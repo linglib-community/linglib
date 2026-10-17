@@ -5,31 +5,40 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Algebra.Algebra.Basic
-public import Mathlib.LinearAlgebra.Span.Basic
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Algebra.Group.Hom.Instances
+public import Mathlib.Algebra.Module.Defs
+public import Mathlib.Data.Set.Operations
+public import Mathlib.Tactic.Abel
 
 /-!
 # Rota–Baxter operators
 
-A Rota–Baxter operator of weight `λ` on a `k`-algebra `A` is a `k`-linear endomorphism `R`
-satisfying `R a * R b = R (R a * b + a * R b + λ • (a * b))`. The prototype of weight `-1` is the
-projection of Laurent series onto their polar part. Operators of weight `-1` drive the Birkhoff
-factorization of characters of a connected graded Hopf algebra, the algebraic form of
-Connes–Kreimer renormalization.
+A map `P : A → A` is a Rota–Baxter operator of weight `θ` if
+`P a * P b = P (P a * b + a * P b + θ • (a * b))` for all `a b`. The projection of Laurent series
+onto their polar part has weight `-1`. Over a semiring, whose addition is not invertible, the
+operators of interest have weight `+1`; over a ring the two are exchanged by `P ↦ -P`.
+
+The identity makes the ranges of `P` and of `θ • id + P` closed under multiplication. For an
+idempotent operator of weight `-1` these are the two subalgebras of the splitting of `A` on which
+the algebraic Birkhoff factorization of renormalization rests.
 
 ## Main definitions
 
-* `RotaBaxter k A lam`: a `k`-linear `R : A → A` satisfying the weight-`lam` identity.
-* `RotaBaxter.rangeMulClosed`: the range of `R` is closed under multiplication.
-* `RotaBaxter.complement`: for weight `-1`, `1 - R` is again a weight-`-1` Rota–Baxter operator,
-  the complementary projection of the splitting `A = range R ⊕ range (1 - R)`.
-* `RotaBaxterSemiring ℛ`: the weight-`+1` operator on a commutative semiring, where addition is
-  not invertible, so the term `op (a * b)` cannot be moved across the identity and the weights
-  `+1` and `-1` are genuinely distinct.
+* `IsRotaBaxter θ P`: `P` satisfies the Rota–Baxter identity of weight `θ`.
 
-`[UPSTREAM]` candidate.
+## Main results
+
+* `IsRotaBaxter.mul_mem_range`, `IsRotaBaxter.mul_mem_range_smul_add`: the ranges of `P` and of
+  `θ • id + P` are closed under multiplication.
+* `IsRotaBaxter.neg`: if the additive map `P` has weight `θ`, then `-P` has weight `-θ`.
+
+## Implementation notes
+
+`IsRotaBaxter` is a predicate on functions, so it applies to additive and linear maps alike, and
+a construction that never uses the identity, such as the Bogolyubov recursion
+`ConnesKreimer.birkhoffMinus`, takes the bare operator. The weight `±1` forms
+`isRotaBaxter_one_iff` and `isRotaBaxter_neg_one_iff` do not mention the scalars, which lets a
+weight move between scalar rings.
 
 ## References
 
@@ -39,98 +48,63 @@ Connes–Kreimer renormalization.
 
 @[expose] public section
 
-variable (k A : Type*) [CommRing k] [CommRing A] [Algebra k A]
+variable {k A : Type*}
 
-/-- A Rota–Baxter operator of weight `lam` on the `k`-algebra `A` is a `k`-linear endomorphism
-    `op` satisfying `op a * op b = op (op a * b + a * op b + lam • (a * b))`. -/
-structure RotaBaxter (lam : k) where
-  /-- The underlying `k`-linear operator. -/
-  op : A →ₗ[k] A
-  /-- The Rota–Baxter identity of weight `lam`. -/
-  rotaBaxter : ∀ a b : A, op a * op b = op (op a * b + a * op b + lam • (a * b))
+section Mul
 
-namespace RotaBaxter
+variable [Add A] [Mul A] [SMul k A]
 
-variable {k A} {lam : k}
+/-- `P` is a Rota–Baxter operator of weight `θ` if
+`P a * P b = P (P a * b + a * P b + θ • (a * b))` for all `a b`. -/
+def IsRotaBaxter (θ : k) (P : A → A) : Prop :=
+  ∀ a b, P a * P b = P (P a * b + a * P b + θ • (a * b))
 
-theorem op_mul_op (R : RotaBaxter k A lam) (a b : A) :
-    R.op a * R.op b = R.op (R.op a * b + a * R.op b + lam • (a * b)) := R.rotaBaxter a b
+variable {θ : k} {P : A → A} {a b : A}
 
-/-- The range of a Rota–Baxter operator is closed under multiplication: `R a * R b ∈ range R`.
-    This makes the two halves of the Birkhoff splitting subalgebras. -/
-theorem rangeMulClosed (R : RotaBaxter k A lam) {a b : A}
-    (ha : a ∈ LinearMap.range R.op) (hb : b ∈ LinearMap.range R.op) :
-    a * b ∈ LinearMap.range R.op := by
+/-- The range of a Rota–Baxter operator is closed under multiplication. -/
+theorem IsRotaBaxter.mul_mem_range (h : IsRotaBaxter θ P) (ha : a ∈ Set.range P)
+    (hb : b ∈ Set.range P) : a * b ∈ Set.range P := by
   obtain ⟨x, rfl⟩ := ha
   obtain ⟨y, rfl⟩ := hb
-  exact ⟨R.op x * y + x * R.op y + lam • (x * y), (R.rotaBaxter x y).symm⟩
+  exact ⟨_, (h x y).symm⟩
 
-/-- The identity is a Rota–Baxter operator of weight `-1`. -/
-def id : RotaBaxter k A (-1) where
-  op := LinearMap.id
-  rotaBaxter a b := by simp
+end Mul
 
-/-- The zero operator is Rota–Baxter of every weight. -/
-def zero : RotaBaxter k A lam where
-  op := 0
-  rotaBaxter a b := by simp
-
-/-- For a weight-`-1` Rota–Baxter operator `R`, the complementary operator
-    `1 - R` is again Rota–Baxter of weight `-1`. When `R` is idempotent this is the complementary
-    projection, giving the splitting `A = range R ⊕ range (1 - R)` into the two subalgebras of the
-    Birkhoff factorization. -/
-def complement (R : RotaBaxter k A (-1)) : RotaBaxter k A (-1) where
-  op := LinearMap.id - R.op
-  rotaBaxter a b := by
-    -- Expand `R`'s weight-`-1` identity to atoms: `R a * R b = R(R a*b) + R(a*R b) − R(a*b)`.
-    have hR : R.op a * R.op b = R.op (R.op a * b) + R.op (a * R.op b) - R.op (a * b) := by
-      have h := R.rotaBaxter a b
-      rw [neg_one_smul, map_add, map_add, map_neg] at h
-      linear_combination h
-    simp only [LinearMap.sub_apply, LinearMap.id_apply]
-    -- The combined argument collapses to `a*b − R a*b − a*R b`; push `R` through it by linearity.
-    have e : (a - R.op a) * b + a * (b - R.op b) + (-1 : k) • (a * b)
-           = a * b - R.op a * b - a * R.op b := by rw [neg_one_smul]; ring
-    rw [e, map_sub, map_sub]
-    linear_combination hR
-
-end RotaBaxter
-
-/-! ### Rota–Baxter operators on semirings -/
+theorem isRotaBaxter_one_iff [Add A] [Mul A] [Monoid k] [MulAction k A] {P : A → A} :
+    IsRotaBaxter (1 : k) P ↔ ∀ a b, P a * P b = P (P a * b + a * P b + a * b) := by
+  simp only [IsRotaBaxter, one_smul]
 
 section Semiring
 
-variable (ℛ : Type*) [CommSemiring ℛ]
+variable [Monoid k] [NonUnitalNonAssocSemiring A] [DistribMulAction k A] [IsScalarTower k A A]
+  [SMulCommClass k A A] {θ : k} {P : A → A} {a b : A}
 
-/-- A Rota–Baxter operator of weight `+1` on a commutative semiring is an additive
-    `op : ℛ → ℛ` satisfying `op a * op b = op (a * op b) + op (op a * b) + op (a * b)`. It is the
-    semiring analogue of `RotaBaxter` for semirings whose addition is not invertible, such as the
-    tropical `(ℝ ∪ {−∞}, max, +)`, Viterbi and Boolean semirings. Because there is no subtraction,
-    the divergence term `op (a * b)` cannot be moved across the identity, so the weight `+1` and
-    weight `-1` semiring operators are genuinely different operators. -/
-structure RotaBaxterSemiring where
-  /-- The underlying additive operator. -/
-  op : ℛ →+ ℛ
-  /-- The weight-`+1` Rota–Baxter identity. -/
-  rotaBaxter : ∀ a b : ℛ, op a * op b = op (a * op b) + op (op a * b) + op (a * b)
-
-namespace RotaBaxterSemiring
-
-variable {ℛ}
-
-theorem op_mul_op (R : RotaBaxterSemiring ℛ) (a b : ℛ) :
-    R.op a * R.op b = R.op (a * R.op b) + R.op (R.op a * b) + R.op (a * b) := R.rotaBaxter a b
-
-/-- The range of a weight-`+1` Rota–Baxter semiring operator is closed under multiplication:
-    `R a * R b ∈ range R`, since `R a * R b = R (a * R b + R a * b + a * b)`. The semiring analogue
-    of `RotaBaxter.rangeMulClosed`. -/
-theorem rangeMulClosed (R : RotaBaxterSemiring ℛ) {a b : ℛ}
-    (ha : a ∈ Set.range R.op) (hb : b ∈ Set.range R.op) :
-    a * b ∈ Set.range R.op := by
+/-- The range of `θ • id + P` is closed under multiplication when `P` has weight `θ`: the product
+of the values at `x` and `y` is the value at `P x * y + x * P y + θ • (x * y)`. -/
+theorem IsRotaBaxter.mul_mem_range_smul_add (h : IsRotaBaxter θ P)
+    (ha : a ∈ Set.range fun x ↦ θ • x + P x) (hb : b ∈ Set.range fun x ↦ θ • x + P x) :
+    a * b ∈ Set.range fun x ↦ θ • x + P x := by
   obtain ⟨x, rfl⟩ := ha
   obtain ⟨y, rfl⟩ := hb
-  exact ⟨x * R.op y + R.op x * y + x * y, by rw [map_add, map_add]; exact (R.rotaBaxter x y).symm⟩
-
-end RotaBaxterSemiring
+  refine ⟨P x * y + x * P y + θ • (x * y), ?_⟩
+  simp only [← h x y, smul_add, add_mul, mul_add, smul_mul_assoc, mul_smul_comm]
+  abel
 
 end Semiring
+
+section Ring
+
+variable [Ring k] [NonUnitalNonAssocRing A] [Module k A]
+
+theorem isRotaBaxter_neg_one_iff {P : A → A} :
+    IsRotaBaxter (-1 : k) P ↔ ∀ a b, P a * P b = P (P a * b + a * P b - a * b) := by
+  simp only [IsRotaBaxter, neg_one_smul, sub_eq_add_neg]
+
+/-- If `P` is an additive Rota–Baxter operator of weight `θ`, then `-P` has weight `-θ`. -/
+theorem IsRotaBaxter.neg {θ : k} {P : A →+ A} (h : IsRotaBaxter θ P) :
+    IsRotaBaxter (-θ) ⇑(-P) := fun a b ↦ by
+  simp only [AddMonoidHom.neg_apply, neg_mul, mul_neg, neg_smul, ← neg_add, map_neg,
+    neg_neg]
+  exact h a b
+
+end Ring
