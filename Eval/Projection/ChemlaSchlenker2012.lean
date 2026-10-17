@@ -87,12 +87,14 @@ local macro "ls_points" : tactic =>
                  Connective.rightItems, compat, Connective.eval]))
 
 private theorem transparency_symmetric_target (k : Construction) (o : Order) :
-    Schlenker2009.Transparency I .symmetric C (target 0 1 2 k o) ↔ C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
+    Schlenker2009.Transparency .symmetric C (Occurrence.ofFormula I (target 0 1 2 k o)) ↔
+      C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
   have tf (K : SyntacticEnvironment (Fin 3)) :
       ∀ f ∈ ({K.truth I} : Set (Set W → Set W)), IsTruthFunctional f :=
     fun _ hf ↦ hf ▸ isTruthFunctional_truth I K
   cases k <;> cases o <;>
-    simp only [Schlenker2009.Transparency, Schlenker2009.continuations_symmetric, target,
+    simp only [Schlenker2009.Transparency, Occurrence.forall_mem_ofFormula, Occurrence.Transparent,
+      SyntacticEnvironment.occurrence, Schlenker2009.Reading.parsePoint, parsePoint_top, target,
       _root_.ChemlaSchlenker2012.unlessThen,
       Formula.occurrences, List.map_cons, List.map_nil, List.nil_append, List.singleton_append,
       List.append_nil, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
@@ -102,7 +104,8 @@ private theorem transparency_symmetric_target (k : Construction) (o : Order) :
       Formula.truth]
 
 private theorem limitedSymmetry_target (k : Construction) (o : Order) :
-    LimitedSymmetry I C (target 0 1 2 k o) ↔ C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
+    LimitedSymmetry C (Occurrence.ofFormula I (target 0 1 2 k o)) ↔
+      C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
   cases k <;> cases o <;>
     rw [limitedSymmetry_of_occurrences I (a := 2) rfl] <;>
     dsimp only [List.nil_append, List.cons_append] <;>

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Presupposition.Formula
-public import Linglib.Semantics.Presupposition.LocalContext
+public import Linglib.Semantics.Presupposition.Occurrence
 
 /-!
 # Syntactic environments
@@ -23,7 +23,11 @@ Kalomoiros checks the constraint at every parse point after a trigger:
 `AgreeUpTo n K K'` holds when `K'` keeps the material before the gap and the first `n` items after
 it, counting the connective after a first argument and the second argument as one item each. At the
 first point it admits every good final (`SyntacticEnvironment.agreeUpTo_zero_iff`), and from the
-last point on only the environment itself (`SyntacticEnvironment.agreeUpTo_iff_eq`).
+last point on only the environment itself (`SyntacticEnvironment.agreeUpTo_iff_eq`). The
+continuations at a parse point `n : ℕ∞` are the truth functions of these finals, the sentence's own
+at `⊤` (`SyntacticEnvironment.parsePoint`); a later parse point consults fewer of them
+(`SyntacticEnvironment.antitone_parsePoint`). With them the triggers of a formula are occurrences in
+the sense of `Presupposition.Occurrence` (`Occurrence.ofFormula`).
 
 Karttunen's local context of a gap (`SyntacticEnvironment.localContext`) is recovered from the
 good finals: some good final makes the formula's truth value at a world depend on the gap iff the
@@ -40,6 +44,8 @@ is in the trigger's local context (`Formula.filter_ne_zero_iff`).
 * `Presupposition.SyntacticEnvironment.SameInitialString`: the environments of the good finals.
 * `Presupposition.SyntacticEnvironment.AgreeUpTo`: the environments of the good finals at a parse
   point.
+* `Presupposition.SyntacticEnvironment.parsePoint`: the continuations at a parse point.
+* `Presupposition.Occurrence.ofFormula`: the triggers of a formula as occurrences.
 * `Presupposition.SyntacticEnvironment.localContext`: Karttunen's local context of the gap.
 
 ## References
@@ -355,6 +361,53 @@ theorem agreeUpTo_append_singleton {n : ℕ} {K L : SyntacticEnvironment Atom} {
     · rintro ⟨_, s', rfl, ⟨t', K', rfl, ht, hK⟩, hs⟩
       exact ⟨t', K' ++ [s'], rfl, ht, K', s', rfl, hK, by rwa [← Nat.sub_add_eq]⟩
 
+/-! ### The continuations at a parse point -/
+
+variable (I : Atom → Set W)
+
+/-- The continuations at parse point `n` after the gap of `K`: the truth functions of the good
+finals that keep the first `n` items after the gap, and at the last parse point the sentence's
+own. -/
+def parsePoint : ℕ∞ → SyntacticEnvironment Atom → Set (Set W → Set W)
+  | ⊤, K => {K.truth I}
+  | (n : ℕ), K => (·.truth I) '' {K' | AgreeUpTo n K K'}
+
+@[simp] theorem parsePoint_top (K : SyntacticEnvironment Atom) :
+    parsePoint I ⊤ K = {K.truth I} := rfl
+
+theorem parsePoint_natCast (n : ℕ) (K : SyntacticEnvironment Atom) :
+    parsePoint I n K = (·.truth I) '' {K' | AgreeUpTo n K K'} := rfl
+
+/-- The first parse point consults every good final. -/
+theorem parsePoint_zero (K : SyntacticEnvironment Atom) :
+    parsePoint I 0 K = (·.truth I) '' {K' | K.SameInitialString K'} := by
+  rw [show (0 : ℕ∞) = ((0 : ℕ) : ℕ∞) from rfl, parsePoint_natCast]
+  simp only [agreeUpTo_zero_iff]
+
+theorem truth_mem_parsePoint (n : ℕ∞) (K : SyntacticEnvironment Atom) :
+    K.truth I ∈ parsePoint I n K := by
+  induction n using ENat.recTopCoe with
+  | top => rfl
+  | coe n => exact ⟨K, AgreeUpTo.refl n K, rfl⟩
+
+/-- A later parse point consults fewer continuations. -/
+theorem antitone_parsePoint (K : SyntacticEnvironment Atom) : Antitone (parsePoint I · K) := by
+  intro m n hmn
+  induction n using ENat.recTopCoe with
+  | top => exact Set.singleton_subset_iff.2 (truth_mem_parsePoint I m K)
+  | coe n =>
+    induction m using ENat.recTopCoe with
+    | top => exact absurd hmn (WithTop.not_top_le_coe n)
+    | coe m =>
+      rintro _ ⟨K', hK', rfl⟩
+      exact ⟨K', hK'.mono (by exact_mod_cast hmn), rfl⟩
+
+/-- From the last item after the gap on, a parse point consults only the sentence itself. -/
+theorem parsePoint_eq_top_of_le {n : ℕ} {K : SyntacticEnvironment Atom} (hn : rightItems K ≤ n) :
+    parsePoint I n K = parsePoint I ⊤ K := by
+  rw [parsePoint_natCast, parsePoint_top]
+  simp only [agreeUpTo_iff_eq hn, Set.ofPred_eq_eq_singleton, Set.image_singleton]
+
 end SyntacticEnvironment
 
 namespace Formula
@@ -419,6 +472,14 @@ theorem isTruthFunctional_truth (K : SyntacticEnvironment Atom) :
     intro w d d' h
     refine ih w _ _ ?_
     cases s <;> simp [Step.truth, h]
+
+theorem isTruthFunctional_of_mem_parsePoint {n : ℕ∞} {K : SyntacticEnvironment Atom}
+    {f : Set W → Set W} (hf : f ∈ K.parsePoint I n) : IsTruthFunctional f := by
+  induction n using ENat.recTopCoe with
+  | top => exact hf ▸ isTruthFunctional_truth I K
+  | coe n =>
+    obtain ⟨K', -, rfl⟩ := hf
+    exact isTruthFunctional_truth I K'
 
 /-- The formula's truth value depends on the gap of `s :: K` iff it depends on the gap of `s` and
 on the gap of `K`. -/
@@ -515,5 +576,27 @@ theorem Formula.filter_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (w : 
       · rw [localContext_eq_inter]; exact ⟨hc, hl⟩
       · rw [localContext_eq_inter] at hl; exact h hl.1 o ho hl.2
     rw [hG, filter_bin_ne_zero I]
+
+/-! ### Occurrences -/
+
+/-- The occurrence of the trigger `trigger p p'` at the gap of `K`, with the continuations of its
+parse points. -/
+def SyntacticEnvironment.occurrence (I : Atom → Set W) (K : SyntacticEnvironment Atom)
+    (p p' : Atom) : Occurrence W (Set W) where
+  presupposition := I p
+  assertion := I p'
+  continuations := (K.parsePoint I ·)
+  sentence := K.truth I
+  antitone_continuations := SyntacticEnvironment.antitone_parsePoint I K
+  continuations_top := SyntacticEnvironment.parsePoint_top I K
+
+/-- The occurrences of the triggers of a formula. -/
+def Occurrence.ofFormula (I : Atom → Set W) (F : Formula Atom) : List (Occurrence W (Set W)) :=
+  F.occurrences.map fun t ↦ t.1.occurrence I t.2.1 t.2.2
+
+theorem Occurrence.forall_mem_ofFormula {I : Atom → Set W} {F : Formula Atom}
+    {P : Occurrence W (Set W) → Prop} :
+    (∀ o ∈ Occurrence.ofFormula I F, P o) ↔ ∀ t ∈ F.occurrences, P (t.1.occurrence I t.2.1 t.2.2) :=
+  List.forall_mem_map
 
 end Presupposition
