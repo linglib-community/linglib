@@ -113,8 +113,8 @@ def starRootCorVel : Constraint Candidate := Zuraw2010.starInitCorVel.comap proj
 /-- *[root ŋ (6c) forbids a root to begin with a velar nasal. -/
 def starRootVelar : Constraint Candidate := Zuraw2010.starInitVelar.comap project
 
-/-- The Uniformity constraint of (5) indexed to prefix construction `q`: a segment of the prefix
-and a distinct input segment must not correspond to one output segment. -/
+/-- The Uniformity constraint of (5) indexed to prefix construction `q`, which forbids a segment
+of the prefix and a distinct input segment to correspond to one output segment. -/
 def unif (q : Prefix) : Constraint Candidate :=
   Constraint.binary fun c ↦ c.1.1 = q ∧ c.2 = .yes
 
@@ -127,23 +127,23 @@ attribute [local simp] constraints nasSub starNC starRootNasal starRootCorVel st
   Zuraw2010.nasSub Zuraw2010.starNC Zuraw2010.starInitAll Zuraw2010.starInitCorVel
   Zuraw2010.starInitVelar project
 
-/-- The two families intersect: on every square the consonant-sensitive constraints are
+/-- The two families intersect, since on every square the consonant-sensitive constraints are
 insensitive to the prefix and the Uniformity constraints to the stem. -/
 theorem independent (p p' : Prefix) (c c' : StemC) :
     (square p p' c c').Independent constraints := by
   intro k
   fin_cases k <;> first | exact .inl ⟨rfl, rfl⟩ | exact .inr ⟨rfl, rfl⟩
 
-/-- The Uniformity family sums to *[root m/n/ŋ: a substituted candidate violates exactly the
-Uniformity constraint of its prefix. -/
+/-- The Uniformity family sums to *[root m/n/ŋ, since a substituted candidate violates exactly
+the Uniformity constraint of its prefix. -/
 theorem sum_unif_eq_starRootNasal (c : Candidate) : ∑ q, unif q c = starRootNasal c := by
   revert c
   decide +kernel
 
 /-! ### Across-the-board effects -/
 
-/-- The effect of the rows of a square is across the board (§2.3): it has the same direction in
-both columns, so that the lines of Figure 4 do not cross. -/
+/-- The effect of the rows of a square is across the board (§2.3) when it has the same direction
+in both columns, so that the lines of Figure 4 do not cross. -/
 def AcrossTheBoard {X : Type*} (sq : Square X) (r : X → ℝ) : Prop :=
   0 ≤ (r sq.tl - r sq.bl) * (r sq.tr - r sq.br)
 
@@ -168,10 +168,8 @@ noncomputable def maxEntSubst (w : Fin 11 → ℝ) (x : Prefix × StemC) : ℝ :
 substituted and unsubstituted candidates (13). -/
 theorem maxEntSubst_eq (w : Fin 11 → ℝ) (x : Prefix × StemC) :
     maxEntSubst w x =
-      sigmoid (harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no)) := by
-  rw [maxEntSubst, softmax_def, show (univ : Finset SubSt) = {.yes, .no} by decide,
-    sum_pair (by decide), sigmoid_def, neg_sub, exp_sub, ← div_self (exp_pos _).ne', ← add_div,
-    inv_div]
+      sigmoid (harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no)) :=
+  softmax_eq_sigmoid_of_univ_eq_pair (i := SubSt.yes) (j := .no) (by decide) (by decide) _
 
 /-- Any MaxEnt weighting has constant logit differences on every square, whatever the other
 candidates. -/
@@ -189,8 +187,8 @@ theorem harmony_b_sub_harmony_k (w : Fin 11 → ℝ) (p : Prefix) :
     w 3 + w 4 - w 1 := by
   cases p <;> simp [harmonyScore_eq_neg_sum, Fin.sum_univ_succ] <;> ring
 
-/-- MaxEnt's effects are across the board on every square, for every weighting: those of the
-prefixes at every pair of stems, and those of the stems at every pair of prefixes. -/
+/-- For every weighting, MaxEnt's prefix effects are across the board at every pair of stems,
+and its stem effects at every pair of prefixes. -/
 theorem maxEnt_acrossTheBoard (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
     AcrossTheBoard (square p p' c c') (maxEntSubst w) ∧
       AcrossTheBoard (square p p' c c').transpose (maxEntSubst w) := by
@@ -270,7 +268,7 @@ section StochasticOT
 open MeasureTheory Filter Topology Set
 open scoped ENNReal
 
-variable (η : Measure ℝ) [IsProbabilityMeasure η]
+variable (η : Measure ℝ)
 
 /-- In stochastic OT every ranking value is perturbed by independent noise of law `η`, and an
 evaluation is decided by the highest-ranked constraint that distinguishes the candidates. When a
@@ -280,21 +278,20 @@ when it outruns the other two (§3.8). `raceRate η n a u` is the rate of that c
 noncomputable def raceRate (n a u : ℝ) : ℝ≥0∞ :=
   choiceProb (Measure.pi ![η.map (n + ·), η.map (a + ·), η.map (u + ·)]) 0
 
-omit [IsProbabilityMeasure η] in
 private theorem map_add_Iio (r x : ℝ) : η.map (r + ·) (Iio x) = η (Iio (x - r)) := by
   rw [Measure.map_apply (measurable_const_add r) measurableSet_Iio, preimage_const_add_Iio]
 
-omit [IsProbabilityMeasure η] in
 private theorem measurable_Iio_sub (r : ℝ) : Measurable fun x ↦ η (Iio (x - r)) :=
   Monotone.measurable fun _ _ h ↦ measure_mono (Iio_subset_Iio (by linarith))
 
-omit [IsProbabilityMeasure η] in
 private theorem measurable_race (a u : ℝ) :
     Measurable fun x ↦ η (Iio (x - a)) * η (Iio (x - u)) :=
   (measurable_Iio_sub η a).mul (measurable_Iio_sub η u)
 
+variable [IsProbabilityMeasure η]
+
 /-- The rate of the first candidate integrates, against the law of its constraint, the product of
-the distribution functions of the other two: the race. -/
+the distribution functions of the other two. -/
 theorem raceRate_eq (n a u : ℝ) :
     raceRate η n a u = ∫⁻ x, η (Iio (x - a)) * η (Iio (x - u)) ∂η.map (n + ·) := by
   have : ∀ j, SigmaFinite (![η.map (n + ·), η.map (a + ·), η.map (u + ·)] j) := fun j ↦ by
@@ -308,7 +305,7 @@ theorem raceRate_le_one (n a u : ℝ) : raceRate η n a u ≤ 1 := by
   calc _ ≤ ∫⁻ _, 1 ∂η.map (n + ·) := lintegral_mono fun _ ↦ mul_le_one' prob_le_one prob_le_one
     _ = 1 := by simp [Measure.map_apply (measurable_const_add n) .univ]
 
-/-- Magri's theorem (§3.8): the difference that a stronger constraint of one family makes to the
+/-- Magri's theorem (§3.8). The difference that a stronger constraint of one family makes to the
 opposing candidate's rate is larger the weaker the constraint of the other family, for noise of
 any law. -/
 theorem raceRate_add_le {n a a' u u' : ℝ} (ha : a' ≤ a) (hu : u ≤ u') :
