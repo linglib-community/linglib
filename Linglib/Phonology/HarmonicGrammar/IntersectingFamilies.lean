@@ -70,11 +70,11 @@ def transpose : Square X := ⟨sq.tl, sq.bl, sq.tr, sq.br⟩
 
 /-! ### Independence -/
 
-/-- `f` is insensitive to the rows: it agrees on the two forms of each column (Figure 4a of
+/-- `f` is insensitive to the rows when it agrees on the two forms of each column (Figure 4a of
 [magri-2025]). -/
 def InsensitiveToRow (f : X → α) : Prop := f sq.tl = f sq.bl ∧ f sq.tr = f sq.br
 
-/-- `f` is insensitive to the columns: it agrees on the two forms of each row (Figure 4b of
+/-- `f` is insensitive to the columns when it agrees on the two forms of each row (Figure 4b of
 [magri-2025]). -/
 def InsensitiveToCol (f : X → α) : Prop := f sq.tl = f sq.tr ∧ f sq.bl = f sq.br
 
@@ -101,7 +101,7 @@ section Interaction
 variable [CommRing R]
 
 variable (sq) in
-/-- The interaction contrast: the difference of `f` along the top row minus its difference
+/-- The interaction contrast is the difference of `f` along the top row minus its difference
 along the bottom row. -/
 def interaction : (X → R) →ₗ[R] R :=
   .proj sq.tl - .proj sq.tr - .proj sq.bl + .proj sq.br
@@ -166,9 +166,9 @@ log-odds of two candidates have zero interaction, for every weighting and every 
 theorem Independent.interaction_logOdds_maxEnt [Fintype Y] [MeasurableSpace Y]
     [MeasurableSingletonClass Y] {con : ConstraintSet (X × Y) (Fin n)} (h : sq.Independent con)
     (w : Fin n → ℝ) (a b : Y) :
-    sq.interaction (fun x ↦ log ((maxEnt (con.comap (x, ·)) w).real {a} /
-      (maxEnt (con.comap (x, ·)) w).real {b})) = 0 := by
-  simpa only [log_maxEnt_real_singleton_div, harmonyScore_comap] using
+    sq.interaction (fun x ↦ log ((maxEnt (con.comap (x, ·)).violations w).real {a} /
+      (maxEnt (con.comap (x, ·)).violations w).real {b})) = 0 := by
+  simpa only [log_maxEnt_real_singleton_div, harmony_violations, harmonyScore_comap] using
     h.interaction_harmonyScore_sub w a b
 
 end Square

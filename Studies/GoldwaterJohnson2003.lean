@@ -9,19 +9,25 @@ public import Linglib.Data.Examples.GoldwaterJohnson2003
 # Goldwater and Johnson (2003): Learning OT Constraint Rankings Using a Maximum Entropy Model
 
 Goldwater and Johnson's maximum entropy model of constraint-based phonology gives an output of an
-input the probability of eq. (1), the MaxEnt distribution `maxEnt` of the input's candidates, whose
-log is the harmony up to a normalizing constant. Learning maximizes the log pseudo-likelihood of
-the training pairs (eq. (2)) less a Gaussian penalty on the weights (eq. (3)). The log
-pseudo-likelihood is concave in the weights (`concaveOn_logPseudoLikelihood`), as footnote 4 says,
-and the penalty makes the objective strictly concave, so at most one weighting maximizes it
-(`eq_of_isMaxOn_regularizedObjective`). Replicating the corpus r times while dividing the prior's
-variance by r rescales the objective by r, so only nσ² matters for the weights learned
-(`regularizedObjective_replicate`). The Wolof tongue-root
-grammar's learned weights of Table 1 are exponentially separated (`wolof_separated`), the spacing
-that recovers strict domination in the limit ([johnson-2002]). For [boersma-hayes-2001]'s Finnish
+input the probability of eq. (1), the MaxEnt distribution `maxEnt` of the input's candidates.
+Learning maximizes the log pseudo-likelihood of the training pairs (eq. (2)) less a Gaussian
+penalty on the weights (eq. (3)). The log pseudo-likelihood is concave in the weights, as
+footnote 4 says, and the penalty makes the objective strictly concave, so at most one weighting
+maximizes it. Replicating the corpus r times while dividing the prior's variance by r rescales the
+objective by r, so only nσ² matters for the weights learned.
+
+The learned weights of the Wolof tongue-root grammar (Table 1) are exponentially separated, the
+spacing that recovers strict domination in Johnson's limit. For Boersma and Hayes's Finnish
 genitive plurals, a model choosing between two candidates sees their violations only through the
-difference vector (`maxEnt_pairConstraintSet_real_zero`), so Table 2's *naapuri* and *ministeri* classes, distinct in
-violations but not in differences, are one class for the learner (`rows_collapse`).
+difference vector, so Table 2's *naapuri* and *ministeri* classes, distinct in violations but not
+in differences, are one class for the learner.
+
+## Main results
+
+* `concaveOn_logPseudoLikelihood`, `eq_of_isMaxOn_regularizedObjective`: footnote 4.
+* `regularizedObjective_replicate`: only nσ² matters.
+* `wolof_separated`: Table 1's weights are exponentially separated.
+* `maxEnt_pairConstraintSet_real_zero`, `rows_collapse`: a pair sees only differences (Table 3).
 
 ## Implementation notes
 
@@ -30,9 +36,9 @@ concave function can be maximized on a whole convex set, as when two constraints
 alike; uniqueness comes from the strictly convex penalty of (3).
 
 The four Finnish rows carry Table 2's violation vectors as digit strings, one digit per constraint
-in [boersma-hayes-2001]'s order; Anttila's full grammar is in `Studies/Anttila1997.lean`. The Wolof
+in Boersma and Hayes's order; Anttila's full grammar is in `Studies/Anttila1997.lean`. The Wolof
 weights are the learned values of Table 1; the error rates and Table 4 stay in the paper, as does
-the comparison with [boersma-1997]'s Gradual Learning Algorithm.
+the comparison with Boersma's Gradual Learning Algorithm.
 
 ## References
 
@@ -52,11 +58,11 @@ open OptimalityTheory HarmonicGrammar MeasureTheory Finset Real
 
 variable {I O : Type*} [MeasurableSpace O] {n : ℕ}
 
-/-- Eq. (2), logged: the log pseudo-likelihood of the training pairs sums the log-probabilities
+/-- The log pseudo-likelihood of the training pairs, eq. (2) logged, sums the log-probabilities
 of the observed outputs under the MaxEnt distributions (1) of their inputs' candidates. -/
 noncomputable def logPseudoLikelihood (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (data : List (I × O)) : ℝ :=
-  (data.map fun p ↦ log ((maxEnt (con.comap (p.1, ·)) w).real {p.2})).sum
+  (data.map fun p ↦ log ((maxEnt (con.comap (p.1, ·)).violations w).real {p.2})).sum
 
 /-- Eq. (3) with the paper's common prior, mean zero and deviation σ for every weight. -/
 noncomputable def regularizedObjective (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
@@ -94,7 +100,7 @@ theorem regularizedObjective_replicate_le_iff (con : ConstraintSet (I × O) (Fin
 
 variable [Fintype O] [MeasurableSingletonClass O]
 
-/-- Footnote 4: the log pseudo-likelihood is concave in the weights, as a sum of the
+/-- The log pseudo-likelihood is concave in the weights (footnote 4), as a sum of the
 log-likelihoods of single observations. -/
 theorem concaveOn_logPseudoLikelihood (con : ConstraintSet (I × O) (Fin n)) (data : List (I × O)) :
     ConcaveOn ℝ Set.univ fun w ↦ logPseudoLikelihood con w data := by
@@ -103,7 +109,7 @@ theorem concaveOn_logPseudoLikelihood (con : ConstraintSet (I × O) (Fin n)) (da
   | cons p data ih =>
     have : Nonempty O := ⟨p.2⟩
     simp only [logPseudoLikelihood, List.map_cons, List.sum_cons] at ih ⊢
-    exact ((concaveOn_logLikelihood (con.comap (p.1, ·)) (Measure.dirac p.2)).congr
+    exact ((concaveOn_logLikelihood (con.comap (p.1, ·)).violations (Measure.dirac p.2)).congr
       fun w _ ↦ logLikelihood_dirac _ _ _).add ih
 
 private theorem strictConvexOn_sum_sq_div {σ : ℝ} (hσ : σ ≠ 0) :
@@ -129,7 +135,7 @@ theorem strictConcaveOn_regularizedObjective (con : ConstraintSet (I × O) (Fin 
     StrictConcaveOn ℝ Set.univ fun w ↦ regularizedObjective con w data σ :=
   (concaveOn_logPseudoLikelihood con data).sub_strictConvexOn (strictConvexOn_sum_sq_div hσ)
 
-/-- Footnote 4's single global maximum: at most one weighting maximizes the objective (3). -/
+/-- At most one weighting maximizes the objective (3), footnote 4's single global maximum. -/
 theorem eq_of_isMaxOn_regularizedObjective (con : ConstraintSet (I × O) (Fin n))
     (data : List (I × O)) {σ : ℝ} (hσ : σ ≠ 0) {w w' : Fin n → ℝ}
     (hw : IsMaxOn (fun w ↦ regularizedObjective con w data σ) Set.univ w)
@@ -145,9 +151,9 @@ def pairConstraintSet (win lose : Fin n → ℕ) : ConstraintSet (Fin 2) (Fin n)
 /-- A two-candidate model sees the violations only through their difference, the winner's
 probability being the sigmoid of the weighted difference vector. -/
 theorem maxEnt_pairConstraintSet_real_zero (w : Fin n → ℝ) (win lose : Fin n → ℕ) :
-    (maxEnt (pairConstraintSet win lose) w).real {0} =
+    (maxEnt (pairConstraintSet win lose).violations w).real {0} =
       sigmoid (∑ j, w j * ((lose j : ℝ) - win j)) := by
-  rw [maxEnt_real_singleton, softmax_fin_two]
+  rw [maxEnt_real_singleton, harmony_violations, softmax_fin_two]
   congr 1
   simp only [harmonyScore_eq_neg_sum, pairConstraintSet, Fin.isValue, ite_true, ite_false,
     one_ne_zero, mul_sub, Finset.sum_sub_distrib]
@@ -158,8 +164,8 @@ every weighting. -/
 theorem maxEnt_pairConstraintSet_real_zero_eq_of_diff_eq (w : Fin n → ℝ)
     {win lose win' lose' : Fin n → ℕ}
     (h : (fun j ↦ (lose j : ℤ) - win j) = fun j ↦ (lose' j : ℤ) - win' j) :
-    (maxEnt (pairConstraintSet win lose) w).real {0} =
-      (maxEnt (pairConstraintSet win' lose') w).real {0} := by
+    (maxEnt (pairConstraintSet win lose).violations w).real {0} =
+      (maxEnt (pairConstraintSet win' lose').violations w).real {0} := by
   rw [maxEnt_pairConstraintSet_real_zero, maxEnt_pairConstraintSet_real_zero]
   congr 1
   refine Finset.sum_congr rfl fun j _ ↦ ?_
@@ -171,8 +177,8 @@ theorem maxEnt_pairConstraintSet_real_zero_eq_of_diff_eq (w : Fin n → ℝ)
 
 /-! ### Table 1: the Wolof tongue-root grammar -/
 
-/-- The weights learned for Boersma's five Wolof constraints (Table 1, nσ² ≈ 1,200,000): *RTRHI,
-PARSE[RTR], GESTURE[CONTOUR], PARSE[ATR], *ATRLO. -/
+/-- The weights learned for Boersma's five Wolof constraints *RTRHI, PARSE[RTR],
+GESTURE[CONTOUR], PARSE[ATR] and *ATRLO (Table 1, nσ² ≈ 1,200,000). -/
 noncomputable def wolofWeights : Fin 5 → ℝ
   | 0 => 3389 / 100
   | 1 => 17
@@ -180,7 +186,7 @@ noncomputable def wolofWeights : Fin 5 → ℝ
   | 3 => 353 / 100
   | 4 => 41 / 100
 
-/-- The learned weights are exponentially separated: each exceeds the sum of all lower ones, the
+/-- The learned weights are exponentially separated, each exceeding the sum of all lower ones, the
 spacing under which Harmonic Grammar reproduces the strict domination of the ranking the Gradual
 Learning Algorithm finds ([johnson-2002], `lex_imp_lower_violations`). -/
 theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := by
@@ -197,7 +203,7 @@ def digits (s : String) : List ℕ := s.toList.map fun c ↦ c.toNat - '0'.toNat
 /-- A violation vector over [boersma-hayes-2001]'s eleven constraints. -/
 def vec (l : List ℕ) : Fin 11 → ℕ := fun j ↦ l.getD j 0
 
-/-- A stem class: the violation vectors of the winning and the losing genitive plural. -/
+/-- A stem class, given by the violation vectors of the winning and the losing genitive plural. -/
 structure Row where
   winner : Fin 11 → ℕ
   loser : Fin 11 → ℕ
@@ -208,7 +214,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let l ← ex.feature? "loserViolations"
   pure ⟨vec (digits w), vec (digits l)⟩
 
-/-- Table 3's learning signal: the loser's violations minus the winner's. -/
+/-- Table 3's learning signal, the loser's violations minus the winner's. -/
 def Row.diff (r : Row) : Fin 11 → ℤ := fun j ↦ (r.loser j : ℤ) - r.winner j
 
 /-- The four stem classes of Table 2. -/
@@ -216,16 +222,16 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide
 
-/-- Table 3: two of Table 2's classes differ in their violation vectors but not in their
-differences, so a learner that sees only differences treats them as one class. -/
+/-- Two of Table 2's classes differ in their violation vectors but not in their differences
+(Table 3), so a learner that sees only differences treats them as one class. -/
 theorem rows_collapse : ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁.winner ≠ r₂.winner ∧ r₁.diff = r₂.diff := by
   decide
 
 /-- The two classes receive the same winner probability under every weighting. -/
 theorem rows_collapse_prob :
     ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁ ≠ r₂ ∧
-      ∀ w, (maxEnt (pairConstraintSet r₁.winner r₁.loser) w).real {0} =
-        (maxEnt (pairConstraintSet r₂.winner r₂.loser) w).real {0} := by
+      ∀ w, (maxEnt (pairConstraintSet r₁.winner r₁.loser).violations w).real {0} =
+        (maxEnt (pairConstraintSet r₂.winner r₂.loser).violations w).real {0} := by
   obtain ⟨r₁, h₁, r₂, h₂, hne, hd⟩ := rows_collapse
   exact ⟨r₁, h₁, r₂, h₂, fun h ↦ hne (congrArg Row.winner h),
     fun w ↦ maxEnt_pairConstraintSet_real_zero_eq_of_diff_eq w hd⟩

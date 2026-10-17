@@ -191,10 +191,10 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
   simp only [dotProduct, Function.comp_apply]
   -- Suffices: 0 < Σ w_i · (vb_i − va_i)
   suffices hpos : (0 : ℝ) <
-      univ.sum (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) by
-    have hlink : univ.sum (λ i => w i * (va i : ℝ)) +
-        univ.sum (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) =
-        univ.sum (λ i => w i * (vb i : ℝ)) := by
+      univ.sum (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) by
+    have hlink : univ.sum (fun i ↦ w i * (va i : ℝ)) +
+        univ.sum (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) =
+        univ.sum (fun i ↦ w i * (vb i : ℝ)) := by
       rw [← Finset.sum_add_distrib]; congr 1; ext i; ring
     linarith
   -- Split the sum: f(k) + Σ_{i≠k} f(i)
@@ -224,7 +224,7 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
   rw [hsplit, Finset.sum_union hdisj]
   -- Terms i < k: each is 0
   have hlt_zero : (univ.filter (· < k)).sum
-      (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) = 0 := by
+      (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) = 0 := by
     apply Finset.sum_eq_zero; intro i hi
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
     rw [h_agree i hi, sub_self, mul_zero]
@@ -235,16 +235,16 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
   -- Terms i > k: each ≥ −w_i · M, so sum ≥ −M · Σ_{i>k} w_i
   have hgt_bound : -(M : ℝ) * (univ.filter (· > k)).sum w ≤
       (univ.filter (· > k)).sum
-        (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) := by
+        (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) := by
     have h_each : ∀ i ∈ univ.filter (· > k),
         -(w i * (M : ℝ)) ≤ w i * ((vb i : ℝ) - (va i : ℝ)) := by
       intro i hi
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
       have hva : (va i : ℝ) ≤ (M : ℝ) := by exact_mod_cast (hM i).1
       nlinarith [(hw.1 i).le]
-    have h_neg_sum : (univ.filter (· > k)).sum (λ i => -(w i * (M : ℝ))) =
+    have h_neg_sum : (univ.filter (· > k)).sum (fun i ↦ -(w i * (M : ℝ))) =
         -(M : ℝ) * (univ.filter (· > k)).sum w := by
-      trans (univ.filter (· > k)).sum (λ i => -(M : ℝ) * w i)
+      trans (univ.filter (· > k)).sum (fun i ↦ -(M : ℝ) * w i)
       · apply Finset.sum_congr rfl; intro i _; ring
       · rw [← Finset.mul_sum]
     linarith [Finset.sum_le_sum h_each]
@@ -290,8 +290,9 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [MeasurableSpace C] [MeasurableS
     (hlex : ∀ c, c ≠ c_opt →
       toLex (fun i : Fin ranking.length => (ranking.get i) c_opt) <
       toLex (fun i : Fin ranking.length => (ranking.get i) c)) :
-    Tendsto (fun α : ℝ ↦ (maxEnt ranking.get (α • expWeights ranking.length M)).real {c_opt})
-      atTop (𝓝 1) :=
+    Tendsto (fun α : ℝ ↦
+      (maxEnt (ConstraintSet.violations ranking.get) (α • expWeights ranking.length M)).real
+        {c_opt}) atTop (𝓝 1) :=
   tendsto_maxEnt_smul_atTop _ _ fun c hc ↦ ot_lex_imp_higher_harmony ranking M hM c_opt c
     (fun con hcon ↦ ⟨hbound c_opt con hcon, hbound c con hcon⟩) (hlex c hc)
 

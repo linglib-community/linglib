@@ -12,7 +12,9 @@ This file formalizes Hayes and Wilson's maximum-entropy model of phonotactics. A
 sequence of feature matrices, one of which may be complemented, and a grammar assigns each form a
 score, a maxent value, and a probability. The weights are learned by maximizing the probability
 of the data, whose partial derivatives are differences between expected and observed violation
-counts (`hasDerivAt_logLik`).
+counts (`hasDerivAt_logLik`), and the weights that maximize it give the distribution of greatest
+entropy among those that match the observed violations
+(`isGreatest_measureEntropy_of_isMaxOn_logLik`).
 
 The grammar the learner found for English onsets (Table 4) is stated over the paper's feature
 chart (Table 3), and every score the paper reports is recomputed from it (`rows_scores`),
@@ -96,7 +98,7 @@ def chart : Feature → List Seg × List Seg
   | _ => ([], [])
 
 /-- The feature specification of a segment is read off the chart. -/
-def spec (x : Seg) : Segment := λ f =>
+def spec (x : Seg) : Segment := fun f ↦
   if x ∈ (chart f).1 then Flat.some true else if x ∈ (chart f).2 then Flat.some false else ⊥
 
 /-- `ofChar` reads the segment written by one IPA letter. -/
@@ -112,7 +114,7 @@ def parse : List Char → Option (List Seg)
   | [] => some []
   | 't' :: 'ʃ' :: cs => (parse cs).map (ch :: ·)
   | 'd' :: 'ʒ' :: cs => (parse cs).map (jh :: ·)
-  | c :: cs => (ofChar c).bind λ x => (parse cs).map (x :: ·)
+  | c :: cs => (ofChar c).bind fun x ↦ (parse cs).map (x :: ·)
 
 end Seg
 
@@ -247,7 +249,7 @@ def observed (i : Fin n) : ℕ :=
 /-- The log probability of the data (7) sums the log probabilities (6) of the forms, each
     weighted by its count, since the forms are independent. -/
 noncomputable def logLik : ℝ :=
-  ∑ x, D x * log ((maxEnt viol w).real {x})
+  ∑ x, D x * log ((maxEnt viol.violations w).real {x})
 
 /-- The empirical distribution of data given as counts per form. -/
 noncomputable def empirical : Measure Ω :=
@@ -274,7 +276,7 @@ theorem empirical_real_singleton (x : Ω) :
 /-- The log probability of the data is its size times the log-likelihood of its empirical
     distribution. -/
 theorem logLik_eq (hD : ∑ x, D x ≠ 0) :
-    logLik viol w D = (∑ x, D x : ℕ) * logLikelihood viol (empirical D) w := by
+    logLik viol w D = (∑ x, D x : ℕ) * logLikelihood viol.violations (empirical D) w := by
   have := isProbabilityMeasure_empirical D hD
   have hN : (∑ x, D x : ℝ) ≠ 0 := by exact_mod_cast hD
   simp only [logLik, logLikelihood, integral_fintype .of_finite, empirical_real_singleton,
@@ -283,11 +285,12 @@ theorem logLik_eq (hD : ∑ x, D x ≠ 0) :
 
 /-- The empirical distribution's expected violations are the observed counts over the size of
     the data. -/
-theorem expectedViolations_empirical (hD : ∑ x, D x ≠ 0) (i : Fin n) :
-    viol.expectedViolations (empirical D) i = observed viol D i / ∑ x, (D x : ℝ) := by
+theorem integral_violations_empirical (hD : ∑ x, D x ≠ 0) (i : Fin n) :
+    (∫ x, viol.violations x ∂empirical D) i = observed viol D i / ∑ x, (D x : ℝ) := by
   have := isProbabilityMeasure_empirical D hD
-  simp only [ConstraintSet.expectedViolations_apply, empirical_real_singleton, observed,
-    Nat.cast_sum, Nat.cast_mul, Finset.sum_div]
+  simp only [integral_eq_sum, Finset.sum_apply, Pi.smul_apply, smul_eq_mul,
+    empirical_real_singleton, ConstraintSet.violations_apply, observed, Nat.cast_sum,
+    Nat.cast_mul, Finset.sum_div]
   exact Finset.sum_congr rfl fun x _ ↦ by ring
 
 variable [Nonempty Ω]
@@ -298,11 +301,13 @@ variable [Nonempty Ω]
     `O[Cᵢ] − E[Cᵢ]`, with the penalty direction in mind. -/
 theorem hasDerivAt_logLik (i : Fin n) :
     HasDerivAt (fun t ↦ logLik viol (Function.update w i t) D)
-      ((∑ x, D x : ℕ) * viol.expectedViolations (maxEnt viol w) i - observed viol D i) (w i) := by
-  have h (x : Ω) : HasDerivAt (fun t ↦ log ((maxEnt viol (Function.update w i t)).real {x}))
-      (viol.expectedViolations (maxEnt viol w) i - viol i x) (w i) := by
-    simpa only [logLikelihood_dirac, ConstraintSet.expectedViolations_dirac] using
-      hasDerivAt_logLikelihood_update viol w (Measure.dirac x) i
+      ((∑ x, D x : ℕ) * (∫ x, viol.violations x ∂maxEnt viol.violations w) i -
+        observed viol D i) (w i) := by
+  have h (x : Ω) :
+      HasDerivAt (fun t ↦ log ((maxEnt viol.violations (Function.update w i t)).real {x}))
+        ((∫ x, viol.violations x ∂maxEnt viol.violations w) i - viol i x) (w i) := by
+    simpa only [logLikelihood_dirac, integral_dirac, ConstraintSet.violations_apply] using
+      hasDerivAt_logLikelihood_update viol.violations w (Measure.dirac x) i
   unfold logLik
   refine (HasDerivAt.fun_sum fun x (_ : x ∈ Finset.univ) ↦
     (h x).const_mul (D x : ℝ)).congr_deriv ?_
@@ -315,11 +320,13 @@ theorem hasDerivAt_logLik (i : Fin n) :
     observed ones. -/
 theorem isGreatest_measureEntropy_of_isMaxOn_logLik (hD : ∑ x, D x ≠ 0)
     (h : IsMaxOn (fun w ↦ logLik viol w D) Set.univ w) :
-    IsGreatest (measureEntropy '' {q | IsProbabilityMeasure q ∧
-      viol.expectedViolations q = viol.expectedViolations (empirical D)}) (Hm[maxEnt viol w]) := by
+    IsGreatest (measureEntropy '' {q : Measure Ω | IsProbabilityMeasure q ∧
+      ∫ x, (viol.violations x : Fin n → ℝ) ∂q = ∫ x, viol.violations x ∂empirical D})
+        (Hm[maxEnt viol.violations w]) := by
   have := isProbabilityMeasure_empirical D hD
   have hN : (0 : ℝ) < (∑ x, D x : ℕ) := by exact_mod_cast Nat.pos_of_ne_zero hD
-  refine isGreatest_measureEntropy_of_isMaxOn viol w (empirical D) (isMaxOn_iff.2 fun w' _ ↦ ?_)
+  refine isGreatest_measureEntropy_of_isMaxOn viol.violations w (empirical D)
+    (isMaxOn_iff.2 fun w' _ ↦ ?_)
   have hw' : logLik viol w' D ≤ logLik viol w D := h (Set.mem_univ w')
   rw [logLik_eq viol _ D hD, logLik_eq viol _ D hD] at hw'
   exact le_of_mul_le_mul_left hw' hN
@@ -370,7 +377,7 @@ def viol (k : Fin 23) (o : List Seg) : ℕ := (table4 k).violations Seg.spec o
 
 /-- The learning data (11) are the onsets of the nonexotic corpus, read off the rows. -/
 def attested : List (List Seg) :=
-  Examples.all.filterMap λ e =>
+  Examples.all.filterMap fun e ↦
     if e.feature? "corpus" = some "(11)" then Seg.parse e.primaryText.toList else none
 
 /-- Every attested onset is penalized by at most 4.53; most score 0 (§5.3.1). -/
@@ -379,7 +386,7 @@ theorem attested_le : ∀ o ∈ attested, h o ≤ 453 := by decide
 /-- Exactly ten attested onsets receive penalties, the rarest ones, namely [θ], [z], [θr], [tw],
     [ʃr], [ð], [dw], [gw], [θw], and [skl] in the corpus order of (11) (§5.3.1). -/
 theorem attested_penalized :
-    (attested.filter (h · ≠ 0)).map (λ o => (o, h o)) =
+    (attested.filter (h · ≠ 0)).map (fun o ↦ (o, h o)) =
       [([th], 184), ([z], 269), ([th, r], 184), ([t, w], 170), ([sh, r], 210), ([dh], 453),
         ([d, w], 297), ([g, w], 297), ([th, w], 390), ([s, k, l], 305)] := by decide
 
@@ -412,13 +419,13 @@ theorem thw_gang : h [th, w] = 390 ∧ viol 17 [th, w] = 1 ∧ viol 20 [th, w] =
 /-- `digits cs` reads a decimal numeral. -/
 def digits (cs : List Char) : Option ℕ :=
   if cs ≠ [] ∧ cs.all Char.isDigit then
-    some (cs.foldl (λ n c => 10 * n + (c.toNat - '0'.toNat)) 0)
+    some (cs.foldl (fun n c ↦ 10 * n + (c.toNat - '0'.toNat)) 0)
   else none
 
 /-- `hundredths s` reads a reported two-decimal score in hundredths. -/
 def hundredths (s : String) : Option ℕ :=
   match s.toList.span (· ≠ '.') with
-  | (whole, '.' :: frac) => (digits whole).bind λ x => (digits frac).map λ y => 100 * x + y
+  | (whole, '.' :: frac) => (digits whole).bind fun x ↦ (digits frac).map fun y ↦ 100 * x + y
   | _ => none
 
 /-- A row that reports a score is reproduced when its onset parses and the grammar's score is
@@ -427,7 +434,7 @@ def Reproduced (e : Datum) : Prop :=
   ∀ sc ∈ e.feature? "score", ∃ o ∈ Seg.parse e.primaryText.toList, ∃ k ∈ hundredths sc,
     ((h o : ℤ) - k).natAbs ≤ 1
 
-instance : DecidablePred Reproduced := λ e => by unfold Reproduced; infer_instance
+instance : DecidablePred Reproduced := fun e ↦ by unfold Reproduced; infer_instance
 
 /-- Every score the paper reports (§5.2–5.3) is reproduced by the grammar to within one
     hundredth, the rounding of the printed weights. -/
@@ -444,19 +451,23 @@ instance : Nonempty candidates := ⟨⟨[r, t], by decide +kernel⟩⟩
 instance : MeasurableSpace candidates := ⊤
 instance : MeasurableSingletonClass candidates := ⟨fun _ ↦ trivial⟩
 
+/-- The constraints of Table 4 on the candidate set. -/
+def onsetCon : ConstraintSet candidates (Fin 23) := fun k o ↦ viol k o
+
 /-- `onsetProb` is the probability (6) of each candidate under the learned grammar, with the
     weights of Table 4 read as reals. -/
 noncomputable def onsetProb (o : candidates) : ℝ :=
-  (maxEnt (fun k (o : candidates) ↦ viol k o) fun k ↦ (table4W k : ℝ) / 100).real {o}
+  (maxEnt onsetCon.violations fun k ↦ (table4W k : ℝ) / 100).real {o}
 
 /-- The probability (6) is the softmax of the negated scores (4). -/
 theorem onsetProb_eq_softmax : onsetProb = softmax fun o : candidates ↦ -(h o : ℝ) / 100 := by
   funext o
-  rw [onsetProb, maxEnt_real_singleton]
+  rw [onsetProb, maxEnt_real_singleton, harmony_violations]
   congr 1
   funext o
   rw [harmonyScore_eq_neg_sum]
-  simp only [h, score, dotProduct, viol, Nat.cast_sum, Nat.cast_mul, neg_div, Finset.sum_div]
+  simp only [onsetCon, h, score, dotProduct, viol, Nat.cast_sum, Nat.cast_mul, neg_div,
+    Finset.sum_div]
   exact congrArg Neg.neg (Finset.sum_congr rfl fun i _ ↦ by ring)
 
 /-- On the candidate set, the probability (6) orders forms as the score does. -/

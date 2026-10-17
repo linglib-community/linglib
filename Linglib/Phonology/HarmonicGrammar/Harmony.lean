@@ -18,7 +18,9 @@ set by a number, real in the usual statement, and the harmony of a candidate is 
 sum of its violations, `H(c) = -(w ⬝ᵥ C(c))`, a linear functional of the candidate's violation
 vector. The weight vector `w : ι → R` is the grammar's parameter, the Harmonic-Grammar twin of an OT
 ranking, and both act on one `ConstraintSet C ι`. The weight ring is a parameter so that a grammar
-with rational or integer weights keeps its scores exactly computable.
+with rational or integer weights keeps its scores exactly computable. Violations need not be
+counts: `harmony T w` is the harmony of violation vectors `T c` with entries in the weight ring,
+such as violations scaled by the activation of a lexical item.
 
 Harmony is additive over concatenated and jointly evaluated constraint sets, so constraint
 summation is innocuous for it, and with non-negative weights a candidate that incurs no more
@@ -27,6 +29,9 @@ violations than another on every constraint has at least its harmony, which is h
 ## Main definitions
 
 * `harmonyScore`: the harmony `H(c) = -(w ⬝ᵥ C(c))` of a candidate.
+* `OptimalityTheory.ConstraintSet.violations`, `harmony`: the violation vector `C(c)` of a
+  candidate, and the harmony of a real-valued violation vector, of which `harmonyScore` is the
+  case of counted violations.
 * `OptimalityTheory.ConstraintSet.violationDiff`: the violation difference `C(a) - C(b)`.
 * `harmonyDominates`: harmonic dominance, `H(a) > H(b)`.
 
@@ -57,7 +62,18 @@ namespace HarmonicGrammar
 
 open OptimalityTheory
 
-variable {C ι R : Type*} [Fintype ι] {n : ℕ}
+variable {C ι R : Type*} {n : ℕ}
+
+/-- The violation vector `C(c)` of a candidate, its violations of each constraint, a row of a
+tableau. -/
+def _root_.OptimalityTheory.ConstraintSet.violations [Ring R] (con : ConstraintSet C ι) (c : C) :
+    ι → R :=
+  fun j ↦ (con j c : R)
+
+@[simp] theorem _root_.OptimalityTheory.ConstraintSet.violations_apply [Ring R]
+    (con : ConstraintSet C ι) (c : C) (j : ι) : con.violations c j = (con j c : R) := rfl
+
+variable [Fintype ι]
 
 /-! ### Harmony -/
 
@@ -70,6 +86,30 @@ def harmonyScore [Ring R] (con : ConstraintSet C ι) (w : ι → R) (c : C) : R 
 /-- `harmonyScore` is a negated `Finset.sum`. -/
 theorem harmonyScore_eq_neg_sum [Ring R] (con : ConstraintSet C ι) (w : ι → R) (c : C) :
     harmonyScore con w c = -∑ j, w j * (con j c : R) := rfl
+
+/-- The harmony `-(w ⬝ᵥ T c)` of a candidate whose violations `T c` may be any elements of the
+weight ring, as when a lexicon scales the violations of faithfulness constraints. -/
+def harmony [Ring R] (T : C → ι → R) (w : ι → R) (c : C) : R :=
+  -(w ⬝ᵥ T c)
+
+@[simp] theorem harmony_violations [Ring R] (con : ConstraintSet C ι) (w : ι → R) :
+    harmony con.violations w = harmonyScore con w := rfl
+
+/-- Harmony is linear in the weights. -/
+theorem harmony_add [Ring R] (T : C → ι → R) (w w' : ι → R) :
+    harmony T (w + w') = harmony T w + harmony T w' := by
+  funext c
+  simp only [harmony, Pi.add_apply, add_dotProduct, neg_add]
+
+theorem harmony_smul [CommRing R] (T : C → ι → R) (r : R) (w : ι → R) :
+    harmony T (r • w) = r • harmony T w := by
+  funext c
+  simp [harmony, smul_dotProduct]
+
+/-- The harmony of a sum of violation vectors is the sum of their harmonies. -/
+theorem harmony_sum [Ring R] {κ D : Type*} [Fintype κ] (T : κ → D → ι → R) (w : ι → R)
+    (f : κ → D) : harmony (fun f ↦ ∑ k, T k (f k)) w f = ∑ k, harmony (T k) w (f k) := by
+  simp [harmony, dotProduct_sum]
 
 /-- The violation difference `C(a) - C(b)` of two candidates, a row of a comparative
 tableau. -/
@@ -96,17 +136,6 @@ def harmonyDominates [Ring R] [LT R] (con : ConstraintSet C ι) (w : ι → R) :
 
 @[simp] theorem harmonyScore_comap [Ring R] {D : Type*} (f : C → D) (con : ConstraintSet D ι)
     (w : ι → R) (c : C) : harmonyScore (con.comap f) w c = harmonyScore con w (f c) := rfl
-
-/-- Harmony is linear in the weights. -/
-theorem harmonyScore_add [Ring R] (con : ConstraintSet C ι) (w w' : ι → R) :
-    harmonyScore con (w + w') = harmonyScore con w + harmonyScore con w' := by
-  funext c
-  simp only [harmonyScore, Pi.add_apply, add_dotProduct, neg_add]
-
-theorem harmonyScore_smul [CommRing R] (con : ConstraintSet C ι) (r : R) (w : ι → R) :
-    harmonyScore con (r • w) = r • harmonyScore con w := by
-  funext c
-  simp [harmonyScore, smul_dotProduct]
 
 /-! ### Evaluation by cons-recursion -/
 

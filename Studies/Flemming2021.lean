@@ -87,7 +87,7 @@ theorem choiceProb_pi_gumbelMeasure_eq_maxEnt [DecidableEq C] [MeasurableSpace C
     [MeasurableSingletonClass C] (con : ConstraintSet C (Fin n))
     (w : Fin n → ℝ) (c : C) :
     choiceProb (Measure.pi fun c' ↦ gumbelMeasure (harmonyScore con w c') 1) c =
-      maxEnt con w {c} := by
+      maxEnt con.violations w {c} := by
   simp [choiceProb_pi_gumbelMeasure _ one_ne_zero c, maxEnt_singleton]
 
 /-- Between two candidates the MaxEnt logit of the first is the harmony difference (10), since under
@@ -247,7 +247,7 @@ theorem harmonyDiff_underlying (o : Onset) (f : Following) (w : Fin 6 → ℝ) :
 
 /-- The MaxEnt probability of the schwa candidate. -/
 noncomputable def maxEntProb (x : Context) (w : Fin 6 → ℝ) : ℝ :=
-  (maxEnt (constraints x) w).real {0}
+  (maxEnt (constraints x).violations w).real {0}
 
 theorem logit_maxEntProb (x : Context) (w : Fin 6 → ℝ) :
     logit (maxEntProb x w) = harmonyDiff x w := by
@@ -358,7 +358,7 @@ theorem observedRate_following :
 /-- In MaxEnt a positive \*Clash weight raises the schwa's probability. -/
 theorem maxEntProb_following_lt (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) (hw : 0 < w 2) :
     maxEntProb ⟨u, o, .disyllable⟩ w < maxEntProb ⟨u, o, .monosyllable⟩ w := by
-  simp only [maxEntProb, maxEnt_real_singleton, softmax_fin_two]
+  simp only [maxEntProb, maxEnt_real_singleton, harmony_violations, softmax_fin_two]
   exact sigmoid_strictMono
     (by have := harmonyDiff_following u o w; unfold harmonyDiff at this; linarith)
 
@@ -438,10 +438,11 @@ theorem table45_harmony :
 /-- MaxEnt gives `a` the probability `e⁻¹⁵ / (e⁻¹⁵ + 2e⁻¹⁶) = 1 / (1 + 2e⁻¹)`, 0.58, and `b` and
 `c` equal probabilities (5). -/
 theorem table45_maxent :
-    (maxEnt tableCon tableW).real {0} = 1 / (1 + 2 * exp (-1)) ∧
-      (maxEnt tableCon tableW).real {1} = (maxEnt tableCon tableW).real {2} := by
+    (maxEnt tableCon.violations tableW).real {0} = 1 / (1 + 2 * exp (-1)) ∧
+      (maxEnt tableCon.violations tableW).real {1} =
+        (maxEnt tableCon.violations tableW).real {2} := by
   obtain ⟨h0, h1, h2⟩ := table45_harmony
-  simp only [maxEnt_real_singleton]
+  simp only [maxEnt_real_singleton, harmony_violations]
   refine ⟨?_, by simp only [softmax, h1, h2]⟩
   simp only [softmax, Fin.sum_univ_three, h0, h1, h2]
   rw [show (-16 : ℝ) = -15 + -1 by norm_num, exp_add]

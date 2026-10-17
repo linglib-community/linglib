@@ -452,7 +452,7 @@ instance : MeasurableSingletonClass Output := ⟨fun _ ↦ trivial⟩
 /-- The MaxEnt deletion probability in `ctx`, the probability of the deletion output under the
 MaxEnt distribution of the context's two outputs. -/
 noncomputable def maxEntProb (w : Fin 4 → ℝ) (ctx : Context) : ℝ :=
-  (maxEnt (con.comap (ctx, ·)) w).real {.delete}
+  (maxEnt (con.comap (ctx, ·)).violations w).real {.delete}
 
 /-- With two candidates, the deletion probability is the logistic of the harmony difference. -/
 theorem maxEntProb_eq_sigmoid (w : Fin 4 → ℝ) (ctx : Context) :
@@ -612,13 +612,13 @@ example : ∀ g ∈ loanwordWeights, g.model = .nHG →
 /-- With IDENT-VOICE weighted 2 over 1 and 1, *guddo* and *gutto* tie at harmony −2 and MaxEnt
 gives each probability ½ (tableau (22)). -/
 theorem guddo_maxEnt_half (o : Voicing) :
-    (maxEnt (loanwordDevoicing.con.comap (.guddo, ·)) ![2, 1, 1]).real {o} = 2⁻¹ := by
+    (maxEnt (loanwordDevoicing.con.comap (.guddo, ·)).violations ![2, 1, 1]).real {o} = 2⁻¹ := by
   have h : harmonyScore (loanwordDevoicing.con.comap (.guddo, ·)) ![2, 1, 1] =
       fun _ ↦ (-2 : ℝ) := by
     funext o
     cases o <;> norm_num [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three,
       identVoice, ocpVoice, voicedGeminate]
-  rw [maxEnt_real_singleton, h]
+  rw [maxEnt_real_singleton, harmony_violations, h]
   simp [show Fintype.card Voicing = 2 from rfl]
 
 /-! ### Variable rules (§4.5) -/
