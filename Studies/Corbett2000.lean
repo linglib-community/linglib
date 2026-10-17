@@ -46,8 +46,8 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
 * A system is the book's sequence of binary choices: a shape, how many determinate and how
   many indeterminate choices are made and whether a greater plural is, with the kind of
   general number and how many final choices are facultative. The substrate's system, its
-  values and its facultative list, is derived from the choices, and the substrate's
-  implicational universals hold of every system by enumeration of the finite type of shapes.
+  values and its facultative values, is derived from the choices, and in every system the
+  determinate values are an initial segment, by enumeration of the finite type of shapes.
 * A range is a function from the positions of the Animacy Hierarchy, with the animate position
   split as Miya needs, to a three-way
   marking; constraint III of chapter 3 is monotonicity, the top-segment constraint I a
@@ -83,7 +83,6 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
 * [corbett-1979]
 * [comrie-1975]
 * [smith-stark-1974]
-* [greenberg-1963]
 * [corbett-hayward-1987]
 -/
 
@@ -151,18 +150,19 @@ def facultativeValues (c : Choices) : List Number :=
 
 /-- The substrate's system. -/
 def toSystem (c : Choices) : Number.System :=
-  { values := c.values, hasGeneral := decide (c.general ≠ .none),
-    facultative := c.facultativeValues }
+  { values := c.values.toFinset, hasGeneral := decide (c.general ≠ .none),
+    facultative := c.facultativeValues.toFinset }
 
 /-- Facultative choices are the last ones. -/
 theorem facultativeValues_suffix (c : Choices) : c.facultativeValues <:+ c.divisions :=
   List.drop_suffix _ _
 
-/-- Every sequence of choices is a well-formed system, satisfying Greenberg's implicational
-universals of number as the substrate states them ([greenberg-1963]). -/
-theorem toSystem_wellFormed (c : Choices) : c.toSystem.WellFormed := by
+/-- The trial is chosen only after the dual, so in every system the determinate values are an
+initial segment and number resolution is the value of the sum of the conjuncts' referents
+(`Number.System.resolve_ofCard`). -/
+theorem toSystem_determinateInitial (c : Choices) : c.toSystem.DeterminateInitial := by
   obtain ⟨⟨d, p, gp⟩, g, f⟩ := c
-  change (Choices.mk ⟨d, p, gp⟩ .none 0).toSystem.WellFormed
+  change (Choices.mk ⟨d, p, gp⟩ .none 0).toSystem.DeterminateInitial
   fin_cases d <;> fin_cases p <;> cases gp <;> decide
 
 /-- Facultative use works up from the last choice, as the count from the last builds in, so
@@ -240,14 +240,14 @@ def japanese : Choices := { general := .withSingular }
 def hamer : Choices := { greaterPlural := true, general := .separate }
 
 /-- Pirahã has no number at all. -/
-def piraha : Number.System := { values := [] }
+def piraha : Number.System := { values := ∅ }
 
 /-- Rembarrnga has minimal, unit augmented and augmented, Table 5.18. -/
 def rembarrnga : Number.System :=
-  { values := [.minimal, .unitAugmented, .augmented] }
+  { values := {.minimal, .unitAugmented, .augmented} }
 
 /-- Ilocano has minimal and augmented, Table 5.20. -/
-def ilocano : Number.System := { values := [.minimal, .augmented] }
+def ilocano : Number.System := { values := {.minimal, .augmented} }
 
 /-! ### The Animacy Hierarchy (chapters 3 and 4) -/
 

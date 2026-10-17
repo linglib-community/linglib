@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Order.Nat
+public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -14,26 +14,29 @@ that corpora annotate (`Morphology/Word/UD.lean`) lack the general, minimal, aug
 augmented values and add inverse, collective and count categories. The quadral is excluded,
 Corbett reanalysing apparent quadrals (Sursurunga, Tangga) as paucals.
 
+A number system is the set of values a language has. The implicational universals that
+constrain which sets occur are claims of the papers that state them, proved there of the systems
+each theory generates. The substrate keeps what cardinality decides, whether the determinate
+values of a system form an initial segment, which number resolution needs.
+
 ## Main definitions
 
 * `Number`: the number values.
-* `Number.instPartialOrder`: the markedness order, `a ≤ b` when every system with `b` has `a`.
-* `Number.System`: a language's number values, with the implicational universals as decidable
-  predicates and their conjunction `Number.System.WellFormed`.
+* `Number.System`: a language's number values, which of them are facultative, and whether it
+  has general number.
+* `Number.System.DeterminateInitial`: the determinate values are an initial segment.
 
 ## Implementation notes
 
-The markedness order is checked against Harbour's feature calculus in `Studies/Harbour2014.lean`.
-The feature decomposition lives in `Semantics/Plurality/NumberFeatures.lean` and coordinate
-resolution in `Syntax/Number/Resolve.lean`.
+Harbour's implicational universals and the order his features induce on the values are in
+`Studies/Harbour2014.lean`, the feature decomposition of the singular, dual and plural is in
+`Semantics/Plurality/NumberFeatures.lean`, and coordinate resolution in
+`Syntax/Number/Resolve.lean`.
 
 ## References
 
 * [corbett-2000]
-* [greenberg-1963]
-* [greenberg-1966]
 * [harbour-2014]
-* [sauerland-2003]
 * [grimm-2018]
 -/
 
@@ -103,177 +106,29 @@ def fromCard : Nat → Number
   | 3 => .trial
   | _ => .plural
 
-/-! ### The markedness order
-
-`a ≤ b` means b presupposes a: every number system containing b also
-contains a — the implicational hierarchy of [greenberg-1963] and
-[corbett-2000] §2.3. The number system of every legitimate parameter setting
-of [harbour-2014] is a lower set of this order except those of
-`{±additive(*), ±minimal*}`, whose unit augmented lacks the augmented
-(`Harbour2014.isLowerSet_values_iff`).
-
-Three independent branches:
-```
-[±atomic] branch:    trial    greaterPlural
-                       |        /
-                      dual     /
-                       |      /
-                   singular  /
-                       |    /
-                    plural
-
-[±minimal] branch:       unitAugmented
-                              |
-                          augmented
-                              |
-                           minimal
-
-Approximative branch:    greaterPaucal    globalPlural
-                              |               |
-                            paucal          plural
-```
-The `[±atomic]` branch and `[±minimal]` branch are independent: singular
-and minimal never cooccur. Plural spans both. `general` is isolated
-(incomparable with all in-system values).
-
-This *typological* order is one of three markedness notions on number and
-must not be conflated with the others: the *specification* order on the
-Harbour decomposition (the size of a `Number.Features` bundle: sg > du > pl,
-linear) and *semantic* markedness ([sauerland-2003], which rides on
-specification). On the sg/pl pair the two orders disagree — here sg and pl
-are incomparable; under specification sg > pl. -/
-
-/-- `markednessLE a b` holds when every number system with `b` has `a`. -/
-def markednessLE (a b : Number) : Prop :=
-  a = b ∨ match a, b with
-  -- [±atomic] branch ([harbour-2014] Table 1: TR → DU, DU → SG, SG → PL):
-  -- plural ≤ singular ≤ dual ≤ trial; greaterPlural requires singular and
-  -- plural but NOT dual (Table 1: GR.PL → PL/AUG; Fula is sg/pl/grpl)
-  | .singular, .dual | .singular, .trial => True
-  | .plural, .singular | .plural, .dual | .plural, .trial => True
-  | .plural, .greaterPlural => True
-  | .dual, .trial => True
-  -- Approximative branch: plural ≤ paucal ≤ greaterPaucal
-  | .plural, .paucal | .plural, .greaterPaucal => True
-  | .paucal, .greaterPaucal => True
-  -- [±minimal] branch: minimal ≤ augmented ≤ unitAugmented
-  | .minimal, .augmented | .minimal, .unitAugmented => True
-  | .augmented, .unitAugmented => True
-  -- globalPlural: plural ≤ globalPlural
-  | .plural, .globalPlural => True
-  | _, _ => False
-
-instance : ∀ a b : Number, Decidable (markednessLE a b) := fun a b => by
-  unfold markednessLE; cases a <;> cases b <;> exact inferInstance
-
-instance : LE Number := ⟨markednessLE⟩
-
-instance : DecidableRel ((· ≤ ·) : Number → Number → Prop) :=
-  fun a b => inferInstanceAs (Decidable (markednessLE a b))
-
-instance instPartialOrder : PartialOrder Number where
-  le_refl a := by cases a <;> decide
-  le_trans a b c := by cases a <;> cases b <;> cases c <;> decide
-  le_antisymm a b := by cases a <;> cases b <;> decide
-
-/-! ### Number systems ([corbett-2000] §2.3) -/
+/-! ### Number systems -/
 
 /-- A number system records the values available in a language, which of them are
 facultative, and whether the language has general number ([corbett-2000] §2.3). -/
 structure System where
   /-- The values available within the number system. -/
-  values : List Number
+  values : Finset Number
   /-- Whether the language has general number, a form outside the system. -/
   hasGeneral : Bool := false
   /-- The facultative values, whose use is optional. -/
-  facultative : List Number := []
+  facultative : Finset Number := ∅
   deriving DecidableEq
 
 namespace System
 
-/-! #### Implicational universals ([greenberg-1963], [corbett-2000] §2.3.1) -/
+/-- A system's determinate values are an initial segment of the singular, dual and trial when,
+with the value of a cardinality, it has the value of every smaller positive one, as the dual
+requires the singular and the trial the dual ([harbour-2014] Table 1). -/
+def DeterminateInitial (ns : System) : Prop :=
+  ∀ v ∈ ns.values, ∀ m ∈ Finset.Icc 1 (v.exactCard.getD 0), fromCard m ∈ ns.values
 
-/-- Trial implies dual, TR → DU in [harbour-2014] Table 1. -/
-def TrialImpliesDual (ns : System) : Prop :=
-  .trial ∈ ns.values → .dual ∈ ns.values
-
-/-- Dual implies singular, DU → SG in [harbour-2014] Table 1. -/
-def DualImpliesSingular (ns : System) : Prop :=
-  .dual ∈ ns.values → .singular ∈ ns.values
-
-/-- Singular implies plural, SG → PL in [harbour-2014] Table 1. -/
-def SingularImpliesPlural (ns : System) : Prop :=
-  .singular ∈ ns.values → .plural ∈ ns.values
-
-/-- Dual implies plural ([greenberg-1966], [corbett-2000] §2.3.1), the composition of
-DU → SG and SG → PL. -/
-def DualImpliesPlural (ns : System) : Prop :=
-  .dual ∈ ns.values → .plural ∈ ns.values
-
-/-- Minimal implies augmented or plural, MIN → AUG/PL in [harbour-2014] Table 1. -/
-def MinimalImpliesAugmentedOrPlural (ns : System) : Prop :=
-  .minimal ∈ ns.values → .augmented ∈ ns.values ∨ .plural ∈ ns.values
-
-/-- Paucal implies plural, PC → PL in [harbour-2014] Table 1. -/
-def PaucalImpliesPlural (ns : System) : Prop :=
-  .paucal ∈ ns.values → .plural ∈ ns.values
-
-/-- Greater paucal implies paucal, GR.PC → PC in [harbour-2014] Table 1. -/
-def GreaterPaucalImpliesPaucal (ns : System) : Prop :=
-  .greaterPaucal ∈ ns.values → .paucal ∈ ns.values
-
-/-- Greater plural implies plural or augmented, GR.PL → PL/AUG in [harbour-2014] Table 1, a
-disjunction and so a predicate of systems rather than an edge of the markedness order. -/
-def GreaterPluralImpliesPluralOrAugmented (ns : System) : Prop :=
-  .greaterPlural ∈ ns.values → .plural ∈ ns.values ∨ .augmented ∈ ns.values
-
-/-- Plural implies singular or minimal, PL → SG/MIN in [harbour-2014] Table 1, the plural
-needing a base value, the singular of `[±atomic]` or the minimal of `[±minimal]`. -/
-def PluralImpliesSingularOrMinimal (ns : System) : Prop :=
-  .plural ∈ ns.values → .singular ∈ ns.values ∨ .minimal ∈ ns.values
-
-/-- Augmented implies minimal, AUG → MIN in [harbour-2014] Table 1. -/
-def AugmentedImpliesMinimal (ns : System) : Prop :=
-  .augmented ∈ ns.values → .minimal ∈ ns.values
-
-/-- Unit augmented implies augmented, U.AUG → AUG in [harbour-2014] Table 1. -/
-def UnitAugImpliesAugmented (ns : System) : Prop :=
-  .unitAugmented ∈ ns.values → .augmented ∈ ns.values
-
-instance (ns : System) : Decidable ns.TrialImpliesDual := by
-  unfold TrialImpliesDual; infer_instance
-instance (ns : System) : Decidable ns.DualImpliesSingular := by
-  unfold DualImpliesSingular; infer_instance
-instance (ns : System) : Decidable ns.SingularImpliesPlural := by
-  unfold SingularImpliesPlural; infer_instance
-instance (ns : System) : Decidable ns.DualImpliesPlural := by
-  unfold DualImpliesPlural; infer_instance
-instance (ns : System) : Decidable ns.MinimalImpliesAugmentedOrPlural := by
-  unfold MinimalImpliesAugmentedOrPlural; infer_instance
-instance (ns : System) : Decidable ns.PaucalImpliesPlural := by
-  unfold PaucalImpliesPlural; infer_instance
-instance (ns : System) : Decidable ns.GreaterPaucalImpliesPaucal := by
-  unfold GreaterPaucalImpliesPaucal; infer_instance
-instance (ns : System) : Decidable ns.GreaterPluralImpliesPluralOrAugmented := by
-  unfold GreaterPluralImpliesPluralOrAugmented; infer_instance
-instance (ns : System) : Decidable ns.PluralImpliesSingularOrMinimal := by
-  unfold PluralImpliesSingularOrMinimal; infer_instance
-instance (ns : System) : Decidable ns.AugmentedImpliesMinimal := by
-  unfold AugmentedImpliesMinimal; infer_instance
-instance (ns : System) : Decidable ns.UnitAugImpliesAugmented := by
-  unfold UnitAugImpliesAugmented; infer_instance
-
-/-- A well-formed number system satisfies all the implicational universals of
-[harbour-2014] Table 1. -/
-def WellFormed (ns : System) : Prop :=
-  ns.TrialImpliesDual ∧ ns.DualImpliesSingular ∧ ns.SingularImpliesPlural ∧
-  ns.DualImpliesPlural ∧ ns.PluralImpliesSingularOrMinimal ∧
-  ns.MinimalImpliesAugmentedOrPlural ∧ ns.AugmentedImpliesMinimal ∧
-  ns.UnitAugImpliesAugmented ∧ ns.PaucalImpliesPlural ∧
-  ns.GreaterPaucalImpliesPaucal ∧ ns.GreaterPluralImpliesPluralOrAugmented
-
-instance (ns : System) : Decidable ns.WellFormed := by
-  unfold WellFormed; infer_instance
+instance : DecidablePred DeterminateInitial := fun _ ↦ by
+  unfold DeterminateInitial; infer_instance
 
 end System
 

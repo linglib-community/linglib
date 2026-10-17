@@ -808,7 +808,7 @@ end French
 namespace Slovene
 
 /-- The numbers of Slovene. -/
-def numbers : Number.System := { values := [.singular, .dual, .plural] }
+def numbers : Number.System := { values := {.singular, .dual, .plural} }
 
 /-- Two Slovene numbers resolve to the dual if both are singular and to the plural otherwise. -/
 theorem resolve_numbers :

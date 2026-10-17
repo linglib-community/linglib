@@ -23,6 +23,8 @@ the typology of Table 3 and the implications of Table 1 are claims about these s
 * `Setting.cell`: the region of a person lattice a bundle denotes in a setting.
 * `Setting.system`: the number system a setting generates.
 * `PlusAdditive`: the `[+additive]` elements of a region cut horizontally.
+* `table1`, `SatisfiesTable1`: the implicational universals of Table 1.
+* `Requires`: the order (34) reads off the settings, one number requiring another.
 
 ## Main results
 
@@ -34,8 +36,11 @@ the typology of Table 3 and the implications of Table 1 are claims about these s
 * `filter_cell_eq_system`: on every person lattice with infinitely many atoms and for every
   placement of the cuts above four atoms, the bundles with nonempty cells form `Setting.system`.
 * `table3_generated`: the systems of Table 3, with Corbett's records of its example languages.
-* `wellFormed_toSystem_iff`: Table 1 holds of every legitimate setting but
+* `satisfiesTable1_toSystem_iff`: Table 1 holds of every legitimate setting but
   `{±additive(*), ±minimal*}`, two lacunae whose unit augmented has no augmented.
+* `requires_of_mem_derivedImplications`, `not_requires_unitAugmented_augmented`: the order the
+  settings induce by (34) has the single implications of Table 1 but the unit augmented's.
+* `mem_of_requires_corbett`: every system of Corbett's choices is a lower set of that order.
 * `meleFila_cell_plural`, `meleFila_classes`: Mele-Fila's plural lies between the two cuts and
   shares a form with each neighbour (Table 4).
 
@@ -684,7 +689,7 @@ def values (σ : Setting) (c : Convention) (p : ℕ) : List Number :=
 
 /-- A setting's third-person system as a `Number.System` sets general number apart. -/
 def toSystem (σ : Setting) (c : Convention) : Number.System where
-  values := (σ.values c 0).filter (· ≠ .general)
+  values := ((σ.values c 0).filter (· ≠ .general)).toFinset
   hasGeneral := decide (.general ∈ σ.values c 0)
 
 end Setting
@@ -792,50 +797,151 @@ theorem length_values_le_six : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.a
     (σ.values c 0).length ≤ 6 := by
   decide +kernel
 
-/-- Every legitimate setting satisfies the implicational universals of Table 1 except
-`{±additive(*), ±minimal*}`, two lacunae of Table 3 whose unit augmented has no augmented. -/
-theorem wellFormed_toSystem_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
-    σ.Legitimate → ((σ.toSystem c).WellFormed ↔
+/-- An implication of Table 1 says that a system with its antecedent has one of its
+consequents. -/
+structure Implication where
+  /-- The number that requires another. -/
+  antecedent : Number
+  /-- The numbers one of which it requires. -/
+  consequents : Finset Number
+  deriving DecidableEq
+
+/-- A system satisfies an implication when, with its antecedent, it has one of its
+consequents. -/
+def Implication.Holds (u : Implication) (s : Finset Number) : Prop :=
+  u.antecedent ∈ s → ∃ v ∈ u.consequents, v ∈ s
+
+instance (u : Implication) (s : Finset Number) : Decidable (u.Holds s) := by
+  unfold Implication.Holds; infer_instance
+
+/-- Table 1, the implications the features are to derive, in the printed order; its last row,
+for the greater and the global plural alike, is two implications. -/
+def table1 : List Implication :=
+  [⟨.trial, {.dual}⟩, ⟨.dual, {.singular}⟩, ⟨.singular, {.plural}⟩,
+    ⟨.plural, {.singular, .minimal}⟩, ⟨.unitAugmented, {.augmented}⟩,
+    ⟨.minimal, {.augmented, .plural}⟩, ⟨.augmented, {.minimal}⟩, ⟨.greaterPaucal, {.paucal}⟩,
+    ⟨.paucal, {.plural}⟩, ⟨.greaterPlural, {.plural, .augmented}⟩,
+    ⟨.globalPlural, {.plural, .augmented}⟩]
+
+/-- A system satisfies Table 1 when it satisfies each of its implications. -/
+def SatisfiesTable1 (s : Finset Number) : Prop := ∀ u ∈ table1, u.Holds s
+
+instance (s : Finset Number) : Decidable (SatisfiesTable1 s) := by
+  unfold SatisfiesTable1; infer_instance
+
+/-- Every legitimate setting satisfies Table 1 except `{±additive(*), ±minimal*}`, two lacunae of
+Table 3 whose unit augmented has no augmented. -/
+theorem satisfiesTable1_toSystem_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    σ.Legitimate → (SatisfiesTable1 (σ.toSystem c).values ↔
       ¬ (σ.atomic = .inactive ∧ σ.minimal = .recursive ∧ σ.additive ≠ .inactive)) := by
   decide +kernel
 
-instance (l : List Number) : Decidable (IsLowerSet {v | v ∈ l}) :=
-  decidable_of_iff (∀ v ∈ l, ∀ u : Number, u ≤ v → u ∈ l)
-    ⟨fun h _ _ huv hv ↦ h _ hv _ huv, fun h _ hv _ huv ↦ h huv hv⟩
+/-- Every system of [corbett-2000]'s sequences of choices satisfies Table 1. -/
+theorem satisfiesTable1_corbett (c : Corbett2000.Choices) : SatisfiesTable1 c.toSystem.values := by
+  obtain ⟨⟨d, p, gp⟩, g, f⟩ := c
+  change SatisfiesTable1 (Corbett2000.Choices.mk ⟨d, p, gp⟩ .none 0).toSystem.values
+  fin_cases d <;> fin_cases p <;> cases gp <;> decide
 
-/-- The same settings generate lower sets of the markedness order of `Number`. -/
-theorem isLowerSet_values_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
-    σ.Legitimate → (IsLowerSet {v | v ∈ σ.values c 0} ↔
-      ¬ (σ.atomic = .inactive ∧ σ.minimal = .recursive ∧ σ.additive ≠ .inactive)) := by
-  decide +kernel
+
+section Table3
 
 /-- Table 3 pairs each setting and convention with the system of its example language, as
 [corbett-2000] records it where it does, or of a lacuna; Banyun's row is left out. -/
-def table3 : List (Setting × Convention × List Number) :=
+def table3 : List (Setting × Convention × Finset Number) :=
   [(⟨.inactive, .inactive, .inactive⟩, .none, Corbett2000.piraha.values),
-   (⟨.active, .inactive, .inactive⟩, .none, [.singular, .plural]),  -- Svan
-   (⟨.inactive, .active, .inactive⟩, .none, [.minimal, .augmented]),  -- Winnebago
+   (⟨.active, .inactive, .inactive⟩, .none, {.singular, .plural}),  -- Svan
+   (⟨.inactive, .active, .inactive⟩, .none, {.minimal, .augmented}),  -- Winnebago
    (⟨.inactive, .recursive, .inactive⟩, .none, Corbett2000.rembarrnga.values),
-   (⟨.active, .active, .inactive⟩, .none, [.singular, .dual, .plural]),  -- Kiowa
-   (⟨.active, .inactive, .active⟩, .one .low, Corbett2000.bayso.values),
-   (⟨.active, .inactive, .active⟩, .one .high, [.singular, .plural, .greaterPlural]),  -- Fula
-   (⟨.inactive, .active, .active⟩, .one .low, [.minimal, .paucal, .plural]),  -- Mebengokre
-   (⟨.active, .recursive, .inactive⟩, .none, Corbett2000.larike.values),
-   (⟨.inactive, .recursive, .active⟩, .one .low, [.minimal, .unitAugmented, .paucal, .plural]),
-   (⟨.inactive, .active, .recursive⟩, .two .low, [.minimal, .paucal, .greaterPaucal, .plural]),
+   (⟨.active, .active, .inactive⟩, .none, {.singular, .dual, .plural}),  -- Kiowa
+   (⟨.active, .inactive, .active⟩, .one .low, Corbett2000.bayso.toSystem.values),
+   (⟨.active, .inactive, .active⟩, .one .high, {.singular, .plural, .greaterPlural}),  -- Fula
+   (⟨.inactive, .active, .active⟩, .one .low, {.minimal, .paucal, .plural}),  -- Mebengokre
+   (⟨.active, .recursive, .inactive⟩, .none, Corbett2000.larike.toSystem.values),
+   (⟨.inactive, .recursive, .active⟩, .one .low, {.minimal, .unitAugmented, .paucal, .plural}),
+   (⟨.inactive, .active, .recursive⟩, .two .low, {.minimal, .paucal, .greaterPaucal, .plural}),
    (⟨.inactive, .recursive, .recursive⟩, .two .low,
-     [.minimal, .unitAugmented, .paucal, .greaterPaucal, .plural]),
-   (⟨.active, .active, .active⟩, .one .low, Corbett2000.yimas.values),
-   (⟨.active, .active, .active⟩, .one .high, Corbett2000.mokilese.values),
-   (⟨.active, .recursive, .active⟩, .one .low, Corbett2000.marshallese.values),
-   (⟨.active, .active, .recursive⟩, .two .low, Corbett2000.sursurunga.values),
-   (⟨.active, .active, .recursive⟩, .two .high, Corbett2000.meleFila.values),
+     {.minimal, .unitAugmented, .paucal, .greaterPaucal, .plural}),
+   (⟨.active, .active, .active⟩, .one .low, Corbett2000.yimas.toSystem.values),
+   (⟨.active, .active, .active⟩, .one .high, Corbett2000.mokilese.toSystem.values),
+   (⟨.active, .recursive, .active⟩, .one .low, Corbett2000.marshallese.toSystem.values),
+   (⟨.active, .active, .recursive⟩, .two .low, Corbett2000.sursurunga.toSystem.values),
+   (⟨.active, .active, .recursive⟩, .two .high, Corbett2000.meleFila.toSystem.values),
    (⟨.active, .recursive, .recursive⟩, .two .low,
-     [.singular, .dual, .trial, .paucal, .greaterPaucal, .plural])]
+     {.singular, .dual, .trial, .paucal, .greaterPaucal, .plural})]
+
+-- The rows carry `Finset Number`, itself finite, so `decide` would otherwise range over every
+-- triple rather than the eighteen rows.
+attribute [local instance high] List.decidableBAll
 
 /-- Every row of Table 3 is generated. -/
-theorem table3_generated : ∀ r ∈ table3, (r.1.toSystem r.2.1).values.Perm r.2.2 := by
+theorem table3_generated : ∀ r ∈ table3, (r.1.toSystem r.2.1).values = r.2.2 := by
   decide +kernel
+
+/-- Every row of Table 3 is a legitimate setting under a convention that fits it. -/
+theorem table3_legitimate : ∀ r ∈ table3, r.2.1.Fits r.1.additive ∧ r.1.Legitimate := by
+  decide
+
+/-! ### The order the settings induce
+
+By (34) a number requires another when the settings that generate the first generate the second.
+Read off the legitimate settings, requirement is the markedness order of number, a preorder on the
+numbers derived from the features. -/
+
+/-- A number requires another when every system a legitimate setting generates with the first
+has the second, the implication schema (34). -/
+def Requires (b a : Number) : Prop :=
+  ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive → σ.Legitimate →
+    b ∈ (σ.toSystem c).values → a ∈ (σ.toSystem c).values
+
+/-- Implications with one consequent that the settings derive, Table 1's but the unit
+augmented's, which requires the minimal instead, with the greater plural's strengthened to the
+plural, since no setting generates the greater plural with the augmented. -/
+def derivedImplications : List (Number × Number) :=
+  [(.trial, .dual), (.dual, .singular), (.singular, .plural), (.unitAugmented, .minimal),
+    (.augmented, .minimal), (.greaterPaucal, .paucal), (.paucal, .plural),
+    (.greaterPlural, .plural)]
+
+/-- The settings derive each implication of `derivedImplications`. -/
+theorem requires_of_mem_derivedImplications : ∀ e ∈ derivedImplications, Requires e.1 e.2 := by
+  have h : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive → σ.Legitimate →
+      ∀ e ∈ derivedImplications, e.1 ∈ (σ.toSystem c).values → e.2 ∈ (σ.toSystem c).values := by
+    decide +kernel
+  exact fun e he σ c hc hσ ↦ h σ c hc hσ e he
+
+/-- The unit augmented does not require the augmented, since `{±additive, ±minimal*}` generates
+it without. -/
+theorem not_requires_unitAugmented_augmented : ¬ Requires .unitAugmented .augmented := fun h ↦
+  absurd (h ⟨.inactive, .recursive, .active⟩ (.one .low) trivial (by decide) (by decide))
+    (by decide)
+
+/-- With a number, a system of Table 3 has every number it requires. -/
+theorem mem_table3_of_requires {b a : Number} (h : Requires b a) {r} (hr : r ∈ table3)
+    (hb : b ∈ r.2.2) : a ∈ r.2.2 := by
+  rw [← table3_generated r hr] at hb ⊢
+  exact h _ _ (table3_legitimate r hr).1 (table3_legitimate r hr).2 hb
+
+/-- Every system of [corbett-2000]'s sequences of choices is a lower set of the order the settings
+induce, having with a number every number that number requires. -/
+theorem mem_of_requires_corbett (c : Corbett2000.Choices) {b a : Number} (h : Requires b a)
+    (hb : b ∈ c.toSystem.values) : a ∈ c.toSystem.values := by
+  have key : ∀ b a : Number, (∀ r ∈ table3, b ∈ r.2.2 → a ∈ r.2.2) →
+      ∀ s : Corbett2000.Shape, b ∈ s.values → a ∈ s.values := by
+    decide +kernel
+  simp only [Corbett2000.Choices.toSystem, List.mem_toFinset] at hb ⊢
+  exact key b a (fun _ hr ↦ mem_table3_of_requires h hr) c.toShape hb
+
+/-- So are the systems of [corbett-2000] without singular and plural, Pirahã's, Rembarrnga's and
+Ilocano's. -/
+theorem mem_of_requires_minimalAugmented {b a : Number} (h : Requires b a) :
+    ∀ ns ∈ [Corbett2000.piraha, Corbett2000.rembarrnga, Corbett2000.ilocano],
+      b ∈ ns.values → a ∈ ns.values := by
+  have key : ∀ b a : Number, (∀ r ∈ table3, b ∈ r.2.2 → a ∈ r.2.2) →
+      ∀ ns ∈ [Corbett2000.piraha, Corbett2000.rembarrnga, Corbett2000.ilocano],
+        b ∈ ns.values → a ∈ ns.values := by
+    decide +kernel
+  exact key b a fun _ hr ↦ mem_table3_of_requires h hr
+
+end Table3
 
 /-! ### Composed number (§5.2) -/
 

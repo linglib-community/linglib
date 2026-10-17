@@ -18,8 +18,8 @@ that the values resolution produces match the semantics of number. A system with
 values gives a referent of `n` individuals the determinate value of that cardinality if it has
 one and the plural otherwise, and the conjuncts denote distinct individuals, so the group's
 cardinality is the sum of theirs. When the determinate values form an initial segment of
-singular, dual and trial, as the implicational universals require, the value of the sum depends
-only on the values of the parts, so resolution is a function of the conjuncts' numbers. The same
+singular, dual and trial (`Number.System.DeterminateInitial`), the value of the sum depends only
+on the values of the parts, so resolution is a function of the conjuncts' numbers. The same
 classification gives the number of a target whose system lacks its controller's value, the
 plural of a Modern Hebrew verb agreeing with a dual noun.
 
@@ -31,8 +31,8 @@ plural of a Modern Hebrew verb agreeing with a dual noun.
 
 ## Main results
 
-* `Number.System.resolve_ofCard`: in a system obeying DU → SG and TR → DU, conjuncts of `m`
-  and `n` individuals resolve to the value of `m + n`.
+* `Number.System.resolve_ofCard`: in a system whose determinate values are an initial segment,
+  conjuncts of `m` and `n` individuals resolve to the value of `m + n`.
 * `Number.System.foldl_resolve_ofCard`: any number of conjuncts resolve to the value of the sum
   of their cardinalities.
 * `Number.System.resolve_card_union`: conjuncts denoting disjoint pluralities resolve to the
@@ -108,9 +108,13 @@ variable {ns}
 /-- In a system whose determinate values are an initial segment of singular, dual and trial,
 conjuncts of `m` and `n` individuals resolve to the value of `m + n`, so resolution matches the
 semantics of number. -/
-theorem resolve_ofCard (h₁ : ns.DualImpliesSingular) (h₂ : ns.TrialImpliesDual) {m n : ℕ}
-    (hm : 0 < m) (hn : 0 < n) : ns.resolve (ns.ofCard m) (ns.ofCard n) = ns.ofCard (m + n) := by
-  unfold DualImpliesSingular TrialImpliesDual at *
+theorem resolve_ofCard (h : ns.DeterminateInitial) {m n : ℕ} (hm : 0 < m) (hn : 0 < n) :
+    ns.resolve (ns.ofCard m) (ns.ofCard n) = ns.ofCard (m + n) := by
+  have h₁ : Number.dual ∈ ns.values → Number.singular ∈ ns.values :=
+    fun hd ↦ h _ hd 1 (by decide)
+  have h₂ : Number.trial ∈ ns.values → Number.dual ∈ ns.values :=
+    fun ht ↦ h _ ht 2 (by decide)
+  clear h
   rw [resolve, exactCard_ofCard ns hm, exactCard_ofCard ns hn]
   by_cases h4 : 3 < m + n
   · rw [ofCard_of_three_lt ns h4]
@@ -121,30 +125,29 @@ theorem resolve_ofCard (h₁ : ns.DualImpliesSingular) (h₂ : ns.TrialImpliesDu
       by_cases hs : Number.singular ∈ ns.values <;> by_cases hd : Number.dual ∈ ns.values <;>
         by_cases ht : Number.trial ∈ ns.values <;> simp_all [ofCard, fromCard]
 
--- Both hypotheses are needed: a dual without a singular, or a trial without a dual, makes the
+-- The hypothesis is needed: a dual without a singular, or a trial without a dual, makes the
 -- value of a sum depend on more than the values of its parts.
-example : let ns : System := { values := [.dual, .plural] }
+example : let ns : System := { values := {.dual, .plural} }
     ns.resolve (ns.ofCard 1) (ns.ofCard 1) ≠ ns.ofCard 2 := by decide
-example : let ns : System := { values := [.singular, .trial, .plural] }
+example : let ns : System := { values := {.singular, .trial, .plural} }
     ns.resolve (ns.ofCard 2) (ns.ofCard 1) ≠ ns.ofCard 3 := by decide
 
 /-- Any number of conjuncts, resolved in order, give the value of the sum of their
 cardinalities. -/
-theorem foldl_resolve_ofCard (h₁ : ns.DualImpliesSingular) (h₂ : ns.TrialImpliesDual) {m : ℕ}
-    (hm : 0 < m) {ms : List ℕ} (hms : ∀ x ∈ ms, 0 < x) :
+theorem foldl_resolve_ofCard (h : ns.DeterminateInitial) {m : ℕ} (hm : 0 < m) {ms : List ℕ}
+    (hms : ∀ x ∈ ms, 0 < x) :
     (ms.map ns.ofCard).foldl ns.resolve (ns.ofCard m) = ns.ofCard (m + ms.sum) := by
   induction ms generalizing m with
   | nil => simp
   | cons x xs ih =>
-    rw [List.map_cons, List.foldl_cons, resolve_ofCard h₁ h₂ hm (hms x (by simp)),
+    rw [List.map_cons, List.foldl_cons, resolve_ofCard h hm (hms x (by simp)),
       ih (by omega) fun y hy ↦ hms y (by simp [hy]), List.sum_cons, Nat.add_assoc]
 
 /-- Conjuncts denoting disjoint pluralities resolve to the value of their sum. -/
-theorem resolve_card_union {α : Type*} [DecidableEq α] (h₁ : ns.DualImpliesSingular)
-    (h₂ : ns.TrialImpliesDual) {s t : Finset α} (hs : s.Nonempty) (ht : t.Nonempty)
-    (hst : Disjoint s t) :
+theorem resolve_card_union {α : Type*} [DecidableEq α] (h : ns.DeterminateInitial)
+    {s t : Finset α} (hs : s.Nonempty) (ht : t.Nonempty) (hst : Disjoint s t) :
     ns.resolve (ns.ofCard s.card) (ns.ofCard t.card) = ns.ofCard (s ∪ t).card := by
-  rw [Finset.card_union_of_disjoint hst, resolve_ofCard h₁ h₂ hs.card_pos ht.card_pos]
+  rw [Finset.card_union_of_disjoint hst, resolve_ofCard h hs.card_pos ht.card_pos]
 
 /-- A target shows the value of its controller's referent when the controller's system has
 every determinate value of the target's. -/
