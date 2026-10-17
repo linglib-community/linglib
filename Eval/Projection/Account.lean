@@ -120,23 +120,31 @@ given by the theory's own predicate. -/
 noncomputable def Accepts : Account → (Atom → Set W) → Set W → Formula Atom → Prop
   | dynamic => fun I C F ↦ (F.ccp I).Admits C
   | filtering => fun I C F ↦ C ⊆ Function.support (F.filter I)
-  | transparencyIncremental => fun I ↦ Schlenker2009.Transparency I .incremental
-  | transparencySymmetric => fun I ↦ Schlenker2009.Transparency I .symmetric
-  | satisfactionIncremental => fun I ↦ Schlenker2009.Satisfaction I .incremental
-  | satisfactionSymmetric => fun I ↦ Schlenker2009.Satisfaction I .symmetric
+  | transparencyIncremental => fun I C F ↦
+    Schlenker2009.Transparency .incremental C (Occurrence.ofFormula I F)
+  | transparencySymmetric => fun I C F ↦
+    Schlenker2009.Transparency .symmetric C (Occurrence.ofFormula I F)
+  | satisfactionIncremental => fun I C F ↦
+    Schlenker2009.Satisfaction .incremental C (Occurrence.ofFormula I F)
+  | satisfactionSymmetric => fun I C F ↦
+    Schlenker2009.Satisfaction .symmetric C (Occurrence.ofFormula I F)
   | kleeneIncremental => fun I ↦ Schlenker2009.KleeneAcceptable I .incremental
   | kleeneSymmetric => fun I ↦ Schlenker2009.KleeneAcceptable I .symmetric
   | supervaluationIncremental => fun I ↦ Schlenker2009.SuperAcceptable I .incremental
   | supervaluationSymmetric => fun I ↦ Schlenker2009.SuperAcceptable I .symmetric
-  | limitedSymmetry => Kalomoiros2023.LimitedSymmetry
+  | limitedSymmetry => fun I C F ↦ Kalomoiros2023.LimitedSymmetry C (Occurrence.ofFormula I F)
 
 open Schlenker2009.QuantifiedClause in
 /-- Whether an account accepts a quantified clause, for the accounts defined on them. -/
 def AcceptsClause : Account → Option ClauseAcceptance
-  | transparencyIncremental => some fun _ _ _ J ↦ Transparency J .incremental
-  | transparencySymmetric => some fun _ _ _ J ↦ Transparency J .symmetric
-  | satisfactionIncremental => some fun _ _ _ J ↦ Satisfaction J .incremental
-  | satisfactionSymmetric => some fun _ _ _ J ↦ Satisfaction J .symmetric
+  | transparencyIncremental => some fun _ _ _ J C c ↦
+    Schlenker2009.Transparency .incremental C (Occurrence.ofClause J c)
+  | transparencySymmetric => some fun _ _ _ J C c ↦
+    Schlenker2009.Transparency .symmetric C (Occurrence.ofClause J c)
+  | satisfactionIncremental => some fun _ _ _ J C c ↦
+    Schlenker2009.Satisfaction .incremental C (Occurrence.ofClause J c)
+  | satisfactionSymmetric => some fun _ _ _ J C c ↦
+    Schlenker2009.Satisfaction .symmetric C (Occurrence.ofClause J c)
   | kleeneIncremental => some fun _ _ _ J ↦ KleeneAcceptable J .incremental
   | kleeneSymmetric => some fun _ _ _ J ↦ KleeneAcceptable J .symmetric
   | supervaluationIncremental => some fun _ _ _ J ↦ SuperAcceptable J .incremental

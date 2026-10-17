@@ -193,9 +193,9 @@ inductive Account
 /-- The formula is acceptable in the context `C` on the account. -/
 def Account.Accepts {Atom : Type*} (I : Atom → Set W) (C : Set W) (F : Formula Atom) :
     Account → Prop
-  | incremental => Schlenker2009.Satisfaction I .incremental C F
-  | limitedSymmetry => Kalomoiros2023.LimitedSymmetry I C F
-  | symmetric => Schlenker2009.Satisfaction I .symmetric C F
+  | incremental => Schlenker2009.Satisfaction .incremental C (Occurrence.ofFormula I F)
+  | limitedSymmetry => Kalomoiros2023.LimitedSymmetry C (Occurrence.ofFormula I F)
+  | symmetric => Schlenker2009.Satisfaction .symmetric C (Occurrence.ofFormula I F)
   | localAccommodation => C ⊆ Function.support fun w ↦ SignType.ofProp (F.filter I w = 1)
 
 /-- An account filters the implication in an antecedent type when the antecedent is acceptable

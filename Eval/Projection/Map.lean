@@ -88,7 +88,7 @@ theorem filtering_stronger_supervaluationIncremental :
 
 theorem transparencyIncremental_stronger_transparencySymmetric :
     transparencyIncremental.Stronger transparencySymmetric :=
-  fun _ _ I _ _ h ↦ Transparency.symmetric I h
+  fun _ _ _ _ _ h ↦ h.symmetric
 
 theorem satisfactionIncremental_stronger_satisfactionSymmetric :
     satisfactionIncremental.Stronger satisfactionSymmetric :=
@@ -109,12 +109,12 @@ theorem kleeneSymmetric_stronger_supervaluationSymmetric :
 /-- Limited Symmetry consults at each parse point only incremental good finals. -/
 theorem transparencyIncremental_stronger_limitedSymmetry :
     transparencyIncremental.Stronger limitedSymmetry :=
-  fun _ _ I _ _ h ↦ Kalomoiros2023.LimitedSymmetry.of_transparency I h
+  fun _ _ _ _ _ h ↦ Kalomoiros2023.LimitedSymmetry.of_transparency h
 
 /-- At its last parse point Limited Symmetry consults the sentence itself. -/
 theorem limitedSymmetry_stronger_transparencySymmetric :
     limitedSymmetry.Stronger transparencySymmetric :=
-  fun _ _ I _ _ h ↦ Kalomoiros2023.LimitedSymmetry.transparency I h
+  fun _ _ _ _ _ h ↦ Kalomoiros2023.LimitedSymmetry.transparency h
 
 /-! ### Cuts -/
 
@@ -122,7 +122,8 @@ theorem limitedSymmetry_stronger_transparencySymmetric :
 private def interp39 : Fin 4 → Set Bool := fun a ↦ if a = 0 ∨ a = 2 then {true} else Set.univ
 
 private theorem theorem39a :
-    Transparency interp39 .symmetric {false, true} (.bin .conj (.trigger 0 1) (.trigger 2 3)) ∧
+    Transparency .symmetric {false, true}
+        (Occurrence.ofFormula interp39 (.bin .conj (.trigger 0 1) (.trigger 2 3))) ∧
       ¬ KleeneAcceptable interp39 .symmetric {false, true}
         (.bin .conj (.trigger 0 1) (.trigger 2 3)) ∧
       ¬ SuperAcceptable interp39 .symmetric {false, true}
@@ -179,7 +180,8 @@ theorem not_kleeneSymmetric_stronger_kleeneIncremental :
 theorem not_limitedSymmetry_stronger_transparencyIncremental :
     ¬ limitedSymmetry.Stronger transparencyIncremental := by
   let I : Fin 3 → Set Unit := fun a ↦ if a = 2 then Set.univ else ∅
-  have hls : Kalomoiros2023.LimitedSymmetry I Set.univ (.bin .disj (.trigger 0 1) (.atom 2)) :=
+  have hls : Kalomoiros2023.LimitedSymmetry Set.univ
+      (Occurrence.ofFormula I (.bin .disj (.trigger 0 1) (.atom 2))) :=
     (Kalomoiros2023.limitedSymmetry_or_left I).2 fun w _ hq ↦ absurd (by simp [I]) hq
   intro h
   have := (Formula.admits_ccp_iff I).1

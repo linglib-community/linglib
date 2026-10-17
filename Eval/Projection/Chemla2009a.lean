@@ -222,7 +222,7 @@ variable {T : Theory} {acc : ClauseAcceptance}
 every quantifier of the experiment. -/
 private theorem predictsUniversal_clause
     (hT : ∀ Atom W E I C c, acc Atom W E I C c →
-      Schlenker2009.QuantifiedClause.Transparency I .symmetric C c)
+      Schlenker2009.Transparency .symmetric C (Occurrence.ofClause I c))
     (d : Determiner) : PredictsUniversal acc (clause d) := fun W I hI C hC w hw e ↦ by
   have h := (Schlenker2009.QuantifiedClause.transparency_symmetric_trigger_iff I rfl).1
     (hT _ _ _ _ _ _ hC) w hw
@@ -309,7 +309,7 @@ private theorem parse_oneStep_eq : Accommodation.oneStep.parser.parse clause = f
 predicts no difference between the groups and is wrong. -/
 theorem verdict_global_of (hacc : T.acceptsClause = some acc)
     (hT : ∀ Atom W E I C c, acc Atom W E I C c →
-      Schlenker2009.QuantifiedClause.Transparency I .symmetric C c) :
+      Schlenker2009.Transparency .symmetric C (Occurrence.ofClause I c)) :
     verdict T Accommodation.global.parser = .wrong := by
   rw [verdict, parse_global, predicted_of_parse hacc, observed_eq]
   unfold orderOf
@@ -321,7 +321,7 @@ theorem verdict_global_of (hacc : T.acceptsClause = some acc)
 trigger predicts the universal inference from *each* and *no* alone and is right. -/
 theorem verdict_oneStep_of (hacc : T.acceptsClause = some acc)
     (hT : ∀ Atom W E I C c, acc Atom W E I C c →
-      Schlenker2009.QuantifiedClause.Transparency I .symmetric C c)
+      Schlenker2009.Transparency .symmetric C (Occurrence.ofClause I c))
     (hU : ∀ Atom W E I C (c : QuantifiedClause Atom), c.occurrences = [] → acc Atom W E I C c) :
     verdict T Accommodation.oneStep.parser = .correct := by
   rw [verdict, parse_oneStep_eq, predicted_of_parse hacc, observed_eq]
@@ -379,7 +379,8 @@ open Schlenker2009.QuantifiedClause
 /-- An account within symmetric Transparency is wrong with every presupposition accommodated in
 the context and right by §4.1.2's stipulations or Appendix F's rule. -/
 private theorem verdict_of_transparency {a : Account} (h : a.AcceptsClause = some acc)
-    (hT : ∀ Atom W E I C c, acc Atom W E I C c → Transparency I .symmetric C c)
+    (hT : ∀ Atom W E I C c, acc Atom W E I C c →
+      Schlenker2009.Transparency .symmetric C (Occurrence.ofClause I c))
     (hU : ∀ Atom W E I C (c : QuantifiedClause Atom), c.occurrences = [] → acc Atom W E I C c)
     (π : Accommodation) :
     verdict a.theory π.parser = if π = .global then .wrong else .correct := by
@@ -401,18 +402,20 @@ theorem verdict_experiment1 (a : Account) (π : Accommodation) :
       | .dynamic | .filtering | .limitedSymmetry => .silent := by
   rw [verdict_experiment1_eq]
   have hU {r : Schlenker2009.Reading} {Atom W E : Type} {I : Atom → Set (W × E)} {C : Set W}
-      {c : QuantifiedClause Atom} (hc : c.occurrences = []) : Transparency I r C c ∧
-        Satisfaction I r C c :=
-    ⟨fun _ ho ↦ by simp [hc] at ho, fun _ ho ↦ by simp [hc] at ho⟩
+      {c : QuantifiedClause Atom} (hc : c.occurrences = []) :
+      Schlenker2009.Transparency r C (Occurrence.ofClause I c) ∧
+        Schlenker2009.Satisfaction r C (Occurrence.ofClause I c) :=
+    ⟨fun _ ho ↦ by simp [Occurrence.ofClause, hc] at ho,
+      fun _ ho ↦ by simp [Occurrence.ofClause, hc] at ho⟩
   cases a
   · exact verdict_eq_silent rfl _
   · exact verdict_eq_silent rfl _
-  · exact verdict_of_transparency rfl (fun _ _ _ I _ _ h ↦ h.symmetric I)
+  · exact verdict_of_transparency rfl (fun _ _ _ _ _ _ h ↦ h.symmetric)
       (fun _ _ _ _ _ _ hc ↦ (hU hc).1) π
   · exact verdict_of_transparency rfl (fun _ _ _ _ _ _ h ↦ h) (fun _ _ _ _ _ _ hc ↦ (hU hc).1) π
-  · exact verdict_of_transparency rfl (fun _ _ _ I _ _ h ↦ (h.transparency I).symmetric I)
+  · exact verdict_of_transparency rfl (fun _ _ _ _ _ _ h ↦ h.transparency.symmetric)
       (fun _ _ _ _ _ _ hc ↦ (hU hc).2) π
-  · exact verdict_of_transparency rfl (fun _ _ _ I _ _ h ↦ h.transparency I)
+  · exact verdict_of_transparency rfl (fun _ _ _ _ _ _ h ↦ h.transparency)
       (fun _ _ _ _ _ _ hc ↦ (hU hc).2) π
   · exact verdict_of_transparentAt rfl
       (fun _ _ _ I _ _ _ _ _ hR h ↦ (kleeneAcceptable_trigger_iff I hR _).2 h)

@@ -28,15 +28,16 @@ restriction is then never stable at the end of the restrictor (`restrictorLS_neg
 (`some_table`, `no_table`, `every_table`): local negation is where Limited Symmetry regains the
 symmetric predictions, and where it departs from incremental Transparency.
 
-The constraint extends to a trigger anywhere in a quantified clause (`ClauseLS`). The parse points
+The constraint extends to a trigger anywhere in a quantified clause as Kalomoiros's constraint on
+the clause's occurrences (`Kalomoiros2023.LimitedSymmetry`, `Occurrence.ofClause`). The parse points
 after the trigger are those of the string of the argument that holds it, each followed by every good
-final of the clause, and then the end of the sentence. For a trigger that is the restrictor, or its
-negation, these are the two parse points above (`clauseLS_trigger_iff`, `clauseLS_not_trigger_iff`).
-With Kalomoiros's constraint on formulas, this makes a theory that `Eval` scores like a registered
-account (`limitedSymmetry`). It is right on every tested cell of Chemla and Schlenker's inferential
-experiments, and on Chemla's first experiment it shares Transparency's verdicts: wrong with every
-presupposition accommodated in the context, right by Chemla's stipulations and by his one-step rule
-(`verdict_chemla2009a`).
+final of the clause, and then the end of the sentence (`QuantifiedClause.Env.parsePoint`). For a
+trigger that is the restrictor, or its negation, these are the two parse points above
+(`limitedSymmetry_trigger_iff`, `limitedSymmetry_not_trigger_iff`). With Kalomoiros's constraint on
+formulas, this makes a theory that `Eval` scores like a registered account (`limitedSymmetry`). It
+is right on every tested cell of Chemla and Schlenker's inferential experiments, and on Chemla's
+first experiment it shares Transparency's verdicts: wrong with every presupposition accommodated in
+the context, right by Chemla's stipulations and by his one-step rule (`verdict_chemla2009a`).
 
 ## Main statements
 
@@ -319,67 +320,64 @@ end Table
 
 section Clause
 
-variable {Atom : Type*} (J : Atom → Set (W × E)) {c : QuantifiedClause Atom}
+variable {Atom : Type*} (J : Atom → Set (W × E))
 
-/-- Limited Symmetry at a gap of a quantified clause, with presupposition `π`. At each parse point
-of the string of the argument that holds the gap, the continuations are the good finals of that
-string up to the point inside every good final of the clause, and at the end of the sentence the
-clause itself; the presupposition is stably transparent at each. -/
-def ClauseLSAt (C : Set W) (k : QuantifiedClause.Env Atom) (π : Set (W × E)) : Prop :=
-  (∀ n ≤ k.inner.rightItems, StablyTransparent C
-    (Set.image2 (· ∘ ·) (k.arg.finals J k.quantifier) (Kalomoiros2023.parsePoint J n k.inner)) π) ∧
-    StablyTransparent C {k.truth J} π
+/-- With nothing after the gap inside the restrictor, the parse points of a restrictor trigger are
+those of the restrictor: every scope at the first, the clause's own scope from then on. -/
+private theorem parsePoint_restrictor {q : NumberTree} {S : Formula Atom}
+    {K : SyntacticEnvironment Atom} (hK : K.rightItems = 0) (n : ℕ∞) :
+    QuantifiedClause.Env.parsePoint J n ⟨q, .restrictor S, K⟩ =
+      (· ∘ K.truth J) '' QuantifiedClause.Arg.parsePoint J q n (.restrictor S) := by
+  have hK' : K.parsePoint J n = {K.truth J} := by
+    induction n using ENat.recTopCoe with
+    | top => rfl
+    | coe n => exact SyntacticEnvironment.parsePoint_eq_top_of_le J (hK ▸ Nat.zero_le n)
+  simp only [QuantifiedClause.Env.parsePoint, hK, Nat.cast_zero, tsub_zero, hK',
+    Set.image2_singleton_right]
 
-/-- Limited Symmetry for a quantified clause: the constraint at every trigger. -/
-def ClauseLS (C : Set W) (c : QuantifiedClause Atom) : Prop :=
-  ∀ o ∈ c.occurrences, ClauseLSAt J C o.1 (J o.2.1)
-
-/-- Incremental Transparency implies Limited Symmetry. -/
-theorem ClauseLS.of_transparency
-    (h : Schlenker2009.QuantifiedClause.Transparency J .incremental C c) : ClauseLS J C c :=
-  fun o ho ↦ by
-    have h' := h o ho
-    refine ⟨fun n _ ↦ (h'.anti (Set.image2_subset_left ?_)).stablyTransparent,
-      (h'.anti (Set.singleton_subset_iff.2
-        (Schlenker2009.QuantifiedClause.truth_mem_continuations J _ o.1))).stablyTransparent⟩
-    rw [Schlenker2009.continuations_incremental]
-    exact Set.image_mono fun _ hK ↦
-      SyntacticEnvironment.agreeUpTo_zero_iff.1 (hK.mono (Nat.zero_le n))
-
-/-- Limited Symmetry implies symmetric Transparency. -/
-theorem ClauseLS.transparency (h : ClauseLS J C c) :
-    Schlenker2009.QuantifiedClause.Transparency J .symmetric C c :=
-  fun o ho ↦ stablyTransparent_singleton_iff.1 (h o ho).2
+/-- Stable transparency at every parse point of a restrictor trigger is stable transparency at the
+end of the restrictor and at the end of the sentence. -/
+private theorem forall_stablyTransparent_restrictor_iff {q : NumberTree} {S : Formula Atom}
+    {g : (Set (W × E) → Set W) → Set (W × E) → Set W} {π : Set (W × E)} :
+    (∀ n : ℕ∞, StablyTransparent C
+      (g '' QuantifiedClause.Arg.parsePoint J q n (.restrictor S)) π) ↔
+      StablyTransparent C (g '' Set.range (restrictorTruth q)) π ∧
+        StablyTransparent C {g (restrictorTruth q fun w e ↦ (w, e) ∈ S.truth J)} π := by
+  simp only [QuantifiedClause.Arg.parsePoint]
+  refine ⟨fun h ↦ ⟨by simpa using h 0, by simpa using h ⊤⟩, fun h n ↦ ?_⟩
+  split_ifs
+  · exact h.1
+  · simpa using h.2
 
 /-- A trigger that is the restrictor has the two parse points of `RestrictorLS`. -/
-theorem clauseLS_trigger_iff {q : NumberTree} {p a : Atom} {S : Formula Atom}
+theorem limitedSymmetry_trigger_iff {q : NumberTree} {p a : Atom} {S : Formula Atom}
     (hS : S.occurrences = []) :
-    ClauseLS J C ⟨q, .trigger p a, S⟩ ↔
+    Kalomoiros2023.LimitedSymmetry C (Occurrence.ofClause J ⟨q, .trigger p a, S⟩) ↔
       RestrictorLS (restrictorTruth q) (fun w e ↦ (w, e) ∈ S.truth J) C (J p) := by
+  simp only [Kalomoiros2023.LimitedSymmetry, Occurrence.forall_mem_ofClause,
+    QuantifiedClause.occurrences, hS, Formula.occurrences, List.map_cons, List.map_nil,
+    List.cons_append, List.nil_append, List.mem_singleton, forall_eq]
+  change (∀ n : ℕ∞, StablyTransparent C
+    (QuantifiedClause.Env.parsePoint J n ⟨q, .restrictor S, []⟩) (J p)) ↔ _
+  simp only [parsePoint_restrictor J (K := []) rfl]
   have h : SyntacticEnvironment.truth J ([] : SyntacticEnvironment Atom) = id := rfl
-  simp only [ClauseLS, ClauseLSAt, QuantifiedClause.occurrences, hS, Formula.occurrences,
-    List.map_cons, List.map_nil, List.cons_append, List.nil_append, List.mem_singleton, forall_eq,
-    SyntacticEnvironment.rightItems_nil, Nat.le_zero, forall_eq, Kalomoiros2023.parsePoint,
-    SyntacticEnvironment.AgreeUpTo, Set.ofPred_eq_eq_singleton, Set.image_singleton, h,
-    Set.image2_singleton_right, Function.comp_id, Set.image_id', QuantifiedClause.Arg.finals]
-  rfl
+  exact (forall_stablyTransparent_restrictor_iff J).trans (by
+    simp only [h, Function.comp_id, Set.image_id', RestrictorLS])
 
 /-- A trigger that is the negated restrictor has the two parse points of `RestrictorLS` for the
 negated restrictor. -/
-theorem clauseLS_not_trigger_iff {q : NumberTree} {p a : Atom} {S : Formula Atom}
+theorem limitedSymmetry_not_trigger_iff {q : NumberTree} {p a : Atom} {S : Formula Atom}
     (hS : S.occurrences = []) :
-    ClauseLS J C ⟨q, .not (.trigger p a), S⟩ ↔
+    Kalomoiros2023.LimitedSymmetry C (Occurrence.ofClause J ⟨q, .not (.trigger p a), S⟩) ↔
       RestrictorLS (negRestrictorTruth q) (fun w e ↦ (w, e) ∈ S.truth J) C (J p) := by
-  have h : {K' : SyntacticEnvironment Atom | SyntacticEnvironment.AgreeUpTo 0 [.not] K'} =
-      {[.not]} := by
-    ext K'
-    simp [SyntacticEnvironment.AgreeUpTo, SyntacticEnvironment.Step.AgreeUpTo]
-  simp only [ClauseLS, ClauseLSAt, QuantifiedClause.occurrences, hS, Formula.occurrences,
-    List.map_cons, List.map_nil, List.cons_append, List.nil_append, List.mem_singleton, forall_eq,
-    SyntacticEnvironment.rightItems_cons, SyntacticEnvironment.rightItems_nil,
-    SyntacticEnvironment.Step.rightItems, add_zero, Nat.le_zero, Kalomoiros2023.parsePoint, h,
-    Set.image_singleton, Set.image2_singleton_right, QuantifiedClause.Arg.finals,
-    ← Set.range_comp]
+  simp only [Kalomoiros2023.LimitedSymmetry, Occurrence.forall_mem_ofClause,
+    QuantifiedClause.occurrences, hS, Formula.occurrences, List.map_cons, List.map_nil,
+    List.cons_append, List.nil_append, List.mem_singleton, forall_eq]
+  change (∀ n : ℕ∞, StablyTransparent C
+    (QuantifiedClause.Env.parsePoint J n ⟨q, .restrictor S, [.not]⟩) (J p)) ↔ _
+  simp only [parsePoint_restrictor J (K := [.not]) rfl]
+  refine (forall_stablyTransparent_restrictor_iff J).trans ?_
+  rw [RestrictorLS, ← Set.range_comp]
   rfl
 
 end Clause
@@ -390,7 +388,9 @@ open Eval.Projection
 
 /-- Limited Symmetry as a theory to score: Kalomoiros's constraint on formulas, and the constraint
 at the parse points of each argument on quantified clauses. -/
-def limitedSymmetry : Theory := ⟨Kalomoiros2023.LimitedSymmetry, some fun _ _ _ ↦ ClauseLS⟩
+def limitedSymmetry : Theory :=
+  ⟨fun I C F ↦ Kalomoiros2023.LimitedSymmetry C (Occurrence.ofFormula I F),
+    some fun _ _ _ J C c ↦ Kalomoiros2023.LimitedSymmetry C (Occurrence.ofClause J c)⟩
 
 /-- On Chemla and Schlenker's inferential experiments, Limited Symmetry is right on every tested
 cell, as the registered account is. -/
@@ -413,11 +413,12 @@ in the context, and right by §4.1.2's stipulations and by the one-step rule. -/
 theorem verdict_chemla2009a (p : Chemla2009a.Accommodation) :
     Chemla2009a.experiment1.verdict (limitedSymmetry, p) () =
       if p = .global then .wrong else .correct := by
-  have hT : ∀ Atom W E I C c, ClauseLS (Atom := Atom) (W := W) (E := E) I C c →
-      Schlenker2009.QuantifiedClause.Transparency I .symmetric C c :=
-    fun _ _ _ _ _ _ h ↦ ClauseLS.transparency _ h
+  have hT : ∀ (Atom W E : Type) (I : Atom → Set (W × E)) C c,
+      Kalomoiros2023.LimitedSymmetry C (Occurrence.ofClause I c) →
+        Schlenker2009.Transparency .symmetric C (Occurrence.ofClause I c) :=
+    fun _ _ _ _ _ _ h ↦ Kalomoiros2023.LimitedSymmetry.transparency h
   have h := Chemla2009a.verdict_oneStep_of (T := limitedSymmetry) rfl hT
-    fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho
+    fun _ _ _ _ _ _ hc o ho ↦ by simp [Occurrence.ofClause, hc] at ho
   rw [Chemla2009a.verdict_experiment1_eq]
   cases p
   · exact Chemla2009a.verdict_global_of rfl hT
