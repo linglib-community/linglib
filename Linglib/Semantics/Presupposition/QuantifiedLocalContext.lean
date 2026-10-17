@@ -10,22 +10,23 @@ A quantifier on van Benthem's tree of numbers holds of a restrictor and a scope 
 many individuals of the restrictor are outside and inside the scope. A predicate in its scope or
 restrictor denotes a set of world–individual pairs, so the local context of that position is a set
 of such pairs (`scopeTruth`, `restrictorTruth`), and by `isLocalContext_of_dependsOn` it is the set
-of pairs on which the sentence's truth value depends.
-
-At a world, a quantifier depends on whether an individual is in its scope iff the individual is in
-the restrictor and the quantifier is not constant on the row of the restrictor's size
+of pairs on which the sentence's truth value depends. At a world, a quantifier depends on whether an
+individual is in its scope iff the individual is in the restrictor and the quantifier is not
+constant on the row of the restrictor's size
 (`Quantifier.NumberTree.dependsOn_toGQ_compl_singleton_iff`). So the local context of the nuclear
 scope is the restrictor's individuals at the worlds of the context where that row is not constant
-(`isLocalContext_scopeTruth`): a presupposition triggered in the scope projects universally over
-the restrictor, except at worlds where the sentence's truth value does not depend on its scope at
-all (`transparent_scopeTruth_iff`). With every scope as a continuation, as the incremental theory
-has it, the local context of the restrictor is every individual unless the quantifier is constant
-on the whole triangle below the size of the universe, and a presupposition triggered in the
-restrictor projects universally over the domain (`transparent_restrictorTruth_iff`).
+(`isLocalContext_scopeTruth`): a presupposition triggered in the scope projects universally over the
+restrictor, except at worlds where the sentence's truth value does not depend on its scope at all
+(`transparent_scopeTruth_iff`). A trigger in the scope is transparent at its own assertion iff the
+quantifier gives one value to every scope that resolves the trigger, at each world of the context
+(`transparentAt_scopeTruth_iff`). With every scope as a continuation, as the incremental theory has
+it, the local context of the restrictor is every individual unless the quantifier is constant on the
+whole triangle below the size of the universe, and a presupposition triggered in the restrictor
+projects universally over the domain (`transparent_restrictorTruth_iff`).
 
 These are Schlenker's derivations of universal projection, in Anti-Dynamics and in Local Contexts,
-stated world by world. The conditions under which those papers prove them, that the restrictor and the
-domain have constant sizes across the context and that the quantifier is not constant on the
+stated world by world. The conditions under which those papers prove them, that the restrictor and
+the domain have constant sizes across the context and that the quantifier is not constant on the
 relevant points of the tree there, become the condition at each world under which the
 presupposition is required.
 
@@ -33,6 +34,7 @@ presupposition is required.
 
 * `isLocalContext_scopeTruth`, `transparent_scopeTruth_iff`: universal projection from the
   nuclear scope.
+* `transparentAt_scopeTruth_iff`: definedness by supervaluation of a trigger in the nuclear scope.
 * `isLocalContext_restrictorTruth`, `transparent_restrictorTruth_iff`: universal projection from
   the restrictor, with every scope as a continuation.
 
@@ -90,6 +92,29 @@ theorem dependsOn_slice [Finite E] (w : W) (g : (E → Prop) → Prop) :
     ∃ s : Set (W × E), s.Finite ∧ DependsOn (fun d : Set (W × E) ↦ g fun x ↦ (w, x) ∈ d) s :=
   ⟨{w} ×ˢ Set.univ, (Set.finite_singleton w).prod Set.finite_univ,
     fun _ _ hd ↦ congrArg g (funext fun x ↦ hd (w, x) ⟨rfl, trivial⟩)⟩
+
+/-- A trigger in the nuclear scope that presupposes `P` and asserts `a` is transparent at `a` iff at
+each world of the context the quantifier gives one value to every scope that agrees with `a` on
+the individuals that satisfy `P` there. -/
+theorem transparentAt_scopeTruth_iff {q : NumberTree} {A : W → E → Prop} {C : Set W}
+    {P a : Set (W × E)} :
+    TransparentAt C {scopeTruth q A} P a ↔ ∀ w ∈ C, ∀ D D' : E → Prop,
+      (∀ e, (w, e) ∈ P → (D e ↔ (w, e) ∈ a)) → (∀ e, (w, e) ∈ P → (D' e ↔ (w, e) ∈ a)) →
+        (q.toGQ (A w) D ↔ q.toGQ (A w) D') := by
+  classical
+  simp only [transparentAt_iff, Set.mem_singleton_iff, forall_eq]
+  refine ⟨fun h w hw D D' hD hD' ↦ ?_, fun h d d' hd hd' w hw ↦ ?_⟩
+  · let ext (D : E → Prop) : Set (W × E) := {p | if p.1 = w then D p.2 else p ∈ a}
+    have hext {D : E → Prop} (hD : ∀ e, (w, e) ∈ P → (D e ↔ (w, e) ∈ a)) :
+        P ⊓ ext D = P ⊓ a := Set.ext fun ⟨u, e⟩ ↦ and_congr_right fun hp ↦ by
+      by_cases hu : u = w
+      · subst hu; simpa [ext] using hD e hp
+      · simp [ext, hu]
+    simpa [scopeTruth, ext] using h _ _ (hext hD) (hext hD') w hw
+  · have agree {d : Set (W × E)} (hd : P ⊓ d = P ⊓ a) (e : E) (hp : (w, e) ∈ P) :
+        (w, e) ∈ d ↔ (w, e) ∈ a := by
+      simpa [hp] using congrArg ((w, e) ∈ ·) hd
+    exact h w hw (fun e ↦ (w, e) ∈ d) (fun e ↦ (w, e) ∈ d') (agree hd) (agree hd')
 
 section Finite
 

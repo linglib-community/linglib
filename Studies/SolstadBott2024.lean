@@ -193,9 +193,9 @@ inductive Account
 /-- The formula is acceptable in the context `C` on the account. -/
 def Account.Accepts {Atom : Type*} (I : Atom → Set W) (C : Set W) (F : Formula Atom) :
     Account → Prop
-  | incremental => Schlenker2009.SatI I C F
-  | limitedSymmetry => Kalomoiros2023.TranspLS I C F
-  | symmetric => Schlenker2009.SatS I C F
+  | incremental => Schlenker2009.Satisfaction I .incremental C F
+  | limitedSymmetry => Kalomoiros2023.LimitedSymmetry I C F
+  | symmetric => Schlenker2009.Satisfaction I .symmetric C F
   | localAccommodation => C ⊆ Function.support fun w ↦ SignType.ofProp (F.filter I w = 1)
 
 /-- An account filters the implication in an antecedent type when the antecedent is acceptable
@@ -214,20 +214,22 @@ theorem Account.filters_iff {a : Account} {x : Antecedent} :
       ¬ a.Filters x := fun h hf ↦
     Bool.false_ne_true (h (fun _ ↦ {true}) Set.univ (hf _ _ _ _ _ _ subset_rfl _) trivial)
   cases a <;> cases x
-  · exact iff_of_false (hno fun I C h ↦ (Schlenker2009.satI_initial_iff I (c := .conj) nofun).1 h)
-      (by simp)
-  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Schlenker2009.satI_and_iff I).2
+  · exact iff_of_false (hno fun I C h ↦
+      (Schlenker2009.satisfaction_incremental_initial_iff I (c := .conj) nofun).1 h) (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦
+      (Schlenker2009.satisfaction_and_right_iff I .incremental).2 fun _ _ hw ↦ hq hw) (by simp)
+  · exact iff_of_false (hno fun I C h ↦
+      (Schlenker2009.satisfaction_trigger_iff I .incremental).1 h) (by simp)
+  · exact iff_of_false (hno fun I C h ↦ (Kalomoiros2023.limitedSymmetry_and_left I).1 h) (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Kalomoiros2023.limitedSymmetry_and_right I).2
       fun _ _ hw ↦ hq hw) (by simp)
-  · exact iff_of_false (hno fun I C h ↦ (Schlenker2009.satI_trigger_iff I).1 h) (by simp)
-  · exact iff_of_false (hno fun I C h ↦ (Kalomoiros2023.transpLS_and_left I).1 h) (by simp)
-  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Kalomoiros2023.transpLS_and_right I).2
-      fun _ _ hw ↦ hq hw) (by simp)
-  · exact iff_of_false (hno fun I C h ↦ (Kalomoiros2023.transpLS_trigger I).1 h) (by simp)
-  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Schlenker2009.satS_and_left_iff I).2
-      fun _ _ hw ↦ hq hw) (by simp)
-  · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Schlenker2009.satS_and_right_iff I).2
-      fun _ _ hw ↦ hq hw) (by simp)
-  · exact iff_of_false (hno fun I C h ↦ (Schlenker2009.satS_trigger_iff I).1 h) (by simp)
+  · exact iff_of_false (hno fun I C h ↦ (Kalomoiros2023.limitedSymmetry_trigger I).1 h) (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦
+      (Schlenker2009.satisfaction_symmetric_and_left_iff I).2 fun _ _ hw ↦ hq hw) (by simp)
+  · exact iff_of_true (fun _ _ I p p' q hq C ↦
+      (Schlenker2009.satisfaction_and_right_iff I .symmetric).2 fun _ _ hw ↦ hq hw) (by simp)
+  · exact iff_of_false (hno fun I C h ↦
+      (Schlenker2009.satisfaction_trigger_iff I .symmetric).1 h) (by simp)
   all_goals exact iff_of_true (fun _ _ _ _ _ _ _ _ _ _ ↦ SignType.ofProp_ne_zero) (by simp)
 
 instance (a : Account) (x : Antecedent) : Decidable (a.Filters x) :=

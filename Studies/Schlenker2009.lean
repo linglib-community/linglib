@@ -11,47 +11,60 @@ public import Studies.Heim1992
 A restriction on the denotation of an expression is transparent in a syntactic environment,
 relative to a context set, when conjoining it to any denotation of the expression's type changes
 the truth value at no world of the context. The local context of the expression is the least
-transparent restriction, and a presupposition is satisfied when its local context entails it. The
-incremental theory consults every good final of the string up to the expression, and the symmetric
-theory only the actual sentence. This file covers the propositional fragment of the paper's
-language after its Appendix C, its quantified clauses, the belief reports of its third section, and
-the comparison with supervaluations and Strong Kleene logic in the appendix of Schlenker's 2008
-manuscript, which the published appendix shortens.
+transparent restriction, and a presupposition is satisfied when its local context entails it. Each
+theory has two readings (`Reading`), which differ only in the finals they consult at a gap
+(`Reading.Finals`): the incremental reading consults every good final of the string up to the
+expression, and the symmetric reading only the sentence itself. Transparency and local satisfaction
+check a trigger's presupposition against the continuations of those finals (`continuations`), and
+Strong Kleene and supervaluation acceptability check the definedness of the sentences they complete
+(`Reading.completions`). This file covers the propositional fragment of the paper's language after
+its Appendix C, its quantified clauses, the belief reports of its third section, and the comparison
+with supervaluations and Strong Kleene logic in the appendix of Schlenker's 2008 manuscript, which
+the published appendix shortens.
 
 ## Main statements
 
-* `isLocalContext_goodFinals`: the incremental local context of every position is Karttunen's,
+* `isLocalContext_incremental`: the incremental local context of every position is Karttunen's,
   the global context except in a second argument, which takes the context updated with the first
   argument, or with its negation in a disjunction.
-* `satI_iff_transpI`, `satS_iff_transpS`, `satI_iff_admits`: satisfaction in the local context is
-  Transparency, and the incremental kind is admittance by Heim's context change potentials with
-  Beaver's disjunction.
+* `satisfaction_iff_transparency`, `satisfaction_incremental_iff_admits`: satisfaction in the
+  local context is Transparency on either reading, and on the incremental one it is admittance by
+  Heim's context change potentials with Beaver's disjunction.
 * `isLocalContext_believe`, `satisfied_believe_iff_admits`: the local context of the complement of
   *believe* pairs each world of the context with the worlds compatible with the agent's beliefs
   there, and it entails a presupposition iff the context admits the report under Heim's belief
   rule.
-* `kleeneI_iff_superI`, `TranspI.kleeneI`, `transpS_not_kleeneS_not_superS`: checked
-  incrementally, Kleene and supervaluation acceptability coincide and follow from Transparency,
-  and checked symmetrically, Transparency accepts a sentence that both reject.
+* `kleeneAcceptable_iff_superAcceptable_incremental`, `Transparency.kleeneAcceptable`,
+  `transparency_symmetric_not_kleeneAcceptable_not_superAcceptable`: on the incremental reading
+  Kleene and supervaluation acceptability coincide and follow from Transparency, and on the
+  symmetric reading Transparency accepts a sentence that both reject.
 * `transparent_scope_iff_universal`, `not_exists_isLocalContext_infinitelyMany`,
-  `scopeDefined_not_transparent_no`: in a quantified sentence Transparency gives universal
+  `transparentAt_not_transparent_no`: in a quantified sentence Transparency gives universal
   projection under Non-Triviality, the scope of *infinitely many* has no local context, and with
   *no* Strong Kleene accepts a sentence that Transparency rejects.
+* `QuantifiedClause.kleeneAcceptable_trigger_iff`: a clause with a final trigger is Kleene
+  acceptable iff the trigger is transparent at its assertion.
 
 ## Implementation notes
 
 * The gap's denotation ranges over all propositions, where the paper quantifies over the
   expressions that may fill the gap and assumes that every proposition is denoted.
 * The continuations a theory consults at a gap are the functions from the gap's truth set to the
-  sentence's, one for each good final for the incremental theory (`goodFinals`) and the actual
-  sentence's for the symmetric one. For the first argument of a conjunction or a disjunction the
-  connective follows the gap in the string and is itself free.
+  sentence's. For the first argument of a conjunction or a disjunction the connective follows the
+  gap in the string and is itself free. The incremental finals carry no trigger after the gap, as
+  the trivalent theories need (items 26a, 29a), which leaves Transparency's continuations those of
+  all good finals (`continuations_incremental`).
 * A trigger whose presupposition fails at a world may be resolved either way (`resolve`).
   Supervaluation resolves all tokens of a trigger alike (`SuperDefined`) and Kleene each token
-  separately (`TokenDefined`), which `tokenDefined_iff` shows is the Strong Kleene evaluation.
+  separately (`TokenDefined`), which `tokenDefined_iff` shows is the Strong Kleene evaluation. On
+  the symmetric reading both evaluate the sentence itself (`kleeneAcceptable_symmetric_iff`,
+  `superAcceptable_symmetric_iff`, items 26b and 29b).
 * The incremental Kleene and supervaluation results are proved by reducing acceptability to
-  entailment of the filtering presupposition (`kleeneI_iff`, `superI_iff`), not by the
-  manuscript's induction on the number of triggers.
+  entailment of the filtering presupposition (`kleeneAcceptable_incremental_iff`,
+  `superAcceptable_incremental_iff`), not by the manuscript's induction on the number of triggers.
+* In a quantified clause the incremental continuations after a restrictor are every predicate, by
+  Expressivity, while the clauses Kleene and supervaluation acceptability evaluate take formula
+  scopes, which a token resolution needs.
 
 ## TODO
 
@@ -80,106 +93,149 @@ variable {Atom W : Type*} (I : Atom → Set W)
 
 /-! ### Transparency and local satisfaction -/
 
-/-- The incremental theory consults at a gap one continuation for each good final (C.8.i, C.10). -/
-def goodFinals (K : SyntacticEnvironment Atom) : Set (Set W → Set W) :=
-  (·.truth I) '' {K' | K.SameInitialString K'}
+/-- The two readings of a theory of projection: the incremental reading consults every good final
+of the string up to an expression, and the symmetric reading only the sentence itself (C.8). -/
+inductive Reading where
+  | incremental
+  | symmetric
+  deriving DecidableEq
 
-/-- A formula satisfies incremental Transparency in `C` when at every trigger the presupposition is
-a transparent restriction for every good final (C.8.i). -/
-def TranspI (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ o ∈ F.occurrences, Transparent C (goodFinals I o.1) (I o.2.1)
+/-- The finals a reading consults at the gap of `K`: on the incremental reading each good final
+without triggers, which keeps the material of `K` before the gap (C.8.i; items 26a, 29a), and on
+the symmetric reading `K` itself (C.8.ii). -/
+def Reading.Finals : Reading → SyntacticEnvironment Atom → SyntacticEnvironment Atom → Prop
+  | .incremental, K, K' => K.SameInitialString K' ∧ K'.TriggerFreeFinal
+  | .symmetric, K, K' => K' = K
 
-/-- A formula satisfies symmetric Transparency in `C` when at every trigger the presupposition is a
-transparent restriction for the actual sentence (C.8.ii). -/
-def TranspS (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ o ∈ F.occurrences, Transparent C {o.1.truth I} (I o.2.1)
+/-- The continuations a reading consults at the gap of `K`, one for each final (C.10). -/
+def continuations (r : Reading) (K : SyntacticEnvironment Atom) : Set (Set W → Set W) :=
+  (·.truth I) '' {K' | r.Finals K K'}
 
-/-- Incremental local satisfaction holds of a formula in `C` when at every trigger the incremental
-local context entails the presupposition (C.17). -/
-def SatI (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ o ∈ F.occurrences, Satisfied C (goodFinals I o.1) (I o.2.1)
+/-- A formula satisfies Transparency in `C` on a reading when at every trigger the presupposition is
+a transparent restriction for the continuations the reading consults (C.8). -/
+def Transparency (r : Reading) (C : Set W) (F : Formula Atom) : Prop :=
+  ∀ o ∈ F.occurrences, Transparent C (continuations I r o.1) (I o.2.1)
 
-/-- Symmetric local satisfaction holds of a formula in `C` when at every trigger the symmetric local
-context entails the presupposition (C.17). -/
-def SatS (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ o ∈ F.occurrences, Satisfied C {o.1.truth I} (I o.2.1)
+/-- Local satisfaction holds of a formula in `C` on a reading when at every trigger the local
+context of the continuations the reading consults entails the presupposition (C.17). -/
+def Satisfaction (r : Reading) (C : Set W) (F : Formula Atom) : Prop :=
+  ∀ o ∈ F.occurrences, Satisfied C (continuations I r o.1) (I o.2.1)
 
-theorem isTruthFunctional_of_mem_goodFinals {K : SyntacticEnvironment Atom}
-    {f : Set W → Set W} (hf : f ∈ goodFinals I K) : IsTruthFunctional f := by
+theorem isTruthFunctional_of_mem_continuations {r : Reading} {K : SyntacticEnvironment Atom}
+    {f : Set W → Set W} (hf : f ∈ continuations I r K) : IsTruthFunctional f := by
   obtain ⟨K', -, rfl⟩ := hf
   exact SyntacticEnvironment.isTruthFunctional_truth I K'
 
-theorem isTruthFunctional_of_mem_singleton {K : SyntacticEnvironment Atom}
-    {f : Set W → Set W} (hf : f ∈ ({K.truth I} : Set (Set W → Set W))) : IsTruthFunctional f :=
-  hf ▸ SyntacticEnvironment.isTruthFunctional_truth I K
+/-- The symmetric reading consults the sentence's own continuation. -/
+@[simp] theorem continuations_symmetric (K : SyntacticEnvironment Atom) :
+    continuations I .symmetric K = {K.truth I} := by
+  simp [continuations, Reading.Finals]
+
+/-- The material after the gap of one step, locally accommodated. -/
+private def accommodateFinal : SyntacticEnvironment.Step Atom → SyntacticEnvironment.Step Atom
+  | .left c G => .left c G.accommodate
+  | s => s
+
+private theorem truth_map_accommodateFinal (K : SyntacticEnvironment Atom) (d : Set W) :
+    SyntacticEnvironment.truth I (K.map accommodateFinal) d = SyntacticEnvironment.truth I K d := by
+  induction K generalizing d with
+  | nil => rfl
+  | cons s K ih =>
+    simp only [List.map_cons, SyntacticEnvironment.truth]
+    rw [ih]
+    cases s <;> simp [accommodateFinal, SyntacticEnvironment.Step.truth]
+
+/-- Every good final gives the continuation of a good final without triggers, its local
+accommodation, so the incremental reading consults the continuations of all good finals. -/
+theorem continuations_incremental (K : SyntacticEnvironment Atom) :
+    continuations I .incremental K = (·.truth I) '' {K' | K.SameInitialString K'} := by
+  refine Set.Subset.antisymm (Set.image_mono fun _ h ↦ h.1) ?_
+  rintro _ ⟨K', hK, rfl⟩
+  refine ⟨K'.map accommodateFinal, ⟨List.forall₂_map_right_iff.2 (hK.imp fun _ _ h ↦ ?_),
+    fun c G hG ↦ ?_⟩, ?_⟩
+  · cases h with
+    | not => exact .not
+    | right c F => exact .right c F
+    | left hc G G' => exact .left hc G G'.accommodate
+  · obtain ⟨s, -, hs⟩ := List.mem_map.1 hG
+    cases s <;> simp only [accommodateFinal, reduceCtorEq,
+      SyntacticEnvironment.Step.left.injEq] at hs
+    obtain ⟨rfl, rfl⟩ := hs
+    exact Formula.occurrences_accommodate _
+  · exact funext (truth_map_accommodateFinal I K')
 
 /-! ### Local contexts in the propositional fragment -/
 
 /-- The incremental local context of any gap is [karttunen-1974-presupposition]'s (C.16 with
 §2.3). -/
-theorem isLocalContext_goodFinals [Nonempty Atom] (K : SyntacticEnvironment Atom) (C : Set W) :
-    IsLocalContext C (goodFinals I K) (K.localContext I C) := by
-  have h := isLocalContext_of_isTruthFunctional (C := C) (env := goodFinals I K) fun _ hf ↦
-    isTruthFunctional_of_mem_goodFinals I hf
-  rwa [show {w | ∃ f ∈ goodFinals I K, DependsAt f w} = K.localContext I Set.univ from
-    Set.ext fun w ↦ Set.exists_mem_image.trans
-      (SyntacticEnvironment.exists_dependsAt_iff I K w),
+theorem isLocalContext_incremental [Nonempty Atom] (K : SyntacticEnvironment Atom) (C : Set W) :
+    IsLocalContext C (continuations I .incremental K) (K.localContext I C) := by
+  have h := isLocalContext_of_isTruthFunctional (C := C) (env := continuations I .incremental K)
+    fun _ hf ↦ isTruthFunctional_of_mem_continuations I hf
+  rwa [show {w | ∃ f ∈ continuations I .incremental K, DependsAt f w} =
+      K.localContext I Set.univ from Set.ext fun w ↦ by
+    rw [continuations_incremental]
+    exact Set.exists_mem_image.trans (SyntacticEnvironment.exists_dependsAt_iff I K w),
     ← SyntacticEnvironment.localContext_eq_inter] at h
 
 /-- The first argument of a connective takes the global context, (18) and (27). -/
 theorem isLocalContext_left [Nonempty Atom] (c : Connective) (G : Formula Atom) (C : Set W) :
-    IsLocalContext C (goodFinals I [.left c G]) C :=
-  isLocalContext_goodFinals I _ C
+    IsLocalContext C (continuations I .incremental [.left c G]) C :=
+  isLocalContext_incremental I _ C
 
 /-- Negation is a hole, (21). -/
 theorem isLocalContext_not [Nonempty Atom] (C : Set W) :
-    IsLocalContext C (goodFinals I [(.not : SyntacticEnvironment.Step Atom)]) C :=
-  isLocalContext_goodFinals I _ C
+    IsLocalContext C (continuations I .incremental [(.not : SyntacticEnvironment.Step Atom)]) C :=
+  isLocalContext_incremental I _ C
 
 /-- The second argument of a conjunction or a conditional takes the context updated with the first,
 the second disjunct the context updated with the first's negation, (24), (30) and (33). -/
 theorem isLocalContext_right [Nonempty Atom] (c : Connective) (F : Formula Atom) (C : Set W) :
-    IsLocalContext C (goodFinals I [.right c F]) (c.localContext C (F.truth I)) :=
-  isLocalContext_goodFinals I _ C
+    IsLocalContext C (continuations I .incremental [.right c F]) (c.localContext C (F.truth I)) :=
+  isLocalContext_incremental I _ C
 
 /-- The symmetric local context of any gap is the worlds of the context at which the truth value
 of the actual sentence depends on the gap. -/
 theorem isLocalContext_symmetric (K : SyntacticEnvironment Atom) (C : Set W) :
-    IsLocalContext C {K.truth I} (C ∩ {w | DependsAt (K.truth I) w}) := by
+    IsLocalContext C (continuations I .symmetric K) (C ∩ {w | DependsAt (K.truth I) w}) := by
   simpa using isLocalContext_of_isTruthFunctional (C := C) fun _ hf ↦
-    isTruthFunctional_of_mem_singleton I hf
+    isTruthFunctional_of_mem_continuations I (r := .symmetric) hf
 
 /-! ### Transparency, satisfaction and dynamic semantics -/
 
-/-- Incremental local satisfaction is incremental Transparency (C.21). -/
-theorem satI_iff_transpI (C : Set W) (F : Formula Atom) : SatI I C F ↔ TranspI I C F :=
+/-- Local satisfaction is Transparency, on either reading (C.21). -/
+theorem satisfaction_iff_transparency (r : Reading) (C : Set W) (F : Formula Atom) :
+    Satisfaction I r C F ↔ Transparency I r C F :=
   forall₂_congr fun _ _ ↦
-    satisfied_iff_transparent (fun _ hf ↦ isTruthFunctional_of_mem_goodFinals I hf) _
+    satisfied_iff_transparent (fun _ hf ↦ isTruthFunctional_of_mem_continuations I hf) _
 
-/-- Symmetric local satisfaction is symmetric Transparency (C.21). -/
-theorem satS_iff_transpS (C : Set W) (F : Formula Atom) : SatS I C F ↔ TranspS I C F :=
-  forall₂_congr fun _ _ ↦
-    satisfied_iff_transparent (fun _ hf ↦ isTruthFunctional_of_mem_singleton I hf) _
-
-theorem TranspI.transpS {C : Set W} {F : Formula Atom} (h : TranspI I C F) : TranspS I C F :=
-  fun o ho ↦ (h o ho).anti <| Set.singleton_subset_iff.2 <|
-    Set.mem_image_of_mem (·.truth I) (SyntacticEnvironment.SameInitialString.refl o.1)
+/-- Incremental Transparency implies symmetric Transparency, since the sentence is one of its good
+finals. -/
+theorem Transparency.symmetric {C : Set W} {F : Formula Atom}
+    (h : Transparency I .incremental C F) : Transparency I .symmetric C F :=
+  fun o ho ↦ (h o ho).anti <| by
+    rw [continuations_symmetric, continuations_incremental, Set.singleton_subset_iff]
+    exact Set.mem_image_of_mem (·.truth I) (SyntacticEnvironment.SameInitialString.refl o.1)
 
 /-- Incremental satisfaction predicts presuppositions at least as strong as symmetric satisfaction
 (C.20). -/
-theorem SatI.satS {C : Set W} {F : Formula Atom} (h : SatI I C F) : SatS I C F :=
-  (satS_iff_transpS I C F).2 (TranspI.transpS I ((satI_iff_transpI I C F).1 h))
+theorem Satisfaction.symmetric {C : Set W} {F : Formula Atom}
+    (h : Satisfaction I .incremental C F) : Satisfaction I .symmetric C F :=
+  (satisfaction_iff_transparency I _ C F).2
+    (((satisfaction_iff_transparency I _ C F).1 h).symmetric I)
 
 /-- Incremental Transparency is admittance by the formula's context change potential, which updates
 the context to its worlds at which the formula is true (`Formula.ccp_get`; Theorem 1 of C.9). -/
-theorem transpI_iff_admits (C : Set W) (F : Formula Atom) :
-    TranspI I C F ↔ (F.ccp I).Admits C := by
+theorem transparency_incremental_iff_admits (C : Set W) (F : Formula Atom) :
+    Transparency I .incremental C F ↔ (F.ccp I).Admits C := by
   rw [Formula.admits_ccp_iff]
-  have henv {K : SyntacticEnvironment Atom} : ∀ f ∈ goodFinals I K, IsTruthFunctional f :=
-    fun _ hf ↦ isTruthFunctional_of_mem_goodFinals I hf
+  have henv {K : SyntacticEnvironment Atom} :
+      ∀ f ∈ continuations I .incremental K, IsTruthFunctional f :=
+    fun _ hf ↦ isTruthFunctional_of_mem_continuations I hf
   have hdep [Nonempty Atom] (K : SyntacticEnvironment Atom) (w : W) :
-      (∃ f ∈ goodFinals I K, DependsAt f w) ↔ w ∈ K.localContext I Set.univ :=
-    Set.exists_mem_image.trans (SyntacticEnvironment.exists_dependsAt_iff I K w)
+      (∃ f ∈ continuations I .incremental K, DependsAt f w) ↔ w ∈ K.localContext I Set.univ := by
+    rw [continuations_incremental]
+    exact Set.exists_mem_image.trans (SyntacticEnvironment.exists_dependsAt_iff I K w)
   refine ⟨fun h w hw ↦ (Formula.filter_ne_zero_iff I F w).2 fun o ho hl ↦ ?_,
     fun h o ho ↦ (transparent_iff_subset henv).2 fun w ⟨hw, hl⟩ ↦ ?_⟩
   · have : Nonempty Atom := ⟨o.2.1⟩
@@ -188,74 +244,73 @@ theorem transpI_iff_admits (C : Set W) (F : Formula Atom) :
     exact (Formula.filter_ne_zero_iff I F w).1 (h hw) o ho ((hdep o.1 w).1 hl)
 
 /-- Incremental satisfaction is admittance by the formula's context change potential (C.22). -/
-theorem satI_iff_admits (C : Set W) (F : Formula Atom) : SatI I C F ↔ (F.ccp I).Admits C :=
-  (satI_iff_transpI I C F).trans (transpI_iff_admits I C F)
+theorem satisfaction_incremental_iff_admits (C : Set W) (F : Formula Atom) :
+    Satisfaction I .incremental C F ↔ (F.ccp I).Admits C :=
+  (satisfaction_iff_transparency I _ C F).trans (transparency_incremental_iff_admits I C F)
 
 /-- Symmetric satisfaction requires each trigger's presupposition at the worlds of the context
 at which the truth value of the sentence depends on the trigger. -/
-theorem satS_iff (C : Set W) (F : Formula Atom) :
-    SatS I C F ↔ ∀ o ∈ F.occurrences, C ∩ {w | DependsAt (o.1.truth I) w} ⊆ I o.2.1 :=
+theorem satisfaction_symmetric_iff (C : Set W) (F : Formula Atom) :
+    Satisfaction I .symmetric C F ↔
+      ∀ o ∈ F.occurrences, C ∩ {w | DependsAt (o.1.truth I) w} ⊆ I o.2.1 :=
   forall₂_congr fun o _ ↦ satisfied_iff (isLocalContext_symmetric I o.1 C) _
 
 /-! ### Examples (§2.3) -/
 
 variable {p p' q q' : Atom} {C : Set W}
 
-/-- `(pp' and q)` and `(pp' or q)` presuppose `p`, (20). -/
-theorem satI_initial_iff {c : Connective} (hc : c ≠ .cond) :
-    SatI I C (.bin c (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
-  rw [satI_iff_admits, Formula.admits_ccp_iff]
+/-- On the incremental theory `(pp' and q)` and `(pp' or q)` presuppose `p`, (20). -/
+theorem satisfaction_incremental_initial_iff {c : Connective} (hc : c ≠ .cond) :
+    Satisfaction I .incremental C (.bin c (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
+  rw [satisfaction_incremental_iff_admits, Formula.admits_ccp_iff]
   cases c <;> simp_all [Set.subset_def, Formula.filter, Formula.eval]
 
-/-- `(not pp')` presupposes `p`, (23). -/
-theorem satI_not_iff : SatI I C (.not (.trigger p p')) ↔ C ⊆ I p := by
-  rw [satI_iff_admits, Formula.admits_ccp_iff]
+/-- On the incremental theory `(not pp')` presupposes `p`, (23). -/
+theorem satisfaction_incremental_not_iff :
+    Satisfaction I .incremental C (.not (.trigger p p')) ↔ C ⊆ I p := by
+  rw [satisfaction_incremental_iff_admits, Formula.admits_ccp_iff]
   simp [Set.subset_def, Formula.filter, Formula.eval]
 
-/-- `(p and qq')` presupposes `(if p . q)`, (26). -/
-theorem satI_and_iff :
-    SatI I C (.bin .conj (.atom p) (.trigger q q')) ↔
+/-- On the incremental theory `(if pp' . q)` presupposes `p`, (29). -/
+theorem satisfaction_incremental_if_iff :
+    Satisfaction I .incremental C (.bin .cond (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
+  rw [satisfaction_incremental_iff_admits, Formula.admits_ccp_iff]
+  simp [Set.subset_def, Formula.filter, Formula.eval]
+
+/-- On the incremental theory `(if p . qq')` presupposes `(if p . q)`, (32). -/
+theorem satisfaction_incremental_then_iff :
+    Satisfaction I .incremental C (.bin .cond (.atom p) (.trigger q q')) ↔
       C ⊆ (Formula.bin .cond (.atom p) (.atom q)).truth I := by
-  rw [satI_iff_admits, Formula.admits_ccp_iff]
+  rw [satisfaction_incremental_iff_admits, Formula.admits_ccp_iff]
   simp [Set.subset_def, Formula.filter, Formula.truth, Formula.eval, Connective.eval]
 
-/-- `(if pp' . q)` presupposes `p`, (29). -/
-theorem satI_if_iff : SatI I C (.bin .cond (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
-  rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter, Formula.eval]
+/-! ### A trigger alone, and conjunction on both readings -/
 
-/-- `(if p . qq')` presupposes `(if p . q)`, (32). -/
-theorem satI_then_iff :
-    SatI I C (.bin .cond (.atom p) (.trigger q q')) ↔
-      C ⊆ (Formula.bin .cond (.atom p) (.atom q)).truth I := by
-  rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter, Formula.truth, Formula.eval, Connective.eval]
+/-- A trigger standing alone presupposes `p` on either reading. -/
+theorem satisfaction_trigger_iff (r : Reading) :
+    Satisfaction I r C (.trigger p p') ↔ C ⊆ I p := by
+  cases r
+  · rw [satisfaction_incremental_iff_admits, Formula.admits_ccp_iff]
+    simp [Set.subset_def, Formula.filter, Formula.eval]
+  · simp [satisfaction_symmetric_iff, Formula.occurrences, SyntacticEnvironment.truth, DependsAt]
 
-/-! ### A trigger alone, and symmetric conjunction -/
-
-/-- A trigger standing alone presupposes `p` on the incremental theory. -/
-theorem satI_trigger_iff : SatI I C (.trigger p p') ↔ C ⊆ I p := by
-  rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter, Formula.eval]
-
-/-- A trigger standing alone presupposes `p` on the symmetric theory. -/
-theorem satS_trigger_iff : SatS I C (.trigger p p') ↔ C ⊆ I p := by
-  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, DependsAt]
+/-- `(q and pp')` presupposes `(if q . p)` on either reading, (26). -/
+theorem satisfaction_and_right_iff (r : Reading) :
+    Satisfaction I r C (.bin .conj (.atom q) (.trigger p p')) ↔
+      C ⊆ (Formula.bin .cond (.atom q) (.atom p)).truth I := by
+  cases r
+  · rw [satisfaction_incremental_iff_admits, Formula.admits_ccp_iff]
+    simp [Set.subset_def, Formula.filter, Formula.truth, Formula.eval, Connective.eval]
+  · simp [satisfaction_symmetric_iff, Formula.occurrences, SyntacticEnvironment.truth,
+      SyntacticEnvironment.Step.truth, DependsAt, Connective.eval, Formula.truth, Set.subset_def]
 
 /-- On the symmetric theory `(pp' and q)` presupposes `(if q . p)`, since the local context of a
 conjunct is the context updated with the other conjunct, whichever comes first. -/
-theorem satS_and_left_iff :
-    SatS I C (.bin .conj (.trigger p p') (.atom q)) ↔
+theorem satisfaction_symmetric_and_left_iff :
+    Satisfaction I .symmetric C (.bin .conj (.trigger p p') (.atom q)) ↔
       C ⊆ (Formula.bin .cond (.atom q) (.atom p)).truth I := by
-  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth,
-    DependsAt, Connective.eval, Formula.truth, Set.subset_def]
-
-/-- On the symmetric theory `(q and pp')` presupposes `(if q . p)`, as on the incremental one. -/
-theorem satS_and_right_iff :
-    SatS I C (.bin .conj (.atom q) (.trigger p p')) ↔
-      C ⊆ (Formula.bin .cond (.atom q) (.atom p)).truth I := by
-  simp [satS_iff, Formula.occurrences, SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth,
-    DependsAt, Connective.eval, Formula.truth, Set.subset_def]
+  simp [satisfaction_symmetric_iff, Formula.occurrences, SyntacticEnvironment.truth,
+    SyntacticEnvironment.Step.truth, DependsAt, Connective.eval, Formula.truth, Set.subset_def]
 
 /-! ### Belief reports (§3.1.2) -/
 
@@ -310,11 +365,11 @@ variable {king son bald : W → Prop}
 
 /-- For *if the king has a son, the king's son is bald*, incremental satisfaction is admittance by
 Heim's context change potential, both holding iff the context entails a king. -/
-theorem satI_king_iff_admits {k s ks b : Atom} (hk : I k = {w | king w}) (hs : I s = {w | son w})
-    (hks : I ks = {w | king w ∧ son w}) (C : Set W) :
-    SatI I C (.bin .cond (.trigger k s) (.trigger ks b)) ↔
+theorem satisfaction_incremental_king_iff_admits {k s ks b : Atom} (hk : I k = {w | king w})
+    (hs : I s = {w | son w}) (hks : I ks = {w | king w ∧ son w}) (C : Set W) :
+    Satisfaction I .incremental C (.bin .cond (.trigger k s) (.trigger ks b)) ↔
       (ifKingHasSon king son bald).Admits C := by
-  rw [satI_iff_admits, king_admits_iff, Formula.admits_ccp_iff]
+  rw [satisfaction_incremental_iff_admits, king_admits_iff, Formula.admits_ccp_iff]
   simp [Formula.filter, Formula.eval, hk, hs, hks, Set.subset_def]
 
 /-! ### Strong Kleene and supervaluations (items 24–41 of [schlenker-2008b]) -/
@@ -342,26 +397,46 @@ def SuperDefined (w : W) (F : Formula Atom) : Prop :=
 def TokenDefined (w : W) (F : Formula Atom) : Prop :=
   ∀ ρ ρ', resolve I w ρ [] F ↔ resolve I w ρ' [] F
 
-/-- Symmetric Kleene acceptability, by the Strong Kleene evaluation of item 40, which Theorem 41
-(`tokenDefined_iff`) shows equivalent to items 27–28 (item 29b). -/
-def KleeneS (C : Set W) (F : Formula Atom) : Prop := C ⊆ Function.support (F.strong I)
+/-- The sentences a reading evaluates: the string up to each trigger completed by each final the
+reading consults, which on the symmetric reading is the sentence itself (items 26, 29). -/
+def Reading.completions (r : Reading) (F : Formula Atom) : Set (Formula Atom) :=
+  {X | ∃ o ∈ F.occurrences, ∃ K', r.Finals o.1 K' ∧ X = K'.fill (.trigger o.2.1 o.2.2)}
 
-/-- Symmetric supervaluation acceptability (item 26b). -/
-def SuperS (C : Set W) (F : Formula Atom) : Prop := ∀ w ∈ C, SuperDefined I w F
+/-- Kleene acceptability on a reading: every sentence the reading evaluates has a Strong Kleene
+value at every world of `C`, by the evaluation of item 40, which Theorem 41 (`tokenDefined_iff`)
+shows equivalent to items 27–28 (item 29). -/
+def KleeneAcceptable (r : Reading) (C : Set W) (F : Formula Atom) : Prop :=
+  ∀ w ∈ C, ∀ X ∈ r.completions F, X.strong I w ≠ 0
+
+/-- Supervaluation acceptability on a reading: every sentence the reading evaluates is
+super-defined at every world of `C` (item 26). -/
+def SuperAcceptable (r : Reading) (C : Set W) (F : Formula Atom) : Prop :=
+  ∀ w ∈ C, ∀ X ∈ r.completions F, SuperDefined I w X
+
+theorem forall_mem_completions {r : Reading} {F : Formula Atom} {P : Formula Atom → Prop} :
+    (∀ X ∈ r.completions F, P X) ↔
+      ∀ o ∈ F.occurrences, ∀ K', r.Finals o.1 K' → P (K'.fill (.trigger o.2.1 o.2.2)) :=
+  ⟨fun h o ho K' hK ↦ h _ ⟨o, ho, K', hK, rfl⟩, fun h _ ⟨o, ho, K', hK, hX⟩ ↦ hX ▸ h o ho K' hK⟩
+
+/-- The symmetric reading evaluates the sentence itself, if it holds a trigger. -/
+theorem forall_mem_completions_symmetric {F : Formula Atom} {P : Formula Atom → Prop} :
+    (∀ X ∈ Reading.symmetric.completions F, P X) ↔ (F.occurrences ≠ [] → P F) := by
+  simp only [forall_mem_completions, Reading.Finals, forall_eq]
+  refine ⟨fun h hF ↦ ?_, fun h o ho ↦ ?_⟩
+  · obtain ⟨o, ho⟩ := List.exists_mem_of_ne_nil _ hF
+    simpa [Formula.fill_of_mem_occurrences ho] using h o ho
+  · rw [Formula.fill_of_mem_occurrences ho]
+    exact h (List.ne_nil_of_mem ho)
 
 /-- A property holds of `F` incrementally when it holds of the string up to each trigger completed
-by any good final without triggers (items 26a, 29a). -/
-def Incrementally (P : Formula Atom → Prop) (F : Formula Atom) : Prop :=
+by any good final without triggers. -/
+private def Incrementally (P : Formula Atom → Prop) (F : Formula Atom) : Prop :=
   ∀ o ∈ F.occurrences, ∀ K', o.1.SameInitialString K' → K'.TriggerFreeFinal →
     P (K'.fill (.trigger o.2.1 o.2.2))
 
-/-- Incremental Kleene acceptability (item 29a). -/
-def KleeneI (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ w ∈ C, Incrementally (fun X ↦ X.strong I w ≠ 0) F
-
-/-- Incremental supervaluation acceptability (item 26a). -/
-def SuperI (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ w ∈ C, Incrementally (SuperDefined I w) F
+private theorem forall_mem_completions_incremental {F : Formula Atom} {P : Formula Atom → Prop} :
+    (∀ X ∈ Reading.incremental.completions F, P X) ↔ Incrementally P F :=
+  forall_mem_completions.trans (forall₂_congr fun _ _ ↦ forall_congr' fun _ ↦ and_imp)
 
 /-! #### Resolutions -/
 
@@ -569,45 +644,30 @@ theorem superDefined_iff_of_nodup {F : Formula Atom} (hF : (F.occurrences.map Pr
   rw [key ρ, key ρ']
   exact hs _ _
 
-/-- Symmetric Kleene acceptability implies symmetric super-acceptability (Lemma 8, item 32). -/
-theorem KleeneS.superS {C : Set W} {F : Formula Atom} (h : KleeneS I C F) : SuperS I C F :=
-  fun _ hw ↦ superDefined_of_strong_ne_zero I (h hw)
-
-/-- Incremental Kleene acceptability implies incremental super-acceptability (Lemma 8, item 32). -/
-theorem KleeneI.superI {C : Set W} {F : Formula Atom} (h : KleeneI I C F) : SuperI I C F :=
-  fun w hw o ho K' hK hT ↦ superDefined_of_strong_ne_zero I (h w hw o ho K' hK hT)
-
-/-- `(pp' or (not pp'))` is symmetrically super-acceptable in the set of all worlds, but not
-Kleene-acceptable there when `p` is not a tautology (Lemma 11, item 37). -/
-theorem superS_not_kleeneS {p p' : Atom} {w₀ : W} (hw₀ : w₀ ∉ I p) :
-    SuperS I Set.univ (.bin .disj (.trigger p p') (.not (.trigger p p'))) ∧
-      ¬ KleeneS I Set.univ (.bin .disj (.trigger p p') (.not (.trigger p p'))) := by
-  refine ⟨fun w _ σ σ' ↦ ?_, fun h ↦ ?_⟩
-  · simp only [resolve, Connective.eval]
-    tauto
-  · have h₀ : Formula.strong I (.bin .disj (.trigger p p') (.not (.trigger p p'))) w₀ ≠ 0 :=
-      h (Set.mem_univ w₀)
-    simp [Formula.strong, Formula.eval, hw₀] at h₀
+/-- Kleene acceptability implies super-acceptability on either reading (Lemma 8, item 32). -/
+theorem KleeneAcceptable.superAcceptable {r : Reading} {C : Set W} {F : Formula Atom}
+    (h : KleeneAcceptable I r C F) : SuperAcceptable I r C F :=
+  fun w hw X hX ↦ superDefined_of_strong_ne_zero I (h w hw X hX)
 
 /-! #### Incremental acceptability -/
 
-theorem Incrementally.congr {P Q : Formula Atom → Prop} (h : ∀ X, P X ↔ Q X)
+private theorem Incrementally.congr {P Q : Formula Atom → Prop} (h : ∀ X, P X ↔ Q X)
     {F : Formula Atom} : Incrementally P F ↔ Incrementally Q F :=
   forall₂_congr fun _ _ ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦ imp_congr_right fun _ ↦
     h _
 
-theorem incrementally_atom (P : Formula Atom → Prop) (p : Atom) :
+private theorem incrementally_atom (P : Formula Atom → Prop) (p : Atom) :
     Incrementally P (.atom p) := by
   simp [Incrementally, Formula.occurrences]
 
-theorem incrementally_trigger {P : Formula Atom → Prop} {p p' : Atom} :
+private theorem incrementally_trigger {P : Formula Atom → Prop} {p p' : Atom} :
     Incrementally P (.trigger p p') ↔ P (.trigger p p') := by
   simp only [Incrementally, Formula.occurrences, List.mem_singleton, forall_eq]
   refine ⟨fun h ↦ h [] (.refl []) fun _ _ h ↦ by simp at h, fun h K' hK _ ↦ ?_⟩
   cases hK
   exact h
 
-theorem incrementally_not {P : Formula Atom → Prop} {F : Formula Atom} :
+private theorem incrementally_not {P : Formula Atom → Prop} {F : Formula Atom} :
     Incrementally P (.not F) ↔ Incrementally (fun X ↦ P (.not X)) F := by
   simp only [Incrementally, Formula.occurrences, List.forall_mem_map]
   refine forall₂_congr fun o _ ↦ ⟨fun h K' hK hT ↦ ?_, fun h K' hK hT ↦ ?_⟩
@@ -622,7 +682,7 @@ theorem incrementally_not {P : Formula Atom → Prop} {F : Formula Atom} :
     rw [SyntacticEnvironment.fill_append]
     exact h K'' hK'' (SyntacticEnvironment.triggerFreeFinal_append.1 hT).1
 
-theorem incrementally_bin {P : Formula Atom → Prop} {c : Connective} {F G : Formula Atom} :
+private theorem incrementally_bin {P : Formula Atom → Prop} {c : Connective} {F G : Formula Atom} :
     Incrementally P (.bin c F G) ↔
       Incrementally (fun X ↦ ∀ c' G', (c = .cond ↔ c' = .cond) → G'.occurrences = [] →
         P (.bin c' X G')) F ∧ Incrementally (fun Y ↦ P (.bin c F Y)) G := by
@@ -700,7 +760,7 @@ private theorem strong_ne_zero (c : Connective) {a b : SignType} (ha : a ≠ 0) 
   revert ha hb; cases c <;> cases a <;> cases b <;> decide
 
 /-- Incremental Strong Kleene definedness is the filtering presupposition. -/
-theorem incrementally_strong_iff (w : W) (F : Formula Atom) :
+private theorem incrementally_strong_iff (w : W) (F : Formula Atom) :
     Incrementally (fun X ↦ X.strong I w ≠ 0) F ↔ F.filter I w ≠ 0 := by
   refine incrementally_iff_filter I _ (fun _ _ ↦ by simp [Formula.strong, Formula.eval])
     (fun _ ↦ by simp [Formula.strong, Formula.eval]) (fun c X ↦ ?_) (fun c F Y hF ↦ ?_) F
@@ -720,7 +780,7 @@ theorem incrementally_strong_iff (w : W) (F : Formula Atom) :
       simp [Formula.strong, Formula.eval, Connective.localContext, hF', ht]
 
 /-- Incremental supervaluation definedness is the filtering presupposition. -/
-theorem incrementally_superDefined_iff (w : W) (F : Formula Atom) :
+private theorem incrementally_superDefined_iff (w : W) (F : Formula Atom) :
     Incrementally (SuperDefined I w) F ↔ F.filter I w ≠ 0 := by
   have hconst (σ : Atom → Atom → Prop) (K : SyntacticEnvironment Atom) (X : Formula Atom) :=
     resolve_const I (w := w) σ K [] X
@@ -763,56 +823,95 @@ theorem incrementally_superDefined_iff (w : W) (F : Formula Atom) :
 
 /-- Incremental Kleene acceptability is entailment of the filtering presupposition, the route by
 which Theorems 36 and 38a are proved here. -/
-theorem kleeneI_iff (C : Set W) (F : Formula Atom) :
-    KleeneI I C F ↔ C ⊆ Function.support (F.filter I) :=
-  forall₂_congr fun w _ ↦ incrementally_strong_iff I w F
+theorem kleeneAcceptable_incremental_iff (C : Set W) (F : Formula Atom) :
+    KleeneAcceptable I .incremental C F ↔ C ⊆ Function.support (F.filter I) :=
+  forall₂_congr fun w _ ↦ forall_mem_completions_incremental.trans (incrementally_strong_iff I w F)
 
 /-- Incremental super-acceptability is entailment of the filtering presupposition. -/
-theorem superI_iff (C : Set W) (F : Formula Atom) :
-    SuperI I C F ↔ C ⊆ Function.support (F.filter I) :=
-  forall₂_congr fun w _ ↦ incrementally_superDefined_iff I w F
+theorem superAcceptable_incremental_iff (C : Set W) (F : Formula Atom) :
+    SuperAcceptable I .incremental C F ↔ C ⊆ Function.support (F.filter I) :=
+  forall₂_congr fun w _ ↦
+    forall_mem_completions_incremental.trans (incrementally_superDefined_iff I w F)
+
+/-- Symmetric Kleene acceptability is Strong Kleene definedness of the sentence (item 29b). -/
+theorem kleeneAcceptable_symmetric_iff (C : Set W) (F : Formula Atom) :
+    KleeneAcceptable I .symmetric C F ↔ C ⊆ Function.support (F.strong I) := by
+  simp only [Set.subset_def, Function.mem_support]
+  refine forall₂_congr fun w _ ↦ forall_mem_completions_symmetric.trans ⟨fun h ↦ ?_, fun h _ ↦ h⟩
+  by_cases hF : F.occurrences = []
+  · simp [strong_eq_ofProp_of_filter_ne_zero I (filter_ne_zero_of_occurrences I (w := w) hF)]
+  · exact h hF
+
+/-- Symmetric super-acceptability is super-definedness of the sentence (item 26b). -/
+theorem superAcceptable_symmetric_iff (C : Set W) (F : Formula Atom) :
+    SuperAcceptable I .symmetric C F ↔ ∀ w ∈ C, SuperDefined I w F := by
+  refine forall₂_congr fun w _ ↦ forall_mem_completions_symmetric.trans ⟨fun h ↦ ?_, fun h _ ↦ h⟩
+  by_cases hF : F.occurrences = []
+  · refine superDefined_of_strong_ne_zero I ?_
+    simp [strong_eq_ofProp_of_filter_ne_zero I (filter_ne_zero_of_occurrences I (w := w) hF)]
+  · exact h hF
 
 /-- Incremental Kleene acceptability is incremental super-acceptability (Theorem 36, item 36). -/
-theorem kleeneI_iff_superI (C : Set W) (F : Formula Atom) : KleeneI I C F ↔ SuperI I C F :=
-  (kleeneI_iff I C F).trans (superI_iff I C F).symm
+theorem kleeneAcceptable_iff_superAcceptable_incremental (C : Set W) (F : Formula Atom) :
+    KleeneAcceptable I .incremental C F ↔ SuperAcceptable I .incremental C F :=
+  (kleeneAcceptable_incremental_iff I C F).trans (superAcceptable_incremental_iff I C F).symm
 
 /-- As item 20 notes for every theory, incremental Kleene acceptability implies symmetric Kleene
 acceptability. -/
-theorem KleeneI.kleeneS {C : Set W} {F : Formula Atom} (h : KleeneI I C F) : KleeneS I C F :=
-  fun _ hw ↦ by simp [strong_eq_ofProp_of_filter_ne_zero I ((kleeneI_iff I C F).1 h hw)]
+theorem KleeneAcceptable.symmetric {C : Set W} {F : Formula Atom}
+    (h : KleeneAcceptable I .incremental C F) : KleeneAcceptable I .symmetric C F :=
+  (kleeneAcceptable_symmetric_iff I C F).2 fun _ hw ↦ by
+    simp [strong_eq_ofProp_of_filter_ne_zero I ((kleeneAcceptable_incremental_iff I C F).1 h hw)]
 
 /-- As item 20 notes for every theory, incremental super-acceptability implies symmetric
 super-acceptability. -/
-theorem SuperI.superS {C : Set W} {F : Formula Atom} (h : SuperI I C F) : SuperS I C F :=
-  KleeneS.superS I (KleeneI.kleeneS I ((kleeneI_iff_superI I C F).2 h))
+theorem SuperAcceptable.symmetric {C : Set W} {F : Formula Atom}
+    (h : SuperAcceptable I .incremental C F) : SuperAcceptable I .symmetric C F :=
+  (((kleeneAcceptable_iff_superAcceptable_incremental I C F).2 h).symmetric I).superAcceptable I
 
 /-- Incremental Transparency implies incremental Kleene and supervaluation acceptability (Theorem
 38a, item 38). -/
-theorem TranspI.kleeneI {C : Set W} {F : Formula Atom} (h : TranspI I C F) :
-    KleeneI I C F ∧ SuperI I C F :=
-  have hK := (kleeneI_iff I C F).2 (Formula.admits_ccp_iff I |>.1 ((transpI_iff_admits I C F).1 h))
-  ⟨hK, (kleeneI_iff_superI I C F).1 hK⟩
+theorem Transparency.kleeneAcceptable {C : Set W} {F : Formula Atom}
+    (h : Transparency I .incremental C F) :
+    KleeneAcceptable I .incremental C F ∧ SuperAcceptable I .incremental C F :=
+  have hK := (kleeneAcceptable_incremental_iff I C F).2
+    (Formula.admits_ccp_iff I |>.1 ((transparency_incremental_iff_admits I C F).1 h))
+  ⟨hK, (kleeneAcceptable_iff_superAcceptable_incremental I C F).1 hK⟩
 
 /-- With a world where `p` and `q` fail and one where both hold, `(pp' and qq')` satisfies symmetric
 Transparency but is neither Kleene- nor super-acceptable (Theorem 39a, item 39). -/
-theorem transpS_not_kleeneS_not_superS {p p' q q' : Atom} {w₁ w₂ : W} (hp₁ : w₁ ∉ I p)
-    (hq₁ : w₁ ∉ I q) (hp₂ : w₂ ∈ I p) (hq₂ : w₂ ∈ I q) :
-    TranspS I {w₁, w₂} (.bin .conj (.trigger p p') (.trigger q q')) ∧
-      ¬ KleeneS I {w₁, w₂} (.bin .conj (.trigger p p') (.trigger q q')) ∧
-      ¬ SuperS I {w₁, w₂} (.bin .conj (.trigger p p') (.trigger q q')) := by
+theorem transparency_symmetric_not_kleeneAcceptable_not_superAcceptable {p p' q q' : Atom}
+    {w₁ w₂ : W} (hp₁ : w₁ ∉ I p) (hq₁ : w₁ ∉ I q) (hp₂ : w₂ ∈ I p) (hq₂ : w₂ ∈ I q) :
+    Transparency I .symmetric {w₁, w₂} (.bin .conj (.trigger p p') (.trigger q q')) ∧
+      ¬ KleeneAcceptable I .symmetric {w₁, w₂} (.bin .conj (.trigger p p') (.trigger q q')) ∧
+      ¬ SuperAcceptable I .symmetric {w₁, w₂} (.bin .conj (.trigger p p') (.trigger q q')) := by
   refine ⟨fun o ho f hf d w hw ↦ ?_, fun h ↦ ?_, fun h ↦ ?_⟩
   · simp only [Formula.occurrences, List.map_cons, List.map_nil, List.nil_append,
       List.singleton_append, List.mem_cons, List.not_mem_nil, or_false] at ho
-    rw [Set.mem_singleton_iff] at hf
+    rw [continuations_symmetric, Set.mem_singleton_iff] at hf
     subst hf
     rcases hw with rfl | rfl <;> rcases ho with rfl | rfl <;>
       simp [SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth, Connective.eval,
         Formula.truth, hp₁, hq₁, hp₂, hq₂]
   · have h₁ : Formula.strong I (.bin .conj (.trigger p p') (.trigger q q')) w₁ ≠ 0 :=
-      h (Set.mem_insert w₁ _)
+      (kleeneAcceptable_symmetric_iff I _ _).1 h (Set.mem_insert w₁ _)
     simp [Formula.strong, Formula.eval, hp₁, hq₁] at h₁
-  · have := h w₁ (Set.mem_insert _ _) (fun _ _ ↦ True) (fun _ _ ↦ False)
+  · have := (superAcceptable_symmetric_iff I _ _).1 h w₁ (Set.mem_insert _ _)
+      (fun _ _ ↦ True) (fun _ _ ↦ False)
     simp [resolve, Connective.eval, hp₁, hq₁] at this
+
+/-- `(pp' or (not pp'))` is symmetrically super-acceptable in the set of all worlds, but not
+Kleene-acceptable there when `p` is not a tautology (Lemma 11, item 37). -/
+theorem superAcceptable_symmetric_not_kleeneAcceptable {p p' : Atom} {w₀ : W} (hw₀ : w₀ ∉ I p) :
+    SuperAcceptable I .symmetric Set.univ (.bin .disj (.trigger p p') (.not (.trigger p p'))) ∧
+      ¬ KleeneAcceptable I .symmetric Set.univ
+        (.bin .disj (.trigger p p') (.not (.trigger p p'))) := by
+  refine ⟨(superAcceptable_symmetric_iff I _ _).2 fun w _ σ σ' ↦ ?_, fun h ↦ ?_⟩
+  · simp only [resolve, Connective.eval]
+    tauto
+  · have h₀ : Formula.strong I (.bin .disj (.trigger p p') (.not (.trigger p p'))) w₀ ≠ 0 :=
+      (kleeneAcceptable_symmetric_iff I _ _).1 h (Set.mem_univ w₀)
+    simp [Formula.strong, Formula.eval, hw₀] at h₀
 
 end Trivalent
 
@@ -834,31 +933,6 @@ theorem transparent_scope_iff_universal [Finite E]
     Transparent C {scopeTruth q A} P ↔ ∀ w ∈ C, ∀ e, A w e → (w, e) ∈ P := by
   rw [transparent_scopeTruth_iff]
   exact ⟨fun h w hw ↦ h w hw (hNT w hw), fun h w hw _ ↦ h w hw⟩
-
-/-- `(Q A. _)`, with a scope that presupposes `π` and asserts `a`, is defined at `w` when every
-resolution of the scope's undefined individuals gives the sentence the same value (items 25 and
-27–28; with one trigger, Kleene and supervaluation definedness coincide). -/
-def ScopeDefined (q : NumberTree) (A : W → E → Prop) (π a : Set (W × E)) (w : W) : Prop :=
-  ∀ D D' : E → Prop, (∀ e, (w, e) ∈ π → (D e ↔ (w, e) ∈ a)) →
-    (∀ e, (w, e) ∈ π → (D' e ↔ (w, e) ∈ a)) → (q.toGQ (A w) D ↔ q.toGQ (A w) D')
-
-/-- A presupposition in the nuclear scope is transparent iff the sentence is defined at every world
-of the context whatever the scope asserts. Transparency quantifies over the assertion that Kleene
-and supervaluation acceptability hold fixed. -/
-theorem transparent_scopeTruth_iff_forall_scopeDefined :
-    Transparent C {scopeTruth q A} P ↔ ∀ a, ∀ w ∈ C, ScopeDefined q A P a w := by
-  classical
-  rw [transparent_iff_dependsOn]
-  simp only [Set.mem_singleton_iff, forall_eq]
-  refine ⟨fun h a w hw D D' hD hD' ↦ Iff.of_eq ?_, fun h w hw d d' hd ↦ propext ?_⟩
-  · have := h w hw (x := {p | p.1 = w ∧ D p.2}) (y := {p | p.1 = w ∧ D' p.2})
-      fun ⟨u, e⟩ hp ↦ by
-        by_cases hu : u = w
-        · subst hu
-          exact propext (and_congr_right fun _ ↦ (hD e hp).trans (hD' e hp).symm)
-        · exact propext ⟨fun h ↦ (hu h.1).elim, fun h ↦ (hu h.1).elim⟩
-    simpa [scopeTruth] using this
-  · exact h d w hw _ _ (fun _ _ ↦ Iff.rfl) fun e he ↦ Iff.of_eq (hd (w, e) he).symm
 
 /-- The truth set of `(Infinitely-many P. _)` at a single world where every natural number is a
 `P`, as a function of its scope. -/
@@ -886,15 +960,17 @@ theorem not_exists_isLocalContext_infinitelyMany :
   simp [infinitelyMany, Set.infinite_univ] at this
 
 /-- With one world and two individuals, the first not `Q` and the second `Q` and `Q'`, the sentence
-`(No P. QQ')` is false however the first individual is resolved, so it is Kleene and supervaluation
-acceptable, but Transparency rejects it, since for a scope false of the second individual the
-first decides (Theorems 38b and 39b; the trigger is final, so the incremental and symmetric
-versions coincide). -/
-theorem scopeDefined_not_transparent_no :
-    ScopeDefined NumberTree.no (fun _ _ ↦ True) {p : Unit × Fin 2 | p.2 = 1} Set.univ () ∧
+`(No P. QQ')` is false however the first individual is resolved, so the trigger is transparent at
+its assertion and the sentence is Kleene and supervaluation acceptable
+(`QuantifiedClause.kleeneAcceptable_trigger_iff`), but Transparency rejects it, since for a scope
+false of the second individual the first decides (Theorems 38b and 39b; the trigger is final, so the
+incremental and symmetric versions coincide). -/
+theorem transparentAt_not_transparent_no :
+    TransparentAt {()} {scopeTruth NumberTree.no fun (_ : Unit) (_ : Fin 2) ↦ True}
+        {p | p.2 = 1} Set.univ ∧
       ¬ Transparent {()} {scopeTruth NumberTree.no fun (_ : Unit) (_ : Fin 2) ↦ True}
         {p | p.2 = 1} := by
-  refine ⟨fun D D' hD hD' ↦ ?_, fun h ↦ ?_⟩
+  refine ⟨transparentAt_scopeTruth_iff.2 fun _ _ D D' hD hD' ↦ ?_, fun h ↦ ?_⟩
   · have h1 : D 1 := (hD 1 rfl).2 trivial
     have h1' : D' 1 := (hD' 1 rfl).2 trivial
     simp only [NumberTree.toGQ_apply, NumberTree.no, true_and]
@@ -919,51 +995,189 @@ variable {E : Type*} (J : Atom → Set (W × E)) {C : Set W} {c : QuantifiedClau
 
 namespace QuantifiedClause
 
-/-- The incremental theory consults at a gap of a quantified clause each good final of the gap's
-argument inside each good final of the clause, namely any scope after a restrictor and the given
-restrictor before a scope. -/
-def goodFinals (k : QuantifiedClause.Env Atom) : Set (Set (W × E) → Set W) :=
-  Set.image2 (· ∘ ·) (k.arg.finals J k.quantifier) (Schlenker2009.goodFinals J k.inner)
+/-- The continuations a reading consults at a gap of a quantified clause. On the incremental reading
+they are each good final of the gap's argument inside each good final of the clause: any scope after
+a restrictor and the given restrictor before a scope. After a restrictor every predicate is a scope,
+as Expressivity has it, where `QuantifiedClause.Finals` consults the scopes that formulas denote. On
+the symmetric reading the continuation is the clause's own. -/
+def continuations : Reading → QuantifiedClause.Env Atom → Set (Set (W × E) → Set W)
+  | .incremental, k => Set.image2 (· ∘ ·) (k.arg.finals J k.quantifier)
+      (Schlenker2009.continuations J .incremental k.inner)
+  | .symmetric, k => {k.truth J}
 
-/-- Incremental Transparency holds for a quantified clause when at every trigger the
-presupposition is a transparent restriction for every good final. -/
-def TranspI (C : Set W) (c : QuantifiedClause Atom) : Prop :=
-  ∀ o ∈ c.occurrences, Transparent C (goodFinals J o.1) (J o.2.1)
+/-- A clause satisfies Transparency in `C` on a reading when at every trigger the presupposition is
+a transparent restriction for the continuations the reading consults. -/
+def Transparency (r : Reading) (C : Set W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ o ∈ c.occurrences, Transparent C (continuations J r o.1) (J o.2.1)
 
-/-- Symmetric Transparency holds for a quantified clause when at every trigger the
-presupposition is a transparent restriction for the actual clause. -/
-def TranspS (C : Set W) (c : QuantifiedClause Atom) : Prop :=
-  ∀ o ∈ c.occurrences, Transparent C {o.1.truth J} (J o.2.1)
+/-- Local satisfaction holds of a clause in `C` on a reading when at every trigger the local context
+of the continuations the reading consults entails the presupposition. -/
+def Satisfaction (r : Reading) (C : Set W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ o ∈ c.occurrences, Satisfied C (continuations J r o.1) (J o.2.1)
 
-/-- Incremental local satisfaction for a quantified clause. -/
-def SatI (C : Set W) (c : QuantifiedClause Atom) : Prop :=
-  ∀ o ∈ c.occurrences, Satisfied C (goodFinals J o.1) (J o.2.1)
+theorem truth_mem_continuations (r : Reading) (k : QuantifiedClause.Env Atom) :
+    k.truth J ∈ continuations J r k := by
+  cases r
+  · refine Set.mem_image2_of_mem (k.arg.truth_mem_finals J k.quantifier) ?_
+    rw [continuations_incremental]
+    exact Set.mem_image_of_mem _ (SyntacticEnvironment.SameInitialString.refl k.inner)
+  · rfl
 
-/-- Symmetric local satisfaction for a quantified clause. -/
-def SatS (C : Set W) (c : QuantifiedClause Atom) : Prop :=
-  ∀ o ∈ c.occurrences, Satisfied C {o.1.truth J} (J o.2.1)
+theorem Transparency.symmetric (h : Transparency J .incremental C c) :
+    Transparency J .symmetric C c :=
+  fun o ho ↦ (h o ho).anti (Set.singleton_subset_iff.2 (truth_mem_continuations J _ o.1))
 
-theorem truth_mem_goodFinals (k : QuantifiedClause.Env Atom) : k.truth J ∈ goodFinals J k :=
-  Set.mem_image2_of_mem (k.arg.truth_mem_finals J k.quantifier)
-    (Set.mem_image_of_mem _ (SyntacticEnvironment.SameInitialString.refl k.inner))
-
-theorem TranspI.transpS (h : TranspI J C c) : TranspS J C c := fun o ho ↦
-  (h o ho).anti (Set.singleton_subset_iff.2 (truth_mem_goodFinals J o.1))
-
-theorem SatI.transpI (h : SatI J C c) : TranspI J C c := fun o ho ↦ (h o ho).transparent
-
-theorem SatS.transpS (h : SatS J C c) : TranspS J C c := fun o ho ↦ (h o ho).transparent
+theorem Satisfaction.transparency {r : Reading} (h : Satisfaction J r C c) :
+    Transparency J r C c :=
+  fun o ho ↦ (h o ho).transparent
 
 /-- In a clause whose scope is a trigger and whose restrictor holds none, symmetric Transparency is
 universal projection over the restrictor, at each world where the quantifier is not constant on
 the row of the restrictor's size. -/
-theorem transpS_trigger_iff [Finite E] {q : NumberTree} {R : Formula Atom} {p a : Atom}
-    (hR : R.occurrences = []) :
-    TranspS J C ⟨q, R, .trigger p a⟩ ↔ ∀ w ∈ C, ¬ q.ConstantOnRow {e | (w, e) ∈ R.truth J}.ncard →
-      ∀ e, (w, e) ∈ R.truth J → (w, e) ∈ J p := by
-  simp only [TranspS, QuantifiedClause.occurrences, hR, Formula.occurrences, List.map_nil,
+theorem transparency_symmetric_trigger_iff [Finite E] {q : NumberTree} {R : Formula Atom}
+    {p a : Atom} (hR : R.occurrences = []) :
+    Transparency J .symmetric C ⟨q, R, .trigger p a⟩ ↔
+      ∀ w ∈ C, ¬ q.ConstantOnRow {e | (w, e) ∈ R.truth J}.ncard →
+        ∀ e, (w, e) ∈ R.truth J → (w, e) ∈ J p := by
+  simp only [Transparency, QuantifiedClause.occurrences, hR, Formula.occurrences, List.map_nil,
     List.nil_append, List.map_cons, List.mem_singleton, forall_eq]
   exact transparent_scopeTruth_iff q
+
+/-! #### Strong Kleene and supervaluations -/
+
+/-- The value at `w` of a clause when each trigger token of the restrictor whose presupposition
+fails of an individual takes the value `ρR` gives it for that individual, and each token of the
+scope the value `ρS` gives it (items 24–25, individual by individual). -/
+def resolve (w : W) (ρR ρS : E → SyntacticEnvironment Atom → Atom → Atom → Prop)
+    (c : QuantifiedClause Atom) : Prop :=
+  c.quantifier.toGQ (fun e ↦ Schlenker2009.resolve J (w, e) (ρR e) [] c.restrictor)
+    fun e ↦ Schlenker2009.resolve J (w, e) (ρS e) [] c.scope
+
+/-- A clause is Kleene-defined at `w` when every resolution of its trigger tokens gives it the same
+value (items 27–28). -/
+def TokenDefined (w : W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ ρR ρS ρR' ρS', resolve J w ρR ρS c ↔ resolve J w ρR' ρS' c
+
+/-- A clause is super-defined at `w` when every resolution of its trigger types, alike for all
+their tokens, gives it the same value (item 25). -/
+def SuperDefined (w : W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ σ σ' : E → Atom → Atom → Prop, resolve J w (fun e _ ↦ σ e) (fun e _ ↦ σ e) c ↔
+    resolve J w (fun e _ ↦ σ' e) (fun e _ ↦ σ' e) c
+
+/-- The finals a reading consults at the gap of a clause's environment, as `Reading.Finals` does
+for formulas: on the incremental reading each good final without triggers, on the symmetric reading
+the environment itself. -/
+def Finals : Reading → QuantifiedClause.Env Atom → QuantifiedClause.Env Atom → Prop
+  | .incremental, k, k' => k.SameInitialString k' ∧ k'.TriggerFreeFinal
+  | .symmetric, k, k' => k' = k
+
+/-- The clauses a reading evaluates: the string up to each trigger completed by each final the
+reading consults, as `Reading.completions` does for formulas. -/
+def completions (r : Reading) (c : QuantifiedClause Atom) : Set (QuantifiedClause Atom) :=
+  {X | ∃ o ∈ c.occurrences, ∃ k', Finals r o.1 k' ∧ X = k'.fill (.trigger o.2.1 o.2.2)}
+
+/-- Kleene acceptability of a clause on a reading (item 29). -/
+def KleeneAcceptable (r : Reading) (C : Set W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ w ∈ C, ∀ X ∈ completions r c, TokenDefined J w X
+
+/-- Supervaluation acceptability of a clause on a reading (item 26). -/
+def SuperAcceptable (r : Reading) (C : Set W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ w ∈ C, ∀ X ∈ completions r c, SuperDefined J w X
+
+theorem KleeneAcceptable.superAcceptable {r : Reading} (h : KleeneAcceptable J r C c) :
+    SuperAcceptable J r C c :=
+  fun w hw X hX _ _ ↦ h w hw X hX _ _ _ _
+
+/-- A clause without triggers is Kleene acceptable in every context, on either reading. -/
+theorem kleeneAcceptable_of_occurrences_eq_nil (r : Reading) (hc : c.occurrences = []) :
+    KleeneAcceptable J r C c :=
+  fun _ _ _ ⟨_, ho, _⟩ ↦ by simp [hc] at ho
+
+/-- A clause without triggers is super acceptable in every context, on either reading. -/
+theorem superAcceptable_of_occurrences_eq_nil (r : Reading) (hc : c.occurrences = []) :
+    SuperAcceptable J r C c :=
+  (kleeneAcceptable_of_occurrences_eq_nil J r hc).superAcceptable J
+
+section Trigger
+
+variable {q : NumberTree} {R : Formula Atom} {p a : Atom}
+
+/-- A formula without triggers takes its classical value under every resolution. -/
+private theorem resolve_iff_of_occurrences {F : Formula Atom} (hF : F.occurrences = [])
+    (x : W × E) (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) :
+    Schlenker2009.resolve J x ρ [] F ↔ x ∈ F.truth J :=
+  resolve_of_filter_ne_zero J (filter_ne_zero_of_occurrences J hF) ρ []
+
+/-- A resolution gives a clause whose scope is a trigger and whose restrictor holds none the
+value of the quantifier on the scope that agrees with the assertion where the presupposition holds
+and with the resolution elsewhere. -/
+private theorem resolve_trigger_iff (hR : R.occurrences = []) {w : W} {ρR ρS} :
+    resolve J w ρR ρS ⟨q, R, .trigger p a⟩ ↔ q.toGQ (fun e ↦ (w, e) ∈ R.truth J)
+      fun e ↦ (w, e) ∈ J p ∧ (w, e) ∈ J a ∨ (w, e) ∉ J p ∧ ρS e [] p a := by
+  simp only [resolve, Schlenker2009.resolve, resolve_iff_of_occurrences J hR]
+
+/-- A predicate of scopes is constant over the resolutions of a trigger iff it is constant over
+the scopes that agree with the assertion where the presupposition holds. -/
+private theorem forall_resolution_iff {P A : E → Prop} (G : (E → Prop) → Prop) :
+    (∀ ρ ρ' : E → Prop,
+      G (fun e ↦ P e ∧ A e ∨ ¬ P e ∧ ρ e) ↔ G (fun e ↦ P e ∧ A e ∨ ¬ P e ∧ ρ' e)) ↔
+    ∀ D D' : E → Prop, (∀ e, P e → (D e ↔ A e)) → (∀ e, P e → (D' e ↔ A e)) →
+      (G D ↔ G D') := by
+  have key {D : E → Prop} (hD : ∀ e, P e → (D e ↔ A e)) :
+      (fun e ↦ P e ∧ A e ∨ ¬ P e ∧ D e) = D := funext fun e ↦ propext <| by
+    by_cases h : P e
+    · simp [h, hD e h]
+    · simp [h]
+  refine ⟨fun h D D' hD hD' ↦ ?_, fun h ρ ρ' ↦ h _ _ (fun e he ↦ by simp [he])
+    fun e he ↦ by simp [he]⟩
+  rw [← key hD, ← key hD']
+  exact h D D'
+
+/-- A clause whose scope is a trigger and whose restrictor holds none is the one clause either
+reading evaluates, since the trigger is final. -/
+theorem completions_trigger (hR : R.occurrences = []) (r : Reading) :
+    completions r ⟨q, R, .trigger p a⟩ = {⟨q, R, .trigger p a⟩} := by
+  ext X
+  simp only [completions, QuantifiedClause.occurrences, hR, Formula.occurrences, List.map_nil,
+    List.nil_append, List.map_cons, List.mem_singleton, exists_eq_left, Set.mem_ofPred_eq,
+    Set.mem_singleton_iff]
+  refine ⟨fun ⟨⟨q', a', K'⟩, hk, hX⟩ ↦ hX ▸ ?_, fun hX ↦ ⟨⟨q, .scope R, []⟩, ?_, hX⟩⟩
+  · cases r
+    · obtain ⟨⟨rfl, ha, hK⟩, -⟩ := hk
+      cases ha
+      cases hK
+      rfl
+    · cases hk
+      rfl
+  · cases r
+    · exact ⟨⟨rfl, .scope R, .nil⟩, fun _ _ h ↦ by simp at h, fun _ h ↦ by cases h⟩
+    · rfl
+
+/-- A clause whose scope is a trigger and whose restrictor holds none is Kleene acceptable, on
+either reading, iff the trigger is transparent at its assertion. -/
+theorem kleeneAcceptable_trigger_iff (hR : R.occurrences = []) (r : Reading) :
+    KleeneAcceptable J r C ⟨q, R, .trigger p a⟩ ↔
+      TransparentAt C {scopeTruth q fun w e ↦ (w, e) ∈ R.truth J} (J p) (J a) := by
+  simp only [KleeneAcceptable, completions_trigger hR, Set.mem_singleton_iff, forall_eq]
+  rw [transparentAt_scopeTruth_iff]
+  refine forall₂_congr fun w _ ↦ Iff.trans ?_ (forall_resolution_iff _)
+  simp only [TokenDefined, resolve_trigger_iff J hR]
+  exact ⟨fun h ρ ρ' ↦ h (fun _ _ _ _ ↦ True) (fun e _ _ _ ↦ ρ e) (fun _ _ _ _ ↦ True)
+    (fun e _ _ _ ↦ ρ' e), fun h _ ρS _ ρS' ↦ h (ρS · [] p a) (ρS' · [] p a)⟩
+
+/-- A clause whose scope is a trigger and whose restrictor holds none is super acceptable, on either
+reading, iff the trigger is transparent at its assertion. -/
+theorem superAcceptable_trigger_iff (hR : R.occurrences = []) (r : Reading) :
+    SuperAcceptable J r C ⟨q, R, .trigger p a⟩ ↔
+      TransparentAt C {scopeTruth q fun w e ↦ (w, e) ∈ R.truth J} (J p) (J a) := by
+  simp only [SuperAcceptable, completions_trigger hR, Set.mem_singleton_iff, forall_eq]
+  rw [transparentAt_scopeTruth_iff]
+  refine forall₂_congr fun w _ ↦ Iff.trans ?_ (forall_resolution_iff _)
+  simp only [SuperDefined, resolve_trigger_iff J hR]
+  exact ⟨fun h ρ ρ' ↦ h (fun e _ _ ↦ ρ e) (fun e _ _ ↦ ρ' e),
+    fun h σ σ' ↦ h (σ · p a) (σ' · p a)⟩
+
+end Trigger
 
 end QuantifiedClause
 

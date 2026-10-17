@@ -30,6 +30,7 @@ to its worlds at which the formula is classically true (`Formula.admits_ccp_iff`
   `Presupposition.Formula.strong` and `Presupposition.Formula.filter` its Strong Kleene and
   filtering instances.
 * `Presupposition.Formula.ccp`: the dynamic evaluation.
+* `Presupposition.Formula.accommodate`: local accommodation, which keeps the classical meaning.
 
 ## Implementation notes
 
@@ -127,6 +128,22 @@ noncomputable def ccp : Formula Atom → CCP.Partial W
   | trigger p p' => CCP.Partial.ofTrivalent ((trigger p p').filter I)
   | not F => CCP.Partial.neg (ccp F)
   | bin c F G => c.ccp (ccp F) (ccp G)
+
+/-- [heim-1983]'s local accommodation: the presupposition of each trigger joins its assertion where
+the trigger is. -/
+def accommodate : Formula Atom → Formula Atom
+  | atom p => atom p
+  | trigger p p' => bin .conj (atom p) (atom p')
+  | not F => not (accommodate F)
+  | bin c F G => bin c (accommodate F) (accommodate G)
+
+/-- Local accommodation keeps the classical meaning. -/
+@[simp] theorem truth_accommodate (F : Formula Atom) : F.accommodate.truth I = F.truth I := by
+  induction F with
+  | atom => rfl
+  | trigger => rfl
+  | not F ih => simp [accommodate, truth, ih]
+  | bin c F G ihF ihG => simp [accommodate, truth, ihF, ihG]
 
 variable {w : W}
 

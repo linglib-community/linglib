@@ -31,8 +31,16 @@ sentence, at the cost of three stipulations (`Accommodation.stipulated`). The se
 suggest a rule instead: keep the presupposition in the context where transparency derives it in one
 step (`Accommodation.oneStep`). The rule parses every sentence as the stipulations do, without any
 of them (`parse_oneStep`), so the two give every theory the same verdict (`verdict_stipulated_eq`),
-and by the rule such a theory is right (`verdict_oneStep_of`). A theory silent on quantified clauses
-is silent here (`verdict_eq_silent`).
+and by the rule such a theory is right (`verdict_oneStep_of`).
+
+A theory that accepts a clause wherever supervaluation defines it, the trigger being transparent at
+its assertion, predicts the universal inference from none of the quantifiers. Where four students
+satisfy both parts of the trigger and a fifth only its presupposition, every quantifier of the
+experiment takes one value however the other students are resolved. So it predicts no difference
+between the groups and is wrong wherever it accommodates (`verdict_of_transparentAt`), as
+Schlenker's Strong Kleene and supervaluationist accounts are on either reading
+(`Schlenker2009.QuantifiedClause.kleeneAcceptable_trigger_iff`). A theory silent on quantified
+clauses is silent here (`verdict_eq_silent`).
 
 The experiment scores a theory together with where it accommodates the presupposition
 (`experiment1`), since that is part of the theory, not of the fact. The registered accounts get
@@ -44,6 +52,10 @@ their verdicts from the general theorems (`verdict_experiment1`).
   no longer presupposes it; §4.1.2 says only that it is weakened or not accommodated.
 * In every model the linking hypothesis consults, the restrictor denotes the ten students at every
   world.
+* The linking hypothesis reads a theory's inference off acceptance alone. A Strong Kleene sentence
+  with *no* that is true as well as defined has every student satisfying the presupposition, an
+  inference from the assertion together with the presupposition that the hypothesis does not
+  consult.
 
 ## References
 
@@ -78,40 +90,10 @@ def clause (d : Determiner) : QuantifiedClause Predicate :=
 
 /-! ### Local accommodation -/
 
-section Accommodation
-
-variable {Atom : Type*}
-
-/-- [heim-1983]'s local accommodation: the presupposition of each trigger joins its assertion where
-the trigger is. -/
-def accommodate : Formula Atom → Formula Atom
-  | .atom p => .atom p
-  | .trigger p p' => .bin .conj (.atom p) (.atom p')
-  | .not F => .not (accommodate F)
-  | .bin c F G => .bin c (accommodate F) (accommodate G)
-
-/-- Local accommodation leaves no trigger. -/
-@[simp] theorem occurrences_accommodate (F : Formula Atom) : (accommodate F).occurrences = [] := by
-  induction F with
-  | atom => rfl
-  | trigger => rfl
-  | not F ih => simp [accommodate, Formula.occurrences, ih]
-  | bin c F G ihF ihG => simp [accommodate, Formula.occurrences, ihF, ihG]
-
-/-- Local accommodation keeps the classical meaning. -/
-@[simp] theorem truth_accommodate {W : Type*} (I : Atom → Set W) (F : Formula Atom) :
-    (accommodate F).truth I = F.truth I := by
-  induction F with
-  | atom => rfl
-  | trigger => rfl
-  | not F ih => simp [accommodate, Formula.truth, ih]
-  | bin c F G ihF ihG => simp [accommodate, Formula.truth, ihF, ihG]
-
-/-- The clause with the presuppositions of its scope accommodated in the scope. -/
-def accommodateScope (c : QuantifiedClause Atom) : QuantifiedClause Atom :=
-  ⟨c.quantifier, c.restrictor, accommodate c.scope⟩
-
-end Accommodation
+/-- The clause with the presuppositions of its scope locally accommodated in the scope
+(`Presupposition.Formula.accommodate`). -/
+def accommodateScope {Atom : Type*} (c : QuantifiedClause Atom) : QuantifiedClause Atom :=
+  ⟨c.quantifier, c.restrictor, c.scope.accommodate⟩
 
 /-! ### Linking hypothesis and verdicts -/
 
@@ -239,9 +221,11 @@ variable {T : Theory} {acc : ClauseAcceptance}
 /-- An acceptance condition within symmetric Transparency predicts the universal inference from
 every quantifier of the experiment. -/
 private theorem predictsUniversal_clause
-    (hT : ∀ Atom W E I C c, acc Atom W E I C c → Schlenker2009.QuantifiedClause.TranspS I C c)
+    (hT : ∀ Atom W E I C c, acc Atom W E I C c →
+      Schlenker2009.QuantifiedClause.Transparency I .symmetric C c)
     (d : Determiner) : PredictsUniversal acc (clause d) := fun W I hI C hC w hw e ↦ by
-  have h := (Schlenker2009.QuantifiedClause.transpS_trigger_iff I rfl).1 (hT _ _ _ _ _ _ hC) w hw
+  have h := (Schlenker2009.QuantifiedClause.transparency_symmetric_trigger_iff I rfl).1
+    (hT _ _ _ _ _ _ hC) w hw
   simp only [Formula.truth, hI, Set.mem_univ, Set.ofPred_true, ncard_students, forall_const] at h
   exact h (not_constantOnRow d) e
 
@@ -254,6 +238,46 @@ private theorem not_predictsUniversal_accommodateScope
   exact h Unit I rfl Set.univ (hU _ _ _ _ _ _ (by simp [QuantifiedClause.occurrences,
     accommodateScope, clause, Formula.occurrences])) () trivial ⟨0, by decide⟩
 
+/-- A model in which four students satisfy the presupposition and the assertion, the fifth only
+the presupposition, and the other five neither. -/
+private def countermodel : Predicate → Set (Unit × Student)
+  | .student => Set.univ
+  | .presupposition => {x | x.2.val < 5}
+  | .assertion => {x | x.2.val < 4}
+
+/-- In the countermodel every scope that resolves the trigger holds of at least the four students
+that satisfy both parts and fails of the fifth, which fixes the value of every quantifier of the
+experiment. -/
+private theorem toGQ_countermodel {D : Student → Prop}
+    (hD : ∀ e : Student, e.val < 5 → (D e ↔ e.val < 4)) (d : Determiner) :
+    d.tree.toGQ (fun _ ↦ True) D ↔ d = .moreThan3 := by
+  have h4 : 4 ≤ {x | True ∧ D x}.ncard := by
+    have : {x : Student | x.val < 4}.ncard = 4 := by
+      rw [Set.ncard_eq_toFinset_card']; decide
+    exact this ▸ Set.ncard_le_ncard (fun x (hx : x.val < 4) ↦ ⟨trivial, (hD x (by omega)).2 hx⟩)
+      (Set.toFinite _)
+  have h1 : 1 ≤ {x | True ∧ ¬ D x}.ncard :=
+    (Set.ncard_pos (Set.toFinite _)).2 ⟨⟨4, by decide⟩, trivial, fun h ↦
+      absurd ((hD ⟨4, by decide⟩ (by decide)).1 h) (by decide)⟩
+  rw [NumberTree.toGQ_apply]
+  cases d <;> simp only [Determiner.tree, NumberTree.all, NumberTree.no, NumberTree.cardinal_apply,
+    Set.mem_ofPred_eq, Set.mem_singleton_iff, reduceCtorEq, iff_false, iff_true] <;> omega
+
+/-- An acceptance condition that accepts a clause whose scope is a trigger wherever the trigger is
+transparent at its assertion predicts the universal inference from no quantifier of the
+experiment. -/
+private theorem not_predictsUniversal_clause
+    (hK : ∀ Atom W E I C q (R : Formula Atom) (p a : Atom), R.occurrences = [] →
+      TransparentAt C {scopeTruth q fun w e ↦ (w, e) ∈ R.truth I} (I p) (I a) →
+        acc Atom W E I C ⟨q, R, .trigger p a⟩)
+    (d : Determiner) : ¬ PredictsUniversal acc (clause d) := fun h ↦ by
+  refine absurd (h Unit countermodel rfl Set.univ (hK _ _ _ _ _ _ _ _ _ rfl ?_) () trivial
+    ⟨9, by decide⟩) (by simp [countermodel])
+  refine transparentAt_scopeTruth_iff.2 fun _ _ D D' hD hD' ↦ ?_
+  have hA : (fun e ↦ ((), e) ∈ (Formula.atom Predicate.student).truth countermodel) =
+      fun _ ↦ True := funext fun _ ↦ eq_true (Set.mem_univ _)
+  rw [hA, toGQ_countermodel (fun e he ↦ hD e he) d, toGQ_countermodel (fun e he ↦ hD' e he) d]
+
 private theorem predicted_of_parse (hacc : T.acceptsClause = some acc)
     (p : Determiner → QuantifiedClause Predicate) :
     predicted T (fun d ↦ some (p d)) = orderOf fun d ↦ PredictsUniversal acc (p d) := by
@@ -261,20 +285,33 @@ private theorem predicted_of_parse (hacc : T.acceptsClause = some acc)
   rw [hacc]
   simp
 
+private theorem orderOf_of_forall_not {predicts : Determiner → Prop} (h : ∀ d, ¬ predicts d) :
+    orderOf predicts = some .eq := by
+  unfold orderOf
+  rw [ite_eq_left (.inr ⟨fun d _ ↦ h d, fun d _ ↦ h d⟩)]
+
 private theorem observed_eq : observed = some .gt := by decide +kernel
 
 /-- By §2.3.4, the universal inference is endorsed more after *each* and *no* than after the
 numerical quantifiers. -/
 theorem observed_experiment1 : experiment1.observed () = some .gt := observed_eq
 
+private theorem parse_global :
+    Accommodation.global.parser.parse clause = fun d ↦ some (clause d) := by
+  funext d; simp [Accommodation.parser]
+
+private theorem parse_oneStep_eq : Accommodation.oneStep.parser.parse clause = fun d ↦
+    some (if (experiment1Groups d).group = .eachOrNo then clause d
+      else accommodateScope (clause d)) := by
+  funext d; simp [Accommodation.parser, clause, oneStep_tree_iff]
+
 /-- With every presupposition accommodated in the context, a theory within symmetric Transparency
 predicts no difference between the groups and is wrong. -/
 theorem verdict_global_of (hacc : T.acceptsClause = some acc)
-    (hT : ∀ Atom W E I C c, acc Atom W E I C c → Schlenker2009.QuantifiedClause.TranspS I C c) :
+    (hT : ∀ Atom W E I C c, acc Atom W E I C c →
+      Schlenker2009.QuantifiedClause.Transparency I .symmetric C c) :
     verdict T Accommodation.global.parser = .wrong := by
-  have : Accommodation.global.parser.parse clause = fun d ↦ some (clause d) := by
-    funext d; simp [Accommodation.parser]
-  rw [verdict, this, predicted_of_parse hacc, observed_eq]
+  rw [verdict, parse_global, predicted_of_parse hacc, observed_eq]
   unfold orderOf
   rw [ite_eq_left (.inl ⟨fun d _ ↦ predictsUniversal_clause hT d,
     fun d _ ↦ predictsUniversal_clause hT d⟩)]
@@ -283,14 +320,11 @@ theorem verdict_global_of (hacc : T.acceptsClause = some acc)
 /-- By Appendix F's rule, a theory within symmetric Transparency that accepts every clause without a
 trigger predicts the universal inference from *each* and *no* alone and is right. -/
 theorem verdict_oneStep_of (hacc : T.acceptsClause = some acc)
-    (hT : ∀ Atom W E I C c, acc Atom W E I C c → Schlenker2009.QuantifiedClause.TranspS I C c)
+    (hT : ∀ Atom W E I C c, acc Atom W E I C c →
+      Schlenker2009.QuantifiedClause.Transparency I .symmetric C c)
     (hU : ∀ Atom W E I C (c : QuantifiedClause Atom), c.occurrences = [] → acc Atom W E I C c) :
     verdict T Accommodation.oneStep.parser = .correct := by
-  have : Accommodation.oneStep.parser.parse clause = fun d ↦
-      some (if (experiment1Groups d).group = .eachOrNo then clause d
-        else accommodateScope (clause d)) := by
-    funext d; simp [Accommodation.parser, clause, oneStep_tree_iff]
-  rw [verdict, this, predicted_of_parse hacc, observed_eq]
+  rw [verdict, parse_oneStep_eq, predicted_of_parse hacc, observed_eq]
   have he := predictsUniversal_clause hT
   have hn := not_predictsUniversal_accommodateScope hU
   unfold orderOf
@@ -314,33 +348,84 @@ theorem verdict_stipulated_eq (T : Theory) :
     verdict T Accommodation.stipulated.parser = verdict T Accommodation.oneStep.parser := by
   rw [verdict, verdict, parse_oneStep]
 
+/-- A theory that accepts a clause whose scope is a trigger wherever the trigger is transparent at
+its assertion, so wherever supervaluation defines the clause, and accepts every clause without a
+trigger, predicts the universal inference from no quantifier of the experiment, so no difference
+between the groups, and is wrong wherever it accommodates the presupposition. -/
+theorem verdict_of_transparentAt (hacc : T.acceptsClause = some acc)
+    (hK : ∀ Atom W E I C q (R : Formula Atom) (p a : Atom), R.occurrences = [] →
+      TransparentAt C {scopeTruth q fun w e ↦ (w, e) ∈ R.truth I} (I p) (I a) →
+        acc Atom W E I C ⟨q, R, .trigger p a⟩)
+    (hU : ∀ Atom W E I C (c : QuantifiedClause Atom), c.occurrences = [] → acc Atom W E I C c)
+    (π : Accommodation) : verdict T π.parser = .wrong := by
+  have hn := not_predictsUniversal_clause hK
+  have ha := not_predictsUniversal_accommodateScope hU
+  have hone : verdict T Accommodation.oneStep.parser = .wrong := by
+    rw [verdict, parse_oneStep_eq, predicted_of_parse hacc, observed_eq,
+      orderOf_of_forall_not fun d ↦ ?_]
+    · rfl
+    · split_ifs
+      exacts [hn d, ha d]
+  cases π
+  · rw [verdict, parse_global, predicted_of_parse hacc, observed_eq, orderOf_of_forall_not hn]
+    rfl
+  · exact (verdict_stipulated_eq _).trans hone
+  · exact hone
+
 /-! ### The registered accounts -/
 
-/-- Schlenker's accounts of quantified clauses accept a clause only where symmetric Transparency
-does, and accept every clause without a trigger. -/
-private theorem acceptsClause_spec {a : Account} (h : a.AcceptsClause = some acc) :
-    (∀ Atom W E I C c, acc Atom W E I C c → Schlenker2009.QuantifiedClause.TranspS I C c) ∧
-      ∀ Atom W E I C (c : QuantifiedClause Atom), c.occurrences = [] → acc Atom W E I C c := by
-  cases a <;> simp only [Account.AcceptsClause, reduceCtorEq, Option.some.injEq] at h <;> subst h
-  · exact ⟨fun _ _ _ _ _ _ h ↦ h.transpS, fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho⟩
-  · exact ⟨fun _ _ _ _ _ _ h ↦ h, fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho⟩
-  · exact ⟨fun _ _ _ _ _ _ h ↦ h.transpI.transpS, fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho⟩
-  · exact ⟨fun _ _ _ _ _ _ h ↦ h.transpS, fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho⟩
+open Schlenker2009.QuantifiedClause
 
-/-- On Experiment 1, each registered account that covers quantified clauses is wrong with every
+/-- An account within symmetric Transparency is wrong with every presupposition accommodated in
+the context and right by §4.1.2's stipulations or Appendix F's rule. -/
+private theorem verdict_of_transparency {a : Account} (h : a.AcceptsClause = some acc)
+    (hT : ∀ Atom W E I C c, acc Atom W E I C c → Transparency I .symmetric C c)
+    (hU : ∀ Atom W E I C (c : QuantifiedClause Atom), c.occurrences = [] → acc Atom W E I C c)
+    (π : Accommodation) :
+    verdict a.theory π.parser = if π = .global then .wrong else .correct := by
+  cases π
+  · exact verdict_global_of h hT
+  · exact (verdict_stipulated_eq _).trans (verdict_oneStep_of h hT hU)
+  · exact verdict_oneStep_of h hT hU
+
+/-- On Experiment 1, Schlenker's Transparency and local satisfaction are wrong with every
 presupposition accommodated in the context and right by §4.1.2's stipulations or Appendix F's rule,
-and the others are silent. -/
-theorem verdict_experiment1 (a : Account) (p : Accommodation) :
-    experiment1.verdict (a.theory, p) () = if a.AcceptsClause.isSome then
-      (if p = .global then .wrong else .correct) else .silent := by
+on either reading. The Strong Kleene and supervaluationist accounts are wrong wherever they
+accommodate, and dynamic semantics, filtering and Limited Symmetry are silent. -/
+theorem verdict_experiment1 (a : Account) (π : Accommodation) :
+    experiment1.verdict (a.theory, π) () = match a with
+      | .transparencyIncremental | .transparencySymmetric | .satisfactionIncremental
+      | .satisfactionSymmetric => if π = .global then .wrong else .correct
+      | .kleeneIncremental | .kleeneSymmetric | .supervaluationIncremental
+      | .supervaluationSymmetric => .wrong
+      | .dynamic | .filtering | .limitedSymmetry => .silent := by
   rw [verdict_experiment1_eq]
-  cases h : a.AcceptsClause with
-  | none => exact verdict_eq_silent h _
-  | some acc =>
-    obtain ⟨hT, hU⟩ := acceptsClause_spec h
-    cases p
-    · exact verdict_global_of h hT
-    · exact (verdict_stipulated_eq _).trans (verdict_oneStep_of h hT hU)
-    · exact verdict_oneStep_of h hT hU
+  have hU {r : Schlenker2009.Reading} {Atom W E : Type} {I : Atom → Set (W × E)} {C : Set W}
+      {c : QuantifiedClause Atom} (hc : c.occurrences = []) : Transparency I r C c ∧
+        Satisfaction I r C c :=
+    ⟨fun _ ho ↦ by simp [hc] at ho, fun _ ho ↦ by simp [hc] at ho⟩
+  cases a
+  · exact verdict_eq_silent rfl _
+  · exact verdict_eq_silent rfl _
+  · exact verdict_of_transparency rfl (fun _ _ _ I _ _ h ↦ h.symmetric I)
+      (fun _ _ _ _ _ _ hc ↦ (hU hc).1) π
+  · exact verdict_of_transparency rfl (fun _ _ _ _ _ _ h ↦ h) (fun _ _ _ _ _ _ hc ↦ (hU hc).1) π
+  · exact verdict_of_transparency rfl (fun _ _ _ I _ _ h ↦ (h.transparency I).symmetric I)
+      (fun _ _ _ _ _ _ hc ↦ (hU hc).2) π
+  · exact verdict_of_transparency rfl (fun _ _ _ I _ _ h ↦ h.transparency I)
+      (fun _ _ _ _ _ _ hc ↦ (hU hc).2) π
+  · exact verdict_of_transparentAt rfl
+      (fun _ _ _ I _ _ _ _ _ hR h ↦ (kleeneAcceptable_trigger_iff I hR _).2 h)
+      (fun _ _ _ I _ _ hc ↦ kleeneAcceptable_of_occurrences_eq_nil I _ hc) π
+  · exact verdict_of_transparentAt rfl
+      (fun _ _ _ I _ _ _ _ _ hR h ↦ (kleeneAcceptable_trigger_iff I hR _).2 h)
+      (fun _ _ _ I _ _ hc ↦ kleeneAcceptable_of_occurrences_eq_nil I _ hc) π
+  · exact verdict_of_transparentAt rfl
+      (fun _ _ _ I _ _ _ _ _ hR h ↦ (superAcceptable_trigger_iff I hR _).2 h)
+      (fun _ _ _ I _ _ hc ↦ superAcceptable_of_occurrences_eq_nil I _ hc) π
+  · exact verdict_of_transparentAt rfl
+      (fun _ _ _ I _ _ _ _ _ hR h ↦ (superAcceptable_trigger_iff I hR _).2 h)
+      (fun _ _ _ I _ _ hc ↦ superAcceptable_of_occurrences_eq_nil I _ hc) π
+  · exact verdict_eq_silent rfl _
 
 end Eval.Projection.Chemla2009a

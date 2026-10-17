@@ -56,8 +56,9 @@ theorem occurrences_target (k : Construction) (o : Order) :
     ((target (0 : Fin 3) 1 2 k o).occurrences.map Prod.snd).Nodup := by
   cases k <;> cases o <;> simp [target, _root_.ChemlaSchlenker2012.unlessThen, Formula.occurrences]
 
-private theorem accepts_iff_superI {a : Account} (ha : a ∈ incremental) (F : Formula (Fin 3)) :
-    a.Accepts I C F ↔ Schlenker2009.SuperI I C F := by
+private theorem accepts_iff_superAcceptable_incremental {a : Account} (ha : a ∈ incremental)
+    (F : Formula (Fin 3)) :
+    a.Accepts I C F ↔ Schlenker2009.SuperAcceptable I .incremental C F := by
   have hf : a.Stronger filtering ∧ filtering.Stronger a := by
     simp only [incremental, List.mem_cons, List.not_mem_nil, or_false] at ha
     rcases ha with rfl | rfl | rfl | rfl | rfl | rfl
@@ -85,13 +86,14 @@ local macro "ls_points" : tactic =>
                simp_all [funs, stepFuns, evalB, val, Formula.truth, Step.rightItems,
                  Connective.rightItems, compat, Connective.eval]))
 
-private theorem transpS_target (k : Construction) (o : Order) :
-    Schlenker2009.TranspS I C (target 0 1 2 k o) ↔ C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
+private theorem transparency_symmetric_target (k : Construction) (o : Order) :
+    Schlenker2009.Transparency I .symmetric C (target 0 1 2 k o) ↔ C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
   have tf (K : SyntacticEnvironment (Fin 3)) :
       ∀ f ∈ ({K.truth I} : Set (Set W → Set W)), IsTruthFunctional f :=
     fun _ hf ↦ hf ▸ isTruthFunctional_truth I K
   cases k <;> cases o <;>
-    simp only [Schlenker2009.TranspS, target, _root_.ChemlaSchlenker2012.unlessThen,
+    simp only [Schlenker2009.Transparency, Schlenker2009.continuations_symmetric, target,
+      _root_.ChemlaSchlenker2012.unlessThen,
       Formula.occurrences, List.map_cons, List.map_nil, List.nil_append, List.singleton_append,
       List.append_nil, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
       and_true] <;>
@@ -99,12 +101,12 @@ private theorem transpS_target (k : Construction) (o : Order) :
     simp [Set.subset_def, DependsAt, SyntacticEnvironment.truth, Step.truth, Connective.eval,
       Formula.truth]
 
-private theorem transpLS_target (k : Construction) (o : Order) :
-    TranspLS I C (target 0 1 2 k o) ↔ C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
+private theorem limitedSymmetry_target (k : Construction) (o : Order) :
+    LimitedSymmetry I C (target 0 1 2 k o) ↔ C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
   cases k <;> cases o <;>
-    rw [transpLS_of_occurrences I (a := 2) rfl] <;>
+    rw [limitedSymmetry_of_occurrences I (a := 2) rfl] <;>
     dsimp only [List.nil_append, List.cons_append] <;>
-    rw [transpLSAt_iff_funs] <;>
+    rw [limitedSymmetryAt_iff_funs] <;>
     refine forall₂_congr fun w _ ↦ ?_ <;>
     (by_cases hq : w ∈ I 1
      · simp [hq]
@@ -123,24 +125,26 @@ theorem accepts_target_iff (a : Account) (k : Construction) (o : Order) :
     a.Accepts I C (target 0 1 2 k o) ↔
       C ⊆ (if a ∈ incremental ∧ o = .inverse then I 1 else {w | w ∈ I 0 → w ∈ I 1}) := by
   by_cases ha : a ∈ incremental
-  · rw [accepts_iff_superI I ha]
+  · rw [accepts_iff_superAcceptable_incremental I ha]
     cases o
-    · simpa using _root_.ChemlaSchlenker2012.superI_canonical I k
-    · simpa [ha] using _root_.ChemlaSchlenker2012.superI_inverse I k
+    · simpa using _root_.ChemlaSchlenker2012.superAcceptable_incremental_canonical I k
+    · simpa [ha] using _root_.ChemlaSchlenker2012.superAcceptable_incremental_inverse I k
   · simp only [ha, false_and, ite_false]
-    have hsuper : Schlenker2009.SuperS I C (target 0 1 2 k o) ↔
+    have hsuper : Schlenker2009.SuperAcceptable I .symmetric C (target 0 1 2 k o) ↔
         C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
       cases o
-      · exact _root_.ChemlaSchlenker2012.superS_canonical I k
-      · exact _root_.ChemlaSchlenker2012.superS_inverse I k
+      · exact _root_.ChemlaSchlenker2012.superAcceptable_symmetric_canonical I k
+      · exact _root_.ChemlaSchlenker2012.superAcceptable_symmetric_inverse I k
     cases a <;> simp [incremental] at ha
-    · exact transpS_target I k o
-    · exact (Schlenker2009.satS_iff_transpS I C _).trans (transpS_target I k o)
-    · refine Iff.trans ?_ hsuper
-      exact forall₂_congr fun w _ ↦
-        (Schlenker2009.superDefined_iff_of_nodup I (occurrences_target k o)).symm
+    · exact transparency_symmetric_target I k o
+    · exact (Schlenker2009.satisfaction_iff_transparency I .symmetric C _).trans
+        (transparency_symmetric_target I k o)
+    · refine (Schlenker2009.kleeneAcceptable_symmetric_iff I C _).trans (Iff.trans ?_ hsuper)
+      exact (forall₂_congr fun w _ ↦
+        (Schlenker2009.superDefined_iff_of_nodup I (occurrences_target k o)).symm).trans
+        (Schlenker2009.superAcceptable_symmetric_iff I C _).symm
     · exact hsuper
-    · exact transpLS_target I k o
+    · exact limitedSymmetry_target I k o
 
 /-! ### Predictions, observations and verdicts -/
 

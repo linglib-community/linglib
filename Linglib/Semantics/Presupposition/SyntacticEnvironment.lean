@@ -370,6 +370,14 @@ def occurrences : Formula Atom → List (SyntacticEnvironment Atom × Atom × At
   | bin c F G => (occurrences F).map (fun o ↦ (o.1 ++ [.left c G], o.2)) ++
       (occurrences G).map fun o ↦ (o.1 ++ [.right c F], o.2)
 
+/-- Local accommodation leaves no trigger. -/
+@[simp] theorem occurrences_accommodate (F : Formula Atom) : F.accommodate.occurrences = [] := by
+  induction F with
+  | atom => rfl
+  | trigger => rfl
+  | not F ih => simp [accommodate, occurrences, ih]
+  | bin c F G ihF ihG => simp [accommodate, occurrences, ihF, ihG]
+
 theorem fill_of_mem_occurrences {F : Formula Atom} {o : SyntacticEnvironment Atom × Atom × Atom}
     (h : o ∈ F.occurrences) : o.1.fill (trigger o.2.1 o.2.2) = F := by
   induction F generalizing o with

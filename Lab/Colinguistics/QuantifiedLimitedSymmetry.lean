@@ -335,14 +335,20 @@ def ClauseLS (C : Set W) (c : QuantifiedClause Atom) : Prop :=
   ∀ o ∈ c.occurrences, ClauseLSAt J C o.1 (J o.2.1)
 
 /-- Incremental Transparency implies Limited Symmetry. -/
-theorem ClauseLS.of_transpI (h : Schlenker2009.QuantifiedClause.TranspI J C c) : ClauseLS J C c :=
-  fun o ho ↦ ⟨fun n _ ↦ ((h o ho).anti (Set.image2_subset_left (Set.image_mono fun _ hK ↦
-      SyntacticEnvironment.agreeUpTo_zero_iff.1 (hK.mono (Nat.zero_le n))))).stablyTransparent,
-    ((h o ho).anti (Set.singleton_subset_iff.2
-      (Schlenker2009.QuantifiedClause.truth_mem_goodFinals J o.1))).stablyTransparent⟩
+theorem ClauseLS.of_transparency
+    (h : Schlenker2009.QuantifiedClause.Transparency J .incremental C c) : ClauseLS J C c :=
+  fun o ho ↦ by
+    have h' := h o ho
+    refine ⟨fun n _ ↦ (h'.anti (Set.image2_subset_left ?_)).stablyTransparent,
+      (h'.anti (Set.singleton_subset_iff.2
+        (Schlenker2009.QuantifiedClause.truth_mem_continuations J _ o.1))).stablyTransparent⟩
+    rw [Schlenker2009.continuations_incremental]
+    exact Set.image_mono fun _ hK ↦
+      SyntacticEnvironment.agreeUpTo_zero_iff.1 (hK.mono (Nat.zero_le n))
 
 /-- Limited Symmetry implies symmetric Transparency. -/
-theorem ClauseLS.transpS (h : ClauseLS J C c) : Schlenker2009.QuantifiedClause.TranspS J C c :=
+theorem ClauseLS.transparency (h : ClauseLS J C c) :
+    Schlenker2009.QuantifiedClause.Transparency J .symmetric C c :=
   fun o ho ↦ stablyTransparent_singleton_iff.1 (h o ho).2
 
 /-- A trigger that is the restrictor has the two parse points of `RestrictorLS`. -/
@@ -384,7 +390,7 @@ open Eval.Projection
 
 /-- Limited Symmetry as a theory to score: Kalomoiros's constraint on formulas, and the constraint
 at the parse points of each argument on quantified clauses. -/
-def limitedSymmetry : Theory := ⟨Kalomoiros2023.TranspLS, some fun _ _ _ ↦ ClauseLS⟩
+def limitedSymmetry : Theory := ⟨Kalomoiros2023.LimitedSymmetry, some fun _ _ _ ↦ ClauseLS⟩
 
 /-- On Chemla and Schlenker's inferential experiments, Limited Symmetry is right on every tested
 cell, as the registered account is. -/
@@ -408,7 +414,8 @@ theorem verdict_chemla2009a (p : Chemla2009a.Accommodation) :
     Chemla2009a.experiment1.verdict (limitedSymmetry, p) () =
       if p = .global then .wrong else .correct := by
   have hT : ∀ Atom W E I C c, ClauseLS (Atom := Atom) (W := W) (E := E) I C c →
-      Schlenker2009.QuantifiedClause.TranspS I C c := fun _ _ _ _ _ _ h ↦ ClauseLS.transpS _ h
+      Schlenker2009.QuantifiedClause.Transparency I .symmetric C c :=
+    fun _ _ _ _ _ _ h ↦ ClauseLS.transparency _ h
   have h := Chemla2009a.verdict_oneStep_of (T := limitedSymmetry) rfl hT
     fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho
   rw [Chemla2009a.verdict_experiment1_eq]

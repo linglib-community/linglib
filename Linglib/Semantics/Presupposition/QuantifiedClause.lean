@@ -17,7 +17,8 @@ the restrictor before the scope, or in the scope after the restrictor (`Quantifi
 environment is that argument together with the trigger's environment inside the argument's formula
 (`QuantifiedClause.Env`), and its meaning is the function from the gap's denotation to the clause's
 truth set. A good final of the clause may replace the scope after a restrictor and keeps the
-restrictor before a scope (`QuantifiedClause.Arg.finals`). The triggers of a clause are listed with
+restrictor before a scope, as meanings (`QuantifiedClause.Arg.finals`) and as strings
+(`QuantifiedClause.Env.SameInitialString`). The triggers of a clause are listed with
 their environments by `QuantifiedClause.occurrences`, and filling the gap of each gives back the
 clause (`QuantifiedClause.fill_of_mem_occurrences`).
 
@@ -101,6 +102,12 @@ theorem truth_mem_finals (q : NumberTree) (a : Arg Atom) : a.truth I q ∈ a.fin
   · exact Set.mem_range_self _
   · rfl
 
+/-- Two arguments have the same initial string when a good final may turn one into the other: it
+may replace the scope after a restrictor, and keeps the restrictor before a scope. -/
+inductive SameInitialString : Arg Atom → Arg Atom → Prop
+  | restrictor (S S' : Formula Atom) : SameInitialString (.restrictor S) (.restrictor S')
+  | scope (R : Formula Atom) : SameInitialString (.scope R) (.scope R)
+
 end Arg
 
 namespace Env
@@ -118,6 +125,18 @@ theorem truth_fill (k : Env Atom) (X : Formula Atom) :
   obtain ⟨q, a, K⟩ := k
   cases a <;> simp [fill, truth, Arg.fill, Arg.truth, QuantifiedClause.truth,
     SyntacticEnvironment.truth_fill, scopeTruth, restrictorTruth]
+
+/-- `SameInitialString k k'` holds when `k'` keeps the material of `k` before the gap and replaces
+what follows it: the quantifier, a restrictor before the scope, and the material before the gap
+inside the argument stay. -/
+def SameInitialString (k k' : Env Atom) : Prop :=
+  k.quantifier = k'.quantifier ∧ k.arg.SameInitialString k'.arg ∧
+    k.inner.SameInitialString k'.inner
+
+/-- The material after the gap of a clause's environment contains no trigger: none after the gap
+inside the argument, and none in a scope after a restrictor. -/
+def TriggerFreeFinal (k : Env Atom) : Prop :=
+  k.inner.TriggerFreeFinal ∧ ∀ S, k.arg = .restrictor S → S.occurrences = []
 
 end Env
 

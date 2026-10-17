@@ -19,8 +19,9 @@ The accounts linglib formalizes are registered as theories by their own acceptab
 from `Semantics/Presupposition` or the paper's study (`Account.Accepts`): Heim's context change
 potentials with Beaver's disjunction, Peters's filtering connectives, Schlenker's Transparency,
 local satisfaction, Strong Kleene and supervaluationist theories, each checked incrementally and
-symmetrically, and Kalomoiros's Limited Symmetry. Schlenker's Transparency and local satisfaction
-also cover quantified clauses (`Account.AcceptsClause`). A theory under development in `Lab` is
+symmetrically, and Kalomoiros's Limited Symmetry. Schlenker's accounts also cover quantified
+clauses (`Account.AcceptsClause`); dynamic semantics, filtering and Limited Symmetry are stated for
+the propositional fragment and are silent on them. A theory under development in `Lab` is
 scored the same way. A theory is stronger than another when every context that accepts a formula by
 the first accepts it by the second, so that it predicts presuppositions at least as strong
 (`Theory.Stronger`).
@@ -119,22 +120,27 @@ given by the theory's own predicate. -/
 noncomputable def Accepts : Account → (Atom → Set W) → Set W → Formula Atom → Prop
   | dynamic => fun I C F ↦ (F.ccp I).Admits C
   | filtering => fun I C F ↦ C ⊆ Function.support (F.filter I)
-  | transparencyIncremental => Schlenker2009.TranspI
-  | transparencySymmetric => Schlenker2009.TranspS
-  | satisfactionIncremental => Schlenker2009.SatI
-  | satisfactionSymmetric => Schlenker2009.SatS
-  | kleeneIncremental => Schlenker2009.KleeneI
-  | kleeneSymmetric => Schlenker2009.KleeneS
-  | supervaluationIncremental => Schlenker2009.SuperI
-  | supervaluationSymmetric => Schlenker2009.SuperS
-  | limitedSymmetry => Kalomoiros2023.TranspLS
+  | transparencyIncremental => fun I ↦ Schlenker2009.Transparency I .incremental
+  | transparencySymmetric => fun I ↦ Schlenker2009.Transparency I .symmetric
+  | satisfactionIncremental => fun I ↦ Schlenker2009.Satisfaction I .incremental
+  | satisfactionSymmetric => fun I ↦ Schlenker2009.Satisfaction I .symmetric
+  | kleeneIncremental => fun I ↦ Schlenker2009.KleeneAcceptable I .incremental
+  | kleeneSymmetric => fun I ↦ Schlenker2009.KleeneAcceptable I .symmetric
+  | supervaluationIncremental => fun I ↦ Schlenker2009.SuperAcceptable I .incremental
+  | supervaluationSymmetric => fun I ↦ Schlenker2009.SuperAcceptable I .symmetric
+  | limitedSymmetry => Kalomoiros2023.LimitedSymmetry
 
+open Schlenker2009.QuantifiedClause in
 /-- Whether an account accepts a quantified clause, for the accounts defined on them. -/
 def AcceptsClause : Account → Option ClauseAcceptance
-  | transparencyIncremental => some fun _ _ _ ↦ Schlenker2009.QuantifiedClause.TranspI
-  | transparencySymmetric => some fun _ _ _ ↦ Schlenker2009.QuantifiedClause.TranspS
-  | satisfactionIncremental => some fun _ _ _ ↦ Schlenker2009.QuantifiedClause.SatI
-  | satisfactionSymmetric => some fun _ _ _ ↦ Schlenker2009.QuantifiedClause.SatS
+  | transparencyIncremental => some fun _ _ _ J ↦ Transparency J .incremental
+  | transparencySymmetric => some fun _ _ _ J ↦ Transparency J .symmetric
+  | satisfactionIncremental => some fun _ _ _ J ↦ Satisfaction J .incremental
+  | satisfactionSymmetric => some fun _ _ _ J ↦ Satisfaction J .symmetric
+  | kleeneIncremental => some fun _ _ _ J ↦ KleeneAcceptable J .incremental
+  | kleeneSymmetric => some fun _ _ _ J ↦ KleeneAcceptable J .symmetric
+  | supervaluationIncremental => some fun _ _ _ J ↦ SuperAcceptable J .incremental
+  | supervaluationSymmetric => some fun _ _ _ J ↦ SuperAcceptable J .symmetric
   | _ => none
 
 /-- The theory an account registers. -/

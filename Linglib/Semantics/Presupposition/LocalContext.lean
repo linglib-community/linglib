@@ -24,6 +24,13 @@ case every environment is truth-functional, the truth value at a world depending
 value there (`IsTruthFunctional`), so the local context is the set of worlds of the context at which
 the truth value depends on the gap for some continuation (`isLocalContext_of_isTruthFunctional`).
 
+A restriction is transparent at an assertion when it is transparent for the denotations of the gap
+that agree with that assertion on it (`TransparentAt`), the resolutions of a trigger that
+presupposes the restriction and asserts the assertion. Transparency at the trigger's own assertion
+is the trigger's definedness by supervaluation, every resolution giving the sentence the same truth
+value (`transparentAt_iff`), and transparency is transparency at every assertion
+(`transparent_iff_forall_transparentAt`).
+
 A restriction is stably transparent when it never settles the truth value across a set of
 continuations unless the unrestricted gap settles it the same way (`StablyTransparent`), the
 condition Kalomoiros's Limited Symmetry imposes at each parse point after a trigger. It is weaker
@@ -35,11 +42,14 @@ is unchanged when the gap is negated (`transparent_image_compl_iff`).
 * `Presupposition.Transparent`: a transparent restriction of a gap.
 * `Presupposition.IsLocalContext`: the least transparent restriction.
 * `Presupposition.Satisfied`: satisfaction of a presupposition in the local context.
+* `Presupposition.TransparentAt`: transparency for the resolutions of a trigger.
 * `Presupposition.StablyTransparent`: a restriction that settles no truth value the gap leaves
   open.
 
 ## Main results
 
+* `Presupposition.transparent_iff_forall_transparentAt`, `Presupposition.transparentAt_iff`:
+  transparency is definedness by supervaluation at every assertion.
 * `Presupposition.transparent_iff_dependsOn`: transparency is dependence.
 * `Presupposition.isLocalContext_of_dependsOn`: the local context is the set of indices the truth
   value depends on.
@@ -125,6 +135,38 @@ theorem Satisfied.transparent (h : Satisfied C env x) : Transparent C env x :=
   hy.1.mono hyx
 
 end Lattice
+
+/-! ### Transparency at an assertion -/
+
+/-- A restriction `x` on the gap of `env` is transparent in `C` at the assertion `a` when it is
+transparent for the denotations of the gap that agree with `a` on `x`. These are the resolutions of
+a trigger presupposing `x` and asserting `a`, which resolve its presupposition failure either way,
+so that transparency at `a` is the definedness of the trigger by supervaluation: every resolution
+gives the sentence the same truth value at each world of `C` (`transparentAt_iff`). -/
+def TransparentAt (C : Set W) (env : Set (α → Set W)) (x a : α) : Prop :=
+  ∀ f ∈ env, ∀ d, x ⊓ d = x ⊓ a → ∀ w ∈ C, w ∈ f (x ⊓ d) ↔ w ∈ f d
+
+section At
+
+variable {C : Set W} {env : Set (α → Set W)} {x a : α}
+
+theorem Transparent.transparentAt (h : Transparent C env x) (a : α) : TransparentAt C env x a :=
+  fun f hf d _ ↦ h f hf d
+
+/-- Transparency is transparency at every assertion: it quantifies over the assertion that
+supervaluation holds fixed. -/
+theorem transparent_iff_forall_transparentAt : Transparent C env x ↔ ∀ a, TransparentAt C env x a :=
+  ⟨Transparent.transparentAt, fun h f hf d ↦ h d f hf d rfl⟩
+
+/-- Transparency at `a` says that the resolutions of the trigger give the sentence one truth value
+at each world of the context. -/
+theorem transparentAt_iff : TransparentAt C env x a ↔
+    ∀ f ∈ env, ∀ d d', x ⊓ d = x ⊓ a → x ⊓ d' = x ⊓ a → ∀ w ∈ C, (w ∈ f d ↔ w ∈ f d') := by
+  refine ⟨fun h f hf d d' hd hd' w hw ↦ ?_, fun h f hf d hd w hw ↦ h f hf _ _ ?_ hd w hw⟩
+  · rw [← h f hf d hd w hw, ← h f hf d' hd' w hw, hd, hd']
+  · rw [← inf_assoc, inf_idem, hd]
+
+end At
 
 /-! ### Transparency is dependence -/
 
