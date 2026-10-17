@@ -29,7 +29,8 @@ syllable-structure constraints.
 
 ## Implementation notes
 
-* The maximum entropy probabilities are `GoldwaterJohnson2003.gjProb`; the sampled estimate of
+* The maximum entropy probabilities are the `HarmonicGrammar.maxEnt` distributions of each
+  input's candidates, as in Goldwater and Johnson's model; the sampled estimate of
   the expected violations is stated over an arbitrary distribution on the candidates.
 * Table 1 is the paper's data, in permyriad; the initial ranks, 0 for FAITH and 10 for the
   markedness constraints, the learning rate 0.1 and the trajectory of Figure 1 are reported, not
@@ -48,7 +49,7 @@ syllable-structure constraints.
 
 namespace Jaeger2007
 
-open OptimalityTheory Finset Real GoldwaterJohnson2003
+open OptimalityTheory HarmonicGrammar MeasureTheory Finset Real GoldwaterJohnson2003
 
 /-! ### The Gradual Learning Algorithm as Stochastic Gradient Ascent -/
 
@@ -95,20 +96,20 @@ theorem expected_glaUpdate_eq_self_iff (p : O → ℝ) (hp : ∑ h, p h = 1) (c 
   · intro h
     rw [h, sub_self, mul_zero, add_zero]
 
-variable {I : Type*} {n : ℕ}
+variable {I : Type*} [MeasurableSpace O] [MeasurableSingletonClass O] {n : ℕ}
 
 /-- With the other weights held fixed, the derivative of the log probability of an observation in
 weight j is its expected violations of constraint j less the observed ones, which is the observed
 feature less its expectation once violations are read as non-positive features (equation (2)). -/
-theorem hasDerivAt_log_gjProb_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
+theorem hasDerivAt_log_maxEnt_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (j : Fin n) (i : I) (o : O) (t : ℝ) :
-    HasDerivAt (fun t ↦ log (gjProb con (Function.update w j t) i o))
-      (∑ o', gjProb con (Function.update w j t) i o' * con j (i, o') - con j (i, o)) t := by
+    HasDerivAt
+      (fun t ↦ log ((maxEnt (con.comap (i, ·)).violations (Function.update w j t)).real {o}))
+      ((∫ o', (con.comap (i, ·)).violations o' ∂maxEnt (con.comap (i, ·)).violations
+        (Function.update w j t)) j - con j (i, o)) t := by
   have : Nonempty O := ⟨o⟩
-  simp_rw [gjProb_update]
-  convert (((hasDerivAt_id' t).smul_const _).add_const _).log_softmax o using 1
-  simp only [one_smul, mul_neg, sum_neg_distrib]
-  ring
+  simpa [Function.update_idem] using hasDerivAt_logLikelihood_update
+    (con.comap (i, ·)).violations (Function.update w j t) (Measure.dirac o) j
 
 /-- The Stochastic Gradient Ascent step of Section 4 on a single weight, which follows the
 gradient (2) with the empirical expectation replaced by the observed feature value and the model's
