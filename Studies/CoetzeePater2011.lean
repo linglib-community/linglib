@@ -2,6 +2,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Phonology.HarmonicGrammar.Expressivity
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Linglib.Phonology.HarmonicGrammar.Noise
 public import Linglib.Data.Experiments.CoetzeePater2011
 
@@ -445,21 +446,19 @@ theorem singleton_preV_not_mem : {Context.preV} ∉ univ.image system := by deci
 
 /-! ### MaxEnt Harmonic Grammar (§4.3–4.4) -/
 
-/-- The MaxEnt grammar for `ctx` under weights `w` gives each output a probability proportional
-to the exponential of its harmony. -/
-noncomputable def maxEnt (w : Fin 4 → ℝ) (ctx : Context) : Output → ℝ :=
-  softmax fun o ↦ harmonyScore con w (ctx, o)
+instance : MeasurableSpace Output := ⊤
+instance : MeasurableSingletonClass Output := ⟨fun _ ↦ trivial⟩
 
-/-- The MaxEnt deletion probability in `ctx` is the probability of the deletion output. -/
+/-- The MaxEnt deletion probability in `ctx`, the probability of the deletion output under the
+MaxEnt distribution of the context's two outputs. -/
 noncomputable def maxEntProb (w : Fin 4 → ℝ) (ctx : Context) : ℝ :=
-  maxEnt w ctx .delete
+  (maxEnt (con.comap (ctx, ·)) w).real {.delete}
 
 /-- With two candidates, the deletion probability is the logistic of the harmony difference. -/
 theorem maxEntProb_eq_sigmoid (w : Fin 4 → ℝ) (ctx : Context) :
     maxEntProb w ctx =
-      sigmoid (harmonyScore con w (ctx, .delete) - harmonyScore con w (ctx, .retain)) := by
-  unfold maxEntProb maxEnt
-  exact softmax_eq_sigmoid_of_univ_eq_pair (by decide) (by decide) _
+      sigmoid (harmonyScore con w (ctx, .delete) - harmonyScore con w (ctx, .retain)) :=
+  maxEnt_real_singleton_of_pair _ _ (a := Output.delete) (b := .retain) (by decide) (by decide)
 
 /-- Non-negative contextual faithfulness keeps MaxEnt within the restriction (§4.4). -/
 theorem maxEntProb_le_preC (hw : 0 ≤ w) (ctx : Context) :
@@ -523,6 +522,9 @@ inductive Voicing
   | voiced
   | devoiced
   deriving DecidableEq, Fintype
+
+instance : MeasurableSpace Voicing := ⊤
+instance : MeasurableSingletonClass Voicing := ⟨fun _ ↦ trivial⟩
 
 /-- IDENT-VOICE is violated by the devoiced output. -/
 def identVoice : Constraint (Loan × Voicing) := Constraint.binary (·.2 = .devoiced)
@@ -609,15 +611,14 @@ example : ∀ g ∈ loanwordWeights, g.model = .nHG →
 
 /-- With IDENT-VOICE weighted 2 over 1 and 1, *guddo* and *gutto* tie at harmony −2 and MaxEnt
 gives each probability ½ (tableau (22)). -/
-theorem guddo_maxEnt_half :
-    softmax (fun o ↦ harmonyScore loanwordDevoicing.con ![2, 1, 1] (.guddo, o)) =
-      fun _ ↦ 2⁻¹ := by
-  have h : (fun o ↦ harmonyScore loanwordDevoicing.con ![2, 1, 1] (.guddo, o)) =
+theorem guddo_maxEnt_half (o : Voicing) :
+    (maxEnt (loanwordDevoicing.con.comap (.guddo, ·)) ![2, 1, 1]).real {o} = 2⁻¹ := by
+  have h : harmonyScore (loanwordDevoicing.con.comap (.guddo, ·)) ![2, 1, 1] =
       fun _ ↦ (-2 : ℝ) := by
     funext o
     cases o <;> norm_num [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three,
       identVoice, ocpVoice, voicedGeminate]
-  rw [h]
+  rw [maxEnt_real_singleton, h]
   simp [show Fintype.card Voicing = 2 from rfl]
 
 /-! ### Variable rules (§4.5) -/

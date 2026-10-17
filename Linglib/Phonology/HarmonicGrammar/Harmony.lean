@@ -94,6 +94,20 @@ def harmonyDominates [Ring R] [LT R] (con : ConstraintSet C ι) (w : ι → R) :
     (a b : C) : harmonyDominates con w a b ↔ harmonyScore con w b < harmonyScore con w a :=
   Iff.rfl
 
+@[simp] theorem harmonyScore_comap [Ring R] {D : Type*} (f : C → D) (con : ConstraintSet D ι)
+    (w : ι → R) (c : C) : harmonyScore (con.comap f) w c = harmonyScore con w (f c) := rfl
+
+/-- Harmony is linear in the weights. -/
+theorem harmonyScore_add [Ring R] (con : ConstraintSet C ι) (w w' : ι → R) :
+    harmonyScore con (w + w') = harmonyScore con w + harmonyScore con w' := by
+  funext c
+  simp only [harmonyScore, Pi.add_apply, add_dotProduct, neg_add]
+
+theorem harmonyScore_smul [CommRing R] (con : ConstraintSet C ι) (r : R) (w : ι → R) :
+    harmonyScore con (r • w) = r • harmonyScore con w := by
+  funext c
+  simp [harmonyScore, smul_dotProduct]
+
 /-! ### Evaluation by cons-recursion -/
 
 @[simp] theorem harmonyScore_nil (con : ConstraintSet C (Fin 0)) (w : Fin 0 → ℝ) (x : C) :

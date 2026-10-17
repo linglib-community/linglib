@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.Harmony
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Mathlib.LinearAlgebra.Pi
 
 /-!
@@ -35,7 +34,7 @@ the generalization for every weighting and every candidate set.
 
 * `Square.Independent.interaction_sum_eq_zero`: under independence, a sum of per-constraint terms
   has zero interaction.
-* `Square.Independent.interaction_logOdds_softmax`: MaxEnt predicts the generalization, (22) of
+* `Square.Independent.interaction_logOdds_maxEnt`: MaxEnt predicts the generalization, (22) of
   [magri-2025].
 
 ## References
@@ -164,12 +163,13 @@ end Interaction
 
 /-- MaxEnt predicts HZ's generalization ((22) of [magri-2025]): under independence, the MaxEnt
 log-odds of two candidates have zero interaction, for every weighting and every candidate set. -/
-theorem Independent.interaction_logOdds_softmax [Fintype Y] {con : ConstraintSet (X × Y) (Fin n)}
-    (h : sq.Independent con) (w : Fin n → ℝ) (a b : Y) :
-    sq.interaction (fun x ↦ log (softmax (fun y ↦ harmonyScore con w (x, y)) a /
-      softmax (fun y ↦ harmonyScore con w (x, y)) b)) = 0 := by
-  have : Nonempty Y := ⟨a⟩
-  simpa only [log_softmax_div_softmax] using h.interaction_harmonyScore_sub w a b
+theorem Independent.interaction_logOdds_maxEnt [Fintype Y] [MeasurableSpace Y]
+    [MeasurableSingletonClass Y] {con : ConstraintSet (X × Y) (Fin n)} (h : sq.Independent con)
+    (w : Fin n → ℝ) (a b : Y) :
+    sq.interaction (fun x ↦ log ((maxEnt (con.comap (x, ·)) w).real {a} /
+      (maxEnt (con.comap (x, ·)) w).real {b})) = 0 := by
+  simpa only [log_maxEnt_real_singleton_div, harmonyScore_comap] using
+    h.interaction_harmonyScore_sub w a b
 
 end Square
 

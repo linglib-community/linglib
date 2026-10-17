@@ -4,7 +4,7 @@ public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 
 /-!
 # Expressivity of OT, Harmonic Grammar, and MaxEnt
@@ -12,7 +12,7 @@ public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 This file compares the expressive power of Optimality Theory (OT), Harmonic Grammar (HG), and
 maximum-entropy grammar (MaxEnt). With exponentially separated weights the harmony order of HG
 agrees with the lexicographic comparison of OT, so every OT grammar is an HG grammar, and as the
-inverse temperature grows MaxEnt concentrates on the OT winner. The containment of OT in HG is
+weights are scaled up MaxEnt concentrates on the OT winner. The containment of OT in HG is
 strict because of *cumulativity*, in which several low-weight violations together outweigh a
 single high-weight one. The comparison follows Smolensky and Legendre, Pater, and Coetzee and
 Pater, and the cumulativity witness is Coetzee and Pater's version of Itô and Mester's Lyman's
@@ -30,7 +30,7 @@ Law data.
 
 * `ot_lex_imp_higher_harmony`: lexicographic dominance gives higher harmony under exponentially
   separated weights.
-* `maxent_ot_limit`: MaxEnt concentrates on the OT winner as the inverse temperature grows.
+* `maxent_ot_limit`: MaxEnt concentrates on the OT winner as the weights are scaled up.
 * `RealizationProblem.realizedByRanking_iff_satisfiedBy`: OT-realization is ERC satisfaction.
 * `RealizationProblem.IsOTRealizable.isHGRealizable`, `hg_strictly_contains_ot`: OT is strictly
   contained in HG.
@@ -281,30 +281,19 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
 
 /-! ### MaxEnt → OT limit -/
 
-/-- As the inverse temperature grows, MaxEnt probability concentrates on the candidate with the
-    highest harmony. This instantiates `Real.tendsto_softmax_atTop` with harmony scores. -/
-theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
-    [DecidableEq C] {n : Nat} (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ) (c_opt : C)
-    (h_opt : ∀ c, c ≠ c_opt →
-      harmonyScore con w c < harmonyScore con w c_opt) :
-    Tendsto (fun α : ℝ => softmax (α • harmonyScore con w) c_opt) atTop (𝓝 1) :=
-  tendsto_softmax_atTop h_opt
-
-/-- As the inverse temperature grows, MaxEnt probability concentrates on a candidate `c_opt`
-    that lexicographically beats every competitor under a ranking with violation bound `M`. The
-    proof combines `ot_lex_imp_higher_harmony` with `Real.tendsto_softmax_atTop`. -/
-theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
-    (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
-    (c_opt : C)
+/-- Scaling exponentially separated weights concentrates the MaxEnt distribution on a candidate
+    that lexicographically beats every competitor under a ranking with violation bound `M`, since
+    it has the greatest harmony (`ot_lex_imp_higher_harmony`). -/
+theorem maxent_ot_limit {C : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSingletonClass C]
+    (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M) (c_opt : C)
     (hbound : ∀ c : C, ∀ con ∈ ranking, con c ≤ M)
     (hlex : ∀ c, c ≠ c_opt →
       toLex (fun i : Fin ranking.length => (ranking.get i) c_opt) <
       toLex (fun i : Fin ranking.length => (ranking.get i) c)) :
-    Tendsto (fun α : ℝ =>
-      softmax (α • harmonyScore ranking.get (expWeights ranking.length M)) c_opt)
-      atTop (𝓝 1) := by
-  exact tendsto_softmax_atTop fun c hc => ot_lex_imp_higher_harmony ranking M hM c_opt c
-    (fun con hcon => ⟨hbound c_opt con hcon, hbound c con hcon⟩) (hlex c hc)
+    Tendsto (fun α : ℝ ↦ (maxEnt ranking.get (α • expWeights ranking.length M)).real {c_opt})
+      atTop (𝓝 1) :=
+  tendsto_maxEnt_smul_atTop _ _ fun c hc ↦ ot_lex_imp_higher_harmony ranking M hM c_opt c
+    (fun con hcon ↦ ⟨hbound c_opt con hcon, hbound c con hcon⟩) (hlex c hc)
 
 /-! ## Realizability
 

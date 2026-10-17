@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Phonology.HarmonicGrammar.Harmony
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Data.Fin.VecNotation
@@ -25,8 +24,9 @@ output–output account of the same authors stipulated it.
 ## Main definitions
 
 * `Item`: a compound's listed bases, an optional free N2 and an optional whole compound.
-* `con`, `harmony`, `pNasal`: the constraints (6), the harmony under activation-scaled weights,
-  and the MaxEnt probability of nasalisation.
+* `con`, `harmony`, `votingBases`: the constraints (6), the harmony under activation-scaled
+  weights, and the MaxEnt distribution of an item's realisations.
+* `pNasal`: the probability of nasalisation.
 * `table1`: the fitted weights.
 
 ## Main results
@@ -71,11 +71,14 @@ output–output account of the same authors stipulated it.
 
 namespace BreissKatsudaKawahara2026
 
-open OptimalityTheory HarmonicGrammar Real
+open OptimalityTheory HarmonicGrammar Real MeasureTheory
 
 /-- The compound-medial velar, oral [g] or nasal [ŋ]. -/
 inductive Velar | oral | nasal
   deriving DecidableEq, Fintype
+
+instance : MeasurableSpace Velar := ⊤
+instance : MeasurableSingletonClass Velar := ⟨fun _ ↦ trivial⟩
 
 /-- A listed allomorph, given by its medial velar and its resting activation. -/
 structure Base where
@@ -136,9 +139,13 @@ def scaledWeights (w : Weights) (it : Item) : Fin 3 → ℝ :=
 def harmony (w : Weights) (it : Item) : Velar → ℝ :=
   harmonyScore (con it) (scaledWeights w it)
 
-/-- The MaxEnt probability that the compound nasalises. -/
+/-- The Voting Bases grammar's MaxEnt distribution of an item's realisations. -/
+noncomputable def votingBases (w : Weights) (it : Item) : Measure Velar :=
+  maxEnt (con it) (scaledWeights w it)
+
+/-- The probability that the compound nasalises. -/
 noncomputable def pNasal (w : Weights) (it : Item) : ℝ :=
-  softmax (harmony w it) .nasal
+  (votingBases w it).real {.nasal}
 
 /-- Scaling the weights is scaling the violations, as the tableaux display them. -/
 theorem harmony_apply (w : Weights) (it : Item) (v : Velar) :
@@ -162,8 +169,9 @@ def pull : Option Base → ℝ
 pulls of the two bases, so each frequency effect takes the sign of its base's listed velar. -/
 theorem pNasal_eq_sigmoid (w : Weights) (it : Item) :
     pNasal w it = sigmoid (w.markedness + w.n2 * pull it.n2 + w.compound * pull it.compound) := by
-  rw [pNasal, softmax_eq_sigmoid_of_univ_eq_pair (i := Velar.nasal) (j := .oral) (by decide)
-    (by decide)]
+  rw [pNasal, votingBases, maxEnt_real_singleton_of_pair _ _ (a := Velar.nasal) (b := .oral)
+    (by decide) (by decide)]
+  change sigmoid (harmony w it .nasal - harmony w it .oral) = _
   congr 1
   obtain ⟨n2, c⟩ := it
   rcases n2 with _ | ⟨_ | _, a⟩ <;> rcases c with _ | ⟨_ | _, b⟩ <;>

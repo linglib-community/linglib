@@ -5,6 +5,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.Analysis.Calculus.Deriv.Prod
+public import Mathlib.Analysis.MeanInequalities
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Data.Fintype.BigOperators
 
@@ -131,6 +132,34 @@ alias ⟨_, softmax_le_softmax⟩ := softmax_le_softmax_iff
 alias ⟨_, softmax_lt_softmax⟩ := softmax_lt_softmax_iff
 
 end Nonempty
+
+/-! ### Convexity -/
+
+/-- Log-sum-exp, the logarithm of softmax's normalizer, is convex. Hölder's inequality with
+exponents `a⁻¹` and `b⁻¹` bounds `∑ i, exp (a * s i + b * t i)` by
+`(∑ i, exp (s i)) ^ a * (∑ i, exp (t i)) ^ b`. -/
+theorem convexOn_log_sum_exp [Nonempty ι] :
+    ConvexOn ℝ Set.univ fun s : ι → ℝ ↦ log (∑ i, exp (s i)) := by
+  refine ⟨convex_univ, fun s _ t _ a b ha hb hab ↦ ?_⟩
+  rcases ha.eq_or_lt with rfl | ha
+  · obtain rfl : b = 1 := by linarith
+    simp
+  rcases hb.eq_or_lt with rfl | hb
+  · obtain rfl : a = 1 := by linarith
+    simp
+  have key := inner_le_Lp_mul_Lq_of_nonneg univ (HolderConjugate.inv_inv ha hb hab)
+    (f := fun i ↦ exp (a * s i)) (g := fun i ↦ exp (b * t i))
+    (fun _ _ ↦ (exp_pos _).le) (fun _ _ ↦ (exp_pos _).le)
+  have hpow (c x : ℝ) (hc : 0 < c) : exp (c * x) ^ c⁻¹ = exp x := by
+    rw [← exp_mul, mul_comm c, mul_assoc, mul_inv_cancel₀ hc.ne', mul_one]
+  simp only [hpow _ _ ha, hpow _ _ hb, one_div, inv_inv, ← exp_add] at key
+  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  calc log (∑ i, exp (a * s i + b * t i))
+      ≤ log ((∑ i, exp (s i)) ^ a * (∑ i, exp (t i)) ^ b) :=
+        log_le_log (sum_exp_pos fun i ↦ a * s i + b * t i) key
+    _ = a * log (∑ i, exp (s i)) + b * log (∑ i, exp (t i)) := by
+        rw [log_mul (rpow_pos_of_pos (sum_exp_pos s) _).ne' (rpow_pos_of_pos (sum_exp_pos t) _).ne',
+          log_rpow (sum_exp_pos s), log_rpow (sum_exp_pos t)]
 
 /-! ### Derivatives along a curve of scores -/
 

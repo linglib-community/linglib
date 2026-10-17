@@ -4,6 +4,7 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.FieldSimp
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Linglib.Phonology.HarmonicGrammar.Noise
 public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Data.Examples.Flemming2021
@@ -29,7 +30,7 @@ NoSchwa, \*CCC, \*Clash, Max, Dep and \*Cluster (20)–(28).
 
 ## Main results
 
-* `choiceProb_pi_gumbelMeasure_eq_softmax`, `logit_choiceProb_pi_gumbelMeasure`: MaxEnt is the
+* `choiceProb_pi_gumbelMeasure_eq_maxEnt`, `logit_choiceProb_pi_gumbelMeasure`: MaxEnt is the
   Gumbel random utility model, with logit (10).
 * `probit_weightNoiseChoiceProb`, `probit_choiceProb_pi_gaussianReal`: the probits (16) and (18).
 * `probitChange_strictAnti`: the NHG probit gain falls with the initial harmony difference (§7.2).
@@ -81,12 +82,13 @@ variable {C : Type*} [Fintype C] [Nonempty C] {n : ℕ}
 
 /-- MaxEnt is the Gumbel random utility model (§4). When the candidates' harmonies are perturbed by
 independent standard Gumbel noise, the probability that `c` has the highest perturbed harmony is the
-softmax of (4), by McFadden's Lemma 1. -/
-theorem choiceProb_pi_gumbelMeasure_eq_softmax [DecidableEq C] (con : ConstraintSet C (Fin n))
+MaxEnt probability of (4), by McFadden's Lemma 1. -/
+theorem choiceProb_pi_gumbelMeasure_eq_maxEnt [DecidableEq C] [MeasurableSpace C]
+    [MeasurableSingletonClass C] (con : ConstraintSet C (Fin n))
     (w : Fin n → ℝ) (c : C) :
     choiceProb (Measure.pi fun c' ↦ gumbelMeasure (harmonyScore con w c') 1) c =
-      ENNReal.ofReal (softmax (harmonyScore con w) c) := by
-  simp [choiceProb_pi_gumbelMeasure _ one_ne_zero c]
+      maxEnt con w {c} := by
+  simp [choiceProb_pi_gumbelMeasure _ one_ne_zero c, maxEnt_singleton]
 
 /-- Between two candidates the MaxEnt logit of the first is the harmony difference (10), since under
 standard Gumbel noise the choice probability is the logistic function of the difference. -/
@@ -245,10 +247,11 @@ theorem harmonyDiff_underlying (o : Onset) (f : Following) (w : Fin 6 → ℝ) :
 
 /-- The MaxEnt probability of the schwa candidate. -/
 noncomputable def maxEntProb (x : Context) (w : Fin 6 → ℝ) : ℝ :=
-  softmax (harmonyScore (constraints x) w) 0
+  (maxEnt (constraints x) w).real {0}
 
-theorem logit_maxEntProb (x : Context) (w : Fin 6 → ℝ) : logit (maxEntProb x w) = harmonyDiff x w :=
-  logit_softmax_fin_two _
+theorem logit_maxEntProb (x : Context) (w : Fin 6 → ℝ) :
+    logit (maxEntProb x w) = harmonyDiff x w := by
+  rw [maxEntProb, maxEnt_real_singleton, logit_softmax_fin_two]; rfl
 
 /-- MaxEnt predicts the same logit difference, the weight of \*Clash, across the four pairs
 1-2, 3-4, 5-6, 7-8. -/
@@ -355,7 +358,7 @@ theorem observedRate_following :
 /-- In MaxEnt a positive \*Clash weight raises the schwa's probability. -/
 theorem maxEntProb_following_lt (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) (hw : 0 < w 2) :
     maxEntProb ⟨u, o, .disyllable⟩ w < maxEntProb ⟨u, o, .monosyllable⟩ w := by
-  simp only [maxEntProb, softmax_fin_two]
+  simp only [maxEntProb, maxEnt_real_singleton, softmax_fin_two]
   exact sigmoid_strictMono
     (by have := harmonyDiff_following u o w; unfold harmonyDiff at this; linarith)
 
@@ -435,9 +438,10 @@ theorem table45_harmony :
 /-- MaxEnt gives `a` the probability `e⁻¹⁵ / (e⁻¹⁵ + 2e⁻¹⁶) = 1 / (1 + 2e⁻¹)`, 0.58, and `b` and
 `c` equal probabilities (5). -/
 theorem table45_maxent :
-    softmax (harmonyScore tableCon tableW) 0 = 1 / (1 + 2 * exp (-1)) ∧
-      softmax (harmonyScore tableCon tableW) 1 = softmax (harmonyScore tableCon tableW) 2 := by
+    (maxEnt tableCon tableW).real {0} = 1 / (1 + 2 * exp (-1)) ∧
+      (maxEnt tableCon tableW).real {1} = (maxEnt tableCon tableW).real {2} := by
   obtain ⟨h0, h1, h2⟩ := table45_harmony
+  simp only [maxEnt_real_singleton]
   refine ⟨?_, by simp only [softmax, h1, h2]⟩
   simp only [softmax, Fin.sum_univ_three, h0, h1, h2]
   rw [show (-16 : ℝ) = -15 + -1 by norm_num, exp_add]

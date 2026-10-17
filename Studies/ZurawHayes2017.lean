@@ -160,24 +160,27 @@ theorem acrossTheBoard_of_interaction_eq_zero {X S : Type*} {sq : Square X} {d :
 
 /-! ### Maximum entropy -/
 
+instance : MeasurableSpace SubSt := ⊤
+instance : MeasurableSingletonClass SubSt := ⟨fun _ ↦ trivial⟩
+
 /-- The MaxEnt probability of substitution for an input. -/
 noncomputable def maxEntSubst (w : Fin 11 → ℝ) (x : Prefix × StemC) : ℝ :=
-  softmax (fun y ↦ harmonyScore constraints w (x, y)) .yes
+  (maxEnt (constraints.comap (x, ·)) w).real {.yes}
 
 /-- The MaxEnt probability of substitution is logistic in the harmony difference between the
 substituted and unsubstituted candidates (13). -/
 theorem maxEntSubst_eq (w : Fin 11 → ℝ) (x : Prefix × StemC) :
     maxEntSubst w x =
       sigmoid (harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no)) :=
-  softmax_eq_sigmoid_of_univ_eq_pair (i := SubSt.yes) (j := .no) (by decide) (by decide) _
+  maxEnt_real_singleton_of_pair _ _ (a := SubSt.yes) (b := .no) (by decide) (by decide)
 
 /-- Any MaxEnt weighting has constant logit differences on every square, whatever the other
 candidates. -/
 theorem maxEnt_interaction_logOdds_eq_zero (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
     (square p p' c c').interaction (fun x ↦
-      log (softmax (fun y ↦ harmonyScore constraints w (x, y)) .yes /
-        softmax (fun y ↦ harmonyScore constraints w (x, y)) .no)) = 0 :=
-  (independent p p' c c').interaction_logOdds_softmax w .yes .no
+      log ((maxEnt (constraints.comap (x, ·)) w).real {.yes} /
+        (maxEnt (constraints.comap (x, ·)) w).real {.no})) = 0 :=
+  (independent p p' c c').interaction_logOdds_maxEnt w .yes .no
 
 /-- The logit of substitution for /b/ exceeds that for /k/ by the weights of *[root n/ŋ and
 *[root ŋ less that of *NC̥, whatever the prefix. -/

@@ -1,8 +1,7 @@
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Phonology.HarmonicGrammar.Harmony
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Data.Examples.HayesWilson2008
 
@@ -232,73 +231,98 @@ theorem table1_maxentValues :
 
 /-! ### Learning the weights (§3.3) -/
 
-/-- Updating one weight splits the weighted sum into that constraint's term and the rest. -/
-theorem update_dotProduct {n : ℕ} (w : Fin n → ℝ) (i : Fin n) (t : ℝ) (v : Fin n → ℕ) :
-    Function.update w i t ⬝ᵥ (Nat.cast ∘ v) = t * v i + ∑ j ∈ Finset.univ.erase i, w j * v j := by
-  rw [dotProduct, ← Finset.sum_erase_add _ _ (Finset.mem_univ i), Function.update_self,
-    add_comm]
-  congr 1
-  exact Finset.sum_congr rfl fun j hj ↦ by
-    rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)]; rfl
-
 section Learning
 
-variable {Ω : Type*} [Fintype Ω] [Nonempty Ω] {n : ℕ}
+open MeasureTheory InformationTheory
+open scoped ENNReal
 
-/-- The probability (6) of each form of a finite form space under real weights `w` and
-    violation counts `viol` is the softmax of the negated scores. -/
-noncomputable def prob (viol : Fin n → Ω → ℕ) (w : Fin n → ℝ) : Ω → ℝ :=
-  softmax fun x ↦ -(w ⬝ᵥ (Nat.cast ∘ (viol · x)))
-
-/-- The expected number of violations (8) of constraint `i` averages its counts under `prob`. -/
-noncomputable def expected (viol : Fin n → Ω → ℕ) (w : Fin n → ℝ) (i : Fin n) : ℝ :=
-  ∑ x, prob viol w x * viol i x
+variable {Ω : Type*} [Fintype Ω] [MeasurableSpace Ω] {n : ℕ} (viol : ConstraintSet Ω (Fin n))
+  (w : Fin n → ℝ) (D : Ω → ℕ)
 
 /-- The observed number of violations of constraint `i` sums its counts over data given as
     counts per form. -/
-def observed (viol : Fin n → Ω → ℕ) (D : Ω → ℕ) (i : Fin n) : ℕ :=
+def observed (i : Fin n) : ℕ :=
   ∑ x, D x * viol i x
 
-/-- The log probability of the data (7) sums the log probabilities of the forms, each weighted
-    by its count, since the forms are independent. -/
-noncomputable def logLik (viol : Fin n → Ω → ℕ) (w : Fin n → ℝ) (D : Ω → ℕ) : ℝ :=
-  ∑ x, D x * log (prob viol w x)
+/-- The log probability of the data (7) sums the log probabilities (6) of the forms, each
+    weighted by its count, since the forms are independent. -/
+noncomputable def logLik : ℝ :=
+  ∑ x, D x * log ((maxEnt viol w).real {x})
 
-/-- The partial derivative of one form's log probability in the weight of constraint `i` is
-    the expected count minus the form's own count. -/
-theorem hasDerivAt_log_prob (viol : Fin n → Ω → ℕ) (w : Fin n → ℝ) (i : Fin n) (x : Ω) :
-    HasDerivAt (λ t => log (prob viol (Function.update w i t) x))
-      (expected viol w i - viol i x) (w i) := by
-  set s : Ω → ℝ := λ y => -(viol i y : ℝ)
-  set r : Ω → ℝ := λ y => -∑ j ∈ Finset.univ.erase i, w j * viol j y
-  have hp : ∀ t, prob viol (Function.update w i t) = softmax (t • s + r) := λ t => by
-    unfold prob
-    congr 1
-    funext y
-    simp only [update_dotProduct, Pi.add_apply, Pi.smul_apply, smul_eq_mul, s, r]
-    ring
-  have hw : prob viol w = softmax ((w i) • s + r) := by
-    rw [← hp, Function.update_eq_self]
-  have hf : (λ t => log (prob viol (Function.update w i t) x)) =
-      λ t => log (softmax (t • s + r) x) := funext λ t => by rw [hp]
-  rw [hf]
-  convert (((hasDerivAt_id' (w i)).smul_const s).add_const r).log_softmax x using 1
-  simp only [expected, hw, s, one_smul, mul_neg, Finset.sum_neg_distrib]
-  ring
+/-- The empirical distribution of data given as counts per form. -/
+noncomputable def empirical : Measure Ω :=
+  ∑ x, ((D x : ℝ≥0∞) / ∑ y, (D y : ℝ≥0∞)) • Measure.dirac x
+
+theorem isProbabilityMeasure_empirical (hD : ∑ x, D x ≠ 0) :
+    IsProbabilityMeasure (empirical D) := by
+  constructor
+  have hN : (∑ y, (D y : ℝ≥0∞)) ≠ 0 := by exact_mod_cast hD
+  simp only [empirical, Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply,
+    measure_univ, smul_eq_mul, mul_one, div_eq_mul_inv, ← Finset.sum_mul]
+  exact ENNReal.mul_inv_cancel hN (ENNReal.sum_ne_top.2 fun _ _ ↦ ENNReal.natCast_ne_top _)
+
+variable [MeasurableSingletonClass Ω]
+
+theorem empirical_real_singleton (x : Ω) :
+    (empirical D).real {x} = D x / ∑ y, (D y : ℝ) := by
+  classical
+  simp only [empirical, measureReal_def, Measure.coe_finsetSum, Finset.sum_apply,
+    Measure.smul_apply, smul_eq_mul]
+  rw [Finset.sum_eq_single x (fun y _ hy ↦ by simp [hy]) (by simp)]
+  simp [ENNReal.toReal_div, ENNReal.toReal_sum fun _ _ ↦ ENNReal.natCast_ne_top _]
+
+/-- The log probability of the data is its size times the log-likelihood of its empirical
+    distribution. -/
+theorem logLik_eq (hD : ∑ x, D x ≠ 0) :
+    logLik viol w D = (∑ x, D x : ℕ) * logLikelihood viol (empirical D) w := by
+  have := isProbabilityMeasure_empirical D hD
+  have hN : (∑ x, D x : ℝ) ≠ 0 := by exact_mod_cast hD
+  simp only [logLik, logLikelihood, integral_fintype .of_finite, empirical_real_singleton,
+    smul_eq_mul, Finset.mul_sum, Nat.cast_sum]
+  exact Finset.sum_congr rfl fun x _ ↦ by field_simp
+
+/-- The empirical distribution's expected violations are the observed counts over the size of
+    the data. -/
+theorem expectedViolations_empirical (hD : ∑ x, D x ≠ 0) (i : Fin n) :
+    viol.expectedViolations (empirical D) i = observed viol D i / ∑ x, (D x : ℝ) := by
+  have := isProbabilityMeasure_empirical D hD
+  simp only [ConstraintSet.expectedViolations_apply, empirical_real_singleton, observed,
+    Nat.cast_sum, Nat.cast_mul, Finset.sum_div]
+  exact Finset.sum_congr rfl fun x _ ↦ by ring
+
+variable [Nonempty Ω]
 
 /-- The partial derivative of the log probability of the data in the weight of constraint `i`
-    is its expected count, scaled by the size of the data, minus its observed count
+    is its expected count (8), scaled by the size of the data, minus its observed count
     ([della-pietra-della-pietra-lafferty-1997]). The paper's §3.3.2 states the two terms as
     `O[Cᵢ] − E[Cᵢ]`, with the penalty direction in mind. -/
-theorem hasDerivAt_logLik (viol : Fin n → Ω → ℕ) (w : Fin n → ℝ) (D : Ω → ℕ)
-    (i : Fin n) :
-    HasDerivAt (λ t => logLik viol (Function.update w i t) D)
-      ((∑ x, D x : ℕ) * expected viol w i - observed viol D i) (w i) := by
+theorem hasDerivAt_logLik (i : Fin n) :
+    HasDerivAt (fun t ↦ logLik viol (Function.update w i t) D)
+      ((∑ x, D x : ℕ) * viol.expectedViolations (maxEnt viol w) i - observed viol D i) (w i) := by
+  have h (x : Ω) : HasDerivAt (fun t ↦ log ((maxEnt viol (Function.update w i t)).real {x}))
+      (viol.expectedViolations (maxEnt viol w) i - viol i x) (w i) := by
+    simpa only [logLikelihood_dirac, ConstraintSet.expectedViolations_dirac] using
+      hasDerivAt_logLikelihood_update viol w (Measure.dirac x) i
   unfold logLik
-  refine (HasDerivAt.fun_sum λ x (_ : x ∈ Finset.univ) =>
-    (hasDerivAt_log_prob viol w i x).const_mul (D x : ℝ)).congr_deriv ?_
+  refine (HasDerivAt.fun_sum fun x (_ : x ∈ Finset.univ) ↦
+    (h x).const_mul (D x : ℝ)).congr_deriv ?_
   simp only [observed, Nat.cast_sum, Nat.cast_mul, Finset.sum_mul, mul_sub,
     Finset.sum_sub_distrib]
+
+/-- Maximizing the probability of the data is maximizing entropy (§3.3.1,
+    [della-pietra-della-pietra-lafferty-1997]). Weights that make the data most probable give
+    the distribution of greatest entropy among those whose expected violations average the
+    observed ones. -/
+theorem isGreatest_measureEntropy_of_isMaxOn_logLik (hD : ∑ x, D x ≠ 0)
+    (h : IsMaxOn (fun w ↦ logLik viol w D) Set.univ w) :
+    IsGreatest (measureEntropy '' {q | IsProbabilityMeasure q ∧
+      viol.expectedViolations q = viol.expectedViolations (empirical D)}) (Hm[maxEnt viol w]) := by
+  have := isProbabilityMeasure_empirical D hD
+  have hN : (0 : ℝ) < (∑ x, D x : ℕ) := by exact_mod_cast Nat.pos_of_ne_zero hD
+  refine isGreatest_measureEntropy_of_isMaxOn viol w (empirical D) (isMaxOn_iff.2 fun w' _ ↦ ?_)
+  have hw' : logLik viol w' D ≤ logLik viol w D := h (Set.mem_univ w')
+  rw [logLik_eq viol _ D hD, logLik_eq viol _ D hD] at hw'
+  exact le_of_mul_le_mul_left hw' hN
 
 end Learning
 
@@ -417,18 +441,23 @@ def candidates : Finset (List Seg) :=
 
 instance : Nonempty candidates := ⟨⟨[r, t], by decide +kernel⟩⟩
 
+instance : MeasurableSpace candidates := ⊤
+instance : MeasurableSingletonClass candidates := ⟨fun _ ↦ trivial⟩
+
 /-- `onsetProb` is the probability (6) of each candidate under the learned grammar, with the
     weights of Table 4 read as reals. -/
-noncomputable def onsetProb : candidates → ℝ :=
-  prob (fun k o => viol k o) fun k => (table4W k : ℝ) / 100
+noncomputable def onsetProb (o : candidates) : ℝ :=
+  (maxEnt (fun k (o : candidates) ↦ viol k o) fun k ↦ (table4W k : ℝ) / 100).real {o}
 
 /-- The probability (6) is the softmax of the negated scores (4). -/
-theorem onsetProb_eq_softmax : onsetProb = softmax fun o : candidates => -(h o : ℝ) / 100 := by
-  unfold onsetProb prob
+theorem onsetProb_eq_softmax : onsetProb = softmax fun o : candidates ↦ -(h o : ℝ) / 100 := by
+  funext o
+  rw [onsetProb, maxEnt_real_singleton]
   congr 1
   funext o
-  simp only [h, score, dotProduct, Function.comp_apply, viol, Nat.cast_sum, Nat.cast_mul,
-    neg_div, Finset.sum_div, div_mul_eq_mul_div]
+  rw [harmonyScore_eq_neg_sum]
+  simp only [h, score, dotProduct, viol, Nat.cast_sum, Nat.cast_mul, neg_div, Finset.sum_div]
+  exact congrArg Neg.neg (Finset.sum_congr rfl fun i _ ↦ by ring)
 
 /-- On the candidate set, the probability (6) orders forms as the score does. -/
 theorem onsetProb_lt_iff {o₁ o₂ : candidates} : onsetProb o₁ < onsetProb o₂ ↔ h o₂ < h o₁ := by
