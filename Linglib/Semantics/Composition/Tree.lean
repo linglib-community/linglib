@@ -23,14 +23,24 @@ predicate modification, then event identification, whichever the daughters' type
 a trace denotes its index's value under the assignment; and a binder abstracts over its index
 by Predicate Abstraction, which is a capability of the effect (`PredAbs`) rather than a given.
 
+The modes are defined once, for any family of values indexed by the semantic types with the
+operations they need (`Modes`): the denotations of an applicative effect are one such family
+(`Modes.ofApplicative`), and the terms of a logical language are another
+(`Composition/Term.lean`). A map of families that commutes with the operations commutes with
+every mode (`Modes.interpBinary_map`).
+
 ## Main declarations
 
 * `PredAbs` is the entity-distributor an effect needs for Predicate Abstraction; `Id` has one
   and scope effects do not.
-* `functionalApplication?`, `intensionalApplication?`, `predicateModification?` and
-  `eventIdentification?` are the binary composition modes, `none` where the daughters' types do
-  not fit, and `interpBinary` tries them in order; `tyBinary` is the type they compose to, a
-  function of the daughters' types alone (`interpBinary_map_fst`).
+* `Modes` supplies the operations the composition modes combine values with, and
+  `Modes.ofApplicative` gives them on the denotations of an applicative effect.
+* `Modes.functionalApplication?`, `Modes.intensionalApplication?`,
+  `Modes.predicateModification?` and `Modes.eventIdentification?` are the binary composition
+  modes, `none` where the daughters' types do not fit, and `Modes.interpBinary` tries them in
+  order; `tyBinary` is the type they compose to, a function of the daughters' types alone
+  (`Modes.interpBinary_map_fst`), and the modes commute with maps of families
+  (`Modes.interpBinary_map`).
 * `interp` interprets a tree under an assignment, over any leaf type.
 * `ty?` is the type a tree composes to, a function of the types of its leaves alone, and the
   type of its denotation (`interp_map_fst`).
@@ -93,98 +103,103 @@ are `simp` lemmas in this namespace only, since they identify `Id α` with `α`.
 
 @[scoped simp] theorem pure_eq {α : Type} (a : α) : (pure a : Id α) = a := rfl
 
-/-! ### Composition modes -/
+/-! ### Composition modes
+
+The modes combine the values of a family `V` of types indexed by the semantic types, through the
+operations a `Modes V` supplies. The denotations of an applicative effect are one such family
+(`Modes.ofApplicative`), and the terms of the typed λ-calculus another (`Montague.Term`). -/
+
+/-- The operations by which the composition modes combine values in a family `V` of types:
+application in either order, the left daughter's value first, application to the rigid intension
+of a sister in either order, predicate modification, and event identification in either order. -/
+structure Modes (V : Ty → Type) where
+  /-- Application of the left daughter to the right. -/
+  app {σ τ : Ty} : V (σ ⇒ τ) → V σ → V τ
+  /-- Application of the right daughter to the left. -/
+  appRev {σ τ : Ty} : V σ → V (σ ⇒ τ) → V τ
+  /-- Application of the left daughter to the rigid intension of the right. -/
+  appRigid {σ τ : Ty} : V (.intens σ ⇒ τ) → V σ → V τ
+  /-- Application of the right daughter to the rigid intension of the left. -/
+  appRigidRev {σ τ : Ty} : V σ → V (.intens σ ⇒ τ) → V τ
+  /-- The intersection of two predicates. -/
+  inter : V (.e ⇒ .t) → V (.e ⇒ .t) → V (.e ⇒ .t)
+  /-- Event identification of a role head on the left with an eventuality predicate. -/
+  evId : V (.e ⇒ .e ⇒ .t) → V (.e ⇒ .t) → V (.e ⇒ .e ⇒ .t)
+  /-- Event identification of an eventuality predicate on the left with a role head. -/
+  evIdRev : V (.e ⇒ .t) → V (.e ⇒ .e ⇒ .t) → V (.e ⇒ .e ⇒ .t)
+
+/-- The modes on the denotations of an applicative effect, which apply by `<*>` with the left
+daughter's computation first. -/
+@[simps]
+def Modes.ofApplicative (E W : Type) (M : Type → Type) [Applicative M] (D : Type) :
+    Modes fun ty ↦ M (Ty.Domain E W ty D) where
+  app f a := f <*> a
+  appRev a f := (fun x g ↦ g x) <$> a <*> f
+  appRigid f a := (fun fv av ↦ fv fun _ ↦ av) <$> f <*> a
+  appRigidRev a f := (fun av fv ↦ fv fun _ ↦ av) <$> a <*> f
+  inter p q := Modifier.intersective <$> p <*> q
+  evId f p := ArgumentStructure.eventIdentification <$> f <*> p
+  evIdRev p f := flip ArgumentStructure.eventIdentification <$> p <*> f
+
+namespace Modes
+
+variable {V : Ty → Type} (S : Modes V)
 
 /-- Forward functional application, the function being the left daughter. -/
-def applyForward? {E W D : Type} {M : Type → Type} [Applicative M]
-    (df da : Denotation E W M D) : Option (Denotation E W M D) :=
+def applyForward? (df da : Σ ty, V ty) : Option (Σ ty, V ty) :=
   match hf : df.1 with
-  | .fn σ τ =>
-    if ha : σ = da.1 then
-      let f : M (Ty.Domain E W (σ ⇒ τ) D) := hf ▸ df.2
-      let a : M (Ty.Domain E W σ D) := ha ▸ da.2
-      some ⟨τ, f <*> a⟩
-    else none
+  | .fn σ τ => if ha : σ = da.1 then some ⟨τ, S.app (hf ▸ df.2) (ha ▸ da.2)⟩ else none
   | _ => none
 
 /-- Backward functional application, the function being the right daughter; the left daughter
-still sequences first. -/
-def applyBackward? {E W D : Type} {M : Type → Type} [Applicative M]
-    (da df : Denotation E W M D) : Option (Denotation E W M D) :=
+still comes first. -/
+def applyBackward? (da df : Σ ty, V ty) : Option (Σ ty, V ty) :=
   match hf : df.1 with
-  | .fn σ τ =>
-    if ha : σ = da.1 then
-      let f : M (Ty.Domain E W (σ ⇒ τ) D) := hf ▸ df.2
-      let a : M (Ty.Domain E W σ D) := ha ▸ da.2
-      some ⟨τ, (fun x g ↦ g x) <$> a <*> f⟩
-    else none
+  | .fn σ τ => if ha : σ = da.1 then some ⟨τ, S.appRev (ha ▸ da.2) (hf ▸ df.2)⟩ else none
   | _ => none
 
 /-- Functional application in either order, forward first. -/
-def functionalApplication? {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
-  applyForward? d1 d2 <|> applyBackward? d1 d2
+def functionalApplication? (d1 d2 : Σ ty, V ty) : Option (Σ ty, V ty) :=
+  S.applyForward? d1 d2 <|> S.applyBackward? d1 d2
 
 /-- Under intensional functional application ([von-fintel-heim-2011]) a daughter expecting an
-intension of type `⟨s,σ⟩` applies to the constant intension of a sister of type `σ`, in
-either order, so that modals and attitude verbs take the intension of their sister. -/
-def intensionalApplication? {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
+intension of type `⟨s,σ⟩` applies to the rigid intension of a sister of type `σ`, in either
+order, so that modals and attitude verbs take the intension of their sister. -/
+def intensionalApplication? (d1 d2 : Σ ty, V ty) : Option (Σ ty, V ty) :=
   match hf : d1.1 with
   | .fn (.intens σ) τ =>
-    if ha : σ = d2.1 then
-      let f : M (Ty.Domain E W (.fn (.intens σ) τ) D) := hf ▸ d1.2
-      let a : M (Ty.Domain E W σ D) := ha ▸ d2.2
-      some ⟨τ, (fun fv av ↦ fv fun _ ↦ av) <$> f <*> a⟩
+    if ha : σ = d2.1 then some ⟨τ, S.appRigid (hf ▸ d1.2) (ha ▸ d2.2)⟩
     else
       match hf' : d2.1 with
       | .fn (.intens σ') τ' =>
-        if ha' : σ' = d1.1 then
-          let f : M (Ty.Domain E W (.fn (.intens σ') τ') D) := hf' ▸ d2.2
-          let a : M (Ty.Domain E W σ' D) := ha' ▸ d1.2
-          some ⟨τ', (fun av fv ↦ fv fun _ ↦ av) <$> a <*> f⟩
-        else none
+        if ha' : σ' = d1.1 then some ⟨τ', S.appRigidRev (ha' ▸ d1.2) (hf' ▸ d2.2)⟩ else none
       | _ => none
   | _ =>
     match hf : d2.1 with
     | .fn (.intens σ) τ =>
-      if ha : σ = d1.1 then
-        let f : M (Ty.Domain E W (.fn (.intens σ) τ) D) := hf ▸ d2.2
-        let a : M (Ty.Domain E W σ D) := ha ▸ d1.2
-        some ⟨τ, (fun av fv ↦ fv fun _ ↦ av) <$> a <*> f⟩
-      else none
+      if ha : σ = d1.1 then some ⟨τ, S.appRigidRev (ha ▸ d1.2) (hf ▸ d2.2)⟩ else none
     | _ => none
 
 /-- Predicate modification, the intersection of two `⟨e,t⟩` predicates. -/
-def predicateModification? {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
+def predicateModification? (d1 d2 : Σ ty, V ty) : Option (Σ ty, V ty) :=
   match h1 : d1.1, h2 : d2.1 with
-  | .fn .e .t, .fn .e .t =>
-    let p1 : M (Ty.Domain E W (.e ⇒ .t) D) := h1 ▸ d1.2
-    let p2 : M (Ty.Domain E W (.e ⇒ .t) D) := h2 ▸ d2.2
-    some ⟨.fn .e .t, Modifier.intersective <$> p1 <*> p2⟩
+  | .fn .e .t, .fn .e .t => some ⟨.fn .e .t, S.inter (h1 ▸ d1.2) (h2 ▸ d2.2)⟩
   | _, _ => none
 
 /-- The event identification mode combines a role head of type `⟨e,⟨e,t⟩⟩` and an eventuality
-predicate of type `⟨e,t⟩`, in either order, by `eventIdentification`. -/
-def eventIdentification? {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
+predicate of type `⟨e,t⟩`, in either order. -/
+def eventIdentification? (d1 d2 : Σ ty, V ty) : Option (Σ ty, V ty) :=
   match h1 : d1.1, h2 : d2.1 with
-  | .fn .e (.fn .e .t), .fn .e .t =>
-    let f : M (Ty.Domain E W (.e ⇒ .e ⇒ .t) D) := h1 ▸ d1.2
-    let p : M (Ty.Domain E W (.e ⇒ .t) D) := h2 ▸ d2.2
-    some ⟨.e ⇒ .e ⇒ .t, ArgumentStructure.eventIdentification <$> f <*> p⟩
-  | .fn .e .t, .fn .e (.fn .e .t) =>
-    let p : M (Ty.Domain E W (.e ⇒ .t) D) := h1 ▸ d1.2
-    let f : M (Ty.Domain E W (.e ⇒ .e ⇒ .t) D) := h2 ▸ d2.2
-    some ⟨.e ⇒ .e ⇒ .t, flip ArgumentStructure.eventIdentification <$> p <*> f⟩
+  | .fn .e (.fn .e .t), .fn .e .t => some ⟨.e ⇒ .e ⇒ .t, S.evId (h1 ▸ d1.2) (h2 ▸ d2.2)⟩
+  | .fn .e .t, .fn .e (.fn .e .t) => some ⟨.e ⇒ .e ⇒ .t, S.evIdRev (h1 ▸ d1.2) (h2 ▸ d2.2)⟩
   | _, _ => none
 
 /-- The modes a binary node tries, in order. -/
-def interpBinary {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
-  functionalApplication? d1 d2 <|> intensionalApplication? d1 d2 <|>
-    predicateModification? d1 d2 <|> eventIdentification? d1 d2
+def interpBinary (d1 d2 : Σ ty, V ty) : Option (Σ ty, V ty) :=
+  S.functionalApplication? d1 d2 <|> S.intensionalApplication? d1 d2 <|>
+    S.predicateModification? d1 d2 <|> S.eventIdentification? d1 d2
+
+end Modes
 
 /-- The value of an interpreted daughter at the type `τ`, with the default `v` where the
 daughter is uninterpretable or of another type. Types do not depend on the assignment
@@ -211,62 +226,64 @@ theorem valueAt_of_map_fst {E W D : Type} {M : Type → Type} {τ : Ty}
 /-! ### Types compose independently of values
 
 The type a node composes to is a function of its daughters' types alone, by the modes in the
-order `interpBinary` tries them; `tyBinary` is that function and `interpBinary_map_fst` the
-agreement. -/
-
-section Typing
-
-variable {E W D : Type} {M : Type → Type} [Applicative M]
+order `Modes.interpBinary` tries them; `tyBinary` is that function and
+`Modes.interpBinary_map_fst` the agreement. -/
 
 /-- The type a binary node composes to, or none when no mode applies. -/
 def tyBinary (σ τ : Ty) : Option Ty :=
   σ.apply? τ <|> τ.apply? σ <|> σ.intensionalApplication? τ <|> σ.predicateModification? τ <|>
     σ.eventIdentification? τ
 
-theorem applyForward?_map_fst (d₁ d₂ : Denotation E W M D) :
-    (applyForward? d₁ d₂).map (·.1) = Ty.apply? d₁.1 d₂.1 := by
+namespace Modes
+
+section Typing
+
+variable {V : Ty → Type} (S : Modes V)
+
+theorem applyForward?_map_fst (d₁ d₂ : Σ ty, V ty) :
+    (S.applyForward? d₁ d₂).map (·.1) = Ty.apply? d₁.1 d₂.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
   unfold applyForward? Ty.apply?
   dsimp only
   split <;> (try split_ifs) <;> simp_all
 
-theorem applyBackward?_map_fst (d₁ d₂ : Denotation E W M D) :
-    (applyBackward? d₁ d₂).map (·.1) = Ty.apply? d₂.1 d₁.1 := by
+theorem applyBackward?_map_fst (d₁ d₂ : Σ ty, V ty) :
+    (S.applyBackward? d₁ d₂).map (·.1) = Ty.apply? d₂.1 d₁.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
   unfold applyBackward? Ty.apply?
   dsimp only
   split <;> (try split_ifs) <;> simp_all
 
-theorem intensionalApplication?_map_fst (d₁ d₂ : Denotation E W M D) :
-    (intensionalApplication? d₁ d₂).map (·.1) = Ty.intensionalApplication? d₁.1 d₂.1 := by
+theorem intensionalApplication?_map_fst (d₁ d₂ : Σ ty, V ty) :
+    (S.intensionalApplication? d₁ d₂).map (·.1) = Ty.intensionalApplication? d₁.1 d₂.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
   unfold intensionalApplication? Ty.intensionalApplication?
   dsimp only
   split <;> (try split_ifs) <;> (try split) <;> (try split_ifs) <;> simp_all
 
-theorem predicateModification?_map_fst (d₁ d₂ : Denotation E W M D) :
-    (predicateModification? d₁ d₂).map (·.1) = Ty.predicateModification? d₁.1 d₂.1 := by
+theorem predicateModification?_map_fst (d₁ d₂ : Σ ty, V ty) :
+    (S.predicateModification? d₁ d₂).map (·.1) = Ty.predicateModification? d₁.1 d₂.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
   unfold predicateModification? Ty.predicateModification?
   dsimp only
   split <;> simp_all
 
-theorem eventIdentification?_map_fst (d₁ d₂ : Denotation E W M D) :
-    (eventIdentification? d₁ d₂).map (·.1) = Ty.eventIdentification? d₁.1 d₂.1 := by
+theorem eventIdentification?_map_fst (d₁ d₂ : Σ ty, V ty) :
+    (S.eventIdentification? d₁ d₂).map (·.1) = Ty.eventIdentification? d₁.1 d₂.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
   unfold eventIdentification? Ty.eventIdentification?
   dsimp only
   split <;> simp_all
 
-theorem interpBinary_map_fst (d₁ d₂ : Denotation E W M D) :
-    (interpBinary d₁ d₂).map (·.1) = tyBinary d₁.1 d₂.1 := by
+theorem interpBinary_map_fst (d₁ d₂ : Σ ty, V ty) :
+    (S.interpBinary d₁ d₂).map (·.1) = tyBinary d₁.1 d₂.1 := by
   simp only [interpBinary, functionalApplication?, tyBinary, Option.orElse_eq_orElse,
     Option.orElse_eq_or, Option.map_or, Option.or_assoc, applyForward?_map_fst,
     applyBackward?_map_fst, intensionalApplication?_map_fst, predicateModification?_map_fst,
     eventIdentification?_map_fst]
 
-theorem intensionalApplication?_eq_none {d₁ d₂ : Denotation E W M D} (h₁ : d₁.1.Extensional)
-    (h₂ : d₂.1.Extensional) : intensionalApplication? d₁ d₂ = none :=
+theorem intensionalApplication?_eq_none {d₁ d₂ : Σ ty, V ty} (h₁ : d₁.1.Extensional)
+    (h₂ : d₂.1.Extensional) : S.intensionalApplication? d₁ d₂ = none :=
   Option.map_eq_none_iff.mp <| by
     rw [intensionalApplication?_map_fst]; exact Ty.intensionalApplication?_eq_none h₁ h₂
 
@@ -274,59 +291,134 @@ end Typing
 
 /-! ### Reduction of the modes
 
-The modes reduce by `simp` at the types where they apply, toward the composed denotation. -/
+The modes reduce by `simp` at the types where they apply, toward the composed value. -/
 
-section Modes
+section Reduction
 
-variable {E W D : Type} {M : Type → Type} [Applicative M]
+variable {V : Ty → Type} (S : Modes V)
 
 /-- Forward application reduces at any types; backward application reduces only at concrete
 types, since forward fires first whenever the left daughter is a function. -/
-@[simp] theorem applyForward?_fn {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
-    (x : M (Ty.Domain E W σ D)) :
-    applyForward? (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+@[simp] theorem applyForward?_fn {σ τ : Ty} (f : V (σ ⇒ τ)) (x : V σ) :
+    S.applyForward? ⟨σ ⇒ τ, f⟩ ⟨σ, x⟩ = some ⟨τ, S.app f x⟩ := by
   simp only [applyForward?, ↓reduceDIte]
 
-@[simp] theorem functionalApplication?_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
-    (x : M (Ty.Domain E W σ D)) :
-    functionalApplication? (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+@[simp] theorem functionalApplication?_forward {σ τ : Ty} (f : V (σ ⇒ τ)) (x : V σ) :
+    S.functionalApplication? ⟨σ ⇒ τ, f⟩ ⟨σ, x⟩ = some ⟨τ, S.app f x⟩ := by
   simp only [functionalApplication?, applyForward?_fn]; rfl
 
-@[simp] theorem applyBackward?_fn {σ τ : Ty} (x : M (Ty.Domain E W σ D))
-    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
-    applyBackward? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
-      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
+@[simp] theorem applyBackward?_fn {σ τ : Ty} (x : V σ) (f : V (σ ⇒ τ)) :
+    S.applyBackward? ⟨σ, x⟩ ⟨σ ⇒ τ, f⟩ = some ⟨τ, S.appRev x f⟩ := by
   simp only [applyBackward?, ↓reduceDIte]
 
 /-- Backward application reduces at any types too, since forward cannot apply to an argument
 of the function's own argument type. -/
-@[simp] theorem functionalApplication?_backward {σ τ : Ty} (x : M (Ty.Domain E W σ D))
-    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
-    functionalApplication? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
-      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
-  have h : applyForward? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ = none :=
+@[simp] theorem functionalApplication?_backward {σ τ : Ty} (x : V σ) (f : V (σ ⇒ τ)) :
+    S.functionalApplication? ⟨σ, x⟩ ⟨σ ⇒ τ, f⟩ = some ⟨τ, S.appRev x f⟩ := by
+  have h : S.applyForward? ⟨σ, x⟩ ⟨σ ⇒ τ, f⟩ = none :=
     Option.map_eq_none_iff.mp (by rw [applyForward?_map_fst]; exact Ty.apply?_fn_self σ τ)
   simp only [functionalApplication?, h, applyBackward?_fn]; rfl
 
-@[simp] theorem interpBinary_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
-    (x : M (Ty.Domain E W σ D)) :
-    interpBinary (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+@[simp] theorem interpBinary_forward {σ τ : Ty} (f : V (σ ⇒ τ)) (x : V σ) :
+    S.interpBinary ⟨σ ⇒ τ, f⟩ ⟨σ, x⟩ = some ⟨τ, S.app f x⟩ := by
   simp [interpBinary]
 
-@[simp] theorem interpBinary_backward {σ τ : Ty} (x : M (Ty.Domain E W σ D))
-    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
-    interpBinary (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
-      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
+@[simp] theorem interpBinary_backward {σ τ : Ty} (x : V σ) (f : V (σ ⇒ τ)) :
+    S.interpBinary ⟨σ, x⟩ ⟨σ ⇒ τ, f⟩ = some ⟨τ, S.appRev x f⟩ := by
   simp [interpBinary]
 
 /-- Two predicates compose by predicate modification, application failing on them. -/
-@[simp] theorem interpBinary_predicateModification (P Q : M (Ty.Domain E W (.e ⇒ .t) D)) :
-    interpBinary (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ =
-      some ⟨.e ⇒ .t, Modifier.intersective <$> P <*> Q⟩ := by
-  have h : intensionalApplication? (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ = none :=
-    intensionalApplication?_eq_none (.fn .e .t) (.fn .e .t)
+@[simp] theorem interpBinary_predicateModification (P Q : V (.e ⇒ .t)) :
+    S.interpBinary ⟨.e ⇒ .t, P⟩ ⟨.e ⇒ .t, Q⟩ = some ⟨.e ⇒ .t, S.inter P Q⟩ := by
+  have h : S.intensionalApplication? ⟨.e ⇒ .t, P⟩ ⟨.e ⇒ .t, Q⟩ = none :=
+    S.intensionalApplication?_eq_none (.fn .e .t) (.fn .e .t)
   simp [interpBinary, functionalApplication?, applyForward?, applyBackward?, h,
     predicateModification?]
+
+end Reduction
+
+/-! ### Maps of families
+
+A map of families that commutes with the operations of two `Modes` commutes with every mode, so
+that composing values and then mapping them is mapping and then composing. -/
+
+/-- A map of families commutes with the operations of the modes. -/
+structure IsHom {V V' : Ty → Type} (S : Modes V) (S' : Modes V')
+    (h : ∀ {ty : Ty}, V ty → V' ty) : Prop where
+  app {σ τ : Ty} (f : V (σ ⇒ τ)) (a : V σ) : h (S.app f a) = S'.app (h f) (h a)
+  appRev {σ τ : Ty} (a : V σ) (f : V (σ ⇒ τ)) : h (S.appRev a f) = S'.appRev (h a) (h f)
+  appRigid {σ τ : Ty} (f : V (.intens σ ⇒ τ)) (a : V σ) :
+    h (S.appRigid f a) = S'.appRigid (h f) (h a)
+  appRigidRev {σ τ : Ty} (a : V σ) (f : V (.intens σ ⇒ τ)) :
+    h (S.appRigidRev a f) = S'.appRigidRev (h a) (h f)
+  inter (p q : V (.e ⇒ .t)) : h (S.inter p q) = S'.inter (h p) (h q)
+  evId (f : V (.e ⇒ .e ⇒ .t)) (p : V (.e ⇒ .t)) : h (S.evId f p) = S'.evId (h f) (h p)
+  evIdRev (p : V (.e ⇒ .t)) (f : V (.e ⇒ .e ⇒ .t)) :
+    h (S.evIdRev p f) = S'.evIdRev (h p) (h f)
+
+section Hom
+
+variable {V V' : Ty → Type} {S : Modes V} {S' : Modes V'} {h : ∀ {ty : Ty}, V ty → V' ty}
+
+/-- A value mapped along a map of families, at its type. -/
+abbrev mapValue (h : ∀ {ty : Ty}, V ty → V' ty) (d : Σ ty, V ty) : Σ ty, V' ty := ⟨d.1, h d.2⟩
+
+theorem applyForward?_map (hh : S.IsHom S' h) (d₁ d₂ : Σ ty, V ty) :
+    (S.applyForward? d₁ d₂).map (mapValue h) =
+      S'.applyForward? (mapValue h d₁) (mapValue h d₂) := by
+  obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
+  cases t₁ with
+  | fn σ τ =>
+    by_cases ha : σ = t₂
+    · subst ha; simp [applyForward?, hh.app]
+    · simp [applyForward?, ha]
+  | _ => rfl
+
+theorem applyBackward?_map (hh : S.IsHom S' h) (d₁ d₂ : Σ ty, V ty) :
+    (S.applyBackward? d₁ d₂).map (mapValue h) =
+      S'.applyBackward? (mapValue h d₁) (mapValue h d₂) := by
+  obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
+  cases t₂ with
+  | fn σ τ =>
+    by_cases ha : σ = t₁
+    · subst ha; simp [applyBackward?, hh.appRev]
+    · simp [applyBackward?, ha]
+  | _ => rfl
+
+theorem intensionalApplication?_map (hh : S.IsHom S' h) (d₁ d₂ : Σ ty, V ty) :
+    (S.intensionalApplication? d₁ d₂).map (mapValue h) =
+      S'.intensionalApplication? (mapValue h d₁) (mapValue h d₂) := by
+  obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
+  unfold intensionalApplication?
+  dsimp only
+  split <;> (try split_ifs) <;> (try split) <;> (try split_ifs) <;>
+    simp_all [hh.appRigid, hh.appRigidRev]
+  all_goals (subst_vars; rfl)
+
+theorem predicateModification?_map (hh : S.IsHom S' h) (d₁ d₂ : Σ ty, V ty) :
+    (S.predicateModification? d₁ d₂).map (mapValue h) =
+      S'.predicateModification? (mapValue h d₁) (mapValue h d₂) := by
+  obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
+  unfold predicateModification?
+  dsimp only
+  split <;> simp_all [hh.inter]
+
+theorem eventIdentification?_map (hh : S.IsHom S' h) (d₁ d₂ : Σ ty, V ty) :
+    (S.eventIdentification? d₁ d₂).map (mapValue h) =
+      S'.eventIdentification? (mapValue h d₁) (mapValue h d₂) := by
+  obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
+  unfold eventIdentification?
+  dsimp only
+  split <;> simp_all [hh.evId, hh.evIdRev]
+
+/-- The modes commute with every map of families that commutes with their operations. -/
+theorem interpBinary_map (hh : S.IsHom S' h) (d₁ d₂ : Σ ty, V ty) :
+    (S.interpBinary d₁ d₂).map (mapValue h) = S'.interpBinary (mapValue h d₁) (mapValue h d₂) := by
+  simp only [interpBinary, functionalApplication?, Option.orElse_eq_orElse, Option.orElse_eq_or,
+    Option.map_or, applyForward?_map hh, applyBackward?_map hh, intensionalApplication?_map hh,
+    predicateModification?_map hh, eventIdentification?_map hh]
+
+end Hom
 
 end Modes
 
@@ -351,13 +443,13 @@ def interp {E W : Type} {M : Type → Type} [Applicative M] {D : Type} [PredAbs 
   | .node _ (t1 :: t2 :: []) => do
     let d1 ← interp lex g t1
     let d2 ← interp lex g t2
-    interpBinary d1 d2
+    (Modes.ofApplicative E W M D).interpBinary d1 d2
   | .node _ _ => none
   | .adjoin _ (t :: []) => interp lex g t
   | .adjoin _ (t1 :: t2 :: []) => do
     let d1 ← interp lex g t1
     let d2 ← interp lex g t2
-    interpBinary d1 d2
+    (Modes.ofApplicative E W M D).interpBinary d1 d2
   | .adjoin _ _ => none
   | .trace n _ => some ⟨.e, pure (g n)⟩
   | .bind n _ body => do
@@ -394,7 +486,8 @@ variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs 
     (c : C) (t₁ t₂ : Tree C L) :
     interp lex g (.adjoin c (t₁ :: t₂ :: []))
       = ((interp lex g t₁).bind fun d₁ =>
-          (interp lex g t₂).bind fun d₂ => interpBinary d₁ d₂) := rfl
+          (interp lex g t₂).bind fun d₂ => (Modes.ofApplicative E W M D).interpBinary d₁ d₂) :=
+  rfl
 
 @[simp] theorem interp_trace (lex : L → Option (Denotation E W M D)) (g : Assignment E) (n : ℕ)
     (c : C) : interp lex g (.trace n c : Tree C L) = some ⟨.e, pure (g n)⟩ := rfl
@@ -411,7 +504,8 @@ variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs 
     (c : C) (t₁ t₂ : Tree C L) :
     interp lex g (.node c (t₁ :: t₂ :: []))
       = ((interp lex g t₁).bind fun d₁ =>
-          (interp lex g t₂).bind fun d₂ => interpBinary d₁ d₂) := rfl
+          (interp lex g t₂).bind fun d₂ => (Modes.ofApplicative E W M D).interpBinary d₁ d₂) :=
+  rfl
 
 /-- A node whose daughters its label does not license denotes nothing. -/
 theorem interp_junk (lex : L → Option (Denotation E W M D)) (g : Assignment E)
@@ -527,7 +621,7 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
     | [t] => exact ih t (by simp) g
     | [t₁, t₂] =>
       rw [interp_node_binary, ty?_node_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
-      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [interpBinary_map_fst]
+      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [Modes.interpBinary_map_fst]
     | _ :: _ :: _ :: _ => rfl
   | adjoin c cs ih =>
     match cs with
@@ -535,7 +629,7 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
     | [t] => exact ih t (by simp) g
     | [t₁, t₂] =>
       rw [interp_adjoin_binary, ty?_adjoin_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
-      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [interpBinary_map_fst]
+      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [Modes.interpBinary_map_fst]
     | _ :: _ :: _ :: _ => rfl
   | trace n c => rfl
   | bind n c body ih =>
@@ -795,7 +889,8 @@ theorem readings_eq_of_choice (choice : L → Option (Denotation E W M D)) (t : 
 /-- A binary node's readings are the pointwise compositions of its daughters'. -/
 theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation E W M D} :
     d ∈ readings lex g (.node c (t₁ :: t₂ :: [])) ↔
-      ∃ d₁ ∈ readings lex g t₁, ∃ d₂ ∈ readings lex g t₂, interpBinary d₁ d₂ = some d := by
+      ∃ d₁ ∈ readings lex g t₁, ∃ d₂ ∈ readings lex g t₂,
+        (Modes.ofApplicative E W M D).interpBinary d₁ d₂ = some d := by
   constructor
   · rintro ⟨r, hr, hd⟩
     rcases r with ⟨l, cs⟩

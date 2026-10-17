@@ -470,7 +470,8 @@ variable {d₁ d₂ : Denotation E W Id D} {d₁' d₂' d' : PDenotation E W D}
 
 theorem applyForward?_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
     (h : applyForward? d₁' d₂' = some d') :
-    ∃ d, Tree.applyForward? d₁ d₂ = some d ∧ d.Lifts d' := by
+    ∃ d : Denotation E W Id D,
+      (Tree.Modes.ofApplicative E W Id D).applyForward? d₁ d₂ = some d ∧ d.Lifts d' := by
   cases h₁ with | @mk ty₁ x₁ y₁ hl₁ => ?_
   cases h₂ with | @mk ty₂ x₂ y₂ hl₂ => ?_
   cases ty₁
@@ -480,7 +481,7 @@ theorem applyForward?_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
       rw [applyForward?_some_some, Option.some.injEq] at h
       subst h
       obtain ⟨z, hz, hl⟩ := hl₁ x₂ y₂ hl₂
-      exact ⟨⟨τ, x₁ x₂⟩, by rw [Tree.applyForward?_fn]; rfl, hz ▸ .mk hl⟩
+      exact ⟨⟨τ, x₁ x₂⟩, by rw [Tree.Modes.applyForward?_fn]; rfl, hz ▸ .mk hl⟩
     · have hty := applyForward?_map_fst (⟨σ ⇒ τ, Part.some y₁⟩ : PDenotation E W D)
         ⟨ty₂, Part.some y₂⟩
       rw [h] at hty
@@ -489,7 +490,8 @@ theorem applyForward?_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
 
 theorem applyBackward?_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
     (h : applyBackward? d₁' d₂' = some d') :
-    ∃ d, Tree.applyBackward? d₁ d₂ = some d ∧ d.Lifts d' := by
+    ∃ d : Denotation E W Id D,
+      (Tree.Modes.ofApplicative E W Id D).applyBackward? d₁ d₂ = some d ∧ d.Lifts d' := by
   cases h₁ with | @mk ty₁ x₁ y₁ hl₁ => ?_
   cases h₂ with | @mk ty₂ x₂ y₂ hl₂ => ?_
   cases ty₂
@@ -499,7 +501,7 @@ theorem applyBackward?_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
       rw [applyBackward?_some_some, Option.some.injEq] at h
       subst h
       obtain ⟨z, hz, hl⟩ := hl₂ x₁ y₁ hl₁
-      exact ⟨⟨τ, x₂ x₁⟩, by rw [Tree.applyBackward?_fn]; rfl, hz ▸ .mk hl⟩
+      exact ⟨⟨τ, x₂ x₁⟩, by rw [Tree.Modes.applyBackward?_fn]; rfl, hz ▸ .mk hl⟩
     · have hty := applyBackward?_map_fst (⟨ty₁, Part.some y₁⟩ : PDenotation E W D)
         ⟨σ ⇒ τ, Part.some y₂⟩
       rw [h] at hty
@@ -508,7 +510,8 @@ theorem applyBackward?_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
 
 theorem predicateModification?_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
     (h : predicateModification? d₁' d₂' = some d') :
-    ∃ d, Tree.interpBinary d₁ d₂ = some d ∧ d.Lifts d' := by
+    ∃ d : Denotation E W Id D,
+      (Tree.Modes.ofApplicative E W Id D).interpBinary d₁ d₂ = some d ∧ d.Lifts d' := by
   cases h₁ with | @mk ty₁ x₁ y₁ hl₁ => ?_
   cases h₂ with | @mk ty₂ x₂ y₂ hl₂ => ?_
   have hty :=
@@ -519,7 +522,7 @@ theorem predicateModification?_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lift
   split at hty
   · rw [predicateModification?_some_some, Option.some.injEq] at h
     subst h
-    refine ⟨_, Tree.interpBinary_predicateModification (M := Id) x₁ x₂,
+    refine ⟨_, (Tree.Modes.ofApplicative E W Id D).interpBinary_predicateModification x₁ x₂,
       .mk (Ty.lifts_fn.mpr fun x _ hxy ↦ ?_)⟩
     obtain rfl : x = _ := hxy
     obtain ⟨a, ha, hla⟩ := hl₁ x x rfl
@@ -531,17 +534,19 @@ theorem predicateModification?_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lift
 
 theorem interpBinary_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
     (h : interpBinary d₁' d₂' = some d') :
-    ∃ d, Tree.interpBinary d₁ d₂ = some d ∧ d.Lifts d' := by
+    ∃ d : Denotation E W Id D,
+      (Tree.Modes.ofApplicative E W Id D).interpBinary d₁ d₂ = some d ∧ d.Lifts d' := by
   simp only [interpBinary, Option.orElse_eq_orElse, Option.orElse_eq_or, Option.or_eq_some_iff] at h
   rcases h with h | ⟨hf, h | ⟨hb, h⟩⟩
   · obtain ⟨d, hd, hl⟩ := applyForward?_lifts h₁ h₂ h
-    exact ⟨d, by simp only [Tree.interpBinary, Tree.functionalApplication?, Option.orElse_eq_orElse,
-      Option.orElse_eq_or, hd, Option.some_or], hl⟩
+    exact ⟨d, by simp only [Tree.Modes.interpBinary, Tree.Modes.functionalApplication?,
+      Option.orElse_eq_orElse, Option.orElse_eq_or, hd, Option.some_or], hl⟩
   · obtain ⟨d, hd, hl⟩ := applyBackward?_lifts h₁ h₂ h
-    have hf' : Tree.applyForward? d₁ d₂ = none := Option.map_eq_none_iff.mp <| by
-      rw [Tree.applyForward?_map_fst, h₁.fst, h₂.fst, ← applyForward?_map_fst, hf]; rfl
-    exact ⟨d, by simp only [Tree.interpBinary, Tree.functionalApplication?, Option.orElse_eq_orElse,
-      Option.orElse_eq_or, hf', hd, Option.none_or, Option.some_or], hl⟩
+    have hf' : (Tree.Modes.ofApplicative E W Id D).applyForward? d₁ d₂ = none :=
+      Option.map_eq_none_iff.mp <| by
+        rw [Tree.Modes.applyForward?_map_fst, h₁.fst, h₂.fst, ← applyForward?_map_fst, hf]; rfl
+    exact ⟨d, by simp only [Tree.Modes.interpBinary, Tree.Modes.functionalApplication?,
+      Option.orElse_eq_orElse, Option.orElse_eq_or, hf', hd, Option.none_or, Option.some_or], hl⟩
   · exact predicateModification?_lifts h₁ h₂ h
 
 variable {C : Type} {L : Type*} {lex : L → Option (Denotation E W Id D)}

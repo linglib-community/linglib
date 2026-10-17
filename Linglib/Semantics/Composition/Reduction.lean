@@ -281,17 +281,17 @@ variable {E W : Type}
 
 /-- Forward FA at `Id`, with the applicative collapsed. -/
 private theorem interpBinary_fa {σ τ : Ty} (f : Ty.Domain E W (σ ⇒ τ)) (x : Ty.Domain E W σ) :
-    interpBinary (M := Id) ⟨σ ⇒ τ, f⟩ ⟨σ, x⟩ = some ⟨τ, f x⟩ := by
-  rw [interpBinary, functionalApplication?_forward]
+    (Tree.Modes.ofApplicative E W Id ℝ).interpBinary ⟨σ ⇒ τ, f⟩ ⟨σ, x⟩ = some ⟨τ, f x⟩ := by
+  rw [Tree.Modes.interpBinary_forward]
   rfl
 
 /-- Backward functional application at `Id` applies a unary predicate to an entity subject. -/
 private theorem interpBinary_e_et (x : Ty.Domain E W .e) (P : Ty.Domain E W (.e ⇒ .t)) :
-    interpBinary (M := Id) ⟨.e, x⟩ ⟨.e ⇒ .t, P⟩ = some ⟨.t, P x⟩ := rfl
+    (Tree.Modes.ofApplicative E W Id ℝ).interpBinary ⟨.e, x⟩ ⟨.e ⇒ .t, P⟩ = some ⟨.t, P x⟩ := rfl
 
 /-- Backward functional application at `Id` applies a sentential operator to a sentence. -/
 private theorem interpBinary_t_tt (p : Ty.Domain E W .t) (F : Ty.Domain E W (.t ⇒ .t)) :
-    interpBinary (M := Id) ⟨.t, p⟩ ⟨.t ⇒ .t, F⟩ = some ⟨.t, F p⟩ := rfl
+    (Tree.Modes.ofApplicative E W Id ℝ).interpBinary ⟨.t, p⟩ ⟨.t ⇒ .t, F⟩ = some ⟨.t, F p⟩ := rfl
 
 private theorem predAbs_id_dist :
     PredAbs.dist? (M := Id) (E := E) (W := W) (D := ℝ) = some (fun _ f ↦ f) := rfl

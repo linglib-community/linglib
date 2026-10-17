@@ -155,14 +155,14 @@ theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment 
   | tn h => exact h
   | nn _ ih => exact ih
   | faLeft _ _ ih₁ ih₂ =>
-    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary,
-      functionalApplication?_forward]; rfl
+    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, Modes.interpBinary,
+      Modes.functionalApplication?_forward]; rfl
   | faRight _ _ ih₁ ih₂ =>
-    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary,
-      functionalApplication?_backward]; rfl
+    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, Modes.interpBinary,
+      Modes.functionalApplication?_backward]; rfl
   | pm _ _ ih₁ ih₂ =>
     simp only [interp_node_binary, ih₁, ih₂, Option.bind_some,
-      interpBinary_predicateModification]; rfl
+      Modes.interpBinary_predicateModification]; rfl
   | trace => rfl
   | @pa g n c body τ F _ ih =>
     have hg := ih (g n)

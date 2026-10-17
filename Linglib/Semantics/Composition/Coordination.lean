@@ -49,7 +49,7 @@ def coordinate? {E W : Type} {M : Type → Type} [Applicative M] (c : Coordinato
 theorem predicateModification?_eq_coordinate?_of_conjunctive {E W : Type} {M : Type → Type}
     [Applicative M] {c : Coordinator} (hc : c.role = .conjunctive) (d1 d2 : Denotation E W M)
     (h1 : d1.1 = (.e ⇒ .t)) (h2 : d2.1 = (.e ⇒ .t)) :
-    predicateModification? d1 d2 = coordinate? c d1 d2 := by
+    (Modes.ofApplicative E W M ℝ).predicateModification? d1 d2 = coordinate? c d1 d2 := by
   obtain ⟨t1, v1⟩ := d1
   obtain ⟨t2, v2⟩ := d2
   subst h1; subst h2
