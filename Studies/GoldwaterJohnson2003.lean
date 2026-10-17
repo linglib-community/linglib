@@ -25,6 +25,9 @@ in differences, are one class for the learner.
 ## Main results
 
 * `concaveOn_logPseudoLikelihood`, `eq_of_isMaxOn_regularizedObjective`: footnote 4.
+* `isGreatest_condEntropy_of_isMaxOn_logPseudoLikelihood`: section 2's maximum entropy, the most
+  likely grammar having the greatest conditional entropy among the models matching the training
+  data.
 * `regularizedObjective_replicate`: only nσ² matters.
 * `wolof_separated`: Table 1's weights are exponentially separated.
 * `maxEnt_pairConstraintSet_real_zero`, `rows_collapse`: a pair sees only differences (Table 3).
@@ -54,7 +57,8 @@ the comparison with Boersma's Gradual Learning Algorithm.
 
 namespace GoldwaterJohnson2003
 
-open OptimalityTheory HarmonicGrammar MeasureTheory Finset Real
+open OptimalityTheory HarmonicGrammar MeasureTheory ProbabilityTheory InformationTheory Finset Real
+open scoped ENNReal
 
 variable {I O : Type*} [MeasurableSpace O] {n : ℕ}
 
@@ -97,6 +101,22 @@ theorem regularizedObjective_replicate_le_iff (con : ConstraintSet (I × O) (Fin
   rw [regularizedObjective_replicate con w data hr hσ h,
     regularizedObjective_replicate con w' data hr hσ h]
   exact mul_le_mul_iff_right₀ (Nat.cast_pos.mpr hr)
+
+section Empirical
+
+variable [MeasurableSpace I] (data : List (I × O))
+
+/-- The empirical distribution of the training pairs. -/
+noncomputable def empirical : Measure (I × O) :=
+  (data.length : ℝ≥0∞)⁻¹ • ∑ i : Fin data.length, Measure.dirac data[i]
+
+theorem isProbabilityMeasure_empirical (h : data ≠ []) : IsProbabilityMeasure (empirical data) :=
+  ⟨by
+    simp only [empirical, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply, measure_univ,
+      Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one, smul_eq_mul]
+    exact ENNReal.inv_mul_cancel (by simpa using h) (ENNReal.natCast_ne_top _)⟩
+
+end Empirical
 
 variable [Fintype O] [MeasurableSingletonClass O]
 
@@ -141,6 +161,47 @@ theorem eq_of_isMaxOn_regularizedObjective (con : ConstraintSet (I × O) (Fin n)
     (hw : IsMaxOn (fun w ↦ regularizedObjective con w data σ) Set.univ w)
     (hw' : IsMaxOn (fun w ↦ regularizedObjective con w data σ) Set.univ w') : w = w' :=
   (strictConcaveOn_regularizedObjective con data hσ).eq_of_isMaxOn hw hw' trivial trivial
+
+/-! ### Maximum entropy (section 2) -/
+
+section MaximumEntropy
+
+variable [MeasurableSpace I] [Fintype I] [MeasurableSingletonClass I]
+  (con : ConstraintSet (I × O) (Fin n)) (data : List (I × O))
+
+/-- The log pseudo-likelihood (2) is the number of training pairs times the conditional
+log-likelihood of their empirical distribution. -/
+theorem logPseudoLikelihood_eq (h : data ≠ []) (w : Fin n → ℝ) :
+    logPseudoLikelihood con w data =
+      data.length * condLogLikelihood con.violations (empirical data) w := by
+  have hlen : (data.length : ℝ) ≠ 0 := by simpa using h
+  rw [condLogLikelihood, empirical, integral_smul_measure,
+    integral_finsetSum_measure fun _ _ ↦ .of_finite]
+  simp only [integral_dirac, smul_eq_mul, ENNReal.toReal_inv, ENNReal.toReal_natCast, ← mul_assoc,
+    mul_inv_cancel₀ hlen, one_mul]
+  rw [logPseudoLikelihood, ← Fin.sum_univ_fun_getElem]
+  rfl
+
+/-- Maximum entropy models "have as high an entropy as possible under the constraint that they
+match the training data" (section 2). Weights maximizing the log pseudo-likelihood give the
+grammar of greatest conditional entropy among the conditional models whose violations, averaged
+over the training inputs, are the training data's. -/
+theorem isGreatest_condEntropy_of_isMaxOn_logPseudoLikelihood (h : data ≠ []) {w : Fin n → ℝ}
+    (hw : IsMaxOn (fun w ↦ logPseudoLikelihood con w data) Set.univ w) :
+    IsGreatest ((fun q : Kernel I O ↦ H[Prod.snd | Prod.fst ; (empirical data).fst ⊗ₘ q]) ''
+      {q | IsMarkovKernel q ∧ ∫ z, (con.violations z : Fin n → ℝ) ∂((empirical data).fst ⊗ₘ q) =
+        ∫ z, con.violations z ∂empirical data})
+      (H[Prod.snd | Prod.fst ; (empirical data).fst ⊗ₘ condMaxEnt con.violations w]) := by
+  have := isProbabilityMeasure_empirical data h
+  have : Nonempty O := ⟨(data.head h).2⟩
+  have hlen : (0 : ℝ) < data.length := by exact_mod_cast List.length_pos_of_ne_nil h
+  refine isGreatest_condEntropy_of_isMaxOn _ w _ (isMaxOn_iff.2 fun w' _ ↦ ?_)
+  have hw' : logPseudoLikelihood con w' data ≤ logPseudoLikelihood con w data :=
+    hw (Set.mem_univ w')
+  rw [logPseudoLikelihood_eq con data h, logPseudoLikelihood_eq con data h] at hw'
+  exact le_of_mul_le_mul_left hw' hlen
+
+end MaximumEntropy
 
 /-! ### Two candidates: learning from differences (section 3.2) -/
 
