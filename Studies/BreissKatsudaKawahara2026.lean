@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Phonology.HarmonicGrammar.Harmony
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Data.Fin.VecNotation
@@ -25,8 +24,9 @@ output–output account of the same authors stipulated it.
 ## Main definitions
 
 * `Item`: a compound's listed bases, an optional free N2 and an optional whole compound.
-* `con`, `harmony`, `pNasal`: the constraints (6), the harmony under activation-scaled weights,
-  and the MaxEnt probability of nasalisation.
+* `con`, `violations`, `votingBases`: the constraints (6), the violation vectors scaled by an
+  item's activations, and the MaxEnt distribution of the item's realisations.
+* `pNasal`: the probability of nasalisation.
 * `table1`: the fitted weights.
 
 ## Main results
@@ -47,7 +47,9 @@ output–output account of the same authors stipulated it.
 * A candidate is the realisation of the compound-medial velar, and identity in [nasal] to a base
   is one violation when the two velars differ.
 * The tableaux display activation-scaled violations and the prose speaks of scaled weights;
-  `harmony_apply` shows the two agree.
+  `harmony_violations_eq` shows the two agree. Scaling the violations keeps the weights the
+  grammar's, shared across items, so the log-likelihood theory of `HarmonicGrammar.maxEnt`
+  applies to the fit of Table 1.
 * Tableau (8b) prints 0.91 for harmonies 2.7 and 0.5, which give σ(2.2) < 0.905
   (`pNasal_tableau8b_lt`).
 * The caption of Table 1 describes weights fitted to existing and novel compounds combined, while
@@ -71,11 +73,14 @@ output–output account of the same authors stipulated it.
 
 namespace BreissKatsudaKawahara2026
 
-open OptimalityTheory HarmonicGrammar Real
+open OptimalityTheory HarmonicGrammar Real MeasureTheory
 
 /-- The compound-medial velar, oral [g] or nasal [ŋ]. -/
 inductive Velar | oral | nasal
   deriving DecidableEq, Fintype
+
+instance : MeasurableSpace Velar := ⊤
+instance : MeasurableSingletonClass Velar := ⟨fun _ ↦ trivial⟩
 
 /-- A listed allomorph, given by its medial velar and its resting activation. -/
 structure Base where
@@ -103,7 +108,7 @@ def existing (a b : ℝ) : Item := ⟨some (freeN2 a), some (storedCompound b)�
 /-- An existing compound with a bound N2. -/
 def bound (b : ℝ) : Item := ⟨none, some (storedCompound b)⟩
 
-/-! ### Constraints, scaling, and the MaxEnt probability -/
+/-! ### Constraints, scaled violations, and the MaxEnt probability -/
 
 /-- Identity in [nasal] to an optional listed base (6b, c) is violated when the candidate's velar
 differs from the base's, and never without a base. -/
@@ -116,37 +121,53 @@ compound. -/
 def con (it : Item) : ConstraintSet Velar (Fin 3) :=
   ![Constraint.binary (· = .oral), idNasal it.n2, idNasal it.compound]
 
+/-- The resting activation of an optional base, zero without one. -/
+def activation : Option Base → ℝ
+  | some β => β.activation
+  | none => 0
+
+/-- The activations by which an item scales the violations of (6) (§4.2), each faithfulness
+constraint's by the activation of its base and markedness's not at all. -/
+def activations (it : Item) : Fin 3 → ℝ :=
+  ![1, activation it.n2, activation it.compound]
+
+/-- The violation vector of a candidate realisation of an item, its violations of (6) scaled by
+the item's activations, as the tableaux display them. -/
+def violations (it : Item) (v : Velar) : Fin 3 → ℝ :=
+  activations it * (con it).violations v
+
 /-- The weights of the three constraints. -/
 structure Weights where
   markedness : ℝ
   n2 : ℝ
   compound : ℝ
 
-/-- The resting activation of an optional base, zero without one. -/
-def activation : Option Base → ℝ
-  | some β => β.activation
-  | none => 0
+/-- The weights as a vector indexed like `con`. -/
+def Weights.vec (w : Weights) : Fin 3 → ℝ :=
+  ![w.markedness, w.n2, w.compound]
 
-/-- Voting Bases scaling (§4.2) multiplies each faithfulness weight by the activation of the base
-the constraint is assessed against. -/
-def scaledWeights (w : Weights) (it : Item) : Fin 3 → ℝ :=
-  ![w.markedness, w.n2 * activation it.n2, w.compound * activation it.compound]
+/-- The Voting Bases grammar's MaxEnt distribution of an item's realisations. -/
+noncomputable def votingBases (w : Weights) (it : Item) : Measure Velar :=
+  maxEnt (violations it) w.vec
 
-/-- The harmony of a candidate realisation of an item under activation-scaled weights. -/
-def harmony (w : Weights) (it : Item) : Velar → ℝ :=
-  harmonyScore (con it) (scaledWeights w it)
-
-/-- The MaxEnt probability that the compound nasalises. -/
+/-- The probability that the compound nasalises. -/
 noncomputable def pNasal (w : Weights) (it : Item) : ℝ :=
-  softmax (harmony w it) .nasal
+  (votingBases w it).real {.nasal}
 
-/-- Scaling the weights is scaling the violations, as the tableaux display them. -/
+/-- The harmony of a realisation weighs each faithfulness violation by its base's activation. -/
 theorem harmony_apply (w : Weights) (it : Item) (v : Velar) :
-    harmony w it v = -(w.markedness * (Constraint.binary (· = Velar.oral) v : ℝ) +
-      w.n2 * (activation it.n2 * idNasal it.n2 v) +
-      w.compound * (activation it.compound * idNasal it.compound v)) := by
-  simp only [harmony, harmonyScore_eq_neg_sum, Fin.sum_univ_three, con, scaledWeights,
-    Matrix.cons_val, mul_assoc]
+    harmony (violations it) w.vec v =
+      -(w.markedness * (Constraint.binary (· = Velar.oral) v : ℝ) +
+        w.n2 * (activation it.n2 * idNasal it.n2 v) +
+        w.compound * (activation it.compound * idNasal it.compound v)) := by
+  simp [harmony, dotProduct, Fin.sum_univ_three, violations, activations, con, Weights.vec]
+
+/-- Scaling the violations by the activations is scaling the weights by them (§4.2, §6.3). -/
+theorem harmony_violations_eq (w : Weights) (it : Item) :
+    harmony (violations it) w.vec = harmonyScore (con it) (w.vec * activations it) := by
+  funext v
+  simp only [harmony, harmonyScore, violations, dotProduct, Pi.mul_apply,
+    ConstraintSet.violations_apply, mul_assoc]
 
 /-- A base's pull toward nasalisation is its activation, signed by its listed velar. -/
 def pull : Option Base → ℝ
@@ -162,8 +183,8 @@ def pull : Option Base → ℝ
 pulls of the two bases, so each frequency effect takes the sign of its base's listed velar. -/
 theorem pNasal_eq_sigmoid (w : Weights) (it : Item) :
     pNasal w it = sigmoid (w.markedness + w.n2 * pull it.n2 + w.compound * pull it.compound) := by
-  rw [pNasal, softmax_eq_sigmoid_of_univ_eq_pair (i := Velar.nasal) (j := .oral) (by decide)
-    (by decide)]
+  rw [pNasal, votingBases, maxEnt_real_singleton_of_pair _ _ (a := Velar.nasal) (b := .oral)
+    (by decide) (by decide)]
   congr 1
   obtain ⟨n2, c⟩ := it
   rcases n2 with _ | ⟨_ | _, a⟩ <;> rcases c with _ | ⟨_ | _, b⟩ <;>
@@ -261,8 +282,10 @@ noncomputable def w9 : Weights := ⟨0.1, 1, 2⟩
 /-- Tableau (7) evaluates novel compounds whose N2s have activations 0.7 and 0.3, and the more
 active N2 pulls harder toward [g]. -/
 theorem tableau7 :
-    harmony w78 (novel 0.7) .oral = -2 ∧ harmony w78 (novel 0.7) .nasal = -0.7 ∧
-      harmony w78 (novel 0.3) .oral = -2 ∧ harmony w78 (novel 0.3) .nasal = -0.3 ∧
+    harmony (violations (novel 0.7)) w78.vec .oral = -2 ∧
+      harmony (violations (novel 0.7)) w78.vec .nasal = -0.7 ∧
+      harmony (violations (novel 0.3)) w78.vec .oral = -2 ∧
+      harmony (violations (novel 0.3)) w78.vec .nasal = -0.3 ∧
       pNasal w78 (novel 0.7) = sigmoid 1.3 ∧ pNasal w78 (novel 0.3) = sigmoid 1.7 ∧
       pNasal w78 (novel 0.7) < pNasal w78 (novel 0.3) := by
   simp only [pNasal_novel]
@@ -272,8 +295,10 @@ theorem tableau7 :
 and 0.3. The more active compound nasalises more, and either nasalises more than the same N2
 without a stored compound. -/
 theorem tableau8 :
-    harmony w78 (existing 0.5 0.7) .oral = -2.7 ∧ harmony w78 (existing 0.5 0.7) .nasal = -0.5 ∧
-      harmony w78 (existing 0.5 0.3) .oral = -2.3 ∧ harmony w78 (existing 0.5 0.3) .nasal = -0.5 ∧
+    harmony (violations (existing 0.5 0.7)) w78.vec .oral = -2.7 ∧
+      harmony (violations (existing 0.5 0.7)) w78.vec .nasal = -0.5 ∧
+      harmony (violations (existing 0.5 0.3)) w78.vec .oral = -2.3 ∧
+      harmony (violations (existing 0.5 0.3)) w78.vec .nasal = -0.5 ∧
       pNasal w78 (existing 0.5 0.7) = sigmoid 2.2 ∧ pNasal w78 (existing 0.5 0.3) = sigmoid 1.8 ∧
       pNasal w78 (existing 0.5 0.3) < pNasal w78 (existing 0.5 0.7) ∧
       pNasal w78 (novel 0.5) < pNasal w78 (existing 0.5 0.3) := by
@@ -298,8 +323,10 @@ theorem pNasal_tableau8b_lt : pNasal w78 (existing 0.5 0.7) < 0.905 := by
 candidate is still the majority outcome for either compound of (8), and the compound effect keeps
 its sign. -/
 theorem tableau9 :
-    harmony w9 (existing 0.5 0.7) .oral = -1.5 ∧ harmony w9 (existing 0.5 0.7) .nasal = -0.5 ∧
-      harmony w9 (existing 0.5 0.3) .oral = -0.7 ∧ harmony w9 (existing 0.5 0.3) .nasal = -0.5 ∧
+    harmony (violations (existing 0.5 0.7)) w9.vec .oral = -1.5 ∧
+      harmony (violations (existing 0.5 0.7)) w9.vec .nasal = -0.5 ∧
+      harmony (violations (existing 0.5 0.3)) w9.vec .oral = -0.7 ∧
+      harmony (violations (existing 0.5 0.3)) w9.vec .nasal = -0.5 ∧
       pNasal w9 (existing 0.5 0.7) = sigmoid 1 ∧ pNasal w9 (existing 0.5 0.3) = sigmoid 0.2 ∧
       2⁻¹ < pNasal w9 (existing 0.5 0.3) ∧
       pNasal w9 (existing 0.5 0.3) < pNasal w9 (existing 0.5 0.7) := by

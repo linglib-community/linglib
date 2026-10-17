@@ -1,10 +1,9 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.Harmony
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Linglib.Phonology.Hiatus
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
 public import Linglib.Fragments.Farsi.Phonology
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Storme (2026): A Method to Evaluate Systemic Constraints in Probabilistic Grammars
@@ -25,7 +24,7 @@ marginals (`predicted`).
 
 On this paradigm \*HOMOPHONY coincides with the jointly evaluated REALIZEMORPHEME of
 [kurisu-2001] that [ariyaee-jurgec-2021] use, so the marginalized model is their classical
-one (`starHomophony_eq_joint_realizeMorpheme`, `predicted_eq_softmax`). Whatever the
+one (`starHomophony_eq_joint_realizeMorpheme`, `predicted_eq_maxEnt`). Whatever the
 weights, the suffix-length effect on deletion, in log-odds against faithful hiatus, is
 exactly the \*HOMOPHONY weight (`log_odds_deletion_sub`), deletion is less likely for the
 monosegmental suffix whenever that weight is positive (`deletion_lt_deletion`), and without
@@ -53,7 +52,7 @@ is not formalized.
 
 namespace Storme2026
 
-open OptimalityTheory HarmonicGrammar Phonology Farsi Finset Real
+open OptimalityTheory HarmonicGrammar Phonology Farsi MeasureTheory Finset Real
 
 /-! ### Systemic constraints, joint evaluation, and marginalization -/
 
@@ -65,8 +64,8 @@ def homophonyAvoidance {n : ℕ} {O : Type*} [DecidableEq O] : Constraint (Fin n
 
 section Method
 
-variable {ι I O : Type*} [Fintype ι] [DecidableEq ι] [Fintype O] [DecidableEq O] [Nonempty O]
-  {m k : ℕ}
+variable {ι I O : Type*} [Fintype ι] [DecidableEq ι] [Fintype O] [MeasurableSpace O]
+  [MeasurableSingletonClass O] [Nonempty O] {m k : ℕ}
 
 /-- The joint MaxEnt grammar — systemic constraints `scon` beside the jointly
 evaluated classical constraints `con` — marginalized at input `i`
@@ -76,15 +75,15 @@ evaluation plus marginalization conservatively extends the classical
 pipeline. -/
 theorem marginal_eq_classical_of_systemic_zero (inputs : ι → I)
     (scon : ConstraintSet (ι → O) (Fin k))
-    (con : ConstraintSet (I × O) (Fin m)) (w : Fin m → ℝ) (i : ι) (o : O) :
-    ∑ f with f i = o,
-        softmax (harmonyScore (Fin.append scon (con.joint inputs)) (Fin.append 0 w)) f =
-      softmax (fun o' ↦ harmonyScore con w (inputs i, o')) o := by
-  have : harmonyScore (Fin.append scon (con.joint inputs)) (Fin.append 0 w) =
-      fun f ↦ ∑ i, harmonyScore con w (inputs i, f i) :=
-    funext fun f ↦ by simp [harmonyScore_append, harmonyScore_joint]
-  rw [this]
-  exact sum_softmax_eval_eq (fun i o' ↦ harmonyScore con w (inputs i, o')) i o
+    (con : ConstraintSet (I × O) (Fin m)) (w : Fin m → ℝ) (i : ι) :
+    (maxEnt (ConstraintSet.violations (Fin.append scon (con.joint inputs))) (Fin.append 0 w)).map
+        (Function.eval i) =
+      maxEnt (con.comap (inputs i, ·)).violations w := by
+  rw [maxEnt_congr (T' := fun f ↦ ∑ k, (con.comap (inputs k, ·)).violations (f k)) (w' := w)
+    (funext fun f ↦ by
+      rw [harmony_sum (fun k ↦ (con.comap (inputs k, ·)).violations)]
+      simp [harmonyScore_append, harmonyScore_joint]),
+    map_eval_maxEnt_sum]
 
 end Method
 
@@ -101,6 +100,9 @@ inductive Resolution where
   /-- Suffix-vowel deletion, e.g. [hutʃɑ], [hutʃɑmun]. -/
   | deletion
   deriving DecidableEq, Fintype, Inhabited, Repr
+
+instance : MeasurableSpace Resolution := ⊤
+instance : MeasurableSingletonClass Resolution := ⟨fun _ ↦ trivial⟩
 
 instance : Nontrivial Resolution := ⟨.hiatus, .deletion, by decide⟩
 
@@ -205,11 +207,11 @@ def jointCon : ConstraintSet (Fin 2 → Resolution) (Fin 4) :=
 constraints. -/
 def jointW (wh : ℝ) (w : Fin 3 → ℝ) : Fin 4 → ℝ := Fin.append ![wh] w
 
-/-- `predicted wh w k o` is the marginalized probability that input `k` is realized as `o`, by
-the paper's marginalization equation on the joint MaxEnt distribution, which gives its Table 5
-at the fitted weights. -/
-noncomputable def predicted (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) (o : Resolution) : ℝ :=
-  ∑ f with f k = o, softmax (harmonyScore jointCon (jointW wh w)) f
+/-- `predicted wh w k` is the distribution of input `k`'s realizations, the marginal of the
+joint MaxEnt distribution by the paper's marginalization equation, which gives its Table 5 at the
+fitted weights. -/
+noncomputable def predicted (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) : Measure Resolution :=
+  (maxEnt jointCon.violations (jointW wh w)).map (Function.eval k)
 
 /-! ### \*HOMOPHONY against REALIZEMORPHEME
 
@@ -253,14 +255,16 @@ theorem harmonyScore_jointCon (wh : ℝ) (w : Fin 3 → ℝ) (f : Fin 2 → Reso
   simp [ajCon, ajW, harmonyScore_joint, starHomophony_eq_joint_realizeMorpheme, Fin.sum_univ_two]
   ring
 
-/-- The marginalized model is [ariyaee-jurgec-2021]'s classical one: the joint
-distribution factorizes over the inputs, so each marginal is the softmax of
-its per-mapping scores. -/
-theorem predicted_eq_softmax (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) (o : Resolution) :
-    predicted wh w k o = softmax (fun o' ↦ harmonyScore ajCon (ajW wh w) (inputs k, o')) o := by
-  unfold predicted
-  rw [funext (harmonyScore_jointCon wh w)]
-  exact sum_softmax_eval_eq (fun k o' ↦ harmonyScore ajCon (ajW wh w) (inputs k, o')) k o
+/-- The marginalized model is [ariyaee-jurgec-2021]'s classical one, since the joint
+distribution is the product of the inputs' MaxEnt distributions under their per-mapping
+scores. -/
+theorem predicted_eq_maxEnt (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) :
+    predicted wh w k = maxEnt (ajCon.comap (inputs k, ·)).violations (ajW wh w) := by
+  rw [predicted, maxEnt_congr
+    (T' := fun f ↦ ∑ k, (ajCon.comap (inputs k, ·)).violations (f k)) (w' := ajW wh w)
+    (funext fun f ↦ by
+      rw [harmony_sum (fun k ↦ (ajCon.comap (inputs k, ·)).violations)]
+      simp [harmonyScore_jointCon]), map_eval_maxEnt_sum]
 
 /-- The per-mapping scores: each candidate costs its constraint's weight, with the
 \*HOMOPHONY weight landing on top of MAX exactly for deletion at the monosegmental
@@ -281,41 +285,42 @@ theorem ajScore_eq (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) (o : Resolution) :
 /-- At the fitted weights the monosegmental suffix prefers hiatus over epenthesis over
 deletion, which would merge the suffixed form with the bare stem. -/
 theorem mono_order :
-    predicted homophonyWeight classicalW 0 .deletion <
-        predicted homophonyWeight classicalW 0 .epenthesis ∧
-      predicted homophonyWeight classicalW 0 .epenthesis <
-        predicted homophonyWeight classicalW 0 .hiatus := by
-  simp only [predicted_eq_softmax]
-  exact ⟨softmax_lt_softmax (by norm_num [ajScore_eq, homophonyWeight]),
-    softmax_lt_softmax (by norm_num [ajScore_eq, homophonyWeight])⟩
+    (predicted homophonyWeight classicalW 0).real {.deletion} <
+        (predicted homophonyWeight classicalW 0).real {.epenthesis} ∧
+      (predicted homophonyWeight classicalW 0).real {.epenthesis} <
+        (predicted homophonyWeight classicalW 0).real {.hiatus} := by
+  simp only [predicted_eq_maxEnt, maxEnt_real_singleton_lt_iff, harmony_violations,
+    harmonyScore_comap]
+  exact ⟨by norm_num [ajScore_eq, homophonyWeight], by norm_num [ajScore_eq, homophonyWeight]⟩
 
 /-- At the fitted weights the polysegmental suffix prefers deletion over hiatus over
 epenthesis: the suffix stays recoverable, so \*HOMOPHONY is silent. -/
 theorem poly_order :
-    predicted homophonyWeight classicalW 1 .epenthesis <
-        predicted homophonyWeight classicalW 1 .hiatus ∧
-      predicted homophonyWeight classicalW 1 .hiatus <
-        predicted homophonyWeight classicalW 1 .deletion := by
-  simp only [predicted_eq_softmax]
-  exact ⟨softmax_lt_softmax (by norm_num [ajScore_eq, homophonyWeight]),
-    softmax_lt_softmax (by norm_num [ajScore_eq, homophonyWeight])⟩
+    (predicted homophonyWeight classicalW 1).real {.epenthesis} <
+        (predicted homophonyWeight classicalW 1).real {.hiatus} ∧
+      (predicted homophonyWeight classicalW 1).real {.hiatus} <
+        (predicted homophonyWeight classicalW 1).real {.deletion} := by
+  simp only [predicted_eq_maxEnt, maxEnt_real_singleton_lt_iff, harmony_violations,
+    harmonyScore_comap]
+  exact ⟨by norm_num [ajScore_eq, homophonyWeight], by norm_num [ajScore_eq, homophonyWeight]⟩
 
 /-- The suffix-length effect of [ariyaee-jurgec-2021]: with a positive \*HOMOPHONY weight,
 deletion is less likely for the monosegmental suffix than for the polysegmental one. -/
 theorem deletion_lt_deletion {wh : ℝ} (hwh : 0 < wh) (w : Fin 3 → ℝ) :
-    predicted wh w 0 .deletion < predicted wh w 1 .deletion := by
-  simp only [predicted_eq_softmax]
+    (predicted wh w 0).real {.deletion} < (predicted wh w 1).real {.deletion} := by
+  simp only [predicted_eq_maxEnt, maxEnt_real_singleton, harmony_violations]
   refine softmax_lt_softmax_of_single_lt ?_ fun o ho ↦ ?_
-  · simp only [ajScore_eq]; simp; linarith
+  · simp only [harmonyScore_comap, ajScore_eq]; simp; linarith
   · cases o <;> simp_all [ajScore_eq]
 
 /-- In log-odds against faithful hiatus, deletion is exactly the \*HOMOPHONY weight less
 likely under the monosegmental suffix than under the polysegmental one, whatever the
 weights: the whole suffix-length effect is the systemic penalty. -/
 theorem log_odds_deletion_sub (wh : ℝ) (w : Fin 3 → ℝ) :
-    log (predicted wh w 1 .deletion / predicted wh w 1 .hiatus) -
-      log (predicted wh w 0 .deletion / predicted wh w 0 .hiatus) = wh := by
-  simp only [predicted_eq_softmax, log_softmax_div_softmax, ajScore_eq]
+    log ((predicted wh w 1).real {.deletion} / (predicted wh w 1).real {.hiatus}) -
+      log ((predicted wh w 0).real {.deletion} / (predicted wh w 0).real {.hiatus}) = wh := by
+  simp only [predicted_eq_maxEnt, log_maxEnt_real_singleton_div, harmony_violations,
+    harmonyScore_comap, ajScore_eq]
   simp
 
 /-- DEP, \*HIATUS and MAX give the two junctures identical violation
@@ -329,9 +334,9 @@ theorem harmonyScore_classicalCon_inputs (w : Fin 3 → ℝ) (k k' : Fin 2) (o :
 grammar assigns the two suffixes the same distribution under every weighting.
 The paper reports the correspondingly worse fit of the model without
 \*HOMOPHONY. -/
-theorem classical_no_length_effect (w : Fin 3 → ℝ) (o : Resolution) :
-    softmax (fun o' ↦ harmonyScore classicalCon w (inputs 0, o')) o =
-      softmax (fun o' ↦ harmonyScore classicalCon w (inputs 1, o')) o := by
-  simp only [harmonyScore_classicalCon_inputs w 0 1]
+theorem classical_no_length_effect (w : Fin 3 → ℝ) :
+    maxEnt (classicalCon.comap (inputs 0, ·)).violations w =
+      maxEnt (classicalCon.comap (inputs 1, ·)).violations w :=
+  maxEnt_congr (funext fun o ↦ harmonyScore_classicalCon_inputs w 0 1 o)
 
 end Storme2026

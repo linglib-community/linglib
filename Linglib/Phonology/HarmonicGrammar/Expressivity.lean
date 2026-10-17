@@ -4,7 +4,7 @@ public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 
 /-!
 # Expressivity of OT, Harmonic Grammar, and MaxEnt
@@ -12,7 +12,7 @@ public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 This file compares the expressive power of Optimality Theory (OT), Harmonic Grammar (HG), and
 maximum-entropy grammar (MaxEnt). With exponentially separated weights the harmony order of HG
 agrees with the lexicographic comparison of OT, so every OT grammar is an HG grammar, and as the
-inverse temperature grows MaxEnt concentrates on the OT winner. The containment of OT in HG is
+weights are scaled up MaxEnt concentrates on the OT winner. The containment of OT in HG is
 strict because of *cumulativity*, in which several low-weight violations together outweigh a
 single high-weight one. The comparison follows Smolensky and Legendre, Pater, and Coetzee and
 Pater, and the cumulativity witness is Coetzee and Pater's version of Itô and Mester's Lyman's
@@ -30,7 +30,7 @@ Law data.
 
 * `ot_lex_imp_higher_harmony`: lexicographic dominance gives higher harmony under exponentially
   separated weights.
-* `maxent_ot_limit`: MaxEnt concentrates on the OT winner as the inverse temperature grows.
+* `maxent_ot_limit`: MaxEnt concentrates on the OT winner as the weights are scaled up.
 * `RealizationProblem.realizedByRanking_iff_satisfiedBy`: OT-realization is ERC satisfaction.
 * `RealizationProblem.IsOTRealizable.isHGRealizable`, `hg_strictly_contains_ot`: OT is strictly
   contained in HG.
@@ -191,10 +191,10 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
   simp only [dotProduct, Function.comp_apply]
   -- Suffices: 0 < Σ w_i · (vb_i − va_i)
   suffices hpos : (0 : ℝ) <
-      univ.sum (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) by
-    have hlink : univ.sum (λ i => w i * (va i : ℝ)) +
-        univ.sum (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) =
-        univ.sum (λ i => w i * (vb i : ℝ)) := by
+      univ.sum (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) by
+    have hlink : univ.sum (fun i ↦ w i * (va i : ℝ)) +
+        univ.sum (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) =
+        univ.sum (fun i ↦ w i * (vb i : ℝ)) := by
       rw [← Finset.sum_add_distrib]; congr 1; ext i; ring
     linarith
   -- Split the sum: f(k) + Σ_{i≠k} f(i)
@@ -224,7 +224,7 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
   rw [hsplit, Finset.sum_union hdisj]
   -- Terms i < k: each is 0
   have hlt_zero : (univ.filter (· < k)).sum
-      (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) = 0 := by
+      (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) = 0 := by
     apply Finset.sum_eq_zero; intro i hi
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
     rw [h_agree i hi, sub_self, mul_zero]
@@ -235,16 +235,16 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
   -- Terms i > k: each ≥ −w_i · M, so sum ≥ −M · Σ_{i>k} w_i
   have hgt_bound : -(M : ℝ) * (univ.filter (· > k)).sum w ≤
       (univ.filter (· > k)).sum
-        (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) := by
+        (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) := by
     have h_each : ∀ i ∈ univ.filter (· > k),
         -(w i * (M : ℝ)) ≤ w i * ((vb i : ℝ) - (va i : ℝ)) := by
       intro i hi
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
       have hva : (va i : ℝ) ≤ (M : ℝ) := by exact_mod_cast (hM i).1
       nlinarith [(hw.1 i).le]
-    have h_neg_sum : (univ.filter (· > k)).sum (λ i => -(w i * (M : ℝ))) =
+    have h_neg_sum : (univ.filter (· > k)).sum (fun i ↦ -(w i * (M : ℝ))) =
         -(M : ℝ) * (univ.filter (· > k)).sum w := by
-      trans (univ.filter (· > k)).sum (λ i => -(M : ℝ) * w i)
+      trans (univ.filter (· > k)).sum (fun i ↦ -(M : ℝ) * w i)
       · apply Finset.sum_congr rfl; intro i _; ring
       · rw [← Finset.mul_sum]
     linarith [Finset.sum_le_sum h_each]
@@ -281,30 +281,20 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
 
 /-! ### MaxEnt → OT limit -/
 
-/-- As the inverse temperature grows, MaxEnt probability concentrates on the candidate with the
-    highest harmony. This instantiates `Real.tendsto_softmax_atTop` with harmony scores. -/
-theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
-    [DecidableEq C] {n : Nat} (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ) (c_opt : C)
-    (h_opt : ∀ c, c ≠ c_opt →
-      harmonyScore con w c < harmonyScore con w c_opt) :
-    Tendsto (fun α : ℝ => softmax (α • harmonyScore con w) c_opt) atTop (𝓝 1) :=
-  tendsto_softmax_atTop h_opt
-
-/-- As the inverse temperature grows, MaxEnt probability concentrates on a candidate `c_opt`
-    that lexicographically beats every competitor under a ranking with violation bound `M`. The
-    proof combines `ot_lex_imp_higher_harmony` with `Real.tendsto_softmax_atTop`. -/
-theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
-    (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
-    (c_opt : C)
+/-- Scaling exponentially separated weights concentrates the MaxEnt distribution on a candidate
+    that lexicographically beats every competitor under a ranking with violation bound `M`, since
+    it has the greatest harmony (`ot_lex_imp_higher_harmony`). -/
+theorem maxent_ot_limit {C : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSingletonClass C]
+    (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M) (c_opt : C)
     (hbound : ∀ c : C, ∀ con ∈ ranking, con c ≤ M)
     (hlex : ∀ c, c ≠ c_opt →
       toLex (fun i : Fin ranking.length => (ranking.get i) c_opt) <
       toLex (fun i : Fin ranking.length => (ranking.get i) c)) :
-    Tendsto (fun α : ℝ =>
-      softmax (α • harmonyScore ranking.get (expWeights ranking.length M)) c_opt)
-      atTop (𝓝 1) := by
-  exact tendsto_softmax_atTop fun c hc => ot_lex_imp_higher_harmony ranking M hM c_opt c
-    (fun con hcon => ⟨hbound c_opt con hcon, hbound c con hcon⟩) (hlex c hc)
+    Tendsto (fun α : ℝ ↦
+      (maxEnt (ConstraintSet.violations ranking.get) (α • expWeights ranking.length M)).real
+        {c_opt}) atTop (𝓝 1) :=
+  tendsto_maxEnt_smul_atTop _ _ fun c hc ↦ ot_lex_imp_higher_harmony ranking M hM c_opt c
+    (fun con hcon ↦ ⟨hbound c_opt con hcon, hbound c con hcon⟩) (hlex c hc)
 
 /-! ## Realizability
 

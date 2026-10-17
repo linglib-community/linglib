@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.Harmony
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Mathlib.LinearAlgebra.Pi
 
 /-!
@@ -35,7 +34,7 @@ the generalization for every weighting and every candidate set.
 
 * `Square.Independent.interaction_sum_eq_zero`: under independence, a sum of per-constraint terms
   has zero interaction.
-* `Square.Independent.interaction_logOdds_softmax`: MaxEnt predicts the generalization, (22) of
+* `Square.Independent.interaction_logOdds_maxEnt`: MaxEnt predicts the generalization, (22) of
   [magri-2025].
 
 ## References
@@ -71,11 +70,11 @@ def transpose : Square X := ⟨sq.tl, sq.bl, sq.tr, sq.br⟩
 
 /-! ### Independence -/
 
-/-- `f` is insensitive to the rows: it agrees on the two forms of each column (Figure 4a of
+/-- `f` is insensitive to the rows when it agrees on the two forms of each column (Figure 4a of
 [magri-2025]). -/
 def InsensitiveToRow (f : X → α) : Prop := f sq.tl = f sq.bl ∧ f sq.tr = f sq.br
 
-/-- `f` is insensitive to the columns: it agrees on the two forms of each row (Figure 4b of
+/-- `f` is insensitive to the columns when it agrees on the two forms of each row (Figure 4b of
 [magri-2025]). -/
 def InsensitiveToCol (f : X → α) : Prop := f sq.tl = f sq.tr ∧ f sq.bl = f sq.br
 
@@ -102,7 +101,7 @@ section Interaction
 variable [CommRing R]
 
 variable (sq) in
-/-- The interaction contrast: the difference of `f` along the top row minus its difference
+/-- The interaction contrast is the difference of `f` along the top row minus its difference
 along the bottom row. -/
 def interaction : (X → R) →ₗ[R] R :=
   .proj sq.tl - .proj sq.tr - .proj sq.bl + .proj sq.br
@@ -164,12 +163,13 @@ end Interaction
 
 /-- MaxEnt predicts HZ's generalization ((22) of [magri-2025]): under independence, the MaxEnt
 log-odds of two candidates have zero interaction, for every weighting and every candidate set. -/
-theorem Independent.interaction_logOdds_softmax [Fintype Y] {con : ConstraintSet (X × Y) (Fin n)}
-    (h : sq.Independent con) (w : Fin n → ℝ) (a b : Y) :
-    sq.interaction (fun x ↦ log (softmax (fun y ↦ harmonyScore con w (x, y)) a /
-      softmax (fun y ↦ harmonyScore con w (x, y)) b)) = 0 := by
-  have : Nonempty Y := ⟨a⟩
-  simpa only [log_softmax_div_softmax] using h.interaction_harmonyScore_sub w a b
+theorem Independent.interaction_logOdds_maxEnt [Fintype Y] [MeasurableSpace Y]
+    [MeasurableSingletonClass Y] {con : ConstraintSet (X × Y) (Fin n)} (h : sq.Independent con)
+    (w : Fin n → ℝ) (a b : Y) :
+    sq.interaction (fun x ↦ log ((maxEnt (con.comap (x, ·)).violations w).real {a} /
+      (maxEnt (con.comap (x, ·)).violations w).real {b})) = 0 := by
+  simpa only [log_maxEnt_real_singleton_div, harmony_violations, harmonyScore_comap] using
+    h.interaction_harmonyScore_sub w a b
 
 end Square
 
