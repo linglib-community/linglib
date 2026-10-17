@@ -13,8 +13,8 @@ public import Linglib.Data.Examples.Nadathur2023
 Nadathur analyses an implicative as Karttunen's presupposition–proposition pair with causal
 conditions, her Proposal (32). The verb presupposes that its prerequisite is causally necessary
 for the complement and, if it is two-way, causally sufficient, both relative to a background
-situation, and it asserts the prerequisite. Under this causal reading of the conditions
-(`causalReading`), which is sound at every context of the background, a verb implies what its
+situation, and it asserts the prerequisite. Under this causal interpretation of the conditions
+(`causalInterpretation`), which is sound at every context of the background, a verb implies what its
 implication signature says.
 
 In her Dreyfus scenario, an eight-vertex causal model, the nerve that *dare* names is causally
@@ -28,11 +28,11 @@ its matrix polarity (`rows_agree`).
 
 ## Implementation notes
 
-A fact is a variable with a value, and the worlds of the causal reading are the contexts where the
-background holds; the reading needs the context to reach the model only at its roots, as in the
-paper's dynamics. The sufficiency verdicts are decided over the finite model; the necessity
-verdicts are proved through the equations, which make every path to the effect run through the
-nerve.
+A fact is a variable with a value, and the worlds of the causal interpretation are the contexts
+where the background holds; the interpretation needs the context to reach the model only at its
+roots, as in the paper's dynamics. The sufficiency verdicts are decided over the finite model; the
+necessity verdicts are proved through the equations, which make every path to the effect run through
+the nerve.
 
 Definition 10b ranges over the consistent supersituations of Definition 9b
 (`IsConsistentSupersituation`), and over them the verdicts on (34c) and (34d) fail: settling the
@@ -94,16 +94,16 @@ end Consistent
 
 /-! ### Proposal (32) -/
 
-section Reading
+section Interpretation
 
 variable {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
   [M.ContextAtRoots]
 
-/-- The causal reading of the conditions over the contexts where the background `s` holds. A fact
-is a variable with a value, and one fact is sufficient (Definition 10a) or necessary
-(Definition 10b, over the exogenous settlements) for another relative to `s`, which does not
-settle the first (the preamble of Definition 10). -/
-def causalReading (s : V → Flat Bool) : Reading (V × Bool) (M.contexts s) where
+/-- The causal interpretation of the conditions over the contexts where the background `s` holds. A
+fact is a variable with a value, and one fact is sufficient (Definition 10a) or necessary
+(Definition 10b, over the exogenous settlements) for another relative to `s`, which does not settle
+the first (the preamble of Definition 10). -/
+def causalInterpretation (s : V → Flat Bool) : Interpretation (V × Bool) (M.contexts s) where
   Holds a u := M.solve ⊥ u a.1 = a.2
   neg a := (a.1, !a.2)
   holds_neg a u := by rcases a with ⟨v, x⟩; cases x <;> simp
@@ -113,7 +113,7 @@ def causalReading (s : V → Flat Bool) : Reading (V × Bool) (M.contexts s) whe
   holds_of_sufficient {_ _ u} h := h.2.solve_eq u.2
   holds_of_necessary {_ _ u} h := h.2.solve_eq u.2
 
-end Reading
+end Interpretation
 
 /-- The vertices of the Dreyfus scenario are INT (Dreyfus intends to spy), NRV (he has the
 nerve), LST (a German is listening on the correct frequency), BRK (the message is garbled), SEC
@@ -162,11 +162,11 @@ def dreyfusBg : V → Flat Bool := [.INT ← true, .SEC ← true]
 instance : dreyfusModel.ContextAtRoots :=
   ⟨fun {v w} hw _ _ _ ↦ by cases v <;> first | rfl | (exfalso; revert hw; revert w; decide)⟩
 
-/-- *Dreyfus dared to `e`*, a verb of the two-way signature `+/−` under the causal reading, with
-the nerve as the prerequisite. -/
+/-- *Dreyfus dared to `e`*, a verb of the two-way signature `+/−` under the causal interpretation,
+with the nerve as the prerequisite. -/
 noncomputable def dare (e : V) : dreyfusModel.contexts dreyfusBg → SignType :=
-  sentence (causalReading dreyfusModel dreyfusBg) ⟨.some .positive, .some .negative⟩ (.NRV, true)
-    (e, true)
+  sentence (causalInterpretation dreyfusModel dreyfusBg) ⟨.some .positive, .some .negative⟩
+    (.NRV, true) (e, true)
 
 /-- NRV is causally sufficient for MSG, the background settling neither. -/
 theorem nrv_sufficient_for_msg :
@@ -230,7 +230,7 @@ it. -/
 theorem not_msg_of_not_dare {u : dreyfusModel.contexts dreyfusBg}
     (h : (-dare .MSG) u = 1) : dreyfusModel.solve ⊥ u .MSG ≠ true := by
   have h' : (Polarity.negative • dare .MSG) u = 1 := by simpa using h
-  exact ((causalReading dreyfusModel dreyfusBg).holds_neg _ u).1
+  exact ((causalInterpretation dreyfusModel dreyfusBg).holds_neg _ u).1
     (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl h')
 
 /-- (34c) *?/# Dreyfus dared to establish communication with the Germans* is infelicitous, since

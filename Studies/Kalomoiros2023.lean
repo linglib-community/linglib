@@ -7,20 +7,20 @@ public import Mathlib.Tactic.IntervalCases
 # Kalomoiros (2023): Presupposition and Its (A-)Symmetries
 
 Limited Symmetry is a theory of presupposition projection that checks Transparency at every point
-of the parse after a trigger. At a parse point a sentence is stably true (false) at a world when
+of the parse after a trigger. At a parsing point a sentence is stably true (false) at a world when
 every good final of the string up to that point makes it true (false) there. The constraint
-requires, at every trigger, every parse point after it and every assertion, that the worlds of
+requires, at every trigger, every parsing point after it and every assertion, that the worlds of
 the context where the sentence is stably true (false) stay so when the trigger is replaced by its
-assertion: the presupposition is stably transparent for the good finals at each parse point
+assertion: the presupposition is stably transparent for the good finals at each parsing point
 (`Presupposition.StablyTransparent`). This file covers the dissertation's first system, over the
 propositional fragment of Schlenker's language.
 
-The good finals at the first parse point after a trigger are all of Schlenker's incremental ones,
+The good finals at the first parsing point after a trigger are all of Schlenker's incremental ones,
 and at the last only the sentence itself, so Limited Symmetry lies between Schlenker's
 incremental and symmetric Transparency (`LimitedSymmetry.of_transparency`,
 `LimitedSymmetry.transparency`). The constraint is stated on the occurrences of a sentence's
 triggers (`Presupposition.Occurrence`), so it applies as it stands wherever a sentence type supplies
-its occurrences and their parse points.
+its occurrences and their parsing points.
 
 ## Main statements
 
@@ -41,7 +41,7 @@ its occurrences and their parse points.
 
 * A trigger `trigger p a` presupposes `p` and asserts `a`. The dissertation writes `p'p` with the
   prime on the presupposition, the reverse of Schlenker's convention.
-* The parse points after a trigger are represented by `SyntacticEnvironment.AgreeUpTo`, which
+* The parsing points after a trigger are represented by `SyntacticEnvironment.AgreeUpTo`, which
   counts the connective after a first argument and the second argument as one item each and
   ignores closing brackets. Points inside the second argument add no condition, since the
   constraint is checked world by world and the argument's value at a world is either still open
@@ -76,54 +76,54 @@ variable {Atom W : Type*} (I : Atom → Set W)
 /-! ### The constraint -/
 
 /-- The constraint of Definition 3.4.4 at one trigger, with presupposition `p` at the gap of `K`. At
-every parse point after the trigger and for every assertion `D`, the worlds where the sentence is
+every parsing point after the trigger and for every assertion `D`, the worlds where the sentence is
 stably true (false) are worlds where it is stably true (false) with the presupposition deleted:
-the presupposition is stably transparent at every parse point. -/
+the presupposition is stably transparent at every parsing point. -/
 def LimitedSymmetryAt (C : Set W) (K : SyntacticEnvironment Atom) (p : Atom) : Prop :=
-  ∀ n : ℕ∞, StablyTransparent C (K.parsePoint I n) (I p)
+  ∀ n : ℕ∞, StablyTransparent C (K.continuations I n) (I p)
 
 /-- A sentence satisfies Limited Symmetry in `C` when the constraint holds at every trigger
 (Definition 3.4.4). -/
 def LimitedSymmetry {α : Type*} [SemilatticeInf α] (C : Set W) (os : List (Occurrence W α)) :
     Prop :=
-  ∀ o ∈ os, o.StablyTransparent C
+  ∀ o ∈ os, ∀ n, o.StablyTransparent n C
 
-theorem limitedSymmetry_ofFormula_iff {C : Set W} {F : Formula Atom} :
-    LimitedSymmetry C (Occurrence.ofFormula I F) ↔
-      ∀ t ∈ F.occurrences, LimitedSymmetryAt I C t.1 t.2.1 :=
-  Occurrence.forall_mem_ofFormula
+theorem limitedSymmetry_occurrences_iff {C : Set W} {F : Formula Atom} :
+    LimitedSymmetry C (Formula.occurrences I F) ↔
+      ∀ t ∈ F.triggers, LimitedSymmetryAt I C t.1 t.2.1 :=
+  Formula.forall_mem_occurrences
 
-/-- The parse points after a trigger are those up to the last item after the gap, as Definition
+/-- The parsing points after a trigger are those up to the last item after the gap, as Definition
 3.4.4 counts them; from there on only the sentence itself is consulted. -/
 theorem limitedSymmetryAt_iff_forall_le {C : Set W} {K : SyntacticEnvironment Atom} {p : Atom} :
     LimitedSymmetryAt I C K p ↔
-      ∀ n ≤ K.rightItems, StablyTransparent C (K.parsePoint I n) (I p) := by
+      ∀ n ≤ K.rightItems, StablyTransparent C (K.continuations I n) (I p) := by
   refine ⟨fun h n _ ↦ h n, fun h n ↦ ?_⟩
   have hlast := h _ le_rfl
-  rw [parsePoint_eq_top_of_le I le_rfl] at hlast
+  rw [continuations_eq_top_of_le I le_rfl] at hlast
   induction n using ENat.recTopCoe with
   | top => exact hlast
   | coe n =>
     rcases le_or_gt n K.rightItems with hn | hn
     · exact h n hn
-    · rwa [parsePoint_eq_top_of_le I hn.le]
+    · rwa [continuations_eq_top_of_le I hn.le]
 
 /-- The constraint is checked world by world. At a world where the presupposition fails, whenever
-every good final at a parse point makes the sentence true (false) with a false gap, every good final
-makes it true (false) with a true gap. -/
+every good final at a parsing point makes the sentence true (false) with a false gap, every good
+final makes it true (false) with a true gap. -/
 theorem limitedSymmetryAt_iff (C : Set W) (K : SyntacticEnvironment Atom) (p : Atom) :
     LimitedSymmetryAt I C K p ↔ ∀ w ∈ C, w ∉ I p → ∀ n ≤ K.rightItems,
       ((∀ K', AgreeUpTo n K K' → w ∈ K'.truth I ∅) →
           ∀ K', AgreeUpTo n K K' → w ∈ K'.truth I Set.univ) ∧
         ((∀ K', AgreeUpTo n K K' → w ∉ K'.truth I ∅) →
           ∀ K', AgreeUpTo n K K' → w ∉ K'.truth I Set.univ) := by
-  have tf (n : ℕ) : ∀ f ∈ K.parsePoint I n, IsTruthFunctional f :=
-    fun _ hf ↦ isTruthFunctional_of_mem_parsePoint I hf
+  have tf (n : ℕ) : ∀ f ∈ K.continuations I n, IsTruthFunctional f :=
+    fun _ hf ↦ isTruthFunctional_of_mem_continuations I hf
   rw [limitedSymmetryAt_iff_forall_le]
   refine ⟨fun h w hw hp n hn ↦ ?_, fun h n hn ↦ (stablyTransparent_iff (tf n)).2 fun w hw hp ↦ ?_⟩
-  · simpa only [parsePoint_natCast, Set.forall_mem_image, Set.mem_ofPred_eq] using
+  · simpa only [continuations_natCast, Set.forall_mem_image, Set.mem_ofPred_eq] using
       (stablyTransparent_iff (tf n)).1 (h n hn) w hw hp
-  · simpa only [parsePoint_natCast, Set.forall_mem_image, Set.mem_ofPred_eq] using h w hw hp n hn
+  · simpa only [continuations_natCast, Set.forall_mem_image, Set.mem_ofPred_eq] using h w hw hp n hn
 
 /-! ### Between incremental and symmetric Transparency -/
 
@@ -131,17 +131,17 @@ section Occurrences
 
 variable {α : Type*} [SemilatticeInf α] {C : Set W} {os : List (Occurrence W α)}
 
-/-- Incremental Transparency implies Limited Symmetry, since every parse point consults fewer
+/-- Incremental Transparency implies Limited Symmetry, since every parsing point consults fewer
 continuations than the first. -/
 theorem LimitedSymmetry.of_transparency (h : Schlenker2009.Transparency .incremental C os) :
     LimitedSymmetry C os :=
-  fun o ho ↦ (h o ho).stablyTransparent
+  fun o ho _ ↦ ((h o ho).mono bot_le).stablyTransparent
 
-/-- Limited Symmetry implies symmetric Transparency, since at the last parse point the only
+/-- Limited Symmetry implies symmetric Transparency, since at the last parsing point the only
 continuation is the sentence's own. -/
 theorem LimitedSymmetry.transparency (h : LimitedSymmetry C os) :
     Schlenker2009.Transparency .symmetric C os :=
-  fun o ho ↦ (h o ho).transparent_top
+  fun o ho ↦ Occurrence.stablyTransparent_top_iff.1 (h o ho ⊤)
 
 end Occurrences
 
@@ -170,7 +170,7 @@ def compat : Connective → List Connective
 theorem mem_compat {c c' : Connective} : c' ∈ compat c ↔ (c = .cond ↔ c' = .cond) := by
   cases c <;> cases c' <;> decide
 
-/-- The truth functions at `w` of the good finals of a step up to parse point `n`, as functions of
+/-- The truth functions at `w` of the good finals of a step up to parsing point `n`, as functions of
 the gap's truth value. -/
 noncomputable def stepFuns (w : W) (n : ℕ) : SyntacticEnvironment.Step Atom → List (Bool → Bool)
   | .not => [not]
@@ -180,7 +180,7 @@ noncomputable def stepFuns (w : W) (n : ℕ) : SyntacticEnvironment.Step Atom �
     else if n < c.rightItems then [(evalB c · true), (evalB c · false)]
     else [(evalB c · (val I w G))]
 
-/-- The truth functions at `w` of the good finals of an environment up to parse point `n`. -/
+/-- The truth functions at `w` of the good finals of an environment up to parsing point `n`. -/
 noncomputable def funs (w : W) : ℕ → SyntacticEnvironment Atom → List (Bool → Bool)
   | _, [] => [id]
   | n, s :: K => (stepFuns I w n s).flatMap fun f ↦ (funs w (n - s.rightItems) K).map (· ∘ f)
@@ -225,7 +225,7 @@ theorem forall_stepAgree_iff [Nonempty Atom] (w : W) (n : ℕ) (s : SyntacticEnv
       exact ⟨fun h ↦ (key c).1 fun G' ↦ h _ G' rfl, fun h _ G' he ↦ he ▸ (key c).2 h G'⟩
     · simp [SyntacticEnvironment.Step.truth, decide_eval, val]
 
-/-- The good finals at a parse point realize, at each world, the truth functions `funs`. -/
+/-- The good finals at a parsing point realize, at each world, the truth functions `funs`. -/
 theorem forall_agreeUpTo_iff [Nonempty Atom] (w : W) (n : ℕ) (K : SyntacticEnvironment Atom)
     (X : Set W) (R : Bool → Prop) :
     (∀ K', AgreeUpTo n K K' → R (decide (w ∈ K'.truth I X))) ↔
@@ -261,27 +261,27 @@ theorem limitedSymmetryAt_iff_funs (C : Set W) (K : SyntacticEnvironment Atom) (
 
 variable {C : Set W} {p a q b r : Atom}
 
-theorem limitedSymmetry_of_occurrences {F : Formula Atom} {K : SyntacticEnvironment Atom}
-    {p a : Atom} (h : F.occurrences = [(K, p, a)]) :
-    LimitedSymmetry C (Occurrence.ofFormula I F) ↔ LimitedSymmetryAt I C K p := by
-  simp [limitedSymmetry_ofFormula_iff, h]
+theorem limitedSymmetry_of_triggers {F : Formula Atom} {K : SyntacticEnvironment Atom}
+    {p a : Atom} (h : F.triggers = [(K, p, a)]) :
+    LimitedSymmetry C (Formula.occurrences I F) ↔ LimitedSymmetryAt I C K p := by
+  simp [limitedSymmetry_occurrences_iff, h]
 
 /-- A trigger standing alone requires the context to entail its presupposition. -/
 theorem limitedSymmetry_trigger :
-    LimitedSymmetry C (Occurrence.ofFormula I (.trigger p a)) ↔ C ⊆ I p := by
-  rw [limitedSymmetry_of_occurrences I (K := []) (a := a) rfl, limitedSymmetryAt_iff]
+    LimitedSymmetry C (Formula.occurrences I (.trigger p a)) ↔ C ⊆ I p := by
+  rw [limitedSymmetry_of_triggers I (K := []) (a := a) rfl, limitedSymmetryAt_iff]
   simp [AgreeUpTo, SyntacticEnvironment.truth, Set.subset_def]
 
 /-- `(p'p and q)` requires the context to entail `p'` (Fact 3.4.1, p. 124). -/
 theorem limitedSymmetry_and_left :
-    LimitedSymmetry C (Occurrence.ofFormula I (.bin .conj (.trigger p a) (.atom q))) ↔ C ⊆ I p := by
-  rw [limitedSymmetry_of_occurrences I (K := [.left .conj (.atom q)]) (a := a) rfl,
+    LimitedSymmetry C (Formula.occurrences I (.bin .conj (.trigger p a) (.atom q))) ↔ C ⊆ I p := by
+  rw [limitedSymmetry_of_triggers I (K := [.left .conj (.atom q)]) (a := a) rfl,
     limitedSymmetryAt_iff_funs]
   refine ⟨fun h w hw ↦ by_contra fun hp ↦ ?_, fun h w hw hp ↦ absurd (h hw) hp⟩
   have := h w hw hp 1 (by simp [rightItems, Step.rightItems, Connective.rightItems])
   simp [funs, stepFuns, evalB, Connective.rightItems] at this
 
-/-- Evaluate the constraint at every parse point of a concrete environment. -/
+/-- Evaluate the constraint at every parsing point of a concrete environment. -/
 local macro "ls_points" : tactic =>
   `(tactic| (intro n hn
              simp only [rightItems_cons, rightItems_nil, Step.rightItems, Connective.rightItems]
@@ -290,16 +290,16 @@ local macro "ls_points" : tactic =>
                simp_all [funs, stepFuns, evalB, val, Formula.truth, Step.rightItems,
                  Connective.rightItems, compat, Connective.eval]))
 
-/-- Evaluate the constraint at one parse point of a concrete environment. -/
+/-- Evaluate the constraint at one parsing point of a concrete environment. -/
 local macro "ls_at " h:term : tactic =>
   `(tactic| (simp [funs, stepFuns, evalB, val, Formula.truth, Step.rightItems,
                Connective.rightItems, compat, Connective.eval, *] at $h:term))
 
 /-- `(q and p'p)` requires the context to entail `q → p'` (Fact 3.4.2, p. 126). -/
 theorem limitedSymmetry_and_right :
-    LimitedSymmetry C (Occurrence.ofFormula I (.bin .conj (.atom q) (.trigger p a))) ↔
+    LimitedSymmetry C (Formula.occurrences I (.bin .conj (.atom q) (.trigger p a))) ↔
       C ⊆ {w | w ∈ I q → w ∈ I p} := by
-  rw [limitedSymmetry_of_occurrences I (K := [.right .conj (.atom q)]) (a := a) rfl,
+  rw [limitedSymmetry_of_triggers I (K := [.right .conj (.atom q)]) (a := a) rfl,
     limitedSymmetryAt_iff_funs]
   refine ⟨fun h w hw hq ↦ by_contra fun hp ↦ ?_, fun h w hw hp ↦ ?_⟩
   · have := h w hw hp 0 le_rfl
@@ -309,9 +309,9 @@ theorem limitedSymmetry_and_right :
 
 /-- `(p'p or q)` requires the context to entail `¬q → p'` (Fact 3.4.3, p. 127). -/
 theorem limitedSymmetry_or_left :
-    LimitedSymmetry C (Occurrence.ofFormula I (.bin .disj (.trigger p a) (.atom q))) ↔
+    LimitedSymmetry C (Formula.occurrences I (.bin .disj (.trigger p a) (.atom q))) ↔
       C ⊆ {w | w ∉ I q → w ∈ I p} := by
-  rw [limitedSymmetry_of_occurrences I (K := [.left .disj (.atom q)]) (a := a) rfl,
+  rw [limitedSymmetry_of_triggers I (K := [.left .disj (.atom q)]) (a := a) rfl,
     limitedSymmetryAt_iff_funs]
   refine ⟨fun h w hw hq ↦ by_contra fun hp ↦ ?_, fun h w hw hp ↦ ?_⟩
   · have := h w hw hp 2 (by simp [rightItems, Step.rightItems, Connective.rightItems])
@@ -321,8 +321,8 @@ theorem limitedSymmetry_or_left :
 
 /-- `(if p'p. q)` requires the context to entail `p'` (Fact 3.4.4, p. 128). -/
 theorem limitedSymmetry_if_left :
-    LimitedSymmetry C (Occurrence.ofFormula I (.bin .cond (.trigger p a) (.atom q))) ↔ C ⊆ I p := by
-  rw [limitedSymmetry_of_occurrences I (K := [.left .cond (.atom q)]) (a := a) rfl,
+    LimitedSymmetry C (Formula.occurrences I (.bin .cond (.trigger p a) (.atom q))) ↔ C ⊆ I p := by
+  rw [limitedSymmetry_of_triggers I (K := [.left .cond (.atom q)]) (a := a) rfl,
     limitedSymmetryAt_iff_funs]
   refine ⟨fun h w hw ↦ by_contra fun hp ↦ ?_, fun h w hw hp ↦ absurd (h hw) hp⟩
   have := h w hw hp 0 (Nat.zero_le _)
@@ -330,9 +330,9 @@ theorem limitedSymmetry_if_left :
 
 /-- `(if q. p'p)` requires the context to entail `q → p'` (Fact 3.4.5, p. 129). -/
 theorem limitedSymmetry_if_right :
-    LimitedSymmetry C (Occurrence.ofFormula I (.bin .cond (.atom q) (.trigger p a))) ↔
+    LimitedSymmetry C (Formula.occurrences I (.bin .cond (.atom q) (.trigger p a))) ↔
       C ⊆ {w | w ∈ I q → w ∈ I p} := by
-  rw [limitedSymmetry_of_occurrences I (K := [.right .cond (.atom q)]) (a := a) rfl,
+  rw [limitedSymmetry_of_triggers I (K := [.right .cond (.atom q)]) (a := a) rfl,
     limitedSymmetryAt_iff_funs]
   refine ⟨fun h w hw hq ↦ by_contra fun hp ↦ ?_, fun h w hw hp ↦ ?_⟩
   · have := h w hw hp 0 le_rfl
@@ -343,9 +343,9 @@ theorem limitedSymmetry_if_right :
 /-- `(if (not p'p). q)` requires the context to entail `¬q → p'`, as `(p'p or q)` does (the first
 half of Fact 3.4.10, p. 136). -/
 theorem limitedSymmetry_if_not_left :
-    LimitedSymmetry C (Occurrence.ofFormula I (.bin .cond (.not (.trigger p a)) (.atom q))) ↔
+    LimitedSymmetry C (Formula.occurrences I (.bin .cond (.not (.trigger p a)) (.atom q))) ↔
       C ⊆ {w | w ∉ I q → w ∈ I p} := by
-  rw [limitedSymmetry_of_occurrences I (K := [.not, .left .cond (.atom q)]) (a := a) rfl,
+  rw [limitedSymmetry_of_triggers I (K := [.not, .left .cond (.atom q)]) (a := a) rfl,
     limitedSymmetryAt_iff_funs]
   refine ⟨fun h w hw hq ↦ by_contra fun hp ↦ ?_, fun h w hw hp ↦ ?_⟩
   · have := h w hw hp 1 (by simp [rightItems, Step.rightItems, Connective.rightItems])
@@ -355,17 +355,17 @@ theorem limitedSymmetry_if_not_left :
 
 /-- `(if (not p'p). q)` respects the constraint iff `(p'p or q)` does (Fact 3.4.10, p. 136). -/
 theorem limitedSymmetry_if_not_left_iff_or :
-    LimitedSymmetry C (Occurrence.ofFormula I (.bin .cond (.not (.trigger p a)) (.atom q))) ↔
-      LimitedSymmetry C (Occurrence.ofFormula I (.bin .disj (.trigger p a) (.atom q))) := by
+    LimitedSymmetry C (Formula.occurrences I (.bin .cond (.not (.trigger p a)) (.atom q))) ↔
+      LimitedSymmetry C (Formula.occurrences I (.bin .disj (.trigger p a) (.atom q))) := by
   rw [limitedSymmetry_if_not_left, limitedSymmetry_or_left]
 
 /-- `(if ((not p'p) and q). r)` requires the context to entail `(q ∧ ¬r) → p'`. Fact 3.4.8 (p. 134)
 prints `(q ∧ r) → p'` and omits the derivation (`not_limitedSymmetry_if_not_and_of_printed`). -/
 theorem limitedSymmetry_if_not_and :
-    LimitedSymmetry C (Occurrence.ofFormula I
+    LimitedSymmetry C (Formula.occurrences I
         (.bin .cond (.bin .conj (.not (.trigger p a)) (.atom q)) (.atom r))) ↔
       C ⊆ {w | w ∈ I q → w ∉ I r → w ∈ I p} := by
-  rw [limitedSymmetry_of_occurrences I (K := [.not, .left .conj (.atom q), .left .cond (.atom r)])
+  rw [limitedSymmetry_of_triggers I (K := [.not, .left .conj (.atom q), .left .cond (.atom r)])
     (a := a) rfl, limitedSymmetryAt_iff_funs]
   refine ⟨fun h w hw hq hr ↦ by_contra fun hp ↦ ?_, fun h w hw hp ↦ ?_⟩
   · have := h w hw hp 3 (by simp [rightItems, Step.rightItems, Connective.rightItems])
@@ -380,7 +380,7 @@ theorem limitedSymmetry_if_not_and :
 theorem not_limitedSymmetry_if_not_and_of_printed {w : W} (hq : w ∈ I q) (hr : w ∉ I r)
     (hp : w ∉ I p) :
     {w} ⊆ {w | w ∈ I q → w ∈ I r → w ∈ I p} ∧
-      ¬ LimitedSymmetry {w} (Occurrence.ofFormula I
+      ¬ LimitedSymmetry {w} (Formula.occurrences I
         (.bin .cond (.bin .conj (.not (.trigger p a)) (.atom q)) (.atom r))) := by
   rw [limitedSymmetry_if_not_and]
   refine ⟨fun v hv ↦ ?_, fun h ↦ hp (h rfl hq hr)⟩
@@ -467,9 +467,9 @@ theorem limitedSymmetryAt_not_or_first :
 filtering symmetrically, before the highest connective (Fact 3.4.15, p. 138). -/
 theorem limitedSymmetry_and_or :
     LimitedSymmetry C
-        (Occurrence.ofFormula I (.bin .disj (.bin .conj (.trigger p a) (.atom q)) (.atom r))) ↔
+        (Formula.occurrences I (.bin .disj (.bin .conj (.trigger p a) (.atom q)) (.atom r))) ↔
       C ⊆ {w | w ∈ I q → w ∈ I p ∨ w ∈ I r} := by
-  rw [limitedSymmetry_of_occurrences I (K := [.left .conj (.atom q), .left .disj (.atom r)])
+  rw [limitedSymmetry_of_triggers I (K := [.left .conj (.atom q), .left .disj (.atom r)])
     (a := a) rfl, limitedSymmetryAt_iff_funs]
   refine ⟨fun h w hw hq ↦ by_contra fun hn ↦ ?_, fun h w hw hp ↦ ?_⟩
   · simp only [not_or] at hn
@@ -508,9 +508,9 @@ theorem forall_agreeUpTo_append_not {n : ℕ} {K : SyntacticEnvironment Atom} {w
 
 /-- A sentence respects the constraint iff its negation does (Proposition 3.4.1, p. 130). -/
 theorem limitedSymmetry_not (A : Formula Atom) :
-    LimitedSymmetry C (Occurrence.ofFormula I (.not A)) ↔
-      LimitedSymmetry C (Occurrence.ofFormula I A) := by
-  simp only [limitedSymmetry_ofFormula_iff, Formula.occurrences, List.forall_mem_map]
+    LimitedSymmetry C (Formula.occurrences I (.not A)) ↔
+      LimitedSymmetry C (Formula.occurrences I A) := by
+  simp only [limitedSymmetry_occurrences_iff, Formula.triggers, List.forall_mem_map]
   refine forall₂_congr fun o _ ↦ ?_
   rw [limitedSymmetryAt_iff, limitedSymmetryAt_iff, rightItems_append]
   refine forall₂_congr fun w _ ↦ imp_congr_right fun _ ↦ forall₂_congr fun n _ ↦ ?_

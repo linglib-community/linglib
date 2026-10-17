@@ -119,36 +119,36 @@ variable {Atom W : Type*}
 given by the theory's own predicate. -/
 noncomputable def Accepts : Account → (Atom → Set W) → Set W → Formula Atom → Prop
   | dynamic => fun I C F ↦ (F.ccp I).Admits C
-  | filtering => fun I C F ↦ C ⊆ Function.support (F.filter I)
+  | filtering => fun I C F ↦ C ⊆ Function.support (F.middleKleene I)
   | transparencyIncremental => fun I C F ↦
-    Schlenker2009.Transparency .incremental C (Occurrence.ofFormula I F)
+    Schlenker2009.Transparency .incremental C (Formula.occurrences I F)
   | transparencySymmetric => fun I C F ↦
-    Schlenker2009.Transparency .symmetric C (Occurrence.ofFormula I F)
+    Schlenker2009.Transparency .symmetric C (Formula.occurrences I F)
   | satisfactionIncremental => fun I C F ↦
-    Schlenker2009.Satisfaction .incremental C (Occurrence.ofFormula I F)
+    Schlenker2009.Satisfaction .incremental C (Formula.occurrences I F)
   | satisfactionSymmetric => fun I C F ↦
-    Schlenker2009.Satisfaction .symmetric C (Occurrence.ofFormula I F)
-  | kleeneIncremental => fun I ↦ Schlenker2009.KleeneAcceptable I .incremental
-  | kleeneSymmetric => fun I ↦ Schlenker2009.KleeneAcceptable I .symmetric
-  | supervaluationIncremental => fun I ↦ Schlenker2009.SuperAcceptable I .incremental
-  | supervaluationSymmetric => fun I ↦ Schlenker2009.SuperAcceptable I .symmetric
-  | limitedSymmetry => fun I C F ↦ Kalomoiros2023.LimitedSymmetry C (Occurrence.ofFormula I F)
+    Schlenker2009.Satisfaction .symmetric C (Formula.occurrences I F)
+  | kleeneIncremental => fun I ↦ Schlenker2009.StrongKleeneAcceptable I .incremental
+  | kleeneSymmetric => fun I ↦ Schlenker2009.StrongKleeneAcceptable I .symmetric
+  | supervaluationIncremental => fun I ↦ Schlenker2009.SupervaluationAcceptable I .incremental
+  | supervaluationSymmetric => fun I ↦ Schlenker2009.SupervaluationAcceptable I .symmetric
+  | limitedSymmetry => fun I C F ↦ Kalomoiros2023.LimitedSymmetry C (Formula.occurrences I F)
 
 open Schlenker2009.QuantifiedClause in
 /-- Whether an account accepts a quantified clause, for the accounts defined on them. -/
 def AcceptsClause : Account → Option ClauseAcceptance
   | transparencyIncremental => some fun _ _ _ J C c ↦
-    Schlenker2009.Transparency .incremental C (Occurrence.ofClause J c)
+    Schlenker2009.Transparency .incremental C (QuantifiedClause.occurrences J c)
   | transparencySymmetric => some fun _ _ _ J C c ↦
-    Schlenker2009.Transparency .symmetric C (Occurrence.ofClause J c)
+    Schlenker2009.Transparency .symmetric C (QuantifiedClause.occurrences J c)
   | satisfactionIncremental => some fun _ _ _ J C c ↦
-    Schlenker2009.Satisfaction .incremental C (Occurrence.ofClause J c)
+    Schlenker2009.Satisfaction .incremental C (QuantifiedClause.occurrences J c)
   | satisfactionSymmetric => some fun _ _ _ J C c ↦
-    Schlenker2009.Satisfaction .symmetric C (Occurrence.ofClause J c)
-  | kleeneIncremental => some fun _ _ _ J ↦ KleeneAcceptable J .incremental
-  | kleeneSymmetric => some fun _ _ _ J ↦ KleeneAcceptable J .symmetric
-  | supervaluationIncremental => some fun _ _ _ J ↦ SuperAcceptable J .incremental
-  | supervaluationSymmetric => some fun _ _ _ J ↦ SuperAcceptable J .symmetric
+    Schlenker2009.Satisfaction .symmetric C (QuantifiedClause.occurrences J c)
+  | kleeneIncremental => some fun _ _ _ J ↦ StrongKleeneAcceptable J .incremental
+  | kleeneSymmetric => some fun _ _ _ J ↦ StrongKleeneAcceptable J .symmetric
+  | supervaluationIncremental => some fun _ _ _ J ↦ SupervaluationAcceptable J .incremental
+  | supervaluationSymmetric => some fun _ _ _ J ↦ SupervaluationAcceptable J .symmetric
   | _ => none
 
 /-- The theory an account registers. -/

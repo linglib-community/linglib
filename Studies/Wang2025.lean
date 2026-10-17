@@ -3,7 +3,7 @@ module
 public import Linglib.Fragments.Mandarin.Adverbs
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Semantics.Presupposition.Verb
-public import Linglib.Semantics.Presupposition.Iterative
+public import Linglib.Semantics.Presupposition.Again
 public import Linglib.Semantics.Aspect.Phasal
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Set.Lattice.Bounded

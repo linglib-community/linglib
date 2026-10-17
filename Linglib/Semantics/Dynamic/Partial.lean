@@ -367,7 +367,7 @@ it. -/
 theorem admits_cond_ofTrivalent (p q : W → SignType) (s : Set W) :
     (cond (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ Function.support fun w ↦ (-p w).joinMiddle (q w) :=
-  (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_support_impMiddle_iff.symm
+  (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_support_neg_joinMiddle_iff.symm
 
 /-- Dynamic disjunction admits `s` iff the Middle Kleene disjunction is defined throughout it,
 the ¬φ local context being Karttunen's negative-antecedent filtering. -/

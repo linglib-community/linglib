@@ -52,13 +52,13 @@ def incremental : List Account :=
 variable {W : Type} (I : Fin 3 → Set W) {C : Set W}
 
 /-- The target sentences carry one trigger. -/
-theorem occurrences_target (k : Construction) (o : Order) :
-    ((target (0 : Fin 3) 1 2 k o).occurrences.map Prod.snd).Nodup := by
-  cases k <;> cases o <;> simp [target, _root_.ChemlaSchlenker2012.unlessThen, Formula.occurrences]
+theorem triggers_target (k : Construction) (o : Order) :
+    ((target (0 : Fin 3) 1 2 k o).triggers.map Prod.snd).Nodup := by
+  cases k <;> cases o <;> simp [target, _root_.ChemlaSchlenker2012.unlessThen, Formula.triggers]
 
-private theorem accepts_iff_superAcceptable_incremental {a : Account} (ha : a ∈ incremental)
-    (F : Formula (Fin 3)) :
-    a.Accepts I C F ↔ Schlenker2009.SuperAcceptable I .incremental C F := by
+private theorem accepts_iff_supervaluationAcceptable_incremental {a : Account}
+    (ha : a ∈ incremental) (F : Formula (Fin 3)) :
+    a.Accepts I C F ↔ Schlenker2009.SupervaluationAcceptable I .incremental C F := by
   have hf : a.Stronger filtering ∧ filtering.Stronger a := by
     simp only [incremental, List.mem_cons, List.not_mem_nil, or_false] at ha
     rcases ha with rfl | rfl | rfl | rfl | rfl | rfl
@@ -77,7 +77,7 @@ private theorem accepts_iff_superAcceptable_incremental {a : Account} (ha : a �
     fun h ↦ hf.2 _ _ I C F (supervaluationIncremental_stronger_filtering _ _ I C F h)⟩
 
 open SyntacticEnvironment Kalomoiros2023 in
-/-- Evaluate Limited Symmetry at every parse point of a concrete environment. -/
+/-- Evaluate Limited Symmetry at every parsing point of a concrete environment. -/
 local macro "ls_points" : tactic =>
   `(tactic| (intro n hn
              simp only [rightItems_cons, rightItems_nil, Step.rightItems, Connective.rightItems]
@@ -87,16 +87,15 @@ local macro "ls_points" : tactic =>
                  Connective.rightItems, compat, Connective.eval]))
 
 private theorem transparency_symmetric_target (k : Construction) (o : Order) :
-    Schlenker2009.Transparency .symmetric C (Occurrence.ofFormula I (target 0 1 2 k o)) ↔
+    Schlenker2009.Transparency .symmetric C (Formula.occurrences I (target 0 1 2 k o)) ↔
       C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
   have tf (K : SyntacticEnvironment (Fin 3)) :
       ∀ f ∈ ({K.truth I} : Set (Set W → Set W)), IsTruthFunctional f :=
     fun _ hf ↦ hf ▸ isTruthFunctional_truth I K
   cases k <;> cases o <;>
-    simp only [Schlenker2009.Transparency, Occurrence.forall_mem_ofFormula, Occurrence.Transparent,
-      SyntacticEnvironment.occurrence, Schlenker2009.Reading.parsePoint, parsePoint_top, target,
-      _root_.ChemlaSchlenker2012.unlessThen,
-      Formula.occurrences, List.map_cons, List.map_nil, List.nil_append, List.singleton_append,
+    simp only [Schlenker2009.Transparency, Formula.forall_mem_occurrences, Occurrence.Transparent,
+      SyntacticEnvironment.occurrence, Schlenker2009.Version.parsingPoint, continuations_top,
+      target, _root_.ChemlaSchlenker2012.unlessThen, Formula.triggers, List.map_cons, List.map_nil, List.nil_append, List.singleton_append,
       List.append_nil, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
       and_true] <;>
     rw [transparent_iff_subset (tf _)] <;>
@@ -104,10 +103,10 @@ private theorem transparency_symmetric_target (k : Construction) (o : Order) :
       Formula.truth]
 
 private theorem limitedSymmetry_target (k : Construction) (o : Order) :
-    LimitedSymmetry C (Occurrence.ofFormula I (target 0 1 2 k o)) ↔
+    LimitedSymmetry C (Formula.occurrences I (target 0 1 2 k o)) ↔
       C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
   cases k <;> cases o <;>
-    rw [limitedSymmetry_of_occurrences I (a := 2) rfl] <;>
+    rw [limitedSymmetry_of_triggers I (a := 2) rfl] <;>
     dsimp only [List.nil_append, List.cons_append] <;>
     rw [limitedSymmetryAt_iff_funs] <;>
     refine forall₂_congr fun w _ ↦ ?_ <;>
@@ -128,24 +127,24 @@ theorem accepts_target_iff (a : Account) (k : Construction) (o : Order) :
     a.Accepts I C (target 0 1 2 k o) ↔
       C ⊆ (if a ∈ incremental ∧ o = .inverse then I 1 else {w | w ∈ I 0 → w ∈ I 1}) := by
   by_cases ha : a ∈ incremental
-  · rw [accepts_iff_superAcceptable_incremental I ha]
+  · rw [accepts_iff_supervaluationAcceptable_incremental I ha]
     cases o
-    · simpa using _root_.ChemlaSchlenker2012.superAcceptable_incremental_canonical I k
-    · simpa [ha] using _root_.ChemlaSchlenker2012.superAcceptable_incremental_inverse I k
+    · simpa using _root_.ChemlaSchlenker2012.supervaluationAcceptable_incremental_canonical I k
+    · simpa [ha] using _root_.ChemlaSchlenker2012.supervaluationAcceptable_incremental_inverse I k
   · simp only [ha, false_and, ite_false]
-    have hsuper : Schlenker2009.SuperAcceptable I .symmetric C (target 0 1 2 k o) ↔
+    have hsuper : Schlenker2009.SupervaluationAcceptable I .symmetric C (target 0 1 2 k o) ↔
         C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
       cases o
-      · exact _root_.ChemlaSchlenker2012.superAcceptable_symmetric_canonical I k
-      · exact _root_.ChemlaSchlenker2012.superAcceptable_symmetric_inverse I k
+      · exact _root_.ChemlaSchlenker2012.supervaluationAcceptable_symmetric_canonical I k
+      · exact _root_.ChemlaSchlenker2012.supervaluationAcceptable_symmetric_inverse I k
     cases a <;> simp [incremental] at ha
     · exact transparency_symmetric_target I k o
     · exact (Schlenker2009.satisfaction_iff_transparency I .symmetric C _).trans
         (transparency_symmetric_target I k o)
-    · refine (Schlenker2009.kleeneAcceptable_symmetric_iff I C _).trans (Iff.trans ?_ hsuper)
+    · refine (Schlenker2009.strongKleeneAcceptable_symmetric_iff I C _).trans (Iff.trans ?_ hsuper)
       exact (forall₂_congr fun w _ ↦
-        (Schlenker2009.superDefined_iff_of_nodup I (occurrences_target k o)).symm).trans
-        (Schlenker2009.superAcceptable_symmetric_iff I C _).symm
+        (Schlenker2009.supervaluationDefined_iff_of_nodup I (triggers_target k o)).symm).trans
+        (Schlenker2009.supervaluationAcceptable_symmetric_iff I C _).symm
     · exact hsuper
     · exact limitedSymmetry_target I k o
 

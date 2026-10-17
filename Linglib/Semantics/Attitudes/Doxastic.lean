@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Semantics.Presupposition.TriggerTypology
+public import Linglib.Semantics.Presupposition.Trigger
 public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Logic.Modal.Basic
 

@@ -27,8 +27,8 @@ disjunction, where the table is asymmetric and symmetric filtering is `TwoDim.or
 ## Main declarations
 
 * `Connective.localContext`: the local context of the second argument of a connective.
-* `subset_support_meetMiddle_iff`, `support_impMiddle_subset_iff`, `support_joinMiddle_subset_iff`:
-  the filtering connectives are admittance in the local contexts.
+* `subset_support_meetMiddle_iff`, `subset_support_neg_joinMiddle_iff`,
+  `subset_support_joinMiddle_iff`: the filtering connectives are admittance in the local contexts.
 
 ## References
 
@@ -80,7 +80,7 @@ theorem subset_support_meetMiddle_iff :
 
 /-- A context admits Karttunen's filtering conditional when it admits the antecedent and the
 consequent's local context admits the consequent. -/
-theorem subset_support_impMiddle_iff :
+theorem subset_support_neg_joinMiddle_iff :
     C ⊆ Function.support (fun w ↦ (-p w).joinMiddle (q w)) ↔
       C ⊆ Function.support p ∧ cond.localContext C (posExt p) ⊆ Function.support q := by
   simp only [Set.subset_def, Function.mem_support, ne_eq, SignType.joinMiddle_eq_zero_iff,

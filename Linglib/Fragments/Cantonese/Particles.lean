@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.TriggerTypology
+public import Linglib.Semantics.Presupposition.Trigger
 
 /-!
 # Cantonese *again*-elements
@@ -27,17 +27,17 @@ namespace Cantonese.Particles
 open Presupposition
 
 /-- The preverbal *jau6* 又 'again'. -/
-def jau : TriggerItem := { form := "jau6", script := "又", trigger := .iterative }
+def jau : TriggerItem := { form := "jau6", script := "又", triggerClass := .iterative }
 
 /-- The preverbal *zoi3* 再 'again'. -/
-def zoi : TriggerItem := { form := "zoi3", script := "再", trigger := .iterative }
+def zoi : TriggerItem := { form := "zoi3", script := "再", triggerClass := .iterative }
 
 /-- The postverbal *-faan1* 返 'again, back'. -/
-def faan : TriggerItem := { form := "faan1", script := "返", trigger := .iterative }
+def faan : TriggerItem := { form := "faan1", script := "返", triggerClass := .iterative }
 
 /-- The postverbal repetitive *-gwo3* 過 'again, anew', redoing an event to set its outcome
 right. -/
-def gwo : TriggerItem := { form := "gwo3", script := "過", trigger := .iterative }
+def gwo : TriggerItem := { form := "gwo3", script := "過", triggerClass := .iterative }
 
 /-- The *again*-elements. -/
 def all : List TriggerItem := [jau, zoi, faan, gwo]

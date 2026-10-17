@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Presupposition.Context
-public import Linglib.Semantics.Presupposition.Environment
+public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Linglib.Data.Examples.TonhauserEtAl2013
 
 /-!
@@ -163,14 +163,14 @@ end ProjectiveClass
 uttered in a context with a given stance to the content, (12) and (24), or the sentence is the
 complement of a belief report whose holder's epistemic state has a given stance, (41). -/
 inductive Test
-  | matrix (e : Environment) (s : Stance)
+  | matrix (e : FamilyVariant) (s : Stance)
   | belief (s : Stance)
   deriving DecidableEq, Repr
 
 /-- An instance of the test is acceptable, where `Acc e` holds of the contexts in which the
 family member `e` is acceptable, `AccB` of those in which the belief report is, and `R` is the
 holder's doxastic accessibility, so that `R.image {w}` is the holder's epistemic state at `w`. -/
-def Test.Accepted (m : Set W) (R : SetRel W W) (Acc : Environment → Set W → Prop)
+def Test.Accepted (m : Set W) (R : SetRel W W) (Acc : FamilyVariant → Set W → Prop)
     (AccB : Set W → Prop) : Test → Prop
   | matrix e s => ∃ c, s.Holds c m ∧ Acc e c
   | belief s => ∃ c, ∃ w ∈ c, s.Holds (R.image {w}) m ∧ AccB c
@@ -181,12 +181,12 @@ acceptability is `Acc₀`, is acceptable in its local context, the image of the 
 member's relation. The modal's accessibility `M` is reflexive, what is the case being possible. -/
 def Excludes (k : ProjectiveClass) (t : Test) : Prop :=
   ∀ (W : Type) (m : Set W) (M R : SetRel W W) [M.IsRefl] (Acc₀ : Set W → Prop)
-    (Acc : Environment → Set W → Prop) (AccB : Set W → Prop),
+    (Acc : FamilyVariant → Set W → Prop) (AccB : Set W → Prop),
     (∀ e c, Acc e c → Acc₀ ((e.rel M).image c)) →
     (k.StrongContextualFelicity → StrongContextualFelicity m Acc₀) →
     (k.ObligatoryLocalEffect → ObligatoryLocalEffect R m AccB) → ¬ t.Accepted m R Acc AccB
 
-variable {k : ProjectiveClass} {e : Environment} {s : Stance}
+variable {k : ProjectiveClass} {e : FamilyVariant} {s : Stance}
 
 /-- A class excludes an utterance in a context exactly when its triggers impose the constraint
 and the context does not entail the content, (12). -/

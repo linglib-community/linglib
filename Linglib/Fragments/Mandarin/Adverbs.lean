@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.TriggerTypology
+public import Linglib.Semantics.Presupposition.Trigger
 
 /-!
 # Mandarin adverbs
@@ -35,25 +35,25 @@ namespace Mandarin.Adverbs
 open Presupposition
 
 /-- *yě* 也 'also', the additive adverb. -/
-def ye : TriggerItem := { form := "yě", script := "也", trigger := .additive }
+def ye : TriggerItem := { form := "yě", script := "也", triggerClass := .additive }
 
 /-- *yòu* 又 'again', of past and present events. -/
-def you : TriggerItem := { form := "yòu", script := "又", trigger := .iterative }
+def you : TriggerItem := { form := "yòu", script := "又", triggerClass := .iterative }
 
 /-- *zài* 再 'again', of events that have not yet happened. -/
-def zai : TriggerItem := { form := "zài", script := "再", trigger := .iterative }
+def zai : TriggerItem := { form := "zài", script := "再", triggerClass := .iterative }
 
 /-- *réng* 仍 'still', of a state continuing from the past. -/
-def reng : TriggerItem := { form := "réng", script := "仍", trigger := .continuative }
+def reng : TriggerItem := { form := "réng", script := "仍", triggerClass := .continuative }
 
 /-- *búzài* 不再 'no longer', of a state that held until the reference time. -/
-def buzai : TriggerItem := { form := "búzài", script := "不再", trigger := .changeOfState }
+def buzai : TriggerItem := { form := "búzài", script := "不再", triggerClass := .changeOfState }
 
 /-- *jiù* 就 in its use as 'only', associating with a focus to its right. -/
-def jiu : TriggerItem := { form := "jiù", script := "就", trigger := .exclusive }
+def jiu : TriggerItem := { form := "jiù", script := "就", triggerClass := .exclusive }
 
 /-- *fǎn'ér* 反而 'instead, on the contrary'. -/
-def faner : TriggerItem := { form := "fǎn'ér", script := "反而", trigger := .contrastive }
+def faner : TriggerItem := { form := "fǎn'ér", script := "反而", triggerClass := .contrastive }
 
 /-- The presupposition-triggering adverbs. -/
 def all : List TriggerItem := [ye, you, zai, reng, buzai, jiu, faner]

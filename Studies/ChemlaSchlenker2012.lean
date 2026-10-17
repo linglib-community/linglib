@@ -8,30 +8,30 @@ public import Linglib.Data.Experiments.ChemlaSchlenker2012
 
 This file formalizes the paper's predictions and its experimental results. The paper takes a
 trivalent theory in which a sentence is presuppositionally acceptable when its supervaluation is
-defined at every world of the context (its (9), the symmetric condition, `SuperAcceptable` of
-Schlenker's appendix on the symmetric reading), and an incremental condition that also completes
+defined at every world of the context (its (9), the symmetric condition, `SupervaluationAcceptable`
+of Schlenker's appendix on the symmetric version), and an incremental condition that also completes
 the sentence after each trigger by every good final without triggers (its (10), the incremental
-reading). The Incremental Theory
-lets (10) alone govern projection; the Strict Symmetric Theory lets (9) alone govern it; the Mixed
-Theory prefers (10) but lets a presupposition satisfied only by (9) through at a cost.
+version). The Incremental Theory lets (10) alone govern projection; the Strict Symmetric Theory lets
+(9) alone govern it; the Mixed Theory prefers (10) but lets a presupposition satisfied only by (9)
+through at a cost.
 
 The experiments test sentences with the anaphoric trigger *too* in *if*-, *or*- and
 *unless*-sentences, with the clause that can satisfy the presupposition before the trigger
 (canonical order) or after it (inverse order) ((48)–(49), `target`). In the canonical order both
 conditions predict the conditional presupposition `if p, q` ((13a)–(15a),
-`superAcceptable_incremental_canonical`, `superAcceptable_symmetric_canonical`). In the inverse
-order the incremental condition predicts the unconditional presupposition `q`
-(`superAcceptable_incremental_inverse`), while the symmetric condition still predicts `if p, q`
-((13b)–(15b), `superAcceptable_symmetric_inverse`).
+`supervaluationAcceptable_incremental_canonical`, `supervaluationAcceptable_symmetric_canonical`).
+In the inverse order the incremental condition predicts the unconditional presupposition `q`
+(`supervaluationAcceptable_incremental_inverse`), while the symmetric condition still predicts
+`if p, q` ((13b)–(15b), `supervaluationAcceptable_symmetric_inverse`).
 
 The results are `Data/Experiments/ChemlaSchlenker2012`. The conditional inference is endorsed more
 than the unconditional one for every tested sentence (Tables 4 and 7,
 `experiment1_conditional_gt_unconditional`, `experiment4_conditional_gt_unconditional`), including
 the inverse order, where the Incremental Theory predicts the unconditional presupposition and so an
-unconditional inference (`superAcceptable_incremental_inverse_subset`) and the symmetric condition
-does not (`exists_superAcceptable_symmetric_inverse_not_subset`). And every target sentence of
-Experiment 2 is rated above the control that forces local accommodation with *too* (Table 5,
-`experiment2_targets_gt_control`), so the inverse order is not unacceptable.
+unconditional inference (`supervaluationAcceptable_incremental_inverse_subset`) and the symmetric
+condition does not (`exists_supervaluationAcceptable_symmetric_inverse_not_subset`). And every
+target sentence of Experiment 2 is rated above the control that forces local accommodation with
+*too* (Table 5, `experiment2_targets_gt_control`), so the inverse order is not unacceptable.
 
 ## Implementation notes
 
@@ -72,67 +72,67 @@ def target (p q q' : Atom) : Construction → Order → Formula Atom
 
 variable {p q q' : Atom} {C : Set W}
 
-private theorem superAcceptable_incremental_iff_forall {F : Formula Atom} :
-    SuperAcceptable I .incremental C F ↔ ∀ w ∈ C, F.filter I w ≠ 0 :=
-  (superAcceptable_incremental_iff I C F).trans Iff.rfl
+private theorem supervaluationAcceptable_incremental_iff_forall {F : Formula Atom} :
+    SupervaluationAcceptable I .incremental C F ↔ ∀ w ∈ C, F.middleKleene I w ≠ 0 :=
+  (supervaluationAcceptable_incremental_iff I C F).trans Iff.rfl
 
-private theorem superAcceptable_symmetric_iff_forall {F : Formula Atom}
-    (hF : (F.occurrences.map Prod.snd).Nodup) :
-    SuperAcceptable I .symmetric C F ↔ ∀ w ∈ C, F.strong I w ≠ 0 :=
-  (superAcceptable_symmetric_iff I C F).trans
-    (forall₂_congr fun _ _ ↦ superDefined_iff_of_nodup I hF)
+private theorem supervaluationAcceptable_symmetric_iff_forall {F : Formula Atom}
+    (hF : (F.triggers.map Prod.snd).Nodup) :
+    SupervaluationAcceptable I .symmetric C F ↔ ∀ w ∈ C, F.strongKleene I w ≠ 0 :=
+  (supervaluationAcceptable_symmetric_iff I C F).trans
+    (forall₂_congr fun _ _ ↦ supervaluationDefined_iff_of_nodup I hF)
 
 /-- In the canonical order the incremental condition predicts the conditional presupposition
 `if p, q` ((13a)–(15a), p. 185). -/
-theorem superAcceptable_incremental_canonical (k : Construction) :
-    SuperAcceptable I .incremental C (target p q q' k .canonical) ↔
+theorem supervaluationAcceptable_incremental_canonical (k : Construction) :
+    SupervaluationAcceptable I .incremental C (target p q q' k .canonical) ↔
       C ⊆ {w | w ∈ I p → w ∈ I q} := by
-  rw [superAcceptable_incremental_iff_forall]
+  rw [supervaluationAcceptable_incremental_iff_forall]
   refine forall₂_congr fun w _ ↦ ?_
-  cases k <;> simp [target, unlessThen, Formula.filter, Formula.eval]
+  cases k <;> simp [target, unlessThen, Formula.middleKleene, Formula.eval]
 
 /-- In the canonical order the symmetric condition predicts the conditional presupposition `if p, q`
 ((13a)–(15a), p. 185). -/
-theorem superAcceptable_symmetric_canonical (k : Construction) :
-    SuperAcceptable I .symmetric C (target p q q' k .canonical) ↔
+theorem supervaluationAcceptable_symmetric_canonical (k : Construction) :
+    SupervaluationAcceptable I .symmetric C (target p q q' k .canonical) ↔
       C ⊆ {w | w ∈ I p → w ∈ I q} := by
   cases k <;>
-    rw [superAcceptable_symmetric_iff_forall I
-      (by simp [target, unlessThen, Formula.occurrences])] <;>
+    rw [supervaluationAcceptable_symmetric_iff_forall I
+      (by simp [target, unlessThen, Formula.triggers])] <;>
     refine forall₂_congr fun w _ ↦ ?_ <;>
-    simp [target, unlessThen, Formula.strong, Formula.eval] <;> tauto
+    simp [target, unlessThen, Formula.strongKleene, Formula.eval] <;> tauto
 
 /-- In the inverse order the incremental condition predicts the unconditional presupposition `q`
 ((13b)–(15b), p. 185). -/
-theorem superAcceptable_incremental_inverse (k : Construction) :
-    SuperAcceptable I .incremental C (target p q q' k .inverse) ↔ C ⊆ I q := by
-  rw [superAcceptable_incremental_iff_forall]
+theorem supervaluationAcceptable_incremental_inverse (k : Construction) :
+    SupervaluationAcceptable I .incremental C (target p q q' k .inverse) ↔ C ⊆ I q := by
+  rw [supervaluationAcceptable_incremental_iff_forall]
   refine forall₂_congr fun w _ ↦ ?_
-  cases k <;> simp [target, unlessThen, Formula.filter, Formula.eval]
+  cases k <;> simp [target, unlessThen, Formula.middleKleene, Formula.eval]
 
 /-- In the inverse order the symmetric condition still predicts the conditional presupposition
 `if p, q` ((13b)–(15b), p. 185). -/
-theorem superAcceptable_symmetric_inverse (k : Construction) :
-    SuperAcceptable I .symmetric C (target p q q' k .inverse) ↔
+theorem supervaluationAcceptable_symmetric_inverse (k : Construction) :
+    SupervaluationAcceptable I .symmetric C (target p q q' k .inverse) ↔
       C ⊆ {w | w ∈ I p → w ∈ I q} := by
   cases k <;>
-    rw [superAcceptable_symmetric_iff_forall I
-      (by simp [target, unlessThen, Formula.occurrences])] <;>
+    rw [supervaluationAcceptable_symmetric_iff_forall I
+      (by simp [target, unlessThen, Formula.triggers])] <;>
     refine forall₂_congr fun w _ ↦ ?_ <;>
-    simp [target, unlessThen, Formula.strong, Formula.eval] <;> tauto
+    simp [target, unlessThen, Formula.strongKleene, Formula.eval] <;> tauto
 
 /-- In the inverse order, any context that the Incremental Theory accepts entails the unconditional
 presupposition (§2.3.2). -/
-theorem superAcceptable_incremental_inverse_subset (k : Construction)
-    (h : SuperAcceptable I .incremental C (target p q q' k .inverse)) : C ⊆ I q :=
-  (superAcceptable_incremental_inverse I k).1 h
+theorem supervaluationAcceptable_incremental_inverse_subset (k : Construction)
+    (h : SupervaluationAcceptable I .incremental C (target p q q' k .inverse)) : C ⊆ I q :=
+  (supervaluationAcceptable_incremental_inverse I k).1 h
 
 /-- The symmetric condition accepts the inverse order in a context that does not entail the
 unconditional presupposition, one with a world where `p` and `q` both fail. -/
-theorem exists_superAcceptable_symmetric_inverse_not_subset (k : Construction) {w : W}
+theorem exists_supervaluationAcceptable_symmetric_inverse_not_subset (k : Construction) {w : W}
     (hp : w ∉ I p) (hq : w ∉ I q) :
-    SuperAcceptable I .symmetric {w} (target p q q' k .inverse) ∧ ¬ {w} ⊆ I q := by
-  refine ⟨(superAcceptable_symmetric_inverse I k).2 fun v hv hpv ↦ ?_, fun h ↦ hq (h rfl)⟩
+    SupervaluationAcceptable I .symmetric {w} (target p q q' k .inverse) ∧ ¬ {w} ⊆ I q := by
+  refine ⟨(supervaluationAcceptable_symmetric_inverse I k).2 fun v hv hpv ↦ ?_, fun h ↦ hq (h rfl)⟩
   rw [Set.mem_singleton_iff] at hv
   exact absurd (hv ▸ hpv) hp
 

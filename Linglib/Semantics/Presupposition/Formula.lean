@@ -14,21 +14,21 @@ and its classical meaning is the conjunction of the two (`Formula.truth`, C.2).
 Each binary connective is interpreted classically (`Connective.eval`), by the truth table of any
 trivalent connectives (`Connective.table`), and by Heim's context change potentials, with Beaver's
 disjunction (`Connective.ccp`). The fold `Formula.eval` evaluates a formula into a trivalent
-proposition `W → SignType` under given connectives, the Strong Kleene ones for `Formula.strong` and
-Peters' filtering ones for `Formula.filter`, and `Formula.ccp` evaluates it into `CCP.Partial`,
-sending an atom or a trigger to the update of its trivalent meaning. Where the filtering evaluation
-is defined it is the classical meaning (`Formula.filter_eq_ofProp`). The context change potential
-admits a context iff the filtering evaluation is defined throughout it, and it updates the context
-to its worlds at which the formula is classically true (`Formula.admits_ccp_iff`,
-`Formula.ccp_get`).
+proposition `W → SignType` under given connectives, the Strong Kleene ones for
+`Formula.strongKleene` and Peters' filtering ones for `Formula.middleKleene`, and `Formula.ccp`
+evaluates it into `CCP.Partial`, sending an atom or a trigger to the update of its trivalent
+meaning. Where the filtering evaluation is defined it is the classical meaning
+(`Formula.middleKleene_eq_ofProp`). The context change potential admits a context iff the filtering
+evaluation is defined throughout it, and it updates the context to its worlds at which the formula
+is classically true (`Formula.admits_ccp_iff`, `Formula.ccp_get`).
 
 ## Main definitions
 
 * `Presupposition.Formula`: atoms, triggers, negation and the binary connectives.
 * `Presupposition.Formula.truth`: the classical meaning at an interpretation of the atoms.
 * `Presupposition.Formula.eval`: the evaluation under trivalent connectives, with
-  `Presupposition.Formula.strong` and `Presupposition.Formula.filter` its Strong Kleene and
-  filtering instances.
+  `Presupposition.Formula.strongKleene` and `Presupposition.Formula.middleKleene` its Strong Kleene
+  and filtering instances.
 * `Presupposition.Formula.ccp`: the dynamic evaluation.
 * `Presupposition.Formula.accommodate`: local accommodation, which keeps the classical meaning.
 
@@ -116,16 +116,16 @@ noncomputable def eval (C : Trivalent.Connectives) : Formula Atom → W → Sign
   | bin c F G => fun w ↦ c.table C (eval C F w) (eval C G w)
 
 /-- The Strong Kleene evaluation. -/
-noncomputable abbrev strong : Formula Atom → W → SignType := eval I .strongKleene
+noncomputable abbrev strongKleene : Formula Atom → W → SignType := eval I .strongKleene
 
 /-- The evaluation by [peters-1979]'s filtering connectives, the Middle Kleene tables. -/
-noncomputable abbrev filter : Formula Atom → W → SignType := eval I .middleKleene
+noncomputable abbrev middleKleene : Formula Atom → W → SignType := eval I .middleKleene
 
 /-- The context change potential of a formula updates an atom or a trigger by its trivalent
 meaning, so a trigger is defined in a context that entails its presupposition. -/
 noncomputable def ccp : Formula Atom → CCP.Partial W
-  | atom p => CCP.Partial.ofTrivalent ((atom p).filter I)
-  | trigger p p' => CCP.Partial.ofTrivalent ((trigger p p').filter I)
+  | atom p => CCP.Partial.ofTrivalent ((atom p).middleKleene I)
+  | trigger p p' => CCP.Partial.ofTrivalent ((trigger p p').middleKleene I)
   | not F => CCP.Partial.neg (ccp F)
   | bin c F G => c.ccp (ccp F) (ccp G)
 
@@ -150,13 +150,14 @@ variable {w : W}
 /-- The filtering evaluation of a binary formula is defined where the first argument's is, and
 the second's wherever the world is in the second argument's local context
 ([karttunen-1974-presupposition]). -/
-theorem filter_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
-    (hF : F.filter I w ≠ 0 → F.filter I w = SignType.ofProp (w ∈ F.truth I)) :
-    (bin c F G).filter I w ≠ 0 ↔
-      F.filter I w ≠ 0 ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.filter I w ≠ 0) := by
-  simp only [filter, eval] at hF ⊢
+theorem middleKleene_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
+    (hF : F.middleKleene I w ≠ 0 → F.middleKleene I w = SignType.ofProp (w ∈ F.truth I)) :
+    (bin c F G).middleKleene I w ≠ 0 ↔
+      F.middleKleene I w ≠ 0 ∧
+        (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ 0) := by
+  simp only [middleKleene, eval] at hF ⊢
   refine ⟨fun h ↦ ?_, fun ⟨h, hG⟩ ↦ ?_⟩
-  · have h' : F.filter I w ≠ 0 := by cases c <;> simp_all
+  · have h' : F.middleKleene I w ≠ 0 := by cases c <;> simp_all
     rw [hF h'] at h
     exact ⟨h', fun hl ↦ by cases c <;> simp_all [Connective.localContext]⟩
   · rw [hF h]
@@ -164,27 +165,27 @@ theorem filter_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
       simp_all [Connective.localContext]
 
 /-- Where the filtering evaluation is defined, it is the classical meaning. -/
-theorem filter_eq_ofProp {F : Formula Atom} (h : F.filter I w ≠ 0) :
-    F.filter I w = SignType.ofProp (w ∈ F.truth I) := by
+theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ 0) :
+    F.middleKleene I w = SignType.ofProp (w ∈ F.truth I) := by
   induction F with
   | atom p => rfl
   | trigger p p' =>
-    by_cases hp : w ∈ I p <;> simp_all [filter, eval, truth]
+    by_cases hp : w ∈ I p <;> simp_all [middleKleene, eval, truth]
   | not F ih =>
-    simp only [filter, eval, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff] at h ⊢
+    simp only [middleKleene, eval, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff] at h ⊢
     simp [ih h, truth]
   | bin c F G ihF ihG =>
-    obtain ⟨hF, hG⟩ := (filter_bin_ne_zero_iff I ihF).1 h
-    simp only [filter, eval, ihF hF]
+    obtain ⟨hF, hG⟩ := (middleKleene_bin_ne_zero_iff I ihF).1 h
+    simp only [middleKleene, eval, ihF hF]
     cases c <;> by_cases ht : w ∈ F.truth I <;>
       simp_all [Connective.localContext, truth, Connective.eval]
 
 /-- The filtering evaluation of a binary formula is defined where the first argument's is, and
 the second's wherever the world is in the second argument's local context. -/
-theorem filter_bin_ne_zero {c : Connective} {F G : Formula Atom} :
-    (bin c F G).filter I w ≠ 0 ↔
-      F.filter I w ≠ 0 ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.filter I w ≠ 0) :=
-  filter_bin_ne_zero_iff I (filter_eq_ofProp I)
+theorem middleKleene_bin_ne_zero {c : Connective} {F G : Formula Atom} :
+    (bin c F G).middleKleene I w ≠ 0 ↔
+      F.middleKleene I w ≠ 0 ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ 0) :=
+  middleKleene_bin_ne_zero_iff I (middleKleene_eq_ofProp I)
 
 /-- Every formula contains an atom or a trigger. -/
 theorem nonempty_atom : Formula Atom → Nonempty Atom
@@ -195,37 +196,37 @@ theorem nonempty_atom : Formula Atom → Nonempty Atom
 
 /-- A context admits a binary formula when it admits the first argument and the second argument's
 local context admits the second. -/
-theorem subset_support_filter_bin_iff {c : Connective} {F G : Formula Atom} {C : Set W} :
-    C ⊆ Function.support ((bin c F G).filter I) ↔
-      C ⊆ Function.support (F.filter I) ∧
-        c.localContext C (F.truth I) ⊆ Function.support (G.filter I) := by
+theorem subset_support_middleKleene_bin_iff {c : Connective} {F G : Formula Atom} {C : Set W} :
+    C ⊆ Function.support ((bin c F G).middleKleene I) ↔
+      C ⊆ Function.support (F.middleKleene I) ∧
+        c.localContext C (F.truth I) ⊆ Function.support (G.middleKleene I) := by
   have hl (w) : w ∈ c.localContext C (F.truth I) ↔ w ∈ C ∧
       w ∈ c.localContext Set.univ (F.truth I) := by
     cases c <;> simp [Connective.localContext]
-  simp only [Set.subset_def, Function.mem_support, filter_bin_ne_zero I, hl, and_imp]
+  simp only [Set.subset_def, Function.mem_support, middleKleene_bin_ne_zero I, hl, and_imp]
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw hc ↦ (h w hw).2 hc⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 
-private theorem mem_ofTrivalent_filter {F : Formula Atom} {C : Set W}
-    (h : C ⊆ Function.support (F.filter I)) :
-    C ∩ F.truth I ∈ CCP.Partial.ofTrivalent (F.filter I) C :=
+private theorem mem_ofTrivalent_middleKleene {F : Formula Atom} {C : Set W}
+    (h : C ⊆ Function.support (F.middleKleene I)) :
+    C ∩ F.truth I ∈ CCP.Partial.ofTrivalent (F.middleKleene I) C :=
   (CCP.Partial.mem_ofTrivalent _ _ _).2 ⟨h, Set.ext fun w ↦ and_congr_right fun hw ↦ by
-    rw [filter_eq_ofProp I (h hw), SignType.ofProp_eq_one_iff]⟩
+    rw [middleKleene_eq_ofProp I (h hw), SignType.ofProp_eq_one_iff]⟩
 
 private theorem ccp_spec (F : Formula Atom) : ∀ C : Set W,
-    ((F.ccp I).Admits C → C ⊆ Function.support (F.filter I)) ∧
-      (C ⊆ Function.support (F.filter I) → C ∩ F.truth I ∈ F.ccp I C) := by
+    ((F.ccp I).Admits C → C ⊆ Function.support (F.middleKleene I)) ∧
+      (C ⊆ Function.support (F.middleKleene I) → C ∩ F.truth I ∈ F.ccp I C) := by
   induction F with
-  | atom p => exact fun C ↦ ⟨id, mem_ofTrivalent_filter I⟩
-  | trigger p p' => exact fun C ↦ ⟨id, mem_ofTrivalent_filter I⟩
+  | atom p => exact fun C ↦ ⟨id, mem_ofTrivalent_middleKleene I⟩
+  | trigger p p' => exact fun C ↦ ⟨id, mem_ofTrivalent_middleKleene I⟩
   | not F ih =>
     refine fun C ↦ ⟨fun h ↦ ?_, fun h ↦ (Part.mem_map_iff _).2 ⟨_, (ih C).2 ?_, ?_⟩⟩
-    · simpa [filter, eval, Set.subset_def] using (ih C).1 h
-    · simpa [filter, eval, Set.subset_def] using h
+    · simpa [middleKleene, eval, Set.subset_def] using (ih C).1 h
+    · simpa [middleKleene, eval, Set.subset_def] using h
     · rw [Set.sdiff_self_inter, Set.sdiff_eq]; rfl
   | bin c F G ihF ihG =>
     intro C
-    rw [subset_support_filter_bin_iff I]
+    rw [subset_support_middleKleene_bin_iff I]
     cases c
     · refine ⟨fun ⟨hφ, hψ⟩ ↦ ?_, fun ⟨hF, hG⟩ ↦ ?_⟩
       · have hF := (ihF C).1 hφ
@@ -262,7 +263,7 @@ private theorem ccp_spec (F : Formula Atom) : ∀ C : Set W,
 /-- The context change potential of a formula admits a context iff the filtering evaluation is
 defined throughout the context. -/
 theorem admits_ccp_iff {F : Formula Atom} {C : Set W} :
-    (F.ccp I).Admits C ↔ C ⊆ Function.support (F.filter I) :=
+    (F.ccp I).Admits C ↔ C ⊆ Function.support (F.middleKleene I) :=
   ⟨(ccp_spec I F C).1, fun h ↦ Part.dom_iff_mem.2 ⟨_, (ccp_spec I F C).2 h⟩⟩
 
 /-- The context change potential updates a context to its worlds at which the formula is

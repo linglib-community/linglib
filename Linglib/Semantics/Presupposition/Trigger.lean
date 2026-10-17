@@ -4,13 +4,13 @@ module
 # Presupposition triggers
 
 A presupposition trigger is an expression whose use takes some proposition for granted. A trigger
-belongs to a class by the kind of expression that hosts it (`Trigger`), the consensus inventory of
-the projection literature after Zeevat and after Tonhauser, Beaver, Roberts and Simons. Abusch
+belongs to a class by the kind of expression that hosts it (`TriggerClass`), the consensus inventory
+of the projection literature after Zeevat and after Tonhauser, Beaver, Roberts and Simons. Abusch
 divides triggers into hard ones, whose presupposition always projects, and soft ones, whose
-presupposition can be suspended (`TriggerType`). Karttunen divides the factive predicates into
-true factives and semi-factives (`Factivity`). A verb's entry records its factivity, and whether
-it is a trigger is derived (`Verb.IsTrigger`); an adverb, particle or affix that triggers a
-presupposition is a `TriggerItem`.
+presupposition can be suspended (`Hardness`). Karttunen divides the factive predicates into true
+factives and semi-factives (`Factivity`). A verb's entry records its factivity, and whether it is a
+trigger is derived (`Verb.IsTrigger`); an adverb, particle or affix that triggers a presupposition
+is a `TriggerItem`.
 
 ## Implementation notes
 
@@ -36,10 +36,10 @@ as Karttunen and Heim argue.
 
 namespace Presupposition
 
-/-- The kind of presupposition trigger an expression is, in the hard/soft classification of
-[abusch-2010]. Hard triggers always project (*too*, *again*, *also*), and soft triggers project
-context-sensitively (*stop*, *know*). -/
-inductive TriggerType where
+/-- Whether a presupposition trigger is hard or soft, in the classification of [abusch-2010]. Hard
+triggers always project (*too*, *again*, *also*), and soft triggers project context-sensitively
+(*stop*, *know*). -/
+inductive Hardness where
   /-- A trigger whose presupposition projects in every context. -/
   | hard
   /-- A trigger whose presupposition can be suspended in context. -/
@@ -57,7 +57,7 @@ inductive Factivity where
   deriving DecidableEq, Repr
 
 /-- The class of a presupposition trigger, by the kind of expression that hosts it. -/
-inductive Trigger where
+inductive TriggerClass where
   /-- A definite description *the X* presupposes that a unique X exists. -/
   | definite
   /-- A factive predicate, *know* or *regret that p*, presupposes `p`. -/
@@ -93,7 +93,7 @@ structure TriggerItem where
   /-- The native-script form of a romanized item. -/
   script : Option String := none
   /-- The trigger class. -/
-  trigger : Trigger
+  triggerClass : TriggerClass
   deriving DecidableEq, Repr
 
 end Presupposition

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Presupposition.Iterative
+public import Linglib.Semantics.Presupposition.Again
 
 /-!
 # Phasal verbs
