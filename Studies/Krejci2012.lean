@@ -4,6 +4,7 @@ public import Linglib.Semantics.Events.Basic
 public import Studies.KoontzGarboden2009
 public import Linglib.Semantics.Presupposition.Iterative
 public import Linglib.Core.Order.UpperLower.Finset
+public import Linglib.Core.Order.Concept
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -26,7 +27,8 @@ stay with the causee of the periphrastic one.
 * `not_eat_and_feed`: denying the simple form while asserting the lexical causative is
   consistent.
 * `restitutive_not_repetitive`: *again* has a restitutive reading on the result state.
-* `table_respectsHierarchy`: no surveyed language skips a tier.
+* `ofAttribute_reaches_le_iff`: the hierarchy is the order of implication among the tiers in the
+  survey, so that no surveyed language skips a tier (`table_respectsHierarchy`).
 
 ## Implementation notes
 
@@ -302,7 +304,20 @@ def table : List Causative :=
    ⟨"Dulong/Rawang", "shv-", {.unaccusative, .middleIngestive, .unergative, .simpleTransitive}⟩,
    ⟨"Koyukon", "-ɬ-", {.unaccusative, .middleIngestive, .unergative, .simpleTransitive}⟩]
 
+/-- The survey as a formal context, a surveyed process bearing the tiers it reaches. -/
+def Reaches (c : {c // c ∈ table}) (t : Tier) : Prop := t ∈ c.1.reach
+
+/-- The hierarchy is the order of implication among the tiers in the survey, one tier coming
+before another exactly when every surveyed process that reaches the second reaches the first. -/
+theorem ofAttribute_reaches_le_iff {t t' : Tier} :
+    Concept.ofAttribute Reaches t' ≤ Concept.ofAttribute Reaches t ↔ t ≤ t' := by
+  rw [Concept.ofAttribute_le_ofAttribute_iff]
+  simp only [Reaches, Subtype.forall]
+  revert t t'
+  decide
+
 /-- No surveyed language skips a tier. -/
-theorem table_respectsHierarchy : ∀ c ∈ table, c.RespectsHierarchy := by decide
+theorem table_respectsHierarchy : ∀ c ∈ table, c.RespectsHierarchy := fun c hc ↦
+  Concept.antitone_ofAttribute_iff.1 (fun _ _ h ↦ ofAttribute_reaches_le_iff.2 h) ⟨c, hc⟩
 
 end Krejci2012

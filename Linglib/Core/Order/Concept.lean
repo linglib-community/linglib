@@ -1,17 +1,22 @@
 module
 
 public import Mathlib.Order.Concept
+public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Core.Order.Ortholattice
 
 /-!
-# The ortholattice of a symmetric, irreflexive relation
+# Formal concepts: orthocomplements and attribute implication
 
 [UPSTREAM] candidate for `Mathlib/Order/Concept.lean`.
 
-This file shows that the formal concepts of a symmetric, irreflexive relation `r`, an
-*orthogonality* relation, form an ortholattice. The lattice structure is mathlib's concept lattice;
-the new content is the orthocomplement `Aᶜ = upperPolar r A = {x | ∀ y ∈ A, r x y}`, which for a
-symmetric relation is an order-reversing involution on extents.
+The formal concepts of a symmetric, irreflexive relation `r`, an *orthogonality* relation, form an
+ortholattice. The lattice structure is mathlib's concept lattice; the new content is the
+orthocomplement `Aᶜ = upperPolar r A = {x | ∀ y ∈ A, r x y}`, which for a symmetric relation is an
+order-reversing involution on extents.
+
+For any relation, the attribute concept of `b` lies below that of `a` exactly when every object
+with `b` has `a`, the attribute implication from `b` to `a`. A preorder on the attributes reverses
+along the attribute concepts exactly when each object's attributes form a lower set of it.
 
 ## Main definitions
 
@@ -23,6 +28,10 @@ symmetric relation is an order-reversing involution on extents.
 * `Concept.instInvolutiveCompl`: for a symmetric relation the orthocomplement is an involution.
 * `Concept.instIsOrtholattice`: for a symmetric, irreflexive relation the concepts form
   an ortholattice.
+* `Concept.ofAttribute_le_ofAttribute_iff`: attribute concepts are ordered by attribute
+  implication.
+* `Concept.antitone_ofAttribute_iff`: the attribute concepts reverse a preorder exactly when every
+  object's attributes form a lower set.
 
 ## References
 
@@ -91,5 +100,27 @@ is mathlib's concept lattice; only the orthocomplement and its axioms are new. -
 instance instIsOrtholattice [Std.Symm r] [Std.Irrefl r] :
     IsOrtholattice (Concept S S r) where
   inf_compl_le_bot _ := fun x hx ↦ absurd (rel_extent_intent hx.1 hx.2) (Std.Irrefl.irrefl x)
+
+/-! ### Attribute implication -/
+
+section Implication
+
+variable {α β : Type*} {r : α → β → Prop} {a b : β}
+
+/-- The attribute concept of `b` lies below that of `a` exactly when every object with `b`
+has `a`. -/
+theorem ofAttribute_le_ofAttribute_iff :
+    ofAttribute r b ≤ ofAttribute r a ↔ ∀ ⦃x⦄, r x b → r x a := by
+  rw [← extent_subset_extent_iff]
+  simp [ofAttribute, ofAttributes, Set.subset_def, mem_lowerPolar_iff]
+
+/-- The attribute concepts reverse a preorder on the attributes exactly when the attributes of
+every object form a lower set of it. -/
+theorem antitone_ofAttribute_iff [Preorder β] :
+    Antitone (ofAttribute r) ↔ ∀ x, IsLowerSet {b | r x b} := by
+  simp only [Antitone, ofAttribute_le_ofAttribute_iff, IsLowerSet, Set.mem_ofPred_eq]
+  exact ⟨fun h _ _ _ hab hb ↦ h hab hb, fun h _ _ hab _ hb ↦ h _ hab hb⟩
+
+end Implication
 
 end Concept

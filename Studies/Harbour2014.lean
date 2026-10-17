@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Linglib.Semantics.Plurality.Number
+public import Linglib.Core.Order.Concept
 public import Studies.Corbett2000
 
 /-!
@@ -24,7 +25,8 @@ the typology of Table 3 and the implications of Table 1 are claims about these s
 * `Setting.system`: the number system a setting generates.
 * `PlusAdditive`: the `[+additive]` elements of a region cut horizontally.
 * `table1`, `SatisfiesTable1`: the implicational universals of Table 1.
-* `Requires`: the order (34) reads off the settings, one number requiring another.
+* `Generates`, `Requires`: the legitimate settings as a formal context, and the order of its
+  attribute concepts that (34) reads off them, one number requiring another.
 
 ## Main results
 
@@ -884,14 +886,26 @@ theorem table3_legitimate : ∀ r ∈ table3, r.2.1.Fits r.1.additive ∧ r.1.Le
 /-! ### The order the settings induce
 
 By (34) a number requires another when the settings that generate the first generate the second.
-Read off the legitimate settings, requirement is the markedness order of number, a preorder on the
-numbers derived from the features. -/
+With the legitimate settings as a formal context, requirement is the order of the numbers'
+attribute concepts, the markedness order of number derived from the features. -/
+
+/-- The legitimate settings, under the conventions that fit them, form a formal context in which
+a setting generates the numbers of its system. -/
+def Generates (p : {p : Setting × Convention // p.2.Fits p.1.additive ∧ p.1.Legitimate})
+    (v : Number) : Prop :=
+  v ∈ (p.1.1.toSystem p.1.2).values
+
+/-- A number requires another when its attribute concept lies below the other's, the implication
+schema (34). -/
+abbrev Requires (b a : Number) : Prop :=
+  Concept.ofAttribute Generates b ≤ Concept.ofAttribute Generates a
 
 /-- A number requires another when every system a legitimate setting generates with the first
-has the second, the implication schema (34). -/
-def Requires (b a : Number) : Prop :=
-  ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive → σ.Legitimate →
-    b ∈ (σ.toSystem c).values → a ∈ (σ.toSystem c).values
+has the second. -/
+theorem requires_iff {b a : Number} : Requires b a ↔ ∀ σ : Setting, ∀ c : Convention,
+    c.Fits σ.additive → σ.Legitimate → b ∈ (σ.toSystem c).values → a ∈ (σ.toSystem c).values := by
+  rw [Requires, Concept.ofAttribute_le_ofAttribute_iff]
+  exact ⟨fun h σ c hc hσ ↦ h (x := ⟨(σ, c), hc, hσ⟩), fun h ⦃p⦄ ↦ h p.1.1 p.1.2 p.2.1 p.2.2⟩
 
 /-- Implications with one consequent that the settings derive, Table 1's but the unit
 augmented's, which requires the minimal instead, with the greater plural's strengthened to the
@@ -906,19 +920,19 @@ theorem requires_of_mem_derivedImplications : ∀ e ∈ derivedImplications, Req
   have h : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive → σ.Legitimate →
       ∀ e ∈ derivedImplications, e.1 ∈ (σ.toSystem c).values → e.2 ∈ (σ.toSystem c).values := by
     decide +kernel
-  exact fun e he σ c hc hσ ↦ h σ c hc hσ e he
+  exact fun e he ↦ requires_iff.2 fun σ c hc hσ ↦ h σ c hc hσ e he
 
 /-- The unit augmented does not require the augmented, since `{±additive, ±minimal*}` generates
 it without. -/
 theorem not_requires_unitAugmented_augmented : ¬ Requires .unitAugmented .augmented := fun h ↦
-  absurd (h ⟨.inactive, .recursive, .active⟩ (.one .low) trivial (by decide) (by decide))
-    (by decide)
+  absurd (requires_iff.1 h ⟨.inactive, .recursive, .active⟩ (.one .low) trivial (by decide)
+    (by decide)) (by decide)
 
 /-- With a number, a system of Table 3 has every number it requires. -/
 theorem mem_table3_of_requires {b a : Number} (h : Requires b a) {r} (hr : r ∈ table3)
     (hb : b ∈ r.2.2) : a ∈ r.2.2 := by
   rw [← table3_generated r hr] at hb ⊢
-  exact h _ _ (table3_legitimate r hr).1 (table3_legitimate r hr).2 hb
+  exact requires_iff.1 h _ _ (table3_legitimate r hr).1 (table3_legitimate r hr).2 hb
 
 /-- Every system of [corbett-2000]'s sequences of choices is a lower set of the order the settings
 induce, having with a number every number that number requires. -/

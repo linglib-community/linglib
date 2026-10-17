@@ -8,6 +8,7 @@ public import Linglib.Syntax.Person.Features
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Tagalog.Pronouns
 public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Core.Order.Concept
 
 /-!
 # Cysouw (2003): The paradigmatic structure of person marking
@@ -21,7 +22,9 @@ setoid.
 
 Two of the book's generalizations are implicational hierarchies, and each is a lower set of a
 chain: horizontal homophony reaches the singular persons from the third upwards, and a paradigm
-gives up its oppositions from the first person complex outwards. Every paradigm the book prints
+gives up its oppositions from the first person complex outwards. The order of asking about the
+first person complex is the order of implication among the five types, and the order of giving
+up oppositions the order of implication among the common paradigms the book prints. Every paradigm the book prints
 is checked against its classification and against the hierarchies, with the exceptions the
 book names.
 
@@ -35,8 +38,12 @@ book names.
 
 ## Main results
 
+* `Clusivity.ofAttribute_profile_le_iff`: the order of asking is the order of implication among
+  the five types' answers.
 * `Clusivity.rung_bijective`: the types are exactly the lower sets of the questions.
 * `Clusivity.le_iff_profile_subset`: the hierarchy is the order of the profiles.
+* `ofAttribute_givenUp_le_iff`: the Explicitness Hierarchy is the order of implication among the
+  common and semi-common paradigms the book prints.
 
 ## Implementation notes
 
@@ -207,11 +214,20 @@ theorem toPattern_injective : Function.Injective toPattern := by
 /-- The questions a type answers positively. -/
 abbrev profile (t : Clusivity) : Finset Question := t.toPattern.profile
 
+/-- The order of asking is the order of implication among the five types, one question coming
+before another exactly when every type that answers the second positively answers the first so. -/
+theorem ofAttribute_profile_le_iff {q q' : Question} :
+    Concept.ofAttribute (fun (t : Clusivity) q ↦ q ∈ t.profile) q' ≤
+      Concept.ofAttribute (fun (t : Clusivity) q ↦ q ∈ t.profile) q ↔ q ≤ q' := by
+  rw [Concept.ofAttribute_le_ofAttribute_iff]
+  revert q q'
+  decide +kernel
+
 /-- Every common type fits the hierarchy, since a specialized exclusive requires a specialized
 inclusive and a split inclusive a specialized exclusive, the two addressee inclusion
 implications. -/
-theorem profile_isLowerSet (t : Clusivity) : IsLowerSet (↑t.profile : Set Question) := by
-  revert t; decide +kernel
+theorem profile_isLowerSet (t : Clusivity) : IsLowerSet (↑t.profile : Set Question) :=
+  Concept.antitone_ofAttribute_iff.1 (fun _ _ h ↦ ofAttribute_profile_le_iff.2 h) t
 
 /-- The rung of a type is its profile, a lower set of the questions. -/
 def rung (t : Clusivity) : {S : Finset Question // IsLowerSet (↑S : Set Question)} :=
@@ -745,6 +761,22 @@ theorem rows_unified_of_singularHomophony :
 theorem rows_rare_of_not_respectsExplicitnessHierarchy :
     ∀ r ∈ rows, ¬ r.syncretism.RespectsExplicitnessHierarchy → r.ubiquity = .rare := by
   decide +kernel
+
+/-- The Explicitness Hierarchy is the order of implication among the common and semi-common
+printed paradigms, one opposition being given up before another exactly when every such paradigm
+that gives up the second gives up the first. With the rare paradigms included, three of its steps
+fail. -/
+theorem ofAttribute_givenUp_le_iff {o o' : Opposition} :
+    Concept.ofAttribute
+        (fun (r : {r // r ∈ rows.filter (·.ubiquity ≠ .rare)}) ↦ r.1.syncretism.GivesUp) o' ≤
+      Concept.ofAttribute
+        (fun (r : {r // r ∈ rows.filter (·.ubiquity ≠ .rare)}) ↦ r.1.syncretism.GivesUp) o ↔
+      o ≤ o' := by
+  have h : ∀ o o' : Opposition, (∀ r ∈ rows.filter (·.ubiquity ≠ .rare),
+      r.syncretism.GivesUp o' → r.syncretism.GivesUp o) ↔ o ≤ o' := by
+    decide +kernel
+  rw [Concept.ofAttribute_le_ofAttribute_iff, ← h o o']
+  exact ⟨fun H r hr ↦ H (x := ⟨r, hr⟩), fun H ⦃x⦄ ↦ H x.1 x.2⟩
 
 /-- Singular homophony without vertical homophony is rare, the European paradigms. -/
 theorem rows_rare_of_singularHomophony_without_vertical :
