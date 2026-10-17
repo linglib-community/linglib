@@ -9,17 +9,18 @@ public import Linglib.Logic.Natural.ImplicationSignature
 Karttunen analyzes an implicative sentence as a presupposition–proposition pair: it asserts the
 proposition `v(S)` and presupposes that `v(S)` is a condition for the complement, so that what it
 implies about the complement follows from the assertion or from its denial. The condition is read
-off the implication signature (`NaturalLogic.ImplicationSignature`): a verb implying a complement
-in a positive context presupposes `v(S)` sufficient for it, and one implying a complement in a
-negative context presupposes `v(S)` necessary for the complement's negation. Here the conditions
-are read through any relations of sufficiency and necessity that are sound for truth at a world
-(`Implicative.Reading`), Karttunen's own reading being the material conditional at the world
-(`Implicative.Reading.material`), and under every reading an implicative sentence implies what its
-signature says.
+off the implication signature (`NaturalLogic.ImplicationSignature`): a verb implying a complement in
+a positive context presupposes `v(S)` sufficient for it, and one implying a complement in a negative
+context presupposes `v(S)` necessary for the complement's negation. Here the conditions are read
+through any relations of sufficiency and necessity that are sound for truth at a world
+(`Implicative.Interpretation`), Karttunen's own interpretation being the material conditional at the
+world (`Implicative.Interpretation.material`), and under every interpretation an implicative
+sentence implies what its signature says.
 
 ## Main definitions
 
-* `Implicative.Reading`: relations of sufficiency and necessity between facts, sound at worlds
+* `Implicative.Interpretation`: relations of sufficiency and necessity between facts, sound at
+  worlds
 * `Implicative.sentence`: the trivalent proposition of a verb with a given implication
   signature, undefined where its presupposition fails
 
@@ -40,10 +41,10 @@ open Presupposition NaturalLogic
 
 namespace Implicative
 
-/-- A reading of sufficiency and necessity between facts `F` that is sound for truth at the worlds
-`W`. A fact sufficient for another at a world makes it true there when it is true, and a fact
+/-- An interpretation of sufficiency and necessity between facts `F` that is sound for truth at the
+worlds `W`. A fact sufficient for another at a world makes it true there when it is true, and a fact
 necessary for another is true there when the other is. -/
-structure Reading (F W : Type*) where
+structure Interpretation (F W : Type*) where
   /-- The fact holds at the world. -/
   Holds : F → W → Prop
   /-- The negation of a fact. -/
@@ -56,11 +57,11 @@ structure Reading (F W : Type*) where
   holds_of_sufficient {a b : F} {w : W} : Sufficient a b w → Holds a w → Holds b w
   holds_of_necessary {a b : F} {w : W} : Necessary a b w → Holds b w → Holds a w
 
-namespace Reading
+namespace Interpretation
 
-/-- Karttunen's reading takes facts to be propositions and a condition to be the material
+/-- Karttunen's interpretation takes facts to be propositions and a condition to be the material
 conditional at the world. -/
-def material (W : Type*) : Reading (W → Prop) W where
+def material (W : Type*) : Interpretation (W → Prop) W where
   Holds a w := a w
   neg a w := ¬ a w
   holds_neg _ _ := Iff.rfl
@@ -69,7 +70,7 @@ def material (W : Type*) : Reading (W → Prop) W where
   holds_of_sufficient h := h
   holds_of_necessary h := h
 
-variable {F W : Type*} (R : Reading F W)
+variable {F W : Type*} (R : Interpretation F W)
 
 /-- A fact or its negation, by polarity. -/
 def signed : Polarity → F → F
@@ -85,9 +86,9 @@ theorem holds_signed_negative_mul {q : Polarity} {a : F} {w : W} :
   · show R.Holds a w ↔ ¬ R.Holds (R.neg a) w
     rw [R.holds_neg]; exact not_not.symm
 
-end Reading
+end Interpretation
 
-variable {F W : Type*} (R : Reading F W)
+variable {F W : Type*} (R : Interpretation F W)
 
 open Classical in
 /-- The sentence of a verb with implication signature `s`, asserted proposition `v` and embedded
@@ -113,7 +114,7 @@ theorem holds_signed_of_implied_eq {m q : Polarity} (hq : s.implied m = q)
       Trivalent.indicator_apply_eq_neg_one_iff, Set.mem_ofPred_eq,
       SignType.ofProp_eq_neg_one_iff] at hs
     by_contra h
-    exact hs.2 (R.holds_of_necessary (hs.1.2 q hq) (Reading.holds_signed_negative_mul.2 h))
+    exact hs.2 (R.holds_of_necessary (hs.1.2 q hq) (Interpretation.holds_signed_negative_mul.2 h))
 
 variable (R v S) in
 /-- A signature that implies more presupposes more, the presupposition of a sentence weakening

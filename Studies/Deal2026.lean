@@ -8,7 +8,7 @@ public import Linglib.Data.Examples.Deal2026
 public import Linglib.Data.Examples.Krapova2010
 public import Studies.BochnakHanink2021
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
-public import Linglib.Semantics.Presupposition.Environment
+public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Studies.Karttunen1971b
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Semantics.Presupposition.Verb

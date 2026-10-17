@@ -5,7 +5,7 @@ public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Syntax.Category.Verb.Diathesis
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Semantics.Presupposition.TriggerTypology
+public import Linglib.Semantics.Presupposition.Trigger
 public import Linglib.Logic.Natural.ImplicationSignature
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Events.Path

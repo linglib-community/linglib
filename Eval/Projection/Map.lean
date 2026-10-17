@@ -73,18 +73,18 @@ theorem transparencySymmetric_stronger_satisfactionSymmetric :
   fun _ _ I C F h ↦ (satisfaction_iff_transparency I .symmetric C F).2 h
 
 theorem kleeneIncremental_stronger_filtering : kleeneIncremental.Stronger filtering :=
-  fun _ _ I C F h ↦ (kleeneAcceptable_incremental_iff I C F).1 h
+  fun _ _ I C F h ↦ (strongKleeneAcceptable_incremental_iff I C F).1 h
 
 theorem filtering_stronger_kleeneIncremental : filtering.Stronger kleeneIncremental :=
-  fun _ _ I C F h ↦ (kleeneAcceptable_incremental_iff I C F).2 h
+  fun _ _ I C F h ↦ (strongKleeneAcceptable_incremental_iff I C F).2 h
 
 theorem supervaluationIncremental_stronger_filtering :
     supervaluationIncremental.Stronger filtering :=
-  fun _ _ I C F h ↦ (superAcceptable_incremental_iff I C F).1 h
+  fun _ _ I C F h ↦ (supervaluationAcceptable_incremental_iff I C F).1 h
 
 theorem filtering_stronger_supervaluationIncremental :
     filtering.Stronger supervaluationIncremental :=
-  fun _ _ I C F h ↦ (superAcceptable_incremental_iff I C F).2 h
+  fun _ _ I C F h ↦ (supervaluationAcceptable_incremental_iff I C F).2 h
 
 theorem transparencyIncremental_stronger_transparencySymmetric :
     transparencyIncremental.Stronger transparencySymmetric :=
@@ -96,22 +96,22 @@ theorem satisfactionIncremental_stronger_satisfactionSymmetric :
 
 theorem kleeneIncremental_stronger_kleeneSymmetric :
     kleeneIncremental.Stronger kleeneSymmetric :=
-  fun _ _ I _ _ h ↦ KleeneAcceptable.symmetric I h
+  fun _ _ I _ _ h ↦ StrongKleeneAcceptable.symmetric I h
 
 theorem supervaluationIncremental_stronger_supervaluationSymmetric :
     supervaluationIncremental.Stronger supervaluationSymmetric :=
-  fun _ _ I _ _ h ↦ SuperAcceptable.symmetric I h
+  fun _ _ I _ _ h ↦ SupervaluationAcceptable.symmetric I h
 
 theorem kleeneSymmetric_stronger_supervaluationSymmetric :
     kleeneSymmetric.Stronger supervaluationSymmetric :=
-  fun _ _ I _ _ h ↦ KleeneAcceptable.superAcceptable I h
+  fun _ _ I _ _ h ↦ StrongKleeneAcceptable.supervaluationAcceptable I h
 
-/-- Limited Symmetry consults at each parse point only incremental good finals. -/
+/-- Limited Symmetry consults at each parsing point only incremental good finals. -/
 theorem transparencyIncremental_stronger_limitedSymmetry :
     transparencyIncremental.Stronger limitedSymmetry :=
   fun _ _ _ _ _ h ↦ Kalomoiros2023.LimitedSymmetry.of_transparency h
 
-/-- At its last parse point Limited Symmetry consults the sentence itself. -/
+/-- At its last parsing point Limited Symmetry consults the sentence itself. -/
 theorem limitedSymmetry_stronger_transparencySymmetric :
     limitedSymmetry.Stronger transparencySymmetric :=
   fun _ _ _ _ _ h ↦ Kalomoiros2023.LimitedSymmetry.transparency h
@@ -123,13 +123,13 @@ private def interp39 : Fin 4 → Set Bool := fun a ↦ if a = 0 ∨ a = 2 then {
 
 private theorem theorem39a :
     Transparency .symmetric {false, true}
-        (Occurrence.ofFormula interp39 (.bin .conj (.trigger 0 1) (.trigger 2 3))) ∧
-      ¬ KleeneAcceptable interp39 .symmetric {false, true}
+        (Formula.occurrences interp39 (.bin .conj (.trigger 0 1) (.trigger 2 3))) ∧
+      ¬ StrongKleeneAcceptable interp39 .symmetric {false, true}
         (.bin .conj (.trigger 0 1) (.trigger 2 3)) ∧
-      ¬ SuperAcceptable interp39 .symmetric {false, true}
+      ¬ SupervaluationAcceptable interp39 .symmetric {false, true}
         (.bin .conj (.trigger 0 1) (.trigger 2 3)) :=
-  transparency_symmetric_not_kleeneAcceptable_not_superAcceptable interp39 (by simp [interp39])
-    (by simp [interp39]) (by simp [interp39]) (by simp [interp39])
+  transparency_symmetric_not_strongKleeneAcceptable_not_supervaluationAcceptable interp39
+    (by simp [interp39]) (by simp [interp39]) (by simp [interp39]) (by simp [interp39])
 
 theorem not_transparencySymmetric_stronger_kleeneSymmetric :
     ¬ transparencySymmetric.Stronger kleeneSymmetric :=
@@ -143,8 +143,8 @@ theorem not_transparencySymmetric_stronger_supervaluationSymmetric :
 theorem not_supervaluationSymmetric_stronger_kleeneSymmetric :
     ¬ supervaluationSymmetric.Stronger kleeneSymmetric := by
   let I : Fin 2 → Set Bool := fun _ ↦ {true}
-  have := superAcceptable_symmetric_not_kleeneAcceptable I (p := 0) (p' := 1) (w₀ := false)
-    (by decide)
+  have := supervaluationAcceptable_symmetric_not_strongKleeneAcceptable I (p := 0) (p' := 1)
+    (w₀ := false) (by decide)
   exact fun h ↦ this.2 (h _ _ I _ _ this.1)
 
 /-- The empty interpretation makes every atom false at the one world. -/
@@ -152,28 +152,28 @@ private def interpEmpty : Fin 3 → Set Unit := fun _ ↦ ∅
 
 /-- [chemla-schlenker-2012]'s (13b), `qq' or (not p)`, where `p` and `q` fail. -/
 private theorem inverseOr :
-    SuperAcceptable interpEmpty .symmetric {()}
+    SupervaluationAcceptable interpEmpty .symmetric {()}
         (ChemlaSchlenker2012.target 0 1 2 .orSentence .inverse) ∧ ¬ {()} ⊆ interpEmpty 1 :=
-  ChemlaSchlenker2012.exists_superAcceptable_symmetric_inverse_not_subset interpEmpty .orSentence
-    (by simp [interpEmpty]) (by simp [interpEmpty])
+  ChemlaSchlenker2012.exists_supervaluationAcceptable_symmetric_inverse_not_subset interpEmpty
+    .orSentence (by simp [interpEmpty]) (by simp [interpEmpty])
 
 theorem not_supervaluationSymmetric_stronger_supervaluationIncremental :
     ¬ supervaluationSymmetric.Stronger supervaluationIncremental :=
   fun h ↦ inverseOr.2
-    ((ChemlaSchlenker2012.superAcceptable_incremental_inverse interpEmpty .orSentence).1
+    ((ChemlaSchlenker2012.supervaluationAcceptable_incremental_inverse interpEmpty .orSentence).1
       (h _ _ interpEmpty _ _ inverseOr.1))
 
 theorem not_kleeneSymmetric_stronger_kleeneIncremental :
     ¬ kleeneSymmetric.Stronger kleeneIncremental := by
-  have hK : KleeneAcceptable interpEmpty .symmetric {()}
+  have hK : StrongKleeneAcceptable interpEmpty .symmetric {()}
       (ChemlaSchlenker2012.target 0 1 2 .orSentence .inverse) :=
-    (kleeneAcceptable_symmetric_iff interpEmpty _ _).2 fun w hw ↦
-      (superDefined_iff_of_nodup interpEmpty
-        (by simp [ChemlaSchlenker2012.target, Formula.occurrences])).1
-        ((superAcceptable_symmetric_iff interpEmpty _ _).1 inverseOr.1 w hw)
+    (strongKleeneAcceptable_symmetric_iff interpEmpty _ _).2 fun w hw ↦
+      (supervaluationDefined_iff_of_nodup interpEmpty
+        (by simp [ChemlaSchlenker2012.target, Formula.triggers])).1
+        ((supervaluationAcceptable_symmetric_iff interpEmpty _ _).1 inverseOr.1 w hw)
   exact fun h ↦ inverseOr.2
-    ((ChemlaSchlenker2012.superAcceptable_incremental_inverse interpEmpty .orSentence).1
-      ((kleeneAcceptable_iff_superAcceptable_incremental interpEmpty _ _).1
+    ((ChemlaSchlenker2012.supervaluationAcceptable_incremental_inverse interpEmpty .orSentence).1
+      ((strongKleeneAcceptable_iff_supervaluationAcceptable_incremental interpEmpty _ _).1
         (h _ _ interpEmpty _ _ hK)))
 
 /-- By Fact 3.4.3, `(pp' or q)` separates the two where `p` fails and `q` holds. -/
@@ -181,21 +181,21 @@ theorem not_limitedSymmetry_stronger_transparencyIncremental :
     ¬ limitedSymmetry.Stronger transparencyIncremental := by
   let I : Fin 3 → Set Unit := fun a ↦ if a = 2 then Set.univ else ∅
   have hls : Kalomoiros2023.LimitedSymmetry Set.univ
-      (Occurrence.ofFormula I (.bin .disj (.trigger 0 1) (.atom 2))) :=
+      (Formula.occurrences I (.bin .disj (.trigger 0 1) (.atom 2))) :=
     (Kalomoiros2023.limitedSymmetry_or_left I).2 fun w _ hq ↦ absurd (by simp [I]) hq
   intro h
   have := (Formula.admits_ccp_iff I).1
     ((transparency_incremental_iff_admits I _ _).1 (h _ _ _ _ _ hls)) (Set.mem_univ ())
-  simp [I, Formula.filter, Formula.eval] at this
+  simp [I, Formula.middleKleene, Formula.eval] at this
 
 /-- By Fact 3.4.1, `(pp' and q)` separates the two where `p` and `q` fail. -/
 theorem not_supervaluationSymmetric_stronger_limitedSymmetry :
     ¬ supervaluationSymmetric.Stronger limitedSymmetry := by
   let I : Fin 3 → Set Unit := fun _ ↦ ∅
-  have hs : SuperAcceptable I .symmetric Set.univ (.bin .conj (.trigger 0 1) (.atom 2)) :=
-    (superAcceptable_symmetric_iff I _ _).2 fun w _ ↦
-      (superDefined_iff_of_nodup I (by simp [Formula.occurrences])).2
-        (by simp [I, Formula.strong, Formula.eval])
+  have hs : SupervaluationAcceptable I .symmetric Set.univ (.bin .conj (.trigger 0 1) (.atom 2)) :=
+    (supervaluationAcceptable_symmetric_iff I _ _).2 fun w _ ↦
+      (supervaluationDefined_iff_of_nodup I (by simp [Formula.triggers])).2
+        (by simp [I, Formula.strongKleene, Formula.eval])
   intro h
   have := (Kalomoiros2023.limitedSymmetry_and_left I).1 (h _ _ _ _ _ hs) (Set.mem_univ ())
   simp [I] at this

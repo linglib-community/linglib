@@ -7,7 +7,7 @@ public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.RootEntailment
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Semantics.Presupposition.Iterative
+public import Linglib.Semantics.Presupposition.Again
 public import Linglib.Data.Examples.BeaversKoontzGarboden2020
 
 /-!

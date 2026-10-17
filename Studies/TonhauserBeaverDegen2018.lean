@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Algebra.Order.Interval.Set.Instances
 public import Linglib.Data.Experiments.TonhauserBeaverDegen2018
-public import Linglib.Semantics.Presupposition.TriggerTypology
+public import Linglib.Semantics.Presupposition.Trigger
 public import Mathlib.Tactic.Linarith
 
 /-!
@@ -231,7 +231,7 @@ theorem know_indistinguishable_from_annoyed : ¬ Expression.Distinguished .know 
 /-- The hard/soft classification the paper checks its ranking against, as it cites it for the
 Experiment 1a contents: *be annoyed* is a hard trigger, and *discover*, *stop* and *only* are soft
 triggers. -/
-def Expression.triggerType? : Expression → Option Presupposition.TriggerType
+def Expression.hardness? : Expression → Option Presupposition.Hardness
   | .annoyed => some .hard
   | .discover | .stop | .only => some .soft
   | _ => none
@@ -245,7 +245,7 @@ theorem some_differences_align :
 /-- The soft triggers are not a projectivity class: the prejacent of *only* is distinguished
 from the pre-state of *stop*. -/
 theorem soft_not_a_class :
-    ∃ a b, a.triggerType? = some .soft ∧ b.triggerType? = some .soft ∧
+    ∃ a b, a.hardness? = some .soft ∧ b.hardness? = some .soft ∧
       Expression.Distinguished a b :=
   ⟨.stop, .only, rfl, rfl, by decide +kernel⟩
 

@@ -20,10 +20,10 @@ makes `v(S)` necessary and sufficient for `S` (*manage*), (41) necessary and suf
 
 Each schema fixes an implication signature: (37) is `+/−`, (41) `−/+`, (54) `◦/−` and (59) `+/◦`,
 and the negative verbs of (56), *prevent* and *dissuade*, are `−/◦`. The analysis is
-`Implicative.sentence` under the material reading of the conditions
-(`Implicative.Reading.material`), which gives the paper's entailment facts: double negation cancels
-as in (13) (`manage_neg_neg_imp`), and the one-way schemas and the non-implicatives leave the
-other direction open (`force_neg_not_entails`, `beAble_not_entails`,
+`Implicative.sentence` under the material interpretation of the conditions
+(`Implicative.Interpretation.material`), which gives the paper's entailment facts: double negation
+cancels as in (13) (`manage_neg_neg_imp`), and the one-way schemas and the non-implicatives leave
+the other direction open (`force_neg_not_entails`, `beAble_not_entails`,
 `nonImplicative_not_entails`). The English fragment's entries for the verbs of (2), (38), (44) and
 (56) carry the signatures of their schemas (`implicative_eq`) and so are presupposition triggers
 (`isTrigger_of_mem_english`), while its entries for the non-implicatives of (2) carry `◦/◦`
@@ -48,27 +48,29 @@ open Presupposition Implicative NaturalLogic
 /-- Double negation cancels, so that *John didn't remember not to lock his door* commits the
 speaker to *John locked his door* (13). -/
 theorem manage_neg_neg_imp {W : Type*} {v S : W → Prop} {w : W}
-    (hs : (-sentence (Reading.material W) ⟨.some .positive, .some .negative⟩ v
+    (hs : (-sentence (Interpretation.material W) ⟨.some .positive, .some .negative⟩ v
       fun w ↦ ¬ S w) w = 1) : S w :=
   not_not.mp (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl (by simpa using hs))
 
 /-- (58) *John didn't force Mary to stay home* leaves open whether she stayed. -/
 theorem force_neg_not_entails : ∃ (v S : Unit → Prop),
-    (-sentence (Reading.material Unit) ⟨.some .positive, ⊥⟩ v S) () = 1 ∧ S () :=
-  ⟨fun _ ↦ False, fun _ ↦ True, by simp [sentence, Reading.material, Flat.bot_ne_coe], trivial⟩
+    (-sentence (Interpretation.material Unit) ⟨.some .positive, ⊥⟩ v S) () = 1 ∧ S () :=
+  ⟨fun _ ↦ False, fun _ ↦ True, by simp [sentence, Interpretation.material, Flat.bot_ne_coe],
+    trivial⟩
 
 /-- (55) *John was able to come* leaves open whether he came. -/
 theorem beAble_not_entails : ∃ (v S : Unit → Prop),
-    sentence (Reading.material Unit) ⟨⊥, .some .negative⟩ v S () = 1 ∧ ¬ S () :=
-  ⟨fun _ ↦ True, fun _ ↦ False, by simp [sentence, Reading.material, Flat.bot_ne_coe], id⟩
+    sentence (Interpretation.material Unit) ⟨⊥, .some .negative⟩ v S () = 1 ∧ ¬ S () :=
+  ⟨fun _ ↦ True, fun _ ↦ False, by simp [sentence, Interpretation.material, Flat.bot_ne_coe], id⟩
 
 /-- A non-implicative, whose signature `◦/◦` gives it no presupposition, commits the speaker to
 nothing about its complement in either polarity (5). -/
 theorem nonImplicative_not_entails :
-    (∃ (v S : Unit → Prop), sentence (Reading.material Unit) ⊥ v S () = 1 ∧ ¬ S ()) ∧
-      ∃ (v S : Unit → Prop), (-sentence (Reading.material Unit) ⊥ v S) () = 1 ∧ S () :=
-  ⟨⟨fun _ ↦ True, fun _ ↦ False, by simp [sentence, Reading.material, Flat.bot_ne_coe], id⟩,
-   ⟨fun _ ↦ False, fun _ ↦ True, by simp [sentence, Reading.material, Flat.bot_ne_coe], trivial⟩⟩
+    (∃ (v S : Unit → Prop), sentence (Interpretation.material Unit) ⊥ v S () = 1 ∧ ¬ S ()) ∧
+      ∃ (v S : Unit → Prop), (-sentence (Interpretation.material Unit) ⊥ v S) () = 1 ∧ S () :=
+  ⟨⟨fun _ ↦ True, fun _ ↦ False, by simp [sentence, Interpretation.material, Flat.bot_ne_coe], id⟩,
+   ⟨fun _ ↦ False, fun _ ↦ True, by simp [sentence, Interpretation.material, Flat.bot_ne_coe],
+    trivial⟩⟩
 
 /-! ### The English lexicon -/
 

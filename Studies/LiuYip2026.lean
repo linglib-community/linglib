@@ -182,7 +182,7 @@ def Again.item : Again → Presupposition.TriggerItem
   | .gwo => Cantonese.Particles.gwo
 
 /-- Every *again*-element is an iterative trigger in its fragment. -/
-theorem Again.item_trigger (a : Again) : a.item.trigger = .iterative := by cases a <;> rfl
+theorem Again.item_triggerClass (a : Again) : a.item.triggerClass = .iterative := by cases a <;> rfl
 
 /-- The projection each element associates with. *You* associates by movement and *-faan* by
 agreement with the outer one, and *zai*, *zoi* and repetitive *-gwo* with the inner one;

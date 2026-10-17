@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Semantics.Presupposition.Environment
+public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.Karttunen1971b
@@ -52,7 +52,7 @@ namespace Karttunen1971b
 open Presupposition ModalLogic
 
 variable {W : Type*} {R : SetRel W W} {A : W → SignType} {s : W → Prop}
-  {c : Factivity} {e : Environment}
+  {c : Factivity} {e : FamilyVariant}
 
 /-- A sentence or its negation is true exactly where the sentence has a truth value. -/
 private theorem eq_one_sup_neg_eq_one (A : W → SignType) :
@@ -93,20 +93,20 @@ theorem Postulates.semi [R.IsRefl] (h : Postulates .full R A s) : Postulates .se
 to the sentence and a negative assertion to its negation. A question and the antecedent of a
 conditional conversationally imply that the sentence is possible (fn. 5), which a possibility
 statement asserts, (26). -/
-def commitment (R : SetRel W W) (A : W → SignType) : Environment → W → Prop
-  | .atomic => (A · = 1)
+def commitment (R : SetRel W W) (A : W → SignType) : FamilyVariant → W → Prop
+  | .unembedded => (A · = 1)
   | .negation => (-A · = 1)
   | .question | .conditionalAntecedent | .epistemicModal => ◇[R] (A · = 1)
 
 /-- The complement of a factive of class `c` follows in environment `e` when, in every model
 where what is the case is possible, the complement of a sentence obeying the postulates of `c`
 is true wherever the speaker's commitment is. -/
-def Projects (c : Factivity) (e : Environment) : Prop :=
+def Projects (c : Factivity) (e : FamilyVariant) : Prop :=
   ∀ (W : Type) (R : SetRel W W) [R.IsRefl] (A : W → SignType) (s : W → Prop),
     Postulates c R A s → commitment R A e ≤ s
 
 theorem Postulates.commitment_le [R.IsRefl] (h : Postulates c R A s)
-    (hce : c = .full ∨ e = .atomic ∨ e = .negation) : commitment R A e ≤ s := by
+    (hce : c = .full ∨ e = .unembedded ∨ e = .negation) : commitment R A e ≤ s := by
   obtain rfl | rfl | rfl := hce
   · cases e; exacts [h.semi.1, h.semi.2, h.1, h.1, h.1]
   · cases c; exacts [h.semi.1, h.1]
@@ -124,7 +124,7 @@ theorem exists_semi_not_diamond_le :
 
 /-- The complement follows exactly when the verb is a true factive or the sentence is asserted or
 negated. -/
-theorem projects_iff : Projects c e ↔ c = .full ∨ e = .atomic ∨ e = .negation := by
+theorem projects_iff : Projects c e ↔ c = .full ∨ e = .unembedded ∨ e = .negation := by
   refine ⟨fun h ↦ ?_, fun h W R _ A s hA ↦ hA.commitment_le h⟩
   obtain ⟨R, _, A, s, hA, hn⟩ := exists_semi_not_diamond_le
   cases c
@@ -134,7 +134,7 @@ theorem projects_iff : Projects c e ↔ c = .full ∨ e = .atomic ∨ e = .negat
   · exact .inr (.inr rfl)
   all_goals exact absurd (h Bool R A s hA) hn
 
-instance (c : Factivity) (e : Environment) : Decidable (Projects c e) :=
+instance (c : Factivity) (e : FamilyVariant) : Decidable (Projects c e) :=
   decidable_of_iff' _ projects_iff
 
 /-- In a model of any universe, the complement is true wherever the commitment is. -/

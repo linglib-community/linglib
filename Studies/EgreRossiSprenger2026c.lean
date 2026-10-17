@@ -580,7 +580,7 @@ noncomputable def ofTrigger (p p' : Atom) : Sentence W := carrier (ofSet (I p)) 
 /-- At a single world the carrier is the trigger's local value, defined where the presupposition
 holds, so the global and the local treatments of presupposition part only in larger contexts. -/
 theorem ofTrigger_singleton (p p' : Atom) (w : W) :
-    ofTrigger I p p' {w} w = (Formula.trigger p p').filter I w := by
+    ofTrigger I p p' {w} w = (Formula.trigger p p').middleKleene I w := by
   show _ = (I p).indicator (fun w ↦ ofProp (w ∈ I p')) w
   by_cases h : w ∈ I p
   · have hacc : Accepts {w} (ofSet (I p)) :=
@@ -598,8 +598,8 @@ noncomputable def localUpdate (s : Set W) (φ : Sentence W) : Connective → Set
 
 variable {I} {s : Set W}
 
-private theorem support_filter_trigger (p p' : Atom) :
-    Function.support ((Formula.trigger p p').filter I) = I p := by
+private theorem support_middleKleene_trigger (p p' : Atom) :
+    Function.support ((Formula.trigger p p').middleKleene I) = I p := by
   ext w
   show (I p).indicator (fun w ↦ ofProp (w ∈ I p')) w ≠ 0 ↔ w ∈ I p
   by_cases h : w ∈ I p <;> simp [h]
@@ -640,10 +640,11 @@ when the context admits it under [peters-1979]'s filtering connectives and the c
 argument is possible in [karttunen-1974-presupposition]'s local context (**§5.3–5.5**). -/
 theorem update_localUpdate_nonempty_iff (c : Connective) (a a' b b' : Atom) :
     (update (localUpdate s (ofTrigger I a a') c) (ofTrigger I b b')).Nonempty ↔
-      s ⊆ Function.support ((Formula.bin c (.trigger a a') (.trigger b b')).filter I) ∧
+      s ⊆ Function.support ((Formula.bin c (.trigger a a') (.trigger b b')).middleKleene I) ∧
         (c.localContext s ((Formula.trigger a a').truth I) ∩
           (Formula.trigger b b').truth I).Nonempty := by
-  rw [Formula.subset_support_filter_bin_iff, support_filter_trigger, support_filter_trigger]
+  rw [Formula.subset_support_middleKleene_bin_iff, support_middleKleene_trigger,
+    support_middleKleene_trigger]
   change _ ↔ (s ⊆ I a ∧ c.localContext s (I a ∩ I a') ⊆ I b) ∧
     (c.localContext s (I a ∩ I a') ∩ (I b ∩ I b')).Nonempty
   by_cases hs : s ⊆ I a

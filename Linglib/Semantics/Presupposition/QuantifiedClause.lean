@@ -17,13 +17,13 @@ the restrictor before the scope, or in the scope after the restrictor (`Quantifi
 environment is that argument together with the trigger's environment inside the argument's formula
 (`QuantifiedClause.Env`), and its meaning is the function from the gap's denotation to the clause's
 truth set. A good final of the clause may replace the scope after a restrictor and keeps the
-restrictor before a scope (`QuantifiedClause.Env.SameInitialString`). At a parse point after the
+restrictor before a scope (`QuantifiedClause.Env.SameInitialString`). At a parsing point after the
 gap, the continuations are those of the argument's formula composed with what the good finals of the
-clause give the argument there: every scope at the first parse point after a restrictor, the
-clause's own scope afterwards (`QuantifiedClause.Env.parsePoint`). The triggers of a clause are
-listed with their environments by `QuantifiedClause.occurrences`, filling the gap of each gives back
-the clause (`QuantifiedClause.fill_of_mem_occurrences`), and `Occurrence.ofClause` lists them as
-occurrences with their parse points.
+clause give the argument there: every scope at the first parsing point after a restrictor, the
+clause's own scope afterwards (`QuantifiedClause.Env.continuations`). The triggers of a clause are
+listed with their environments by `QuantifiedClause.triggers`, filling the gap of each gives back
+the clause (`QuantifiedClause.fill_of_mem_triggers`), and `QuantifiedClause.occurrences` lists them
+as occurrences with their parsing points.
 
 ## Implementation notes
 
@@ -94,35 +94,30 @@ def truth (q : NumberTree) : Arg Atom → Set (W × E) → Set W
   | restrictor S => restrictorTruth q fun w e ↦ (w, e) ∈ S.truth I
   | scope R => scopeTruth q fun w e ↦ (w, e) ∈ R.truth I
 
-/-- The number of items of the clause after the argument that holds the gap: the scope after a
-restrictor, nothing after a scope. -/
-def rightItems : Arg Atom → ℕ
-  | restrictor _ => 1
-  | scope _ => 0
-
-/-- The meanings that the good finals of the clause at parse point `n` give the argument that holds
-the gap: at the first parse point after a restrictor one for every scope, as Expressivity has it,
-and otherwise the clause's own. -/
-def parsePoint (q : NumberTree) (n : ℕ∞) : Arg Atom → Set (Set (W × E) → Set W)
-  | restrictor S =>
+/-- The meanings that the good finals of the clause at parsing point `n` give the argument that
+holds the gap: at the first parsing point after a restrictor one for every scope, as Expressivity
+has it, and otherwise the clause's own. -/
+def continuations (q : NumberTree) : Arg Atom → ℕ∞ → Set (Set (W × E) → Set W)
+  | restrictor S, n =>
     if n = 0 then Set.range (restrictorTruth q)
     else {restrictorTruth q fun w e ↦ (w, e) ∈ S.truth I}
-  | scope R => {scopeTruth q fun w e ↦ (w, e) ∈ R.truth I}
+  | scope R, _ => {scopeTruth q fun w e ↦ (w, e) ∈ R.truth I}
 
-theorem truth_mem_parsePoint (q : NumberTree) (n : ℕ∞) (a : Arg Atom) :
-    a.truth I q ∈ a.parsePoint I q n := by
+theorem truth_mem_continuations (q : NumberTree) (n : ℕ∞) (a : Arg Atom) :
+    a.truth I q ∈ a.continuations I q n := by
   cases a
-  · unfold parsePoint
+  · simp only [continuations]
     split_ifs
     · exact Set.mem_range_self _
     · rfl
   · rfl
 
-theorem antitone_parsePoint (q : NumberTree) (a : Arg Atom) : Antitone (a.parsePoint I q ·) := by
+theorem antitone_continuations (q : NumberTree) (a : Arg Atom) :
+    Antitone (a.continuations I q) := by
   intro m n hmn
   cases a with
   | restrictor S =>
-    simp only [parsePoint]
+    simp only [continuations]
     split_ifs with hn hm hm
     · exact le_rfl
     · exact absurd (nonpos_iff_eq_zero.1 (hn ▸ hmn)) hm
@@ -130,8 +125,9 @@ theorem antitone_parsePoint (q : NumberTree) (a : Arg Atom) : Antitone (a.parseP
     · exact le_rfl
   | scope R => exact le_rfl
 
-theorem parsePoint_top (q : NumberTree) (a : Arg Atom) : a.parsePoint I q ⊤ = {a.truth I q} := by
-  cases a <;> simp [parsePoint, truth]
+theorem continuations_top (q : NumberTree) (a : Arg Atom) :
+    a.continuations I q ⊤ = {a.truth I q} := by
+  cases a <;> simp [continuations, truth]
 
 /-- Two arguments have the same initial string when a good final may turn one into the other: it
 may replace the scope after a restrictor, and keeps the restrictor before a scope. -/
@@ -157,36 +153,36 @@ theorem truth_fill (k : Env Atom) (X : Formula Atom) :
   cases a <;> simp [fill, truth, Arg.fill, Arg.truth, QuantifiedClause.truth,
     SyntacticEnvironment.truth_fill, scopeTruth, restrictorTruth]
 
-/-- The continuations at parse point `n` after the gap of a clause: the parse point of the
+/-- The continuations at parsing point `n` after the gap of a clause: the parsing point of the
 argument's formula inside the argument's good finals there, the argument coming after the items
 that follow the gap inside it. -/
-def parsePoint (n : ℕ∞) (k : Env Atom) : Set (Set (W × E) → Set W) :=
-  Set.image2 (· ∘ ·) (k.arg.parsePoint I k.quantifier (n - k.inner.rightItems))
-    (k.inner.parsePoint I n)
+def continuations (k : Env Atom) (n : ℕ∞) : Set (Set (W × E) → Set W) :=
+  Set.image2 (· ∘ ·) (k.arg.continuations I k.quantifier (n - k.inner.rightItems))
+    (k.inner.continuations I n)
 
-theorem truth_mem_parsePoint (n : ℕ∞) (k : Env Atom) : k.truth I ∈ k.parsePoint I n :=
-  Set.mem_image2_of_mem (k.arg.truth_mem_parsePoint I _ _)
-    (SyntacticEnvironment.truth_mem_parsePoint I n k.inner)
+theorem truth_mem_continuations (n : ℕ∞) (k : Env Atom) : k.truth I ∈ k.continuations I n :=
+  Set.mem_image2_of_mem (k.arg.truth_mem_continuations I _ _)
+    (SyntacticEnvironment.truth_mem_continuations I n k.inner)
 
-/-- A later parse point consults fewer continuations. -/
-theorem antitone_parsePoint (k : Env Atom) : Antitone (k.parsePoint I ·) := fun _ _ hmn ↦
-  Set.image2_subset (k.arg.antitone_parsePoint I _ (tsub_le_tsub_right hmn _))
-    (SyntacticEnvironment.antitone_parsePoint I _ hmn)
+/-- A later parsing point consults fewer continuations. -/
+theorem antitone_continuations (k : Env Atom) : Antitone (k.continuations I) := fun _ _ hmn ↦
+  Set.image2_subset (k.arg.antitone_continuations I _ (tsub_le_tsub_right hmn _))
+    (SyntacticEnvironment.antitone_continuations I _ hmn)
 
-@[simp] theorem parsePoint_top (k : Env Atom) : k.parsePoint I ⊤ = {k.truth I} := by
-  simp only [parsePoint, ENat.top_sub_natCast, Arg.parsePoint_top,
-    SyntacticEnvironment.parsePoint_top, Set.image2_singleton]
+@[simp] theorem continuations_top (k : Env Atom) : k.continuations I ⊤ = {k.truth I} := by
+  simp only [continuations, ENat.top_sub_natCast, Arg.continuations_top,
+    SyntacticEnvironment.continuations_top, Set.image2_singleton]
   rfl
 
 /-- The occurrence of the trigger `trigger p p'` at the gap of a clause, with the continuations of
-its parse points. -/
+its parsing points. -/
 def occurrence (k : Env Atom) (p p' : Atom) : Occurrence W (Set (W × E)) where
   presupposition := I p
   assertion := I p'
-  continuations := (k.parsePoint I ·)
-  sentence := k.truth I
-  antitone_continuations := k.antitone_parsePoint I
-  continuations_top := k.parsePoint_top I
+  continuations := k.continuations I
+  truth := k.truth I
+  antitone_continuations := k.antitone_continuations I
+  continuations_top := k.continuations_top I
 
 /-- `SameInitialString k k'` holds when `k'` keeps the material of `k` before the gap and replaces
 what follows it: the quantifier, a restrictor before the scope, and the material before the gap
@@ -198,32 +194,33 @@ def SameInitialString (k k' : Env Atom) : Prop :=
 /-- The material after the gap of a clause's environment contains no trigger: none after the gap
 inside the argument, and none in a scope after a restrictor. -/
 def TriggerFreeFinal (k : Env Atom) : Prop :=
-  k.inner.TriggerFreeFinal ∧ ∀ S, k.arg = .restrictor S → S.occurrences = []
+  k.inner.TriggerFreeFinal ∧ ∀ S, k.arg = .restrictor S → S.triggers = []
 
 end Env
 
 /-- The triggers of a clause, each with its environment and its presupposition and assertion. -/
-def occurrences (c : QuantifiedClause Atom) : List (Env Atom × Atom × Atom) :=
-  c.restrictor.occurrences.map (fun o ↦ (⟨c.quantifier, .restrictor c.scope, o.1⟩, o.2)) ++
-    c.scope.occurrences.map fun o ↦ (⟨c.quantifier, .scope c.restrictor, o.1⟩, o.2)
+def triggers (c : QuantifiedClause Atom) : List (Env Atom × Atom × Atom) :=
+  c.restrictor.triggers.map (fun o ↦ (⟨c.quantifier, .restrictor c.scope, o.1⟩, o.2)) ++
+    c.scope.triggers.map fun o ↦ (⟨c.quantifier, .scope c.restrictor, o.1⟩, o.2)
 
-theorem fill_of_mem_occurrences {c : QuantifiedClause Atom} {o : Env Atom × Atom × Atom}
-    (h : o ∈ c.occurrences) : o.1.fill (.trigger o.2.1 o.2.2) = c := by
+theorem fill_of_mem_triggers {c : QuantifiedClause Atom} {o : Env Atom × Atom × Atom}
+    (h : o ∈ c.triggers) : o.1.fill (.trigger o.2.1 o.2.2) = c := by
   obtain ⟨q, R, S⟩ := c
   rcases List.mem_append.1 h with h | h <;> obtain ⟨o', ho', rfl⟩ := List.mem_map.1 h
-  · simp [Env.fill, Arg.fill, Formula.fill_of_mem_occurrences ho']
-  · simp [Env.fill, Arg.fill, Formula.fill_of_mem_occurrences ho']
+  · simp [Env.fill, Arg.fill, Formula.fill_of_mem_triggers ho']
+  · simp [Env.fill, Arg.fill, Formula.fill_of_mem_triggers ho']
 
 end QuantifiedClause
 
 /-- The occurrences of the triggers of a quantified clause. -/
-def Occurrence.ofClause {E : Type*} (I : Atom → Set (W × E)) (c : QuantifiedClause Atom) :
+def QuantifiedClause.occurrences {E : Type*} (I : Atom → Set (W × E)) (c : QuantifiedClause Atom) :
     List (Occurrence W (Set (W × E))) :=
-  c.occurrences.map fun t ↦ t.1.occurrence I t.2.1 t.2.2
+  c.triggers.map fun t ↦ t.1.occurrence I t.2.1 t.2.2
 
-theorem Occurrence.forall_mem_ofClause {E : Type*} {I : Atom → Set (W × E)}
+theorem QuantifiedClause.forall_mem_occurrences {E : Type*} {I : Atom → Set (W × E)}
     {c : QuantifiedClause Atom} {P : Occurrence W (Set (W × E)) → Prop} :
-    (∀ o ∈ Occurrence.ofClause I c, P o) ↔ ∀ t ∈ c.occurrences, P (t.1.occurrence I t.2.1 t.2.2) :=
+    (∀ o ∈ QuantifiedClause.occurrences I c, P o) ↔
+      ∀ t ∈ c.triggers, P (t.1.occurrence I t.2.1 t.2.2) :=
   List.forall_mem_map
 
 end Presupposition
