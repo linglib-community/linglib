@@ -22,6 +22,11 @@ meaning. Where the filtering evaluation is defined it is the classical meaning
 evaluation is defined throughout it, and it updates the context to its worlds at which the formula
 is classically true (`Formula.admits_ccp_iff`, `Formula.ccp_get`).
 
+A formula is written as a string of tokens (`Formula.yield`), with brackets, the dot after a
+conditional's antecedent and a trigger as one token, as in Kalomoiros's Definition 3.4.1. The
+string can be parsed back (`Formula.parse_yield`), so it determines the formula even when more
+tokens follow (`Formula.yield_append_inj`): the strings are uniquely readable.
+
 ## Main definitions
 
 * `Presupposition.Formula`: atoms, triggers, negation and the binary connectives.
@@ -31,6 +36,8 @@ is classically true (`Formula.admits_ccp_iff`, `Formula.ccp_get`).
   and filtering instances.
 * `Presupposition.Formula.ccp`: the dynamic evaluation.
 * `Presupposition.Formula.accommodate`: local accommodation, which keeps the classical meaning.
+* `Presupposition.Token`, `Presupposition.Formula.yield`: the tokens and the string of a formula.
+* `Presupposition.Formula.parse`: the parser, in the state monad of the remaining tokens.
 
 ## Implementation notes
 
@@ -271,6 +278,130 @@ classically true. -/
 theorem ccp_get {F : Formula Atom} {C : Set W} (h : (F.ccp I).Admits C) :
     (F.ccp I C).get h = C ∩ F.truth I :=
   Part.get_eq_of_mem ((ccp_spec I F C).2 ((admits_ccp_iff I).1 h)) h
+
+end Formula
+
+/-! ### The string of a formula -/
+
+/-- The tokens of the language as [kalomoiros-2023] writes it (Definition 3.4.1): brackets, the dot
+after the antecedent of a conditional, atoms, triggers, *not* and the connective words. A trigger
+`p′p` is one token. -/
+inductive Token (Atom : Type*) where
+  | lparen
+  | rparen
+  | dot
+  | atom (p : Atom)
+  | trigger (presup assert : Atom)
+  | not
+  | conn (c : Connective)
+  deriving DecidableEq
+
+namespace Token
+
+/-- The tokens of a binary formula before its first argument, after the bracket: *if* for a
+conditional and nothing otherwise. -/
+def lead : Connective → List (Token Atom)
+  | .cond => [.conn .cond]
+  | _ => []
+
+/-- The token between the arguments of a binary formula: the dot after a conditional's antecedent,
+and otherwise the connective word. -/
+def sep : Connective → Token Atom
+  | .cond => .dot
+  | c => .conn c
+
+end Token
+
+namespace Formula
+
+/-- The string of a formula: `p`, `p′p`, `(not F)`, `(F and G)`, `(F or G)` and `(if F. G)`. -/
+def yield : Formula Atom → List (Token Atom)
+  | atom p => [.atom p]
+  | trigger p p' => [.trigger p p']
+  | not F => .lparen :: .not :: (F.yield ++ [.rparen])
+  | bin c F G => .lparen :: (Token.lead c ++ (F.yield ++ Token.sep c :: (G.yield ++ [.rparen])))
+
+/-- The rest of a binary formula after its opening bracket, parsing its arguments with `p`: a
+formula, a connective word, a formula and a closing bracket. -/
+def parseBinary (p : List (Token Atom) → Option (Formula Atom × List (Token Atom)))
+    (ts : List (Token Atom)) : Option (Formula Atom × List (Token Atom)) := do
+  let (F, .conn c :: ts) ← p ts | none
+  let (G, .rparen :: ts) ← p ts | none
+  pure (bin c F G, ts)
+
+/-- Parse a formula from the front of a string, nesting at most `n` formulas, and return it with
+the rest of the string: a computation of the state monad of the remaining tokens over `Option`. -/
+def parse : ℕ → List (Token Atom) → Option (Formula Atom × List (Token Atom))
+  | 0, _ => none
+  | _ + 1, .atom p :: ts => some (atom p, ts)
+  | _ + 1, .trigger p p' :: ts => some (trigger p p', ts)
+  | n + 1, .lparen :: .not :: ts => do
+    let (F, .rparen :: ts) ← parse n ts | none
+    pure (not F, ts)
+  | n + 1, .lparen :: .conn .cond :: ts => do
+    let (F, .dot :: ts) ← parse n ts | none
+    let (G, .rparen :: ts) ← parse n ts | none
+    pure (bin .cond F G, ts)
+  | n + 1, .lparen :: ts => parseBinary (parse n) ts
+  | _ + 1, _ => none
+
+theorem yield_ne_nil (F : Formula Atom) : F.yield ≠ [] := by
+  cases F <;> simp [yield]
+
+/-- A formula's string begins with an atom, a trigger or a bracket, never with *not*. -/
+theorem yield_append_ne_not (F : Formula Atom) (r r' : List (Token Atom)) :
+    F.yield ++ r ≠ .not :: r' := by
+  cases F <;> simp [yield]
+
+/-- A formula's string never begins with a connective word. -/
+theorem yield_append_ne_conn (F : Formula Atom) (c : Connective) (r r' : List (Token Atom)) :
+    F.yield ++ r ≠ .conn c :: r' := by
+  cases F <;> simp [yield]
+
+private theorem parse_lparen (n : ℕ) {ts : List (Token Atom)} (h₁ : ∀ ts', ts ≠ .not :: ts')
+    (h₂ : ∀ ts', ts ≠ .conn .cond :: ts') :
+    parse (n + 1) (.lparen :: ts) = parseBinary (parse n) ts := by
+  rcases ts with _ | ⟨t, ts⟩
+  · rfl
+  · cases t with
+    | not => exact absurd rfl (h₁ ts)
+    | conn c => cases c <;> first | exact absurd rfl (h₂ ts) | rfl
+    | _ => rfl
+
+/-- Parsing the string of a formula gives back the formula and the rest of the string. -/
+theorem parse_yield (F : Formula Atom) {n : ℕ} (r : List (Token Atom))
+    (hn : F.yield.length ≤ n) : parse n (F.yield ++ r) = some (F, r) := by
+  induction F generalizing n r with
+  | atom p => obtain ⟨n, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by simp [yield] at hn; omega⟩; rfl
+  | trigger p p' => obtain ⟨n, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by simp [yield] at hn; omega⟩; rfl
+  | not F ih =>
+    obtain ⟨n, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by simp [yield] at hn; omega⟩
+    simp only [yield, List.length_cons, List.length_append] at hn
+    simp [yield, parse, ih (.rparen :: r) (show F.yield.length ≤ n by simp at hn; omega)]
+  | bin c F G ihF ihG =>
+    obtain ⟨n, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by simp [yield] at hn; omega⟩
+    have hF : F.yield.length ≤ n := by cases c <;> simp [yield, Token.lead] at hn <;> omega
+    have hG : G.yield.length ≤ n := by cases c <;> simp [yield, Token.lead] at hn <;> omega
+    cases c with
+    | cond => simp [yield, Token.lead, Token.sep, parse, ihF _ hF, ihG _ hG]
+    | _ =>
+      simp only [yield, Token.lead, Token.sep, List.nil_append, List.cons_append,
+        List.append_assoc]
+      rw [parse_lparen n (fun _ ↦ yield_append_ne_not F _ _)
+        (fun _ ↦ yield_append_ne_conn F _ _ _)]
+      simp [parseBinary, ihF _ hF, ihG _ hG]
+
+/-- Unique readability: a formula's string determines the formula, even followed by more
+tokens. -/
+theorem yield_append_inj {F F' : Formula Atom} {r r' : List (Token Atom)}
+    (h : F.yield ++ r = F'.yield ++ r') : F = F' ∧ r = r' := by
+  have := (parse_yield F r (le_max_left _ F'.yield.length)).symm.trans
+    (h ▸ parse_yield F' r' (le_max_right F.yield.length _))
+  simpa using this
+
+/-- A formula's string determines the formula. -/
+theorem yield_injective : Function.Injective (yield : Formula Atom → List (Token Atom)) :=
+  fun F F' h ↦ (yield_append_inj (r := []) (r' := []) (by simpa using h)).1
 
 end Formula
 

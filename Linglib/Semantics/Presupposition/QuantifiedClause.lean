@@ -154,10 +154,10 @@ theorem truth_fill (k : Env Atom) (X : Formula Atom) :
     SyntacticEnvironment.truth_fill, scopeTruth, restrictorTruth]
 
 /-- The continuations at parsing point `n` after the gap of a clause: the parsing point of the
-argument's formula inside the argument's good finals there, the argument coming after the items
+argument's formula inside the argument's good finals there, the argument coming after the tokens
 that follow the gap inside it. -/
 def continuations (k : Env Atom) (n : ℕ∞) : Set (Set (W × E) → Set W) :=
-  Set.image2 (· ∘ ·) (k.arg.continuations I k.quantifier (n - k.inner.rightItems))
+  Set.image2 (· ∘ ·) (k.arg.continuations I k.quantifier (n - k.inner.yield.2.length))
     (k.inner.continuations I n)
 
 theorem truth_mem_continuations (n : ℕ∞) (k : Env Atom) : k.truth I ∈ k.continuations I n :=

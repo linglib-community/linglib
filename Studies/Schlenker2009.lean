@@ -641,8 +641,8 @@ private theorem incrementally_atom (P : Formula Atom → Prop) (p : Atom) :
 private theorem incrementally_trigger {P : Formula Atom → Prop} {p p' : Atom} :
     Incrementally P (.trigger p p') ↔ P (.trigger p p') := by
   simp only [Incrementally, Formula.triggers, List.mem_singleton, forall_eq]
-  refine ⟨fun h ↦ h [] (.refl []) fun _ _ h ↦ by simp at h, fun h K' hK _ ↦ ?_⟩
-  cases hK
+  refine ⟨fun h ↦ h [] rfl fun _ _ h ↦ by simp at h, fun h K' hK _ ↦ ?_⟩
+  obtain rfl := SyntacticEnvironment.sameInitialString_nil_iff.1 hK
   exact h
 
 private theorem incrementally_not {P : Formula Atom → Prop} {F : Formula Atom} :
@@ -650,13 +650,13 @@ private theorem incrementally_not {P : Formula Atom → Prop} {F : Formula Atom}
   simp only [Incrementally, Formula.triggers, List.forall_mem_map]
   refine forall₂_congr fun o _ ↦ ⟨fun h K' hK hT ↦ ?_, fun h K' hK hT ↦ ?_⟩
   · have := h (K' ++ [.not])
-      (SyntacticEnvironment.sameInitialString_append_singleton.2 ⟨K', .not, rfl, hK, .not⟩)
+      (SyntacticEnvironment.sameInitialString_append_singleton.2 ⟨K', .not, rfl, hK, rfl⟩)
       (SyntacticEnvironment.triggerFreeFinal_append.2
         ⟨hT, SyntacticEnvironment.triggerFreeFinal_singleton.2 fun _ _ h ↦ by cases h⟩)
     rwa [SyntacticEnvironment.fill_append] at this
   · obtain ⟨K'', s', rfl, hK'', hs⟩ :=
       SyntacticEnvironment.sameInitialString_append_singleton.1 hK
-    cases hs
+    obtain rfl := SyntacticEnvironment.Step.sameInitialString_not_iff.1 hs
     rw [SyntacticEnvironment.fill_append]
     exact h K'' hK'' (SyntacticEnvironment.triggerFreeFinal_append.1 hT).1
 
@@ -669,25 +669,24 @@ private theorem incrementally_bin {P : Formula Atom → Prop} {c : Connective} {
     fun h K' hK hT ↦ ?_⟩) (forall₂_congr fun o _ ↦ ⟨fun h K' hK hT ↦ ?_, fun h K' hK hT ↦ ?_⟩)
   · have := h (K' ++ [.left c' G'])
       (SyntacticEnvironment.sameInitialString_append_singleton.2
-        ⟨K', _, rfl, hK, .left hc G G'⟩)
+        ⟨K', _, rfl, hK, SyntacticEnvironment.Step.sameInitialString_left_iff.2 ⟨c', G', rfl, hc⟩⟩)
       (SyntacticEnvironment.triggerFreeFinal_append.2
         ⟨hT, SyntacticEnvironment.triggerFreeFinal_singleton.2 fun _ _ h ↦ by cases h; exact hG⟩)
     rwa [SyntacticEnvironment.fill_append] at this
   · obtain ⟨K'', s', rfl, hK'', hs⟩ :=
       SyntacticEnvironment.sameInitialString_append_singleton.1 hK
     obtain ⟨hT'', hTs⟩ := SyntacticEnvironment.triggerFreeFinal_append.1 hT
-    cases hs with
-    | left hc _ G' =>
-      rw [SyntacticEnvironment.fill_append]
-      exact h K'' hK'' hT'' _ G' hc (SyntacticEnvironment.triggerFreeFinal_singleton.1 hTs _ _ rfl)
+    obtain ⟨c', G', rfl, hc⟩ := SyntacticEnvironment.Step.sameInitialString_left_iff.1 hs
+    rw [SyntacticEnvironment.fill_append]
+    exact h K'' hK'' hT'' _ G' hc (SyntacticEnvironment.triggerFreeFinal_singleton.1 hTs _ _ rfl)
   · have := h (K' ++ [.right c F])
-      (SyntacticEnvironment.sameInitialString_append_singleton.2 ⟨K', _, rfl, hK, .right c F⟩)
+      (SyntacticEnvironment.sameInitialString_append_singleton.2 ⟨K', _, rfl, hK, rfl⟩)
       (SyntacticEnvironment.triggerFreeFinal_append.2
         ⟨hT, SyntacticEnvironment.triggerFreeFinal_singleton.2 fun _ _ h ↦ by cases h⟩)
     rwa [SyntacticEnvironment.fill_append] at this
   · obtain ⟨K'', s', rfl, hK'', hs⟩ :=
       SyntacticEnvironment.sameInitialString_append_singleton.1 hK
-    cases hs
+    obtain rfl := SyntacticEnvironment.Step.sameInitialString_right_iff.1 hs
     rw [SyntacticEnvironment.fill_append]
     exact h K'' hK'' (SyntacticEnvironment.triggerFreeFinal_append.1 hT).1
 

@@ -166,200 +166,318 @@ theorem localContext_eq_inter (I : Atom → Set W) (K : SyntacticEnvironment Ato
     rw [localContext_cons, localContext_cons, Step.localContext_eq_inter, ih,
       Step.localContext_eq_inter I s (localContext I K Set.univ), Set.inter_assoc]
 
-/-- Two steps have the same initial string when a good final may turn one into the other, which it
-does by replacing the second argument of a first argument, and the connective unless it is *if*,
-which precedes its antecedent. -/
-inductive Step.SameInitialString : Step Atom → Step Atom → Prop
-  | not : Step.SameInitialString .not .not
-  | right (c : Connective) (F : Formula Atom) : Step.SameInitialString (.right c F) (.right c F)
-  | left {c c' : Connective} (hc : c = .cond ↔ c' = .cond) (G G' : Formula Atom) :
-      Step.SameInitialString (.left c G) (.left c' G')
+/-! ### The string of an environment -/
 
-@[refl] theorem Step.SameInitialString.refl : ∀ s : Step Atom, s.SameInitialString s
-  | .not => .not
-  | .right c F => .right c F
-  | .left _ G => .left Iff.rfl G G
+namespace Step
 
-/-- `SameInitialString K K'` holds when `K'` keeps the material of `K` before the gap and replaces
-what follows it, so that it is `K` with another good final. -/
-def SameInitialString (K K' : SyntacticEnvironment Atom) : Prop :=
-  List.Forall₂ Step.SameInitialString K K'
+/-- The string of a step: the tokens before its gap and the tokens after it. -/
+def yield : Step Atom → List (Token Atom) × List (Token Atom)
+  | .not => ([.lparen, .not], [.rparen])
+  | .left c G => (.lparen :: Token.lead c, Token.sep c :: (G.yield ++ [.rparen]))
+  | .right c F => (.lparen :: (Token.lead c ++ (F.yield ++ [Token.sep c])), [.rparen])
 
-@[refl] theorem SameInitialString.refl (K : SyntacticEnvironment Atom) : SameInitialString K K :=
-  List.forall₂_same.2 fun s _ ↦ .refl s
+theorem yield_fill (s : Step Atom) (X : Formula Atom) :
+    (s.fill X).yield = s.yield.1 ++ (X.yield ++ s.yield.2) := by
+  cases s <;> simp [fill, yield, Formula.yield]
+
+/-- Two steps have the same initial string when the tokens before their gaps agree. -/
+def SameInitialString (s s' : Step Atom) : Prop := s.yield.1 = s'.yield.1
+
+theorem sameInitialString_not_iff {s : Step Atom} : Step.not.SameInitialString s ↔ s = .not := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ rfl⟩
+  cases s with
+  | not => rfl
+  | left c G => cases c <;> simp [SameInitialString, yield, Token.lead] at h
+  | right c F =>
+    cases c <;> simp [SameInitialString, yield, Token.lead] at h <;>
+      exact absurd h.symm (Formula.yield_append_ne_not F _ _)
+
+theorem sameInitialString_right_iff {c : Connective} {F : Formula Atom} {s : Step Atom} :
+    (Step.right c F).SameInitialString s ↔ s = .right c F := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ rfl⟩
+  cases c <;> cases s <;> (try cases ‹Connective›) <;>
+    simp only [SameInitialString, yield, Token.lead, Token.sep, List.cons_append, List.nil_append,
+      List.cons.injEq, reduceCtorEq, true_and, false_and, and_false, Step.right.injEq,
+      List.append_eq_nil_iff, List.cons_ne_nil] at h ⊢
+  all_goals first
+    | exact absurd h (Formula.yield_append_ne_not _ _ _)
+    | exact absurd h (Formula.yield_append_ne_conn _ _ _ _)
+    | exact absurd h.symm (Formula.yield_append_ne_conn _ _ _ _)
+    | exact (Formula.yield_append_inj h).1.symm
+    | (obtain ⟨rfl, h'⟩ := Formula.yield_append_inj h; simp_all)
+
+/-- The steps with the initial string of a first argument are the first arguments of a connective
+that is *if* exactly when the step's is, *if* preceding its antecedent. -/
+theorem sameInitialString_left_iff {c : Connective} {G : Formula Atom} {s : Step Atom} :
+    (Step.left c G).SameInitialString s ↔ ∃ c' G', s = .left c' G' ∧ (c = .cond ↔ c' = .cond) := by
+  refine ⟨fun h ↦ ?_, fun ⟨c', G', he, hc⟩ ↦ he ▸ ?_⟩
+  · cases s with
+    | not => cases c <;> simp [SameInitialString, yield, Token.lead] at h
+    | right c' F =>
+      cases c <;> cases c' <;> simp [SameInitialString, yield, Token.lead] at h <;>
+        exact absurd h.symm (Formula.yield_append_ne_conn _ _ _ _)
+    | left c' G' =>
+      exact ⟨c', G', rfl, by cases c <;> cases c' <;> simp_all [SameInitialString, yield, Token.lead]⟩
+  · cases c <;> cases c' <;> simp_all [SameInitialString, yield, Token.lead]
+
+end Step
+
+/-- The string of an environment: the tokens before its gap and the tokens after it. -/
+def yield : SyntacticEnvironment Atom → List (Token Atom) × List (Token Atom)
+  | [] => ([], [])
+  | s :: K => ((yield K).1 ++ s.yield.1, s.yield.2 ++ (yield K).2)
+
+@[simp] theorem yield_nil : yield ([] : SyntacticEnvironment Atom) = ([], []) := rfl
+
+@[simp] theorem yield_cons (s : Step Atom) (K : SyntacticEnvironment Atom) :
+    yield (s :: K) = ((yield K).1 ++ s.yield.1, s.yield.2 ++ (yield K).2) := rfl
+
+theorem yield_append (K M : SyntacticEnvironment Atom) :
+    yield (K ++ M) = ((yield M).1 ++ (yield K).1, (yield K).2 ++ (yield M).2) := by
+  induction K with
+  | nil => simp
+  | cons s K ih => simp [ih]
+
+theorem yield_fill (K : SyntacticEnvironment Atom) (X : Formula Atom) :
+    (K.fill X).yield = (yield K).1 ++ (X.yield ++ (yield K).2) := by
+  induction K generalizing X with
+  | nil => simp [fill]
+  | cons s K ih => simp [fill, ih, Step.yield_fill]
+
+/-- No formula's string begins the string before a gap, which leaves a bracket open. -/
+theorem yield_fst_ne (K : SyntacticEnvironment Atom) (F : Formula Atom) (r : List (Token Atom)) :
+    (yield K).1 ≠ F.yield ++ r := by
+  intro h
+  obtain ⟨-, h'⟩ := Formula.yield_append_inj (r := []) (r' := r ++ (F.yield ++ (yield K).2))
+    (F := K.fill F) (F' := F) (by rw [yield_fill, h]; simp)
+  exact Formula.yield_ne_nil F (List.append_eq_nil_iff.1 (List.append_eq_nil_iff.1 h'.symm).2).1
+
+/-- The string before a gap is empty or opens with a bracket. -/
+theorem yield_fst_eq_nil_or (K : SyntacticEnvironment Atom) :
+    (yield K).1 = [] ∨ ∃ t, (yield K).1 = .lparen :: t := by
+  induction K with
+  | nil => exact .inl rfl
+  | cons s K ih =>
+    rcases ih with h | ⟨t, h⟩
+    · refine .inr ?_
+      cases s <;> simp [h, Step.yield]
+    · exact .inr ⟨t ++ s.yield.1, by simp [h]⟩
+
+
+/-- The string before the gap of an environment splits at its outermost step: the outermost steps of
+two environments with the same initial string have the same initial string. -/
+theorem Step.yield_fst_append_inj {s s' : Step Atom} {K K' : SyntacticEnvironment Atom}
+    (h : s.yield.1 ++ K.yield.1 = s'.yield.1 ++ K'.yield.1) : s.yield.1 = s'.yield.1 := by
+  have hK := SyntacticEnvironment.yield_fst_eq_nil_or K
+  have hK' := SyntacticEnvironment.yield_fst_eq_nil_or K'
+  have nK := SyntacticEnvironment.yield_fst_ne K
+  have nK' := SyntacticEnvironment.yield_fst_ne K'
+  cases s <;> cases s' <;> (try cases ‹Connective›) <;> (try cases ‹Connective›) <;>
+    simp only [Step.yield, Token.lead, Token.sep, List.cons_append, List.nil_append,
+      List.append_assoc, List.cons.injEq, reduceCtorEq, true_and, false_and, and_false] at h ⊢
+  all_goals first
+    | exact absurd h (nK _ _)
+    | exact absurd h.symm (nK' _ _)
+    | exact absurd h (Formula.yield_append_ne_not _ _ _)
+    | exact absurd h.symm (Formula.yield_append_ne_not _ _ _)
+    | exact absurd h (Formula.yield_append_ne_conn _ _ _ _)
+    | exact absurd h.symm (Formula.yield_append_ne_conn _ _ _ _)
+    | (obtain ⟨rfl, h'⟩ := Formula.yield_append_inj h; simp_all)
+    | (rcases hK with h' | ⟨u, h'⟩ <;> rcases hK' with h'' | ⟨u', h''⟩ <;> simp_all)
+
+
+/-- Two environments have the same initial string when the tokens before their gaps agree. -/
+def SameInitialString (K K' : SyntacticEnvironment Atom) : Prop := K.yield.1 = K'.yield.1
+
+theorem SameInitialString.symm {K K' : SyntacticEnvironment Atom} (h : K.SameInitialString K') :
+    K'.SameInitialString K := Eq.symm h
+
+theorem yield_fst_eq_nil_iff {K : SyntacticEnvironment Atom} : K.yield.1 = [] ↔ K = [] := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ rfl⟩
+  cases K with
+  | nil => rfl
+  | cons s K => cases s <;> simp [Step.yield] at h
+
+/-- Unique readability of the string before a gap: it splits step by step. -/
+theorem sameInitialString_iff_forall₂ {K K' : SyntacticEnvironment Atom} :
+    K.SameInitialString K' ↔ List.Forall₂ Step.SameInitialString K K' := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · induction K using List.reverseRecOn generalizing K' with
+    | nil => obtain rfl := yield_fst_eq_nil_iff.1 h.symm; exact .nil
+    | append_singleton K s ih =>
+      rcases List.eq_nil_or_concat K' with rfl | ⟨K₀, s', rfl⟩
+      · exact absurd (yield_fst_eq_nil_iff.1 h) (by simp)
+      · simp only [SameInitialString, List.concat_eq_append, yield_append, yield_cons, yield_nil,
+          List.nil_append, List.append_nil] at h
+        have hs := Step.yield_fst_append_inj h
+        rw [hs, List.append_cancel_left_eq] at h
+        rw [List.concat_eq_append]
+        exact List.rel_append (ih h) (.cons hs .nil)
+  · induction h with
+    | nil => rfl
+    | cons hs _ ih => simp only [SameInitialString, yield_cons] at ih ⊢; rw [ih, hs]
+
+/-- A good final of `K ++ M` is a good final of `K` inside one of `M`. -/
+theorem sameInitialString_append_iff {K M L : SyntacticEnvironment Atom} :
+    (K ++ M).SameInitialString L ↔
+      ∃ K' M', L = K' ++ M' ∧ K.SameInitialString K' ∧ M.SameInitialString M' := by
+  simp only [sameInitialString_iff_forall₂]
+  refine ⟨fun h ↦ ⟨L.take K.length, L.drop K.length, (List.take_append_drop _ _).symm, ?_, ?_⟩,
+    fun ⟨K', M', he, hK, hM⟩ ↦ he ▸ List.rel_append hK hM⟩
+  · simpa using List.forall₂_take K.length h
+  · simpa using List.forall₂_drop K.length h
+
+theorem SameInitialString.cons {s s' : Step Atom} {K K' : SyntacticEnvironment Atom}
+    (hs : s.SameInitialString s') (hK : K.SameInitialString K') :
+    SameInitialString (s :: K) (s' :: K') :=
+  congrArg₂ (· ++ ·) hK hs
+
+theorem sameInitialString_nil_iff {K : SyntacticEnvironment Atom} :
+    SameInitialString [] K ↔ K = [] := by
+  rw [SameInitialString, yield_nil, eq_comm, yield_fst_eq_nil_iff]
 
 /-- A good final of `K ++ [s]` is a good final of `K` inside a good final of the outermost step. -/
 theorem sameInitialString_append_singleton {K L : SyntacticEnvironment Atom} {s : Step Atom} :
-    SameInitialString (K ++ [s]) L ↔
-      ∃ K' s', L = K' ++ [s'] ∧ SameInitialString K K' ∧ s.SameInitialString s' := by
-  induction K generalizing L with
-  | nil =>
-    simp only [List.nil_append, SameInitialString, List.forall₂_cons_left_iff,
-      List.forall₂_nil_left_iff]
-    constructor
-    · rintro ⟨s', _, hs, rfl, rfl⟩; exact ⟨[], s', rfl, rfl, hs⟩
-    · rintro ⟨K', s', rfl, rfl, hs⟩; exact ⟨s', [], hs, rfl, rfl⟩
-  | cons t K ih =>
-    simp only [List.cons_append, SameInitialString, List.forall₂_cons_left_iff] at ih ⊢
-    constructor
-    · rintro ⟨t', L', ht, hL, rfl⟩
-      obtain ⟨K', s', rfl, hK, hs⟩ := ih.1 hL
-      exact ⟨t' :: K', s', rfl, ⟨t', K', ht, hK, rfl⟩, hs⟩
-    · rintro ⟨K', s', rfl, ⟨t', K'', ht, hK, rfl⟩, hs⟩
-      exact ⟨t', K'' ++ [s'], ht, ih.2 ⟨K'', s', rfl, hK, hs⟩, rfl⟩
+    (K ++ [s]).SameInitialString L ↔
+      ∃ K' s', L = K' ++ [s'] ∧ K.SameInitialString K' ∧ s.SameInitialString s' := by
+  rw [sameInitialString_append_iff]
+  constructor
+  · rintro ⟨K', M', rfl, hK, hM⟩
+    obtain ⟨s', rfl⟩ : ∃ s', M' = [s'] := by
+      have := (sameInitialString_iff_forall₂.1 hM).length_eq
+      match M', this with
+      | [s'], _ => exact ⟨s', rfl⟩
+    exact ⟨K', s', rfl, hK, by simpa [SameInitialString, Step.SameInitialString] using hM⟩
+  · rintro ⟨K', s', rfl, hK, hs⟩
+    exact ⟨K', [s'], rfl, hK, by simpa [SameInitialString, Step.SameInitialString] using hs⟩
+
+/-- The string after the gap of a step determines the step among those with its initial string, even
+followed by more tokens. -/
+theorem Step.eq_of_yield_snd_append {s s' : Step Atom} {u u' : List (Token Atom)}
+    (hs : s.SameInitialString s') (h : s.yield.2 ++ u = s'.yield.2 ++ u') : s = s' ∧ u = u' := by
+  cases s <;> cases s' <;> (try cases ‹Connective›) <;> (try cases ‹Connective›) <;>
+    simp only [SameInitialString, Step.yield, Token.lead, Token.sep, List.cons_append,
+      List.nil_append, List.append_assoc, List.cons.injEq, reduceCtorEq, true_and, false_and,
+      and_false, Step.right.injEq, Step.left.injEq, true_and, and_true] at hs h ⊢
+  all_goals first
+    | exact h
+    | exact absurd hs (Formula.yield_append_ne_not _ _ _)
+    | exact absurd hs.symm (Formula.yield_append_ne_not _ _ _)
+    | exact absurd hs (Formula.yield_append_ne_conn _ _ _ _)
+    | exact absurd hs.symm (Formula.yield_append_ne_conn _ _ _ _)
+    | (obtain ⟨rfl, h'⟩ := Formula.yield_append_inj h; simp_all)
+    | (obtain ⟨rfl, h'⟩ := Formula.yield_append_inj hs; simp_all)
+    | simp_all
+
+/-- The string after a gap determines the environment among those with its initial string, even
+followed by more tokens. -/
+theorem eq_of_yield_snd_append {K K' : SyntacticEnvironment Atom} {t t' : List (Token Atom)}
+    (hK : K.SameInitialString K') (h : K.yield.2 ++ t = K'.yield.2 ++ t') : K = K' ∧ t = t' := by
+  induction sameInitialString_iff_forall₂.1 hK generalizing t t' with
+  | nil => simpa using h
+  | cons hs _ ih =>
+    simp only [yield_cons, List.append_assoc] at h
+    obtain ⟨rfl, h'⟩ := Step.eq_of_yield_snd_append hs h
+    obtain ⟨rfl, rfl⟩ := ih (sameInitialString_iff_forall₂.2 ‹_›) h'
+    exact ⟨rfl, rfl⟩
+
+/-- Among environments with one initial string, no string after the gap is a proper prefix of
+another. -/
+theorem eq_of_yield_snd_prefix {K K' : SyntacticEnvironment Atom} (hK : K.SameInitialString K')
+    (h : K.yield.2 <+: K'.yield.2) : K = K' :=
+  let ⟨t, ht⟩ := h
+  (eq_of_yield_snd_append (t' := []) hK (by simpa using ht)).1
 
 /-! ### Parsing points -/
 
-/-- The number of items of the string that follow the first argument of a connective is two for a
-conjunction or a disjunction, the connective and the second argument, and one for *if*, the
-consequent, since *if* precedes its antecedent and its separator is forced. -/
-def _root_.Presupposition.Connective.rightItems : Connective → ℕ
-  | .cond => 1
-  | _ => 2
-
-/-- The number of items of the string after the gap of a step; only closing brackets, which are
-forced, follow the argument of a negation and the second argument of a connective. -/
-def Step.rightItems : Step Atom → ℕ
-  | .left c _ => c.rightItems
-  | _ => 0
-
-/-- The number of items of the string after the gap. -/
-def rightItems (K : SyntacticEnvironment Atom) : ℕ := (K.map Step.rightItems).sum
-
-@[simp] theorem rightItems_nil : rightItems ([] : SyntacticEnvironment Atom) = 0 := rfl
-
-@[simp] theorem rightItems_cons (s : Step Atom) (K : SyntacticEnvironment Atom) :
-    rightItems (s :: K) = s.rightItems + rightItems K := by
-  simp [rightItems]
-
-theorem rightItems_append (K K' : SyntacticEnvironment Atom) :
-    rightItems (K ++ K') = rightItems K + rightItems K' := by
-  simp [rightItems]
-
-/-- `s'` keeps the material of `s` before the gap and its first `n` items after it. -/
-def Step.AgreeUpTo (n : ℕ) : Step Atom → Step Atom → Prop
-  | .not, s' => s' = .not
-  | .right c F, s' => s' = .right c F
-  | .left c G, s' =>
-    if n = 0 then ∃ c' G', s' = .left c' G' ∧ (c = .cond ↔ c' = .cond)
-    else if n < c.rightItems then ∃ G', s' = .left c G' else s' = .left c G
-
-/-- `AgreeUpTo n K K'` holds when `K'` keeps the material of `K` before the gap and the first `n`
-items after it, so that it is `K` with a good final of the string up to the `n`-th item, the parsing
-points of [kalomoiros-2023]. -/
-def AgreeUpTo : ℕ → SyntacticEnvironment Atom → SyntacticEnvironment Atom → Prop
-  | _, [], K' => K' = []
-  | n, s :: K, K' =>
-    ∃ s' K'', K' = s' :: K'' ∧ s.AgreeUpTo n s' ∧ AgreeUpTo (n - s.rightItems) K K''
-
-theorem Step.agreeUpTo_zero_iff {s s' : Step Atom} : s.AgreeUpTo 0 s' ↔ s.SameInitialString s' := by
-  cases s with
-  | not => exact ⟨fun h ↦ h ▸ .not, fun h ↦ by cases h; rfl⟩
-  | right c F => exact ⟨fun h ↦ h ▸ .right c F, fun h ↦ by cases h; rfl⟩
-  | left c G =>
-    simp only [AgreeUpTo, ite_true]
-    exact ⟨fun ⟨c', G', he, hc⟩ ↦ he ▸ .left hc G G', fun h ↦ by cases h with
-      | left hc _ G' => exact ⟨_, G', rfl, hc⟩⟩
+/-- `AgreeUpTo n K K'` holds when `K'` keeps the string before the gap of `K` and continues its
+first `n` tokens after the gap, so that it is `K` with a good final at the `n`-th parsing point of
+[kalomoiros-2023]'s Definition 3.4.4. -/
+def AgreeUpTo (n : ℕ) (K K' : SyntacticEnvironment Atom) : Prop :=
+  K.SameInitialString K' ∧ K.yield.2.take n <+: K'.yield.2
 
 /-- The first parsing point, right after the trigger, admits every good final. -/
-theorem agreeUpTo_zero_iff {K K' : SyntacticEnvironment Atom} :
-    AgreeUpTo 0 K K' ↔ SameInitialString K K' := by
-  induction K generalizing K' with
-  | nil => exact ⟨fun h ↦ h ▸ .nil, fun h ↦ by cases h; rfl⟩
-  | cons s K ih =>
-    simp only [AgreeUpTo, Nat.zero_sub, SameInitialString, List.forall₂_cons_left_iff, ih,
-      Step.agreeUpTo_zero_iff]
-    exact ⟨fun ⟨s', K'', he, hs, hK⟩ ↦ ⟨s', K'', hs, hK, he⟩,
-      fun ⟨s', K'', hs, hK, he⟩ ↦ ⟨s', K'', he, hs, hK⟩⟩
+@[simp] theorem agreeUpTo_zero_iff {K K' : SyntacticEnvironment Atom} :
+    AgreeUpTo 0 K K' ↔ K.SameInitialString K' := by
+  simp [AgreeUpTo]
 
-theorem Step.AgreeUpTo.refl (n : ℕ) (s : Step Atom) : s.AgreeUpTo n s := by
-  cases s with
-  | not => rfl
-  | right c F => rfl
-  | left c G =>
-    simp only [AgreeUpTo]
-    split_ifs
-    · exact ⟨c, G, rfl, Iff.rfl⟩
-    · exact ⟨G, rfl⟩
-
-theorem AgreeUpTo.refl (n : ℕ) (K : SyntacticEnvironment Atom) : AgreeUpTo n K K := by
-  induction K generalizing n with
-  | nil => rfl
-  | cons s K ih => exact ⟨s, K, rfl, .refl n s, ih _⟩
-
-theorem Step.AgreeUpTo.mono {m n : ℕ} {s s' : Step Atom} (h : s.AgreeUpTo m s') (hnm : n ≤ m) :
-    s.AgreeUpTo n s' := by
-  cases s with
-  | not => exact h
-  | right c F => exact h
-  | left c G =>
-    simp only [AgreeUpTo] at h ⊢
-    by_cases hn0 : n = 0
-    · simp only [hn0, ite_true]
-      by_cases hm0 : m = 0
-      · simpa [hm0] using h
-      · by_cases hm : m < c.rightItems
-        · simp only [hm0, hm, ite_false, ite_true] at h
-          obtain ⟨G', rfl⟩ := h
-          exact ⟨c, G', rfl, Iff.rfl⟩
-        · simp only [hm0, hm, ite_false] at h
-          exact ⟨c, G, h, Iff.rfl⟩
-    · have hm0 : ¬ m = 0 := by omega
-      by_cases hn : n < c.rightItems
-      · by_cases hm : m < c.rightItems
-        · simpa [hn0, hn, hm0, hm] using h
-        · simp only [hm0, hm, ite_false] at h
-          simp only [hn0, hn, ite_false, ite_true]
-          exact ⟨G, h⟩
-      · have hm : ¬ m < c.rightItems := by omega
-        simpa [hn0, hn, hm0, hm] using h
+theorem AgreeUpTo.refl (n : ℕ) (K : SyntacticEnvironment Atom) : AgreeUpTo n K K :=
+  ⟨rfl, List.take_prefix _ _⟩
 
 theorem AgreeUpTo.mono {m n : ℕ} {K K' : SyntacticEnvironment Atom} (h : AgreeUpTo m K K')
     (hnm : n ≤ m) : AgreeUpTo n K K' := by
-  induction K generalizing m n K' with
-  | nil => exact h
-  | cons s K ih =>
-    obtain ⟨s', K'', rfl, hs, hK⟩ := h
-    exact ⟨s', K'', rfl, hs.mono hnm, ih hK (Nat.sub_le_sub_right hnm _)⟩
+  refine ⟨h.1, ?_⟩
+  rw [show K.yield.2.take n = (K.yield.2.take m).take n by rw [List.take_take, min_eq_left hnm]]
+  exact (List.take_prefix _ _).trans h.2
 
-theorem Step.agreeUpTo_iff_eq {n : ℕ} {s s' : Step Atom} (hn : s.rightItems ≤ n) :
-    s.AgreeUpTo n s' ↔ s' = s := by
-  cases s with
-  | not => exact Iff.rfl
-  | right c F => exact Iff.rfl
-  | left c G =>
-    have h1 : 1 ≤ c.rightItems := by cases c <;> decide
-    have hn0 : ¬ n = 0 := by simp only [rightItems] at hn; omega
-    have hn' : ¬ n < c.rightItems := by simp only [rightItems] at hn; omega
-    simp only [AgreeUpTo, hn0, hn', ite_false]
-
-/-- From the last parsing point on, only the environment itself agrees. -/
-theorem agreeUpTo_iff_eq {n : ℕ} {K K' : SyntacticEnvironment Atom} (hn : rightItems K ≤ n) :
+/-- From the last token after the gap on, only the environment itself agrees. -/
+theorem agreeUpTo_iff_eq {n : ℕ} {K K' : SyntacticEnvironment Atom} (hn : K.yield.2.length ≤ n) :
     AgreeUpTo n K K' ↔ K' = K := by
-  induction K generalizing n K' with
-  | nil => exact Iff.rfl
-  | cons s K ih =>
-    rw [rightItems_cons] at hn
-    simp only [AgreeUpTo, Step.agreeUpTo_iff_eq (show s.rightItems ≤ n by omega),
-      ih (show rightItems K ≤ n - s.rightItems by omega)]
-    exact ⟨fun ⟨_, _, he, rfl, rfl⟩ ↦ he, fun h ↦ ⟨s, K, h, rfl, rfl⟩⟩
+  refine ⟨fun ⟨hK, h⟩ ↦ ?_, fun h ↦ h ▸ .refl n K⟩
+  rw [List.take_of_length_le hn] at h
+  exact (eq_of_yield_snd_prefix hK h).symm
 
-/-- A good final of `K ++ [s]` up to a parsing point is a good final of `K` inside one of `s`. -/
-theorem agreeUpTo_append_singleton {n : ℕ} {K L : SyntacticEnvironment Atom} {s : Step Atom} :
-    AgreeUpTo n (K ++ [s]) L ↔
-      ∃ K' s', L = K' ++ [s'] ∧ AgreeUpTo n K K' ∧ s.AgreeUpTo (n - rightItems K) s' := by
-  induction K generalizing n L with
-  | nil =>
-    simp only [List.nil_append, AgreeUpTo, rightItems_nil, Nat.sub_zero]
-    exact ⟨fun ⟨s', K'', he, hs, hK⟩ ↦ ⟨[], s', by rw [he, hK]; rfl, rfl, hs⟩,
-      fun ⟨K', s', he, hK, hs⟩ ↦ ⟨s', [], by rw [he, hK]; rfl, hs, rfl⟩⟩
-  | cons t K ih =>
-    simp only [List.cons_append, AgreeUpTo, rightItems_cons, ih]
-    constructor
-    · rintro ⟨t', _, rfl, ht, K', s', rfl, hK, hs⟩
-      exact ⟨t' :: K', s', rfl, ⟨t', K', rfl, ht, hK⟩, by rwa [Nat.sub_add_eq]⟩
-    · rintro ⟨_, s', rfl, ⟨t', K', rfl, ht, hK⟩, hs⟩
-      exact ⟨t', K' ++ [s'], rfl, ht, K', s', rfl, hK, by rwa [← Nat.sub_add_eq]⟩
+private theorem take_append_prefix_iff {α : Type*} {n : ℕ} {a a' b b' : List α}
+    (h : a <+: a' → a = a') (h' : a' <+: a → a' = a) :
+    a.take n ++ b.take (n - a.length) <+: a' ++ b' ↔ a.take n <+: a' ∧ b.take (n - a.length) <+: b' := by
+  by_cases hn : n ≤ a.length
+  · rw [Nat.sub_eq_zero_of_le hn, List.take_zero, List.append_nil]
+    refine ⟨fun hp ↦ ⟨?_, List.nil_prefix⟩, fun ⟨hp, _⟩ ↦ hp.trans (List.prefix_append _ _)⟩
+    by_cases ha : n ≤ a'.length
+    · exact List.prefix_of_prefix_length_le hp (List.prefix_append _ _) (by simp; omega)
+    · have ha' := h' ((List.prefix_of_prefix_length_le (List.prefix_append _ _) hp
+        (by simp; omega)).trans (List.take_prefix _ _))
+      exact absurd (ha' ▸ hn) ha
+  · rw [List.take_of_length_le (by omega)]
+    refine ⟨fun hp ↦ ?_, fun ⟨h₁, h₂⟩ ↦ ?_⟩
+    · obtain rfl : a = a' := by
+        rcases le_total a.length a'.length with hl | hl
+        · exact h (List.prefix_of_prefix_length_le ((List.prefix_append a _).trans hp)
+            (List.prefix_append _ _) hl)
+        · exact (h' (List.prefix_of_prefix_length_le (List.prefix_append _ _)
+            ((List.prefix_append a _).trans hp) hl)).symm
+      exact ⟨List.prefix_rfl, (List.prefix_append_right_inj _).1 hp⟩
+    · obtain rfl := h h₁
+      exact (List.prefix_append_right_inj _).2 h₂
+
+/-- A good final of `K ++ M` at a parsing point is a good final of `K` there inside a good final of
+`M` at the corresponding parsing point. -/
+theorem agreeUpTo_append_iff {n : ℕ} {K M L : SyntacticEnvironment Atom} :
+    AgreeUpTo n (K ++ M) L ↔ ∃ K' M', L = K' ++ M' ∧ AgreeUpTo n K K' ∧
+      AgreeUpTo (n - K.yield.2.length) M M' := by
+  have key {K K' : SyntacticEnvironment Atom} (hK : K.SameInitialString K')
+      (h : K.yield.2 <+: K'.yield.2) : K.yield.2 = K'.yield.2 := by
+    rw [eq_of_yield_snd_prefix hK h]
+  simp only [AgreeUpTo, sameInitialString_append_iff]
+  constructor
+  · rintro ⟨⟨K', M', rfl, hK, hM⟩, h⟩
+    rw [yield_append, yield_append, List.take_append] at h
+    obtain ⟨h₁, h₂⟩ := (take_append_prefix_iff (key hK) (key hK.symm)).1 h
+    exact ⟨K', M', rfl, ⟨hK, h₁⟩, hM, h₂⟩
+  · rintro ⟨K', M', rfl, ⟨hK, h₁⟩, hM, h₂⟩
+    refine ⟨⟨K', M', rfl, hK, hM⟩, ?_⟩
+    rw [yield_append, yield_append, List.take_append]
+    exact (take_append_prefix_iff (key hK) (key hK.symm)).2 ⟨h₁, h₂⟩
+
+@[simp] theorem agreeUpTo_nil_iff {n : ℕ} {K : SyntacticEnvironment Atom} :
+    AgreeUpTo n [] K ↔ K = [] := by
+  simp [AgreeUpTo, sameInitialString_nil_iff]
+
+/-- A good final of `s :: K` at a parsing point is a good final of the step there inside a good
+final of `K` at the corresponding parsing point. -/
+theorem agreeUpTo_cons_iff {n : ℕ} {s : Step Atom} {K L : SyntacticEnvironment Atom} :
+    AgreeUpTo n (s :: K) L ↔ ∃ s' K', L = s' :: K' ∧ AgreeUpTo n [s] [s'] ∧
+      AgreeUpTo (n - s.yield.2.length) K K' := by
+  rw [show s :: K = [s] ++ K from rfl, agreeUpTo_append_iff]
+  constructor
+  · rintro ⟨M, K', rfl, hs, hK⟩
+    obtain ⟨s', rfl⟩ : ∃ s', M = [s'] := by
+      have := (sameInitialString_iff_forall₂.1 hs.1).length_eq
+      match M, this with
+      | [s'], _ => exact ⟨s', rfl⟩
+    exact ⟨s', K', rfl, hs, by simpa using hK⟩
+  · rintro ⟨s', K', rfl, hs, hK⟩
+    exact ⟨[s'], K', rfl, hs, by simpa using hK⟩
 
 /-! ### The continuations at a parsing point -/
 
@@ -403,7 +521,8 @@ theorem antitone_continuations (K : SyntacticEnvironment Atom) : Antitone (K.con
       exact ⟨K', hK'.mono (by exact_mod_cast hmn), rfl⟩
 
 /-- From the last item after the gap on, a parsing point consults only the sentence itself. -/
-theorem continuations_eq_top_of_le {n : ℕ} {K : SyntacticEnvironment Atom} (hn : rightItems K ≤ n) :
+theorem continuations_eq_top_of_le {n : ℕ} {K : SyntacticEnvironment Atom}
+    (hn : K.yield.2.length ≤ n) :
     K.continuations I n = K.continuations I ⊤ := by
   rw [continuations_natCast, continuations_top]
   simp only [agreeUpTo_iff_eq hn, Set.ofPred_eq_eq_singleton, Set.image_singleton]
@@ -515,16 +634,18 @@ theorem exists_dependsAt_left [Nonempty Atom] (c : Connective) (w : W) :
 private theorem mem_localContext_of_dependsAt {K K' : SyntacticEnvironment Atom}
     (h : SameInitialString K K') {w : W} (hw : DependsAt (K'.truth I) w) :
     w ∈ K.localContext I Set.univ := by
+  rw [sameInitialString_iff_forall₂] at h
   induction h with
   | nil => trivial
-  | cons hs _ ih =>
+  | @cons s _ _ _ hs _ ih =>
     obtain ⟨hs', hK⟩ := (dependsAt_truth_cons I).1 hw
     rw [localContext_cons, Step.localContext_eq_inter]
     refine ⟨ih hK, ?_⟩
-    cases hs with
-    | not => trivial
-    | right c F => exact (dependsAt_right_iff I c F w).1 hs'
-    | left => trivial
+    cases s with
+    | right c F =>
+      obtain rfl := Step.sameInitialString_right_iff.1 hs
+      exact (dependsAt_right_iff I c F w).1 hs'
+    | _ => trivial
 
 /-- Some good final makes the truth value at `w` depend on the gap of `K` iff `w` is in
 [karttunen-1974-presupposition]'s local context of the gap. -/
@@ -533,20 +654,20 @@ theorem exists_dependsAt_iff [Nonempty Atom] (K : SyntacticEnvironment Atom) (w 
       w ∈ K.localContext I Set.univ := by
   refine ⟨fun ⟨_, hK', hw⟩ ↦ mem_localContext_of_dependsAt I hK' hw, fun hw ↦ ?_⟩
   induction K with
-  | nil => exact ⟨[], .nil, by simp [DependsAt, truth]⟩
+  | nil => exact ⟨[], rfl, by simp [DependsAt, truth]⟩
   | cons s K ih =>
     rw [localContext_cons, Step.localContext_eq_inter] at hw
     obtain ⟨K', hK', hdep⟩ := ih hw.1
     cases s with
     | not =>
-      exact ⟨.not :: K', .cons .not hK',
+      exact ⟨.not :: K', SameInitialString.cons rfl hK',
         (dependsAt_truth_cons I).2 ⟨by simp [DependsAt, Step.truth], hdep⟩⟩
     | right c F =>
-      exact ⟨.right c F :: K', .cons (.right c F) hK',
+      exact ⟨.right c F :: K', SameInitialString.cons rfl hK',
         (dependsAt_truth_cons I).2 ⟨(dependsAt_right_iff I c F w).2 hw.2, hdep⟩⟩
     | left c G =>
       obtain ⟨G', hG'⟩ := exists_dependsAt_left I c w
-      exact ⟨.left c G' :: K', .cons (.left Iff.rfl G G') hK',
+      exact ⟨.left c G' :: K', SameInitialString.cons rfl hK',
         (dependsAt_truth_cons I).2 ⟨hG', hdep⟩⟩
 
 end SyntacticEnvironment
