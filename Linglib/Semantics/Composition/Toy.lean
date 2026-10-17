@@ -21,8 +21,7 @@ off the model.
 * `toyLang`, `toyStructure`: the signature and its interpretation.
 * `toyModel`: the one-world composition model.
 * `toyNaming`, `toyLexicon`: the naming maps and the lexicon they induce.
-* `ToyConst`, `toyTerms`: four words as constants of the typed λ-calculus, for the translation of
-  trees into terms.
+* `ToyConst`, `toyConsts`: four words as constants, for the translation of trees into terms.
 
 ## Implementation notes
 
@@ -171,8 +170,9 @@ example :
 
 /-! ### Translation into terms
 
-Four words as constants: a quantifier-raised tree translates to its logical form, which the
-interpretation of the constants evaluates to what `Tree.interp` computes. -/
+Four words as constants: a quantifier-raised tree translates to its term, with the mode at each
+node, and the interpretation of the constants evaluates the term to what `Tree.interp`
+computes. -/
 
 /-- The constants of the four-word signature. -/
 inductive ToyConst : Ty → Type
@@ -188,12 +188,12 @@ noncomputable def ToyConst.interp : {ty : Ty} → ToyConst ty → Ty.Domain ToyE
   | _, .sleeps => Toy.sleeps
   | _, .john => .john
 
-/-- The four words translate to their constants. -/
-def toyTerms : String → Option (Σ ty, Term ToyConst ty)
-  | "every" => some ⟨_, .const .every⟩
-  | "student" => some ⟨_, .const .student⟩
-  | "sleeps" => some ⟨_, .const .sleeps⟩
-  | "John" => some ⟨_, .const .john⟩
+/-- The four words and their constants. -/
+def toyConsts : String → Option (Σ ty, ToyConst ty)
+  | "every" => some ⟨_, .every⟩
+  | "student" => some ⟨_, .student⟩
+  | "sleeps" => some ⟨_, .sleeps⟩
+  | "John" => some ⟨_, .john⟩
   | _ => none
 
 /-- *Every student sleeps*, with the subject raised over the trace of index 1. -/
@@ -201,30 +201,26 @@ def everyStudentSleeps : PhraseStructure.Tree Unit String :=
   .node () [.node () [.terminal () "every", .terminal () "student"],
     .bind 1 () (.node () [.trace 1 (), .terminal () "sleeps"])]
 
-/-- The logical form of *every student sleeps* is `every(student)(λ1. sleeps(x₁))`. -/
-theorem translate_everyStudentSleeps : Tree.translate toyTerms everyStudentSleeps =
-    some ⟨.t, .app (.app (.const .every) (.const .student))
-      (.lam 1 (.app (.const .sleeps) (.var 1)))⟩ := rfl
+/-- The term of *every student sleeps*: the determiner applies forward to the noun and to the
+abstraction over the trace, which the verb applies backward to. -/
+theorem translate_everyStudentSleeps : Tree.translate toyConsts everyStudentSleeps =
+    some ⟨.t, .comp .functionalLeft (.comp .functionalLeft (.const .every) (.const .student))
+      (.lam 1 (.comp .functionalRight (.var 1) (.const .sleeps)))⟩ := rfl
 
-/-- The logical form of the raised sentence is closed. -/
-example : ((Tree.translate toyTerms everyStudentSleeps).map fun d ↦ d.2.freeVars) = some ∅ := by
+/-- The term of the raised sentence is closed. -/
+example : ((Tree.translate toyConsts everyStudentSleeps).map fun d ↦ d.2.freeVars) = some ∅ := by
   rw [translate_everyStudentSleeps]; decide
 
 /-- *John John* translates to nothing, since no mode combines two individuals. -/
-example : Tree.translate toyTerms
+example : Tree.translate toyConsts
     (.node () [.terminal () "John", .terminal () "John"] : PhraseStructure.Tree Unit String) =
       none := rfl
 
-/-- The engine interprets *every student sleeps* as its logical form says: every student
-sleeps. -/
+/-- The engine interprets *every student sleeps* as its term says: every student sleeps. -/
 example (g : Assignment ToyEntity) :
-    Tree.interp (fun w ↦ (toyTerms w).map (Tree.evalValue ToyConst.interp g)) g everyStudentSleeps =
-      some ⟨.t, ∀ x, Toy.student x → Toy.sleeps x⟩ := by
-  have hc : ∀ w d, toyTerms w = some d → d.2.Closed := by
-    intro w d h
-    simp only [toyTerms] at h
-    split at h <;> cases h <;> rfl
-  rw [Tree.interp_eq_map_translate ToyConst.interp hc g g, translate_everyStudentSleeps]
+    Tree.interp (M := Id) (fun w ↦ (toyConsts w).map fun c ↦ ⟨c.1, ToyConst.interp c.2⟩) g
+      everyStudentSleeps = some ⟨.t, ∀ x, Toy.student x → Toy.sleeps x⟩ := by
+  rw [Tree.interp_eq_eval_translate, translate_everyStudentSleeps]
   rfl
 
 end HeimKratzer
