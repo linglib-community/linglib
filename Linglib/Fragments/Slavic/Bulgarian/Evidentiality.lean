@@ -28,7 +28,6 @@ open Evidential
 
 /-- The non-firsthand *l*-form, cited by its suffix; the aorist is its unmarked counterpart. -/
 def evidentials : List Evidential :=
-  [ { morphs := [.suff "l"], exponent := .tamFusion,
-      covers := {.inference, .assumption, .hearsay} } ]
+  [ { morphs := [.suff "l"], covers := {.inference, .assumption, .hearsay, .quotative} } ]
 
 end Bulgarian.Evidentiality

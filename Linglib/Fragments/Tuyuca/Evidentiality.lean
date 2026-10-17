@@ -8,7 +8,7 @@ public import Linglib.Semantics.Evidential.Defs
 Tuyuca (East Tucanoan, Vaupés) has a five-choice system of Aikhenvald's type D1, the most
 frequently cited example of its kind: visual *-wi*, non-visual sensory *-ti*, apparent
 (inferred) *-yi*, secondhand (reported) *-yigi* and assumed *-hiyi*, obligatory verbal
-suffixes; [barnes-1984] is the classic description. WALS codes the language as having direct
+suffixes, classically described by Barnes. WALS codes the language as having direct
 and indirect evidentials.
 
 ## References
@@ -26,10 +26,10 @@ open Evidential
 
 /-- Visual *-wi*, non-visual *-ti*, apparent *-yi*, secondhand *-yigi* and assumed *-hiyi*. -/
 def evidentials : List Evidential :=
-  [ { morphs := [.suff "wi"], exponent := .verbalAffix, covers := {.visual} },
-    { morphs := [.suff "ti"], exponent := .verbalAffix, covers := {.sensory} },
-    { morphs := [.suff "yi"], exponent := .verbalAffix, covers := {.inference} },
-    { morphs := [.suff "yigi"], exponent := .verbalAffix, covers := {.hearsay} },
-    { morphs := [.suff "hiyi"], exponent := .verbalAffix, covers := {.assumption} } ]
+  [ { morphs := [.suff "wi"], covers := {.visual} },
+    { morphs := [.suff "ti"], covers := {.sensory} },
+    { morphs := [.suff "yi"], covers := {.inference} },
+    { morphs := [.suff "yigi"], covers := {.hearsay, .quotative} },
+    { morphs := [.suff "hiyi"], covers := {.assumption} } ]
 
 end Tuyuca.Evidentiality

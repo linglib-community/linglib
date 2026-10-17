@@ -7,8 +7,8 @@ public import Linglib.Semantics.Aspect.Defs
 # Kashaya evidentiality
 
 Kashaya (Pomoan, northern California) marks the source of the speaker's information with a
-paradigm of verbal suffixes, which [oswalt-1986] lays out in his Table 1 and which
-[aikhenvald-2004] sets beside the five-choice systems as a complex system with further terms.
+paradigm of verbal suffixes, which Oswalt lays out in his Table 1 and which Aikhenvald sets
+beside the five-choice systems as a complex system with further terms.
 The rows of the table are the evidentials, top down in the order of Oswalt's hierarchy of
 preference; its columns are the modes of speech. A spontaneous remark, prompted by the event
 itself, makes the finest distinctions: the performative pair *-ŵela* ~ *-mela*, the speaker
@@ -64,45 +64,45 @@ inductive Mode
 /-- The performative pair *-ŵela* ~ *-mela*: the speaker performs or has just performed the act.
 Its source lies outside the six parameters, so it covers none. -/
 def performative : Perfectivity → Evidential
-  | .imperfective => { morphs := [.suff "ŵela"], exponent := .verbalAffix, covers := ∅ }
-  | .perfective => { morphs := [.suff "mela"], exponent := .verbalAffix, covers := ∅ }
+  | .imperfective => { morphs := [.suff "ŵela"], covers := ∅ }
+  | .perfective => { morphs := [.suff "mela"], covers := ∅ }
 
 /-- The factual-visual pair: the speaker sees or saw the event. The imperfective factual *-ŵă*
 also states general truths and common knowledge, general knowledge cast in the visual; the
 perfective visual *-yă* does not. -/
 def factualVisual : Perfectivity → Evidential
-  | .imperfective => { morphs := [.suff "ŵă"], exponent := .verbalAffix, covers := {.visual} }
-  | .perfective => { morphs := [.suff "yă"], exponent := .verbalAffix, covers := {.visual} }
+  | .imperfective => { morphs := [.suff "ŵă"], covers := {.visual} }
+  | .perfective => { morphs := [.suff "yă"], covers := {.visual} }
 
 /-- The auditory *-V̂nnă*: the speaker heard the sound of the action but did not see it. -/
 def auditory : Evidential :=
-  { morphs := [.suff "V̂nnă"], exponent := .verbalAffix, covers := {.sensory} }
+  { morphs := [.suff "V̂nnă"], covers := {.sensory} }
 
 /-- Inferential I *-qă*: inference from circumstances or evidence found apart, in space or time,
 from the event. -/
 def inferential : Evidential :=
-  { morphs := [.suff "qă"], exponent := .verbalAffix, covers := {.inference} }
+  { morphs := [.suff "qă"], covers := {.inference} }
 
 /-- The quotative *-do*: information learned from someone else. -/
 def quotative : Evidential :=
-  { morphs := [.suff "do"], exponent := .verbalAffix, covers := {.hearsay} }
+  { morphs := [.suff "do"], covers := {.hearsay, .quotative} }
 
 /-- Inferential II *-bi-*, which must be followed by another suffix: a subordinator, the
 absolutive in *-biw* 'it turned out', the quotative or inferential I. -/
 def inferentialII : Evidential :=
-  { morphs := [.suff "bi"], exponent := .verbalAffix, covers := {.inference} }
+  { morphs := [.suff "bi"], covers := {.inference} }
 
 /-- The personal experience *-yowă* of the narrative construction, the factual on an element
 *-yo-*, which replaces every evidential of direct evidence. -/
 def personalExperience : Evidential :=
-  { morphs := [.suff "yowă"], exponent := .verbalAffix, covers := {.visual, .sensory, .inference} }
+  { morphs := [.suff "yowă"], covers := {.visual, .sensory, .inference} }
 
 /-- The archaic remote past *-miyă*, the visual on an element *-mi-*: personal experience in an
 irretrievable past. -/
 def remotePast : Evidential :=
-  { morphs := [.suff "miyă"], exponent := .verbalAffix, covers := {.visual, .sensory, .inference} }
+  { morphs := [.suff "miyă"], covers := {.visual, .sensory, .inference} }
 
-/-- The paradigm of a mode for stems of an aspect: a column of Table 1 read top down, in the
+/-- The paradigm of a mode for stems of an aspect is a column of Table 1 read top down, in the
 order of Oswalt's hierarchy. -/
 def paradigm : Mode → Perfectivity → List Evidential
   | .spontaneous, a => [performative a, factualVisual a, auditory, inferential, quotative]

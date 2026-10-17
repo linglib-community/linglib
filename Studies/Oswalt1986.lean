@@ -7,7 +7,7 @@ public import Linglib.Data.Examples.Oswalt1986
 /-!
 # Oswalt (1986): The Evidential System of Kashaya
 
-This file formalizes [oswalt-1986]'s description of the Kashaya evidential suffixes, recorded
+This file formalizes Oswalt's description of the Kashaya evidential suffixes, recorded
 in `Fragments/Kashaya/Evidentiality.lean` as the columns of his Table 1. The suffixes of a
 column are mutually exclusive, only one appearing on a verb, and cover disjoint sources, so
 every column is a well-formed paradigm (`paradigm_wellFormed`). A response to another's words
@@ -50,13 +50,13 @@ theorem paradigm_responsive (a : Perfectivity) :
     paradigm .responsive a = (paradigm .spontaneous a).erase (performative a) := by
   cases a <;> rfl
 
-/-- The performative does not take the responsive suffix: *men s̓ímela* 'I have done that' is
-normal as an isolated remark, *men s̓ímelam* does not occur. -/
+/-- The performative does not take the responsive suffix, so that *men s̓ímela* 'I have done that'
+is normal as an isolated remark and *men s̓ímelam* does not occur. -/
 theorem performative_notMem_responsive (a : Perfectivity) :
     performative a ∉ paradigm .responsive a := by
   cases a <;> decide
 
-/-- Inferential II belongs to no column: it is never verb-final. -/
+/-- Inferential II, never verb-final, belongs to no column. -/
 theorem inferentialII_notMem (m : Mode) (a : Perfectivity) : inferentialII ∉ paradigm m a := by
   cases m <;> cases a <;> decide
 
@@ -67,16 +67,16 @@ theorem expressed_spontaneous_subset (m : Mode) (a : Perfectivity) :
     expressed (paradigm .spontaneous a) ⊆ expressed (paradigm m a) := by
   cases m <;> cases a <;> decide
 
-/-- Every column is a coarsening of the spontaneous column: restricted to the sources a
-spontaneous remark expresses, its paradigm is refined by the spontaneous paradigm. -/
+/-- Every column is a coarsening of the spontaneous column, its paradigm restricted to the
+sources a spontaneous remark expresses being refined by the spontaneous paradigm. -/
 theorem spontaneous_le (m : Mode) (a : Perfectivity) :
     Evidential.finpartition (paradigm .spontaneous a) (paradigm_wellFormed _ _) ≤
       (Evidential.finpartition (paradigm m a) (paradigm_wellFormed _ _)).restrict
         (expressed_spontaneous_subset m a) := by
   cases m <;> cases a <;> (show ∀ b ∈ _, ∃ c ∈ _, b ≤ c; decide)
 
-/-- A spontaneous remark makes four distinctions of source in either aspect: the performative,
-covering no parameter, adds no block. -/
+/-- A spontaneous remark makes four distinctions of source in either aspect, since the
+performative, covering no parameter, adds no block. -/
 theorem card_parts_spontaneous (a : Perfectivity) :
     (Evidential.finpartition (paradigm .spontaneous a) (paradigm_wellFormed _ _)).parts.card =
       4 := by
@@ -91,30 +91,51 @@ theorem card_parts_narrative (a : Perfectivity) :
 
 /-! ### The hierarchy -/
 
-/-- The evidential a column prefers for the sources at hand: its first suffix covering one of
+/-- The evidential a column prefers for the sources at hand is its first suffix covering one of
 them, the rows of Table 1 being ordered so that each has priority over those below. -/
 def preferred (es : List Evidential) (sources : Finset Parameter) : Option Evidential :=
   es.find? fun e ↦ (e.covers ∩ sources).Nonempty
 
-/-- Seeing takes priority over every other source: whatever else a speaker has, the
+/-- Seeing takes priority over every other source, so whatever else a speaker has, the
 factual-visual is used. -/
 theorem preferred_of_visual_mem (a : Perfectivity) {S : Finset Parameter} (h : .visual ∈ S) :
     preferred (paradigm .spontaneous a) S = some (factualVisual a) := by
   cases a <;> simp [preferred, paradigm, List.find?, performative, factualVisual,
     Finset.Nonempty, h]
 
+/-- A column prefers its last suffix exactly when that suffix covers a source at hand and no
+suffix above it does. -/
+theorem preferred_append_singleton_eq_some {es : List Evidential} {e : Evidential} (he : e ∉ es)
+    (S : Finset Parameter) :
+    preferred (es ++ [e]) S = some e ↔
+      ¬ Disjoint e.covers S ∧ ∀ x ∈ es, Disjoint x.covers S := by
+  simp only [preferred, List.find?_append, ← Finset.not_disjoint_iff_nonempty_inter]
+  cases h : es.find? (fun x ↦ !Disjoint x.covers S) with
+  | none => simp_all [List.find?_eq_none]
+  | some x =>
+    have hx := List.mem_of_find?_eq_some h
+    have := List.find?_some h
+    simp only [Option.some_or, Option.some.injEq]
+    exact ⟨fun hxe ↦ (he (hxe ▸ hx)).elim, fun ⟨_, hall⟩ ↦ by simp_all⟩
+
 /-- The quotative is used exactly when report is at hand and no other row of the column covers
 a source at hand. -/
 theorem preferred_eq_quotative_iff (a : Perfectivity) (S : Finset Parameter) :
     preferred (paradigm .spontaneous a) S = some quotative ↔
-      .hearsay ∈ S ∧ ∀ e ∈ paradigm .spontaneous a, e ≠ quotative → Disjoint e.covers S := by
-  by_cases hv : .visual ∈ S <;> by_cases hs : .sensory ∈ S <;> by_cases hi : .inference ∈ S <;>
-    by_cases hh : .hearsay ∈ S <;> cases a <;>
-    simp [preferred, paradigm, List.find?, performative, factualVisual, auditory, inferential,
-      quotative, Finset.Nonempty, Finset.disjoint_left, hv, hs, hi, hh]
+      ¬ Disjoint quotative.covers S ∧
+        ∀ e ∈ paradigm .spontaneous a, e ≠ quotative → Disjoint e.covers S := by
+  have hne : quotative ∉ [performative a, factualVisual a, auditory, inferential] := by
+    cases a <;> decide
+  rw [show paradigm .spontaneous a =
+      [performative a, factualVisual a, auditory, inferential] ++ [quotative] from rfl,
+    preferred_append_singleton_eq_some hne]
+  refine and_congr_right fun _ ↦ ⟨fun h e he hq ↦ ?_,
+    fun h e he ↦ h e (List.mem_append_left _ he) (ne_of_mem_of_not_mem he hne)⟩
+  rcases List.mem_append.1 he with he | he
+  exacts [h e he, (hq (List.mem_singleton.1 he)).elim]
 
-/-- The performative is never chosen on the strength of a parameter: its source lies outside
-them. -/
+/-- The performative, whose source lies outside the parameters, is never chosen on the strength
+of one. -/
 theorem preferred_ne_performative (a : Perfectivity) (S : Finset Parameter) :
     preferred (paradigm .spontaneous a) S ≠ some (performative a) := fun h ↦ by
   have := List.find?_some h
@@ -131,7 +152,7 @@ def mode? (r : Datum) : Option Mode :=
   | some "remote" => some .remote
   | _ => none
 
-/-- The aspects an example's stem may have: the one its `aspect` feature names, or either. -/
+/-- The aspects an example's stem may have, the one its `aspect` feature names or else either. -/
 def aspects (r : Datum) : List Perfectivity :=
   match r.feature? "aspect" with
   | some "imperfective" => [.imperfective]

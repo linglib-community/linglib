@@ -37,7 +37,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
-      ["term", "sensory"],
+      ["term", "nonvisual"],
       ["source", "nonvisual"]
     ],
     "comment": "Tariana's five-choice system: the evidential -mahka is fused with recent past tense; omitting an evidential is ungrammatical.",
@@ -192,7 +192,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "B1"],
-      ["term", "visual"],
+      ["term", "direct"],
       ["source", "visual"]
     ],
     "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd.",
