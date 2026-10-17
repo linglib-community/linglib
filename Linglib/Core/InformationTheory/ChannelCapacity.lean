@@ -110,6 +110,19 @@ private theorem freeEnergy_uniformOn [Nonempty C] (ν : Measure C) [IsProbabilit
 
 variable (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C) [IsProbabilityMeasure μ]
 
+/-- The conditional entropy of a channel's output given its input is the input average of the
+entropies of the rows. -/
+theorem condEntropy_snd_fst_compProd :
+    H[Prod.snd | Prod.fst ; μ ⊗ₘ κ] = ∑ c, μ.real {c} * Hm[κ c] := by
+  rw [condEntropy_eq_sum _ measurable_fst]
+  refine Finset.sum_congr rfl fun c _ ↦ ?_
+  have hfst : (μ ⊗ₘ κ).real (Prod.fst ⁻¹' {c}) = μ.real {c} := by
+    rw [measureReal_def, ← Measure.fst_apply (.singleton c), Measure.fst_compProd, measureReal_def]
+  rw [hfst]
+  rcases eq_or_ne (μ {c}) 0 with h | h
+  · simp [measureReal_def, h]
+  · rw [entropy_def, Measure.map_snd_cond_fst_compProd μ κ h]
+
 private theorem measureMutualInfo_compProd_eq_sum :
     Im[μ ⊗ₘ κ] = ∑ c, μ.real {c} * ∑ w, (κ c).real {w}
       * log ((κ c).real {w} / (κ ∘ₘ μ).real {w}) := by

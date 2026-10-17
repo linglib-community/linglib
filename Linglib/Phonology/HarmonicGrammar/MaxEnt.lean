@@ -7,6 +7,7 @@ module
 
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.InformationTheory.Entropy
 public import Linglib.Core.Probability.GibbsVariational
 public import Mathlib.Analysis.Calculus.Deriv.Pi
@@ -27,13 +28,18 @@ violations as a MaxEnt distribution, the MaxEnt one has the greatest entropy, an
 much. The log-likelihood of an empirical distribution is concave in the weights, with gradient the
 expected less the observed violations, so the weights that maximize it are exactly those whose
 distribution has the observed expected violations, and the most likely MaxEnt grammar is the
-maximum-entropy one.
+maximum-entropy one. A conditional grammar, a Markov kernel from inputs to the MaxEnt
+distributions of their candidates, satisfies the same duality with conditional entropy, the
+expected violations averaged over the observed inputs.
 
 ## Main definitions
 
 * `HarmonicGrammar.maxEnt T w`: the MaxEnt distribution of the candidates.
+* `HarmonicGrammar.logPartition T w`: the log of its normalizing constant.
 * `HarmonicGrammar.logLikelihood T p w`: the expected log-probability, under the grammar, of the
   candidates drawn from `p`.
+* `HarmonicGrammar.condMaxEnt T w`, `HarmonicGrammar.condLogLikelihood T p w`: the conditional
+  grammar and its log-likelihood on input–output pairs drawn from `p`.
 
 ## Main results
 
@@ -48,13 +54,17 @@ maximum-entropy one.
 * `isMaxOn_logLikelihood_iff`, `isGreatest_measureEntropy_of_isMaxOn`: maximum likelihood is
   matching the observed violations, and gives the maximum-entropy distribution.
 * `maxEnt_sum`: additive violations over several inputs give independent outputs.
+* `isGreatest_condEntropy_condMaxEnt`, `isMaxOn_condLogLikelihood_iff`,
+  `condLogLikelihood_eq_neg_condEntropy`, `isGreatest_condEntropy_of_isMaxOn`: the conditional
+  duality.
 * `tendsto_maxEnt_smul_atTop`: scaling the weights concentrates the distribution on the harmony
   maximum.
 
 ## Implementation notes
 
 * The candidates of one input form a finite type. A conditional grammar takes, at an input `i`,
-  the violations `(con.comap (i, ·)).violations` of the candidates paired with `i`.
+  the violations `(con.comap (i, ·)).violations` of the candidates paired with `i`, and
+  `condMaxEnt` assembles these into a kernel over finitely many inputs.
 * Goldwater and Johnson write the exponent as `∑ i, wᵢ fᵢ` without a sign; harmony negates the
   weighted violations here, as in Hayes and Wilson, so that positive weights penalize.
 * The log-likelihood takes the empirical distribution of a sample; the log-probability of `n`
@@ -76,7 +86,28 @@ open scoped ENNReal
 
 namespace HarmonicGrammar
 
-variable {C ι : Type*} [MeasurableSpace C] [Fintype ι]
+variable {C ι : Type*} [Fintype ι]
+
+section LogPartition
+
+variable [Fintype C] (T : C → ι → ℝ) (w : ι → ℝ)
+
+/-- The log-partition function, the log of the normalizing constant of the MaxEnt
+distribution. -/
+noncomputable def logPartition : ℝ :=
+  log (∑ c, exp (harmony T w c))
+
+/-- The log-partition function is convex in the weights, a log-sum-exp of harmonies linear in
+them. -/
+theorem convexOn_logPartition [Nonempty C] : ConvexOn ℝ Set.univ (logPartition T) := by
+  refine ⟨convex_univ, fun x _ y _ a b ha hb hab ↦ ?_⟩
+  have := convexOn_log_sum_exp.2 (Set.mem_univ (harmony T x)) (Set.mem_univ (harmony T y))
+    ha hb hab
+  simpa [logPartition, harmony_add, harmony_smul] using this
+
+end LogPartition
+
+variable [MeasurableSpace C]
 
 /-- The MaxEnt distribution of candidates with violation vectors `T` under weights `w` weighs each
 candidate by the exponential of its harmony. -/
@@ -136,9 +167,9 @@ theorem absolutelyContinuous_maxEnt (q : Measure C) : q ≪ maxEnt T w := by
 
 /-- Harmony is log-probability up to the log of the normalizing constant. -/
 theorem log_maxEnt_real_singleton (c : C) :
-    log ((maxEnt T w).real {c}) = harmony T w c - log (∑ c', exp (harmony T w c')) := by
+    log ((maxEnt T w).real {c}) = harmony T w c - logPartition T w := by
   have : Nonempty C := ⟨c⟩
-  rw [maxEnt_real_singleton, log_softmax]
+  rw [maxEnt_real_singleton, log_softmax, logPartition]
 
 /-- The log-odds of two candidates are their harmony difference, `-(w ⬝ᵥ (T a - T b))`, linear
 in the weights. -/
@@ -175,7 +206,7 @@ theorem tendsto_maxEnt_smul_atTop {c : C} (h : ∀ c' ≠ c, harmony T w c' < ha
 through its expected violations. -/
 theorem integral_log_maxEnt_real_singleton (q : Measure C) [IsProbabilityMeasure q] :
     ∫ c, log ((maxEnt T w).real {c}) ∂q =
-      -(w ⬝ᵥ ∫ c, T c ∂q) - log (∑ c, exp (harmony T w c)) := by
+      -(w ⬝ᵥ ∫ c, T c ∂q) - logPartition T w := by
   rw [integral_fintype .of_finite, integral_eq_sum]
   simp only [smul_eq_mul, log_maxEnt_real_singleton, mul_sub, sum_sub_distrib, ← sum_mul,
     sum_measureReal_singleton_eq_one, one_mul, harmony, dotProduct_sum, dotProduct_smul,
@@ -184,7 +215,7 @@ theorem integral_log_maxEnt_real_singleton (q : Measure C) [IsProbabilityMeasure
 variable (p : Measure C) [IsProbabilityMeasure p]
 
 theorem logLikelihood_eq :
-    logLikelihood T p w = -(w ⬝ᵥ ∫ c, T c ∂p) - log (∑ c, exp (harmony T w c)) :=
+    logLikelihood T p w = -(w ⬝ᵥ ∫ c, T c ∂p) - logPartition T w :=
   integral_log_maxEnt_real_singleton T w p
 
 variable [Nonempty C]
@@ -195,7 +226,7 @@ variable [Nonempty C]
 expected penalty `w ⬝ᵥ ∫ c, T c ∂q` plus the log of the normalizing constant. -/
 theorem toReal_klDiv_maxEnt_add_measureEntropy (q : Measure C) [IsProbabilityMeasure q] :
     (klDiv q (maxEnt T w)).toReal + Hm[q] =
-      w ⬝ᵥ (∫ c, T c ∂q) + log (∑ c, exp (harmony T w c)) := by
+      w ⬝ᵥ (∫ c, T c ∂q) + logPartition T w := by
   have h := integral_log_maxEnt_real_singleton T w q
   rw [integral_fintype .of_finite] at h
   simp only [smul_eq_mul] at h
@@ -203,7 +234,7 @@ theorem toReal_klDiv_maxEnt_add_measureEntropy (q : Measure C) [IsProbabilityMea
   ring
 
 theorem measureEntropy_maxEnt :
-    Hm[maxEnt T w] = w ⬝ᵥ (∫ c, T c ∂maxEnt T w) + log (∑ c, exp (harmony T w c)) := by
+    Hm[maxEnt T w] = w ⬝ᵥ (∫ c, T c ∂maxEnt T w) + logPartition T w := by
   simpa using toReal_klDiv_maxEnt_add_measureEntropy T w (maxEnt T w)
 
 /-- A distribution with the expected violations of a MaxEnt distribution falls short of its
@@ -241,18 +272,31 @@ theorem isGreatest_measureEntropy_maxEnt :
 
 /-! ### Learning -/
 
-/-- The log-likelihood is concave in the weights: it is linear in them less the log-sum-exp of
-the harmonies, which are linear in them. -/
+/-- The gradient of the log-partition function is minus the expected violation vector. -/
+theorem hasFDerivAt_logPartition :
+    HasFDerivAt (logPartition T)
+      (-LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ (∫ c, T c ∂maxEnt T w))) w := by
+  let ℓ (a : ι → ℝ) : (ι → ℝ) →L[ℝ] ℝ := LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ a)
+  have hℓ (a v : ι → ℝ) : ℓ a v = a ⬝ᵥ v := rfl
+  have hH (c : C) : HasFDerivAt (fun w ↦ harmony T w c) (-ℓ (T c)) w :=
+    (-ℓ (T c)).hasFDerivAt.congr_of_eventuallyEq
+      (Eventually.of_forall fun w ↦ by simp [harmony, hℓ, dotProduct_comm])
+  change HasFDerivAt (fun w ↦ log (∑ c, exp (harmony T w c))) _ w
+  refine ((HasFDerivAt.fun_sum fun c (_ : c ∈ univ) ↦ (hH c).exp).log
+    (sum_exp_pos (harmony T w)).ne').congr_fderiv ?_
+  ext v
+  simp only [neg_apply, smul_apply, _root_.sum_apply, hℓ, smul_eq_mul,
+    LinearMap.coe_toContinuousLinearMap', dotProductBilin, LinearMap.coe_mk, AddHom.coe_mk,
+    integral_eq_sum, maxEnt_real_singleton, softmax_def, sum_dotProduct, smul_dotProduct,
+    mul_neg, sum_neg_distrib, mul_sum, div_eq_inv_mul, mul_assoc]
+
+/-- The log-likelihood is concave in the weights: it is linear in them less the log-partition
+function. -/
 theorem concaveOn_logLikelihood : ConcaveOn ℝ Set.univ (logLikelihood T p) := by
   have hlin : ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ ∫ c, T c ∂p) :=
     (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip (∫ c, T c ∂p))) convex_univ).congr
       fun w _ ↦ by simp
-  have hlse : ConvexOn ℝ Set.univ fun w : ι → ℝ ↦ log (∑ c, exp (harmony T w c)) := by
-    refine ⟨convex_univ, fun x _ y _ a b ha hb hab ↦ ?_⟩
-    have := convexOn_log_sum_exp.2 (Set.mem_univ (harmony T x)) (Set.mem_univ (harmony T y))
-      ha hb hab
-    simpa [harmony_add, harmony_smul] using this
-  exact (hlin.sub hlse).congr fun w _ ↦ (logLikelihood_eq T w p).symm
+  exact (hlin.sub (convexOn_logPartition T)).congr fun w _ ↦ (logLikelihood_eq T w p).symm
 
 /-- The gradient of the log-likelihood is the expected less the observed violation vector. -/
 theorem hasFDerivAt_logLikelihood :
@@ -261,21 +305,14 @@ theorem hasFDerivAt_logLikelihood :
         (dotProductBilin ℝ ℝ ((∫ c, T c ∂maxEnt T w) - ∫ c, T c ∂p))) w := by
   let ℓ (a : ι → ℝ) : (ι → ℝ) →L[ℝ] ℝ := LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ a)
   have hℓ (a v : ι → ℝ) : ℓ a v = a ⬝ᵥ v := rfl
-  have hH (c : C) : HasFDerivAt (fun w ↦ harmony T w c) (-ℓ (T c)) w :=
-    (-ℓ (T c)).hasFDerivAt.congr_of_eventuallyEq
-      (Eventually.of_forall fun w ↦ by simp [harmony, hℓ, dotProduct_comm])
-  have hZ := (HasFDerivAt.fun_sum fun c (_ : c ∈ univ) ↦ (hH c).exp).log
-    (sum_exp_pos (harmony T w)).ne'
   have hlin : HasFDerivAt (fun w ↦ -(w ⬝ᵥ ∫ c, T c ∂p)) (-ℓ (∫ c, T c ∂p)) w :=
     (-ℓ (∫ c, T c ∂p)).hasFDerivAt.congr_of_eventuallyEq
       (Eventually.of_forall fun w ↦ by simp [hℓ, dotProduct_comm])
-  refine (hlin.sub hZ).congr_of_eventuallyEq (Eventually.of_forall fun w ↦ logLikelihood_eq T w p)
-    |>.congr_fderiv ?_
+  refine (hlin.sub (hasFDerivAt_logPartition T w)).congr_of_eventuallyEq
+    (Eventually.of_forall fun w ↦ logLikelihood_eq T w p) |>.congr_fderiv ?_
   ext v
-  simp only [sub_apply, neg_apply, smul_apply, _root_.sum_apply, hℓ, smul_eq_mul,
-    LinearMap.coe_toContinuousLinearMap', dotProductBilin, LinearMap.coe_mk, AddHom.coe_mk,
-    integral_eq_sum, maxEnt_real_singleton, softmax_def, sub_dotProduct, sum_dotProduct,
-    smul_dotProduct, mul_neg, sum_neg_distrib, mul_sum, div_eq_inv_mul, mul_assoc]
+  simp only [sub_apply, neg_apply, hℓ, LinearMap.coe_toContinuousLinearMap', dotProductBilin,
+    LinearMap.coe_mk, AddHom.coe_mk, sub_dotProduct]
   ring
 
 /-- The partial derivative of the log-likelihood in the weight of constraint `j` is that
@@ -336,5 +373,187 @@ theorem map_eval_maxEnt_sum (k : κ) :
   simp [maxEnt_sum, Measure.pi_map_eval]
 
 end Joint
+
+/-! ### Conditional MaxEnt -/
+
+section Conditional
+
+variable {X Y : Type*} [Fintype X] [MeasurableSpace X] [MeasurableSingletonClass X]
+  [MeasurableSpace Y] (T : X × Y → ι → ℝ) (w : ι → ℝ)
+
+/-- The conditional MaxEnt grammar takes each input to the MaxEnt distribution of its candidates,
+whose violation vectors are `T (x, ·)`. -/
+noncomputable def condMaxEnt : Kernel X Y where
+  toFun x := maxEnt (fun y ↦ T (x, y)) w
+  measurable' := .of_discrete
+
+@[simp] theorem condMaxEnt_apply (x : X) : condMaxEnt T w x = maxEnt (fun y ↦ T (x, y)) w :=
+  rfl
+
+/-- The conditional log-likelihood of an empirical distribution `p` of input–output pairs is the
+expected log-probability of each output given its input. -/
+noncomputable def condLogLikelihood (p : Measure (X × Y)) (w : ι → ℝ) : ℝ :=
+  ∫ z, log ((condMaxEnt T w z.1).real {z.2}) ∂p
+
+variable [Fintype Y] [MeasurableSingletonClass Y] (p : Measure (X × Y)) [IsProbabilityMeasure p]
+
+theorem condLogLikelihood_eq :
+    condLogLikelihood T p w =
+      -(w ⬝ᵥ ∫ z, T z ∂p) - ∑ x, p.fst.real {x} * logPartition (fun y ↦ T (x, y)) w := by
+  simp only [condLogLikelihood, integral_fintype .of_finite, Fintype.sum_prod_type, smul_eq_mul,
+    condMaxEnt_apply, log_maxEnt_real_singleton, Measure.fst_real_singleton_eq_sum, mul_sub,
+    sum_sub_distrib, sum_mul, harmony, dotProduct_sum, dotProduct_smul, mul_neg,
+    sum_neg_distrib]
+
+variable [Nonempty Y]
+
+instance : IsMarkovKernel (condMaxEnt T w) :=
+  ⟨fun x ↦ by rw [condMaxEnt_apply]; infer_instance⟩
+
+variable (ν : Measure X) [IsProbabilityMeasure ν]
+
+/-- Averaged over inputs drawn from `ν`, the divergence of a conditional model `q` from the
+conditional MaxEnt grammar and the conditional entropy of `q` add up to the expected penalty
+plus the average log-partition function. -/
+theorem sum_toReal_klDiv_condMaxEnt_add_condEntropy (q : Kernel X Y) [IsMarkovKernel q] :
+    ∑ x, ν.real {x} * (klDiv (q x) (condMaxEnt T w x)).toReal + H[Prod.snd | Prod.fst ; ν ⊗ₘ q] =
+      w ⬝ᵥ (∫ z, T z ∂(ν ⊗ₘ q)) + ∑ x, ν.real {x} * logPartition (fun y ↦ T (x, y)) w := by
+  rw [condEntropy_snd_fst_compProd q ν, Measure.integral_compProd_eq_sum, dotProduct_sum,
+    ← sum_add_distrib, ← sum_add_distrib]
+  refine sum_congr rfl fun x _ ↦ ?_
+  rw [dotProduct_smul, smul_eq_mul, ← mul_add, ← mul_add, condMaxEnt_apply,
+    toReal_klDiv_maxEnt_add_measureEntropy]
+
+/-- The conditional entropy of the conditional MaxEnt grammar. -/
+theorem condEntropy_condMaxEnt :
+    H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] =
+      w ⬝ᵥ (∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)) +
+        ∑ x, ν.real {x} * logPartition (fun y ↦ T (x, y)) w := by
+  simpa using sum_toReal_klDiv_condMaxEnt_add_condEntropy T w ν (condMaxEnt T w)
+
+/-- A conditional model with the expected violations of a conditional MaxEnt grammar falls short
+of its conditional entropy by its average divergence from it. -/
+theorem condEntropy_add_sum_toReal_klDiv {q : Kernel X Y} [IsMarkovKernel q]
+    (hq : ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)) :
+    H[Prod.snd | Prod.fst ; ν ⊗ₘ q] + ∑ x, ν.real {x} * (klDiv (q x) (condMaxEnt T w x)).toReal =
+      H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] := by
+  rw [condEntropy_condMaxEnt, ← hq, ← sum_toReal_klDiv_condMaxEnt_add_condEntropy, add_comm]
+
+/-- The conditional maximum entropy principle. No conditional model whose expected violations,
+averaged over the inputs, are those of a conditional MaxEnt grammar has more conditional
+entropy. -/
+theorem condEntropy_le_condMaxEnt {q : Kernel X Y} [IsMarkovKernel q]
+    (hq : ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)) :
+    H[Prod.snd | Prod.fst ; ν ⊗ₘ q] ≤ H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] := by
+  rw [← condEntropy_add_sum_toReal_klDiv T w ν hq]
+  exact le_add_of_nonneg_right <| sum_nonneg fun x _ ↦
+    mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg
+
+/-- A conditional model with those expected violations and that conditional entropy is the
+conditional MaxEnt grammar at every input of positive mass. -/
+theorem eq_condMaxEnt_of_condEntropy_eq {q : Kernel X Y} [IsMarkovKernel q]
+    (hq : ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w))
+    (h : H[Prod.snd | Prod.fst ; ν ⊗ₘ q] = H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w]) {x : X}
+    (hx : ν {x} ≠ 0) : q x = condMaxEnt T w x := by
+  have hkl := condEntropy_add_sum_toReal_klDiv T w ν hq
+  rw [h, add_eq_left, sum_eq_zero_iff_of_nonneg fun x _ ↦
+    mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg] at hkl
+  have hx' := (mul_eq_zero.1 (hkl x (mem_univ x))).resolve_left
+    ((measureReal_ne_zero_iff (measure_ne_top _ _)).2 hx)
+  rw [condMaxEnt_apply] at hx' ⊢
+  exact klDiv_eq_zero_iff.1 (((ENNReal.toReal_eq_zero_iff _).1 hx').resolve_right
+    (klDiv_ne_top (absolutelyContinuous_maxEnt _ w (q x)) .of_finite))
+
+/-- The conditional MaxEnt grammar has the greatest conditional entropy among the conditional
+models with its average expected violations. -/
+theorem isGreatest_condEntropy_condMaxEnt :
+    IsGreatest ((fun q : Kernel X Y ↦ H[Prod.snd | Prod.fst ; ν ⊗ₘ q]) ''
+      {q | IsMarkovKernel q ∧ ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)})
+      (H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w]) :=
+  ⟨⟨condMaxEnt T w, ⟨inferInstance, rfl⟩, rfl⟩, by
+    rintro _ ⟨q, ⟨hq, hv⟩, rfl⟩
+    exact condEntropy_le_condMaxEnt T w ν hv⟩
+
+
+/-- The conditional log-likelihood is concave in the weights. -/
+theorem concaveOn_condLogLikelihood : ConcaveOn ℝ Set.univ (condLogLikelihood T p) := by
+  have hlin : ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ ∫ z, T z ∂p) :=
+    (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip (∫ z, T z ∂p))) convex_univ).congr
+      fun w _ ↦ by simp
+  have hZ : ConvexOn ℝ Set.univ fun w : ι → ℝ ↦
+      ∑ x, p.fst.real {x} * logPartition (fun y ↦ T (x, y)) w := by
+    refine ⟨convex_univ, fun u _ v _ a b ha hb hab ↦ ?_⟩
+    simp only [smul_eq_mul, mul_sum, ← sum_add_distrib]
+    refine sum_le_sum fun x _ ↦ ?_
+    have h := (convexOn_logPartition (fun y ↦ T (x, y))).2 (Set.mem_univ u) (Set.mem_univ v)
+      ha hb hab
+    simp only [smul_eq_mul] at h
+    calc _ ≤ p.fst.real {x} * (a * logPartition (fun y ↦ T (x, y)) u +
+          b * logPartition (fun y ↦ T (x, y)) v) := mul_le_mul_of_nonneg_left h measureReal_nonneg
+      _ = _ := by ring
+  exact (hlin.sub hZ).congr fun w _ ↦ (condLogLikelihood_eq T w p).symm
+
+/-- The gradient of the conditional log-likelihood is the expected less the observed violation
+vector, the expectation taken over the observed inputs. -/
+theorem hasFDerivAt_condLogLikelihood :
+    HasFDerivAt (condLogLikelihood T p)
+      (LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ
+        ((∫ z, T z ∂(p.fst ⊗ₘ condMaxEnt T w)) - ∫ z, T z ∂p))) w := by
+  let ℓ (a : ι → ℝ) : (ι → ℝ) →L[ℝ] ℝ := LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ a)
+  have hℓ (a v : ι → ℝ) : ℓ a v = a ⬝ᵥ v := rfl
+  have hlin : HasFDerivAt (fun w ↦ -(w ⬝ᵥ ∫ z, T z ∂p)) (-ℓ (∫ z, T z ∂p)) w :=
+    (-ℓ (∫ z, T z ∂p)).hasFDerivAt.congr_of_eventuallyEq
+      (Eventually.of_forall fun w ↦ by simp [hℓ, dotProduct_comm])
+  have hZ := HasFDerivAt.fun_sum fun x (_ : x ∈ univ) ↦
+    (hasFDerivAt_logPartition (fun y ↦ T (x, y)) w).const_mul (p.fst.real {x})
+  refine (hlin.sub hZ).congr_of_eventuallyEq
+    (Eventually.of_forall fun w ↦ condLogLikelihood_eq T w p) |>.congr_fderiv ?_
+  ext v
+  simp only [sub_apply, neg_apply, _root_.sum_apply, smul_apply, hℓ, smul_eq_mul,
+    LinearMap.coe_toContinuousLinearMap', dotProductBilin, LinearMap.coe_mk, AddHom.coe_mk,
+    Measure.integral_compProd_eq_sum, condMaxEnt_apply, sub_dotProduct, sum_dotProduct,
+    smul_dotProduct, mul_neg, sum_neg_distrib]
+  ring
+
+/-- Weights maximize the conditional log-likelihood exactly when the expected violations of their
+grammar, over the observed inputs, are the observed ones. -/
+theorem isMaxOn_condLogLikelihood_iff :
+    IsMaxOn (condLogLikelihood T p) Set.univ w ↔
+      ∫ z, T z ∂(p.fst ⊗ₘ condMaxEnt T w) = ∫ z, T z ∂p := by
+  classical
+  constructor
+  · intro h
+    have h0 := (h.isLocalMax Filter.univ_mem).hasFDerivAt_eq_zero
+      (hasFDerivAt_condLogLikelihood T w p)
+    funext j
+    have := congrArg (· (Pi.single j 1)) h0
+    simpa [dotProductBilin, dotProduct_single, sub_eq_zero] using this
+  · intro h w' _
+    have h₁ := sum_toReal_klDiv_condMaxEnt_add_condEntropy T w' p.fst (condMaxEnt T w)
+    have h₂ := condEntropy_condMaxEnt T w p.fst
+    have h₃ : 0 ≤ ∑ x, p.fst.real {x} * (klDiv (condMaxEnt T w x) (condMaxEnt T w' x)).toReal :=
+      sum_nonneg fun x _ ↦ mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg
+    change condLogLikelihood T p w' ≤ condLogLikelihood T p w
+    rw [condLogLikelihood_eq, condLogLikelihood_eq, ← h]
+    linarith
+
+/-- At weights matching the observed violations the conditional log-likelihood is minus the
+conditional entropy of the grammar, the common value of the two dual problems. -/
+theorem condLogLikelihood_eq_neg_condEntropy
+    (h : ∫ z, T z ∂(p.fst ⊗ₘ condMaxEnt T w) = ∫ z, T z ∂p) :
+    condLogLikelihood T p w = -H[Prod.snd | Prod.fst ; p.fst ⊗ₘ condMaxEnt T w] := by
+  rw [condLogLikelihood_eq, condEntropy_condMaxEnt, h]
+  ring
+
+/-- The most likely conditional MaxEnt grammar of an empirical distribution has the greatest
+conditional entropy among the conditional models with the observed expected violations. -/
+theorem isGreatest_condEntropy_of_isMaxOn (h : IsMaxOn (condLogLikelihood T p) Set.univ w) :
+    IsGreatest ((fun q : Kernel X Y ↦ H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q]) ''
+      {q | IsMarkovKernel q ∧ ∫ z, T z ∂(p.fst ⊗ₘ q) = ∫ z, T z ∂p})
+      (H[Prod.snd | Prod.fst ; p.fst ⊗ₘ condMaxEnt T w]) := by
+  simpa [(isMaxOn_condLogLikelihood_iff T w p).1 h] using
+    isGreatest_condEntropy_condMaxEnt T w p.fst
+
+end Conditional
 
 end HarmonicGrammar

@@ -132,6 +132,36 @@ theorem parallelComp_id_comp_real_singleton (ρ : Measure (α × β)) [IsFiniteM
 
 end Atoms
 
+section Fiber
+
+variable [Fintype α] [MeasurableSingletonClass α] [Fintype β] [MeasurableSingletonClass β]
+  (μ : Measure α) [IsFiniteMeasure μ] (κ : Kernel α β) [IsMarkovKernel κ]
+
+/-- On finite types, integrating against a composition-product integrates each row against the
+kernel and averages over the first measure. -/
+theorem integral_compProd_eq_sum {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [CompleteSpace E] (f : α × β → E) :
+    ∫ z, f z ∂(μ ⊗ₘ κ) = ∑ a, μ.real {a} • ∫ b, f (a, b) ∂(κ a) := by
+  rw [integral_fintype .of_finite, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun a _ ↦ ?_
+  rw [integral_fintype .of_finite, Finset.smul_sum]
+  exact Finset.sum_congr rfl fun b _ ↦ by rw [compProd_real_singleton, mul_smul]
+
+/-- Conditioning a composition-product on a first coordinate of positive mass and forgetting
+that coordinate gives its row. -/
+theorem map_snd_cond_fst_compProd {a : α} (ha : μ {a} ≠ 0) :
+    ((μ ⊗ₘ κ)[|Prod.fst ⁻¹' {a}]).map Prod.snd = κ a := by
+  refine ext_iff_singleton.2 fun b ↦ ?_
+  have hfst : (μ ⊗ₘ κ) (Prod.fst ⁻¹' {a}) = μ {a} := by
+    rw [← fst_apply (.singleton a), fst_compProd]
+  rw [map_apply measurable_snd (.singleton b), cond_apply (measurable_fst (.singleton a)),
+    show Prod.fst ⁻¹' {a} ∩ Prod.snd ⁻¹' {b} = {(a, b)} by ext ⟨x, y⟩; simp,
+    compProd_apply_singleton, hfst, ← mul_assoc, ENNReal.inv_mul_cancel ha (measure_ne_top _ _),
+    one_mul]
+
+end Fiber
+
+
 end MeasureTheory.Measure
 
 namespace ProbabilityTheory.Kernel
