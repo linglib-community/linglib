@@ -24,7 +24,7 @@ open Evidential
 
 /-- The non-firsthand *-mIş*; the *-DI* past is evidentiality-neutral, not a firsthand term. -/
 def evidentials : List Evidential :=
-  [ { morphs := [.suff "mIş"], exponent := .tamFusion,
-      covers := {.sensory, .inference, .assumption, .hearsay} } ]
+  [ { morphs := [.suff "mIş"],
+      covers := {.sensory, .inference, .assumption, .hearsay, .quotative} } ]
 
 end Turkish.Evidentiality

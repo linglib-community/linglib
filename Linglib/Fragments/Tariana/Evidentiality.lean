@@ -6,7 +6,7 @@ public import Linglib.Semantics.Evidential.Defs
 # Tariana evidentiality
 
 Tariana (Arawak, Vaupés) has a five-choice system of Aikhenvald's type D1, fused with tense:
-in the recent past, visual *-ka*, non-visual sensory *-mha*, inferred *-nihka*, assumed
+in the recent past, visual *-ka*, non-visual sensory *-mahka*, inferred *-nihka*, assumed
 *-sika* and reported *-pidaka*. WALS codes the language as having direct and indirect
 evidentials.
 
@@ -24,10 +24,10 @@ open Evidential
 
 /-- The recent-past forms: visual, non-visual, inferred, assumed and reported. -/
 def evidentials : List Evidential :=
-  [ { morphs := [.suff "ka"], exponent := .verbalAffix, covers := {.visual} },
-    { morphs := [.suff "mha"], exponent := .verbalAffix, covers := {.sensory} },
-    { morphs := [.suff "nihka"], exponent := .verbalAffix, covers := {.inference} },
-    { morphs := [.suff "sika"], exponent := .verbalAffix, covers := {.assumption} },
-    { morphs := [.suff "pidaka"], exponent := .verbalAffix, covers := {.hearsay} } ]
+  [ { morphs := [.suff "ka"], covers := {.visual} },
+    { morphs := [.suff "mahka"], covers := {.sensory} },
+    { morphs := [.suff "nihka"], covers := {.inference} },
+    { morphs := [.suff "sika"], covers := {.assumption} },
+    { morphs := [.suff "pidaka"], covers := {.hearsay, .quotative} } ]
 
 end Tariana.Evidentiality

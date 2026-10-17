@@ -8,7 +8,7 @@ public import Linglib.Semantics.Evidential.Defs
 Saraguro Kichwa (Quechuan, Loja Province, Ecuador) has a three-way contrast in matrix
 declaratives: direct *-rka* and reportative *-shka*, both also past tenses, and inferential
 *-shi*. The discourse-sensitive enclitic *=mi*, whose analysis is contested across Quechuan
-varieties, is not an evidential of this variety; [martinez-vera-2026] analyzes it in
+varieties, is not an evidential of this variety; Martínez Vera's analysis of it is in
 `Studies/MartinezVera2026.lean`.
 
 ## References
@@ -25,15 +25,15 @@ open Evidential
 
 /-- The direct past *-rka* marks direct perceptual evidence. -/
 def rka : Evidential :=
-  { morphs := [.suff "rka"], exponent := .verbalAffix, covers := {.visual, .sensory} }
+  { morphs := [.suff "rka"], covers := {.visual, .sensory} }
 
 /-- The reportative past *-shka* marks that the speaker was told. -/
 def shka : Evidential :=
-  { morphs := [.suff "shka"], exponent := .verbalAffix, covers := {.hearsay} }
+  { morphs := [.suff "shka"], covers := {.hearsay, .quotative} }
 
 /-- The inferential *-shi* marks inference or assumption. -/
 def shi : Evidential :=
-  { morphs := [.suff "shi"], exponent := .verbalAffix, covers := {.inference, .assumption} }
+  { morphs := [.suff "shi"], covers := {.inference, .assumption} }
 
 /-- The evidentials of matrix declaratives are direct *-rka*, reportative *-shka* and inferential
 *-shi*. -/

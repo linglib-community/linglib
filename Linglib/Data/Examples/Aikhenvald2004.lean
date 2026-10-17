@@ -39,7 +39,7 @@ def ex1_2 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("system", "D1"), ("term", "sensory"), ("source", "nonvisual")] }
+    paperFeatures := [("system", "D1"), ("term", "nonvisual"), ("source", "nonvisual")] }
 
 def ex1_3 : Datum :=
   { id := "aikhenvald2004_ex1_3"
@@ -130,7 +130,7 @@ def ex2_40 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("system", "B1"), ("term", "visual"), ("source", "visual")] }
+    paperFeatures := [("system", "B1"), ("term", "direct"), ("source", "visual")] }
 
 def ex2_41 : Datum :=
   { id := "aikhenvald2004_ex2_41"

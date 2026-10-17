@@ -10,13 +10,13 @@ and aspect, and the same contrast runs through the copulas and the imperfective,
 are given here in the perfective. Sensory *-song* marks an event the speaker perceived through
 any of the senses, and *-bzhag* one inferred from direct knowledge of its result, the only
 dedicated inferential in the paradigm. The so-called factual *-pa red* is read three ways:
-[tournadre-lapolla-2014] take it to mark factual access, with all report on the suffix *-za*;
-[delancey-2001] glosses it indirect, covering hearsay, inference and general knowledge; and
-[zeisler-2024], with Garrett, shows it used for generic and shared knowledge, for inferences
+Tournadre and LaPolla take it to mark factual access, with all report on the suffix *-za*;
+DeLancey's later account glosses it indirect, covering hearsay, inference and general
+knowledge; and Zeisler, with Garrett, shows it used for generic and shared knowledge, for inferences
 and assumptions of high certainty and for unattributable hearsay, with *-za* (the depleted
 verb *zer* 'say') reserved for attributable report. Under Aikhenvald's parameters that is
 assumption and hearsay for *-pa red* and quotative for *-za*, which the inventory records.
-Aikhenvald herself, following [delancey-1986]'s description of *-song* against *-pa red*,
+Aikhenvald herself, following DeLancey's earlier description of *-song* against *-pa red*,
 reads the perfective as a firsthand ~ non-firsthand system and confines evidentiality proper
 to it. The egophoric *-pa yin*, *yin* and *yod*, and *-byung* with the speaker as goal of the
 event, mark personal involvement rather than source: for Aikhenvald the copular opposition
@@ -43,10 +43,9 @@ open Evidential
 /-- The perfective evidentials sensory *-song*, inferential *-bzhag* and factual *-pa red*,
 and the quotative *-za*. -/
 def evidentials : List Evidential :=
-  [ { morphs := [.suff "song"], exponent := .auxiliary, covers := {.visual, .sensory} },
-    { morphs := [.suff "bzhag"], exponent := .auxiliary, covers := {.inference} },
-    { morphs := [.suff "pa", .free "red"], exponent := .auxiliary,
-      covers := {.assumption, .hearsay} },
-    { morphs := [.suff "za"], exponent := .verbalAffix, covers := {.quotative} } ]
+  [ { morphs := [.suff "song"], covers := {.visual, .sensory} },
+    { morphs := [.suff "bzhag"], covers := {.inference} },
+    { morphs := [.suff "pa", .free "red"], covers := {.assumption, .hearsay} },
+    { morphs := [.suff "za"], covers := {.quotative} } ]
 
 end LhasaTibetan.Evidentiality
