@@ -31,7 +31,7 @@ arguments.
   realize.
 * `Pronoun.WellFormed`: clusivity is not borne by a singular.
 * `Pronoun.toWord`: the pronoun as a token, with the pronoun type and reflexive marking of
-  its kind.
+  its kind; `Pronoun.phi_toWord` says the token bears the pronoun's φ-features.
 * `Pronoun.CandidateAntecedent`: a nominal token that agrees with the pronoun, so one of the
   pronoun's number (`Pronoun.CandidateAntecedent.number_eq`).
 
@@ -150,6 +150,12 @@ def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none
     features := .of (person := p.person) (number := p.number) (gender := p.gender)
       (case_ := p.case_) (reflex := reflex) (pronType := pronType) }
 
+/-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type and reflexive
+marking. -/
+@[simp] theorem phi_toWord (pronType : Option UD.PronType) (reflex : Option Unit) :
+    HasPhi.phi (p.toWord pronType reflex) = HasPhi.phi p := by
+  funext d; cases d <;> rfl
+
 /-- A token marked reflexive classifies as a reflexive anaphor. -/
 @[simp]
 theorem bindingClassOf_toWord_reflex (t : Option UD.PronType) :
@@ -172,7 +178,7 @@ theorem bindingClassOf_toWord {t : Option UD.PronType} (ht : t ≠ some .Rcp) :
 /-- A candidate antecedent of a pronoun is a nominal token that agrees with it: a pro-form
 takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
 def CandidateAntecedent (w : Morphology.Word) : Prop :=
-  Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w
+  Binding.IsNominal w.cat ∧ HasPhi.Agree p w
 
 instance (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
   inferInstanceAs (Decidable (_ ∧ _))

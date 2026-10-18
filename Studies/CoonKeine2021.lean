@@ -90,13 +90,16 @@ open Minimalist Minimalist.CyclicAgree Morphology.Exponence
 
 /-! ### Goals and their visible geometries -/
 
+/-- The goals' languages distinguish the singular and the plural. -/
+def numberSystem : Number.System := { values := {.singular, .plural} }
+
 /-- A goal DP may sit in the K(ase) shell that encapsulates a dative, so that only its person node
 is visible from outside, as with Basque and Icelandic datives (§3.4.1). -/
 structure Goal where
   /-- The DP's person. -/
   person : Person
-  /-- Whether the DP is plural. -/
-  plural : Bool := false
+  /-- The DP's number. -/
+  number : numberSystem.values := numberSystem.value .singular
   /-- Whether a K shell hides everything but the person node. -/
   encapsulated : Bool := false
   deriving DecidableEq, Repr
@@ -105,7 +108,7 @@ structure Goal where
 def dp (p : Person) : Goal := { person := p }
 
 /-- A φ-transparent plural goal. -/
-def dpPl (p : Person) : Goal := { person := p, plural := true }
+def dpPl (p : Person) : Goal := { person := p, number := numberSystem.value .plural }
 
 /-- A K-encapsulated dative goal. -/
 def dat (p : Person) : Goal := { person := p, encapsulated := true }
@@ -124,7 +127,7 @@ inductive NumberSegment where
 
 /-- The number segments a goal exposes; an encapsulated goal exposes none. -/
 def Goal.numberSegments (g : Goal) : List NumberSegment :=
-  if g.encapsulated then [] else if g.plural then [.num, .pl] else [.num]
+  if g.encapsulated then [] else numberSystem.elim [.num] [.num, .pl] (n := g.number)
 
 theorem pi_mem_personSegments (g : Goal) : PersonSegment.pi ∈ g.personSegments := by
   unfold Goal.personSegments
@@ -133,7 +136,7 @@ theorem pi_mem_personSegments (g : Goal) : PersonSegment.pi ∈ g.personSegments
 /-- A goal read as a nominal of [bejar-rezac-2003] has its Case valued and its person licensed by
 its own head when it is an encapsulated dative, and neither when it is transparent. -/
 def Goal.toNominal (g : Goal) : BejarRezac2003.Nominal :=
-  let cell := Agreement.Bundle.personNumber g.person (if g.plural then .plural else .singular)
+  let cell := Agreement.Bundle.personNumber g.person g.number.1
   if g.encapsulated then .dat cell else .caseless cell
 
 /-! ### Segment-based Agree and gluttony (14)–(16) -/
@@ -225,9 +228,10 @@ theorem not_gluttonous_of_length_le_one (h : goals.length ≤ 1) : ¬ Gluttonous
   rintro ⟨t, ht, u, hu, hne⟩
   have ht' := (mem_agreed.1 ht).1
   have hu' := (mem_agreed.1 hu).1
-  match goals, h with
-  | [], _ => exact nomatch ht'
-  | [_], _ => exact hne ((List.mem_singleton.1 ht').trans (List.mem_singleton.1 hu').symm)
+  rcases goals with _ | ⟨_, _ | ⟨_, _⟩⟩
+  · exact nomatch ht'
+  · exact hne ((List.mem_singleton.1 ht').trans (List.mem_singleton.1 hu').symm)
+  · simp at h
 
 /-- A single-segment probe never gluttons (fn. 21). -/
 theorem not_gluttonous_singleton : ¬ Gluttonous geo [s] goals := by
@@ -490,20 +494,22 @@ def addr : List PersonSegment := [.pi, .participant, .addressee]
 
 /-- The person items of a paradigm in the context of the number probe's value (82), undefined
 where the paper glosses no forms. -/
-def Paradigm.person : Paradigm → Bool → Option (RuleSet (VI PersonSegment))
-  | .icelandicMediopassivePast, false => some [⟨[], "-ist"⟩]
-  | .icelandicMediopassivePast, true => some [⟨[], "-ust"⟩, ⟨spkr, "-umst"⟩]
-  | .icelandicLikaPast, false => some [⟨[], "líkaði"⟩, ⟨addr, "líkaðir"⟩]
-  | .icelandicThykjaPresent, false => some [⟨[], "þykir"⟩, ⟨spkr, "þyki"⟩]
-  | .icelandicThykjaPresent, true => some [⟨[], "þykja"⟩]
-  | .germanPresent, false => some [⟨[], "ist"⟩, ⟨spkr, "bin"⟩, ⟨addr, "bist"⟩]
-  | .germanPresent, true => some [⟨[], "sind"⟩]
-  | .germanPast, false => some [⟨[], "war"⟩]
-  | .hindiPresent, false => some [⟨[], "hai"⟩, ⟨spkr, "hũ:"⟩]
-  | .hindiPresent, true => some [⟨[], "hẼ"⟩]
-  | .hindiPast, false => some [⟨[], "tha:"⟩]
-  | .portuguesePresent, false => some [⟨[], "é"⟩, ⟨spkr, "sou"⟩]
-  | _, _ => none
+def Paradigm.person (par : Paradigm) (n : numberSystem.values) :
+    Option (RuleSet (VI PersonSegment)) :=
+  match par with
+  | .icelandicMediopassivePast =>
+    numberSystem.elim (some [⟨[], "-ist"⟩]) (some [⟨[], "-ust"⟩, ⟨spkr, "-umst"⟩]) (n := n)
+  | .icelandicLikaPast => numberSystem.elim (some [⟨[], "líkaði"⟩, ⟨addr, "líkaðir"⟩]) none (n := n)
+  | .icelandicThykjaPresent =>
+    numberSystem.elim (some [⟨[], "þykir"⟩, ⟨spkr, "þyki"⟩]) (some [⟨[], "þykja"⟩]) (n := n)
+  | .germanPresent =>
+    numberSystem.elim (some [⟨[], "ist"⟩, ⟨spkr, "bin"⟩, ⟨addr, "bist"⟩]) (some [⟨[], "sind"⟩])
+      (n := n)
+  | .germanPast => numberSystem.elim (some [⟨[], "war"⟩]) none (n := n)
+  | .hindiPresent =>
+    numberSystem.elim (some [⟨[], "hai"⟩, ⟨spkr, "hũ:"⟩]) (some [⟨[], "hẼ"⟩]) (n := n)
+  | .hindiPast => numberSystem.elim (some [⟨[], "tha:"⟩]) none (n := n)
+  | .portuguesePresent => numberSystem.elim (some [⟨[], "é"⟩, ⟨spkr, "sou"⟩]) none (n := n)
 
 /-- The number items of a paradigm, where the paper gives them. -/
 def Paradigm.number : Paradigm → RuleSet (VI NumberSegment)
@@ -511,10 +517,12 @@ def Paradigm.number : Paradigm → RuleSet (VI NumberSegment)
   | .hindiPresent => [⟨[.num], "hai"⟩, ⟨[.num, .pl], "hẼ"⟩]
   | _ => []
 
-/-- The number context of person insertion is that the number probe's first value is plural. -/
-def pluralContext (P : Probe.Articulation) (goals : List Goal) : Bool :=
-  (values Goal.numberSegments (numberProbe P) goals).head?.any fun v ↦
-    decide (NumberSegment.pl ∈ v)
+/-- The number context of person insertion is the plural when the number probe's first value is
+plural, and the singular otherwise. -/
+def numberContext (P : Probe.Articulation) (goals : List Goal) : numberSystem.values :=
+  if ∃ v ∈ (values Goal.numberSegments (numberProbe P) goals).head?, NumberSegment.pl ∈ v then
+    (numberSystem.value .plural)
+  else numberSystem.value .singular
 
 /-- After Agree a probe either cliticizes what it agreed with (30) or undergoes Vocabulary insertion
 in a paradigm. -/
@@ -530,7 +538,7 @@ an agreement probe's person and number demands are resolvable in a glossed numbe
 def Aftermath.Converges : Aftermath → Probe.Articulation → List Goal → Prop
   | .cliticize, P, goals => ¬ Gluttonous Goal.personSegments P goals
   | .realize par, P, goals =>
-      (∃ vocab ∈ par.person (pluralContext P goals),
+      (∃ vocab ∈ par.person (numberContext P goals),
         Resolvable vocab (values Goal.personSegments P goals)) ∧
         Resolvable par.number (values Goal.numberSegments (numberProbe P) goals)
 
@@ -554,18 +562,21 @@ theorem icelandic_syncretism :
 def kicheanAgentFocus : RuleSet (VI NumberSegment) := [⟨[.num, .pl], "-e"⟩]
 
 /-- Two 3rd person goals of the given numbers, the cells of (88). -/
-def kicheanGoals (s o : Bool) : List Goal := [⟨.third, s, false⟩, ⟨.third, o, false⟩]
+def kicheanGoals (s o : numberSystem.values) : List Goal :=
+  [⟨.third, s, false⟩, ⟨.third, o, false⟩]
 
 /-- In omnivorous number (§5.2), with no singular item, a number probe gluttonous over SG > PL
 converges on the plural item, and the table of (88) follows. -/
 theorem kichean_omnivorous :
-    Gluttonous Goal.numberSegments (numberProbe weakProbe) (kicheanGoals false true) ∧
-    ∀ s ∈ [false, true], ∀ o ∈ [false, true],
+    Gluttonous Goal.numberSegments (numberProbe weakProbe)
+      (kicheanGoals (numberSystem.value .singular) (numberSystem.value .plural)) ∧
+    ∀ s o,
       Resolvable kicheanAgentFocus
         (values Goal.numberSegments (numberProbe weakProbe) (kicheanGoals s o)) ∧
       realization kicheanAgentFocus
           (values Goal.numberSegments (numberProbe weakProbe) (kicheanGoals s o)) =
-        if s || o then some "-e" else none := by
+        if s = numberSystem.value .plural ∨ o = numberSystem.value .plural then some "-e"
+        else none := by
   decide
 
 /-! ### The paper's examples -/
@@ -601,7 +612,9 @@ probe. -/
 def rowGoal (row : Datum) (k : String) : Option (List Goal) := do
   let p ← row.parse? k [("1", Person.first), ("2", .second), ("3", .third)]
   return if row.feature? (k ++ "Shielded") = some "yes" then []
-    else [⟨p, decide (row.feature? (k ++ "Number") = some "pl"),
+    else [⟨p,
+      if row.feature? (k ++ "Number") = some "pl" then numberSystem.value .plural
+      else numberSystem.value .singular,
       decide (row.feature? (k ++ "Opaque") = some "yes")⟩]
 
 /-- The configuration of a row that the paper analyses. -/

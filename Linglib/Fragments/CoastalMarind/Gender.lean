@@ -16,7 +16,7 @@ vowel with gender in the same way; *nanVh* 'face' takes the gender of the one wh
 
 ## Implementation notes
 
-* Number is a `Bool`, `true` for the plural, and matters only for genders I and II.
+* Number is a value of the singular-plural system, and matters only for genders I and II.
 * Demonstratives are segmented into their gender vowel and the stem, as in *e-pe*.
 
 ## References
@@ -41,29 +41,28 @@ inductive Gender where
   | gIV
   deriving DecidableEq, Repr, Fintype
 
+/-- Coastal Marind distinguishes the singular and the plural. -/
+def numberSystem : Number.System := { values := {.singular, .plural} }
+
 /-- The distal demonstrative, by gender and number. -/
-def demonstrative : Gender → Bool → String
-  | .gI, false | .gIII, _ => "e-pe"
-  | .gII, false => "u-pe"
-  | .gI, true | .gII, true | .gIV, _ => "i-pe"
+def demonstrative (g : Gender) : numberSystem.values → String :=
+  numberSystem.elim (match g with | .gI | .gIII => "e-pe" | .gII => "u-pe" | .gIV => "i-pe")
+    (match g with | .gIII => "e-pe" | .gI | .gII | .gIV => "i-pe")
 
 /-- The similative postposition *hV* 'like', which is *hu* for gender II in the singular and *hi*
 otherwise. -/
-def similative : Gender → Bool → String
-  | .gII, false => "hu"
-  | _, _ => "hi"
+def similative (g : Gender) : numberSystem.values → String :=
+  numberSystem.elim (match g with | .gII => "hu" | .gI | .gIII | .gIV => "hi") "hi"
 
 /-- The adjective *ak-k* 'light (in weight)', by gender and number. -/
-def light : Gender → Bool → String
-  | .gI, false => "akek"
-  | .gII, false => "akuk"
-  | .gIII, _ => "akak"
-  | .gI, true | .gII, true | .gIV, _ => "akik"
+def light (g : Gender) : numberSystem.values → String :=
+  numberSystem.elim
+    (match g with | .gI => "akek" | .gII => "akuk" | .gIII => "akak" | .gIV => "akik")
+    (match g with | .gIII => "akak" | .gI | .gII | .gIV => "akik")
 
 /-- The noun *nanVh* 'face', by the gender and number of the one whose face it is. -/
-def face : Gender → Bool → String
-  | .gII, false => "nanuh"
-  | _, _ => "nanih"
+def face (g : Gender) : numberSystem.values → String :=
+  numberSystem.elim (match g with | .gII => "nanuh" | .gI | .gIII | .gIV => "nanih") "nanih"
 
 /-- A noun with its gender. -/
 abbrev Noun := GenderedNoun Gender

@@ -181,16 +181,18 @@ theorem not_wellFormed_comitative : ¬ WellFormed [⟨_, .case .com⟩] := by
 
 /-! ### Realization -/
 
-/-- The endings of the case `c`, after the plural when `plural` holds, where the genitive is
--en, or -den or -tten (§13.1.2), the partitive -A or -tA and the illative -hVn or -siin. -/
-def caseEndings (plural : Bool) (c : Case) : List (List Segment) :=
-  if plural then
-    match c with
+/-- Finnish nominals distinguish the singular and the plural. -/
+def numberSystem : Number.System := { values := {.singular, .plural} }
+
+/-- The endings of the case `c` in the number `num`, where in the plural the genitive is -en, or
+-den or -tten (§13.1.2), the partitive -A or -tA and the illative -hVn or -siin. -/
+def caseEndings (num : numberSystem.values) (c : Case) : List (List Segment) :=
+  numberSystem.elim (Declension.endings c)
+    (match c with
     | .gen => [[e, n], [d, e, n], [t, t, e, n]]
     | .part => [[A], [t, A]]
     | .ill => [[h, V, n], [s, i, i, n]]
-    | c => Declension.endings c
-  else Declension.endings c
+    | c => Declension.endings c) (n := num)
 
 /-- Before a possessive ending the translative -ksi is -kse, and a final consonant is dropped. -/
 def beforePossessive (x : List Segment) : List Segment :=
@@ -218,39 +220,38 @@ def BeforePossessive (es : List (Σ σ, Exponent σ)) : Prop := ∃ e ∈ es.hea
 instance (es : List (Σ σ, Exponent σ)) : Decidable (BeforePossessive es) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The underlying forms of the word `w` followed by the endings `es`, where `plural` records a
-preceding plural and `c` the case of the last case ending. The plural -i is -j between two
+/-- The underlying forms of the word `w` followed by the endings `es`, where `num` is the number
+the preceding endings mark and `c` the case of the last case ending. The plural -i is -j between two
 vowels (§5.4). -/
-def continuations (w : List Segment) (plural : Bool) (c : Option Case) :
+def continuations (w : List Segment) (num : numberSystem.values) (c : Option Case) :
     List (Σ σ, Exponent σ) → List (List Segment)
   | [] => [w]
-  | ⟨_, .infinitive i⟩ :: es => continuations (i.base w) plural c es
+  | ⟨_, .infinitive i⟩ :: es => continuations (i.base w) num c es
   | ⟨_, .nominativePlural⟩ :: es =>
-    continuations (w ++ if BeforePossessive es then [] else [t]) true c es
+    continuations (w ++ if BeforePossessive es then [] else [t]) (numberSystem.value .plural) c es
   | ⟨_, .plural⟩ :: es =>
-    (continuations (w ++ [i]) true c es).map fun x ↦
+    (continuations (w ++ [i]) (numberSystem.value .plural) c es).map fun x ↦
       if (∃ y ∈ w.getLast?, y.IsVowel) ∧ ∃ y ∈ x[w.length + 1]?, y.IsVowel then x.set w.length j
       else x
   | ⟨_, .case c'⟩ :: es =>
-    (caseEndings plural c').flatMap fun x ↦
-      continuations (w ++ if BeforePossessive es then beforePossessive x else x) plural
-        (some c') es
+    (caseEndings num c').flatMap fun x ↦
+      continuations (w ++ if BeforePossessive es then beforePossessive x else x) num (some c') es
   | ⟨_, .possessive p⟩ :: es =>
-    (possessiveForms p c w).flatMap fun x ↦ continuations (w ++ x) plural c es
-  | ⟨_, .clitic k⟩ :: es => continuations (w ++ k.form) plural c es
+    (possessiveForms p c w).flatMap fun x ↦ continuations (w ++ x) num c es
+  | ⟨_, .clitic k⟩ :: es => continuations (w ++ k.form) num c es
 
 /-- The surface forms of the stem `w` with the endings `es`. -/
 def realize (w : List Segment) (es : List (Σ σ, Exponent σ)) : List (List Segment) :=
-  (continuations w false none es).map surface
+  (continuations w (numberSystem.value .singular) none es).map surface
 
 /-- The third person is -Vn or -nsA after the inessive, as in *talo-ssa-an* 'in his house', and
 -nsA alone after the illative, whose endings end in a consonant, as in *talo-o-nsa* 'into his
 house'. -/
 theorem continuations_third :
-    continuations [] false none [⟨_, .case .ine⟩,
+    continuations [] (numberSystem.value .singular) none [⟨_, .case .ine⟩,
                                  ⟨_, .possessive (.personNumber .third .singular)⟩] =
         [[s, s, A, V, n], [s, s, A, n, s, A]] ∧
-      continuations [] false none [⟨_, .case .ill⟩,
+      continuations [] (numberSystem.value .singular) none [⟨_, .case .ill⟩,
                                    ⟨_, .possessive (.personNumber .third .singular)⟩] =
         [[V, n, s, A], [h, V, n, s, A], [s, e, e, n, s, A]] := by
   decide

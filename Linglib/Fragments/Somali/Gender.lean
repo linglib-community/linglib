@@ -62,10 +62,16 @@ inductive Article where
   | tii
   deriving DecidableEq, Repr, Fintype
 
-/-- The article a gender takes in the singular and in the plural. -/
-def Value.article : Value → Bool → Article
-  | .masc, false | .fem, true => .kii
-  | .fem, false | .masc, true => .tii
+/-- Somali distinguishes the singular and the plural. -/
+def numberSystem : Number.System := { values := {.singular, .plural} }
+
+instance : Nontrivial numberSystem.values :=
+  ⟨⟨numberSystem.value .singular, numberSystem.value .plural, by decide⟩⟩
+
+/-- The article a gender takes in each number. -/
+def Value.article (g : Value) : numberSystem.values → Article :=
+  numberSystem.elim (match g with | .masc => .kii | .fem => .tii)
+    (match g with | .masc => .tii | .fem => .kii)
 
 /-- The subject prefix of the verbs that conjugate by prefix. -/
 inductive VerbPrefix where
@@ -73,10 +79,9 @@ inductive VerbPrefix where
   | t
   deriving DecidableEq, Repr, Fintype
 
-/-- The verbal prefix a gender takes in the singular and in the plural. -/
-def Value.verbPrefix : Value → Bool → VerbPrefix
-  | .fem, false => .t
-  | _, _ => .y
+/-- The verbal prefix a gender takes in each number. -/
+def Value.verbPrefix (g : Value) : numberSystem.values → VerbPrefix :=
+  numberSystem.elim (match g with | .masc => .y | .fem => .t) .y
 
 /-- The article is polar. -/
 theorem polar_article : Gender.Polar Value.article := by decide
@@ -99,8 +104,8 @@ structure Noun extends GenderedNoun Value where
   deriving DecidableEq, Repr
 
 /-- The article a noun takes in the singular and in the plural. -/
-def Noun.article (n : Noun) (plural : Bool) : Article :=
-  n.gender.article (plural && !n.reduplicatedPlural)
+def Noun.article (n : Noun) (num : numberSystem.values) : Article :=
+  n.gender.article (if n.reduplicatedPlural then numberSystem.value .singular else num)
 
 /-- The noun *ìnan* 'boy'. -/
 def inan : Noun := ⟨⟨⟨"ìnan", "boy"⟩, .masc, some .masculine⟩, "inammá", false⟩

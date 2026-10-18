@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Data.Examples.Schema
-public import Linglib.Data.UD.Features
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # The family of sentences
@@ -28,8 +28,8 @@ here type those features.
 
 namespace Presupposition
 
-/-- A member of the family of sentences, by the position of its sentence: unembedded or under an
-entailment-cancelling operator. -/
+/-- A member of the family of sentences is named by the position of its sentence, unembedded or
+under an entailment-cancelling operator. -/
 inductive FamilyVariant where
   | unembedded
   | negation
@@ -79,7 +79,7 @@ def projective? (e : Datum) : Option Bool :=
   e.parse? "projective" [("yes", true), ("no", false)]
 
 /-- The person of the row's matrix subject. -/
-def person? (e : Datum) : Option UD.Person :=
+def person? (e : Datum) : Option Person :=
   e.parse? "person" [("1", .first), ("2", .second), ("3", .third)]
 
 end Datum

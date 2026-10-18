@@ -582,20 +582,23 @@ end Rembarrnga
 
 namespace Hopi
 
+/-- The pronoun and the verb each mark the singular against the plural. -/
+def numberSystem : Number.System := { values := {.singular, .plural} }
+
 /-- The pronoun sets the singular against dual and plural, (40) to (42). -/
-def pronounPlural : Number → Bool
-  | .singular => false
-  | _ => true
+def pronounNumber : Number → numberSystem.values
+  | .singular => (numberSystem.value .singular)
+  | _ => (numberSystem.value .plural)
 
 /-- The verb sets singular and dual against the plural. -/
-def verbPlural : Number → Bool
-  | .plural => true
-  | _ => false
+def verbNumber : Number → numberSystem.values
+  | .plural => (numberSystem.value .plural)
+  | _ => (numberSystem.value .singular)
 
 /-- Neither marking distinguishes the three numbers; together they construct the dual. -/
 theorem constructed :
-    ¬ (sgDuPl.map pronounPlural).Nodup ∧ ¬ (sgDuPl.map verbPlural).Nodup ∧
-      (sgDuPl.map fun n ↦ (pronounPlural n, verbPlural n)).Nodup := by
+    ¬ (sgDuPl.map pronounNumber).Nodup ∧ ¬ (sgDuPl.map verbNumber).Nodup ∧
+      (sgDuPl.map fun n ↦ (pronounNumber n, verbNumber n)).Nodup := by
   decide
 
 end Hopi
@@ -902,8 +905,9 @@ theorem default_rows : ∀ row ∈ Examples.all, ∀ d ∈ row.parse? "default" 
 number and the concord it takes are the fragment's. -/
 theorem bayso_rows : ∀ row ∈ Examples.all, row.language = "bais1246" →
     ∀ n ∈ row.parse? "noun" (Bayso.allNouns.map fun n ↦ (n.form, n)),
-    ∀ v ∈ row.parse? "number" [("general", Bayso.Value.general), ("singular", .singular),
-      ("paucal", .paucal), ("plural", .plural)],
+    ∀ v ∈ row.parse? "number" [("general", (⟨.general, by decide⟩ : Bayso.nounNumbers)),
+      ("singular", ⟨.singular, by decide⟩), ("paucal", ⟨.paucal, by decide⟩),
+      ("plural", ⟨.plural, by decide⟩)],
       (∀ f ∈ row.feature? "form", f = n.formAt v) ∧
         ∀ c ∈ row.parse? "concord" [("masc", Bayso.Concord.masc), ("fem", .fem),
           ("plural", .plural)], c = n.gender.concord v := by
@@ -933,10 +937,12 @@ theorem committee_rows : ∀ row ∈ Examples.all, row.language = "stan1293" →
 
 /-- In Hopi, (40) to (42), the number is read off the pronoun's and the verb's marking. -/
 theorem hopi_rows : ∀ row ∈ Examples.all, row.language = "hopi1249" →
-    ∀ p ∈ row.parse? "pronoun" [("sg", false), ("pl", true)],
-    ∀ v ∈ row.parse? "verb" [("sg", false), ("pl", true)],
+    ∀ p ∈ row.parse? "pronoun"
+      [("sg", Hopi.numberSystem.value .singular), ("pl", Hopi.numberSystem.value .plural)],
+    ∀ v ∈ row.parse? "verb"
+      [("sg", Hopi.numberSystem.value .singular), ("pl", Hopi.numberSystem.value .plural)],
     ∀ n ∈ row.parse? "number" numberNames,
-      Hopi.pronounPlural n = p ∧ Hopi.verbPlural n = v := by
+      Hopi.pronounNumber n = p ∧ Hopi.verbNumber n = v := by
   decide +kernel
 
 /-- In Kiowa, (21) to (23), the inverse suffix appears off the class's basic numbers. -/

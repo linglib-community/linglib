@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Category.Complementizer.Basic
-public import Linglib.Data.UD.Features
+public import Linglib.Syntax.Number.Basic
 public import Linglib.Fragments.NezPerce.Case
 
 /-!
@@ -132,21 +132,21 @@ def verbs : List Verb :=
 /-! ### Relative-pronoun paradigm
 
 The *yox̂/ko* paradigm from [deal-2016a], reproduced at [deal-2026] (22).
-Cells are indexed by `NezPerce.Case` × `Core.UD.Number`. -/
+Cells are indexed by `NezPerce.Case` × `Number`. -/
 
 /-- A relative-pronoun cell from [deal-2026] (22). -/
 structure RelativePronoun where
   case : Case
-  number : UD.Number
+  number : Number
   forms : List String  -- multiple if idiolectal variation
   deriving Repr
 
-def rp_nom_sg : RelativePronoun := ⟨.nom, .Sing, ["yox̂"]⟩
-def rp_nom_pl : RelativePronoun := ⟨.nom, .Plur, ["yox̂me"]⟩
-def rp_erg_sg : RelativePronoun := ⟨.erg, .Sing, ["konim"]⟩
-def rp_erg_pl : RelativePronoun := ⟨.erg, .Plur, ["konmam"]⟩
-def rp_acc_sg : RelativePronoun := ⟨.acc, .Sing, ["konya"]⟩
-def rp_acc_pl : RelativePronoun := ⟨.acc, .Plur, ["konmana", "yox̂mene"]⟩
+def rp_nom_sg : RelativePronoun := ⟨.nom, .singular, ["yox̂"]⟩
+def rp_nom_pl : RelativePronoun := ⟨.nom, .plural, ["yox̂me"]⟩
+def rp_erg_sg : RelativePronoun := ⟨.erg, .singular, ["konim"]⟩
+def rp_erg_pl : RelativePronoun := ⟨.erg, .plural, ["konmam"]⟩
+def rp_acc_sg : RelativePronoun := ⟨.acc, .singular, ["konya"]⟩
+def rp_acc_pl : RelativePronoun := ⟨.acc, .plural, ["konmana", "yox̂mene"]⟩
 
 /-- The full paradigm has three cases × two numbers, six cells. -/
 def relativePronounParadigm : List RelativePronoun :=

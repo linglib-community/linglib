@@ -128,10 +128,12 @@ namespace CoastalMarind
 open _root_.CoastalMarind
 
 /-- The infixed vowel of *ak-k* 'light' distinguishes all four genders, (6)–(9). -/
-theorem faithful_light : Function.Injective (light · false) := by decide
+theorem faithful_light : Function.Injective (light · (numberSystem.value .singular)) := by decide
 
 /-- The demonstrative does not, since genders I and III share *e-pe*. -/
-theorem not_faithful_demonstrative : ¬ Function.Injective (demonstrative · false) := by decide
+theorem not_faithful_demonstrative :
+    ¬ Function.Injective (demonstrative · (numberSystem.value .singular)) := by
+  decide
 
 end CoastalMarind
 
@@ -143,12 +145,14 @@ open _root_.Russian.Gender _root_.Russian.Agreement
 
 /-- Adjectives distinguish gender only in the singular, (1)–(4), a convergent system. -/
 theorem convergent :
-    Gender.Convergent (Value.adjEnding · false) (Value.adjEnding · true) := by decide
+    Gender.Convergent (Value.adjEnding · (numberSystem.value .singular))
+      (Value.adjEnding · (numberSystem.value .plural)) := by
+  decide
 
 /-- Greenberg's Universal 37 as its corollary. -/
 theorem card_adjEnding_pl_le :
-    Nat.card (Set.range (Value.adjEnding · true)) ≤
-      Nat.card (Set.range (Value.adjEnding · false)) :=
+    Nat.card (Set.range (Value.adjEnding · (numberSystem.value .plural))) ≤
+      Nat.card (Set.range (Value.adjEnding · (numberSystem.value .singular))) :=
   convergent.1.card_range_le
 
 /-- Gender agreement on the verb is confined to the past tense, which is inflected for gender
@@ -167,21 +171,27 @@ masculine singular's. -/
 theorem not_polar_verbPrefix : ¬ Gender.Polar Value.verbPrefix := by decide
 
 /-- The plural prefix of either gender is the masculine singular's. -/
-theorem verbPrefix_plural (g : Value) : g.verbPrefix true = Value.masc.verbPrefix false := by
+theorem verbPrefix_plural (g : Value) :
+    g.verbPrefix (numberSystem.value .plural) =
+      Value.masc.verbPrefix (numberSystem.value .singular) := by
   cases g <;> rfl
 
 /-- Not every noun is in the polarity system, since *nin* 'man' keeps *-kii* in the plural. -/
-theorem article_nin : nin.article true = nin.article false := rfl
+theorem article_nin :
+    nin.article (numberSystem.value .plural) = nin.article (numberSystem.value .singular) := rfl
 
 /-- In the typology of gender the article is a parallel system and the verb a convergent
 one. -/
 theorem parallel_article :
-    Gender.Parallel (Value.article · false) (Value.article · true) :=
-  polar_article.parallel false true
+    Gender.Parallel (Value.article · (numberSystem.value .singular))
+      (Value.article · (numberSystem.value .plural)) :=
+  polar_article.parallel (numberSystem.value .singular) (numberSystem.value .plural)
 
 /-- The verbal prefix converges on one plural form. -/
 theorem convergent_verbPrefix :
-    Gender.Convergent (Value.verbPrefix · false) (Value.verbPrefix · true) := by decide
+    Gender.Convergent (Value.verbPrefix · (numberSystem.value .singular))
+      (Value.verbPrefix · (numberSystem.value .plural)) := by
+  decide
 
 end Somali
 
@@ -298,7 +308,8 @@ end Chichewa
 theorem russian_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
     ∀ g ∈ row.parse? "gender"
       [("masc", _root_.Russian.Gender.Value.masc), ("fem", .fem), ("neut", .neut)],
-    ∀ pl ∈ row.parse? "number" [("sg", false), ("pl", true)],
+    ∀ pl ∈ row.parse? "number" [("sg", _root_.Russian.Gender.numberSystem.value .singular),
+      ("pl", _root_.Russian.Gender.numberSystem.value .plural)],
     ∀ e ∈ row.parse? "ending"
       [("yj", _root_.Russian.Gender.AdjEnding.yj), ("aja", .aja), ("oe", .oe), ("ye", .ye)],
       e = g.adjEnding pl := by
@@ -308,8 +319,10 @@ theorem russian_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
 theorem marind_rows : ∀ row ∈ Examples.all, row.language = "nucl1622" →
     ∀ g ∈ row.parse? "gender"
       [("I", CoastalMarind.Gender.gI), ("II", .gII), ("III", .gIII), ("IV", .gIV)],
-      (∀ a ∈ row.feature? "adjective", a = CoastalMarind.light g false) ∧
-        ∀ d ∈ row.feature? "demonstrative", d = CoastalMarind.demonstrative g false := by
+      (∀ a ∈ row.feature? "adjective",
+          a = CoastalMarind.light g (CoastalMarind.numberSystem.value .singular)) ∧
+        ∀ d ∈ row.feature? "demonstrative",
+          d = CoastalMarind.demonstrative g (CoastalMarind.numberSystem.value .singular) := by
   decide +kernel
 
 /-- In the Upper Sorbian row (17) each target agrees in the features the row records for it. -/
@@ -324,7 +337,8 @@ theorem upperSorbian_rows : ∀ row ∈ Examples.all, row.language = "uppe1395" 
 prefix the gender's. -/
 theorem somali_rows : ∀ row ∈ Examples.all, row.language = "soma1255" →
     ∀ n ∈ row.parse? "noun" (_root_.Somali.Gender.allNouns.map fun n ↦ (n.form, n)),
-    ∀ pl ∈ row.parse? "number" [("sg", false), ("pl", true)],
+    ∀ pl ∈ row.parse? "number" [("sg", _root_.Somali.Gender.numberSystem.value .singular),
+      ("pl", _root_.Somali.Gender.numberSystem.value .plural)],
       (∀ a ∈ row.parse? "article" [("kii", _root_.Somali.Gender.Article.kii), ("tii", .tii)],
         a = n.article pl) ∧
       ∀ v ∈ row.parse? "verb" [("y", _root_.Somali.Gender.VerbPrefix.y), ("t", .t)],

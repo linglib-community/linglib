@@ -11,7 +11,7 @@ and within the system a singular, a paucal for two to about six, and a plural, e
 own suffix; nouns fall into two genders. An agreeing verb has three forms only, labelled
 from the pronouns, which distinguish a masculine and a feminine singular and one plural:
 general and singular nouns take their gender's form, paucal nouns the plural form, and
-plural nouns the masculine one ([hayward-1979]; [corbett-hayward-1987]; [corbett-2000]).
+plural nouns the masculine one, as Hayward, Corbett and Hayward, and Corbett describe.
 
 ## References
 
@@ -31,14 +31,16 @@ inductive Gender where
   | fem
   deriving DecidableEq, Repr, Fintype
 
-/-- The four numbers of a noun: the general outside the system, and singular, paucal and
-plural within it. -/
-inductive Value where
-  | general
-  | singular
-  | paucal
-  | plural
-  deriving DecidableEq, Repr, Fintype
+/-- Bayso nouns have a singular, a paucal and a plural, and a general number outside the
+system. -/
+def numberSystem : Number.System :=
+  { values := {.singular, .paucal, .plural}, hasGeneral := true }
+
+/-- The numbers a noun has a form for, the general and the values of the system. -/
+def nounNumbers : Finset Number := insert .general numberSystem.values
+
+/-- Pronouns distinguish the singular and the plural. -/
+def pronounNumberSystem : Number.System := { values := {.singular, .plural} }
 
 /-- The three forms of an agreeing verb, labelled from the pronouns that take them:
 *hudure* 'slept' masculine, *hudurte* feminine, *hudureene* plural. -/
@@ -48,30 +50,32 @@ inductive Concord where
   | plural
   deriving DecidableEq, Repr, Fintype
 
-/-- The concord a pronoun takes: its gender in the singular, the plural form in the plural. -/
-def Gender.pronounConcord : Gender → Bool → Concord
-  | .masc, false => .masc
-  | .fem, false => .fem
-  | _, true => .plural
+/-- A pronoun takes its gender's concord in the singular and the plural concord in the plural. -/
+def Gender.pronounConcord (g : Gender) : pronounNumberSystem.values → Concord :=
+  pronounNumberSystem.elim (match g with | .masc => .masc | .fem => .fem) .plural
 
-/-- The concord a noun takes, by gender and number: its gender's form for the general and
-the singular, the plural form for the paucal, the masculine form for the plural. -/
-def Gender.concord : Gender → Value → Concord
-  | .masc, .general | .masc, .singular => .masc
-  | .fem, .general | .fem, .singular => .fem
-  | _, .paucal => .plural
-  | _, .plural => .masc
+/-- A noun takes its gender's concord in the general and the singular, the plural concord in the
+paucal, and the masculine concord in the plural. -/
+def Gender.concord : Gender → nounNumbers → Concord
+  | .masc, ⟨.general, _⟩ | .masc, ⟨.singular, _⟩ => .masc
+  | .fem, ⟨.general, _⟩ | .fem, ⟨.singular, _⟩ => .fem
+  | _, ⟨.paucal, _⟩ => .plural
+  | _, ⟨.plural, _⟩ => .masc
+  | _, ⟨.dual, h⟩ | _, ⟨.trial, h⟩ | _, ⟨.greaterPaucal, h⟩ | _, ⟨.greaterPlural, h⟩
+  | _, ⟨.minimal, h⟩ | _, ⟨.augmented, h⟩ | _, ⟨.unitAugmented, h⟩ | _, ⟨.globalPlural, h⟩ =>
+    absurd h (by decide)
 
 /-- General and singular nouns take their gender's concord. -/
-@[simp] theorem Gender.concord_general (g : Gender) : g.concord .general = g.concord .singular := by
+@[simp] theorem Gender.concord_general (g : Gender) :
+    g.concord ⟨.general, by decide⟩ = g.concord ⟨.singular, by decide⟩ := by
   cases g <;> rfl
 
 /-- Paucal nouns take the plural concord. -/
-@[simp] theorem Gender.concord_paucal (g : Gender) : g.concord .paucal = .plural := by
+@[simp] theorem Gender.concord_paucal (g : Gender) : g.concord ⟨.paucal, by decide⟩ = .plural := by
   cases g <;> rfl
 
 /-- Plural nouns take the masculine concord. -/
-@[simp] theorem Gender.concord_plural (g : Gender) : g.concord .plural = .masc := by
+@[simp] theorem Gender.concord_plural (g : Gender) : g.concord ⟨.plural, by decide⟩ = .masc := by
   cases g <;> rfl
 
 /-- A noun with its four number forms; the citation form is the general one. -/
@@ -98,10 +102,12 @@ def kimbir : Noun :=
 def allNouns : List Noun := [luban, kimbir]
 
 /-- The form of a noun in each number. -/
-def Noun.formAt (n : Noun) : Value → String
-  | .general => n.form
-  | .singular => n.singular
-  | .paucal => n.paucal
-  | .plural => n.plural
+def Noun.formAt (n : Noun) : nounNumbers → String
+  | ⟨.general, _⟩ => n.form
+  | ⟨.singular, _⟩ => n.singular
+  | ⟨.paucal, _⟩ => n.paucal
+  | ⟨.plural, _⟩ => n.plural
+  | ⟨.dual, h⟩ | ⟨.trial, h⟩ | ⟨.greaterPaucal, h⟩ | ⟨.greaterPlural, h⟩ | ⟨.minimal, h⟩
+  | ⟨.augmented, h⟩ | ⟨.unitAugmented, h⟩ | ⟨.globalPlural, h⟩ => absurd h (by decide)
 
 end Bayso

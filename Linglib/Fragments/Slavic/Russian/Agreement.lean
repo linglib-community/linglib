@@ -36,8 +36,8 @@ namespace Russian.Agreement
 
 open _root_.Agreement
 
-/-- An agreement target of Russian whose forms a grammar tabulates: the long and the short
-adjective, and the nonpast and the past finite verb ([wade-2020]). -/
+/-- The agreement targets of Russian whose forms a grammar tabulates are the long and the short
+adjective and the nonpast and the past finite verb ([wade-2020]). -/
 inductive Target where
   | longAdjective
   | shortAdjective
@@ -47,13 +47,13 @@ inductive Target where
 
 namespace Target
 
-/-- The positions of the Agreement Hierarchy a target's forms occupy: the long adjective is
+/-- A target's forms occupy positions of the Agreement Hierarchy: the long adjective is
 attributive and predicative, the short adjective and the finite verb predicative only. -/
 def positions : Target → Finset Position
   | .longAdjective => {.attributive, .predicate}
   | _ => {.predicate}
 
-/-- The dimensions a target's forms are inflected for: the long adjective declines for
+/-- A target's forms are inflected for dimensions: the long adjective declines for
 gender, number and case, the short adjective for gender and number; the nonpast verb
 expresses person and number, the past tense gender and number. -/
 def features : Target → Finset Dimension
@@ -64,12 +64,14 @@ def features : Target → Finset Dimension
 /-- The long adjective's nominative ending does not factor through its number: gender is
 inflected. -/
 theorem longAdjective_gender :
-    ¬ Function.FactorsThrough (fun p : Gender.Value × Bool ↦ p.1.adjEnding p.2) Prod.snd := by
+    ¬ Function.FactorsThrough
+      (fun p : Gender.Value × Gender.numberSystem.values ↦ p.1.adjEnding p.2) Prod.snd := by
   decide
 
 /-- Nor through its gender: number is inflected. -/
 theorem longAdjective_number :
-    ¬ Function.FactorsThrough (fun p : Gender.Value × Bool ↦ p.1.adjEnding p.2) Prod.fst := by
+    ¬ Function.FactorsThrough
+      (fun p : Gender.Value × Gender.numberSystem.values ↦ p.1.adjEnding p.2) Prod.fst := by
   decide
 
 /-- The past-tense concord is not constant: gender is inflected. -/

@@ -25,6 +25,9 @@ values of a system form an initial segment, which number resolution needs.
 * `Number.System`: a language's number values, which of them are facultative, and whether it
   has general number.
 * `Number.System.DeterminateInitial`: the determinate values are an initial segment.
+* `Number.System.value`: a value of a system, as an element of its values.
+* `Number.System.elim`: a function on a system of the singular and the plural, by its values at
+  the two.
 
 ## Implementation notes
 
@@ -129,6 +132,29 @@ def DeterminateInitial (ns : System) : Prop :=
 
 instance : DecidablePred DeterminateInitial := fun _ ↦ by
   unfold DeterminateInitial; infer_instance
+
+/-- The value `n` of a system that has it. -/
+def value (ns : System) (n : Number) (h : n ∈ ns.values := by decide) : ns.values := ⟨n, h⟩
+
+@[simp] theorem coe_value (ns : System) (n : Number) (h : n ∈ ns.values) :
+    (ns.value n h : Number) = n :=
+  rfl
+
+/-- A function on the values of a system of the singular and the plural, by its value at
+each. -/
+def elim {β : Sort*} (ns : System) (sg pl : β)
+    (_h : ns.values = {.singular, .plural} := by decide) (n : ns.values) : β :=
+  if n.1 = .plural then pl else sg
+
+variable {β : Sort*} {ns : System} {sg pl : β} {h : ns.values = {.singular, .plural}}
+
+@[simp] theorem elim_value_singular (hs : .singular ∈ ns.values) :
+    ns.elim sg pl h (ns.value .singular hs) = sg :=
+  rfl
+
+@[simp] theorem elim_value_plural (hp : .plural ∈ ns.values) :
+    ns.elim sg pl h (ns.value .plural hp) = pl :=
+  rfl
 
 end System
 

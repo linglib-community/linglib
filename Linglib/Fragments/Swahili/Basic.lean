@@ -61,25 +61,25 @@ open Agreement Morphology
 
 /-- A noun class in the Bantu numbering. -/
 inductive NounClass where
-  /-- *m-*, *mw-*: *mtu* 'person', *mwalimu* 'teacher'. -/
+  /-- The prefix *m-* or *mw-*, as in *mtu* 'person' and *mwalimu* 'teacher'. -/
   | cl1
-  /-- *wa-*: *watu* 'people'. -/
+  /-- The prefix *wa-*, as in *watu* 'people'. -/
   | cl2
-  /-- *m-*, *mw-*: *mti* 'tree'. -/
+  /-- The prefix *m-* or *mw-*, as in *mti* 'tree'. -/
   | cl3
-  /-- *mi-*: *miti* 'trees'. -/
+  /-- The prefix *mi-*, as in *miti* 'trees'. -/
   | cl4
-  /-- *ji-*, often unprefixed: *joka* 'giant snake'. -/
+  /-- The prefix *ji-*, often absent, as in *joka* 'giant snake'. -/
   | cl5
-  /-- *ma-*: *maji* 'water'. -/
+  /-- The prefix *ma-*, as in *maji* 'water'. -/
   | cl6
-  /-- *ki-*: *kikapu* 'basket'. -/
+  /-- The prefix *ki-*, as in *kikapu* 'basket'. -/
   | cl7
-  /-- *vi-*: *vikapu* 'baskets'. -/
+  /-- The prefix *vi-*, as in *vikapu* 'baskets'. -/
   | cl8
-  /-- A nasal: *nyoka* 'snake', *nyumba* 'house'. -/
+  /-- A nasal prefix, as in *nyoka* 'snake' and *nyumba* 'house'. -/
   | cl9
-  /-- A nasal: *nyumba* 'houses'. -/
+  /-- A nasal prefix, as in *nyumba* 'houses'. -/
   | cl10
   /-- *u-*, the class Corbett and Welmers number 11 and pair with class 10. -/
   | cl14
@@ -144,13 +144,16 @@ def Gender.pluralClass : Gender → NounClass
   | .genderD => .cl8
   | .genderE => .cl10
 
-/-- The class of a gender in the singular or, when `plural`, the plural. -/
-def Gender.class (g : Gender) (plural : Bool) : NounClass :=
-  if plural then g.pluralClass else g.singularClass
+/-- Swahili distinguishes the singular and the plural. -/
+def numberSystem : Number.System := { values := {.singular, .plural} }
+
+/-- The class of a gender in a number. -/
+def Gender.class (g : Gender) : numberSystem.values → NounClass :=
+  numberSystem.elim g.singularClass g.pluralClass
 
 /-- Subject agreement, singular and plural, distinguishes the five genders. -/
 theorem Gender.faithful_subjPrefix :
-    Gender.Faithful fun (g : Gender) (plural : Bool) ↦ (g.class plural).subjPrefix := by
+    Gender.Faithful fun (g : Gender) (n : numberSystem.values) ↦ (g.class n).subjPrefix := by
   decide
 
 /-! ### Subject prefixes of the persons -/

@@ -22,7 +22,7 @@ a-class article when possessed and the o-class article otherwise.
 
 ## Implementation notes
 
-* Number is a `Bool`, `true` for the plural.
+* Number is a value of the singular-plural system.
 * The plural article of the e-class is recorded as *o*. Personal names, kinship terms and
   *teiee* 'who' can also take the plural article *ere*.
 * A body-part term is recorded with the class it takes without a possessor.
@@ -58,19 +58,22 @@ inductive Article where
   | o
   deriving DecidableEq, Repr, Fintype
 
+/-- Teop distinguishes the singular and the plural. -/
+def numberSystem : Number.System := { values := {.singular, .plural} }
+
+instance : Nontrivial numberSystem.values :=
+  ⟨⟨numberSystem.value .singular, numberSystem.value .plural, by decide⟩⟩
+
 /-- The basic article of a noun, by class and number. -/
-def headArticle : NounClass → Bool → Article
-  | .e, false => .e
-  | .a, false => .a
-  | .o, false => .o
-  | .e, true | .a, true => .o
-  | .o, true => .a
+def headArticle (c : NounClass) : numberSystem.values → Article :=
+  numberSystem.elim (match c with | .e => .e | .a => .a | .o => .o)
+    (match c with | .e | .a => .o | .o => .a)
 
 /-- The article of an adjective or numeral agreeing with a noun, by the noun's class and
 number. -/
-def targetArticle : NounClass → Bool → Article
-  | .e, false | .a, false | .o, true => .a
-  | .e, true | .a, true | .o, false => .o
+def targetArticle (c : NounClass) : numberSystem.values → Article :=
+  numberSystem.elim (match c with | .e | .a => .a | .o => .o)
+    (match c with | .e | .a => .o | .o => .a)
 
 /-- A Teop noun with its class. -/
 abbrev Noun := GenderedNoun NounClass
