@@ -2,56 +2,57 @@ module
 
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Composition.Coordinator
+public import Linglib.Data.Examples.MitrovicSauerland2016
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Fragments.Japanese.Determiners
 public import Linglib.Fragments.Hungarian.Coordination
-public import Linglib.Fragments.Georgian.Coordination
-public import Linglib.Fragments.Latin.Coordination
 public import Linglib.Fragments.Latin.Determiners
-public import Linglib.Fragments.Korean.Coordination
 public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Mitrović and Sauerland (2016): Two Conjunctions Are Better Than One
 
-This file formalizes the universal two-head structure for the conjunction of noun phrases
-that Mitrović and Sauerland propose. The head μ combines with a predicate and denotes the
-subset relation, (12a), and the head J′ intersects two quantifiers, (12b); an individual reaches
-μ through the shift to its characteristic property. The subset relation is the generalized
-quantifier *every* (`mu_eq_every`), which is why a μ particle on an indeterminate, Japanese
-*dare-mo* or Latin *quis-que*, is a universal quantifier (`mu_of_conjunctive_particle`), and μ of
-a shifted individual is its Montague lift (`mu_shift`). The structure J′(μ(↑a))(μ(↑b)) of (13)
-therefore denotes the meet of the two lifts (`conjunction_eq`), true of a predicate that holds of
-each conjunct (`conjunction_apply`), with no collective reading. Both μ heads are needed: J′
-applied to the shifted individuals directly is contradictory unless the conjuncts are identical
-(`shift_inf_shift_eq_bot_iff`).
+Mitrović and Sauerland decompose the conjunction of two noun phrases into a junctor J, which
+intersects two generalized quantifiers, and a head μ on each conjunct, which denotes the subset
+relation and so is the quantifier *every*. Languages differ in which of the three heads they
+pronounce: English *and* is J, Japanese *mo* is μ, and Hungarian pronounces all three. Only μ can
+have the additive and quantificational uses of Japanese *mo*.
 
-The structure has three heads, J and a μ head on each conjunct (`Head`), and a conjunction strategy
-is the set of heads a language pronounces (`ConjunctionStrategy.pronounced`): exactly the nonempty
-sets that pronounce the μ head of both conjuncts or of neither (`exists_pronounced_eq_iff`).
-Languages differ in which heads they pronounce. Coordinators of the J kind, such as English *and*,
-have propositional uses and lack additive and quantificational uses; coordinators of the μ kind,
-such as Japanese *mo*, combine noun phrases, double, and have them (`mu_has_other_use`,
-`j_has_no_other_use`). Some languages pronounce all three heads at once, triadic exponency, which
-the paper attests in Southeastern Macedonian, Hungarian, and Avar (`hasAllThreeStrategies`,
-`hungarian_triadic`), and every language of the sample has a strategy pronouncing J alone
-(`j_is_universal`).
+## Main statements
+
+* `conjunction_apply`: J′ over the μ phrases of two individuals holds of a predicate exactly when
+  the predicate holds of each.
+* `mu_of_conjunctive_particle`: μ on an indeterminate is the universal quantifier, as in Japanese
+  *dare-mo* and Latin *quis-que*.
+* `muPrime_team`: the collective μ′ of (20) holds of a predicate true only of a larger team, (22),
+  so it gives no collective reading.
+* `mem_attested_iff`: the examples pronounce exactly the nonempty sets of heads in which the first
+  μ comes only with the second.
+* `languages_pronounced_eq_univ`: all three heads are pronounced in Southeastern Macedonian,
+  Serbo-Croatian, Hungarian and Avar.
+* `mu_has_other_use`, `j_has_no_other_use`: the μ coordinators have additive or quantificational
+  uses, and the J coordinators have neither.
 
 ## Implementation notes
 
-Which coordinator of a language is J and which is μ is the paper's classification, recorded in
-the language records here; the generalizations are checked against the descriptive facts of the
-Fragments, whether a form is also an additive particle and which indeterminate quantifiers have
-it as their particle. Georgian, Korean, and Slovenian follow [mitrovic-2021], and Southeastern
-Macedonian, Avar, and Serbo-Croatian are not in the sample. The typological table of languages
-with distinct nominal and verbal conjunctions is not formalized.
+* The heads an example pronounces are those its gloss line writes outside parentheses, or for
+  Latin *-que* and *atque* those of the configurations (38b) and (39). The examples are (1c),
+  (23)–(29) with fn. 9, and (33).
+* The J coordinators with Fragment entries are English *and*, Japanese *to*, the verbal
+  conjunction of Table 1, and Hungarian *és*; the μ coordinators are Japanese *mo*, Hungarian *is*
+  and Latin *-que*.
+
+## TODO
+
+* Table 1, fifteen languages whose quantificational conjunction is the nominal one and not the
+  verbal one, and the Indo-European shift from μ to J of §3.3.
 
 ## References
 
 * [mitrovic-sauerland-2016]
 * [mitrovic-sauerland-2014]
-* [mitrovic-2021]
 -/
 
 @[expose] public section
@@ -96,14 +97,47 @@ theorem conjunction_apply {j : Coordinator} (hj : j.role = .conjunctive) (a b : 
 /-- J′ cannot apply to the shifted individuals without μ, since the intersection of two
 singletons is empty unless the conjuncts are identical. -/
 theorem shift_inf_shift_eq_bot_iff {a b : α} : shift a ⊓ shift b = ⊥ ↔ a ≠ b := by
-  constructor
-  · rintro h rfl
-    exact (congrFun h a).mp ⟨rfl, rfl⟩
-  · intro h
-    funext x
-    exact propext ⟨fun ⟨ha, hb⟩ ↦ h (ha.symm.trans hb), False.elim⟩
+  simp [funext_iff, shift]
 
 end Semantics
+
+/-! ### The collective μ′, (20)–(22) -/
+
+section Collective
+
+variable {α : Type*} [SemilatticeSup α] {x y : α} {P : α → Prop}
+
+/-- `muPrime x P`, the collective μ′ that (20) tries, holds when `P` is true of some sum of which
+`x` is a part. -/
+def muPrime (x : α) (P : α → Prop) : Prop := ∃ y, y ⊔ x = y ∧ P y
+
+/-- μ′ of an individual holds of a predicate when the individual is below some element of its
+extension. -/
+theorem muPrime_iff_mem_lowerClosure : muPrime x P ↔ x ∈ lowerClosure {y | P y} := by
+  simp [muPrime, and_comm]
+
+theorem muPrime_of_le (hxy : x ≤ y) (hy : P y) : muPrime x P := ⟨y, sup_eq_left.2 hxy, hy⟩
+
+/-- The conjunction of two μ′ phrases, (21), holds of a predicate true of their sum, the
+collective reading of (19). -/
+theorem muPrime_of_collective {a b : α} (h : P (a ⊔ b)) : muPrime a P ∧ muPrime b P :=
+  ⟨muPrime_of_le le_sup_left h, muPrime_of_le le_sup_right h⟩
+
+/-- The conjunction of two μ′ phrases holds of a predicate true of each conjunct, the distributive
+reading. -/
+theorem muPrime_of_distributive {a b : α} (ha : P a) (hb : P b) : muPrime a P ∧ muPrime b P :=
+  ⟨muPrime_of_le le_rfl ha, muPrime_of_le le_rfl hb⟩
+
+end Collective
+
+/-- For two members of a team of three, (22), the conjunction of their μ′ phrases holds of forming
+the team, though neither the collective nor the distributive reading does, so μ′ is too weak to
+give a collective reading. -/
+theorem muPrime_team :
+    (muPrime ({0} : Finset (Fin 3)) (· = Finset.univ) ∧
+      muPrime ({1} : Finset (Fin 3)) (· = Finset.univ)) ∧
+      ({0} ⊔ {1} : Finset (Fin 3)) ≠ Finset.univ ∧ ({0} : Finset (Fin 3)) ≠ Finset.univ :=
+  ⟨⟨muPrime_of_le (by decide) rfl, muPrime_of_le (by decide) rfl⟩, by decide, by decide⟩
 
 /-- An indeterminate quantifier whose particle is conjunctive denotes μ, (15). -/
 theorem mu_of_conjunctive_particle {q : IndeterminateQuantifier}
@@ -123,10 +157,10 @@ theorem quisque_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
     (h : d ∈ ⟦Latin.Determiners.quisque⟧) : d α = mu :=
   mu_of_conjunctive_particle rfl h
 
-/-! ### Exponence -/
+/-! ### Exponence, §3.1 -/
 
-/-- The heads of the structure for the conjunction of two noun phrases, (13), are J and a μ head
-on each conjunct. -/
+/-- The heads of the structure for the conjunction of two noun phrases, (11) and (13), are J and
+a μ head on each conjunct. -/
 inductive Head where
   | j
   | mu (conjunct : Fin 2)
@@ -134,125 +168,60 @@ inductive Head where
 
 theorem card_head : Fintype.card Head = 3 := rfl
 
-/-- A conjunction strategy pronounces J alone, *A and B*, the two μ heads, *A-mo B-mo*, or all
-three heads of the structure. -/
-inductive ConjunctionStrategy where
-  | jOnly
-  | muOnly
-  | jMu
-  deriving DecidableEq, Repr, Fintype
+/-- The labels of the heads in the rows. -/
+def Head.labels : List (String × Head) := [("j", .j), ("mu-first", .mu 0), ("mu-second", .mu 1)]
 
-/-- The heads a strategy pronounces. -/
-def ConjunctionStrategy.pronounced : ConjunctionStrategy → Finset Head
-  | .jOnly => {.j}
-  | .muOnly => Finset.univ.image .mu
-  | .jMu => Finset.univ
+/-- The heads an example pronounces. -/
+def pronounced (d : Datum) : Finset Head :=
+  ((d.features "head").filterMap (List.lookup · Head.labels)).toFinset
 
-/-- A set of heads is μ-uniform when it has the μ head of every conjunct or of none. -/
-def MuUniform (h : Finset Head) : Prop := ∀ i j : Fin 2, Head.mu i ∈ h ↔ Head.mu j ∈ h
+/-- The sets of heads the examples pronounce. -/
+def attested : Finset (Finset Head) := (Examples.all.map pronounced).toFinset
 
-instance : DecidablePred MuUniform := fun _ ↦ inferInstanceAs (Decidable (∀ _ _, _ ↔ _))
-
-/-- The strategies are exactly the nonempty μ-uniform sets of heads, the ways of pronouncing the
-structure that pronounce the μ head of both conjuncts or of neither. -/
-theorem exists_pronounced_eq_iff (h : Finset Head) :
-    (∃ s : ConjunctionStrategy, s.pronounced = h) ↔ h.Nonempty ∧ MuUniform h := by
-  constructor
-  · rintro ⟨s, rfl⟩; cases s <;> decide
-  · rintro ⟨hne, hu⟩
-    revert h
-    decide
-
-/-- A language's exponents of the two heads, which the paper classifies, the strategies it
-allows, and its indeterminate quantifiers in the Fragments. -/
-structure ConjunctionSystem where
-  language : String
-  j : Option Coordinator
-  mu : Option Coordinator
-  strategies : List ConjunctionStrategy
-  quantifiers : List IndeterminateQuantifier := []
-
-/-- English has only J, *and*. -/
-def english : ConjunctionSystem :=
-  { language := "English", j := some English.Coordination.and_, mu := none,
-    strategies := [.jOnly] }
-
-/-- Japanese *to* is J and *mo* is μ. -/
-def japanese : ConjunctionSystem :=
-  { language := "Japanese", j := some Japanese.Coordination.to_,
-    mu := some Japanese.Coordination.mo, strategies := [.jOnly, .muOnly],
-    quantifiers := Japanese.Determiners.indefinites }
-
-/-- Hungarian *és* is J and *is* is μ; the language pronounces J and the two μ heads at once,
-*Kati is és Mari is*, (28). -/
-def hungarian : ConjunctionSystem :=
-  { language := "Hungarian", j := some Hungarian.Coordination.es,
-    mu := some Hungarian.Coordination.is_, strategies := [.jOnly, .muOnly, .jMu] }
-
-/-- Georgian *da* is J and *-c* is μ; the triadic classification follows [mitrovic-2021]. -/
-def georgian : ConjunctionSystem :=
-  { language := "Georgian", j := some Georgian.Coordination.da,
-    mu := some Georgian.Coordination.c_, strategies := [.jOnly, .muOnly, .jMu] }
-
-/-- Latin *et* is J and the enclitic *-que* is μ, §3.3. -/
-def latin : ConjunctionSystem :=
-  { language := "Latin", j := some Latin.Coordination.et, mu := some Latin.Coordination.que,
-    strategies := [.jOnly, .muOnly], quantifiers := [Latin.Determiners.quisque] }
-
-/-- Korean *-(i)rang* is J and *-do* is μ, following [mitrovic-2021]. -/
-def korean : ConjunctionSystem :=
-  { language := "Korean", j := some Korean.Coordination.irang,
-    mu := some Korean.Coordination.do_, strategies := [.jOnly, .muOnly] }
-
-/-- Slovenian *in* is J. -/
-def slovenian : ConjunctionSystem :=
-  { language := "Slovenian",
-    j := some { morph := .free "in", gloss := "and", role := .conjunctive },
-    mu := none, strategies := [.jOnly] }
-
-/-- The seven-language sample. -/
-def msLanguages : List ConjunctionSystem :=
-  [english, japanese, hungarian, georgian, latin, korean, slovenian]
-
-/-- A system has triadic exponency when the J-only, μ-only, and J-with-μ strategies are all
-attested in it. -/
-def hasAllThreeStrategies (sys : ConjunctionSystem) : Prop :=
-  .jOnly ∈ sys.strategies ∧ .muOnly ∈ sys.strategies ∧ .jMu ∈ sys.strategies
-
-instance (sys : ConjunctionSystem) : Decidable (hasAllThreeStrategies sys) := by
-  unfold hasAllThreeStrategies; infer_instance
-
-/-- The exponent of a head in a language is its J or its μ coordinator. -/
-def ConjunctionSystem.exponent (sys : ConjunctionSystem) : Head → Option Coordinator
-  | .j => sys.j
-  | .mu _ => sys.mu
-
-/-- A language of the sample has an exponent for every head its strategies pronounce. -/
-theorem strategies_exponent : ∀ sys ∈ msLanguages, ∀ st ∈ sys.strategies,
-    ∀ h ∈ st.pronounced, (sys.exponent h).isSome := by
+theorem attested_eq : attested = {{.j}, {.mu 1}, {.mu 0, .mu 1}, {.j, .mu 1}, Finset.univ} := by
   decide
 
-/-- Hungarian realizes all three strategies, *Kati is (és) Mari is*. -/
-theorem hungarian_triadic : hasAllThreeStrategies hungarian := by decide
+/-- The examples pronounce exactly the nonempty sets of heads in which the μ of the first conjunct
+comes only with that of the second, all but the sets that keep the first μ and drop the
+second. -/
+theorem mem_attested_iff {h : Finset Head} :
+    h ∈ attested ↔ h.Nonempty ∧ (Head.mu 0 ∈ h → Head.mu 1 ∈ h) := by
+  rw [attested_eq]; revert h; decide
 
-/-- Every μ coordinator of the sample has a use outside conjunction, as an additive particle or
-as the particle of an indeterminate quantifier, §3. -/
-theorem mu_has_other_use : ∀ sys ∈ msLanguages, ∀ c ∈ sys.mu,
-    c.alsoAdditive = true ∨ ∃ q ∈ sys.quantifiers, q.particle = c := by
+/-- The examples that pronounce all three heads are Southeastern Macedonian (26), Serbo-Croatian
+(27), whose J is adversative, Hungarian (28) and Avar (29). -/
+theorem languages_pronounced_eq_univ :
+    (Examples.all.filter (pronounced · = Finset.univ)).map (·.language) =
+      ["mace1250", "sout1528", "hung1274", "avar1256"] := by
   decide
 
-/-- No J coordinator of the sample has an additive or a quantificational use, §3. -/
-theorem j_has_no_other_use : ∀ sys ∈ msLanguages, ∀ c ∈ sys.j,
-    c.alsoAdditive = false ∧ ∀ q ∈ sys.quantifiers, q.particle ≠ c := by
+/-! ### Other uses, §3 -/
+
+/-- The coordinators the paper takes for J that have Fragment entries. -/
+def jCoordinators : List Coordinator :=
+  [English.Coordination.and_, Japanese.Coordination.to_, Hungarian.Coordination.es]
+
+/-- The coordinators the paper takes for μ that have Fragment entries. -/
+def muCoordinators : List Coordinator :=
+  [Japanese.Coordination.mo, Hungarian.Coordination.is_, Latin.Coordination.que]
+
+/-- The indeterminate quantifiers of their languages in the Fragments. -/
+def quantifiers : List IndeterminateQuantifier :=
+  Japanese.Determiners.indefinites ++ [Latin.Determiners.quisque]
+
+theorem coordinators_conjunctive :
+    ∀ c ∈ jCoordinators ++ muCoordinators, c.role = .conjunctive := by
   decide
 
-/-- Every coordinator the paper classifies as J or μ is conjunctive in the Fragments. -/
-theorem heads_conjunctive : ∀ sys ∈ msLanguages,
-    (∀ c ∈ sys.j, c.role = .conjunctive) ∧ ∀ c ∈ sys.mu, c.role = .conjunctive := by
+/-- Every μ coordinator has a use outside conjunction, as an additive particle or as the particle
+of an indeterminate quantifier. -/
+theorem mu_has_other_use : ∀ c ∈ muCoordinators,
+    c.alsoAdditive = true ∨ ∃ q ∈ quantifiers, q.particle = c := by
   decide
 
-/-- Every language in the sample has a J-only strategy. -/
-theorem j_is_universal : ∀ sys ∈ msLanguages, .jOnly ∈ sys.strategies := by
+/-- No J coordinator has an additive or a quantificational use. -/
+theorem j_has_no_other_use : ∀ c ∈ jCoordinators,
+    c.alsoAdditive = false ∧ ∀ q ∈ quantifiers, q.particle ≠ c := by
   decide
 
 end MitrovicSauerland2016
