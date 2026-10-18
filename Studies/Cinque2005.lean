@@ -125,32 +125,30 @@ picture-of-who type otherwise, and a proper part strands the rest. -/
 def markOf (c s : RoseTree SyntacticObject.Vertex) : Option Marked :=
   if s == c then (if specHasN s then none else some .pictureOfWho) else some .withoutPiedPiping
 
-/-- A stage of the enumeration records the derivation, its ordered form, the marked options of its
-raises and their number. -/
+/-- A stage of the enumeration records the derivation, the marked options of its raises and
+their number. -/
 structure Stage where
   derivation : Derivation
-  planar : PlanarSyntacticObject
   marks : List Marked
   raises : ℕ
 
-/-- Merge the modifier `m` above the current object, then optionally raise a subtree containing
-the overt noun to the left edge. -/
+/-- Merge the modifier `m` above the current object, then optionally raise a subtree of it
+containing the overt noun to the left edge, the subtrees read off the derivation's ordered
+object. -/
 def step (m : LexicalItem.Token) (st : Stage) : List Stage :=
-  let d : Derivation := ⟨st.derivation.initial, st.derivation.steps ++ [.em .left (leaf m)]⟩
-  let p := m * st.planar
-  ⟨d, p, st.marks, st.raises⟩ ::
-    (st.planar.val.subtrees.filter hasN).filterMap fun s =>
-      if h : IsSyntacticObject (UnorderedTree.mk s) then
-        (p.move .left (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)).map fun p' =>
-          ⟨⟨d.initial, d.steps ++ [.im (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)]⟩, p',
-            (markOf st.planar.val s).toList ++ st.marks, st.raises + 1⟩
-      else none
+  let d := st.derivation.append [.em .left (leaf m)]
+  ⟨d, st.marks, st.raises⟩ :: match st.derivation.externalize? with
+    | none => []
+    | some p => (p.val.subtrees.filter hasN).filterMap fun s ↦
+        if h : IsSyntacticObject (UnorderedTree.mk s) then
+          some ⟨d.append [.im (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)],
+            (markOf p.val s).toList ++ st.marks, st.raises + 1⟩
+        else none
 
 /-- The derivations (7) allows from the noun and the modifiers `ms`, merged in turn, with an
 optional raise after each Merge. -/
 def stagesOf (ms : List LexicalItem.Token) : List Stage :=
-  ms.foldl (fun sts m ↦ sts.flatMap (step m))
-    [⟨⟨leaf tokN, []⟩, PlanarSyntacticObject.leaf tokN, [], 0⟩]
+  ms.foldl (fun sts m ↦ sts.flatMap (step m)) [⟨⟨leaf tokN, []⟩, [], 0⟩]
 
 /-- The derivations of A, Num and Dem. -/
 def stages : List Stage := stagesOf [tokA, tokNum, tokDem]

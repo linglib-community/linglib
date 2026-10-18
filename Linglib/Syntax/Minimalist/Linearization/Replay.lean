@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Derivation.Basic
+public import Linglib.Core.Data.List.Monadic
 
 /-!
 # Replaying a derivation on planar objects
@@ -20,7 +21,7 @@ order is a morphism of magmas (their Lemma 1.13.1), so a successful replay forge
 derivation's own configuration (`Derivation.replay?_faithful`): the readouts `surfaceTokens`,
 `surfaceCats` and `surfacePhon` are the word order of the derived object. The order is a datum
 of the derivation, not of the object it derives, since one object has derivations in two orders
-(`Derivation.not_exists_externalize?_eq_comp_final`). The replay is partial, `none` when an
+(`Derivation.not_factorsThrough_final`). The replay is partial, `none` when an
 externally merged item is not a leaf, an unordered complex item having no order to replay, when
 a mover is absent, or when nothing is left to merge back. Traces are unpronounced. Sibling
 accounts of linearization: the selection-induced harmonic order
@@ -28,7 +29,7 @@ accounts of linearization: the selection-induced harmonic order
 
 ## Main definitions
 
-* `Minimalist.PlanarSyntacticObject.find?`, `replace`, `move`: Internal Merge on planar objects.
+* `Minimalist.PlanarSyntacticObject.find?`, `replace`: an occurrence and its replacement.
 * `Minimalist.Step.replay?`, `Minimalist.Derivation.replay?`, `externalize?`: the replay.
 * `Minimalist.Derivation.surfaceTokens`, `surfaceCats`, `surfacePhon`.
 
@@ -36,8 +37,8 @@ accounts of linearization: the selection-induced harmonic order
 
 * `Minimalist.Derivation.replay?_faithful`, `externalize?_faithful`: a successful replay forgets
   to `run` and `final`.
-* `Minimalist.Derivation.not_exists_externalize?_eq_comp_final`: the planar object does not
-  factor through the derived object.
+* `Minimalist.Derivation.not_factorsThrough_final`: the planar object does not factor through
+  the derived object.
 
 ## References
 
@@ -70,7 +71,7 @@ theorem SyntacticObject.toSyntacticObject_of_toPlanarLeaf? {s : SyntacticObject}
 def PlanarSyntacticObject.yield (p : PlanarSyntacticObject) : List LexicalItem.Token :=
   p.val.leafList.filterMap (Sum.elim id fun _ ↦ none)
 
-/-! ### Internal Merge on planar objects -/
+/-! ### Occurrences in planar objects -/
 
 namespace PlanarSyntacticObject
 
@@ -110,47 +111,24 @@ def SyntacticObject.tracePlanar (s : SyntacticObject)
     (s.tracePlanar τ).toSyntacticObject = s.headTrace τ := by
   unfold tracePlanar headTrace; cases τ s <;> rfl
 
-namespace PlanarSyntacticObject
-
-/-- Internal Merge on a planar object raises the leftmost subtree projecting to `mover` to the
-    edge on `side`, leaving the trace of its head under `τ`; `none` if it is absent. -/
-def move (side : Edge) (p : PlanarSyntacticObject) (mover : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Option PlanarSyntacticObject :=
-  (p.find? mover).map fun s ↦ match side with
-    | .left => merge s (p.replace mover (mover.tracePlanar τ))
-    | .right => merge (p.replace mover (mover.tracePlanar τ)) s
-
-/-- Internal Merge on a planar object forgets to Internal Merge on the syntactic object. -/
-theorem toSyntacticObject_move {side : Edge} {p p' : PlanarSyntacticObject}
-    {mover : SyntacticObject} {τ : SyntacticObject → Option LexicalItem.Token}
-    (h : p.move side mover τ = some p') :
-    p'.toSyntacticObject = SyntacticObject.merge
-      (deleteAccessible mover p.toSyntacticObject τ) mover := by
-  obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
-  cases side
-  · rw [toSyntacticObject_merge, toSyntacticObject_find? hs, toSyntacticObject_replace,
-      toSyntacticObject_tracePlanar, SyntacticObject.merge_comm]
-    rfl
-  · rw [toSyntacticObject_merge, toSyntacticObject_find? hs, toSyntacticObject_replace,
-      toSyntacticObject_tracePlanar]
-    rfl
-
-end PlanarSyntacticObject
-
 /-! ### The replay -/
 
 open Derivation (Cfg)
 
-/-- A step on a planar configuration, `Step.run` with each new daughter on its side, an extraction
-    stacking the planar copy it finds; `none` when an externally merged item is not a leaf, the
-    mover is absent, or the stack is empty. -/
+/-- A step on a planar configuration, `Step.run` with each new daughter on its side. Internal
+    Merge raises the leftmost occurrence of the mover, leaving the trace of its head under `τ`,
+    and an extraction stacks it; `none` when an externally merged item is not a leaf, the mover is
+    absent, or the stack is empty. -/
 def Step.replay? (step : Step) (c : Cfg PlanarSyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
     Option (Cfg PlanarSyntacticObject) :=
   match step, c with
   | .em .left item, ⟨p, st⟩ => item.toPlanarLeaf?.map fun i ↦ ⟨i.merge p, st⟩
   | .em .right item, ⟨p, st⟩ => item.toPlanarLeaf?.map fun i ↦ ⟨p.merge i, st⟩
-  | .im mover side, ⟨p, st⟩ => (p.move side mover τ).map fun p' ↦ ⟨p', st⟩
+  | .im mover .left, ⟨p, st⟩ =>
+      (p.find? mover).map fun s ↦ ⟨s.merge (p.replace mover (mover.tracePlanar τ)), st⟩
+  | .im mover .right, ⟨p, st⟩ =>
+      (p.find? mover).map fun s ↦ ⟨(p.replace mover (mover.tracePlanar τ)).merge s, st⟩
   | .extract mover, ⟨p, st⟩ =>
       (p.find? mover).map fun s ↦ ⟨p.replace mover (mover.tracePlanar τ), s :: st⟩
   | .remerge .left, ⟨p, m :: st⟩ => some ⟨m.merge p, st⟩
@@ -203,11 +181,12 @@ private theorem Step.map_of_replay? {c c' : Cfg PlanarSyntacticObject} {step : S
         subst h <;>
         simp [Cfg.map, Step.run, Step.apply, PlanarSyntacticObject.toSyntacticObject_merge, hi']
   | im mover side =>
-    rcases hm : p.move side mover τ with _ | p'
-    · simp [Step.replay?, hm] at h
-    · simp only [Step.replay?, hm, Option.map_some, Option.some.injEq] at h
-      subst h
-      simp [Cfg.map, Step.run, Step.apply, PlanarSyntacticObject.toSyntacticObject_move hm]
+    rcases hf : p.find? mover with _ | f
+    · cases side <;> simp [Step.replay?, hf] at h
+    · have hf' := PlanarSyntacticObject.toSyntacticObject_find? hf
+      cases side <;> simp only [Step.replay?, hf, Option.map_some, Option.some.injEq] at h <;>
+        subst h <;>
+        simp [Cfg.map, Step.run, Step.apply, deleteAccessible, hf', SyntacticObject.merge_comm]
   | extract mover =>
     rcases hf : p.find? mover with _ | f
     · simp [Step.replay?, hf] at h
@@ -222,17 +201,6 @@ private theorem Step.map_of_replay? {c c' : Cfg PlanarSyntacticObject} {step : S
         subst h <;>
         simp [Cfg.map, Step.run, Step.apply, PlanarSyntacticObject.toSyntacticObject_merge]
 
-/-- A successful replay of a list of steps forgets to the fold of `Step.run`. -/
-private theorem map_of_foldlM_replay? :
-    ∀ (steps : List Step) {c p : Cfg PlanarSyntacticObject},
-      steps.foldlM (fun c step ↦ step.replay? c τ) c = some p →
-      p.map PlanarSyntacticObject.toSyntacticObject
-        = steps.foldl (fun c step ↦ step.run c τ) (c.map PlanarSyntacticObject.toSyntacticObject)
-  | [], _, _, h => by obtain rfl := Option.some.inj h; rfl
-  | step :: steps, _, _, h => by
-    obtain ⟨c', hc', h⟩ := Option.bind_eq_some_iff.1 h
-    rw [List.foldl_cons, ← Step.map_of_replay? hc', map_of_foldlM_replay? steps h]
-
 /-- A successful replay forgets to the derivation's configuration, the object and every copy on
     the stack, forgetting the order being a morphism of magmas
     ([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
@@ -240,7 +208,9 @@ theorem Derivation.replay?_faithful (d : Derivation) {c : Cfg PlanarSyntacticObj
     (h : d.replay? τ = some c) :
     c.map PlanarSyntacticObject.toSyntacticObject = d.run τ := by
   obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
-  rw [map_of_foldlM_replay? d.steps h, Derivation.run, Cfg.map, List.map_nil,
+  rw [List.foldl_eq_of_foldlM_eq_some (f := fun c (step : Step) ↦ step.replay? c τ)
+    (g := fun c (step : Step) ↦ step.run c τ) (π := Cfg.map PlanarSyntacticObject.toSyntacticObject)
+    (fun _ _ _ ↦ Step.map_of_replay?) h, Derivation.run, Cfg.map, List.map_nil,
     toSyntacticObject_of_toPlanarLeaf? hp]
 
 /-- A successful externalization forgets to the derived object, so the surface readouts are the
@@ -259,15 +229,11 @@ theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
 
 /-- The planar object is a datum of the derivation, not of the object it derives: merging a
     second leaf on the left and on the right derives one object in two orders. -/
-theorem Derivation.not_exists_externalize?_eq_comp_final :
-    ¬ ∃ σ : SyntacticObject → Option PlanarSyntacticObject,
-      ∀ d : Derivation, d.externalize? = σ d.final := by
-  rintro ⟨σ, hσ⟩
-  have hfinal : (⟨.leaf ⟨.of .N [], 0⟩, [.em .left (.leaf ⟨.of .N [], 1⟩)]⟩ : Derivation).final =
-      (⟨.leaf ⟨.of .N [], 0⟩, [.em .right (.leaf ⟨.of .N [], 1⟩)]⟩ : Derivation).final :=
-    merge_comm _ _
-  have h := (hσ _).trans ((congrArg σ hfinal).trans (hσ _).symm)
-  revert h
+theorem Derivation.not_factorsThrough_final :
+    ¬ Function.FactorsThrough (externalize? · selHead) (final · selHead) := fun h ↦ by
+  have := @h ⟨.leaf ⟨.of .N [], 0⟩, [.em .left (.leaf ⟨.of .N [], 1⟩)]⟩
+    ⟨.leaf ⟨.of .N [], 0⟩, [.em .right (.leaf ⟨.of .N [], 1⟩)]⟩ (merge_comm _ _)
+  revert this
   decide
 
 end Minimalist
