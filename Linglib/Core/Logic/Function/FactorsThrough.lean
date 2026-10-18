@@ -9,6 +9,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Set.Restrict
 public import Mathlib.Data.Set.Finite.Range
 public import Mathlib.SetTheory.Cardinal.Finite
 
@@ -28,6 +29,10 @@ that `g` agrees on `s` with a function of `f`.
   factors through another takes no more values, so its range is finite when the other's is.
 * `Function.factorsThrough_iff_of_idempotent`: a function factors through an idempotent `f`
   exactly when it is invariant under `f`.
+* `Set.Subsingleton.factorsThrough_domRestrict`, `Set.InjOn.factorsThrough_domRestrict`: on a
+  subsingleton, or where `f` is injective, every function factors through `f`.
+* `Set.factorsThrough_domRestrict_const_iff`: a function factors through a constant on `s` exactly
+  when it is constant there.
 -/
 
 @[expose] public section
@@ -60,3 +65,26 @@ theorem FactorsThrough.finite_range (h : FactorsThrough g f) (hf : (Set.range f)
   exact ⟨⟨f a, a, rfl⟩, h (⟨a, rfl⟩ : ∃ a', f a' = f a).choose_spec⟩
 
 end Function
+
+namespace Set
+
+variable {α β γ : Type*} {s : Set α} {f : α → β} {g : α → γ}
+
+/-- On a subsingleton every function factors through every other. -/
+theorem Subsingleton.factorsThrough_domRestrict (hs : s.Subsingleton) :
+    (s.domRestrict g).FactorsThrough (s.domRestrict f) :=
+  fun a b _ ↦ congrArg (s.domRestrict g) (Subtype.ext (hs a.2 b.2))
+
+/-- Where `f` is injective every function factors through `f`. -/
+theorem InjOn.factorsThrough_domRestrict (hf : s.InjOn f) :
+    (s.domRestrict g).FactorsThrough (s.domRestrict f) :=
+  fun a b hab ↦ congrArg (s.domRestrict g) (Subtype.ext (hf a.2 b.2 hab))
+
+/-- A function factors through a constant on `s` exactly when it is constant there. -/
+theorem factorsThrough_domRestrict_const_iff {c : β} :
+    (s.domRestrict g).FactorsThrough (s.domRestrict fun _ ↦ c) ↔ (g '' s).Subsingleton := by
+  refine ⟨fun h ↦ ?_, fun h a b _ ↦ h (mem_image_of_mem g a.2) (mem_image_of_mem g b.2)⟩
+  rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
+  exact @h ⟨a, ha⟩ ⟨b, hb⟩ rfl
+
+end Set

@@ -190,30 +190,36 @@ def sentence (P : E → Prop) (d : Update (Set S) → Update (Set S)) (M : Model
     (C : Condition (Set S)) : Update (Set S) :=
   intro u ○ test (lex P u) ○ d (vp u u' M ○ test C)
 
-variable {P : E → Prop} {M : Model E} {C : Condition (Set S)}
+variable {P : E → Prop} {M : Model E} {C : Condition (Set S)} {D : Update (Set S)}
+
+theorem singleton_mem_lex_iff {j : S} : {j} ∈ lex P u ↔ P (val u j) := by
+  simp [lex]
+
+theorem singleton_mem_lex₂_iff {P : E → E → Prop} {j : S} :
+    {j} ∈ lex₂ P u u' ↔ P (val u j) (val u' j) := by
+  simp [lex₂]
+
+/-- From a single assignment, introducing `u` and testing `C` before `D` tries each value of
+`u`. -/
+theorem singleton_mem_dom_intro_comp_iff :
+    {i} ∈ (intro u ○ test C ○ D).dom ↔ ∃ x, {extend i u x} ∈ C ∧ {extend i u x} ∈ D.dom := by
+  simp only [mem_dom, mem_comp, singleton_mem_intro_iff, mem_test_iff_left]
+  constructor
+  · rintro ⟨out, _, ⟨_, ⟨x, rfl⟩, rfl, hC⟩, hD⟩
+    exact ⟨x, hC, out, hD⟩
+  · rintro ⟨x, hC, out, hD⟩
+    exact ⟨out, _, ⟨_, ⟨x, rfl⟩, rfl, hC⟩, hD⟩
 
 theorem singleton_mem_dom_sentence_iff {d : Update (Set S) → Update (Set S)} :
     {i} ∈ (sentence u u' P d M C).dom ↔
       ∃ x, P x ∧ {extend i u x} ∈ (d (vp u u' M ○ test C)).dom := by
-  simp only [sentence, mem_dom, mem_comp, singleton_mem_intro_iff, mem_test_iff_left]
-  constructor
-  · rintro ⟨out, _, ⟨_, ⟨x, rfl⟩, rfl, -, hP⟩, hJ⟩
-    exact ⟨x, by simpa [val_extend_self] using hP, out, hJ⟩
-  · rintro ⟨x, hx, out, hJ⟩
-    exact ⟨out, _, ⟨_, ⟨x, rfl⟩, rfl, Set.singleton_nonempty _, by simpa [val_extend_self]⟩, hJ⟩
+  simp only [sentence, singleton_mem_dom_intro_comp_iff, singleton_mem_lex_iff, val_extend_self]
 
 theorem singleton_mem_dom_vp_iff (huu' : u ≠ u') :
     {k} ∈ (vp u u' M ○ test C).dom ↔
       ∃ y, M.noun y ∧ M.verb (val u k) y ∧ {extend k u' y} ∈ C := by
-  simp only [vp, mem_dom, mem_comp, singleton_mem_intro_iff, mem_test_iff_left, lex, lex₂,
-    Set.mem_inter_iff, Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨_, _, ⟨_, ⟨y, rfl⟩, rfl, ⟨-, hn⟩, -, hv⟩, rfl, hC⟩
-    exact ⟨y, by simpa [val_extend_self] using hn,
-      by simpa [val_extend_self, val_extend_of_ne _ _ _ _ huu'] using hv, hC⟩
-  · rintro ⟨y, hn, hv, hC⟩
-    exact ⟨_, _, ⟨_, ⟨y, rfl⟩, rfl, ⟨Set.singleton_nonempty _, by simpa [val_extend_self]⟩,
-      Set.singleton_nonempty _, by simpa [val_extend_self, val_extend_of_ne _ _ _ _ huu']⟩, rfl, hC⟩
+  simp only [vp, singleton_mem_dom_intro_comp_iff, Set.mem_inter_iff, singleton_mem_lex_iff,
+    singleton_mem_lex₂_iff, val_extend_self, val_extend_of_ne _ _ _ _ huu', dom_test, and_assoc]
 
 /-- Introducing `u'` at the split of an assignment gives `u'` a value at each atomic part of its
 value of `u`. -/
@@ -232,15 +238,15 @@ theorem image_mem_intro_iff {A : Set E} {K : Set S} :
     rw [Set.image_image]
     exact Set.image_congr fun a _ ↦ by simp [val_extend_self]
 
-variable [PartialOrder E]
-
 /-! ### Number and cardinality (§5.1) -/
-
-/-- `atom{u}` (75a) holds when every value of `u` is an atom. -/
-def atomic (u : R) : Condition (Set S) := 𝒫 {i | Atom (val u i)}
 
 /-- `unique{u}` (75b) holds when `u` takes one value across the state. -/
 def unique (u : R) : Condition (Set S) := {I | (val u '' I).Subsingleton}
+
+variable [PartialOrder E]
+
+/-- `atom{u}` (75a) holds when every value of `u` is an atom. -/
+def atomic (u : R) : Condition (Set S) := 𝒫 {i | Atom (val u i)}
 
 /-- A cardinality condition holds when the number of atoms of every value of `u` satisfies `p`,
 which is `= n` for the numeral `n` (77) and `> 1` for *several* (78). -/
@@ -373,21 +379,30 @@ theorem singleton_mem_dom_distS_test_iff :
 
 /-! ### Truth conditions (§6) -/
 
+/-- At the split of an assignment, introducing `u'` and testing `C` before `D` tries a value of
+`u'` at each atomic part of the value of `u`. -/
+theorem singleton_mem_dom_distW_intro_iff :
+    {k} ∈ (distW u (intro u' ○ test C ○ D)).dom ↔
+      ∃ b : E → E, (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ C ∧
+        (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ D.dom := by
+  simp only [mem_dom, mem_distW, mem_comp, split_singleton, image_mem_intro_iff,
+    mem_test_iff_left]
+  constructor
+  · rintro ⟨out, _, ⟨_, ⟨b, rfl⟩, rfl, hC⟩, hD⟩
+    exact ⟨b, hC, out, hD⟩
+  · rintro ⟨b, hC, out, hD⟩
+    exact ⟨out, _, ⟨_, ⟨b, rfl⟩, rfl, hC⟩, hD⟩
+
 theorem singleton_mem_dom_distW_iff (huu' : u ≠ u') :
     {k} ∈ (distW u (vp u u' M ○ test C)).dom ↔
       ∃ b : E → E, (atomsBelow (val u k)).Nonempty ∧
         (∀ a ∈ atomsBelow (val u k), M.noun (b a) ∧ M.verb a (b a)) ∧
         (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ C := by
-  simp only [mem_dom, mem_distW, vp, mem_comp, split_singleton, image_mem_intro_iff,
-    mem_test_iff_left]
-  constructor
-  · rintro ⟨_, _, ⟨_, ⟨b, rfl⟩, rfl, ⟨hne, hn⟩, -, hv⟩, rfl, hC⟩
-    simp only [Set.forall_mem_image, val_extend_self, val_extend_of_ne _ _ _ _ huu'] at hn hv
-    exact ⟨b, hne.of_image, fun a ha ↦ ⟨hn ha, hv ha⟩, hC⟩
-  · rintro ⟨b, hne, h, hC⟩
-    refine ⟨_, _, ⟨_, ⟨b, rfl⟩, rfl, ⟨hne.image _, ?_⟩, hne.image _, ?_⟩, rfl, hC⟩ <;>
-      simp only [Set.forall_mem_image, val_extend_self, val_extend_of_ne _ _ _ _ huu']
-    exacts [fun a ha ↦ (h a ha).1, fun a ha ↦ (h a ha).2]
+  rw [vp, singleton_mem_dom_distW_intro_iff]
+  simp only [lex, lex₂, Set.mem_inter_iff, Set.mem_ofPred_eq, dom_test, Set.image_nonempty,
+    Set.forall_mem_image, val_extend_self, val_extend_of_ne _ _ _ _ huu']
+  exact exists_congr fun b ↦ ⟨fun ⟨⟨⟨hne, hn⟩, _, hv⟩, hC⟩ ↦ ⟨hne, fun a ha ↦ ⟨hn ha, hv ha⟩, hC⟩,
+    fun ⟨hne, h, hC⟩ ↦ ⟨⟨⟨hne, fun a ha ↦ (h a ha).1⟩, hne, fun a ha ↦ (h a ha).2⟩, hC⟩⟩
 
 variable (P M)
 
