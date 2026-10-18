@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.ArgumentStructure.Valency
+public import Linglib.Semantics.Composition.Ty
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Fragments.Mayan.Chuj.RootClasses
 public import Linglib.Fragments.Mayan.Chuj.Voice
@@ -65,27 +66,34 @@ open scoped Montague
 
 /-! ### Root classes -/
 
-/-- In [coon-2019]'s coordinates for the four root classes, (3) and §3.3, transitive and
-intransitive roots are event predicates over an internal argument, only the former compatible
-with the agent-merging Voice head; positional roots are measure functions after
-[henderson-2017] and nominal roots properties, neither selecting an internal argument in the
-sense of (2). -/
-def _root_.Chuj.RootClass.toRoot : RootClass → Semantics.Root
-  | .tv =>
-    { valency := some {.internal}, denotationType := some (.e ⇒ .v ⇒ .t),
-      licensesTransitiveVoice := true }
-  | .itv => { valency := some {.internal}, denotationType := some (.e ⇒ .v ⇒ .t) }
-  | .pos => { valency := some ∅, denotationType := some (.e ⇒ .v ⇒ .d) }
-  | .nom => { valency := some ∅, denotationType := some (.e ⇒ .t) }
+/-- The core-argument positions a root class introduces, in the sense of [coon-2019]'s (2):
+transitive and intransitive roots an internal argument, positional and nominal roots none
+(39). -/
+def _root_.Chuj.RootClass.valency : RootClass → Valency
+  | .tv | .itv => {.internal}
+  | .pos | .nom => ∅
+
+/-- The semantic type of a root class, (3): transitive and intransitive roots are event
+predicates over an internal argument, positional roots measure functions after
+[henderson-2017] and nominal roots properties. -/
+def _root_.Chuj.RootClass.ty : RootClass → Montague.Ty
+  | .tv | .itv => .e ⇒ .v ⇒ .t
+  | .pos => .e ⇒ .v ⇒ .d
+  | .nom => .e ⇒ .t
+
+/-- The root class combines with the transitive-forming v ~ Voice head that merges an agent,
+the coordinate separating √TV from the unaccusative √ITV, §3.3. -/
+def _root_.Chuj.RootClass.LicensesTransitiveVoice (rc : RootClass) : Prop := rc = .tv
+
+instance : DecidablePred RootClass.LicensesTransitiveVoice :=
+  fun rc ↦ inferInstanceAs (Decidable (rc = .tv))
 
 /-- √TV and √ITV share type and valency, after [davis-1997]; compatibility with external
 causation by an agent alone separates them, §3.3. -/
 theorem tv_itv_differ_only_in_voice :
-    RootClass.tv.toRoot.denotationType = RootClass.itv.toRoot.denotationType ∧
-      RootClass.tv.toRoot.valency = RootClass.itv.toRoot.valency ∧
-      RootClass.tv.toRoot.licensesTransitiveVoice ≠
-        RootClass.itv.toRoot.licensesTransitiveVoice :=
-  ⟨rfl, rfl, by decide⟩
+    RootClass.tv.ty = RootClass.itv.ty ∧ RootClass.tv.valency = RootClass.itv.valency ∧
+      RootClass.tv.LicensesTransitiveVoice ∧ ¬ RootClass.itv.LicensesTransitiveVoice :=
+  ⟨rfl, rfl, rfl, by decide⟩
 
 /-! ### The v ~ Voice⁰ heads -/
 
@@ -178,18 +186,18 @@ instance (v : V) (i : Internal) : Decidable (Licensed v i) := by unfold Licensed
 passive -ch need a root whose event admits an external agent, and so does -j apart from
 isolated forms like (71); the null intransitive head needs an unaccusative root; -w needs only
 a root, its ban on intransitive roots following from licensing rather than selection, §3.3. -/
-def V.Selects : V → Semantics.Root → Prop
-  | .transitive, r | .ch, r | .j, r => r.licensesTransitiveVoice = true
-  | .intransitive, r => r.valency = some {.internal} ∧ r.licensesTransitiveVoice = false
+def V.Selects : V → RootClass → Prop
+  | .transitive, rc | .ch, rc | .j, rc => rc.LicensesTransitiveVoice
+  | .intransitive, rc => rc.valency = {.internal} ∧ ¬ rc.LicensesTransitiveVoice
   | .w, _ => True
 
-instance (v : V) (r : Semantics.Root) : Decidable (v.Selects r) := by
+instance (v : V) (rc : RootClass) : Decidable (v.Selects rc) := by
   cases v <;> simp only [V.Selects] <;> infer_instance
 
 /-- A stem from a root class is well-formed when the head selects the root, the root admits the
 realization, and the arguments are licensed. -/
 def WellFormed (rc : RootClass) (v : V) (i : Internal) : Prop :=
-  v.Selects rc.toRoot ∧ i ∈ internals rc ∧ Licensed v i
+  v.Selects rc ∧ i ∈ internals rc ∧ Licensed v i
 
 instance (rc : RootClass) (v : V) (i : Internal) : Decidable (WellFormed rc v i) := by
   unfold WellFormed; infer_instance
@@ -252,7 +260,7 @@ theorem w_complement : ¬ WellFormed .tv .w .absent ∧ ¬ WellFormed .nom .w .n
 /-- There is no -w on an intransitive root (47), since with the agent on Infl⁰ the root's DP
 argument goes unlicensed, §3.3, a consequence of licensing rather than selection, given that the
 argument is a DP. -/
-theorem itv_no_w : (∀ i, ¬ WellFormed .itv .w i) ∧ V.w.Selects RootClass.itv.toRoot :=
+theorem itv_no_w : (∀ i, ¬ WellFormed .itv .w i) ∧ V.w.Selects .itv :=
   ⟨fun i ↦ by cases i <;> decide, trivial⟩
 
 /-- Every class forms a verb stem with some head, so root class is not surface category (§5). -/

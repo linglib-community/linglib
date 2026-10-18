@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Order.Closure
 public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Tactic.DeriveFintype
 
@@ -9,30 +10,28 @@ public import Mathlib.Tactic.DeriveFintype
 
 Which templatic components a root entails, the coarse, between-class half of a
 root's meaning; the fine, within-class half is `Root.Content`. The root typology
-of [beavers-koontz-garboden-2020] (§5.4.1) records which of four kinds of
+of Beavers and Koontz-Garboden (§5.4.1) records which of four kinds of
 lexical entailment a root carries — state, manner, result, cause —
 under two collocational restrictions, that a change entails a state and a cause
 entails a change. The restrictions are the partial order `state ≤ result ≤ cause`
 on `Root.Kind`, with `manner` isolated. A root's kind signature is a
 `Finset Root.Kind`; it is well-formed when it is a lower set of that order, and
-`close` sends any signature to its lower closure. The named signatures are the
-attested rows of the typology's display (12), and `changeType` is
-[beavers-etal-2021]'s coarsening of the change-of-state rows into
-property-concept roots, which name a state, and result roots, whose state
-entails a prior change.
+the closure operator `close` sends any signature to its lower closure, the least
+well-formed signature containing it. The named signatures are the attested rows
+of the typology's display (12).
 
 ## Main declarations
 
 * `Root.Kind`, with the collocational `PartialOrder`
-* `Root.Kinds`, `Root.Kinds.close`, `Root.Kinds.WellFormed`
+* `Root.Kinds`, `Root.Kinds.WellFormed`
+* `Root.Kinds.close`: the collocational closure, a `ClosureOperator` whose closed
+  signatures are the well-formed ones
 * `Root.Kinds.propertyConcept`, `pureResult`, `causativeResult`, `pureManner`,
   `fullSpec`
-* `Root.ChangeType`, `Root.Kinds.changeType` — property-concept or result root
 
 ## References
 
 * [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
-* [beavers-etal-2021]: States and changes of state.
 -/
 
 @[expose] public section
@@ -81,24 +80,7 @@ namespace Root.Kinds
 
 open Finset
 
-variable {s t : Kinds}
-
-/-- The collocational closure of a signature, its lower closure in the kind order. -/
-def close (s : Kinds) : Kinds := univ.filter (∃ j ∈ s, · ≤ j)
-
-@[simp] theorem mem_close {k : Kind} : k ∈ close s ↔ ∃ j ∈ s, k ≤ j := by simp [close]
-
-@[simp] theorem coe_close (s : Kinds) : (close s : Set Kind) = lowerClosure (s : Set Kind) := by
-  ext; simp
-
-theorem subset_close (s : Kinds) : s ⊆ close s := fun k hk => mem_close.2 ⟨k, hk, le_rfl⟩
-
-theorem close_mono (h : s ⊆ t) : close s ⊆ close t := by
-  simp only [subset_iff, mem_close] at h ⊢
-  exact fun k ⟨j, hj, hkj⟩ => ⟨j, h hj, hkj⟩
-
-theorem close_close (s : Kinds) : close (close s) = close s :=
-  coe_injective <| by simp
+variable {s : Kinds} {k : Kind}
 
 /-- A signature is well-formed if it respects the collocational restrictions, that is,
 if it is a lower set of the kind order. -/
@@ -107,11 +89,24 @@ def WellFormed (s : Kinds) : Prop := IsLowerSet (s : Set Kind)
 instance : DecidablePred WellFormed := fun s =>
   inferInstanceAs (Decidable (∀ a b : Kind, b ≤ a → a ∈ s → b ∈ s))
 
-theorem wellFormed_iff_close_eq : s.WellFormed ↔ close s = s := by
-  rw [WellFormed, ← lowerClosure_eq, ← coe_close, coe_inj]
+/-- The collocational closure of a signature, its lower closure in the kind order, whose
+closed signatures are the well-formed ones. -/
+@[simps! isClosed]
+def close : ClosureOperator Kinds := .ofPred (fun s ↦ univ.filter (∃ j ∈ s, · ≤ j)) WellFormed
+  (fun _ k hk ↦ by simpa using ⟨k, hk, le_rfl⟩)
+  (fun _ _ _ hba ha ↦ by
+    simp only [coe_filter, mem_univ, true_and, Set.mem_ofPred_eq] at ha ⊢
+    exact ha.imp fun _ hj ↦ ⟨hj.1, hba.trans hj.2⟩)
+  (fun _ _ hst ht _ hk ↦ by
+    obtain ⟨_, hj, hkj⟩ := by simpa using hk
+    exact ht hkj (hst hj))
 
-theorem close_wellFormed (s : Kinds) : (close s).WellFormed := by
-  rw [WellFormed, coe_close]; exact (lowerClosure _).lower
+@[simp] theorem mem_close : k ∈ close s ↔ ∃ j ∈ s, k ≤ j := by
+  rw [show close s = univ.filter (∃ j ∈ s, · ≤ j) from rfl]; simp
+
+@[simp, norm_cast] theorem coe_close (s : Kinds) :
+    (close s : Set Kind) = lowerClosure (s : Set Kind) := by
+  ext; simp
 
 /-! ### The attested rows of the typology -/
 
@@ -131,31 +126,5 @@ def pureManner : Kinds := {.manner}
 def fullSpec : Kinds := univ
 
 end Root.Kinds
-
-/-! ### Change type -/
-
-/-- The two types of change-of-state root, property-concept roots naming a gradable
-property (√flat, √red) and result roots naming the state an event brings about
-(√crack, √shatter) ([beavers-etal-2021] §3.1). -/
-inductive Root.ChangeType where
-  | propertyConcept
-  | result
-  deriving DecidableEq, Repr
-
-/-- The change type of a signature, `result` when it carries `result`,
-`propertyConcept` when it carries `state` but not `result`, and undefined for
-signatures naming no state. -/
-def Root.Kinds.changeType (s : Root.Kinds) : Option Root.ChangeType :=
-  if Root.Kind.result ∈ s then some .result
-  else if Root.Kind.state ∈ s then some .propertyConcept
-  else none
-
-theorem Root.Kinds.changeType_eq_some_result {s : Root.Kinds} :
-    s.changeType = some .result ↔ Root.Kind.result ∈ s := by
-  unfold Root.Kinds.changeType; split_ifs <;> simp_all
-
-theorem Root.Kinds.changeType_eq_some_propertyConcept {s : Root.Kinds} :
-    s.changeType = some .propertyConcept ↔ Root.Kind.state ∈ s ∧ Root.Kind.result ∉ s := by
-  unfold Root.Kinds.changeType; split_ifs <;> simp_all
 
 end Semantics

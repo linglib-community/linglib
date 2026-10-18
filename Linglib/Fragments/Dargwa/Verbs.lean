@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Root.Defs
 public import Linglib.Morphology.Morph
 
 /-!
@@ -17,8 +16,8 @@ the verb are in `Voice.lean`.
 
 * `Dargwa.LightVerb`, `Dargwa.lightVerbs`: the light verbs, each with the meaning of the
   homophonous simplex verb where it has one
-* `Dargwa.ComplexVerb`: a lexical stem, as a `Semantics.Root`, with its word class, preverbs
-  and light verb
+* `Dargwa.ComplexVerb`: a lexical stem, cited as its root, with its word class, preverbs and
+  light verb
 
 ## Implementation notes
 
@@ -150,7 +149,7 @@ inductive StemClass where
 verb, with any preverbs between them. -/
 structure ComplexVerb where
   /-- The lexical stem, which carries the core meaning of the complex. -/
-  root : Semantics.Root
+  stem : Morph
   /-- The word class of the stem, `none` for a stem restricted to the complex verb. -/
   category : Option StemClass
   /-- The preverbs between the stem and the light verb. -/
@@ -163,36 +162,36 @@ structure ComplexVerb where
 
 /-- *taman-b-arq'-* 'finish' (transitive), from *taman* 'end'. -/
 def finish : ComplexVerb :=
-  { root := { name := "taman" }, category := some .noun, lightVerb := make, gloss := "finish" }
+  { stem := .root "taman", category := some .noun, lightVerb := make, gloss := "finish" }
 
 /-- *ʜaˁdur-d-arq'-* 'prepare', from *ʜaˁdur-* 'ready'. -/
 def prepare : ComplexVerb :=
-  { root := { name := "ʜaˁdur" }, category := some .adjective, lightVerb := make,
+  { stem := .root "ʜaˁdur", category := some .adjective, lightVerb := make,
     gloss := "prepare" }
 
 /-- *č'u-b-ut'-* 'divide by two', from *č'u* 'two'. -/
 def divideByTwo : ComplexVerb :=
-  { root := { name := "č'u" }, category := some .numeral, lightVerb := cut,
+  { stem := .root "č'u", category := some .numeral, lightVerb := cut,
     gloss := "divide by two" }
 
 /-- *qeʜ-w-ik'-* 'cough' (imperfective), from the ideophone *qeʜ-*. -/
 def cough : ComplexVerb :=
-  { root := { name := "qeʜ" }, category := some .ideophone, lightVerb := speak,
+  { stem := .root "qeʜ", category := some .ideophone, lightVerb := speak,
     gloss := "cough" }
 
 /-- *w-isːe-w-ig-* 'start crying', from *w-isː-* 'cry' (imperfective). -/
 def startCrying : ComplexVerb :=
-  { root := { name := "isːe" }, category := some .verb, lightVerb := sitDown,
+  { stem := .root "isːe", category := some .verb, lightVerb := sitDown,
     gloss := "start crying" }
 
 /-- *tːurχ-b-arq'-* 'spin', from a stem found nowhere else. -/
 def spin : ComplexVerb :=
-  { root := { name := "tːurχ" }, category := none, lightVerb := make, gloss := "spin" }
+  { stem := .root "tːurχ", category := none, lightVerb := make, gloss := "spin" }
 
 /-- *t'aš-ka-b-icː-* 'stop', from a stem found nowhere else, with the preverb *ka-*
 'downward' between it and the light verb. -/
 def stop : ComplexVerb :=
-  { root := { name := "t'aš" }, category := none, preverbs := [.pref "ka"],
+  { stem := .root "t'aš", category := none, preverbs := [.pref "ka"],
     lightVerb := standUp, gloss := "stop" }
 
 end Dargwa

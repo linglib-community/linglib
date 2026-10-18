@@ -8,7 +8,7 @@ public import Linglib.Data.Forms.Lucy1994
 /-!
 # Lucy (1994): The Role of Semantic Value in Lexical Comparison
 
-This file formalizes the morpho-distributional diagnostic of [lucy-1994]: the lexical classes
+This file formalizes the morpho-distributional diagnostic of Lucy: the lexical classes
 of a language are to be identified by their morphology rather than by notional content, and
 the notional class of motion verbs, assembled from English intuition, coincides with no
 morphologically defined class of Yucatec. The diagnostic is the derivation a root requires to
@@ -16,7 +16,7 @@ form a transitive stem, the affective suffix *=t* for agent-salient roots, no de
 agent-patient-salient roots, and the causative suffix *=s* for patient-salient roots
 (`affectiveT`, `zeroDeriv`, `causativeS`), salience being a set of default semantic values in
 a root that influence case marking. Roots are encoded by their entailment signature and their
-valency after [beavers-koontz-garboden-2020] and [coon-2019], the classifier is the substrate's
+valency after Beavers and Koontz-Garboden and after Coon, the classifier is the substrate's
 `ArgumentStructure.SalienceClass.ofKinds`, and the derivations predicted from the encoding
 reproduce every derivation the paper attests (`predicted_matches_attested`), the attestations
 being the form relations of `Data/Forms/Lucy1994`. Notional motion roots land in the
@@ -50,26 +50,31 @@ namespace Lucy1994
 
 open Semantics ArgumentStructure Morphology Data.Forms
 
-/-- The root of the sample that a form spells, with its entailment signature. -/
-def ofForm (f : Form Forms.Cell) (entailments : Finset Root.Entailment) : Root :=
-  { name := f.form, entailments := entailments }
+/-- A sampled root, the meaning of a root with the form row that spells it. -/
+structure SampledRoot extends Root where
+  /-- The form row that spells the root. -/
+  form : Form Forms.Cell
+  deriving DecidableEq
+
+/-- The root of the sample that a form spells, with its kind signature. -/
+def ofForm (f : Form Forms.Cell) (kinds : Root.Kinds) : SampledRoot := { form := f, kinds }
 
 /-! ### Agent-salient roots ((1a), p. 629) -/
 
 /-- síit' 'jump' (1a). -/
-def siit : Root := ofForm Forms.siit {.manner "jumping"}
+def siit : SampledRoot := ofForm Forms.siit {.manner}
 
 /-- ¢'iib' 'write' (p. 629). -/
-def tziib : Root := ofForm Forms.tziib {.manner "writing"}
+def tziib : SampledRoot := ofForm Forms.tziib {.manner}
 
 /-- mìis 'sweep' (p. 629), denominal from 'broom'. -/
-def miis : Root := ofForm Forms.miis {.manner "sweeping"}
+def miis : SampledRoot := ofForm Forms.miis {.manner}
 
 /-- čé'eh 'smile' (p. 629). -/
-def cheh : Root := ofForm Forms.cheh {.manner "smiling"}
+def cheh : SampledRoot := ofForm Forms.cheh {.manner}
 
 /-- páak 'weed' (p. 629). -/
-def paak : Root := ofForm Forms.paak {.manner "weeding"}
+def paak : SampledRoot := ofForm Forms.paak {.manner}
 
 /-! ### Agent-patient-salient roots ((1b), p. 629)
 
@@ -77,19 +82,19 @@ Root transitives, carrying no uniform signature: *kuč*, *p'is*, *ha¢* and *lo�
 surface contact without an entailed result, while *k'os* 'cut' is manner and result. -/
 
 /-- kuč 'carry' (1b). -/
-def kuc : Root := ofForm Forms.kuc {.manner "carrying"}
+def kuc : SampledRoot := ofForm Forms.kuc {.manner}
 
 /-- k'os 'cut' (p. 629), manner and result. -/
-def kos : Root := ofForm Forms.kos {.manner "cutting", .result "cut"}
+def kos : SampledRoot := ofForm Forms.kos {.manner, .result}
 
 /-- p'is 'measure' (p. 629), no entailed change of state. -/
-def pis : Root := ofForm Forms.pis {.manner "measuring"}
+def pis : SampledRoot := ofForm Forms.pis {.manner}
 
 /-- ha¢ 'whip' (p. 629). -/
-def hats : Root := ofForm Forms.hats {.manner "whipping"}
+def hats : SampledRoot := ofForm Forms.hats {.manner}
 
 /-- loš 'punch' (p. 629), surface contact without an entailed result. -/
-def los : Root := ofForm Forms.los {.manner "striking"}
+def los : SampledRoot := ofForm Forms.los {.manner}
 
 /-! ### Patient-salient roots ((2), pp. 629–630)
 
@@ -97,41 +102,41 @@ List (2) is arranged in antonym pairs listed in vertical adjacency: 'ah ~ wen, s
 tú'ub' ~ k'a'ah, ču'un ~ č'en, hó'op' ~ háaw. The order below is the list's. -/
 
 /-- 'ah '(a)wake(n)', 'ah=s 'wake (someone)'. -/
-def ah : Root := ofForm Forms.ah {.result "awake"}
+def ah : SampledRoot := ofForm Forms.ah {.result}
 
 /-- wen '(fall a)sleep', ween=s 'put to sleep'; fn. 7 flags it as also denoting continuation in
 the state. -/
-def wen : Root := ofForm Forms.wen {.result "asleep"}
+def wen : SampledRoot := ofForm Forms.wen {.result}
 
 /-- siih 'be born', siih=s 'give birth, bear'. -/
-def siih : Root := ofForm Forms.siih {.result "born"}
+def siih : SampledRoot := ofForm Forms.siih {.result}
 
 /-- kíim 'die' (1c), kíim=s 'kill'. -/
-def kiim : Root := ofForm Forms.kiim {.result "dead"}
+def kiim : SampledRoot := ofForm Forms.kiim {.result}
 
 /-- tú'ub' 'forget', tú'ub'=s 'distract, cause to forget'. -/
-def tuub : Root := ofForm Forms.tuub {.result "forgotten"}
+def tuub : SampledRoot := ofForm Forms.tuub {.result}
 
 /-- k'a'ah 'remember', k'á'ah=s 'remind, mention, invoke'. -/
-def kaah : Root := ofForm Forms.kaah {.result "remembered"}
+def kaah : SampledRoot := ofForm Forms.kaah {.result}
 
 /-- ču'un 'begin activity', ču'un=s 'cause to begin'. -/
-def chuun : Root := ofForm Forms.chuun {.result "begun"}
+def chuun : SampledRoot := ofForm Forms.chuun {.result}
 
 /-- č'en 'stop, cease', č'en=s 'cause to stop, suspend'. -/
-def chen : Root := ofForm Forms.chen {.result "ceased"}
+def chen : SampledRoot := ofForm Forms.chen {.result}
 
 /-- hó'op' 'begin, start', hó'op'=s 'cause to begin'. -/
-def hoop : Root := ofForm Forms.hoop {.result "started"}
+def hoop : SampledRoot := ofForm Forms.hoop {.result}
 
 /-- háaw 'stop, cease, heal', háaw=s 'stop, revoke, medicate'. -/
-def haaw : Root := ofForm Forms.haaw {.result "stopped"}
+def haaw : SampledRoot := ofForm Forms.haaw {.result}
 
 /-- hé'el 'rest, stop at', hé'e(l)=s 'rest'. -/
-def heel : Root := ofForm Forms.heel {.result "rested"}
+def heel : SampledRoot := ofForm Forms.heel {.result}
 
 /-- p'át 'remain', p'át=s 'abandon'. -/
-def paat : Root := ofForm Forms.paat {.result "remaining"}
+def paat : SampledRoot := ofForm Forms.paat {.result}
 
 /-! ### Motion roots ((4), p. 640)
 
@@ -141,75 +146,75 @@ the imperfective; fn. 17 adds that *péek* and *'ú'ul* are also irregular in th
 perfective forms, where they pattern like agent-salient roots. -/
 
 /-- máan 'pass by' (`#`), maan=s 'pass, transfer, transport'. -/
-def maan : Root := ofForm Forms.maan {.result "past"}
+def maan : SampledRoot := ofForm Forms.maan {.result}
 
 /-- péek 'move, vibrate' (`#`), pek=s 'cause to move, vibrate'. -/
-def peek : Root := ofForm Forms.peek {.result "in-motion"}
+def peek : SampledRoot := ofForm Forms.peek {.result}
 
 /-- b'in 'go' (`#`), bi(n)=s 'take'. -/
-def bin : Root := ofForm Forms.bin {.result "gone"}
+def bin : SampledRoot := ofForm Forms.bin {.result}
 
 /-- tàal 'come (here)' (`#`), taa(l)=s 'bring'. -/
-def taal : Root := ofForm Forms.taal {.result "come"}
+def taal : SampledRoot := ofForm Forms.taal {.result}
 
 /-- 'ú'ul 'arrive (here)' (`#`), 'u'uh=s 'bring it to here'. -/
-def uul : Root := ofForm Forms.uul {.result "arrived"}
+def uul : SampledRoot := ofForm Forms.uul {.result}
 
 /-- 'ok 'enter, intrude', 'ook=s 'move it in(to)'. -/
-def ok : Root := ofForm Forms.ok {.result "inside"}
+def ok : SampledRoot := ofForm Forms.ok {.result}
 
 /-- lúub' 'fall', luub'=s 'fell'. -/
-def luub : Root := ofForm Forms.luub {.result "fallen"}
+def luub : SampledRoot := ofForm Forms.luub {.result}
 
 /-- líik' '(a)rise, ascend', lii(k)'=s 'raise, lift, put away'. -/
-def liik : Root := ofForm Forms.liik {.result "risen"}
+def liik : SampledRoot := ofForm Forms.liik {.result}
 
 /-- ná'ak '(a)rise, ascend', na'ak=s 'raise'; distinct from náak 'arrive, reach, hit', not
 sampled here. -/
-def naak : Root := ofForm Forms.naak {.result "ascended"}
+def naak : SampledRoot := ofForm Forms.naak {.result}
 
 /-! ### Positional roots ((5) to (7), pp. 642–644) -/
 
 /-- čin 'bow, bend down, bend over' ((5) to (7)); zero-derives a transitive, (6) 'I bent it'. -/
-def cin : Root := ofForm Forms.cin {.state "bent"}
+def cin : SampledRoot := ofForm Forms.cin {.state}
 
 /-- čil 'lie down, lying down' (7). -/
-def cil : Root := ofForm Forms.cil {.state "lying"}
+def cil : SampledRoot := ofForm Forms.cil {.state}
 
 /-! ### Valency and class lists -/
 
 /-- The roots attested forming a transitive stem by zero derivation, the sampled `=∅` predicate
 roots (p. 629) and the positional *čin* (6). -/
-def rootTransitives : List Root := [kuc, kos, pis, hats, los, cin]
+def rootTransitives : List SampledRoot := [kuc, kos, pis, hats, los, cin]
 
 /-- Root valency for the sample, [coon-2019]'s √TV as `{.internal}`: zero-derivers introduce
 their internal argument, every other sampled root none. -/
-def valency (r : Root) : Valency :=
+def valency (r : SampledRoot) : Valency :=
   if r ∈ rootTransitives then {.internal} else ∅
 
 /-- The sampled agent-salient roots. -/
-def agentSalientRoots : List Root := [siit, tziib, miis, cheh, paak]
+def agentSalientRoots : List SampledRoot := [siit, tziib, miis, cheh, paak]
 
 /-- The sampled agent-patient-salient roots. -/
-def agentPatientSalientRoots : List Root := [kuc, kos, pis, hats, los]
+def agentPatientSalientRoots : List SampledRoot := [kuc, kos, pis, hats, los]
 
 /-- The sampled patient-salient roots of list (2), in the list's order. -/
-def patientSalientRoots : List Root :=
+def patientSalientRoots : List SampledRoot :=
   [ah, wen, siih, kiim, tuub, kaah, chuun, chen, hoop, haaw, heel, paat]
 
 /-- The sampled motion roots of (4). -/
-def motionRoots : List Root :=
+def motionRoots : List SampledRoot :=
   [maan, peek, bin, taal, uul, ok, luub, liik, naak]
 
 /-- The `#`-marked subset of (4), the roots lacking the *-Vl* imperfective: for the paper, the
 only candidate formal class of motion verbs (p. 641). -/
-def hashMarked : List Root := [maan, peek, bin, taal, uul]
+def hashMarked : List SampledRoot := [maan, peek, bin, taal, uul]
 
 /-- The sampled positional roots. -/
-def positionalRoots : List Root := [cin, cil]
+def positionalRoots : List SampledRoot := [cin, cil]
 
 /-- Every sampled root. -/
-def sampledRoots : List Root :=
+def sampledRoots : List SampledRoot :=
   agentSalientRoots ++ agentPatientSalientRoots ++ patientSalientRoots ++
     motionRoots ++ positionalRoots
 
@@ -224,18 +229,18 @@ structure DiagOp where
   /-- The core-argument positions the derivation adds (`transitiviser_adds_compl`). -/
   adds : Valency
   /-- The structural condition on the root. -/
-  Applies : Root → Prop
+  Applies : SampledRoot → Prop
   /-- Bundled decidability of the condition. -/
   decApplies : DecidablePred Applies
 
-instance : Exponence.Rule DiagOp Root String where
+instance : Exponence.Rule DiagOp SampledRoot String where
   exponent := DiagOp.exponent
   Applies := DiagOp.Applies
 
-instance : DecidableRel (Exponence.Applies : DiagOp → Root → Prop) :=
+instance : DecidableRel (Exponence.Applies : DiagOp → SampledRoot → Prop) :=
   fun op r ↦ op.decApplies r
 
-@[simp] theorem applies_iff (op : DiagOp) (r : Root) :
+@[simp] theorem applies_iff (op : DiagOp) (r : SampledRoot) :
     Exponence.Applies op r ↔ op.Applies r := Iff.rfl
 
 /-- Affective *=t* transitivises an agent-salient root by adding a patient argument. -/
@@ -262,15 +267,15 @@ def inventory : Exponence.RuleSet DiagOp :=
 
 /-- The exponents of the inventory's applicable operators at `r`, in inventory order, which are
 the root's predicted derivational behaviour. -/
-def predictedExponents (r : Root) : List String :=
+def predictedExponents (r : SampledRoot) : List String :=
   (inventory.applicable r).map DiagOp.exponent
 
 /-! ### Predicted against attested derivations -/
 
 /-- The derivations the paper attests for a root. Each is the final segment of a form that the
 root's row is related to, a derived stem or the bare derivational morpheme. -/
-def attested (r : Root) : List String :=
-  (Forms.relations.filter (·.form.form == r.name)).filterMap (·.target.segments.getLast?)
+def attested (r : SampledRoot) : List String :=
+  (Forms.relations.filter (·.form.form == r.form.form)).filterMap (·.target.segments.getLast?)
 
 /-- The derivations predicted from signature and valency reproduce every derivation the paper
 attests. -/
@@ -280,7 +285,7 @@ theorem predicted_matches_attested : ∀ r ∈ sampledRoots, predictedExponents 
 /-! ### The derived classification -/
 
 /-- A root's predicted salience class. -/
-def predictedClass (r : Root) : Option SalienceClass :=
+def predictedClass (r : SampledRoot) : Option SalienceClass :=
   SalienceClass.ofKinds r.kinds (valency r)
 
 /-- The transitiviser each salience class requires. -/
@@ -292,7 +297,7 @@ def exponentOf : SalienceClass → String
 /-- Predicted derivational behaviour decomposes as the class's transitiviser followed by the
 positional derivation when the signature licenses it: the applicability profile is the
 classification, plus the cross-cutting positional diagnostic. -/
-theorem predictedExponents_eq (r : Root) :
+theorem predictedExponents_eq (r : SampledRoot) :
     predictedExponents r =
       (predictedClass r).toList.map exponentOf ++
         (if IsPositional r.kinds then ["=lah"] else []) := by
@@ -356,7 +361,7 @@ theorem positional_crosscuts_transitiviser_classes :
 
 /-- For cause-free roots, every root in this sample, collocational closure does not change the
 predicted class. -/
-theorem predictedClass_closure_invariant (r : Root) (h : Root.Kind.cause ∉ r.kinds) :
+theorem predictedClass_closure_invariant (r : SampledRoot) (h : Root.Kind.cause ∉ r.kinds) :
     SalienceClass.ofKinds r.closedKinds (valency r) = predictedClass r :=
   SalienceClass.ofKinds_close r.kinds (valency r) h
 

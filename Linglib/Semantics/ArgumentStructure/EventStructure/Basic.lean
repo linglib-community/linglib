@@ -7,19 +7,19 @@ public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 
 An event structure template is a term over a small set of primitive predicates: a state, an
 action `ACT`, a change `BECOME` and causation `CAUSE`, where `BECOME` and `CAUSE` take templates
-as arguments and so build larger templates out of smaller ones ([rappaport-hovav-levin-1998];
-[beavers-koontz-garboden-2020]). A verb's meaning pairs a template, which fixes its class, with a
+as arguments and so build larger templates out of smaller ones (Rappaport Hovav and Levin;
+Beavers and Koontz-Garboden). A verb's meaning pairs a template, which fixes its class, with a
 root, which tells it apart from the other members of the class. The basic inventory of
-[rappaport-hovav-levin-1998] is the state `[x ⟨STATE⟩]`, the activity `[x ACT⟨MANNER⟩]`, the
+Rappaport Hovav and Levin is the state `[x ⟨STATE⟩]`, the activity `[x ACT⟨MANNER⟩]`, the
 achievement `[BECOME [x ⟨STATE⟩]]` and the two accomplishments
 `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]` and `[x CAUSE [BECOME [y ⟨STATE⟩]]]`, the second
-with an individual causer, which is the `vcause` of [beavers-koontz-garboden-2020].
+with an individual causer, which is the `vcause` of Beavers and Koontz-Garboden.
 
 Templates are sorted like the domain of an `Interpretation`: `BECOME` turns a state template into
 an event template and `CAUSE` relates two event templates. `Template.denote` interprets a
 template with a root in its slots, the root's state predicate at the state and its manner at
 `ACT`, through the heads `vBecome` and `vCause`. The primitives are the four kinds of entailment
-of the root typology of [beavers-koontz-garboden-2020], so `Template.kinds` reads a template's
+of the root typology of Beavers and Koontz-Garboden, so `Template.kinds` reads a template's
 primitives as a root signature, and membership in it is exactly what every denotation of the
 template entails: a change for `HasResultState`, a causal relation for `HasCause`. A template's
 denotation entails that each of its subterms is realized, which orders the readings of a
@@ -38,6 +38,7 @@ modifier such as *again* attached at different subterms.
 
 * `Template.hasResultState_iff`, `Template.hasCause_iff`: the diagnostics are the entailments
   of the denotation
+* `Template.hasCause_of_mem_kinds`: a template with a manner and a state has `CAUSE`
 * `Template.exists_denote_of_isSubterm`: a template's subterms are realized with its undergoer
 * `Template.IsSubterm.kinds_subset`: a subterm's primitives are among the template's
 * `Template.denote_cause_effector`: CAUSE with an individual causer is `vCause`
@@ -143,6 +144,17 @@ inductive IsSubterm : {α β : Eventuality} → Template α → Template β → 
       IsSubterm u c → IsSubterm u (cause c e)
   | caused {α : Eventuality} {u : Template α} {c e : Template .event} :
       IsSubterm u e → IsSubterm u (cause c e)
+
+/-- A template whose primitives include a manner and a state has `CAUSE`, since causation is
+the only primitive that relates an action to a state. -/
+theorem hasCause_of_mem_kinds {t : Template σ} (hm : Root.Kind.manner ∈ t.kinds)
+    (hs : Root.Kind.state ∈ t.kinds) : t.HasCause := by
+  induction t with
+  | state | act | effector => simp [kinds] at hm hs
+  | become _ ih =>
+    simp only [kinds, Finset.mem_insert, reduceCtorEq, false_or] at hm hs
+    exact Finset.mem_insert_of_mem (ih hm hs)
+  | cause => exact Finset.mem_insert_self _ _
 
 /-- A subterm's primitives are among the template's. -/
 theorem IsSubterm.kinds_subset {u : Template τ} {t : Template σ} (h : u.IsSubterm t) :

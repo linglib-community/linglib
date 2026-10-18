@@ -10,15 +10,15 @@ public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 # Benz (2025): Structure and interpretation across categories
 
 Three case studies on the syntax–LF interface in German run on the contextual-allosemy
-substrate of `DistributedMorphology.Allosemy` ([benz-2025]). One nominalization structure
+substrate of `DistributedMorphology.Allosemy`. One nominalization structure
 yields the event, referential and content readings of *Beobachtung*, the variation lying in
-the allosemes of v and n (Ch. 3, after [wood-2023]). The co-occurrence restrictions among
+the allosemes of v and n (Ch. 3, after Wood). The co-occurrence restrictions among
 inseparable prefixes, separable particles and resultative secondary predicates follow from a
 phrase-structural factor, that the inner element be a head, together with an event-structural
-one, [tenny-1994]'s Single Delimiting Constraint (Ch. 4), and the particle "structure
-problem" of [luedeling-2001] is solved differently by the three nominalization types, whose
+one, Tenny's Single Delimiting Constraint (Ch. 4), and the particle "structure
+problem" of Lüdeling is solved differently by the three nominalization types, whose
 distribution of preverbal elements follows from their solutions, while *-ung* further demands
-the complex change-of-state structure of [rossdeutscher-kamp-2010] (Ch. 5).
+the complex change-of-state structure of Roßdeutscher and Kamp (Ch. 5).
 
 ## Implementation notes
 
@@ -26,7 +26,7 @@ Alloseme selection is the substrate's own engine: allosemes are Vocabulary Items
 neighborhoods, applicability is the Subset Principle, and the canonical choice is Elsewhere
 competition. The readings are derived from typed denotations, and the co-occurrence and
 nominalization paradigms are predicted cell by cell against the example rows, the Table 3
-combinations, the resultative data of [creemers-2020] and the *-ung* and *Ge-…-e* forms of
+combinations, the resultative data of Creemers and the *-ung* and *Ge-…-e* forms of
 Ch. 5, with the base verbs read from the German fragment.
 
 ## References
@@ -129,11 +129,13 @@ theorem v_allosemes_licensed :
 
 open Morphology.Exponence in
 /-- The canonical v alloseme of the root typology is the engine's Elsewhere winner: the more
-specified eventive entry beats vacuous v exactly when the root entails an event. -/
-theorem fromRootType_is_selectBy_winner (rt : Semantics.Root.ChangeType) :
-    (winner? Verbalizer.vocabulary (vContext (decide (rt = .result)))).map (·.exponent) =
-      some (Verbalizer.Alloseme.fromRootType rt) := by
-  cases rt <;> rfl
+specified eventive entry beats vacuous v exactly when the root entails change. -/
+theorem ofKinds_is_selectBy_winner (s : Semantics.Root.Kinds) :
+    (winner? Verbalizer.vocabulary
+        (vContext (decide (.result ∈ Semantics.Root.Kinds.close s)))).map (·.exponent) =
+      some (Verbalizer.Alloseme.ofKinds s) := by
+  unfold Verbalizer.Alloseme.ofKinds; split_ifs with h <;> simp only [h, decide_true,
+    decide_false] <;> rfl
 
 /-- Every attested *Beobachtung* reading ((32)) is available in the single structure: the
 engine licenses the allosemes and composition delivers the readings. -/

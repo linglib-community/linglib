@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Fragments.Washo.PropertyConcepts
@@ -204,16 +204,6 @@ theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event → Prop}
   ⟨s, hs⟩
 
 /-! ### The stems of the appendix -/
-
-/-- The semantic root of a stem has one state atom, no core arguments and the type of its
-meaning, so every Washo property concept is a property-concept root of the typology of Beavers
-and Koontz-Garboden. -/
-def toRoot (e : PropertyConcept) : Root :=
-  { name := e.stem, entailments := {.state e.gloss}, valency := some ∅,
-    denotationType := some (RootType.ofShape e.shape).ty }
-
-theorem toRoot_kinds (e : PropertyConcept) : (toRoot e).kinds = Root.Kinds.propertyConcept := by
-  simp [toRoot, Root.kinds, Root.Kinds.propertyConcept, Root.Entailment.kind]
 
 /-- The only category whose members share a shape is color, all of whose stems are prefixed
 (appendix). -/

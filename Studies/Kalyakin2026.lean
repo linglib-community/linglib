@@ -38,7 +38,6 @@ Identity Requirement.
 
 namespace Kalyakin2026
 
-open ArgumentStructure
 open Minimalist Minimalist.Voice
 open Minimalist.Ellipsis
 
@@ -169,25 +168,25 @@ the state or manner entailment Kalyakin reads off them. -/
 open Semantics
 
 /-- *wana* of *wana AGR-arq'-* 'warm up' (3), (8), (75)–(80). -/
-def wana : Root := { name := "wana", entailments := {.state "warm"} }
+def wana : Root := { kinds := {.state} }
 
 /-- *hark* of *hark AGR-arq'-* 'open', which denotes the result state of being open (52). -/
-def hark : Root := { name := "hark", entailments := {.state "open"} }
+def hark : Root := { kinds := {.state} }
 
 /-- *parʁat* of *parʁat AGR-arq'-* 'calm' (36), (69)–(71). -/
-def parghat : Root := { name := "parʁat", entailments := {.state "calm"} }
+def parghat : Root := { kinds := {.state} }
 
 /-- *dawk* of *dawk AGR-irq'-* 'repair' (84)–(86). -/
-def dawk : Root := { name := "dawk", entailments := {.state "repaired"} }
+def dawk : Root := { kinds := {.state} }
 
 /-- *taˤħ* of *taˤħ Ø-uq-* 'jump' (57). -/
-def tah : Root := { name := "taˤħ", entailments := {.manner "jump"} }
+def tah : Root := { kinds := {.manner} }
 
 /-- *duc'* of *duc' Ø-uq-* 'run' (58). -/
-def duc : Root := { name := "duc'", entailments := {.manner "run"} }
+def duc : Root := { kinds := {.manner} }
 
 /-- *ʡimč* of *ʡimč w-ik'-* 'sneeze' (59). -/
-def imc : Root := { name := "ʡimč", entailments := {.manner "sneeze"} }
+def imc : Root := { kinds := {.manner} }
 
 /-- The position of a root by its conceptual content. A root imposing a manner on an activity
 attaches to v, one describing an end state merges with the direct object. -/

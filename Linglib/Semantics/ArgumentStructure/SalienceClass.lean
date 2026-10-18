@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.Root.Kinds
 public import Linglib.Semantics.ArgumentStructure.Valency
 
 /-!
 # Salience classes
 
-[lucy-1994]'s classification of verbal roots by required transitiviser —
+Lucy's classification of verbal roots by required transitiviser —
 "salience" is his term for the default semantic values in a root that
 influence overt case marking, which is why the classifier lives in the
 argument-realization layer. Stated over the (kind signature × arity)
@@ -16,7 +16,7 @@ roots). The positional diagnostic (`IsPositional`) is deliberately
 separate and arity-free — positional roots cross-cut the transitiviser
 classes rather than forming a fourth case.
 
-Originates with [lucy-1994] (Yucatec `=t`, `=∅`, `=s`); the Yucatec
+Originates with Lucy (Yucatec `=t`, `=∅`, `=s`); the Yucatec
 instantiation with attested derivations is `Studies/Lucy1994.lean`.
 
 ## Main declarations
@@ -24,10 +24,12 @@ instantiation with attested derivations is `Studies/Lucy1994.lean`.
 * `SalienceClass`
 * `IsAgentSalient`, `IsPatientSalient`, `IsPositional`
 * `SalienceClass.ofKinds` — the pair-level classifier
-* `SalienceClass.ofRoot` — the classifier on an annotated root, agreeing with
-  `ofKinds` on manner-free signatures (`ofRoot_eq_ofKinds`)
 * `SalienceClass.ofKinds_close` — closure invariance on cause-free
   signatures
+
+## References
+
+* [lucy-1994]
 -/
 
 @[expose] public section
@@ -80,7 +82,7 @@ def SalienceClass.ofKinds : Option SalienceClass :=
     cause-free signatures: the only available closure edge is
     result→state, which no arm of the classifier consults. -/
 theorem SalienceClass.ofKinds_close (h : Root.Kind.cause ∉ s) :
-    ofKinds s.close v = ofKinds s v := by
+    ofKinds (Root.Kinds.close s) v = ofKinds s v := by
   revert s v; decide
 
 /-- The cause-free hypothesis of `ofKinds_close` is necessary: a lone
@@ -90,25 +92,6 @@ theorem SalienceClass.ofKinds_close_cause :
     ofKinds {.cause} ∅ = none ∧
     ofKinds (Root.Kinds.close {.cause}) ∅ = some .patient := by
   decide
-
-/-- The salience class of a root from its annotation, agent-patient for a root licensing
-transitive Voice and patient for any other root carrying `result` ([lucy-1994];
-[coon-2019] §3.3). A root with neither is left undetermined, since without atoms a manner
-root and a stative one look alike. -/
-def SalienceClass.ofRoot (r : Root) : Option SalienceClass :=
-  if r.licensesTransitiveVoice then some .agentPatient
-  else if Root.Kind.result ∈ r.kinds then some .patient
-  else none
-
-/-- On manner-free signatures the annotation-level classifier agrees with the
-signature-level one, when the root is annotated as licensing transitive Voice exactly
-when its valency has the internal position. -/
-theorem SalienceClass.ofRoot_eq_ofKinds {r : Root} (h : Root.Kind.manner ∉ r.kinds)
-    (hl : r.licensesTransitiveVoice = decide (.internal ∈ v)) :
-    ofRoot r = ofKinds r.kinds v := by
-  simp only [SalienceClass.ofRoot, SalienceClass.ofKinds, IsAgentSalient, IsPatientSalient, h,
-    hl, decide_eq_true_eq]
-  split_ifs <;> simp_all
 
 /-! ### Stem valencies -/
 
