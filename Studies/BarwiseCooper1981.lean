@@ -5,7 +5,7 @@ public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Semantics.Quantification.Lindstrom
 public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Fragments.English.Determiners
-public import Linglib.Semantics.Composition.Reduction
+public import Linglib.Semantics.Composition.FirstOrder
 public import Linglib.Data.Examples.BarwiseCooper1981
 public import Mathlib.Data.Finset.Fin
 public import Mathlib.Data.Set.Card

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Semantics.Composition.Reduction
+public import Linglib.Semantics.Composition.FirstOrder
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Composition.Partial
 public import Linglib.Semantics.Quantification.Polyadic
