@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Reciprocal
-public import Linglib.Fragments.Romance.Portuguese.Verbs
 
 /-!
 # Portuguese reciprocals
@@ -12,14 +11,13 @@ a class of transitive verbs has a lexical reciprocal entry: with *abraçar* 'hug
 siblings the reciprocal reading also arises without *se*, in Brazilian Portuguese both in finite
 clauses, *X e Y abraçaram*, and in analytic causatives, *eu fiz X e Y abraçarem*, the two
 environments of Palmieri's table where the clitic may be omitted. The lexical reciprocals are
-entries of `Portuguese.Verbs`, and their two-entry analysis is the matter of
+entries of `Portuguese.Verbs`, and Palmieri's list of them and their two-entry analysis are
 `Studies/Palmieri2024.lean`.
 
 ## Main definitions
 
 * `Portuguese.Reciprocals.seClitic`, `Portuguese.Reciprocals.bipartite`,
   `Portuguese.Reciprocals.markers`: the reciprocal markers.
-* `Portuguese.Reciprocals.lexicalReciprocals`: the verbs with a lexical reciprocal entry.
 
 ## References
 
@@ -42,11 +40,5 @@ def bipartite : Marker :=
 
 /-- The reciprocal markers. -/
 def markers : Finset Marker := {seClitic, bipartite}
-
-/-- The verbs with a lexical reciprocal entry, whose reciprocal reading survives without *se*
-in finite clauses and analytic causatives. -/
-def lexicalReciprocals : List Verb :=
-  [Verbs.abracar, Verbs.beijar, Verbs.casar, Verbs.consultar, Verbs.cumprimentar,
-    Verbs.encontrar, Verbs.namorar]
 
 end Portuguese.Reciprocals

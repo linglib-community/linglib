@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Reciprocal
 
 /-!
@@ -11,7 +10,7 @@ English marks reciprocity with the two-part noun phrases *each other* and *one a
 an argument slot of a bivalent clause and are distinct from the reflexive *themselves*. A closed
 class of predicates such as *meet*, *quarrel* and *kiss* is reciprocal without any marker. The
 markers are those of the pronoun entries in `Fragments/English/Pronouns.lean`. The lexical strategy
-has no exponent, so the verb entries carry it rather than the marker inventory.
+has no exponent: the verbs' Levin classes record it, not the marker inventory.
 
 ## References
 
@@ -30,11 +29,6 @@ def eachOther : Marker := Pronouns.eachOther.toMarker
 
 /-- The marker of *one another*, from its pronoun entry. -/
 def oneAnother : Marker := Pronouns.oneAnother.toMarker
-
-/-- The inherently reciprocal predicates, as verb entries: the lexical strategy marks
-predicates, not forms ([nordlinger-2023], [siloni-2012]). -/
-def lexicalReciprocals : List English.Verbs.Verb :=
-  [English.Verbs.meet]
 
 /-- The reciprocal marker inventory. -/
 def markers : Finset Marker := {eachOther, oneAnother}

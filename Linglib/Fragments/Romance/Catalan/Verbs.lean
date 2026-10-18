@@ -4,13 +4,14 @@ public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Catalan verbs
-[palmieri-2024]
 
-Catalan verbs with lexical reciprocal entries alongside their
-transitive alternates ([palmieri-2024], Appendix A): the reciprocal
-reading emerges without *se* in the language's Table 2.2 environments.
-Membership in `Catalan.Reciprocals.lexicalReciprocals` carries the
-reciprocal marking; the entries here are ordinary verb entries.
+These are the Catalan verbs with a lexical reciprocal entry beside their transitive one, whose
+reciprocal reading emerges without *es* in the environments of Palmieri's Table 2.2. They are
+ordinary verb entries here, and Palmieri's list of them is `Studies/Palmieri2024.lean`.
+
+## References
+
+* [palmieri-2024]
 -/
 
 @[expose] public section

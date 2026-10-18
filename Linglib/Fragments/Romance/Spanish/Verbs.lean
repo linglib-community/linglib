@@ -16,8 +16,8 @@ intransitive one with the patient as subject. The proto-role entailments of the 
 Koontz-Garboden discusses for the causer, and the classification by marking follows Muñoz Pérez.
 
 The verbs with a lexical reciprocal entry beside their transitive use are those of Palmieri's
-appendix. They are ordinary verb entries here, and `Spanish.Reciprocals.lexicalReciprocals`
-records which of them are lexical reciprocals.
+appendix. They are ordinary verb entries here, and Palmieri's list of them is
+`Studies/Palmieri2024.lean`.
 
 The verbs of the dative survey are those whose dative arguments Cuervo classifies, with the
 frames the survey uses.

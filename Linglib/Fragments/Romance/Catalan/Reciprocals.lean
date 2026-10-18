@@ -1,18 +1,19 @@
 module
 
 public import Linglib.Syntax.Reciprocal
-public import Linglib.Fragments.Romance.Catalan.Verbs
 
 /-!
-# Catalan Reciprocal Fragment
-[palmieri-2024]
+# Catalan reciprocals
 
-Catalan encodes reciprocity with the reflexive-identical clitic *es*
-(the grammatical strategy) and the periphrastic *l'un a l'altre*, alongside a
-class of lexical reciprocal verbs — verbs with a transitive entry whose
-reciprocal reading also emerges without *es* in language-specific
-environments ([palmieri-2024] ch. 2, Table 2.2; Appendix A carries the
-verb list formalized in `lexicalReciprocals`).
+Catalan encodes reciprocity with the clitic *es*, identical to the reflexive, and the
+periphrastic *l'un a l'altre*, alongside a class of lexical reciprocal verbs, verbs with a
+transitive entry whose reciprocal reading also emerges without *es* in language-specific
+environments. These are the matter of Palmieri's second chapter, whose list of the verbs is
+`Studies/Palmieri2024.lean`.
+
+## References
+
+* [palmieri-2024]
 -/
 
 @[expose] public section
@@ -32,12 +33,5 @@ def bipartite : Marker :=
 
 /-- Marker inventory. -/
 def markers : Finset Marker := {seClitic, bipartite}
-
-/-- The verbs carrying lexical reciprocal entries ([palmieri-2024],
-    Appendix A), referenced as ordinary verb entries — the lexical
-    strategy marks predicates, not forms. The transitive alternate is
-    the entry itself (homophonous in Romance). -/
-def lexicalReciprocals : List Verb :=
-  [Verbs.abracar, Verbs.casar, Verbs.deixar, Verbs.petonejar, Verbs.topar, Verbs.trobar]
 
 end Catalan.Reciprocals

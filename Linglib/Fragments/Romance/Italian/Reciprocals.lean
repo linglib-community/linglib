@@ -2,7 +2,6 @@ module
 
 public import Linglib.Syntax.Reciprocal
 public import Linglib.Fragments.Romance.Italian.Pronouns
-public import Linglib.Fragments.Romance.Italian.Verbs
 
 /-!
 # Italian reciprocals
@@ -14,12 +13,12 @@ leaves only the reciprocal reading. A closed class of transitive verbs, *abbracc
 *baciare* 'kiss', *sposare* 'marry' and the others of Palmieri's Appendix A, also reads
 reciprocally with no marker at all under the causative *fare*, *Ho fatto abbracciare Mary e
 Lisa* 'I made Mary and Lisa hug', where *si* is in fact excluded, though in a finite clause the
-same verbs still need it. These are the lexical reciprocals; their entries are those of
-`Verbs`, and Palmieri's analysis of the class is `Studies/Palmieri2024.lean`.
+same verbs still need it. These are the lexical reciprocals, entries of `Verbs`; Palmieri's
+list of them and her analysis of the class are `Studies/Palmieri2024.lean`.
 
-Italian also has the bipartite *l'un l'altro* ([evans-2008]). As in French, with a direct object
-it does not replace *si* but is added to it: *Si amano l'un l'altro* beside \**Amano l'un l'altro*
-([maslova-2008] (33)).
+Italian also has the bipartite *l'un l'altro*, which Evans lists. As in French, with a direct
+object it does not replace *si* but is added to it: *Si amano l'un l'altro* beside \**Amano l'un
+l'altro*, Maslova's (33).
 
 ## References
 
@@ -45,12 +44,5 @@ def lunLaltro : Marker := { morphs := [.free "l'un", .free "l'altro"], strategy 
 
 /-- The reciprocal marker inventory. -/
 def markers : Finset Marker := {si, lunLaltro}
-
-/-- The transitive verbs of Palmieri's Appendix A with a lexical reciprocal use, as verb entries,
-since the lexical strategy marks predicates rather than forms. -/
-def lexicalReciprocals : List Verb :=
-  [Verbs.abbracciare, Verbs.baciare, Verbs.coccolare, Verbs.conoscere,
-    Verbs.consultare, Verbs.frequentare, Verbs.incontrare, Verbs.incrociare,
-    Verbs.lasciare, Verbs.sposare, Verbs.trovare, Verbs.vedere]
 
 end Italian.Reciprocals
