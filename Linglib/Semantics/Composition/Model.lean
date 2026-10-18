@@ -22,8 +22,8 @@ first-order fragment translate to these symbols (`Composition/Reduction.lean`).
 
 `interp : W → L.Structure E` carries structures as terms rather than instances, since a
 world-indexed family of structures on one carrier cannot be instance-based; formulas are
-realized at a world by `Formula.RealizeAt m.interp w`. The concrete model in
-`Semantics/Composition/Toy.lean` follows mathlib's concrete-language idiom.
+realized at a world by `Formula.RealizeAt m.interp w`. The concrete toy model of
+`Studies/HeimKratzer1998` follows mathlib's concrete-language idiom.
 
 ## References
 

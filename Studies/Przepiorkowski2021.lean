@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.HPSG.Subinterpretation
-public import Linglib.Syntax.HPSG.Binding
+public import Studies.SagWasowBender2003
 public import Linglib.Syntax.HPSG.Construction
 public import Studies.Sag2010
 
@@ -236,25 +236,26 @@ end Quantification
 section Binding
 
 open HPSG.RSRL.Binding
+open SagWasowBender2003 (ClauseEnt clause)
 
 /-- Away from a root the two quantifiers differ. At the subject of a clause some entity of the
 universe is a sign, but no component of the subject is. -/
-example : SatisfiesFO (clause .ana .iSubj .gMasc .nSing) (fun _ ↦ .subj) .subj
+example : SatisfiesFO (clause .ana .iSubj .gFem .nSing) (fun _ ↦ .subj) .subj
       (.ex 0 (.sortAssign (.var 0) .sign)) ∧
-    ¬ (clause .ana .iSubj .gMasc .nSing).Satisfies (fun _ ↦ .subj) .subj
+    ¬ (clause .ana .iSubj .gFem .nSing).Satisfies (fun _ ↦ .subj) .subj
       (.ex 0 (.sortAssign (.var 0) .sign)) := by decide
 
 /-- The binding principles hold throughout the utterance that the verb's sign generates exactly
 when they hold at that sign in Richter's sense. -/
-theorem modelsFO_clause_iff (σ : Binding.Srt) (i γ n : Binding.Ent) :
+theorem modelsFO_clause_iff (σ : Binding.Srt) (i γ n : ClauseEnt) :
     ModelsFO ((clause σ i γ n).generated .s) Binding.grammar ↔
       ∀ d ∈ Binding.grammar, (clause σ i γ n).Satisfies (fun _ ↦ .s) .s d :=
   modelsFO_generated_iff_of_colonFree _ (by decide)
 
-/-- The utterance *John likes himself* is a rooted model of the binding principles, and *John
-likes herself* is not. -/
-example : ModelsFO ((clause .ana .iSubj .gMasc .nSing).generated .s) Binding.grammar ∧
-    ¬ ModelsFO ((clause .ana .iSubj .gFem .nSing).generated .s) Binding.grammar := by
+/-- The utterance *Susan likes herself* is a rooted model of the binding principles, and *Susan
+likes himself* is not. -/
+example : ModelsFO ((clause .ana .iSubj .gFem .nSing).generated .s) Binding.grammar ∧
+    ¬ ModelsFO ((clause .ana .iSubj .gMasc .nSing).generated .s) Binding.grammar := by
   rw [modelsFO_clause_iff, modelsFO_clause_iff]; decide
 
 end Binding
