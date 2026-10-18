@@ -36,9 +36,10 @@ namespace Korean.Coordination
 def irang : Coordinator :=
   { morph := .encl "(i)rang", gloss := "and", role := .conjunctive }
 
-/-- *-do* 'and', Sohn's *-to*, enclitic on each conjunct, also the additive 'too'. -/
+/-- *-do* 'and', Sohn's *-to*, enclitic on each conjunct, also the additive particle
+`Korean.FocusParticles.do_`. -/
 def do_ : Coordinator :=
-  { morph := .encl "do", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
+  { morph := .encl "do", gloss := "and", role := .conjunctive }
 
 /-- *-hago* 'and', Sohn's *-hako*, informal, enclitic on the first conjunct and optionally the
 second; also the comitative of `Korean.Case.wa`. -/

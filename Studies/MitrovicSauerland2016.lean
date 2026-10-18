@@ -4,8 +4,11 @@ public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Composition.Coordinator
 public import Linglib.Data.Examples.MitrovicSauerland2016
 public import Linglib.Fragments.English.Coordination
+public import Linglib.Fragments.English.FocusParticles
 public import Linglib.Fragments.Japanese.Determiners
+public import Linglib.Fragments.Japanese.FocusParticles
 public import Linglib.Fragments.Hungarian.Coordination
+public import Linglib.Fragments.Hungarian.FocusParticles
 public import Linglib.Fragments.Latin.Determiners
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Order.UpperLower.Closure
@@ -42,7 +45,8 @@ have the additive and quantificational uses of Japanese *mo*.
   (23)–(29) with fn. 9, and (33).
 * The J coordinators with Fragment entries are English *and*, Japanese *to*, the verbal
   conjunction of Table 1, and Hungarian *és*; the μ coordinators are Japanese *mo*, Hungarian *is*
-  and Latin *-que*.
+  and Latin *-que*. A coordinator's additive use is `Coordinator.IsAlsoAdditive` against the
+  additive particles of its language in the Fragments.
 
 ## TODO
 
@@ -205,6 +209,11 @@ def jCoordinators : List Coordinator :=
 def muCoordinators : List Coordinator :=
   [Japanese.Coordination.mo, Hungarian.Coordination.is_, Latin.Coordination.que]
 
+/-- The additive particles of their languages in the Fragments. -/
+def additiveParticles : List AdditiveParticle :=
+  [English.FocusParticles.too, English.FocusParticles.also, Japanese.FocusParticles.mo,
+    Hungarian.FocusParticles.is_]
+
 /-- The indeterminate quantifiers of their languages in the Fragments. -/
 def quantifiers : List IndeterminateQuantifier :=
   Japanese.Determiners.indefinites ++ [Latin.Determiners.quisque]
@@ -216,12 +225,12 @@ theorem coordinators_conjunctive :
 /-- Every μ coordinator has a use outside conjunction, as an additive particle or as the particle
 of an indeterminate quantifier. -/
 theorem mu_has_other_use : ∀ c ∈ muCoordinators,
-    c.alsoAdditive = true ∨ ∃ q ∈ quantifiers, q.particle = c := by
+    (∃ a ∈ additiveParticles, c.IsAlsoAdditive a) ∨ ∃ q ∈ quantifiers, q.particle = c := by
   decide
 
 /-- No J coordinator has an additive or a quantificational use. -/
 theorem j_has_no_other_use : ∀ c ∈ jCoordinators,
-    c.alsoAdditive = false ∧ ∀ q ∈ quantifiers, q.particle ≠ c := by
+    (∀ a ∈ additiveParticles, ¬ c.IsAlsoAdditive a) ∧ ∀ q ∈ quantifiers, q.particle ≠ c := by
   decide
 
 end MitrovicSauerland2016

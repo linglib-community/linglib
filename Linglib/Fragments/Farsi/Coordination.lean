@@ -27,9 +27,10 @@ namespace Farsi.Coordination
 def va : Coordinator :=
   { morph := .free "va", gloss := "and", role := .conjunctive }
 
-/-- *ham* 'also, too', with each coordinand 'both … and'. -/
+/-- *ham*, with each coordinand 'both … and', also the additive particle
+`Farsi.FocusParticles.ham`. -/
 def ham : Coordinator :=
-  { morph := .free "ham", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
+  { morph := .free "ham", gloss := "and", role := .conjunctive }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [va, ham]

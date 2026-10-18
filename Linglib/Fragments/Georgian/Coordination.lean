@@ -9,7 +9,8 @@ Georgian conjoins noun phrases with the free word *da* 'and' before the second c
 the enclitic *-c* 'also, too' on each coordinand, or with both, the enclitic on each coordinand
 and *da* between them: in the examples of Bill and colleagues, *vashl-i da banan-i*,
 *vashl-i-c, banan-i-c* and *vashl-i-c da banan-i-c* all mean 'the apple and the banana'.
-Disjunction is *an* 'or' and the adversative coordinator is *magram* 'but'.
+Disjunction is *an* 'or' and the adversative coordinator is *magram* 'but', as Hewitt lists them
+with *da*.
 
 ## Main definitions
 
@@ -21,6 +22,7 @@ Disjunction is *an* 'or' and the adversative coordinator is *magram* 'but'.
 ## References
 
 * [bill-etal-2025]
+* [hewitt-1995]
 -/
 
 @[expose] public section
@@ -31,9 +33,10 @@ namespace Georgian.Coordination
 def da : Coordinator :=
   { morph := .free "da", gloss := "and", role := .conjunctive }
 
-/-- *-c* 'also, too', which conjoins as an enclitic on each coordinand. -/
+/-- *-c* 'and', enclitic on each coordinand, also the additive particle
+`Georgian.FocusParticles.c`. -/
 def c : Coordinator :=
-  { morph := .encl "c", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
+  { morph := .encl "c", gloss := "and", role := .conjunctive }
 
 /-- *an* 'or'. -/
 def an : Coordinator :=

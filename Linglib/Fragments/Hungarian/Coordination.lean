@@ -33,9 +33,10 @@ namespace Hungarian.Coordination
 def es : Coordinator :=
   { morph := .free "és", gloss := "and", role := .conjunctive }
 
-/-- *is* 'also, too', after each coordinand 'both … and'. -/
+/-- *is*, after each coordinand 'both … and', also the additive particle
+`Hungarian.FocusParticles.is_`. -/
 def is_ : Coordinator :=
-  { morph := .free "is", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
+  { morph := .free "is", gloss := "and", role := .conjunctive }
 
 /-- *vagy* 'or'. -/
 def vagy : Coordinator :=
