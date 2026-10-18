@@ -128,9 +128,9 @@ def exponents : List (VocabularyItem NumFeature Exponent) :=
 /-- By the Subset Principle (67) the singular form spells out only the full head (68), and the
 atomic plural is spelled out by `/s/`, as the plain plural is (71), (73a). -/
 theorem spellOut :
-    subsetPrinciple exponents [NumFeature.num, .atom, .unique] = some .null ∧
-      subsetPrinciple exponents [NumFeature.num, .atom] = some .s ∧
-        subsetPrinciple exponents [NumFeature.num] = some .s := by
+    subsetPrinciple exponents ({.num, .atom, .unique} : Finset NumFeature) = some .null ∧
+      subsetPrinciple exponents ({.num, .atom} : Finset NumFeature) = some .s ∧
+        subsetPrinciple exponents ({.num} : Finset NumFeature) = some .s := by
   decide
 
 section Denotation

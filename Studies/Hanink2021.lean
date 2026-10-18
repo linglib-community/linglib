@@ -156,11 +156,11 @@ def contextualSpecificity (i : VocabularyItem Feat String) : ℕ ×ₗ ℕ :=
   toLex ((i.site.filter (·.1 ≠ 0)).card, (i.site.filter (·.1 = 0)).card)
 
 /-- `idxExponent n` is the exponent of idx in the neighborhood `n`. -/
-def idxExponent (n : Neighborhood (List Feat)) : Option String :=
+def idxExponent (n : Neighborhood (Finset Feat)) : Option String :=
   idxItems.realize contextualSpecificity n
 
 /-- `dExponent n` is the exponent of D in the neighborhood `n`. -/
-def dExponent (n : Neighborhood (List Feat)) : Option String :=
+def dExponent (n : Neighborhood (Finset Feat)) : Option String :=
   dItems.realize contextualSpecificity n
 
 /-- The exponent *gi ~ ge* is distributed as in (108) to (115) and (127) to (129). It is overt in
@@ -169,30 +169,30 @@ demonstratives, whose complement is RP (129), each alternating for case ((44), (
 before the overt NP of an anaphoric bare definite (115), and still null under dependent case
 (22), where the contextual entry outranks the case entry. -/
 theorem idxExponent_distribution :
-    idxExponent ⟨[.idx], [], [[.elided]]⟩ = some "gi" ∧
-      idxExponent ⟨[.idx, .dep], [], [[.elided]]⟩ = some "ge" ∧
-      idxExponent ⟨[.idx], [], [[.cp]]⟩ = some "gi" ∧
-      idxExponent ⟨[.idx, .dep], [], [[.cp]]⟩ = some "ge" ∧
-      idxExponent ⟨[.idx], [[.d, .deixis Person.first.participantSetsᶜ]], [[.rp]]⟩ = some "gi" ∧
-      idxExponent ⟨[.idx], [], [[.np]]⟩ = some "" ∧
-      idxExponent ⟨[.idx, .dep], [], [[.np]]⟩ = some "" := by
+    idxExponent ⟨{.idx}, [], [{.elided}]⟩ = some "gi" ∧
+      idxExponent ⟨{.idx, .dep}, [], [{.elided}]⟩ = some "ge" ∧
+      idxExponent ⟨{.idx}, [], [{.cp}]⟩ = some "gi" ∧
+      idxExponent ⟨{.idx, .dep}, [], [{.cp}]⟩ = some "ge" ∧
+      idxExponent ⟨{.idx}, [{.d, .deixis Person.first.participantSetsᶜ}], [{.rp}]⟩ = some "gi" ∧
+      idxExponent ⟨{.idx}, [], [{.np}]⟩ = some "" ∧
+      idxExponent ⟨{.idx, .dep}, [], [{.np}]⟩ = some "" := by
   decide
 
 /-- Under the Elsewhere score alone the case entry and the contextual entry tie on the accusative
 bare definite and vocabulary order decides for *ge*; the paper's ordering (118) is what makes
 the null entry win. -/
 theorem subsetPrinciple_accusative_bare :
-    subsetPrinciple idxItems ⟨[.idx, .dep], [], [[.np]]⟩ = some "ge" := by
+    subsetPrinciple idxItems ⟨{.idx, .dep}, [], [{.np}]⟩ = some "ge" := by
   decide
 
 /-- The demonstratives *hádigi* and *wídigi* of (25) and (127) decompose as the D exponent
 followed by the idx exponent. -/
 theorem demonstrative_forms :
-    (dExponent ⟨[.d, .deixis Person.first.participantSetsᶜ], [], [[.idx]]⟩).bind (fun a ↦
-        (idxExponent ⟨[.idx], [[.d, .deixis Person.first.participantSetsᶜ]], [[.rp]]⟩).map
+    (dExponent ⟨{.d, .deixis Person.first.participantSetsᶜ}, [], [{.idx}]⟩).bind (fun a ↦
+        (idxExponent ⟨{.idx}, [{.d, .deixis Person.first.participantSetsᶜ}], [{.rp}]⟩).map
           (a ++ ·)) = some "hádigi" ∧
-    (dExponent ⟨[.d, .deixis Person.first.participantSets], [], [[.idx]]⟩).bind (fun a ↦
-        (idxExponent ⟨[.idx], [[.d, .deixis Person.first.participantSets]], [[.rp]]⟩).map
+    (dExponent ⟨{.d, .deixis Person.first.participantSets}, [], [{.idx}]⟩).bind (fun a ↦
+        (idxExponent ⟨{.idx}, [{.d, .deixis Person.first.participantSets}], [{.rp}]⟩).map
           (a ++ ·)) = some "wídigi" := by
   decide
 

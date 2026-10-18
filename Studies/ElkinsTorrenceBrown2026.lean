@@ -360,7 +360,7 @@ def eqYa : VocabularyItem FeatureVal String :=
 /-- Agree with an [obl] mover followed by insertion yields the enclitic. -/
 theorem agree_spellout :
     (voice.features.applyAgree (.single .oblique true) .oblique).bind
-      (fun b ↦ subsetPrinciple [eqYa] b.valued) = some "=(y)a'" := by
+      (fun b ↦ subsetPrinciple [eqYa] (b.valued.toFinset : Finset FeatureVal)) = some "=(y)a'" := by
   decide
 
 /-- A mover without [obl], an absolutive argument or a temporal, transmits nothing to Voice⁰. -/

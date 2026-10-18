@@ -107,12 +107,12 @@ theorem reading_determines_contentful_head (v : Verbalizer.Alloseme) (n : Nomina
 
 /-- `vContext eventive` is v's context in the nominalization structure [n [v √]], with the root,
 event-entailing or not, as its complement and n above it. -/
-def vContext (eventive : Bool) : Neighborhood (List Feature) :=
-  ⟨[], [if eventive then [.eventive] else []], [[.cat .n]]⟩
+def vContext (eventive : Bool) : Neighborhood (Finset Feature) :=
+  ⟨∅, [if eventive then {.eventive} else ∅], [{.cat .n}]⟩
 
 /-- `nContext eventive` is n's context in [n [v √]], with a verbal complement, eventive or not. -/
-def nContext (eventive : Bool) : Neighborhood (List Feature) :=
-  complement (.cat .v :: if eventive then [.eventive] else [])
+def nContext (eventive : Bool) : Neighborhood (Finset Feature) :=
+  complement (insert (.cat .v) (if eventive then {.eventive} else ∅))
 
 /-- `availableReadings eventive` lists the readings derivable in the nominalization structure,
 those of any licensed v alloseme composed with any licensed n alloseme. -/
@@ -544,7 +544,8 @@ instance (e : Datum) : Decidable (Predicted e) :=
 
 /-- Every nominalization row names a verb with a fragment entry. -/
 theorem nominalization_rows_have_entries :
-    ∀ e ∈ Examples.all, (nominalizationOf e).isSome → ((e.feature? "verb").bind entryOf).isSome := by
+    ∀ e ∈ Examples.all, (nominalizationOf e).isSome →
+      ((e.feature? "verb").bind entryOf).isSome := by
   decide
 
 /-- The Ch. 5 distribution ((193), (197), (198), (204), (212), (216), (218)): a nominalization

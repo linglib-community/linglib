@@ -151,23 +151,23 @@ inductive Feature where
   deriving DecidableEq, Repr
 
 /-- A specification on the complement, the terminal below the head. -/
-def complement (fs : List Feature) : Neighborhood (List Feature) := ⟨[], [fs], []⟩
+def complement (fs : Finset Feature) : Neighborhood (Finset Feature) := ⟨∅, [fs], []⟩
 
 /-- A specification on the embedding head, the terminal above. -/
-def embedding (fs : List Feature) : Neighborhood (List Feature) := ⟨[], [], [fs]⟩
+def embedding (fs : Finset Feature) : Neighborhood (Finset Feature) := ⟨∅, [], [fs]⟩
 
 /-- The denotations a vocabulary licenses in a context — the exponents of
 its applicable entries. Ambiguity in a context is non-singleton licensing;
 the canonical default among the licensed entries is the Elsewhere winner
 (`winner?_isElsewhereWinner`). -/
 def licensed {Sem : Type*} (v : RuleSet (VocabularyItem Feature Sem))
-    (n : Neighborhood (List Feature)) : List Sem :=
+    (n : Neighborhood (Finset Feature)) : List Sem :=
   (v.applicable n).map (·.exponent)
 
 /-- The alloseme vocabulary of v. The eventive alloseme requires an eventive complement and the
 zero alloseme is the elsewhere case. -/
 def Verbalizer.vocabulary : RuleSet (VocabularyItem Feature Verbalizer.Alloseme) :=
-  [⟨(complement [.eventive]).toFinset, .eventive⟩, ∅ ⟷ .zero]
+  [⟨(complement {.eventive}).toFinset, .eventive⟩, ∅ ⟷ .zero]
 
 /-- Root change-type conditions v alloseme selection: result roots,
     which entail a prior change, demand the event variable; property
@@ -219,12 +219,12 @@ end Nominalizer.Alloseme
 result allosemes an eventive one, and the others are unconditioned. -/
 def Nominalizer.vocabulary : RuleSet (VocabularyItem Feature Nominalizer.Alloseme) :=
   [∅ ⟷ .relational, ∅ ⟷ .sortal, ∅ ⟷ .alienator,
-    ⟨(complement [.cat .v]).toFinset, .content⟩,
-    ⟨(complement [.cat .v, .eventive]).toFinset, .zero⟩,
-    ⟨(complement [.cat .v]).toFinset, .simpleEvent⟩,
-    ⟨(complement [.cat .v, .eventive]).toFinset, .result⟩,
-    ⟨(complement [.cat .v]).toFinset, .state⟩,
-    ⟨(complement [.cat .v]).toFinset, .entity⟩]
+    ⟨(complement {.cat .v}).toFinset, .content⟩,
+    ⟨(complement {.cat .v, .eventive}).toFinset, .zero⟩,
+    ⟨(complement {.cat .v}).toFinset, .simpleEvent⟩,
+    ⟨(complement {.cat .v, .eventive}).toFinset, .result⟩,
+    ⟨(complement {.cat .v}).toFinset, .state⟩,
+    ⟨(complement {.cat .v}).toFinset, .entity⟩]
 
 /-! ### Voice allosemy -/
 
@@ -262,21 +262,21 @@ instance : DecidablePred Voice.Alloseme.AssignsTheta :=
 /-- The alloseme vocabulary of Voice. The engineer takes a saturated eventive complement, the
 holder a stative one, and the expletive is the elsewhere case. -/
 def Voice.vocabulary : RuleSet (VocabularyItem Feature Voice.Alloseme) :=
-  [⟨(complement [.cat .v, .eventive]).toFinset, .engineer⟩,
-    ⟨(complement [.stative]).toFinset, .holder⟩, ∅ ⟷ .expletive]
+  [⟨(complement {.cat .v, .eventive}).toFinset, .engineer⟩,
+    ⟨(complement {.stative}).toFinset, .holder⟩, ∅ ⟷ .expletive]
 
 /-- The Voice alloseme selected from `Voice.vocabulary` by the complement's features. -/
-def Voice.Alloseme.fromComplement (fs : List Feature) : Voice.Alloseme :=
+def Voice.Alloseme.fromComplement (fs : Finset Feature) : Voice.Alloseme :=
   (subsetPrinciple Voice.vocabulary (complement fs)).getD .expletive
 
 /-- Eventive-VoiceP complement selects engineer. -/
-example : Voice.Alloseme.fromComplement [.cat .v, .eventive] = .engineer := by decide
+example : Voice.Alloseme.fromComplement {.cat .v, .eventive} = .engineer := by decide
 
 /-- Stative complement selects holder. -/
-example : Voice.Alloseme.fromComplement [.stative] = .holder := by decide
+example : Voice.Alloseme.fromComplement {.stative} = .holder := by decide
 
 /-- Neither condition met selects the elsewhere expletive. -/
-example : Voice.Alloseme.fromComplement [] = .expletive := by decide
+example : Voice.Alloseme.fromComplement ∅ = .expletive := by decide
 
 /-- Bridge to the syntactic Voice heads. Syntactically all four allosemes realize an
     active Voice with a DP specifier; the θ-role distinction is resolved at LF. The
@@ -344,7 +344,7 @@ claim that allosemy is allomorphy's LF analogue, is then literally
 /-- The allosemy engine as a `Realization.Interpreted` view, whose one head is interpreted as the
 alloseme the Subset Principle picks. -/
 def toInterpreted {Sem : Type} (v : RuleSet (VocabularyItem Feature Sem)) :
-    Morphology.Realization.Interpreted Unit (Neighborhood (List Feature)) Unit Sem where
+    Morphology.Realization.Interpreted Unit (Neighborhood (Finset Feature)) Unit Sem where
   realize _ _ := ∅
   interp _ n := (subsetPrinciple v n).elim ∅ ({·})
 
@@ -352,6 +352,6 @@ def toInterpreted {Sem : Type} (v : RuleSet (VocabularyItem Feature Sem)) :
 elsewhere. -/
 theorem Verbalizer.isAllosemous :
     (toInterpreted Verbalizer.vocabulary).IsAllosemous () :=
-  ⟨complement [.eventive], ∅, .eventive, by decide, .zero, by decide, by decide⟩
+  ⟨complement {.eventive}, ∅, .eventive, by decide, .zero, by decide, by decide⟩
 
 end DistributedMorphology.Allosemy

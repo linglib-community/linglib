@@ -145,7 +145,7 @@ inductive Feature
 context. -/
 def realize (vocab : List (VocabularyItem Feature String)) (w : ComplexHead Root Word) :
     Option String :=
-  subsetPrinciple vocab ⟨[.fient], [[.root w.root]], []⟩
+  subsetPrinciple vocab ⟨{.fient}, [{.root w.root}], []⟩
 
 /-- v[FIENT] is spelled out as *-en* next to √FLAT and as null next to √HAMMER (fn. 24). -/
 def vocabulary : List (VocabularyItem Feature String) :=

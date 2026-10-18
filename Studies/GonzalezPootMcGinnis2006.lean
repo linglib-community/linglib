@@ -56,28 +56,28 @@ open scoped DistributedMorphology.VocabularyItem
 
 /-- The person features of (26), [±PSE, ±Auth], as the substrate's [±participant, ±author]
 decomposition of a person. -/
-def personFeatures (p : Person) : List FeatureVal :=
-  [⟨.participant, decide (.participant ∈ p.toFeatures)⟩,
-    ⟨.author, decide (.author ∈ p.toFeatures)⟩]
+def personFeatures (p : Person) : Finset FeatureVal :=
+  {⟨.participant, decide (.participant ∈ p.toFeatures)⟩,
+    ⟨.author, decide (.author ∈ p.toFeatures)⟩}
 
 /-- Number as the feature [±Pl]. -/
 def number (pl : Bool) : FeatureVal := ⟨.number, if pl then .plural else .singular⟩
 
 /-- In an ergative argument's matrix (42), first-person number is a person distinction, singular
 [+PSE, +Auth] and plural [+Auth]. -/
-def ergMatrix : Person → Bool → List FeatureVal
-  | .first, false => [⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .erg⟩]
-  | .first, true => [⟨.author, true⟩, ⟨.case, .erg⟩]
-  | p, pl => personFeatures p ++ [number pl, ⟨.case, .erg⟩]
+def ergMatrix : Person → Bool → Finset FeatureVal
+  | .first, false => {⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .erg⟩}
+  | .first, true => {⟨.author, true⟩, ⟨.case, .erg⟩}
+  | p, pl => personFeatures p ∪ {number pl, ⟨.case, .erg⟩}
 
 /-- An argument's matrix for Agr3 is (42) for ergative arguments and for second and third person,
 and for nominative first person the one the assignment (27) presupposes, *-oʔon* 1pl [+PSE, +Auth,
 NOM] and *-en* 1sg [+Auth, NOM]. -/
-def matrix : Person → Bool → Case → List FeatureVal
-  | .first, false, .nom => [⟨.author, true⟩, ⟨.case, .nom⟩]
-  | .first, true, .nom => [⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩]
+def matrix : Person → Bool → Case → Finset FeatureVal
+  | .first, false, .nom => {⟨.author, true⟩, ⟨.case, .nom⟩}
+  | .first, true, .nom => {⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩}
   | p, pl, .erg => ergMatrix p pl
-  | p, pl, c => personFeatures p ++ [number pl, ⟨.case, c⟩]
+  | p, pl, c => personFeatures p ∪ {number pl, ⟨.case, c⟩}
 
 /-! ### The Vocabularies (27), (43), (44) -/
 
@@ -201,14 +201,15 @@ inductive Privative where
   deriving DecidableEq, Repr
 
 /-- The specifications (A1), with nominative case on a nominative argument. -/
-def privMatrix (p : Person) (pl : Bool) (c : Case) : List Privative :=
-  (match p, pl with
-    | .first, false => [.participant]
-    | .first, true => [.participant, .speaker]
-    | .second, false => [.participant, .addressee]
-    | .second, true => [.participant, .addressee, .group]
-    | _, false => []
-    | _, true => [.group]) ++ if c = .nom then [.nom] else []
+def privMatrix (p : Person) (pl : Bool) (c : Case) : Finset Privative :=
+  let person : Finset Privative := match p, pl with
+    | .first, false => {.participant}
+    | .first, true => {.participant, .speaker}
+    | .second, false => {.participant, .addressee}
+    | .second, true => {.participant, .addressee, .group}
+    | _, false => ∅
+    | _, true => {.group}
+  person ∪ if c = .nom then {.nom} else ∅
 
 /-- The Agr1 Vocabulary Items (A2). -/
 def agr1' : List (VocabularyItem Privative String) :=

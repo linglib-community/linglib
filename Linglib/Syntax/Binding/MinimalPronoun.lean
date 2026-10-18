@@ -88,7 +88,7 @@ variable {E : Type*} (v : Vocabulary E) {c : Context}
 /-- The form of the minimal pronoun in a context is the exponent of the most specific item that
 applies there, by the Subset Principle, and the elsewhere form where none does. -/
 def realize (c : Context) : E :=
-  (subsetPrinciple v.items ↑[c]).getD v.elsewhere
+  (subsetPrinciple v.items (.ofBundle {c})).getD v.elsewhere
 
 /-- The form of a controlled subject, silent PRO or an overt pronoun. -/
 def controlForm : E := v.realize .controlledSubject
@@ -106,22 +106,22 @@ theorem mem_syncretic [DecidableEq E] : c ∈ v.syncretic ↔ v.realize c = v.el
 /-- The elsewhere form is the elsewhere item of the Subset Principle: realizing a context is
 selecting among the items followed by the item of empty site. -/
 theorem some_realize (c : Context) :
-    some (v.realize c) = subsetPrinciple (v.items ++ [∅ ⟷ v.elsewhere]) ↑[c] := by
+    some (v.realize c) = subsetPrinciple (v.items ++ [∅ ⟷ v.elsewhere]) (.ofBundle {c}) := by
   have happ : Morphology.Exponence.RuleSet.applicable (v.items ++ [∅ ⟷ v.elsewhere])
-      (↑[c] : Neighborhood (List Context)) =
-      v.items.applicable ↑[c] ++ [∅ ⟷ v.elsewhere] := by
+      (.ofBundle {c} : Neighborhood (Finset Context)) =
+      v.items.applicable (.ofBundle {c}) ++ [∅ ⟷ v.elsewhere] := by
     simp [Morphology.Exponence.RuleSet.applicable, List.filter_append,
       VocabularyItem.applies_iff]
   simp only [realize, subsetPrinciple, Morphology.Exponence.RuleSet.realize,
     Morphology.Exponence.RuleSet.selectBy, happ, List.argmax_concat]
-  cases (v.items.applicable ↑[c]).argmax VocabularyItem.specificity with
+  cases (v.items.applicable (.ofBundle {c})).argmax VocabularyItem.specificity with
   | none => rfl
   | some i => simp
 
 /-- A context that no item applies to gets the elsewhere form. -/
-theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ Morphology.Exponence.Applies i ↑[c]) :
+theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ Morphology.Exponence.Applies i (.ofBundle {c})) :
     v.realize c = v.elsewhere := by
-  have : subsetPrinciple v.items ↑[c] = none :=
+  have : subsetPrinciple v.items (.ofBundle {c}) = none :=
     Morphology.Exponence.RuleSet.realize_eq_none_iff.2 <| List.filter_eq_nil_iff.2 fun i hi ↦ by
       simpa using h i hi
   simp [realize, this]
@@ -129,8 +129,8 @@ theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ Morphology.Exponence.App
 /-- A form other than the elsewhere form is the exponent of an item that applies in the
 context. -/
 theorem exists_item_of_realize_ne (h : v.realize c ≠ v.elsewhere) :
-    ∃ i ∈ v.items, Morphology.Exponence.Applies i ↑[c] ∧ i.exponent = v.realize c := by
-  cases hs : subsetPrinciple v.items ↑[c] with
+    ∃ i ∈ v.items, Morphology.Exponence.Applies i (.ofBundle {c}) ∧ i.exponent = v.realize c := by
+  cases hs : subsetPrinciple v.items (.ofBundle {c}) with
   | none => exact absurd (by simp [realize, hs]) h
   | some e =>
     obtain ⟨i, hi, he, hsub⟩ := subsetPrinciple_winner_mem hs
@@ -140,7 +140,7 @@ theorem exists_item_of_realize_ne (h : v.realize c ≠ v.elsewhere) :
 null only through an item for that context whose exponent is null. -/
 theorem exists_null_item_of_controlForm_eq_null {v : Vocabulary Form}
     (he : v.elsewhere ≠ .null) (h : v.controlForm = .null) :
-    ∃ i ∈ v.items, Morphology.Exponence.Applies i ↑[Context.controlledSubject] ∧
+    ∃ i ∈ v.items, Morphology.Exponence.Applies i (.ofBundle {.controlledSubject}) ∧
       i.exponent = .null := by
   obtain ⟨i, hi, hs, hx⟩ := exists_item_of_realize_ne (h ▸ he.symm : v.controlForm ≠ _)
   exact ⟨i, hi, hs, hx.trans h⟩

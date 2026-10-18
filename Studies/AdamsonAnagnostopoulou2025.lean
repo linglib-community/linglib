@@ -129,7 +129,7 @@ def nominal (n : GenderedNoun Gender) (r : Referent) : Bundle Node :=
 
 /-- The exponent of a feature set under the Subset Principle. -/
 def realize (fs : Finset Node) : Option Gender :=
-  subsetPrinciple L.vocabulary (Node.all.filter (· ∈ fs))
+  subsetPrinciple L.vocabulary fs
 
 /-- The exponent of a nominal's own gender, as on its determiner, its features at PF
 realized. -/
@@ -311,9 +311,9 @@ theorem clausal : system.realize ∅ = some .neuter := by decide
 /-- No neuter–feminine syncretism to the exclusion of masculine, for any vocabulary with one
 item per exponent over the Greek feature sets. -/
 theorem no_aba (v : RuleSet (VocabularyItem Node Gender)) (hv : v.Antihomophonous) {φ : Gender}
-    (hn : v.Realizes (Neighborhood.ofBundle [.cls]) φ)
-    (hf : v.Realizes (Neighborhood.ofBundle [.fem, .masc, .cls]) φ) :
-    v.Realizes (Neighborhood.ofBundle [.masc, .cls]) φ :=
+    (hn : v.Realizes (Neighborhood.ofBundle {.cls}) φ)
+    (hf : v.Realizes (Neighborhood.ofBundle {.fem, .masc, .cls}) φ) :
+    v.Realizes (Neighborhood.ofBundle {.masc, .cls}) φ :=
   RuleSet.Realizes.of_realizes hv (fun _ _ h ↦ VocabularyItem.applies_mono h (by decide))
     (fun _ _ h ↦ VocabularyItem.applies_mono h (by decide)) hn hf
 

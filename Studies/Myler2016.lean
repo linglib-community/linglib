@@ -54,9 +54,9 @@ structure Context where
   deriving DecidableEq, Repr, Fintype
 
 /-- The features a context exposes. -/
-def Context.features (c : Context) : List Feature :=
-  (if c.voiceD then [.d] else []) ++ (if c.voicePhi then [.phi] else []) ++
-    (if c.predComplement then [.pred] else [])
+def Context.features (c : Context) : Finset Feature :=
+  (if c.voiceD then {.d} else ∅) ∪ (if c.voicePhi then {.phi} else ∅) ∪
+    (if c.predComplement then {.pred} else ∅)
 
 /-- A transitive context: Voice introduces an external argument and bears
 φ-features that license v's complement. -/
@@ -196,7 +196,8 @@ theorem attributive_rows :
 substrate's competition over `Voice.vocabulary`. -/
 def voiceAlloseme (eventiveVoiceP stative : Bool) : Voice.Alloseme :=
   Voice.Alloseme.fromComplement
-    ((if eventiveVoiceP then [.cat .v, .eventive] else []) ++ if stative then [.stative] else [])
+    ((if eventiveVoiceP then {.cat .v, .eventive} else ∅) ∪ if stative then {.stative} else ∅ :
+      Finset Allosemy.Feature)
 
 /-- ⟦v⟧ = λx.x ((61)) and, over a relational complement — neither an
 eventive VoiceP nor a state — Voice is the expletive identity: the

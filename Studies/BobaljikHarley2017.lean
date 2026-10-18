@@ -153,8 +153,8 @@ theorem localNumbers_clause (c : Arguments Number) :
 /-- The context that locality gives a Root's Vocabulary Items, its index and the numbers local to
 it. -/
 def structuralSite (c : Arguments Number) (r : DistributedMorphology.Root) :
-    DistributedMorphology.Neighborhood (List Harley2014.SiteFeature) :=
-  ⟨[.root r], (localNumbers (clause c) (rootPos c)).map fun n ↦ [.internal n], []⟩
+    DistributedMorphology.Neighborhood (Finset Harley2014.SiteFeature) :=
+  ⟨{.root r}, (localNumbers (clause c) (rootPos c)).map fun n ↦ {.internal n}, []⟩
 
 /-- The context locality gives a Root is the one Harley's site stipulates, so Hiaki suppletion is
 spelled out over the context that (1′) delivers. -/

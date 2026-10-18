@@ -96,7 +96,7 @@ open Feature
 def zero : Morph := .suff ""
 
 /-- A realized exponent presents itself as context. -/
-def expFeatures (m : Morph) : List Feature := [exp m]
+def expFeatures (m : Morph) : Finset Feature := {exp m}
 
 /-- The item spelling out n as `e` after the exponent `m`. -/
 def nAfter (m : Morph) (e : String) : VocabularyItem Feature Morph :=
@@ -125,7 +125,8 @@ variable (r : String) (e : Morph)
 
 /-- The root categorized by v and then by n, with the exponent of v if already inserted. -/
 def word (v : Option Morph) : ComplexHead (Morpheme Feature Morph) (Morpheme Feature Morph) :=
-  ⟨⟨[], some (.root r), .after⟩, [⟨[cat .v], v, .after⟩, ⟨[cat .n], none, .after⟩]⟩
+  ⟨⟨∅, some (.root r), .after⟩,
+    [⟨{(cat .v : Feature)}, v, .after⟩, ⟨{(cat .n : Feature)}, none, .after⟩]⟩
 
 /-- Vocabulary Insertion at head `i`, over the concatenated neighbors with zero exponents
 pruned. -/
@@ -147,16 +148,18 @@ theorem fragment_realize :
 private theorem root_ne_zero : Morph.root r ≠ zero := by
   simp [zero, Morph.root, Morph.suff]
 
-private theorem subsetPrinciple_eq (c : Neighborhood (List Feature)) :
+private theorem subsetPrinciple_eq (c : Neighborhood (Finset Feature)) :
     subsetPrinciple vocab c = (winner? vocab c).map (·.exponent) := rfl
 
 /-- In the context v presents, the root is inside and the bare n outside. -/
-def vContext : Neighborhood (List Feature) := ⟨[cat .v], [[exp (.root r)]], [[cat .n]]⟩
+def vContext : Neighborhood (Finset Feature) :=
+  ⟨{(cat .v : Feature)}, [{exp (.root r)}], [{(cat .n : Feature)}]⟩
 
 /-- In the context n presents after the exponent `e` of v, the inner neighbor is v when it is
 overt, and the root past a pruned zero v. -/
-def nContext : Neighborhood (List Feature) :=
-  if e = zero then ⟨[cat .n], [[exp (.root r)]], []⟩ else ⟨[cat .n], [[cat .v, exp e]], []⟩
+def nContext : Neighborhood (Finset Feature) :=
+  if e = zero then ⟨{(cat .n : Feature)}, [{exp (.root r)}], []⟩
+  else ⟨{(cat .n : Feature)}, [{(cat .v : Feature), exp e}], []⟩
 
 theorem contextAt_word_zero :
     (word r none).contextAt (· = zero) .concatenation expFeatures 0 = vContext r := by
@@ -214,12 +217,13 @@ theorem nominalizer_eq : nominalizer r = subsetPrinciple vocab (nContext r (verb
 
 /-- An overt verbalizer hides the root, so the nominalizer is chosen by the verbalizer alone. -/
 theorem nominalizer_of_ne_zero (h : verbalizer r ≠ zero) :
-    nominalizer r = subsetPrinciple vocab ⟨[cat .n], [[cat .v, exp (verbalizer r)]], []⟩ := by
+    nominalizer r = subsetPrinciple vocab
+      ⟨{(cat .n : Feature)}, [{(cat .v : Feature), exp (verbalizer r)}], []⟩ := by
   simp [nominalizer_eq, nContext, h]
 
 /-- A zero verbalizer is pruned, so the nominalizer is chosen by the root. -/
 theorem nominalizer_of_eq_zero (h : verbalizer r = zero) :
-    nominalizer r = subsetPrinciple vocab ⟨[cat .n], [[exp (.root r)]], []⟩ := by
+    nominalizer r = subsetPrinciple vocab ⟨{(cat .n : Feature)}, [{exp (.root r)}], []⟩ := by
   simp [nominalizer_eq, nContext, h]
 
 /-- After *-k* the nominalizer is *-un*, whatever the root. -/
@@ -364,15 +368,15 @@ end IStar.Alloseme
 
 /-- i* is an agent in the context of an eventive complement and a possessor elsewhere. -/
 def IStar.vocabulary : RuleSet (VocabularyItem Feature IStar.Alloseme) :=
-  [⟨(complement [.eventive]).toFinset, .agent⟩, ∅ ⟷ .possessor]
+  [⟨(complement {.eventive}).toFinset, .agent⟩, ∅ ⟷ .possessor]
 
 /-- The alloseme of i* selected by its complement's features. -/
-def IStar.alloseme (fs : List Feature) : IStar.Alloseme :=
+def IStar.alloseme (fs : Finset Feature) : IStar.Alloseme :=
   (subsetPrinciple IStar.vocabulary (complement fs)).getD .possessor
 
 /-- An nP presents its category to i*, and eventivity when it denotes an event. -/
-def Derivation.features (d : Derivation) : List Feature :=
-  if d.Eventive then [.cat .n, .eventive] else [.cat .n]
+def Derivation.features (d : Derivation) : Finset Feature :=
+  if d.Eventive then {.cat .n, .eventive} else {.cat .n}
 
 /-- The possessor of a nominal is its agent exactly on the complex event reading. -/
 theorem iStar_agent_iff (d : Derivation) :

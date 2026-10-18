@@ -118,61 +118,63 @@ structure Argument where
 /-- Georgian activates neither Addressee nor Minimal ((4)), so a pronoun's first person is
 Participant with Speaker, its plural adding Multispeaker, its second person is bare Participant,
 its plural is Group under [#], and only its third person has Class. -/
-def Argument.features (a : Argument) : List Feature :=
-  ((match a.person with
-      | .first => [Node.participant, .speaker] ++ if a.number = .plural then [.multispeaker] else []
-      | .second => [.participant]
-      | _ => []) ++
-    Node.individuation :: (if a.number = .plural then [Node.group] else []) ++
-      if a.person = .third then [Node.nounClass] else []).map Feature.node
+def Argument.features (a : Argument) : Finset Feature :=
+  let person : Finset Node := match a.person with
+    | .first => {.participant, .speaker} ∪ if a.number = .plural then {.multispeaker} else ∅
+    | .second => {.participant}
+    | _ => ∅
+  let number : Finset Node := insert .individuation
+    ((if a.number = .plural then {.group} else ∅) ∪ if a.person = .third then {.nounClass} else ∅)
+  (person ∪ number).image Feature.node
 
 /-- A Set B marking spells out [DAT] ((9)), and a Set A marking no case. -/
-def caseFeatures (m : Marking) : List Feature := if m.affixes = some .B then [.dat] else []
+def caseFeatures (m : Marking) : Finset Feature := if m.affixes = some .B then {.dat} else ∅
 
 /-- The subject of a transitive verb in the second series bears its φ-features and the case of
 its marking. -/
-def Argument.asSubject (a : Argument) : List Feature :=
-  a.features ++ caseFeatures (pattern .transitive .aorist).subject
+def Argument.asSubject (a : Argument) : Finset Feature :=
+  a.features ∪ caseFeatures (pattern .transitive .aorist).subject
 
 /-- The direct object of a transitive verb in the second series bears its φ-features and the
 case of its marking. -/
-def Argument.asObject (a : Argument) : List Feature :=
-  a.features ++ caseFeatures (pattern .transitive .aorist).directObject
+def Argument.asObject (a : Argument) : Finset Feature :=
+  a.features ∪ caseFeatures (pattern .transitive .aorist).directObject
 
 /-- Impoverishment deletes the [Group] of a dative first-person pronoun at the spell-out of vP,
 after case and before T's number probe ((8)). -/
-def impoverishment : ImpoverishmentRule (List Feature) Feature :=
+def impoverishment : ImpoverishmentRule (Finset Feature) Feature :=
   .ofFocus (fun b ↦ .dat ∈ b ∧ .node .speaker ∈ b) (.node .group)
 
 /-- `impoverish b` is the pronoun `b` after Impoverishment. -/
-def impoverish (b : List Feature) : List Feature := impoverishment.apply List.erase (.ofBundle b)
+def impoverish (b : Finset Feature) : Finset Feature :=
+  impoverishment.apply Finset.erase (.ofBundle b)
 
 /-! ### Agree -/
 
 /-- v's person probe is specified for [Participant]. -/
-def personProbe : Minimalist.Probe (List Feature) :=
-  .relativized (·.contains (.node .participant))
+def personProbe : Minimalist.Probe (Finset Feature) :=
+  .relativized (.node .participant ∈ ·)
 
 /-- T's number probe is specified for [Group], so a goal without [Group] does not halt its search
 and T probes again ([bejar-2003]). -/
-def numberProbe : Minimalist.Probe (List Feature) := .relativized (·.contains (.node .group))
+def numberProbe : Minimalist.Probe (Finset Feature) := .relativized (.node .group ∈ ·)
 
 /-- v's probe finds a participant object first, else a participant subject ((7), (9)), and its
 agreement node copies the goal's person features and case. -/
-def prefixNode (subj obj : Argument) : List Feature :=
+def prefixNode (subj obj : Argument) : Finset Feature :=
   ((personProbe.search [obj.asObject, subj.asSubject]).map
-    (·.filter fun f ↦ f.IsUnder .participant ∨ f = .dat)).getD []
+    (·.filter fun f ↦ f.IsUnder .participant ∨ f = .dat)).getD ∅
 
 /-- T's number probe searches the subject and then the object if it is a first- or second-person
 clitic moved to T, both after Impoverishment; a third-person object stays below T ((6), (7)). -/
-def numberGoals (subj obj : Argument) : List (List Feature) :=
+def numberGoals (subj obj : Argument) : List (Finset Feature) :=
   (subj.asSubject :: if obj.person = .third then [] else [obj.asObject]).map impoverish
 
 /-- T copies the number content of its goal, and keeps the bare [#] when no goal bears [Group],
 the probe's [Group] then deleting ((5)). -/
-def numberContent (subj obj : Argument) : List Feature :=
+def numberContent (subj obj : Argument) : Finset Feature :=
   ((numberProbe.search (numberGoals subj obj)).map (·.filter (·.IsUnder .individuation))).getD
-    [.node .individuation]
+    {.node .individuation}
 
 /-- The two screeves treated are the aorist (10) and the optative (13). -/
 inductive Screeve where
@@ -181,14 +183,14 @@ inductive Screeve where
   deriving DecidableEq, Repr, Fintype
 
 /-- A screeve bears its interpretable features. -/
-def Screeve.features : Screeve → List Feature
-  | .aorist => [.aorist]
-  | .optative => [.ftam, .optative]
+def Screeve.features : Screeve → Finset Feature
+  | .aorist => {.aorist}
+  | .optative => {.ftam, .optative}
 
 /-- The fused TAM node bears the screeve's features, the subject's person features, and the
 number content T agreed with. -/
-def tamNode (s : Screeve) (subj obj : Argument) : List Feature :=
-  s.features ++ subj.asSubject.filter (·.IsUnder .participant) ++ numberContent subj obj
+def tamNode (s : Screeve) (subj obj : Argument) : Finset Feature :=
+  s.features ∪ subj.asSubject.filter (·.IsUnder .participant) ∪ numberContent subj obj
 
 /-! ### Vocabulary -/
 
@@ -231,7 +233,7 @@ def personPrefix (subj obj : Argument) : Option String :=
 /-- Strict scansion with local Fission inserts these items at the fused node, whose own features
 stand as context to every item. -/
 def suffixItems (s : Screeve) (subj obj : Argument) : List (VocabularyItem Feature String) :=
-  insertions s.vocabulary ⟨[], [tamNode s subj obj], []⟩ [tamNode s subj obj]
+  insertions s.vocabulary ⟨∅, [tamNode s subj obj], []⟩ [tamNode s subj obj]
 
 /-- The overt suffixes are the inserted items' nonnull exponents. -/
 def suffixes (s : Screeve) (subj obj : Argument) : List String :=
@@ -273,58 +275,23 @@ theorem rows_realized :
 
 /-! ### One exponent per feature -/
 
-/-- An argument's bundle bears each feature once. -/
-theorem nodup_features_append (a : Argument) (m : Marking) :
-    (a.features ++ caseFeatures m).Nodup := by
-  rcases a with ⟨p, n⟩
-  unfold Argument.features caseFeatures
-  cases p <;> by_cases h : n = .plural <;> by_cases hm : m.affixes = some .B <;> simp [h, hm]
-
-/-- T's fused node bears each feature once, since the screeve's features, the subject's person
-features, and the number content of T's goal are disjoint. -/
-theorem tamNode_nodup (s : Screeve) (subj obj : Argument) : (tamNode s subj obj).Nodup := by
-  have hpn : ∀ f : Feature, f.IsUnder .participant → ¬ f.IsUnder .individuation := by decide
-  have hs : ∀ s : Screeve, ∀ f ∈ s.features, ∀ a, ¬ f.IsUnder a := by decide
-  have ⟨hn, hu⟩ : (numberContent subj obj).Nodup ∧
-      ∀ f ∈ numberContent subj obj, f.IsUnder .individuation := by
-    unfold numberContent
-    cases h : numberProbe.search (numberGoals subj obj) with
-    | none => decide
-    | some b =>
-      obtain ⟨x, hx, rfl⟩ := List.mem_map.mp (Minimalist.Probe.mem_of_search_eq_some h)
-      have hx : x.Nodup := by
-        simp only [List.mem_cons] at hx
-        split at hx <;> simp only [List.not_mem_nil, List.mem_singleton, or_false] at hx <;>
-          rcases hx with rfl | rfl <;> exact nodup_features_append _ _
-      exact ⟨(hx.sublist (ImpoverishmentRule.apply_erase_sublist _ _)).filter _,
-        fun f hf ↦ of_decide_eq_true (List.mem_filter.mp hf).2⟩
-  unfold tamNode
-  refine List.nodup_append.mpr ⟨List.nodup_append.mpr ⟨by cases s <;> decide,
-    (nodup_features_append _ _).filter _, ?_⟩, hn, ?_⟩
-  · rintro x hx _ hy rfl
-    exact hs s x hx _ (of_decide_eq_true (List.mem_filter.mp hy).2)
-  · rintro x hx _ hy rfl
-    rcases List.mem_append.mp hx with hx | hx
-    · exact hs s x hx _ (hu x hy)
-    · exact hpn x (of_decide_eq_true (List.mem_filter.mp hx).2) (hu x hy)
-
-/-- **No double plural marking** (§3.3.1). T bears each feature once, so the suffixes realize
-disjoint parts of its node. At most one realizes [Group], whence *-es* and *-n* exclude *-t*, and
-at most one realizes [#], whence *-t* excludes *-s*. -/
+/-- **No double plural marking** (§3.3.1). T's single number probe makes T one matrix, so the
+suffixes realize disjoint parts of it. At most one realizes [Group], whence *-es* and *-n* exclude
+*-t*, and at most one realizes [#], whence *-t* excludes *-s*. -/
 theorem one_exponent_per_feature (s : Screeve) (subj obj : Argument) :
     (suffixItems s subj obj).Pairwise fun i j ↦ Disjoint i.features j.features :=
-  pairwise_disjoint_insertions (by simpa using tamNode_nodup s subj obj)
+  pairwise_disjoint_insertions (by simpa using (tamNode s subj obj).nodup)
 
 /-- Fission alone does not exclude double plural marking (§3.3.1). Were T to agree in number with
-both a plural third-person subject and a plural second-person object, its node would bear two
-[Group]s, and scansion would insert both *-es* and *-t*, the starred (3b); T's single [#] probe
-is what excludes it. -/
+both a plural third-person subject and a plural second-person object, it would bear two number
+matrices, one for each Agree relation, and scansion would insert *-es* from the one and *-t* from
+the other, the starred (3b); T's single [#] probe is what excludes it. -/
 theorem fission_alone_allows_double_plural :
-    let node := Screeve.aorist.features ++
-      (⟨.third, .plural⟩ : Argument).features.filter (·.IsUnder .individuation) ++
-        (⟨.second, .plural⟩ : Argument).features.filter (·.IsUnder .individuation)
-    ((insertions Screeve.aorist.vocabulary ⟨[], [node], []⟩ [node]).map (·.exponent)).filter
-      (· ≠ "") = ["es", "t"] := by
+    let subjNum := Screeve.aorist.features ∪
+      (⟨.third, .plural⟩ : Argument).features.filter (·.IsUnder .individuation)
+    let objNum := (⟨.second, .plural⟩ : Argument).features.filter (·.IsUnder .individuation)
+    ((insertions Screeve.aorist.vocabulary ⟨∅, [subjNum ∪ objNum], []⟩
+        [subjNum, objNum]).map (·.exponent)).filter (· ≠ "") = ["es", "t"] := by
   decide
 
 /-! ### The ranking -/

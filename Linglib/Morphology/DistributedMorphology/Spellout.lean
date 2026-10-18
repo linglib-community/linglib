@@ -167,17 +167,18 @@ end TerminalMetathesisRule
 
 namespace FusionRule
 
-variable {F : Type*}
+variable {F : Type*} [DecidableEq F]
 
 /-- The domain lift of Fusion fuses the first terminal that fuses with the terminal to its right,
 and otherwise leaves the domain unchanged. -/
-def applyFirstAdjacent (rule : FusionRule F) : SpelloutDomain (List F) → SpelloutDomain (List F) :=
+def applyFirstAdjacent (rule : FusionRule F) :
+    SpelloutDomain (Finset F) → SpelloutDomain (Finset F) :=
   rewriteFirst (fun n ↦ ∃ q ∈ n.rightCtx.head?, rule.condition n.focus q) fun
-    | ⟨p, l, q :: r⟩ => l.reverse ++ (p ++ q) :: r
+    | ⟨p, l, q :: r⟩ => l.reverse ++ (p ∪ q) :: r
     | n => n.toList
 
 /-- Fusion never increases the number of terminals. -/
-theorem length_applyFirstAdjacent_le (rule : FusionRule F) (d : SpelloutDomain (List F)) :
+theorem length_applyFirstAdjacent_le (rule : FusionRule F) (d : SpelloutDomain (Finset F)) :
     (rule.applyFirstAdjacent d).length ≤ d.length :=
   length_rewriteFirst_le (fun | ⟨_, _, _ :: _⟩ => by simp [Neighborhood.toList]
                               | ⟨_, _, []⟩ => le_rfl) d

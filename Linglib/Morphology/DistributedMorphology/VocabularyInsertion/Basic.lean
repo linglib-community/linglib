@@ -110,11 +110,11 @@ namespace DistributedMorphology.VocabularyItem
 
 open Morphology.Exponence
 
-variable {F E : Type*} {i j : VocabularyItem F E} {n : Neighborhood (List F)}
+variable {F E : Type*} {i j : VocabularyItem F E} {n : Neighborhood (Finset F)}
 
 /-- A Vocabulary Item exposes the shared exponence interface: its contexts are neighborhoods, and
 it applies in those bearing every positioned feature of its site. -/
-instance : Rule (VocabularyItem F E) (Neighborhood (List F)) E :=
+instance : Rule (VocabularyItem F E) (Neighborhood (Finset F)) E :=
   ⟨exponent, fun i n ↦ ∀ x ∈ i.site, x ∈ n⟩
 
 instance : Preorder (VocabularyItem F E) := toPreorder
@@ -124,25 +124,38 @@ theorem applies_iff : Applies i n ↔ ∀ x ∈ i.site, x ∈ n := Iff.rfl
 theorem applies_iff_subset_toFinset [DecidableEq F] : Applies i n ↔ i.site ⊆ n.toFinset := by
   simp [applies_iff, Finset.subset_iff]
 
+/-- An item applies exactly in the neighborhoods containing the least one bearing its site. -/
+theorem applies_iff_ofFinset_subset [DecidableEq F] :
+    Applies i n ↔ Neighborhood.ofFinset i.site ⊆ n := by
+  rw [applies_iff_subset_toFinset]
+  exact (Neighborhood.gc_ofFinset_toFinset _ _).symm
+
+/-- The neighborhoods an item applies in are the principal up-set of the least neighborhood
+bearing its site. -/
+theorem applySet_eq [DecidableEq F] : applySet i = Set.Ici (Neighborhood.ofFinset i.site) :=
+  Set.ext fun _ ↦ applies_iff_ofFinset_subset
+
 /-- A context-free item applies where its features are on the focus. -/
 @[simp] theorem applies_ofFeatures {fs : Finset F} {e : E} :
-    Applies (fs ⟷ e) n ↔ ∀ f ∈ fs, f ∈ n.focus := by
-  simp [applies_iff, Neighborhood.mem_def]
+    Applies (fs ⟷ e) n ↔ fs ⊆ n.focus := by
+  simp [applies_iff, Neighborhood.mem_def, Finset.subset_iff]
 
 /-- The Elsewhere item applies at every neighborhood. -/
-theorem elsewhere_applies (e : E) (n : Neighborhood (List F)) :
+theorem elsewhere_applies (e : E) (n : Neighborhood (Finset F)) :
     Applies ((∅ : Finset F) ⟷ e) n := by
   simp [applies_iff]
 
 /-- An item applying in a neighborhood applies in every larger one. -/
-theorem applies_mono {n' : Neighborhood (List F)} (h : Applies i n) (hn : n ⊆ n') : Applies i n' :=
-  fun _ hx ↦ hn (h _ hx)
+theorem applies_mono {n' : Neighborhood (Finset F)} (h : Applies i n) (hn : n ⊆ n') :
+    Applies i n' :=
+  fun _ hx ↦ Neighborhood.mem_of_subset hn (h _ hx)
 
-/-- The engine's specificity order is reverse inclusion of sites. -/
+/-- The engine's specificity order is reverse inclusion of sites, since principal up-sets are
+ordered reversely to their generators. -/
 theorem le_iff : i ≤ j ↔ j.site ⊆ i.site := by
-  refine ⟨fun h x hx ↦ ?_, fun h n hi x hx ↦ hi x (h hx)⟩
-  have hi : Applies i (Neighborhood.ofFinset i.site) := fun y hy ↦ Neighborhood.mem_ofFinset.2 hy
-  exact Neighborhood.mem_ofFinset.1 (h hi x hx)
+  classical
+  change applySet i ⊆ applySet j ↔ _
+  rw [applySet_eq, applySet_eq, Set.Ici_subset_Ici, Neighborhood.ofFinset_subset_ofFinset]
 
 /-- A strictly more specific item has a strictly larger site. -/
 theorem site_strictAnti : StrictAnti (site : VocabularyItem F E → Finset (ℤ × F)) :=
@@ -173,7 +186,7 @@ theorem specificity_strictAnti : StrictAnti (specificity : VocabularyItem F E �
   simp [specificity, Prod.Lex.toLex_lt_toLex]
 
 instance [DecidableEq F] :
-    DecidableRel (Applies : VocabularyItem F E → Neighborhood (List F) → Prop) :=
+    DecidableRel (Applies : VocabularyItem F E → Neighborhood (Finset F) → Prop) :=
   fun i n ↦ inferInstanceAs (Decidable (∀ x ∈ i.site, x ∈ n))
 
 end DistributedMorphology.VocabularyItem
@@ -187,17 +200,17 @@ open Morphology.Exponence
 section SubsetPrinciple
 
 variable {F E : Type*} [DecidableEq F] {items : RuleSet (VocabularyItem F E)}
-  {n n' : Neighborhood (List F)} {i i' : VocabularyItem F E} {e : E}
+  {n n' : Neighborhood (Finset F)} {i i' : VocabularyItem F E} {e : E}
 
 /-- The Subset Principle's winning item is the applicable item of greatest `specificity`, the
 earliest under ties. -/
-def winner? (items : RuleSet (VocabularyItem F E)) (n : Neighborhood (List F)) :
+def winner? (items : RuleSet (VocabularyItem F E)) (n : Neighborhood (Finset F)) :
     Option (VocabularyItem F E) :=
   items.selectBy VocabularyItem.specificity n
 
 /-- The **Subset Principle** yields the exponent of the most specific item whose site the
 neighborhood contains, and `none` iff no item applies. -/
-def subsetPrinciple (items : RuleSet (VocabularyItem F E)) (n : Neighborhood (List F)) :
+def subsetPrinciple (items : RuleSet (VocabularyItem F E)) (n : Neighborhood (Finset F)) :
     Option E :=
   items.realize VocabularyItem.specificity n
 

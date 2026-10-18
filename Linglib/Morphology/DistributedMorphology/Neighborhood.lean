@@ -4,16 +4,19 @@ public import Mathlib.Algebra.Group.Int.Defs
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Data.Finset.Union
 public import Mathlib.Order.RelClasses
 
 /-!
 # Neighborhoods
 
-The local environment a postsyntactic rule inspects: a focus terminal with
-the terminals to either side, nearest first. Vocabulary Items and
-Impoverishment rules are stated over the same neighborhoods. A terminal bears a
-feature at an offset from the focus, and a neighborhood is included in another,
-`⊆`, when every positioned feature of the one is one of the other.
+A neighborhood is the local environment a postsyntactic rule inspects, a focus terminal with the
+terminals to either side, nearest first. Vocabulary Items and Impoverishment rules are stated over
+the same neighborhoods. A terminal of features bears each feature at its offset from the focus, so
+a neighborhood presents a finite set of positioned features (`toFinset`), and one neighborhood is
+included in another, `⊆`, when every positioned feature of the one is one of the other. Every
+finite set of positioned features has a least presentation (`ofFinset`), a Galois connection that
+makes the Subset Principle's inclusion of sites an inclusion of finite sets.
 
 ## Main definitions
 
@@ -21,9 +24,8 @@ feature at an offset from the focus, and a neighborhood is included in another,
 * `Neighborhood.nth`: the terminal at an integer offset from the focus.
 * `(i, f) ∈ n`: the terminal at offset `i` bears the feature `f`; `s ⊆ n` when
   every positioned feature of `s` is one of `n`.
-* `Neighborhood.positioned`, `Neighborhood.toFinset`: the positioned features,
-  listed and as a finite set; `Neighborhood.ofFinset` realizes a finite set of positioned
-  features.
+* `Neighborhood.toFinset`, `Neighborhood.ofFinset`: the positioned features as a finite set,
+  and the least neighborhood bearing a finite set of them.
 * `Neighborhood.project`, `Neighborhood.window`: the neighborhood on a tier, and the focus with
   the terminals within a radius of it.
 * `Neighborhood.around`, `Neighborhood.along`: the neighborhood of a position of
@@ -31,12 +33,11 @@ feature at an offset from the focus, and a neighborhood is included in another,
 
 ## Main results
 
-* `Neighborhood.mem_positioned`: `positioned` lists exactly the positioned
-  features, so it decides `⊆`.
 * `Neighborhood.subset_iff_nth`: inclusion compares terminal by terminal.
 * `Neighborhood.ofBundle_subset_iff`: a bundle is included where its features are on the
   focus.
-* `Neighborhood.mem_ofFinset`: `ofFinset s` bears exactly the positioned features of `s`.
+* `Neighborhood.gc_ofFinset_toFinset`: `ofFinset` and `toFinset` form a Galois connection, and
+  `toFinset ∘ ofFinset` is the identity.
 * `Neighborhood.toList_of_mem_along`, `Neighborhood.nth_around`: each
   neighborhood of a string reassembles to it, and terminal `k` stands at offset
   `k - i` from position `i`.
@@ -46,9 +47,8 @@ feature at an offset from the focus, and a neighborhood is included in another,
 Offsets are integers, indexed as for `Turing.Tape.nth`: `0` is the focus,
 `-(k + 1)` the `k`-th terminal to the left (toward the root), `k + 1` the `k`-th
 to the right (toward the clause), and past either end `nth` returns `default`,
-for a feature list `[]`. Inclusion ignores the order and repetition of features
-on a terminal and empty terminals past the ends, so it is a preorder and not a
-partial order; as for `PSet`, the preorder is written `⊆`.
+for a terminal of features `∅`. Inclusion ignores empty terminals past the ends, so it is a
+preorder and not a partial order; as for `PSet`, the preorder is written `⊆`.
 
 A bare bundle coerces to the neighborhood with nothing to either side.
 
@@ -96,7 +96,7 @@ instance [EmptyCollection Bundle] : EmptyCollection (Neighborhood Bundle) := ⟨
 
 @[simp] theorem rightCtx_ofBundle (fb : Bundle) : (ofBundle fb).rightCtx = [] := rfl
 
-@[simp] theorem ofBundle_nil : ofBundle ([] : List F) = ∅ := rfl
+@[simp] theorem ofBundle_empty : ofBundle (∅ : Finset F) = ∅ := rfl
 
 /-! ### Offsets -/
 
@@ -121,6 +121,10 @@ variable [Inhabited Bundle] (n : Neighborhood Bundle) (k : ℕ)
 @[simp] theorem nth_one : n.nth 1 = n.rightCtx.getD 0 default := rfl
 
 @[simp] theorem nth_neg_one : n.nth (-1) = n.leftCtx.getD 0 default := rfl
+
+theorem nth_ofBundle (fb : Bundle) (i : ℤ) :
+    (ofBundle fb).nth i = if i = 0 then fb else default := by
+  rcases i with (_ | k) | k <;> rfl
 
 end nth
 
@@ -224,65 +228,37 @@ end String
 
 /-! ### Positioned features -/
 
-variable {s n : Neighborhood (List F)} {x : ℤ × F}
+variable {s n : Neighborhood (Finset F)} {x : ℤ × F}
 
 /-- `(i, f) ∈ n` holds when the terminal at offset `i` from the focus bears the feature `f`. -/
-instance : Membership (ℤ × F) (Neighborhood (List F)) := ⟨fun n x ↦ x.2 ∈ n.nth x.1⟩
+instance : Membership (ℤ × F) (Neighborhood (Finset F)) := ⟨fun n x ↦ x.2 ∈ n.nth x.1⟩
 
 theorem mem_def : x ∈ n ↔ x.2 ∈ n.nth x.1 := Iff.rfl
 
-instance [DecidableEq F] (x : ℤ × F) (n : Neighborhood (List F)) : Decidable (x ∈ n) :=
+instance [DecidableEq F] (x : ℤ × F) (n : Neighborhood (Finset F)) : Decidable (x ∈ n) :=
   inferInstanceAs (Decidable (x.2 ∈ n.nth x.1))
 
-/-- `n.positioned` lists the positioned features of a neighborhood of feature
-lists, the focus's at offset `0`, then the left context's, then the right
-context's. -/
-def positioned (n : Neighborhood (List F)) : List (ℤ × F) :=
-  n.focus.map (0, ·) ++
-    n.leftCtx.zipIdx.flatMap (fun p ↦ p.1.map (-(p.2 + 1 : ℤ), ·)) ++
-    n.rightCtx.zipIdx.flatMap (fun p ↦ p.1.map ((p.2 + 1 : ℤ), ·))
+@[simp] theorem mem_ofBundle {fs : Finset F} :
+    x ∈ (fs : Neighborhood (Finset F)) ↔ x.1 = 0 ∧ x.2 ∈ fs := by
+  rw [mem_def, nth_ofBundle]
+  split_ifs with h
+  · simp [h]
+  · exact iff_of_false (Finset.notMem_empty _) fun h' ↦ h h'.1
 
-private theorem mem_flatMap_zipIdx {l : List (List F)} {g : ℕ → ℤ} {i : ℤ} {f : F} :
-    (i, f) ∈ l.zipIdx.flatMap (fun p ↦ p.1.map (g p.2, ·)) ↔ ∃ k, g k = i ∧ f ∈ l.getD k [] := by
-  simp only [List.mem_flatMap, List.mem_map, Prod.mk.injEq, List.getD_eq_getElem?_getD,
-    Prod.exists, List.mem_zipIdx_iff_getElem?]
-  grind
+@[simp] theorem notMem_empty : x ∉ (∅ : Neighborhood (Finset F)) :=
+  fun h ↦ Finset.notMem_empty _ (mem_ofBundle (fs := ∅).1 h).2
 
-@[simp] theorem mem_positioned : x ∈ n.positioned ↔ x ∈ n := by
-  obtain ⟨i, f⟩ := x
-  simp only [positioned, List.mem_append, mem_flatMap_zipIdx (g := fun k : ℕ ↦ -(k + 1 : ℤ)),
-    mem_flatMap_zipIdx (g := fun k : ℕ ↦ (k + 1 : ℤ)), List.mem_map, Prod.mk.injEq, mem_def]
-  constructor
-  · rintro ((⟨a, ha, rfl, rfl⟩ | ⟨k, rfl, hf⟩) | ⟨k, rfl, hf⟩) <;> assumption
-  · rcases i with (_ | k) | k <;> intro hf
-    · exact .inl (.inl ⟨f, hf, rfl, rfl⟩)
-    · exact .inr ⟨k, rfl, hf⟩
-    · exact .inl (.inr ⟨k, rfl, hf⟩)
+/-- The positioned features of a neighborhood, as a set. -/
+def toSet (n : Neighborhood (Finset F)) : Set (ℤ × F) := {x | x ∈ n}
 
-@[simp] theorem positioned_ofBundle (fs : List F) :
-    (ofBundle fs : Neighborhood (List F)).positioned = fs.map (0, ·) := by
-  simp [positioned, ofBundle]
-
-@[simp] theorem positioned_empty : (∅ : Neighborhood (List F)).positioned = [] := rfl
-
-@[simp] theorem mem_ofBundle {fs : List F} :
-    x ∈ (fs : Neighborhood (List F)) ↔ x.1 = 0 ∧ x.2 ∈ fs := by
-  rw [← mem_positioned, positioned_ofBundle]
-  obtain ⟨i, f⟩ := x
-  simp [eq_comm, and_comm]
-
-@[simp] theorem notMem_empty : x ∉ (∅ : Neighborhood (List F)) := by
-  simp [← mem_positioned]
+@[simp] theorem mem_toSet : x ∈ n.toSet ↔ x ∈ n := Iff.rfl
 
 /-! ### Inclusion -/
 
-/-- A site is included in a neighborhood when every positioned feature it
-mentions is present; a terminal it does not mention is unconstrained. This is
-the Subset Principle's inclusion. -/
-instance : Preorder (Neighborhood (List F)) where
-  le s n := ∀ ⦃x⦄, x ∈ s → x ∈ n
-  le_refl _ _ := id
-  le_trans _ _ _ h₁ h₂ _ hx := h₂ (h₁ hx)
+/-- A neighborhood is included in another when every positioned feature it bears is one of the
+other's; a terminal it leaves empty is unconstrained. This is the Subset Principle's inclusion,
+the order of the positioned features lifted to neighborhoods. -/
+instance : Preorder (Neighborhood (Finset F)) := Preorder.lift toSet
 
 theorem subset_iff : s ⊆ n ↔ ∀ ⦃x⦄, x ∈ s → x ∈ n := Iff.rfl
 
@@ -290,63 +266,90 @@ theorem mem_of_subset (h : s ⊆ n) (hx : x ∈ s) : x ∈ n := h hx
 
 /-- Inclusion compares terminal by terminal. -/
 theorem subset_iff_nth : s ⊆ n ↔ ∀ i, s.nth i ⊆ n.nth i :=
-  ⟨fun h i _ hf ↦ h (x := (i, _)) hf, fun h x hx ↦ h x.1 hx⟩
+  ⟨fun h i _ hf ↦ subset_iff.1 h (x := (i, _)) hf, fun h ↦ subset_iff.2 fun x hx ↦ h x.1 hx⟩
 
 theorem focus_subset_focus (h : s ⊆ n) : s.focus ⊆ n.focus := subset_iff_nth.mp h 0
 
-theorem subset_iff_positioned : s ⊆ n ↔ s.positioned ⊆ n.positioned := by
-  simp [subset_iff, List.subset_def]
+@[simp] theorem empty_subset (n : Neighborhood (Finset F)) : ∅ ⊆ n :=
+  subset_iff.2 fun _ h ↦ absurd h notMem_empty
 
-instance [DecidableEq F] : DecidableLE (Neighborhood (List F)) :=
-  fun _ _ ↦ decidable_of_iff _ subset_iff_positioned.symm
-
-@[simp] theorem empty_subset (n : Neighborhood (List F)) : ∅ ⊆ n := fun _ h ↦ absurd h notMem_empty
-
-/-- A context-free site is included in a neighborhood exactly when its features
-are on the focus. -/
-@[simp] theorem ofBundle_subset_iff {fs : List F} :
-    (fs : Neighborhood (List F)) ⊆ n ↔ fs ⊆ n.focus :=
-  ⟨fun h _ hf ↦ h (x := (0, _)) (mem_ofBundle.mpr ⟨rfl, hf⟩),
-    fun h _ hx ↦ by obtain ⟨hi, hf⟩ := mem_ofBundle.mp hx; exact mem_def.mpr (hi ▸ h hf)⟩
+/-- A bundle is included in a neighborhood exactly when its features are on the focus. -/
+@[simp] theorem ofBundle_subset_iff {fs : Finset F} :
+    (fs : Neighborhood (Finset F)) ⊆ n ↔ fs ⊆ n.focus :=
+  ⟨fun h _ hf ↦ subset_iff.1 h (x := (0, _)) (mem_ofBundle.mpr ⟨rfl, hf⟩),
+    fun h ↦ subset_iff.2 fun _ hx ↦ by
+      obtain ⟨hi, hf⟩ := mem_ofBundle.mp hx; exact mem_def.mpr (hi ▸ h hf)⟩
 
 /-! ### Finite sets of positioned features -/
+
+private theorem getD_map_range {N k : ℕ} (g : ℕ → Finset F) :
+    ((List.range N).map g).getD k default = if k < N then g k else ∅ := by
+  split_ifs with h
+  · simp [List.getD_eq_getElem?_getD, h]
+  · simp [List.getD_eq_getElem?_getD, h]
+    rfl
 
 section toFinset
 
 variable [DecidableEq F]
 
-/-- The positioned features of a neighborhood of feature lists, as a finite set. -/
-def toFinset (n : Neighborhood (List F)) : Finset (ℤ × F) := n.positioned.toFinset
+/-- The positioned features a list of terminals puts at the offsets `g 0`, `g 1`, …. -/
+def positionsOf (g : ℕ → ℤ) (l : List (Finset F)) : Finset (ℤ × F) :=
+  l.zipIdx.toFinset.biUnion fun p ↦ p.1.map (.sectR (g p.2) F)
 
-@[simp] theorem mem_toFinset : x ∈ n.toFinset ↔ x ∈ n := by simp [toFinset]
+theorem mem_positionsOf {g : ℕ → ℤ} {l : List (Finset F)} {i : ℤ} {f : F} :
+    (i, f) ∈ positionsOf g l ↔ ∃ k, g k = i ∧ f ∈ l.getD k default := by
+  simp only [positionsOf, Finset.mem_biUnion, List.mem_toFinset, Finset.mem_map,
+    Function.Embedding.sectR_apply, Prod.mk.injEq, Prod.exists, List.mem_zipIdx_iff_getElem?,
+    List.getD_eq_getElem?_getD]
+  constructor
+  · rintro ⟨a, k, hk, c, hc, hgi, rfl⟩
+    exact ⟨k, hgi, by rw [hk]; exact hc⟩
+  · rintro ⟨k, hgi, hf⟩
+    cases hk : l[k]? with
+    | none => rw [hk] at hf; exact absurd hf (Finset.notMem_empty f)
+    | some a => rw [hk] at hf; exact ⟨a, k, hk, f, hf, hgi, rfl⟩
 
-@[simp] theorem toFinset_empty : (∅ : Neighborhood (List F)).toFinset = ∅ := rfl
+/-- The positioned features of a neighborhood, as a finite set. -/
+def toFinset (n : Neighborhood (Finset F)) : Finset (ℤ × F) :=
+  n.focus.map (.sectR 0 F) ∪ positionsOf (fun k ↦ -(k + 1 : ℤ)) n.leftCtx ∪
+    positionsOf (fun k ↦ (k + 1 : ℤ)) n.rightCtx
 
-@[simp] theorem toFinset_subset_toFinset : s.toFinset ⊆ n.toFinset ↔ s ⊆ n := by
+@[simp] theorem mem_toFinset : x ∈ n.toFinset ↔ x ∈ n := by
+  obtain ⟨i, f⟩ := x
+  simp only [toFinset, Finset.mem_union, mem_positionsOf, Finset.mem_map,
+    Function.Embedding.sectR_apply, Prod.mk.injEq]
+  rw [mem_def]
+  constructor
+  · rintro ((⟨a, ha, rfl, rfl⟩ | ⟨k, rfl, hf⟩) | ⟨k, rfl, hf⟩)
+    · exact ha
+    · rwa [nth_neg_natCast_add_one]
+    · rwa [nth_natCast_add_one]
+  · rcases i with (_ | k) | k <;> intro hf
+    · exact .inl (.inl ⟨f, hf, rfl, rfl⟩)
+    · exact .inr ⟨k, rfl, hf⟩
+    · exact .inl (.inr ⟨k, (Int.negSucc_eq k).symm, hf⟩)
+
+@[simp] theorem coe_toFinset : (n.toFinset : Set (ℤ × F)) = n.toSet := by ext; simp
+
+theorem toFinset_subset_toFinset : s.toFinset ⊆ n.toFinset ↔ s ⊆ n := by
   simp [Finset.subset_iff, subset_iff]
 
-end toFinset
+instance : DecidableLE (Neighborhood (Finset F)) :=
+  fun _ _ ↦ decidable_of_iff _ toFinset_subset_toFinset
 
 /-- The features a finite set of positioned features puts at offset `i`. -/
-noncomputable def atOffset (t : Finset (ℤ × F)) (i : ℤ) : List F :=
-  (t.toList.filter (·.1 = i)).map Prod.snd
+def atOffset (t : Finset (ℤ × F)) (i : ℤ) : Finset F := (t.filter (·.1 = i)).image Prod.snd
 
 @[simp] theorem mem_atOffset {t : Finset (ℤ × F)} {i : ℤ} {f : F} :
     f ∈ atOffset t i ↔ (i, f) ∈ t := by
   simp [atOffset]
 
-/-- The neighborhood whose terminals bear exactly the positioned features of a finite set, out
-to the largest offset among them. -/
-noncomputable def ofFinset (t : Finset (ℤ × F)) : Neighborhood (List F) :=
+/-- The neighborhood bearing exactly the positioned features of a finite set, out to the largest
+offset among them. -/
+def ofFinset (t : Finset (ℤ × F)) : Neighborhood (Finset F) :=
   ⟨atOffset t 0, (List.range (t.sup (·.1.natAbs))).map fun k : ℕ ↦ atOffset t (-((k : ℤ) + 1)),
     (List.range (t.sup (·.1.natAbs))).map fun k : ℕ ↦ atOffset t ((k : ℤ) + 1)⟩
-
-private theorem getD_map_range {N k : ℕ} (g : ℕ → List F) :
-    ((List.range N).map g).getD k default = if k < N then g k else [] := by
-  split_ifs with h
-  · simp [List.getD_eq_getElem?_getD, h]
-  · simp [List.getD_eq_getElem?_getD, h]
-    rfl
 
 @[simp] theorem mem_ofFinset {t : Finset (ℤ × F)} : x ∈ ofFinset t ↔ x ∈ t := by
   obtain ⟨i, f⟩ := x
@@ -360,14 +363,28 @@ private theorem getD_map_range {N k : ℕ} (g : ℕ → List F) :
       simp only [ofFinset, getD_map_range]
       split_ifs with hm
       · exact mem_atOffset
-      · exact iff_of_false (List.not_mem_nil) fun h ↦ hm (by have := hb h; omega)
+      · exact iff_of_false (Finset.notMem_empty _) fun h ↦ hm (by have := hb h; omega)
   · rcases m with _ | m
     · simp [ofFinset]
     · rw [show -((m + 1 : ℕ) : ℤ) = -((m : ℤ) + 1) by omega, nth_neg_natCast_add_one]
       simp only [ofFinset, getD_map_range]
       split_ifs with hm
       · exact mem_atOffset
-      · exact iff_of_false (List.not_mem_nil) fun h ↦ hm (by have := hb h; omega)
+      · exact iff_of_false (Finset.notMem_empty _) fun h ↦ hm (by have := hb h; omega)
+
+@[simp] theorem toFinset_ofFinset (t : Finset (ℤ × F)) : (ofFinset t).toFinset = t := by
+  ext; simp
+
+/-- A neighborhood presents its finite set of positioned features, and `ofFinset` is the least
+neighborhood presenting a given one. -/
+theorem gc_ofFinset_toFinset :
+    GaloisConnection (ofFinset : Finset (ℤ × F) → Neighborhood (Finset F)) toFinset :=
+  fun _ _ ↦ by simp [subset_iff, Finset.subset_iff]
+
+theorem ofFinset_subset_ofFinset {s t : Finset (ℤ × F)} : ofFinset s ⊆ ofFinset t ↔ s ⊆ t :=
+  gc_ofFinset_toFinset.le_iff_le.trans (by rw [toFinset_ofFinset])
+
+end toFinset
 
 end Neighborhood
 

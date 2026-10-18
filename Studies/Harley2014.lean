@@ -91,8 +91,8 @@ inductive SiteFeature where
 /-- The neighborhood of root `r` in a clause bearing the numbers `c` has the
 internal argument as the terminal below, and the external argument is not in
 the local environment (§3.3). -/
-def site (c : Arguments Number) (r : Root) : Neighborhood (List SiteFeature) :=
-  ⟨[.root r], ((c .internal).map fun n ↦ ([.internal n] : List SiteFeature)).toList, []⟩
+def site (c : Arguments Number) (r : Root) : Neighborhood (Finset SiteFeature) :=
+  ⟨{.root r}, ((c .internal).map fun n ↦ ({.internal n} : Finset SiteFeature)).toList, []⟩
 
 /-! ### List 2: the suppletive Vocabulary Items -/
 
@@ -192,7 +192,7 @@ def cahoot : Root := ⟨548⟩
 /-- The List-3 entry of √548: "a conspiracy" in the frame of (16), recorded by
 its categorizing head, and no Elsewhere. -/
 def cahootLF : RuleSet (VocabularyItem Allosemy.Feature String) :=
-  [⟨(embedding [.cat .n]).toFinset, "a conspiracy"⟩]
+  [⟨(embedding {.cat .n}).toFinset, "a conspiracy"⟩]
 
 /-- Outside its frame the caboodle item has no interpretation. The paper adds
 that no List-3 entry could be a true Elsewhere, since an interpretation must
@@ -233,14 +233,14 @@ theorem run_hasSuppletiveCore : Morphology.Root.HasSuppletiveCore realization (f
 
 /-- √548 as a List-3 `Realization.Interpreted` view. -/
 def cahootHead :
-    Morphology.Realization.Interpreted Unit (Neighborhood (List Allosemy.Feature)) Unit String :=
+    Morphology.Realization.Interpreted Unit (Neighborhood (Finset Allosemy.Feature)) Unit String :=
   toInterpreted cahootLF
 
 /-- The caboodle item is interpreted inside its frame and has an empty
 `interp` fiber elsewhere — a gap, the meaning-side analogue of an empty
 realization fiber, so a licensing failure rather than allosemy (§2.3). -/
 theorem cahoot_interp_gap :
-    cahootHead.interp () (embedding [.cat .n]) = {"a conspiracy"} ∧
+    cahootHead.interp () (embedding {.cat .n}) = {"a conspiracy"} ∧
       cahootHead.interp () ∅ = ∅ := by
   refine ⟨?_, ?_⟩ <;> decide
 

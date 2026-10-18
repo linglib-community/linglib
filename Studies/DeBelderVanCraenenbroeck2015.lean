@@ -328,7 +328,7 @@ def Model.visiblePhi (M : Model) : List Phi :=
 
 /-- The copula agreeing with a subject whose root position *ik* realizes. -/
 def Model.copula (M : Model) : Option String :=
-  subsetPrinciple zijn (M.visiblePhi : DistributedMorphology.Neighborhood (List Phi))
+  subsetPrinciple zijn (M.visiblePhi.toFinset : Finset Phi)
 
 /-- An example tests whether an item may be in a root position, the agreement it triggers there,
 or the complement it selects there. -/

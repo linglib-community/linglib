@@ -228,7 +228,7 @@ def vocabulary : RuleSet (VocabularyItem Feat Piece) :=
     {.T, .tense, .agr} ⟷ .finite, {.T} ⟷ .infinitival, {.neg} ⟷ .contracted]
 
 /-- The dummy verb is inserted exactly at an orphan verb, whatever stands beside it. -/
-theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉ n.focus) :
+theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (Finset Feat)} (hT : .T ∉ n.focus) :
     subsetPrinciple vocabulary n = some .dummy ↔ .verb ∈ n.focus ∧ .orphan ∈ n.focus := by
   let dummy : VocabularyItem Feat Piece := {.verb, .orphan} ⟷ .dummy
   constructor
@@ -237,11 +237,11 @@ theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉
     simp only [vocabulary, List.mem_cons, List.not_mem_nil, or_false] at hi
     rcases hi with rfl | rfl | rfl | rfl | rfl | rfl <;> cases he
     have hf := VocabularyItem.applies_ofFeatures.1 hs
-    exact ⟨hf _ (by simp), hf _ (by simp)⟩
+    exact ⟨hf (by simp), hf (by simp)⟩
   · rintro ⟨hv, ho⟩
     have hT' : ∀ (fs : Finset Feat) (e : Piece), .T ∈ fs →
         ¬ Morphology.Exponence.Applies (fs ⟷ e) n :=
-      fun fs e h hs ↦ hT (VocabularyItem.applies_ofFeatures.1 hs _ h)
+      fun fs e h hs ↦ hT (VocabularyItem.applies_ofFeatures.1 hs h)
     have key : ∀ s ∈ vocabulary, Morphology.Exponence.Applies s n →
         s = dummy ∨ s.specificity < dummy.specificity := by
       intro s hs ha
@@ -254,46 +254,46 @@ theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉
       · exact absurd ha (hT' _ _ (by simp))
       · exact .inr (by decide)
     exact RuleSet.realize_eq_of_forall_le (r := dummy) (by simp [vocabulary, dummy])
-      (VocabularyItem.applies_ofFeatures.2 (by simp [hv, ho]))
+      (VocabularyItem.applies_ofFeatures.2 (by simp [Finset.insert_subset_iff, hv, ho]))
       (fun s hs ha ↦ (key s hs ha).elim (fun h ↦ h ▸ le_rfl) le_of_lt)
       (fun s hs ha he ↦ (key s hs ha).elim (fun h ↦ h ▸ rfl) fun h ↦ absurd he h.ne)
 
 /-- Impoverishment deletes the tense and the agreement of an orphan T. -/
-def impoverishment : List (ImpoverishmentRule (List Feat) Feat) :=
+def impoverishment : List (ImpoverishmentRule (Finset Feat) Feat) :=
   [.ofFocus (fun b ↦ .T ∈ b ∧ .orphan ∈ b) .tense, .ofFocus (fun b ↦ .T ∈ b ∧ .orphan ∈ b) .agr]
 
 /-- The focus of a neighborhood after impoverishment. -/
-def impoverish (n : Neighborhood (List Feat)) : List Feat :=
-  runChain (ImpoverishmentRule.apply List.erase) impoverishment n
+def impoverish (n : Neighborhood (Finset Feat)) : Finset Feat :=
+  runChain (ImpoverishmentRule.apply Finset.erase) impoverishment n
 
 /-- Obliteration deletes an orphan T. -/
-def obliteration : ObliterationRule (List Feat) := ⟨fun n ↦ .T ∈ n.focus ∧ .orphan ∈ n.focus⟩
+def obliteration : ObliterationRule (Finset Feat) := ⟨fun n ↦ .T ∈ n.focus ∧ .orphan ∈ n.focus⟩
 
 /-- Vocabulary Insertion at each terminal of a word, with no rule before it. -/
-def insertion : Spellout (List Feat) Piece where
+def insertion : Spellout (Finset Feat) Piece where
   modules := []
   insert n := (subsetPrinciple vocabulary n).toList
 
 /-- The spell-out of a word under each fate of an orphan T. Impoverishment applies before
 insertion, or to the orphan at its own insertion only, where its features still condition the
 stem beside it. -/
-def OrphanFate.spellout : OrphanFate → Spellout (List Feat) Piece
+def OrphanFate.spellout : OrphanFate → Spellout (Finset Feat) Piece
   | .ignored => insertion
   | .elsewhere => insertion.rewriteAt impoverish
   | .impoverished => insertion.rewriteBefore impoverish
   | .obliterated => { insertion with modules := [obliteration.apply] }
 
 /-- The features of a terminal that has an exponent in a verbal word. -/
-def Head.feats : Head → Option (List Feat)
-  | .V | .Aux => some [.verb]
-  | .T => some [.T, .tense, .agr]
-  | .Neg => some [.neg]
+def Head.feats : Head → Option (Finset Feat)
+  | .V | .Aux => some {.verb}
+  | .T => some {.T, .tense, .agr}
+  | .Neg => some {.neg}
   | _ => none
 
 /-- `c.domain` is the word of `c` as Vocabulary Insertion meets it, its terminals that have
 exponents, each with the mark of an orphan if it is one. -/
-def HeadChain.domain (c : HeadChain) : SpelloutDomain (List Feat) :=
-  c.terminals.filterMap fun x ↦ x.feats.map fun fs ↦ if c.Orphan x then fs ++ [.orphan] else fs
+def HeadChain.domain (c : HeadChain) : SpelloutDomain (Finset Feat) :=
+  c.terminals.filterMap fun x ↦ x.feats.map fun fs ↦ if c.Orphan x then insert .orphan fs else fs
 
 /-- The pieces of the word that a chain is pronounced as, terminal by terminal, or `none` where
 its T is an orphan and what the language does to an orphan T is not recorded. -/

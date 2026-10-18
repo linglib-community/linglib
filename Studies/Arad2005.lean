@@ -184,8 +184,8 @@ def voiceSpellout : List (VocabularyItem Feature Exponent) :=
 
 /-- The Voice node, once v has been spelled out, carries its value and has the binyan as its inner
 neighbor. -/
-def voiceNode (b : Binyan) (v : Voice) : Neighborhood (List Feature) :=
-  ⟨[.voice v], [[.binyan b]], []⟩
+def voiceNode (b : Binyan) (v : Voice) : Neighborhood (Finset Feature) :=
+  ⟨{.voice v}, [{.binyan b}], []⟩
 
 /-- `realizeVoice b v` is the binyan and the vowels of a verb, Voice being spelled out in the
 context of `b`. -/

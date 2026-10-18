@@ -77,12 +77,12 @@ def items : List (VocabularyItem Feature String) :=
   [{.sg, .fem} ⟷ "she", {.sg, .masc} ⟷ "he", {.sg, .inanim} ⟷ "it", ∅ ⟷ "they"]
 
 /-- The exponent of a feature bundle under the Subset Principle. -/
-def spellout (b : List Feature) : Option String := subsetPrinciple items b
+def spellout (b : Finset Feature) : Option String := subsetPrinciple items b
 
 theorem spellout_items :
-    spellout [.sg, .fem] = some "she" ∧ spellout [.sg, .masc] = some "he" ∧
-      spellout [.sg, .inanim] = some "it" ∧ spellout [.sg] = some "they" ∧
-      spellout [] = some "they" := by
+    spellout {.sg, .fem} = some "she" ∧ spellout {.sg, .masc} = some "he" ∧
+      spellout {.sg, .inanim} = some "it" ∧ spellout {.sg} = some "they" ∧
+      spellout ∅ = some "they" := by
   decide
 
 /-- A feature is contrastive when its absence conveys its negation, and a non-contrastive
@@ -139,8 +139,8 @@ def lexicalGender : Option Gender :=
   | _ => none
 
 /-- The features of Num, copied to the pronoun in every case. -/
-def numFeatures : List Feature :=
-  (if a.singular then [.sg] else []) ++ (if a.inanimate then [.inanim] else [])
+def numFeatures : Finset Feature :=
+  (if a.singular then {.sg} else ∅) ∪ (if a.inanimate then {.inanim} else ∅)
 
 end Antecedent
 
@@ -154,9 +154,9 @@ def Stage.genders (s : Stage) (a : Antecedent) : List (Option Gender) :=
   | .contrastive, none => (if s.insertionObligatory then [] else [none]) ++ [a.known]
 
 /-- The bundles a pronoun with antecedent `a` may spell out at stage `s`. -/
-def bundles (s : Stage) (a : Antecedent) : List (List Feature) :=
+def bundles (s : Stage) (a : Antecedent) : List (Finset Feature) :=
   ((if a.quantified then [none] else []) ++ s.genders a).map
-    fun g : Option Gender ↦ a.numFeatures ++ (g.map Gender.feature).toList
+    fun g : Option Gender ↦ a.numFeatures ∪ (g.map Gender.feature).toFinset
 
 /-- The pronoun forms available for an antecedent at a stage. -/
 def forms (s : Stage) (a : Antecedent) : List String := (bundles s a).filterMap spellout
@@ -207,9 +207,9 @@ theorem it_of_inanimate {s : Stage} {a : Antecedent} (hs : a.singular = true)
     · split at h <;> simp at h; exact h
     · exact h
   subst hg'
-  simp only [Antecedent.numFeatures, hs, hi, ite_true, Option.map_none, Option.toList_none,
-    List.append_nil, List.singleton_append] at hsp
-  rw [(by decide : spellout [.sg, .inanim] = some "it")] at hsp
+  simp only [Antecedent.numFeatures, hs, hi, ite_true, Option.map_none, Option.toFinset_none,
+    Finset.union_empty, Finset.singleton_union] at hsp
+  rw [(by decide : spellout {.sg, .inanim} = some "it")] at hsp
   exact (Option.some.inj hsp).symm
 
 /-! ### The paper's antecedents -/
@@ -270,17 +270,17 @@ theorem quantified :
 
 /-- [bjorkman-2017]'s condition requires a referential pronoun's features to include those
 already associated with its referent. -/
-abbrev BjorkmanCondition (pronoun antecedent : List Feature) : Prop := antecedent ⊆ pronoun
+abbrev BjorkmanCondition (pronoun antecedent : Finset Feature) : Prop := antecedent ⊆ pronoun
 
 /-- In (23) the pronoun of *the women* bears <fem> without [sg], and no item spells that out but
 *they*. -/
-theorem bjorkman_women_they : BjorkmanCondition [.fem] [.fem] ∧ spellout [.fem] = some "they" := by
+theorem bjorkman_women_they : BjorkmanCondition {.fem} {.fem} ∧ spellout {.fem} = some "they" := by
   decide
 
 /-- In (24) a pronoun bearing <fem> and [sg] satisfies the condition for *the women* and spells
 out as *she*, which the condition therefore wrongly licenses. -/
 theorem bjorkman_overgenerates :
-    BjorkmanCondition [.sg, .fem] [.fem] ∧ spellout [.sg, .fem] = some "she" := by
+    BjorkmanCondition {.sg, .fem} {.fem} ∧ spellout {.sg, .fem} = some "she" := by
   decide
 
 /-- On the present account the number feature on Num is copied, so a plural antecedent never

@@ -207,14 +207,14 @@ def articles : List (VocabularyItem ArticleFeature Article) :=
   [{.animate, .pl} ⟷ .o, {.pl} ⟷ .a, {.animate, .proper} ⟷ .e, {.animate} ⟷ .a, ∅ ⟷ .o]
 
 /-- The article features of each class. Gender I-E is gender I with [proper]. -/
-def classFeatures : NounClass → List ArticleFeature
-  | .e => [.animate, .proper]
-  | .a => [.animate]
-  | .o => []
+def classFeatures : NounClass → Finset ArticleFeature
+  | .e => {.animate, .proper}
+  | .a => {.animate}
+  | .o => ∅
 
 /-- The article inserted by the Subset Principle, by class and number. -/
 def article (c : NounClass) (plural : Bool) : Option Article :=
-  subsetPrinciple articles (classFeatures c ++ if plural then [ArticleFeature.pl] else [])
+  subsetPrinciple articles (classFeatures c ∪ if plural then {.pl} else ∅ : Finset ArticleFeature)
 
 /-- The vocabulary derives the basic article of every class and number. -/
 theorem article_eq_headArticle : ∀ c pl, article c pl = some (headArticle c pl) := by decide
@@ -223,7 +223,7 @@ theorem article_eq_headArticle : ∀ c pl, article c pl = some (headArticle c pl
 is not a gender. -/
 theorem agreementClasses_targetArticle :
     Gender.agreementClasses targetArticle =
-      Setoid.ker fun c ↦ (classFeatures c).contains .animate := by
+      Setoid.ker fun c ↦ decide (ArticleFeature.animate ∈ classFeatures c) := by
   ext c c'
   simp only [Setoid.ker_def]
   cases c <;> cases c' <;> decide
@@ -231,8 +231,10 @@ theorem agreementClasses_targetArticle :
 /-- A possessed kinship term takes the proprial article *e*, (50), and one under the alienator
 takes *o*, (51). -/
 theorem kinship (r : Root) :
-    subsetPrinciple articles (.proper :: classFeatures (classOf r ipossessed)) = some .e ∧
-      subsetPrinciple articles (.proper :: classFeatures (classOf r free)) = some .o := by
+    subsetPrinciple articles (insert .proper (classFeatures (classOf r ipossessed)) :
+        Finset ArticleFeature) = some .e ∧
+      subsetPrinciple articles (insert .proper (classFeatures (classOf r free)) :
+        Finset ArticleFeature) = some .o := by
   simp only [classOf, ComplexHead.lastCycle]
   decide
 
@@ -272,31 +274,31 @@ inductive Phi where
   deriving DecidableEq, Repr
 
 /-- The features a possessor contributes to agreement. -/
-def possessorPhi : Possessor → List Phi
-  | .sg1 | .sg2 => [.participant]
-  | .incl | .excl | .nsg2 => [.participant, .pl]
-  | .sg3 g => if g = .masc then [.masc] else []
-  | .nsg3 g => .pl :: if g = .masc then [.masc] else []
+def possessorPhi : Possessor → Finset Phi
+  | .sg1 | .sg2 => {.participant}
+  | .incl | .excl | .nsg2 => {.participant, .pl}
+  | .sg3 g => if g = .masc then {.masc} else ∅
+  | .nsg3 g => insert .pl (if g = .masc then {.masc} else ∅)
 
 /-- Gender impoverishment deletes [masc] next to [pl] and next to [participant]. -/
-def impoverishment : List (ImpoverishmentRule (List Phi) Phi) :=
+def impoverishment : List (ImpoverishmentRule (Finset Phi) Phi) :=
   [.ofFocus (.pl ∈ ·) .masc, .ofFocus (.participant ∈ ·) .masc]
 
 /-- The φ-bundle after impoverishment. -/
-def impoverish (φ : List Phi) : List Phi :=
-  runChain (ImpoverishmentRule.apply List.erase) impoverishment (Neighborhood.ofBundle φ)
+def impoverish (φ : Finset Phi) : Finset Phi :=
+  runChain (ImpoverishmentRule.apply Finset.erase) impoverishment (Neighborhood.ofBundle φ)
 
 /-- The declarative marker is *ka* for [masc] and *ke* elsewhere. -/
 def declarative : List (VocabularyItem Phi String) := [{.masc} ⟷ "ka", ∅ ⟷ "ke"]
 
 /-- The declarative marker agreeing with a nominal of features `φ`. -/
-def decl (φ : List Phi) : Option String := subsetPrinciple declarative (impoverish φ)
+def decl (φ : Finset Phi) : Option String := subsetPrinciple declarative (impoverish φ)
 
 /-- Masculine singular takes *ka* and everything else *ke*, so impoverishment bleeds the specific
 exponent. -/
 theorem decl_masc_only :
-    decl [.masc] = some "ka" ∧ decl [] = some "ke" ∧ decl [.participant] = some "ke" ∧
-      decl [.masc, .pl] = some "ke" := by
+    decl {.masc} = some "ka" ∧ decl ∅ = some "ke" ∧ decl {.participant} = some "ke" ∧
+      decl {.masc, .pl} = some "ke" := by
   decide
 
 /-- A possessed noun takes its marked form for [participant] or a surviving [masc] and its
@@ -305,7 +307,7 @@ def possessedItems (marked unmarked : String) : List (VocabularyItem Phi String)
   [{.participant} ⟷ marked, {.masc} ⟷ marked, ∅ ⟷ unmarked]
 
 /-- The form of a possessed noun agreeing with a possessor of features `φ`. -/
-def agreeingForm (n : PossessedNoun) (φ : List Phi) : Option String :=
+def agreeingForm (n : PossessedNoun) (φ : Finset Phi) : Option String :=
   subsetPrinciple (possessedItems n.mForm n.fForm) (impoverish φ)
 
 /-- Impoverishment then insertion derives the form of every possessed noun with every possessor;
@@ -316,7 +318,7 @@ theorem agreeingForm_eq_form :
 
 /-- A possessor makes its features visible outside the word of the noun it possesses unless it
 is a prefix, a pronoun below the two-mora minimal word that forms one word with that noun. -/
-def visibleOutside (p : Possessor) : List Phi := if p.IsPrefix then [] else possessorPhi p
+def visibleOutside (p : Possessor) : Finset Phi := if p.IsPrefix then ∅ else possessorPhi p
 
 /-- *bako* 'inside' in `[[p mano] bako]`, agreeing with the possessor when its features
 percolate and with the feminine possessed noun otherwise. -/
