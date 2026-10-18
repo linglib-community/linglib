@@ -6,11 +6,11 @@ public import Studies.Aikhenvald2000
 /-!
 # Prasertsom, Smith and Culbertson (2026): Domain-General Categorisation Explains Constrained Cross-Linguistic Variation in Noun Classification
 
-This file formalizes the two formal claims of [prasertsom-smith-culbertson-2026]. The paper asks
+This file formalizes the two formal claims of Prasertsom, Smith and Culbertson. The paper asks
 why animacy, but never colour, serves as a basis for noun classification although both are
 perceptually salient, and answers with a domain-general principle: a good category is one whose
 defining feature predicts the other features of its members, and animacy predicts more than
-colour. The typological premise is read off [aikhenvald-2000]'s sample of noun categorization
+colour. The typological premise is read off Aikhenvald's sample of noun categorization
 devices, where animacy is a basic semantic parameter and colour is none of any device's
 (`animacy_not_colour`). The predictive-power manipulation of Experiments 3a and 3b rests on two
 sixteen-stimulus sets, Tables 4 and 5 (`predictiveAnimacy`, `predictiveColour`), built so that
@@ -56,13 +56,13 @@ namespace PrasertsonSmithCulbertson2026
 /-- Every noun class or numeral classifier device of the sample has animacy, humanness, or sex
 among its basic semantic parameters, and none has colour. -/
 theorem animacy_not_colour (l : Aikhenvald2000.Language)
-    (hk : l.kind = some .nounClass ∨ l.kind = some .numeralClassifier) :
+    (hk : l.device = some .nounClass ∨ l.device = some .numeralClassifier) :
     (∃ p ∈ l.semantics, p = .animacy ∨ p = .humanness ∨ p = .sex) ∧ .colour ∉ l.semantics :=
   ⟨Aikhenvald2000.animacy_basic l hk, Aikhenvald2000.colour_never l⟩
 
 /-! ### The stimulus dimensions (§4.2.2, Fig. 10) -/
 
-/-- The animacy dimension: two kinds of animate, with crescent or round eyes, and two of
+/-- The animacy dimension has two kinds of animate, with crescent or round eyes, and two of
 inanimate, dots forming a line or a triangle. -/
 inductive Animacy where
   | crescentEyed
@@ -71,7 +71,7 @@ inductive Animacy where
   | triangle
   deriving DecidableEq, Repr, Fintype
 
-/-- The colour dimension: two warm and two cool colours. -/
+/-- The colour dimension has two warm and two cool colours. -/
 inductive Colour where
   | red
   | orange
@@ -139,9 +139,9 @@ structure Body where
 
 /-! ### The stimulus sets (Tables 4 and 5) -/
 
-/-- The predictive-animacy set (Table 4): the body of the stimulus in each animacy–colour cell.
-The eight animates are alike; among the inanimates each body dimension departs once per kind
-of inanimate from its inanimate value. -/
+/-- The predictive-animacy set (Table 4) gives the body of the stimulus in each animacy–colour
+cell. The eight animates are alike; among the inanimates each body dimension departs once per
+kind of inanimate from its inanimate value. -/
 def predictiveAnimacy : Animacy × Colour → Body
   | (.crescentEyed, _) | (.roundEyed, _) => ⟨.crescent, .circle, .wavy⟩
   | (.line, .red) => ⟨.crescent, .inkblot, .round⟩
@@ -165,8 +165,8 @@ def predictiveColour : Animacy × Colour → Body
   | (.triangle, .blue) => ⟨.jagged, .inkblot, .round⟩
   | (.triangle, .teal) => ⟨.crescent, .inkblot, .round⟩
 
-/-- The colour that stands in for a kind of animacy when the two columns are exchanged: the
-animates for the warm colours, the inanimates for the cool ones. -/
+/-- The colour that stands in for a kind of animacy when the two columns are exchanged, the warm
+colours for the animates and the cool ones for the inanimates. -/
 def Animacy.toColour : Animacy → Colour
   | .crescentEyed => .red
   | .roundEyed => .orange
@@ -184,8 +184,8 @@ def Colour.toAnimacy : Colour → Animacy
 def mirror : Animacy × Colour → Animacy × Colour
   | (a, c) => (c.toAnimacy, a.toColour)
 
-/-- The two sets are mirror images of each other: each is the other with the animacy and colour
-columns exchanged. -/
+/-- The two sets are mirror images of each other, each being the other with the animacy and
+colour columns exchanged. -/
 theorem mirror_images :
     ∀ p, predictiveColour (mirror p) = predictiveAnimacy p
       ∧ predictiveAnimacy (mirror p) = predictiveColour p := by
