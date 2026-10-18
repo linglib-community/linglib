@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Autosegmental.Melody
-public import Linglib.Morphology.Morph
+public import Linglib.Morphology.Word.Tree
 
 /-!
 # Laoide-Kemp (2026): Strict modularity at the morphosyntax-phonology interface
