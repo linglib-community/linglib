@@ -42,6 +42,8 @@ plural.
 
 namespace Somali.Gender
 
+open Number.System (singularPlural)
+
 /-! ### Genders and their exponents -/
 
 /-- The two controller genders. -/
@@ -66,10 +68,9 @@ inductive Article where
 abbrev numberSystem : Number.System := .singularPlural
 
 /-- The article a gender takes in each number. -/
-def Value.article (g : Value) (n : numberSystem.values) : Article :=
-  match g, n.1 with
-  | .masc, .singular | .fem, .plural => .kii
-  | _, _ => .tii
+def Value.article (g : Value) : numberSystem.values → Article :=
+  singularPlural.elim (match g with | .masc => .kii | .fem => .tii)
+    (match g with | .masc => .tii | .fem => .kii)
 
 /-- The subject prefix of the verbs that conjugate by prefix. -/
 inductive VerbPrefix where
@@ -78,10 +79,8 @@ inductive VerbPrefix where
   deriving DecidableEq, Repr, Fintype
 
 /-- The verbal prefix a gender takes in each number. -/
-def Value.verbPrefix (g : Value) (n : numberSystem.values) : VerbPrefix :=
-  match g, n.1 with
-  | .fem, .singular => .t
-  | _, _ => .y
+def Value.verbPrefix (g : Value) : numberSystem.values → VerbPrefix :=
+  singularPlural.elim (match g with | .masc => .y | .fem => .t) .y
 
 /-- The article is polar. -/
 theorem polar_article : Gender.Polar Value.article := by decide

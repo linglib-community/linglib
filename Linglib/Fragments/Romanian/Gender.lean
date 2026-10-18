@@ -23,6 +23,8 @@ across the two numbers: *bărbat* 'man' (*-Ø*, *-i*), *fată* 'girl' (*-ă*, *-
 
 namespace Romanian.Gender
 
+open Number.System (singularPlural)
+
 /-- The three controller genders. -/
 inductive Value where
   | masc
@@ -71,14 +73,9 @@ inductive AdjForm where
 abbrev numberSystem : Number.System := .singularPlural
 
 /-- The ending an agreeing adjective takes with each gender, in each number. -/
-def Value.adjForm (g : Value) (n : numberSystem.values) : AdjForm :=
-  match g, n.1 with
-  | .masc, .singular => .zero
-  | .fem, .singular => .ă
-  | .neut, .singular => .zero
-  | .masc, _ => .i
-  | .fem, _ => .e
-  | .neut, _ => .e
+def Value.adjForm (g : Value) : numberSystem.values → AdjForm :=
+  singularPlural.elim (match g with | .masc => .zero | .fem => .ă | .neut => .zero)
+    (match g with | .masc => .i | .fem => .e | .neut => .e)
 
 /-- Taking both numbers together, the adjective distinguishes all three genders. -/
 theorem faithful_adjForm : Gender.Faithful Value.adjForm := by decide

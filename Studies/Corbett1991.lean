@@ -111,7 +111,7 @@ never less semantic than its assignment. The judgments the book reports are the 
 namespace Corbett1991
 
 open Agreement Agreement.ResolutionRule
-open Number.System.singularPlural (singular plural)
+open Number.System (singularPlural)
 
 /-! ### Assignment systems -/
 
@@ -367,19 +367,22 @@ namespace Romanian
 open _root_.Romanian.Gender
 
 /-- Figure 6.1 is a crossed system. -/
-theorem crossed : Gender.Crossed (Value.adjForm · singular) (Value.adjForm · plural) := by decide
+theorem crossed :
+    Gender.Crossed (Value.adjForm · Number.singular) (Value.adjForm · Number.plural) := by
+  decide
 
 /-- Three controller genders over two target genders in each number. -/
 theorem card_range_adjForm :
     Fintype.card (Set.range Value.adjForm) = 3 ∧
-      Fintype.card (Gender.targetGenders Value.adjForm singular) = 2 ∧
-        Fintype.card (Gender.targetGenders Value.adjForm plural) = 2 := by
+      Fintype.card (Gender.targetGenders Value.adjForm Number.singular) = 2 ∧
+        Fintype.card (Gender.targetGenders Value.adjForm Number.plural) = 2 := by
   decide
 
 /-- Every fragment noun takes, in each number, the form of its gender, (5) to (10). -/
 theorem rows : ∀ row ∈ Examples.all, row.language = "roma1327" →
     ∀ n ∈ row.parse? "noun" (allNouns.map fun n ↦ (n.form, n)),
-      ∀ pl ∈ row.parse? "number" [("singular", singular), ("plural", plural)],
+      ∀ pl ∈ row.parse? "number"
+          [("singular", (Number.singular : singularPlural.values)), ("plural", Number.plural)],
         ∀ f ∈ row.parse? "form" [("zero", AdjForm.zero), ("ă", .ă), ("i", .i), ("e", .e)],
           (row.judgment = .acceptable ↔ n.gender.adjForm pl = f) := by
   decide +kernel

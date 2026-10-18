@@ -29,6 +29,8 @@ vowel with gender in the same way; *nanVh* 'face' takes the gender of the one wh
 
 namespace CoastalMarind
 
+open Number.System (singularPlural)
+
 /-- The four genders. -/
 inductive Gender where
   /-- Men. -/
@@ -45,32 +47,24 @@ inductive Gender where
 abbrev numberSystem : Number.System := .singularPlural
 
 /-- The distal demonstrative, by gender and number. -/
-def demonstrative (g : Gender) (n : numberSystem.values) : String :=
-  match g, n.1 with
-  | .gI, .singular | .gIII, _ => "e-pe"
-  | .gII, .singular => "u-pe"
-  | _, _ => "i-pe"
+def demonstrative (g : Gender) : numberSystem.values → String :=
+  singularPlural.elim (match g with | .gI | .gIII => "e-pe" | .gII => "u-pe" | .gIV => "i-pe")
+    (match g with | .gIII => "e-pe" | .gI | .gII | .gIV => "i-pe")
 
 /-- The similative postposition *hV* 'like', which is *hu* for gender II in the singular and *hi*
 otherwise. -/
-def similative (g : Gender) (n : numberSystem.values) : String :=
-  match g, n.1 with
-  | .gII, .singular => "hu"
-  | _, _ => "hi"
+def similative (g : Gender) : numberSystem.values → String :=
+  singularPlural.elim (match g with | .gII => "hu" | .gI | .gIII | .gIV => "hi") "hi"
 
 /-- The adjective *ak-k* 'light (in weight)', by gender and number. -/
-def light (g : Gender) (n : numberSystem.values) : String :=
-  match g, n.1 with
-  | .gI, .singular => "akek"
-  | .gII, .singular => "akuk"
-  | .gIII, _ => "akak"
-  | _, _ => "akik"
+def light (g : Gender) : numberSystem.values → String :=
+  singularPlural.elim
+    (match g with | .gI => "akek" | .gII => "akuk" | .gIII => "akak" | .gIV => "akik")
+    (match g with | .gIII => "akak" | .gI | .gII | .gIV => "akik")
 
 /-- The noun *nanVh* 'face', by the gender and number of the one whose face it is. -/
-def face (g : Gender) (n : numberSystem.values) : String :=
-  match g, n.1 with
-  | .gII, .singular => "nanuh"
-  | _, _ => "nanih"
+def face (g : Gender) : numberSystem.values → String :=
+  singularPlural.elim (match g with | .gII => "nanuh" | .gI | .gIII | .gIV => "nanih") "nanih"
 
 /-- A noun with its gender. -/
 abbrev Noun := GenderedNoun Gender

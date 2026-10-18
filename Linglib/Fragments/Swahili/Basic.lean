@@ -55,6 +55,8 @@ class prefix for a nominal subject and a person prefix for a speech-act particip
 
 namespace Swahili
 
+open Number.System (singularPlural)
+
 open Agreement Morphology
 
 /-! ### Classes -/
@@ -148,8 +150,8 @@ def Gender.pluralClass : Gender → NounClass
 abbrev numberSystem : Number.System := .singularPlural
 
 /-- The class of a gender in a number. -/
-def Gender.class (g : Gender) (n : numberSystem.values) : NounClass :=
-  if n.1 = .plural then g.pluralClass else g.singularClass
+def Gender.class (g : Gender) : numberSystem.values → NounClass :=
+  singularPlural.elim g.singularClass g.pluralClass
 
 /-- Subject agreement, singular and plural, distinguishes the five genders. -/
 theorem Gender.faithful_subjPrefix :

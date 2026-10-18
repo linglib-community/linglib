@@ -52,7 +52,7 @@ open DistributedMorphology
 open Minimalist (FeatureVal)
 open scoped DistributedMorphology.VocabularyItem
 open Number.System (singularPlural)
-open Number.System.singularPlural (singular plural)
+open Number.System (singularPlural)
 
 /-! ### Features and matrices, sections 3 to 5 -/
 
@@ -71,29 +71,31 @@ def number (n : singularPlural.values) : FeatureVal := ⟨.number, n.1⟩
 /-- In an ergative argument's matrix (42), first-person number is a person distinction, singular
 [+PSE, +Auth] and plural [+Auth]. -/
 def ergMatrix (p : Person) (n : singularPlural.values) : Finset FeatureVal :=
-  match p, n.1 with
-  | .first, .singular => {⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .erg⟩}
-  | .first, .plural => {⟨.author, true⟩, ⟨.case, .erg⟩}
-  | p, _ => personFeatures p ∪ {number n, ⟨.case, .erg⟩}
+  match p with
+  | .first =>
+    singularPlural.elim {⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .erg⟩}
+      {⟨.author, true⟩, ⟨.case, .erg⟩} n
+  | p => personFeatures p ∪ {number n, ⟨.case, .erg⟩}
 
 /-- An argument's matrix for Agr3 is (42) for ergative arguments and for second and third person,
 and for nominative first person the one the assignment (27) presupposes, *-oʔon* 1pl [+PSE, +Auth,
 NOM] and *-en* 1sg [+Auth, NOM]. -/
 def matrix (p : Person) (n : singularPlural.values) (c : Case) : Finset FeatureVal :=
-  match p, n.1, c with
-  | .first, .singular, .nom => {⟨.author, true⟩, ⟨.case, .nom⟩}
-  | .first, .plural, .nom => {⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩}
-  | p, _, .erg => ergMatrix p n
-  | p, _, c => personFeatures p ∪ {number n, ⟨.case, c⟩}
+  match p, c with
+  | .first, .nom =>
+    singularPlural.elim {⟨.author, true⟩, ⟨.case, .nom⟩}
+      {⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩} n
+  | p, .erg => ergMatrix p n
+  | p, c => personFeatures p ∪ {number n, ⟨.case, c⟩}
 
 /-! ### The Vocabularies (27), (43), (44) -/
 
 /-- The Agr3 Vocabulary Items (27), in scansion order. -/
 def agr3 : List (VocabularyItem FeatureVal String) :=
   [{⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩} ⟷ "oʔon",
-    {⟨.participant, true⟩, number singular, ⟨.case, .nom⟩} ⟷ "etš",
-    {⟨.author, true⟩, ⟨.case, .nom⟩} ⟷ "en", {⟨.participant, true⟩, number plural} ⟷ "éːš",
-    {number plural} ⟷ "oʔob", ∅ ⟷ "Ø"]
+    {⟨.participant, true⟩, number Number.singular, ⟨.case, .nom⟩} ⟷ "etš",
+    {⟨.author, true⟩, ⟨.case, .nom⟩} ⟷ "en", {⟨.participant, true⟩, number Number.plural} ⟷ "éːš",
+    {number Number.plural} ⟷ "oʔob", ∅ ⟷ "Ø"]
 
 /-- The Agr1 Vocabulary Items (43) realize the ergative auxiliary suffix. -/
 def agr1 : List (VocabularyItem FeatureVal String) :=
@@ -140,7 +142,7 @@ structure Row where
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let person := [("1", Person.first), ("2", .second), ("3", .third)]
-  let numbers := [("sg", singular), ("pl", plural)]
+  let numbers := [("sg", (Number.singular : singularPlural.values)), ("pl", Number.plural)]
   let subj ← ex.parse? "subjPerson" person
   let subjPl ← ex.parse? "subjNumber" numbers
   let obj ← match ex.parse? "objPerson" person, ex.parse? "objNumber" numbers with
@@ -184,15 +186,17 @@ theorem aux_prefix_rows :
 /-- In the paradigm (39) for second and third person, the auxiliary suffix and the prefix mark
 person alone, and plurality is a verbal suffix, the distribution of (36) to (38). -/
 theorem ergative_paradigm (p : Person) (h : p = .second ∨ p = .third) :
-    aux (p, singular) = aux (p, plural) ∧ verbPrefix (p, singular) = verbPrefix (p, plural) ∧
-      suffixes (p, singular) none = [] ∧ suffixes (p, plural) none ≠ [] := by
+    aux (p, Number.singular) = aux (p, Number.plural) ∧
+      verbPrefix (p, Number.singular) = verbPrefix (p, Number.plural) ∧
+      suffixes (p, Number.singular) none = [] ∧ suffixes (p, Number.plural) none ≠ [] := by
   rcases h with rfl | rfl <;> decide
 
 /-- In the paradigm (39) for first person, the auxiliary distinguishes singular from plural and no
 verbal suffix marks number, since (42) makes first-person number a person distinction, (3) and (4).
 -/
 theorem first_person_paradigm :
-    aux (.first, singular) ≠ aux (.first, plural) ∧ ∀ pl, suffixes (.first, pl) none = [] := by
+    aux (.first, Number.singular) ≠ aux (.first, Number.plural) ∧
+      ∀ pl, suffixes (.first, pl) none = [] := by
   decide
 
 /-! ### The appendix: a privative implementation -/
@@ -208,13 +212,10 @@ inductive Privative where
 
 /-- The specifications (A1), with nominative case on a nominative argument. -/
 def privMatrix (p : Person) (n : singularPlural.values) (c : Case) : Finset Privative :=
-  let person : Finset Privative := match p, n.1 with
-    | .first, .singular => {.participant}
-    | .first, _ => {.participant, .speaker}
-    | .second, .singular => {.participant, .addressee}
-    | .second, _ => {.participant, .addressee, .group}
-    | _, .singular => ∅
-    | _, _ => {.group}
+  let person : Finset Privative := match p with
+    | .first => singularPlural.elim {.participant} {.participant, .speaker} n
+    | .second => singularPlural.elim {.participant, .addressee} {.participant, .addressee, .group} n
+    | _ => singularPlural.elim ∅ {.group} n
   person ∪ if c = .nom then {.nom} else ∅
 
 /-- The Agr1 Vocabulary Items (A2). -/
@@ -246,7 +247,7 @@ theorem privative_aux_prefix :
 /-- The privative Agr3 list (A4) fails a grammatical row: in (20) the object's residue after
 *-éːš* is [Participant, NOM], which *-en* matches, where the binary [−Auth] of (27) blocks it. -/
 theorem privative_suffixes :
-    suffixes' (.third, plural) (some (.second, plural)) = ["éːš", "en", "oʔob"] ∧
+    suffixes' (.third, Number.plural) (some (.second, Number.plural)) = ["éːš", "en", "oʔob"] ∧
       ∃ r ∈ rows, r.judgment = .acceptable ∧ suffixes' r.subj r.obj ≠ r.suffixes := by
   decide
 

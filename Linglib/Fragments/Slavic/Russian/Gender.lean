@@ -35,6 +35,8 @@ evidence that the three genders are distinct ([corbett-1991]).
 
 namespace Russian.Gender
 
+open Number.System (singularPlural)
+
 /-! ### Genders and declension classes -/
 
 /-- The three controller genders. -/
@@ -174,12 +176,8 @@ inductive AdjEnding where
 abbrev numberSystem : Number.System := .singularPlural
 
 /-- The nominative ending by gender and number. -/
-def Value.adjEnding (g : Value) (n : numberSystem.values) : AdjEnding :=
-  match g, n.1 with
-  | .masc, .singular => .yj
-  | .fem, .singular => .aja
-  | .neut, .singular => .oe
-  | _, _ => .ye
+def Value.adjEnding (g : Value) : numberSystem.values → AdjEnding :=
+  singularPlural.elim (match g with | .masc => .yj | .fem => .aja | .neut => .oe) .ye
 
 /-- The singular ending alone distinguishes the three genders. -/
 theorem faithful_adjEnding :

@@ -25,6 +25,8 @@ plural nouns the masculine one, as Hayward, Corbett and Hayward, and Corbett des
 
 namespace Bayso
 
+open Number.System (singularPlural)
+
 /-- The two genders. -/
 inductive Gender where
   | masc
@@ -51,20 +53,19 @@ inductive Concord where
   deriving DecidableEq, Repr, Fintype
 
 /-- A pronoun takes its gender's concord in the singular and the plural concord in the plural. -/
-def Gender.pronounConcord (g : Gender) (n : pronounNumberSystem.values) : Concord :=
-  match g, n.1 with
-  | .masc, .singular => .masc
-  | .fem, .singular => .fem
-  | _, _ => .plural
+def Gender.pronounConcord (g : Gender) : pronounNumberSystem.values → Concord :=
+  singularPlural.elim (match g with | .masc => .masc | .fem => .fem) .plural
 
 /-- A noun takes its gender's concord in the general and the singular, the plural concord in the
 paucal, and the masculine concord in the plural. -/
-def Gender.concord (g : Gender) (n : nounNumbers) : Concord :=
-  match g, n.1 with
-  | .masc, .general | .masc, .singular => .masc
-  | .fem, .general | .fem, .singular => .fem
-  | _, .paucal => .plural
-  | _, _ => .masc
+def Gender.concord : Gender → nounNumbers → Concord
+  | .masc, ⟨.general, _⟩ | .masc, ⟨.singular, _⟩ => .masc
+  | .fem, ⟨.general, _⟩ | .fem, ⟨.singular, _⟩ => .fem
+  | _, ⟨.paucal, _⟩ => .plural
+  | _, ⟨.plural, _⟩ => .masc
+  | _, ⟨.dual, h⟩ | _, ⟨.trial, h⟩ | _, ⟨.greaterPaucal, h⟩ | _, ⟨.greaterPlural, h⟩
+  | _, ⟨.minimal, h⟩ | _, ⟨.augmented, h⟩ | _, ⟨.unitAugmented, h⟩ | _, ⟨.globalPlural, h⟩ =>
+    absurd h (by decide)
 
 /-- General and singular nouns take their gender's concord. -/
 @[simp] theorem Gender.concord_general (g : Gender) :
@@ -103,11 +104,12 @@ def kimbir : Noun :=
 def allNouns : List Noun := [luban, kimbir]
 
 /-- The form of a noun in each number. -/
-def Noun.formAt (n : Noun) (v : nounNumbers) : String :=
-  match v.1 with
-  | .general => n.form
-  | .singular => n.singular
-  | .paucal => n.paucal
-  | _ => n.plural
+def Noun.formAt (n : Noun) : nounNumbers → String
+  | ⟨.general, _⟩ => n.form
+  | ⟨.singular, _⟩ => n.singular
+  | ⟨.paucal, _⟩ => n.paucal
+  | ⟨.plural, _⟩ => n.plural
+  | ⟨.dual, h⟩ | ⟨.trial, h⟩ | ⟨.greaterPaucal, h⟩ | ⟨.greaterPlural, h⟩ | ⟨.minimal, h⟩
+  | ⟨.augmented, h⟩ | ⟨.unitAugmented, h⟩ | ⟨.globalPlural, h⟩ => absurd h (by decide)
 
 end Bayso

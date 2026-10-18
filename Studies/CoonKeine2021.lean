@@ -88,7 +88,7 @@ namespace CoonKeine2021
 
 open Minimalist Minimalist.CyclicAgree Morphology.Exponence
 open Number.System (singularPlural)
-open Number.System.singularPlural (singular plural)
+open Number.System (singularPlural)
 
 /-! ### Goals and their visible geometries -/
 
@@ -98,7 +98,7 @@ structure Goal where
   /-- The DP's person. -/
   person : Person
   /-- The DP's number. -/
-  number : singularPlural.values := singular
+  number : singularPlural.values := Number.singular
   /-- Whether a K shell hides everything but the person node. -/
   encapsulated : Bool := false
   deriving DecidableEq, Repr
@@ -107,7 +107,7 @@ structure Goal where
 def dp (p : Person) : Goal := { person := p }
 
 /-- A φ-transparent plural goal. -/
-def dpPl (p : Person) : Goal := { person := p, number := plural }
+def dpPl (p : Person) : Goal := { person := p, number := Number.plural }
 
 /-- A K-encapsulated dative goal. -/
 def dat (p : Person) : Goal := { person := p, encapsulated := true }
@@ -126,7 +126,7 @@ inductive NumberSegment where
 
 /-- The number segments a goal exposes; an encapsulated goal exposes none. -/
 def Goal.numberSegments (g : Goal) : List NumberSegment :=
-  if g.encapsulated then [] else if g.number.1 = .plural then [.num, .pl] else [.num]
+  if g.encapsulated then [] else singularPlural.elim [.num] [.num, .pl] g.number
 
 theorem pi_mem_personSegments (g : Goal) : PersonSegment.pi ∈ g.personSegments := by
   unfold Goal.personSegments
@@ -495,20 +495,18 @@ def addr : List PersonSegment := [.pi, .participant, .addressee]
 where the paper glosses no forms. -/
 def Paradigm.person (par : Paradigm) (n : singularPlural.values) :
     Option (RuleSet (VI PersonSegment)) :=
-  match par, n.1 with
-  | .icelandicMediopassivePast, .singular => some [⟨[], "-ist"⟩]
-  | .icelandicMediopassivePast, .plural => some [⟨[], "-ust"⟩, ⟨spkr, "-umst"⟩]
-  | .icelandicLikaPast, .singular => some [⟨[], "líkaði"⟩, ⟨addr, "líkaðir"⟩]
-  | .icelandicThykjaPresent, .singular => some [⟨[], "þykir"⟩, ⟨spkr, "þyki"⟩]
-  | .icelandicThykjaPresent, .plural => some [⟨[], "þykja"⟩]
-  | .germanPresent, .singular => some [⟨[], "ist"⟩, ⟨spkr, "bin"⟩, ⟨addr, "bist"⟩]
-  | .germanPresent, .plural => some [⟨[], "sind"⟩]
-  | .germanPast, .singular => some [⟨[], "war"⟩]
-  | .hindiPresent, .singular => some [⟨[], "hai"⟩, ⟨spkr, "hũ:"⟩]
-  | .hindiPresent, .plural => some [⟨[], "hẼ"⟩]
-  | .hindiPast, .singular => some [⟨[], "tha:"⟩]
-  | .portuguesePresent, .singular => some [⟨[], "é"⟩, ⟨spkr, "sou"⟩]
-  | _, _ => none
+  match par with
+  | .icelandicMediopassivePast =>
+    singularPlural.elim (some [⟨[], "-ist"⟩]) (some [⟨[], "-ust"⟩, ⟨spkr, "-umst"⟩]) n
+  | .icelandicLikaPast => singularPlural.elim (some [⟨[], "líkaði"⟩, ⟨addr, "líkaðir"⟩]) none n
+  | .icelandicThykjaPresent =>
+    singularPlural.elim (some [⟨[], "þykir"⟩, ⟨spkr, "þyki"⟩]) (some [⟨[], "þykja"⟩]) n
+  | .germanPresent =>
+    singularPlural.elim (some [⟨[], "ist"⟩, ⟨spkr, "bin"⟩, ⟨addr, "bist"⟩]) (some [⟨[], "sind"⟩]) n
+  | .germanPast => singularPlural.elim (some [⟨[], "war"⟩]) none n
+  | .hindiPresent => singularPlural.elim (some [⟨[], "hai"⟩, ⟨spkr, "hũ:"⟩]) (some [⟨[], "hẼ"⟩]) n
+  | .hindiPast => singularPlural.elim (some [⟨[], "tha:"⟩]) none n
+  | .portuguesePresent => singularPlural.elim (some [⟨[], "é"⟩, ⟨spkr, "sou"⟩]) none n
 
 /-- The number items of a paradigm, where the paper gives them. -/
 def Paradigm.number : Paradigm → RuleSet (VI NumberSegment)
@@ -520,8 +518,8 @@ def Paradigm.number : Paradigm → RuleSet (VI NumberSegment)
 plural, and the singular otherwise. -/
 def numberContext (P : Probe.Articulation) (goals : List Goal) : singularPlural.values :=
   if ∃ v ∈ (values Goal.numberSegments (numberProbe P) goals).head?, NumberSegment.pl ∈ v then
-    plural
-  else singular
+    Number.plural
+  else Number.singular
 
 /-- After Agree a probe either cliticizes what it agreed with (30) or undergoes Vocabulary insertion
 in a paradigm. -/
@@ -567,13 +565,14 @@ def kicheanGoals (s o : singularPlural.values) : List Goal :=
 /-- In omnivorous number (§5.2), with no singular item, a number probe gluttonous over SG > PL
 converges on the plural item, and the table of (88) follows. -/
 theorem kichean_omnivorous :
-    Gluttonous Goal.numberSegments (numberProbe weakProbe) (kicheanGoals singular plural) ∧
+    Gluttonous Goal.numberSegments (numberProbe weakProbe)
+      (kicheanGoals Number.singular Number.plural) ∧
     ∀ s o,
       Resolvable kicheanAgentFocus
         (values Goal.numberSegments (numberProbe weakProbe) (kicheanGoals s o)) ∧
       realization kicheanAgentFocus
           (values Goal.numberSegments (numberProbe weakProbe) (kicheanGoals s o)) =
-        if s = plural ∨ o = plural then some "-e" else none := by
+        if s = Number.plural ∨ o = Number.plural then some "-e" else none := by
   decide
 
 /-! ### The paper's examples -/
@@ -609,7 +608,7 @@ probe. -/
 def rowGoal (row : Datum) (k : String) : Option (List Goal) := do
   let p ← row.parse? k [("1", Person.first), ("2", .second), ("3", .third)]
   return if row.feature? (k ++ "Shielded") = some "yes" then []
-    else [⟨p, if row.feature? (k ++ "Number") = some "pl" then plural else singular,
+    else [⟨p, if row.feature? (k ++ "Number") = some "pl" then Number.plural else Number.singular,
       decide (row.feature? (k ++ "Opaque") = some "yes")⟩]
 
 /-- The configuration of a row that the paper analyses. -/

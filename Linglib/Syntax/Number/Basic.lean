@@ -26,7 +26,8 @@ values of a system form an initial segment, which number resolution needs.
   has general number.
 * `Number.System.DeterminateInitial`: the determinate values are an initial segment.
 * `Number.System.value`: a value of a system, as an element of its values.
-* `Number.System.singularPlural`: the system of the singular and the plural.
+* `Number.System.singularPlural`, `Number.System.singularPlural.elim`: the system of the singular
+  and the plural, and a function on it by its values at the two.
 
 ## Implementation notes
 
@@ -144,13 +145,25 @@ def value (ns : System) (n : Number) (h : n ∈ ns.values := by decide) : ns.val
 
 namespace singularPlural
 
-/-- The singular of the singular-plural system. -/
-abbrev singular : singularPlural.values := singularPlural.value .singular
+/-- The singular as a value of the singular-plural system. -/
+instance : CoeDep Number .singular singularPlural.values := ⟨singularPlural.value .singular⟩
 
-/-- The plural of the singular-plural system. -/
-abbrev plural : singularPlural.values := singularPlural.value .plural
+/-- The plural as a value of the singular-plural system. -/
+instance : CoeDep Number .plural singularPlural.values := ⟨singularPlural.value .plural⟩
 
-instance : Nontrivial singularPlural.values := ⟨⟨singular, plural, by decide⟩⟩
+instance : Nontrivial singularPlural.values :=
+  ⟨⟨singularPlural.value .singular, singularPlural.value .plural, by decide⟩⟩
+
+/-- A function on the singular-plural system is given by its value at the singular and its value
+at the plural. -/
+def elim {β : Sort*} (sg pl : β) (n : singularPlural.values) : β :=
+  if n.1 = .plural then pl else sg
+
+variable {β : Sort*} (sg pl : β)
+
+@[simp] theorem elim_singular : elim sg pl (singularPlural.value .singular) = sg := rfl
+
+@[simp] theorem elim_plural : elim sg pl (singularPlural.value .plural) = pl := rfl
 
 end singularPlural
 
