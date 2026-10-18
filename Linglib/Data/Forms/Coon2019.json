@@ -1,0 +1,826 @@
+{
+  "description": "The Chuj root inventory of Coon (2019): the roots of the root-class table (5), of the tables of denominal (17) and positional (20) verb stems, and the further roots of the examples, with Coon's class of each.",
+  "Types": {
+    "RootClass": [
+      {"Value": "tv", "Lean": "tv", "Description": "a transitive root, forming bare transitive stems"},
+      {"Value": "itv", "Lean": "itv", "Description": "an intransitive root, taking the null head of intransitive stems"},
+      {"Value": "pos", "Lean": "pos", "Description": "a positional root, forming stative -an stems and taking -w"},
+      {"Value": "nom", "Lean": "nom", "Description": "a nominal root, appearing underived in nominal contexts"}
+    ]
+  },
+  "ParameterTable": [
+    {
+      "ID": "chop",
+      "Name": "chop",
+      "Description": ""
+    },
+    {
+      "ID": "sell",
+      "Name": "sell",
+      "Description": ""
+    },
+    {
+      "ID": "grind",
+      "Name": "grind",
+      "Description": ""
+    },
+    {
+      "ID": "hug",
+      "Name": "hug",
+      "Description": ""
+    },
+    {
+      "ID": "kick",
+      "Name": "kick",
+      "Description": ""
+    },
+    {
+      "ID": "hit",
+      "Name": "hit",
+      "Description": ""
+    },
+    {
+      "ID": "see",
+      "Name": "see",
+      "Description": ""
+    },
+    {
+      "ID": "fell",
+      "Name": "fell",
+      "Description": ""
+    },
+    {
+      "ID": "make",
+      "Name": "make",
+      "Description": ""
+    },
+    {
+      "ID": "buy",
+      "Name": "buy",
+      "Description": ""
+    },
+    {
+      "ID": "stir",
+      "Name": "stir",
+      "Description": ""
+    },
+    {
+      "ID": "tear",
+      "Name": "tear",
+      "Description": ""
+    },
+    {
+      "ID": "catch",
+      "Name": "catch",
+      "Description": ""
+    },
+    {
+      "ID": "close",
+      "Name": "close",
+      "Description": ""
+    },
+    {
+      "ID": "go",
+      "Name": "go",
+      "Description": ""
+    },
+    {
+      "ID": "sleep",
+      "Name": "sleep",
+      "Description": ""
+    },
+    {
+      "ID": "ascend",
+      "Name": "ascend",
+      "Description": ""
+    },
+    {
+      "ID": "arrive",
+      "Name": "arrive",
+      "Description": ""
+    },
+    {
+      "ID": "cry",
+      "Name": "cry",
+      "Description": ""
+    },
+    {
+      "ID": "walk",
+      "Name": "walk",
+      "Description": ""
+    },
+    {
+      "ID": "dissolve",
+      "Name": "dissolve",
+      "Description": ""
+    },
+    {
+      "ID": "leave",
+      "Name": "leave",
+      "Description": ""
+    },
+    {
+      "ID": "crouched",
+      "Name": "crouched",
+      "Description": ""
+    },
+    {
+      "ID": "outstretched",
+      "Name": "outstretched",
+      "Description": ""
+    },
+    {
+      "ID": "leaning",
+      "Name": "leaning",
+      "Description": ""
+    },
+    {
+      "ID": "extended",
+      "Name": "extended",
+      "Description": ""
+    },
+    {
+      "ID": "gathered",
+      "Name": "gathered",
+      "Description": ""
+    },
+    {
+      "ID": "on_four_legs",
+      "Name": "on four legs",
+      "Description": ""
+    },
+    {
+      "ID": "lying_down",
+      "Name": "lying down",
+      "Description": ""
+    },
+    {
+      "ID": "on_two_legs",
+      "Name": "on two legs",
+      "Description": ""
+    },
+    {
+      "ID": "house",
+      "Name": "house",
+      "Description": ""
+    },
+    {
+      "ID": "wood",
+      "Name": "wood",
+      "Description": ""
+    },
+    {
+      "ID": "corn",
+      "Name": "corn",
+      "Description": ""
+    },
+    {
+      "ID": "man",
+      "Name": "man",
+      "Description": ""
+    },
+    {
+      "ID": "dance",
+      "Name": "dance",
+      "Description": ""
+    },
+    {
+      "ID": "sneeze",
+      "Name": "sneeze",
+      "Description": ""
+    },
+    {
+      "ID": "writing",
+      "Name": "letters, writing",
+      "Description": ""
+    },
+    {
+      "ID": "cleared_land",
+      "Name": "cleared land",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "root_xik",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "chop",
+      "Name": "xik"
+    },
+    {
+      "ID": "root_chonh",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "sell",
+      "Name": "chonh"
+    },
+    {
+      "ID": "root_jax",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "grind",
+      "Name": "jax"
+    },
+    {
+      "ID": "root_chel",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "hug",
+      "Name": "chel"
+    },
+    {
+      "ID": "root_tek",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "kick",
+      "Name": "tek'"
+    },
+    {
+      "ID": "root_mak_hit",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "hit",
+      "Name": "mak'"
+    },
+    {
+      "ID": "root_il",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "see",
+      "Name": "il"
+    },
+    {
+      "ID": "root_chak",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "fell",
+      "Name": "ch'ak"
+    },
+    {
+      "ID": "root_bo",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "make",
+      "Name": "b'o'"
+    },
+    {
+      "ID": "root_man",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "buy",
+      "Name": "man"
+    },
+    {
+      "ID": "root_kal",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "stir",
+      "Name": "kal"
+    },
+    {
+      "ID": "root_tzil",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "tear",
+      "Name": "tzil"
+    },
+    {
+      "ID": "root_yam",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "catch",
+      "Name": "yam"
+    },
+    {
+      "ID": "root_mak",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "close",
+      "Name": "mak"
+    },
+    {
+      "ID": "root_bat",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "go",
+      "Name": "b'at"
+    },
+    {
+      "ID": "root_way",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "sleep",
+      "Name": "way"
+    },
+    {
+      "ID": "root_key",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "ascend",
+      "Name": "k'ey"
+    },
+    {
+      "ID": "root_jaw",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "arrive",
+      "Name": "jaw"
+    },
+    {
+      "ID": "root_ok",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "cry",
+      "Name": "ok'"
+    },
+    {
+      "ID": "root_bey",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "walk",
+      "Name": "b'ey"
+    },
+    {
+      "ID": "root_ul",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "dissolve",
+      "Name": "ul"
+    },
+    {
+      "ID": "root_el",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "leave",
+      "Name": "el"
+    },
+    {
+      "ID": "root_chot",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "crouched",
+      "Name": "chot"
+    },
+    {
+      "ID": "root_jenh",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "outstretched",
+      "Name": "jenh"
+    },
+    {
+      "ID": "root_chek",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "leaning",
+      "Name": "chek'"
+    },
+    {
+      "ID": "root_lich",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "extended",
+      "Name": "lich'"
+    },
+    {
+      "ID": "root_bul",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "gathered",
+      "Name": "b'ul"
+    },
+    {
+      "ID": "root_kot",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "on_four_legs",
+      "Name": "kot"
+    },
+    {
+      "ID": "root_tel",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "lying_down",
+      "Name": "tel"
+    },
+    {
+      "ID": "root_chet",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "on_two_legs",
+      "Name": "chet"
+    },
+    {
+      "ID": "root_pat",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "house",
+      "Name": "pat"
+    },
+    {
+      "ID": "root_katzitz",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "wood",
+      "Name": "k'atzitz"
+    },
+    {
+      "ID": "root_ixim",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "corn",
+      "Name": "ixim"
+    },
+    {
+      "ID": "root_winak",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "man",
+      "Name": "winak"
+    },
+    {
+      "ID": "root_chanhal",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "dance",
+      "Name": "chanhal"
+    },
+    {
+      "ID": "root_atis",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "sneeze",
+      "Name": "at'is"
+    },
+    {
+      "ID": "root_tzib",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "writing",
+      "Name": "tz'ib'"
+    },
+    {
+      "ID": "root_patan",
+      "Language_ID": "chuj1250",
+      "Parameter_ID": "cleared_land",
+      "Name": "patan"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "coon2019_xik",
+      "Lexeme_ID": "root_xik",
+      "Form": "xik",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_chonh",
+      "Lexeme_ID": "root_chonh",
+      "Form": "chonh",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_jax",
+      "Lexeme_ID": "root_jax",
+      "Form": "jax",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_chel",
+      "Lexeme_ID": "root_chel",
+      "Form": "chel",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_tek",
+      "Lexeme_ID": "root_tek",
+      "Form": "tek'",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_mak_hit",
+      "Lexeme_ID": "root_mak_hit",
+      "Form": "mak'",
+      "Comment": "ID disambiguated from mak 'close'",
+      "Source": ["coon-2019[(55b)]"]
+    },
+    {
+      "ID": "coon2019_il",
+      "Lexeme_ID": "root_il",
+      "Form": "il",
+      "Source": ["coon-2019[(10d)]"]
+    },
+    {
+      "ID": "coon2019_chak",
+      "Lexeme_ID": "root_chak",
+      "Form": "ch'ak",
+      "Source": ["coon-2019[(63a)]"]
+    },
+    {
+      "ID": "coon2019_bo",
+      "Lexeme_ID": "root_bo",
+      "Form": "b'o'",
+      "Source": ["coon-2019[(62)]"]
+    },
+    {
+      "ID": "coon2019_man",
+      "Lexeme_ID": "root_man",
+      "Form": "man",
+      "Source": ["coon-2019[(59a)]"]
+    },
+    {
+      "ID": "coon2019_kal",
+      "Lexeme_ID": "root_kal",
+      "Form": "kal",
+      "Source": ["coon-2019[(29a)]"]
+    },
+    {
+      "ID": "coon2019_tzil",
+      "Lexeme_ID": "root_tzil",
+      "Form": "tzil",
+      "Source": ["coon-2019[(35a)]"]
+    },
+    {
+      "ID": "coon2019_yam",
+      "Lexeme_ID": "root_yam",
+      "Form": "yam",
+      "Source": ["coon-2019[(60a)]"]
+    },
+    {
+      "ID": "coon2019_mak",
+      "Lexeme_ID": "root_mak",
+      "Form": "mak",
+      "Source": ["coon-2019[(70a)]"]
+    },
+    {
+      "ID": "coon2019_bat",
+      "Lexeme_ID": "root_bat",
+      "Form": "b'at",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_way",
+      "Lexeme_ID": "root_way",
+      "Form": "way",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_key",
+      "Lexeme_ID": "root_key",
+      "Form": "k'ey",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_jaw",
+      "Lexeme_ID": "root_jaw",
+      "Form": "jaw",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_ok",
+      "Lexeme_ID": "root_ok",
+      "Form": "ok'",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_bey",
+      "Lexeme_ID": "root_bey",
+      "Form": "b'ey",
+      "Source": ["coon-2019[(7c)]"]
+    },
+    {
+      "ID": "coon2019_ul",
+      "Lexeme_ID": "root_ul",
+      "Form": "ul",
+      "Source": ["coon-2019[(48a)]"]
+    },
+    {
+      "ID": "coon2019_el",
+      "Lexeme_ID": "root_el",
+      "Form": "el",
+      "Source": ["coon-2019[(57)]"]
+    },
+    {
+      "ID": "coon2019_chot",
+      "Lexeme_ID": "root_chot",
+      "Form": "chot",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_jenh",
+      "Lexeme_ID": "root_jenh",
+      "Form": "jenh",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_chek",
+      "Lexeme_ID": "root_chek",
+      "Form": "chek'",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_lich",
+      "Lexeme_ID": "root_lich",
+      "Form": "lich'",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_bul",
+      "Lexeme_ID": "root_bul",
+      "Form": "b'ul",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_kot",
+      "Lexeme_ID": "root_kot",
+      "Form": "kot",
+      "Source": ["coon-2019[(20)]"]
+    },
+    {
+      "ID": "coon2019_tel",
+      "Lexeme_ID": "root_tel",
+      "Form": "tel",
+      "Source": ["coon-2019[(20)]"]
+    },
+    {
+      "ID": "coon2019_chet",
+      "Lexeme_ID": "root_chet",
+      "Form": "chet",
+      "Source": ["coon-2019[(20)]"]
+    },
+    {
+      "ID": "coon2019_pat",
+      "Lexeme_ID": "root_pat",
+      "Form": "pat",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_katzitz",
+      "Lexeme_ID": "root_katzitz",
+      "Form": "k'atzitz",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_ixim",
+      "Lexeme_ID": "root_ixim",
+      "Form": "ixim",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_winak",
+      "Lexeme_ID": "root_winak",
+      "Form": "winak",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_chanhal",
+      "Lexeme_ID": "root_chanhal",
+      "Form": "chanhal",
+      "Source": ["coon-2019[(5)]"]
+    },
+    {
+      "ID": "coon2019_atis",
+      "Lexeme_ID": "root_atis",
+      "Form": "at'is",
+      "Source": ["coon-2019[(17)]"]
+    },
+    {
+      "ID": "coon2019_tzib",
+      "Lexeme_ID": "root_tzib",
+      "Form": "tz'ib'",
+      "Source": ["coon-2019[(17)]"]
+    },
+    {
+      "ID": "coon2019_patan",
+      "Lexeme_ID": "root_patan",
+      "Form": "patan",
+      "Source": ["coon-2019[(17)]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Class",
+      "Lean": "rootClass",
+      "Type": "RootClass",
+      "Description": "the root class, the column of (5) the root heads or the class Coon names it by"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "coon2019_xik",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_chonh",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_jax",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_chel",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_tek",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_mak_hit",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_il",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_chak",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_bo",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_man",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_kal",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_tzil",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_yam",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_mak",
+      "Class": "tv"
+    },
+    {
+      "Form_ID": "coon2019_bat",
+      "Class": "itv"
+    },
+    {
+      "Form_ID": "coon2019_way",
+      "Class": "itv"
+    },
+    {
+      "Form_ID": "coon2019_key",
+      "Class": "itv"
+    },
+    {
+      "Form_ID": "coon2019_jaw",
+      "Class": "itv"
+    },
+    {
+      "Form_ID": "coon2019_ok",
+      "Class": "itv"
+    },
+    {
+      "Form_ID": "coon2019_bey",
+      "Class": "itv"
+    },
+    {
+      "Form_ID": "coon2019_ul",
+      "Class": "itv"
+    },
+    {
+      "Form_ID": "coon2019_el",
+      "Class": "itv"
+    },
+    {
+      "Form_ID": "coon2019_chot",
+      "Class": "pos"
+    },
+    {
+      "Form_ID": "coon2019_jenh",
+      "Class": "pos"
+    },
+    {
+      "Form_ID": "coon2019_chek",
+      "Class": "pos"
+    },
+    {
+      "Form_ID": "coon2019_lich",
+      "Class": "pos"
+    },
+    {
+      "Form_ID": "coon2019_bul",
+      "Class": "pos"
+    },
+    {
+      "Form_ID": "coon2019_kot",
+      "Class": "pos"
+    },
+    {
+      "Form_ID": "coon2019_tel",
+      "Class": "pos"
+    },
+    {
+      "Form_ID": "coon2019_chet",
+      "Class": "pos"
+    },
+    {
+      "Form_ID": "coon2019_pat",
+      "Class": "nom"
+    },
+    {
+      "Form_ID": "coon2019_katzitz",
+      "Class": "nom"
+    },
+    {
+      "Form_ID": "coon2019_ixim",
+      "Class": "nom"
+    },
+    {
+      "Form_ID": "coon2019_winak",
+      "Class": "nom"
+    },
+    {
+      "Form_ID": "coon2019_chanhal",
+      "Class": "nom"
+    },
+    {
+      "Form_ID": "coon2019_atis",
+      "Class": "nom"
+    },
+    {
+      "Form_ID": "coon2019_tzib",
+      "Class": "nom"
+    },
+    {
+      "Form_ID": "coon2019_patan",
+      "Class": "nom"
+    }
+  ]
+}
