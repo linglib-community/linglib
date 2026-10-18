@@ -1,0 +1,62 @@
+[
+  {
+    "id": "minor2026_93a",
+    "source": {"bibkey": "minor-2026", "paperLabel": "(93a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Miles wants to meet a policeman.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "want > ∃", "judgment": "acceptable"},
+      {"name": "∃ > want", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "The singular indefinite scopes either below or above want (p. 26; Partee's paradigm (1a)).",
+    "verified": "page-image"
+  },
+  {
+    "id": "minor2026_93b",
+    "source": {"bibkey": "minor-2026", "paperLabel": "(93b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Miles wants to meet policemen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "want > ∃", "judgment": "acceptable"},
+      {"name": "∃ > want", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "The bare plural takes only narrow scope (p. 26; (1b)).",
+    "verified": "page-image"
+  },
+  {
+    "id": "minor2026_93c",
+    "source": {"bibkey": "minor-2026", "paperLabel": "(93c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "All (of) the boys want to meet policemen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "want > ∃", "judgment": "acceptable"},
+      {"name": "∃ > want", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "The dependent bare plural scopes either below or above want (p. 26; Partee's (1d)).",
+    "verified": "page-image"
+  }
+]

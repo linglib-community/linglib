@@ -74,7 +74,7 @@ theorem isLowerSet_dep (f : α → β) (g : α → γ) : IsLowerSet (dep f g) :=
   fun _ _ hT h a b hab ↦ @h ⟨a, hT a.2⟩ ⟨b, hT b.2⟩ hab
 
 theorem singleton_mem_dep (a : α) : {a} ∈ dep f g :=
-  mem_dep.2 fun _ hx _ hy _ ↦ by rw [Finset.mem_singleton.1 hx, Finset.mem_singleton.1 hy]
+  (Finset.coe_singleton a ▸ Set.subsingleton_singleton).factorsThrough_domRestrict
 
 theorem empty_mem_dep : ∅ ∈ dep f g := mem_dep.2 fun _ h ↦ absurd h (Finset.notMem_empty _)
 
