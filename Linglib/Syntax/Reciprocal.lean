@@ -16,8 +16,8 @@ public import Linglib.Syntax.Voice.Basic
 Cross-linguistic vocabulary for reciprocal constructions: the marking strategy
 ([nordlinger-2023]'s synthesis of [konig-kokutani-2006], [nedjalkov-2007a], and
 [evans-2008]), the site it codes and the valency it derives, the formation locus
-of reciprocal verbs ([siloni-2008], [siloni-2012]), and the reciprocal markers with
-the readings they cover, from which a language's inventory is built.
+of reciprocal verbs ([siloni-2008], [siloni-2012]), and the reciprocal markers, each noting
+whether it also expresses the reflexive meaning, from which a language's inventory is built.
 
 ## Main definitions
 
@@ -29,7 +29,7 @@ the readings they cover, from which a language's inventory is built.
   construction as its exponent together with what each indicator reports;
   `Construction.Mixed` is [evans-et-al-2007]'s mixed transitivity effect.
 * `Formation` — lexical vs syntactic formation of reciprocal verbs.
-* `Reading`, `Marker` — a reciprocal exponent with its polysemy.
+* `Marker` — a reciprocal exponent, and whether it is also reflexive.
 
 ## Implementation notes
 
@@ -184,17 +184,8 @@ inductive Formation where
 
 /-! ### Marker inventories -/
 
-/-- Readings a reciprocal marker can carry ([nordlinger-2023] after
-[nedjalkov-2007b]). -/
-inductive Reading where
-  | reciprocal
-  | reflexive
-  | collective
-  | sociative
-  | iterative
-  deriving DecidableEq, Repr
-
-/-- A reciprocal marker is an exponent with its strategy and the readings it covers. -/
+/-- A reciprocal marker is an exponent with its strategy, noting whether it also expresses the
+reflexive meaning, the reflexive–reciprocal polysemy. -/
 structure Marker where
   /-- The exponent, in surface order, a romanization where the language has a native script. -/
   morphs : List Morphology.Morph
@@ -202,8 +193,8 @@ structure Marker where
   script : Option String := none
   /-- Morphosyntactic strategy of the exponent. -/
   strategy : Strategy
-  /-- Readings the marker covers. -/
-  readings : Finset Reading := {.reciprocal}
+  /-- The marker also expresses the reflexive meaning. -/
+  alsoReflexive : Bool := false
   deriving DecidableEq
 
 /-! ### Constructions -/

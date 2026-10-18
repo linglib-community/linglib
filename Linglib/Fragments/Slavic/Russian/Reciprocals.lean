@@ -32,7 +32,7 @@ def drugDruga : Marker :=
     ([nordlinger-2023] ex. 31). -/
 def sja : Marker :=
   { morphs := [.suff "sja"], script := some "-ся", strategy := .verbalAffix
-  , readings := {.reciprocal, .reflexive} }
+  , alsoReflexive := true }
 
 /-- себя *sebja* — the reflexive pronoun (for contrast), one form for every person and
     number. -/

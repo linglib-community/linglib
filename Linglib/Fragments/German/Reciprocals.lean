@@ -35,7 +35,7 @@ def einander : Marker := Pronouns.einander.toMarker
 rather than filling the object slot and also has the reflexive reading. -/
 def sich : Marker :=
   { morphs := [.free Pronouns.sich.form], strategy := .recipClitic,
-    readings := {.reciprocal, .reflexive} }
+    alsoReflexive := true }
 
 /-- The reciprocal marker inventory. -/
 def markers : Finset Marker := {einander, sich}

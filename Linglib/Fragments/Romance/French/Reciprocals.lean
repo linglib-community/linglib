@@ -32,7 +32,7 @@ open Reciprocal
 /-- se — reflexive/reciprocal clitic ([nordlinger-2023] ex. 28, 47). -/
 def se : Marker :=
   { morphs := [.free "se"], strategy := .recipClitic
-  , readings := {.reciprocal, .reflexive} }
+  , alsoReflexive := true }
 
 /-- *l'un l'autre*, the bipartite reciprocal; with a direct object it accompanies *se* rather than
     replacing it ([maslova-2008]). -/

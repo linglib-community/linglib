@@ -39,7 +39,11 @@ review's example where no fragment exists (Warlpiri, Kuuk Thaayorre, Dalabon, To
 records the valency indicators the review reports. The formation locus is Siloni's own
 classification where it covers the language and the review's extension otherwise. Malagasy,
 bivalent at f-structure and monovalent at c-structure on Hurst's analysis, splits
-levels rather than indicators and is not represented.
+levels rather than indicators and is not represented. A marker records only whether it is also
+reflexive, the polysemy carried by the markers glossed RR (French *se*, Wambaya *-ngg-*, Warlpiri
+*-nyanu*, Dalabon *-rr*); the review's further polysemy types, Yakut *-üs* with collective and
+sociative readings (ex. 49) and East Futunan *fe-...-ʼaki* with iterative ones (ex. 50, both
+after Nedjalkov), are not.
 
 ## References
 
@@ -75,14 +79,14 @@ inductive Language where
 /-- Warlpiri *-nyanu* is the reflexive–reciprocal bound pronoun in the object slot of the
 pronominal complex ([nordlinger-2023] ex. 18b, 48). -/
 def warlpiriNyanu : Marker :=
-  { morphs := [.suff "nyanu"], strategy := .boundPronoun, readings := {.reciprocal, .reflexive} }
+  { morphs := [.suff "nyanu"], strategy := .boundPronoun, alsoReflexive := true }
 
 /-- Kuuk Thaayorre *-rr* is the reciprocal verbal suffix ([nordlinger-2023] ex. 25). -/
 def kuukThaayorreRr : Marker := { morphs := [.suff "rr"], strategy := .verbalAffix }
 
 /-- Dalabon *-rr* is the reflexive–reciprocal verbal suffix ([nordlinger-2023] ex. 26b). -/
 def dalabonRr : Marker :=
-  { morphs := [.suff "rr"], strategy := .verbalAffix, readings := {.reciprocal, .reflexive} }
+  { morphs := [.suff "rr"], strategy := .verbalAffix, alsoReflexive := true }
 
 /-- Tonga *-an* is the reciprocal verbal suffix ([nordlinger-2023] ex. 21, from
 [maslova-2008]). -/
@@ -458,25 +462,5 @@ theorem ReciprocityType.Realizes.inclusiveAlternativeOrdering (h : t.Realizes R 
   | melee => exact absurd rfl ht
 
 end Realizes
-
-/-! ### Polysemous markers beyond the sample
-
-Reflexive polysemy is carried by the markers above glossed RR (French *se*, Wambaya *-ngg-*,
-Warlpiri *-nyanu*, Dalabon *-rr*). The review's further polysemy types are attested by markers
-of languages outside `Language`. -/
-
-/-- Yakut *-üs* marks reciprocal and collective or sociative readings, *ölör-üs* 'kill
-    each other' or 'kill somebody together' ([nordlinger-2023] ex. 49,
-    citing [nedjalkov-2007b]). -/
-def yakutUs : Marker :=
-  { morphs := [.suff "üs"], strategy := .verbalAffix
-  , readings := {.reciprocal, .collective, .sociative} }
-
-/-- East Futunan *fe-...-ʼaki* marks reciprocal and iterative readings, *fe-tapa-ʼaki*
-    'sparkle again and again' ([nordlinger-2023] ex. 50, citing
-    [nedjalkov-2007b]). -/
-def eastFutunanFeAki : Marker :=
-  { morphs := [.pref "fe", .suff "ʼaki"], strategy := .verbalAffix
-  , readings := {.reciprocal, .iterative} }
 
 end Nordlinger2023

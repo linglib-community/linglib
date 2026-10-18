@@ -23,7 +23,7 @@ open Reciprocal
 
 /-- *se*, the reflexive clitic in its reciprocal use. -/
 def se : Marker :=
-  { morphs := [.free "se"], strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
+  { morphs := [.free "se"], strategy := .recipClitic, alsoReflexive := true }
 
 /-- *jeden druhého* 'one the-other', the bipartite periphrastic reciprocal. -/
 def jedenDruheho : Marker :=

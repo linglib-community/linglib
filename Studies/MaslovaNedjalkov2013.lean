@@ -27,8 +27,8 @@ whose reciprocal markers a fragment records has the value the chapter codes
 
 ## Implementation notes
 
-A marker's polysemy is its `Reciprocal.Marker.readings`; the value reads only whether each
-reciprocal marker also covers the reflexive reading. Mandarin, coded non-reflexive, is left out
+A marker records whether it also expresses the reflexive meaning
+(`Reciprocal.Marker.alsoReflexive`), which is all the value reads. Mandarin, coded non-reflexive, is left out
 of `Language`: its fragment's one marker, the compound *dǎ-lái-dǎ-qù*, repeats its verb, the
 iconic encoding the chapter sets aside (§2.1).
 
@@ -54,18 +54,14 @@ section Kinds
 
 variable (m : Marker)
 
-/-- The marker expresses the reciprocal and also the reflexive meaning: a reflexive reciprocal
-construction. -/
-def IsReflexiveReciprocal : Prop :=
-  Reading.reciprocal ∈ m.readings ∧ Reading.reflexive ∈ m.readings
+/-- A reflexive reciprocal construction also expresses the reflexive meaning. -/
+def IsReflexiveReciprocal : Prop := m.alsoReflexive = true
 
-/-- The marker expresses the reciprocal meaning but not the reflexive one: a non-reflexive
-reciprocal construction. -/
-def IsNonreflexiveReciprocal : Prop :=
-  Reading.reciprocal ∈ m.readings ∧ Reading.reflexive ∉ m.readings
+/-- A non-reflexive reciprocal construction does not express the reflexive meaning. -/
+def IsNonreflexiveReciprocal : Prop := m.alsoReflexive = false
 
-instance : Decidable (IsReflexiveReciprocal m) := instDecidableAnd
-instance : Decidable (IsNonreflexiveReciprocal m) := instDecidableAnd
+instance : Decidable (IsReflexiveReciprocal m) := inferInstanceAs (Decidable (_ = _))
+instance : Decidable (IsNonreflexiveReciprocal m) := inferInstanceAs (Decidable (_ = _))
 
 end Kinds
 
@@ -94,12 +90,23 @@ theorem ofInventory_eq_distinctFromReflexive_iff : ofInventory inv = .distinctFr
     (∀ m ∈ inv, ¬ IsReflexiveReciprocal m) ∧ ∃ m ∈ inv, IsNonreflexiveReciprocal m := by
   unfold ofInventory; split_ifs <;> simp_all
 
-/-- An inventory has no reciprocal construction when none of its markers is reciprocal. -/
+/-- Every marker is reflexive or not, so an inventory has no reciprocal construction exactly
+when it is empty. -/
 @[simp]
 theorem ofInventory_eq_noReciprocalConstruction_iff :
-    ofInventory inv = .noReciprocalConstruction ↔ ∀ m ∈ inv, Reading.reciprocal ∉ m.readings := by
-  unfold ofInventory IsReflexiveReciprocal IsNonreflexiveReciprocal
-  split_ifs <;> grind
+    ofInventory inv = .noReciprocalConstruction ↔ inv = ∅ := by
+  have key (m : Marker) : IsReflexiveReciprocal m ∨ IsNonreflexiveReciprocal m := by
+    unfold IsReflexiveReciprocal IsNonreflexiveReciprocal
+    cases m.alsoReflexive <;> simp
+  rw [Finset.eq_empty_iff_forall_notMem]
+  unfold ofInventory
+  split_ifs with h₁ h₂ h₃ <;> simp only [false_iff, true_iff, not_forall, not_not]
+  · exact h₁.imp fun _ h ↦ h.1
+  · exact h₁.imp fun _ h ↦ h.1
+  · exact h₃.imp fun _ h ↦ h.1
+  · intro m hm
+    rcases key m with h | h
+    exacts [h₁ ⟨m, hm, h⟩, h₃ ⟨m, hm, h⟩]
 
 /-! ### The chapter's examples (§2.2) -/
 
