@@ -11,15 +11,26 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 # Building and reading syntactic objects
 
 Merge on the carrier is written `*`: External Merge of two objects, and the re-merge of a mover
-with the remainder in Internal Merge. Concrete objects are built ordered, as
-`PlanarSyntacticObject`s, and forgotten to the carrier by `toSyntacticObject`. The accessors read
-the root token, the leaf and node counts, and the trace predicate, which recognizes the trace
-leaves, bare or indexed.
+with the remainder in Internal Merge. The objects form a commutative magma and the ordered
+objects a noncommutative one. Concrete objects are built ordered, as `PlanarSyntacticObject`s,
+and forgotten to the carrier by `toSyntacticObject`, a homomorphism of magmas with none going
+back. The accessors read the root token, the leaf and node counts, and the trace predicate,
+which recognizes the trace leaves, bare or indexed.
 
 ## Main definitions
 
+* `Minimalist.PlanarSyntacticObject.toSyntacticObjectHom`: forgetting the order.
 * `Minimalist.SyntacticObject.mkLeaf`, `mkLeafPhon`: lexical leaves from features.
 * `Minimalist.SyntacticObject.token?`, `isTrace`, `leafCount`, `nodeCount`, `IsLeaf`.
+
+## Main results
+
+* `Minimalist.PlanarSyntacticObject.isEmpty_mulHom`: no homomorphism of magmas forgets in the
+  other direction.
+
+## References
+
+* [marcolli-chomsky-berwick-2025], §1.13.1 (Lemma 1.13.1)
 -/
 
 @[expose] public section
@@ -35,12 +46,12 @@ instance : Inhabited SyntacticObject := ⟨trace⟩
 
 /-! ### Merge as multiplication -/
 
-/-- Merge on the carrier is written `l * r`. -/
-noncomputable instance : Mul SyntacticObject := ⟨merge⟩
+/-- Merge on the carrier is written `l * r`, the commutative magma of the objects. -/
+noncomputable instance : CommMagma SyntacticObject where
+  mul := merge
+  mul_comm := merge_comm
 
 @[simp] theorem mul_def (l r : SyntacticObject) : l * r = merge l r := rfl
-
-theorem mul_comm (l r : SyntacticObject) : l * r = r * l := merge_comm l r
 
 /-- A lexical item is a leaf. -/
 instance : Coe LexicalItem.Token SyntacticObject := ⟨leaf⟩
@@ -68,16 +79,34 @@ instance : Coe LexicalItem.Token PlanarSyntacticObject := ⟨leaf⟩
 /-- An ordered object is an object. -/
 instance : Coe PlanarSyntacticObject SyntacticObject := ⟨toSyntacticObject⟩
 
-/-- Forgetting the order is a homomorphism of magmas. -/
+/-- Forgetting the order is a homomorphism of magmas ([marcolli-chomsky-berwick-2025]
+    Lemma 1.13.1). -/
 def toSyntacticObjectHom : PlanarSyntacticObject →ₙ* SyntacticObject :=
   ⟨toSyntacticObject, toSyntacticObject_merge⟩
 
 @[simp] theorem toSyntacticObjectHom_apply (p : PlanarSyntacticObject) :
     toSyntacticObjectHom p = p.toSyntacticObject := rfl
 
-@[simp] theorem toSyntacticObject_mul (l r : PlanarSyntacticObject) :
-    (l * r).toSyntacticObject = l.toSyntacticObject * r.toSyntacticObject :=
-  toSyntacticObject_merge l r
+theorem merge_inj {l r l' r' : PlanarSyntacticObject} :
+    merge l r = merge l' r' ↔ l = l' ∧ r = r' := by
+  refine ⟨fun h ↦ ?_, fun ⟨hl, hr⟩ ↦ hl ▸ hr ▸ rfl⟩
+  obtain ⟨hl, hr⟩ : l.val = l'.val ∧ r.val = r'.val := by simpa using congrArg Subtype.val h
+  exact ⟨Subtype.ext hl, Subtype.ext hr⟩
+
+theorem merge_ne_left (l r : PlanarSyntacticObject) : merge l r ≠ l := fun h ↦ by
+  have := congrArg (·.val.numNodes) h
+  simp only [merge_val, RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
+    List.sum_nil] at this
+  omega
+
+/-- No homomorphism of magmas forgets in the other direction, since the ordered objects have no
+    commutative submagma: the images of `t * (t * t)` and `(t * t) * t` would coincide
+    ([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
+theorem isEmpty_mulHom : IsEmpty (SyntacticObject →ₙ* PlanarSyntacticObject) := by
+  refine ⟨fun φ ↦ ?_⟩
+  have h := congrArg φ (mul_comm (default : SyntacticObject) (default * default))
+  simp only [map_mul, mul_def, merge_inj] at h
+  exact merge_ne_left _ _ h.1.symm
 
 /-! ### Merge in braces
 
