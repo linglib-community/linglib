@@ -371,7 +371,8 @@ def IsValencyIncreasing : Prop :=
 def IsValencyDecreasing : Prop :=
   v.initial.construction.IsValencyDecreasing v.derived.construction
 
-/-- A voice is symmetrical when it neither nucleativizes nor denucleativizes. -/
+/-- A voice is symmetrical when it neither nucleativizes nor denucleativizes and keeps the
+transitivity of the construction. -/
 def IsSymmetrical : Prop := v.initial.construction.IsSymmetrical v.derived.construction
 
 /-- The pivot is an oblique, the selection a binary system does not allow
