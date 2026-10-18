@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Semantics.Alternatives.Competition
+public import Linglib.Pragmatics.Competition
 
 /-!
 # Sauerland (2003): a new semantics for number
@@ -49,7 +49,7 @@ namespace Sauerland2003
 
 open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
 open Mereology (D)
-open Alternatives Trivalent
+open Competition Trivalent
 
 variable {E : Type*}
 

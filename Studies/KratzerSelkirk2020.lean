@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Semantics.Alternatives.Basic
+public import Linglib.Semantics.Composition.WithAlternatives
 public import Linglib.Semantics.Focus.Control
 public import Studies.HartmannZimmermann2007
 
@@ -51,16 +51,16 @@ namespace KratzerSelkirk2020
 
 /-! ### The features (45)–(47) -/
 
-/-- The contribution of [FoC] (45): the ordinary value is unchanged and the alternatives
-value is the whole domain of the constituent's type. -/
+/-- [FoC] (45) leaves the ordinary value unchanged and makes the alternatives value the whole
+domain of the constituent's type. -/
 def applyFoC {α : Type*} (m : WithAlternatives α) (domain : Set α) : WithAlternatives α :=
   { ordinary := m.ordinary, alternatives := domain }
 
 theorem applyFoC_ordinary {α : Type*} (m : WithAlternatives α) (domain : Set α) :
     (applyFoC m domain).ordinary = m.ordinary := rfl
 
-/-- The contribution of [G] indexed with the salient discourse referent `a` (47): defined
-only if the meaning is Given with respect to `a` (46), and then the identity. -/
+/-- [G] indexed with the salient discourse referent `a` (47) is defined only if the meaning is
+Given with respect to `a` (46), and is then the identity. -/
 def applyG {α : Type*} (m : WithAlternatives α) (a : α) (_ : m.Given a) :
     WithAlternatives α := m
 
@@ -71,7 +71,7 @@ theorem applyG_eq {α : Type*} (m : WithAlternatives α) (a : α) (h : m.Given a
 domain has, is not a singleton. -/
 theorem not_given_of_pair {α : Type*} {m : WithAlternatives α} {a b : α}
     (ha : a ∈ m.alternatives) (hb : b ∈ m.alternatives) (hab : a ≠ b) (referent : α) :
-    ¬ m.Given referent := λ h => by
+    ¬ m.Given referent := fun h ↦ by
   rw [h] at ha hb
   exact hab (ha.trans hb.symm)
 
@@ -145,7 +145,7 @@ def IsFoCus : Focus.Use → Prop
 instance (u : Focus.Use) : Decidable (IsFoCus u) := by
   cases u <;> simp [IsFoCus] <;> infer_instance
 
-/-- The rereading of Hausa: ex situ realisation iff [FoC]. -/
+/-- On the rereading of Hausa a focus is realised ex situ iff it bears [FoC]. -/
 def KSHausaReading (u : HartmannZimmermann2007.FocusUtterance) : Prop :=
   u.cfg.strategy = .exSitu ↔ IsFoCus u.pragType
 

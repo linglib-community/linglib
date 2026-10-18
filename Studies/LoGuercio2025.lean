@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Semantics.Alternatives.Competition
+public import Linglib.Pragmatics.Competition
 public import Linglib.Data.Examples.LoGuercio2025
 
 /-!
@@ -16,7 +16,7 @@ of felicitous use, so one sentence has stronger such content than another when i
 set is a proper subset of the other's, and the principle Maximize Conventional Implicatures!
 forbids a sentence when a formal alternative in the sense of Katzir and of Fox and
 Katzir, one no more complex than it, has stronger content. All three principles
-are instances of the substrate's `Alternatives.Blocked`, here along conventional-implicature
+are instances of the substrate's `Competition.Blocked`, here along conventional-implicature
 content.
 
 The worked case is the epithet. Out of the blue, *John arrived first* carries no inference
@@ -24,7 +24,7 @@ that John is no bastard, because *that bastard John arrived first* is not a form
 alternative: the epithet construction is a determiner phrase with three daughters, which no
 chain of deletions, contractions, and substitutions from a source of lexical items and
 one-daughter phrases can build (`outOfBlue_no_ACI`, through
-`Alternatives.subtree_preservation`). Once *that bastard Pedro* has been
+`Tree.subtree_preservation`). Once *that bastard Pedro* has been
 mentioned, its phrase enters the substitution source, the epithet alternative is derived by
 substituting it for the subject and then *John* for *Pedro*, the paper's derivation (24)
 (`epithet_alternative_priorMention`), and the inference arises (`priorMention_yes_ACI`): the
@@ -54,7 +54,7 @@ theorems.
 
 namespace LoGuercio2025
 
-open Alternatives
+open PhraseStructure.Tree Competition
 open PhraseStructure
 
 /-! ### The epithet as a structural alternative -/
@@ -145,17 +145,17 @@ derivation (24), in which the mentioned phrase replaces the subject and then *Jo
 *Pedro*. -/
 theorem epithet_alternative_priorMention :
     bastardJohnArrived ∈ structuralAlternatives priorContextLex johnArrived := by
-  have step1 : StructOp (substitutionSource priorContextLex johnArrived) johnArrived
+  have step1 : StructuralOp (substitutionSource priorContextLex johnArrived) johnArrived
       bastardPedroArrived :=
-    StructOp.inChild (cs := [Tree.node Cat.Det [Tree.terminal Cat.N john], arrivedFirst])
+    StructuralOp.inChild (cs := [Tree.node Cat.Det [Tree.terminal Cat.N john], arrivedFirst])
       ⟨0, by decide⟩
-      (StructOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex])))
-  have step2 : StructOp (substitutionSource priorContextLex johnArrived) bastardPedroArrived
+      (StructuralOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex])))
+  have step2 : StructuralOp (substitutionSource priorContextLex johnArrived) bastardPedroArrived
       bastardJohnArrived :=
-    StructOp.inChild (cs := [bastardPedroDP, arrivedFirst]) ⟨0, by decide⟩
-      (StructOp.inChild (cs := [Tree.terminal Cat.Det that_, Tree.terminal Cat.N bastard,
+    StructuralOp.inChild (cs := [bastardPedroDP, arrivedFirst]) ⟨0, by decide⟩
+      (StructuralOp.inChild (cs := [Tree.terminal Cat.Det that_, Tree.terminal Cat.N bastard,
           Tree.terminal Cat.N pedro]) ⟨2, by decide⟩
-        (StructOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex, epithetLex]))))
+        (StructuralOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex, epithetLex]))))
   exact Relation.ReflTransGen.head step1 (Relation.ReflTransGen.single step2)
 
 /-! ### Conventionally implicated content as felicity sets -/

@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Order.BooleanSubalgebra
 public import Mathlib.Data.Finset.Basic
+public import Mathlib.Order.LatticeIntervals
 
 /-!
 # Symmetric alternatives
@@ -11,8 +12,10 @@ asserts the other, so no theory that strengthens an assertion by negating altern
 negate one of them without the other. This is the configuration of [kroch-1972]'s symmetry
 problem for scalar implicature, and [fox-katzir-2011]'s definition of it. The file defines
 `IsSymmetric`, shows that the second symmetric alternative is the assertion without the first,
-and that a set of propositions closed under negation and conjunction, a `BooleanSubalgebra`,
-contains both or neither.
+that symmetric alternatives are complements below the assertion (`isSymmetric_iff_isCompl`), and
+that a set of propositions closed under negation and conjunction, a `BooleanSubalgebra`, contains
+both or neither. The namespace `Alternatives` is the owner of terms of the theory of formal
+alternatives about sets of propositions, Fox and Katzir's symmetric alternatives here.
 
 ## References
 
@@ -37,6 +40,17 @@ structure IsSymmetric (s s₁ s₂ : Set W) : Prop where
 theorem isSymmetric_sdiff {t : Set W} (h : t ⊆ s) : IsSymmetric s t (s \ t) :=
   ⟨Set.union_sdiff_cancel h, Set.disjoint_sdiff_right⟩
 
+/-- Symmetric alternatives of `s` are complements in the lattice of subsets of `s`. -/
+theorem isSymmetric_iff_isCompl (h₁ : s₁ ⊆ s) (h₂ : s₂ ⊆ s) :
+    IsSymmetric s s₁ s₂ ↔ IsCompl (⟨s₁, h₁⟩ : Set.Iic s) ⟨s₂, h₂⟩ := by
+  rw [isCompl_iff, disjoint_iff, codisjoint_iff]
+  constructor
+  · rintro ⟨hu, hd⟩
+    exact ⟨Subtype.ext (by simpa using hd.eq_bot), Subtype.ext (by simpa using hu)⟩
+  · rintro ⟨hd, hu⟩
+    exact ⟨by simpa using congrArg Subtype.val hu,
+      Set.disjoint_iff_inter_eq_empty.2 (by simpa using congrArg Subtype.val hd)⟩
+
 namespace IsSymmetric
 
 theorem symm (h : IsSymmetric s s₁ s₂) : IsSymmetric s s₂ s₁ :=
@@ -52,7 +66,7 @@ theorem sdiff_eq (h : IsSymmetric s s₁ s₂) : s \ s₁ = s₂ := by
   exact h.disjoint.symm.sdiff_eq_left
 
 theorem not_subset_left (h : IsSymmetric s s₁ s₂) (hne : s₂.Nonempty) : ¬ s ⊆ s₁ :=
-  λ hsub => let ⟨_, hw⟩ := hne; Set.disjoint_left.1 h.disjoint (hsub (h.subset_right hw)) hw
+  fun hsub ↦ let ⟨_, hw⟩ := hne; Set.disjoint_left.1 h.disjoint (hsub (h.subset_right hw)) hw
 
 theorem ssubset_left (h : IsSymmetric s s₁ s₂) (hne : s₂.Nonempty) : s₁ ⊂ s :=
   h.subset_left.ssubset_of_not_subset (h.not_subset_left hne)

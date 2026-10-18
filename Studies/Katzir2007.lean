@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Semantics.Alternatives.Competition
+public import Linglib.Pragmatics.Competition
 
 /-!
 # Katzir (2007): Structurally-Defined Alternatives
@@ -13,7 +13,7 @@ are the trees obtainable from it by deletion, contraction, and substitution of c
 same-category items of the substitution source, the lexicon together with the sentence's own
 subtrees (its definitions (19) to (21) and (41), the substrate `Alternatives`).
 The conversational principle (21) then forbids asserting a sentence when a structural
-alternative is strictly stronger and weakly assertable, the substrate's `Alternatives.Blocked`
+alternative is strictly stronger and weakly assertable, the substrate's `Competition.Blocked`
 over the weakly assertable structural alternatives.
 
 The examples are the paper's Section 4 and 5 sentences over a small lexicon. For (25),
@@ -44,7 +44,7 @@ and the symmetric alternative places the conjunction of quantifiers at the deter
 
 @[expose] public section
 
-open PhraseStructure Alternatives
+open PhraseStructure Tree Competition
 
 namespace Katzir2007
 
@@ -96,9 +96,9 @@ theorem some_all_equalComplexity :
     equalComplexity (substitutionSource lexicon someSentence) someSentence allSentence := by
   refine ⟨?_, ?_⟩ <;>
   · apply Relation.ReflTransGen.single
-    apply StructOp.inChild ⟨1, by simp⟩
-    apply StructOp.inChild ⟨1, by simp⟩
-    apply StructOp.subst
+    apply StructuralOp.inChild ⟨1, by simp⟩
+    apply StructuralOp.inChild ⟨1, by simp⟩
+    apply StructuralOp.subst
     · rfl
     · simp [substitutionSource, lexicon]
 
@@ -178,16 +178,16 @@ theorem and_mem_alternatives : andSentence ∈ structuralAlternatives lexicon or
 the connective and then contracting, the effect of the L connective of [sauerland-2004]. -/
 theorem leftDisjunct_mem_alternatives :
     leftDisjunct ∈ structuralAlternatives lexicon orSentence := by
-  refine Relation.ReflTransGen.head (StructOp.delete ⟨2, by simp⟩) ?_
-  refine Relation.ReflTransGen.head (StructOp.delete ⟨1, by simp [List.eraseIdx]⟩) ?_
-  exact Relation.ReflTransGen.single (StructOp.contract (List.Mem.head _) rfl)
+  refine Relation.ReflTransGen.head (StructuralOp.delete ⟨2, by simp⟩) ?_
+  refine Relation.ReflTransGen.head (StructuralOp.delete ⟨1, by simp [List.eraseIdx]⟩) ?_
+  exact Relation.ReflTransGen.single (StructuralOp.contract (List.Mem.head _) rfl)
 
 /-- The right disjunct likewise, the effect of R. -/
 theorem rightDisjunct_mem_alternatives :
     rightDisjunct ∈ structuralAlternatives lexicon orSentence := by
-  refine Relation.ReflTransGen.head (StructOp.delete ⟨0, by simp⟩) ?_
-  refine Relation.ReflTransGen.head (StructOp.delete ⟨0, by simp [List.eraseIdx]⟩) ?_
-  exact Relation.ReflTransGen.single (StructOp.contract (List.Mem.head _) rfl)
+  refine Relation.ReflTransGen.head (StructuralOp.delete ⟨0, by simp⟩) ?_
+  refine Relation.ReflTransGen.head (StructuralOp.delete ⟨0, by simp [List.eraseIdx]⟩) ?_
+  exact Relation.ReflTransGen.single (StructuralOp.contract (List.Mem.head _) rfl)
 
 /-- Which of the two fruits John ate. -/
 abbrev Fruits := Bool × Bool
@@ -223,7 +223,7 @@ def justMan : Tree Cat Word := .node .N [.terminal .N .man]
 context it is entailed and yields no inference, under a downward-entailing operator it does,
 (30) to (32). -/
 theorem justMan_mem_alternatives : justMan ∈ structuralAlternatives lexicon tallMan :=
-  Relation.ReflTransGen.single (StructOp.delete ⟨0, by simp⟩)
+  Relation.ReflTransGen.single (StructuralOp.delete ⟨0, by simp⟩)
 
 /-! ### The subtrees of the sentence as substitution source (Section 5) -/
 
@@ -253,7 +253,8 @@ def moreThanWarmYesterday : Tree Cat Word :=
 it needs is a subtree of (40a), hence in the substitution source (41). -/
 theorem moreThanWarmYesterday_mem_alternatives :
     moreThanWarmYesterday ∈ structuralAlternatives lexicon warmYesterday :=
-  Relation.ReflTransGen.single (StructOp.inChild ⟨0, by simp⟩
-    (StructOp.inChild ⟨2, by simp⟩ (StructOp.subst rfl (Set.mem_union_right _ (by decide)))))
+  Relation.ReflTransGen.single (StructuralOp.inChild ⟨0, by simp⟩
+    (StructuralOp.inChild ⟨2, by simp⟩
+      (StructuralOp.subst rfl (Set.mem_union_right _ (by decide)))))
 
 end Katzir2007

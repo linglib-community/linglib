@@ -46,7 +46,7 @@ Cowper. The person entries take the agent and the addressee as parts of the refe
 Sauerland has them overlap it; the two coincide for an atomic agent and addressee. The
 two-feature decomposition does not see clusivity, so the inclusive is refined to referents
 including the addressee. The cells of the tripartition are stated one by one, since
-Maximize Presupposition (`Alternatives.unblocked`) yields them only when the agent is not
+Maximize Presupposition (`Competition.unblocked`) yields them only when the agent is not
 part of the addressee; otherwise the first and second person domains coincide
 (`Sauerland2003.unblocked_second_of_degenerate`). The dual's minimality domain needs a
 mereological predicate the entity domain's order does not supply, so the dual restricts nothing.

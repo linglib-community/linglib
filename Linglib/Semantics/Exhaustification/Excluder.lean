@@ -5,7 +5,6 @@ public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
-public import Linglib.Semantics.Alternatives.Competition
 public import Linglib.Semantics.Exhaustification.Pointwise
 
 /-!
@@ -26,10 +25,7 @@ members the prejacent does not entail (`mem_exh_range_iff_exhAgainst`), over an 
 every other member (`Irredundant.mem_exh_range_iff`). Against the image or range of an indexed
 family, `exh` denies the members the prejacent does not entail (`mem_exh_image_iff`), decidably over
 finite worlds. When the prejacent is maximal among the alternatives, exclusion is Rooth's condition
-that every true alternative *equals* the prejacent (`mem_excludes_iff_forall_eq`). Against the
-strictly stronger alternatives alone, `exh` of a content is where it is unblocked under competition
-(`Alternatives.unblocked_eq_exh`), so Maximize Presupposition strengthens a presupposition as
-exhaustification strengthens an assertion.
+that every true alternative *equals* the prejacent (`mem_excludes_iff_forall_eq`).
 
 An `Excluder` is a selection over finite world types, `Excluder.exh` the resulting operator, and
 `tolerant` is `exh` there, contradiction or not, after Chierchia. `Excluder.restrict` keeps only
@@ -364,17 +360,3 @@ theorem entailed_not_excluded {ALT : Finset (Finset W)} {φ a : Finset W}
   simp [h]
 
 end Exhaustification
-
-namespace Alternatives
-
-variable {S W : Type*}
-
-/-- An expression is unblocked on its content exhaustified against the contents of its strictly
-stronger alternatives. -/
-theorem unblocked_eq_exh (alts : S → Set S) (content : S → Set W) (φ : S) :
-    unblocked alts content φ =
-      Exhaustification.exh (content '' alts φ ∩ Set.Iio (content φ)) (content φ) := by
-  rw [unblocked, Exhaustification.exh_eq_sdiff,
-    Set.sep_eq_self_iff_mem_true.2 fun _ hq ↦ hq.2.not_ge]
-
-end Alternatives

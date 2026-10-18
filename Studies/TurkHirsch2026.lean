@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Lattice.Image
-public import Linglib.Semantics.Alternatives.Basic
+public import Linglib.Semantics.Composition.WithAlternatives
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Semantics.Questions.Hamblin
@@ -32,13 +32,13 @@ with some context, `exists_context_inter_eq`, whereas the modalized question (38
 even in the supporting context (39). Instead alternatives are syntactic objects formed under the
 Category Match Constraint (42), [fox-katzir-2011], [katzir-2007]: replacements of the focus share
 its category, which is the terminal clause of the substrate's syntactic composition
-`Alternatives.hamblin`, so Σ_F is that composition interpreted, `sigmaCat`. With Σ and NEG the
-only morphemes of category Pol, the Hamblin set is the polar one, `hamblin_sigma`,
+`Tree.withAlternatives`, so Σ_F is that composition interpreted, `sigmaCat`. With Σ and NEG the
+only morphemes of category Pol, the Hamblin set is the polar one, `withAlternatives_sigma`,
 `hamblinCat_eq`, `hamblinCat_eq_alt_polar`, Dayal's operator returns the positive or the
 negative answer, `isStrongestTrueAnswer_hamblinCat`, and the modal answer (41) is not a member,
 `mem_hamblinCat_iff`. No structural-complexity constraint is involved: the category-match
 alternatives are substitutions at the focus, hence structural alternatives of [katzir-2007]
-without any bound, `Alternatives.hamblin_alternatives_subset`.
+without any bound, `Tree.alternatives_withAlternatives_subset`.
 
 ## Implementation notes
 
@@ -46,7 +46,7 @@ Propositions are sets of worlds. Σ and NEG are the positive and the negative `P
 denote its action on propositions, the identity and complementation. The deontic modal is
 `Modality.necessity` over a modal base and an ordering source. The lexicon is a finite set of
 terminals of `PhraseStructure.Tree`, so that category match is the terminal clause of
-`Alternatives.hamblin`; the denotation of a tree is its terminal's operator and the identity
+`Tree.withAlternatives`; the denotation of a tree is its terminal's operator and the identity
 elsewhere. Two-dimensional values are `WithAlternatives`, whose `<*>` is pointwise functional
 application. *=mI* itself is vacuous and does not enter the composition. The embedding data,
 (14) and (18), in which *=mI* below the complementizer *diye* yields a declarative matrix clause
@@ -71,7 +71,7 @@ as rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch
 
 namespace TurkHirsch2026
 
-open Alternatives Modality Question PhraseStructure
+open Modality Question PhraseStructure
 
 /-! ### The polar morphemes and the deontic modal -/
 
@@ -118,7 +118,7 @@ def sigma : Tree Cat Word := .terminal .pol (.polarity .positive)
 pointwise to the unfocused prejacent, (9), and C_Q returns the focus value of its prejacent as
 the Hamblin set, (10). Type-theoretic alternatives make Σ_F the F-marked identity,
 `WithAlternatives.focused id`; category match makes it the interpretation of the syntactic
-composition `Alternatives.hamblin` over the lexicon. -/
+composition `Tree.withAlternatives` over the lexicon. -/
 
 /-- The Hamblin set of the question formed on Σ_F with two-dimensional value `m` is the focus
 value of the TP `m <*> pure p`, (9) and (10). -/
@@ -181,14 +181,15 @@ theorem exists_context_inter_eq (p : Set W) (H : Set (Set W)) :
 
 /-- Under the Category Match Constraint (42), Σ_F evokes its same-category replacements from the
 lexicon, the terminal clause of the substrate's syntactic composition, so its two-dimensional
-value is the interpretation of `Alternatives.hamblin`. -/
-def sigmaCat : WithAlternatives (Set W → Set W) := den f g <$> hamblin lexicon sigma
+value is the interpretation of `Tree.withAlternatives`. -/
+def sigmaCat : WithAlternatives (Set W → Set W) := den f g <$> Tree.withAlternatives lexicon sigma
 
 /-- The category-match alternatives of Σ_F are Σ and NEG (45). -/
-theorem hamblin_sigma :
-    (hamblin lexicon sigma).alternatives = {sigma, .terminal .pol (.polarity .negative)} := by
+theorem withAlternatives_sigma :
+    (Tree.withAlternatives lexicon sigma).alternatives =
+      {sigma, .terminal .pol (.polarity .negative)} := by
   ext ψ
-  grind [hamblin, sigma, lexicon, Tree.cat_terminal]
+  grind [Tree.withAlternatives, sigma, lexicon, Tree.cat_terminal]
 
 /-- The Hamblin set under category match. -/
 def hamblinCat (p : Set W) : Set (Set W) := hamblinSet (sigmaCat f g) p
@@ -197,7 +198,7 @@ def hamblinCat (p : Set W) : Set (Set W) := hamblinSet (sigmaCat f g) p
 theorem hamblinCat_eq (p : Set W) : hamblinCat f g p = {p, pᶜ} := by
   ext q
   rw [hamblinCat, mem_hamblinSet, sigmaCat]
-  simp only [WithAlternatives.mem_alternatives_map, hamblin_sigma]
+  simp only [WithAlternatives.mem_alternatives_map, withAlternatives_sigma]
   simp [den, Word.den, sigma, eq_comm]
 
 /-- The category-match Hamblin set is the alternative set of the polar interrogative. -/
