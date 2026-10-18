@@ -30,8 +30,7 @@ its base position or is fronted (`Focus.Strategy`).
 
 * `WithAlternatives.alternatives_mark_subset_alternatives_mark_iff`: unless a constituent already
   evokes its whole type, its alternatives grow exactly along the order of the marks.
-* `WithAlternatives.monotone_alternatives_map₂_mark`: the alternatives of a composition grow with
-  the marks of its daughters.
+* `WithAlternatives.mark_eq_bind`: on a well-formed meaning a mark is a continuation.
 * `WithAlternatives.ordinary_eq_of_given_mark_focused_bind`: an F-marked constituent under a
   continuation is Given only if the continuation's ordinary values ignore it.
 
@@ -102,23 +101,10 @@ theorem WellFormed.mark (hd : d.WellFormed) (m : Mark) : (d.mark m).WellFormed :
   cases m
   exacts [hd, WellFormed.focused _]
 
-/-- The alternatives of a constituent grow with its mark. -/
-theorem monotone_alternatives_mark (d : WithAlternatives α) :
-    Monotone fun m : Mark ↦ (d.mark m).alternatives := by
-  rintro (_ | _) (_ | _) h
-  exacts [subset_rfl, Set.subset_univ _, absurd h (by decide), subset_rfl]
-
 /-- An F-marked constituent of a type with two values evokes two alternatives. -/
 theorem nontrivial_alternatives_mark_focused [Nontrivial α] (d : WithAlternatives α) :
     (d.mark .focused).alternatives.Nontrivial :=
   Set.nontrivial_univ
-
-/-- The alternatives of a composition grow with the marks of its daughters. -/
-theorem monotone_alternatives_map₂_mark (f : α → β → γ) (a : WithAlternatives α)
-    (b : WithAlternatives β) :
-    Monotone fun m : Mark × Mark ↦ (map₂ f (a.mark m.1) (b.mark m.2)).alternatives :=
-  fun _ _ h ↦
-    Set.image2_subset (monotone_alternatives_mark a h.1) (monotone_alternatives_mark b h.2)
 
 /-- Narrow focus on the first argument of a predication `f x y` evokes `f x' y` for every `x'`. -/
 @[simp] theorem alternatives_map₂_focused_unfeatured (f : α → β → γ) (x : α) (y : β) :
@@ -145,13 +131,15 @@ universe u
 
 variable {σ τ : Type u}
 
-/-- On a well-formed meaning, F-marking binds into `focused`, every alternative giving way to the
-whole type. -/
-theorem mark_focused_eq_bind {d : WithAlternatives σ} (hd : d.WellFormed) :
-    d.mark .focused = d >>= .focused := by
-  refine WithAlternatives.ext rfl (Set.ext fun x ↦ ?_)
-  rw [alternatives_bind]
-  exact ⟨fun _ ↦ ⟨_, hd, Set.mem_univ x⟩, fun _ ↦ Set.mem_univ x⟩
+/-- On a well-formed meaning a mark is a continuation: each alternative is bound into the
+meaning of a terminal bearing the mark, so F-marking replaces it by the whole type. -/
+theorem mark_eq_bind {d : WithAlternatives σ} (hd : d.WellFormed) (m : Mark) :
+    d.mark m = d >>= fun a ↦ (pure a : WithAlternatives σ).mark m := by
+  cases m
+  · exact (bind_pure d).symm
+  · refine WithAlternatives.ext rfl (Set.ext fun x ↦ ?_)
+    rw [alternatives_bind]
+    exact ⟨fun _ ↦ ⟨_, hd, Set.mem_univ x⟩, fun _ ↦ Set.mem_univ x⟩
 
 /-- An F-marked constituent under a continuation with well-formed values is Given only if the
 ordinary values of the continuation ignore it. -/
