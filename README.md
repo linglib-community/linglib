@@ -43,7 +43,7 @@ Then `import Linglib` — or, more selectively, e.g. `import Linglib.Pragmatics.
 
 ## Links
 
-- **Project site & API docs:** [linglib.io](https://linglib.io/), with the [bibliography](https://linglib.io/bibliography/) and the [projection scoreboard](https://linglib.io/eval/), the verdicts of `Eval` on recorded experiments.
+- **Project site & API docs:** [linglib.io](https://linglib.io/), with the [bibliography](https://linglib.io/bibliography/) and the [evaluations](https://linglib.io/eval/), the verdicts of `Eval` on recorded experiments.
 - **Contributing:** see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License

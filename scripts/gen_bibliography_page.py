@@ -16,21 +16,20 @@ Usage, from the repository root:
 """
 
 import argparse
-import datetime
 import html
 import json
-import os
 import re
 import subprocess
 import sys
 import unicodedata
 from collections import defaultdict
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import site_shell  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 BIB = ROOT / "references.bib"
 TEMPLATE = ROOT / "scripts" / "bibliography_page" / "template.html"
-PAPERMOD_CSS = ROOT / "scripts" / "papermod.css"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "bibliography"
 LEAN_LIBS = ("Linglib", "Studies", "Eval", "Lab")
 REPO = "https://github.com/linglib-community/linglib"
@@ -326,17 +325,6 @@ def build(sha, docs_base):
     return rows, unrendered
 
 
-def git_commit():
-    sha = os.environ.get("GITHUB_SHA")
-    if not sha:
-        try:
-            sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
-                                 text=True, check=True).stdout.strip()
-        except (OSError, subprocess.CalledProcessError):
-            sha = ""
-    return sha
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT, help="directory for index.html")
@@ -346,7 +334,7 @@ def main():
                     help="report entries whose TeX the page cannot render, and write nothing")
     args = ap.parse_args()
 
-    sha = git_commit()
+    sha = site_shell.git_commit()
     rows, unrendered = build(sha, args.docs_base)
     if args.check:
         for key, field, value in unrendered:
@@ -354,13 +342,9 @@ def main():
         print(f"{len(rows)} entries, {len(unrendered)} fields with TeX the page cannot render")
         sys.exit(1 if unrendered else 0)
 
-    page = {"entries": rows, "built": datetime.date.today().isoformat(),
-            "commit": {"sha": sha, "short": sha[:9],
-                       "href": f"{REPO}/tree/{sha}" if sha else ""}}
-    data = json.dumps(page, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-    out = (TEMPLATE.read_text(encoding="utf-8")
-           .replace("/*PAPERMOD_CSS*/", PAPERMOD_CSS.read_text(encoding="utf-8"))
-           .replace("/*BIB_DATA*/{}", data))
+    data = json.dumps({"entries": rows}, ensure_ascii=False, separators=(",", ":"))
+    out = (site_shell.render(TEMPLATE.read_text(encoding="utf-8"), "../", "Bibliography", sha)
+           .replace("/*BIB_DATA*/{}", data.replace("</", "<\\/")))
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "index.html").write_text(out, encoding="utf-8")
     used = sum(1 for r in rows if r["places"])

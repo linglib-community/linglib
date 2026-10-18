@@ -5,11 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Linglib</title>
 <meta name="description" content="A Lean 4 library for formal linguistics across semantics, syntax, pragmatics, morphology, phonology, and processing.">
-<link rel="icon" href="docs/favicon.svg">
-<script>try { var t = localStorage.getItem("pref-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<!--SITE_HEAD-->
 <style>
-/*PAPERMOD_CSS*/
-
 /* Home */
 .home p { margin: 24px 0 0; }
 @media (max-width: 768px) {
@@ -18,37 +15,13 @@
 </style>
 </head>
 <body>
-<header>
-  <nav class="nav" aria-label="Site">
-    <div class="logo">
-      <a href="./">Linglib</a>
-      <button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
-        <svg id="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-        <svg id="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      </button>
-    </div>
-    <ul class="menu">
-      <li><a href="docs/">Docs</a></li>
-      <li><a href="eval/">Scoreboard</a></li>
-      <li><a href="bibliography/">Bibliography</a></li>
-      <li><a href="https://github.com/linglib-community/linglib">GitHub</a></li>
-    </ul>
-  </nav>
-</header>
+<!--SITE_HEADER-->
 
 <main class="main home">
   <p>A Lean 4 library for formal linguistics across semantics, syntax, pragmatics, morphology, phonology, and processing.</p>
 </main>
 
-<footer class="footer">Built __BUILT__ from <a href="__COMMIT_HREF__">__COMMIT_SHORT__</a></footer>
-
-<script>
-document.getElementById("theme-toggle").addEventListener("click", () => {
-  const root = document.documentElement;
-  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-  root.dataset.theme = dark ? "light" : "dark";
-  try { localStorage.setItem("pref-theme", root.dataset.theme); } catch (e) {}
-});
-</script>
+<!--SITE_FOOTER-->
+<!--SITE_SCRIPT-->
 </body>
 </html>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the projection scoreboard, the page of `Eval` verdicts published at linglib.io/eval/.
+"""Generate the evaluations page, the `Eval` verdicts published at linglib.io/eval/.
 
 Every verdict on the page comes from `scripts/eval_page/Export.lean`, which reads the theorems of
 `Eval` and `Lab` about an `Eval.Experiment`, instantiates them at each theory and each cell, and
@@ -18,7 +18,6 @@ The page is self-contained: the data is embedded in the HTML, so the file opens 
 """
 
 import argparse
-import datetime
 import html
 import json
 import os
@@ -26,11 +25,12 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import site_shell  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 EXPORT = ROOT / "scripts" / "eval_page" / "Export.lean"
 TEMPLATE = ROOT / "scripts" / "eval_page" / "template.html"
-SITE_CSS = ROOT / "scripts" / "site.css"
 DEFAULT_JSON = ROOT / ".lake" / "build" / "eval-page" / "verdicts.json"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "eval-page"
 DATA = ROOT / "Linglib" / "Data" / "Experiments"
@@ -186,7 +186,9 @@ def build(export, base):
 
     # Theories: the registered accounts in their order, then theories under development.
     ids = {r["theory"] for r in export["verdicts"]}
-    theories = [{"id": t, "label": theory_label(t), "source": source(t), "decl": decl(t)}
+    # Each with the definitions of `Linglib` and `Studies` its registration reaches.
+    theories = [{"id": t, "label": theory_label(t), "source": source(t), "decl": decl(t),
+                 "definitions": [decl(n) for n in export["definitions"].get(t, [])]}
                 for t in sorted(ids, key=lambda t: (source(t) != "registered", rank(t), t))]
 
     stipulations = {r["variant"]: r for r in export["stipulations"]}
@@ -228,6 +230,19 @@ def build(export, base):
             "cite": bib.get(key), "columns": columns, "variants": bool(variant_list)})
     experiments.sort(key=lambda e: ((e["cite"] or {}).get("year", ""), e["id"]))
 
+    # The domains: an experiment's is its namespace under `Eval` (`Eval.Projection`), and a
+    # theory belongs to the domains of the experiments it is scored on. Each gets its own board.
+    def domain(X):
+        return X.split(".")[1]
+
+    domains = {}
+    for e in experiments:
+        domains.setdefault(domain(e["id"]), {"name": domain(e["id"]), "experiments": [],
+                                             "theories": []})["experiments"].append(e["id"])
+    scored = {(domain(r["experiment"]), r["theory"]) for r in export["verdicts"]}
+    for d in domains.values():
+        d["theories"] = [t["id"] for t in theories if (d["name"], t["id"]) in scored]
+
     # The printed numbers behind the observations, from the papers' data files.
     papers = {}
     for e in experiments:
@@ -240,10 +255,16 @@ def build(export, base):
                            for t in s["tables"]],
                 "experiments": [x["decl"] for x in experiments if x["paper"] == e["paper"]]}
 
+    # Each theorem with the domains of the experiments or parsers it is about.
     theorems = {}
     for r in export["verdicts"] + export["observed"] + export["stipulations"] + export["sameParse"]:
-        theorems.setdefault(r["theorem"], decl(r["theorem"]))
-    return {"theories": theories, "experiments": experiments, "cells": cells, "papers": papers,
+        t = theorems.setdefault(r["theorem"], {**decl(r["theorem"]), "domains": []})
+        d = domain(r.get("experiment") or r["variant"])
+        if d not in t["domains"]:
+            t["domains"].append(d)
+    return {"theories": theories, "experiments": experiments, "domains": sorted(
+                domains.values(), key=lambda d: d["name"]),
+            "cells": cells, "papers": papers,
             "theorems": sorted(theorems.values(), key=lambda t: t["name"]),
             "project": bib.get(PROJECT)}
 
@@ -268,17 +289,6 @@ def run_export(json_path):
         sys.exit("the Lean export failed")
 
 
-def git_commit():
-    sha = os.environ.get("GITHUB_SHA")
-    if not sha:
-        try:
-            sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
-                                 text=True, check=True).stdout.strip()
-        except (OSError, subprocess.CalledProcessError):
-            sha = ""
-    return sha
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--export", action="store_true", help="run the Lean export first")
@@ -292,15 +302,9 @@ def main():
         run_export(args.json)
 
     page = build(json.loads(args.json.read_text(encoding="utf-8")), args.docs_base)
-    sha = git_commit()
-    page["commit"] = {"sha": sha, "short": sha[:9],
-                      "href": f"https://github.com/linglib-community/linglib/tree/{sha}" if sha
-                      else ""}
-    page["built"] = datetime.date.today().isoformat()
-
     data = json.dumps(page, ensure_ascii=False).replace("</", "<\\/")
-    out = (TEMPLATE.read_text(encoding="utf-8")
-           .replace("/*SITE_CSS*/", SITE_CSS.read_text(encoding="utf-8"))
+    out = (site_shell.render(TEMPLATE.read_text(encoding="utf-8"), "../", "Evaluations",
+                             site_shell.git_commit())
            .replace("/*EVAL_DATA*/{}", data))
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "index.html").write_text(out, encoding="utf-8")

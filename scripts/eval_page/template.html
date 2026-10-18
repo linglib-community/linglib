@@ -3,169 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Projection Scoreboard · linglib</title>
-<meta name="description" content="Theories of presupposition projection formalized in linglib, scored against recorded experiments. Every verdict is a theorem.">
-<link rel="icon" href="../docs/favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:opsz,wght@6..72,400;6..72,560&display=swap">
+<title>Evaluations | Linglib</title>
+<meta name="description" content="Theories formalized in Linglib, scored against recorded experiments. Every verdict is a theorem.">
+<!--SITE_HEAD-->
 <style>
-/*SITE_CSS*/
+/* Evaluations */
+:root {
+  --right: #15803d; --right-bg: #dcfce7; --wrong: #b91c1c; --wrong-bg: #fee2e2;
+  --silent: #8a8a8a; --silent-bg: #ededed;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --right: #4ade80; --right-bg: #1b3a27; --wrong: #f87171; --wrong-bg: #45201f;
+    --silent: #8c8d8e; --silent-bg: #2e2e33;
+  }
+}
+:root[data-theme="dark"] {
+  --right: #4ade80; --right-bg: #1b3a27; --wrong: #f87171; --wrong-bg: #45201f;
+  --silent: #8c8d8e; --silent-bg: #2e2e33;
+}
+.main :is(p, li, dd, .desc) a, .board thead a {
+  text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px;
+}
+.main :is(p, li, dd, .desc) a:hover, .board thead a:hover { text-decoration-color: currentColor; }
+.meta { margin: 0 0 28px; font-size: 14px; color: var(--secondary); }
+.meta a { color: inherit; }
+.small { font-size: 14px; color: var(--secondary); }
 
 /* Verdict marks */
 .v {
-  display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 7px;
-  font: 600 15px/1 var(--sans); text-decoration: none;
+  display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 4px;
+  font-size: 14px; font-weight: 600; line-height: 1;
 }
 .v-correct { background: var(--right-bg); color: var(--right); }
 .v-wrong { background: var(--wrong-bg); color: var(--wrong); }
 .v-silent {
-  color: var(--silent);
+  color: var(--silent); box-shadow: inset 0 0 0 1px var(--border);
   background: repeating-linear-gradient(135deg, var(--silent-bg) 0 4px, transparent 4px 8px);
-  box-shadow: inset 0 0 0 1px var(--rule);
 }
-.legend .v { width: 22px; height: 22px; font-size: 12px; border-radius: 5px; }
 a.v:hover { filter: brightness(0.94); }
 
-/* Scoreboard */
-.board-scroll {
-  overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
-}
-table.board { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; }
+.domains { display: flex; flex-wrap: wrap; gap: 4px 24px; margin: 0 0 20px; }
+.domains a { font-size: 16px; color: var(--secondary); padding-block: 2px; }
+.domains a:hover { color: var(--primary); }
+.domains a[aria-current] { color: var(--primary); font-weight: 500; border-bottom: 2px solid; }
+
+/* Board */
+.board-scroll { overflow-x: auto; border-block: 1px solid var(--border); }
+table.board { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 14px; line-height: 1.4; }
 .board th, .board td { padding: 6px 8px; text-align: center; vertical-align: middle; }
-.board thead th { font-weight: 500; color: var(--muted); white-space: nowrap; }
-.board thead tr.datasets th { font: 560 16px/1.2 var(--serif); color: var(--ink); padding-top: 16px; }
-.board thead tr.datasets th small { display: block; font: 400 12px/1.4 var(--sans); color: var(--muted); margin-top: 2px; white-space: normal; }
-.board thead tr.groups th { border-bottom: 1px solid var(--rule); }
-.board thead tr.observed th, .board thead tr.observed td { border-bottom: 1px solid var(--rule); font-size: 12px; color: var(--muted); padding-bottom: 12px; }
-.board .obs { display: inline-block; padding: 2px 7px; border-radius: 999px; background: var(--bg); color: var(--ink); white-space: nowrap; }
-.board .obs.none { color: var(--muted); background: transparent; font-style: italic; }
-.board .split { border-left: 1px solid var(--rule); }
-.board .stip { display: block; font: 400 11px/1.3 var(--sans); color: var(--muted); }
-.board .stip b { color: var(--ink); font-weight: 600; }
+.board thead th { font-weight: 400; color: var(--secondary); white-space: nowrap; }
+.board thead a { color: var(--primary); }
+.board thead tr.datasets th { font-weight: 600; color: var(--primary); padding-top: 14px; }
+.board thead tr.datasets th small { display: block; font-size: 13px; font-weight: 400; color: var(--secondary); }
+.board thead tr.groups th { border-bottom: 1px solid var(--border); }
+.board tr.observed > * { font-size: 13px; color: var(--secondary); padding-bottom: 10px; border-bottom: 1px solid var(--tertiary); }
+.board .obs { color: var(--primary); white-space: nowrap; }
+.board .obs.none { color: var(--secondary); font-style: italic; }
+.board .split { border-left: 1px solid var(--border); }
+.board .stip { display: block; font-size: 12px; }
 .board th[scope="row"], .board .corner {
-  position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left;
-  min-width: 15rem; max-width: 22rem; border-right: 1px solid var(--rule);
+  position: sticky; left: 0; z-index: 1; background: var(--theme); text-align: left;
+  min-width: 14rem; max-width: 20rem; padding-left: 0; border-right: 1px solid var(--border);
 }
-.board th[scope="row"] { font-weight: 400; padding: 9px 14px; }
-.board th[scope="row"] .name { font-weight: 600; color: var(--ink); text-decoration: none; }
+.board .corner { color: var(--secondary); font-weight: 400; }
+.board thead .corner { color: var(--primary); font-weight: 600; vertical-align: bottom; }
+.board th[scope="row"] { font-weight: 400; padding-block: 8px; white-space: normal; }
+.board th[scope="row"] .name { font-weight: 600; color: var(--primary); }
 .board th[scope="row"] .name:hover { text-decoration: underline; }
-.board th[scope="row"] .desc { display: block; color: var(--muted); font-size: 12px; line-height: 1.4; margin-top: 2px; }
-.board tbody tr:hover th[scope="row"], .board tbody tr:hover td { background: var(--bg); }
-.board tbody tr.group th {
-  text-align: left; font: 500 11px/1 var(--sans); letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--muted); padding: 18px 14px 8px; background: var(--surface); border-top: 1px solid var(--rule);
-}
-.board tbody tr.group:first-child th { border-top: 0; }
-.pill {
-  display: inline-block; font: 500 10px/1 var(--sans); letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 3px 6px; border-radius: 4px; background: var(--lab-bg); color: var(--lab); margin-left: 6px; vertical-align: 2px;
-}
+.board th[scope="row"] .desc { display: block; margin-top: 2px; font-size: 13px; line-height: 1.4; color: var(--secondary); }
+.board th[scope="row"] .desc a { color: inherit; }
+.board tbody tr:hover > * { background: var(--code-bg); }
+.board tbody tr.group > th { text-align: left; font-weight: 600; color: var(--secondary); padding: 18px 0 4px; border-top: 1px solid var(--border); background: var(--theme); }
+.board tbody tr.group:first-child > th { border-top: 0; }
+.board tbody tr.group span { position: sticky; left: 0; }
 
 /* Observations */
-.cards { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); }
-.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 12px; min-width: 0; align-content: start; }
-.card .cite { font: 400 17px/1.35 var(--serif); }
-.card .cite em { font-style: italic; }
-.card p { margin: 0; }
-.card .small { font-size: 13px; color: var(--muted); }
-.card svg { width: 100%; height: auto; display: block; }
-.card svg text { fill: var(--muted); font: 11px var(--sans); }
-.card svg .label { fill: var(--ink); font-size: 12px; }
-.card svg .grid { stroke: var(--rule); stroke-width: 1; }
-.card svg .link { stroke: var(--muted); stroke-width: 1.5; }
-.card svg .cond { fill: var(--accent); }
-.card svg .uncond { fill: var(--surface); stroke: var(--accent); stroke-width: 1.5; }
-.card svg .bar { fill: var(--accent); }
-.card svg .value { fill: var(--ink); font-weight: 600; }
-.key { display: flex; gap: 16px; font-size: 12px; color: var(--muted); align-items: center; flex-wrap: wrap; }
-.key i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
-.key i.cond { background: var(--accent); }
-.key i.uncond { border: 1.5px solid var(--accent); }
-.parsers { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.parsers li { display: grid; gap: 2px; padding-left: 12px; border-left: 2px solid var(--rule); }
-.parsers .count { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.paper { margin-bottom: 40px; }
+.paper h3 { font-weight: 600; line-height: 1.4; }
+.paper h3 em { font-weight: 400; }
+.paper h4 { font-size: 16px; margin: 20px 0 4px; color: var(--primary); }
+.paper p { margin: 0 0 12px; }
+.paper svg { display: block; width: 100%; max-width: 560px; height: auto; margin: 16px 0 6px; }
+.paper svg text { fill: var(--secondary); font-size: 11px; }
+.paper svg .label { fill: var(--primary); font-size: 12px; }
+.paper svg .grid { stroke: var(--border); stroke-width: 1; }
+.paper svg .link { stroke: var(--tertiary); stroke-width: 1.5; }
+.paper svg .cond { fill: var(--primary); }
+.paper svg .uncond { fill: var(--theme); stroke: var(--primary); stroke-width: 1.5; }
+.paper svg .bar { fill: var(--secondary); }
+.paper svg .value { fill: var(--primary); font-weight: 600; }
+.key { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; margin-bottom: 12px; font-size: 14px; color: var(--secondary); }
+.key i { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 50%; }
+.key i.cond { background: var(--primary); }
+.key i.uncond { border: 1.5px solid var(--primary); }
+.parsers { list-style: none; margin: 0 0 12px; padding: 0; }
+.parsers li { margin-top: 10px; padding-left: 12px; border-left: 2px solid var(--border); }
+.parsers li > span { display: block; }
+.parsers .count { font-size: 14px; color: var(--secondary); }
 
-/* Pipeline */
-ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); counter-reset: step; }
-ol.steps li { counter-increment: step; display: grid; gap: 6px; align-content: start; padding: 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; min-width: 0; }
-ol.steps li::before { content: counter(step); font: 560 22px/1 var(--serif); color: var(--accent); }
-ol.steps p { margin: 0; font-size: 13px; color: var(--muted); }
-ol.steps code { color: var(--ink); }
-
-/* Theorems */
-dl.theorems { margin: 0; display: grid; gap: 14px; }
-dl.theorems div { display: grid; gap: 3px; min-width: 0; }
-dl.theorems dt a { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
-dl.theorems dd { margin: 0; color: var(--ink); max-width: 72ch; }
+/* Pipeline, theorems */
+ol.steps { padding-inline-start: 20px; }
+ol.steps li { margin-top: 6px; }
+dl.theorems { margin: 0; }
+dl.theorems dt { margin-top: 18px; overflow-wrap: anywhere; }
+dl.theorems dt a { color: var(--primary); }
+dl.theorems dd { margin: 4px 0 0; }
 
 @media (max-width: 640px) {
   .board th[scope="row"], .board .corner { min-width: 8.5rem; max-width: 10rem; }
   .board th[scope="row"] .desc { display: none; }
+  .key, .small, .meta { font-size: 13px; }
 }
 </style>
 </head>
-<body>
-<div class="wrap" id="app">
-  <header>
-    <nav class="site" aria-label="linglib.io"><a class="home" href="../">linglib</a><a href="../docs/">Docs</a><a href="../eval/" aria-current="page">Scoreboard</a><a href="../bibliography/">Bibliography</a><a href="https://github.com/linglib-community/linglib">GitHub</a></nav>
-    <h1>Projection scoreboard</h1>
-    <p class="lede prose">The theories of presupposition projection that linglib formalizes, scored against
-      recorded experiments. Every mark is the right-hand side of a theorem, reduced by Lean when this
-      page was built; follow a mark to its theorem.</p>
-    <p class="project prose" id="project"></p>
-    <div class="legend" aria-label="Legend">
-      <span><b class="v v-correct">✓</b>right: the prediction matches the observation</span>
-      <span><b class="v v-wrong">✗</b>wrong: it does not</span>
-      <span><b class="v v-silent">–</b>silent: the theory predicts nothing here, or nothing was observed</span>
-    </div>
-    <div class="meta" id="meta"></div>
-  </header>
+<body id="top">
+<!--SITE_HEADER-->
 
-  <section aria-labelledby="board-h">
-    <div class="section-head">
-      <h2 id="board-h">Verdicts</h2>
-      <p class="prose">Rows are theories, columns the cells of each experiment. Where a theory is scored with a
-        way of parsing the sentences, each column is one such way, with the number of sentences whose parse it
-        stipulates.</p>
-    </div>
-    <div class="board-scroll"><table class="board" id="board"></table></div>
-  </section>
+<main class="main">
+  <h1>Evaluations</h1>
+  <p class="meta" id="project"></p>
+  <nav class="domains" id="domains" aria-label="Domains"></nav>
 
-  <section aria-labelledby="obs-h">
-    <div class="section-head">
-      <h2 id="obs-h">The observations</h2>
-      <p class="prose">As printed in the papers and recorded in <code>Linglib/Data/Experiments</code>.</p>
-    </div>
-    <div class="cards" id="cards"></div>
-  </section>
+  <div class="board-scroll" id="board-box"><table class="board" id="board"></table></div>
 
-  <section aria-labelledby="how-h">
-    <div class="section-head">
-      <h2 id="how-h">How a mark is computed</h2>
-      <p class="prose">Each step is a named declaration, so a disagreement with a verdict can be traced to the step
-        it comes from.</p>
-    </div>
-    <ol class="steps">
-      <li><h3>Fact</h3><p>A judgment as printed, with its table and page: <code>Data.<wbr>Experiments</code>.</p></li>
-      <li><h3>Shared parse</h3><p>The sentence in the fragment every theory reads: <code>Presupposition.<wbr>Formula</code>, <code>Presupposition.<wbr>QuantifiedClause</code>.</p></li>
-      <li><h3>Theory's parse</h3><p>By a rule on the shared parse, or stipulated sentence by sentence, at a counted cost: <code>Eval.<wbr>Parser</code>.</p></li>
-      <li><h3>Acceptance</h3><p>Which contexts accept the parse; a theory without a condition for a sentence is silent on it: <code>Eval.<wbr>Projection.<wbr>Theory</code>.</p></li>
-      <li><h3>Linking hypothesis</h3><p>A stated rule from acceptance to the judgment subjects give: <code>Theory.<wbr>Predicts</code>, <code>Chemla2009a.<wbr>PredictsUniversal</code>.</p></li>
-      <li><h3>Verdict</h3><p>The prediction against the observation: <code>Eval.<wbr>Verdict</code>.</p></li>
-    </ol>
-  </section>
+  <h2 id="obs-h">Observations</h2>
+  <div id="papers"></div>
 
-  <section aria-labelledby="thm-h">
-    <div class="section-head">
-      <h2 id="thm-h">The theorems</h2>
-      <p class="prose">The statements behind the marks, as their docstrings put them.</p>
-    </div>
-    <dl class="theorems" id="theorems"></dl>
-  </section>
+  <h2 id="how-h">How a mark is computed</h2>
+  <ol class="steps">
+    <li><b>Fact.</b> A judgment as printed, with its table and page: <code>Data.<wbr>Experiments</code>.</li>
+    <li><b>Parse.</b> How the theory reads the experiment's sentences, by a rule on the representation the domain's theories share, or stipulated sentence by sentence at a counted cost: <code>Eval.<wbr>Parser</code>.</li>
+    <li><b>Prediction.</b> The outcome the theory predicts in a cell by the experiment's linking hypothesis, or none where it says nothing: <code>Eval.<wbr>Experiment.<wbr>predicted</code>.</li>
+    <li><b>Verdict.</b> The prediction against the observation: <code>Eval.<wbr>Verdict</code>.</li>
+  </ol>
 
-  <footer id="footer"></footer>
-</div>
+  <h2 id="thm-h">Theorems</h2>
+  <dl class="theorems" id="theorems"></dl>
+</main>
+
+<!--SITE_FOOTER-->
 
 <script type="application/json" id="eval-data">/*EVAL_DATA*/{}</script>
 <script>
@@ -182,14 +159,9 @@ dl.theorems dd { margin: 0; color: var(--ink); max-width: 72ch; }
   // The project the page belongs to.
   const proj = data.project;
   if (proj) {
-    const title = proj.url ? `<a href="${esc(proj.url)}">${esc(proj.title)}</a>` : `<i>${esc(proj.title)}</i>`;
-    document.getElementById("project").innerHTML = `Part of the Co-Linguistics project: ${esc(proj.authors)}, ${title} (${esc(proj.year)}).`;
+    const name = proj.url ? `<a href="${esc(proj.url)}" title="${esc(proj.title)}">Co-Linguistics project</a>` : "Co-Linguistics project";
+    document.getElementById("project").innerHTML = `Part of the ${name} (${esc(proj.authors)} ${esc(proj.year)}).`;
   }
-
-  // Header meta.
-  document.getElementById("meta").innerHTML =
-    `<span>${data.theories.length} theories · ${exps.length} experiments · ${Object.keys(data.cells).length} verdicts</span>` +
-    (data.commit.sha ? `<span>built from <a href="${esc(data.commit.href)}"><code>${esc(data.commit.short)}</code></a> on ${esc(data.built)}</span>` : "");
 
   // The printed rows of a paper's table for an experiment and a cell, for tooltips.
   function printed(e, col) {
@@ -222,74 +194,89 @@ dl.theorems dd { margin: 0; color: var(--ink); max-width: 72ch; }
     return esc(col.observed);
   }
 
-  // Scoreboard.
-  let h = "<thead><tr class=\"datasets\"><th class=\"corner\" rowspan=\"3\" scope=\"col\">Theory</th>";
-  for (const e of exps) h += `<th class="split" colspan="${e.columns.length}">${cite(e.cite)}<small>${esc(e.label)}</small></th>`;
-  h += "</tr><tr class=\"groups\">";
-  for (const e of exps) {
-    if (e.variants) { h += `<th class="split" colspan="${e.columns.length}">how the theory parses the sentences</th>`; continue; }
-    const groups = [];
-    for (const c of e.columns) {
-      const g = c.cell.length > 1 ? c.cell[0] : "";
-      if (groups.length && groups[groups.length - 1].g === g) groups[groups.length - 1].n++;
-      else groups.push({ g, n: 1 });
-    }
-    groups.forEach((g, i) => { h += `<th colspan="${g.n}" class="${i === 0 ? "split" : ""}"><i>${esc(g.g)}</i></th>`; });
-  }
-  h += "</tr><tr>";
-  for (const e of exps) {
-    e.columns.forEach((c, i) => {
-      const cls = i === 0 ? "split" : "";
-      if (c.variant) {
-        const v = c.variant, n = v.stipulations ? v.stipulations.length : null;
-        h += `<th scope="col" class="${cls}"><a href="${esc(v.decl.href)}" title="${esc(strip(v.decl.doc))}">${esc(v.label)}</a>` +
-          (n === null ? "" : `<span class="stip"><b>${n}</b> stipulated</span>`) + `</th>`;
-      } else {
-        h += `<th scope="col" class="${cls}">${esc(c.cell.length ? c.cell[c.cell.length - 1] : "")}</th>`;
+  // A board: the theories scored in a domain, against its experiments.
+  function board(exps, theories) {
+    let h = "<thead><tr class=\"datasets\"><th class=\"corner\" rowspan=\"3\" scope=\"col\">Theory</th>";
+    for (const e of exps) h += `<th class="split" colspan="${e.columns.length}">${cite(e.cite)}<small>${esc(e.label)}</small></th>`;
+    h += "</tr><tr class=\"groups\">";
+    for (const e of exps) {
+      if (e.variants) { h += `<th class="split" colspan="${e.columns.length}">how the theory parses the sentences</th>`; continue; }
+      const groups = [];
+      for (const c of e.columns) {
+        const g = c.cell.length > 1 ? c.cell[0] : "";
+        if (groups.length && groups[groups.length - 1].g === g) groups[groups.length - 1].n++;
+        else groups.push({ g, n: 1 });
       }
-    });
-  }
-  h += `</tr><tr class="observed"><th class="corner" scope="row" style="font-weight:500;color:var(--muted)">Observed</th>`;
-  for (const e of exps) {
-    let i = 0;
-    while (i < e.columns.length) {
-      const c = e.columns[i];
-      let n = 1;
-      while (i + n < e.columns.length && e.columns[i + n].cell.join() === c.cell.join()) n++;
-      const text = observedText(e, c);
-      const tip = printed(e, c);
-      h += `<td class="${i === 0 ? "split" : ""}" colspan="${n}">` +
-        (text === null ? `<span class="obs none">not tested</span>` : `<span class="obs"${tip ? ` title="${esc(tip)}"` : ""}>${text}</span>`) + `</td>`;
-      i += n;
+      groups.forEach((g, i) => { h += `<th colspan="${g.n}" class="${i === 0 ? "split" : ""}"><i>${esc(g.g)}</i></th>`; });
     }
-  }
-  h += "</tr></thead><tbody>";
-  const span = 1 + exps.reduce((n, e) => n + e.columns.length, 0);
-  const groups = [
-    ["Registered accounts", data.theories.filter((t) => t.source === "registered")],
-    ["Lab: theories under development", data.theories.filter((t) => t.source === "lab")],
-  ];
-  for (const [label, rows] of groups) {
-    if (!rows.length) continue;
-    h += `<tr class="group"><th colspan="${span}" scope="colgroup">${esc(label)}</th></tr>`;
-    for (const t of rows) {
-      h += `<tr><th scope="row"><a class="name" href="${esc(t.decl.href)}">${esc(t.label)}</a>` +
-        (t.source === "lab" ? `<span class="pill">Lab</span>` : "") + `<span class="desc">${t.decl.doc}</span></th>`;
-      for (const e of exps) {
-        e.columns.forEach((c, i) => {
-          const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
-          const cls = i === 0 ? "split" : "";
-          if (!cell) { h += `<td class="${cls}"></td>`; return; }
-          const where = [cite(e.cite).replace(/<[^>]*>/g, ""), e.label, ...c.cell, c.variant ? c.variant.label : ""].filter(Boolean).join(", ");
-          const what = `${WORD[cell.verdict] || cell.verdict}: ${t.label} on ${where}. By ${cell.theorem.name}`;
-          h += `<td class="${cls}"><a class="v v-${esc(cell.verdict)}" href="${esc(cell.theorem.href)}" title="${esc(what)}" aria-label="${esc(what)}">${MARK[cell.verdict] || "?"}</a></td>`;
-        });
+    h += "</tr><tr>";
+    for (const e of exps) {
+      e.columns.forEach((c, i) => {
+        const cls = i === 0 ? "split" : "";
+        if (c.variant) {
+          const v = c.variant, n = v.stipulations ? v.stipulations.length : null;
+          h += `<th scope="col" class="${cls}"><a href="${esc(v.decl.href)}" title="${esc(strip(v.decl.doc))}">${esc(v.label)}</a>` +
+            (n === null ? "" : `<span class="stip"><b>${n}</b> stipulated</span>`) + `</th>`;
+        } else {
+          h += `<th scope="col" class="${cls}">${esc(c.cell.length ? c.cell[c.cell.length - 1] : "")}</th>`;
+        }
+      });
+    }
+    h += `</tr><tr class="observed"><th class="corner" scope="row">Observed</th>`;
+    for (const e of exps) {
+      let i = 0;
+      while (i < e.columns.length) {
+        const c = e.columns[i];
+        let n = 1;
+        while (i + n < e.columns.length && e.columns[i + n].cell.join() === c.cell.join()) n++;
+        const text = observedText(e, c);
+        const tip = printed(e, c);
+        h += `<td class="${i === 0 ? "split" : ""}" colspan="${n}">` +
+          (text === null ? `<span class="obs none">not tested</span>` : `<span class="obs"${tip ? ` title="${esc(tip)}"` : ""}>${text}</span>`) + `</td>`;
+        i += n;
       }
-      h += "</tr>";
     }
+    h += "</tr></thead><tbody>";
+    const span = 1 + exps.reduce((n, e) => n + e.columns.length, 0);
+    const groups = [
+      ["Registered accounts", theories.filter((t) => t.source === "registered")],
+      ["Lab: theories under development", theories.filter((t) => t.source === "lab")],
+    ];
+    for (const [label, rows] of groups) {
+      if (!rows.length) continue;
+      h += `<tr class="group"><th colspan="${span}" scope="colgroup"><span>${esc(label)}</span></th></tr>`;
+      for (const t of rows) {
+        // The name leads to the theory's definition, past its registration, unless it is under development.
+        const defs = t.definitions || [];
+        const home = defs.length && t.source === "registered" ? defs[0] : t.decl;
+        const defined = defs.length ? `Defined by ${defs.map((d) => d.name).join(", ")}` : home.name;
+        h += `<tr><th scope="row"><a class="name" href="${esc(home.href)}" title="${esc(defined)}">${esc(t.label)}</a>` +
+          `<span class="desc">${t.decl.doc}</span></th>`;
+        for (const e of exps) {
+          e.columns.forEach((c, i) => {
+            const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
+            const cls = i === 0 ? "split" : "";
+            if (!cell) { h += `<td class="${cls}"></td>`; return; }
+            const where = [cite(e.cite).replace(/<[^>]*>/g, ""), e.label, ...c.cell, c.variant ? c.variant.label : ""].filter(Boolean).join(", ");
+            const what = `${WORD[cell.verdict] || cell.verdict}: ${t.label} on ${where}. By ${cell.theorem.name}`;
+            h += `<td class="${cls}"><a class="v v-${esc(cell.verdict)}" href="${esc(cell.theorem.href)}" title="${esc(what)}" aria-label="${esc(what)}">${MARK[cell.verdict] || "?"}</a></td>`;
+          });
+        }
+        h += "</tr>";
+      }
+    }
+    h += "</tbody>";
+    return h;
   }
-  h += "</tbody>";
-  document.getElementById("board").innerHTML = h;
+  const byId = (xs) => new Map(xs.map((x) => [x.id, x]));
+  const expById = byId(exps), theoryById = byId(data.theories);
+  // A board wider than the column takes the header's width.
+  const box = document.getElementById("board-box");
+  const fit = () => {
+    box.classList.remove("wide");
+    box.classList.toggle("wide", box.firstChild.scrollWidth > box.clientWidth);
+  };
+  addEventListener("resize", fit, { passive: true });
 
   // Observations, drawn to scale from the papers' printed tables.
   function dotPlot(paper) {
@@ -348,7 +335,7 @@ dl.theorems dd { margin: 0; color: var(--ink); max-width: 72ch; }
     const seen = new Map();
     for (const e of exps) if (e.paper === paper) for (const c of e.columns) if (c.variant && !seen.has(c.variant.id)) seen.set(c.variant.id, c.variant);
     if (!seen.size) return "";
-    let h = `<h3>How a theory may parse the sentences</h3><ul class="parsers">`;
+    let h = `<h4>How a theory may parse the sentences</h4><ul class="parsers">`;
     for (const v of seen.values()) {
       const n = v.stipulations ? v.stipulations.length : null;
       h += `<li><span><a href="${esc(v.decl.href)}">${esc(v.label)}</a> ` +
@@ -359,26 +346,41 @@ dl.theorems dd { margin: 0; color: var(--ink); max-width: 72ch; }
     return h + "</ul>";
   }
   const verified = { "page-image": "checked against the page images", "text-layer": "checked against the text", "raw-data": "from the released data" };
-  let cards = "";
-  for (const [paper, p] of Object.entries(data.papers)) {
-    const used = p.tables.filter((t) => exps.some((e) => e.paper === paper && t.name.startsWith(e.decl.short)));
-    cards += `<article class="card"><p class="cite">${cite(p.cite)}${p.cite ? `, <em>${esc(p.cite.title)}</em>` : ""}` +
-      (p.cite && p.cite.doi ? `. <a href="https://doi.org/${esc(p.cite.doi)}">doi</a>` : "") + `</p>` +
-      p.experiments.map((d) => `<p>${d.doc}</p>`).join("") +
-      dotPlot(p) + bars(p) + variantsOf(paper) +
-      `<p class="small">${used.map((t) => `${esc(t.locator)}, ${esc(verified[t.verified] || t.verified)}`).filter((x, i, a) => a.indexOf(x) === i).join("; ")}.</p></article>`;
+  // The papers whose experiments a domain scores.
+  function papersOf(d) {
+    let papers = "";
+    for (const [paper, p] of Object.entries(data.papers)) {
+      if (!exps.some((e) => e.paper === paper && d.experiments.includes(e.id))) continue;
+      const used = p.tables.filter((t) => exps.some((e) => e.paper === paper && t.name.startsWith(e.decl.short)));
+      const title = p.cite && p.cite.doi ? `<a href="https://doi.org/${esc(p.cite.doi)}">${esc(p.cite.title)}</a>` : p.cite ? esc(p.cite.title) : "";
+      papers += `<section class="paper"><h3>${cite(p.cite)}${title ? `, <em>${title}</em>` : ""}</h3>` +
+        p.experiments.map((d) => `<p>${d.doc}</p>`).join("") +
+        dotPlot(p) + bars(p) + variantsOf(paper) +
+        `<p class="small">${used.map((t) => `${esc(t.locator)}, ${esc(verified[t.verified] || t.verified)}`).filter((x, i, a) => a.indexOf(x) === i).join("; ")}.</p></section>`;
+    }
+    return papers;
   }
-  document.getElementById("cards").innerHTML = cards;
 
-  // Theorems.
-  document.getElementById("theorems").innerHTML = data.theorems.map((t) =>
-    `<div><dt><a href="${esc(t.href)}">${esc(t.name)}</a></dt><dd>${t.doc || "<i>No docstring.</i>"}</dd></div>`).join("");
-
-  // Footer.
-  document.getElementById("footer").innerHTML =
-    `<p>Generated by <code>scripts/gen_eval_page.py</code> from <code>scripts/eval_page/Export.lean</code>, which reads every theorem of <code>Eval</code> and <code>Lab</code> about an <code>Eval.Experiment</code> and reduces it with Lean.</p>` +
-    `<p>Regenerate: <code>lake build &amp;&amp; python3 scripts/gen_eval_page.py --export</code>.</p>`;
+  // One domain at a time, named in the address (`#Projection`).
+  const named = () => data.domains.find((x) => x.name === decodeURIComponent(location.hash.slice(1)));
+  let current = named() || data.domains[0];
+  function show() {
+    const d = current;
+    document.getElementById("domains").innerHTML = data.domains.length < 2 ? "" : data.domains.map((x) =>
+      `<a href="#${esc(x.name)}"${x === d ? ' aria-current="true"' : ""}>${esc(x.name)}</a>`).join("");
+    document.getElementById("board").innerHTML =
+      board(d.experiments.map((x) => expById.get(x)), d.theories.map((t) => theoryById.get(t)));
+    fit();
+    const papers = papersOf(d);
+    document.getElementById("papers").innerHTML = papers;
+    document.getElementById("obs-h").hidden = !papers;
+    document.getElementById("theorems").innerHTML = data.theorems.filter((t) => t.domains.includes(d.name)).map((t) =>
+      `<div><dt><a href="${esc(t.href)}"><code>${esc(t.name)}</code></a></dt><dd>${t.doc || "<i>No docstring.</i>"}</dd></div>`).join("");
+  }
+  addEventListener("hashchange", () => { const d = named(); if (d) { current = d; show(); } });
+  show();
 })();
 </script>
+<!--SITE_SCRIPT-->
 </body>
 </html>

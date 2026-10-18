@@ -100,7 +100,7 @@ jobs:
       - name: Build
         run: lake build
 
-      - name: Build the projection scoreboard from the verdict theorems
+      - name: Build the evaluations page from the verdict theorems
         run: python3 scripts/gen_eval_page.py --export
 
       - name: Check for sorries (informational)

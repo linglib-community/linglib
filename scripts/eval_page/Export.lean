@@ -13,6 +13,9 @@ to a constructor by Lean. So the page shows what the theorems say and nothing ty
 new experiment reaches the page through its theorems alone. A theorem that rests on `sorry` stops
 the export.
 
+It also writes, for each theory scored, the definitions of `Linglib` and `Studies` its registration
+reaches once the declarations of `Eval` and `Lab` are unfolded (`definitions`).
+
 The output path is `$EVAL_PAGE_JSON`, by default `.lake/build/eval-page/verdicts.json`.
 -/
 
@@ -22,6 +25,79 @@ namespace EvalPage
 
 /-- The libraries whose theorems are read. -/
 def libraries : List String := ["Eval", "Lab"]
+
+/-- The library a declaration belongs to, which is the root of its module. -/
+def libraryOf (n : Name) : CoreM Name := do
+  let env ← getEnv
+  return match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!.getRoot
+    | none => .anonymous
+
+/-- The definitions of `Linglib` and `Studies` a term reaches once the declarations of `Eval` and
+`Lab` in it are unfolded, in the order they occur; `none` if a case split is left stuck, since it
+would reach every case. Instances, theorems, types and constructors are left out. -/
+def reaches (e : Expr) : MetaM (Option (List Name)) := do
+  let scoring (_ : Meta.Config) (info : ConstantInfo) : CoreM Bool :=
+    return libraries.contains (← libraryOf info.name).toString
+  let r ← withCanUnfoldPred scoring <| reduce e (skipTypes := false)
+  let env ← getEnv
+  let cs := r.getUsedConstants
+  if cs.any fun c ↦ isMatcherCore env c || isCasesOnRecursor env c then return none
+  let mut out := #[]
+  for c in cs do
+    unless [`Linglib, `Studies].contains (← libraryOf c) do continue
+    let some (.defnInfo _) := env.find? c | continue
+    if c.isInternal || (← isInstance c) || out.contains c then continue
+    out := out.push c
+  return some out.toList
+
+/-- The definitions of `Eval` and `Lab` with an explicit argument in the enumeration `A`, each as
+a function of that argument. -/
+def takers (A : Name) : MetaM (List Expr) := do
+  let env ← getEnv
+  let mut out := #[]
+  for (n, info) in env.constants.map₁.toList do
+    let .defnInfo d := info | continue
+    if n.isInternal || !libraries.contains (← libraryOf n).toString || (← isInstance n) then
+      continue
+    let f? ← forallTelescope d.type fun xs _ ↦ do
+      for h : i in [:xs.size] do
+        let x := xs[i]
+        unless (← x.fvarId!.getBinderInfo).isExplicit do continue
+        unless (← whnfR (← inferType x)).isConstOf A do continue
+        let rest := xs.eraseIdx! i
+        let body := mkAppN (mkConst n (d.levelParams.map mkLevelParam)) xs
+        return some (n, ← mkLambdaFVars #[x] (← mkLambdaFVars rest body))
+      return none
+    if let some f := f? then out := out.push f
+  return (out.qsort (·.1.toString < ·.1.toString)).toList.map (·.2)
+
+/-- The definitions each theory rests on, which are those its term reaches. A theory that is a bare
+constructor of an enumeration reaches nothing itself, so for it they are those each definition
+taking the enumeration reaches at that constructor, less those every constructor reaches. -/
+def definitions (theories : List (Name × Expr)) : MetaM (List (Name × List Name)) := do
+  let env ← getEnv
+  let mut cache : Std.HashMap Name (List Expr) := {}
+  let mut out := []
+  for (T, t) in theories do
+    let mut found := (← reaches t).getD []
+    if let (true, some (.ctorInfo ci)) := (found.isEmpty, env.find? T) then
+      let fs ← match cache[ci.induct]? with
+        | some fs => pure fs
+        | none => takers ci.induct
+      cache := cache.insert ci.induct fs
+      let at_ (c : Name) : MetaM (List Name) :=
+        fs.foldlM (fun ns f ↦ return ns ++ ((← reaches (f.beta #[mkConst c])).getD [])) []
+      let mine ← at_ T
+      let .inductInfo ii ← getConstInfo ci.induct | unreachable!
+      let mut shared := if ii.ctors.length > 1 then mine else []
+      for c in ii.ctors do
+        if shared.isEmpty then break
+        let theirs ← at_ c
+        shared := shared.filter theirs.contains
+      found := mine.filter (!shared.contains ·)
+    out := out ++ [(T, found.eraseDups)]
+  return out
 
 /-- The constructors of an enumeration, or `none` for any other type. -/
 def enumCtors (ty : Expr) : MetaM (Option (List Name)) := do
@@ -81,6 +157,10 @@ def theoryOf (T : Expr) : MetaM (Name × Option Name) := do
     return (← nameOf T.appFn!.appArg!, some (← nameOf T.appArg!))
   return (← nameOf T, none)
 
+/-- The theory of a scored pair, or the term itself. -/
+def theoryTerm (T : Expr) : Expr :=
+  if T.isAppOfArity ``Prod.mk 4 then T.appFn!.appArg! else T
+
 /-- The components of a cell: a constructor, a tuple of them, or `()`. -/
 partial def cellOf (c : Expr) : MetaM (List Name) := do
   let c := c.consumeMData
@@ -115,6 +195,8 @@ structure Out where
   stipulations : Array Json := #[]
   sameParse : Array Json := #[]
   names : Std.HashSet Name := {}
+  /-- Each theory scored, with a term for it. -/
+  theories : Std.HashMap Name Expr := {}
 
 /-- Read one claim, instantiated. -/
 def readClaim (thm : Name) (claim : Expr) (out : Out) : MetaM Out := do
@@ -126,7 +208,9 @@ def readClaim (thm : Name) (claim : Expr) (out : Out) : MetaM Out := do
     let (T, v) ← theoryOf args[5]!
     let c ← cellOf args[6]!
     let names := ((c ++ v.toList).foldl (·.insert ·) out.names).insert X |>.insert T
-    return { out with names, verdicts := out.verdicts.push <| Json.mkObj [
+    let theories := if out.theories.contains T then out.theories
+      else out.theories.insert T (theoryTerm args[5]!)
+    return { out with names, theories, verdicts := out.verdicts.push <| Json.mkObj [
       ("experiment", toJson X.toString), ("theory", toJson T.toString),
       ("variant", toJson (v.map Name.toString)), ("cell", toJson (c.map Name.toString)),
       ("verdict", ← ctorTree r), ("theorem", src)] }
@@ -174,9 +258,12 @@ def exportAll : MetaM Json := do
     let some i := env.getModuleIdxFor? n | continue
     unless libraries.contains env.header.moduleNames[i.toNat]!.getRoot.toString do continue
     out ← readTheorem n t.type out
-  let names ← out.names.toList.mapM fun n ↦ return (n.toString, ← named n)
+  let defs ← definitions (out.theories.toList.mergeSort (·.1.toString ≤ ·.1.toString))
+  let all := defs.foldl (fun s (_, ns) ↦ ns.foldl (·.insert ·) s) out.names
+  let names ← all.toList.mapM fun n ↦ return (n.toString, ← named n)
   return Json.mkObj [("verdicts", toJson out.verdicts), ("observed", toJson out.observed),
     ("stipulations", toJson out.stipulations), ("sameParse", toJson out.sameParse),
+    ("definitions", Json.mkObj (defs.map fun (T, ns) ↦ (T.toString, toJson (ns.map toString)))),
     ("names", Json.mkObj names)]
 
 end EvalPage

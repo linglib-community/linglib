@@ -125,7 +125,7 @@ jobs:
           cp -r .lake/build/doc/* .lake/build/doc-site/docs/
           # The landing page at /.
           python3 scripts/gen_home_page.py --out .lake/build/doc-site
-          # The projection scoreboard at /eval/, its verdicts reduced from Eval's theorems.
+          # The evaluations at /eval/, its verdicts reduced from Eval's theorems.
           python3 scripts/gen_eval_page.py --export --out .lake/build/doc-site/eval
           # The bibliography at /bibliography/, with where each work is cited.
           python3 scripts/gen_bibliography_page.py --out .lake/build/doc-site/bibliography
