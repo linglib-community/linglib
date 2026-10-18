@@ -23,6 +23,8 @@ where the corresponding update succeeds.
 
 * `Minor2026.NumFeature`, `Minor2026.Composes`, `Minor2026.exponents`: the features of the
   #-head (65), Complex Heads (69) and the exponents (66).
+* `Minor2026.SemType.denote`, `Minor2026.NumFeature.denote`: the types of concepts and of
+  predicates of referents, and the translations (65) between them.
 * `Minor2026.want`: an attitude (100) distributing the worlds compatible with its experiencer's
   wishes.
 
@@ -30,6 +32,8 @@ where the corresponding update succeeds.
 
 * `Minor2026.composes_heads`, `Minor2026.spellOut`: the atomic plural is a well-typed head
   spelled out as a plural, and `[#, UNIQUE]` is not well-typed (fn. 21).
+* `Minor2026.denote_heads`: the singular head denotes the singular's atomicity and uniqueness,
+  and the atomic plural's head atomicity alone.
 * `Minor2026.exh_atomicPlural`, `Minor2026.disjoint_exhR_atomicPlural`: Exh negates the singular
   alternative of an atomic plural (87), mandatorily at single assignments (§6.2).
 * `Minor2026.notMem_dom_sentence_atomicPlural`, `Minor2026.atomicPlural_distW_iff`: an atomic
@@ -128,6 +132,36 @@ theorem spellOut :
       subsetPrinciple exponents [NumFeature.num, .atom] = some .s ∧
         subsetPrinciple exponents [NumFeature.num] = some .s := by
   decide
+
+section Denotation
+
+universe w
+
+variable {R S E : Type w} [RegisterStructure R S E] [PartialOrder E]
+
+/-- The denotations of the types of (65): a concept is the predicate of individuals of a noun,
+and a predicate of referents is a condition on the values of a referent. -/
+abbrev SemType.denote (R S E : Type w) : SemType → Type w
+  | .concept => E → Prop
+  | .pred => R → Condition (Set S)
+
+/-- The translations (65): `#` is the identity on concepts, ATOM instantiates a concept by a
+referent with atomic values, and UNIQUE adds uniqueness to a predicate of referents. -/
+def NumFeature.denote : (f : NumFeature) → f.sig.1.denote R S E → f.sig.2.denote R S E
+  | .num => id
+  | .atom => fun P u ↦ lex P u ∩ atomic u
+  | .unique => fun C u ↦ C u ∩ Minor2022.unique u
+
+/-- The head `[#, ATOM, UNIQUE]` denotes instantiation with the singular's atomicity and
+uniqueness (74), and the atomic plural `[#, ATOM]` the same without uniqueness. -/
+theorem denote_heads (P : E → Prop) (u : R) :
+    NumFeature.unique.denote (NumFeature.atom.denote (NumFeature.num.denote (R := R) (S := S) P))
+        u = lex P u ∩ (atomic u ∩ unique u) ∧
+      NumFeature.atom.denote (NumFeature.num.denote (R := R) (S := S) P) u =
+        lex P u ∩ atomic u :=
+  ⟨Set.inter_assoc .., rfl⟩
+
+end Denotation
 
 /-! ### Intensionalized uniqueness (§7.2) -/
 
