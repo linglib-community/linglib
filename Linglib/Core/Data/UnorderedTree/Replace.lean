@@ -15,17 +15,52 @@ public import Linglib.Core.Data.UnorderedTree.Basic
 replaced by `replacement`. It is computed on a planar representative by
 `RoseTree.unorderedReplace`, and is well-defined because that recursion computes the
 `UnorderedTree.para` testing each subtree before rebuilding it from its substituted children.
+The planar substitution `RoseTree.replaceIf` replaces the subtrees satisfying a predicate, and
+replacing the planar subtrees in a class is `replace` on the class (`UnorderedTree.mk_replaceIf`).
 
 ## Main definitions
 
 * `UnorderedTree.replace`, `RoseTree.unorderedReplace`
+* `RoseTree.replaceIf`
+
+## Main results
+
+* `UnorderedTree.mk_replaceIf`: the quotient map commutes with substitution.
 -/
 
 @[expose] public section
 
 namespace RoseTree
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*}
+
+section ReplaceIf
+
+variable (p : RoseTree α → Prop) [DecidablePred p] (r : RoseTree α)
+
+mutual
+/-- Replace every subtree satisfying `p` by `r`, testing each subtree before its children. -/
+def replaceIf : RoseTree α → RoseTree α
+  | .node a cs => if p (.node a cs) then r else .node a (replaceIfList cs)
+/-- `replaceIf` in each tree of a list. -/
+def replaceIfList : List (RoseTree α) → List (RoseTree α)
+  | [] => []
+  | c :: cs => replaceIf c :: replaceIfList cs
+end
+
+theorem replaceIfList_eq (cs : List (RoseTree α)) :
+    replaceIfList p r cs = cs.map (replaceIf p r) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => rw [replaceIfList, ih, List.map_cons]
+
+theorem replaceIf_node (a : α) (cs : List (RoseTree α)) :
+    replaceIf p r (node a cs) = if p (node a cs) then r else node a (cs.map (replaceIf p r)) := by
+  rw [replaceIf, replaceIfList_eq]
+
+end ReplaceIf
+
+variable [DecidableEq α]
 
 mutual
 /-- Substitution on a planar tree: replace every subtree equal, in the quotient, to `target` by
@@ -95,5 +130,16 @@ theorem replace_node_pair (target replacement : UnorderedTree α) (a : α) (l r 
 /-- Replacing the whole tree yields the replacement. -/
 theorem replace_self (t r : UnorderedTree α) : replace t r t = r := by
   simpa [node_eta] using replace_node t r t.value t.children
+
+/-- Replacing the planar subtrees in the class `target` is replacing `target` in the class. -/
+theorem mk_replaceIf (target : UnorderedTree α) (r t : RoseTree α) :
+    mk (replaceIf (mk · = target) r t) = replace target (mk r) (mk t) := by
+  induction t with
+  | node a cs ih =>
+    rw [replaceIf_node, ← node_mk_tree_list a cs, replace_node, node_mk_tree_list]
+    split_ifs
+    · rfl
+    · rw [← node_mk_tree_list, Multiset.map_coe, List.map_map, List.map_map]
+      exact congrArg (node a ∘ Multiset.ofList) (List.map_congr_left fun c hc ↦ ih c hc)
 
 end UnorderedTree

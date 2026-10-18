@@ -28,7 +28,9 @@ edge; `markedOptions` takes the least count over an order's derivations. The der
 the paper's for every order with a stated count except (6w), which (7b-v) classes as partial
 while the count omits it (`markedOptions_eq_stated`, `markedOptions_w`); with two marked
 options rather than one, its very few languages fit the frequency claim `markedness_extremes`.
-The demonstrative is `Cat.Dem`.
+The paper's own derivations of (6a), (6o) and (6n) are `mergeOrder`, `derivation6o` and
+`derivation6n`, the two pied-piping types each keeping the moved phrase's internal order. The
+demonstrative is `Cat.Dem`.
 
 ## References
 
@@ -162,7 +164,36 @@ def reachableOrders : List (List Cat) := (stages.map Stage.order).eraseDups
 /-- Universal 20 is derived, an order being reachable iff it is attested, so the 14 attested
 orders have derivations and the 10 unattested do not. -/
 theorem u20_reachable_iff_attested :
-    table.all fun r => decide (r.order ∈ reachableOrders) = decide r.Attested := by decide
+    table.all fun r => decide (r.order ∈ reachableOrders) = decide r.Attested := by decide +kernel
+
+/-! ### The pied-piping types (7b-ii, iv)
+
+A pied-piped phrase keeps its internal order. In the derivation of (6o) the NP raises past A
+with vacuous pied-piping of the whose-picture type, `[NP [XP]]`, and then pied-pipes `[N A]` past
+Num; in that of (6n) `[A N]` pied-pipes past Num, of the picture-of-who type, `[XP [NP]]`. -/
+
+/-- The Merge order (7a) with nothing moved. -/
+def mergeOrder : Derivation :=
+  ⟨leaf tokN, [.em .left (leaf tokA), .em .left (leaf tokNum), .em .left (leaf tokDem)]⟩
+
+/-- The derivation of (6o): NP raises past A, and `[N [A t]]` past Num. -/
+def derivation6o : Derivation :=
+  ⟨leaf tokN, [.em .left (leaf tokA), .im (leaf tokN), .em .left (leaf tokNum),
+    .im (tokN * (tokA * .traceOf tokN) : PlanarSyntacticObject), .em .left (leaf tokDem)]⟩
+
+/-- The derivation of (6n): `[A N]` raises past Num. -/
+def derivation6n : Derivation :=
+  ⟨leaf tokN, [.em .left (leaf tokA), .em .left (leaf tokNum),
+    .im (tokA * tokN : PlanarSyntacticObject), .em .left (leaf tokDem)]⟩
+
+/-- With nothing moved the order is (6a), Dem Num A N. -/
+theorem surfaceCats_mergeOrder : mergeOrder.surfaceCats = [.Dem, .Num, .A, .N] := by decide
+
+/-- Pied-piping of the whose-picture type gives (6o), Dem N A Num. -/
+theorem surfaceCats_derivation6o : derivation6o.surfaceCats = [.Dem, .N, .A, .Num] := by decide
+
+/-- Pied-piping of the picture-of-who type gives (6n), Dem A N Num. -/
+theorem surfaceCats_derivation6n : derivation6n.surfaceCats = [.Dem, .A, .N, .Num] := by decide
 
 /-! ### Markedness and frequency (7b) -/
 
@@ -179,22 +210,22 @@ def markedOptions (ord : List Cat) : Option ℕ :=
 /-- The derived count is the paper's for every order with a stated count except (6w). -/
 theorem markedOptions_eq_stated :
     (table.filter fun r => r.stated.isSome && r.order != [.A, .N, .Num, .Dem]).all fun r =>
-      decide (markedOptions r.order = r.stated) := by decide
+      decide (markedOptions r.order = r.stated) := by decide +kernel
 
 /-- For (6w), A N Num Dem, the paper counts one marked option, the picture-of-who pied-piping of
 `[A N]` past Num, but (7b-v) lists the order as partial, and no derivation avoids it, since the
 noun never passes A. -/
-theorem markedOptions_w : markedOptions [.A, .N, .Num, .Dem] = some 2 := by decide
+theorem markedOptions_w : markedOptions [.A, .N, .Num, .Dem] = some 2 := by decide +kernel
 
 /-- (6p), N Dem A Num, for which the paper states no count, has one marked option, the
 extraction of the noun past Dem. -/
-theorem markedOptions_p : markedOptions [.N, .Dem, .A, .Num] = some 1 := by decide
+theorem markedOptions_p : markedOptions [.N, .Dem, .A, .Num] = some 1 := by decide +kernel
 
 /-- Marked options predict the extremes of frequency. An attested order has no marked option iff
 it is found in very many languages, and an order with two is found in few or very few. -/
 theorem markedness_extremes :
     (table.filter fun r => decide r.Attested).all fun r =>
       decide ((markedOptions r.order = some 0 ↔ r.freq = .veryMany) ∧
-        (markedOptions r.order = some 2 → r.freq = .few ∨ r.freq = .veryFew)) := by decide
+        (markedOptions r.order = some 2 → r.freq = .few ∨ r.freq = .veryFew)) := by decide +kernel
 
 end Cinque2005

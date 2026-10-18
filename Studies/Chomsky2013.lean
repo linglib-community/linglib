@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Label
-public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
 # Chomsky (2013): Problems of projection
