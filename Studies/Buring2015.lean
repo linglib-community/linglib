@@ -5,122 +5,166 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Semantics.Focus.Unalternatives
 
 /-!
-# Unalternative Semantics: the prosodic origin
+# Büring 2015
 
-Formalises [buring-2015]: calculating focus alternatives without
-F-markers, from metrical structure alone. A branching node's stress
-pattern restricts its focal targets. Under the default weak–strong
-pattern the Weak Restriction ((4), the revision of the preliminary
-(1) that keeps a node's literal meaning out of the banned set) bans
-targets varying the weak daughter non-trivially while the strong stays
-at its ordinary value; under prosodic reversal the Strong Restriction
-((9)) allows exactly those same targets, so the two patterns divide a
-node's focal targets between them.
+Büring derives focal targets from metrical structure, without F-markers. This file runs his
+calculus on *Smith ordered breakfast*, with Jones, paid for and lunch the only alternatives to its
+words. Default stress on the object allows exactly the foci containing the object (Figure 2);
+reversal on the verb allows the foci containing the verb but not the object, and reversal on the
+subject only narrow subject focus (Figure 4). Reversal inside the demoted VP of a reversed clause
+leaves no target (Figure 5), and after Focus Reset at the VP the clause allows only its literal
+meaning (Figure 6).
 
-The worked example is his *ordered BREAKfast* vs *ORDERED breakfast*:
-default stress bans exactly *paid for breakfast*, licensing "all VP
-meanings, except those that are relations to breakfast other than
-ordering breakfast"; reversal licenses exactly what the default bans. The rules live in
-`Semantics/Focus/Unalternatives.lean`, shared with the
-morphosyntactic extension of [assmann-etal-2023].
+## References
+
+* [buring-2015]
 -/
 
 @[expose] public section
 
 namespace Buring2015
 
-open Focus (weakBanned strongAllowed licensedFocusValue)
+open Set Focus WithAlternatives
+
+/-- Individuals. -/
+inductive Ent | smith | jones
+  deriving DecidableEq, Repr, Fintype
 
 /-- Transitive-verb meanings. -/
-inductive Rel where
-  | ordered | paidFor
-  deriving DecidableEq, Repr
+inductive Rel | ordered | paidFor
+  deriving DecidableEq, Repr, Fintype
 
 /-- Object meanings. -/
-inductive Obj where
-  | breakfast | lunch
-  deriving DecidableEq, Repr
+inductive Obj | breakfast | lunch
+  deriving DecidableEq, Repr, Fintype
 
-/-- VP meanings as verb–object applications, modelled as pairs. -/
-def vt (r : Rel) : Obj → Rel × Obj := fun o => (r, o)
+private theorem bijective_uncurry_mk {α β : Type*} :
+    Function.Bijective (Function.uncurry (@Prod.mk α β)) :=
+  Function.bijective_id
 
-/-- *ordered*, with its transitive alternatives. -/
-def orderedM : WithAlternatives (Obj → Rel × Obj) :=
-  ⟨vt .ordered, {vt .ordered, vt .paidFor}⟩
+private theorem injective2_mk {α β : Type*} : Function.Injective2 (@Prod.mk α β) :=
+  fun _ _ _ _ ↦ Prod.mk.inj
 
-/-- *breakfast*, with its object alternatives. -/
-def breakfastM : WithAlternatives Obj := ⟨Obj.breakfast, {Obj.breakfast, Obj.lunch}⟩
+/-- The VP *ordered breakfast* with restriction `r` on the verb, weak under default stress on the
+object and strong under reversal. -/
+def vp (r : Restriction) : WithAlternatives (Rel × Obj) :=
+  .node Prod.mk .left r (.focused .ordered) (.focused .breakfast)
 
-private theorem vt_ne : vt .paidFor ≠ vt .ordered := fun h => by
-  have := congrFun h .breakfast
-  exact absurd (congrArg Prod.fst this) (by decide)
+/-- The clause *Smith ordered breakfast* with restriction `r` on the subject and `r'` on the
+verb. -/
+def clause (r r' : Restriction) : WithAlternatives (Ent × Rel × Obj) :=
+  .node Prod.mk .left r (.focused .smith) (vp r')
 
-/-- Under default stress the banned targets are exactly the verb-focus ones: *paid for breakfast*
-and nothing else. The subtraction of the weak daughter's ordinary value in (4) is what keeps
-*ordered breakfast* itself out of the banned set. -/
-theorem weakBanned_eq :
-    weakBanned orderedM breakfastM = {(Rel.paidFor, Obj.breakfast)} := by
+/-! ### The VP -/
+
+/-- Default *ordered BREAKfast* excludes the VP meanings composed of a relation other than
+*ordered* and *breakfast*, Büring's (5). -/
+theorem compl_alternatives_vp_weak :
+    (vp .weak).alternativesᶜ = {Rel.ordered}ᶜ ×ˢ {Obj.breakfast} := by
   ext ⟨r, o⟩
-  simp only [weakBanned, Set.mem_seq_iff, Set.mem_sdiff, Set.mem_singleton_iff,
-    Set.mem_insert_iff, orderedM, breakfastM]
-  constructor
-  · rintro ⟨f, ⟨rfl | rfl, hne⟩, a, rfl, heq⟩
-    · exact absurd rfl hne
-    · exact heq.symm
-  · intro h
-    exact ⟨vt .paidFor, ⟨Or.inr rfl, vt_ne⟩, .breakfast, rfl, by rw [h]; rfl⟩
+  simp [vp, compl_alternatives_node, propagated, eq_comm]
 
-/-- Default *ordered BREAKfast* bans the verb-focus target *paid for breakfast*: it varies the weak
-daughter over given *breakfast*. -/
-theorem default_bans_verb_focus :
-    (Rel.paidFor, Obj.breakfast) ∈ weakBanned orderedM breakfastM := by
-  rw [weakBanned_eq]; rfl
-
-/-- It permits the object-focus target *ordered lunch*: no composition holds *breakfast* fixed. -/
-theorem default_permits_object_focus :
-    (Rel.ordered, Obj.lunch) ∉ weakBanned orderedM breakfastM := by
-  rw [weakBanned_eq]; decide
-
-/-- And it permits the node's own literal meaning. This is what rule (4) secures over the
-preliminary (1), which banned it: "we should never, at the lower (VP) level, exclude the literal
-meaning of a neutral node". -/
-theorem default_permits_ordinary_value :
-    (Rel.ordered, Obj.breakfast) ∉ weakBanned orderedM breakfastM := by
-  rw [weakBanned_eq]; decide
-
-/-- Reversed *ORDERED breakfast* allows exactly what the default bans — an instance of
-`Focus.strongAllowed_eq_weakBanned`, so the two metrical patterns of the node divide its focal
-targets between them. -/
-theorem reversal_allows_exactly_default_bans :
-    strongAllowed orderedM breakfastM = weakBanned orderedM breakfastM :=
-  Focus.strongAllowed_eq_weakBanned _ _
-
-/-- In particular reversal allows the non-trivial verb-focus target and nothing else: neither the
-ordinary value nor an object-focus target. -/
-theorem reversal_allows_only_verb_focus :
-    (Rel.paidFor, Obj.breakfast) ∈ strongAllowed orderedM breakfastM ∧
-      (Rel.ordered, Obj.breakfast) ∉ strongAllowed orderedM breakfastM ∧
-      (Rel.ordered, Obj.lunch) ∉ strongAllowed orderedM breakfastM := by
-  rw [reversal_allows_exactly_default_bans, weakBanned_eq]
-  refine ⟨rfl, by decide, by decide⟩
-
-/-- The licensed focal targets of default *ordered BREAKfast* are all the VP meanings the daughters
-compose except the banned one — "all VP meanings, except those that are relations to breakfast
-other than ordering breakfast". The licensed set is the focus value the prosody derives, which the
-squiggle consumes at propositional type. -/
-theorem licensed_eq :
-    licensedFocusValue orderedM breakfastM =
-      {p : Rel × Obj | p ≠ (Rel.paidFor, Obj.breakfast)} := by
+/-- Reversed *ORDERED breakfast* allows only the VP meanings composed of a relation other than
+*ordered* and *breakfast*, Büring's (10). -/
+theorem alternatives_vp_strong : (vp .strong).alternatives = {Rel.ordered}ᶜ ×ˢ {Obj.breakfast} := by
   ext ⟨r, o⟩
-  rw [licensedFocusValue, weakBanned_eq]
-  simp only [Set.mem_sdiff, Set.mem_singleton_iff, Set.mem_ofPred_eq, Set.mem_seq_iff,
-    Set.mem_insert_iff, orderedM, breakfastM]
-  constructor
-  · rintro ⟨-, hne⟩; exact hne
-  · intro hne
-    exact ⟨⟨vt r, by cases r <;> simp, o, by cases o <;> simp, rfl⟩, hne⟩
+  simp [vp, alternatives_node bijective_uncurry_mk, eq_comm]
+
+/-- Default and reversed weights on the VP divide its focal targets between them. -/
+theorem isCompl_alternatives_vp : IsCompl (vp .weak).alternatives (vp .strong).alternatives :=
+  ⟨disjoint_alternatives_node_weak_strong, codisjoint_iff.2 <| by
+    change _ ∪ _ = univ
+    rw [vp, vp, alternatives_node_weak_union_strong]
+    simp [propagated]⟩
+
+/-! ### The clause -/
+
+/-- The words of the clause. -/
+inductive Word | subj | verb | obj
+  deriving DecidableEq, Repr, Fintype
+
+/-- The focal target of a focus on the words `F` replaces each of them by its alternative. -/
+def target (F : Finset Word) : Ent × Rel × Obj :=
+  (if .subj ∈ F then .jones else .smith, if .verb ∈ F then .paidFor else .ordered,
+    if .obj ∈ F then .lunch else .breakfast)
+
+/-- Default weights keep the literal meaning of *Smith ordered breakfast*, which is why Büring's
+Weak Restriction subtracts the weak daughter's ordinary value. -/
+theorem wellFormed_clause_weak_weak : (clause .weak .weak).WellFormed :=
+  .node_weak injective2_mk (.focused _) (.node_weak injective2_mk (.focused _) (.focused _))
+
+/-- Default *Smith ordered BREAKfast* excludes the propositions composed of an individual, a
+relation and *breakfast*, other than *Smith ordered breakfast* itself (Figure 2). -/
+theorem compl_alternatives_clause_weak_weak :
+    (clause .weak .weak).alternativesᶜ =
+      {t | t.2.2 = .breakfast} \ {(.smith, .ordered, .breakfast)} := by
+  ext ⟨x, r, o⟩
+  simp [clause, vp, compl_alternatives_node, propagated]
+  revert x r o
+  decide
+
+/-- Default stress on the object allows exactly the foci containing the object, and the literal
+meaning (Figure 2). -/
+theorem target_mem_clause_weak_weak (F : Finset Word) :
+    target F ∈ (clause .weak .weak).alternatives ↔ .obj ∈ F ∨ F = ∅ := by
+  rw [← compl_compl (clause .weak .weak).alternatives, compl_alternatives_clause_weak_weak]
+  simp only [mem_compl_iff, mem_sdiff, mem_ofPred_eq, mem_singleton_iff]
+  revert F
+  decide
+
+/-- *Smith ORDERED breakfast* allows the propositions in which any individual stands in a relation
+other than *ordered* to *breakfast* (Figure 4). -/
+theorem alternatives_clause_weak_strong :
+    (clause .weak .strong).alternatives = univ ×ˢ ({Rel.ordered}ᶜ ×ˢ {Obj.breakfast}) := by
+  rw [clause, alternatives_node bijective_uncurry_mk, focused_alternatives, alternatives_vp_strong]
+  ext ⟨x, r, o⟩
+  simp [vp]
+  revert x r o
+  decide
+
+/-- Reversal on the verb allows the foci containing the verb but not the object (Figure 4). -/
+theorem target_mem_clause_weak_strong (F : Finset Word) :
+    target F ∈ (clause .weak .strong).alternatives ↔ .verb ∈ F ∧ .obj ∉ F := by
+  rw [alternatives_clause_weak_strong]
+  simp only [mem_prod, mem_univ, mem_compl_iff, mem_singleton_iff, true_and]
+  revert F
+  decide
+
+/-- *SMITH ordered breakfast* allows the propositions in which an individual other than Smith
+ordered breakfast (Figure 4). -/
+theorem alternatives_clause_strong_weak :
+    (clause .strong .weak).alternatives = {Ent.smith}ᶜ ×ˢ {(Rel.ordered, Obj.breakfast)} := by
+  rw [clause, alternatives_node bijective_uncurry_mk, focused_alternatives]
+  ext ⟨x, r, o⟩
+  simp [vp, alternatives_node bijective_uncurry_mk]
+  revert x r o
+  decide
+
+/-- Reversal on the subject allows only narrow subject focus (Figure 4). -/
+theorem target_mem_clause_strong_weak (F : Finset Word) :
+    target F ∈ (clause .strong .weak).alternatives ↔ F = {.subj} := by
+  rw [alternatives_clause_strong_weak]
+  simp only [mem_prod, mem_compl_iff, mem_singleton_iff]
+  revert F
+  decide
+
+/-- Reversal inside the demoted VP of a reversed clause leaves no focal target (Figure 5). -/
+theorem alternatives_clause_strong_strong : (clause .strong .strong).alternatives = ∅ :=
+  alternatives_node_left_strong_eq_empty (not_wellFormed_node_strong injective2_mk)
+
+/-- After Focus Reset at the VP, Propagation and the weak restriction on the subject leave the
+clause only its literal meaning, as Büring's condition on root nodes demands (Figure 6). -/
+theorem alternatives_reset_vp :
+    (node Prod.mk .left .weak (.focused Ent.smith) (.unfeatured (vp .weak).ordinary)).alternatives =
+      {(.smith, .ordered, .breakfast)} := by
+  rw [alternatives_node bijective_uncurry_mk, focused_alternatives, unfeatured_alternatives]
+  ext ⟨x, r, o⟩
+  simp [vp]
+  revert x r o
+  decide
 
 end Buring2015

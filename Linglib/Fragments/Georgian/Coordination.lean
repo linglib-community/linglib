@@ -5,14 +5,15 @@ public import Linglib.Syntax.Category.Coordinator
 /-!
 # Georgian coordinators
 
-Georgian conjoins with the free word *da* 'and' before the second coordinand, and with the
-enclitic *-c* 'also, too' on each coordinand; the two combine, the enclitic on each coordinand
-with *da* between them, the three constructions that Bill and colleagues test with Georgian
-children. Disjunction is *an* 'or' and the adversative coordinator is *magram* 'but'.
+Georgian conjoins noun phrases with the free word *da* 'and' before the second coordinand, with
+the enclitic *-c* 'also, too' on each coordinand, or with both, the enclitic on each coordinand
+and *da* between them: in the examples of Bill and colleagues, *vashl-i da banan-i*,
+*vashl-i-c, banan-i-c* and *vashl-i-c da banan-i-c* all mean 'the apple and the banana'.
+Disjunction is *an* 'or' and the adversative coordinator is *magram* 'but'.
 
 ## Main definitions
 
-* `Georgian.Coordination.da`, `Georgian.Coordination.c_`: the conjunctive coordinator and the
+* `Georgian.Coordination.da`, `Georgian.Coordination.c`: the conjunctive coordinator and the
   additive enclitic that conjoins when repeated.
 * `Georgian.Coordination.an`, `Georgian.Coordination.magram`: the disjunctive and the
   adversative coordinator.
@@ -20,7 +21,6 @@ children. Disjunction is *an* 'or' and the adversative coordinator is *magram* '
 ## References
 
 * [bill-etal-2025]
-* [mitrovic-2021]
 -/
 
 @[expose] public section
@@ -31,8 +31,8 @@ namespace Georgian.Coordination
 def da : Coordinator :=
   { morph := .free "da", gloss := "and", role := .conjunctive }
 
-/-- *-c* 'also, too', enclitic on each coordinand 'both … and'. -/
-def c_ : Coordinator :=
+/-- *-c* 'also, too', which conjoins as an enclitic on each coordinand. -/
+def c : Coordinator :=
   { morph := .encl "c", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
 
 /-- *an* 'or'. -/
@@ -44,6 +44,6 @@ def magram : Coordinator :=
   { morph := .free "magram", gloss := "but", role := .adversative }
 
 /-- The coordinators. -/
-def allEntries : List Coordinator := [da, c_, an, magram]
+def allEntries : List Coordinator := [da, c, an, magram]
 
 end Georgian.Coordination

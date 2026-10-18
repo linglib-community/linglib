@@ -77,7 +77,7 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `cutSummandsCN` and `comulCAlgHomN` for `Δ^c`.
 * Lemma 1.2.10: `ConnesKreimer.comulCN_coassoc` and the edge grading of `Coproduct/TraceGrading`.
 * Lemma 1.2.11 and (1.2.12): `ConnesKreimer.instBialgebraRho`, the `HopfAlgebra` instance, and
-  `antipodeTreeN`.
+  `antipode_ofTree`.
 * The projections `Π_{ρ,c}` and `Π_{d,ρ}` and the relations `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ =
   (id ⊗ Π_{d,c}) ∘ Δ^c` displayed before (1.3.10): `ConnesKreimer.eraseTraces`,
   `UnorderedTree.contractUnary`, `ConnesKreimer.cutSummandsDN`, `ConnesKreimer.comulDAlgHomN`,

@@ -10,14 +10,13 @@ which is also the comitative marker, so that Japanese is a with-language in Stas
 *mo* 'and', on each conjunct, which is also the additive particle 'too' and the universal
 particle of the indeterminate quantifiers (*dare-mo* 'everyone'); and *ka* 'or', which is also
 the question particle and the existential particle of the indeterminate quantifiers (*dare-ka*
-'someone'). Mitrović and Sauerland take *to* for the J particle and *mo* for the μ particle of
-their decomposition of conjunction; the indeterminate quantifiers built on *mo* and *ka* are in
+'someone'); the indeterminate quantifiers built on *mo* and *ka* are in
 `Fragments/Japanese/Determiners.lean`.
 
 ## Main definitions
 
-* `Japanese.Coordination.to_`, `Japanese.Coordination.mo`, `Japanese.Coordination.ka` — the
-  three particles
+* `Japanese.Coordination.to_`, `Japanese.Coordination.mo`, `Japanese.Coordination.ka`: the
+  three particles.
 
 ## References
 

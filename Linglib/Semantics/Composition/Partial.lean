@@ -93,7 +93,7 @@ open scoped Assignment
 
 /-- The partial denotation of a term under a partial interpretation of the constants and an
 assignment; an abstraction is the partial function undefined wherever its body is. -/
-def Term.evalPartial {K : Ty → Type} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty D))
+def Term.evalPartial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty D))
     (g : Assignment E) : {ty : Ty} → Term K ty → Part (Ty.PDomain E W ty D)
   | _, .const c => I c
   | _, .var n => Part.some (g n)
@@ -145,14 +145,25 @@ def valueAt (τ : Ty) : Option (PDenotation E W D) → Part (Ty.PDomain E W τ D
 
 variable {C : Type} {L : Type*}
 
-/-- The partial denotation of a tree under an assignment: its term's partial denotation, each
-word's partial denotation its constant. A terminal denotes what its leaf interpretation gives it,
-a binary node what the mode its daughters' types select composes, a trace the value of its
-index, and a binder the partial function abstracting over its index in the body. -/
+/-- The partial denotation of a tree under an assignment is its term's partial denotation, with each
+word's partial denotation its constant. A terminal denotes what its leaf interpretation gives it, a
+binary node what the mode its daughters' types select composes, a trace the value of its index, and
+a binder the partial function abstracting over its index in the body. -/
 def interp (lex : L → Option (PDenotation E W D)) (g : Assignment E) (t : Tree C L) :
     Option (PDenotation E W D) :=
   (translate (K := fun ty ↦ Part (Ty.PDomain E W ty D)) lex t).map fun d ↦
     ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩
+
+private theorem map_bind_combine (g : Assignment E)
+    (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ Part (Ty.PDomain E W ty D)) ty)) :
+    (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
+        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩ : PDenotation E W D)) =
+      (t₁.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₁ ↦
+        (t₂.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₂ ↦
+          Mode.combine? Mode.evalPartial d₁ d₂ := by
+  rcases t₁ with _ | ⟨τ₁, u₁⟩ <;> rcases t₂ with _ | ⟨τ₂, u₂⟩ <;> try rfl
+  simp only [Option.bind_some, Option.map_some, Mode.combine?, Option.map_map]
+  rfl
 
 variable (lex lex' : L → Option (PDenotation E W D)) (g g' : Assignment E)
 
@@ -166,18 +177,6 @@ variable (lex lex' : L → Option (PDenotation E W D)) (g g' : Assignment E)
 
 @[simp] theorem interp_adjoin_unary (c : C) (t : Tree C L) :
     interp lex g (.adjoin c (t :: [])) = interp lex g t := rfl
-
-omit lex in
-private theorem map_bind_combine
-    (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ Part (Ty.PDomain E W ty D)) ty)) :
-    (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
-        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩ : PDenotation E W D)) =
-      (t₁.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₁ ↦
-        (t₂.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₂ ↦
-          Mode.combine? Mode.evalPartial d₁ d₂ := by
-  rcases t₁ with _ | ⟨τ₁, u₁⟩ <;> rcases t₂ with _ | ⟨τ₂, u₂⟩ <;> try rfl
-  simp only [Option.bind_some, Option.map_some, Mode.combine?, Option.map_map]
-  rfl
 
 @[simp] theorem interp_node_binary (c : C) (t₁ t₂ : Tree C L) :
     interp lex g (.node c (t₁ :: t₂ :: [])) = (interp lex g t₁).bind fun d₁ ↦
@@ -363,8 +362,8 @@ open scoped Assignment
 
 variable {E W D : Type}
 
-/-- Every mode preserves the lift: on defined daughters lifting total ones, a mode's partial
-value is defined and lifts its total value. -/
+/-- Every mode preserves the lift, since on defined daughters that lift total ones a mode's
+partial value is defined and lifts its total value. -/
 theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {a : Ty.Domain E W σ₁ D}
     {b : Ty.Domain E W σ₂ D} {a' : Ty.PDomain E W σ₁ D} {b' : Ty.PDomain E W σ₂ D}
     (ha : Ty.Lifts σ₁ a a') (hb : Ty.Lifts σ₂ b b') :
