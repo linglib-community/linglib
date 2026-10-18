@@ -201,7 +201,10 @@ section Events
 variable [DecidableEq A] {E : Type*}
 
 /-- The rule of [dimitriadis-2008b], as (42) states it, makes a collective event of two
-entities one specified by a sub-event of the binary predicate in each direction. -/
+entities one specified by a sub-event of the binary predicate in each direction. Dimitriadis
+states it for Siloni's bundled [Agent-Theme] role, which his (65) expands into one specifying
+sub-event per member of the group, with specification taken from Link (64); (42) states it for
+any collective and its binary alternate. -/
 def Dimitriadis (spec : E → E → Prop) (R : E → A → A → Prop)
     (P : E → Finset A → Prop) : Prop :=
   ∀ e (x y : A), x ≠ y →
