@@ -31,7 +31,7 @@ open Reciprocal
 /-- The clitic *-ngg-* is a reciprocal marker, reflexive as well; it marks the predicate and
 fills no object slot. Its surface allomorphs vary with the paradigm of the auxiliary. -/
 def rr : Marker :=
-  { morphs := [.suff "ngg"], strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
+  { morphs := [.suff "ngg"], strategy := .recipClitic }
 
 /-- The marker inventory. -/
 def markers : Finset Marker := {rr}

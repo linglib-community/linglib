@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Logic.Relation
 public import Linglib.Syntax.Voice.System
+public import Linglib.Semantics.Plurality.Reciprocal
 public import Linglib.Data.Examples.Creissels2024
 public import Linglib.Data.Experiments.Creissels2024
 public import Linglib.Fragments.English.Verbs.Causative
@@ -27,13 +28,20 @@ violate.
 * `stacking_tswana`, `stacking_nahuatl`: stacked voice markers compose their alternations.
 * `break_decausativization`: the English fragment's *break* is a decausativization in its own
   diatheses.
+* `weakReciprocity_pair_iff`, `liftRel_singleton_iff`, `not_weakReciprocity_singleton`: the
+  reciprocal event of §11.3.1 is (30b) on two participants, and §11.3.3's account of the
+  reflexive–reciprocal polysemy holds for every member doing and undergoing but not for the
+  reciprocity with "another member" of §8.3.3 and §11.3.1.
 
 ## Implementation notes
 
 * An alternation is a pair of `Voice.Construction`s, a type a predicate on the pair with the
   participant the type singles out as a parameter. The semantic conditions that separate
-  causativization from the other A/S-nucleativizations, or reflexivization from
-  reciprocalization, are not modelled; the rows carry the book's label.
+  causativization from the other A/S-nucleativizations are not modelled; the rows carry the
+  book's label. Reflexivization and reciprocalization share their structure, and what separates
+  them, an individual or a group as S, is stated for §11.3's polysemy over the reciprocity
+  quantifiers of `Semantics/Plurality/Reciprocal.lean`, with "a sizeable proportion" of the
+  group read as all of it.
 * Passivization also keeps the initial P nuclear, which footnote 1 of §8.1.3 states beside the
   three defining features of §8.3.2.1.
 * Frames record no dative oblique and no concernee, so D-applicativization and
@@ -51,6 +59,7 @@ violate.
 
 * [creissels-2024]
 * [bahrt-2021]
+* [langendoen-1978]
 -/
 
 @[expose] public section
@@ -589,5 +598,47 @@ theorem tagalog_multiple : Voice.Symmetrical tagalog ∧ Multiple tagalog := by 
 
 /-- Every Tagalog voice is coded on the verb by an affix, the agent voice by the infix *-um-*. -/
 theorem tagalog_synthetic : ∀ v ∈ tagalog, v.coding = .synthetic := by decide
+
+/-! ### The reflexive–reciprocal polysemy (§11.3)
+
+A reciprocal event has a group as S whose members fulfill both roles of a bivalent verb "in their
+interaction with other members of the group" (§8.3.3); the guests greeted "another" member and
+were also greeted (§11.3.1). Read for every member, this is Weak Reciprocity, and on two
+participants it is the paraphrase of (30b). §11.3.3 explains the reflexive–reciprocal polysemy
+two ways: a reciprocal event is a reflexive event of a plural individual, the relation lifted to
+pluralities (`Set.LiftRel`) holding of the group and itself, and a reflexive event is the
+borderline case of a single participant. Its wording there drops "other": the borderline case
+holds for every member doing and undergoing, and fails for Weak Reciprocity, which no single
+participant satisfies. -/
+
+section Polysemy
+
+open Reciprocal
+
+variable {α : Type*} {R : α → α → Prop}
+
+/-- On two participants the reciprocal event of §11.3.1 is (30b), *John greeted Peter and Peter
+greeted John*. -/
+theorem weakReciprocity_pair_iff [DecidableEq α] {a b : α} (hab : a ≠ b) :
+    WeakReciprocity R {a, b} ↔ R a b ∧ R b a := by
+  simp only [WeakReciprocity, Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp,
+    forall_eq, exists_eq_or_imp, ne_eq, not_true_eq_false, and_false, false_or, hab,
+    Ne.symm hab, not_false_eq_true, and_true]
+  tauto
+
+/-- Reduced to a single participant, every member doing and undergoing is the reflexive event
+(§11.3.3). -/
+theorem liftRel_singleton_iff (x : α) :
+    Set.LiftRel R ↑({x} : Finset α) ↑({x} : Finset α) ↔ R x x := by
+  simp [Set.LiftRel]
+
+/-- No single participant is a reciprocal event in the sense of §8.3.3 and §11.3.1, so the
+borderline case of §11.3.3 rests on that section's own wording. -/
+theorem not_weakReciprocity_singleton (x : α) : ¬ WeakReciprocity R {x} := by
+  rintro ⟨h, -⟩
+  obtain ⟨y, hy, -, hxy⟩ := h x (Finset.mem_singleton_self x)
+  exact hxy (Finset.mem_singleton.1 hy).symm
+
+end Polysemy
 
 end Creissels2024

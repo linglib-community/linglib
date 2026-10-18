@@ -31,11 +31,10 @@ open Reciprocal
 /-- The marker of the reciprocal pronoun *einander*. -/
 def einander : Marker := Pronouns.einander.toMarker
 
-/-- *sich* in its reciprocal use: the clitic *sich* of [gast-haas-2008], which marks the predicate
-rather than filling the object slot and also has the reflexive reading. -/
+/-- *sich* in its reciprocal use is the clitic *sich* of [gast-haas-2008], which marks the
+predicate rather than filling the object slot and also has the reflexive reading. -/
 def sich : Marker :=
-  { morphs := [.free Pronouns.sich.form], strategy := .recipClitic,
-    readings := {.reciprocal, .reflexive} }
+  { morphs := [.free Pronouns.sich.form], strategy := .recipClitic }
 
 /-- The reciprocal marker inventory. -/
 def markers : Finset Marker := {einander, sich}

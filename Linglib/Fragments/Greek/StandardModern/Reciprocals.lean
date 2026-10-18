@@ -26,7 +26,7 @@ open Reciprocal
 
 def nonactive : Marker :=
   { morphs := [.suff "ome"], strategy := .verbalAffix
-  , readings := {.reciprocal, .reflexive} }
+   }
 
 /-- *o enas ton allon* 'the one the other', the periphrastic reciprocal, which does not carry the
     reflexive reading. -/
