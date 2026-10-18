@@ -1,9 +1,7 @@
 module
 
-public import Mathlib.Data.Finset.Grade
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Composition.Tree
-public import Studies.Chierchia1998
 public import Studies.IoninMatushansky2006
 public import Linglib.Fragments.Mayan.Chol.Classifiers
 public import Linglib.Fragments.Shan.Classifiers
@@ -11,38 +9,36 @@ public import Linglib.Fragments.Shan.Classifiers
 /-!
 # Little, Moroney and Royer (2022): Classifiers Can Be for Numerals or Nouns
 
-This file formalizes the two strategies of numeral modification of
-[little-moroney-royer-2022]. In a classifier-for-numeral language the
-classifier is the measure function the numeral demands; in a
-classifier-for-noun language it atomizes the noun so that a partition
-numeral can count. Ch'ol takes the first path and Shan the second, with
-constituency `[[Num Clf] N]` versus `[Num [Clf N]]`, yet both reach the
-same denotation for *two dogs*. The morphology of the two languages'
-classifiers is read off their fragments: Ch'ol's are suffixes on the numeral
-(`chol_classifiers_suffixed`) and Shan's free morphemes
-(`shan_classifiers_free`).
+Little, Moroney and Royer distinguish two strategies of numeral modification. In a
+classifier-for-numeral language the classifier is the measure function the numeral demands; in a
+classifier-for-noun language it atomizes the noun so that a partition numeral can count. Ch'ol
+takes the first path and Shan the second, with constituency `[[Num Clf] N]` against
+`[Num [Clf N]]`, and the two derivations reach the same denotation.
 
-The two lexicons `cholLex` and `shanLex` are driven through
-`HeimKratzer.Tree.interp` over the substrate's own denotations:
-the Ch'ol root is measure modification, `Mereology.QMOD`
-(`cholTree_interp`), the Shan root is `IoninMatushansky2006.cardMod` over
-the atomized noun, `Mereology.atomize` (`shanTree_interp`), and the two agree
-(`qmod_iff_cardMod_atomize`). The distributional diagnostics of the paper's
-§4 then follow from the lexical types alone — what composes without a noun
-(`chol_numClf_composes`, `shan_numClf_fails`) and what composes without a
-numeral (`shan_clfNoun_composes`, `chol_clfNoun_fails`, `chol_ocho`); the
-diagnostics are the paper's case against a uniform classifier semantics,
-[chierchia-1998]'s classifier-for-noun analysis extending to Shan but not to
-Ch'ol.
+A count noun denotes Link's star of its atoms, the singletons of its individuals, so the noun is
+`Mereology.AlgClosure` over `IoninMatushansky2006.IsAtomOf`. The two lexicons are driven through
+`HeimKratzer.Tree.interp`: the Ch'ol root is measure modification by the atom count,
+`Mereology.QMOD`, and the Shan root is the partition numeral `IoninMatushansky2006.cardMod` over
+the atomized noun, `Mereology.atomize`. The distributional diagnostics of the paper's §4, its case
+against a uniform classifier semantics such as Chierchia's, then follow from the lexical types.
 
-Pluralities are `Finset α`, the atoms and their sums with `∅` excluded by
-`Finset.Nonempty`, so the measure function μ# is `Finset.card` at type
-`⟨e,n⟩` — the grade of the plurality lattice (`Finset.grade_eq`) and a
-positive valuation on it, which is all quantization needs
-(`qmod_dogs_qua`). Prediction 2 of §4 (nouns that need no classifier)
-rests on Vietnamese rather than Ch'ol or Shan data and is not formalized,
-nor is the paper's observation that Ch'ol classifiers co-occur with plural
-marking, against [borer-2005]'s complementarity, where Shan's do not.
+## Main results
+
+* `chol_classifiers_suffixed`, `shan_classifiers_free`: the morphology of the two strategies.
+* `cholTree_interp`, `shanTree_interp`: the two derivations of *two dogs*.
+* `chol_numClf_composes`, `chol_clfNoun_fails`, `chol_ocho`, `shan_clfNoun_composes`,
+  `shan_numClf_fails`: what composes without a noun, without a numeral, and with a loan numeral.
+* `atomize_dogs`: the Shan classifier recovers the noun's atoms.
+* `qmod_iff_cardMod_atomize`: the two strategies agree on every nonzero numeral.
+
+## Implementation notes
+
+Pluralities are `Finset α`, so μ# is `Finset.card` at type `⟨e,n⟩`, and its strict monotonicity
+is all that quantization needs (`qmod_dogs_qua`). The strategies part at zero, where the partition
+numeral holds of the empty sum that the noun excludes. Prediction 2 of §4, nouns that need no
+classifier, rests on Vietnamese rather than Ch'ol or Shan data and is not formalized, nor is the
+paper's remark on plural marking: Ch'ol classifiers co-occur with the plural, against Borer's
+complementarity, which the paper keeps for classifier-for-noun languages such as Shan.
 
 ## References
 
@@ -52,6 +48,7 @@ marking, against [borer-2005]'s complementarity, where Shan's do not.
 * [bale-coon-2014]
 * [borer-2005]
 * [krifka-1995b]
+* [link-1983]
 -/
 
 @[expose] public section
@@ -59,7 +56,7 @@ marking, against [borer-2005]'s complementarity, where Shan's do not.
 namespace LittleMoroneyRoyer2022
 
 open HeimKratzer
-open Mereology (QMOD atomize)
+open Mereology (QMOD atomize AlgClosure)
 open HeimKratzer.Tree (interp)
 open PhraseStructure (Tree)
 open IoninMatushansky2006 (cardMod IsAtomOf cardMod_atoms_iff)
@@ -75,33 +72,38 @@ theorem chol_classifiers_suffixed :
 theorem shan_classifiers_free : ∀ c ∈ Shan.Classifiers.classifiers, c.kind = .free := by
   decide
 
-variable {α : Type} (g : Assignment (Finset α))
+variable {α : Type} [DecidableEq α] (dog : α → Prop) (g : Assignment (Finset α))
 
 /-! ### Count nouns, measured and atomized -/
 
-/-- A count noun denotes the atoms and their sums ((6)). -/
-def dogs (x : Finset α) : Prop := x.Nonempty
+/-- A count noun denotes the atoms and their sums ((6)), Link's star of the singletons of its
+individuals (fn. 4). -/
+def dogs : Finset α → Prop := AlgClosure (IsAtomOf dog)
 
-theorem qmod_dogs_iff (x : Finset α) : QMOD dogs Finset.card 2 x ↔ x.card = 2 := by
-  simp only [QMOD, dogs, ← Finset.card_pos]
-  omega
+theorem dogs_iff {x : Finset α} : dogs dog x ↔ x.Nonempty ∧ ∀ a ∈ x, dog a := by
+  rw [dogs, Mereology.algClosure_iff_of_subset_range_singleton (P := IsAtomOf dog)
+    fun _ ⟨a, _, h⟩ ↦ ⟨a, h.symm⟩]
+  simp [IsAtomOf]
 
-/-- Atomizing a count noun yields the atoms of the plurality lattice
-(`Mereology.atomize_ne_bot`), the singletons `IoninMatushansky2006.IsAtomOf`. -/
-theorem atomize_dogs : (atomize dogs : Finset α → Prop) = IsAtomOf (fun _ ↦ True) := by
-  have h : (dogs : Finset α → Prop) = (· ≠ ⊥) :=
-    funext fun _ ↦ propext Finset.nonempty_iff_ne_empty
-  rw [show (atomize dogs : Finset α → Prop) = atomize (· ≠ ⊥) from congrArg atomize h,
-    Mereology.atomize_ne_bot]
-  funext x
-  simp [Finset.isAtom_iff, IsAtomOf]
+/-- Atomizing a count noun yields its atoms ((13)), the singletons of its individuals. -/
+theorem atomize_dogs : atomize (dogs dog) = IsAtomOf dog :=
+  Mereology.atomize_algClosure fun _ ⟨a, _, h⟩ ↦
+    h ▸ Mereology.atom_iff_isAtom.2 (Finset.isAtom_singleton a)
+
+theorem qmod_dogs_iff {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
+    QMOD (dogs dog) Finset.card n x ↔ x.card = n ∧ ∀ a ∈ x, dog a := by
+  simp only [QMOD, dogs_iff, ← Finset.card_pos]
+  constructor
+  · rintro ⟨⟨-, h⟩, rfl⟩
+    exact ⟨rfl, h⟩
+  · rintro ⟨rfl, h⟩
+    exact ⟨⟨Nat.pos_of_ne_zero hn, h⟩, rfl⟩
 
 /-! ### Ch'ol: classifier-for-numeral -/
 
-/-- *cha'* 'two' takes a measure function and then a predicate ((7)), the
-classifier *-kojty* is μ# ((8)) keyed on `Chol.Classifiers.kojty`, the
-Spanish loan *ocho* 'eight' has its measure built in ((34b)), and *ts'i'*
-is 'dog'. -/
+/-- *cha'* 'two' takes a measure function and then a predicate ((7)), the classifier *-kojty* is
+μ# ((8)) keyed on `Chol.Classifiers.kojty`, the Spanish loan *ocho* 'eight' has its measure built
+in ((34b)), and *ts'i'* is 'dog'. -/
 def cholLex : Lexicon (Finset α) Unit := fun w ↦
   if w = "cha'" then some ⟨(.e ⇒ .n) ⇒ (.e ⇒ .t) ⇒ .e ⇒ .t,
     show (Finset α → ℕ) → (Finset α → Prop) → Finset α → Prop from
@@ -109,7 +111,7 @@ def cholLex : Lexicon (Finset α) Unit := fun w ↦
   else if w = Chol.Classifiers.kojty.form then some ⟨.e ⇒ .n, Finset.card⟩
   else if w = "ocho" then some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
     show (Finset α → Prop) → Finset α → Prop from fun P x ↦ P x ∧ x.card = 8⟩
-  else if w = "ts'i'" then some ⟨.e ⇒ .t, dogs⟩
+  else if w = "ts'i'" then some ⟨.e ⇒ .t, dogs dog⟩
   else none
 
 /-- In *cha'-kojty*, numeral and classifier form a constituent ((23a)). -/
@@ -118,37 +120,31 @@ def cholNumClf : Tree Unit String := .bin (.leaf "cha'") (.leaf Chol.Classifiers
 /-- `[[cha' -kojty] ts'i']` ((51)). -/
 def cholTree : Tree Unit String := .bin cholNumClf (.leaf "ts'i'")
 
-/-- The Ch'ol root is the measure-modified noun `λx. dogs x ∧ μ# x = 2` ((51)). -/
+/-- The Ch'ol root is the noun measure-modified by the atom count to two ((51)). -/
 theorem cholTree_interp :
-    interp cholLex g cholTree = some ⟨.e ⇒ .t, QMOD dogs Finset.card 2⟩ :=
+    interp (cholLex dog) g cholTree = some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 2⟩ :=
   rfl
 
-/-- Numeral and classifier compose without a noun, into the measure phrase
-`λP λx. P x ∧ μ# x = 2` ((45)–(46), Prediction 4). -/
+/-- Numeral and classifier compose without a noun, into a measure phrase that restricts any
+predicate to its pluralities of two atoms ((45)–(46), Prediction 4). -/
 theorem chol_numClf_composes :
-    interp cholLex g cholNumClf =
+    interp (cholLex dog) g cholNumClf =
       some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, fun P ↦ QMOD P Finset.card 2⟩ :=
   rfl
 
 /-- The classifier, a measure of type `⟨e,n⟩`, cannot compose with the noun
 without the numeral ((43a)). -/
 theorem chol_clfNoun_fails :
-    interp cholLex g (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) =
-      none :=
+    interp (cholLex dog) g (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) = none :=
   rfl
 
 /-- *ocho* composes with the noun directly and rejects the classifier
 ((33)–(34), Prediction 1). -/
 theorem chol_ocho :
-    interp cholLex g (.bin (.leaf "ocho") (.leaf "ts'i'")) =
-        some ⟨.e ⇒ .t, QMOD dogs Finset.card 8⟩ ∧
-      interp cholLex g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) =
-        none :=
+    interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf "ts'i'")) =
+        some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 8⟩ ∧
+      interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) = none :=
   ⟨rfl, rfl⟩
-
-section
-
-variable [DecidableEq α]
 
 /-! ### Shan: classifier-for-noun -/
 
@@ -159,7 +155,7 @@ def shanLex : Lexicon (Finset α) Unit := fun w ↦
   if w = "sɔ̌ŋ" then some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, cardMod 2⟩
   else if w = Shan.Classifiers.«to».form then some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
     show (Finset α → Prop) → Finset α → Prop from atomize⟩
-  else if w = "mǎa" then some ⟨.e ⇒ .t, dogs⟩
+  else if w = "mǎa" then some ⟨.e ⇒ .t, dogs dog⟩
   else none
 
 /-- In *tǒ mǎa*, classifier and noun form a constituent ((23b)). -/
@@ -171,52 +167,51 @@ def shanTree : Tree Unit String := .bin (.leaf "sɔ̌ŋ") shanClfNoun
 
 /-- The Shan root is the partition numeral over the atomized noun ((52)). -/
 theorem shanTree_interp :
-    interp shanLex g shanTree = some ⟨.e ⇒ .t, cardMod 2 (atomize dogs)⟩ :=
+    interp (shanLex dog) g shanTree = some ⟨.e ⇒ .t, cardMod 2 (atomize (dogs dog))⟩ :=
   rfl
 
 /-- Classifier and noun compose without a numeral, yielding the atoms
 ((42), Prediction 3). -/
 theorem shan_clfNoun_composes :
-    interp shanLex g shanClfNoun = some ⟨.e ⇒ .t, (atomize dogs : Finset α → Prop)⟩ :=
+    interp (shanLex dog) g shanClfNoun = some ⟨.e ⇒ .t, atomize (dogs dog)⟩ :=
   rfl
 
 /-- Numeral and classifier, both `⟨⟨e,t⟩,⟨e,t⟩⟩`, do not compose without the
 noun ((48)–(49)). -/
 theorem shan_numClf_fails :
-    interp shanLex g (.bin (.leaf "sɔ̌ŋ") (.leaf Shan.Classifiers.«to».form)) =
-      none :=
+    interp (shanLex dog) g (.bin (.leaf "sɔ̌ŋ") (.leaf Shan.Classifiers.«to».form)) = none :=
   rfl
-
-end
 
 /-! ### One denotation for *two dogs* -/
 
-/-- Measure modification by the atom count is quantized, since `Finset.card` is strictly monotone
-and strict monotonicity is all `qua_pullback` needs. -/
-theorem qmod_dogs_qua : Mereology.QUA (QMOD dogs Finset.card 2 : Finset α → Prop) := by
-  refine (Mereology.qua_pullback ?_ (Mereology.singleton_qua 2)).subset fun _ h ↦ h.2
-  exact Finset.card_strictMono
+/-- Measure modification by the atom count is quantized, since `Finset.card` is strictly
+monotone. -/
+theorem qmod_dogs_qua (n : ℕ) : Mereology.QUA (QMOD (dogs dog) Finset.card n) :=
+  Mereology.qmod_qua (Finset.card_strictMono.strictMonoOn _) n
 
-section
+/-- Derivationally distinct, the two strategies denote the same pluralities for every nonzero
+numeral (§4.5). -/
+theorem qmod_iff_cardMod_atomize {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
+    QMOD (dogs dog) Finset.card n x ↔ cardMod n (atomize (dogs dog)) x := by
+  rw [qmod_dogs_iff dog hn, atomize_dogs, cardMod_atoms_iff]
 
-variable [DecidableEq α]
-
-/-- Derivationally distinct, the two strategies denote the same two-dog
-pluralities (§4.5). -/
-theorem qmod_iff_cardMod_atomize (x : Finset α) :
-    QMOD dogs Finset.card 2 x ↔ cardMod 2 (atomize dogs) x := by
-  simp [qmod_dogs_iff, atomize_dogs, cardMod_atoms_iff]
-
-/-- Three dogs ((6)). -/
-inductive Dog | a | b | c
+/-- Three dogs and a cat, the model of (6) with a cat added for the noun to exclude. -/
+inductive Animal | a | b | c | cat
   deriving DecidableEq, Fintype
 
--- *two dogs* denotes `{ab, ac, bc}` ((51)–(52)).
-example (x : Finset Dog) :
-    QMOD dogs Finset.card 2 x ↔
-      x ∈ ({{.a, .b}, {.a, .c}, {.b, .c}} : Finset (Finset Dog)) :=
-  (qmod_dogs_iff x).trans (by revert x; decide)
+-- *mǎa* atomized denotes the three dogs `{a, b, c}` ((52)).
+example (x : Finset Animal) :
+    atomize (dogs (· ≠ Animal.cat)) x ↔
+      x ∈ ({{.a}, {.b}, {.c}} : Finset (Finset Animal)) := by
+  rw [atomize_dogs]
+  unfold IsAtomOf
+  revert x
+  decide
 
-end
+-- *two dogs* denotes `{ab, ac, bc}` ((51)–(52)).
+example (x : Finset Animal) :
+    QMOD (dogs (· ≠ Animal.cat)) Finset.card 2 x ↔
+      x ∈ ({{.a, .b}, {.a, .c}, {.b, .c}} : Finset (Finset Animal)) :=
+  (qmod_dogs_iff _ two_ne_zero x).trans (by revert x; decide)
 
 end LittleMoroneyRoyer2022

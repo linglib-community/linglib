@@ -46,8 +46,8 @@ or none, as a classical mereology does. Atoms and overlap are stated relative to
 ## Implementation notes
 
 `AlgClosure` closes under binary sums, which agrees with closure under sums of arbitrary
-nonempty subsets only for finite sums. Classical mereology is defined, as in [champollion-2017],
-by unique sums in Tarski's sense; [hovda-2009] compares the alternative axiomatizations. Since
+nonempty subsets only for finite sums. Classical mereology is defined, as in Champollion's book,
+by unique sums in Tarski's sense; Hovda compares the alternative axiomatizations. Since
 `Overlap` excludes null parts, the element of a one-point carrier is null, so the trivial model
 is not a classical mereology.
 
@@ -347,6 +347,16 @@ theorem isPlural_iff_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) :
           exact ⟨a, ha.trans_le le_sup_right, b, hb.trans_le le_sup_right, hPa, hPb, hab⟩
       · obtain ⟨a, ha, b, hb, hPa, hPb, hab⟩ := ihy hay
         exact ⟨a, ha.trans_le le_sup_left, b, hb.trans_le le_sup_left, hPa, hPb, hab⟩
+
+/-- Atomizing the closure of a predicate holding only of atoms gives back the predicate. -/
+theorem atomize_algClosure (hP : ∀ ⦃a⦄, P a → Atom a) : atomize (AlgClosure P) = P := by
+  funext x
+  refine propext ⟨fun hx ↦ ?_, fun hx ↦ ⟨.base hx, fun y hy hyx ↦ ?_⟩⟩
+  · obtain ⟨a, ha, hax⟩ := algClosure_has_base hx.prop
+    exact hx.eq_of_le (.base ha) hax ▸ ha
+  · obtain ⟨b, hb, hby⟩ := algClosure_has_base hy
+    rw [← (hP hx).eq (hby.trans hyx) (hP hb).not_isBot]
+    exact hby
 
 end Plural
 
