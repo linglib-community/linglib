@@ -3,7 +3,6 @@ module
 public import Linglib.Syntax.Reciprocal
 public import Studies.HeimLasnikMay1991
 public import Linglib.Syntax.Category.Verb.Reciprocal
-public import Linglib.Syntax.Category.Verb.Symmetric
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Case
 public import Linglib.Semantics.Plurality.Groups
@@ -20,12 +19,12 @@ both profiles' entailments, as a bundled complex role in the lexicon ((35) and (
 `reciprocalize`) or as two roles assigned separately by last-resort parasitic assignment in the
 syntax ((43), `Merger`, which also derives the ban on derived subjects and the ECM derivation
 (63)). Both loci share Landman's group operators: a symmetric verb is a set of atomic
-events whose complex role assigns the group atom over an unordered pair, related to its base by
-the meaning postulate of footnote 17 (`Verb.SymmetricDenotation`), from which the underlying
-directional events of (41) follow (`underlying_of_symmetric`); the syntactic reciprocal has the
-accumulation reading (46b) and the packed singular reading (47), whose content coincides with
-the symmetric verb's (`GroupEventReading.underlyingReading`). The "I" reading of embedded
-reciprocals (Higginbotham) needs a sub-event reading and a sole-role subject, so both
+events whose complex role assigns the group of two singular individuals, related to its base by
+the meaning postulate of footnote 17 (`IsSymmetricVerb`), from which the underlying directional
+events of (41) follow (`IsSymmetricVerb.exists_underlyingReading`); the syntactic reciprocal
+has the accumulation reading (46b) and the packed singular reading (47), whose content
+coincides with the symmetric verb's (`GroupEventReading.underlyingReading`). The "I" reading of
+embedded reciprocals (Higginbotham) needs a sub-event reading and a sole-role subject, so both
 verb types lack it (`I_reading_iff_periphrastic`); the periphrastic sub-event reading is derived
 from Heim, Lasnik and May's LF (`accumulation_of_eachOtherLF`).
 
@@ -39,8 +38,13 @@ with reciprocalization: Czech depictive case (`depictive_diagnostic`), comparati
 remnants (`ellipsis_diagnostic`) and Kayne's causative causee (`causative_diagnostic`).
 The count-adverbial contrast of (15) and (16) is modelled by five atomic mutual events with
 inaccessible parts against five accumulation events with ten accessible directional parts
-(`mutualEvent_not_subEventReading`, `accumulated_subEventReading`), and the discontinuous
-construction is the dyadic realization of a symmetric entry (section 7.5, `DyadicReading`).
+(`mutualEvent_not_subEventReading`, `accumulated_subEventReading`); the mutual events form a
+symmetric verb in the sense of footnote 17 (`isSymmetricVerb_hitnashek`). The discontinuous
+construction is the dyadic entry of footnote 43 (`IsDyadicSymmetricVerb`), whose subject bears
+the complex role and whose comitative bears the empty [Ø-WITH] role. Its postulate gives the
+subject and the comitative symmetric underlying content
+(`IsDyadicSymmetricVerb.underlyingReading_of_discontinuous`), but it does not by itself make
+*Dan kissed with Dina* entail *Dina kissed with Dan* (73) (`exists_discontinuous_not_comm`).
 
 ## Implementation notes
 
@@ -51,8 +55,12 @@ construction is the dyadic realization of a symmetric entry (section 7.5, `Dyadi
   properties are derived from them and not recorded per formation. The exceptions the paper
   notes, Czech reciprocal event nominals (Hron) and English *kiss* and *hug* resisting
   the discontinuous construction (footnote 32), are recorded in the docstrings.
-* The counting model takes events to be finite sets of markers, with a group atom for each
-  round of kissing; the participants' roles are read off the parity of the marker.
+* The counting model takes events and individuals to be finite sets of markers, with a group
+  atom for each round of kissing and one for Dan and Rina; the participants' roles are read off
+  the parity of the marker.
+* Footnote 17 takes the members of the pair to be singular individuals, so its postulate is
+  stated for atoms; without that, a "pair" with one member below the other would have the
+  larger member as its sum.
 
 ## References
 
@@ -132,19 +140,26 @@ theorem compositionLocus_ofFormation (f : Formation) :
 
 Neo-Davidsonian format after [landman-2000]: verbs are sets of events, θ-roles are functions
 from events to individuals, and both domains are semilattices carrying the group operators.
-Footnote 17's lexical format of the symmetric verb is the substrate contract
-`Verb.SymmetricDenotation`; here it meets the paper's numbered readings and the derivation of
-(41). -/
+Footnote 17 defines the symmetric verb by a meaning postulate relating it to its transitive
+alternate: a constraint between two entries rather than a decomposition, which is why the
+underlying events stay invisible. -/
 
 section Events
 
-variable {D E : Type*} [SemilatticeSup E] {V : Set E} {ag th : E → D}
-  {d₁ d₂ : D} {e : E} {GE : GroupStructure E}
+variable {D E : Type*} {V : Set E} {ag th : E → D} {d₁ d₂ : D} {e : E}
 
 /-- Two base-verb events realizing the two directions between `d₁` and `d₂`, the kernel shared
 by (41b), (46b) and (47). -/
 def CrossedPair (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e₁ e₂ : E) : Prop :=
   e₁ ∈ V ∧ e₂ ∈ V ∧ ag e₁ = d₁ ∧ th e₁ = d₂ ∧ ag e₂ = d₂ ∧ th e₂ = d₁
+
+/-- A crossed pair read from the other participant's side. -/
+theorem CrossedPair.symm {e₁ e₂ : E} (h : CrossedPair V ag th d₁ d₂ e₁ e₂) :
+    CrossedPair V ag th d₂ d₁ e₂ e₁ := by
+  obtain ⟨h₁, h₂, ha₁, ht₁, ha₂, ht₂⟩ := h
+  exact ⟨h₂, h₁, ha₂, ht₂, ha₁, ht₁⟩
+
+variable [SemilatticeSup E] {GE : GroupStructure E}
 
 /-- The accumulation reading of a syntactic reciprocal (46b), on which the event is the plain sum of
 the two directional sub-events. -/
@@ -162,6 +177,16 @@ events. -/
 def UnderlyingReading (GE : GroupStructure E) (V : Set E) (ag th : E → D)
     (d₁ d₂ : D) (e : E) : Prop :=
   ∃ e₁ e₂, GE.down e = e₁ ⊔ e₂ ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
+
+/-- The content of (41b) is symmetric in the two participants. -/
+theorem UnderlyingReading.symm (h : UnderlyingReading GE V ag th d₁ d₂ e) :
+    UnderlyingReading GE V ag th d₂ d₁ e := by
+  obtain ⟨e₁, e₂, hd, hc⟩ := h
+  exact ⟨e₂, e₁, hd.trans (sup_comm e₁ e₂), hc.symm⟩
+
+theorem underlyingReading_comm :
+    UnderlyingReading GE V ag th d₁ d₂ e ↔ UnderlyingReading GE V ag th d₂ d₁ e :=
+  ⟨.symm, .symm⟩
 
 /-- The sub-event reading (section 2.2): the event decomposes into two proper parts realizing
 the two directions. -/
@@ -198,20 +223,38 @@ theorem GroupEventReading.underlyingReading (h : GroupEventReading GE V ag th d�
 
 variable [SemilatticeSup D] {GD : GroupStructure D} {Vsym : Set E} {agTh : E → D}
 
-/-- A symmetric kissing of the pair entails two underlying directional kissings (41), by
-`Verb.SymmetricDenotation`'s meaning postulate (the SYM marking of (36), footnote 17). -/
-theorem underlying_of_symmetric [h : Verb.SymmetricDenotation GD GE V ag th Vsym agTh]
-    (he : e ∈ Vsym) (hne : d₁ ≠ d₂) (hrole : agTh e = GD.up (d₁ ⊔ d₂)) :
-    UnderlyingReading GE V ag th d₁ d₂ e := by
-  obtain ⟨e₁, e₂, hd, h₁, h₂, ha₁, ht₁, ha₂, ht₂⟩ := h.postulate e he d₁ d₂ hne hrole
-  exact ⟨e₁, e₂, hd, h₁, h₂, ha₁, ht₁, ha₂, ht₂⟩
+/-- A symmetric verb over the transitive `V`, the SYM marking of reciprocal bundling (36) as
+footnote 17 spells it out, is a set `Vsym` of singular events whose complex role `agTh` assigns
+the group of two distinct singular individuals, under the meaning postulate that such an event
+dissolves into two `V` events with crossed Agent and Theme. -/
+structure IsSymmetricVerb (GD : GroupStructure D) (GE : GroupStructure E) (V : Set E)
+    (ag th : E → D) (Vsym : Set E) (agTh : E → D) : Prop where
+  /-- Symmetric verbs denote singular events. -/
+  atom : ∀ e ∈ Vsym, Mereology.Atom e
+  /-- The complex role assigns the group of two distinct singular individuals. -/
+  exists_pair : ∀ e ∈ Vsym, ∃ d₁ d₂, Mereology.Atom d₁ ∧ Mereology.Atom d₂ ∧ d₁ ≠ d₂ ∧
+    agTh e = GD.up (d₁ ⊔ d₂)
+  /-- The meaning postulate: an event whose role is the group of two singular individuals has
+  the underlying reading (41b) for them. -/
+  underlyingReading : ∀ e ∈ Vsym, ∀ ⦃d₁ d₂⦄, Mereology.Atom d₁ → Mereology.Atom d₂ →
+    agTh e = GD.up (d₁ ⊔ d₂) → UnderlyingReading GE V ag th d₁ d₂ e
+
+namespace IsSymmetricVerb
+
+/-- (41a) entails (41b): each event of a symmetric verb dissolves into two events of its base
+with crossed roles for the two members of its pair. -/
+theorem exists_underlyingReading (h : IsSymmetricVerb GD GE V ag th Vsym agTh) (he : e ∈ Vsym) :
+    ∃ d₁ d₂, d₁ ≠ d₂ ∧ UnderlyingReading GE V ag th d₁ d₂ e := by
+  obtain ⟨d₁, d₂, h₁, h₂, hne, hrole⟩ := h.exists_pair e he
+  exact ⟨d₁, d₂, hne, h.underlyingReading e he h₁ h₂ hrole⟩
 
 /-- A symmetric verb's events admit no sub-event reading for any predicate and roles
 whatsoever: the underlying events are invisible to counting and modification (section 2.2). -/
-theorem not_subEventReading_of_symmetric [h : Verb.SymmetricDenotation GD GE V ag th Vsym agTh]
-    (he : e ∈ Vsym) {V' : Set E} {ag' th' : E → D} {d₁' d₂' : D} :
-    ¬ SubEventReading V' ag' th' d₁' d₂' e :=
-  fun hs ↦ hs.not_atom (h.atomic e he)
+theorem not_subEventReading (h : IsSymmetricVerb GD GE V ag th Vsym agTh) (he : e ∈ Vsym)
+    {V' : Set E} {ag' th' : E → D} {d₁' d₂' : D} : ¬ SubEventReading V' ag' th' d₁' d₂' e :=
+  fun hs ↦ hs.not_atom (h.atom e he)
+
+end IsSymmetricVerb
 
 end Events
 
@@ -552,7 +595,28 @@ section Counting
 /-- The two participants. -/
 inductive Kisser
   | dan | rina
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
+
+noncomputable instance : Encodable Kisser := Encodable.ofCountable Kisser
+
+/-- The domain of individuals, finite sets of atomic markers, the left summand for the
+participants and the right for group atoms. -/
+abbrev Individual : Type := Finset (Kisser ⊕ ℕ)
+
+noncomputable def individualGroups : GroupStructure Individual := GroupStructure.finsetModel Kisser
+
+/-- Dan, a singular individual. -/
+def dan : Individual := {.inl .dan}
+
+/-- Rina, a singular individual. -/
+def rina : Individual := {.inl .rina}
+
+theorem atom_dan : Mereology.Atom dan := Mereology.atom_iff_isAtom.2 (Finset.isAtom_singleton _)
+
+theorem atom_rina : Mereology.Atom rina :=
+  Mereology.atom_iff_isAtom.2 (Finset.isAtom_singleton _)
+
+theorem dan_ne_rina : dan ≠ rina := by decide
 
 /-- The event domain, finite sets of atomic event markers, the left summand for directional kissings
 and the right for group atoms. -/
@@ -576,14 +640,14 @@ instance : DecidablePred IsDansKissing := fun e ↦
   decidable_of_iff (∃ j ∈ Finset.range 5, e = directional (2 * j)) (by simp [IsDansKissing])
 
 /-- The agent of a directional kissing, Dan for the even events. -/
-def kissAg (e : KissEvent) : Kisser := if IsDansKissing e then .dan else .rina
+def kissAg (e : KissEvent) : Individual := if IsDansKissing e then dan else rina
 
 /-- The theme of a directional kissing, Rina for the even events. -/
-def kissTh (e : KissEvent) : Kisser := if IsDansKissing e then .rina else .dan
+def kissTh (e : KissEvent) : Individual := if IsDansKissing e then rina else dan
 
 /-- Round `j`'s two directional events form a crossed pair. -/
 theorem crossedPair_round {j : ℕ} (hj : j < 5) :
-    CrossedPair kiss kissAg kissTh .dan .rina (directional (2 * j)) (directional (2 * j + 1)) := by
+    CrossedPair kiss kissAg kissTh dan rina (directional (2 * j)) (directional (2 * j + 1)) := by
   have hodd : ¬ IsDansKissing (directional (2 * j + 1)) := by
     rintro ⟨k, -, hk⟩
     have := directional_injective hk
@@ -631,11 +695,42 @@ theorem mutualEvent_down (j : Fin 5) :
     kissGroups.down (mutualEvent j) = directional (2 * j) ⊔ directional (2 * j + 1) :=
   kissGroups.down_up _
 
+/-- Each round's directional events underlie its mutual event (41b). -/
+theorem underlyingReading_mutualEvent (j : Fin 5) :
+    UnderlyingReading kissGroups kiss kissAg kissTh dan rina (mutualEvent j) :=
+  ⟨_, _, mutualEvent_down j, crossedPair_round j.isLt⟩
+
+/-- *Hitnašek* 'kissREC' in the model, the five mutual events. -/
+def hitnashek : Set KissEvent := Set.range mutualEvent
+
+/-- The complex role of the mutual events, the group of Dan and Rina. -/
+noncomputable def kissAgTh (_ : KissEvent) : Individual := individualGroups.up (dan ⊔ rina)
+
+/-- The model meets footnote 17: *hitnašek* is a symmetric verb over the transitive *nišek*
+'kiss'. The pair-group fixes its members up to order, and the postulate holds in either order
+since (41b) is symmetric. -/
+theorem isSymmetricVerb_hitnashek :
+    IsSymmetricVerb individualGroups kissGroups kiss kissAg kissTh hitnashek kissAgTh where
+  atom := by
+    rintro _ ⟨j, rfl⟩
+    exact kissGroups.atom_up _
+  exists_pair _ _ := ⟨dan, rina, atom_dan, atom_rina, dan_ne_rina, rfl⟩
+  underlyingReading := by
+    rintro _ ⟨j, rfl⟩ d₁ d₂ h₁ h₂ hrole
+    obtain ⟨a, rfl⟩ := Finset.isAtom_iff.mp (Mereology.atom_iff_isAtom.mp h₁)
+    obtain ⟨b, rfl⟩ := Finset.isAtom_iff.mp (Mereology.atom_iff_isAtom.mp h₂)
+    have h := congrArg (fun s : Individual ↦ (s : Set (Kisser ⊕ ℕ)))
+      (individualGroups.up_injective hrole)
+    simp only [dan, rina, Finset.sup_eq_union, Finset.coe_union, Finset.coe_singleton,
+      ← Set.insert_eq] at h
+    rcases Set.pair_eq_pair_iff.mp h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    exacts [underlyingReading_mutualEvent j, (underlyingReading_mutualEvent j).symm]
+
 /-- Yet the mutual event has no accessible parts: the count adverbial and locative modification
 see one atomic event per round ((15a) and (15d)). -/
 theorem mutualEvent_not_subEventReading (j : Fin 5) :
-    ¬ SubEventReading kiss kissAg kissTh .dan .rina (mutualEvent j) :=
-  fun hs ↦ hs.not_atom (kissGroups.atom_up _)
+    ¬ SubEventReading kiss kissAg kissTh dan rina (mutualEvent j) :=
+  isSymmetricVerb_hitnashek.not_subEventReading ⟨j, rfl⟩
 
 /-- The French accumulation event of round `j` is the plain sum (16). -/
 def accumulated (j : Fin 5) : KissEvent := directional (2 * j) ⊔ directional (2 * j + 1)
@@ -657,7 +752,7 @@ theorem card_accumulated : (Finset.univ.image accumulated).card = 5 := by
 /-- The accumulation event keeps the sub-event reading: both directional events are accessible
 ((16b)'s ten-count, (16c)'s modification). -/
 theorem accumulated_subEventReading (j : Fin 5) :
-    SubEventReading kiss kissAg kissTh .dan .rina (accumulated j) :=
+    SubEventReading kiss kissAg kissTh dan rina (accumulated j) :=
   subEventReading_of_crossedPair (directional_not_le (by omega)) (directional_not_le (by omega))
     (crossedPair_round j.isLt)
 
@@ -671,37 +766,70 @@ end Counting
 
 /-! ### The discontinuous construction: dyadic symmetric verbs (sections 7.4 to 7.5)
 
-The discontinuous phrase is an argument (section 7.4), so lexical reciprocal verbs have two
-realizations of one entry: monadic, with the pair-group subject, and dyadic, with subject and
-comitative each contributing one member of the pair (section 7.5). Syntactic reciprocal verbs
-have no listed symmetric entry to realize dyadically, which is why drifted *se battre* 'fight'
-allows discontinuity in syntax-set French (section 7.2) while English *kiss* and *hug* resist it
-lexically (footnote 32). -/
+The discontinuous phrase is an argument (section 7.4), so a lexical reciprocal verb has two
+realizations (100): monadic, with the pair-group subject, and dyadic, whose subject bears the
+complex [Agent-Theme] role and whose comitative bears the thematically empty [Ø-WITH] role,
+under a meaning postulate of the same shape as footnote 17's (footnote 43). The comitative is an
+Agent only of an underlying event, which is why it fails Agenthood diagnostics while the subject
+passes them. Syntactic reciprocal verbs have no listed symmetric entry to realize dyadically,
+which is why drifted *se battre* 'fight' allows discontinuity in syntax-set French (section 7.2)
+while English *kiss* and *hug* resist it lexically (footnote 32). -/
 
 section Dyadic
 
-variable {D E : Type*} [SemilatticeSup D] {GD : GroupStructure D} {Vsym : Set E} {d₁ d₂ : D}
-  {e : E}
+variable {D E : Type*} [SemilatticeSup E] {GE : GroupStructure E} {V Vsym : Set E}
+  {ag th agTh obl : E → D} {d₁ d₂ : D} {e : E}
 
-/-- The dyadic realization (section 7.5), whose events and complex role are those of the monadic
-symmetric entry, the role taken at the subject and comitative's pair-group. -/
-def DyadicReading (GD : GroupStructure D) (Vsym : Set E) (agTh : E → D) (d₁ d₂ : D) (e : E) :
-    Prop :=
-  e ∈ Vsym ∧ agTh e = GD.up (d₁ ⊔ d₂)
+/-- A dyadic symmetric verb over the transitive `V` (footnote 43) is a set `Vsym` of singular
+events with the [Agent-Theme] role `agTh` for the subject and the [Ø-WITH] role `obl` for the
+comitative, under the meaning postulate that each event dissolves into two `V` events whose
+Agent and Theme are the subject and the comitative, crossed. -/
+structure IsDyadicSymmetricVerb (GE : GroupStructure E) (V : Set E) (ag th : E → D)
+    (Vsym : Set E) (agTh obl : E → D) : Prop where
+  /-- Dyadic symmetric verbs denote singular events. -/
+  atom : ∀ e ∈ Vsym, Mereology.Atom e
+  /-- The meaning postulate, (101) entailing (102). -/
+  underlyingReading : ∀ e ∈ Vsym, UnderlyingReading GE V ag th (agTh e) (obl e) e
 
-/-- Discontinuity is symmetric: *Dan corresponded with Rina* and *Rina corresponded with Dan*
-describe the same events, the pair-group being unordered (section 7.1). -/
-theorem dyadicReading_comm {agTh : E → D} :
-    DyadicReading GD Vsym agTh d₁ d₂ e ↔ DyadicReading GD Vsym agTh d₂ d₁ e := by
-  unfold DyadicReading
-  rw [sup_comm]
+/-- The discontinuous sentence (101), *Dan kissed with Dina*, says that some event of the
+dyadic entry has the subject as its [Agent-Theme] and the comitative as its [Ø-WITH]. -/
+def Discontinuous (Vsym : Set E) (agTh obl : E → D) (d₁ d₂ : D) : Prop :=
+  ∃ e ∈ Vsym, agTh e = d₁ ∧ obl e = d₂
 
-/-- The discontinuous construction entails reciprocity between subject and oblique (section
-7.1): the dyadic reading of a symmetric verb yields the crossed directional events. -/
-theorem DyadicReading.underlying [SemilatticeSup E] {GE : GroupStructure E} {V : Set E}
-    {ag th agTh : E → D} [h : Verb.SymmetricDenotation GD GE V ag th Vsym agTh] (hne : d₁ ≠ d₂)
-    (hd : DyadicReading GD Vsym agTh d₁ d₂ e) : UnderlyingReading GE V ag th d₁ d₂ e :=
-  underlying_of_symmetric hd.1 hne hd.2
+namespace IsDyadicSymmetricVerb
+
+/-- The discontinuous construction entails reciprocity between subject and comitative (section
+7.1): (101) entails (102), whose content is symmetric, so *Dan kissed with Dina* carries the
+underlying content of *Dina kissed with Dan* too. -/
+theorem underlyingReading_of_discontinuous (h : IsDyadicSymmetricVerb GE V ag th Vsym agTh obl)
+    (hd : Discontinuous Vsym agTh obl d₁ d₂) :
+    ∃ e, UnderlyingReading GE V ag th d₁ d₂ e ∧ UnderlyingReading GE V ag th d₂ d₁ e := by
+  obtain ⟨e, he, rfl, rfl⟩ := hd
+  exact ⟨e, h.underlyingReading e he, (h.underlyingReading e he).symm⟩
+
+/-- Modification of the dyadic entry by a count adverbial counts its singular events: the
+underlying events stay invisible (section 7.5). -/
+theorem not_subEventReading (h : IsDyadicSymmetricVerb GE V ag th Vsym agTh obl) (he : e ∈ Vsym)
+    {V' : Set E} {ag' th' : E → D} {d₁' d₂' : D} : ¬ SubEventReading V' ag' th' d₁' d₂' e :=
+  fun hs ↦ hs.not_atom (h.atom e he)
+
+end IsDyadicSymmetricVerb
+
+/-- The postulate does not by itself make (73a) entail (73b). A dyadic entry whose one event has
+Dan kissing with Rina meets footnote 43, while *Rina kissed with Dan* is false of it. The
+infelicity of (73c), *Dan kissed with Dina but Dina didn't kiss with Dan*, needs more than the
+postulate, which entails (102) without being equivalent to it (section 7.5). -/
+theorem exists_discontinuous_not_comm :
+    ∃ (Vsym : Set KissEvent) (agTh obl : KissEvent → Individual),
+      IsDyadicSymmetricVerb kissGroups kiss kissAg kissTh Vsym agTh obl ∧
+        Discontinuous Vsym agTh obl dan rina ∧ ¬ Discontinuous Vsym agTh obl rina dan := by
+  refine ⟨{mutualEvent 0}, fun _ ↦ dan, fun _ ↦ rina, ⟨?_, ?_⟩, ⟨_, rfl, rfl, rfl⟩, ?_⟩
+  · rintro _ rfl
+    exact kissGroups.atom_up _
+  · rintro _ rfl
+    exact underlyingReading_mutualEvent 0
+  · rintro ⟨_, -, h, -⟩
+    exact dan_ne_rina h
 
 end Dyadic
 

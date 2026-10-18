@@ -9,10 +9,9 @@ public import Linglib.Semantics.Mereology
 
 This file defines Landman's group operators on a join-semilattice `E` of individuals or events.
 Formation `up` packs a plural sum into an atom, the group, and dissolution `down` recovers the
-sum ([landman-1989]; [landman-2000]). The carrier is any `SemilatticeSup`, so the operators
-serve the domain of individuals and the domain of events alike; in the event domain, a
-symmetric verb's atomic event dissolves into the sum of its directional sub-events
-([siloni-2012]). A model on finite sets shows the two laws consistent.
+sum. The carrier is any `SemilatticeSup`, so the operators serve individuals and events alike;
+Siloni uses the event version to dissolve a symmetric verb's atomic event into its directional
+sub-events. A model on finite sets shows the two laws consistent.
 
 ## Definitions
 
@@ -36,7 +35,8 @@ symmetric verb's atomic event dissolves into the sum of its directional sub-even
 
 namespace Plurality
 
-/-- Landman's group structure: `up` packs a sum into a group atom and `down` recovers the sum. -/
+/-- Landman's group structure, in which `up` packs a sum into a group atom and `down` recovers
+the sum. -/
 structure GroupStructure (E : Type*) [SemilatticeSup E] where
   /-- Group formation. -/
   up : E → E
@@ -62,12 +62,12 @@ domain. -/
 
 variable {β : Type*} [Encodable β]
 
-/-- Group formation in the model: the singleton of the marker indexed by the plurality's
-code. -/
+/-- Group formation in the model sends a plurality to the singleton of the marker indexed by
+its code. -/
 def modelUp (x : Finset (β ⊕ ℕ)) : Finset (β ⊕ ℕ) :=
   {Sum.inr (Encodable.encode x)}
 
-theorem modelUp_injective : Function.Injective (modelUp (β := β)) := λ _ _ h =>
+theorem modelUp_injective : Function.Injective (modelUp (β := β)) := fun _ _ h ↦
   Encodable.encode_injective (Sum.inr.inj (Finset.singleton_injective h))
 
 /-- The finite sets of `β ⊕ ℕ` carry a group structure, with dissolution the left inverse of

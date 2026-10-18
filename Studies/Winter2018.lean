@@ -2,11 +2,12 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 public import Linglib.Data.Examples.Winter2018
+public import Studies.Siloni2012
 
 /-!
 # Winter (2018): Symmetric Predicates and the Semantics of Reciprocal Alternations
 
-This file formalizes [winter-2018]'s account of reciprocal alternations, which pair a
+This file formalizes Winter's account of reciprocal alternations, which pair a
 unary collective predicate with a binary one. An alternation is plain when the collective
 holds of a sum of two entities exactly if the binary predicate holds between them in both
 directions (7) (`PlainReciprocity`), and the Reciprocity-Symmetry Generalization says that
@@ -19,9 +20,13 @@ by the commutativity of sum formation (`rsg_symmetricImage`). Non-symmetric pred
 *hug* show weaker patterns (`Pr1`, `Pr2`, `Pr4`), of which only the disjunctive entailment
 from the collective to one direction of the binary predicate is shared by all alternations
 (`Pr5`); plain reciprocity is exactly the conjunction of the first two
-(`plainReciprocity_iff_pr1_pr2`). The event-based rule of [dimitriadis-2008] (42), which
-derives the collective from two specifying sub-events, leaves the two unidirectional hugs of
-(38) without a common event (`exists_dimitriadis_not_pr1`). The paper's own account of the
+(`plainReciprocity_iff_pr1_pr2`). Previous approaches assume that a collective entails the
+binary predicate in both directions (43), and Siloni's (2012) meaning postulate for symmetric
+verbs is one such approach: it validates (Pr₂) for every symmetric verb
+(`pr2_of_isSymmetricVerb`), which the hug, fight, collide, divorce and talk alternations fail.
+The event-based rule (42) of Dimitriadis (2008), which derives the collective from two
+specifying sub-events, leaves the two unidirectional hugs of (38) without a common event
+(`exists_dimitriadis_not_pr1`). The paper's own account of the
 non-plain cases is preferential: the typicality of an event as a collective one grows with the
 number of directed pairs the binary predicate relates in it (58) (`typ`), so that more
 directed relations only raise it (`typ_mono`), a positive threshold yields the disjunctive
@@ -33,8 +38,9 @@ pair (`two_le_typ_pair_iff`).
 Sums of two distinct entities are pair finsets, and the typicality of (58) is the count of
 directed pairs rather than a value proportional to it. Table 3's per-verb patterns are
 judgments about lexical items and are recorded in the paper's examples rather than as a
-table; the counting of events and the comparison with [siloni-2012]'s derivation of
-reciprocals from transitives are not formalized.
+table; the counting of events is not formalized. Siloni's collective is read off her event
+semantics: it holds of a sum when some event of the symmetric verb has the group of the sum
+as its complex role.
 
 ## References
 
@@ -51,8 +57,8 @@ variable {A : Type*} [DecidableEq A]
 
 /-! ### Plain reciprocity and symmetry -/
 
-/-- Plain reciprocity (7): for distinct entities, the collective holds of their sum exactly
-if the binary predicate holds between them in both directions. -/
+/-- An alternation is in plain reciprocity (7) when, for distinct entities, the collective
+holds of their sum exactly if the binary predicate holds between them in both directions. -/
 def PlainReciprocity (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → (P {x, y} ↔ R x y ∧ R y x)
 
@@ -61,8 +67,8 @@ its binary predicate is truth-conditionally symmetric. -/
 def RSG (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   PlainReciprocity P R ↔ Std.Symm R
 
-/-- The symmetric image of a collective predicate (22): the binary predicate holding of two
-entities when the collective holds of their sum. -/
+/-- The symmetric image of a collective predicate (22) holds of two entities when the
+collective holds of their sum. -/
 def symmetricImage (P : Finset A → Prop) : A → A → Prop := fun x y ↦ P {x, y}
 
 /-- The symmetric image is symmetric, by the commutativity of sum formation. -/
@@ -99,21 +105,21 @@ theorem exists_plainReciprocity_not_symm :
 
 /-! ### The patterns of non-plain alternations (§3.3) -/
 
-/-- (Pr₁): the binary predicate in both directions yields the collective. -/
+/-- Property (Pr₁) says that the binary predicate in both directions yields the collective. -/
 def Pr1 (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → R x y → R y x → P {x, y}
 
-/-- (Pr₂): the collective yields the binary predicate. -/
+/-- Property (Pr₂) says that the collective yields the binary predicate. -/
 def Pr2 (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → P {x, y} → R x y
 
-/-- (Pr₄): one direction of the binary predicate yields the collective, as with *break up*
-(46). -/
+/-- Property (Pr₄) says that one direction of the binary predicate yields the collective, as
+with *break up* (46). -/
 def Pr4 (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → R x y → P {x, y}
 
-/-- (Pr₅): the collective yields the binary predicate in at least one direction, the pattern
-every reciprocal alternation shares. -/
+/-- Property (Pr₅) says that the collective yields the binary predicate in at least one
+direction, the pattern every reciprocal alternation shares. -/
 def Pr5 (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → P {x, y} → R x y ∨ R y x
 
@@ -139,6 +145,37 @@ theorem plainReciprocity_iff_pr1_pr2 : PlainReciprocity P R ↔ Pr1 P R ∧ Pr2 
       fun x y hxy hP ↦ ((h x y hxy).mp hP).1⟩
   · rintro ⟨h1, h2⟩ x y hxy
     exact ⟨fun hP ↦ h2.both hxy hP, fun h ↦ h1 x y hxy h.1 h.2⟩
+
+/-! ### The assumption of previous approaches (43)
+
+Previous accounts take *A and B hugged* to entail *A hugged B* and *B hugged A* (43), which is
+(Pr₂) by `Pr2.both`. [siloni-2012]'s symmetric verbs are an instance: footnote 17's meaning
+postulate makes an event of the reciprocal verb dissolve into two events of the transitive one
+with crossed roles. Its collective holds of a sum when some event has the group of the sum as
+its complex role, and its binary predicate when some event of the transitive verb has the two
+entities as Agent and Theme. -/
+
+section Siloni
+
+variable {D E : Type*} [SemilatticeSup D] [SemilatticeSup E] {GD : Plurality.GroupStructure D}
+  {GE : Plurality.GroupStructure E} {V Vsym : Set E} {ag th agTh : E → D}
+
+/-- [siloni-2012]'s symmetric verbs validate (Pr₂): for entities that are singular individuals
+`ι x`, with `σ` summing a pair to the sum of its members, a collective sentence entails the
+binary one. The paper reports (Pr₂) failing for hug, fight, collide, divorce and talk (§3.3,
+partly from experiments on their Dutch counterparts), so on its judgments these reciprocal
+verbs are not symmetric verbs in Siloni's sense. -/
+theorem pr2_of_isSymmetricVerb (h : Siloni2012.IsSymmetricVerb GD GE V ag th Vsym agTh)
+    {ι : A → D} (hι : ∀ x, Mereology.Atom (ι x)) {σ : Finset A → D}
+    (hσ : ∀ x y, σ {x, y} = ι x ⊔ ι y) :
+    Pr2 (fun s ↦ ∃ e ∈ Vsym, agTh e = GD.up (σ s))
+      (fun x y ↦ ∃ e ∈ V, ag e = ι x ∧ th e = ι y) := by
+  rintro x y - ⟨e, he, hrole⟩
+  rw [hσ] at hrole
+  obtain ⟨e₁, -, -, h₁, -, ha₁, ht₁, -⟩ := h.underlyingReading e he (hι x) (hι y) hrole
+  exact ⟨e₁, h₁, ha₁, ht₁⟩
+
+end Siloni
 
 /-! ### Events: Dimitriadis's rule and preferential reciprocity -/
 
@@ -170,11 +207,11 @@ theorem exists_dimitriadis_not_pr1 :
 
 variable (R : E → A → A → Prop) [∀ e, DecidableRel (R e)]
 
-/-- The typicality of an event as a collective event of a group (58): the number of ordered
+/-- The typicality of an event as a collective event of a group (58) is the number of ordered
 pairs of distinct members the binary predicate relates in it. -/
 def typ (e : E) (s : Finset A) : ℕ := ((s ×ˢ s).filter fun p ↦ p.1 ≠ p.2 ∧ R e p.1 p.2).card
 
-/-- (57): an event with more directed relations is at least as typical. -/
+/-- An event with more directed relations is at least as typical (57). -/
 theorem typ_mono {R' : E → A → A → Prop} [∀ e, DecidableRel (R' e)] {e : E}
     (h : ∀ x y, R e x y → R' e x y) (s : Finset A) : typ R e s ≤ typ R' e s :=
   Finset.card_le_card fun p hp ↦ by
