@@ -79,14 +79,14 @@ inductive Language where
 /-- Warlpiri *-nyanu* is the reflexive–reciprocal bound pronoun in the object slot of the
 pronominal complex ([nordlinger-2023] ex. 18b, 48). -/
 def warlpiriNyanu : Marker :=
-  { morphs := [.suff "nyanu"], strategy := .boundPronoun, alsoReflexive := true }
+  { morphs := [.suff "nyanu"], strategy := .boundPronoun }
 
 /-- Kuuk Thaayorre *-rr* is the reciprocal verbal suffix ([nordlinger-2023] ex. 25). -/
 def kuukThaayorreRr : Marker := { morphs := [.suff "rr"], strategy := .verbalAffix }
 
 /-- Dalabon *-rr* is the reflexive–reciprocal verbal suffix ([nordlinger-2023] ex. 26b). -/
 def dalabonRr : Marker :=
-  { morphs := [.suff "rr"], strategy := .verbalAffix, alsoReflexive := true }
+  { morphs := [.suff "rr"], strategy := .verbalAffix }
 
 /-- Tonga *-an* is the reciprocal verbal suffix ([nordlinger-2023] ex. 21, from
 [maslova-2008]). -/
@@ -159,9 +159,9 @@ def Language.formation : Language → Option Formation
   | .swahili | .greek => some .lexical
   | _ => none
 
-/-- Whether the review attests the discontinuous reciprocal construction (§3.3): Greek,
-Swahili and Hungarian with a comitative (ex. 36–38), French and Czech ungrammatical (ex. 39,
-p. 86). -/
+/-- Whether the review attests the discontinuous reciprocal construction (§3.3), as it does for
+Greek, Swahili and Hungarian with a comitative (ex. 36–38), while in French and Czech it is
+ungrammatical (ex. 39, p. 86). -/
 def Language.discontinuous : Language → Option Bool
   | .swahili | .hungarian | .greek => some true
   | .french | .czech => some false

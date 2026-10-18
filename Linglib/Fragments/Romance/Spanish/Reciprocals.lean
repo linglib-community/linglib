@@ -25,7 +25,7 @@ open Reciprocal
 /-- se — reflexive/reciprocal clitic ([palmieri-2024] ch. 2). -/
 def seClitic : Marker :=
   { morphs := [.free "se"], strategy := .recipClitic
-  , alsoReflexive := true }
+   }
 
 /-- el uno al otro — periphrastic bipartite reciprocal (consensus periphrastic). -/
 def bipartite : Marker :=

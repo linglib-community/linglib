@@ -16,8 +16,8 @@ public import Linglib.Syntax.Voice.Basic
 Cross-linguistic vocabulary for reciprocal constructions: the marking strategy
 ([nordlinger-2023]'s synthesis of [konig-kokutani-2006], [nedjalkov-2007a], and
 [evans-2008]), the site it codes and the valency it derives, the formation locus
-of reciprocal verbs ([siloni-2008], [siloni-2012]), and the reciprocal markers, each noting
-whether it also expresses the reflexive meaning, from which a language's inventory is built.
+of reciprocal verbs ([siloni-2008], [siloni-2012]), and the reciprocal markers, from which a
+language's inventory is built.
 
 ## Main definitions
 
@@ -29,7 +29,7 @@ whether it also expresses the reflexive meaning, from which a language's invento
   construction as its exponent together with what each indicator reports;
   `Construction.Mixed` is [evans-et-al-2007]'s mixed transitivity effect.
 * `Formation` — lexical vs syntactic formation of reciprocal verbs.
-* `Marker` — a reciprocal exponent, and whether it is also reflexive.
+* `Marker` — a reciprocal exponent with its strategy.
 
 ## Implementation notes
 
@@ -184,8 +184,8 @@ inductive Formation where
 
 /-! ### Marker inventories -/
 
-/-- A reciprocal marker is an exponent with its strategy, noting whether it also expresses the
-reflexive meaning, the reflexive–reciprocal polysemy. -/
+/-- A reciprocal marker is an exponent with its strategy. Whether it also expresses the reflexive
+meaning is whether its form is one of the language's reflexive exponents. -/
 structure Marker where
   /-- The exponent, in surface order, a romanization where the language has a native script. -/
   morphs : List Morphology.Morph
@@ -193,8 +193,6 @@ structure Marker where
   script : Option String := none
   /-- Morphosyntactic strategy of the exponent. -/
   strategy : Strategy
-  /-- The marker also expresses the reflexive meaning. -/
-  alsoReflexive : Bool := false
   deriving DecidableEq
 
 /-! ### Constructions -/

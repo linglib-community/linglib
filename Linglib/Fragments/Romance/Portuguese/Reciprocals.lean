@@ -32,7 +32,7 @@ open Reciprocal
 
 /-- The clitic *se* in its reciprocal use, also the reflexive. -/
 def seClitic : Marker :=
-  { morphs := [.free "se"], strategy := .recipClitic, alsoReflexive := true }
+  { morphs := [.free "se"], strategy := .recipClitic }
 
 /-- The bipartite *um o outro* 'one the other'. -/
 def bipartite : Marker :=
