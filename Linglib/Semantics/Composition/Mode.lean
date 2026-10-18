@@ -51,16 +51,17 @@ namespace Montague
 /-- The composition modes are the typed binary operations of functional application, with the
 function as either daughter, of intensional application, which applies a daughter expecting an
 intension to the rigid intension of its sister in either order ([von-fintel-heim-2011]), of
-predicate modification, and of event identification of a role head and an eventuality predicate
-in either order ([kratzer-1996]). -/
+predicate modification, the intersection of two predicates of one sort, and of event
+identification of a role head and a predicate of eventualities in either order, Kratzer's (23)
+([kratzer-1996]). -/
 inductive Mode : Ty → Ty → Ty → Type where
   | functionalLeft {σ τ : Ty} : Mode (σ ⇒ τ) σ τ
   | functionalRight {σ τ : Ty} : Mode σ (σ ⇒ τ) τ
   | intensionalLeft {σ τ : Ty} : Mode (.intens σ ⇒ τ) σ τ
   | intensionalRight {σ τ : Ty} : Mode σ (.intens σ ⇒ τ) τ
-  | predicateModification : Mode (.e ⇒ .t) (.e ⇒ .t) (.e ⇒ .t)
-  | eventIdentificationLeft : Mode (.e ⇒ .e ⇒ .t) (.e ⇒ .t) (.e ⇒ .e ⇒ .t)
-  | eventIdentificationRight : Mode (.e ⇒ .t) (.e ⇒ .e ⇒ .t) (.e ⇒ .e ⇒ .t)
+  | predicateModification {σ : Ty} : Mode (σ ⇒ .t) (σ ⇒ .t) (σ ⇒ .t)
+  | eventIdentificationLeft : Mode (.e ⇒ .v ⇒ .t) (.v ⇒ .t) (.e ⇒ .v ⇒ .t)
+  | eventIdentificationRight : Mode (.v ⇒ .t) (.e ⇒ .v ⇒ .t) (.e ⇒ .v ⇒ .t)
   deriving DecidableEq
 
 namespace Mode
@@ -90,15 +91,17 @@ def intensionalRight? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ �
   | σ₁, .fn (.intens σ) τ => if h : σ = σ₁ then some ⟨τ, h ▸ intensionalRight⟩ else none
   | _, _ => none
 
-/-- Predicate modification applies to two predicates. -/
+/-- Predicate modification applies to two predicates of individuals or two predicates of
+eventualities ([wellwood-2015]). -/
 def predicateModification? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
   | .fn .e .t, .fn .e .t => some ⟨_, predicateModification⟩
+  | .fn .v .t, .fn .v .t => some ⟨_, predicateModification⟩
   | _, _ => none
 
 /-- Event identification applies to a role head and an eventuality predicate, in either order. -/
 def eventIdentification? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
-  | .fn .e (.fn .e .t), .fn .e .t => some ⟨_, eventIdentificationLeft⟩
-  | .fn .e .t, .fn .e (.fn .e .t) => some ⟨_, eventIdentificationRight⟩
+  | .fn .e (.fn .v .t), .fn .v .t => some ⟨_, eventIdentificationLeft⟩
+  | .fn .v .t, .fn .e (.fn .v .t) => some ⟨_, eventIdentificationRight⟩
   | _, _ => none
 
 end Mode
@@ -210,6 +213,12 @@ theorem combine?_map {op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V 
     (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p q : V (.e ⇒ .t)) :
     combine? op ⟨.e ⇒ .t, p⟩ ⟨.e ⇒ .t, q⟩ = some ⟨.e ⇒ .t, op predicateModification p q⟩ := by
   simp [combine?]
+
+@[simp] theorem combine?_predicateModification_v
+    (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p q : V (.v ⇒ .t)) :
+    combine? op ⟨.v ⇒ .t, p⟩ ⟨.v ⇒ .t, q⟩ = some ⟨.v ⇒ .t, op predicateModification p q⟩ := by
+  simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, intensionalLeft?,
+    intensionalRight?, predicateModification?]
 
 end Mode
 

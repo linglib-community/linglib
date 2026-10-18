@@ -33,15 +33,15 @@ type-driven composition engine.
 
 ## Implementation notes
 
-Semantic types are those of `Montague.Ty`, in which events share the type `e` with
-individuals, as in the composition engine: the book's `⟨s,t⟩` is `Ty.et` and `⟨e,⟨s,t⟩⟩` is
-`Ty.eet`. A constituent fails to compose with another exactly when `Ty.combine?` returns `none`.
+Semantic types are those of `Montague.Ty`, whose eventuality sort `v` is the book's event type
+`s`, so the book's `⟨s,t⟩` is `Ty.vt` and `⟨e,⟨s,t⟩⟩` is `Ty.evt`. A constituent fails to compose
+with another exactly when `Ty.combine?` returns `none`.
 
 The third applicative diagnostic, the availability of the applied argument for depictive
 modification, is also a typing fact in the book: a depictive phrase is of type ⟨e,⟨s,t⟩⟩ and
 combines by Predicate Modification with constituents of that type, which a high Appl' is and a
-low Appl' is not. The engine's predicate modification is at `⟨e,t⟩` only, so that diagnostic is
-recorded in the data rows only.
+low Appl' is not. The engine's predicate modification is at `⟨e,t⟩` and `⟨v,t⟩` only, so that
+diagnostic is recorded in the data rows only.
 
 The Voice-bundling status of the Bemba, Luganda, and Venda causatives is unknown (Table 3.1,
 note a), so only the English, Japanese, and Finnish heads are given as `CauseHead` values.
@@ -83,7 +83,7 @@ def lowAppl (theme : Entity → E → Prop) (poss : Entity → Entity → Prop) 
   fun e ↦ f x e ∧ theme x e ∧ poss x y
 
 /-- `lowApplTy` is the type of the low applicative head (15), `⟨e,⟨e,⟨⟨e,⟨s,t⟩⟩,⟨s,t⟩⟩⟩⟩`. -/
-abbrev lowApplTy : Ty := .e ⇒ .e ⇒ Ty.eet ⇒ Ty.et
+abbrev lowApplTy : Ty := .e ⇒ .e ⇒ Ty.evt ⇒ Ty.vt
 
 /-- `sisterTy a` is the type of the applicative constituent that is the verb's sister, the high
 applicative head (13) of type `⟨e,⟨s,t⟩⟩`, which the verb phrase combines with by Event
@@ -91,26 +91,26 @@ Identification, or the low ApplP of type `⟨⟨e,⟨s,t⟩⟩,⟨s,t⟩⟩`, wh
 argument. The affected
 applicative of [cuervo-2003] is outside the book's inventory and has no type here. -/
 def sisterTy : ApplType → Option Ty
-  | .high => some Ty.eet
-  | .low _ => some (Ty.eet ⇒ Ty.et)
+  | .high => some Ty.evt
+  | .low _ => some (Ty.evt ⇒ Ty.vt)
   | .affected => none
 
 /-- An applicative composes with an unergative verb phrase, of type `⟨s,t⟩`, exactly when it is
 high, Diagnostic 1 (17). -/
 theorem composes_unergative_iff (a : ApplType) :
-    (∃ τ ∈ sisterTy a, (Ty.combine? τ Ty.et).isSome) ↔ a = .high := by
+    (∃ τ ∈ sisterTy a, (Ty.combine? τ Ty.vt).isSome) ↔ a = .high := by
   cases a <;> simp [sisterTy] <;> decide
 
 /-- A low applicative cannot appear in a structure that lacks a direct object (17), since at no
 stage of its saturation does it compose with an unergative verb phrase, in either order. -/
 theorem lowAppl_not_composes_unergative :
-    ∀ τ ∈ [lowApplTy, .e ⇒ Ty.eet ⇒ Ty.et, Ty.eet ⇒ Ty.et],
-      Ty.combine? τ Ty.et = none ∧ Ty.combine? Ty.et τ = none := by
+    ∀ τ ∈ [lowApplTy, .e ⇒ Ty.evt ⇒ Ty.vt, Ty.evt ⇒ Ty.vt],
+      Ty.combine? τ Ty.vt = none ∧ Ty.combine? Ty.vt τ = none := by
   decide
 
 /-- The low ApplP composes with a transitive verb, static or not, so the second diagnostic (18)
 is not a typing fact. -/
-theorem lowApplP_composes_transitive : Ty.combine? (Ty.eet ⇒ Ty.et) Ty.eet = some Ty.et := by
+theorem lowApplP_composes_transitive : Ty.combine? (Ty.evt ⇒ Ty.vt) Ty.evt = some Ty.vt := by
   decide
 
 /-- In the derivation (16) of *Mary bought John the book*, the low ApplP takes the verb, whose
@@ -162,7 +162,7 @@ def Construction.head : Construction → ApplType
 /-- A construction composes with an unergative verb phrase when its head's applicative
 constituent does. -/
 def Construction.ComposesUnergative (c : Construction) : Prop :=
-  ∃ τ ∈ sisterTy c.head, (Ty.combine? τ Ty.et).isSome
+  ∃ τ ∈ sisterTy c.head, (Ty.combine? τ Ty.vt).isSome
 
 instance : DecidablePred Construction.ComposesUnergative := fun c ↦
   inferInstanceAs (Decidable (∃ τ ∈ sisterTy c.head, _))
@@ -217,22 +217,22 @@ theorem melted_readings (CAUSE : E → E → Prop) (agent causer : Entity → E 
   ⟨Iff.rfl, Iff.rfl⟩
 
 /-- `causeTy` is the type of Cause (9), `⟨⟨s,t⟩,⟨s,t⟩⟩`. -/
-abbrev causeTy : Ty := Ty.et ⇒ Ty.et
+abbrev causeTy : Ty := Ty.vt ⇒ Ty.vt
 
 /-- Cause applied to a verb phrase yields a predicate of events, the unaccusative causative (18),
 while the θ-role analysis's causer head (16a), of type `⟨e,⟨s,t⟩⟩`, yields a relation that still
 awaits an individual (§3.2). -/
 theorem unaccusative_causative :
-    Ty.combine? causeTy Ty.et = some Ty.et ∧ Ty.combine? Ty.eet Ty.et = some Ty.eet := by
+    Ty.combine? causeTy Ty.vt = some Ty.vt ∧ Ty.combine? Ty.evt Ty.vt = some Ty.evt := by
   decide
 
 /-- The two heads of the Voice-bundling Cause (42) cannot combine with each other, in either
 order, so they apply to the verb phrase one at a time, and only Cause first, since after Voice
 nothing Cause can take remains (§3.3). -/
 theorem cause_voice_order :
-    Ty.combine? causeTy Ty.eet = none ∧ Ty.combine? Ty.eet causeTy = none ∧
-      (Ty.combine? causeTy Ty.et).bind (Ty.combine? Ty.eet) = some Ty.eet ∧
-      (Ty.combine? Ty.eet Ty.et).bind (Ty.combine? causeTy) = none := by
+    Ty.combine? causeTy Ty.evt = none ∧ Ty.combine? Ty.evt causeTy = none ∧
+      (Ty.combine? causeTy Ty.vt).bind (Ty.combine? Ty.evt) = some Ty.evt ∧
+      (Ty.combine? Ty.evt Ty.vt).bind (Ty.combine? causeTy) = none := by
   decide
 
 /-! ### Selection: Cause takes a root, a verb, or a phase -/
