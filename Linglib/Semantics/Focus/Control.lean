@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Alternatives.Basic
+public import Linglib.Semantics.Composition.WithAlternatives
 
 /-!
 # Focus antecedents
@@ -49,9 +49,9 @@ inductive Use where
   | contrastive  -- parallel contrast across utterances
   deriving DecidableEq, Repr, Inhabited
 
-/-- A focus antecedent: the discourse object that supplies the
-squiggle's antecedent — a contrast set for [rooth-1992]'s set case, or
-a single contrasting ordinary value for the individual case. -/
+/-- A focus antecedent is the discourse object that supplies the squiggle's antecedent, a
+contrast set for [rooth-1992]'s set case or a single contrasting ordinary value for the
+individual case. -/
 inductive Antecedent (W : Type*) where
   /-- A question with (flat Hamblin) denotation `q`. -/
   | question (q : Set (Set W))
@@ -147,14 +147,13 @@ section Squiggle
 
 variable {α : Type*}
 
-/-- The ~ presupposition, set case: `Γ ⊆ fv`, `o ∈ Γ`, and `Γ` contains
-an alternative distinct from `o` ([rooth-1992] (40)). -/
+/-- The ~ presupposition in the set case requires `Γ ⊆ fv`, `o ∈ Γ`, and an alternative in `Γ`
+distinct from `o` ([rooth-1992] (40)). -/
 def SquiggleSet (o : α) (fv Γ : Set α) : Prop :=
   Γ ⊆ fv ∧ o ∈ Γ ∧ ∃ x ∈ Γ, x ≠ o
 
-/-- The ~ presupposition, individual case: the antecedent is a member
-of `fv` distinct from `o` ([rooth-1992] (40)); the contrasting-phrases
-rule is this with `γ := ⟦β⟧ᵒ`. -/
+/-- The ~ presupposition in the individual case requires the antecedent to be a member of `fv`
+distinct from `o` ([rooth-1992] (40)); the contrasting-phrases rule is this with `γ := ⟦β⟧ᵒ`. -/
 def SquiggleInd (o : α) (fv : Set α) (γ : α) : Prop :=
   γ ∈ fv ∧ γ ≠ o
 
@@ -254,10 +253,9 @@ def pairAnswer {W : Type*} (d d' : W) : WithAlternatives (Set W) :=
     · exact ⟨d, by simp, rfl⟩
     · exact ⟨d', by simp, rfl⟩
 
-/-- **Uniform resolution across the four uses**: every canonical
-antecedent shape fully resolves — all squiggle clauses, including the
-correction clause — against the composed answer over its pair. One
-semantics, four pragmatic uses. -/
+/-- Every canonical antecedent shape fully resolves, all squiggle clauses including the
+correction clause, against the composed answer over its pair, so the four pragmatic uses share
+one semantics. -/
 theorem use_model_resolves {W : Type*} {d d' : W} (hne : d' ≠ d) (u : Use) :
     (Use.model {d} {d'} u).Resolves
       (pairAnswer d d').ordinary (pairAnswer d d').alternatives := by

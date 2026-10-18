@@ -23,18 +23,18 @@ each principle state their disagreement over one definition.
 
 ## Main definitions
 
-* `Alternatives.Blocked`: some alternative is strictly stronger along the content dimension.
-* `Alternatives.unblocked`: the points where no alternative whose content holds is strictly
+* `Competition.Blocked`: some alternative is strictly stronger along the content dimension.
+* `Competition.unblocked`: the points where no alternative whose content holds is strictly
   stronger.
-* `Alternatives.sameAssertion`: the alternatives with the same at-issue content.
+* `Competition.sameAssertion`: the alternatives with the same at-issue content.
 
 ## Main results
 
-* `Alternatives.mem_unblocked_iff_minimalFor`: an expression is unblocked where it is a most
+* `Competition.mem_unblocked_iff_minimalFor`: an expression is unblocked where it is a most
   specific competitor whose content holds.
-* `Alternatives.disjoint_unblocked`: competitors with strictly nested contents are never
+* `Competition.disjoint_unblocked`: competitors with strictly nested contents are never
   unblocked at the same point.
-* `Alternatives.unblocked_anti`: more alternatives, fewer unblocked points.
+* `Competition.unblocked_anti`: more alternatives, fewer unblocked points.
 
 ## References
 
@@ -48,7 +48,7 @@ each principle state their disagreement over one definition.
 
 @[expose] public section
 
-namespace Alternatives
+namespace Competition
 
 variable {S W : Type*} {alts alts' : S → Set S} {content assertion : S → Set W} {φ φ' ψ : S}
   {w : W}
@@ -159,4 +159,4 @@ theorem unblocked_anti (h : alts ≤ alts') :
     unblocked alts' content φ ⊆ unblocked alts content φ :=
   sdiff_le_sdiff_left <| sSup_le_sSup <| Set.inter_subset_inter_left _ (Set.image_mono (h φ))
 
-end Alternatives
+end Competition

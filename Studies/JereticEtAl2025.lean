@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.JereticEtAl2025
 public import Linglib.Syntax.Cat
-public import Linglib.Semantics.Alternatives.Competition
+public import Linglib.Pragmatics.Competition
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Fragments.Romance.French.Determiners
 public import Linglib.Fragments.English.Determiners
@@ -19,12 +19,12 @@ Križ and Chemla to show a conceptual alternative at work.
 The account posits a dual number feature in every language, syncretic with the plural in French, so
 that the string *tous les NP* is ambiguous between a plural and a dual parse; Avoid Ambiguity
 (`BarredByAmbiguity`) bars the dual parse from pronunciation because *les deux NP* realizes its
-meaning at no greater node count, and that expression, an indirect alternative in the sense of the
-substrate's `Alternatives.indirectFrom`, licenses the Maximize Presupposition competition the silent
-parse cannot enter on its own. The worked example runs this on (25): the dual parse is barred,
-pronounceability is thereby derived rather than stipulated, and *tous* violates Maximize
-Presupposition through *les deux* (`tous_blocked_via_indirect`), so that it is used in the domain of
-three cups and not in the domain of two (`unblocked_tous`).
+meaning at no greater node count, and that expression, an indirect alternative (`indirectFrom`),
+licenses the Maximize Presupposition competition the silent parse cannot enter on its own. The
+worked example runs this on (25): the dual parse is barred, pronounceability is thereby derived
+rather than stipulated, and *tous* violates Maximize Presupposition through *les deux*
+(`tous_blocked_via_indirect`), so that it is used in the domain of three cups and not in the domain
+of two (`unblocked_tous`).
 
 Across languages and quantifier slots a plain quantifier is predicted anti-dual exactly when a
 dual competitor exists, a lexical dual item or a pronounceable dual expression at most as
@@ -226,6 +226,31 @@ instance [DecidableEq P] [DecidableEq M] [Fintype S] :
 
 end AvoidAmbiguity
 
+/-! ### Indirect alternatives -/
+
+section Indirect
+
+variable {S M : Type*} {base : S → Set S} {pron : S → Prop} {meaning : S → M} {size : S → Nat}
+  {s s' : S}
+
+/-- The indirect alternatives of `s` (43) are the pronounceable expressions `s'` at most as
+complex as `s` that mean what some unpronounceable alternative `sₓ ∈ base s` means. -/
+def indirectFrom (base : S → Set S) (pron : S → Prop) (meaning : S → M) (size : S → Nat) :
+    S → Set S :=
+  fun s ↦ {s' | pron s' ∧ size s' ≤ size s ∧ ∃ sₓ ∈ base s, ¬ pron sₓ ∧ meaning s' = meaning sₓ}
+
+@[simp] theorem mem_indirectFrom :
+    s' ∈ indirectFrom base pron meaning size s ↔
+      pron s' ∧ size s' ≤ size s ∧ ∃ sₓ ∈ base s, ¬ pron sₓ ∧ meaning s' = meaning sₓ :=
+  Iff.rfl
+
+/-- An expression all of whose alternatives are pronounceable has no indirect alternative. -/
+theorem indirectFrom_eq_empty_of_forall_pron (h : ∀ x ∈ base s, pron x) :
+    indirectFrom base pron meaning size s = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ ⟨_, _, sₓ, hsₓ, hn, _⟩ ↦ hn (h sₓ hsₓ)
+
+end Indirect
+
 /-! ### The worked example (25)
 
 *Tous les verres sont pleins* against *les deux verres sont pleins*, collapsed to head
@@ -234,8 +259,7 @@ one NP over two terminals, so every step is a `decide` or one Katzir substitutio
 
 section WorkedExample
 
-open PhraseStructure
-open Alternatives
+open PhraseStructure Tree Competition
 
 /-- The two evaluation contexts are a domain of two cups and a domain of three; the dual
 presupposition is satisfied only in the first. -/
@@ -341,8 +365,8 @@ def frenchIndirectSrc : Tree Cat String → Set (Tree Cat String) :=
 /-- *tous_DUAL V* is a Katzir alternative of *tous V*, by substituting the dual determiner. -/
 theorem tousDual_katzir_alt : tousDualVerres ∈ structuralAlternatives frenchLex tousVerres := by
   apply Relation.ReflTransGen.single
-  refine StructOp.inChild (cs := [tousLex, verresLex]) ⟨0, by decide⟩
-    (StructOp.subst (φ := tousLex) (ψ := tousDualLex) rfl ?_)
+  refine StructuralOp.inChild (cs := [tousLex, verresLex]) ⟨0, by decide⟩
+    (StructuralOp.subst (φ := tousLex) (ψ := tousDualLex) rfl ?_)
   exact Set.mem_union_left _ (by simp [frenchLex])
 
 /-- *les deux V* is in the indirect-alternative source of *tous V*, witnessed by the silent

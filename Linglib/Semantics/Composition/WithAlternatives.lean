@@ -12,9 +12,6 @@ that focus features and operators manipulate while leaving the ordinary denotati
 two-dimensional recursion of alternative semantics is `<$>` and `<*>` of a lawful `Monad`, and the
 two dimensions are its two monad morphisms.
 
-Symmetry-based refinements live in `Symmetric.lean`, structural alternatives in `Structural.lean`,
-and the semantics of the focus and givenness features in `Semantics/Focus/`.
-
 ## Main definitions
 
 * `WithAlternatives` — an ordinary value together with the alternatives it evokes
@@ -50,7 +47,7 @@ structure WithAlternatives (α : Type*) where
   `Monad`. -/
   alternatives : Set α
 
-/-- The meaning of an expression bearing no focus feature: `unfeatured x` has ordinary value `x`
+/-- The meaning `unfeatured x` of an expression bearing no focus feature has ordinary value `x`
 and evokes only `{x}`. -/
 def WithAlternatives.unfeatured {α : Type*} (x : α) : WithAlternatives α :=
   { ordinary := x, alternatives := {x} }
@@ -114,7 +111,7 @@ instance : LawfulMonad WithAlternatives := LawfulMonad.mk'
     b ∈ (f <$> m).alternatives ↔ ∃ a ∈ m.alternatives, f a = b := by
   simp [Functor.map, unfeatured, eq_comm]
 
-/-- Hamblin functional application: alternative functions apply to alternative arguments. -/
+/-- In Hamblin functional application alternative functions apply to alternative arguments. -/
 @[simp] theorem mem_alternatives_seq {mf : WithAlternatives (α → β)} {ma : WithAlternatives α}
     {b : β} :
     b ∈ (mf <*> ma).alternatives ↔ ∃ g ∈ mf.alternatives, ∃ a ∈ ma.alternatives, g a = b := by
@@ -141,7 +138,7 @@ theorem alternatives_bind (m : WithAlternatives α) (f : α → WithAlternatives
     (m >>= f).alternatives = {b | ∃ a ∈ m.alternatives, b ∈ (f a).alternatives} := by
   ext b; simp [Bind.bind, bind]
 
-/-- Rooth's containment constraint: the alternatives contain the ordinary value. -/
+/-- Rooth's containment constraint says that the alternatives contain the ordinary value. -/
 def WellFormed (m : WithAlternatives α) : Prop := m.ordinary ∈ m.alternatives
 
 theorem WellFormed.unfeatured (x : α) :
@@ -161,7 +158,7 @@ theorem WellFormed.map {f : α → β} {m : WithAlternatives α} (hm : m.WellFor
 
 /-! ### Givenness -/
 
-/-- Given with respect to `a`: the alternatives have collapsed to the singleton `{a}`. -/
+/-- A meaning is Given with respect to `a` when its alternatives have collapsed to `{a}`. -/
 def Given (m : WithAlternatives α) (a : α) : Prop := m.alternatives = {a}
 
 /-- Unfeatured meanings are Given with respect to their value. -/

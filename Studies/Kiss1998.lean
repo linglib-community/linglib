@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Order.Interval.Set.Basic
-public import Linglib.Semantics.Alternatives.Basic
+public import Linglib.Semantics.Composition.WithAlternatives
 public import Linglib.Semantics.Exhaustification.Excluder
 
 /-!
@@ -61,12 +61,12 @@ variable {ι : Type*} {A : Set ι} {a b : ι}
 
 /-- The alternatives evoked by a focus over the given set `A`, one for each given element,
 saying that the predicate phrase holds of it. -/
-def alternatives (A : Set ι) : Set (Set (Set ι)) := (λ i => Ici {i}) '' A
+def alternatives (A : Set ι) : Set (Set (Set ι)) := (fun i ↦ Ici {i}) '' A
 
 /-- Hamblin composition of the predicate phrase with a focused argument ranging over the
 given set evokes exactly these alternatives. -/
 theorem alternatives_eq (A : Set ι) (a : ι) :
-    alternatives A = ((λ i => Ici {i}) <$> (⟨a, A⟩ : WithAlternatives ι)).alternatives := by
+    alternatives A = ((fun i ↦ Ici {i}) <$> (⟨a, A⟩ : WithAlternatives ι)).alternatives := by
   ext q
   simp only [alternatives, mem_image, WithAlternatives.mem_alternatives_map]
 
@@ -78,7 +78,7 @@ theorem exh_Ici (A s : Set ι) : exh (alternatives A) (Ici s) = Icc s (s ∪ A�
   ext w
   simp only [mem_exh, alternatives, mem_Ici, mem_Icc, forall_mem_image, Ici_subset_Ici,
     singleton_subset_iff]
-  refine and_congr_right λ _ => ⟨λ h i hiw => ?_, λ h i hiA hiw => ?_⟩
+  refine and_congr_right fun _ ↦ ⟨fun h i hiw ↦ ?_, fun h i hiA hiw ↦ ?_⟩
   · exact (mem_union _ _ _).2 ((em (i ∈ A)).imp_left (h · hiw))
   · exact ((mem_union _ _ _).1 (h hiw)).resolve_right (not_not.2 hiA)
 
@@ -115,7 +115,7 @@ theorem farkas_test (hb : b ∈ A) (hab : a ≠ b) :
 /-- Exhaustive identification is not monotone in the prejacent, which is what the coordination
 test detects. -/
 theorem not_monotone_exh (hb : b ∈ A) (hab : a ≠ b) : ¬ Monotone (exh (alternatives A)) :=
-  λ h => (farkas_test hb hab).1 <|
+  fun h ↦ (farkas_test hb hab).1 <|
     h (Ici_subset_Ici.2 (singleton_subset_iff.2 (mem_insert a _))) <| by
       rw [exh_Ici]
       exact left_mem_Icc.2 subset_union_left
@@ -135,7 +135,7 @@ theorem exh_Ici_restrictor (A : Set ι) : exh (alternatives A) (Ici A) = Ici A :
 over a given set with two elements is contradictory. -/
 theorem exh_nonempty_eq_empty (hA : A.Nontrivial) :
     exh (alternatives A) {w | (w ∩ A).Nonempty} = ∅ := by
-  refine eq_empty_of_forall_notMem λ w hw => ?_
+  refine eq_empty_of_forall_notMem fun w hw ↦ ?_
   obtain ⟨⟨i, hiw, hiA⟩, h⟩ := mem_exh.1 hw
   obtain ⟨j, hjA, hji⟩ := hA.exists_ne i
   exact hji (mem_singleton_iff.1 (singleton_subset_iff.1

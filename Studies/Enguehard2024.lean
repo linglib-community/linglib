@@ -6,7 +6,7 @@ public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Syntax.Number.Resolve
 public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Semantics.Alternatives.Competition
+public import Linglib.Pragmatics.Competition
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Core.MeasureTheory.Constructions.Option
 public import Linglib.Core.MeasureTheory.Measure.Dirac
@@ -400,7 +400,7 @@ theorem H1.not_H2 (h : H1 κ) : ¬ H2 κ :=
 
 /-! ### Maximize Presupposition over the conditions -/
 
-open Alternatives (unblocked)
+open Competition (unblocked)
 
 /-- The English numbers are each other's alternatives. -/
 def englishAlts : Number → Set Number := fun _ ↦ {n | n ∈ numberSystem.values}
@@ -414,7 +414,7 @@ def mpPresup (S : Set Condition) : Number → Set Condition
 
 theorem unblocked_mpPresup_singular (S : Set Condition) :
     unblocked englishAlts (mpPresup S) .singular = S := by
-  refine Alternatives.unblocked_eq_self ?_
+  refine Competition.unblocked_eq_self ?_
   rintro ⟨m, hm, hss⟩
   rcases (by simpa [englishAlts, numberSystem] using hm : m = .singular ∨ m = .plural)
     with rfl | rfl
@@ -424,7 +424,7 @@ theorem unblocked_mpPresup_singular (S : Set Condition) :
 /-- The plural is used exactly where the singular's presupposition fails. -/
 theorem unblocked_mpPresup_plural {S : Set Condition} (hS : S ≠ Set.univ) :
     unblocked englishAlts (mpPresup S) .plural = Sᶜ := by
-  rw [Alternatives.unblocked_eq_sdiff (ψ := .singular) (by simp [englishAlts, numberSystem])
+  rw [Competition.unblocked_eq_sdiff (ψ := .singular) (by simp [englishAlts, numberSystem])
     hS.lt_top, Set.compl_eq_univ_sdiff]
   · rfl
   rintro χ hχ hss
@@ -466,7 +466,7 @@ theorem Follows.H1_of_mpPresup [∀ c, IsProbabilityMeasure (κ c)[|indefinite]]
     case singular => rw [unblocked_mpPresup_singular]; split_ifs <;> simp_all
     case plural => rw [unblocked_mpPresup_plural hS]; split_ifs <;> simp_all
     all_goals
-      refine ⟨fun hc ↦ absurd (Alternatives.unblocked_subset _ _ _ hc) (Set.notMem_empty c),
+      refine ⟨fun hc ↦ absurd (Competition.unblocked_subset _ _ _ hc) (Set.notMem_empty c),
         fun h ↦ ?_⟩
       split_ifs at h
 

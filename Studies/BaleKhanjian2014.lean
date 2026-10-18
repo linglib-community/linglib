@@ -61,7 +61,7 @@ definite singular.
 
 namespace BaleKhanjian2014
 
-open PhraseStructure Alternatives
+open PhraseStructure Tree
 
 /-! ### Denotations -/
 
@@ -252,27 +252,27 @@ theorem pluralDef_alternative : equalComplexity (↑lexicon) singularDef pluralD
       .node .V [.terminal .V "vaze-ts"]]
   refine ⟨?_, ?_⟩
   · refine .head (b := step₁) ?_ (.head (b := step₂) ?_ (.single ?_))
-    · apply StructOp.inChild ⟨1, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
-    · apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
-    · apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨1, by simp⟩
+      apply StructuralOp.inChild ⟨0, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨0, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨0, by simp⟩
+      apply StructuralOp.inChild ⟨0, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
   · refine .head (b := step₂) ?_ (.head (b := step₁) ?_ (.single ?_))
-    · apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
-    · apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
-    · apply StructOp.inChild ⟨1, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨0, by simp⟩
+      apply StructuralOp.inChild ⟨0, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨0, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨1, by simp⟩
+      apply StructuralOp.inChild ⟨0, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
 
 /-- The numeral-modified plural is a structural alternative to the numeral-modified singular,
     and conversely: the number head and the verb form substitute. -/
@@ -285,23 +285,23 @@ theorem numeralPl_alternative : equalComplexity lexicon numeralSg numeralPl := b
       .node .V [.terminal .V "vaze-ts"]]
   refine ⟨?_, ?_⟩
   · refine .head (b := step) ?_ (.single ?_)
-    · apply StructOp.inChild ⟨1, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
-    · apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨1, by simp⟩
+      apply StructuralOp.inChild ⟨0, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨0, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
   · refine .head (b := step) ?_ (.single ?_)
-    · apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
-    · apply StructOp.inChild ⟨1, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      exact StructOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨0, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      apply StructuralOp.inChild ⟨1, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
+    · apply StructuralOp.inChild ⟨1, by simp⟩
+      apply StructuralOp.inChild ⟨0, by simp⟩
+      exact StructuralOp.subst rfl (by simp [lexicon])
 
 /-! ### The rows -/
 

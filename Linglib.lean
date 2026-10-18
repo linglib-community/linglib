@@ -775,7 +775,6 @@ import Linglib.Processing.DiscriminativeLexicon.Normed
 import Linglib.Processing.DiscriminativeLexicon.Realization
 import Linglib.Processing.DiscriminativeLexicon.Training
 import Linglib.Processing.Psychophysics.SignalDetection
-import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Alternatives.Extremum
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Semantics.Alternatives.Symmetric

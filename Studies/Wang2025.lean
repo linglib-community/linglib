@@ -8,7 +8,7 @@ public import Linglib.Semantics.Aspect.Phasal
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Data.Fintype.Prod
-public import Linglib.Semantics.Alternatives.Competition
+public import Linglib.Pragmatics.Competition
 public import Linglib.Semantics.Exhaustification.Finite
 
 /-!
@@ -42,7 +42,7 @@ entails a proposition when every state it admits believes the proposition.
 * Information states are nonempty sets of worlds; the belief operator `K p` is the set of
   states included in `p`, and possibility and ignorance are the corresponding overlap
   conditions.
-* Maximize Presupposition is blocking, `Alternatives.Blocked`. A sentence without a
+* Maximize Presupposition is blocking, `Competition.Blocked`. A sentence without a
   presupposition violates it in every context, as in the dissertation's tableaux, and its rank
   below Felicity Presupposition confines its effect to contexts that entail the presupposition.
 * The aspectual triggers take their meanings from `Presupposition.again` and
@@ -133,7 +133,7 @@ theorem Candidate.admits_ssubset_univ {c : Candidate W} {p : Set W} (h : c.presu
 /-- Maximize Presupposition is violated by a candidate that its rival blocks, the rival being
 presuppositionally stronger, admitted by strictly fewer contexts, (3c). -/
 def ViolMP (rival c : Candidate W) : Prop :=
-  Alternatives.Blocked (fun _ ↦ {rival}) Candidate.admits c
+  Competition.Blocked (fun _ ↦ {rival}) Candidate.admits c
 
 theorem violMP_iff {rival c : Candidate W} : ViolMP rival c ↔ rival.admits ⊂ c.admits :=
   ⟨fun ⟨_, h, hss⟩ ↦ h ▸ hss, fun h ↦ ⟨rival, rfl, h⟩⟩

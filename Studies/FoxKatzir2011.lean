@@ -58,7 +58,7 @@ variable {W : Type*}
 
 section Formal
 
-open PhraseStructure Alternatives
+open PhraseStructure Tree
 
 variable {C V : Type} (lex : Finset (Tree C V)) (φ : Tree C V) (salient : Finset (Tree C V))
 
@@ -78,7 +78,7 @@ theorem formalAlternatives_empty : formalAlternatives lex φ ∅ = structuralAlt
 /-- A salient constituent of the sentence's category is a formal alternative. -/
 theorem mem_formalAlternatives_of_salient {ψ : Tree C V} (hψ : ψ ∈ salient)
     (hcat : ψ.cat = φ.cat) : ψ ∈ formalAlternatives lex φ salient :=
-  Relation.ReflTransGen.single (StructOp.subst hcat (by simp [contextualSource, hψ]))
+  Relation.ReflTransGen.single (StructuralOp.subst hcat (by simp [contextualSource, hψ]))
 
 /-- The symmetric *some but not all* is not a structural alternative of *some*, but it becomes a
 formal alternative once it is salient. -/
