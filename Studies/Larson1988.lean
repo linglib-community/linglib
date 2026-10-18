@@ -7,7 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
-public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.Derivation.Basic
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 
 /-!

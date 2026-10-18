@@ -60,7 +60,7 @@ def Step.applyInside (step : Step) (D : PlanarSyntacticObject) : PlanarSyntactic
   | .em _ _ | .remerge _ => D
   | .im mover _ | .extract mover =>
     if D.toSyntacticObject = mover then D
-    else PlanarSyntacticObject.replaceWhere mover mover.tracePlanar D
+    else D.replace mover mover.tracePlanar
 
 namespace Derivation
 
@@ -75,7 +75,7 @@ def spelloutDomain : Option PlanarSyntacticObject :=
   (d.stage? m).map fun D ↦ ((d.steps.drop m).take (n - m)).foldl (fun D step ↦ step.applyInside D) D
 
 /-- The Spell-out at stage `n` of the domain built by stage `m` is its pronounced yield. -/
-def spellout : List LexicalItem.Token := ((d.spelloutDomain m n).map (planarYield ·.val)).getD []
+def spellout : List LexicalItem.Token := ((d.spelloutDomain m n).map (·.yield)).getD []
 
 /-- `d.mergeStage? item` is the stage right after `item` is externally merged, if it is. -/
 def mergeStage? (item : SyntacticObject) : Option ℕ :=
