@@ -14,8 +14,6 @@ import Linglib.Core.Algebra.Opposites
 import Linglib.Core.Algebra.Order.Interval.Set.Instances
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
-import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
-import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
@@ -28,7 +26,6 @@ import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
 import Linglib.Core.Algebra.RotaBaxter
-import Linglib.Core.Algebra.RotaBaxterLaurent
 import Linglib.Core.Algebra.Group.IdempotentPower
 import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
@@ -1006,7 +1003,6 @@ import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Agree.Coordination
 import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
-import Linglib.Syntax.Minimalist.Economy.MinimalYield.Laurent
 import Linglib.Syntax.Minimalist.Economy.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.LateMerger

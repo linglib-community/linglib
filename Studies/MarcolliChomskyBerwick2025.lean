@@ -5,8 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
+public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
+public import Linglib.Core.RingTheory.HahnSeries.RotaBaxter
 public import Linglib.Syntax.Minimalist.Linearization.Externalization
 public import Linglib.Syntax.Minimalist.Derivation.Economy
 public import Linglib.Syntax.Minimalist.Merge.MinimalSearch
@@ -14,7 +15,7 @@ public import Linglib.Syntax.Minimalist.Merge.Sideward
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 public import Linglib.Syntax.Minimalist.SyntacticObject.FormCopy
 public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
-public import Mathlib.RingTheory.PowerSeries.Basic
+public import Mathlib.RingTheory.LaurentSeries
 
 /-!
 # Marcolli, Chomsky and Berwick (2025): Mathematical Structure of Syntactic Merge
@@ -55,7 +56,11 @@ of the syntactic object. The Boolean parsing semiring `Consistency` of §3.5 is 
 `toCK` embeds a syntactic object into the Hopf algebra, `featureConsistency` is the renormalized
 character, and `headConsistency` instantiates it for the head-following character of Lemma 3.2.5,
 whose probe reads the §1.13 selection head. The machinery is noncomputable, so these are
-specifications of consistency rather than checkers.
+specifications of consistency rather than checkers. In §3.5.2 the operator is the projection of
+Laurent series onto their polar part. The renormalized part of any character then lands in the
+power series (`truncLT_birkhoffPlus_of'`), while the grading character `ϕt` is already nonpolar
+and is its own renormalized part (`birkhoffPlus_gradingChar`), so it cannot single out Sideward
+Merge.
 
 Obligatory control (§3.8.2) is derived by External Merge alone. In *the man tried to read a
 book* both inscriptions of *the man* merge into theta positions, as repetitions of one another,
@@ -117,13 +122,19 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
 * Lemma 1.7.3, for `Δ^ρ` and grafting at vertices: `ConnesKreimer.isDualPrimitive_lcoeff_iff`,
   `lie_lcoeff_singleton_apply_ofTree`, `lie_lcoeff_singleton_apply_of'`, and
   `GrossmanLarson.pairingLie` for the bracket of the grafting product.
-* Definitions 3.1.1 and 3.1.2: `RotaBaxter`, `RotaBaxterSemiring`; Remark 3.2.2: `RotaBaxter.id`.
+* Definition 3.1.1 and the weight `+1` identity of Definition 3.1.2: `IsRotaBaxter` at weights
+  `-1` and `+1`; the identity operator of Remark 3.2.2, at weight `+1` on the Boolean semiring:
+  `Consistency.isRotaBaxter_id`.
 * Definitions 3.1.3, 3.1.5 and 3.1.6, Proposition 3.1.7, Remark 3.1.8:
   `ConnesKreimer.birkhoffMinus`, `birkhoffPrepTree`, `birkhoffPlus`, `birkhoffPlus_eq_convMul`,
-  `birkhoffFactorization`; Proposition 3.1.9:
-  `ConnesKreimer.SemiringRenorm.birkhoffFactorization_ofTree`.
-* Proposition 3.5.2 and (3.5.4): `LaurentSeries.rotaBaxterPolar`; Proposition 3.5.6:
-  `ConnesKreimer.polarHahn_birkhoffPlus_of'`.
+  `birkhoffFactorization`, with the operator `-R`; the subalgebras of Proposition 3.1.7:
+  `ConnesKreimer.birkhoffMinus_of'_mem_range`, `birkhoffPlus_of'_mem_range`; Proposition 3.1.9:
+  `ConnesKreimer.convMul_birkhoffMinus_apply_ofTree`.
+* Proposition 3.5.2 and (3.5.4): `HahnSeries.isRotaBaxter_truncLT`. The gradings of §3.5.2.1:
+  `δb₀`, `δα`, `δσ`, `minimalYield_iff_gradings`, `minimalYieldWeak_iff_truncLT`. Proposition
+  3.5.3 for `δα`, without the derivation coefficients: `gradingChar`; Lemma 3.5.5:
+  `truncLT_gradingChar_of'`; the first step of the proof of Proposition 3.5.6:
+  `truncLT_birkhoffPlus_of'`.
 
 ## Implementation notes
 
@@ -149,6 +160,12 @@ The proof of Proposition 1.10.2 prints `X₄ = 2{x{x{xx}}} + {{xx}{xx}}`. Its re
 the number of planar embeddings that the proof says the coefficient counts: the five planar binary
 trees with four leaves split as four and one.
 
+Definition 3.1.2's weight `-1` semiring identity
+`R(a) ⊙ R(b) ⊡ R(a ⊙ b) = R(a ⊙ R(b)) ⊡ R(R(a) ⊙ b)` is not the `IsRotaBaxter` identity at any
+weight, and Remark 3.2.2 and Lemma 3.2.7 use `R = id` at that weight on the tropical semiring. On
+`Consistency` the identity has weight `+1` as well, since disjunction is idempotent, and the
+consistency maps use it at that weight.
+
 ## TODO
 
 §1.17 reads (1.10.1) as the quadratic case of the combinatorial Dyson–Schwinger equation
@@ -169,6 +186,10 @@ Proposition 1.6.8's row for the Sideward case 3(a) under `Δ^d` lowers `α` by t
 contracted edges. When the two terms are sisters, as *the* and *apple* are in *the apple*, the
 deletion leaves their parent a leaf and contracts nothing, so `α` is unchanged. The term still
 diverges, so the proposition's conclusion stands.
+
+Corollary 3.5.4's character `ψt` sums over the pairs of intermediate derivations of a target,
+which needs a Merge step relation on workspaces; it, and Proposition 3.5.6 beyond the first step of
+its proof, are not formalized.
 
 The book's section locators (§1.12.1, §1.13, §1.13.2) are transcribed from an earlier
 version of this file and are UNVERIFIED against the published text.
@@ -822,12 +843,11 @@ instance : CommSemiring Consistency where
   zero_mul := by rintro ⟨⟩ <;> rfl
   mul_zero := by rintro ⟨⟩ <;> rfl
 
-/-- The identity Rota–Baxter operator of weight `+1` on `Consistency` (Lemma 3.2.7), valid
-because disjunction is idempotent, so the weight-`+1` term is absorbed. On a Boolean target the
-threshold operator collapses to the identity, since disagreement already is the additive zero. -/
-def rbId : RotaBaxterSemiring Consistency where
-  op := AddMonoidHom.id Consistency
-  rotaBaxter := by rintro ⟨⟩ ⟨⟩ <;> rfl
+/-- The identity is a Rota–Baxter operator of weight `+1` on `Consistency`, since disjunction is
+idempotent and absorbs the weight term. On a Boolean target the threshold operator collapses to
+the identity, disagreement already being the additive zero. -/
+theorem isRotaBaxter_id : IsRotaBaxter (1 : ℕ) (id : Consistency → Consistency) := by
+  rintro ⟨⟩ ⟨⟩ <;> rfl
 
 end Consistency
 
@@ -845,26 +865,23 @@ theorem toCK_merge (l r : SyntacticObject) :
     bPlusLin_of', merge_val]
   rfl
 
-open scoped TensorProduct
+open WithConv
 
-/-- The feature-consistency map `φ₊` on a syntactic object, the renormalized value of a feature
-character `φ` with weight-`+1` Rota–Baxter operator `RB` at the object, the single recursive map
-of §3.1.5 that incorporates consistency checking over all substructures. -/
+/-- The feature-consistency map `φ₊` on a syntactic object, the value at the object of the
+renormalized part of a feature character `φ` under an operator `P` on `Consistency`. It is the
+single recursive map of §3.1.5 that checks consistency over all substructures. -/
 noncomputable def featureConsistency
     (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
-    (RB : RotaBaxterSemiring Consistency) (S : SyntacticObject) : Consistency :=
-  SemiringRenorm.birkhoffPlusTree φ RB S.val
+    (P : Consistency →+ Consistency) (S : SyntacticObject) : Consistency :=
+  birkhoffPlusTree φ P S.val
 
 /-- The feature-consistency map factors as the semiring Birkhoff convolution `φ₊ = φ₋ ⋆ φ` on
 the object's Hopf-algebra image (Definition 3.1.6, Proposition 3.1.9), for a unital `φ`. -/
 theorem featureConsistency_eq_convMul
     (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
-    (RB : RotaBaxterSemiring Consistency) (hφ : φ 1 = 1) (S : SyntacticObject) :
-    LinearMap.mul' ℕ Consistency
-        ((TensorProduct.map (SemiringRenorm.birkhoffMinus φ RB).toLinearMap φ)
-          (comulAlgHomN (toCK S)))
-      = featureConsistency φ RB S :=
-  SemiringRenorm.birkhoffFactorization_ofTree φ RB hφ S.val
+    (P : Consistency →+ Consistency) (hφ : φ 1 = 1) (S : SyntacticObject) :
+    (toConv (birkhoffMinus φ P).toLinearMap * toConv φ) (toCK S) = featureConsistency φ P S :=
+  convMul_birkhoffMinus_apply_ofTree φ P hφ S.val
 
 /-- The head-probe value `Υ_{s,h}` on a tree (equation (3.2.1)), the probe `Υ` applied to the
 tree's selection head, and `inconsistent` when the tree has no well-defined head. -/
@@ -896,19 +913,124 @@ Birkhoff renormalization with the identity operator of the head-following charac
 iff the head-probe agreements cohere across all substructures. -/
 noncomputable def headConsistency (Υ : LexicalItem.Token → Consistency) (S : SyntacticObject) :
     Consistency :=
-  featureConsistency (headProbeChar Υ).toLinearMap Consistency.rbId S
+  featureConsistency (headProbeChar Υ).toLinearMap (.id _) S
 
 /-- The head-driven verdict factors as the semiring Birkhoff convolution `φ₊ = φ₋ ⋆ φ` of the
 head-following character (Definition 3.1.6, Lemma 3.2.7). -/
 theorem headConsistency_eq_convMul (Υ : LexicalItem.Token → Consistency) (S : SyntacticObject) :
-    LinearMap.mul' ℕ Consistency
-        ((TensorProduct.map
-            (SemiringRenorm.birkhoffMinus (headProbeChar Υ).toLinearMap
-              Consistency.rbId).toLinearMap
-            (headProbeChar Υ).toLinearMap)
-          (comulAlgHomN (toCK S)))
-      = headConsistency Υ S :=
+    (toConv (birkhoffMinus (headProbeChar Υ).toLinearMap (.id _)).toLinearMap
+        * toConv (headProbeChar Υ).toLinearMap) (toCK S) = headConsistency Υ S :=
   featureConsistency_eq_convMul _ _ (headProbeChar_one Υ) S
+
+/-! ### Minimal Yield and the polar part of Laurent series (§3.5.2) -/
+
+section Laurent
+
+open HahnSeries
+
+variable {α β R : Type*} [CommRing R]
+
+/-- The projection `R` of Laurent series onto their polar part (3.5.4), as an additive map. -/
+local notation "𝐑" => LinearMap.toAddMonoidHom (truncLTLinearMap R (0 : ℤ))
+
+section Gradings
+
+variable (F F' : Forest (UnorderedTree (α ⊕ β)))
+
+/-- `δb₀ F F' = b₀ F − b₀ F'`, nonnegative iff `F → F'` does not diverge. -/
+def δb₀ : ℤ := (Multiset.card F : ℤ) - Multiset.card F'
+
+/-- `δα F F' = α F' − α F`, nonnegative iff `F → F'` loses no information. -/
+def δα : ℤ := ((F'.map UnorderedTree.numEdges).sum : ℤ) - (F.map UnorderedTree.numEdges).sum
+
+/-- `δσ F F' = σ F' − σ F`, equal to `1` iff `F → F'` has minimal yield. -/
+def δσ : ℤ := ((F'.map UnorderedTree.numNodes).sum : ℤ) - (F.map UnorderedTree.numNodes).sum
+
+theorem δσ_eq : δσ F F' = δα F F' - δb₀ F F' := by
+  simp only [δσ, δα, δb₀, UnorderedTree.sum_map_numNodes]; omega
+
+theorem minimalYieldWeak_iff_gradings :
+    MinimalYieldWeak UnorderedTree.numEdges F F' ↔ 0 ≤ δb₀ F F' ∧ 0 ≤ δα F F' := by
+  simp only [δb₀, δα, sub_nonneg, Nat.cast_le]
+  exact ⟨fun h ↦ ⟨h.1, h.2⟩, fun h ↦ ⟨h.1, h.2⟩⟩
+
+theorem minimalYield_iff_gradings :
+    MinimalYield UnorderedTree.numEdges F F' ↔ 0 ≤ δb₀ F F' ∧ 0 ≤ δα F F' ∧ δσ F F' = 1 := by
+  rw [← and_assoc, ← minimalYieldWeak_iff_gradings, δσ_eq, δα, δb₀]
+  exact ⟨fun h ↦ ⟨h.1, by have := h.2; omega⟩, fun h ↦ ⟨h.1, by have := h.2; omega⟩⟩
+
+/-- Weak Minimal Yield holds iff the `δb₀`- and `δα`-monomials of `F → F'` are both nonpolar. -/
+theorem minimalYieldWeak_iff_truncLT [Nontrivial R] :
+    MinimalYieldWeak UnorderedTree.numEdges F F' ↔
+      truncLT 0 (single (δb₀ F F') (1 : R)) = 0 ∧ truncLT 0 (single (δα F F') (1 : R)) = 0 := by
+  simp only [minimalYieldWeak_iff_gradings, truncLT_single_eq_zero_iff one_ne_zero]
+
+end Gradings
+
+/-- The character `ϕt` of Proposition 3.5.3 for `δ = δα`, recording only the grading, sends a
+tree `T` to `t^{α(T)}`, multiplicatively over disjoint union. -/
+noncomputable def gradingChar : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R :=
+  aeval fun T ↦ single (T.numEdges : ℤ) 1
+
+/-- `ϕt(F) = t^{α(F)}`, since `α` is additive over forests. -/
+theorem gradingChar_apply_of' (F : Forest (UnorderedTree α)) :
+    gradingChar (R := R) (of' F) = single ((F.map UnorderedTree.numEdges).sum : ℤ) 1 := by
+  rw [gradingChar, aeval_of']
+  induction F using Multiset.induction with
+  | empty => simp
+  | cons T F ih => simp [ih, single_mul_single, add_comm]
+
+/-- `ϕt` is nonpolar on every forest, since `α(F) ≥ 0` (Lemma 3.5.5). -/
+theorem truncLT_gradingChar_of' (F : Forest (UnorderedTree α)) :
+    truncLT 0 (gradingChar (R := R) (of' F)) = 0 := by
+  rw [gradingChar_apply_of', truncLT_single, ite_eq_right_iff]
+  exact fun h ↦ absurd h (by omega)
+
+/-- `ϕt` is its own renormalized part. Being nonpolar, it has no negative part, so the Birkhoff
+factorization removes nothing and cannot separate Sideward Merge from Internal and External
+Merge. -/
+theorem birkhoffPlus_gradingChar :
+    birkhoffPlus (gradingChar (R := R) (α := α)).toLinearMap (-𝐑) = gradingChar :=
+  birkhoffPlus_eq_self fun T ↦ by
+    simpa [← of'_singleton] using truncLT_gradingChar_of' (R := R) {T}
+
+/-- The polar projection is not multiplicative: `t⁻² · t = t⁻¹` is polar while `t` is not, so a
+product can acquire a polar part that its factors lack. Hence `(1 − R) ∘ φ` need not be a
+character, and renormalization goes through the Birkhoff factorization. -/
+theorem truncLT_single_mul_ne [Nontrivial R] :
+    truncLT 0 (single (-2 : ℤ) (1 : R) * single 1 1)
+      ≠ truncLT 0 (single (-2 : ℤ) (1 : R)) * truncLT 0 (single 1 1) := by
+  simp [single_mul_single, truncLT_single]
+
+private theorem isRotaBaxter_neg_polar : IsRotaBaxter (1 : ℕ) ⇑(-𝐑 : LaurentSeries R →+ _) := by
+  have h : IsRotaBaxter (-1 : ℤ) ⇑(𝐑 : LaurentSeries R →+ LaurentSeries R) := by
+    simpa using isRotaBaxter_truncLT (Γ := ℤ) (R := R) ℤ
+  replace h := h.neg
+  rw [neg_neg] at h
+  exact isRotaBaxter_one_iff.2 (isRotaBaxter_one_iff.1 h)
+
+/-- The negative part of every character into Laurent series is polar on nonempty forests, landing
+in the subalgebra `R(A[t⁻¹][[t]])` of Proposition 3.1.7. -/
+theorem truncLT_birkhoffMinus_of' (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R)
+    {F : Forest (UnorderedTree α)} (hF : F ≠ 0) :
+    truncLT 0 (birkhoffMinus φ.toLinearMap (-𝐑) (of' F))
+      = birkhoffMinus φ.toLinearMap (-𝐑) (of' F) := by
+  obtain ⟨y, hy⟩ := birkhoffMinus_of'_mem_range (φ := φ.toLinearMap) isRotaBaxter_neg_polar hF
+  rw [← hy]
+  simp [truncLT_neg]
+
+/-- The renormalized part of every character into Laurent series is nonpolar, landing in the
+subalgebra `(1 − R)(A[t⁻¹][[t]]) = A[[t]]` of Proposition 3.1.7: the first step of the proof of
+Proposition 3.5.6. -/
+theorem truncLT_birkhoffPlus_of' (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R)
+    (F : Forest (UnorderedTree α)) : truncLT 0 (birkhoffPlus φ.toLinearMap (-𝐑) (of' F)) = 0 := by
+  rcases eq_or_ne F 0 with rfl | hF
+  · simp [← single_zero_one, truncLT_single]
+  obtain ⟨y, hy⟩ := birkhoffPlus_of'_mem_range (φ := φ.toLinearMap) isRotaBaxter_neg_polar hF
+  rw [← hy]
+  simp [← sub_eq_add_neg, truncLT_sub]
+
+end Laurent
 
 /-! ### Obligatory control by Form Copy (§3.8.2) -/
 
