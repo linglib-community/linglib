@@ -31,8 +31,8 @@ that `g` agrees on `s` with a function of `f`.
   exactly when it is invariant under `f`.
 * `Set.Subsingleton.factorsThrough_domRestrict`, `Set.InjOn.factorsThrough_domRestrict`: on a
   subsingleton, or where `f` is injective, every function factors through `f`.
-* `Set.factorsThrough_domRestrict_const_iff`: a function factors through a constant on `s` exactly
-  when it is constant there.
+* `Set.factorsThrough_domRestrict_iff_of_subsingleton`: where `f` is constant, a function factors
+  through `f` exactly when it is constant too.
 -/
 
 @[expose] public section
@@ -80,11 +80,11 @@ theorem InjOn.factorsThrough_domRestrict (hf : s.InjOn f) :
     (s.domRestrict g).FactorsThrough (s.domRestrict f) :=
   fun a b hab ↦ congrArg (s.domRestrict g) (Subtype.ext (hf a.2 b.2 hab))
 
-/-- A function factors through a constant on `s` exactly when it is constant there. -/
-theorem factorsThrough_domRestrict_const_iff {c : β} :
-    (s.domRestrict g).FactorsThrough (s.domRestrict fun _ ↦ c) ↔ (g '' s).Subsingleton := by
+/-- Where `f` is constant, a function factors through `f` exactly when it is constant too. -/
+theorem factorsThrough_domRestrict_iff_of_subsingleton (hf : (f '' s).Subsingleton) :
+    (s.domRestrict g).FactorsThrough (s.domRestrict f) ↔ (g '' s).Subsingleton := by
   refine ⟨fun h ↦ ?_, fun h a b _ ↦ h (mem_image_of_mem g a.2) (mem_image_of_mem g b.2)⟩
   rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
-  exact @h ⟨a, ha⟩ ⟨b, hb⟩ rfl
+  exact @h ⟨a, ha⟩ ⟨b, hb⟩ (hf (mem_image_of_mem f ha) (mem_image_of_mem f hb))
 
 end Set

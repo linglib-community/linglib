@@ -31,8 +31,8 @@ of donkey sentences, and a strong-truth operator internalizes universal readings
 ## Implementation notes
 
 * One language serves both systems: `valued` is the paper's *U(x)* in the simplified system and
-  *atomic(x)* in the full one, and the simplified evaluation leaves the universal and the
-  strong-truth operator undefined.
+  *atomic(x)*, a single value `∃ d, G.value x = {d}`, in the full one, and the simplified
+  evaluation leaves the universal and the strong-truth operator undefined.
 * `Formula.occurrences` lists the free arguments of each atom with the presupposition the
   Transparency Condition tests there, *valued(x)* for each and *valued(x) ∧ valued(y)* when both
   arguments of a relation are free.
@@ -547,14 +547,14 @@ here and false at no plural assignment, false when its argument is false here an
 plural assignment. -/
 noncomputable def evalP : Formula P R → W → PluralAssign ℕ D → SignType
   | .pred p x, w, G =>
-    if ∃ d, G.SingularAt x d ∧ d ∈ M.pred p w then 1
-    else if ∃ d, G.SingularAt x d ∧ d ∉ M.pred p w then -1
+    if ∃ d, G.value x = {d} ∧ d ∈ M.pred p w then 1
+    else if ∃ d, G.value x = {d} ∧ d ∉ M.pred p w then -1
     else 0
   | .rel r x y, w, G =>
-    if ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∈ M.rel r w then 1
-    else if ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∉ M.rel r w then -1
+    if ∃ a b, G.value x = {a} ∧ G.value y = {b} ∧ (a, b) ∈ M.rel r w then 1
+    else if ∃ a b, G.value x = {a} ∧ G.value y = {b} ∧ (a, b) ∉ M.rel r w then -1
     else 0
-  | .valued x, _, G => ofProp (G.Singular x)
+  | .valued x, _, G => ofProp (∃ d, G.value x = {d})
   | .not φ, w, G => -evalP φ w G
   | .and φ ψ, w, G => meetMiddle (evalP φ w G) (evalP ψ w G)
   | .or φ ψ, w, G => joinMiddle (evalP φ w G) (evalP ψ w G)
@@ -591,24 +591,24 @@ section Lemmas
 variable {p : P} {r : R} {x y : ℕ} {φ ψ : Formula P R} {w : W} {G : PluralAssign ℕ D}
 
 theorem evalP_pred_eq_true_iff :
-    evalP M (.pred p x) w G = 1 ↔ ∃ d, G.SingularAt x d ∧ d ∈ M.pred p w := by
+    evalP M (.pred p x) w G = 1 ↔ ∃ d, G.value x = {d} ∧ d ∈ M.pred p w := by
   simp only [evalP]
   split_ifs <;> simp [*]
 
 theorem evalP_pred_eq_false_iff :
-    evalP M (.pred p x) w G = -1 ↔ ∃ d, G.SingularAt x d ∧ d ∉ M.pred p w := by
+    evalP M (.pred p x) w G = -1 ↔ ∃ d, G.value x = {d} ∧ d ∉ M.pred p w := by
   simp only [evalP]
   split_ifs with h1 h2
   · refine iff_of_false (by decide) ?_
     rintro ⟨d', hd', hn⟩
     obtain ⟨d, hd, hm⟩ := h1
-    exact hn (by rw [hd'.unique hd]; exact hm)
+    exact hn (by rw [Set.singleton_injective (hd'.symm.trans hd)]; exact hm)
   · exact iff_of_true rfl h2
   · exact iff_of_false (by decide) h2
 
 theorem evalP_rel_eq_true_iff :
     evalP M (.rel r x y) w G = 1 ↔
-      ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∈ M.rel r w := by
+      ∃ a b, G.value x = {a} ∧ G.value y = {b} ∧ (a, b) ∈ M.rel r w := by
   simp only [evalP]
   split_ifs with h1 h2
   · exact iff_of_true rfl h1
@@ -617,20 +617,21 @@ theorem evalP_rel_eq_true_iff :
 
 theorem evalP_rel_eq_false_iff :
     evalP M (.rel r x y) w G = -1 ↔
-      ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∉ M.rel r w := by
+      ∃ a b, G.value x = {a} ∧ G.value y = {b} ∧ (a, b) ∉ M.rel r w := by
   simp only [evalP]
   split_ifs with h1 h2
   · refine iff_of_false (by decide) ?_
     rintro ⟨a', b', ha', hb', hn⟩
     obtain ⟨a, b, ha, hb, hm⟩ := h1
-    exact hn (by rw [ha'.unique ha, hb'.unique hb]; exact hm)
+    exact hn (by rw [Set.singleton_injective (ha'.symm.trans ha),
+      Set.singleton_injective (hb'.symm.trans hb)]; exact hm)
   · exact iff_of_true rfl h2
   · exact iff_of_false (by decide) h2
 
-theorem evalP_valued_eq_true_iff : evalP M (.valued x) w G = 1 ↔ G.Singular x := by
+theorem evalP_valued_eq_true_iff : evalP M (.valued x) w G = 1 ↔ ∃ d, G.value x = {d} := by
   simp [evalP]
 
-theorem evalP_valued_eq_false_iff : evalP M (.valued x) w G = -1 ↔ ¬ G.Singular x := by
+theorem evalP_valued_eq_false_iff : evalP M (.valued x) w G = -1 ↔ ¬ ∃ d, G.value x = {d} := by
   simp [evalP]
 
 theorem evalP_not : evalP M (.not φ) w G = -evalP M φ w G := rfl
@@ -678,8 +679,8 @@ theorem evalP_strong_eq_true_iff :
 
 /-- A true existential over a predicate makes its variable atomic. -/
 theorem singular_of_evalP_ex_pred (h : evalP M (.ex x (.pred p x)) w G = 1) :
-    G.Singular x :=
-  (evalP_pred_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h)).elim fun _ h ↦ h.1.singular
+    ∃ d, G.value x = {d} :=
+  (evalP_pred_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h)).elim fun _ h ↦ ⟨_, h.1⟩
 
 theorem evalP_strong_eq_false_iff :
     evalP M (.strong φ) w G = -1 ↔
@@ -708,11 +709,12 @@ theorem transparentP_bathroom (C : Set (W × PluralAssign ℕ D)) (B : P) (x : �
 /-- A plural assignment covering a domain with two individuals is not atomic at the covered
 variable. -/
 theorem not_singular_of_covers {G : PluralAssign ℕ D} {x : ℕ} {a b : D} (hab : a ≠ b)
-    (hcov : ∀ a, (G.restrict x a).Nonempty) : ¬ G.Singular x := by
+    (hcov : ∀ a, (G.restrict x a).Nonempty) : ¬ ∃ d, G.value x = {d} := by
   rintro ⟨d, hd⟩
   obtain ⟨_, hga⟩ := hcov a
   obtain ⟨_, hgb⟩ := hcov b
-  exact hab ((hd.eq_of_mem_restrict hga).trans (hd.eq_of_mem_restrict hgb).symm)
+  exact hab ((PluralAssign.eq_of_mem_restrict hd hga).trans
+    (PluralAssign.eq_of_mem_restrict hd hgb).symm)
 
 /-- A universal does not license a singular pronoun in *∀xP(x) ∧ Q(x)*. In a context containing a
 pair at which *∀xP(x)* is true, over a domain with two individuals, the occurrence *Q(x)* is not
@@ -747,7 +749,7 @@ theorem not_transparentP_forall_conj_univ {a b : D} (hab : a ≠ b) {P₀ : P} (
   refine not_transparentP_forall_conj hab (w := w) (G := covering D x) (Set.mem_univ _)
     (evalP_all_eq_true_iff.2 fun a ↦ ⟨restrict_covering_nonempty x a, ?_⟩)
   exact evalP_pred_eq_true_iff.2
-    ⟨a, PluralAssign.singularAt_restrict (restrict_covering_nonempty x a), hw a⟩
+    ⟨a, PluralAssign.value_restrict (restrict_covering_nonempty x a), hw a⟩
 
 /-- *∃xP(x) ∧ ∀xQ(x)* is never true over a domain with two individuals, because the existential
 makes the variable atomic and the universal requires it to cover the domain. -/
@@ -776,13 +778,13 @@ theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
       obtain ⟨-, hall⟩ := evalP_ex_eq_false_iff.1 hE
       obtain ⟨hne, hfalse⟩ := hall d
       obtain ⟨d', hd', hn⟩ := evalP_pred_eq_false_iff.1 hfalse
-      exact hn ((PluralAssign.singularAt_restrict_iff.1 hd').2 ▸ hd)
+      exact hn ((PluralAssign.value_restrict_eq_singleton_iff.1 hd').2 ▸ hd)
     | pos =>
       right
       rw [hE, SignType.pos_eq_one, SignType.joinMiddle_neg_one_left] at hG
       obtain ⟨d, hd, hB⟩ := evalP_pred_eq_true_iff.1 (evalP_ex_eq_true_iff.1 hE)
       obtain ⟨d', hd', hF⟩ := evalP_pred_eq_true_iff.1 hG
-      exact ⟨d, hB, hd.unique hd' ▸ hF⟩
+      exact ⟨d, hB, Set.singleton_injective (hd.symm.trans hd') ▸ hF⟩
   · rintro (hnone | ⟨d, hB, hF⟩)
     · refine ⟨covering D x, ?_⟩
       rw [evalP_or, evalP_not, evalP_ex_eq_false_iff.2 ⟨?_, fun a ↦ ?_⟩, neg_neg,
@@ -791,10 +793,10 @@ theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
         rintro ⟨d, -, hd⟩
         exact hnone d hd
       · exact ⟨restrict_covering_nonempty x a, evalP_pred_eq_false_iff.2
-          ⟨a, PluralAssign.singularAt_restrict (restrict_covering_nonempty x a), hnone a⟩⟩
+          ⟨a, PluralAssign.value_restrict (restrict_covering_nonempty x a), hnone a⟩⟩
     · refine ⟨{PartialAssign.single x d}, ?_⟩
-      have hsing : ({PartialAssign.single x d} : PluralAssign ℕ D).SingularAt x d :=
-        PluralAssign.singularAt_singleton.2 (by simp)
+      have hsing : ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+        PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
       rw [evalP_or, evalP_not, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨d, hsing, hB⟩),
         SignType.joinMiddle_neg_one_left]
       exact evalP_pred_eq_true_iff.2 ⟨d, hsing, hF⟩
@@ -806,7 +808,7 @@ def pairing (x y : ℕ) (f : D → D) : PluralAssign ℕ D :=
 /-- A restriction of the pairing to `x = a` is nonempty and atomic at `y` with value `f a`. -/
 theorem restrict_pairing {x y : ℕ} (hxy : x ≠ y) (f : D → D) (a : D) :
     ((pairing x y f).restrict x a).Nonempty ∧
-      ((pairing x y f).restrict x a).SingularAt y (f a) := by
+      ((pairing x y f).restrict x a).value y = {f a} := by
   have hmem : ∀ a', (PartialAssign.single x a').update y (f a') ∈
       (pairing x y f).restrict x a ↔ a' = a := by
     intro a'
@@ -815,7 +817,8 @@ theorem restrict_pairing {x y : ℕ} (hxy : x ≠ y) (f : D → D) (a : D) :
       simpa [PartialAssign.update_of_ne hxy] using h
     · rintro rfl
       exact ⟨⟨a', rfl⟩, by simp [PartialAssign.update_of_ne hxy]⟩
-  refine ⟨⟨_, (hmem a).2 rfl⟩, PluralAssign.singularAt_iff.2 ⟨⟨_, (hmem a).2 rfl, by simp⟩, ?_⟩⟩
+  refine ⟨⟨_, (hmem a).2 rfl⟩, PluralAssign.value_eq_singleton_iff.2 ⟨⟨_, (hmem a).2 rfl, by simp⟩,
+    ?_⟩⟩
   rintro g ⟨⟨a', rfl⟩, hga⟩ -
   rw [(hmem a').1 ⟨⟨a', rfl⟩, hga⟩]
   simp
@@ -833,7 +836,7 @@ theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) 
     rw [evalP_not, SignType.neg_eq_neg_one_iff, evalP_ex_eq_true_iff,
       evalP_rel_eq_true_iff] at hfalse
     obtain ⟨a', b, ha', hb, hS⟩ := hfalse
-    exact ⟨b, (PluralAssign.singularAt_restrict_iff.1 ha').2 ▸ hS⟩
+    exact ⟨b, (PluralAssign.value_restrict_eq_singleton_iff.1 ha').2 ▸ hS⟩
   · intro hS
     choose f hf using hS
     refine ⟨pairing x y f, ?_⟩
@@ -848,13 +851,13 @@ theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) 
           (pairing x y f).restrict y (f a₀) :=
         ⟨⟨a₀, rfl⟩, by simp⟩
       have hx : a₀ = a' :=
-        ha'.eq_of_mem_restrict ⟨hg₀, by simp [PartialAssign.update_of_ne hxy]⟩
-      rw [← hx, (PluralAssign.singularAt_restrict_iff.1 hb').2] at hn
+        PluralAssign.eq_of_mem_restrict ha' ⟨hg₀, by simp [PartialAssign.update_of_ne hxy]⟩
+      rw [← hx, (PluralAssign.value_restrict_eq_singleton_iff.1 hb').2] at hn
       exact hn (hf a₀)
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
       refine ⟨hne, ?_⟩
       rw [evalP_not, SignType.neg_eq_neg_one_iff, evalP_ex_eq_true_iff, evalP_rel_eq_true_iff]
-      exact ⟨a, f a, PluralAssign.singularAt_restrict hne, hsing, hf a⟩
+      exact ⟨a, f a, PluralAssign.value_restrict hne, hsing, hf a⟩
 
 /-- *∀x∃yS(x, y)* is true exactly when everyone spoke to someone. -/
 theorem trueAtP_allEx_iff (S : R) {x y : ℕ} (hxy : x ≠ y) (w : W) :
@@ -864,13 +867,13 @@ theorem trueAtP_allEx_iff (S : R) {x y : ℕ} (hxy : x ≠ y) (w : W) :
     intro a
     obtain ⟨-, htrue⟩ := evalP_all_eq_true_iff.1 hG a
     obtain ⟨a', b, ha', hb, hS⟩ := evalP_rel_eq_true_iff.1 (evalP_ex_eq_true_iff.1 htrue)
-    exact ⟨b, (PluralAssign.singularAt_restrict_iff.1 ha').2 ▸ hS⟩
+    exact ⟨b, (PluralAssign.value_restrict_eq_singleton_iff.1 ha').2 ▸ hS⟩
   · intro hS
     choose f hf using hS
     refine ⟨pairing x y f, evalP_all_eq_true_iff.2 fun a ↦ ?_⟩
     obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
     exact ⟨hne, evalP_ex_eq_true_iff.2 (evalP_rel_eq_true_iff.2
-      ⟨a, f a, PluralAssign.singularAt_restrict hne, hsing, hf a⟩)⟩
+      ⟨a, f a, PluralAssign.value_restrict hne, hsing, hf a⟩)⟩
 
 /-- *Everybody spoke to someone* and *not a single person failed to speak to someone* are
 true at the same worlds. -/
@@ -890,7 +893,7 @@ theorem stronglyTrueAt_ex_iff (P₀ : P) (x : ℕ) (w : W) :
   obtain ⟨-, hall⟩ := evalP_ex_eq_false_iff.1 hG'
   obtain ⟨-, hfalse⟩ := hall d
   obtain ⟨d', hd', hn⟩ := evalP_pred_eq_false_iff.1 hfalse
-  exact hn (by rw [(PluralAssign.singularAt_restrict_iff.1 hd').2]; exact hd)
+  exact hn (by rw [(PluralAssign.value_restrict_eq_singleton_iff.1 hd').2]; exact hd)
 
 /-- *There is a bathroom and it is upstairs* is weakly but not strongly true at a world with
 a bathroom upstairs and a bathroom that is not. -/
@@ -899,8 +902,8 @@ theorem trueAtP_not_stronglyTrueAt_conj (B F : P) (x : ℕ) (w : W) {b₁ b₂ :
     (hF₂ : b₂ ∉ M.pred F w) :
     TrueAtP M (.and (.ex x (.pred B x)) (.pred F x)) w ∧
       ¬ StronglyTrueAt M (.and (.ex x (.pred B x)) (.pred F x)) w := by
-  have hs : ∀ d : D, ({PartialAssign.single x d} : PluralAssign ℕ D).SingularAt x d :=
-    fun d ↦ PluralAssign.singularAt_singleton.2 (by simp)
+  have hs : ∀ d : D, ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+    fun d ↦ PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
   refine ⟨⟨{PartialAssign.single x b₁}, ?_⟩,
     fun h ↦ h.2 {PartialAssign.single x b₂} ?_⟩
   · rw [evalP_and, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨b₁, hs b₁, h₁⟩),
@@ -933,9 +936,9 @@ theorem evalP_strong_valued [Nonempty D] (x : ℕ) (w : W) (G : PluralAssign ℕ
     evalP M (.strong (.valued x)) w G = 0 := by
   obtain ⟨d⟩ := ‹Nonempty D›
   have ht : evalP M (.valued x) w {PartialAssign.single x d} = 1 :=
-    evalP_valued_eq_true_iff.2 ⟨d, PluralAssign.singularAt_singleton.2 (by simp)⟩
+    evalP_valued_eq_true_iff.2 ⟨d, PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)⟩
   have hf : evalP M (.valued x) w ∅ = -1 :=
-    evalP_valued_eq_false_iff.2 (by simp [PluralAssign.singular_iff])
+    evalP_valued_eq_false_iff.2 (by simp)
   cases h : evalP M (.strong (.valued x)) w G with
   | zero => rfl
   | pos => exact absurd hf ((evalP_strong_eq_true_iff.1 h).2 _)
@@ -951,10 +954,11 @@ theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
       evalP_pred_eq_true_iff, evalP_strong_eq_true_iff] at hG
     obtain ⟨⟨d, -, hd⟩, -, hall⟩ := hG
     refine ⟨⟨d, hd⟩, fun d ↦ by_contra fun hn ↦ hall {PartialAssign.single x d} ?_⟩
-    exact evalP_pred_eq_false_iff.2 ⟨d, PluralAssign.singularAt_singleton.2 (by simp), hn⟩
+    exact evalP_pred_eq_false_iff.2 ⟨d, PluralAssign.value_singleton_eq_singleton_iff.2 (by simp),
+      hn⟩
   · rintro ⟨⟨d, hd⟩, hall⟩
-    have hs : ({PartialAssign.single x d} : PluralAssign ℕ D).SingularAt x d :=
-      PluralAssign.singularAt_singleton.2 (by simp)
+    have hs : ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+      PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
     refine ⟨{PartialAssign.single x d}, ?_⟩
     rw [evalP_and, SignType.meetMiddle_eq_one_iff, evalP_ex_eq_true_iff,
       evalP_strong_eq_true_iff]
@@ -1011,8 +1015,9 @@ theorem trueAtP_qs_iff (Rd L : R) (hxy : x ≠ y) :
     obtain ⟨-, h2⟩ := evalP_all_eq_true_iff.1 hG.2 a
     obtain ⟨a₁, b₁, ha₁, hb₁, hR⟩ := evalP_rel_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h1)
     obtain ⟨a₂, b₂, ha₂, hb₂, hL⟩ := evalP_rel_eq_true_iff.1 h2
-    rw [(PluralAssign.singularAt_restrict_iff.1 ha₁).2] at hR
-    rw [(PluralAssign.singularAt_restrict_iff.1 ha₂).2, ← hb₁.unique hb₂] at hL
+    rw [(PluralAssign.value_restrict_eq_singleton_iff.1 ha₁).2] at hR
+    rw [(PluralAssign.value_restrict_eq_singleton_iff.1 ha₂).2,
+      ← Set.singleton_injective (hb₁.symm.trans hb₂)] at hL
     exact ⟨b₁, hR, hL⟩
   · intro h
     choose f hf using h
@@ -1021,10 +1026,10 @@ theorem trueAtP_qs_iff (Rd L : R) (hxy : x ≠ y) :
     refine ⟨evalP_all_eq_true_iff.2 fun a ↦ ?_, evalP_all_eq_true_iff.2 fun a ↦ ?_⟩
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
       exact ⟨hne, evalP_ex_eq_true_iff.2 (evalP_rel_eq_true_iff.2
-        ⟨a, f a, PluralAssign.singularAt_restrict hne, hsing, (hf a).1⟩)⟩
+        ⟨a, f a, PluralAssign.value_restrict hne, hsing, (hf a).1⟩)⟩
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
       exact ⟨hne, evalP_rel_eq_true_iff.2
-        ⟨a, f a, PluralAssign.singularAt_restrict hne, hsing, (hf a).2⟩⟩
+        ⟨a, f a, PluralAssign.value_restrict hne, hsing, (hf a).2⟩⟩
 
 /-- The pronoun of quantificational subordination satisfies Transparency in every context
 ((28)). -/
@@ -1038,7 +1043,7 @@ theorem felicitousP_qs (C : Set (W × PluralAssign ℕ D)) (Rd L : R) (hxy : x �
   refine SignType.meetMiddle_congr_right fun h ↦ evalP_all_congr fun a ↦ ?_
   obtain ⟨-, h1⟩ := evalP_all_eq_true_iff.1 h a
   obtain ⟨-, b, -, hb, -⟩ := evalP_rel_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h1)
-  rw [evalP_and, evalP_valued_eq_true_iff.2 hb.singular, SignType.meetMiddle_one_left]
+  rw [evalP_and, evalP_valued_eq_true_iff.2 ⟨_, hb⟩, SignType.meetMiddle_one_left]
 
 /-- Over a domain with two individuals *every student came. He …* is infelicitous in the null
 context, because a universal does not license a singular pronoun ((21)–(22)). -/
@@ -1063,10 +1068,10 @@ theorem evalP_all_false_and_not_ex_not_indet {a b : D} (hab : a ≠ b) (P₀ : P
     evalP M (.all x (.pred P₀ x)) w (covering D x) = -1 ∧
       evalP M (.not (.ex x (.not (.pred P₀ x)))) w (covering D x) = 0 := by
   obtain ⟨d, hd⟩ := hd
-  have hns : ¬ (covering D x).Singular x :=
+  have hns : ¬ ∃ d, (covering D x).value x = {d} :=
     not_singular_of_covers hab (restrict_covering_nonempty x)
   refine ⟨evalP_all_eq_false_iff.2 ⟨restrict_covering_nonempty x, d, evalP_pred_eq_false_iff.2
-    ⟨d, PluralAssign.singularAt_restrict (restrict_covering_nonempty x d), hd⟩⟩, ?_⟩
+    ⟨d, PluralAssign.value_restrict (restrict_covering_nonempty x d), hd⟩⟩, ?_⟩
   rw [evalP_not]
   cases h : evalP M (.ex x (.not (.pred P₀ x))) w (covering D x) with
   | zero => rfl
@@ -1074,13 +1079,13 @@ theorem evalP_all_false_and_not_ex_not_indet {a b : D} (hab : a ≠ b) (P₀ : P
     have := evalP_ex_eq_true_iff.1 h
     rw [evalP_not, SignType.neg_eq_one_iff, evalP_pred_eq_false_iff] at this
     obtain ⟨d', hd', -⟩ := this
-    exact absurd hd'.singular hns
+    exact absurd ⟨_, hd'⟩ hns
   | neg =>
     obtain ⟨-, hall⟩ := evalP_ex_eq_false_iff.1 h
     have hf := (hall d).2
     rw [evalP_not, SignType.neg_eq_neg_one_iff, evalP_pred_eq_true_iff] at hf
     obtain ⟨d', hd', hm⟩ := hf
-    rw [(PluralAssign.singularAt_restrict_iff.1 hd').2] at hm
+    rw [(PluralAssign.value_restrict_eq_singleton_iff.1 hd').2] at hm
     exact absurd hm hd
 
 /-- *Not every male student came. He stayed home.* is infelicitous, because the negated universal
@@ -1094,7 +1099,7 @@ theorem not_felicitousDiscourseP_not_all {a b : D} (hab : a ≠ b) (P₀ Q : P)
     rw [evalP_not, (evalP_all_false_and_not_ex_not_indet hab P₀ hd).1]; rfl
   have := h (id, .valued x) (by simp [Formula.occurrences]) (.or (.valued x) (.not (.valued x)))
     _ hmem
-  have hns : ¬ (covering D x).Singular x :=
+  have hns : ¬ ∃ d, (covering D x).value x = {d} :=
     not_singular_of_covers hab (restrict_covering_nonempty x)
   simp only [id, evalP_and, evalP_or, evalP_not, evalP_valued_eq_false_iff.2 hns] at this
   exact absurd this (by decide)
@@ -1133,15 +1138,17 @@ theorem trueAtP_qs_restricted_iff [Nonempty D] (S B : P) (Rd L : R) (hxy : x ≠
     obtain ⟨-, h2⟩ := evalP_all_eq_true_iff.1 hG.2 a
     have hS : evalP M (.not (.pred S x)) w (G.restrict x a) = -1 := by
       rw [evalP_not, SignType.neg_eq_neg_one_iff]
-      exact evalP_pred_eq_true_iff.2 ⟨a, PluralAssign.singularAt_restrict hne, ha⟩
+      exact evalP_pred_eq_true_iff.2 ⟨a, PluralAssign.value_restrict hne, ha⟩
     rw [evalP_or, hS, SignType.joinMiddle_neg_one_left, evalP_ex_eq_true_iff, evalP_and,
       SignType.meetMiddle_eq_one_iff] at h1
     rw [evalP_or, hS, SignType.joinMiddle_neg_one_left] at h2
     obtain ⟨b, hb, hB⟩ := evalP_pred_eq_true_iff.1 h1.1
     obtain ⟨a₁, b₁, ha₁, hb₁, hR⟩ := evalP_rel_eq_true_iff.1 h1.2
     obtain ⟨a₂, b₂, ha₂, hb₂, hL⟩ := evalP_rel_eq_true_iff.1 h2
-    rw [(PluralAssign.singularAt_restrict_iff.1 ha₁).2, ← hb.unique hb₁] at hR
-    rw [(PluralAssign.singularAt_restrict_iff.1 ha₂).2, ← hb.unique hb₂] at hL
+    rw [(PluralAssign.value_restrict_eq_singleton_iff.1 ha₁).2,
+      ← Set.singleton_injective (hb.symm.trans hb₁)] at hR
+    rw [(PluralAssign.value_restrict_eq_singleton_iff.1 ha₂).2,
+      ← Set.singleton_injective (hb.symm.trans hb₂)] at hL
     exact ⟨b, hB, hR, hL⟩
   · intro h
     have h' : ∀ a, ∃ b, a ∈ M.pred S w →
@@ -1155,7 +1162,7 @@ theorem trueAtP_qs_restricted_iff [Nonempty D] (S B : P) (Rd L : R) (hxy : x ≠
     rw [evalP_and, SignType.meetMiddle_eq_one_iff]
     refine ⟨evalP_all_eq_true_iff.2 fun a ↦ ?_, evalP_all_eq_true_iff.2 fun a ↦ ?_⟩ <;>
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
-      have hsx := PluralAssign.singularAt_restrict hne
+      have hsx := PluralAssign.value_restrict hne
       refine ⟨hne, ?_⟩
       by_cases ha : a ∈ M.pred S w
       · obtain ⟨hB, hR, hL⟩ := hf a ha
@@ -1189,7 +1196,7 @@ theorem felicitousP_qs_restricted (C : Set (W × PluralAssign ℕ D)) (S B : P) 
   rw [evalP_or, hS, SignType.joinMiddle_neg_one_left, evalP_ex_eq_true_iff, evalP_and,
     SignType.meetMiddle_eq_one_iff] at h1
   obtain ⟨b, hb, -⟩ := evalP_pred_eq_true_iff.1 h1.1
-  exact evalP_valued_eq_true_iff.2 hb.singular
+  exact evalP_valued_eq_true_iff.2 ⟨_, hb⟩
 
 /-- The pronoun of *every student read a book and everyone liked it* fails Transparency in the null
 context at a world with a non-student where every student read a book, since a plural assignment can
@@ -1223,18 +1230,18 @@ theorem not_felicitousP_qs_everyone {c d : D} (hcd : c ≠ d) (S B : P) (Rd L : 
     rw [hres]
     simp only [rows]
     split_ifs <;> simp
-  have hsx : ∀ e, (PluralAssign.restrict (⋃ e, rows e) x e).SingularAt x e := fun e ↦
-    PluralAssign.singularAt_restrict (hne e)
+  have hsx : ∀ e, (PluralAssign.restrict (⋃ e, rows e) x e).value x = {e} := fun e ↦
+    PluralAssign.value_restrict (hne e)
   have hsy : ∀ s ∈ M.pred S w,
-      (PluralAssign.restrict (⋃ e, rows e) x s).SingularAt y (f s) := fun s hs ↦ by
+      (PluralAssign.restrict (⋃ e, rows e) x s).value y = {f s} := fun s hs ↦ by
     rw [hres]
     simp [rows, hs, row]
-  have hnsy : ¬ (PluralAssign.restrict (⋃ e, rows e) x e₀).Singular y := by
+  have hnsy : ¬ ∃ d, (PluralAssign.restrict (⋃ e, rows e) x e₀).value y = {d} := by
     rintro ⟨v, hv⟩
     rw [hres] at hv
     simp only [rows, he₀, ite_false] at hv
-    have h1 := (PluralAssign.singularAt_iff.1 hv).2 (row e₀ c) (by simp) (by simp [row])
-    have h2 := (PluralAssign.singularAt_iff.1 hv).2 (row e₀ d) (by simp) (by simp [row])
+    have h1 := (PluralAssign.value_eq_singleton_iff.1 hv).2 (row e₀ c) (by simp) (by simp [row])
+    have h2 := (PluralAssign.value_eq_singleton_iff.1 hv).2 (row e₀ d) (by simp) (by simp [row])
     simp only [row, PartialAssign.update_self] at h1 h2
     exact hcd (Flat.coe_inj.1 (h1.trans h2.symm))
   have hA : evalP M (.all x (.or (.not (.pred S x)) (.ex y (.and (.pred B y) (.rel Rd x y))))) w
@@ -1250,7 +1257,7 @@ theorem not_felicitousP_qs_everyone {c d : D} (hcd : c ≠ d) (S B : P) (Rd L : 
   have htaut : ∀ H : PluralAssign ℕ D,
       evalP M (.or (.valued y) (.not (.valued y))) w H = 1 := fun H ↦ by
     rw [evalP_or, evalP_not]
-    by_cases h : H.Singular y
+    by_cases h : ∃ d, H.value y = {d}
     · rw [evalP_valued_eq_true_iff.2 h]; rfl
     · rw [evalP_valued_eq_false_iff.2 h]; rfl
   have := hT (.or (.valued y) (.not (.valued y))) (w, ⋃ e, rows e) trivial
@@ -1271,7 +1278,7 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
   constructor
   · rintro ⟨G, hG⟩ a ha ⟨d₀, hd₀, hO₀⟩
     obtain ⟨hne, hZ⟩ := evalP_all_eq_true_iff.1 hG a
-    have hsx : (G.restrict x a).SingularAt x a := PluralAssign.singularAt_restrict hne
+    have hsx : (G.restrict x a).value x = {a} := PluralAssign.value_restrict hne
     rw [evalP_or, evalP_not, evalP_and, evalP_pred_eq_true_iff.2 ⟨a, hsx, ha⟩,
       SignType.meetMiddle_one_left] at hZ
     cases hE : evalP M (.ex y (.and (.pred Dn y) (.rel O x y))) w (G.restrict x a) with
@@ -1282,21 +1289,24 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
       obtain ⟨b, hb, hDn⟩ := evalP_pred_eq_true_iff.1 hE.1
       obtain ⟨a₁, b₁, ha₁, hb₁, hO⟩ := evalP_rel_eq_true_iff.1 hE.2
       obtain ⟨a₂, b₂, ha₂, hb₂, hB⟩ := evalP_rel_eq_true_iff.1 hZ
-      rw [← hsx.unique ha₁, ← hb.unique hb₁] at hO
-      rw [← hsx.unique ha₂, ← hb.unique hb₂] at hB
+      rw [← Set.singleton_injective (hsx.symm.trans ha₁),
+        ← Set.singleton_injective (hb.symm.trans hb₁)] at hO
+      rw [← Set.singleton_injective (hsx.symm.trans ha₂),
+        ← Set.singleton_injective (hb.symm.trans hb₂)] at hB
       exact ⟨b, hDn, hO, hB⟩
     | neg =>
       obtain ⟨-, hall⟩ := evalP_ex_eq_false_iff.1 hE
       obtain ⟨hne', hfalse⟩ := hall d₀
-      have hs1 := PluralAssign.singularAt_restrict hne'
-      have hs2 : ((G.restrict x a).restrict y d₀).SingularAt x a := by
+      have hs1 := PluralAssign.value_restrict hne'
+      have hs2 : ((G.restrict x a).restrict y d₀).value x = {a} := by
         obtain ⟨g, hg⟩ := hne'
-        exact PluralAssign.singularAt_iff.2 ⟨⟨g, hg, (PluralAssign.mem_restrict.1 hg).1.2⟩,
+        exact PluralAssign.value_eq_singleton_iff.2 ⟨⟨g, hg, (PluralAssign.mem_restrict.1 hg).1.2⟩,
           fun g' hg' _ ↦ (PluralAssign.mem_restrict.1 hg').1.2⟩
       rw [evalP_and, evalP_pred_eq_true_iff.2 ⟨d₀, hs1, hd₀⟩, SignType.meetMiddle_one_left,
         evalP_rel_eq_false_iff] at hfalse
       obtain ⟨a', b', ha', hb', hn⟩ := hfalse
-      rw [← hs2.unique ha', ← hs1.unique hb'] at hn
+      rw [← Set.singleton_injective (hs2.symm.trans ha'),
+        ← Set.singleton_injective (hs1.symm.trans hb')] at hn
       exact absurd hO₀ hn
     | zero =>
       rw [hE, SignType.zero_eq_zero, SignType.neg_zero, SignType.joinMiddle_zero_left] at hZ
@@ -1328,14 +1338,14 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
       rw [hres]
       simp only [rows]
       split_ifs <;> first | exact Set.singleton_nonempty _ | exact Set.range_nonempty _
-    have hsx := PluralAssign.singularAt_restrict hne
+    have hsx := PluralAssign.value_restrict hne
     refine ⟨hne, ?_⟩
     rw [evalP_or, evalP_not, evalP_and]
     by_cases he : e ∈ M.pred F w
     · rw [evalP_pred_eq_true_iff.2 ⟨e, hsx, he⟩, SignType.meetMiddle_one_left]
       by_cases hd : ∃ d ∈ M.pred Dn w, (e, d) ∈ M.rel O w
       · obtain ⟨hDn, hO, hB⟩ := hf e he hd
-        have hsy : (PluralAssign.restrict (⋃ e, rows e) x e).SingularAt y (f e) := by
+        have hsy : (PluralAssign.restrict (⋃ e, rows e) x e).value y = {f e} := by
           rw [hres]
           simp [rows, he, hd, row]
         rw [evalP_ex_eq_true_iff.2 (by
@@ -1352,7 +1362,8 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
             rintro ⟨h1, h2⟩
             obtain ⟨b, hb, hDnb⟩ := evalP_pred_eq_true_iff.1 h1
             obtain ⟨a₁, b₁, ha₁, hb₁, hO⟩ := evalP_rel_eq_true_iff.1 h2
-            rw [← hsx.unique ha₁, ← hb.unique hb₁] at hO
+            rw [← Set.singleton_injective (hsx.symm.trans ha₁),
+              ← Set.singleton_injective (hb.symm.trans hb₁)] at hO
             exact hd ⟨b, hDnb, hO⟩
           · have hrv : (PluralAssign.restrict (⋃ e, rows e) x e).restrict y v = {row e v} := by
               rw [hres]
@@ -1367,8 +1378,8 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
                 exact ⟨⟨v, rfl⟩, by simp [row]⟩
             rw [hrv]
             refine ⟨Set.singleton_nonempty _, ?_⟩
-            have hsy : ({row e v} : PluralAssign ℕ D).SingularAt y v := by simp [row]
-            have hsx' : ({row e v} : PluralAssign ℕ D).SingularAt x e := by
+            have hsy : ({row e v} : PluralAssign ℕ D).value y = {v} := by simp [row]
+            have hsx' : ({row e v} : PluralAssign ℕ D).value x = {e} := by
               simp [row, PartialAssign.update_of_ne hxy]
             rw [evalP_and]
             by_cases hv : v ∈ M.pred Dn w
@@ -1396,7 +1407,7 @@ theorem felicitousP_donkey (C : Set (W × PluralAssign ℕ D)) (F Dn : P) (O Bt 
   rw [evalP_not, SignType.neg_eq_neg_one_iff, evalP_and, SignType.meetMiddle_eq_one_iff,
     evalP_ex_eq_true_iff, evalP_and, SignType.meetMiddle_eq_one_iff] at h
   obtain ⟨b, hb, -⟩ := evalP_pred_eq_true_iff.1 h.2.1
-  exact evalP_valued_eq_true_iff.2 hb.singular
+  exact evalP_valued_eq_true_iff.2 ⟨_, hb⟩
 
 /-- *It is not true that Sue has a donkey and that she beats it* is weakly true at a world
 exactly when Sue has no donkey or has one she does not beat ((39)–(40)). Sue's owning and
@@ -1413,11 +1424,11 @@ theorem trueAtP_not_ex_and_iff (Dk OS BS : P) :
       refine .inl fun d ⟨hDk, hOS⟩ ↦ ?_
       obtain ⟨-, hall⟩ := evalP_ex_eq_false_iff.1 hE
       obtain ⟨hne, hf⟩ := hall d
-      have hs := PluralAssign.singularAt_restrict hne
+      have hs := PluralAssign.value_restrict hne
       rw [evalP_and, evalP_pred_eq_true_iff.2 ⟨d, hs, hDk⟩, SignType.meetMiddle_one_left,
         evalP_pred_eq_false_iff] at hf
       obtain ⟨d', hd', hn⟩ := hf
-      rw [← hs.unique hd'] at hn
+      rw [← Set.singleton_injective (hs.symm.trans hd')] at hn
       exact hn hOS
     | pos =>
       rw [hE, SignType.pos_eq_one, SignType.meetMiddle_one_left] at hG
@@ -1426,8 +1437,8 @@ theorem trueAtP_not_ex_and_iff (Dk OS BS : P) :
       obtain ⟨d, hd, hDk⟩ := evalP_pred_eq_true_iff.1 hE.1
       obtain ⟨d₁, hd₁, hOS⟩ := evalP_pred_eq_true_iff.1 hE.2
       obtain ⟨d₂, hd₂, hBS⟩ := evalP_pred_eq_false_iff.1 hG
-      rw [← hd.unique hd₁] at hOS
-      rw [← hd.unique hd₂] at hBS
+      rw [← Set.singleton_injective (hd.symm.trans hd₁)] at hOS
+      rw [← Set.singleton_injective (hd.symm.trans hd₂)] at hBS
       exact .inr ⟨d, hDk, hOS, hBS⟩
     | zero =>
       rw [hE, SignType.zero_eq_zero, SignType.meetMiddle_zero_left] at hG
@@ -1441,16 +1452,16 @@ theorem trueAtP_not_ex_and_iff (Dk OS BS : P) :
         rintro ⟨h1, h2⟩
         obtain ⟨d, hd, hDk⟩ := evalP_pred_eq_true_iff.1 h1
         obtain ⟨d', hd', hOS⟩ := evalP_pred_eq_true_iff.1 h2
-        rw [← hd.unique hd'] at hOS
+        rw [← Set.singleton_injective (hd.symm.trans hd')] at hOS
         exact hnone d ⟨hDk, hOS⟩
-      · have hs := PluralAssign.singularAt_restrict (restrict_covering_nonempty x e)
+      · have hs := PluralAssign.value_restrict (restrict_covering_nonempty x e)
         rw [evalP_and]
         by_cases he : e ∈ M.pred Dk w
         · rw [evalP_pred_eq_true_iff.2 ⟨e, hs, he⟩, SignType.meetMiddle_one_left]
           exact evalP_pred_eq_false_iff.2 ⟨e, hs, fun h ↦ hnone e ⟨he, h⟩⟩
         · rw [evalP_pred_eq_false_iff.2 ⟨e, hs, he⟩, SignType.meetMiddle_neg_one_left]
-    · have hs : ({PartialAssign.single x d} : PluralAssign ℕ D).SingularAt x d :=
-        PluralAssign.singularAt_singleton.2 (by simp)
+    · have hs : ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+        PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
       refine ⟨{PartialAssign.single x d}, ?_⟩
       rw [evalP_not, evalP_and, evalP_ex_eq_true_iff.2 (by
           rw [evalP_and, SignType.meetMiddle_eq_one_iff]
@@ -1463,8 +1474,8 @@ and every bathroom is upstairs ((47a)). -/
 theorem stronglyTrueAt_ex_and_iff (B F : P) :
     StronglyTrueAt M (.and (.ex x (.pred B x)) (.pred F x)) w ↔
       (∃ d, d ∈ M.pred B w) ∧ ∀ d ∈ M.pred B w, d ∈ M.pred F w := by
-  have hs : ∀ d : D, ({PartialAssign.single x d} : PluralAssign ℕ D).SingularAt x d :=
-    fun d ↦ PluralAssign.singularAt_singleton.2 (by simp)
+  have hs : ∀ d : D, ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+    fun d ↦ PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
   constructor
   · rintro ⟨⟨G, hG⟩, hnf⟩
     rw [evalP_and, SignType.meetMiddle_eq_one_iff, evalP_ex_eq_true_iff] at hG
@@ -1483,12 +1494,12 @@ theorem stronglyTrueAt_ex_and_iff (B F : P) :
       | neg =>
         obtain ⟨-, hf⟩ := evalP_ex_eq_false_iff.1 hE
         obtain ⟨d', hd', hn⟩ := evalP_pred_eq_false_iff.1 (hf d).2
-        exact hn ((PluralAssign.singularAt_restrict_iff.1 hd').2 ▸ hd)
+        exact hn ((PluralAssign.value_restrict_eq_singleton_iff.1 hd').2 ▸ hd)
       | pos =>
         rw [hE, SignType.pos_eq_one, SignType.meetMiddle_one_left, evalP_pred_eq_false_iff] at hG
         obtain ⟨d', hd', hn⟩ := hG
         obtain ⟨d'', hd'', hB⟩ := evalP_pred_eq_true_iff.1 (evalP_ex_eq_true_iff.1 hE)
-        rw [hd''.unique hd'] at hB
+        rw [Set.singleton_injective (hd''.symm.trans hd')] at hB
         exact hn (hall d' hB)
       | zero =>
         rw [hE, SignType.zero_eq_zero, SignType.meetMiddle_zero_left] at hG

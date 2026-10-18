@@ -23,8 +23,9 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   `PartialAssign.domain` the variables an assignment values and `PartialAssign.single x d` the
   assignment valuing `x` alone.
 * `PluralAssign Var D`: sets of partial assignments, with `PluralAssign.value` the values a
-  variable takes across them, and the operators of [Spector][spector-2026],
-  `PluralAssign.restrict`, `PluralAssign.SingularAt` and `PluralAssign.Singular`, defined from it.
+  variable takes across them and `PluralAssign.restrict` the restriction of
+  [Spector][spector-2026]. A variable takes a single value `d` when its values are `{d}`, Spector's
+  *atomic*.
 
 ## Main results
 
@@ -32,9 +33,9 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   the other's domain.
 * `PartialAssign.covBy_iff_exists_update`: one assignment covers another when it values exactly
   one more variable, the counterpart of `Set.covBy_iff_exists_insert`.
-* `PluralAssign.singularAt_iff`: `PluralAssign.SingularAt` as [Spector][spector-2026] states it.
-* `PluralAssign.singular_iff`: a variable is singular when its value set is a nonempty
-  subsingleton.
+* `PluralAssign.value_eq_singleton_iff`: a single value as [Spector][spector-2026] states it.
+* `PluralAssign.value_restrict_eq_singleton_iff`: a nonempty restriction of a variable to a value
+  gives it that single value.
 
 ## Notation
 
@@ -196,8 +197,8 @@ end PartialAssign
 
 /-! ### Plural assignments -/
 
-/-- `PluralAssign Var D` is the type of plural assignments, sets of partial assignments: the
-plural information states of [van den Berg][van-den-berg-1996] and the assignment sets of
+/-- `PluralAssign Var D` is the type of plural assignments, sets of partial assignments, which are
+the plural information states of [van den Berg][van-den-berg-1996] and the assignment sets of
 [Spector][spector-2026]. -/
 abbrev PluralAssign (Var D : Type*) := Set (PartialAssign Var D)
 
@@ -249,57 +250,33 @@ theorem value_restrict (h : (G.restrict x a).Nonempty) : (G.restrict x a).value 
   (Set.Nonempty.subset_singleton_iff (s := (G.restrict x a).value x) ⟨a, g, hg, hg.2⟩).1
     value_restrict_subset
 
-/-! #### Singularity -/
+/-! #### Single values -/
 
-/-- `G.SingularAt x d` says that `d` is the only value `x` takes in `G`; assignments leaving `x`
-unvalued are allowed. This is singularity in the sense of [Spector][spector-2026] (§6.2), and
-`PluralAssign.singularAt_iff` states it in Spector's form. -/
-def SingularAt (G : PluralAssign Var D) (x : Var) (d : D) : Prop :=
-  G.value x = {d}
-
-/-- `G.Singular x` says that `x` takes exactly one value in `G`, the $\mathit{atomic}(x)$ of
-[Spector][spector-2026]. -/
-def Singular (G : PluralAssign Var D) (x : Var) : Prop :=
-  ∃ d, G.SingularAt x d
-
-/-- `G.SingularAt x d` holds exactly when some assignment in `G` sends `x` to `d` and every
-assignment in `G` that values `x` sends it to `d`, as [Spector][spector-2026] states it. -/
-theorem singularAt_iff :
-    G.SingularAt x d ↔ (∃ g ∈ G, g x = ↑d) ∧ ∀ g ∈ G, g x ≠ ⊥ → g x = ↑d := by
+/-- `x` has the single value `d` in `G` exactly when some assignment in `G` sends `x` to `d` and
+every assignment in `G` that values `x` sends it to `d`, the form in which [Spector][spector-2026]
+states his *atomic*. -/
+theorem value_eq_singleton_iff :
+    G.value x = {d} ↔ (∃ g ∈ G, g x = ↑d) ∧ ∀ g ∈ G, g x ≠ ⊥ → g x = ↑d := by
   refine Set.eq_singleton_iff_unique_mem.trans ⟨fun ⟨hex, hall⟩ ↦ ⟨hex, fun g hg hne ↦ ?_⟩,
     fun ⟨hex, hall⟩ ↦ ⟨hex, fun a ⟨g, hg, ha⟩ ↦ ?_⟩⟩
   · obtain ⟨a, ha⟩ := Flat.ne_bot_iff_exists.1 hne
     rw [ha, hall a ⟨g, hg, ha⟩]
   · exact Flat.coe_inj.1 (ha.symm.trans (hall g hg (ha ▸ Flat.coe_ne_bot)))
 
-/-- `x` is singular in `G` exactly when it takes at least one value there and at most one. -/
-theorem singular_iff : G.Singular x ↔ (G.value x).Nonempty ∧ (G.value x).Subsingleton :=
-  Set.exists_eq_singleton_iff_nonempty_subsingleton
-
-/-- `x` is singular in `G` at no more than one value. -/
-theorem SingularAt.unique (h : G.SingularAt x d) (h' : G.SingularAt x d') : d = d' :=
-  Set.singleton_injective (h.symm.trans h')
-
-theorem SingularAt.singular (h : G.SingularAt x d) : G.Singular x :=
-  ⟨d, h⟩
-
-theorem SingularAt.eq_of_mem_restrict (h : G.SingularAt x d) (hg : g ∈ G.restrict x a) :
-    a = d :=
+/-- Where `x` has the single value `d`, every restriction of `x` that `G` meets is to `d`. -/
+theorem eq_of_mem_restrict (h : G.value x = {d}) (hg : g ∈ G.restrict x a) : a = d :=
   h.subset ⟨g, hg.1, hg.2⟩
 
-@[simp] theorem singularAt_singleton : ({g} : PluralAssign Var D).SingularAt x d ↔ g x = ↑d := by
-  rw [SingularAt, value_singleton, Set.eq_singleton_iff_unique_mem]
+@[simp] theorem value_singleton_eq_singleton_iff :
+    ({g} : PluralAssign Var D).value x = {d} ↔ g x = ↑d := by
+  rw [value_singleton, Set.eq_singleton_iff_unique_mem]
   exact ⟨And.left, fun h ↦ ⟨h, fun _ hd' ↦ Flat.coe_inj.1 (hd'.symm.trans h)⟩⟩
 
-/-- A nonempty restriction of `G` to `x = a` assigns `x` uniquely to `a`. -/
-theorem singularAt_restrict (h : (G.restrict x a).Nonempty) : (G.restrict x a).SingularAt x a :=
-  value_restrict h
-
-/-- The restriction of `G` to `x = a` assigns `x` uniquely to `d` exactly when it is nonempty
+/-- The restriction of `G` to `x = a` gives `x` the single value `d` exactly when it is nonempty
 and `d = a`. -/
-theorem singularAt_restrict_iff :
-    (G.restrict x a).SingularAt x d ↔ (G.restrict x a).Nonempty ∧ d = a := by
-  refine ⟨fun h ↦ ?_, fun ⟨hne, hd⟩ ↦ hd.symm ▸ singularAt_restrict hne⟩
+theorem value_restrict_eq_singleton_iff :
+    (G.restrict x a).value x = {d} ↔ (G.restrict x a).Nonempty ∧ d = a := by
+  refine ⟨fun h ↦ ?_, fun ⟨hne, hd⟩ ↦ hd.symm ▸ value_restrict hne⟩
   have hd : d ∈ (G.restrict x a).value x := h ▸ rfl
   exact ⟨let ⟨g, hg, _⟩ := hd; ⟨g, hg⟩, value_restrict_subset hd⟩
 

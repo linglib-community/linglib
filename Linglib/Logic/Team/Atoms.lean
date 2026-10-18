@@ -31,6 +31,8 @@ Degano and Aloni compose the atoms into constancy and variation conditions.
 * `Team.isLowerSet_dep`, `Team.supClosed_incl`, `Team.isUpperSet_var`: closure of the atoms.
 * `Team.not_supClosed_dep`, `Team.not_isLowerSet_incl`: the closure properties they break.
 * `Team.dep_iff_exists`: the dependent variable is a function of the parameters on the team.
+* `Team.dep_empty_iff`, `Team.var_empty_iff`: constancy is a variable taking at most one value on
+  the team, and variation on no variables taking two.
 * `Team.Dep.trans`: dependence composes.
 
 ## References
@@ -150,6 +152,16 @@ theorem dep_iff_exists [Nonempty E] :
   simp only [dep_iff, Var, not_forall, exists_prop]
 
 @[simp] theorem not_var : ¬ Var T Z u ↔ Dep T Z u := by rw [← not_dep, not_not]
+
+/-- The constancy atom `=(u)`, dependence on no variables, holds when `u` takes at most one value
+on the team. -/
+theorem dep_empty_iff : Dep T ∅ u ↔ ((· u) '' (T : Set (V → E))).Subsingleton :=
+  Set.factorsThrough_domRestrict_iff_of_subsingleton fun _ _ _ _ ↦
+    funext fun z ↦ absurd (Finset.mem_coe.1 z.2) (Finset.notMem_empty _)
+
+/-- Variation on no variables holds when `u` takes two values on the team. -/
+theorem var_empty_iff : Var T ∅ u ↔ ((· u) '' (T : Set (V → E))).Nontrivial := by
+  rw [← not_dep, dep_empty_iff, Set.not_subsingleton_iff]
 
 /-- Dependence excludes variation on the same parameters. -/
 theorem Dep.not_var (h : Dep T Z u) : ¬ Var T Z u := Team.not_var.2 h
