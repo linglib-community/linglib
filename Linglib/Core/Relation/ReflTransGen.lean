@@ -26,7 +26,8 @@ finite simple graphs (`SimpleGraph.Reachable`), not for an arbitrary relation.
 * `Function.exists_lt_card_iterate_eq`: on a finite type, every point of a forward orbit is
   reached within `card α` iterations.
 * `Relation.ReflTransGen.reach`, `mem_reach_iff`: the set reached from a node, and its
-  characterization.
+  characterization; `mem_iterate_closeStep_iff`, the same set along successors that lower a
+  rank, with no bounding set.
 * `decidable_of_finset_step` and its wrappers for a list-valued successor function, a decidable
   relation with a bounding list, and a `Fintype` carrier; the `TransGen` siblings; and the two
   `DecidableRel` instances over a `Fintype`.
@@ -118,6 +119,14 @@ def closeStep (step : α → Finset α) (S : Finset α) : Finset α := S ∪ S.b
 def reach (step : α → Finset α) (s : Finset α) (a : α) : Finset α :=
   (closeStep step)^[(insert a s).card] {a}
 
+theorem monotone_closeStep : Monotone (closeStep step) := fun _ _ h ↦
+  Finset.union_subset_union h (Finset.biUnion_subset_biUnion_of_subset_left _ h)
+
+theorem mem_iterate_closeStep_self (n : ℕ) : a ∈ (closeStep step)^[n] {a} := by
+  induction n with
+  | zero => exact Finset.mem_singleton_self a
+  | succ n ih => rw [iterate_succ_apply']; exact Finset.mem_union_left _ ih
+
 theorem of_mem_iterate_closeStep :
     ∀ (n : ℕ) {b : α}, b ∈ (closeStep step)^[n] {a} → ReflTransGen (fun x y ↦ y ∈ step x) a b
   | 0, _, h => by rw [iterate_zero_apply, Finset.mem_singleton] at h; exact h ▸ .refl
@@ -136,15 +145,29 @@ theorem mem_reach_iff (hs : ∀ x, step x ⊆ s) :
         (hs x).trans (Finset.subset_insert _ _))
       (Finset.singleton_subset_iff.2 (Finset.mem_insert_self _ _))
   induction h with
-  | refl =>
-    have : ∀ n, a ∈ (closeStep step)^[n] {a} := fun n ↦ by
-      induction n with
-      | zero => exact Finset.mem_singleton_self a
-      | succ n ih => rw [iterate_succ_apply']; exact Finset.mem_union_left _ ih
-    exact this _
+  | refl => exact mem_iterate_closeStep_self _
   | tail _ hcb ih =>
     rw [← hfix.eq]
     exact Finset.mem_union_right _ (Finset.mem_biUnion.2 ⟨_, ih, hcb⟩)
+
+/-- Along successors that lower a natural-number rank, the nodes reached from `a` are those
+reached by as many rounds of closure as its rank, with no bounding set. -/
+theorem mem_iterate_closeStep_iff {rank : α → ℕ} (hrank : ∀ x, ∀ y ∈ step x, rank y < rank x)
+    {n : ℕ} (h : rank a ≤ n) :
+    b ∈ (closeStep step)^[n] {a} ↔ ReflTransGen (fun x y ↦ y ∈ step x) a b := by
+  refine ⟨of_mem_iterate_closeStep n, fun hab ↦ ?_⟩
+  induction n generalizing a with
+  | zero =>
+    obtain rfl | ⟨c, hc, -⟩ := hab.cases_head
+    · exact Finset.mem_singleton_self _
+    · exact absurd (hrank a c hc) (by omega)
+  | succ n ih =>
+    obtain rfl | ⟨c, hc, hcb⟩ := hab.cases_head
+    · exact mem_iterate_closeStep_self _
+    rw [iterate_succ_apply]
+    refine monotone_closeStep.iterate n (Finset.singleton_subset_iff.2 ?_)
+      (ih (by have := hrank a c hc; omega) hcb)
+    exact Finset.mem_union_right _ (Finset.mem_biUnion.2 ⟨a, Finset.mem_singleton_self a, hc⟩)
 
 end Reach
 

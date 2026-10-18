@@ -366,17 +366,19 @@ end Presentation
 /-- A `Candidate u` is the surface state of a derivation from the form `u`, recording the
     autosegments deleted so far and the current surface lines. The faithful candidate is
     `Candidate.input u`, and GEN edits candidates while `u` stays fixed. -/
-structure Candidate {S T M : Type*} (u : Form S T M) where
+@[ext] structure Candidate {S T M : Type*} (u : Form S T M) where
   /-- The autosegments deleted on the surface. -/
   deleted : Finset (Fin u.upper.length)
   /-- The surface association lines. -/
   links : Finset (Fin u.upper.length × Fin u.lower.length)
-  deriving DecidableEq
 
 namespace Candidate
 
 variable {S T M : Type*} {u : Form S T M} (c : Candidate u) {k j : Fin u.upper.length}
   {i : Fin u.lower.length} {l : Fin u.upper.length × Fin u.lower.length}
+
+/-- Candidates are compared on their positions alone, whatever the labels of the form. -/
+instance : DecidableEq (Candidate u) := fun _ _ ↦ decidable_of_iff _ Candidate.ext_iff.symm
 
 /-- `input u` is the faithful candidate of `u`, with nothing deleted and the form's lines as
     its surface lines. -/
@@ -517,7 +519,7 @@ theorem links_subset_insertLink : c.links ⊆ (c.insertLink k i).links :=
 
 section Gen
 
-variable [DecidableEq S] [DecidableEq T] [DecidableEq M] {c' : Candidate u}
+variable {c' : Candidate u}
 
 /-- `gen c` is the one-step GEN of harmonic serialism. It contains `c` itself, the deletion of
     each undeleted autosegment, and each line from a floating autosegment to a slot that
