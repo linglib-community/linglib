@@ -5,144 +5,193 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Data.Set.Lattice.Image
-public import Mathlib.Order.Minimal
-public import Mathlib.Order.Preorder.Chain
-public import Linglib.Semantics.Focus.Control
+public import Mathlib.Data.Set.NAry
+public import Linglib.Core.Computability.Edge
+public import Linglib.Semantics.Alternatives.Basic
 
 /-!
-# Unalternative Semantics
+# Unalternative semantics
 
-Focus marking without [F]-features ([buring-2015],
-[assmann-etal-2023]): constructions directly constrain the focal
-targets they can realize.
+In Büring's unalternative semantics the focal targets of a constituent play the part of its focus
+value, so a meaning is a `WithAlternatives` whose alternatives are its focal targets. What a
+constituent excludes are its unalternatives. A terminal excludes nothing, so it is `focused`. A
+branching node excludes whatever is composed from an unalternative of a daughter (Propagation),
+and whatever its own restriction on one daughter excludes: a weak restriction excludes narrow
+focus on her, and a strong restriction everything else. Default metrical weights put a weak
+restriction on the weak daughter, and prosodic reversal a strong restriction on the daughter it
+promotes. Focus Reset leaves a constituent only its literal meaning, as `unfeatured` does.
 
-* **Morphosyntactic** ([assmann-etal-2023] §2): a construction focally
-  marks exactly one constituent; No Projection lets it realize any
-  focus within that constituent, and Blocking preempts it wherever a
-  strictly more specific marking would do. `Usable` packages both;
-  `usable_iff_minimal` identifies it with minimality among inventory
-  covers.
-* **Prosodic** ([buring-2015]): a branching node's metrical pattern
-  restricts targets pointwise. `weakBanned` (his Weak Restriction)
-  bans targets that vary the weak daughter over its alternative domain
-  while the strong daughter stays at its ordinary value;
-  `strongAllowed` (his Strong Restriction) allows only targets varying
-  the accented daughter non-trivially. Both are `Set.seq` images of
-  `WithAlternatives.alternatives` — Hamblin application with one side held at its
-  ordinary value — so the prosodic calculus runs through the same
-  applicative as the Roothian engine (`WithAlternatives.alternatives_seq`).
+## Main definitions
 
-`licensedFocusValue` is the pipeline connector: the composable targets
-minus the banned ones. At propositional type its values are
-families of propositions, the focus values [rooth-1992]'s squiggle consumes —
-the metrical structure derives the focus value that F-marking
-stipulates (`Antecedent.Admits.of_licensed`).
+* `Focus.narrow`: the targets of narrow focus on one daughter of a node.
+* `Focus.Restriction`, `Focus.excluded`: the weak and the strong restriction, and what each
+  excludes.
+* `Focus.propagated`: the targets a node excludes by Propagation.
+* `WithAlternatives.node`: a branching node of unalternative semantics.
+
+## Main results
+
+* `WithAlternatives.alternatives_node`: under a bijective composition, the targets of a node are
+  the pointwise composition of its daughters' targets, minus what its restriction excludes.
+* `WithAlternatives.not_wellFormed_node_strong`: a strong restriction excludes the literal
+  meaning of its node, against Rooth's containment constraint.
+* `WithAlternatives.alternatives_node_left_strong_eq_empty`: a strong restriction over a sister
+  that excludes her own literal meaning leaves no target.
+
+## Implementation notes
+
+Büring restricts the alternatives of a constituent to the natural meanings of its type. Here the
+alternatives are all values of the type, so a model chooses types of natural meanings, and a node
+composes its daughters by a fixed operation `op`. Büring's pointwise combination `⊗` is
+`Set.image2 op`.
+
+## References
+
+* [buring-2015]
 -/
 
 @[expose] public section
 
+open Set Function
+
 namespace Focus
 
-/-! ### Morphosyntactic focal marking -/
+variable {α β γ : Type*} (op : α → β → γ) (a : α) (b : β)
 
-section Marking
+/-- The targets of narrow focus on daughter `e` of a node whose daughters have ordinary values
+`a` and `b` vary that daughter and hold her sister at her ordinary value. -/
+def narrow : Edge → Set γ
+  | .left => image2 op {a}ᶜ {b}
+  | .right => image2 op {a} {b}ᶜ
 
-variable {C : Type*} [PartialOrder C] {inv : List C} {m f : C}
+/-- A restriction on a daughter is weak or strong. -/
+inductive Restriction
+  | weak
+  | strong
+  deriving DecidableEq, Repr, Fintype
 
-/-- A focally marked constituent is usable for focus `f`
-([assmann-etal-2023] §2.2–2.3): it is in the language's inventory,
-`f` lies within it (No Projection), and no strictly more specific
-inventory constituent also covers `f` (Blocking). -/
-def Usable (inv : List C) (m f : C) : Prop :=
-  m ∈ inv ∧ f ≤ m ∧ ∀ m' ∈ inv, f ≤ m' → m' ≤ m → m' = m
+/-- A weak restriction on daughter `e` excludes narrow focus on her, and a strong restriction
+excludes every other target. -/
+def excluded (e : Edge) : Restriction → Set γ
+  | .weak => narrow op a b e
+  | .strong => (narrow op a b e)ᶜ
 
-instance [DecidableEq C] [DecidableLE C] : Decidable (Usable inv m f) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+/-- Propagation excludes every target composed from an unalternative of either daughter. -/
+def propagated (u : Set α) (v : Set β) : Set γ := image2 op univ v ∪ image2 op u univ
 
-/-- Usability is minimality among inventory covers of the focus. -/
-theorem usable_iff_minimal :
-    Usable inv m f ↔ Minimal (fun c => c ∈ inv ∧ f ≤ c) m := by
-  constructor
-  · rintro ⟨hm, hf, hmin⟩
-    exact ⟨⟨hm, hf⟩, fun b ⟨hb, hfb⟩ hbm => (hmin b hb hfb hbm) ▸ le_rfl⟩
-  · rintro ⟨⟨hm, hf⟩, hmin⟩
-    exact ⟨hm, hf, fun m' hm' hfm' hm'm =>
-      le_antisymm hm'm (hmin ⟨hm', hfm'⟩ hm'm)⟩
+variable {op a b}
 
-/-- A usable marking realizes every focus between the focus and the marked constituent: the
-foci a marking is syncretic for form a continuous stretch of the tree. -/
-theorem Usable.of_le (h : Usable inv m f) {g : C} (hfg : f ≤ g) (hgm : g ≤ m) : Usable inv m g :=
-  ⟨h.1, hgm, fun m' hm' hgm' hm'm => h.2.2 m' hm' (hfg.trans hgm') hm'm⟩
+@[simp] theorem narrow_left : narrow op a b .left = image2 op {a}ᶜ {b} := rfl
 
-/-- When the constituents containing a focus form a chain — in a tree — its usable marking is
-unique. -/
-theorem Usable.unique {m' : C} (hchain : IsChain (· ≤ ·) (Set.Ici f)) (h : Usable inv m f)
-    (h' : Usable inv m' f) : m = m' := by
-  rcases eq_or_ne m m' with rfl | hne
-  · rfl
-  rcases hchain h.2.1 h'.2.1 hne with hmm' | hm'm
-  · exact h'.2.2 m h.1 h.2.1 hmm'
-  · exact (h.2.2 m' h'.1 h'.2.1 hm'm).symm
+@[simp] theorem narrow_right : narrow op a b .right = image2 op {a} {b}ᶜ := rfl
 
-end Marking
+@[simp] theorem excluded_weak (e : Edge) : excluded op a b e .weak = narrow op a b e := rfl
 
-/-! ### Prosodic focal restrictions -/
+@[simp] theorem excluded_strong (e : Edge) : excluded op a b e .strong = (narrow op a b e)ᶜ := rfl
 
-section Prosodic
+/-- Narrow focus on a daughter excludes the literal meaning of the node. -/
+theorem notMem_narrow (hop : Injective2 op) (e : Edge) : op a b ∉ narrow op a b e := by
+  cases e <;> rintro ⟨x, hx, y, hy, h⟩ <;> obtain ⟨rfl, rfl⟩ := hop h
+  exacts [hx rfl, hy rfl]
 
+theorem disjoint_narrow_left_right (hop : Injective2 op) :
+    Disjoint (narrow op a b .left) (narrow op a b .right) := by
+  rw [Set.disjoint_left]
+  rintro _ ⟨x, hx, _, rfl, rfl⟩ ⟨_, rfl, y, hy, h⟩
+  exact hx (hop h).1.symm
 
-variable {W α β : Type*}
+/-- A strong restriction on a daughter excludes narrow focus on her sister. -/
+theorem narrow_swap_subset_excluded_strong (hop : Injective2 op) (e : Edge) :
+    narrow op a b e.swap ⊆ excluded op a b e .strong := by
+  cases e
+  exacts [(disjoint_narrow_left_right hop).subset_compl_left,
+    (disjoint_narrow_left_right hop).subset_compl_right]
 
-/-- Weak Restriction ([buring-2015] (4)): under the default weak–strong
-pattern, the banned focal targets vary the weak (function) daughter
-*non-trivially* while the strong daughter stays at its ordinary value.
-The weak daughter's own ordinary value is subtracted, so a node never
-excludes its literal meaning — the revision [buring-2015] makes to the
-preliminary rule (1), which lacked the subtraction. -/
-def weakBanned (dw : WithAlternatives (α → β)) (ds : WithAlternatives α) : Set β :=
-  (dw.alternatives \ {dw.ordinary}).seq {ds.ordinary}
-
-/-- Strong Restriction ([buring-2015]): under prosodic reversal, the
-allowed focal targets vary the accented (function) daughter
-non-trivially while the deaccented daughter stays at its ordinary
-value. -/
-def strongAllowed (dm : WithAlternatives (α → β)) (ds : WithAlternatives α) :
-    Set β :=
-  (dm.alternatives \ {dm.ordinary}).seq {ds.ordinary}
-
-/-- Reversal allows exactly the targets the default bans: the two metrical patterns of a branching
-node divide its focal targets between them. -/
-theorem strongAllowed_eq_weakBanned (dm : WithAlternatives (α → β))
-    (ds : WithAlternatives α) : strongAllowed dm ds = weakBanned dm ds := rfl
-
-/-- The focal targets a metrical configuration licenses: everything
-the daughters compose to, minus the banned targets. At `β := Set W`
-this is the focus value the prosody derives. -/
-def licensedFocusValue (dw : WithAlternatives (α → β)) (ds : WithAlternatives α) :
-    Set β :=
-  dw.alternatives.seq ds.alternatives \ weakBanned dw ds
-
-theorem licensedFocusValue_subset_seq (dw : WithAlternatives (α → β))
-    (ds : WithAlternatives α) :
-    licensedFocusValue dw ds ⊆ dw.alternatives.seq ds.alternatives :=
-  Set.sdiff_subset
-
-theorem disjoint_licensedFocusValue_weakBanned
-    (dw : WithAlternatives (α → β)) (ds : WithAlternatives α) :
-    Disjoint (licensedFocusValue dw ds) (weakBanned dw ds) :=
-  Set.disjoint_sdiff_left
-
-/-- Prosodic restriction only strengthens admission: an antecedent the
-licensed focus value admits is admitted by the unrestricted Hamblin
-composition — [rooth-1992]'s focus interpretation principle against the prosodically derived
-focus value. -/
-theorem Antecedent.Admits.of_licensed {a : Antecedent W}
-    {dw : WithAlternatives (α → Set W)} {ds : WithAlternatives α}
-    (h : a.Admits (licensedFocusValue dw ds)) :
-    a.Admits (dw.alternatives.seq ds.alternatives) :=
-  h.mono Set.sdiff_subset
-
-end Prosodic
+/-- Under a bijective composition, the targets Propagation leaves are composed from targets of
+both daughters. -/
+theorem compl_propagated (hop : Bijective (uncurry op)) (u : Set α) (v : Set β) :
+    (propagated op u v)ᶜ = image2 op uᶜ vᶜ := by
+  have : univ ×ˢ v ∪ u ×ˢ univ = (uᶜ ×ˢ vᶜ)ᶜ := by
+    rw [compl_prod_eq_union, compl_compl, compl_compl, union_comm]
+  rw [propagated, ← image_uncurry_prod, ← image_uncurry_prod, ← image_union, this,
+    image_compl_eq hop, compl_compl, image_uncurry_prod]
 
 end Focus
+
+namespace WithAlternatives
+
+open Focus
+
+variable {α β γ : Type*} {op : α → β → γ} {e : Edge} {r : Restriction}
+  {d₁ : WithAlternatives α} {d₂ : WithAlternatives β}
+
+/-- A branching node of unalternative semantics composes its daughters by `op`, and its targets
+are those that neither Propagation nor its restriction `r` on daughter `e` excludes. -/
+def node (op : α → β → γ) (e : Edge) (r : Restriction) (d₁ : WithAlternatives α)
+    (d₂ : WithAlternatives β) : WithAlternatives γ where
+  ordinary := op d₁.ordinary d₂.ordinary
+  alternatives := (propagated op d₁.alternativesᶜ d₂.alternativesᶜ ∪
+    excluded op d₁.ordinary d₂.ordinary e r)ᶜ
+
+@[simp] theorem ordinary_node : (node op e r d₁ d₂).ordinary = op d₁.ordinary d₂.ordinary := rfl
+
+/-- The unalternatives of a node are those Propagation and its restriction exclude. -/
+theorem compl_alternatives_node :
+    (node op e r d₁ d₂).alternativesᶜ = propagated op d₁.alternativesᶜ d₂.alternativesᶜ ∪
+      excluded op d₁.ordinary d₂.ordinary e r :=
+  compl_compl _
+
+/-- Under a bijective composition, the targets of a node are composed pointwise from the targets
+of its daughters, as Roothian focus values are, less what the node's restriction excludes. -/
+theorem alternatives_node (hop : Bijective (uncurry op)) :
+    (node op e r d₁ d₂).alternatives =
+      image2 op d₁.alternatives d₂.alternatives \ excluded op d₁.ordinary d₂.ordinary e r := by
+  rw [node, compl_union, compl_propagated hop, compl_compl, compl_compl, sdiff_eq]
+
+/-- The weak and the strong restriction on a daughter divide between them the targets that
+Propagation leaves. -/
+theorem alternatives_node_weak_union_strong :
+    (node op e .weak d₁ d₂).alternatives ∪ (node op e .strong d₁ d₂).alternatives =
+      (propagated op d₁.alternativesᶜ d₂.alternativesᶜ)ᶜ := by
+  simp only [node, excluded_weak, excluded_strong, compl_union, compl_compl,
+    ← inter_union_distrib_left, compl_union_self, inter_univ]
+
+theorem disjoint_alternatives_node_weak_strong :
+    Disjoint (node op e .weak d₁ d₂).alternatives (node op e .strong d₁ d₂).alternatives := by
+  simp only [node, excluded_weak, excluded_strong, compl_union, compl_compl]
+  exact disjoint_compl_left.mono inter_subset_right inter_subset_right
+
+/-- A weak restriction keeps the literal meaning of a node whose daughters keep theirs. -/
+theorem WellFormed.node_weak (hop : Injective2 op) (h₁ : d₁.WellFormed) (h₂ : d₂.WellFormed) :
+    (node op e .weak d₁ d₂).WellFormed := by
+  simp only [WellFormed, node, propagated, excluded_weak, mem_compl_iff, mem_union, not_or]
+  refine ⟨⟨?_, ?_⟩, notMem_narrow hop e⟩
+  · rintro ⟨x, -, y, hy, h⟩
+    exact hy (by rwa [(hop h).2])
+  · rintro ⟨x, hx, y, -, h⟩
+    exact hx (by rwa [(hop h).1])
+
+/-- A strong restriction excludes the literal meaning of its node. -/
+theorem not_wellFormed_node_strong (hop : Injective2 op) :
+    ¬ (node op e .strong d₁ d₂).WellFormed :=
+  fun h ↦ h (.inr (notMem_narrow hop e))
+
+/-- A strong restriction on the left daughter leaves no target when her sister excludes her own
+literal meaning. -/
+theorem alternatives_node_left_strong_eq_empty (h : ¬ d₂.WellFormed) :
+    (node op .left .strong d₁ d₂).alternatives = ∅ := by
+  refine eq_empty_of_forall_notMem fun t ht ↦ ?_
+  simp only [node, excluded_strong, mem_compl_iff, mem_union, not_or, not_not] at ht
+  obtain ⟨hp, x, -, y, rfl, rfl⟩ := ht
+  exact hp (.inl (mem_image2_of_mem (mem_univ x) h))
+
+/-- A strong restriction on the right daughter leaves no target when her sister excludes her own
+literal meaning. -/
+theorem alternatives_node_right_strong_eq_empty (h : ¬ d₁.WellFormed) :
+    (node op .right .strong d₁ d₂).alternatives = ∅ := by
+  refine eq_empty_of_forall_notMem fun t ht ↦ ?_
+  simp only [node, excluded_strong, mem_compl_iff, mem_union, not_or, not_not] at ht
+  obtain ⟨hp, x, rfl, y, -, rfl⟩ := ht
+  exact hp (.inr (mem_image2_of_mem h (mem_univ y)))
+
+end WithAlternatives
