@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate the landing page published at linglib.io/.
 
-The page links the API documentation, the scoreboard, the bibliography and the repository.
+The page links the API documentation, the evaluations, the bibliography and the repository.
 
 Usage, from the repository root:
 
@@ -10,27 +10,14 @@ Usage, from the repository root:
 """
 
 import argparse
-import datetime
-import os
-import subprocess
+import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import site_shell  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = ROOT / "scripts" / "home_page" / "template.html"
-PAPERMOD_CSS = ROOT / "scripts" / "papermod.css"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "doc-site"
-REPO = "https://github.com/linglib-community/linglib"
-
-
-def git_commit():
-    sha = os.environ.get("GITHUB_SHA")
-    if not sha:
-        try:
-            sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
-                                 text=True, check=True).stdout.strip()
-        except (OSError, subprocess.CalledProcessError):
-            sha = ""
-    return sha
 
 
 def main():
@@ -38,12 +25,8 @@ def main():
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT, help="directory for index.html")
     args = ap.parse_args()
 
-    sha = git_commit()
-    page = (TEMPLATE.read_text(encoding="utf-8")
-            .replace("/*PAPERMOD_CSS*/", PAPERMOD_CSS.read_text(encoding="utf-8"))
-            .replace("__BUILT__", datetime.date.today().isoformat())
-            .replace("__COMMIT_SHORT__", sha[:9])
-            .replace("__COMMIT_HREF__", f"{REPO}/tree/{sha}" if sha else REPO))
+    page = site_shell.render(TEMPLATE.read_text(encoding="utf-8"), "./", None,
+                             site_shell.git_commit())
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "index.html").write_text(page, encoding="utf-8")
     print(f"wrote {args.out / 'index.html'}")

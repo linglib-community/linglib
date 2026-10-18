@@ -5,19 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bibliography | Linglib</title>
 <meta name="description" content="Papers referenced, cited, or formalized in Linglib.">
-<link rel="icon" href="../docs/favicon.svg">
-<script>try { var t = localStorage.getItem("pref-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<!--SITE_HEAD-->
 <style>
-/*PAPERMOD_CSS*/
-
 /* Bibliography */
 :root { --formalized: #22c55e; --foundational: #a78bfa; --cited: #d6d6d6; --control: #e2e2e2; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) { --cited: #4a4b4e; --control: #414244; }
 }
 :root[data-theme="dark"] { --cited: #4a4b4e; --control: #414244; }
-
-h1 { font-size: 40px; margin: 24px 0 12px; }
 
 /* Toolbar */
 .search { position: sticky; top: 0; z-index: 2; background: var(--theme); padding: 12px 0 8px; }
@@ -69,9 +64,6 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
 .files button:hover { color: var(--primary); }
 .empty { color: var(--secondary); }
 
-@media (max-width: 768px) {
-  h1 { font-size: 32px; margin-top: 12px; }
-}
 @media (max-width: 600px) {
   #q { font-size: 16px; }
   .filter { font-size: 14px; padding: 2px 9px; }
@@ -82,23 +74,7 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
 </style>
 </head>
 <body id="top">
-<header>
-  <nav class="nav" aria-label="Site">
-    <div class="logo">
-      <a href="../">Linglib</a>
-      <button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
-        <svg id="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-        <svg id="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      </button>
-    </div>
-    <ul class="menu">
-      <li><a href="../docs/">Docs</a></li>
-      <li><a href="../eval/">Scoreboard</a></li>
-      <li><a href="./" aria-current="page">Bibliography</a></li>
-      <li><a href="https://github.com/linglib-community/linglib">GitHub</a></li>
-    </ul>
-  </nav>
-</header>
+<!--SITE_HEADER-->
 
 <main class="main">
   <h1>Bibliography</h1>
@@ -112,8 +88,7 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
   <ol class="entries" id="list"></ol>
 </main>
 
-<footer class="footer" id="footer"></footer>
-<a href="#top" class="top-link" id="top-link" aria-label="Back to top" title="Back to top"><svg viewBox="0 0 12 6" fill="currentColor" aria-hidden="true"><path d="M12 6H0l6-6z"/></svg></a>
+<!--SITE_FOOTER-->
 
 <script type="application/json" id="bib-data">/*BIB_DATA*/{}</script>
 <script>
@@ -291,14 +266,6 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
   document.addEventListener("keydown", (ev) => {
     if (ev.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { ev.preventDefault(); q.focus(); }
   });
-  $("theme-toggle").addEventListener("click", () => {
-    const root = document.documentElement;
-    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-    root.dataset.theme = dark ? "light" : "dark";
-    try { localStorage.setItem("pref-theme", root.dataset.theme); } catch (e) {}
-  });
-  const top = $("top-link");
-  addEventListener("scroll", () => top.classList.toggle("on", scrollY > 800), { passive: true });
 
   // A #key link shows that entry, relaxing the filters only if they hide it.
   function go(target) {
@@ -315,11 +282,8 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
     go(load());
   });
   go(load());
-
-  $("footer").innerHTML = data.commit && data.commit.sha
-    ? `Built ${esc(data.built)} from <a href="${esc(data.commit.href)}">${esc(data.commit.short)}</a>`
-    : `Built ${esc(data.built || "")}`;
 })();
 </script>
+<!--SITE_SCRIPT-->
 </body>
 </html>
