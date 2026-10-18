@@ -148,11 +148,11 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
 
 /-! ### Denotation -/
 
-variable {E W D : Type} {σ₁ σ₂ τ : Ty}
+variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 
 /-- A mode denotes application, application to the rigid intension of the argument, the
 intersection of two predicates, or event identification. -/
-@[simp] def eval : Mode σ₁ σ₂ τ → Ty.Domain E W σ₁ D → Ty.Domain E W σ₂ D → Ty.Domain E W τ D
+@[simp] def eval : Mode σ₁ σ₂ τ → Ty.Domain E W σ₁ S → Ty.Domain E W σ₂ S → Ty.Domain E W τ S
   | functionalLeft, f, a => f a
   | functionalRight, a, f => f a
   | intensionalLeft, f, a => f fun _ ↦ a
@@ -163,12 +163,12 @@ intersection of two predicates, or event identification. -/
 
 /-- The denotation of a mode under an applicative effect, which runs the left daughter's
 computation first. -/
-def evalM {M : Type → Type} [Applicative M] (m : Mode σ₁ σ₂ τ) (a : M (Ty.Domain E W σ₁ D))
-    (b : M (Ty.Domain E W σ₂ D)) : M (Ty.Domain E W τ D) :=
+def evalM {M : Type → Type} [Applicative M] (m : Mode σ₁ σ₂ τ) (a : M (Ty.Domain E W σ₁ S))
+    (b : M (Ty.Domain E W σ₂ S)) : M (Ty.Domain E W τ S) :=
   m.eval <$> a <*> b
 
 /-- At the identity effect a mode denotes its pure denotation. -/
-@[simp] theorem evalM_id (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ D) (b : Ty.Domain E W σ₂ D) :
+@[simp] theorem evalM_id (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S) (b : Ty.Domain E W σ₂ S) :
     m.evalM (M := Id) a b = m.eval a b := rfl
 
 /-! ### Composition in a family of values -/

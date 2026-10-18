@@ -318,15 +318,15 @@ end Reference
 
 section FregeanArticle
 
-variable {E W D : Type}
+variable {E W : Type} {S : Sorts}
 
 /-- The Fregean definite article (§4.4) maps a predicate true of exactly one individual to that
 individual and is undefined elsewhere. -/
-noncomputable def the : Ty.PDomain E W ((.e ⇒ .t) ⇒ .e) D :=
+noncomputable def the : Ty.PDomain E W ((.e ⇒ .t) ⇒ .e) S :=
   fun P ↦ ⟨∃! x, True ∈ P x, fun h ↦ Classical.choose h⟩
 
 /-- The definite article is defined exactly on the predicates true of one individual. -/
-theorem the_dom (P : E →. Prop) : (the (W := W) (D := D) P).Dom ↔ ∃! x, True ∈ P x := Iff.rfl
+theorem the_dom (P : E →. Prop) : (the (W := W) (S := S) P).Dom ↔ ∃! x, True ∈ P x := Iff.rfl
 
 /-- A total predicate is true of an individual where it holds. -/
 @[simp] theorem true_mem_lift (P : E → Prop) (x : E) : True ∈ PFun.lift P x ↔ P x := by
@@ -334,7 +334,7 @@ theorem the_dom (P : E →. Prop) : (the (W := W) (D := D) P).Dom ↔ ∃! x, Tr
 
 /-- On a total predicate true of exactly one individual, the definite article picks it. -/
 theorem the_lift_eq_some {P : E → Prop} {a : E} (h : ∀ x, P x ↔ x = a) :
-    the (W := W) (D := D) (PFun.lift P) = Part.some a := by
+    the (W := W) (S := S) (PFun.lift P) = Part.some a := by
   have hu : ∃! x, True ∈ PFun.lift P x := ⟨a, (true_mem_lift P a).mpr ((h a).mpr rfl),
     fun y hy ↦ (h y).mp ((true_mem_lift P y).mp hy)⟩
   exact Part.eq_some_iff.mpr ⟨hu, (h _).mp ((true_mem_lift P _).mp (Classical.choose_spec hu).1)⟩

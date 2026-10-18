@@ -60,32 +60,31 @@ namespace Montague
 
 /-- Partial denotation domains, as `Ty.Domain` but with functions the partial functions `→.`,
 whose domain is a lexical entry's definedness condition. -/
-abbrev Ty.PDomain (E W : Type) (ty : Ty) (D : Type := ℝ) : Type :=
+abbrev Ty.PDomain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
   match ty with
   | .e => E
   | .t => Prop
-  | .d => D
+  | .d => S.degree
   | .n => ℕ
-  | .v => Empty
-  | .s => Empty
-  | .fn a b => Ty.PDomain E W a D →. Ty.PDomain E W b D
-  | .intens a => W →. Ty.PDomain E W a D
+  | .v => S.eventuality
+  | .fn a b => Ty.PDomain E W a S →. Ty.PDomain E W b S
+  | .intens a => W →. Ty.PDomain E W a S
 
 /-- A partial denotation is a semantic type with a possibly undefined value in its partial
 domain. -/
-abbrev PDenotation (E W : Type) (D : Type := ℝ) : Type :=
-  (ty : Ty) × Part (Ty.PDomain E W ty D)
+abbrev PDenotation (E W : Type) (S : Sorts := {}) : Type :=
+  (ty : Ty) × Part (Ty.PDomain E W ty S)
 
 /-! ### Partial denotations of the modes and terms -/
 
 section Evaluation
 
-variable {E W D : Type} {σ₁ σ₂ τ : Ty}
+variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 
 /-- The partial denotation of a mode, defined where both daughters are and the function or role
 head among them is defined at its argument. -/
-def Mode.evalPartial : Mode σ₁ σ₂ τ → Part (Ty.PDomain E W σ₁ D) → Part (Ty.PDomain E W σ₂ D) →
-    Part (Ty.PDomain E W τ D)
+def Mode.evalPartial : Mode σ₁ σ₂ τ → Part (Ty.PDomain E W σ₁ S) → Part (Ty.PDomain E W σ₂ S) →
+    Part (Ty.PDomain E W τ S)
   | .functionalLeft, f, a => f.bind fun fv ↦ a.bind fv
   | .functionalRight, a, f => f.bind fun fv ↦ a.bind fv
   | .intensionalLeft, f, a => f.bind fun fv ↦ a.bind fun av ↦ fv fun _ ↦ Part.some av
@@ -101,8 +100,8 @@ open scoped Assignment
 
 /-- The partial denotation of a term under a partial interpretation of the constants and an
 assignment; an abstraction is the partial function undefined wherever its body is. -/
-def Term.evalPartial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty D))
-    (g : Assignment E) : {ty : Ty} → Term K ty → Part (Ty.PDomain E W ty D)
+def Term.evalPartial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S))
+    (g : Assignment E) : {ty : Ty} → Term K ty → Part (Ty.PDomain E W ty S)
   | _, .const c => I c
   | _, .var n => Part.some (g n)
   | _, .lam n b => Part.some fun x ↦ evalPartial I (g[n ↦ x]) b
@@ -112,7 +111,7 @@ end Evaluation
 
 section Composition
 
-variable {E W D : Type}
+variable {E W : Type} {S : Sorts}
 
 /-! ### Composition of defined daughters
 
@@ -121,30 +120,30 @@ concrete domain and a variable one differently for `simp`'s index. -/
 
 /-- A binary node whose left daughter is a defined function over the right daughter's type
 applies it forward. -/
-theorem Mode.combine?_evalPartial_fn_left {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) D)
-    (a : Ty.PDomain E W σ D) :
-    Mode.combine? Mode.evalPartial (⟨σ ⇒ τ, Part.some f⟩ : PDenotation E W D) ⟨σ, Part.some a⟩ =
+theorem Mode.combine?_evalPartial_fn_left {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) S)
+    (a : Ty.PDomain E W σ S) :
+    Mode.combine? Mode.evalPartial (⟨σ ⇒ τ, Part.some f⟩ : PDenotation E W S) ⟨σ, Part.some a⟩ =
       some ⟨τ, f a⟩ := by
   rw [Mode.combine?_fn_left]; simp [Mode.evalPartial]
 
 /-- A binary node whose right daughter is a defined function over the left daughter's type
 applies it backward. -/
-theorem Mode.combine?_evalPartial_fn_right {σ τ : Ty} (a : Ty.PDomain E W σ D)
-    (f : Ty.PDomain E W (σ ⇒ τ) D) :
-    Mode.combine? Mode.evalPartial (⟨σ, Part.some a⟩ : PDenotation E W D) ⟨σ ⇒ τ, Part.some f⟩ =
+theorem Mode.combine?_evalPartial_fn_right {σ τ : Ty} (a : Ty.PDomain E W σ S)
+    (f : Ty.PDomain E W (σ ⇒ τ) S) :
+    Mode.combine? Mode.evalPartial (⟨σ, Part.some a⟩ : PDenotation E W S) ⟨σ ⇒ τ, Part.some f⟩ =
       some ⟨τ, f a⟩ := by
   rw [Mode.combine?_fn_right]; simp [Mode.evalPartial]
 
 /-- Two defined predicates compose by predicate modification, conjoined pointwise. -/
-theorem Mode.combine?_evalPartial_predicateModification (P Q : Ty.PDomain E W (.e ⇒ .t) D) :
-    Mode.combine? Mode.evalPartial (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W D)
+theorem Mode.combine?_evalPartial_predicateModification (P Q : Ty.PDomain E W (.e ⇒ .t) S) :
+    Mode.combine? Mode.evalPartial (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W S)
         ⟨.e ⇒ .t, Part.some Q⟩ =
       some ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩ := by
   rw [Mode.combine?_predicateModification]; simp [Mode.evalPartial]
 
 /-- The value of an interpreted daughter at the type `τ`, which is undefined where the daughter
 is uninterpretable or of another type. -/
-def valueAtPartial (τ : Ty) : Option (PDenotation E W D) → Part (Ty.PDomain E W τ D)
+def valueAtPartial (τ : Ty) : Option (PDenotation E W S) → Part (Ty.PDomain E W τ S)
   | some ⟨ty, v⟩ => if h : ty = τ then h ▸ v else Part.none
   | none => Part.none
 
@@ -160,45 +159,44 @@ preserves the lift; so a total lexicon has no presupposition failures. -/
 
 section Total
 
-variable {E W D : Type}
+variable {E W : Type} {S : Sorts}
 
 open scoped Assignment
 
 /-- The lifting relation between a total denotation and a partial one of the same type. -/
-def Ty.Lifts : (ty : Ty) → Ty.Domain E W ty D → Ty.PDomain E W ty D → Prop
+def Ty.Lifts : (ty : Ty) → Ty.Domain E W ty S → Ty.PDomain E W ty S → Prop
   | .e, x, y => x = y
   | .t, x, y => x = y
   | .d, x, y => x = y
   | .n, x, y => x = y
   | .v, x, y => x = y
-  | .s, x, y => x = y
   | .fn a b, f, f' => ∀ x y, Ty.Lifts a x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z
   | .intens a, f, f' => ∀ w, ∃ z, f' w = Part.some z ∧ Ty.Lifts a (f w) z
 
-@[simp] theorem Ty.lifts_e {x y : E} : Ty.Lifts (E := E) (W := W) (D := D) .e x y ↔ x = y :=
+@[simp] theorem Ty.lifts_e {x y : E} : Ty.Lifts (E := E) (W := W) (S := S) .e x y ↔ x = y :=
   Iff.rfl
 
-@[simp] theorem Ty.lifts_t {x y : Prop} : Ty.Lifts (E := E) (W := W) (D := D) .t x y ↔ x = y :=
+@[simp] theorem Ty.lifts_t {x y : Prop} : Ty.Lifts (E := E) (W := W) (S := S) .t x y ↔ x = y :=
   Iff.rfl
 
-theorem Ty.lifts_fn {a b : Ty} {f : Ty.Domain E W (a ⇒ b) D} {f' : Ty.PDomain E W (a ⇒ b) D} :
+theorem Ty.lifts_fn {a b : Ty} {f : Ty.Domain E W (a ⇒ b) S} {f' : Ty.PDomain E W (a ⇒ b) S} :
     Ty.Lifts (a ⇒ b) f f' ↔
       ∀ x y, Ty.Lifts a x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z :=
   Iff.rfl
 
 /-- A total function of individuals lifts to the everywhere-defined partial function whose
 values lift its values. -/
-theorem Ty.lifts_lift {b : Ty} {f : E → Ty.Domain E W b D} {f' : E → Ty.PDomain E W b D}
+theorem Ty.lifts_lift {b : Ty} {f : E → Ty.Domain E W b S} {f' : E → Ty.PDomain E W b S}
     (h : ∀ x, Ty.Lifts b (f x) (f' x)) : Ty.Lifts (.e ⇒ b) f (PFun.lift f') :=
   fun x _ hxy ↦ ⟨f' x, hxy ▸ rfl, h x⟩
 
 /-- A partial denotation lifts a total one when it has the same type and a defined value that
 lifts the total value. -/
-inductive Denotation.Lifts : Denotation E W Id D → PDenotation E W D → Prop
-  | mk {ty : Ty} {x : Ty.Domain E W ty D} {y : Ty.PDomain E W ty D} (h : Ty.Lifts ty x y) :
+inductive Denotation.Lifts : Denotation E W Id S → PDenotation E W S → Prop
+  | mk {ty : Ty} {x : Ty.Domain E W ty S} {y : Ty.PDomain E W ty S} (h : Ty.Lifts ty x y) :
       Denotation.Lifts ⟨ty, x⟩ ⟨ty, Part.some y⟩
 
-theorem Denotation.Lifts.fst {d : Denotation E W Id D} {d' : PDenotation E W D}
+theorem Denotation.Lifts.fst {d : Denotation E W Id S} {d' : PDenotation E W S}
     (h : d.Lifts d') : d.1 = d'.1 := by cases h; rfl
 
 /-- The types whose functions take only individuals as arguments are those the extensional
@@ -210,25 +208,23 @@ inductive Ty.FirstOrder : Ty → Prop
   | d : FirstOrder .d
   | n : FirstOrder .n
   | v : FirstOrder .v
-  | s : FirstOrder .s
   | fn {b : Ty} : FirstOrder b → FirstOrder (.e ⇒ b)
   | intens {a : Ty} : FirstOrder a → FirstOrder (.intens a)
 
 /-- The partial denotation a total one lifts to, defined everywhere on individual arguments
 and nowhere on a function argument. -/
-def Ty.Domain.toPartial : (ty : Ty) → Ty.Domain E W ty D → Ty.PDomain E W ty D
+def Ty.Domain.toPartial : (ty : Ty) → Ty.Domain E W ty S → Ty.PDomain E W ty S
   | .e, x => x
   | .t, x => x
   | .d, x => x
   | .n, x => x
   | .v, x => x
-  | .s, x => x
   | .fn .e b, f => PFun.lift fun x ↦ toPartial b (f x)
   | .fn _ _, _ => fun _ ↦ Part.none
   | .intens a, f => PFun.lift fun w ↦ toPartial a (f w)
 
 /-- At a first-order type, the lift of a total denotation lifts it. -/
-theorem Ty.lifts_toPartial {ty : Ty} (h : ty.FirstOrder) (x : Ty.Domain E W ty D) :
+theorem Ty.lifts_toPartial {ty : Ty} (h : ty.FirstOrder) (x : Ty.Domain E W ty S) :
     Ty.Lifts ty x (Ty.Domain.toPartial ty x) := by
   induction h with
   | fn _ ih => exact Ty.lifts_lift fun x ↦ ih _
@@ -236,19 +232,19 @@ theorem Ty.lifts_toPartial {ty : Ty} (h : ty.FirstOrder) (x : Ty.Domain E W ty D
   | _ => rfl
 
 /-- The partial denotation a total one lifts to. -/
-def Denotation.toPartial (d : Denotation E W Id D) : PDenotation E W D :=
+def Denotation.toPartial (d : Denotation E W Id S) : PDenotation E W S :=
   ⟨d.1, Part.some (Ty.Domain.toPartial d.1 d.2)⟩
 
 /-- A first-order total denotation is lifted by its partial counterpart. -/
-theorem Denotation.lifts_toPartial {d : Denotation E W Id D} (h : d.1.FirstOrder) :
+theorem Denotation.lifts_toPartial {d : Denotation E W Id S} (h : d.1.FirstOrder) :
     d.Lifts d.toPartial := by
   obtain ⟨ty, x⟩ := d
   exact .mk (Ty.lifts_toPartial h x)
 
 /-- Every mode preserves the lift, since on defined daughters that lift total ones a mode's
 partial value is defined and lifts its total value. -/
-theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {a : Ty.Domain E W σ₁ D}
-    {b : Ty.Domain E W σ₂ D} {a' : Ty.PDomain E W σ₁ D} {b' : Ty.PDomain E W σ₂ D}
+theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {a : Ty.Domain E W σ₁ S}
+    {b : Ty.Domain E W σ₂ S} {a' : Ty.PDomain E W σ₁ S} {b' : Ty.PDomain E W σ₂ S}
     (ha : Ty.Lifts σ₁ a a') (hb : Ty.Lifts σ₂ b b') :
     ∃ z, m.evalPartial (Part.some a') (Part.some b') = Part.some z ∧ Ty.Lifts τ (m.eval a b) z := by
   cases m with
@@ -290,13 +286,13 @@ theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {
     exact ⟨b x e ∧ a e, by simp [hp, hq], rfl⟩
 
 /-- A partial constant lifts a total one when it is defined with a value lifting it. -/
-def LiftsConst (ty : Ty) (c : Id (Ty.Domain E W ty D)) (c' : Part (Ty.PDomain E W ty D)) : Prop :=
+def LiftsConst (ty : Ty) (c : Id (Ty.Domain E W ty S)) (c' : Part (Ty.PDomain E W ty S)) : Prop :=
   ∃ y, c' = Part.some y ∧ Ty.Lifts ty c y
 
 /-- Terms of the same shape whose partial constants lift the total ones have a defined partial
 denotation lifting the total one, under every assignment. -/
-theorem Term.Rel.lifts {ty : Ty} {u : Term (fun ty ↦ Id (Ty.Domain E W ty D)) ty}
-    {u' : Term (fun ty ↦ Part (Ty.PDomain E W ty D)) ty} (h : Term.Rel LiftsConst u u')
+theorem Term.Rel.lifts {ty : Ty} {u : Term (fun ty ↦ Id (Ty.Domain E W ty S)) ty}
+    {u' : Term (fun ty ↦ Part (Ty.PDomain E W ty S)) ty} (h : Term.Rel LiftsConst u u')
     (g : Assignment E) :
     ∃ z, u'.evalPartial (fun c ↦ c) g = Part.some z ∧ Ty.Lifts ty (u.eval (fun c ↦ c) g) z := by
   induction h generalizing g with
@@ -310,11 +306,11 @@ theorem Term.Rel.lifts {ty : Ty} {u : Term (fun ty ↦ Id (Ty.Domain E W ty D)) 
     simp only [Term.evalPartial, hzl, hzr, Term.eval]
     exact m.lifts_evalPartial hll hlr
 
-variable {L : Type*} {lex : L → Option (Denotation E W Id D)}
+variable {L : Type*} {lex : L → Option (Denotation E W Id S)}
 
 /-- The entrywise lift of a first-order lexicon lifts it. -/
 theorem lifts_map_toPartial (h : ∀ w d, lex w = some d → d.1.FirstOrder) (w : L)
-    (d' : PDenotation E W D) (h' : (lex w).map Denotation.toPartial = some d') :
+    (d' : PDenotation E W S) (h' : (lex w).map Denotation.toPartial = some d') :
     ∃ d, lex w = some d ∧ d.Lifts d' := by
   obtain ⟨d, hd, rfl⟩ := Option.map_eq_some_iff.mp h'
   exact ⟨d, hd, Denotation.lifts_toPartial (h w d hd)⟩
@@ -328,7 +324,7 @@ namespace PhraseStructure.Tree
 open Montague
 open scoped Assignment
 
-variable {E W D : Type}
+variable {E W : Type} {S : Sorts}
 
 /-! ### Partial interpretation -/
 
@@ -340,15 +336,15 @@ variable {C : Type} {L : Type*}
 word's partial denotation its constant. A terminal denotes what its leaf interpretation gives it, a
 binary node what the mode its daughters' types select composes, a trace the value of its index, and
 a binder the partial function abstracting over its index in the body. -/
-def interpPartial (lex : L → Option (PDenotation E W D)) (g : Assignment E) (t : Tree C L) :
-    Option (PDenotation E W D) :=
-  (translate (K := fun ty ↦ Part (Ty.PDomain E W ty D)) lex t).map fun d ↦
+def interpPartial (lex : L → Option (PDenotation E W S)) (g : Assignment E) (t : Tree C L) :
+    Option (PDenotation E W S) :=
+  (translate (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex t).map fun d ↦
     ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩
 
 private theorem map_bind_combine (g : Assignment E)
-    (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ Part (Ty.PDomain E W ty D)) ty)) :
+    (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ Part (Ty.PDomain E W ty S)) ty)) :
     (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
-        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩ : PDenotation E W D)) =
+        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩ : PDenotation E W S)) =
       (t₁.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₁ ↦
         (t₂.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₂ ↦
           Mode.combine? Mode.evalPartial d₁ d₂ := by
@@ -356,7 +352,7 @@ private theorem map_bind_combine (g : Assignment E)
   simp only [Option.bind_some, Option.map_some, Mode.combine?, Option.map_map]
   rfl
 
-variable (lex lex' : L → Option (PDenotation E W D)) (g g' : Assignment E)
+variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
 
 @[simp] theorem interpPartial_terminal (c : C) (w : L) :
     interpPartial lex g (.terminal c w : Tree C L) = lex w := by
@@ -386,7 +382,7 @@ variable (lex lex' : L → Option (PDenotation E W D)) (g g' : Assignment E)
     interpPartial lex g (.bind n c body) = (interpPartial lex g body).map fun d ↦
       ⟨.fn .e d.1, Part.some fun x ↦ valueAtPartial d.1 (interpPartial lex (g[n ↦ x]) body)⟩ := by
   simp only [interpPartial, translate_bind, Option.map_map]
-  rcases translate (K := fun ty ↦ Part (Ty.PDomain E W ty D)) lex body with _ | ⟨τ, b⟩
+  rcases translate (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex body with _ | ⟨τ, b⟩
   · rfl
   · simp [Term.evalPartial, valueAtPartial]
 
@@ -424,13 +420,13 @@ end Partial
 
 section Total
 
-variable {C : Type} {L : Type*} {lex : L → Option (Denotation E W Id D)}
-  {lex' : L → Option (PDenotation E W D)}
+variable {C : Type} {L : Type*} {lex : L → Option (Denotation E W Id S)}
+  {lex' : L → Option (PDenotation E W S)}
 
 /-- On a lexicon lifting a total one, every value of the partial engine is defined and lifts the
 pure engine's value at that node. -/
 theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d')
-    (g : Assignment E) (t : Tree C L) {d' : PDenotation E W D}
+    (g : Assignment E) (t : Tree C L) {d' : PDenotation E W S}
     (h : interpPartial lex' g t = some d') :
     ∃ d, Tree.interp lex g t = some d ∧ d.Lifts d' := by
   have hrel : ∀ w d', lex' w = some d' → ∃ c, lex w = some ⟨d'.1, c⟩ ∧ LiftsConst d'.1 c d'.2 := by

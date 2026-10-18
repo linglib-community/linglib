@@ -59,14 +59,14 @@ inductive Term (K : Ty → Type u) : Ty → Type u where
 `M` over entity-indexed families. `Id` and the Reader-like effects have one; scope effects such
 as `Cont R` do not, since abstraction would have to run one continuation at every entity at
 once, and record that by `dist? = none`. -/
-class PredAbs (M : Type → Type) (E W : Type) (D : Type := ℝ) where
+class PredAbs (M : Type → Type) (E W : Type) (S : Sorts := {}) where
   /-- The entity-distributor, if the effect has one. -/
-  dist? : Option (∀ ty : Ty, (E → M (Ty.Domain E W ty D)) → M (E → Ty.Domain E W ty D))
+  dist? : Option (∀ ty : Ty, (E → M (Ty.Domain E W ty S)) → M (E → Ty.Domain E W ty S))
 
-instance (E W D : Type) : PredAbs Id E W D := ⟨some fun _ f ↦ f⟩
+instance (E W : Type) (S : Sorts) : PredAbs Id E W S := ⟨some fun _ f ↦ f⟩
 
-@[simp] theorem PredAbs.dist?_id (E W D : Type) :
-    PredAbs.dist? (M := Id) (E := E) (W := W) (D := D) = some fun _ f ↦ f := rfl
+@[simp] theorem PredAbs.dist?_id (E W : Type) (S : Sorts) :
+    PredAbs.dist? (M := Id) (E := E) (W := W) (S := S) = some fun _ f ↦ f := rfl
 
 namespace Term
 
@@ -94,14 +94,14 @@ inductive Rel (R : ∀ ty : Ty, K ty → K' ty → Prop) : {ty : Ty} → Term K 
   | comp {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {l : Term K σ₁} {l' : Term K' σ₁} {r : Term K σ₂}
       {r' : Term K' σ₂} : Rel R l l' → Rel R r r' → Rel R (comp m l r) (comp m l' r')
 
-variable {E W D : Type}
+variable {E W : Type} {S : Sorts}
 
 open scoped Assignment
 
 /-- The denotation of a term under an interpretation of the constants and an assignment of the
 variables. -/
-def eval (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D) (g : Assignment E) :
-    {ty : Ty} → Term K ty → Ty.Domain E W ty D
+def eval (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E) :
+    {ty : Ty} → Term K ty → Ty.Domain E W ty S
   | _, const c => I c
   | _, var n => g n
   | _, lam n b => fun x ↦ eval I (g[n ↦ x]) b
@@ -109,13 +109,13 @@ def eval (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D) (g : Assignment E) :
 
 /-- A variable denotes the value of its index under the assignment, by the Traces and Pronouns
 Rule. -/
-theorem eval_var (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D) (g : Assignment E) (n : ℕ) :
+theorem eval_var (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E) (n : ℕ) :
     (var n : Term K .e).eval I g = interpPronoun n g :=
   rfl
 
 /-- An abstraction denotes the abstraction of its body over its variable, by Predicate
 Abstraction. -/
-theorem eval_lam (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D) (g : Assignment E) (n : ℕ)
+theorem eval_lam (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E) (n : ℕ)
     {τ : Ty} (b : Term K τ) : (lam n b).eval I g = lambdaAbsG n (fun g' ↦ b.eval I g') g :=
   rfl
 
@@ -123,17 +123,17 @@ theorem eval_lam (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D) (g : Assignmen
 `I` of the constants as computations and an assignment `g`. A composition runs its left daughter
 first, and an abstraction distributes the effect over the entities, so `evalM` is `none` when
 the effect has no distributor. -/
-def evalM {M : Type → Type} [Applicative M] [PredAbs M E W D]
-    (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty D)) (g : Assignment E) :
-    {ty : Ty} → Term K ty → Option (M (Ty.Domain E W ty D))
+def evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
+    (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) (g : Assignment E) :
+    {ty : Ty} → Term K ty → Option (M (Ty.Domain E W ty S))
   | _, const c => some (I c)
   | _, var n => some (pure (g n))
-  | _, lam n b => (PredAbs.dist? (M := M) (E := E) (W := W) (D := D)).bind fun dist ↦
+  | _, lam n b => (PredAbs.dist? (M := M) (E := E) (W := W) (S := S)).bind fun dist ↦
       (evalM I g b).map fun probe ↦ dist _ fun x ↦ (evalM I (g[n ↦ x]) b).getD probe
   | _, comp m l r => (evalM I g l).bind fun a ↦ (evalM I g r).map fun b ↦ m.evalM a b
 
 /-- At the identity effect, evaluation is the pure denotation. -/
-@[simp] theorem evalM_id (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D) (g : Assignment E)
+@[simp] theorem evalM_id (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E)
     {ty : Ty} (t : Term K ty) : t.evalM (M := Id) I g = some (t.eval I g) := by
   induction t generalizing g with
   | const c => rfl
@@ -142,7 +142,7 @@ def evalM {M : Type → Type} [Applicative M] [PredAbs M E W D]
   | comp m l r ihl ihr => simp only [evalM, ihl, ihr, Option.bind_some, Option.map_some]; rfl
 
 /-- The denotation of a renamed term interprets the renamed constants. -/
-theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty D) (f : ∀ {ty : Ty}, K ty → K' ty)
+theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty S) (f : ∀ {ty : Ty}, K ty → K' ty)
     (g : Assignment E) {ty : Ty} (t : Term K ty) :
     (t.map f).eval I g = t.eval (fun c ↦ I (f c)) g := by
   induction t generalizing g with
@@ -152,8 +152,8 @@ theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty D) (f : ∀ {ty 
   | comp m l r ihl ihr => simp only [map, eval, ihl, ihr]
 
 /-- Evaluating a renamed term interprets the renamed constants. -/
-theorem evalM_map {M : Type → Type} [Applicative M] [PredAbs M E W D]
-    (I : ∀ {ty : Ty}, K' ty → M (Ty.Domain E W ty D)) (f : ∀ {ty : Ty}, K ty → K' ty)
+theorem evalM_map {M : Type → Type} [Applicative M] [PredAbs M E W S]
+    (I : ∀ {ty : Ty}, K' ty → M (Ty.Domain E W ty S)) (f : ∀ {ty : Ty}, K ty → K' ty)
     (g : Assignment E) {ty : Ty} (t : Term K ty) :
     (t.map f).evalM I g = t.evalM (fun c ↦ I (f c)) g := by
   induction t generalizing g with
@@ -164,15 +164,15 @@ theorem evalM_map {M : Type → Type} [Applicative M] [PredAbs M E W D]
 
 /-- Whether a term has a denotation under an effect, and at which type, does not depend on the
 assignment. -/
-theorem isSome_evalM {M : Type → Type} [Applicative M] [PredAbs M E W D]
-    (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty D)) (g g' : Assignment E) {ty : Ty}
+theorem isSome_evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
+    (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) (g g' : Assignment E) {ty : Ty}
     (t : Term K ty) : (t.evalM I g).isSome = (t.evalM I g').isSome := by
   induction t generalizing g g' with
   | const c => rfl
   | var n => rfl
   | lam n b ih =>
     simp only [evalM]
-    cases PredAbs.dist? (M := M) (E := E) (W := W) (D := D) <;> simp [ih g g']
+    cases PredAbs.dist? (M := M) (E := E) (W := W) (S := S) <;> simp [ih g g']
   | comp m l r ihl ihr =>
     have hl := ihl g g'
     have hr := ihr g g'
@@ -181,8 +181,8 @@ theorem isSome_evalM {M : Type → Type} [Applicative M] [PredAbs M E W D]
       cases h₄ : r.evalM I g' <;> simp_all
 
 /-- A term's denotation depends on the assignment only at its free variables. -/
-theorem evalM_congr_of_agree {M : Type → Type} [Applicative M] [PredAbs M E W D]
-    (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty D)) {ty : Ty} (t : Term K ty)
+theorem evalM_congr_of_agree {M : Type → Type} [Applicative M] [PredAbs M E W S]
+    (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) {ty : Ty} (t : Term K ty)
     {g g' : Assignment E} (h : ∀ n ∈ t.freeVars, g n = g' n) : t.evalM I g = t.evalM I g' := by
   induction t generalizing g g' with
   | const c => rfl
@@ -193,7 +193,7 @@ theorem evalM_congr_of_agree {M : Type → Type} [Applicative M] [PredAbs M E W 
       · subst hmn; simp
       · simp [Function.update_of_ne hmn, h m (Finset.mem_erase.2 ⟨hmn, hm⟩)]
     simp only [evalM]
-    cases PredAbs.dist? (M := M) (E := E) (W := W) (D := D) with
+    cases PredAbs.dist? (M := M) (E := E) (W := W) (S := S) with
     | none => rfl
     | some dist =>
       have hsome := isSome_evalM I g g' b

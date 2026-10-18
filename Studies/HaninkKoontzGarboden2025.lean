@@ -32,12 +32,12 @@ categories predict the shape only for color; the examples are the rows of
 
 ## Implementation notes
 
-Types are the substrate's `Ty` with `.s` for the paper's state sort, and the composability
-claims are stated at the type level, since Lean's own typing enforces them in the semantic
-definitions. Possession relates a possessor to a possessum of any type, so ordinary possession
-(67) and the possession of a state (35) are one operator. Causation and change are interpreted
-by the substrate's `EventStructure.Interpretation`, whose heads `vBecome` and `vCause` are the
-paper's (43) and whose effector stands for the paper's AGENT.
+Types are the substrate's `Ty`, with `.v` the paper's type of states and events of change alike
+(43), and the composability claims are stated at the type level, since Lean's own typing enforces
+them in the semantic definitions. Possession relates a possessor to a possessum of any type, so
+ordinary possession (67) and the possession of a state (35) are one operator. Causation and change
+are interpreted by the substrate's `EventStructure.Interpretation`, whose heads `vBecome` and
+`vCause` are the paper's (43) and whose effector stands for the paper's AGENT.
 
 ## References
 
@@ -66,8 +66,8 @@ inductive RootType where
 
 /-- The semantic type of each meaning. -/
 def RootType.ty : RootType → Ty
-  | .relation => .e ⇒ .s ⇒ .t
-  | .quality => .s ⇒ .t
+  | .relation => .e ⇒ .v ⇒ .t
+  | .quality => .v ⇒ .t
 
 /-- On the analysis bare and prefixed roots denote relations and suffixed roots qualities. -/
 def RootType.ofShape : Shape → RootType
@@ -97,17 +97,18 @@ inductive Head where
 
 /-- The type a head takes. -/
 def Head.input : Head → Ty
-  | .zero => .e ⇒ .s ⇒ .t
-  | .possess => .s ⇒ .t
-  | .attr => .e ⇒ .s ⇒ .t
-  | .become => .e ⇒ .s ⇒ .t
+  | .zero => .e ⇒ .v ⇒ .t
+  | .possess => .v ⇒ .t
+  | .attr => .e ⇒ .v ⇒ .t
+  | .become => .e ⇒ .v ⇒ .t
 
 /-- The type a head returns is a predicate of individuals and states for the verbalizers, a
-predicate of states for *ʔil-*, and a relation to events of change for the bipartite head. -/
+predicate of states for *ʔil-*, and a relation of individuals to events of change for the bipartite
+head, of the same type, since states and events of change are both of type `v` (43). -/
 def Head.output : Head → Ty
-  | .zero => .e ⇒ .s ⇒ .t
-  | .possess => .e ⇒ .s ⇒ .t
-  | .attr => .s ⇒ .t
+  | .zero => .e ⇒ .v ⇒ .t
+  | .possess => .e ⇒ .v ⇒ .t
+  | .attr => .v ⇒ .t
   | .become => .e ⇒ .v ⇒ .t
 
 /-- A sequence of heads composes with a type when each takes what the last returns. -/
@@ -127,10 +128,12 @@ def output (τ : Ty) : List Head → Ty
   | h :: hs => output h.output hs
 
 /-- A verbalization of a root is a sequence of at least one head that is well-typed and returns
-a stative predicate, with zero categorization open only to a free root. -/
+a stative predicate, one without the change-of-state head, with zero categorization open only to
+a free root. -/
 def Verbalizes (sh : Shape) (hs : List Head) : Prop :=
   hs ≠ [] ∧ WellTyped (RootType.ofShape sh).ty hs ∧
-    output (RootType.ofShape sh).ty hs = (.e ⇒ .s ⇒ .t) ∧ (Head.zero ∈ hs → sh = .bare)
+    output (RootType.ofShape sh).ty hs = (.e ⇒ .v ⇒ .t) ∧ Head.become ∉ hs ∧
+      (Head.zero ∈ hs → sh = .bare)
 
 instance (sh : Shape) (hs : List Head) : Decidable (Verbalizes sh hs) := by
   unfold Verbalizes; infer_instance
@@ -182,7 +185,7 @@ def vHave (P : Y → Prop) (R : E → Y → Prop) : E → Prop := dom P R
 to. -/
 def nabla (P : E → St → Prop) : St → Prop := ⨆ x, P x
 
-/-- The Duke-of-York derivation of section 5.2: when possessing a state of the root is bearing
+/-- In the Duke-of-York derivation of section 5.2, when possessing a state of the root is bearing
 the root's relation to it, the prefixed root under *ʔil-* and *-iʔ* predicates what the bare
 relation does (28), the meaning its bipartite uses show it to have. -/
 theorem vHave_nabla_self (P : E → St → Prop) (x : E) : vHave (nabla P) P x ↔ ∃ s, P x s :=
@@ -217,8 +220,8 @@ theorem toRoot_kinds (e : PropertyConcept) : (toRoot e).kinds = Root.Kinds.prope
 theorem color_prefixed : ∀ e ∈ propertyConcepts, e.category = .color → e.shape = .prefixed := by
   decide
 
-/-- [dixon-1982]'s categories do not predict the shape: the antonyms *MiLe* 'old' and *ešlut’*
-'young' differ. -/
+/-- [dixon-1982]'s categories do not predict the shape, since the antonyms *MiLe* 'old' and
+*ešlut’* 'young' differ. -/
 theorem category_not_predictive :
     ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts,
       e₁.category = e₂.category ∧ e₁.shape ≠ e₂.shape :=
