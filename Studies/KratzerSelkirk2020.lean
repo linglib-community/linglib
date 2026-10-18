@@ -13,8 +13,9 @@ its semantics in Rooth's alternatives framework. The privative feature [FoC] int
 alternatives, setting the alternatives value of a constituent of type τ to the whole domain
 of that type, and imposes no discourse requirement of its own; the squiggle operator that
 must c-command it requires the constituent to represent a contrast with each of a set of
-salient discourse referents, which must be among the alternatives and differ from the
-ordinary value, and then consumes the alternatives, collapsing them to the ordinary value.
+discourse referents: each must be among the alternatives and differ from the ordinary value, and
+no variant with fewer alternatives may also have it among them. The operator then consumes the
+alternatives, collapsing them to the ordinary value.
 The feature [G] presupposes Givenness, that the alternatives value is the singleton of a
 salient discourse referent, and leaves both values unchanged; the requirement is
 use-conditional, like the German particles *ja* and *doch*. Two consequences follow. No
@@ -32,14 +33,17 @@ Hartmann and Zimmermann as unmarked newness and [FoC].
 
 [FoC] is the substrate's F-mark `Focus.Mark.focused` and (45) is `WithAlternatives.mark`, the
 domain of a type being all its values. The paper's Givenness is the substrate's
-`WithAlternatives.Given`, and its *only* (56) is `Exhaustification.excludes` at the salient
-contrast set the squiggle also carries (55b), so the paper's indirect association through two
-occurrences of the contextual variable is a fact about the substrate and is not restated. The
-squiggle operator is bundled with `Focus.SquiggleInd` for each antecedent, the first two contrast
-conditions of (49). The third, which prevents overfocusing, compares an expression with its
-[FoC]/[G]-variants; `RepresentsContrast` states (49) over any family of variants, and the
-variants of a two-argument predication are the four markings of its arguments (`variants`), the
-predicate and larger constituents held unmarked, which is all that (50) and (51) vary. (58) is
+`WithAlternatives.Given`, and its *only* (56), every true member of the salient set being the
+prejacent, is `Focus.Particles.atMost (· = ·)` at the set the squiggle also carries (55b), so the
+paper's indirect association through two occurrences of the contextual variable is a fact about
+the substrate and is not restated. Condition (iii) of (49), which prevents overfocusing, compares
+an expression with its [FoC]/[G]-variants, so `RepresentsContrast` states (49) over a family of
+variants and the squiggle operator (54) carries its expression among them. The variants of a
+two-argument predication are the four markings of its arguments (`variants`), the predicate and
+larger constituents held unmarked, which is all that (50) and (51) vary. Contexts are a window of
+discourse referents: [G] (47) takes its antecedent from the window preceding the context, with no
+anticipatory licensing (fn. 46), and the squiggle (53) from the window surrounding it, since a
+contrast may be represented with a later referent (fn. 58). (58) is
 proved for one step of composition. The prosodic spell-out of the features in English (§6–§7) is
 prose.
 
@@ -62,13 +66,14 @@ namespace KratzerSelkirk2020
 
 /-! ### The features (45)–(47) -/
 
-/-- [G] indexed with the salient discourse referent `a` (47) is defined only if the meaning is
-Given with respect to `a` (46), and is then the identity. -/
-def applyG {α : Type*} (m : WithAlternatives α) (a : α) (_ : m.Given a) :
-    WithAlternatives α := m
+/-- [G] indexed with the discourse referent `a` (47) is defined only if `a` is in the window
+`preceding` the context and the meaning is Given with respect to `a` (46), and is then the
+identity. -/
+def applyG {α : Type*} (preceding : Set α) (m : WithAlternatives α) (a : α) (_ : a ∈ preceding)
+    (_ : m.Given a) : WithAlternatives α := m
 
-theorem applyG_eq {α : Type*} (m : WithAlternatives α) (a : α) (h : m.Given a) :
-    applyG m a h = m := rfl
+theorem applyG_eq {α : Type*} (preceding : Set α) (m : WithAlternatives α) (a : α)
+    (ha : a ∈ preceding) (h : m.Given a) : applyG preceding m a ha h = m := rfl
 
 /-- No constituent bears both features, since an F-marked constituent of a type with two values
 is Given with respect to nothing. -/
@@ -100,31 +105,6 @@ theorem useConditional_projects {W : Type*} (F : (W → Prop) → W → Prop)
     (atIssue requirement : W → Prop) :
     (F <$> (⟨atIssue, requirement⟩ : TwoDim W (W → Prop))).notAtIssue = requirement :=
   rfl
-
-/-! ### The squiggle operator (49), (54) -/
-
-/-- The squiggle operator with a set of discourse antecedents (54), carrying the first two
-contrast conditions of (49): each antecedent is among the alternatives and differs from the
-ordinary value, the individual case of [rooth-1992]'s presupposition, `Focus.SquiggleInd`. -/
-structure ContrastOperator (α : Type*) where
-  /-- The meaning in its scope. -/
-  meaning : WithAlternatives α
-  /-- The contrasting discourse referents. -/
-  antecedents : List α
-  /-- (49i) and (49ii): each antecedent resolves the squiggle against the meaning. -/
-  antecedents_squiggle :
-    ∀ a ∈ antecedents, Focus.SquiggleInd meaning.ordinary meaning.alternatives a
-
-/-- The operator consumes the alternatives: the ordinary value is unchanged and the
-alternatives value collapses to it. -/
-def ContrastOperator.result {α : Type*} (op : ContrastOperator α) : WithAlternatives α :=
-  { ordinary := op.meaning.ordinary, alternatives := {op.meaning.ordinary} }
-
-/-- After consumption the result is Given with respect to its ordinary value (46), which is
-what (58) requires of a Given constituent containing a focus: the engine of the
-second-occurrence-focus analysis of (59). -/
-theorem ContrastOperator.result_given {α : Type*} (op : ContrastOperator α) :
-    op.result.Given op.meaning.ordinary := rfl
 
 /-! ### Contrast representation (49)–(51) -/
 
@@ -176,6 +156,51 @@ theorem representsContrast_variants_narrow (hf : Function.Injective2 f) (x : α)
 
 end Contrast
 
+/-! ### The squiggle operator (53), (54) -/
+
+/-- The squiggle operator with a set of discourse antecedents (54) applies to an expression among
+its [FoC]/[G]-variants, and is defined when every antecedent is in the window `surrounding` the
+context and the expression represents a contrast with it (49). -/
+structure ContrastOperator (ι α : Type*) where
+  /-- The [FoC]/[G]-variants of the expression in the operator's scope. -/
+  variants : ι → WithAlternatives α
+  /-- The expression in the operator's scope. -/
+  self : ι
+  /-- The discourse referents of the window surrounding the context. -/
+  surrounding : Set α
+  /-- The contrasting discourse referents. -/
+  antecedents : Set α
+  antecedents_subset : antecedents ⊆ surrounding
+  representsContrast : ∀ a ∈ antecedents, RepresentsContrast variants self a
+
+namespace ContrastOperator
+
+variable {ι α : Type*} (op : ContrastOperator ι α)
+
+/-- The operator consumes the alternatives of its expression, keeping its ordinary value and
+collapsing the alternatives to it (54). -/
+def result : WithAlternatives α := .unfeatured (op.variants op.self).ordinary
+
+/-- After consumption the result is Given with respect to its ordinary value (46), which is what
+(58) requires of a Given constituent containing a focus: the engine of the second-occurrence-focus
+analysis of (59). -/
+theorem result_given : op.result.Given (op.variants op.self).ordinary := rfl
+
+end ContrastOperator
+
+/-- (51) *John picked strawberries at [Sandy's]FoC farm* under a squiggle with (50a) *John picked
+strawberries at Mary's farm* as its antecedent. -/
+def squiggleNarrow {α β γ : Type*} {f : α → β → γ} (hf : Function.Injective2 f) (x : α)
+    {y y' : β} (hy : y' ≠ y) : ContrastOperator (Mark × Mark) γ where
+  variants := variants f x y
+  self := (.unfeatured, .focused)
+  surrounding := {f x y'}
+  antecedents := {f x y'}
+  antecedents_subset := subset_rfl
+  representsContrast := by
+    rintro _ rfl
+    exact representsContrast_variants_narrow hf x hy
+
 /-! ### A-Givenness (§3) -/
 
 /-- [schwarzschild-1999]'s A-Givenness in alternatives semantics: a salient discourse
@@ -189,11 +214,22 @@ theorem isAGiven_of_given {α : Type*} {m : WithAlternatives α} {referent : α}
   rw [isAGiven, h]; rfl
 
 /-- The converse fails: a two-membered alternatives value is A-Given with respect to either
-member but Given with respect to neither (footnote 14, on the condition being too easy to
-satisfy). -/
+member but Given with respect to neither. -/
 theorem not_given_of_isAGiven :
     ∃ (m : WithAlternatives ℕ) (referent : ℕ), isAGiven m referent ∧ ¬ m.Given referent :=
   ⟨⟨1, {1, 2}⟩, 1, by simp [isAGiven], not_given_of_nontrivial (Set.nontrivial_pair (by decide)) 1⟩
+
+/-- *Every `P` is a `Q`*, with the restrictor and the scope as properties. -/
+def every {E W : Type*} (P Q : E → Set W) : Set W := {w | ∀ x, w ∈ P x → w ∈ Q x}
+
+/-- Footnote 14 finds Schwarzschild's givenness, entailment of the existential F-closure, too easy
+to satisfy, which A-Givenness is not. The F-closure of *Every [cat]F is a complainer*, that every
+`P` is a complainer for some `P`, holds at every world, since every complainer is a complainer. -/
+theorem sUnion_alternatives_every_focused {E W : Type} (cat complainer : E → Set W) :
+    ⋃₀ ((every · complainer) <$>
+      (pure cat : WithAlternatives (E → Set W)).mark .focused).alternatives = Set.univ := by
+  rw [WithAlternatives.mark_focused, WithAlternatives.alternatives_map_focused]
+  exact Set.eq_univ_of_forall fun _ ↦ ⟨_, ⟨complainer, rfl⟩, fun _ h ↦ h⟩
 
 /-! ### Hausa (footnote 21)
 
