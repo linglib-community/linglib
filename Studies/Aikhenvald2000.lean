@@ -71,8 +71,8 @@ def locus : Language → Scope
 /-- Every device of the sample characterizes the head noun (the book's (B)). -/
 def constituent (_ : Language) : Constituent := .headNoun
 
-/-- The kind of a device, read off its locus and the constituent it characterizes. -/
-def kind (l : Language) : Option Kind := Kind.ofScope l.locus l.constituent
+/-- The kind of device, read off its locus and the constituent it characterizes. -/
+def device (l : Language) : Option Device := Device.ofScope l.locus l.constituent
 
 /-- The scopes the device operates in (the book's (B)). Mandarin uses the same classifiers with
 numerals and with demonstratives (the book's Table 9.1), and agreement in gender and class
@@ -156,17 +156,17 @@ open Language
 /-- A noun class system is defined by agreement outside the noun and is a closed obligatory
 grammatical system. -/
 theorem nounClass_agreement_obligatory :
-    ∀ l : Language, l.kind = some .nounClass → l.Agreement ∧ l.Obligatory := by
+    ∀ l : Language, l.device = some .nounClass → l.Agreement ∧ l.Obligatory := by
   decide
 
 /-- Noun classes are realized with affixes or clitics, never with free lexemes. -/
 theorem nounClass_bound :
-    ∀ l : Language, l.kind = some .nounClass → .morph .free ∉ l.realizations := by
+    ∀ l : Language, l.device = some .nounClass → .morph .free ∉ l.realizations := by
   decide
 
 /-- Numeral classifiers expressed as free morphemes do not participate in agreement. -/
 theorem free_numeralClassifier_no_agreement :
-    ∀ l : Language, l.kind = some .numeralClassifier → .morph .free ∈ l.realizations →
+    ∀ l : Language, l.device = some .numeralClassifier → .morph .free ∈ l.realizations →
       ¬ l.Agreement := by
   decide
 
@@ -174,21 +174,21 @@ theorem free_numeralClassifier_no_agreement :
 Japanese fragment that takes a classifier is counted without one, though Mandarin *tiān* 'day',
 which takes none, is counted directly. -/
 theorem numeralClassifier_obligatory :
-    (∀ l : Language, l.kind = some .numeralClassifier → l.Obligatory) ∧
+    (∀ l : Language, l.device = some .numeralClassifier → l.Obligatory) ∧
       Mandarin.Nouns.tian.IsBareCount := by
   decide
 
 /-- Every kind of device other than noun class is assigned on purely semantic grounds; noun
 class assignment may be only partially semantic. -/
 theorem classifier_assignment_semantic :
-    ∀ l : Language, l.kind ≠ some .nounClass → l.SemanticAssignment := by
+    ∀ l : Language, l.device ≠ some .nounClass → l.SemanticAssignment := by
   decide
 
 /-- Both numeral-classifier systems have a general classifier that can replace the specific
 ones, the analogue of a functionally unmarked noun class. In Mandarin it is *gè*, which every noun
 that takes a classifier can take, and in Japanese *-tsu*. -/
 theorem numeralClassifier_general :
-    ∀ l : Language, l.kind = some .numeralClassifier → l.HasUnmarkedMember
+    ∀ l : Language, l.device = some .numeralClassifier → l.HasUnmarkedMember
   | .mandarin, _ =>
     ⟨Mandarin.Classifiers.ge, by simp [Mandarin.Classifiers.classifiers],
       fun _ _ h ↦ Mandarin.Nouns.Noun.takes_ge h⟩
@@ -198,13 +198,13 @@ theorem numeralClassifier_general :
 
 /-- Animacy, humanness or sex is basic to noun classes and numeral classifiers. -/
 theorem animacy_basic :
-    ∀ l : Language, l.kind = some .nounClass ∨ l.kind = some .numeralClassifier →
+    ∀ l : Language, l.device = some .nounClass ∨ l.device = some .numeralClassifier →
       ∃ p ∈ l.semantics, p = .animacy ∨ p = .humanness ∨ p = .sex := by
   decide
 
 /-- Physical properties such as shape are typical of numeral classifiers. -/
 theorem numeralClassifier_shape :
-    ∀ l : Language, l.kind = some .numeralClassifier → .shape ∈ l.semantics := by
+    ∀ l : Language, l.device = some .numeralClassifier → .shape ∈ l.semantics := by
   decide
 
 /-- Colour is never a basis for noun categorization. -/
@@ -214,7 +214,7 @@ theorem colour_never : ∀ l : Language, .colour ∉ l.semantics := by decide
 
 /-- Numeral-classifier languages usually lack compulsory number marking. -/
 theorem numeralClassifier_no_obligatory_number :
-    ∀ l : Language, l.kind = some .numeralClassifier → ¬ l.ObligatoryNumber := by
+    ∀ l : Language, l.device = some .numeralClassifier → ¬ l.ObligatoryNumber := by
   decide
 
 end Aikhenvald2000

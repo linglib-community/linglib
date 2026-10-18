@@ -25,16 +25,17 @@ a noun are the remaining cases of `Realization`.
 
 * `Classifier`: the lexical entry, a morph with its script and gloss.
 * `Classifier.Parameter`: the semantic parameters.
-* `Classifier.Scope`, `Classifier.Constituent`, `Classifier.Kind`, `Classifier.Kind.ofScope`: the
-  nine kinds of device as the classification of a locus by the constituent it characterizes.
+* `Classifier.Scope`, `Classifier.Constituent`, `Classifier.Device`, `Classifier.Device.ofScope`:
+  the nine kinds of device as the classification of a locus by the constituent it characterizes.
 * `Classifier.Realization`, `Classifier.realization`: the realizations, and the realization of an
   entry.
 
 ## Main results
 
-* `Classifier.Kind.ofScope_surjective`: every kind is the kind of some locus and constituent.
-* `Classifier.Kind.ofScope_eq_some_nounClass_iff`, `Classifier.Kind.existsUnique_ofScope_eq_some`:
-  noun class has two loci, agreement inside and outside the noun phrase, and every other kind one.
+* `Classifier.Device.ofScope_surjective`: every kind of device has a locus and a constituent.
+* `Classifier.Device.ofScope_eq_some_nounClass_iff`,
+  `Classifier.Device.existsUnique_ofScope_eq_some`: noun class has two loci, agreement inside and
+  outside the noun phrase, and every other kind of device one.
 
 ## Implementation notes
 
@@ -152,7 +153,7 @@ inductive Constituent where
 
 /-- The nine kinds of noun categorization device, focal points on a continuum individuated by
 locus and the constituent characterized. -/
-inductive Kind where
+inductive Device where
   /-- Noun class or gender, a closed obligatory system realized by agreement inside and
   sometimes outside the noun phrase, with an inventory often of two to ten. -/
   | nounClass
@@ -183,7 +184,7 @@ inside a head-modifier NP or agree with an argument outside it, noun classifiers
 and numeral classifiers in the numeral NP, the three possessive kinds differ in the part of the
 possessive NP they characterize, verbal classifiers agree with an argument in the clause, and
 locative and deictic classifiers sit in adpositional and attributive NPs. -/
-def Kind.ofScope : Scope → Constituent → Option Kind
+def Device.ofScope : Scope → Constituent → Option Device
   | .headModifierNP, .headNoun => some .nounClass
   | .predicateArgument, .argument => some .nounClass
   | .noun, .headNoun => some .nounClassifier
@@ -197,19 +198,19 @@ def Kind.ofScope : Scope → Constituent → Option Kind
   | _, _ => none
 
 /-- Every kind of device is the classification of some locus and constituent. -/
-theorem Kind.ofScope_surjective (k : Kind) : ∃ s c, ofScope s c = some k := by
+theorem Device.ofScope_surjective (d : Device) : ∃ s c, ofScope s c = some d := by
   decide +revert
 
 /-- Noun class has two loci, agreement with the head noun inside a head-modifier NP and agreement
 with an argument outside the NP. -/
-theorem Kind.ofScope_eq_some_nounClass_iff {s : Scope} {c : Constituent} :
+theorem Device.ofScope_eq_some_nounClass_iff {s : Scope} {c : Constituent} :
     ofScope s c = some .nounClass ↔
       s = .headModifierNP ∧ c = .headNoun ∨ s = .predicateArgument ∧ c = .argument := by
   decide +revert
 
 /-- Every kind other than noun class has a single locus. -/
-theorem Kind.existsUnique_ofScope_eq_some {k : Kind} (hk : k ≠ .nounClass) :
-    ∃! p : Scope × Constituent, ofScope p.1 p.2 = some k := by
+theorem Device.existsUnique_ofScope_eq_some {d : Device} (hd : d ≠ .nounClass) :
+    ∃! p : Scope × Constituent, ofScope p.1 p.2 = some d := by
   rw [Fintype.existsUnique_iff_card_one]
   decide +revert
 
