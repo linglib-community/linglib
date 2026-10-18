@@ -60,7 +60,7 @@ open Event (τ)
 open Semantics
 
 open Tense
-open HeimKratzer
+open Montague
 open Aspect (ofRel ofRel_mono UNBOUNDED PRFV ViewpointType)
 
 /-! ### The tenses (§4–§5) -/

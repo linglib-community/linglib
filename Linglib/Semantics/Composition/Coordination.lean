@@ -16,11 +16,11 @@ coordinator's denotation.
 
 ## Main definitions
 
-* `HeimKratzer.Tree.coordinate?`: the coordination mode.
+* `Coordinator.coordinate?`: the coordination mode.
 
 ## Main results
 
-* `combine?_eq_coordinate?_of_conjunctive`: predicate modification is conjunctive
+* `Coordinator.combine?_eq_coordinate?_of_conjunctive`: predicate modification is conjunctive
   coordination at `⟨e,t⟩`.
 
 ## References
@@ -30,7 +30,7 @@ coordinator's denotation.
 
 @[expose] public section
 
-namespace HeimKratzer.Tree
+namespace Coordinator
 
 open Montague
 
@@ -59,4 +59,4 @@ theorem combine?_eq_coordinate?_of_conjunctive {E W : Type} {M : Type → Type}
   rw [Mode.combine?_predicateModification]
   exact congrArg (fun F ↦ some (⟨.e ⇒ .t, F <$> v1 <*> v2⟩ : Denotation E W M)) h
 
-end HeimKratzer.Tree
+end Coordinator

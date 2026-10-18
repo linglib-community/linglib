@@ -109,7 +109,7 @@ def john_sees_mary : Derivation String .multimodal S :=
 
 section Coordination
 
-open HeimKratzer HeimKratzer1998
+open Montague HeimKratzer1998
 
 /-- The type-raised subject "John" is a lexical leaf of category `S/(S\NP)`. -/
 def john_tr : Derivation String .multimodal (S / (S \ NP)) := .lex "John" (S / (S \ NP))
@@ -570,7 +570,7 @@ def verbProjectionRaisingComposed : Derivation String .multimodal IV :=
   .fapp (.fcomp (.lex "probeert" (IV / IV)) (.lex "veel liederen" (NP.forwardTypeRaise IV)))
     (.lex "te zingen" (IV \ NP))
 
-/-- Composition is not what licenses wide scope: the composed verb-projection-raising
+/-- Composition is not what licenses wide scope, since the composed verb-projection-raising
 derivation has a composition node, yet the object does not take scope over the tensed verb. -/
 theorem verbProjectionRaisingComposed_hasComp_not_outscopes :
     verbProjectionRaisingComposed.LexIn scopeLexicon ∧
@@ -585,8 +585,8 @@ private theorem eq_or_eq_of_append_eq {a b c : String} {l₁ l₂ : List String}
   rcases l₁ with _ | ⟨x, _ | ⟨y, _ | ⟨z, r⟩⟩⟩ <;> simp_all
 
 /-- In the verb-projection-raising order no derivation, in any rule system, lets the quantified
-object take scope over the tensed verb: the object can be a functor only over "te zingen", since
-its category looks rightward. -/
+object take scope over the tensed verb, because the object can be a functor only over
+"te zingen", its category looking rightward. -/
 theorem not_outscopes_of_verbProjectionRaising {c : Cat Atom} (e : Derivation String R c)
     (hl : e.LexIn scopeLexicon) (hy : e.yield = orderString .verbProjectionRaising) :
     ¬ ObjectOutscopesTense e := by

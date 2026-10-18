@@ -126,8 +126,8 @@ end Derivation
 
 section TypeDriven
 
-open HeimKratzer.Tree
-open HeimKratzer
+open PhraseStructure.Tree
+open Montague
 open PhraseStructure (Tree)
 
 variable {Ent α : Type}

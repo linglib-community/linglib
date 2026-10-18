@@ -795,7 +795,7 @@ theorem most_sem_not_definable :
 
 /-! ### The engine-level corollary: no tree means *most* -/
 
-open HeimKratzer in
+open Montague PhraseStructure in
 /-- No tree means *most*. Under any translation of words into the first-order constants of the
 language of C12, no tree has, across all nonempty finite models and under every assignment, the
 truth conditions of `most`. A tree whose logical form has type `t` reads back to a first-order

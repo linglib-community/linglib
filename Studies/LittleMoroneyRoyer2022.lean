@@ -17,7 +17,7 @@ takes the first path and Shan the second, with constituency `[[Num Clf] N]` agai
 
 A count noun denotes Link's star of its atoms, the singletons of its individuals, so the noun is
 `Mereology.AlgClosure` over `({·} : α → Finset α) '' dog`. The two lexicons are driven through
-`HeimKratzer.Tree.interp`: the Ch'ol root is measure modification by the atom count,
+`PhraseStructure.Tree.interp`: the Ch'ol root is measure modification by the atom count,
 `Mereology.QMOD`, and the Shan root is the partition numeral `IoninMatushansky2006.cardMod` over
 the atomized noun, `Mereology.atomize`. The distributional diagnostics of the paper's §4, its case
 against a uniform classifier semantics such as Chierchia's, then follow from the lexical types.
@@ -57,9 +57,7 @@ complementarity, which the paper keeps for classifier-for-noun languages such as
 
 namespace LittleMoroneyRoyer2022
 
-open HeimKratzer Mereology
-open HeimKratzer.Tree (interp)
-open PhraseStructure (Tree)
+open Montague Mereology PhraseStructure
 open IoninMatushansky2006 (cardMod cardMod_atoms_iff)
 
 /-! ### The two strategies, in the morphology -/
@@ -115,31 +113,31 @@ def cholTree : Tree Unit String := .bin cholNumClf (.leaf "ts'i'")
 
 /-- The Ch'ol root is the noun measure-modified by the atom count to two ((51)). -/
 theorem cholTree_interp :
-    interp (cholLex dog) g cholTree = some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 2⟩ :=
+    cholTree.interp (cholLex dog) g = some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 2⟩ :=
   rfl
 
 /-- Numeral and classifier compose without a noun, into a measure phrase that restricts any
 predicate to its pluralities of two atoms ((45)–(46), Prediction 4). -/
 theorem chol_numClf_composes :
-    interp (cholLex dog) g cholNumClf =
+    cholNumClf.interp (cholLex dog) g =
       some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, fun P ↦ QMOD P Finset.card 2⟩ :=
   rfl
 
 /-- The classifier, a measure of type `⟨e,n⟩`, cannot compose with the noun
 without the numeral ((43a)). -/
 theorem chol_clfNoun_fails :
-    interp (cholLex dog) g (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) = none :=
+    Tree.interp (cholLex dog) g (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) = none :=
   rfl
 
 /-- *ocho* composes with the noun directly ((33), Prediction 1). -/
 theorem chol_ocho_composes :
-    interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf "ts'i'")) =
+    Tree.interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf "ts'i'")) =
       some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 8⟩ :=
   rfl
 
 /-- *ocho* rejects the classifier ((34), Prediction 1). -/
 theorem chol_ocho_clf_fails :
-    interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) = none :=
+    Tree.interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) = none :=
   rfl
 
 /-! ### Shan: classifier-for-noun -/
@@ -163,19 +161,19 @@ def shanTree : Tree Unit String := .bin (.leaf "sɔ̌ŋ") shanClfNoun
 
 /-- The Shan root is the partition numeral over the atomized noun ((52)). -/
 theorem shanTree_interp :
-    interp (shanLex dog) g shanTree = some ⟨.e ⇒ .t, cardMod 2 (atomize (dogs dog))⟩ :=
+    shanTree.interp (shanLex dog) g = some ⟨.e ⇒ .t, cardMod 2 (atomize (dogs dog))⟩ :=
   rfl
 
 /-- Classifier and noun compose without a numeral, yielding the atoms
 ((42), Prediction 3). -/
 theorem shan_clfNoun_composes :
-    interp (shanLex dog) g shanClfNoun = some ⟨.e ⇒ .t, atomize (dogs dog)⟩ :=
+    shanClfNoun.interp (shanLex dog) g = some ⟨.e ⇒ .t, atomize (dogs dog)⟩ :=
   rfl
 
 /-- Numeral and classifier, both `⟨⟨e,t⟩,⟨e,t⟩⟩`, do not compose without the
 noun ((48)–(49)). -/
 theorem shan_numClf_fails :
-    interp (shanLex dog) g (.bin (.leaf "sɔ̌ŋ") (.leaf Shan.Classifiers.«to».form)) = none :=
+    Tree.interp (shanLex dog) g (.bin (.leaf "sɔ̌ŋ") (.leaf Shan.Classifiers.«to».form)) = none :=
   rfl
 
 /-! ### One denotation for *two dogs* -/

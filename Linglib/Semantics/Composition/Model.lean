@@ -33,9 +33,8 @@ realized at a world by `Formula.RealizeAt m.interp w`. The concrete toy model of
 @[expose] public section
 
 open FirstOrder Language
-open Montague
 
-namespace HeimKratzer
+namespace Montague
 
 universe u v
 
@@ -68,4 +67,4 @@ def Model.pred₂ (m : Model L) (R : L.Relations 2) (w : m.W) :
     Ty.Domain m.E m.W (.e ⇒ .e ⇒ .t) :=
   fun y x ↦ (m.interp w).RelMap R (fun i ↦ if i = 0 then x else y)
 
-end HeimKratzer
+end Montague

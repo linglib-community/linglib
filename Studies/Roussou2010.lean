@@ -51,7 +51,7 @@ argument against uninterpretable features are not formalized.
 namespace Roussou2010
 
 open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs
-open HeimKratzer.Tree
+open PhraseStructure.Tree
 
 /-! ### The lexical specification -/
 
@@ -128,11 +128,11 @@ theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
 /-- An outside merger takes a proposition, and a *na*-clause, its subject position reopened,
 is a property, so no composition mode combines them, whatever the merger returns. -/
 theorem comp_over_na_type_clash (b : Montague.Ty) :
-    HeimKratzer.Tree.tyBinary (.fn .t b) (.fn .e .t) = none := by
-  simp [HeimKratzer.Tree.tyBinary, Montague.Ty.mode?, HeimKratzer.Mode.functionalLeft?,
-    HeimKratzer.Mode.functionalRight?, HeimKratzer.Mode.intensionalLeft?,
-    HeimKratzer.Mode.intensionalRight?, HeimKratzer.Mode.predicateModification?,
-    HeimKratzer.Mode.eventIdentification?]
+    Montague.Ty.combine? (.fn .t b) (.fn .e .t) = none := by
+  simp [Montague.Ty.combine?, Montague.Ty.mode?, Montague.Mode.functionalLeft?,
+    Montague.Mode.functionalRight?, Montague.Mode.intensionalLeft?,
+    Montague.Mode.intensionalRight?, Montague.Mode.predicateModification?,
+    Montague.Mode.eventIdentification?]
 
 /-! ### Selection -/
 

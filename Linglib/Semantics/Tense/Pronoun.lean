@@ -15,7 +15,7 @@ nominal over times (`Reference.Nominal`) as the denotation of a personal pronoun
 over individuals. The past and the present are the pronouns of their cells, and the zero tense
 of Kratzer, a variable with no presupposition, is the pronoun of the unconstrained cell `⊤`.
 One denotation serves the deictic, the anaphoric and the bound use, binding being abstraction
-over the assignment (`HeimKratzer.lambdaAbsG`), and a free evaluation index is by convention
+over the assignment (`Montague.lambdaAbsG`), and a free evaluation index is by convention
 the utterance time. Bound by an existential quantifier, a pronominal tense is the
 quantificational tense of its cell.
 
@@ -40,7 +40,7 @@ quantificational tense of its cell.
 
 namespace Tense
 
-open Reference HeimKratzer ModalLogic
+open Reference Montague ModalLogic
 open scoped SetRel
 
 variable {W T : Type*} {C : Finset Ordering} {k j : ℕ} {g : Assignment T} {w : W}

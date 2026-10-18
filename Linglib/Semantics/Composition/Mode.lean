@@ -23,16 +23,19 @@ by the types, `Mode.combine?` composes two values by the mode their types select
 
 ## Main definitions
 
-* `HeimKratzer.Mode`: the composition modes as typed binary operations.
-* `Montague.Ty.mode?`: the mode two daughters' types select.
-* `HeimKratzer.Mode.eval`, `HeimKratzer.Mode.evalM`: the denotation of a mode, pure and under an
+* `Montague.Mode`: the composition modes as typed binary operations.
+* `Montague.Ty.mode?`, `Montague.Ty.combine?`: the mode two daughters' types select, and the type
+  they compose to.
+* `Montague.Mode.eval`, `Montague.Mode.evalM`: the denotation of a mode, pure and under an
   applicative effect.
-* `HeimKratzer.Mode.combine?`: composition by the selected mode in a family of values.
+* `Montague.Mode.combine?`: composition by the selected mode in a family of values.
 
 ## Main results
 
-* `HeimKratzer.Mode.combine?_map`: composing commutes with every map of families that commutes
-  with the modes.
+* `Montague.Mode.combine?_map`: composing commutes with every map of families that commutes with
+  the modes.
+* `Montague.Mode.combine?_map_fst`: the type of a composed value is `Ty.combine?` of the
+  daughters' types.
 
 ## References
 
@@ -43,9 +46,7 @@ by the types, `Mode.combine?` composes two values by the mode their types select
 
 @[expose] public section
 
-namespace HeimKratzer
-
-open Montague
+namespace Montague
 
 /-- The composition modes are the typed binary operations of functional application, with the
 function as either daughter, of intensional application, which applies a daughter expecting an
@@ -106,10 +107,14 @@ end Mode
 `σ₂` compose, the first that applies of functional application (the left daughter as the
 function first), intensional application, predicate modification and event identification, and
 `none` when none does. -/
-def _root_.Montague.Ty.mode? (σ₁ σ₂ : Ty) : Option (Σ τ, Mode σ₁ σ₂ τ) :=
+def Ty.mode? (σ₁ σ₂ : Ty) : Option (Σ τ, Mode σ₁ σ₂ τ) :=
   Mode.functionalLeft? σ₁ σ₂ <|> Mode.functionalRight? σ₁ σ₂ <|> Mode.intensionalLeft? σ₁ σ₂ <|>
     Mode.intensionalRight? σ₁ σ₂ <|> Mode.predicateModification? σ₁ σ₂ <|>
       Mode.eventIdentification? σ₁ σ₂
+
+/-- `σ₁.combine? σ₂` is the type a left daughter of type `σ₁` and a right daughter of type `σ₂`
+compose to, the mother's type under the mode their types select. -/
+def Ty.combine? (σ₁ σ₂ : Ty) : Option Ty := (σ₁.mode? σ₂).map (·.1)
 
 namespace Mode
 
@@ -179,8 +184,8 @@ def combine? (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ �
 /-- The type of a composed value is the type the mode selects, a function of the daughters' types
 alone. -/
 @[simp] theorem combine?_map_fst (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ)
-    (d₁ d₂ : Σ ty, V ty) : (combine? op d₁ d₂).map (·.1) = (d₁.1.mode? d₂.1).map (·.1) := by
-  simp [combine?, Option.map_map, Function.comp_def]
+    (d₁ d₂ : Σ ty, V ty) : (combine? op d₁ d₂).map (·.1) = d₁.1.combine? d₂.1 := by
+  simp [combine?, Ty.combine?, Option.map_map, Function.comp_def]
 
 /-- Composing commutes with every map of families that commutes with the modes. -/
 theorem combine?_map {op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ}
@@ -208,4 +213,4 @@ theorem combine?_map {op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V 
 
 end Mode
 
-end HeimKratzer
+end Montague

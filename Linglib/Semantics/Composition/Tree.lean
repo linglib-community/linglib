@@ -1,60 +1,61 @@
 module
 
+public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Composition.Term
-public import Linglib.Semantics.Composition.Lexicon
 
 /-!
 # Type-driven interpretation
 
-This file is the composition engine of Heim and Kratzer's type-driven interpretation, with the
-intensional application of von Fintel and Heim and the event identification of Kratzer
-(`eventIdentification`), parameterized over an effect functor `M` in the style of Bumford and
-Charlow. A node denotes an `M`-computation in the domain of its semantic type,
-a `Denotation`, and each composition principle lifts through the `Applicative` structure of
-`M`, so the pure Heim and Kratzer engine is the instance `M = Id`. A terminal node denotes
-what its leaf interpretation gives it, a string in a `Lexicon` or a fragment carrier through
-its readings; a non-branching node denotes what its daughter does; a binary node composes by
-functional application in either order, then intensional functional application, then
-predicate modification, then event identification, whichever the daughters' types admit first;
-a trace denotes its index's value under the assignment; and a binder abstracts over its index
-by Predicate Abstraction, which is a capability of the effect (`PredAbs`) rather than a given.
+This file interprets phrase-structure trees by Heim and Kratzer's type-driven composition, with
+the intensional application of von Fintel and Heim and the event identification of Kratzer,
+parameterized over an effect functor `M` in the style of Bumford and Charlow. A tree translates
+to a term of the composition modes (`PhraseStructure.Tree.translate`): a terminal to its word's
+constant, a binary node to the composition of its daughters' terms by the mode their types
+select, a trace to the variable of its index, and a binder to the abstraction over it. Its
+denotation is the evaluation of that term (`PhraseStructure.Tree.interp`), so a tree is
+interpreted by translation followed by the interpretation of the terms, as in Montague's theory
+of translation. Translation is the one type-driven step, and Predicate Abstraction is a capability
+of the effect (`PredAbs`) rather than a given.
 
-A tree is interpreted by evaluating its translation (`Composition/Term.lean`): the composition
-modes are the typed operations of `Composition/Mode.lean`, selected by the daughters' types
-alone, and `interp` is the evaluation of the term a tree translates to. Each equation of the
-engine is then a fact about that evaluation, and the pure engine is the denotation of the term
-(`interp_eq_eval_translate`).
+## Main definitions
 
-## Main declarations
+* `Montague.Lexicon`: a string-keyed lexicon of effectful denotations.
+* `PhraseStructure.Tree.translate`: the term a tree translates to.
+* `PhraseStructure.Tree.interp`: the denotation of a tree under an assignment, the evaluation of
+  its term; a binary node composes by the mode `Montague.Ty.mode?` selects.
+* `PhraseStructure.Tree.ty?`: the type a tree composes to, from the types of its leaves alone.
+* `PhraseStructure.Tree.readings`: the readings of a tree under a lexicon of sets of readings.
+* `PhraseStructure.Tree.HoldsAt`: the truth of a tree under a lexicon and an assignment.
 
-* `interp` interprets a tree under an assignment, over any leaf type, as the evaluation of its
-  translation; a binary node composes by `Montague.Ty.mode?` (`interp_node_binary`).
-* `tyBinary` is the type a binary node composes to, a function of the daughters' types alone.
-* `ty?` is the type a tree composes to, a function of the types of its leaves alone, and the
-  type of its denotation (`interp_map_fst`).
-* `interp_congr_of_agree` and its corollaries are Heim and Kratzer's theorems on variable
-  binding: interpretability and the composed type never depend on the assignment
-  (`interp_map_fst_congr`), and a tree's denotation depends on it only at the traces free in
-  the tree.
-* `readings` composes a lexicon of sets of readings, the values the engine computes over the
-  tree's resolutions; the engine on an unambiguous lexicon is the special case
-  (`readings_eq_of_choice`) and a binary node's readings compose pointwise
-  (`mem_readings_node_binary`).
-* `interp_eq_eval_translate`: the pure engine is the denotation of the tree's term.
+## Main results
+
+* `PhraseStructure.Tree.interp_eq_eval_translate`: the pure engine is the denotation of the
+  tree's term.
+* `PhraseStructure.Tree.interp_map_fst`: the type of a tree's denotation is the type `ty?`
+  computes.
+* `PhraseStructure.Tree.interp_congr_of_agree` and its corollaries: Heim and Kratzer's theorems
+  on variable binding, that a tree's denotation depends on the assignment only at its free traces.
+* `PhraseStructure.Tree.readings_eq_of_choice`, `PhraseStructure.Tree.mem_readings_node_binary`:
+  the engine on an unambiguous lexicon is a case of `readings`, and a binary node's readings
+  compose pointwise.
+* `PhraseStructure.Tree.translate_map_const`, `PhraseStructure.Tree.translate_rel`: translation
+  commutes with renaming the constants and carries related lexicons to related terms.
 
 ## Implementation notes
 
-Binary nodes sequence effects in linear order, the left daughter's first whichever daughter is
-the function, so at `M = Cont R` surface scope is the default reading and inverse scope needs
-a reordered evaluation (`Composition/Cont.lean`). Predicate Abstraction needs a distributor
+The tree operations live in the namespace of `PhraseStructure.Tree`, as mathlib's `Term.realize`
+lives in that of `Term`, so that `t.interp lex g` works. Binary nodes sequence effects in linear
+order, the left daughter's first whichever daughter is the function, so at `M = Cont R` surface
+scope is the default reading and inverse scope needs a reordered evaluation
+(`Composition/Cont.lean`). Predicate Abstraction needs a distributor
 `(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`, which scope effects lack, so under them `.bind`
-nodes fail and binding comes from the order of effects instead; making the distributor optional
-turns that rivalry into a fact instance resolution checks. The abstraction's fallback value
+nodes fail and binding comes from the order of effects instead. The abstraction's fallback value
 `valueAt` is never reached, since types do not depend on the assignment. The category parameter
 of a tree is ignored, composition being type-driven.
 
 ## References
 
+* [montague-1970], §5
 * [heim-kratzer-1998]
 * [von-fintel-heim-2011]
 * [kratzer-1996]
@@ -63,10 +64,13 @@ of a tree is ignored, composition being type-driven.
 
 @[expose] public section
 
-namespace HeimKratzer.Tree
+namespace Montague
 
-open Montague
 open scoped Assignment
+
+/-- A lexicon looks up a string's `M`-effectful denotation, if it has one. -/
+abbrev Lexicon (E W : Type) (M : Type → Type := Id) (D : Type := ℝ) :=
+  String → Option (Denotation E W M D)
 
 /-! The pure engine computes in `Id`, whose applicative operations are application. The lemmas
 are `simp` lemmas in this namespace only, since they identify `Id α` with `α`. -/
@@ -100,19 +104,226 @@ theorem valueAt_of_map_fst {E W D : Type} {M : Type → Type} {τ : Ty}
   · simp only [Option.map_some, Option.some.injEq] at h
     subst h; simp [valueAt]
 
-/-! ### Tree interpretation -/
-
-open PhraseStructure
-
-section TreeInterp
-
-variable {C : Type}
-
 /-- The denotation of a term whose constants are denotations, at its type. -/
 abbrev evalAt {E W : Type} {M : Type → Type} [Applicative M] {D : Type} [PredAbs M E W D]
     (g : Assignment E) (d : Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty D)) ty) :
     Option (Denotation E W M D) :=
   (d.2.evalM (fun c ↦ c) g).map fun v ↦ ⟨d.1, v⟩
+
+end Montague
+
+namespace PhraseStructure.Tree
+
+open Montague
+open scoped Assignment
+
+/-! ### Translation -/
+
+section Translate
+
+variable {C : Type} {K : Ty → Type*} {L : Type*}
+
+/-- `translate lex t` is the term the tree `t` translates to by the composition principles of
+[heim-kratzer-1998]. A terminal translates to its word's constant, a non-branching node to its
+daughter's term, a binary node to the composition of its daughters' terms by the mode their types
+select, a trace to the variable of its index, and a binder to the abstraction over that variable. -/
+def translate (lex : L → Option (Σ ty, K ty)) : Tree C L → Option (Σ ty, Term K ty)
+  | .terminal _ w => (lex w).map fun c ↦ ⟨c.1, .const c.2⟩
+  | .node _ (t :: []) => translate lex t
+  | .node _ (t1 :: t2 :: []) => do
+    let d1 ← translate lex t1
+    let d2 ← translate lex t2
+    Mode.combine? (fun m l r ↦ .comp m l r) d1 d2
+  | .node _ _ => none
+  | .adjoin _ (t :: []) => translate lex t
+  | .adjoin _ (t1 :: t2 :: []) => do
+    let d1 ← translate lex t1
+    let d2 ← translate lex t2
+    Mode.combine? (fun m l r ↦ .comp m l r) d1 d2
+  | .adjoin _ _ => none
+  | .trace n _ => some ⟨.e, .var n⟩
+  | .bind n _ body => (translate lex body).map fun d ↦ ⟨.e ⇒ d.1, .lam n d.2⟩
+  | _ => none
+
+variable (lex : L → Option (Σ ty, K ty))
+
+@[simp] theorem translate_terminal (c : C) (w : L) :
+    translate lex (.terminal c w : Tree C L) = (lex w).map fun c ↦ ⟨c.1, .const c.2⟩ := rfl
+
+@[simp] theorem translate_node_unary (c : C) (t : Tree C L) :
+    translate lex (.node c (t :: [])) = translate lex t := rfl
+
+@[simp] theorem translate_node_binary (c : C) (t₁ t₂ : Tree C L) :
+    translate lex (.node c (t₁ :: t₂ :: [])) = ((translate lex t₁).bind fun d₁ ↦
+      (translate lex t₂).bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂) := rfl
+
+@[simp] theorem translate_adjoin_unary (c : C) (t : Tree C L) :
+    translate lex (.adjoin c (t :: [])) = translate lex t := rfl
+
+@[simp] theorem translate_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
+    translate lex (.adjoin c (t₁ :: t₂ :: [])) = ((translate lex t₁).bind fun d₁ ↦
+      (translate lex t₂).bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂) := rfl
+
+@[simp] theorem translate_trace (n : ℕ) (c : C) :
+    translate lex (.trace n c : Tree C L) = some ⟨.e, .var n⟩ := rfl
+
+@[simp] theorem translate_bind (n : ℕ) (c : C) (body : Tree C L) :
+    translate lex (.bind n c body) =
+      (translate lex body).map fun d ↦ ⟨.e ⇒ d.1, .lam n d.2⟩ := rfl
+
+/-- A node whose daughters its label does not license translates to nothing. -/
+theorem translate_junk {l : Tree.Label C L} {cs : List (Tree C L)}
+    (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
+    translate lex (RoseTree.node l cs) = none := by
+  cases l with
+  | terminal c w => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | node c => exact absurd trivial h
+  | segment c => exact absurd trivial h
+  | trace n c => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | bind n c =>
+    rcases cs with _ | ⟨t, _ | ⟨u, cs⟩⟩
+    · rfl
+    · exact absurd rfl h
+    · rfl
+
+
+/-- Translation commutes with renaming the constants. -/
+theorem translate_map_const {K' : Ty → Type*} (f : ∀ {ty : Ty}, K ty → K' ty) (t : Tree C L) :
+    translate (fun w ↦ (lex w).map fun c ↦ ⟨c.1, f c.2⟩) t =
+      (translate lex t).map fun d ↦ ⟨d.1, d.2.map f⟩ := by
+  induction t using Tree.rec' with
+  | terminal c w => simp only [translate_terminal]; cases lex w <;> rfl
+  | node c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => exact ih t (by simp)
+    | [t₁, t₂] =>
+      simp only [translate_node_binary, ih t₁ (by simp), ih t₂ (by simp)]
+      cases translate lex t₁ <;> cases translate lex t₂ <;> try rfl
+      exact (Mode.combine?_map (fun _ _ _ ↦ rfl) _ _).symm
+    | _ :: _ :: _ :: _ => rfl
+  | adjoin c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => exact ih t (by simp)
+    | [t₁, t₂] =>
+      simp only [translate_adjoin_binary, ih t₁ (by simp), ih t₂ (by simp)]
+      cases translate lex t₁ <;> cases translate lex t₂ <;> try rfl
+      exact (Mode.combine?_map (fun _ _ _ ↦ rfl) _ _).symm
+    | _ :: _ :: _ :: _ => rfl
+  | trace n c => rfl
+  | bind n c body ih => simp only [translate_bind, ih, Option.map_map]; rfl
+  | junk l cs hj _ => rw [translate_junk _ hj, translate_junk _ hj]; rfl
+
+
+private theorem bind_combine?_map_fst {K' : Ty → Type*}
+    {op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Term K σ₁ → Term K σ₂ → Term K τ}
+    {op' : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Term K' σ₁ → Term K' σ₂ → Term K' τ}
+    {o₁ o₂ : Option (Σ ty, Term K ty)} {o₁' o₂' : Option (Σ ty, Term K' ty)}
+    (h₁ : o₁.map (·.1) = o₁'.map (·.1)) (h₂ : o₂.map (·.1) = o₂'.map (·.1)) :
+    (o₁.bind fun a ↦ o₂.bind fun b ↦ Mode.combine? op a b).map (·.1) =
+      (o₁'.bind fun a ↦ o₂'.bind fun b ↦ Mode.combine? op' a b).map (·.1) := by
+  rcases o₁ with _ | ⟨σ₁, u₁⟩ <;> rcases o₁' with _ | ⟨σ₁', u₁'⟩ <;> simp at h₁ ⊢
+  subst h₁
+  rcases o₂ with _ | ⟨σ₂, u₂⟩ <;> rcases o₂' with _ | ⟨σ₂', u₂'⟩ <;> simp at h₂ ⊢
+  subst h₂
+  simp
+
+/-- The types of a tree's term depend only on the types of its words' constants. -/
+theorem translate_map_fst {K' : Ty → Type*} {lex' : L → Option (Σ ty, K' ty)}
+    (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
+    (translate lex t).map (·.1) = (translate lex' t).map (·.1) := by
+  induction t using Tree.rec' with
+  | terminal c w => simpa [Option.map_map, Function.comp_def] using h w
+  | node c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => exact ih t (by simp)
+    | [t₁, t₂] =>
+      simp only [translate_node_binary]
+      exact bind_combine?_map_fst (ih t₁ (by simp)) (ih t₂ (by simp))
+    | _ :: _ :: _ :: _ => rfl
+  | adjoin c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => exact ih t (by simp)
+    | [t₁, t₂] =>
+      simp only [translate_adjoin_binary]
+      exact bind_combine?_map_fst (ih t₁ (by simp)) (ih t₂ (by simp))
+    | _ :: _ :: _ :: _ => rfl
+  | trace n c => rfl
+  | bind n c body ih =>
+    simp only [translate_bind, Option.map_map]
+    revert ih
+    cases translate lex body <;> cases translate lex' body <;> simp_all
+  | junk l cs hj _ => rw [translate_junk _ hj, translate_junk _ hj]; rfl
+
+/-- Lexicons whose constants are related translate a tree to terms of the same shape with
+related constants. -/
+theorem translate_rel {K' : Ty → Type*} {R : ∀ ty : Ty, K ty → K' ty → Prop}
+    {lex' : L → Option (Σ ty, K' ty)}
+    (hlex : ∀ w d', lex' w = some d' → ∃ c, lex w = some ⟨d'.1, c⟩ ∧ R d'.1 c d'.2)
+    (t : Tree C L) :
+    ∀ {d'}, translate lex' t = some d' →
+      ∃ u, translate lex t = some ⟨d'.1, u⟩ ∧ Term.Rel R u d'.2 := by
+  induction t using Tree.rec' with
+  | terminal c w =>
+    intro d' h
+    obtain ⟨d, hd, rfl⟩ := Option.map_eq_some_iff.1 h
+    obtain ⟨c', hc', hR⟩ := hlex w d hd
+    exact ⟨.const c', by simp [hc'], .const hR⟩
+  | node c cs ih =>
+    match cs with
+    | [] => intro d' h; simp [translate] at h
+    | [t] => intro d' h; exact ih t (by simp) h
+    | [t₁, t₂] =>
+      intro d' h
+      simp only [translate_node_binary, Option.bind_eq_some_iff] at h
+      obtain ⟨⟨σ₁, u₁'⟩, h₁, ⟨σ₂, u₂'⟩, h₂, h⟩ := h
+      obtain ⟨u₁, hu₁, hr₁⟩ := ih t₁ (by simp) h₁
+      obtain ⟨u₂, hu₂, hr₂⟩ := ih t₂ (by simp) h₂
+      simp only [Mode.combine?, Option.map_eq_some_iff] at h
+      obtain ⟨⟨τ, m⟩, hm, rfl⟩ := h
+      exact ⟨.comp m u₁ u₂, by simp [translate_node_binary, hu₁, hu₂, Mode.combine?, hm],
+        .comp m hr₁ hr₂⟩
+    | _ :: _ :: _ :: _ => intro d' h; simp [translate] at h
+  | adjoin c cs ih =>
+    match cs with
+    | [] => intro d' h; simp [translate] at h
+    | [t] => intro d' h; exact ih t (by simp) h
+    | [t₁, t₂] =>
+      intro d' h
+      simp only [translate_adjoin_binary, Option.bind_eq_some_iff] at h
+      obtain ⟨⟨σ₁, u₁'⟩, h₁, ⟨σ₂, u₂'⟩, h₂, h⟩ := h
+      obtain ⟨u₁, hu₁, hr₁⟩ := ih t₁ (by simp) h₁
+      obtain ⟨u₂, hu₂, hr₂⟩ := ih t₂ (by simp) h₂
+      simp only [Mode.combine?, Option.map_eq_some_iff] at h
+      obtain ⟨⟨τ, m⟩, hm, rfl⟩ := h
+      exact ⟨.comp m u₁ u₂, by simp [translate_adjoin_binary, hu₁, hu₂, Mode.combine?, hm],
+        .comp m hr₁ hr₂⟩
+    | _ :: _ :: _ :: _ => intro d' h; simp [translate] at h
+  | trace n c =>
+    intro d' h
+    obtain rfl := Option.some.inj h.symm
+    exact ⟨.var n, rfl, .var n⟩
+  | bind n c body ih =>
+    intro d' h
+    obtain ⟨⟨τ, b'⟩, hb, rfl⟩ := Option.map_eq_some_iff.1 h
+    obtain ⟨b, hb', hr⟩ := ih hb
+    exact ⟨.lam n b, by simp [hb'], .lam n hr⟩
+  | junk l cs hj _ => intro d' h; rw [translate_junk _ hj] at h; exact absurd h (by simp)
+
+end Translate
+
+/-! ### Tree interpretation -/
+
+section TreeInterp
+
+variable {C : Type}
 
 /-- In the denotation of a tree under an assignment, by the composition principles of
 [heim-kratzer-1998], a terminal denotes what its leaf interpretation gives it, a non-branching
@@ -209,11 +420,8 @@ end Reduction
 /-! ### The type of a tree
 
 The type a tree composes to is a function of the types of its leaves: `ty?` computes it by the
-recursion of `interp`, with `tyBinary` at the binary nodes, and `interp_map_fst` is the
+recursion of `interp`, with `Ty.combine?` at the binary nodes, and `interp_map_fst` is the
 agreement. Interpretability is therefore decided by the types of the leaves alone. -/
-
-/-- The type two daughters compose to, the mother's type under the mode their types select. -/
-def tyBinary (σ τ : Ty) : Option Ty := (σ.mode? τ).map (·.1)
 
 section TreeTyping
 
@@ -227,13 +435,13 @@ def ty? (lexTy : L → Option Ty) (abs : Bool) : Tree C L → Option Ty
   | .node _ (t1 :: t2 :: []) => do
     let σ ← ty? lexTy abs t1
     let τ ← ty? lexTy abs t2
-    tyBinary σ τ
+    σ.combine? τ
   | .node _ _ => none
   | .adjoin _ (t :: []) => ty? lexTy abs t
   | .adjoin _ (t1 :: t2 :: []) => do
     let σ ← ty? lexTy abs t1
     let τ ← ty? lexTy abs t2
-    tyBinary σ τ
+    σ.combine? τ
   | .adjoin _ _ => none
   | .trace _ _ => some .e
   | .bind _ _ body => if abs then (ty? lexTy abs body).map (.fn .e) else none
@@ -249,14 +457,14 @@ variable (lexTy : L → Option Ty) (abs : Bool)
 
 @[simp] theorem ty?_node_binary (c : C) (t₁ t₂ : Tree C L) :
     ty? lexTy abs (.node c (t₁ :: t₂ :: [])) =
-      (ty? lexTy abs t₁).bind fun σ ↦ (ty? lexTy abs t₂).bind fun τ ↦ tyBinary σ τ := rfl
+      (ty? lexTy abs t₁).bind fun σ ↦ (ty? lexTy abs t₂).bind fun τ ↦ σ.combine? τ := rfl
 
 @[simp] theorem ty?_adjoin_unary (c : C) (t : Tree C L) :
     ty? lexTy abs (.adjoin c (t :: [])) = ty? lexTy abs t := rfl
 
 @[simp] theorem ty?_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
     ty? lexTy abs (.adjoin c (t₁ :: t₂ :: [])) =
-      (ty? lexTy abs t₁).bind fun σ ↦ (ty? lexTy abs t₂).bind fun τ ↦ tyBinary σ τ := rfl
+      (ty? lexTy abs t₁).bind fun σ ↦ (ty? lexTy abs t₂).bind fun τ ↦ σ.combine? τ := rfl
 
 @[simp] theorem ty?_trace (n : ℕ) (c : C) : ty? lexTy abs (.trace n c : Tree C L) = some .e := rfl
 
@@ -300,7 +508,7 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
     | [t] => exact ih t (by simp) g
     | [t₁, t₂] =>
       rw [interp_node_binary, ty?_node_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
-      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [tyBinary]
+      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [Ty.combine?]
     | _ :: _ :: _ :: _ => rfl
   | adjoin c cs ih =>
     match cs with
@@ -308,7 +516,7 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
     | [t] => exact ih t (by simp) g
     | [t₁, t₂] =>
       rw [interp_adjoin_binary, ty?_adjoin_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
-      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [tyBinary]
+      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [Ty.combine?]
     | _ :: _ :: _ :: _ => rfl
   | trace n c => rfl
   | bind n c body ih =>
@@ -615,4 +823,17 @@ theorem interp_eq_eval_translate (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D
 
 end Translation
 
-end HeimKratzer.Tree
+
+/-! ### Truth -/
+
+section Truth
+
+variable {C : Type} {L : Type*} {E W : Type}
+
+/-- A tree holds under a lexicon and an assignment when it composes to a true truth value. -/
+def HoldsAt (lex : L → Option (Denotation E W)) (g : Assignment E) (t : Tree C L) : Prop :=
+  ∃ p, interp lex g t = some ⟨.t, p⟩ ∧ p
+
+end Truth
+
+end PhraseStructure.Tree

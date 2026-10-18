@@ -51,7 +51,7 @@ open Semantics
 
 open Tense
 open scoped ModalLogic
-open HeimKratzer
+open Montague
 
 variable {T : Type*}
 

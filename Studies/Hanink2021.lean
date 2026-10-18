@@ -50,7 +50,7 @@ sets containing the speaker and the others.
 
 ## TODO
 
-* Quantified heads (98) to (103): [matthewson-2001]'s *all* over an index-hosting DP, and the
+* Quantified heads (98) to (103), Matthewson's *all* over an index-hosting DP, and the
   relative-internal scope it predicts.
 
 ## References
@@ -69,7 +69,7 @@ sets containing the speaker and the others.
 
 namespace Hanink2021
 
-open Semantics HeimKratzer Reference DistributedMorphology Morphology.Exponence
+open Semantics Montague Reference DistributedMorphology Morphology.Exponence
 open scoped Assignment
 
 variable {E W : Type}

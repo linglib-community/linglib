@@ -22,7 +22,7 @@ intersection of `Person.dom` at the context of utterance with `Number.dom` and `
 entry's referential person and number and its gender. The selector does not vary with the world
 of evaluation (`PersonalPronoun.isRigid_denote_selector`), so a pronoun refers directly. This is
 the account Büring surveys: one denotation serves the bound, anaphoric and deictic uses, binding
-is abstraction over the assignment (`HeimKratzer.lambdaAbsG`), and, as Sauerland
+is abstraction over the assignment (`Montague.lambdaAbsG`), and, as Sauerland
 proposes, an absent or unmarked feature restricts nothing.
 
 ## Implementation notes
@@ -74,7 +74,7 @@ always defined under a total assignment, and whose intrinsic presupposition is t
 referent `g i` lies in the φ-domain. -/
 def denote : Nominal (Assignment E) W E where
   presup g _ := g i ∈ e.phiDom c
-  selector g _ := some (HeimKratzer.interpPronoun i g)
+  selector g _ := some (Montague.interpPronoun i g)
 
 universe u
 

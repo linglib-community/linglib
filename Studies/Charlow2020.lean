@@ -339,7 +339,7 @@ Reader.Set monad of `Charlow2014`. -/
 
 namespace Si
 
-open HeimKratzer
+open Montague
 open scoped Assignment
 
 variable {E α : Type}

@@ -5,7 +5,6 @@ public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Composition.Reduction
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Composition.Partial
-public import Linglib.Semantics.Composition.Lexicon
 public import Linglib.Semantics.Quantification.Polyadic
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.HeimKratzer1998
@@ -16,7 +15,7 @@ public import Linglib.Data.Examples.HeimKratzer1998
 Heim and Kratzer interpret a tree by a few general rules: Functional Application, Predicate
 Modification, Predicate Abstraction over a binder index, and, from Chapter 4, partial
 denotations, with a Fregean definite article that may leave a node undefined. The library's
-engines `Tree.interp` and `Partial.interp` implement these rules. Here the book's rules are
+engines `Tree.interp` and `Tree.interpPartial` implement these rules. Here the book's rules are
 transcribed as interpretation relations that the engines extend, and the engines are run on the
 toy model for the book's definite descriptions (Chapter 4), relative clauses (Chapter 5) and
 quantifier scope (Chapter 7).
@@ -51,10 +50,10 @@ empty*, *every person sees some person* for "Some publisher offended every lingu
 
 namespace HeimKratzer1998
 
-open Montague HeimKratzer
+open Montague
 open scoped Assignment
 open PhraseStructure
-open HeimKratzer.Tree
+open PhraseStructure.Tree
 open Quantifier Quantifier.GQ
 open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
 open English.Determiners (QuantityWord)
@@ -317,15 +316,38 @@ theorem Denotes.unique {lex : L → Option (Denotation E W)} {g : Assignment E} 
 
 end Reference
 
+section FregeanArticle
+
+variable {E W D : Type}
+
+/-- The Fregean definite article (§4.4) maps a predicate true of exactly one individual to that
+individual and is undefined elsewhere. -/
+noncomputable def the : Ty.PDomain E W ((.e ⇒ .t) ⇒ .e) D :=
+  fun P ↦ ⟨∃! x, True ∈ P x, fun h ↦ Classical.choose h⟩
+
+/-- The definite article is defined exactly on the predicates true of one individual. -/
+theorem the_dom (P : E →. Prop) : (the (W := W) (D := D) P).Dom ↔ ∃! x, True ∈ P x := Iff.rfl
+
+/-- A total predicate is true of an individual where it holds. -/
+@[simp] theorem true_mem_lift (P : E → Prop) (x : E) : True ∈ PFun.lift P x ↔ P x := by
+  simp [PFun.lift, Part.mem_some_iff]
+
+/-- On a total predicate true of exactly one individual, the definite article picks it. -/
+theorem the_lift_eq_some {P : E → Prop} {a : E} (h : ∀ x, P x ↔ x = a) :
+    the (W := W) (D := D) (PFun.lift P) = Part.some a := by
+  have hu : ∃! x, True ∈ PFun.lift P x := ⟨a, (true_mem_lift P a).mpr ((h a).mpr rfl),
+    fun y hy ↦ (h y).mp ((true_mem_lift P y).mp hy)⟩
+  exact Part.eq_some_iff.mpr ⟨hu, (h _).mp ((true_mem_lift P _).mp (Classical.choose_spec hu).1)⟩
+
+end FregeanArticle
+
 /-! ### Definite descriptions
 
-The Fregean article `Partial.the` is defined on predicates true of exactly one individual
+The Fregean article `the` is defined on predicates true of exactly one individual
 (§4.4). In the toy model, with two students and one pizza, *the student* is undefined and *the
 pizza* is not. -/
 
 section DefiniteArticle
-
-open Partial
 
 /-- The toy lexicon for the partial engine, which pairs the definite article with the fragment's
 nouns, *sleeps* and names lifted to partial denotations. -/
@@ -341,17 +363,17 @@ noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
 theorem the_student_fails :
     PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
   refine ⟨⟨.e, the (PFun.lift student)⟩, ?_, fun ⟨x, _, huniq⟩ ↦ ?_⟩
-  · rw [interp_node_binary, interp_terminal, interp_terminal]
-    exact combine?_forward the (PFun.lift student)
-  have hj := huniq .john ((holds_lift _ _).mpr (.inl rfl))
-  have hm := huniq .mary ((holds_lift _ _).mpr (.inr rfl))
+  · rw [interpPartial_node_binary, interpPartial_terminal, interpPartial_terminal]
+    exact Mode.combine?_evalPartial_fn_left the (PFun.lift student)
+  have hj := huniq .john ((true_mem_lift _ _).mpr (.inl rfl))
+  have hm := huniq .mary ((true_mem_lift _ _).mpr (.inr rfl))
   exact ToyEntity.noConfusion (hj.trans hm.symm)
 
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/
-theorem the_pizza : interp partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
+theorem the_pizza : interpPartial partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
     some ⟨.e, Part.some .pizza⟩ := by
-  rw [interp_node_binary, interp_terminal, interp_terminal]
-  refine (combine?_forward the (PFun.lift Toy.pizza)).trans ?_
+  rw [interpPartial_node_binary, interpPartial_terminal, interpPartial_terminal]
+  refine (Mode.combine?_evalPartial_fn_left the (PFun.lift Toy.pizza)).trans ?_
   rw [the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl]
 
 /-- *The John*, the article applied to an individual rather than a predicate, is
@@ -409,27 +431,27 @@ inductive Denotes (lex : L → Option (PDenotation E W)) :
 /-- Where the book's revised rules assign a value, the partial engine computes it. -/
 theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment E}
     {t : Tree C L} {d : PDenotation E W} (h : Denotes lex g t d) :
-    Partial.interp lex g t = some d := by
+    interpPartial lex g t = some d := by
   induction h with
-  | tn h => rw [Partial.interp_terminal]; exact h
+  | tn h => rw [interpPartial_terminal]; exact h
   | nn _ ih => exact ih
   | faLeft _ _ ih₁ ih₂ =>
-    rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Partial.combine?_forward]
+    rw [interpPartial_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+      Mode.combine?_evalPartial_fn_left]
   | faRight _ _ ih₁ ih₂ =>
-    rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Partial.combine?_backward]
+    rw [interpPartial_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+      Mode.combine?_evalPartial_fn_right]
   | pm _ _ ih₁ ih₂ =>
-    rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Partial.combine?_predicateModification]
+    rw [interpPartial_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+      Mode.combine?_evalPartial_predicateModification]
   | trace => rfl
   | @pa g n c body τ F _ ih =>
     have hg := ih (g n)
     rw [Function.update_eq_self] at hg
-    rw [Partial.interp_bind, hg, Option.map_some]
+    rw [interpPartial_bind, hg, Option.map_some]
     congr 3
     funext x
-    simp [ih x, Partial.valueAt]
+    simp [ih x, valueAtPartial]
 
 /-- The book's revised rules are deterministic. -/
 theorem Denotes.unique {lex : L → Option (PDenotation E W)} {g : Assignment E} {t : Tree C L}
@@ -440,10 +462,10 @@ theorem Denotes.unique {lex : L → Option (PDenotation E W)} {g : Assignment E}
 theorem denotes_the_pizza :
     Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) ⟨.e, Part.some .pizza⟩ := by
   have h : Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza"))
-      ⟨.e, Partial.the (PFun.lift Toy.pizza)⟩ :=
-    .faLeft (σ := .e ⇒ .t) (τ := .e) (f := Partial.the) (a := PFun.lift Toy.pizza)
+      ⟨.e, the (PFun.lift Toy.pizza)⟩ :=
+    .faLeft (σ := .e ⇒ .t) (τ := .e) (f := the) (a := PFun.lift Toy.pizza)
       (.tn rfl) (.tn rfl)
-  rwa [Partial.the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl] at h
+  rwa [the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl] at h
 
 /-- Whatever value the book's rules assign *the student* is undefined. -/
 theorem denotes_the_student {v : Part ToyEntity}
@@ -454,8 +476,8 @@ theorem denotes_the_student {v : Part ToyEntity}
 
 /-- The toy lexicon lifted entrywise never fails, since its entries are first order. -/
 theorem toyLexicon_toPartial_noFailure (g : Assignment ToyEntity) (t : Tree Unit String) :
-    ¬ Partial.PresupFailure (fun w ↦ (toyLexicon w).map Denotation.toPartial) g t :=
-  Partial.not_presupFailure_map_toPartial (fun _ _ h ↦ by
+    ¬ PresupFailure (fun w ↦ (toyLexicon w).map Denotation.toPartial) g t :=
+  not_presupFailure_map_toPartial (fun _ _ h ↦ by
     rcases toyLexicon_fst h with h | h | h <;> rw [h] <;> repeat constructor) g t
 
 end Partial
@@ -540,7 +562,7 @@ theorem Partial.denotes_the_student_who_sleeps :
     Partial.Denotes partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps)
       ⟨.e, Part.some .john⟩ := by
   have h : Partial.Denotes partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps)
-      ⟨.e, Partial.the fun x ↦
+      ⟨.e, the fun x ↦
         (PFun.lift student x).bind fun a ↦ (PFun.lift Toy.sleeps x).map fun b ↦ a ∧ b⟩ :=
     .faLeft (σ := .e ⇒ .t) (τ := .e) (.tn rfl) <| .pm (.tn rfl) <| .pa (τ := .t) fun x ↦ .nn <|
       .faRight (lex := partialLex) (σ := .e) (τ := .t) (a := x) (f := PFun.lift Toy.sleeps)
@@ -548,21 +570,21 @@ theorem Partial.denotes_the_student_who_sleeps :
   have hP : (fun x ↦ (PFun.lift student x).bind fun a ↦ (PFun.lift Toy.sleeps x).map (a ∧ ·)) =
       PFun.lift fun x ↦ student x ∧ Toy.sleeps x := by
     funext x; simp [PFun.lift]
-  rwa [hP, Partial.the_lift_eq_some (P := fun x ↦ student x ∧ Toy.sleeps x) (a := .john)
+  rwa [hP, the_lift_eq_some (P := fun x ↦ student x ∧ Toy.sleeps x) (a := .john)
     fun _ ↦ ⟨And.right, fun h ↦ h ▸ ⟨.inl rfl, rfl⟩⟩] at h
 
 /-- *The student who sleeps* denotes John, though *the student* is a presupposition failure
 (`the_student_fails`), since the restrictive relative narrows the article's domain to one student,
 where a nonrestrictive one would leave the article applying to *student* alone (p. 88). -/
 theorem the_student_who_sleeps :
-    Partial.interp partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps) =
+    interpPartial partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps) =
       some ⟨.e, Part.some .john⟩ :=
   Partial.interp_of_denotes Partial.denotes_the_student_who_sleeps
 
 /-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]` that §4.5 rejects, the definite
 denotes a truth value, so a sentence with it as subject is uninterpretable (p. 83). -/
 theorem det_noun_modifier_uninterpretable :
-    Partial.Uninterpretable partialLex g₀
+    Uninterpretable partialLex g₀
       (.bin (.bin (.bin (.leaf "the") (.leaf "student")) tree_whoSleeps) (.leaf "sleeps")) :=
   rfl
 

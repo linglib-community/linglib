@@ -26,15 +26,15 @@ first-order consequence between readbacks is entailment between trees, as
 * `Ty.SyntacticDomain`: the syntactic model, by type and number of bound variables.
 * `Term.readback`, `Term.toFormula`: the readback of a logical form.
 * `Ty.Realizes`: the logical relation between the syntactic and the standard model.
-* `Tree.HoldsAt`: truth of a tree under a lexicon and an assignment.
 
 ## Main results
 
 * `Term.realizes_readback`: a logical form's readback realizes its denotation whenever the
   readbacks of its constants realize theirs.
 * `Term.realizeAt_toFormula`: a first-order logical form denotes the realization of its readback.
-* `Tree.holdsAt_iff_realizeAt`, `Tree.holdsAt_of_models`, `Tree.models_imp_iff_entails`,
-  `Tree.holdsAt_compactness`: a tree holds where its readback is realized, entailment between
+* `PhraseStructure.Tree.holdsAt_iff_realizeAt`, `PhraseStructure.Tree.holdsAt_of_models`,
+  `PhraseStructure.Tree.models_imp_iff_entails`, `PhraseStructure.Tree.holdsAt_compactness`: a
+  tree holds (`PhraseStructure.Tree.HoldsAt`) where its readback is realized, entailment between
   trees is first-order consequence, and families of trees satisfy compactness.
 
 ## Implementation notes
@@ -56,11 +56,9 @@ first-order definable, as Barwise and Cooper showed, so it is not a first-order 
 
 universe u v w
 
-namespace HeimKratzer
+namespace Montague
 
 open FirstOrder Language
-open Montague
-open PhraseStructure (Tree)
 
 /-! ### First-order constants -/
 
@@ -111,12 +109,6 @@ end Constants
 The syntactic model takes the function and relation symbols of the signature in one universe,
 so that terms and bounded formulas share it. -/
 
-end HeimKratzer
-
-namespace Montague
-
-open FirstOrder Language
-
 /-- In the syntactic model of the types over the free variables `α`, with `n` bound variables in
 scope, an entity is a term, and a truth value and a function are given at every larger number of
 bound variables, as a bounded formula and as a function on the values there. -/
@@ -148,14 +140,6 @@ def Ty.Realizes {L : Language.{u, u}} {α : Type w} {M W D : Type} (S : L.Struct
       ∀ x a, Ty.Realizes S v σ k ys x a → Ty.Realizes S v τ k ys (f k hk x) (f' a)
   | .intens σ, i, xs, x, a => ∀ w, Ty.Realizes S v σ i xs x (a w)
   | _, _, _, _, _ => True
-
-end Montague
-
-namespace HeimKratzer
-
-open FirstOrder Language
-open Montague
-open PhraseStructure (Tree)
 
 section SyntacticModel
 
@@ -373,16 +357,22 @@ end Soundness
 
 end SyntacticModel
 
+/-- A first-order structure as a one-world composition model. -/
+def Model.ofStructure {L : Language.{0, 0}} (M : Type) (S : L.Structure M) : Model L :=
+  ⟨M, Unit, fun _ ↦ S⟩
+
+end Montague
+
+namespace PhraseStructure.Tree
+
+open FirstOrder Language
+open Montague
+
 /-! ### Trees -/
 
-namespace Tree
+section Readback
 
 variable {L : Language.{u, u}} {C : Type} {X : Type*}
-
-/-- A tree holds under a lexicon and an assignment when it composes to a true truth value. -/
-def HoldsAt {E W : Type} (lex : X → Option (Denotation E W)) (g : Assignment E) (t : Tree C X) :
-    Prop :=
-  ∃ p, Tree.interp lex g t = some ⟨.t, p⟩ ∧ p
 
 variable {words : X → Option (Σ ty, FirstOrderConstant L ty)}
 
@@ -415,7 +405,7 @@ theorem holdsAt_of_models {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOrderCo
   rw [holdsAt_iff_realizeAt m w h₁, holdsAt_iff_realizeAt m w h₂]
   exact hmod m.E (m.interp w) g
 
-end Tree
+end Readback
 
 /-! ### Consequence and compactness
 
@@ -425,11 +415,7 @@ empty theory, and compactness transfers to families of trees. Mathlib's `ModelTy
 carriers, hence the restriction to nonempty domains, which is standard in the study of
 generalized quantifiers. -/
 
-/-- A first-order structure as a one-world composition model. -/
-def Model.ofStructure {L : Language.{0, 0}} (M : Type) (S : L.Structure M) : Model L :=
-  ⟨M, Unit, fun _ ↦ S⟩
-
-namespace Tree
+section Compactness
 
 variable {L₀ : Language.{0, 0}} {C : Type} {X : Type*}
   {words : X → Option (Σ ty, FirstOrderConstant L₀ ty)}
@@ -502,6 +488,7 @@ theorem holdsAt_compactness {ι : Type} {trees : ι → Tree C X}
     exact (Formula.realize_toSentence (M := (N : Type)) (us i).toFormula (hcl i)
       (fun _ ↦ Classical.arbitrary N)).mp this
 
-end Tree
+end Compactness
 
-end HeimKratzer
+
+end PhraseStructure.Tree

@@ -45,7 +45,7 @@ is a situation pronoun.
 
 @[expose] public section
 
-namespace HeimKratzer
+namespace Montague
 
 open Function
 open scoped Assignment
@@ -89,4 +89,4 @@ theorem lambdaAbsG_eq_const_iff {body : Assignment E → α} :
   rw [(eq_update_iff.2 ⟨rfl, hg⟩ : g = g'[n ↦ g n])]
   exact congrFun (h g') (g n)
 
-end HeimKratzer
+end Montague

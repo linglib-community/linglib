@@ -35,7 +35,7 @@ type-driven composition engine.
 
 Semantic types are those of `Montague.Ty`, in which events share the type `e` with
 individuals, as in the composition engine: the book's `⟨s,t⟩` is `Ty.et` and `⟨e,⟨s,t⟩⟩` is
-`Ty.eet`. A constituent fails to compose with another exactly when `tyBinary` returns `none`.
+`Ty.eet`. A constituent fails to compose with another exactly when `Ty.combine?` returns `none`.
 
 The third applicative diagnostic, the availability of the applied argument for depictive
 modification, is also a typing fact in the book: a depictive phrase is of type ⟨e,⟨s,t⟩⟩ and
@@ -69,7 +69,7 @@ book's correlation of the two tests across Table 2.1 (`table21_static_iff_unerga
 namespace Pylkkanen2008
 
 
-open ArgumentStructure Minimalist Examples Montague HeimKratzer.Tree
+open ArgumentStructure Minimalist Examples Montague PhraseStructure.Tree
 
 variable {Entity E : Type*}
 
@@ -98,19 +98,19 @@ def sisterTy : ApplType → Option Ty
 /-- An applicative composes with an unergative verb phrase, of type `⟨s,t⟩`, exactly when it is
 high, Diagnostic 1 (17). -/
 theorem composes_unergative_iff (a : ApplType) :
-    (∃ τ ∈ sisterTy a, (tyBinary τ Ty.et).isSome) ↔ a = .high := by
+    (∃ τ ∈ sisterTy a, (Ty.combine? τ Ty.et).isSome) ↔ a = .high := by
   cases a <;> simp [sisterTy] <;> decide
 
 /-- A low applicative cannot appear in a structure that lacks a direct object (17), since at no
 stage of its saturation does it compose with an unergative verb phrase, in either order. -/
 theorem lowAppl_not_composes_unergative :
     ∀ τ ∈ [lowApplTy, .e ⇒ Ty.eet ⇒ Ty.et, Ty.eet ⇒ Ty.et],
-      tyBinary τ Ty.et = none ∧ tyBinary Ty.et τ = none := by
+      Ty.combine? τ Ty.et = none ∧ Ty.combine? Ty.et τ = none := by
   decide
 
 /-- The low ApplP composes with a transitive verb, static or not, so the second diagnostic (18)
 is not a typing fact. -/
-theorem lowApplP_composes_transitive : tyBinary (Ty.eet ⇒ Ty.et) Ty.eet = some Ty.et := by
+theorem lowApplP_composes_transitive : Ty.combine? (Ty.eet ⇒ Ty.et) Ty.eet = some Ty.et := by
   decide
 
 /-- In the derivation (16) of *Mary bought John the book*, the low ApplP takes the verb, whose
@@ -162,7 +162,7 @@ def Construction.head : Construction → ApplType
 /-- A construction composes with an unergative verb phrase when its head's applicative
 constituent does. -/
 def Construction.ComposesUnergative (c : Construction) : Prop :=
-  ∃ τ ∈ sisterTy c.head, (tyBinary τ Ty.et).isSome
+  ∃ τ ∈ sisterTy c.head, (Ty.combine? τ Ty.et).isSome
 
 instance : DecidablePred Construction.ComposesUnergative := fun c ↦
   inferInstanceAs (Decidable (∃ τ ∈ sisterTy c.head, _))
@@ -223,16 +223,16 @@ abbrev causeTy : Ty := Ty.et ⇒ Ty.et
 while the θ-role analysis's causer head (16a), of type `⟨e,⟨s,t⟩⟩`, yields a relation that still
 awaits an individual (§3.2). -/
 theorem unaccusative_causative :
-    tyBinary causeTy Ty.et = some Ty.et ∧ tyBinary Ty.eet Ty.et = some Ty.eet := by
+    Ty.combine? causeTy Ty.et = some Ty.et ∧ Ty.combine? Ty.eet Ty.et = some Ty.eet := by
   decide
 
 /-- The two heads of the Voice-bundling Cause (42) cannot combine with each other, in either
 order, so they apply to the verb phrase one at a time, and only Cause first, since after Voice
 nothing Cause can take remains (§3.3). -/
 theorem cause_voice_order :
-    tyBinary causeTy Ty.eet = none ∧ tyBinary Ty.eet causeTy = none ∧
-      (tyBinary causeTy Ty.et).bind (tyBinary Ty.eet) = some Ty.eet ∧
-      (tyBinary Ty.eet Ty.et).bind (tyBinary causeTy) = none := by
+    Ty.combine? causeTy Ty.eet = none ∧ Ty.combine? Ty.eet causeTy = none ∧
+      (Ty.combine? causeTy Ty.et).bind (Ty.combine? Ty.eet) = some Ty.eet ∧
+      (Ty.combine? Ty.eet Ty.et).bind (Ty.combine? causeTy) = none := by
   decide
 
 /-! ### Selection: Cause takes a root, a verb, or a phase -/
