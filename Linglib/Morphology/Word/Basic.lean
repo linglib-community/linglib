@@ -11,12 +11,18 @@ public import Linglib.Morphology.Word.Features
 /-!
 # Word tokens
 
-The surface token: the unit (morpho)syntax treats as a word, approximating the
-ms-word of the ms-word/p-word split ([kalin-bjorkman-etal-2026]; the p-word is
-`Phonology/Prosody/Word.lean`). The token carries no theory of how words are
-formed: word-internal structure is `Word/Tree.lean`, the word-forming
-correspondence `Paradigm/Linkage`. A property belongs on the token only when a
-token-level engine reads it off the token's own data.
+A word token is a surface form with its part of speech and its morphosyntactic features. It is
+the morphosyntactic word, which Kalin and colleagues distinguish from the prosodic word of
+`Phonology/Prosody/Word.lean`.
+
+## Main definitions
+
+* `Morphology.Word`: a word token.
+* `Morphology.Word.mk'`: the token with a form and a part of speech and no features.
+
+## References
+
+* [kalin-bjorkman-etal-2026]
 -/
 
 @[expose] public section
@@ -37,15 +43,7 @@ structure Word where
 /-- The featureless word with the given form and category. -/
 def Word.mk' (form : String) (cat : UD.UPOS) : Word := { form := form, cat := cat }
 
-
-
-/-- Words compare by form and category, ignoring features, so homographs
-collapse. -/
-instance : BEq Word where
-  beq w1 w2 := w1.form == w2.form && w1.cat == w2.cat
-
 instance : ToString Word where
   toString w := w.form
-
 
 end Morphology

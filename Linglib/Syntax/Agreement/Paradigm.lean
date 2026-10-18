@@ -11,15 +11,15 @@ exponents that realize them, and the person–number bundles such a table ranges
 A paradigm records which forms realize which cells, as a reference grammar lists them, and
 commits to no account of how the table arises: syncretism is a non-injective table and
 defectiveness a partial one. The cells are the bundles of `Syntax/Agreement/Bundle.lean`,
-the feature space a pronoun or a word token already carries, so a controller's `Word.phi`
-indexes a paradigm directly ([corbett-1998]).
+the feature space a pronoun or a word token already carries, so a controller's `HasPhi.phi`
+indexes a paradigm directly, as in Corbett's account of agreement.
 
 ## Main definitions
 
-* `Agreement.Bundle.personNumberCells` — the six person–number bundles
-* `Agreement.Bundle.IsSAP`, `Agreement.Bundle.IsPlural`, `Agreement.Bundle.person` — the
-  speech-act-participant and plural cells, and the person a cell bears
-* `Agreement.Paradigm` — a table from bundles to exponents, with `Paradigm.realize`
+* `Agreement.Bundle.personNumberCells`: the six person–number bundles.
+* `Agreement.Bundle.IsSAP`, `Agreement.Bundle.IsPlural`, `Agreement.Bundle.person`: the
+  speech-act-participant and plural cells, and the person a cell bears.
+* `Agreement.Paradigm`: a table from bundles to exponents, with `Paradigm.realize`.
 
 ## References
 

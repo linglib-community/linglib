@@ -10,9 +10,9 @@ public import Linglib.Morphology.Word.Tree
 /-!
 # Svenonius (2004): Slavic Prefixes Inside and Outside VP
 
-This file formalizes [svenonius-2004]'s division of Slavic verbal prefixes into two classes
+This file formalizes Svenonius's division of Slavic verbal prefixes into two classes
 by their place in a decomposed clause (2): a lexical prefix is the resultative R head inside
-the VP, like a Germanic verb particle ([dendikken-1995]), while a superlexical prefix is an
+the VP, like a Germanic verb particle in den Dikken's analysis, while a superlexical prefix is an
 Asp head above the VP with an adverbial, aspectual or quantificational meaning. The same
 prefix form serves either class, Russian *za-* spatial and idiomatic in (1a)–(1b) and
 inceptive in (1c), on the shared fragment morph. A prefix in a word is classified,
@@ -30,14 +30,14 @@ sequence is that of some structure exactly when it is well-stacked with at most 
 prefix, `Structure.exists_prefixes_eq_iff`, and every analysis of the paper has one,
 `analyses_structured`. Among the diagnostics of superlexical prefixes (56), selection for an
 imperfective stem (56c) holds of the Russian analyses, `superlexical_selects_imperfective`;
-the Bulgarian stacks (3), from [istratkova-2004], attach to the perfective *razkaža*.
+the Bulgarian stacks (3), from Istratkova, attach to the perfective *razkaža*.
 
 ## Implementation notes
 
-The subtypes are the glosses of (57)–(58) together with [istratkova-2004]'s terminative and
+The subtypes are the glosses of (57)–(58) together with Istratkova's terminative and
 excessive, an open list. The secondary imperfective's scope (4.5), the argument-structure
 effects of lexical prefixes (4.3), and the phrasal-movement alternative of section 5 are not
-formalized; the classification of the examples is the paper's, and [romanova-2004] documents
+formalized; the classification of the examples is the paper's, and Romanova documents
 mismatches among the diagnostics.
 
 ## References
@@ -71,7 +71,7 @@ inductive SuperlexicalSubtype
   | excessive
   deriving DecidableEq
 
-/-- The class of a prefix in a word: the R head or an Asp head with its subtype. -/
+/-- A prefix in a word is the R head or an Asp head with its subtype. -/
 inductive PrefixClass
   | lexical
   | superlexical (subtype : SuperlexicalSubtype)
@@ -96,10 +96,10 @@ end PrefixClass
 /-- A classified prefix sequence, outermost first, is well-stacked when no lexical prefix
 appears outside a superlexical one (4). -/
 def WellStacked (prefixes : List (Morph × PrefixClass)) : Prop :=
-  prefixes.Pairwise λ outer inner => inner.2.IsSuperlexical → outer.2.IsSuperlexical
+  prefixes.Pairwise fun outer inner ↦ inner.2.IsSuperlexical → outer.2.IsSuperlexical
 
-instance : DecidablePred WellStacked := λ prefixes =>
-  inferInstanceAs (Decidable (prefixes.Pairwise λ outer inner =>
+instance : DecidablePred WellStacked := fun prefixes ↦
+  inferInstanceAs (Decidable (prefixes.Pairwise fun outer inner ↦
     inner.2.IsSuperlexical → outer.2.IsSuperlexical))
 
 /-- The lexical prefixes of a sequence. -/
@@ -121,14 +121,14 @@ structure Structure where
 
 namespace Structure
 
-/-- The linearization: the Asp heads, then the R head, before the stem. -/
+/-- A structure linearizes as the Asp heads, then the R head, before the stem. -/
 def prefixes (s : Structure) : List (Morph × PrefixClass) :=
-  s.outer.map (λ p => (p.1, .superlexical p.2)) ++ (s.result.map (·, .lexical)).toList
+  s.outer.map (fun p ↦ (p.1, .superlexical p.2)) ++ (s.result.map (·, .lexical)).toList
 
 /-- The stacking generalization (4): a linearized structure is well-stacked. -/
 theorem wellStacked_prefixes (s : Structure) : WellStacked s.prefixes := by
   rw [WellStacked, prefixes, List.pairwise_append]
-  refine ⟨List.pairwise_map.2 (List.pairwise_of_forall λ _ _ _ => trivial), ?_, ?_⟩
+  refine ⟨List.pairwise_map.2 (List.pairwise_of_forall fun _ _ _ ↦ trivial), ?_, ?_⟩
   · cases s.result <;> simp
   · intro a ha b hb _
     obtain ⟨p, _, rfl⟩ := List.mem_map.1 ha
@@ -137,9 +137,9 @@ theorem wellStacked_prefixes (s : Structure) : WellStacked s.prefixes := by
 /-- Structural uniqueness (4.4): a linearized structure has at most one lexical prefix. -/
 theorem lexicals_length_le_one (s : Structure) : (lexicals s.prefixes).length ≤ 1 := by
   rw [lexicals, prefixes, List.filter_append, List.length_append]
-  have h : (s.outer.map (λ p => (p.1, PrefixClass.superlexical p.2))).filter
+  have h : (s.outer.map (fun p ↦ (p.1, PrefixClass.superlexical p.2))).filter
       (·.2 = PrefixClass.lexical) = [] :=
-    List.filter_eq_nil_iff.2 λ a ha => by
+    List.filter_eq_nil_iff.2 fun a ha ↦ by
       obtain ⟨p, _, rfl⟩ := List.mem_map.1 ha
       simp
   rw [h, List.length_nil, zero_add]
@@ -154,7 +154,7 @@ theorem exists_prefixes_eq_iff (ps : List (Morph × PrefixClass)) (st : Stem) :
   · rintro ⟨s, _, rfl⟩
     exact ⟨s.wellStacked_prefixes, s.lexicals_length_le_one⟩
   · induction ps with
-    | nil => exact λ _ => ⟨⟨[], none, st⟩, rfl, rfl⟩
+    | nil => exact fun _ ↦ ⟨⟨[], none, st⟩, rfl, rfl⟩
     | cons p ps ih =>
       rintro ⟨hw, hl⟩
       rw [WellStacked, List.pairwise_cons] at hw
@@ -166,7 +166,7 @@ theorem exists_prefixes_eq_iff (ps : List (Morph × PrefixClass)) (st : Stem) :
           | nil => rfl
           | cons a ps' =>
             have ha : a.2 = .lexical :=
-              (PrefixClass.not_isSuperlexical_iff _).1 λ h => hw.1 a (List.mem_cons_self ..) h
+              (PrefixClass.not_isSuperlexical_iff _).1 fun h ↦ hw.1 a (List.mem_cons_self ..) h
             simp [lexicals, ha] at hl
         exact ⟨⟨[], some m, st⟩, rfl, by simp [prefixes, hps]⟩
       | superlexical k =>
@@ -175,7 +175,7 @@ theorem exists_prefixes_eq_iff (ps : List (Morph × PrefixClass)) (st : Stem) :
 
 end Structure
 
-/-- An analysis of an attested example: the fragment stem it is built on and its classified
+/-- An analysis of an attested example gives the fragment stem it is built on and its classified
 prefix sequence, outermost first. -/
 structure Analysis where
   /-- The attested example. -/
@@ -187,16 +187,13 @@ structure Analysis where
 
 namespace Analysis
 
-/-- The word-formation tree: the prefix morphs folded, innermost last, over the stem root. -/
+/-- The word-formation tree, the prefix morphs attached to the stem root innermost first. -/
 def tree (a : Analysis) : Tree Morph :=
-  a.prefixes.foldr (λ p t => .prefixed p.1 t) (.root (Morph.root a.stem.form))
+  .attachAll (Morph.root a.stem.form) (a.prefixes.reverse.map fun p ↦ (.before, p.1))
 
-/-- Every analysis tree is concatenative: prefixation only. -/
-theorem tree_isConcatenative (a : Analysis) : a.tree.IsConcatenative := by
-  unfold tree
-  induction a.prefixes with
-  | nil => trivial
-  | cons p ps ih => exact ih
+/-- Every analysis tree is concatenative, since prefixation is. -/
+theorem tree_isConcatenative (a : Analysis) : a.tree.IsConcatenative :=
+  Tree.isConcatenative_attachAll _ _
 
 end Analysis
 
@@ -273,15 +270,15 @@ theorem analyses_structured (a : Analysis) (ha : a ∈ analyses) :
 theorem reverse_4a_not_wellStacked :
     ¬ WellStacked a4a.prefixes.reverse ∧
       ¬ ∃ s : Structure, s.stem = a4a.stem ∧ s.prefixes = a4a.prefixes.reverse :=
-  ⟨by decide, λ h => absurd ((Structure.exists_prefixes_eq_iff _ _).1 h).1 (by decide)⟩
+  ⟨by decide, fun h ↦ absurd ((Structure.exists_prefixes_eq_iff _ _).1 h).1 (by decide)⟩
 
 /-- Likewise the Polish reversal (4d) *w-po-chodzili*. -/
 theorem reverse_4c_not_wellStacked :
     ¬ WellStacked a4c.prefixes.reverse ∧
       ¬ ∃ s : Structure, s.stem = a4c.stem ∧ s.prefixes = a4c.prefixes.reverse :=
-  ⟨by decide, λ h => absurd ((Structure.exists_prefixes_eq_iff _ _).1 h).1 (by decide)⟩
+  ⟨by decide, fun h ↦ absurd ((Structure.exists_prefixes_eq_iff _ _).1 h).1 (by decide)⟩
 
-/-- Diagnostic (56c) over the Russian analyses: a superlexically prefixed verb is built on an
+/-- Diagnostic (56c) holds of the Russian analyses: a superlexically prefixed verb is built on an
 imperfective stem. -/
 theorem superlexical_selects_imperfective (a : Analysis) (ha : a ∈ russianAnalyses)
     (hs : ∃ p ∈ a.prefixes, p.2.IsSuperlexical) :

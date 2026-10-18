@@ -18,7 +18,8 @@ exponent is present from the start, and insertion targets the heads above it.
 ## Main definitions
 
 * `DistributedMorphology.ComplexHead.order`, `DistributedMorphology.ComplexHead.exponents`: the
-  positions of a complex head of morphemes in linear order, and its surface exponents.
+  positions of a complex head of morphemes in linear order, the surface of `ComplexHead.surface`,
+  and its surface exponents.
 * `DistributedMorphology.ComplexHead.Locality`, `DistributedMorphology.ComplexHead.Discharge`: the
   two regimes of context and the two fates of features.
 * `DistributedMorphology.ComplexHead.contextAt`, `DistributedMorphology.ComplexHead.insertAt`,
@@ -61,14 +62,35 @@ variable {F E : Type*} (w : ComplexHead (Morpheme F E) (Morpheme F E))
 
 /-! ### Linearization -/
 
-/-- The positions of the complex head in linear order respect No Tangling,
-with prefixal morphemes outermost first, then the root (`none`), then
-suffixal morphemes innermost first. -/
+/-- The positions of the complex head in linear order, the root at `none` and head `i` at
+`some i`: the surface of the complex head of positions, each head on its morpheme's side. -/
 def order : List (Option ℕ) :=
-  ((List.range w.heads.length).filter fun i =>
+  (surface ⟨(), List.range w.heads.length⟩ fun i ↦ (w.heads[i]?.map (·.side)).getD .before).map
+    (Sum.elim (fun _ ↦ none) some)
+
+/-- The positions in linear order respect No Tangling, with prefixal morphemes outermost first,
+then the root, then suffixal morphemes innermost first. -/
+theorem order_eq : w.order =
+    ((List.range w.heads.length).filter fun i ↦
       (w.heads[i]?.map (·.side)) = some .before).reverse.map some ++
-    none :: ((List.range w.heads.length).filter fun i =>
-      (w.heads[i]?.map (·.side)) = some .after).map some
+    none :: ((List.range w.heads.length).filter fun i ↦
+      (w.heads[i]?.map (·.side)) = some .after).map some := by
+  have hb : ∀ i ∈ List.range w.heads.length,
+      ((w.heads[i]?.map (·.side)).getD Morph.Side.before = .before) =
+        ((w.heads[i]?.map (·.side)) = some .before) := fun i hi ↦ by
+    rw [List.getElem?_eq_getElem (List.mem_range.1 hi)]
+    simp
+  have ha : ∀ i : ℕ, ((w.heads[i]?.map (·.side)).getD Morph.Side.before = .after) =
+      ((w.heads[i]?.map (·.side)) = some Morph.Side.after) := fun i ↦ by
+    cases w.heads[i]? <;> simp
+  have hf : (List.range w.heads.length).filter (fun i ↦
+        decide ((w.heads[i]?.map (·.side)).getD Morph.Side.before = .before)) =
+      (List.range w.heads.length).filter (fun i ↦
+        decide ((w.heads[i]?.map (·.side)) = some Morph.Side.before)) :=
+    List.filter_congr fun i hi ↦ by simp only [hb i hi]
+  simp only [order, surface_eq, List.map_append, List.map_cons, List.map_reverse, List.map_map,
+    Function.comp_def, Sum.elim_inl, Sum.elim_inr, ha]
+  rw [hf]
 
 /-- The morpheme at a position. -/
 def at? : Option ℕ → Option (Morpheme F E)

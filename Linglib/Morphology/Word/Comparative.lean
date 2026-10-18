@@ -9,7 +9,7 @@ public import Mathlib.Data.List.Dedup
 public import Mathlib.Data.List.Duplicate
 public import Mathlib.Data.List.Infix
 public import Mathlib.Data.List.Sublists
-public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Order.FixedPoints
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -26,31 +26,29 @@ a word is a free morph, a clitic, or a root with its affixes.
 ## Main definitions
 
 * `Comparative.RootClass`: the classes of roots denoting actions, objects and properties.
-* `Comparative.IsBoundIn`, `Comparative.IsContentful`, `Comparative.IsRootIn`: bound morphs,
-  contentful morphs, and roots of an inventory.
+* `Comparative.Inventory`: a language's free forms, with the root class each morph denotes.
+* `Comparative.Inventory.IsBound`, `Comparative.Inventory.IsContentful`,
+  `Comparative.Inventory.IsRoot`: bound morphs, contentful morphs, and roots.
 * `Comparative.OccursOn`: occurrence on a root through candidate affixes.
-* `Comparative.AffixStep`, `Comparative.IsAffixIn`: one step of the definition of an affix, and
-  its greatest solution.
-* `Comparative.IsCliticIn`, `Comparative.IsRequiredAffixIn`, `Comparative.IsWordIn`: clitics,
-  required affixes and words.
+* `Comparative.Inventory.AffixStep`, `Comparative.Inventory.IsAffix`: one step of the definition
+  of an affix, and its greatest solution.
+* `Comparative.Inventory.IsClitic`, `Comparative.Inventory.IsRequiredAffix`,
+  `Comparative.Inventory.IsWord`: clitics, required affixes and words.
 
 ## Main results
 
-* `Comparative.isAffixIn_iff_sublists`: affixhood is decided over the bound morphs of the
+* `Comparative.Inventory.isAffix_iff_sublists`: affixhood is decided over the bound morphs of the
   inventory.
-* `Comparative.AffixStep.mono`: when the roots of every free form are adjacent, the step is
-  monotone.
-* `Comparative.isGreatest_setOf_isAffixIn`: the affixes are then the greatest fixed point of the
-  step.
+* `Comparative.Inventory.setOf_isAffix_eq_gfp`: when the roots of every free form are adjacent,
+  the affixes are the greatest fixed point of the step.
 
 ## Implementation notes
 
-An inventory is a list of free forms, each a list of morphs, with the root class each morph
-denotes, if any. The definition of an affix refers to affixes, and its fixed points need not be
-unique; the affixes are its greatest solution. It is parametric in the roots, which are the
-contentful morphs in the 2021 paper and those of `IsRootIn` in the 2023 one. A required affix
-may be replaced by any other affix on its root, since replacement within one slot would need
-paradigm structure. Compounds are not covered.
+The definition of an affix refers to affixes, and its fixed points need not be unique; the
+affixes are its greatest solution, the union of the sets the step maps into themselves. It is
+parametric in the roots, which are the contentful morphs in the 2021 paper and those of `IsRoot`
+in the 2023 one. A required affix may be replaced by any other affix on its root, since
+replacement within one slot would need paradigm structure. Compounds are not covered.
 
 ## References
 
@@ -73,34 +71,6 @@ inductive RootClass where
   deriving DecidableEq, Fintype, Repr
 
 variable {M : Type*}
-
-/-! ### Free forms and roots -/
-
-section
-variable (F : List (List M)) (rootClass : M → Option RootClass)
-
-/-- A morph is bound when it is not a free form, one that can be used on its own. -/
-def IsBoundIn (x : M) : Prop := [x] ∉ F
-
-instance [DecidableEq M] (x : M) : Decidable (IsBoundIn F x) :=
-  inferInstanceAs (Decidable (_ ∉ _))
-
-/-- A morph is contentful when it denotes an action, an object or a property. -/
-def IsContentful (x : M) : Prop := rootClass x ≠ none
-
-instance (x : M) : Decidable (IsContentful rootClass x) := inferInstanceAs (Decidable (_ ≠ _))
-
-/-- A root is a contentful morph that occurs in a free form with no other contentful morph. -/
-def IsRootIn (x : M) : Prop :=
-  IsContentful rootClass x ∧ ∃ w ∈ F, x ∈ w ∧ ∀ y ∈ w, y ≠ x → ¬ IsContentful rootClass y
-
-instance [DecidableEq M] (x : M) : Decidable (IsRootIn F rootClass x) :=
-  inferInstanceAs (Decidable (_ ∧ ∃ w ∈ F, _))
-
-theorem IsRootIn.isContentful {x : M} (h : IsRootIn F rootClass x) : IsContentful rootClass x :=
-  h.1
-
-end
 
 /-! ### Occurrence on a root -/
 
@@ -142,7 +112,7 @@ theorem Reaches.find?_eq {A : Set M} {p : M → Prop} [DecidablePred p] (hA : �
   | cons z v ih => rcases hv with rfl | hv; exacts [by simp [hy], by simp [hA z hv.1, ih hv.2]]
 
 section
-variable (F : List (List M)) (rootClass : M → Option RootClass) (root : M → Prop)
+variable (root : M → Prop)
 
 /-- In the free form `w`, the morph at `i` occurs on the root `y` through the morphs of `A` when it
 is next to `y`, or next to a morph of `A` that occurs on `y`. -/
@@ -151,19 +121,6 @@ def OccursOn (A : Set M) (w : List M) (i : ℕ) (y : M) : Prop :=
 
 instance [DecidableEq M] [DecidablePred root] (A : Set M) [DecidablePred (· ∈ A)] (w : List M)
     (i : ℕ) (y : M) : Decidable (OccursOn root A w i y) := inferInstanceAs (Decidable (_ ∧ _))
-
-/-- `AffixStep A x` is one step of the definition of an affix. Given that the morphs of `A` are
-affixes, `x` is an affix when it is a bound morph that is not a root, and there is a root class
-such that every occurrence of `x` occurs on a root and every root it occurs on is of that
-class. -/
-def AffixStep (A : Set M) (x : M) : Prop :=
-  IsBoundIn F x ∧ ¬ root x ∧ (∃ w ∈ F, x ∈ w) ∧ ∃ c : RootClass, ∀ w ∈ F, ∀ i < w.length,
-    w[i]? = some x → (∃ y ∈ w, OccursOn root A w i y) ∧
-      ∀ y ∈ w, OccursOn root A w i y → rootClass y = some c
-
-instance [DecidableEq M] [DecidablePred root] (A : Set M) [DecidablePred (· ∈ A)] (x : M) :
-    Decidable (AffixStep F rootClass root A x) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ ∃ _ : RootClass, _))
 
 /-- The roots of the form `w` are contiguous when no morph that is not a root lies between two
 roots, as in a compound. -/
@@ -174,34 +131,88 @@ def RootsContiguous (w : List M) : Prop :=
 instance [DecidablePred root] (w : List M) : Decidable (RootsContiguous root w) :=
   inferInstanceAs (Decidable (∀ i (_ : i < w.length), _))
 
+end
+
+/-! ### Inventories -/
+
+/-- An inventory is a language's free forms, each a sequence of morphs, with the class of root
+each morph denotes, if any. -/
+structure Inventory (M : Type*) where
+  /-- The free forms, the forms that can be used on their own. -/
+  forms : List (List M)
+  /-- The class of root a morph denotes, if any. -/
+  rootClass : M → Option RootClass
+
+namespace Inventory
+
+variable (L : Inventory M)
+
+/-! ### Free forms and roots -/
+
+/-- A morph is bound when it is not a free form. -/
+def IsBound (x : M) : Prop := [x] ∉ L.forms
+
+instance [DecidableEq M] (x : M) : Decidable (L.IsBound x) :=
+  inferInstanceAs (Decidable (_ ∉ _))
+
+/-- A morph is contentful when it denotes an action, an object or a property. -/
+def IsContentful (x : M) : Prop := L.rootClass x ≠ none
+
+instance (x : M) : Decidable (L.IsContentful x) := inferInstanceAs (Decidable (_ ≠ _))
+
+/-- A root is a contentful morph that occurs in a free form with no other contentful morph. -/
+def IsRoot (x : M) : Prop :=
+  L.IsContentful x ∧ ∃ w ∈ L.forms, x ∈ w ∧ ∀ y ∈ w, y ≠ x → ¬ L.IsContentful y
+
+instance [DecidableEq M] (x : M) : Decidable (L.IsRoot x) :=
+  inferInstanceAs (Decidable (_ ∧ ∃ w ∈ L.forms, _))
+
+theorem IsRoot.isContentful {L : Inventory M} {x : M} (h : L.IsRoot x) : L.IsContentful x := h.1
+
+/-! ### Affixes -/
+
+variable (root : M → Prop)
+
+/-- `L.AffixStep root A x` is one step of the definition of an affix. Given that the morphs of `A`
+are affixes, `x` is an affix when it is a bound morph that is not a root, and there is a root class
+such that every occurrence of `x` occurs on a root and every root it occurs on is of that class. -/
+def AffixStep (A : Set M) (x : M) : Prop :=
+  L.IsBound x ∧ ¬ root x ∧ (∃ w ∈ L.forms, x ∈ w) ∧ ∃ c : RootClass, ∀ w ∈ L.forms, ∀ i < w.length,
+    w[i]? = some x → (∃ y ∈ w, OccursOn root A w i y) ∧
+      ∀ y ∈ w, OccursOn root A w i y → L.rootClass y = some c
+
+instance [DecidableEq M] [DecidablePred root] (A : Set M) [DecidablePred (· ∈ A)] (x : M) :
+    Decidable (L.AffixStep root A x) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ ∃ _ : RootClass, _))
+
 /-- An affix is a morph in a set of morphs each of which is an affix given that the members of
 the set are, so the affixes are the greatest solution of the definition. -/
-def IsAffixIn (x : M) : Prop := ∃ A : Set M, x ∈ A ∧ ∀ y ∈ A, AffixStep F rootClass root A y
+def IsAffix (x : M) : Prop := ∃ A : Set M, x ∈ A ∧ ∀ y ∈ A, L.AffixStep root A y
 
-variable {F rootClass root}
+variable {L root}
 
-theorem AffixStep.not_root {A : Set M} {x : M} (h : AffixStep F rootClass root A x) : ¬ root x :=
+theorem AffixStep.not_root {A : Set M} {x : M} (h : L.AffixStep root A x) : ¬ root x :=
   h.2.1
 
-theorem AffixStep.mem_flatten {A : Set M} {x : M} (h : AffixStep F rootClass root A x) :
-    x ∈ F.flatten := by
+theorem AffixStep.mem_flatten {A : Set M} {x : M} (h : L.AffixStep root A x) :
+    x ∈ L.forms.flatten := by
   obtain ⟨w, hw, hx⟩ := h.2.2.1
   exact List.mem_flatten.2 ⟨w, hw, hx⟩
 
 /-- The candidate sets can be restricted to sublists of the bound morphs of the inventory that
 are not roots. -/
-theorem isAffixIn_iff_sublists [DecidableEq M] [DecidablePred root] {x : M} :
-    IsAffixIn F rootClass root x ↔
-      ∃ A ∈ (F.flatten.dedup.filter fun y ↦ IsBoundIn F y ∧ ¬ root y).sublists,
-        x ∈ A ∧ ∀ y ∈ A, AffixStep F rootClass root {z | z ∈ A} y := by
+theorem isAffix_iff_sublists [DecidableEq M] [DecidablePred root] {x : M} :
+    L.IsAffix root x ↔
+      ∃ A ∈ (L.forms.flatten.dedup.filter fun y ↦ L.IsBound y ∧ ¬ root y).sublists,
+        x ∈ A ∧ ∀ y ∈ A, L.AffixStep root {z | z ∈ A} y := by
   constructor
   · rintro ⟨A, hx, hA⟩
     classical
-    refine ⟨(F.flatten.dedup.filter fun y ↦ IsBoundIn F y ∧ ¬ root y).filter (· ∈ A),
+    refine ⟨(L.forms.flatten.dedup.filter fun y ↦ L.IsBound y ∧ ¬ root y).filter (· ∈ A),
       List.mem_sublists.2 (List.filter_sublist), ?_, fun y hy ↦ ?_⟩
     · have := hA x hx
       simp [hx, this.mem_flatten, this.1, this.not_root]
-    · have hset : {z | z ∈ (F.flatten.dedup.filter fun y ↦ IsBoundIn F y ∧ ¬ root y).filter
+    · have hset : {z | z ∈ (L.forms.flatten.dedup.filter fun y ↦ L.IsBound y ∧ ¬ root y).filter
           (· ∈ A)} = A := by
         ext z
         simp only [Set.mem_ofPred_eq, List.mem_filter, List.mem_dedup, decide_eq_true_eq]
@@ -211,17 +222,15 @@ theorem isAffixIn_iff_sublists [DecidableEq M] [DecidablePred root] {x : M} :
   · rintro ⟨A, -, hx, hA⟩
     exact ⟨{z | z ∈ A}, hx, hA⟩
 
-instance [DecidableEq M] [DecidablePred root] (x : M) :
-    Decidable (IsAffixIn F rootClass root x) :=
-  decidable_of_iff _ isAffixIn_iff_sublists.symm
+instance [DecidableEq M] [DecidablePred root] (x : M) : Decidable (L.IsAffix root x) :=
+  decidable_of_iff _ isAffix_iff_sublists.symm
 
 /-! ### The greatest solution -/
 
 /-- When roots are contiguous in every free form, the step is monotone among sets of morphs that
 are not roots. -/
-theorem AffixStep.mono (hF : ∀ w ∈ F, RootsContiguous root w) {A B : Set M} (hAB : A ⊆ B)
-    (hB : ∀ z ∈ B, ¬ root z) {x : M} (h : AffixStep F rootClass root A x) :
-    AffixStep F rootClass root B x := by
+theorem AffixStep.mono (hF : ∀ w ∈ L.forms, RootsContiguous root w) {A B : Set M} (hAB : A ⊆ B)
+    (hB : ∀ z ∈ B, ¬ root z) {x : M} (h : L.AffixStep root A x) : L.AffixStep root B x := by
   classical
   obtain ⟨hb, hr, ho, c, hc⟩ := h
   refine ⟨hb, hr, ho, c, fun w hw i hi hx ↦ ?_⟩
@@ -241,72 +250,82 @@ theorem AffixStep.mono (hF : ∀ w ∈ F, RootsContiguous root w) {A B : Set M} 
     exacts [h y (List.mem_reverse.1 hL.mem) hyr, h y' hR'.mem hy'r]
   · exact Option.some_injective _ ((hL'.find?_eq hB hy'r).symm.trans (hL.find?_eq hB hyr))
 
-/-- When roots are contiguous in every free form, the affixes are the greatest set that the step
-maps to itself. -/
-theorem isGreatest_setOf_isAffixIn (hF : ∀ w ∈ F, RootsContiguous root w) :
-    IsGreatest {A | {x | AffixStep F rootClass root A x} = A}
-      {x | IsAffixIn F rootClass root x} := by
-  set S := {x | IsAffixIn F rootClass root x}
-  have hS : ∀ z ∈ S, ¬ root z := fun z ⟨A, hz, hA⟩ ↦ (hA z hz).not_root
-  have hsub {A : Set M} (hA : ∀ y ∈ A, AffixStep F rootClass root A y) : A ⊆ S :=
-    fun y hy ↦ ⟨A, hy, hA⟩
-  have h₁ : S ⊆ {x | AffixStep F rootClass root S x} := fun x ⟨A, hx, hA⟩ ↦
-    (hA x hx).mono hF (hsub hA) hS
-  refine ⟨Set.Subset.antisymm (hsub fun x hx ↦ hx.mono hF h₁ fun z hz ↦ hz.not_root) h₁,
-    fun A hA ↦ hsub fun y hy ↦ ?_⟩
-  rw [← hA] at hy
-  exact hy
+variable (L root) in
+/-- When roots are contiguous in every free form, the step taken over the morphs that are not
+roots is a monotone map on sets of morphs. -/
+def affixStep (hF : ∀ w ∈ L.forms, RootsContiguous root w) : Set M →o Set M where
+  toFun A := {x | L.AffixStep root (A ∩ {z | ¬ root z}) x}
+  monotone' _ _ h _ hx := hx.mono hF (Set.inter_subset_inter_left _ h) fun _ hz ↦ hz.2
+
+/-- When roots are contiguous in every free form, the affixes are the greatest fixed point of the
+step. -/
+theorem setOf_isAffix_eq_gfp (hF : ∀ w ∈ L.forms, RootsContiguous root w) :
+    {x | L.IsAffix root x} = (L.affixStep root hF).gfp := by
+  have key {A : Set M} (hA : ∀ z ∈ A, ¬ root z) : A ∩ {z | ¬ root z} = A :=
+    Set.inter_eq_left.2 hA
+  apply le_antisymm
+  · rintro x ⟨A, hx, hA⟩
+    refine (L.affixStep root hF).le_gfp (fun y hy ↦ ?_) hx
+    show L.AffixStep root (A ∩ {z | ¬ root z}) y
+    rw [key fun z hz ↦ (hA z hz).not_root]
+    exact hA y hy
+  · intro x hx
+    have hnr : ∀ z ∈ (L.affixStep root hF).gfp, ¬ root z := fun z hz ↦ by
+      rw [← (L.affixStep root hF).map_gfp] at hz; exact hz.not_root
+    refine ⟨_, hx, fun y hy ↦ ?_⟩
+    rw [← (L.affixStep root hF).map_gfp] at hy
+    have : L.AffixStep root (_ ∩ {z | ¬ root z}) y := hy
+    rwa [key hnr] at this
 
 /-! ### Clitics, required affixes and words -/
 
-variable (F rootClass root)
+variable (L root)
 
 /-- A clitic is a bound morph that is neither a root nor an affix. -/
-def IsCliticIn (x : M) : Prop :=
-  IsBoundIn F x ∧ ¬ root x ∧ ¬ IsAffixIn F rootClass root x ∧ ∃ w ∈ F, x ∈ w
+def IsClitic (x : M) : Prop :=
+  L.IsBound x ∧ ¬ root x ∧ ¬ L.IsAffix root x ∧ ∃ w ∈ L.forms, x ∈ w
 
 /-- In the free form `w`, the morph `y` at `i` is an affix that occurs on the root `r`. -/
 def IsAffixOnAt (w : List M) (i : ℕ) (y r : M) : Prop :=
-  w[i]? = some y ∧ IsAffixIn F rootClass root y ∧
-    OccursOn root {z | IsAffixIn F rootClass root z} w i r
+  w[i]? = some y ∧ L.IsAffix root y ∧ OccursOn root {z | L.IsAffix root z} w i r
 
 /-- A root requires an affix when every free form containing it has an affix on it. -/
-def RequiresAffixIn (r : M) : Prop :=
-  ∀ w ∈ F, r ∈ w → ∃ i < w.length, ∃ y ∈ w, IsAffixOnAt F rootClass root w i y r
+def RequiresAffix (r : M) : Prop :=
+  ∀ w ∈ L.forms, r ∈ w → ∃ i < w.length, ∃ y ∈ w, L.IsAffixOnAt root w i y r
 
 /-- A required affix of a root is an affix on it when the root requires an affix, so that the
 affix must be present unless another replaces it. -/
-def IsRequiredAffixIn (x r : M) : Prop :=
-  RequiresAffixIn F rootClass root r ∧ ∃ w ∈ F, ∃ i < w.length, IsAffixOnAt F rootClass root w i x r
+def IsRequiredAffix (x r : M) : Prop :=
+  L.RequiresAffix root r ∧ ∃ w ∈ L.forms, ∃ i < w.length, L.IsAffixOnAt root w i x r
 
 /-- A word is a form of the language that is a free morph, a clitic, or a root with affixes,
 among them an affix if the root requires one. Compounds are not covered. -/
-def IsWordIn (w : List M) : Prop :=
-  (∃ f ∈ F, w <:+: f) ∧
-    ((∃ x ∈ w, w = [x] ∧ ([x] ∈ F ∨ IsCliticIn F rootClass root x)) ∨
-      ∃ r ∈ w, root r ∧ ¬ List.Duplicate r w ∧ (∀ y ∈ w, y = r ∨ IsAffixIn F rootClass root y) ∧
-        (RequiresAffixIn F rootClass root r → ∃ y ∈ w, y ≠ r))
+def IsWord (w : List M) : Prop :=
+  (∃ f ∈ L.forms, w <:+: f) ∧
+    ((∃ x ∈ w, w = [x] ∧ ([x] ∈ L.forms ∨ L.IsClitic root x)) ∨
+      ∃ r ∈ w, root r ∧ ¬ List.Duplicate r w ∧ (∀ y ∈ w, y = r ∨ L.IsAffix root y) ∧
+        (L.RequiresAffix root r → ∃ y ∈ w, y ≠ r))
 
 section Decidable
 variable [DecidableEq M] [DecidablePred root]
 
-instance (x : M) : Decidable (IsCliticIn F rootClass root x) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ ∃ w ∈ F, _))
+instance (x : M) : Decidable (L.IsClitic root x) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ ∃ w ∈ L.forms, _))
 
-instance (w : List M) (i : ℕ) (y r : M) : Decidable (IsAffixOnAt F rootClass root w i y r) :=
+instance (w : List M) (i : ℕ) (y r : M) : Decidable (L.IsAffixOnAt root w i y r) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-instance (r : M) : Decidable (RequiresAffixIn F rootClass root r) :=
-  inferInstanceAs (Decidable (∀ w ∈ F, _))
+instance (r : M) : Decidable (L.RequiresAffix root r) :=
+  inferInstanceAs (Decidable (∀ w ∈ L.forms, _))
 
-instance (x r : M) : Decidable (IsRequiredAffixIn F rootClass root x r) :=
-  inferInstanceAs (Decidable (_ ∧ ∃ w ∈ F, _))
+instance (x r : M) : Decidable (L.IsRequiredAffix root x r) :=
+  inferInstanceAs (Decidable (_ ∧ ∃ w ∈ L.forms, _))
 
-instance (w : List M) : Decidable (IsWordIn F rootClass root w) :=
-  inferInstanceAs (Decidable ((∃ f ∈ F, _) ∧ _))
+instance (w : List M) : Decidable (L.IsWord root w) :=
+  inferInstanceAs (Decidable ((∃ f ∈ L.forms, _) ∧ _))
 
 end Decidable
 
-end
+end Inventory
 
 end Morphology.Comparative

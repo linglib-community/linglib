@@ -15,10 +15,11 @@ public import Linglib.Morphology.Word.Comparative
 Haspelmath defines an affix as a bound morph that is not a root, that must occur on a root, and
 that cannot occur on roots of different root classes, where a bound form occurs on a root when
 it is next to the root or next to an affix that occurs on the root. Roots are the morphs
-denoting a thing, an action or a property. The definition is `Morphology.Comparative.IsAffixIn`
-with the contentful morphs as roots. This file checks it against the paper's examples and shows
-what its recursion needs: the inductive reading misses affixes that occur only next to other
-affixes, and when markers separate roots the definition can have two incompatible solutions.
+denoting a thing, an action or a property. The definition is
+`Morphology.Comparative.Inventory.IsAffix` with the contentful morphs as roots. This file checks it
+against the paper's examples and shows what its recursion needs: the inductive reading misses
+affixes that occur only next to other affixes, and when markers separate roots the definition can
+have two incompatible solutions.
 
 ## Main results
 
@@ -68,18 +69,17 @@ def v : Morph := .suff "v"
 def isti : Morph := .suff "isti"
 
 /-- The Latin free forms of (16), *lauda-s*, *lauda-bi-s* and *lauda-v-isti*. -/
-def latin : List (List Morph) := [[lauda, s], [lauda, bi, s], [lauda, v, isti]]
-
-/-- The class of the Latin root. -/
-def latinClass (m : Morph) : Option RootClass := if m = lauda then some .action else none
+def latin : Inventory Morph where
+  forms := [[lauda, s], [lauda, bi, s], [lauda, v, isti]]
+  rootClass m := if m = lauda then some .action else none
 
 /-- The four suffixes of (16) are affixes, *-s* and *-isti* because they occur next to *-bi*
 and *-v*. With no affixes given, only *-bi* and *-v* pass. -/
 theorem latin_affixes :
-    (∀ m ∈ [bi, v, s, isti], IsAffixIn latin latinClass (IsContentful latinClass) m) ∧
-      AffixStep latin latinClass (IsContentful latinClass) ∅ bi ∧
-      ¬ AffixStep latin latinClass (IsContentful latinClass) ∅ s ∧
-      ¬ AffixStep latin latinClass (IsContentful latinClass) ∅ isti := by
+    (∀ m ∈ [bi, v, s, isti], latin.IsAffix latin.IsContentful m) ∧
+      latin.AffixStep latin.IsContentful ∅ bi ∧
+      ¬ latin.AffixStep latin.IsContentful ∅ s ∧
+      ¬ latin.AffixStep latin.IsContentful ∅ isti := by
   decide
 
 /-! ### Turkish (18) -/
@@ -96,20 +96,19 @@ def mu : Morph := .encl "mu"
 def su : Morph := .root "su"
 
 /-- The Turkish free forms of (18), *gel-iyor-sun*, *gel-iyor mu-sun* and *su mu*. -/
-def turkish : List (List Morph) := [[gel, iyor, sun], [gel, iyor, mu, sun], [su, mu]]
-
-/-- The classes of the Turkish roots. -/
-def turkishClass (m : Morph) : Option RootClass :=
-  if m = gel then some .action else if m = su then some .object else none
+def turkish : Inventory Morph where
+  forms := [[gel, iyor, sun], [gel, iyor, mu, sun], [su, mu]]
+  rootClass m :=
+    if m = gel then some .action else if m = su then some .object else none
 
 /-- In (18), *mu* occurs on a verb and on a noun, so it is not an affix, and *-sun* follows it
 in (18b), so *-sun* is not an affix either, although it is written as a suffix; *-iyor* is
 one. -/
 theorem turkish_affixes :
-    IsAffixIn turkish turkishClass (IsContentful turkishClass) iyor ∧
-      ¬ IsAffixIn turkish turkishClass (IsContentful turkishClass) mu ∧
+    turkish.IsAffix turkish.IsContentful iyor ∧
+      ¬ turkish.IsAffix turkish.IsContentful mu ∧
       sun.kind = .bound .after .affix ∧
-      ¬ IsAffixIn turkish turkishClass (IsContentful turkishClass) sun := by
+      ¬ turkish.IsAffix turkish.IsContentful sun := by
   decide
 
 /-! ### Bound forms on roots of two classes (15) -/
@@ -126,14 +125,13 @@ def zrobili : Morph := .root "zrobili"
 def scie : Morph := .encl "ście"
 
 /-- The Polish free forms of (15), *W domu to zrobili=ście?* and *W domu=ście to zrobili?*. -/
-def polish : List (List Morph) := [[w, domu, «to», zrobili, scie], [w, domu, scie, «to», zrobili]]
-
-/-- The classes of the Polish roots. -/
-def polishClass (m : Morph) : Option RootClass :=
-  if m = domu then some .object else if m = zrobili then some .action else none
+def polish : Inventory Morph where
+  forms := [[w, domu, «to», zrobili, scie], [w, domu, scie, «to», zrobili]]
+  rootClass m :=
+    if m = domu then some .object else if m = zrobili then some .action else none
 
 /-- In (15), *=ście* occurs on a verb and on a noun, so it is not an affix. -/
-theorem polish_scie_not_affix : ¬ IsAffixIn polish polishClass (IsContentful polishClass) scie := by
+theorem polish_scie_not_affix : ¬ polish.IsAffix polish.IsContentful scie := by
   decide
 
 /-- The English indefinite article *a*. -/
@@ -150,19 +148,17 @@ def big : Morph := .root "big"
 def «open» : Morph := .root "open"
 
 /-- The English free forms *a house*, *an apple*, *a big house* and *an open house*. -/
-def english : List (List Morph) :=
-  [[a, house], [an, apple], [a, big, house], [an, «open», house]]
-
-/-- The classes of the English roots. -/
-def englishClass (m : Morph) : Option RootClass :=
-  if m = house ∨ m = apple then some .object
-  else if m = big ∨ m = «open» then some .property else none
+def english : Inventory Morph where
+  forms := [[a, house], [an, apple], [a, big, house], [an, «open», house]]
+  rootClass m :=
+    if m = house ∨ m = apple then some .object
+    else if m = big ∨ m = «open» then some .property else none
 
 /-- The English indefinite article occurs on nouns and on prenominal adjectives, so neither of
 its shapes is a prefix. -/
 theorem english_article_not_affix :
-    ¬ IsAffixIn english englishClass (IsContentful englishClass) a ∧
-      ¬ IsAffixIn english englishClass (IsContentful englishClass) an := by
+    ¬ english.IsAffix english.IsContentful a ∧
+      ¬ english.IsAffix english.IsContentful an := by
   decide
 
 /-- The Russian action form *znaeš'* 'you know'. -/
@@ -175,15 +171,14 @@ def zdes : Morph := .free "zdes'"
 def li : Morph := .encl "li"
 
 /-- The Russian free forms *znaeš' li?*, *zdorov li?* and *zdes' li?*. -/
-def russian : List (List Morph) := [[znaesh, li], [zdorov, li], [zdes, li]]
-
-/-- The classes of the Russian roots. -/
-def russianClass (m : Morph) : Option RootClass :=
-  if m = znaesh then some .action else if m = zdorov then some .property else none
+def russian : Inventory Morph where
+  forms := [[znaesh, li], [zdorov, li], [zdes, li]]
+  rootClass m :=
+    if m = znaesh then some .action else if m = zdorov then some .property else none
 
 /-- *li* occurs on verbs and adjectives, so it is not an affix. -/
 theorem russian_li_not_affix :
-    ¬ IsAffixIn russian russianClass (IsContentful russianClass) li := by
+    ¬ russian.IsAffix russian.IsContentful li := by
   decide
 
 /-! ### Italian (19) -/
@@ -196,17 +191,16 @@ def mmi : Morph := .encl "mmi"
 def da : Morph := .root "da"
 
 /-- The Italian free forms of (19), *mi da* and *da-mmi*. -/
-def italian : List (List Morph) := [[mi, da], [da, mmi]]
-
-/-- The class of the Italian root. -/
-def italianClass (m : Morph) : Option RootClass := if m = da then some .action else none
+def italian : Inventory Morph where
+  forms := [[mi, da], [da, mmi]]
+  rootClass m := if m = da then some .action else none
 
 /-- In (19), the object person forms always occur on verb roots, on either side, so they are
 affixes, although the Italian fragment records *mi* as a clitic. -/
 theorem italian_object_affixes :
     Italian.Pronouns.mi_dat.strength = some .clitic ∧
-      IsAffixIn italian italianClass (IsContentful italianClass) mi ∧
-      IsAffixIn italian italianClass (IsContentful italianClass) mmi := by
+      italian.IsAffix italian.IsContentful mi ∧
+      italian.IsAffix italian.IsContentful mmi := by
   decide
 
 /-! ### Solutions of the definition -/
@@ -225,38 +219,38 @@ def schematicClass : Schematic → Option RootClass
   | .x | .z => none
 
 /-- One root with two suffixes in either order. -/
-def variableOrder : List (List Schematic) := [[y, x, z], [y, z, x]]
+def variableOrder : Inventory Schematic := ⟨[[y, x, z], [y, z, x]], schematicClass⟩
 
 /-- With two suffixes in either order, the empty set solves the definition, so its least
 solution has no affix, while both suffixes are affixes, its greatest solution. -/
 theorem variableOrder_affixes :
-    (∀ m, ¬ AffixStep variableOrder schematicClass (IsContentful schematicClass) ∅ m) ∧
-      {m | IsAffixIn variableOrder schematicClass (IsContentful schematicClass) m} = {x, z} ∧
-      ∀ f ∈ variableOrder, RootsContiguous (IsContentful schematicClass) f := by
+    (∀ m, ¬ variableOrder.AffixStep variableOrder.IsContentful ∅ m) ∧
+      {m | variableOrder.IsAffix variableOrder.IsContentful m} = {x, z} ∧
+      ∀ f ∈ variableOrder.forms, RootsContiguous variableOrder.IsContentful f := by
   refine ⟨by decide, Set.ext fun m ↦ ?_, by decide⟩
   cases m <;> simp <;> decide
 
 /-- Two roots of different classes separated by two bound morphs, each also next to one root. -/
-def separated : List (List Schematic) := [[y₁, x, z, y₂], [y₁, x], [z, y₂]]
+def separated : Inventory Schematic := ⟨[[y₁, x, z, y₂], [y₁, x], [z, y₂]], schematicClass⟩
 
 /-- When two markers separate two roots, each marker is an affix in some solution of the
 definition, but given that both are affixes, neither passes. -/
 theorem separated_affixes :
-    IsAffixIn separated schematicClass (IsContentful schematicClass) x ∧
-      IsAffixIn separated schematicClass (IsContentful schematicClass) z ∧
-      ¬ AffixStep separated schematicClass (IsContentful schematicClass) {m | m = x ∨ m = z} x ∧
-      ¬ AffixStep separated schematicClass (IsContentful schematicClass) {m | m = x ∨ m = z} z := by
+    separated.IsAffix separated.IsContentful x ∧
+      separated.IsAffix separated.IsContentful z ∧
+      ¬ separated.AffixStep separated.IsContentful {m | m = x ∨ m = z} x ∧
+      ¬ separated.AffixStep separated.IsContentful {m | m = x ∨ m = z} z := by
   decide
 
 /-- A suffix that always follows an object root, followed in a longer free form by an action
 root. -/
-def suffixBeforeRoot : List (List Schematic) := [[y₁, x], [y₁, x, y₂]]
+def suffixBeforeRoot : Inventory Schematic := ⟨[[y₁, x], [y₁, x, y₂]], schematicClass⟩
 
 /-- Occurrence on a root is adjacency on either side, so a suffix that always follows an object
 root but precedes an action root in a longer free form occurs on roots of two classes, and is
 not an affix. -/
 theorem suffixBeforeRoot_not_affix :
-    ¬ IsAffixIn suffixBeforeRoot schematicClass (IsContentful schematicClass) x := by
+    ¬ suffixBeforeRoot.IsAffix suffixBeforeRoot.IsContentful x := by
   decide
 
 end Haspelmath2021c

@@ -47,7 +47,7 @@ theorem mem_paradigm {I : Finset ReflexivePronoun} {c : Person.Category} {f : St
   Morphology.mem_formsAt
 
 /-- A reflexive's token is of UD pronoun type `Prs` and marked reflexive. -/
-def toWord (p : ReflexivePronoun) : Morphology.Word := p.toPronoun.toWord (some .Prs) true
+def toWord (p : ReflexivePronoun) : Morphology.Word := p.toPronoun.toWord (some .Prs) (some ())
 
 /-- A reflexive pronoun is a reflexive anaphor. -/
 @[simp]

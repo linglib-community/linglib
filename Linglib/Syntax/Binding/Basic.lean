@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.UD.UPOS
-public import Linglib.Morphology.Word.Agree
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Binding theory

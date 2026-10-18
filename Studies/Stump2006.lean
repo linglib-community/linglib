@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Forms.Stump2006
 public import Linglib.Morphology.Paradigm.Linkage
 public import Linglib.Morphology.Exponence.Domain
+public import Linglib.Morphology.Word.UD
 public import Linglib.Fragments.Slavic.Czech.Nouns
 public import Linglib.Fragments.Slavic.Russian.Case
 public import Linglib.Fragments.Slavic.Russian.Gender
@@ -130,32 +131,13 @@ open Morphology Data.Forms Finset
 Czech inventory with a number, gender being constant within a paradigm. -/
 abbrev CzCell : Type := Czech.Declension.Cell
 
-/-- `caseOf c` reads a case of the forms data as a case. -/
-def caseOf : UD.Case → Option Case
-  | .Nom => some .nom
-  | .Gen => some .gen
-  | .Dat => some .dat
-  | .Acc => some .acc
-  | .Voc => some .voc
-  | .Loc => some .loc
-  | .Ins => some .inst
-  | .Abl => some .abl
-  | _ => none
-
-/-- `numberOf n` reads a number of the forms data as a number. -/
-def numberOf : UD.Number → Option Number
-  | .Sing => some .singular
-  | .Dual => some .dual
-  | .Plur => some .plural
-  | _ => none
-
 /-- The case of a form's cell. -/
 def caseOfForm (f : Form Forms.Cell) : Option Case :=
-  (f.cell.case_ : Option UD.Case).bind caseOf
+  (f.cell.case_ : Option UD.Case).map Case.fromUD
 
 /-- The number of a form's cell. -/
 def numberOfForm (f : Form Forms.Cell) : Option Number :=
-  (f.cell.number : Option UD.Number).bind numberOf
+  (f.cell.number : Option UD.Number).bind Number.fromUD
 
 /-- `czForms` are the Czech rows of the forms data, those of Tables 1, 6 and 8. -/
 def czForms : List (Form Forms.Cell) := Forms.all.filter (·.languageId == "czec1258")

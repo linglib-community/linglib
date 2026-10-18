@@ -165,7 +165,7 @@ theorem contextAt_word_zero :
     (word r none).contextAt (· = zero) .concatenation expFeatures 0 = vContext r := by
   have hi : List.idxOf? (some 0) [none, some 0, some 1] = some 1 := by decide
   simp [hi, vContext, word, ComplexHead.contextAt, ComplexHead.neighbors, ComplexHead.concat,
-    ComplexHead.order, ComplexHead.at?, ComplexHead.Pruned, ComplexHead.visible, expFeatures,
+    ComplexHead.order_eq, ComplexHead.at?, ComplexHead.Pruned, ComplexHead.visible, expFeatures,
     List.range_succ, root_ne_zero]
 
 theorem contextAt_word_one :
@@ -173,11 +173,11 @@ theorem contextAt_word_one :
   by_cases he : e = zero
   · have hi : List.idxOf? (some 1) [none, some 1] = some 1 := by decide
     simp [hi, he, nContext, word, ComplexHead.contextAt, ComplexHead.neighbors,
-      ComplexHead.concat, ComplexHead.order, ComplexHead.at?, ComplexHead.Pruned,
+      ComplexHead.concat, ComplexHead.order_eq, ComplexHead.at?, ComplexHead.Pruned,
       ComplexHead.visible, expFeatures, List.range_succ, root_ne_zero]
   · have hi : List.idxOf? (some 1) [none, some 0, some 1] = some 2 := by decide
     simp [hi, he, nContext, word, ComplexHead.contextAt, ComplexHead.neighbors,
-      ComplexHead.concat, ComplexHead.order, ComplexHead.at?, ComplexHead.Pruned,
+      ComplexHead.concat, ComplexHead.order_eq, ComplexHead.at?, ComplexHead.Pruned,
       ComplexHead.visible, expFeatures, List.range_succ, root_ne_zero]
 
 theorem insertAt_word_zero :

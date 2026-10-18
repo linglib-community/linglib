@@ -38,3 +38,13 @@ def HasPhi.Agree {α β : Type*} [HasPhi α] [HasPhi β] (a : α) (b : β) : Pro
 instance {α β : Type*} [HasPhi α] [HasPhi β] (a : α) (b : β) :
     Decidable (HasPhi.Agree a b) := by
   unfold HasPhi.Agree; infer_instance
+
+namespace HasPhi.Agree
+
+variable {α β : Type*} [HasPhi α] [HasPhi β]
+
+@[refl] theorem refl (a : α) : HasPhi.Agree a a := compat_self _
+
+theorem symm {a : α} {b : β} (h : HasPhi.Agree a b) : HasPhi.Agree b a := Compat.symm h
+
+end HasPhi.Agree
