@@ -89,7 +89,7 @@ def dalabonRr : Marker :=
   { morphs := [.suff "rr"], strategy := .verbalAffix }
 
 /-- Tonga *-an* is the reciprocal verbal suffix ([nordlinger-2023] ex. 21, from
-[maslova-2008]). -/
+[maslova-2008] (9), p. 230). -/
 def tongaAn : Marker := { morphs := [.suff "an"], strategy := .verbalAffix }
 
 /-- A construction whose only reported indicator is the object slot. -/
@@ -194,7 +194,7 @@ theorem monovalent_implies_verbal (hm : ¬ l.construction.Mixed) (ht : l ≠ .to
 /-! ### Mixed transitivity effects
 
 The tendency is not absolute. Tonga's verb-marked reciprocal keeps both reciprocants as
-argument NPs ([maslova-2008]), and in the Australian cases of [evans-et-al-2007] the
+argument NPs ([maslova-2008] (9), p. 230), and in the Australian cases of [evans-et-al-2007] the
 indicators of valency disagree with one another. -/
 
 theorem kuukThaayorre_mixed : Language.kuukThaayorre.construction.Mixed := by decide

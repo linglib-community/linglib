@@ -51,7 +51,7 @@ holds of a sum when some event of the symmetric verb has the group of the sum as
 
 * [winter-2018]
 * [dalrymple-et-al-1998]
-* [dimitriadis-2008]
+* [dimitriadis-2008b]
 * [siloni-2012]
 -/
 
@@ -199,8 +199,8 @@ section Events
 
 variable [DecidableEq A] {E : Type*}
 
-/-- [dimitriadis-2008]'s rule (42): a collective event of two entities is one specified by
-a sub-event of the binary predicate in each direction. -/
+/-- The rule of [dimitriadis-2008b], as (42) states it, makes a collective event of two
+entities one specified by a sub-event of the binary predicate in each direction. -/
 def Dimitriadis (spec : E → E → Prop) (R : E → A → A → Prop)
     (P : E → Finset A → Prop) : Prop :=
   ∀ e (x y : A), x ≠ y →

@@ -138,7 +138,7 @@ def sich : ReflexivePronoun := { form := "sich", person := some .third }
 /-- The reciprocal *einander* 'each other', invariant for person, number and case. It fuses *ein*
 'one' and *ander* 'other' ([gast-haas-2008]) into a single word that also compounds with a
 preposition (*an-einander*, *miteinander*), the kind of fused bipartite form that [evans-2008]
-classes with the reciprocal pronouns. -/
+classes with the reciprocal pronouns (p. 48). -/
 def einander : ReciprocalPronoun := { form := "einander" }
 
 /-! ### Interrogative pronouns
