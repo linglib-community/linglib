@@ -16,7 +16,7 @@ takes the first path and Shan the second, with constituency `[[Num Clf] N]` agai
 `[Num [Clf N]]`, and the two derivations reach the same denotation.
 
 A count noun denotes Link's star of its atoms, the singletons of its individuals, so the noun is
-`Mereology.AlgClosure` over `IoninMatushansky2006.IsAtomOf`. The two lexicons are driven through
+`Mereology.AlgClosure` over `({·} : α → Finset α) '' dog`. The two lexicons are driven through
 `HeimKratzer.Tree.interp`: the Ch'ol root is measure modification by the atom count,
 `Mereology.QMOD`, and the Shan root is the partition numeral `IoninMatushansky2006.cardMod` over
 the atomized noun, `Mereology.atomize`. The distributional diagnostics of the paper's §4, its case
@@ -60,7 +60,7 @@ namespace LittleMoroneyRoyer2022
 open HeimKratzer Mereology
 open HeimKratzer.Tree (interp)
 open PhraseStructure (Tree)
-open IoninMatushansky2006 (cardMod IsAtomOf cardMod_atoms_iff)
+open IoninMatushansky2006 (cardMod cardMod_atoms_iff)
 
 /-! ### The two strategies, in the morphology -/
 
@@ -73,25 +73,23 @@ theorem chol_classifiers_suffixed :
 theorem shan_classifiers_free : ∀ c ∈ Shan.Classifiers.classifiers, c.kind = .free := by
   decide
 
-variable {α : Type} [DecidableEq α] (dog : α → Prop) (g : Assignment (Finset α))
+variable {α : Type} [DecidableEq α] (dog : Set α) (g : Assignment (Finset α))
 
 /-! ### Count nouns, measured and atomized -/
 
 /-- A count noun denotes the atoms and their sums ((6)), Link's star of the singletons of its
 individuals (fn. 4). -/
-def dogs : Finset α → Prop := AlgClosure (IsAtomOf dog)
+def dogs : Finset α → Prop := AlgClosure (· ∈ ({·} : α → Finset α) '' dog)
 
-theorem dogs_iff {x : Finset α} : dogs dog x ↔ x.Nonempty ∧ ∀ a ∈ x, dog a := by
-  rw [dogs, algClosure_iff_of_subset_range_singleton (P := IsAtomOf dog)
-    fun _ ⟨a, _, h⟩ ↦ ⟨a, h.symm⟩]
-  simp [IsAtomOf]
+theorem dogs_iff (x : Finset α) : dogs dog x ↔ x.Nonempty ∧ ↑x ⊆ dog :=
+  algClosure_image_singleton dog x
 
 /-- Atomizing a count noun yields its atoms ((13)), the singletons of its individuals. -/
-theorem atomize_dogs : atomize (dogs dog) = IsAtomOf dog :=
+theorem atomize_dogs : atomize (dogs dog) = (· ∈ ({·} : α → Finset α) '' dog) :=
   atomize_algClosure fun _ ⟨a, _, h⟩ ↦ h ▸ atom_iff_isAtom.2 (Finset.isAtom_singleton a)
 
 theorem qmod_dogs_iff {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
-    QMOD (dogs dog) Finset.card n x ↔ x.card = n ∧ ∀ a ∈ x, dog a := by
+    QMOD (dogs dog) Finset.card n x ↔ x.card = n ∧ ↑x ⊆ dog := by
   simp only [QMOD, dogs_iff, ← Finset.card_pos]
   grind
 
@@ -199,17 +197,17 @@ inductive Animal | a | b | c | cat
 
 -- *mǎa* atomized denotes the three dogs `{a, b, c}` ((52)).
 example (x : Finset Animal) :
-    atomize (dogs (· ≠ Animal.cat)) x ↔
-      x ∈ ({{.a}, {.b}, {.c}} : Finset (Finset Animal)) := by
-  rw [atomize_dogs]
-  unfold IsAtomOf
+    atomize (dogs {.cat}ᶜ) x ↔ x ∈ ({{.a}, {.b}, {.c}} : Finset (Finset Animal)) := by
+  simp only [atomize_dogs, Set.mem_image, Set.mem_compl_singleton_iff]
   revert x
   decide
 
 -- *two dogs* denotes `{ab, ac, bc}` ((51)–(52)).
 example (x : Finset Animal) :
-    QMOD (dogs (· ≠ Animal.cat)) Finset.card 2 x ↔
-      x ∈ ({{.a, .b}, {.a, .c}, {.b, .c}} : Finset (Finset Animal)) :=
-  (qmod_dogs_iff _ two_ne_zero x).trans (by revert x; decide)
+    QMOD (dogs {.cat}ᶜ) Finset.card 2 x ↔
+      x ∈ ({{.a, .b}, {.a, .c}, {.b, .c}} : Finset (Finset Animal)) := by
+  simp only [qmod_dogs_iff _ two_ne_zero, Set.subset_compl_singleton_iff, Finset.mem_coe]
+  revert x
+  decide
 
 end LittleMoroneyRoyer2022
