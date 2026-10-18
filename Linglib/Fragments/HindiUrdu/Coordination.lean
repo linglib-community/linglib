@@ -27,9 +27,10 @@ namespace HindiUrdu.Coordination
 def aur : Coordinator :=
   { morph := .free "aur", gloss := "and", role := .conjunctive }
 
-/-- *bhii* 'also, too', after each coordinand 'both … and'. -/
+/-- *bhii*, after each coordinand 'both … and', also the additive particle
+`HindiUrdu.FocusParticles.bhii`. -/
 def bhii : Coordinator :=
-  { morph := .free "bhii", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
+  { morph := .free "bhii", gloss := "and", role := .conjunctive }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [aur, bhii]

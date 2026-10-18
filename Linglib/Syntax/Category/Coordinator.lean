@@ -3,38 +3,41 @@ module
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Category.Particle.Additive
 
 /-!
 # Coordinators
 
 A coordinator is a word or clitic that links the coordinands of a coordinate construction, such
-as *and*, *or*, *but* and *nor*. This file defines its lexical record: the morph, which says
-whether the coordinator is a free word or a bound clitic or affix, the gloss, the semantic type,
-and the other uses its form has. What a coordinator denotes, an operation on the set of
-coordinands that its semantic type fixes, is `Coordinator.denote` in
+as *and*, *or*, *but* and *nor*. This file defines its lexical record, the morph, which says
+whether the coordinator is a free word or a bound clitic or affix, the gloss and the semantic
+type, and the relations that give the other uses its form has. What a coordinator denotes, an
+operation on the set of coordinands that its semantic type fixes, is `Coordinator.denote` in
 `Semantics/Composition/Coordinator.lean`.
 
 ## Main definitions
 
 * `Coordinator.Role`: the semantic type of a coordinator.
-* `Coordinator`: the morph, gloss and semantic type of a coordinator, with the other uses the
-  same form has.
+* `Coordinator`: the morph, gloss and semantic type of a coordinator.
 * `Coordinator.Correlative`: a pair of correlative coordinators with the single coordinator
   of the plain construction.
 * `Coordinator.IsAlsoComitative`: the coordinator's form is a form of a comitative marker, 'and'
   is 'with'.
+* `Coordinator.IsAlsoAdditive`: the coordinator's form is that of an additive particle, 'and' is
+  'too'.
 
 ## Implementation notes
 
-* A comitative use is a relation to a comitative marker of the language, an adposition or a case
-  with its exponents, not a field, and a quantifier use is an `IndeterminateQuantifier` of the
-  language whose particle is the coordinator. The additive use is a flag until the library has
-  entries for additive particles.
+* The other uses of a coordinator's form are relations to entries of other categories, not fields:
+  a comitative use to a comitative marker of the language, an adposition or a case with its
+  exponents, an additive use to an `AdditiveParticle`, and a quantifier use to an
+  `IndeterminateQuantifier` of the language whose particle is the coordinator.
 * Analyses that divide the conjunctive coordinators further, such as the two conjunction heads
-  of [mitrovic-sauerland-2016], classify the entries in their own studies.
+  of Mitrović and Sauerland, classify the entries in their own studies.
 
 ## References
 
+* [haspelmath-1997]
 * [haspelmath-2007]
 * [mitrovic-sauerland-2016]
 * [stassen-2000]
@@ -68,8 +71,6 @@ structure Coordinator where
   gloss : String
   /-- The semantic type. -/
   role : Coordinator.Role
-  /-- The form is also the additive focus particle 'also, too'. -/
-  alsoAdditive : Bool := false
   deriving DecidableEq, Repr
 
 /-- An emphatic coordination with correlative coordinators, English *both … and*, records the
@@ -101,5 +102,13 @@ def IsAlsoComitative (ms : List Morphology.Morph) (fs : Finset Case) : Prop :=
 instance (ms : List Morphology.Morph) (fs : Finset Case) :
     Decidable (c.IsAlsoComitative ms fs) :=
   inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A coordinator is also additive when its morph is that of an additive particle `a`, so that
+'and' is 'too', the identity of the two that [haspelmath-1997] notes and on which
+[mitrovic-sauerland-2016] build. -/
+def IsAlsoAdditive (a : AdditiveParticle) : Prop := c.morph = a.morph
+
+instance (a : AdditiveParticle) : Decidable (c.IsAlsoAdditive a) :=
+  inferInstanceAs (Decidable (_ = _))
 
 end Coordinator

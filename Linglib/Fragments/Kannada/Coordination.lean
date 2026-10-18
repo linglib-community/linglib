@@ -28,10 +28,11 @@ Each also marks an indefinite series on the interrogative pronouns, *yaar-uu* 'a
 
 namespace Kannada.Coordination
 
-/-- *-uu* 'and', enclitic on each coordinand, also the additive 'also' and the marker of the
-*-uu* series of indefinites, `Kannada.Indefinites.uuSeries`. -/
+/-- *-uu* 'and', enclitic on each coordinand, also the additive particle
+`Kannada.FocusParticles.uu` and the marker of the *-uu* series of indefinites,
+`Kannada.Indefinites.uuSeries`. -/
 def uu : Coordinator :=
-  { morph := .encl "uu", gloss := "and; also", role := .conjunctive, alsoAdditive := true }
+  { morph := .encl "uu", gloss := "and", role := .conjunctive }
 
 /-- *-oo* 'or', enclitic, also the marker of the *-oo* series of indefinites,
 `Kannada.Indefinites.ooSeries`. -/

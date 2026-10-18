@@ -25,9 +25,10 @@ word *ja* before each alternative, which with negation gives 'neither … nor', 
 
 namespace Dargwa.Coordination
 
-/-- *=ra* 'and', enclitic on each coordinand, also the additive 'also, too'. -/
+/-- *=ra* 'and', enclitic on each coordinand, also the additive particle
+`Dargwa.FocusParticles.ra`. -/
 def ra : Coordinator :=
-  { morph := .encl "ra", gloss := "and; also, too", role := .conjunctive, alsoAdditive := true }
+  { morph := .encl "ra", gloss := "and", role := .conjunctive }
 
 /-- *ja* 'or', repeated before each alternative. -/
 def ja : Coordinator :=

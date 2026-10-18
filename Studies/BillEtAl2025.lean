@@ -3,6 +3,7 @@ module
 public import Studies.MitrovicSauerland2016
 public import Linglib.Data.Experiments.BillEtAl2025
 public import Linglib.Fragments.Georgian.Coordination
+public import Linglib.Fragments.Georgian.FocusParticles
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
@@ -84,14 +85,21 @@ def muParticle : Language → Coordinator
   | .georgian => Georgian.Coordination.c
   | .hungarian => Hungarian.Coordination.is_
 
+/-- The additive particle of a test language, Georgian *-c* and Hungarian *is*. -/
+def additiveParticle : Language → AdditiveParticle
+  | .georgian => Georgian.FocusParticles.c
+  | .hungarian => Hungarian.FocusParticles.is_
+
 /-- The μ particle of each test language is also its additive particle, as Mitrović and Sauerland
 predict of μ. -/
-theorem alsoAdditive_muParticle (l : Language) : (muParticle l).alsoAdditive = true := by
+theorem muParticle_isAlsoAdditive (l : Language) :
+    (muParticle l).IsAlsoAdditive (additiveParticle l) := by
   cases l <;> rfl
 
-/-- The J particle of neither test language is an additive particle. -/
-theorem alsoAdditive_jParticle (l : Language) : (jParticle l).alsoAdditive = false := by
-  cases l <;> rfl
+/-- The J particle of neither test language is its additive particle. -/
+theorem not_jParticle_isAlsoAdditive (l : Language) :
+    ¬ (jParticle l).IsAlsoAdditive (additiveParticle l) := by
+  cases l <;> decide
 
 /-! ### Accounts and their measures -/
 
