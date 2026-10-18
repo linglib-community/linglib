@@ -6,6 +6,8 @@ public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Fragments.Tigrinya.Phonology
 public import Linglib.Fragments.Tigre.Phonology
 public import Linglib.Data.Examples.FaustLampitelli2026
+public import Linglib.Phonology.StrictCV.Basic
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Faust and Lampitelli (2026): Guttural syneresis in Tigrinya and Tigre
@@ -25,6 +27,8 @@ analysis needs the element.
 * `rows_derived`: every attested form of the paper's paradigms is a realization of the
   derivation of its underlying form.
 * `rows_unpredicted`: the forms whose retained position the analysis does not predict.
+* `syneresis_37a`: of the two economical realizations of (37a) under the Empty Category
+  Principle, the derivation yields the one that is not standard.
 
 ## Implementation notes
 
@@ -37,7 +41,9 @@ analysis needs the element.
 * The prefixes tɨ- and mɨ- carry empty nuclei realized by epenthesis, as in the paper's
   underlying forms (t_-, m_-); the causative ʔʌ- is lexical (19c).
 * Among the realizations of a run of empty nuclei the analysis takes the Ethiosemitic option
-  C▪C_C▪C (37a): reading left to right, a nucleus after a silent one is realized.
+  C▪C_C▪C (37a): reading left to right, a nucleus after a silent one is realized. Both options
+  satisfy the Empty Category Principle with two epentheses, and the standard right-to-left
+  realization is the other one (`syneresis_37a`).
 * Trans-guttural harmony "can, but does not have to apply" (§2.1), so `realizations` lists
   every option and `rows_derived` asks that each attested form be among them. Realization
   does not feed fusion again, the paper's first way out of the loop of (37b–d).
@@ -604,6 +610,41 @@ theorem rows_derived : ∀ r ∈ rows, r.predicted → ∀ f ∈ r.forms, f ∈ 
 /-- The forms of (17b–d) and (39) realize the position the analysis empties, which it does not
 predict (§3.3.3). -/
 theorem rows_unpredicted : ∀ r ∈ rows, ¬ r.predicted → ∀ f ∈ r.forms, f ∉ r.realizations := by
+  decide +kernel
+
+/-! ### (37a) and the Empty Category Principle -/
+
+/-- The gerund of 'hear' with the suffix *-u*, /m_s_maʕ-u/ (37a). -/
+def gerund37a : Form := attach ((instantiate gerA ⟨["s", "m", "ʕ"]⟩).getD []) ⟨some .u, []⟩
+
+/-- The positions of the nuclei of a form that carry a lexical vowel. -/
+def contentful (f : Form) : Finset ℕ := (Finset.range f.length).filter (Contentful f)
+
+/-- The positions of the nuclei of a form that are pronounced: lexical vowels and nuclei marked
+for epenthesis. -/
+def pronounced (f : Form) : Finset ℕ :=
+  (Finset.range f.length).filter fun i ↦ Contentful f i ∨ f[i]?.map CV.v = some .mark
+
+/-- The nuclei of (37a) after fusion and dissociation: a lexical vowel last, and a first nucleus
+that must be pronounced, since an initial empty CV unit needs its government (fn. 21). -/
+def profile37a : StrictCV.Profile 4 := { full := {3}, forced := {0} }
+
+/-- The realizations of a profile that satisfy the ECP, pronounce the required nuclei, and
+pronounce as few nuclei as possible. -/
+def economical {n : ℕ} (p : StrictCV.FinalNucleus) (w : StrictCV.Profile n) :
+    Finset (Finset (Fin n)) :=
+  let admissible := Finset.univ.filter fun R ↦ StrictCV.SatisfiesECP p w R ∧ w.forced ⊆ R
+  admissible.filter fun R ↦ ∀ R' ∈ admissible, R.card ≤ R'.card
+
+/-- In (37a) a left-aligned run of three empty nuclei precedes the lexical vowel, and the ECP
+needs two epentheses, [C▪C▪C_C] or [C▪C_C▪C], whatever the final nucleus. The first is the
+standard realization; the derivation yields the second, which Ethiosemitic always takes
+(§3.3.3). -/
+theorem syneresis_37a :
+    contentful (dissociation (fusion gerund37a)) = {3} ∧
+      (∀ p, (economical p profile37a).image (·.map Fin.valEmbedding) = {{0, 1, 3}, {0, 2, 3}}) ∧
+      (∀ p, (StrictCV.standard p profile37a).map Fin.valEmbedding = {0, 1, 3}) ∧
+      pronounced (derive gerund37a) = {0, 2, 3} := by
   decide +kernel
 
 end FaustLampitelli2026
