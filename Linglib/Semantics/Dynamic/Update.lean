@@ -29,8 +29,8 @@ is in `Collapse.lean`.
   condition, and the conditions `D.domᶜ`, `D₁.core D₂.dom`, and `D₁.dom ∪ D₂.dom`.
 * `Update.IsTest`: updates that never change the state.
 * `Update.maxBy`: the outputs of an update at which a valuation is locally maximal.
-* `Update.cumul`: the cumulative lift of an update to plural states, `Set.LiftRel` of its
-  relation.
+* `Update.cumul`, `Update.strictLift`: the cumulative and the strict lift of an update to plural
+  states, `Set.LiftRel` of its relation and the images of its selections.
 * `CCP.guard`, `CCP.might`, `CCP.must`, `CCP.negTest`: whole-state tests.
 * `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`,
   `CCP.IsClassical`: the classification of transformers.
@@ -47,6 +47,8 @@ is in `Collapse.lean`.
   of its truth condition, a guard of its acceptance condition.
 * `Update.lower_image`, `CCP.image_lower`: the image and `lower` are mutually inverse on
   distributive transformers.
+* `Update.strictLift_subset_cumul`, `Update.singleton_mem_strictLift_iff`: a strict lift is a
+  cumulative one, and takes a one-row state to a one-row state.
 * `CCP.isClassical_iff_up_down_eq`, `CCP.exists_eq_image_test_iff`: the classical
   transformers are exactly the static ones — `up` of their own content, the
   images of tests; `CCP.might_not_isDistributive` separates.
@@ -77,6 +79,7 @@ studies. [groenendijk-stokhof-1991]'s entailment notions live in
 * [A. Gillies, *On Groenendijk and Stokhof's "Dynamic Predicate Logic"*][gillies-2022]
 * [A. Brasoveanu, *Decomposing Modal Quantification*][brasoveanu-2010]
 * [S. Beck and U. Sauerland, *Cumulation Is Needed: A Reply to Winter (2000)*][beck-sauerland-2000]
+* [S. Minor, *Dependent Plurals and Three Levels of Multiplicity*][minor-2022]
 -/
 
 @[expose] public section
@@ -195,7 +198,7 @@ def IsTest (D : Update S) : Prop := D ⊆ .id
 theorem IsTest.eq (h : IsTest D) (hij : i ~[D] j) : i = j := h hij
 
 /-- `test C` is a test. -/
-theorem isTest_test (C : Condition S) : IsTest (test C) := fun _ h => h.1
+theorem isTest_test (C : Condition S) : IsTest (test C) := fun _ h ↦ h.1
 
 /-- Tests are closed under sequencing. -/
 theorem IsTest.comp (h₁ : IsTest D₁) (h₂ : IsTest D₂) : IsTest (D₁ ○ D₂) := by
@@ -236,8 +239,9 @@ theorem dom_comp (D₁ D₂ : Update S) : (D₁ ○ D₂).dom = D₁.preimage D�
 
 /-! ### Maximization -/
 
-/-- Maximization under a valuation `f`: the outputs of `D` at which no other output of `D` has
-a strictly greater value. The maxima are local, since a nondeterministic `D` may have several. -/
+/-- Maximization under a valuation `f` keeps the outputs of `D` at which no other output of `D`
+has a strictly greater value. The maxima are local, since a nondeterministic `D` may have
+several. -/
 def maxBy {α : Type*} [Preorder α] (f : S → α) (D : Update S) : Update S :=
   {(i, j) | i ~[D] j ∧ ∀ k, i ~[D] k → ¬f j < f k}
 
@@ -268,8 +272,8 @@ theorem cumul_id : cumul (SetRel.id : Update S) = SetRel.id := by
   ext ⟨I, J⟩
   exact Set.liftRel_eq
 
-/-- The lift preserves sequencing: a path through the intermediate rows gives the intermediate
-state. -/
+/-- The lift preserves sequencing, since a path through the intermediate rows gives the
+intermediate state. -/
 theorem cumul_comp (D₁ D₂ : Update S) : cumul (D₁ ○ D₂) = cumul D₁ ○ cumul D₂ := by
   ext ⟨I, J⟩
   exact Set.liftRel_comp
@@ -291,11 +295,32 @@ theorem cumul_test (C : Condition S) : cumul (test C) = test {I | I ⊆ C} := by
   · rintro ⟨rfl, hC⟩
     exact ⟨fun i hi ↦ ⟨i, hi, rfl, hC hi⟩, fun j hj ↦ ⟨j, hj, rfl, hC hj⟩⟩
 
+/-- The strict lift of an update to plural states ([minor-2022] (60)): each input row moves to
+one `D`-successor, and the output state is the image. Where the cumulative lift lets a row have
+several successors, a strict output is an image of its input, so never larger. -/
+def strictLift (D : Update S) : Update (Set S) :=
+  {(I, J) | ∃ f : S → S, (∀ i ∈ I, i ~[D] f i) ∧ f '' I = J}
+
+theorem mem_strictLift : I ~[strictLift D] J ↔ ∃ f : S → S, (∀ i ∈ I, i ~[D] f i) ∧ f '' I = J :=
+  Iff.rfl
+
+theorem strictLift_subset_cumul (D : Update S) : strictLift D ⊆ cumul D := by
+  rintro ⟨I, J⟩ ⟨f, hf, rfl⟩
+  exact ⟨fun i hi ↦ ⟨f i, Set.mem_image_of_mem f hi, hf i hi⟩,
+    fun _ ⟨i, hi, hj⟩ ↦ ⟨i, hi, hj ▸ hf i hi⟩⟩
+
+/-- From a one-row state, the strict lift moves to a one-row state. -/
+theorem singleton_mem_strictLift_iff {i : S} :
+    {i} ~[strictLift D] J ↔ ∃ j, i ~[D] j ∧ J = {j} := by
+  refine ⟨fun ⟨f, hf, h⟩ ↦ ⟨f i, hf i rfl, h ▸ Set.image_singleton⟩, ?_⟩
+  rintro ⟨j, hj, rfl⟩
+  exact ⟨fun _ ↦ j, fun k hk ↦ by rwa [Set.mem_singleton_iff.1 hk], Set.image_singleton⟩
+
 end Update
 
 /-! ## The transformer face -/
 
-/-- A context change potential: a transformer of whole information states. -/
+/-- A context change potential is a transformer of whole information states. -/
 abbrev CCP (S : Type*) := Set S → Set S
 
 namespace CCP
@@ -303,7 +328,7 @@ namespace CCP
 variable {S : Type*} {u v : CCP S}
 
 /-- Sequential composition of CCPs, in diagrammatic order. -/
-def seq (u v : CCP S) : CCP S := λ s => v (u s)
+def seq (u v : CCP S) : CCP S := fun s ↦ v (u s)
 
 /-- `CCP S` is a monoid under `CCP.seq` (scoped; see the implementation notes). -/
 scoped instance : Monoid (CCP S) where
@@ -313,35 +338,35 @@ scoped instance : Monoid (CCP S) where
   one_mul _ := rfl
   mul_one _ := rfl
 
-/-- Dynamic negation by set difference: the states that do not survive `φ`
+/-- Dynamic negation by set difference keeps the states that do not survive `φ`
 ([heim-1982]; [veltman-1996]). -/
-def neg (φ : CCP S) : CCP S := λ s => s \ φ s
+def neg (φ : CCP S) : CCP S := fun s ↦ s \ φ s
 
 /-! ### Whole-state tests -/
 
 /-- `guard C` passes a state through iff it satisfies `C`, else crashes to `∅`. -/
-def guard (C : Set S → Prop) : CCP S := λ s => { p ∈ s | C s }
+def guard (C : Set S → Prop) : CCP S := fun s ↦ { p ∈ s | C s }
 
 /-- A guard whose condition holds passes the state through. -/
 @[simp] theorem guard_pos {C : Set S → Prop} {s} (h : C s) : guard C s = s :=
-  Set.ext λ _ => and_iff_left h
+  Set.ext fun _ ↦ and_iff_left h
 
 /-- A guard whose condition fails crashes to `∅`. -/
 @[simp] theorem guard_neg {C : Set S → Prop} {s} (h : ¬C s) : guard C s = ∅ :=
-  Set.eq_empty_of_forall_notMem λ _ hp => h hp.2
+  Set.eq_empty_of_forall_notMem fun _ hp ↦ h hp.2
 
 @[simp] theorem mem_guard {C : Set S → Prop} {s : Set S} {p : S} :
     p ∈ guard C s ↔ p ∈ s ∧ C s := Iff.rfl
 
 /-- `negTest φ` passes iff `φ` crashes — a whole-state consistency test, not
 the set-difference `neg` (see the implementation notes). -/
-def negTest (φ : CCP S) : CCP S := guard (λ s => ¬ (φ s).Nonempty)
+def negTest (φ : CCP S) : CCP S := guard (fun s ↦ ¬ (φ s).Nonempty)
 
 /-- `might φ` passes iff `φ` yields a nonempty result ([veltman-1996]). -/
-def might (φ : CCP S) : CCP S := guard (λ s => (φ s).Nonempty)
+def might (φ : CCP S) : CCP S := guard (fun s ↦ (φ s).Nonempty)
 
 /-- `must φ` passes iff `φ` returns its input unchanged ([veltman-1996]). -/
-def must (φ : CCP S) : CCP S := guard (λ s => φ s = s)
+def must (φ : CCP S) : CCP S := guard (fun s ↦ φ s = s)
 
 /-! ### Classification -/
 
@@ -354,7 +379,7 @@ theorem isEliminative_id : IsEliminative (id : CCP S) := le_rfl
 /-- Sequencing preserves eliminativity. -/
 theorem IsEliminative.seq (hu : IsEliminative u) (hv : IsEliminative v) :
     IsEliminative (u.seq v) :=
-  λ s => (hv (u s)).trans (hu s)
+  fun s ↦ (hv (u s)).trans (hu s)
 
 /-- A transformer is a *test* if it passes its input through or crashes to
 `∅` — [veltman-1996]'s tests, `Update.IsTest` one carrier up. -/
@@ -362,23 +387,23 @@ def IsTest (u : CCP S) : Prop := ∀ s, u s = s ∨ u s = ∅
 
 /-- Tests are eliminative. -/
 theorem IsTest.isEliminative (h : IsTest u) : IsEliminative u :=
-  λ s p hp => (h s).elim (· ▸ hp) (λ hemp => (Set.notMem_empty p (hemp ▸ hp)).elim)
+  fun s p hp ↦ (h s).elim (· ▸ hp) (fun hemp ↦ (Set.notMem_empty p (hemp ▸ hp)).elim)
 
 /-- Guards are tests. -/
 theorem guard_isTest (C : Set S → Prop) : IsTest (guard C) :=
-  λ s => (Classical.em (C s)).elim (λ h => .inl (guard_pos h)) (λ h => .inr (guard_neg h))
+  fun s ↦ (Classical.em (C s)).elim (fun h ↦ .inl (guard_pos h)) (fun h ↦ .inr (guard_neg h))
 
 /-- A test is the guard of its own acceptance condition — the mirror of
 `Update.IsTest.eq_test_dom`. -/
-theorem IsTest.eq_guard (h : IsTest u) : u = guard fun s => u s = s :=
-  funext λ s => Set.ext λ p =>
-    ⟨λ hp => (h s).elim (λ hs => ⟨hs ▸ hp, hs⟩)
-      (λ h₀ => absurd (h₀ ▸ hp) (Set.notMem_empty p)),
-     λ ⟨hp, hs⟩ => hs.symm ▸ hp⟩
+theorem IsTest.eq_guard (h : IsTest u) : u = guard fun s ↦ u s = s :=
+  funext fun s ↦ Set.ext fun p ↦
+    ⟨fun hp ↦ (h s).elim (fun hs ↦ ⟨hs ▸ hp, hs⟩)
+      (fun h₀ ↦ absurd (h₀ ▸ hp) (Set.notMem_empty p)),
+     fun ⟨hp, hs⟩ ↦ hs.symm ▸ hp⟩
 
 /-- The tests are exactly the guards. -/
 theorem isTest_iff_exists_guard : IsTest u ↔ ∃ C, u = guard C :=
-  ⟨fun h => ⟨_, h.eq_guard⟩, fun ⟨C, hC⟩ => hC ▸ guard_isTest C⟩
+  ⟨fun h ↦ ⟨_, h.eq_guard⟩, fun ⟨C, hC⟩ ↦ hC ▸ guard_isTest C⟩
 
 /-- A transformer is *distributive* if it acts per-element:
 `φ s = ⋃ i ∈ s, φ {i}` — equivalently, it preserves arbitrary joins
@@ -388,21 +413,21 @@ def IsDistributive (φ : CCP S) : Prop :=
 
 /-! ### The classical fragment -/
 
-/-- The static update a content determines: intersection with it. -/
-def up (c : Set S) : CCP S := λ s => s ∩ c
+/-- The static update a content determines is intersection with it. -/
+def up (c : Set S) : CCP S := fun s ↦ s ∩ c
 
-/-- The content an update determines: the indices whose singleton it
-updates successfully. -/
+/-- The content an update determines is the set of indices whose singleton it updates
+successfully. -/
 def down (u : CCP S) : Set S := {i | (u {i}).Nonempty}
 
 /-- `down` retracts `up`. -/
 @[simp] theorem down_up (c : Set S) : down (up c) = c :=
-  Set.ext λ _ => Set.singleton_inter_nonempty
+  Set.ext fun _ ↦ Set.singleton_inter_nonempty
 
 /-- On eliminative updates, content is acceptance on singletons. -/
 theorem IsEliminative.down_eq (he : IsEliminative u) : down u = {i | u {i} = {i}} :=
-  Set.ext λ i => show (u {i}).Nonempty ↔ u {i} = {i} from
-    ⟨λ h => h.subset_singleton_iff.mp (he {i}), λ h => (Set.singleton_nonempty i).mono h.ge⟩
+  Set.ext fun i ↦ show (u {i}).Nonempty ↔ u {i} = {i} from
+    ⟨fun h ↦ h.subset_singleton_iff.mp (he {i}), fun h ↦ (Set.singleton_nonempty i).mono h.ge⟩
 
 /-- An update is *classical* if it is eliminative and distributive. -/
 def IsClassical (u : CCP S) : Prop := IsEliminative u ∧ IsDistributive u
@@ -413,17 +438,17 @@ theorem monotone_up (c : Set S) : Monotone (up c) :=
 
 /-- Static updates are classical. -/
 theorem isClassical_up (c : Set S) : IsClassical (up c) :=
-  ⟨λ _ => Set.inter_subset_left,
-   λ _ => Set.ext λ p =>
-     ⟨λ ⟨hp, hc⟩ => ⟨p, hp, rfl, hc⟩, λ ⟨_, hi, hpi, hc⟩ => ⟨hpi ▸ hi, hc⟩⟩⟩
+  ⟨fun _ ↦ Set.inter_subset_left,
+   fun _ ↦ Set.ext fun p ↦
+     ⟨fun ⟨hp, hc⟩ ↦ ⟨p, hp, rfl, hc⟩, fun ⟨_, hi, hpi, hc⟩ ↦ ⟨hpi ▸ hi, hc⟩⟩⟩
 
-/-- `might` is not distributive: a whole-state test can pass where every
-per-singleton test fails. -/
+/-- `might` is not distributive, since a whole-state test can pass where every per-singleton
+test fails. -/
 theorem might_not_isDistributive :
     ∃ (S : Type) (φ : CCP S), ¬IsDistributive (might φ) := by
-  refine ⟨Bool, (fun s => {p ∈ s | p = true}), fun hD => ?_⟩
+  refine ⟨Bool, (fun s ↦ {p ∈ s | p = true}), fun hD ↦ ?_⟩
   have hfalse :
-      false ∈ might (fun s : Set Bool => {p ∈ s | p = true}) {true, false} :=
+      false ∈ might (fun s : Set Bool ↦ {p ∈ s | p = true}) {true, false} :=
     ⟨Or.inr rfl, true, Or.inl rfl, rfl⟩
   rw [hD] at hfalse
   obtain ⟨i, hi, hmem⟩ := hfalse
@@ -451,7 +476,7 @@ def CCP.lower (φ : CCP S) : Update S := {p | p.2 ∈ φ {p.1}}
 
 /-- Relational images are distributive. -/
 theorem Update.image_isDistributive (R : Update S) : CCP.IsDistributive R.image :=
-  fun _ => by ext; simp only [mem_image, Set.mem_ofPred_eq, Set.mem_singleton_iff]; grind
+  fun _ ↦ by ext; simp only [mem_image, Set.mem_ofPred_eq, Set.mem_singleton_iff]; grind
 
 /-- `lower` is a left inverse of the image, so the relational face loses nothing. -/
 theorem Update.lower_image (R : Update S) : CCP.lower R.image = R := by
@@ -459,14 +484,14 @@ theorem Update.lower_image (R : Update S) : CCP.lower R.image = R := by
 
 /-- The image is a right inverse of `lower` on distributive transformers. -/
 theorem CCP.image_lower (φ : CCP S) (hd : CCP.IsDistributive φ) : (lower φ).image = φ :=
-  funext fun σ => (hd σ).symm
+  funext fun σ ↦ (hd σ).symm
 
 /-- The image reflects (and preserves) the order. -/
 theorem Update.image_le_image_iff : R.image ≤ R'.image ↔ R ⊆ R' :=
-  ⟨fun h ⟨i, _⟩ r => by
+  ⟨fun h ⟨i, _⟩ r ↦ by
       obtain ⟨_, rfl, r'⟩ := h {i} ⟨i, rfl, r⟩
       exact r',
-    fun h _ => image_subset_image_left h⟩
+    fun h _ ↦ image_subset_image_left h⟩
 
 /-! ### The static fragment
 
@@ -477,7 +502,7 @@ does the reverse ([groenendijk-stokhof-1990], §4). -/
 
 /-- `up` of a condition is the image of its test. -/
 theorem CCP.up_eq_image_test (C : Condition S) : CCP.up C = (test C).image :=
-  funext fun σ => (image_test C σ).symm
+  funext fun σ ↦ (image_test C σ).symm
 
 /-- The image of a test is eliminative. -/
 theorem Update.image_test_isEliminative (C : Condition S) :
@@ -487,20 +512,21 @@ theorem Update.image_test_isEliminative (C : Condition S) :
 /-- A transformer is the image of a test iff it is classical. -/
 theorem CCP.exists_eq_image_test_iff {φ : CCP S} :
     (∃ C : Condition S, φ = (test C).image) ↔ CCP.IsClassical φ := by
-  refine ⟨fun ⟨C, hC⟩ => hC ▸ ⟨image_test_isEliminative C, image_isDistributive _⟩,
-    fun ⟨he, hd⟩ => ⟨{i | i ∈ φ {i}}, funext fun s => ?_⟩⟩
+  refine ⟨fun ⟨C, hC⟩ ↦ hC ▸ ⟨image_test_isEliminative C, image_isDistributive _⟩,
+    fun ⟨he, hd⟩ ↦ ⟨{i | i ∈ φ {i}}, funext fun s ↦ ?_⟩⟩
   rw [hd s, image_test]
   ext p
-  exact ⟨fun ⟨i, hi, hpi⟩ => have h : p = i := he {i} hpi; ⟨h ▸ hi, h ▸ hpi⟩,
-    fun ⟨hp, hC⟩ => ⟨p, hp, hC⟩⟩
+  exact ⟨fun ⟨i, hi, hpi⟩ ↦ have h : p = i := he {i} hpi; ⟨h ▸ hi, h ▸ hpi⟩,
+    fun ⟨hp, hC⟩ ↦ ⟨p, hp, hC⟩⟩
 
-/-- The classical updates are exactly the static ones: `up ∘ down` is
-their normal form. -/
+/-- The classical updates are exactly the static ones, with `up ∘ down` as their normal
+form. -/
 theorem CCP.isClassical_iff_up_down_eq {φ : CCP S} :
     CCP.IsClassical φ ↔ CCP.up (CCP.down φ) = φ :=
-  ⟨fun h => by obtain ⟨C, rfl⟩ := exists_eq_image_test_iff.mpr h
-               rw [← up_eq_image_test, down_up],
-   fun h => h ▸ CCP.isClassical_up _⟩
+  ⟨fun h ↦ by
+      obtain ⟨C, rfl⟩ := exists_eq_image_test_iff.mpr h
+      rw [← up_eq_image_test, down_up],
+    fun h ↦ h ▸ CCP.isClassical_up _⟩
 
 end RelationalBridge
 

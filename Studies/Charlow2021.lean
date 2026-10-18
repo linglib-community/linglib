@@ -4,7 +4,6 @@ public import Linglib.Semantics.Composition.Writer
 public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Linglib.Semantics.Mereology
 public import Mathlib.Control.Monad.Cont
-public import Mathlib.Data.Finset.Grade
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -135,8 +134,6 @@ theorem mem_maxAt_Evar_comp {v : R} {P Q : E → Prop} {D : Update S} (hD : Fixe
     refine ⟨⟨hm.prop.1, hj⟩, fun k ⟨hP, hk⟩ hlt ↦ ?_⟩
     exact (maximal_iff_forall_gt.1 hm).2 hlt ⟨hP, (hQ _ hP).1 ⟨k, hk⟩⟩
 
-variable [Fintype E]
-
 /-- `card v n` tests that the value of `v` has `n` atoms (19). -/
 def card (v : R) (n : ℕ) : Update S := test {i | Mereology.atomCount E (val v i) = n}
 
@@ -167,7 +164,7 @@ section Tower
 
 universe u
 
-variable {R S : Type u} {E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
+variable {R S : Type u} {E : Type*} [RegisterStructure R S E] [PartialOrder E]
 
 /-- `exactly v n P` is the dynamic quantifier (3), which introduces, maximizes and counts in one
 scope. -/
@@ -300,7 +297,7 @@ theorem not_hasType_pseudoCumulative (A : Ty) :
     | seq h _ => exact hmax _ h
 
 /-- `K.denote` is the update that the logical form `K` denotes. -/
-def LF.denote {S : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E] :
+def LF.denote {S : Type*} [RegisterStructure R S E] [PartialOrder E] :
     LF R E → Update S
   | .dref v P => Evar v P
   | .max v K => maxAt v K.denote
@@ -308,7 +305,7 @@ def LF.denote {S : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
   | .rel u v r => relTest u v r
   | .seq K L => K.denote ○ L.denote
 
-variable {S : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
+variable {S : Type*} [RegisterStructure R S E] [PartialOrder E]
 
 theorem denote_cumulative :
     (LF.cumulative v u P Q r n m).denote = (cumulative v u P Q r n m : Update S) := rfl
@@ -324,7 +321,7 @@ section PostSuppositional
 
 universe u
 
-variable {R S : Type u} {E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
+variable {R S : Type u} {E : Type*} [RegisterStructure R S E] [PartialOrder E]
 
 /-- A post-suppositional meaning (52) is a computation of the Writer monad over the update monoid,
 whose log is its post-supposition; `pure` and `bind` are (120) and (121), the unit being the
@@ -375,8 +372,6 @@ theorem lower_maxAtU_image (v : R) (D : Update S) : CCP.lower (maxAtU v D.image)
   ext ⟨i, j⟩
   simp [maxAtU, maxAt, maxBy]
 
-variable [Fintype E]
-
 /-- `exactlyU v n P` is the update-theoretic modified numeral (81), of the same form as (3). -/
 def exactlyU (v : R) (n : ℕ) (P : E → Prop) : Cont (CCP S) R :=
   fun k ↦ CCP.seq (maxAtU v (CCP.seq (Evar v P).image (k v))) (card v n).image
@@ -391,7 +386,7 @@ def sentenceULowered (v u : R) (P Q : E → Prop) (r : E → E → Prop) (n m : 
   exactlyU v n P fun a ↦ CCP.seq
     (CCP.lower (maxAtU u (CCP.seq (Evar u Q).image (relTest u a r).image))).image (card u m).image
 
-omit [PartialOrder E] [Fintype E] in
+omit [PartialOrder E] in
 private theorem image_comp_eq_seq (D₁ D₂ : Update S) :
     (D₁ ○ D₂).image = CCP.seq D₁.image D₂.image :=
   funext fun _ ↦ SetRel.image_comp ..
@@ -515,21 +510,6 @@ open Scenario
 /-- An assignment gives each register a plurality. -/
 abbrev St := Reg → Finset Ent
 
-/-- Pluralities are finite sets of atoms, which `#` counts (§2.1). -/
-theorem atomCount_eq_card {α : Type*} [Fintype α] [DecidableEq α] (X : Finset α) :
-    Mereology.atomCount (Finset α) X = X.card := by
-  have : {a : Finset α | Mereology.Atom a ∧ a ≤ X} = (fun e ↦ ({e} : Finset α)) '' ↑X := by
-    ext a
-    simp only [Mereology.atom_iff_isAtom, Finset.isAtom_iff, Set.mem_ofPred_eq, Set.mem_image,
-      Finset.mem_coe]
-    constructor
-    · rintro ⟨⟨e, rfl⟩, h⟩
-      exact ⟨e, Finset.singleton_subset_iff.1 h, rfl⟩
-    · rintro ⟨e, he, rfl⟩
-      exact ⟨⟨e, rfl⟩, Finset.singleton_subset_iff.2 he⟩
-  rw [Mereology.atomCount, this, Set.ncard_image_of_injective _ Finset.singleton_injective,
-    Set.ncard_coe_finset]
-
 variable {σ : Scenario} {a b : Reg}
 
 /-- The object's maximization stores the movies the subject's boys saw. -/
@@ -563,7 +543,7 @@ theorem mem_dom_cumulative (hab : a ≠ b) (hw : σ.WellFormed) (ht : σ.Total)
       (Evar b σ.Movies ○ relTest b a σ.Saw)] k) ↔ True) := fun x hx ↦ by
     simp only [extend_eq_update, mem_maxAt_object hab hw ht hx, exists_eq]
   simp only [cumulative, SetRel.mem_dom, mem_comp_card, mem_maxAt_Evar_comp (fixes_maxAt_object hab)
-    hQ, and_true, maximal_boys_iff hne, extend_eq_update, val_apply, atomCount_eq_card]
+    hQ, and_true, maximal_boys_iff hne, extend_eq_update, val_apply, Mereology.atomCount_finset]
   constructor
   · rintro ⟨j, ⟨⟨hj, hja⟩, hm⟩, hn⟩
     rw [hja] at hj hn
@@ -583,11 +563,11 @@ theorem mem_dom_pseudoCumulative (hab : a ≠ b) (hw : σ.WellFormed) (ht : σ.T
   have hQ : ∀ x, σ.Boys x → ((∃ k, extend i a x ~[maxAt (S := St) b
       (Evar b σ.Movies ○ relTest b a σ.Saw) ○ card b m] k) ↔ (σ.seen x).card = m) := fun x hx ↦ by
     simp only [extend_eq_update, mem_comp_card, mem_maxAt_object hab hw ht hx, exists_eq_left,
-      val_apply, Function.update_self, atomCount_eq_card]
+      val_apply, Function.update_self, Mereology.atomCount_finset]
   have hD : Fixes a (maxAt (S := St) b (Evar b σ.Movies ○ relTest b a σ.Saw) ○ card b m) :=
     (fixes_maxAt_object hab).comp (fixes_test _ _)
   simp only [pseudoCumulative, SetRel.mem_dom, mem_comp_card, mem_maxAt_Evar_comp hD hQ, val_apply,
-    atomCount_eq_card]
+    Mereology.atomCount_finset]
   constructor
   · rintro ⟨j, ⟨-, hX⟩, hn⟩
     exact ⟨_, hX, hn⟩
@@ -658,7 +638,7 @@ theorem mem_down_sentenceU (hw : σ.WellFormed) (ht : σ.Total) (hne : σ.boys.N
       (σ.seen σ.boys).card = m ∧ j = Function.update (Function.update i .v X) .u (σ.seen σ.boys) :=
     fun j ↦ by
     simp only [hGdef, exactlyU, CCP.seq, image_test, Set.mem_inter_iff, card, Set.mem_ofPred_eq,
-      val_apply, atomCount_eq_card]
+      val_apply, Mereology.atomCount_finset]
     simp only [mem_maxAtU_object hw ht hne]
     constructor
     · rintro ⟨⟨X, hX, h, rfl⟩, hm⟩
@@ -668,7 +648,7 @@ theorem mem_down_sentenceU (hw : σ.WellFormed) (ht : σ.Total) (hne : σ.boys.N
   rw [show sentenceU (S := St) Reg.v Reg.u σ.Boys σ.Movies σ.Saw n m =
     CCP.seq (maxAtU Reg.v G) (card Reg.v n).image from rfl]
   simp only [CCP.down, Set.mem_ofPred_eq, CCP.seq, image_test, Set.Nonempty, Set.mem_inter_iff,
-    maxAtU, card, val_apply, atomCount_eq_card, hctx]
+    maxAtU, card, val_apply, Mereology.atomCount_finset, hctx]
   constructor
   · rintro ⟨_, ⟨⟨X, hX, h, hm, rfl⟩, hmax⟩, hn⟩
     obtain rfl : X = σ.boys := by

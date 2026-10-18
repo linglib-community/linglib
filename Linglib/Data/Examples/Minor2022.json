@@ -1,0 +1,122 @@
+[
+  {
+    "id": "minor2022_1a",
+    "source": {"bibkey": "minor-2022", "paperLabel": "(1a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "All the girls were wearing hats.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["licensor", "pluralQ"],
+      ["dependent", "bare"]
+    ],
+    "comment": "A neutral context reading: each girl wears a single hat (p. 432). Dependent plural under a plural quantificational DP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "minor2022_2a",
+    "source": {"bibkey": "minor-2022", "paperLabel": "(2a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Each girl was wearing hats.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["licensor", "singularQ"],
+      ["dependent", "bare"]
+    ],
+    "comment": "Implies that each girl was wearing more than one hat (p. 432).",
+    "verified": "page-image"
+  },
+  {
+    "id": "minor2022_3",
+    "source": {"bibkey": "minor-2022", "paperLabel": "(3)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "All the girls were wearing several hats.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["licensor", "pluralQ"],
+      ["dependent", "cardinal"]
+    ],
+    "comment": "Entails that each girl was wearing more than one hat (p. 432).",
+    "verified": "page-image"
+  },
+  {
+    "id": "minor2022_4",
+    "source": {"bibkey": "minor-2022", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The girls were wearing several hats.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["licensor", "nonQ"],
+      ["dependent", "cardinal"]
+    ],
+    "comment": "Allows a cumulative interpretation on which each girl wears at least one hat (p. 433).",
+    "verified": "page-image"
+  },
+  {
+    "id": "minor2022_11a",
+    "source": {"bibkey": "minor-2022", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The girls were all wearing hats.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["licensor", "pluralQ"],
+      ["dependent", "bare"]
+    ],
+    "comment": "Dependent plural licensed by floating all (p. 435).",
+    "verified": "page-image"
+  },
+  {
+    "id": "minor2022_13",
+    "source": {"bibkey": "minor-2022", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The girls were each wearing hats.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["licensor", "singularQ"],
+      ["dependent", "bare"]
+    ],
+    "comment": "Entails that each girl was wearing more than one hat (p. 436); floating each.",
+    "verified": "page-image"
+  }
+]
