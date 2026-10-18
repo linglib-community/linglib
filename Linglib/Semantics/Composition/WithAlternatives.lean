@@ -189,6 +189,10 @@ theorem WellFormed.map {f : α → β} {m : WithAlternatives α} (hm : m.WellFor
     (f <$> m).WellFormed :=
   hm.bind fun a => WellFormed.unfeatured (f a)
 
+theorem WellFormed.seq {mf : WithAlternatives (α → β)} {ma : WithAlternatives α}
+    (hf : mf.WellFormed) (ha : ma.WellFormed) : (mf <*> ma).WellFormed :=
+  mem_alternatives_seq.2 ⟨_, hf, _, ha, rfl⟩
+
 /-! ### Givenness -/
 
 /-- A meaning is Given with respect to `a` when its alternatives have collapsed to `{a}`. -/
@@ -197,6 +201,14 @@ def Given (m : WithAlternatives α) (a : α) : Prop := m.alternatives = {a}
 /-- Unfeatured meanings are Given with respect to their value. -/
 theorem Given.unfeatured (x : α) : (unfeatured x).Given x :=
   unfeatured_alternatives x
+
+/-- A function evoking every function, applied to an argument that evokes something, evokes every
+value. -/
+theorem alternatives_seq_eq_univ {mf : WithAlternatives (α → β)} {ma : WithAlternatives α}
+    (hf : mf.alternatives = Set.univ) (ha : ma.alternatives.Nonempty) :
+    (mf <*> ma).alternatives = Set.univ :=
+  let ⟨a, ha⟩ := ha
+  Set.eq_univ_of_forall fun b ↦ mem_alternatives_seq.2 ⟨fun _ ↦ b, hf ▸ Set.mem_univ _, a, ha, rfl⟩
 
 /-- A Given function collapses Hamblin composition to application on the argument's alternatives:
 deaccented material contributes exactly its ordinary value. -/

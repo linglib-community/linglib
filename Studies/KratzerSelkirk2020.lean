@@ -8,32 +8,42 @@ public import Studies.HartmannZimmermann2007
 /-!
 # Kratzer and Selkirk (2020): Deconstructing Information Structure
 
-This file formalizes the paper's two-feature decomposition of information structure and
-its semantics in Rooth's alternatives framework. The privative feature [FoC] introduces
-alternatives, setting the alternatives value of a constituent of type τ to the whole domain
-of that type, and imposes no discourse requirement of its own; the squiggle operator that
-must c-command it requires the constituent to represent a contrast with each of a set of
-discourse referents: each must be among the alternatives and differ from the ordinary value, and
-no variant with fewer alternatives may also have it among them. The operator then consumes the
-alternatives, collapsing them to the ordinary value.
-The feature [G] presupposes Givenness, that the alternatives value is the singleton of a
-salient discourse referent, and leaves both values unchanged; the requirement is
-use-conditional, like the German particles *ja* and *doch*. Two consequences follow. No
-constituent can bear both features, since no domain is a singleton (`not_given_mark_focused`),
-and a constituent containing a focus can be Given only if an operator inside it has consumed the
-alternatives (58), which is what licenses second-occurrence focus under *only*
-(`LF.given_only_squiggle`). With no squiggle between them, the meaning of a constituent is the
-meaning of the focus bound into its context (`LF.Ctx.meaning_plug`), so the constituent is Given
-only if its ordinary value ignores the focus (`LF.ord_plug_eq_of_given`). The paper's derivation
-of (58) assumes that it never does: *[Mary]FoC came or didn't come* is Given, with an unconsumed
-FoCus (`LF.given_foc_came_or_not`), and (58) holds where the ordinary value depends on the focus
-(`LF.not_given_plug_foc`). A contrast is represented with the fewest [FoC]-marks that still
-evoke the antecedent, so *John picked [strawberries]FoC at [Sandy's]FoC farm* does not contrast
-with *John picked strawberries at Mary's farm*, while *John picked strawberries at
-[Sandy's]FoC farm* does (`not_representsContrast_variants_top`,
-`representsContrast_variants_narrow`). Newness is no
-feature at all, so the paper's footnote on Hausa rereads the in situ and ex situ answers of
-Hartmann and Zimmermann as unmarked newness and [FoC].
+Kratzer and Selkirk decompose information structure into two privative features, with their
+semantics in Rooth's alternative semantics. [FoC] makes the alternatives of a constituent the whole
+domain of its type and imposes no discourse requirement of its own. The squiggle that must
+c-command it requires its scope to represent a contrast with each of a set of discourse referents
+(49), and then collapses the alternatives to the ordinary value. [G] requires its node to be Given
+with respect to a referent of the preceding discourse and leaves both values unchanged; the
+requirement is use-conditional, like the German particles *ja* and *doch*. Newness is no feature
+at all, so the paper's footnote on Hausa rereads the in situ and ex situ answers of Hartmann and
+Zimmermann as unmarked newness and [FoC].
+
+Two consequences follow. No constituent bears both features, since no domain is a singleton, and a
+constituent containing a FoCus can be Given only if an operator inside it consumes the
+alternatives (58). Through a context with no squiggle, the meaning of a constituent is the meaning
+of the FoCus bound into the context, so the constituent is Given only if its ordinary value
+ignores the FoCus. The paper's derivation of (58) assumes that it never does, but *[Mary]FoC came
+or didn't come* is Given with an unconsumed FoCus. In second-occurrence focus (60) the squiggle
+under *only* consumes the alternatives, and without it the [G] on the VP is not licensed.
+
+## Main definitions
+
+* `LF`, `LF.meaning`: logical forms with labelled nodes, and their meanings.
+* `LF.IsVariant`, `LF.RepresentsContrast`: [FoC]/[G]-variants, and contrast representation (49).
+* `Window`, `LF.Felicitous`: discourse windows, and the use-conditional content of [G] and the
+  squiggle.
+* `LF.Ctx`, `LF.Ctx.Transparent`: one-hole contexts, and those with no squiggle.
+
+## Main results
+
+* `not_given_mark_focused`: no constituent bears both features.
+* `LF.Ctx.meaning_plug`: a context with no squiggle is a continuation.
+* `LF.ord_plug_eq_of_given`, `LF.not_given_plug_foc`: (58) at any depth.
+* `LF.given_foc_came_or_not`: (58) needs the dependence on the FoCus.
+* `LF.representsContrast_narrow`, `LF.not_representsContrast_overfocused`: among all their
+  variants, (51) represents a contrast with (50a) and (50b) does not.
+* `LF.felicitous_sofVP`, `LF.not_felicitous_without_squiggle`: second-occurrence focus (60).
+* `sUnion_alternatives_every_focused`: Schwarzschild's givenness is trivially satisfied (fn. 14).
 
 ## Implementation notes
 
@@ -42,24 +52,17 @@ domain of a type being all its values. The paper's Givenness is the substrate's
 `WithAlternatives.Given`, and its *only* (56), every true member of the salient set being the
 prejacent, is `Focus.Particles.atMost (· = ·)` at the set the squiggle also carries (55b), so the
 paper's indirect association through two occurrences of the contextual variable is a fact about
-the substrate and is not restated. Condition (iii) of (49), which prevents overfocusing, compares
-an expression with its [FoC]/[G]-variants, so `RepresentsContrast` states (49) over a family of
-variants and the squiggle operator (54) carries its expression among them. The variants of a
-two-argument predication are the four markings of its arguments (`variants`), the predicate and
-larger constituents held unmarked, which is all that (50) and (51) vary. Contexts are a window of
-discourse referents: [G] (47) takes its antecedent from the window preceding the context, with no
-anticipatory licensing (fn. 46), and the squiggle (53) from the window surrounding it, since a
-contrast may be represented with a later referent (fn. 58). Logical forms (`LF`) compose by
-function application, with [FoC], [G] and the squiggle as wrappers on the node they label, so the
-[FoC]/[G]-variants of a form are the forms with its erasure (`LF.erase`); (58) is stated over
-their one-hole contexts (`LF.Ctx`). The prosodic spell-out of the features in English (§6–§7) is
-prose.
+the substrate and is not restated. The features are part of a node's label (p. 38), so every node
+of a logical form carries a label, and the variants of a form are its relabellings. [G] (47) takes
+its referent from the window preceding the context, with no anticipatory licensing (fn. 46), and
+the squiggle (53) from the window surrounding it, since a contrast may be represented with a later
+referent (fn. 58). Logical forms compose by function application only. The prosodic spell-out of
+the features in English (§6–§7) is prose.
 
 ## TODO
 
-* The squiggle's presupposition over a logical form's own variants, the forms with its erasure,
-  rather than over a family given with it (`ContrastOperator`), and (49)–(51) and Pressure for
-  [FoC]-Marking (66) with the data of (62)–(65) over those variants.
+* Pressure for [FoC]-Marking (66), with the data of (62)–(65), over the variants of a form.
+* The squiggle of (60) over the whole sentence, contrasting with the preceding sentence.
 * Logical forms with abstraction, where Hamblin alternatives do not distribute.
 
 ## References
@@ -81,15 +84,6 @@ namespace KratzerSelkirk2020
 
 /-! ### The features (45)–(47) -/
 
-/-- [G] indexed with the discourse referent `a` (47) is defined only if `a` is in the window
-`preceding` the context and the meaning is Given with respect to `a` (46), and is then the
-identity. -/
-def applyG {α : Type*} (preceding : Set α) (m : WithAlternatives α) (a : α) (_ : a ∈ preceding)
-    (_ : m.Given a) : WithAlternatives α := m
-
-theorem applyG_eq {α : Type*} (preceding : Set α) (m : WithAlternatives α) (a : α)
-    (ha : a ∈ preceding) (h : m.Given a) : applyG preceding m a ha h = m := rfl
-
 /-- No constituent bears both features, since an F-marked constituent of a type with two values
 is Given with respect to nothing. -/
 theorem not_given_mark_focused {α : Type*} [Nontrivial α] (d : WithAlternatives α) (a : α) :
@@ -104,267 +98,473 @@ theorem useConditional_projects {W : Type*} (F : (W → Prop) → W → Prop)
     (F <$> (⟨atIssue, requirement⟩ : TwoDim W (W → Prop))).notAtIssue = requirement :=
   rfl
 
-/-! ### Contrast representation (49)–(51) -/
-
-section Contrast
-
-variable {α β γ : Type*} {f : α → β → γ}
-
 /-- (49) An expression `v i` represents a contrast with `a` when `a` is among its alternatives
 and differs from its ordinary value, and no variant `v j` with strictly fewer alternatives has
 `a` among them. The last condition prevents overfocusing. -/
-def RepresentsContrast {ι : Type*} (v : ι → WithAlternatives γ) (i : ι) (a : γ) : Prop :=
+def RepresentsContrast {ι γ : Type*} (v : ι → WithAlternatives γ) (i : ι) (a : γ) : Prop :=
   Focus.SquiggleInd (v i).ordinary (v i).alternatives a ∧
     ∀ j, (v j).alternatives ⊂ (v i).alternatives → a ∉ (v j).alternatives
 
-/-- The [FoC]-variants of a predication `f x y` mark its arguments by `m` and leave the predicate
-unmarked. -/
-def variants (f : α → β → γ) (x : α) (y : β) (m : Mark × Mark) : WithAlternatives γ :=
-  map₂ f ((WithAlternatives.unfeatured x).mark m.1) ((WithAlternatives.unfeatured y).mark m.2)
+/-! ### Logical forms
 
-/-- Without (49iii), (50b) *John picked [strawberries]FoC at [Sandy's]FoC farm* would represent a
-contrast with (50a) *John picked strawberries at Mary's farm*, which is among its alternatives
-and differs from it. -/
-theorem squiggleInd_variants_top (hf : Function.Injective2 f) (x : α) {y y' : β} (hy : y' ≠ y) :
-    Focus.SquiggleInd (variants f x y ⊤).ordinary (variants f x y ⊤).alternatives (f x y') :=
-  ⟨Set.mem_image2_of_mem (Set.mem_univ _) (Set.mem_univ _), fun h ↦ hy (hf h).2⟩
+A logical form composes lexical meanings by function application, and a squiggle takes scope over
+a constituent. Every node is labelled with its features, [FoC] and [G] with its referent, which
+are "technically part of [its] labeling" (p. 38), so the [FoC]/[G]-variants of a form are its
+relabellings (49). -/
 
-/-- (49iii) rules (50b) out, since its variant (51) *John picked strawberries at [Sandy's]FoC
-farm* has strictly fewer alternatives and (50a) among them. -/
-theorem not_representsContrast_variants_top [Nontrivial α] (hf : Function.Injective2 f) (x : α)
-    (y y' : β) : ¬ RepresentsContrast (variants f x y) ⊤ (f x y') := by
-  obtain ⟨x', hx'⟩ := exists_ne x
-  refine fun h ↦ h.2 (.unfeatured, .focused) ((WithAlternatives.monotone_alternatives_map₂_mark
-    f _ _ le_top).ssubset_of_not_subset fun hsub ↦ ?_) (Set.mem_image2_of_mem rfl (Set.mem_univ _))
-  obtain ⟨_, rfl, _, -, hxy⟩ := hsub (Set.mem_image2_of_mem (Set.mem_univ x') (Set.mem_univ y))
-  exact hx' (hf hxy).1.symm
+/-- A node's label records whether it bears [FoC] and the referent of its [G], if it bears [G]. -/
+structure Label (α : Type) where
+  /-- Whether the node bears [FoC]. -/
+  mark : Mark
+  /-- The referent the node's [G] is indexed with, if it bears [G]. -/
+  given : Option α
 
-/-- (51) represents a contrast with (50a), since no variant with fewer alternatives evokes
-it. -/
-theorem representsContrast_variants_narrow (hf : Function.Injective2 f) (x : α) {y y' : β}
-    (hy : y' ≠ y) : RepresentsContrast (variants f x y) (.unfeatured, .focused) (f x y') := by
-  refine ⟨⟨Set.mem_image2_of_mem rfl (Set.mem_univ _), fun h ↦ hy (hf h).2⟩, ?_⟩
-  rintro ⟨_ | _, _ | _⟩ hj
-  · rintro ⟨_, -, _, rfl, h⟩
-    exact hy (hf h).2.symm
-  · exact absurd hj (ssubset_irrefl _)
-  · rintro ⟨_, -, _, rfl, h⟩
-    exact hy (hf h).2.symm
-  · exact absurd (WithAlternatives.monotone_alternatives_map₂_mark f _ _ le_top) hj.not_subset
+namespace Label
 
-end Contrast
+variable {α : Type}
 
-/-! ### The squiggle operator (53), (54) -/
+/-- The label of a node with neither feature. -/
+def bare : Label α := ⟨.unfeatured, none⟩
 
-/-- The squiggle operator with a set of discourse antecedents (54) applies to an expression among
-its [FoC]/[G]-variants, and is defined when every antecedent is in the window `surrounding` the
-context and the expression represents a contrast with it (49). -/
-structure ContrastOperator (ι α : Type*) where
-  /-- The [FoC]/[G]-variants of the expression in the operator's scope. -/
-  variants : ι → WithAlternatives α
-  /-- The expression in the operator's scope. -/
-  self : ι
-  /-- The discourse referents of the window surrounding the context. -/
-  surrounding : Set α
-  /-- The contrasting discourse referents. -/
-  antecedents : Set α
-  antecedents_subset : antecedents ⊆ surrounding
-  representsContrast : ∀ a ∈ antecedents, RepresentsContrast variants self a
+/-- The label of a [FoC]-marked node. -/
+def foc : Label α := ⟨.focused, none⟩
 
-namespace ContrastOperator
+end Label
 
-variable {ι α : Type*} (op : ContrastOperator ι α)
-
-/-- The operator consumes the alternatives of its expression, keeping its ordinary value and
-collapsing the alternatives to it (54). -/
-def result : WithAlternatives α := .unfeatured (op.variants op.self).ordinary
-
-/-- After consumption the result is Given with respect to its ordinary value (46), which is what
-(58) requires of a Given constituent containing a focus: the engine of the second-occurrence-focus
-analysis of (59). -/
-theorem result_given : op.result.Given (op.variants op.self).ordinary := rfl
-
-end ContrastOperator
-
-/-- (51) *John picked strawberries at [Sandy's]FoC farm* under a squiggle with (50a) *John picked
-strawberries at Mary's farm* as its antecedent. -/
-def squiggleNarrow {α β γ : Type*} {f : α → β → γ} (hf : Function.Injective2 f) (x : α)
-    {y y' : β} (hy : y' ≠ y) : ContrastOperator (Mark × Mark) γ where
-  variants := variants f x y
-  self := (.unfeatured, .focused)
-  surrounding := {f x y'}
-  antecedents := {f x y'}
-  antecedents_subset := subset_rfl
-  representsContrast := by
-    rintro _ rfl
-    exact representsContrast_variants_narrow hf x hy
-
-/-! ### Logical forms and (58)
-
-A logical form composes lexical meanings by function application, and [FoC], [G] and the squiggle
-wrap the node they label. Through a context with no squiggle the meaning of a constituent is the
-meaning of its hole bound into the context, so the context is a continuation, and (58) holds at any
-depth. -/
-
-/-- A logical form of the paper is a lexical item, a function application, a [FoC]-marked or
-[G]-marked node, or a squiggle with its antecedents, over meanings of each type. -/
+/-- A logical form of the paper is a lexical item, a function application or a squiggle with its
+antecedents, each node with its label, over meanings of each type. -/
 inductive LF : Type → Type 1 where
-  | lex {α : Type} (x : α) : LF α
-  | app {α β : Type} (f : LF (α → β)) (x : LF α) : LF β
-  | foc {α : Type} (t : LF α) : LF α
-  | given {α : Type} (a : α) (t : LF α) : LF α
-  | squiggle {α : Type} (ℭ : Set α) (t : LF α) : LF α
+  | lex {α : Type} (x : α) (l : Label α) : LF α
+  | app {α β : Type} (f : LF (α → β)) (x : LF α) (l : Label β) : LF β
+  | squiggle {α : Type} (ℭ : Set α) (t : LF α) (l : Label α) : LF α
 
 namespace LF
 
 variable {α β γ : Type}
 
-/-- The ordinary value of a logical form overlooks its features and squiggles (45), (47), (54). -/
-def ord : {α : Type} → LF α → α
-  | _, lex x => x
-  | _, app f x => f.ord x.ord
-  | _, foc t => t.ord
-  | _, given _ t => t.ord
-  | _, squiggle _ t => t.ord
+/-- The label of the root. -/
+def label : {α : Type} → LF α → Label α
+  | _, lex _ l => l
+  | _, app _ _ l => l
+  | _, squiggle _ _ l => l
 
-/-- The meaning of a logical form. [FoC] makes the alternatives the whole type (45), [G] leaves
-both values unchanged (47), and a squiggle collapses the alternatives to the ordinary value
-(54). -/
+/-- The ordinary value of a logical form overlooks its labels and squiggles (45), (47), (54). -/
+def ord : {α : Type} → LF α → α
+  | _, lex x _ => x
+  | _, app f x _ => f.ord x.ord
+  | _, squiggle _ t _ => t.ord
+
+/-- The meaning of a logical form. A node applies its function daughter to its argument, a
+squiggle collapses the alternatives of its scope to the ordinary value (54), [FoC] on a node makes
+its alternatives the whole type (45), and [G] leaves both values unchanged (47). -/
 def meaning : {α : Type} → LF α → WithAlternatives α
-  | _, lex x => pure x
-  | _, app f x => f.meaning <*> x.meaning
-  | _, foc t => t.meaning.mark .focused
-  | _, given _ t => t.meaning
-  | _, squiggle _ t => pure t.ord
+  | _, lex x l => (WithAlternatives.unfeatured x).mark l.mark
+  | _, app f x l => (f.meaning <*> x.meaning).mark l.mark
+  | _, squiggle _ t l => (WithAlternatives.unfeatured t.ord).mark l.mark
+
+/-- The meaning of the root before its own [FoC]. -/
+def raw : {α : Type} → LF α → WithAlternatives α
+  | _, lex x _ => .unfeatured x
+  | _, app f x _ => f.meaning <*> x.meaning
+  | _, squiggle _ t _ => .unfeatured t.ord
+
+theorem meaning_eq_mark (t : LF α) : t.meaning = t.raw.mark t.label.mark := by
+  cases t <;> rfl
+
+@[simp] theorem meaning_lex_bare (x : α) : (lex x .bare).meaning = pure x := rfl
 
 @[simp] theorem ordinary_meaning (t : LF α) : t.meaning.ordinary = t.ord := by
   induction t with
-  | lex x => rfl
-  | app f x ihf ihx => simp only [meaning, ord, WithAlternatives.ordinary_seq, ihf, ihx]
-  | foc t ih => simp only [meaning, ord, WithAlternatives.ordinary_mark, ih]
-  | given a t ih => exact ih
-  | squiggle ℭ t ih => rfl
+  | lex x l => simp only [meaning, ord, WithAlternatives.ordinary_mark,
+      WithAlternatives.unfeatured_ordinary]
+  | app f x l ihf ihx =>
+    simp only [meaning, ord, WithAlternatives.ordinary_mark, WithAlternatives.ordinary_seq, ihf,
+      ihx]
+  | squiggle ℭ t l ih => simp only [meaning, ord, WithAlternatives.ordinary_mark,
+      WithAlternatives.unfeatured_ordinary]
 
 /-- Every logical form has its ordinary value among its alternatives. -/
 theorem wellFormed_meaning (t : LF α) : t.meaning.WellFormed := by
   induction t with
-  | lex x => exact WithAlternatives.WellFormed.unfeatured x
-  | app f x ihf ihx => exact WithAlternatives.mem_alternatives_seq.2 ⟨_, ihf, _, ihx, rfl⟩
-  | foc t ih => exact ih.mark _
-  | given a t ih => exact ih
-  | squiggle ℭ t ih => exact WithAlternatives.WellFormed.unfeatured _
+  | lex x l => exact (WithAlternatives.WellFormed.unfeatured x).mark _
+  | app f x l ihf ihx =>
+    exact (ihf.seq ihx).mark _
+  | squiggle ℭ t l ih => exact (WithAlternatives.WellFormed.unfeatured _).mark _
 
-/-- The erasure of a logical form drops its [FoC]- and [G]-marks; its [FoC]/[G]-variants are the
-forms with the same erasure (49). -/
-def erase : {α : Type} → LF α → LF α
-  | _, lex x => lex x
-  | _, app f x => app f.erase x.erase
-  | _, foc t => t.erase
-  | _, given _ t => t.erase
-  | _, squiggle ℭ t => squiggle ℭ t.erase
+theorem wellFormed_raw (t : LF α) : t.raw.WellFormed := by
+  cases t with
+  | lex x l => exact WithAlternatives.WellFormed.unfeatured x
+  | app f x l =>
+    exact f.wellFormed_meaning.seq x.wellFormed_meaning
+  | squiggle ℭ t l => exact WithAlternatives.WellFormed.unfeatured _
 
-/-- The ordinary value overlooks [FoC] and [G], so variants share it (45), (47). -/
-@[simp] theorem ord_erase (t : LF α) : t.erase.ord = t.ord := by
+/-- A node's own mark is a continuation of the meaning of its root. -/
+theorem meaning_eq_bind (t : LF α) :
+    t.meaning = t.raw >>= fun c ↦ (pure c : WithAlternatives α).mark t.label.mark := by
+  rw [meaning_eq_mark, WithAlternatives.mark_eq_bind t.wellFormed_raw]
+
+/-! ### Variants, contrast and felicity -/
+
+/-- Two logical forms are [FoC]/[G]-variants when they are identical except for their labels
+(49). -/
+inductive IsVariant : {α : Type} → LF α → LF α → Prop
+  | lex {α : Type} (x : α) (l l' : Label α) : IsVariant (lex x l) (lex x l')
+  | app {α β : Type} {f f' : LF (α → β)} {x x' : LF α} (l l' : Label β) :
+      IsVariant f f' → IsVariant x x' → IsVariant (app f x l) (app f' x' l')
+  | squiggle {α : Type} (ℭ : Set α) {t t' : LF α} (l l' : Label α) :
+      IsVariant t t' → IsVariant (squiggle ℭ t l) (squiggle ℭ t' l')
+
+theorem IsVariant.refl (t : LF α) : IsVariant t t := by
   induction t with
-  | lex x => rfl
-  | app f x ihf ihx => simp only [erase, ord, ihf, ihx]
-  | foc t ih => exact ih
-  | given a t ih => exact ih
-  | squiggle ℭ t ih => simp only [erase, ord, ih]
+  | lex x l => exact .lex x l l
+  | app f x l ihf ihx => exact .app l l ihf ihx
+  | squiggle ℭ t l ih => exact .squiggle ℭ l l ih
 
-/-- A one-hole context of a logical form, from a hole of type `α` up to a root of type `γ`. -/
+/-- Variants share their ordinary value, which overlooks labels. -/
+theorem IsVariant.ord_eq {s t : LF α} (h : IsVariant s t) : s.ord = t.ord := by
+  induction h with
+  | lex => rfl
+  | app _ _ _ _ ihf ihx => simp only [ord, ihf, ihx]
+  | squiggle _ _ _ _ ih => simp only [ord, ih]
+
+/-- (49) over the variants of a logical form. It represents a contrast with `a` when `a` is among
+its alternatives and differs from its ordinary value, and no variant with strictly fewer
+alternatives has `a` among them. -/
+def RepresentsContrast (t : LF α) (a : α) : Prop :=
+  KratzerSelkirk2020.RepresentsContrast (fun s : {s : LF α // IsVariant s t} ↦ s.1.meaning)
+    ⟨t, .refl t⟩ a
+
+theorem representsContrast_iff {t : LF α} {a : α} :
+    t.RepresentsContrast a ↔ a ∈ t.meaning.alternatives ∧ a ≠ t.ord ∧
+      ∀ s, IsVariant s t → s.meaning.alternatives ⊂ t.meaning.alternatives →
+        a ∉ s.meaning.alternatives := by
+  simp only [RepresentsContrast, KratzerSelkirk2020.RepresentsContrast, Focus.SquiggleInd,
+    ordinary_meaning, Subtype.forall, and_assoc]
+
+end LF
+
+/-- A context of utterance supplies discourse referents of each type, in the window preceding it
+and in the window surrounding it. -/
+structure Window where
+  /-- The referents of the window preceding the context. -/
+  preceding : ∀ α : Type, Set α
+  /-- The referents of the window surrounding the context. -/
+  surrounding : ∀ α : Type, Set α
+
+/-- The label of a node of meaning `m` is licensed when its [G], if any, has its referent in the
+preceding window and the node is Given with respect to it (47); there is no anticipatory [G]
+(fn. 46). -/
+def Label.Licensed {α : Type} (w : Window) (l : Label α) (m : WithAlternatives α) : Prop :=
+  ∀ a ∈ l.given, a ∈ w.preceding α ∧ m.Given a
+
+@[simp] theorem Label.licensed_bare {α : Type} (w : Window) (m : WithAlternatives α) :
+    Label.bare.Licensed w m := nofun
+
+@[simp] theorem Label.licensed_foc {α : Type} (w : Window) (m : WithAlternatives α) :
+    Label.foc.Licensed w m := nofun
+
+namespace LF
+
+variable {α β γ : Type}
+
+/-- A logical form is felicitous in a context when every label is licensed and every squiggle
+represents a contrast with each of its antecedents, which the surrounding window supplies (54);
+a contrast may be represented with a later referent (fn. 58). -/
+def Felicitous (w : Window) : {α : Type} → LF α → Prop
+  | _, lex x l => l.Licensed w (lex x l).meaning
+  | _, app f x l => f.Felicitous w ∧ x.Felicitous w ∧ l.Licensed w (app f x l).meaning
+  | α, squiggle ℭ t l => t.Felicitous w ∧ ℭ ⊆ w.surrounding α ∧
+      (∀ a ∈ ℭ, t.RepresentsContrast a) ∧ l.Licensed w (squiggle ℭ t l).meaning
+
+/-! ### (58) -/
+
+/-- A one-hole context of a logical form, from a hole of type `α` up to a root of type `γ`, each
+node above the hole with its label. -/
 inductive Ctx : Type → Type → Type 1 where
   | hole {α : Type} : Ctx α α
-  | fn {α β γ : Type} (x : LF α) (K : Ctx β γ) : Ctx (α → β) γ
-  | arg {α β γ : Type} (f : LF (α → β)) (K : Ctx β γ) : Ctx α γ
-  | foc {α γ : Type} (K : Ctx α γ) : Ctx α γ
-  | given {α γ : Type} (a : α) (K : Ctx α γ) : Ctx α γ
-  | squiggle {α γ : Type} (ℭ : Set α) (K : Ctx α γ) : Ctx α γ
+  | fn {α β γ : Type} (x : LF α) (l : Label β) (K : Ctx β γ) : Ctx (α → β) γ
+  | arg {α β γ : Type} (f : LF (α → β)) (l : Label β) (K : Ctx β γ) : Ctx α γ
+  | squiggle {α γ : Type} (ℭ : Set α) (l : Label α) (K : Ctx α γ) : Ctx α γ
 
 namespace Ctx
 
 /-- The form with `t` in the hole. -/
 def plug : {α γ : Type} → Ctx α γ → LF α → LF γ
   | _, _, hole, t => t
-  | _, _, fn x K, t => K.plug (app t x)
-  | _, _, arg f K, t => K.plug (app f t)
-  | _, _, foc K, t => K.plug (.foc t)
-  | _, _, given a K, t => K.plug (.given a t)
-  | _, _, squiggle ℭ K, t => K.plug (.squiggle ℭ t)
+  | _, _, fn x l K, t => K.plug (.app t x l)
+  | _, _, arg f l K, t => K.plug (.app f t l)
+  | _, _, squiggle ℭ l K, t => K.plug (.squiggle ℭ t l)
 
 /-- A context is transparent when no squiggle lies between its hole and its root, so nothing in
 it consumes the alternatives of the hole. -/
 def Transparent : {α γ : Type} → Ctx α γ → Prop
   | _, _, hole => True
-  | _, _, fn _ K => K.Transparent
-  | _, _, arg _ K => K.Transparent
-  | _, _, foc K => K.Transparent
-  | _, _, given _ K => K.Transparent
-  | _, _, squiggle _ _ => False
+  | _, _, fn _ _ K => K.Transparent
+  | _, _, arg _ _ K => K.Transparent
+  | _, _, squiggle _ _ _ => False
 
 /-- Through a transparent context the meaning of a constituent is the meaning of its hole bound
 into the context, which is a continuation. -/
 theorem meaning_plug {K : Ctx α γ} (hK : K.Transparent) (t : LF α) :
-    (K.plug t).meaning = t.meaning >>= fun a ↦ (K.plug (lex a)).meaning := by
+    (K.plug t).meaning = t.meaning >>= fun a ↦ (K.plug (lex a .bare)).meaning := by
   induction K with
   | hole => exact (bind_pure _).symm
-  | fn x K ih =>
-    simp only [plug, ih hK (.app _ x), meaning, seq_eq_bind_map, bind_assoc, pure_bind]
-  | arg f K ih =>
-    simp only [plug, ih hK (.app f _), meaning]
+  | fn x l K ih =>
+    simp only [plug, ih hK (.app _ x l), meaning_eq_bind (.app _ x l), raw, label,
+      meaning_lex_bare, seq_eq_bind_map, bind_assoc, pure_bind]
+  | arg f l K ih =>
+    simp only [plug, ih hK (.app f _ l), meaning_eq_bind (.app f _ l), raw, label,
+      meaning_lex_bare]
     rw [WithAlternatives.seq_eq_bind_seq_pure f.meaning t.meaning, bind_assoc]
-  | foc K ih =>
-    simp only [plug, ih hK (.foc _), meaning,
-      WithAlternatives.mark_focused_eq_bind (wellFormed_meaning _), bind_assoc]
-    rfl
-  | given a K ih => simp only [plug, ih hK (.given a _), meaning, pure_bind]
-  | squiggle ℭ K ih => exact hK.elim
+    simp only [bind_assoc]
+  | squiggle ℭ l K ih => exact hK.elim
 
 end Ctx
 
 /-- (58) at any depth. A constituent containing a [FoC]-marked constituent with no squiggle between
 them is Given only if its ordinary value ignores the FoCus. -/
-theorem ord_plug_eq_of_given {K : Ctx α γ} (hK : K.Transparent) {t : LF α} {c : γ}
-    (h : (K.plug (foc t)).meaning.Given c) (v : α) : (K.plug (lex v)).ord = c := by
-  rw [Ctx.meaning_plug hK] at h
+theorem ord_plug_eq_of_given {K : Ctx α γ} (hK : K.Transparent) {t : LF α}
+    (ht : t.label.mark = .focused) {c : γ} (h : (K.plug t).meaning.Given c) (v : α) :
+    (K.plug (lex v .bare)).ord = c := by
+  rw [Ctx.meaning_plug hK, meaning_eq_mark, ht] at h
   rw [← ordinary_meaning]
   exact WithAlternatives.ordinary_eq_of_given_mark_focused_bind (fun _ ↦ wellFormed_meaning _) h v
 
 /-- (58) in the paper's form. A constituent whose ordinary value depends on a [FoC]-marked
 constituent with no squiggle between them is not Given, so it cannot be [G]-marked. -/
 theorem not_given_plug_foc {K : Ctx α γ} (hK : K.Transparent) {v w : α}
-    (hvw : (K.plug (lex v)).ord ≠ (K.plug (lex w)).ord) (t : LF α) (c : γ) :
-    ¬ (K.plug (foc t)).meaning.Given c := fun h ↦
-  hvw ((ord_plug_eq_of_given hK h v).trans (ord_plug_eq_of_given hK h w).symm)
+    (hvw : (K.plug (lex v .bare)).ord ≠ (K.plug (lex w .bare)).ord) {t : LF α}
+    (ht : t.label.mark = .focused) (c : γ) : ¬ (K.plug t).meaning.Given c := fun h ↦
+  hvw ((ord_plug_eq_of_given hK ht h v).trans (ord_plug_eq_of_given hK ht h w).symm)
 
 /-- The dependence is needed, as the paper's derivation of (58) overlooks. *[Mary]FoC came or
 didn't come* contains a FoCus that nothing consumes, yet it is Given with respect to the
 tautology, since its predicate holds of everyone. -/
 theorem given_foc_came_or_not {E W : Type} (came : E → Set W) (mary : E) :
-    (app (lex fun x ↦ came x ∪ (came x)ᶜ) (foc (lex mary))).meaning.Given Set.univ := by
+    (app (lex (fun x ↦ came x ∪ (came x)ᶜ) .bare) (lex mary .foc) .bare).meaning.Given
+      Set.univ := by
   refine Set.ext fun s ↦ ?_
-  simp only [meaning, WithAlternatives.mem_alternatives_seq, WithAlternatives.alternatives_pure,
-    WithAlternatives.mark_focused, WithAlternatives.focused_alternatives, Set.mem_singleton_iff,
-    Set.mem_univ, true_and, exists_eq_left, Set.union_compl_self]
+  simp only [meaning, Label.bare, Label.foc, WithAlternatives.mark_unfeatured,
+    WithAlternatives.mark_focused, WithAlternatives.mem_alternatives_seq,
+    WithAlternatives.unfeatured_alternatives, WithAlternatives.unfeatured_ordinary,
+    WithAlternatives.focused_alternatives, Set.mem_singleton_iff, Set.mem_univ, true_and,
+    exists_eq_left, Set.union_compl_self]
   exact ⟨fun ⟨_, h⟩ ↦ h.symm, fun h ↦ ⟨mary, h.symm⟩⟩
 
-/-- (60) In second-occurrence focus the [G]-marked VP *only ~ [quote [the faculty]FoC]* contains a
-FoCus yet is Given, since the squiggle consumes its alternatives and *only* introduces none of its
-own. -/
-theorem given_only_squiggle {E W : Type} (only : (E → Set W) → E → Set W)
-    (quote : E → E → Set W) (faculty : E) (ℭ : Set (E → Set W)) :
-    (app (lex only) (squiggle ℭ (app (lex quote) (foc (lex faculty))))).meaning.Given
-      (only (quote faculty)) := by
-  simp only [WithAlternatives.Given, meaning, ord, seq_pure, map_pure,
-    WithAlternatives.alternatives_pure]
+/-! ### Overfocusing (49)–(51)
 
-/-- The context between the second occurrence and the VP is not transparent. -/
-theorem not_transparent_only_squiggle {E W : Type} (only : (E → Set W) → E → Set W)
-    (quote : E → E → Set W) (ℭ : Set (E → Set W)) :
-    ¬ (Ctx.arg (lex quote) (.squiggle ℭ (.arg (lex only) .hole))).Transparent :=
-  id
+Over the variants of a predication, every relabelling of its nodes, a narrow FoCus on one argument
+represents a contrast with an antecedent differing there, and the FoCus on both arguments of (50b)
+does not, since the narrow variant (51) has fewer alternatives that still include the
+antecedent. -/
+
+section Overfocusing
+
+variable {σ τ : Type}
+
+/-- The application `g z`, its function, argument and root labelled `l₁`, `l₂`, `l₃`. -/
+def pred₁ (g : σ → τ) (z : σ) (l₁ : Label (σ → τ)) (l₂ : Label σ) (l₃ : Label τ) : LF τ :=
+  app (lex g l₁) (lex z l₂) l₃
+
+theorem isVariant_pred₁ (g : σ → τ) (z : σ) (l₁ l₁' : Label (σ → τ)) (l₂ l₂' : Label σ)
+    (l₃ l₃' : Label τ) : IsVariant (pred₁ g z l₁ l₂ l₃) (pred₁ g z l₁' l₂' l₃') :=
+  .app _ _ (.lex _ _ _) (.lex _ _ _)
+
+theorem eq_pred₁_of_isVariant {g : σ → τ} {z : σ} {l₁ : Label (σ → τ)} {l₂ : Label σ}
+    {l₃ : Label τ} {s : LF τ} (h : IsVariant s (pred₁ g z l₁ l₂ l₃)) :
+    ∃ l₁' l₂' l₃', s = pred₁ g z l₁' l₂' l₃' := by
+  cases h with
+  | app l₃' _ hg hz =>
+    cases hg with
+    | lex _ l₁' _ => cases hz with
+      | lex _ l₂' _ => exact ⟨l₁', l₂', l₃', rfl⟩
+
+/-- A [FoC]-marked function or root makes the application evoke every value. -/
+theorem alternatives_pred₁_eq_univ {g : σ → τ} {z : σ} {l₁ : Label (σ → τ)} {l₂ : Label σ}
+    {l₃ : Label τ} (h : l₁.mark = .focused ∨ l₃.mark = .focused) :
+    (pred₁ g z l₁ l₂ l₃).meaning.alternatives = Set.univ := by
+  rcases l₃ with ⟨_ | _, _⟩
+  · rcases h with h | h
+    · simp only [pred₁, meaning, h, WithAlternatives.mark_unfeatured]
+      exact WithAlternatives.alternatives_seq_eq_univ rfl ⟨_, (lex z l₂).wellFormed_meaning⟩
+    · exact absurd h nofun
+  · rfl
+
+/-- Otherwise the application evokes `g` at the alternatives of its argument. -/
+theorem alternatives_pred₁ {g : σ → τ} {z : σ} {l₁ : Label (σ → τ)} (l₂ : Label σ)
+    {l₃ : Label τ} (h₁ : l₁.mark = .unfeatured) (h₃ : l₃.mark = .unfeatured) :
+    (pred₁ g z l₁ l₂ l₃).meaning.alternatives = g '' (lex z l₂).meaning.alternatives := by
+  simp only [pred₁, meaning, h₁, h₃, WithAlternatives.mark_unfeatured]
+  ext c
+  simp [WithAlternatives.mem_alternatives_seq]
+
+/-- A narrow FoCus on the argument of an injective function represents a contrast, among all the
+variants of the application, with the function at another argument. -/
+theorem representsContrast_pred₁ {g : σ → τ} (hg : Function.Injective g) (z : σ) {z' : σ}
+    (hz : z' ≠ z) : (pred₁ g z .bare .foc .bare).RepresentsContrast (g z') := by
+  have ht : (pred₁ g z .bare .foc .bare).meaning.alternatives = Set.range g := by
+    rw [alternatives_pred₁ _ rfl rfl]; simp [meaning, Label.foc]
+  rw [representsContrast_iff, ht]
+  refine ⟨⟨z', rfl⟩, fun h ↦ hz (hg h), fun s hs hss ↦ ?_⟩
+  obtain ⟨l₁, l₂, l₃, rfl⟩ := eq_pred₁_of_isVariant hs
+  by_cases hu : l₁.mark = .focused ∨ l₃.mark = .focused
+  · exact absurd (Set.subset_univ _) (alternatives_pred₁_eq_univ hu ▸ hss).2
+  · rw [not_or] at hu
+    have h₁ : l₁.mark = .unfeatured := by cases h : l₁.mark <;> simp_all
+    have h₃ : l₃.mark = .unfeatured := by cases h : l₃.mark <;> simp_all
+    rw [alternatives_pred₁ l₂ h₁ h₃] at hss ⊢
+    rcases l₂ with ⟨_ | _, _⟩
+    · rintro ⟨_, rfl, h⟩
+      exact hz (hg h).symm
+    · exact absurd (by simp [meaning]) (ne_of_ssubset hss)
+
+variable {α β γ : Type} {f : α → β → γ}
+
+/-- The predication `f x y`, its nodes labelled from the function down to the root. -/
+def pred₂ (f : α → β → γ) (x : α) (y : β) (l₁ : Label (α → β → γ)) (l₂ : Label α)
+    (l₃ : Label (β → γ)) (l₄ : Label β) (l₅ : Label γ) : LF γ :=
+  app (pred₁ f x l₁ l₂ l₃) (lex y l₄) l₅
+
+theorem isVariant_pred₂ (f : α → β → γ) (x : α) (y : β) {l₁ l₁' : Label (α → β → γ)}
+    {l₂ l₂' : Label α} {l₃ l₃' : Label (β → γ)} {l₄ l₄' : Label β} {l₅ l₅' : Label γ} :
+    IsVariant (pred₂ f x y l₁ l₂ l₃ l₄ l₅) (pred₂ f x y l₁' l₂' l₃' l₄' l₅') :=
+  .app _ _ (isVariant_pred₁ ..) (.lex _ _ _)
+
+theorem eq_pred₂_of_isVariant {x : α} {y : β} {l₁ : Label (α → β → γ)} {l₂ : Label α}
+    {l₃ : Label (β → γ)} {l₄ : Label β} {l₅ : Label γ} {s : LF γ}
+    (h : IsVariant s (pred₂ f x y l₁ l₂ l₃ l₄ l₅)) :
+    ∃ l₁' l₂' l₃' l₄' l₅', s = pred₂ f x y l₁' l₂' l₃' l₄' l₅' := by
+  unfold pred₂ at h
+  cases h with
+  | app l₅' _ hfx hy =>
+    obtain ⟨l₁', l₂', l₃', rfl⟩ := eq_pred₁_of_isVariant hfx
+    cases hy with
+    | lex _ l₄' _ => exact ⟨l₁', l₂', l₃', l₄', l₅', rfl⟩
+
+theorem alternatives_pred₂_eq_univ {x : α} {y : β} {l₁ : Label (α → β → γ)} {l₂ : Label α}
+    {l₃ : Label (β → γ)} {l₄ : Label β} {l₅ : Label γ}
+    (h : l₁.mark = .focused ∨ l₃.mark = .focused ∨ l₅.mark = .focused) :
+    (pred₂ f x y l₁ l₂ l₃ l₄ l₅).meaning.alternatives = Set.univ := by
+  rcases l₅ with ⟨_ | _, _⟩
+  · have h' : l₁.mark = .focused ∨ l₃.mark = .focused := by
+      rcases h with h | h | h
+      exacts [.inl h, .inr h, absurd h nofun]
+    simp only [pred₂, meaning, WithAlternatives.mark_unfeatured]
+    exact WithAlternatives.alternatives_seq_eq_univ (alternatives_pred₁_eq_univ h')
+      ⟨_, (lex y l₄).wellFormed_meaning⟩
+  · rfl
+
+theorem alternatives_pred₂ {x : α} {y : β} {l₁ : Label (α → β → γ)} (l₂ : Label α)
+    {l₃ : Label (β → γ)} (l₄ : Label β) {l₅ : Label γ} (h₁ : l₁.mark = .unfeatured)
+    (h₃ : l₃.mark = .unfeatured) (h₅ : l₅.mark = .unfeatured) :
+    (pred₂ f x y l₁ l₂ l₃ l₄ l₅).meaning.alternatives =
+      Set.image2 f (lex x l₂).meaning.alternatives (lex y l₄).meaning.alternatives := by
+  have := alternatives_pred₁ (g := f) (z := x) l₂ h₁ h₃
+  simp only [pred₂, meaning, h₅, WithAlternatives.mark_unfeatured] at this ⊢
+  ext c
+  simp only [WithAlternatives.mem_alternatives_seq, this, Set.mem_image, Set.mem_image2]
+  constructor
+  · rintro ⟨_, ⟨a, ha, rfl⟩, b, hb, rfl⟩
+    exact ⟨a, ha, b, hb, rfl⟩
+  · rintro ⟨a, ha, b, hb, rfl⟩
+    exact ⟨_, ⟨a, ha, rfl⟩, b, hb, rfl⟩
+
+private theorem marks_of_not {l₁ : Label (α → β → γ)} {l₃ : Label (β → γ)} {l₅ : Label γ}
+    (h : ¬ (l₁.mark = .focused ∨ l₃.mark = .focused ∨ l₅.mark = .focused)) :
+    l₁.mark = .unfeatured ∧ l₃.mark = .unfeatured ∧ l₅.mark = .unfeatured := by
+  rcases l₁ with ⟨_ | _, _⟩ <;> rcases l₃ with ⟨_ | _, _⟩ <;> rcases l₅ with ⟨_ | _, _⟩ <;>
+    simp_all
+
+/-- (51) *John picked strawberries at [Sandy's]FoC farm* represents a contrast with (50a) *John
+picked strawberries at Mary's farm*: no variant with fewer alternatives evokes it. -/
+theorem representsContrast_narrow (hf : Function.Injective2 f) (x : α) {y y' : β} (hy : y' ≠ y) :
+    (pred₂ f x y .bare .bare .bare .foc .bare).RepresentsContrast (f x y') := by
+  have ht : (pred₂ f x y .bare .bare .bare .foc .bare).meaning.alternatives =
+      Set.image2 f {x} Set.univ := by
+    rw [alternatives_pred₂ _ _ rfl rfl rfl]; rfl
+  rw [representsContrast_iff, ht]
+  refine ⟨⟨x, rfl, y', trivial, rfl⟩, fun h ↦ hy (hf h).2, fun s hs hss ↦ ?_⟩
+  obtain ⟨l₁, l₂, l₃, l₄, l₅, rfl⟩ := eq_pred₂_of_isVariant hs
+  by_cases hu : l₁.mark = .focused ∨ l₃.mark = .focused ∨ l₅.mark = .focused
+  · exact absurd (Set.subset_univ _) (alternatives_pred₂_eq_univ hu ▸ hss).2
+  obtain ⟨h₁, h₃, h₅⟩ := marks_of_not hu
+  rw [alternatives_pred₂ l₂ l₄ h₁ h₃ h₅] at hss ⊢
+  rcases l₂ with ⟨_ | _, _⟩ <;> rcases l₄ with ⟨_ | _, _⟩
+  · rintro ⟨_, -, _, rfl, h⟩
+    exact hy (hf h).2.symm
+  · exact absurd (by rfl) (ne_of_ssubset hss)
+  · rintro ⟨_, -, _, rfl, h⟩
+    exact hy (hf h).2.symm
+  · exact absurd (Set.image2_subset (Set.subset_univ _) subset_rfl) hss.2
+
+/-- (50b) *John picked [strawberries]FoC at [Sandy's]FoC farm* does not represent a contrast with
+(50a), since its variant (51) has strictly fewer alternatives and (50a) among them (49iii). -/
+theorem not_representsContrast_overfocused [Nontrivial α] (hf : Function.Injective2 f) (x : α)
+    (y y' : β) : ¬ (pred₂ f x y .bare .foc .bare .foc .bare).RepresentsContrast (f x y') := by
+  intro h
+  obtain ⟨x', hx'⟩ := exists_ne x
+  refine (representsContrast_iff.1 h).2.2 (pred₂ f x y .bare .bare .bare .foc .bare)
+    (isVariant_pred₂ f x y) ?_ ?_
+  · rw [alternatives_pred₂ _ _ rfl rfl rfl, alternatives_pred₂ _ _ rfl rfl rfl]
+    refine (Set.image2_subset (Set.subset_univ _) subset_rfl).ssubset_of_not_subset fun hsub ↦ ?_
+    obtain ⟨_, rfl, _, -, h⟩ := hsub ⟨x', trivial, y, trivial, rfl⟩
+    exact hx' (hf h).1.symm
+  · rw [alternatives_pred₂ _ _ rfl rfl rfl]
+    exact ⟨x, rfl, y', trivial, rfl⟩
+
+/-- (51) under a squiggle whose antecedent (50a) the surrounding window supplies is felicitous. -/
+theorem felicitous_squiggle_narrow (hf : Function.Injective2 f) (x : α) {y y' : β} (hy : y' ≠ y)
+    (w : Window) (hw : f x y' ∈ w.surrounding γ) :
+    (squiggle {f x y'} (pred₂ f x y .bare .bare .bare .foc .bare) .bare).Felicitous w := by
+  refine ⟨?_, Set.singleton_subset_iff.2 hw, ?_, Label.licensed_bare w _⟩
+  · simp [pred₂, pred₁, Felicitous]
+  · rintro _ rfl
+    exact representsContrast_narrow hf x hy
+
+end Overfocusing
+
+/-! ### Second-occurrence focus (60) -/
+
+section SecondOccurrence
+
+variable {E W : Type} (only : (E → Set W) → E → Set W) (quote : E → E → Set W) (faculty : E)
+
+/-- The VP of (60), *only ~𝔞 [quote [the faculty]FoC]*, [G]-marked with referent `p`. -/
+def sofVP (𝔞 p : E → Set W) : LF (E → Set W) :=
+  app (lex only .bare) (squiggle {𝔞} (pred₁ quote faculty .bare .foc .bare) .bare)
+    ⟨.unfeatured, some p⟩
+
+/-- (60) The [G]-marked VP containing the second occurrence of *the faculty* is felicitous. Its
+squiggle represents a contrast with an accommodated antecedent, quoting someone other than the
+faculty (fn. 53), and consumes the FoCus, so the VP is Given with respect to the VP of the
+preceding sentence. -/
+theorem felicitous_sofVP (hq : Function.Injective quote) {other : E} (ho : other ≠ faculty)
+    (w : Window) (hp : only (quote faculty) ∈ w.preceding _)
+    (ha : quote other ∈ w.surrounding _) :
+    (sofVP only quote faculty (quote other) (only (quote faculty))).Felicitous w := by
+  refine ⟨Label.licensed_bare w _,
+    ⟨by simp [pred₁, Felicitous], Set.singleton_subset_iff.2 ha, ?_, Label.licensed_bare w _⟩, ?_⟩
+  · rintro _ rfl
+    exact representsContrast_pred₁ hq faculty ho
+  · intro p hp'
+    obtain rfl := Option.mem_some_iff.1 hp'
+    refine ⟨hp, Set.ext fun c ↦ ?_⟩
+    simp [meaning, ord, pred₁, Label.bare, WithAlternatives.mem_alternatives_seq, eq_comm]
+
+/-- Without the squiggle the [G] on the VP is not licensed when whom one quotes matters to the
+VP, since the FoCus on *the faculty* then reaches it (58). -/
+theorem not_felicitous_without_squiggle {v v' : E} (hvv : only (quote v) ≠ only (quote v'))
+    (w : Window) (p : E → Set W) :
+    ¬ (app (lex only .bare) (pred₁ quote faculty .bare .foc .bare)
+      ⟨.unfeatured, some p⟩).Felicitous w := fun ⟨_, _, hl⟩ ↦
+  not_given_plug_foc (K := .arg (lex quote .bare) .bare
+    (.arg (lex only .bare) ⟨.unfeatured, some p⟩ .hole)) trivial (v := v) (w := v') hvv
+    (t := lex faculty .foc) rfl p (hl p rfl).2
+
+end SecondOccurrence
 
 end LF
+
 
 /-! ### A-Givenness (§3) -/
 
