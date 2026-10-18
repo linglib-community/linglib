@@ -41,9 +41,10 @@ construction actually shows is read off its indicators one at a time, since
 they can disagree: a Kuuk Thaayorre reciprocal can keep ergative on its subject
 with no object slot, a Dalabon one takes intransitive agreement yet incorporates
 the patient ([evans-et-al-2007]). A construction records only the indicators
-a source reports, and languages may override the default throughout (Tonga:
-[maslova-2008]). Hurst's Malagasy case, bivalent at f-structure and monovalent
-at c-structure ([hurst-2012]), splits levels rather than indicators and is not
+a source reports, and a language may override the default: a Tonga verb-marked reciprocal keeps
+both reciprocants as arguments, a construction Maslova calls very rare and of somewhat
+controversial status ([maslova-2008] (9), p. 230). Hurst's Malagasy case, bivalent at f-structure
+and monovalent at c-structure ([hurst-2012]), splits levels rather than indicators and is not
 representable here. A bound reciprocal pronoun (Warlpiri *-nyanu*) fills an argument slot and is
 an argument strategy. The clitic of a syntactically formed reciprocal verb (French *se*) is not an
 object ([siloni-2012]) and marks the predicate, as do German clitic *sich*, the only *sich* with a

@@ -31,8 +31,7 @@ def drugDruga : Marker :=
 /-- -ся *-sja* — verbal postfix, reflexive-identical reciprocal uses
     ([nordlinger-2023] ex. 31). -/
 def sja : Marker :=
-  { morphs := [.suff "sja"], script := some "-ся", strategy := .verbalAffix
-   }
+  { morphs := [.suff "sja"], script := some "-ся", strategy := .verbalAffix }
 
 /-- себя *sebja* — the reflexive pronoun (for contrast), one form for every person and
     number. -/
