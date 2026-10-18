@@ -2,7 +2,6 @@ module
 
 public import Linglib.Syntax.Reciprocal
 public import Studies.HeimLasnikMay1991
-public import Linglib.Syntax.Category.Verb.Reciprocal
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Case
 public import Linglib.Semantics.Plurality.Groups
@@ -304,14 +303,6 @@ theorem reciprocalize_isComplexRole (ho : r.objectProfile = some o)
     ((reciprocalize r).subjectProfile).IsComplexRole := by
   rw [reciprocalize_subjectProfile ho]
   exact EntailmentProfile.isComplexRole_union ha hp
-
-/-- A reciprocal verb entry's bundled subject role is the subject of its reciprocalized base
-grid: the entry-level and grid-level operations agree. -/
-theorem bundledSubjectProfile_eq_reciprocalize (v : Verb.Reciprocal)
-    {b : Verb} {ps po : EntailmentProfile} (hb : v.base = some b)
-    (hs : b.subjectEntailments = some ps) (ho : b.objectEntailments = some po) :
-    v.bundledSubjectProfile = some (reciprocalize ⟨ps, some po⟩).subjectProfile := by
-  rw [Verb.Reciprocal.bundledSubjectProfile_eq hb hs ho]; rfl
 
 end Reciprocalize
 

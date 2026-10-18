@@ -4,18 +4,18 @@ public import Linglib.Syntax.Reciprocal
 public import Linglib.Semantics.Plurality.Reciprocal
 public import Studies.Siloni2012
 public import Studies.Winter2018
-public import Linglib.Fragments.Romance.Portuguese.Reciprocals
-public import Linglib.Fragments.Romance.Catalan.Reciprocals
-public import Linglib.Fragments.Romance.Italian.Reciprocals
-public import Linglib.Fragments.Romance.Spanish.Reciprocals
-public import Linglib.Fragments.Swahili.Reciprocals
+public import Linglib.Fragments.Romance.Portuguese.Verbs
+public import Linglib.Fragments.Romance.Catalan.Verbs
+public import Linglib.Fragments.Romance.Italian.Verbs
+public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Fragments.Swahili.Verbs
 
 /-!
 # Palmieri (2024): Lexical and Grammatical Reciprocity
 
-This file formalizes the second chapter of [palmieri-2024], on lexical reciprocity in Romance.
-Against the language-level parameter of [siloni-2012], on which Romance forms its reciprocals
-in the syntax, verbs fall into three classes by the entries they carry: reciprocal
+This file formalizes the second chapter of Palmieri's thesis, on lexical reciprocity in
+Romance. Against Siloni's (2012) language-level parameter, on which Romance forms its
+reciprocals in the syntax, verbs fall into three classes by the entries they carry: reciprocal
 intransitives with a lexical reciprocal entry only, plain transitives with a transitive entry
 only, and verbs like 'hug' with both, whose reciprocal reading requires *se* in most
 environments but emerges without it in language-specific ones, Brazilian Portuguese finite
@@ -30,20 +30,21 @@ disappear and the pseudo-reciprocal reading survives exactly for the classes wit
 entry (`grammatical_needs_se`, `pseudo_without_se_iff`). A Romance lexical reciprocal is a
 verb with some construction in which a reciprocal interpretation emerges without *se*, the
 chapter's definition (44), which is having a lexical entry, in every language
-(`lexicalReciprocalIn_iff`). Grammatical reciprocity is plain in the sense of [winter-2018]
-for any relation, *x and y kissed each other* being *x kissed y and y kissed x* (50)
-(`strongReciprocity_plainReciprocity`), whereas the collective predicate of a lexical entry is
-not so constrained, 'divorce' and 'kiss' failing one direction each (53), (54). The reciprocal
-'with'-construction tracks the lexical entry, the generalization of [kemmer-1993], including
-non-symmetric members and the *si*-retaining Italian cases that refine the French-based
-restriction of [siloni-2012] (`withConstruction_iff_lexical`).
+(`lexicalReciprocalIn_iff`). Grammatical reciprocity is Strong Reciprocity of the binary
+relation, *x and y kissed each other* being *x kissed y and y kissed x* (50), and so plain in
+Winter's (2018) sense for any relation (`strongReciprocity_plainReciprocity`), whereas the
+collective predicate of a lexical entry is not so constrained, 'divorce' and 'kiss' failing one
+direction each (53), (54). The reciprocal 'with'-construction tracks the lexical entry,
+Kemmer's (1993) generalization, including non-symmetric members and the *si*-retaining Italian
+cases that refine Siloni's French-based restriction (`withConstruction_iff_lexical`).
 
 ## Implementation notes
 
-The entries are primitive and the class tables derived. The per-language inventories of
-lexical reciprocals come from the Romance Fragments, and one theorem from the fourth
-chapter's Swahili data records that lexical reciprocity need not be derivational. The Swahili
-chapters and the questionnaires are not otherwise formalized.
+The entries are primitive and the class tables derived. Appendix A's verbs are entries of the
+Romance Fragments (`appendixA`), and Appendix C pairs the Swahili lexical reciprocals of the
+fourth chapter with their bases (`appendixC`), from which one theorem records that lexical
+reciprocity need not be derivational. The Swahili chapters and the questionnaires are not
+otherwise formalized.
 
 ## References
 
@@ -61,9 +62,9 @@ open Reciprocal
 
 /-! ### The verb classes and their entries (Table 2.1) -/
 
-/-- The three classes of Romance verbs: 'chat', with no transitive entry (31); 'describe',
-unambiguously transitive (32); and 'hug', transitive with a lexical reciprocal entry
-besides (34), (38), (40), (42). -/
+/-- Romance verbs fall into three classes, those like 'chat', with no transitive entry (31),
+those like 'describe', unambiguously transitive (32), and those like 'hug', transitive with a
+lexical reciprocal entry besides (34), (38), (40), (42). -/
 inductive VerbClass where
   | reciprocalIntransitive
   | plainTransitive
@@ -77,11 +78,11 @@ def VerbClass.formations : VerbClass → List Formation
   | .plainTransitive => [.syntactic]
   | .reciprocalTransitive => [.lexical, .syntactic]
 
-/-- The first column of Table 2.1: a class combines with *se* iff it has a transitive
+/-- By the first column of Table 2.1, a class combines with *se* iff it has a transitive
 entry. -/
 def VerbClass.CombinesWithSe (c : VerbClass) : Prop := Formation.syntactic ∈ c.formations
 
-/-- The second column of Table 2.1: a class expresses reciprocity by itself iff it has a
+/-- By the second column of Table 2.1, a class expresses reciprocity by itself iff it has a
 lexical entry. -/
 def VerbClass.ReciprocityByItself (c : VerbClass) : Prop := Formation.lexical ∈ c.formations
 
@@ -91,7 +92,7 @@ instance : DecidablePred VerbClass.CombinesWithSe :=
 instance : DecidablePred VerbClass.ReciprocityByItself :=
   fun c ↦ inferInstanceAs (Decidable (Formation.lexical ∈ c.formations))
 
-/-- Table 2.1 as printed: the intransitives express reciprocity by themselves and reject
+/-- In Table 2.1 as printed, the intransitives express reciprocity by themselves and reject
 *se*, the plain transitives the reverse, and the third class both. -/
 theorem table21 :
     (¬ VerbClass.reciprocalIntransitive.CombinesWithSe ∧
@@ -100,19 +101,6 @@ theorem table21 :
         ¬ VerbClass.plainTransitive.ReciprocityByItself) ∧
       (VerbClass.reciprocalTransitive.CombinesWithSe ∧
         VerbClass.reciprocalTransitive.ReciprocityByItself) := by
-  decide
-
-/-- The divergence from [siloni-2012]: Italian carries lexical reciprocal entries, class 3
-*abbracciare* 'hug' (40), though the language-level parameter classifies it as syntax-set. -/
-theorem romance_not_monolithic :
-    VerbClass.reciprocalTransitive.ReciprocityByItself ∧
-      Siloni2012.Language.italian.formation = Formation.syntactic :=
-  ⟨by decide, rfl⟩
-
-/-- The witness grounded in the Italian Fragment: *abbracciare* carries a lexical reciprocal
-entry alongside its homophonous transitive alternate. -/
-theorem abbracciare_grounds_divergence :
-    "abbracciare" ∈ Italian.Reciprocals.lexicalReciprocals.map (·.form) := by
   decide
 
 /-! ### The *se*-less environments (Table 2.2) -/
@@ -133,8 +121,8 @@ inductive Environment where
   | absoluteParticipial
   deriving DecidableEq
 
-/-- Table 2.2: whether the language lets a class-3 verb receive a reciprocal interpretation
-without *se* in the environment. -/
+/-- Table 2.2 records whether the language lets a class-3 verb receive a reciprocal
+interpretation without *se* in the environment. -/
 def SeOmissible : Language → Environment → Prop
   | .brazilianPortuguese, .absoluteParticipial => False
   | .brazilianPortuguese, _ => True
@@ -152,12 +140,32 @@ instance : ∀ (l : Language) (e : Environment), Decidable (SeOmissible l e) := 
 theorem every_language_diagnosable (l : Language) : SeOmissible l .analyticCausative := by
   cases l <;> decide
 
-/-- Per-language inventories of lexical reciprocals, from the Fragments. -/
-def inventory : Language → List Verb
-  | .brazilianPortuguese => Portuguese.Reciprocals.lexicalReciprocals
-  | .italian => Italian.Reciprocals.lexicalReciprocals.map (·.toVerb)
-  | .spanish => Spanish.Reciprocals.lexicalReciprocals
-  | .catalan => Catalan.Reciprocals.lexicalReciprocals
+/-- The verbs of Appendix A, class 3 verbs with a lexical reciprocal entry beside their
+transitive one. -/
+def appendixA : Language → List Verb
+  | .brazilianPortuguese =>
+      [Portuguese.Verbs.abracar, Portuguese.Verbs.beijar, Portuguese.Verbs.casar,
+        Portuguese.Verbs.consultar, Portuguese.Verbs.cumprimentar, Portuguese.Verbs.encontrar,
+        Portuguese.Verbs.namorar]
+  | .italian =>
+      [Italian.Verbs.abbracciare, Italian.Verbs.baciare, Italian.Verbs.coccolare,
+        Italian.Verbs.conoscere, Italian.Verbs.consultare, Italian.Verbs.frequentare,
+        Italian.Verbs.incontrare, Italian.Verbs.incrociare, Italian.Verbs.lasciare,
+        Italian.Verbs.sposare, Italian.Verbs.trovare, Italian.Verbs.vedere].map (·.toVerb)
+  | .spanish =>
+      [Spanish.Verbs.abrazar, Spanish.Verbs.acurrucar, Spanish.Verbs.besar, Spanish.Verbs.casar,
+        Spanish.Verbs.consultar, Spanish.Verbs.cruzar, Spanish.Verbs.dejar,
+        Spanish.Verbs.encontrar]
+  | .catalan =>
+      [Catalan.Verbs.abracar, Catalan.Verbs.casar, Catalan.Verbs.deixar, Catalan.Verbs.petonejar,
+        Catalan.Verbs.topar, Catalan.Verbs.trobar]
+
+/-- The divergence from Siloni's parameter: Italian carries lexical reciprocal entries,
+*abbracciare* 'hug' (40) among them, though the parameter classifies it as syntax-set. -/
+theorem romance_not_monolithic :
+    "abbracciare" ∈ (appendixA .italian).map Verb.form ∧
+      Siloni2012.Language.italian.formation = Formation.syntactic :=
+  ⟨by decide, rfl⟩
 
 /-! ### Readings with and without *se* (§4.3) -/
 
@@ -209,7 +217,7 @@ theorem pseudo_without_se_iff (c : VerbClass) :
     SeReading.pseudoReciprocal ∈ c.readingsWithoutSe ↔ c.ReciprocityByItself := by
   cases c <;> decide
 
-/-- Definition (44): a class is a lexical reciprocal in a language iff some construction of
+/-- By definition (44), a class is a lexical reciprocal in a language iff some construction of
 that language lets a reciprocal interpretation emerge without *se*. -/
 def LexicalReciprocalIn (l : Language) (c : VerbClass) : Prop :=
   ∃ e, SeOmissible l e ∧ SeReading.pseudoReciprocal ∈ c.readingsWithoutSe
@@ -222,19 +230,19 @@ theorem lexicalReciprocalIn_iff (l : Language) (c : VerbClass) :
 
 /-! ### Pseudo-reciprocity against plain reciprocity (§4.3) -/
 
-/-- (50): grammatical reciprocity, Strong Reciprocity over the participants, is plain in the
-sense of [winter-2018] for every relation, symmetric or not, since *x and y kissed each other*
-holds iff *x kissed y and y kissed x*. -/
-theorem strongReciprocity_plainReciprocity {A : Type*} [DecidableEq A] (R : A → A → Prop) :
+/-- Grammatical reciprocity (50), Strong Reciprocity over the participants, is plain in
+[winter-2018]'s sense for every relation, symmetric or not: plain reciprocity is agreement with
+Strong Reciprocity on pairs. -/
+theorem strongReciprocity_plainReciprocity {A : Type*} (R : A → A → Prop) :
     Winter2018.PlainReciprocity (StrongReciprocity R) R :=
-  fun _ _ hxy ↦ strongReciprocity_pair.trans (and_iff_right hxy)
+  fun _ _ ↦ .rfl
 
 /-- A lexical entry's collective predicate is not so constrained: for any relation some
 collective predicate fails plain reciprocity for it, the room in which 'divorce' fails the
 collective-to-unidirectional direction (53) and 'kiss' the converse (54). -/
 theorem exists_collective_not_plain (R : Bool → Bool → Prop) :
     ∃ P : Finset Bool → Prop, ¬ Winter2018.PlainReciprocity P R :=
-  ⟨fun _ ↦ ¬ (R true false ∧ R false true), fun h ↦ iff_not_self (h true false (by decide)).symm⟩
+  ⟨fun X ↦ ¬ StrongReciprocity R X, fun h ↦ iff_not_self (h {true, false} (by decide)).symm⟩
 
 /-! ### The reciprocal 'with'-construction (§4.4) -/
 
@@ -256,12 +264,29 @@ theorem withConstruction_iff_lexical (c : VerbClass) :
 
 /-! ### Swahili (fourth chapter) -/
 
-/-- Swahili lexical reciprocals may lack a binary base altogether: *jibizana* 'discuss' is in
-the reciprocal inventory but in no derivational pair, so lexical reciprocity is not always
-derivational, the Bantu analogue of the Romance intransitive class. -/
-theorem jibizana_no_binary_base :
-    "jibizana" ∈ Swahili.Reciprocals.lexicalReciprocals.map Verb.form ∧
-      ∀ p ∈ Swahili.Reciprocals.derivedFrom, p.1.form ≠ "jibizana" := by
+/-- The Swahili lexical reciprocals (169), verbs in *-an-* whose suffix is lexicalized as part
+of the stem, each with its binary base as Appendix C gives it. -/
+def appendixC : List (Verb × Option Verb) :=
+  [(Swahili.Verbs.achana, some Swahili.Verbs.acha),
+    (Swahili.Verbs.gawana, some Swahili.Verbs.gawa),
+    (Swahili.Verbs.gombana, some Swahili.Verbs.gomba),
+    (Swahili.Verbs.gongana, some Swahili.Verbs.gonga),
+    (Swahili.Verbs.jibizana, none),
+    (Swahili.Verbs.pambana, some Swahili.Verbs.pamba),
+    (Swahili.Verbs.patana, some Swahili.Verbs.pata),
+    (Swahili.Verbs.pigana, some Swahili.Verbs.piga),
+    (Swahili.Verbs.shindana, some Swahili.Verbs.shinda),
+    (Swahili.Verbs.tengana, some Swahili.Verbs.tenga)]
+
+/-- Each lexical reciprocal with a base is the base with *-an-* before its final vowel. -/
+theorem appendixC_form :
+    ∀ p ∈ appendixC, ∀ b ∈ p.2, p.1.form.toList = b.form.toList.dropLast ++ ['a', 'n', 'a'] := by
+  decide
+
+/-- Swahili lexical reciprocals may lack a binary base altogether: *jibizana* 'discuss' has
+none, so lexical reciprocity is not always derivational, the Bantu analogue of the Romance
+intransitive class. -/
+theorem jibizana_no_binary_base : ∃ p ∈ appendixC, p.1.form = "jibizana" ∧ p.2.isNone := by
   decide
 
 end Palmieri2024

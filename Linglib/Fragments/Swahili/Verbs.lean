@@ -5,20 +5,20 @@ public import Linglib.Syntax.Category.Verb.Basic
 /-!
 # Swahili verbs
 
-This file defines the Swahili verbs of Palmieri's appendix on lexical reciprocity: nine verbs
-in *-an-* with a lexicalized reciprocal entry and the eight binary bases they derive from.
+This file defines the Swahili verbs of Palmieri's appendix on lexical reciprocity: ten verbs
+in *-an-* with a lexicalized reciprocal entry and the nine binary bases they derive from.
 Palmieri diagnoses the reciprocal entries as lexical by singular predication, under a modal
 and in the habitual, and by the order of the reciprocal against the applicative and causative
 suffixes. Some bases have drifted in meaning, *pambana* 'fight' from *pamba* 'decorate', and
-*jibizana* 'discuss' has no binary base at all. The reciprocal marker and the derivational pairs
-are in `Reciprocals.lean`.
+*jibizana* 'discuss' has no binary base at all. The reciprocal marker is in `Reciprocals.lean`,
+and Palmieri's pairing of each verb with its base is `Studies/Palmieri2024.lean`.
 
 ## Main definitions
 
 * `Swahili.Verbs.achana`, `gawana`, `gombana`, `gongana`, `jibizana`, `pambana`, `patana`,
-  `pigana`, `shindana`: the lexical reciprocals
-* `Swahili.Verbs.acha`, `gawa`, `gomba`, `gonga`, `pamba`, `pata`, `piga`, `shinda`: their
-  binary bases
+  `pigana`, `shindana`, `tengana`: the lexical reciprocals
+* `Swahili.Verbs.acha`, `gawa`, `gomba`, `gonga`, `pamba`, `pata`, `piga`, `shinda`, `tenga`:
+  their binary bases
 
 ## References
 
@@ -77,6 +77,11 @@ def shindana : Verb where
   morphs := [.root "shindana"]
   valency := .ofFrame ArgumentFrame.intransitive
 
+/-- *tengana* 'separate, break up'. -/
+def tengana : Verb where
+  morphs := [.root "tengana"]
+  valency := .ofFrame ArgumentFrame.intransitive
+
 /-! ### Binary bases -/
 
 /-- *acha* 'leave, abandon'. -/
@@ -117,6 +122,11 @@ def piga : Verb where
 /-- *shinda* 'defeat'. -/
 def shinda : Verb where
   morphs := [.root "shinda"]
+  valency := .ofFrame ArgumentFrame.np
+
+/-- *tenga* 'separate, isolate'. -/
+def tenga : Verb where
+  morphs := [.root "tenga"]
   valency := .ofFrame ArgumentFrame.np
 
 end Swahili.Verbs

@@ -19,13 +19,13 @@ complement, and *fare* embeds a finite clause only as *fare sì che* with the su
 verb's `clauseTypers` are the complementizers of the complements it takes, and its frames record
 the coding of each complement. Fusco and Sgrizzi's analysis of the *di* and *a* alternation is
 `Studies/FuscoSgrizzi2026.lean`; the twelve transitive verbs of Palmieri's Appendix A that also
-read reciprocally without *si* are ordinary entries here, and `Italian.Reciprocals` lists them
-as the lexical reciprocals.
+read reciprocally without *si* are ordinary entries here, and Palmieri's list of them is
+`Studies/Palmieri2024.lean`.
 
 An intransitive verb forms its perfect with *essere* when it expresses a change of location, state
 or condition, the continuation of a state or existence in a state, and with *avere* when an
-activity is in the foreground, whether or not its subject controls it (`Italian.Verbs.perfectAuxiliary`):
-*Maria è arrivata* 'Maria has arrived' but *Mario ha tossito* 'Mario has coughed'. *Correre*
+activity is in the foreground, whether or not its subject controls it
+(`Italian.Verbs.perfectAuxiliary`): *Maria è arrivata* 'Maria has arrived' but *Mario ha tossito* 'Mario has coughed'. *Correre*
 'run' takes *essere* with a phrase that brings it to an endpoint, *È corso al campo sportivo in
 un'ora* 'he ran to the sports ground in an hour', and *nuotare* 'swim', which selects no such
 phrase, keeps *avere*.
