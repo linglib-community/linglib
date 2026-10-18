@@ -38,11 +38,12 @@ verbs is Bresnan's Much Deletion.
 
 ## Implementation notes
 
-Degrees are rationals and eventualities an abstract event type; the
-engine's sorted domain is the sum of individuals and eventualities, and existential closure
-is a lexical item. The order models of the measured domains are the reals for states and the
-componentwise-ordered plane for entities and events. The bare-adjective, measure-phrase and
-scalar-change discussions of the paper's objections section are not formalized.
+Degrees are rationals and eventualities an abstract type, the engine's eventuality sort `v` beside
+the individuals of `e`, as in the paper's sorted domains `D_e` and `D_v`, and the degree phrase
+modifies the base predicate by predicate modification at `⟨v,t⟩`, which the paper allows beside
+`⟨e,t⟩`. Existential closure is a lexical item. The order models of the measured domains are the
+reals for states and the componentwise-ordered plane for entities and events. The bare-adjective,
+measure-phrase and scalar-change discussions of the paper's objections section are not formalized.
 
 ## References
 
@@ -132,31 +133,22 @@ open PhraseStructure (Tree)
 
 variable {Ent α : Type}
 
-/-- The sorted domain consists of individuals and eventualities. -/
-abbrev Dom (Ent α : Type) : Type := Ent ⊕ α
-
-/-- In the lexicon *much* is the measure (7), *-er* and *abs* the strict and weak degree heads
-((27i), (38ii)), the role head composes by event identification ([kratzer-1996]), and
-existential closure is an item. -/
-def lexicon {D : Type} [LinearOrder D] [Zero D] (role : Ent → α → Prop) (P : α → Prop)
-    (μ0 : α → D) (subj : Ent) (δ : D) : Lexicon (Dom Ent α) Unit Id { degree := D } := fun w ↦
+/-- In the lexicon *much* is the measure (7) of the eventualities, *-er* and *abs* the strict and
+weak degree heads ((27i), (38ii)), the role head composes by event identification
+([kratzer-1996]), and existential closure is an item. -/
+def lexicon {D : Type} [LinearOrder D] (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → D)
+    (subj : Ent) (δ : D) : Lexicon Ent Unit Id { degree := D, eventuality := α } := fun w ↦
   match w with
-  | "much" => some ⟨.e ⇒ .d, show Dom Ent α → D from fun x ↦ match x with
-      | .inr e => μ0 e
-      | .inl _ => 0⟩
-  | "er" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
-      show (Dom Ent α → D) → D → Dom Ent α → Prop from fun m d x ↦ d < m x⟩
-  | "abs" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
-      show (Dom Ent α → D) → D → Dom Ent α → Prop from fun m d x ↦ d ≤ m x⟩
+  | "much" => some ⟨.v ⇒ .d, show α → D from μ0⟩
+  | "er" => some ⟨(.v ⇒ .d) ⇒ .d ⇒ .v ⇒ .t,
+      show (α → D) → D → α → Prop from fun m d e ↦ d < m e⟩
+  | "abs" => some ⟨(.v ⇒ .d) ⇒ .d ⇒ .v ⇒ .t,
+      show (α → D) → D → α → Prop from fun m d e ↦ d ≤ m e⟩
   | "δ" => some ⟨.d, show D from δ⟩
-  | "pred" => some ⟨.e ⇒ .t, fun x ↦ match x with
-      | .inr e => P e
-      | .inl _ => False⟩
-  | "role" => some ⟨.e ⇒ .e ⇒ .t, fun x ev ↦ match x, ev with
-      | .inl i, .inr e => role i e
-      | _, _ => False⟩
-  | "subj" => some ⟨.e, .inl subj⟩
-  | "EC" => some ⟨(.e ⇒ .t) ⇒ .t, fun p ↦ ∃ e : α, p (.inr e)⟩
+  | "pred" => some ⟨Ty.vt, show α → Prop from P⟩
+  | "role" => some ⟨Ty.evt, show Ent → α → Prop from role⟩
+  | "subj" => some ⟨.e, show Ent from subj⟩
+  | "EC" => some ⟨Ty.vt ⇒ .t, show (α → Prop) → Prop from fun p ↦ ∃ e, p e⟩
   | _ => none
 
 /-- In the matrix tree, (36), (44), (60), the degree phrase modifies the base predicate, the role
@@ -180,7 +172,7 @@ def thanTree : Tree Unit String :=
 
 /-- The engine derives the matrix clause (37), (45), (61). -/
 theorem matrix_derivation_denotes (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → ℚ)
-    (a : Ent) (δ : ℚ) (g : Assignment (Dom Ent α)) :
+    (a : Ent) (δ : ℚ) (g : Assignment Ent) :
     interp (lexicon role P μ0 a δ) g matrixTree =
       some ⟨.t, pure (matrixClause role P μ0 a δ)⟩ :=
   rfl
@@ -188,7 +180,7 @@ theorem matrix_derivation_denotes (role : Ent → α → Prop) (P : α → Prop)
 /-- The engine derives the than-clause pointwise in the degree; abstraction over it (40),
 (47), (63) is the metalanguage's. -/
 theorem than_derivation_denotes (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → ℚ)
-    (b : Ent) (d : ℚ) (g : Assignment (Dom Ent α)) :
+    (b : Ent) (d : ℚ) (g : Assignment Ent) :
     interp (lexicon role P μ0 b d) g thanTree =
       some ⟨.t, pure (d ∈ thanClause role P μ0 b)⟩ :=
   rfl

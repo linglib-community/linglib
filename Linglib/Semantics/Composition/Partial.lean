@@ -255,10 +255,9 @@ theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {
   | intensionalRight =>
     simpa [evalPartial, eval] using hb (fun _ ↦ a) (fun _ ↦ Part.some a') fun _ ↦ ⟨a', rfl, ha⟩
   | predicateModification =>
-    refine ⟨_, by simp [evalPartial]; rfl, Ty.lifts_fn.mpr fun x _ hxy ↦ ?_⟩
-    obtain rfl : x = _ := hxy
-    obtain ⟨p, hp, hlp⟩ := ha x x rfl
-    obtain ⟨q, hq, hlq⟩ := hb x x rfl
+    refine ⟨_, by simp [evalPartial]; rfl, Ty.lifts_fn.mpr fun x y hxy ↦ ?_⟩
+    obtain ⟨p, hp, hlp⟩ := ha x y hxy
+    obtain ⟨q, hq, hlq⟩ := hb x y hxy
     rw [Ty.lifts_t] at hlp hlq
     subst hlp hlq
     exact ⟨a x ∧ b x, by simp [hp, hq], rfl⟩

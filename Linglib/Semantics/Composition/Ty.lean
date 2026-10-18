@@ -68,6 +68,10 @@ inductive Ty where
 abbrev Ty.et : Ty := .e ⇒ .t
 /-- `⟨e,⟨e,t⟩⟩`, relations between individuals. -/
 abbrev Ty.eet : Ty := .e ⇒ .e ⇒ .t
+/-- `⟨v,t⟩`, predicates of eventualities. -/
+abbrev Ty.vt : Ty := .v ⇒ .t
+/-- `⟨e,⟨v,t⟩⟩`, relations of individuals to eventualities, as thematic roles are. -/
+abbrev Ty.evt : Ty := .e ⇒ .v ⇒ .t
 /-- `⟨⟨e,t⟩,t⟩`, generalized quantifiers. -/
 abbrev Ty.ett : Ty := (.e ⇒ .t) ⇒ .t
 /-- `⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩`, determiners. -/
