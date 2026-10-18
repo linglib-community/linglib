@@ -139,10 +139,8 @@ def uniqueAt (w y : R) : Condition (Set S) :=
 
 /-- Uniqueness relative to a world that is constant across the state is uniqueness (59). -/
 theorem mem_uniqueAt_iff_of_subsingleton (hw : (val w '' I).Subsingleton) :
-    I ∈ uniqueAt w y ↔ I ∈ unique y := by
-  refine ⟨fun h ↦ ?_, fun h a b _ ↦ h ⟨a, a.2, rfl⟩ ⟨b, b.2, rfl⟩⟩
-  rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
-  exact @h ⟨a, ha⟩ ⟨b, hb⟩ (hw ⟨a, ha, rfl⟩ ⟨b, hb, rfl⟩)
+    I ∈ uniqueAt w y ↔ I ∈ unique y :=
+  Set.factorsThrough_domRestrict_iff_of_subsingleton hw
 
 /-- Where `w` tells the assignments apart, every referent is a function of `w`. -/
 theorem mem_uniqueAt_of_injOn (h : Set.InjOn (val w) I) : I ∈ uniqueAt w y :=

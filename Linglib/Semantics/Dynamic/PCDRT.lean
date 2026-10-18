@@ -18,9 +18,9 @@ having a successor among the output rows and each output row a predecessor among
 This is how dref introduction `[u]` lifts to plural states, and the lift is a functor. Atomic
 conditions hold distributively of the rows where their drefs have values. Structured inclusion
 selects a subset of a dref's values by discarding rows, so the subset keeps exactly the
-superset's dependencies. On plural partial assignments a dref's values are `PluralAssign.value`,
-its cells the operator `restrict`, and singular number is `PluralAssign.Singular`, [spector-2026]'s
-`atomic(x)`.
+superset's dependencies. A dref's values are the defined part of the image of its register, and
+on plural partial assignments they are `PluralAssign.value`, its cells the operator `restrict`.
+Singular number says the values are a singleton, [spector-2026]'s `atomic(x)`.
 
 ## Main definitions
 
@@ -65,10 +65,16 @@ variable {R S E : Type*} [RegisterStructure R S (Flat E)] {u u' v : R} {I J : Se
 /-- The values of `u` in `I`, `uI` ([brasoveanu-2010] (16), (38)); ★ is not a value. -/
 def value (u : R) (I : Set S) : Set E := {x | ∃ i ∈ I, RegisterStructure.val u i = ↑x}
 
+/-- The values of `u` are the defined part of the image of its register. -/
+theorem value_eq_preimage_image (u : R) (I : Set S) :
+    value u I = (↑) ⁻¹' (RegisterStructure.val u '' I) :=
+  rfl
+
 /-- The rows of `I` where `u` has the value `x`, `I_{u=x}` ((71)). -/
 def cell (u : R) (x : E) (I : Set S) : Set S := {i ∈ I | RegisterStructure.val u i = ↑x}
 
-/-- The dependency between `u` and `v` that `I` stores: the pairs of their values in a row. -/
+/-- The dependency between `u` and `v` that `I` stores is the set of pairs of their values in a
+row. -/
 def dep (u v : R) (I : Set S) : SetRel E E :=
   {p | ∃ i ∈ I, RegisterStructure.val u i = ↑p.1 ∧ RegisterStructure.val v i = ↑p.2}
 
@@ -151,37 +157,39 @@ theorem value_eq_of_fixes {D : Update S} (h : Fixes v D) (hIJ : I ~[cumul D] J) 
 theorem value_intro_of_ne (h : v ≠ u) (hIJ : I ~[intro u] J) : value v J = value v I :=
   value_eq_of_fixes (fixes_randomAssign_of_ne h) hIJ
 
-/-- A unary atomic condition `P{u}` ((30)): `u` has values, and all of them satisfy `P`. -/
+/-- A unary atomic condition `P{u}` ((30)) holds when `u` has values and all of them satisfy
+`P`. -/
 def atom (P : E → Prop) (u : R) : Condition (Set S) :=
   {I | (value u I).Nonempty ∧ ∀ x ∈ value u I, P x}
 
-/-- A binary atomic condition `P{u, v}` ((32)): some row values both drefs, and the values in
-every such row are related by `P`. -/
+/-- A binary atomic condition `P{u, v}` ((32)) holds when some row values both drefs and the
+values in every such row are related by `P`. -/
 def atom₂ (P : E → E → Prop) (u v : R) : Condition (Set S) :=
   {I | (dep u v I).Nonempty ∧ ∀ p ∈ dep u v I, P p.1 p.2}
 
-/-- Singular number `sing(u)` ((39)): `u` has exactly one value. -/
+/-- Singular number `sing(u)` ((39)) holds when `u` has exactly one value. -/
 def sing (u : R) : Condition (Set S) := {I | ∃ x, value u I = {x}}
 
-/-- On plural partial assignments, singular number is [spector-2026]'s `atomic(x)`. -/
-theorem mem_sing_iff_singular {Var D : Type*} [DecidableEq Var] {G : PluralAssign Var D}
-    {x : Var} : G ∈ sing x ↔ G.Singular x :=
+/-- On plural partial assignments, singular number is [spector-2026]'s `atomic(x)`, a single
+value. -/
+theorem mem_sing_iff {Var D : Type*} [DecidableEq Var] {G : PluralAssign Var D} {x : Var} :
+    G ∈ sing x ↔ ∃ d, G.value x = {d} :=
   Iff.rfl
 
 /-! ### Structured inclusion -/
 
-/-- Structured inclusion `u' ⋐ u` ((66)): in every row, `u'` has `u`'s value or ★. -/
+/-- Structured inclusion `u' ⋐ u` ((66)) holds when in every row `u'` has `u`'s value or ★. -/
 def structSub (u' u : R) : Condition (Set S) :=
   {I | ∀ i ∈ I, RegisterStructure.val u' i = RegisterStructure.val u i ∨
     RegisterStructure.val u' i = ⊥}
 
-/-- Full structured inclusion `u' ⊑ u` ((68)): structured inclusion that also keeps every row
+/-- Full structured inclusion `u' ⊑ u` ((68)) is structured inclusion that also keeps every row
 in which `u` has one of `u'`'s values. -/
 def structSubAll (u' u : R) : Condition (Set S) :=
   {I | I ∈ structSub u' u ∧ ∀ i ∈ I, ∀ x ∈ value u' I,
     RegisterStructure.val u i = ↑x → RegisterStructure.val u' i = ↑x}
 
-/-- A structured subset keeps only the superset's dependencies (p. 465): whatever `u'` is
+/-- A structured subset keeps only the superset's dependencies (p. 465), since whatever `u'` is
 paired with in a row, `u` is paired with there too. -/
 theorem dep_subset_of_structSub (h : I ∈ structSub u' u) : dep u' v I ⊆ dep u v I := by
   rintro ⟨x, y⟩ ⟨i, hi, hx, hy⟩
