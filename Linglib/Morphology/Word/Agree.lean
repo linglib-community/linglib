@@ -11,41 +11,26 @@ public import Linglib.Morphology.Word.Basic
 /-!
 # φ-agreement between word tokens
 
-`Word.phi` is the agreement bundle of a word's features, and two words `Agree` when their
-bundles are compatible, an unspecified dimension acting as a wildcard. The relation is
-reflexive and symmetric but not transitive; `HasPhi.Agree` is its generic form.
+A word's φ-features are the agreement dimensions of its features, so two words agree when those
+bundles are compatible. Agreement is reflexive and symmetric but not transitive, since an
+unspecified dimension agrees with every value.
+
+## Main results
+
+* `Morphology.Word.not_isTrans_agree`: agreement between words is not transitive.
 -/
 
 @[expose] public section
 
 namespace Morphology
 
-/-- The agreement bundle of a word's features. -/
-def Word.phi (w : Word) : Agreement.Bundle := Agreement.Bundle.ofFeatures w.features
+/-- A word bears the agreement dimensions of its features. -/
+instance Word.instHasPhi : HasPhi Word := ⟨fun w ↦ phi w.features⟩
 
-instance : HasPhi Word := ⟨Word.phi⟩
-
-/-- Two words agree when their bundles are compatible, an unspecified dimension acting as a
-wildcard; the agreement check binding and concord consumers share. -/
-def Word.Agree (w1 w2 : Word) : Prop := Compat w1.phi w2.phi
-
-/-- On word tokens, generic agreement is `Word.Agree`. -/
-theorem Word.hasPhi_agree (w1 w2 : Word) : HasPhi.Agree w1 w2 ↔ w1.Agree w2 := Iff.rfl
-
-instance (w1 w2 : Word) : Decidable (Word.Agree w1 w2) := by
-  unfold Word.Agree; infer_instance
-
-@[refl] theorem Word.Agree.refl (w : Word) : Word.Agree w w := Compat.of_le le_rfl le_rfl
-
-@[symm] theorem Word.Agree.symm {w1 w2 : Word} (h : Word.Agree w1 w2) : Word.Agree w2 w1 :=
-  Compat.symm h
-
-/-- φ-agreement is not transitive: underspecified *they* agrees with both *she* and *he*
-while *she* and *he* disagree. -/
-theorem Word.Agree.not_transitive :
-    ¬ ∀ w1 w2 w3 : Word, Word.Agree w1 w2 → Word.Agree w2 w3 → Word.Agree w1 w3 := by
-  intro h
-  exact absurd
+/-- Agreement between words is not transitive: underspecified *they* agrees with both *she* and
+*he*, which disagree. -/
+theorem Word.not_isTrans_agree : ¬ IsTrans Word HasPhi.Agree := fun ⟨h⟩ ↦
+  absurd
     (h ⟨"she", .PRON, Features.of (person := some .third) (number := some .singular)
           (gender := some .feminine)⟩
        ⟨"they", .PRON, Features.of (person := some .third)⟩
@@ -54,9 +39,10 @@ theorem Word.Agree.not_transitive :
        (by decide) (by decide))
     (by decide)
 
-/-- A reflexive-marked token still agrees with an unmarked one: `reflex` is not an
-agreement feature. -/
-example : Word.Agree ⟨"sich", .PRON, Features.of (reflex := true)⟩ ⟨"Kind", .NOUN, ⊥⟩ :=
-  by decide
+/-- Reflexivity is not an agreement feature: a reflexive-marked token agrees with an unmarked
+one. -/
+example : HasPhi.Agree (⟨"sich", .PRON, Features.of (reflex := some ())⟩ : Word)
+    (⟨"Kind", .NOUN, ⊥⟩ : Word) := by
+  decide
 
 end Morphology

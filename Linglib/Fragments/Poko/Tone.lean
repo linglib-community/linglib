@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.Autosegmental.Melody
-public import Linglib.Morphology.Word.Tree
+public import Linglib.Morphology.Morph
 
 /-!
 # Poko Tonal Fragment

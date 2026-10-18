@@ -37,7 +37,7 @@ description over shared variables read through two subscriptings,
   Relatedness of meaning within a heterosemous root set is carried by the schema of (21),
   not by the forms.
 * `IsStemIn` is the stem definition of fn. 6, with the Latin `laud-ab-` case; its affixes are
-  those of `Morphology.Comparative.IsAffixIn` over the roots of definition (1).
+  those of `Morphology.Comparative.Inventory.IsAffix` over the roots of definition (1).
 * The chapter names the combining forms *geo-* and *socio-* in prose only; the English word
   *geology*, with its *-logy*, is this file's illustration of *geo-*.
 
@@ -94,16 +94,19 @@ structure Form where
 `Morphology/Root/Basic.lean`. -/
 def shapes (w : List Form) : List Morph := w.map Form.shape
 
+/-- The inventory of free forms whose roots are classed by their meanings. -/
+def inventory (forms : List (List Form)) : Inventory Form := ⟨forms, Form.meaning⟩
+
 /-- Fn. 6: a stem is a contiguous string of at least one root and possibly some affixes that
 can be combined with an affix. -/
-def IsStemIn (words freeForms : List (List Form)) (s : List Form) : Prop :=
-  let root := IsRootIn freeForms Form.meaning
-  let affix := IsAffixIn freeForms Form.meaning root
+def IsStemIn (words : List (List Form)) (L : Inventory Form) (s : List Form) : Prop :=
+  let root := L.IsRoot
+  let affix := L.IsAffix root
   (∃ f ∈ s, root f) ∧ (∀ f ∈ s, root f ∨ affix f) ∧
     ∃ w ∈ words, ∃ a ∈ w, affix a ∧ (w = s ++ [a] ∨ w = a :: s)
 
-instance (words freeForms : List (List Form)) (s : List Form) :
-    Decidable (IsStemIn words freeForms s) :=
+instance (words : List (List Form)) (L : Inventory Form) (s : List Form) :
+    Decidable (IsStemIn words L s) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ w ∈ words, ∃ a ∈ w, _))
 
 /-! ### Contentful affixes and combining forms (§2) -/
@@ -118,12 +121,12 @@ def u : Form := ⟨.suff "u", none⟩
 def ru : Form := ⟨.suff "ru", none⟩
 
 /-- The Japanese free forms `yom-u` 'read' and `yom-ase-ru` 'make read'. -/
-def japanese : List (List Form) := [[yom, u], [yom, ase, ru]]
+def japanese : Inventory Form := inventory [[yom, u], [yom, ase, ru]]
 
 /-- The causative `-ase` is contentful but never occurs without another contentful form, so
 it is not a root, while `yom` is (§2). -/
-theorem ase_not_root : IsContentful Form.meaning ase ∧ ¬ IsRootIn japanese Form.meaning ase ∧
-    IsRootIn japanese Form.meaning yom := by
+theorem ase_not_root : japanese.IsContentful ase ∧ ¬ japanese.IsRoot ase ∧
+    japanese.IsRoot yom := by
   decide
 
 /-- The neoclassical combining form `geo-`. -/
@@ -141,22 +144,22 @@ def s : Form := ⟨.suff "s", none⟩
 /-- The English past suffix. -/
 def ed : Form := ⟨.suff "ed", none⟩
 
-/-- The English free forms: `geology` (an illustration), `hello`, and the *hammer* forms. -/
-def english : List (List Form) :=
+/-- The English free forms are `geology` (an illustration), `hello`, and the *hammer* forms. -/
+def english : Inventory Form := inventory
   [[geo, logy], [hello], [hammerN], [hammerN, s], [hammerV], [hammerV, ed]]
 
 /-- `geo-` is contentful but only occurs with another contentful form, so it is not a root,
 although it is a morphological core under the formal base definition (§2). -/
 theorem geo_not_root :
-    ¬ IsRootIn english Form.meaning geo ∧
-      geo.shape.IsCoreIn (english.map shapes) (english.map shapes) := by
+    ¬ english.IsRoot geo ∧
+      geo.shape.IsCoreIn (english.forms.map shapes) (english.forms.map shapes) := by
   decide
 
 /-- `hello` is a free form without a lexical meaning, hence not a root, although it is a
 morphological core (fn. 10). -/
 theorem hello_not_root :
-    ¬ IsRootIn english Form.meaning hello ∧
-      hello.shape.IsCoreIn (english.map shapes) (english.map shapes) := by
+    ¬ english.IsRoot hello ∧
+      hello.shape.IsCoreIn (english.forms.map shapes) (english.forms.map shapes) := by
   decide
 
 /-- The Sorbian object root `žon-` 'wife'. -/
@@ -169,10 +172,10 @@ def y : Form := ⟨.suff "y", none⟩
 def uAcc : Form := ⟨.suff "u", none⟩
 
 /-- The Sorbian free forms `žon-a`, `žon-y`, `žon-u` (§3). -/
-def sorbian : List (List Form) := [[žon, a], [žon, y], [žon, uAcc]]
+def sorbian : Inventory Form := inventory [[žon, a], [žon, y], [žon, uAcc]]
 
 /-- `žon-` always occurs with an inflectional affix, yet it is a root (§3, fn. 2). -/
-theorem žon_bound_root : IsRootIn sorbian Form.meaning žon ∧ IsBoundIn sorbian žon := by decide
+theorem žon_bound_root : sorbian.IsRoot žon ∧ sorbian.IsBound žon := by decide
 
 /-! ### Roots as concrete forms (§4) -/
 
@@ -188,11 +191,11 @@ def en : Form := ⟨.suff "en", none⟩
 def ge : Form := ⟨.pref "ge", none⟩
 
 /-- The German verb forms of (5) are `lauf-e`, `lauf-en`, `lauf`, `ge-lauf-en`, `lief`. -/
-def german : List (List Form) := [[lauf, e], [lauf, en], [lauf], [ge, lauf, en], [lief]]
+def german : Inventory Form := inventory [[lauf, e], [lauf, en], [lauf], [ge, lauf, en], [lief]]
 
 /-- With no replacive morphs, `lauf` and `lief` are two roots (§4). -/
 theorem lauf_lief_roots :
-    IsRootIn german Form.meaning lauf ∧ IsRootIn german Form.meaning lief ∧ lauf ≠ lief := by
+    german.IsRoot lauf ∧ german.IsRoot lief ∧ lauf ≠ lief := by
   decide
 
 /-- The consonantal skeleton of a form is its shape with the vowels removed. -/
@@ -213,13 +216,13 @@ def naa : Form := ⟨.suff "naa", none⟩
 def na : Form := ⟨.pref "na", none⟩
 
 /-- The Arabic forms of (6) are `katab-naa`, `na-ktub-u`, `kaatib`, `kitaab`. -/
-def arabic : List (List Form) := [[katab, naa], [na, ktub, u], [kaatib], [kitaab]]
+def arabic : Inventory Form := inventory [[katab, naa], [na, ktub, u], [kaatib], [kitaab]]
 
 /-- The forms of (6) contain four distinct roots sharing the skeleton k-t-b, which is not
 itself a root (§4). -/
 theorem arabic_four_roots :
     (∀ f ∈ [katab, ktub, kaatib, kitaab],
-        IsRootIn arabic Form.meaning f ∧ skeleton f = ⟨['k', 't', 'b']⟩) ∧
+        arabic.IsRoot f ∧ skeleton f = ⟨['k', 't', 'b']⟩) ∧
       [katab, ktub, kaatib, kitaab].Nodup := by
   decide
 
@@ -233,18 +236,19 @@ def am : Form := ⟨.suff "am", none⟩
 def o : Form := ⟨.suff "o", none⟩
 
 /-- The Latin forms `laud-o` 'I praise' and `laud-ab-am` 'I was praising'. -/
-def latin : List (List Form) := [[laud, o], [laud, ab, am]]
+def latin : Inventory Form := inventory [[laud, o], [laud, ab, am]]
 
 /-- Fn. 6: `laud-ab-` is an imperfect stem, a root with a tense suffix that combines with a
 person suffix. -/
-theorem laudab_stem : IsStemIn latin latin [laud, ab] ∧ IsStemIn latin latin [laud] := by
+theorem laudab_stem :
+    IsStemIn latin.forms latin [laud, ab] ∧ IsStemIn latin.forms latin [laud] := by
   decide
 
 /-! ### Heterosemy (§6) -/
 
 /-- `hammer` (noun) and `hammer` (verb) are two roots with one shape (§6). -/
 theorem hammer_two_roots :
-    IsRootIn english Form.meaning hammerN ∧ IsRootIn english Form.meaning hammerV ∧
+    english.IsRoot hammerN ∧ english.IsRoot hammerV ∧
       hammerN ≠ hammerV ∧ hammerN.shape = hammerV.shape := by
   decide
 

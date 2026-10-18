@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Morphology.Morph
+public import Linglib.Morphology.Word.Tree
 public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
@@ -27,8 +27,10 @@ separate word are prefixed to its noun: *gera við* 'repair', *við-ger-ð*.
 
 ## Main definitions
 
-* `Icelandic.Nouns.Deverbal`, `Icelandic.Nouns.Deverbal.morphs`, `Icelandic.Nouns.deverbals`: a
-  deverbal noun segmented, its morphs in linear order, and the entries.
+* `Icelandic.Nouns.Deverbal`: a deverbal noun, segmented.
+* `Icelandic.Nouns.Deverbal.tree`, `Icelandic.Nouns.Deverbal.morphs`: its word-formation tree and
+  its morphs in linear order.
+* `Icelandic.Nouns.deverbals`: the entries.
 
 ## Implementation notes
 
@@ -113,10 +115,14 @@ structure Deverbal where
   nominalizer : String
   deriving DecidableEq, Repr
 
+/-- The word-formation tree of a nominal: the verbalizer and the nominalizer suffixed to the
+root, and the preposition prefixed to the noun. -/
+def Deverbal.tree (w : Deverbal) : Morphology.Word.Tree Morph :=
+  .attachMorphs (.root w.root)
+    ((w.verbalizer.map .suff).toList ++ .suff w.nominalizer :: (w.preposition.map .pref).toList)
+
 /-- The morphs of a nominal in linear order. -/
-def Deverbal.morphs (w : Deverbal) : List Morph :=
-  (w.preposition.map .pref).toList ++
-    .root w.root :: (w.verbalizer.map .suff).toList ++ [.suff w.nominalizer]
+def Deverbal.morphs (w : Deverbal) : List Morph := w.tree.toList
 
 /-- *opn-un* 'opening', from *opna* 'open' ([wood-2023], (2.94)). -/
 def opnun : Deverbal := { root := "opn", nominalizer := "un" }

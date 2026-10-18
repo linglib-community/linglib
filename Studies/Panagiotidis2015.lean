@@ -1,21 +1,21 @@
 module
 
-public import Linglib.Data.UD.UPOS
+public import Linglib.Morphology.Word.Basic
 public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
 
 /-!
 # Panagiotidis (2015): Categorial Features
 
-This file formalizes the theory of word class in [panagiotidis-2015]: lexical category is
+This file formalizes Panagiotidis's theory of word class: lexical category is
 not a property of roots but of the categorizer heads *n*, *v*, and *a* that category-neutral
-roots merge with ([marantz-1997]), and the categorial features those heads bear are
+roots merge with, as Marantz proposed, and the categorial features those heads bear are
 substantive and interpretable rather than diacritic, [N] imposing a sortal perspective and
 [V] a perspective extending into time on the root's concept. Nouns bear [N] only, verbs [V]
 only, adjectives both, and adpositions neither, the adposition being the default categorizer
 (`categorizer_features`, `isCategorizer_iff`). The functional heads of an extended projection
 carry uninterpretable copies of their categorizer's features, so a category's features are
-fixed by its family (`categorialFeatures_eq_iff`), and the diacritic features of
-[chomsky-1970] cut the categories into the same four classes (`chomsky_panagiotidis_agree`).
+fixed by its family (`categorialFeatures_eq_iff`), and the diacritic features Chomsky proposed
+in 1970 cut the categories into the same four classes (`chomsky_panagiotidis_agree`).
 Category change is change of categorizer: an English root surfaces in all three categorized
 classes (`RootFamily`, `all_families_tricategorial`).
 
@@ -109,37 +109,38 @@ each stamped with its Universal Dependencies category ([marantz-1997]). -/
 structure RootFamily where
   /-- A label for the root; roots themselves are sub-morphemic. -/
   rootLabel : String
-  /-- The surface forms with their categories. -/
-  forms : List (String × UD.UPOS)
+  /-- The surface words it projects. -/
+  words : List Morphology.Word
 
 /-- The family has a surface form in category `c`. -/
 def RootFamily.HasCategory (rf : RootFamily) (c : UD.UPOS) : Prop :=
-  ∃ f ∈ rf.forms, f.2 = c
+  ∃ w ∈ rf.words, w.cat = c
 
 instance (rf : RootFamily) (c : UD.UPOS) : Decidable (rf.HasCategory c) :=
-  List.decidableBEx _ rf.forms
+  List.decidableBEx _ rf.words
 
 /-- The root √DESTROY surfaces as destroy, destruction and destructive. -/
 def destroy : RootFamily :=
-  ⟨"DESTROY", [("destroy", .VERB), ("destruction", .NOUN), ("destructive", .ADJ)]⟩
+  ⟨"DESTROY", [.mk' "destroy" .VERB, .mk' "destruction" .NOUN, .mk' "destructive" .ADJ]⟩
 
 /-- The root √BEAUTY surfaces as beautify, beauty and beautiful. -/
 def beauty : RootFamily :=
-  ⟨"BEAUTY", [("beautify", .VERB), ("beauty", .NOUN), ("beautiful", .ADJ)]⟩
+  ⟨"BEAUTY", [.mk' "beautify" .VERB, .mk' "beauty" .NOUN, .mk' "beautiful" .ADJ]⟩
 
 /-- The root √CLEAR surfaces as clear, clarity and clear. -/
-def clear : RootFamily := ⟨"CLEAR", [("clear", .VERB), ("clarity", .NOUN), ("clear", .ADJ)]⟩
+def clear : RootFamily :=
+  ⟨"CLEAR", [.mk' "clear" .VERB, .mk' "clarity" .NOUN, .mk' "clear" .ADJ]⟩
 
 /-- The root √PRODUCE surfaces as produce, production and productive. -/
 def produce : RootFamily :=
-  ⟨"PRODUCE", [("produce", .VERB), ("production", .NOUN), ("productive", .ADJ)]⟩
+  ⟨"PRODUCE", [.mk' "produce" .VERB, .mk' "production" .NOUN, .mk' "productive" .ADJ]⟩
 
 /-- The root √CREATE surfaces as create, creation and creative. -/
 def create : RootFamily :=
-  ⟨"CREATE", [("create", .VERB), ("creation", .NOUN), ("creative", .ADJ)]⟩
+  ⟨"CREATE", [.mk' "create" .VERB, .mk' "creation" .NOUN, .mk' "creative" .ADJ]⟩
 
 /-- The root √ACT surfaces as act, action and active. -/
-def act : RootFamily := ⟨"ACT", [("act", .VERB), ("action", .NOUN), ("active", .ADJ)]⟩
+def act : RootFamily := ⟨"ACT", [.mk' "act" .VERB, .mk' "action" .NOUN, .mk' "active" .ADJ]⟩
 
 /-- The sample root families. -/
 def allFamilies : List RootFamily := [destroy, beauty, clear, produce, create, act]

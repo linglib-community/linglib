@@ -98,7 +98,7 @@ def classOf (x : Nominal t) : Option BindingClass := bindingClassOf x.1.2
 /-- An indexing is licit when coindexed noun phrases agree and coindexation satisfies the three
 principles, with no anaphor exempt. -/
 def Licit (t : Tree Cat Word) {κ : Type*} (idx : Nominal t → κ) : Prop :=
-  (∀ a b, idx a = idx b → a.1.2.Agree b.1.2) ∧
+  (∀ a b, idx a = idx b → HasPhi.Agree a.1.2 b.1.2) ∧
     (configuration t).Satisfies (fun a b ↦ idx a = idx b) ∅ classOf
 
 instance {κ : Type*} [DecidableEq κ] (idx : Nominal t → κ) : Decidable (Licit t idx) :=

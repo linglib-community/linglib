@@ -1,34 +1,35 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
+public import Mathlib.Basic.PEquiv
 public import Linglib.Morphology.Word.Features
-public import Linglib.Syntax.Agreement.Bundle
 
 /-!
 # Universal Dependencies annotation of tokens
 
-The bridge between the analytical inventories of person, number, gender and case and the
-tags treebanks annotate. Each inventory realizes as a tag where one exists and each tag
-ingests as a value: person's clusivity has no tag and collapses to the first person, so
-ingestion after realization is coarsening; number's minimal, augmented and general values
-have no tag, and the inverse, collective and count tags no value; the animacy genders have no
-tag. A token's features realize as an annotation record and an annotation ingests as
-features, and an annotation ingests as an agreement bundle.
+Each analytical inventory of person, number, gender and case realizes as a Universal Dependencies
+tag where one exists, and each tag ingests as a value. The two directions are not inverse: the
+annotation has no tag for clusivity, for minimal and augmented number or for animacy genders, and
+it tags the oblique case `Acc`. A token's features realize as an annotation record, and an
+annotation ingests as features.
 
-## Main declarations
+## Main definitions
 
-* `Person.toUD`, `Person.fromUD`: realization of a person as a tag, clusivity collapsing to
-  the first person, and ingestion of a tag, the impersonal `Person=0` as no person, with
-  `Person.fromUD_toUD` showing ingestion after realization is coarsening.
-* `Number.toUD`, `Number.fromUD`: the partial realization and ingestion of number, with
-  `Number.roundtrip_fromUD_toUD` on the seven values that have a tag.
-* `Gender.toUD`, `Gender.fromUD`: realization where a tag exists and total ingestion,
-  `Gender.isPartialInv_fromUD_toUD` making realization a partial inverse.
-* `Case.toUD`, `Case.fromUD`: realization of a case as a tag, the oblique as `Acc`, and ingestion
-  of a tag, with `Case.fromUD_toUD` showing ingestion after realization is the identity but on the
-  oblique.
-* `Morphology.Features.toUD`, `Morphology.Features.ofUD`: the annotation record a token's
-  features realize as, and the features an annotation ingests as.
-* `Agreement.Bundle.ofUD`: the agreement bundle an annotation ingests as.
+* `Person.toUD`, `Number.toUD`, `Gender.toUD`, `Case.toUD`: realization as a tag.
+* `Person.fromUD`, `Number.fromUD`, `Gender.fromUD`, `Case.fromUD`: ingestion of a tag.
+* `Number.toUDPEquiv`: realization and ingestion of number, a partial equivalence.
+* `Morphology.Features.toUD`, `Morphology.Features.ofUD`: realization and ingestion of a token's
+  features.
+
+## Main results
+
+* `Person.fromUD_toUD`: ingestion after realization forgets clusivity.
+* `Gender.isPartialInv_fromUD_toUD`: realization is a partial inverse of ingestion.
+* `Case.fromUD_toUD`: ingestion after realization is the identity except on the oblique.
 
 ## References
 
@@ -41,7 +42,7 @@ features, and an annotation ingests as an agreement bundle.
 
 namespace Person
 
-/-- Realize as an annotation: clusivity collapses to the first person. -/
+/-- Realization as a tag collapses clusivity to the first person. -/
 def toUD : Person → UD.Person
   | .first | .firstInclusive | .firstExclusive => .first
   | .second => .second
@@ -99,11 +100,12 @@ def fromUD : UD.Number → Option Number
   | .Coll => none
   | .Count => none
 
-/-- The values with a tag round-trip. -/
-theorem roundtrip_fromUD_toUD :
-    ∀ v ∈ [Number.singular, .dual, .trial, .paucal, .plural, .greaterPaucal, .greaterPlural],
-      v.toUD.bind fromUD = some v := by
-  decide
+/-- Realization and ingestion of number are a partial equivalence: a value has a tag exactly when
+that tag ingests as the value. -/
+def toUDPEquiv : Number ≃. UD.Number where
+  toFun := toUD
+  invFun := fromUD
+  inv a b := by cases a <;> cases b <;> decide
 
 end Number
 
@@ -257,7 +259,3 @@ def ofUD (m : UD.MorphFeatures) : Features
   | .polarity => m.polarity
 
 end Morphology.Features
-
-/-- The agreement bundle an annotation ingests as. -/
-def Agreement.Bundle.ofUD (m : UD.MorphFeatures) : Agreement.Bundle :=
-  Agreement.Bundle.ofFeatures (Morphology.Features.ofUD m)

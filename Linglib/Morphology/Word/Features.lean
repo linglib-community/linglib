@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Order.Flat
@@ -22,10 +27,10 @@ join and meet; the Universal Dependencies annotation of a token is the matter of
 
 ## Main declarations
 
-* `Morphology.Feature`, `Morphology.Feature.Value` — the features and their value types
-* `Morphology.Features` — the bundle, with the constructor `Features.of` naming the values
-  it specifies
-* `Morphology.Features.IsWh` — an interrogative or relative pro-form
+* `Morphology.Feature`, `Morphology.Feature.Value`: the features and their value types.
+* `Morphology.Features`: the bundle, with the constructor `Features.of` naming the values it
+  specifies.
+* `Morphology.Features.IsWh`: an interrogative or relative pro-form.
 
 ## References
 
@@ -43,8 +48,8 @@ inductive Feature where
   | verbForm | tense | aspect | mood | voice | polarity
   deriving DecidableEq, Repr, Fintype
 
-/-- The value type of each feature: the analytical inventory for the agreement dimensions
-and the Universal Dependencies tags otherwise, reflexivity being privative. -/
+/-- A feature takes its values in the analytical inventory for an agreement dimension and in the
+Universal Dependencies tags otherwise, reflexivity being privative. -/
 abbrev Feature.Value : Feature → Type
   | .person => Person
   | .number => Number
@@ -65,7 +70,7 @@ instance (t : Feature) : DecidableEq t.Value := by cases t <;> exact inferInstan
 
 instance (t : Feature) : Repr t.Value := by cases t <;> exact inferInstance
 
-/-- A token's features: a value or `⊥` in each feature. -/
+/-- A token's features give each feature a value or `⊥`. -/
 abbrev Features := (f : Feature) → Flat f.Value
 
 namespace Features
@@ -74,7 +79,7 @@ namespace Features
 def of (person : Option Person := none) (number : Option Number := none)
     (gender : Option Gender := none) (case_ : Option Case := none)
     (definiteness : Option UD.Definite := none) (degree : Option UD.Degree := none)
-    (pronType : Option UD.PronType := none) (reflex : Bool := false)
+    (pronType : Option UD.PronType := none) (reflex : Option Unit := none)
     (verbForm : Option UD.VerbForm := none) (tense : Option UD.Tense := none)
     (aspect : Option UD.Aspect := none) (mood : Option UD.Mood := none)
     (voice : Option UD.Voice := none) (polarity : Option UD.Polarity := none) : Features
@@ -85,7 +90,7 @@ def of (person : Option Person := none) (number : Option Number := none)
   | .definiteness => definiteness
   | .degree => degree
   | .pronType => pronType
-  | .reflex => if reflex then some () else none
+  | .reflex => reflex
   | .verbForm => verbForm
   | .tense => tense
   | .aspect => aspect

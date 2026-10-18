@@ -36,7 +36,7 @@ survey the splits, which arose independently in Cholan, Q'anjob'alan and Yucatec
 ## Implementation notes
 
 A paradigm is an `Agreement.Paradigm` over `Agreement.Bundle.personNumberCells`, so a
-controller's `Word.phi` indexes it directly, as in Corbett's account of agreement; an exponent is
+controller's `HasPhi.phi` indexes it directly, as in Corbett's account of agreement; an exponent is
 a list of `Morphology.Morph`, empty for zero exponence and of length two for a discontinuous
 marker such as a person prefix with a separate plural word. A cell whose only marker is a
 process also renders as `[]`. Tables with pre-consonantal and pre-vocalic shapes are

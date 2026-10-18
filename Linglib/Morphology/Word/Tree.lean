@@ -10,28 +10,29 @@ public import Linglib.Morphology.Morph
 /-!
 # Word-internal structure
 
-A `Word.Tree M` is an operation-typed tree over the word-formation
-signature: each constructor is one of [booij-2012]'s morphological
-operations, with its own arity and material. Every subtree is a partial
-word; the tree records derivational history and word-internal
-constituency, which applying the operations as functions would forget.
+A `Word.Tree M` records how a word is built from material in `M`, with one constructor for each of
+Booij's morphological operations: affixation on either side, infixation, circumfixation,
+compounding, reduplication and conversion. Linearization forgets the structure; attaching affixes
+to a root in order records the affixes and their order.
 
-## Main declarations
+## Main definitions
 
-* `Word.Tree` — the operation-typed tree
-* `Word.Tree.attach`, `Word.Tree.attachAll` — attachment of an affix on a side
-  of its host, and of a sequence of affixes to a root, innermost first;
-  `toList_attach` linearizes attachment to `Morph.Side.attach`
-* `Word.Tree.toList`, `Word.Tree.IsConcatenative` — linearization, and the
-  shapes where it is the word's segmentation; `toList_attachAll` reads the
-  affixes of each side outward from the root in order of attachment, and
-  `attachAll_injective` says the tree records the affixes and their order
-* `Word.Tree.attachMorphs` — attachment of morphs on the sides their kinds
-  give; `attachMorphs_injOn` on sequences of morphs bound on a side, and
-  `wordsAt_toList_attachMorphs`: the result is one word
-* `Word.Tree.base`, `Word.Tree.stem`, `Word.Tree.roots` — [booij-2012]'s
-  relational notions
-* `Word.Tree.IsKindCoherent` — attachment kinds match their positions
+* `Morphology.Word.Tree`: the tree of a word's formation.
+* `Morphology.Word.Tree.toList`: the material of a tree in surface order.
+* `Morphology.Word.Tree.IsConcatenative`: the tree is built by concatenation alone, so `toList`
+  is the word's segmentation.
+* `Morphology.Word.Tree.attachAll`, `Morphology.Word.Tree.attachMorphs`: attachment of affixes to
+  a root, and of morphs on the sides their kinds give.
+
+## Main results
+
+* `Morphology.Word.Tree.toList_attachAll`: the affixes of each side surface outward from the root
+  in the order they were attached.
+* `Morphology.Word.Tree.attachAll_injective`: attachment records the affixes and their order.
+
+## References
+
+* [booij-2012]
 -/
 
 @[expose] public section
@@ -73,7 +74,7 @@ inductive Tree (M : Type*) where
 
 namespace Tree
 
-variable {M N O : Type*} {t : Tree M} {l : List M}
+variable {M : Type*}
 
 /-! ### Linearization -/
 
@@ -89,21 +90,6 @@ def toList : Tree M → List M
   | .compound left right => left.toList ++ right.toList
   | .reduplicated _ base => base.toList
   | .converted base => base.toList
-
-theorem toList_ne_nil (t : Tree M) : t.toList ≠ [] := by
-  induction t <;> simp_all [toList]
-
-/-- Apply a function to the material at every node, preserving the tree's
-shape. -/
-def map (f : M → N) : Tree M → Tree N
-  | .root m => .root (f m)
-  | .prefixed afx base => .prefixed (f afx) (base.map f)
-  | .suffixed base afx => .suffixed (base.map f) (f afx)
-  | .infixed base afx => .infixed (base.map f) (f afx)
-  | .circumfixed pre base suf => .circumfixed (f pre) (base.map f) (f suf)
-  | .compound left right => .compound (left.map f) (right.map f)
-  | .reduplicated rt base => .reduplicated rt (base.map f)
-  | .converted base => .converted (base.map f)
 
 /-- `IsConcatenative t` asserts that `t` is built by concatenation alone —
 no infixation, circumfixation, or reduplication — so `toList` is the word's
@@ -136,11 +122,6 @@ def attach (side : Morph.Side) (afx : M) (t : Tree M) : Tree M :=
 
 @[simp] theorem attach_after (afx : M) (t : Tree M) : t.attach .after afx = .suffixed t afx := rfl
 
-/-- Linearization intertwines attachment on trees with attachment on sequences. -/
-theorem toList_attach (side : Morph.Side) (afx : M) (t : Tree M) :
-    (t.attach side afx).toList = side.attach afx t.toList := by
-  cases side <;> rfl
-
 theorem attach_inj {s s' : Morph.Side} {afx afx' : M} {t t' : Tree M} :
     t.attach s afx = t'.attach s' afx' ↔ s = s' ∧ afx = afx' ∧ t = t' := by
   cases s <;> cases s' <;> simp [and_comm]
@@ -151,7 +132,7 @@ theorem attach_ne_root (side : Morph.Side) (afx : M) (t : Tree M) (m : M) :
 
 /-- Attach affixes to a root in order, innermost first. -/
 def attachAll (root : M) (affixes : List (Morph.Side × M)) : Tree M :=
-  affixes.foldl (fun t p => t.attach p.1 p.2) (.root root)
+  affixes.foldl (fun t p ↦ t.attach p.1 p.2) (.root root)
 
 @[simp] theorem attachAll_nil (root : M) : attachAll root [] = .root root := rfl
 
@@ -175,7 +156,7 @@ theorem attachAll_injective (root : M) : Function.Injective (attachAll root) := 
       rw [ih h.2.2, Prod.ext h.1 h.2.1]
 
 theorem toList_foldl_attach (t : Tree M) : ∀ affixes : List (Morph.Side × M),
-    (affixes.foldl (fun t p => t.attach p.1 p.2) t).toList =
+    (affixes.foldl (fun t p ↦ t.attach p.1 p.2) t).toList =
       ((affixes.filter (·.1 = .before)).map (·.2)).reverse ++ t.toList ++
         (affixes.filter (·.1 = .after)).map (·.2)
   | [] => by simp
@@ -194,7 +175,7 @@ theorem toList_attachAll (root : M) (affixes : List (Morph.Side × M)) :
 
 theorem isConcatenative_foldl_attach {t : Tree M} (ht : t.IsConcatenative) :
     ∀ affixes : List (Morph.Side × M),
-      (affixes.foldl (fun t p => t.attach p.1 p.2) t).IsConcatenative
+      (affixes.foldl (fun t p ↦ t.attach p.1 p.2) t).IsConcatenative
   | [] => ht
   | ⟨s, a⟩ :: rest => by
     rw [List.foldl_cons]
@@ -227,112 +208,6 @@ theorem attachMorphs_injOn (root : Morph) :
   have := attachAll_injective root
     (by simpa only [attachMorphs, key l₁ h₁, key l₂ h₂] using h)
   exact List.map_injective_iff.mpr (fun m m' hmm ↦ (Prod.ext_iff.mp hmm).2) this
-
-/-- A root with morphs attached on their sides is one word. -/
-theorem wordsAt_toList_attachMorphs (root : Morph) (ms : List Morph) :
-    Morph.wordsAt .clitic (attachMorphs root ms).toList = [(attachMorphs root ms).toList] := by
-  rw [attachMorphs, toList_attachAll]
-  refine Morph.wordsAt_append_cons root (fun p hp ↦ ?_) fun s hs ↦ ?_
-  · simp at hp
-    obtain ⟨a, ha⟩ := Morph.Kind.side?_eq_some_iff.mp hp.2
-    exact ⟨a, by simp, by simpa using ha⟩
-  · simp at hs
-    obtain ⟨a, ha⟩ := Morph.Kind.side?_eq_some_iff.mp hs.2
-    exact ⟨.after, nofun, a, by simp, by simpa using ha⟩
-
-/-! ### Laws -/
-
-@[simp] theorem map_id (t : Tree M) : t.map id = t := by
-  induction t <;> simp [map, *]
-
-theorem map_map (f : M → N) (g : N → O) (t : Tree M) :
-    (t.map f).map g = t.map (g ∘ f) := by
-  induction t <;> simp [map, *]
-
-/-- Linearization is natural in the material. -/
-theorem toList_map (f : M → N) (t : Tree M) :
-    (t.map f).toList = t.toList.map f := by
-  induction t <;> simp [map, toList, *]
-
-/-! ### Structural measures -/
-
-/-- The number of operations above the deepest root. -/
-def depth : Tree M → Nat
-  | .root _ => 0
-  | .compound l r => max l.depth r.depth + 1
-  | .prefixed _ b | .suffixed b _ | .infixed b _ | .circumfixed _ b _
-  | .reduplicated _ b | .converted b => b.depth + 1
-
-/-- A bare root has depth zero. -/
-theorem depth_root (m : M) : (root m).depth = 0 := rfl
-
-/-! ### Relational accessors -/
-
-/-- The daughter the outermost operation applied to; `none` for a bare
-root and for compounds. -/
-def base : Tree M → Option (Tree M)
-  | .root _ | .compound _ _ => none
-  | .prefixed _ b | .suffixed b _ | .infixed b _ | .circumfixed _ b _
-  | .reduplicated _ b | .converted b => some b
-
-/-- The tree with outer affixation by `infl`-material stripped. -/
-def stem (infl : M → Bool) : Tree M → Tree M
-  | w@(.prefixed a b) => if infl a then b.stem infl else w
-  | w@(.suffixed b a) => if infl a then b.stem infl else w
-  | w@(.infixed b a) => if infl a then b.stem infl else w
-  | w@(.circumfixed pre b suf) => if infl pre && infl suf then b.stem infl else w
-  | w => w
-
-/-- The material at the leaves. -/
-def roots : Tree M → List M
-  | .root m => [m]
-  | .compound l r => l.roots ++ r.roots
-  | .prefixed _ b | .suffixed b _ | .infixed b _ | .circumfixed _ b _
-  | .reduplicated _ b | .converted b => b.roots
-
-variable {infl : M → Bool}
-
-theorem stem_root (m : M) : (root m).stem infl = root m := rfl
-
-theorem stem_suffixed_of_infl {afx : M} (b : Tree M) (h : infl afx) :
-    (suffixed b afx).stem infl = b.stem infl := by simp [stem, h]
-
-theorem stem_suffixed_of_not_infl {afx : M} (b : Tree M) (h : ¬ infl afx) :
-    (suffixed b afx).stem infl = suffixed b afx := by simp [stem, h]
-
-/-- Attaching inflectional material on either side leaves the stem alone. -/
-theorem stem_attach {afx : M} (side : Morph.Side) (t : Tree M) (h : infl afx) :
-    (t.attach side afx).stem infl = t.stem infl := by
-  cases side <;> simp [stem, h]
-
-/-! ### Kind coherence -/
-
-/-- `IsKindCoherent t` asserts that the material's `Kind`s agree with their
-positions — no `suffixed` node holds a prefix morph — and every leaf is a
-root or a free form. -/
-def IsKindCoherent : Tree Morph → Prop
-  | .root m => m.kind = .root ∨ m.kind = .free
-  | .prefixed m b => m.kind.side? = some .before ∧ b.IsKindCoherent
-  | .suffixed b m => m.kind.side? = some .after ∧ b.IsKindCoherent
-  | .circumfixed pre b suf =>
-      pre.kind.side? = some .before ∧ suf.kind.side? = some .after ∧ b.IsKindCoherent
-  | .compound l r => l.IsKindCoherent ∧ r.IsKindCoherent
-  | .infixed b _ | .reduplicated _ b | .converted b => b.IsKindCoherent
-
-instance decIsKindCoherent : (t : Tree Morph) → Decidable t.IsKindCoherent
-  | .root _ => inferInstanceAs (Decidable (_ ∨ _))
-  | .prefixed _ b => @instDecidableAnd _ _ inferInstance (decIsKindCoherent b)
-  | .suffixed b _ => @instDecidableAnd _ _ inferInstance (decIsKindCoherent b)
-  | .circumfixed _ b _ =>
-      @instDecidableAnd _ _ inferInstance
-        (@instDecidableAnd _ _ inferInstance (decIsKindCoherent b))
-  | .compound l r => @instDecidableAnd _ _ (decIsKindCoherent l) (decIsKindCoherent r)
-  | .infixed b _ | .reduplicated _ b | .converted b => decIsKindCoherent b
-
-/-- Attaching a morph bound on the side it is attached preserves kind coherence. -/
-theorem isKindCoherent_attach {side : Morph.Side} {m : Morph} (hm : m.kind.side? = some side)
-    {t : Tree Morph} (ht : t.IsKindCoherent) : (t.attach side m).IsKindCoherent := by
-  cases side <;> exact ⟨hm, ht⟩
 
 end Tree
 

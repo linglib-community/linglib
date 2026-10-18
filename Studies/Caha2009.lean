@@ -91,17 +91,17 @@ with the segmentation and the locator each table prints. A paradigm's form at a 
 Slavic sequence (13) is its form in the cell of that case. -/
 
 /-- `slavicCase i` is the case at the place `i` of the Slavic sequence (13): nominative,
-accusative, genitive, prepositional, dative, instrumental, the prepositional as UD's locative. -/
-def slavicCase : Fin 6 → UD.Case := ![.Nom, .Acc, .Gen, .Loc, .Dat, .Ins]
+accusative, genitive, prepositional, dative, instrumental, the prepositional as the locative. -/
+def slavicCase : Fin 6 → Case := ![.nom, .acc, .gen, .loc, .dat, .inst]
 
 /-- `form p i` is the form the paradigm `p` gives the case at the place `i` of the Slavic
 sequence. -/
 def form (p : Paradigm Forms.Cell) : Morphology.Paradigm 6 String := fun i ↦
-  ((p.forms.find? (·.cell.case_ = ↑(slavicCase i))).map (·.form)).getD ""
+  ((p.forms.find? (Morphology.Features.ofUD ·.cell .case = ↑(slavicCase i))).map (·.form)).getD ""
 
 /-- `number p` is the number of the paradigm's cells. -/
 def number (p : Paradigm Forms.Cell) : Option Number :=
-  p.forms.head?.bind fun f ↦ (f.cell.number : Option UD.Number).bind Number.fromUD
+  p.forms.head?.bind fun f ↦ Morphology.Features.ofUD f.cell .number
 
 /-! ### Contiguity -/
 

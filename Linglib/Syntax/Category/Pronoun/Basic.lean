@@ -4,7 +4,7 @@ public import Mathlib.Data.Option.NAry
 public import Mathlib.Order.Nat
 public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
-public import Linglib.Morphology.Word.Basic
+public import Linglib.Morphology.Word.Agree
 public import Linglib.Syntax.Agreement.Phi
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Case.Basic
@@ -23,23 +23,23 @@ arguments.
 
 ## Main definitions
 
-* `Pronoun.Strength` — the clitic, weak and strong classes of [cardinaletti-starke-1999], a
-  bounded linear order by structural deficiency
-* `Pronoun` — the form, person, number, case and gender of a pronoun, with its script form
-  and the strength class of its series
-* `Pronoun.categories` — the referential categories of [cysouw-2003] that the person and
-  number realize
-* `Pronoun.WellFormed` — clusivity is not borne by a singular
-* `Pronoun.toWord` — the pronoun as a token, with the pronoun type and reflexive marking of
-  its kind
-* `Pronoun.CandidateAntecedent` — a nominal token that agrees with the pronoun, so one of the
-  pronoun's number (`Pronoun.CandidateAntecedent.number_eq`)
+* `Pronoun.Strength`: the clitic, weak and strong classes of Cardinaletti and Starke, a
+  bounded linear order by structural deficiency.
+* `Pronoun`: the form, person, number, case and gender of a pronoun, with its script form
+  and the strength class of its series.
+* `Pronoun.categories`: the referential categories of Cysouw that the person and number
+  realize.
+* `Pronoun.WellFormed`: clusivity is not borne by a singular.
+* `Pronoun.toWord`: the pronoun as a token, with the pronoun type and reflexive marking of
+  its kind.
+* `Pronoun.CandidateAntecedent`: a nominal token that agrees with the pronoun, so one of the
+  pronoun's number (`Pronoun.CandidateAntecedent.number_eq`).
 
 ## Main results
 
 * `Pronoun.bindingClassOf_toWord_reflex`, `Pronoun.bindingClassOf_toWord_rcp`,
-  `Pronoun.bindingClassOf_toWord` — the binding class the engine reads off a pronoun's token is
-  fixed by the marking its kind supplies
+  `Pronoun.bindingClassOf_toWord`: the binding class the engine reads off a pronoun's token is
+  fixed by the marking its kind supplies.
 
 ## References
 
@@ -59,11 +59,11 @@ arguments.
 /-- The three pronoun classes of [cardinaletti-starke-1999], ordered by structural deficiency
 with the most deficient least. The classes are distributional: stress does not define them. -/
 inductive Pronoun.Strength where
-  /-- A deficient head: adjacent to the verb, clustering and prosodically dependent, as
-  Italian *lo* and French *le*. -/
+  /-- A clitic is a deficient head, adjacent to the verb, clustering and prosodically dependent,
+  as Italian *lo* and French *le*. -/
   | clitic
-  /-- A deficient phrase: confined to derived positions and not coordinable, yet a prosodic
-  word, as German *es* and Italian dative *loro*. -/
+  /-- A weak pronoun is a deficient phrase, confined to derived positions and not coordinable,
+  yet a prosodic word, as German *es* and Italian dative *loro*. -/
   | weak
   /-- A non-deficient phrase: coordinable, modifiable and free to stand in peripheral
   positions, as Italian and French *lui*. -/
@@ -93,7 +93,7 @@ end Pronoun.Strength
 
 /-! ### The pronoun -/
 
-/-- A pronoun: its surface form and agreement features, the core every pronoun kind shares. -/
+/-- A pronoun is a surface form with agreement features, the core every pronoun kind shares. -/
 structure Pronoun where
   /-- The surface form, romanized or orthographic. -/
   form : String
@@ -122,7 +122,7 @@ either is unspecified, several for a syncretism such as clusivity-unmarked Engli
 def categories : Finset Person.Category :=
   (Option.map₂ Person.Category.ofPersonNumber p.person p.number).getD ∅
 
-/-- The bundle a pronoun bears: its person, number, gender and case. -/
+/-- A pronoun bears the bundle of its person, number, gender and case. -/
 def phi : Agreement.Bundle
   | .person => p.person
   | .number => p.number
@@ -142,9 +142,10 @@ instance : Decidable p.WellFormed :=
 
 /-! ### The pronoun as a token -/
 
-/-- The pronoun as a token: a `PRON` word with its agreement features, and the pronoun type
-and reflexive marking its kind supplies. -/
-def toWord (pronType : Option UD.PronType := none) (reflex : Bool := false) : Morphology.Word :=
+/-- The token of a pronoun is a `PRON` word with its agreement features, and with the pronoun
+type and reflexive marking its kind supplies. -/
+def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none) :
+    Morphology.Word :=
   { form := p.form, cat := .PRON,
     features := .of (person := p.person) (number := p.number) (gender := p.gender)
       (case_ := p.case_) (reflex := reflex) (pronType := pronType) }
@@ -152,7 +153,7 @@ def toWord (pronType : Option UD.PronType := none) (reflex : Bool := false) : Mo
 /-- A token marked reflexive classifies as a reflexive anaphor. -/
 @[simp]
 theorem bindingClassOf_toWord_reflex (t : Option UD.PronType) :
-    Binding.bindingClassOf (p.toWord t true) = some .reflexive := by
+    Binding.bindingClassOf (p.toWord t (some ())) = some .reflexive := by
   simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
 /-- A token of reciprocal pronoun type classifies as a reciprocal anaphor. -/
