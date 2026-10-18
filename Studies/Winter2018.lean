@@ -53,6 +53,7 @@ holds of a sum when some event of the symmetric verb has the group of the sum as
 * [dalrymple-et-al-1998]
 * [dimitriadis-2008b]
 * [siloni-2012]
+* [kruitwagen-et-al-2017]
 -/
 
 @[expose] public section
@@ -177,8 +178,8 @@ variable [DecidableEq A] {D E : Type*} [SemilatticeSup D] [SemilatticeSup E]
 /-- [siloni-2012]'s symmetric verbs validate (Pr₂): for entities that are singular individuals
 `ι x`, with `σ` summing a pair to the sum of its members, a collective sentence entails the
 binary one. The paper reports (Pr₂) failing for hug, fight, collide, divorce and talk (§3.3,
-partly from experiments on their Dutch counterparts), so on its judgments these reciprocal
-verbs are not symmetric verbs in Siloni's sense. -/
+partly from [kruitwagen-et-al-2017]'s experiments on their Dutch counterparts), so on its
+judgments these reciprocal verbs are not symmetric verbs in Siloni's sense. -/
 theorem pr2_of_isSymmetricVerb (h : Siloni2012.IsSymmetricVerb GD GE V ag th Vsym agTh)
     {ι : A → D} (hι : ∀ x, Mereology.Atom (ι x)) {σ : Finset A → D}
     (hσ : ∀ x y, σ {x, y} = ι x ⊔ ι y) :
@@ -200,7 +201,10 @@ section Events
 variable [DecidableEq A] {E : Type*}
 
 /-- The rule of [dimitriadis-2008b], as (42) states it, makes a collective event of two
-entities one specified by a sub-event of the binary predicate in each direction. -/
+entities one specified by a sub-event of the binary predicate in each direction. Dimitriadis
+states it for Siloni's bundled [Agent-Theme] role, which his (65) expands into one specifying
+sub-event per member of the group, with specification taken from Link (64); (42) states it for
+any collective and its binary alternate. -/
 def Dimitriadis (spec : E → E → Prop) (R : E → A → A → Prop)
     (P : E → Finset A → Prop) : Prop :=
   ∀ e (x y : A), x ≠ y →
