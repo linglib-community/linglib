@@ -70,7 +70,7 @@ which gives a past under *mae* and a present under *ato* no denotation.
 
 namespace ArreguiKusumoto1998
 
-open Montague HeimKratzer HeimKratzer.Tree PhraseStructure Semantics ModalLogic Tense
+open Montague PhraseStructure.Tree PhraseStructure Semantics ModalLogic Tense
 open Japanese.TemporalConnectives (mae ato)
 open scoped SetRel
 

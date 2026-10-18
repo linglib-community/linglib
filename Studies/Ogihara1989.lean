@@ -50,7 +50,7 @@ the stove is stronger.
 
 namespace Ogihara1989
 
-open Semantics HeimKratzer ModalLogic Tense Partee1973
+open Semantics Montague ModalLogic Tense Partee1973
 open scoped SetRel
 
 variable {T : Type*} [LinearOrder T] {P : NonemptyInterval T → Prop} {K σ : NonemptyInterval T}
@@ -67,8 +67,8 @@ theorem restricted_iff_exists_past :
 /-! ### The stove
 
 *I didn't turn off the stove* (`Examples.ex_46a`), with `P` the times at which the speaker turns
-off the stove and the time of the tense's index the salient interval. The sentence says that this interval is past
-and has no subinterval at which the speaker turned off the stove. -/
+off the stove and the time of the tense's index the salient interval. The sentence says that this
+interval is past and has no subinterval at which the speaker turned off the stove. -/
 
 /-- The stove sentence says that the salient interval is past and denies the past restricted to
 it. -/

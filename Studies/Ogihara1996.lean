@@ -39,7 +39,7 @@ carry both the morphological tense and the divergent event location.
 namespace Ogihara1996
 
 open Tense Semantics
-open HeimKratzer
+open Montague
 
 /-- The frame of a clause embedded under an attitude verb takes the matrix event time as its
 perspective time, so the embedded tense locates its reference time against the attitude holder's
@@ -48,29 +48,29 @@ now. -/
     (embeddedR embeddedE : T) : ReichenbachFrame T :=
   ⟨matrixFrame.speechTime, matrixFrame.eventTime, embeddedR, embeddedE⟩
 
-/-- The simultaneous reading is the zero-tense reading: a zero tense bound by the attitude
+/-- The simultaneous reading is the zero-tense reading, since a zero tense bound by the attitude
 denotes its now. -/
 theorem zeroTense_simultaneous {W T : Type*} [LT T] (g : Assignment T) (n : ℕ) (now : T)
     (w : W) : (pronoun ⊤ n 0).selector (Function.update g n now) w = some now := by
   simp
 
-/-- The shifted reading is the genuine-past reading: a pronominal past whose presupposition
+/-- The shifted reading is the genuine-past reading, since a pronominal past whose presupposition
 holds precedes its evaluation time. -/
 theorem genuinePast_shifted {W T : Type*} [LinearOrder T] {k j : ℕ} {g : Assignment T} {w : W}
     (h : (pronoun ⟦past⟧ k j).presup g w) : compare (g k) (g j) = .lt := by
   simpa [compare_lt_iff_lt] using h
 
-/-- The matrix frame *Taroo-wa … to it-ta*, past and perfective: the speech and perspective
-times at the origin, the reference and event times two units earlier. -/
+/-- The matrix frame *Taroo-wa … to it-ta* is past and perfective, with the speech and
+perspective times at the origin and the reference and event times two units earlier. -/
 def matrixItta : ReichenbachFrame ℤ := .root 0 (-2) (-2)
 
-/-- The embedded *Hanako-ga byookidat-ta*: a past under a past, interpreted relative to the
+/-- The embedded *Hanako-ga byookidat-ta* is a past under a past, interpreted relative to the
 matrix event, so its perspective time is the matrix event time and its reference time lies
 before it. -/
 def embeddedByookiDatta : ReichenbachFrame ℤ := embeddedFrame matrixItta (-5) (-5)
 
 /-- The English past perfect under a past matrix, *he said that Mary had been reading books
-yesterday*: past relative to the embedded perspective, and perfect. -/
+yesterday*, is past relative to the embedded perspective, and perfect. -/
 def pluperfectShifted : ReichenbachFrame ℤ := embeddedFrame matrixItta (-4) (-5)
 
 /-- The embedded Japanese past is evaluated from the matrix event, not the speech time. -/

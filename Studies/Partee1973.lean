@@ -30,7 +30,7 @@ antecedent, which two existential pasts do not require.
 ## Implementation notes
 
 * A time is an interval of a linear order, mathlib's `NonemptyInterval`, and a tense is an index
-  of an assignment of times, read as a pronoun by `HeimKratzer.interpPronoun`.
+  of an assignment of times, read as a pronoun by `Montague.interpPronoun`.
 * A clause in the past tense says that the time of its index precedes the speech time and that
   the clause holds at that time, as a conjunction.
 
@@ -44,7 +44,7 @@ antecedent, which two existential pasts do not require.
 
 namespace Partee1973
 
-open Semantics HeimKratzer ModalLogic Tense
+open Semantics Montague ModalLogic Tense
 open scoped SetRel
 
 variable {T : Type*} [LinearOrder T] {P Q : NonemptyInterval T → Prop} {σ : NonemptyInterval T}

@@ -9,9 +9,9 @@ public import Mathlib.Data.Set.Functor
 /-!
 # Charlow 2018: a modular theory of pronouns and binding
 
-The standard theory of pronouns ([heim-kratzer-1998]) makes every meaning depend on an
-assignment and composes by handing one assignment to both daughters. [charlow-2018] factors this
-into two operations: a lift `ρ x := λg. x` for meanings that do not depend on the assignment, and
+The standard theory of pronouns, Heim and Kratzer's, makes every meaning depend on an assignment
+and composes by handing one assignment to both daughters. Charlow factors this into two
+operations: a lift `ρ x := λg. x` for meanings that do not depend on the assignment, and
 an application `m ⊛ n := λg. m g (n g)` used only where it is needed. Together they make
 assignment-dependent meanings an applicative functor. A flattener `μ m := λg. m g g` for pronouns
 whose value is an intension then makes them a monad. These are the `pure`, `<*>` and `joinM` of
@@ -22,8 +22,8 @@ paycheck pronouns and binding reconstruction follow from pronouns whose values a
 Those analyses store intensions in assignments. Assignments that can store every intension exist
 only over a one-element domain, by Cantor's diagonal argument. This is the difficulty the paper
 cites in section 5, whose type-homogeneous assignments avoid it: two composed reader applicatives
-derive the paycheck reading with no flattener. The pronouns of variable-free semantics
-([jacobson-1999]) use the same applicative at the entity type.
+derive the paycheck reading with no flattener. The pronouns of Jacobson's variable-free
+semantics use the same applicative at the entity type.
 
 ## Main results
 
@@ -58,7 +58,7 @@ derivation assumes only the laws it uses, for the one intension it stores. As in
 
 namespace Charlow2018
 
-open HeimKratzer
+open Montague
 open scoped Assignment
 
 variable {E : Type}
@@ -69,7 +69,7 @@ The standard rule interprets a branching node by giving both daughters the same 
 `⟦α β⟧ := λg. ⟦α⟧ g (⟦β⟧ g)` (6). Binding needs the sister of `Λᵢ` evaluated at shifted
 assignments, which the rule never supplies. -/
 
-/-- No denotation for `Λᵢ` binds under the standard rule (section 2.2): whatever `L` is,
+/-- No denotation for `Λᵢ` binds under the standard rule (section 2.2), since whatever `L` is,
 `λg. L g (⟦α⟧ g)` sees `⟦α⟧` only at `g`, while binding needs `λg. λx. ⟦α⟧ g^{i→x}`. -/
 theorem not_exists_abstraction_denotation [Nontrivial E] (i : ℕ) :
     ¬ ∃ L : Assignment E → Prop → E → Prop,
@@ -143,7 +143,7 @@ example {R : Type} (m : Cont R (α → β)) (n : Cont R α) :
 example {F G : Type → Type} [Applicative F] [LawfulApplicative F] [Applicative G]
     [LawfulApplicative G] : LawfulApplicative (Functor.Comp F G) := inferInstance
 
-/-- The reader composed with itself: `ρ x = λg. λh. x` and `m ⊛ n = λg. λh. m g h (n g h)`. -/
+/-- The reader composed with itself has `ρ x = λg. λh. x` and `m ⊛ n = λg. λh. m g h (n g h)`. -/
 example {E₁ E₂ : Type} (x : α) :
     (pure x : Functor.Comp (ReaderM E₁) (ReaderM E₂) α).run = fun _ _ => x := rfl
 
@@ -166,11 +166,12 @@ section MonadLaws
 
 variable {M : Type → Type} [Monad M] [LawfulMonad M] {α : Type}
 
-/-- Associativity: `μ ∘ μ = λm. μ (ρ μ ⊛ m)`. -/
+/-- The flattener is associative, `μ ∘ μ = λm. μ (ρ μ ⊛ m)`. -/
 theorem joinM_joinM (m : M (M (M α))) : joinM (joinM m) = joinM (pure joinM <*> m) := by
   rw [pure_seq, joinM_map_joinM]
 
-/-- Identity: `λm. μ (ρ ρ ⊛ m) = λm. m`; the other half, `μ ∘ ρ = id`, is `joinM_pure`. -/
+/-- Flattening undoes the inner lift, `λm. μ (ρ ρ ⊛ m) = λm. m`; the other half of the identity
+law, `μ ∘ ρ = id`, is `joinM_pure`. -/
 theorem joinM_pure_seq_pure (m : M α) : joinM (pure pure <*> m) = m := by
   rw [pure_seq, joinM_map_pure]
 
@@ -195,9 +196,9 @@ example {α : Type} (i : ℕ) (f : ReaderM (Assignment E) α) :
 
 variable (shift : ℕ → E → G → G) (shiftCon : ℕ → ReaderM G E → G → G)
 
-/-- The paycheck reading (Fig. 6): *Bill Λ₀ t₀ likes her₁*, with `her₁` anaphoric to an intension
-and flattened by `μ`. If the input assignment gives variable 1 the intension of *his₀ mom*, the
-sentence says that Bill likes Bill's mom. -/
+/-- In the paycheck reading (Fig. 6) of *Bill Λ₀ t₀ likes her₁*, `her₁` is anaphoric to an
+intension and flattened by `μ`. If the input assignment gives variable 1 the intension of
+*his₀ mom*, the sentence says that Bill likes Bill's mom. -/
 theorem paycheck (likes : E → E → Prop) (mom : E → E) (b : E) (g : G)
     (hg : con 1 g = pure mom <*> ind 0)
     (hcon : ∀ x g, con 1 (shift 0 x g) = con 1 g) (hind : ∀ x g, ind 0 (shift 0 x g) = x) :
@@ -207,7 +208,7 @@ theorem paycheck (likes : E → E → Prop) (mom : E → E) (b : E) (g : G)
   rw [hcon, hg, hind]
   exact congrArg (likes · b) (congrArg mom (hind b g))
 
-/-- Binding reconstruction (Fig. 7): *[his₀ mom] Λ₁ every boy Λ₀ t₀ likes t₁*. The fronted
+/-- In binding reconstruction (Fig. 7), *[his₀ mom] Λ₁ every boy Λ₀ t₀ likes t₁*, the fronted
 phrase's intension is stored at variable 1, the trace `t₁` is flattened by `μ`, and the sentence
 says that every boy likes his own mom. -/
 theorem reconstruction (likes : E → E → Prop) (mom : E → E) (everyBoy : (E → Prop) → Prop)
@@ -223,7 +224,7 @@ theorem reconstruction (likes : E → E → Prop) (mom : E → E) (everyBoy : (E
   simp only [hcon, hstore, hind]
   exact congrArg everyBoy (funext fun x => congrArg (likes · x) (congrArg mom (hind x _)))
 
-/-- The laws `reconstruction` assumes are satisfiable over any domain: take assignments of
+/-- The laws `reconstruction` assumes are satisfiable over any domain, by assignments of
 individuals whose variable 1 constantly holds the intension of *his₀ mom*. -/
 example (mom : E → E) :
     ∃ (G : Type) (ind : ℕ → ReaderM G E) (con : ℕ → ReaderM G (ReaderM G E))
@@ -259,21 +260,22 @@ applicatives. -/
 
 section TypeHomogeneous
 
-/-- *…and buy the couch Λ₀ she₁ did t₀* (20): a pronoun over individuals and a trace over
+/-- In *…and buy the couch Λ₀ she₁ did t₀* (20), a pronoun over individuals and a trace over
 properties give `λg. λh. h₀ g₁`. -/
 example :
     (Functor.Comp.mk (fun _ h => h 0) <*> Functor.Comp.mk (fun g _ => g 1) :
       Functor.Comp (ReaderM (Assignment E)) (ReaderM (Assignment (E → Prop))) Prop).run =
       fun g h => h 0 (g 1) := rfl
 
-/-- Meanings that depend on an assignment of individual concepts and then on an assignment of
-individuals: the composite `G_{G_e e} ∘ G_e` of section 5.2. -/
+/-- The meanings that depend on an assignment of individual concepts and then on one of
+individuals, the composite `G_{G_e e} ∘ G_e` of section 5.2. -/
 abbrev ConceptThenIndividual (E : Type) : Type → Type :=
   Functor.Comp (ReaderM (Assignment (Assignment E → E))) (ReaderM (Assignment E))
 
-/-- The paycheck reading on type-homogeneous assignments (section 5.2): `her₁` reads an intension
-from the outer assignment and evaluates it at the inner one, and `Λ₀` binds the subject's trace
-in the inner layer. The meaning is `λg. λh. likes (g₁ h^{0→b}) b`, with no flattener. -/
+/-- On type-homogeneous assignments (section 5.2) the paycheck reading has `her₁` read an
+intension from the outer assignment and evaluate it at the inner one, with `Λ₀` binding the
+subject's trace in the inner layer. The meaning is `λg. λh. likes (g₁ h^{0→b}) b`, with no
+flattener. -/
 theorem typed_paycheck (likes : E → E → Prop) (mom : E → E) (b : E)
     (g : Assignment (Assignment E → E)) (h : Assignment E) (hg : g 1 = fun h => mom (h 0)) :
     (Functor.Comp.mk (lambdaAbsG 0 <$> (pure likes <*>

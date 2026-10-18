@@ -60,7 +60,7 @@ arguments are not formalized.
 
 namespace Bruening2021
 
-open English.Verbs Minimalist Montague HeimKratzer.Tree
+open English.Verbs Minimalist Montague PhraseStructure.Tree
 
 /-! ### Implicit arguments -/
 
@@ -193,11 +193,11 @@ theorem melt_build : ∀ v ∈ [melt, build],
 
 /-- Appl takes a verb with an open individual argument, of type ⟨e,⟨s,t⟩⟩, then the theme, the
 recipient and the event, so a verb whose object ∃ has closed off, of type ⟨s,t⟩, cannot combine
-with it: a simple transitive's implicit object is not available in the double object
+with it, and a simple transitive's implicit object is not available in the double object
 construction. -/
-theorem tyBinary_appl :
-    tyBinary (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.eet = some (.e ⇒ .e ⇒ Ty.et) ∧
-      tyBinary (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.et = none := by
+theorem combine?_appl :
+    Ty.combine? (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.eet = some (.e ⇒ .e ⇒ Ty.et) ∧
+      Ty.combine? (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.et = none := by
   decide
 
 /-- No verb but *write* leaves its direct object implicit both in the double object and in the

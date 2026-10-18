@@ -947,7 +947,7 @@ theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) 
   rfl
 
 open HeimKratzer1998.Toy (person sees) in
-open HeimKratzer.Tree (interp) in
+open PhraseStructure.Tree (interp) in
 /-- One set of premises yields, by its two proofs, what Heim and Kratzer's engine computes from
     their two Quantifier Raising trees. -/
 theorem interp_qr_eq_eval :

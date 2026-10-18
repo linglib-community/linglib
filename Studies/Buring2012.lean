@@ -46,7 +46,7 @@ variable {E P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (g 
 variable lookup, the same one for the bound, anaphoric and deictic uses. -/
 theorem selector_eq_assignment :
     (e.denote n c).selector g ⟨⟩
-      = some (HeimKratzer.interpPronoun n g) := rfl
+      = some (Montague.interpPronoun n g) := rfl
 
 /-- A feminine pronoun is undefined of a referent gendered masculine. The feature does not assert
 the referent's gender but presupposes it, so the denotation has no value at all when it fails. -/
