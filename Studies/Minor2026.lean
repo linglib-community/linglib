@@ -50,7 +50,7 @@ where the corresponding update succeeds.
 ## Implementation notes
 
 * Intensionalized uniqueness `unique_w(y)` (103b) is Väänänen's dependence atom
-  `Team.dep (val w) (val y)`: assignments agreeing on the world `w` agree on `y`.
+  `Team.dep (val w) (val y)`, which holds when assignments agreeing on the world `w` agree on `y`.
 * Events are folded into the lexical relations, as in `Studies/Minor2022`, and the maximal sum of
   worlds compatible with the experiencer's wishes (100) is a function `bul` of the world and the
   experiencer.
@@ -139,14 +139,15 @@ universe w
 
 variable {R S E : Type w} [RegisterStructure R S E] [PartialOrder E]
 
-/-- The denotations of the types of (65): a concept is the predicate of individuals of a noun,
-and a predicate of referents is a condition on the values of a referent. -/
+/-- A concept, a type of (65), denotes the predicate of individuals of a noun, and a predicate of
+referents denotes a condition on the values of a referent. -/
 abbrev SemType.denote (R S E : Type w) : SemType → Type w
   | .concept => E → Prop
   | .pred => R → Condition (Set S)
 
-/-- The translations (65): `#` is the identity on concepts, ATOM instantiates a concept by a
-referent with atomic values, and UNIQUE adds uniqueness to a predicate of referents. -/
+/-- The translations (65) take `#` to the identity on concepts, ATOM to the instantiation of a
+concept by a referent with atomic values, and UNIQUE to the addition of uniqueness to a predicate
+of referents. -/
 def NumFeature.denote : (f : NumFeature) → f.sig.1.denote R S E → f.sig.2.denote R S E
   | .num => id
   | .atom => fun P u ↦ lex P u ∩ atomic u
