@@ -9,9 +9,9 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Zheng (2025): Nandao-Qs, When Surprise Sparks Inquiry
 
-This file formalizes [zheng-2025]'s felicity conditions for Mandarin *nandao* questions, which
+This file formalizes Zheng's felicity conditions for Mandarin *nandao* questions, which
 are driven by unexpected contextual evidence rather than by the speaker's epistemic bias. The
-conditions are stated over [von-fintel-gillies-2010]'s kernel, the set of propositions directly
+conditions are stated over von Fintel and Gillies's kernel, the set of propositions directly
 available in the context: some piece of evidence in the kernel raises the probability of the
 prejacent (`evidenceSupports`), the kernel conflicts with the information state `U` in place
 before the evidence, the beliefs, norms, desires or default expectations of the speaker
@@ -29,7 +29,7 @@ expectation that people do not wear raincoats (`raincoat_nandao_felicitous`,
 `raincoat_default_felicitous`), and infelicitous without the evidence
 (`no_evidence_infelicitous`) or when the evidence is expected
 (`expected_evidence_infelicitous`), which is (6). The link to rhetorical questions in §5 runs
-through [farkas-2025]'s closed-question condition: a closed polar question is resolved in the
+through Farkas's closed-question condition: a closed polar question is resolved in the
 common ground whenever the speaker's beliefs are consistent with it (`resolved_of_closed_polar`),
 the argument of the paper's footnote on (17).
 
@@ -119,20 +119,20 @@ theorem not_nandaoQFelicitous_of_unsupported {k : Kernel W} {u : Set (W → Prop
 
 /-- *Nandao* combines with polar questions only, (12), as the fragment records. -/
 theorem nandao_distribution :
-    ¬ Mandarin.QuestionParticles.nandao.LicensedIn .declarative ∧
-      Mandarin.QuestionParticles.nandao.LicensedIn .polar ∧
-      ¬ Mandarin.QuestionParticles.nandao.LicensedIn .constituent := by
+    .declarative ∉ Mandarin.QuestionParticles.nandao.distribution.possible.dom ∧
+      .polar ∈ Mandarin.QuestionParticles.nandao.distribution.possible.dom ∧
+      .constituent ∉ Mandarin.QuestionParticles.nandao.distribution.possible.dom := by
   decide
 
-/-- The bias profile of *nandao*: it requires contextual evidence for the prejacent, the paper's
+/-- The bias profile of *nandao* requires contextual evidence for the prejacent, the paper's
 evidential bias, and places no requirement on the prior state of the speaker, so that a neutral
 prior state is compatible with it, (3). -/
 def nandaoProfile : Question.BiasProfile := ⟨.plus .positive, Finset.univ⟩
 
 /-! ### The dripping-raincoat scenario, (2), (3) and (5) -/
 
-/-- The worlds of the scenario: it rains, the sprinkler ran and the coat is wet without rain,
-it is dry, or the weather is unknown. -/
+/-- The worlds of the scenario, in which it rains, the sprinkler ran and the coat is wet without
+rain, it is dry, or the weather is unknown. -/
 inductive World
   | rain | sprinkler | dry | unknown
   deriving DecidableEq, Repr, Inhabited, Fintype

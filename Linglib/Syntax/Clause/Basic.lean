@@ -124,42 +124,64 @@ namespace Distribution
 
 variable (d : Distribution)
 
-/-- The cells the source records. -/
-def recorded : SetRel SentenceType EmbeddingContext := {c | (d c.1 c.2).isSome = true}
+/-- The cells whose recorded occurrence lies in `s`, the preimage of `s` under `d` read as a
+partial function on cells. -/
+def preimage (s : Set Occurrence) : SetRel SentenceType EmbeddingContext :=
+  {c | ∃ o ∈ s, o ∈ d c.1 c.2}
 
-/-- The cells where the element or process is possible, recorded as obligatory or optional. -/
-def possible : SetRel SentenceType EmbeddingContext :=
-  {c | d c.1 c.2 = some .obligatory ∨ d c.1 c.2 = some .optional}
+/-- The cells the source records. -/
+def recorded : SetRel SentenceType EmbeddingContext := d.preimage .univ
+
+/-- The cells where the element or process is possible, recorded as anything but excluded. -/
+def possible : SetRel SentenceType EmbeddingContext := d.preimage {.excluded}ᶜ
 
 /-- The cells where the element or process is required. -/
-def required : SetRel SentenceType EmbeddingContext := {c | d c.1 c.2 = some .obligatory}
+def required : SetRel SentenceType EmbeddingContext := d.preimage {.obligatory}
 
-variable {d}
+variable {d} {s t : Set Occurrence} {c : SentenceType × EmbeddingContext}
 
-instance (c : SentenceType × EmbeddingContext) : Decidable (c ∈ d.recorded) :=
-  inferInstanceAs (Decidable ((d c.1 c.2).isSome = true))
+@[simp]
+theorem mem_preimage : c ∈ d.preimage s ↔ ∃ o ∈ s, o ∈ d c.1 c.2 := .rfl
 
-instance (c : SentenceType × EmbeddingContext) : Decidable (c ∈ d.possible) :=
-  inferInstanceAs (Decidable (_ ∨ _))
+@[simp]
+theorem mem_recorded : c ∈ d.recorded ↔ d c.1 c.2 ≠ none := by
+  simp [recorded, Option.ne_none_iff_exists']
 
-instance (c : SentenceType × EmbeddingContext) : Decidable (c ∈ d.required) :=
-  inferInstanceAs (Decidable (_ = _))
+@[simp]
+theorem mem_possible : c ∈ d.possible ↔ ∃ o ∈ d c.1 c.2, o ≠ .excluded := by
+  simp [possible, and_comm]
 
-instance (t : SentenceType) : Decidable (t ∈ d.possible.dom) :=
-  inferInstanceAs (Decidable (∃ e, (t, e) ∈ d.possible))
+@[simp]
+theorem mem_required : c ∈ d.required ↔ d c.1 c.2 = some .obligatory := by
+  simp [required]
 
-instance (e : EmbeddingContext) : Decidable (e ∈ d.possible.cod) :=
-  inferInstanceAs (Decidable (∃ t, (t, e) ∈ d.possible))
+@[gcongr]
+theorem preimage_mono (h : s ⊆ t) : d.preimage s ⊆ d.preimage t :=
+  fun _ ⟨o, hs, ho⟩ ↦ ⟨o, h hs, ho⟩
 
-instance : Decidable d.recorded.Nonempty :=
-  inferInstanceAs (Decidable (∃ c, c ∈ d.recorded))
+theorem preimage_subset_recorded (s : Set Occurrence) : d.preimage s ⊆ d.recorded :=
+  preimage_mono (Set.subset_univ s)
 
-theorem required_subset_possible : d.required ⊆ d.possible := fun _ h ↦ Or.inl h
+theorem required_subset_possible : d.required ⊆ d.possible := preimage_mono (by simp)
 
-theorem possible_subset_recorded : d.possible ⊆ d.recorded := by
-  rintro c (h | h) <;> simp [recorded, h]
+instance [DecidablePred (· ∈ s)] : DecidablePred (· ∈ d.preimage s) :=
+  fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
+
+instance : DecidablePred (· ∈ d.recorded) := inferInstanceAs (DecidablePred (· ∈ d.preimage _))
+
+instance : DecidablePred (· ∈ d.possible) := inferInstanceAs (DecidablePred (· ∈ d.preimage _))
+
+instance : DecidablePred (· ∈ d.required) := inferInstanceAs (DecidablePred (· ∈ d.preimage _))
 
 end Distribution
+
+instance {R : SetRel SentenceType EmbeddingContext} [DecidablePred (· ∈ R)] :
+    DecidablePred (· ∈ R.dom) :=
+  fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
+
+instance {R : SetRel SentenceType EmbeddingContext} [DecidablePred (· ∈ R)] :
+    DecidablePred (· ∈ R.cod) :=
+  fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
 
 /-! ### Selections -/
 
@@ -306,13 +328,6 @@ inductive Size where
   | proposition
   deriving DecidableEq, Repr, Fintype
 
-/-- Position on the containment order. -/
-def Size.rank : Size → Nat
-  | .event => 0
-  | .situation => 1
-  | .proposition => 2
-
-instance : LinearOrder Size :=
-  .lift' Size.rank fun a b ↦ by cases a <;> cases b <;> simp [Size.rank]
+instance : LinearOrder Size := .lift' Size.ctorIdx (by decide)
 
 end Clause
