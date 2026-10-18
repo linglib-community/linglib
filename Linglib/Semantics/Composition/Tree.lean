@@ -69,8 +69,8 @@ namespace Montague
 open scoped Assignment
 
 /-- A lexicon looks up a string's `M`-effectful denotation, if it has one. -/
-abbrev Lexicon (E W : Type) (M : Type → Type := Id) (D : Type := ℝ) :=
-  String → Option (Denotation E W M D)
+abbrev Lexicon (E W : Type) (M : Type → Type := Id) (S : Sorts := {}) :=
+  String → Option (Denotation E W M S)
 
 /-! The pure engine computes in `Id`, whose applicative operations are application. The lemmas
 are `simp` lemmas in this namespace only, since they identify `Id α` with `α`. -/
@@ -86,18 +86,18 @@ are `simp` lemmas in this namespace only, since they identify `Id α` with `α`.
 daughter is uninterpretable or of another type. Types do not depend on the assignment
 (`interp_map_fst_congr`), so under Predicate Abstraction the default is never reached
 (`valueAt_of_map_fst`). -/
-def valueAt {E W D : Type} {M : Type → Type} (τ : Ty) (v : M (Ty.Domain E W τ D)) :
-    Option (Denotation E W M D) → M (Ty.Domain E W τ D)
+def valueAt {E W : Type} {S : Sorts} {M : Type → Type} (τ : Ty) (v : M (Ty.Domain E W τ S)) :
+    Option (Denotation E W M S) → M (Ty.Domain E W τ S)
   | some ⟨ty, val⟩ => if h : ty = τ then h ▸ val else v
   | none => v
 
-@[simp] theorem valueAt_some {E W D : Type} {M : Type → Type} {τ : Ty}
-    (v x : M (Ty.Domain E W τ D)) :
-    valueAt τ v (some ⟨τ, x⟩ : Option (Denotation E W M D)) = x := by
+@[simp] theorem valueAt_some {E W : Type} {S : Sorts} {M : Type → Type} {τ : Ty}
+    (v x : M (Ty.Domain E W τ S)) :
+    valueAt τ v (some ⟨τ, x⟩ : Option (Denotation E W M S)) = x := by
   simp [valueAt]
 
-theorem valueAt_of_map_fst {E W D : Type} {M : Type → Type} {τ : Ty}
-    {v v' : M (Ty.Domain E W τ D)} {d : Option (Denotation E W M D)}
+theorem valueAt_of_map_fst {E W : Type} {S : Sorts} {M : Type → Type} {τ : Ty}
+    {v v' : M (Ty.Domain E W τ S)} {d : Option (Denotation E W M S)}
     (h : d.map (·.1) = some τ) : valueAt τ v d = valueAt τ v' d := by
   obtain _ | ⟨ty, val⟩ := d
   · simp at h
@@ -105,9 +105,9 @@ theorem valueAt_of_map_fst {E W D : Type} {M : Type → Type} {τ : Ty}
     subst h; simp [valueAt]
 
 /-- The denotation of a term whose constants are denotations, at its type. -/
-abbrev evalAt {E W : Type} {M : Type → Type} [Applicative M] {D : Type} [PredAbs M E W D]
-    (g : Assignment E) (d : Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty D)) ty) :
-    Option (Denotation E W M D) :=
+abbrev evalAt {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [PredAbs M E W S]
+    (g : Assignment E) (d : Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty S)) ty) :
+    Option (Denotation E W M S) :=
   (d.2.evalM (fun c ↦ c) g).map fun v ↦ ⟨d.1, v⟩
 
 end Montague
@@ -330,10 +330,10 @@ variable {C : Type}
 node what its daughter does, a binary node what the mode its daughters' types select composes, a
 trace the value of its index, and a binder the abstraction over its index, when the effect has a
 distributor. It is the denotation of the tree's term, each word's denotation its constant. -/
-def interp {E W : Type} {M : Type → Type} [Applicative M] {D : Type} [PredAbs M E W D]
-    {L : Type*} (lex : L → Option (Denotation E W M D)) (g : Assignment E) (t : Tree C L) :
-    Option (Denotation E W M D) :=
-  (translate (K := fun ty ↦ M (Ty.Domain E W ty D)) lex t).bind (evalAt g)
+def interp {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [PredAbs M E W S]
+    {L : Type*} (lex : L → Option (Denotation E W M S)) (g : Assignment E) (t : Tree C L) :
+    Option (Denotation E W M S) :=
+  (translate (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t).bind (evalAt g)
 
 end TreeInterp
 
@@ -344,11 +344,11 @@ composed denotation. -/
 
 section Reduction
 
-variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs M E W D]
+variable {C : Type} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [PredAbs M E W S]
   {L : Type*}
 
 private theorem bind_evalAt_combine (g : Assignment E)
-    (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty D)) ty)) :
+    (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty S)) ty)) :
     (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).bind
         (evalAt g) =
       (t₁.bind (evalAt g)).bind fun d₁ ↦ (t₂.bind (evalAt g)).bind fun d₂ ↦
@@ -364,7 +364,7 @@ private theorem bind_evalAt_combine (g : Assignment E)
     rcases hb : u₂.evalM (fun c ↦ c) g with _ | b <;>
     simp [Term.evalM, hm, ha, hb]
 
-variable (lex : L → Option (Denotation E W M D)) (g : Assignment E)
+variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
 
 @[simp] theorem interp_terminal (c : C) (w : L) :
     interp lex g (.terminal c w : Tree C L) = lex w := by
@@ -392,14 +392,14 @@ variable (lex : L → Option (Denotation E W M D)) (g : Assignment E)
 
 @[simp] theorem interp_bind (n : ℕ) (c : C) (body : Tree C L) :
     interp lex g (.bind n c body) =
-      (PredAbs.dist? (M := M) (E := E) (W := W) (D := D)).bind fun dist ↦
+      (PredAbs.dist? (M := M) (E := E) (W := W) (S := S)).bind fun dist ↦
         (interp lex g body).bind fun d ↦
           some ⟨.fn .e d.1, dist d.1 fun x ↦ valueAt d.1 d.2 (interp lex (g[n ↦ x]) body)⟩ := by
   simp only [interp, translate_bind, evalAt]
-  rcases translate (K := fun ty ↦ M (Ty.Domain E W ty D)) lex body with _ | ⟨τ, b⟩
-  · cases PredAbs.dist? (M := M) (E := E) (W := W) (D := D) <;> rfl
+  rcases translate (K := fun ty ↦ M (Ty.Domain E W ty S)) lex body with _ | ⟨τ, b⟩
+  · cases PredAbs.dist? (M := M) (E := E) (W := W) (S := S) <;> rfl
   · simp only [Option.map_some, Option.bind_some, Term.evalM]
-    cases PredAbs.dist? (M := M) (E := E) (W := W) (D := D) with
+    cases PredAbs.dist? (M := M) (E := E) (W := W) (S := S) with
     | none => rfl
     | some dist =>
       rcases b.evalM (fun c ↦ c) g with _ | p
@@ -491,15 +491,15 @@ theorem ty?_junk {l : Tree.Label C L} {cs : List (Tree C L)}
     · exact absurd rfl h
     · rfl
 
-variable {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs M E W D]
+variable {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [PredAbs M E W S]
 
-variable {lexTy} {lex : L → Option (Denotation E W M D)}
+variable {lexTy} {lex : L → Option (Denotation E W M S)}
 
 /-- The type of a tree's denotation is the type `ty?` computes from the types of its leaves. -/
 theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
     (t : Tree C L) :
     (interp lex g t).map (·.1) =
-      ty? lexTy (PredAbs.dist? (M := M) (E := E) (W := W) (D := D)).isSome t := by
+      ty? lexTy (PredAbs.dist? (M := M) (E := E) (W := W) (S := S)).isSome t := by
   induction t using Tree.rec' generalizing g with
   | terminal c w => rw [interp_terminal]; exact h w
   | node c cs ih =>
@@ -521,7 +521,7 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
   | trace n c => rfl
   | bind n c body ih =>
     rw [interp_bind, ty?_bind, ← ih g]
-    cases PredAbs.dist? (M := M) (E := E) (W := W) (D := D) <;>
+    cases PredAbs.dist? (M := M) (E := E) (W := W) (S := S) <;>
       cases interp lex g body <;> rfl
   | junk l cs hj _ => rw [interp_junk lex g hj, ty?_junk _ _ hj]; rfl
 
@@ -529,7 +529,7 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
 theorem isSome_interp (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
     (t : Tree C L) :
     (interp lex g t).isSome =
-      (ty? lexTy (PredAbs.dist? (M := M) (E := E) (W := W) (D := D)).isSome t).isSome := by
+      (ty? lexTy (PredAbs.dist? (M := M) (E := E) (W := W) (S := S)).isSome t).isSome := by
   rw [← interp_map_fst h g t, Option.isSome_map]
 
 end TreeTyping
@@ -545,8 +545,8 @@ assignment and its modification at `i`, is `interp_update_of_not_mem_freeIndices
 
 section FreeVariables
 
-variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs M E W D]
-  {L : Type*} (lex : L → Option (Denotation E W M D))
+variable {C : Type} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [PredAbs M E W S]
+  {L : Type*} (lex : L → Option (Denotation E W M S))
 
 /-- Whether a tree is interpretable, and at which type, does not depend on the assignment. -/
 theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
@@ -582,7 +582,7 @@ theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
   | trace n c => simp only [interp_trace]; rw [h n (by simp)]
   | bind n c body ih =>
     simp only [interp_bind]
-    cases PredAbs.dist? (M := M) (E := E) (W := W) (D := D) with
+    cases PredAbs.dist? (M := M) (E := E) (W := W) (S := S) with
     | none => rfl
     | some dist =>
       have hb : ∀ x, interp lex (g[n ↦ x]) body = interp lex (g'[n ↦ x]) body :=
@@ -633,11 +633,11 @@ daughters' (`mem_readings_node_binary`). -/
 
 section Readings
 
-variable {C : Type} {L : Type*} {E W D : Type} {M : Type → Type} [Applicative M]
-  [PredAbs M E W D]
+variable {C : Type} {L : Type*} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M]
+  [PredAbs M E W S]
 
 /-- Interpretation commutes with relabelling the leaves. -/
-theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M D)) (f : L → L')
+theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M S)) (f : L → L')
     (g : Assignment E) (t : Tree C L) : interp lex g (t.map f) = interp (lex ∘ f) g t := by
   induction t using Tree.rec' generalizing g with
   | terminal c w => rfl
@@ -665,21 +665,21 @@ theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M D)) (f : 
     rw [Tree.map_rose, interp_junk _ _ (by rw [hmap, Tree.Label.licenses_mapWord]; exact hj),
       interp_junk _ _ hj]
 
-variable (lex : L → Set (Denotation E W M D)) (g : Assignment E)
+variable (lex : L → Set (Denotation E W M S)) (g : Assignment E)
 
 /-- The readings of a tree under a leaf interpretation giving each word a set of readings, the
 values the engine computes over the resolutions of the tree, each occurrence of a word resolved
 to one of its readings. -/
-def readings (t : Tree C L) : Set (Denotation E W M D) :=
-  {d | ∃ r : Tree C {p : L × Denotation E W M D // p.2 ∈ lex p.1},
+def readings (t : Tree C L) : Set (Denotation E W M S) :=
+  {d | ∃ r : Tree C {p : L × Denotation E W M S // p.2 ∈ lex p.1},
     r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g r = some d}
 
 variable {lex g}
 
 /-- A value the engine computes under a choice of readings is the value of a resolved tree. -/
-theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M D)} {t : Tree C L}
-    {d : Denotation E W M D} (h : interp choice g t = some d) :
-    ∃ r : Tree C {p : L × Denotation E W M D // choice p.1 = some p.2},
+theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M S)} {t : Tree C L}
+    {d : Denotation E W M S} (h : interp choice g t = some d) :
+    ∃ r : Tree C {p : L × Denotation E W M S // choice p.1 = some p.2},
       r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g r = some d := by
   induction t using Tree.rec' generalizing g d with
   | terminal c w =>
@@ -730,8 +730,8 @@ theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M D)}
   | junk l cs hj _ => exact absurd h (by rw [interp_junk _ _ hj]; simp)
 
 /-- A value the engine computes under a choice among the readings is a reading. -/
-theorem interp_mem_readings {choice : L → Option (Denotation E W M D)}
-    (hc : ∀ w d, choice w = some d → d ∈ lex w) {t : Tree C L} {d : Denotation E W M D}
+theorem interp_mem_readings {choice : L → Option (Denotation E W M S)}
+    (hc : ∀ w d, choice w = some d → d ∈ lex w) {t : Tree C L} {d : Denotation E W M S}
     (h : interp choice g t = some d) : d ∈ readings lex g t := by
   obtain ⟨r, hr, hd⟩ := exists_resolution_of_interp h
   refine ⟨r.map fun p ↦ ⟨p.1, hc _ _ p.2⟩, ?_, ?_⟩
@@ -739,7 +739,7 @@ theorem interp_mem_readings {choice : L → Option (Denotation E W M D)}
   · rw [interp_map]; exact hd
 
 /-- On a lexicon with one reading per word, the readings are the engine's values. -/
-theorem readings_eq_of_choice (choice : L → Option (Denotation E W M D)) (t : Tree C L) :
+theorem readings_eq_of_choice (choice : L → Option (Denotation E W M S)) (t : Tree C L) :
     readings (fun w ↦ {d | choice w = some d}) g t = {d | interp choice g t = some d} := by
   ext d
   refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ interp_mem_readings (fun _ _ h ↦ h) h⟩
@@ -776,7 +776,7 @@ theorem readings_eq_of_choice (choice : L → Option (Denotation E W M D)) (t : 
   | _ => simp [Tree.Label.mapWord] at hl
 
 /-- A binary node's readings are the pointwise compositions of its daughters'. -/
-theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation E W M D} :
+theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation E W M S} :
     d ∈ readings lex g (.node c (t₁ :: t₂ :: [])) ↔
       ∃ d₁ ∈ readings lex g t₁, ∃ d₂ ∈ readings lex g t₂,
         Mode.combine? Mode.evalM d₁ d₂ = some d := by
@@ -808,11 +808,11 @@ end Readings
 
 section Translation
 
-variable {C : Type} {K : Ty → Type*} {L : Type*} {E W D : Type}
+variable {C : Type} {K : Ty → Type*} {L : Type*} {E W : Type} {S : Sorts}
 
 /-- Interpreting a tree whose words denote what an interpretation `I` of their constants gives
 is evaluating the tree's term under `I`. -/
-theorem interp_eq_eval_translate (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D)
+theorem interp_eq_eval_translate (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S)
     (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (t : Tree C L) :
     interp (M := Id) (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g t =
       (translate lex t).map fun d ↦ ⟨d.1, d.2.eval I g⟩ := by

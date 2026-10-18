@@ -12,13 +12,13 @@ public import Mathlib.Algebra.Group.Action.End
 /-!
 # Gajewski (2002): On Analyticity in Natural Language
 
-This file formalizes [gajewski-2002]'s principle that a sentence is ungrammatical if its
+This file formalizes Gajewski's principle that a sentence is ungrammatical if its
 logical form contains an L-analytic constituent, one that is true, or false, in virtue of its
 logical structure alone. Logical structure has two ingredients, and the file formalizes both
 halves of the paper.
 
 The logical items are the denotations invariant under permutations of the domain, the
-criterion of [van-benthem-1989]: a permutation of the entity domain lifts through the
+criterion of van Benthem: a permutation of the entity domain lifts through the
 `Montague.Ty` hierarchy (`permLift`), and an item is logical when every lifted permutation
 fixes it (`PermutationInvariant`). Truth-functional conjunction is fixed because the lift is
 the identity at type `t` (`permutationInvariant_and`), expletive *there*, which denotes the
@@ -33,11 +33,11 @@ The logical skeleton of a sentence replaces each maximal constituent without log
 a distinct variable of its semantic type; a skeleton is a predicate on type-sorted assignments
 (`Skeleton`, domains by `Montague.Ty.Domain`), and a sentence is L-analytic when its skeleton
 receives one truth value under every assignment (`Skeleton.IsLAnalytic`). The principle puts
-two analyses on firmer ground. [barwise-cooper-1981] explained the definiteness restriction on
-*there*-sentences of [milsark-1977] by the tautology a strong determiner produces there: the
+two analyses on firmer ground. Barwise and Cooper explained Milsark's definiteness restriction on
+*there*-sentences by the tautology a strong determiner produces there: the
 skeleton of *there is every new student* is an L-tautology because every set is a subset of
 the domain (`thereSkeleton_isLTautology`), while with *some* or *two* the skeleton is false
-under the empty assignment and true under a large enough one. [von-fintel-1993] explained the
+under the empty assignment and true under a large enough one. Von Fintel explained the
 restriction of *but*-exceptives to universal determiners by the contradiction his
 least-exception semantics produces under a left-upward-monotone determiner, which admits no
 nonempty least exception (`IsExceptionSet.eq_bot_of_restrictorMonotone`): the skeletons with
@@ -111,7 +111,6 @@ def permLift (π : Equiv.Perm E) : ∀ ty : Ty, Equiv.Perm (Ty.Domain E Unit ty)
   | .d => Equiv.refl _
   | .n => Equiv.refl _
   | .v => Equiv.refl _
-  | .s => Equiv.refl _
   | .fn a b => (permLift π a).arrowCongr (permLift π b)
   | .intens a => (Equiv.refl Unit).arrowCongr (permLift π a)
 

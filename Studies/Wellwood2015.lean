@@ -139,7 +139,7 @@ abbrev Dom (Ent α : Type) : Type := Ent ⊕ α
 ((27i), (38ii)), the role head composes by event identification ([kratzer-1996]), and
 existential closure is an item. -/
 def lexicon {D : Type} [LinearOrder D] [Zero D] (role : Ent → α → Prop) (P : α → Prop)
-    (μ0 : α → D) (subj : Ent) (δ : D) : Lexicon (Dom Ent α) Unit Id D := fun w ↦
+    (μ0 : α → D) (subj : Ent) (δ : D) : Lexicon (Dom Ent α) Unit Id { degree := D } := fun w ↦
   match w with
   | "much" => some ⟨.e ⇒ .d, show Dom Ent α → D from fun x ↦ match x with
       | .inr e => μ0 e

@@ -64,17 +64,17 @@ open Chuj Minimalist.Voice ArgumentStructure
 
 /-! ### Root classes -/
 
-/-- [coon-2019]'s coordinates for the four root classes, (3) and §3.3: transitive and
+/-- In [coon-2019]'s coordinates for the four root classes, (3) and §3.3, transitive and
 intransitive roots are event predicates over an internal argument, only the former compatible
 with the agent-merging Voice head; positional roots are measure functions after
 [henderson-2017] and nominal roots properties, neither selecting an internal argument in the
 sense of (2). -/
 def _root_.Chuj.RootClass.toRoot : RootClass → Semantics.Root
   | .tv =>
-    { valency := some {.internal}, denotationType := some (.e ⇒ .s ⇒ .t),
+    { valency := some {.internal}, denotationType := some (.e ⇒ .v ⇒ .t),
       licensesTransitiveVoice := true }
-  | .itv => { valency := some {.internal}, denotationType := some (.e ⇒ .s ⇒ .t) }
-  | .pos => { valency := some ∅, denotationType := some (.e ⇒ .s ⇒ .d) }
+  | .itv => { valency := some {.internal}, denotationType := some (.e ⇒ .v ⇒ .t) }
+  | .pos => { valency := some ∅, denotationType := some (.e ⇒ .v ⇒ .d) }
   | .nom => { valency := some ∅, denotationType := some (.e ⇒ .t) }
 
 /-- √TV and √ITV share type and valency, after [davis-1997]; compatibility with external
@@ -124,7 +124,7 @@ the implicit agent of (64) that the impersonal cell leaves specifierless. -/
 theorem dCoherent : (∀ v : V, v ≠ .ch → v.head.DCoherent) ∧ ¬ V.ch.head.DCoherent :=
   ⟨fun v ↦ by cases v <;> decide, by decide⟩
 
-/-- The head properties behind (78) are read off the substrate cells: every head but -j and the
+/-- The head properties behind (78) are read off the substrate cells. Every head but -j and the
 null intransitive head introduces an external argument, and -ch alone an implicit one. -/
 theorem head_table :
     (∀ v : V, v.head.IsThematic ↔ v ≠ .intransitive ∧ v ≠ .j) ∧
@@ -164,7 +164,7 @@ def licenser (v : V) (i : Internal) : ArgPosition → Licenser
       (if v.AssignsErgative then .voice else .infl) else .unlicensed
   | .internal => if i = .dp then .infl else .unlicensed
 
-/-- A stem is licensed when Infl⁰ has exactly one argument to license: it licenses one
+/-- A stem is licensed when Infl⁰ has exactly one argument to license. It licenses one
 absolutive argument, and must license one, the Obligatory Case Parameter that footnote 15
 offers beside an economy condition to keep the transitive head off stems whose only DP it would
 case itself. -/
@@ -185,7 +185,7 @@ def V.Selects : V → Semantics.Root → Prop
 instance (v : V) (r : Semantics.Root) : Decidable (v.Selects r) := by
   cases v <;> simp only [V.Selects] <;> infer_instance
 
-/-- A well-formed stem from a root class: the head selects the root, the root admits the
+/-- A stem from a root class is well-formed when the head selects the root, the root admits the
 realization, and the arguments are licensed. -/
 def WellFormed (rc : RootClass) (v : V) (i : Internal) : Prop :=
   v.Selects rc.toRoot ∧ i ∈ internals rc ∧ Licensed v i
@@ -193,8 +193,8 @@ def WellFormed (rc : RootClass) (v : V) (i : Internal) : Prop :=
 instance (rc : RootClass) (v : V) (i : Internal) : Decidable (WellFormed rc v i) := by
   unfold WellFormed; infer_instance
 
-/-- The voice of the fragment a head derives with a realization of the internal argument,
-Section 4: the transitive stem under the transitive head, the passives under -ch and -j, the
+/-- The voice of the fragment a head derives with a realization of the internal argument
+(Section 4) is the transitive stem under the transitive head, the passives under -ch and -j, the
 attested -chaj carrying the -aj that closes the implicit agent, and under -w the incorporation
 antipassive with a bare NP and, with -aj closing an implicit theme, the absolutive antipassive;
 none under the null intransitive head, whose stem is no voice. -/
@@ -240,17 +240,17 @@ theorem tv_stems :
       {(.transitive, .dp), (.ch, .dp), (.j, .dp), (.w, .np), (.w, .implicit)} := by
   decide
 
-/-- No stem of -w has a full DP internal argument, (37): Infl⁰ is taken by the agent. -/
+/-- No stem of -w has a full DP internal argument (37), since Infl⁰ is taken by the agent. -/
 theorem w_no_dp (rc : RootClass) : ¬ WellFormed rc .w .dp := by
   cases rc <;> decide
 
 /-- A transitive root under -w requires its complement, (38), and a nominal root rejects one,
-(39): the difference lies in the root. -/
+(39), so the difference lies in the root. -/
 theorem w_complement : ¬ WellFormed .tv .w .absent ∧ ¬ WellFormed .nom .w .np := by decide
 
-/-- No -w on an intransitive root, (47): with the agent on Infl⁰ the root's DP argument goes
-unlicensed, §3.3, a consequence of licensing rather than selection, given that the argument is a
-DP. -/
+/-- There is no -w on an intransitive root (47), since with the agent on Infl⁰ the root's DP
+argument goes unlicensed, §3.3, a consequence of licensing rather than selection, given that the
+argument is a DP. -/
 theorem itv_no_w : (∀ i, ¬ WellFormed .itv .w i) ∧ V.w.Selects RootClass.itv.toRoot :=
   ⟨fun i ↦ by cases i <;> decide, trivial⟩
 
@@ -293,7 +293,7 @@ def Implicit (v : V) (i : Internal) : ArgPosition → Prop
   | .internal => i = .implicit
 
 /-- The suffix -aj, an overt reflex of Existential Closure ([diesing-1992]) binding an implicit
-argument above v ~ VoiceP, §4.2: present exactly when the stem has one. -/
+argument above v ~ VoiceP (§4.2), is present exactly when the stem has one. -/
 def Aj (v : V) (i : Internal) : Prop := ∃ a, Implicit v i a
 
 instance (v : V) (i : Internal) (a : ArgPosition) : Decidable (Implicit v i a) := by
@@ -310,7 +310,7 @@ theorem aj_table :
 
 /-! ### Agent diagnostics -/
 
-/-- The reading of an oblique -uj phrase adjoined to a passive: the agent when the head has an
+/-- The reading of an oblique -uj phrase adjoined to a passive is the agent when the head has an
 implicit agent to identify, (62) and (66a); otherwise a cause of any kind, an agent not
 excluded but not required, (65) and (66b). -/
 inductive ObliqueReading
@@ -321,7 +321,7 @@ inductive ObliqueReading
 def V.obliqueReading (v : V) : ObliqueReading :=
   if v.head.ExternalImplicit then .agent else .cause
 
-/-- Agent-oriented adverbs and purpose clauses need an agent, overt or implicit, §4.1: -ch
+/-- Agent-oriented adverbs and purpose clauses need an agent, overt or implicit (§4.1), so -ch
 admits them and reads its oblique as the agent, (62) and (63); -j rejects them and reads its
 oblique as a cause, (65) and (67). -/
 theorem passive_contrast :
@@ -335,12 +335,12 @@ section Semantics
 
 variable {E S : Type*} (P : E → S → Prop) (Q : E → Prop) (a : E)
 
-/-- Restrict, footnote 19 after [chung-ladusaw-2004]: a property complement narrows the root
+/-- Restrict (footnote 19, after [chung-ladusaw-2004]) narrows the root by a property complement
 without saturating its argument, (44b). -/
 def restrict : E → S → Prop := fun x e ↦ P x e ∧ Q x
 
-/-- Existential Closure, footnote 19 after [chung-ladusaw-2004]: the open argument is bound at
-the event level, (44c). -/
+/-- Existential Closure (footnote 19, after [chung-ladusaw-2004]) binds the open argument at the
+event level, (44c). -/
 def close : S → Prop := fun e ↦ ∃ x, P x e
 
 /-- The transitive stem (43), in which the DP saturates the root by Functional Application. -/

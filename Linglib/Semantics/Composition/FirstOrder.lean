@@ -130,9 +130,9 @@ under a valuation `v` of the free variables and `xs` of the `n` bound ones. A te
 entity it denotes, a formula realizes a truth value with `xs` extended to any larger number of
 bound variables, a function realizes a function that sends realized arguments to realized values
 with `xs` so extended, and an intension is realized at every world. -/
-def Ty.Realizes {L : Language.{u, u}} {α : Type w} {M W D : Type} (S : L.Structure M)
+def Ty.Realizes {L : Language.{u, u}} {α : Type w} {M W : Type} {Q : Sorts} (S : L.Structure M)
     (v : α → M) :
-    (ty : Ty) → (n : ℕ) → (Fin n → M) → Ty.SyntacticDomain L α ty n → Ty.Domain M W ty D → Prop
+    (ty : Ty) → (n : ℕ) → (Fin n → M) → Ty.SyntacticDomain L α ty n → Ty.Domain M W ty Q → Prop
   | .e, _, xs, x, a => letI := S; x.realize (Sum.elim v xs) = a
   | .t, i, xs, φ, p => ∀ k (hk : i ≤ k) (ys : Fin k → M), ys ∘ Fin.castLE hk = xs →
       (letI := S; (φ k hk).Realize v ys ↔ p)
@@ -205,7 +205,7 @@ def Term.toFormula (u : Term (FirstOrderConstant L) .t) : L.Formula ℕ :=
 
 section Soundness
 
-variable {α : Type w} {M W D : Type}
+variable {α : Type w} {M W : Type} {Q : Sorts}
 
 variable (S : L.Structure M) (v : α → M)
 
@@ -228,7 +228,7 @@ private theorem realize_relabel_castLE {n k : ℕ} (hk : n ≤ k) (x : L.Term (�
 
 private theorem realize_applyNext {k j : ℕ} {ys : Fin k → M}
     {P : Ty.SyntacticDomain L α (.e ⇒ .t) k}
-    {P' : Ty.Domain M W (.e ⇒ .t) D} (hP : Ty.Realizes S v (.e ⇒ .t) k ys P P') (h : k ≤ j)
+    {P' : Ty.Domain M W (.e ⇒ .t) Q} (hP : Ty.Realizes S v (.e ⇒ .t) k ys P P') (h : k ≤ j)
     {zs : Fin j → M} (hzs : zs ∘ Fin.castLE h = ys) (a : M) :
     letI := S
     (P.applyNext h).Realize v (Fin.snoc zs a) ↔ P' a :=
@@ -237,7 +237,7 @@ private theorem realize_applyNext {k j : ℕ} {ys : Fin k → M}
 /-- A composition mode preserves the logical relation. -/
 theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) {n : ℕ} {xs : Fin n → M}
     {a : Ty.SyntacticDomain L α σ₁ n} {b : Ty.SyntacticDomain L α σ₂ n}
-    {a' : Ty.Domain M W σ₁ D} {b' : Ty.Domain M W σ₂ D}
+    {a' : Ty.Domain M W σ₁ Q} {b' : Ty.Domain M W σ₂ Q}
     (ha : Ty.Realizes S v σ₁ n xs a a') (hb : Ty.Realizes S v σ₂ n xs b b') :
     Ty.Realizes S v τ n xs (μ.readback a b) (μ.eval a' b') := by
   let := S
@@ -269,10 +269,10 @@ a valuation of its variables realizes the term's denotation under the assignment
 realizes. This is the fundamental lemma of the logical relation. -/
 theorem Term.realizes_readback {K : Ty → Type*}
     {R : ∀ {ty : Ty} (n : ℕ), K ty → Ty.SyntacticDomain L α ty n}
-    {I : ∀ {ty : Ty}, K ty → Ty.Domain M W ty D}
+    {I : ∀ {ty : Ty}, K ty → Ty.Domain M W ty Q}
     (hR : ∀ {ty : Ty} (c : K ty) (n : ℕ) (xs : Fin n → M), Ty.Realizes S v ty n xs (R n c) (I c))
     {ty : Ty} (u : Term K ty) {n : ℕ} {ρ : ℕ → L.Term (α ⊕ Fin n)} {xs : Fin n → M}
-    {g : Assignment M} (hρ : ∀ i, Ty.Realizes (W := W) (D := D) S v .e n xs (ρ i) (g i)) :
+    {g : Assignment M} (hρ : ∀ i, Ty.Realizes (W := W) (Q := Q) S v .e n xs (ρ i) (g i)) :
     Ty.Realizes S v ty n xs (u.readback R n ρ) (u.eval I g) := by
   let := S
   induction u generalizing n ρ xs g with
