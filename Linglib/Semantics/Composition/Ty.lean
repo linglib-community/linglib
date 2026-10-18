@@ -49,7 +49,10 @@ degree sort `d` ([heim-2001], [wellwood-2015]), the cardinality sort `n` ([sudo-
 ([hanink-koontz-garboden-2025]); events and states are distinguished within it
 ([yu-ausensi-smith-2023]), not as two types. -/
 inductive Ty where
-  | e | t
+  /-- Entities. -/
+  | e
+  /-- Truth values. -/
+  | t
   /-- Degrees, denoting in the model's scale. -/
   | d
   /-- Cardinalities, denoting in `ℕ`. -/
@@ -62,7 +65,7 @@ inductive Ty where
   | intens : Ty → Ty
   deriving Repr, DecidableEq
 
-@[inherit_doc] infixr:25 " ⇒ " => Ty.fn
+@[inherit_doc] scoped infixr:25 " ⇒ " => Ty.fn
 
 /-- `⟨e,t⟩`, properties of individuals. -/
 abbrev Ty.et : Ty := .e ⇒ .t

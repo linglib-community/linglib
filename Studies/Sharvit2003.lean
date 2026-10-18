@@ -193,14 +193,14 @@ zero tense read by the deleted past on *will*, the base-generated zero tense on 
 deleted past on *miss*. -/
 def lf7 [LT T] (decides tells : T → Set T) (miss : T → Prop) (g : Assignment T) :
     Prop :=
-  ∃ t, t < interpPronoun 0 g ∧
+  ∃ t, t < g 0 ∧
     attitude decides
       (lambdaAbsG 0 (fun g₁ ↦
         will
           (lambdaAbsG 0 (fun g₂ ↦
-            attitude tells (lambdaAbsG 0 (fun g₃ ↦ miss (interpPronoun 0 g₃)) g₂)
-              (interpPronoun 0 g₂)) g₁)
-          (interpPronoun 0 g₁)) g) t
+            attitude tells (lambdaAbsG 0 (fun g₃ ↦ miss (g₃ 0)) g₂)
+              (g₂ 0)) g₁)
+          (g₁ 0)) g) t
 
 /-- The LF (7) has the interpretation (10), that for every time compatible with what John decides at
 some time before the utterance time there is a later time at which he tells his mother, and he
@@ -209,7 +209,7 @@ theorem lf7_iff [LT T] (decides tells : T → Set T) (miss : T → Prop)
     (g : Assignment T) :
     lf7 decides tells miss g ↔
       ∃ t, t < g 0 ∧ ∀ t' ∈ decides t, ∃ t'', t' < t'' ∧ ∀ t''' ∈ tells t'', miss t''' := by
-  simp only [lf7, attitude, will, diamond_toSetRel_future, lambdaAbsG, interpPronoun,
+  simp only [lf7, attitude, will, diamond_toSetRel_future, lambdaAbsG,
     Function.update_self]
 
 /-! ### The paper's examples -/

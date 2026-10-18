@@ -15,15 +15,15 @@ public import Linglib.Semantics.Composition.Assignment
 # The denotation of a pronoun
 
 This file defines the denotation of a personal pronoun. A `PersonalPronoun` entry denotes a
-`Nominal` whose selector is the variable denotation `interpPronoun`, the value of the entry's
-index under the assignment, and whose intrinsic presupposition is that the resolved referent lies
-in the entry's φ-domain (`PersonalPronoun.phiDom`, `PersonalPronoun.denote`). The φ-domain is the
-intersection of `Person.dom` at the context of utterance with `Number.dom` and `Gender.dom` at the
-entry's referential person and number and its gender. The selector does not vary with the world
-of evaluation (`PersonalPronoun.isRigid_denote_selector`), so a pronoun refers directly. This is
-the account Büring surveys: one denotation serves the bound, anaphoric and deictic uses, binding
-is abstraction over the assignment (`Montague.lambdaAbsG`), and, as Sauerland
-proposes, an absent or unmarked feature restricts nothing.
+`Nominal` whose selector is the value of the entry's index under the assignment, and whose intrinsic
+presupposition is that the resolved referent lies in the entry's φ-domain (`PersonalPronoun.phiDom`,
+`PersonalPronoun.denote`). The φ-domain is the intersection of `Person.dom` at the context of
+utterance with `Number.dom` and `Gender.dom` at the entry's referential person and number and its
+gender. The selector does not vary with the world of evaluation
+(`PersonalPronoun.isRigid_denote_selector`), so a pronoun refers directly. This is the account
+Büring surveys: one denotation serves the bound, anaphoric and deictic uses, binding is abstraction
+over the assignment (`Montague.lambdaAbsG`), and, as Sauerland proposes, an absent or unmarked
+feature restricts nothing.
 
 ## Implementation notes
 
@@ -69,12 +69,12 @@ theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂
     (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
   simp only [phiDom, referentialPerson, referentialNumber, hr, hg]
 
-/-- A pronoun denotes the nominal whose selector is the variable denotation `interpPronoun i`,
-always defined under a total assignment, and whose intrinsic presupposition is that the resolved
+/-- A pronoun denotes the nominal whose selector is the value `g i` of its index, always defined
+under a total assignment, and whose intrinsic presupposition is that the resolved
 referent `g i` lies in the φ-domain. -/
 def denote : Nominal (Assignment E) W E where
   presup g _ := g i ∈ e.phiDom c
-  selector g _ := some (Montague.interpPronoun i g)
+  selector g _ := some (g i)
 
 universe u
 

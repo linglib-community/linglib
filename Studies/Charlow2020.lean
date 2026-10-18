@@ -350,7 +350,7 @@ example : LawfulMonad (ReaderT (Assignment E) Set) := inferInstance
     (monadLift m : ReaderT (Assignment E) Set α) g = m := rfl
 
 /-- `pro n` is the pronoun `she_n` (58), the singleton of the value of index `n`. -/
-def pro (n : ℕ) : ReaderT (Assignment E) Set E := fun g ↦ {interpPronoun n g}
+def pro (n : ℕ) : ReaderT (Assignment E) Set E := fun g ↦ {g n}
 
 @[simp] theorem pro_apply (n : ℕ) (g : Assignment E) : pro n g = {g n} := rfl
 

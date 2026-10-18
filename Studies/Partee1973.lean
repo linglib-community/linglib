@@ -30,7 +30,7 @@ antecedent, which two existential pasts do not require.
 ## Implementation notes
 
 * A time is an interval of a linear order, mathlib's `NonemptyInterval`, and a tense is an index
-  of an assignment of times, read as a pronoun by `Montague.interpPronoun`.
+  of an assignment of times, read as a pronoun, the value of its index.
 * A clause in the past tense says that the time of its index precedes the speech time and that
   the clause holds at that time, as a conjunction.
 
@@ -54,7 +54,7 @@ variable {T : Type*} [LinearOrder T] {P Q : NonemptyInterval T → Prop} {σ : N
 `σ` and that the clause holds at it. -/
 def Past (n : ℕ) (P : NonemptyInterval T → Prop) (σ : NonemptyInterval T) :
     Assignment (NonemptyInterval T) → Prop :=
-  fun g ↦ Perspective.Presup ⟦past⟧ σ (interpPronoun n g) ∧ P (interpPronoun n g)
+  fun g ↦ Perspective.Presup ⟦past⟧ σ (g n) ∧ P (g n)
 
 theorem past_iff : Past n P σ g ↔ (g n).Precedes σ ∧ P (g n) := by
   simp [Past]
@@ -62,7 +62,7 @@ theorem past_iff : Past n P σ g ↔ (g n).Precedes σ ∧ P (g n) := by
 /-- A past tense is free in its clause, which depends on the context only for the time of the
 tense's index. -/
 theorem dependsOn_past : DependsOn (Past n P σ) {n} := fun g g' h ↦ by
-  simp only [Past, interpPronoun_apply, h n rfl]
+  simp only [Past, h n rfl]
 
 /-- What held at the time of a past tense held at some past time. -/
 theorem Past.sometime (h : Past n P σ g) : ◇[Perspective.toSetRel ⟦past⟧] P σ :=

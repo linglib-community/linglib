@@ -55,12 +55,19 @@ predicate modification, the intersection of two predicates of one sort, and of e
 identification of a role head and a predicate of eventualities in either order, Kratzer's (23)
 ([kratzer-1996]). -/
 inductive Mode : Ty → Ty → Ty → Type where
+  /-- Functional application, the left daughter the function. -/
   | functionalLeft {σ τ : Ty} : Mode (σ ⇒ τ) σ τ
+  /-- Functional application, the right daughter the function. -/
   | functionalRight {σ τ : Ty} : Mode σ (σ ⇒ τ) τ
+  /-- Intensional application, the left daughter taking the intension of the right. -/
   | intensionalLeft {σ τ : Ty} : Mode (.intens σ ⇒ τ) σ τ
+  /-- Intensional application, the right daughter taking the intension of the left. -/
   | intensionalRight {σ τ : Ty} : Mode σ (.intens σ ⇒ τ) τ
+  /-- Predicate modification, the intersection of two predicates of a sort. -/
   | predicateModification {σ : Ty} : Mode (σ ⇒ .t) (σ ⇒ .t) (σ ⇒ .t)
+  /-- Event identification, the role head the left daughter. -/
   | eventIdentificationLeft : Mode (.e ⇒ .v ⇒ .t) (.v ⇒ .t) (.e ⇒ .v ⇒ .t)
+  /-- Event identification, the role head the right daughter. -/
   | eventIdentificationRight : Mode (.v ⇒ .t) (.e ⇒ .v ⇒ .t) (.e ⇒ .v ⇒ .t)
   deriving DecidableEq
 

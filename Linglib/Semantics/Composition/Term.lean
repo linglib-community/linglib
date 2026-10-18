@@ -24,8 +24,8 @@ to terms in `Composition/Tree.lean`.
 
 ## Main results
 
-* `Montague.Term.eval_var`, `Montague.Term.eval_lam`: a variable denotes by `interpPronoun` and an
-  abstraction by `lambdaAbsG`.
+* `Montague.Term.eval_var`, `Montague.Term.eval_lam`: a variable denotes the value of its index and
+  an abstraction by `lambdaAbsG`.
 * `Montague.Term.evalM_id`: at the identity effect, evaluation is the pure denotation.
 * `Montague.Term.evalM_congr_of_agree`: a term's denotation depends on the assignment only at its
   free variables.
@@ -50,9 +50,13 @@ namespace Montague
 /-- The terms over a signature `K` of constants are, by type, the constants, the variables of
 type `e`, the abstractions over a variable, and the compositions of two terms by a mode. -/
 inductive Term (K : Ty → Type u) : Ty → Type u where
+  /-- A constant of the signature. -/
   | const {ty : Ty} (c : K ty) : Term K ty
+  /-- The variable of type `e` with index `n`. -/
   | var (n : ℕ) : Term K .e
+  /-- The abstraction of a body over the variable `n`. -/
   | lam {τ : Ty} (n : ℕ) (body : Term K τ) : Term K (.e ⇒ τ)
+  /-- The composition of two terms by a mode. -/
   | comp {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) (l : Term K σ₁) (r : Term K σ₂) : Term K τ
 
 /-- An effect supports Predicate Abstraction when it has an entity-distributor, which commutes
@@ -110,7 +114,7 @@ def eval (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E) :
 /-- A variable denotes the value of its index under the assignment, by the Traces and Pronouns
 Rule. -/
 theorem eval_var (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E) (n : ℕ) :
-    (var n : Term K .e).eval I g = interpPronoun n g :=
+    (var n : Term K .e).eval I g = g n :=
   rfl
 
 /-- An abstraction denotes the abstraction of its body over its variable, by Predicate

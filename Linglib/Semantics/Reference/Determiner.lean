@@ -15,7 +15,7 @@ with the pronouns of `Semantics/Reference/Pronoun.lean`:
 | | pronoun | determiner |
 |---|---|---|
 | lexical record | `PersonalPronoun` | `Article`, `DemonstrativeDeterminer` |
-| selector | `interpPronoun` (`g ↦ g i`) | `⟦k⟧` for a `Description` `k` |
+| selector | `Function.eval i` (`g ↦ g i`) | `⟦k⟧` for a `Description` `k` |
 | intrinsic presupposition | φ-domain (`phiDom`) | vicinity of the anchors (`χ.image`) |
 
 The selector is the description's denotation, so a determiner and its description pick the same
@@ -135,10 +135,9 @@ theorem _root_.DemonstrativeDeterminer.denote_presup_or_iff_of_compl
     · exact .inl ⟨x, hm, hx⟩
     · exact .inr ⟨x, hm, hx⟩
 
-/-- Deixis filters, it does not select: a demonstrative determiner's selector
-is exactly the strong article's selector. The API-level form of
-`Description.denote_demonstrative_eq_anaphoric` — the deictic content lives entirely
-in the `presup` component. -/
+/-- Deixis filters and does not select, so a demonstrative determiner's selector is exactly the
+strong article's selector, the API-level form of `Description.denote_demonstrative_eq_anaphoric`;
+the deictic content lives entirely in the `presup` component. -/
 theorem _root_.DemonstrativeDeterminer.denote_selector_eq_anaphoric
     (dem : DemonstrativeDeterminer) :
     (dem.denote R d c χ).selector = (Description.anaphoric R d).toNominal.selector := rfl

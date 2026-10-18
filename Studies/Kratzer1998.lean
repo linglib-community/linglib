@@ -185,7 +185,7 @@ theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
 defined and the aspect holds of the property at the tense's reference. -/
 def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
     (g : Assignment T) (w : W) : Prop :=
-  (tense C n).presup g w ∧ .pure (interpPronoun n g) ∈ a.denote P w
+  (tense C n).presup g w ∧ .pure (g n) ∈ a.denote P w
 
 /-- Out of the blue a tense with an aspect is true iff the tense admits coincidence with the
 utterance time and the aspect holds there. -/
