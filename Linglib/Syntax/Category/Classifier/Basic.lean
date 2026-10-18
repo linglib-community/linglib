@@ -210,7 +210,7 @@ theorem Kind.ofScope_eq_some_nounClass_iff {s : Scope} {c : Constituent} :
 /-- Every kind other than noun class has a single locus. -/
 theorem Kind.existsUnique_ofScope_eq_some {k : Kind} (hk : k ≠ .nounClass) :
     ∃! p : Scope × Constituent, ofScope p.1 p.2 = some k := by
-  simp only [ExistsUnique]
+  rw [Fintype.existsUnique_iff_card_one]
   decide +revert
 
 /-! ### Realization -/

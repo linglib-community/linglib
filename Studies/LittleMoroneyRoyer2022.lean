@@ -26,8 +26,10 @@ against a uniform classifier semantics such as Chierchia's, then follow from the
 
 * `chol_classifiers_suffixed`, `shan_classifiers_free`: the morphology of the two strategies.
 * `cholTree_interp`, `shanTree_interp`: the two derivations of *two dogs*.
-* `chol_numClf_composes`, `chol_clfNoun_fails`, `chol_ocho`, `shan_clfNoun_composes`,
-  `shan_numClf_fails`: what composes without a noun, without a numeral, and with a loan numeral.
+* `chol_numClf_composes`, `chol_clfNoun_fails`, `shan_clfNoun_composes`, `shan_numClf_fails`:
+  what composes without a noun and what without a numeral.
+* `chol_ocho_composes`, `chol_ocho_clf_fails`: a loan numeral counts the noun without a
+  classifier.
 * `atomize_dogs`: the Shan classifier recovers the noun's atoms.
 * `qmod_iff_cardMod_atomize`: the two strategies agree on every nonzero numeral.
 
@@ -55,8 +57,7 @@ complementarity, which the paper keeps for classifier-for-noun languages such as
 
 namespace LittleMoroneyRoyer2022
 
-open HeimKratzer
-open Mereology (QMOD atomize AlgClosure)
+open HeimKratzer Mereology
 open HeimKratzer.Tree (interp)
 open PhraseStructure (Tree)
 open IoninMatushansky2006 (cardMod IsAtomOf cardMod_atoms_iff)
@@ -81,23 +82,18 @@ individuals (fn. 4). -/
 def dogs : Finset α → Prop := AlgClosure (IsAtomOf dog)
 
 theorem dogs_iff {x : Finset α} : dogs dog x ↔ x.Nonempty ∧ ∀ a ∈ x, dog a := by
-  rw [dogs, Mereology.algClosure_iff_of_subset_range_singleton (P := IsAtomOf dog)
+  rw [dogs, algClosure_iff_of_subset_range_singleton (P := IsAtomOf dog)
     fun _ ⟨a, _, h⟩ ↦ ⟨a, h.symm⟩]
   simp [IsAtomOf]
 
 /-- Atomizing a count noun yields its atoms ((13)), the singletons of its individuals. -/
 theorem atomize_dogs : atomize (dogs dog) = IsAtomOf dog :=
-  Mereology.atomize_algClosure fun _ ⟨a, _, h⟩ ↦
-    h ▸ Mereology.atom_iff_isAtom.2 (Finset.isAtom_singleton a)
+  atomize_algClosure fun _ ⟨a, _, h⟩ ↦ h ▸ atom_iff_isAtom.2 (Finset.isAtom_singleton a)
 
 theorem qmod_dogs_iff {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
     QMOD (dogs dog) Finset.card n x ↔ x.card = n ∧ ∀ a ∈ x, dog a := by
   simp only [QMOD, dogs_iff, ← Finset.card_pos]
-  constructor
-  · rintro ⟨⟨-, h⟩, rfl⟩
-    exact ⟨rfl, h⟩
-  · rintro ⟨rfl, h⟩
-    exact ⟨⟨Nat.pos_of_ne_zero hn, h⟩, rfl⟩
+  grind
 
 /-! ### Ch'ol: classifier-for-numeral -/
 
@@ -106,11 +102,10 @@ theorem qmod_dogs_iff {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
 in ((34b)), and *ts'i'* is 'dog'. -/
 def cholLex : Lexicon (Finset α) Unit := fun w ↦
   if w = "cha'" then some ⟨(.e ⇒ .n) ⇒ (.e ⇒ .t) ⇒ .e ⇒ .t,
-    show (Finset α → ℕ) → (Finset α → Prop) → Finset α → Prop from
-      fun m P x ↦ P x ∧ m x = 2⟩
+    show (Finset α → ℕ) → (Finset α → Prop) → Finset α → Prop from fun m P ↦ QMOD P m 2⟩
   else if w = Chol.Classifiers.kojty.form then some ⟨.e ⇒ .n, Finset.card⟩
   else if w = "ocho" then some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
-    show (Finset α → Prop) → Finset α → Prop from fun P x ↦ P x ∧ x.card = 8⟩
+    show (Finset α → Prop) → Finset α → Prop from fun P ↦ QMOD P Finset.card 8⟩
   else if w = "ts'i'" then some ⟨.e ⇒ .t, dogs dog⟩
   else none
 
@@ -138,13 +133,16 @@ theorem chol_clfNoun_fails :
     interp (cholLex dog) g (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) = none :=
   rfl
 
-/-- *ocho* composes with the noun directly and rejects the classifier
-((33)–(34), Prediction 1). -/
-theorem chol_ocho :
+/-- *ocho* composes with the noun directly ((33), Prediction 1). -/
+theorem chol_ocho_composes :
     interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf "ts'i'")) =
-        some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 8⟩ ∧
-      interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) = none :=
-  ⟨rfl, rfl⟩
+      some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 8⟩ :=
+  rfl
+
+/-- *ocho* rejects the classifier ((34), Prediction 1). -/
+theorem chol_ocho_clf_fails :
+    interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) = none :=
+  rfl
 
 /-! ### Shan: classifier-for-noun -/
 
@@ -186,8 +184,8 @@ theorem shan_numClf_fails :
 
 /-- Measure modification by the atom count is quantized, since `Finset.card` is strictly
 monotone. -/
-theorem qmod_dogs_qua (n : ℕ) : Mereology.QUA (QMOD (dogs dog) Finset.card n) :=
-  Mereology.qmod_qua (Finset.card_strictMono.strictMonoOn _) n
+theorem qmod_dogs_qua (n : ℕ) : QUA (QMOD (dogs dog) Finset.card n) :=
+  qmod_qua (Finset.card_strictMono.strictMonoOn _) n
 
 /-- Derivationally distinct, the two strategies denote the same pluralities for every nonzero
 numeral (§4.5). -/
