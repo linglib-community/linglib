@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Steedman2000
-public import Linglib.Semantics.Composition.Toy
+public import Studies.HeimKratzer1998
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Semantics.Composition.Coordinator
 public import Linglib.Syntax.CCG.Derivation
@@ -18,8 +18,8 @@ In Steedman's combinatory categorial grammar the slash directions of lexical cat
 word order, and composition and type-raising make strings such as a subject and a
 transitive verb into constituents. This file derives the book's analyses of non-constituent
 coordination, gapping, Dutch cross-serial dependencies, scope in verb clusters and
-intonational phrasing over the library's CCG, and interprets the derivations over a toy
-English model.
+intonational phrasing over the library's CCG, and interprets the derivations over the toy
+model of `Studies/HeimKratzer1998`.
 
 ## Main statements
 
@@ -109,7 +109,7 @@ def john_sees_mary : Derivation String .multimodal S :=
 
 section Coordination
 
-open HeimKratzer
+open HeimKratzer HeimKratzer1998
 
 /-- The type-raised subject "John" is a lexical leaf of category `S/(S\NP)`. -/
 def john_tr : Derivation String .multimodal (S / (S \ NP)) := .lex "John" (S / (S \ NP))

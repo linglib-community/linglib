@@ -946,7 +946,7 @@ theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) 
       inverseScope every GQ.some person person fun x y ↦ love y x :=
   rfl
 
-open HeimKratzer.Toy (person sees) in
+open HeimKratzer1998.Toy (person sees) in
 open HeimKratzer.Tree (interp) in
 /-- One set of premises yields, by its two proofs, what Heim and Kratzer's engine computes from
     their two Quantifier Raising trees. -/
@@ -957,7 +957,7 @@ theorem interp_qr_eq_eval :
         some ⟨.t, inverse.eval (scopeEnv person sees)⟩ :=
   ⟨HeimKratzer1998.interp_computes_surface, HeimKratzer1998.interp_computes_inverse⟩
 
-open HeimKratzer.Toy (person sees) in
+open HeimKratzer1998.Toy (person sees) in
 /-- The two proofs are two readings, since in Heim and Kratzer's model the surface reading holds
     and the inverse one fails. -/
 theorem readings_differ :

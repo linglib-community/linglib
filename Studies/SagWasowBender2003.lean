@@ -11,7 +11,8 @@ This file formalizes two chapters of the textbook in the RSRL model theory of `S
 The binding theory of Chapter 7 says that an anaphor must be outranked by a coindexed argument
 on some argument-structure list and that a nonreflexive pronoun must not be, and the
 textbook's judgments on reflexives and pronouns follow from the binding grammar of
-`Syntax/HPSG/Binding`, whose outranking is local o-command (`binding_rows`). The long-distance
+`Syntax/HPSG/Binding`, whose outranking is local o-command (`binding_rows`), over a worked
+model of a transitive clause such as *Susan likes herself*. The long-distance
 dependencies of Chapter 15 rest on the list-valued feature GAP: the GAP Principle sums the
 daughters' gaps into the mother and the Head-Filler Rule discharges one, which is the
 filler-head construction of `Syntax/HPSG/Construction`. The Coordinate Structure Constraint and
@@ -24,8 +25,9 @@ unrealized in the syntax rather than an empty phrase (`gap_not_conjunct`).
 ## Implementation notes
 
 The textbook's ranking on argument-structure lists, with a prepositional object of equal rank
-to its PP, is the substrate's local o-command relation, given directly on a worked transitive
-clause; the rows record whether the pronoun's antecedent is its local o-commander.
+to its PP, is the substrate's local o-command relation, given directly on the worked transitive
+clause, whose subject is the feminine singular *Susan*; the rows record whether the pronoun's
+antecedent is its local o-commander.
 Coordination is a binary construct whose conjuncts share their category and GAP list by token
 identity, the SYN identity of the textbook's rule; n-ary coordination, the conjunction daughter
 and the semantic restriction list are not modelled. The Argument Realization Principle, the
@@ -50,9 +52,58 @@ def probing (t : String) : List Datum :=
 
 /-! ### Binding theory -/
 
+/-- The entities of a worked transitive clause are the verb's sign, its subject and object, two
+indices, and the gender and number values. -/
+inductive ClauseEnt
+  | s | subj | obj | iSubj | iObj | gMasc | gFem | nSing | nPlur
+  deriving DecidableEq, Fintype, Repr
+
+/-- The worked transitive clause, whose subject *Susan* is a feminine singular nonpronoun indexed
+`iSubj` that locally o-commands the object. The object has the given sort, index, gender and
+number. -/
+@[reducible] def clause (objSort : Binding.Srt) (objIdx objGend objNum : ClauseEnt) :
+    Interpretation Binding.sig ClauseEnt where
+  S
+    | .s => .sign
+    | .subj => .npro
+    | .obj => objSort
+    | .iSubj | .iObj => .idx
+    | .gMasc => .masc
+    | .gFem => .fem
+    | .nSing => .sing
+    | .nPlur => .plur
+  A
+    | .SUBJ, .s => some .subj
+    | .OBJ, .s => some .obj
+    | .IDX, .subj => some .iSubj
+    | .IDX, .obj => some objIdx
+    | .GEND, .subj => some .gFem
+    | .GEND, .obj => some objGend
+    | .NUM, .subj => some .nSing
+    | .NUM, .obj => some objNum
+    | _, _ => none
+  R _ xs := xs 0 = .subj ∧ xs 1 = .obj
+
+instance (objSort : Binding.Srt) (objIdx objGend objNum : ClauseEnt) (ρ : Binding.sig.Rel) :
+    DecidablePred ((clause objSort objIdx objGend objNum).R ρ) :=
+  fun xs ↦ inferInstanceAs (Decidable (xs 0 = .subj ∧ xs 1 = .obj))
+
+/-- Every worked clause whose object is a species of nominal object with an index, a gender and
+a number is sort-resolved and totally well-typed. -/
+theorem clause_isTotallyWellTyped :
+    ∀ σ ∈ [Binding.Srt.ana, .ppro, .npro], ∀ i ∈ [ClauseEnt.iSubj, .iObj],
+      ∀ γ ∈ [ClauseEnt.gMasc, .gFem], ∀ n ∈ [ClauseEnt.nSing, .nPlur],
+        (clause σ i γ n).IsSortResolved ∧ (clause σ i γ n).IsTotallyWellTyped := by
+  decide
+
+/-- A clause whose object has the underspecified sort `synsem` is not sort-resolved, and one
+whose object has a gender in place of its index is not well-typed. -/
+example : ¬ (clause .synsem .iSubj .gFem .nSing).IsSortResolved ∧
+    ¬ (clause .ana .gFem .gFem .nSing).IsWellTyped := by decide
+
 def sorts : List (String × Binding.Srt) := [("anaphor", .ana), ("pronoun", .ppro)]
 
-def binders : List (String × Binding.Ent) :=
+def binders : List (String × ClauseEnt) :=
   [("local", .iSubj), ("nonlocal", .iObj)]
 
 /-- The rows on binding are acceptable exactly when the worked clause with a pronoun of the
@@ -62,8 +113,19 @@ must lack one. -/
 theorem binding_rows :
     ∀ x ∈ probing "binding", ∀ s ∈ x.parse? "sort" sorts, ∀ i ∈ x.parse? "binder" binders,
       (x.judgment = .acceptable ↔
-        (Binding.clause s i .gMasc .nSing).Models Binding.grammar) := by
+        (clause s i .gFem .nSing).Models Binding.grammar) := by
   decide +kernel
+
+/-- *Susan likes herself* meets the framework-neutral Conditions A and B over local o-command:
+the part of its worked clause that the verb's sign generates is rooted at the sign and models
+the binding principles. -/
+theorem clause_satisfies_conditions :
+    let I := (clause .ana .iSubj .gFem .nSing).generated .s
+    (Binding.configuration I).Satisfies (Binding.Codependent I) (Binding.configuration I).exempt
+      fun x ↦ (I.S x).bindingClass :=
+  Binding.satisfies_of_models
+    ((show (clause .ana .iSubj .gFem .nSing).Models Binding.grammar by decide).generated .s)
+    Interpretation.isRootedAt_generated fun _ h ↦ by cases h.1.symm.trans h.2
 
 /-! ### Long-distance dependencies -/
 
