@@ -66,6 +66,7 @@ model of `Studies/HeimKratzer1998`.
 namespace Steedman2000
 
 open CCG
+open scoped Montague
 
 /-! ### Categories -/
 

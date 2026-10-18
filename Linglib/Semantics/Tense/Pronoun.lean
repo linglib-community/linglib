@@ -53,7 +53,7 @@ variable [LT T]
 the time of `k` and presupposes that it stands to the time of `j` in a position of `C`. -/
 def pronoun (C : Finset Ordering) (k j : ℕ) : Nominal (Assignment T) W T where
   presup g _ := g j ~[toSetRel C] g k
-  selector g _ := some (interpPronoun k g)
+  selector g _ := some (g k)
 
 @[simp] theorem pronoun_presup : (pronoun C k j).presup g w = (g j ~[toSetRel C] g k) := rfl
 
@@ -63,7 +63,7 @@ def pronoun (C : Finset Ordering) (k j : ℕ) : Nominal (Assignment T) W T where
 /-- A pronominal tense with its referential index bound by an existential quantifier is the
 quantificational tense of its cell at the evaluation time. -/
 theorem exists_pronoun_iff_diamond (hkj : k ≠ j) (P : T → Prop) :
-    (∃ t, lambdaAbsG k (fun g ↦ (pronoun C k j).presup g w ∧ P (interpPronoun k g)) g t) ↔
+    (∃ t, lambdaAbsG k (fun g ↦ (pronoun C k j).presup g w ∧ P (g k)) g t) ↔
       ◇[toSetRel C] P (g j) := by
   simp [Diamond, Function.update_of_ne hkj.symm]
 

@@ -96,22 +96,22 @@ example : LawfulApplicative (ReaderM (Assignment E)) := inferInstance
 
 /-- *She₀ left* and *John saw her₀* (Fig. 3). -/
 example (left : E → Prop) :
-    (pure left <*> interpPronoun 0 : ReaderM (Assignment E) Prop) = fun g => left (g 0) := rfl
+    (pure left <*> Function.eval 0 : ReaderM (Assignment E) Prop) = fun g => left (g 0) := rfl
 
 example (saw : E → E → Prop) (j : E) :
-    (pure saw <*> interpPronoun 0 <*> pure j : ReaderM (Assignment E) Prop) =
+    (pure saw <*> Function.eval 0 <*> pure j : ReaderM (Assignment E) Prop) =
       fun g => saw (g 0) j := rfl
 
 /-- *Bill Λ₀ t₀ left* and *everyone Λ₀ t₀ likes their₀ mom* (Fig. 4). -/
 example (left : E → Prop) (b : E) :
-    (lambdaAbsG 0 (pure left <*> interpPronoun 0 : ReaderM (Assignment E) Prop) <*> pure b :
+    (lambdaAbsG 0 (pure left <*> Function.eval 0 : ReaderM (Assignment E) Prop) <*> pure b :
       ReaderM (Assignment E) Prop) = fun _ => left b := by
   funext g
   exact congrArg left (Function.update_self ..)
 
 example (likes : E → E → Prop) (mom : E → E) (everyone : (E → Prop) → Prop) :
     (pure everyone <*> lambdaAbsG 0
-        (pure likes <*> (pure mom <*> interpPronoun 0) <*> interpPronoun 0 :
+        (pure likes <*> (pure mom <*> Function.eval 0) <*> Function.eval 0 :
           ReaderM (Assignment E) Prop) : ReaderM (Assignment E) Prop) =
       fun _ => everyone fun x => likes (mom x) x := by
   funext g
@@ -231,9 +231,10 @@ example (mom : E → E) :
       (shift : ℕ → E → G → G) (shiftCon : ℕ → ReaderM G E → G → G),
       (∀ g, con 1 (shiftCon 1 (pure mom <*> ind 0) g) = pure mom <*> ind 0) ∧
       (∀ x g, con 1 (shift 0 x g) = con 1 g) ∧ ∀ x g, ind 0 (shift 0 x g) = x :=
-  ⟨Assignment E, interpPronoun, fun _ _ => (pure mom <*> interpPronoun 0 : ReaderM _ E),
+  ⟨Assignment E, Function.eval,
+    fun _ _ => (pure mom <*> Function.eval 0 : ReaderM (Assignment E) E),
     fun i x g => g[i ↦ x], fun _ _ g => g, fun _ => rfl, fun _ _ => rfl,
-    fun _ _ => by simp only [interpPronoun, Function.update_self]⟩
+    fun _ _ => by simp only [Function.eval, Function.update_self]⟩
 
 /-- Assignments that can store every intension exist only over a one-element domain. Storing
 makes the lookup `con i` a surjection from `G` onto `G → E`, which Cantor's diagonal argument
