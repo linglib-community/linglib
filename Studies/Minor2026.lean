@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Data.Examples.Minor2026
+public import Linglib.Logic.Team.Atoms
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Studies.Magri2009
 public import Studies.Minor2022
@@ -23,7 +23,6 @@ where the corresponding update succeeds.
 
 * `Minor2026.NumFeature`, `Minor2026.Composes`, `Minor2026.exponents`: the features of the
   #-head (65), Complex Heads (69) and the exponents (66).
-* `Minor2026.uniqueAt`: intensionalized uniqueness (103).
 * `Minor2026.want`: an attitude (100) distributing the worlds compatible with its experiencer's
   wishes.
 
@@ -46,6 +45,8 @@ where the corresponding update succeeds.
 
 ## Implementation notes
 
+* Intensionalized uniqueness `unique_w(y)` (103b) is Väänänen's dependence atom
+  `Team.dep (val w) (val y)`: assignments agreeing on the world `w` agree on `y`.
 * Events are folded into the lexical relations, as in `Studies/Minor2022`, and the maximal sum of
   worlds compatible with the experiencer's wishes (100) is a function `bul` of the world and the
   experiencer.
@@ -64,6 +65,7 @@ where the corresponding update succeeds.
 * [minor-2026]
 * [minor-2022]
 * [magri-2009]
+* [vaananen-2007]
 -/
 
 @[expose] public section
@@ -132,20 +134,6 @@ theorem spellOut :
 variable {R S E : Type*} [RegisterStructure R S E] {u u' w w' x y : R} {H I J : Set S} {i k : S}
   {C : Condition (Set S)} {D : Update (Set S)}
 
-/-- Intensionalized uniqueness `unique_w(y)` (103b) holds when assignments agreeing on the world
-`w` agree on `y`, so that `y` is a function of `w` across the state. -/
-def uniqueAt (w y : R) : Condition (Set S) :=
-  {I | (I.domRestrict (val y)).FactorsThrough (I.domRestrict (val w))}
-
-/-- Uniqueness relative to a world that is constant across the state is uniqueness (59). -/
-theorem mem_uniqueAt_iff_of_subsingleton (hw : (val w '' I).Subsingleton) :
-    I ∈ uniqueAt w y ↔ I ∈ unique y :=
-  Set.factorsThrough_domRestrict_iff_of_subsingleton hw
-
-/-- Where `w` tells the assignments apart, every referent is a function of `w`. -/
-theorem mem_uniqueAt_of_injOn (h : Set.InjOn (val w) I) : I ∈ uniqueAt w y :=
-  Set.InjOn.factorsThrough_domRestrict h
-
 /-- Introducing a referent other than `w` keeps `w` telling the assignments apart. -/
 theorem injOn_of_mem_intro (hwy : w ≠ y) (hH : Set.InjOn (val w) H) (h : H ~[intro y] J) :
     Set.InjOn (val w) J := by
@@ -159,13 +147,13 @@ theorem injOn_of_mem_intro (hwy : w ≠ y) (hH : Set.InjOn (val w) H) (h : H ~[i
 /-- A referent required not to be a function of `w` cannot be introduced where `w` tells the
 assignments apart, so an exhaustified atomic plural fails there ((113)–(121)). -/
 theorem notMem_dom_intro_test_of_injOn (hwy : w ≠ y) (hH : Set.InjOn (val w) H)
-    (hC : C ⊆ (uniqueAt w y)ᶜ) : H ∉ (intro y ○ test C ○ D).dom := by
+    (hC : C ⊆ (Team.dep (val w) (val y))ᶜ) : H ∉ (intro y ○ test C ○ D).dom := by
   rintro ⟨_, _, ⟨J, hJ, rfl, hJC⟩, -⟩
-  exact hC hJC (mem_uniqueAt_of_injOn (injOn_of_mem_intro hwy hH hJ))
+  exact hC hJC (Set.InjOn.factorsThrough_domRestrict (injOn_of_mem_intro hwy hH hJ))
 
 /-- An atomic plural scoping over *want* without a licensor is contradictory ((117)–(121)), since
 at a single assignment it is unique. -/
-theorem notMem_dom_intro_test_singleton (hwy : w ≠ y) (hC : C ⊆ (uniqueAt w y)ᶜ) :
+theorem notMem_dom_intro_test_singleton (hwy : w ≠ y) (hC : C ⊆ (Team.dep (val w) (val y))ᶜ) :
     {k} ∉ (intro y ○ test C ○ D).dom :=
   notMem_dom_intro_test_of_injOn hwy (Set.injOn_singleton _ _) hC
 
@@ -287,7 +275,7 @@ theorem injOn_val_split : Set.InjOn (val u) (split u {k}) := by
 
 /-- An atomic plural under *want* alone is contradictory ((115), (116)), since the attitude tells
 the assignments of its complement apart by their worlds. -/
-theorem notMem_dom_want_atomicPlural (hw'y : w' ≠ y) (hC : C ⊆ (uniqueAt w' y)ᶜ) :
+theorem notMem_dom_want_atomicPlural (hw'y : w' ≠ y) (hC : C ⊆ (Team.dep (val w') (val y))ᶜ) :
     {k} ∉ (want w w' x bul (intro y ○ test C ○ D)).dom := by
   rintro ⟨out, _, ⟨_, hK, rfl, -⟩, hD⟩
   obtain ⟨e, rfl⟩ := singleton_mem_intro_iff.1 hK
@@ -346,7 +334,7 @@ def wide (M : IModel E) (P : E → Prop) (d : Update (Set S) → Update (Set S))
 /-- Without a weakly distributive licensor an atomic plural takes no wide scope over *want*
 ((117)–(121)), so the wide-scope reading of *Miles wants to meet policemen* is contradictory. -/
 theorem notMem_dom_wide_atomicPlural (hwy : w ≠ y) (M : IModel E) (P : E → Prop) :
-    {i} ∉ (wide w w' x y M P id (atomic y ∩ (uniqueAt w y)ᶜ)).dom := by
+    {i} ∉ (wide w w' x y M P id (atomic y ∩ (Team.dep (val w) (val y))ᶜ)).dom := by
   rw [wide, singleton_mem_dom_intro_comp_iff]
   rintro ⟨s, -, h⟩
   exact notMem_dom_intro_test_singleton hwy (fun _ hJ ↦ hJ.2.2) h
@@ -357,7 +345,7 @@ every world compatible with its wishes, and the policemen are not all the same. 
 atomic is Minor's new prediction (§8). -/
 theorem wideScope_iff (hxy : x ≠ y) (hwx : w ≠ x) (hwy : w ≠ y) (hxw' : x ≠ w') (hww' : w ≠ w')
     (hyw' : y ≠ w') (M : IModel E) (P : E → Prop) :
-    {i} ∈ (wide w w' x y M P (distW x) (atomic y ∩ (uniqueAt w y)ᶜ)).dom ↔
+    {i} ∈ (wide w w' x y M P (distW x) (atomic y ∩ (Team.dep (val w) (val y))ᶜ)).dom ↔
       ∃ s, P s ∧ ∃ b : E → E,
         (∀ a ∈ atomsBelow s, M.inst (val w i) (b a) ∧ Atom (b a) ∧
           ∀ v ∈ atomsBelow (M.bul (val w i) a), M.meet v a (b a)) ∧
@@ -373,7 +361,8 @@ theorem wideScope_iff (hxy : x ≠ y) (hwx : w ≠ x) (hwy : w ≠ y) (hxw' : x 
       atomsBelow s)).Subsingleton := by
     rintro _ ⟨_, ⟨a, -, rfl⟩, rfl⟩ _ ⟨_, ⟨a', -, rfl⟩, rfl⟩
     simp [val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx]
-  simp only [Set.mem_inter_iff, Set.mem_compl_iff, mem_uniqueAt_iff_of_subsingleton hw, unique,
+  simp only [Set.mem_inter_iff, Set.mem_compl_iff, Team.dep, Set.mem_ofPred_eq,
+    Set.factorsThrough_domRestrict_iff_of_subsingleton hw, unique,
     lex₂, atomic, Set.mem_ofPred_eq, Set.image_image, Set.forall_mem_image,
     Set.image_nonempty, Set.subset_def, val_extend_self,
     val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx, val_extend_of_ne _ _ _ _ hxy,
@@ -418,23 +407,22 @@ theorem partee :
     (Examples.ex_93a.readings.lookup "∃ > want" = some .acceptable ↔
       ∃ (M : IModel (Finset Thing)) (i : Dref → Finset Thing), {i} ∈ (wide Dref.world Dref.bul
         Dref.subj Dref.obj M (· = M.miles) id
-          (atomic Dref.obj ∩ uniqueAt Dref.world Dref.obj)).dom) ∧
+          (atomic Dref.obj ∩ Team.dep (val Dref.world) (val Dref.obj))).dom) ∧
     (Examples.ex_93b.readings.lookup "∃ > want" = some .acceptable ↔
       ∃ (M : IModel (Finset Thing)) (i : Dref → Finset Thing), {i} ∈ (wide Dref.world Dref.bul
         Dref.subj Dref.obj M (· = M.miles) id
-          (atomic Dref.obj ∩ (uniqueAt Dref.world Dref.obj)ᶜ)).dom) ∧
+          (atomic Dref.obj ∩ (Team.dep (val Dref.world) (val Dref.obj))ᶜ)).dom) ∧
     (Examples.ex_93c.readings.lookup "∃ > want" = some .acceptable ↔
       ∃ (M : IModel (Finset Thing)) (i : Dref → Finset Thing), {i} ∈ (wide Dref.world Dref.bul
         Dref.subj Dref.obj M (· = M.boys) (distW Dref.subj)
-          (atomic Dref.obj ∩ (uniqueAt Dref.world Dref.obj)ᶜ)).dom) := by
+          (atomic Dref.obj ∩ (Team.dep (val Dref.world) (val Dref.obj))ᶜ)).dom) := by
   refine ⟨iff_of_true (by decide) ⟨model, fun _ ↦ ∅, ?_⟩,
     iff_of_false (by decide) fun ⟨M, i, h⟩ ↦ notMem_dom_wide_atomicPlural (by decide) M _ h,
     iff_of_true (by decide) ⟨model, fun _ ↦ ∅, ?_⟩⟩
   · rw [wide, singleton_mem_dom_intro_comp_iff]
     refine ⟨{3}, by simp [singleton_mem_lex_iff, model], ?_⟩
     rw [id, singleton_mem_dom_intro_comp_iff]
-    refine ⟨{5}, ⟨by simp [singleton_mem_lex₂_iff, model], ?_, mem_uniqueAt_of_injOn
-      (Set.injOn_singleton _ _)⟩, ?_⟩
+    refine ⟨{5}, ⟨by simp [singleton_mem_lex₂_iff, model], ?_, Team.singleton_mem_dep _⟩, ?_⟩
     · simp [atomic, atom_iff_isAtom]
     · rw [mem_dom_want_test_iff (by decide) (by decide)]
       simp [model, atomsBelow_finset]

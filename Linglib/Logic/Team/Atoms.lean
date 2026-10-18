@@ -7,11 +7,12 @@ public import Mathlib.Data.Set.Restrict
 /-!
 # Dependency atoms
 
-The atoms of team semantics are team properties, alongside the connectives of
-`Team/Operations.lean`. Each atom compares values read off the points of a team through two maps
-`f` and `g`. Väänänen's dependence atom `Team.dep f g` says that on the team `g` is a function of
-`f`; the inclusion atom `Team.incl f g`, which Anttila, Häggblom and Yang study in modal team
-logic, says that every value of `f` on the team is a value of `g` there.
+The atoms of team semantics compare values read off the points of a team through two maps `f`
+and `g`. Väänänen's dependence atom `Team.dep f g` says that on the team `g` is a function of `f`;
+the inclusion atom `Team.incl f g`, which Anttila, Häggblom and Yang study in modal team logic,
+says that every value of `f` on the team is a value of `g` there. Neither needs the team to be
+finite, so both are properties of sets of points, and the finite teams of the logics in this
+directory, which make support decidable, satisfy them through their coercion to sets.
 
 A team of assignments reads a tuple of variables through `f`, and a team of Kripke worlds reads a
 tuple of propositional atoms through the valuation. Väänänen's first-order atom `=(Z, u)`, here
@@ -22,7 +23,7 @@ Degano and Aloni compose the atoms into constancy and variation conditions.
 
 ## Main definitions
 
-* `Team.dep`, `Team.incl`: the atoms as team properties.
+* `Team.dep`, `Team.incl`: the atoms as properties of sets of points.
 * `Team.Dep`, `Team.Var`: the first-order dependence atom over a team of assignments, and the
   variation atom, its failure witnessed by two assignments.
 
@@ -50,63 +51,59 @@ namespace Team
 
 variable {α β γ : Type*}
 
-/-! ### The atoms as team properties -/
+/-! ### The atoms -/
 
 /-- The dependence atom holds of a team on which `g` is a function of `f`. -/
-def dep (f : α → β) (g : α → γ) : TeamProperty α :=
-  {T | ((T : Set α).domRestrict g).FactorsThrough ((T : Set α).domRestrict f)}
+def dep (f : α → β) (g : α → γ) : Set (Set α) :=
+  {T | (T.domRestrict g).FactorsThrough (T.domRestrict f)}
 
 /-- The inclusion atom holds of a team on which every value of `f` is a value of `g`. -/
-def incl (f g : α → β) : TeamProperty α := {T | ∀ a ∈ T, ∃ b ∈ T, f a = g b}
+def incl (f g : α → β) : Set (Set α) := {T | ∀ a ∈ T, ∃ b ∈ T, f a = g b}
 
-variable {f : α → β} {g : α → γ} {T T' : Finset α}
+variable {f : α → β} {g : α → γ} {T : Set α}
 
 theorem mem_dep : T ∈ dep f g ↔ ∀ a ∈ T, ∀ b ∈ T, f a = f b → g a = g b :=
   ⟨fun h a ha b hb hab ↦ @h ⟨a, ha⟩ ⟨b, hb⟩ hab, fun h a b hab ↦ h a a.2 b b.2 hab⟩
 
 @[simp] theorem mem_incl {f g : α → β} : T ∈ incl f g ↔ ∀ a ∈ T, ∃ b ∈ T, f a = g b := Iff.rfl
 
-instance [DecidableEq β] [DecidableEq γ] (T : Finset α) : Decidable (T ∈ dep f g) :=
-  decidable_of_iff _ mem_dep.symm
+instance [DecidableEq β] [DecidableEq γ] (T : Finset α) : Decidable ((T : Set α) ∈ dep f g) :=
+  decidable_of_iff (∀ a ∈ T, ∀ b ∈ T, f a = f b → g a = g b) (by simp [mem_dep])
 
-instance [DecidableEq β] (f g : α → β) (T : Finset α) : Decidable (T ∈ incl f g) :=
-  inferInstanceAs (Decidable (∀ a ∈ T, ∃ b ∈ T, _))
+instance [DecidableEq β] (f g : α → β) (T : Finset α) : Decidable ((T : Set α) ∈ incl f g) :=
+  decidable_of_iff (∀ a ∈ T, ∃ b ∈ T, f a = g b) (by simp)
 
 theorem isLowerSet_dep (f : α → β) (g : α → γ) : IsLowerSet (dep f g) :=
   fun _ _ hT h a b hab ↦ @h ⟨a, hT a.2⟩ ⟨b, hT b.2⟩ hab
 
 theorem singleton_mem_dep (a : α) : {a} ∈ dep f g :=
-  (Finset.coe_singleton a ▸ Set.subsingleton_singleton).factorsThrough_domRestrict
+  Set.subsingleton_singleton.factorsThrough_domRestrict
 
-theorem empty_mem_dep : ∅ ∈ dep f g := mem_dep.2 fun _ h ↦ absurd h (Finset.notMem_empty _)
+theorem empty_mem_dep : ∅ ∈ dep f g := Set.subsingleton_empty.factorsThrough_domRestrict
 
-theorem empty_mem_incl (f g : α → β) : ∅ ∈ incl f g := fun _ h ↦ absurd h (Finset.notMem_empty _)
+theorem empty_mem_incl (f g : α → β) : ∅ ∈ incl f g := fun _ h ↦ h.elim
 
-theorem supClosed_incl [DecidableEq α] (f g : α → β) : SupClosed (incl f g) := by
-  intro s hs t ht a ha
-  rcases Finset.mem_union.1 ha with ha | ha
+theorem supClosed_incl (f g : α → β) : SupClosed (incl f g) := by
+  rintro s hs t ht a (ha | ha)
   · obtain ⟨b, hb, h⟩ := hs a ha
-    exact ⟨b, Finset.mem_union_left t hb, h⟩
+    exact ⟨b, Or.inl hb, h⟩
   · obtain ⟨b, hb, h⟩ := ht a ha
-    exact ⟨b, Finset.mem_union_right s hb, h⟩
+    exact ⟨b, Or.inr hb, h⟩
 
 /-- Dependence is not union-closed. Two points agreeing on `f` and differing on `g` each form a
 team satisfying the atom, but their union does not. -/
-theorem not_supClosed_dep [DecidableEq α] {a b : α} (hf : f a = f b) (hg : g a ≠ g b) :
+theorem not_supClosed_dep {a b : α} (hf : f a = f b) (hg : g a ≠ g b) :
     ¬ SupClosed (dep f g) := fun h ↦
-  hg <| mem_dep.1 (h (singleton_mem_dep a) (singleton_mem_dep b)) a (by simp) b (by simp) hf
+  hg <| mem_dep.1 (h (singleton_mem_dep a) (singleton_mem_dep b)) a (.inl rfl) b (.inr rfl) hf
 
 /-- Inclusion is not downward-closed. If `b` supplies the `g`-value both of its own `f`-value
 and of `a`'s, but `a` does not supply its own, then `{a, b}` satisfies the atom and `{a}` does
 not. -/
-theorem not_isLowerSet_incl [DecidableEq α] {f g : α → β} {a b : α} (hab : f a = g b)
-    (hb : f b = g b) (ha : f a ≠ g a) : ¬ IsLowerSet (incl f g) := by
+theorem not_isLowerSet_incl {f g : α → β} {a b : α} (hab : f a = g b) (hb : f b = g b)
+    (ha : f a ≠ g a) : ¬ IsLowerSet (incl f g) := by
   intro h
-  have hpair : {a, b} ∈ incl f g := fun x hx ↦
-    ⟨b, by simp, by rcases Finset.mem_insert.1 hx with rfl | hx <;> simp_all⟩
-  have hsub : ({a} : Finset α) ⊆ {a, b} := by simp
-  obtain ⟨w, hw, hax⟩ := h hsub hpair a (Finset.mem_singleton_self a)
-  rw [Finset.mem_singleton.1 hw] at hax
+  have hpair : {a, b} ∈ incl f g := fun x hx ↦ ⟨b, .inr rfl, by rcases hx with rfl | rfl <;> simpa⟩
+  obtain ⟨w, rfl, hax⟩ := h (Set.singleton_subset_iff.2 (.inl rfl)) hpair a rfl
   exact ha hax
 
 /-! ### The first-order atoms -/
@@ -117,7 +114,7 @@ variable {V E : Type*} {T T' : Finset (V → E)} {Z Z' : Finset V} {u : V}
 of `u` is a function of the values of the variables of `Z`. With `Z` empty, `u` is constant
 across the team. -/
 def Dep (T : Finset (V → E)) (Z : Finset V) (u : V) : Prop :=
-  T ∈ dep (Z : Set V).domRestrict (· u)
+  (T : Set (V → E)) ∈ dep (Z : Set V).domRestrict (· u)
 
 /-- The variation atom `var(Z, u)` of [degano-aloni-2025] holds of a team in which two
 assignments agree on `Z` and differ on `u`. It is the failure of `=(Z, u)` (`Team.not_dep`),
@@ -131,7 +128,7 @@ private theorem domRestrict_eq_iff {i j : V → E} :
 
 /-- Assignments of the team agreeing on every variable of `Z` agree on `u`. -/
 theorem dep_iff : Dep T Z u ↔ ∀ i ∈ T, ∀ j ∈ T, (∀ z ∈ Z, i z = j z) → i u = j u := by
-  simp only [Dep, mem_dep, domRestrict_eq_iff]
+  simp only [Dep, mem_dep, Finset.mem_coe, domRestrict_eq_iff]
 
 theorem var_iff : Var T Z u ↔ ∃ i ∈ T, ∃ j ∈ T, (∀ z ∈ Z, i z = j z) ∧ i u ≠ j u := Iff.rfl
 
@@ -170,7 +167,9 @@ theorem Dep.not_var (h : Dep T Z u) : ¬ Var T Z u := Team.not_var.2 h
 theorem dep_of_mem (h : u ∈ Z) : Dep T Z u := dep_iff.2 fun _ _ _ _ hZ ↦ hZ u h
 
 /-- Every dependence holds on a team of one assignment. -/
-theorem dep_singleton (i : V → E) : Dep {i} Z u := singleton_mem_dep i
+theorem dep_singleton (i : V → E) : Dep {i} Z u := by
+  rw [Dep, Finset.coe_singleton]
+  exact singleton_mem_dep i
 
 /-- Dependence on fewer parameters is dependence on more. -/
 theorem Dep.mono (hZ : Z ⊆ Z') (h : Dep T Z u) : Dep T Z' u :=
@@ -188,7 +187,8 @@ theorem Dep.trans (hZ : ∀ z ∈ Z', Dep T Z z) (h : Dep T Z' u) : Dep T Z u :=
     dep_iff.1 h i hi j hj fun z hz ↦ dep_iff.1 (hZ z hz) i hi j hj hagree
 
 /-- Dependence is inherited by subteams. -/
-theorem Dep.subset (hT : T' ⊆ T) (h : Dep T Z u) : Dep T' Z u := isLowerSet_dep _ _ hT h
+theorem Dep.subset (hT : T' ⊆ T) (h : Dep T Z u) : Dep T' Z u :=
+  isLowerSet_dep _ _ (Finset.coe_subset.2 hT) h
 
 /-- Variation is inherited by superteams. -/
 theorem Var.superset (hT : T ⊆ T') (h : Var T Z u) : Var T' Z u :=

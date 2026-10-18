@@ -128,7 +128,7 @@ def eval (M : KripkeModel W Atom) : Formula Atom → Finset W → Prop
   | .atom p,        t => t ∈ Team.flat (M.val p)
   | .bot,           t => t ∈ ({∅} : Team.TeamProperty W)
   | .incl xys,      t =>
-      t ∈ Team.incl (fun w ↦ xys.map (M.val ·.1 w)) (fun w ↦ xys.map (M.val ·.2 w))
+      (t : Set W) ∈ Team.incl (fun w ↦ xys.map (M.val ·.1 w)) (fun w ↦ xys.map (M.val ·.2 w))
   | .neg ψ,         t => t ∈ Team.flat fun w ↦ ¬ eval M ψ {w}
   | .conj ψ₁ ψ₂,    t => eval M ψ₁ t ∧ eval M ψ₂ t
   | .disj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M ψ₁ s} {s | eval M ψ₂ s}
@@ -149,7 +149,7 @@ abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Pro
     (t : Finset W) :
     support M (.incl xys) t ↔
       ∀ w₁ ∈ t, ∃ w₂ ∈ t, ∀ xy ∈ xys, (M.val xy.1 w₁ ↔ M.val xy.2 w₂) := by
-  simp only [support, eval, Team.mem_incl, List.map_inj_left, eq_iff_iff]
+  simp only [support, eval, Team.mem_incl, Finset.mem_coe, List.map_inj_left, eq_iff_iff]
 
 @[simp] lemma support_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.neg φ) t ↔ ∀ w ∈ t, ¬ support M φ {w} := Iff.rfl
@@ -187,7 +187,10 @@ theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
   induction φ with
   | atom p => exact Team.supClosed_flat _
   | bot => exact Team.supClosed_singleton_empty
-  | incl xys => exact Team.supClosed_incl _ _
+  | incl xys =>
+    intro s hs t ht
+    simp only [Set.mem_setOf_eq, support, eval, Finset.sup_eq_union, Finset.coe_union]
+    exact Team.supClosed_incl _ _ hs ht
   | neg ψ _ => exact Team.supClosed_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.inter ih₂
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.tensor ih₂
@@ -201,7 +204,9 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
   induction φ with
   | atom p => exact Team.empty_mem_flat _
   | bot => rfl
-  | incl xys => exact Team.empty_mem_incl _ _
+  | incl xys =>
+    simp only [support, eval, Finset.coe_empty]
+    exact Team.empty_mem_incl _ _
   | neg ψ _ => exact Team.empty_mem_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁, ih₂⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact Team.empty_mem_tensor ih₁ ih₂
@@ -216,11 +221,13 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeModel W Atom}
     (hpair : M.val a w₁ ↔ M.val b w₂) (hself : M.val a w₂ ↔ M.val b w₂)
     (hwit : ¬ (M.val a w₁ ↔ M.val b w₁)) :
-    ¬ IsLowerSet { t : Finset W | support M (.incl [(a, b)]) t } := by
-  simpa only [support, eval, Set.ofPred_mem_eq] using
-    Team.not_isLowerSet_incl (f := fun w ↦ [(a, b)].map (M.val ·.1 w))
-      (g := fun w ↦ [(a, b)].map (M.val ·.2 w)) (a := w₁) (b := w₂) (by simp [hpair])
-      (by simp [hself]) (by simpa [eq_iff_iff] using hwit)
+    ¬ IsLowerSet { t : Finset W | support M (.incl [(a, b)]) t } := fun h ↦ by
+  have hs : support M (.incl [(a, b)]) {w₁, w₂} := (support_incl M _ _).2 fun w hw ↦
+    ⟨w₂, by simp, by rcases Finset.mem_insert.1 hw with rfl | hw <;> simp_all⟩
+  obtain ⟨w, hw, hw'⟩ := (support_incl M _ _).1
+    (h (by simp : ({w₁} : Finset W) ⊆ {w₁, w₂}) hs) w₁ (by simp)
+  rw [Finset.mem_singleton.1 hw] at hw'
+  exact hwit (by simpa using hw')
 
 /-! ### Bisimulation invariance -/
 

@@ -83,9 +83,10 @@ theorem Invariant.union (h₁ : Invariant r P P') (h₂ : Invariant r Q Q') :
   fun _ _ hs ↦ or_congr (h₁ hs) (h₂ hs)
 
 theorem invariant_dep {γ δ : Type*} {f : α → γ} {f' : β → γ} {g : α → δ} {g' : β → δ}
-    (hf : (r ⇒ Eq) f f') (hg : (r ⇒ Eq) g g') : Invariant r (dep f g) (dep f' g') := by
+    (hf : (r ⇒ Eq) f f') (hg : (r ⇒ Eq) g g') :
+    Invariant r ((↑) ⁻¹' dep f g) ((↑) ⁻¹' dep f' g') := by
   intro s s' hs
-  simp only [mem_dep]
+  simp only [Set.mem_preimage, mem_dep]
   constructor
   · intro h b₁ hb₁ b₂ hb₂ hfb
     obtain ⟨a₁, ha₁, h₁⟩ := hs.2 b₁ hb₁
@@ -99,9 +100,9 @@ theorem invariant_dep {γ δ : Type*} {f : α → γ} {f' : β → γ} {g : α �
     exact h b₁ hb₁ b₂ hb₂ (by rw [← hf h₁, ← hf h₂, hfa])
 
 theorem invariant_incl {γ : Type*} {f g : α → γ} {f' g' : β → γ} (hf : (r ⇒ Eq) f f')
-    (hg : (r ⇒ Eq) g g') : Invariant r (incl f g) (incl f' g') := by
+    (hg : (r ⇒ Eq) g g') : Invariant r ((↑) ⁻¹' incl f g) ((↑) ⁻¹' incl f' g') := by
   intro s s' hs
-  simp only [mem_incl]
+  simp only [Set.mem_preimage, mem_incl]
   constructor
   · intro h b₁ hb₁
     obtain ⟨a₁, ha₁, h₁⟩ := hs.2 b₁ hb₁
