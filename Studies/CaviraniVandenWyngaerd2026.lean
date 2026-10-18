@@ -7,6 +7,7 @@ module
 
 public import Linglib.Phonology.Segmental.ElementTheory
 public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Phonology.StrictCV.Basic
 public import Linglib.Fragments.Slavic.Czech.Phonology
 public import Linglib.Data.Forms.CaviraniVandenWyngaerd2026
 
@@ -33,12 +34,14 @@ consonant off their spelling.
   of its attested alternant.
 * `derive_comparative`, `derive_h`: a fricative builds one structure under small and medium
   palatalisation, where /ɦ/ has two reflexes.
+* `loket_lokte`: the paper's illustration of proper government, *loket* against *lok_te*.
 
 ## Implementation notes
 
 * The skeleton is reduced to what the outcome depends on: the root node of the base-final
-  consonant, whether the vowel of the suffix floats, and what a sonorant spreads. Government,
-  licensing and the reduction of empty slots are not modelled.
+  consonant, whether the vowel of the suffix floats, and what a sonorant spreads. The analysis
+  uses neither government nor licensing; only the illustration of proper government in the
+  paper's presentation of strict CV is checked, against the Strict CV substrate.
 * The melodies are those of the paper's tables of plain and palatalised consonants. Its closing
   summary table prints /s/ without |I| and /n/ without |A|.
 * Union is taken in the structure, so small and medium palatalisation of /x/ build one structure
@@ -408,5 +411,21 @@ theorem interpret_medium :
       [t ⊔ PAL₁, t ⊔ PAL₂, t ⊔ PAL₃].map (fun c ↦ interpret (.C, c)) =
         [some Czech.Phonology.ť, some Czech.Phonology.ť, some Czech.Phonology.c] := by
   decide +kernel
+
+/-! ### Proper government (§3.3)
+
+The paper illustrates proper government with the alternation in Czech 'elbow': Czech allows an
+empty final nucleus but does not let it govern. -/
+
+/-- A Czech final nucleus may be empty and then neither governs nor licenses. -/
+def czechFinal : StrictCV.FinalNucleus := ⟨true, false⟩
+
+/-- In *loket* 'elbow.NOM.SG' the final nucleus is empty and governs nothing, so the nucleus before
+it is pronounced; in *lok_te* 'elbow.GEN.SG' the suffix vowel governs it and it stays silent
+(§3.3). The nuclei are those of *lo*, *ke* and *t(e)*. -/
+theorem loket_lokte :
+    StrictCV.standard czechFinal ({ full := {0} } : StrictCV.Profile 3) = {0, 1} ∧
+      StrictCV.standard czechFinal ({ full := {0, 2} } : StrictCV.Profile 3) = {0, 2} := by
+  decide
 
 end CaviraniVandenWyngaerd2026
