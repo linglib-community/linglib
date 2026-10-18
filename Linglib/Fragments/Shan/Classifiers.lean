@@ -10,13 +10,14 @@ A Shan noun is counted through a classifier, a free morpheme after the numeral i
 noun–numeral–classifier: *mǎa sǎam tǒ* 'three dogs'. The classifier is chosen by the noun, and
 the classifiers are nominal in origin: *tǒ* for animals is also the noun 'body', and *ton* for
 plants is the head of the compound *ton-mâj* 'tree', which it counts. The classifier also
-appears with the interrogative numeral *lǎaj* 'how many', with quantifiers, demonstratives and
-relative clauses, and *ʔǎn* is the general classifier of inanimates. The basic classifiers below
-are those of [little-moroney-royer-2022]'s table of Shan classifiers, after [moroney-2021].
+appears with the interrogative numeral *lǎaj* 'how many', the quantifier *ku* 'every',
+demonstratives and relative clauses, though not with every expression of quantity: *nǎm* 'many,
+much' takes none. *ʔǎn* is the general classifier of inanimates. The basic classifiers below are
+those of Little, Moroney and Royer's table of Shan classifiers, after Moroney's.
 
 ## Main definitions
 
-* `Shan.Classifiers.classifiers` — the classifiers entered here.
+* `Shan.Classifiers.classifiers`: the classifiers entered here.
 
 ## References
 
@@ -28,22 +29,23 @@ are those of [little-moroney-royer-2022]'s table of Shan classifiers, after [mor
 
 namespace Shan.Classifiers
 
-/-- *ʔǎn*, the general classifier of inanimates: *tsɔ̂ sǎam ʔǎn* 'three spoons'. -/
+/-- *ʔǎn*, the general classifier of inanimates, as in *tsɔ̂ sǎam ʔǎn* 'three spoons'. -/
 def an : Classifier := { toMorph := .free "ʔǎn" }
 
-/-- *tǒ*, animals, also the noun 'body': *mɛ́w sǎam tǒ* 'three cats'. -/
+/-- *tǒ*, for animals and also the noun 'body', as in *mɛ́w sǎam tǒ* 'three cats'. -/
 def «to» : Classifier := { toMorph := .free "tǒ" }
 
-/-- *kɔ̂*, people: *kón sǎam kɔ̂* 'three people'. -/
+/-- *kɔ̂*, for people, as in *kón sǎam kɔ̂* 'three people'. -/
 def ko : Classifier := { toMorph := .free "kɔ̂" }
 
-/-- *hòj*, round objects: *màak-khɔ̌ sǎam hòj* 'three jujubes'. -/
+/-- *hòj*, for round objects, as in *màak-khɔ̌ sǎam hòj* 'three jujubes'. -/
 def hoj : Classifier := { toMorph := .free "hòj" }
 
-/-- *ton*, plants and trees, the head of *ton-mâj* 'tree': *ton-mâj sǎam ton* 'three trees'. -/
+/-- *ton*, for plants and trees and the head of *ton-mâj* 'tree', as in *ton-mâj sǎam ton*
+'three trees'. -/
 def ton : Classifier := { toMorph := .free "ton" }
 
-/-- *lǎŋ*, buildings: *hɤ́n sǎam lǎŋ* 'three houses'. -/
+/-- *lǎŋ*, for buildings, as in *hɤ́n sǎam lǎŋ* 'three houses'. -/
 def lang : Classifier := { toMorph := .free "lǎŋ" }
 
 /-- The classifiers. -/

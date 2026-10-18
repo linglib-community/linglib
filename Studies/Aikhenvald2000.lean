@@ -62,67 +62,67 @@ inductive Language where
 
 namespace Language
 
-/-- (A): the locus of coding, the head-modifier NP for the gender and noun-class systems and the
-numeral NP for the numeral classifiers. -/
+/-- The locus of coding (the book's (A)) is the head-modifier NP for the gender and noun-class
+systems and the numeral NP for the numeral classifiers. -/
 def locus : Language → Scope
   | mandarin | japanese => .numeralNP
   | french | italian | xhosa | shona | swahili => .headModifierNP
 
-/-- (B): every device of the sample characterizes the head noun. -/
+/-- Every device of the sample characterizes the head noun (the book's (B)). -/
 def constituent (_ : Language) : Constituent := .headNoun
 
 /-- The kind of a device, read off its locus and the constituent it characterizes. -/
 def kind (l : Language) : Option Kind := Kind.ofScope l.locus l.constituent
 
-/-- (B): every scope the device operates in. Mandarin uses the same classifiers with numerals
-and with demonstratives (the book's Table 9.1); agreement in gender and class reaches the
-predicate. -/
+/-- The scopes the device operates in (the book's (B)). Mandarin uses the same classifiers with
+numerals and with demonstratives (the book's Table 9.1), and agreement in gender and class
+reaches the predicate. -/
 def scopes : Language → Finset Scope
   | mandarin => {.numeralNP, .attributiveNP}
   | japanese => {.numeralNP}
   | french | italian | xhosa | shona | swahili => {.headModifierNP, .predicateArgument}
 
-/-- (C): the principle of assignment, semantic for the numeral classifiers and a semantic core
-with a morphological residue for gender and noun class. -/
-def assignment : Language → Assignment
-  | mandarin | japanese => .semantic
-  | french | italian | xhosa | shona | swahili => .mixed
+/-- The assignment is wholly semantic (the book's (C)), as it is for the numeral classifiers.
+Gender and noun class assignment has a semantic core, but that core is never the whole of it. -/
+def SemanticAssignment : Language → Prop
+  | mandarin | japanese => True
+  | french | italian | xhosa | shona | swahili => False
 
-/-- (D): the surface realizations, read off the fragments' entries for the classifier
-languages, Mandarin's independent forms and Japanese's suffixes on the numeral; gender is
-inflection on the agreeing words and Bantu class a prefix. -/
+/-- The surface realizations (the book's (D)) are read off the fragments' entries for the
+classifier languages, Mandarin's independent forms and Japanese's suffixes on the numeral; gender
+is inflection on the agreeing words and Bantu class a prefix. -/
 def realizations : Language → Finset Realization
   | mandarin => Mandarin.Classifiers.classifiers.image Classifier.realization
   | japanese => Japanese.Classifiers.classifiers.image Classifier.realization
   | french | italian => {.morph (.bound .after .affix)}
   | xhosa | shona | swahili => {.morph (.bound .before .affix)}
 
-/-- (E): the device participates in agreement. -/
+/-- The device participates in agreement (the book's (E)). -/
 def Agreement : Language → Prop
   | mandarin | japanese => False
   | french | italian | xhosa | shona | swahili => True
 
-/-- (G): the device is obligatory. For the numeral classifiers it is read off the fragments: no
-noun that takes a classifier is counted without one. Gender and noun class are obligatory as the
-book describes them. -/
+/-- The device is obligatory (the book's (G)). For the numeral classifiers this is read off the
+fragments, where no noun that takes a classifier is counted without one. Gender and noun class
+are obligatory as the book describes them. -/
 def Obligatory : Language → Prop
   | mandarin => ∀ n ∈ Mandarin.Nouns.nouns, n.classifiers.Nonempty → ¬ n.IsBareCount
   | japanese => ∀ n ∈ Japanese.Nouns.nouns, n.classifiers.Nonempty → ¬ n.IsBareCount
   | french | italian | xhosa | shona | swahili => True
 
-/-- (F): the system has a functionally unmarked member or a general classifier. For the
-numeral classifiers it is read off the earlier descriptions: a Mandarin classifier every counted
-noun can take, and a classifier of Downing's inventory whose category has no parameter. The
-masculine gender and a default class are the unmarked members of the other systems. -/
+/-- The system has a functionally unmarked member or a general classifier (the book's (F)). For
+the numeral classifiers this is read off the earlier descriptions, as a Mandarin classifier every
+counted noun can take and a classifier of Downing's inventory whose category has no parameter.
+The masculine gender and a default class are the unmarked members of the other systems. -/
 def HasUnmarkedMember : Language → Prop
   | mandarin => ∃ c ∈ Mandarin.Classifiers.classifiers,
       ∀ n ∈ Mandarin.Nouns.nouns, n.classifiers.Nonempty → n.Takes c
   | japanese => ∃ r : Downing1996.Row, r.params = []
   | french | italian | xhosa | shona | swahili => True
 
-/-- (I): the preferred semantic parameters. Sex and animacy for the Romance genders, humanness
-and animacy for the Bantu classes; for Mandarin, the animacy of *zhī* and the shape by which
-*tiáo* extended from 'small branch' to long things in general, shape being the preferred
+/-- The preferred semantic parameters (the book's (I)). Sex and animacy for the Romance genders,
+humanness and animacy for the Bantu classes; for Mandarin, the animacy of *zhī* and the shape by
+which *tiáo* extended from 'small branch' to long things in general, shape being the preferred
 parameter of numeral classifiers; for Japanese, the parameters of the categories of Downing's
 inventory. -/
 def semantics : Language → Finset Parameter
@@ -135,6 +135,9 @@ def semantics : Language → Finset Parameter
 def ObligatoryNumber : Language → Prop
   | mandarin | japanese => False
   | french | italian | xhosa | shona | swahili => True
+
+instance : DecidablePred SemanticAssignment := fun l ↦ by
+  cases l <;> unfold SemanticAssignment <;> infer_instance
 
 instance : DecidablePred Agreement := fun l ↦ by cases l <;> unfold Agreement <;> infer_instance
 
@@ -167,9 +170,9 @@ theorem free_numeralClassifier_no_agreement :
       ¬ l.Agreement := by
   decide
 
-/-- The numeral classifiers of the sample are obligatory: no noun of the Mandarin or Japanese
-fragment that takes a classifier is counted without one, though Mandarin *tiān* 'day', which
-takes none, is counted directly. -/
+/-- The numeral classifiers of the sample are obligatory, since no noun of the Mandarin or
+Japanese fragment that takes a classifier is counted without one, though Mandarin *tiān* 'day',
+which takes none, is counted directly. -/
 theorem numeralClassifier_obligatory :
     (∀ l : Language, l.kind = some .numeralClassifier → l.Obligatory) ∧
       Mandarin.Nouns.tian.IsBareCount := by
@@ -178,12 +181,12 @@ theorem numeralClassifier_obligatory :
 /-- Every kind of device other than noun class is assigned on purely semantic grounds; noun
 class assignment may be only partially semantic. -/
 theorem classifier_assignment_semantic :
-    ∀ l : Language, l.kind ≠ some .nounClass → l.assignment = .semantic := by
+    ∀ l : Language, l.kind ≠ some .nounClass → l.SemanticAssignment := by
   decide
 
 /-- Both numeral-classifier systems have a general classifier that can replace the specific
-ones, the analogue of a functionally unmarked noun class: *gè*, which every Mandarin noun that
-takes a classifier can take, and Japanese *-tsu*. -/
+ones, the analogue of a functionally unmarked noun class. In Mandarin it is *gè*, which every noun
+that takes a classifier can take, and in Japanese *-tsu*. -/
 theorem numeralClassifier_general :
     ∀ l : Language, l.kind = some .numeralClassifier → l.HasUnmarkedMember
   | .mandarin, _ =>
