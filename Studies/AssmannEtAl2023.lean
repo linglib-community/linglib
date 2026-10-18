@@ -315,8 +315,9 @@ def kimAteTheYogurt (ρ ρ' : Restriction) : WithAlternatives (Ent × Rel × Obj
 propositions in which anyone stands in a relation other than eating to the yogurt. -/
 theorem alternatives_kimAteTheYogurt :
     (kimAteTheYogurt .weak .strong).alternatives = Set.univ ×ˢ ({Rel.ate}ᶜ ×ˢ {Obj.yogurt}) := by
-  rw [kimAteTheYogurt, alternatives_node bijective_uncurry_mk, focused_alternatives,
-    alternatives_node bijective_uncurry_mk, focused_alternatives, focused_alternatives]
+  rw [kimAteTheYogurt, alternatives_node bijective_uncurry_mk, alternatives_map₂,
+    focused_alternatives, alternatives_node bijective_uncurry_mk, alternatives_map₂,
+    focused_alternatives, focused_alternatives]
   ext ⟨x, r, o⟩
   simp
   revert x r o

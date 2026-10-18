@@ -30,6 +30,8 @@ its base position or is fronted (`Focus.Strategy`).
 
 * `WithAlternatives.alternatives_mark_subset_alternatives_mark_iff`: unless a constituent already
   evokes its whole type, its alternatives grow exactly along the order of the marks.
+* `WithAlternatives.monotone_alternatives_map₂_mark`: the alternatives of a composition grow with
+  the marks of its daughters.
 
 ## References
 
@@ -77,7 +79,7 @@ namespace WithAlternatives
 
 open Focus (Mark)
 
-variable {α : Type*} {d : WithAlternatives α}
+variable {α β γ : Type*} {d : WithAlternatives α}
 
 /-- The meaning of a constituent bearing a mark. F-marking keeps the ordinary value and makes
 the alternatives the whole type; an unfeatured constituent keeps the alternatives of its parts. -/
@@ -97,6 +99,37 @@ def mark (d : WithAlternatives α) : Mark → WithAlternatives α
 theorem WellFormed.mark (hd : d.WellFormed) (m : Mark) : (d.mark m).WellFormed := by
   cases m
   exacts [hd, WellFormed.focused _]
+
+/-- The alternatives of a constituent grow with its mark. -/
+theorem monotone_alternatives_mark (d : WithAlternatives α) :
+    Monotone fun m : Mark ↦ (d.mark m).alternatives := by
+  rintro (_ | _) (_ | _) h
+  exacts [subset_rfl, Set.subset_univ _, absurd h (by decide), subset_rfl]
+
+/-- An F-marked constituent of a type with two values evokes two alternatives. -/
+theorem nontrivial_alternatives_mark_focused [Nontrivial α] (d : WithAlternatives α) :
+    (d.mark .focused).alternatives.Nontrivial :=
+  Set.nontrivial_univ
+
+/-- The alternatives of a composition grow with the marks of its daughters. -/
+theorem monotone_alternatives_map₂_mark (f : α → β → γ) (a : WithAlternatives α)
+    (b : WithAlternatives β) :
+    Monotone fun m : Mark × Mark ↦ (map₂ f (a.mark m.1) (b.mark m.2)).alternatives :=
+  fun _ _ h ↦
+    Set.image2_subset (monotone_alternatives_mark a h.1) (monotone_alternatives_mark b h.2)
+
+/-- Narrow focus on the first argument of a predication `f x y` evokes `f x' y` for every `x'`. -/
+@[simp] theorem alternatives_map₂_focused_unfeatured (f : α → β → γ) (x : α) (y : β) :
+    (map₂ f ((unfeatured x).mark .focused) ((unfeatured y).mark .unfeatured)).alternatives =
+      Set.range (f · y) := by
+  simp [Set.image2_singleton_right]
+
+/-- Narrow focus on the second argument of a predication `f x y` evokes `f x y'` for every
+`y'`. -/
+@[simp] theorem alternatives_map₂_unfeatured_focused (f : α → β → γ) (x : α) (y : β) :
+    (map₂ f ((unfeatured x).mark .unfeatured) ((unfeatured y).mark .focused)).alternatives =
+      Set.range (f x) := by
+  simp [Set.image2_singleton_left]
 
 /-- Unless a constituent already evokes its whole type, its alternatives grow exactly along the
 order of the marks: the order on marks is the order of the alternatives they evoke. -/

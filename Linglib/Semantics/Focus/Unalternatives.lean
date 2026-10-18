@@ -32,7 +32,8 @@ promotes. Focus Reset leaves a constituent only its literal meaning, as `unfeatu
 ## Main results
 
 * `WithAlternatives.alternatives_node`: under a bijective composition, the targets of a node are
-  the pointwise composition of its daughters' targets, minus what its restriction excludes.
+  the alternatives of the Roothian composition `map₂` of its daughters, minus what its
+  restriction excludes.
 * `WithAlternatives.not_wellFormed_node_strong`: a strong restriction excludes the literal
   meaning of its node, against Rooth's containment constraint.
 * `WithAlternatives.alternatives_node_left_strong_eq_empty`: a strong restriction over a sister
@@ -43,7 +44,7 @@ promotes. Focus Reset leaves a constituent only its literal meaning, as `unfeatu
 Büring restricts the alternatives of a constituent to the natural meanings of its type. Here the
 alternatives are all values of the type, so a model chooses types of natural meanings, and a node
 composes its daughters by a fixed operation `op`. Büring's pointwise combination `⊗` is
-`Set.image2 op`.
+`Set.image2 op`, the alternatives of `WithAlternatives.map₂ op`.
 
 ## References
 
@@ -141,12 +142,13 @@ theorem compl_alternatives_node :
       excluded op d₁.ordinary d₂.ordinary e r :=
   compl_compl _
 
-/-- Under a bijective composition, the targets of a node are composed pointwise from the targets
-of its daughters, as Roothian focus values are, less what the node's restriction excludes. -/
+/-- Under a bijective composition, the targets of a node are the alternatives of the Roothian
+composition of its daughters, less what the node's restriction excludes. -/
 theorem alternatives_node (hop : Bijective (uncurry op)) :
     (node op e r d₁ d₂).alternatives =
-      image2 op d₁.alternatives d₂.alternatives \ excluded op d₁.ordinary d₂.ordinary e r := by
-  rw [node, compl_union, compl_propagated hop, compl_compl, compl_compl, sdiff_eq]
+      (map₂ op d₁ d₂).alternatives \ excluded op d₁.ordinary d₂.ordinary e r := by
+  rw [alternatives_map₂, node, compl_union, compl_propagated hop, compl_compl, compl_compl,
+    sdiff_eq]
 
 /-- The weak and the strong restriction on a daughter divide between them the targets that
 Propagation leaves. -/

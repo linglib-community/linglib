@@ -72,7 +72,7 @@ theorem compl_alternatives_vp_weak :
 *ordered* and *breakfast*, Büring's (10). -/
 theorem alternatives_vp_strong : (vp .strong).alternatives = {Rel.ordered}ᶜ ×ˢ {Obj.breakfast} := by
   ext ⟨r, o⟩
-  simp [vp, alternatives_node bijective_uncurry_mk, eq_comm]
+  simp [vp, alternatives_node bijective_uncurry_mk, alternatives_map₂, eq_comm]
 
 /-- Default and reversed weights on the VP divide its focal targets between them. -/
 theorem isCompl_alternatives_vp : IsCompl (vp .weak).alternatives (vp .strong).alternatives :=
@@ -120,7 +120,8 @@ theorem target_mem_clause_weak_weak (F : Finset Word) :
 other than *ordered* to *breakfast* (Figure 4). -/
 theorem alternatives_clause_weak_strong :
     (clause .weak .strong).alternatives = univ ×ˢ ({Rel.ordered}ᶜ ×ˢ {Obj.breakfast}) := by
-  rw [clause, alternatives_node bijective_uncurry_mk, focused_alternatives, alternatives_vp_strong]
+  rw [clause, alternatives_node bijective_uncurry_mk, alternatives_map₂, focused_alternatives,
+    alternatives_vp_strong]
   ext ⟨x, r, o⟩
   simp [vp]
   revert x r o
@@ -138,7 +139,7 @@ theorem target_mem_clause_weak_strong (F : Finset Word) :
 ordered breakfast (Figure 4). -/
 theorem alternatives_clause_strong_weak :
     (clause .strong .weak).alternatives = {Ent.smith}ᶜ ×ˢ {(Rel.ordered, Obj.breakfast)} := by
-  rw [clause, alternatives_node bijective_uncurry_mk, focused_alternatives]
+  rw [clause, alternatives_node bijective_uncurry_mk, alternatives_map₂, focused_alternatives]
   ext ⟨x, r, o⟩
   simp [vp, alternatives_node bijective_uncurry_mk]
   revert x r o
@@ -161,7 +162,8 @@ clause only its literal meaning, as Büring's condition on root nodes demands (F
 theorem alternatives_reset_vp :
     (node Prod.mk .left .weak (.focused Ent.smith) (.unfeatured (vp .weak).ordinary)).alternatives =
       {(.smith, .ordered, .breakfast)} := by
-  rw [alternatives_node bijective_uncurry_mk, focused_alternatives, unfeatured_alternatives]
+  rw [alternatives_node bijective_uncurry_mk, alternatives_map₂, focused_alternatives,
+    unfeatured_alternatives]
   ext ⟨x, r, o⟩
   simp [vp]
   revert x r o

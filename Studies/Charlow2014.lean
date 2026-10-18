@@ -946,14 +946,11 @@ across islands. -/
 
 namespace Focus
 
-/-- Application in the Focus monad is pointwise on values and `NA` on alternatives, Rooth's two
-interpretation functions at once (Fact 5.4). -/
-theorem combine_def {α β γ : Type u} (f : α → β → γ) (m n : WithAlternatives _) :
-    combine f m n = ⟨f m.ordinary n.ordinary,
-      {c | ∃ x ∈ m.alternatives, ∃ y ∈ n.alternatives, c = f x y}⟩ := by
-  refine WithAlternatives.ext ?_ ?_
-  · simp [combine]
-  · ext c; simp [combine, WithAlternatives.alternatives_bind, eq_comm]
+/-- Application in the Focus monad is binary composition, pointwise on values and `NA` on
+alternatives, Rooth's two interpretation functions at once (Fact 5.4). -/
+theorem combine_eq_map₂ {α β γ : Type u} (f : α → β → γ) (m : WithAlternatives α)
+    (n : WithAlternatives β) : combine f m n = WithAlternatives.map₂ f m n :=
+  (combine_eq_seq f m n).trans (WithAlternatives.map₂_eq_seq f m n).symm
 
 variable {E W : Type}
 
@@ -1015,8 +1012,8 @@ theorem fmark_left (alt : E → Set E) (j : E) (left : E → Prop) :
     ContT.eval (combine (fun x f ↦ f x) (monadLift (fmark alt j) : ContT Prop WithAlternatives E)
       (monadLift (pure left : WithAlternatives (E → Prop)))) =
       ⟨left j, {p | ∃ x ∈ alt j, p = left x}⟩ := by
-  rw [eval_combine_monadLift, combine_def]
-  exact WithAlternatives.ext rfl (by ext; simp [fmark, WithAlternatives.alternatives_pure])
+  rw [eval_combine_monadLift, combine_eq_map₂]
+  exact WithAlternatives.ext rfl (by ext; simp [fmark, WithAlternatives.alternatives_pure, eq_comm])
 
 /-- *Sharon only met JOHNᶠ* associates with focus at the VP. -/
 theorem only_met_fmark (alt : E → Set E) (j : E) (met : E → E → W → Prop) :
@@ -1025,8 +1022,8 @@ theorem only_met_fmark (alt : E → Set E) (j : E) (met : E → E → W → Prop
       (monadLift (fmark alt j)))) =
       fun x w ↦ {Q | (∃ y ∈ alt j, Q = met y) ∧ Q x w} = {met j} := by
   funext x w
-  rw [eval_combine_monadLift, combine_def, only_iff]
-  simp [fmark, WithAlternatives.alternatives_pure]
+  rw [eval_combine_monadLift, combine_eq_map₂, only_iff]
+  simp [fmark, WithAlternatives.alternatives_pure, eq_comm]
 
 /-- In unselective association `only` binds both foci in its scope (5.4.3). -/
 theorem only_fmark_fmark (alt : E → Set E) (b s : E) (intro : E → E → E → W → Prop) :
