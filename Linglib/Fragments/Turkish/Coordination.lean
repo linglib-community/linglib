@@ -44,7 +44,4 @@ def de : Coordinator :=
 def ile : Coordinator :=
   { morph := .encl "(y)lA", gloss := "and", role := .conjunctive }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [ve, de, ile]
-
 end Turkish.Coordination

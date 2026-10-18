@@ -32,7 +32,4 @@ def va : Coordinator :=
 def ham : Coordinator :=
   { morph := .free "ham", gloss := "and", role := .conjunctive }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [va, ham]
-
 end Farsi.Coordination

@@ -44,16 +44,10 @@ def aber : Coordinator :=
 def sondern : Coordinator :=
   { morph := .free "sondern", gloss := "but rather", role := .adversative }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [und, oder, aber, sondern]
-
 /-- *sowohl … als auch* 'both … and'. -/
 def sowohlAlsAuch : Coordinator.Correlative := ⟨[.free "sowohl"], [.free "als", .free "auch"], und⟩
 
 /-- *entweder … oder* 'either … or'. -/
 def entwederOder : Coordinator.Correlative := ⟨[.free "entweder"], [oder.morph], oder⟩
-
-/-- The emphatic constructions. -/
-def correlatives : List Coordinator.Correlative := [sowohlAlsAuch, entwederOder]
 
 end German.Coordination

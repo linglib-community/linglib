@@ -6,8 +6,8 @@ public import Linglib.Syntax.Category.Coordinator
 # Hindi-Urdu coordinators
 
 Hindi-Urdu conjoins with the free word *aur* 'and' before the second coordinand. The additive
-particle *bhii* 'also, too' follows the phrase it associates with, and repeated after each
-coordinand gives 'both … and'.
+particle *bhii* 'also, even', `HindiUrdu.FocusParticles.bhii`, follows the phrase it associates
+with, and repeated after each coordinand gives 'both … and'.
 
 ## Main definitions
 
@@ -16,7 +16,11 @@ coordinand gives 'both … and'.
 
 ## TODO
 
-The entries have not been checked against a grammar of Hindi-Urdu.
+*aur* and the coordinating use of *bhii* have not been checked against a grammar of Hindi-Urdu.
+
+## References
+
+* [haspelmath-1997]
 -/
 
 @[expose] public section
@@ -31,8 +35,5 @@ def aur : Coordinator :=
 `HindiUrdu.FocusParticles.bhii`. -/
 def bhii : Coordinator :=
   { morph := .free "bhii", gloss := "and", role := .conjunctive }
-
-/-- The coordinators. -/
-def allEntries : List Coordinator := [aur, bhii]
 
 end HindiUrdu.Coordination

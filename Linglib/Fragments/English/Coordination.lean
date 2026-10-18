@@ -42,9 +42,6 @@ def but_ : Coordinator :=
 def nor_ : Coordinator :=
   { morph := .free "nor", gloss := "nor", role := .negative }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [and_, or_, but_, nor_]
-
 /-- *both … and*. -/
 def bothAnd : Coordinator.Correlative := ⟨[.free "both"], [and_.morph], and_⟩
 
@@ -53,8 +50,5 @@ def eitherOr : Coordinator.Correlative := ⟨[.free "either"], [or_.morph], or_�
 
 /-- *neither … nor*. -/
 def neitherNor : Coordinator.Correlative := ⟨[.free "neither"], [nor_.morph], nor_⟩
-
-/-- The emphatic constructions. -/
-def correlatives : List Coordinator.Correlative := [bothAnd, eitherOr, neitherNor]
 
 end English.Coordination

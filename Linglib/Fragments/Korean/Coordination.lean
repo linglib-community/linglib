@@ -6,15 +6,16 @@ public import Linglib.Syntax.Category.Coordinator
 # Korean coordinators
 
 Korean coordinates noun phrases with the comitative particles, formal *-(g)wa* and informal *-hago*
-and *-(i)rang*, 'and, with' between the conjuncts, and with the delimiter *-do* 'also' after each
-conjunct, and disjoins them with *-(i)na* 'or'; *-hago* and *-(i)na* may be repeated after the
-second conjunct. So Sohn's *The Korean Language* describes them, pp. 339–340, writing *(k)wa*,
-*hako*, *(i)lang* and *to*.
+and *-(i)rang*, 'and, with' between the conjuncts, and disjoins them with *-(i)na* 'or'; *-hago*
+and *-(i)na* may be repeated after the second conjunct, as Sohn's *The Korean Language* describes
+them on pp. 339–340, writing *(k)wa*, *hako* and *(i)lang*. The delimiter *-do*, Sohn's *to* 'also,
+too, indeed' (p. 214), after each conjunct gives the emphatic *-do … -do* 'both … and', which
+Haspelmath sets against *-hago*.
 
 ## Main definitions
 
 * `Korean.Coordination.irang`, `Korean.Coordination.do_`: the comitative *-(i)rang* 'and'
-  and the additive *-do* 'also'.
+  and the delimiter *-do* of the emphatic conjunction.
 * `Korean.Coordination.hago`, `Korean.Coordination.doDo`: the comitative *-hago* and the
   emphatic *-do … -do* that Haspelmath sets against it.
 * `Korean.Coordination.gwa`, `Korean.Coordination.ina`: the formal comitative *-(g)wa* 'and'
@@ -36,8 +37,8 @@ namespace Korean.Coordination
 def irang : Coordinator :=
   { morph := .encl "(i)rang", gloss := "and", role := .conjunctive }
 
-/-- *-do* 'and', Sohn's *-to*, enclitic on each conjunct, also the additive particle
-`Korean.FocusParticles.do_`. -/
+/-- *-do*, Sohn's *to*, enclitic on each conjunct of the emphatic *-do … -do* 'both … and', also
+the additive particle `Korean.FocusParticles.do_`. -/
 def do_ : Coordinator :=
   { morph := .encl "do", gloss := "and", role := .conjunctive }
 
@@ -55,13 +56,7 @@ def gwa : Coordinator :=
 def ina : Coordinator :=
   { morph := .encl "(i)na", gloss := "or", role := .disjunctive }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [gwa, irang, hago, do_, ina]
-
 /-- *-do … -do* 'both … and', which Haspelmath sets against the single coordinator *-hago*. -/
 def doDo : Coordinator.Correlative := ⟨[do_.morph], [do_.morph], hago⟩
-
-/-- The emphatic constructions. -/
-def correlatives : List Coordinator.Correlative := [doDo]
 
 end Korean.Coordination

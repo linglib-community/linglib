@@ -5,8 +5,8 @@ public import Linglib.Syntax.Category.Particle.Additive
 /-!
 # Korean focus particles
 
-The delimiter *-do* 'also', Sohn's *to*, is the additive particle of Korean, and after each of two
-conjuncts the coordinator `Korean.Coordination.do_`.
+The delimiter *-do*, which Sohn lists as *to* 'also, too, indeed' (p. 214), is the additive
+particle of Korean, and after each of two conjuncts the coordinator `Korean.Coordination.do_`.
 
 ## Main definitions
 
