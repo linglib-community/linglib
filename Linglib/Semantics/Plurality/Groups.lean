@@ -44,15 +44,14 @@ structure GroupStructure (E : Type*) [SemilatticeSup E] where
   down : E → E
   /-- A group is an atom. -/
   atom_up (x : E) : Mereology.Atom (up x)
-  /-- Dissolution inverts formation. -/
-  down_up (x : E) : down (up x) = x
+  /-- Dissolution is a left inverse of formation. -/
+  down_up : Function.LeftInverse down up
 
 namespace GroupStructure
 
 variable {E : Type*} [SemilatticeSup E] (G : GroupStructure E)
 
-theorem up_injective : Function.Injective G.up :=
-  Function.LeftInverse.injective G.down_up
+theorem up_injective : Function.Injective G.up := G.down_up.injective
 
 /-! ### A model
 

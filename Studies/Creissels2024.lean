@@ -187,13 +187,13 @@ theorem Portative.not_aNucleativization {i : ι} (h : Portative c d i)
 
 /-- A symmetrical voice is not a passivization, nor any type defined by denucleativization. -/
 theorem not_passivization_of_isSymmetrical (h : c.IsSymmetrical d) : ¬ Passivization c d :=
-  fun ⟨⟨⟨a, ha⟩, _⟩, hA, _⟩ ↦ h.2.1 ⟨a, (hA a ha).1⟩
+  fun ⟨⟨⟨a, ha⟩, _⟩, hA, _⟩ ↦ h.not_denucleativizes ⟨a, (hA a ha).1⟩
 
 /-- A symmetrical voice is not an A/S-nucleativization, nor any type defined by
 nucleativization. -/
 theorem not_aNucleativization_of_isSymmetrical (h : c.IsSymmetrical d) (i : ι) :
     ¬ ANucleativization c d i :=
-  fun hc ↦ h.1 ⟨i, hc.1⟩
+  fun hc ↦ h.not_nucleativizes ⟨i, hc.1⟩
 
 /-! ### The types the book names -/
 

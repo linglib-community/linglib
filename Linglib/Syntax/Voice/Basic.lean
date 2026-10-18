@@ -159,8 +159,9 @@ def Transitive : Prop := (∃ i, c i = .term .A) ∧ ∃ i, c i = .term .P
 /-- An impersonal construction has neither an A term nor an S term. -/
 def Impersonal : Prop := ∀ i, c i ≠ .term .A ∧ c i ≠ .term .S
 
+open Finset in
 /-- The valency of a construction is its number of nuclear participants. -/
-def valency [Fintype ι] : ℕ := (Finset.univ.filter fun i ↦ (c i).Nuclear).card
+def valency [Fintype ι] : ℕ := #{i | (c i).Nuclear}
 
 /-! Comparing an initial construction `c` with a derived construction `d` of the same verb. -/
 
@@ -189,20 +190,59 @@ def Nucleativizes : Prop := ∃ i, c.Nucleativized d i
 /-- Some participant is denucleativized. -/
 def Denucleativizes : Prop := ∃ i, c.Denucleativized d i
 
+/-- Some initial core term is cumulated with another. -/
+def Cumulates : Prop := ∃ i, c.Cumulated d i
+
 /-- The alternation is valency-increasing when it nucleativizes without denucleativizing. -/
-def IsValencyIncreasing : Prop := c.Nucleativizes d ∧ ¬ c.Denucleativizes d
+structure IsValencyIncreasing : Prop where
+  /-- Some participant becomes a core term. -/
+  nucleativizes : c.Nucleativizes d
+  /-- No initial core term ceases to be one. -/
+  not_denucleativizes : ¬ c.Denucleativizes d
+
+theorem isValencyIncreasing_iff :
+    c.IsValencyIncreasing d ↔ c.Nucleativizes d ∧ ¬ c.Denucleativizes d :=
+  ⟨fun h ↦ ⟨h.nucleativizes, h.not_denucleativizes⟩, fun h ↦ ⟨h.1, h.2⟩⟩
 
 /-- The alternation is valency-decreasing when it denucleativizes without nucleativizing. -/
-def IsValencyDecreasing : Prop := c.Denucleativizes d ∧ ¬ c.Nucleativizes d
+structure IsValencyDecreasing : Prop where
+  /-- Some initial core term ceases to be one. -/
+  denucleativizes : c.Denucleativizes d
+  /-- No participant becomes a core term. -/
+  not_nucleativizes : ¬ c.Nucleativizes d
+
+theorem isValencyDecreasing_iff :
+    c.IsValencyDecreasing d ↔ c.Denucleativizes d ∧ ¬ c.Nucleativizes d :=
+  ⟨fun h ↦ ⟨h.denucleativizes, h.not_nucleativizes⟩, fun h ↦ ⟨h.1, h.2⟩⟩
 
 /-- The alternation is symmetrical when it neither nucleativizes nor denucleativizes and does
 not affect the transitivity of the construction ([creissels-2024] §8.1.7); a cumulation changes
 transitivity with neither. -/
-def IsSymmetrical : Prop :=
-  ¬ c.Nucleativizes d ∧ ¬ c.Denucleativizes d ∧ (c.Transitive ↔ d.Transitive)
+structure IsSymmetrical : Prop where
+  /-- No participant becomes a core term. -/
+  not_nucleativizes : ¬ c.Nucleativizes d
+  /-- No initial core term ceases to be one. -/
+  not_denucleativizes : ¬ c.Denucleativizes d
+  /-- Transitivity is unaffected. -/
+  transitive_iff : c.Transitive ↔ d.Transitive
+
+theorem isSymmetrical_iff : c.IsSymmetrical d ↔
+    ¬ c.Nucleativizes d ∧ ¬ c.Denucleativizes d ∧ (c.Transitive ↔ d.Transitive) :=
+  ⟨fun h ↦ ⟨h.not_nucleativizes, h.not_denucleativizes, h.transitive_iff⟩,
+    fun h ↦ ⟨h.1, h.2.1, h.2.2⟩⟩
 
 theorem isSymmetrical_self : c.IsSymmetrical c :=
   ⟨fun ⟨_, h⟩ ↦ h.1 h.2, fun ⟨_, h⟩ ↦ h.2 h.1, .rfl⟩
+
+variable {c d} in
+/-- A valency-increasing alternation is not symmetrical. -/
+theorem IsValencyIncreasing.not_isSymmetrical (h : c.IsValencyIncreasing d) :
+    ¬ c.IsSymmetrical d := fun h' ↦ h'.not_nucleativizes h.nucleativizes
+
+variable {c d} in
+/-- A valency-decreasing alternation is not symmetrical. -/
+theorem IsValencyDecreasing.not_isSymmetrical (h : c.IsValencyDecreasing d) :
+    ¬ c.IsSymmetrical d := fun h' ↦ h'.not_denucleativizes h.denucleativizes
 
 section Fintype
 
@@ -217,9 +257,12 @@ instance (i : ι) : Decidable (c.Introduced d i) := inferInstanceAs (Decidable (
 instance (i : ι) : Decidable (c.Cumulated d i) := inferInstanceAs (Decidable (_ ∧ _))
 instance : Decidable (c.Nucleativizes d) := inferInstanceAs (Decidable (∃ _, _))
 instance : Decidable (c.Denucleativizes d) := inferInstanceAs (Decidable (∃ _, _))
-instance : Decidable (c.IsValencyIncreasing d) := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable (c.IsValencyDecreasing d) := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable (c.IsSymmetrical d) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance : Decidable (c.Cumulates d) := inferInstanceAs (Decidable (∃ _, _))
+instance : Decidable (c.IsValencyIncreasing d) :=
+  decidable_of_iff _ (isValencyIncreasing_iff c d).symm
+instance : Decidable (c.IsValencyDecreasing d) :=
+  decidable_of_iff _ (isValencyDecreasing_iff c d).symm
+instance : Decidable (c.IsSymmetrical d) := decidable_of_iff _ (isSymmetrical_iff c d).symm
 
 /-- An initial core term is suppressed when it leaves participant structure, cumulated when it
 shares its derived core term with another, maintained when it remains a core term, and
@@ -337,10 +380,8 @@ def fate (s : Slot) : ParticipantFate :=
 
 /-- The fate of the initial core term with a transitivity-related role. -/
 def fateOfRole (r : TermRole) : ParticipantFate :=
-  match v.initial.coreSlots.find? fun s ↦
-      (v.initial.argumentRole s).map TermRole.ofArgumentRole == some r with
-  | some s => v.fate s
-  | none => .na
+  (v.initial.coreSlots.find? fun s ↦
+    (v.initial.argumentRole s).map TermRole.ofArgumentRole == some r).elim .na v.fate
 
 /-- The role of the first participant the voice introduces, if one. -/
 def newParticipant : Option TermRole :=
@@ -355,25 +396,25 @@ def pivotRole : Option TermRole := v.pivot.bind fun t ↦ (v.derived.status t).r
 /-! ### Classification -/
 
 /-- Some participant becomes a core term. -/
-def Nucleativizes : Prop := v.initial.construction.Nucleativizes v.derived.construction
+abbrev Nucleativizes : Prop := v.initial.construction.Nucleativizes v.derived.construction
 
 /-- Some initial core term ceases to be one. -/
-def Denucleativizes : Prop := v.initial.construction.Denucleativizes v.derived.construction
+abbrev Denucleativizes : Prop := v.initial.construction.Denucleativizes v.derived.construction
 
 /-- Two initial core terms are cumulated. -/
-def Cumulates : Prop := ∃ i, v.initial.construction.Cumulated v.derived.construction i
+abbrev Cumulates : Prop := v.initial.construction.Cumulates v.derived.construction
 
 /-- A voice is valency-increasing when it nucleativizes without denucleativizing. -/
-def IsValencyIncreasing : Prop :=
+abbrev IsValencyIncreasing : Prop :=
   v.initial.construction.IsValencyIncreasing v.derived.construction
 
 /-- A voice is valency-decreasing when it denucleativizes without nucleativizing. -/
-def IsValencyDecreasing : Prop :=
+abbrev IsValencyDecreasing : Prop :=
   v.initial.construction.IsValencyDecreasing v.derived.construction
 
 /-- A voice is symmetrical when it neither nucleativizes nor denucleativizes and keeps the
 transitivity of the construction. -/
-def IsSymmetrical : Prop := v.initial.construction.IsSymmetrical v.derived.construction
+abbrev IsSymmetrical : Prop := v.initial.construction.IsSymmetrical v.derived.construction
 
 /-- The pivot is an oblique, the selection a binary system does not allow
 ([creissels-2024] §8.5.2). -/
@@ -390,15 +431,6 @@ def coding : Coding := .ofMarker v.marker
 ([creissels-2024] §1.1.3). -/
 def IsCoded : Prop := v.marker ≠ []
 
-instance : Decidable v.Nucleativizes := inferInstanceAs (Decidable (Construction.Nucleativizes ..))
-instance : Decidable v.Denucleativizes :=
-  inferInstanceAs (Decidable (Construction.Denucleativizes ..))
-instance : Decidable v.Cumulates := inferInstanceAs (Decidable (∃ _, _))
-instance : Decidable v.IsValencyIncreasing :=
-  inferInstanceAs (Decidable (Construction.IsValencyIncreasing ..))
-instance : Decidable v.IsValencyDecreasing :=
-  inferInstanceAs (Decidable (Construction.IsValencyDecreasing ..))
-instance : Decidable v.IsSymmetrical := inferInstanceAs (Decidable (Construction.IsSymmetrical ..))
 instance : Decidable v.SelectsOblique := inferInstanceAs (Decidable (_ = _))
 instance : Decidable v.IsImpersonal := inferInstanceAs (Decidable (_ = _))
 instance : Decidable v.IsCoded := inferInstanceAs (Decidable (_ ≠ _))
@@ -419,12 +451,6 @@ theorem isCoded_iff : v.IsCoded ↔ v.coding ≠ .uncoded := by
 
 variable {v}
 
-theorem IsValencyIncreasing.not_isSymmetrical (h : v.IsValencyIncreasing) :
-    ¬ v.IsSymmetrical := fun h' ↦ h'.1 h.1
-
-theorem IsValencyDecreasing.not_isSymmetrical (h : v.IsValencyDecreasing) :
-    ¬ v.IsSymmetrical := fun h' ↦ h'.2.1 h.1
-
 /-! ### The trivial voice -/
 
 /-- The trivial voice of a frame with itself is the initial construction of a system. -/
@@ -438,7 +464,8 @@ theorem derived_refl (fr : ArgumentFrame) : (refl fr).derived = (refl fr).initia
 
 /-- The trivial voice is symmetrical. -/
 theorem isSymmetrical_refl (fr : ArgumentFrame) : (refl fr).IsSymmetrical := by
-  rw [IsSymmetrical, derived_refl]
+  show Construction.IsSymmetrical _ _
+  rw [derived_refl]
   exact Construction.isSymmetrical_self _
 
 /-! ### The voices -/
