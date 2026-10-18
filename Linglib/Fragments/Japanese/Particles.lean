@@ -12,15 +12,15 @@ in matrix ones, its informal counterpart *no*, the declarative complementizer *k
 meta-question particle *kke*, which asks the addressee to remind the speaker of an answer and
 occurs only in matrix questions and quotations, and the conjectural *darō*, which embeds
 declaratives and questions alike. The colloquial polarity particles *un* 'yes' and *uun* 'no' are
-`Japanese.PolarityParticle`: in the truth-based system of [holmberg-2016], *un* confirms the
-negative alternative of a negative question, *Kimi tukarete nai? — Un (tukarete nai)* 'Are you
-not tired? — Yes (I'm not tired)'.
+`Japanese.PolarityParticle`. In Holmberg's truth-based system *un* confirms the negative
+alternative of a negative question, *Kimi tukarete nai? — Un (tukarete nai)* 'Are you not
+tired? — Yes (I'm not tired)'.
 
 ## Main definitions
 
-* `Japanese.Particles.ka`, `no_`, `koto`, `kke`, `daroo` — the clause-typing particles with
-  their embedding distributions
-* `Japanese.PolarityParticle` — the polarity particles
+* `Japanese.Particles.ka`, `no_`, `koto`, `kke`, `daroo`: the clause-typing particles with their
+  embedding distributions.
+* `Japanese.PolarityParticle`: the polarity particles.
 
 ## References
 
@@ -42,7 +42,7 @@ def ka : Particle where
   form := "ka"
   script := some "か"
   position := some .clauseFinal
-  distribution := fun c e => match c with
+  distribution := fun c e ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .optional
@@ -57,7 +57,7 @@ def no_ : Particle where
   form := "no"
   script := some "の"
   position := some .clauseFinal
-  distribution := fun c e => match c with
+  distribution := fun c e ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .optional
@@ -74,7 +74,7 @@ def koto : Particle where
   form := "koto"
   script := some "こと"
   position := some .clauseFinal
-  distribution := fun c e => match c, e with
+  distribution := fun c e ↦ match c, e with
     | .declarative, .matrix => some .excluded
     | .declarative, .subordinated => some .optional
     | .declarative, .quasiSubordinated => some .excluded
@@ -88,7 +88,7 @@ def kke : Particle where
   form := "kke"
   script := some "っけ"
   position := some .clauseFinal
-  distribution := fun c e => match c with
+  distribution := fun c e ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .optional
@@ -109,7 +109,7 @@ def daroo : Particle where
   form := "darō"
   script := some "だろう"
   position := some .clauseFinal
-  distribution := fun c e => match c with
+  distribution := fun c e ↦ match c with
     | .declarative | .polar =>
       match e with
       | .matrix => some .optional
@@ -117,9 +117,6 @@ def daroo : Particle where
       | .quasiSubordinated => some .optional
       | .quotation | .insubordinated => none
     | _ => none
-
-/-- The clause-typing particles. -/
-def allParticles : List Particle := [ka, no_, koto, kke, daroo]
 
 end Japanese.Particles
 
@@ -129,8 +126,8 @@ namespace Japanese
 inductive PolarityParticle where
   /-- *un* 'yes'. -/
   | un
-  /-- *uun* 'no': *Kare-wa koohii-o noma nai no?* 'Does he not drink coffee?' — *Uun, nomu
-  yo* 'No, he drinks'. -/
+  /-- *uun* 'no', as in *Kare-wa koohii-o noma nai no?* 'Does he not drink coffee?' — *Uun,
+  nomu yo* 'No, he drinks'. -/
   | uun
   deriving DecidableEq, Repr, Fintype
 

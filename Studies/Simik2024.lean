@@ -51,7 +51,9 @@ Table 2's starred DeclPPQ of the neutral cell, conditioned on a contrastive topi
 admitted by `czechFelicitous` and read off the row feature `contrastiveTopic`. The
 language rows carry the paper's own strategy labels; the derived predicates read the
 normalized `strategy` and `polarity` features. The kin of *razve* across Slavic are listed
-(`razveKin`) without a profile, as the chapter leaves their semantics open.
+(`razveKin`) without a profile, as the chapter leaves their semantics open. Bulgarian *dali*,
+which footnote 40 reports quiz-infelicitous for its 'wondering' component, has no example
+sentence and so no quiz row.
 
 ## References
 
@@ -108,7 +110,7 @@ def CzechPQForm.Declarative : CzechPQForm → Prop
   | .declPPQ | .declNPQ => True
   | .interPPQ | .interNPQ => False
 
-instance : DecidablePred CzechPQForm.Declarative := fun f => by
+instance : DecidablePred CzechPQForm.Declarative := fun f ↦ by
   cases f <;> simp only [CzechPQForm.Declarative] <;> infer_instance
 
 /-- The forms natural in each cell of contextual evidence by prior epistemic bias (Table 2),
@@ -254,7 +256,9 @@ def Language.particles : Language → List Particle
   | .macedonian =>
     [Macedonian.QuestionParticles.dali, Macedonian.QuestionParticles.li,
      Macedonian.QuestionParticles.zar]
-  | .bulgarian => [Bulgarian.QuestionParticles.li, Bulgarian.QuestionParticles.nima]
+  | .bulgarian =>
+    [Bulgarian.QuestionParticles.li, Bulgarian.QuestionParticles.dali,
+     Bulgarian.QuestionParticles.nima]
   | .russian =>
     [Russian.QuestionParticles.li, Russian.QuestionParticles.razve,
      Russian.QuestionParticles.neuzeli]
@@ -272,7 +276,7 @@ def polarity? (e : Datum) : Option Polarity :=
 
 /-- The quiz rows (25)–(34) of a language. -/
 def quizRows (l : Language) : List Datum :=
-  Examples.all.filter fun e => e.language == l.glottocode && (e.feature? "strategy").isSome
+  Examples.all.filter fun e ↦ e.language == l.glottocode && (e.feature? "strategy").isSome
 
 variable (l : Language)
 
@@ -414,12 +418,12 @@ variable {W : Type*} (p : Set W) (w : W)
 /-- A polar question has exactly one true answer at each world. -/
 theorem trueAnswers_polar_existsUnique : ∃! q, q ∈ trueAnswers {p, pᶜ} w := by
   by_cases hw : w ∈ p
-  · refine ⟨p, ⟨by simp, hw⟩, fun q ⟨hq, hwq⟩ => ?_⟩
+  · refine ⟨p, ⟨by simp, hw⟩, fun q ⟨hq, hwq⟩ ↦ ?_⟩
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
     rcases hq with rfl | rfl
     · rfl
     · exact absurd hw hwq
-  · refine ⟨pᶜ, ⟨by simp, hw⟩, fun q ⟨hq, hwq⟩ => ?_⟩
+  · refine ⟨pᶜ, ⟨by simp, hw⟩, fun q ⟨hq, hwq⟩ ↦ ?_⟩
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
     rcases hq with rfl | rfl
     · exact absurd hwq hw
@@ -520,7 +524,7 @@ instance (pol : Polarity) (r : Polarity) : Decidable (NahodouLicensed pol r) := 
 
 /-- *Náhodou* needs negation (43e). -/
 theorem nahodou_requires_negation (r : Polarity) : ¬ NahodouLicensed .positive r :=
-  fun h => Polarity.noConfusion h.1
+  fun h ↦ Polarity.noConfusion h.1
 
 /-- *Náhodou* needs outer negation (43d). -/
 theorem nahodou_requires_outer (pol : Polarity) (r : Polarity)

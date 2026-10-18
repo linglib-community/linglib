@@ -39,14 +39,14 @@ open Clause (EmbeddingContext SentenceType)
 /-- Where a particle sits relative to its host domain, Zwicky's positional diagnostic. -/
 inductive Particle.Position where
   | clauseInitial
-  /-- Second position (Wackernagel; Slavic *li*). -/
+  /-- Second position (Wackernagel; Russian *li*). -/
   | secondPosition
   /-- Clause-medial / middle field (German *denn*, Swedish *väl*). -/
   | clauseMedial
   | clauseFinal
   /-- Immediately before a host constituent (adnominal focus particles). -/
   | preHost
-  /-- Immediately after a host constituent. -/
+  /-- Immediately after a host constituent (Turkish *mI*, Bulgarian *li* on the focus). -/
   | postHost
   /-- No fixed position (Hindi-Urdu *kya:*). -/
   | free

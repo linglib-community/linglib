@@ -7,9 +7,10 @@ public import Linglib.Syntax.Category.Particle.Basic
 
 The utterance-final discourse particles of Marathi as `Particle` values with their clause-type
 distribution. *Bərə* occurs with declaratives, imperatives and wh-interrogatives and never with
-polar interrogatives ([deo-2025-bara] §1); its commitment semantics is the subject of
-`Studies/Deo2025.lean`. *Na* signals a preference for independent shared commitment
-([deo-2023]); only its imperative use is recorded here, from [deo-2025-bara] fn. 5 and fn. 6.
+polar interrogatives (Deo's study of *bərə*, §1); its commitment semantics is the subject of
+`Studies/Deo2025.lean`. *Na* signals a preference for independent shared commitment, as Deo
+argues in earlier work; only its imperative use is recorded here, from footnotes 5 and 6 of the
+*bərə* study.
 
 ## References
 
@@ -21,28 +22,25 @@ polar interrogatives ([deo-2025-bara] §1); its commitment semantics is the subj
 
 namespace Marathi.Particles
 
-/-- *bərə*: utterance-final, with declaratives, imperatives and wh-interrogatives, never with
-polar interrogatives ([deo-2025-bara] §1). -/
+/-- *bərə*, the utterance-final particle of declaratives, imperatives and wh-interrogatives,
+never of polar interrogatives ([deo-2025-bara] §1). -/
 def bara : Particle where
   form := "bərə"
   position := some .clauseFinal
-  distribution := fun c e => match c, e with
+  distribution
     | .declarative, .matrix => some .optional
     | .polar, .matrix => some .excluded
     | .constituent, .matrix => some .optional
     | .imperative, .matrix => some .optional
     | _, _ => none
 
-/-- *na*: utterance-final, augmenting an imperative while leaving the addressee the choice
-([deo-2025-bara] fn. 5); its other uses are not recorded. -/
+/-- *na*, the utterance-final particle that augments an imperative while leaving the addressee
+the choice ([deo-2025-bara] fn. 5); its other uses are not recorded. -/
 def na : Particle where
   form := "na"
   position := some .clauseFinal
-  distribution := fun c e => match c, e with
+  distribution
     | .imperative, .matrix => some .optional
     | _, _ => none
-
-/-- All Marathi utterance-final particles indexed in this file. -/
-def allParticles : List Particle := [bara, na]
 
 end Marathi.Particles

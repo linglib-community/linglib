@@ -63,7 +63,4 @@ def nandao : Particle where
   position := some .clauseInitial
   distribution := polarOnly
 
-/-- All Mandarin question particles indexed in this file. -/
-def allQuestionParticles : List Particle := [ma, ba, nandao]
-
 end Mandarin.QuestionParticles
