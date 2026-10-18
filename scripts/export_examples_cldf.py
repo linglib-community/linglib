@@ -78,6 +78,7 @@ MARK = {
     "questionable": "??",
     "unacceptable": "#",
     "ungrammatical": "*",
+    "variable": "%",
 }
 
 CUSTOM_COLUMNS = [

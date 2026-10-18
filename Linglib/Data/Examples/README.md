@@ -52,7 +52,7 @@ key reference:
 | `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if no IGT (e.g., English-glossed-as-English) |
 | `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
-| `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical` | sentence-level felicity |
+| `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical, variable` | sentence-level felicity; `variable` is the mark `%`, speakers differing |
 | `alternatives` | array of `{form, judgment}` | within-example contrast pairs (e.g., Schwarz's `vom` vs `von dem`) |
 | `readings` | array of `{name, judgment}` | multiple LFs / scope readings (e.g., donkey strong vs weak) |
 | `paperFeatures` | array of `[key, value]` | what the paper states about the example (its design cell, the class it assigns); a key repeats when the example bears the property twice |
@@ -107,6 +107,8 @@ sentences: write each variant as its own row with its own `judgment` and `paperF
 sharing the `paperLabel`, when the variants differ in what the paper classifies; keep a
 contrast the paper does not classify in `alternatives`. A feature a sentence bears twice (two
 indefinite series in one clause) is two entries under the same key, not a slash-joined value.
+The mark `%` says that speakers differ without saying how, and is the judgment `variable`; a row
+records who accepts the example, a variety or a stage, as a paper feature where the source says.
 A mark a source prints split between speakers (`*/??`, `?/√`) gives one sentence several marks.
 The row's `judgment` is the first mark printed, and each further mark is a `paperFeatures` entry
 `["alsoJudged", <judgment>]`, in printed order; the generator rejects a value that is not a

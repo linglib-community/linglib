@@ -244,10 +244,10 @@ def ex_66b : Datum :=
     primaryText := "Weet’u pro hi-cuukwe-ce-∅ yox̂ ke hi-weeqi-sa-qa watiisx."
     glossedTokens := [("Weet’u", "neg"), ("pro", "3sg"), ("hi-cuukwe-ce-∅", "3subj-know-imperf-pres"), ("yox̂", "rp.nom"), ("ke", "CĀ"), ("hi-weeqi-sa-qa", "3subj-rain-imperf-rec.past"), ("watiisx", "one.day.away")]
     context := ""
-    judgment := .marginal
+    judgment := .variable
     alternatives := []
     readings := []
-    paperFeatures := [("verb", "cuukwe"), ("edge", "yoxKe"), ("diagnostic", "edge"), ("diacritic", "%")] }
+    paperFeatures := [("verb", "cuukwe"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
 def ex_33 : Datum :=
   { id := "deal2026_33"

@@ -257,7 +257,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
     [("IO", Binder.io), ("subject", .subject), ("matrix DAT", .matrixDat),
       ("matrix subject", .matrixSubject), ("embedded subject", .embeddedSubject)]
   let mover ← ex.parse? "mover" [("DP", Mover.dp), ("DP-lexical", .lexicalDP), ("PP", .pp)]
-  pure ⟨construction, binder, mover, ex.judgments.foldl min ex.judgment⟩
+  pure ⟨construction, binder, mover, ex.judgments.foldl (· ⊓ ·) ex.judgment⟩
 
 /-- The scrambled orders (18b) to (21b), (32b), (33), (40), (41), (58), (61), (79), (85b), (86),
 (93b), and (94b). -/
@@ -311,7 +311,8 @@ structure AccRow where
   deriving DecidableEq, Repr
 
 def AccRow.ofDatum (ex : Datum) : Option AccRow := do
-  let competitor ← ex.parse? "competitor" [("NOM", Competitor.nom), ("DAT", .dat), ("none", .absent)]
+  let competitor ← ex.parse? "competitor"
+    [("NOM", Competitor.nom), ("DAT", .dat), ("none", .absent)]
   pure ⟨competitor, ex.judgment⟩
 
 /-- (47), (48), (63), (64), and (65). -/
