@@ -103,7 +103,6 @@ import Linglib.Logic.Modal.FirstOrder.Syntax
 import Linglib.Logic.Modal.FirstOrder.Correspondence
 import Linglib.Core.ModelTheory.Lindstrom
 import Linglib.Core.ModelTheory.QuantifierRank
-import Linglib.Core.ModelTheory.TotalPreorder
 import Linglib.Logic.PIP.Syntax
 import Linglib.Logic.PIP.Semantics
 import Linglib.Logic.PIP.Felicity
