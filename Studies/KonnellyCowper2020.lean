@@ -5,7 +5,7 @@ public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 /-!
 # Konnelly and Cowper (2020): Gender Diversity and Morphosyntax
 
-This file formalizes [konnelly-cowper-2020]'s account of singular *they* as a grammatical
+This file formalizes Konnelly and Cowper's account of singular *they* as a grammatical
 change in three stages. A third-person pronoun spells out a bundle of privative features by
 the Elsewhere Principle, the vocabulary items of (11) being *she* for [sg][fem], *he* for
 [sg][masc], *it* for [sg, inanim] and *they* elsewhere (`items`, `spellout`); the items are
@@ -17,11 +17,12 @@ Stage 1, [masc] and [fem] are contrastive and a noun referring to a person of kn
 obligatorily bears one, so *they* needs an antecedent of unknown gender or a quantifier, (5).
 At Stage 2 the features are still contrastive but the insertion rule is optional, so an
 ungendered name like *Kelly* antecedes *they*, (6), while a lexically gendered noun does not,
-(15) and (21). At Stage 3 the features are the non-contrastive modifiers of [wiltschko-2008]
-(`Contrastivity`), so *they* is the default for any singular animate antecedent,
+(15) and (21), a fact of nominals bearing gender, on which Stages 1 and 2 agree
+(`they_not_mem_forms_of_lexical`). At Stage 3 the features are Wiltschko's non-contrastive
+modifiers (`Contrastivity`), so *they* is the default for any singular animate antecedent,
 (7) and (25), with *he* and *she* still available, (8), and *it* still forced for inanimates,
 (10) (`Stage.genders`, `forms`, `stage3_they`, `it_of_inanimate`). Against
-[bjorkman-2017]'s dynamic condition, which asks a pronoun's features to include its
+Bjorkman's dynamic condition, which asks a pronoun's features to include its
 antecedent's, (24) *the women said that she was leaving* is wrongly licensed, whereas the
 number contrast excludes it here (`bjorkman_overgenerates`, `women_not_she`).
 
@@ -168,6 +169,15 @@ theorem lexical_forces_gender {s : Stage} {a : Antecedent} {g : Gender}
     (h : s.genderContrastivity = .contrastive) (hl : a.lexical = some (.gender g)) :
     s.genders a = [some g] := by
   simp [Stage.genders, Antecedent.inanimate, Antecedent.lexicalGender, h, hl]
+
+/-- A singular antecedent outside a quantifier whose entry bears a contrastive gender does not
+take *they*, so Stages 1 and 2 agree on nominals bearing gender features, §4.2. -/
+theorem they_not_mem_forms_of_lexical {s : Stage} {a : Antecedent} {g : Gender}
+    (h : s.genderContrastivity = .contrastive) (hs : a.singular = true)
+    (hq : a.quantified = false) (hl : a.lexical = some (.gender g)) : "they" ∉ forms s a := by
+  cases g <;>
+    simp [forms, bundles, lexical_forces_gender h hl, hq, hs, hl, Antecedent.numFeatures,
+      Antecedent.inanimate, Gender.feature] <;> decide
 
 /-- *They* is available whenever the pronoun may omit the gender feature and the antecedent is
 not inanimate. -/
