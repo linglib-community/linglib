@@ -8,7 +8,7 @@ module
 public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Core.RingTheory.HahnSeries.RotaBaxter
-public import Linglib.Syntax.Minimalist.Linearization.Externalization
+public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Syntax.Minimalist.Derivation.Economy
 public import Linglib.Syntax.Minimalist.Merge.MinimalSearch
 public import Linglib.Syntax.Minimalist.Merge.Sideward
@@ -715,14 +715,23 @@ private def theDog : SyntacticObject :=
     [.node (Vertex.lex ⟨.of .D [.N] (phonForm := "the"), 0⟩) [],
      .node (Vertex.lex ⟨.of .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
 
-/-- In the harmonic head-initial order the projecting `D`'s yield comes first. -/
-example : (theDog.linearize .initial).map (·.map (·.id)) = some [0, 1] := by decide
+/-- In the harmonic head-initial planarization the projecting `D` comes first. -/
+example : (theDog.planarize? .left).map (·.yield.map (·.id)) = some [0, 1] := by decide
 
-/-- In the harmonic head-final order the same head function is mirrored. -/
-example : (theDog.linearize .final).map (·.map (·.id)) = some [1, 0] := by decide
+/-- In the harmonic head-final planarization the same head function is mirrored. -/
+example : (theDog.planarize? .right).map (·.yield.map (·.id)) = some [1, 0] := by decide
 
-example : theDog.phonYield .initial = some ["the", "dog"] := by decide
-example : theDog.phonYield .final = some ["dog", "the"] := by decide
+example : (theDog.planarize? .left).map (·.yield.filterMap (·.item.phonForm?)) =
+    some ["the", "dog"] := by decide
+
+/-- Merging *the* on the left of *dog*, which it selects, is harmonic for a head-initial
+language, so that derivation records the head-initial planarization
+(`Derivation.externalize?_eq_planarize?`); merging it on the right is not harmonic. -/
+example : Step.HarmonicList .left selHead [.em .left (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
+      ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ ∧
+    ¬ Step.HarmonicList .left selHead [.em .right (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
+      ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ :=
+  ⟨⟨⟨rfl, by decide⟩, trivial⟩, fun ⟨⟨_, h⟩, _⟩ ↦ absurd h (by decide)⟩
 
 /-- Exocentric Merge of two saturated `N`s, neither selecting the other, determines no head and
 no order. -/
@@ -731,8 +740,7 @@ private def exoNN : SyntacticObject :=
     [.node (Vertex.lex ⟨.of .N [] (phonForm := "cats"), 0⟩) [],
      .node (Vertex.lex ⟨.of .N [] (phonForm := "dogs"), 1⟩) []]), by decide⟩
 
-example : exoNN.linearize .initial = none := by decide
-example : exoNN.linearize .final = none := by decide
+example : exoNN.planarize? .left = none ∧ exoNN.planarize? .right = none := by decide
 
 /-! ### FormSet (§1.16) -/
 

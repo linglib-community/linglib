@@ -83,21 +83,14 @@ theorem replace_merge_of_ne {l r target replacement : SyntacticObject} (h : merg
   rw [← merge_val]
   exact fun heq => h (Subtype.ext heq)
 
-theorem replace_lexLeaf_of_ne {tok : LexicalItem.Token} {target replacement : SyntacticObject}
-    (h : SyntacticObject.leaf tok ≠ target) : replace (SyntacticObject.leaf tok) target replacement
-      = SyntacticObject.leaf tok := by
+/-- A leaf other than the target is kept. -/
+theorem replace_of_val_eq_leaf {s target replacement : SyntacticObject} {a : Vertex}
+    (hs : s.val = UnorderedTree.leaf a) (h : s ≠ target) : s.replace target replacement = s := by
   apply Subtype.ext
-  rw [replace_val,
-    show (SyntacticObject.leaf tok).val = UnorderedTree.leaf (Vertex.lex tok) from rfl,
-      UnorderedTree.replace_leaf, ite_eq_right]
-  exact fun heq => h (Subtype.ext heq)
-
-theorem replace_traceLeaf_of_ne {target replacement : SyntacticObject}
-    (h : trace ≠ target) : replace trace target replacement = trace := by
-  apply Subtype.ext
-  rw [replace_val, show trace.val = UnorderedTree.leaf (Sum.inr none) from rfl,
-      UnorderedTree.replace_leaf, ite_eq_right]
-  exact fun heq => h (Subtype.ext heq)
+  rw [replace_val, hs, UnorderedTree.replace_leaf]
+  split_ifs with hc
+  · exact (h (Subtype.ext (hs.trans hc))).elim
+  · rfl
 
 /-- Moving the daughter `r` out of `[l r]` and leaving a trace yields `[l′ t]`, with `l′` the
     substituted left daughter; a tree is never its own daughter, taken here as a hypothesis. -/

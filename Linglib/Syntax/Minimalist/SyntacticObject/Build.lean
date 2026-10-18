@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
+public import Linglib.Core.Computability.Edge
 
 /-!
 # Building and reading syntactic objects
@@ -20,6 +21,8 @@ which recognizes the trace leaves, bare or indexed.
 ## Main definitions
 
 * `Minimalist.PlanarSyntacticObject.toSyntacticObjectHom`: forgetting the order.
+* `Minimalist.PlanarSyntacticObject.attach`, `yield`: Merge on a given edge, and the pronounced
+  tokens.
 * `Minimalist.SyntacticObject.mkLeaf`, `mkLeafPhon`: lexical leaves from features.
 * `Minimalist.SyntacticObject.token?`, `isTrace`, `leafCount`, `nodeCount`, `IsLeaf`.
 
@@ -107,6 +110,33 @@ theorem isEmpty_mulHom : IsEmpty (SyntacticObject →ₙ* PlanarSyntacticObject)
   have h := congrArg φ (mul_comm (default : SyntacticObject) (default * default))
   simp only [map_mul, mul_def, merge_inj] at h
   exact merge_ne_left _ _ h.1.symm
+
+/-- `p.attach e d` merges `d` into `p` as the daughter on edge `e`. -/
+def attach (p : PlanarSyntacticObject) (e : Edge) (d : PlanarSyntacticObject) :
+    PlanarSyntacticObject :=
+  match e with
+  | .left => merge d p
+  | .right => merge p d
+
+@[simp] theorem attach_left (p d : PlanarSyntacticObject) : p.attach .left d = merge d p := rfl
+
+@[simp] theorem attach_right (p d : PlanarSyntacticObject) : p.attach .right d = merge p d := rfl
+
+theorem attach_swap (p d : PlanarSyntacticObject) (e : Edge) :
+    p.attach e.swap d = d.attach e p := by
+  cases e <;> rfl
+
+/-- Merge on either edge forgets to Merge. -/
+@[simp] theorem toSyntacticObject_attach (p d : PlanarSyntacticObject) (e : Edge) :
+    (p.attach e d).toSyntacticObject = SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject
+    := by
+  cases e
+  · exact toSyntacticObject_merge d p
+  · exact (toSyntacticObject_merge p d).trans (SyntacticObject.merge_comm _ _)
+
+/-- The pronounced tokens of a planar object, left to right; traces are unpronounced. -/
+def yield (p : PlanarSyntacticObject) : List LexicalItem.Token :=
+  p.val.leafList.filterMap (Sum.elim id fun _ ↦ none)
 
 /-! ### Merge in braces
 
