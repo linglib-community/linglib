@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Semantics.Composition.Ty
 public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Fragments.Mayan.Chuj.RootClasses
+public import Linglib.Data.Forms.Coon2019
 public import Linglib.Fragments.Mayan.Chuj.Voice
 public import Linglib.Data.Examples.Coon2019
 public import Mathlib.Tactic.DeriveFintype
@@ -28,7 +28,9 @@ ergative case, Ch'ol, has no agentive intransitive stems.
 
 ## Implementation notes
 
-The heads are Minimalist Voice heads whose parametric semantics supplies two of the three
+The roots of the class table (5), of (17) and (20) and of the examples are the forms of
+`Data/Forms/Coon2019`, each with its class as Coon's analysis, and the class fixes the root's
+type, valency and compatibility with the agent-merging head. The heads are Minimalist Voice heads whose parametric semantics supplies two of the three
 properties the licensing count reads, an external argument and its implicitness; the third,
 inherent ergative case, is the transitive head's own, since the substrate's Case checking is
 the accusative of v. The count adopts the Obligatory Case Parameter of footnote 15,
@@ -62,6 +64,7 @@ inanimate causer of (70a) and the isolated -j form (71) are recorded as data onl
 namespace Coon2019
 
 open Chuj Minimalist.Voice ArgumentStructure
+open Forms (RootClass)
 open scoped Montague
 
 /-! ### Root classes -/
@@ -69,21 +72,21 @@ open scoped Montague
 /-- The core-argument positions a root class introduces, in the sense of [coon-2019]'s (2):
 transitive and intransitive roots an internal argument, positional and nominal roots none
 (39). -/
-def _root_.Chuj.RootClass.valency : RootClass → Valency
+def Forms.RootClass.valency : RootClass → Valency
   | .tv | .itv => {.internal}
   | .pos | .nom => ∅
 
 /-- The semantic type of a root class, (3): transitive and intransitive roots are event
 predicates over an internal argument, positional roots measure functions after
 [henderson-2017] and nominal roots properties. -/
-def _root_.Chuj.RootClass.ty : RootClass → Montague.Ty
+def Forms.RootClass.ty : RootClass → Montague.Ty
   | .tv | .itv => .e ⇒ .v ⇒ .t
   | .pos => .e ⇒ .v ⇒ .d
   | .nom => .e ⇒ .t
 
 /-- The root class combines with the transitive-forming v ~ Voice head that merges an agent,
 the coordinate separating √TV from the unaccusative √ITV, §3.3. -/
-def _root_.Chuj.RootClass.LicensesTransitiveVoice (rc : RootClass) : Prop := rc = .tv
+def Forms.RootClass.LicensesTransitiveVoice (rc : RootClass) : Prop := rc = .tv
 
 instance : DecidablePred RootClass.LicensesTransitiveVoice :=
   fun rc ↦ inferInstanceAs (Decidable (rc = .tv))
@@ -217,16 +220,17 @@ def V.voice : V → Internal → Option Voice
 
 /-- A root class forms a stem with a head when the head is well-formed on it under some
 realization; stems with other derivational suffixes, (11) and (15), are not in view. -/
-def Forms (rc : RootClass) (v : V) : Prop := ∃ i, WellFormed rc v i
+def FormsStem (rc : RootClass) (v : V) : Prop := ∃ i, WellFormed rc v i
 
-instance (rc : RootClass) (v : V) : Decidable (Forms rc v) := by unfold Forms; infer_instance
+instance (rc : RootClass) (v : V) : Decidable (FormsStem rc v) := by
+  unfold FormsStem; infer_instance
 
 /-- The distribution of the heads over the root classes is derived. √TV takes every head but the
 null intransitive one, (45) and (59) to (60); √ITV only that one, (47); √POS and √NOM only -w,
 (45), apart from isolated forms like (71). -/
-theorem forms_iff :
-    (∀ v, Forms .tv v ↔ v ≠ .intransitive) ∧ (∀ v, Forms .itv v ↔ v = .intransitive) ∧
-      (∀ v, Forms .pos v ↔ v = .w) ∧ ∀ v, Forms .nom v ↔ v = .w := by
+theorem formsStem_iff :
+    (∀ v, FormsStem .tv v ↔ v ≠ .intransitive) ∧ (∀ v, FormsStem .itv v ↔ v = .intransitive) ∧
+      (∀ v, FormsStem .pos v ↔ v = .w) ∧ ∀ v, FormsStem .nom v ↔ v = .w := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> intro v <;> cases v <;> decide
 
 /-- The stems of a transitive root are exactly the five voices of the fragment, (58). -/
@@ -264,7 +268,7 @@ theorem itv_no_w : (∀ i, ¬ WellFormed .itv .w i) ∧ V.w.Selects .itv :=
   ⟨fun i ↦ by cases i <;> decide, trivial⟩
 
 /-- Every class forms a verb stem with some head, so root class is not surface category (§5). -/
-theorem every_class_verbalizes (rc : RootClass) : ∃ v, Forms rc v := by
+theorem every_class_verbalizes (rc : RootClass) : ∃ v, FormsStem rc v := by
   cases rc
   exacts [⟨.transitive, by decide⟩, ⟨.intransitive, by decide⟩, ⟨.w, by decide⟩, ⟨.w, by decide⟩]
 
@@ -378,9 +382,9 @@ end Semantics
 
 /-! ### The rows -/
 
-/-- The root of a row, from the fragment lexicon by its form. -/
-def rowRoot (row : Datum) : Option ChujRoot :=
-  row.feature? "rootForm" >>= fun f ↦ allRoots.find? (·.form == f)
+/-- The analysis of a row's root, found in the root inventory by its form. -/
+def rowRoot (row : Datum) : Option Forms.Analysis :=
+  row.feature? "rootForm" >>= fun f ↦ Forms.analyses.find? (·.form.form == f)
 
 def heads : List (String × V) :=
   [("transitive", .transitive), ("intransitive", .intransitive), ("w", .w), ("ch", .ch),
@@ -401,7 +405,7 @@ structure Stem where
 /-- The stem a row records. -/
 def Stem.ofRow (row : Datum) : Option Stem := do
   guard (row.feature? "construction" = some "stem")
-  return ⟨(← rowRoot row).class', ← row.parse? "head" heads,
+  return ⟨(← rowRoot row).rootClass, ← row.parse? "head" heads,
     ← row.parse? "internal"
       [("dp", Internal.dp), ("np", .np), ("implicit", .implicit), ("none", .absent)],
     ← row.parse? "aj" [("yes", true), ("no", false)]⟩

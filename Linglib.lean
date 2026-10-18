@@ -516,7 +516,6 @@ import Linglib.Fragments.Marathi.Particles
 import Linglib.Fragments.MauritianCreole.Determiners
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Chol.Classifiers
-import Linglib.Fragments.Mayan.Chuj.RootClasses
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 import Linglib.Fragments.Mayan.Kaqchikel.Focus
