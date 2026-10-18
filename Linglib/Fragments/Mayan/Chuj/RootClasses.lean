@@ -4,7 +4,7 @@ module
 # Chuj Root Classes
 
 Root lexicon for Chuj (Q'anjob'alan, Mayan): the four Mayanist root
-classes and the root inventory of [coon-2019] "Building verbs in Chuj:
+classes and the root inventory of Coon's "Building verbs in Chuj:
 Consequences for the nature of roots."
 
 ## Main declarations
@@ -18,10 +18,13 @@ Consequences for the nature of roots."
 ## Implementation notes
 
 The entry carries only the distributional class label; the theoretical
-coordinates ([coon-2019]'s (3): semantic type, valency, transitive-Voice
-licensing) are a derived projection `RootClass.toRoot` in
-`Studies/Coon2019.lean`, following the derived-projection pattern of
-`Studies/HaninkKoontzGarboden2025.lean`.
+coordinates (Coon's (3): semantic type, valency, transitive-Voice
+licensing) are functions of the class, `RootClass.ty`, `RootClass.valency` and
+`RootClass.LicensesTransitiveVoice`, in `Studies/Coon2019.lean`.
+
+## References
+
+* [coon-2019]
 -/
 
 @[expose] public section

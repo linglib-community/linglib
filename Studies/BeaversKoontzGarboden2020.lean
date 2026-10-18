@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Root.Defs
-public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.RootEntailment
@@ -21,6 +20,14 @@ both a manner and a result. The root of *blossom* entails a change and so falsif
 (`bifurcation_thesis_false`); the roots of *hand* and *drown* entail both a manner and a result
 and so falsify the second (`manner_result_complementarity_false`).
 
+The typology (12) crosses the well-formed signatures with the two positions of a root. The book
+accounts for its empty cells by markedness, an adjoined root describing a manner and a
+complement root a state, and by naturalness, a root that describes a manner and a state also
+entailing the causation that would relate them; together these carve out exactly the filled
+cells (`mem_attestedCells_iff`). No event template relates a manner and a state other than by
+causation (`Template.hasCause_of_mem_kinds`), and the attested rows are exactly the signatures
+of the templates of the basic inventory, as (13) shows (`attestedRows_eq_kinds_templates`).
+
 The modifier *again* attaches to the root, to `vbecome` or to `vcause`, the three subterms of
 the causative template, and the entailments among its three readings follow from the subterm
 order (`Template.exists_denote_of_isSubterm`). The book's hypothesis about which roots alternate
@@ -31,6 +38,12 @@ Classes and Alternations* (`rootHypothesis_matches_profile`).
 
 * The state entailments of the result roots are derived by the collocational closure of the
   kind signature (`Root.closedKinds`).
+* A root is its meaning; the six roots carry their signatures and leave their content
+  unannotated, so √hand and √drown coincide as values, and the position of each root is
+  recorded beside it in `sample`.
+* The third clause of `mem_attestedCells_iff` is the book's naturalness argument for the row
+  with a manner and a state alone. For the row that adds a change without a cause, the book
+  leaves open whether a change and a manner can combine without causation (p. 230).
 * The thesis predicates are the apparatus of this study alone.
 
 ## References
@@ -45,7 +58,9 @@ Classes and Alternations* (`rootHypothesis_matches_profile`).
 
 @[expose] public section
 
-namespace Semantics.Root.Kinds
+namespace BeaversKoontzGarboden2020
+
+open Semantics Semantics.Root.Kinds
 
 /-! ### The two theses, at signature level -/
 
@@ -56,42 +71,33 @@ def ontological : Root.Kinds := {.state, .manner}
 that is, when it is not bounded by `ontological`. -/
 def ViolatesBifurcation (s : Root.Kinds) : Prop := ¬ s ≤ ontological
 
-instance (s : Root.Kinds) : Decidable s.ViolatesBifurcation :=
-  inferInstanceAs (Decidable (¬ _ ≤ _))
+instance : DecidablePred ViolatesBifurcation := fun _ ↦ inferInstanceAs (Decidable (¬ _ ≤ _))
 
 /-- Violation is carrying a `result` or `cause` kind. -/
 theorem violatesBifurcation_iff :
-    ∀ s : Root.Kinds,
-      s.ViolatesBifurcation ↔ .result ∈ s ∨ .cause ∈ s := by decide
+    ∀ s, ViolatesBifurcation s ↔ .result ∈ s ∨ .cause ∈ s := by decide
 
-/-- Bifurcation violation is monotone, so adding entailments cannot repair a violation. -/
-theorem violatesBifurcation_mono :
-    ∀ {s t : Root.Kinds}, s ≤ t →
-      s.ViolatesBifurcation → t.ViolatesBifurcation := by decide
+/-- Adding entailments cannot repair a violation. -/
+theorem violatesBifurcation_monotone : Monotone ViolatesBifurcation :=
+  fun _ _ hst hs ht ↦ hs (hst.trans ht)
 
 /-- A signature has both manner and result, the configuration that Manner/Result
 Complementarity claims no root realizes. -/
-def HasMannerAndResult (s : Root.Kinds) : Prop :=
-  {Root.Kind.manner, Root.Kind.result} ≤ s
+def HasMannerAndResult (s : Root.Kinds) : Prop := ({.manner, .result} : Root.Kinds) ≤ s
 
-instance (s : Root.Kinds) : Decidable s.HasMannerAndResult :=
-  inferInstanceAs (Decidable (_ ≤ _))
+instance : DecidablePred HasMannerAndResult := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
 
-/-- MRC violation is monotone in the signature order. -/
-theorem hasMannerAndResult_mono :
-    ∀ {s t : Root.Kinds}, s ≤ t →
-      s.HasMannerAndResult → t.HasMannerAndResult := by decide
+theorem hasMannerAndResult_monotone : Monotone HasMannerAndResult :=
+  fun _ _ hst h ↦ h.trans hst
 
 /-- Bifurcation is invariant under collocational closure, since `close` only adds the `state`
 and `result` kinds forced by `cause`, never `manner`. -/
 theorem violatesBifurcation_close_iff :
-    ∀ s : Root.Kinds,
-      (close s).ViolatesBifurcation ↔ s.ViolatesBifurcation := by decide
+    ∀ s, ViolatesBifurcation (close s) ↔ ViolatesBifurcation s := by decide
 
 theorem hasMannerAndResult_close_iff :
-    ∀ s : Root.Kinds,
-      (close s).HasMannerAndResult ↔
-        s.HasMannerAndResult ∨ (.manner ∈ s ∧ .cause ∈ s) := by decide
+    ∀ s, HasMannerAndResult (close s) ↔ HasMannerAndResult s ∨ (.manner ∈ s ∧ .cause ∈ s) := by
+  decide
 
 /-! ### The typology -/
 
@@ -101,7 +107,8 @@ def typology : Finset Root.Kinds :=
    {.state, .manner, .result}, fullSpec}
 
 /-- The typology (12) is exhaustive, since the signatures respecting the collocational
-    restrictions are its seven rows and `∅`. -/
+restrictions are its seven rows and `∅`, the roots positively specified for no feature that the
+book sets aside (p. 227). -/
 theorem wellFormed_iff_mem_typology :
     ∀ s : Root.Kinds, s.WellFormed ↔ s = ∅ ∨ s ∈ typology := by decide
 
@@ -110,52 +117,14 @@ def attestedCells : Finset (Root.Kinds × Root.Position) :=
   {(propertyConcept, .complement), (pureResult, .complement), (causativeResult, .complement),
    (pureManner, .adjoined), (fullSpec, .adjoined), (fullSpec, .complement)}
 
-end Semantics.Root.Kinds
-
-namespace Semantics.Root
-
-/-! ### The two theses, at root level -/
-
-/-- A root violates Bifurcation when it itself carries templatic, eventive meaning, a change of
-state or a cause. -/
-def ViolatesBifurcation (r : Root) : Prop :=
-  r.kinds.ViolatesBifurcation
-
-instance (r : Root) : Decidable r.ViolatesBifurcation :=
-  inferInstanceAs (Decidable (Root.Kinds.ViolatesBifurcation _))
-
-/-- A root respects Bifurcation when it carries only the ontological entailments, state and
-manner. -/
-def RespectsBifurcation (r : Root) : Prop :=
-  ¬ r.ViolatesBifurcation
-
-instance (r : Root) : Decidable r.RespectsBifurcation :=
-  inferInstanceAs (Decidable (¬ _))
-
-/-- A root respects Bifurcation iff its signature is bounded by the ontological kinds. -/
-theorem respectsBifurcation_iff_le {r : Root} :
-    r.RespectsBifurcation ↔
-      r.kinds ≤ Root.Kinds.ontological :=
-  not_not
-
-/-- A root has both manner and result entailments, which Manner/Result Complementarity claims
-no root does. -/
-def HasMannerAndResult (r : Root) : Prop :=
-  r.kinds.HasMannerAndResult
-
-instance (r : Root) : Decidable r.HasMannerAndResult :=
-  inferInstanceAs (Decidable (Root.Kinds.HasMannerAndResult _))
-
-/-- Negation of `HasMannerAndResult`. -/
-def RespectsMannerResultComplementarity (r : Root) : Prop :=
-  ¬ r.HasMannerAndResult
-
-instance (r : Root) : Decidable r.RespectsMannerResultComplementarity :=
-  inferInstanceAs (Decidable (¬ _))
-
-end Semantics.Root
-
-namespace BeaversKoontzGarboden2020
+/-- The book's account of the empty cells of (12) (pp. 229–230): on markedness grounds an
+adjoined root describes a manner and a complement root a state, and on naturalness grounds a
+root describing a manner and a state also entails the causation that relates them. These
+carve out exactly the filled cells. -/
+theorem mem_attestedCells_iff : ∀ (s : Root.Kinds) (p : Root.Position),
+    (s, p) ∈ attestedCells ↔ s ∈ typology ∧ (p = .adjoined → .manner ∈ s) ∧
+      (p = .complement → .state ∈ s) ∧ (.manner ∈ s → .state ∈ s → .cause ∈ s) := by
+  decide
 
 section Again
 
@@ -219,157 +188,127 @@ theorem exists_become_of_againAt_state_ne_zero {R : SetRel State State} {s : Sta
 
 end Again
 
-end BeaversKoontzGarboden2020
+/-! ### The typology and the templates -/
 
+section Templates
 
-namespace BeaversKoontzGarboden2020
+open ArgumentStructure EventStructure Template
 
-open Verb
-open Semantics
+variable {σ : Eventuality}
+
+/-- The attested rows of (12) are the signatures of the templates of the basic inventory, the
+state, the activity, the achievement and the two accomplishments: as (13) and the text after it
+show (p. 231), √blossom has the templatic meaning of the inchoative, √crack of the causative and
+√drown of the resultative. -/
+theorem attestedRows_eq_kinds_templates :
+    attestedCells.image Prod.fst =
+      {state.kinds, act.kinds, achievement.kinds, causative.kinds, accomplishment.kinds} := by
+  decide
+
+/-- A signature with a manner and a state but no cause is the signature of no template. -/
+theorem kinds_ne_of_cause_not_mem {t : Template σ} {s : Root.Kinds} (hm : .manner ∈ s)
+    (hs : .state ∈ s) (hc : .cause ∉ s) : t.kinds ≠ s := by
+  rintro rfl; exact hc (hasCause_of_mem_kinds hm hs)
+
+/-- The two rows of (12) that describe a manner and a state without a cause are the signature
+of no template, as the book finds no event template that would relate the two (p. 230). -/
+theorem kinds_ne_emptyRows (t : Template σ) :
+    t.kinds ≠ {.state, .manner} ∧ t.kinds ≠ {.state, .manner, .result} :=
+  ⟨kinds_ne_of_cause_not_mem (by decide) (by decide) (by decide),
+    kinds_ne_of_cause_not_mem (by decide) (by decide) (by decide)⟩
+
+end Templates
 
 /-! ### The six representative roots -/
 
 /-- √flat is a pure state root. -/
-def flat : Root := { name := "flat", entailments := {.state "flat"}, position := some .complement }
+def flat : Root := { kinds := {.state} }
 
-/-- √jog is a pure manner-of-motion root. -/
-def jog : Root :=
-  { name := "jog", entailments := {.manner "jogging-gait"}, position := some .adjoined }
+/-- √jog is a pure manner-of-motion root, its manner the jogging gait. -/
+def jog : Root := { kinds := {.manner} }
 
 /-- √blossom is a result root with no specified manner or cause, an internally caused change
-of state. -/
-def blossom : Root :=
-  { name := "blossom", entailments := {.result "flowering"}, position := some .complement }
+into flowering. -/
+def blossom : Root := { kinds := {.result} }
 
-/-- √crack is a caused-result root without a specified manner. -/
-def crack : Root :=
-  { name := "crack", entailments := {.result "fissured", .cause}, position := some .complement }
+/-- √crack is a caused-result root without a specified manner, a caused change into a fissured
+state. -/
+def crack : Root := { kinds := {.result, .cause} }
 
-/-- √hand carries manner, cause and result in the adjoined position. The possession result is
-not cancelable (*Mary handed John the book, #but it never came to be on his person*), so it is
-entailed by the root rather than implicated. -/
-def hand : Root :=
-  { name := "hand",
-    entailments := {.manner "by-hand-transfer", .result "in-recipient-possession", .cause},
-    position := some .adjoined }
+/-- √hand carries manner, cause and result, a transfer by hand into the recipient's possession.
+The possession result is not cancelable (*Mary handed John the book, #but it never came to be
+on his person*), so it is entailed by the root rather than implicated. -/
+def hand : Root := { kinds := {.manner, .result, .cause} }
 
-/-- √drown is a manner-of-killing root, carrying manner, cause and result in the complement
-position. -/
-def drown : Root :=
-  { name := "drown",
-    entailments := {.manner "submersion-in-liquid", .result "dead", .cause},
-    position := some .complement }
+/-- √drown is a manner-of-killing root, death by submersion in liquid, carrying manner, cause
+and result. -/
+def drown : Root := { kinds := {.manner, .result, .cause} }
 
-/-! ### Kind signatures
+/-- The six roots with the position each occupies in (12), √hand adjoined and √drown a
+complement. -/
+def sample : List (Root × Root.Position) :=
+  [(flat, .complement), (jog, .adjoined), (blossom, .complement), (crack, .complement),
+   (hand, .adjoined), (drown, .complement)]
 
-Base signatures record the atom kinds; closed signatures are their
-collocational closures, and coincide with the canonical rows of the
-book's typology. -/
+/-! ### Closed signatures
 
-theorem flat_kinds : flat.kinds = {.state} := by
-  decide
+The closed signatures of the roots are the rows of the typology they fill. -/
 
-theorem jog_kinds : jog.kinds = {.manner} := by
-  decide
+theorem flat_closedKinds : flat.closedKinds = propertyConcept := by decide
 
-theorem blossom_kinds :
-    blossom.kinds = {.result} := by decide
+theorem jog_closedKinds : jog.closedKinds = pureManner := by decide
 
-theorem crack_kinds :
-    crack.kinds = {.result, .cause} := by decide
+theorem blossom_closedKinds : blossom.closedKinds = pureResult := by decide
 
-theorem hand_kinds :
-    hand.kinds = {.manner, .result, .cause} := by decide
+theorem crack_closedKinds : crack.closedKinds = causativeResult := by decide
 
-theorem drown_kinds :
-    drown.kinds = {.manner, .result, .cause} := by decide
+theorem hand_closedKinds : hand.closedKinds = fullSpec := by decide
 
-theorem flat_closedKinds :
-    flat.closedKinds = Root.Kinds.propertyConcept := by
-  decide
+theorem drown_closedKinds : drown.closedKinds = fullSpec := by decide
 
-theorem jog_closedKinds :
-    jog.closedKinds = Root.Kinds.pureManner := by decide
+/-- The filled cells of (12) are the cells of its six roots. -/
+theorem attestedCells_eq_sample :
+    attestedCells = (sample.map fun c ↦ (c.1.closedKinds, c.2)).toFinset := by decide
 
-theorem blossom_closedKinds :
-    blossom.closedKinds = Root.Kinds.pureResult := by
-  decide
-
-theorem crack_closedKinds :
-    crack.closedKinds = Root.Kinds.causativeResult := by
-  decide
-
-theorem hand_closedKinds :
-    hand.closedKinds = Root.Kinds.fullSpec := by decide
-
-theorem drown_closedKinds :
-    drown.closedKinds = Root.Kinds.fullSpec := by decide
-
-/-- Each of the six roots fills a cell of (12). -/
-theorem cells_attested :
-    ∀ r ∈ [flat, jog, blossom, crack, hand, drown],
-      ∃ p, r.position = some p ∧ (r.closedKinds, p) ∈ Root.Kinds.attestedCells := by decide
-
-/-- √hand and √drown share a signature and differ only in position. -/
+/-- √hand and √drown share a signature and differ in position. -/
 theorem hand_drown_differ_in_position :
-    hand.closedKinds = drown.closedKinds ∧ hand.position ≠ drown.position := by decide
+    hand.closedKinds = drown.closedKinds ∧ (hand, .adjoined) ∈ sample ∧
+      (drown, .complement) ∈ sample := by decide
 
 /-! ### Falsifying the Bifurcation Thesis -/
 
 /-- √blossom entails a change of state, the templatic content of `v_become`, in the root, and so
 falsifies Bifurcation without any manner or cause entailment. -/
-theorem blossom_violatesBifurcation : blossom.ViolatesBifurcation := by
+theorem blossom_violatesBifurcation : ViolatesBifurcation blossom.kinds := by decide
+
+theorem crack_violatesBifurcation : ViolatesBifurcation crack.kinds := by decide
+
+theorem hand_violatesBifurcation : ViolatesBifurcation hand.kinds := by decide
+
+/-- √flat and √jog respect Bifurcation, their signatures being bounded by the ontological
+kinds. -/
+theorem flat_jog_le_ontological : flat.kinds ≤ ontological ∧ jog.kinds ≤ ontological := by
   decide
 
-theorem crack_violatesBifurcation : crack.ViolatesBifurcation := by
-  decide
-
-theorem hand_violatesBifurcation : hand.ViolatesBifurcation := by decide
-
-theorem drown_violatesBifurcation : drown.ViolatesBifurcation := by
-  decide
-
-/-- Some root carries templatic content. -/
-theorem exists_violatesBifurcation : ∃ r : Root, r.ViolatesBifurcation :=
-  ⟨blossom, blossom_violatesBifurcation⟩
-
-/-- The universal closure of the Bifurcation Thesis is false. -/
-theorem bifurcation_thesis_false :
-    ¬ ∀ r : Root, r.RespectsBifurcation := fun h =>
-  h blossom blossom_violatesBifurcation
+/-- The Bifurcation Thesis, that every root carries only ontological kinds, is false. -/
+theorem bifurcation_thesis_false : ¬ ∀ r : Root, r.kinds ≤ ontological :=
+  fun h ↦ blossom_violatesBifurcation (h blossom)
 
 /-! ### Falsifying Manner/Result Complementarity -/
 
-/-- √hand entails both a manner (by-hand transfer) and a result
-    (recipient possession). -/
-theorem hand_hasMannerAndResult : hand.HasMannerAndResult := by decide
+/-- √hand entails both a manner (by-hand transfer) and a result (recipient possession). -/
+theorem hand_hasMannerAndResult : HasMannerAndResult hand.kinds := by decide
 
-/-- √drown entails both a manner (submersion) and a result (death);
-    it differs from √hand in root position. -/
-theorem drown_hasMannerAndResult : drown.HasMannerAndResult := by decide
+/-- √drown entails both a manner (submersion) and a result (death). -/
+theorem drown_hasMannerAndResult : HasMannerAndResult drown.kinds := by decide
 
-/-- Some root entails both a manner and a result. -/
-theorem exists_hasMannerAndResult : ∃ r : Root, r.HasMannerAndResult :=
-  ⟨hand, hand_hasMannerAndResult⟩
+/-- √crack, a caused result without a manner, respects Manner/Result Complementarity. -/
+theorem crack_not_hasMannerAndResult : ¬ HasMannerAndResult crack.kinds := by decide
 
-/-- The universal closure of Manner/Result Complementarity is false. -/
-theorem manner_result_complementarity_false :
-    ¬ ∀ r : Root, r.RespectsMannerResultComplementarity := fun h =>
-  h hand hand_hasMannerAndResult
-
-/-! ### Roots respecting each constraint -/
-
-/-- √flat, a pure state root, respects Bifurcation, its signature being bounded by the
-ontological kinds. -/
-theorem flat_respectsBifurcation : flat.RespectsBifurcation := by decide
-
-/-- √jog (pure manner) respects Bifurcation. -/
-theorem jog_respectsBifurcation : jog.RespectsBifurcation := by decide
-
-/-- √crack (cause + result, no manner) respects Manner/Result
-    Complementarity. -/
-theorem crack_respectsMannerResultComplementarity :
-    crack.RespectsMannerResultComplementarity := by decide
+/-- Manner/Result Complementarity, that no root entails both a manner and a result, is
+false. -/
+theorem manner_result_complementarity_false : ¬ ∀ r : Root, ¬ HasMannerAndResult r.kinds :=
+  fun h ↦ h hand hand_hasMannerAndResult
 
 /-! ### The entailments of the roots in a model
 

@@ -50,8 +50,8 @@ conditions on the neighboring terminals, not on features of its own head.
 engine; `readingFromAllosemes` is a different object — the composition of
 two already-selected allosemes.
 Existing infrastructure this module retroactively classifies as
-allosemy: `Minimalist.Voice.Flavor` (Voice) and root change-type
-conditioning of v.
+allosemy: `Minimalist.Voice.Flavor` (Voice) and the conditioning of v by
+whether its root entails change.
 
 ## References
 
@@ -169,17 +169,17 @@ zero alloseme is the elsewhere case. -/
 def Verbalizer.vocabulary : RuleSet (VocabularyItem Feature Verbalizer.Alloseme) :=
   [⟨(complement [.eventive]).toFinset, .eventive⟩, ∅ ⟷ .zero]
 
-/-- Root change-type conditions v alloseme selection: result roots,
-    which entail a prior change, demand the event variable; property
-    concept roots do not — the root typology feeding v allosemy. -/
-def Verbalizer.Alloseme.fromRootType : Semantics.Root.ChangeType → Verbalizer.Alloseme
-  | .result          => .eventive
-  | .propertyConcept => .zero
+/-- The v alloseme over a complement root of signature `s`, the root typology feeding v
+allosemy: eventive when the root entails change, as result roots do, and zero otherwise, as
+over property-concept roots ([beavers-etal-2021]). -/
+def Verbalizer.Alloseme.ofKinds (s : Semantics.Root.Kinds) : Verbalizer.Alloseme :=
+  if .result ∈ Semantics.Root.Kinds.close s then .eventive else .zero
 
 /-- v is eventive iff the root entails change. -/
-theorem Verbalizer.fromRootType_eventive_iff (rt : Semantics.Root.ChangeType) :
-    (Verbalizer.Alloseme.fromRootType rt).introducesEvent = true ↔ rt = .result := by
-  cases rt <;> decide
+theorem Verbalizer.ofKinds_introducesEvent_iff (s : Semantics.Root.Kinds) :
+    (Verbalizer.Alloseme.ofKinds s).introducesEvent = true ↔
+      .result ∈ Semantics.Root.Kinds.close s := by
+  unfold Verbalizer.Alloseme.ofKinds; split_ifs with h <;> simp [h] <;> decide
 
 /-! ### n allosemy -/
 

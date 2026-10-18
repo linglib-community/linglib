@@ -31,7 +31,8 @@ entailment is witnessed by one.
 
 ## Main results
 
-* `Interpretation.Entails.anti`: the postulates are downward closed along the order on kinds.
+* `Interpretation.Entails.anti`, `Interpretation.isLowerSet_setOf_entails`: the postulates are
+  downward closed along the order on kinds.
 * `Interpretation.respects_close`: a signature and its collocational closure have the same
   models.
 
@@ -40,6 +41,15 @@ entailment is witnessed by one.
 The sorts are type parameters, so a relation cannot be applied to an argument of the wrong sort.
 mathlib's first-order structures are single-sorted; a view of an interpretation as such a
 structure, with the postulates as sentences, is not yet defined.
+
+## TODO
+
+The manner postulate is a condition on the state predicate and entails change
+(`EntailsManner.entailsChange`), the manner of Beavers and Koontz-Garboden's √drown, which
+restricts the cause of a change. For the pure manner signature of √jog it then requires every
+state of the predicate to arise from a change, while the order on kinds keeps manner apart from
+result, and the book's feature (11b) is that the root describes an action, a condition on the
+event predicate `Q`. The two manners want separate postulates.
 
 ## References
 
@@ -139,20 +149,28 @@ theorem Entails.anti {j k : Root.Kind} (hkj : k ≤ j) (h : M.Entails P Q j) :
   | state_result | state_cause => trivial
   | result_cause => exact EntailsCause.entailsChange h
 
+variable (M P Q) in
+/-- The kinds whose postulates hold form a lower set of the collocational order. -/
+theorem isLowerSet_setOf_entails : IsLowerSet {k | M.Entails P Q k} :=
+  fun _ _ hkj h ↦ Entails.anti hkj h
+
+theorem respects_iff_subset : M.Respects P Q ks ↔ (ks : Set Root.Kind) ⊆ {k | M.Entails P Q k} :=
+  Iff.rfl
+
 theorem Respects.mono {ks' : Root.Kinds} (hks : ks ⊆ ks') (h : M.Respects P Q ks') :
     M.Respects P Q ks :=
   fun k hk ↦ h k (hks hk)
 
-/-- A signature is respected iff its collocational closure is. -/
-@[simp] theorem respects_close : M.Respects P Q ks.close ↔ M.Respects P Q ks :=
-  ⟨Respects.mono (Root.Kinds.subset_close ks), fun h _ hk ↦
-    let ⟨j, hj, hkj⟩ := Root.Kinds.mem_close.1 hk
-    (h j hj).anti hkj⟩
+/-- A signature is respected iff its collocational closure is, since the respected kinds form
+a lower set. -/
+@[simp] theorem respects_close : M.Respects P Q (Root.Kinds.close ks) ↔ M.Respects P Q ks := by
+  simp only [respects_iff_subset, Root.Kinds.coe_close]
+  exact lowerClosure_le (t := ⟨_, isLowerSet_setOf_entails M P Q⟩)
 
 /-- An interpretation that respects a signature whose closure has a result satisfies the
 postulate of change. -/
-theorem Respects.entailsChange (h : M.Respects P Q ks) (hr : Root.Kind.result ∈ ks.close) :
-    M.EntailsChange P :=
+theorem Respects.entailsChange (h : M.Respects P Q ks)
+    (hr : Root.Kind.result ∈ Root.Kinds.close ks) : M.EntailsChange P :=
   respects_close.2 h _ hr
 
 end Postulates

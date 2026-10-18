@@ -10,19 +10,23 @@ What a root says about the action, its result, and the patient, the fine,
 within-class half of a root's meaning; the coarse half, which templatic
 components it entails, is `Root.Kinds`. Each dimension is a region of a finite
 scale rather than a point, since a verb is compatible with a range of force
-levels, patient materials, or result geometries. [spalek-mcnally-2026] separate
+levels, patient materials, or result geometries. Spalek and McNally separate
 English *tear* from Spanish *rasgar*, two roots of one kind, by patient
 robustness, force direction, and compatibility with careful action;
-[majid-boster-bowerman-2008] vary the instrument and the object's rigidity and
-dimensionality across their cutting and breaking events. `Root.Content` bundles
-one region per dimension, `univ` where a root says nothing.
+Majid, Boster and Bowerman vary the instrument and the object's rigidity and
+dimensionality across their cutting and breaking events. A described situation,
+`Root.Content.Situation`, is a point of the product of the dimensions, and a
+`Root.Content` is a box in that space, one region per dimension, `univ` where a root
+says nothing; two contents overlap when the boxes meet, which is when some situation
+lies in both (`Root.Content.overlaps_iff_exists_mem`).
 
 ## Main declarations
 
 * `Root.Content.ForceLevel`, `ForceDirection`, `InstrumentType`, `AgentControl` —
   dimensions of the action; `ResultGeometry` of the result; `Robustness`,
   `ObjectDimensionality` of the patient
-* `Root.Content` — a region per dimension
+* `Root.Content.Situation` — a value on every dimension
+* `Root.Content` — a region per dimension, containing situations
 * `Root.Content.Overlaps` — the regions meet on every dimension
 
 ## References
@@ -111,6 +115,17 @@ inductive AgentControl where
   | compatible
   deriving DecidableEq, Fintype, Repr
 
+/-- A described situation, a point of the content space: a value on every dimension. -/
+structure Situation where
+  force : ForceLevel
+  forceDirection : ForceDirection
+  instrument : InstrumentType
+  agentControl : AgentControl
+  resultGeometry : ResultGeometry
+  patientRobustness : Robustness
+  patientDimensionality : ObjectDimensionality
+  deriving DecidableEq, Repr
+
 end Semantics.Root.Content
 
 namespace Semantics.Root
@@ -137,6 +152,23 @@ structure Content where
 
 namespace Content
 
+variable {p q c : Content} {s : Situation}
+
+/-- A content contains a situation when each of its regions contains the situation's value on
+that dimension, so a content is a box in the space of situations. -/
+instance : Membership Situation Content where
+  mem c s := s.force ∈ c.force ∧ s.forceDirection ∈ c.forceDirection ∧
+    s.instrument ∈ c.instrument ∧ s.agentControl ∈ c.agentControl ∧
+    s.resultGeometry ∈ c.resultGeometry ∧ s.patientRobustness ∈ c.patientRobustness ∧
+    s.patientDimensionality ∈ c.patientDimensionality
+
+theorem mem_iff : s ∈ c ↔ s.force ∈ c.force ∧ s.forceDirection ∈ c.forceDirection ∧
+    s.instrument ∈ c.instrument ∧ s.agentControl ∈ c.agentControl ∧
+    s.resultGeometry ∈ c.resultGeometry ∧ s.patientRobustness ∈ c.patientRobustness ∧
+    s.patientDimensionality ∈ c.patientDimensionality := Iff.rfl
+
+instance (c : Content) (s : Situation) : Decidable (s ∈ c) := decidable_of_iff _ mem_iff.symm
+
 /-- Two contents overlap when their regions meet on every dimension. -/
 def Overlaps (p q : Content) : Prop :=
   ¬ Disjoint p.force q.force ∧ ¬ Disjoint p.forceDirection q.forceDirection ∧
@@ -146,6 +178,18 @@ def Overlaps (p q : Content) : Prop :=
     ¬ Disjoint p.patientDimensionality q.patientDimensionality
 
 instance (p q : Content) : Decidable (p.Overlaps q) := by unfold Overlaps; infer_instance
+
+/-- Two contents overlap exactly when some situation lies in both, as two boxes meet exactly
+when their sides meet on every axis. -/
+theorem overlaps_iff_exists_mem : p.Overlaps q ↔ ∃ s, s ∈ p ∧ s ∈ q := by
+  simp only [Overlaps, mem_iff, Finset.not_disjoint_iff]
+  constructor
+  · rintro ⟨⟨a, ha, ha'⟩, ⟨b, hb, hb'⟩, ⟨c, hc, hc'⟩, ⟨d, hd, hd'⟩, ⟨e, he, he'⟩,
+      ⟨f, hf, hf'⟩, ⟨g, hg, hg'⟩⟩
+    exact ⟨⟨a, b, c, d, e, f, g⟩, ⟨ha, hb, hc, hd, he, hf, hg⟩, ha', hb', hc', hd', he', hf', hg'⟩
+  · rintro ⟨s, ⟨ha, hb, hc, hd, he, hf, hg⟩, ha', hb', hc', hd', he', hf', hg'⟩
+    exact ⟨⟨_, ha, ha'⟩, ⟨_, hb, hb'⟩, ⟨_, hc, hc'⟩, ⟨_, hd, hd'⟩, ⟨_, he, he'⟩, ⟨_, hf, hf'⟩,
+      ⟨_, hg, hg'⟩⟩
 
 end Content
 
