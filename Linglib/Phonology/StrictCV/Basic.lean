@@ -100,19 +100,19 @@ instance (j : Fin n) : Decidable (Acts p R j) := inferInstanceAs (Decidable (_ �
 
 /-- Nucleus `j` is enclosed in a domain of infrasegmental government when it is empty, its flanking
 consonants may contract government, and the governing consonant is licensed by its own nucleus,
-which acts ([scheer-2004] (49), (50)). -/
+which only a pronounced nucleus can do ([scheer-2004] (49), (50)). -/
 def Enclosed (j : Fin n) : Prop :=
-  j ∉ w.full ∧ j ∈ w.cluster ∧ ∃ k : Fin n, k.val = j.val + 1 ∧ Acts p R k
+  j ∉ w.full ∧ j ∈ w.cluster ∧ ∃ k : Fin n, k.val = j.val + 1 ∧ k ∈ R
 
-instance (j : Fin n) : Decidable (Enclosed p w R j) :=
+instance (j : Fin n) : Decidable (Enclosed w R j) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ _, _))
 
 /-- Nucleus `j` is properly governed when it is empty, not enclosed, and the first following
 nucleus that is not enclosed acts: government binds the first nucleus whose silence is not
 licensed otherwise ([scheer-2004] §75). -/
 def ProperlyGoverned (j : Fin n) : Prop :=
-  j ∉ w.full ∧ ¬ Enclosed p w R j ∧
-    ∃ k, j < k ∧ Acts p R k ∧ ∀ i, j < i → i < k → Enclosed p w R i
+  j ∉ w.full ∧ ¬ Enclosed w R j ∧
+    ∃ k, j < k ∧ Acts p R k ∧ ∀ i, j < i → i < k → Enclosed w R i
 
 instance (j : Fin n) : Decidable (ProperlyGoverned p w R j) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ _, _ ∧ _ ∧ ∀ _, _))
@@ -120,7 +120,7 @@ instance (j : Fin n) : Decidable (ProperlyGoverned p w R j) :=
 /-- The silence of nucleus `j` is licensed when it is properly governed, enclosed, or final where
 final nuclei may be empty ([scheer-2004] (53)). -/
 def SilenceLicensed (j : Fin n) : Prop :=
-  ProperlyGoverned p w R j ∨ Enclosed p w R j ∨ (IsLast j ∧ p.empty = true)
+  ProperlyGoverned p w R j ∨ Enclosed w R j ∨ (IsLast j ∧ p.empty = true)
 
 instance (j : Fin n) : Decidable (SilenceLicensed p w R j) :=
   inferInstanceAs (Decidable (_ ∨ _ ∨ _))
@@ -150,9 +150,9 @@ theorem acts_congr {k : Fin n} (h : k ∈ R ↔ k ∈ R') : Acts p R k ↔ Acts 
   simp only [Acts, h]
 
 theorem enclosed_congr (h : ∀ i, j < i → (i ∈ R ↔ i ∈ R')) :
-    Enclosed p w R j ↔ Enclosed p w R' j :=
+    Enclosed w R j ↔ Enclosed w R' j :=
   and_congr_right' <| and_congr_right' <| exists_congr fun k ↦ and_congr_right fun hk ↦
-    acts_congr (h k (Fin.lt_def.2 (by omega)))
+    h k (Fin.lt_def.2 (by omega))
 
 theorem properlyGoverned_congr (h : ∀ i, j < i → (i ∈ R ↔ i ∈ R')) :
     ProperlyGoverned p w R j ↔ ProperlyGoverned p w R' j := by
