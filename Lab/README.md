@@ -22,7 +22,7 @@ Lab/{Project}/{Topic}.lean       -- namespace Lab.{Project}
   state it is in: which claims come from the authors, which were derived here, and what still
   needs checking against what the authors intended.
 - **Scored by `Eval`.** A theory over a fragment that `Eval` has data for is scored through the
-  same linking hypothesis as the registered accounts (`Eval.Projection.Theory`), never through a
+  same linking hypothesis as the registered accounts (`Eval.Presupposition.Theory`), never through a
   rule of its own.
 - **Graduation.** When a paper publishes the content, the file moves to `Studies/AuthorYear.lean`
   and the paper's account is registered in `Eval`. A definition that a second paper consumes

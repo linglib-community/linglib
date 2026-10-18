@@ -1,12 +1,12 @@
 module
 
-public import Eval.Projection.Account
+public import Eval.Presupposition.Account
 public import Studies.ChemlaSchlenker2012
 
 /-!
 # The map of projection accounts
 
-The comparisons between the accounts of `Eval.Projection.Account` that the library proves. An
+The comparisons between the accounts of `Eval.Presupposition.Account` that the library proves. An
 edge `(a, b)` says that `a` predicts presuppositions at least as strong as `b` (`edges`,
 `edges_sound`); a cut `(a, b)` says that it does not, because some context accepts a formula by
 `a` and rejects it by `b` (`cuts`, `cuts_sound`). Every edge and cut is a theorem about the
@@ -36,9 +36,9 @@ Symmetry (Fact 3.4.1).
 
 @[expose] public section
 
-namespace Eval.Projection
+namespace Eval.Presupposition
 
-open Presupposition Schlenker2009
+open _root_.Presupposition Schlenker2009
 
 namespace Account
 
@@ -258,4 +258,4 @@ theorem cuts_sound : ∀ c ∈ cuts, ¬ c.1.Stronger c.2 := by
     not_limitedSymmetry_stronger_transparencyIncremental,
     not_supervaluationSymmetric_stronger_limitedSymmetry⟩
 
-end Eval.Projection
+end Eval.Presupposition
