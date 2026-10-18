@@ -798,7 +798,6 @@ import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.Coordination
 import Linglib.Semantics.Composition.Model
-import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.Writer

@@ -10,7 +10,7 @@ A composition model is a mathlib first-order structure on one entity domain at e
 world set. The symbols of the signature denote what the structure gives them, read off through
 `Structure.funMap` and `Structure.RelMap` as DRT reads off the truth of atomic conditions
 (`Semantics/Dynamic/DRS/`), and world dependence stays in the `.intens` types. The words of a
-first-order fragment translate to these symbols (`Composition/Reduction.lean`).
+first-order fragment translate to these symbols (`Composition/FirstOrder.lean`).
 
 ## Main definitions
 
