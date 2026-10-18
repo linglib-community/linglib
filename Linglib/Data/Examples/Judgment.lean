@@ -80,6 +80,8 @@ theorem le_iff_toPair_le {j k : Judgment} : j ≤ k ↔ j.toPair ≤ k.toPair :=
 
 instance : DecidableLE Judgment := fun _ _ ↦ decidable_of_iff _ le_iff_toPair_le.symm
 
+instance : DecidableLT Judgment := decidableLTOfDecidableLE
+
 instance : Lattice Judgment where
   sup j k := if j ≤ k then k else if k ≤ j then j else .acceptable
   inf j k := if j ≤ k then j else if k ≤ j then k else .ungrammatical

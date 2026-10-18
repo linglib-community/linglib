@@ -292,7 +292,7 @@ theorem stacking_daviesDubinsky :
     ∀ ex₁ ∈ DaviesDubinsky2003.Examples.all, ∀ ex₂ ∈ DaviesDubinsky2003.Examples.all,
       ∀ c₁ ∈ Config.ofDatum ex₁, ∀ c₂ ∈ Config.ofDatum ex₂,
         violations combined c₁ < violations combined c₂ →
-          ex₂.judgment.rank ≤ ex₁.judgment.rank := by
+          ex₂.judgment ≤ ex₁.judgment := by
   decide
 
 /-- Constraints stack on the paper's cited judgments, since within a language an example violating
@@ -300,7 +300,7 @@ strictly more constraints of the combined account is judged no better. -/
 theorem stacking : ∀ ex₁ ∈ Examples.all, ∀ ex₂ ∈ Examples.all, ex₁.language = ex₂.language →
     ∀ c₁ ∈ Config.ofDatum ex₁, ∀ c₂ ∈ Config.ofDatum ex₂,
       violations combined c₁ < violations combined c₂ →
-        ex₂.judgment.rank ≤ ex₁.judgment.rank := by
+        ex₂.judgment ≤ ex₁.judgment := by
   decide
 
 /-! ### Binding and the PIC under cyclic linearization (§4.2) -/
