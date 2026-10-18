@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Algebra.Order.Group.Defs
+public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Field.Rat
 public import Linglib.Semantics.Degree.Scale
 public import Linglib.Fragments.English.Verbs.Inventory
