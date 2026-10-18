@@ -89,22 +89,22 @@ end Feature
 
 /-- The site mentioning the nodes `ns` bears every node at or below them, since a dependent brings
 what it depends on, and the further features `extra`. -/
-def site (ns : List Node) (extra : List Feature) : List Feature :=
-  (ns.flatMap Node.below).eraseDups.map .node ++ extra
+def site (ns : List Node) (extra : Finset Feature) : Finset Feature :=
+  ((ns.flatMap Node.below).map Feature.node).toFinset ∪ extra
 
 /-- A site bears a node iff the node lies below a mentioned one, the root aside, or is among the
 further features: sites are closed downward. -/
-theorem node_mem_site {a : Node} {ns : List Node} {extra : List Feature} :
+theorem node_mem_site {a : Node} {ns : List Node} {extra : Finset Feature} :
     .node a ∈ site ns extra ↔ (∃ n ∈ ns, ⊥ < a ∧ a ≤ n) ∨ .node a ∈ extra := by
   simp [site, Node.mem_below]
 
 /-- A dependent node's site contains its dominator's, so geometric dependence is site inclusion
 and hence engine ranking (`VocabularyItem.le_iff`). -/
-theorem site_subset_site {a b : Node} (h : a ≤ b) (extra : List Feature) :
+theorem site_subset_site {a b : Node} (h : a ≤ b) (extra : Finset Feature) :
     site [a] extra ⊆ site [b] extra := by
   intro x hx
-  simp only [site, List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_append,
-    List.mem_map, List.mem_eraseDups] at hx ⊢
+  simp only [site, List.flatMap_cons, List.flatMap_nil, List.append_nil, Finset.mem_union,
+    List.mem_toFinset, List.mem_map] at hx ⊢
   exact hx.imp_left fun ⟨n, hn, hx⟩ ↦ ⟨n, Node.below_subset_below h hn, hx⟩
 
 /-! ### Arguments -/
@@ -193,34 +193,35 @@ def tamNode (s : Screeve) (subj obj : Argument) : List Feature :=
 /-! ### Vocabulary -/
 
 /-- The prefix items are those of (9). -/
-def gv : VocabularyItem Feature String := site [.multispeaker] [.dat] ⟷ "gv"
-def m : VocabularyItem Feature String := site [.speaker] [.dat] ⟷ "m"
-def g : VocabularyItem Feature String := site [.participant] [.dat] ⟷ "g"
-def v : VocabularyItem Feature String := site [.speaker] [] ⟷ "v"
-def participantNull : VocabularyItem Feature String := site [.participant] [] ⟷ ""
-def elsewhere : VocabularyItem Feature String := [] ⟷ ""
+def gv : VocabularyItem Feature String := site [.multispeaker] {.dat} ⟷ "gv"
+def m : VocabularyItem Feature String := site [.speaker] {.dat} ⟷ "m"
+def g : VocabularyItem Feature String := site [.participant] {.dat} ⟷ "g"
+def v : VocabularyItem Feature String := site [.speaker] ∅ ⟷ "v"
+def participantNull : VocabularyItem Feature String := site [.participant] ∅ ⟷ ""
+def elsewhere : VocabularyItem Feature String := ∅ ⟷ ""
 
 def prefixes : List (VocabularyItem Feature String) := [gv, m, g, v, participantNull, elsewhere]
 
 /-- The plural suffix *-t* (13c) takes its [#] from the geometry. -/
-def plural : VocabularyItem Feature String := site [.group] [] ⟷ "t"
+def plural : VocabularyItem Feature String := site [.group] ∅ ⟷ "t"
 
 /-- A null suffix (13d) realizes the [#] of a participant. -/
 def participantNumber : VocabularyItem Feature String :=
-  ⟨⟨site [.individuation] [], [[.ftam, .node .participant]], []⟩, ""⟩
+  ⟨(site [.individuation] ∅).map (.sectR 0 _) ∪ {(-1, .ftam), (-1, .node .participant)}, ""⟩
 
 /-- The suffix *-s* (13e) realizes [#] by default. -/
 def defaultNumber : VocabularyItem Feature String :=
-  ⟨⟨site [.individuation] [], [[.ftam]], []⟩, "s"⟩
+  ⟨(site [.individuation] ∅).map (.sectR 0 _) ∪ {(-1, .ftam)}, "s"⟩
 
 /-- A screeve's Vocabulary lists the aorist items (10) or the optative items (13) in scansion
 order. -/
 def Screeve.vocabulary : Screeve → List (VocabularyItem Feature String)
   | .aorist =>
-    [site [.group, .nounClass] [.aorist] ⟷ "es", site [.participant] [.aorist] ⟷ "e",
-      [.aorist] ⟷ "a", plural, elsewhere]
+    [site [.group, .nounClass] {.aorist} ⟷ "es", site [.participant] {.aorist} ⟷ "e",
+      {.aorist} ⟷ "a", plural, elsewhere]
   | .optative =>
-    [[.ftam, .optative] ⟷ "o", ⟨⟨site [.group, .nounClass] [], [[.optative]], []⟩, "n"⟩, plural,
+    [{.ftam, .optative} ⟷ "o",
+      ⟨(site [.group, .nounClass] ∅).map (.sectR 0 _) ∪ {(-1, .optative)}, "n"⟩, plural,
       participantNumber, defaultNumber, elsewhere]
 
 /-- The person prefix wins Elsewhere competition at v's agreement node. -/
@@ -311,7 +312,7 @@ theorem tamNode_nodup (s : Screeve) (subj obj : Argument) : (tamNode s subj obj)
 disjoint parts of its node. At most one realizes [Group], whence *-es* and *-n* exclude *-t*, and
 at most one realizes [#], whence *-t* excludes *-s*. -/
 theorem one_exponent_per_feature (s : Screeve) (subj obj : Argument) :
-    (suffixItems s subj obj).Pairwise fun i j ↦ i.site.focus.Disjoint j.site.focus :=
+    (suffixItems s subj obj).Pairwise fun i j ↦ Disjoint i.features j.features :=
   pairwise_disjoint_insertions (by simpa using tamNode_nodup s subj obj)
 
 /-- Fission alone does not exclude double plural marking (§3.3.1). Were T to agree in number with
@@ -331,7 +332,7 @@ theorem fission_alone_allows_double_plural :
 /-- An item ranks by the number of interpretable features it discharges, then by its Subset
 Principle specificity, its intrinsic features leading and its contextual ones breaking ties. -/
 def rank (i : VocabularyItem Feature String) : ℕ ×ₗ ℕ ×ₗ ℕ :=
-  toLex (i.site.focus.countP (·.IsInterpretable), i.specificity)
+  toLex ((i.features.filter (·.IsInterpretable)).card, i.specificity)
 
 /-- Each screeve's Vocabulary descends in rank, since interpretable features are discharged as
 soon as possible ((10c), (13a)) and *-t* ranks above *-s* ((20)). -/
@@ -349,15 +350,15 @@ theorem specificity_number :
 /-- The geometry ranks the prefixes (9a) above (9b) above (9c) and (9d) above (9e) above (9f),
 Multispeaker depending on Speaker and Speaker on Participant. -/
 theorem prefix_ranking :
-    m.site.focus ⊆ gv.site.focus ∧ g.site.focus ⊆ m.site.focus ∧
-      participantNull.site.focus ⊆ v.site.focus ∧
-        elsewhere.site.focus ⊆ participantNull.site.focus :=
-  ⟨site_subset_site (by decide) _, site_subset_site (by decide) _,
-    site_subset_site (by decide) _, List.nil_subset _⟩
+    m.features ⊆ gv.features ∧ g.features ⊆ m.features ∧
+      participantNull.features ⊆ v.features ∧ elsewhere.features ⊆ participantNull.features := by
+  simp only [m, gv, g, v, participantNull, elsewhere, VocabularyItem.features_ofFeatures]
+  exact ⟨site_subset_site (by decide) _, site_subset_site (by decide) _,
+    site_subset_site (by decide) _, Finset.empty_subset _⟩
 
 /-- The geometry supplies the [#] of the revised *-t* (13c), the site of Group being
 [#, Group]. -/
-theorem plural_site : plural.site.focus = [.node .individuation, .node .group] := by decide
+theorem plural_site : plural.features = {.node .individuation, .node .group} := by decide
 
 /-! ### The agreement sets -/
 

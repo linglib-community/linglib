@@ -7,7 +7,7 @@ public import Linglib.Data.Examples.Myler2016
 /-!
 # Myler (2016): Building and Interpreting Possession Sentences
 
-This file formalizes the treatment of *have* and *be* in [myler-2016] as one meaningless
+This file formalizes Myler's treatment of *have* and *be* as one meaningless
 copula whose meaning is the identity function and whose form is fixed by its syntactic
 surroundings: *have* under a transitive Voice, one bearing the specifier feature and
 φ-features, and *be* otherwise (`englishItems`, `have_iff_transitive`). The possession
@@ -65,12 +65,12 @@ def Context.Transitive (c : Context) : Prop := c.voiceD = true ∧ c.voicePhi = 
 instance (c : Context) : Decidable c.Transitive := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- English ((89) of chapter 1): *have* in a transitive context, *be* elsewhere. -/
-def englishItems : List (VocabularyItem Feature String) := [[.d, .phi] ⟷ "have", [] ⟷ "be"]
+def englishItems : List (VocabularyItem Feature String) := [{.d, .phi} ⟷ "have", ∅ ⟷ "be"]
 
 /-- Icelandic ((89) of chapter 4): *hafa* in a transitive context over a PredP,
 *eiga* in a transitive context otherwise, and the copula *vera* elsewhere. -/
 def icelandicItems : List (VocabularyItem Feature String) :=
-  [[.d, .phi, .pred] ⟷ "hafa", [.d, .phi] ⟷ "eiga", [] ⟷ "vera"]
+  [{.d, .phi, .pred} ⟷ "hafa", {.d, .phi} ⟷ "eiga", ∅ ⟷ "vera"]
 
 /-- The form of v in a context, by the Subset Principle over a language's
 items. -/

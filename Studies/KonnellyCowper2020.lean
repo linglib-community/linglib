@@ -74,7 +74,7 @@ inductive Class
 
 /-- The vocabulary items (11), constant across the stages. -/
 def items : List (VocabularyItem Feature String) :=
-  [[.sg, .fem] ⟷ "she", [.sg, .masc] ⟷ "he", [.sg, .inanim] ⟷ "it", [] ⟷ "they"]
+  [{.sg, .fem} ⟷ "she", {.sg, .masc} ⟷ "he", {.sg, .inanim} ⟷ "it", ∅ ⟷ "they"]
 
 /-- The exponent of a feature bundle under the Subset Principle. -/
 def spellout (b : List Feature) : Option String := subsetPrinciple items b

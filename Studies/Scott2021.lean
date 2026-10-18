@@ -16,7 +16,7 @@ monosyllabic prepositions require (§3.3): bound pronouns, the only option insid
 copy theory of movement. A pronoun is a `PhraseStructure.Tree` over D, Num, the animate n and, for
 local persons only, a Person projection ((40)–(44), `pronoun`), and the Vocabulary spells out the
 Fragment's paradigm of Table 2 (`table2`). A movement copy in a position with a phonological
-requirement is reduced rather than deleted, following [landau-2006]: MaxElide removes the largest
+requirement is reduced rather than deleted, following Landau: MaxElide removes the largest
 constituent whose residue can still be spelled out (`Deletable`, `maxElideTarget`), which is PersP,
 since *-ye* spells out `[sg + n_anim]` while nothing spells out Num alone ((46)–(48),
 `maxElide_persP`). So a movement copy of a local-person pronoun surfaces as the personless pronoun
@@ -88,13 +88,13 @@ def featureList (t : Tree DPCat String) : List FeatureVal :=
 /-- The Vocabulary Items of (28), the person-specified animate entries and the personless
 animate defaults *-ye* and *-o*. -/
 def resumptiveVocab : List (VocabularyItem FeatureVal String) :=
-  let entry (fs : List FeatureVal) (e : String) : VocabularyItem FeatureVal String := ⟨fs, e⟩
-  [ entry [⟨.person, .first⟩, ⟨.gender, .animate⟩, ⟨.number, .singular⟩] "mi",
-    entry [⟨.person, .first⟩, ⟨.gender, .animate⟩, ⟨.number, .plural⟩] "si",
-    entry [⟨.person, .second⟩, ⟨.gender, .animate⟩, ⟨.number, .singular⟩] "we",
-    entry [⟨.person, .second⟩, ⟨.gender, .animate⟩, ⟨.number, .plural⟩] "nyi",
-    entry [⟨.gender, .animate⟩, ⟨.number, .singular⟩] "ye",
-    entry [⟨.gender, .animate⟩, ⟨.number, .plural⟩] "o" ]
+  let entry (fs : Finset FeatureVal) (e : String) : VocabularyItem FeatureVal String := fs ⟷ e
+  [ entry {⟨.person, .first⟩, ⟨.gender, .animate⟩, ⟨.number, .singular⟩} "mi",
+    entry {⟨.person, .first⟩, ⟨.gender, .animate⟩, ⟨.number, .plural⟩} "si",
+    entry {⟨.person, .second⟩, ⟨.gender, .animate⟩, ⟨.number, .singular⟩} "we",
+    entry {⟨.person, .second⟩, ⟨.gender, .animate⟩, ⟨.number, .plural⟩} "nyi",
+    entry {⟨.gender, .animate⟩, ⟨.number, .singular⟩} "ye",
+    entry {⟨.gender, .animate⟩, ⟨.number, .plural⟩} "o" ]
 
 /-- The exponent of a pronoun structure, by the Subset Principle over (28). -/
 def spellout (t : Tree DPCat String) : Option String :=

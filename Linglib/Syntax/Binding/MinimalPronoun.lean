@@ -73,8 +73,8 @@ inductive Form where
   | reflexive
   deriving DecidableEq, Repr
 
-/-- A language's vocabulary for minimal pronouns: the items that realize the valued pronoun in
-binding contexts, and the elsewhere form, which realizes it where no item applies. -/
+/-- A language's vocabulary for minimal pronouns consists of the items that realize the valued
+pronoun in binding contexts and the elsewhere form, which realizes it where no item applies. -/
 structure Vocabulary (E : Type*) where
   /-- The items, each conditioned on binding contexts. -/
   items : Morphology.Exponence.RuleSet (VocabularyItem Context E)
@@ -106,10 +106,10 @@ theorem mem_syncretic [DecidableEq E] : c ∈ v.syncretic ↔ v.realize c = v.el
 /-- The elsewhere form is the elsewhere item of the Subset Principle: realizing a context is
 selecting among the items followed by the item of empty site. -/
 theorem some_realize (c : Context) :
-    some (v.realize c) = subsetPrinciple (v.items ++ [[] ⟷ v.elsewhere]) ↑[c] := by
-  have happ : Morphology.Exponence.RuleSet.applicable (v.items ++ [[] ⟷ v.elsewhere])
+    some (v.realize c) = subsetPrinciple (v.items ++ [∅ ⟷ v.elsewhere]) ↑[c] := by
+  have happ : Morphology.Exponence.RuleSet.applicable (v.items ++ [∅ ⟷ v.elsewhere])
       (↑[c] : Neighborhood (List Context)) =
-      v.items.applicable ↑[c] ++ [[] ⟷ v.elsewhere] := by
+      v.items.applicable ↑[c] ++ [∅ ⟷ v.elsewhere] := by
     simp [Morphology.Exponence.RuleSet.applicable, List.filter_append,
       VocabularyItem.applies_iff]
   simp only [realize, subsetPrinciple, Morphology.Exponence.RuleSet.realize,
@@ -119,17 +119,17 @@ theorem some_realize (c : Context) :
   | some i => simp
 
 /-- A context that no item applies to gets the elsewhere form. -/
-theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ i.site ⊆ ↑[c]) :
+theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ Morphology.Exponence.Applies i ↑[c]) :
     v.realize c = v.elsewhere := by
   have : subsetPrinciple v.items ↑[c] = none :=
     Morphology.Exponence.RuleSet.realize_eq_none_iff.2 <| List.filter_eq_nil_iff.2 fun i hi ↦ by
-      simpa [VocabularyItem.applies_iff] using h i hi
+      simpa using h i hi
   simp [realize, this]
 
 /-- A form other than the elsewhere form is the exponent of an item that applies in the
 context. -/
 theorem exists_item_of_realize_ne (h : v.realize c ≠ v.elsewhere) :
-    ∃ i ∈ v.items, i.site ⊆ ↑[c] ∧ i.exponent = v.realize c := by
+    ∃ i ∈ v.items, Morphology.Exponence.Applies i ↑[c] ∧ i.exponent = v.realize c := by
   cases hs : subsetPrinciple v.items ↑[c] with
   | none => exact absurd (by simp [realize, hs]) h
   | some e =>
@@ -140,7 +140,8 @@ theorem exists_item_of_realize_ne (h : v.realize c ≠ v.elsewhere) :
 null only through an item for that context whose exponent is null. -/
 theorem exists_null_item_of_controlForm_eq_null {v : Vocabulary Form}
     (he : v.elsewhere ≠ .null) (h : v.controlForm = .null) :
-    ∃ i ∈ v.items, i.site ⊆ ↑[Context.controlledSubject] ∧ i.exponent = .null := by
+    ∃ i ∈ v.items, Morphology.Exponence.Applies i ↑[Context.controlledSubject] ∧
+      i.exponent = .null := by
   obtain ⟨i, hi, hs, hx⟩ := exists_item_of_realize_ne (h ▸ he.symm : v.controlForm ≠ _)
   exact ⟨i, hi, hs, hx.trans h⟩
 

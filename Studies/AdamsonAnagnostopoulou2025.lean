@@ -166,7 +166,7 @@ end System
 
 /-- The three-way vocabulary shared by Greek and Icelandic. -/
 def threeWay : RuleSet (VocabularyItem Node Gender) :=
-  [[.fem, .masc] ⟷ .feminine, [.masc] ⟷ .masculine, [] ⟷ .neuter]
+  [{.fem, .masc} ⟷ .feminine, {.masc} ⟷ .masculine, ∅ ⟷ .neuter]
 
 /-! ### Greek -/
 
@@ -314,8 +314,8 @@ theorem no_aba (v : RuleSet (VocabularyItem Node Gender)) (hv : v.Antihomophonou
     (hn : v.Realizes (Neighborhood.ofBundle [.cls]) φ)
     (hf : v.Realizes (Neighborhood.ofBundle [.fem, .masc, .cls]) φ) :
     v.Realizes (Neighborhood.ofBundle [.masc, .cls]) φ :=
-  RuleSet.Realizes.of_realizes hv (fun _ _ h ↦ subset_trans h (by decide))
-    (fun _ _ h ↦ subset_trans h (by decide)) hn hf
+  RuleSet.Realizes.of_realizes hv (fun _ _ h ↦ VocabularyItem.applies_mono h (by decide))
+    (fun _ _ h ↦ VocabularyItem.applies_mono h (by decide)) hn hf
 
 end Greek
 
@@ -417,8 +417,8 @@ def system : System where
     | _ => .cls
   plural := {.grp, .indiv, .cls}
   vocabulary :=
-    [[.fem, .anim, .masc, .indiv] ⟷ .feminine, [.anim, .masc, .indiv] ⟷ .masculine,
-      [.indiv] ⟷ .masculine, [] ⟷ .neuter]
+    [{.fem, .anim, .masc, .indiv} ⟷ .feminine, {.anim, .masc, .indiv} ⟷ .masculine,
+      {.indiv} ⟷ .masculine, ∅ ⟷ .neuter]
 
 /-- An inanimate refers as a mass when it is neuter, the neuter being the mass gender, and as an
 individuated thing otherwise. -/

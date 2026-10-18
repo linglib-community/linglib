@@ -123,7 +123,7 @@ inductive Exponent where
 
 /-- In the exponents (66) `/∅/` spells out `[#, ATOM, UNIQUE]` and `/s/` spells out `[#]`. -/
 def exponents : List (VocabularyItem NumFeature Exponent) :=
-  [.ofFeatures [.num, .atom, .unique] .null, .ofFeatures [.num] .s]
+  [.ofFeatures {.num, .atom, .unique} .null, .ofFeatures {.num} .s]
 
 /-- By the Subset Principle (67) the singular form spells out only the full head (68), and the
 atomic plural is spelled out by `/s/`, as the plain plural is (71), (73a). -/
@@ -397,7 +397,7 @@ theorem wideScope_iff (hxy : x ≠ y) (hwx : w ≠ x) (hwy : w ≠ y) (hxw' : x 
     rintro _ ⟨_, ⟨a, -, rfl⟩, rfl⟩ _ ⟨_, ⟨a', -, rfl⟩, rfl⟩
     simp [val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx]
   simp only [Set.mem_inter_iff, Set.mem_compl_iff, Team.dep, Set.mem_ofPred_eq,
-    Set.factorsThrough_domRestrict_iff_of_subsingleton hw, unique,
+    Set.factorsThrough_domRestrict_iff_of_subsingleton hw,
     lex₂, atomic, Set.mem_ofPred_eq, Set.image_image, Set.forall_mem_image,
     Set.image_nonempty, Set.subset_def, val_extend_self,
     val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx, val_extend_of_ne _ _ _ _ hxy,

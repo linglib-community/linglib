@@ -141,19 +141,19 @@ inductive Feat where
 /-- The Vocabulary entries for idx, (119) and (131), are *gi* elsewhere, *ge* under dependent
 case, and null before an overt NP. -/
 def idxItems : RuleSet (VocabularyItem Feat String) :=
-  [[Feat.idx] ⟷ "gi", [Feat.idx, .dep] ⟷ "ge", ⟨⟨[.idx], [], [[.np]]⟩, ""⟩]
+  [{Feat.idx} ⟷ "gi", {Feat.idx, .dep} ⟷ "ge", ⟨{(0, .idx), (1, .np)}, ""⟩]
 
 /-- The Vocabulary entries for D, (130), are null elsewhere, *hádi* distal and *wídi* proximal,
 the speaker's space. -/
 def dItems : RuleSet (VocabularyItem Feat String) :=
-  [[Feat.d] ⟷ "", [Feat.d, .deixis Person.first.participantSetsᶜ] ⟷ "hádi",
-    [Feat.d, .deixis Person.first.participantSets] ⟷ "wídi"]
+  [{Feat.d} ⟷ "", {Feat.d, .deixis Person.first.participantSetsᶜ} ⟷ "hádi",
+    {Feat.d, .deixis Person.first.participantSets} ⟷ "wídi"]
 
 /-- Under (118), contextual specificity takes precedence over the Elsewhere Principle, the
 ordering of [arregi-nevins-2012]. An item is ranked first by the features it demands of the
 context and then by those it spells out. -/
 def contextualSpecificity (i : VocabularyItem Feat String) : ℕ ×ₗ ℕ :=
-  toLex ((i.site.leftCtx ++ i.site.rightCtx).flatten.length, i.site.focus.length)
+  toLex ((i.site.filter (·.1 ≠ 0)).card, (i.site.filter (·.1 = 0)).card)
 
 /-- `idxExponent n` is the exponent of idx in the neighborhood `n`. -/
 def idxExponent (n : Neighborhood (List Feat)) : Option String :=

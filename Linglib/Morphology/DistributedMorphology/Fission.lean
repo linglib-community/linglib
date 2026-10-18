@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Mathlib.Data.Finset.Disjoint
 public import Mathlib.Data.Multiset.Bind
+public import Mathlib.Data.Multiset.AddSub
 
 /-!
 # Fission
@@ -14,17 +15,17 @@ scansion: the Vocabulary is scanned once, top to bottom, and an item is inserted
 node's matrices bears every feature of its site, discharging one occurrence of each; scansion halts
 at the bottom of the list, so no item is inserted twice.
 
-An item's site is a set of features, as applicability and specificity already treat it, while a
-matrix is a multiset, so that a feature borne twice is two repetitions in Marcolli, Chomsky and
-Berwick's sense and two items may discharge it one at a time. Lists represent both for
-computation, and the theorems are stated in the free commutative monoid `Multiset F`, where
-discharge is truncated subtraction and scansion a greedy decomposition of the node. A node may
+An item's features are a finite set, while a matrix is a multiset, so that a feature borne twice
+is two repetitions in Marcolli, Chomsky and Berwick's sense and two items may discharge it one at a
+time. A list represents a matrix for computation, and the theorems are stated in the free
+commutative monoid `Multiset F`, where discharge is truncated subtraction and scansion a greedy
+decomposition of the node. A node may
 bear several matrices, one per argument it agrees with, as the Yucatec Agr3 agrees with both
 subject and object, and an item draws on one of them.
 
 ## Main definitions
 
-* `discharge`: remove one occurrence of each feature of an item's site from the first matrix
+* `discharge`: remove one occurrence of each feature an item spells out from the first matrix
   bearing them all.
 * `scan`, `insertions`, `residue`, `scansion`: the items a node's matrices receive under strict
   scansion with local Fission, the matrices left over, and the items' exponents.
@@ -58,15 +59,24 @@ open Morphology.Exponence
 
 variable {F E : Type*} [DecidableEq F]
 
-/-- Discharging an item removes one occurrence of each feature of its site from the first of the
-matrices bearing them all, in the environment `env` (whose focus is ignored), and fails when no
-matrix does. -/
+/-- `subFeatures m s` removes one occurrence of each element of the multiset `s` from the list
+`m`, which does not depend on the order in which `s` is listed. -/
+def subFeatures (m : List F) (s : Multiset F) : List F :=
+  Quot.liftOn s m.diff fun _ _ h ↦ List.Perm.diff_left m h
+
+@[simp] theorem coe_subFeatures (m : List F) (s : Multiset F) :
+    (subFeatures m s : Multiset F) = m - s :=
+  Quot.induction_on s fun _ ↦ (Multiset.coe_sub _ _).symm
+
+/-- Discharging an item removes one occurrence of each feature it spells out from the first of
+the matrices bearing them all, in the environment `env` (whose focus is ignored), and fails when
+no matrix does. -/
 def discharge (i : VocabularyItem F E) (env : Neighborhood (List F)) :
     List (List F) → Option (List (List F))
   | [] => none
   | m :: ms =>
-    if i.site ⊆ ({ env with focus := m } : Neighborhood (List F)) then
-      some (m.diff i.site.focus.dedup :: ms)
+    if Applies i ({ env with focus := m } : Neighborhood (List F)) then
+      some (subFeatures m i.features.val :: ms)
     else (discharge i env ms).map (m :: ·)
 
 /-- Strict scansion with local Fission at a node bearing the matrices `ms` in the environment
@@ -110,29 +120,30 @@ theorem scan_cons_of_discharge_eq_none (h : discharge i env ms = none) :
     scan (i :: rest) env ms = scan rest env ms := by
   simp [scan, h]
 
-/-- Discharge subtracts the item's site, a set of features, from the node's multiset. -/
+/-- Discharge subtracts the item's features, a finite set, from the node's multiset. -/
 theorem val_add_discharge : ∀ {ms ms' : List (List F)}, discharge i env ms = some ms' →
-    i.site.focus.toFinset.val + ms'.flatten = (ms.flatten : Multiset F)
+    i.features.val + ms'.flatten = (ms.flatten : Multiset F)
   | [], _, h => by simp at h
   | m :: ms, ms', h => by
     unfold discharge at h
     split_ifs at h with hs
     · cases h
-      have hle : i.site.focus.toFinset.val ≤ (m : Multiset F) := Finset.val_le_iff_val_subset.mpr
-        fun f hf ↦ by simpa using Neighborhood.focus_subset_focus hs (by simpa using hf)
+      have hle : i.features.val ≤ (m : Multiset F) := Finset.val_le_iff_val_subset.mpr
+        fun f hf ↦ by
+          simpa [Neighborhood.mem_def] using hs _ (VocabularyItem.mem_features.1 hf)
       rw [List.flatten_cons, List.flatten_cons, ← Multiset.coe_add, ← Multiset.coe_add,
-        ← Multiset.coe_sub, ← List.toFinset_val, ← Multiset.add_assoc,
-        Multiset.add_comm i.site.focus.toFinset.val, Multiset.sub_add_cancel hle]
+        coe_subFeatures, ← Multiset.add_assoc, Multiset.add_comm i.features.val,
+        Multiset.sub_add_cancel hle]
     · obtain ⟨ms'', h'', rfl⟩ := Option.map_eq_some_iff.mp h
       rw [List.flatten_cons, List.flatten_cons, ← Multiset.coe_add, ← Multiset.coe_add,
-        ← Multiset.add_assoc, Multiset.add_comm i.site.focus.toFinset.val, Multiset.add_assoc,
+        ← Multiset.add_assoc, Multiset.add_comm i.features.val, Multiset.add_assoc,
         val_add_discharge h'']
 
-/-- **Conservation.** In the free commutative monoid on the features, the inserted items' sites
-and the residue sum to the node. -/
+/-- **Conservation.** In the free commutative monoid on the features, the inserted items'
+features and the residue sum to the node. -/
 theorem bind_insertions_add_residue :
     ∀ (items : RuleSet (VocabularyItem F E)) (ms : List (List F)),
-    (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.site.focus.toFinset.val) +
+    (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.features.val) +
       ((residue items env ms).flatten : Multiset F) = ms.flatten
   | [], _ => by simp [insertions, residue]
   | i :: rest, ms => by
@@ -146,20 +157,20 @@ theorem bind_insertions_add_residue :
       rw [← Multiset.cons_coe, Multiset.cons_bind, Multiset.add_assoc,
         bind_insertions_add_residue rest ms', val_add_discharge h]
 
-/-- **No multiple exponence.** The inserted items' sites fit inside the node, so no feature is
+/-- **No multiple exponence.** The inserted items' features fit inside the node, so no feature is
 discharged more often than the node bears it. -/
 theorem bind_insertions_le (items : RuleSet (VocabularyItem F E)) (ms : List (List F)) :
-    (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.site.focus.toFinset.val) ≤
+    (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.features.val) ≤
       (ms.flatten : Multiset F) :=
   bind_insertions_add_residue items ms ▸ Multiset.le_add_right _ _
 
-/-- On a node without repetitions the inserted items' sites are disjoint, so the items partition
-the features they discharge. -/
+/-- On a node without repetitions the inserted items' features are disjoint, so the items
+partition the features they discharge. -/
 theorem pairwise_disjoint_insertions (h : ms.flatten.Nodup) :
-    (insertions items env ms).Pairwise fun i j ↦ i.site.focus.Disjoint j.site.focus := by
+    (insertions items env ms).Pairwise fun i j ↦ Disjoint i.features j.features := by
   have := Multiset.nodup_of_le (bind_insertions_le (env := env) items ms) (Multiset.coe_nodup.mpr h)
   rw [Multiset.nodup_bind, Multiset.pairwise_coe_iff_pairwise] at this
-  exact this.2.imp (List.disjoint_toFinset_iff_disjoint.mp <| Finset.disjoint_val.mp ·)
+  exact this.2.imp (Finset.disjoint_val.mp ·)
 
 /-- A node with no matrix receives nothing. -/
 @[simp] theorem insertions_nil_right :
@@ -193,8 +204,8 @@ theorem length_scansion_le (ms : List (List F)) :
 /-- At a single matrix, an item discharges iff it applies there. -/
 theorem discharge_singleton (i : VocabularyItem F E) (m : List F) :
     discharge i env [m] =
-      if i.site ⊆ ({ env with focus := m } : Neighborhood (List F))
-        then some [m.diff i.site.focus.dedup] else none := by
+      if Applies i ({ env with focus := m } : Neighborhood (List F))
+        then some [subFeatures m i.features.val] else none := by
   simp [discharge]
 
 /-- At a single matrix, the first item inserted is the first item that applies there. -/
@@ -203,11 +214,11 @@ theorem head?_insertions_singleton (m : List F) : ∀ items : RuleSet (Vocabular
       (items.applicable ({ env with focus := m } : Neighborhood (List F))).head?
   | [] => rfl
   | i :: rest => by
-    by_cases h : i.site ⊆ ({ env with focus := m } : Neighborhood (List F))
+    by_cases h : Applies i ({ env with focus := m } : Neighborhood (List F))
     · rw [insertions, scan_cons_of_discharge_eq_some (by rw [discharge_singleton, ite_eq_left h])]
-      simp [RuleSet.applicable, show Applies i _ from h]
+      simp [RuleSet.applicable, h]
     · rw [insertions, scan_cons_of_discharge_eq_none (by rw [discharge_singleton, ite_eq_right h])]
-      simpa [insertions, RuleSet.applicable, show ¬ Applies i _ from h] using
+      simpa [insertions, RuleSet.applicable, h] using
         head?_insertions_singleton m rest
 
 /-- On a Vocabulary ordered by decreasing specificity, the first insertion at a single matrix is

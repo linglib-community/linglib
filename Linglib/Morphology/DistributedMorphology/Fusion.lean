@@ -87,7 +87,8 @@ missing from each unfused bundle, the Subset Principle selects it at neither unf
 only the fused bundle contains its item's features (`subsetPrinciple_winner_mem`). -/
 theorem portmanteau_needs_fusion {items : List (VocabularyItem F E)}
     {p q : Neighborhood (List F)} {e : E}
-    (he : ∀ i ∈ items, i.exponent = e → ¬ i.site ⊆ p ∧ ¬ i.site ⊆ q) :
+    (he : ∀ i ∈ items, i.exponent = e → ¬ Morphology.Exponence.Applies i p ∧
+      ¬ Morphology.Exponence.Applies i q) :
     subsetPrinciple items p ≠ some e ∧ subsetPrinciple items q ≠ some e := by
   refine ⟨fun h => ?_, fun h => ?_⟩ <;> obtain ⟨i, hi, rfl, happ⟩ := subsetPrinciple_winner_mem h
   · exact (he i hi rfl).1 happ
