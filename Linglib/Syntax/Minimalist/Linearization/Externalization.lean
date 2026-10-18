@@ -8,57 +8,64 @@ module
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
-# Externalization on the `SyntacticObject` carrier
+# Harmonic externalization
 
-This file defines the selection-induced linearization of syntactic objects
-([marcolli-chomsky-berwick-2025] §1.12.1, §1.13): the surface token order obtained by
-placing the projecting daughter's yield on a language's harmonic head side. Lemma
-1.13.5 identifies head functions on a binary tree with its planar embeddings, and
-Lemma 1.13.7 identifies head functions with bare-phrase-structure projection
-([chomsky-1995-bare]); composed with [adger-2003]'s identification of the projecting
-item as the selecting item (a synthesis step of this formalization, not a claim of
-the book), c-selection computes the planar order.
+A head function on a binary tree determines a planar embedding of it, and conversely
+([marcolli-chomsky-berwick-2025] Lemmas 1.13.4 and 1.13.5), and the book reads the head
+function's value on a tree as the ordered leaves of that embedding (eq. (1.13.3)). Lemma 1.13.7
+identifies head functions with bare-phrase-structure projection ([chomsky-1995-bare]); composed
+with [adger-2003]'s identification of the projecting item as the selecting item (a synthesis
+step of this formalization, not a claim of the book), c-selection computes the embedding. The
+harmonic planarization `SyntacticObject.planarize?` places the projecting daughter on a
+language's head side at every node. It is the planar component of the head function's value,
+a morphism of commutative magmas out of the carrier (`SyntacticObject.headHom`), and a section of
+forgetting the order wherever every node has a head
+(`SyntacticObject.toSyntacticObject_of_planarize?`): the harmonic candidate for the book's
+externalization section σ_L, which must extend it noncanonically off that domain.
 
 ## Main declarations
 
-* `Minimalist.ConventionDir`: the harmonic head-side convention, head-initial or head-final.
-* `Minimalist.LinearizationState`: the value of the book's head function in its two
-  descriptions — the selection state enriched with the yield, `0` off `Dom(h)`; a
-  `CommMagma` and `MulZeroClass` under the `side`-indexed Merge-local product.
+* `Minimalist.LinearizationState`: the value of the head function in its two descriptions, the
+  selection state and the planar object the head determines, `0` off `Dom(h)`; a `CommMagma`
+  and `MulZeroClass` under the Merge-local product.
 * `Minimalist.LinearizationState.sel`: the projection morphism to `SelectionState`.
 * `Minimalist.SyntacticObject.headHom`: the head function as a morphism of magmas
   `SyntacticObject →ₙ* LinearizationState side`, refining `selCheckHom`.
-* `Minimalist.SyntacticObject.linearize`, `Minimalist.SyntacticObject.phonYield`:
-  the yield readout and the pronounced surface forms.
+* `Minimalist.SyntacticObject.planarize?`: the harmonic planarization.
 
 ## Main results
 
-* `Minimalist.SyntacticObject.sel_comp_headHom`: fusion — the selection component of the head
-  function's value is the selection check, by `SyntacticObject.hom_ext`.
+* `Minimalist.SyntacticObject.sel_comp_headHom`: fusion, the selection component of the head
+  function's value being the selection check, by `SyntacticObject.hom_ext`.
+* `Minimalist.SyntacticObject.toSyntacticObject_of_planarize?`: the harmonic planarization is a
+  section of forgetting the order on its domain.
+* `Minimalist.SyntacticObject.planarize?_merge`: a daughter merged on an edge is planarized there
+  when it projects exactly if the edge is the head side.
 
 ## Implementation notes
 
-Head functions are partial ([marcolli-chomsky-berwick-2025] §1.13.2): at exocentric
-nodes no daughter projects and no order is determined — the book rejects inducing one
-from a total order on labels as "not a realistic linguistic assumption" — so the
-state is `0` there, the absorbing element of the book's renormalization reading of
-partial head functions. The selection state and the yield are the book's two
-descriptions of *one* head function: eq. (1.13.3) reads `h(T)` as "a single leaf
-(the head)" or as the ordered leaf sequence, "switch[ing] between these two
-descriptions without changing the notation". `LinearizationState` fuses them into
-one partial value, making `Dom(yield) = Dom(h)` true by construction. **Naming**:
-the head-function *maps* (`headHom` and the leaf data it lifts) carry the book's
-name for `h`; the *value* type does not — the book restricts "the term head to
-terminal elements" (quoting [chomsky-1995-bare] §4), and the strict head is
-recovered via `sel`. `SyntacticObject.linearize` is the harmonic candidate for the
-externalization section σ_L, defined on `Dom(h)` only — the book's σ_L must extend
-it *noncanonically* off `Dom(h)`. Conceptually the yield component is
-`WithZero (FreeMonoid LexicalItem.Token)`: a silent trace is the unit, exocentricity the
-absorbing zero, and head-final placement is multiplication in the opposite monoid.
+The head side is an `Edge`, `left` for head-initial and `right` for head-final. Head functions
+are partial ([marcolli-chomsky-berwick-2025] §1.13.2): at exocentric nodes no daughter projects
+and no order is determined, the book rejecting an order induced from a total order on labels as
+"not a realistic linguistic assumption", so the state is `0` there, the absorbing element of the
+book's renormalization reading of partial head functions. The selection state and the planar
+object are the book's two descriptions of *one* head function: eq. (1.13.3) reads `h(T)` as "a
+single leaf (the head)" or as the ordered leaves of the planar embedding it determines,
+"switch[ing] between these two descriptions without changing the notation". `LinearizationState`
+fuses them into one partial value, so the planarization is defined exactly on `Dom(h)`.
+**Naming**: the head-function *maps* (`headHom` and the leaf data it lifts) carry the book's name
+for `h`; the *value* type does not, the book restricting "the term head to terminal elements"
+(quoting [chomsky-1995-bare] §4), and the strict head is recovered via `sel`.
 
-Only the two harmonic sections are realized: uniform head-side placement is right
-for head–complement structure but does not model specifier placement (that needs the
-`headSide : Cat → ConventionDir` refinement noted at `ConventionDir`).
+Only the two harmonic sections are realized: uniform head-side placement is right for
+head–complement structure but does not model specifier placement, which needs a head side per
+category.
+
+## References
+
+* [marcolli-chomsky-berwick-2025], §1.12.1 and §1.13
+* [chomsky-1995-bare]
+* [adger-2003]
 -/
 
 @[expose] public section
@@ -67,63 +74,48 @@ namespace Minimalist
 
 open RoseTree UnorderedTree
 
-/-- The harmonic head-side convention: a head function determines a planar embedding by placing
-    the head daughter to the left (`initial`) or to the right (`final`) of every binary node
-    ([marcolli-chomsky-berwick-2025], Lemma 1.13.5). -/
-inductive ConventionDir where
-  | initial
-  | final
-  deriving Repr, DecidableEq, Inhabited
-
-/-- Place the head daughter's yield on the convention side: `.initial` → head-yield
-    first, `.final` → head-yield last. -/
-def placeYield :
-    ConventionDir → List LexicalItem.Token → List LexicalItem.Token → List LexicalItem.Token
-  | .initial, headY, otherY => headY ++ otherY
-  | .final,   headY, otherY => otherY ++ headY
-
 /-! ### The linearization state -/
 
-/-- The value of the head function in its two descriptions: the projecting head
-    with its residual stack, enriched with the yield; `0` off `Dom(h)`. The `side`
-    parameter is phantom in the carrier — the multiplication reads it. -/
-structure LinearizationState (side : ConventionDir) : Type where
-  toOption : Option ((LexicalItem.Token × List Cat) × List LexicalItem.Token)
+/-- The value of the head function in its two descriptions: the projecting head with its residual
+    stack, and the planar object it determines; `0` off `Dom(h)`. The head side is phantom in
+    the carrier; the multiplication reads it. -/
+structure LinearizationState (side : Edge) : Type where
+  toOption : Option ((LexicalItem.Token × List Cat) × PlanarSyntacticObject)
 deriving DecidableEq
 
 namespace LinearizationState
 
-variable {side : ConventionDir}
+variable {side : Edge}
 
-/-- A defined state: projecting head `tok`, residual stack `stack`, yield `yld`. -/
-def of (tok : LexicalItem.Token) (stack : List Cat)
-    (yld : List LexicalItem.Token) : LinearizationState side :=
-  ⟨some ((tok, stack), yld)⟩
+/-- A defined state: projecting head `tok`, residual stack `stack`, planar object `p`. -/
+def of (tok : LexicalItem.Token) (stack : List Cat) (p : PlanarSyntacticObject) :
+    LinearizationState side :=
+  ⟨some ((tok, stack), p)⟩
 
-/-- Merge-local externalization: the `selCombine` decision places the projecting
-    daughter's yield on the convention side; `0` is absorbing. -/
+/-- Merge-local externalization: the `selCombine` decision attaches the projecting daughter on
+    the head side; `0` is absorbing. -/
 instance : MulZeroClass (LinearizationState side) where
   mul x y :=
     match x, y with
-    | ⟨some (s₁, y₁)⟩, ⟨some (s₂, y₂)⟩ =>
-        ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun p =>
-          (p.2, placeYield side (bif p.1 then y₁ else y₂) (bif p.1 then y₂ else y₁))⟩
+    | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
+        ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun d =>
+          (d.2, (bif d.1 then p₂ else p₁).attach side (bif d.1 then p₁ else p₂))⟩
     | _, _ => ⟨none⟩
   zero := ⟨none⟩
   zero_mul _ := rfl
   mul_zero x := by rcases x with ⟨_ | _⟩ <;> rfl
 
 /-- `*` on defined states: the canonical accessor. -/
-theorem some_mul_some (s₁ s₂ : LexicalItem.Token × List Cat) (y₁ y₂ : List LexicalItem.Token) :
-    (⟨some (s₁, y₁)⟩ * ⟨some (s₂, y₂)⟩ : LinearizationState side) =
-      ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun p =>
-          (p.2, placeYield side (bif p.1 then y₁ else y₂) (bif p.1 then y₂ else y₁))⟩ := rfl
+theorem some_mul_some (s₁ s₂ : LexicalItem.Token × List Cat) (p₁ p₂ : PlanarSyntacticObject) :
+    (⟨some (s₁, p₁)⟩ * ⟨some (s₂, p₂)⟩ : LinearizationState side) =
+      ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun d =>
+          (d.2, (bif d.1 then p₂ else p₁).attach side (bif d.1 then p₁ else p₂))⟩ := rfl
 
 instance : CommMagma (LinearizationState side) where
   mul_comm x y := by
     match x, y with
     | ⟨none⟩, ⟨none⟩ | ⟨none⟩, ⟨some _⟩ | ⟨some _⟩, ⟨none⟩ => rfl
-    | ⟨some (s₁, y₁)⟩, ⟨some (s₂, y₂)⟩ =>
+    | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
       rw [some_mul_some, some_mul_some, selCombine_comm]
       rcases selCombine ⟨some s₂⟩ ⟨some s₁⟩ with _ | ⟨_ | _, _, _⟩ <;> rfl
 
@@ -134,53 +126,65 @@ def sel : LinearizationState side →ₙ* SelectionState where
     match x, y with
     | ⟨none⟩, _ => rfl
     | ⟨some _⟩, ⟨none⟩ => exact (mul_zero _).symm
-    | ⟨some (s₁, y₁)⟩, ⟨some (s₂, y₂)⟩ =>
+    | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
       rw [some_mul_some]
       simp only [Option.map_map]
       rfl
 
-@[simp] theorem sel_of (tok : LexicalItem.Token) (stack : List Cat) (yld : List LexicalItem.Token) :
-    sel (of tok stack yld : LinearizationState side) = .of tok stack := rfl
+@[simp] theorem sel_of (tok : LexicalItem.Token) (stack : List Cat) (p : PlanarSyntacticObject) :
+    sel (of tok stack p : LinearizationState side) = .of tok stack := rfl
 
 @[simp] theorem sel_zero : sel (0 : LinearizationState side) = 0 := rfl
 
-/-- The yield component: the ordered leaf sequence, `none` off `Dom(h)`. -/
-def yield (x : LinearizationState side) : Option (List LexicalItem.Token) :=
-  x.toOption.map (·.2)
+/-- The planar component, the embedding the head function determines; `none` off `Dom(h)`. -/
+def planar? (x : LinearizationState side) : Option PlanarSyntacticObject := x.toOption.map (·.2)
 
-@[simp] theorem yield_of (tok : LexicalItem.Token) (stack : List Cat)
-    (yld : List LexicalItem.Token) :
-    (of tok stack yld : LinearizationState side).yield = some yld := rfl
+@[simp] theorem planar?_of (tok : LexicalItem.Token) (stack : List Cat)
+    (p : PlanarSyntacticObject) : (of tok stack p : LinearizationState side).planar? = some p :=
+  rfl
 
-@[simp] theorem yield_zero : (0 : LinearizationState side).yield = none := rfl
+@[simp] theorem planar?_zero : (0 : LinearizationState side).planar? = none := rfl
+
+/-- A defined product attaches one factor's planar object to the other's on the head side. -/
+theorem planar?_mul_eq_some {x y : LinearizationState side} {p : PlanarSyntacticObject}
+    (h : (x * y).planar? = some p) : ∃ px py, x.planar? = some px ∧ y.planar? = some py ∧
+      (p = py.attach side px ∨ p = px.attach side py) := by
+  match x, y with
+  | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
+    rw [some_mul_some] at h
+    simp only [planar?, Option.map_map] at h
+    obtain ⟨⟨b, _⟩, -, rfl⟩ := Option.map_eq_some_iff.1 h
+    exact ⟨p₁, p₂, rfl, rfl, by cases b <;> simp⟩
+  | ⟨none⟩, _ => cases h
+  | ⟨some _⟩, ⟨none⟩ => cases h
 
 end LinearizationState
 
-/-! ### Externalization on `SyntacticObject` -/
+/-! ### Harmonic planarization -/
 
 namespace SyntacticObject
 
-variable (side : ConventionDir)
+variable (side : Edge)
 
 /-- The linearization state of a trace: silent, and saturated as `traceState` has it, a copy of
     the phrase its token heads. -/
 def traceLinearizationState : Option LexicalItem.Token → LinearizationState side
-  | some tok => .of tok [] []
-  | none => .of .bareTrace [] []
+  | some tok => .of tok [] (.traceOf tok)
+  | none => .of .bareTrace [] .trace
 
-/-- The head function's value on a syntactic object: the `liftFun` of pronounced
-    lexical leaves and the silent, saturated traces. -/
+/-- The head function's value on a syntactic object: the `liftFun` of the lexical leaves and the
+    silent, saturated traces. -/
 def linearizationState (s : SyntacticObject) : LinearizationState side :=
-  liftFun (fun tok => .of tok tok.item.sel [tok]) (traceLinearizationState side) s
+  liftFun (fun tok => .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side) s
 
 @[simp] theorem linearizationState_leaf (tok : LexicalItem.Token) :
-    (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.sel [tok] := rfl
+    (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.sel (.leaf tok) := rfl
 
 @[simp] theorem linearizationState_trace :
-    trace.linearizationState side = .of .bareTrace [] [] := rfl
+    trace.linearizationState side = .of .bareTrace [] .trace := rfl
 
 @[simp] theorem linearizationState_traceOf (tok : LexicalItem.Token) :
-    (traceOf tok).linearizationState side = .of tok [] [] := rfl
+    (traceOf tok).linearizationState side = .of tok [] (.traceOf tok) := rfl
 
 @[simp] theorem linearizationState_node (l r : SyntacticObject) :
     (merge l r).linearizationState side =
@@ -190,7 +194,7 @@ def linearizationState (s : SyntacticObject) : LinearizationState side :=
 /-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
     §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
 noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
-  lift (fun tok => .of tok tok.item.sel [tok]) (traceLinearizationState side)
+  lift (fun tok => .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side)
 
 @[simp] theorem headHom_apply (s : SyntacticObject) :
     headHom side s = s.linearizationState side := rfl
@@ -201,20 +205,86 @@ theorem sel_comp_headHom :
     LinearizationState.sel.comp (headHom side) = selCheckHom :=
   hom_ext (fun _ => rfl) rfl (fun _ => rfl)
 
-/-- The surface token order under head-side convention `side`
-    ([marcolli-chomsky-berwick-2025] §1.12.1): the yield readout of the
-    linearization state. Not a morphism — placing a yield needs the head. -/
-def linearize (s : SyntacticObject) : Option (List LexicalItem.Token) :=
-  (s.linearizationState side).yield
+/-- The selection component of an object's linearization state is its selection check. -/
+@[simp] theorem sel_linearizationState (s : SyntacticObject) :
+    LinearizationState.sel (s.linearizationState side) = s.selCheck :=
+  DFunLike.congr_fun (sel_comp_headHom side) s
 
-/-- The pronounced surface forms: the yield with unpronounced tokens dropped. -/
-def phonYield (s : SyntacticObject) : Option (List String) :=
-  (s.linearize side).map (·.filterMap (·.item.phonForm?))
+/-- The harmonic planarization, the projecting daughter on the head side at every node
+    ([marcolli-chomsky-berwick-2025] Lemma 1.13.5); `none` off `Dom(h)`. -/
+def planarize? (s : SyntacticObject) : Option PlanarSyntacticObject :=
+  (s.linearizationState side).planar?
 
-@[simp] theorem linearize_leaf (tok : LexicalItem.Token) :
-    (SyntacticObject.leaf tok).linearize side = some [tok] := rfl
+variable {side}
 
-@[simp] theorem linearize_trace : trace.linearize side = some [] := rfl
+/-- The harmonic planarization is a section of forgetting the order on its domain. -/
+theorem toSyntacticObject_of_planarize? {s : SyntacticObject} {p : PlanarSyntacticObject}
+    (h : s.planarize? side = some p) : p.toSyntacticObject = s := by
+  induction s using ind generalizing p with
+  | leaf tok | trace | traceOf tok => obtain rfl := Option.some.inj h; rfl
+  | merge l r ihl ihr =>
+    rw [planarize?, linearizationState_node] at h
+    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := LinearizationState.planar?_mul_eq_some h
+    · rw [PlanarSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr]
+    · rw [PlanarSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr, merge_comm]
+
+/-- A defined planarization comes with the selection state it refines. -/
+theorem linearizationState_eq_of_planarize? {s : SyntacticObject} {p : PlanarSyntacticObject}
+    (h : s.planarize? side = some p) :
+    ∃ σ, s.selCheck = ⟨some σ⟩ ∧ s.linearizationState side = ⟨some (σ, p)⟩ := by
+  rcases hx : s.linearizationState side with ⟨_ | ⟨σ, q⟩⟩
+  · simp [planarize?, hx, LinearizationState.planar?] at h
+  · simp only [planarize?, hx, LinearizationState.planar?, Option.map_some,
+      Option.some.injEq] at h
+    subst h
+    exact ⟨σ, by rw [← sel_linearizationState side s, hx]; rfl, rfl⟩
+
+/-- Merging `d` on edge `e` of `l` is harmonic when `d` projects exactly if `e` is the head
+side. -/
+theorem planarize?_merge {d l : SyntacticObject} {pd pl : PlanarSyntacticObject} {e : Edge}
+    (hd : d.planarize? side = some pd) (hl : l.planarize? side = some pl)
+    (h : selSide d.selCheck l.selCheck = some (decide (e = side))) :
+    (merge d l).planarize? side = some (pl.attach e pd) := by
+  obtain ⟨σd, hσd, hsd⟩ := linearizationState_eq_of_planarize? hd
+  obtain ⟨σl, hσl, hsl⟩ := linearizationState_eq_of_planarize? hl
+  rw [hσd, hσl, selSide] at h
+  obtain ⟨⟨_, x⟩, hc, rfl⟩ := Option.map_eq_some_iff.1 h
+  rw [planarize?, linearizationState_node, hsd, hsl, LinearizationState.some_mul_some, hc]
+  cases e <;> cases side <;> rfl
+
+/-- The subtrees of a harmonic planarization are the harmonic planarizations of their objects,
+    the head function of a term being the restriction of the whole's. -/
+theorem planarize?_of_mem_subtrees {cur : SyntacticObject} {pc : PlanarSyntacticObject}
+    (hc : cur.planarize? side = some pc) {q : RoseTree Vertex} (hq : q ∈ pc.val.subtrees)
+    (hqs : IsSyntacticObject (mk q)) :
+    planarize? side ⟨mk q, hqs⟩ = some (⟨q, hqs⟩ : PlanarSyntacticObject) := by
+  have root : ∀ {cur : SyntacticObject} {pc : PlanarSyntacticObject},
+      cur.planarize? side = some pc → ∀ hqs : IsSyntacticObject (mk pc.val),
+      planarize? side ⟨mk pc.val, hqs⟩ = some (⟨pc.val, hqs⟩ : PlanarSyntacticObject) :=
+    fun hc _ ↦ by
+      rw [show (⟨_, _⟩ : SyntacticObject) = _ from toSyntacticObject_of_planarize? hc, hc]; rfl
+  induction cur using ind generalizing pc with
+  | leaf tok | trace | traceOf tok =>
+    obtain rfl := Option.some.inj hc
+    simp only [PlanarSyntacticObject.leaf_val, PlanarSyntacticObject.trace_val,
+      PlanarSyntacticObject.traceOf_val, RoseTree.subtrees_node, List.flatMap_nil, List.mem_cons,
+      List.not_mem_nil, or_false] at hq
+    subst hq
+    exact root hc hqs
+  | merge l r ihl ihr =>
+    have hc' := hc
+    rw [planarize?, linearizationState_node] at hc'
+    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := LinearizationState.planar?_mul_eq_some hc' <;>
+      cases side <;>
+      simp only [PlanarSyntacticObject.attach, PlanarSyntacticObject.merge_val,
+        RoseTree.subtrees_node,
+        List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_cons,
+        List.mem_append] at hq <;>
+      rcases hq with rfl | hq | hq
+    all_goals first
+      | exact root hc hqs
+      | exact ihl hl hq
+      | exact ihr hr hq
 
 end SyntacticObject
 

@@ -520,7 +520,7 @@ theorem frozen_sides (c : Clause) (σ σ' : Sides) (x : SyntacticObject) :
 and, up to the omitted XP, (89) among them, externalizes to V-O-S-IO. -/
 theorem surface_sides (σ : Sides) :
     (ex56.vos σ).surfacePhon = ["mang-", "alean", "buku", "si-John", "tu si-Mary"] := by
-  revert σ; decide
+  revert σ; decide +kernel
 
 /-! ### English passives (§7) -/
 
