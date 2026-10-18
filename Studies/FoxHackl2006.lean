@@ -1,7 +1,10 @@
 module
 
 public import Linglib.Data.Examples.FoxHackl2006
-public import Linglib.Semantics.Alternatives.Extremum
+public import Mathlib.Order.Interval.Set.Monotone
+public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Semantics.Exhaustification.Pointwise
+public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Logic.Modal.Defs
 
 /-!
@@ -10,20 +13,21 @@ public import Linglib.Logic.Modal.Defs
 This file formalizes Fox and Hackl's Universal Density of Measurement, the claim that the
 measurement scales of natural language semantics are dense, and the single mechanism it drives
 through scalar implicatures, *only*, degree questions and definite descriptions. Each maximizes
-a property of degrees with MAXinf, the most informative true degree (`Alternatives.IsMaxInf`),
-and the Constraint on Interval Maximization, `not_hasMaxInf_of_isNecessarilyOpen`, says this
-fails on a property that necessarily describes an open interval. *More than d* and *not … d*
-are such properties, so they carry no implicature, reject *only*, and make negative islands; a
-universal modal closes the interval (`hasMaxInf_box`) and an existential modal does not
+a property of degrees with MAXinf, the most informative true degree, which is Dayal's strongest
+true answer of the degree property (`Question.IsStrongestTrueAnswer`), and the Constraint on
+Interval Maximization, `not_isExhaustivelyResolvable_of_isNecessarilyOpen`, says this fails on a
+property that necessarily describes an open interval. *More than d* and *not … d* are such
+properties, so they carry no implicature, reject *only*, and make negative islands; a universal
+modal closes the interval (`isExhaustivelyResolvable_box`) and an existential modal does not
 (`not_isGreatest_diamond`); at cardinality granularity *more than n* exhaustifies to
 *exactly n + 1* (`moreThan_exact_nat`).
 
 ## Implementation notes
 
 On a strictly antitone family the most informative degree is the greatest true one
-(`Alternatives.hasMaxInf_iff_isGreatest`), so density removes it exactly when the true set is
-open at its informative end; the downward-monotone cases are the order duals. The paper's
-example sentences are the rows of `Examples.all`.
+(`Question.isExhaustivelyResolvable_range_iff_isGreatest`), so density removes it exactly when
+the true set is open at its informative end; the downward-monotone cases are the order duals.
+The paper's example sentences are the rows of `Examples.all`.
 
 ## References
 
@@ -38,7 +42,7 @@ example sentences are the rows of `Examples.all`.
 
 namespace FoxHackl2006
 
-open Alternatives ModalLogic OrderDual Set
+open Question ModalLogic OrderDual Set
 open SetRel
 open Degree
 
@@ -58,17 +62,19 @@ abbrev IsNecessarilyOpenBelow (φ : D → Set W) : Prop :=
 
 /-- By the Constraint on Interval Maximization (42), on a dense scale a necessarily open
 upward-monotone property has no most informative degree. -/
-theorem not_hasMaxInf_of_isNecessarilyOpen [DenselyOrdered D] {φ : D → Set W}
-    (hφ : StrictAnti φ) (hopen : IsNecessarilyOpen φ) (w : W) : ¬ HasMaxInf φ w :=
-  (hasMaxInf_iff_isGreatest hφ).not.2 fun ⟨_, hm⟩ =>
+theorem not_isExhaustivelyResolvable_of_isNecessarilyOpen [DenselyOrdered D] {φ : D → Set W}
+    (hφ : StrictAnti φ) (hopen : IsNecessarilyOpen φ) (w : W) :
+    ¬ IsExhaustivelyResolvable (range φ) w :=
+  (isExhaustivelyResolvable_range_iff_isGreatest hφ).not.2 fun ⟨_, hm⟩ =>
     let ⟨_, hd, hlt⟩ := hopen w
     let ⟨y, hmy, hyd⟩ := exists_between (lt_of_not_ge fun h => hd (hφ.antitone h hm.1))
     not_le.2 hmy (hm.2 (hlt y hyd))
 
 /-- (42) for downward-monotone properties. -/
-theorem not_hasMaxInf_of_isNecessarilyOpenBelow [DenselyOrdered D] {φ : D → Set W}
-    (hφ : StrictMono φ) (hopen : IsNecessarilyOpenBelow φ) (w : W) : ¬ HasMaxInf φ w :=
-  not_hasMaxInf_of_isNecessarilyOpen (φ := fun d : Dᵒᵈ => φ (ofDual d))
+theorem not_isExhaustivelyResolvable_of_isNecessarilyOpenBelow [DenselyOrdered D] {φ : D → Set W}
+    (hφ : StrictMono φ) (hopen : IsNecessarilyOpenBelow φ) (w : W) :
+    ¬ IsExhaustivelyResolvable (range φ) w :=
+  not_isExhaustivelyResolvable_of_isNecessarilyOpen (φ := fun d : Dᵒᵈ => φ (ofDual d))
     (fun _ _ h => hφ h) hopen w
 
 /-! ### Implicatures and *only* -/
@@ -80,11 +86,22 @@ theorem isNecessarilyOpen_gt_over (μ : W → D) : IsNecessarilyOpen (μ ⁻¹' 
 
 /-- On a dense scale *more than d* has no most informative degree, so it carries no scalar
 implicature and rejects *only* ((2), (5), (7b–c)). -/
-theorem moreThan_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function.Surjective μ)
-    (w : W) : ¬ HasMaxInf (μ ⁻¹' Set.Ioi ·) w :=
-  not_hasMaxInf_of_isNecessarilyOpen ((Set.monotone_preimage.comp_antitone antitone_Ioi)
-    |>.strictAnti_of_injective ((Set.preimage_injective.2 hμ).comp Set.Ioi_injective))
+theorem moreThan_not_isExhaustivelyResolvable [DenselyOrdered D] (μ : W → D)
+    (hμ : Function.Surjective μ) (w : W) : ¬ IsExhaustivelyResolvable (range (μ ⁻¹' Set.Ioi ·)) w :=
+  not_isExhaustivelyResolvable_of_isNecessarilyOpen
+    ((Set.monotone_preimage.comp_antitone antitone_Ioi).strictAnti_of_injective
+      ((Set.preimage_injective.2 hμ).comp Set.Ioi_injective))
     (isNecessarilyOpen_gt_over μ) w
+
+/-- Exhaustifying a strictly antitone degree property against its stronger members asserts that
+the prejacent is the most informative true degree, so *only* and the scalar implicature are
+MAXinf. -/
+theorem exhAgainst_lt_iff_isStrongestTrueAnswer {φ : D → Set W} (hφ : StrictAnti φ) {i : D}
+    {w : W} :
+    Exhaustification.exhAgainst (· < ·) (w ∈ φ ·) i ↔ IsStrongestTrueAnswer (range φ) w (φ i) := by
+  rw [isStrongestTrueAnswer_range_iff]
+  refine and_congr_right fun _ => ⟨fun h y hy => ?_, fun h j hij hj => (hφ hij).2 (h j hj)⟩
+  exact hφ.antitone (not_lt.1 fun hiy => h y hiy hy)
 
 /-! ### Modal operators -/
 
@@ -110,11 +127,14 @@ theorem box_eq_Iic [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (
 
 /-- A universal modal closes the interval, so *required to φ more than d* has a most informative
 degree, `a` itself ((13), (46)). -/
-theorem hasMaxInf_box [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (a : D)
-    (w : W) : HasMaxInf (fun d => (requirementBase φ a).core (φ d)) w := by
+theorem isExhaustivelyResolvable_box [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ)
+    (a : D) (w : W) :
+    IsExhaustivelyResolvable (range fun d => (requirementBase φ a).core (φ d)) w := by
   have hanti : Antitone fun d => (requirementBase φ a).core (φ d) :=
     fun _ _ h _ hv _ hu => hφ.antitone h (hv hu)
-  exact ⟨a, hanti.map_isGreatest (box_eq_Iic hφ a w ▸ isGreatest_Iic)⟩
+  refine isExhaustivelyResolvable_range_iff_exists.2 ⟨a, ?_⟩
+  rw [IsStrongestTrueAnswer, trueAnswers_range]
+  exact hanti.map_isGreatest (box_eq_Iic hφ a w ▸ isGreatest_Iic)
 
 /-- No existential modal closes the interval, since the true degrees of *allowed to φ d* have no
 greatest element, so the constraint still applies ((14), (47)). -/
@@ -137,17 +157,19 @@ theorem isNecessarilyOpenBelow_lt_over (μ : W → D) :
 
 /-- On a dense scale the negated degree property has no most informative (least true) degree, so
 a degree question or definite description over it is undefined ((16), (19a), (25)). -/
-theorem negation_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function.Surjective μ)
-    (w : W) : ¬ HasMaxInf (μ ⁻¹' Set.Iio ·) w :=
-  not_hasMaxInf_of_isNecessarilyOpenBelow ((Set.monotone_preimage.comp monotone_Iio)
-    |>.strictMono_of_injective ((Set.preimage_injective.2 hμ).comp Set.Iio_injective))
+theorem negation_not_isExhaustivelyResolvable [DenselyOrdered D] (μ : W → D)
+    (hμ : Function.Surjective μ) (w : W) : ¬ IsExhaustivelyResolvable (range (μ ⁻¹' Set.Iio ·)) w :=
+  not_isExhaustivelyResolvable_of_isNecessarilyOpenBelow
+    ((Set.monotone_preimage.comp monotone_Iio).strictMono_of_injective
+      ((Set.preimage_injective.2 hμ).comp Set.Iio_injective))
     (isNecessarilyOpenBelow_lt_over μ) w
 
 /-- In *required not to φ d* a universal modal over a downward-monotone property closes the
 interval from below ((27b), (28a), (29a)). -/
-theorem hasMaxInf_box_below [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ) (a : D)
-    (w : W) : HasMaxInf (fun d => SetRel.core {p | ∃ d, d < a ∧ p.2 ∈ φ d} (φ d)) w :=
-  hasMaxInf_box (φ := fun d : Dᵒᵈ => φ (ofDual d)) (fun _ _ h => hφ h) (toDual a) w
+theorem isExhaustivelyResolvable_box_below [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
+    (a : D) (w : W) :
+    IsExhaustivelyResolvable (range fun d => SetRel.core {p | ∃ d, d < a ∧ p.2 ∈ φ d} (φ d)) w :=
+  isExhaustivelyResolvable_box (φ := fun d : Dᵒᵈ => φ (ofDual d)) (fun _ _ h => hφ h) (toDual a) w
 
 /-- *Allowed not to φ d* stays open from below ((28b), (29b), (47)). -/
 theorem not_isLeast_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
@@ -160,8 +182,8 @@ theorem not_isLeast_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictM
 /-- At cardinality granularity *more than n* is *at least n + 1*, whose most informative degree
 is the count, so *only more than 15F* means *exactly 16* ((73)–(75)). -/
 theorem moreThan_exact_nat (μ : W → ℕ) (hμ : Function.Surjective μ) (m : ℕ) (w : W) :
-    IsMaxInf (μ ⁻¹' Set.Ioi ·) m w ↔ μ w = m + 1 := by
-  refine isMaxInf_iff.trans ⟨fun ⟨h1, h2⟩ => ?_, fun h => ⟨?_, fun y hy => ?_⟩⟩
+    IsStrongestTrueAnswer (range (μ ⁻¹' Set.Ioi ·)) w (μ ⁻¹' Set.Ioi m) ↔ μ w = m + 1 := by
+  refine isStrongestTrueAnswer_range_iff.trans ⟨fun ⟨h1, h2⟩ => ?_, fun h => ⟨?_, fun y hy => ?_⟩⟩
   · obtain ⟨v, hv⟩ := hμ (m + 1)
     by_contra hne
     have h1 : m < μ w := h1

@@ -6,11 +6,13 @@ public import Mathlib.Order.Minimal
 /-!
 # Pragmatic competition
 
-An expression is blocked when one of its alternatives is strictly stronger along a dimension of
-content, and it survives competition at a point where its content holds and no alternative whose
-content also holds there is strictly stronger. `Blocked` is the first relation and `unblocked`
-the set of points of the second, for any alternative source `S → Set S` and content function
-`S → Set W`; `sameAssertion` keeps the alternatives with the same at-issue content.
+An expression is blocked when one of its alternatives is strictly better along a preorder, and
+it survives competition at a point where its content holds and no alternative whose content also
+holds there is strictly stronger. `Blocked` is the first relation, for any alternative source
+`S → Set S` and any map into a preorder, and `unblocked` the set of points of the second, for a
+content function `S → Set W`; `sameAssertion` keeps the alternatives with the same at-issue
+content. Ordered by entailment, blocking compares contents; ordered by harmony it is the blocking
+of bidirectional optimality theory (`BidirectionalOT.blocks_iff_blocked`).
 
 Along at-issue content over the weakly assertable alternatives, blocking is Katzir's
 neo-Gricean principle, and along conventional-implicature content it is Lo Guercio's Maximize
@@ -23,13 +25,15 @@ each principle state their disagreement over one definition.
 
 ## Main definitions
 
-* `Competition.Blocked`: some alternative is strictly stronger along the content dimension.
+* `Competition.Blocked`: some alternative is strictly better along a preorder.
 * `Competition.unblocked`: the points where no alternative whose content holds is strictly
   stronger.
 * `Competition.sameAssertion`: the alternatives with the same at-issue content.
 
 ## Main results
 
+* `Competition.not_blocked_iff_minimalFor`: an expression is unblocked when it is minimal among
+  itself and its alternatives.
 * `Competition.mem_unblocked_iff_minimalFor`: an expression is unblocked where it is a most
   specific competitor whose content holds.
 * `Competition.disjoint_unblocked`: competitors with strictly nested contents are never
@@ -50,34 +54,50 @@ each principle state their disagreement over one definition.
 
 namespace Competition
 
-variable {S W : Type*} {alts alts' : S → Set S} {content assertion : S → Set W} {φ φ' ψ : S}
+variable {S W β : Type*} {alts alts' : S → Set S} {content assertion : S → Set W} {φ φ' ψ : S}
   {w : W}
 
-/-- `φ` is blocked when some alternative in `alts φ` has strictly stronger `content`. -/
-def Blocked (alts : S → Set S) (content : S → Set W) (φ : S) : Prop :=
-  ∃ φ' ∈ alts φ, content φ' ⊂ content φ
+section Preorder
+
+variable [Preorder β] {f : S → β}
+
+/-- `φ` is blocked when some alternative in `alts φ` is strictly better under `f`. -/
+def Blocked (alts : S → Set S) (f : S → β) (φ : S) : Prop :=
+  ∃ φ' ∈ alts φ, f φ' < f φ
 
 /-- Blocking is monotone in the alternative source. -/
-theorem Blocked.mono (h : alts ≤ alts') (hb : Blocked alts content φ) :
-    Blocked alts' content φ :=
-  let ⟨φ', hφ', hss⟩ := hb; ⟨φ', h φ hφ', hss⟩
+theorem Blocked.mono (h : alts ≤ alts') (hb : Blocked alts f φ) : Blocked alts' f φ :=
+  let ⟨φ', hφ', hlt⟩ := hb; ⟨φ', h φ hφ', hlt⟩
 
-/-- An expression at least as strong as each of its alternatives is not blocked. -/
-theorem not_blocked_of_forall_subset (h : ∀ φ' ∈ alts φ, content φ ⊆ content φ') :
-    ¬ Blocked alts content φ :=
-  fun ⟨φ', hφ', hss⟩ ↦ hss.not_subset (h φ' hφ')
+/-- An expression at least as good as each of its alternatives is not blocked. -/
+theorem not_blocked_of_forall_le (h : ∀ φ' ∈ alts φ, f φ ≤ f φ') : ¬ Blocked alts f φ :=
+  fun ⟨φ', hφ', hlt⟩ ↦ hlt.not_ge (h φ' hφ')
+
+/-- An expression is unblocked exactly when it is minimal under `f` among itself and its
+alternatives. -/
+theorem not_blocked_iff_minimalFor :
+    ¬ Blocked alts f φ ↔ MinimalFor (· ∈ insert φ (alts φ)) f φ := by
+  simp only [Blocked, MinimalFor, Set.mem_insert_iff, true_or, true_and, not_exists, not_and,
+    not_lt_iff_le_imp_ge]
+  constructor
+  · intro h ψ hψ hle
+    rcases hψ with rfl | hψ
+    exacts [le_rfl, h ψ hψ hle]
+  · exact fun h ψ hψ hle ↦ h (.inr hψ) hle
+
+end Preorder
 
 /-- The alternatives of `φ` with the same at-issue content, the competitors Maximize
 Presupposition compares. -/
-def sameAssertion (assertion : S → Set W) (alts : S → Set S) (φ : S) : Set S :=
+def sameAssertion (alts : S → Set S) (assertion : S → Set W) (φ : S) : Set S :=
   {φ' ∈ alts φ | assertion φ' = assertion φ}
 
 @[simp] theorem mem_sameAssertion :
-    φ' ∈ sameAssertion assertion alts φ ↔ φ' ∈ alts φ ∧ assertion φ' = assertion φ :=
+    φ' ∈ sameAssertion alts assertion φ ↔ φ' ∈ alts φ ∧ assertion φ' = assertion φ :=
   Iff.rfl
 
-theorem sameAssertion_le (assertion : S → Set W) (alts : S → Set S) :
-    sameAssertion assertion alts ≤ alts :=
+theorem sameAssertion_le (alts : S → Set S) (assertion : S → Set W) :
+    sameAssertion alts assertion ≤ alts :=
   fun _ _ h ↦ h.1
 
 /-! ### Unblocked points -/

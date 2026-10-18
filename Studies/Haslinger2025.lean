@@ -8,6 +8,7 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
 public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Pragmatics.Competition
 public import Studies.Krifka2007
 public import Linglib.Data.Examples.Haslinger2025
 
@@ -69,9 +70,10 @@ imprecision, the two orderings of (58), combined by the product order as in (57)
 def manner (φ : S) : ℕ × ℕ := (complexity φ, potential φ)
 
 /-- A cooperative speaker will not use `ψ` when a potentially p-equivalent `φ` is at least as good
-on both orderings and better on one, (59). -/
-def Blocked (ψ : S) : Prop :=
-  ∃ φ, PotEquiv φ ψ ∧ manner complexity potential φ < manner complexity potential ψ
+on both orderings and better on one, (59): competition among the potentially p-equivalent
+sentences along the Manner profile. -/
+abbrev Blocked (ψ : S) : Prop :=
+  Competition.Blocked (fun ψ ↦ {φ | PotEquiv φ ψ}) (manner complexity potential) ψ
 
 /-- By the form–meaning correlation, an unblocked sentence with more potential for imprecision than
 a potentially p-equivalent competitor is strictly simpler than it. -/
