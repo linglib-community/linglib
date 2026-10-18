@@ -39,7 +39,7 @@ def lovato : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated")] }
+    paperFeatures := [("kind", "personal"), ("pronouns", "they/them")] }
 
 def bed : Datum :=
   { id := "arnold2026_bed"
@@ -143,7 +143,7 @@ def alex : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("Alex broke some plates", .acceptable), ("Alex and Will broke some plates", .acceptable)]
-    paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated"), ("ambiguity", "singular or plural")] }
+    paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("ambiguity", "singular or plural")] }
 
 def dillon : Datum :=
   { id := "arnold2026_dillon"
@@ -182,7 +182,7 @@ def butler : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated"), ("pronounsIntroduced", "true")] }
+    paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("pronounsIntroduced", "true")] }
 
 def all : List Datum := [homework, lovato, bed, teacher, clerk, neighbor, shakespeare, landlord, son, alex, dillon, mother, butler]
 

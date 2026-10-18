@@ -33,8 +33,7 @@
     "readings": [],
     "paperFeatures": [
       ["kind", "personal"],
-      ["pronouns", "they/them"],
-      ["representation", "elaborated"]
+      ["pronouns", "they/them"]
     ],
     "comment": "Article on Demi Lovato (Olson and Fuentes 2022).",
     "verified": "page-image"
@@ -203,7 +202,6 @@
     "paperFeatures": [
       ["kind", "personal"],
       ["pronouns", "they/them"],
-      ["representation", "elaborated"],
       ["ambiguity", "singular or plural"]
     ],
     "comment": "Arnold, Mayo and Dong (2021): Alex (they/them), Will (he/him), Liz (she/her); the plural interpretation dominates, explicit pronoun introduction raises the singular one.",
@@ -266,7 +264,6 @@
     "paperFeatures": [
       ["kind", "personal"],
       ["pronouns", "they/them"],
-      ["representation", "elaborated"],
       ["pronounsIntroduced", "true"]
     ],
     "comment": "Szalai 2024, New York Times: pronouns introduced explicitly.",
