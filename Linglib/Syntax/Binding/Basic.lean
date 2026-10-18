@@ -103,8 +103,9 @@ instance (c : BindingClass) : Decidable c.IsRExpression := inferInstanceAs (Deci
 end BindingClass
 
 /-- A part of speech is nominal when it is a proper noun, a common noun or a pronoun. -/
-def isNominalCat (cat : UD.UPOS) : Bool :=
-  cat == .PROPN || cat == .NOUN || cat == .PRON
+def IsNominal (cat : UD.UPOS) : Prop := cat = .PROPN ∨ cat = .NOUN ∨ cat = .PRON
+
+instance : DecidablePred IsNominal := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- `bindingClassOf w` reads the binding class of `w` off its morphology and category.
 Reflexive marking makes a reflexive, the reciprocal pronoun type a reciprocal, any other pronoun
@@ -114,8 +115,8 @@ def bindingClassOf (w : Morphology.Word) : Option BindingClass :=
   else match w.features .pronType with
     | some .Rcp => some .reciprocal
     | _ =>
-      if w.cat == .PRON then some .pronoun
-      else if isNominalCat w.cat then some .rExpression
+      if w.cat = .PRON then some .pronoun
+      else if IsNominal w.cat then some .rExpression
       else none
 
 /-! ### Configurations -/

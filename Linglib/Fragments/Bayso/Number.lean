@@ -11,7 +11,7 @@ and within the system a singular, a paucal for two to about six, and a plural, e
 own suffix; nouns fall into two genders. An agreeing verb has three forms only, labelled
 from the pronouns, which distinguish a masculine and a feminine singular and one plural:
 general and singular nouns take their gender's form, paucal nouns the plural form, and
-plural nouns the masculine one ([hayward-1979]; [corbett-hayward-1987]; [corbett-2000]).
+plural nouns the masculine one, as Hayward, Corbett and Hayward, and Corbett describe.
 
 ## References
 
@@ -50,15 +50,15 @@ inductive Concord where
   | plural
   deriving DecidableEq, Repr, Fintype
 
-/-- The concord a pronoun takes: its gender in the singular, the plural form in the plural. -/
+/-- A pronoun takes its gender's concord in the singular and the plural concord in the plural. -/
 def Gender.pronounConcord (g : Gender) (n : pronounNumberSystem.values) : Concord :=
   match g, n.1 with
   | .masc, .singular => .masc
   | .fem, .singular => .fem
   | _, _ => .plural
 
-/-- The concord a noun takes, by gender and number: its gender's form for the general and
-the singular, the plural form for the paucal, the masculine form for the plural. -/
+/-- A noun takes its gender's concord in the general and the singular, the plural concord in the
+paucal, and the masculine concord in the plural. -/
 def Gender.concord (g : Gender) (n : nounNumbers) : Concord :=
   match g, n.1 with
   | .masc, .general | .masc, .singular => .masc

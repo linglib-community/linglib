@@ -372,8 +372,8 @@ open _root_.CoastalMarind
 
 /-- The demonstrative agreeing with *igih* 'name' takes the possessor's gender. -/
 theorem name_demonstrative (g : _root_.CoastalMarind.Gender) :
-    (inheritedGender PossessionType.inalienable.possessorPosition g).map (demonstrative · singular) =
-      some (demonstrative g singular) :=
+    (inheritedGender PossessionType.inalienable.possessorPosition g).map
+        (demonstrative · singular) = some (demonstrative g singular) :=
   rfl
 
 /-- *nanVh* 'face' is *nanih* with a gender I possessor and *nanuh* with a gender II one, the
