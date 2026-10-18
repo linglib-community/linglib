@@ -49,13 +49,15 @@ abstraction over the variable `n`, and translation needs no fresh names.
 
 @[expose] public section
 
+universe u
+
 namespace HeimKratzer
 
 open Montague
 
-/-- The terms over a signature `K` of constants, by type: constants, the variables of type `e`,
-abstraction over a variable, and the composition of two terms by a mode. -/
-inductive Term (K : Ty → Type) : Ty → Type where
+/-- The terms over a signature `K` of constants are, by type, the constants, the variables of
+type `e`, the abstractions over a variable, and the compositions of two terms by a mode. -/
+inductive Term (K : Ty → Type u) : Ty → Type u where
   | const {ty : Ty} (c : K ty) : Term K ty
   | var (n : ℕ) : Term K .e
   | lam {τ : Ty} (n : ℕ) (body : Term K τ) : Term K (.e ⇒ τ)
@@ -76,7 +78,7 @@ instance (E W D : Type) : PredAbs Id E W D := ⟨some fun _ f ↦ f⟩
 
 namespace Term
 
-variable {K K' : Ty → Type}
+variable {K K' : Ty → Type*}
 
 /-- Rename the constants of a term. -/
 def map (f : ∀ {ty : Ty}, K ty → K' ty) : {ty : Ty} → Term K ty → Term K' ty
@@ -113,10 +115,10 @@ def eval (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D) (g : Assignment E) :
   | _, lam n b => fun x ↦ eval I (g[n ↦ x]) b
   | _, comp m l r => m.eval (eval I g l) (eval I g r)
 
-/-- The denotation of a term under an applicative effect, an interpretation of the constants as
-computations and an assignment of the variables: a composition runs its left daughter first, and
-an abstraction distributes the effect over the entities, `none` when the effect has no
-distributor. -/
+/-- `evalM I g t` is the denotation of `t` under an applicative effect, given an interpretation
+`I` of the constants as computations and an assignment `g`. A composition runs its left daughter
+first, and an abstraction distributes the effect over the entities, so `evalM` is `none` when
+the effect has no distributor. -/
 def evalM {M : Type → Type} [Applicative M] [PredAbs M E W D]
     (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty D)) (g : Assignment E) :
     {ty : Ty} → Term K ty → Option (M (Ty.Domain E W ty D))
@@ -215,12 +217,12 @@ namespace Tree
 
 open PhraseStructure
 
-variable {C : Type} {K : Ty → Type} {L : Type*}
+variable {C : Type} {K : Ty → Type*} {L : Type*}
 
-/-- The term a tree translates to, by the composition principles of [heim-kratzer-1998]: a
-terminal translates to its word's constant, a non-branching node to its daughter's term, a
-binary node to the composition of its daughters' terms by the mode their types select, a trace
-to the variable of its index, and a binder to the abstraction over that variable. -/
+/-- `translate lex t` is the term the tree `t` translates to by the composition principles of
+[heim-kratzer-1998]. A terminal translates to its word's constant, a non-branching node to its
+daughter's term, a binary node to the composition of its daughters' terms by the mode their types
+select, a trace to the variable of its index, and a binder to the abstraction over that variable. -/
 def translate (lex : L → Option (Σ ty, K ty)) : Tree C L → Option (Σ ty, Term K ty)
   | .terminal _ w => (lex w).map fun c ↦ ⟨c.1, .const c.2⟩
   | .node _ (t :: []) => translate lex t
@@ -286,7 +288,7 @@ theorem translate_junk {l : Tree.Label C L} {cs : List (Tree C L)}
 
 
 /-- Translation commutes with renaming the constants. -/
-theorem translate_map_const {K' : Ty → Type} (f : ∀ {ty : Ty}, K ty → K' ty) (t : Tree C L) :
+theorem translate_map_const {K' : Ty → Type*} (f : ∀ {ty : Ty}, K ty → K' ty) (t : Tree C L) :
     translate (fun w ↦ (lex w).map fun c ↦ ⟨c.1, f c.2⟩) t =
       (translate lex t).map fun d ↦ ⟨d.1, d.2.map f⟩ := by
   induction t using Tree.rec' with
@@ -314,7 +316,7 @@ theorem translate_map_const {K' : Ty → Type} (f : ∀ {ty : Ty}, K ty → K' t
   | junk l cs hj _ => rw [translate_junk _ hj, translate_junk _ hj]; rfl
 
 
-private theorem bind_combine?_map_fst {K' : Ty → Type}
+private theorem bind_combine?_map_fst {K' : Ty → Type*}
     {op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Term K σ₁ → Term K σ₂ → Term K τ}
     {op' : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Term K' σ₁ → Term K' σ₂ → Term K' τ}
     {o₁ o₂ : Option (Σ ty, Term K ty)} {o₁' o₂' : Option (Σ ty, Term K' ty)}
@@ -328,7 +330,7 @@ private theorem bind_combine?_map_fst {K' : Ty → Type}
   simp
 
 /-- The types of a tree's term depend only on the types of its words' constants. -/
-theorem translate_map_fst {K' : Ty → Type} {lex' : L → Option (Σ ty, K' ty)}
+theorem translate_map_fst {K' : Ty → Type*} {lex' : L → Option (Σ ty, K' ty)}
     (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
     (translate lex t).map (·.1) = (translate lex' t).map (·.1) := by
   induction t using Tree.rec' with
@@ -358,7 +360,7 @@ theorem translate_map_fst {K' : Ty → Type} {lex' : L → Option (Σ ty, K' ty)
 
 /-- Lexicons whose constants are related translate a tree to terms of the same shape with
 related constants. -/
-theorem translate_rel {K' : Ty → Type} {R : ∀ ty : Ty, K ty → K' ty → Prop}
+theorem translate_rel {K' : Ty → Type*} {R : ∀ ty : Ty, K ty → K' ty → Prop}
     {lex' : L → Option (Σ ty, K' ty)}
     (hlex : ∀ w d', lex' w = some d' → ∃ c, lex w = some ⟨d'.1, c⟩ ∧ R d'.1 c d'.2)
     (t : Tree C L) :

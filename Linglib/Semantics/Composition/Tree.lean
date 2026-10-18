@@ -134,21 +134,9 @@ composed denotation. -/
 section Reduction
 
 variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs M E W D]
-  {L : Type*} (lex : L → Option (Denotation E W M D)) (g : Assignment E)
+  {L : Type*}
 
-@[simp] theorem interp_terminal (c : C) (w : L) :
-    interp lex g (.terminal c w : Tree C L) = lex w := by
-  simp only [interp, translate_terminal]
-  cases lex w <;> rfl
-
-@[simp] theorem interp_node_unary (c : C) (t : Tree C L) :
-    interp lex g (.node c (t :: [])) = interp lex g t := rfl
-
-@[simp] theorem interp_adjoin_unary (c : C) (t : Tree C L) :
-    interp lex g (.adjoin c (t :: [])) = interp lex g t := rfl
-
-omit lex in
-private theorem bind_evalAt_combine
+private theorem bind_evalAt_combine (g : Assignment E)
     (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty D)) ty)) :
     (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).bind
         (evalAt g) =
@@ -164,6 +152,19 @@ private theorem bind_evalAt_combine
     rcases ha : u₁.evalM (fun c ↦ c) g with _ | a <;>
     rcases hb : u₂.evalM (fun c ↦ c) g with _ | b <;>
     simp [Term.evalM, hm, ha, hb]
+
+variable (lex : L → Option (Denotation E W M D)) (g : Assignment E)
+
+@[simp] theorem interp_terminal (c : C) (w : L) :
+    interp lex g (.terminal c w : Tree C L) = lex w := by
+  simp only [interp, translate_terminal]
+  cases lex w <;> rfl
+
+@[simp] theorem interp_node_unary (c : C) (t : Tree C L) :
+    interp lex g (.node c (t :: [])) = interp lex g t := rfl
+
+@[simp] theorem interp_adjoin_unary (c : C) (t : Tree C L) :
+    interp lex g (.adjoin c (t :: [])) = interp lex g t := rfl
 
 @[simp] theorem interp_node_binary (c : C) (t₁ t₂ : Tree C L) :
     interp lex g (.node c (t₁ :: t₂ :: [])) = ((interp lex g t₁).bind fun d₁ ↦
@@ -599,10 +600,10 @@ end Readings
 
 section Translation
 
-variable {C : Type} {K : Ty → Type} {L : Type*} {E W D : Type}
+variable {C : Type} {K : Ty → Type*} {L : Type*} {E W D : Type}
 
-/-- Interpretation is evaluation of the translation: interpreting a tree whose words denote what
-an interpretation of their constants gives is evaluating the tree's term. -/
+/-- Interpreting a tree whose words denote what an interpretation `I` of their constants gives
+is evaluating the tree's term under `I`. -/
 theorem interp_eq_eval_translate (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty D)
     (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (t : Tree C L) :
     interp (M := Id) (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g t =
