@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Composition.Reduction
+public import Linglib.Semantics.Composition.Term
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -20,6 +21,7 @@ off the model.
 * `toyLang`, `toyStructure`: the signature and its interpretation.
 * `toyModel`: the one-world composition model.
 * `toyNaming`, `toyLexicon`: the naming maps and the lexicon they induce.
+* `ToyConst`, `toyConsts`: four words as constants, for the translation of trees into terms.
 
 ## Implementation notes
 
@@ -165,5 +167,60 @@ example :
     Tree.interp toyLexicon (fun _ ↦ ToyEntity.john)
       (.node () [.terminal () "John", .terminal () "sleeps"] : PhraseStructure.Tree Unit String)
       = some ⟨.t, Toy.sleeps ToyEntity.john⟩ := rfl
+
+/-! ### Translation into terms
+
+Four words as constants: a quantifier-raised tree translates to its term, with the mode at each
+node, and the interpretation of the constants evaluates the term to what `Tree.interp`
+computes. -/
+
+/-- The constants of the four-word signature. -/
+inductive ToyConst : Ty → Type
+  | every : ToyConst Ty.det
+  | student : ToyConst (.e ⇒ .t)
+  | sleeps : ToyConst (.e ⇒ .t)
+  | john : ToyConst .e
+
+/-- The constants denote the determiner `every` and the toy model's facts. -/
+noncomputable def ToyConst.interp : {ty : Ty} → ToyConst ty → Ty.Domain ToyEntity Unit ty
+  | _, .every => Quantifier.GQ.every
+  | _, .student => Toy.student
+  | _, .sleeps => Toy.sleeps
+  | _, .john => .john
+
+/-- The four words and their constants. -/
+def toyConsts : String → Option (Σ ty, ToyConst ty)
+  | "every" => some ⟨_, .every⟩
+  | "student" => some ⟨_, .student⟩
+  | "sleeps" => some ⟨_, .sleeps⟩
+  | "John" => some ⟨_, .john⟩
+  | _ => none
+
+/-- *Every student sleeps*, with the subject raised over the trace of index 1. -/
+def everyStudentSleeps : PhraseStructure.Tree Unit String :=
+  .node () [.node () [.terminal () "every", .terminal () "student"],
+    .bind 1 () (.node () [.trace 1 (), .terminal () "sleeps"])]
+
+/-- The term of *every student sleeps*: the determiner applies forward to the noun and to the
+abstraction over the trace, which the verb applies backward to. -/
+theorem translate_everyStudentSleeps : Tree.translate toyConsts everyStudentSleeps =
+    some ⟨.t, .comp .functionalLeft (.comp .functionalLeft (.const .every) (.const .student))
+      (.lam 1 (.comp .functionalRight (.var 1) (.const .sleeps)))⟩ := rfl
+
+/-- The term of the raised sentence is closed. -/
+example : ((Tree.translate toyConsts everyStudentSleeps).map fun d ↦ d.2.freeVars) = some ∅ := by
+  rw [translate_everyStudentSleeps]; decide
+
+/-- *John John* translates to nothing, since no mode combines two individuals. -/
+example : Tree.translate toyConsts
+    (.node () [.terminal () "John", .terminal () "John"] : PhraseStructure.Tree Unit String) =
+      none := rfl
+
+/-- The engine interprets *every student sleeps* as its term says: every student sleeps. -/
+example (g : Assignment ToyEntity) :
+    Tree.interp (M := Id) (fun w ↦ (toyConsts w).map fun c ↦ ⟨c.1, ToyConst.interp c.2⟩) g
+      everyStudentSleeps = some ⟨.t, ∀ x, Toy.student x → Toy.sleeps x⟩ := by
+  rw [Tree.interp_eq_eval_translate, translate_everyStudentSleeps]
+  rfl
 
 end HeimKratzer

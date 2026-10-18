@@ -20,7 +20,7 @@ coordinator's denotation.
 
 ## Main results
 
-* `predicateModification?_eq_coordinate?_of_conjunctive`: predicate modification is conjunctive
+* `combine?_eq_coordinate?_of_conjunctive`: predicate modification is conjunctive
   coordination at `⟨e,t⟩`.
 
 ## References
@@ -46,16 +46,17 @@ def coordinate? {E W : Type} {M : Type → Type} [Applicative M] (c : Coordinato
   else none
 
 /-- Predicate modification is generalized conjunction at `⟨e,t⟩`. -/
-theorem predicateModification?_eq_coordinate?_of_conjunctive {E W : Type} {M : Type → Type}
+theorem combine?_eq_coordinate?_of_conjunctive {E W : Type} {M : Type → Type}
     [Applicative M] {c : Coordinator} (hc : c.role = .conjunctive) (d1 d2 : Denotation E W M)
     (h1 : d1.1 = (.e ⇒ .t)) (h2 : d2.1 = (.e ⇒ .t)) :
-    predicateModification? d1 d2 = coordinate? c d1 d2 := by
+    Mode.combine? Mode.evalM d1 d2 = coordinate? c d1 d2 := by
   obtain ⟨t1, v1⟩ := d1
   obtain ⟨t2, v2⟩ := d2
   subst h1; subst h2
   have h : (Modifier.intersective : Ty.Domain E W (.e ⇒ .t) → _) =
       fun p q ↦ c.denote {p, q} := by
     funext p q; simp [Modifier.intersective, Coordinator.denote_of_conjunctive hc]
+  rw [Mode.combine?_predicateModification]
   exact congrArg (fun F ↦ some (⟨.e ⇒ .t, F <$> v1 <*> v2⟩ : Denotation E W M)) h
 
 end HeimKratzer.Tree

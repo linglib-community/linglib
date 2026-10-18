@@ -126,9 +126,13 @@ theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
   Question.not_isInformative_polar p
 
 /-- An outside merger takes a proposition, and a *na*-clause, its subject position reopened,
-is a property, so application is undefined whatever the merger returns. -/
+is a property, so no composition mode combines them, whatever the merger returns. -/
 theorem comp_over_na_type_clash (b : Montague.Ty) :
-    Montague.Ty.apply? (.fn .t b) (.fn .e .t) = none := rfl
+    HeimKratzer.Tree.tyBinary (.fn .t b) (.fn .e .t) = none := by
+  simp [HeimKratzer.Tree.tyBinary, Montague.Ty.mode?, HeimKratzer.Mode.functionalLeft?,
+    HeimKratzer.Mode.functionalRight?, HeimKratzer.Mode.intensionalLeft?,
+    HeimKratzer.Mode.intensionalRight?, HeimKratzer.Mode.predicateModification?,
+    HeimKratzer.Mode.eventIdentification?]
 
 /-! ### Selection -/
 

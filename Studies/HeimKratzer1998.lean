@@ -152,17 +152,18 @@ inductive Denotes (lex : L → Option (Denotation E W)) :
 theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment E}
     {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) : interp lex g t = some d := by
   induction h with
-  | tn h => exact h
+  | tn h => rw [interp_terminal]; exact h
   | nn _ ih => exact ih
   | faLeft _ _ ih₁ ih₂ =>
-    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary,
-      functionalApplication?_forward]; rfl
+    rw [interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some, Mode.combine?_fn_left]
+    rfl
   | faRight _ _ ih₁ ih₂ =>
-    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary,
-      functionalApplication?_backward]; rfl
+    rw [interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some, Mode.combine?_fn_right]
+    rfl
   | pm _ _ ih₁ ih₂ =>
-    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some,
-      interpBinary_predicateModification]; rfl
+    rw [interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+      Mode.combine?_predicateModification]
+    rfl
   | trace => rfl
   | @pa g n c body τ F _ ih =>
     have hg := ih (g n)
@@ -204,7 +205,9 @@ noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
 /-- *The student* is a presupposition failure in the toy model, which has two students. -/
 theorem the_student_fails :
     PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
-  refine ⟨_, interpBinary_forward the (PFun.lift student), fun ⟨x, _, huniq⟩ ↦ ?_⟩
+  refine ⟨⟨.e, the (PFun.lift student)⟩, ?_, fun ⟨x, _, huniq⟩ ↦ ?_⟩
+  · rw [interp_node_binary, interp_terminal, interp_terminal]
+    exact combine?_forward the (PFun.lift student)
   have hj := huniq .john ((holds_lift _ _).mpr (.inl rfl))
   have hm := huniq .mary ((holds_lift _ _).mpr (.inr rfl))
   exact ToyEntity.noConfusion (hj.trans hm.symm)
@@ -212,7 +215,8 @@ theorem the_student_fails :
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/
 theorem the_pizza : interp partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
     some ⟨.e, Part.some .pizza⟩ := by
-  refine (interpBinary_forward the (PFun.lift Toy.pizza)).trans ?_
+  rw [interp_node_binary, interp_terminal, interp_terminal]
+  refine (combine?_forward the (PFun.lift Toy.pizza)).trans ?_
   rw [the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl]
 
 /-- *The John*, the article applied to an individual rather than a predicate, is
@@ -272,17 +276,17 @@ theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment
     {t : Tree C L} {d : PDenotation E W} (h : Denotes lex g t d) :
     Partial.interp lex g t = some d := by
   induction h with
-  | tn h => exact h
+  | tn h => rw [Partial.interp_terminal]; exact h
   | nn _ ih => exact ih
   | faLeft _ _ ih₁ ih₂ =>
     rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Partial.interpBinary_forward]
+      Partial.combine?_forward]
   | faRight _ _ ih₁ ih₂ =>
     rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Partial.interpBinary_backward]
+      Partial.combine?_backward]
   | pm _ _ ih₁ ih₂ =>
     rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Partial.interpBinary_predicateModification]
+      Partial.combine?_predicateModification]
   | trace => rfl
   | @pa g n c body τ F _ ih =>
     have hg := ih (g n)

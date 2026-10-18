@@ -113,7 +113,7 @@ else — in particular *most* — is outside the fragment and compiles to
 /-- `compileTerm` compiles an entity subtree, a proper name or a trace, to a term. -/
 def compileTerm (nm : LexNaming L) : Tree Unit String → Option (L.Term ℕ)
   | .terminal _ s => (nm.names s).map Constants.term
-  | .trace k _ => some (Term.var k)
+  | .trace k _ => some (Language.Term.var k)
   | _ => none
 
 /-- `compilePred` compiles a predicate subtree applied to a subject term, either an
@@ -133,14 +133,14 @@ def compileFO (fw : FOWords) (nm : LexNaming L) :
   | .node _ [.terminal _ s, r] =>
       if s = fw.not_ then (compileFO fw nm r).map BoundedFormula.not
       else (nm.names s).bind fun c ↦ compilePred nm (Constants.term c) r
-  | .node _ [.trace k _, r] => compilePred nm (Term.var k) r
+  | .node _ [.trace k _, r] => compilePred nm (Language.Term.var k) r
   | .node _ [.node _ [.terminal _ q, .terminal _ nw], .bind k _ body] =>
       (nm.preds₁ nw).bind fun R ↦
         (compileFO fw nm body).bind fun ψ ↦
-          if q = fw.every then some (all₁ k ((R.formula₁ (Term.var k)).imp ψ))
-          else if q = fw.some_ then some (ex₁ k (R.formula₁ (Term.var k) ⊓ ψ))
+          if q = fw.every then some (all₁ k ((R.formula₁ (Language.Term.var k)).imp ψ))
+          else if q = fw.some_ then some (ex₁ k (R.formula₁ (Language.Term.var k) ⊓ ψ))
           else if q = fw.no then
-            some (all₁ k ((R.formula₁ (Term.var k)).imp ψ.not))
+            some (all₁ k ((R.formula₁ (Language.Term.var k)).imp ψ.not))
           else none
   | .node _ [l, .node _ [.terminal _ s, t₂] ] =>
       if s = fw.and_ then
@@ -280,18 +280,19 @@ section EngineHelpers
 variable {E W : Type}
 
 /-- Forward FA at `Id`, with the applicative collapsed. -/
-private theorem interpBinary_fa {σ τ : Ty} (f : Ty.Domain E W (σ ⇒ τ)) (x : Ty.Domain E W σ) :
-    interpBinary (M := Id) ⟨σ ⇒ τ, f⟩ ⟨σ, x⟩ = some ⟨τ, f x⟩ := by
-  rw [interpBinary, functionalApplication?_forward]
-  rfl
+private theorem combine?_fn_left_id {σ τ : Ty} (f : Ty.Domain E W (σ ⇒ τ)) (x : Ty.Domain E W σ) :
+    Mode.combine? Mode.evalM (⟨σ ⇒ τ, f⟩ : Denotation E W) ⟨σ, x⟩ = some ⟨τ, f x⟩ := by
+  rw [Mode.combine?_fn_left]; rfl
 
 /-- Backward functional application at `Id` applies a unary predicate to an entity subject. -/
-private theorem interpBinary_e_et (x : Ty.Domain E W .e) (P : Ty.Domain E W (.e ⇒ .t)) :
-    interpBinary (M := Id) ⟨.e, x⟩ ⟨.e ⇒ .t, P⟩ = some ⟨.t, P x⟩ := rfl
+private theorem combine?_e_et_id (x : Ty.Domain E W .e) (P : Ty.Domain E W (.e ⇒ .t)) :
+    Mode.combine? Mode.evalM (⟨.e, x⟩ : Denotation E W) ⟨.e ⇒ .t, P⟩ = some ⟨.t, P x⟩ := by
+  rw [Mode.combine?_fn_right]; rfl
 
 /-- Backward functional application at `Id` applies a sentential operator to a sentence. -/
-private theorem interpBinary_t_tt (p : Ty.Domain E W .t) (F : Ty.Domain E W (.t ⇒ .t)) :
-    interpBinary (M := Id) ⟨.t, p⟩ ⟨.t ⇒ .t, F⟩ = some ⟨.t, F p⟩ := rfl
+private theorem combine?_t_tt_id (p : Ty.Domain E W .t) (F : Ty.Domain E W (.t ⇒ .t)) :
+    Mode.combine? Mode.evalM (⟨.t, p⟩ : Denotation E W) ⟨.t ⇒ .t, F⟩ = some ⟨.t, F p⟩ := by
+  rw [Mode.combine?_fn_right]; rfl
 
 private theorem predAbs_id_dist :
     PredAbs.dist? (M := Id) (E := E) (W := W) (D := ℝ) = some (fun _ f ↦ f) := rfl
@@ -313,8 +314,7 @@ private theorem interp_bind_exists (lex : Lexicon E W) (g : Assignment E)
         F x = px := by
   refine ⟨?_, ?_, ?_⟩
   rotate_left
-  · conv_lhs => rw [Tree.interp]
-    rw [predAbs_id_dist, hbody]
+  · rw [Tree.interp_bind, predAbs_id_dist, hbody]
     rfl
   · intro x px hx
     simp only [hx]
@@ -358,7 +358,7 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
       rw [interp_node_binary, interp_compileTerm m fw nm w g hsubj, Option.bind_some,
         interp_terminal,
         m.lexiconFO_preds₁ fw nm w hR (hdj.names_of_preds₁ v R hR),
-        Option.bind_some, interpBinary_e_et]
+        Option.bind_some, combine?_e_et_id]
       exact some_t_congr (m.realizeAt_rel₁ w g R τ).symm
   | .node _ [.terminal _ v, obj], φ, h, c => by
       simp only [compilePred, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
@@ -369,7 +369,7 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
           (hdj.preds₁_of_preds₂ v R hR),
         Option.bind_some,
         interp_compileTerm m fw nm w g hobj, Option.bind_some,
-        interpBinary_fa, Option.bind_some, interpBinary_e_et]
+        combine?_fn_left_id, Option.bind_some, combine?_e_et_id]
       exact some_t_congr (m.realizeAt_rel₂ w g R τ τₒ).symm
 
 /-- Composition of a quantified clause `[[Q N] [bind k body]]` from the
@@ -388,8 +388,8 @@ private theorem interp_quantClause {g : Assignment m.E} {q nw : String}
       = some ⟨.t, Q N F⟩ := by
   rw [interp_node_binary, interp_node_binary, interp_terminal, hQ, Option.bind_some,
     interp_terminal, hN,
-    Option.bind_some, interpBinary_fa, Option.bind_some, hbind,
-    Option.bind_some, interpBinary_fa]
+    Option.bind_some, combine?_fn_left_id, Option.bind_some, hbind,
+    Option.bind_some, combine?_fn_left_id]
 
 /-- Whenever the compiler succeeds, the engine's denotation of the tree is the realization of
 the compiled formula over the model at `w`. -/
@@ -408,7 +408,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     rw [interp_node_binary, interp_terminal,
       m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
       FOWords.lexicon_not m.E m.W hnd, Option.bind_some,
-      ih g hψ, Option.bind_some, interpBinary_fa]
+      ih g hψ, Option.bind_some, combine?_fn_left_id]
     congr 1
   | case2 a a₁ s r hs =>
     -- name-subject predication
@@ -433,7 +433,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
         F x = ψ.RealizeAt m.interp w (Function.update g k x) := fun x ↦
       hF x _ (ih (Function.update g k x) hψ)
     have hrestr : ∀ x : m.E,
-        (Relations.formula₁ R (Term.var k)).RealizeAt m.interp w (Function.update g k x)
+        (Relations.formula₁ R (Language.Term.var k)).RealizeAt m.interp w (Function.update g k x)
           ↔ m.pred₁ext R w x := by
       intro x
       rw [m.realizeAt_rel₁, Term.realizeAt_var, Function.update_self]
@@ -493,8 +493,8 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       interp_terminal,
       m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
       FOWords.lexicon_and m.E m.W hnd, Option.bind_some,
-      iht g h₂, Option.bind_some, interpBinary_fa, Option.bind_some,
-      interpBinary_t_tt]
+      iht g h₂, Option.bind_some, combine?_fn_left_id, Option.bind_some,
+      combine?_t_tt_id]
     refine some_t_congr ?_
     rw [Formula.realizeAt_inf]
   | case6 a l a₁ a₂ t₂ hl₁ hl₂ hne ihl iht =>
@@ -508,8 +508,8 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       interp_terminal,
       m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
       FOWords.lexicon_or m.E m.W hnd, Option.bind_some,
-      iht g h₂, Option.bind_some, interpBinary_fa, Option.bind_some,
-      interpBinary_t_tt]
+      iht g h₂, Option.bind_some, combine?_fn_left_id, Option.bind_some,
+      combine?_t_tt_id]
     refine some_t_congr ?_
     rw [Formula.realizeAt_sup]
   | case7 a l a₁ a₂ s t₂ hl₁ hl₂ hs₁ hs₂ =>
