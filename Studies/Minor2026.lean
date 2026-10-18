@@ -33,10 +33,10 @@ where the corresponding update succeeds.
   spelled out as a plural, and `[#, UNIQUE]` is not well-typed (fn. 21).
 * `Minor2026.exh_atomicPlural`, `Minor2026.disjoint_exhR_atomicPlural`: Exh negates the singular
   alternative of an atomic plural (87), mandatorily at single assignments (§6.2).
-* `Minor2026.not_mem_dom_sentence_atomicPlural`, `Minor2026.atomicPlural_distW_iff`: an atomic
+* `Minor2026.notMem_dom_sentence_atomicPlural`, `Minor2026.atomicPlural_distW_iff`: an atomic
   plural is contradictory without a weakly distributive licensor (88) and co-distributive under
   one (90).
-* `Minor2026.not_mem_dom_intro_test_of_injOn`: an atomic plural exhaustified relative to `w` fails
+* `Minor2026.notMem_dom_intro_test_of_injOn`: an atomic plural exhaustified relative to `w` fails
   wherever `w` tells the assignments apart, at a single assignment and under an attitude.
 * `Minor2026.mem_dom_want_test_iff`: *want* with a flat complement quantifies over the worlds
   compatible with the experiencer's wishes.
@@ -160,16 +160,16 @@ theorem injOn_of_mem_intro (hwy : w ≠ y) (hH : Set.InjOn (val w) H) (h : H ~[i
 
 /-- A referent required not to be a function of `w` cannot be introduced where `w` tells the
 assignments apart, so an exhaustified atomic plural fails there ((113)–(121)). -/
-theorem not_mem_dom_intro_test_of_injOn (hwy : w ≠ y) (hH : Set.InjOn (val w) H)
+theorem notMem_dom_intro_test_of_injOn (hwy : w ≠ y) (hH : Set.InjOn (val w) H)
     (hC : C ⊆ (uniqueAt w y)ᶜ) : H ∉ (intro y ○ test C ○ D).dom := by
   rintro ⟨_, _, ⟨J, hJ, rfl, hJC⟩, -⟩
   exact hC hJC (mem_uniqueAt_of_injOn (injOn_of_mem_intro hwy hH hJ))
 
 /-- An atomic plural scoping over *want* without a licensor is contradictory ((117)–(121)), since
 at a single assignment it is unique. -/
-theorem not_mem_dom_intro_test_singleton (hwy : w ≠ y) (hC : C ⊆ (uniqueAt w y)ᶜ) :
+theorem notMem_dom_intro_test_singleton (hwy : w ≠ y) (hC : C ⊆ (uniqueAt w y)ᶜ) :
     {k} ∉ (intro y ○ test C ○ D).dom :=
-  not_mem_dom_intro_test_of_injOn hwy (Set.injOn_singleton _ _) hC
+  notMem_dom_intro_test_of_injOn hwy (Set.injOn_singleton _ _) hC
 
 /-! ### Atomic plurals and Exh (§6.2) -/
 
@@ -192,9 +192,8 @@ theorem exists_mem_vp_atomic_not_unique {a b : E} (ha : Atom a) (hb : Atom b) (h
   have hne : (f '' {extend i u a, extend i u b}).Nonempty := ⟨_, _, Or.inl rfl, rfl⟩
   refine ⟨{extend i u a, extend i u b}, f '' {extend i u a, extend i u b},
     mem_comp_test.2 ⟨mem_comp_test.2 ⟨⟨f, fun r _ ↦ ⟨val u r, rfl⟩, rfl⟩,
-      ⟨hne, fun _ _ ↦ trivial⟩, hne, fun _ _ ↦ trivial⟩, ?_⟩, fun hU ↦ hab ?_⟩
-  · refine (Set.mem_powerset_iff _ _).2 ?_
-    rintro _ ⟨r, rfl | rfl, rfl⟩
+      ⟨hne.image _, fun _ _ ↦ trivial⟩, hne.image _, fun _ _ ↦ trivial⟩, ?_⟩, fun hU ↦ hab ?_⟩
+  · rintro _ ⟨_, ⟨r, rfl | rfl, rfl⟩, rfl⟩
     · simpa [hf, val_extend_self] using ha
     · simpa [hf, val_extend_self] using hb
   · have := hU ⟨f (extend i u a), ⟨_, Or.inl rfl, rfl⟩, rfl⟩
@@ -210,7 +209,7 @@ theorem exh_atomicPlural {a b : E} (ha : Atom a) (hb : Atom b) (hab : a ≠ b) (
         (acrossModels (S := S) fun M : Model E ↦ vp u u' M ○ test (atomic u')) =
       acrossModels (S := S) fun M : Model E ↦ vp u u' M ○ test (atomic u') ○ test (unique u')ᶜ := by
   obtain ⟨I, J, hp, hU⟩ := exists_mem_vp_atomic_not_unique u u' ha hb hab i
-  exact exh_acrossModels_comp_test ⟨_, fun h ↦ hU (mem_comp_test.1 (h hp)).2⟩
+  exact exh_acrossModels_comp_test (comp_test_lt _ fun h ↦ hU (mem_comp_test.1 (h hp)).2)
 
 variable (u u') in
 /-- The non-uniqueness implicature of an atomic plural is mandatory (§6.2). At a single assignment
@@ -240,14 +239,14 @@ theorem disjoint_exhR_atomicPlural {a b : E} (ha : Atom a) (hb : Atom b) (hab : 
 
 /-- Without a weakly distributive licensor an atomic plural is contradictory (88), since from a
 single assignment the state stays a single assignment, where uniqueness holds. -/
-theorem not_mem_dom_sentence_atomicPlural (huu' : u ≠ u') :
+theorem notMem_dom_sentence_atomicPlural (huu' : u ≠ u') :
     {i} ∉ (sentence u u' P id M (atomic u' ∩ (unique u')ᶜ)).dom := by
   rw [singleton_mem_dom_sentence_iff]
   simp [singleton_mem_dom_vp_iff huu', unique]
 
 /-- Under a strongly distributive licensor an atomic plural is contradictory too, since every
 singleton state makes it unique. -/
-theorem not_mem_dom_sentence_distS_atomicPlural (huu' : u ≠ u') :
+theorem notMem_dom_sentence_distS_atomicPlural (huu' : u ≠ u') :
     {i} ∉ (sentence u u' P (distS u) M (atomic u' ∩ (unique u')ᶜ)).dom := by
   rw [singleton_mem_dom_sentence_iff]
   rintro ⟨x, -, h⟩
@@ -266,7 +265,7 @@ theorem atomicPlural_distW_iff (huu' : u ≠ u') :
   refine exists_congr fun x ↦ and_congr_right fun _ ↦ ?_
   rw [singleton_mem_dom_distW_iff huu', val_extend_self]
   refine exists_congr fun b ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦ ?_
-  simp only [atomic, unique, Set.mem_compl_iff, Set.mem_inter_iff, Set.mem_powerset_iff,
+  simp only [atomic, unique, Set.mem_compl_iff, Set.mem_inter_iff,
     Set.mem_ofPred_eq, Set.image_image, Set.image_subset_iff, val_extend_self]
   simp [Set.subset_def, val_extend_self]
 
@@ -279,7 +278,7 @@ variable (w w' x) in
 the worlds compatible with the experiencer's wishes, and weakly distributes `w'` over its
 complement. -/
 def want (bul : E → E → E) (D : Update (Set S)) : Update (Set S) :=
-  intro w' ○ test {I | ∀ i ∈ I, val w' i = bul (val w i) (val x i)} ○ distW w' D
+  intro w' ○ test {I | Set.EqOn (val w') (fun i ↦ bul (val w i) (val x i)) I} ○ distW w' D
 
 /-- A split tells its assignments apart by the referent it splits. -/
 theorem injOn_val_split : Set.InjOn (val u) (split u {k}) := by
@@ -290,11 +289,11 @@ theorem injOn_val_split : Set.InjOn (val u) (split u {k}) := by
 
 /-- An atomic plural under *want* alone is contradictory ((115), (116)), since the attitude tells
 the assignments of its complement apart by their worlds. -/
-theorem not_mem_dom_want_atomicPlural (hw'y : w' ≠ y) (hC : C ⊆ (uniqueAt w' y)ᶜ) :
+theorem notMem_dom_want_atomicPlural (hw'y : w' ≠ y) (hC : C ⊆ (uniqueAt w' y)ᶜ) :
     {k} ∉ (want w w' x bul (intro y ○ test C ○ D)).dom := by
   rintro ⟨out, _, ⟨_, hK, rfl, -⟩, hD⟩
   obtain ⟨e, rfl⟩ := singleton_mem_intro_iff.1 hK
-  exact not_mem_dom_intro_test_of_injOn hw'y injOn_val_split hC ⟨out, mem_distW.1 hD⟩
+  exact notMem_dom_intro_test_of_injOn hw'y injOn_val_split hC ⟨out, mem_distW.1 hD⟩
 
 /-- With a flat complement *want* is Hintikka's, holding of a state exactly when the complement
 holds at every world compatible with each experiencer's wishes. -/
@@ -307,8 +306,9 @@ theorem mem_dom_want_test_iff (hxw' : x ≠ w') (hww' : w ≠ w') {Q : Set S} :
   · rintro ⟨out, _, ⟨_, ⟨f, hf, rfl⟩, rfl, hT⟩, hD⟩
     have hfg (j) (hj : j ∈ J) : f j = g j := by
       obtain ⟨e, he⟩ := hf j hj
-      have := hT (f j) ⟨j, hj, rfl⟩
-      rw [he, val_extend_self, val_extend_of_ne _ _ _ _ hww', val_extend_of_ne _ _ _ _ hxw'] at this
+      have := hT ⟨j, hj, rfl⟩
+      simp only [he, val_extend_self, val_extend_of_ne _ _ _ _ hww',
+        val_extend_of_ne _ _ _ _ hxw'] at this
       rw [he, this]
     obtain ⟨-, hQ⟩ := mem_test_iff_left.1 (mem_distW.1 hD)
     intro j hj v hv
@@ -318,7 +318,7 @@ theorem mem_dom_want_test_iff (hxw' : x ≠ w') (hww' : w ≠ w') {Q : Set S} :
     refine ⟨_, _, ⟨_, ⟨g, fun j _ ↦ ⟨_, rfl⟩, rfl⟩, rfl, ?_⟩, mem_distW.2
       (mem_test_iff_left.2 ⟨rfl, fun z hz ↦ ?_⟩)⟩
     · rintro _ ⟨j, -, rfl⟩
-      rw [hg, val_extend_of_ne _ _ _ _ hww', val_extend_of_ne _ _ _ _ hxw']
+      simp [g, val_extend_self, val_extend_of_ne _ _ _ _ hww', val_extend_of_ne _ _ _ _ hxw']
     · obtain ⟨_, ⟨j, hj, rfl⟩, v, hv, rfl⟩ := mem_split.1 hz
       rw [hg] at hv
       simpa [g, extend_idem] using h j hj v hv
@@ -347,11 +347,11 @@ def wide (M : IModel E) (P : E → Prop) (d : Update (Set S) → Update (Set S))
 
 /-- Without a weakly distributive licensor an atomic plural takes no wide scope over *want*
 ((117)–(121)), so the wide-scope reading of *Miles wants to meet policemen* is contradictory. -/
-theorem not_mem_dom_wide_atomicPlural (hwy : w ≠ y) (M : IModel E) (P : E → Prop) :
+theorem notMem_dom_wide_atomicPlural (hwy : w ≠ y) (M : IModel E) (P : E → Prop) :
     {i} ∉ (wide w w' x y M P id (atomic y ∩ (uniqueAt w y)ᶜ)).dom := by
   rw [wide, singleton_mem_dom_intro_comp_iff]
   rintro ⟨s, -, h⟩
-  exact not_mem_dom_intro_test_singleton hwy (fun _ hJ ↦ hJ.2.2) h
+  exact notMem_dom_intro_test_singleton hwy (fun _ hJ ↦ hJ.2.2) h
 
 /-- On the wide-scope dependent plural reading (133), (134) of *All the boys want to meet
 policemen*, every atomic part `a` of the subject has an atomic policeman `b a` whom it meets at
@@ -376,7 +376,7 @@ theorem wideScope_iff (hxy : x ≠ y) (hwx : w ≠ x) (hwy : w ≠ y) (hxw' : x 
     rintro _ ⟨_, ⟨a, -, rfl⟩, rfl⟩ _ ⟨_, ⟨a', -, rfl⟩, rfl⟩
     simp [val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx]
   simp only [Set.mem_inter_iff, Set.mem_compl_iff, mem_uniqueAt_iff_of_subsingleton hw, unique,
-    lex₂, atomic, Set.mem_powerset_iff, Set.mem_ofPred_eq, Set.image_image, Set.forall_mem_image,
+    lex₂, atomic, Set.mem_ofPred_eq, Set.image_image, Set.forall_mem_image,
     Set.image_nonempty, Set.subset_def, val_extend_self,
     val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx, val_extend_of_ne _ _ _ _ hxy,
     val_extend_of_ne _ _ _ _ hxw', val_extend_of_ne _ _ _ _ hyw']
@@ -430,7 +430,7 @@ theorem partee :
         Dref.subj Dref.obj M (· = M.boys) (distW Dref.subj)
           (atomic Dref.obj ∩ (uniqueAt Dref.world Dref.obj)ᶜ)).dom) := by
   refine ⟨iff_of_true (by decide) ⟨model, fun _ ↦ ∅, ?_⟩,
-    iff_of_false (by decide) fun ⟨M, i, h⟩ ↦ not_mem_dom_wide_atomicPlural (by decide) M _ h,
+    iff_of_false (by decide) fun ⟨M, i, h⟩ ↦ notMem_dom_wide_atomicPlural (by decide) M _ h,
     iff_of_true (by decide) ⟨model, fun _ ↦ ∅, ?_⟩⟩
   · rw [wide, singleton_mem_dom_intro_comp_iff]
     refine ⟨{3}, by simp [singleton_mem_lex_iff, model], ?_⟩

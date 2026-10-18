@@ -21,7 +21,8 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
 ## Main definitions
 
 * `Minor2022.intro`: dref introduction (60), the strict lift of random assignment.
-* `Minor2022.atomic`, `Minor2022.unique`, `Minor2022.cardinal`: the conditions (75), (77) and (78).
+* `Minor2022.atomic`, `Minor2022.unique`, `Minor2022.cardinal`: the conditions (75), (77) and (78),
+  each a property of the values of a dref across the state.
 * `Minor2022.split`, `Minor2022.dist`, `Minor2022.distW`, `Minor2022.distS`: the split (90), the
   distributivity operator (94), and weak and strong distributivity (93).
 * `Minor2022.sentence`: a subject over a distributivity operator over a verb and its object.
@@ -32,6 +33,8 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
   assignment where (60) cannot (fn. 28).
 * `Minor2022.mem_atomic_inter_unique_iff`: the singular is atomicity of the sum of the values
   (§5.1).
+* `Minor2022.acrossModels_ssubset_iff`: strict inclusion across models is Generalized Strength
+  (89), the pointwise order on meanings.
 * `Minor2022.exh_vp`: Exh with Generalized Strength (89) negates the singular alternative (115).
 * `Minor2022.split_split`, `Minor2022.distW_distW`, `Minor2022.distW_distS`,
   `Minor2022.distS_distW`: the idempotence (92) and the stacking equivalences (98a), (98c), (98d).
@@ -118,13 +121,16 @@ theorem singleton_mem_cumul_randomAssign_pair {x y : E} (hxy : x ≠ y) :
 
 /-! ### Lexical relations (§4.4) -/
 
-/-- A lexical relation `R{u}` (63) holds of a nonempty state when it holds of the value of `u` at
-every assignment. -/
-def lex (P : E → Prop) (u : R) : Condition (Set S) := {I | I.Nonempty ∧ ∀ i ∈ I, P (val u i)}
+/-- A lexical relation `R{u}` (63) holds of a state when `u` has values there and they satisfy
+it. -/
+def lex (P : E → Prop) (u : R) : Condition (Set S) :=
+  {I | (val u '' I).Nonempty ∧ val u '' I ⊆ {x | P x}}
 
-/-- A two-place lexical relation `R{u, u'}` (63). -/
+/-- A two-place lexical relation `R{u, u'}` (63) holds of a state when the pairs of values of `u`
+and `u'` exist and satisfy it. -/
 def lex₂ (P : E → E → Prop) (u u' : R) : Condition (Set S) :=
-  {I | I.Nonempty ∧ ∀ i ∈ I, P (val u i) (val u' i)}
+  {I | ((fun i ↦ (val u i, val u' i)) '' I).Nonempty ∧
+    (fun i ↦ (val u i, val u' i)) '' I ⊆ {p | P p.1 p.2}}
 
 /-! ### The distributivity operator (94) -/
 
@@ -168,15 +174,27 @@ failing in some. -/
 def acrossModels {M : Type*} (D : M → Update (Set S)) : Set (M × (Set S × Set S)) :=
   {w | w.2 ∈ D w.1}
 
-/-- Exh with Generalized Strength, against an alternative that adds the test `C` and is stronger
-in some model, adds the negated test. -/
+theorem acrossModels_subset_iff {M : Type*} {D D' : M → Update (Set S)} :
+    acrossModels D ⊆ acrossModels D' ↔ D ≤ D' :=
+  ⟨fun h m p hp ↦ h (a := (m, p)) hp, fun h w hw ↦ h w.1 hw⟩
+
+/-- Strict inclusion across models is Generalized Strength (89), the pointwise order on meanings
+as functions of the model. -/
+theorem acrossModels_ssubset_iff {M : Type*} {D D' : M → Update (Set S)} :
+    acrossModels D ⊂ acrossModels D' ↔ D < D' := by
+  rw [Set.ssubset_def, acrossModels_subset_iff, acrossModels_subset_iff, lt_iff_le_not_ge]
+
+/-- Adding a test that fails in some model gives a stronger meaning. -/
+theorem comp_test_lt {M : Type*} {D : M → Update (Set S)} {C : Condition (Set S)} (m : M)
+    (h : ¬ D m ⊆ D m ○ test C) : (fun m ↦ D m ○ test C) < D :=
+  lt_of_le_not_ge (fun _ _ hp ↦ (mem_comp_test.1 hp).1) fun h' ↦ h (h' m)
+
+/-- Exh against a stronger alternative that adds the test `C` adds the negated test. -/
 theorem exh_acrossModels_comp_test {M : Type*} {D : M → Update (Set S)} {C : Condition (Set S)}
-    (h : ∃ m, ¬ D m ⊆ D m ○ test C) :
+    (h : (fun m ↦ D m ○ test C) < D) :
     Exhaustification.exh {acrossModels fun m ↦ D m ○ test C} (acrossModels D) =
       acrossModels fun m ↦ D m ○ test Cᶜ := by
-  have hns : ¬ acrossModels D ⊆ acrossModels fun m ↦ D m ○ test C := by
-    obtain ⟨m, hm⟩ := h
-    exact fun hs ↦ hm fun p hp ↦ hs (a := (m, p)) hp
+  have hns := (acrossModels_ssubset_iff.2 h).2
   ext ⟨m, I, J⟩
   simp only [Exhaustification.mem_exh, Set.mem_singleton_iff, forall_eq, acrossModels,
     Set.mem_ofPred_eq, mem_comp_test, Set.mem_compl_iff]
@@ -245,12 +263,13 @@ def unique (u : R) : Condition (Set S) := {I | (val u '' I).Subsingleton}
 
 variable [PartialOrder E]
 
-/-- `atom{u}` (75a) holds when every value of `u` is an atom. -/
-def atomic (u : R) : Condition (Set S) := 𝒫 {i | Atom (val u i)}
+/-- `atom{u}` (75a) holds when the values of `u` are atoms. -/
+def atomic (u : R) : Condition (Set S) := {I | val u '' I ⊆ {a | Atom a}}
 
-/-- A cardinality condition holds when the number of atoms of every value of `u` satisfies `p`,
+/-- A cardinality condition holds when the number of atoms of each value of `u` satisfies `p`,
 which is `= n` for the numeral `n` (77) and `> 1` for *several* (78). -/
-def cardinal (p : ℕ → Prop) (u : R) : Condition (Set S) := 𝒫 {i | p (atomCount E (val u i))}
+def cardinal (p : ℕ → Prop) (u : R) : Condition (Set S) :=
+  {I | val u '' I ⊆ {x | p (atomCount E x)}}
 
 /-- An exhaustified bare plural (115) requires the values of `u` not to be atomic and unique,
 negating the singular. -/
@@ -262,14 +281,13 @@ theorem mem_atomic_inter_unique_iff (hI : I.Nonempty) (hu : ∀ i ∈ I, ¬ IsBo
     I ∈ atomic u ∩ unique u ↔ ∃ a, Atom a ∧ IsLUB (val u '' I) a := by
   refine ⟨fun ⟨hA, hU⟩ ↦ ?_, fun ⟨a, ha, hlub⟩ ↦ ?_⟩
   · obtain ⟨i, hi⟩ := hI
-    refine ⟨val u i, hA hi, ?_⟩
+    refine ⟨val u i, hA (Set.mem_image_of_mem _ hi), ?_⟩
     rw [hU.eq_singleton_of_mem (Set.mem_image_of_mem _ hi)]
     exact isLUB_singleton
-  · have h (i) (hi : i ∈ I) : val u i = a :=
-      ha.eq (hlub.1 (Set.mem_image_of_mem _ hi)) (hu i hi)
-    refine ⟨fun i hi ↦ (show Atom (val u i) by rw [h i hi]; exact ha), ?_⟩
-    rintro _ ⟨i, hi, rfl⟩ _ ⟨j, hj, rfl⟩
-    rw [h i hi, h j hj]
+  · have h : val u '' I ⊆ {a} := by
+      rintro _ ⟨i, hi, rfl⟩
+      exact ha.eq (hlub.1 (Set.mem_image_of_mem _ hi)) (hu i hi)
+    exact ⟨h.trans (Set.singleton_subset_iff.2 ha), Set.subsingleton_singleton.anti h⟩
 
 /-- On a single assignment uniqueness holds, and the singular is atomicity. -/
 theorem singleton_mem_atomic_inter_unique_iff : {i} ∈ atomic u ∩ unique u ↔ Atom (val u i) := by
@@ -282,10 +300,9 @@ theorem exh_vp {y : E} (hy : ¬ Atom y) (i : S) :
     Exhaustification.exh {acrossModels fun M : Model E ↦ vp u u' M ○ test (atomic u' ∩ unique u')}
       (acrossModels fun M : Model E ↦ vp u u' M) =
         acrossModels fun M : Model E ↦ vp u u' M ○ test (bare (S := S) u') := by
-  refine exh_acrossModels_comp_test ⟨⟨fun _ ↦ True, fun _ _ ↦ True⟩, fun h ↦ hy ?_⟩
+  refine exh_acrossModels_comp_test (comp_test_lt ⟨fun _ ↦ True, fun _ _ ↦ True⟩ fun h ↦ hy ?_)
   have hp : ({i}, {extend i u' y}) ∈ vp u u' ⟨fun _ ↦ True, fun _ _ ↦ True⟩ :=
-    ⟨_, singleton_mem_intro_iff.2 ⟨y, rfl⟩, rfl, ⟨Set.singleton_nonempty _, fun _ _ ↦ trivial⟩,
-      Set.singleton_nonempty _, fun _ _ ↦ trivial⟩
+    ⟨_, singleton_mem_intro_iff.2 ⟨y, rfl⟩, rfl, by simp [lex, lex₂]⟩
   have := (mem_comp_test.1 (h hp)).2.1
   simpa [atomic, val_extend_self] using this
 
@@ -306,6 +323,11 @@ theorem atom_of_mem_split {j : S} (h : j ∈ split u I) : Atom (val u j) := by
   obtain ⟨_, -, a, ha, rfl⟩ := mem_split.1 h
   rw [val_extend_self]
   exact ha.1
+
+/-- The values of the split of an assignment are the atomic parts of its value. -/
+theorem image_val_split_singleton : val u '' split u {i} = atomsBelow (val u i) := by
+  rw [split_singleton, Set.image_image]
+  simp [val_extend_self]
 
 theorem split_singleton_of_atom (h : Atom (val u i)) : split u {i} = {i} := by
   rw [split_singleton, atomsBelow_of_atom h, Set.image_singleton, extend_eq_self]
@@ -362,12 +384,9 @@ theorem singleton_mem_dom_distS_iff :
 global atomicity that rules out a singular quantifier distributing weakly (§6.4.3). -/
 theorem singleton_mem_dom_distW_test_iff :
     {k} ∈ (distW u (test (atomic u ∩ unique u))).dom ↔ (atomsBelow (val u k)).Subsingleton := by
-  have hval : val u '' split u {k} = atomsBelow (val u k) := by
-    rw [split_singleton, Set.image_image]
-    simp [val_extend_self]
-  simp only [mem_dom, mem_distW, mem_test_iff_left, exists_eq_left', Set.mem_inter_iff, unique,
-    Set.mem_ofPred_eq, hval]
-  exact ⟨And.right, fun h ↦ ⟨fun j hj ↦ atom_of_mem_split hj, h⟩⟩
+  simp only [mem_dom, mem_distW, mem_test_iff_left, exists_eq_left', Set.mem_inter_iff, atomic,
+    unique, Set.mem_ofPred_eq, image_val_split_singleton]
+  exact ⟨And.right, fun h ↦ ⟨fun _ ha ↦ ha.1, h⟩⟩
 
 /-- Under strong distributivity it requires only an atomic part. -/
 theorem singleton_mem_dom_distS_test_iff :
@@ -400,7 +419,7 @@ theorem singleton_mem_dom_distW_iff (huu' : u ≠ u') :
         (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ C := by
   rw [vp, singleton_mem_dom_distW_intro_iff]
   simp only [lex, lex₂, Set.mem_inter_iff, Set.mem_ofPred_eq, dom_test, Set.image_nonempty,
-    Set.forall_mem_image, val_extend_self, val_extend_of_ne _ _ _ _ huu']
+    Set.subset_def, Set.forall_mem_image, val_extend_self, val_extend_of_ne _ _ _ _ huu']
   exact exists_congr fun b ↦ ⟨fun ⟨⟨⟨hne, hn⟩, _, hv⟩, hC⟩ ↦ ⟨hne, fun a ha ↦ ⟨hn ha, hv ha⟩, hC⟩,
     fun ⟨hne, h, hC⟩ ↦ ⟨⟨⟨hne, fun a ha ↦ (h a ha).1⟩, hne, fun a ha ↦ (h a ha).2⟩, hC⟩⟩
 
@@ -420,7 +439,7 @@ theorem cumulative_cardinal_iff (huu' : u ≠ u') (p : ℕ → Prop) :
     {i} ∈ (sentence u u' P id M (cardinal p u')).dom ↔
       ∃ x, P x ∧ ∃ y, M.noun y ∧ M.verb x y ∧ p (atomCount E y) := by
   rw [singleton_mem_dom_sentence_iff]
-  simp only [id, singleton_mem_dom_vp_iff huu', val_extend_self, cardinal, Set.mem_powerset_iff,
+  simp only [id, singleton_mem_dom_vp_iff huu', val_extend_self, cardinal, Set.image_singleton,
     Set.singleton_subset_iff, Set.mem_ofPred_eq]
 
 /-- On the dependent plural reading (129) of *Three students all carried boxes*, every atomic part
@@ -434,8 +453,8 @@ theorem dependent_iff (huu' : u ≠ u') :
   refine exists_congr fun x ↦ and_congr_right fun _ ↦ ?_
   rw [singleton_mem_dom_distW_iff huu', val_extend_self]
   refine exists_congr fun b ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦ ?_
-  simp only [bare, atomic, unique, Set.mem_compl_iff, Set.mem_inter_iff, Set.mem_powerset_iff,
-    Set.mem_ofPred_eq, Set.image_image, Set.image_subset_iff, val_extend_self]
+  simp only [bare, atomic, unique, Set.mem_compl_iff, Set.mem_inter_iff, Set.mem_ofPred_eq,
+    Set.image_image, Set.image_subset_iff, val_extend_self]
   simp [Set.subset_def, val_extend_self]
 
 /-- Under weak distributivity a cardinality condition counts at every atomic part of the
@@ -447,7 +466,7 @@ theorem distW_cardinal_iff (huu' : u ≠ u') (p : ℕ → Prop) :
   rw [singleton_mem_dom_sentence_iff]
   refine exists_congr fun x ↦ and_congr_right fun _ ↦ ?_
   rw [singleton_mem_dom_distW_iff huu', val_extend_self]
-  simp only [cardinal, Set.mem_powerset_iff, Set.image_subset_iff]
+  simp only [cardinal, Set.mem_ofPred_eq, Set.image_subset_iff]
   constructor
   · rintro ⟨b, hne, h, hp⟩
     exact ⟨hne, fun a ha ↦ ⟨b a, (h a ha).1, (h a ha).2, by simpa [val_extend_self] using hp ha⟩⟩
