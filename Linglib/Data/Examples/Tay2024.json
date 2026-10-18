@@ -411,7 +411,7 @@
     "alternatives": [],
     "readings": [
       {"name": "the horse became tired", "judgment": "acceptable"},
-      {"name": "Zhangsan became tired", "judgment": "marginal"}
+      {"name": "Zhangsan became tired", "judgment": "variable"}
     ],
     "paperFeatures": [["externalArgument", "agent"]],
     "comment": "The second reading is marked % for speaker variation; on both readings Tay analyzes the postverbal phrase as an argument of V2, a Locatum on the second.",

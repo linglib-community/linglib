@@ -901,7 +901,7 @@
     ],
     "translation": "What did the boy who I saw yesterday say?",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "variable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -912,9 +912,7 @@
       ["internalCase", "GEN"],
       ["test", "position"],
       ["position", "afterArgument"],
-      ["function", "subject"],
-      ["alsoJudged", "ungrammatical"],
-      ["mark", "%"]
+      ["function", "subject"]
     ],
     "comment": "An ICA relative after a main-clause argument (the object mezˈə 'what'): some speakers accept it, others judge it degraded.",
     "verified": "page-image"
@@ -932,7 +930,7 @@
     ],
     "translation": "Katja threw away the cabinet where I have put the photos.",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "variable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -943,9 +941,7 @@
       ["internalCase", "DAT"],
       ["test", "position"],
       ["position", "afterArgument"],
-      ["function", "object"],
-      ["alsoJudged", "ungrammatical"],
-      ["mark", "%"]
+      ["function", "object"]
     ],
     "comment": "An ICA relative after the main-clause subject: some speakers accept it, others judge it degraded.",
     "verified": "page-image"
@@ -2756,7 +2752,7 @@
     ],
     "translation": "Take care of your heart, which cannot calm down.",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "variable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2765,9 +2761,7 @@
       ["externalCase", "GEN"],
       ["internalCase", "NOM"],
       ["diagnostic", "idiom"],
-      ["site", "rc"],
-      ["alsoJudged", "ungrammatical"],
-      ["mark", "%"]
+      ["site", "rc"]
     ],
     "comment": "With an external-genitive head the RC-split idiom is rejected by some speakers and accepted by others. The book glosses van-ft-k IMP.3SG.O.3SG.S although the addressee is the subject; kept as printed.",
     "verified": "page-image"
@@ -2867,7 +2861,7 @@
     ],
     "translation": "His heart, which Pasha takes care of, is not calm.",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "variable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2877,9 +2871,7 @@
       ["externalCase", "NOM"],
       ["internalCase", "GEN"],
       ["diagnostic", "idiom"],
-      ["site", "matrix"],
-      ["alsoJudged", "ungrammatical"],
-      ["mark", "%"]
+      ["site", "matrix"]
     ],
     "comment": "With an ICA head the matrix idiom sˈedˈijəc af ozaj is accepted by some speakers and rejected by others.",
     "verified": "page-image"
@@ -4343,13 +4335,12 @@
     "alternatives": [],
     "readings": [
       {"name": "disjoint", "judgment": "acceptable"},
-      {"name": "coreferent", "judgment": "acceptable"}
+      {"name": "coreferent", "judgment": "variable"}
     ],
     "paperFeatures": [
       ["section", "4.3.5"],
       ["rcType", "none"],
-      ["diagnostic", "baseline"],
-      ["readingMark", "coreferent %"]
+      ["diagnostic", "baseline"]
     ],
     "comment": "Long-distance wh-movement obviates Condition C for some speakers: the coreferent index is marked % (son_i/%j ... Puškin-ənˈ_j). The book marks the gap with an underscore; omitted here.",
     "verified": "page-image"
@@ -4613,7 +4604,7 @@
     ],
     "translation": "Katja threw away the cupboard where I put the photos.",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "variable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -4626,9 +4617,7 @@
       ["relPronounCase", "DAT"],
       ["test", "position"],
       ["position", "afterArgument"],
-      ["function", "object"],
-      ["alsoJudged", "ungrammatical"],
-      ["mark", "%"]
+      ["function", "object"]
     ],
     "comment": "A relative with ICA after a main-clause argument is accepted only by some speakers (defective intervention for the others). Repeats ch. 3 (42). The book's translation reads 'cubboard'; read 'cupboard'.",
     "verified": "page-image"

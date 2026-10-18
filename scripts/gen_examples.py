@@ -32,7 +32,7 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
     "glossedTokens": [["Every", "every"], ...],  // pairs as 2-arrays
     "translation": "...",
     "context": "",
-    "judgment": "acceptable",                // one of the 5 cases
+    "judgment": "acceptable",                // one of the 6 cases
     "alternatives": [{"form": "...", "judgment": "unacceptable"}],
     "readings":     [{"name": "strong", "judgment": "acceptable"},
                      {"name": "weak",   "judgment": "acceptable"}],
@@ -83,7 +83,7 @@ def known_languages() -> set[str]:
 KNOWN_LANGUAGES = known_languages()
 
 VALID_JUDGMENTS = {
-    "acceptable", "marginal", "questionable", "unacceptable", "ungrammatical",
+    "acceptable", "marginal", "questionable", "unacceptable", "ungrammatical", "variable",
 }
 
 

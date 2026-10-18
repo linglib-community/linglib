@@ -337,7 +337,7 @@ def ex_330 : Datum :=
     context := "A hybrid resultative, commonly described as a subject-oriented transitive resultative."
     judgment := .acceptable
     alternatives := []
-    readings := [("the horse became tired", .acceptable), ("Zhangsan became tired", .marginal)]
+    readings := [("the horse became tired", .acceptable), ("Zhangsan became tired", .variable)]
     paperFeatures := [("externalArgument", "agent")] }
 
 def ex_668 : Datum :=

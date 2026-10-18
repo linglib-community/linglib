@@ -209,7 +209,7 @@ structure Row where
 
 /-- Condition C rows are judged on the coreferent reading, the others on the sentence. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
-  guard (ex.feature? "mark" ≠ some "%")
+  guard (ex.judgment ≠ .variable)
   guard (ex.feature? "section" ∈ [some "4.3.1", some "4.3.2", some "4.3.3", some "4.3.4",
     some "4.3.5"])
   let headCase ← ex.parse? "rcType" [("ICA", HeadCase.internal), ("external", .external)]
@@ -220,7 +220,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let judgment ← match diagnostic with
     | .conditionC => ex.readings.lookup "coreferent"
     | _ => some ex.judgment
-  pure ⟨headCase, diagnostic, site, judgment == .acceptable⟩
+  pure ⟨headCase, diagnostic, site, decide (.variable ≤ judgment)⟩
 
 /-- The structural connectivity rows of chapter 4. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum

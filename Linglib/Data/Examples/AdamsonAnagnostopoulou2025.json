@@ -265,14 +265,14 @@
     "glossedTokens": [],
     "translation": "The skirt and the T-shirt are dirty.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "variable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["conjuncts", "inanimate F + inanimate F"],
       ["resolved", "N"]
     ],
-    "comment": "Accepted by some speakers: uniform inanimates percolating interpretable CLASS. The paper marks (43) with % (speaker variation), not a judgment mark; the row keeps its value.",
+    "comment": "Accepted by some speakers: uniform inanimates percolating interpretable CLASS.",
     "verified": "page-image"
   },
   {

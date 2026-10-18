@@ -194,13 +194,13 @@
     "glossedTokens": [],
     "translation": "He entrusted me to you.",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "variable",
     "paperFeatures": [
       ["io", "2"],
       ["do", "1"],
       ["pattern", "weak"]
     ],
-    "comment": "Accepted by the weak-PCC variety of Italian; ambiguous between the two readings, so clitic order is templatic. The paper marks the example % (speaker variation).",
+    "comment": "Accepted by the weak-PCC variety of Italian; ambiguous between the two readings, so clitic order is templatic.",
     "verified": "page-image"
   },
   {

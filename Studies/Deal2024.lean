@@ -343,12 +343,13 @@ def grammarsOf (e : Datum) : List Grammar :=
   | some "strongOrWeak" => [strong, weak]
   | _ => []
 
-/-- Every clitic combination of the rows is grammatical exactly when the language's grammar
-licenses it, the probe meeting the indirect object first in the reverse-PCC rows of Shapsug
-Adyghe and of Slovenian with the direct object clitic first. -/
+/-- Every clitic combination of the rows is accepted, by every speaker or, where speakers differ,
+by those of the row's variety, exactly when the language's grammar licenses it, the probe meeting
+the indirect object first in the reverse-PCC rows of Shapsug Adyghe and of Slovenian with the
+direct object clitic first. -/
 theorem rows :
     ∀ e ∈ Examples.all, ∀ g ∈ grammarsOf e, ∀ io ∈ personOf e "io", ∀ do_ ∈ personOf e "do",
-      (e.judgment = .acceptable ↔
+      (.variable ≤ e.judgment ↔
         if e.feature? "preference" = some "io" then Licit g ⟨do_, io⟩ else Licit g ⟨io, do_⟩) := by
   decide +kernel
 

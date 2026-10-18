@@ -969,7 +969,7 @@
     ],
     "translation": "She doesn’t know it was raining yesterday.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "variable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -984,10 +984,6 @@
       [
         "diagnostic",
         "edge"
-      ],
-      [
-        "diacritic",
-        "%"
       ]
     ],
     "comment": "Marked %: consultants did on rare occasions accept an RE with ‘know’, and once produced one.",
