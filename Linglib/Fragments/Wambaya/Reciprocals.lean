@@ -7,12 +7,12 @@ public import Linglib.Syntax.Reciprocal
 
 Wambaya marks reflexivity and reciprocity with the clitic *-ngg-* (glossed RR) in the object
 position of the second-position auxiliary: *Alag-bulu wurlu-ngg-a nyurrunyurru* 'The two children
-are chasing each other', an example of Nordlinger's from her grammar. Though it looks like a
-reflexive or reciprocal object pronoun such as Warlpiri *-nyanu*, Evans, Gaby and Nordlinger show
-that the clause is intransitive: the subject noun phrase is nominative rather than ergative, a
-controlled complement takes the subject-control form, and *-ngg-* also occurs with
-semi-transitive verbs, whose objects the auxiliary never cross-references. It is a
-valency-reducing marker of the predicate, not an argument.
+are chasing each other', example (5-25) of Nordlinger's grammar. Nordlinger calls it a bound
+pronoun, and it looks like a reflexive or reciprocal object pronoun such as Warlpiri *-nyanu*,
+but Evans, Gaby and Nordlinger show (§3.2.2) that the clause is intransitive: the subject noun
+phrase is nominative rather than ergative, a controlled complement takes the subject-control
+form, and *-ngg-* also occurs with semi-transitive verbs, whose indirect objects the auxiliary
+never cross-references. It is a valency-reducing marker of the predicate, not an argument.
 
 ## References
 
@@ -29,7 +29,8 @@ namespace Wambaya.Reciprocals
 open Reciprocal
 
 /-- The clitic *-ngg-* is a reciprocal marker, reflexive as well; it marks the predicate and
-fills no object slot. Its surface allomorphs vary with the paradigm of the auxiliary. -/
+fills no object slot. A tense suffix follows it, presumably replacing the final vowel of an
+underlying *-ngga*, the Gudanji form. -/
 def rr : Marker :=
   { morphs := [.suff "ngg"], strategy := .recipClitic }
 
