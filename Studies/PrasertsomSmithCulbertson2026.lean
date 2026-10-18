@@ -49,7 +49,7 @@ predictive-animacy ones through `mirror_images`.
 open InformationTheory MeasureTheory ProbabilityTheory Real
 open scoped ProbabilityTheory
 
-namespace PrasertsonSmithCulbertson2026
+namespace PrasertsomSmithCulbertson2026
 
 /-! ### The typological premise (§1) -/
 
@@ -259,4 +259,4 @@ theorem predictiveColour_appendages :
   norm_num
   linarith [negMulLog_half_pos]
 
-end PrasertsonSmithCulbertson2026
+end PrasertsomSmithCulbertson2026
