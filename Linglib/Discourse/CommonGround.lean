@@ -5,37 +5,18 @@ public import Mathlib.Order.Filter.Ker
 /-!
 # Common ground
 
-The common ground of a conversation is the **filter** of propositions the interlocutors
-mutually accept ([stalnaker-1978], [stalnaker-2002]; independently
-[karttunen-1974-presupposition]): acceptance is closed under entailment
-and finite conjunction and contains the trivial proposition, which are exactly the filter
-axioms (in modal-logic terms: "every augmented model is a filter", [chellas-1980] §7.3;
-in belief-revision terms, a deductively closed belief set, [gardenfors-1988]). Stalnaker's
-**context set** — the worlds compatible with everything accepted — is the kernel
-`Filter.ker`, [chellas-1980]'s smallest proposition `⋂ Nα`, and a bare context set
-`cs : Set W` is the principal common ground `𝓟 cs`, with acceptance `p ∈ 𝓟 cs ↔ cs ⊆ p`
-(`Filter.mem_principal`); `Filter.giPrincipalKer` is the two-sidedness of this duality, and
-the principal (augmented) case is exactly the Kripke case ([chellas-1980] Theorem 7.9).
-**Assertion** of `φ` is `· ⊓ 𝓟 φ` ([stalnaker-1978]):
-intersective update of the context set is `Filter.ker_inf`, and commutativity and
-idempotence of assertion are lattice laws. A **consistent** context is a `Filter.NeBot`;
-the absurd context is `⊥`.
+The common ground of a conversation is the set of propositions the interlocutors mutually
+accept, as Stalnaker and, independently, Karttunen describe it. Acceptance is closed under
+entailment and finite conjunction and contains the trivial proposition, so the common ground is
+a filter on worlds, like Chellas's augmented models and Gärdenfors's deductively closed belief
+sets. Stalnaker's context set, the worlds compatible with everything accepted, is its kernel
+`Filter.ker`, and a bare context set `cs` is the principal common ground `𝓟 cs`. Asserting `φ`
+takes a common ground `c` to `c ⊓ 𝓟 φ`, so a history of assertions lands on the principal filter
+of their intersection in whatever order they are made, and a history that asserts more leaves a
+stronger common ground.
 
-`HasCommonGround` and `HasAssertion` connect richer discourse-state representations
-(commitment slates, gameboards, probabilistic states) to this projection.
-
-## Implementation notes
-
-The filter axioms are the body-of-information view of the common ground ([geurts-2024]'s
-survey) and deliberately carry no epistemology: whether what grounds them is iterated
-common belief ([stalnaker-2002]), common acceptance as a primitive ([stalnaker-2014]), or
-[lederman-2014]'s non-iterated minimal theory is stated separately, as `Filter.GroundedIn`
-in `Logic/Modal/Epistemic.lean` — the epistemology, and in particular closure of acceptance
-under conjunction (the filter's `inter_sets`, [lederman-2014] §2.C's contested axiom), is
-the disputed idealization in that debate, not a commitment every consumer inherits.
-Proposal-based ([farkas-bruce-2010]) and graded non-monotonic ([anderson-2021]) assertion
-models are deliberate non-instances of `HasAssertion`; see
-`FarkasBruce2010.assert_not_narrowing` and `Anderson2021.graded_update_keeps_false_world`.
+`HasCommonGround` and `HasAssertion` connect richer discourse states (commitment slates,
+gameboards, probabilistic states) to this projection.
 
 ## Main definitions
 
@@ -47,11 +28,36 @@ models are deliberate non-instances of `HasAssertion`; see
 ## Main results
 
 * `HasAssertion.contextSet_assert`: assertion intersects the context set by exactly the
-  asserted proposition ([stalnaker-1973] p. 455).
-* `HasAssertion.commonGround_play`: a played history lands on the principal filter of the
-  history's intersection ([stalnaker-1973] p. 450's duality map), so the projection is
-  permutation-invariant (`commonGround_play_perm`) — states may record assertion order,
-  but the common ground cannot.
+  asserted proposition.
+* `HasAssertion.commonGround_play`, `HasAssertion.commonGround_play_perm`: a history lands on
+  the principal filter of its intersection, whatever the order of its assertions.
+* `HasAssertion.antitone_commonGround_play`: along histories each asserting what the earlier
+  ones assert, the common ground only grows.
+
+## Implementation notes
+
+The filter axioms are the body-of-information view of the common ground that Geurts surveys,
+and they carry no epistemology. Whether what grounds them is Stalnaker's iterated common belief,
+his later common acceptance as a primitive, or Lederman's non-iterated minimal theory is stated
+separately, as `Filter.GroundedIn` in `Logic/Modal/Epistemic.lean`; closure of acceptance under
+conjunction, the filter's `inter_sets`, is the axiom Lederman contests. Farkas and Bruce's
+proposal-based assertion and Anderson's graded non-monotonic assertion are deliberate
+non-instances of `HasAssertion` (`FarkasBruce2010.assert_not_narrowing`,
+`Anderson2021.graded_update_keeps_false_world`).
+
+## References
+
+* [stalnaker-1973]
+* [stalnaker-1978]
+* [stalnaker-2002]
+* [stalnaker-2014]
+* [karttunen-1974-presupposition]
+* [chellas-1980]
+* [gardenfors-1988]
+* [geurts-2024]
+* [lederman-2014]
+* [farkas-bruce-2010]
+* [anderson-2021]
 -/
 
 @[expose] public section
@@ -62,7 +68,7 @@ variable {W : Type*}
 
 /-! ### Discourse states and their common ground -/
 
-/-- A discourse state projecting to a common ground: the filter of propositions the
+/-- A discourse state projects to a common ground, the filter of propositions the
 interlocutors mutually accept at that state. -/
 class HasCommonGround (S : Type*) (W : outParam Type*) where
   /-- The common ground of the state. -/
@@ -70,7 +76,8 @@ class HasCommonGround (S : Type*) (W : outParam Type*) where
 
 export HasCommonGround (commonGround)
 
-/-- The context set of a discourse state: the worlds compatible with everything accepted. -/
+/-- The context set of a discourse state is the set of worlds compatible with everything
+accepted. -/
 def HasCommonGround.contextSet {S : Type*} [HasCommonGround S W] (s : S) : Set W :=
   (commonGround s).ker
 
@@ -86,8 +93,8 @@ instance : HasCommonGround (Set W) W := ⟨principal⟩
 
 /-! ### Stalnakerian assertion -/
 
-/-- A discourse state with a Stalnakerian `assert`: the projected common ground grows by
-exactly the asserted proposition ([stalnaker-1978]). -/
+/-- A discourse state with a Stalnakerian `assert`, under which the projected common ground grows
+by exactly the asserted proposition ([stalnaker-1978]). -/
 class HasAssertion (S : Type*) (W : outParam Type*) extends HasCommonGround S W where
   /-- The initial dialogue state. -/
   initial : S
@@ -98,7 +105,7 @@ class HasAssertion (S : Type*) (W : outParam Type*) extends HasCommonGround S W 
   /-- Assertion adds exactly `φ` to the common ground. -/
   commonGround_assert : ∀ (s : S) (φ : Set W), commonGround (assert s φ) = commonGround s ⊓ 𝓟 φ
 
-/-- The regular model: a common ground asserted-into by `· ⊓ 𝓟 φ`. Every `HasAssertion`
+/-- In the regular model a common ground is asserted into by `· ⊓ 𝓟 φ`. Every `HasAssertion`
 state projects onto this flow. -/
 instance : HasAssertion (Filter W) W where
   initial := ⊤
@@ -163,29 +170,44 @@ def play (s : S) (h : List (Set W)) : S :=
 @[simp] theorem play_cons (s : S) (φ : Set W) (t : List (Set W)) :
     play s (φ :: t) = play (assert s φ) t := rfl
 
+@[simp] theorem play_append (s : S) (h₁ h₂ : List (Set W)) :
+    play s (h₁ ++ h₂) = play (play s h₁) h₂ :=
+  List.foldl_append
+
 /-- A played history adds the principal filter of the history's intersection. -/
 theorem commonGround_play (h : List (Set W)) (s : S) :
-    commonGround (play s h) = commonGround s ⊓ 𝓟 {w | ∀ p ∈ h, w ∈ p} := by
+    commonGround (play s h) = commonGround s ⊓ 𝓟 (⋂ p ∈ h, p) := by
   induction h generalizing s with
   | nil => simp
   | cons φ t ih =>
-    have h : φ ∩ {w | ∀ p ∈ t, w ∈ p} = {w | ∀ p ∈ φ :: t, w ∈ p} := by
-      ext w
-      simp
-    rw [play_cons, ih, commonGround_assert, inf_assoc, inf_principal, h]
+    rw [play_cons, ih, commonGround_assert, inf_assoc, inf_principal]
+    congr 2
+    ext
+    simp
 
-/-- From the initial state, a played history *is* its common ground: the free model of
+/-- From the initial state, a played history *is* its common ground, the free model of
 Stalnakerian assertion ([stalnaker-1973] p. 450). -/
 theorem commonGround_play_initial (h : List (Set W)) :
-    commonGround (play (initial : S) h) = 𝓟 {w | ∀ p ∈ h, w ∈ p} := by
+    commonGround (play (initial : S) h) = 𝓟 (⋂ p ∈ h, p) := by
   simp [commonGround_play]
 
-/-- Assertion order is irrelevant: permuted histories project to the same common ground.
-States may differ — frameworks can record order — but the projection cannot. -/
+/-- A history asserting everything another asserts leaves a common ground at least as strong. -/
+theorem commonGround_play_le_of_subset {h₁ h₂ : List (Set W)} (hs : h₁ ⊆ h₂) :
+    commonGround (play s h₂) ≤ commonGround (play s h₁) := by
+  simp only [commonGround_play]
+  exact inf_le_inf_left _
+    (principal_mono.2 (Set.subset_iInter₂ fun p hp ↦ Set.iInter₂_subset p (hs hp)))
+
+/-- Along a family of histories, each asserting everything the earlier ones do, the common
+ground only grows. -/
+theorem antitone_commonGround_play {ι : Type*} [Preorder ι] {h : ι → List (Set W)}
+    (hh : ∀ ⦃i j⦄, i ≤ j → h i ⊆ h j) : Antitone fun i ↦ commonGround (play s (h i)) :=
+  fun _ _ hij ↦ commonGround_play_le_of_subset s (hh hij)
+
+/-- Assertion order is irrelevant, so permuted histories project to the same common ground.
+States may differ, since frameworks can record order, but the projection cannot. -/
 theorem commonGround_play_perm {h₁ h₂ : List (Set W)} (p : h₁.Perm h₂) :
     commonGround (play (initial : S) h₁) = commonGround (play (initial : S) h₂) := by
-  simp only [commonGround_play_initial]
-  exact congrArg _ (Set.ext fun w => ⟨fun h q hq => h q (p.mem_iff.2 hq),
-    fun h q hq => h q (p.mem_iff.1 hq)⟩)
+  simp [commonGround_play_initial, p.mem_iff]
 
 end HasAssertion
