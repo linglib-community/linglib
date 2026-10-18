@@ -5,10 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
-public import Linglib.Core.Combinatorics.RootedTree.Conservation
-public import Mathlib.RingTheory.Bialgebra.Convolution
-public import Mathlib.RingTheory.HopfAlgebra.Convolution
+public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
+public import Linglib.Core.RingTheory.HopfAlgebra.Convolution
 
 /-!
 # The Connes–Kreimer Hopf algebra of nonplanar rooted trees
@@ -24,17 +22,22 @@ so it is determined by its values on trees. Summing over every admissible cut `(
 
   `S(T) = −Σ_{(F, T')} (Π_{t ∈ F} S(t)) · T'`.
 
+This is the Bogolyubov recursion of `ConnesKreimer.birkhoffMinus` for the identity character and
+the operator `P = -id`, so the antipode is defined as that negative part, and `S ⋆ id = 1` is the
+statement that at `P = -id` the negative part is a convolution inverse. With the antipode in hand,
+`φ₊ = φ₋ ⋆ φ` becomes the Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊` of a character.
+
 ## Main definitions
 
-* `ConnesKreimer.antipodeTreeN`: the antipode on a tree.
-* `ConnesKreimer.antipodeAlgHomN`: its multiplicative extension to forests.
+* `ConnesKreimer.antipodeAlgHomN`: the antipode, the negative part of the identity at `P = -id`.
 
 ## Main results
 
 * `ConnesKreimer.antipodeAlgHomN_convMul_id`, `ConnesKreimer.id_convMul_antipodeAlgHomN`:
   `S ⋆ id = 1 = id ⋆ S` in the convolution monoid of algebra endomorphisms.
 * The `HopfAlgebra R (ConnesKreimer R (UnorderedTree α))` instance, over any commutative ring.
-* `ConnesKreimer.antipode_ofTree`: the antipode on a tree is `antipodeTreeN`.
+* `ConnesKreimer.antipode_ofTree`: the inductive formula for the antipode on a tree.
+* `ConnesKreimer.birkhoffFactorization`: `φ = (φ₋ ∘ S) ⋆ φ₊` for a character `φ`.
 
 ## Implementation notes
 
@@ -49,14 +52,15 @@ the recursion `R(T) = −T − Σ_{F ≠ 0} F · R(T')` on the trunk; the two ag
 
 ## TODO
 
-* Derive the antipode from a general construction for connected graded bialgebras once one is
-  in mathlib (mathlib4#39849).
+* State the Bogolyubov recursion, and with it the antipode, for any connected graded bialgebra
+  once mathlib has one (mathlib4#39849).
 * Foissy's closed form `S(t) = Σ (−1)^(n_c + 1) W^c(t)` over the non-total cuts `c` of `t`
   ([foissy-introduction-hopf-algebras-trees] §1.3, Theorem 2).
 
 ## References
 
 * [connes-kreimer-1998]
+* [connes-kreimer-2000]
 * [foissy-introduction-hopf-algebras-trees]
 -/
 
@@ -68,35 +72,16 @@ namespace ConnesKreimer
 
 variable {R : Type*} [CommRing R] {α : Type*}
 
-/-- The antipode on a tree, summed over all cuts,
-`S(T) = −Σ_{(F, T') ∈ cutSummandsN T} (Π_{t ∈ F} S(t)) · T'`. -/
-noncomputable def antipodeTreeN (T : UnorderedTree α) : ConnesKreimer R (UnorderedTree α) :=
-  -((cutSummandsN T).attach.map fun p ↦
-    (p.1.1.attach.map fun t ↦ antipodeTreeN t.1).prod * ofTree p.1.2).sum
-termination_by T.numNodes
-decreasing_by exact cutSummandsN_crown_numNodes_lt p.2 t.2
-
-theorem antipodeTreeN_unfold (T : UnorderedTree α) :
-    antipodeTreeN (R := R) T =
-      -((cutSummandsN T).map fun p ↦ (p.1.map antipodeTreeN).prod * ofTree p.2).sum := by
-  rw [antipodeTreeN]
-  simp only [Multiset.attach_map_val' _ (antipodeTreeN (R := R))]
-  exact congrArg (fun s ↦ -s.sum) (Multiset.attach_map_val' _
-    fun p : Forest (UnorderedTree α) × UnorderedTree α ↦
-      (p.1.map (antipodeTreeN (R := R))).prod * ofTree p.2)
-
-/-- The antipode as an algebra map extends `antipodeTreeN` multiplicatively to forests. -/
+/-- The antipode, the Bogolyubov negative part of the identity character at `P = -id`. -/
 noncomputable def antipodeAlgHomN :
     ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree α) :=
-  aeval antipodeTreeN
+  birkhoffMinus LinearMap.id (-AddMonoidHom.id _)
 
-@[simp] theorem antipodeAlgHomN_apply_of' (F : Forest (UnorderedTree α)) :
-    antipodeAlgHomN (R := R) (of' F) = (F.map antipodeTreeN).prod :=
-  aeval_of' _ F
-
-@[simp] theorem antipodeAlgHomN_apply_ofTree (T : UnorderedTree α) :
-    antipodeAlgHomN (R := R) (ofTree T) = antipodeTreeN T :=
-  aeval_ofTree _ T
+/-- `S ⋆ id = 1`, the left inverse law of the negative part at `P = -id`. An input to the instance;
+afterwards this is `AlgHom.antipode_id_cancel`. -/
+theorem antipodeAlgHomN_convMul_id :
+    toConv (antipodeAlgHomN (R := R) (α := α)) * toConv (AlgHom.id R _) = 1 :=
+  birkhoffMinus_neg_id_convMul (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
 
 /-- The right antipode on a tree, recursing on the trunk of the nonempty cuts:
 `R(T) = −T − Σ_{(F, T'), F ≠ 0} F · R(T')`. -/
@@ -116,14 +101,6 @@ private theorem antipodeRightTreeN_unfold (T : UnorderedTree α) :
   rw [antipodeRightTreeN]
   exact congrArg (fun s ↦ -ofTree T - s.sum) (Multiset.attach_map_val' _
     fun p : Forest (UnorderedTree α) × UnorderedTree α ↦ of' p.1 * antipodeRightTreeN (R := R) p.2)
-
-/-- `S ⋆ id = 1`, since on a tree the summands of `(S ⊗ id) Δ T` are those of `−S(T)`. An input to
-the instance; afterwards this is `AlgHom.antipode_id_cancel`. -/
-theorem antipodeAlgHomN_convMul_id :
-    toConv (antipodeAlgHomN (R := R) (α := α)) * toConv (AlgHom.id R _) = 1 := by
-  refine ofConv_injective (algHom_ext_ofTree fun T ↦ ?_)
-  simp [AlgHom.convMul_apply, coalgebra_comul_apply, coalgebra_counit_apply, comulTreeN,
-    comulTreeNG, map_multiset_sum, Multiset.map_map, antipodeTreeN_unfold T]
 
 /-- `id ⋆ R = 1`, since the empty cut contributes `R(T)`, which cancels the rest. -/
 private theorem id_convMul_aeval_antipodeRightTreeN :
@@ -150,12 +127,32 @@ noncomputable instance : HopfAlgebra R (ConnesKreimer R (UnorderedTree α)) :=
     congr(toConv ($(antipodeAlgHomN_convMul_id (R := R) (α := α))).ofConv.toLinearMap)
     congr(toConv ($(id_convMul_antipodeAlgHomN (R := R) (α := α))).ofConv.toLinearMap)
 
-@[simp] theorem antipode_ofTree (T : UnorderedTree α) :
-    HopfAlgebra.antipode R (ofTree T) = antipodeTreeN (R := R) T :=
-  antipodeAlgHomN_apply_ofTree T
-
 theorem antipodeAlgHom_eq_antipodeAlgHomN :
     HopfAlgebra.antipodeAlgHom R (ConnesKreimer R (UnorderedTree α)) = antipodeAlgHomN :=
   rfl
+
+/-- The antipode on a tree, `S(T) = −Σ_{(F, T') ∈ cutSummandsN T} (Π_{t ∈ F} S(t)) · T'`. -/
+theorem antipode_ofTree (T : UnorderedTree α) :
+    HopfAlgebra.antipode R (ofTree T : ConnesKreimer R (UnorderedTree α)) =
+      -((cutSummandsN T).map fun p ↦
+        (p.1.map fun t ↦ HopfAlgebra.antipode R (ofTree t)).prod * ofTree p.2).sum := by
+  change antipodeAlgHomN (R := R) (ofTree T) = -((cutSummandsN T).map fun p ↦
+    (p.1.map fun t ↦ antipodeAlgHomN (ofTree t)).prod * ofTree p.2).sum
+  rw [antipodeAlgHomN, birkhoffMinus_apply_ofTree, birkhoffMinusTree_eq, birkhoffPrepTree]
+  simp only [birkhoffMinus_apply_ofTree, AddMonoidHom.neg_apply, AddMonoidHom.id_apply,
+    LinearMap.id_apply]
+
+/-! ### Birkhoff factorization through the antipode -/
+
+variable {ℛ : Type*} [CommSemiring ℛ] [Algebra R ℛ]
+
+/-- The Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊` of a character, from `φ₊ = φ₋ ⋆ φ` and the
+left inverse `φ₋ ∘ S` of `φ₋`. -/
+theorem birkhoffFactorization (P : ℛ →+ ℛ) (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
+    toConv φ
+      = toConv ((birkhoffMinus φ.toLinearMap P).comp
+            (HopfAlgebra.antipodeAlgHom R (ConnesKreimer R (UnorderedTree α))))
+          * toConv (birkhoffPlus φ.toLinearMap P) := by
+  rw [← birkhoffPlus_eq_convMul, ← mul_assoc, AlgHom.comp_antipode_cancel, one_mul]
 
 end ConnesKreimer
