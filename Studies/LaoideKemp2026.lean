@@ -21,43 +21,52 @@ environment over a strict-CV skeleton ((18)). A floating object docks on the slo
 its right when that slot suits it: `{L}` on a consonant, deleting the segmental content of an *f*,
 and `d` on a segmentally empty C-slot before a filled V-slot. These processes apply whenever their
 conditions are met (§4.2), and an empty CV unit at the left edge of a word, her representation of
-the past-tense impersonal, blocks both (§6.2).
+the past-tense impersonal, blocks both (§6.2). The rival morphosyntactic analysis of §5 spells
+out `{L}` as a prefix and *d'* afterwards; it fails on the past-tense impersonals.
 
 ## Main definitions
 
-* `historic`: the historic-tense marker, a floating `d` before `{L}`.
+* `floating`, `historic`, `lenition`: an exponent of floating material, the historic-tense marker
+  `(d){L}`, and the bundle `{L}` alone.
 * `CanDock`, `dock`: when and how a floating object docks.
 * `Step`, `IsSurface`, `surfaces`: one docking, a candidate where none applies, and the surface
-  forms a candidate derives.
+  forms a candidate derives; `Realizes`, an object linked on the surface.
 
 ## Main results
 
 * `surfaces_nonempty`: every candidate derives a surface form.
-* `card_surfaces_historic`, `historic_bog`, `historic_ól`, `historic_fág`: each form of Figure 1
-  has one surface form, with `d` pronounced before *ól* and *fág* but not before *bog*.
+* `historic_bog`, `historic_ól`, `historic_fág`: in the one surface form of each form of
+  Figure 1, `d` is pronounced before *ól* and *fág* but not before *bog*.
 * `lenition_feeds_linking`, `not_linking_feeds_lenition`: lenition feeds the linking of `d` and
   not conversely, so the order of the two processes is intrinsic.
-* `isFloating_of_emptyCV`: whatever the stem, after an empty CV unit neither `d` nor `{L}` docks.
+* `isFloating_of_emptyCV`: whatever the stem, no object of a floating exponent docks before an
+  empty CV unit; `conditional_impersonals`, the same resistance after the trigger *má*.
+* `beginsWithEmptyC_iff_realizes_d`, `beginsWithEmptyC_pstImpers`, `beginsWithEmptyC_of_emptyCV`:
+  the morphosyntactic analysis agrees on (11) and inserts *d'* before a past-tense impersonal.
+* `munster_iff_historic`: in Munster the floating `d` after a particle has the same distribution.
+* `prothesis`: a floating consonant without `{L}` links before a vowel-initial word only.
 
 ## Implementation notes
 
-The segments are written orthographically, as in the paper's CV diagrams. The slot immediately to
-the right of a melodic object is the first slot after every slot linked to an object before it, the
-left edge of its window under the No-Crossing Constraint (`leftIndices`). Once `d` is linked, the
-slot to the right of `{L}` is the following V-slot, so `{L}` never acts on `d`, the consequence of
-melodic order that §4.2 draws. `{L}` docking is a line from `{L}` to the slot of the consonant it
-acts on, and of its effects only the deletion of *f* is modelled, which leaves the C-slot, as
-Gussmann argues. The palatalization such a slot keeps, a lexical property of the following word as
-Ní Chiosáin shows, is not modelled. The condition on `d` applies to every floating segment, as §4.3
-extends it to the prothetic consonants. The phonology is defined for any type of sponsoring
-morpheme, so it cannot consult the morphosyntax, which is Bermúdez-Otero's strict modularity. The
-suffix of the impersonal forms is not modelled.
+The segments are written orthographically, as in the paper's CV diagrams. The words of Figure 1
+are given in full and the others by their first CV unit, as Figure 2 draws *rith*. The slot
+immediately to the right of a melodic object is the first slot after every slot linked to an
+object before it, the left edge of its window under the No-Crossing Constraint (`leftIndices`).
+Once `d` is linked, the slot to the right of `{L}` is the following V-slot, so `{L}` never acts on
+`d`, the consequence of melodic order that §4.2 draws. `{L}` docking is a line from `{L}` to the
+slot of the consonant it acts on, and of its effects only the deletion of *f* is modelled, which
+leaves the C-slot, as Gussmann argues. The palatalization such a slot keeps, a lexical property of
+the following word as Ní Chiosáin shows, is not modelled. The condition on `d` applies to every
+floating segment, as §4.3 extends it to the prothetic consonants; of the masculine article only
+its floating `t` is modelled. The phonology is defined for any type of sponsoring morpheme, so it
+cannot consult the morphosyntax, which is Bermúdez-Otero's strict modularity. Suffixes are not
+modelled, and Munster *dh'* is written `d`, as the paper writes it.
 
 ## TODO
 
 Model the infrasegmental-government domains of Figure 2, after Scheer, which license `d` before
-lenited *fl-* and *fr-* clusters ((12)), and the Munster forms of Table 3, where the floating `d`
-accompanies `{L}` after every lenition-triggering particle.
+lenited *fl-* and *fr-* clusters ((12)), and prove the distribution of `d` for every stem, not only
+for the paper's verbs.
 
 ## References
 
@@ -81,7 +90,7 @@ open Morphology (CVSlot)
 
 /-- The segments of the paper's examples, written orthographically as in its CV diagrams. -/
 inductive Segment
-  | á | b | d | f | g | l | o | ó
+  | a | á | b | d | ea | f | g | i | í | l | m | n | o | ó | t
   deriving DecidableEq, Repr, Fintype
 
 /-- An object of the melodic tier is a segment or the lenition-inducing bundle `{L}`, whose
@@ -93,23 +102,38 @@ inductive Autosegment
   | L
   deriving DecidableEq, Repr
 
+/-- A form of the paper is a melodic tier of `Autosegment`s over a strict-CV skeleton, each object
+and slot sponsored by a morpheme in `M`. -/
+abbrev Form (M : Type*) := Autosegmental.Form CVSlot Autosegment M
+
 section Exponents
 
 variable {M : Type*} (m : M)
 
-/-- The historic-tense marker ((18)) is a floating `d` followed by `{L}`, with no skeleton. -/
-def historic : Autosegmental.Form CVSlot Autosegment M := .melody m [.seg .d, .L] [] ∅
+/-- An exponent of floating material has objects on the melodic tier and no skeleton. -/
+abbrev floating (objs : List Autosegment) : Form M :=
+  .melody m objs [] ∅
+
+/-- The historic-tense marker ((18)) is a floating `d` followed by `{L}`. -/
+abbrev historic : Form M := floating m [.seg .d, .L]
+
+/-- The bundle `{L}` alone, at the right edge of a trigger word ((3)) or as the historic-tense
+prefix of the morphosyntactic analysis ((22)). -/
+abbrev lenition : Form M := floating m [.L]
+
+/-- A prothetic consonant is a floating segment with no `{L}` (§4.3). -/
+abbrev prothetic (s : Segment) : Form M := floating m [.seg s]
 
 /-- An empty CV unit, the left edge of a word that resists mutation (§6.2). -/
-def emptyCV : Autosegmental.Form CVSlot Autosegment M := .melody m [] [.C, .V] ∅
+def emptyCV : Form M := .melody m [] [.C, .V] ∅
 
-variable {m} (s : Autosegmental.Form CVSlot Autosegment M)
+variable {m} (s : Form M)
 
 /-- The floating `d` of a historic-tense form. -/
-def d : Fin (historic m * s).upper.length := ⟨0, by simp [historic]⟩
+def d : Fin (historic m * s).upper.length := ⟨0, by simp⟩
 
 /-- The bundle `{L}` of a historic-tense form. -/
-def L : Fin (historic m * s).upper.length := ⟨1, by simp [historic]⟩
+def bundle : Fin (historic m * s).upper.length := ⟨1, by simp⟩
 
 end Exponents
 
@@ -117,7 +141,7 @@ end Exponents
 
 section Docking
 
-variable {M : Type*} {u : Autosegmental.Form CVSlot Autosegment M} (c : Candidate u)
+variable {M : Type*} {u : Form M} (c : Candidate u)
 
 /-- Slot `i` hosts a segment on the surface. -/
 def HostsSegment (i : Fin u.lower.length) : Prop :=
@@ -134,9 +158,9 @@ def nextSlot (k : Fin u.upper.length) : Option (Fin u.lower.length) :=
 /-- A docking site for `{L}` is a C-slot hosting the consonant it acts on, and for a segment a
 segmentally empty C-slot directly followed by a V-slot hosting a segment. -/
 def IsDockingSite : Autosegment → Fin u.lower.length → Prop
-  | .L, i => u.lower[i].value = .C ∧ HostsSegment c i
-  | .seg _, i => u.lower[i].value = .C ∧ ¬ HostsSegment c i ∧
-      ∃ i' : Fin u.lower.length, i'.val = i.val + 1 ∧ u.lower[i'].value = .V ∧ HostsSegment c i'
+  | .L, i => u.lower[i].value.IsC ∧ HostsSegment c i
+  | .seg _, i => u.lower[i].value.IsC ∧ ¬ HostsSegment c i ∧
+      ∃ i' : Fin u.lower.length, i'.val = i.val + 1 ∧ u.lower[i'].value.IsV ∧ HostsSegment c i'
 
 instance : ∀ a i, Decidable (IsDockingSite c a i)
   | .L, _ => inferInstanceAs (Decidable (_ ∧ _))
@@ -144,7 +168,7 @@ instance : ∀ a i, Decidable (IsDockingSite c a i)
 
 variable {c} in
 theorem IsDockingSite.isC {i : Fin u.lower.length} : ∀ {a}, IsDockingSite c a i →
-    u.lower[i].value = .C
+    u.lower[i].value.IsC
   | .L, h | .seg _, h => h.1
 
 /-- Object `k` can dock when it is floating and the slot immediately to its right is a docking
@@ -179,6 +203,19 @@ def IsSurface : Prop := ∀ k, ¬ CanDock c k
 
 instance : Decidable (IsSurface c) := inferInstanceAs (Decidable (∀ _, _))
 
+/-- A candidate realizes `a` when an object of value `a` is linked on the surface; a floating
+object is not pronounced. -/
+def Realizes (a : Autosegment) : Prop := ∃ k, u.upper[k].value = a ∧ c.IsLinked k
+
+instance (a : Autosegment) : Decidable (Realizes c a) := inferInstanceAs (Decidable (∃ _, _ ∧ _))
+
+/-- A candidate begins with an empty consonantal slot, the context in which the morphosyntactic
+analysis spells out the historic-tense particle as *d* ((23)). -/
+def BeginsWithEmptyC : Prop :=
+  ∃ i : Fin u.lower.length, i.val = 0 ∧ u.lower[i].value.IsC ∧ ¬ HostsSegment c i
+
+instance : Decidable (BeginsWithEmptyC c) := inferInstanceAs (Decidable (∃ _, _ ∧ _ ∧ _))
+
 variable {c} {c' : Candidate u} {k j : Fin u.upper.length}
 
 theorem mem_links_of_fOn_eq_some {i : Fin u.lower.length} (h : fOn c i = some j) :
@@ -188,8 +225,8 @@ theorem mem_links_of_fOn_eq_some {i : Fin u.lower.length} (h : fOn c i = some j)
 theorem isSurface_iff_forall_not_step : IsSurface c ↔ ∀ c', ¬ Step c c' :=
   ⟨fun h _ hs ↦ by cases hs with | dock hk => exact h _ hk, fun h _ hk ↦ h _ (.dock hk)⟩
 
-/-- Docking floats nothing: an object floats after a step exactly when it floated before and is
-not the one that docked. -/
+/-- Docking floats nothing, so an object floats after a step exactly when it floated before and
+is not the one that docked. -/
 theorem isFloating_dock (hk : CanDock c k) : (dock c k).IsFloating j ↔ j ≠ k ∧ c.IsFloating j := by
   obtain ⟨-, i, hi : nextSlot c k = some i, -⟩ := hk
   simp only [dock, hi]
@@ -269,125 +306,167 @@ end Docking
 /-! ### The empty CV unit
 
 An empty CV unit is no docking site for anything: `{L}` finds no consonant on its C-slot, and a
-segment finds its V-slot empty. So the same structure blocks both lenition and the linking of `d`
-(§6.2). -/
+segment finds its V-slot empty. So no object of a floating exponent ever docks before it, and the
+same structure blocks both lenition and the linking of `d` (§6.2). -/
 
 section EmptyCV
 
-variable {M : Type*} {u : Autosegmental.Form CVSlot Autosegment M} {c c' : Candidate u}
-  {k j : Fin u.upper.length}
+variable {M : Type*} {u : Form M} {c : Candidate u}
 
 theorem not_isDockingSite_of_emptyCV {i i' : Fin u.lower.length} (hi' : i'.val = i.val + 1)
     (hc : ¬ HostsSegment c i) (hv : ¬ HostsSegment c i') : ∀ a, ¬ IsDockingSite c a i
   | .L, h => hc h.2
   | .seg _, ⟨_, _, _, hi'', _, h⟩ => hv (Fin.ext (hi'.trans hi''.symm) ▸ h)
 
-variable {m m' : M} {s : Autosegmental.Form CVSlot Autosegment M}
+variable {m m' : M} {objs : List Autosegment} {s : Form M}
+  {c c' : Candidate (floating m objs * (emptyCV m' * s))}
 
-private theorem two_le_of_mem_links {p} (hp : p ∈ (historic m * (emptyCV m' * s)).links) :
-    2 ≤ p.1.val ∧ 2 ≤ p.2.val := by
+private theorem le_of_mem_links {p} (hp : p ∈ (floating m objs * (emptyCV m' * s)).links) :
+    objs.length ≤ p.1.val ∧ 2 ≤ p.2.val := by
   rcases Form.mem_links_concat.1 hp with ⟨q, hq, -⟩ | ⟨q, hq, h₁, h₂⟩
   · exact absurd (Form.mem_links_melody.1 hq) (Finset.notMem_empty _)
   rcases Form.mem_links_concat.1 hq with ⟨r, hr, -⟩ | ⟨r, hr, h₃, h₄⟩
   · exact absurd (Form.mem_links_melody.1 hr) (Finset.notMem_empty _)
-  simp only [historic, emptyCV, Form.melody_upper, Form.melody_lower, List.length_map,
+  simp only [floating, emptyCV, Form.melody_upper, Form.melody_lower, List.length_map,
     List.length_cons, List.length_nil] at h₁ h₂ h₄
   omega
 
-/-- In a historic-tense form over an empty CV unit, `d` and `{L}` float and the unit hosts no
+/-- Before an empty CV unit, the objects of a floating exponent float and the unit hosts no
 segment. -/
-private def Blocked (c : Candidate (historic m * (emptyCV m' * s))) : Prop :=
-  c.IsFloating (d _) ∧ c.IsFloating (L _) ∧ ∀ i : Fin _, i.val < 2 → ¬ HostsSegment c i
+private def Blocked (c : Candidate (floating m objs * (emptyCV m' * s))) : Prop :=
+  (∀ k : Fin _, k.val < objs.length → c.IsFloating k) ∧
+    ∀ i : Fin _, i.val < 2 → ¬ HostsSegment c i
 
-private theorem leftIndices_eq_empty {c : Candidate (historic m * (emptyCV m' * s))}
-    (h : Blocked c) {k : Fin _} (hk : k.val < 2) : leftIndices c.links k = ∅ := by
+private theorem leftIndices_eq_empty (h : Blocked c) {k : Fin _} (hk : k.val < objs.length) :
+    leftIndices c.links k = ∅ := by
   refine Finset.eq_empty_of_forall_notMem fun x hx ↦ ?_
   obtain ⟨n, hn, hnx⟩ := mem_leftIndices.1 hx
-  obtain rfl : n = d s := Fin.ext (by simp only [d]; have := Fin.lt_def.1 hn; omega)
-  exact h.1.2 (Candidate.isLinked_iff.2 ⟨_, hnx⟩)
+  exact (h.1 n (by have := Fin.lt_def.1 hn; omega)).2 (Candidate.isLinked_iff.2 ⟨_, hnx⟩)
 
-private theorem two_le_of_canDock {c : Candidate (historic m * (emptyCV m' * s))} (h : Blocked c)
-    {k : Fin _} (hk : CanDock c k) : 2 ≤ k.val ∧ ∀ i ∈ nextSlot c k, 2 ≤ i.val := by
-  have hlen : 1 < (historic m * (emptyCV m' * s)).lower.length := by
-    simp [historic, emptyCV]
+private theorem le_of_canDock (h : Blocked c) {k : Fin _} (hk : CanDock c k) :
+    objs.length ≤ k.val ∧ ∀ i ∈ nextSlot c k, 2 ≤ i.val := by
+  have hlen : 1 < (floating m objs * (emptyCV m' * s)).lower.length := by simp [emptyCV]
   obtain ⟨-, i, hi, hs⟩ := hk
   have hi0 : i.val ≠ 0 := fun h0 ↦ not_isDockingSite_of_emptyCV (i' := ⟨1, hlen⟩) (by simp [h0])
-    (h.2.2 _ (by omega)) (h.2.2 _ (by simp)) _ hs
+    (h.2 _ (by omega)) (h.2 _ (by simp)) _ hs
   have hi1 : i.val ≠ 1 := fun h1 ↦ by
     obtain rfl : i = ⟨1, hlen⟩ := Fin.ext h1
-    have hV : (historic m * (emptyCV m' * s)).lower[(⟨1, hlen⟩ : Fin _)].value = .V := rfl
-    exact absurd (hs.isC.symm.trans hV) (by decide)
+    exact hs.isC
   refine ⟨Nat.le_of_not_lt fun hk2 ↦ hi0 ?_, fun i' hi' ↦ ?_⟩
   · exact val_eq_zero_of_mem_nextSlot (leftIndices_eq_empty h hk2) hi
   · obtain rfl := Option.mem_unique hi hi'
     omega
 
-private theorem blocked_input : Blocked (.input (historic m * (emptyCV m' * s))) := by
-  refine ⟨⟨Finset.notMem_empty _, ?_⟩, ⟨Finset.notMem_empty _, ?_⟩, ?_⟩
-  · rintro ⟨p, hp, hpd⟩
-    exact absurd (two_le_of_mem_links hp).1 (by rw [hpd]; show ¬ 2 ≤ 0; omega)
-  · rintro ⟨p, hp, hpL⟩
-    exact absurd (two_le_of_mem_links hp).1 (by rw [hpL]; show ¬ 2 ≤ 1; omega)
+private theorem blocked_input : Blocked (.input (floating m objs * (emptyCV m' * s))) := by
+  refine ⟨fun k hk ↦ ⟨Finset.notMem_empty _, ?_⟩, ?_⟩
+  · rintro ⟨p, hp, rfl⟩
+    exact absurd (le_of_mem_links hp).1 (by omega)
   · rintro i hi ⟨k, -, hk, -⟩
-    have := (two_le_of_mem_links hk).2
+    have := (le_of_mem_links hk).2
     dsimp only at this
     omega
 
-private theorem Blocked.step {c c' : Candidate (historic m * (emptyCV m' * s))} (h : Blocked c)
-    (hs : Step c c') : Blocked c' := by
+private theorem Blocked.step (h : Blocked c) (hs : Step c c') : Blocked c' := by
   obtain ⟨hk⟩ := hs
-  obtain ⟨hk2, hi2⟩ := two_le_of_canDock h hk
+  obtain ⟨hk2, hi2⟩ := le_of_canDock h hk
   obtain ⟨i, hi, -⟩ := hk.2
   have hsub := links_dock_subset hi
   have hi2 := hi2 i hi
-  refine ⟨(isFloating_dock hk).2 ⟨fun he ↦ ?_, h.1⟩, (isFloating_dock hk).2 ⟨fun he ↦ ?_, h.2.1⟩,
+  refine ⟨fun j hj ↦ (isFloating_dock hk).2 ⟨fun he ↦ ?_, h.1 j hj⟩,
     fun i₀ hi₀ ⟨k', s', hk', hval⟩ ↦ ?_⟩
-  · exact absurd hk2 (by rw [← he]; show ¬ 2 ≤ 0; omega)
-  · exact absurd hk2 (by rw [← he]; show ¬ 2 ≤ 1; omega)
+  · rw [he] at hj
+    omega
   · rcases Finset.mem_insert.1 (hsub hk') with he | he
     · have := congrArg (·.2.val) he
       simp only at this
       omega
-    · exact h.2.2 i₀ hi₀ ⟨k', s', he, hval⟩
+    · exact h.2 i₀ hi₀ ⟨k', s', he, hval⟩
 
-/-- Whatever the stem, in a historic-tense form whose stem begins with an empty CV unit, `d` and
-`{L}` float in every candidate derived: the form is neither lenited nor preceded by *d'*
-(Figure 5, §6.2). -/
-theorem isFloating_of_emptyCV {c : Candidate (historic m * (emptyCV m' * s))}
-    (hc : ReflTransGen Step (.input _) c) : c.IsFloating (d _) ∧ c.IsFloating (L _) := by
-  have : Blocked c := by
-    induction hc with
-    | refl => exact blocked_input
-    | tail _ hs ih => exact ih.step hs
-  exact ⟨this.1, this.2.1⟩
+private theorem blocked (hc : ReflTransGen Step (.input _) c) : Blocked c := by
+  induction hc with
+  | refl => exact blocked_input
+  | tail _ hs ih => exact ih.step hs
+
+/-- Whatever the stem, no object of a floating exponent docks before an empty CV unit, in any
+candidate derived (§6.2). -/
+theorem isFloating_of_emptyCV (hc : ReflTransGen Step (.input _) c) {k : Fin _}
+    (hk : k.val < objs.length) : c.IsFloating k :=
+  (blocked hc).1 k hk
+
+/-- Whatever the stem, an empty CV unit after a floating exponent hosts no segment in any
+candidate derived. -/
+theorem not_hostsSegment_of_emptyCV (hc : ReflTransGen Step (.input _) c) {i : Fin _}
+    (hi : i.val < 2) : ¬ HostsSegment c i :=
+  (blocked hc).2 i hi
+
+/-- Whatever the stem, a form that begins with an empty CV unit begins with an empty consonantal
+slot in every candidate derived, so under the morphosyntactic analysis it would take *d'*. -/
+theorem beginsWithEmptyC_of_emptyCV (hc : ReflTransGen Step (.input _) c) : BeginsWithEmptyC c :=
+  ⟨⟨0, by simp [emptyCV]⟩, rfl, trivial, not_hostsSegment_of_emptyCV hc (by simp)⟩
 
 end EmptyCV
 
-/-! ### The forms of Figures 1 and 5 -/
+/-! ### The forms -/
 
 /-- The morphemes that sponsor the paper's forms. -/
 inductive Morpheme
-  /-- A verb root. -/
+  /-- A verb or noun root. -/
   | root
   /-- The historic-tense exponent ((18)). -/
   | hist
   /-- The past-tense impersonal exponent (§6.2). -/
   | pstImpers
+  /-- The negative particle *ní*. -/
+  | neg
+  /-- The conditional particle *má*. -/
+  | cond
+  /-- The masculine definite article *an*. -/
+  | art
   deriving DecidableEq, Repr
 
-/-- A form of the paper, sponsored by its morphemes. -/
-abbrev Form := Autosegmental.Form CVSlot Autosegment Morpheme
-
 /-- *bog* 'move', consonant-initial (Figure 1a). -/
-def bog : Form :=
+def bog : Form Morpheme :=
   .melody .root [.seg .b, .seg .o, .seg .g] [.C, .V, .C, .V] {(0, 0), (1, 1), (2, 2)}
 
 /-- *ól* 'drink', vowel-initial: its first C-slot is empty (Figure 1b). -/
-def ól : Form := .melody .root [.seg .ó, .seg .l] [.C, .V, .C, .V] {(0, 1), (1, 2)}
+def ól : Form Morpheme := .melody .root [.seg .ó, .seg .l] [.C, .V, .C, .V] {(0, 1), (1, 2)}
 
 /-- *fág* 'leave', *f*-initial (Figure 1c). -/
-def fág : Form :=
+def fág : Form Morpheme :=
   .melody .root [.seg .f, .seg .á, .seg .g] [.C, .V, .C, .V] {(0, 0), (1, 1), (2, 2)}
+
+/-- *imigh* 'go away', vowel-initial (Table 2). -/
+def imigh : Form Morpheme := .melody .root [.seg .i] [.C, .V] {(0, 1)}
+
+/-- *fás* 'grow', *f*-initial (Table 2). -/
+def fás : Form Morpheme := .melody .root [.seg .f, .seg .á] [.C, .V] {(0, 0), (1, 1)}
+
+/-- *fan* 'stay', *f*-initial (Table 2). -/
+def fan : Form Morpheme := .melody .root [.seg .f, .seg .a] [.C, .V] {(0, 0), (1, 1)}
+
+/-- *athair* 'father', vowel-initial ((19)). -/
+def athair : Form Morpheme := .melody .root [.seg .a] [.C, .V] {(0, 1)}
+
+/-- *fear* 'man', *f*-initial (fn. 10). -/
+def fear : Form Morpheme := .melody .root [.seg .f, .seg .ea] [.C, .V] {(0, 0), (1, 1)}
+
+/-- A particle whose consonant and vowel fill one CV unit. -/
+def particle (m : Morpheme) (consonant vowel : Segment) : Form Morpheme :=
+  .melody m [.seg consonant, .seg vowel] [.C, .V] {(0, 0), (1, 1)}
+
+/-- The negative particle *ní*, with `{L}` at its right edge ((3)). -/
+def ní : Form Morpheme := particle .neg .n .í * lenition Morpheme.neg
+
+/-- The conditional particle *má*, with `{L}` at its right edge ((26)). -/
+def má : Form Morpheme := particle .cond .m .á * lenition Morpheme.cond
+
+/-- Munster *ní*, where the floating `d` accompanies `{L}` (Table 3). -/
+def níMunster : Form Morpheme := particle .neg .n .í * historic Morpheme.neg
+
+/-- Munster *má*, where the floating `d` accompanies `{L}` (Table 3). -/
+def máMunster : Form Morpheme := particle .cond .m .á * historic Morpheme.cond
+
+/-! ### Figure 1 -/
 
 /-- Each historic-tense form of Figure 1 has exactly one surface form. -/
 theorem card_surfaces_historic :
@@ -397,38 +476,99 @@ theorem card_surfaces_historic :
 /-- In Figure 1a, *bog* → *bhog*, `{L}` docks on *b*, which fills the C-slot, so `d` cannot link
 ((11c)). -/
 theorem historic_bog : ∀ c ∈ surfaces (.input (historic Morpheme.hist * bog)),
-    c.IsFloating (d bog) ∧ c.IsLinked (L bog) := by
+    ¬ Realizes c (.seg .d) ∧ Realizes c .L := by
   decide
 
 /-- In Figure 1b, *ól* → *d' ól*, the C-slot is empty, so `{L}` finds nothing to dock on and `d`
 links ((11a)). -/
 theorem historic_ól : ∀ c ∈ surfaces (.input (historic Morpheme.hist * ól)),
-    c.IsLinked (d ól) ∧ c.IsFloating (L ól) := by
+    Realizes c (.seg .d) ∧ ¬ Realizes c .L := by
   decide
 
 /-- In Figure 1c, *fág* → *d' fhág*, `{L}` deletes the *f*, leaving its C-slot empty, and `d`
 links ((11b)). -/
 theorem historic_fág : ∀ c ∈ surfaces (.input (historic Morpheme.hist * fág)),
-    c.IsLinked (d fág) ∧ c.IsLinked (L fág) ∧ ⟨2, by decide⟩ ∈ c.deleted := by
+    Realizes c (.seg .d) ∧ Realizes c .L ∧ ¬ Realizes c (.seg .f) := by
   decide
 
 /-- Lenition feeds the linking of `d` before *fág*, since `d` cannot link until `{L}` has deleted
 the *f* (§4.2). -/
-theorem lenition_feeds_linking : Feeds (fun k c ↦ dock c k) (fun k c ↦ CanDock c k) (L fág) (d fág)
-    (.input (historic Morpheme.hist * fág)) := by
+theorem lenition_feeds_linking : Feeds (fun k c ↦ dock c k) (fun k c ↦ CanDock c k)
+    (bundle fág) (d fág) (.input (historic Morpheme.hist * fág)) := by
   decide
 
 /-- The linking of `d` does not feed lenition before *ól*, since `{L}` never acts on `d`, which
 precedes it on the melodic tier; the form is *d' ól*, not *dh' ól* (§4.2). -/
 theorem not_linking_feeds_lenition : ¬ Feeds (fun k c ↦ dock c k) (fun k c ↦ CanDock c k)
-    (d ól) (L ól) (.input (historic Morpheme.hist * ól)) := by
+    (d ól) (bundle ól) (.input (historic Morpheme.hist * ól)) := by
   decide
+
+/-! ### Figure 5 and the past-tense impersonal -/
 
 /-- In Figure 5 the past-tense impersonals *bogadh*, *óladh* and *fágadh* are neither lenited
 nor preceded by *d'* ((27)). -/
 theorem historic_pstImpers : ∀ s ∈ [bog, ól, fág],
     ∀ c ∈ surfaces (.input (historic Morpheme.hist * (emptyCV Morpheme.pstImpers * s))),
-      c.IsFloating (d _) ∧ c.IsFloating (L _) :=
-  fun _ _ _ hc ↦ isFloating_of_emptyCV (mem_surfaces.1 hc).1
+      c.IsFloating (d _) ∧ c.IsFloating (bundle _) :=
+  fun _ _ _ hc ↦ ⟨isFloating_of_emptyCV (mem_surfaces.1 hc).1 (by simp [d]),
+    isFloating_of_emptyCV (mem_surfaces.1 hc).1 (by simp [bundle])⟩
+
+/-- After the conditional particle a present-tense impersonal is lenited, *má bhogtar*, and a
+past-tense one is not, *má bogadh*: the past-tense impersonal resists lenition from any source,
+not only that of historic tense ((26), §6.2). -/
+theorem conditional_impersonals : (∀ c ∈ surfaces (.input (má * bog)), Realizes c .L) ∧
+    ∀ c ∈ surfaces (.input (má * (emptyCV Morpheme.pstImpers * bog))), ¬ Realizes c .L := by
+  decide
+
+/-! ### The morphosyntactic analysis (§5)
+
+The alternative spells out `{L}` as a prefix on the verb ((22)) and, once the verb has been
+processed, the historic-tense particle as *d* before an empty consonantal slot and as nothing
+elsewhere ((23)). -/
+
+/-- On the verbs of (11) the two analyses agree. Processed with the prefix `{L}`, a verb begins
+with an empty consonantal slot exactly where the historic-tense marker's `d` is pronounced
+(§5.2). -/
+theorem beginsWithEmptyC_iff_realizes_d : ∀ v ∈ [bog, ól, fág],
+    (∀ c ∈ surfaces (.input (lenition Morpheme.hist * v)), BeginsWithEmptyC c) ↔
+      ∀ c ∈ surfaces (.input (historic Morpheme.hist * v)), Realizes c (.seg .d) := by
+  decide
+
+/-- The morphosyntactic analysis predicts *d'* before the vowel-initial past-tense impersonal
+alone: such a verb resists lenition, and unlenited only a vowel-initial verb begins with an empty
+consonantal slot. (27) has *d'* before none of them (§6.2). With the empty CV unit instead,
+every past-tense impersonal would take *d'* (`beginsWithEmptyC_of_emptyCV`). -/
+theorem beginsWithEmptyC_pstImpers : BeginsWithEmptyC (.input ól) ∧
+    ¬ BeginsWithEmptyC (.input fág) ∧ ¬ BeginsWithEmptyC (.input bog) := by
+  decide
+
+/-! ### Munster (§6.1) -/
+
+/-- In Munster the floating `d` accompanies `{L}` after a lenition-triggering particle and is
+pronounced exactly where it is after the historic-tense marker, before a vowel-initial or
+lenited *f*-initial verb (Table 3). -/
+theorem munster_iff_historic : ∀ v ∈ [bog, ól, fág],
+    (∀ c ∈ surfaces (.input (níMunster * v)), Realizes c (.seg .d)) ↔
+      ∀ c ∈ surfaces (.input (historic Morpheme.hist * v)), Realizes c (.seg .d) := by
+  decide
+
+/-- In Table 2, Standard *ní fhásann* lenites without *d'*, and Munster has *dh' imigh*,
+*ní dh' fhásann* and *má dh' fhanann*. -/
+theorem table2 : (∀ c ∈ surfaces (.input (ní * fás)), ¬ Realizes c (.seg .d) ∧ Realizes c .L) ∧
+    (∀ c ∈ surfaces (.input (historic Morpheme.hist * imigh)), Realizes c (.seg .d)) ∧
+    (∀ c ∈ surfaces (.input (níMunster * fás)), Realizes c (.seg .d) ∧ Realizes c .L) ∧
+    ∀ c ∈ surfaces (.input (máMunster * fan)), Realizes c (.seg .d) ∧ Realizes c .L := by
+  decide
+
+/-! ### Prothesis (§4.3) -/
+
+/-- Without `{L}`, a floating consonant links before a vowel-initial word but not before an
+*f*-initial one: *an t-athair* but *an fear*, not *an t-fear*. After the historic-tense marker an
+*f*-initial verb patterns with a vowel-initial one (`historic_fág`), since `{L}` deletes the *f*:
+radical *f* patterns with consonants and mutated *f* with vowels (fn. 10). -/
+theorem prothesis :
+    (∀ c ∈ surfaces (.input (prothetic Morpheme.art .t * athair)), Realizes c (.seg .t)) ∧
+      ∀ c ∈ surfaces (.input (prothetic Morpheme.art .t * fear)), ¬ Realizes c (.seg .t) := by
+  decide
 
 end LaoideKemp2026
