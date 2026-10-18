@@ -50,6 +50,10 @@ voice with its marker, `Voice.passive.marked [.suff "x"]`, and the bare constant
   auxiliary, is among them, uncoded when it is empty.
 * The names of the alternations as processes, passivization and the rest, are predicates on
   pairs of constructions in `Studies/Creissels2024.lean`; the constants here are the voices.
+* An implicit object understood as the subject itself or as its members is not a separate
+  implied participant: its participant takes the subject's status, so Levin's understood
+  reflexive and reciprocal objects are Creissels' cumulations, and the reflexive and the
+  reciprocal are the voices leaving the object implicit under these two readings.
 
 ## References
 
@@ -191,11 +195,14 @@ def IsValencyIncreasing : Prop := c.Nucleativizes d ∧ ¬ c.Denucleativizes d
 /-- The alternation is valency-decreasing when it denucleativizes without nucleativizing. -/
 def IsValencyDecreasing : Prop := c.Denucleativizes d ∧ ¬ c.Nucleativizes d
 
-/-- The alternation is symmetrical when it neither nucleativizes nor denucleativizes, so that
-it does not affect the transitivity of the construction ([creissels-2024] §8.1.7). -/
-def IsSymmetrical : Prop := ¬ c.Nucleativizes d ∧ ¬ c.Denucleativizes d
+/-- The alternation is symmetrical when it neither nucleativizes nor denucleativizes and does
+not affect the transitivity of the construction ([creissels-2024] §8.1.7); a cumulation changes
+transitivity with neither. -/
+def IsSymmetrical : Prop :=
+  ¬ c.Nucleativizes d ∧ ¬ c.Denucleativizes d ∧ (c.Transitive ↔ d.Transitive)
 
-theorem isSymmetrical_self : c.IsSymmetrical c := ⟨fun ⟨_, h⟩ ↦ h.1 h.2, fun ⟨_, h⟩ ↦ h.2 h.1⟩
+theorem isSymmetrical_self : c.IsSymmetrical c :=
+  ⟨fun ⟨_, h⟩ ↦ h.1 h.2, fun ⟨_, h⟩ ↦ h.2 h.1, .rfl⟩
 
 section Fintype
 
@@ -212,7 +219,7 @@ instance : Decidable (c.Nucleativizes d) := inferInstanceAs (Decidable (∃ _, _
 instance : Decidable (c.Denucleativizes d) := inferInstanceAs (Decidable (∃ _, _))
 instance : Decidable (c.IsValencyIncreasing d) := inferInstanceAs (Decidable (_ ∧ _))
 instance : Decidable (c.IsValencyDecreasing d) := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable (c.IsSymmetrical d) := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable (c.IsSymmetrical d) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- An initial core term is suppressed when it leaves participant structure, cumulated when it
 shares its derived core term with another, maintained when it remains a core term, and
@@ -242,11 +249,14 @@ end Fintype
 end Construction
 
 /-- The status a frame gives the participant of a slot is the transitivity-related role of a
-core slot, X for an expressed oblique, implicit for an implicit position, and absent for an
-expletive or an unfilled slot. -/
+core slot, X for an expressed oblique, and absent for an expletive or an unfilled slot. An
+implicit position leaves its participant implied, unless it is understood as the subject itself
+or as its members: then the subject's term cumulates the two roles ([creissels-2024] §8.3.3). -/
 def _root_.ArgumentFrame.status (fr : ArgumentFrame) (s : ArgumentFrame.Slot) : Status :=
   match fr.argumentRole s, fr.get? s with
   | some r, _ => .term (.ofArgumentRole r)
+  | none, some (.implicit (some .reflexive)) | none, some (.implicit (some .reciprocal)) =>
+      (fr.argumentRole .external).elim .implicit (.term ∘ .ofArgumentRole)
   | none, some (.implicit _) => .implicit
   | none, some p => if p.IsExpressed then .term .X else .absent
   | none, none => .absent
@@ -412,7 +422,7 @@ theorem IsValencyIncreasing.not_isSymmetrical (h : v.IsValencyIncreasing) :
     ¬ v.IsSymmetrical := fun h' ↦ h'.1 h.1
 
 theorem IsValencyDecreasing.not_isSymmetrical (h : v.IsValencyDecreasing) :
-    ¬ v.IsSymmetrical := fun h' ↦ h'.2 h.1
+    ¬ v.IsSymmetrical := fun h' ↦ h'.2.1 h.1
 
 /-! ### The trivial voice -/
 
@@ -477,11 +487,14 @@ def anticausative : Voice := of .np .intransitive [none, some external]
 initial S ([creissels-2024] §8.3.1.1). -/
 def causative : Voice := of .intransitive .np [some (complement 0), some external]
 
-/-- The reflexive cumulates the initial A and P in one S ([creissels-2024] §8.3.3). -/
-def reflexive : Voice := of .np .intransitive [some external, some external]
+/-- The reflexive cumulates the initial A and P in one S, an individual bearing both roles
+([creissels-2024] §8.3.3): the object is left implicit, understood as the subject itself. -/
+def reflexive : Voice := leaveImplicit .np 0 (some .reflexive)
 
-/-- The reciprocal is the reflexive with a group reading ([creissels-2024] §8.3.3). -/
-abbrev reciprocal : Voice := reflexive
+/-- The reciprocal cumulates the initial A and P in one S, a group whose members bear both roles
+toward one another ([creissels-2024] §8.3.3): the object is left implicit, understood as the
+subject's members. -/
+def reciprocal : Voice := leaveImplicit .np 0 (some .reciprocal)
 
 /-- The applicative nucleativizes an applied participant as a second P beside the initial A
 and P ([creissels-2024] §8.3.5). -/
@@ -523,6 +536,12 @@ theorem passive_not_isImpersonal : ¬ passive.IsImpersonal := by decide
 theorem antipassive_isValencyDecreasing : antipassive.IsValencyDecreasing := by decide
 
 theorem reflexive_cumulates : reflexive.Cumulates := by decide
+
+theorem reciprocal_cumulates : reciprocal.Cumulates := by decide
+
+/-- A cumulation changes transitivity without nucleativizing or denucleativizing, so it is not
+symmetrical. -/
+theorem reflexive_not_isSymmetrical : ¬ reflexive.IsSymmetrical := by decide
 
 theorem applicative_isValencyIncreasing : applicative.IsValencyIncreasing := by decide
 
