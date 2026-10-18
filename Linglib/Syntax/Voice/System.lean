@@ -73,10 +73,10 @@ instance : Decidable (Equipollent S) := inferInstanceAs (Decidable (∀ _ ∈ _,
 variable {S}
 
 theorem Symmetrical.not_isValencyIncreasing (h : Symmetrical S) {v : Voice} (hv : v ∈ S) :
-    ¬ v.IsValencyIncreasing := fun h' ↦ (h v hv).1 h'.1
+    ¬ v.IsValencyIncreasing := fun h' ↦ h'.not_isSymmetrical (h v hv)
 
 theorem Symmetrical.not_isValencyDecreasing (h : Symmetrical S) {v : Voice} (hv : v ∈ S) :
-    ¬ v.IsValencyDecreasing := fun h' ↦ (h v hv).2 h'.1
+    ¬ v.IsValencyDecreasing := fun h' ↦ h'.not_isSymmetrical (h v hv)
 
 /-! ### Systems indexed by a language's names -/
 

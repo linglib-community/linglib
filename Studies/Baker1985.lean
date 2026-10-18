@@ -41,7 +41,7 @@ run of voices moving the participants) are both read. The word determines the se
 
 ## Main results
 
-* `causativeChamorro_intransitive`, `reciprocalOf_np`, `passiveAt_fateOfRole`,
+* `causativeChamorro_intransitive`, `reciprocalOf_np_fateOfRole`, `passiveAt_fateOfRole`,
   `applicativeOf_isValencyIncreasing`: Baker's rules are the substrate's voices where the frames
   meet.
 * `word_injective`: the morphological derivation determines the processes (§2.1).
@@ -140,8 +140,13 @@ theorem causativeChamorro_intransitive : causativeChamorro .intransitive = Voice
 theorem causativeQuechua_intransitive : causativeQuechua .intransitive = Voice.causative := by
   decide
 
-/-- Of a transitive, reflexive-reciprocal formation is [creissels-2024]'s reflexive. -/
-theorem reciprocalOf_np : reciprocalOf .np = some Voice.reflexive := by decide
+/-- Of a transitive, reflexive-reciprocal formation cumulates the A and the P as
+[creissels-2024]'s reflexive and reciprocal do, though it links both to the subject where they
+leave the object implicit. -/
+theorem reciprocalOf_np_fateOfRole (r : Voice.TermRole) :
+    ∀ v ∈ reciprocalOf .np, v.fateOfRole r = Voice.reflexive.fateOfRole r ∧
+      v.fateOfRole r = Voice.reciprocal.fateOfRole r := by
+  cases r <;> decide
 
 /-- Baker's passive and [creissels-2024]'s agree on the fate of every core term. -/
 theorem passiveAt_fateOfRole (r : Voice.TermRole) :

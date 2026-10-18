@@ -24,9 +24,9 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
 
 ## Implementation notes
 
-* A link runs from a participant to its slot, so two participants can share a slot, as the
-  agent and the patient of a reflexive do; an implied participant occupies an implicit position
-  of the frame.
+* A link runs from a participant to its slot, so two participants can share a slot, as in
+  Baker's reflexive-reciprocal formation; an implied participant occupies an implicit position
+  of the frame, and one understood as the subject itself or its members is cumulated with it.
 * Participants are numbered, and a diathesis is entered as the participants of its slots in slot
   order, the external argument first: `ofSlots .np [0, 1]` puts participant 0 in subject
   position and participant 1 in object position.

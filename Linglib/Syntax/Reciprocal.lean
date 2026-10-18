@@ -137,9 +137,8 @@ inductive Valency where
   deriving DecidableEq, Fintype, Repr
 
 open Voice in
-/-- Every strategy marking the predicate or a multipredicate structure realizes the
-denucleativizing `Voice.reciprocal`; argument strategies leave the frame intact and realize no
-voice. -/
+/-- Every strategy marking the predicate or a multipredicate structure realizes the cumulating
+`Voice.reciprocal`; argument strategies leave the frame intact and realize no voice. -/
 def Strategy.voice (s : Strategy) : Option Voice :=
   if s.IsNominal then none else some reciprocal
 
