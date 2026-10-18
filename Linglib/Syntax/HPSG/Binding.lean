@@ -91,9 +91,8 @@ instance : PartialOrder Srt :=
   partialOrderOfCovers (fun σ τ : Srt ↦ σ.parent = some τ) Srt.rank (by decide)
 
 instance : DecidableLE Srt :=
-  decidableLEOfCovers (covers := fun σ τ : Srt ↦ σ.parent = some τ)
-    [.top, .sign, .synsem, .ana, .ppro, .npro, .idx, .gender, .masc, .fem, .number, .sing, .plur]
-    (by decide)
+  decidableLEOfRank (covers := fun σ τ : Srt ↦ σ.parent = some τ) (·.parent.toList) Srt.rank
+    (fun _ _ ↦ by simp) (by decide)
 
 /-- A sign introduces the subject and the object, and a nominal object introduces the index, the
 gender and the number. -/

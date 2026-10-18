@@ -15,27 +15,29 @@ which the paper's parameters of variation follow: which distinguished element th
 contain, which categories the filler and head daughters may have, whether the head may or must
 be inverted or infinitival, whether the clause is an island, and whether it must be independent.
 
-A construct is described by the categories of its daughters and the inversion, finiteness and
-independence of its head (`Construct`), and a clause licenses the constructs meeting its
-constraints (`FGClause.Licenses`), with categories compared in the sort order of the RSRL
-construct hierarchy of `Syntax/HPSG/Construction`. Islandhood and semantics are facts of that
-hierarchy's grammar. A clause is an absolute island when every construct of its sort, in every
-model of the grammar, has a mother with an empty `GAP` list (`FGClause.IsIsland`). Topicalized
-clauses, wh-exclamatives and the-clauses are islands, since their constructions give the head
-daughter a single gap, which the filler discharges (`isIsland_iff`). A construct is well formed
-exactly when its mother has the semantic type of its clause. The distinguished element is
-lexical: the wh-word inventory is read off the paper's judgment triples (`occurs`), and no
-wh-form of any category occurs in all three wh-constructions (`no_universal_wh_word`).
-The rows are the paper's examples, and their judgments follow from the constructions
-(`judgments`).
+The constructions are those of the paper's appendix, stated in RSRL over the construct
+hierarchy of `Syntax/HPSG/Construction`. A row of the paper's examples describes a construct, the
+categories of its daughters and the inversion, independence and finiteness of its head, and the
+row is acceptable exactly when that construct is a model of the grammar (`judgments`). The
+parameters of variation hold in every model of the grammar: the filler is nonverbal
+(`satisfies_filler_nonverbal`), the head of every clause but the the-clause is a projection of a
+verb, since only a verb is inverted or uninverted (`satisfies_head_verb`), and the head's
+inversion, finiteness and independence follow from the constructions, a wh-relative's through
+its mother (`satisfies_head_uninverted`, `satisfies_head_fin`, `satisfies_head_ic`). A clause is
+an absolute island when every construct of its sort, in every model of the grammar, has a mother
+with an empty `GAP` list (`FGClause.IsIsland`). Topicalized clauses, wh-exclamatives and
+the-clauses are islands, since their constructions give the head daughter a single gap, which
+the filler discharges (`isIsland_iff`). The distinguished element is lexical: the wh-word
+inventory is read off the paper's judgment triples (`occurs`), and no wh-form of any category
+occurs in all three wh-constructions (`no_universal_wh_word`).
 
 ## Implementation notes
 
-The WH, REL, IC and VFORM features of the constructions are not in the RSRL signature, so the
-constraints on them are stated over `Construct` rather than checked by the model theory, while
-the category, GAP and SEM constraints are the grammar's. Independence is identified with the
-absence of embedding, so the embedded topicalizations the paper licenses under predicates that
-admit main-clause phenomena are not among the rows. The inventory is derived from the judgment
+The WH, REL and VAL features are not in the RSRL signature, so the distinguished element is
+checked against the wh-word inventory rather than by the model theory, and S and VP, both
+projections of a verb, are not told apart. Independence is identified with the absence of
+embedding, so the embedded topicalizations the paper licenses under predicates that admit
+main-clause phenomena are not among the rows. The inventory is derived from the judgment
 triples rather than transcribed from the paper's table of wh-words, which prints two cells
 differently: bare *what* in exclamatives and determiner *which* in relatives are marked as
 accepted by some speakers in the table but starred in the triples. The island rows are checked
@@ -90,65 +92,6 @@ def FGClause.sem : FGClause → Srt
   | .whRelative => .modifier
   | .topicalized | .theClause => .austinean
 
-/-- A single-gap construct of the clause's sort whose mother has semantic type `σ`. -/
-abbrev FGClause.construct (c : FGClause) (σ : Srt) : Interpretation sig Ent :=
-  singleConstruct c.sort σ singleGapA
-
-/-- A construct of the clause's sort satisfies the grammar exactly when its mother has the
-clause's semantic type. -/
-theorem models_construct_iff (c : FGClause) (σ : Srt)
-    (hσ : σ ∈ [Srt.question, .fact, .modifier, .austinean]) :
-    (c.construct σ).Models grammar ↔ σ = c.sem := by
-  revert c σ
-  decide +kernel
-
-/-- A construct of the clause's sort whose head daughter carries a second, undischarged gap. -/
-abbrev FGClause.secondGap (c : FGClause) : Interpretation sig Ent :=
-  twoGapConstruct c.sort c.sem .noun
-
-/-- The constructs of each clause are well-typed, so the grammar's verdict on them is a verdict
-of its constructions and not of the appropriateness conditions. -/
-theorem isWellTyped_constructs (c : FGClause) :
-    (c.construct c.sem).IsWellTyped ∧ c.secondGap.IsWellTyped := by
-  cases c <;> decide +kernel
-
-/-- A clause is an absolute island when, in every model of the grammar, every construct of its
-sort has a mother with an empty `GAP` list, so that no gap inside the clause is bound outside
-it. -/
-def FGClause.IsIsland (c : FGClause) : Prop :=
-  ∀ ⦃U : Type⦄ (I : Interpretation sig U), I.Models grammar → ∀ u, I.S u = c.sort →
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.MTR, .GAP]) .elist)
-
-/-- In a model of the grammar, the head daughter of a topicalized clause, a wh-exclamative or a
-the-clause has a single gap. -/
-theorem satisfies_gapRest_elist {U : Type*} {I : Interpretation sig U} (hI : I.Models grammar)
-    {c : FGClause} (hc : c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) {u : U}
-    (hu : I.S u = c.sort) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist) := by
-  rcases hc with rfl | rfl | rfl
-  · exact (hI.satisfies_body (c := topPrinciple)
-      (List.mem_map_of_mem (by simp [constraints])) hu.le).2.2.1
-  · exact (hI.satisfies_body (c := whExclPrinciple)
-      (List.mem_map_of_mem (by simp [constraints])) hu.le).2
-  · exact (hI.satisfies_body (c := thePrinciple)
-      (List.mem_map_of_mem (by simp [constraints])) hu.le).2
-
-/-- Exactly topicalized clauses, wh-exclamatives and the-clauses are absolute islands. Their
-constructions give the head daughter a single gap, which the filler discharges, while a
-wh-interrogative or a wh-relative construct may pass a second gap to its mother. -/
-theorem isIsland_iff (c : FGClause) :
-    c.IsIsland ↔ c = .topicalized ∨ c = .whExclamative ∨ c = .theClause := by
-  refine ⟨fun h ↦ ?_, fun hc U I hI u hu ↦ ?_⟩
-  · by_contra hc
-    have key : ∀ c : FGClause, ¬ (c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) →
-        c.secondGap.Models grammar ∧ ¬ c.secondGap.Satisfies (fun _ ↦ .cxt) .cxt
-          (.sortAssign (.path [.MTR, .GAP]) .elist) := by
-      decide +kernel
-    exact (key c hc).2 (h _ (key c hc).1 .cxt rfl)
-  · have hfh : I.S u ≤ .fillerHeadCxt :=
-      hu ▸ (by decide +kernel : ∀ c : FGClause, c.sort ≤ .fillerHeadCxt) c
-    exact (satisfies_mtrGap_iff hI hfh .elist).2 (satisfies_gapRest_elist hI hc hu)
-
 /-! ### Constructs -/
 
 /-- The syntactic categories of filler and head daughters. -/
@@ -171,93 +114,214 @@ def Cat.sort : Cat → Srt
   | .VP | .S => .verb
   | .CP => .comp
 
-/-- The nonverbal categories are NP, PP, AP and AdvP. -/
-theorem Cat.sort_le_nonverbal_iff {x : Cat} :
-    x.sort ≤ .nonverbal ↔ x = .NP ∨ x = .PP ∨ x = .AP ∨ x = .AdvP := by
-  cases x <;> decide
+/-- The entities of a worked construct are the construct, its mother, head daughter and filler
+daughter, their categories, two list cells and the empty list, two gaps with their indices and
+the second gap's category, the mother's semantic object, and the values of the head's
+features. -/
+inductive Ent
+  | cxt | mtr | hd | fl | flCat | hdCat | g1 | g2 | nil | gp1 | gp2 | gp2Cat | ix1 | ix2 | sem
+  | plus | minus | fin | inf
+  deriving DecidableEq, Fintype, Repr
 
-/-- The nominal categories are NP and PP. -/
-theorem Cat.sort_le_nominal_iff {x : Cat} : x.sort ≤ .nominal ↔ x = .NP ∨ x = .PP := by
-  cases x <;> decide
+/-- The construct of sort `σ` whose filler and head daughters have the categories `filler` and
+`head`, whose head has the inversion, independence and verb-form values `inv`, `ic` and `vform`,
+whose mother has the semantic type `semSort`, and whose mother's `GAP` list is `rest`, either
+the empty list `nil` or the list `g2` of a second gap. The filler shares its category and index
+with the first gap, and the mother its category with the head daughter. As the signature
+requires, only a verb has an inversion value and only a verbal category an independence value
+and a verb form. -/
+@[reducible] def construct (σ : Srt) (filler head : Cat) (inv ic vform : Ent) (semSort : Srt)
+    (rest : Ent) : Interpretation sig Ent where
+  S
+    | .cxt => σ
+    | .mtr | .hd | .fl => .overtExpr
+    | .flCat => filler.sort
+    | .hdCat => head.sort
+    | .g1 | .g2 => .nelist
+    | .nil => .elist
+    | .gp1 | .gp2 => .gap
+    | .gp2Cat => .noun
+    | .ix1 | .ix2 => .idx
+    | .sem => semSort
+    | .plus => .plus
+    | .minus => .minus
+    | .fin => .fin
+    | .inf => .inf
+  A
+    | .MTR, .cxt => some .mtr
+    | .HDDTR, .cxt => some .hd
+    | .FILLERDTR, .cxt => some .fl
+    | .CAT, .fl | .CAT, .gp1 => some .flCat
+    | .INDEX, .fl | .INDEX, .gp1 => some .ix1
+    | .CAT, .hd | .CAT, .mtr => some .hdCat
+    | .INV, .hdCat => if head.sort ≤ .verb then some inv else none
+    | .IC, .hdCat => if head.sort ≤ .verbal then some ic else none
+    | .VFORM, .hdCat => if head.sort ≤ .verbal then some vform else none
+    | .GAP, .hd => some .g1
+    | .FIRST, .g1 => some .gp1
+    | .REST, .g1 | .GAP, .mtr => some rest
+    | .FIRST, .g2 => some .gp2
+    | .CAT, .gp2 => some .gp2Cat
+    | .INDEX, .gp2 => some .ix2
+    | .REST, .g2 | .GAP, .fl | .GAP, .gp1 | .GAP, .gp2 => some .nil
+    | .SEM, .mtr => some .sem
+    | _, _ => none
+  R := noRel
 
-/-- The projections of a verb are S and VP. -/
-theorem Cat.sort_le_verb_iff {x : Cat} : x.sort ≤ .verb ↔ x = .S ∨ x = .VP := by
-  cases x <;> decide
+/-- The construct sort of a clause whose head has the verb form `vform`. A wh-relative is finite
+or infinitival. -/
+def FGClause.cxtSort : FGClause → Ent → Srt
+  | .whRelative, .inf => .infWhRelCl
+  | .whRelative, _ => .finWhRelCl
+  | c, _ => c.sort
 
-/-- The syntactic features of a filler-head construct that the parameters of variation probe:
-the categories of its filler and head daughters, and whether its head is inverted, finite and
-independent. -/
-structure Construct where
-  filler : Cat
-  head : Cat
-  inverted : Bool
-  finite : Bool
-  independent : Bool
-  deriving DecidableEq, Repr
+/-- A finite construct of the clause with a noun phrase filler and a sentential head, whose
+mother has semantic type `semSort` and `GAP` list `rest`. Its head is inverted and independent
+in a wh-interrogative, uninverted and embedded in a wh-relative, and uninverted and independent
+otherwise. -/
+abbrev FGClause.construct (c : FGClause) (semSort : Srt) (rest : Ent) : Interpretation sig Ent :=
+  Sag2010.construct (c.cxtSort .fin) .NP .S (if c = .whInterrogative then .plus else .minus)
+    (if c = .whRelative then .minus else .plus) .fin semSort rest
 
-/-- A construct meets the category conditions shared by the five clauses when its filler is
-nonverbal and its head verbal. -/
-def Construct.FillerHead (k : Construct) : Prop :=
-  k.filler.sort ≤ .nonverbal ∧ k.head.sort ≤ .verbal
+/-- A construct of the clause's sort satisfies the grammar exactly when its mother has the
+clause's semantic type. -/
+theorem models_construct_iff (c : FGClause) (σ : Srt)
+    (hσ : σ ∈ [Srt.question, .fact, .modifier, .austinean]) :
+    (c.construct σ .nil).Models grammar ↔ σ = c.sem := by
+  revert c σ
+  decide +kernel
 
-instance : DecidablePred Construct.FillerHead := fun k ↦ by
-  unfold Construct.FillerHead; infer_instance
+/-- The constructs of each clause, with one gap or two, are well-typed, so the grammar's verdict
+on them is a verdict of its constructions and not of the appropriateness conditions. -/
+theorem isWellTyped_constructs (c : FGClause) :
+    (c.construct c.sem .nil).IsWellTyped ∧ (c.construct c.sem .g2).IsWellTyped := by
+  cases c <;> decide +kernel
 
-/-- The relative construction requires a clause that is neither independent nor inverted. -/
-def Construct.RelativeCl (k : Construct) : Prop := k.independent = false ∧ k.inverted = false
+/-- A filler that differs in category from the gap it fills violates the filler-head
+construction. -/
+example : ¬ { FGClause.topicalized.construct .austinean .nil with
+    A := fun (a : Attr) (v : Ent) ↦ match a, v with
+      | .CAT, .gp1 => some .hdCat
+      | a, v => (FGClause.topicalized.construct .austinean .nil).A a v }.Models grammar := by
+  decide +kernel
 
-instance : DecidablePred Construct.RelativeCl := fun k ↦ by
-  unfold Construct.RelativeCl; infer_instance
+/-! ### Islands -/
 
-/-- The constructs a clause licenses. A topicalized clause has an uninverted, finite,
-independent S head; a wh-exclamative an uninverted, finite S head; a nonsubject
-wh-interrogative an S head inverted exactly when the clause is independent; a wh-relative is a
-relative clause with a verbal head whose filler is nominal when finite and a PP when
-infinitival; and a the-clause has a finite S or CP head. -/
-def FGClause.Licenses : FGClause → Construct → Prop
-  | .topicalized, k =>
-      k.FillerHead ∧ k.head = .S ∧ k.inverted = false ∧ k.finite = true ∧ k.independent = true
-  | .whExclamative, k => k.FillerHead ∧ k.head = .S ∧ k.inverted = false ∧ k.finite = true
-  | .whInterrogative, k => k.FillerHead ∧ k.head = .S ∧ k.inverted = k.independent
-  | .whRelative, k =>
-      k.FillerHead ∧ k.RelativeCl ∧ k.head.sort ≤ .verb ∧
-        (k.finite = true → k.filler.sort ≤ .nominal) ∧ (k.finite = false → k.filler = .PP)
-  | .theClause, k => k.FillerHead ∧ (k.head = .S ∨ k.head = .CP) ∧ k.finite = true
+/-- A clause is an absolute island when, in every model of the grammar, every construct of its
+sort has a mother with an empty `GAP` list, so that no gap inside the clause is bound outside
+it. -/
+def FGClause.IsIsland (c : FGClause) : Prop :=
+  ∀ ⦃U : Type⦄ (I : Interpretation sig U), I.Models grammar → ∀ u, I.S u ≤ c.sort →
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.MTR, .GAP]) .elist)
 
-instance (c : FGClause) (k : Construct) : Decidable (c.Licenses k) := by
-  cases c <;> unfold FGClause.Licenses <;> infer_instance
+variable {U : Type*} {I : Interpretation sig U} {u : U}
 
-/-! ### The parameters of variation -/
+/-- In a model of the grammar, the head daughter of a topicalized clause, a wh-exclamative or a
+the-clause has a single gap. -/
+theorem satisfies_gapRest_elist (hI : I.Models grammar) {c : FGClause}
+    (hc : c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) (hu : I.S u ≤ c.sort) :
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist) := by
+  rcases hc with rfl | rfl | rfl
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.2.2.2.2.1
+  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).2.2.2
+  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).2.2
 
-/-- The filler daughter is an NP, PP, AP or AdvP; a finite wh-relative's is an NP or PP and an
-infinitival wh-relative's a PP. -/
-theorem filler_of_licenses {c : FGClause} {k : Construct} (h : c.Licenses k) :
-    (k.filler = .NP ∨ k.filler = .PP ∨ k.filler = .AP ∨ k.filler = .AdvP) ∧
-      (c = .whRelative →
-        (k.finite = true → k.filler = .NP ∨ k.filler = .PP) ∧
-          (k.finite = false → k.filler = .PP)) := by
-  cases c <;> simp_all [FGClause.Licenses, Construct.FillerHead, Cat.sort_le_nonverbal_iff,
-    Cat.sort_le_nominal_iff]
+/-- Exactly topicalized clauses, wh-exclamatives and the-clauses are absolute islands. Their
+constructions give the head daughter a single gap, which the filler discharges, while a
+wh-interrogative or a wh-relative construct may pass a second gap to its mother. -/
+theorem isIsland_iff (c : FGClause) :
+    c.IsIsland ↔ c = .topicalized ∨ c = .whExclamative ∨ c = .theClause := by
+  refine ⟨fun h ↦ ?_, fun hc U I hI u hu ↦ ?_⟩
+  · by_contra hc
+    have key : ∀ c : FGClause, ¬ (c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) →
+        (c.construct c.sem .g2).Models grammar ∧ ¬ (c.construct c.sem .g2).Satisfies
+          (fun _ ↦ .cxt) .cxt (.sortAssign (.path [.MTR, .GAP]) .elist) := by
+      decide +kernel
+    exact (key c hc).2 (h _ (key c hc).1 .cxt
+      ((by decide +kernel : ∀ c : FGClause, c.cxtSort .fin ≤ c.sort) c))
+  · exact (satisfies_mtrGap_iff hI
+      (hu.trans ((by decide +kernel : ∀ c : FGClause, c.sort ≤ .fillerHeadCxt) c)) .elist).2
+      (satisfies_gapRest_elist hI hc hu)
 
-/-- The head daughter is an S, or a CP in a the-clause, or a VP in a wh-relative. -/
-theorem head_of_licenses {c : FGClause} {k : Construct} (h : c.Licenses k) :
-    k.head = .S ∨ c = .theClause ∧ k.head = .CP ∨ c = .whRelative ∧ k.head = .VP := by
-  cases c <;> simp_all [FGClause.Licenses, Cat.sort_le_verb_iff]
+/-! ### The parameters of variation
 
-/-- An inverted head occurs only in an independent wh-interrogative or in a the-clause. -/
-theorem inverted_of_licenses {c : FGClause} {k : Construct} (h : c.Licenses k)
-    (hi : k.inverted = true) : c = .whInterrogative ∧ k.independent = true ∨ c = .theClause := by
-  cases c <;> simp_all [FGClause.Licenses, Construct.RelativeCl]
+The constructions fix the parameters of variation (6) in every model of the grammar, not only
+in the worked constructs. -/
 
-/-- Only wh-interrogatives and wh-relatives take an infinitival head. -/
-theorem infinitival_of_licenses {c : FGClause} {k : Construct} (h : c.Licenses k)
-    (hf : k.finite = false) : c = .whInterrogative ∨ c = .whRelative := by
-  cases c <;> simp_all [FGClause.Licenses]
+/-- A wh-relative of a sort-resolved interpretation is finite or infinitival. -/
+private theorem le_finWhRelCl_or_le_infWhRelCl (hs : I.IsSortResolved) (hu : I.S u ≤ .whRelCl) :
+    I.S u ≤ .finWhRelCl ∨ I.S u ≤ .infWhRelCl :=
+  (by decide +kernel : ∀ σ : Srt, σ ≤ .whRelCl → IsSpecies σ →
+    σ ≤ .finWhRelCl ∨ σ ≤ .infWhRelCl) _ hu (hs u)
 
-/-- Topicalized clauses are independent and wh-relatives are not. -/
-theorem independent_of_licenses {c : FGClause} {k : Construct} (h : c.Licenses k) :
-    (c = .topicalized → k.independent = true) ∧ (c = .whRelative → k.independent = false) := by
-  cases c <;> simp_all [FGClause.Licenses, Construct.RelativeCl]
+/-- The filler daughter of each of the five clauses is nonverbal, a noun phrase, prepositional
+phrase, adjective phrase or adverb phrase (25). A wh-relative's is nominal or prepositional,
+according as it is finite or infinitival. -/
+theorem satisfies_filler_nonverbal (hI : I.Models grammar) (hs : I.IsSortResolved)
+    (c : FGClause) (hu : I.S u ≤ c.sort) :
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal) := by
+  cases c
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).1
+  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).1
+  · exact (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu).1
+  · rcases le_finWhRelCl_or_le_infWhRelCl hs hu with h | h
+    · exact (satisfies_body hI (c := finWhRelPrinciple) (by simp [constraints])
+        h).2.sortAssign_mono (by decide)
+    · exact (satisfies_body hI (c := infWhRelPrinciple) (by simp [constraints])
+        h).1.sortAssign_mono (by decide)
+  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).1
+
+/-- The head daughter of a topicalized clause, wh-exclamative, wh-interrogative or wh-relative is
+a projection of a verb (27). Except in the topicalized clause, which states it, this follows
+from the head's inversion value, which only a verb has; a wh-relative's comes from the relative
+construction on its mother. -/
+theorem satisfies_head_verb (hI : I.Models grammar) (hw : I.IsWellTyped) {c : FGClause}
+    (hc : c ≠ .theClause) (hu : I.S u ≤ c.sort) :
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT]) .verb) := by
+  cases c
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.1
+  · obtain ⟨v, hv, -⟩ := (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).2.1
+    exact satisfies_le_of_mem_termDenot hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide) hv
+  · obtain ⟨v, hv, -⟩ := (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu).2
+    exact satisfies_le_of_mem_termDenot hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide) hv
+  · obtain ⟨v, hv, -⟩ := (satisfies_hdCat_iff hI (hu.trans (by decide)) [.INV] .minus).1
+      (satisfies_body hI (c := relativePrinciple) (by simp [constraints]) (hu.trans (by decide))).1
+    exact satisfies_le_of_mem_termDenot hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide) hv
+  · exact absurd rfl hc
+
+/-- The head daughter of a topicalized clause, wh-exclamative or wh-relative is uninverted (28).
+A wh-relative inherits this from the relative construction on its mother. -/
+theorem satisfies_head_uninverted (hI : I.Models grammar) {c : FGClause}
+    (hc : c = .topicalized ∨ c = .whExclamative ∨ c = .whRelative) (hu : I.S u ≤ c.sort) :
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus) := by
+  rcases hc with rfl | rfl | rfl
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.2.1
+  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).2.1
+  · exact (satisfies_hdCat_iff hI (hu.trans (by decide)) [.INV] .minus).1
+      (satisfies_body hI (c := relativePrinciple) (by simp [constraints]) (hu.trans (by decide))).1
+
+/-- The head daughter of a topicalized clause, wh-exclamative, the-clause or finite wh-relative
+is finite (29). In a finite wh-relative the construction makes the mother finite, and the head
+daughter shares the mother's category. -/
+theorem satisfies_head_fin (hI : I.Models grammar)
+    (hu : I.S u ≤ .topCl ∨ I.S u ≤ .whExclCl ∨ I.S u ≤ .theCl ∨ I.S u ≤ .finWhRelCl) :
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin) := by
+  rcases hu with hu | hu | hu | hu
+  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.2.2.2.1
+  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).2.2.1
+  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).2.1
+  · exact (satisfies_hdCat_iff hI (hu.trans (by decide)) [.VFORM] .fin).1
+      (satisfies_body hI (c := finWhRelPrinciple) (by simp [constraints]) hu).1
+
+/-- The head daughter of a topicalized clause is independent and that of a wh-relative is not.
+A wh-relative inherits this from the relative construction on its mother. -/
+theorem satisfies_head_ic (hI : I.Models grammar) :
+    (I.S u ≤ .topCl → I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .IC]) .plus)) ∧
+      (I.S u ≤ .whRelCl →
+        I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .IC]) .minus)) :=
+  ⟨fun hu ↦ (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).2.2.2.1,
+    fun hu ↦ (satisfies_hdCat_iff hI (hu.trans (by decide)) [.IC] .minus).1
+      (satisfies_body hI (c := relativePrinciple) (by simp [constraints]) (hu.trans (by decide))).2⟩
 
 /-! ### The distinguished element -/
 
@@ -352,15 +416,23 @@ def probing (p : Parameter) : List Datum :=
 /-- The clause a row instantiates. -/
 def clause? (x : Datum) : Option FGClause := x.parse? "construction" clauses
 
-/-- The construct that a row describes, with its filler and head categories and the inversion,
-finiteness and embedding of its head. The filler is an NP and the head an uninverted, finite,
-matrix S unless the row records otherwise. -/
-def construct (x : Datum) : Construct where
-  filler := (x.parse? "filler" cats).getD .NP
-  head := (x.parse? "head" cats).getD .S
-  inverted := (x.parse? "inverted" bools).getD false
-  finite := (x.parse? "finite" bools).getD true
-  independent := !(x.parse? "embedded" bools).getD false
+/-- The inversion values that rows record. -/
+def inversions : List (String × Ent) := [("true", .plus), ("false", .minus)]
+
+/-- The independence values of embedded and matrix clauses. -/
+def embeddings : List (String × Ent) := [("true", .minus), ("false", .plus)]
+
+/-- The verb forms of finite and infinitival clauses. -/
+def verbForms : List (String × Ent) := [("true", .fin), ("false", .inf)]
+
+/-- The construct of the clause `c` that a row describes, with its filler and head categories
+and the inversion, embedding and finiteness of its head. The filler is an NP and the head an
+uninverted, finite, matrix S unless the row records otherwise. -/
+@[reducible] def rowConstruct (c : FGClause) (x : Datum) : Interpretation sig Ent :=
+  let vform := (x.parse? "finite" verbForms).getD .fin
+  construct (c.cxtSort vform) ((x.parse? "filler" cats).getD .NP) ((x.parse? "head" cats).getD .S)
+    ((x.parse? "inverted" inversions).getD .minus) ((x.parse? "embedded" embeddings).getD .plus)
+    vform c.sem .nil
 
 /-- The wh-form and category of a row's filler, if it contains a wh-word. -/
 def whWord? (x : Datum) : Option (WhForm × WhCategory) :=
@@ -401,12 +473,19 @@ theorem distinguished :
   decide +kernel
 
 /-- The rows probing the categories of the daughters and the inversion, finiteness and
-independence of the head are acceptable exactly when the clause licenses the construct they
-describe. -/
+independence of the head are acceptable exactly when the construct they describe is a model of
+the grammar. -/
 theorem judgments :
     ∀ p ∈ [Parameter.fillerCategory, .headCategory, .inversion, .finiteness, .independence],
       ∀ x ∈ probing p, ∀ c, clause? x = some c →
-        (x.judgment = .acceptable ↔ c.Licenses (construct x)) := by
+        (x.judgment = .acceptable ↔ (rowConstruct c x).Models grammar) := by
+  decide +kernel
+
+/-- The constructs that the rows describe are well-typed, so each verdict of `judgments` is one
+of the constructions. -/
+theorem isWellTyped_rowConstruct :
+    ∀ p ∈ [Parameter.fillerCategory, .headCategory, .inversion, .finiteness, .independence],
+      ∀ x ∈ probing p, ∀ c, clause? x = some c → (rowConstruct c x).IsWellTyped := by
   decide +kernel
 
 /-- The rows extracting a second gap from a clause are acceptable only when the clause is not
