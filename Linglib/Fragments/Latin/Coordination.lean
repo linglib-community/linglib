@@ -60,7 +60,4 @@ def vel : Coordinator :=
 def sed : Coordinator :=
   { morph := .free "sed", gloss := "but", role := .adversative }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [et, que, atque, neque, aut, vel, sed]
-
 end Latin.Coordination

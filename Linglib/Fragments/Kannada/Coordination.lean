@@ -39,7 +39,4 @@ def uu : Coordinator :=
 def oo : Coordinator :=
   { morph := .encl "oo", gloss := "or", role := .disjunctive }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [uu, oo]
-
 end Kannada.Coordination

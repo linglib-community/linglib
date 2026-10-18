@@ -39,16 +39,10 @@ def tai : Coordinator :=
 def vai : Coordinator :=
   { morph := .free "vai", gloss := "or", role := .disjunctive }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [ja, tai, vai]
-
 /-- *sekä … että* 'both … and'. -/
 def sekaEtta : Coordinator.Correlative := ⟨[.free "sekä"], [.free "että"], ja⟩
 
 /-- *joko … tai* 'either … or'. -/
 def jokoTai : Coordinator.Correlative := ⟨[.free "joko"], [tai.morph], tai⟩
-
-/-- The emphatic constructions. -/
-def correlatives : List Coordinator.Correlative := [sekaEtta, jokoTai]
 
 end Finnish.Coordination

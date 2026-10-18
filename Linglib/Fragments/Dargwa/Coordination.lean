@@ -38,7 +38,4 @@ def ja : Coordinator :=
 def nu : Coordinator :=
   { morph := .encl "nu", gloss := "but; because", role := .adversative }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [ra, ja, nu]
-
 end Dargwa.Coordination

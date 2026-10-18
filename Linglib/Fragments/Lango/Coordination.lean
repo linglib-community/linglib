@@ -28,7 +28,4 @@ namespace Lango.Coordination
 def kede : Coordinator :=
   { morph := .free "kèdè", gloss := "and", role := .conjunctive }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [kede]
-
 end Lango.Coordination

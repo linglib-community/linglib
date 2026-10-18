@@ -47,13 +47,7 @@ def na_ : Coordinator :=
 def ach : Coordinator :=
   { morph := .free "ach", gloss := "but", role := .adversative }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [agus, no_, na_, ach]
-
 /-- *idir … agus* 'both … and'. -/
 def idirAgus : Coordinator.Correlative := ⟨[.free "idir"], [agus.morph], agus⟩
-
-/-- The emphatic constructions. -/
-def correlatives : List Coordinator.Correlative := [idirAgus]
 
 end Irish.Coordination

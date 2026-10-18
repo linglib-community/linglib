@@ -46,13 +46,7 @@ def vagy : Coordinator :=
 def de : Coordinator :=
   { morph := .free "de", gloss := "but", role := .adversative }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [es, is_, vagy, de]
-
 /-- *mind … mind* 'both … and'. -/
 def mindMind : Coordinator.Correlative := ⟨[.free "mind"], [.free "mind"], es⟩
-
-/-- The emphatic constructions. -/
-def correlatives : List Coordinator.Correlative := [mindMind]
 
 end Hungarian.Coordination

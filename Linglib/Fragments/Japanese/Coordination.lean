@@ -6,7 +6,7 @@ public import Linglib.Syntax.Category.Coordinator
 # Japanese coordinators
 
 Japanese coordinates noun phrases with enclitic particles: *to* 'and', on the first conjunct,
-which is also the comitative marker, so that Japanese is a with-language in Stassen's terms;
+which is also the comitative marker;
 *mo* 'and', on each conjunct, which is also the additive particle 'too' and the universal
 particle of the indeterminate quantifiers (*dare-mo* 'everyone'); and *ka* 'or', which is also
 the question particle and the existential particle of the indeterminate quantifiers (*dare-ka*
@@ -43,8 +43,5 @@ def mo : Coordinator :=
 indeterminates, `Japanese.Determiners.dare_ka`. -/
 def ka : Coordinator :=
   { morph := .encl "ka", gloss := "or; question; some", role := .disjunctive }
-
-/-- The coordinators. -/
-def allEntries : List Coordinator := [to_, mo, ka]
 
 end Japanese.Coordination

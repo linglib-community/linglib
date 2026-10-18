@@ -46,7 +46,4 @@ def an : Coordinator :=
 def magram : Coordinator :=
   { morph := .free "magram", gloss := "but", role := .adversative }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [da, c, an, magram]
-
 end Georgian.Coordination

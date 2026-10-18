@@ -28,13 +28,7 @@ namespace Yoruba.Coordination
 def ati : Coordinator :=
   { morph := .free "àtí", gloss := "and", role := .conjunctive }
 
-/-- The coordinators. -/
-def allEntries : List Coordinator := [ati]
-
 /-- *àtí … àtí* 'both … and'. -/
 def atiAti : Coordinator.Correlative := ⟨[ati.morph], [ati.morph], ati⟩
-
-/-- The emphatic constructions. -/
-def correlatives : List Coordinator.Correlative := [atiAti]
 
 end Yoruba.Coordination
