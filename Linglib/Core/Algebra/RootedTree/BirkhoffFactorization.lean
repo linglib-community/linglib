@@ -5,25 +5,29 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
+public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 public import Linglib.Core.Algebra.RotaBaxter
+public import Linglib.Core.Combinatorics.RootedTree.Conservation
+public import Mathlib.RingTheory.Bialgebra.Convolution
 
 /-!
-# Birkhoff factorization on the Connes–Kreimer Hopf algebra
+# Birkhoff factorization of Connes–Kreimer characters
 
-Let `φ : H → ℛ` be a linear map from the Connes–Kreimer Hopf algebra into a commutative algebra
-and `P` an additive operator on `ℛ`. The Bogolyubov recursion over the cuts `(F, T')` of a tree
-defines the preparation `φ̃(T) = Σ (Π_{t ∈ F} φ₋(t)) · φ(T')`, the negative part `φ₋(T) = P (φ̃(T))`
-and the renormalized part `φ₊(T) = φ̃(T) + φ₋(T)`, each extended multiplicatively to forests.
-Connes and Kreimer's construction over a ring, with a Rota–Baxter operator `R` of weight `-1`, is
-the case `P = -R`, where `φ₋ = -R(φ̃)` and `φ₊ = (1 - R)(φ̃)`; over a semiring, as in Marcolli and
-Tedeschi, `P` is itself the operator, of weight `+1`. Either way `P` has weight `+1`.
+Let `φ : H → ℛ` be a linear map from the Connes–Kreimer algebra of rooted forests into a
+commutative algebra and `P` an additive operator on `ℛ`. The Bogolyubov recursion over the cuts
+`(F, T')` of a tree defines the preparation `φ̃(T) = Σ (Π_{t ∈ F} φ₋(t)) · φ(T')`, the negative part
+`φ₋(T) = P (φ̃(T))` and the renormalized part `φ₊(T) = φ̃(T) + φ₋(T)`, each extended
+multiplicatively to forests. Connes and Kreimer's construction over a ring, with a Rota–Baxter
+operator `R` of weight `-1`, is the case `P = -R`, where `φ₋ = -R(φ̃)` and `φ₊ = (1 - R)(φ̃)`;
+over a semiring, as in Marcolli and Tedeschi, `P` is itself the operator, of weight `+1`. Either
+way `P` has weight `+1`.
 
 For a unital `φ`, `φ₊ = φ₋ ⋆ φ` holds on trees for every `P`, and on all of `H` when `φ` is a
 character. The Rota–Baxter identity puts the two parts in subalgebras: if `P` has weight `+1`, then
-`φ₋` sends every nonempty forest into the range of `P` and `φ₊` into the range of `id + P`. Over a
-ring the antipode `S` turns `φ₊ = φ₋ ⋆ φ` into the Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊`, and
-at `φ = id`, `P = -id` the negative part is the antipode itself.
+`φ₋` sends every nonempty forest into the range of `P` and `φ₊` into the range of `id + P`. At
+`P = -id` the renormalized part vanishes on trees, so `φ₋` is a left convolution inverse of `φ`;
+at `φ = id` this is the antipode `ConnesKreimer.antipodeAlgHomN`, which turns `φ₊ = φ₋ ⋆ φ` into
+the factorization `φ = (φ₋ ∘ S) ⋆ φ₊` (`ConnesKreimer.birkhoffFactorization`).
 
 ## Main definitions
 
@@ -39,18 +43,13 @@ at `φ = id`, `P = -id` the negative part is the antipode itself.
   of weight `+1`, the two parts land in the ranges of `P` and of `id + P`.
 * `ConnesKreimer.birkhoffPlus_eq_self`: a character that `P` kills on every tree is its own
   renormalized part.
-* `ConnesKreimer.birkhoffFactorization`: `φ = (φ₋ ∘ S) ⋆ φ₊` for a character `φ`.
-* `ConnesKreimer.birkhoffMinus_id_neg_eq_antipodeAlgHomN`: at `φ = id` and `P = -id`, `φ₋` is the
-  antipode.
+* `ConnesKreimer.birkhoffMinus_neg_id_convMul`: at `P = -id`, `φ₋ ⋆ φ = 1`.
 
 ## Implementation notes
 
 The weight of `P` is stated in `ℕ`, which acts canonically on every semiring. On Laurent series
 the base ring also acts through `HahnSeries.powerSeriesAlgebra`, an action not definitionally
 equal to the coefficientwise one.
-
-Mathlib's convolution group `AlgHom.convGroup` asks the target to be a bialgebra, so the inverse
-`φ₋ ∘ S` of `φ₋` comes from the antipode law directly (`antipodeComp_convMul_self`).
 
 ## References
 
@@ -64,8 +63,6 @@ Mathlib's convolution group `AlgHom.convGroup` asks the target to be a bialgebra
 open RoseTree UnorderedTree WithConv
 
 namespace ConnesKreimer
-
-open scoped TensorProduct
 
 section Semiring
 
@@ -208,57 +205,25 @@ theorem birkhoffPlus_eq_self {φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] 
 
 end Semiring
 
-/-! ### The factorization `φ = (φ₋ ∘ S) ⋆ φ₊` over a ring -/
+/-! ### The operator `-id` -/
 
-section Ring
+section NegId
 
-variable {R ℛ : Type*} [CommRing R] [CommSemiring ℛ] [Algebra R ℛ] {α : Type*} (P : ℛ →+ ℛ)
+variable {R ℛ : Type*} [CommSemiring R] [CommRing ℛ] [Algebra R ℛ] {α : Type*}
 
-/-- For a character `ψ : H →ₐ[R] ℛ`, the composite `ψ ∘ S` is a left convolution inverse of `ψ`,
-by the antipode law `S ⋆ id = 1` transported along `ψ`. -/
-theorem antipodeComp_convMul_self (ψ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
-    toConv (ψ.comp (HopfAlgebra.antipodeAlgHom R (ConnesKreimer R (UnorderedTree α))))
-        * toConv ψ
-      = (1 : WithConv (ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ)) := by
-  have h := AlgHom.comp_convMul_distrib ψ
-    (toConv (HopfAlgebra.antipodeAlgHom R (ConnesKreimer R (UnorderedTree α))))
-    (toConv (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
-  rw [AlgHom.antipode_id_cancel, AlgHom.comp_id] at h
-  apply ofConv_injective
-  rw [← h]
-  simp only [AlgHom.convOne_def, ofConv_toConv, ← AlgHom.comp_assoc,
-    Subsingleton.elim (ψ.comp (Algebra.ofId R (ConnesKreimer R (UnorderedTree α))))
-      (Algebra.ofId R ℛ)]
+/-- At `P = -id` the renormalized part vanishes on every tree, `φ₊(T) = φ̃(T) - φ̃(T)`. -/
+theorem birkhoffPlusTree_neg_id (φ : ConnesKreimer R (UnorderedTree α) →ₗ[R] ℛ)
+    (T : UnorderedTree α) : birkhoffPlusTree φ (-AddMonoidHom.id ℛ) T = 0 := by
+  rw [birkhoffPlusTree, birkhoffMinusTree_eq, AddMonoidHom.neg_apply, AddMonoidHom.id_apply,
+    add_neg_cancel]
 
-/-- The Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊` of a character, from `φ₊ = φ₋ ⋆ φ` and the
-inverse `φ₋ ∘ S` of `φ₋`. -/
-theorem birkhoffFactorization (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
-    toConv φ
-      = toConv ((birkhoffMinus φ.toLinearMap P).comp
-            (HopfAlgebra.antipodeAlgHom R (ConnesKreimer R (UnorderedTree α))))
-          * toConv (birkhoffPlus φ.toLinearMap P) := by
-  rw [← birkhoffPlus_eq_convMul, ← mul_assoc, antipodeComp_convMul_self, one_mul]
+/-- At `P = -id` the negative part of a character is its left convolution inverse. -/
+theorem birkhoffMinus_neg_id_convMul (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
+    toConv (birkhoffMinus φ.toLinearMap (-AddMonoidHom.id ℛ)) * toConv φ = 1 := by
+  rw [birkhoffPlus_eq_convMul]
+  refine ofConv_injective (algHom_ext_ofTree fun T ↦ ?_)
+  simp [birkhoffPlusTree_neg_id, coalgebra_counit_apply]
 
-/-- At `φ = id` and `P = -id`, the negative part on a tree is the antipode: the two recursions
-coincide summand by summand. -/
-theorem birkhoffMinusTree_id_neg_eq_antipodeTreeN (T : UnorderedTree α) :
-    birkhoffMinusTree (LinearMap.id : ConnesKreimer R (UnorderedTree α) →ₗ[R] _)
-      (-AddMonoidHom.id _) T = antipodeTreeN T := by
-  rw [birkhoffMinusTree_eq, birkhoffPrepTree, antipodeTreeN_unfold, AddMonoidHom.neg_apply,
-    AddMonoidHom.id_apply, neg_inj]
-  refine congrArg Multiset.sum (Multiset.map_congr rfl fun p hp ↦ ?_)
-  rw [LinearMap.id_apply]
-  exact congrArg (· * ofTree p.2) (congrArg Multiset.prod (Multiset.map_congr rfl
-    fun t ht ↦ birkhoffMinusTree_id_neg_eq_antipodeTreeN t))
-termination_by T.numNodes
-decreasing_by exact cutSummandsN_crown_numNodes_lt hp ht
-
-/-- At `φ = id` and `P = -id`, the negative part is the antipode. -/
-theorem birkhoffMinus_id_neg_eq_antipodeAlgHomN :
-    birkhoffMinus (LinearMap.id : ConnesKreimer R (UnorderedTree α) →ₗ[R] _) (-AddMonoidHom.id _)
-      = antipodeAlgHomN :=
-  congrArg aeval (funext birkhoffMinusTree_id_neg_eq_antipodeTreeN)
-
-end Ring
+end NegId
 
 end ConnesKreimer
