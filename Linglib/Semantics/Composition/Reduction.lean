@@ -1,662 +1,481 @@
 module
 
 public import Linglib.Semantics.Composition.Model
+public import Linglib.Semantics.Composition.Tree
 public import Linglib.Core.ModelTheory.Binders
 public import Linglib.Semantics.Quantification.Basic
-public import Mathlib.ModelTheory.Semantics
 public import Mathlib.ModelTheory.Satisfiability
 public import Mathlib.Tactic.FinCases
 
 /-!
 # The first-order fragment of type-driven composition
 
-`compileFO` compiles the first-order fragment of Heim and Kratzer's trees, after Quantifier
-Raising, into mathlib `FirstOrder.Language.Formula`s. Whenever it succeeds, the denotation
-`Tree.interp` composes is equivalent to the realization of the compiled formula over the model,
-the same triangle `Semantics/Dynamic/DRS/Reduction.lean` proves for DRT. First-order consequence
-between compiled formulas then transfers to entailment between trees in every composition model.
+The first-order constants over a signature are its constant and relation symbols, the
+determiners *every*, *some* and *no*, negation, conjunction and disjunction. Every logical form
+over them reads back to a first-order formula whose realization is the logical form's
+denotation. The readback evaluates the logical form in a syntactic model built from mathlib's
+terms and bounded formulas, and a logical relation with the standard model proves it sound, so
+first-order consequence between readbacks is entailment between trees, as
+`Semantics/Dynamic/DRS/Reduction.lean` shows for DRT.
 
 ## Main definitions
 
-* `FOWords`, `Model.lexiconFO`: the logical vocabulary over a naming-map lexicon.
-* `FOWords.FreshFor`, `LexNaming.Disjoint`: the well-formedness conditions the compiler needs.
-* `compileFO`: the partial compiler.
-* `HoldsAt`: truth of a tree at a world under an assignment.
+* `FirstOrderConstant`, `FirstOrderConstant.interp`: the first-order constants and their
+  denotations in a composition model at a world; `Model.lexicon` interprets the words of a
+  fragment through them.
+* `Ty.SyntacticDomain`: the syntactic model, by type and number of bound variables.
+* `Term.readback`, `Term.toFormula`: the readback of a logical form.
+* `Ty.Realizes`: the logical relation between the syntactic and the standard model.
+* `Tree.HoldsAt`: truth of a tree under a lexicon and an assignment.
 
 ## Main results
 
-* `interp_compileFO`, `holdsAt_iff_realize`: the engine's denotation of a compiled tree is the
-  realization of its formula.
-* `holdsAt_of_models`: first-order consequence yields entailment in every composition model.
-* `models_imp_iff_entails`, `holdsAt_compactness`: tree entailment is first-order consequence
-  over the empty theory, and families of trees satisfy compactness.
+* `Term.realizes_readback`: a logical form's readback realizes its denotation whenever the
+  readbacks of its constants realize theirs.
+* `Term.realizeAt_toFormula`: a first-order logical form denotes the realization of its readback.
+* `Tree.holdsAt_iff_realizeAt`, `Tree.holdsAt_of_models`, `Tree.models_imp_iff_entails`,
+  `Tree.holdsAt_compactness`: a tree holds where its readback is realized, entailment between
+  trees is first-order consequence, and families of trees satisfy compactness.
 
 ## Implementation notes
 
-Trace indices are the formulas' free variables (`ℕ`), so a binder index is the variable name and
-the assignment update `g[n ↦ x]` is `Function.update`. Quantifiers bind exactly one trace, so
-closure uses the computable singleton binders `Formula.all₁` and `Formula.ex₁` (mathlib's
-`iAlls` and `iExs` are noncomputable). *Most* and the other proportional determiners are not
-first-order definable, as Barwise and Cooper showed, so they lie outside the compiled fragment
-and `compileFO` is partial.
+The syntactic model is indexed by the number of bound variables in scope, and gives truth values
+and functions at every larger number, so a determiner binds the next de Bruijn variable of
+`BoundedFormula` without computing a fresh name. Formulas are never carried to more bound
+variables, since `BoundedFormula.castLE` keeps the index an inner quantifier binds. *Most* is not
+first-order definable, as Barwise and Cooper showed, so it is not a first-order constant.
 
 ## References
 
 * [heim-kratzer-1998]
 * [barwise-cooper-1981]
+* [montague-1973]
 -/
 
 @[expose] public section
 
-universe u v
+universe u v w
 
 namespace HeimKratzer
 
 open FirstOrder Language
-open FirstOrder.Language.Formula (all₁ ex₁)
 open Montague
-open HeimKratzer.Tree
 open PhraseStructure (Tree)
+
+/-! ### First-order constants -/
+
+section Constants
 
 variable {L : Language.{u, v}}
 
-/-! ### The logical vocabulary -/
+variable (L) in
+/-- The first-order constants over a signature `L` are its constant symbols at type `e`, its
+unary and binary relation symbols at `e ⇒ t` and `e ⇒ e ⇒ t`, the determiners *every*, *some*
+and *no*, negation, and conjunction and disjunction. -/
+inductive FirstOrderConstant : Ty → Type (max u v) where
+  | name (c : L.Constants) : FirstOrderConstant (.e)
+  | rel₁ (R : L.Relations 1) : FirstOrderConstant (.e ⇒ .t)
+  | rel₂ (R : L.Relations 2) : FirstOrderConstant (.e ⇒ .e ⇒ .t)
+  | every : FirstOrderConstant Ty.det
+  | some : FirstOrderConstant Ty.det
+  | no : FirstOrderConstant Ty.det
+  | neg : FirstOrderConstant (.t ⇒ .t)
+  | conj : FirstOrderConstant (.t ⇒ .t ⇒ .t)
+  | disj : FirstOrderConstant (.t ⇒ .t ⇒ .t)
 
-/-- Word forms for the compiled logical vocabulary, parameterizable per
-fragment/language. -/
-structure FOWords where
-  every : String := "every"
-  some_ : String := "some"
-  no : String := "no"
-  not_ : String := "not"
-  and_ : String := "and"
-  or_ : String := "or"
+/-- At a world of a composition model a symbol denotes what the structure there gives it, the
+determiners denote those of `Quantification`, and conjunction and disjunction take the second
+conjunct first, as a right-branching coordination `[t₁ [and t₂]]` composes. -/
+def FirstOrderConstant.interp (m : Model L) (w : m.W) :
+    {ty : Ty} → FirstOrderConstant L ty → Ty.Domain m.E m.W ty
+  | _, .name c => m.const c w
+  | _, .rel₁ R => m.pred₁ R w
+  | _, .rel₂ R => m.pred₂ R w
+  | _, .every => Quantifier.GQ.every
+  | _, .some => Quantifier.GQ.some
+  | _, .no => Quantifier.GQ.no
+  | _, .neg => Not
+  | _, .conj => fun q p ↦ p ∧ q
+  | _, .disj => fun q p ↦ p ∨ q
 
-/-- The logical vocabulary's lexicon gives the quantifier words their denotations from
-`Quantification` and the connectives their truth functions, with arguments flipped so that
-`[t₁ [and t₂]]` composes to `⟦t₁⟧ ∧ ⟦t₂⟧`. -/
-def FOWords.lexicon (fw : FOWords) (E W : Type) : Lexicon E W := fun s ↦
-  if s = fw.every then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.every⟩
-  else if s = fw.some_ then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.some⟩
-  else if s = fw.no then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.no⟩
-  else if s = fw.not_ then some ⟨.t ⇒ .t, Not⟩
-  else if s = fw.and_ then some ⟨.t ⇒ .t ⇒ .t, fun q p ↦ p ∧ q⟩
-  else if s = fw.or_ then some ⟨.t ⇒ .t ⇒ .t, fun q p ↦ p ∨ q⟩
-  else none
+/-- The lexicon a composition model induces at a world from a translation of words into
+first-order constants. -/
+def Model.lexicon {X : Type*} (m : Model L) (words : X → Option (Σ ty, FirstOrderConstant L ty))
+    (w : m.W) : X → Option (Denotation m.E m.W) :=
+  fun x ↦ (words x).map fun c ↦ ⟨c.1, c.2.interp m w⟩
 
-/-- A naming-map lexicon extended with the logical vocabulary. Content words
-take priority; `FOWords.FreshFor` rules out collisions. -/
-def Model.lexiconFO (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W) :
-    Lexicon m.E m.W := fun s ↦
-  m.lexiconAt nm w s <|> fw.lexicon m.E m.W s
+end Constants
 
-/-- The logical word forms are fresh for the naming maps. -/
-def FOWords.FreshFor (fw : FOWords) (nm : LexNaming L) : Prop :=
-  ∀ s ∈ [fw.every, fw.some_, fw.no, fw.not_, fw.and_, fw.or_],
-    nm.names s = none ∧ nm.preds₁ s = none ∧ nm.preds₂ s = none
+/-! ### The syntactic model
 
-/-- Each word form names at most one kind of symbol, so the compiler's
-classification of a word agrees with the lexicon's lookup order. -/
-structure LexNaming.Disjoint (nm : LexNaming L) : Prop where
-  names_of_preds₁ : ∀ s R, nm.preds₁ s = some R → nm.names s = none
-  names_of_preds₂ : ∀ s R, nm.preds₂ s = some R → nm.names s = none
-  preds₁_of_preds₂ : ∀ s R, nm.preds₂ s = some R → nm.preds₁ s = none
-
-/-! ### The compiler
-
-Recognized (QR'd Heim-Kratzer) shapes: name/trace–verb predication with
-optional object, sentence negation `[not t]`, sentence coordination
-`[t₁ [and t₂]]`, and quantified clauses `[[Q N] [bind k body]]`. Everything
-else — in particular *most* — is outside the fragment and compiles to
-`none`. -/
-
-/-- `compileTerm` compiles an entity subtree, a proper name or a trace, to a term. -/
-def compileTerm (nm : LexNaming L) : Tree Unit String → Option (L.Term ℕ)
-  | .terminal _ s => (nm.names s).map Constants.term
-  | .trace k _ => some (Language.Term.var k)
-  | _ => none
-
-/-- `compilePred` compiles a predicate subtree applied to a subject term, either an
-intransitive verb or a transitive verb with a name or trace as object. -/
-def compilePred (nm : LexNaming L) (τ : L.Term ℕ) :
-    Tree Unit String → Option (L.Formula ℕ)
-  | .terminal _ v => (nm.preds₁ v).map fun R ↦ R.formula₁ τ
-  | .node _ [.terminal _ v, obj] =>
-      (nm.preds₂ v).bind fun R ↦
-        (compileTerm nm obj).map fun τₒ ↦ R.formula₂ τ τₒ
-  | _ => none
-
-/-- `compileFO` compiles the first-order fragment of a tree to a formula with trace indices as
-free variables, returning `none` outside the fragment. -/
-def compileFO (fw : FOWords) (nm : LexNaming L) :
-    Tree Unit String → Option (L.Formula ℕ)
-  | .node _ [.terminal _ s, r] =>
-      if s = fw.not_ then (compileFO fw nm r).map BoundedFormula.not
-      else (nm.names s).bind fun c ↦ compilePred nm (Constants.term c) r
-  | .node _ [.trace k _, r] => compilePred nm (Language.Term.var k) r
-  | .node _ [.node _ [.terminal _ q, .terminal _ nw], .bind k _ body] =>
-      (nm.preds₁ nw).bind fun R ↦
-        (compileFO fw nm body).bind fun ψ ↦
-          if q = fw.every then some (all₁ k ((R.formula₁ (Language.Term.var k)).imp ψ))
-          else if q = fw.some_ then some (ex₁ k (R.formula₁ (Language.Term.var k) ⊓ ψ))
-          else if q = fw.no then
-            some (all₁ k ((R.formula₁ (Language.Term.var k)).imp ψ.not))
-          else none
-  | .node _ [l, .node _ [.terminal _ s, t₂] ] =>
-      if s = fw.and_ then
-        (compileFO fw nm l).bind fun φ₁ ↦
-          (compileFO fw nm t₂).map fun φ₂ ↦ φ₁ ⊓ φ₂
-      else if s = fw.or_ then
-        (compileFO fw nm l).bind fun φ₁ ↦
-          (compileFO fw nm t₂).map fun φ₂ ↦ φ₁ ⊔ φ₂
-      else none
-  | _ => none
-
-/-! ### Lookup lemmas -/
-
-/-- The six logical word forms are pairwise distinct. -/
-def FOWords.Nodup (fw : FOWords) : Prop :=
-  ([fw.every, fw.some_, fw.no, fw.not_, fw.and_, fw.or_] : List String).Nodup
-
-section Lookups
-
-variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
-
-theorem Model.lexiconFO_names {s : String} {c : L.Constants}
-    (h : nm.names s = some c) :
-    m.lexiconFO fw nm w s = some ⟨.e, m.const c w⟩ := by
-  simp [Model.lexiconFO, Model.lexiconAt, h]
-
-theorem Model.lexiconFO_preds₁ {s : String} {R : L.Relations 1}
-    (h : nm.preds₁ s = some R) (h₀ : nm.names s = none) :
-    m.lexiconFO fw nm w s = some ⟨.e ⇒ .t, m.pred₁ext R w⟩ := by
-  simp [Model.lexiconFO, Model.lexiconAt, h, h₀]
-
-theorem Model.lexiconFO_preds₂ {s : String} {R : L.Relations 2}
-    (h : nm.preds₂ s = some R) (h₀ : nm.names s = none)
-    (h₁ : nm.preds₁ s = none) :
-    m.lexiconFO fw nm w s = some ⟨.e ⇒ .e ⇒ .t, m.pred₂ext R w⟩ := by
-  simp [Model.lexiconFO, Model.lexiconAt, h, h₀, h₁]
-
-/-- At a word fresh for the naming maps, lookup falls through to the logical
-vocabulary. -/
-theorem Model.lexiconFO_fresh {s : String}
-    (h₀ : nm.names s = none) (h₁ : nm.preds₁ s = none)
-    (h₂ : nm.preds₂ s = none) :
-    m.lexiconFO fw nm w s = fw.lexicon m.E m.W s := by
-  simp [Model.lexiconFO, Model.lexiconAt, h₀, h₁, h₂]
-
-end Lookups
-
-namespace FOWords
-
-variable {fw : FOWords}
-
-private theorem nodup_ne (hnd : fw.Nodup) :
-    (fw.some_ ≠ fw.every) ∧
-    (fw.no ≠ fw.every ∧ fw.no ≠ fw.some_) ∧
-    (fw.not_ ≠ fw.every ∧ fw.not_ ≠ fw.some_ ∧ fw.not_ ≠ fw.no) ∧
-    (fw.and_ ≠ fw.every ∧ fw.and_ ≠ fw.some_ ∧ fw.and_ ≠ fw.no ∧
-      fw.and_ ≠ fw.not_) ∧
-    (fw.or_ ≠ fw.every ∧ fw.or_ ≠ fw.some_ ∧ fw.or_ ≠ fw.no ∧
-      fw.or_ ≠ fw.not_ ∧ fw.or_ ≠ fw.and_) := by
-  simp only [FOWords.Nodup, List.nodup_cons, List.mem_cons,
-    List.not_mem_nil, or_false, not_or, List.nodup_nil, and_true] at hnd
-  obtain ⟨⟨h1, h2, h3, h4, h5⟩, ⟨h6, h7, h8, h9⟩, ⟨h10, h11, h12⟩, ⟨h13, h14⟩, h15, -⟩ := hnd
-  exact ⟨Ne.symm h1, ⟨Ne.symm h2, Ne.symm h6⟩, ⟨Ne.symm h3, Ne.symm h7, Ne.symm h10⟩,
-    ⟨Ne.symm h4, Ne.symm h8, Ne.symm h11, Ne.symm h13⟩,
-    ⟨Ne.symm h5, Ne.symm h9, Ne.symm h12, Ne.symm h14, Ne.symm h15⟩⟩
-
-variable (E W : Type)
-
-theorem lexicon_every :
-    fw.lexicon E W fw.every
-      = some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.every⟩ := by
-  simp [FOWords.lexicon]
-
-theorem lexicon_some (hnd : fw.Nodup) :
-    fw.lexicon E W fw.some_
-      = some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.some⟩ := by
-  obtain ⟨h1, _, _, _, _⟩ := nodup_ne hnd
-  simp [FOWords.lexicon, h1]
-
-theorem lexicon_no (hnd : fw.Nodup) :
-    fw.lexicon E W fw.no
-      = some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.no⟩ := by
-  obtain ⟨_, ⟨h1, h2⟩, _, _, _⟩ := nodup_ne hnd
-  simp [FOWords.lexicon, h1, h2]
-
-theorem lexicon_not (hnd : fw.Nodup) :
-    fw.lexicon E W fw.not_ = some ⟨.t ⇒ .t, Not⟩ := by
-  obtain ⟨_, _, ⟨h1, h2, h3⟩, _, _⟩ := nodup_ne hnd
-  simp [FOWords.lexicon, h1, h2, h3]
-
-theorem lexicon_and (hnd : fw.Nodup) :
-    fw.lexicon E W fw.and_
-      = some ⟨.t ⇒ .t ⇒ .t, fun q p ↦ p ∧ q⟩ := by
-  obtain ⟨_, _, _, ⟨h1, h2, h3, h4⟩, _⟩ := nodup_ne hnd
-  simp [FOWords.lexicon, h1, h2, h3, h4]
-
-theorem lexicon_or (hnd : fw.Nodup) :
-    fw.lexicon E W fw.or_
-      = some ⟨.t ⇒ .t ⇒ .t, fun q p ↦ p ∨ q⟩ := by
-  obtain ⟨_, _, _, _, ⟨h1, h2, h3, h4, h5⟩⟩ := nodup_ne hnd
-  simp [FOWords.lexicon, h1, h2, h3, h4, h5]
-
-/-- Extract the naming-map-freshness triple for a logical word. -/
-theorem FreshFor.at {nm : LexNaming L} (h : fw.FreshFor nm) {s : String}
-    (hs : s ∈ [fw.every, fw.some_, fw.no, fw.not_, fw.and_, fw.or_]) :
-    nm.names s = none ∧ nm.preds₁ s = none ∧ nm.preds₂ s = none :=
-  h s hs
-
-end FOWords
-
-/-! ### Atoms at a model's world -/
-
-section RealizeAt
-
-variable (m : Model L) (w : m.W) (g : Assignment m.E)
-
-/-- The realization of a unary atom `R(τ)` is the extension of `R` at the term's value. -/
-theorem Model.realizeAt_rel₁ (R : L.Relations 1) (τ : L.Term ℕ) :
-    (R.formula₁ τ).RealizeAt m.interp w g ↔ m.pred₁ext R w (τ.realizeAt m.interp w g) := by
-  rw [Formula.realizeAt_rel₁, Matrix.cons_fin_one]
-  rfl
-
-/-- The realization of a binary atom `R(τ₁, τ₂)`, subject first, is the object-first extension
-of `R` at the terms' values. -/
-theorem Model.realizeAt_rel₂ (R : L.Relations 2) (τ₁ τ₂ : L.Term ℕ) :
-    (R.formula₂ τ₁ τ₂).RealizeAt m.interp w g ↔
-      m.pred₂ext R w (τ₂.realizeAt m.interp w g) (τ₁.realizeAt m.interp w g) := by
-  rw [Formula.realizeAt_rel₂]
-  exact iff_of_eq (congrArg _ (funext fun i ↦ by fin_cases i <;> rfl))
-
-end RealizeAt
-
-/-! ### Engine reduction helpers (at `M = Id`) -/
-
-section EngineHelpers
-
-variable {E W : Type}
-
-/-- Forward FA at `Id`, with the applicative collapsed. -/
-private theorem combine?_fn_left_id {σ τ : Ty} (f : Ty.Domain E W (σ ⇒ τ)) (x : Ty.Domain E W σ) :
-    Mode.combine? Mode.evalM (⟨σ ⇒ τ, f⟩ : Denotation E W) ⟨σ, x⟩ = some ⟨τ, f x⟩ := by
-  rw [Mode.combine?_fn_left]; rfl
-
-/-- Backward functional application at `Id` applies a unary predicate to an entity subject. -/
-private theorem combine?_e_et_id (x : Ty.Domain E W .e) (P : Ty.Domain E W (.e ⇒ .t)) :
-    Mode.combine? Mode.evalM (⟨.e, x⟩ : Denotation E W) ⟨.e ⇒ .t, P⟩ = some ⟨.t, P x⟩ := by
-  rw [Mode.combine?_fn_right]; rfl
-
-/-- Backward functional application at `Id` applies a sentential operator to a sentence. -/
-private theorem combine?_t_tt_id (p : Ty.Domain E W .t) (F : Ty.Domain E W (.t ⇒ .t)) :
-    Mode.combine? Mode.evalM (⟨.t, p⟩ : Denotation E W) ⟨.t ⇒ .t, F⟩ = some ⟨.t, F p⟩ := by
-  rw [Mode.combine?_fn_right]; rfl
-
-private theorem predAbs_id_dist :
-    PredAbs.dist? (M := Id) (E := E) (W := W) (D := ℝ) = some (fun _ f ↦ f) := rfl
-
-/-- An `Iff` between truth values lifts through `some ⟨.t, ·⟩`. -/
-private theorem some_t_congr {p q : Ty.Domain E W .t} (h : p ↔ q) :
-    (some ⟨.t, p⟩ : Option (Denotation E W)) = some ⟨.t, q⟩ :=
-  congrArg (fun r ↦ (some ⟨.t, r⟩ : Option (Denotation E W))) (propext h)
-
-/-- Given the body's interpretation at the outer assignment, a `.bind` node at `Id` denotes an
-entity predicate that agrees pointwise with the body at the updated assignments. -/
-private theorem interp_bind_exists (lex : Lexicon E W) (g : Assignment E)
-    (k : ℕ) (c : Unit) (body : Tree Unit String) {p : Ty.Domain E W .t}
-    (hbody : Tree.interp lex g body = some ⟨.t, p⟩) :
-    ∃ F : Ty.Domain E W (.e ⇒ .t),
-      Tree.interp lex g (.bind k c body) = some ⟨.fn .e .t, F⟩ ∧
-      ∀ (x : E) (px : Ty.Domain E W .t),
-        Tree.interp lex (Function.update g k x) body = some ⟨.t, px⟩ →
-        F x = px := by
-  refine ⟨?_, ?_, ?_⟩
-  rotate_left
-  · rw [Tree.interp_bind, predAbs_id_dist, hbody]
-    rfl
-  · intro x px hx
-    simp only [hx]
-    rfl
-
-end EngineHelpers
-
-/-! ### Agreement -/
-
-section Agreement
-
-variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
-
-/-- The engine's value of a compiled entity subtree is the realization of its term. -/
-theorem interp_compileTerm (g : Assignment m.E) :
-    ∀ {t : Tree Unit String} {τ : L.Term ℕ}, compileTerm nm t = some τ →
-      Tree.interp (m.lexiconFO fw nm w) g t
-        = some ⟨.e, τ.realizeAt m.interp w g⟩
-  | .terminal _ s, τ, h => by
-      simp only [compileTerm, Option.map_eq_some_iff] at h
-      obtain ⟨c, hc, rfl⟩ := h
-      rw [interp_terminal, m.lexiconFO_names fw nm w hc, Term.realizeAt_constants]
-      rfl
-  | .trace k _, τ, h => by
-      simp only [compileTerm, Option.some.injEq] at h
-      subst h
-      rfl
-
-/-- A subject term and a compiled predicate subtree compose to the realization of the compiled
-atom. -/
-theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
-    {subj : Tree Unit String} {τ : L.Term ℕ}
-    (hsubj : compileTerm nm subj = some τ) :
-    ∀ {r : Tree Unit String} {φ : L.Formula ℕ}, compilePred nm τ r = some φ →
-      ∀ c : Unit,
-        Tree.interp (m.lexiconFO fw nm w) g (.node c [subj, r])
-          = some ⟨.t, φ.RealizeAt m.interp w g⟩
-  | .terminal _ v, φ, h, c => by
-      simp only [compilePred, Option.map_eq_some_iff] at h
-      obtain ⟨R, hR, rfl⟩ := h
-      rw [interp_node_binary, interp_compileTerm m fw nm w g hsubj, Option.bind_some,
-        interp_terminal,
-        m.lexiconFO_preds₁ fw nm w hR (hdj.names_of_preds₁ v R hR),
-        Option.bind_some, combine?_e_et_id]
-      exact some_t_congr (m.realizeAt_rel₁ w g R τ).symm
-  | .node _ [.terminal _ v, obj], φ, h, c => by
-      simp only [compilePred, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
-      obtain ⟨R, hR, τₒ, hobj, rfl⟩ := h
-      rw [interp_node_binary, interp_compileTerm m fw nm w g hsubj, Option.bind_some,
-        interp_node_binary, interp_terminal,
-        m.lexiconFO_preds₂ fw nm w hR (hdj.names_of_preds₂ v R hR)
-          (hdj.preds₁_of_preds₂ v R hR),
-        Option.bind_some,
-        interp_compileTerm m fw nm w g hobj, Option.bind_some,
-        combine?_fn_left_id, Option.bind_some, combine?_e_et_id]
-      exact some_t_congr (m.realizeAt_rel₂ w g R τ τₒ).symm
-
-/-- Composition of a quantified clause `[[Q N] [bind k body]]` from the
-lexicon lookups of the quantifier and restrictor words and the `.bind`
-node's interpretation. -/
-private theorem interp_quantClause {g : Assignment m.E} {q nw : String}
-    {Q : Ty.Domain m.E m.W ((.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t)}
-    {N F : Ty.Domain m.E m.W (.e ⇒ .t)} {k : ℕ} {body : Tree Unit String}
-    {a a₁ a₂ a₃ a₄ : Unit}
-    (hQ : m.lexiconFO fw nm w q = some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Q⟩)
-    (hN : m.lexiconFO fw nm w nw = some ⟨.e ⇒ .t, N⟩)
-    (hbind : Tree.interp (m.lexiconFO fw nm w) g (.bind k a₄ body)
-      = some ⟨.fn .e .t, F⟩) :
-    Tree.interp (m.lexiconFO fw nm w) g
-        (.node a [.node a₁ [.terminal a₂ q, .terminal a₃ nw], .bind k a₄ body])
-      = some ⟨.t, Q N F⟩ := by
-  rw [interp_node_binary, interp_node_binary, interp_terminal, hQ, Option.bind_some,
-    interp_terminal, hN,
-    Option.bind_some, combine?_fn_left_id, Option.bind_some, hbind,
-    Option.bind_some, combine?_fn_left_id]
-
-/-- Whenever the compiler succeeds, the engine's denotation of the tree is the realization of
-the compiled formula over the model at `w`. -/
-theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
-    (hdj : nm.Disjoint) (t : Tree Unit String) :
-    ∀ {φ : L.Formula ℕ} (g : Assignment m.E), compileFO fw nm t = some φ →
-      Tree.interp (m.lexiconFO fw nm w) g t
-        = some ⟨.t, φ.RealizeAt m.interp w g⟩ := by
-  induction t using compileFO.induct fw with
-  | case1 a a₁ r ih =>
-    -- negation [not r]
-    intro φ g h
-    simp only [compileFO, ↓reduceIte, Option.map_eq_some_iff] at h
-    obtain ⟨ψ, hψ, rfl⟩ := h
-    have hfr₁ := hfr.at (s := fw.not_) (by simp)
-    rw [interp_node_binary, interp_terminal,
-      m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
-      FOWords.lexicon_not m.E m.W hnd, Option.bind_some,
-      ih g hψ, Option.bind_some, combine?_fn_left_id]
-    congr 1
-  | case2 a a₁ s r hs =>
-    -- name-subject predication
-    intro φ g h
-    simp only [compileFO, ite_eq_right hs, Option.bind_eq_some_iff] at h
-    obtain ⟨c, hc, hpred⟩ := h
-    exact interp_compilePred m fw nm w hdj g
-      (by simp [compileTerm, hc]) hpred a
-  | case3 a k a₁ r =>
-    -- trace-subject predication
-    intro φ g h
-    simp only [compileFO] at h
-    exact interp_compilePred m fw nm w hdj g (by simp [compileTerm]) h a
-  | case4 a a₁ a₂ q a₃ nw k a₄ body ih =>
-    -- quantified clause [[Q N] [bind k body]]
-    intro φ g h
-    simp only [compileFO, Option.bind_eq_some_iff] at h
-    obtain ⟨R, hR, ψ, hψ, hq⟩ := h
-    obtain ⟨F, hbind, hF⟩ :=
-      interp_bind_exists (m.lexiconFO fw nm w) g k a₄ body (ih g hψ)
-    have hquant : ∀ x : m.E,
-        F x = ψ.RealizeAt m.interp w (Function.update g k x) := fun x ↦
-      hF x _ (ih (Function.update g k x) hψ)
-    have hrestr : ∀ x : m.E,
-        (Relations.formula₁ R (Language.Term.var k)).RealizeAt m.interp w (Function.update g k x)
-          ↔ m.pred₁ext R w x := by
-      intro x
-      rw [m.realizeAt_rel₁, Term.realizeAt_var, Function.update_self]
-    have hN := m.lexiconFO_preds₁ fw nm w hR (hdj.names_of_preds₁ _ _ hR)
-    by_cases hq1 : q = fw.every
-    · rw [ite_eq_left hq1] at hq
-      cases hq
-      subst hq1
-      have hfr₁ := hfr.at (s := fw.every) (by simp)
-      rw [interp_quantClause m fw nm w
-        ((m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2).trans
-          (FOWords.lexicon_every m.E m.W)) hN hbind]
-      refine some_t_congr ?_
-      rw [Formula.realizeAt_all₁]
-      simp only [Quantifier.GQ.every, Formula.realizeAt_imp]
-      exact forall_congr' fun x ↦
-        imp_congr (hrestr x).symm (by rw [hquant x])
-    · rw [ite_eq_right hq1] at hq
-      by_cases hq2 : q = fw.some_
-      · rw [ite_eq_left hq2] at hq
-        cases hq
-        subst hq2
-        have hfr₁ := hfr.at (s := fw.some_) (by simp)
-        rw [interp_quantClause m fw nm w
-          ((m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2).trans
-            (FOWords.lexicon_some m.E m.W hnd)) hN hbind]
-        refine some_t_congr ?_
-        rw [Formula.realizeAt_ex₁]
-        simp only [Quantifier.GQ.some, Formula.realizeAt_inf]
-        exact exists_congr fun x ↦
-          and_congr (hrestr x).symm (by rw [hquant x])
-      · rw [ite_eq_right hq2] at hq
-        by_cases hq3 : q = fw.no
-        · rw [ite_eq_left hq3] at hq
-          cases hq
-          subst hq3
-          have hfr₁ := hfr.at (s := fw.no) (by simp)
-          rw [interp_quantClause m fw nm w
-            ((m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2).trans
-              (FOWords.lexicon_no m.E m.W hnd)) hN hbind]
-          refine some_t_congr ?_
-          rw [Formula.realizeAt_all₁]
-          simp only [Quantifier.GQ.no, Formula.realizeAt_imp,
-            Formula.realizeAt_not]
-          exact forall_congr' fun x ↦
-            imp_congr (hrestr x).symm (by rw [hquant x])
-        · rw [ite_eq_right hq3] at hq
-          simp at hq
-  | case5 a l a₁ a₂ t₂ hl₁ hl₂ ihl iht =>
-    -- coordination [l [and t₂]]
-    intro φ g h
-    simp only [compileFO, ↓reduceIte, Option.bind_eq_some_iff,
-      Option.map_eq_some_iff] at h
-    obtain ⟨φ₁, h₁, φ₂, h₂, rfl⟩ := h
-    have hfr₁ := hfr.at (s := fw.and_) (by simp)
-    rw [interp_node_binary, ihl g h₁, Option.bind_some, interp_node_binary,
-      interp_terminal,
-      m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
-      FOWords.lexicon_and m.E m.W hnd, Option.bind_some,
-      iht g h₂, Option.bind_some, combine?_fn_left_id, Option.bind_some,
-      combine?_t_tt_id]
-    refine some_t_congr ?_
-    rw [Formula.realizeAt_inf]
-  | case6 a l a₁ a₂ t₂ hl₁ hl₂ hne ihl iht =>
-    -- coordination [l [or t₂]]
-    intro φ g h
-    simp only [compileFO, ite_eq_right hne, ↓reduceIte, Option.bind_eq_some_iff,
-      Option.map_eq_some_iff] at h
-    obtain ⟨φ₁, h₁, φ₂, h₂, rfl⟩ := h
-    have hfr₁ := hfr.at (s := fw.or_) (by simp)
-    rw [interp_node_binary, ihl g h₁, Option.bind_some, interp_node_binary,
-      interp_terminal,
-      m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
-      FOWords.lexicon_or m.E m.W hnd, Option.bind_some,
-      iht g h₂, Option.bind_some, combine?_fn_left_id, Option.bind_some,
-      combine?_t_tt_id]
-    refine some_t_congr ?_
-    rw [Formula.realizeAt_sup]
-  | case7 a l a₁ a₂ s t₂ hl₁ hl₂ hs₁ hs₂ =>
-    intro φ g h
-    simp only [compileFO, ite_eq_right hs₁, ite_eq_right hs₂] at h
-    simp at h
-  | case8 t hex₁ hex₂ hex₃ hex₄ =>
-    intro φ g h
-    rw [compileFO.eq_def] at h
-    split at h
-    all_goals
-      first
-        | simp at h
-        | exact (hex₁ _ _ _ _ rfl).elim
-        | exact (hex₂ _ _ _ _ rfl).elim
-        | exact (hex₃ _ _ _ _ _ _ _ _ _ rfl).elim
-        | exact (hex₄ _ _ _ _ _ _ rfl).elim
-
-end Agreement
-
-/-! ### Truth and consequence transfer -/
-
-section Consequence
-
-variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
-
-/-- A tree holds at a model's world under an assignment when it composes to a true truth
-value. -/
-def HoldsAt (lex : Lexicon m.E m.W) (g : Assignment m.E)
-    (t : Tree Unit String) : Prop :=
-  ∃ p, Tree.interp lex g t = some ⟨.t, p⟩ ∧ p
-
-theorem holdsAt_iff_realize (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
-    (hdj : nm.Disjoint) {t : Tree Unit String} {φ : L.Formula ℕ}
-    (h : compileFO fw nm t = some φ) (g : Assignment m.E) :
-    HoldsAt m (m.lexiconFO fw nm w) g t ↔ φ.RealizeAt m.interp w g := by
-  constructor
-  · rintro ⟨p, hp, htrue⟩
-    have := (interp_compileFO m fw nm w hnd hfr hdj t g h).symm.trans hp
-    simp only [Option.some.injEq, Sigma.mk.injEq, heq_eq_eq,
-      true_and] at this
-    rw [this]
-    exact htrue
-  · intro hr
-    exact ⟨_, interp_compileFO m fw nm w hnd hfr hdj t g h, hr⟩
-
-/-- First-order consequence between compiled formulas yields entailment between the trees in
-every composition model, at every world and under every assignment. -/
-theorem holdsAt_of_models (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
-    (hdj : nm.Disjoint) {t₁ t₂ : Tree Unit String} {φ₁ φ₂ : L.Formula ℕ}
-    (h₁ : compileFO fw nm t₁ = some φ₁) (h₂ : compileFO fw nm t₂ = some φ₂)
-    (hmod : ∀ (M : Type) (S : L.Structure M) (v : ℕ → M),
-      @Formula.Realize L M S ℕ φ₁ v → @Formula.Realize L M S ℕ φ₂ v)
-    (g : Assignment m.E) :
-    HoldsAt m (m.lexiconFO fw nm w) g t₁ →
-      HoldsAt m (m.lexiconFO fw nm w) g t₂ := by
-  rw [holdsAt_iff_realize m fw nm w hnd hfr hdj h₁ g,
-    holdsAt_iff_realize m fw nm w hnd hfr hdj h₂ g]
-  exact hmod m.E (m.interp w) g
-
-end Consequence
+The syntactic model takes the function and relation symbols of the signature in one universe,
+so that terms and bounded formulas share it. -/
 
 end HeimKratzer
 
-namespace HeimKratzer
+namespace Montague
 
-/-- The default logical vocabulary is pairwise distinct. -/
-theorem FOWords.nodup_default : ({} : FOWords).Nodup := by
-  unfold FOWords.Nodup
-  decide
+open FirstOrder Language
 
-end HeimKratzer
+/-- In the syntactic model of the types over the free variables `α`, with `n` bound variables in
+scope, an entity is a term, and a truth value and a function are given at every larger number of
+bound variables, as a bounded formula and as a function on the values there. -/
+abbrev Ty.SyntacticDomain (L : Language.{u, u}) (α : Type w) : Ty → ℕ → Type (max u w)
+  | .e, i => L.Term (α ⊕ Fin i)
+  | .t, i => ∀ k, i ≤ k → L.BoundedFormula α k
+  | .fn σ τ, i => ∀ k, i ≤ k → Ty.SyntacticDomain L α σ k → Ty.SyntacticDomain L α τ k
+  | .intens σ, i => Ty.SyntacticDomain L α σ i
+  | _, _ => PUnit
 
-/-! ### Bridge to mathlib `Theory` consequence
+/-- A predicate of the syntactic model applied to the next bound variable, with `j + 1` bound
+variables in scope, as a determiner applies its restrictor and scope to the variable it binds. -/
+def Ty.SyntacticDomain.applyNext {L : Language.{u, u}} {α : Type w} {k j : ℕ}
+    (P : Ty.SyntacticDomain L α (.e ⇒ .t) k) (h : k ≤ j) : L.BoundedFormula α (j + 1) :=
+  P (j + 1) (h.trans j.le_succ) (Language.Term.var (.inr (Fin.last j))) (j + 1) le_rfl
 
-For universe-0 languages, composition models and mathlib's bundled models
-coincide: tree entailment over nonempty-domain composition models *is*
-first-order consequence over the empty theory, and compactness transfers
-to families of trees. (`ModelType` requires nonempty carriers, hence the
-nonempty-domain restriction — standard in the GQ literature.) -/
+/-- The logical relation between the syntactic model and the standard one over a structure,
+under a valuation `v` of the free variables and `xs` of the `n` bound ones. A term realizes the
+entity it denotes, a formula realizes a truth value with `xs` extended to any larger number of
+bound variables, a function realizes a function that sends realized arguments to realized values
+with `xs` so extended, and an intension is realized at every world. -/
+def Ty.Realizes {L : Language.{u, u}} {α : Type w} {M W D : Type} (S : L.Structure M)
+    (v : α → M) :
+    (ty : Ty) → (n : ℕ) → (Fin n → M) → Ty.SyntacticDomain L α ty n → Ty.Domain M W ty D → Prop
+  | .e, _, xs, x, a => letI := S; x.realize (Sum.elim v xs) = a
+  | .t, i, xs, φ, p => ∀ k (hk : i ≤ k) (ys : Fin k → M), ys ∘ Fin.castLE hk = xs →
+      (letI := S; (φ k hk).Realize v ys ↔ p)
+  | .fn σ τ, i, xs, f, f' => ∀ k (hk : i ≤ k) (ys : Fin k → M), ys ∘ Fin.castLE hk = xs →
+      ∀ x a, Ty.Realizes S v σ k ys x a → Ty.Realizes S v τ k ys (f k hk x) (f' a)
+  | .intens σ, i, xs, x, a => ∀ w, Ty.Realizes S v σ i xs x (a w)
+  | _, _, _, _, _ => True
+
+end Montague
 
 namespace HeimKratzer
 
 open FirstOrder Language
+open Montague
 open PhraseStructure (Tree)
 
-section TheoryBridge
+section SyntacticModel
 
-variable {L₀ : Language.{0, 0}} (fw : FOWords) (nm : LexNaming L₀)
+variable {L : Language.{u, u}}
+
+section Readback
+
+variable {α : Type w}
+
+/-- In the syntactic model a mode applies at the current number of bound variables, the
+intensional modes to the argument itself, and predicate modification and event identification
+conjoin pointwise. -/
+def Mode.readback {σ₁ σ₂ τ : Ty} {n : ℕ} :
+    Mode σ₁ σ₂ τ → Ty.SyntacticDomain L α σ₁ n → Ty.SyntacticDomain L α σ₂ n →
+      Ty.SyntacticDomain L α τ n
+  | .functionalLeft, f, a => f n le_rfl a
+  | .functionalRight, a, f => f n le_rfl a
+  | .intensionalLeft, f, a => f n le_rfl a
+  | .intensionalRight, a, f => f n le_rfl a
+  | .predicateModification, p, q => fun k hk x j hj ↦ p k hk x j hj ⊓ q k hk x j hj
+  | .eventIdentificationLeft, f, p => fun k hk x j hj e i hi ↦
+      f k hk x j hj e i hi ⊓ p j (hk.trans hj) e i hi
+  | .eventIdentificationRight, p, f => fun k hk x j hj e i hi ↦
+      f k hk x j hj e i hi ⊓ p j (hk.trans hj) e i hi
+
+/-- In the syntactic model a symbol is an atom, a determiner binds the next bound variable where
+its scope is complete, and negation and the connectives are the formula connectives. -/
+def FirstOrderConstant.readback : {ty : Ty} → (n : ℕ) → FirstOrderConstant L ty →
+    Ty.SyntacticDomain L α ty n
+  | _, _, .name c => c.term
+  | _, _, .rel₁ R => fun _ _ x _ hj ↦ R.boundedFormula₁ (x.relabel (Sum.map id (Fin.castLE hj)))
+  | _, _, .rel₂ R => fun _ _ y _ hk x _ hj ↦
+      R.boundedFormula₂ (x.relabel (Sum.map id (Fin.castLE hj)))
+        (y.relabel (Sum.map id (Fin.castLE (hk.trans hj))))
+  | _, _, .every => fun _ _ P _ hk Q _ hj ↦ ((P.applyNext (hk.trans hj)).imp (Q.applyNext hj)).all
+  | _, _, .some => fun _ _ P _ hk Q _ hj ↦ (P.applyNext (hk.trans hj) ⊓ Q.applyNext hj).ex
+  | _, _, .no => fun _ _ P _ hk Q _ hj ↦
+      ((P.applyNext (hk.trans hj)).imp (Q.applyNext hj).not).all
+  | _, _, .neg => fun _ _ φ j hj ↦ (φ j hj).not
+  | _, _, .conj => fun _ _ q _ hk p j hj ↦ p j hj ⊓ q j (hk.trans hj)
+  | _, _, .disj => fun _ _ q _ hk p j hj ↦ p j hj ⊔ q j (hk.trans hj)
+
+/-- The readback of a term in the syntactic model, given readbacks of its constants, with `n`
+bound variables in scope and a valuation `ρ` of its variables in terms. An abstraction reads back
+to a function at every larger number of bound variables, under `ρ` carried there and updated at
+its variable. -/
+def Term.readback {K : Ty → Type*} (R : ∀ {ty : Ty} (n : ℕ), K ty → Ty.SyntacticDomain L α ty n)
+    (n : ℕ) (ρ : ℕ → L.Term (α ⊕ Fin n)) : {ty : Ty} → Term K ty → Ty.SyntacticDomain L α ty n
+  | _, .const c => R n c
+  | _, .var i => ρ i
+  | _, .lam i b => fun k hk x ↦
+      readback R k (Function.update (fun j ↦ (ρ j).relabel (Sum.map id (Fin.castLE hk))) i x) b
+  | _, .comp μ l r => μ.readback (readback R n ρ l) (readback R n ρ r)
+
+end Readback
+
+/-- The first-order formula a logical form over the first-order constants reads back to, whose
+free variables are the logical form's variables. -/
+def Term.toFormula (u : Term (FirstOrderConstant L) .t) : L.Formula ℕ :=
+  u.readback FirstOrderConstant.readback 0 (fun i ↦ Language.Term.var (.inl i)) 0 le_rfl
+
+/-! ### Soundness of the readback -/
+
+section Soundness
+
+variable {α : Type w} {M W D : Type}
+
+variable (S : L.Structure M) (v : α → M)
+
+private theorem comp_castLE_trans {k₁ k₂ k₃ : ℕ} {h₁ : k₁ ≤ k₂} {h₂ : k₂ ≤ k₃} {xs : Fin k₁ → M}
+    {ys : Fin k₂ → M} {zs : Fin k₃ → M} (hys : ys ∘ Fin.castLE h₁ = xs)
+    (hzs : zs ∘ Fin.castLE h₂ = ys) : zs ∘ Fin.castLE (h₁.trans h₂) = xs := by
+  subst hys hzs
+  rfl
+
+private theorem snoc_comp_castLE {k j : ℕ} {h : k ≤ j} {h' : k ≤ j + 1} (zs : Fin j → M)
+    (a : M) : (Fin.snoc zs a : Fin (j + 1) → M) ∘ Fin.castLE h' = zs ∘ Fin.castLE h :=
+  funext fun i ↦ Fin.snoc_castSucc (α := fun _ ↦ M) (p := zs) (x := a) (i := Fin.castLE h i)
+
+private theorem realize_relabel_castLE {n k : ℕ} (hk : n ≤ k) (x : L.Term (α ⊕ Fin n))
+    (ys : Fin k → M) :
+    letI := S
+    (x.relabel (Sum.map id (Fin.castLE hk))).realize (Sum.elim v ys) =
+      x.realize (Sum.elim v (ys ∘ Fin.castLE hk)) := by
+  rw [Term.realize_relabel, Sum.elim_comp_map, Function.comp_id]
+
+private theorem realize_applyNext {k j : ℕ} {ys : Fin k → M}
+    {P : Ty.SyntacticDomain L α (.e ⇒ .t) k}
+    {P' : Ty.Domain M W (.e ⇒ .t) D} (hP : Ty.Realizes S v (.e ⇒ .t) k ys P P') (h : k ≤ j)
+    {zs : Fin j → M} (hzs : zs ∘ Fin.castLE h = ys) (a : M) :
+    letI := S
+    (P.applyNext h).Realize v (Fin.snoc zs a) ↔ P' a :=
+  hP _ _ _ ((snoc_comp_castLE zs a).trans hzs) _ a (by simp [Ty.Realizes]) _ le_rfl _ rfl
+
+/-- A composition mode preserves the logical relation. -/
+theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) {n : ℕ} {xs : Fin n → M}
+    {a : Ty.SyntacticDomain L α σ₁ n} {b : Ty.SyntacticDomain L α σ₂ n}
+    {a' : Ty.Domain M W σ₁ D} {b' : Ty.Domain M W σ₂ D}
+    (ha : Ty.Realizes S v σ₁ n xs a a') (hb : Ty.Realizes S v σ₂ n xs b b') :
+    Ty.Realizes S v τ n xs (μ.readback a b) (μ.eval a' b') := by
+  let := S
+  cases μ with
+  | functionalLeft => exact ha n le_rfl xs rfl b b' hb
+  | functionalRight => exact hb n le_rfl xs rfl a a' ha
+  | intensionalLeft => exact ha n le_rfl xs rfl b (fun _ ↦ b') fun _ ↦ hb
+  | intensionalRight => exact hb n le_rfl xs rfl a (fun _ ↦ a') fun _ ↦ ha
+  | predicateModification =>
+    intro k hk ys hys x c hx j hj zs hzs
+    simp only [Mode.readback, Mode.eval, BoundedFormula.realize_inf,
+      Modifier.intersective_apply]
+    exact and_congr (ha k hk ys hys x c hx j hj zs hzs) (hb k hk ys hys x c hx j hj zs hzs)
+  | eventIdentificationLeft =>
+    intro k hk ys hys x c hx j hj zs hzs e d he i hi us hus
+    simp only [Mode.readback, Mode.eval, BoundedFormula.realize_inf,
+      ArgumentStructure.eventIdentification]
+    exact and_congr (ha k hk ys hys x c hx j hj zs hzs e d he i hi us hus)
+      (hb j (hk.trans hj) zs (comp_castLE_trans hys hzs) e d he i hi us hus)
+  | eventIdentificationRight =>
+    intro k hk ys hys x c hx j hj zs hzs e d he i hi us hus
+    simp only [Mode.readback, Mode.eval, BoundedFormula.realize_inf,
+      ArgumentStructure.eventIdentification]
+    exact and_congr (hb k hk ys hys x c hx j hj zs hzs e d he i hi us hus)
+      (ha j (hk.trans hj) zs (comp_castLE_trans hys hzs) e d he i hi us hus)
+
+/-- When the readbacks of the constants realize their denotations, the readback of a term under
+a valuation of its variables realizes the term's denotation under the assignment that valuation
+realizes. This is the fundamental lemma of the logical relation. -/
+theorem Term.realizes_readback {K : Ty → Type*}
+    {R : ∀ {ty : Ty} (n : ℕ), K ty → Ty.SyntacticDomain L α ty n}
+    {I : ∀ {ty : Ty}, K ty → Ty.Domain M W ty D}
+    (hR : ∀ {ty : Ty} (c : K ty) (n : ℕ) (xs : Fin n → M), Ty.Realizes S v ty n xs (R n c) (I c))
+    {ty : Ty} (u : Term K ty) {n : ℕ} {ρ : ℕ → L.Term (α ⊕ Fin n)} {xs : Fin n → M}
+    {g : Assignment M} (hρ : ∀ i, Ty.Realizes (W := W) (D := D) S v .e n xs (ρ i) (g i)) :
+    Ty.Realizes S v ty n xs (u.readback R n ρ) (u.eval I g) := by
+  let := S
+  induction u generalizing n ρ xs g with
+  | const c => exact hR c n xs
+  | var i => exact hρ i
+  | lam i b ih =>
+    intro k hk ys hys x a hx
+    refine ih fun j ↦ ?_
+    rcases eq_or_ne j i with rfl | hji
+    · simpa using hx
+    · simp only [Function.update_of_ne hji]
+      exact (realize_relabel_castLE S v hk (ρ j) ys).trans (hys ▸ hρ j)
+  | comp μ l r ihl ihr => exact μ.realizes_readback S v (ihl hρ) (ihr hρ)
+
+/-- The readbacks of the first-order constants realize their denotations in a composition
+model at a world. -/
+theorem FirstOrderConstant.realizes_readback (m : Model L) (w : m.W) (v : α → m.E) {ty : Ty}
+    (c : FirstOrderConstant L ty) (n : ℕ) (xs : Fin n → m.E) :
+    Ty.Realizes (m.interp w) v ty n xs (FirstOrderConstant.readback n c) (c.interp m w) := by
+  let := m.interp w
+  cases c with
+  | name c => exact Term.realize_constants
+  | rel₁ R =>
+    intro k hk ys hys x a hx j hj zs hzs
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Model.pred₁,
+      BoundedFormula.realize_rel₁, realize_relabel_castLE (m.interp w) v, hzs]
+    rw [show x.realize (Sum.elim v ys) = a from hx, Matrix.cons_fin_one]
+  | rel₂ R =>
+    intro k₁ hk₁ ys₁ hys₁ y b hy k₂ hk₂ ys₂ hys₂ x a hx j hj zs hzs
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Model.pred₂,
+      BoundedFormula.realize_rel₂, realize_relabel_castLE (m.interp w) v,
+      comp_castLE_trans hys₂ hzs, hzs]
+    rw [show x.realize (Sum.elim v ys₂) = a from hx, show y.realize (Sum.elim v ys₁) = b from hy]
+    exact iff_of_eq (congrArg _ (funext fun i ↦ by fin_cases i <;> rfl))
+  | every =>
+    intro k₁ hk₁ ys₁ hys₁ P P' hP k₂ hk₂ ys₂ hys₂ Q Q' hQ j hj zs hzs
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Quantifier.GQ.every,
+      BoundedFormula.realize_all, BoundedFormula.realize_imp]
+    exact forall_congr' fun a ↦ imp_congr
+      (realize_applyNext _ v hP _ (comp_castLE_trans hys₂ hzs) a)
+      (realize_applyNext _ v hQ hj hzs a)
+  | some =>
+    intro k₁ hk₁ ys₁ hys₁ P P' hP k₂ hk₂ ys₂ hys₂ Q Q' hQ j hj zs hzs
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Quantifier.GQ.some,
+      BoundedFormula.realize_ex, BoundedFormula.realize_inf]
+    exact exists_congr fun a ↦ and_congr
+      (realize_applyNext _ v hP _ (comp_castLE_trans hys₂ hzs) a)
+      (realize_applyNext _ v hQ hj hzs a)
+  | no =>
+    intro k₁ hk₁ ys₁ hys₁ P P' hP k₂ hk₂ ys₂ hys₂ Q Q' hQ j hj zs hzs
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Quantifier.GQ.no,
+      BoundedFormula.realize_all, BoundedFormula.realize_imp, BoundedFormula.realize_not]
+    exact forall_congr' fun a ↦ imp_congr
+      (realize_applyNext _ v hP _ (comp_castLE_trans hys₂ hzs) a)
+      (not_congr (realize_applyNext _ v hQ hj hzs a))
+  | neg =>
+    intro k hk ys hys φ p hφ j hj zs hzs
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp,
+      BoundedFormula.realize_not]
+    exact not_congr (hφ j hj zs hzs)
+  | conj =>
+    intro k₁ hk₁ ys₁ hys₁ q q' hq k₂ hk₂ ys₂ hys₂ p p' hp j hj zs hzs
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp,
+      BoundedFormula.realize_inf]
+    exact and_congr (hp j hj zs hzs) (hq j (hk₂.trans hj) zs (comp_castLE_trans hys₂ hzs))
+  | disj =>
+    intro k₁ hk₁ ys₁ hys₁ q q' hq k₂ hk₂ ys₂ hys₂ p p' hp j hj zs hzs
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp,
+      BoundedFormula.realize_sup]
+    exact or_congr (hp j hj zs hzs) (hq j (hk₂.trans hj) zs (comp_castLE_trans hys₂ hzs))
+
+/-- A first-order logical form denotes, at a world of a composition model and under an
+assignment, the realization of its readback there. -/
+theorem Term.realizeAt_toFormula (m : Model L) (w : m.W) (u : Term (FirstOrderConstant L) .t)
+    (g : Assignment m.E) :
+    u.toFormula.RealizeAt m.interp w g ↔ u.eval (FirstOrderConstant.interp m w) g :=
+  Term.realizes_readback (m.interp w) g (FirstOrderConstant.realizes_readback m w g) u
+    (n := 0) (ρ := fun i ↦ Language.Term.var (.inl i)) (xs := default) (g := g) (fun _ ↦ rfl) 0
+    le_rfl default (Subsingleton.elim _ _)
+
+end Soundness
+
+end SyntacticModel
+
+/-! ### Trees -/
+
+namespace Tree
+
+variable {L : Language.{u, u}} {C : Type} {X : Type*}
+
+/-- A tree holds under a lexicon and an assignment when it composes to a true truth value. -/
+def HoldsAt {E W : Type} (lex : X → Option (Denotation E W)) (g : Assignment E) (t : Tree C X) :
+    Prop :=
+  ∃ p, Tree.interp lex g t = some ⟨.t, p⟩ ∧ p
+
+variable {words : X → Option (Σ ty, FirstOrderConstant L ty)}
+
+/-- A tree that translates to a logical form of type `t` holds where the logical form is
+true. -/
+theorem holdsAt_iff_eval (m : Model L) (w : m.W) {t : Tree C X}
+    {u : Term (FirstOrderConstant L) .t} (h : Tree.translate words t = some ⟨.t, u⟩)
+    (g : Assignment m.E) :
+    HoldsAt (m.lexicon words w) g t ↔ u.eval (FirstOrderConstant.interp m w) g := by
+  unfold HoldsAt Model.lexicon
+  rw [Tree.interp_eq_eval_translate (FirstOrderConstant.interp m w), h]
+  simp
+
+/-- A tree that translates to a logical form of type `t` holds where the readback of the
+logical form is realized. -/
+theorem holdsAt_iff_realizeAt (m : Model L) (w : m.W) {t : Tree C X}
+    {u : Term (FirstOrderConstant L) .t} (h : Tree.translate words t = some ⟨.t, u⟩)
+    (g : Assignment m.E) :
+    HoldsAt (m.lexicon words w) g t ↔ u.toFormula.RealizeAt m.interp w g :=
+  (holdsAt_iff_eval m w h g).trans (Term.realizeAt_toFormula m w u g).symm
+
+/-- First-order consequence between the readbacks of two trees yields entailment between the
+trees in every composition model, at every world and under every assignment. -/
+theorem holdsAt_of_models {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOrderConstant L) .t}
+    (h₁ : Tree.translate words t₁ = some ⟨.t, u₁⟩) (h₂ : Tree.translate words t₂ = some ⟨.t, u₂⟩)
+    (hmod : ∀ (M : Type) (S : L.Structure M) (v : ℕ → M),
+      @Formula.Realize L M S ℕ u₁.toFormula v → @Formula.Realize L M S ℕ u₂.toFormula v)
+    (m : Model L) (w : m.W) (g : Assignment m.E) :
+    HoldsAt (m.lexicon words w) g t₁ → HoldsAt (m.lexicon words w) g t₂ := by
+  rw [holdsAt_iff_realizeAt m w h₁, holdsAt_iff_realizeAt m w h₂]
+  exact hmod m.E (m.interp w) g
+
+end Tree
+
+/-! ### Consequence and compactness
+
+For universe-0 languages, composition models and mathlib's bundled models coincide: entailment
+between trees over composition models with nonempty domains is first-order consequence over the
+empty theory, and compactness transfers to families of trees. Mathlib's `ModelType` has nonempty
+carriers, hence the restriction to nonempty domains, which is standard in the study of
+generalized quantifiers. -/
 
 /-- A first-order structure as a one-world composition model. -/
-def Model.ofStructure (M : Type) (S : L₀.Structure M) : Model L₀ :=
+def Model.ofStructure {L : Language.{0, 0}} (M : Type) (S : L.Structure M) : Model L :=
   ⟨M, Unit, fun _ ↦ S⟩
+
+namespace Tree
+
+variable {L₀ : Language.{0, 0}} {C : Type} {X : Type*}
+  {words : X → Option (Σ ty, FirstOrderConstant L₀ ty)}
 
 private theorem modelEmpty (M : Type) [L₀.Structure M] : M ⊨ (∅ : L₀.Theory) :=
   ⟨fun _φ hφ ↦ absurd hφ (by simp)⟩
 
-/-- Over composition models with nonempty domains, entailment between compiled trees coincides
-with mathlib's `⊨ᵇ` over the empty theory. -/
-theorem models_imp_iff_entails (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
-    (hdj : nm.Disjoint) {t₁ t₂ : Tree Unit String} {φ₁ φ₂ : L₀.Formula ℕ}
-    (h₁ : compileFO fw nm t₁ = some φ₁) (h₂ : compileFO fw nm t₂ = some φ₂) :
-    (∅ : L₀.Theory) ⊨ᵇ φ₁.imp φ₂ ↔
+/-- Over composition models with nonempty domains, entailment between two trees is mathlib's
+`⊨ᵇ` between their readbacks over the empty theory. -/
+theorem models_imp_iff_entails {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOrderConstant L₀) .t}
+    (h₁ : Tree.translate words t₁ = some ⟨.t, u₁⟩) (h₂ : Tree.translate words t₂ = some ⟨.t, u₂⟩) :
+    (∅ : L₀.Theory) ⊨ᵇ u₁.toFormula.imp u₂.toFormula ↔
       ∀ (m : Model L₀), Nonempty m.E → ∀ (w : m.W) (g : Assignment m.E),
-        HoldsAt m (m.lexiconFO fw nm w) g t₁ →
-          HoldsAt m (m.lexiconFO fw nm w) g t₂ := by
+        HoldsAt (m.lexicon words w) g t₁ → HoldsAt (m.lexicon words w) g t₂ := by
   constructor
   · intro hmod m hne w g
-    rw [holdsAt_iff_realize m fw nm w hnd hfr hdj h₁ g,
-      holdsAt_iff_realize m fw nm w hnd hfr hdj h₂ g]
+    rw [holdsAt_iff_realizeAt m w h₁, holdsAt_iff_realizeAt m w h₂]
     let := m.interp w
     have : m.E ⊨ (∅ : L₀.Theory) := inferInstance
     have : Nonempty m.E := hne
-    have h := hmod ⟨m.E⟩ g default
-    exact BoundedFormula.realize_imp.mp h
+    exact BoundedFormula.realize_imp.mp (hmod ⟨m.E⟩ g default)
   · intro hent M v xs
-    have hxs : xs = default := funext fun i ↦ i.elim0
-    subst hxs
+    obtain rfl : xs = default := funext fun i ↦ i.elim0
     rw [BoundedFormula.realize_imp]
     have := hent (Model.ofStructure M M.struc) M.nonempty' () v
-    rw [holdsAt_iff_realize (Model.ofStructure M M.struc) fw nm ()
-        hnd hfr hdj h₁ v,
-      holdsAt_iff_realize (Model.ofStructure M M.struc) fw nm ()
-        hnd hfr hdj h₂ v] at this
-    exact this
+    rwa [holdsAt_iff_realizeAt (Model.ofStructure M M.struc) () h₁,
+      holdsAt_iff_realizeAt (Model.ofStructure M M.struc) () h₂] at this
 
-/-! ### Closed trees as sentences, and compactness -/
-
-/-- A family of closed fragment trees is jointly satisfiable in a composition model with a
+/-- A family of trees whose readbacks are closed is jointly true in a composition model with a
 nonempty domain iff every finite subfamily is. The nontrivial direction is mathlib's compactness
 theorem `Theory.isSatisfiable_iff_isFinitelySatisfiable`. -/
-theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
-    (hdj : nm.Disjoint) {ι : Type} (trees : ι → Tree Unit String)
-    (φs : ι → L₀.Formula ℕ)
-    (hc : ∀ i, compileFO fw nm (trees i) = some (φs i))
-    (hcl : ∀ i, (φs i).freeVarFinset = ∅) :
+theorem holdsAt_compactness {ι : Type} {trees : ι → Tree C X}
+    {us : ι → Term (FirstOrderConstant L₀) .t}
+    (hc : ∀ i, Tree.translate words (trees i) = some ⟨.t, us i⟩)
+    (hcl : ∀ i, (us i).toFormula.freeVarFinset = ∅) :
     (∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Assignment m.E),
-        ∀ i, HoldsAt m (m.lexiconFO fw nm w) g (trees i)) ↔
+        ∀ i, HoldsAt (m.lexicon words w) g (trees i)) ↔
       ∀ s : Finset ι,
         ∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Assignment m.E),
-          ∀ i ∈ s, HoldsAt m (m.lexiconFO fw nm w) g (trees i) := by
+          ∀ i ∈ s, HoldsAt (m.lexicon words w) g (trees i) := by
   constructor
   · rintro ⟨m, hne, w, g, hall⟩ s
     exact ⟨m, hne, w, g, fun i _ ↦ hall i⟩
   · intro hfin
     have hsat : Theory.IsSatisfiable
-        (L := L₀) (Set.range fun i ↦ (φs i).toSentence (hcl i)) := by
+        (L := L₀) (Set.range fun i ↦ (us i).toFormula.toSentence (hcl i)) := by
       rw [Theory.isSatisfiable_iff_isFinitelySatisfiable]
       intro T₀ hT₀
       classical
@@ -666,25 +485,23 @@ theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       have : Nonempty m.E := hne
       have : m.E ⊨ (T₀ : L₀.Theory) := by
         refine ⟨fun ψ hψ ↦ ?_⟩
-        obtain ⟨x, rfl⟩ : ∃ x : T₀, (φs (f x)).toSentence (hcl (f x)) = ψ :=
+        obtain ⟨x, rfl⟩ : ∃ x : T₀, (us (f x)).toFormula.toSentence (hcl (f x)) = ψ :=
           ⟨⟨ψ, hψ⟩, hf ⟨ψ, hψ⟩⟩
         rw [Formula.realize_toSentence (v := g)]
         have hold := hs (f x) (Finset.mem_image_of_mem f (Finset.mem_univ x))
-        rw [holdsAt_iff_realize m fw nm w hnd hfr hdj (hc (f x)) g] at hold
-        exact hold
+        rwa [holdsAt_iff_realizeAt m w (hc (f x)) g] at hold
       exact Theory.Model.isSatisfiable m.E
     obtain ⟨N⟩ := hsat
     let := N.struc
     have := N.nonempty'
-    refine ⟨Model.ofStructure N N.struc, N.nonempty', (),
-      fun _ ↦ Classical.arbitrary N, fun i ↦ ?_⟩
-    rw [holdsAt_iff_realize (Model.ofStructure N N.struc) fw nm ()
-      hnd hfr hdj (hc i) _]
-    have : (N : Type) ⊨ (φs i).toSentence (hcl i) :=
+    refine ⟨Model.ofStructure N N.struc, N.nonempty', (), fun _ ↦ Classical.arbitrary N,
+      fun i ↦ ?_⟩
+    rw [holdsAt_iff_realizeAt (Model.ofStructure N N.struc) () (hc i)]
+    have : (N : Type) ⊨ (us i).toFormula.toSentence (hcl i) :=
       N.is_model.realize_of_mem _ (Set.mem_range_self i)
-    exact (Formula.realize_toSentence (M := (N : Type)) (φs i) (hcl i)
+    exact (Formula.realize_toSentence (M := (N : Type)) (us i).toFormula (hcl i)
       (fun _ ↦ Classical.arbitrary N)).mp this
 
-end TheoryBridge
+end Tree
 
 end HeimKratzer

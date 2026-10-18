@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Composition.Reduction
-public import Linglib.Semantics.Composition.Term
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -11,17 +10,18 @@ public import Mathlib.Tactic.DeriveFintype
 (John, Mary, a pizza and a book), one world, and a signature of two constants and eight content
 relations, which `toyStructure` interprets as equalities on the entities. The fragment is of
 the kind Heim and Kratzer interpret in their textbook, with proper names, intransitive and
-transitive verbs, and common nouns. The naming maps `toyNaming` send English word forms to
+transitive verbs, and common nouns. The words `toyWords` translate English word forms to
 symbols, and the lexicon `toyLexicon` and the denotations `Toy.sleeps`, `Toy.sees`, … are read
-off the model.
+off the model; with the logical words, quantified trees translate to logical forms that read back
+to first-order formulas.
 
 ## Main definitions
 
 * `ToyEntity`: the entity domain.
 * `toyLang`, `toyStructure`: the signature and its interpretation.
 * `toyModel`: the one-world composition model.
-* `toyNaming`, `toyLexicon`: the naming maps and the lexicon they induce.
-* `ToyConst`, `toyConsts`: four words as constants, for the translation of trees into terms.
+* `toyWords`, `toyLexicon`: the content words and the lexicon they induce.
+* `Toy.logicalWords`, `toyVocabulary`: the logical words, and all the toy words.
 
 ## Implementation notes
 
@@ -29,7 +29,7 @@ The signature follows mathlib's concrete-language idiom
 (`Mathlib/ModelTheory/Algebra/Ring/Basic.lean`), with arity-indexed symbol inductives and
 per-symbol abbreviations in `Toy`. The structure is a closed term, so a claim about particular
 entities reduces by `rfl` to an equality on `ToyEntity`. Binary relations take the subject first in
-the structure and the object first as transitive-verb denotations, as `Model.pred₂ext` does.
+the structure and the object first as transitive-verb denotations, as `Model.pred₂` does.
 
 ## References
 
@@ -116,51 +116,42 @@ abbrev readRel : toyLang.Relations 2 := .read
 
 /-! The denotations of the toy content words are read off the model at its one world. -/
 
-def sleeps : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext sleepRel ()
-def laughs : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext laughRel ()
-def student : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext studentRel ()
-def person : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext personRel ()
-def pizza : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext pizzaRel ()
-def sees : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext seeRel ()
-def eats : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext eatRel ()
-def reads : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext readRel ()
+def sleeps : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ sleepRel ()
+def laughs : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ laughRel ()
+def student : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ studentRel ()
+def person : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ personRel ()
+def pizza : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ pizzaRel ()
+def sees : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ seeRel ()
+def eats : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ eatRel ()
+def reads : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ readRel ()
 
 end Toy
 
 open Toy in
-/-- The toy naming maps send the toy word forms to the symbols of the toy signature. -/
-def toyNaming : LexNaming toyLang where
-  names
-    | "John" => some johnConst
-    | "Mary" => some maryConst
-    | _ => none
-  preds₁
-    | "sleeps" => some sleepRel
-    | "laughs" => some laughRel
-    | "student" => some studentRel
-    | "person" => some personRel
-    | "pizza" => some pizzaRel
-    | _ => none
-  preds₂
-    | "sees" => some seeRel
-    | "eats" => some eatRel
-    | "reads" => some readRel
-    | _ => none
+/-- The toy content words translate to the symbols of the toy signature. -/
+def toyWords : String → Option (Σ ty, FirstOrderConstant toyLang ty)
+  | "John" => some ⟨_, .name johnConst⟩
+  | "Mary" => some ⟨_, .name maryConst⟩
+  | "sleeps" => some ⟨_, .rel₁ sleepRel⟩
+  | "laughs" => some ⟨_, .rel₁ laughRel⟩
+  | "student" => some ⟨_, .rel₁ studentRel⟩
+  | "person" => some ⟨_, .rel₁ personRel⟩
+  | "pizza" => some ⟨_, .rel₁ pizzaRel⟩
+  | "sees" => some ⟨_, .rel₂ seeRel⟩
+  | "eats" => some ⟨_, .rel₂ eatRel⟩
+  | "reads" => some ⟨_, .rel₂ readRel⟩
+  | _ => none
 
-/-- The toy lexicon is the lexicon the toy naming maps induce over the toy model. -/
-def toyLexicon : Lexicon ToyEntity Unit := toyModel.lexiconAt toyNaming ()
+/-- The toy lexicon is the lexicon the toy words induce over the toy model. -/
+def toyLexicon : Lexicon ToyEntity Unit := toyModel.lexicon toyWords ()
 
-/-- The toy naming maps classify each word once. -/
-theorem toyNaming_disjoint : toyNaming.Disjoint := by
-  refine ⟨?_, ?_, ?_⟩ <;>
-    · intro s R h
-      simp only [toyNaming] at h ⊢
-      split at h <;> simp_all
-
-/-- The default logical vocabulary is fresh for the toy naming maps. -/
-theorem toyNaming_freshFor : FOWords.FreshFor {} toyNaming := by
-  intro s hs
-  fin_cases hs <;> exact ⟨rfl, rfl, rfl⟩
+/-- The toy lexicon has entries of the three first-order lexical types only. -/
+theorem toyLexicon_fst {s : String} {d : Denotation ToyEntity Unit} (h : toyLexicon s = some d) :
+    d.1 = .e ∨ d.1 = (.e ⇒ .t) ∨ d.1 = (.e ⇒ .e ⇒ .t) := by
+  simp only [toyLexicon, Model.lexicon, Option.map_eq_some_iff] at h
+  obtain ⟨c, hc, rfl⟩ := h
+  unfold toyWords at hc
+  split at hc <;> cases hc <;> simp
 
 /-- "John sleeps" composes through `Tree.interp` over the toy lexicon to the model's fact. -/
 example :
@@ -168,59 +159,72 @@ example :
       (.node () [.terminal () "John", .terminal () "sleeps"] : PhraseStructure.Tree Unit String)
       = some ⟨.t, Toy.sleeps ToyEntity.john⟩ := rfl
 
-/-! ### Translation into terms
+/-! ### Logical forms and their readback
 
-Four words as constants: a quantifier-raised tree translates to its term, with the mode at each
-node, and the interpretation of the constants evaluates the term to what `Tree.interp`
-computes. -/
+With the logical words, a quantifier-raised tree translates to its logical form, with the mode at
+each node, and the logical form reads back to the first-order formula of its truth conditions. -/
 
-/-- The constants of the four-word signature. -/
-inductive ToyConst : Ty → Type
-  | every : ToyConst Ty.det
-  | student : ToyConst (.e ⇒ .t)
-  | sleeps : ToyConst (.e ⇒ .t)
-  | john : ToyConst .e
-
-/-- The constants denote the determiner `every` and the toy model's facts. -/
-noncomputable def ToyConst.interp : {ty : Ty} → ToyConst ty → Ty.Domain ToyEntity Unit ty
-  | _, .every => Quantifier.GQ.every
-  | _, .student => Toy.student
-  | _, .sleeps => Toy.sleeps
-  | _, .john => .john
-
-/-- The four words and their constants. -/
-def toyConsts : String → Option (Σ ty, ToyConst ty)
+/-- The English logical words translate to the logical first-order constants. -/
+def Toy.logicalWords {L : FirstOrder.Language} : String → Option (Σ ty, FirstOrderConstant L ty)
   | "every" => some ⟨_, .every⟩
-  | "student" => some ⟨_, .student⟩
-  | "sleeps" => some ⟨_, .sleeps⟩
-  | "John" => some ⟨_, .john⟩
+  | "some" => some ⟨_, .some⟩
+  | "no" => some ⟨_, .no⟩
+  | "not" => some ⟨_, .neg⟩
+  | "and" => some ⟨_, .conj⟩
+  | "or" => some ⟨_, .disj⟩
   | _ => none
+
+/-- The toy vocabulary translates the toy content words and the logical words. -/
+def toyVocabulary (s : String) : Option (Σ ty, FirstOrderConstant toyLang ty) :=
+  toyWords s <|> Toy.logicalWords s
 
 /-- *Every student sleeps*, with the subject raised over the trace of index 1. -/
 def everyStudentSleeps : PhraseStructure.Tree Unit String :=
   .node () [.node () [.terminal () "every", .terminal () "student"],
     .bind 1 () (.node () [.trace 1 (), .terminal () "sleeps"])]
 
-/-- The term of *every student sleeps*: the determiner applies forward to the noun and to the
-abstraction over the trace, which the verb applies backward to. -/
-theorem translate_everyStudentSleeps : Tree.translate toyConsts everyStudentSleeps =
-    some ⟨.t, .comp .functionalLeft (.comp .functionalLeft (.const .every) (.const .student))
-      (.lam 1 (.comp .functionalRight (.var 1) (.const .sleeps)))⟩ := rfl
+open Toy in
+/-- In the logical form of *every student sleeps* the determiner applies forward to the noun and
+to the abstraction over the trace, which the verb applies backward to. -/
+theorem translate_everyStudentSleeps : Tree.translate toyVocabulary everyStudentSleeps =
+    some ⟨.t, .comp .functionalLeft
+      (.comp .functionalLeft (.const .every) (.const (.rel₁ studentRel)))
+      (.lam 1 (.comp .functionalRight (.var 1) (.const (.rel₁ sleepRel))))⟩ :=
+  rfl
 
-/-- The term of the raised sentence is closed. -/
-example : ((Tree.translate toyConsts everyStudentSleeps).map fun d ↦ d.2.freeVars) = some ∅ := by
-  rw [translate_everyStudentSleeps]; decide
+open Toy FirstOrder.Language in
+/-- The logical form of *every student sleeps* reads back to `∀ x, student x → sleeps x`. -/
+example : ∃ u, Tree.translate toyVocabulary everyStudentSleeps = some ⟨.t, u⟩ ∧
+    u.toFormula = ((studentRel.boundedFormula₁ (var (.inr 0))).imp
+      (sleepRel.boundedFormula₁ (var (.inr 0)))).all :=
+  ⟨_, rfl, rfl⟩
 
 /-- *John John* translates to nothing, since no mode combines two individuals. -/
-example : Tree.translate toyConsts
+example : Tree.translate toyVocabulary
     (.node () [.terminal () "John", .terminal () "John"] : PhraseStructure.Tree Unit String) =
       none := rfl
 
-/-- The engine interprets *every student sleeps* as its term says: every student sleeps. -/
+/-- In *every student who sleeps laughs* the relative clause abstracts over its trace and
+intersects with the noun by predicate modification. -/
+def everyStudentWhoSleepsLaughs : PhraseStructure.Tree Unit String :=
+  .node () [.node () [.terminal () "every",
+      .node () [.terminal () "student",
+        .bind 2 () (.node () [.trace 2 (), .terminal () "sleeps"])] ],
+    .bind 1 () (.node () [.trace 1 (), .terminal () "laughs"])]
+
+open Toy FirstOrder.Language in
+/-- The relative clause reads back as a conjunct of the restrictor, in
+`∀ x, student x ∧ sleeps x → laughs x`. -/
+example : ∃ u, Tree.translate toyVocabulary everyStudentWhoSleepsLaughs = some ⟨.t, u⟩ ∧
+    u.toFormula = ((studentRel.boundedFormula₁ (var (.inr 0)) ⊓
+      sleepRel.boundedFormula₁ (var (.inr 0))).imp (laughRel.boundedFormula₁ (var (.inr 0)))).all :=
+  ⟨_, rfl, rfl⟩
+
+/-- *Every student who sleeps laughs* holds in the toy model, where the students are the ones
+who laugh. -/
 example (g : Assignment ToyEntity) :
-    Tree.interp (M := Id) (fun w ↦ (toyConsts w).map fun c ↦ ⟨c.1, ToyConst.interp c.2⟩) g
-      everyStudentSleeps = some ⟨.t, ∀ x, Toy.student x → Toy.sleeps x⟩ := by
-  rw [Tree.interp_eq_eval_translate, translate_everyStudentSleeps]
-  rfl
+    Tree.HoldsAt (toyModel.lexicon toyVocabulary ()) g everyStudentWhoSleepsLaughs := by
+  rw [Tree.holdsAt_iff_eval toyModel () rfl]
+  exact fun _ hx ↦ hx.1
 
 end HeimKratzer

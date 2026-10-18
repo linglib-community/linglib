@@ -70,7 +70,7 @@ def terminals (s : Set Family.{0}) (E W : Type) [Fintype E] : Set (Denotation E 
   (toDenotation · E W) '' s
 
 /-- `objectShift D` is the object-position entry of the determiner `D`, which the book's lexical
-rule (§7.2.1) derives from the basic one: it takes an object-first two-place predicate and the
+rule (§7.2.1) derives from the basic one. It takes an object-first two-place predicate and the
 subject and quantifies over the object. -/
 def objectShift {E : Type*} (D : GQ E) : (E → Prop) → (E → E → Prop) → E → Prop :=
   fun P R x ↦ D P fun y ↦ R y x
@@ -321,7 +321,7 @@ theorem denotes_the_student {v : Part ToyEntity}
 theorem toyLexicon_toPartial_noFailure (g : Assignment ToyEntity) (t : Tree Unit String) :
     ¬ Partial.PresupFailure (fun w ↦ (toyLexicon w).map Denotation.toPartial) g t :=
   Partial.not_presupFailure_map_toPartial (fun _ _ h ↦ by
-    rcases Model.lexiconAt_fst h with h | h | h <;> rw [h] <;> repeat constructor) g t
+    rcases toyLexicon_fst h with h | h | h <;> rw [h] <;> repeat constructor) g t
 
 end Partial
 
@@ -375,7 +375,8 @@ theorem denotes_studentWhoSleeps (g : Assignment ToyEntity) :
 theorem interp_johnSeesT (g : Assignment ToyEntity) :
     interp toyLexicon g tree_johnSeesT = some ⟨.t, Toy.sees (g 1) .john⟩ := rfl
 
-/-- The open sentence has no assignment-independent value: John sees Mary but not himself. -/
+/-- The open sentence has no assignment-independent value, since John sees Mary but not
+himself. -/
 theorem interp_johnSeesT_ne :
     interp toyLexicon (g₀[1 ↦ .mary]) tree_johnSeesT ≠ interp toyLexicon g₀ tree_johnSeesT := by
   simp only [interp_johnSeesT, Function.update_self, ne_eq, Option.some.injEq, Sigma.mk.inj_iff,
@@ -388,7 +389,7 @@ of none of its subtrees. -/
 theorem interp_whichJohnSees (g : Assignment ToyEntity) :
     interp toyLexicon g tree_whichJohnSees = some ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ := rfl
 
-/-- The book's proof for *which John abandoned t* (pp. 96-98) as a derivation in its rules:
+/-- The book's proof for *which John abandoned t* (pp. 96-98) is a derivation in its rules, by
 Predicate Abstraction, the vacuous complementizer, Functional Application twice and the Traces
 Rule. -/
 theorem denotes_whichJohnSees (g : Assignment ToyEntity) :
@@ -416,7 +417,7 @@ theorem Partial.denotes_the_student_who_sleeps :
     fun _ ↦ ⟨And.right, fun h ↦ h ▸ ⟨.inl rfl, rfl⟩⟩] at h
 
 /-- *The student who sleeps* denotes John, though *the student* is a presupposition failure
-(`the_student_fails`): the restrictive relative narrows the article's domain to one student,
+(`the_student_fails`), since the restrictive relative narrows the article's domain to one student,
 where a nonrestrictive one would leave the article applying to *student* alone (p. 88). -/
 theorem the_student_who_sleeps :
     Partial.interp partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps) =

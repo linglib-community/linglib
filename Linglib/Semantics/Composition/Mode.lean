@@ -47,11 +47,11 @@ namespace HeimKratzer
 
 open Montague
 
-/-- The composition modes as typed binary operations: functional application with the function
-as the left or the right daughter, application of a daughter expecting an intension to the
-rigid intension of its sister in either order ([von-fintel-heim-2011]), predicate modification,
-and event identification of a role head and an eventuality predicate in either order
-([kratzer-1996]). -/
+/-- The composition modes are the typed binary operations of functional application, with the
+function as either daughter, of intensional application, which applies a daughter expecting an
+intension to the rigid intension of its sister in either order ([von-fintel-heim-2011]), of
+predicate modification, and of event identification of a role head and an eventuality predicate
+in either order ([kratzer-1996]). -/
 inductive Mode : Ty → Ty → Ty → Type where
   | functionalLeft {σ τ : Ty} : Mode (σ ⇒ τ) σ τ
   | functionalRight {σ τ : Ty} : Mode σ (σ ⇒ τ) τ
@@ -102,10 +102,10 @@ def eventIdentification? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ�
 
 end Mode
 
-/-- The mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose: the
-first that applies of functional application, the left daughter as the function first,
-intensional application, predicate modification and event identification, and `none` when none
-does. -/
+/-- `σ₁.mode? σ₂` is the mode by which a left daughter of type `σ₁` and a right daughter of type
+`σ₂` compose, the first that applies of functional application (the left daughter as the
+function first), intensional application, predicate modification and event identification, and
+`none` when none does. -/
 def _root_.Montague.Ty.mode? (σ₁ σ₂ : Ty) : Option (Σ τ, Mode σ₁ σ₂ τ) :=
   Mode.functionalLeft? σ₁ σ₂ <|> Mode.functionalRight? σ₁ σ₂ <|> Mode.intensionalLeft? σ₁ σ₂ <|>
     Mode.intensionalRight? σ₁ σ₂ <|> Mode.predicateModification? σ₁ σ₂ <|>
@@ -145,8 +145,8 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
 
 variable {E W D : Type} {σ₁ σ₂ τ : Ty}
 
-/-- The denotation of a mode: application, application to the rigid intension of the argument,
-the intersection of two predicates, and event identification. -/
+/-- A mode denotes application, application to the rigid intension of the argument, the
+intersection of two predicates, or event identification. -/
 @[simp] def eval : Mode σ₁ σ₂ τ → Ty.Domain E W σ₁ D → Ty.Domain E W σ₂ D → Ty.Domain E W τ D
   | functionalLeft, f, a => f a
   | functionalRight, a, f => f a
@@ -168,7 +168,7 @@ def evalM {M : Type → Type} [Applicative M] (m : Mode σ₁ σ₂ τ) (a : M (
 
 /-! ### Composition in a family of values -/
 
-variable {V V' : Ty → Type}
+variable {V V' : Ty → Type*}
 
 /-- Two values compose by the mode their types select, interpreted by `op`, and not at all when
 no mode applies. -/

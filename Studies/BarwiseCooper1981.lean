@@ -38,11 +38,11 @@ their own §4.8 discussion of *many* and *few* already marks as unstable. Partia
 
 ## Main results
 
-* `livesOn_apply_iff`, `there_of_positiveStrong`, `Definite.positiveStrong` — C1–C3.
-* `strong_trivial_of_intersective` — C6; `scopeUp_of_restrictorUp_symmetric` — C7.
-* `exists_and_of_scopeUp_dual` — C10; `most_selfDual_of_odd_count`.
-* `more_than_half_not_definable` (C12), `more_than_half_not_Q_definable` (C13),
-  `no_tree_means_most`.
+* `livesOn_apply_iff`, `there_of_positiveStrong`, `Definite.positiveStrong`: C1–C3.
+* `strong_trivial_of_intersective`, `scopeUp_of_restrictorUp_symmetric`: C6 and C7.
+* `exists_and_of_scopeUp_dual`: C10, with `most_selfDual_of_odd_count`.
+* `more_than_half_not_definable`, `more_than_half_not_Q_definable`: C12 and C13, with
+  `no_tree_means_most`, no tree of first-order constants means *most*.
 
 ## References
 
@@ -234,34 +234,11 @@ section English
 open English.Determiners (QuantityWord)
 open scoped Semantics
 
-variable [Fintype α]
-
-/-- Every available reading of *all* is positive strong (Table II). -/
-theorem all_positiveStrong {d : GQ.Family} (h : d ∈ ⟦QuantityWord.all⟧) :
-    PositiveStrong (d α) := by
-  obtain rfl : d = GQ.Family.every := h
-  exact positiveStrong_every
-
-open Classical in
-/-- *Most* is positive strong on nonempty restrictors (Table II; Appendix B's SP1), since *most
-N are N* whenever there are `N`s. On the empty restrictor the proportional reading fails, as
-in Barwise and Cooper's Table I column, so *most N* can denote the empty quantifier. -/
-theorem most_apply_self {d : GQ.Family} (hd : d ∈ ⟦QuantityWord.most⟧) (A : α → Prop)
-    (h : ∃ x, A x) : d α A A := by
-  obtain rfl : d = GQ.Family.most := hd
-  obtain ⟨x, hx⟩ := h
-  show most A A
-  rw [most_apply, show {y | A y ∧ ¬ A y} = ∅ from Set.eq_empty_of_forall_notMem fun _ h ↦ h.2 h.1,
-    Set.ncard_empty]
-  exact (Set.ncard_pos (Set.toFinite _)).2 ⟨x, hx, hx⟩
-
-omit [Fintype α] in
 /-- Under the proportional reading (*fewer than half*), *few N are N* is contradictory, so
 `few` is negative strong, where B&C's Table II lists *few* as weak. -/
 theorem few_negativeStrong : NegativeStrong (few : GQ α) := fun A hA ↦ by
   simp [few_apply] at hA
 
-omit [Fintype α] in
 /-- *Some* is weak (Table II), since *some N is a N* is contingent. -/
 theorem some_weak [Nonempty α] : Weak (GQ.some : GQ α) := by
   rintro (h | h)
@@ -269,7 +246,6 @@ theorem some_weak [Nonempty α] : Weak (GQ.some : GQ α) := by
     exact hx
   · exact h (fun _ ↦ True) ⟨Classical.arbitrary α, trivial, trivial⟩
 
-omit [Fintype α] in
 /-- *No* is weak (Table II), since *no N is a N* is contingent. -/
 theorem no_weak [Nonempty α] : Weak (no : GQ α) := by
   rintro (h | h)
@@ -289,7 +265,6 @@ def atLeastHalf : GQ α := (NumberTree.ofSizes fun x p ↦ p ≤ 2 * x).toGQ
 /-- The upper half of *exactly half* puts at most half the restrictor in the scope. -/
 def atMostHalf : GQ α := (NumberTree.ofSizes fun x p ↦ 2 * x ≤ p).toGQ
 
-omit [Fintype α] in
 /-- U6 for *exactly half*, the non-monotone example of §4.8, says that the non-monotone
 determiner is the conjunction of an increasing and a decreasing one, as the monotonicity
 constraint requires of simple NPs; `exactly n` decomposes likewise
@@ -301,6 +276,8 @@ theorem half_eq_meet : (half : GQ α) = (atLeastHalf ⊓ atMostHalf) := by
   funext a b
   exact propext (show a = b ↔ a + b ≤ 2 * b ∧ 2 * b ≤ a + b by omega)
 
+variable [Fintype α]
+
 theorem atLeastHalf_scopeUp : ScopeMonotone (atLeastHalf (α := α)) :=
   (NumberTree.scopeMonotone_ofSizes (c := fun x p ↦ p ≤ 2 * x) fun _ _ _ hxy h ↦
     h.trans (Nat.mul_le_mul_left 2 hxy)).toGQ
@@ -308,6 +285,25 @@ theorem atLeastHalf_scopeUp : ScopeMonotone (atLeastHalf (α := α)) :=
 theorem atMostHalf_scopeDown : ScopeAntitone (atMostHalf (α := α)) :=
   (NumberTree.scopeAntitone_ofSizes (c := fun x p ↦ 2 * x ≤ p) fun _ _ _ hxy h ↦
     (Nat.mul_le_mul_left 2 hxy).trans h).toGQ
+
+/-- Every available reading of *all* is positive strong (Table II). -/
+theorem all_positiveStrong {d : GQ.Family} (h : d ∈ ⟦QuantityWord.all⟧) :
+    PositiveStrong (d α) := by
+  obtain rfl : d = GQ.Family.every := h
+  exact positiveStrong_every
+
+open Classical in
+/-- *Most* is positive strong on nonempty restrictors (Table II; Appendix B's SP1), since *most
+N are N* whenever there are `N`s. On the empty restrictor the proportional reading fails, as
+in Barwise and Cooper's Table I column, so *most N* can denote the empty quantifier. -/
+theorem most_apply_self {d : GQ.Family} (hd : d ∈ ⟦QuantityWord.most⟧) (A : α → Prop)
+    (h : ∃ x, A x) : d α A A := by
+  obtain rfl : d = GQ.Family.most := hd
+  obtain ⟨x, hx⟩ := h
+  show most A A
+  rw [most_apply, show {y | A y ∧ ¬ A y} = ∅ from Set.eq_empty_of_forall_notMem fun _ h ↦ h.2 h.1,
+    Set.ncard_empty]
+  exact (Set.ncard_pos (Set.toFinite _)).2 ⟨x, hx, hx⟩
 
 /-- On a restrictor of odd size, *more than half* is self-dual (§4.11). -/
 theorem most_selfDual_of_odd_count {A : α → Prop} (h : Odd {x | A x}.ncard)
@@ -797,33 +793,41 @@ theorem most_sem_not_definable :
   exact more_than_half_not_definable ⟨φ, fun M _ _ S ↦
     (hφ M S).trans (mostUV_iff_most_sem _ _).symm⟩
 
-/-! ### The engine-level corollary: no fragment tree means *most* -/
+/-! ### The engine-level corollary: no tree means *most* -/
 
 open HeimKratzer in
-set_option linter.style.haveILetI false in
-/-- No tree of the compiled fragment means *most*, since for any logical vocabulary and disjoint
-naming maps over the language of C12, no closed tree of the first-order fragment has, across all
-nonempty finite models, exactly the truth conditions of `most`; this is C12 stated about
-`Tree.interp` itself, via the agreement theorem `holdsAt_iff_realize`, so the fragment's
-partiality at *most* is a theorem, not a design choice. -/
-theorem no_tree_means_most (fw : FOWords) (nm : LexNaming (Language.monadic (Fin 2)))
-    (hnd : fw.Nodup) (hfr : fw.FreshFor nm) (hdj : nm.Disjoint) :
-    ¬ ∃ (t : PhraseStructure.Tree Unit String) (φ : (Language.monadic (Fin 2)).Formula ℕ)
-        (_ : compileFO fw nm t = some φ) (_ : φ.freeVarFinset = ∅),
-      ∀ (M : Type) [Fintype M] [Nonempty M] (S : (Language.monadic (Fin 2)).Structure M)
-        (g : Assignment M),
-        HoldsAt (Model.ofStructure M S)
-          ((Model.ofStructure M S).lexiconFO fw nm ()) g t ↔
+/-- No tree means *most*. Under any translation of words into the first-order constants of the
+language of C12, no tree has, across all nonempty finite models and under every assignment, the
+truth conditions of `most`. A tree whose logical form has type `t` reads back to a first-order
+formula whose universal closure would define `most`, against C12; any other tree is true in no
+model, while `most` is true in the one-element model where both predicates hold. -/
+theorem no_tree_means_most {C X : Type}
+    (words : X → Option (Σ ty, FirstOrderConstant (Language.monadic (Fin 2)) ty)) :
+    ¬ ∃ t : PhraseStructure.Tree C X, ∀ (M : Type) [Fintype M] [Nonempty M]
+      (S : (Language.monadic (Fin 2)).Structure M) (g : Assignment M),
+        Tree.HoldsAt ((Model.ofStructure M S).lexicon words ()) g t ↔
           Quantifier.GQ.most (fun x ↦ S.RelMap (.pred 1) ![x])
             (fun x ↦ S.RelMap (.pred 0) ![x]) := by
-  rintro ⟨t, φ, h, hcl, htree⟩
-  refine most_sem_not_definable ⟨φ.toSentence hcl, ?_⟩
-  intro M _ _ S
-  letI := S
-  have h1 := htree M S fun _ ↦ Classical.arbitrary M
-  rw [holdsAt_iff_realize (Model.ofStructure M S) fw nm () hnd hfr hdj h
-    (fun _ ↦ Classical.arbitrary M)] at h1
-  rw [Formula.realize_toSentence φ hcl (fun _ ↦ Classical.arbitrary M)]
-  exact h1
+  rintro ⟨t, ht⟩
+  obtain ⟨u, hu⟩ : ∃ u, Tree.translate words t = some ⟨.t, u⟩ := by
+    let S₁ := monadicStructure (Fin 1) fun (_ : Fin 2) (_ : Fin 1) ↦ True
+    obtain ⟨p, hp, -⟩ := (ht (Fin 1) S₁ fun _ ↦ 0).2 (by
+      show Quantifier.GQ.most (fun _ : Fin 1 ↦ True) fun _ ↦ True
+      simp [Quantifier.GQ.most_apply])
+    unfold Model.lexicon at hp
+    rw [Tree.interp_eq_eval_translate (FirstOrderConstant.interp _ _)] at hp
+    obtain ⟨⟨ty, u⟩, hd, he⟩ := Option.map_eq_some_iff.1 hp
+    obtain ⟨rfl, -⟩ := Sigma.mk.inj_iff.1 he
+    exact ⟨u, hd⟩
+  refine most_sem_not_definable ⟨(u.readback FirstOrderConstant.readback 1
+    (fun _ ↦ Language.Term.var (.inr 0)) 1 le_rfl).all, fun M _ _ S ↦ ?_⟩
+  let m := Model.ofStructure M S
+  have key (a : M) := Term.realizes_readback (m.interp ()) (default : Empty → M)
+    (FirstOrderConstant.realizes_readback m () default) u (n := 1)
+    (ρ := fun _ ↦ Language.Term.var (.inr 0)) (xs := Fin.snoc default a) (g := fun _ ↦ a)
+    (fun _ ↦ rfl) 1 le_rfl (Fin.snoc default a) rfl
+  have hold (a : M) := (Tree.holdsAt_iff_eval m () hu fun _ ↦ a).symm.trans (ht M S fun _ ↦ a)
+  refine BoundedFormula.realize_all.trans ⟨fun h ↦ ?_, fun h a ↦ (key a).2 ((hold a).2 h)⟩
+  exact (hold (Classical.arbitrary M)).1 ((key _).1 (h _))
 
 end BarwiseCooper1981
