@@ -101,7 +101,7 @@ def site (r : Root) (c : Case) : List Feature :=
 context of [ACC] when `acc`. -/
 def forRoots (roots : List Root) (e : String) (acc : Bool := false) :
     List (VocabularyItem Feature String) :=
-  roots.map fun r ↦ (.root r :: if acc then [.acc] else []) ⟷ e
+  roots.map fun r ↦ insert (.root r) (if acc then {.acc} else ∅) ⟷ e
 
 /-- The Vocabulary Items of (4) for the roots of (2) insert the nominative exponents next to
 their roots and the oblique exponents next to the same roots and [ACC], one *-ṭi* entry
@@ -280,7 +280,7 @@ inductive NumContext where
 
 /-- The Vocabulary Items of Num in the singular ((40)) insert *-ni* after *-am* and null
 elsewhere, conditioned inward as root-out insertion allows. -/
-def numItems : List (VocabularyItem NumContext String) := [[.afterAm] ⟷ "ni", [] ⟷ "ø"]
+def numItems : List (VocabularyItem NumContext String) := [{.afterAm} ⟷ "ni", ∅ ⟷ "ø"]
 
 /-- The singular exponent of Num after an n exponent. -/
 def numSg (nExponent : String) : Option String :=

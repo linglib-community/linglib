@@ -7,7 +7,7 @@ public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Insid
 /-!
 # Embick (2015): The Morpheme: A Theoretical Introduction
 
-This file formalizes [embick-2015]'s procedure of Vocabulary Insertion in a complex head: insertion
+This file formalizes Embick's procedure of Vocabulary Insertion in a complex head: insertion
 proceeds from the inside out (§4.5, the condition (C3) of §7.3), substitutes an exponent for the
 Q variable of each functional morpheme (§4.2), leaves the morpheme's synsem features in place
 (§4.2.2), and lets a contextual item see the concatenated neighbours of its morpheme, null
@@ -81,19 +81,19 @@ open Feature
 agreement endings, the perfect-specific set after Asp[perf], *-m* after T[+past], the defaults
 elsewhere. -/
 def vocab : List (VocabularyItem Feature String) :=
-  [⟨⟨[v], [[conjI]], []⟩, "ā"⟩, [asp, perf] ⟷ "vi",
-   ⟨⟨[tense, past], [[asp, perf]], []⟩, "rā"⟩, [tense, past] ⟷ "bā", [tense] ⟷ "",
-   ⟨⟨[agr, first true, second false, pl false], [[asp, perf]], []⟩, "ī"⟩,
-   ⟨⟨[agr, first false, second true, pl false], [[asp, perf]], []⟩, "stī"⟩,
-   ⟨⟨[agr, first false, second true, pl true], [[asp, perf]], []⟩, "stis"⟩,
-   ⟨⟨[agr, first false, second false, pl true], [[asp, perf]], []⟩, "ērunt"⟩,
-   ⟨⟨[agr, first true, second false, pl false], [[tense, past]], []⟩, "m"⟩,
-   [agr, first true, second false, pl false] ⟷ "ō",
-   [agr, first true, second false, pl true] ⟷ "mus",
-   [agr, first false, second true, pl false] ⟷ "s",
-   [agr, first false, second true, pl true] ⟷ "tis",
-   [agr, first false, second false, pl true] ⟷ "nt",
-   [agr, first false, second false, pl false] ⟷ "t"]
+  [⟨{(0, v), (-1, conjI)}, "ā"⟩, {asp, perf} ⟷ "vi",
+   ⟨{(0, tense), (0, past), (-1, asp), (-1, perf)}, "rā"⟩, {tense, past} ⟷ "bā", {tense} ⟷ "",
+   ⟨{(0, agr), (0, first true), (0, second false), (0, pl false), (-1, asp), (-1, perf)}, "ī"⟩,
+   ⟨{(0, agr), (0, first false), (0, second true), (0, pl false), (-1, asp), (-1, perf)}, "stī"⟩,
+   ⟨{(0, agr), (0, first false), (0, second true), (0, pl true), (-1, asp), (-1, perf)}, "stis"⟩,
+   ⟨{(0, agr), (0, first false), (0, second false), (0, pl true), (-1, asp), (-1, perf)}, "ērunt"⟩,
+   ⟨{(0, agr), (0, first true), (0, second false), (0, pl false), (-1, tense), (-1, past)}, "m"⟩,
+   {agr, first true, second false, pl false} ⟷ "ō",
+   {agr, first true, second false, pl true} ⟷ "mus",
+   {agr, first false, second true, pl false} ⟷ "s",
+   {agr, first false, second true, pl true} ⟷ "tis",
+   {agr, first false, second false, pl true} ⟷ "nt",
+   {agr, first false, second false, pl false} ⟷ "t"]
 
 /-- The four tenses of (40). -/
 inductive Tense
@@ -152,7 +152,7 @@ def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String)
 
 /-- In (40) the four tenses derive with T[−past] pruned, so that Agr is concatenated with Asp[perf]
 in the perfect but with the overt T[+past] in the pluperfect (§7.3.2.1). -/
-theorem rows_morphs : ∀ r ∈ rows, morphs .nondeletion r.1 = r.2 := by decide
+theorem rows_morphs : ∀ r ∈ rows, morphs .nondeletion r.1 = r.2 := by decide +kernel
 
 /-- As §4.6.3 argues, were a morpheme's synsem features deleted at its insertion, Agr could
 see neither T[+past] nor Asp[perf], and the first singular of the imperfect and of the perfect
@@ -179,7 +179,7 @@ open Feature
 /-- In (8), with the concatenation of (28), the plural is *-((j)a)i-* before a possessive and
 *-(V)k* otherwise; the first singular possessive is *-m*. -/
 def vocab : List (VocabularyItem Feature String) :=
-  [⟨⟨[pl], [], [[poss]]⟩, "ai"⟩, [pl] ⟷ "k", [poss] ⟷ "m"]
+  [⟨{(0, pl), (1, poss)}, "ai"⟩, {pl} ⟷ "k", {poss} ⟷ "m"]
 
 /-- Noun-[+pl], or Noun-[+pl]-[+poss] when possessed. -/
 def word (r : String) (possessed : Bool) :
@@ -233,7 +233,7 @@ open Feature
 
 /-- In (11) the nominative is *-i* after a consonant and *-ka* after a vowel. -/
 def vocab : List (VocabularyItem Feature String) :=
-  [⟨⟨[nom], [[cFinal]], []⟩, "i"⟩, ⟨⟨[nom], [[vFinal]], []⟩, "ka"⟩]
+  [⟨{(0, nom), (-1, cFinal)}, "i"⟩, ⟨{(0, nom), (-1, vFinal)}, "ka"⟩]
 
 /-- The hosts of (10), transcribed into the segments of the fragment. -/
 def segments : List (String × List Phonology.Segment) :=

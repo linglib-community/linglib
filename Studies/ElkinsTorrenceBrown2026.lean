@@ -355,7 +355,7 @@ def voice : Voice.Head :=
 
 /-- The vocabulary item (46a) realizes the valued [obl] on Voice⁰ or Dir⁰. -/
 def eqYa : VocabularyItem FeatureVal String :=
-  [⟨.oblique, true⟩] ⟷ toString Mam.Extraction.movementEnclitic
+  {⟨.oblique, true⟩} ⟷ toString Mam.Extraction.movementEnclitic
 
 /-- Agree with an [obl] mover followed by insertion yields the enclitic. -/
 theorem agree_spellout :

@@ -268,18 +268,18 @@ theorem smpm_refutes_movement : ¬ IsExhaustive ex86Occupant ex86Dependency :=
 /-- English (94): a null item for controlled subjects, a reflexive for local binding, and the
 pronoun elsewhere. -/
 def englishInventory : Vocabulary Form where
-  items := [[.controlledSubject] ⟷ .null, [.locallyBound] ⟷ .reflexive]
+  items := [{.controlledSubject} ⟷ .null, {.locallyBound} ⟷ .reflexive]
   elsewhere := .pronoun
 
 /-- Haitian Creole (96): a null item for controlled subjects and no reflexive item, reflexives
 surfacing as pronouns ([dechaine-manfredi-1994]). -/
 def haitianInventory : Vocabulary Form where
-  items := [[.controlledSubject] ⟷ .null]
+  items := [{.controlledSubject} ⟷ .null]
   elsewhere := .pronoun
 
 /-- SMPM (98): a reflexive item, *mí* with a clitic, and no null item. -/
 def smpmInventory : Vocabulary Form where
-  items := [[.locallyBound] ⟷ .reflexive]
+  items := [{.locallyBound} ⟷ .reflexive]
   elsewhere := .pronoun
 
 /-- Quiegolani Zapotec ([black-1994]): no context-specific item at all. -/

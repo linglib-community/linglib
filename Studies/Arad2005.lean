@@ -173,14 +173,14 @@ inductive Exponent where
 /-- `voiceSpellout` lists the Voice spell-out (25), each item in the context of a binyan inserted
 under v. -/
 def voiceSpellout : List (VocabularyItem Feature Exponent) :=
-  [⟨⟨[.voice .active], [[.binyan .cvcvc]], []⟩, .vocalism [.a, .a]⟩,
-    ⟨⟨[.voice .active], [[.binyan .nvccvc]], []⟩, .vocalism [.i, .a]⟩,
-    ⟨⟨[.voice .active], [[.binyan .cvccvc]], []⟩, .vocalism [.i, .e]⟩,
-    ⟨⟨[.voice .active], [[.binyan .hvccvc]], []⟩, .vocalism [.i, .i]⟩,
-    ⟨⟨[.voice .active], [[.binyan .hitcvccvc]], []⟩, .vocalism [.a, .e]⟩,
-    ⟨⟨[.voice .passive], [[.binyan .cvccvc]], []⟩, .vocalism [.u, .a]⟩,
-    ⟨⟨[.voice .passive], [[.binyan .hvccvc]], []⟩, .vocalism [.u, .a]⟩,
-    ⟨⟨[.voice .passive], [[.binyan .cvcvc]], []⟩, .rewrite .nvccvc [.i, .a]⟩]
+  [⟨{(0, .voice .active), (-1, .binyan .cvcvc)}, .vocalism [.a, .a]⟩,
+    ⟨{(0, .voice .active), (-1, .binyan .nvccvc)}, .vocalism [.i, .a]⟩,
+    ⟨{(0, .voice .active), (-1, .binyan .cvccvc)}, .vocalism [.i, .e]⟩,
+    ⟨{(0, .voice .active), (-1, .binyan .hvccvc)}, .vocalism [.i, .i]⟩,
+    ⟨{(0, .voice .active), (-1, .binyan .hitcvccvc)}, .vocalism [.a, .e]⟩,
+    ⟨{(0, .voice .passive), (-1, .binyan .cvccvc)}, .vocalism [.u, .a]⟩,
+    ⟨{(0, .voice .passive), (-1, .binyan .hvccvc)}, .vocalism [.u, .a]⟩,
+    ⟨{(0, .voice .passive), (-1, .binyan .cvcvc)}, .rewrite .nvccvc [.i, .a]⟩]
 
 /-- The Voice node, once v has been spelled out, carries its value and has the binyan as its inner
 neighbor. -/

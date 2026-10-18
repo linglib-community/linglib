@@ -17,7 +17,7 @@ public import Studies.Bobaljik2008
 /-!
 # Harley (2014): On the identity of roots
 
-This file formalizes [harley-2014]'s argument that a root of List 1 is individuated neither by
+This file formalizes Harley's argument that a root of List 1 is individuated neither by
 its form nor by its meaning but by an index, on which the Vocabulary Items of List 2 and the
 interpretations of List 3 are both keyed. Hiaki root suppletion (√322, *vuite* ~ *tenne* 'run')
 shows that roots must already be distinct when their items compete, since an item conditioned
@@ -100,7 +100,7 @@ def site (c : Arguments Number) (r : Root) : Neighborhood (List SiteFeature) :=
 singular internal argument below and the Elsewhere form. -/
 def suppletive (r : Root) (sgForm elseForm : String) :
     RuleSet (VocabularyItem SiteFeature String) :=
-  [⟨⟨[.root r], [[.internal .singular]], []⟩, sgForm⟩, [.root r] ⟷ elseForm]
+  [⟨{(0, .root r), (-1, .internal .singular)}, sgForm⟩, {.root r} ⟷ elseForm]
 
 /-- The Hiaki suppletive vocabulary of (3a), (3f), (3g). -/
 def vocabulary : RuleSet (VocabularyItem SiteFeature String) :=
@@ -192,7 +192,7 @@ def cahoot : Root := ⟨548⟩
 /-- The List-3 entry of √548: "a conspiracy" in the frame of (16), recorded by
 its categorizing head, and no Elsewhere. -/
 def cahootLF : RuleSet (VocabularyItem Allosemy.Feature String) :=
-  [⟨embedding [.cat .n], "a conspiracy"⟩]
+  [⟨(embedding [.cat .n]).toFinset, "a conspiracy"⟩]
 
 /-- Outside its frame the caboodle item has no interpretation. The paper adds
 that no List-3 entry could be a true Elsewhere, since an interpretation must

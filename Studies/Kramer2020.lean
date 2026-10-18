@@ -16,8 +16,8 @@ system assigns gender to some nouns by animacy, humanness, or social gender/biol
 semantic core generalization, and the remainder nouns take one gender or several, recycled from
 the core or novel, in every combination (Table 2). Russian's remainder follows declension class
 up to the Class III exceptions, and Hausa's feminine remainder ends in *-ā*, a correlation that
-fails in the other direction. Against these facts the review sets the lexical rules of
-[harris-1991] beside the gender-on-*n* analysis of [kramer-2015] for Spanish: the two agree on
+fails in the other direction. Against these facts the review sets Harris's lexical rules
+beside Kramer's gender-on-*n* analysis for Spanish: the two agree on
 Spanish, but a lexical entry holds one gender feature, so hybrid nouns call for a second
 structural source, and the thesis of radical interpretability derives the semantic core from
 the structural account alone.
@@ -262,7 +262,7 @@ def determinerFeatures (ch : Categorizer.Head) : List DetFeature :=
 /-- Of the Spanish definite determiners (25), *la* carries [+fem] and *el* is
 underspecified. -/
 def determiners : List (VocabularyItem DetFeature String) :=
-  [[.d, .definite, .gender ⟨.fem, .pos⟩] ⟷ "la", [.d, .definite] ⟷ "el"]
+  [{.d, .definite, .gender ⟨.fem, .pos⟩} ⟷ "la", {.d, .definite} ⟷ "el"]
 
 /-- The determiner a head takes, by the Subset Principle. -/
 def determiner (ch : Categorizer.Head) : Option String :=

@@ -167,7 +167,7 @@ def licensed {Sem : Type*} (v : RuleSet (VocabularyItem Feature Sem))
 /-- The alloseme vocabulary of v. The eventive alloseme requires an eventive complement and the
 zero alloseme is the elsewhere case. -/
 def Verbalizer.vocabulary : RuleSet (VocabularyItem Feature Verbalizer.Alloseme) :=
-  [⟨complement [.eventive], .eventive⟩, [] ⟷ .zero]
+  [⟨(complement [.eventive]).toFinset, .eventive⟩, ∅ ⟷ .zero]
 
 /-- Root change-type conditions v alloseme selection: result roots,
     which entail a prior change, demand the event variable; property
@@ -218,13 +218,13 @@ end Nominalizer.Alloseme
 /-- The alloseme vocabulary of n. The deverbal allosemes require a verbal complement, the CEN and
 result allosemes an eventive one, and the others are unconditioned. -/
 def Nominalizer.vocabulary : RuleSet (VocabularyItem Feature Nominalizer.Alloseme) :=
-  [[] ⟷ .relational, [] ⟷ .sortal, [] ⟷ .alienator,
-    ⟨complement [.cat .v], .content⟩,
-    ⟨complement [.cat .v, .eventive], .zero⟩,
-    ⟨complement [.cat .v], .simpleEvent⟩,
-    ⟨complement [.cat .v, .eventive], .result⟩,
-    ⟨complement [.cat .v], .state⟩,
-    ⟨complement [.cat .v], .entity⟩]
+  [∅ ⟷ .relational, ∅ ⟷ .sortal, ∅ ⟷ .alienator,
+    ⟨(complement [.cat .v]).toFinset, .content⟩,
+    ⟨(complement [.cat .v, .eventive]).toFinset, .zero⟩,
+    ⟨(complement [.cat .v]).toFinset, .simpleEvent⟩,
+    ⟨(complement [.cat .v, .eventive]).toFinset, .result⟩,
+    ⟨(complement [.cat .v]).toFinset, .state⟩,
+    ⟨(complement [.cat .v]).toFinset, .entity⟩]
 
 /-! ### Voice allosemy -/
 
@@ -262,8 +262,8 @@ instance : DecidablePred Voice.Alloseme.AssignsTheta :=
 /-- The alloseme vocabulary of Voice. The engineer takes a saturated eventive complement, the
 holder a stative one, and the expletive is the elsewhere case. -/
 def Voice.vocabulary : RuleSet (VocabularyItem Feature Voice.Alloseme) :=
-  [⟨complement [.cat .v, .eventive], .engineer⟩, ⟨complement [.stative], .holder⟩,
-    [] ⟷ .expletive]
+  [⟨(complement [.cat .v, .eventive]).toFinset, .engineer⟩,
+    ⟨(complement [.stative]).toFinset, .holder⟩, ∅ ⟷ .expletive]
 
 /-- The Voice alloseme selected from `Voice.vocabulary` by the complement's features. -/
 def Voice.Alloseme.fromComplement (fs : List Feature) : Voice.Alloseme :=

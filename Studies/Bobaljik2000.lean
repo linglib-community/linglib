@@ -96,15 +96,16 @@ object agreement (8) is *-čen*, plural *-čeʔn*, under a first-person subject 
 *-iʔn*, under a second-singular one. The subject prefix is *t-* for first singular and null for
 second singular. -/
 def vocab : List (VocabularyItem Feature String) :=
-  [[pres] ⟷ "s",
-   ⟨⟨[classMarker], [[], [classII]], [[agrO, third], [agrS, first]]⟩, "ki"⟩,
-   ⟨⟨[classMarker], [[], [classII]], [[agrO, third], [agrS, second, sg]]⟩, "čŋ"⟩,
-   [classMarker] ⟷ "",
-   ⟨⟨[agrO, third, sg], [], [[agrS, first]]⟩, "čen"⟩,
-   ⟨⟨[agrO, third, pl], [], [[agrS, first]]⟩, "čeʔn"⟩,
-   ⟨⟨[agrO, third, sg], [], [[agrS, second, sg]]⟩, "in"⟩,
-   ⟨⟨[agrO, third, pl], [], [[agrS, second, sg]]⟩, "iʔn"⟩,
-   [agrS, first, sg] ⟷ "t", [agrS, second, sg] ⟷ ""]
+  [{pres} ⟷ "s",
+   ⟨{(0, classMarker), (-2, classII), (1, agrO), (1, third), (2, agrS), (2, first)}, "ki"⟩,
+   ⟨{(0, classMarker), (-2, classII), (1, agrO), (1, third), (2, agrS), (2, second), (2, sg)},
+     "čŋ"⟩,
+   {classMarker} ⟷ "",
+   ⟨{(0, agrO), (0, third), (0, sg), (1, agrS), (1, first)}, "čen"⟩,
+   ⟨{(0, agrO), (0, third), (0, pl), (1, agrS), (1, first)}, "čeʔn"⟩,
+   ⟨{(0, agrO), (0, third), (0, sg), (1, agrS), (1, second), (1, sg)}, "in"⟩,
+   ⟨{(0, agrO), (0, third), (0, pl), (1, agrS), (1, second), (1, sg)}, "iʔn"⟩,
+   {agrS, first, sg} ⟷ "t", {agrS, second, sg} ⟷ ""]
 
 /-- The verb is the root with its class diacritics, then present tense, the class position, and
 the object and subject agreement nodes, as in (16). -/
@@ -166,18 +167,18 @@ namespace Chukchi
 otherwise *-ɣʔen* and *-net* for a third-person object, and the first- and second-person
 suffixes. -/
 def objectVocab : List (VocabularyItem Feature String) :=
-  [⟨⟨[agrO, third, sg], [], [[agrS, third, sg]]⟩, "nin"⟩,
-   ⟨⟨[agrO, third, pl], [], [[agrS, third, sg]]⟩, "ninet"⟩,
-   [agrO, third, sg] ⟷ "ɣʔen", [agrO, third, pl] ⟷ "net",
-   [agrO, first, sg] ⟷ "ɣəm", [agrO, first, pl] ⟷ "mək",
-   [agrO, second, sg] ⟷ "ɣət", [agrO, second, pl] ⟷ "tək"]
+  [⟨{(0, agrO), (0, third), (0, sg), (1, agrS), (1, third), (1, sg)}, "nin"⟩,
+   ⟨{(0, agrO), (0, third), (0, pl), (1, agrS), (1, third), (1, sg)}, "ninet"⟩,
+   {agrO, third, sg} ⟷ "ɣʔen", {agrO, third, pl} ⟷ "net",
+   {agrO, first, sg} ⟷ "ɣəm", {agrO, first, pl} ⟷ "mək",
+   {agrO, second, sg} ⟷ "ɣət", {agrO, second, pl} ⟷ "tək"]
 
 /-- The object suffixes, and the third-person subject prefix *ne-*, impoverished to zero inward of
 the item *-nin* or *-ninet*. -/
 def vocab : List (VocabularyItem Feature String) :=
   objectVocab ++
-    [⟨⟨[agrS, third], [[item "nin"]], []⟩, ""⟩, ⟨⟨[agrS, third], [[item "ninet"]], []⟩, ""⟩,
-     [agrS, third] ⟷ "ne"]
+    [⟨{(0, agrS), (0, third), (-1, item "nin")}, ""⟩,
+     ⟨{(0, agrS), (0, third), (-1, item "ninet")}, ""⟩, {agrS, third} ⟷ "ne"]
 
 /-- The Past I verb is the root with the object and subject agreement nodes. -/
 def word (r : String) (subj obj : List Feature) :
@@ -209,7 +210,8 @@ theorem rows_morphs :
 /-- The impossible Pseudo-Chukchi rule (28a), deleting *ne-* in the context of a third-singular
 object rather than of the item *-nin*. -/
 def pseudoVocab : List (VocabularyItem Feature String) :=
-  objectVocab ++ [⟨⟨[agrS, third], [[agrO, third, sg]], []⟩, ""⟩, [agrS, third] ⟷ "ne"]
+  objectVocab ++
+    [⟨{(0, agrS), (0, third), (-1, agrO), (-1, third), (-1, sg)}, ""⟩, {agrS, third} ⟷ "ne"]
 
 /-- A third-singular object presents the same features under a third-singular subject, where it
 is spelled out *-nin*, and under a third-plural one, where it is *-ɣʔen* (23). Keyed to those

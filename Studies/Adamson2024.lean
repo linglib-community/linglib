@@ -204,7 +204,7 @@ inductive ArticleFeature where
 
 /-- The article vocabulary (32). -/
 def articles : List (VocabularyItem ArticleFeature Article) :=
-  [[.animate, .pl] ⟷ .o, [.pl] ⟷ .a, [.animate, .proper] ⟷ .e, [.animate] ⟷ .a, [] ⟷ .o]
+  [{.animate, .pl} ⟷ .o, {.pl} ⟷ .a, {.animate, .proper} ⟷ .e, {.animate} ⟷ .a, ∅ ⟷ .o]
 
 /-- The article features of each class. Gender I-E is gender I with [proper]. -/
 def classFeatures : NounClass → List ArticleFeature
@@ -287,7 +287,7 @@ def impoverish (φ : List Phi) : List Phi :=
   runChain (ImpoverishmentRule.apply List.erase) impoverishment (Neighborhood.ofBundle φ)
 
 /-- The declarative marker is *ka* for [masc] and *ke* elsewhere. -/
-def declarative : List (VocabularyItem Phi String) := [[.masc] ⟷ "ka", [] ⟷ "ke"]
+def declarative : List (VocabularyItem Phi String) := [{.masc} ⟷ "ka", ∅ ⟷ "ke"]
 
 /-- The declarative marker agreeing with a nominal of features `φ`. -/
 def decl (φ : List Phi) : Option String := subsetPrinciple declarative (impoverish φ)
@@ -302,7 +302,7 @@ theorem decl_masc_only :
 /-- A possessed noun takes its marked form for [participant] or a surviving [masc] and its
 unmarked form elsewhere. -/
 def possessedItems (marked unmarked : String) : List (VocabularyItem Phi String) :=
-  [[.participant] ⟷ marked, [.masc] ⟷ marked, [] ⟷ unmarked]
+  [{.participant} ⟷ marked, {.masc} ⟷ marked, ∅ ⟷ unmarked]
 
 /-- The form of a possessed noun agreeing with a possessor of features `φ`. -/
 def agreeingForm (n : PossessedNoun) (φ : List Phi) : Option String :=

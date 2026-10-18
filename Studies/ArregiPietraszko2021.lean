@@ -224,23 +224,24 @@ inductive Piece
 bears tense takes the allomorph that tense conditions, and the infinitival exponent is the
 elsewhere exponent of T. -/
 def vocabulary : RuleSet (VocabularyItem Feat Piece) :=
-  [[.verb, .orphan] ⟷ .dummy, ⟨⟨[.verb], [], [[.tense]]⟩, .finiteStem⟩, [.verb] ⟷ .stem,
-    [.T, .tense, .agr] ⟷ .finite, [.T] ⟷ .infinitival, [.neg] ⟷ .contracted]
+  [{.verb, .orphan} ⟷ .dummy, ⟨{(0, .verb), (1, .tense)}, .finiteStem⟩, {.verb} ⟷ .stem,
+    {.T, .tense, .agr} ⟷ .finite, {.T} ⟷ .infinitival, {.neg} ⟷ .contracted]
 
 /-- The dummy verb is inserted exactly at an orphan verb, whatever stands beside it. -/
 theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉ n.focus) :
     subsetPrinciple vocabulary n = some .dummy ↔ .verb ∈ n.focus ∧ .orphan ∈ n.focus := by
-  let dummy : VocabularyItem Feat Piece := [.verb, .orphan] ⟷ .dummy
+  let dummy : VocabularyItem Feat Piece := {.verb, .orphan} ⟷ .dummy
   constructor
   · intro h
     obtain ⟨i, hi, he, hs⟩ := subsetPrinciple_winner_mem h
-    have hf := Neighborhood.focus_subset_focus hs
     simp only [vocabulary, List.mem_cons, List.not_mem_nil, or_false] at hi
     rcases hi with rfl | rfl | rfl | rfl | rfl | rfl <;> cases he
-    exact ⟨hf (by simp [VocabularyItem.ofFeatures]), hf (by simp [VocabularyItem.ofFeatures])⟩
+    have hf := VocabularyItem.applies_ofFeatures.1 hs
+    exact ⟨hf _ (by simp), hf _ (by simp)⟩
   · rintro ⟨hv, ho⟩
-    have hT' : ∀ fs : List Feat, .T ∈ fs → ¬ (fs : Neighborhood (List Feat)) ⊆ n :=
-      fun fs h hs ↦ hT (Neighborhood.ofBundle_subset_iff.mp hs h)
+    have hT' : ∀ (fs : Finset Feat) (e : Piece), .T ∈ fs →
+        ¬ Morphology.Exponence.Applies (fs ⟷ e) n :=
+      fun fs e h hs ↦ hT (VocabularyItem.applies_ofFeatures.1 hs _ h)
     have key : ∀ s ∈ vocabulary, Morphology.Exponence.Applies s n →
         s = dummy ∨ s.specificity < dummy.specificity := by
       intro s hs ha
@@ -249,11 +250,11 @@ theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (List Feat)} (hT : .T ∉
       · exact .inl rfl
       · exact .inr (by decide)
       · exact .inr (by decide)
-      · exact absurd ha (hT' _ (by simp))
-      · exact absurd ha (hT' _ (by simp))
+      · exact absurd ha (hT' _ _ (by simp))
+      · exact absurd ha (hT' _ _ (by simp))
       · exact .inr (by decide)
     exact RuleSet.realize_eq_of_forall_le (r := dummy) (by simp [vocabulary, dummy])
-      (Neighborhood.ofBundle_subset_iff.mpr (by simp [hv, ho]))
+      (VocabularyItem.applies_ofFeatures.2 (by simp [hv, ho]))
       (fun s hs ha ↦ (key s hs ha).elim (fun h ↦ h ▸ le_rfl) le_of_lt)
       (fun s hs ha he ↦ (key s hs ha).elim (fun h ↦ h ▸ rfl) fun h ↦ absurd he h.ne)
 

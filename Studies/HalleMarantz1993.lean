@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.HalleMarantz1993
 /-!
 # Halle and Marantz (1993): Distributed Morphology and the Pieces of Inflection
 
-This file formalizes the English verb inflection of [halle-marantz-1993], section 3.1. The
+This file formalizes Halle and Marantz's English verb inflection, section 3.1. The
 seven suffixes of (8) compete under the Subset Principle for the fused Tns–Agr node,
 `vocabulary`, and the principal parts of (7) fall out, `principal_parts`. The node's
 features are the binary `[±past]` and `[±participle]`, the `[3sg]` agreement complex, and the
@@ -89,17 +89,17 @@ def tPast : List Verb := [.dwell]
 
 /-- The items of a stem-conditioned suffix: one per listed stem, the paper's
 disjunctive list in a contextual feature. -/
-def forStems (features : List Feature) (e : String) (stems : List Verb) :
+def forStems (features : Finset Feature) (e : String) (stems : List Verb) :
     List (VocabularyItem Feature String) :=
-  stems.map λ v => (features ++ [.stem v]) ⟷ e
+  stems.map fun v ↦ insert (.stem v) features ⟷ e
 
 /-- The seven suffixes of (8): the past block (`-n`, the unordered `∅` and
 `-t`, default `-d`), then `[3sg]` `-z`, `[+participle]` `-ing`, and
 the Elsewhere `∅`. -/
 def vocabulary : List (VocabularyItem Feature String) :=
-  forStems [.past true, .participle true] "-n" strongParticiple ++
-    forStems [.past true] "∅" strongPast ++ forStems [.past true] "-t" tPast ++
-    [[.past true] ⟷ "-d", [.sg3] ⟷ "-z", [.participle true] ⟷ "-ing", [] ⟷ "∅"]
+  forStems {.past true, .participle true} "-n" strongParticiple ++
+    forStems {.past true} "∅" strongPast ++ forStems {.past true} "-t" tPast ++
+    [{.past true} ⟷ "-d", {.sg3} ⟷ "-z", {.participle true} ⟷ "-ing", ∅ ⟷ "∅"]
 
 /-- The `∅` and `-t` pasts "are not ordered by complexity" and need no
 ordering: their stem lists are disjoint. -/
@@ -169,7 +169,7 @@ theorem participle_eq_past_of_not_strong (v : Verb) (hv : v ∉ strongParticiple
 /-- The stem-conditioned past `∅` (*put*) blocks the default `-d`: the
 winner is the stem-listed item. -/
 theorem zero_past_blocks_default :
-    winner? vocabulary (Part.pastFinite.node .put) = some ([.past true, .stem .put] ⟷ "∅") := by
+    winner? vocabulary (Part.pastFinite.node .put) = some ({.past true, .stem .put} ⟷ "∅") := by
   decide
 
 /-- The paper's two zero morphemes are different items: the stem-conditioned

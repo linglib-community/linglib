@@ -100,17 +100,17 @@ def expFeatures (m : Morph) : List Feature := [exp m]
 
 /-- The item spelling out n as `e` after the exponent `m`. -/
 def nAfter (m : Morph) (e : String) : VocabularyItem Feature Morph :=
-  ⟨⟨[cat .n], [[exp m]], []⟩, .suff e⟩
+  ⟨{(0, (cat .n : Feature)), (-1, exp m)}, .suff e⟩
 
 /-- The Vocabulary Items of v and n. v is *-k* after *sein* and, in a nominal only, after
 *not*, *-er* after *analýs*, and zero elsewhere; n is *-ing* after *-er*, *-un* after *-k*
 and after the roots the fragment shows with *-un*, *-n*, *-ttur* and *-ð* after their roots,
 and has no elsewhere item, as the rule (2.8) of the book has it. -/
 def vocab : RuleSet (VocabularyItem Feature Morph) :=
-  [⟨⟨[cat .v], [[exp (.root "sein")]], []⟩, .suff "k"⟩,
-   ⟨⟨[cat .v], [[exp (.root "not")]], [[cat .n]]⟩, .suff "k"⟩,
-   ⟨⟨[cat .v], [[exp (.root "analýs")]], []⟩, .suff "er"⟩,
-   [cat .v] ⟷ zero,
+  [⟨{(0, (cat .v : Feature)), (-1, exp (.root "sein"))}, .suff "k"⟩,
+   ⟨{(0, (cat .v : Feature)), (-1, exp (.root "not")), (1, (cat .n : Feature))}, .suff "k"⟩,
+   ⟨{(0, (cat .v : Feature)), (-1, exp (.root "analýs"))}, .suff "er"⟩,
+   {(cat .v : Feature)} ⟷ zero,
    nAfter (.suff "er") "ing", nAfter (.suff "k") "un",
    nAfter (.root "opn") "un", nAfter (.root "söfn") "un", nAfter (.root "vönt") "un",
    nAfter (.root "prent") "un", nAfter (.root "vör") "un", nAfter (.root "dá") "un",
@@ -193,7 +193,7 @@ theorem insertAt_word_one :
 /-- v always receives an exponent, since zero is its elsewhere item. -/
 theorem subsetPrinciple_vContext_isSome : (subsetPrinciple vocab (vContext r)).isSome := by
   rw [subsetPrinciple_eq, Option.isSome_map, winner?_isSome_iff]
-  exact ⟨[Feature.cat .v] ⟷ zero, by simp [vocab], by simp [vContext]⟩
+  exact ⟨{Feature.cat .v} ⟷ zero, by decide, by simp [vContext]⟩
 
 /-- The exponent of v in the nominal of the root `r`. -/
 def verbalizer : Morph := (subsetPrinciple vocab (vContext r)).getD zero
@@ -237,8 +237,8 @@ theorem nominalizer_eq_none (h : verbalizer r = zero) (hr : r ∉ listed) :
     nominalizer r = none := by
   rw [nominalizer_of_eq_zero r h, subsetPrinciple, RuleSet.realize_eq_none_iff]
   simp [listed] at hr
-  simp [RuleSet.applicable, vocab, nAfter, VocabularyItem.applies_iff,
-    Neighborhood.subset_iff_positioned, Neighborhood.positioned, Morph.root, Morph.suff, zero]
+  simp [RuleSet.applicable, vocab, nAfter, VocabularyItem.applies_iff, Neighborhood.mem_def,
+    Morph.root, Morph.suff, zero, or_and_right, exists_or]
   simpa [eq_comm] using hr
 
 /-- *borða* 'eat' has no nominalization (*\*borð-un*). -/
@@ -364,7 +364,7 @@ end IStar.Alloseme
 
 /-- i* is an agent in the context of an eventive complement and a possessor elsewhere. -/
 def IStar.vocabulary : RuleSet (VocabularyItem Feature IStar.Alloseme) :=
-  [⟨complement [.eventive], .agent⟩, [] ⟷ .possessor]
+  [⟨(complement [.eventive]).toFinset, .agent⟩, ∅ ⟷ .possessor]
 
 /-- The alloseme of i* selected by its complement's features. -/
 def IStar.alloseme (fs : List Feature) : IStar.Alloseme :=

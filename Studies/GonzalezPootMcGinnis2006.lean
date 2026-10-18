@@ -8,10 +8,10 @@ public import Linglib.Data.Examples.GonzalezPootMcGinnis2006
 /-!
 # González Poot and McGinnis (2006): Local versus Long-Distance Fission in Distributed Morphology
 
-[gonzalez-poot-mcginnis-2006]'s argument that Yucatec Maya has local but not long-distance
+González Poot and McGinnis's argument that Yucatec Maya has local but not long-distance
 Fission. The verbal agreement suffixes come from one node, Agr3, which agrees with both the
 ergative subject and the nominative object and is realized by strict scansion of the Vocabulary
-(27) with local Fission ([halle-1997]): an item discharges its features from one of the node's
+(27) with Halle's local Fission: an item discharges its features from one of the node's
 two matrices and the residue stays available to the items below (`suffixes`). The second- and
 third-person plural suffixes *-éːš* and *-oʔob* are unspecified for case, so their order is fixed
 by specificity whatever the grammatical roles, (19) to (22), and one scansion never inserts
@@ -21,7 +21,7 @@ ergative person onto the auxiliary and number onto the verb, (39), crosses a wor
 first-person number is a person distinction, (42), so the auxiliary and prefix Vocabularies (43)
 and (44) recover every row (`aux_prefix_rows`) and derive the paradigm (39) that the paper aligns
 with Hebrew, Basque, and Georgian (`ergative_paradigm`, `first_person_paradigm`). The appendix's
-privative implementation over [harley-ritter-2002]'s features, (A1) to (A4), recovers the
+privative implementation over Harley and Ritter's features, (A1) to (A4), recovers the
 auxiliary and the prefix (`privative_aux_prefix`) but not the suffixes: without negative values,
 the nominative residue of a second-person plural object still matches *-en*, so (A4)
 over-generates on (20) (`privative_suffixes`).
@@ -83,19 +83,19 @@ def matrix : Person → Bool → Case → List FeatureVal
 
 /-- The Agr3 Vocabulary Items (27), in scansion order. -/
 def agr3 : List (VocabularyItem FeatureVal String) :=
-  [[⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩] ⟷ "oʔon",
-    [⟨.participant, true⟩, number false, ⟨.case, .nom⟩] ⟷ "etš",
-    [⟨.author, true⟩, ⟨.case, .nom⟩] ⟷ "en", [⟨.participant, true⟩, number true] ⟷ "éːš",
-    [number true] ⟷ "oʔob", [] ⟷ "Ø"]
+  [{⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩} ⟷ "oʔon",
+    {⟨.participant, true⟩, number false, ⟨.case, .nom⟩} ⟷ "etš",
+    {⟨.author, true⟩, ⟨.case, .nom⟩} ⟷ "en", {⟨.participant, true⟩, number true} ⟷ "éːš",
+    {number true} ⟷ "oʔob", ∅ ⟷ "Ø"]
 
 /-- The Agr1 Vocabulary Items (43) realize the ergative auxiliary suffix. -/
 def agr1 : List (VocabularyItem FeatureVal String) :=
-  [[⟨.participant, true⟩, ⟨.author, true⟩] ⟷ "in", [⟨.author, true⟩] ⟷ "k",
-    [⟨.participant, true⟩] ⟷ "a", [] ⟷ "u"]
+  [{⟨.participant, true⟩, ⟨.author, true⟩} ⟷ "in", {⟨.author, true⟩} ⟷ "k",
+    {⟨.participant, true⟩} ⟷ "a", ∅ ⟷ "u"]
 
 /-- The Agr2 Vocabulary Items (44) realize the ergative verbal prefix. -/
 def agr2 : List (VocabularyItem FeatureVal String) :=
-  [[⟨.participant, true⟩] ⟷ "w", [⟨.participant, false⟩] ⟷ "j", [] ⟷ ""]
+  [{⟨.participant, true⟩} ⟷ "w", {⟨.participant, false⟩} ⟷ "j", ∅ ⟷ ""]
 
 /-- In the overt verbal suffixes of a clause, Agr3 bears the subject's matrix and, in a transitive
 clause, the object's, (25) and (28b); strict scansion of (27) realizes them, and the elsewhere *-Ø*
@@ -212,16 +212,16 @@ def privMatrix (p : Person) (pl : Bool) (c : Case) : List Privative :=
 
 /-- The Agr1 Vocabulary Items (A2). -/
 def agr1' : List (VocabularyItem Privative String) :=
-  [[.speaker] ⟷ "k", [.addressee] ⟷ "a", [.participant] ⟷ "in", [] ⟷ "u"]
+  [{.speaker} ⟷ "k", {.addressee} ⟷ "a", {.participant} ⟷ "in", ∅ ⟷ "u"]
 
 /-- The Agr2 Vocabulary Items (A3). -/
 def agr2' : List (VocabularyItem Privative String) :=
-  [[.speaker] ⟷ "", [.participant] ⟷ "w", [] ⟷ "j"]
+  [{.speaker} ⟷ "", {.participant} ⟷ "w", ∅ ⟷ "j"]
 
 /-- The Agr3 Vocabulary Items (A4). -/
 def agr3' : List (VocabularyItem Privative String) :=
-  [[.addressee, .group] ⟷ "éːš", [.addressee, .nom] ⟷ "etš", [.speaker, .nom] ⟷ "oʔon",
-    [.participant, .nom] ⟷ "en", [.group] ⟷ "oʔob", [] ⟷ "Ø"]
+  [{.addressee, .group} ⟷ "éːš", {.addressee, .nom} ⟷ "etš", {.speaker, .nom} ⟷ "oʔon",
+    {.participant, .nom} ⟷ "en", {.group} ⟷ "oʔob", ∅ ⟷ "Ø"]
 
 /-- The overt verbal suffixes under (A4). -/
 def suffixes' (subj : Person × Bool) (obj : Option (Person × Bool)) : List String :=

@@ -159,7 +159,7 @@ structure Item where
 def Item.site (i : Item) : List Feat := i.realized ++ i.context
 
 /-- The item for the substrate's Subset Principle keeps its site and exponent. -/
-def Item.toVI (i : Item) : VocabularyItem Feat Morph := ⟨↑i.site, i.exponent⟩
+def Item.toVI (i : Item) : VocabularyItem Feat Morph := i.site.toFinset ⟷ i.exponent
 
 /-- The Vocabulary lists Set A (Table 4.7), Set B with its context-free first-person plural and its
 Elsewhere item (Table 4.8), the pronominal base *qin* (Table 4.10), the plurals *q* and *qa* ((65),

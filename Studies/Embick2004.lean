@@ -149,7 +149,7 @@ def realize (vocab : List (VocabularyItem Feature String)) (w : ComplexHead Root
 
 /-- v[FIENT] is spelled out as *-en* next to √FLAT and as null next to √HAMMER (fn. 24). -/
 def vocabulary : List (VocabularyItem Feature String) :=
-  [⟨⟨[.fient], [[.root .flat]], []⟩, "-en"⟩, [.fient] ⟷ ""]
+  [⟨{(0, .fient), (-1, .root .flat)}, "-en"⟩, {.fient} ⟷ ""]
 
 theorem realize_flat : realize vocabulary ⟨.flat, [.fient]⟩ = some "-en" := by decide
 
