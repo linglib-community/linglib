@@ -32,6 +32,8 @@ its base position or is fronted (`Focus.Strategy`).
   evokes its whole type, its alternatives grow exactly along the order of the marks.
 * `WithAlternatives.monotone_alternatives_map₂_mark`: the alternatives of a composition grow with
   the marks of its daughters.
+* `WithAlternatives.ordinary_eq_of_given_mark_focused_bind`: an F-marked constituent under a
+  continuation is Given only if the continuation's ordinary values ignore it.
 
 ## References
 
@@ -136,5 +138,31 @@ order of the marks: the order on marks is the order of the alternatives they evo
 theorem alternatives_mark_subset_alternatives_mark_iff (hd : d.alternatives ≠ .univ)
     {m m' : Mark} : (d.mark m).alternatives ⊆ (d.mark m').alternatives ↔ m ≤ m' := by
   cases m <;> cases m' <;> simp [Set.univ_subset_iff, hd] <;> decide
+
+section Bind
+
+universe u
+
+variable {σ τ : Type u}
+
+/-- On a well-formed meaning, F-marking binds into `focused`, every alternative giving way to the
+whole type. -/
+theorem mark_focused_eq_bind {d : WithAlternatives σ} (hd : d.WellFormed) :
+    d.mark .focused = d >>= .focused := by
+  refine WithAlternatives.ext rfl (Set.ext fun x ↦ ?_)
+  rw [alternatives_bind]
+  exact ⟨fun _ ↦ ⟨_, hd, Set.mem_univ x⟩, fun _ ↦ Set.mem_univ x⟩
+
+/-- An F-marked constituent under a continuation with well-formed values is Given only if the
+ordinary values of the continuation ignore it. -/
+theorem ordinary_eq_of_given_mark_focused_bind {d : WithAlternatives σ}
+    {k : σ → WithAlternatives τ} (hk : ∀ a, (k a).WellFormed) {c : τ}
+    (h : (d.mark .focused >>= k).Given c) (a : σ) : (k a).ordinary = c := by
+  have : (k a).ordinary ∈ (d.mark .focused >>= k).alternatives := by
+    rw [alternatives_bind]
+    exact ⟨a, Set.mem_univ a, hk a⟩
+  rwa [h] at this
+
+end Bind
 
 end WithAlternatives

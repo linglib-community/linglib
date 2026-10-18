@@ -21,11 +21,17 @@ salient discourse referent, and leaves both values unchanged; the requirement is
 use-conditional, like the German particles *ja* and *doch*. Two consequences follow. No
 constituent can bear both features, since no domain is a singleton (`not_given_mark_focused`),
 and a constituent containing a focus can be Given only if an operator inside it has consumed the
-alternatives (`not_given_map₂_mark`), which is what licenses second-occurrence focus under
-*only*. A contrast is represented with the fewest [FoC]-marks that still evoke the antecedent, so
-*John picked [strawberries]FoC at [Sandy's]FoC farm* does not contrast with *John picked
-strawberries at Mary's farm*, while *John picked strawberries at [Sandy's]FoC farm* does
-(`not_representsContrast_variants_top`, `representsContrast_variants_narrow`). Newness is no
+alternatives (58), which is what licenses second-occurrence focus under *only*
+(`LF.given_only_squiggle`). With no squiggle between them, the meaning of a constituent is the
+meaning of the focus bound into its context (`LF.Ctx.meaning_plug`), so the constituent is Given
+only if its ordinary value ignores the focus (`LF.ord_plug_eq_of_given`). The paper's derivation
+of (58) assumes that it never does: *[Mary]FoC came or didn't come* is Given, with an unconsumed
+FoCus (`LF.given_foc_came_or_not`), and (58) holds where the ordinary value depends on the focus
+(`LF.not_given_plug_foc`). A contrast is represented with the fewest [FoC]-marks that still
+evoke the antecedent, so *John picked [strawberries]FoC at [Sandy's]FoC farm* does not contrast
+with *John picked strawberries at Mary's farm*, while *John picked strawberries at
+[Sandy's]FoC farm* does (`not_representsContrast_variants_top`,
+`representsContrast_variants_narrow`). Newness is no
 feature at all, so the paper's footnote on Hausa rereads the in situ and ex situ answers of
 Hartmann and Zimmermann as unmarked newness and [FoC].
 
@@ -43,9 +49,18 @@ two-argument predication are the four markings of its arguments (`variants`), th
 larger constituents held unmarked, which is all that (50) and (51) vary. Contexts are a window of
 discourse referents: [G] (47) takes its antecedent from the window preceding the context, with no
 anticipatory licensing (fn. 46), and the squiggle (53) from the window surrounding it, since a
-contrast may be represented with a later referent (fn. 58). (58) is
-proved for one step of composition. The prosodic spell-out of the features in English (§6–§7) is
+contrast may be represented with a later referent (fn. 58). Logical forms (`LF`) compose by
+function application, with [FoC], [G] and the squiggle as wrappers on the node they label, so the
+[FoC]/[G]-variants of a form are the forms with its erasure (`LF.erase`); (58) is stated over
+their one-hole contexts (`LF.Ctx`). The prosodic spell-out of the features in English (§6–§7) is
 prose.
+
+## TODO
+
+* The squiggle's presupposition over a logical form's own variants, the forms with its erasure,
+  rather than over a family given with it (`ContrastOperator`), and (49)–(51) and Pressure for
+  [FoC]-Marking (66) with the data of (62)–(65) over those variants.
+* Logical forms with abstraction, where Hamblin alternatives do not distribute.
 
 ## References
 
@@ -80,23 +95,6 @@ is Given with respect to nothing. -/
 theorem not_given_mark_focused {α : Type*} [Nontrivial α] (d : WithAlternatives α) (a : α) :
     ¬ (d.mark .focused).Given a :=
   not_given_of_nontrivial (d.nontrivial_alternatives_mark_focused) a
-
-/-- (58) for one step of composition. A constituent composed with no operator from daughters of
-types with two values, one of them F-marked, is not Given, so a constituent containing a FoCus can
-be Given only if an operator inside it consumes the alternatives. -/
-theorem not_given_map₂_mark {α β γ : Type*} [Nontrivial α] [Nontrivial β] {f : α → β → γ}
-    (hf : Function.Injective2 f) {a : WithAlternatives α} {b : WithAlternatives β}
-    (ha : a.WellFormed) (hb : b.WellFormed) {m : Mark × Mark} (hm : m ≠ ⊥) (c : γ) :
-    ¬ (map₂ f (a.mark m.1) (b.mark m.2)).Given c := by
-  refine not_given_of_nontrivial ?_ c
-  obtain ⟨_ | _, _ | _⟩ := m
-  · exact absurd rfl hm
-  · exact WithAlternatives.nontrivial_alternatives_map₂_right hf.right ⟨_, ha⟩
-      b.nontrivial_alternatives_mark_focused
-  · exact WithAlternatives.nontrivial_alternatives_map₂_left hf.left
-      a.nontrivial_alternatives_mark_focused ⟨_, hb⟩
-  · exact WithAlternatives.nontrivial_alternatives_map₂_left hf.left
-      a.nontrivial_alternatives_mark_focused ⟨_, hb.mark _⟩
 
 /-- The Givenness requirement is use-conditional and must be met by the utterance context
 however deeply [G] is embedded. As the not-at-issue content of a two-dimensional meaning, it
@@ -200,6 +198,173 @@ def squiggleNarrow {α β γ : Type*} {f : α → β → γ} (hf : Function.Inje
   representsContrast := by
     rintro _ rfl
     exact representsContrast_variants_narrow hf x hy
+
+/-! ### Logical forms and (58)
+
+A logical form composes lexical meanings by function application, and [FoC], [G] and the squiggle
+wrap the node they label. Through a context with no squiggle the meaning of a constituent is the
+meaning of its hole bound into the context, so the context is a continuation, and (58) holds at any
+depth. -/
+
+/-- A logical form of the paper is a lexical item, a function application, a [FoC]-marked or
+[G]-marked node, or a squiggle with its antecedents, over meanings of each type. -/
+inductive LF : Type → Type 1 where
+  | lex {α : Type} (x : α) : LF α
+  | app {α β : Type} (f : LF (α → β)) (x : LF α) : LF β
+  | foc {α : Type} (t : LF α) : LF α
+  | given {α : Type} (a : α) (t : LF α) : LF α
+  | squiggle {α : Type} (ℭ : Set α) (t : LF α) : LF α
+
+namespace LF
+
+variable {α β γ : Type}
+
+/-- The ordinary value of a logical form overlooks its features and squiggles (45), (47), (54). -/
+def ord : {α : Type} → LF α → α
+  | _, lex x => x
+  | _, app f x => f.ord x.ord
+  | _, foc t => t.ord
+  | _, given _ t => t.ord
+  | _, squiggle _ t => t.ord
+
+/-- The meaning of a logical form. [FoC] makes the alternatives the whole type (45), [G] leaves
+both values unchanged (47), and a squiggle collapses the alternatives to the ordinary value
+(54). -/
+def meaning : {α : Type} → LF α → WithAlternatives α
+  | _, lex x => pure x
+  | _, app f x => f.meaning <*> x.meaning
+  | _, foc t => t.meaning.mark .focused
+  | _, given _ t => t.meaning
+  | _, squiggle _ t => pure t.ord
+
+@[simp] theorem ordinary_meaning (t : LF α) : t.meaning.ordinary = t.ord := by
+  induction t with
+  | lex x => rfl
+  | app f x ihf ihx => simp only [meaning, ord, WithAlternatives.ordinary_seq, ihf, ihx]
+  | foc t ih => simp only [meaning, ord, WithAlternatives.ordinary_mark, ih]
+  | given a t ih => exact ih
+  | squiggle ℭ t ih => rfl
+
+/-- Every logical form has its ordinary value among its alternatives. -/
+theorem wellFormed_meaning (t : LF α) : t.meaning.WellFormed := by
+  induction t with
+  | lex x => exact WithAlternatives.WellFormed.unfeatured x
+  | app f x ihf ihx => exact WithAlternatives.mem_alternatives_seq.2 ⟨_, ihf, _, ihx, rfl⟩
+  | foc t ih => exact ih.mark _
+  | given a t ih => exact ih
+  | squiggle ℭ t ih => exact WithAlternatives.WellFormed.unfeatured _
+
+/-- The erasure of a logical form drops its [FoC]- and [G]-marks; its [FoC]/[G]-variants are the
+forms with the same erasure (49). -/
+def erase : {α : Type} → LF α → LF α
+  | _, lex x => lex x
+  | _, app f x => app f.erase x.erase
+  | _, foc t => t.erase
+  | _, given _ t => t.erase
+  | _, squiggle ℭ t => squiggle ℭ t.erase
+
+/-- The ordinary value overlooks [FoC] and [G], so variants share it (45), (47). -/
+@[simp] theorem ord_erase (t : LF α) : t.erase.ord = t.ord := by
+  induction t with
+  | lex x => rfl
+  | app f x ihf ihx => simp only [erase, ord, ihf, ihx]
+  | foc t ih => exact ih
+  | given a t ih => exact ih
+  | squiggle ℭ t ih => simp only [erase, ord, ih]
+
+/-- A one-hole context of a logical form, from a hole of type `α` up to a root of type `γ`. -/
+inductive Ctx : Type → Type → Type 1 where
+  | hole {α : Type} : Ctx α α
+  | fn {α β γ : Type} (x : LF α) (K : Ctx β γ) : Ctx (α → β) γ
+  | arg {α β γ : Type} (f : LF (α → β)) (K : Ctx β γ) : Ctx α γ
+  | foc {α γ : Type} (K : Ctx α γ) : Ctx α γ
+  | given {α γ : Type} (a : α) (K : Ctx α γ) : Ctx α γ
+  | squiggle {α γ : Type} (ℭ : Set α) (K : Ctx α γ) : Ctx α γ
+
+namespace Ctx
+
+/-- The form with `t` in the hole. -/
+def plug : {α γ : Type} → Ctx α γ → LF α → LF γ
+  | _, _, hole, t => t
+  | _, _, fn x K, t => K.plug (app t x)
+  | _, _, arg f K, t => K.plug (app f t)
+  | _, _, foc K, t => K.plug (.foc t)
+  | _, _, given a K, t => K.plug (.given a t)
+  | _, _, squiggle ℭ K, t => K.plug (.squiggle ℭ t)
+
+/-- A context is transparent when no squiggle lies between its hole and its root, so nothing in
+it consumes the alternatives of the hole. -/
+def Transparent : {α γ : Type} → Ctx α γ → Prop
+  | _, _, hole => True
+  | _, _, fn _ K => K.Transparent
+  | _, _, arg _ K => K.Transparent
+  | _, _, foc K => K.Transparent
+  | _, _, given _ K => K.Transparent
+  | _, _, squiggle _ _ => False
+
+/-- Through a transparent context the meaning of a constituent is the meaning of its hole bound
+into the context, which is a continuation. -/
+theorem meaning_plug {K : Ctx α γ} (hK : K.Transparent) (t : LF α) :
+    (K.plug t).meaning = t.meaning >>= fun a ↦ (K.plug (lex a)).meaning := by
+  induction K with
+  | hole => exact (bind_pure _).symm
+  | fn x K ih =>
+    simp only [plug, ih hK (.app _ x), meaning, seq_eq_bind_map, bind_assoc, pure_bind]
+  | arg f K ih =>
+    simp only [plug, ih hK (.app f _), meaning]
+    rw [WithAlternatives.seq_eq_bind_seq_pure f.meaning t.meaning, bind_assoc]
+  | foc K ih =>
+    simp only [plug, ih hK (.foc _), meaning,
+      WithAlternatives.mark_focused_eq_bind (wellFormed_meaning _), bind_assoc]
+    rfl
+  | given a K ih => simp only [plug, ih hK (.given a _), meaning, pure_bind]
+  | squiggle ℭ K ih => exact hK.elim
+
+end Ctx
+
+/-- (58) at any depth. A constituent containing a [FoC]-marked constituent with no squiggle between
+them is Given only if its ordinary value ignores the FoCus. -/
+theorem ord_plug_eq_of_given {K : Ctx α γ} (hK : K.Transparent) {t : LF α} {c : γ}
+    (h : (K.plug (foc t)).meaning.Given c) (v : α) : (K.plug (lex v)).ord = c := by
+  rw [Ctx.meaning_plug hK] at h
+  rw [← ordinary_meaning]
+  exact WithAlternatives.ordinary_eq_of_given_mark_focused_bind (fun _ ↦ wellFormed_meaning _) h v
+
+/-- (58) in the paper's form. A constituent whose ordinary value depends on a [FoC]-marked
+constituent with no squiggle between them is not Given, so it cannot be [G]-marked. -/
+theorem not_given_plug_foc {K : Ctx α γ} (hK : K.Transparent) {v w : α}
+    (hvw : (K.plug (lex v)).ord ≠ (K.plug (lex w)).ord) (t : LF α) (c : γ) :
+    ¬ (K.plug (foc t)).meaning.Given c := fun h ↦
+  hvw ((ord_plug_eq_of_given hK h v).trans (ord_plug_eq_of_given hK h w).symm)
+
+/-- The dependence is needed, as the paper's derivation of (58) overlooks. *[Mary]FoC came or
+didn't come* contains a FoCus that nothing consumes, yet it is Given with respect to the
+tautology, since its predicate holds of everyone. -/
+theorem given_foc_came_or_not {E W : Type} (came : E → Set W) (mary : E) :
+    (app (lex fun x ↦ came x ∪ (came x)ᶜ) (foc (lex mary))).meaning.Given Set.univ := by
+  refine Set.ext fun s ↦ ?_
+  simp only [meaning, WithAlternatives.mem_alternatives_seq, WithAlternatives.alternatives_pure,
+    WithAlternatives.mark_focused, WithAlternatives.focused_alternatives, Set.mem_singleton_iff,
+    Set.mem_univ, true_and, exists_eq_left, Set.union_compl_self]
+  exact ⟨fun ⟨_, h⟩ ↦ h.symm, fun h ↦ ⟨mary, h.symm⟩⟩
+
+/-- (60) In second-occurrence focus the [G]-marked VP *only ~ [quote [the faculty]FoC]* contains a
+FoCus yet is Given, since the squiggle consumes its alternatives and *only* introduces none of its
+own. -/
+theorem given_only_squiggle {E W : Type} (only : (E → Set W) → E → Set W)
+    (quote : E → E → Set W) (faculty : E) (ℭ : Set (E → Set W)) :
+    (app (lex only) (squiggle ℭ (app (lex quote) (foc (lex faculty))))).meaning.Given
+      (only (quote faculty)) := by
+  simp only [WithAlternatives.Given, meaning, ord, seq_pure, map_pure,
+    WithAlternatives.alternatives_pure]
+
+/-- The context between the second occurrence and the VP is not transparent. -/
+theorem not_transparent_only_squiggle {E W : Type} (only : (E → Set W) → E → Set W)
+    (quote : E → E → Set W) (ℭ : Set (E → Set W)) :
+    ¬ (Ctx.arg (lex quote) (.squiggle ℭ (.arg (lex only) .hole))).Transparent :=
+  id
+
+end LF
 
 /-! ### A-Givenness (§3) -/
 
