@@ -16,7 +16,7 @@ vowel with gender in the same way; *nanVh* 'face' takes the gender of the one wh
 
 ## Implementation notes
 
-* Number is a `Bool`, `true` for the plural, and matters only for genders I and II.
+* Number is a value of the singular-plural system, and matters only for genders I and II.
 * Demonstratives are segmented into their gender vowel and the stem, as in *e-pe*.
 
 ## References
@@ -41,28 +41,35 @@ inductive Gender where
   | gIV
   deriving DecidableEq, Repr, Fintype
 
+/-- Coastal Marind distinguishes the singular and the plural. -/
+abbrev numberSystem : Number.System := .singularPlural
+
 /-- The distal demonstrative, by gender and number. -/
-def demonstrative : Gender → Bool → String
-  | .gI, false | .gIII, _ => "e-pe"
-  | .gII, false => "u-pe"
-  | .gI, true | .gII, true | .gIV, _ => "i-pe"
+def demonstrative (g : Gender) (n : numberSystem.values) : String :=
+  match g, n.1 with
+  | .gI, .singular | .gIII, _ => "e-pe"
+  | .gII, .singular => "u-pe"
+  | _, _ => "i-pe"
 
 /-- The similative postposition *hV* 'like', which is *hu* for gender II in the singular and *hi*
 otherwise. -/
-def similative : Gender → Bool → String
-  | .gII, false => "hu"
+def similative (g : Gender) (n : numberSystem.values) : String :=
+  match g, n.1 with
+  | .gII, .singular => "hu"
   | _, _ => "hi"
 
 /-- The adjective *ak-k* 'light (in weight)', by gender and number. -/
-def light : Gender → Bool → String
-  | .gI, false => "akek"
-  | .gII, false => "akuk"
+def light (g : Gender) (n : numberSystem.values) : String :=
+  match g, n.1 with
+  | .gI, .singular => "akek"
+  | .gII, .singular => "akuk"
   | .gIII, _ => "akak"
-  | .gI, true | .gII, true | .gIV, _ => "akik"
+  | _, _ => "akik"
 
 /-- The noun *nanVh* 'face', by the gender and number of the one whose face it is. -/
-def face : Gender → Bool → String
-  | .gII, false => "nanuh"
+def face (g : Gender) (n : numberSystem.values) : String :=
+  match g, n.1 with
+  | .gII, .singular => "nanuh"
   | _, _ => "nanih"
 
 /-- A noun with its gender. -/

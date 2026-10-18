@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.CCG.Derivation
 public import Linglib.Phonology.Prosody.Intonation
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Core.Order.Flat
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -18,8 +18,8 @@ constituents can be prosodic phrases, which is Selkirk's Sense Unit Condition by
 
 ## Main definitions
 
-* `CCG.Intonation.InfoFeature`: the INFORMATION feature, with `InfoFeature.unify` its partial
-  join, a `PartialUnify` instance.
+* `CCG.Intonation.Info`, `CCG.Intonation.InfoFeature`: the values of the INFORMATION feature,
+  and the feature, a value or unmarked in the flat order.
 * `CCG.Intonation.accentInfo`: the marking an accent slot contributes.
 * `CCG.Derivation.infoFeature`: the feature a derivation projects under an accent assignment,
   `none` on a theme/rheme clash.
@@ -52,83 +52,34 @@ open Prosody
 
 /-! ### The INFORMATION feature -/
 
-/-- The INFORMATION feature of [steedman-2000]. -/
-inductive InfoFeature where
+/-- The values of the INFORMATION feature of [steedman-2000]. -/
+inductive Info where
   /-- Theme. -/
   | θ
   /-- Rheme. -/
   | ρ
-  /-- Unspecified, unifying with either theme or rheme. -/
-  | unmarked
   /-- Phrasal, after a boundary has applied. -/
   | φ
-  deriving Repr, DecidableEq, Inhabited, Fintype
+  deriving Repr, DecidableEq, Fintype
 
-/-- The unification of two info features, their partial join in the subsumption order below
-(`PartialUnify`). -/
-def InfoFeature.unify : InfoFeature → InfoFeature → WithTop InfoFeature
-  | .unmarked, f => f
-  | f, .unmarked => f
-  | .θ, .θ => (.θ : InfoFeature)
-  | .ρ, .ρ => (.ρ : InfoFeature)
-  | .φ, .φ => (.φ : InfoFeature)
-  | _, _ => ⊤
+/-- The INFORMATION feature is a value or unmarked, the underspecified feature that "can unify
+with either" theme or rheme. It carries the flat order of feature unification
+([carpenter-1992]): unmarked is `⊥`, the values are pairwise incomparable above it, unification
+is the partial join and generalization the meet. -/
+abbrev InfoFeature := Flat Info
 
-/-! ### The information feature as a subsumption order
+namespace InfoFeature
 
-`unmarked` is Steedman's underspecified feature — the category that "can unify with
-either" theme or rheme — so it is `⊥`; `θ`, `ρ`, `φ` are pairwise-incomparable atoms
-above it. This is the flat order of feature unification ([carpenter-1992]) carried on
-the information feature: `InfoFeature.unify` is its partial join (`PartialUnify`) and
-the total meet is generalization (anti-unification). -/
+/-- The theme. -/
+@[match_pattern] abbrev θ : InfoFeature := Flat.some .θ
 
-instance : LE InfoFeature where
-  le a b := a = .unmarked ∨ a = b
+/-- The rheme. -/
+@[match_pattern] abbrev ρ : InfoFeature := Flat.some .ρ
 
-theorem InfoFeature.le_def {a b : InfoFeature} :
-    a ≤ b ↔ a = .unmarked ∨ a = b := Iff.rfl
+/-- The phrasal feature. -/
+@[match_pattern] abbrev φ : InfoFeature := Flat.some .φ
 
-instance (a b : InfoFeature) : Decidable (a ≤ b) :=
-  decidable_of_iff _ InfoFeature.le_def.symm
-
-instance : PartialOrder InfoFeature where
-  le_refl := by decide
-  le_trans := by decide
-  le_antisymm := by decide
-
-instance : OrderBot InfoFeature where
-  bot := .unmarked
-  bot_le := by decide
-
-instance : Min InfoFeature where
-  min a b := if a = b then a else .unmarked
-
-instance : SemilatticeInf InfoFeature :=
-  { (inferInstance : PartialOrder InfoFeature), (inferInstance : Min InfoFeature) with
-    inf := min
-    inf_le_left := by decide
-    inf_le_right := by decide
-    le_inf := by decide }
-
-/-- The two `PartialUnify` axioms in decidable form. A successful unification is the least
-upper bound, and unification succeeds on bounded-above pairs. -/
-private theorem InfoFeature.unify_spec (a b : InfoFeature) :
-    (∀ c : InfoFeature, InfoFeature.unify a b = ↑c →
-        (a ≤ c ∧ b ≤ c) ∧ ∀ u, a ≤ u → b ≤ u → c ≤ u) ∧
-      ((∃ u, a ≤ u ∧ b ≤ u) → InfoFeature.unify a b ≠ ⊤) := by
-  revert a b; decide
-
-instance : PartialUnify InfoFeature where
-  unify := InfoFeature.unify
-  isLUB_of_unify_eq_coe {a b c} h := by
-    obtain ⟨⟨hac, hbc⟩, hmin⟩ := (InfoFeature.unify_spec a b).1 c h
-    refine ⟨mem_upperBounds_pair.mpr ⟨hac, hbc⟩, fun u hu ↦ ?_⟩
-    obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
-    exact hmin u hau hbu
-  unify_ne_top_of_bddAbove {a b} h := by
-    obtain ⟨u, hu⟩ := h
-    obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
-    exact (InfoFeature.unify_spec a b).2 ⟨u, hau, hbu⟩
+end InfoFeature
 
 /-! ### Projecting information structure through a derivation -/
 
@@ -137,7 +88,7 @@ theme and H* and H*+L the rheme, and unaccented material is unmarked. The book c
 accent, and the rest are grouped with the rheme here. -/
 def accentInfo : Option PitchAccent → InfoFeature
   | some (.leading .L .H) => .θ
-  | none => .unmarked
+  | none => ⊥
   | some _ => .ρ
 
 /-- An assignment of pitch accents to the tokens of a derivation, `none` for an unaccented

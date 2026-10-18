@@ -64,12 +64,14 @@ def features : Target → Finset Dimension
 /-- The long adjective's nominative ending does not factor through its number: gender is
 inflected. -/
 theorem longAdjective_gender :
-    ¬ Function.FactorsThrough (fun p : Gender.Value × Bool ↦ p.1.adjEnding p.2) Prod.snd := by
+    ¬ Function.FactorsThrough
+      (fun p : Gender.Value × Gender.numberSystem.values ↦ p.1.adjEnding p.2) Prod.snd := by
   decide
 
 /-- Nor through its gender: number is inflected. -/
 theorem longAdjective_number :
-    ¬ Function.FactorsThrough (fun p : Gender.Value × Bool ↦ p.1.adjEnding p.2) Prod.fst := by
+    ¬ Function.FactorsThrough
+      (fun p : Gender.Value × Gender.numberSystem.values ↦ p.1.adjEnding p.2) Prod.fst := by
   decide
 
 /-- The past-tense concord is not constant: gender is inflected. -/

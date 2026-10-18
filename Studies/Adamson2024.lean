@@ -70,6 +70,7 @@ namespace Adamson2024
 
 open DistributedMorphology
 open DistributedMorphology.Categorizer (Head)
+open Number.System.singularPlural (singular plural)
 
 /-! ### The gender locality hypothesis -/
 
@@ -213,8 +214,9 @@ def classFeatures : NounClass → Finset ArticleFeature
   | .o => ∅
 
 /-- The article inserted by the Subset Principle, by class and number. -/
-def article (c : NounClass) (plural : Bool) : Option Article :=
-  subsetPrinciple articles (classFeatures c ∪ if plural then {.pl} else ∅ : Finset ArticleFeature)
+def article (c : NounClass) (n : numberSystem.values) : Option Article :=
+  subsetPrinciple articles
+    (classFeatures c ∪ if n.1 = .plural then {.pl} else ∅ : Finset ArticleFeature)
 
 /-- The vocabulary derives the basic article of every class and number. -/
 theorem article_eq_headArticle : ∀ c pl, article c pl = some (headArticle c pl) := by decide
@@ -370,18 +372,18 @@ open _root_.CoastalMarind
 
 /-- The demonstrative agreeing with *igih* 'name' takes the possessor's gender. -/
 theorem name_demonstrative (g : _root_.CoastalMarind.Gender) :
-    (inheritedGender PossessionType.inalienable.possessorPosition g).map (demonstrative · false) =
-      some (demonstrative g false) :=
+    (inheritedGender PossessionType.inalienable.possessorPosition g).map (demonstrative · singular) =
+      some (demonstrative g singular) :=
   rfl
 
 /-- *nanVh* 'face' is *nanih* with a gender I possessor and *nanuh* with a gender II one, the
 similative agreeing alongside. -/
 theorem face_inherits :
-    (inheritedGender PossessionType.inalienable.possessorPosition .gI).map (face · false) =
+    (inheritedGender PossessionType.inalienable.possessorPosition .gI).map (face · singular) =
         some "nanih" ∧
-      (inheritedGender PossessionType.inalienable.possessorPosition .gII).map (face · false) =
+      (inheritedGender PossessionType.inalienable.possessorPosition .gII).map (face · singular) =
         some "nanuh" ∧
-      similative .gI false = "hi" ∧ similative .gII false = "hu" := by
+      similative .gI singular = "hi" ∧ similative .gII singular = "hu" := by
   decide
 
 end CoastalMarind

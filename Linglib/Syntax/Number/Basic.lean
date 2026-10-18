@@ -25,6 +25,8 @@ values of a system form an initial segment, which number resolution needs.
 * `Number.System`: a language's number values, which of them are facultative, and whether it
   has general number.
 * `Number.System.DeterminateInitial`: the determinate values are an initial segment.
+* `Number.System.value`: a value of a system, as an element of its values.
+* `Number.System.singularPlural`: the system of the singular and the plural.
 
 ## Implementation notes
 
@@ -129,6 +131,28 @@ def DeterminateInitial (ns : System) : Prop :=
 
 instance : DecidablePred DeterminateInitial := fun _ ↦ by
   unfold DeterminateInitial; infer_instance
+
+/-- The value `n` of a system that has it. -/
+def value (ns : System) (n : Number) (h : n ∈ ns.values := by decide) : ns.values := ⟨n, h⟩
+
+@[simp] theorem coe_value (ns : System) (n : Number) (h : n ∈ ns.values) :
+    (ns.value n h : Number) = n :=
+  rfl
+
+/-- The system of the singular and the plural. -/
+@[simps] def singularPlural : System := { values := {.singular, .plural} }
+
+namespace singularPlural
+
+/-- The singular of the singular-plural system. -/
+abbrev singular : singularPlural.values := singularPlural.value .singular
+
+/-- The plural of the singular-plural system. -/
+abbrev plural : singularPlural.values := singularPlural.value .plural
+
+instance : Nontrivial singularPlural.values := ⟨⟨singular, plural, by decide⟩⟩
+
+end singularPlural
 
 end System
 

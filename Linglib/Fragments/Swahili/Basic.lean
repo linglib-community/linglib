@@ -144,13 +144,16 @@ def Gender.pluralClass : Gender → NounClass
   | .genderD => .cl8
   | .genderE => .cl10
 
-/-- The class of a gender in the singular or, when `plural`, the plural. -/
-def Gender.class (g : Gender) (plural : Bool) : NounClass :=
-  if plural then g.pluralClass else g.singularClass
+/-- Swahili distinguishes the singular and the plural. -/
+abbrev numberSystem : Number.System := .singularPlural
+
+/-- The class of a gender in a number. -/
+def Gender.class (g : Gender) (n : numberSystem.values) : NounClass :=
+  if n.1 = .plural then g.pluralClass else g.singularClass
 
 /-- Subject agreement, singular and plural, distinguishes the five genders. -/
 theorem Gender.faithful_subjPrefix :
-    Gender.Faithful fun (g : Gender) (plural : Bool) ↦ (g.class plural).subjPrefix := by
+    Gender.Faithful fun (g : Gender) (n : numberSystem.values) ↦ (g.class n).subjPrefix := by
   decide
 
 /-! ### Subject prefixes of the persons -/

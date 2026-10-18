@@ -170,15 +170,21 @@ inductive AdjEnding where
   | ye
   deriving DecidableEq, Repr, Fintype
 
+/-- Russian distinguishes the singular and the plural. -/
+abbrev numberSystem : Number.System := .singularPlural
+
 /-- The nominative ending by gender and number. -/
-def Value.adjEnding : Value → Bool → AdjEnding
-  | .masc, false => .yj
-  | .fem, false => .aja
-  | .neut, false => .oe
-  | _, true => .ye
+def Value.adjEnding (g : Value) (n : numberSystem.values) : AdjEnding :=
+  match g, n.1 with
+  | .masc, .singular => .yj
+  | .fem, .singular => .aja
+  | .neut, .singular => .oe
+  | _, _ => .ye
 
 /-- The singular ending alone distinguishes the three genders. -/
-theorem faithful_adjEnding : Function.Injective (Value.adjEnding · false) := by decide
+theorem faithful_adjEnding :
+    Function.Injective (Value.adjEnding · (numberSystem.value .singular)) := by
+  decide
 
 /-- The past-tense concord distinguishes the three genders on a single target. -/
 theorem faithful_pastConcord : Function.Injective Value.pastConcord := by decide

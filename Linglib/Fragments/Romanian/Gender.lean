@@ -67,15 +67,18 @@ inductive AdjForm where
   | e
   deriving DecidableEq, Repr, Fintype
 
+/-- Romanian distinguishes the singular and the plural. -/
+abbrev numberSystem : Number.System := .singularPlural
+
 /-- The ending an agreeing adjective takes with each gender, in each number. -/
-def Value.adjForm (g : Value) (plural : Bool) : AdjForm :=
-  match g, plural with
-  | .masc, false => .zero
-  | .masc, true => .i
-  | .fem, false => .ă
-  | .fem, true => .e
-  | .neut, false => .zero
-  | .neut, true => .e
+def Value.adjForm (g : Value) (n : numberSystem.values) : AdjForm :=
+  match g, n.1 with
+  | .masc, .singular => .zero
+  | .fem, .singular => .ă
+  | .neut, .singular => .zero
+  | .masc, _ => .i
+  | .fem, _ => .e
+  | .neut, _ => .e
 
 /-- Taking both numbers together, the adjective distinguishes all three genders. -/
 theorem faithful_adjForm : Gender.Faithful Value.adjForm := by decide
