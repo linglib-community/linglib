@@ -33,7 +33,7 @@ well formed, and has as many evidentials as the kind has marked terms. Turkish, 
 Bulgarian realize A2, their unmarked pasts read as evidentiality-neutral, Aymara and Cuzco
 Quechua B1, Tuyuca and Tariana D1. The Kashaya performative lies outside the six parameters, so
 a spontaneous remark realizes no kind; West Greenlandic's synonymous reported evidentials form no
-paradigm, though each, read as a system on its own, is A3.
+paradigm, though each, read as a system on its own, is A3; Euchee's auditory evidential is A5.
 
 ## Implementation notes
 
@@ -49,6 +49,7 @@ than its cell, as a B1 system whose first term is visual only, realizes none.
 * [aikhenvald-2004]
 * [barnes-1984]
 * [fortescue-2003]
+* [linn-2000]
 * [oswalt-1986]
 * [willett-1988]
 -/
@@ -257,6 +258,16 @@ theorem westGreenlandic (k : Kind) : ¬ Realizes WestGreenlandic.Evidentiality.e
 theorem westGreenlandic_A3 :
     ∀ e ∈ WestGreenlandic.Evidentiality.evidentials, Realizes [e] .A3 := by
   decide
+
+/-! ### Euchee -/
+
+/-- The Euchee auditory evidential *-ke*, as Linn analyses it; an earlier grammar takes it for a
+locative only. -/
+def eucheeKe : Evidential := { morphs := [.suff "ke"], covers := {.sensory} }
+
+/-- Euchee, the one language found with an A5 system, opposes its auditory evidential to an
+unmarked term. -/
+theorem euchee : Realizes [eucheeKe] .A5 := by decide
 
 /-! ### The book's examples -/
 
