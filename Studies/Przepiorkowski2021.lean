@@ -264,16 +264,18 @@ section Stranded
 
 open HPSG.Construction
 
-/-- A `loc` object on its own, which belongs to no utterance. -/
-@[reducible] def strandedLoc : Interpretation sig Unit where
-  S _ := .loc
+/-- An index on its own, which belongs to no utterance. The paper's stranded structures are
+rooted in `local` objects, which the signature lacks; an index is likewise a component of signs
+that no principle mentions. -/
+@[reducible] def strandedIndex : Interpretation sig Unit where
+  S _ := .idx
   A _ _ := none
   R := noRel
 
-/-- The grammar says nothing about `loc` objects, so the stranded object is a model of it. An
+/-- The grammar says nothing about indices, so the stranded index is a model of it. An
 exhaustive model of the grammar therefore contains a copy of it, and likewise a copy of the
 construct whose mother still has a gap. -/
-example : strandedLoc.Models grammar ∧ goodTwoGap.Models grammar := by decide
+example : strandedIndex.Models grammar ∧ goodTwoGap.Models grammar := by decide
 
 /-- The principles that hold of the root of an utterance, which is a construct whose mother has
 an empty `GAP` list. -/
@@ -301,10 +303,10 @@ theorem isUtterance_generated_iff {U : Type*} {I : Interpretation sig U} (r : U)
       (Interpretation.satisfies_generated.2 (h.2 d hd))
 
 /-- The filler-head construct with one gap generates an utterance. The construct whose mother
-still has a gap does not, and neither does the stranded `loc` object. -/
+still has a gap does not, and neither does the stranded index. -/
 example : IsUtterance (goodFillerHead.generated .cxt) ⟨.cxt, .refl⟩ ∧
     ¬ IsUtterance (goodTwoGap.generated .cxt) ⟨.cxt, .refl⟩ ∧
-    ¬ IsUtterance (strandedLoc.generated ()) ⟨(), .refl⟩ := by
+    ¬ IsUtterance (strandedIndex.generated ()) ⟨(), .refl⟩ := by
   simp only [isUtterance_generated_iff]; decide
 
 end Stranded

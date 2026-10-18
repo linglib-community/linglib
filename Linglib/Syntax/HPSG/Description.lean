@@ -28,7 +28,7 @@ makes a constraint on a sort hold of the entities of every subsort.
 * `HPSG.RSRL.Grammar`: a list of principles.
 * `HPSG.RSRL.Interpretation.Models`: every entity satisfies every principle of the grammar.
 * `HPSG.RSRL.Constraint`: a principle that requires the entities of one sort to satisfy a formula.
-* `HPSG.RSRL.Constraint.inherited`: the formulae that a list of constraints imposes on a sort.
+* `HPSG.RSRL.Constraint.inherited`: the constraints of a list that a sort inherits.
 
 ## Main results
 
@@ -36,8 +36,8 @@ makes a constraint on a sort hold of the entities of every subsort.
   assignment gives to the free variables.
 * `HPSG.RSRL.Interpretation.models_iff_forall_assignment`: a model of a grammar of closed
   formulae satisfies them under every assignment.
-* `HPSG.RSRL.Interpretation.models_map_toDesc_iff`: an interpretation is a model of a list of
-  constraints exactly when every entity satisfies the formulae that its sort inherits.
+* `HPSG.RSRL.Interpretation.forall_satisfies_map_toDesc_iff`: an entity satisfies a list of
+  constraints exactly when it satisfies the constraints that its sort inherits.
 
 ## Implementation notes
 
@@ -129,7 +129,9 @@ def Satisfies (g : ℕ → U) (u : U) : Desc Sig → Prop
 instance decidableSatisfies [Fintype U] [DecidableEq U] [DecidableLE Srt] [Fintype Sig.Attr]
     [∀ ρ, DecidablePred (I.R ρ)] (g : ℕ → U) (u : U) :
     (d : Desc Sig) → Decidable (I.Satisfies g u d)
-  | .sortAssign .. | .pathEq .. | .rel .. => by unfold Satisfies; infer_instance
+  | .sortAssign _ σ => Option.decidableExistsMem (p := (I.S · ≤ σ)) _
+  | .pathEq _ t₂ => Option.decidableExistsMem (p := (· ∈ I.termDenot g t₂ u)) _
+  | .rel .. => by unfold Satisfies; infer_instance
   | .neg d => by
     have := decidableSatisfies g u d
     unfold Satisfies; infer_instance
@@ -280,30 +282,33 @@ instance : Coe (Constraint Sig) (Desc Sig) := ⟨toDesc⟩
 @[simp] theorem freeVars_toDesc (c : Constraint Sig) : c.toDesc.freeVars = c.body.freeVars := by
   simp [toDesc, Desc.freeVars, Term.freeVars]
 
-/-- The formulae that the constraints `C` impose on the sort `σ`, those of the constraints on
-`σ` and on its supersorts. -/
-def inherited [DecidableLE Srt] (C : List (Constraint Sig)) (σ : Srt) : List (Desc Sig) :=
-  (C.filter fun c ↦ σ ≤ c.sort).map body
+/-- The constraints among `C` that the sort `σ` inherits, those on `σ` and on its supersorts. -/
+def inherited [DecidableLE Srt] (C : List (Constraint Sig)) (σ : Srt) : List (Constraint Sig) :=
+  C.filter fun c ↦ σ ≤ c.sort
 
 end Constraint
 
 namespace Interpretation
 
-variable {I : Interpretation Sig U} {C : List (Constraint Sig)} {u : U}
+variable {I : Interpretation Sig U} {C : List (Constraint Sig)} {g : ℕ → U} {u : U}
 
-@[simp] theorem satisfies_toDesc {g : ℕ → U} {c : Constraint Sig} :
+@[simp] theorem satisfies_toDesc {c : Constraint Sig} :
     I.Satisfies g u c.toDesc ↔ I.S u ≤ c.sort → I.Satisfies g u c.body := by
   simp [Constraint.toDesc]
 
+/-- An entity satisfies the formulae that state a list of constraints exactly when it satisfies
+the bodies of the constraints that its sort inherits. An entity below several constrained sorts
+therefore satisfies the constraints on all of them. -/
+theorem forall_satisfies_map_toDesc_iff [DecidableLE Srt] :
+    (∀ d ∈ C.map Constraint.toDesc, I.Satisfies g u d) ↔
+      ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies g u c.body := by
+  simp [Constraint.inherited]
+
 /-- An interpretation is a model of a list of constraints exactly when every entity satisfies
-the formulae that its sort inherits. An entity below several constrained sorts therefore
-satisfies the constraints on all of them. -/
+the constraints that its sort inherits. -/
 theorem models_map_toDesc_iff [DecidableLE Srt] : I.Models (C.map Constraint.toDesc) ↔
-    ∀ u, ∀ d ∈ Constraint.inherited C (I.S u), I.Satisfies (fun _ ↦ u) u d := by
-  simp only [Models, Constraint.inherited, List.mem_map, List.mem_filter, decide_eq_true_eq,
-    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, satisfies_toDesc]
-  exact forall_congr' fun u ↦
-    ⟨fun h d c hc hle hd ↦ hd ▸ h c hc hle, fun h c hc hle ↦ h _ c hc hle rfl⟩
+    ∀ u, ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies (fun _ ↦ u) u c.body :=
+  forall_congr' fun _ ↦ forall_satisfies_map_toDesc_iff
 
 /-- In a model, a constraint among the principles holds of every entity whose sort is at least
 as specific as the constrained sort. -/
