@@ -57,7 +57,7 @@ def Noun.common (form : String) : Noun :=
 def Noun.mass (form : String) : Noun := { form, gloss := form, counters := ∅ }
 
 /-- English nouns distinguish two numbers, the singular and the plural. -/
-abbrev numberSystem : Number.System := .singularPlural
+def numberSystem : Number.System := { values := {.singular, .plural} }
 
 /-- The form at a number is the citation form in the singular and the plural where the noun has
 one. -/

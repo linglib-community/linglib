@@ -91,7 +91,6 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
 namespace Corbett2000
 
 open Agreement Corbett1991
-open Number.System (singularPlural)
 
 /-- Singular, dual and plural. -/
 def sgDuPl : List Number := [.singular, .dual, .plural]
@@ -583,15 +582,18 @@ end Rembarrnga
 
 namespace Hopi
 
+/-- The pronoun and the verb each mark the singular against the plural. -/
+def numberSystem : Number.System := { values := {.singular, .plural} }
+
 /-- The pronoun sets the singular against dual and plural, (40) to (42). -/
-def pronounNumber : Number → Number.System.singularPlural.values
-  | .singular => Number.singular
-  | _ => Number.plural
+def pronounNumber : Number → numberSystem.values
+  | .singular => (numberSystem.value .singular)
+  | _ => (numberSystem.value .plural)
 
 /-- The verb sets singular and dual against the plural. -/
-def verbNumber : Number → Number.System.singularPlural.values
-  | .plural => Number.plural
-  | _ => Number.singular
+def verbNumber : Number → numberSystem.values
+  | .plural => (numberSystem.value .plural)
+  | _ => (numberSystem.value .singular)
 
 /-- Neither marking distinguishes the three numbers; together they construct the dual. -/
 theorem constructed :
@@ -935,10 +937,10 @@ theorem committee_rows : ∀ row ∈ Examples.all, row.language = "stan1293" →
 
 /-- In Hopi, (40) to (42), the number is read off the pronoun's and the verb's marking. -/
 theorem hopi_rows : ∀ row ∈ Examples.all, row.language = "hopi1249" →
-    ∀ p ∈ row.parse? "pronoun" [("sg", (Number.singular : singularPlural.values)),
-      ("pl", Number.plural)],
-    ∀ v ∈ row.parse? "verb" [("sg", (Number.singular : singularPlural.values)),
-      ("pl", Number.plural)],
+    ∀ p ∈ row.parse? "pronoun"
+      [("sg", Hopi.numberSystem.value .singular), ("pl", Hopi.numberSystem.value .plural)],
+    ∀ v ∈ row.parse? "verb"
+      [("sg", Hopi.numberSystem.value .singular), ("pl", Hopi.numberSystem.value .plural)],
     ∀ n ∈ row.parse? "number" numberNames,
       Hopi.pronounNumber n = p ∧ Hopi.verbNumber n = v := by
   decide +kernel

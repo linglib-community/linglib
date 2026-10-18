@@ -38,8 +38,6 @@ a-class article when possessed and the o-class article otherwise.
 
 namespace Teop
 
-open Number.System (singularPlural)
-
 /-- The noun classes, named by the singular article. -/
 inductive NounClass where
   /-- The class of personal names, kinship terms, socially important people and pets (gender
@@ -61,17 +59,20 @@ inductive Article where
   deriving DecidableEq, Repr, Fintype
 
 /-- Teop distinguishes the singular and the plural. -/
-abbrev numberSystem : Number.System := .singularPlural
+def numberSystem : Number.System := { values := {.singular, .plural} }
+
+instance : Nontrivial numberSystem.values :=
+  ⟨⟨numberSystem.value .singular, numberSystem.value .plural, by decide⟩⟩
 
 /-- The basic article of a noun, by class and number. -/
 def headArticle (c : NounClass) : numberSystem.values → Article :=
-  singularPlural.elim (match c with | .e => .e | .a => .a | .o => .o)
+  numberSystem.elim (match c with | .e => .e | .a => .a | .o => .o)
     (match c with | .e | .a => .o | .o => .a)
 
 /-- The article of an adjective or numeral agreeing with a noun, by the noun's class and
 number. -/
 def targetArticle (c : NounClass) : numberSystem.values → Article :=
-  singularPlural.elim (match c with | .e | .a => .a | .o => .o)
+  numberSystem.elim (match c with | .e | .a => .a | .o => .o)
     (match c with | .e | .a => .o | .o => .a)
 
 /-- A Teop noun with its class. -/

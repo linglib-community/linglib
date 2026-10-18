@@ -521,8 +521,7 @@ theorem bestGuess_plural_iff (μ : Measure ℕ) [IsFiniteMeasure μ] (hμ : μ w
   have hpl : ineffability μ .plural = 1 - μ[strong | weak] := by
     rw [← hsum, ENNReal.add_sub_cancel_left (ne_top_of_le_ne_top ENNReal.one_ne_top hle)]
   simp only [BestGuess, IsMinOn, IsMinFilter, Filter.eventually_principal, numberSystem,
-    Number.System.singularPlural_values, Finset.mem_insert, Finset.mem_singleton,
-    Set.mem_ofPred_eq, forall_eq_or_imp, forall_eq,
+    Finset.mem_insert, Finset.mem_singleton, Set.mem_ofPred_eq, forall_eq_or_imp, forall_eq,
     le_refl, and_true, hpl, ineffability_singular]
   rw [tsub_le_iff_right, ENNReal.div_le_iff two_ne_zero ENNReal.ofNat_ne_top, mul_two]
 

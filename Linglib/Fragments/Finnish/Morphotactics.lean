@@ -87,8 +87,6 @@ def Clitic.form : Clitic → List Segment
 
 namespace Nominal
 
-open Number.System (singularPlural)
-
 /-- The positions of the endings of a nominal and of a non-finite verb form. -/
 inductive Slot where
   /-- The function ending of an infinitive. -/
@@ -184,17 +182,17 @@ theorem not_wellFormed_comitative : ¬ WellFormed [⟨_, .case .com⟩] := by
 /-! ### Realization -/
 
 /-- Finnish nominals distinguish the singular and the plural. -/
-abbrev numberSystem : Number.System := .singularPlural
+def numberSystem : Number.System := { values := {.singular, .plural} }
 
 /-- The endings of the case `c` in the number `num`, where in the plural the genitive is -en, or
 -den or -tten (§13.1.2), the partitive -A or -tA and the illative -hVn or -siin. -/
 def caseEndings (num : numberSystem.values) (c : Case) : List (List Segment) :=
-  singularPlural.elim (Declension.endings c)
+  numberSystem.elim (Declension.endings c)
     (match c with
     | .gen => [[e, n], [d, e, n], [t, t, e, n]]
     | .part => [[A], [t, A]]
     | .ill => [[h, V, n], [s, i, i, n]]
-    | c => Declension.endings c) num
+    | c => Declension.endings c) (n := num)
 
 /-- Before a possessive ending the translative -ksi is -kse, and a final consonant is dropped. -/
 def beforePossessive (x : List Segment) : List Segment :=

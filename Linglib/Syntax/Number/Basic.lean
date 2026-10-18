@@ -26,8 +26,8 @@ values of a system form an initial segment, which number resolution needs.
   has general number.
 * `Number.System.DeterminateInitial`: the determinate values are an initial segment.
 * `Number.System.value`: a value of a system, as an element of its values.
-* `Number.System.singularPlural`, `Number.System.singularPlural.elim`: the system of the singular
-  and the plural, and a function on it by its values at the two.
+* `Number.System.elim`: a function on a system of the singular and the plural, by its values at
+  the two.
 
 ## Implementation notes
 
@@ -140,32 +140,21 @@ def value (ns : System) (n : Number) (h : n ∈ ns.values := by decide) : ns.val
     (ns.value n h : Number) = n :=
   rfl
 
-/-- The system of the singular and the plural. -/
-@[simps] def singularPlural : System := { values := {.singular, .plural} }
-
-namespace singularPlural
-
-/-- The singular as a value of the singular-plural system. -/
-instance : CoeDep Number .singular singularPlural.values := ⟨singularPlural.value .singular⟩
-
-/-- The plural as a value of the singular-plural system. -/
-instance : CoeDep Number .plural singularPlural.values := ⟨singularPlural.value .plural⟩
-
-instance : Nontrivial singularPlural.values :=
-  ⟨⟨singularPlural.value .singular, singularPlural.value .plural, by decide⟩⟩
-
-/-- A function on the singular-plural system is given by its value at the singular and its value
-at the plural. -/
-def elim {β : Sort*} (sg pl : β) (n : singularPlural.values) : β :=
+/-- A function on the values of a system of the singular and the plural, by its value at
+each. -/
+def elim {β : Sort*} (ns : System) (sg pl : β)
+    (_h : ns.values = {.singular, .plural} := by decide) (n : ns.values) : β :=
   if n.1 = .plural then pl else sg
 
-variable {β : Sort*} (sg pl : β)
+variable {β : Sort*} {ns : System} {sg pl : β} {h : ns.values = {.singular, .plural}}
 
-@[simp] theorem elim_singular : elim sg pl (singularPlural.value .singular) = sg := rfl
+@[simp] theorem elim_value_singular (hs : .singular ∈ ns.values) :
+    ns.elim sg pl h (ns.value .singular hs) = sg :=
+  rfl
 
-@[simp] theorem elim_plural : elim sg pl (singularPlural.value .plural) = pl := rfl
-
-end singularPlural
+@[simp] theorem elim_value_plural (hp : .plural ∈ ns.values) :
+    ns.elim sg pl h (ns.value .plural hp) = pl :=
+  rfl
 
 end System
 

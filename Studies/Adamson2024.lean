@@ -70,7 +70,6 @@ namespace Adamson2024
 
 open DistributedMorphology
 open DistributedMorphology.Categorizer (Head)
-open Number.System (singularPlural)
 
 /-! ### The gender locality hypothesis -/
 
@@ -216,7 +215,7 @@ def classFeatures : NounClass → Finset ArticleFeature
 /-- The article inserted by the Subset Principle, by class and number. -/
 def article (c : NounClass) (n : numberSystem.values) : Option Article :=
   subsetPrinciple articles
-    (classFeatures c ∪ singularPlural.elim ∅ {.pl} n : Finset ArticleFeature)
+    (classFeatures c ∪ numberSystem.elim ∅ {.pl} (n := n) : Finset ArticleFeature)
 
 /-- The vocabulary derives the basic article of every class and number. -/
 theorem article_eq_headArticle : ∀ c pl, article c pl = some (headArticle c pl) := by decide
@@ -373,19 +372,21 @@ open _root_.CoastalMarind
 /-- The demonstrative agreeing with *igih* 'name' takes the possessor's gender. -/
 theorem name_demonstrative (g : _root_.CoastalMarind.Gender) :
     (inheritedGender PossessionType.inalienable.possessorPosition g).map
-        (demonstrative · Number.singular) = some (demonstrative g Number.singular) :=
+        (demonstrative · (numberSystem.value .singular)) =
+      some (demonstrative g (numberSystem.value .singular)) :=
   rfl
 
 /-- *nanVh* 'face' is *nanih* with a gender I possessor and *nanuh* with a gender II one, the
 similative agreeing alongside. -/
 theorem face_inherits :
     (inheritedGender PossessionType.inalienable.possessorPosition .gI).map
-        (face · Number.singular) =
+        (face · (numberSystem.value .singular)) =
         some "nanih" ∧
       (inheritedGender PossessionType.inalienable.possessorPosition .gII).map
-          (face · Number.singular) =
+          (face · (numberSystem.value .singular)) =
         some "nanuh" ∧
-      similative .gI Number.singular = "hi" ∧ similative .gII Number.singular = "hu" := by
+      similative .gI (numberSystem.value .singular) = "hi" ∧
+      similative .gII (numberSystem.value .singular) = "hu" := by
   decide
 
 end CoastalMarind

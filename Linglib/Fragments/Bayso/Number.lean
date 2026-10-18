@@ -25,8 +25,6 @@ plural nouns the masculine one, as Hayward, Corbett and Hayward, and Corbett des
 
 namespace Bayso
 
-open Number.System (singularPlural)
-
 /-- The two genders. -/
 inductive Gender where
   | masc
@@ -42,7 +40,7 @@ def numberSystem : Number.System :=
 def nounNumbers : Finset Number := insert .general numberSystem.values
 
 /-- Pronouns distinguish the singular and the plural. -/
-abbrev pronounNumberSystem : Number.System := .singularPlural
+def pronounNumberSystem : Number.System := { values := {.singular, .plural} }
 
 /-- The three forms of an agreeing verb, labelled from the pronouns that take them:
 *hudure* 'slept' masculine, *hudurte* feminine, *hudureene* plural. -/
@@ -54,7 +52,7 @@ inductive Concord where
 
 /-- A pronoun takes its gender's concord in the singular and the plural concord in the plural. -/
 def Gender.pronounConcord (g : Gender) : pronounNumberSystem.values → Concord :=
-  singularPlural.elim (match g with | .masc => .masc | .fem => .fem) .plural
+  pronounNumberSystem.elim (match g with | .masc => .masc | .fem => .fem) .plural
 
 /-- A noun takes its gender's concord in the general and the singular, the plural concord in the
 paucal, and the masculine concord in the plural. -/
