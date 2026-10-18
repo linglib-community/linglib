@@ -1,0 +1,237 @@
+[
+  {
+    "id": "mitrovicsauerland2016_ex1c",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(1c)"},
+    "language": "nucl1643",
+    "primaryText": "Mary-mo John-mo wakaru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mary-mo", "M-μ"], ["John-mo", "J-μ"], ["wakaru", "understand"]
+    ],
+    "translation": "Both Mary and John understand.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "mu-first"], ["head", "mu-second"]],
+    "comment": "The source prints Mary (-mo) John -mo, the first -mo optional (fn. 1), and J in the gloss abbreviates John; the variant without it is ex1c_omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex1c_omitted",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(1c)"},
+    "language": "nucl1643",
+    "primaryText": "Mary John-mo wakaru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mary", "M"], ["John-mo", "J-μ"], ["wakaru", "understand"]
+    ],
+    "translation": "Mary and John understand.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "mu-second"]],
+    "comment": "The variant of (1c) without the optional first -mo.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex23",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(23)"},
+    "language": "mace1250",
+    "primaryText": "Roska i Ivan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Roska", "R"], ["i", "J⁰"], ["Ivan", "I"]
+    ],
+    "translation": "Roska and Ivan",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "j"]],
+    "comment": "Southeastern Macedonian; the gloss line marks both μ⁰ heads as silent.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex24",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(24)"},
+    "language": "mace1250",
+    "primaryText": "i Roska i Ivan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["i", "μ⁰"], ["Roska", "R"], ["i", "μ⁰"], ["Ivan", "I"]
+    ],
+    "translation": "both Roska and Ivan",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "mu-first"], ["head", "mu-second"]],
+    "comment": "Southeastern Macedonian; the gloss line marks J⁰ as silent.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex25",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(25)"},
+    "language": "mace1250",
+    "primaryText": "Roska i i Ivan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Roska", "R"], ["i", "J⁰"], ["i", "μ⁰"], ["Ivan", "I"]
+    ],
+    "translation": "Roska and also Ivan",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "j"], ["head", "mu-second"]],
+    "comment": "Southeastern Macedonian; the gloss line marks the first μ⁰ as silent.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex26",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(26)"},
+    "language": "mace1250",
+    "primaryText": "i Roska i i Ivan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["i", "μ⁰"], ["Roska", "R"], ["i", "J⁰"], ["i", "μ⁰"], ["Ivan", "I"]
+    ],
+    "translation": "both Roska and also Ivan",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "mu-first"], ["head", "j"], ["head", "mu-second"]],
+    "comment": "Southeastern Macedonian, the union of exponency of (23) and (24).",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex27",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(27)"},
+    "language": "sout1528",
+    "primaryText": "i Mujo a i Haso",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["i", "μ⁰"], ["Mujo", "M"], ["a", "J⁰.but"], ["i", "μ⁰"], ["Haso", "H"]
+    ],
+    "translation": "not only Mujo but also Haso",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "mu-first"], ["head", "j"], ["head", "mu-second"], ["junctor", "adversative"]],
+    "comment": "Serbo-Croatian, whose J head here is adversative. The source glosses the names R and I, carried over from (23)-(26).",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex28",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(28)"},
+    "language": "hung1274",
+    "primaryText": "Kati is és Mari is",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kati", "K"], ["is", "μ"], ["és", "J"], ["Mari", "M"], ["is", "μ"]
+    ],
+    "translation": "both Kate and Mary",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "mu-first"], ["head", "j"], ["head", "mu-second"]],
+    "comment": "The source prints Kati is (és) Mari is, és optional, after Szabolcsi (2015); the variant without it is ex28_omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex28_omitted",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(28)"},
+    "language": "hung1274",
+    "primaryText": "Kati is Mari is",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kati", "K"], ["is", "μ"], ["Mari", "M"], ["is", "μ"]
+    ],
+    "translation": "both Kate and Mary",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "mu-first"], ["head", "mu-second"]],
+    "comment": "The variant of (28) without the optional és.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_fn9",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "fn. 9 (i)"},
+    "language": "hung1274",
+    "primaryText": "Kati és Mari is",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kati", "K"], ["és", "J"], ["Mari", "M"], ["is", "μ"]
+    ],
+    "translation": "Kate and Mary",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "j"], ["head", "mu-second"]],
+    "comment": "The source prints Kati ∅ és Mari is, with (μ) under the gap, after Szabolcsi (2015, fn. 20).",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex29",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(29)"},
+    "language": "avar1256",
+    "primaryText": "keto gi va ħve gi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["keto", "cat"], ["gi", "μ"], ["va", "J"], ["ħve", "dog"], ["gi", "μ"]
+    ],
+    "translation": "cat and dog",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "mu-first"], ["head", "j"], ["head", "mu-second"]],
+    "comment": "Avar data from Ramazanov and Mukhtarova (p.c.), fn. 10.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex33a",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(33a)"},
+    "language": "lati1261",
+    "primaryText": "ad summam rem pūblicam atque ad omnium nostrum",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ad", "to"], ["summam", "utmost"], ["rem", "weal"], ["pūblicam", "common"],
+      ["atque", "and"], ["ad", "to"], ["omnium", "all"], ["nostrum", "of.us"]
+    ],
+    "translation": "to highest welfare and all our [lives]",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "j"], ["head", "mu-second"]],
+    "comment": "The source cuts the sentence off with […] and locates it at Or. 1.VI.27-28. The heads are those of the initial configuration (39), at as J⁰ and que as the μ⁰ of the second coordinand.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mitrovicsauerland2016_ex33b",
+    "source": {"bibkey": "mitrovic-sauerland-2016", "paperLabel": "(33b)"},
+    "language": "lati1261",
+    "primaryText": "vītam salūtemque",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["vītam", "life"], ["salūtem-que", "safety-and"]
+    ],
+    "translation": "the life and safety",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["head", "mu-second"]],
+    "comment": "The source prints vīam samūtem que, glossed life safety and, and locates it at Or. 1.VI.28-29. The heads are those of the peninitial monosyndetic configuration (38b), que as the μ⁰ of the second coordinand.",
+    "verified": "page-image"
+  }
+]

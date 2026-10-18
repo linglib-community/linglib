@@ -7,25 +7,22 @@ public import Linglib.Syntax.Category.Coordinator
 
 Korean coordinates noun phrases with the comitative particles, formal *-(g)wa* and informal *-hago*
 and *-(i)rang*, 'and, with' between the conjuncts, and with the delimiter *-do* 'also' after each
-conjunct, and disjoins them with *-(i)na* 'or', as Sohn describes them; *-hago* and *-(i)na* may be
-repeated after the second conjunct ([sohn-1999], pp. 339–340). Mitrović and Sauerland take
-*-(i)rang* for the J particle and *-do* for the μ particle of their decomposition of conjunction.
-Sohn writes *(k)wa*, *hako*, *(i)lang* and *to*.
+conjunct, and disjoins them with *-(i)na* 'or'; *-hago* and *-(i)na* may be repeated after the
+second conjunct. So Sohn's *The Korean Language* describes them, pp. 339–340, writing *(k)wa*,
+*hako*, *(i)lang* and *to*.
 
 ## Main definitions
 
-* `Korean.Coordination.irang`, `Korean.Coordination.do_` — the comitative *-(i)rang* 'and'
-  and the additive *-do* 'also', Mitrović and Sauerland's J and μ particles
-* `Korean.Coordination.hago`, `Korean.Coordination.doDo` — the comitative *-hago* and the
-  emphatic *-do … -do* that Haspelmath sets against it
-* `Korean.Coordination.gwa`, `Korean.Coordination.ina` — the formal comitative *-(g)wa* 'and'
-  and the disjunctive *-(i)na* 'or'
+* `Korean.Coordination.irang`, `Korean.Coordination.do_`: the comitative *-(i)rang* 'and'
+  and the additive *-do* 'also'.
+* `Korean.Coordination.hago`, `Korean.Coordination.doDo`: the comitative *-hago* and the
+  emphatic *-do … -do* that Haspelmath sets against it.
+* `Korean.Coordination.gwa`, `Korean.Coordination.ina`: the formal comitative *-(g)wa* 'and'
+  and the disjunctive *-(i)na* 'or'.
 
 ## References
 
 * [haspelmath-2007]
-* [mitrovic-2021]
-* [mitrovic-sauerland-2016]
 * [sohn-1994]
 * [sohn-1999]
 -/

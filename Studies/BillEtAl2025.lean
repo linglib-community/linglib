@@ -2,32 +2,27 @@ module
 
 public import Studies.MitrovicSauerland2016
 public import Linglib.Data.Experiments.BillEtAl2025
+public import Linglib.Fragments.Georgian.Coordination
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Bill, Gonzalez, Driemel, Makharoblidze and Pintér (2025): Is DP conjunction always complex?
 
-Bill and colleagues test Mitrović and Sauerland's decomposition of noun-phrase conjunction on
-children's comprehension of the three conjunctive expressions of Georgian and Hungarian: a J
-particle alone, a μ particle on each conjunct, and both. On the decomposition the three share one
-structure and differ in which of its heads they pronounce, so with van Hout's Transparency
-Principle the fully pronounced J-μ expressions should be the easiest; on the rival structures of
-Szabolcsi and of Haslinger and colleagues, J expressions are the simplest. Georgian children
-instead replayed J-μ sentences more often than J or μ sentences, and Hungarian children showed no
-difference, so neither account meets the conditions the paper sets for a successful one.
-
-An account assigns each strategy the heads of its underlying structure, and a measure of
-difficulty counts the heads it leaves unpronounced or all of them. The findings are read off the
-printed tables, a difference being a starred contrast or fixed effect, and an end state of the
-act-out task is accurate when it survives exhaustification of the basic truth conditions, which
-the decomposition computes, against the alternatives that name one object.
+Bill and colleagues test Mitrović and Sauerland's decomposition of noun-phrase conjunction on how
+children understand the three conjunctive expressions of Georgian and Hungarian, a J particle
+alone, a μ particle on each conjunct, and both. With van Hout's Transparency Principle the
+decomposition predicts the fully pronounced J-μ expressions to be the easiest, and the rival
+structures of Szabolcsi and of Haslinger and colleagues predict the J expressions to be. Georgian
+children instead replayed J-μ sentences most, and Hungarian children showed no difference.
 
 ## Main statements
 
+* `pronounced_mem_attested`: each sentence type pronounces a set of heads that Mitrović and
+  Sauerland's examples attest.
 * `transparency_prediction`: the decomposition with the Transparency Principle predicts J-μ
   easiest, while `playedMore_child_iff` says Georgian children replayed J-μ more than either
-  other strategy, and those two did not differ.
+  other sentence type, and those two did not differ.
 * `desiderata_iff`: a measure meets the paper's conditions on a successful account exactly when
   the order it predicts is the observed one, which none of `Account.universal.covert`,
   `Account.bareJ.complexity` and `Account.bareJ.covert` does.
@@ -38,10 +33,12 @@ the decomposition computes, against the alternatives that name one object.
 
 ## Implementation notes
 
-* A difference is read from the paper's star on a contrast or a fixed effect, and its direction
-  from the sign of the printed estimate; nothing is recomputed from the statistics.
-* The type-shifter of the decomposition is not counted as a head: no language pronounces it, and
-  it would add the same constant to every count. The rival structures are the paper's
+* An account assigns each sentence type the heads of its underlying structure, and a measure of
+  difficulty counts the heads it leaves unpronounced or all of them. A difference is the paper's
+  star on a contrast or a fixed effect, its direction the sign of the printed estimate.
+* The sentence types are the paper's three; it sets aside the expressions with one μ (fn. 1).
+* The type-shifter of the decomposition is not counted as a head, since no language pronounces
+  it and it would add the same constant to every count. The rival structures are the paper's
   simplification, since neither Szabolcsi's nor Haslinger and colleagues' analysis is formalized.
 * Accuracy exhaustifies against the domain alternatives *o is on the table*. The three kinds of
   error are classified in the order the paper lists them, so an error with an unmentioned object
@@ -65,24 +62,50 @@ namespace BillEtAl2025
 
 open Data.Experiments MitrovicSauerland2016 Exhaustification
 
-/-- Both test languages attest all three strategies, the precondition of the test. -/
-theorem both_have_all_three :
-    hasAllThreeStrategies georgian ∧ hasAllThreeStrategies hungarian := by
-  decide
+/-! ### The test sentences -/
+
+/-- A sentence type pronounces J, the μ head of each conjunct, or all three heads. -/
+def Sentence.pronounced : Sentence → Finset Head
+  | .j => {.j}
+  | .mu => {.mu 0, .mu 1}
+  | .jMu => Finset.univ
+
+/-- Each sentence type pronounces heads in a way that Mitrović and Sauerland's examples attest. -/
+theorem pronounced_mem_attested (s : Sentence) : s.pronounced ∈ attested := by
+  rw [mem_attested_iff]; cases s <;> decide
+
+/-- The J particle of a test language, Georgian *da*, (2), and Hungarian *és*, (1). -/
+def jParticle : Language → Coordinator
+  | .georgian => Georgian.Coordination.da
+  | .hungarian => Hungarian.Coordination.es
+
+/-- The μ particle of a test language, Georgian *-c*, (2), and Hungarian *is*, (1). -/
+def muParticle : Language → Coordinator
+  | .georgian => Georgian.Coordination.c
+  | .hungarian => Hungarian.Coordination.is_
+
+/-- The μ particle of each test language is also its additive particle, as Mitrović and Sauerland
+predict of μ. -/
+theorem alsoAdditive_muParticle (l : Language) : (muParticle l).alsoAdditive = true := by
+  cases l <;> rfl
+
+/-- The J particle of neither test language is an additive particle. -/
+theorem alsoAdditive_jParticle (l : Language) : (jParticle l).alsoAdditive = false := by
+  cases l <;> rfl
 
 /-! ### Accounts and their measures -/
 
-/-- An account assigns each strategy the heads of its underlying structure, among which are the
-heads it pronounces. -/
+/-- An account assigns each sentence type the heads of its underlying structure, among which are
+the heads it pronounces. -/
 structure Account where
-  /-- The heads of the structure underlying a strategy. -/
-  underlying : ConjunctionStrategy → Finset Head
-  /-- A strategy pronounces only heads of its structure. -/
+  /-- The heads of the structure underlying a sentence type. -/
+  underlying : Sentence → Finset Head
+  /-- A sentence type pronounces only heads of its structure. -/
   pronounced_subset : ∀ s, s.pronounced ⊆ underlying s
 
 namespace Account
 
-/-- Mitrović and Sauerland give every strategy the whole structure. -/
+/-- Mitrović and Sauerland give every sentence type the whole structure. -/
 def universal : Account where
   underlying _ := Finset.univ
   pronounced_subset _ := Finset.subset_univ _
@@ -91,22 +114,22 @@ def universal : Account where
 structure. -/
 def bareJ : Account where
   underlying
-    | .jOnly => {.j}
-    | .muOnly | .jMu => Finset.univ
+    | .j => {.j}
+    | .mu | .jMu => Finset.univ
   pronounced_subset := by decide
 
-/-- The complexity of a strategy is the number of heads in its structure. -/
-def complexity (a : Account) (s : ConjunctionStrategy) : ℕ := (a.underlying s).card
+/-- The complexity of a sentence type is the number of heads in its structure. -/
+def complexity (a : Account) (s : Sentence) : ℕ := (a.underlying s).card
 
-/-- The covert pieces of a strategy are the heads of its structure it leaves unpronounced, the
-Transparency Principle's measure of difficulty. -/
-def covert (a : Account) (s : ConjunctionStrategy) : ℕ := (a.underlying s \ s.pronounced).card
+/-- The covert pieces of a sentence type are the heads of its structure it leaves unpronounced,
+the Transparency Principle's measure of difficulty. -/
+def covert (a : Account) (s : Sentence) : ℕ := (a.underlying s \ s.pronounced).card
 
-theorem card_pronounced_add_covert (a : Account) (s : ConjunctionStrategy) :
+theorem card_pronounced_add_covert (a : Account) (s : Sentence) :
     s.pronounced.card + a.covert s = a.complexity s :=
   (add_comm _ _).trans (Finset.card_sdiff_add_card_eq_card (a.pronounced_subset s))
 
-theorem universal_covert (s : ConjunctionStrategy) :
+theorem universal_covert (s : Sentence) :
     universal.covert s = Fintype.card Head - s.pronounced.card := by
   simp [covert, universal, Finset.card_univ_sdiff]
 
@@ -115,56 +138,55 @@ end Account
 /-! ### The predictions -/
 
 /-- The decomposition with the Transparency Principle predicts J-μ, which pronounces every head,
-easier than either other strategy. -/
-theorem transparency_prediction (s : ConjunctionStrategy) (h : s ≠ .jMu) :
+easier than either other sentence type. -/
+theorem transparency_prediction (s : Sentence) (h : s ≠ .jMu) :
     Account.universal.covert .jMu < Account.universal.covert s := by
   revert s; decide
 
 /-- If the more complex is the harder, the rival predicts J expressions easier than J-μ
 expressions. -/
-theorem bareJ_prediction : Account.bareJ.complexity .jOnly < Account.bareJ.complexity .jMu := by
+theorem bareJ_prediction : Account.bareJ.complexity .j < Account.bareJ.complexity .jMu := by
   decide
 
 /-- The rival gives μ and J-μ expressions one structure. -/
-theorem bareJ_underlying_muOnly :
-    Account.bareJ.underlying .muOnly = Account.bareJ.underlying .jMu := rfl
+theorem bareJ_underlying_mu : Account.bareJ.underlying .mu = Account.bareJ.underlying .jMu := rfl
 
 /-- On the rival structures μ expressions are the more opaque of μ and J-μ. -/
-theorem bareJ_muOnly_opaque : Account.bareJ.covert .jMu < Account.bareJ.covert .muOnly := by
+theorem bareJ_mu_opaque : Account.bareJ.covert .jMu < Account.bareJ.covert .mu := by
   decide
 
 /-! ### The findings -/
 
-/-- The two strategies a follow-up contrast compares, in the paper's order. -/
-def Contrast.strategies : Contrast → ConjunctionStrategy × ConjunctionStrategy
-  | .jVsJMu => (.jOnly, .jMu)
-  | .jVsMu => (.jOnly, .muOnly)
-  | .jMuVsMu => (.jMu, .muOnly)
+/-- The two sentence types a follow-up contrast compares, in the paper's order. -/
+def Contrast.sentences : Contrast → Sentence × Sentence
+  | .jVsJMu => (.j, .jMu)
+  | .jVsMu => (.j, .mu)
+  | .jMuVsMu => (.jMu, .mu)
 
-/-- A group replayed sentences of one strategy more than those of another when the paper stars
+/-- A group replayed sentences of one type more than those of another when the paper stars
 their contrast, in the direction of the estimate, which is negative when the first was played
 less. Children replay the sentences they find difficult, so this is the order of difficulty
 the Georgian data show. -/
-def PlayedMore (g : Group) (s t : ConjunctionStrategy) : Prop :=
+def PlayedMore (g : Group) (s t : Sentence) : Prop :=
   ∃ c, (contrasts g c).mark = .starred ∧
-    (c.strategies = (s, t) ∧ 0 < (contrasts g c).estimate.toRat ∨
-      c.strategies = (t, s) ∧ (contrasts g c).estimate.toRat < 0)
+    (c.sentences = (s, t) ∧ 0 < (contrasts g c).estimate.toRat ∨
+      c.sentences = (t, s) ∧ (contrasts g c).estimate.toRat < 0)
 
 instance (g : Group) : DecidableRel (PlayedMore g) := fun _ _ ↦
   inferInstanceAs (Decidable (∃ _, _ ∧ _))
 
 /-- Georgian children replayed J-μ sentences more than J and than μ sentences, and J and μ
 sentences did not differ. -/
-theorem playedMore_child_iff (s t : ConjunctionStrategy) :
+theorem playedMore_child_iff (s t : Sentence) :
     PlayedMore .child s t ↔ s = .jMu ∧ t ≠ .jMu := by
   revert s t; decide
 
-/-- Georgian adults replayed no strategy more than another. -/
-theorem not_playedMore_adult (s t : ConjunctionStrategy) : ¬ PlayedMore .adult s t := by
+/-- Georgian adults replayed no sentence type more than another. -/
+theorem not_playedMore_adult (s t : Sentence) : ¬ PlayedMore .adult s t := by
   revert s t; decide
 
 /-- The observed differences run against the decomposition's prediction. -/
-theorem playedMore_child_contradicts_transparency {s t : ConjunctionStrategy}
+theorem playedMore_child_contradicts_transparency {s t : Sentence}
     (h : PlayedMore .child s t) : Account.universal.covert s < Account.universal.covert t := by
   obtain ⟨rfl, ht⟩ := (playedMore_child_iff s t).1 h
   exact transparency_prediction t ht
@@ -187,15 +209,15 @@ theorem georgian_sentenceEffect_iff (m : Measure) : SentenceEffect .georgian m �
 
 /-- A measure meets the paper's conditions on a successful account when J-μ is more complex than
 J and than μ, and J and μ are equally complex. -/
-def Desiderata (c : ConjunctionStrategy → ℕ) : Prop :=
-  c .jOnly < c .jMu ∧ c .muOnly < c .jMu ∧ c .jOnly = c .muOnly
+def Desiderata (c : Sentence → ℕ) : Prop :=
+  c .j < c .jMu ∧ c .mu < c .jMu ∧ c .j = c .mu
 
-instance (c : ConjunctionStrategy → ℕ) : Decidable (Desiderata c) :=
+instance (c : Sentence → ℕ) : Decidable (Desiderata c) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- The conditions say that the order a measure predicts is the one the Georgian children
 showed. -/
-theorem desiderata_iff (c : ConjunctionStrategy → ℕ) :
+theorem desiderata_iff (c : Sentence → ℕ) :
     Desiderata c ↔ ∀ s t, c s < c t ↔ PlayedMore .child t s := by
   simp only [playedMore_child_iff]
   constructor
@@ -203,7 +225,7 @@ theorem desiderata_iff (c : ConjunctionStrategy → ℕ) :
     cases s <;> cases t <;> simp <;> omega
   · intro h
     refine ⟨(h _ _).2 ⟨rfl, nofun⟩, (h _ _).2 ⟨rfl, nofun⟩, ?_⟩
-    have := h .jOnly .muOnly; have := h .muOnly .jOnly
+    have := h .j .mu; have := h .mu .j
     simp at *
     omega
 
@@ -217,9 +239,9 @@ theorem not_desiderata_bareJ_covert : ¬ Desiderata Account.bareJ.covert := by d
 morphological route is that Georgian *-c* is a bound clitic where Hungarian *is* is free
 ([clark-2017]). -/
 theorem mu_kind_differs :
-    (∀ c ∈ georgian.mu, c.morph.kind = .bound .after .clitic) ∧
-      ∀ c ∈ hungarian.mu, c.morph.kind = .free := by
-  decide
+    (muParticle .georgian).morph.kind = .bound .after .clitic ∧
+      (muParticle .hungarian).morph.kind = .free :=
+  ⟨rfl, rfl⟩
 
 /-! ### The act-out task -/
 
