@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Fragments.English.Pronouns
 public import Linglib.Data.Examples.KonnellyCowper2020
 
 /-!
@@ -21,12 +21,15 @@ uses of *they*.
 
 ## Main definitions
 
+* `KonnellyCowper2020.items`: the vocabulary items (11), those of the English pronouns.
 * `KonnellyCowper2020.Stage`, `KonnellyCowper2020.Antecedent`: the stages, ordered, and what a
   pronoun may copy from its antecedent.
 * `KonnellyCowper2020.forms`: the pronouns available for an antecedent at a stage.
 
 ## Main results
 
+* `spellout_pronounFeatures`, `subsetPrinciple_append_they_sg`: each English third-person
+  pronoun spells out its own features, and singular *they* needs no item of its own.
 * `they_mem_forms_iff`, `none_mem_genders_one_iff`, `none_mem_genders_two_iff`: where singular
   *they* is available at each stage.
 * `monotone_they_mem_forms`: each stage keeps the uses of singular *they* of the stage before.
@@ -38,9 +41,11 @@ uses of *they*.
 
 ## Implementation notes
 
-An antecedent records its number, whether D hosts a quantifier, the class its noun bears
-lexically, and the binary gender the discourse assigns its referent, which the insertion rule of
-Stages 1 and 2 may place on n and which Stage 3's modifier expresses, as in (26). The paper leaves
+The items (11) are read off the English pronoun entries, a neuter bearing [inanim]; the case of a
+pronoun is not modelled. An antecedent records its number, whether D hosts a quantifier, the class
+its noun bears lexically, and the binary gender the discourse assigns its referent, which the
+insertion rule of Stages 1 and 2 may place on n and which Stage 3's modifier expresses, as in
+(26). The paper leaves
 the gender of some referents open, as for *Kelly* in (6a); a row then says only that it is known,
 and the theorems over rows hold for either binary gender.
 
@@ -65,7 +70,7 @@ inductive Feature
   | inanim
   | masc
   | fem
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The binary genders n may bear. -/
 inductive Gender
@@ -85,17 +90,47 @@ inductive Class
   | inanim
   deriving DecidableEq, Repr
 
-/-- The vocabulary items (11), constant across the stages. -/
+/-- The features an English third-person pronoun spells out, [sg] for a singular, [masc] or [fem]
+for a masculine or feminine, and [inanim] for the neuter *it*. -/
+def pronounFeatures (p : PersonalPronoun) : Finset Feature :=
+  (if p.number = some .singular then {.sg} else ∅) ∪
+    match p.gender with
+    | some .masculine => {.masc}
+    | some .feminine => {.fem}
+    | some .neuter => {.inanim}
+    | _ => ∅
+
+/-- The Vocabulary Item of a pronoun spells out its features as its form. -/
+def vocabularyItem (p : PersonalPronoun) : VocabularyItem Feature String :=
+  pronounFeatures p ⟷ p.form
+
+/-- The vocabulary items (11), those of *she*, *he*, *it* and plural *they*, constant across the
+stages. -/
 def items : List (VocabularyItem Feature String) :=
-  [{.sg, .fem} ⟷ "she", {.sg, .masc} ⟷ "he", {.sg, .inanim} ⟷ "it", ∅ ⟷ "they"]
+  [English.Pronouns.she, English.Pronouns.he, English.Pronouns.it, English.Pronouns.they].map
+    vocabularyItem
+
+/-- The items are (11), *she* for [sg][fem], *he* for [sg][masc], *it* for [sg, inanim] and
+*they* elsewhere. -/
+theorem items_eq :
+    items = [{.sg, .fem} ⟷ "she", {.sg, .masc} ⟷ "he", {.sg, .inanim} ⟷ "it", ∅ ⟷ "they"] := by
+  decide
 
 /-- The exponent of a feature bundle under the Subset Principle. -/
 def spellout (b : Finset Feature) : Option String := subsetPrinciple items b
 
-theorem spellout_items :
-    spellout {.sg, .fem} = some "she" ∧ spellout {.sg, .masc} = some "he" ∧
-      spellout {.sg, .inanim} = some "it" ∧ spellout {.sg} = some "they" ∧
-      spellout ∅ = some "they" := by
+/-- Each English third-person pronoun outside the accusative spells out its own features,
+singular *they* by the Elsewhere item. -/
+theorem spellout_pronounFeatures :
+    ∀ p ∈ English.Pronouns.pronouns, p.person = some .third → p.case_ ≠ some .acc →
+      spellout (pronounFeatures p) = some p.form := by
+  decide
+
+/-- Singular and plural *they* are a syncretism of the Elsewhere item, so an item of singular
+*they*'s own would change no exponent. -/
+theorem subsetPrinciple_append_they_sg (b : Finset Feature) :
+    subsetPrinciple (items ++ [vocabularyItem English.Pronouns.they_sg]) b = spellout b := by
+  revert b
   decide
 
 /-- A feature is contrastive when its absence conveys its negation, and a non-contrastive

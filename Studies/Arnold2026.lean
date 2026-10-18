@@ -173,7 +173,7 @@ kind the speaker intends (§5). -/
 /-- At Konnelly and Cowper's second stage a singular antecedent outside a quantifier whose entry
 bears a gender does not take *they*, so personal *they* for such a referent needs a homophonous
 entry without the gender, their ad hoc ungendered *Mary* (§5). -/
-theorem stage2_they_needs_ungendered_entry {a : Antecedent} {g : Gender}
+theorem stage2_they_needs_ungendered_entry {a : Antecedent} {g : KonnellyCowper2020.Gender}
     (hs : a.number = .singular) (hq : a.det = .referential) (hl : a.lexical = some (.gender g)) :
     "they" ∉ forms .two a ∧ "they" ∈ forms .two { a with lexical := none } :=
   have hi : ¬ Antecedent.Inanimate { a with lexical := none } := nofun
