@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Data.Set.NAry
 public import Linglib.Core.Computability.Edge
-public import Linglib.Semantics.Alternatives.Basic
+public import Linglib.Semantics.Composition.WithAlternatives
 
 /-!
 # Unalternative semantics
