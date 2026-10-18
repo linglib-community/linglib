@@ -169,9 +169,9 @@ instance (cls : SelectionClass) (e : EmbeddingContext) : Decidable (Selects cls 
 subordination, otherwise PerspP if it is licensed in quasi-subordination, otherwise SAP if it is
 licensed in matrix clauses. -/
 def layerOf (p : Particle) : Option PeripheryLayer :=
-  if p.LicensedInEmbed .subordinated then some .cp
-  else if p.LicensedInEmbed .quasiSubordinated then some .perspP
-  else if p.LicensedInEmbed .matrix then some .sap
+  if .subordinated ∈ p.distribution.possible.cod then some .cp
+  else if .quasiSubordinated ∈ p.distribution.possible.cod then some .perspP
+  else if .matrix ∈ p.distribution.possible.cod then some .sap
   else none
 
 /-- Japanese *ka* types the clause at CP, Hindi-Urdu *kya:* sits at PerspP, and the meta

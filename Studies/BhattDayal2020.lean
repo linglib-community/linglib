@@ -42,9 +42,9 @@ Questions are inquisitive contents, and the paper's Hamblin set is a content's s
 alternatives `alt`: the polar question `{p}` of (22b) is `ofSet p` and the constituent
 question of (22a) is `which`. Inquisitive contents do not separate declaratives from
 interrogatives, so the declarative *p* is `ofSet p` as well and meets the presupposition. The
-paper keeps *kya:* off declaratives by a type distinction instead, and names highlighting in
-the sense of [roelofsen-farkas-2015] as the replacement in theories without one; [xu-2017]
-analyses *nandao* that way. `kyaDefined_iff_not_isInquisitive` states the collapse. The
+paper keeps *kya:* off declaratives by a type distinction instead, and names Roelofsen and
+Farkas's highlighting as the replacement in theories without one; Xu analyses *nandao* that
+way. `kyaDefined_iff_not_isInquisitive` states the collapse. The
 paper's alternative question is the union `{p, q}` of the two disjuncts; the inquisitive
 disjunction `altQ p q` has both as alternatives only when neither entails the other, which
 the theorems about it assume.
@@ -140,13 +140,14 @@ instance (e : EmbeddingContext) : Decidable (selectsForceP e) :=
 /-- Over the contexts the paper records, *kya:* is licensed exactly where ForceP is selected
 ((8), (9), (21)). -/
 theorem kya_licensed_iff_selectsForceP :
-    ∀ e, e ≠ EmbeddingContext.quotation → (kya.LicensedInEmbed e ↔ selectsForceP e) := by
+    ∀ e, e ≠ EmbeddingContext.quotation →
+      (e ∈ kya.distribution.possible.cod ↔ selectsForceP e) := by
   decide
 
 /-- *kya:* is licensed in polar and alternative questions and not in constituent questions,
 (4) and (5). -/
 theorem kya_clause_types :
-    ∀ c, kya.LicensedIn c ↔ c = Clause.SentenceType.polar ∨ c = .alternative := by
+    ∀ c, c ∈ kya.distribution.possible.dom ↔ c = Clause.SentenceType.polar ∨ c = .alternative := by
   decide
 
 end BhattDayal2020

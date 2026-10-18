@@ -42,7 +42,7 @@ low like inner negation but non-propositional like FALSUM.
 namespace Stankova2026
 
 open Question Simik2024
-open StankovaSimik2025 (VerbPosition LicensedAt)
+open StankovaSimik2025 (LicensedAt)
 
 /-! ### The three positions -/
 
@@ -67,7 +67,7 @@ def Position.ofReading : Polarity → Position
   | .negative => .inner
   | .positive => .outer
 
-/-- The evidential bias strength of a negation position (the paper's §3.1): inner negation
+/-- The evidential bias strength of a negation position (the paper's §3.1). Inner negation
 presupposes evidence for ¬p, medial negation only the absence of evidence for p, and FALSUM
 conveys epistemic rather than evidential bias. -/
 inductive BiasStrength where
@@ -98,13 +98,13 @@ inductive Diagnostic where
   | fakt
   deriving DecidableEq, Repr, Fintype
 
-/-- Table 1: the diagnostics each negation position licenses. -/
+/-- The diagnostics each negation position licenses, Table 1. -/
 def licensed : Position → Finset Diagnostic
   | .inner => {.nciLicensed, .jeste, .fakt}
   | .medial => {.ppiOutscoping, .fakt}
   | .outer => {.ppiOutscoping, .nahodou}
 
-/-- A cell of Table 1: the position licenses the diagnostic. -/
+/-- The position licenses the diagnostic, a cell of Table 1. -/
 abbrev Licenses (pos : Position) (d : Diagnostic) : Prop := d ∈ licensed pos
 
 /-- Table 1 fingerprints the positions: no two license the same diagnostics. -/
@@ -207,17 +207,20 @@ theorem copak_no_diagnostic : diagnostic? copak = none := by decide
 Czech PQs come in V1 (interrogative) and nonV1 (declarative) word
 orders; since *ne-* is inseparable from the finite verb, verb position
 determines the syntactic position of negation ([stankova-simik-2025] §2,
-[stankova-2026] §1). The `VerbPosition` API lives with the experiment
-that established it, in `StankovaSimik2025`. Crossing word order with
-polarity gives [simik-2024]'s 2×2 grid of PQ forms (`Simik2024.CzechPQForm`),
-which maps onto [romero-2024]'s PosQ/LoNQ/HiNQ typology. -/
+[stankova-2026] §1). Crossing word order with polarity gives [simik-2024]'s 2×2 grid of PQ
+forms (`Simik2024.CzechPQForm`), which maps onto [romero-2024]'s PosQ/LoNQ/HiNQ typology; the
+readings of negation available at each verb position are in `StankovaSimik2025`. -/
+
+/-- Outer negation has the verb clause-initial, inner and medial negation in situ. -/
+def Position.toVerbPosition : Position → VerbPosition
+  | .inner | .medial => .nonV1
+  | .outer => .v1
 
 /-- Outer negation preposes the negated verb, giving the high negation form (HiNQ) of
 [romero-2024], and inner and medial negation leave it in situ, giving the low negation form
 (LoNQ). -/
-def Position.negationPosition : Position → NegationPosition
-  | .inner | .medial => .nonPreposed
-  | .outer => .preposed
+def Position.negationPosition (pos : Position) : NegationPosition :=
+  pos.toVerbPosition.negationPosition
 
 /-- Only outer negation (FALSUM) is obligatorily focused
 ([stankova-2026] §3.2). -/
@@ -225,25 +228,18 @@ def Position.RequiresFocus : Position → Prop
   | .outer => True
   | .medial | .inner => False
 
-instance : DecidablePred Position.RequiresFocus := fun pos => by
+instance : DecidablePred Position.RequiresFocus := fun pos ↦ by
   cases pos <;> unfold Position.RequiresFocus <;> infer_instance
-
-/-- Outer negation has the verb clause-initial, inner and medial negation in situ. -/
-def Position.toVerbPosition : Position → VerbPosition
-  | .inner | .medial => .nonV1
-  | .outer => .v1
 
 /-- In the grid of [simik-2024], outer negation gives an interrogative negative question
 (InterNPQ), and inner and medial negation a declarative one (DeclNPQ). -/
-def Position.toCzechPQForm : Position → CzechPQForm
-  | .inner | .medial => .declNPQ
-  | .outer => .interNPQ
+def Position.toCzechPQForm (pos : Position) : CzechPQForm := ⟨pos.toVerbPosition, .negative⟩
 
 /-- The two form typologies agree: [simik-2024]'s grid refines
 [romero-2024]'s. -/
 theorem czechPQForm_negation (pos : Position) :
-    pos.toCzechPQForm.negation = some pos.negationPosition := by
-  cases pos <;> rfl
+    pos.toCzechPQForm.negation = some pos.negationPosition :=
+  rfl
 
 /-- Czech refines [romero-2024]'s LoNQ: inner and medial share the LoNQ
 form but differ in evidential bias strength and in Table 1

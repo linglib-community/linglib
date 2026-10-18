@@ -59,20 +59,12 @@ open scoped Semantics
 
 /-! ### Verb position and the readings of negation -/
 
-/-- The finite verb of a Czech polar question is clause-initial, in interrogative word order,
-or in situ, in declarative word order. The negative prefix is inseparable from the finite verb,
-so verb position fixes the position of negation. -/
-inductive VerbPosition
-  | v1
-  | nonV1
-  deriving DecidableEq, Repr, Fintype
-
 /-- The readings of negation available at a verb position, each given as the polarity of the
 proposition the question double-checks, `.positive` for FALSUM, the outer reading, and
 `.negative` for the canonical operator, the inner reading. The clause-initial verb raises above
 the canonical operator and is licensed by FALSUM alone, the verb in situ by FALSUM or by the
 canonical operator (the paper's (11) and (12)). -/
-def VerbPosition.availableReadings : VerbPosition → List Polarity
+def _root_.Simik2024.VerbPosition.availableReadings : VerbPosition → List Polarity
   | .v1 => [.positive]
   | .nonV1 => [.negative, .positive]
 
@@ -83,7 +75,7 @@ theorem mem_availableReadings_iff (wp : VerbPosition) (n : Polarity) :
   cases wp <;> cases n <;> decide
 
 /-- The unmarked reading at a verb position is that of the lowest available operator. -/
-def VerbPosition.defaultReading : VerbPosition → Polarity
+def _root_.Simik2024.VerbPosition.defaultReading : VerbPosition → Polarity
   | .v1 => .positive
   | .nonV1 => .negative
 

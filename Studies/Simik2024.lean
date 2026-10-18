@@ -89,29 +89,48 @@ def polarityOf : Option Polarity → Polarity
 
 /-! ### The Czech forms and their bias profile (§3.2, Table 2) -/
 
-/-- The chapter's grid of Czech polar-question forms, which crosses interrogative
-(verb-initial) or declarative word order with polarity. -/
-inductive CzechPQForm
-  | interPPQ
-  | interNPQ
-  | declPPQ
-  | declNPQ
+/-- The finite verb of a Czech polar question is clause-initial, in interrogative word order,
+or in situ, in declarative word order. The negative prefix is inseparable from the finite verb,
+so verb position fixes the position of negation. -/
+inductive VerbPosition
+  | v1
+  | nonV1
   deriving DecidableEq, Repr, Fintype
 
-/-- The position of the negation of each grid cell, in [romero-2024]'s forms. The verb-initial
-InterNPQ preposes its negated verb, a high negation question, and DeclNPQ does not, a low one. -/
-def CzechPQForm.negation : CzechPQForm → Option NegationPosition
-  | .interPPQ | .declPPQ => none
-  | .interNPQ => some .preposed
-  | .declNPQ => some .nonPreposed
+/-- The position of a negation on the finite verb, in [romero-2024]'s forms: the clause-initial
+verb preposes it, giving a high negation question, and the verb in situ does not, a low one. -/
+def VerbPosition.negationPosition : VerbPosition → NegationPosition
+  | .v1 => .preposed
+  | .nonV1 => .nonPreposed
 
-/-- Declarative word order. -/
-def CzechPQForm.Declarative : CzechPQForm → Prop
-  | .declPPQ | .declNPQ => True
-  | .interPPQ | .interNPQ => False
+/-- The chapter's grid of Czech polar-question forms, which crosses interrogative
+(verb-initial) or declarative word order with polarity. -/
+structure CzechPQForm where
+  /-- The position of the finite verb. -/
+  verb : VerbPosition
+  /-- The polarity of the question. -/
+  polarity : Polarity
+  deriving DecidableEq, Repr, Fintype
 
-instance : DecidablePred CzechPQForm.Declarative := fun f ↦ by
-  cases f <;> simp only [CzechPQForm.Declarative] <;> infer_instance
+namespace CzechPQForm
+
+/-- The interrogative positive question, InterPPQ. -/
+def interPPQ : CzechPQForm := ⟨.v1, .positive⟩
+
+/-- The interrogative negative question, InterNPQ. -/
+def interNPQ : CzechPQForm := ⟨.v1, .negative⟩
+
+/-- The declarative positive question, DeclPPQ. -/
+def declPPQ : CzechPQForm := ⟨.nonV1, .positive⟩
+
+/-- The declarative negative question, DeclNPQ. -/
+def declNPQ : CzechPQForm := ⟨.nonV1, .negative⟩
+
+/-- The position of the negation of a form, `none` for a positive question. -/
+def negation (f : CzechPQForm) : Option NegationPosition :=
+  if f.polarity = .negative then some f.verb.negationPosition else none
+
+end CzechPQForm
 
 /-- The forms natural in each cell of contextual evidence by prior epistemic bias (Table 2),
 with the starred DeclPPQ of the neutral cell left to `czechFelicitous`. -/
@@ -128,12 +147,12 @@ def czechBiasProfile : SignType → SignType → Finset CzechPQForm
 
 /-- The forms felicitous in a cell, admitting the unbiased declarative of (18) when a
 contrastive topic claims the initial position. -/
-def czechFelicitous (ev : SignType) (ob : SignType) (ct : Bool) :
+def czechFelicitous (ev ob : SignType) (ct : Bool) :
     Finset CzechPQForm :=
   if ct ∧ ev = 0 ∧ ob = 0 then insert .declPPQ (czechBiasProfile ev ob)
   else czechBiasProfile ev ob
 
-variable (ev : SignType) (ob : SignType)
+variable (ev ob : SignType)
 
 /-- The default form is natural exactly without evidence and without a prior against
 the prejacent. -/
@@ -159,7 +178,7 @@ theorem interNPQ_mem_iff :
   decide +revert
 
 /-- Declarative questions are specialized for evidential bias ([gunlogson-2002]). -/
-theorem declarative_requires_evidence (f : CzechPQForm) (hf : f.Declarative)
+theorem declarative_requires_evidence (f : CzechPQForm) (hf : f.verb = .nonV1)
     (h : f ∈ czechBiasProfile ev ob) : ev ≠ 0 := by
   revert hf h; decide +revert
 
@@ -298,8 +317,8 @@ def NegationTriggersBias : Prop :=
   ∀ e ∈ quizRows l, polarity? e = some .negative → strategy? e ≠ some .declarative →
     e.judgment ≠ .acceptable
 
-instance : Decidable (NegationTriggersBias l) := by
-  unfold NegationTriggersBias; infer_instance
+instance : Decidable (NegationTriggersBias l) :=
+  inferInstanceAs (Decidable (∀ e ∈ quizRows l, _))
 
 /-- Every language's quiz rows include a negated interrogative form. -/
 theorem negated_interrogative_attested :
@@ -318,7 +337,8 @@ theorem quiz_particles_in_fragment :
   cases l <;> decide
 
 /-- Every fragment particle is recorded in matrix polar questions. -/
-theorem particles_licensed_polar : ∀ p ∈ l.particles, p.Licensed .polar .matrix := by
+theorem particles_licensed_polar :
+    ∀ p ∈ l.particles, Clause.root .polar ∈ p.distribution.possible := by
   cases l <;> decide
 
 /-! ### The Serbian strategies and Todorović's bias profile (§4.2.2, Table 1) -/
@@ -418,16 +438,8 @@ variable {W : Type*} (p : Set W) (w : W)
 /-- A polar question has exactly one true answer at each world. -/
 theorem trueAnswers_polar_existsUnique : ∃! q, q ∈ trueAnswers {p, pᶜ} w := by
   by_cases hw : w ∈ p
-  · refine ⟨p, ⟨by simp, hw⟩, fun q ⟨hq, hwq⟩ ↦ ?_⟩
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
-    rcases hq with rfl | rfl
-    · rfl
-    · exact absurd hw hwq
-  · refine ⟨pᶜ, ⟨by simp, hw⟩, fun q ⟨hq, hwq⟩ ↦ ?_⟩
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
-    rcases hq with rfl | rfl
-    · exact absurd hwq hw
-    · rfl
+  · exact ⟨p, ⟨by simp, hw⟩, by rintro q ⟨rfl | rfl, hwq⟩ <;> simp_all⟩
+  · exact ⟨pᶜ, ⟨by simp, hw⟩, by rintro q ⟨rfl | rfl, hwq⟩ <;> simp_all⟩
 
 /-- The speaker wants to know the true answer to the polar question over `p` (the chapter's
 (36)); the embedded (10b) is the same form with the attitude holder in place of the
@@ -465,8 +477,8 @@ theorem neuzeliNegations_ssubset : neuzeliNegations ⊂ razveNegations := by dec
 /-- *Razve* is a root phenomenon while *li* is obligatory in subordinated polar questions
 ([korotkova-2023]), read off the fragment cells. -/
 theorem razve_root_li_embedded :
-    ¬ Russian.QuestionParticles.razve.LicensedInEmbed .subordinated ∧
-      Russian.QuestionParticles.li.Licensed .polar .subordinated := by
+    .subordinated ∉ Russian.QuestionParticles.razve.distribution.possible.cod ∧
+      Clause.embedded .polar ∈ Russian.QuestionParticles.li.distribution.possible := by
   decide
 
 /-- The kin of *razve* the chapter lists across Slavic, whose semantics it leaves open. -/
@@ -516,19 +528,11 @@ proposition the question double-checks. Inner negation, the classical propositio
 diagnosed by negative polarity items, double-checks the negation of the prejacent, `.negative`;
 outer negation, the non-propositional FALSUM diagnosed by positive polarity items, the prejacent
 itself, `.positive`. -/
-def NahodouLicensed (pol : Polarity) (r : Polarity) : Prop :=
+def NahodouLicensed (pol r : Polarity) : Prop :=
   pol = .negative ∧ r = .positive
 
-instance (pol : Polarity) (r : Polarity) : Decidable (NahodouLicensed pol r) := by
-  unfold NahodouLicensed; infer_instance
-
-/-- *Náhodou* needs negation (43e). -/
-theorem nahodou_requires_negation (r : Polarity) : ¬ NahodouLicensed .positive r :=
-  fun h ↦ Polarity.noConfusion h.1
-
-/-- *Náhodou* needs outer negation (43d). -/
-theorem nahodou_requires_outer (pol : Polarity) (r : Polarity)
-    (h : NahodouLicensed pol r) : r = .positive := h.2
+instance (pol r : Polarity) : Decidable (NahodouLicensed pol r) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The reading of negation an indefinite diagnoses, the polarity item diagnosing the outer
 one and the concord item the inner one. -/
