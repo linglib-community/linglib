@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Algebra.Order.Archimedean.Basic
+public import Mathlib.Data.Finset.Grade
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.SupClosed
@@ -22,8 +23,8 @@ or none, as a classical mereology does. Atoms and overlap are stated relative to
 
 * `CUM`, `DIV`, `QUA`: cumulative, divisive and quantized reference.
 * `AlgClosure P`: the closure of `P` under binary sum, and `FullAlgClosure P` with the empty sum.
-* `Atom`, `Overlap`, `IsPlural`, `atomCount`: atoms, overlap, proper pluralities, and the number
-  of atoms below an element.
+* `Atom`, `Overlap`, `IsPlural`: atoms, overlap, and proper pluralities.
+* `atomsBelow`, `atomCount`: the atomic parts of an element, and their number.
 * `HasRemainders α`: every proper part is completed to the whole by a non-overlapping part.
 * `IsClassicalMereology α`: classical extensional mereology, in which every inhabited predicate
   has a unique sum.
@@ -38,6 +39,8 @@ or none, as a classical mereology does. Atoms and overlap are stated relative to
 * `IsExtensiveMeasure.strictMono`: over a carrier with remainders an extensive measure is strictly
   monotone, so the measure phrases it builds are quantized (`qmod_qua`); the atom count is
   likewise extensive on sums of atoms (`qua_algClosure_atomCount`).
+* `atomsBelow_finset`, `atomCount_finset`: the atomic parts of a finite set are its singletons,
+  so its atom count is its cardinality.
 * `nullSchema_eq`: every member of a predicate lies in some individuation perspective.
 
 ## Implementation notes
@@ -255,9 +258,18 @@ theorem exists_atom_le [WellFoundedLT α] (hy : ¬ IsBot y) : ∃ a, Atom a ∧ 
     WellFounded.has_min wellFounded_lt {z | ¬ IsBot z ∧ z ≤ y} ⟨y, hy, le_rfl⟩
   exact ⟨a, ⟨ha, fun z hz hza ↦ (eq_of_le_of_not_lt hza (hmin z ⟨hz, hza.trans hay⟩)).ge⟩, hay⟩
 
+/-- The atoms below `x`, its atomic parts. -/
+def atomsBelow (x : α) : Set α := {a | Atom a ∧ a ≤ x}
+
+@[simp] theorem mem_atomsBelow : y ∈ atomsBelow x ↔ Atom y ∧ y ≤ x := Iff.rfl
+
+/-- An atom is its own only atomic part. -/
+theorem atomsBelow_of_atom (h : Atom x) : atomsBelow x = {x} :=
+  Set.ext fun _ ↦ ⟨fun hy ↦ h.eq hy.2 hy.1.not_isBot, by rintro rfl; exact ⟨h, le_rfl⟩⟩
+
 variable (α) in
 /-- `atomCount α x` is the number of atoms below `x` ([champollion-krifka-2016]). -/
-noncomputable def atomCount [Fintype α] (x : α) : ℕ := {a : α | Atom a ∧ a ≤ x}.ncard
+noncomputable def atomCount (x : α) : ℕ := (atomsBelow x).ncard
 
 /-- Two elements overlap ([krifka-1998]) if they share a non-null part. -/
 def Overlap (x y : α) : Prop := ∃ z, ¬ IsBot z ∧ z ≤ x ∧ z ≤ y
@@ -361,6 +373,22 @@ theorem atomize_ne_bot : atomize (· ≠ (⊥ : α)) = IsAtom := by
   funext x; exact propext isAtom_iff_le_of_ge.symm
 
 end OrderBot
+
+/-- The atomic parts of a finite set are its singletons. -/
+theorem atomsBelow_finset {β : Type*} (s : Finset β) :
+    atomsBelow s = (fun b ↦ ({b} : Finset β)) '' ↑s := by
+  ext a
+  simp only [mem_atomsBelow, atom_iff_isAtom, Finset.isAtom_iff, Set.mem_image, Finset.mem_coe]
+  constructor
+  · rintro ⟨⟨b, rfl⟩, h⟩
+    exact ⟨b, Finset.singleton_subset_iff.1 h, rfl⟩
+  · rintro ⟨b, hb, rfl⟩
+    exact ⟨⟨b, rfl⟩, Finset.singleton_subset_iff.2 hb⟩
+
+/-- A finite set has as many atomic parts as members. -/
+theorem atomCount_finset {β : Type*} (s : Finset β) : atomCount (Finset β) s = s.card := by
+  rw [atomCount, atomsBelow_finset, Set.ncard_image_of_injective _ Finset.singleton_injective,
+    Set.ncard_coe_finset]
 
 /-- Without a null individual, the atoms are the minimal elements. -/
 theorem atom_iff_isMin [PartialOrder α] [NoBotOrder α] {x : α} : Atom x ↔ IsMin x :=
@@ -612,7 +640,7 @@ theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop
     (hP : ∀ ⦃a⦄, P a → Atom a) : StrictMonoOn (atomCount α) {x | AlgClosure P x} := by
   intro x _ y hy hxy
   obtain ⟨t, ht, hPt, rfl⟩ := (algClosure_iff_exists_sup' P y).1 hy
-  have hsub : {a : α | Atom a ∧ a ≤ x} ⊆ {a | Atom a ∧ a ≤ t.sup' ht id} :=
+  have hsub : atomsBelow x ⊆ atomsBelow (t.sup' ht id) :=
     fun a ha ↦ ⟨ha.1, ha.2.trans hxy.le⟩
   obtain ⟨a, ha, hax⟩ : ∃ a ∈ t, ¬ a ≤ x := by
     by_contra! hno
