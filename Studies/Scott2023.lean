@@ -182,7 +182,8 @@ def vocabulary : List Item :=
 
 /-- Single insertion at an agreement terminal inserts the most specific applicable item, by the
 Extended Subset Principle (53). -/
-def insert1 (t : List Feat) : Option Morph := subsetPrinciple (vocabulary.map Item.toVI) t
+def insert1 (t : List Feat) : Option Morph :=
+  subsetPrinciple (vocabulary.map Item.toVI) (t.toFinset : Finset Feat)
 
 /-- Multiple insertion at a pronoun (§4.4.1) inserts every applicable item, unless a more specific
 applicable item realizes what it realizes. -/

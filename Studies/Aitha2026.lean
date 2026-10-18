@@ -94,8 +94,8 @@ inductive Feature where
 
 /-- The n head's bundle for root `r` in case `c`, with [ACC] in every nonnominative case, the
 natural class of the oblique ((3), [caha-2009]). -/
-def site (r : Root) (c : Case) : List Feature :=
-  .root r :: if c.IsNonnominative then [.acc] else []
+def site (r : Root) (c : Case) : Finset Feature :=
+  insert (.root r) (if c.IsNonnominative then {.acc} else ∅)
 
 /-- `forRoots roots e acc` lists the items inserting `e` next to each root of `roots`, in the
 context of [ACC] when `acc`. -/
@@ -284,7 +284,7 @@ def numItems : List (VocabularyItem NumContext String) := [{.afterAm} ⟷ "ni", 
 
 /-- The singular exponent of Num after an n exponent. -/
 def numSg (nExponent : String) : Option String :=
-  subsetPrinciple numItems (if nExponent = "am" then [.afterAm] else [] : List NumContext)
+  subsetPrinciple numItems (if nExponent = "am" then {.afterAm} else ∅ : Finset NumContext)
 
 /-- Weak nouns take *-ni* and strong nouns the null singular, so the underlying weak singular
 is *samudr-am-ni-K* ((41)). -/

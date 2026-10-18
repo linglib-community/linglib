@@ -99,14 +99,16 @@ inductive Discharge where
   | rewriting
   deriving DecidableEq, Repr
 
+variable [DecidableEq F]
+
 /-- A morpheme presents as context its own features and, once realized, the
 morphophonological features of its exponent. -/
-def visible (expFeatures : E → List F) (s : Morpheme F E) : List F :=
-  s.feats ++ (s.exp.map expFeatures).getD []
+def visible (expFeatures : E → Finset F) (s : Morpheme F E) : Finset F :=
+  s.feats ∪ (s.exp.map expFeatures).getD ∅
 
 /-- A bare morpheme presents its features only, since nothing of an exponent
 is visible before insertion. -/
-@[simp] theorem visible_of_exp_none {expFeatures : E → List F} {s : Morpheme F E}
+@[simp] theorem visible_of_exp_none {expFeatures : E → Finset F} {s : Morpheme F E}
     (h : s.exp = none) : visible expFeatures s = s.feats := by
   simp [visible, h]
 
@@ -141,40 +143,40 @@ def neighbors (i : ℕ) : Option (Morpheme F E) × Option (Morpheme F E) :=
 inner context on the left and outer on the right, nearest first. Under
 concatenation the context is the unpruned neighbors, under hierarchy the
 neighborhood of head `i` in the complex head read from the root outward. -/
-def contextAt (loc : Locality) (expFeatures : E → List F) (i : ℕ) : Neighborhood (List F) :=
+def contextAt (loc : Locality) (expFeatures : E → Finset F) (i : ℕ) : Neighborhood (Finset F) :=
   match loc with
   | .concatenation =>
     let (inner, outer) := w.neighbors isNull i
-    ⟨(w.heads[i]?.map (·.feats)).getD [], (inner.map fun s => [visible expFeatures s]).getD [],
+    ⟨(w.heads[i]?.map (·.feats)).getD ∅, (inner.map fun s => [visible expFeatures s]).getD [],
       (outer.map fun s => [visible expFeatures s]).getD []⟩
   | .hierarchical =>
     .around ((w.root :: w.heads).map (visible expFeatures)) (i + 1)
-      ((w.heads[i]?.map (·.feats)).getD [])
+      ((w.heads[i]?.map (·.feats)).getD ∅)
 
 /-- Under hierarchy, context is by distance, head `j` standing at offset
 `j - i` from head `i`. -/
-theorem nth_contextAt_hierarchical {expFeatures : E → List F} {i j : ℕ}
+theorem nth_contextAt_hierarchical {expFeatures : E → Finset F} {i j : ℕ}
     (hi : i ≤ w.heads.length) (hj : j ≠ i) :
     (w.contextAt isNull .hierarchical expFeatures i).nth (j - i) =
-      (w.heads.map (visible expFeatures)).getD j [] := by
+      (w.heads.map (visible expFeatures)).getD j ∅ := by
   have := Neighborhood.nth_around ((w.root :: w.heads).map (visible expFeatures)) (i + 1)
-    ((w.heads[i]?.map (·.feats)).getD []) (k := j + 1) (by simpa using hi) (by omega)
+    ((w.heads[i]?.map (·.feats)).getD ∅) (k := j + 1) (by simpa using hi) (by omega)
   simpa [contextAt, show ((j + 1 : ℕ) - (i + 1 : ℕ) : ℤ) = j - i by omega,
-    show (default : List F) = [] from rfl] using this
+    show (default : Finset F) = ∅ from rfl] using this
 
 /-- Under hierarchy, the root stands at offset `-(i + 1)` from head `i`. -/
-theorem nth_contextAt_hierarchical_root {expFeatures : E → List F} {i : ℕ}
+theorem nth_contextAt_hierarchical_root {expFeatures : E → Finset F} {i : ℕ}
     (hi : i ≤ w.heads.length) :
     (w.contextAt isNull .hierarchical expFeatures i).nth (-(i + 1)) =
       visible expFeatures w.root := by
   have := Neighborhood.nth_around ((w.root :: w.heads).map (visible expFeatures)) (i + 1)
-    ((w.heads[i]?.map (·.feats)).getD []) (k := 0) (by simpa using hi) (by omega)
+    ((w.heads[i]?.map (·.feats)).getD ∅) (k := 0) (by simpa using hi) (by omega)
   simpa [contextAt, show ((0 : ℕ) - (i + 1 : ℕ) : ℤ) = -(i + 1) by omega] using this
 
 /-! ### Insertion -/
 
-variable [DecidableEq F] (vocab : List (VocabularyItem F E)) (loc : Locality)
-  (expFeatures : E → List F) (dis : Discharge)
+variable (vocab : List (VocabularyItem F E)) (loc : Locality)
+  (expFeatures : E → Finset F) (dis : Discharge)
 
 /-- Vocabulary Insertion at head `i` substitutes the Subset Principle's
 winner for Q, once only; under rewriting it deletes the morpheme's
@@ -190,7 +192,7 @@ def insertAt (i : ℕ) : ComplexHead (Morpheme F E) (Morpheme F E) :=
       | some item =>
         let feats := match dis with
           | .nondeletion => s.feats
-          | .rewriting => []
+          | .rewriting => ∅
         let s' : Morpheme F E := { s with exp := some item.exponent, feats := feats }
         { w with heads := w.heads.set i s' }
 
@@ -323,9 +325,9 @@ theorem feats_insertAll_nondeletion :
 /-! ### Rewriting -/
 
 /-- Under rewriting, insertion leaves no features on the morpheme it realizes. -/
-theorem feats_insertAt_rewriting (h : ∀ s ∈ w.heads, s.IsRealized → s.feats = []) (i : ℕ) :
+theorem feats_insertAt_rewriting (h : ∀ s ∈ w.heads, s.IsRealized → s.feats = ∅) (i : ℕ) :
     ∀ s ∈ (w.insertAt isNull vocab loc expFeatures .rewriting i).heads,
-      s.IsRealized → s.feats = [] := by
+      s.IsRealized → s.feats = ∅ := by
   unfold insertAt
   split
   · exact h
@@ -340,7 +342,7 @@ theorem feats_insertAt_rewriting (h : ∀ s ∈ w.heads, s.IsRealized → s.feat
 
 theorem feats_insertUpTo_rewriting (hw : ∀ s ∈ w.heads, s.exp = none) (n : ℕ) :
     ∀ s ∈ (w.insertUpTo isNull vocab loc expFeatures .rewriting n).heads,
-      s.IsRealized → s.feats = [] := by
+      s.IsRealized → s.feats = ∅ := by
   induction n with
   | zero => intro s hs hr; simp [Morpheme.IsRealized, hw s hs] at hr
   | succ n ih => rw [insertUpTo_succ]; exact feats_insertAt_rewriting isNull ih n

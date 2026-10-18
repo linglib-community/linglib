@@ -98,7 +98,7 @@ def resumptiveVocab : List (VocabularyItem FeatureVal String) :=
 
 /-- The exponent of a pronoun structure, by the Subset Principle over (28). -/
 def spellout (t : Tree DPCat String) : Option String :=
-  subsetPrinciple resumptiveVocab (featureList t)
+  subsetPrinciple resumptiveVocab (featureList t).toFinset
 
 /-- The person of a cell as the structures' person, third person being the absence of
 PersP. -/

@@ -256,8 +256,8 @@ inductive DetFeature where
   deriving DecidableEq, Repr
 
 /-- What the determiner carries after agreeing with a head. -/
-def determinerFeatures (ch : Categorizer.Head) : List DetFeature :=
-  [.d, .definite] ++ (ch.gender.map fun gf ↦ .gender gf.val).toList
+def determinerFeatures (ch : Categorizer.Head) : Finset DetFeature :=
+  {.d, .definite} ∪ (ch.gender.map fun gf ↦ .gender gf.val).toFinset
 
 /-- Of the Spanish definite determiners (25), *la* carries [+fem] and *el* is
 underspecified. -/

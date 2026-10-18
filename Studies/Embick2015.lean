@@ -105,23 +105,23 @@ inductive Tense
 
 /-- The Asp and T morphemes of a tense, with Asp[perf] in the perfects only (§4.6.1). -/
 def Tense.heads : Tense → List (Morpheme Feature String)
-  | .present => [⟨[tense], none, .after⟩]
-  | .imperfect => [⟨[tense, past], none, .after⟩]
-  | .perfect => [⟨[asp, perf], none, .after⟩, ⟨[tense], none, .after⟩]
-  | .pluperfect => [⟨[asp, perf], none, .after⟩, ⟨[tense, past], none, .after⟩]
+  | .present => [⟨{tense}, none, .after⟩]
+  | .imperfect => [⟨{tense, past}, none, .after⟩]
+  | .perfect => [⟨{asp, perf}, none, .after⟩, ⟨{tense}, none, .after⟩]
+  | .pluperfect => [⟨{asp, perf}, none, .after⟩, ⟨{tense, past}, none, .after⟩]
 
 /-- ROOT-v-(Asp)-T-Agr, (35). -/
 def word (t : Tense) (p₁ p₂ pl : Bool) :
     ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
-  ⟨⟨[laud, conjI], some "laud", .after⟩,
-   ⟨[v], none, .after⟩ :: t.heads ++
-     [⟨[agr, first p₁, second p₂, Feature.pl pl], none, .after⟩]⟩
+  ⟨⟨{laud, conjI}, some "laud", .after⟩,
+   ⟨{v}, none, .after⟩ :: t.heads ++
+     [⟨{agr, first p₁, second p₂, Feature.pl pl}, none, .after⟩]⟩
 
 /-- The surface morphs after inside-out insertion with the given discharge, the pruned T[−past]
 dropped. -/
 def morphs (dis : ComplexHead.Discharge)
     (w : ComplexHead (Morpheme Feature String) (Morpheme Feature String)) : List String :=
-  (w.insertAll (· = "") vocab .concatenation (fun _ ↦ []) dis).exponents.filter (· ≠ "")
+  (w.insertAll (· = "") vocab .concatenation (fun _ ↦ ∅) dis).exponents.filter (· ≠ "")
 
 /-- The tenses as named in the rows. -/
 def tenseTable : List (String × Tense) :=
@@ -184,12 +184,12 @@ def vocab : List (VocabularyItem Feature String) :=
 /-- Noun-[+pl], or Noun-[+pl]-[+poss] when possessed. -/
 def word (r : String) (possessed : Bool) :
     ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
-  ⟨⟨[], some r, .after⟩,
-   ⟨[pl], none, .after⟩ :: if possessed then [⟨[poss], none, .after⟩] else []⟩
+  ⟨⟨∅, some r, .after⟩,
+   ⟨{pl}, none, .after⟩ :: if possessed then [⟨{poss}, none, .after⟩] else []⟩
 
 /-- The exponent of the plural after inside-out insertion. -/
 def plural (w : ComplexHead (Morpheme Feature String) (Morpheme Feature String)) : Option String :=
-  (w.insertAll (· = "") vocab .concatenation (fun _ ↦ []) .nondeletion).heads[0]? >>= (·.exp)
+  (w.insertAll (· = "") vocab .concatenation (fun _ ↦ ∅) .nondeletion).heads[0]? >>= (·.exp)
 
 /-- Possession as named in the rows. -/
 def possTable : List (String × Bool) := [("yes", true), ("no", false)]
@@ -212,7 +212,7 @@ theorem rows_plural : ∀ r ∈ rows, plural r.1 = some r.2 := by decide
 /-- As (43a, b) state, when the plural is reached, what it sees outward is the features of the
 possessive and nothing of an exponent, the possessive being still bare. -/
 theorem outward_features_only :
-    ∀ r ∈ rows, (r.1.contextAt (· = "") .concatenation (fun _ ↦ []) 0).rightCtx =
+    ∀ r ∈ rows, (r.1.contextAt (· = "") .concatenation (fun _ ↦ ∅) 0).rightCtx =
       (r.1.heads.drop 1).map (·.feats) := by
   decide
 
@@ -241,14 +241,14 @@ def segments : List (String × List Phonology.Segment) :=
 
 /-- The phonological feature a realized exponent presents to insertion is whether its final
 segment is a consonant. -/
-def shape (e : String) : List Feature :=
+def shape (e : String) : Finset Feature :=
   match (segments.lookup e).bind List.getLast? with
-  | some s => if s.IsConsonant then [cFinal] else [vFinal]
-  | none => []
+  | some s => if s.IsConsonant then {cFinal} else {vFinal}
+  | none => ∅
 
 /-- Noun-[nom]. -/
 def word (r : String) : ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
-  ⟨⟨[], some r, .after⟩, [⟨[nom], none, .after⟩]⟩
+  ⟨⟨∅, some r, .after⟩, [⟨{nom}, none, .after⟩]⟩
 
 /-- The exponent of the nominative after inside-out insertion. -/
 def nominative (w : ComplexHead (Morpheme Feature String) (Morpheme Feature String)) :

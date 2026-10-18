@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.Word.Tree
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Distributed Morphology
@@ -95,18 +96,23 @@ theorem card_categorizer : Fintype.card Categorizer = 3 := rfl
 
 /-- A morpheme at PF carries its features, the value of its Q variable (`none` before Vocabulary
 Insertion, the exponent after), and the side on which it is linearized. -/
+@[ext]
 structure Morpheme (F E : Type*) where
   /-- The synsem and diacritic features. -/
-  feats : List F
+  feats : Finset F
   /-- The Q variable is `none` until an exponent is substituted for it. -/
   exp : Option E := none
   /-- The side of its host the morpheme is linearized on. -/
   side : Morph.Side := .after
-  deriving DecidableEq, Repr
 
 namespace Morpheme
 
 variable {F E : Type*}
+
+/-- Morphemes are compared field by field, so two feature sets listed in different orders are
+equal. -/
+instance [DecidableEq F] [DecidableEq E] : DecidableEq (Morpheme F E) :=
+  fun _ _ ↦ decidable_of_iff _ Morpheme.ext_iff.symm
 
 /-- The morpheme has been realized. -/
 def IsRealized (s : Morpheme F E) : Prop := s.exp.isSome

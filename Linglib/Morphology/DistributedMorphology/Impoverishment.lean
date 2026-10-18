@@ -10,9 +10,8 @@ Impoverishment deletes features from a terminal before Vocabulary Insertion, the
 Morphology mechanism for syncretism: a context that loses a distinguishing feature falls together
 with its neighbor, and insertion retreats to the more general exponent (`winner?_retreat`). A rule
 is evaluated at a `Neighborhood`, the focus terminal with the terminals beside it, so whether a
-rule is paradigmatic, its condition reading the focus alone, is a theorem about the rule. On a
-list bundle a rule erases one occurrence of its target, subtraction in the free commutative monoid
-on the features that `DistributedMorphology/Fission.lean` decomposes.
+rule is paradigmatic, its condition reading the focus alone, is a theorem about the rule. A rule
+whose deletion shrinks bundles only deletes; on a bundle of features it erases its target.
 
 ## Main definitions
 
@@ -26,8 +25,8 @@ on the features that `DistributedMorphology/Fission.lean` decomposes.
 ## Main results
 
 * `ImpoverishmentRule.paradigmatic_ofFocus`: a focus-only rule is paradigmatic.
-* `ImpoverishmentRule.coe_apply_erase`, `ImpoverishmentRule.apply_erase_sublist`: on a list
-  bundle a rule erases one occurrence of its target, so impoverishment only deletes.
+* `ImpoverishmentRule.apply_le`, `ImpoverishmentRule.apply_erase_subset`: a rule whose deletion
+  shrinks bundles leaves a bundle below the focus, so impoverishment only deletes.
 
 ## Implementation notes
 
@@ -88,25 +87,21 @@ def Syntagmatic (r : ImpoverishmentRule Bundle Target) : Prop := ¬ r.Paradigmat
 theorem paradigmatic_ofFocus (p : Bundle → Prop) [DecidablePred p] (target : Target) :
     (ofFocus p target).Paradigmatic := fun _ _ h ↦ by simp [ofFocus, h]
 
-/-! ### List bundles -/
+/-! ### Impoverishment only deletes -/
 
-/-- Impoverishment only deletes. On a list bundle, erasing the target leaves a sublist of the
-focus. -/
-theorem apply_erase_sublist {α : Type*} [BEq α] (rule : ImpoverishmentRule (List α) α)
-    (n : Neighborhood (List α)) : (rule.apply List.erase n).Sublist n.focus := by
+/-- A rule whose deletion shrinks bundles leaves a bundle below the focus. -/
+theorem apply_le [Preorder Bundle] {delete : Bundle → Target → Bundle}
+    (h : ∀ b t, delete b t ≤ b) (rule : ImpoverishmentRule Bundle Target)
+    (n : Neighborhood Bundle) : rule.apply delete n ≤ n.focus := by
   unfold apply
   split
-  · exact List.erase_sublist
-  · exact .refl _
+  · exact h _ _
+  · exact le_rfl
 
-/-- In the free commutative monoid on the features, a rule erases one occurrence of its target
-from the focus where its condition holds. -/
-theorem coe_apply_erase {α : Type*} [DecidableEq α] (rule : ImpoverishmentRule (List α) α)
-    (n : Neighborhood (List α)) :
-    (↑(rule.apply List.erase n) : Multiset α) =
-      if rule.condition n then (n.focus : Multiset α).erase rule.target else n.focus := by
-  unfold apply
-  split <;> simp
+/-- On bundles of features, a rule erases its target from the focus where its condition holds. -/
+theorem apply_erase_subset {α : Type*} [DecidableEq α] (rule : ImpoverishmentRule (Finset α) α)
+    (n : Neighborhood (Finset α)) : rule.apply Finset.erase n ⊆ n.focus :=
+  apply_le (fun _ _ ↦ Finset.erase_subset _ _) rule n
 
 end ImpoverishmentRule
 

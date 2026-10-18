@@ -60,7 +60,7 @@ inductive Feature where
 open Feature
 
 /-- An inserted exponent presents its identity. -/
-def itemFeatures (e : String) : List Feature := [item e]
+def itemFeatures (e : String) : Finset Feature := {item e}
 
 /-- The surface exponents after inside-out insertion under hierarchical locality, null exponents
 dropped. -/
@@ -71,14 +71,14 @@ def morphs (dis : Discharge) (voc : List (VocabularyItem Feature String))
 /-- The context head `i` presents when inside-out insertion reaches it. -/
 def stepContext (voc : List (VocabularyItem Feature String))
     (w : ComplexHead (Morpheme Feature String) (Morpheme Feature String)) (dis : Discharge)
-    (i : ℕ) : Neighborhood (List Feature) :=
+    (i : ℕ) : Neighborhood (Finset Feature) :=
   (w.insertUpTo (· = "") voc .hierarchical itemFeatures dis i).contextAt
     (· = "") .hierarchical itemFeatures i
 
 /-- The person and number of an argument, as the rows name them. -/
-def phi : String → Option (List Feature)
-  | "1sg" => some [first, sg] | "2sg" => some [second, sg] | "3sg" => some [third, sg]
-  | "1pl" => some [first, pl] | "2pl" => some [second, pl] | "3pl" => some [third, pl]
+def phi : String → Option (Finset Feature)
+  | "1sg" => some {first, sg} | "2sg" => some {second, sg} | "3sg" => some {third, sg}
+  | "1pl" => some {first, pl} | "2pl" => some {second, pl} | "3pl" => some {third, pl}
   | _ => none
 
 /-- A row's exponents, in linear order. -/
@@ -109,16 +109,16 @@ def vocab : List (VocabularyItem Feature String) :=
 
 /-- The verb is the root with its class diacritics, then present tense, the class position, and
 the object and subject agreement nodes, as in (16). -/
-def word (r : String) (cls subj obj : List Feature) :
+def word (r : String) (cls subj obj : Finset Feature) :
     ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
   ⟨⟨cls, some r, .after⟩,
-   [⟨[pres], none, .after⟩, ⟨[classMarker], none, .after⟩, ⟨agrO :: obj, none, .after⟩,
-    ⟨agrS :: subj, none, .before⟩]⟩
+   [⟨{pres}, none, .after⟩, ⟨{classMarker}, none, .after⟩, ⟨insert agrO obj, none, .after⟩,
+    ⟨insert agrS subj, none, .before⟩]⟩
 
 /-- The class diacritics of a root, as the rows name its class. -/
-def rootClass : String → Option (List Feature)
-  | "I" => some []
-  | "II" => some [classII]
+def rootClass : String → Option (Finset Feature)
+  | "I" => some ∅
+  | "II" => some {classII}
   | _ => none
 
 /-- The verb of an Itelmen row. -/
@@ -137,14 +137,14 @@ theorem rows_morphs :
 /-- The verb of (9b), *t-tɸ-s-ki-čeʔn*, is 'bring' with a first-singular subject and a
 third-plural object. -/
 def bring : ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
-  word "tɸ" [classII] [first, sg] [third, pl]
+  word "tɸ" {classII} {first, sg} {third, pl}
 
 /-- In (9b) the Class II marker sees the root's diacritic inward, past the tense suffix already
 rewritten as *-s-*, and both agreement nodes outward, bare. -/
 theorem class_marker_context :
     stepContext vocab bring .rewriting 1 =
-      ⟨[classMarker], [[item "s"], [classII, item "tɸ"]],
-        [[agrO, third, pl], [agrS, first, sg]]⟩ := by
+      ⟨{classMarker}, [{item "s"}, {classII, item "tɸ"}],
+        [{agrO, third, pl}, {agrS, first, sg}]⟩ := by
   decide
 
 /-- When the subject prefix of (9b) is reached, every morpheme inside it has been rewritten as its
@@ -152,9 +152,9 @@ exponent, and nothing of the object agreement remains for the prefix to be condi
 the non-deletion of [halle-marantz-1993] the object's features would remain. -/
 theorem prefix_sees_no_object :
     (stepContext vocab bring .rewriting 3).leftCtx =
-        [[item "čeʔn"], [item "ki"], [item "s"], [classII, item "tɸ"]] ∧
+        [{item "čeʔn"}, {item "ki"}, {item "s"}, {classII, item "tɸ"}] ∧
       (stepContext vocab bring .nondeletion 3).leftCtx.head? =
-        some [agrO, third, pl, item "čeʔn"] := by
+        some {agrO, third, pl, item "čeʔn"} := by
   decide
 
 end Itelmen
@@ -181,13 +181,13 @@ def vocab : List (VocabularyItem Feature String) :=
      ⟨{(0, agrS), (0, third), (-1, item "ninet")}, ""⟩, {agrS, third} ⟷ "ne"]
 
 /-- The Past I verb is the root with the object and subject agreement nodes. -/
-def word (r : String) (subj obj : List Feature) :
+def word (r : String) (subj obj : Finset Feature) :
     ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
-  ⟨⟨[], some r, .after⟩, [⟨agrO :: obj, none, .after⟩, ⟨agrS :: subj, none, .before⟩]⟩
+  ⟨⟨∅, some r, .after⟩, [⟨insert agrO obj, none, .after⟩, ⟨insert agrS subj, none, .before⟩]⟩
 
 /-- Object agreement targets a first- or second-person indirect object over a third-person direct
 object, by the person hierarchy of §3.2.2, and otherwise the direct object. -/
-def agreesWith (dObj : List Feature) : Option (List Feature) → List Feature
+def agreesWith (dObj : Finset Feature) : Option (Finset Feature) → Finset Feature
   | some io => if third ∈ dObj ∧ third ∉ io then io else dObj
   | none => dObj
 
@@ -219,8 +219,8 @@ features, as in (28a), the deletion of *ne-* overapplies under non-deletion, rem
 of (19i). Under rewriting the features are gone when the prefix is inserted, so the deletion
 never applies, leaving the prefix of (19c). -/
 theorem object_features_cannot_bleed :
-    morphs .nondeletion pseudoVocab (word "ɬʔu" [third, pl] [third, sg]) = ["ɬʔu", "ɣʔen"] ∧
-      morphs .rewriting pseudoVocab (word "ɬʔu" [third, sg] [third, sg]) =
+    morphs .nondeletion pseudoVocab (word "ɬʔu" {third, pl} {third, sg}) = ["ɬʔu", "ɣʔen"] ∧
+      morphs .rewriting pseudoVocab (word "ɬʔu" {third, sg} {third, sg}) =
         ["ne", "ɬʔu", "nin"] := by
   decide
 
@@ -228,9 +228,9 @@ theorem object_features_cannot_bleed :
 (27) the verb agrees with the second-person dative instead, *-nin* is not inserted, and *ne-*
 stays, so the prefix tracks the item, not the syntactic configuration. -/
 theorem ditransitive_retains_prefix :
-    morphs .rewriting vocab (word "ɬʔu" [third, sg] (agreesWith [third, sg] none)) =
+    morphs .rewriting vocab (word "ɬʔu" {third, sg} (agreesWith {third, sg} none)) =
         ["ɬʔu", "nin"] ∧
-      morphs .rewriting vocab (word "jəl" [third, sg] (agreesWith [third, sg] (some [second, sg])))
+      morphs .rewriting vocab (word "jəl" {third, sg} (agreesWith {third, sg} (some {second, sg})))
         = ["ne", "jəl", "ɣət"] := by
   decide
 

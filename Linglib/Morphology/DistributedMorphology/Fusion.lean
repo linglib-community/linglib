@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Mathlib.Data.Multiset.AddSub
 
 /-!
 # Fusion
@@ -11,9 +10,8 @@ both feature bundles, which a single Vocabulary Item then spells out — the
 Tns+Agr fusion of English finite verbs; French *du* = P[de] fused with
 D[le] is the portmanteau case. It is the inverse misalignment from Fission:
 fission yields more positions of exponence than syntactic terminals, fusion
-fewer. The fused bundle is the two bundles together, their sum in the free
-commutative monoid on the features (`coe_eq_add_of_apply_eq_some`); a rule
-contributes only the condition under which the two terminals fuse.
+fewer. The fused bundle is the union of the two bundles; a rule contributes only
+the condition under which the two terminals fuse.
 
 ## Main definitions
 
@@ -22,7 +20,6 @@ contributes only the condition under which the two terminals fuse.
 
 ## Main results
 
-* `FusionRule.coe_eq_add_of_apply_eq_some`: Fusion adds the two bundles.
 * `portmanteau_needs_fusion`: an exponent whose items all draw on both
   bundles is insertable at neither unfused node.
 
@@ -43,26 +40,26 @@ variable {F E : Type*}
 both bundles when its decidable condition holds of them. -/
 structure FusionRule (F : Type*) where
   /-- The condition on the two fusing bundles. -/
-  condition : List F → List F → Prop
+  condition : Finset F → Finset F → Prop
   [decCond : DecidableRel condition]
 
 namespace FusionRule
 
-variable {rule : FusionRule F} {p q out : List F}
+variable [DecidableEq F] {rule : FusionRule F} {p q out : Finset F}
 
 instance (rule : FusionRule F) : DecidableRel rule.condition := rule.decCond
 
 /-- Applying Fusion gives the two bundles together when the condition holds, and `none`
 otherwise. -/
-def apply (rule : FusionRule F) (p q : List F) : Option (List F) :=
-  if rule.condition p q then some (p ++ q) else none
+def apply (rule : FusionRule F) (p q : Finset F) : Option (Finset F) :=
+  if rule.condition p q then some (p ∪ q) else none
 
-theorem apply_pos (h : rule.condition p q) : rule.apply p q = some (p ++ q) := ite_eq_left h
+theorem apply_pos (h : rule.condition p q) : rule.apply p q = some (p ∪ q) := ite_eq_left h
 
 theorem apply_neg (h : ¬ rule.condition p q) : rule.apply p q = none := ite_eq_right h
 
 @[simp] theorem apply_eq_some_iff :
-    rule.apply p q = some out ↔ rule.condition p q ∧ p ++ q = out := by
+    rule.apply p q = some out ↔ rule.condition p q ∧ p ∪ q = out := by
   unfold apply; split <;> simp_all
 
 @[simp] theorem apply_eq_none_iff : rule.apply p q = none ↔ ¬ rule.condition p q := by
@@ -70,11 +67,6 @@ theorem apply_neg (h : ¬ rule.condition p q) : rule.apply p q = none := ite_eq_
 
 theorem isSome_apply : (rule.apply p q).isSome ↔ rule.condition p q := by
   unfold apply; split <;> simp_all
-
-/-- Fusion adds the two bundles in the free commutative monoid on the features. -/
-theorem coe_eq_add_of_apply_eq_some (h : rule.apply p q = some out) :
-    (out : Multiset F) = p + q := by
-  rw [← (apply_eq_some_iff.mp h).2, Multiset.coe_add]
 
 end FusionRule
 
@@ -86,7 +78,7 @@ variable [DecidableEq F]
 missing from each unfused bundle, the Subset Principle selects it at neither unfused node, since
 only the fused bundle contains its item's features (`subsetPrinciple_winner_mem`). -/
 theorem portmanteau_needs_fusion {items : List (VocabularyItem F E)}
-    {p q : Neighborhood (List F)} {e : E}
+    {p q : Neighborhood (Finset F)} {e : E}
     (he : ∀ i ∈ items, i.exponent = e → ¬ Morphology.Exponence.Applies i p ∧
       ¬ Morphology.Exponence.Applies i q) :
     subsetPrinciple items p ≠ some e ∧ subsetPrinciple items q ≠ some e := by

@@ -55,12 +55,12 @@ inductive Feature where
   deriving DecidableEq, Repr
 
 /-- A Tns node next to stem `v`. -/
-def tns (v : Verb) (past participle : Bool) : List Feature :=
-  [.past past, .participle participle, .stem v]
+def tns (v : Verb) (past participle : Bool) : Finset Feature :=
+  {.past past, .participle participle, .stem v}
 
 /-- The Agr node added at MS: the `[3sg]` complex or the unmarked one. -/
-def agr (sg3 : Bool) : List Feature :=
-  if sg3 then [.sg3] else []
+def agr (sg3 : Bool) : Finset Feature :=
+  if sg3 then {.sg3} else ∅
 
 /-- Agr fuses with a `[−participle]` Tns node into one terminal bearing both
 bundles. -/
@@ -68,7 +68,7 @@ def tnsAgrFusion : FusionRule Feature where
   condition p _ := .participle false ∈ p
 
 /-- The fused node of a finite form. -/
-def tnsAgr (v : Verb) (past sg3 : Bool) : List Feature := tns v past false ++ agr sg3
+def tnsAgr (v : Verb) (past sg3 : Bool) : Finset Feature := tns v past false ∪ agr sg3
 
 /-- Agr is added only to `[−participle]` nodes: Fusion rejects a participial
 Tns. -/
@@ -114,7 +114,7 @@ inductive Part where
   deriving DecidableEq, Repr
 
 /-- The fused node a row is spelled out at; participles take no Agr. -/
-def Part.node : Part → Verb → List Feature
+def Part.node : Part → Verb → Finset Feature
   | .pastParticiple, v => tns v true true
   | .pastFinite, v => tnsAgr v true false
   | .nonpast3sg, v => tnsAgr v false true
@@ -189,7 +189,7 @@ theorem past_precedes_agreement :
 /-! ### Fusion in the spell-out pipeline -/
 
 /-- Fusion of adjacent Tns and Agr, then insertion by the Subset Principle. -/
-def tnsAgrSpellout : Spellout (List Feature) String where
+def tnsAgrSpellout : Spellout (Finset Feature) String where
   modules := [tnsAgrFusion.applyFirstAdjacent]
   insert n := (subsetPrinciple vocabulary n).toList
 
