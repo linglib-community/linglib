@@ -9,6 +9,7 @@ public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Morphology.Morphotactics.CVTemplate
 public import Linglib.Phonology.Autosegmental.Melody
 public import Linglib.Phonology.RuleInteraction
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Laoide-Kemp (2026): Strict modularity at the morphosyntax-phonology interface
@@ -41,16 +42,16 @@ the past-tense impersonal, blocks both (§6.2).
 ## Implementation notes
 
 The segments are written orthographically, as in the paper's CV diagrams. The slot immediately to
-the right of a melodic object is the first slot after every slot linked to an object before it,
-the left edge of its window under the No-Crossing Constraint (`leftIndices`). Once `d` is linked,
-the slot to the right of `{L}` is the following V-slot, so `{L}` never acts on `d`, the consequence
-of melodic order that §4.2 draws. `{L}` docking is a line from `{L}` to the slot of the consonant
-it acts on, and of its effects only the deletion of *f* is modelled, which leaves the C-slot, as
-Gussmann argues; Ní Chiosáin's evidence that lexical palatalization sits on such a slot is not
-modelled. The condition on `d` applies to every floating segment, as §4.3 extends it to the
-prothetic consonants. The phonology is defined for any type of sponsoring morpheme, so it cannot
-consult the morphosyntax, which is Bermúdez-Otero's strict modularity. The suffix of the
-impersonal forms is not modelled.
+the right of a melodic object is the first slot after every slot linked to an object before it, the
+left edge of its window under the No-Crossing Constraint (`leftIndices`). Once `d` is linked, the
+slot to the right of `{L}` is the following V-slot, so `{L}` never acts on `d`, the consequence of
+melodic order that §4.2 draws. `{L}` docking is a line from `{L}` to the slot of the consonant it
+acts on, and of its effects only the deletion of *f* is modelled, which leaves the C-slot, as
+Gussmann argues. The palatalization such a slot keeps, a lexical property of the following word as
+Ní Chiosáin shows, is not modelled. The condition on `d` applies to every floating segment, as §4.3
+extends it to the prothetic consonants. The phonology is defined for any type of sponsoring
+morpheme, so it cannot consult the morphosyntax, which is Bermúdez-Otero's strict modularity. The
+suffix of the impersonal forms is not modelled.
 
 ## TODO
 
@@ -73,6 +74,7 @@ accompanies `{L}` after every lenition-triggering particle.
 namespace LaoideKemp2026
 
 open Autosegmental Relation RuleInteraction
+open scoped Finset
 open Morphology (CVSlot)
 
 /-! ### Representations -/
@@ -80,7 +82,7 @@ open Morphology (CVSlot)
 /-- The segments of the paper's examples, written orthographically as in its CV diagrams. -/
 inductive Segment
   | á | b | d | f | g | l | o | ó
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- An object of the melodic tier is a segment or the lenition-inducing bundle `{L}`, whose
 content the paper leaves open. -/
@@ -118,14 +120,16 @@ section Docking
 variable {M : Type*} {u : Autosegmental.Form CVSlot Autosegment M} (c : Candidate u)
 
 /-- Slot `i` hosts a segment on the surface. -/
-def HostsSegment (i : Fin u.lower.length) : Prop := ∃ k, (k, i) ∈ c.links ∧ u.upper[k].value ≠ .L
+def HostsSegment (i : Fin u.lower.length) : Prop :=
+  ∃ k s, (k, i) ∈ c.links ∧ u.upper[k].value = .seg s
 
 instance (i : Fin u.lower.length) : Decidable (HostsSegment c i) :=
-  inferInstanceAs (Decidable (∃ _, _ ∧ _))
+  inferInstanceAs (Decidable (∃ _ _, _ ∧ _))
 
 /-- The slot immediately to the right of object `k` is the first slot after every slot linked to
 an object before it. -/
-def nextSlot (k : Fin u.upper.length) : ℕ := (leftIndices c.links k).sup (·.val + 1)
+def nextSlot (k : Fin u.upper.length) : Option (Fin u.lower.length) :=
+  Fin.find? fun i ↦ ∀ j ∈ leftIndices c.links k, j < i
 
 /-- A docking site for `{L}` is a C-slot hosting the consonant it acts on, and for a segment a
 segmentally empty C-slot directly followed by a V-slot hosting a segment. -/
@@ -146,11 +150,10 @@ theorem IsDockingSite.isC {i : Fin u.lower.length} : ∀ {a}, IsDockingSite c a 
 /-- Object `k` can dock when it is floating and the slot immediately to its right is a docking
 site for it. -/
 def CanDock (k : Fin u.upper.length) : Prop :=
-  c.IsFloating k ∧
-    ∃ i : Fin u.lower.length, i.val = nextSlot c k ∧ IsDockingSite c u.upper[k].value i
+  c.IsFloating k ∧ ∃ i ∈ nextSlot c k, IsDockingSite c u.upper[k].value i
 
 instance (k : Fin u.upper.length) : Decidable (CanDock c k) :=
-  inferInstanceAs (Decidable (_ ∧ ∃ _, _))
+  inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _))
 
 /-- The *f* on slot `i`, whose segmental content `{L}` deletes (§2.2). -/
 def fOn (i : Fin u.lower.length) : Option (Fin u.upper.length) :=
@@ -159,12 +162,12 @@ def fOn (i : Fin u.lower.length) : Option (Fin u.upper.length) :=
 /-- Object `k` docks on the slot immediately to its right; `{L}` docking on an *f* deletes its
 segmental content and leaves the slot. -/
 def dock (k : Fin u.upper.length) : Candidate u :=
-  if h : nextSlot c k < u.lower.length then
-    let i : Fin u.lower.length := ⟨nextSlot c k, h⟩
+  match nextSlot c k with
+  | some i =>
     if u.upper[k].value = .L then
       (fOn c i).elim (c.insertLink k i) (c.insertLink k i).deleteTierElem
     else c.insertLink k i
-  else c
+  | none => c
 
 /-- A step docks one floating object where it can. -/
 inductive Step : Candidate u → Candidate u → Prop
@@ -185,28 +188,46 @@ theorem mem_links_of_fOn_eq_some {i : Fin u.lower.length} (h : fOn c i = some j)
 theorem isSurface_iff_forall_not_step : IsSurface c ↔ ∀ c', ¬ Step c c' :=
   ⟨fun h _ hs ↦ by cases hs with | dock hk => exact h _ hk, fun h _ hk ↦ h _ (.dock hk)⟩
 
-theorem isFloating_of_isFloating_dock (hk : CanDock c k) (h : (dock c k).IsFloating j) :
-    j ≠ k ∧ c.IsFloating j := by
-  obtain ⟨-, i, hi, -⟩ := hk
-  have hlt : nextSlot c k < u.lower.length := hi ▸ i.isLt
-  simp only [dock, hlt, dite_true] at h
-  split_ifs at h
-  · revert h
-    rcases fOn c ⟨nextSlot c k, hlt⟩ with _ | j' <;> simp_all
-  · simp_all
+/-- Docking floats nothing: an object floats after a step exactly when it floated before and is
+not the one that docked. -/
+theorem isFloating_dock (hk : CanDock c k) : (dock c k).IsFloating j ↔ j ≠ k ∧ c.IsFloating j := by
+  obtain ⟨-, i, hi : nextSlot c k = some i, -⟩ := hk
+  simp only [dock, hi]
+  split_ifs
+  · rcases hf : fOn c i with _ | j'
+    · exact Candidate.isFloating_insertLink
+    have hj' : ¬ c.IsFloating j' :=
+      fun h ↦ h.2 (Candidate.isLinked_iff.2 ⟨_, mem_links_of_fOn_eq_some hf⟩)
+    simp only [Option.elim, Candidate.isFloating_deleteTierElem, Candidate.isFloating_insertLink]
+    exact ⟨fun h ↦ h.2, fun ⟨hjk, hj⟩ ↦ ⟨fun he ↦ hj' (he ▸ hj), hjk, hj⟩⟩
+  · exact Candidate.isFloating_insertLink
+
+theorem links_dock_subset {i : Fin u.lower.length} (hi : nextSlot c k = some i) :
+    (dock c k).links ⊆ insert (k, i) c.links := by
+  simp only [dock, hi]
+  split_ifs
+  · rcases fOn c i with _ | j'
+    exacts [Finset.Subset.refl _, Candidate.links_deleteTierElem_subset]
+  · exact Finset.Subset.refl _
+
+theorem val_eq_zero_of_mem_nextSlot (h : leftIndices c.links k = ∅) {i : Fin u.lower.length}
+    (hi : i ∈ nextSlot c k) : i.val = 0 := by
+  by_contra h0
+  have := (Fin.find?_eq_some_iff.1 hi).2 ⟨0, by omega⟩ (Fin.lt_def.2 (by simp only; omega))
+  simp [h] at this
 
 variable (c) in
 /-- The number of floating objects. -/
-def floatingCount : ℕ := (Finset.univ.filter c.IsFloating).card
+def floatingCount : ℕ := #{k | c.IsFloating k}
 
 /-- Each step docks a floating object and floats none. -/
 theorem Step.floatingCount_lt (h : Step c c') : floatingCount c' < floatingCount c := by
   obtain ⟨hk⟩ := h
   refine Finset.card_lt_card <| (Finset.ssubset_iff_of_subset fun j hj ↦ ?_).2
     ⟨_, Finset.mem_filter.2 ⟨Finset.mem_univ _, hk.1⟩, fun h ↦ ?_⟩
-  · exact Finset.mem_filter.2 ⟨Finset.mem_univ _,
-      (isFloating_of_isFloating_dock hk (Finset.mem_filter.1 hj).2).2⟩
-  · exact (isFloating_of_isFloating_dock hk (Finset.mem_filter.1 h).2).1 rfl
+  · exact Finset.mem_filter.2
+      ⟨Finset.mem_univ _, ((isFloating_dock hk).1 (Finset.mem_filter.1 hj).2).2⟩
+  · exact ((isFloating_dock hk).1 (Finset.mem_filter.1 h).2).1 rfl
 
 variable (c) in
 /-- The candidates one step away. -/
@@ -233,16 +254,15 @@ def surfaces : Finset (Candidate u) := (derived c).filter IsSurface
 theorem mem_surfaces : c' ∈ surfaces c ↔ ReflTransGen Step c c' ∧ IsSurface c' := by
   rw [surfaces, Finset.mem_filter, mem_derived]
 
+/-- Derivations terminate, since each step lowers the number of floating objects. -/
+theorem wellFounded_flip_step : WellFounded (flip (Step (u := u))) :=
+  Subrelation.wf (fun h ↦ h.floatingCount_lt) (InvImage.wf floatingCount wellFounded_lt)
+
 variable (c) in
 /-- Every candidate derives a surface form. -/
 theorem surfaces_nonempty : (surfaces c).Nonempty := by
-  induction h : floatingCount c using Nat.strong_induction_on generalizing c with
-  | _ n ih =>
-    by_cases hs : IsSurface c
-    · exact ⟨c, mem_surfaces.2 ⟨.refl, hs⟩⟩
-    · obtain ⟨k, hk⟩ := not_forall_not.1 hs
-      obtain ⟨c', hc'⟩ := ih _ (h ▸ (Step.dock hk).floatingCount_lt) _ rfl
-      exact ⟨c', mem_surfaces.2 ⟨.head (.dock hk) (mem_surfaces.1 hc').1, (mem_surfaces.1 hc').2⟩⟩
+  obtain ⟨b, hb, hmin⟩ := wellFounded_flip_step.has_min {b | ReflTransGen Step c b} ⟨c, .refl⟩
+  exact ⟨b, mem_surfaces.2 ⟨hb, isSurface_iff_forall_not_step.2 fun b' h ↦ hmin b' (hb.tail h) h⟩⟩
 
 end Docking
 
@@ -262,31 +282,6 @@ theorem not_isDockingSite_of_emptyCV {i i' : Fin u.lower.length} (hi' : i'.val =
   | .L, h => hc h.2
   | .seg _, ⟨_, _, _, hi'', _, h⟩ => hv (Fin.ext (hi'.trans hi''.symm) ▸ h)
 
-theorem links_dock_subset (hk : CanDock c k) :
-    ∃ i : Fin u.lower.length, i.val = nextSlot c k ∧ (dock c k).links ⊆ insert (k, i) c.links := by
-  obtain ⟨-, i, hi, -⟩ := hk
-  have hlt : nextSlot c k < u.lower.length := hi ▸ i.isLt
-  refine ⟨i, hi, ?_⟩
-  obtain rfl : i = ⟨nextSlot c k, hlt⟩ := Fin.ext hi
-  simp only [dock, hlt, dite_true]
-  split_ifs
-  · rcases fOn c ⟨nextSlot c k, hlt⟩ with _ | j'
-    exacts [Finset.Subset.refl _, Candidate.links_deleteTierElem_subset]
-  · exact Finset.Subset.refl _
-
-theorem isFloating_dock (hk : CanDock c k) (hj : c.IsFloating j) (hjk : j ≠ k) :
-    (dock c k).IsFloating j := by
-  obtain ⟨-, i, hi, -⟩ := hk
-  have hlt : nextSlot c k < u.lower.length := hi ▸ i.isLt
-  simp only [dock, hlt, dite_true]
-  split_ifs
-  · rcases hf : fOn c ⟨nextSlot c k, hlt⟩ with _ | j'
-    · exact Candidate.isFloating_insertLink.2 ⟨hjk, hj⟩
-    refine Candidate.isFloating_deleteTierElem.2 ⟨?_, Candidate.isFloating_insertLink.2 ⟨hjk, hj⟩⟩
-    rintro rfl
-    exact hj.2 (Candidate.isLinked_iff.2 ⟨_, mem_links_of_fOn_eq_some hf⟩)
-  · exact Candidate.isFloating_insertLink.2 ⟨hjk, hj⟩
-
 variable {m m' : M} {s : Autosegmental.Form CVSlot Autosegment M}
 
 private theorem two_le_of_mem_links {p} (hp : p ∈ (historic m * (emptyCV m' * s)).links) :
@@ -304,15 +299,15 @@ segment. -/
 private def Blocked (c : Candidate (historic m * (emptyCV m' * s))) : Prop :=
   c.IsFloating (d _) ∧ c.IsFloating (L _) ∧ ∀ i : Fin _, i.val < 2 → ¬ HostsSegment c i
 
-private theorem nextSlot_eq_zero {c : Candidate (historic m * (emptyCV m' * s))} (h : Blocked c)
-    {k : Fin _} (hk : k.val < 2) : nextSlot c k = 0 := by
-  refine Finset.sup_eq_bot_iff _ _ |>.2 fun x hx ↦ ?_
+private theorem leftIndices_eq_empty {c : Candidate (historic m * (emptyCV m' * s))}
+    (h : Blocked c) {k : Fin _} (hk : k.val < 2) : leftIndices c.links k = ∅ := by
+  refine Finset.eq_empty_of_forall_notMem fun x hx ↦ ?_
   obtain ⟨n, hn, hnx⟩ := mem_leftIndices.1 hx
   obtain rfl : n = d s := Fin.ext (by simp only [d]; have := Fin.lt_def.1 hn; omega)
-  exact absurd (Candidate.isLinked_iff.2 ⟨_, hnx⟩) h.1.2
+  exact h.1.2 (Candidate.isLinked_iff.2 ⟨_, hnx⟩)
 
 private theorem two_le_of_canDock {c : Candidate (historic m * (emptyCV m' * s))} (h : Blocked c)
-    {k : Fin _} (hk : CanDock c k) : 2 ≤ k.val ∧ 2 ≤ nextSlot c k := by
+    {k : Fin _} (hk : CanDock c k) : 2 ≤ k.val ∧ ∀ i ∈ nextSlot c k, 2 ≤ i.val := by
   have hlen : 1 < (historic m * (emptyCV m' * s)).lower.length := by
     simp [historic, emptyCV]
   obtain ⟨-, i, hi, hs⟩ := hk
@@ -322,8 +317,10 @@ private theorem two_le_of_canDock {c : Candidate (historic m * (emptyCV m' * s))
     obtain rfl : i = ⟨1, hlen⟩ := Fin.ext h1
     have hV : (historic m * (emptyCV m' * s)).lower[(⟨1, hlen⟩ : Fin _)].value = .V := rfl
     exact absurd (hs.isC.symm.trans hV) (by decide)
-  refine ⟨Nat.le_of_not_lt fun hk2 ↦ hi0 ?_, by omega⟩
-  rw [hi, nextSlot_eq_zero h hk2]
+  refine ⟨Nat.le_of_not_lt fun hk2 ↦ hi0 ?_, fun i' hi' ↦ ?_⟩
+  · exact val_eq_zero_of_mem_nextSlot (leftIndices_eq_empty h hk2) hi
+  · obtain rfl := Option.mem_unique hi hi'
+    omega
 
 private theorem blocked_input : Blocked (.input (historic m * (emptyCV m' * s))) := by
   refine ⟨⟨Finset.notMem_empty _, ?_⟩, ⟨Finset.notMem_empty _, ?_⟩, ?_⟩
@@ -331,7 +328,7 @@ private theorem blocked_input : Blocked (.input (historic m * (emptyCV m' * s)))
     exact absurd (two_le_of_mem_links hp).1 (by rw [hpd]; show ¬ 2 ≤ 0; omega)
   · rintro ⟨p, hp, hpL⟩
     exact absurd (two_le_of_mem_links hp).1 (by rw [hpL]; show ¬ 2 ≤ 1; omega)
-  · rintro i hi ⟨k, hk, -⟩
+  · rintro i hi ⟨k, -, hk, -⟩
     have := (two_le_of_mem_links hk).2
     dsimp only at this
     omega
@@ -340,16 +337,18 @@ private theorem Blocked.step {c c' : Candidate (historic m * (emptyCV m' * s))} 
     (hs : Step c c') : Blocked c' := by
   obtain ⟨hk⟩ := hs
   obtain ⟨hk2, hi2⟩ := two_le_of_canDock h hk
-  obtain ⟨i, hi, hsub⟩ := links_dock_subset hk
-  refine ⟨isFloating_dock hk h.1 fun he ↦ ?_, isFloating_dock hk h.2.1 fun he ↦ ?_,
-    fun i₀ hi₀ ⟨k', hk', hval⟩ ↦ ?_⟩
+  obtain ⟨i, hi, -⟩ := hk.2
+  have hsub := links_dock_subset hi
+  have hi2 := hi2 i hi
+  refine ⟨(isFloating_dock hk).2 ⟨fun he ↦ ?_, h.1⟩, (isFloating_dock hk).2 ⟨fun he ↦ ?_, h.2.1⟩,
+    fun i₀ hi₀ ⟨k', s', hk', hval⟩ ↦ ?_⟩
   · exact absurd hk2 (by rw [← he]; show ¬ 2 ≤ 0; omega)
   · exact absurd hk2 (by rw [← he]; show ¬ 2 ≤ 1; omega)
   · rcases Finset.mem_insert.1 (hsub hk') with he | he
     · have := congrArg (·.2.val) he
       simp only at this
       omega
-    · exact h.2.2 i₀ hi₀ ⟨k', he, hval⟩
+    · exact h.2.2 i₀ hi₀ ⟨k', s', he, hval⟩
 
 /-- Whatever the stem, in a historic-tense form whose stem begins with an empty CV unit, `d` and
 `{L}` float in every candidate derived: the form is neither lenited nor preceded by *d'*
