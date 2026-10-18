@@ -19,11 +19,13 @@ A construct is described by the categories of its daughters and the inversion, f
 independence of its head (`Construct`), and a clause licenses the constructs meeting its
 constraints (`FGClause.Licenses`), with categories compared in the sort order of the RSRL
 construct hierarchy of `Syntax/HPSG/Construction`. Islandhood and semantics are facts of that
-hierarchy's grammar: a clause is an absolute island when the grammar rejects a construct of its
-sort with a second, undischarged gap (`FGClause.IsIsland`), and a construct is well formed
-exactly when its mother has the semantic type of the clausal supertype. The distinguished
-element is lexical: the wh-word inventory is read off the paper's judgment triples (`occurs`),
-and no wh-form of any category occurs in all three wh-constructions (`no_universal_wh_word`).
+hierarchy's grammar. A clause is an absolute island when every construct of its sort, in every
+model of the grammar, has a mother with an empty `GAP` list (`FGClause.IsIsland`). Topicalized
+clauses, wh-exclamatives and the-clauses are islands, since their constructions give the head
+daughter a single gap, which the filler discharges (`isIsland_iff`). A construct is well formed
+exactly when its mother has the semantic type of its clause. The distinguished element is
+lexical: the wh-word inventory is read off the paper's judgment triples (`occurs`), and no
+wh-form of any category occurs in all three wh-constructions (`no_universal_wh_word`).
 The rows are the paper's examples, and their judgments follow from the constructions
 (`judgments`).
 
@@ -38,7 +40,10 @@ triples rather than transcribed from the paper's table of wh-words, which prints
 differently: bare *what* in exclamatives and determiner *which* in relatives are marked as
 accepted by some speakers in the table but starred in the triples. The island rows are checked
 in one direction, since the paper attributes the graded degradation of extraction from finite
-wh-interrogatives to processing.
+wh-interrogatives to processing. The-clauses come out as islands because the the-clause
+construction gives the head daughter a single gap, as the topicalization and wh-exclamative
+constructions do. The text discusses islandhood only for the latter two, and no row tests a
+the-clause.
 
 ## TODO
 
@@ -78,25 +83,24 @@ def FGClause.sort : FGClause → Srt
   | .whRelative => .whRelCl
   | .theClause => .theCl
 
-/-- The semantic type of a clause is a question, a fact, a proposition, or an austinean
-object. -/
+/-- The semantic type of a clause is a question, a fact, a modifier, or an austinean object. -/
 def FGClause.sem : FGClause → Srt
   | .whInterrogative => .question
   | .whExclamative => .fact
-  | .whRelative => .proposition
+  | .whRelative => .modifier
   | .topicalized | .theClause => .austinean
 
 /-- A single-gap construct of the clause's sort whose mother has semantic type `σ`. -/
 abbrev FGClause.construct (c : FGClause) (σ : Srt) : Interpretation sig Ent :=
   singleConstruct c.sort σ singleGapA
 
-/-- The semantic type of a clause is inherited from its clausal supertype. A construct of the
-clause's sort satisfies the grammar exactly when its mother has the clause's semantic type. -/
+/-- A construct of the clause's sort satisfies the grammar exactly when its mother has the
+clause's semantic type. -/
 theorem models_construct_iff (c : FGClause) (σ : Srt)
-    (hσ : σ ∈ [Srt.question, .fact, .proposition, .austinean]) :
+    (hσ : σ ∈ [Srt.question, .fact, .modifier, .austinean]) :
     (c.construct σ).Models grammar ↔ σ = c.sem := by
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at hσ
-  cases c <;> rcases hσ with rfl | rfl | rfl | rfl <;> decide
+  revert c σ
+  decide +kernel
 
 /-- A construct of the clause's sort whose head daughter carries a second, undischarged gap. -/
 abbrev FGClause.secondGap (c : FGClause) : Interpretation sig Ent :=
@@ -106,18 +110,44 @@ abbrev FGClause.secondGap (c : FGClause) : Interpretation sig Ent :=
 of its constructions and not of the appropriateness conditions. -/
 theorem isWellTyped_constructs (c : FGClause) :
     (c.construct c.sem).IsWellTyped ∧ c.secondGap.IsWellTyped := by
-  cases c <;> decide
+  cases c <;> decide +kernel
 
-/-- A clause is an absolute island when the grammar rejects a construct of its sort with a
-second, undischarged gap: the amalgamated gap contradicts the construction's `[GAP ⟨⟩]`. -/
-def FGClause.IsIsland (c : FGClause) : Prop := ¬ c.secondGap.Models grammar
+/-- A clause is an absolute island when, in every model of the grammar, every construct of its
+sort has a mother with an empty `GAP` list, so that no gap inside the clause is bound outside
+it. -/
+def FGClause.IsIsland (c : FGClause) : Prop :=
+  ∀ ⦃U : Type⦄ (I : Interpretation sig U), I.Models grammar → ∀ u, I.S u = c.sort →
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.MTR, .GAP]) .elist)
 
-instance : DecidablePred FGClause.IsIsland := fun c ↦
-  inferInstanceAs (Decidable (¬ c.secondGap.Models grammar))
+/-- In a model of the grammar, the head daughter of a topicalized clause, a wh-exclamative or a
+the-clause has a single gap. -/
+theorem satisfies_gapRest_elist {U : Type*} {I : Interpretation sig U} (hI : I.Models grammar)
+    {c : FGClause} (hc : c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) {u : U}
+    (hu : I.S u = c.sort) :
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist) := by
+  rcases hc with rfl | rfl | rfl
+  · exact (hI.satisfies_body (c := topPrinciple)
+      (List.mem_map_of_mem (by simp [constraints])) hu.le).2.2.1
+  · exact (hI.satisfies_body (c := whExclPrinciple)
+      (List.mem_map_of_mem (by simp [constraints])) hu.le).2
+  · exact (hI.satisfies_body (c := thePrinciple)
+      (List.mem_map_of_mem (by simp [constraints])) hu.le).2
 
-/-- Exactly topicalized clauses and wh-exclamatives are absolute islands. -/
-theorem isIsland_iff (c : FGClause) : c.IsIsland ↔ c = .topicalized ∨ c = .whExclamative := by
-  cases c <;> decide
+/-- Exactly topicalized clauses, wh-exclamatives and the-clauses are absolute islands. Their
+constructions give the head daughter a single gap, which the filler discharges, while a
+wh-interrogative or a wh-relative construct may pass a second gap to its mother. -/
+theorem isIsland_iff (c : FGClause) :
+    c.IsIsland ↔ c = .topicalized ∨ c = .whExclamative ∨ c = .theClause := by
+  refine ⟨fun h ↦ ?_, fun hc U I hI u hu ↦ ?_⟩
+  · by_contra hc
+    have key : ∀ c : FGClause, ¬ (c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) →
+        c.secondGap.Models grammar ∧ ¬ c.secondGap.Satisfies (fun _ ↦ .cxt) .cxt
+          (.sortAssign (.path [.MTR, .GAP]) .elist) := by
+      decide +kernel
+    exact (key c hc).2 (h _ (key c hc).1 .cxt rfl)
+  · have hfh : I.S u ≤ .fillerHeadCxt :=
+      hu ▸ (by decide +kernel : ∀ c : FGClause, c.sort ≤ .fillerHeadCxt) c
+    exact (satisfies_mtrGap_iff hI hfh .elist).2 (satisfies_gapRest_elist hI hc hu)
 
 /-! ### Constructs -/
 
@@ -165,7 +195,8 @@ structure Construct where
   independent : Bool
   deriving DecidableEq, Repr
 
-/-- The filler-head construction: a nonverbal filler and a verbal head. -/
+/-- A construct meets the category conditions shared by the five clauses when its filler is
+nonverbal and its head verbal. -/
 def Construct.FillerHead (k : Construct) : Prop :=
   k.filler.sort ≤ .nonverbal ∧ k.head.sort ≤ .verbal
 
@@ -382,6 +413,7 @@ theorem judgments :
 an island. -/
 theorem island_rows :
     ∀ x ∈ probing .island, ∀ c, clause? x = some c → x.judgment = .acceptable → ¬ c.IsIsland := by
+  simp only [isIsland_iff]
   decide +kernel
 
 end Sag2010

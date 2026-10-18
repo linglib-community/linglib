@@ -57,13 +57,14 @@ theorem sai_cross_classify :
 
 /-! ### Worked aux-initial constructs -/
 
-/-- The entities of a worked aux-initial construct: the construct, its mother and head
-daughter, and the head's inversion value and the mother's semantic object; an aux-initial
-construct has no filler daughter. -/
+/-- The entities of a worked aux-initial construct are the construct, its mother and head
+daughter, the verbal category they share, the head's inversion value and the mother's semantic
+object. An aux-initial construct has no filler daughter. -/
 inductive SAIEnt where
   | cxt
   | mtr
   | hd
+  | cat
   | inv
   | sem
   deriving DecidableEq, Fintype, Repr
@@ -73,12 +74,14 @@ inductive SAIEnt where
 @[reducible] def saiConstruct (cxtSort invSort semSort : Srt) : Interpretation sig SAIEnt where
   S := fun
     | .cxt => cxtSort
-    | .mtr | .hd => .sign
+    | .mtr | .hd => .overtExpr
+    | .cat => .verb
     | .inv => invSort
     | .sem => semSort
   A := fun a u ↦ match a, u with
     | .MTR, .cxt => some .mtr
     | .HDDTR, .cxt => some .hd
+    | .CAT, .mtr | .CAT, .hd => some .cat
     | .INV, .hd => some .inv
     | .SEM, .mtr => some .sem
     | _, _ => none

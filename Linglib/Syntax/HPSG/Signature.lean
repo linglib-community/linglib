@@ -107,6 +107,13 @@ private theorem find?_of_le {l : List (Srt × Srt)}
       rw [List.find?_cons_of_neg (by simpa using h₂)]
       exact ih hl.2 h
 
+/-- An attribute that declarations make appropriate to a sort is declared at a supersort of it,
+with the value sort that the declaration names. -/
+theorem exists_mem_decl_of_appropOfDecl_eq_some {σ τ : Srt} {α : Attr}
+    (h : appropOfDecl decl σ α = some τ) : ∃ d ∈ decl α, σ ≤ d.1 ∧ d.2 = τ := by
+  obtain ⟨d, hd, rfl⟩ := Option.map_eq_some_iff.1 h
+  exact ⟨d, List.mem_of_find?_eq_some hd, by simpa using List.find?_some hd, rfl⟩
+
 /-- Declarations generate an appropriateness function with feature inheritance when no sort
 lies below two sorts that introduce the same attribute. -/
 theorem appropOfDecl_inherits

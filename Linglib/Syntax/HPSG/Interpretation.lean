@@ -172,12 +172,11 @@ instance [Fintype Srt] [DecidableLE Srt] (σ : Srt) : Decidable (IsSpecies σ) :
 instance [Fintype Srt] [DecidableLE Srt] [Fintype U] : Decidable I.IsSortResolved :=
   inferInstanceAs (Decidable (∀ u, IsSpecies (I.S u)))
 
-instance [DecidableLE Srt] [Fintype U] [DecidableEq U] [Fintype Sig.Attr] :
-    Decidable I.IsWellTyped := by
-  unfold IsWellTyped; infer_instance
+instance [DecidableLE Srt] [Fintype U] [Fintype Sig.Attr] : Decidable I.IsWellTyped :=
+  inferInstanceAs <| Decidable <| ∀ (α : Sig.Attr) (u : U),
+    ∀ v ∈ I.A α u, ∃ τ ∈ Sig.approp (I.S u) α, I.S v ≤ τ
 
-instance [DecidableLE Srt] [Fintype U] [DecidableEq U] [Fintype Sig.Attr] :
-    Decidable I.IsTotallyWellTyped :=
+instance [DecidableLE Srt] [Fintype U] [Fintype Sig.Attr] : Decidable I.IsTotallyWellTyped :=
   decidable_of_iff (I.IsWellTyped ∧
       ∀ (α : Sig.Attr) (u : U), (Sig.approp (I.S u) α).isSome → (I.A α u).isSome)
     ⟨fun ⟨a, b⟩ ↦ ⟨a, b⟩, fun ⟨a, b⟩ ↦ ⟨a, b⟩⟩

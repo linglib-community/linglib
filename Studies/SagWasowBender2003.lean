@@ -14,13 +14,12 @@ textbook's judgments on reflexives and pronouns follow from the binding grammar 
 `Syntax/HPSG/Binding`, whose outranking is local o-command (`binding_rows`). The long-distance
 dependencies of Chapter 15 rest on the list-valued feature GAP: the GAP Principle sums the
 daughters' gaps into the mother and the Head-Filler Rule discharges one, which is the
-filler-head construction of `Syntax/HPSG/Construction` (`head_filler_models`,
-`gap_principle_models`). The Coordinate Structure Constraint and its across-the-board exception
-are then derived rather than stipulated: conjuncts share their SYN value, GAP included, so a gap
-in one conjunct whose filler lies outside is rejected while gaps in every conjunct paired with
-one filler pass (`coordinationPrinciple`, `coordination_rows`), and a conjunct cannot itself be
-a gap, since a gap is an argument unrealized in the syntax rather than an empty phrase
-(`gap_not_conjunct`).
+filler-head construction of `Syntax/HPSG/Construction`. The Coordinate Structure Constraint and
+its across-the-board exception are then derived rather than stipulated: conjuncts share their
+SYN value, GAP included, so a gap in one conjunct whose filler lies outside is rejected while
+gaps in every conjunct paired with one filler pass (`coordinationPrinciple`,
+`coordination_rows`), and a conjunct cannot itself be a gap, since a gap is an argument
+unrealized in the syntax rather than an empty phrase (`gap_not_conjunct`).
 
 ## Implementation notes
 
@@ -68,14 +67,6 @@ theorem binding_rows :
 
 /-! ### Long-distance dependencies -/
 
-/-- The Head-Filler Rule: a filler-head construct whose filler is identical to the head
-daughter's one gap satisfies the grammar, and the mother's GAP is empty. -/
-theorem head_filler_models : goodFillerHead.Models grammar := by decide
-
-/-- The GAP Principle holds of a head daughter with two gaps. The filler discharges the first
-gap and the second is summed into the mother. -/
-theorem gap_principle_models : goodTwoGap.Models grammar := by decide
-
 /-- In the coordination construction the two conjuncts share their category and GAP list, and
 the mother carries them. -/
 def coordinationPrinciple : Constraint sig where
@@ -90,7 +81,8 @@ def coordinationPrinciple : Constraint sig where
 def swbGrammar : Grammar sig := (constraints ++ [coordinationPrinciple]).map Constraint.toDesc
 
 /-- The entities of a worked coordinate construct are the construct, its mother and two
-conjuncts, their category, a one-gap list with its NP `loc` and index, and the empty list. -/
+conjuncts, their category, a one-gap list with its NP gap and the gap's index, and the empty
+list. -/
 inductive CoordEnt where
   | cxt
   | mtr
@@ -99,7 +91,7 @@ inductive CoordEnt where
   | cat
   | np
   | g
-  | lcl
+  | gp
   | nil
   | ix
   deriving DecidableEq, Fintype, Repr
@@ -108,17 +100,16 @@ inductive CoordEnt where
 the empty list otherwise. -/
 def gapList (b : Bool) : CoordEnt := if b then .g else .nil
 
-/-- A coordinate construct of two clausal conjuncts, each containing a gap or not; the gap is
-one NP `loc`, shared by the conjuncts that have one, and the mother's GAP is the first
-conjunct's. -/
+/-- A coordinate construct of two clausal conjuncts, each containing a gap or not. The gap is one
+NP, shared by the conjuncts that have one, and the mother's GAP is the first conjunct's. -/
 @[reducible] def coordConstruct (gap₁ gap₂ : Bool) : Interpretation sig CoordEnt where
   S := fun
     | .cxt => .coordCxt
-    | .mtr | .c₁ | .c₂ => .sign
+    | .mtr | .c₁ | .c₂ => .overtExpr
     | .cat => .verb
     | .np => .noun
     | .g => .nelist
-    | .lcl => .loc
+    | .gp => .gap
     | .nil => .elist
     | .ix => .idx
   A := fun a u ↦ match a, u with
@@ -128,10 +119,10 @@ conjunct's. -/
     | .CAT, .mtr | .CAT, .c₁ | .CAT, .c₂ => some .cat
     | .GAP, .mtr | .GAP, .c₁ => some (gapList gap₁)
     | .GAP, .c₂ => some (gapList gap₂)
-    | .FIRST, .g => some .lcl
+    | .FIRST, .g => some .gp
     | .REST, .g => some .nil
-    | .CAT, .lcl => some .np
-    | .INDEX, .lcl => some .ix
+    | .CAT, .gp => some .np
+    | .INDEX, .gp => some .ix
     | _, _ => none
   R := noRel
 
@@ -150,14 +141,10 @@ theorem coordination_rows :
         (x.judgment = .acceptable ↔ (coordConstruct g₁ g₂).Models swbGrammar) := by
   decide +kernel
 
-/-- A conjunct is a sign and a gap is a `loc` object, an argument unrealized in the syntax, so
-no well-typed interpretation has a gap for a conjunct. The sort of a conjunct lies below
-`sign`, and no sort lies below both `sign` and `loc`. -/
+/-- A conjunct is an overt expression and a gap a covert one, an argument unrealized in the
+syntax, so no well-typed interpretation has a gap for a conjunct. -/
 theorem gap_not_conjunct {U : Type*} {I : Interpretation sig U} (hI : I.IsWellTyped) {u v : U}
-    (hu : I.S u = .coordCxt) (hv : I.A .CONJ1 u = some v) : ¬ I.S v ≤ .loc := by
-  obtain ⟨τ, hτ, hle⟩ := hI .CONJ1 u v hv
-  rw [hu, show sig.approp .coordCxt .CONJ1 = some .sign from by decide] at hτ
-  obtain rfl : Srt.sign = τ := Option.some.inj hτ
-  exact (by decide : ∀ σ : Srt, σ ≤ .sign → ¬ σ ≤ .loc) _ hle
+    (hv : I.A .CONJ1 u = some v) : ¬ I.S v ≤ .gap :=
+  fun h ↦ not_le_covertExpr hI (by simp) hv (h.trans (by decide))
 
 end SagWasowBender2003
