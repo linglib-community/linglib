@@ -40,9 +40,8 @@ of a referent, and a tripartition value denotes the referents in its domain and 
 An absent feature, and a value without a bundle, the impersonal person, the numbers beyond the
 dual and the non-sex-based genders, denote the whole domain; the semantically unmarked values,
 third person, plural and masculine, are the empty bundles, whose unrestricted domain Wang finds
-recruited by honorification. A referent may be gendered neither way, and then only a form without
-a gender feature is defined of it, the account of singular *they* of Bjorkman and of Konnelly and
-Cowper. The person entries take the agent and the addressee as parts of the referent where
+recruited by honorification. A referent may be gendered neither way, and then it lies in all three
+gender domains. The person entries take the agent and the addressee as parts of the referent where
 Sauerland has them overlap it; the two coincide for an atomic agent and addressee. The
 two-feature decomposition does not see clusivity, so the inclusive is refined to referents
 including the addressee. The cells of the tripartition are stated one by one, since
@@ -55,8 +54,6 @@ mereological predicate the entity domain's order does not supply, so the dual re
 
 * [sauerland-2003]
 * [sauerland-2008b]
-* [bjorkman-2017]
-* [konnelly-cowper-2020]
 * [wang-r-2023]
 -/
 
