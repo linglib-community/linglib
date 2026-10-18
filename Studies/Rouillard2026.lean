@@ -4,7 +4,7 @@ public import Mathlib.Algebra.Order.Ring.NNRat
 public import Mathlib.Data.NNRat.BigOperators
 public import Mathlib.MeasureTheory.Measure.AddContent
 public import Linglib.Core.Order.Interval.Set.LinearOrder
-public import Linglib.Semantics.Alternatives.Extremum
+public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Polarity.Basic
 
@@ -68,7 +68,7 @@ namespace Rouillard2026
 
 open Event (τ)
 
-open Alternatives Aspect MeasureTheory NonemptyInterval Set
+open Question Aspect MeasureTheory NonemptyInterval Set
 
 /-! ### Measuring times (§2.2) -/
 
@@ -151,39 +151,45 @@ variable {W T E α : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-- A property of numbers is licensed when at some world the numeral is its unique maximally
 informative value, (92) with (75). -/
-def IsMIPLicensed {N : Type*} (φ : N → Set W) : Prop := ∃ w, ∃! n, IsMaxInf φ n w
+def IsMIPLicensed {N : Type*} (φ : N → Set W) : Prop :=
+  ∃ w, ∃! n, IsStrongestTrueAnswer (range φ) w (φ n)
 
 /-- A property that does not depend on the numeral is not licensed, the information collapse. -/
 theorem not_isMIPLicensed_of_forall_eq {N : Type*} [Nontrivial N] {φ : N → Set W}
     (h : ∀ n m, φ n = φ m) : ¬ IsMIPLicensed φ := by
   rintro ⟨w, n, hn, huniq⟩
   obtain ⟨m, hm⟩ := exists_ne n
-  obtain ⟨hnw, hmin⟩ := isMaxInf_iff.1 hn
-  exact hm (huniq m (isMaxInf_iff.2 ⟨h n m ▸ hnw, fun k hk ↦ h n m ▸ hmin k hk⟩))
+  obtain ⟨hnw, hmin⟩ := isStrongestTrueAnswer_range_iff.1 hn
+  exact hm (huniq m (isStrongestTrueAnswer_range_iff.2 ⟨h n m ▸ hnw, fun k hk ↦ h n m ▸ hmin k hk⟩))
 
 /-- An upward scalar property with no least true value is not licensed. -/
 theorem not_isMIPLicensed_of_not_isLeast {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : Monotone φ) (h : ∀ w n, ¬ IsLeast {m | w ∈ φ m} n) : ¬ IsMIPLicensed φ := by
   rintro ⟨w, n, hn, huniq⟩
-  obtain ⟨hnw, hmin⟩ := isMaxInf_iff.1 hn
+  obtain ⟨hnw, hmin⟩ := isStrongestTrueAnswer_range_iff.1 hn
   refine h w n ⟨hnw, fun m hm ↦ not_lt.1 fun hlt ↦ ?_⟩
-  exact hlt.ne (huniq m (isMaxInf_iff.2 ⟨hm, fun k hk ↦ (hφ hlt.le).trans (hmin k hk)⟩))
+  exact hlt.ne (huniq m (isStrongestTrueAnswer_range_iff.2
+    ⟨hm, fun k hk ↦ (hφ hlt.le).trans (hmin k hk)⟩))
 
 /-- A strictly downward scalar property with a greatest true value at some world is licensed. -/
 theorem isMIPLicensed_of_isGreatest {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : StrictAnti φ) {w : W} (h : ∃ n, IsGreatest {m | w ∈ φ m} n) : IsMIPLicensed φ := by
-  obtain ⟨n, hn⟩ := (hasMaxInf_iff_isGreatest hφ).2 h
+  obtain ⟨n, hn⟩ :=
+    isExhaustivelyResolvable_range_iff_exists.1
+      ((isExhaustivelyResolvable_range_iff_isGreatest hφ).2 h)
   refine ⟨w, n, hn, fun m hm ↦ hφ.injective (subset_antisymm ?_ ?_)⟩
-  exacts [(isMaxInf_iff.1 hm).2 n (isMaxInf_iff.1 hn).1,
-    (isMaxInf_iff.1 hn).2 m (isMaxInf_iff.1 hm).1]
+  exacts [(isStrongestTrueAnswer_range_iff.1 hm).2 n (isStrongestTrueAnswer_range_iff.1 hn).1,
+    (isStrongestTrueAnswer_range_iff.1 hn).2 m (isStrongestTrueAnswer_range_iff.1 hm).1]
 
 /-- A strictly upward scalar property with a least true value at some world is licensed. -/
 theorem isMIPLicensed_of_isLeast {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : StrictMono φ) {w : W} (h : ∃ n, IsLeast {m | w ∈ φ m} n) : IsMIPLicensed φ := by
-  obtain ⟨n, hn⟩ := (hasMaxInf_iff_isLeast hφ).2 h
+  obtain ⟨n, hn⟩ :=
+    isExhaustivelyResolvable_range_iff_exists.1
+      ((isExhaustivelyResolvable_range_iff_isLeast hφ).2 h)
   refine ⟨w, n, hn, fun m hm ↦ hφ.injective (subset_antisymm ?_ ?_)⟩
-  exacts [(isMaxInf_iff.1 hm).2 n (isMaxInf_iff.1 hn).1,
-    (isMaxInf_iff.1 hn).2 m (isMaxInf_iff.1 hm).1]
+  exacts [(isStrongestTrueAnswer_range_iff.1 hm).2 n (isStrongestTrueAnswer_range_iff.1 hn).1,
+    (isStrongestTrueAnswer_range_iff.1 hn).2 m (isStrongestTrueAnswer_range_iff.1 hm).1]
 
 /-! ### E-TIAs (§4.1) -/
 

@@ -377,7 +377,7 @@ theorem lesDeux_indirectAlt_tous : lesDeuxVerres ∈ frenchIndirectSrc tousVerre
 
 /-- *les deux V* competes with *tous V* as an indirect alternative with the same assertion. -/
 theorem lesDeux_mem_sameAssertion :
-    lesDeuxVerres ∈ sameAssertion assertionFn frenchIndirectSrc tousVerres :=
+    lesDeuxVerres ∈ sameAssertion frenchIndirectSrc assertionFn tousVerres :=
   ⟨lesDeux_indirectAlt_tous, rfl⟩
 
 /-- The dual presupposition of *les deux V* is strictly stronger than the trivial one of
@@ -389,7 +389,7 @@ theorem presupFn_lesDeux_ssubset_tous : presupFn lesDeuxVerres ⊂ presupFn tous
 /-- *tous V* violates Maximize Presupposition through the indirect alternative *les deux V*,
 licensed by the silent witness. -/
 theorem tous_blocked_via_indirect :
-    Blocked (sameAssertion assertionFn frenchIndirectSrc) presupFn tousVerres :=
+    Blocked (sameAssertion frenchIndirectSrc assertionFn) presupFn tousVerres :=
   ⟨lesDeuxVerres, lesDeux_mem_sameAssertion, presupFn_lesDeux_ssubset_tous⟩
 
 /-- A sentence defined in the domain of three cups presupposes nothing. -/
@@ -404,7 +404,7 @@ private theorem presupFn_eq_univ_of_w3 {t : Tree Cat String} (h : WorldEx.w3 ∈
 anti-duality: in the domain of two the dual presupposition of *les deux V* holds and blocks it,
 and every competitor defined in the domain of three presupposes nothing. -/
 theorem unblocked_tous :
-    unblocked (sameAssertion assertionFn frenchIndirectSrc) presupFn tousVerres = {.w3} := by
+    unblocked (sameAssertion frenchIndirectSrc assertionFn) presupFn tousVerres = {.w3} := by
   ext w
   cases w
   · simp only [Set.mem_singleton_iff, reduceCtorEq, iff_false]

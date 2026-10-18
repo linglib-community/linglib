@@ -33,7 +33,9 @@ operator on the members of `H` true at `w`:
 - `isExhaustivelyResolvable_range_iff`, the presupposition on a topical
   property `P : α → Set W` from short answers to propositions ([xiang-2022]),
   whose Hamblin set is `Set.range P`: a true short answer entailing every
-  true one;
+  true one, the maximally informative member of Fox and Hackl, which on a strictly
+  monotone property is the greatest or least true degree
+  (`isExhaustivelyResolvable_range_iff_isGreatest`);
 - `box H R`, the question under necessity, the image of `H` under
   `SetRel.core R`, whose presupposition at a world is the prejacent's on
   that world's modal base (`isExhaustivelyResolvable_box_iff`);
@@ -230,6 +232,43 @@ theorem isExhaustivelyResolvable_range_iff (P : α → Set W) (w : W) :
     exact ⟨a, hw, fun b hb => hmin ⟨⟨b, rfl⟩, hb⟩⟩
   · rintro ⟨a, hw, hmin⟩
     exact ⟨P a, ⟨⟨a, rfl⟩, hw⟩, by rintro q ⟨⟨b, rfl⟩, hb⟩; exact hmin b hb⟩
+
+/-- The proposition of a short answer is the strongest true answer of a topical property when it
+is true and entails every true one. -/
+theorem isStrongestTrueAnswer_range_iff {P : α → Set W} {a : α} {w : W} :
+    IsStrongestTrueAnswer (Set.range P) w (P a) ↔ w ∈ P a ∧ ∀ b, w ∈ P b → P a ⊆ P b := by
+  rw [IsStrongestTrueAnswer, trueAnswers_range]
+  exact and_congr ⟨fun ⟨_, hb, h⟩ => h ▸ hb, fun h => ⟨a, h, rfl⟩⟩ Set.forall_mem_image
+
+/-- A topical property has a strongest true answer exactly when the proposition of some short
+answer is one. -/
+theorem isExhaustivelyResolvable_range_iff_exists {P : α → Set W} {w : W} :
+    IsExhaustivelyResolvable (Set.range P) w ↔
+      ∃ a, IsStrongestTrueAnswer (Set.range P) w (P a) := by
+  refine ⟨fun ⟨p, hp⟩ => ?_, fun ⟨a, ha⟩ => ⟨_, ha⟩⟩
+  obtain ⟨⟨a, rfl⟩, -⟩ := hp.1
+  exact ⟨a, hp⟩
+
+section LinearOrder
+
+variable [LinearOrder α] {φ : α → Set W} {w : W}
+
+/-- On a strictly antitone topical property Dayal's presupposition holds exactly when some degree
+is the greatest true one. -/
+theorem isExhaustivelyResolvable_range_iff_isGreatest (hφ : StrictAnti φ) :
+    IsExhaustivelyResolvable (Set.range φ) w ↔ ∃ m, IsGreatest {d | w ∈ φ d} m := by
+  rw [isExhaustivelyResolvable_range_iff]
+  exact ⟨fun ⟨x, hxw, hent⟩ => ⟨x, hxw, fun y hy => not_lt.1 fun hxy => (hφ hxy).2 (hent y hy)⟩,
+    fun ⟨m, hm⟩ => ⟨m, hm.1, fun _ hb => hφ.antitone (hm.2 hb)⟩⟩
+
+/-- On a strictly monotone topical property Dayal's presupposition holds exactly when some degree
+is the least true one. -/
+theorem isExhaustivelyResolvable_range_iff_isLeast (hφ : StrictMono φ) :
+    IsExhaustivelyResolvable (Set.range φ) w ↔ ∃ m, IsLeast {d | w ∈ φ d} m :=
+  isExhaustivelyResolvable_range_iff_isGreatest (φ := fun d : αᵒᵈ => φ (OrderDual.ofDual d))
+    fun _ _ h => hφ h
+
+end LinearOrder
 
 end Range
 

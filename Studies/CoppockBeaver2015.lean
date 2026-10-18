@@ -568,8 +568,8 @@ level, although `an_only_blocked` blocks it at expression level, so Maximize Pre
 must compare expressions rather than sentences. -/
 theorem not_blocked_sentence_an_only :
     ¬ Competition.Blocked
-        (Competition.sameAssertion (fun p ↦ {w | p w = 1})
-          (fun _ ↦ {fun w ↦ F w (the (only (π w)))}))
+        (Competition.sameAssertion (fun _ ↦ {fun w ↦ F w (the (only (π w)))})
+          (fun p ↦ {w | p w = 1}))
         (fun p ↦ {w | p w ≠ 0}) (fun w ↦ F w (an (only (π w)))) := by
   rw [← sentence_the_only_eq_an_only]
   rintro ⟨q, ⟨hq, -⟩, hss⟩
