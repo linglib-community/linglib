@@ -192,6 +192,16 @@ theorem termDenot_path_cons (α : Sig.Attr) (p : Path Sig) :
       Option.bind_assoc]
     rfl
 
+/-- The denotation of a path `p ++ q` is the denotation of `q` at the end of `p`. -/
+theorem termDenot_path_append (p q : Path Sig) :
+    I.termDenot g (.path (p ++ q)) u =
+      (I.termDenot g (.path p) u).bind (I.termDenot g (.path q)) := by
+  induction p generalizing u with
+  | nil => rfl
+  | cons α p ih =>
+    rw [List.cons_append, termDenot_path_cons, termDenot_path_cons, Option.bind_assoc]
+    simp only [ih]
+
 /-- In a well-typed interpretation the signature admits every path that is defined, from the
 sort of the entity it starts at to the sort of the entity it reaches. -/
 theorem IsWellTyped.admits (hI : I.IsWellTyped) {p : Path Sig}

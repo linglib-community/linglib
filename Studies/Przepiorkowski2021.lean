@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.HPSG.Subinterpretation
 public import Linglib.Syntax.HPSG.Binding
 public import Linglib.Syntax.HPSG.Construction
+public import Studies.Sag2010
 
 /-!
 # Przepiórkowski (2021): Three improvements to the HPSG model theory
@@ -264,6 +265,15 @@ section Stranded
 
 open HPSG.Construction
 
+/-- A topicalized construct of `Studies/Sag2010`, whose head daughter has one gap. -/
+abbrev oneGap : Interpretation sig Sag2010.Ent :=
+  Sag2010.FGClause.topicalized.construct .austinean .nil
+
+/-- A nonsubject wh-interrogative construct of `Studies/Sag2010` whose head daughter has two gaps,
+so that its mother still has one. -/
+abbrev twoGaps : Interpretation sig Sag2010.Ent :=
+  Sag2010.FGClause.whInterrogative.construct .question .g2
+
 /-- An index on its own, which belongs to no utterance. The paper's stranded structures are
 rooted in `local` objects, which the signature lacks; an index is likewise a component of signs
 that no principle mentions. -/
@@ -275,7 +285,7 @@ that no principle mentions. -/
 /-- The grammar says nothing about indices, so the stranded index is a model of it. An
 exhaustive model of the grammar therefore contains a copy of it, and likewise a copy of the
 construct whose mother still has a gap. -/
-example : strandedIndex.Models grammar ∧ goodTwoGap.Models grammar := by decide
+example : strandedIndex.Models grammar ∧ twoGaps.Models grammar := by decide +kernel
 
 /-- The principles that hold of the root of an utterance, which is a construct whose mother has
 an empty `GAP` list. -/
@@ -302,12 +312,12 @@ theorem isUtterance_generated_iff {U : Type*} {I : Interpretation sig U} (r : U)
   · exact (satisfiesFO_iff_satisfies_of_quantifierFree (hroot d hd)).2
       (Interpretation.satisfies_generated.2 (h.2 d hd))
 
-/-- The filler-head construct with one gap generates an utterance. The construct whose mother
+/-- The topicalized construct with one gap generates an utterance. The construct whose mother
 still has a gap does not, and neither does the stranded index. -/
-example : IsUtterance (goodFillerHead.generated .cxt) ⟨.cxt, .refl⟩ ∧
-    ¬ IsUtterance (goodTwoGap.generated .cxt) ⟨.cxt, .refl⟩ ∧
+example : IsUtterance (oneGap.generated .cxt) ⟨.cxt, .refl⟩ ∧
+    ¬ IsUtterance (twoGaps.generated .cxt) ⟨.cxt, .refl⟩ ∧
     ¬ IsUtterance (strandedIndex.generated ()) ⟨(), .refl⟩ := by
-  simp only [isUtterance_generated_iff]; decide
+  simp only [isUtterance_generated_iff]; decide +kernel
 
 end Stranded
 
@@ -334,7 +344,8 @@ instance : PartialOrder Srt :=
   partialOrderOfCovers (fun σ τ : Srt ↦ σ.parent = some τ) Srt.rank (by decide)
 
 instance : DecidableLE Srt :=
-  decidableLEOfCovers (covers := fun σ τ : Srt ↦ σ.parent = some τ) [.top] (by decide)
+  decidableLEOfRank (covers := fun σ τ : Srt ↦ σ.parent = some τ) (·.parent.toList) Srt.rank
+    (fun _ _ ↦ by simp) (by decide)
 
 /-- A phrase has two indices and two lists, and an index has a gender and the attribute `INT`. -/
 inductive Attr | IDX1 | IDX2 | L1 | L2 | GEND | INT

@@ -39,9 +39,9 @@ namespace SagEtAl2020
 
 open HPSG.RSRL HPSG.Construction
 
-/-- The aux-initial construction requires the head daughter to be an inverted word. -/
+/-- The aux-initial construction requires the head daughter to be an inverted verb. -/
 def auxInitialPrinciple : Constraint sig :=
-  ⟨.auxInitialCxt, .sortAssign (.path [.HDDTR, .INV]) .invPlus⟩
+  ⟨.auxInitialCxt, .sortAssign (.path [.HDDTR, .CAT, .INV]) .plus⟩
 
 /-- The filler-gap grammar extended with the aux-initial construction. -/
 def saiGrammar : Grammar sig := (constraints ++ [auxInitialPrinciple]).map Constraint.toDesc
@@ -58,18 +58,19 @@ theorem sai_cross_classify :
 /-! ### Worked aux-initial constructs -/
 
 /-- The entities of a worked aux-initial construct are the construct, its mother and head
-daughter, the verbal category they share, the head's inversion value and the mother's semantic
-object. An aux-initial construct has no filler daughter. -/
+daughter, the verbal category they share with its inversion value and finite verb form, and the
+mother's semantic object. An aux-initial construct has no filler daughter. -/
 inductive SAIEnt where
   | cxt
   | mtr
   | hd
   | cat
   | inv
+  | vform
   | sem
   deriving DecidableEq, Fintype, Repr
 
-/-- An aux-initial construct of sort `cxtSort` whose head daughter has inversion value
+/-- A finite aux-initial construct of sort `cxtSort` whose head daughter has inversion value
 `invSort` and whose mother has semantic type `semSort`. -/
 @[reducible] def saiConstruct (cxtSort invSort semSort : Srt) : Interpretation sig SAIEnt where
   S := fun
@@ -77,12 +78,14 @@ inductive SAIEnt where
     | .mtr | .hd => .overtExpr
     | .cat => .verb
     | .inv => invSort
+    | .vform => .fin
     | .sem => semSort
   A := fun a u ↦ match a, u with
     | .MTR, .cxt => some .mtr
     | .HDDTR, .cxt => some .hd
     | .CAT, .mtr | .CAT, .hd => some .cat
-    | .INV, .hd => some .inv
+    | .INV, .cat => some .inv
+    | .VFORM, .cat => some .vform
     | .SEM, .mtr => some .sem
     | _, _ => none
   R := noRel
@@ -90,7 +93,7 @@ inductive SAIEnt where
 /-- The worked constructs are well-typed whenever the inversion value and the semantic type
 have sorts of the right kind. -/
 theorem saiConstruct_isWellTyped :
-    ∀ i ∈ [Srt.invPlus, .invMinus], ∀ σ ∈ [Srt.question, .fact, .austinean],
+    ∀ i ∈ [Srt.plus, .minus], ∀ σ ∈ [Srt.question, .fact, .austinean],
       ∀ c ∈ [Srt.polarIntCl, .auxInitialExclCl], (saiConstruct c i σ).IsWellTyped := by
   decide +kernel
 
@@ -98,17 +101,17 @@ theorem saiConstruct_isWellTyped :
 mother is a question: the inversion comes from the aux-initial construction and the semantics
 from the interrogative clausal type, neither stated on the polar interrogative itself. -/
 theorem polarInterrogative_models :
-    (saiConstruct .polarIntCl .invPlus .question).Models saiGrammar ∧
-      ¬ (saiConstruct .polarIntCl .invMinus .question).Models saiGrammar ∧
-      ¬ (saiConstruct .polarIntCl .invPlus .austinean).Models saiGrammar := by
+    (saiConstruct .polarIntCl .plus .question).Models saiGrammar ∧
+      ¬ (saiConstruct .polarIntCl .minus .question).Models saiGrammar ∧
+      ¬ (saiConstruct .polarIntCl .plus .austinean).Models saiGrammar := by
   decide
 
 /-- An aux-initial exclamative satisfies the grammar exactly when its head is inverted and its
 mother is a fact: the same inverted head with the exclamative type's semantics. -/
 theorem auxInitialExclamative_models :
-    (saiConstruct .auxInitialExclCl .invPlus .fact).Models saiGrammar ∧
-      ¬ (saiConstruct .auxInitialExclCl .invMinus .fact).Models saiGrammar ∧
-      ¬ (saiConstruct .auxInitialExclCl .invPlus .question).Models saiGrammar := by
+    (saiConstruct .auxInitialExclCl .plus .fact).Models saiGrammar ∧
+      ¬ (saiConstruct .auxInitialExclCl .minus .fact).Models saiGrammar ∧
+      ¬ (saiConstruct .auxInitialExclCl .plus .question).Models saiGrammar := by
   decide
 
 end SagEtAl2020

@@ -23,14 +23,15 @@ clauses.
 The headed construction gives the mother the category of its head daughter. The filler-head
 construction identifies the filler daughter with the first sign on the head daughter's `GAP`
 list and passes the rest of the list to the mother. Each filler-gap clause adds constraints on
-its daughters, the clause types fix the semantic type of the mother after Ginzburg and Sag, and
-the topicalized, wh-exclamative and the-clause constructions give the head daughter exactly one
-gap. The principle `memberDef` defines list membership, uniquely on lists without cycles.
+the categories of its daughters and on the inversion, independence and verb form of its head,
+the clause types fix the semantic type and verb form of the mother, and the topicalized,
+wh-exclamative and the-clause constructions give the head daughter exactly one gap. The
+principle `memberDef` defines list membership, uniquely on lists without cycles.
 
 ## Main definitions
 
-* `HPSG.Construction.Srt`: the sorts, with the hierarchies of categories, semantic types, lists,
-  signs, constructs and clauses.
+* `HPSG.Construction.Srt`: the sorts, with the hierarchies of categories, verb forms, semantic
+  types, lists, signs, constructs and clauses.
 * `HPSG.Construction.sig`: the signature.
 * `HPSG.Construction.fillerHeadPrinciple`: the filler-head construction.
 * `HPSG.Construction.constraints`: the constructions, each a constraint on one sort.
@@ -44,27 +45,31 @@ gap. The principle `memberDef` defines list membership, uniquely on lists withou
   satisfies the grammar exactly when it satisfies the four constructions it inherits.
 * `HPSG.Construction.satisfies_mtrGap_iff`: in a model of the grammar, the mother of a
   filler-head construct has the `GAP` list that remains of its head daughter's.
+* `HPSG.Construction.satisfies_hdCat_iff`: in a model of the grammar, the head daughter of a
+  headed construct has the features of its mother's category.
 * `HPSG.Construction.not_le_covertExpr`: no daughter of a construct is covert.
 * `HPSG.Construction.models_memberDef_iff`: on lists without cycles, a well-typed interpretation
   models `memberDef` exactly when `member` is list membership.
 
 ## Implementation notes
 
-As in Sag's grammars, a `GAP` list contains signs. Signs are overt or covert, only overt signs
-are daughters of constructs, and a word leaves a covert sign of sort `gap` on its `GAP` list for
-an argument that it does not realize. The features of `SYN` and the index of `SEM` are attributes
-of the sign itself. The filler-head construction identifies the `SYN` value of the filler with
-that of the gap except for `WH` and `REL`, which are not in the signature, so the filler and the
-gap share their `CAT` and `GAP` values, and, in Sag's synopsis of the framework, their index.
-Daughters are attributes named by their role rather than members of a `DTRS` list. `WH`, `REL`, `IC`, `VFORM`, `VAL`,
-`STORE` and compositional semantics are not in the signature, and the semantic type of the
-mother stands in for its meaning. Sag places the topicalized clause below the filler-head
-construct alone and gives its head daughter an austinean meaning, which the mother's meaning
-inherits; here the mother's type is stated.
+As in Sag's grammars, a `GAP` list contains signs. Signs are overt or covert, only overt signs are
+daughters of constructs, and a word leaves a covert sign of sort `gap` on its `GAP` list for an
+argument that it does not realize. The features of `SYN` and the index of `SEM` are attributes of
+the sign itself. The filler-head construction identifies the `SYN` value of the filler with that of
+the gap except for `WH` and `REL`, which are not in the signature, so the filler and the gap share
+their `CAT` and `GAP` values, and, in Sag's synopsis of the framework, their index. Daughters are
+attributes named by their role rather than members of a `DTRS` list. As in Sag's signature, a verbal
+category has a verb form and an independence value and a verb an inversion value; of the features he
+declares, only those that the constructions here mention are in the signature, so `WH`, `REL`,
+`VAL`, `SELECT`, `AUX` and `STORE` are not, and the semantic type of the mother stands in for its
+meaning. Sag places the topicalized clause below the filler-head construct alone and gives its head
+daughter an austinean meaning, which the mother's meaning inherits; here the mother's type is
+stated.
 
-The aux-initial sorts and `INV` are constrained in `Studies/SagEtAl2020`, the coordinate
-construct in `Studies/SagWasowBender2003`, and the island status of the five filler-gap clauses
-is derived in `Studies/Sag2010`.
+The aux-initial construction is stated in `Studies/SagEtAl2020` and the coordinate construction
+in `Studies/SagWasowBender2003`. The worked constructs are in `Studies/Sag2010`, which checks
+the paper's judgments against the grammar and derives the island status of the five clauses.
 
 ## References
 
@@ -89,10 +94,12 @@ inductive Srt
   | top
   -- categories
   | cat | verbal | nonverbal | verb | comp | nominal | noun | prep | adj | adv
+  -- verb forms
+  | vform | presentPart | perfectPart | passivePart | core | fin | inf | base | gerund
+  -- boolean values
+  | boolean | plus | minus
   -- semantic types
   | semType | austinean | question | fact | modifier
-  -- inversion values
-  | invVal | invPlus | invMinus
   -- lists and indices
   | list | elist | nelist | idx
   -- signs
@@ -102,20 +109,23 @@ inductive Srt
   -- clause types
   | coreCl | relativeCl | declarativeCl | interrogativeCl | exclamativeCl
   -- clauses that are headed constructs
-  | topCl | whExclCl | nsWhIntCl | whRelCl | theCl | polarIntCl | auxInitialExclCl
+  | topCl | whExclCl | nsWhIntCl | whRelCl | finWhRelCl | infWhRelCl | theCl | polarIntCl
+  | auxInitialExclCl
   deriving DecidableEq, Fintype, Repr
 
 /-- The immediate supersorts of a sort. Each filler-gap clause other than the topicalized clause
 and each aux-initial clause has two, a headed construct and a clause type. -/
 def Srt.parents : Srt → List Srt
   | .top => []
-  | .cat | .semType | .invVal | .list | .idx | .sign | .construct => [.top]
+  | .cat | .vform | .boolean | .semType | .list | .idx | .sign | .construct => [.top]
   | .verbal | .nonverbal => [.cat]
   | .verb | .comp => [.verbal]
   | .nominal | .adj | .adv => [.nonverbal]
   | .noun | .prep => [.nominal]
+  | .presentPart | .perfectPart | .passivePart | .core | .base | .gerund => [.vform]
+  | .fin | .inf => [.core]
+  | .plus | .minus => [.boolean]
   | .austinean | .question | .fact | .modifier => [.semType]
-  | .invPlus | .invMinus => [.invVal]
   | .elist | .nelist => [.list]
   | .overtExpr | .covertExpr => [.sign]
   | .gap => [.covertExpr]
@@ -129,33 +139,43 @@ def Srt.parents : Srt → List Srt
   | .whExclCl => [.fillerHeadCxt, .exclamativeCl]
   | .nsWhIntCl => [.fillerHeadCxt, .interrogativeCl]
   | .whRelCl => [.fillerHeadCxt, .relativeCl]
+  | .finWhRelCl | .infWhRelCl => [.whRelCl]
   | .polarIntCl => [.auxInitialCxt, .interrogativeCl]
   | .auxInitialExclCl => [.auxInitialCxt, .exclamativeCl]
 
 /-- The length of the longest chain from a sort up to `top`. -/
 def Srt.rank : Srt → ℕ
   | .top => 0
-  | .cat | .semType | .invVal | .list | .idx | .sign | .construct => 1
-  | .verbal | .nonverbal | .austinean | .question | .fact | .modifier | .invPlus | .invMinus
-  | .elist | .nelist | .overtExpr | .covertExpr | .phrasalCxt => 2
-  | .verb | .comp | .nominal | .adj | .adv | .gap | .headedCxt | .clause | .coordCxt => 3
+  | .cat | .vform | .boolean | .semType | .list | .idx | .sign | .construct => 1
+  | .verbal | .nonverbal | .presentPart | .perfectPart | .passivePart | .core | .base | .gerund
+  | .plus | .minus | .austinean | .question | .fact | .modifier | .elist | .nelist | .overtExpr
+  | .covertExpr | .phrasalCxt => 2
+  | .verb | .comp | .nominal | .adj | .adv | .fin | .inf | .gap | .headedCxt | .clause
+  | .coordCxt => 3
   | .noun | .prep | .fillerHeadCxt | .auxInitialCxt | .coreCl | .relativeCl => 4
-  | .declarativeCl | .interrogativeCl | .exclamativeCl | .topCl => 5
-  | .whExclCl | .nsWhIntCl | .whRelCl | .theCl | .polarIntCl | .auxInitialExclCl => 6
+  | .declarativeCl | .interrogativeCl | .exclamativeCl | .topCl | .whRelCl => 5
+  | .whExclCl | .nsWhIntCl | .finWhRelCl | .infWhRelCl | .theCl | .polarIntCl
+  | .auxInitialExclCl => 6
+
+/-- Every immediate supersort of a sort has a lower rank. -/
+theorem Srt.rank_lt_of_mem_parents : ∀ σ : Srt, ∀ τ ∈ σ.parents, τ.rank < σ.rank := by
+  decide +kernel
 
 instance : PartialOrder Srt :=
-  partialOrderOfCovers (fun σ τ : Srt ↦ τ ∈ σ.parents) Srt.rank (by decide)
+  partialOrderOfCovers (fun σ τ : Srt ↦ τ ∈ σ.parents) Srt.rank Srt.rank_lt_of_mem_parents
 
 instance : DecidableLE Srt :=
-  Relation.ReflTransGen.decidable_of_fintype_step (fun σ ↦ σ.parents.toFinset) (by simp)
+  decidableLEOfRank (covers := fun σ τ : Srt ↦ τ ∈ σ.parents) Srt.parents Srt.rank
+    (fun _ _ ↦ Iff.rfl) Srt.rank_lt_of_mem_parents
 
 /-! ### Attributes and the signature -/
 
-/-- The attributes. A construct has a mother and daughters, a sign has a category, a `GAP` list,
-a semantic type, an inversion value and an index, and a nonempty list has a first element and a
-rest. -/
+/-- The attributes. A construct has a mother and daughters. A sign has a category, a `GAP` list,
+a semantic type and an index. A verbal category has a verb form and is independent or not, and a
+verb is inverted or not. A nonempty list has a first element and a rest. -/
 inductive Attr
-  | MTR | HDDTR | FILLERDTR | CONJ1 | CONJ2 | CAT | GAP | SEM | INV | INDEX | FIRST | REST
+  | MTR | HDDTR | FILLERDTR | CONJ1 | CONJ2 | CAT | VFORM | IC | INV | GAP | SEM | INDEX | FIRST
+  | REST
   deriving DecidableEq, Fintype, Repr
 
 /-- The sorts that introduce each attribute, with its value sort there. The mother of a phrasal
@@ -166,9 +186,11 @@ def Attr.decl : Attr → List (Srt × Srt)
   | .FILLERDTR => [(.fillerHeadCxt, .overtExpr)]
   | .CONJ1 | .CONJ2 => [(.coordCxt, .overtExpr)]
   | .CAT => [(.sign, .cat)]
+  | .VFORM => [(.verbal, .vform)]
+  | .IC => [(.verbal, .boolean)]
+  | .INV => [(.verb, .boolean)]
   | .GAP => [(.sign, .list)]
   | .SEM => [(.sign, .semType)]
-  | .INV => [(.sign, .invVal)]
   | .INDEX => [(.sign, .idx)]
   | .FIRST => [(.nelist, .sign)]
   | .REST => [(.nelist, .list)]
@@ -181,11 +203,11 @@ inductive Rel | member
 @[reducible] def sig : Signature Srt := .ofDecl Attr Rel (fun _ ↦ 2) Attr.decl (by decide +kernel)
 
 /-- A nonsubject wh-interrogative construct inherits its mother from the phrasal construct and
-its filler daughter from the filler-head construct, and a coordinate construct has no filler
-daughter. -/
+its filler daughter from the filler-head construct, a coordinate construct has no filler
+daughter, and a complementizer is not inverted or uninverted. -/
 example : sig.approp .nsWhIntCl .MTR = some .overtExpr ∧
     sig.approp .nsWhIntCl .FILLERDTR = some .overtExpr ∧
-    sig.approp .coordCxt .FILLERDTR = none := by decide
+    sig.approp .coordCxt .FILLERDTR = none ∧ sig.approp .comp .INV = none := by decide +kernel
 
 /-- The interpretation of `member` that holds of nothing, for models whose principles do not
 mention the relation. -/
@@ -213,6 +235,11 @@ def fillerHeadPrinciple : Constraint sig where
           (.and (.pathEq (.path [.FILLERDTR, .INDEX]) (.path [.HDDTR, .GAP, .FIRST, .INDEX]))
             (.pathEq (.path [.MTR, .GAP]) (.path [.HDDTR, .GAP, .REST])))))
 
+/-- The core clause construction of [sag-2010]: the mother of a core clause is finite or
+infinitival. -/
+def corePrinciple : Constraint sig :=
+  ⟨.coreCl, .sortAssign (.path [.MTR, .CAT, .VFORM]) .core⟩
+
 /-- The mother of a declarative clause has an austinean semantic type. -/
 def declarativePrinciple : Constraint sig :=
   ⟨.declarativeCl, .sortAssign (.path [.MTR, .SEM]) .austinean⟩
@@ -225,43 +252,68 @@ def interrogativePrinciple : Constraint sig :=
 def exclamativePrinciple : Constraint sig :=
   ⟨.exclamativeCl, .sortAssign (.path [.MTR, .SEM]) .fact⟩
 
-/-- The topicalization construction ([sag-2010] (61)). The filler daughter is nonverbal, the
-head daughter is a projection of a verb with exactly one gap, which excludes the
-complementizer-headed clause that a the-clause allows, and the mother is austinean. -/
+/-- The relative construction ([sag-2010] (91)): the mother of a relative clause is neither
+inverted nor independent. -/
+def relativePrinciple : Constraint sig :=
+  ⟨.relativeCl, .and (.sortAssign (.path [.MTR, .CAT, .INV]) .minus)
+    (.sortAssign (.path [.MTR, .CAT, .IC]) .minus)⟩
+
+/-- The topicalization construction ([sag-2010] (61)). The filler daughter is nonverbal. The head
+daughter is an uninverted, independent, finite projection of a verb, which excludes the
+complementizer-headed clause that a the-clause allows, and it has exactly one gap. The mother is
+austinean. -/
 def topPrinciple : Constraint sig :=
   ⟨.topCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
     (.and (.sortAssign (.path [.HDDTR, .CAT]) .verb)
-      (.and (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)
-        (.sortAssign (.path [.MTR, .SEM]) .austinean)))⟩
+      (.and (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus)
+        (.and (.sortAssign (.path [.HDDTR, .CAT, .IC]) .plus)
+          (.and (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin)
+            (.and (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)
+              (.sortAssign (.path [.MTR, .SEM]) .austinean))))))⟩
 
-/-- The wh-exclamative construction ([sag-2010] (70)). The filler daughter is nonverbal and the
-head daughter has exactly one gap. -/
+/-- The wh-exclamative construction ([sag-2010] (70)). The filler daughter is nonverbal, and the
+head daughter is uninverted and finite and has exactly one gap. -/
 def whExclPrinciple : Constraint sig :=
   ⟨.whExclCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
-    (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)⟩
+    (.and (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus)
+      (.and (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin)
+        (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)))⟩
 
-/-- The nonsubject wh-interrogative construction ([sag-2010] (80)) requires a nonverbal filler
-daughter. -/
+/-- The nonsubject wh-interrogative construction ([sag-2010] (80)). The filler daughter is
+nonverbal, and the head daughter is inverted exactly when it is independent. -/
 def nsWhIntPrinciple : Constraint sig :=
-  ⟨.nsWhIntCl, .sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal⟩
+  ⟨.nsWhIntCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
+    (.pathEq (.path [.HDDTR, .CAT, .INV]) (.path [.HDDTR, .CAT, .IC]))⟩
 
-/-- The wh-relative construction ([sag-2010] (90), (92)). Its finite and infinitival subtypes
-require a nominal and a prepositional filler daughter, so the filler daughter is nominal, and
-the mother has the semantic type of a modifier. -/
+/-- The wh-relative construction ([sag-2010] (90)) gives the mother the semantic type of a
+modifier. -/
 def whRelPrinciple : Constraint sig :=
-  ⟨.whRelCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nominal)
-    (.sortAssign (.path [.MTR, .SEM]) .modifier)⟩
+  ⟨.whRelCl, .sortAssign (.path [.MTR, .SEM]) .modifier⟩
 
-/-- The the-clause construction ([sag-2010] (108)). The filler daughter is nonverbal and the head
-daughter has exactly one gap. -/
+/-- The finite wh-relative construction ([sag-2010] (92)). The mother is finite and the filler
+daughter nominal, a noun phrase or a prepositional phrase. -/
+def finWhRelPrinciple : Constraint sig :=
+  ⟨.finWhRelCl, .and (.sortAssign (.path [.MTR, .CAT, .VFORM]) .fin)
+    (.sortAssign (.path [.FILLERDTR, .CAT]) .nominal)⟩
+
+/-- The infinitival wh-relative construction of [sag-2010]. The filler daughter is a
+prepositional phrase and the head daughter is infinitival. -/
+def infWhRelPrinciple : Constraint sig :=
+  ⟨.infWhRelCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .prep)
+    (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .inf)⟩
+
+/-- The the-clause construction ([sag-2010] (108)). The filler daughter is nonverbal, and the
+head daughter is finite and has exactly one gap. -/
 def thePrinciple : Constraint sig :=
   ⟨.theCl, .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
-    (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)⟩
+    (.and (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin)
+      (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist))⟩
 
 /-- The constructions of the fragment. -/
 def constraints : List (Constraint sig) :=
-  [headedPrinciple, fillerHeadPrinciple, declarativePrinciple, interrogativePrinciple,
-    exclamativePrinciple, topPrinciple, whExclPrinciple, nsWhIntPrinciple, whRelPrinciple,
+  [headedPrinciple, fillerHeadPrinciple, corePrinciple, declarativePrinciple,
+    interrogativePrinciple, exclamativePrinciple, relativePrinciple, topPrinciple,
+    whExclPrinciple, nsWhIntPrinciple, whRelPrinciple, finWhRelPrinciple, infWhRelPrinciple,
     thePrinciple]
 
 /-- The grammar of the fragment. -/
@@ -279,30 +331,39 @@ example : sig.Admits .fillerHeadCxt [.HDDTR, .GAP, .FIRST, .INDEX] .idx ∧
 
 /-! ### Inheritance -/
 
-/-- Each filler-gap clause inherits the headed and filler-head constructions, and the clause
-type of every clause but the topicalized one, and has a construction of its own. -/
+/-- Each filler-gap clause inherits the headed and filler-head constructions and the
+constructions on the clause types above it, and has a construction of its own. A finite
+wh-relative inherits five constructions. -/
 theorem map_sort_inherited_fillerGap :
     (Constraint.inherited constraints .topCl).map (·.sort) =
         [.headedCxt, .fillerHeadCxt, .topCl] ∧
       (Constraint.inherited constraints .whExclCl).map (·.sort) =
-        [.headedCxt, .fillerHeadCxt, .exclamativeCl, .whExclCl] ∧
+        [.headedCxt, .fillerHeadCxt, .coreCl, .exclamativeCl, .whExclCl] ∧
       (Constraint.inherited constraints .nsWhIntCl).map (·.sort) =
-        [.headedCxt, .fillerHeadCxt, .interrogativeCl, .nsWhIntCl] ∧
-      (Constraint.inherited constraints .whRelCl).map (·.sort) =
-        [.headedCxt, .fillerHeadCxt, .whRelCl] ∧
+        [.headedCxt, .fillerHeadCxt, .coreCl, .interrogativeCl, .nsWhIntCl] ∧
+      (Constraint.inherited constraints .finWhRelCl).map (·.sort) =
+        [.headedCxt, .fillerHeadCxt, .relativeCl, .whRelCl, .finWhRelCl] ∧
+      (Constraint.inherited constraints .infWhRelCl).map (·.sort) =
+        [.headedCxt, .fillerHeadCxt, .relativeCl, .whRelCl, .infWhRelCl] ∧
       (Constraint.inherited constraints .theCl).map (·.sort) =
-        [.headedCxt, .fillerHeadCxt, .declarativeCl, .theCl] := by
-  decide
+        [.headedCxt, .fillerHeadCxt, .coreCl, .declarativeCl, .theCl] := by
+  decide +kernel
 
 variable {U : Type*} {I : Interpretation sig U} {g : ℕ → U} {u : U}
 
+/-- In a model of the grammar, every entity satisfies each construction on a sort above its
+own. -/
+theorem satisfies_body (hI : I.Models grammar) {c : Constraint sig} (hc : c ∈ constraints)
+    (hu : I.S u ≤ c.sort) : I.Satisfies (fun _ ↦ u) u c.body :=
+  hI.satisfies_body (List.mem_map_of_mem hc) hu
+
 /-- An entity of the nonsubject wh-interrogative sort satisfies the grammar exactly when it
-satisfies the headed, filler-head, interrogative and nonsubject wh-interrogative constructions.
-Only the last is stated on its sort. -/
+satisfies the headed, filler-head, core clause, interrogative and nonsubject wh-interrogative
+constructions. Only the last is stated on its sort. -/
 theorem forall_satisfies_grammar_iff_of_nsWhIntCl (hu : I.S u = .nsWhIntCl) :
     (∀ d ∈ grammar, I.Satisfies g u d) ↔
-      ∀ c ∈ [headedPrinciple, fillerHeadPrinciple, interrogativePrinciple, nsWhIntPrinciple],
-        I.Satisfies g u c.body := by
+      ∀ c ∈ [headedPrinciple, fillerHeadPrinciple, corePrinciple, interrogativePrinciple,
+        nsWhIntPrinciple], I.Satisfies g u c.body := by
   rw [grammar, Interpretation.forall_satisfies_map_toDesc_iff, hu]
   rfl
 
@@ -314,13 +375,38 @@ theorem satisfies_mtrGap_iff (hI : I.Models grammar) (hu : I.S u ≤ .fillerHead
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.MTR, .GAP]) σ) ↔
       I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) σ) := by
   obtain ⟨-, -, -, -, v, hv, hv'⟩ :=
-    hI.satisfies_body (c := fillerHeadPrinciple) (List.mem_map_of_mem (by simp [constraints])) hu
+    satisfies_body hI (c := fillerHeadPrinciple) (by simp [constraints]) hu
   simp only [Interpretation.satisfies_sortAssign]
   constructor <;> rintro ⟨w, hw, hle⟩
   · obtain rfl : w = v := Option.mem_unique hw hv
     exact ⟨w, hv', hle⟩
   · obtain rfl : w = v := Option.mem_unique hw hv'
     exact ⟨w, hv, hle⟩
+
+/-- In a model of the grammar, the mother and the head daughter of a headed construct share
+their category, so a feature of the mother's category has the same value on the head's. -/
+theorem satisfies_hdCat_iff (hI : I.Models grammar) (hu : I.S u ≤ .headedCxt) (p : Path sig)
+    (σ : Srt) :
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path (.MTR :: .CAT :: p)) σ) ↔
+      I.Satisfies (fun _ ↦ u) u (.sortAssign (.path (.HDDTR :: .CAT :: p)) σ) := by
+  obtain ⟨v, hv, hv'⟩ := satisfies_body hI (c := headedPrinciple) (by simp [constraints]) hu
+  simp only [Interpretation.satisfies_sortAssign]
+  rw [show (Attr.MTR :: .CAT :: p : Path sig) = [.MTR, .CAT] ++ p from rfl,
+    show (Attr.HDDTR :: .CAT :: p : Path sig) = [.HDDTR, .CAT] ++ p from rfl,
+    Interpretation.termDenot_path_append, Interpretation.termDenot_path_append,
+    Option.mem_def.1 hv, Option.mem_def.1 hv']
+
+/-- In a well-typed interpretation, an entity on which an attribute is defined has a sort below
+one that introduces the attribute. A category with an inversion value is therefore a verb. -/
+theorem satisfies_le_of_mem_termDenot (hI : I.IsWellTyped) {p : Path sig} {α : Attr} {σ : Srt}
+    (hσ : ∀ d ∈ Attr.decl α, d.1 ≤ σ) {v : U}
+    (hv : v ∈ I.termDenot g (.path (p ++ [α])) u) :
+    I.Satisfies g u (.sortAssign (.path p) σ) := by
+  rw [Interpretation.termDenot_path_append, Option.mem_def, Option.bind_eq_some_iff] at hv
+  obtain ⟨w, hw, hα⟩ := hv
+  obtain ⟨τ, hτ, -⟩ := hI α w v (by simpa [Term.path, Interpretation.termDenot] using hα)
+  obtain ⟨d, hd, hle, -⟩ := exists_mem_decl_of_appropOfDecl_eq_some _ hτ
+  exact ⟨w, hw, hle.trans (hσ d hd)⟩
 
 /-- No daughter or mother of a construct is covert in a well-typed interpretation, since the
 signs of a phrasal construct are overt expressions [sag-2012]. A gap, which stands on a `GAP`
@@ -333,184 +419,6 @@ theorem not_le_covertExpr (hI : I.IsWellTyped) {α : sig.Attr}
   rw [(by decide : ∀ α ∈ ([.MTR, .HDDTR, .FILLERDTR, .CONJ1, .CONJ2] : List Attr),
     ∀ d ∈ Attr.decl α, d.2 = .overtExpr) α hα d hd] at hle
   exact (by decide +kernel : ∀ σ : Srt, σ ≤ .overtExpr → ¬ σ ≤ .covertExpr) _ hle
-
-/-! ### Models of filler-head constructs -/
-
-/-- The entities of the worked constructs are the construct, its mother, head daughter and
-filler daughter, four categories, two list cells and the empty list, the category of a second
-gap, a semantic object, and two gaps with their indices. -/
-inductive Ent
-  | cxt | mtr | hd | fl | npCat | vpCat | adjCat | compCat | g1 | g2 | nil | c2 | sem
-  | gp1 | gp2 | ix1 | ix2
-  deriving DecidableEq, Fintype, Repr
-
-/-- The default sort of each entity. A model overrides the sort of the construct and, where its
-clause type requires, of the semantic object and of the second gap's category. -/
-def baseS : Ent → Srt
-  | .cxt => .fillerHeadCxt
-  | .mtr | .hd | .fl => .overtExpr
-  | .npCat | .c2 => .noun
-  | .vpCat => .verb
-  | .adjCat => .adj
-  | .compCat => .comp
-  | .g1 | .g2 => .nelist
-  | .nil => .elist
-  | .sem => .austinean
-  | .gp1 | .gp2 => .gap
-  | .ix1 | .ix2 => .idx
-
-/-- The attribute values of a construct with one gap. The head daughter and the mother are
-verbal, the head daughter has the `GAP` list `⟨gp1⟩`, the filler is a noun phrase that shares its
-category, its empty `GAP` list and its index with `gp1`, and the mother's `GAP` list is empty. -/
-def singleGapA : Attr → Ent → Option Ent
-  | .MTR, .cxt => some .mtr
-  | .HDDTR, .cxt => some .hd
-  | .FILLERDTR, .cxt => some .fl
-  | .CAT, .fl | .CAT, .gp1 => some .npCat
-  | .INDEX, .fl | .INDEX, .gp1 => some .ix1
-  | .CAT, .hd | .CAT, .mtr => some .vpCat
-  | .GAP, .hd => some .g1
-  | .FIRST, .g1 => some .gp1
-  | .REST, .g1 | .GAP, .mtr | .GAP, .fl | .GAP, .gp1 => some .nil
-  | .SEM, .mtr => some .sem
-  | _, _ => none
-
-/-- The attribute values of a construct whose head daughter has the `GAP` list `⟨gp1, gp2⟩`. The
-filler discharges `gp1`, and the mother's `GAP` list is the rest, `⟨gp2⟩`. -/
-def twoGapA : Attr → Ent → Option Ent
-  | .MTR, .cxt => some .mtr
-  | .HDDTR, .cxt => some .hd
-  | .FILLERDTR, .cxt => some .fl
-  | .CAT, .fl | .CAT, .gp1 => some .npCat
-  | .INDEX, .fl | .INDEX, .gp1 => some .ix1
-  | .CAT, .hd | .CAT, .mtr => some .vpCat
-  | .GAP, .hd => some .g1
-  | .FIRST, .g1 => some .gp1
-  | .REST, .g1 | .GAP, .mtr => some .g2
-  | .FIRST, .g2 => some .gp2
-  | .CAT, .gp2 => some .c2
-  | .INDEX, .gp2 => some .ix2
-  | .REST, .g2 | .GAP, .fl | .GAP, .gp1 | .GAP, .gp2 => some .nil
-  | .SEM, .mtr => some .sem
-  | _, _ => none
-
-/-- The model of a construct of sort `cxtSort` whose mother has semantic type `semSort`, with
-the attribute values `a`. -/
-@[reducible] def singleConstruct (cxtSort semSort : Srt) (a : Attr → Ent → Option Ent) :
-    Interpretation sig Ent where
-  S
-    | .cxt => cxtSort
-    | .sem => semSort
-    | u => baseS u
-  A := a
-  R := noRel
-
-/-- The model of a two-gap construct of sort `cxtSort` whose mother has semantic type `semSort`
-and whose second gap has category `c2Sort`. -/
-@[reducible] def twoGapConstruct (cxtSort semSort c2Sort : Srt) : Interpretation sig Ent where
-  S
-    | .cxt => cxtSort
-    | .sem => semSort
-    | .c2 => c2Sort
-    | u => baseS u
-  A := twoGapA
-  R := noRel
-
-/-- A well-formed filler-head construct with one gap. -/
-abbrev goodFillerHead : Interpretation sig Ent :=
-  singleConstruct .fillerHeadCxt .austinean singleGapA
-
-example : goodFillerHead.Models grammar := by decide +kernel
-
-/-- A filler-head construct whose mother is a noun phrase although its head daughter is verbal.
-It violates the headed construction. -/
-abbrev mtrCatMismatch : Interpretation sig Ent :=
-  singleConstruct .fillerHeadCxt .austinean fun
-    | .CAT, .mtr => some .npCat
-    | a, u => singleGapA a u
-
-example : mtrCatMismatch.Models [fillerHeadPrinciple] ∧
-    ¬ mtrCatMismatch.Models [headedPrinciple] := by decide
-
-/-- A filler-head construct whose filler is an adjective phrase although the gap is a noun
-phrase, so the identity of their categories fails. -/
-abbrev gapMismatch : Interpretation sig Ent :=
-  singleConstruct .fillerHeadCxt .austinean fun
-    | .CAT, .fl => some .adjCat
-    | a, u => singleGapA a u
-
-example : ¬ gapMismatch.Models [fillerHeadPrinciple] := by decide
-
-/-- A filler-head construct whose filler and gap agree in category but differ in index. -/
-abbrev indexMismatch : Interpretation sig Ent :=
-  singleConstruct .fillerHeadCxt .austinean fun
-    | .INDEX, .fl => some .ix2
-    | a, u => singleGapA a u
-
-example : ¬ indexMismatch.Models [fillerHeadPrinciple] := by decide
-
-/-- A filler-head construct whose filler has a `GAP` list of its own, which the gap it fills does
-not share. -/
-abbrev fillerGapMismatch : Interpretation sig Ent :=
-  singleConstruct .fillerHeadCxt .austinean fun
-    | .GAP, .fl => some .g1
-    | a, u => singleGapA a u
-
-example : ¬ fillerGapMismatch.Models [fillerHeadPrinciple] := by decide
-
-/-- A filler-head construct whose head daughter has two gaps. The second gap passes to the
-mother. -/
-abbrev goodTwoGap : Interpretation sig Ent :=
-  twoGapConstruct .fillerHeadCxt .austinean .noun
-
-example : goodTwoGap.Models grammar := by decide +kernel
-
-/-- A well-formed nonsubject wh-interrogative construct. -/
-abbrev goodNsWhInt : Interpretation sig Ent :=
-  singleConstruct .nsWhIntCl .question singleGapA
-
-example : goodNsWhInt.Models grammar := by decide +kernel
-
-/-- A nonsubject wh-interrogative construct whose mother has an austinean semantic type. It
-violates the constraint that it inherits from the interrogative clause. -/
-abbrev nsWhIntWrongSem : Interpretation sig Ent :=
-  singleConstruct .nsWhIntCl .austinean singleGapA
-
-example : nsWhIntWrongSem.Models [fillerHeadPrinciple] ∧
-    ¬ nsWhIntWrongSem.Models [interrogativePrinciple] := by decide
-
-/-- A wh-relative construct whose filler is an adjective phrase that matches the gap. It
-satisfies the filler-head construction but not the requirement of a nominal filler. -/
-abbrev whRelAdjFiller : Interpretation sig Ent :=
-  singleConstruct .whRelCl .modifier fun
-    | .CAT, .fl | .CAT, .gp1 => some .adjCat
-    | a, u => singleGapA a u
-
-example : whRelAdjFiller.Models [fillerHeadPrinciple] ∧
-    ¬ whRelAdjFiller.Models [whRelPrinciple] := by decide
-
-/-- A the-clause whose head daughter is headed by a complementizer. -/
-abbrev goodTheCl : Interpretation sig Ent :=
-  singleConstruct .theCl .austinean fun
-    | .CAT, .hd | .CAT, .mtr => some .compCat
-    | a, u => singleGapA a u
-
-example : goodTheCl.Models grammar := by decide +kernel
-
-/-- A the-clause whose head daughter has two gaps. The the-clause construction gives the head
-daughter one gap, so the grammar rejects it, as it accepts the same construct of the
-filler-head sort. -/
-example : ¬ (twoGapConstruct .theCl .austinean .noun).Models grammar := by decide +kernel
-
-/-- A topicalized clause whose head daughter is headed by a complementizer. The head is verbal,
-as the filler-head construction requires, but it is not a projection of a verb. -/
-abbrev topClCompHead : Interpretation sig Ent :=
-  singleConstruct .topCl .austinean fun
-    | .CAT, .hd | .CAT, .mtr => some .compCat
-    | a, u => singleGapA a u
-
-example : topClCompHead.Models [fillerHeadPrinciple] ∧ ¬ topClCompHead.Models [topPrinciple] := by
-  decide
 
 /-! ### The `GAP` list as a set
 
@@ -615,95 +523,5 @@ theorem models_memberDef_iff (hI : I.IsWellTyped)
     rw [hu x hx l hl, ← and_or_listMem_iff hI]
     exact and_congr_right fun _ ↦ or_congr_right <| exists_congr fun y ↦
       and_congr_right fun hy ↦ ih y hy (hl.tail ⟨_, hy⟩)
-
-/-- The entities of a cyclic list are its one cell, whose rest is the cell itself, the cell's
-first element, and that element's index. -/
-inductive LoopEnt | cell | elem | ix
-  deriving DecidableEq, Fintype, Repr
-
-/-- The cyclic list with `member` interpreted as `R`. -/
-@[reducible] def loopList (R : LoopEnt → LoopEnt → Prop) : Interpretation sig LoopEnt where
-  S
-    | .cell => .nelist
-    | .elem => .overtExpr
-    | .ix => .idx
-  A
-    | .FIRST, .cell => some .elem
-    | .REST, .cell => some .cell
-    | .INDEX, .elem => some .ix
-    | _, _ => none
-  R _ xs := R (xs 0) (xs 1)
-
-instance (R : LoopEnt → LoopEnt → Prop) [DecidableRel R] (ρ : sig.Rel) :
-    DecidablePred ((loopList R).R ρ) := fun xs ↦ inferInstanceAs (Decidable (R (xs 0) (xs 1)))
-
-/-- On a cyclic list `memberDef` does not determine `member`. It holds both when the index of the
-first element is a member of the list and when it is not, and the index is not an element of the
-list. -/
-example : (loopList fun x l ↦ x = .elem ∧ l = .cell).Models [memberDef] ∧
-    (loopList fun x l ↦ (x = .elem ∨ x = .ix) ∧ l = .cell).Models [memberDef] ∧
-    ¬ ListMem (loopList fun _ _ ↦ True) .ix .cell := by
-  decide +kernel
-
-/-- The attribute values of a two-gap construct whose filler matches the second element of the
-head daughter's `GAP` list in category and index. -/
-def secondGapA : Attr → Ent → Option Ent
-  | .CAT, .fl => some .c2
-  | .INDEX, .fl => some .ix2
-  | a, u => twoGapA a u
-
-/-- The two-gap construct whose prepositional filler matches the second gap, with `member`
-uninterpreted. -/
-@[reducible] def secondGapBase : Interpretation sig Ent where
-  S
-    | .c2 => .prep
-    | u => baseS u
-  A := secondGapA
-  R := noRel
-
-/-- The same construct with `member` interpreted as list membership. -/
-@[reducible] def gapSetModel : Interpretation sig Ent :=
-  { secondGapBase with R := fun _ xs ↦ ListMem secondGapBase (xs 0) (xs 1) }
-
-instance (ρ : sig.Rel) : DecidablePred (gapSetModel.R ρ) := fun xs ↦
-  inferInstanceAs (Decidable (ListMem secondGapBase (xs 0) (xs 1)))
-
-/-- Some member of the head daughter's `GAP` list shares its category and its index with the
-filler. -/
-example : gapSetModel.Satisfies (fun _ ↦ .cxt) .cxt
-    (.ex 0 (.ex 1 (.and (.pathEq (.var 1) (.path [.HDDTR, .GAP]))
-      (.and (.rel .member ![0, 1])
-        (.and (.pathEq (.feat (.var 0) .CAT) (.path [.FILLERDTR, .CAT]))
-          (.pathEq (.feat (.var 0) .INDEX) (.path [.FILLERDTR, .INDEX]))))))) := by
-  decide +kernel
-
-/-- The construct models `memberDef`. -/
-example : gapSetModel.Models [memberDef] :=
-  models_memberDef_of_forall (by decide +kernel) fun _ _ _ _ _ ↦ Iff.rfl
-
-/-- The same construct violates the filler-head construction, which looks only at the first
-element of the list. -/
-example : ¬ gapSetModel.Models [fillerHeadPrinciple] := by decide
-
-/-! ### Typing of the models
-
-Every model above is well-typed, so a model that a principle rejects fails that principle and
-not the appropriateness conditions. None is totally well-typed, since each interprets only the
-attributes that the principles mention. -/
-
-/-- The worked models are well-typed. -/
-theorem isWellTyped_models :
-    goodFillerHead.IsWellTyped ∧ mtrCatMismatch.IsWellTyped ∧ gapMismatch.IsWellTyped ∧
-      indexMismatch.IsWellTyped ∧ fillerGapMismatch.IsWellTyped ∧ goodTwoGap.IsWellTyped ∧
-      goodNsWhInt.IsWellTyped ∧ nsWhIntWrongSem.IsWellTyped ∧ whRelAdjFiller.IsWellTyped ∧
-      goodTheCl.IsWellTyped ∧ topClCompHead.IsWellTyped ∧ gapSetModel.IsWellTyped := by
-  decide +kernel
-
-example : ¬ goodFillerHead.IsTotallyWellTyped := by decide
-
-/-- A model whose `GAP` list contains a category in place of a sign is not well-typed. -/
-example : ¬ (singleConstruct .fillerHeadCxt .austinean fun
-    | .FIRST, .g1 => some .npCat
-    | a, u => singleGapA a u).IsWellTyped := by decide
 
 end HPSG.Construction
