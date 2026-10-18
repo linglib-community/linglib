@@ -31,7 +31,7 @@ constituent question rejects *do* altogether.
 ## Main definitions
 
 * `Clause`, `AffixHopping`, `DoSupport`, `EmphaticDo`: the auxiliary system of section 2.
-* `polarityFocus`: F-marking of Σ, with the polarity alternatives of the proposition.
+* `polarityFocus`: an F-marked Σ applied to the proposition, with its polarity alternatives.
 * `existentialClosure`, `Given`: Schwarzschild's existential F-closure and Givenness.
 * `DirectlyAnswersPolar`: the hypothesis (112) on the strategy a contrastive topic indicates.
 * `Row`, `rows`: the paper's judgments on the two sentence types across clause types.
@@ -154,27 +154,35 @@ theorem emphaticDo_sigma {c : Clause} (h : EmphaticDo c) : ∃ f, c.sigma = some
 
 variable {W : Type*}
 
-/-- F-marking Σ pairs the proposition of the clause with the alternatives obtained by applying
-each value of Σ, affirmation and negation, to it (73), its polarity alternatives. -/
+/-- Polarity focus is an affirmative Σ, F-marked, applied to the proposition of the clause, so
+that each value of Σ, affirmation and negation, applies to it (73). -/
 def polarityFocus (p : Set W) : WithAlternatives (Set W) :=
-  ⟨p, MulAction.orbit Polarity p⟩
+  WithAlternatives.map₂ (· • ·) ((WithAlternatives.unfeatured Polarity.positive).mark .focused)
+    (WithAlternatives.unfeatured p)
 
 @[simp] theorem polarityFocus_ordinary (p : Set W) : (polarityFocus p).ordinary = p := rfl
+
+/-- The alternatives of polarity focus are the orbit of the proposition under the polarity
+group, its polarity alternatives. -/
+theorem polarityFocus_alternatives_eq_orbit (p : Set W) :
+    (polarityFocus p).alternatives = MulAction.orbit Polarity p := by
+  simp [polarityFocus, Set.image2_singleton_right, MulAction.orbit]
 
 /-- The alternatives of polarity focus are the proposition and its negation. -/
 theorem polarityFocus_alternatives (p : Set W) :
     (polarityFocus p).alternatives = {p, pᶜ} :=
-  Polarity.orbit_eq_pair_compl p
+  (polarityFocus_alternatives_eq_orbit p).trans (Polarity.orbit_eq_pair_compl p)
 
 /-- Polarity focus is well formed, since the proposition is among its alternatives. -/
 theorem polarityFocus_wellFormed (p : Set W) : (polarityFocus p).WellFormed :=
-  MulAction.mem_orbit_self p
+  ((WithAlternatives.WellFormed.unfeatured _).mark _).map₂
+    (WithAlternatives.WellFormed.unfeatured _)
 
 /-- The alternative set of an emphatic *do* sentence is the meaning of the polar question it
 answers (section 4.1). -/
 theorem polarityFocus_alternatives_eq_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     (polarityFocus p).alternatives = (Question.polar p).alt :=
-  (Question.alt_polar_eq_orbit hne hnu).symm
+  (polarityFocus_alternatives_eq_orbit p).trans (Question.alt_polar_eq_orbit hne hnu).symm
 
 /-- By (59) and (60), a context that evokes the polar question admits the polarity focus of an
 answer to it. -/

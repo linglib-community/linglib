@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Rooth1992
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Focus.Control
+public import Linglib.Semantics.Focus.Marking
 public import Linglib.Semantics.Focus.Particles
 
 /-!
@@ -37,7 +38,9 @@ antecedent is a `Focus.Antecedent`.
   distinct propositions; the quiz model assigns each person a grade, acing entailing passing,
   with groups as finite sets of people.
 * The rows carry the paper's examples with the truth values of the introduction scenario and
-  the question-answer judgments, which the theorems derive.
+  the question-answer judgments, which the theorems derive. A row's focus position marks the
+  arguments of its predication, and its focus semantic value is their composition
+  (`WithAlternatives.map₂`).
 * *Only* is the substrate's exclusive assertion on the identity scale,
   `Focus.Particles.atMost (· = ·)`, which is (4b) with the equation reversed. Footnote 2 leaves
   open whether the prejacent belongs in the presupposition or the assertion, and suggests that
@@ -329,10 +332,14 @@ inductive FocusSite where
   | onSubject
   deriving DecidableEq, Repr
 
-/-- The focus semantic value of the main clause under each placement of focus. -/
-def mainClause : FocusSite → Set (Set (Set (E × E)))
-  | .onObject => ((fun y ↦ beats she y) <$> focused me).alternatives
-  | .onSubject => ((fun x ↦ beats x me) <$> focused she).alternatives
+/-- The marks a placement of focus puts on the subject and the object. -/
+def FocusSite.marks : FocusSite → Mark × Mark
+  | .onObject => (.unfeatured, .focused)
+  | .onSubject => (.focused, .unfeatured)
+
+/-- The focus semantic value of the main clause under a placement of focus. -/
+def mainClause (f : FocusSite) : Set (Set (Set (E × E))) :=
+  (map₂ beats ((unfeatured she).mark f.marks.1) ((unfeatured me).mark f.marks.2)).alternatives
 
 /-- The *than*-clause is an antecedent for the focus in the main clause exactly when the
 correlate is the focused phrase, so each reading survives under one placement of focus (66). -/
@@ -341,7 +348,8 @@ theorem ellipsis_filter (hsm : sue ≠ me) (hss : sue ≠ she) (r : Correlate) (
         (mainClause she me f) ↔
       (r = .object ↔ f = .onObject) := by
   cases r <;> cases f <;>
-    simp only [Antecedent.Resolves, thanClause, mainClause, alternatives_map_focused]
+    simp only [Antecedent.Resolves, thanClause, mainClause, FocusSite.marks,
+      alternatives_map₂_focused_unfeatured, alternatives_map₂_unfeatured_focused]
   · exact iff_of_true ⟨⟨sue, rfl⟩, fun h ↦ hsm (Prod.mk.inj (atom_injective h)).2⟩ (by decide)
   · exact iff_of_false (fun ⟨⟨_, hx⟩, _⟩ ↦ hsm (Prod.mk.inj (atom_injective hx)).2.symm)
       (by decide)
@@ -369,10 +377,17 @@ inductive OnlyFocus where
   | sue
   deriving DecidableEq, Repr
 
-/-- The domain of *only* a focus position constrains, over the introduction scenario. -/
-def OnlyFocus.domain : OnlyFocus → Set (Set (Set (Person × Person × Person)))
-  | .bill => Set.range fun y ↦ intro Person.mary y .sue
-  | .sue => Set.range fun z ↦ intro Person.mary .bill z
+/-- The marks a focus position puts on the object and the goal of *Mary introduced Bill to
+Sue*. -/
+def OnlyFocus.marks : OnlyFocus → Mark × Mark
+  | .bill => (.focused, .unfeatured)
+  | .sue => (.unfeatured, .focused)
+
+/-- The domain of *only* a focus position constrains, over the introduction scenario, is the
+focus semantic value of the VP. -/
+def OnlyFocus.domain (f : OnlyFocus) : Set (Set (Set (Person × Person × Person))) :=
+  (map₂ (intro Person.mary) ((unfeatured Person.bill).mark f.marks.1)
+    ((unfeatured Person.sue).mark f.marks.2)).alternatives
 
 /-- The focus position and the truth value an *only* row reports. -/
 def onlyRow (r : Datum) : Option (OnlyFocus × Bool) := do
@@ -391,9 +406,11 @@ theorem only_rows : ∀ d ∈ onlyData, (d.2 = true ↔
   intro d hd
   rw [show onlyData = [(.bill, false), (.sue, true)] by decide] at hd
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hd
-  rcases hd with rfl | rfl
+  rcases hd with rfl | rfl <;>
+    simp only [OnlyFocus.domain, OnlyFocus.marks, alternatives_map₂_focused_unfeatured,
+      alternatives_map₂_unfeatured_focused]
   · exact ⟨fun h ↦ absurd h Bool.false_ne_true, fun h ↦ absurd h (three_a _ _ _ _ (by decide))⟩
-  · exact ⟨fun _ ↦ three_b _ _ _ _ (by decide), fun _ ↦ rfl⟩
+  · exact ⟨fun _ ↦ three_b _ _ _ _ (by decide), fun _ ↦ trivial⟩
 
 /-- The questions of (23). -/
 inductive Q where
@@ -412,10 +429,16 @@ inductive AnswerFocus where
   | bill
   deriving DecidableEq, Repr
 
+/-- The marks a focus position puts on the subject and the object of *Mary cut Bill down to
+size*. -/
+def AnswerFocus.marks : AnswerFocus → Mark × Mark
+  | .mary => (.focused, .unfeatured)
+  | .bill => (.unfeatured, .focused)
+
 /-- The focus semantic value of an answer. -/
-def AnswerFocus.value : AnswerFocus → Set (Set (Set (Person × Person)))
-  | .mary => Set.range fun x ↦ cut x Person.bill
-  | .bill => Set.range fun y ↦ cut Person.mary y
+def AnswerFocus.value (f : AnswerFocus) : Set (Set (Set (Person × Person))) :=
+  (map₂ cut ((unfeatured Person.mary).mark f.marks.1)
+    ((unfeatured Person.bill).mark f.marks.2)).alternatives
 
 /-- The question, the answer's focus position, and the judgment of a question-answer row. -/
 def qaRow (r : Datum) : Option (Q × AnswerFocus × Bool) := do
@@ -434,12 +457,14 @@ theorem qa_rows : ∀ d ∈ qaData,
   rw [show qaData = [(.whoCutBill, .mary, true), (.whoCutBill, .bill, false),
     (.whoDidMaryCut, .bill, true), (.whoDidMaryCut, .mary, false)] by decide] at hd
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hd
-  rcases hd with rfl | rfl | rfl | rfl
-  · exact ⟨fun _ ↦ Set.image_subset_range _ _, fun _ ↦ rfl⟩
+  rcases hd with rfl | rfl | rfl | rfl <;>
+    simp only [AnswerFocus.value, AnswerFocus.marks, alternatives_map₂_focused_unfeatured,
+      alternatives_map₂_unfeatured_focused]
+  · exact ⟨fun _ ↦ Set.image_subset_range _ _, fun _ ↦ trivial⟩
   · exact ⟨fun h ↦ absurd h Bool.false_ne_true,
       fun h ↦ absurd h (question_rejects_objectFocus _ _ _ (Set.mem_univ Person.monique)
         (by decide))⟩
-  · exact ⟨fun _ ↦ Set.image_subset_range _ _, fun _ ↦ rfl⟩
+  · exact ⟨fun _ ↦ Set.image_subset_range _ _, fun _ ↦ trivial⟩
   · refine ⟨fun h ↦ absurd h Bool.false_ne_true, fun h ↦ ?_⟩
     obtain ⟨_, hy⟩ := h ⟨Person.bjorn, Set.mem_univ _, rfl⟩
     exact absurd (Prod.mk.inj (atom_injective hy)).2 (by decide)

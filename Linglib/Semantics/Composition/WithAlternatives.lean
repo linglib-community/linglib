@@ -1,7 +1,13 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Mathlib.Data.Set.Insert
 public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.Set.Lattice.Image
 
 /-!
 # Meanings with alternatives
@@ -10,7 +16,9 @@ A meaning in alternative semantics is a pair: an ordinary denotation, and a set 
 that focus features and operators manipulate while leaving the ordinary denotation alone.
 `WithAlternatives` is that pair. It is the product of the identity monad and the set monad, so the
 two-dimensional recursion of alternative semantics is `<$>` and `<*>` of a lawful `Monad`, and the
-two dimensions are its two monad morphisms.
+two dimensions are its two monad morphisms. The monad lives in one universe; binary composition
+across universes is `WithAlternatives.map₂`, the same composition with `Set.image2` as its
+alternatives.
 
 ## Main definitions
 
@@ -20,12 +28,15 @@ two dimensions are its two monad morphisms.
 * `WithAlternatives.WellFormed` — the containment constraint: the alternatives include the
   ordinary value
 * `WithAlternatives.Given` — the alternatives have collapsed to a singleton
+* `WithAlternatives.map₂` — binary composition, alternatives composed pointwise
 
 ## Main results
 
 * `ordinary_seq`, `mem_alternatives_seq` — the two dimensions of Hamblin composition
 * `alternatives_seq` — the alternatives of an application are those of the `Set` applicative
 * `Given.alternatives_seq` — a Given function contributes only its ordinary value
+* `nontrivial_alternatives_map₂_left`, `nontrivial_alternatives_map₂_right` — a daughter evoking
+  two alternatives makes her mother evoke two, so the mother is not Given
 
 ## References
 
@@ -178,5 +189,60 @@ theorem Given.alternatives_seq {mf : WithAlternatives (α → β)} {f : α → �
     exact ⟨a, ha, rfl⟩
   · rintro ⟨a, ha, rfl⟩
     exact ⟨f, h ▸ rfl, a, ha, rfl⟩
+
+end WithAlternatives
+
+/-! ### Binary composition -/
+
+namespace WithAlternatives
+
+variable {α β γ : Type*} {f : α → β → γ} {a : WithAlternatives α} {b : WithAlternatives β}
+
+/-- A meaning whose alternatives are nontrivial is Given with respect to nothing. -/
+theorem not_given_of_nontrivial {m : WithAlternatives α} (h : m.alternatives.Nontrivial)
+    (x : α) : ¬ m.Given x :=
+  h.ne_singleton
+
+/-- Binary composition by `f` composes the ordinary values, and its alternatives are the
+compositions of an alternative of each daughter. -/
+def map₂ (f : α → β → γ) (a : WithAlternatives α) (b : WithAlternatives β) :
+    WithAlternatives γ :=
+  ⟨f a.ordinary b.ordinary, Set.image2 f a.alternatives b.alternatives⟩
+
+@[simp] theorem ordinary_map₂ (f : α → β → γ) (a : WithAlternatives α) (b : WithAlternatives β) :
+    (map₂ f a b).ordinary = f a.ordinary b.ordinary := rfl
+
+@[simp] theorem alternatives_map₂ (f : α → β → γ) (a : WithAlternatives α)
+    (b : WithAlternatives β) :
+    (map₂ f a b).alternatives = Set.image2 f a.alternatives b.alternatives := rfl
+
+theorem WellFormed.map₂ (ha : a.WellFormed) (hb : b.WellFormed) : (map₂ f a b).WellFormed :=
+  Set.mem_image2_of_mem ha hb
+
+/-- A daughter evoking two alternatives makes her mother evoke two, when the composition is
+injective in her and her sister evokes something. -/
+theorem nontrivial_alternatives_map₂_left (hf : ∀ y, Function.Injective (f · y))
+    (ha : a.alternatives.Nontrivial) (hb : b.alternatives.Nonempty) :
+    (map₂ f a b).alternatives.Nontrivial :=
+  let ⟨_, hy⟩ := hb
+  (ha.image (hf _)).mono (Set.image_subset_image2_left hy)
+
+theorem nontrivial_alternatives_map₂_right (hf : ∀ x, Function.Injective (f x))
+    (ha : a.alternatives.Nonempty) (hb : b.alternatives.Nontrivial) :
+    (map₂ f a b).alternatives.Nontrivial :=
+  let ⟨_, hx⟩ := ha
+  (hb.image (hf _)).mono (Set.image_subset_image2_right hx)
+
+universe u in
+/-- Within a universe, binary composition is the monad's `f <$> a <*> b`. -/
+theorem map₂_eq_seq {α β γ : Type u} (f : α → β → γ) (a : WithAlternatives α)
+    (b : WithAlternatives β) : map₂ f a b = f <$> a <*> b := by
+  refine WithAlternatives.ext rfl (Set.ext fun c ↦ ?_)
+  simp only [alternatives_map₂, Set.mem_image2, mem_alternatives_seq, mem_alternatives_map]
+  constructor
+  · rintro ⟨x, hx, y, hy, rfl⟩
+    exact ⟨f x, ⟨x, hx, rfl⟩, y, hy, rfl⟩
+  · rintro ⟨_, ⟨x, hx, rfl⟩, y, hy, rfl⟩
+    exact ⟨x, hx, y, hy, rfl⟩
 
 end WithAlternatives
