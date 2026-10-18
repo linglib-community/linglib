@@ -2,32 +2,34 @@ module
 
 public import Studies.KonnellyCowper2020
 public import Linglib.Data.Examples.Arnold2026
+public import Linglib.Discourse.CommonGround
 public import Mathlib.Order.UpperLower.Closure
 
 /-!
 # Arnold 2026: two kinds of singular *they*
 
-Arnold distinguishes two uses of singular *they* by what each asks of the discourse
-representation of its referent, the set of facts the discourse has established about it, more
-elaborated as it grows. Underspecified *they*, attested since Middle English, asks for a
-representation below a threshold that varies across speakers and situations, a lower set;
-personal *they*, mainstream since about 2018, asks for a representation that establishes the
-referent's pronouns as *they/them*, an upper set (`Kind.condition`). The two kinds share their
-form and their lack of a gender feature, so Konnelly and Cowper's grammar, which reads only the
+Arnold distinguishes two uses of singular *they* by what each asks of the common ground, the
+propositions the interlocutors accept, which grows as the discourse goes on. Underspecified
+*they*, attested since Middle English, asks for a common ground that has not grown past a
+threshold varying across speakers and situations, an upper set in the order of filters; personal
+*they*, mainstream since about 2018, asks for a common ground that accepts the referent's
+pronouns as *they/them*, a principal lower set (`Kind.condition`). The two kinds share their form
+and their lack of a gender feature, so Konnelly and Cowper's grammar, which reads only the
 antecedent, does not separate them, and where it admits *they* for a specific referent whose
 pronouns are not *they/them*, the two accounts part ways.
 
 ## Main definitions
 
-* `Arnold2026.Kind`, `Arnold2026.Kind.condition`: the two kinds and the representations each
-  kind is used with.
+* `Arnold2026.Kind`, `Arnold2026.Kind.condition`: the two kinds and the common grounds each
+  kind is used in.
 
 ## Main results
 
-* `Arnold2026.disjoint_condition_iff`: the kinds share no context unless the they/them fact
-  alone leaves a representation below the threshold.
-* `Arnold2026.antitone_mem_condition_underspecified`: as a discourse adds facts, underspecified
-  *they* is lost and not regained, as in the student story (`Arnold2026.story_they_lost`).
+* `Arnold2026.disjoint_condition_iff`: the kinds share no common ground unless the one accepting
+  just the they/them fact counts as underspecified.
+* `Arnold2026.antitone_mem_condition_underspecified`: as a discourse asserts more,
+  underspecified *they* is lost and not regained, as in the student story
+  (`Arnold2026.story_they_lost`).
 * `Arnold2026.stage2_they_needs_ungendered_entry`, `Arnold2026.stage3_they_counterexample`: at
   Konnelly and Cowper's second stage personal *they* needs an ad hoc entry, and at their third
   stage the grammar admits a use neither kind licenses.
@@ -36,23 +38,26 @@ pronouns are not *they/them*, the two accounts part ways.
 
 ## Implementation notes
 
-The paper describes the context of an example only as an underspecified or an elaborated
-representation, and by whether the referent's pronouns are known to be *they/them*. A
-representation agrees with a row when it has the properties the row states (`Agrees`), and the
-examples are tested on every agreeing representation.
+The representation of the referent is the common ground of `Discourse/CommonGround.lean`, a
+filter on worlds, so a finer common ground is a more elaborated representation; which accepted
+propositions bear on the referent is left to the threshold. The paper describes the context of
+an example only as an underspecified or an elaborated representation, and by whether the
+referent's pronouns are known to be *they/them*. A common ground agrees with a row when it has
+the properties the row states (`Agrees`), and the examples are tested on every agreeing one.
 
 ## References
 
 * [arnold-2026]
 * [konnelly-cowper-2020]
 * [balhorn-2004]
+* [stalnaker-1978]
 -/
 
 @[expose] public section
 
 namespace Arnold2026
 
-open KonnellyCowper2020
+open KonnellyCowper2020 Filter HasCommonGround HasAssertion
 
 /-- The two kinds of singular *they*. -/
 inductive Kind
@@ -60,56 +65,57 @@ inductive Kind
   | personal
   deriving DecidableEq, Repr
 
-variable {F : Type*} (U : LowerSet (Set F)) (p : F)
+variable {W : Type*} (U : UpperSet (Filter W)) (P : Set W)
 
-/-- The representations a kind of *they* is used with, given the threshold `U` below which a
-representation, the set of facts established about the referent, counts as underspecified, and
-the fact `p` that the referent's pronouns are *they/them*. Underspecified *they* asks for a
-representation below the threshold, personal *they* for one that establishes `p`. -/
-def Kind.condition : Kind → Set (Set F)
+/-- The common grounds a kind of *they* is used in, given the threshold `U` of common grounds
+that count as underspecified and the proposition `P` that the referent's pronouns are
+*they/them*. Underspecified *they* asks for a common ground in `U`, personal *they* for one that
+accepts `P`. -/
+def Kind.condition : Kind → Set (Filter W)
   | .underspecified => U
-  | .personal => Set.Ici {p}
+  | .personal => Set.Iic (𝓟 P)
 
-variable {U p} {r : Set F}
+variable {U P} {c : Filter W}
 
 @[simp]
-theorem mem_condition_underspecified : r ∈ Kind.underspecified.condition U p ↔ r ∈ U :=
+theorem mem_condition_underspecified : c ∈ Kind.underspecified.condition U P ↔ c ∈ U :=
   Iff.rfl
 
 @[simp]
-theorem mem_condition_personal : r ∈ Kind.personal.condition U p ↔ p ∈ r :=
-  Set.singleton_subset_iff
+theorem mem_condition_personal : c ∈ Kind.personal.condition U P ↔ P ∈ c :=
+  le_principal_iff
 
-theorem isLowerSet_condition_underspecified : IsLowerSet (Kind.underspecified.condition U p) :=
-  U.lower
+theorem isUpperSet_condition_underspecified : IsUpperSet (Kind.underspecified.condition U P) :=
+  U.upper
 
-theorem isUpperSet_condition_personal : IsUpperSet (Kind.personal.condition U p) :=
-  isUpperSet_Ici _
+theorem isLowerSet_condition_personal : IsLowerSet (Kind.personal.condition U P) :=
+  isLowerSet_Iic _
 
-/-- The two kinds share no context unless the they/them fact alone leaves a representation below
-the threshold, since knowing someone's pronouns is itself a detail of their representation
+/-- The two kinds share no common ground unless the one accepting just the they/them fact counts
+as underspecified, since knowing someone's pronouns is itself a detail of their representation
 (§3, §4.1). -/
 theorem disjoint_condition_iff :
-    Disjoint (Kind.underspecified.condition U p) (Kind.personal.condition U p) ↔ {p} ∉ U := by
-  change Disjoint (U : Set (Set F)) (Set.Ici {p}) ↔ _
-  rw [← UpperSet.coe_Ici, ← upperClosure_singleton, U.lower.disjoint_upperClosure_right,
+    Disjoint (Kind.underspecified.condition U P) (Kind.personal.condition U P) ↔ 𝓟 P ∉ U := by
+  change Disjoint (U : Set (Filter W)) (Set.Iic (𝓟 P)) ↔ _
+  rw [← LowerSet.coe_Iic, ← lowerClosure_singleton, U.upper.disjoint_lowerClosure_right,
     Set.disjoint_singleton_right, SetLike.mem_coe]
 
 /-! ### Discourses -/
 
-variable {ι : Type*} [Preorder ι] {d : ι → Set F}
+variable {ι : Type*} [Preorder ι] {d : ι → Filter W}
 
-/-- Along a discourse that only adds facts, underspecified *they* is lost and not regained. A
-speaker may use *they* for a neighbor who plays a passing role, but not once the story has built
-a detailed picture of them (§2). -/
-theorem antitone_mem_condition_underspecified (hd : Monotone d) :
-    Antitone fun i ↦ d i ∈ Kind.underspecified.condition U p :=
-  (Set.antitone_mem.2 isLowerSet_condition_underspecified).comp_monotone hd
+/-- As a discourse asserts more, underspecified *they* is lost and not regained. A speaker may
+use *they* for a neighbor who plays a passing role, but not once the story has built a detailed
+picture of them (§2). Assertion histories are such discourses
+(`HasAssertion.antitone_commonGround_play`). -/
+theorem antitone_mem_condition_underspecified (hd : Antitone d) :
+    Antitone fun i ↦ d i ∈ Kind.underspecified.condition U P :=
+  (Set.monotone_mem.2 isUpperSet_condition_underspecified).comp_antitone hd
 
-/-- Along a discourse that only adds facts, personal *they*, once licensed, stays licensed. -/
-theorem monotone_mem_condition_personal (hd : Monotone d) :
-    Monotone fun i ↦ d i ∈ Kind.personal.condition U p :=
-  (Set.monotone_mem.2 isUpperSet_condition_personal).comp hd
+/-- As a discourse asserts more, personal *they*, once licensed, stays licensed. -/
+theorem monotone_mem_condition_personal (hd : Antitone d) :
+    Monotone fun i ↦ d i ∈ Kind.personal.condition U P :=
+  (Set.antitone_mem.2 isLowerSet_condition_personal).comp hd
 
 /-- A fact the student story of §2 can establish is that the referent is a student, that their
 pronouns are *they/them*, or one of the details that emerge about them. -/
@@ -118,29 +124,46 @@ inductive StoryFact
   | theyThem
   | detail (n : ℕ)
 
-/-- After `n` steps the story has established that the referent is a student and the first `n`
+/-- The proposition that a fact holds, at the worlds that settle which facts hold. -/
+def holds (f : StoryFact) : Set (Set StoryFact) := {w | f ∈ w}
+
+/-- After `n` steps the story has asserted that the referent is a student and the first `n`
 details. -/
-def story (n : ℕ) : Set StoryFact := insert .student (.detail '' Set.Iio n)
+def story (n : ℕ) : List (Set (Set StoryFact)) :=
+  holds .student :: (List.range n).map (holds ∘ .detail)
 
-theorem monotone_story : Monotone story := fun _ _ h ↦
-  Set.insert_subset_insert (Set.image_mono (Set.Iio_subset_Iio h))
+/-- The common ground after `n` steps of the story, told from scratch. -/
+def storyGround (n : ℕ) : Filter (Set StoryFact) :=
+  commonGround (play (initial : Filter (Set StoryFact)) (story n))
 
-/-- The teller counts a representation as underspecified while it establishes at most that the
-referent is a student. -/
-def storyThreshold : LowerSet (Set StoryFact) := LowerSet.Iic {.student}
+theorem storyGround_eq (n : ℕ) : storyGround n = 𝓟 (⋂ p ∈ story n, p) :=
+  commonGround_play_initial _
+
+theorem antitone_storyGround : Antitone storyGround :=
+  antitone_commonGround_play _ fun _ _ h ↦
+    List.cons_subset_cons _ (List.map_subset _ (List.range_subset.2 h))
+
+/-- The teller counts a common ground as underspecified while it accepts nothing beyond what
+follows from the referent's being a student. -/
+def storyThreshold : UpperSet (Filter (Set StoryFact)) := UpperSet.Ici (𝓟 (holds .student))
 
 /-- The teller of §2 began a story with *they* for a student and shifted to *she* as details
-emerged. Underspecified *they* is licensed at the outset, and once a detail is established no
-kind of *they* is, then or later. -/
+emerged. Underspecified *they* is licensed at the outset, and once a detail is asserted no kind
+of *they* is, then or later. -/
 theorem story_they_lost :
-    story 0 ∈ Kind.underspecified.condition storyThreshold .theyThem ∧
-      ∀ n, 0 < n → ∀ k : Kind, story n ∉ k.condition storyThreshold .theyThem := by
-  have h1 : story 1 ∉ Kind.underspecified.condition storyThreshold .theyThem := fun h ↦ by
-    simpa using h (Set.mem_insert_of_mem _ ⟨0, Nat.zero_lt_one, rfl⟩)
-  refine ⟨by simp [story, storyThreshold], fun n hn k ↦ ?_⟩
+    storyGround 0 ∈ Kind.underspecified.condition storyThreshold (holds .theyThem) ∧
+      ∀ n, 0 < n → ∀ k : Kind, storyGround n ∉ k.condition storyThreshold (holds .theyThem) := by
+  have h1 : storyGround 1 ∉ Kind.underspecified.condition storyThreshold (holds .theyThem) :=
+    fun h ↦ by
+      have := principal_mono.1 (UpperSet.mem_Ici_iff.1 h |>.trans_eq (storyGround_eq 1))
+      simpa [story, holds] using this (show {StoryFact.student} ∈ holds .student from rfl)
+  refine ⟨by simp [storyGround_eq, story, storyThreshold], fun n hn k ↦ ?_⟩
   cases k
-  · exact fun h ↦ h1 (antitone_mem_condition_underspecified monotone_story hn h)
-  · simp [story]
+  · exact fun h ↦ h1 (antitone_mem_condition_underspecified antitone_storyGround hn h)
+  · rw [mem_condition_personal, storyGround_eq, mem_principal]
+    intro h
+    have hw : {f | f ≠ StoryFact.theyThem} ∈ ⋂ p ∈ story n, p := by simp [story, holds]
+    simpa [holds] using h hw
 
 /-! ### The grammatical account
 
@@ -161,11 +184,11 @@ theorem stage2_they_needs_ungendered_entry {a : Antecedent} {g : Gender}
 as in Konnelly and Cowper's (26). -/
 def myMother : Antecedent := ⟨true, some (.gender .fem), some .fem, false⟩
 
-/-- The third-stage grammar admits *my mother … they* (§6.2), but on a representation above the
-threshold that does not establish the they/them fact neither kind's condition holds, so such a
-production would be a counterexample to the proposal. -/
-theorem stage3_they_counterexample (hU : r ∉ U) (hp : p ∉ r) :
-    "they" ∈ forms .three myMother ∧ ∀ k : Kind, r ∉ k.condition U p :=
+/-- The third-stage grammar admits *my mother … they* (§6.2), but in a common ground that no
+longer counts as underspecified and does not accept the they/them fact neither kind's condition
+holds, so such a production would be a counterexample to the proposal. -/
+theorem stage3_they_counterexample (hU : c ∉ U) (hP : P ∉ c) :
+    "they" ∈ forms .three myMother ∧ ∀ k : Kind, c ∉ k.condition U P :=
   ⟨stage3_they rfl, by rintro (_ | _) <;> simpa⟩
 
 /-! ### The examples -/
@@ -174,37 +197,40 @@ theorem stage3_they_counterexample (hU : r ∉ U) (hp : p ∉ r) :
 def Kind.ofRow? (e : Datum) : Option Kind :=
   e.parse? "kind" [("underspecified", .underspecified), ("personal", .personal)]
 
-variable (U p) in
-/-- A representation agrees with a row when it lies below the threshold if the row calls the
-representation underspecified, not below it if the row calls it elaborated, and establishes the
-they/them fact if the row records those pronouns. -/
-def Agrees (e : Datum) (r : Set F) : Prop :=
-  (e.feature? "representation" = some "underspecified" → r ∈ U) ∧
-    (e.feature? "representation" = some "elaborated" → r ∉ U) ∧
-    (e.feature? "pronouns" = some "they/them" → p ∈ r)
+variable (U P) in
+/-- A common ground agrees with a row when, if the row describes the representation, it counts
+as underspecified exactly if the row calls the representation underspecified, and when it
+accepts the they/them fact if the row records those pronouns. -/
+def Agrees (e : Datum) (c : Filter W) : Prop :=
+  (∀ v ∈ e.feature? "representation", c ∈ U ↔ v = "underspecified") ∧
+    (e.feature? "pronouns" = some "they/them" → P ∈ c)
 
-/-- Each underspecified row states an underspecified representation, or an elaborated one where
-the paper flags the row, and each personal row records the they/them pronouns and is not
-flagged. -/
-private theorem rows_described : ∀ e ∈ Examples.all, ∀ k ∈ (Kind.ofRow? e).toList,
-    (k = .underspecified → e.feature? "representation" =
-      some (if e.feature? "counterexample" = none then "underspecified" else "elaborated")) ∧
-    (k = .personal →
-      e.feature? "pronouns" = some "they/them" ∧ e.feature? "counterexample" = none) := by
+/-- Each underspecified row describes the representation, as underspecified unless the paper
+flags the row. -/
+private theorem rows_underspecified : ∀ e ∈ Examples.all, Kind.ofRow? e = some .underspecified →
+    (e.feature? "representation").isSome ∧
+      (e.feature? "representation" = some "underspecified" ↔
+        e.feature? "counterexample" = none) := by
   decide +kernel
 
-/-- An example meets the condition of its kind on every representation agreeing with it exactly
+/-- Each personal row records the they/them pronouns, and the paper flags none. -/
+private theorem rows_personal : ∀ e ∈ Examples.all, Kind.ofRow? e = some .personal →
+    e.feature? "pronouns" = some "they/them" ∧ e.feature? "counterexample" = none := by
+  decide +kernel
+
+/-- An example meets the condition of its kind in every common ground agreeing with it exactly
 when the paper does not flag it as a would-be counterexample, the stage-3 *my mother … they*
 of §6.2. -/
 theorem mem_condition_iff_of_agrees {e : Datum} (he : e ∈ Examples.all) {k : Kind}
-    (hk : Kind.ofRow? e = some k) (hr : Agrees U p e r) :
-    r ∈ k.condition U p ↔ e.feature? "counterexample" = none := by
-  obtain ⟨hu, hp⟩ := rows_described e he k (by simp [hk])
+    (hk : Kind.ofRow? e = some k) (hc : Agrees U P e c) :
+    c ∈ k.condition U P ↔ e.feature? "counterexample" = none := by
   cases k with
   | underspecified =>
-    by_cases hc : e.feature? "counterexample" = none
-    · simpa [hc] using hr.1 (by simpa [hc] using hu rfl)
-    · simpa [hc] using hr.2.1 (by simpa [hc] using hu rfl)
-  | personal => simpa [(hp rfl).2] using hr.2.2 (hp rfl).1
+    obtain ⟨hs, hiff⟩ := rows_underspecified e he hk
+    obtain ⟨v, hv⟩ := Option.isSome_iff_exists.1 hs
+    rw [mem_condition_underspecified, hc.1 v hv, ← hiff, hv, Option.some_inj]
+  | personal =>
+    obtain ⟨hp, hn⟩ := rows_personal e he hk
+    simpa [hn] using hc.2 hp
 
 end Arnold2026
