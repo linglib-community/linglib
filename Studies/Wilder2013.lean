@@ -3,23 +3,24 @@ module
 public import Linglib.Data.Examples.Wilder2013
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Semantics.Focus.Control
+public import Linglib.Semantics.Focus.Marking
 public import Linglib.Discourse.QUD.Basic
 
 /-!
 # Wilder (2013): English emphatic *do*
 
-This file formalizes [wilder-2013]'s analysis of emphatic *do*. The auxiliary appears wherever
-Affix Hopping cannot attach Tense to the verb, and emphatic assertion is one such case: the
-polarity head Σ of [laka-1990] holding the affirmative morpheme intervenes between Tense and the
+On Wilder's analysis the auxiliary *do* appears wherever Affix Hopping cannot attach Tense to
+the verb, and emphatic assertion is one such case: the
+polarity head Σ of Laka holding the affirmative morpheme intervenes between Tense and the
 verb just as negation does, so emphatic *do* has the syntax of *do*-support under negation. The
 emphasis itself is focus on Σ, polarity focus, whose alternatives are the proposition and its
 negation, the alternatives of the polar question the sentence answers. Under
-[schwarzschild-1999]'s Givenness the existential F-closure of a clause with F-marked Σ is a
+Schwarzschild's Givenness the existential F-closure of a clause with F-marked Σ is a
 tautology, so any salient antecedent makes the clause Given, and the requirement that the
 antecedent be a negated or modalised version of the proposition falls on the unfocused subject
 and verb phrase instead. Emphatic *do* sentences come in two types. A Verum-focus sentence has no
 accent beyond focus accents and occurs in every finite clause type. A contrastive-topic sentence
-has, on its subject, verb phrase or object, the fall-rise accent that [buring-2003] analyses as
+has, on its subject, verb phrase or object, the fall-rise accent that Büring analyses as
 indicating a strategy of questions, and it occurs only as a root declarative or a complement of
 the *believe* type. Wilder derives the restriction from the hypothesis that a contrastive-topic
 sentence with emphatic *do* directly answers a polar question of the strategy: such an answer can
@@ -93,7 +94,7 @@ auxiliary raising to T (*have*, *be*) or a modal in T, the polarity head Σ with
 whether it is F-marked, subject–auxiliary inversion, and an empty verb (ellipsis or VP fronting). -/
 structure Clause where
   aux : Bool
-  sigma : Option (Polarity × Bool)
+  sigma : Option (Polarity × Mark)
   inversion : Bool
   emptyV : Bool
   deriving DecidableEq
@@ -106,7 +107,7 @@ def AffixHopping (c : Clause) : Prop := c.sigma = none ∧ ¬c.inversion ∧ ¬c
 def DoSupport (c : Clause) : Prop := ¬c.aux ∧ ¬AffixHopping c
 
 /-- A clause has polarity focus when Σ is present and F-marked. -/
-def PolarityFocus (c : Clause) : Prop := ∃ s, c.sigma = some (s, true)
+def PolarityFocus (c : Clause) : Prop := ∃ s, c.sigma = some (s, .focused)
 
 /-- Emphatic *do* is *do*-support motivated by none of the contexts of (1), negation, inversion
 or an empty verb. -/
@@ -128,7 +129,7 @@ theorem emphaticDo_iff (c : Clause) :
 
 /-- The syntax of emphatic assertion is that of negation, since with Σ present *do*-support does
 not depend on the value of Σ. -/
-theorem doSupport_negative_iff_positive (c : Clause) (f f' : Bool) :
+theorem doSupport_negative_iff_positive (c : Clause) (f f' : Mark) :
     DoSupport { c with sigma := some (.negative, f) } ↔
       DoSupport { c with sigma := some (.positive, f') } := by
   simp [doSupport_iff]

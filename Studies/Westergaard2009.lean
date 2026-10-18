@@ -6,6 +6,7 @@ public import Linglib.Fragments.English.V2
 public import Linglib.Fragments.German.V2
 public import Linglib.Fragments.Danish.V2
 public import Linglib.Data.Examples.Westergaard2009
+public import Linglib.Semantics.Focus.Marking
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -309,8 +310,10 @@ inductive Checker
   | subject | verb
   deriving DecidableEq, Repr
 
-/-- The checker, by whether the subject is focused. -/
-def checker (subjectFoc : Bool) : Checker := if subjectFoc then .verb else .subject
+/-- The checker, by the focus marking of the subject. -/
+def checker : Focus.Mark → Checker
+  | .unfeatured => .subject
+  | .focused => .verb
 
 /-- The words whose order the two structures fix. -/
 inductive Word
@@ -319,7 +322,7 @@ inductive Word
 
 /-- The surface order puts the *wh*-head in Int⁰, then the specifier and head of TopP, then the
 rest of the clause. -/
-def order (subjectFoc : Bool) : List Word :=
+def order (subjectFoc : Focus.Mark) : List Word :=
   match checker subjectFoc with
   | .subject => [.wh, .subject, .verb]
   | .verb => [.wh, .verb, .subject]
@@ -330,7 +333,8 @@ def IsV2 (l : List Word) : Prop := l[1]? = some .verb
 instance (l : List Word) : Decidable (IsV2 l) := inferInstanceAs (Decidable (_ = _))
 
 /-- A monosyllabic *wh*-question is V2 exactly when its subject is new information. -/
-theorem isV2_order_iff (subjectFoc : Bool) : IsV2 (order subjectFoc) ↔ subjectFoc = true := by
+theorem isV2_order_iff (subjectFoc : Focus.Mark) :
+    IsV2 (order subjectFoc) ↔ subjectFoc = .focused := by
   cases subjectFoc <;> decide
 
 end Westergaard2009

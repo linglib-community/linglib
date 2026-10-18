@@ -1,71 +1,107 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
+public import Linglib.Semantics.Composition.WithAlternatives
 public import Mathlib.Order.Atoms
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Focus marking
 
-Binary focus marking (`Mark`): the marking feature of the focus axis,
-one of [krifka-2008]'s four information-structure notions. Use `Mark`
-when only the binary focused-vs-not distinction is needed;
-`WithAlternatives` carries the Roothian alternative-set
-structure. Marks are ordered by prominence, `nonFocused < focused`, the
-scale on which one constituent is more focused than another
-([abeille-et-al-2020], [winckel-et-al-2025]). `Strategy` is where a focused
-constituent is realized, in its base position or fronted to the left
-periphery, the in situ vs ex situ cut of the West African focus literature
-([hartmann-zimmermann-2007]).
+A focus indicates the presence of alternatives that are relevant to interpretation, Krifka's
+definition of the notion after Rooth's alternative semantics. A constituent is F-marked or
+unfeatured (`Focus.Mark`). An F-marked constituent keeps its ordinary value and evokes every value
+of its type, and an unfeatured one evokes what its parts compose (`WithAlternatives.mark`), so the
+two marks are ordered by the alternatives they evoke, unfeatured below F-marked. Where a language
+realizes a focus is a separate matter, and one cut is whether the focused constituent stays in
+its base position or is fronted (`Focus.Strategy`).
+
+## Main definitions
+
+* `Focus.Mark`: F-marked or unfeatured, a two-element linear order.
+* `WithAlternatives.mark`: the meaning of a constituent bearing a mark.
+* `Focus.Strategy`: a focus realized in place or fronted.
+
+## Main results
+
+* `WithAlternatives.alternatives_mark_subset_alternatives_mark_iff`: unless a constituent already
+  evokes its whole type, its alternatives grow exactly along the order of the marks.
 
 ## References
 
-* [abeille-et-al-2020]
-* [hartmann-zimmermann-2007]
 * [krifka-2008]
-* [winckel-et-al-2025]
+* [rooth-1992]
+* [hartmann-zimmermann-2007]
 -/
 
 @[expose] public section
 
 namespace Focus
 
-/-- Binary focus marking — whether a constituent bears focus (pitch
-accent / contrast) or not. -/
+/-- A constituent is F-marked or unfeatured. -/
 inductive Mark where
-  /-- Constituent is focus-marked (pitch accent / contrast). -/
+  /-- The constituent bears no focus feature. -/
+  | unfeatured
+  /-- The constituent bears the focus feature. -/
   | focused
-  /-- Constituent is not focus-marked. -/
-  | nonFocused
   deriving DecidableEq, Repr, Fintype
 
-namespace Mark
+instance : LinearOrder Mark := LinearOrder.lift' Mark.ctorIdx (by decide)
 
-/-- The rank of a mark, higher for focused. -/
-def rank : Mark → ℕ
-  | .focused => 1
-  | .nonFocused => 0
-
-/-- `nonFocused < focused`: a focused constituent is the more prominent. -/
-instance : LinearOrder Mark := LinearOrder.lift' rank (by decide)
-
-/-- `⊥ = nonFocused`, `⊤ = focused`. -/
 instance : BoundedOrder Mark where
   top := .focused
   le_top := by decide
-  bot := .nonFocused
+  bot := .unfeatured
   bot_le := by decide
 
 instance : IsSimpleOrder Mark where
-  exists_pair_ne := ⟨.nonFocused, .focused, by decide⟩
+  exists_pair_ne := ⟨.unfeatured, .focused, by decide⟩
   eq_bot_or_eq_top := by decide
 
-end Mark
-
-/-- A focused constituent is realized in its base position or fronted to the left periphery
-of its clause. -/
+/-- A focused constituent is realized in its base position or fronted to the left periphery of
+its clause. -/
 inductive Strategy where
+  /-- The focus stays in its base position. -/
   | inSitu
+  /-- The focus is fronted. -/
   | exSitu
   deriving DecidableEq, Repr, Inhabited
 
 end Focus
+
+namespace WithAlternatives
+
+open Focus (Mark)
+
+variable {α : Type*} {d : WithAlternatives α}
+
+/-- The meaning of a constituent bearing a mark. F-marking keeps the ordinary value and makes
+the alternatives the whole type; an unfeatured constituent keeps the alternatives of its parts. -/
+def mark (d : WithAlternatives α) : Mark → WithAlternatives α
+  | .unfeatured => d
+  | .focused => .focused d.ordinary
+
+@[simp] theorem mark_unfeatured (d : WithAlternatives α) : d.mark .unfeatured = d := rfl
+
+@[simp] theorem mark_focused (d : WithAlternatives α) : d.mark .focused = .focused d.ordinary :=
+  rfl
+
+@[simp] theorem ordinary_mark (d : WithAlternatives α) (m : Mark) :
+    (d.mark m).ordinary = d.ordinary := by
+  cases m <;> rfl
+
+theorem WellFormed.mark (hd : d.WellFormed) (m : Mark) : (d.mark m).WellFormed := by
+  cases m
+  exacts [hd, WellFormed.focused _]
+
+/-- Unless a constituent already evokes its whole type, its alternatives grow exactly along the
+order of the marks: the order on marks is the order of the alternatives they evoke. -/
+theorem alternatives_mark_subset_alternatives_mark_iff (hd : d.alternatives ≠ .univ)
+    {m m' : Mark} : (d.mark m).alternatives ⊆ (d.mark m').alternatives ↔ m ≤ m' := by
+  cases m <;> cases m' <;> simp [Set.univ_subset_iff, hd] <;> decide
+
+end WithAlternatives

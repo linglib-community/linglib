@@ -472,7 +472,7 @@ theorem mangarrayiA_comp_ofAnimacy :
   funext a; cases a <;> rfl
 
 /-- Central Tibetan flags a focused A with the ergative `-ki'`, as in (25). -/
-def tibetanA : Markᵒᵈ → ℕ := below (toDual .nonFocused)
+def tibetanA : Markᵒᵈ → ℕ := below (toDual .unfeatured)
 
 /-- French dative clitics are longer than accusative ones only for aliophoric R, as in (28) (`lui` ~
 `le`, `leur` ~ `les`); they are person indexes, so fn. 17 keeps the case outside split flagging
@@ -740,7 +740,7 @@ argument that efficient coding, not ambiguity avoidance, explains the splits. -/
 
 /-- The hypothetical language of §11.3 puts the ergative on every topical A and zero coding on a
 focused A. -/
-def antiEfficientA : Markᵒᵈ → ℕ := atLeast (toDual .nonFocused)
+def antiEfficientA : Markᵒᵈ → ℕ := atLeast (toDual .unfeatured)
 
 /-- The hypothetical language of §11.3 puts the accusative on every indefinite P and zero coding on
 a definite P. -/
@@ -846,7 +846,7 @@ def BinaryGivenness.table : List (String × BinaryGivenness) := [("given", .give
 /-- The focus tags of the rows lie on the focus scale of (8b), which ranks background above focus as
 the dual of the focus-marking order. -/
 def focusTable : List (String × Markᵒᵈ) :=
-  [("background", toDual .nonFocused), ("focus", toDual .focused)]
+  [("background", toDual .unfeatured), ("focus", toDual .focused)]
 
 /-- The nominal-type tags of the rows. -/
 def Nominality.table : List (String × Nominality) :=

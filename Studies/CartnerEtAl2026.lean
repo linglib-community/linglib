@@ -6,29 +6,28 @@ public import Linglib.Semantics.Focus.Marking
 /-!
 # Cartner et al. 2026: subject islands do not reduce to discourse function
 
-This file formalizes the argument of [cartner-et-al-2026] against information-structural accounts
-of the subject island. On the Focus Background Constraint of [abeille-et-al-2020] a subject island
-is a clash between a focused filler and a backgrounded extraction domain, so the effect should
-appear where the filler is focused and not otherwise: in wh-questions but not in relative clauses
-or topicalization, whose fillers are not focused. Three factorial acceptability experiments
-([sprouse-2007], [sprouse-et-al-2012]) find the effect in all three constructions and at
-comparable magnitude, which no reading of the constraint accommodates. The constraint compares
-the filler and the extraction domain on one scale, a backgrounded constituent being an unfocused
-one, so both statuses are a `Focus.Mark`. Its gradient statement, (44) of [abeille-et-al-2020],
-makes focus monotone along containment: the more focused an element, the more focused the
-constituent it is part of. The revision of [winckel-et-al-2025], the paper's (11), states it as
-the strict inequality, an extracted element being no more focused than its governor
-(`FBCPredictsIsland`), and on binary marks the categorical constraint, the paper's (10), is that
-inequality (`fbcViolation_iff_lt`).
+Cartner et al. argue against information-structural accounts of the subject island. On the
+Focus Background Constraint of Abeillé et al. a subject island is a clash between a focused
+filler and a backgrounded extraction domain, so the effect should appear where the filler is
+focused and not otherwise: in wh-questions but not in relative clauses or topicalization, whose
+fillers are not focused. Three factorial acceptability experiments in Sprouse's design find the
+effect in all three constructions and at comparable magnitude, which no reading of the
+constraint accommodates. The constraint compares the filler and the extraction domain on one
+scale, a backgrounded constituent being an unfocused one, so both statuses are a `Focus.Mark`.
+Its gradient statement, (44) of Abeillé et al., makes focus monotone along containment: the more
+focused an element, the more focused the constituent it is part of. The revision of Winckel et
+al., the paper's (11), states it as the strict inequality, an extracted element being no more
+focused than its governor (`FBCPredictsIsland`), and on binary marks the categorical constraint,
+the paper's (10), is that inequality (`fbcViolation_iff_lt`).
 
 The design holds the extraction domain constant and varies the filler, so it bears only on
-accounts that read the filler. An account whose prediction is a function of the domain alone —
-direct backgroundedness ([cuneo-goldberg-2023]), or a structural constraint on the configuration —
-predicts the same verdict in every construction and is untouched by the result, as the paper notes
-(§8). Direct backgroundedness is not the constraint with a different filler: its foregrounded
-constituents include topics, which the Focus Background Constraint counts as backgrounded, and
-it assumes that every filler-gap construction foregrounds a constituent (p. 4), so it reads the
-domain alone.
+accounts that read the filler. An account whose prediction is a function of the domain alone,
+such as the direct backgroundedness of Cuneo and Goldberg or a structural constraint on the
+configuration, predicts the same verdict in every construction and is untouched by the result, as
+the paper notes (§8). Direct backgroundedness is not the constraint with a different filler: its
+foregrounded constituents include topics, which the Focus Background Constraint counts as
+backgrounded, and it assumes that every filler-gap construction foregrounds a constituent (p. 4),
+so it reads the domain alone.
 
 ## Main definitions
 
@@ -71,17 +70,17 @@ inductive FGDConstruction where
   | topicalization
   deriving DecidableEq, Repr
 
-/-- Focus marking of the filler: a wh-phrase is focused, a topicalized constituent is already
-backgrounded in the discourse (§2), and relativization assigns its head no focus
+/-- The focus marking of the filler. A wh-phrase is focused, a topicalized constituent is
+already backgrounded in the discourse (§2), and relativization assigns its head no focus
 ([abeille-et-al-2020]). -/
 def fillerFocus : FGDConstruction → Mark
   | .whQuestion => .focused
-  | .relativeClause | .topicalization => .nonFocused
+  | .relativeClause | .topicalization => .unfeatured
 
 /-- Focus marking of the subject, the constituent containing the gap. Subjects are backgrounded,
 that is unfocused, in all three constructions, which is what the design holds constant. -/
 def subjectFocus : FGDConstruction → Mark
-  | _ => .nonFocused
+  | _ => .unfeatured
 
 /-- The extraction domain is uniform across the three constructions, so any difference between
 them is a difference in the filler. -/
@@ -99,7 +98,7 @@ theorem fillerFocus_varies :
 /-- The categorical Focus Background Constraint of [abeille-et-al-2020], the paper's (10): a
 focused element should not be part of an unfocused, backgrounded constituent. -/
 def FBCViolation (filler domain : Mark) : Prop :=
-  filler = .focused ∧ domain = .nonFocused
+  filler = .focused ∧ domain = .unfeatured
 
 instance : DecidableRel FBCViolation := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -108,9 +107,9 @@ scale the only strict pair is the unfocused below the focused. -/
 theorem fbcViolation_iff_lt (filler domain : Mark) : FBCViolation filler domain ↔ domain < filler :=
   (IsSimpleOrder.lt_iff_eq_bot_and_eq_top.trans and_comm).symm
 
-/-- The constraint's prediction for a construction: the filler is strictly more focused than the
-subject containing its gap, against the monotonicity of [abeille-et-al-2020]'s (44) and the
-revision (11). -/
+/-- The constraint predicts an island in a construction whose filler is strictly more focused
+than the subject containing its gap, against the monotonicity of [abeille-et-al-2020]'s (44) and
+the revision (11). -/
 def FBCPredictsIsland (c : FGDConstruction) : Prop :=
   subjectFocus c < fillerFocus c
 

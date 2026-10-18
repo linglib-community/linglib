@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Focus.Marking
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Fragments.Dutch.Particles
 public import Linglib.Fragments.German.Particles
@@ -8,28 +9,38 @@ public import Linglib.Data.Examples.TurcoBraunDimroth2014
 /-!
 # Turco, Braun and Dimroth (2014): When Contrasting Polarity, the Dutch Use Particles, Germans Intonation
 
-This file formalizes [turco-braun-dimroth-2014], a production study of how Dutch and German
-mark a switch from a negative to a positive polarity in two discourse contexts. A polarity
-contrast, (1), asserts the positive claim of a different topic situation, in the sense of
-[klein-2008], than the negative claim, so the two claims are compatible; a polarity correction,
-(2), asserts it of the same topic situation, so the two claims exclude each other, the contrast
-and correction of [umbach-2004]: `Sentence`, `Switch`, `IsContrast`, `IsCorrection`,
-`Switch.disjoint_iff`, `IsCorrection.disjoint`, `exists_isContrast_not_disjoint`. In both
-contexts German speakers produced Verum focus, a high-falling pitch accent on the finite verb,
-[hohle-1992], and never a sentence-internal affirmative particle, whereas Dutch speakers mostly
-produced the accented affirmative particle *wel*, `Dutch.Particles.wel`. The paper's
-theoretical claim is that the two devices, though functionally equivalent, operate on different
-levels: a sentence contains a polarity operator and, above it, an assertion operator carried by
-the finite verb; *wel* is the overt affirmative value of the polarity operator, the counterpart
-of *niet*, [sudhoff-2012], whereas Verum focus highlights the assertion operator,
-`Sentence.polarityOp` and `Sentence.verumFocus`. Truth conditions do not depend on Verum focus
-or on whether affirmation is overt, `denotation_verumFocus` and `denotation_affirmation`, the
-functional equivalence; an overt polarity value fixes the polarity of its sentence, so *wel*
-cannot occur in a negated sentence, while Verum focus can, `pol_of_polarityOp_eq_some` and
-`exists_verumFocus_negative`, which is why the assertion operator takes effect above polarity,
-as in [bluhdorn-2012]. The paper sets this against [sudhoff-2012], for whom focus on *wel* is
-itself an instance of Verum focus: that the two devices do the same work does not put them on
-the same level.
+Turco, Braun and Dimroth study how Dutch and German speakers mark a switch from a negative to a
+positive claim in two discourse contexts. In a polarity contrast, (1), the positive claim is about
+a different topic situation, in Klein's sense, than the negative one, so the two claims are
+compatible; in a polarity correction, (2), it is about the same topic situation, so they exclude
+each other. These are Umbach's contrast and correction. German speakers produced Höhle's Verum
+focus, a high-falling pitch accent on the finite verb, and never a sentence-internal affirmative
+particle, whereas Dutch speakers mostly produced the accented affirmative particle *wel*
+(`Dutch.Particles.wel`). The paper's claim is that the two devices are functionally equivalent
+but operate on different levels. A sentence contains a polarity operator and, above it, an
+assertion operator carried by the finite verb; *wel* is the overt affirmative value of the
+polarity operator, the counterpart of *niet*, as Sudhoff has it, whereas Verum focus marks the
+assertion operator. An overt polarity value fixes the polarity of its sentence, so *wel* cannot
+occur in a negated sentence while Verum focus can, which is why the assertion operator takes
+effect above polarity, as in Blühdorn. The paper sets this against Sudhoff, for whom focus on
+*wel* is itself an instance of Verum focus: that the two devices do the same work does not put
+them on the same level.
+
+## Main definitions
+
+* `Sentence`: a property of a topic situation, asserted through a polarity operator
+  (`Sentence.polarityOp`) and an assertion operator that Verum focus marks
+  (`Sentence.verumFocus`).
+* `Switch`, `IsContrast`, `IsCorrection`: a negative claim followed by a positive one, about a
+  different or the same topic situation.
+
+## Main results
+
+* `Switch.disjoint_iff`, `IsCorrection.disjoint`, `exists_isContrast_not_disjoint`: corrected
+  claims exclude each other and contrasted ones need not.
+* `denotation_verumFocus`, `denotation_affirmation`: neither device changes truth conditions.
+* `pol_of_polarityOp_eq_some`, `exists_verumFocus_negative`: *wel* makes its sentence positive,
+  and Verum focus occurs in a negated sentence.
 
 ## Implementation notes
 
@@ -46,7 +57,7 @@ realization, not an affirmative particle, since *doch* never carried the correct
 itself. *Wel* was mostly accented, as a downstepped fall in
 contrast and as a fall in correction, and the pitch range of German Verum focus was larger in
 correction than in contrast; the paper attributes the greater prominence of correction either to
-the strength of undoing a denial, [hogeweg-2009], or to the absence of a contrastive topic accent
+the strength of undoing a denial, as Hogeweg has it, or to the absence of a contrastive topic accent
 before the comment. The examples are the rows of `Data.Examples.TurcoBraunDimroth2014`.
 
 ## References
@@ -57,6 +68,7 @@ before the comment. The examples are the rows of `Data.Examples.TurcoBraunDimrot
 * [hohle-1992]
 * [sudhoff-2012]
 * [bluhdorn-2012]
+* [hogeweg-2009]
 * [hogeweg-2009]
 * [dimroth-etal-2010]
 -/
@@ -76,7 +88,8 @@ structure Sentence (S W : Type*) where
   /-- The overt value of the polarity operator: negation, or an affirmative particle such as
   Dutch *wel*; `none` when affirmation is unmarked. -/
   polarityOp : Option Polarity
-  verumFocus : Bool
+  /-- The mark on the assertion operator, F-marked under Verum focus. -/
+  verumFocus : Focus.Mark
 
 variable {S W : Type*}
 
@@ -89,8 +102,8 @@ def pol (s : Sentence S W) : Polarity := s.polarityOp.getD .positive
 def denotation (s : Sentence S W) : Set W := s.pol • s.property s.situation
 
 /-- Accenting the assertion operator leaves the truth conditions unchanged. -/
-theorem denotation_verumFocus (s : Sentence S W) (b : Bool) :
-    { s with verumFocus := b }.denotation = s.denotation := rfl
+theorem denotation_verumFocus (s : Sentence S W) (m : Focus.Mark) :
+    { s with verumFocus := m }.denotation = s.denotation := rfl
 
 /-- An overt affirmative particle leaves the truth conditions of the unmarked affirmative
 sentence unchanged: *wel* and Verum focus are functionally equivalent on a positive sentence. -/
@@ -106,22 +119,22 @@ theorem pol_of_polarityOp_eq_some {s : Sentence S W} {p : Polarity} (h : s.polar
 
 /-- Verum focus can occur in a negated sentence, *Das Kind HAT nicht geweint*. -/
 theorem exists_verumFocus_negative [Nonempty S] :
-    ∃ s : Sentence S W, s.verumFocus = true ∧ s.pol = .negative :=
-  ⟨⟨fun _ ↦ ∅, Classical.arbitrary S, some .negative, true⟩, rfl, rfl⟩
+    ∃ s : Sentence S W, s.verumFocus = .focused ∧ s.pol = .negative :=
+  ⟨⟨fun _ ↦ ∅, Classical.arbitrary S, some .negative, .focused⟩, rfl, rfl⟩
 
 end Sentence
 
 /-! ### Polarity contrast and polarity correction -/
 
-/-- A polarity switch from `a` to `b`: a negative claim followed by a positive claim of the same
-descriptive property. -/
+/-- A polarity switch from `a` to `b` is a negative claim followed by a positive claim of the
+same descriptive property. -/
 def Switch (a b : Sentence S W) : Prop :=
   a.property = b.property ∧ a.pol = .negative ∧ b.pol = .positive
 
-/-- A polarity contrast: a switch between claims about different topic situations. -/
+/-- A polarity contrast is a switch between claims about different topic situations. -/
 def IsContrast (a b : Sentence S W) : Prop := Switch a b ∧ a.situation ≠ b.situation
 
-/-- A polarity correction: a switch between claims about the same topic situation. -/
+/-- A polarity correction is a switch between claims about the same topic situation. -/
 def IsCorrection (a b : Sentence S W) : Prop := Switch a b ∧ a.situation = b.situation
 
 /-- The claims of a switch exclude each other exactly when the property's holding of the second
@@ -141,8 +154,8 @@ theorem IsCorrection.disjoint {a b : Sentence S W} (h : IsCorrection a b) :
 contrast whose claims are jointly true. -/
 theorem exists_isContrast_not_disjoint [Nonempty W] {s₁ s₂ : S} (h : s₁ ≠ s₂) :
     ∃ a b : Sentence S W, IsContrast a b ∧ ¬ Disjoint a.denotation b.denotation := by
-  refine ⟨⟨fun s ↦ {_w | s = s₂}, s₁, some .negative, false⟩,
-    ⟨fun s ↦ {_w | s = s₂}, s₂, none, false⟩, ⟨⟨rfl, rfl, rfl⟩, h⟩, ?_⟩
+  refine ⟨⟨fun s ↦ {_w | s = s₂}, s₁, some .negative, .unfeatured⟩,
+    ⟨fun s ↦ {_w | s = s₂}, s₂, none, .unfeatured⟩, ⟨⟨rfl, rfl, rfl⟩, h⟩, ?_⟩
   exact Set.not_disjoint_iff.2 ⟨Classical.arbitrary W, h, rfl⟩
 
 end TurcoBraunDimroth2014

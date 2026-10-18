@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Semantics.Composition.WithAlternatives
 public import Linglib.Semantics.Focus.Control
+public import Linglib.Semantics.Focus.Marking
 public import Studies.HartmannZimmermann2007
 
 /-!
@@ -21,18 +21,19 @@ use-conditional, like the German particles *ja* and *doch*. Two consequences fol
 constituent can bear both features, since no domain is a singleton, and a constituent
 containing a focus can be Given only if an operator inside it has consumed the alternatives,
 which is what licenses second-occurrence focus under *only*. Newness is no feature at all,
-so the paper's footnote on Hausa rereads the in situ and ex situ answers of
-[hartmann-zimmermann-2007] as unmarked newness and [FoC].
+so the paper's footnote on Hausa rereads the in situ and ex situ answers of Hartmann and
+Zimmermann as unmarked newness and [FoC].
 
 ## Implementation notes
 
-The paper's Givenness is the substrate's `WithAlternatives.Given`, and its *only* (56) is
-`Exhaustification.excludes` at the salient contrast set the squiggle also carries (55b), so the
-paper's indirect association through two occurrences of the contextual variable is a fact about
-the substrate and is not restated. The squiggle operator is bundled with `Focus.SquiggleInd` for
-each antecedent, the first two contrast conditions of (49); the third, which prevents overfocusing
-by comparing [FoC]/[G]-variants, is not formalized. The prosodic spell-out of the features in
-English (§6–§7) is prose.
+[FoC] is the substrate's F-mark `Focus.Mark.focused` and (45) is `WithAlternatives.mark`, the
+domain of a type being all its values. The paper's Givenness is the substrate's
+`WithAlternatives.Given`, and its *only* (56) is `Exhaustification.excludes` at the salient
+contrast set the squiggle also carries (55b), so the paper's indirect association through two
+occurrences of the contextual variable is a fact about the substrate and is not restated. The
+squiggle operator is bundled with `Focus.SquiggleInd` for each antecedent, the first two contrast
+conditions of (49); the third, which prevents overfocusing by comparing [FoC]/[G]-variants, is not
+formalized. The prosodic spell-out of the features in English (§6–§7) is prose.
 
 ## References
 
@@ -51,14 +52,6 @@ namespace KratzerSelkirk2020
 
 /-! ### The features (45)–(47) -/
 
-/-- [FoC] (45) leaves the ordinary value unchanged and makes the alternatives value the whole
-domain of the constituent's type. -/
-def applyFoC {α : Type*} (m : WithAlternatives α) (domain : Set α) : WithAlternatives α :=
-  { ordinary := m.ordinary, alternatives := domain }
-
-theorem applyFoC_ordinary {α : Type*} (m : WithAlternatives α) (domain : Set α) :
-    (applyFoC m domain).ordinary = m.ordinary := rfl
-
 /-- [G] indexed with the salient discourse referent `a` (47) is defined only if the meaning is
 Given with respect to `a` (46), and is then the identity. -/
 def applyG {α : Type*} (m : WithAlternatives α) (a : α) (_ : m.Given a) :
@@ -67,13 +60,19 @@ def applyG {α : Type*} (m : WithAlternatives α) (a : α) (_ : m.Given a) :
 theorem applyG_eq {α : Type*} (m : WithAlternatives α) (a : α) (h : m.Given a) :
     applyG m a h = m := rfl
 
-/-- No constituent bears both features: an alternatives value with two members, as any
-domain has, is not a singleton. -/
+/-- A meaning with two distinct alternatives is Given with respect to nothing. -/
 theorem not_given_of_pair {α : Type*} {m : WithAlternatives α} {a b : α}
     (ha : a ∈ m.alternatives) (hb : b ∈ m.alternatives) (hab : a ≠ b) (referent : α) :
     ¬ m.Given referent := fun h ↦ by
   rw [h] at ha hb
   exact hab (ha.trans hb.symm)
+
+/-- No constituent bears both features, since an F-marked constituent of a type with two values
+is Given with respect to nothing. -/
+theorem not_given_mark_focused {α : Type*} [Nontrivial α] (d : WithAlternatives α) (a : α) :
+    ¬ (d.mark .focused).Given a :=
+  let ⟨x, y, hxy⟩ := exists_pair_ne α
+  not_given_of_pair (Set.mem_univ x) (Set.mem_univ y) hxy a
 
 /-- The Givenness requirement is use-conditional and must be met by the utterance context
 however deeply [G] is embedded. As the not-at-issue content of a two-dimensional meaning, it
@@ -132,22 +131,20 @@ theorem not_given_of_isAGiven :
 
 The paper does not conclude with [hartmann-zimmermann-2007] that information focus is
 realised both in situ and ex situ in Hausa, since accommodated contrasts were not controlled
-for: on its inventory mere newness is no focus, so ex situ realises [FoC] and in situ is
-unmarked, in line with the corpus tendency the footnote cites, most information focus in
-situ and most selective, contrastive, and corrective focus ex situ. -/
+for, and it notes the corpus tendency, most information focus in situ and most selective,
+contrastive, and corrective focus ex situ. On its inventory mere newness is no focus, so the
+rereading the footnote suggests, without stating it, is that ex situ realises [FoC] and in situ
+is unmarked. -/
 
-/-- The paper's inventory over the pragmatic uses of [hartmann-zimmermann-2007]: the
-contrastive family is [FoC], new information is unmarked. -/
-def IsFoCus : Focus.Use → Prop
-  | .newInfo => False
-  | _ => True
-
-instance (u : Focus.Use) : Decidable (IsFoCus u) := by
-  cases u <;> simp [IsFoCus] <;> infer_instance
+/-- The paper's inventory over the pragmatic uses of [hartmann-zimmermann-2007] marks the
+contrastive family with [FoC] and leaves new information unfeatured. -/
+def useMark : Focus.Use → Focus.Mark
+  | .newInfo => .unfeatured
+  | _ => .focused
 
 /-- On the rereading of Hausa a focus is realised ex situ iff it bears [FoC]. -/
 def KSHausaReading (u : HartmannZimmermann2007.FocusUtterance) : Prop :=
-  u.cfg.strategy = .exSitu ↔ IsFoCus u.pragType
+  u.cfg.strategy = .exSitu ↔ useMark u.pragType = .focused
 
 instance (u : HartmannZimmermann2007.FocusUtterance) : Decidable (KSHausaReading u) :=
   inferInstanceAs (Decidable (_ ↔ _))
