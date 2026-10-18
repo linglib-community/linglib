@@ -4,6 +4,7 @@ public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Card
 public import Linglib.Core.Data.Set.Monad
 public import Linglib.Semantics.Composition.WithAlternatives
+public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Composition.Cont
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Data.Examples.Charlow2014
@@ -34,39 +35,40 @@ Rooth's alternatives, is the library's `WithAlternatives`. Continuation results 
 
 ## Main definitions
 
-* `combine` — monadic application, the thesis's overloaded rule of use
-* `Stack`, `StateSet`, `indef`, `pro`, `dref`, `holds`, `neg`, `cond`, `det`, `every`, `no` — the
+* `combine`: monadic application, the thesis's overloaded rule of use
+* `Stack`, `StateSet`, `indef`, `pro`, `dref`, `holds`, `neg`, `cond`, `det`, `every`, `no`: the
   State.Set fragment
-* `Tower`, `liftValue`, `bindShift`, `everyDP`, `noDP`, `eval₂` — scope-takers over it
-* `distr`, `or`, `dynGQ` — distributivity, program disjunction, dynamic generalized quantifiers
-* `Focus.fmark`, `Focus.only`, `Focus.also` — F-marking and the focus particles over
-  `WithAlternatives`
-* `ReaderSet` and its fragment — the Reader.Set variant
+* `Tower`, `liftValue`, `bindShift`, `everyDP`, `noDP`, `eval₂`: scope-takers over it
+* `distr`, `or`, `dynGQ`: distributivity, program disjunction, dynamic generalized quantifiers
+* `Focus.fmark`, `Focus.only`, `Focus.also`: F-marking and the focus particles over
+  `WithAlternatives`, *only* and the additive of `Focus.Particles` on the identity scale
+* `ReaderSet` and its fragment: the Reader.Set variant
 
 ## Main results
 
-* `combine_bind` — Rebracket: side effects propagate in linear order whatever the bracketing
-* `dref_bind`, `bind_pro` — dref introduction and binding in State.Set
-* `neg_dref_indef`, `neg_pro`, `cond_dref_indef`, `every_dref_indef` — negation and the operators
+* `combine_bind`: Rebracket: side effects propagate in linear order whatever the bracketing
+* `dref_bind`, `bind_pro`: dref introduction and binding in State.Set
+* `neg_dref_indef`, `neg_pro`, `cond_dref_indef`, `every_dref_indef`: negation and the operators
   built on it discharge nondeterminism and drefs but not pronouns
-* `eval_combine_monadLift` — scopal application subsumes monadic application
-* `reset_combine_monadLift` — side effects survive evaluation, in any monad
-* `reset_every`, `reset_indef_every`, `reset_every_indef`, `reset_every_pro` — what survives
+* `eval_combine_monadLift`: scopal application subsumes monadic application
+* `reset_combine_monadLift`: side effects survive evaluation, in any monad
+* `reset_every`, `reset_indef_every`, `reset_every_indef`, `reset_every_pro`: what survives
   evaluation: indefinites and pronouns, not quantifiers, and not an indefinite an inverse-scoped
   quantifier discharged
 * `exceptional_neg`, `exceptional_cond`, `exceptional_feeds_binding`, `brc_derivation` —
   exceptional scope over negation and conditionals, feeding anaphora, and the Binder Roof
   Constraint
-* `monadLift_layered`, `indef_visits_indef_layered` — selective exceptional scope via layering
-* `or_over_every`, `or_or_names` — disjunction over a universal whose indefinites stay under it,
+* `monadLift_layered`, `indef_visits_indef_layered`: selective exceptional scope via layering
+* `or_over_every`, `or_or_names`: disjunction over a universal whose indefinites stay under it,
   and higher-order disjunctive programs
-* `name_dref_inverse`, `dynGQ_neg` — name drefs and maximal drefs escape islands
-* `Focus.only_focus_layered`, `Focus.also_only_focus_layered` — selective association with focus
-* `island_cond_every` — a universal does not scope out of a Reset antecedent
-* `ReaderSet.no_exceptional_binding`, `ReaderSet.run_monadLift` — Reader.Set continuations see the
+* `name_dref_inverse`, `dynGQ_neg`: name drefs and maximal drefs escape islands
+* `Focus.only_iff`, `Focus.also_iff`: the particles are those of Def. 5.10
+* `Focus.only_focus_layered`, `Focus.also_only_focus_layered`: selective association with focus
+* `island_cond_every`: a universal does not scope out of a Reset antecedent
+* `ReaderSet.no_exceptional_binding`, `ReaderSet.run_monadLift`: Reader.Set continuations see the
   input stack only, so the variant hosts exceptional scope but not exceptional binding
 * `cf_exceptional_cond`, `cf_no_candidate_iff`, `cf_same_restrictor_iff`, `cf_layered_iff`,
-  `cf_disjunction_iff` — the choice-functional rival (section 4.7.1) matches exceptional scope but
+  `cf_disjunction_iff`: the choice-functional rival (section 4.7.1) matches exceptional scope but
   closes choice functions over bound-into restrictors into unattested readings
 
 ## Implementation notes
@@ -958,13 +960,55 @@ variable {E W : Type}
 /-- `fmark alt a` is F-marking (Def. 5.7), a value with its contextual alternatives. -/
 def fmark (alt : E → Set E) (a : E) : WithAlternatives E := ⟨a, alt a⟩
 
-/-- `only P` holds when the VP's value is the sole true alternative (Def. 5.10). -/
-def only (P : WithAlternatives (E → W → Prop)) : E → W → Prop :=
-  fun x w ↦ {Q | Q ∈ P.alternatives ∧ Q x w} = {P.ordinary}
+/-- A VP meaning as the set of subject–world pairs it holds of. -/
+def toSet (Q : E → W → Prop) : Set (E × W) := {xw | Q xw.1 xw.2}
 
-/-- `also P` holds when some other alternative is true too (Def. 5.10). -/
-def also (P : WithAlternatives (E → W → Prop)) : E → W → Prop :=
-  fun x w ↦ {P.ordinary} ⊂ {Q | Q ∈ P.alternatives ∧ Q x w}
+@[simp] theorem mem_toSet {Q : E → W → Prop} {x : E} {w : W} : (x, w) ∈ toSet Q ↔ Q x w :=
+  Iff.rfl
+
+theorem toSet_injective : Function.Injective (toSet : (E → W → Prop) → Set (E × W)) :=
+  Function.uncurry_injective
+
+/-- `only P` holds of `x` at `w` when the VP's value is among its alternatives and *only* on the
+identity scale is true at `(x, w)`. -/
+def only (P : WithAlternatives (E → W → Prop)) : E → W → Prop := fun x w ↦
+  P.ordinary ∈ P.alternatives ∧
+    _root_.Focus.Particles.only (· = ·) (toSet '' P.alternatives) (toSet P.ordinary) (x, w) = 1
+
+/-- `also P` holds of `x` at `w` when the VP's value is among its alternatives and the additive on
+the identity scale is true at `(x, w)`. -/
+def also (P : WithAlternatives (E → W → Prop)) : E → W → Prop := fun x w ↦
+  P.ordinary ∈ P.alternatives ∧
+    _root_.Focus.Particles.additive (· = ·) (toSet '' P.alternatives) (toSet P.ordinary) (x, w) = 1
+
+/-- *Only* is Def. 5.10's, true where the VP's value is the sole true alternative. -/
+theorem only_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
+    only P x w ↔ {Q | Q ∈ P.alternatives ∧ Q x w} = {P.ordinary} := by
+  simp only [only, _root_.Focus.Particles.only_eq_one_iff, _root_.Focus.Particles.mem_atLeast,
+    _root_.Focus.Particles.mem_atMost, Set.forall_mem_image, Set.exists_mem_image, mem_toSet,
+    toSet_injective.eq_iff, Set.eq_singleton_iff_unique_mem, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨ho, ⟨_, -, hw, rfl⟩, hmax⟩
+    exact ⟨⟨ho, hw⟩, fun Q ⟨hQ, hQw⟩ ↦ (hmax hQ hQw).symm⟩
+  · rintro ⟨⟨ho, hw⟩, hu⟩
+    exact ⟨ho, ⟨_, ho, hw, rfl⟩, fun Q hQ hQw ↦ (hu Q ⟨hQ, hQw⟩).symm⟩
+
+/-- *Also* is Def. 5.10's, true where some alternative besides the VP's value is true too. -/
+theorem also_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
+    also P x w ↔ {P.ordinary} ⊂ {Q | Q ∈ P.alternatives ∧ Q x w} := by
+  simp only [also, _root_.Focus.Particles.additive_eq_one_iff,
+    _root_.Focus.Particles.mem_additivePresup, Set.exists_mem_image, mem_toSet,
+    toSet_injective.eq_iff]
+  constructor
+  · rintro ⟨ho, ⟨Q, hQ, hQw, hne⟩, hw⟩
+    have hsub : {P.ordinary} ⊆ {Q | Q ∈ P.alternatives ∧ Q x w} :=
+      Set.singleton_subset_iff.2 ⟨ho, hw⟩
+    exact (Set.ssubset_iff_of_subset hsub).2
+      ⟨Q, ⟨hQ, hQw⟩, fun h ↦ hne (Set.mem_singleton_iff.1 h).symm⟩
+  · intro h
+    obtain ⟨ho, hw⟩ := Set.singleton_subset_iff.1 h.subset
+    obtain ⟨Q, ⟨hQ, hQw⟩, hne⟩ := (Set.ssubset_iff_of_subset h.subset).1 h
+    exact ⟨ho, ⟨Q, hQ, hQw, fun h' ↦ hne (Set.mem_singleton_iff.2 h'.symm)⟩, hw⟩
 
 /-- JOHNᶠ left (5.30). -/
 theorem fmark_left (alt : E → Set E) (j : E) (left : E → Prop) :
@@ -981,8 +1025,8 @@ theorem only_met_fmark (alt : E → Set E) (j : E) (met : E → E → W → Prop
       (monadLift (fmark alt j)))) =
       fun x w ↦ {Q | (∃ y ∈ alt j, Q = met y) ∧ Q x w} = {met j} := by
   funext x w
-  rw [eval_combine_monadLift, combine_def]
-  simp [only, fmark, WithAlternatives.alternatives_pure]
+  rw [eval_combine_monadLift, combine_def, only_iff]
+  simp [fmark, WithAlternatives.alternatives_pure]
 
 /-- In unselective association `only` binds both foci in its scope (5.4.3). -/
 theorem only_fmark_fmark (alt : E → Set E) (b s : E) (intro : E → E → E → W → Prop) :
@@ -993,7 +1037,8 @@ theorem only_fmark_fmark (alt : E → Set E) (b s : E) (intro : E → E → E �
       (monadLift (fmark alt s)))) =
       fun z w ↦ {Q | (∃ x ∈ alt b, ∃ y ∈ alt s, Q = intro x y) ∧ Q z w} = {intro b s} := by
   funext z w
-  simp [only, combine, ContT.eval, fmark, WithAlternatives.alternatives_bind,
+  rw [only_iff]
+  simp [combine, ContT.eval, fmark, WithAlternatives.alternatives_bind,
     WithAlternatives.alternatives_pure, eq_comm]
 
 /-- In selective association, with BILLᶠ externally and SUEᶠ internally lifted, `only` catches
@@ -1033,7 +1078,9 @@ theorem also_only_focus_layered (alt : E → Set E) (b s : E) (intro : E → E �
       fun z w ↦ {only (combine (· ·) (combine (· ·) (pure intro) (fmark alt b)) (pure s))} ⊂
         {Q | (∃ y ∈ alt s, Q =
           only (combine (· ·) (combine (· ·) (pure intro) (fmark alt b)) (pure y))) ∧ Q z w} := by
-  rw [only_focus_layered]; rfl
+  rw [only_focus_layered]
+  funext z w
+  exact propext (also_iff _ z w)
 
 /-- Focus effects survive Reset, an instance of Fact 4.1. -/
 theorem reset_fmark (alt : E → Set E) (j : E) (left : E → Prop) :
