@@ -122,7 +122,7 @@ variable [DecidableEq W]
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,        t => t ∈ Team.flat (M.val p)
   | false, .atom p,        t => t ∈ Team.flat fun w ↦ ¬ M.val p w
-  | true,  .dep xs y,      t => t ∈ Team.dep (fun w ↦ xs.map (M.val · w)) (M.val y)
+  | true,  .dep xs y,      t => (t : Set W) ∈ Team.dep (fun w ↦ xs.map (M.val · w)) (M.val y)
   | false, .dep _ _,       t => t ∈ ({∅} : Team.TeamProperty W)
   | true,  .neg ψ,         t => eval M false ψ t
   | false, .neg ψ,         t => eval M true ψ t
@@ -152,7 +152,7 @@ abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.dep xs y) t ↔
       ∀ w₁ ∈ t, ∀ w₂ ∈ t,
         (∀ x ∈ xs, M.val x w₁ ↔ M.val x w₂) → (M.val y w₁ ↔ M.val y w₂) := by
-  simp only [support, eval, Team.mem_dep, List.map_inj_left, eq_iff_iff]
+  simp only [support, eval, Team.mem_dep, Finset.mem_coe, List.map_inj_left, eq_iff_iff]
 
 @[simp] lemma antiSupport_dep (M : KripkeModel W Atom) (xs : List Atom) (y : Atom)
     (t : Finset W) :
@@ -204,7 +204,9 @@ private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
     IsLowerSet {t | support M φ t} ∧ IsLowerSet {t | antiSupport M φ t} := by
   induction φ with
   | atom p => exact ⟨Team.isLowerSet_flat _, Team.isLowerSet_flat _⟩
-  | dep xs y => exact ⟨Team.isLowerSet_dep _ _, Team.isLowerSet_singleton_empty⟩
+  | dep xs y =>
+    exact ⟨(Team.isLowerSet_dep _ _).preimage fun _ _ ↦ Finset.coe_subset.2,
+      Team.isLowerSet_singleton_empty⟩
   | neg ψ ih => exact ih.symm
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.tensor ih₂.2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
@@ -223,7 +225,10 @@ private theorem support_and_antiSupport_empty
     support M φ ∅ ∧ antiSupport M φ ∅ := by
   induction φ with
   | atom p => exact ⟨Team.empty_mem_flat _, Team.empty_mem_flat _⟩
-  | dep xs y => exact ⟨Team.empty_mem_dep, rfl⟩
+  | dep xs y =>
+    refine ⟨?_, rfl⟩
+    simp only [support, eval, Finset.coe_empty]
+    exact Team.empty_mem_dep
   | neg ψ ih => exact ih.symm
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, Team.empty_mem_tensor ih₁.2 ih₂.2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Team.empty_mem_tensor ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
@@ -240,9 +245,12 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     each of their singleton teams supports `=(p; q)` but the team of both does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
     {M : KripkeModel W Atom} (hp : M.val p w₁ ↔ M.val p w₂) (hq : ¬ (M.val q w₁ ↔ M.val q w₂)) :
-    ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := by
-  simpa only [support, eval, Set.ofPred_mem_eq] using
-    Team.not_supClosed_dep (f := fun w ↦ [p].map (M.val · w)) (by simp [hp]) (hq ∘ Eq.to_iff)
+    ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := fun h ↦ by
+  have hs (w : W) : support M (.dep [p] q) {w} := by
+    simp only [support, eval, Finset.coe_singleton]
+    exact Team.singleton_mem_dep w
+  exact hq <| (support_dep M [p] q _).1 (h (hs w₁) (hs w₂)) w₁ (by simp) w₂ (by simp)
+    (by simpa using hp)
 
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
