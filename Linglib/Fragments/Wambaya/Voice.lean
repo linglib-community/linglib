@@ -6,7 +6,9 @@ public import Linglib.Syntax.Voice.Basic
 # Wambaya voice
 
 Wambaya encodes reflexive and reciprocal constructions with the clitic *-ngg-*, in the object
-position of the second-position auxiliary, which reduces the clause to an intransitive one.
+position of the second-position auxiliary. It reduces the valency of the verb by one: a
+transitive verb becomes intransitive, its subject nominative rather than ergative, while a
+ditransitive keeps its theme as an accusative object (Nordlinger's grammar, §7.3.1).
 
 ## Main definitions
 

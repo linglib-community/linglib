@@ -24,6 +24,14 @@ sub-events. A model on finite sets shows the two laws consistent.
 
 * `Plurality.GroupStructure.up_injective`: distinct sums form distinct groups.
 
+## Implementation notes
+
+* Landman's set-theoretic model identifies group formation with singleton formation and defines
+  dissolution only on groups, the singleton sets of sets. Here `down` is total, and the
+  left-inverse law constrains it only on the image of `up`.
+* The finite-set model follows the singleton construction, with a fresh marker standing for the
+  plurality so that groups and ordinary atoms share one carrier.
+
 ## References
 
 * [F. Landman, *Groups, I* (1989)][landman-1989]

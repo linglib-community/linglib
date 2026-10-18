@@ -339,8 +339,9 @@ theorem IntermediateReciprocity.weak (h : IntermediateReciprocity R X) : WeakRec
 
 /-! ### Partitioned Strong Reciprocity -/
 
-/-- Partitioned Strong Reciprocity ([fiengo-lasnik-1973]) holds when `X` splits into disjoint
-cells within each of which Strong Reciprocity holds. -/
+/-- Partitioned Strong Reciprocity ([langendoen-1978]), the reciprocal relation of
+[fiengo-lasnik-1973], holds when `X` splits into disjoint cells of two or more members within
+each of which Strong Reciprocity holds. -/
 def PartitionedStrongReciprocity [DecidableEq α] (R : α → α → Prop) (X : Finset α) : Prop :=
   ∃ P : Finpartition X, ∀ c ∈ P.parts, StrongReciprocity R c
 
