@@ -174,22 +174,22 @@ kind the speaker intends (§5). -/
 bears a gender does not take *they*, so personal *they* for such a referent needs a homophonous
 entry without the gender, their ad hoc ungendered *Mary* (§5). -/
 theorem stage2_they_needs_ungendered_entry {a : Antecedent} {g : Gender}
-    (hs : a.singular = true) (hq : a.quantified = false) (hl : a.lexical = some (.gender g)) :
+    (hs : a.number = .singular) (hq : a.det = .referential) (hl : a.lexical = some (.gender g)) :
     "they" ∉ forms .two a ∧ "they" ∈ forms .two { a with lexical := none } :=
+  have hi : ¬ Antecedent.Inanimate { a with lexical := none } := nofun
   ⟨they_not_mem_forms_of_lexical rfl hs hq hl,
-    they_mem_forms (Or.inl (by simp [Stage.genders, Stage.genderContrastivity,
-      Stage.insertionObligatory, Antecedent.inanimate, Antecedent.lexicalGender])) rfl⟩
+    they_mem_forms (.inl ((none_mem_genders_two_iff hi).2 rfl)) hi⟩
 
 /-- *My mother*, a lexically gendered noun for a referent of known gender outside a quantifier,
 as in Konnelly and Cowper's (26). -/
-def myMother : Antecedent := ⟨true, some (.gender .fem), some .fem, false⟩
+def myMother : Antecedent := ⟨.singular, .referential, some (.gender .fem), some .fem⟩
 
 /-- The third-stage grammar admits *my mother … they* (§6.2), but in a common ground that no
 longer counts as underspecified and does not accept the they/them fact neither kind's condition
 holds, so such a production would be a counterexample to the proposal. -/
 theorem stage3_they_counterexample (hU : c ∉ U) (hP : P ∉ c) :
     "they" ∈ forms .three myMother ∧ ∀ k : Kind, c ∉ k.condition U P :=
-  ⟨stage3_they rfl, by rintro (_ | _) <;> simpa⟩
+  ⟨stage3_they nofun, by rintro (_ | _) <;> simpa⟩
 
 /-! ### The examples -/
 
