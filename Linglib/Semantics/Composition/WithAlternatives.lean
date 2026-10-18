@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Control.Basic
 public import Mathlib.Data.Set.Insert
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Data.Set.Lattice.Image
@@ -34,9 +35,9 @@ alternatives.
 
 * `ordinary_seq`, `mem_alternatives_seq` — the two dimensions of Hamblin composition
 * `alternatives_seq` — the alternatives of an application are those of the `Set` applicative
+* `CommApplicative WithAlternatives`, `seq_eq_bind_seq_pure` — composition does not depend on the
+  order of the daughters, so an application can bind its argument first
 * `Given.alternatives_seq` — a Given function contributes only its ordinary value
-* `nontrivial_alternatives_map₂_left`, `nontrivial_alternatives_map₂_right` — a daughter evoking
-  two alternatives makes her mother evoke two, so the mother is not Given
 
 ## References
 
@@ -149,6 +150,27 @@ theorem alternatives_bind (m : WithAlternatives α) (f : α → WithAlternatives
     (m >>= f).alternatives = {b | ∃ a ∈ m.alternatives, b ∈ (f a).alternatives} := by
   ext b; simp [Bind.bind, bind]
 
+/-- Hamblin composition does not depend on the order in which the daughters are composed, since
+both dimensions, `Id` and `Set`, are commutative. -/
+instance : CommApplicative WithAlternatives where
+  commutative_prod a b := by
+    refine WithAlternatives.ext rfl (Set.ext fun p ↦ ?_)
+    simp only [mem_alternatives_seq, mem_alternatives_map]
+    constructor
+    · rintro ⟨_, ⟨x, hx, rfl⟩, y, hy, rfl⟩
+      exact ⟨_, ⟨y, hy, rfl⟩, x, hx, rfl⟩
+    · rintro ⟨_, ⟨y, hy, rfl⟩, x, hx, rfl⟩
+      exact ⟨_, ⟨x, hx, rfl⟩, y, hy, rfl⟩
+
+/-- By commutativity an application can run its argument first, binding the argument into the
+function applied to it. -/
+theorem seq_eq_bind_seq_pure (mf : WithAlternatives (α → β)) (mx : WithAlternatives α) :
+    mf <*> mx = mx >>= fun x ↦ mf <*> pure x := by
+  have h := CommApplicative.commutative_map mf mx (f := fun g x ↦ g x)
+  simp only [id_map', seq_eq_bind_map, bind_map_left] at h
+  simp only [seq_eq_bind_map, map_pure, bind_pure_comp]
+  exact h
+
 /-- Rooth's containment constraint says that the alternatives contain the ordinary value. -/
 def WellFormed (m : WithAlternatives α) : Prop := m.ordinary ∈ m.alternatives
 
@@ -218,20 +240,6 @@ def map₂ (f : α → β → γ) (a : WithAlternatives α) (b : WithAlternative
 
 theorem WellFormed.map₂ (ha : a.WellFormed) (hb : b.WellFormed) : (map₂ f a b).WellFormed :=
   Set.mem_image2_of_mem ha hb
-
-/-- A daughter evoking two alternatives makes her mother evoke two, when the composition is
-injective in her and her sister evokes something. -/
-theorem nontrivial_alternatives_map₂_left (hf : ∀ y, Function.Injective (f · y))
-    (ha : a.alternatives.Nontrivial) (hb : b.alternatives.Nonempty) :
-    (map₂ f a b).alternatives.Nontrivial :=
-  let ⟨_, hy⟩ := hb
-  (ha.image (hf _)).mono (Set.image_subset_image2_left hy)
-
-theorem nontrivial_alternatives_map₂_right (hf : ∀ x, Function.Injective (f x))
-    (ha : a.alternatives.Nonempty) (hb : b.alternatives.Nontrivial) :
-    (map₂ f a b).alternatives.Nontrivial :=
-  let ⟨_, hx⟩ := ha
-  (hb.image (hf _)).mono (Set.image_subset_image2_right hx)
 
 universe u in
 /-- Within a universe, binary composition is the monad's `f <$> a <*> b`. -/
