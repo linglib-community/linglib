@@ -48,6 +48,15 @@ dl.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .v-wrong { background: var(--wrong-bg); color: var(--wrong); }
 .v-silent { color: var(--silent); font-weight: 400; }
 button.v:hover { filter: brightness(0.94); }
+.strip { display: inline-flex; gap: 2px; align-items: center; vertical-align: middle; }
+.strip .gap { width: 6px; }
+.v.sq, span.sq { width: 12px; height: 12px; border-radius: 2px; }
+span.sq { display: inline-block; }
+.sq.v-correct { background: var(--right); }
+.sq.v-wrong { background: var(--wrong); }
+.sq.v-silent { background: var(--tertiary); }
+#overview .board thead th { white-space: normal; }
+#overview .board th[scope="row"], #overview .board .corner { min-width: 12rem; }
 button.v[aria-current="true"] { outline: 2px solid var(--primary); outline-offset: 1px; }
 
 /* The panel of a mark */
@@ -134,7 +143,8 @@ ol.steps { padding-inline-start: 20px; }
 ol.steps li { margin-top: 6px; }
 
 @media (max-width: 640px) {
-  .board th[scope="row"], .board .corner { min-width: 8.5rem; max-width: 10rem; }
+  .board th[scope="row"], .board .corner,
+  #overview .board th[scope="row"], #overview .board .corner { min-width: 8.5rem; max-width: 10rem; }
   .key, .small, .meta { font-size: 13px; }
 }
 </style>
@@ -222,6 +232,49 @@ ol.steps li { margin-top: 6px; }
 
   // The marks on the board shown, by experiment, theory and column.
   const marks = new Map();
+  // How a board groups an experiment's columns under its header: by cell when the experiment
+  // has parses, by the first component of a cell otherwise.
+  const groupOf = (e, c) => e.variants ? c.cell.join(", ") : c.cell.length > 1 ? c.cell[0] : "";
+  // A mark's description, for its title and its label.
+  function describe(e, t, c, cell) {
+    const where = [cite(e.cite).replace(/<[^>]*>/g, ""), e.label, ...c.cell, c.variant ? c.variant.label : ""].filter(Boolean).join(", ");
+    return `${WORD[cell.verdict] || cell.verdict}: ${t.label} on ${where}`;
+  }
+  const theoryGroups = (theories) => [
+    ["Registered accounts", theories.filter((t) => t.source === "registered")],
+    ["Lab: theories under development", theories.filter((t) => t.source === "lab")],
+  ];
+  // The overview: each experiment one column, each theory's verdicts in it a strip of small marks,
+  // one for each column of the experiment's own page, grouped as its header groups them.
+  function strips(exps, theories) {
+    marks.clear();
+    let h = `<thead><tr class="datasets"><th class="corner" scope="col">Theory</th>`;
+    for (const e of exps) h += `<th class="split"><a href="${esc(page(e.id))}">${e.cite ? cite(e.cite) : esc(e.label)}</a>${e.cite ? `<small>${esc(e.label)}</small>` : ""}</th>`;
+    h += "</tr></thead><tbody>";
+    for (const [label, rows] of theoryGroups(theories)) {
+      if (!rows.length) continue;
+      h += `<tr class="group"><th colspan="${1 + exps.length}" scope="colgroup"><span>${esc(label)}</span></th></tr>`;
+      for (const t of rows) {
+        h += `<tr><th scope="row"><a class="name" href="${esc(page(t.id))}" title="${esc(strip(t.decl.doc))}">${esc(t.label)}</a></th>`;
+        for (const e of exps) {
+          let s = "", prev = null;
+          for (const c of e.columns) {
+            const g = groupOf(e, c);
+            if (prev !== null && g !== prev) s += `<i class="gap"></i>`;
+            prev = g;
+            const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
+            if (!cell) { s += `<span class="sq"></span>`; continue; }
+            const k = `${e.id}|${t.id}|${c.key}`, what = describe(e, t, c, cell);
+            marks.set(k, { e, t, c, cell });
+            s += `<button type="button" class="v sq v-${esc(cell.verdict)}" data-k="${esc(k)}" title="${esc(what)}" aria-label="${esc(what)}" aria-controls="pop"></button>`;
+          }
+          h += `<td class="split"><span class="strip">${s}</span></td>`;
+        }
+        h += "</tr>";
+      }
+    }
+    return h + "</tbody>";
+  }
   // A board: the theories scored in a domain, against its experiments.
   function board(exps, theories) {
     marks.clear();
@@ -233,7 +286,7 @@ ol.steps li { margin-top: 6px; }
       if (e.variants && new Set(e.columns.map((c) => c.cell.join())).size < 2) { h += `<th class="split" colspan="${e.columns.length}"></th>`; continue; }
       const groups = [];
       for (const c of e.columns) {
-        const g = e.variants ? c.cell.join(", ") : c.cell.length > 1 ? c.cell[0] : "";
+        const g = groupOf(e, c);
         if (groups.length && groups[groups.length - 1].g === g) groups[groups.length - 1].n++;
         else groups.push({ g, n: 1 });
       }
@@ -269,11 +322,7 @@ ol.steps li { margin-top: 6px; }
     }
     h += "</tr></thead><tbody>";
     const span = 1 + exps.reduce((n, e) => n + e.columns.length, 0);
-    const groups = [
-      ["Registered accounts", theories.filter((t) => t.source === "registered")],
-      ["Lab: theories under development", theories.filter((t) => t.source === "lab")],
-    ];
-    for (const [label, rows] of groups) {
+    for (const [label, rows] of theoryGroups(theories)) {
       if (!rows.length) continue;
       h += `<tr class="group"><th colspan="${span}" scope="colgroup"><span>${esc(label)}</span></th></tr>`;
       for (const t of rows) {
@@ -283,8 +332,7 @@ ol.steps li { margin-top: 6px; }
             const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
             const cls = i === 0 ? "split" : "";
             if (!cell) { h += `<td class="${cls}"></td>`; return; }
-            const where = [cite(e.cite).replace(/<[^>]*>/g, ""), e.label, ...c.cell, c.variant ? c.variant.label : ""].filter(Boolean).join(", ");
-            const what = `${WORD[cell.verdict] || cell.verdict}: ${t.label} on ${where}`;
+            const what = describe(e, t, c, cell);
             const k = `${e.id}|${t.id}|${c.key}`;
             marks.set(k, { e, t, c, cell });
             h += `<td class="${cls}"><button type="button" class="v v-${esc(cell.verdict)}" data-k="${esc(k)}" title="${esc(what)}" aria-label="${esc(what)}" aria-controls="pop">${MARK[cell.verdict] || "?"}</button></td>`;
@@ -459,7 +507,7 @@ ol.steps li { margin-top: 6px; }
     document.getElementById("domains").innerHTML = data.domains.length < 2 ? "" : data.domains.map((x) =>
       `<a href="#${esc(x.name)}"${x === d ? ' aria-current="true"' : ""}>${esc(x.name)}</a>`).join("");
     document.getElementById("board").innerHTML =
-      board(d.experiments.map((x) => expById.get(x)), d.theories.map((t) => theoryById.get(t)));
+      strips(d.experiments.map((x) => expById.get(x)), d.theories.map((t) => theoryById.get(t)));
     fit();
     // The papers the board brings together.
     const names = (ps) => {
