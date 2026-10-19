@@ -465,7 +465,7 @@ inductive Con
 /-- The leg `a ≫ b ≫ c`. -/
 def leg (a b c : Con) (h : [a, b, c].Nodup := by decide) (h' : ∀ x, x ∈ [a, b, c] := by decide) :
     Ranking Con 3 :=
-  List.Nodup.getEquivOfForallMemList [a, b, c] h h'
+  Ranking.ofList [a, b, c] h h'
 
 /-- The block `O = {YXZ, XZY, ZYX}` of the partition (164). -/
 def blockO : Finset (Ranking Con 3) := {leg .Y .X .Z, leg .X .Z .Y, leg .Z .Y .X}

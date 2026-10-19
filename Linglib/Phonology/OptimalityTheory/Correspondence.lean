@@ -12,6 +12,7 @@ public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Hom.Set
 public import Mathlib.Data.Fintype.Card
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
+public import Linglib.Core.Data.Fintype.Fin
 
 /-!
 # Correspondence Theory
@@ -58,6 +59,12 @@ relations: [dolatian-heinz-2020]).
   predicate is symmetric.
 * `Correspondence.isMarkedness_iff_exists_comap` — a markedness constraint is exactly a
   constraint on strings pulled back along the output form.
+* `Correspondence.maxViolFeature_of_diagonal`, `depViolFeature_of_diagonal`,
+  `identViolFeature_of_diagonal` — on a diagonal edge a feature family counts the offending pairs
+  of the two strings' `List.zip`; `Correspondence.edgeOfPairs_diagonalPairs` — the index pairs
+  `(i, i)` give the diagonal.
+* `Correspondence.IsFaithfulness.not_antifaithful` — the anti-faithfulness constraint of a
+  faithfulness constraint is not faithfulness.
 
 ## References
 
@@ -171,27 +178,27 @@ theorem maxViolFeature_pos_iff (P : α → Prop) [DecidablePred P] (c : Correspo
       ∃ p ∈ c.edge r₁ r₂, P (c.form r₁)[p.1] ∧ ¬ P (c.form r₂)[p.2] := by
   simp [maxViolFeature, Finset.card_pos, Finset.filter_nonempty_iff]
 
-/-- I-CONTIG, "No Skipping" (A.4a): whether the domain of the relation is a contiguous
+/-- I-CONTIG, "No Skipping" (A.4a), checks whether the domain of the relation is a contiguous
 substring of `form r₁`. -/
 def contigIViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   if ((((c.edge r₁ r₂).image Prod.fst).image Fin.val).sort (· ≤ ·)).IsChain
       (fun a b => b = a + 1) then 0 else 1
 
-/-- O-CONTIG, "No Intrusion" (A.4b): whether the range of the relation is a contiguous
+/-- O-CONTIG, "No Intrusion" (A.4b), checks whether the range of the relation is a contiguous
 substring of `form r₂`. -/
 def contigOViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   if ((((c.edge r₁ r₂).image Prod.snd).image Fin.val).sort (· ≤ ·)).IsChain
       (fun a b => b = a + 1) then 0 else 1
 
-/-- L-ANCHOR (A.5): whether the leftmost positions correspond; vacuous when either
+/-- L-ANCHOR (A.5) checks whether the leftmost positions correspond, and is vacuous when either
 string is empty. -/
 def anchorLViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   if h : 0 < (c.form r₁).length ∧ 0 < (c.form r₂).length then
     if (⟨0, h.1⟩, ⟨0, h.2⟩) ∈ c.edge r₁ r₂ then 0 else 1
   else 0
 
-/-- R-ANCHOR (A.5): whether the rightmost positions correspond; vacuous when either
-string is empty. -/
+/-- R-ANCHOR (A.5) checks whether the rightmost positions correspond, and is vacuous when
+either string is empty. -/
 def anchorRViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   if h : 0 < (c.form r₁).length ∧ 0 < (c.form r₂).length then
     if (⟨(c.form r₁).length - 1, Nat.pred_lt_self h.1⟩,
@@ -466,6 +473,68 @@ theorem identViol_eq_zero_of_diagonal [DecidableEq α] (hform : c.form r₁ = c.
     (s : List α) : (identity s).identViolFeature proj .lhs .rhs = 0 :=
   identViolFeature_eq_zero_of_diagonal _ _ _ proj rfl (parallel_edge_lhs_rhs s s)
 
+/-! ### Diagonal edges as zips
+
+On a diagonal edge the `i`-th positions of the two strings correspond, so a feature family counts
+the offending pairs of their `List.zip`. -/
+
+private theorem lt_of_lt_length_zip {β : Type*} {l₁ : List α} {l₂ : List β} {i : ℕ}
+    (h : i < (l₁.zip l₂).length) : i < l₁.length ∧ i < l₂.length := by
+  simpa [List.length_zip] using h
+
+/-- The diagonal pairs of two strings that satisfy `q` number as many as the pairs of their zip
+that satisfy it. -/
+theorem card_filter_diagonal {β : Type*} (l₁ : List α) (l₂ : List β) (q : α × β → Prop)
+    [DecidablePred q] :
+    ((diagonal l₁.length l₂.length).filter fun p ↦ q (l₁[p.1], l₂[p.2])).card =
+      (l₁.zip l₂).countP (q ·) := by
+  rw [← Fin.card_filter_univ_getElem_eq_countP]
+  symm
+  refine Finset.card_bij (fun i _ ↦ (⟨i, (lt_of_lt_length_zip i.2).1⟩,
+    ⟨i, (lt_of_lt_length_zip i.2).2⟩)) ?_ ?_ ?_
+  · intro i hi
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, decide_eq_true_eq] at hi
+    simpa [mem_diagonal, List.getElem_zip] using hi
+  · intro i _ j _ h
+    exact Fin.ext (congrArg (fun p ↦ (p.1 : ℕ)) h)
+  · rintro ⟨a, b⟩ hab
+    simp only [Finset.mem_filter, mem_diagonal] at hab
+    have hb : (a : ℕ) < l₂.length := hab.1 ▸ b.2
+    refine ⟨⟨a, by simp [List.length_zip, hb]⟩, by simpa [List.getElem_zip, hab.1] using hab.2,
+      ?_⟩
+    ext <;> simp [hab.1]
+
+theorem maxViolFeature_of_diagonal (P : α → Prop) [DecidablePred P]
+    (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
+    c.maxViolFeature P r₁ r₂ = ((c.form r₁).zip (c.form r₂)).countP fun p ↦ P p.1 ∧ ¬ P p.2 := by
+  rw [maxViolFeature, hedge]
+  exact card_filter_diagonal _ _ fun p ↦ P p.1 ∧ ¬ P p.2
+
+theorem depViolFeature_of_diagonal (P : α → Prop) [DecidablePred P]
+    (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
+    c.depViolFeature P r₁ r₂ = ((c.form r₁).zip (c.form r₂)).countP fun p ↦ ¬ P p.1 ∧ P p.2 := by
+  rw [depViolFeature, hedge]
+  exact card_filter_diagonal _ _ fun p ↦ ¬ P p.1 ∧ P p.2
+
+theorem identViolFeature_of_diagonal {F : Type*} [DecidableEq F] (proj : α → F)
+    (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
+    c.identViolFeature proj r₁ r₂ =
+      ((c.form r₁).zip (c.form r₂)).countP fun p ↦ proj p.1 ≠ proj p.2 := by
+  rw [identViolFeature, hedge]
+  exact card_filter_diagonal _ _ fun p ↦ proj p.1 ≠ proj p.2
+
+/-- The index pairs `(0, 0), …, (k - 1, k - 1)` give the diagonal once `k` reaches the shorter
+string. -/
+theorem edgeOfPairs_diagonalPairs {m n k : ℕ} (h : min m n ≤ k) :
+    edgeOfPairs m n (diagonalPairs k) = diagonal m n := by
+  ext ⟨a, b⟩
+  simp only [mem_edgeOfPairs, diagonalPairs, List.mem_map, List.mem_range, Prod.mk.injEq,
+    mem_diagonal]
+  refine ⟨fun ⟨i, _, hia, hib⟩ ↦ hia.symm.trans hib, fun hab ↦ ⟨a, ?_, rfl, hab⟩⟩
+  have := a.2
+  have := b.2
+  omega
+
 /-! ### Faithfulness as order isomorphism -/
 
 /-- An edge is faithful when it has no MAX, DEP, INTEGRITY, UNIFORMITY or LINEARITY
@@ -581,6 +650,12 @@ theorem isFaithfulness_depViol : IsFaithfulness (α := α) (depViol · .lhs .rhs
 theorem isFaithfulness_identViol [DecidableEq α] :
     IsFaithfulness (α := α) (identViol · .lhs .rhs) :=
   identViol_identity
+
+/-- The anti-faithfulness constraint of a faithfulness constraint is not faithfulness, since the
+fully faithful candidate violates it. -/
+theorem IsFaithfulness.not_antifaithful {k : Constraint (Correspondence BinaryRole α)}
+    (hk : IsFaithfulness k) : ¬ IsFaithfulness k.antifaithful := fun h ↦ by
+  simpa [Constraint.antifaithful_eq_zero_iff, hk []] using h []
 
 theorem exists_isMarkedness_not_isFaithfulness [Inhabited α] :
     ∃ k : Constraint (Correspondence BinaryRole α), IsMarkedness .rhs k ∧ ¬ IsFaithfulness k :=

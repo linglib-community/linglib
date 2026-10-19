@@ -17,12 +17,13 @@ public import Linglib.Core.Order.PiLex
 
 A ranking of a constraint set indexed by `ι` ([prince-2002]'s total domination order `≫`) is an
 enumeration `r : Fin n ≃ ι` of the constraints in rank order: `r p` is the constraint at rank
-position `p`, position `0` most dominant, and `r.symm i` is the rank position of `i`. For
+position `p`, position `0` most dominant, and `r.symm i` is the rank position of `i`;
+`Ranking.ofList l` enumerates them in the order of a list `l` of all of them. For
 `ι = Fin n` a ranking is a permutation, `Equiv.Perm (Fin n)`. `Ranking.Dominates` is the induced
 strict dominance relation, a strict total order on the constraints, and `Ranking.toRel` its
 reflexive closure, from which the ranking is recoverable (`toRel_le_toRel_iff`); `Ranking.take r k`
-is the set of its top `k` constraints, and `Ranking.swapAt` transposes two adjacent ones. A ranking reads a violation vector `v` in rank order as
-`toLex (v ∘ r)`; comparing two such readings is the lexicographic order along an enumeration
+is the set of its top `k` constraints, and `Ranking.swapAt` transposes two adjacent ones. A
+ranking reads a violation vector `v` in rank order as `toLex (v ∘ r)`; comparing two such readings is the lexicographic order along an enumeration
 (`Pi.toLex_comp_lt_iff_exists` in `Core/Order/PiLex`), and comparing them under every ranking is
 the product order (`Pi.forall_toLex_comp_lt_iff`), which is harmonic bounding. The `Tableau`
 machinery evaluates under a ranking, and the elementary-ranking-condition layer
@@ -74,6 +75,15 @@ namespace Ranking
 /-- A ranking enumerates all the constraints, so their number is the number of rank positions. -/
 theorem card_eq [Fintype ι] (r : Ranking ι n) : Fintype.card ι = n := by
   simpa using Fintype.card_congr r.symm
+
+/-- The ranking a list of all the constraints enumerates, most dominant first. -/
+def ofList [DecidableEq ι] (l : List ι) (hl : l.Nodup := by decide)
+    (hc : ∀ i, i ∈ l := by decide) : Ranking ι l.length :=
+  hl.getEquivOfForallMemList l hc
+
+@[simp] theorem ofList_apply [DecidableEq ι] {l : List ι} {hl : l.Nodup} {hc : ∀ i, i ∈ l}
+    (p : Fin l.length) : ofList l hl hc p = l[p] :=
+  rfl
 
 variable (r : Ranking ι n)
 

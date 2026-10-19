@@ -32,6 +32,7 @@ Theory's strict domination, while Harmonic Grammar weights the same vector witho
 * `Tableau.ofList` — the tableau of a ranked constraint list, list order being priority.
 * `Tableau.ofOrder` — a tableau from a constraint *order* (labels, most dominant first) and the
   candidates' violation marks by label: the paper-tableau form.
+* `Tableau.tail` — the candidates doing best on the top constraint, under the constraints below.
 
 ## Main results
 
@@ -47,6 +48,11 @@ Theory's strict domination, while Harmonic Grammar weights the same vector witho
   with no violations wins under every ranking, and then every winner has no violations.
 * `Tableau.constraints_zero_le_of_mem_optimal` — a winner does at least as well as every
   candidate on the top constraint.
+* `Tableau.optimal_tail` / `Tableau.optimal_ofList_cons` — EVAL filters the candidates constraint
+  by constraint; `Tableau.optimal_ofList_append_of_forall_eq` — constraints rating every candidate
+  alike are inert.
+* `Tableau.optimal_ofList_antifaithful` — under `¬F ≫ F` the winners are the candidates violating
+  `F` least among those violating it ([alderete-2001]).
 
 ## References
 
@@ -54,6 +60,8 @@ Theory's strict domination, while Harmonic Grammar weights the same vector witho
   (1993)][prince-smolensky-1993]
 * [A. Prince, *Entailed Ranking Arguments* (2002)][prince-2002]
 * [J. Riggle, *Violation Semirings in Optimality Theory* (2009)][riggle-2009b]
+* [J. D. Alderete, *Dominance Effects as Trans-derivational Anti-faithfulness*
+  (2001)][alderete-2001]
 -/
 
 @[expose] public section
@@ -64,7 +72,8 @@ namespace OptimalityTheory
 order. -/
 abbrev ViolationProfile (n : ℕ) := Lex (Fin n → ℕ)
 
-/-- An OT tableau: a finite candidate set and the constraints that evaluate it, in rank order. -/
+/-- An OT tableau is a finite candidate set and the constraints that evaluate it, in rank
+order. -/
 structure Tableau (C : Type*) (n : ℕ) where
   /-- The candidates. -/
   candidates : Finset C
@@ -75,7 +84,7 @@ namespace Tableau
 
 variable {C : Type*} {n : ℕ} (t : Tableau C n) (c : C)
 
-/-- A candidate's violation profile: its violations read in rank order, ordered
+/-- A candidate's violation profile is its violations read in rank order, ordered
 lexicographically. -/
 def profile : ViolationProfile n := toLex fun p ↦ t.constraints p c
 
@@ -166,7 +175,7 @@ the lexicographic profile is the most dominant constraint. -/
 def ofRanking : Tableau C n := ⟨candidates, con ∘ r⟩
 
 /-- The tableau of a ranked constraint list, list order being priority (position `0` most
-dominant): `Tableau.ofRanking` under the identity ranking. Study files use this as
+dominant), is `Tableau.ofRanking` under the identity ranking. Study files use this as
 `(Tableau.ofList {.a, .b} [c₁, c₂]).optimal = {.a}`. -/
 def ofList : Tableau C ranking.length := ofRanking ranking.get (Equiv.refl _) candidates
 
@@ -244,6 +253,90 @@ theorem exists_ofRanking_optimal_eq_singleton_iff_pair (hcand : candidates = {c,
 end Bounding
 
 end Constructors
+
+/-! ### Evaluation constraint by constraint
+
+EVAL filters the candidates constraint by constraint ([prince-smolensky-1993]): the winners of a
+tableau are the winners of its lower constraints among the candidates that do best on its top one.
+A constraint that every candidate violates equally filters out nothing. -/
+
+section Cascade
+
+/-- The candidates doing best on the top constraint of `t`, evaluated by the constraints below
+it. -/
+def tail (t : Tableau C (n + 1)) : Tableau C n :=
+  ⟨t.candidates.argmin (t.constraints 0), Fin.tail t.constraints⟩
+
+/-- The winners of a tableau are the winners of its tail. -/
+theorem optimal_tail (t : Tableau C (n + 1)) : t.tail.optimal = t.optimal := by
+  ext c
+  simp only [mem_optimal_iff, tail, Finset.mem_argmin, profile, Pi.toLex_le_toLex_iff_succ]
+  refine ⟨fun ⟨⟨hc, hmin⟩, htail⟩ ↦ ⟨hc, fun d hd ↦ ?_⟩, fun h ↦ ⟨⟨h.1, fun d hd ↦ ?_⟩,
+    fun d hd ↦ ?_⟩⟩
+  · exact (hmin d hd).lt_or_eq.imp id fun h0 ↦ ⟨h0, htail d ⟨hd, fun e he ↦ h0 ▸ hmin e he⟩⟩
+  · rcases h.2 d hd with h0 | ⟨h0, -⟩
+    exacts [h0.le, h0.le]
+  · rcases h.2 d hd.1 with h0 | ⟨-, ht⟩
+    exacts [absurd (hd.2 c h.1) (not_le.2 h0), ht]
+
+variable {s : Finset C} {F : Constraint C} {Fs Gs : List (Constraint C)}
+
+theorem ofList_cons_tail : (ofList s (F :: Fs)).tail = ofList (s.argmin F) Fs := rfl
+
+/-- The winners under a ranked list are the winners under its lower constraints among the
+candidates doing best on its top constraint. -/
+theorem optimal_ofList_cons : (ofList s (F :: Fs)).optimal = (ofList (s.argmin F) Fs).optimal := by
+  rw [← ofList_cons_tail, optimal_tail]
+
+/-- With no constraints every candidate wins. -/
+@[simp] theorem optimal_ofList_nil : (ofList s []).optimal = s :=
+  Finset.argmin_eq_self_of_forall_le fun _ _ _ _ ↦
+    le_of_eq <| funext fun i ↦ absurd i.2 (Nat.not_lt_zero _)
+
+/-- A constraint that rates every candidate alike is inert. -/
+theorem optimal_ofList_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
+    (ofList s (F :: Fs)).optimal = (ofList s Fs).optimal := by
+  rw [optimal_ofList_cons, Finset.argmin_eq_self_of_forall_le fun c hc d hd ↦ (h c hc d hd).le]
+
+/-- Constraints that rate every candidate alike are inert wherever they are ranked above the
+others. -/
+theorem optimal_ofList_append_of_forall_eq (h : ∀ F ∈ Fs, ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
+    (ofList s (Fs ++ Gs)).optimal = (ofList s Gs).optimal := by
+  induction Fs with
+  | nil => rfl
+  | cons F Fs ih =>
+    rw [List.cons_append, optimal_ofList_cons_of_forall_eq (h F List.mem_cons_self),
+      ih fun F' hF' ↦ h F' (List.mem_cons_of_mem _ hF')]
+
+/-! ### Anti-faithfulness -/
+
+/-- When some candidate violates `F`, the candidates doing best on the anti-faithfulness
+constraint `¬F` are those violating `F`. -/
+theorem _root_.OptimalityTheory.Constraint.argmin_antifaithful (h : ∃ c ∈ s, 0 < F c) :
+    s.argmin F.antifaithful = s.filter (0 < F ·) := by
+  obtain ⟨d, hd, hFd⟩ := h
+  ext c
+  simp only [Finset.mem_argmin, Finset.mem_filter]
+  refine ⟨fun ⟨hc, hmin⟩ ↦ ⟨hc, ?_⟩, fun ⟨hc, hFc⟩ ↦ ⟨hc, fun _ _ ↦ ?_⟩⟩
+  · have := hmin d hd
+    rw [(Constraint.antifaithful_eq_zero_iff F d).2 hFd, Nat.le_zero] at this
+    exact (Constraint.antifaithful_eq_zero_iff F c).1 this
+  · rw [(Constraint.antifaithful_eq_zero_iff F c).2 hFc]
+    exact Nat.zero_le _
+
+/-- An anti-faithfulness constraint on top filters the candidates down to those violating its
+faithfulness constraint, whenever one does. -/
+theorem optimal_ofList_antifaithful_cons (h : ∃ c ∈ s, 0 < F c) :
+    (ofList s (F.antifaithful :: Fs)).optimal = (ofList (s.filter (0 < F ·)) Fs).optimal := by
+  rw [optimal_ofList_cons, Constraint.argmin_antifaithful h]
+
+/-- **Anti-faithfulness demands one violation and no more** ([alderete-2001] (9)). Under
+`¬F ≫ F` the winners are the candidates violating `F` least among those violating it at all. -/
+theorem optimal_ofList_antifaithful (h : ∃ c ∈ s, 0 < F c) :
+    (ofList s [F.antifaithful, F]).optimal = (s.filter (0 < F ·)).argmin F := by
+  rw [optimal_ofList_antifaithful_cons h, optimal_ofList_cons, optimal_ofList_nil]
+
+end Cascade
 
 section Fintype
 
