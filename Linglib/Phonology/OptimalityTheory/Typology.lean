@@ -34,6 +34,8 @@ candidate sets minimizes each summand (`Finset.mem_argmin_piFinset_sum`).
 
 * `ConstraintSystem.language_eq_singleton_iff`: a ranking selects `o` alone at an input iff `o`
   is a candidate lexicographically below every other.
+* `ConstraintSystem.mem_language_iff_of_mem`: tied winners have the same violations, so the
+  language at an input consists of the candidates with any one winner's violations.
 * `ConstraintSystem.language_joint`: the language of the joint system is the product of the
   languages.
 * `ConstraintSystem.typology_joint`: one tableau suffices, the joint system having the system's
@@ -80,6 +82,27 @@ theorem language_eq_singleton_iff : S.language r i = {o} ↔ o ∈ S.gen i ∧ �
 /-- A ranking selects a winner at every input that has a candidate. -/
 theorem language_nonempty (h : (S.gen i).Nonempty) : (S.language r i).Nonempty :=
   Tableau.optimal_nonempty h
+
+theorem language_nonempty_iff : (S.language r i).Nonempty ↔ (S.gen i).Nonempty :=
+  ⟨fun ⟨o, ho⟩ ↦ ⟨o, Tableau.optimal_subset ho⟩, language_nonempty⟩
+
+/-- Tied winners have the same violations on every constraint, since the ranking reads distinct
+violation vectors as distinct profiles. -/
+theorem con_eq_of_mem_language {o' : O} (ho : o ∈ S.language r i) (ho' : o' ∈ S.language r i)
+    (C : ι) : S.con C (i, o) = S.con C (i, o') := by
+  have h := le_antisymm (Tableau.le_of_mem_optimal ho (Tableau.optimal_subset ho'))
+    (Tableau.le_of_mem_optimal ho' (Tableau.optimal_subset ho))
+  simpa [tableau, Tableau.profile] using congrFun (congrArg ofLex h) (r.symm C)
+
+/-- The language of a ranking at an input consists of the candidates with the violations of any
+one of its winners. -/
+theorem mem_language_iff_of_mem {o' : O} (ho : o ∈ S.language r i) :
+    o' ∈ S.language r i ↔ o' ∈ S.gen i ∧ ∀ C, S.con C (i, o') = S.con C (i, o) := by
+  refine ⟨fun h ↦ ⟨Tableau.optimal_subset h, con_eq_of_mem_language h ho⟩, fun ⟨hg, he⟩ ↦ ?_⟩
+  have hp : (S.tableau r i).profile o' = (S.tableau r i).profile o := by
+    simp only [tableau, Tableau.profile, Tableau.ofRanking_constraints, Function.comp_apply,
+      conAt_apply, he]
+  exact Tableau.mem_optimal_iff.2 ⟨hg, fun d hd ↦ hp ▸ Tableau.le_of_mem_optimal ho hd⟩
 
 section Joint
 

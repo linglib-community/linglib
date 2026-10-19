@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Order.PiLex
+public import Mathlib.Order.Cover
 public import Mathlib.Data.List.Lex
 public import Mathlib.Data.List.OfFn
 public import Mathlib.Data.Fin.Tuple.Basic
@@ -24,7 +25,9 @@ both tuples along an equivalence transports the index relation (`Pi.lex_comp_equ
 enumeration `e` of the coordinates, one vector is below another iff some coordinate where it is
 below comes before every coordinate where it is above (`Pi.toLex_comp_lt_iff_exists`), and the
 product order is the intersection of these lexicographic orders over all enumerations
-(`Pi.forall_toLex_comp_lt_iff`).
+(`Pi.forall_toLex_comp_lt_iff`). Two vectors ordered oppositely along enumerations that differ by
+transposing adjacent positions agree before those positions and are ordered oppositely at them
+(`Pi.eq_and_lt_and_gt_of_toLex_comp_swap`).
 
 [UPSTREAM] candidates for `Mathlib/Order/PiLex.lean` and `Mathlib/Data/List/OfFn.lean`.
 -/
@@ -188,6 +191,29 @@ theorem toLex_comp_strictMono [WellFoundedLT κ] : StrictMono fun v : ι → β 
     obtain ⟨hle, i, hi⟩ := Pi.lt_def.1 h
     exact Pi.lt_def.2 ⟨fun k ↦ hle (e k), e.symm i, by simpa using hi⟩
 
+/-- Transposing a covering pair `a ⋖ b` reverses the order of two positions only if they are
+`a` and `b`. -/
+private theorem eq_and_eq_of_swap_lt_swap [DecidableEq κ] {a b x y : κ} (hab : a ⋖ b)
+    (hxy : x < y) (h : Equiv.swap a b y < Equiv.swap a b x) : x = a ∧ y = b := by
+  have hlt : ∀ z, z ≠ a → z < b → z < a := fun z hza hzb ↦ (hab.le_of_lt hzb).lt_of_ne hza
+  rcases eq_or_ne x a with rfl | hxa
+  · rcases eq_or_ne y b with rfl | hyb
+    · exact ⟨rfl, rfl⟩
+    · rw [Equiv.swap_apply_left, Equiv.swap_apply_of_ne_of_ne hxy.ne' hyb] at h
+      exact absurd (hlt y hxy.ne' h) hxy.not_gt
+  · rcases eq_or_ne x b with rfl | hxb
+    · rw [Equiv.swap_apply_right, Equiv.swap_apply_of_ne_of_ne (hab.lt.trans hxy).ne' hxy.ne'] at h
+      exact absurd (hab.lt.trans hxy) h.not_gt
+    · rw [Equiv.swap_apply_of_ne_of_ne hxa hxb] at h
+      rcases eq_or_ne y a with rfl | hya
+      · rw [Equiv.swap_apply_left] at h
+        exact absurd (hxy.trans hab.lt) h.not_gt
+      · rcases eq_or_ne y b with rfl | hyb
+        · rw [Equiv.swap_apply_right] at h
+          exact absurd (hlt x hxa hxy) h.not_gt
+        · rw [Equiv.swap_apply_of_ne_of_ne hya hyb] at h
+          exact absurd hxy h.not_gt
+
 variable [WellFoundedLT κ]
 
 /-- Read along an enumeration, one vector is lexicographically below another iff some coordinate
@@ -232,6 +258,28 @@ theorem toLex_comp_le_iff_exists_forall [Nonempty κ] :
       exact ((toLex_comp_lt_iff_exists e).2 ⟨i, (hi j hj).1, fun k hk ↦ (hi k hk).2⟩).le
     · push Not at hv
       exact Pi.toLex_monotone fun k ↦ hv (e k)
+
+/-- Two vectors ordered oppositely along two enumerations that differ by transposing a covering
+pair `a ⋖ b` agree at every position before `a`, and are ordered as the first enumeration orders
+them at `a` and as the second does at `b`. -/
+theorem eq_and_lt_and_gt_of_toLex_comp_swap [DecidableEq κ] {a b : κ} (hab : a ⋖ b)
+    (h : toLex (v ∘ e) < toLex (w ∘ e))
+    (h' : toLex (w ∘ (Equiv.swap a b).trans e) < toLex (v ∘ (Equiv.swap a b).trans e)) :
+    (∀ c < a, v (e c) = w (e c)) ∧ v (e a) < w (e a) ∧ w (e b) < v (e b) := by
+  obtain ⟨i, hi, hd⟩ := (toLex_comp_lt_iff_exists e).1 h
+  obtain ⟨i', hi', hd'⟩ := (toLex_comp_lt_iff_exists ((Equiv.swap a b).trans e)).1 h'
+  simp only [Equiv.symm_trans_apply, Equiv.symm_swap] at hd'
+  obtain ⟨hia, hib⟩ := eq_and_eq_of_swap_lt_swap hab (hd i' hi') (hd' i hi)
+  rw [Equiv.symm_apply_eq] at hia hib
+  subst hia hib
+  refine ⟨fun c hc ↦ ?_, hi, hi'⟩
+  rcases lt_trichotomy (v (e c)) (w (e c)) with hvw | hvw | hvw
+  · have := hd' (e c) hvw
+    rw [Equiv.symm_apply_apply, Equiv.symm_apply_apply, Equiv.swap_apply_right,
+      Equiv.swap_apply_of_ne_of_ne hc.ne (hc.trans hab.lt).ne] at this
+    exact absurd hc this.not_gt
+  · exact hvw
+  · exact absurd hc (by simpa using (hd (e c) hvw).not_gt)
 
 end Reindex
 
