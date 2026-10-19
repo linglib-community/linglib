@@ -22,6 +22,8 @@ property in every belief world.
 
 * `Aloni2001.IsCover`: conceptual covers.
 * `Aloni2001.names`: the name cover.
+* `Aloni2001.crossId`, `Aloni2001.IsProper`: the method of cross-identification of a set of
+  concepts, and proper methods.
 * `Aloni2001.whoUnder`: a constituent question under a cover.
 * `Aloni2001.DeReUnder`: a de re belief report under a cover.
 
@@ -31,6 +33,8 @@ property in every belief world.
 * `Aloni2001.IsCover.equiv`: Proposition 4.1.2.
 * `Aloni2001.coverEquivPerm`, `Aloni2001.card_covers`: covers are the families of permutations
   trivial at a base world, and Proposition 4.1.3.
+* `Aloni2001.coverEquivProper`: covers are the proper methods of cross-identification,
+  Propositions 4.2.2 and 4.2.4, the name cover giving the rigid method (`crossId_names`).
 * `Aloni2001.IsCover.eq_names`, `Aloni2001.isCover_iff_eq_names`: a cover of rigid concepts is the
   name cover, and Corollary 4.1.4.
 * `Aloni2001.whoUnder_names`: under the name cover a question is Groenendijk and Stokhof's.
@@ -47,7 +51,8 @@ property in every belief world.
   Definition 1.4.1, which assign covers to variable indices, multiple-constituent questions, the
   dynamic semantics of Chapter 3 and the pragmatics of cover selection of Chapter 4 are not
   formalized.
-* Questions are partitions, `Setoid`s, as in `GroenendijkStokhof1984`.
+* A question under a cover is `GroenendijkStokhof1984.who` with the concepts of the cover as the
+  individuals.
 
 ## References
 
@@ -194,22 +199,120 @@ theorem card_covers [Finite W] [Finite D] [Nonempty W] :
     Nat.card_eq_fintype_card (α := {w // w ≠ w₀}), Nat.card_eq_fintype_card (α := W)]
   simp
 
+/-! ### Covers as methods of cross-identification (Section 4.2) -/
+
+/-- The method of cross-identification of a set of concepts identifies `d` in `w` with `d'` in
+`w'` when some concept of the set picks out `d` in `w` and `d'` in `w'`. -/
+def crossId (S : Set (W → D)) (x x' : W × D) : Prop := ∃ c ∈ S, c x.1 = x.2 ∧ c x'.1 = x'.2
+
+/-- The name cover identifies each individual of a world with itself in every other world, the
+rigid method of cross-identification. -/
+theorem crossId_names {x x' : W × D} : crossId names x x' ↔ x.2 = x'.2 :=
+  ⟨fun ⟨_, ⟨_, rfl⟩, e, e'⟩ ↦ e.symm.trans e', fun h ↦ ⟨_, ⟨x.2, rfl⟩, rfl, h⟩⟩
+
+/-- A method of cross-identification (Definition 4.2.1) is proper when it is an equivalence
+relation on world-individual pairs that identifies each individual of a world with exactly one
+individual of each world. -/
+def IsProper (R : Setoid (W × D)) : Prop := ∀ w w' d, ∃! d', R (w, d) (w', d')
+
+/-- The method of cross-identification of a cover is an equivalence relation. -/
+theorem IsCover.equivalence_crossId (h : IsCover C) : Equivalence (crossId C) where
+  refl x := let ⟨c, hc, e⟩ := (h x.1).surjOn (mem_univ x.2); ⟨c, hc, e, e⟩
+  symm := fun ⟨c, hc, e, e'⟩ ↦ ⟨c, hc, e', e⟩
+  trans := fun ⟨c, hc, e₁, e₂⟩ ⟨_, hc', e₂', e₃⟩ ↦
+    ⟨c, hc, e₁, h.eq_of_apply_eq hc hc' (e₂.trans e₂'.symm) ▸ e₃⟩
+
+/-- The method of cross-identification of a cover, as a setoid. -/
+def IsCover.crossIdSetoid (h : IsCover C) : Setoid (W × D) := ⟨crossId C, h.equivalence_crossId⟩
+
+/-- The method of cross-identification of a cover is proper (Proposition 4.2.2). -/
+theorem IsCover.isProper_crossIdSetoid (h : IsCover C) : IsProper h.crossIdSetoid := by
+  intro w w' d
+  obtain ⟨c, hc, e⟩ := (h w).surjOn (mem_univ d)
+  refine ⟨c w', ⟨c, hc, e, rfl⟩, fun d' ⟨_, hc', e', e''⟩ ↦ ?_⟩
+  exact e''.symm.trans (congrFun (h.eq_of_apply_eq hc' hc (e'.trans e.symm)) w')
+
+section Proper
+
+variable {R : Setoid (W × D)}
+
+/-- The individual of `w'` that a proper method identifies with `d` in `w`. -/
+noncomputable def IsProper.transport (hR : IsProper R) (w w' : W) (d : D) : D :=
+  (hR w w' d).exists.choose
+
+theorem IsProper.rel_transport (hR : IsProper R) (w w' : W) (d : D) :
+    R (w, d) (w', hR.transport w w' d) :=
+  (hR w w' d).exists.choose_spec
+
+theorem IsProper.eq_transport (hR : IsProper R) {w w' : W} {d d' : D} (h : R (w, d) (w', d')) :
+    d' = hR.transport w w' d :=
+  (hR w w' d).unique h (hR.rel_transport w w' d)
+
+/-- The concepts of a proper method, one through each world-individual pair, are its classes of
+pairs (Definition 4.2.3), each of which picks out one individual in each world (Lemma 4.2.5). -/
+def IsProper.concepts (hR : IsProper R) : Set (W → D) :=
+  range fun x : W × D ↦ fun w' ↦ hR.transport x.1 w' x.2
+
+theorem IsProper.transport_self (hR : IsProper R) (w : W) (d : D) : hR.transport w w d = d :=
+  (hR.eq_transport (R.refl' (w, d))).symm
+
+/-- The concepts of a proper method form a cover (Proposition 4.2.4). -/
+theorem IsProper.isCover_concepts (hR : IsProper R) : IsCover hR.concepts := by
+  intro w
+  refine ⟨mapsTo_univ _ _, ?_, fun d _ ↦ ⟨_, ⟨(w, d), rfl⟩, hR.transport_self w d⟩⟩
+  rintro _ ⟨x, rfl⟩ _ ⟨x', rfl⟩ (e : hR.transport x.1 w x.2 = hR.transport x'.1 w x'.2)
+  have hxx' : R x x' :=
+    R.trans' (hR.rel_transport x.1 w x.2) (e ▸ R.symm' (hR.rel_transport x'.1 w x'.2))
+  show (fun w' ↦ hR.transport x.1 w' x.2) = fun w' ↦ hR.transport x'.1 w' x'.2
+  exact funext fun w' ↦ (hR.eq_transport (R.trans' hxx' (hR.rel_transport x'.1 w' x'.2))).symm
+
+/-- Each cover determines a proper method of cross-identification and each proper method a cover,
+inversely (Propositions 4.2.2 and 4.2.4). -/
+noncomputable def coverEquivProper [Nonempty W] :
+    {C : Set (W → D) // IsCover C} ≃ {R : Setoid (W × D) // IsProper R} where
+  toFun C := ⟨C.2.crossIdSetoid, C.2.isProper_crossIdSetoid⟩
+  invFun R := ⟨R.2.concepts, R.2.isCover_concepts⟩
+  left_inv C := by
+    obtain ⟨C, h⟩ := C
+    refine Subtype.ext (Set.ext fun c ↦ ⟨?_, fun hc ↦ ?_⟩)
+    · rintro ⟨x, rfl⟩
+      obtain ⟨c, hc, e⟩ := (h x.1).surjOn (mem_univ x.2)
+      convert hc using 1
+      exact funext fun w' ↦
+        ((h.isProper_crossIdSetoid).eq_transport (R := h.crossIdSetoid) ⟨c, hc, e, rfl⟩).symm
+    · obtain ⟨w₀⟩ := ‹Nonempty W›
+      exact ⟨(w₀, c w₀), funext fun w' ↦
+        ((h.isProper_crossIdSetoid).eq_transport (R := h.crossIdSetoid) ⟨c, hc, rfl, rfl⟩).symm⟩
+  right_inv R := by
+    obtain ⟨R, hR⟩ := R
+    refine Subtype.ext (Setoid.ext fun x x' ↦ ⟨?_, fun h ↦ ⟨_, ⟨x, rfl⟩, hR.transport_self _ _,
+      (hR.eq_transport h).symm⟩⟩)
+    rintro ⟨_, ⟨y, rfl⟩, e, e'⟩
+    have e : hR.transport y.1 x.1 y.2 = x.2 := e
+    have e' : hR.transport y.1 x'.1 y.2 = x'.2 := e'
+    have h₁ : R (y.1, y.2) (x.1, x.2) := e ▸ hR.rel_transport y.1 x.1 y.2
+    have h₂ : R (y.1, y.2) (x'.1, x'.2) := e' ▸ hR.rel_transport y.1 x'.1 y.2
+    exact R.trans' (R.symm' h₁) h₂
+
+end Proper
+
 /-! ### Questions under cover -/
 
-/-- The question *who has `P`?* under the cover `C` (Definition 1.4.2) relates two worlds when the
-concepts of `C` that have `P` in the one are those that have it in the other. -/
+/-- The question *who has `P`?* under the cover `C` (Definition 1.4.2) is the question of
+[groenendijk-stokhof-1984] with the concepts of `C` as the individuals, a concept having `P` in a
+world when the individual it picks out there does. -/
 def whoUnder (C : Set (W → D)) (P : D → Set W) : Setoid W :=
-  Setoid.ker fun w ↦ {c ∈ C | w ∈ P (c w)}
+  GroenendijkStokhof1984.who fun c : C ↦ {w | w ∈ P (c.1 w)}
 
 theorem whoUnder_iff {P : D → Set W} {v w : W} :
-    whoUnder C P v w ↔ ∀ c ∈ C, (v ∈ P (c v) ↔ w ∈ P (c w)) := by
-  simp only [Setoid.ker_def, Set.ext_iff, Set.mem_ofPred_eq, and_congr_right_iff]
+    whoUnder C P v w ↔ ∀ c ∈ C, (v ∈ P (c v) ↔ w ∈ P (c w)) :=
+  GroenendijkStokhof1984.who_iff.trans Subtype.forall
 
-/-- Under the name cover, a question under cover is the question of [groenendijk-stokhof-1984]. -/
+/-- Under the name cover, a question under cover is the question of [groenendijk-stokhof-1984],
+the name cover being a copy of the individuals. -/
 theorem whoUnder_names (P : D → Set W) : whoUnder names P = GroenendijkStokhof1984.who P :=
-  Setoid.ext fun _ _ ↦ by
-    rw [whoUnder_iff, GroenendijkStokhof1984.who_iff]
-    simp [names]
+  (GroenendijkStokhof1984.who_comp_of_surjective
+    (f := fun d ↦ (⟨_, d, rfl⟩ : (names : Set (W → D)))) (fun ⟨_, d, rfl⟩ ↦ ⟨d, rfl⟩) _).symm
 
 /-! ### De re belief under cover -/
 
@@ -222,10 +325,10 @@ def DeReUnder (C : Set (W → D)) (R : Set W) (y : D) (P : D → Set W) (w : W) 
 /-- A de re report under a cover holds when the believer ascribes the property to the res under
 one of the cover's concepts, in the sense of [lewis-1979-attitudes] with worlds as centers. -/
 theorem deReUnder_iff_exists_ascribesUnder {R : Set W} {y : D} {P : D → Set W} {w : W} :
-    DeReUnder C R y P w ↔ ∃ c ∈ C, AscribesUnder R w (ofConcept c) y P := by
+    DeReUnder C R y P w ↔ ∃ c ∈ C, AscribesUnder R w (some ∘ c) y P := by
   unfold DeReUnder
   exact exists_congr fun _ ↦
-    and_congr_right' (ascribesUnder_ofConcept.trans (and_congr_left' eq_comm)).symm
+    and_congr_right' (ascribesUnder_comp_some.trans (and_congr_left' eq_comm)).symm
 
 /-! ### The cards (Sections 1.4.1 and 4.1) -/
 
@@ -293,6 +396,14 @@ theorem isCover_iff {C : Set (World → Card)} : IsCover C ↔ C = byPosition �
   change left ∈ bySuit
   rw [this]
   exact .inl rfl
+
+/-- The two covers cross-identify the cards differently: by position the Ace of Hearts in `w₁` is
+the Ace of Spades in `w₂`, the card on the left in both, while by suit it is only itself. -/
+theorem crossId_byPosition : crossId byPosition (w₁, hearts) (w₂, spades) :=
+  ⟨left, .inl rfl, rfl, rfl⟩
+
+theorem not_crossId_bySuit : ¬ crossId bySuit (w₁, hearts) (w₂, spades) := fun h ↦
+  absurd (crossId_names.1 h) (by decide)
 
 /-- *Which card is the Ace of Hearts?* (186) asks who has the property of being the Ace of
 Hearts. -/

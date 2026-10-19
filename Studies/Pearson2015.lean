@@ -22,7 +22,7 @@ holder's own concept when the res is an epistemic alternative.
   holder's own concept, as Pearson derives from (82).
 * `sayDeRe_of_sayDeSe`: the de se reading is the de re reading through identity, so it entails
   the de re reading when identity is among the holder's acquaintance relations.
-* `ClaimDeRe.exists_bearsUniquely`: a de re claim about a res other than an epistemic alternative
+* `ClaimDeRe.exists_relatum_eq`: a de re claim about a res other than an epistemic alternative
   needs an acquaintance relation the holder actually bears uniquely to it.
 * `ye_de_se_de_re_ambiguous`: when John praises a paper he does not recognize as his own, the de
   se reading is false and the de re reading true.
@@ -101,7 +101,7 @@ uniquely to the value of the concept of `x` as well. -/
 def AcquaintanceBased (Acq : Set (E → Centered W E → Prop)) (alts : Set (Centered W E))
     (G : ConceptGenerator W E) (x : E) (w : W) (dom : Set E) : Prop :=
   ∀ u ∈ dom, ∃ R ∈ Acq, ∀ p ∈ insert (w, x) alts,
-    BearsUniquely R p (G u p) ∧ (u ∈ epiAlt alts → BearsUniquely R p (G x p))
+    relatum R p = some (G u p) ∧ (u ∈ epiAlt alts → relatum R p = some (G x p))
 
 /-- A generator is suitable for `x` in `w` (82) when it is reliable and acquaintance-based. -/
 def Suitable (Acq : Set (E → Centered W E → Prop)) (alts : Set (Centered W E))
@@ -128,26 +128,26 @@ the values of both. Pearson draws this from (82) before (83) reduces to (84). -/
 theorem AcquaintanceBased.eqOn_of_mem_epiAlt (h : AcquaintanceBased Acq alts G x w dom)
     (hu : u ∈ dom) (he : u ∈ epiAlt alts) : Set.EqOn (G u) (G x) (insert (w, x) alts) := by
   obtain ⟨R, -, hR⟩ := h u hu
-  exact fun p hp ↦ (hR p hp).1.unique ((hR p hp).2 he)
+  exact fun p hp ↦ Option.some_inj.1 ((hR p hp).1.symm.trans ((hR p hp).2 he))
 
 /-- The de se reading is the de re reading through the self concept, whose relation is identity,
 Lewis's relation of acquaintance par excellence. When identity is among the holder's acquaintance
 relations and every res in the domain is the holder or one of her epistemic alternatives, the de
 se reading entails the de re reading. -/
-theorem sayDeRe_of_sayDeSe (hself : ofConcept selfConcept ∈ Acq)
+theorem sayDeRe_of_sayDeSe (hself : (fun y p ↦ y = selfConcept p) ∈ Acq)
     (hdom : ∀ u ∈ dom, u = x ∨ u ∈ epiAlt alts) (h : SayDeSe alts P) :
     SayDeRe Acq alts P x w dom :=
   ⟨fun _ ↦ selfConcept,
     ⟨fun u hu ↦ (hdom u hu).elim (fun e ↦ Or.inl e.symm) (fun e ↦ Or.inr ⟨e, rfl⟩),
       fun _ _ ↦ ⟨_, hself, fun p _ ↦
-        ⟨bearsUniquely_ofConcept _ p, fun _ ↦ bearsUniquely_ofConcept _ p⟩⟩⟩,
+        ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩,
     h⟩
 
 /-- A de re claim about a res in the domain that is not an epistemic alternative of the holder
 needs an acquaintance relation she bears uniquely to the res in the actual world, the base
 condition of [lewis-1979-attitudes]. -/
-theorem ClaimDeRe.exists_bearsUniquely (h : ClaimDeRe Acq alts P res x w dom) (hres : res ∈ dom)
-    (hne : res ∉ epiAlt alts) : ∃ R ∈ Acq, BearsUniquely R (w, x) res := by
+theorem ClaimDeRe.exists_relatum_eq (h : ClaimDeRe Acq alts P res x w dom) (hres : res ∈ dom)
+    (hne : res ∉ epiAlt alts) : ∃ R ∈ Acq, relatum R (w, x) = some res := by
   obtain ⟨G, ⟨hrel, hacq⟩, -⟩ := h
   obtain ⟨R, hR, hb⟩ := hacq res hres
   have hG : G res (w, x) = res := (hrel res hres).resolve_right fun h ↦ hne h.1
@@ -184,7 +184,7 @@ def authorConcept : Concept Wld Ind := fun p ↦ if p.1 = actual then john else 
 def authorGen : ConceptGenerator Wld Ind := fun _ ↦ authorConcept
 
 /-- John's salient acquaintance relation is reading the paper of its author. -/
-def s1Acq : Set (Ind → Centered Wld Ind → Prop) := {ofConcept authorConcept}
+def s1Acq : Set (Ind → Centered Wld Ind → Prop) := {fun y p ↦ y = authorConcept p}
 
 /-- The de se reading is false, since at John's alternative the center, John, is not clever. -/
 theorem deSe_false : ¬ SayDeSe sayAlts cleverP := by
@@ -195,7 +195,7 @@ world, and acquainted through reading the paper. -/
 theorem authorGen_suitable : Suitable s1Acq sayAlts authorGen john actual {john} :=
   ⟨by simp [Reliable, authorGen, authorConcept],
     fun _ _ ↦ ⟨_, rfl, fun p _ ↦
-      ⟨bearsUniquely_ofConcept _ p, fun _ ↦ bearsUniquely_ofConcept _ p⟩⟩⟩
+      ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩
 
 /-- The de re reading is true, since through the author concept the individual picked at John's
 alternative is clever. -/
@@ -247,14 +247,14 @@ def patientGen : ConceptGenerator Wld Ind := fun _ ↦ patientConcept
 
 /-- John's salient acquaintance relation is seeing on television, which in the actual world he
 bears to himself. -/
-def johnAcq : Set (Ind → Centered Wld Ind → Prop) := {ofConcept patientConcept}
+def johnAcq : Set (Ind → Centered Wld Ind → Prop) := {fun y p ↦ y = patientConcept p}
 
 /-- *John claims he is delusional* is true de re, since the center, John, fed to the patient
 generator, is the delusional patient at the alternative. -/
 theorem claimsHe_true : SayDeRe johnAcq claimAlts delusionalP john actualN {john} :=
   ⟨patientGen, ⟨by simp [Reliable, patientGen, patientConcept],
     fun _ _ ↦ ⟨_, rfl, fun p _ ↦
-      ⟨bearsUniquely_ofConcept _ p, fun _ ↦ bearsUniquely_ofConcept _ p⟩⟩⟩,
+      ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩,
     by simp [claimAlts, delusionalP, patientGen, patientConcept, actualN, belN, patient]⟩
 
 /-- *John claims Napoleon is delusional* is false, since Napoleon is not an epistemic alternative
@@ -263,10 +263,11 @@ actual world to himself. -/
 theorem claimsNapoleon_false :
     ¬ ClaimDeRe johnAcq claimAlts delusionalP napoleon john actualN {napoleon} := by
   intro h
-  obtain ⟨R, hR, hb⟩ := h.exists_bearsUniquely rfl (by simp [epiAlt, claimAlts, john, napoleon])
+  obtain ⟨R, hR, hb⟩ := h.exists_relatum_eq rfl (by simp [epiAlt, claimAlts, john, napoleon])
   rw [johnAcq, Set.mem_singleton_iff] at hR
   subst hR
-  exact absurd (bearsUniquely_ofConcept_iff.1 hb) (by decide)
+  rw [relatum_eq] at hb
+  exact absurd (Option.some_inj.1 hb) (by decide)
 
 /-- In the Napoleon contrast the bound-pronoun reading is true and the name reading false. -/
 theorem napoleon_contrast :

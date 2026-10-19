@@ -129,6 +129,11 @@ knowing the answer to the other (chapter II, (X)). -/
 theorem who_compl (P : E → Set W) : who (fun x ↦ (P x)ᶜ) = who P :=
   Setoid.ker_comp_of_injective (extension P) compl_injective
 
+/-- Reindexing the individuals by a surjection leaves the question unchanged. -/
+theorem who_comp_of_surjective {E' : Type*} {f : E' → E} (hf : Function.Surjective f)
+    (P : E → Set W) : who (P ∘ f) = who P :=
+  Setoid.ker_comp_of_injective (extension P) (Set.preimage_injective.2 hf)
+
 /-- *Who walks* entails *which girl walks* read de re (chapter II, (XI)). -/
 theorem who_le_whichDeRe (G P : E → Set W) (w : W) : who P ≤ whichDeRe G P w :=
   Setoid.ker_le_ker_comp (extension P) (extension G w ∩ ·)
