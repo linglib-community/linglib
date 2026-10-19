@@ -2,7 +2,6 @@ module
 
 public import Linglib.Data.PHOIBLE.Inventories.Indonesian
 public import Linglib.Phonology.Segmental.PHOIBLE
-public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Phonology.NasalSubstitution
 
 /-!
@@ -30,11 +29,6 @@ and fusion only at the left edge of the root.
 ## Main results
 
 * `subset_ind`: the phonemes are those of PHOIBLE's Standard Indonesian inventory.
-* `voicelessObstruents_sdiff_substituting`: the voiceless obstruents that do not fuse are *c*
-  and the fricatives of loans.
-* `juncture_of_sonorant`, `juncture_of_vowel_or_h`, `juncture_of_obstruent`: the juncture for
-  each class of base-initial segment.
-* `fuse_eq`: the fused nasals are *m*, *n*, *ng* and, for *s*, *ny*.
 
 ## Implementation notes
 
@@ -163,10 +157,6 @@ theorem subset_ind : (consonants ∪ vowels).erase y ⊆ Inventories.Indonesian.
 `h` is not consonantal. -/
 def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
 
-/-- The voiceless obstruents. -/
-def voicelessObstruent : Segment :=
-  Segment.ofSpecs [(.consonantal, true), (.sonorant, false), (.voice, false)]
-
 /-- The sonorant consonants, [+sonorant, −syllabic], which are the nasals, liquids and
 glides. -/
 def sonorantConsonant : Segment := Segment.ofSpecs [(.sonorant, true), (.syllabic, false)]
@@ -194,10 +184,6 @@ def juncture (x : Segment) : List Segment :=
   else if sonorantConsonant ≤ x then [x]
   else assimilate [ng, x]
 
-/-- The juncture with a base that keeps its initial consonant, where there is no fusion. -/
-def junctureRetained (x : Segment) : List Segment :=
-  if sonorantConsonant ≤ x then [x] else assimilate [ng, x]
-
 /-- `prefixN pre base` attaches to `base` the prefix that consists of `pre` and the nasal. -/
 def prefixN (pre : List Segment) : List Segment → List Segment
   | [] => pre ++ [ng]
@@ -208,94 +194,5 @@ def meN : List Segment → List Segment := prefixN [m, e]
 
 /-- The nominal prefix *peN-*. -/
 def peN : List Segment → List Segment := prefixN [p, e]
-
-/-! ### The juncture by class -/
-
-/-- The substituting consonants are voiceless obstruents. -/
-theorem substituting_subset :
-    substituting ⊆ voicelessObstruent.naturalClass consonants := by
-  decide
-
-/-- The voiceless obstruents that do not substitute are `c` and the fricatives of loans. -/
-theorem voicelessObstruents_sdiff_substituting :
-    voicelessObstruent.naturalClass consonants \ substituting = {c, f, sy, kh} := by
-  decide
-
-/-- A substituting consonant is replaced by one nasal. -/
-theorem juncture_of_mem_substituting {x : Segment} (hx : x ∈ substituting) :
-    juncture x = fuse x := by
-  simp only [juncture, hx, ↓reduceIte]
-
-/-- The nasal is lost before a nasal, a liquid or a glide. -/
-theorem juncture_of_sonorant : ∀ x ∈ consonants, sonorantConsonant ≤ x → juncture x = [x] := by
-  decide
-
-/-- The nasal is velar before a vowel and before `h`. -/
-theorem juncture_of_vowel_or_h : ∀ x ∈ insert h vowels, juncture x = [ng, x] := by
-  decide
-
-/-- Before an obstruent that does not substitute, the nasal and the obstruent both surface. -/
-theorem juncture_of_obstruent :
-    ∀ x ∈ consonants, x.IsObstruent → x ∉ substituting → juncture x = assimilate [ng, x] := by
-  decide
-
-/-- Before every obstruent but `s` the nasal at the juncture is a nasal that agrees with the
-obstruent in every place feature but [strident]. -/
-theorem juncture_head_agrees :
-    ∀ x ∈ consonants, x.IsObstruent → x ≠ s →
-      ∀ N ∈ (juncture x).head?, N.IsNasal ∧
-        ∀ ft ∈ FeatureClass.place.erase .strident, N ft = x ft := by
-  decide
-
-/-- The fused nasals are phonemes, the nasal of the place of each stop and the palatal for
-`s`. -/
-theorem fuse_eq : fuse p = [m] ∧ fuse t = [n] ∧ fuse k = [ng] ∧ fuse s = [ny] := by
-  decide
-
-/-- Where `s` is kept the nasal before it is alveolar, as in *mensukseskan*. -/
-theorem junctureRetained_s : junctureRetained s = [n, s] := by
-  decide
-
-/-- The place class alone makes the nasal before `s` strident, and the redundancy rule
-restores `n`. -/
-theorem placeAssimilation_s :
-    (NasalSubstitution.placeAssimilation trigger).apply [ng, s]
-        = [n.setFeature .strident true, s] ∧
-      assimilate [ng, s] = [n, s] := by
-  decide
-
-/-! ### Examples -/
-
-/-- *mengajar* 'teach' from *ajar*, with the velar nasal before a vowel. -/
-theorem mengajar : meN [a, j, a, r] = [m, e, ng, a, j, a, r] := by decide
-
-/-- *memakai* 'use' from *pakai*, with substitution of `p`. -/
-theorem memakai : meN [p, a, k, a, i] = [m, e, m, a, k, a, i] := by decide
-
-/-- *membeli* 'buy' from *beli*, with assimilation alone before a voiced stop. -/
-theorem membeli : meN [b, e, l, i] = [m, e, m, b, e, l, i] := by decide
-
-/-- *menyewa* 'rent' from *sewa*, with the palatal nasal for `s`. -/
-theorem menyewa : meN [s, é, w, a] = [m, e, ny, é, w, a] := by decide
-
-/-- *melihat* 'see' from *lihat*, with loss of the nasal before a liquid. -/
-theorem melihat : meN [l, i, h, a, t] = [m, e, l, i, h, a, t] := by decide
-
-/-- *penulis* 'writer' from *tulis*, with the same alternation under *peN-*. -/
-theorem penulis : peN [t, u, l, i, s] = [p, e, n, u, l, i, s] := by decide
-
-/-- *meN-* on *tampar* 'slap'. Substitution takes the root-initial `t` and leaves the
-cluster inside the root, which assimilation does not change either. -/
-theorem menampar :
-    meN [t, a, m, p, a, r] = [m, e, n, a, m, p, a, r] ∧
-      assimilate [t, a, m, p, a, r] = [t, a, m, p, a, r] := by
-  decide
-
-/-- *memperbesar* 'enlarge' from *besar* with the prefix *per-*. Between the two prefixes the
-nasal assimilates and the `p` of *per-* is kept. -/
-theorem memperbesar :
-    assimilate ([m, e, ng] ++ [p, e, r] ++ [b, e, s, a, r])
-      = [m, e, m, p, e, r, b, e, s, a, r] := by
-  decide
 
 end Indonesian.Phonology

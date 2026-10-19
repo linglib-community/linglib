@@ -1,0 +1,297 @@
+{
+  "ParameterTable": [
+    {
+      "ID": "ajar",
+      "Name": "ajar",
+      "Description": ""
+    },
+    {
+      "ID": "mengajar",
+      "Name": "mengajar",
+      "Description": ""
+    },
+    {
+      "ID": "pakai",
+      "Name": "pakai",
+      "Description": ""
+    },
+    {
+      "ID": "memakai",
+      "Name": "memakai",
+      "Description": ""
+    },
+    {
+      "ID": "beli",
+      "Name": "beli",
+      "Description": ""
+    },
+    {
+      "ID": "membeli",
+      "Name": "membeli",
+      "Description": ""
+    },
+    {
+      "ID": "sewa",
+      "Name": "sewa",
+      "Description": ""
+    },
+    {
+      "ID": "menyewa",
+      "Name": "menyewa",
+      "Description": ""
+    },
+    {
+      "ID": "lihat",
+      "Name": "lihat",
+      "Description": ""
+    },
+    {
+      "ID": "melihat",
+      "Name": "melihat",
+      "Description": ""
+    },
+    {
+      "ID": "tulis",
+      "Name": "tulis",
+      "Description": ""
+    },
+    {
+      "ID": "penulis",
+      "Name": "penulis",
+      "Description": ""
+    },
+    {
+      "ID": "besar",
+      "Name": "large",
+      "Description": ""
+    },
+    {
+      "ID": "memperbesar",
+      "Name": "enlarge",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "ajar",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "ajar"
+    },
+    {
+      "ID": "mengajar",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "mengajar"
+    },
+    {
+      "ID": "pakai",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "pakai"
+    },
+    {
+      "ID": "memakai",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "memakai"
+    },
+    {
+      "ID": "beli",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "beli"
+    },
+    {
+      "ID": "membeli",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "membeli"
+    },
+    {
+      "ID": "sewa",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "sewa"
+    },
+    {
+      "ID": "menyewa",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "menyewa"
+    },
+    {
+      "ID": "lihat",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "lihat"
+    },
+    {
+      "ID": "melihat",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "melihat"
+    },
+    {
+      "ID": "tulis",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "tulis"
+    },
+    {
+      "ID": "penulis",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "penulis"
+    },
+    {
+      "ID": "besar",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "besar"
+    },
+    {
+      "ID": "memperbesar",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "memperbesar"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "sneddon1996_ajar",
+      "Lexeme_ID": "ajar",
+      "Form": "ajar",
+      "Segments": ["a", "d̠ʒ", "a", "r"],
+      "Source": ["sneddon-1996[p. 9]"]
+    },
+    {
+      "ID": "sneddon1996_mengajar",
+      "Lexeme_ID": "mengajar",
+      "Form": "mengajar",
+      "Segments": ["m", "ə", "ŋ", "a", "d̠ʒ", "a", "r"],
+      "Source": ["sneddon-1996[p. 9]"]
+    },
+    {
+      "ID": "sneddon1996_pakai",
+      "Lexeme_ID": "pakai",
+      "Form": "pakai",
+      "Segments": ["p", "a", "k", "a", "i"],
+      "Source": ["sneddon-1996[p. 9]"]
+    },
+    {
+      "ID": "sneddon1996_memakai",
+      "Lexeme_ID": "memakai",
+      "Form": "memakai",
+      "Segments": ["m", "ə", "m", "a", "k", "a", "i"],
+      "Source": ["sneddon-1996[p. 9]"]
+    },
+    {
+      "ID": "sneddon1996_beli",
+      "Lexeme_ID": "beli",
+      "Form": "beli",
+      "Segments": ["b", "ə", "l", "i"],
+      "Source": ["sneddon-1996[p. 9]"]
+    },
+    {
+      "ID": "sneddon1996_membeli",
+      "Lexeme_ID": "membeli",
+      "Form": "membeli",
+      "Segments": ["m", "ə", "m", "b", "ə", "l", "i"],
+      "Source": ["sneddon-1996[p. 9]"]
+    },
+    {
+      "ID": "sneddon1996_sewa",
+      "Lexeme_ID": "sewa",
+      "Form": "sewa",
+      "Segments": ["s", "e", "w", "a"],
+      "Source": ["sneddon-1996[p. 10]"]
+    },
+    {
+      "ID": "sneddon1996_menyewa",
+      "Lexeme_ID": "menyewa",
+      "Form": "menyewa",
+      "Segments": ["m", "ə", "ɲ", "e", "w", "a"],
+      "Source": ["sneddon-1996[p. 10]"]
+    },
+    {
+      "ID": "sneddon1996_lihat",
+      "Lexeme_ID": "lihat",
+      "Form": "lihat",
+      "Segments": ["l", "i", "h", "a", "t"],
+      "Source": ["sneddon-1996[p. 10]"]
+    },
+    {
+      "ID": "sneddon1996_melihat",
+      "Lexeme_ID": "melihat",
+      "Form": "melihat",
+      "Segments": ["m", "ə", "l", "i", "h", "a", "t"],
+      "Source": ["sneddon-1996[p. 10]"]
+    },
+    {
+      "ID": "sneddon1996_tulis",
+      "Lexeme_ID": "tulis",
+      "Form": "tulis",
+      "Segments": ["t", "u", "l", "i", "s"],
+      "Source": ["sneddon-1996[p. 11]"]
+    },
+    {
+      "ID": "sneddon1996_penulis",
+      "Lexeme_ID": "penulis",
+      "Form": "penulis",
+      "Segments": ["p", "ə", "n", "u", "l", "i", "s"],
+      "Source": ["sneddon-1996[p. 11]"]
+    },
+    {
+      "ID": "sneddon1996_besar",
+      "Lexeme_ID": "besar",
+      "Form": "besar",
+      "Segments": ["b", "ə", "s", "a", "r"],
+      "Source": ["sneddon-1996[p. 26]"]
+    },
+    {
+      "ID": "sneddon1996_memperbesar",
+      "Lexeme_ID": "memperbesar",
+      "Form": "memperbesar",
+      "Segments": ["m", "ə", "m", "p", "ə", "r", "b", "ə", "s", "a", "r"],
+      "Source": ["sneddon-1996[p. 26]"]
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "sneddon1996_ajar_mengajar",
+      "Form_ID": "sneddon1996_ajar",
+      "Target_ID": "sneddon1996_mengajar",
+      "Relation": "meN-",
+      "Source": ["sneddon-1996[p. 9]"]
+    },
+    {
+      "ID": "sneddon1996_pakai_memakai",
+      "Form_ID": "sneddon1996_pakai",
+      "Target_ID": "sneddon1996_memakai",
+      "Relation": "meN-",
+      "Source": ["sneddon-1996[p. 9]"]
+    },
+    {
+      "ID": "sneddon1996_beli_membeli",
+      "Form_ID": "sneddon1996_beli",
+      "Target_ID": "sneddon1996_membeli",
+      "Relation": "meN-",
+      "Source": ["sneddon-1996[p. 9]"]
+    },
+    {
+      "ID": "sneddon1996_sewa_menyewa",
+      "Form_ID": "sneddon1996_sewa",
+      "Target_ID": "sneddon1996_menyewa",
+      "Relation": "meN-",
+      "Source": ["sneddon-1996[p. 10]"]
+    },
+    {
+      "ID": "sneddon1996_lihat_melihat",
+      "Form_ID": "sneddon1996_lihat",
+      "Target_ID": "sneddon1996_melihat",
+      "Relation": "meN-",
+      "Source": ["sneddon-1996[p. 10]"]
+    },
+    {
+      "ID": "sneddon1996_tulis_penulis",
+      "Form_ID": "sneddon1996_tulis",
+      "Target_ID": "sneddon1996_penulis",
+      "Relation": "peN-",
+      "Source": ["sneddon-1996[p. 11]"]
+    },
+    {
+      "ID": "sneddon1996_besar_memperbesar",
+      "Form_ID": "sneddon1996_besar",
+      "Target_ID": "sneddon1996_memperbesar",
+      "Relation": "meN- per-",
+      "Source": ["sneddon-1996[p. 26]"]
+    }
+  ]
+}
