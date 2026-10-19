@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Mood.Defs
+public import Linglib.Syntax.Category.Verb.Tense
 
 /-!
 # Temporal connectives
@@ -8,8 +9,9 @@ public import Linglib.Semantics.Mood.Defs
 This file defines the lexical entry of a temporal connective, a subordinator or preposition
 that locates the time of its host clause relative to the time of its complement: *before*,
 *after*, *when*, *while*, *until*, *since*, *by* and *whenever*. An entry records the relation
-the word lexicalizes, drawn from Heinämäki's inventory, and the grammatical mood its complement
-takes where the language marks one. Whether an *until* word is a punctual rather than a durative
+the word lexicalizes, drawn from Heinämäki's inventory, and the grammatical mood and tense its
+complement takes where the language or the word fixes one, as Japanese *mae* 'before' takes a
+non-past complement under a past. Whether an *until* word is a punctual rather than a durative
 *until*, Karttunen's two *until*s, is contested, since Iatridou and Zeijlstra derive both uses
 from one *until*, so a study that draws the line classifies the words itself.
 
@@ -21,7 +23,7 @@ lexicalizes.
 
 ## Main declarations
 
-* `Tense.Connective`: the lexical entry, with its `relation` and `mood`.
+* `Tense.Connective`: the lexical entry, with its `relation`, `mood` and `tense`.
 * `Tense.Connective.Relation`: the eight relations a connective can lexicalize.
 
 ## References
@@ -62,5 +64,7 @@ structure Connective where
   relation : Connective.Relation
   /-- The grammatical mood of the complement, where the language marks one. -/
   mood : Option Mood.Grammatical := none
+  /-- The grammatical tense of the complement, where the connective fixes one. -/
+  tense : Option Tense := none
 
 end Tense

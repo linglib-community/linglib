@@ -1,5 +1,6 @@
 module
 
+public import Studies.Heinamaki1974
 public import Studies.Rett2020a
 public import Linglib.Data.Examples.AlstottAravind2026
 
@@ -50,6 +51,7 @@ to pragmatic as against semantic coercion.
 namespace AlstottAravind2026
 
 open Tense Rett2020a
+open Heinamaki1974 (when_)
 
 /-! ### The two theories (§2.1) -/
 
@@ -63,9 +65,6 @@ def weakBefore (A B : Set (NonemptyInterval T)) : Prop := ∃ i ∈ A, ∀ j ∈
 /-- The under-specification entry for *after*, (7b), holds when some run-time of the main clause
 fully follows some run-time of the embedded clause. -/
 def weakAfter (A B : Set (NonemptyInterval T)) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.snd < i.fst
-
-/-- Temporal overlap — the *while* reading a competition-based implicature negates (§8.1). -/
-def Overlap (A B : Set (NonemptyInterval T)) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
 /-- A stative is weakly *before* an accomplishment iff its onset precedes the telos. -/
 theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval T) :
@@ -88,10 +87,11 @@ theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
     exact ⟨NonemptyInterval.pure a.snd, Set.mem_Iic.mpr ⟨a.fst_le_snd, le_rfl⟩,
       NonemptyInterval.pure b.fst, Set.mem_Iic.mpr ⟨le_rfl, b.fst_le_snd⟩, h⟩
 
-/-- A stative and an accomplishment overlap iff neither ends before the other starts. -/
-theorem overlap_stative_accomplishment_iff (a b : NonemptyInterval T) :
-    Overlap (Set.Iic a) {b} ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
-  simp only [Overlap, timeTrace_Iic, timeTrace_singleton]
+/-- A stative and an accomplishment overlap, Heinämäki's *when*, the reading a *while*-competition
+implicature negates (§8.1), iff neither ends before the other starts. -/
+theorem when_stative_accomplishment_iff (a b : NonemptyInterval T) :
+    when_ (Set.Iic a) {b} ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
+  simp only [when_, timeTrace_Iic, timeTrace_singleton]
   constructor
   · rintro ⟨t, ⟨h1, h2⟩, h3, h4⟩
     exact ⟨h1.trans h4, h3.trans h2⟩
@@ -137,8 +137,8 @@ theorem exp2_rett_asymmetric :
 *while*-competition implicature would negate, so neither distinguishes (29a) from (29b) (§8.1). -/
 theorem exp2_underspecification_symmetric :
     (weakBefore irritableA tent ∧ weakBefore irritableB tent) ∧
-      (Overlap irritableA tent ∧ Overlap irritableB tent) := by
-  simp only [weakBefore_stative_accomplishment_iff, overlap_stative_accomplishment_iff]
+      (when_ irritableA tent ∧ when_ irritableB tent) := by
+  simp only [weakBefore_stative_accomplishment_iff, when_stative_accomplishment_iff]
   decide
 
 /-- In Exp. 4 Rett's default after-finish reading is false in the after-start context, where

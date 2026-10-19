@@ -421,13 +421,8 @@ theorem holds_withoutClause_iff {s : DEStrength} :
 
 theorem holds_beforeClause_iff {s : DEStrength} :
     beforeClause.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr ⟨fun B C ↦ propext
-    ⟨fun ⟨t, ht, h⟩ ↦ ⟨⟨t, ht, fun t' ⟨i, hi, hti⟩ ↦ h t' ⟨i, .inl hi, hti⟩⟩,
-      ⟨t, ht, fun t' ⟨i, hi, hti⟩ ↦ h t' ⟨i, .inr hi, hti⟩⟩⟩,
-    fun ⟨⟨t, ht, h₁⟩, ⟨s, hs, h₂⟩⟩ ↦ ⟨min t s,
-      by rcases min_choice t s with h | h <;> rw [h] <;> assumption,
-      fun t' ⟨i, hi, hti⟩ ↦ hi.elim (fun hi ↦ (min_le_left t s).trans_lt (h₁ t' ⟨i, hi, hti⟩))
-        fun hi ↦ (min_le_right t s).trans_lt (h₂ t' ⟨i, hi, hti⟩)⟩⟩,
+  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
+    ⟨fun _ _ ↦ propext beforeEver_union_right,
     eq_bot_iff.2 fun ⟨t, _, h⟩ ↦ lt_irrefl t (h t ⟨NonemptyInterval.pure t, trivial, by simp⟩)⟩)
     fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
