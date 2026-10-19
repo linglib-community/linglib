@@ -455,6 +455,7 @@ ol.steps li { margin-top: 6px; }
       `<span>${WORD[cell.verdict] || esc(cell.verdict)}: ${esc(t.label)}</span></p><p class="where">${where}</p><dl>`;
     h += `<dt>Observed</dt><dd>${obs === null ? "not tested" : obs}${nums ? ` (mean ${esc(nums)})` : ""}` +
       (c.observedTheorem ? `, by ${link(c.observedTheorem, `<code>${esc(c.observedTheorem.short)}</code>`)}` : "") +
+      (c.observedTheorem && c.observedTheorem.doc ? `<br><span class="small">${c.observedTheorem.doc}</span>` : "") +
       (src ? `<br><span class="small">${src}</span>` : "") + `</dd>`;
     if (c.variant) {
       const n = c.variant.stipulations ? c.variant.stipulations.length : null;
