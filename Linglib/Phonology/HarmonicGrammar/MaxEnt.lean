@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.HarmonicGrammar.Harmony
+public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.InformationTheory.Entropy
@@ -194,11 +195,12 @@ theorem maxEnt_real_singleton_of_pair [DecidableEq C] {a b : C} (hab : a ≠ b)
     (maxEnt T w).real {a} = sigmoid (harmony T w a - harmony T w b) := by
   rw [maxEnt_real_singleton, softmax_eq_sigmoid_of_univ_eq_pair hab h]
 
-/-- Scaling the weights scales the harmonies, so the MaxEnt distribution concentrates on a
-candidate of strictly greatest harmony. -/
-theorem tendsto_maxEnt_smul_atTop {c : C} (h : ∀ c' ≠ c, harmony T w c' < harmony T w c) :
+/-- Scaling the weights scales the harmonies, so the MaxEnt distribution concentrates on the sole
+candidate of greatest harmony. -/
+theorem tendsto_maxEnt_smul_atTop {c : C} (h : univ.argmax (harmony T w) = {c}) :
     Tendsto (fun α : ℝ ↦ (maxEnt T (α • w)).real {c}) atTop (𝓝 1) := by
-  simpa [maxEnt_real_singleton, harmony_smul] using tendsto_softmax_atTop h
+  simpa [maxEnt_real_singleton, harmony_smul] using tendsto_softmax_atTop fun c' hc' ↦
+    (Finset.argmax_eq_singleton_iff.1 h).2 c' (mem_univ c') hc'
 
 /-! ### Expected log-probability -/
 

@@ -28,8 +28,8 @@ Law data.
 
 ## Main results
 
-* `ot_lex_imp_higher_harmony`: lexicographic dominance gives higher harmony under exponentially
-  separated weights.
+* `Tableau.optimal_eq_argmax_harmonyScore`: under exponentially separated weights a tableau's OT
+  winners are its HG winners.
 * `maxent_ot_limit`: MaxEnt concentrates on the OT winner as the weights are scaled up.
 * `RealizationProblem.realizedByRanking_iff_satisfiedBy`: OT-realization is ERC satisfaction.
 * `RealizationProblem.IsOTRealizable.isHGRealizable`, `hg_strictly_contains_ot`: OT is strictly
@@ -260,41 +260,34 @@ theorem strictMonoOn_dotProduct {n : Nat} {w : Fin n → ℝ} {M : Nat}
       {v | ∀ i, ofLex v i ≤ M} :=
   fun _ ha _ hb hlex => lex_imp_lower_violations w M _ _ (fun i => ⟨ha i, hb i⟩) hw hlex
 
-/-- If candidate `a` lexicographically beats `b` on the violation profile induced by `ranking`
-    and `M` bounds all violations, then `a` has strictly higher harmony than `b` under the
-    exponential weights `expWeights ranking.length M`. -/
-theorem ot_lex_imp_higher_harmony {C : Type*}
-    (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
-    (a b : C)
-    (hbound : ∀ con ∈ ranking, con a ≤ M ∧ con b ≤ M)
-    (hlex : toLex (fun i : Fin ranking.length => (ranking.get i) a) <
-            toLex (fun i : Fin ranking.length => (ranking.get i) b)) :
-    harmonyScore ranking.get (expWeights ranking.length M) a >
-    harmonyScore ranking.get (expWeights ranking.length M) b := by
-  show -(expWeights ranking.length M ⬝ᵥ (Nat.cast ∘ fun i => ranking.get i b)) <
-       -(expWeights ranking.length M ⬝ᵥ (Nat.cast ∘ fun i => ranking.get i a))
-  rw [neg_lt_neg_iff]
-  exact lex_imp_lower_violations (expWeights ranking.length M) M
-    (fun i => ranking.get i a) (fun i => ranking.get i b)
-    (fun i => hbound (ranking.get i) (by simp [List.get_eq_getElem, List.getElem_mem]))
-    (expWeights_separated ranking.length M hM) hlex
+/-- With exponentially separated weights bounding every violation, a tableau's OT winners are
+its HG winners: the candidates of lexicographically least profile are those of greatest
+harmony. -/
+theorem _root_.OptimalityTheory.Tableau.optimal_eq_argmax_harmonyScore {C : Type*} {n M : ℕ}
+    {w : Fin n → ℝ} (t : Tableau C n) (hw : ExponentiallySeparated w M)
+    (hM : ∀ c ∈ t.candidates, ∀ p, t.constraints p c ≤ M) :
+    t.optimal = t.candidates.argmax (harmonyScore t.constraints w) :=
+  Finset.argmin_eq_argmax_of_le_iff fun a ha b hb ↦ by
+    rw [harmonyScore, harmonyScore, neg_le_neg_iff]
+    exact ((strictMonoOn_dotProduct hw).le_iff_le (hM a ha) (hM b hb)).symm
 
 /-! ### MaxEnt → OT limit -/
 
-/-- Scaling exponentially separated weights concentrates the MaxEnt distribution on a candidate
-    that lexicographically beats every competitor under a ranking with violation bound `M`, since
-    it has the greatest harmony (`ot_lex_imp_higher_harmony`). -/
+/-- Scaling exponentially separated weights concentrates the MaxEnt distribution on the sole OT
+    winner of a ranking with violation bound `M`, which is the sole HG winner
+    (`Tableau.optimal_eq_argmax_harmonyScore`). -/
 theorem maxent_ot_limit {C : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSingletonClass C]
     (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M) (c_opt : C)
     (hbound : ∀ c : C, ∀ con ∈ ranking, con c ≤ M)
-    (hlex : ∀ c, c ≠ c_opt →
-      toLex (fun i : Fin ranking.length => (ranking.get i) c_opt) <
-      toLex (fun i : Fin ranking.length => (ranking.get i) c)) :
+    (hopt : (Tableau.ofList Finset.univ ranking).optimal = {c_opt}) :
     Tendsto (fun α : ℝ ↦
       (maxEnt (ConstraintSet.violations ranking.get) (α • expWeights ranking.length M)).real
-        {c_opt}) atTop (𝓝 1) :=
-  tendsto_maxEnt_smul_atTop _ _ fun c hc ↦ ot_lex_imp_higher_harmony ranking M hM c_opt c
-    (fun con hcon ↦ ⟨hbound c_opt con hcon, hbound c con hcon⟩) (hlex c hc)
+        {c_opt}) atTop (𝓝 1) := by
+  refine tendsto_maxEnt_smul_atTop (T := ConstraintSet.violations ranking.get)
+    (w := expWeights ranking.length M) ?_
+  rw [harmony_violations, ← hopt, Tableau.optimal_eq_argmax_harmonyScore _
+    (expWeights_separated _ M hM) fun c _ p ↦ hbound c _ (List.get_mem ranking p)]
+  rfl
 
 /-! ## Realizability
 
@@ -322,11 +315,10 @@ structure RealizationProblem (Input : Type*) (Output : Type*) (ι : Type*) where
 
 namespace RealizationProblem
 
-/-- The weighting `w` *HG-realizes* the target when on every input the target harmonically
-    dominates every other candidate. -/
+/-- The weighting `w` *HG-realizes* the target when on every input the target is the sole
+    candidate of greatest harmony. -/
 def realizedByWeighting [Fintype ι] (P : RealizationProblem Input Output ι) (w : ι → ℝ) : Prop :=
-  ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
-    harmonyDominates P.con w (i, P.target i) (i, o)
+  ∀ i ∈ P.inputs, (P.cands i).argmax (harmonyScore (P.con.comap (i, ·)) w) = {P.target i}
 
 /-- A problem is HG-realizable when some non-negative weighting realizes its target.
     Non-negativity is [pater-2009]'s standard HG; [coetzee-pater-2011] also discuss negative
@@ -410,15 +402,13 @@ theorem RealizationProblem.IsOTRealizable.isHGRealizable
       ((Finset.le_sup (f := fun o ↦ Finset.univ.sup (P.con · (i, o))) ho).trans
         (Finset.le_sup (f := fun i ↦ (P.cands i).sup fun o ↦ Finset.univ.sup (P.con · (i, o)))
           hi))).trans (Nat.le_succ _)
-  refine ⟨expWeights n M ∘ σ.symm, fun k => (expWeights_pos n M (σ.symm k)).le, ?_⟩
-  intro i hi o ho hne
-  rw [harmonyDominates_iff, harmonyScore, harmonyScore, neg_lt_neg_iff,
-    comp_equiv_symm_dotProduct, comp_equiv_symm_dotProduct]
-  apply lex_imp_lower_violations _ M
-  · intro k
-    exact ⟨hbound i hi (P.target i) (P.target_mem i hi) (σ k), hbound i hi o ho (σ k)⟩
-  · exact expWeights_separated n M (Nat.succ_pos _)
-  · exact (picksAt_iff.1 (hσ i hi)).2 o ho hne
+  refine ⟨expWeights n M ∘ σ.symm, fun k => (expWeights_pos n M (σ.symm k)).le, fun i hi ↦ ?_⟩
+  rw [← hσ i hi, Tableau.optimal_eq_argmax_harmonyScore _
+    (expWeights_separated n M (Nat.succ_pos _)) fun o ho k ↦ hbound i hi o ho (σ k)]
+  congr 1
+  funext o
+  simp only [harmonyScore, comp_equiv_symm_dotProduct]
+  rfl
 
 /-! ### Strict containment — the cumulativity gap -/
 
@@ -438,8 +428,8 @@ theorem hg_strictly_contains_ot :
       target := ![true, true, false]
       target_mem := fun _ _ => Finset.mem_univ _ },
     ⟨![3, 2, 2], fun k => by fin_cases k <;> norm_num, ?_⟩, ?_⟩
-  · intro i _ o _ hne
-    simp only [harmonyDominates_iff, harmonyScore, dotProduct, Fin.sum_univ_three]
+  · refine fun i _ ↦ Finset.argmax_eq_singleton_iff.2 ⟨Finset.mem_univ _, fun o _ hne ↦ ?_⟩
+    simp only [harmonyScore, dotProduct, Fin.sum_univ_three]
     fin_cases i <;> cases o <;>
       first
       | (exfalso; exact hne rfl)
