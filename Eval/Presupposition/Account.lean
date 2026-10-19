@@ -8,7 +8,7 @@ public import Studies.Kalomoiros2023
 # Accounts of presupposition projection
 
 A theory of projection says when a context accepts a sentence of the fragment that the theories
-share, under an interpretation of its atoms (`Eval.Projection.Theory`): a formula of the
+share, under an interpretation of its atoms (`Eval.Presupposition.Theory`): a formula of the
 propositional fragment, and a quantified clause if the theory covers them. A theory silent on
 quantified clauses is not thereby wrong about them. A theory predicts an inference from a formula
 when every context that accepts the formula entails it (`Theory.Predicts`). This is the linking
@@ -38,9 +38,9 @@ the first accepts it by the second, so that it predicts presuppositions at least
 
 @[expose] public section
 
-namespace Eval.Projection
+namespace Eval.Presupposition
 
-open Presupposition
+open _root_.Presupposition
 
 /-- When a context accepts a quantified clause, under an interpretation of its atoms as sets of
 world–individual pairs. -/
@@ -165,4 +165,4 @@ theorem Stronger.trans {a b c : Account} (hab : a.Stronger b) (hbc : b.Stronger 
 
 end Account
 
-end Eval.Projection
+end Eval.Presupposition

@@ -1,7 +1,7 @@
 module
 
-public import Eval.Projection.Chemla2009a
-public import Eval.Projection.ChemlaSchlenker2012
+public import Eval.Presupposition.Chemla2009a
+public import Eval.Presupposition.ChemlaSchlenker2012
 
 /-!
 # Limited Symmetry in quantified sentences
@@ -385,7 +385,7 @@ end Clause
 
 /-! ### Scoring -/
 
-open Eval.Projection
+open Eval.Presupposition
 
 /-- Limited Symmetry as a theory to score: Kalomoiros's constraint on formulas, and the constraint
 at the parsing points of each argument on quantified clauses. -/

@@ -1,7 +1,7 @@
 module
 
-public import Eval.Projection.Account
-public import Eval.Projection.Map
+public import Eval.Presupposition.Account
+public import Eval.Presupposition.Map
 public import Mathlib.Tactic.IntervalCases
 
 /-!
@@ -19,7 +19,7 @@ otherwise the conditional one if the theory predicts that, and nothing if it pre
 registered account or for a theory under development alike.
 
 Every account accepts a target sentence iff the context entails `if p, q`, except that the
-incremental accounts, which coincide on the fragment (`Eval.Projection.edges`), require the
+incremental accounts, which coincide on the fragment (`Eval.Presupposition.edges`), require the
 unconditional `q` in the inverse order (`accepts_target_iff`). The conditional inference is
 endorsed more in every tested cell of both experiments (`observed_experiment1`,
 `observed_experiment4`). So every incremental account is wrong on
@@ -36,9 +36,9 @@ symmetric ones and Limited Symmetry, is right on all (`verdict_experiment1`,
 
 @[expose] public section
 
-namespace Eval.Projection.ChemlaSchlenker2012
+namespace Eval.Presupposition.ChemlaSchlenker2012
 
-open Presupposition Account SyntacticEnvironment Kalomoiros2023
+open _root_.Presupposition Account SyntacticEnvironment Kalomoiros2023
 open _root_.ChemlaSchlenker2012 (Construction Order Inference target experiment1Inferences
   experiment4Inferences)
 
@@ -257,4 +257,4 @@ theorem verdict_experiment4 (a : Account) (k : Construction) (o : Order) :
       else if a ∈ incremental ∧ o = .inverse then .wrong else .correct :=
   verdict_of_observed (fun _ _ ↦ rfl) observed_experiment4 a k o
 
-end Eval.Projection.ChemlaSchlenker2012
+end Eval.Presupposition.ChemlaSchlenker2012

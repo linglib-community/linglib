@@ -1,7 +1,7 @@
 module
 
 public import Eval.Parser
-public import Eval.Projection.Account
+public import Eval.Presupposition.Account
 public import Studies.Chemla2009a
 
 /-!
@@ -66,9 +66,9 @@ their verdicts from the general theorems (`verdict_experiment1`).
 
 @[expose] public section
 
-namespace Eval.Projection.Chemla2009a
+namespace Eval.Presupposition.Chemla2009a
 
-open Presupposition Quantifier _root_.Chemla2009a
+open _root_.Presupposition Quantifier _root_.Chemla2009a
 
 /-- The students of the domain. -/
 abbrev Student := Fin domainSize
@@ -431,4 +431,4 @@ theorem verdict_experiment1 (a : Account) (π : Accommodation) :
       (fun _ _ _ I _ _ hc ↦ supervaluationAcceptable_of_triggers_eq_nil I _ hc) π
   · exact verdict_eq_silent rfl _
 
-end Eval.Projection.Chemla2009a
+end Eval.Presupposition.Chemla2009a

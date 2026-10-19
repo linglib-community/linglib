@@ -230,7 +230,7 @@ def build(export, base):
             "cite": bib.get(key), "columns": columns, "variants": bool(variant_list)})
     experiments.sort(key=lambda e: ((e["cite"] or {}).get("year", ""), e["id"]))
 
-    # The domains: an experiment's is its namespace under `Eval` (`Eval.Projection`), and a
+    # The domains: an experiment's is its namespace under `Eval` (`Eval.Presupposition`), and a
     # theory belongs to the domains of the experiments it is scored on. Each gets its own board.
     def domain(X):
         return X.split(".")[1]
