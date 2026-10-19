@@ -69,8 +69,8 @@ Mary ascribes raining to her now under identity with it exactly when it rains at
 of her alternatives. This is also what the reading licensed by the matrix past ascribes, so the
 sentence has two equivalent logical forms. -/
 theorem simultaneous_deRe {C : Type*} (now : C → T) (rain : T → Set C) (A : Set C) (p : C) :
-    AscribesUnder A p (ofConcept now) (now p) rain ↔ ∀ q ∈ A, q ∈ rain (now q) :=
-  ascribesUnder_ofConcept_apply
+    AscribesUnder A p (some ∘ now) (now p) rain ↔ ∀ q ∈ A, q ∈ rain (now q) :=
+  ascribesUnder_comp_some_apply
 
 /-! ### The upper limit constraint
 

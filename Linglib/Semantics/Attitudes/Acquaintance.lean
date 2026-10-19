@@ -1,30 +1,34 @@
 module
 
-public import Mathlib.Data.Set.Defs
+public import Linglib.Semantics.Reference.Iota
 
 /-!
 # De re attitudes by acquaintance
 
-For Lewis the objects of attitudes are properties of centers, a subject at a time in a world.
-A subject ascribes a property to a res under a relation when she bears the relation uniquely to
-the res and self-ascribes the property of bearing it uniquely to something with the property; a
-de re belief is such an ascription under a relation of acquaintance. A concept, a value at each
-center, is the relation each center bears to its value there, and identity, the concept of the
-self, makes belief de se the case of belief de re through identity.
+For Lewis the objects of attitudes are properties of centers, a subject at a time in a world, and
+a relation the subject bears to things serves as a description: at each center it picks out the
+unique thing the center bears it to, when there is one. A relation thus determines a partial
+concept, of which a concept, a value at every center, is the total case. A subject ascribes a
+property to a res under a partial concept when its value at her center is the res and every
+alternative has the property of its value there; a de re belief is such an ascription under a
+relation of acquaintance, and identity, the concept of the self, makes belief de se the case of
+belief de re through identity.
 
 ## Main definitions
 
-* `Acquaintance.BearsUniquely`: a center bears a relation to a value and to nothing else.
-* `Acquaintance.deRe`: the property of bearing a relation uniquely to something with a property.
-* `Acquaintance.AscribesUnder`: ascription of a property to a res under a relation.
-* `Acquaintance.ofConcept`: the relation of a concept.
+* `Acquaintance.relatum`: the partial concept of a relation, through the iota operator.
+* `Acquaintance.deRe`: the property of having a value of a partial concept that has a property.
+* `Acquaintance.AscribesUnder`: ascription of a property to a res under a partial concept.
 
 ## Main statements
 
-* `Acquaintance.BearsUniquely.unique`: a center bears a relation uniquely to at most one value.
-* `Acquaintance.mem_deRe_ofConcept`: through a concept, the de re property is the property of
-  the concept's value.
-* `Acquaintance.ascribesUnder_ofConcept`, `Acquaintance.ascribesUnder_ofConcept_apply`: ascription
+* `Acquaintance.relatum_eq_some_iff`: a center's relatum is what it bears the relation to and
+  nothing else to.
+* `Acquaintance.mem_deRe_relatum_iff`: the de re property of a relation is the property of
+  bearing it uniquely to something that has the property.
+* `Acquaintance.relatum_eq`: a concept is the partial concept of the relation of identity with
+  its values.
+* `Acquaintance.ascribesUnder_comp_some`, `Acquaintance.ascribesUnder_comp_some_apply`: ascription
   under a concept, and ascription under identity as self-ascription.
 
 ## References
@@ -39,54 +43,54 @@ self, makes belief de se the case of belief de re through identity.
 
 namespace Acquaintance
 
-variable {α C : Type*} {R : α → C → Prop} {P : α → Set C} {A : Set C} {c : C → α} {p : C}
-  {y y' : α}
+open Reference
 
-/-- The center `p` bears `R` uniquely to `y` when `R y p` holds and `R z p` holds of no other
-`z`. -/
-def BearsUniquely (R : α → C → Prop) (p : C) (y : α) : Prop := ∀ z, R z p ↔ z = y
+variable {α C : Type*} {R : α → C → Prop} {k : C → Option α} {c : C → α} {P : α → Set C}
+  {A : Set C} {p : C} {y : α}
 
-/-- The property of bearing `R` uniquely to something that has `P`, the centers that do. -/
-def deRe (R : α → C → Prop) (P : α → Set C) : Set C := {p | ∃ y, BearsUniquely R p y ∧ p ∈ P y}
+/-- The relatum of the center `p` under `R` is the unique thing `p` bears `R` to, and `none` when
+there is no such thing or several. -/
+noncomputable def relatum (R : α → C → Prop) (p : C) : Option α := iota (R · p)
 
-/-- At the center `p`, with attitude alternatives `A`, the subject ascribes `P` to `y` under `R`
-when she bears `R` uniquely to `y` and self-ascribes the property of bearing `R` uniquely to
-something that has `P`, every alternative having it. -/
-def AscribesUnder (A : Set C) (p : C) (R : α → C → Prop) (y : α) (P : α → Set C) : Prop :=
-  BearsUniquely R p y ∧ A ⊆ deRe R P
+/-- The property of having a value under the partial concept `k` that has `P`, the centers that
+do. -/
+def deRe (k : C → Option α) (P : α → Set C) : Set C := {p | ∃ y ∈ k p, p ∈ P y}
 
-/-- The relation of a concept `c` relates each center to the value of `c` there. -/
-def ofConcept (c : C → α) (y : α) (p : C) : Prop := y = c p
+/-- At the center `p`, with attitude alternatives `A`, the subject ascribes `P` to `y` under `k`
+when `k` picks out `y` at her center and she self-ascribes the property of having a value under
+`k` that has `P`, every alternative having it. -/
+def AscribesUnder (A : Set C) (p : C) (k : C → Option α) (y : α) (P : α → Set C) : Prop :=
+  k p = some y ∧ A ⊆ deRe k P
 
-theorem BearsUniquely.rel (h : BearsUniquely R p y) : R y p := (h y).2 rfl
+theorem relatum_eq_some_iff : relatum R p = some y ↔ R y p ∧ ∀ z, R z p → z = y :=
+  iota_eq_some_iff _
 
-theorem BearsUniquely.eq (h : BearsUniquely R p y) {z : α} (hz : R z p) : z = y := (h z).1 hz
+/-- A concept is the partial concept of the relation each center bears to its value there. -/
+theorem relatum_eq (c : C → α) : relatum (fun y p ↦ y = c p) = some ∘ c :=
+  funext fun p ↦ iota_ident (c p)
 
-theorem BearsUniquely.unique (h : BearsUniquely R p y) (h' : BearsUniquely R p y') : y = y' :=
-  h'.eq h.rel
+theorem mem_deRe_iff_of_eq_some (h : k p = some y) : p ∈ deRe k P ↔ p ∈ P y :=
+  ⟨fun ⟨_, hz, hP⟩ ↦ Option.some_inj.1 (h.symm.trans hz) ▸ hP, fun hP ↦ ⟨y, h, hP⟩⟩
 
-theorem BearsUniquely.mem_deRe_iff (h : BearsUniquely R p y) : p ∈ deRe R P ↔ p ∈ P y :=
-  ⟨fun ⟨_, h', hP⟩ ↦ h'.unique h ▸ hP, fun hP ↦ ⟨y, h, hP⟩⟩
+/-- The de re property of a relation is the property of bearing it uniquely to something that
+has the property. -/
+theorem mem_deRe_relatum_iff :
+    p ∈ deRe (relatum R) P ↔ ∃ y, (R y p ∧ ∀ z, R z p → z = y) ∧ p ∈ P y :=
+  exists_congr fun _ ↦ and_congr_left' relatum_eq_some_iff
 
-theorem bearsUniquely_ofConcept_iff : BearsUniquely (ofConcept c) p y ↔ y = c p :=
-  ⟨fun h ↦ h.rel, fun h _ ↦ h ▸ Iff.rfl⟩
+@[simp] theorem mem_deRe_comp_some : p ∈ deRe (some ∘ c) P ↔ p ∈ P (c p) :=
+  mem_deRe_iff_of_eq_some rfl
 
-theorem bearsUniquely_ofConcept (c : C → α) (p : C) : BearsUniquely (ofConcept c) p (c p) :=
-  bearsUniquely_ofConcept_iff.2 rfl
-
-@[simp] theorem mem_deRe_ofConcept : p ∈ deRe (ofConcept c) P ↔ p ∈ P (c p) :=
-  (bearsUniquely_ofConcept c p).mem_deRe_iff
-
-theorem ascribesUnder_ofConcept :
-    AscribesUnder A p (ofConcept c) y P ↔ y = c p ∧ ∀ q ∈ A, q ∈ P (c q) :=
-  and_congr bearsUniquely_ofConcept_iff
-    ⟨fun h _ hq ↦ mem_deRe_ofConcept.1 (h hq), fun h _ hq ↦ mem_deRe_ofConcept.2 (h _ hq)⟩
+theorem ascribesUnder_comp_some :
+    AscribesUnder A p (some ∘ c) y P ↔ y = c p ∧ ∀ q ∈ A, q ∈ P (c q) :=
+  and_congr (Option.some_inj.trans eq_comm)
+    ⟨fun h _ hq ↦ mem_deRe_comp_some.1 (h hq), fun h _ hq ↦ mem_deRe_comp_some.2 (h _ hq)⟩
 
 /-- Ascribing `P` under a concept to its value at the subject's own center is self-ascribing the
 property of the concept's value. With the self of each center as the concept, identity, this is
 Lewis's reduction of belief de se to belief de re. -/
-theorem ascribesUnder_ofConcept_apply :
-    AscribesUnder A p (ofConcept c) (c p) P ↔ ∀ q ∈ A, q ∈ P (c q) := by
-  simp [ascribesUnder_ofConcept]
+theorem ascribesUnder_comp_some_apply :
+    AscribesUnder A p (some ∘ c) (c p) P ↔ ∀ q ∈ A, q ∈ P (c q) := by
+  simp [ascribesUnder_comp_some]
 
 end Acquaintance
