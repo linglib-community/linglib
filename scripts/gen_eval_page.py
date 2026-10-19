@@ -167,10 +167,10 @@ def first_clause(doc):
     return re.split(r",\s|\s\(|\.\s|\.$", " ".join(doc.split()), maxsplit=1)[0]
 
 
-def level_label(ctor):
+def named_label(ctor):
     """The printed label of a constructor of a data type, `Paper.Type.level`, as the paper's data
     file gives it; a triple's language and forms; a sampled language's name; a root pattern in
-    capitals (`AAB`); and otherwise its words."""
+    capitals (`AAB`); otherwise none."""
     triple = root_classes(ctor)
     if triple:
         return f"{triple['language']} {', '.join(triple['forms'])}"
@@ -186,7 +186,12 @@ def level_label(ctor):
                 for lv in t["levels"]:
                     if lv["name"] == parts[-1]:
                         return lv["label"]
-    return " ".join(words(parts[-1])).lower()
+    return None
+
+
+def level_label(ctor):
+    """A constructor's label as `named_label` gives it, and otherwise its words."""
+    return named_label(ctor) or " ".join(words(ctor.split(".")[-1])).lower()
 
 
 def doc_href(decl, base):
@@ -277,11 +282,9 @@ def build(export, root):
         return names.get(n, {}).get("rank", 1000)
 
     def cell_label(x):
-        """A cell's label; for a constant no data file names, its docstring's first clause."""
-        label = level_label(x)
+        """A cell's label; for a constant nothing names, its docstring's first clause."""
         doc = names.get(x, {}).get("doc", "")
-        return first_clause(doc) if doc and label == " ".join(words(x.split(".")[-1])).lower() \
-            else label
+        return named_label(x) or (first_clause(doc) if doc else level_label(x))
 
     def source(n):
         return "lab" if names.get(n, {}).get("module", "").startswith("Lab.") else "registered"
