@@ -21,18 +21,17 @@ Coon's division of labor is stated as predicates over valencies
 introduce at most the internal argument, v ~ Voice at most the
 external.
 
-`label` maps a valency to the comparative core-term labels of
-`ArgumentRole`: a lone position — internal or
-external alike — surfaces as S, both together as A and P. The labels
-are relational, so `label` is deliberately not monotone
-(`label_not_monotone`): adding a co-argument relabels S, which is why
-alignment typology needs S as its own comparative concept.
+`role` reads the comparative role (`ArgumentRole`) of a position off the clause's valency: a lone
+position, internal or external alike, is S, and the two positions of a transitive clause are A
+and P. The roles are relational, so `label`, the set of roles a valency's arguments bear, is not
+monotone: adding a co-argument turns S into A or P, which is why alignment typology needs S as a
+concept of its own.
 
 ## Main declarations
 
 * `ArgPosition`, `Valency`
 * `Valency.IsRootValency`, `IsVoiceValency`, `IsTransitive`
-* `Valency.label` — valencies to comparative core-term labels
+* `Valency.role`, `Valency.label`: the comparative role of a position, and the roles of a valency
 
 ## References
 
@@ -62,7 +61,7 @@ abbrev Valency := Finset ArgPosition
 /-- `Finset` carries no `Repr`; over the two-element position universe the
     four valencies render literally. -/
 instance : Repr Valency :=
-  ⟨fun v _ =>
+  ⟨fun v _ ↦
     if v = {.internal, .external} then "{internal, external}"
     else if v = ({.internal} : Valency) then "{internal}"
     else if v = ({.external} : Valency) then "{external}"
@@ -104,15 +103,22 @@ theorem isTransitive_union_iff :
       ((v ∪ v').IsTransitive ↔
         v = {.internal} ∧ v' = {.external}) := by decide
 
-/-! ### Comparative core-term labels -/
+/-! ### Comparative roles -/
 
-/-- The comparative core-term labels a valency's arguments surface with
-    (S ~ A ~ P, `ArgumentRole`): a lone position —
-    internal or external alike — is the S of an intransitive clause;
-    both together are A and P. -/
-def label (v : Valency) : Finset ArgumentRole :=
-  if v = {.internal, .external} then {.A, .P}
-  else if v = ∅ then ∅ else {.S}
+/-- The comparative role of position `p` in a clause realizing `v`. A lone position, internal or
+external alike, is the S of an intransitive clause; in a transitive clause the external position
+is A and the internal one P. A position outside `v` has no role. The clause, not the predicate,
+takes the classification. -/
+def role (v : Valency) (p : ArgPosition) : Option ArgumentRole :=
+  if p ∉ v then none
+  else if v.IsTransitive then
+    match p with
+    | .internal => some .P
+    | .external => some .A
+  else some .S
+
+/-- The roles a valency's arguments bear. -/
+def label (v : Valency) : Finset ArgumentRole := {r | ∃ p, v.role p = some r}
 
 /-- S surfaces exactly for the two singleton valencies — the
     unaccusative (internal) and unergative (external) S, which

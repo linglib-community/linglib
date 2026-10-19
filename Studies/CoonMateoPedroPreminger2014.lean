@@ -461,7 +461,7 @@ theorem tada (L : Language) (h₁ : L ≠ .tsotsil) (h₂ : L ≠ .yukatek) {r :
     (hr : r ∈ ArgumentRole.core) :
     L.MarksExtraction r ↔
       ¬ Converges ⟨L.licenser, true, .transitive agentive .dp, some r, false⟩ := by
-  simp only [ArgumentRole.core, List.mem_cons, List.not_mem_nil, or_false] at hr
+  rw [ArgumentRole.mem_core] at hr
   cases L <;> first | exact (h₁ rfl).elim | exact (h₂ rfl).elim |
     rcases hr with rfl | rfl | rfl <;> decide
 

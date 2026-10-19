@@ -77,6 +77,6 @@ object and absolutive on the intransitive subject. -/
 def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.tripartite
 
 /-- The cases the core roles realize, the ergative, the accusative and the absolutive. -/
-def caseInventory : Finset Case := (ArgumentRole.core.map (assignCase .Perf)).toFinset
+def caseInventory : Finset Case := ArgumentRole.core.image (assignCase .Perf)
 
 end Mam

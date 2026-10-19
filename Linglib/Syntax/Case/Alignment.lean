@@ -27,6 +27,8 @@ than nominative clothing.
 * `Alignment.IsNeutral`, `Alignment.IsAccusative`, `Alignment.IsErgative`,
   `Alignment.IsHorizontal`, `Alignment.IsTripartite`: the five alignments of a marking, one of
   which every marking has (`Alignment.marking_cases`).
+* `Alignment.ditransitive`, `Alignment.IsIndirective`, `Alignment.IsSecundative`: ditransitive
+  alignment, the alignment of P, T and R.
 * `Alignment.accusative`, `Alignment.ergative`, `Alignment.tripartite`,
   `Alignment.extendedErgative`, `Alignment.invertedErgative`: the canonical case markings.
 * `Alignment.AlignmentType`: Comrie's observational classification of WALS chapters 98 to
@@ -38,9 +40,10 @@ than nominative clothing.
 
 ## Implementation notes
 
-The alignment predicates read the three core roles only. The values a canonical marking gives
-the ditransitive roles R and T, a dative recipient in the accusative marking and the theme with
-the patient elsewhere, are placeholders with no audit trail, and no consumer reads them.
+The monotransitive alignment predicates read S, A and P only. The values a canonical marking
+gives R and T, a dative recipient in the accusative marking and the theme with the patient
+elsewhere, are placeholders with no audit trail, and no theorem reads their ditransitive
+alignment.
 `AlignmentType.active`, the split-S systems, identifies no fixed pair of roles and so is not the
 alignment of a single marking.
 
@@ -51,6 +54,7 @@ alignment of a single marking.
 * [comrie-2013]
 * [coon-2013]
 * [dixon-1994]
+* [haspelmath-2011]
 * [imanishi-2014]
 * [imanishi-2020]
 * [scott-2023]
@@ -103,6 +107,40 @@ and P. -/
 theorem IsAccusative.not_isErgative (h : IsAccusative m) : ¬ IsErgative m := fun h' ↦ h.2 h'.1
 
 theorem IsErgative.not_isAccusative (h : IsErgative m) : ¬ IsAccusative m := fun h' ↦ h.2 h'.1
+
+/-! ### Ditransitive alignment
+
+Ditransitive alignment compares how a marking codes P, T and R, and Haspelmath draws its triangle
+like the monotransitive one, with P in the place of S, T in that of A and R in that of P. The
+ditransitive alignment of a marking is the alignment of the marking read through that
+correspondence, so indirective alignment, T with P and R apart, is the counterpart of accusative
+alignment, and secundative alignment, R with P and T apart, the counterpart of ergative
+alignment. -/
+
+/-- The ditransitive role in the place of each monotransitive role in [haspelmath-2011]'s (6): P
+for S, T for A and R for P. R and T, outside the monotransitive triangle, stay fixed. -/
+def ditransitive : ArgumentRole → ArgumentRole
+  | .S => .P
+  | .A => .T
+  | .P => .R
+  | .R => .R
+  | .T => .T
+
+variable (m) in
+/-- The marking treats T like P and unlike R. -/
+def IsIndirective : Prop := IsAccusative (m ∘ ditransitive)
+
+variable (m) in
+/-- The marking treats R like P and unlike T. -/
+def IsSecundative : Prop := IsErgative (m ∘ ditransitive)
+
+theorem isIndirective_iff : IsIndirective m ↔ m .P = m .T ∧ m .P ≠ m .R := Iff.rfl
+
+theorem isSecundative_iff : IsSecundative m ↔ m .P = m .R ∧ m .P ≠ m .T := Iff.rfl
+
+instance [DecidableEq κ] : Decidable (IsIndirective m) := decidable_of_iff' _ isIndirective_iff
+
+instance [DecidableEq κ] : Decidable (IsSecundative m) := decidable_of_iff' _ isSecundative_iff
 
 /-! ### Canonical case markings -/
 
@@ -163,7 +201,7 @@ inductive AlignmentType where
   | ergative
   /-- S, A and P all distinct. -/
   | tripartite
-  /-- Split-S: S is marked like A for some predicates and like P for others. -/
+  /-- Split-S, with S marked like A for some predicates and like P for others. -/
   | active
   deriving DecidableEq, Repr, Inhabited, Fintype
 
