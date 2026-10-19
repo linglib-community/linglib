@@ -249,9 +249,9 @@ noncomputable def wolofWeights : Fin 5 → ℝ
 
 /-- The learned weights are exponentially separated, each exceeding the sum of all lower ones, the
 spacing under which Harmonic Grammar reproduces the strict domination of the ranking the Gradual
-Learning Algorithm finds ([johnson-2002], `lex_imp_lower_violations`). -/
-theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := by
-  refine ⟨fun i ↦ by fin_cases i <;> norm_num [wolofWeights], fun k ↦ ?_⟩
+Learning Algorithm finds ([johnson-2002], `Pi.strictMonoOn_sum_mul`). -/
+theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := fun k ↦ by
+  rw [← Finset.filter_lt_eq_Ioi]
   fin_cases k <;>
     simp +decide only [wolofWeights, Finset.sum_filter, Fin.sum_univ_five] <;>
     norm_num

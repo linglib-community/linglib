@@ -552,7 +552,7 @@ def loanwordDevoicing : RealizationProblem Loan Voicing (Fin 3) where
 the pattern, since the two lower weights sum past the higher one only in *guddo*. -/
 theorem loanwordDevoicing_realizedByWeighting :
     loanwordDevoicing.realizedByWeighting ![3/2, 1, 1] := by
-  intro i _ o _ hne
+  refine fun i _ ↦ Finset.argmax_eq_singleton_iff.2 ⟨mem_univ _, fun o _ hne ↦ ?_⟩
   cases i <;> cases o <;>
     simp [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three, identVoice, ocpVoice,
       voicedGeminate] at hne ⊢ <;> norm_num

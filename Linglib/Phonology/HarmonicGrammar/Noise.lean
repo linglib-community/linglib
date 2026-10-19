@@ -21,12 +21,10 @@ independent.
 
 * `weightNoise`: independent `N(0, v)` noise on every constraint weight.
 * `weightNoiseChoiceProb`: the probability that a candidate has the highest harmony under noisy
-  weights.
+  weights, the random-utility choice probability under the law of the noisy harmonies.
 
 ## Main results
 
-* `weightNoiseChoiceProb_eq_choiceProb_map`: noisy harmonic grammar is the random utility model
-  whose joint law is that of the noisy harmonies.
 * `map_weightNoise_harmonyScore_sub`: the harmony difference of two candidates is Gaussian with
   variance `v * (d ⬝ᵥ d)`.
 * `variance_harmonyScore_sub`, `covariance_harmonyScore_sub`: the variances and covariances of
@@ -66,11 +64,6 @@ noncomputable def weightNoise (ι : Type*) [Fintype ι] (v : ℝ≥0) : Measure 
 instance : IsProbabilityMeasure (weightNoise ι v) := by
   unfold weightNoise; infer_instance
 
-/-- `weightNoiseChoiceProb con w v a` is the probability that `a` has the highest harmony when the
-weights `w` are perturbed by weight noise of variance `v`. -/
-noncomputable def weightNoiseChoiceProb (a : C) : ℝ≥0∞ :=
-  weightNoise ι v {η | ∀ b, b ≠ a → harmonyScore con (w + η) b < harmonyScore con (w + η) a}
-
 theorem measurable_harmonyScore_add (c : C) :
     Measurable fun η : ι → ℝ ↦ harmonyScore con (w + η) c := by
   simp only [harmonyScore_eq_neg_sum, Pi.add_apply]
@@ -85,12 +78,17 @@ theorem dotProduct_violationDiff_self_nonneg (a b : C) :
     0 ≤ (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ) :=
   Finset.sum_nonneg fun _ _ ↦ mul_self_nonneg _
 
-/-- Noisy harmonic grammar is the random utility model whose utilities are the noisy
-harmonies. -/
-theorem weightNoiseChoiceProb_eq_choiceProb_map [Fintype C] (a : C) :
+/-- `weightNoiseChoiceProb con w v a` is the probability that `a` has the highest harmony when the
+weights `w` are perturbed by weight noise of variance `v`: the random-utility choice probability
+of `a` under the law of the noisy harmonies. -/
+noncomputable def weightNoiseChoiceProb [Fintype C] (a : C) : ℝ≥0∞ :=
+  choiceProb ((weightNoise ι v).map fun η c ↦ harmonyScore con (w + η) c) a
+
+/-- The probability that `a` has the highest noisy harmony, as an event of the weight noise. -/
+theorem weightNoiseChoiceProb_eq [Fintype C] (a : C) :
     weightNoiseChoiceProb con w v a =
-      choiceProb ((weightNoise ι v).map fun η c ↦ harmonyScore con (w + η) c) a :=
-  (choiceProb_map _ (measurable_pi_iff.mpr (measurable_harmonyScore_add con w)) a).symm
+      weightNoise ι v {η | ∀ b, b ≠ a → harmonyScore con (w + η) b < harmonyScore con (w + η) a} :=
+  choiceProb_map _ (measurable_pi_iff.mpr (measurable_harmonyScore_add con w)) a
 
 /-- Noise on the weights moves the harmony difference of two candidates by the noise against their
 violation difference. -/
@@ -170,12 +168,12 @@ theorem weightNoise_setOf_harmonyScore_lt (hv : v ≠ 0) {a b : C}
 
 /-- When `b` is the only other candidate, the probability that `a` wins is the probit of their
 harmony difference over its standard deviation. -/
-theorem weightNoiseChoiceProb_of_forall_ne_eq (hv : v ≠ 0) {a b : C} (hb : ∀ c, c ≠ a → c = b)
-    (hab : a ≠ b) (hd : (con.violationDiff a b : ι → ℝ) ≠ 0) :
+theorem weightNoiseChoiceProb_of_forall_ne_eq [Fintype C] (hv : v ≠ 0) {a b : C}
+    (hb : ∀ c, c ≠ a → c = b) (hab : a ≠ b) (hd : (con.violationDiff a b : ι → ℝ) ≠ 0) :
     weightNoiseChoiceProb con w v a =
       ENNReal.ofReal (normalCDF ((harmonyScore con w a - harmonyScore con w b) /
         √(v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ)))) := by
-  rw [weightNoiseChoiceProb, ← weightNoise_setOf_harmonyScore_lt con w v hv hd]
+  rw [weightNoiseChoiceProb_eq, ← weightNoise_setOf_harmonyScore_lt con w v hv hd]
   congr 1
   ext η
   exact ⟨fun h ↦ h b hab.symm, fun h c hc ↦ hb c hc ▸ h⟩
