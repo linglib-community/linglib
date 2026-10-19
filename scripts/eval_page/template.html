@@ -41,7 +41,26 @@
   color: var(--silent); box-shadow: inset 0 0 0 1px var(--border);
   background: repeating-linear-gradient(135deg, var(--silent-bg) 0 4px, transparent 4px 8px);
 }
-a.v:hover { filter: brightness(0.94); }
+button.v:hover { filter: brightness(0.94); }
+button.v[aria-expanded="true"] { outline: 2px solid var(--primary); outline-offset: 1px; }
+
+/* The panel of a mark */
+.pop {
+  position: absolute; z-index: 4; width: min(380px, calc(100vw - 2 * var(--gap))); padding: 12px 14px;
+  font-size: 14px; line-height: 1.45; color: var(--content); background: var(--entry);
+  border: 1px solid var(--tertiary); border-radius: 8px; box-shadow: 0 4px 16px rgb(0 0 0 / 0.12);
+}
+.pop p { margin: 0; }
+.pop .head { display: flex; gap: 8px; align-items: baseline; font-weight: 600; color: var(--primary); }
+.pop .head .v { width: 20px; height: 20px; font-size: 12px; flex: none; align-self: center; }
+.pop .where { margin-top: 2px; color: var(--secondary); }
+.pop dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 12px; margin: 10px 0 0; }
+.pop dt { color: var(--secondary); }
+.pop dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.pop a { text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.pop a:hover { text-decoration-color: currentColor; }
+.pop code { padding: 0; font-size: 0.85em; background: none; }
+.pop .small { font-size: 13px; }
 
 .domains { display: flex; flex-wrap: wrap; gap: 4px 24px; margin: 0 0 20px; }
 .domains a { font-size: 16px; color: var(--secondary); padding-block: 2px; }
@@ -143,6 +162,7 @@ dl.theorems dd { margin: 4px 0 0; }
 </main>
 
 <!--SITE_FOOTER-->
+<div class="pop" id="pop" role="dialog" aria-label="Verdict" hidden></div>
 
 <script type="application/json" id="eval-data">/*EVAL_DATA*/{}</script>
 <script>
@@ -194,8 +214,11 @@ dl.theorems dd { margin: 4px 0 0; }
     return esc(col.observed);
   }
 
+  // The marks on the board shown, by experiment, theory and column.
+  const marks = new Map();
   // A board: the theories scored in a domain, against its experiments.
   function board(exps, theories) {
+    marks.clear();
     let h = "<thead><tr class=\"datasets\"><th class=\"corner\" rowspan=\"3\" scope=\"col\">Theory</th>";
     for (const e of exps) h += `<th class="split" colspan="${e.columns.length}">${cite(e.cite)}<small>${esc(e.label)}</small></th>`;
     h += "</tr><tr class=\"groups\">";
@@ -258,8 +281,10 @@ dl.theorems dd { margin: 4px 0 0; }
             const cls = i === 0 ? "split" : "";
             if (!cell) { h += `<td class="${cls}"></td>`; return; }
             const where = [cite(e.cite).replace(/<[^>]*>/g, ""), e.label, ...c.cell, c.variant ? c.variant.label : ""].filter(Boolean).join(", ");
-            const what = `${WORD[cell.verdict] || cell.verdict}: ${t.label} on ${where}. By ${cell.theorem.name}`;
-            h += `<td class="${cls}"><a class="v v-${esc(cell.verdict)}" href="${esc(cell.theorem.href)}" title="${esc(what)}" aria-label="${esc(what)}">${MARK[cell.verdict] || "?"}</a></td>`;
+            const what = `${WORD[cell.verdict] || cell.verdict}: ${t.label} on ${where}`;
+            const k = `${e.id}|${t.id}|${c.key}`;
+            marks.set(k, { e, t, c, cell });
+            h += `<td class="${cls}"><button type="button" class="v v-${esc(cell.verdict)}" data-k="${esc(k)}" aria-label="${esc(what)}" aria-haspopup="dialog">${MARK[cell.verdict] || "?"}</button></td>`;
           });
         }
         h += "</tr>";
@@ -361,10 +386,83 @@ dl.theorems dd { margin: 4px 0 0; }
     return papers;
   }
 
-  // One domain at a time, named in the address (`#Projection`).
+  // The panel of a mark, shown on hover or focus and kept open by a click.
+  const pop = document.getElementById("pop");
+  let shown = null, pinned = false, timer = 0;
+  const link = (d, text) => d.href ? `<a href="${esc(d.href)}">${text}</a>` : text;
+  function sources(e) {
+    const paper = data.papers[e.paper];
+    if (!paper) return "";
+    const ts = paper.tables.filter((t) => t.name.startsWith(e.decl.short) && t.locator);
+    return [...new Set(ts.map((t) => `${esc(t.locator)}, ${esc(verified[t.verified] || t.verified)}`))].join("; ");
+  }
+  function panel({ e, t, c, cell }) {
+    const obs = observedText(e, c), nums = printed(e, c), src = sources(e);
+    const defs = t.definitions || [];
+    const paper = e.cite ? `${cite(e.cite)}, <em>${e.cite.doi ? `<a href="https://doi.org/${esc(e.cite.doi)}">${esc(e.cite.title)}</a>` : esc(e.cite.title)}</em>` : "";
+    const where = [cite(e.cite), esc(e.label), ...c.cell.map(esc)].filter(Boolean).join(" · ");
+    let h = `<p class="head"><span class="v v-${esc(cell.verdict)}">${MARK[cell.verdict] || "?"}</span>` +
+      `<span>${WORD[cell.verdict] || esc(cell.verdict)}: ${esc(t.label)}</span></p><p class="where">${where}</p><dl>`;
+    h += `<dt>Observed</dt><dd>${obs === null ? "not tested" : obs}${nums ? ` (mean ${esc(nums)})` : ""}` +
+      (c.observedTheorem ? `, by ${link(c.observedTheorem, `<code>${esc(c.observedTheorem.short)}</code>`)}` : "") +
+      (src ? `<br><span class="small">${src}</span>` : "") + `</dd>`;
+    if (c.variant) {
+      const n = c.variant.stipulations ? c.variant.stipulations.length : null;
+      h += `<dt>Parse</dt><dd>${link(c.variant.decl, esc(c.variant.label))}${n === null ? "" : `, ${n} stipulated`}</dd>`;
+    }
+    h += `<dt>Theory</dt><dd>${defs.length ? defs.map((d) => link(d, `<code>${esc(d.name)}</code>`)).join(", ") : link(t.decl, `<code>${esc(t.decl.name)}</code>`)}</dd>`;
+    h += `<dt>Proof</dt><dd>${link(cell.theorem, `<code>${esc(cell.theorem.short)}</code>`)}` +
+      (cell.theorem.doc ? `<br><span class="small">${cell.theorem.doc}</span>` : "") + `</dd>`;
+    if (paper) h += `<dt>Paper</dt><dd>${paper}</dd>`;
+    return h + "</dl>";
+  }
+  function place(b) {
+    const r = b.getBoundingClientRect(), w = pop.offsetWidth, hgt = pop.offsetHeight, m = 16;
+    const left = Math.min(Math.max(m, r.left + r.width / 2 - w / 2), document.documentElement.clientWidth - w - m);
+    const below = r.bottom + 8 + hgt < innerHeight || r.top - 8 - hgt < 0;
+    pop.style.left = `${left + scrollX}px`;
+    pop.style.top = `${(below ? r.bottom + 8 : r.top - 8 - hgt) + scrollY}px`;
+  }
+  function open(b) {
+    clearTimeout(timer);
+    if (shown && shown !== b) shown.setAttribute("aria-expanded", "false");
+    shown = b;
+    b.setAttribute("aria-expanded", "true");
+    pop.innerHTML = panel(marks.get(b.dataset.k));
+    pop.hidden = false;
+    place(b);
+  }
+  function close() {
+    clearTimeout(timer);
+    if (shown) shown.setAttribute("aria-expanded", "false");
+    shown = null; pinned = false; pop.hidden = true;
+  }
+  const later = () => { clearTimeout(timer); timer = setTimeout(() => { if (!pinned) close(); }, 200); };
+  const boardEl = document.getElementById("board");
+  boardEl.addEventListener("mouseover", (ev) => { const b = ev.target.closest("button.v"); if (b && !pinned) open(b); });
+  boardEl.addEventListener("mouseout", (ev) => { if (ev.target.closest("button.v") && !pinned) later(); });
+  boardEl.addEventListener("focusin", (ev) => { const b = ev.target.closest("button.v"); if (b && !pinned) open(b); });
+  boardEl.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button.v");
+    if (!b) return;
+    if (pinned && shown === b) { close(); return; }
+    open(b); pinned = true;
+  });
+  pop.addEventListener("mouseover", () => clearTimeout(timer));
+  pop.addEventListener("mouseout", () => { if (!pinned) later(); });
+  document.addEventListener("click", (ev) => { if (pinned && !ev.target.closest("#pop, button.v")) close(); });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key !== "Escape" || !shown) return;
+    const b = shown; close(); b.focus();
+  });
+  addEventListener("resize", () => { if (shown) place(shown); }, { passive: true });
+  document.getElementById("board-box").addEventListener("scroll", () => { if (shown) place(shown); }, { passive: true });
+
+  // One domain at a time, named in the address (`#Suppletion`).
   const named = () => data.domains.find((x) => x.name === decodeURIComponent(location.hash.slice(1)));
   let current = named() || data.domains[0];
   function show() {
+    close();
     const d = current;
     document.getElementById("domains").innerHTML = data.domains.length < 2 ? "" : data.domains.map((x) =>
       `<a href="#${esc(x.name)}"${x === d ? ' aria-current="true"' : ""}>${esc(x.name)}</a>`).join("");
