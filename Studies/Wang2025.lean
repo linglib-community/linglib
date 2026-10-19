@@ -323,7 +323,7 @@ inductive Trigger
   deriving DecidableEq, Repr
 
 /-- The fragment entry of a trigger, an adverb or a verb. -/
-def Trigger.entry : Trigger → Presupposition.TriggerItem ⊕ Mandarin.Verb
+def Trigger.entry : Trigger → Presupposition.TriggerItem ⊕ Verb
   | .ye => .inl Mandarin.Adverbs.ye
   | .faner => .inl Mandarin.Adverbs.faner
   | .reng => .inl Mandarin.Adverbs.reng
@@ -345,7 +345,7 @@ def Trigger.altStructure : Trigger → AltStructure
   | .jiu | .houhui => .none
 
 /-- The verbal triggers are presupposition triggers by their fragment entries. -/
-theorem isTrigger_of_entry {t : Trigger} {v : Mandarin.Verb} (h : t.entry = .inr v) :
+theorem isTrigger_of_entry {t : Trigger} {v : Verb} (h : t.entry = .inr v) :
     v.IsTrigger := by
   cases t <;> simp only [Trigger.entry, Sum.inr.injEq, reduceCtorEq] at h <;> subst h <;> decide
 

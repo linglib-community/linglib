@@ -24,7 +24,6 @@ an English artifact it flags itself.
 ## References
 
 * [pietraszko-2019]
-* [noonan-2007]
 -/
 
 @[expose] public section
@@ -42,16 +41,10 @@ def ukuthi : Complementizer where
 
 /-! ### Predicates -/
 
-/-- An Ndebele complement-taking predicate is a verb entry with its [noonan-2007] class. -/
-structure Verb extends _root_.Verb where
-  /-- The [noonan-2007] class. -/
-  predicateClass : Complement.PredicateClass
-
 /-- *cabanga* 'think', with an indicative complement ((4), (12)). -/
 def cabanga : Verb where
   morphs := [.root "cabanga"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .propAttitude
   attitude := some (.doxastic .nonVeridical)
 
 /-- *funa* 'want', with a subjunctive complement and plain class-15 objects ((7)). -/
@@ -61,20 +54,17 @@ def funa : Verb where
     [({ complements := [.clausal (coding := some .subjunctive) (types := .only .declarative)] },
      [0, 1]),
      (ArgumentFrame.np, [0, 1])]
-  predicateClass := .desiderative
   attitude := some (.preferential .positive true)
 
 /-- *zwa* 'hear', attested as a hearsay report ((18)). -/
 def zwa : Verb where
   morphs := [.root "zwa"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .perception
 
 /-- *khuluma nga* 'talk about', whose clause is the object of the preposition ((20b)). -/
 def khulumaNga : Verb where
   morphs := [.root "khuluma", .free "nga"]
   valency := .ofFrame ArgumentFrame.pp
-  predicateClass := .utterance
   speechActVerb := true
 
 /-- The predicates with clausal-argument data in the paper. -/

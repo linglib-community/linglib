@@ -92,16 +92,16 @@ inductive EmbeddingStrategy where
 
 /-- A predicate embeds relatively when some grammatical notional complement of it carries the
 *yox̂ ke* edge ((27)–(28)); *cuukwe*'s (66b) is only marginal. -/
-def RelativeEmbedding (v : NezPerce.Verb) : Prop :=
+def RelativeEmbedding (v : Verb) : Prop :=
   ∃ row ∈ Examples.all, row.feature? "verb" = some v.form ∧
     row.feature? "edge" = some "yoxKe" ∧ row.judgment = .acceptable
 
-instance (v : NezPerce.Verb) : Decidable (RelativeEmbedding v) :=
+instance (v : Verb) : Decidable (RelativeEmbedding v) :=
   inferInstanceAs (Decidable (∃ row ∈ Examples.all, _))
 
 /-- A predicate's strategy is relative when it embeds relatively and simplex otherwise. Both
 strategies select a CP; the contrast is internal to the clause selected. -/
-def strategy (v : NezPerce.Verb) : EmbeddingStrategy :=
+def strategy (v : Verb) : EmbeddingStrategy :=
   if RelativeEmbedding v then .relative else .simplex
 
 /-- The relative-embedding predicates take no noun-phrase object, (41). -/
@@ -113,14 +113,14 @@ theorem nominal_rows :
 
 /-- Every relative embedding is factive (§7). -/
 theorem relative_factive :
-    ∀ v ∈ verbs, strategy v = .relative → v.toVerb.IsFactive := by
+    ∀ v ∈ verbs, strategy v = .relative → v.IsFactive := by
   decide
 
 /-- Consultants endorse the complement under negation, in a question or in a conditional
 antecedent exactly for the factive predicates, the projection trials (33)–(36) and (68). -/
 theorem projection_rows :
     ∀ row ∈ Examples.all, ∀ _ ∈ row.environment?, ∀ v ∈ verbs, row.feature? "verb" = some v.form →
-      (row.projective? = some true ↔ v.toVerb.IsFactive) := by
+      (row.projective? = some true ↔ v.IsFactive) := by
   decide
 
 /-- The semi-factive *cuukwe* 'know' projects from a third-person conditional antecedent, (68),
@@ -144,7 +144,7 @@ structure Cell where
   internalAbar : Bool
 
 /-- A Nez Perce cell is a bare CP whose Ā-dependency is the relative strategy. -/
-def nezPerce (v : NezPerce.Verb) : Cell := ⟨ClauseSpine.cP, strategy v == .relative⟩
+def nezPerce (v : Verb) : Cell := ⟨ClauseSpine.cP, strategy v == .relative⟩
 
 /-- English simplex V complementation, *think*, is a bare CP without an Ā-dependency. -/
 def englishThink : Cell := ⟨ClauseSpine.cP, false⟩
@@ -158,11 +158,11 @@ def adygheRelative : Cell :=
 /-- By Krapova's double requirement, reported at footnote 22, *deto* introduces the complement
 of a predicate that is an emotive factive, a factive preferential attitude, and takes a *za*
 phrase. -/
-def DetoComplement (v : Bulgarian.Verb) : Prop :=
-  (∃ a ∈ v.attitude, a.IsPreferential) ∧ v.toVerb.IsFactive ∧
+def DetoComplement (v : Verb) : Prop :=
+  (∃ a ∈ v.attitude, a.IsPreferential) ∧ v.IsFactive ∧
     ∃ fr ∈ v.valency.frames, fr.HasAdpositional
 
-instance (v : Bulgarian.Verb) : Decidable (DetoComplement v) :=
+instance (v : Verb) : Decidable (DetoComplement v) :=
   inferInstanceAs (Decidable ((∃ a ∈ v.attitude, _) ∧ _ ∧ ∃ fr ∈ v.valency.frames, _))
 
 /-- The double requirement picks out exactly the predicates Krapova lists as *deto*-takers, and
@@ -196,7 +196,7 @@ for the factive predicates. -/
 theorem krapova_projection_rows :
     ∀ row ∈ Krapova2010.Examples.all, ∀ _ ∈ row.environment?,
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        (row.projective? = some true ↔ v.toVerb.IsFactive) := by
+        (row.projective? = some true ↔ v.IsFactive) := by
   decide
 
 /-- In Krapova's contradiction tests (57c) and footnote 46, a continuation denying the
@@ -204,7 +204,7 @@ complement is starred exactly under a factive predicate, under *deto* and *če* 
 theorem krapova_contradiction_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "contradiction" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        ((∃ a ∈ row.alternatives, a.2 = .ungrammatical) ↔ v.toVerb.IsFactive) := by
+        ((∃ a ∈ row.alternatives, a.2 = .ungrammatical) ↔ v.IsFactive) := by
   decide
 
 /-- English N complementation, *the fact that S*, is V D N CP without an Ā-dependency, the DP
@@ -248,9 +248,9 @@ factive simplex embedding, *cuukwe* 'know', a non-factive simplex embedding, *ne
 and a non-factive relative embedding, Adyghe 'think', which requires the relative strategy for
 its tensed complement. Factivity and relative-embedding syntax vary independently. -/
 theorem table80 :
-    (∃ v ∈ verbs, v.toVerb.IsFactive ∧ strategy v = .relative) ∧
-      (∃ v ∈ verbs, v.toVerb.IsFactive ∧ strategy v = .simplex) ∧
-      (∃ v ∈ verbs, ¬ v.toVerb.IsFactive ∧ strategy v = .simplex) ∧
+    (∃ v ∈ verbs, v.IsFactive ∧ strategy v = .relative) ∧
+      (∃ v ∈ verbs, v.IsFactive ∧ strategy v = .simplex) ∧
+      (∃ v ∈ verbs, ¬ v.IsFactive ∧ strategy v = .simplex) ∧
       (∃ v ∈ Adyghe.verbs, v.toVerb.Takes Adyghe.zeRe ∧ ¬ v.toVerb.IsFactive) := by
   decide
 

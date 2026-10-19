@@ -235,6 +235,8 @@ structure Verb extends Verb.ArgStructure, Verb.Aspect, Verb.Presupposition, Verb
   /-- The morphs of the citation form, in surface order, are the stem with the affixes and
       particles it is cited with. A citation form the entry does not analyse is a single root. -/
   morphs : List Morph
+  /-- The spelling in the native script, where the morphs are a romanization. -/
+  script : Option String := none
   /-- Does the verb denote the performance of an illocutionary act?
       True for speech-act verbs (say, tell, claim, ask). This is a genuine
       semantic primitive that cannot be derived from other fields. -/

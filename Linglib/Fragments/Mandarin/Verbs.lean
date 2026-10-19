@@ -11,12 +11,11 @@ of Liu and Yip consume: the preferential attitudes *qīdài* 'look forward to', 
 'think', the factives *zhīdào* 'know' and *hòuhuǐ* 'regret', the inchoative *kāishǐ* 'start',
 and the control and causative predicates *xiǎng* 'want', *ràng* 'let', *xiāngxìn*
 'believe', *quàn* 'urge', *bī* 'force', *dǎsuàn* 'plan' and *shèfǎ* 'try'. Mandarin is
-isolating, so a verb carries no inflectional fields; an entry adds its characters to the root
-entry, whose form is the pinyin.
+isolating, so an entry is a root `Verb` with no inflectional fields, its form the pinyin and
+its script the characters.
 
 ## Main definitions
 
-* `Mandarin.Verb`: a Mandarin verb, the root `Verb` with its characters.
 * `Mandarin.verbs`: the inventory of the entries.
 
 ## References
@@ -33,17 +32,10 @@ namespace Mandarin
 
 open ArgumentStructure
 
-/-- A Mandarin verb: the cross-linguistic core with the pinyin as citation form, plus its
-characters. Mandarin being isolating, the verb has no inflectional fields. -/
-structure Verb extends _root_.Verb where
-  /-- The characters. -/
-  hanzi : String
-  deriving BEq
-
 /-- 期待 *qīdài* 'look forward to' is a positive preferential attitude that takes questions. -/
 def qidai : Verb := {
   morphs := [.root "qīdài"]
-  hanzi := "期待"
+  script := some "期待"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -52,7 +44,7 @@ def qidai : Verb := {
 /-- 担心 *dānxīn* 'worry' is a negative preferential attitude. -/
 def danxin : Verb := {
   morphs := [.root "dānxīn"]
-  hanzi := "担心"
+  script := some "担心"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -61,7 +53,7 @@ def danxin : Verb := {
 /-- 希望 *xīwàng* 'hope' is a positive preferential attitude that takes no questions. -/
 def xiwang : Verb := {
   morphs := [.root "xīwàng"]
-  hanzi := "希望"
+  script := some "希望"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -70,7 +62,7 @@ def xiwang : Verb := {
 /-- 害怕 *hàipà* 'fear' is a negative preferential attitude that takes questions. -/
 def haipa : Verb := {
   morphs := [.root "hàipà"]
-  hanzi := "害怕"
+  script := some "害怕"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -79,7 +71,7 @@ def haipa : Verb := {
 /-- 以为 *yǐwéi* 'be under the impression that' is a nonveridical doxastic attitude. -/
 def yiwei : Verb := {
   morphs := [.root "yǐwéi"]
-  hanzi := "以为"
+  script := some "以为"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -88,7 +80,7 @@ def yiwei : Verb := {
 /-- 认为 *rènwéi* 'think, hold the view that' is the neutral nonveridical doxastic verb. -/
 def renwei : Verb := {
   morphs := [.root "rènwéi"]
-  hanzi := "认为"
+  script := some "认为"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -98,7 +90,7 @@ def renwei : Verb := {
 its non-factive counterpart. -/
 def zhidao : Verb := {
   morphs := [.root "zhīdào"]
-  hanzi := "知道"
+  script := some "知道"
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
   passivizable := false
   opaqueContext := true
@@ -108,7 +100,7 @@ def zhidao : Verb := {
 /-- 后悔 *hòuhuǐ* 'regret', the emotive factive. -/
 def houhui : Verb := {
   morphs := [.root "hòuhuǐ"]
-  hanzi := "后悔"
+  script := some "后悔"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -118,22 +110,24 @@ def houhui : Verb := {
 /-- 开始 *kāishǐ* 'start', presupposing that the action or state was not under way before. -/
 def kaishi : Verb := {
   morphs := [.root "kāishǐ"]
-  hanzi := "开始"
+  script := some "开始"
   valency := .ofFrame ArgumentFrame.infinitival
   passivizable := false
   phasal := some .inception }
 
 /-! ### Control and causative predicates
 
-The entries record the surface form and whether the complement is finite. The sizes and the
-dynamicity of the complements each predicate selects are the analysis of Liu and Yip and live in
-`Studies/LiuYip2026.lean`. -/
+The entries record the surface form, whether the complement is finite, and who controls its
+subject, the matrix subject for *xiǎng*, *dǎsuàn* and *shèfǎ* and the causee object for *ràng*,
+*quàn* and *bī*, as Liu and Yip's examples show. The sizes and the dynamicity of the complements
+each predicate selects are the analysis of Liu and Yip and live in `Studies/LiuYip2026.lean`. -/
 
 /-- 想 *xiǎng* 'want' is a desiderative verb with a nonfinite complement. -/
 def xiang : Verb := {
   morphs := [.root "xiǎng"]
-  hanzi := "想"
+  script := some "想"
   valency := .ofFrame ArgumentFrame.infinitival
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true) }
@@ -141,41 +135,45 @@ def xiang : Verb := {
 /-- 让 *ràng* 'let' is a manipulative verb with a nonfinite complement. -/
 def rang : Verb := {
   morphs := [.root "ràng"]
-  hanzi := "让"
+  script := some "让"
   valency := .ofFrame ArgumentFrame.infinitival
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   passivizable := false
   opaqueContext := false }
 
-/-- 相信 *xiāngxìn* 'believe' is a propositional attitude verb with a finite complement. -/
+/-- 相信 *xiāngxìn* 'believe' is a nonveridical doxastic attitude with a finite complement. -/
 def xiangxin : Verb := {
   morphs := [.root "xiāngxìn"]
-  hanzi := "相信"
+  script := some "相信"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
-  attitude := some (.doxastic .veridical) }
+  attitude := some (.doxastic .nonVeridical) }
 
 /-- 劝 *quàn* 'urge' is a manipulative verb with a nonfinite complement. -/
 def quan : Verb := {
   morphs := [.root "quàn"]
-  hanzi := "劝"
+  script := some "劝"
   valency := .ofFrame ArgumentFrame.infinitival
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   passivizable := true
   opaqueContext := false }
 
 /-- 逼 *bī* 'force' is a manipulative verb with a nonfinite complement. -/
 def bi : Verb := {
   morphs := [.root "bī"]
-  hanzi := "逼"
+  script := some "逼"
   valency := .ofFrame ArgumentFrame.infinitival
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   passivizable := true
   opaqueContext := false }
 
 /-- 打算 *dǎsuàn* 'plan' is a desiderative verb with a nonfinite complement. -/
 def dasuan : Verb := {
   morphs := [.root "dǎsuàn"]
-  hanzi := "打算"
+  script := some "打算"
   valency := .ofFrame ArgumentFrame.infinitival
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true) }
@@ -183,8 +181,9 @@ def dasuan : Verb := {
 /-- 设法 *shèfǎ* 'try' is an achievement verb with a nonfinite complement. -/
 def shefa : Verb := {
   morphs := [.root "shèfǎ"]
-  hanzi := "设法"
+  script := some "设法"
   valency := .ofFrame ArgumentFrame.infinitival
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   passivizable := false
   opaqueContext := false }
 
