@@ -181,12 +181,10 @@ an object before it. -/
 def nextSlot (k : Fin u.upper.length) : Option (Fin u.lower.length) :=
   Fin.find? fun i ↦ ∀ j ∈ leftIndices c.links k, j < i
 
-/-- The profile a candidate presents to the lateral computation has the nuclei hosting a segment,
-and the domains of infrasegmental government of the form itself, a structure that "remains
-intact, even after the initial f has been deleted" (§4.1). -/
-def profile : StrictCV.Profile (StrictCV.units u) where
-  full := StrictCV.hosting c Autosegment.IsSegment
-  cluster := StrictCV.clusters (.input u) MayGovern
+variable (u) in
+/-- The units whose onsets contract infrasegmental government are those of the form itself, a
+structure that "remains intact, even after the initial f has been deleted" (§4.1). -/
+def domains : Finset (Fin (StrictCV.units u)) := StrictCV.clusters (.input u) MayGovern
 
 /-- A docking site for `{L}` is a C-slot hosting the consonant it acts on, and for a segment a
 segmentally empty C-slot whose nucleus hosts a segment or is enclosed in a domain of
@@ -194,8 +192,9 @@ infrasegmental government (§4.1). -/
 def IsDockingSite : Autosegment → Fin u.lower.length → Prop
   | .L, i => u.lower[i].value.IsC ∧ HostsSegment c i
   | .seg _, i => u.lower[i].value.IsC ∧ ¬ HostsSegment c i ∧
-      ∃ j, StrictCV.onset u j = i ∧
-        (j ∈ (profile c).full ∨ StrictCV.Enclosed (profile c) (profile c).full j)
+      ∃ j, StrictCV.onset u j = i ∧ (HostsSegment c (StrictCV.nucleus u j) ∨
+        StrictCV.Enclosed (StrictCV.nucleusOf c Autosegment.IsSegment (domains u) j)
+          ((StrictCV.surface c Autosegment.IsSegment (domains u)).drop (j + 1)))
 
 instance : ∀ a i, Decidable (IsDockingSite c a i)
   | .L, _ => inferInstanceAs (Decidable (_ ∧ _))
@@ -348,17 +347,12 @@ section EmptyCV
 
 variable {M : Type*} {u : Form M} {c : Candidate u}
 
-theorem mem_profile_full {j : Fin (StrictCV.units u)} :
-    j ∈ (profile c).full ↔ HostsSegment c (StrictCV.nucleus u j) := by
-  simp only [profile, StrictCV.mem_hosting, HostsSegment, Autosegment.isSegment_iff]
-  exact ⟨fun ⟨k, hk, s', h⟩ ↦ ⟨k, s', hk, h⟩, fun ⟨k, s', hk, h⟩ ↦ ⟨k, hk, s', h⟩⟩
-
 /-- A CV unit whose slots host no segment and which no domain of infrasegmental government spans
 is no docking site for anything: `{L}` finds no consonant on its onset, and a segment finds its
 nucleus empty and not enclosed. -/
 theorem not_isDockingSite_onset {j : Fin (StrictCV.units u)}
     (hc : ¬ HostsSegment c (StrictCV.onset u j)) (hv : ¬ HostsSegment c (StrictCV.nucleus u j))
-    (hcl : j ∉ StrictCV.clusters (.input u) MayGovern) :
+    (hcl : j ∉ domains u) :
     ∀ a, ¬ IsDockingSite c a (StrictCV.onset u j)
   | .L, h => hc h.2
   | .seg _, ⟨_, _, j', hj', h⟩ => by
@@ -367,8 +361,8 @@ theorem not_isDockingSite_onset {j : Fin (StrictCV.units u)}
       simp only [StrictCV.onset] at this
       omega)
     rcases h with h | h
-    · exact hv (mem_profile_full.1 h)
-    · exact hcl h.2.1
+    · exact hv h
+    · exact hcl (by simpa [StrictCV.nucleusOf] using h.cluster_eq_true)
 
 variable {m m' : M} {objs : List Autosegment} {s : Form M}
   {c c' : Candidate (floating m objs * (emptyCV m' * s))}
@@ -385,11 +379,11 @@ private theorem le_of_mem_links {p} (hp : p ∈ (floating m objs * (emptyCV m' *
 
 /-- No domain of infrasegmental government spans an empty CV unit, whose onset hosts no
 consonant. -/
-private theorem zero_notMem_clusters
+private theorem zero_notMem_domains
     (h0 : 0 < StrictCV.units (floating m objs * (emptyCV m' * s))) :
-    (⟨0, h0⟩ : Fin _) ∉
-      StrictCV.clusters (.input (floating m objs * (emptyCV m' * s))) MayGovern := by
-  simp only [StrictCV.clusters, Finset.mem_filter, Finset.mem_univ, true_and, not_exists, not_and]
+    (⟨0, h0⟩ : Fin _) ∉ domains (floating m objs * (emptyCV m' * s)) := by
+  simp only [domains, StrictCV.clusters, Finset.mem_filter, Finset.mem_univ, true_and, not_exists,
+    not_and]
   rintro k - ⟨-, s', -, hs'⟩
   obtain ⟨k', hk', -⟩ := Candidate.mem_tierValues.1 hs'
   have := (le_of_mem_links hk').2
@@ -419,7 +413,7 @@ private theorem le_of_canDock (h : Blocked c) {k : Fin _} (hk : CanDock c k) :
       omega
     obtain rfl : i = StrictCV.onset _ ⟨0, hu⟩ := Fin.ext (by simp [StrictCV.onset, h0])
     exact not_isDockingSite_onset (h.2 _ (by simp only [StrictCV.onset]; omega))
-      (h.2 _ (by simp only [StrictCV.nucleus]; omega)) (zero_notMem_clusters hu) _ hs
+      (h.2 _ (by simp only [StrictCV.nucleus]; omega)) (zero_notMem_domains hu) _ hs
   have hi1 : i.val ≠ 1 := fun h1 ↦ by
     obtain rfl : i = ⟨1, hlen⟩ := Fin.ext h1
     exact hs.isC
