@@ -12,7 +12,7 @@ hand.
 Usage, from the repository root, once `Eval` and `Lab` are built:
 
     python3 scripts/gen_eval_page.py --export        # run the Lean export first
-    python3 scripts/gen_eval_page.py --out DIR        # write DIR/index.html
+    python3 scripts/gen_eval_page.py --out DIR        # write DIR/index.html and DIR/<page>/
 
 The page is self-contained: the data is embedded in the HTML, so the file opens from disk too.
 """
@@ -76,9 +76,9 @@ def bib_entries(keys):
 CITE = re.compile(r"\[([a-z0-9][a-z0-9-]*-\d{4}[a-z]?)\]('s)?")
 
 
-def doc_html(doc, bib, base):
-    """A docstring as HTML: `[key]` links become author-year citations linked to the
-    bibliography, backticks code, asterisks emphasis."""
+def doc_html(doc, bib, bibliography):
+    """A docstring as HTML: `[key]` links become author-year citations linked to the entry on the
+    bibliography page, backticks code, asterisks emphasis."""
     doc = " ".join(doc.split())
     parts = []
     pos = 0
@@ -92,7 +92,7 @@ def doc_html(doc, bib, base):
             entry = bib.get(m.group(3))
             if entry:
                 poss = "'s" if m.group(4) else ""
-                href = html.escape(f"{base}references.html#ref_{m.group(3)}")
+                href = html.escape(f"{bibliography}#{m.group(3)}")
                 parts.append(f'<a href="{href}">{html.escape(entry["who"])}{poss} '
                              f'({html.escape(entry["year"])})</a>')
             else:
@@ -168,7 +168,26 @@ def tree_label(t):
     return str(t)
 
 
-def build(export, base):
+def unique(xs):
+    return list(dict.fromkeys(xs))
+
+
+def kebab(ident):
+    return re.sub(r"(?<=[a-z])(?=[A-Z0-9])|(?<=[0-9])(?=[A-Z])", "-", ident).lower()
+
+
+def slug(ident, experiment=False):
+    """The address of a theory's or an experiment's page under /eval/: its name in kebab case, an
+    experiment's after its paper's, a theory under development's after `lab-`."""
+    parts = ident.split(".")
+    if experiment:
+        return f"{kebab(parts[-2])}-{kebab(parts[-1])}"
+    return ("lab-" if parts[0] == "Lab" else "") + kebab(parts[-1])
+
+
+def build(export, root):
+    """The page's data, with links relative to `root`, the site's root seen from the page."""
+    base, bibliography = root + "docs/", root + "bibliography/"
     names = export["names"]
     keys = {m.group(1) for n in names.values() for m in CITE.finditer(n["doc"])} | {PROJECT}
     bib = bib_entries(sorted(keys))
@@ -177,7 +196,7 @@ def build(export, base):
         d = names.get(n, {"name": n, "module": "", "doc": "", "rank": 1000})
         return {"name": d["name"], "short": short(d["name"]),
                 "href": doc_href(d, base) if d["module"] else "",
-                "doc": doc_html(d["doc"], bib, base)}
+                "doc": doc_html(d["doc"], bib, bibliography)}
 
     def rank(n):
         return names.get(n, {}).get("rank", 1000)
@@ -249,7 +268,13 @@ def build(export, base):
     keys_of = {study_name(k): k for k in re.findall(r"^@\w+\{([^,\s]+),",
                                                      (ROOT / "references.bib").read_text(
                                                          encoding="utf-8"), re.M)}
-    cited = bib_entries(sorted(keys_of.values()))
+
+    def studies_of(t):
+        return unique(names[n["name"]]["module"].split(".")[1] for n in t["definitions"]
+                      if names[n["name"]]["module"].startswith("Studies."))
+
+    needed = {p for t in theories for p in studies_of(t)} | {e["paper"] for e in experiments}
+    cited = bib_entries(sorted(keys_of[p] for p in needed if p in keys_of))
 
     def paper(study):
         study_file = ROOT / "Studies" / f"{study}.lean"
@@ -258,15 +283,12 @@ def build(export, base):
                 f"https://doi.org/{ref['doi']}" if ref.get("doi") else ref.get("url", ""))
         return {"study": study, "cite": ref or None, "href": href}
 
-    def unique(xs):
-        return list(dict.fromkeys(xs))
-
     by_id = {t["id"]: t for t in theories}
+    for t in theories:
+        t["papers"] = [paper(p) for p in studies_of(t)]
     for d in domains.values():
-        defining = unique(names[n["name"]]["module"].split(".")[1]
-                          for t in d["theories"] for n in by_id[t]["definitions"]
-                          if names[n["name"]]["module"].startswith("Studies."))
-        d["theoryPapers"] = [paper(p) for p in defining]
+        d["theoryPapers"] = [paper(p) for p in unique(p for t in d["theories"]
+                                                      for p in studies_of(by_id[t]))]
         d["dataPapers"] = [paper(p) for p in unique(e["paper"] for e in experiments
                                                     if e["id"] in d["experiments"])]
 
@@ -289,9 +311,13 @@ def build(export, base):
         d = domain(r.get("experiment") or r["variant"])
         if d not in t["domains"]:
             t["domains"].append(d)
+    # Each theory and experiment has a page of its own.
+    slugs = {t["id"]: slug(t["id"]) for t in theories}
+    slugs.update({e["id"]: slug(e["id"], experiment=True) for e in experiments})
+    assert len(set(slugs.values())) == len(slugs), "two pages would share an address"
     return {"theories": theories, "experiments": experiments, "domains": sorted(
                 domains.values(), key=lambda d: d["name"]),
-            "cells": cells, "papers": papers,
+            "slugs": slugs, "cells": cells, "papers": papers,
             "theorems": sorted(theorems.values(), key=lambda t: t["name"]),
             "project": bib.get(PROJECT)}
 
@@ -320,23 +346,42 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--export", action="store_true", help="run the Lean export first")
     ap.add_argument("--json", type=Path, default=DEFAULT_JSON, help="the Lean export's output")
-    ap.add_argument("--out", type=Path, default=DEFAULT_OUT, help="directory for index.html")
-    ap.add_argument("--docs-base", default="../docs/",
-                    help="URL of the API documentation, relative to the page")
+    ap.add_argument("--out", type=Path, default=DEFAULT_OUT,
+                    help="directory for index.html and the pages of theories and experiments")
     args = ap.parse_args()
 
     if args.export:
         run_export(args.json)
 
-    page = build(json.loads(args.json.read_text(encoding="utf-8")), args.docs_base)
-    data = json.dumps(page, ensure_ascii=False).replace("</", "<\\/")
-    out = (site_shell.render(TEMPLATE.read_text(encoding="utf-8"), "../", "Evaluations",
-                             site_shell.git_commit())
-           .replace("/*EVAL_DATA*/{}", data))
-    args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "index.html").write_text(out, encoding="utf-8")
-    print(f"wrote {args.out / 'index.html'}: {len(page['experiments'])} experiments, "
-          f"{len(page['theories'])} theories, {len(page['cells'])} verdicts")
+    export = json.loads(args.json.read_text(encoding="utf-8"))
+    template = TEMPLATE.read_text(encoding="utf-8")
+    title = "<title>Evaluations | Linglib</title>"
+    assert template.count(title) == 1
+    sha = site_shell.git_commit()
+
+    def write(path, page, root, name):
+        data = json.dumps(page, ensure_ascii=False).replace("</", "<\\/")
+        out = (site_shell.render(template, root, "Evaluations", sha)
+               .replace(title, f"<title>{html.escape(name)} | Linglib</title>")
+               .replace("/*EVAL_DATA*/{}", data))
+        path.mkdir(parents=True, exist_ok=True)
+        (path / "index.html").write_text(out, encoding="utf-8")
+
+    # The boards at /eval/, and a page for each theory and experiment one level down.
+    board = build(export, "../")
+    write(args.out, {**board, "view": None, "up": ""}, "../", "Evaluations")
+    pages = build(export, "../../")
+    for t in pages["theories"]:
+        write(args.out / pages["slugs"][t["id"]],
+              {**pages, "view": {"kind": "theory", "id": t["id"]}, "up": "../"}, "../../",
+              t["label"] + (" (Lab)" if t["source"] == "lab" else ""))
+    for e in pages["experiments"]:
+        name = f"{e['cite']['who']} ({e['cite']['year']}), {e['label']}" if e["cite"] else e["label"]
+        write(args.out / pages["slugs"][e["id"]],
+              {**pages, "view": {"kind": "experiment", "id": e["id"]}, "up": "../"}, "../../", name)
+    print(f"wrote {args.out}: {len(board['experiments'])} experiments, "
+          f"{len(board['theories'])} theories, {len(board['cells'])} verdicts, "
+          f"{len(board['slugs'])} pages")
 
 
 if __name__ == "__main__":
