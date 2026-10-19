@@ -167,12 +167,12 @@ theorem con_apply : ∀ (i : Fin 3) (c : Candidate), con i c = if i = c.violated
 
 /-- Tableau (39) under a ranking of its constraints. -/
 def tableau (r : Ranking (Fin 3) 3) : Tableau Candidate 3 :=
-  .ofPerm con r [.overapplication, .underapplication, .normalApplication]
+  .ofRanking con r {.overapplication, .underapplication, .normalApplication}
 
 /-- The winner of (39) is the candidate whose one violated constraint is ranked last. -/
 theorem optimal_eq (r : Ranking (Fin 3) 3) : (tableau r).optimal = {violator (r 2)} := by
-  refine (Tableau.ofPerm_optimal_eq_singleton_iff
-    (by cases violator (r 2) <;> simp)).2 fun d _ hne ↦ ?_
+  refine Tableau.ofRanking_optimal_eq_singleton_iff.2
+    ⟨by cases violator (r 2) <;> simp, fun d _ hne ↦ ?_⟩
   have hd : d.violated ≠ r 2 := fun h ↦
     hne (violated_injective (h.trans (violated_violator _).symm))
   refine ⟨d.violated, by simp [con_apply, hd], fun j hj ↦ ?_⟩
@@ -288,7 +288,7 @@ theorem con_apply :
 
 /-- Tableau (106) under a ranking of its constraints. -/
 def tableau (r : Ranking (Fin 3) 3) : Tableau Candidate 3 :=
-  .ofPerm con r [.unfaithfulBase, .exactCopy, .codalessReduplicant]
+  .ofRanking con r {.unfaithfulBase, .exactCopy, .codalessReduplicant}
 
 /-- The coda-sparing reduplicant wins exactly under MAX-IO ≫ NO-CODA ≫ MAX-BR, the paper's
 instance of the ranking for emergence of the unmarked. -/
@@ -298,7 +298,7 @@ theorem optimal_iff (r : Ranking (Fin 3) 3) :
   have va (i) : con i .unfaithfulBase = ![1, 2, 0] i := congrFun ha i
   have vb (i) : con i .exactCopy = ![0, 4, 0] i := congrFun hb i
   have vc (i) : con i .codalessReduplicant = ![0, 3, 1] i := congrFun hc i
-  rw [tableau, Tableau.ofPerm_optimal_eq_singleton_iff (by simp)]
+  rw [tableau, Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by simp)]
   constructor
   · intro h
     obtain ⟨i, hi, hdi⟩ := h .unfaithfulBase (by simp) (by decide)
@@ -417,7 +417,7 @@ theorem con_apply :
 
 /-- Tableau (131) under a ranking of its constraints. -/
 def tableau (r : Ranking (Fin 4) 4) : Tableau Candidate 4 :=
-  .ofPerm con r [.overapplication, .normalApplication, .underapplication]
+  .ofRanking con r {.overapplication, .normalApplication, .underapplication}
 
 /-- While PAL dominates IDENT-IO(−cor), as palatalization in unreduplicated words requires, the
 unpalatalized *kɪ–ka* wins exactly when OCP(+cor) and IDENT-BR(−cor) both dominate PAL. The
@@ -428,7 +428,7 @@ theorem optimal_iff {r : Ranking (Fin 4) 4} (h : r.Dominates 2 3) :
   have va (i) : con i .overapplication = ![1, 0, 0, 1] i := congrFun ha i
   have vb (i) : con i .normalApplication = ![0, 1, 0, 0] i := congrFun hb i
   have vc (i) : con i .underapplication = ![0, 0, 1, 0] i := congrFun hc i
-  rw [tableau, Tableau.ofPerm_optimal_eq_singleton_iff (by simp)]
+  rw [tableau, Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by simp)]
   constructor
   · intro hw
     obtain ⟨i, hi, hdi⟩ := hw .overapplication (by simp) (by decide)

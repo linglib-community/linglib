@@ -214,10 +214,8 @@ def constraints (i : Input) (order : List Licensor) : ConstraintSet Candidate (F
 /-- Hyman's evaluation under a ranking: a candidate succeeds at the first licensor down the
 ranking by which all of its demands are licensed, the lexicographic minimum of the cumulative
 profile. -/
-def tableau (i : Input) (order : List Licensor) : Tableau Candidate order.length where
-  candidates := candidates i
-  profile c := toLex (constraints i order · c)
-  nonempty := ⟨templatic i, Finset.mem_insert_self _ _⟩
+def tableau (i : Input) (order : List Licensor) : Tableau Candidate order.length :=
+  ⟨candidates i, constraints i order⟩
 
 /-- A grammar: licensors under a partial order ([anttila-1997]'s partially ordered
 constraints), evaluated under each linear extension; free ranking is the discrete order. -/
@@ -355,8 +353,7 @@ theorem chimwiini_outputs (i : Input) : chimwiini.outputs i = {templatic i} := b
   have hrank : chimwiini.rankings = {1} := by decide
   have hord : chimwiini.ranked 1 = [.template] := by decide
   rw [Grammar.outputs, hrank, Finset.singleton_biUnion, hord]
-  rw [Tableau.optimal_eq_singleton_iff (templatic_mem_candidates i)]
-  intro c hc hne
+  refine Tableau.optimal_eq_singleton_iff.2 ⟨templatic_mem_candidates i, fun c hc hne ↦ ?_⟩
   have hcl : ¬ LicensedBy i [.template] c := fun h ↦ hne ((licensedBy_iff_templatic hc).mp h)
   show toLex (constraints i [.template] · (templatic i)) < toLex (constraints i [.template] · c)
   have : Unique (Fin [Licensor.template].length) := inferInstanceAs (Unique (Fin 1))

@@ -352,15 +352,12 @@ instance [DecidableEq Output] (P : RealizationProblem Input Output (Fin n)) :
   unfold IsOTRealizable; infer_instance
 
 /-- `σ` OT-realizes `P` iff for every input the target is the unique
-    `Tableau.optimal` of the σ-permuted tableau. -/
+    `Tableau.optimal` of the tableau of the input's constraints under `σ`. -/
 theorem realizedByRanking_iff_optimal [DecidableEq Output]
     (P : RealizationProblem Input Output ι) (σ : Ranking ι n) :
-    P.realizedByRanking σ ↔ ∀ i (hi : i ∈ P.inputs),
-      Tableau.optimal ⟨P.cands i, fun o ↦ toLex fun p ↦ P.con (σ p) (i, o),
-        ⟨P.target i, P.target_mem i hi⟩⟩ = {P.target i} := by
-  refine ⟨fun h i hi ↦ ?_, fun h i hi ↦ ⟨P.target_mem i hi, ?_⟩⟩
-  · exact (Tableau.optimal_eq_singleton_iff (P.target_mem i hi)).mpr (h i hi).2
-  · exact (Tableau.optimal_eq_singleton_iff (P.target_mem i hi)).mp (h i hi)
+    P.realizedByRanking σ ↔ ∀ i ∈ P.inputs,
+      (Tableau.ofRanking (P.con.comap (i, ·)) σ (P.cands i)).optimal = {P.target i} :=
+  forall₂_congr fun _ _ ↦ by rw [Tableau.optimal_eq_singleton_iff]; rfl
 
 /-! ### OT-realization is ERC satisfaction -/
 

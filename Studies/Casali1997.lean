@@ -137,12 +137,12 @@ end Violations
 
 /-- The tableau of the two elisions under the ranking `r`. -/
 abbrev tableau (r : Ranking (Option Prominence) 5) : Tableau ElidedVowel 5 :=
-  Tableau.ofPerm (con c) r [.first, .second]
+  Tableau.ofRanking (con c) r {.first, .second}
 
 private theorem card_option_prominence : Fintype.card (Option Prominence) = 5 := rfl
 
-private theorem toFinset_eq_pair {e e' : ElidedVowel} (hne : e ≠ e') :
-    [ElidedVowel.first, .second].toFinset = {e, e'} := by
+private theorem candidates_eq_pair {e e' : ElidedVowel} (hne : e ≠ e') :
+    ({.first, .second} : Finset ElidedVowel) = {e, e'} := by
   cases e <;> cases e' <;> first | exact absurd rfl hne | decide
 
 variable {c}
@@ -151,13 +151,13 @@ variable {c}
 proper superset of those the other elision violates. -/
 theorem exists_mem_optimal_iff {e e' : ElidedVowel} (hne : e ≠ e') :
     (∃ r, e ∈ (tableau c r).optimal) ↔ ¬ violations c e' ⊂ violations c e :=
-  exists_mem_optimal_positionalMax_iff card_option_prominence (toFinset_eq_pair hne) rfl rfl
+  exists_mem_optimal_positionalMax_iff card_option_prominence (candidates_eq_pair hne) rfl rfl
 
 /-- An elision is the sole optimum under some ranking exactly when the other elision violates a
 constraint it does not. -/
 theorem exists_optimal_eq_singleton_iff {e e' : ElidedVowel} (hne : e ≠ e') :
     (∃ r, (tableau c r).optimal = {e}) ↔ ¬ violations c e' ⊆ violations c e :=
-  exists_optimal_eq_singleton_positionalMax_iff card_option_prominence (toFinset_eq_pair hne)
+  exists_optimal_eq_singleton_positionalMax_iff card_option_prominence (candidates_eq_pair hne)
     hne rfl rfl
 
 /-- One elision is the sole optimum under a ranking exactly when some constraint violated only by
@@ -165,7 +165,7 @@ the other outranks every constraint violated only by it. -/
 theorem optimal_eq_singleton_iff {e e' : ElidedVowel} (hne : e ≠ e') (r) :
     (tableau c r).optimal = {e} ↔ ∃ i ∈ violations c e', i ∉ violations c e ∧
       ∀ j ∈ violations c e, j ∉ violations c e' → r.Dominates i j :=
-  optimal_eq_singleton_positionalMax_iff (toFinset_eq_pair hne) hne rfl rfl r
+  optimal_eq_singleton_positionalMax_iff (candidates_eq_pair hne) hne rfl rfl r
 
 /-- A constraint violated only by the other elision and ranked on top makes an elision the sole
 optimum. -/

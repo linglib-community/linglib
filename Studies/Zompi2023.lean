@@ -105,8 +105,8 @@ inductive Con | maxD (d : Dim) | depD (d : Dim) | maxG | depG
 `Dep`-type stars for spurious features the spec adds, counted on one
 dimension or globally. -/
 def viol : Con → ZCell → Cand F → ℕ
-  | .maxD d, c, r => ((zdecomp c \ r.feats).filter (λ k => dimOf k = d)).card
-  | .depD d, c, r => ((r.feats \ zdecomp c).filter (λ k => dimOf k = d)).card
+  | .maxD d, c, r => ((zdecomp c \ r.feats).filter (fun k ↦ dimOf k = d)).card
+  | .depD d, c, r => ((r.feats \ zdecomp c).filter (fun k ↦ dimOf k = d)).card
   | .maxG, c, r => (zdecomp c \ r.feats).card
   | .depG, c, r => (r.feats \ zdecomp c).card
 
@@ -114,7 +114,7 @@ def viol : Con → ZCell → Cand F → ℕ
 def cut (c : ZCell) (cands : List (Cand F)) (C : Con) : List (Cand F) :=
   match (cands.map (viol C c)).min? with
   | none => cands
-  | some m => cands.filter (λ r => viol C c r = m)
+  | some m => cands.filter (fun r ↦ viol C c r = m)
 
 /-- Strict-domination Eval: successive cuts down the ranking, top constraint
 first. -/
@@ -146,7 +146,7 @@ open OptimalityTheory
 /-- The candidate's violation vector at a cell, ordered by the ranking — the
 `List ℕ` reading of the OT `ViolationProfile`. -/
 def rankedViols (rk : List Con) (c : ZCell) (r : Cand F) : List ℕ :=
-  rk.map (λ C => viol C c r)
+  rk.map (fun C ↦ viol C c r)
 
 @[simp] theorem rankedViols_nil (c : ZCell) (r : Cand F) : rankedViols [] c r = [] :=
   rfl
@@ -170,7 +170,7 @@ theorem mem_cut_iff {C : Con} {c : ZCell} {v : List (Cand F)} {r : Cand F} :
     simp only [decide_eq_true_eq]
     constructor
     · rintro ⟨hrv, hrm⟩
-      exact ⟨hrv, λ s hs => hrm ▸ hmin _ (List.mem_map_of_mem hs)⟩
+      exact ⟨hrv, fun s hs ↦ hrm ▸ hmin _ (List.mem_map_of_mem hs)⟩
     · rintro ⟨hrv, hle⟩
       exact ⟨hrv, le_antisymm ((hle _ hs₀v).trans_eq hs₀)
         (hmin _ (List.mem_map_of_mem hrv))⟩
@@ -187,19 +187,19 @@ theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : ZCell} {r : Cand F
     constructor
     · rintro ⟨hrcut, htail⟩
       obtain ⟨hrv, hrmin⟩ := mem_cut_iff.mp hrcut
-      refine ⟨hrv, λ s hs => ?_⟩
+      refine ⟨hrv, fun s hs ↦ ?_⟩
       rw [rankedViols_cons, rankedViols_cons, List.cons_le_cons_iff']
       rcases lt_or_eq_of_le (hrmin s hs) with hlt | heq
       · exact Or.inl hlt
-      · exact Or.inr ⟨heq, htail s (mem_cut_iff.mpr ⟨hs, λ t ht => heq ▸ hrmin t ht⟩)⟩
+      · exact Or.inr ⟨heq, htail s (mem_cut_iff.mpr ⟨hs, fun t ht ↦ heq ▸ hrmin t ht⟩)⟩
     · rintro ⟨hrv, hcons⟩
-      have hrmin : ∀ s ∈ v, viol C c r ≤ viol C c s := λ s hs => by
+      have hrmin : ∀ s ∈ v, viol C c r ≤ viol C c s := fun s hs ↦ by
         have := hcons s hs
         rw [rankedViols_cons, rankedViols_cons, List.cons_le_cons_iff'] at this
         rcases this with hlt | ⟨heq, _⟩
         · exact le_of_lt hlt
         · exact le_of_eq heq
-      refine ⟨mem_cut_iff.mpr ⟨hrv, hrmin⟩, λ s hs => ?_⟩
+      refine ⟨mem_cut_iff.mpr ⟨hrv, hrmin⟩, fun s hs ↦ ?_⟩
       obtain ⟨hsv, hsmin⟩ := mem_cut_iff.mp hs
       have := hcons s hsv
       rw [rankedViols_cons, rankedViols_cons, List.cons_le_cons_iff'] at this
@@ -208,30 +208,27 @@ theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : ZCell} {r : Cand F
       · exact htail
 
 private theorem map_eq_ofFn_get {α β : Type*} (l : List α) (f : α → β) :
-    l.map f = List.ofFn (λ i : Fin l.length => f (l.get i)) := by
+    l.map f = List.ofFn (fun i : Fin l.length ↦ f (l.get i)) := by
   apply List.ext_getElem <;> simp
 
 /-- The ranked violation vector is the fixed-length OT profile spelled out as a
 list. -/
 theorem rankedViols_eq_ofFn (rk : List Con) (c : ZCell) (r : Cand F) :
-    rankedViols rk c r = List.ofFn (λ i : Fin rk.length => viol (rk.get i) c r) :=
-  map_eq_ofFn_get rk (λ C => viol C c r)
+    rankedViols rk c r = List.ofFn (fun i : Fin rk.length ↦ viol (rk.get i) c r) :=
+  map_eq_ofFn_get rk (fun C ↦ viol C c r)
 
 /-- The Eval competition as an `OptimalityTheory.Tableau`: candidate set `v`, profile the
 ranked violation vector, rank position `i` reading the `i`-th constraint as a violation count.
 This is a phonological OT tableau with morphological Max/Dep constraints. -/
-def zTableau [DecidableEq F] (rk : List Con) (v : List (Cand F)) (c : ZCell)
-    (hv : v ≠ []) : Tableau (Cand F) rk.length where
-  candidates := v.toFinset
-  profile r := toLex fun i ↦ viol (rk.get i) c r
-  nonempty := let ⟨x, hx⟩ := List.exists_mem_of_ne_nil v hv; ⟨x, List.mem_toFinset.mpr hx⟩
+def zTableau [DecidableEq F] (rk : List Con) (v : List (Cand F)) (c : ZCell) :
+    Tableau (Cand F) rk.length :=
+  ⟨v.toFinset, fun i ↦ viol (rk.get i) c⟩
 
 /-- **Eval and OT are one engine.** An Eval survivor is exactly a winner of the OT tableau
 `zTableau`: the morphological Max/Dep competition *is* a phonological OT tableau over the
 shared lexicographic order. -/
 theorem mem_eval_iff_optimal [DecidableEq F] {rk : List Con} {v : List (Cand F)}
-    {c : ZCell} {r : Cand F} (hv : v ≠ []) :
-    r ∈ eval rk v c ↔ r ∈ (zTableau rk v c hv).optimal := by
+    {c : ZCell} {r : Cand F} : r ∈ eval rk v c ↔ r ∈ (zTableau rk v c).optimal := by
   rw [mem_eval_iff, Tableau.mem_optimal_iff]
   refine and_congr List.mem_toFinset.symm (forall_congr' fun s ↦ ?_)
   refine imp_congr List.mem_toFinset.symm ?_

@@ -158,11 +158,8 @@ def candidatesOf (transitive objectOnly : Bool) : List Candidate :=
     (c.aProbe → c.bTarget ≠ .subj) ∧ (objectOnly → transitive → c.bTarget = .obj)
 
 /-- The candidates of a clause. -/
-def candidates (i : Input) (objectOnly : Bool) : List Candidate :=
-  candidatesOf i.transitive objectOnly
-
-theorem candidates_ne_nil (i : Input) (o : Bool) : candidates i o ≠ [] := by
-  unfold candidates; cases i.transitive <;> cases o <;> decide
+def candidates (i : Input) (objectOnly : Bool) : Finset Candidate :=
+  (candidatesOf i.transitive objectOnly).toFinset
 
 /-- An argument is cross-referenced when the Set A probe targets it, the subject having moved to
 Spec,TP, or the Set B probe does, (46). -/
@@ -200,7 +197,7 @@ structure Grammar where
 
 /-- The competition of a clause under a grammar. -/
 def Grammar.tableau (g : Grammar) (i : Input) :=
-  Tableau.ofRanking (candidates i g.objectOnly) (g.ranking.map (· i)) (candidates_ne_nil i _)
+  Tableau.ofList (candidates i g.objectOnly) (g.ranking.map (· i))
 
 /-- Kaqchikel ranks XRef-Participant ≫ SSAL ≫ XRef, Set B free to target either argument. -/
 def kaqchikel : Grammar := ⟨[xrefP, ssal, xref], false⟩

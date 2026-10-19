@@ -250,12 +250,12 @@ private theorem marks :
 /-- The tableau selects the spreading of M exactly when MAX-Tone is below both M anchors. It does
 not rank L-ANCH-Mᵥ against R-ANCH-Mᵥ, which the paper reads off it. -/
 theorem optimal_iff (r : Ranking Con 5) :
-    (Tableau.ofPerm con r candidates).optimal = {candE} ↔
+    (Tableau.ofRanking con r candidates.toFinset).optimal = {candE} ↔
       r.Dominates .lAnchorM .maxTone ∧ r.Dominates .rAnchorM .maxTone := by
-  rw [Tableau.ofPerm_optimal_eq_singleton_iff (show candE ∈ candidates by decide)]
-  simp +decide only [candidates, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
-    forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or, true_implies,
-    imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
+  rw [Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by decide)]
+  simp +decide only [candidates, List.mem_toFinset, List.mem_cons, List.not_mem_nil, or_false,
+    forall_eq_or_imp, forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or,
+    true_implies, imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
   omega
 
 end Tableau24
@@ -301,13 +301,13 @@ private theorem marks :
 /-- The tableau selects M then H exactly under R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ and
 R-ANCH-Mᵥ ≫ MAX-Tone. It does not rank L-ANCH-Mᵥ against R-ANCH-Mᵥ either. -/
 theorem optimal_iff (r : Ranking Con 5) :
-    (Tableau.ofPerm con r candidates).optimal = {candE} ↔
+    (Tableau.ofRanking con r candidates.toFinset).optimal = {candE} ↔
       r.Dominates .rAnchorH .rAnchorM ∧ r.Dominates .rAnchorM .lAnchorH ∧
         r.Dominates .rAnchorM .maxTone := by
-  rw [Tableau.ofPerm_optimal_eq_singleton_iff (show candE ∈ candidates by decide)]
-  simp +decide only [candidates, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
-    forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or, true_implies,
-    imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
+  rw [Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by decide)]
+  simp +decide only [candidates, List.mem_toFinset, List.mem_cons, List.not_mem_nil, or_false,
+    forall_eq_or_imp, forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or,
+    true_implies, imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
   omega
 
 end Tableau25
@@ -358,14 +358,14 @@ private theorem marks :
 base exactly when MAX-Tone is below a left anchor, a right anchor, and one of R-ANCH-Mᵥ and
 L-ANCH-Hᵥ. -/
 theorem optimal_iff (r : Ranking Con 5) :
-    (Tableau.ofPerm con r candidates).optimal = {candD} ↔
+    (Tableau.ofRanking con r candidates.toFinset).optimal = {candD} ↔
       (r.Dominates .lAnchorM .maxTone ∨ r.Dominates .lAnchorH .maxTone) ∧
         (r.Dominates .rAnchorH .maxTone ∨ r.Dominates .rAnchorM .maxTone) ∧
         (r.Dominates .rAnchorM .maxTone ∨ r.Dominates .lAnchorH .maxTone) := by
-  rw [Tableau.ofPerm_optimal_eq_singleton_iff (show candD ∈ candidates by decide)]
-  simp +decide only [candidates, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
-    forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or, true_implies,
-    imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
+  rw [Tableau.ofRanking_optimal_eq_singleton_iff, and_iff_right (by decide)]
+  simp +decide only [candidates, List.mem_toFinset, List.mem_cons, List.not_mem_nil, or_false,
+    forall_eq_or_imp, forall_eq, ne_eq, false_imp_iff, true_and, and_true, false_and, false_or,
+    true_implies, imp_false, con_exists, con_forall, Ranking.Dominates, Fin.lt_def]
   omega
 
 end Tableau26
@@ -375,9 +375,9 @@ end Tableau26
 /-- A ranking selects the printed verbs: the spreading of M over the root in the first tableau,
 M then H in the second, and M on the reduplicant with H on the base in the third. -/
 def SelectsWinners (r : Ranking Con 5) : Prop :=
-  (Tableau.ofPerm con r Tableau24.candidates).optimal = {Tableau24.candE} ∧
-    (Tableau.ofPerm con r Tableau25.candidates).optimal = {Tableau25.candE} ∧
-    (Tableau.ofPerm con r Tableau26.candidates).optimal = {Tableau26.candD}
+  (Tableau.ofRanking con r Tableau24.candidates.toFinset).optimal = {Tableau24.candE} ∧
+    (Tableau.ofRanking con r Tableau25.candidates.toFinset).optimal = {Tableau25.candE} ∧
+    (Tableau.ofRanking con r Tableau26.candidates.toFinset).optimal = {Tableau26.candD}
 
 /-- The tableaux select the printed verbs exactly under the rankings with
 R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ and MAX-Tone below both M anchors. -/

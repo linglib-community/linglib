@@ -186,26 +186,13 @@ namespace HSDerivation
 
 variable {C : Type*} [DecidableEq C] (D : HSDerivation C) (c : C)
 
-/-- The inner tableau on an explicit nonempty candidate set, scored by `D.ranking`. -/
-def tableauFor (cands : Finset C) (h : cands.Nonempty) : Tableau C D.ranking.length where
-  candidates := cands
-  profile c := toLex (D.ranking.get · c)
-  nonempty := h
-
-@[simp] theorem tableauFor_profile (cands : Finset C) (h : cands.Nonempty) :
-    (D.tableauFor cands h).profile = fun c ↦ toLex (D.ranking.get · c) := rfl
-
-/-- Filter a candidate set to its optimal subset under `D.ranking`; `∅` on empty
-input. This is the one-step EVAL of the serial search. -/
-def evalFilter (cands : Finset C) : Finset C :=
-  if h : cands.Nonempty then (D.tableauFor cands h).optimal else ∅
-
-/-- The optimal set of one GEN/EVAL round. -/
-def stepOptimum : Finset C := D.evalFilter (D.gen c)
+/-- The optimal set of one GEN/EVAL round: the winners of the tableau of `gen c` under the
+durable ranking. -/
+def stepOptimum : Finset C := (Tableau.ofList (D.gen c) D.ranking).optimal
 
 /-- An empty `gen` output yields an empty optimal set. -/
 @[simp] theorem stepOptimum_of_empty_gen (h : D.gen c = ∅) : D.stepOptimum c = ∅ := by
-  simp [stepOptimum, evalFilter, h]
+  simp [stepOptimum, Tableau.optimal, h]
 
 /-! ### Convergence -/
 
@@ -224,10 +211,8 @@ with no intermediate combinator. Simp-normalized toward `Converged`. -/
   simp [Converged, Function.IsFixedPt, Finset.singleton_biUnion]
 
 /-- GEN-restriction to the faithful candidate forces convergence. -/
-theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c := by
-  show D.evalFilter (D.gen c) = ({c} : Finset C)
-  rw [h, evalFilter, dite_eq_left (Finset.singleton_nonempty c)]
-  exact Tableau.optimal_singleton rfl
+theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c :=
+  Tableau.optimal_singleton h
 
 /-- An `n`-round HS derivation: `iterateGen` over `stepOptimum` with a caller-supplied
 `pick` tie-breaker for non-singleton optima (ties not yet broken by directional eval,

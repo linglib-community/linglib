@@ -53,9 +53,9 @@ inductive Role
 /-- A subparadigm: the base and the derived word with their inputs, and the three
 correspondence relations of (11) — each word's IO relation and the OO relation. -/
 def paradigm (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) : Correspondence Role α :=
-  .ofPairs (λ | .baseInput => bIn | .base => b | .derivInput => dIn | .derivative => d)
-    λ | .baseInput, .base => ioB | .derivInput, .derivative => ioD | .base, .derivative => oo
-      | _, _ => []
+  .ofPairs (fun | .baseInput => bIn | .base => b | .derivInput => dIn | .derivative => d)
+    fun | .baseInput, .base => ioB | .derivInput, .derivative => ioD | .base, .derivative => oo
+        | _, _ => []
 
 /-- A constraint of the hierarchy read at each word of the subparadigm: a markedness
 constraint on the word's output, IO-Faith on its IO relation, OO-Identity on the OO
@@ -66,36 +66,36 @@ structure ParadigmConstraint (α : Type*) where
 
 /-- A markedness constraint, read off each output. -/
 def markedness (m : List α → ℕ) : ρ → ParadigmConstraint α :=
-  λ _ => ⟨λ c => m (c.form .base), λ c => m (c.form .derivative)⟩
+  fun _ ↦ ⟨fun c ↦ m (c.form .base), fun c ↦ m (c.form .derivative)⟩
 
 /-- An IO-Faith constraint, read off each word's IO relation. -/
 def ioFaith (f : Correspondence Role α → Role → Role → ℕ) : ρ → ParadigmConstraint α :=
-  λ _ => ⟨λ c => f c .baseInput .base, λ c => f c .derivInput .derivative⟩
+  fun _ ↦ ⟨fun c ↦ f c .baseInput .base, fun c ↦ f c .derivInput .derivative⟩
 
 /-- The OO-Identity constraint proper to the relation `rel`: read off the OO relation of
 a paradigm bearing `rel`, vacuous on paradigms bearing another (§4.6.3) and at the base. -/
 def ooIdentity [DecidableEq ρ] (rel : ρ) (f : Correspondence Role α → Role → Role → ℕ) :
     ρ → ParadigmConstraint α :=
-  λ r => ⟨λ _ => 0, λ c => if r = rel then f c .base .derivative else 0⟩
+  fun r ↦ ⟨fun _ ↦ 0, fun c ↦ if r = rel then f c .base .derivative else 0⟩
 
 /-- Recursive evaluation (§2.3.1): the ranking is duplicated and the recursions ranked,
 the base's above the derived word's, for paradigms bearing relation `r`. -/
 def recursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
     List (Constraint (Correspondence Role α)) :=
-  ranking.map (λ k => (k r).atBase) ++ ranking.map (λ k => (k r).atDerived)
+  ranking.map (fun k ↦ (k r).atBase) ++ ranking.map (fun k ↦ (k r).atDerived)
 
 /-- Non-recursive evaluation, each constraint's violations tallied over both words — the
 evaluation of (57), (88), (119). -/
 def nonrecursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
     List (Constraint (Correspondence Role α)) :=
-  ranking.map λ k c => (k r).atBase c + (k r).atDerived c
+  ranking.map fun k c ↦ (k r).atBase c + (k r).atDerived c
 
 /-- The tableau of the labelled candidate paradigms `cand` under `eval` — `recursive` or
 `nonrecursive` — for paradigms bearing `r`. -/
-def tableau {L : Type*} [DecidableEq L] (cand : L → Correspondence Role α) (labels : List L)
+def tableau {L : Type*} [DecidableEq L] (cand : L → Correspondence Role α) (labels : Finset L)
     (eval : List (ρ → ParadigmConstraint α) → ρ → List (Constraint (Correspondence Role α)))
-    (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) (h : labels ≠ [] := by decide) :=
-  Tableau.ofRanking labels ((eval ranking r).map (Constraint.comap cand)) h
+    (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :=
+  Tableau.ofList labels ((eval ranking r).map (Constraint.comap cand))
 
 /-- The candidate paradigms of a four-way tableau. -/
 inductive Cand4
@@ -152,12 +152,12 @@ def cand : Cand4 → Correspondence Role Seg
 wins — overapplication in the base costs an IO-IDENT violation in the dominant
 recursion. -/
 theorem underapplication :
-    (tableau cand [.a, .b, .c, .d] recursive ranking ()).optimal = {.d} := by decide
+    (tableau cand {.a, .b, .c, .d} recursive ranking ()).optimal = {.d} := by decide
 
 /-- Without recursion, overapplication in the base *L[a]rry ~ L[a]r* wins: it satisfies
 OO-Identity and `*ær]σ` at the cost of low-ranked IO-Faith only. -/
 theorem overapplication_nonrecursive :
-    (tableau cand [.a, .b, .c, .d] nonrecursive ranking ()).optimal = {.a} := by decide
+    (tableau cand {.a, .b, .c, .d} nonrecursive ranking ()).optimal = {.a} := by decide
 
 end English
 
@@ -216,9 +216,9 @@ def word : Cand4 → List Seg
 /-- (47): whatever the input's vowels, `*NVORAL >> *VNAS >> IO-IDENT[NAS]` selects *ŋãtur* —
 allophony is decided by markedness over the rich input. -/
 theorem allophony : ∀ input ∈ inputs,
-    (Tableau.ofRanking [.a, .b, .c, .d]
+    (Tableau.ofList {.a, .b, .c, .d}
       [Constraint.comap word nvOral, Constraint.comap word vNas,
-       λ w => (Correspondence.parallel input (word w)).identViolFeature nasal .lhs .rhs]).optimal =
+       fun w ↦ (Correspondence.parallel input (word w)).identViolFeature nasal .lhs .rhs]).optimal =
       {Cand4.d} := by
   decide
 
@@ -248,7 +248,7 @@ def plural : Cand4 → Correspondence Role Seg
 /-- (52): nasal spread overapplies in the plural — *ɲĩãr ~ ɲ-ãl-ĩãr* wins, the root vowels
 nasal in oral context to match the base. -/
 theorem overapplication :
-    (tableau plural [.a, .b, .c, .d] recursive ranking ()).optimal = {.d} := by decide
+    (tableau plural {.a, .b, .c, .d} recursive ranking ()).optimal = {.d} := by decide
 
 /-- The OO correspondence of *dəhəs* with *d-um-əhəs*. -/
 def umOO : List (ℕ × ℕ) := [(0, 0), (1, 3), (2, 4), (3, 5), (4, 6)]
@@ -274,7 +274,7 @@ where
 /-- (55): under a nasal affix harmony applies normally — *dəhəs ~ d-um-ə̃hə̃s* — OO-Identity
 giving way to `*NVORAL`, and `*VNAS` keeping the infix vowel oral. -/
 theorem normalApplication :
-    (tableau approach [.a, .b, .c, .d] recursive ranking ()).optimal = {.c} := by decide
+    (tableau approach {.a, .b, .c, .d} recursive ranking ()).optimal = {.c} := by decide
 
 /-- (56)/(57): the base *də̃hə̃s* that would overapply to restore identity against the
 canonical *dəhəs*. -/
@@ -285,12 +285,12 @@ def baseChoice : Cand3 → Correspondence Role Seg
 
 /-- (56): the base cannot misapply — its `*VNAS` marks fall in the dominant recursion. -/
 theorem base_priority :
-    (tableau baseChoice [.a, .b] recursive ranking ()).optimal = {.b} := by decide
+    (tableau baseChoice {.a, .b} recursive ranking ()).optimal = {.b} := by decide
 
 /-- (57): the non-recursive tally wrongly prefers the overapplying base, which satisfies
 `*NVORAL` and OO-Identity outright. -/
 theorem base_overapplies_nonrecursive :
-    (tableau baseChoice [.a, .b] nonrecursive ranking ()).optimal = {.a} := by decide
+    (tableau baseChoice {.a, .b} nonrecursive ranking ()).optimal = {.a} := by decide
 
 end Sundanese
 
@@ -399,13 +399,13 @@ where
 /-- (87): epenthesis underapplies in *yiš.bē ~ yišb* 'take captive' — the complex coda is
 kept to give every jussive segment a base correspondent. -/
 theorem epenthesis_underapplies :
-    (tableau captive [.a, .b, .c, .d] recursive epenthesis .jussive).optimal = {.d} := by
+    (tableau captive {.a, .b, .c, .d} recursive epenthesis .jussive).optimal = {.d} := by
   decide
 
 /-- (88): the non-recursive tally prefers epenthesis overapplying in the base,
 *yi.šə.bē ~ yi.šeb*. -/
 theorem epenthesis_overapplies_nonrecursive :
-    (tableau captive [.a, .b, .c, .d] nonrecursive epenthesis .jussive).optimal = {.a} := by
+    (tableau captive {.a, .b, .c, .d} nonrecursive epenthesis .jussive).optimal = {.a} := by
   decide
 
 /-- The paradigms of (92), from `/ya-glē/`: base *yi.ɣə.lē* or *yiɣ.lē*, jussive *yi.ɣel* or
@@ -426,7 +426,7 @@ where
 yi.ɣel* 'uncover' — `SON-CON` outranking OOJ-DEP, while the overapplying base loses in
 the dominant recursion. -/
 theorem tetru :
-    (tableau uncover [.a, .b, .c] recursive epenthesis .jussive).optimal = {.b} := by decide
+    (tableau uncover {.a, .b, .c} recursive epenthesis .jussive).optimal = {.b} := by decide
 
 /-- The 2fs paradigms of (118), from `/šamaʕ-tī/` and its truncation: the base's coronal
 a stop or a spirant, the 2fs stem's a stop or a spirant after the epenthetic vowel. -/
@@ -448,12 +448,12 @@ where
 /-- (118): spirantization underapplies in *šāmaʕtī ~ šāmaʕat* 'I/you (fs) heard' — the
 post-vocalic stop matches the base's. -/
 theorem spirantization_underapplies :
-    (tableau heard [.a, .b, .c] recursive spirantization .jussive).optimal = {.c} := by
+    (tableau heard {.a, .b, .c} recursive spirantization .jussive).optimal = {.c} := by
   decide
 
 /-- (119): the non-recursive tally prefers spirantization overapplying in the base. -/
 theorem spirantization_overapplies_nonrecursive :
-    (tableau heard [.a, .b, .c] nonrecursive spirantization .jussive).optimal = {.a} := by
+    (tableau heard {.a, .b, .c} nonrecursive spirantization .jussive).optimal = {.a} := by
   decide
 
 /-- The imperative paradigms of (135), from `/ya-ktōb/`: base *yikθōβ* or *yixtōβ*, imperative
@@ -475,7 +475,7 @@ where
 same ranking (137), the imperative's OO-Identity ranked below the spirantization
 constraints. -/
 theorem imperative_normalApplication :
-    (tableau write [.a, .b, .c] recursive spirantization .imperative).optimal = {.c} := by
+    (tableau write {.a, .b, .c} recursive spirantization .imperative).optimal = {.c} := by
   decide
 
 end Hebrew

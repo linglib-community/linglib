@@ -28,7 +28,7 @@ is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
   separate algebra.
 * `ercOfProfiles`, `tableauERC` — ERCs from violation vectors and winner–loser
   pairs; `satisfiedBy_ercOfProfiles_iff_le` bridges to the Core lex order, and
-  `Tableau.ofPerm_mem_optimal_iff_satisfiedBy` identifies optimality with ERC satisfaction.
+  `Tableau.ofRanking_mem_optimal_iff_satisfiedBy` identifies optimality with ERC satisfaction.
 * `simpleERC` — a single-`W`/single-`L` ERC, one Hasse edge `i ≫ j`
   ([merchant-riggle-2016]).
 -/
@@ -99,14 +99,6 @@ variable (r : Ranking ι n) (α : ERC ι)
 order, is lexicographically nonnegative. -/
 def SatisfiedBy : Prop := toLex 0 ≤ toLex (α ∘ r)
 
-/-- Position-space dominance, ranking-free: a sign vector is lex-nonnegative iff every
-`L` is preceded by a `W`. -/
-theorem lex_nonneg_iff_dominance (v : Fin n → ERCVal) :
-    toLex 0 ≤ toLex v ↔ ∀ p, v p = .L → ∃ q < p, v q = .W := by
-  rw [Pi.lex_le_iff_forall]
-  exact forall_congr' fun p => imp_congr (ERCVal.lt_zero_iff _)
-    (exists_congr fun q => and_congr_right fun _ => ERCVal.zero_lt_iff _)
-
 /-- **Prince's leading-entry characterization** ([prince-2002] §0): a ranking
 satisfies an ERC iff the `r`-earliest non-neutral constraint, when one exists, is
 winner-preferring. -/
@@ -115,52 +107,24 @@ theorem satisfiedBy_iff_lead :
   ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((Pi.lex_le_iff_find _ _).mp h he),
    fun h => (Pi.lex_le_iff_find _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
 
-/-- A loser-preferring constraint witnesses a non-neutral position. -/
-private theorem exists_ne_of_L {c : ι} (hc : α c = .L) : ∃ p, α (r p) ≠ .e :=
-  ⟨r.symm c, by rw [Equiv.apply_symm_apply, hc]; decide⟩
-
-/-- With a winner-preferring leader, the leader dominates every loser-preferring
-constraint. -/
-private theorem lead_dominates
-    (hlead : ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W) {c : ι}
-    (hc : α c = .L) :
-    α (r (Fin.find _ (exists_ne_of_L r α hc))) = .W
-      ∧ r.Dominates (r (Fin.find _ (exists_ne_of_L r α hc))) c := by
-  have he := exists_ne_of_L r α hc
-  refine ⟨hlead he, ?_⟩
-  have hle : Fin.find _ he ≤ r.symm c :=
-    Fin.find_le_of_pos he (by rw [Equiv.apply_symm_apply, hc]; decide)
-  have hne : Fin.find _ he ≠ r.symm c := fun h =>
-    absurd (h ▸ hlead he) (by rw [Equiv.apply_symm_apply, hc]; decide)
-  simpa [Ranking.Dominates] using hle.lt_of_ne hne
-
 /-- [prince-2002] §0 (3): satisfaction unfolds to the `∀∃` dominance form — every
-loser-preferring constraint is dominated by some winner-preferring one.
-Position-space dominance (`lex_nonneg_iff_dominance`), coordinates changed along `r`. -/
+loser-preferring constraint is dominated by some winner-preferring one. -/
 theorem satisfiedBy_iff_dominance :
-    α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c :=
-  (lex_nonneg_iff_dominance fun p => α (r p)).trans
-    ⟨fun h c hc =>
-      have ⟨q, hq, hW⟩ := h (r.symm c) (by rwa [Equiv.apply_symm_apply])
-      ⟨r q, hW, by simpa [Ranking.Dominates] using hq⟩,
-     fun h p hp =>
-      have ⟨w, hW, hdom⟩ := h (r p) hp
-      ⟨r.symm w, by simpa [Ranking.Dominates] using hdom, by rwa [Equiv.apply_symm_apply]⟩⟩
+    α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c := by
+  rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
+    Pi.toLex_comp_le_iff_forall_exists]
+  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Dominates]
 
 instance : Decidable (α.SatisfiedBy r) :=
   inferInstanceAs (Decidable (toLex 0 ≤ toLex (α ∘ r)))
 
 /-- [prince-2002] §0 (4): the `∀∃` form is equivalent to the `∃∀` form — *some*
-`W`-constraint dominates *every* `L`-constraint — because the ranking is total:
-the leading constraint is the single witness. -/
+`W`-constraint dominates *every* `L`-constraint — because the ranking is total. -/
 theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) := by
-  refine ⟨fun hsat => ?_,
-    fun ⟨d, hd⟩ => (satisfiedBy_iff_dominance r α).mpr fun c hc => ⟨d, hd c hc⟩⟩
-  have hlead := (satisfiedBy_iff_lead r α).mp hsat
-  by_cases he : ∃ p, α (r p) ≠ .e
-  · exact ⟨r (Fin.find _ he), fun c hc => ⟨hlead he, (lead_dominates r α hlead hc).2⟩⟩
-  · exact ⟨r 0, fun c hc => (he (exists_ne_of_L r α hc)).elim⟩
+  rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
+    Pi.toLex_comp_le_iff_exists_forall]
+  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Dominates]
 
 /-- A trivial ERC is satisfied by every ranking. -/
 theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking ι n) :
@@ -322,42 +286,37 @@ theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking ι n) (w l : ι → ℕ) :
 
 /-- The ERC of a winner-loser pair `(w, l)` in tableau `t`: the ranking requirements
 for `w` to beat `l`. -/
-def tableauERC {C : Type*} [DecidableEq C] (t : Tableau C n) (w l : C) : ERC (Fin n) :=
-  ercOfProfiles (ofLex (t.profile w)) (ofLex (t.profile l))
+def tableauERC {C : Type*} (t : Tableau C n) (w l : C) : ERC (Fin n) :=
+  ercOfProfiles (t.constraints · w) (t.constraints · l)
 
 /-- Tableau form of the bridge: the winner-loser ERC is satisfied by `r` iff `r`
 ranks the winner at-or-above the loser under the tableau's lex evaluation. -/
-theorem tableauERC_satisfiedBy_iff {C : Type*} [DecidableEq C]
-    (t : Tableau C n) (r : Ranking (Fin n) n) (w l : C) :
-    (tableauERC t w l).SatisfiedBy r ↔ r • t.profile w ≤ r • t.profile l :=
-  satisfiedBy_ercOfProfiles_iff_le r (ofLex (t.profile w)) (ofLex (t.profile l))
+theorem tableauERC_satisfiedBy_iff {C : Type*} (t : Tableau C n) (r : Ranking (Fin n) n)
+    (w l : C) : (tableauERC t w l).SatisfiedBy r ↔ r • t.profile w ≤ r • t.profile l :=
+  satisfiedBy_ercOfProfiles_iff_le r (t.constraints · w) (t.constraints · l)
 
 /-- At the identity ranking, ERC satisfaction is exactly the tableau's own lex
 comparison — connecting ERC inference to the tableau's winner set. -/
-theorem tableauERC_satisfiedBy_id_iff {C : Type*} [DecidableEq C]
-    (t : Tableau C n) (w l : C) :
+theorem tableauERC_satisfiedBy_id_iff {C : Type*} (t : Tableau C n) (w l : C) :
     (tableauERC t w l).SatisfiedBy (1 : Ranking (Fin n) n) ↔ t.profile w ≤ t.profile l := by
   rw [tableauERC_satisfiedBy_iff]; exact Iff.rfl
 
 /-- A candidate is the tableau's optimum iff, under the identity ranking, its ERC
 against every competitor is satisfied — ERC consistency *is* optimality. -/
-theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} [DecidableEq C]
-    (t : Tableau C n) (w : C) :
+theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} (t : Tableau C n) (w : C) :
     w ∈ t.optimal ↔
       w ∈ t.candidates ∧
         ∀ l ∈ t.candidates, (tableauERC t w l).SatisfiedBy (1 : Ranking (Fin n) n) :=
   Tableau.mem_optimal_iff.trans <| and_congr_right fun _ =>
     forall₂_congr fun l _ => (tableauERC_satisfiedBy_id_iff t w l).symm
 
-/-- **Optimality under a ranking is ERC satisfaction**: `w` is optimal in `Tableau.ofPerm con r`
+/-- **Optimality under a ranking is ERC satisfaction**: `w` is optimal in `Tableau.ofRanking con r`
 iff `r` satisfies the winner–loser ERC of `w` against every competitor, so factorial typology and
 ERC consistency are two readouts of one constraint set. -/
-theorem Tableau.ofPerm_mem_optimal_iff_satisfiedBy {C : Type*} [DecidableEq C]
-    (con : ConstraintSet C ι) (r : Ranking ι n) (candidates : List C) (h : candidates ≠ [])
-    (w : C) :
-    w ∈ (Tableau.ofPerm con r candidates h).optimal ↔
-      w ∈ candidates.toFinset ∧
-        ∀ l ∈ candidates.toFinset, (ercOfProfiles (con · w) (con · l)).SatisfiedBy r :=
+theorem Tableau.ofRanking_mem_optimal_iff_satisfiedBy {C : Type*} (con : ConstraintSet C ι)
+    (r : Ranking ι n) (candidates : Finset C) (w : C) :
+    w ∈ (Tableau.ofRanking con r candidates).optimal ↔
+      w ∈ candidates ∧ ∀ l ∈ candidates, (ercOfProfiles (con · w) (con · l)).SatisfiedBy r :=
   Tableau.mem_optimal_iff.trans <| and_congr_right fun _ ↦ forall₂_congr fun l _ ↦
     (satisfiedBy_ercOfProfiles_iff_le r (con · w) (con · l)).symm
 

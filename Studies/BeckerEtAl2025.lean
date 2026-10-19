@@ -185,7 +185,7 @@ theorem iamb_violations  : candidates.map cIamb  = [0, 0, 1] := by decide
     optimal footing of `/σσσσ/` is the iamb + final **trochee** — no final long vowel, no unparsed
     σ, at the cost of one (low-ranked) non-right-headed foot. -/
 theorem footing_optimal :
-    (Tableau.ofFintype footingRanking).optimal = {.iambTrochee} := by decide
+    (Tableau.ofList Finset.univ footingRanking).optimal = {.iambTrochee} := by decide
 
 /-! ### The tone domain and Culminativity-H ([becker-etal-2025] §4.2)
 

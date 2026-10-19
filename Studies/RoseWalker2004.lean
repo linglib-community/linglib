@@ -95,7 +95,7 @@ instance : DecidablePred IsNasal
 /-- A consonant. -/
 def IsConsonant (s : Seg) : Prop := s ≠ vocoid
 
-instance : DecidablePred IsConsonant := λ s => inferInstanceAs (Decidable (s ≠ vocoid))
+instance : DecidablePred IsConsonant := fun s ↦ inferInstanceAs (Decidable (s ≠ vocoid))
 
 /-- The nasal counterpart of a consonant: the nasal at a stop's place, the coronal nasal for
 an approximant. -/
@@ -135,17 +135,17 @@ theorem AtLeast.mono {k k' : Fin 4} {a b : Seg} (h : AtLeast k a b) (hk : k ≤ 
   revert h
   cases nasalSimilarity a b with
   | none => exact id
-  | some r => exact λ h => h.trans hk
+  | some r => exact fun h ↦ h.trans hk
 
 /-! ### Candidates and constraints -/
 
 /-- The positions of the consonants of a string. -/
 def consonants (w : List Seg) : List ℕ :=
-  (List.range w.length).filter λ i => (w.getD i .vocoid).IsConsonant
+  (List.range w.length).filter fun i ↦ (w.getD i .vocoid).IsConsonant
 
 /-- The pairs of consonant positions of a string, left position first. -/
 def consonantPairs (w : List Seg) : List (ℕ × ℕ) :=
-  (consonants w).flatMap λ i => ((consonants w).filter (i < ·)).map (i, ·)
+  (consonants w).flatMap fun i ↦ ((consonants w).filter (i < ·)).map (i, ·)
 
 /-- An output candidate: the output string, aligned position by position with the input, and
 the correspondence relation among its consonants as coindexed pairs of positions, each written
@@ -160,23 +160,23 @@ def Cand.seg (c : Cand) (i : ℕ) : Seg := c.out.getD i .vocoid
 
 /-- CORR at stratum `k`: a violation for each consonant pair at least as similar as the stratum
 that does not correspond. -/
-def corr (k : Fin 4) : Constraint Cand := λ c =>
-  ((consonantPairs c.out).filter λ p => AtLeast k (c.seg p.1) (c.seg p.2) ∧ p ∉ c.corr).length
+def corr (k : Fin 4) : Constraint Cand := fun c ↦
+  ((consonantPairs c.out).filter fun p ↦ AtLeast k (c.seg p.1) (c.seg p.2) ∧ p ∉ c.corr).length
 
 /-- IDENT-CLCR(nasal): a violation for each coindexed pair whose left member is nasal and
 whose right member is oral. -/
-def identCLCR : Constraint Cand := λ c =>
-  (c.corr.filter λ p => (c.seg p.1).IsNasal ∧ ¬ (c.seg p.2).IsNasal).length
+def identCLCR : Constraint Cand := fun c ↦
+  (c.corr.filter fun p ↦ (c.seg p.1).IsNasal ∧ ¬ (c.seg p.2).IsNasal).length
 
 /-- IDENT-CRCL(nasal): a violation for each coindexed pair whose right member is nasal and
 whose left member is oral. -/
-def identCRCL : Constraint Cand := λ c =>
-  (c.corr.filter λ p => ¬ (c.seg p.1).IsNasal ∧ (c.seg p.2).IsNasal).length
+def identCRCL : Constraint Cand := fun c ↦
+  (c.corr.filter fun p ↦ ¬ (c.seg p.1).IsNasal ∧ (c.seg p.2).IsNasal).length
 
 /-- IDENT-OI(nasal) for an input: a violation for each segment nasal in the output but not in
 the input. -/
-def identOI (input : List Seg) : Constraint Cand := λ c =>
-  ((List.range input.length).filter λ i =>
+def identOI (input : List Seg) : Constraint Cand := fun c ↦
+  ((List.range input.length).filter fun i ↦
     ¬ (input.getD i .vocoid).IsNasal ∧ (c.seg i).IsNasal).length
 
 /-- The nasal correspondence hierarchy with IDENT-OI(nasal) interpolated below stratum `k`,
@@ -201,51 +201,27 @@ def kikongo (input : List Seg) : List (Constraint Cand) :=
 def outputs : List Seg → List (List Seg)
   | [] => [[]]
   | s :: rest =>
-    (outputs rest).flatMap λ o => (s :: o) :: if s.nasalize = s then [] else [s.nasalize :: o]
+    (outputs rest).flatMap fun o ↦ (s :: o) :: if s.nasalize = s then [] else [s.nasalize :: o]
 
 /-- The partitions of a list into blocks. -/
 def partitions : List ℕ → List (List (List ℕ))
   | [] => [[]]
   | x :: xs =>
-    (partitions xs).flatMap λ P =>
-      ([x] :: P) :: (List.range P.length).map λ i => P.modify i (x :: ·)
+    (partitions xs).flatMap fun P ↦
+      ([x] :: P) :: (List.range P.length).map fun i ↦ P.modify i (x :: ·)
 
 /-- The coindexed pairs of a partition, left position first. -/
 def corrOf (P : List (List ℕ)) : List (ℕ × ℕ) :=
-  P.flatMap λ b => b.flatMap λ i => (b.filter (i < ·)).map (i, ·)
+  P.flatMap fun b ↦ b.flatMap fun i ↦ (b.filter (i < ·)).map (i, ·)
 
 /-- GEN: every output under every coindexation of the consonants. -/
 def gen (input : List Seg) : List Cand :=
-  (outputs input).flatMap λ o => (partitions (consonants input)).map λ P => ⟨o, corrOf P⟩
-
-theorem outputs_ne_nil (w : List Seg) : outputs w ≠ [] := by
-  induction w with
-  | nil => simp [outputs]
-  | cons s rest ih =>
-    intro h
-    rw [outputs, List.flatMap_eq_nil_iff] at h
-    obtain ⟨o, ho⟩ := List.exists_mem_of_ne_nil _ ih
-    exact List.cons_ne_nil _ _ (h o ho)
-
-theorem partitions_ne_nil (l : List ℕ) : partitions l ≠ [] := by
-  induction l with
-  | nil => simp [partitions]
-  | cons x xs ih =>
-    intro h
-    rw [partitions, List.flatMap_eq_nil_iff] at h
-    obtain ⟨P, hP⟩ := List.exists_mem_of_ne_nil _ ih
-    exact List.cons_ne_nil _ _ (h P hP)
-
-theorem gen_ne_nil (input : List Seg) : gen input ≠ [] := by
-  intro h
-  rw [gen, List.flatMap_eq_nil_iff] at h
-  obtain ⟨o, ho⟩ := List.exists_mem_of_ne_nil _ (outputs_ne_nil input)
-  exact partitions_ne_nil _ (List.map_eq_nil_iff.mp (h o ho))
+  (outputs input).flatMap fun o ↦ (partitions (consonants input)).map fun P ↦ ⟨o, corrOf P⟩
 
 /-- The tableau of an input under a ranking, over GEN. -/
 def tableau (ranking : List Seg → List (Constraint Cand)) (input : List Seg) :
     Tableau Cand (ranking input).length :=
-  Tableau.ofRanking (gen input) (ranking input) (gen_ne_nil input)
+  Tableau.ofList (gen input).toFinset (ranking input)
 
 /-! ### The typology of the cut -/
 
@@ -320,7 +296,7 @@ instance (ranking : List Seg → List (Constraint Cand)) (w : List Seg) :
 
 /-- The Ngbaka words of the rows, with their judgments. -/
 def ngbakaData : List (List Seg × Judgment) :=
-  (Examples.all.filter (·.language = "ngba1284")).map λ r =>
+  (Examples.all.filter (·.language = "ngba1284")).map fun r ↦
     (parse r.primaryText.toList, r.judgment)
 
 /-- Ngbaka's tableaux: a homorganic nasal and prenasal stop agree, the prenasal nasalized, while
@@ -337,7 +313,7 @@ theorem ngbaka_rows : ∀ d ∈ ngbakaData, d.2 = .acceptable ↔ IsFixedPoint n
 
 /-- The Kikongo alternations of the rows: the underlying and surface stems. -/
 def kikongoData : List (List Seg × List Seg) :=
-  Examples.all.filterMap λ r => do
+  Examples.all.filterMap fun r ↦ do
     let ur ← r.feature? "underlying"
     let sr ← r.feature? "stem"
     pure (parse ur.toList, parse sr.toList)
@@ -352,7 +328,7 @@ instance (w : List Seg) (i : ℕ) : Decidable (Triggers w i) := inferInstanceAs 
 similar as the cut to a preceding trigger nasalized unless it is the second half of an NC
 cluster. -/
 def harmonize (w : List Seg) : List Seg :=
-  w.mapIdx λ j s =>
+  w.mapIdx fun j s ↦
     if (∃ i < j, Triggers w i ∧ AtLeast 3 (w.getD i .vocoid) s) ∧
         ¬ (w.getD (j - 1) .vocoid).IsNasal then s.nasalize else s
 
@@ -405,7 +381,7 @@ def kudumukila : List Cand :=
 it, the suffix consonant to the right of the nasal nasalizes and the voiced stop to its left
 stays oral. -/
 theorem kudumukila_winner :
-    (Tableau.ofRanking kudumukila (kikongo (parse "kudumuk-ila".toList)) (by decide)).optimal =
+    (Tableau.ofList kudumukila.toFinset (kikongo (parse "kudumuk-ila".toList))).optimal =
       {kudumukila[0]} := by
   decide +kernel
 

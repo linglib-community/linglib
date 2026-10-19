@@ -123,12 +123,9 @@ def Level.input (x : α) : Level → Option (List α)
 
 /-- The competitors for a doubled name XX and its control XY are the simplex parses at both
 levels, joined by the reduplicative parse at the morphological level. -/
-def candidates (x y : α) : Level → List (Parse α)
-  | .phonology => [.simplex [x, y], .simplex [x, x]]
-  | .morphology => [.reduplicated [x], .simplex [x, y], .simplex [x, x]]
-
-theorem candidates_ne_nil (x y : α) (l : Level) : candidates x y l ≠ [] := by
-  cases l <;> simp [candidates]
+def candidates [DecidableEq α] (x y : α) : Level → Finset (Parse α)
+  | .phonology => {.simplex [x, y], .simplex [x, x]}
+  | .morphology => {.reduplicated [x], .simplex [x, y], .simplex [x, x]}
 
 /-! ### The constraints -/
 
@@ -174,14 +171,14 @@ def con (x : α) (l : Level) : ConstraintSet (Parse α) (Fin 2) := ![ocp, dep (l
 
 /-- The competition between XX and XY at a level, under a ranking of the OCP and DEP. -/
 def tableau (x y : α) (l : Level) (r : Ranking (Fin 2) 2) : Tableau (Parse α) 2 :=
-  .ofPerm (con x l) r (candidates x y l) (candidates_ne_nil x y l)
+  .ofRanking (con x l) r (candidates x y l)
 
 /-- At the phonological level the control wins under either ranking, because doubling is
 identity within a morpheme, which the OCP bans. -/
 theorem optimal_phonology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
     (tableau x y .phonology r).optimal = {.simplex [x, y]} := by
-  refine Tableau.ofPerm_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
-  simp only [candidates, List.mem_cons, List.not_mem_nil, or_false]
+  refine Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
+  simp only [candidates, Finset.mem_insert, Finset.mem_singleton]
   rintro d (rfl | rfl) hd
   · exact absurd rfl hd
   · simp [Pi.lt_def, Pi.le_def, Fin.forall_fin_two, Fin.exists_fin_two, con, Level.input, h]
@@ -190,8 +187,8 @@ theorem optimal_phonology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
 escapes the OCP and adds nothing to the base, while the control violates DEP. -/
 theorem optimal_morphology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
     (tableau x y .morphology r).optimal = {.reduplicated [x]} := by
-  refine Tableau.ofPerm_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
-  simp only [candidates, List.mem_cons, List.not_mem_nil, or_false]
+  refine Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
+  simp only [candidates, Finset.mem_insert, Finset.mem_singleton]
   rintro d (rfl | rfl | rfl) hd
   · exact absurd rfl hd
   · simp [Pi.lt_def, Pi.le_def, Fin.forall_fin_two, Fin.exists_fin_two, con, Level.input, h]

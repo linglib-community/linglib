@@ -7,6 +7,7 @@ public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Order.Fin.Basic
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # The lexicographic order on finite tuples
@@ -19,7 +20,11 @@ by the first differing coordinate. The order on `Fin (n + 1)`-tuples compares he
 a classical instance. A tuple is lexicographically at most another when every coordinate where it
 exceeds the other is preceded by one where it falls short (`Pi.lex_le_iff_forall`), which is to say
 that it falls short at the first coordinate where they differ (`Pi.lex_le_iff_find`). Reindexing
-both tuples along an equivalence transports the index relation (`Pi.lex_comp_equiv`).
+both tuples along an equivalence transports the index relation (`Pi.lex_comp_equiv`). Read along an
+enumeration `e` of the coordinates, one vector is below another iff some coordinate where it is
+below comes before every coordinate where it is above (`Pi.toLex_comp_lt_iff_exists`), and the
+product order is the intersection of these lexicographic orders over all enumerations
+(`Pi.forall_toLex_comp_lt_iff`).
 
 [UPSTREAM] candidates for `Mathlib/Order/PiLex.lean` and `Mathlib/Data/List/OfFn.lean`.
 -/
@@ -167,5 +172,106 @@ theorem lex_le_iff_find (A B : Fin m → α) [DecidablePred fun i ↦ B i ≠ A 
     refine ⟨Fin.find _ he, ?_, hlead he⟩
     exact (Fin.find_le_of_pos he hp.ne).lt_of_ne fun h ↦
       absurd (h ▸ hlead he) hp.asymm
+
+end Pi
+
+namespace Pi
+
+section Reindex
+
+variable {ι κ β : Type*} [LinearOrder κ] [LinearOrder β] (e : κ ≃ ι) {v w : ι → β}
+
+/-- Reading two vectors along an enumeration of their coordinates, the product order embeds in
+the lexicographic order. -/
+theorem toLex_comp_strictMono [WellFoundedLT κ] : StrictMono fun v : ι → β ↦ toLex (v ∘ e) :=
+  fun v w h ↦ Pi.toLex_strictMono <| by
+    obtain ⟨hle, i, hi⟩ := Pi.lt_def.1 h
+    exact Pi.lt_def.2 ⟨fun k ↦ hle (e k), e.symm i, by simpa using hi⟩
+
+variable [WellFoundedLT κ]
+
+/-- Read along an enumeration, one vector is lexicographically below another iff some coordinate
+where it is below comes before every coordinate where it is above. -/
+theorem toLex_comp_lt_iff_exists :
+    toLex (v ∘ e) < toLex (w ∘ e) ↔ ∃ i, v i < w i ∧ ∀ j, w j < v j → e.symm i < e.symm j := by
+  refine ⟨fun hlt ↦ ?_, fun ⟨i, hi, hd⟩ ↦ ?_⟩
+  · obtain ⟨i, hi, hlt⟩ := (lex_comp_equiv e (· < ·) (· < ·) v w).1 hlt
+    refine ⟨i, hlt, fun j hj ↦ ?_⟩
+    rcases lt_trichotomy (e.symm i) (e.symm j) with h | h | h
+    · exact h
+    · exact absurd hj (e.symm.injective h ▸ hlt.asymm)
+    · exact absurd (hi j h) hj.ne'
+  · refine lt_of_le_of_ne (not_lt.1 fun hlt ↦ ?_) fun heq ↦ hi.ne ?_
+    · obtain ⟨j, hj, hlt⟩ := (lex_comp_equiv e (· < ·) (· < ·) w v).1 hlt
+      exact absurd (hj i (hd j hlt)) hi.ne'
+    · simpa using congrArg (· (e.symm i)) heq
+
+/-- Read along an enumeration, one vector is lexicographically at most another iff every
+coordinate where it is above is preceded by one where it is below. -/
+theorem toLex_comp_le_iff_forall_exists :
+    toLex (v ∘ e) ≤ toLex (w ∘ e) ↔ ∀ j, w j < v j → ∃ i, v i < w i ∧ e.symm i < e.symm j := by
+  rw [← not_lt, toLex_comp_lt_iff_exists]
+  push Not
+  refine forall₂_congr fun j hj ↦ exists_congr fun i ↦ and_congr_right fun hi ↦
+    ⟨fun h ↦ h.lt_of_ne fun heq ↦ ?_, le_of_lt⟩
+  obtain rfl := e.symm.injective heq
+  exact lt_asymm hi hj
+
+/-- Read along an enumeration, one vector is lexicographically at most another iff a single
+coordinate where it is below precedes every coordinate where it is above. -/
+theorem toLex_comp_le_iff_exists_forall [Nonempty κ] :
+    toLex (v ∘ e) ≤ toLex (w ∘ e) ↔ ∃ i, ∀ j, w j < v j → v i < w i ∧ e.symm i < e.symm j := by
+  refine ⟨fun h ↦ ?_, fun ⟨i, hi⟩ ↦ ?_⟩
+  · rcases h.lt_or_eq with h | h
+    · obtain ⟨i, hi, hd⟩ := (toLex_comp_lt_iff_exists e).1 h
+      exact ⟨i, fun j hj ↦ ⟨hi, hd j hj⟩⟩
+    · refine ⟨e (Classical.arbitrary κ), fun j hj ↦ absurd hj (not_lt.2 (le_of_eq ?_))⟩
+      simpa using congrArg (· (e.symm j)) h
+  · by_cases hv : ∃ j, w j < v j
+    · obtain ⟨j, hj⟩ := hv
+      exact ((toLex_comp_lt_iff_exists e).2 ⟨i, (hi j hj).1, fun k hk ↦ (hi k hk).2⟩).le
+    · push Not at hv
+      exact Pi.toLex_monotone fun k ↦ hv (e k)
+
+end Reindex
+
+section Enumerations
+
+variable {ι β : Type*} [Fintype ι] [LinearOrder β] {n : ℕ} {v w : ι → β}
+
+/-- Any coordinate can be enumerated first. -/
+private theorem exists_equiv_fin_symm_lt (i : ι) (hn : Fintype.card ι = n) :
+    ∃ e : Fin n ≃ ι, ∀ j, j ≠ i → e.symm i < e.symm j := by
+  classical
+  let e : Fin n ≃ ι := (Fintype.equivFinOfCardEq hn).symm
+  let r : Fin n ≃ ι := (Equiv.swap ⟨0, (e.symm i).pos⟩ (e.symm i)).trans e
+  have hi : r.symm i = ⟨0, (e.symm i).pos⟩ := by simp [r]
+  refine ⟨r, fun j hj ↦ ?_⟩
+  rw [hi, Fin.lt_def]
+  exact Nat.pos_of_ne_zero fun h0 ↦ hj <| r.symm.injective <|
+    Fin.ext (h0.trans (congrArg Fin.val hi).symm)
+
+/-- One vector is lexicographically below another under some enumeration of the coordinates iff
+it is below it at some coordinate. -/
+theorem exists_toLex_comp_lt_iff (hn : Fintype.card ι = n) :
+    (∃ e : Fin n ≃ ι, toLex (v ∘ e) < toLex (w ∘ e)) ↔ ∃ i, v i < w i := by
+  refine ⟨fun ⟨e, he⟩ ↦ ?_, fun ⟨i, hi⟩ ↦ ?_⟩
+  · obtain ⟨i, hi, -⟩ := (toLex_comp_lt_iff_exists e).1 he
+    exact ⟨i, hi⟩
+  · obtain ⟨e, he⟩ := exists_equiv_fin_symm_lt i hn
+    exact ⟨e, (toLex_comp_lt_iff_exists e).2
+      ⟨i, hi, fun j hj ↦ he j fun hji ↦ (hji ▸ hj).asymm hi⟩⟩
+
+/-- The product order is the intersection of the lexicographic orders under all enumerations of
+the coordinates. -/
+theorem forall_toLex_comp_lt_iff (hn : Fintype.card ι = n) :
+    (∀ e : Fin n ≃ ι, toLex (v ∘ e) < toLex (w ∘ e)) ↔ v < w := by
+  refine ⟨fun h ↦ Pi.lt_def.2 ⟨fun i ↦ not_lt.1 fun hi ↦ ?_, ?_⟩,
+    fun h e ↦ toLex_comp_strictMono e h⟩
+  · obtain ⟨e, he⟩ := (exists_toLex_comp_lt_iff hn).2 ⟨i, hi⟩
+    exact (h e).asymm he
+  · exact (exists_toLex_comp_lt_iff hn).1 ⟨_, h (Fintype.equivFinOfCardEq hn).symm⟩
+
+end Enumerations
 
 end Pi
