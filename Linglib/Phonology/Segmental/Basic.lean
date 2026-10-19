@@ -21,6 +21,8 @@ sonority rise between two classes, and the Parker sonority ranking.
 
 ## Main results
 
+* `Segment.le_iff_forall_hasValue`: a description lies below a segment iff the segment has each
+  of its values.
 * `Segment.hasValue_iff_ofSpecs_le`: having a value is lying above the single-feature
   bundle.
 * `Segment.ofSpecs_le_iff`: a specification list lies below a segment iff the segment has
@@ -58,18 +60,22 @@ variable (s : Segment)
 @[simp] theorem ofSpecs_apply (specs : List (Feature × Bool)) (f : Feature) :
     ofSpecs specs f = specs.lookup f := rfl
 
+/-- A description lies below a segment exactly when the segment has every value the
+description has. -/
+theorem le_iff_forall_hasValue {d : Segment} : d ≤ s ↔ ∀ f v, d.HasValue f v → s.HasValue f v := by
+  refine ⟨fun h f v (hv : d f = some v) ↦ ?_, fun h f ↦ ?_⟩
+  · have := h f
+    rw [hv] at this
+    exact Flat.coe_le_iff.1 this
+  · cases hf : d f with
+    | bot => exact bot_le
+    | coe v => exact Flat.coe_le_iff.2 (h f v hf)
+
 /-- A specification list lies below a segment exactly when the segment has every value the
 list looks up. -/
 theorem ofSpecs_le_iff (specs : List (Feature × Bool)) :
-    ofSpecs specs ≤ s ↔ ∀ f v, specs.lookup f = some v → s.HasValue f v := by
-  refine ⟨fun h f v hv ↦ ?_, fun h f ↦ ?_⟩
-  · have := h f
-    rw [ofSpecs_apply, hv] at this
-    exact Flat.coe_le_iff.1 this
-  · rw [ofSpecs_apply]
-    cases hf : specs.lookup f with
-    | none => exact bot_le
-    | some v => exact Flat.coe_le_iff.2 (h f v hf)
+    ofSpecs specs ≤ s ↔ ∀ f v, specs.lookup f = some v → s.HasValue f v :=
+  le_iff_forall_hasValue s
 
 /-- With distinct features, a specification list lies below a segment exactly when the
 segment has each listed value. -/
