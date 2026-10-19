@@ -119,8 +119,7 @@ def yaptır : Verb where
   morphs := [.root "yaptır"]
   rootSegments := [y, a, p]
   voice := [.causative]
-  valency := .ofFrame ArgumentFrame.smallClause
-  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
 
 /-- `verbs` lists the entries. -/
 def verbs : List Verb := [kork, um, endişelen, dolan, öldür, yaptır]

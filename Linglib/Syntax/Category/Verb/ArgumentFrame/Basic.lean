@@ -33,6 +33,7 @@ ordered by refinement, so a schematic frame lies below every frame instantiating
   `ArgumentFrame.HasAdpositional`, `ArgumentFrame.HasClausal`, `ArgumentFrame.HasFinite`,
   `ArgumentFrame.HasImplicit` — shape predicates
 * `ArgumentFrame.leaveImplicit` — a frame with one complement left unexpressed
+* `ArgumentFrame.withObject` — a frame with a nominal object before its complements
 * `ArgumentFrame.intransitive`, `ArgumentFrame.np`, `ArgumentFrame.finiteClause`, … — smart
   constructors
 
@@ -52,8 +53,9 @@ verb's diatheses (`Verb.IsUnaccusative`). The comparative role labels S, A, P, R
 off the frame's coding (`ArgumentFrame.argumentRole`), never stored. The interpretations of an
 implicit argument are Fillmore's and Bruening's, with Levin's understood-object alternations.
 Complement-taking is cross-categorial, Noonan's complement-taking predicates including
-adjectives and nouns, so `ArgumentFrame` is not under `Verb`. Frame-conditioned readings
-(attitude, opacity, control) live on `Verb.Reading` (`Syntax/Category/Verb/Defs.lean`); the
+adjectives and nouns, so `ArgumentFrame` is not under `Verb`. Control is a participant of a
+diathesis (`Diathesis.controller`), frame-conditioned attitude and opacity live on `Verb.Reading`
+(`Syntax/Category/Verb/Defs.lean`), and the
 selection relation between frames and clause-typers (`Verb.Takes`) in
 `Syntax/Category/Verb/ArgumentFrame/Takes.lean`. Deal's CP-external shell inventory lives
 with its consumer in `Studies/Deal2026.lean`.
@@ -394,6 +396,11 @@ instance : Decidable fr.HasImplicit := inferInstanceAs (Decidable (∃ p ∈ _, 
 def leaveImplicit (i : ℕ) (a : Option ImplicitInterp := none) : ArgumentFrame :=
   { fr with complements := fr.complements.set i (.implicit a) }
 
+/-- The frame with a nominal object before its complements, the object of an object-control or
+causative verb before its infinitive or small clause, as in *persuade him to leave* and *make him
+leave*. -/
+def withObject : ArgumentFrame := { fr with complements := .nominal :: fr.complements }
+
 /-- The [noonan-2007] codings recorded across the frame's complements. -/
 def codings : List Complement.Coding := fr.complements.filterMap (·.coding?)
 
@@ -443,9 +450,9 @@ def finiteClause : ArgumentFrame :=
 def subjunctiveClause : ArgumentFrame :=
   ⟨some .nominal, [.clausal (coding := some .subjunctive) (types := .only .declarative)]⟩
 
-/-- Infinitival clause. The embedded-subject requirement varies by verb
-    (equi-deletion, raising, or adposition-marked overt subjects,
-    [noonan-2007] §1.3.4), so it lives on the verb's reading, not here. -/
+/-- Infinitival clause. Who the embedded subject is varies by verb (equi-deletion, raising, or
+    adposition-marked overt subjects, [noonan-2007] §1.3.4), so it lives on the verb's diathesis,
+    `Diathesis.controller`, not here. -/
 def infinitival : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .infinitive)]⟩
 
 /-- The raising frame has an infinitival clause and no external argument. -/

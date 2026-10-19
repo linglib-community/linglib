@@ -71,18 +71,17 @@ inductive EmbeddedClauseType where
   | untensedSubjunctive
   deriving DecidableEq, Repr, Fintype
 
-/-- A verb's complement frame is finite in the indicative coding and otherwise a subjunctive,
-untensed exactly when the verb's reading of the frame is controlled (§3). -/
-def EmbeddedClauseType.ofFrame (v : Verb) (fr : ArgumentFrame) : EmbeddedClauseType :=
-  if Complement.Coding.indicative ∈ fr.codings then .finite
-  else if ((v.reading? fr).bind (·.control)).isSome then .untensedSubjunctive
+/-- A verb's complement in a diathesis is finite in the indicative coding and otherwise a
+subjunctive, untensed exactly when a participant of the diathesis controls it (§3). -/
+def EmbeddedClauseType.ofDiathesis {n : ℕ} (d : Diathesis n) : EmbeddedClauseType :=
+  if Complement.Coding.indicative ∈ d.codings then .finite
+  else if d.controller.isSome then .untensedSubjunctive
   else .tensedSubjunctive
 
 /-- The fragment's controlled complements are exactly its untensed subjunctives: no finite
 complement is controlled, not even that of *kònì* 'know', which also takes an untensed one. -/
-theorem control_iff_untensed : ∀ v ∈ verbs, ∀ fr ∈ v.valency.frames,
-    ((v.reading? fr).bind (·.control)).isSome ↔
-      EmbeddedClauseType.ofFrame v fr = .untensedSubjunctive := by
+theorem control_iff_untensed : ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses,
+    d.controller.isSome ↔ EmbeddedClauseType.ofDiathesis d = .untensedSubjunctive := by
   decide
 
 /-! ### The rows -/
@@ -102,7 +101,7 @@ def verbOf (row : Datum) : Option Verb :=
 /-- The rows agree with the predicate lists (27): each row's clause type is one its matrix verb
 takes in the fragment. -/
 theorem clauseTypeOf_mem_verbOf : ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row,
-    ∃ v ∈ verbOf row, ∃ fr ∈ v.valency.frames, EmbeddedClauseType.ofFrame v fr = c := by
+    ∃ v ∈ verbOf row, ∃ d ∈ v.valency.diatheses, EmbeddedClauseType.ofDiathesis d = c := by
   decide +kernel
 
 /-- A row records reading `r` with judgment `j`. -/
@@ -141,23 +140,23 @@ def Restructures (c : EmbeddedClauseType) : Prop :=
 instance (c : EmbeddedClauseType) : Decidable (Restructures c) := by
   unfold Restructures; infer_instance
 
-/-- The TAM column of (26): only finite clauses take every aspect. -/
+/-- By the TAM column of (26), only finite clauses take every aspect. -/
 theorem unrestrictedTAM_iff (c : EmbeddedClauseType) : UnrestrictedTAM c ↔ c = .finite := by
   cases c <;> decide +kernel
 
-/-- The tense column: only untensed subjunctives lack a tense of their own. -/
+/-- By the tense column, only untensed subjunctives lack a tense of their own. -/
 theorem independentTense_iff (c : EmbeddedClauseType) :
     IndependentTense c ↔ c ≠ .untensedSubjunctive := by
   cases c <;> decide +kernel
 
 /-- The restructuring column holds of the rows except under *kòni* 'want', out of whose tensed
-subjunctive a quantifier fronts (fn. 8): the rows make tensed subjunctives restructure too. -/
+subjunctive a quantifier fronts (fn. 8), so the rows make tensed subjunctives restructure too. -/
 theorem restructures_iff (c : EmbeddedClauseType) : Restructures c ↔ c ≠ .finite := by
   cases c <;> decide +kernel
 
-/-- The restructuring column with its exception: a quantifier fronts out of an embedded clause
-exactly when the clause is an untensed subjunctive or the verb is *kòni* 'want' ((20), (22),
-(24), (109)). -/
+/-- With its exception, the restructuring column says that a quantifier fronts out of an
+embedded clause exactly when the clause is an untensed subjunctive or the verb is *kòni* 'want'
+((20), (22), (24), (109)). -/
 theorem frontingOut_iff : ∀ row ∈ Examples.all, row.feature? "fronting" = some "out" →
     (row.judgment = .acceptable ↔
       clauseTypeOf row = some .untensedSubjunctive ∨ row.feature? "verb" = some "kòni") := by
@@ -165,7 +164,7 @@ theorem frontingOut_iff : ∀ row ∈ Examples.all, row.feature? "fronting" = so
 
 /-! ### Obligatory control (§4) -/
 
-/-- The control diagnostic an acceptable reading of a row attests: a free reading of the
+/-- The control diagnostic an acceptable reading of a row attests, a free reading of the
 embedded subject, a strict reading under ellipsis, or a non-c-commanding antecedent. The paper
 tests neither long-distance antecedents nor readings under *only*. -/
 def attests (row : Datum) : Diagnostic → Prop
@@ -193,7 +192,7 @@ theorem attested_eq_empty_iff (c : EmbeddedClauseType) :
   rw [Set.eq_empty_iff_forall_notMem]
   cases c <;> decide +kernel
 
-/-- The control profile of a clause type in [landau-2013]'s signature: the clauses no attested
+/-- The control profile of a clause type in [landau-2013]'s signature, the clauses no attested
 diagnostic refutes. -/
 def smpmProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
   ofAttested (attested c)
@@ -211,7 +210,7 @@ theorem partialControl_rows : ∀ row ∈ Examples.all,
 
 /-! ### Landau's scale -/
 
-/-- The clause types on the finiteness scale of [landau-2004]: untensed subjunctives are
+/-- The clause types on the finiteness scale of [landau-2004], untensed subjunctives being
 C-subjunctives and tensed ones F-subjunctives (§3). -/
 def landauToSMPM : ClauseClass → EmbeddedClauseType
   | .cSubjunctive => .untensedSubjunctive
@@ -243,7 +242,7 @@ theorem exemptAnaphor_rows : ∀ row ∈ Examples.all,
       (row.judgment = .acceptable ↔ clauseTypeOf row = some .untensedSubjunctive) := by
   decide +kernel
 
-/-- The occupants of the configurations (86) and (87): a quantified controller and the overt
+/-- The occupants of the configurations (86) and (87), a quantified controller and the overt
 controlled clitic that antecedes an exempt anaphor. -/
 inductive Ex86Item where
   | quantifierDP
@@ -265,41 +264,41 @@ theorem smpm_refutes_movement : ¬ IsExhaustive ex86Occupant ex86Dependency :=
 
 /-! ### Minimal pronoun inventories (§7) -/
 
-/-- English (94): a null item for controlled subjects, a reflexive for local binding, and the
-pronoun elsewhere. -/
+/-- The English inventory (94), with a null item for controlled subjects, a reflexive for local
+binding, and the pronoun elsewhere. -/
 def englishInventory : Vocabulary Form where
   items := [{.controlledSubject} ⟷ .null, {.locallyBound} ⟷ .reflexive]
   elsewhere := .pronoun
 
-/-- Haitian Creole (96): a null item for controlled subjects and no reflexive item, reflexives
-surfacing as pronouns ([dechaine-manfredi-1994]). -/
+/-- The Haitian Creole inventory (96), with a null item for controlled subjects and no reflexive
+item, reflexives surfacing as pronouns ([dechaine-manfredi-1994]). -/
 def haitianInventory : Vocabulary Form where
   items := [{.controlledSubject} ⟷ .null]
   elsewhere := .pronoun
 
-/-- SMPM (98): a reflexive item, *mí* with a clitic, and no null item. -/
+/-- The SMPM inventory (98), with a reflexive item, *mí* with a clitic, and no null item. -/
 def smpmInventory : Vocabulary Form where
   items := [{.locallyBound} ⟷ .reflexive]
   elsewhere := .pronoun
 
-/-- Quiegolani Zapotec ([black-1994]): no context-specific item at all. -/
+/-- The Quiegolani Zapotec inventory ([black-1994]), with no context-specific item at all. -/
 def quiegolaniInventory : Vocabulary Form where
   items := []
   elsewhere := .pronoun
 
-/-- Overt PRO: no SMPM item is conditioned on the controlled subject, so it takes the
-elsewhere pronoun (98), where English's null item yields silent PRO (94a). -/
+/-- PRO is overt in SMPM, since no SMPM item is conditioned on the controlled subject, so it
+takes the elsewhere pronoun (98), where English's null item yields silent PRO (94a). -/
 theorem smpm_overt_pro :
     smpmInventory.controlForm = smpmInventory.elsewhere ∧ englishInventory.controlForm = .null :=
   ⟨Vocabulary.realize_eq_elsewhere (by decide), rfl⟩
 
-/-- The analysis in general form: with the pronoun as its elsewhere form, a language has silent
-PRO only through a null item for controlled subjects, which SMPM lacks. -/
+/-- In general form, with the pronoun as its elsewhere form a language has silent PRO only
+through a null item for controlled subjects, which SMPM lacks. -/
 theorem smpm_no_null_item : ∀ i ∈ smpmInventory.items, i.exponent ≠ .null := by decide
 
-/-- The syncretism table (92), each row derived from its inventory: the contexts in which the
-bound form is the referential pronoun's, whose own column is the elsewhere form itself. The four
-languages occupy four distinct cells. -/
+/-- In the syncretism table (92), each row derived from its inventory, a cell is a context in
+which the bound form is the referential pronoun's, whose own column is the elsewhere form itself.
+The four languages occupy four distinct cells. -/
 theorem syncretism_typology :
     englishInventory.syncretic = {.boundVariable} ∧
       quiegolaniInventory.syncretic = Finset.univ ∧
@@ -310,7 +309,7 @@ theorem syncretism_typology :
 /-! ### Copy control (§5) -/
 
 /-- The four types of copy control, an overt element in the controlled position
-([polinsky-potsdam-2006]): a full copy of the controller, or a pronoun that is overt in
+([polinsky-potsdam-2006]), a full copy of the controller, or a pronoun that is overt in
 attitude reports only, under scope-taking operators only, or unconditionally. -/
 inductive CopyControlType where
   /-- San Lucas Quiaviní Zapotec, Copala Triqui. -/
@@ -323,8 +322,8 @@ inductive CopyControlType where
   | obligatoryPronominal
   deriving DecidableEq
 
-/-- SMPM's type: the controlled subject is a pronoun rather than a full copy (57), it is overt
-outside attitude reports, and it cannot bear focus, so the scope-sensitive alternation with
+/-- SMPM's type, whose controlled subject is a pronoun rather than a full copy (57), overt
+outside attitude reports, and unable to bear focus, so the scope-sensitive alternation with
 null PRO is unavailable. -/
 def smpmCopyControlType : CopyControlType := .obligatoryPronominal
 

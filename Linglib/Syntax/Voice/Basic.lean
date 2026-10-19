@@ -457,7 +457,7 @@ variable {v}
 def refl (fr : ArgumentFrame) : Voice := of fr fr (fr.slots.map some)
 
 theorem derived_refl (fr : ArgumentFrame) : (refl fr).derived = (refl fr).initial := by
-  simp only [refl, of, Diathesis.mk.injEq, true_and]
+  simp only [refl, of, Diathesis.mk.injEq, true_and, and_true]
   ext m hm
   simp only [List.length_map] at hm
   simp [List.getElem?_eq_getElem hm]

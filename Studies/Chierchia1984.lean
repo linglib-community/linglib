@@ -19,8 +19,10 @@ configuration. Visser's and Bach's generalizations follow: a subject-control ver
 passivize and an object-control verb cannot detransitivize, since either alternation removes
 the argument the postulate needs. The control classes of chapter IV are cut by whether the
 postulate applies and whether the controller must be expressed. The theorems derive the
-controller's having the property from the postulate, the blocking of each valency alternation
-from which argument controls, and check the Fragment's control verbs against both.
+controller's having the property from the postulate, and, in the Fragment, which alternations
+it blocks from what the voice does to the controlling participant of the verb's diathesis: the
+passive exactly when the controller is the subject, the antipassive exactly when it is the
+object.
 
 ## Implementation notes
 
@@ -61,8 +63,8 @@ abbrev SubjectControlVerb (E W : Type*) := ControlVerb E W E
 /-- An object-control verb controls the first of its object and subject. -/
 abbrev ObjectControlVerb (E W : Type*) := ControlVerb E W (E × E)
 
-/-- A control verb from a modal base and an ordering source, [kratzer-1991]'s form of the
-background: the controller has the property throughout the best accessible worlds. -/
+/-- The control verb of a modal base and an ordering source, [kratzer-1991]'s form of the
+background, whose controller has the property throughout the best accessible worlds. -/
 def ControlVerb.ofKratzer (base ordering : Background W)
     (controller : Args → E) : ControlVerb E W Args where
   sem P args w := necessity base ordering (P (controller args)) w
@@ -84,16 +86,16 @@ theorem ControlVerb.controller_has_self (hrefl : ∀ args w, w ∈ v.accessible 
 
 /-! ### Visser's and Bach's generalizations (chapter IV) -/
 
-/-- Visser's generalization: a faithful passive of a subject-control verb, one whose truth
-witnesses a truth of the active, can only guarantee that some entity has the property in the
-selected situations; the argument the postulate would name is gone. -/
+/-- Visser's generalization says that a faithful passive of a subject-control verb, one whose
+truth witnesses a truth of the active, can only guarantee that some entity has the property in
+the selected situations, since the argument the postulate would name is gone. -/
 theorem visser (v : SubjectControlVerb E W) (pass : (E → W → Prop) → W → Prop)
     (faithful : ∀ P w, pass P w → ∃ x, v.sem P x w) {P : E → W → Prop} {w : W}
     (h : pass P w) : ∃ x, ∀ w' ∈ v.accessible x w, P (v.controller x) w' :=
   let ⟨x, hx⟩ := faithful P w h
   ⟨x, v.controller_has hx⟩
 
-/-- Bach's generalization: the same for a faithful detransitive of an object-control verb. -/
+/-- Bach's generalization says the same of a faithful detransitive of an object-control verb. -/
 theorem bach (v : ObjectControlVerb E W) (detrans : (E → W → Prop) → E → W → Prop)
     (faithful : ∀ P y w, detrans P y w → ∃ args, v.sem P args w) {P : E → W → Prop} {y : E}
     {w : W} (h : detrans P y w) : ∃ args, ∀ w' ∈ v.accessible args w, P (v.controller args) w' :=
@@ -102,7 +104,7 @@ theorem bach (v : ObjectControlVerb E W) (detrans : (E → W → Prop) → E →
 
 /-! ### Control classes (chapter IV, section 1) -/
 
-/-- The three control classes: obligatory control, where the Control Principle fixes a
+/-- The three control classes are obligatory control, where the Control Principle fixes a
 controller that must be expressed, *try* and *persuade* alike; semi-obligatory control, where
 the controller may stay implicit, *decide*, *recommend*; and prominence control, where discourse
 rather than the postulate fixes it, *bother*, *be dangerous*. -/
@@ -123,54 +125,30 @@ instance : DecidablePred ControlClass.HasControlPrinciple
   | .semiObligatory => inferInstanceAs (Decidable True)
   | .prominence => inferInstanceAs (Decidable False)
 
-/-- The class of a Fragment verb: every verb the Fragment marks for control has a fixed
-controller and is obligatory control, the Fragment recording neither an implicit controller nor
-the prominence verbs. -/
+/-- The class of a Fragment verb, obligatory control for every verb with a controller, the
+Fragment recording neither an implicit controller nor the prominence verbs. -/
 def ControlClass.ofVerb (v : Verb) : Option ControlClass :=
-  if v.controlType = .none ∧ v.altControlType = .none then none else some .obligatory
+  if v.HasController then some .obligatory else none
 
 /-! ### Which alternations the postulate blocks -/
 
 open Voice
 
-/-- The argument the postulate needs: the agent-like term of a subject-control verb, the
-patient-like term of an object-control verb, none for raising. -/
-def controllerRole : ControlType → Option TermRole
-  | .subjectControl => some .A
-  | .objectControl => some .P
-  | .raising => none
-  | .none => none
+variable {n : ℕ}
 
-/-- The Control Principle blocks a valency alternation that removes the controller from
-core-term status. -/
-def Blocks (ct : ControlType) (va : Voice) : Prop :=
-  ∃ role ∈ controllerRole ct, (va.fateOfRole role).RemovesFromCoreStatus
+/-- The Control Principle blocks a voice on a diathesis's frame that removes the controlling
+participant from core-term status, since the argument the postulate needs is then gone. -/
+def Blocks (d : Diathesis n) (va : Voice) : Prop :=
+  ∃ c ∈ d.controller, ∃ s ∈ d.links.get c, (va.fate s).RemovesFromCoreStatus
 
-instance (ct : ControlType) (va : Voice) : Decidable (Blocks ct va) :=
+instance (d : Diathesis n) (va : Voice) : Decidable (Blocks d va) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- A control type passivizes when the postulate does not block passivization. -/
-def Passivizable (ct : ControlType) : Prop := ¬ Blocks ct passive
+/-- A diathesis passivizes when the postulate does not block the passive of its frame. -/
+def Passivizable (d : Diathesis n) : Prop := ¬ Blocks d (passive d.toArgumentFrame)
 
-instance : DecidablePred Passivizable := λ ct => inferInstanceAs (Decidable (¬ Blocks ct _))
-
-/-- Visser's generalization at the level of alternations: passivization demotes the agent-like
-term, which subject control needs. -/
-theorem subjectControl_blocks_passive : Blocks .subjectControl passive := by decide
-
-/-- Passivization keeps the patient-like term, so object control survives it. -/
-theorem objectControl_passivizable : Passivizable .objectControl := by decide
-
-/-- Bach's generalization at the level of alternations: antipassivization demotes the
-patient-like term, which object control needs. -/
-theorem objectControl_blocks_antipassive : Blocks .objectControl antipassive := by
-  decide
-
-/-- Antipassivization keeps the agent-like term, so subject control survives it, *promise to
-come* beside *promise Bill to come*. -/
-theorem subjectControl_not_blocks_antipassive :
-    ¬ Blocks .subjectControl antipassive := by
-  decide
+instance (d : Diathesis n) : Decidable (Passivizable d) :=
+  inferInstanceAs (Decidable (¬ Blocks d _))
 
 /-! ### The Fragment's control verbs -/
 
@@ -179,26 +157,40 @@ section Fragment
 open English
 open English.Verbs hiding Verb
 
-/-- Every control verb of the Fragment, the attitude verbs *want*, *hope* and *promise* included,
-is a control verb in the dissertation's sense, with a fixed controller whether subject or
-object. -/
-theorem fragment_control_verbs :
-    ∀ v ∈ [try_.toVerb, manage.toVerb, begin_.toVerb, stop.toVerb, continue_.toVerb, fail.toVerb,
-      persuade.toVerb, force.toVerb, want.toVerb, hope.toVerb, promise.toVerb],
-      v.controlType ≠ .none ∨ v.altControlType ≠ .none := by
-  intro v hv
-  fin_cases hv <;> decide
+/-- The control verbs of the Fragment, the attitude verbs *want*, *hope* and *promise* included. -/
+def controlVerbs : List Verb :=
+  [try_.toVerb, manage.toVerb, begin_.toVerb, stop.toVerb, continue_.toVerb, fail.toVerb,
+    persuade.toVerb, force.toVerb, want.toVerb, hope.toVerb, promise.toVerb]
 
-/-- At each Fragment control verb the passivizability the postulate derives agrees with the
-stored flag: subject control blocks passivization and object control does not. -/
+/-- Every control verb of the Fragment is a control verb in the dissertation's sense, with a
+participant controlling its complement. -/
+theorem fragment_control_verbs : ∀ v ∈ controlVerbs, v.HasController := by
+  decide
+
+/-- Visser's generalization holds in the Fragment. The passive of a diathesis's frame blocks
+exactly when its controller is the subject, as for *try* and *promise Bill to come*, and not when
+it is the object, as for *persuade* and *force*. -/
+theorem blocks_passive_iff : ∀ v ∈ controlVerbs, ∀ d ∈ v.valency.diatheses,
+    Blocks d (passive d.toArgumentFrame) ↔
+      d.controllerRole = some .S ∨ d.controllerRole = some .A := by
+  decide
+
+/-- Bach's generalization holds in the Fragment. The antipassive blocks exactly when the
+controller is the object, so *promise to come* stands beside *promise Bill to come*, and
+*persuade to come* does not. -/
+theorem blocks_antipassive_iff : ∀ v ∈ controlVerbs, ∀ d ∈ v.valency.diatheses,
+    Blocks d antipassive ↔ d.controllerRole = some .P := by
+  decide
+
+/-- At the Fragment's control verbs with one diathesis, the passivizability the postulate
+derives agrees with the stored flag. -/
 theorem passivizable_iff :
-    ∀ v ∈ [try_.toVerb, persuade.toVerb, force.toVerb],
-      Passivizable v.controlType ↔ v.passivizable = true := by
-  intro v hv
-  fin_cases hv <;> decide
+    ∀ v ∈ [try_.toVerb, persuade.toVerb, force.toVerb], ∀ d ∈ v.valency.basic?,
+      Passivizable d ↔ v.passivizable = true := by
+  decide
 
-/-- The semantic type of a clausal complement: a finite clause denotes a proposition and a
-nonfinite one a property, the type distinction of chapter I. -/
+/-- The semantic type of a clausal complement, a proposition for a finite clause and a property
+for a nonfinite one, the type distinction of chapter I. -/
 def complementTy (fr : ArgumentFrame) : Option Montague.Ty :=
   if fr.HasClausal then some (if fr.HasFinite then .t else .et) else none
 
@@ -207,9 +199,8 @@ clause denoting a proposition. -/
 theorem control_complements_property :
     (∀ v ∈ [try_.toVerb, want.toVerb], v.valency.frames.head?.bind complementTy = some .et) ∧
       believe.toVerb.valency.frames.head?.bind complementTy = some .t ∧
-      believe.toVerb.controlType = .none := by
-  refine ⟨fun v hv ↦ ?_, by decide, rfl⟩
-  fin_cases hv <;> decide
+      ¬ believe.toVerb.HasController := by
+  decide
 
 end Fragment
 

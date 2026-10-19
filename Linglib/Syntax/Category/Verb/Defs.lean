@@ -27,8 +27,9 @@ public import Linglib.Morphology.Morph
 grouped into the facets `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition` and
 `Verb.Attitude`, beside the selectional and inflectional enums `VoiceType`,
 `Verb.PerfectAuxiliary` and `SenseTag`.
-A verb's valency is its participants and their diatheses, and a frame-conditioned attitude,
-opacity or control lives on a `Verb.Reading` row. The classifications of an entry, factive,
+A verb's valency is its participants and their diatheses, each with the participant that
+controls its clausal complement, and a frame-conditioned attitude or opacity lives on a
+`Verb.Reading` row. The classifications of an entry, factive,
 implicative, trigger and so on, are read off these fields in `Syntax/Category/Verb/Basic.lean`.
 
 ## Implementation notes
@@ -175,7 +176,7 @@ structure Presupposition where
 
 /-- A frame-conditioned reading of a verb ([bondarenko-2022] §4.4.3 *hanaxa*; Greek
     *thimame*) overrides the lexeme-level attitude and opacity for its frame (`none` inherits
-    `Verb.attitude` and `Verb.opaqueContext`) and records the frame's control type. -/
+    `Verb.attitude` and `Verb.opaqueContext`) and records the sort of the frame's complement. -/
 structure Reading where
   /-- The reading applies to every frame of the verb refining this one, in the refinement order
       on `ArgumentFrame`. -/
@@ -184,8 +185,6 @@ structure Reading where
   attitude : Option _root_.Attitude := none
   /-- Frame-conditioned opacity override. -/
   opaqueContext : Option Bool := none
-  /-- Control type for this frame. -/
-  control : Option ControlType := none
   /-- The semantic sort of the complement on this frame
       ([wurmbrand-lohninger-2023]). -/
   size : Option Clause.Size := none
@@ -199,7 +198,7 @@ structure Attitude where
   /-- The attitude the verb expresses, doxastic or preferential, if it is an attitude verb. -/
   attitude : Option _root_.Attitude := none
   /-- The frame-conditioned readings ([bondarenko-2022] §4.4.3), per-frame attitude and opacity
-      overrides and control keyed to the frames of `valency`. -/
+      overrides keyed to the frames of `valency`. -/
   readings : List Reading := []
   /-- Entailment signature of the complement position.
       Classifies this verb's monotonicity w.r.t. its clausal complement.
@@ -256,9 +255,8 @@ def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
 
 /-! ### ArgumentFrame accessors
 
-Readers over the frames of `Verb.valency` and over `Verb.readings`: the basic diathesis's
-control type and the alternate frame's, when present, and the entailment profiles of the basic
-diathesis's subject and object. -/
+Readers over the frames of `Verb.valency` and over `Verb.readings`: whether some diathesis has a
+controller, and the entailment profiles of the basic diathesis's subject and object. -/
 
 /-- The entailment profile the entry records for the subject of its basic diathesis. -/
 def Verb.subjectEntailments (v : Verb) : Option EntailmentProfile :=
@@ -279,13 +277,11 @@ def Verb.IsIntransitive (v : Verb) : Prop := ∀ fr ∈ v.valency.frames, fr.IsI
 instance (v : Verb) : Decidable v.IsIntransitive :=
   inferInstanceAs (Decidable (∀ fr ∈ v.valency.frames, _))
 
-/-- The control type of the reading keyed to the basic frame. -/
-def Verb.controlType (v : Verb) : ControlType :=
-  (v.valency.basic?.bind fun d ↦ (v.reading? d.toArgumentFrame).bind (·.control)).getD .none
+/-- Some diathesis of the verb has a participant controlling its clausal complement. -/
+def Verb.HasController (v : Verb) : Prop := ∃ d ∈ v.valency.diatheses, d.controller.isSome
 
-/-- The control type of the reading keyed to the alternate frame. -/
-def Verb.altControlType (v : Verb) : ControlType :=
-  (v.valency.frames[1]?.bind fun fr ↦ (v.reading? fr).bind (·.control)).getD .none
+instance (v : Verb) : Decidable v.HasController :=
+  inferInstanceAs (Decidable (∃ d ∈ v.valency.diatheses, _))
 
 /-- The effective attitude on frame `fr` is the reading's override, else the lexeme's
     default. -/

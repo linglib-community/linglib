@@ -4,45 +4,29 @@ public import Mathlib.Order.Basic
 public import Mathlib.Data.Nat.Basic
 
 /-!
-# Complementation — Noonan typology and control
+# Complementation
 
-[noonan-2007]
+Noonan's cross-linguistic typology of complementation: the six morphological codings of a
+complement clause (`Complement.Coding`, in the row order of his summary table), and twelve of his
+fourteen classes of complement-taking predicate (`Complement.PredicateClass`) with their default
+reality status. The argument frames that select complements are in
+`Syntax/Category/Verb/ArgumentFrame/Basic.lean`, and control, the participant a diathesis
+identifies with the subject of its clausal complement, is `Diathesis.controller`.
+`Data/Complementation/Schema.lean` types its rows with these enums, the one deliberate
+theory-layer import in `Data/`.
 
-The cross-linguistic complementation typology: [noonan-2007]'s six
-morphological complement codings (`Complement.Coding`, in his summary
-table's row order via `rank`) and twelve of his fourteen
-complement-taking-predicate classes (`Complement.PredicateClass`) with their default
-reality status (`RealityStatus`, `Complement.PredicateClass.realityStatus`), plus the control
-enum for infinitival complements (`ControlType`).
+## Main definitions
 
-The argument frames live in
-`Syntax/Category/Verb/ArgumentFrame/Basic.lean`; the verb–complementizer
-compatibility relation in `Syntax/Category/Verb/ArgumentFrame/Takes.lean`.
-`Data/Complementation/Schema.lean` types its rows with these enums —
-the one deliberate theory-layer import in `Data/`, carrying descriptive
-typological vocabulary rather than analytical commitments.
+* `Complement.Coding`, `Complement.Coding.rank`: the complement codings and their table order.
+* `Complement.PredicateClass`, `RealityStatus`, `Complement.PredicateClass.realityStatus`: the
+  predicate classes and their realis or irrealis defaults.
 
-## Main declarations
+## References
 
-* `Complement.Coding` + `isReduced` + `rank` — [noonan-2007]'s complement
-  types, classified by the morphological coding of the complement clause
-* `Complement.PredicateClass`, `RealityStatus`, `Complement.PredicateClass.realityStatus` —
-  [noonan-2007]'s predicate classification and realis/irrealis defaults
-* `ControlType` — subject/object control vs raising for infinitival
-  complements
+* [noonan-2007]
 -/
 
 @[expose] public section
-
-/--
-Control type for verbs with infinitival complements.
--/
-inductive ControlType where
-  | subjectControl  -- "John tried to leave" (John = leaver)
-  | objectControl   -- "John persuaded Mary to leave" (Mary = leaver)
-  | raising         -- "John seems to be happy" (no theta role for matrix subject)
-  | none            -- Not applicable
-  deriving DecidableEq, Repr
 
 /-! ### Noonan complement typology -/
 

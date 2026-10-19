@@ -58,8 +58,7 @@ and asserts only the subject's capacity for it, a stative that perfective aspect
 instance of the action (Proposal (7.10), §7.2). -/
 def able : ClauseEmbeddingAdjective where
   form := "able"
-  frames := [ArgumentFrame.infinitival]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   implicative := ⟨⊥, .some .negative⟩
 
 /-- *be annoyed (that p)*. -/

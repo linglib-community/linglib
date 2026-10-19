@@ -31,14 +31,12 @@ open ArgumentStructure
 /-- *wus-ke ha-ta* 'cause to smile', the periphrastic causative. -/
 def wus_ke_ha : Verb where
   morphs := [.root "wus", .suff "ke", .root "ha", .suff "ta"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
 
 /-- *ilk-ke ha-ta* 'cause to read', the periphrastic causative. -/
 def ilk_ke_ha : Verb where
   morphs := [.root "ilk", .suff "ke", .root "ha", .suff "ta"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
 
 /-- *cwuk-i-ta* 'kill', the morphological causative of *cwuk-ta* 'die'. -/
 def cwuk_i : Verb where
