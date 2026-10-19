@@ -18,6 +18,7 @@ The page is self-contained: the data is embedded in the HTML, so the file opens 
 """
 
 import argparse
+import csv
 import html
 import json
 import os
@@ -141,7 +142,13 @@ def spec(paper):
 
 def level_label(ctor):
     """The printed label of a constructor of a data type, `Paper.Type.level`, as the paper's data
-    file gives it, and otherwise its words."""
+    file gives it; a triple's language and forms; a root pattern in capitals (`AAB`); and
+    otherwise its words."""
+    triple = root_classes(ctor)
+    if triple:
+        return f"{triple['language']} {', '.join(triple['forms'])}"
+    if re.fullmatch(r"[abc]{3}", ctor.split(".")[-1]):
+        return ctor.split(".")[-1].upper()
     parts = ctor.split(".")
     if len(parts) >= 3 and spec(parts[-3]):
         for t in spec(parts[-3])["types"]:
@@ -160,12 +167,50 @@ def doc_href(decl, base):
 
 
 def tree_label(t):
-    """An outcome as a reduced constructor tree: `none` is no observation."""
+    """An outcome as a reduced constructor tree: `none` is no observation, and a truth value is
+    yes or no."""
     if t == "none":
         return None
     if isinstance(t, dict):
         return " ".join(str(tree_label(a)) for a in t["args"])
-    return str(t)
+    return {"true": "yes", "false": "no"}.get(t, str(t))
+
+
+_languages = {}
+
+
+def language_name(glottocode):
+    """A language's name, the shortest WALS gives its Glottolog code, or the code itself."""
+    if not _languages:
+        with open(ROOT / "Linglib" / "Data" / "WALS" / "raw" / "languages.csv",
+                  encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                g = row["Glottocode"]
+                if g and (g not in _languages or len(row["Name"]) < len(_languages[g])):
+                    _languages[g] = row["Name"]
+    return _languages.get(glottocode, glottocode)
+
+
+def root_classes(ident):
+    """The forms and root classes of a triple, when a cell names a row of a paper's
+    `Data/Forms` file (`Paper.Forms.row.roots`)."""
+    parts = ident.split(".")
+    if "Forms" not in parts[:-1]:
+        return None
+    i = parts.index("Forms")
+    f = ROOT / "Linglib" / "Data" / "Forms" / f"{parts[i - 1]}.json"
+    if i == 0 or not f.exists():
+        return None
+    d = json.loads(f.read_text(encoding="utf-8"))
+    row = next((r for r in d["RootClassTable"] if r["ID"] == parts[i + 1]), None)
+    if not row:
+        return None
+    lexeme = next(x for x in d["LexemeTable"] if x["ID"] == row["Lexeme_ID"])
+    forms = {x["ID"]: x for x in d["FormTable"]}
+    cells = [forms[i]["Cell"] for i in row["Form_IDs"]]
+    return {"language": language_name(lexeme["Language_ID"]),
+            "forms": [forms[i]["Form"] for i in row["Form_IDs"]],
+            "classes": "".join(row["Classes"][c] for c in cells)}
 
 
 def build(export, base):
@@ -209,8 +254,13 @@ def build(export, base):
         for c in cell_list:
             obs = observed.get((X, c))
             for v in variant_list or [None]:
+                seen = tree_label(obs["observed"]) if obs else None
+                # A recorded triple's observation is its root classes.
+                triple = root_classes(c[0]) if len(c) == 1 else None
+                if triple and seen == "yes":
+                    seen = triple["classes"]
                 col = {"key": "|".join(c) + "#" + (v or ""), "cell": [level_label(x) for x in c],
-                       "observed": tree_label(obs["observed"]) if obs else None,
+                       "observed": seen,
                        "observedTheorem": decl(obs["theorem"]) if obs else None}
                 if v:
                     st = stipulations.get(v)

@@ -27,10 +27,11 @@ stipulations (`bobaljik`).
 
 Triple by triple (`triples`), a theory is right on an observed triple it fits and wrong on one it
 does not. Under the naive parse both containment theories are wrong on the Basque doublet and on
-the Bulgarian and Armenian quantifiers (`wrong_naive_elsewhere`, `wrong_naive_grounded`). Bobaljik's
+the Bulgarian and Armenian quantifiers (`wrong_naive_elsewhere`, `wrong_naive_grounded`,
+`verdict_naive`). Bobaljik's
 parse changes nothing off its stipulations (`verdict_bobaljik_of_notMem`) and makes both
 quantifiers right (`verdict_bobaljik_stipulated`), leaving the Basque doublet, which the book leaves
-open. Every theory is silent on the contested Karelian triple alone (`contested_ids`,
+open (`verdict_bobaljik`). Every theory is silent on the contested Karelian triple alone (`contested_ids`,
 `verdict_eq_silent_iff`), and the theory without containment, reading every triple as synthetic,
 is never wrong (`verdict_free_naive_ne_wrong`). Pattern by pattern (`patterns`), the linking
 hypothesis is asymmetric: a theory predicts that no observed triple shows a pattern it cannot
@@ -124,12 +125,16 @@ def bobaljik : TripleParser :=
 
 theorem stipulations_naive : naive.stipulations = ∅ := Parser.stipulations_ofRule _
 
+/-- Bobaljik's parse stipulates the Bulgarian and the Armenian 'many'. -/
+theorem stipulations_bobaljik : bobaljik.stipulations = {bul_many.roots, hye_many.roots} := by
+  decide +kernel
+
 theorem card_stipulations_bobaljik : bobaljik.stipulations.card = 2 := by
   decide +kernel
 
 /-! ### Triple by triple -/
 
-/-- Each triple scored by whether a theory, under its parse, fits it. -/
+/-- Each triple of [bobaljik-2012] scored by whether a theory, under its parse, fits it. -/
 def triples : Experiment (Theory × TripleParser) (RootClasses Cell) Bool where
   observed r := if Contested r then none else some true
   predicted Tπ r := (Tπ.2.parse rootPattern r).map fun e ↦ decide (Tπ.1.Fits e (rootPattern r))
@@ -166,6 +171,42 @@ theorem verdict_bobaljik_stipulated (T : Theory) :
 theorem contested_ids : (rootClasses.filter Contested).map (·.id) = [krl_many.roots.id] := by
   decide +kernel
 
+/-- The Basque doublet and the Bulgarian and Armenian quantifiers are observed, and the contested
+Karelian triple is not. -/
+theorem triples_observed :
+    triples.observed eus_good_on.roots = some true ∧ triples.observed bul_many.roots = some true ∧
+      triples.observed hye_many.roots = some true ∧ triples.observed krl_many.roots = none := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide +kernel
+
+/-- Read as synthetic, the Basque doublet and the Bulgarian and Armenian quantifiers refute both
+containment theories and fit the theory without containment, and no theory is scored on the
+contested Karelian triple. -/
+theorem verdict_naive :
+    triples.verdict (.elsewhere, naive) eus_good_on.roots = .wrong ∧
+      triples.verdict (.grounded, naive) eus_good_on.roots = .wrong ∧
+      triples.verdict (.free, naive) eus_good_on.roots = .correct ∧
+      triples.verdict (.elsewhere, naive) bul_many.roots = .wrong ∧
+      triples.verdict (.grounded, naive) bul_many.roots = .wrong ∧
+      triples.verdict (.free, naive) bul_many.roots = .correct ∧
+      triples.verdict (.elsewhere, naive) hye_many.roots = .wrong ∧
+      triples.verdict (.grounded, naive) hye_many.roots = .wrong ∧
+      triples.verdict (.free, naive) hye_many.roots = .correct ∧
+      triples.verdict (.elsewhere, naive) krl_many.roots = .silent ∧
+      triples.verdict (.grounded, naive) krl_many.roots = .silent ∧
+      triples.verdict (.free, naive) krl_many.roots = .silent := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
+
+/-- Under Bobaljik's parse the Basque doublet still refutes both containment theories and fits the
+theory without containment, and no theory is scored on the Karelian triple. -/
+theorem verdict_bobaljik :
+    triples.verdict (.elsewhere, bobaljik) eus_good_on.roots = .wrong ∧
+      triples.verdict (.grounded, bobaljik) eus_good_on.roots = .wrong ∧
+      triples.verdict (.free, bobaljik) eus_good_on.roots = .correct ∧
+      triples.verdict (.elsewhere, bobaljik) krl_many.roots = .silent ∧
+      triples.verdict (.grounded, bobaljik) krl_many.roots = .silent ∧
+      triples.verdict (.free, bobaljik) krl_many.roots = .silent := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
+
 /-- Under a parse whose rule covers every triple, a theory is silent exactly on the contested
 triples. -/
 theorem verdict_eq_silent_iff {T : Theory} {π : TripleParser} (hπ : ∀ p, π.rule p = some id)
@@ -194,21 +235,30 @@ theorem verdict_free_naive_ne_wrong (r : RootClasses Cell) :
 
 /-! ### Pattern by pattern -/
 
-/-- Each root pattern scored by whether an observed triple shows it, with the asymmetric linking
-hypothesis: a theory predicts the absence of each pattern it cannot generate. -/
+/-- Each root pattern scored by whether an observed triple of [bobaljik-2012] shows it, with the
+asymmetric linking hypothesis: a theory predicts the absence of each pattern it cannot generate. -/
 def patterns : Experiment Theory (Paradigm 3 ℕ) Bool where
   observed c :=
     some (decide (∃ r ∈ rootClasses, ¬ Contested r ∧ Setoid.ker (rootPattern r) = Setoid.ker c))
   predicted T c := if T.Generates c then none else some false
+
+/-- No observed triple is AAB, and some is ABA on the surface. -/
+theorem patterns_observed :
+    patterns.observed Paradigm.aab = some false ∧ patterns.observed Paradigm.aba = some true := by
+  refine ⟨?_, ?_⟩ <;> decide +kernel
+
+/-- The theory without containment predicts nothing about any pattern. -/
+theorem verdict_patterns_free (c : Paradigm 3 ℕ) : patterns.verdict .free c = .silent := rfl
 
 /-- Grounded containment is right that no triple is AAB, where Elsewhere insertion predicts
 nothing; both are wrong that none is ABA; the theory without containment predicts nothing. -/
 theorem verdict_patterns :
     patterns.verdict .grounded Paradigm.aab = .correct ∧
       patterns.verdict .elsewhere Paradigm.aab = .silent ∧
+      patterns.verdict .free Paradigm.aab = .silent ∧
       patterns.verdict .grounded Paradigm.aba = .wrong ∧
       patterns.verdict .elsewhere Paradigm.aba = .wrong ∧
-      ∀ c, patterns.verdict .free c = .silent := by
-  refine ⟨by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, fun _ ↦ rfl⟩
+      patterns.verdict .free Paradigm.aba = .silent := by
+  refine ⟨?_, ?_, verdict_patterns_free _, ?_, ?_, verdict_patterns_free _⟩ <;> decide +kernel
 
 end Eval.Suppletion.Bobaljik2012

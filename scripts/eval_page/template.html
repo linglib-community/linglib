@@ -226,14 +226,16 @@ dl.theorems dd { margin: 4px 0 0; }
     for (const e of exps) h += `<th class="split" colspan="${e.columns.length}">${cite(e.cite)}<small>${esc(e.label)}</small></th>`;
     h += "</tr><tr class=\"groups\">";
     for (const e of exps) {
-      if (e.variants) { h += `<th class="split" colspan="${e.columns.length}">how the theory parses the sentences</th>`; continue; }
+      // With one cell, the parses span the experiment; with several, each cell spans its parses.
+      if (e.variants && new Set(e.columns.map((c) => c.cell.join())).size < 2) { h += `<th class="split" colspan="${e.columns.length}">how the theory parses the sentences</th>`; continue; }
       const groups = [];
       for (const c of e.columns) {
-        const g = c.cell.length > 1 ? c.cell[0] : "";
+        const g = e.variants ? c.cell.join(", ") : c.cell.length > 1 ? c.cell[0] : "";
         if (groups.length && groups[groups.length - 1].g === g) groups[groups.length - 1].n++;
         else groups.push({ g, n: 1 });
       }
-      groups.forEach((g, i) => { h += `<th colspan="${g.n}" class="${i === 0 ? "split" : ""}"><i>${esc(g.g)}</i></th>`; });
+      const label = (g) => e.variants ? esc(g) : `<i>${esc(g)}</i>`;
+      groups.forEach((g, i) => { h += `<th colspan="${g.n}" class="${i === 0 ? "split" : ""}">${label(g.g)}</th>`; });
     }
     h += "</tr><tr>";
     for (const e of exps) {
