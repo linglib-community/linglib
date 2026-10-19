@@ -29,6 +29,8 @@
 .meta { margin: 0 0 28px; font-size: 14px; color: var(--secondary); }
 .meta a { color: inherit; }
 .small { font-size: 14px; color: var(--secondary); }
+.sources { margin: 12px 0 0; }
+.sources a { color: inherit; }
 
 /* Verdict marks */
 .v {
@@ -145,6 +147,7 @@ dl.theorems dd { margin: 4px 0 0; }
   <nav class="domains" id="domains" aria-label="Domains"></nav>
 
   <div class="board-scroll" id="board-box"><table class="board" id="board"></table></div>
+  <p class="small sources" id="sources"></p>
 
   <h2 id="obs-h">Observations</h2>
   <div id="papers"></div>
@@ -469,6 +472,15 @@ dl.theorems dd { margin: 4px 0 0; }
     document.getElementById("board").innerHTML =
       board(d.experiments.map((x) => expById.get(x)), d.theories.map((t) => theoryById.get(t)));
     fit();
+    // The papers the board brings together.
+    const names = (ps) => {
+      const xs = ps.map((p) => p.href ? `<a href="${esc(p.href)}">${p.cite ? cite(p.cite) : esc(p.study)}</a>` : (p.cite ? cite(p.cite) : esc(p.study)));
+      return xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`;
+    };
+    const theories = names(d.theoryPapers), dataFrom = names(d.dataPapers);
+    document.getElementById("sources").innerHTML = theories && dataFrom
+      ? `Theories from ${theories}, on data from ${dataFrom}.`
+      : theories ? `Theories from ${theories}.` : dataFrom ? `On data from ${dataFrom}.` : "";
     const papers = papersOf(d);
     document.getElementById("papers").innerHTML = papers;
     document.getElementById("obs-h").hidden = !papers;
