@@ -159,37 +159,36 @@ noncomputable def subProb (c : StemC) : ℝ :=
 
 /-- The share is the fraction of distinguishing constraints that favour substitution. -/
 private theorem subProb_eq_rate (c : StemC) :
-    subProb c = ((favoring con c .yes .no ∩ active con c .yes .no).card : ℝ) /
-      (active con c .yes .no).card :=
+    subProb c = ((favoring con c .yes .no).card : ℝ) / (active con c .yes .no).card :=
   uniformOn_real_picksAt_discrete_binary (nsCands_two c) fun heq ↦ SubSt.noConfusion heq
 
 theorem subProb_p : subProb .p = 1/2 := by
-  rw [subProb_eq_rate, show (favoring con .p .yes .no ∩ active con .p .yes .no).card = 2 by
+  rw [subProb_eq_rate, show (favoring con .p .yes .no).card = 2 by
     decide, show (active con .p .yes .no).card = 4 by decide]
   norm_num
 
 theorem subProb_t : subProb .t = 2/5 := by
-  rw [subProb_eq_rate, show (favoring con .t .yes .no ∩ active con .t .yes .no).card = 2 by
+  rw [subProb_eq_rate, show (favoring con .t .yes .no).card = 2 by
     decide, show (active con .t .yes .no).card = 5 by decide]
   norm_num
 
 theorem subProb_k : subProb .k = 1/3 := by
-  rw [subProb_eq_rate, show (favoring con .k .yes .no ∩ active con .k .yes .no).card = 2 by
+  rw [subProb_eq_rate, show (favoring con .k .yes .no).card = 2 by
     decide, show (active con .k .yes .no).card = 6 by decide]
   norm_num
 
 theorem subProb_b : subProb .b = 1/3 := by
-  rw [subProb_eq_rate, show (favoring con .b .yes .no ∩ active con .b .yes .no).card = 1 by
+  rw [subProb_eq_rate, show (favoring con .b .yes .no).card = 1 by
     decide, show (active con .b .yes .no).card = 3 by decide]
   norm_num
 
 theorem subProb_d : subProb .d = 1/4 := by
-  rw [subProb_eq_rate, show (favoring con .d .yes .no ∩ active con .d .yes .no).card = 1 by
+  rw [subProb_eq_rate, show (favoring con .d .yes .no).card = 1 by
     decide, show (active con .d .yes .no).card = 4 by decide]
   norm_num
 
 theorem subProb_g : subProb .g = 1/5 := by
-  rw [subProb_eq_rate, show (favoring con .g .yes .no ∩ active con .g .yes .no).card = 1 by
+  rw [subProb_eq_rate, show (favoring con .g .yes .no).card = 1 by
     decide, show (active con .g .yes .no).card = 5 by decide]
   norm_num
 
@@ -217,7 +216,7 @@ theorem voicing_monotonicity :
 
 /-- If `c'` has a smaller distinguishing set than `c` and every extra constraint of `c` favours
 substitution, then substitution on `c'` entails substitution on `c`. -/
-theorem PicksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
+theorem picksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_D : active con c' .yes .no ⊆ active con c .yes .no)
     (h_Y : favoring con c' .yes .no ⊆ favoring con c .yes .no)
     (h_extra :
@@ -237,7 +236,7 @@ theorem PicksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
 /-- If `c'` has a larger distinguishing set than `c` and its substitution-favouring constraints
 all distinguish the candidates for `c`, then substitution on `c'` entails substitution on
 `c`. -/
-theorem PicksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
+theorem picksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_D : active con c .yes .no ⊆ active con c' .yes .no)
     (h_Y : favoring con c' .yes .no ⊆ favoring con c .yes .no)
     (h_subset : favoring con c' .yes .no ⊆ active con c .yes .no)
@@ -251,37 +250,37 @@ theorem PicksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
 /-- Substitution on voiced *b* entails substitution on voiceless *p*. -/
 theorem voicing_b_implies_p (σ : Equiv.Perm (Fin 6)) :
     PicksAt nsCands con σ .b .yes → PicksAt nsCands con σ .p .yes :=
-  PicksAt_extends_smaller_D (by decide) (by decide) (by decide)
+  picksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- Substitution on voiced *d* entails substitution on voiceless *t*. -/
 theorem voicing_d_implies_t (σ : Equiv.Perm (Fin 6)) :
     PicksAt nsCands con σ .d .yes → PicksAt nsCands con σ .t .yes :=
-  PicksAt_extends_smaller_D (by decide) (by decide) (by decide)
+  picksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- Substitution on voiced *g* entails substitution on voiceless *k*. -/
 theorem voicing_g_implies_k (σ : Equiv.Perm (Fin 6)) :
     PicksAt nsCands con σ .g .yes → PicksAt nsCands con σ .k .yes :=
-  PicksAt_extends_smaller_D (by decide) (by decide) (by decide)
+  picksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- Substitution on velar *k* entails substitution on coronal *t*. -/
 theorem place_k_implies_t (σ : Equiv.Perm (Fin 6)) :
     PicksAt nsCands con σ .k .yes → PicksAt nsCands con σ .t .yes :=
-  PicksAt_extends_larger_D (by decide) (by decide) (by decide)
+  picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on coronal *t* entails substitution on labial *p*. -/
 theorem place_t_implies_p (σ : Equiv.Perm (Fin 6)) :
     PicksAt nsCands con σ .t .yes → PicksAt nsCands con σ .p .yes :=
-  PicksAt_extends_larger_D (by decide) (by decide) (by decide)
+  picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on velar *g* entails substitution on coronal *d*. -/
 theorem place_g_implies_d (σ : Equiv.Perm (Fin 6)) :
     PicksAt nsCands con σ .g .yes → PicksAt nsCands con σ .d .yes :=
-  PicksAt_extends_larger_D (by decide) (by decide) (by decide)
+  picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on coronal *d* entails substitution on labial *b*. -/
 theorem place_d_implies_b (σ : Equiv.Perm (Fin 6)) :
     PicksAt nsCands con σ .d .yes → PicksAt nsCands con σ .b .yes :=
-  PicksAt_extends_larger_D (by decide) (by decide) (by decide)
+  picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on voiced velar *g* entails substitution on every stop, the top of the
 implicational hierarchy of Table 5. -/

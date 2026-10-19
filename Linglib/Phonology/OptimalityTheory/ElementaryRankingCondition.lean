@@ -4,6 +4,7 @@ public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.Basic.Sign.Basic
 public import Mathlib.Data.Fintype.Perm
+public import Linglib.Core.GroupTheory.Perm.MinOn
 
 /-!
 # Elementary ranking conditions
@@ -26,6 +27,9 @@ is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
   `ERC.linearExtensions` the permutations of `Fin n` satisfying a `Finset` of them.
   Consistency and entailment of ERC sets are `Nonempty` and `⊆` of linear-extension sets — no
   separate algebra.
+* `ERC.satisfiedBy_iff_exists_isMinOn`, `ERC.card_filter_satisfiedBy_mul_card` — a ranking
+  satisfies an ERC iff its earliest non-neutral constraint is winner-preferring, so the rankings
+  satisfying it are the fraction `|W| / |W ∪ L|` of all rankings.
 * `ercOfProfiles`, `tableauERC` — ERCs from violation vectors and winner–loser
   pairs; `satisfiedBy_ercOfProfiles_iff_le` bridges to the Core lex order, and
   `Tableau.ofRanking_mem_optimal_iff_satisfiedBy` identifies optimality with ERC satisfaction.
@@ -130,6 +134,57 @@ theorem satisfiedBy_iff_exists_dominant [NeZero n] :
 theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking ι n) :
     α.SatisfiedBy r :=
   (satisfiedBy_iff_dominance r α).mpr fun l hl => absurd hl (htriv l)
+
+/-! ### The earliest non-neutral constraint
+
+A ranking satisfies an ERC with a non-neutral constraint exactly when the earliest of its
+non-neutral constraints is winner-preferring. Every non-neutral constraint comes first equally
+often, so the rankings satisfying an ERC are the fraction `|W| / |W ∪ L|` of all rankings. -/
+
+section Earliest
+
+variable [Fintype ι] {α : ERC ι} {r : Ranking ι n}
+
+/-- A ranking satisfies an ERC with a non-neutral constraint iff its earliest non-neutral
+constraint is winner-preferring. -/
+theorem satisfiedBy_iff_exists_isMinOn (hα : ∃ k, α k ≠ .e) :
+    α.SatisfiedBy r ↔ ∃ x, α x = .W ∧ IsMinOn r.symm ↑({k | α k ≠ .e} : Finset ι) x := by
+  obtain ⟨k, hk⟩ := hα
+  rw [satisfiedBy_iff_dominance]
+  refine ⟨fun h ↦ ?_, fun ⟨x, hx, hmin⟩ c hc ↦ ⟨x, hx, ?_⟩⟩
+  · obtain ⟨x, hx, hmin⟩ := Finset.exists_min_image ({k | α k ≠ .e} : Finset ι) r.symm
+      ⟨k, by simpa using hk⟩
+    refine ⟨x, ?_, isMinOn_iff.2 hmin⟩
+    rcases h' : α x with _ | _ | _
+    · exact absurd h' (by simpa using hx)
+    · obtain ⟨w, hw, hdom⟩ := h x h'
+      exact absurd (hmin w (by simp [hw])) (not_le.2 hdom)
+    · rfl
+  · refine (isMinOn_iff.1 hmin c (by simp [hc])).lt_of_ne fun h ↦ ?_
+    obtain rfl := r.symm.injective h
+    simp [hc] at hx
+
+open Finset in
+/-- The rankings satisfying an ERC, counted against all rankings: their number times the number
+of non-neutral constraints is `n!` times the number of winner-preferring ones. -/
+theorem card_filter_satisfiedBy_mul_card (α : ERC (Fin n)) :
+    #{σ : Ranking (Fin n) n | α.SatisfiedBy σ} * #{k | α k ≠ .e} =
+      n.factorial * #{k | α k = .W} := by
+  rcases ({k | α k ≠ .e} : Finset (Fin n)).eq_empty_or_nonempty with h | ⟨k, hk⟩
+  · have hW : ({k | α k = .W} : Finset (Fin n)) = ∅ :=
+      Finset.eq_empty_of_forall_notMem fun k hk ↦ Finset.eq_empty_iff_forall_notMem.1 h k
+        (by simp_all)
+    rw [h, hW, card_empty, mul_zero, mul_zero]
+  · classical
+    have hα : ∃ k, α k ≠ .e := ⟨k, (mem_filter.1 hk).2⟩
+    have := Equiv.Perm.card_filter_isMinOn_symm_univ_mul_card
+      ({k | α k ≠ .e} : Finset (Fin n)) {k | α k = .W}
+    rw [Fintype.card_fin, Finset.inter_eq_left.2 fun k hk ↦ by simp_all] at this
+    convert this using 3
+    ext σ
+    simp [satisfiedBy_iff_exists_isMinOn hα]
+
+end Earliest
 
 end ERC
 
