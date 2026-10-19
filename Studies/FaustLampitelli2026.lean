@@ -28,6 +28,9 @@ analysis needs the element.
 * `rows_unpredicted`: the forms whose retained position the analysis does not predict.
 * `syneresis_37a`: of the two economical realizations of (37a) under the Empty Category
   Principle, the derivation yields the one that is not standard.
+* `rows_pronounced_eq_standard`: on every row the derivation pronounces the nuclei of the
+  standard realization, except in the configuration of (37a).
+* `governs_32a`: the forms need a final nucleus that does not govern.
 
 ## Implementation notes
 
@@ -39,15 +42,21 @@ analysis needs the element.
   a geminable position holding a guttural is a single unit ((12): -sʌʔɨl).
 * The prefixes tɨ- and mɨ- carry empty nuclei realized by epenthesis, as in the paper's
   underlying forms (t_-, m_-); the causative ʔʌ- is lexical (19c).
-* Among the realizations of a run of empty nuclei the analysis takes the Ethiosemitic option
-  C▪C_C▪C (37a): reading left to right, a nucleus after a silent one is realized. Both options
-  satisfy the Empty Category Principle with two epentheses, and the standard right-to-left
-  realization is the other one (`syneresis_37a`).
+* Government is Strict CV's, of which the paper's (23) is a simplified version (fn. 16), and the
+  final nucleus of both languages may be empty and does not govern. Epenthesis is the paper's
+  left-to-right procedure, in which a nucleus after a silent one is realized, so that a run of
+  empty nuclei takes the Ethiosemitic option C▪C_C▪C of (37a) and not the standard one.
 * Trans-guttural harmony "can, but does not have to apply" (§2.1), so `realizations` lists
   every option and `rows_derived` asks that each attested form be among them. Realization
   does not feed fusion again, the paper's first way out of the loop of (37b–d).
 * The postvocalic spirantization of b ([nɨβaħ], (10b)) is outside the analysis; β is read as b.
 * Not derived: the |I|-syneresis of (8)–(9) and the ejective asymmetry of fn. 8.
+
+## TODO
+
+That a final guttural needs no licensor ((32a)) is stipulated. The paper ascribes to Scheer and
+Ziková final nuclei that license without governing, but they make a final nucleus govern and
+license or do neither, and these forms need one that does not govern (`governs_32a`).
 
 ## References
 
@@ -60,6 +69,7 @@ analysis needs the element.
 * [kaye-lowenstamm-vergnaud-1990]
 * [charette-1991]
 * [scheer-segeral-2001]
+* [scheer-zikova-2010]
 * [kaye-1992]
 * [bye-2011]
 * [buckley-2000]
@@ -250,15 +260,6 @@ structure CV where
 /-- A form is a strict iteration of CV units. -/
 abbrev Form := List CV
 
-/-- The nucleus at `i` is contentful, so that it properly governs the nucleus before it (23a). -/
-def Contentful (f : Form) (i : Nat) : Prop :=
-  match f[i]? with
-  | some ⟨_, .vowel _ _⟩ => True
-  | _ => False
-
-instance (f : Form) (i : Nat) : Decidable (Contentful f i) := by
-  unfold Contentful; split <;> infer_instance
-
 /-- The consonant at `i` contains |A|. -/
 def HasAAt (f : Form) (i : Nat) : Prop :=
   match f[i]? with
@@ -277,6 +278,31 @@ def GeminateInternal (f : Form) (i : Nat) : Prop :=
 instance (f : Form) (i : Nat) : Decidable (GeminateInternal f i) := by
   unfold GeminateInternal; split <;> infer_instance
 
+/-! ### Lateral relations -/
+
+/-- The final nucleus of Tigrinya and Tigre may be empty and does not govern. -/
+def final : StrictCV.FinalNucleus := ⟨true, false⟩
+
+/-- The melody of a nucleus is associated for a lexical vowel and empty otherwise, even when the
+nucleus is marked for epenthesis. -/
+def Nuc.melody : Nuc → StrictCV.Melody
+  | .vowel _ _ => .associated
+  | .empty | .mark => .empty
+
+/-- The nuclei of a form as the lateral computation reads them. The first nucleus must be
+pronounced, since an initial empty CV unit needs its government (fn. 21), and so must a nucleus
+whose onset is a guttural, which needs a pronounced licensor (25), unless the nucleus is final
+((32a)). -/
+def nuclei (f : Form) : List StrictCV.Nucleus :=
+  f.mapIdx fun i u ↦
+    { melody := u.v.melody
+      forced := decide (i = 0 ∨ u.c.HasA ∧ i + 1 < f.length) }
+
+/-- The nuclei of a form before epenthesis, those with a lexical vowel pronounced, so that only a
+contentful nucleus governs (23a). -/
+def lexical (f : Form) : List (StrictCV.Nucleus × Bool) :=
+  (nuclei f).map fun x ↦ (x, decide (x.melody = .associated))
+
 /-! ### The operations of (30) -/
 
 /-- Fusion ((26b), (27b), (28b)) fuses a low vowel next to an |A| consonant, its own onset or the
@@ -288,14 +314,16 @@ def fusion (f : Form) : Form :=
       if IsLowA v ∧ (u.c.HasA ∨ HasAAt f (i + 1)) then ⟨u.c, .vowel (lowered v) true⟩ else u
     | _ => u
 
-/-- Dissociation (26c) empties a fused nucleus iff it is properly governed by a contentful nucleus
-and is not the licensor of its own fused domain, that is, iff the guttural is the next onset (Av +
-Ac) rather than its own (Ac + Av, (28)). -/
+/-- Dissociation (26c) empties a fused nucleus iff the nuclei after it govern it and it is not the
+licensor of its own fused domain, that is, iff the guttural is the next onset (Av + Ac) rather
+than its own (Ac + Av, (28)). -/
 def dissociation (f : Form) : Form :=
   f.mapIdx fun i u ↦
     match u.v with
     | .vowel _ true =>
-      if HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ Contentful f (i + 1) then ⟨u.c, .empty⟩ else u
+      if HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ StrictCV.Governs final ((lexical f).drop (i + 1)) then
+        ⟨u.c, .empty⟩
+      else u
     | _ => u
 
 /-- Epenthesis (30)–(31) marks the empty nuclei that must be realized. The word-final nucleus and a
@@ -370,7 +398,7 @@ theorem fusion_fuses (f : Form) (i : Nat) (c : Cons) (v : Vowel)
 theorem dissociation_empty_iff (f : Form) (i : Nat) (u : CV) (h : f[i]? = some u) :
     (dissociation f)[i]? = some ⟨u.c, .empty⟩ ↔
       u.v = .empty ∨ ∃ v, u.v = .vowel v true ∧
-        HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ Contentful f (i + 1) := by
+        HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ StrictCV.Governs final ((lexical f).drop (i + 1)) := by
   simp only [dissociation, List.getElem?_mapIdx, h, Option.map_some, Option.some.injEq]
   obtain ⟨c, n⟩ := u
   cases n with
@@ -611,20 +639,22 @@ predict (§3.3.3). -/
 theorem rows_unpredicted : ∀ r ∈ rows, ¬ r.predicted → ∀ f ∈ r.forms, f ∉ r.realizations := by
   decide +kernel
 
-/-! ### (37a) and the Empty Category Principle -/
+/-! ### Proper government and the standard realization -/
+
+/-- The 2nd-person jussive of 'hear', /t_-s_mʌʕ_/ (32a). -/
+def jussive32a : Form := (instantiate juss2 ⟨["s", "m", "ʕ"]⟩).getD []
+
+/-- The fused vowel of (32a) is governed by the nucleus after it iff final nuclei act. Since
+[tɨsmaʕ] keeps its vowel, the final nucleus does not govern (§3.3.1). -/
+theorem governs_32a (p : StrictCV.FinalNucleus) :
+    StrictCV.Governs p ((lexical (fusion jussive32a)).drop 3) ↔ p.acts = true := by
+  cases p with | mk e a => cases e <;> cases a <;> decide
 
 /-- The gerund of 'hear' with the suffix *-u*, /m_s_maʕ-u/ (37a). -/
 def gerund37a : Form := attach ((instantiate gerA ⟨["s", "m", "ʕ"]⟩).getD []) ⟨some .u, []⟩
 
-/-- The nuclei of a form as the lateral computation reads them: a contentful nucleus has
-associated melody, and the first must be pronounced, since an initial empty CV unit needs its
-government (fn. 21). -/
-def nuclei (f : Form) : List StrictCV.Nucleus :=
-  f.mapIdx fun i _ ↦
-    { melody := if Contentful f i then .associated else .empty, forced := decide (i = 0) }
-
-/-- Whether each nucleus of a form is pronounced: a lexical vowel or a nucleus marked for
-epenthesis. -/
+/-- `pronounced f` marks the nuclei of `f` that are pronounced, its lexical vowels and the nuclei
+marked for epenthesis. -/
 def pronounced (f : Form) : List Bool := f.map fun u ↦ decide (u.v ≠ .empty)
 
 /-- The realizations of a sequence of nuclei that satisfy the ECP, pronounce the required nuclei,
@@ -647,6 +677,22 @@ theorem syneresis_37a :
       (∀ p, (StrictCV.standard p (nuclei (dissociation (fusion gerund37a)))).map Prod.snd =
         [true, true, false, true]) ∧
       pronounced (derive gerund37a) = [true, false, true, true] := by
+  decide +kernel
+
+/-- In the configuration of (37a), the dissociated position is the third in a left-aligned
+sequence of three empty nuclei. -/
+def DissociatedThird (f : Form) : Prop :=
+  (fusion f)[2]?.map (·.v) ≠ some .empty ∧
+    ∀ i < 3, (dissociation (fusion f))[i]?.map (·.v) = some .empty
+
+instance (f : Form) : Decidable (DissociatedThird f) := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- On every form of (4)–(19) and (31)–(39), the derivation pronounces the nuclei of the standard
+realization, except in the configuration of (37a), where the standard realization is the
+unattested *[mɨsɨmʕu] (§3.3.3). -/
+theorem rows_pronounced_eq_standard : ∀ r ∈ rows, ∀ f ∈ r.stem,
+    pronounced (derive f) = (StrictCV.standard final (nuclei (dissociation (fusion f)))).map
+      Prod.snd ↔ ¬ DissociatedThird f := by
   decide +kernel
 
 end FaustLampitelli2026
