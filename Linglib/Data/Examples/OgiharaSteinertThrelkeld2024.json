@@ -1,23 +1,22 @@
 [
   {
-    "id": "ost2024_before_noncommittal",
-    "source": {"bibkey": "beaver-condoravdi-2003", "paperLabel": "(43)"},
+    "id": "ost2024_left_country",
+    "source": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "(1a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "I left the party before there was (any) trouble.",
+    "primaryText": "I left the country before anything happened.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Non-committal reading of *before*: implies trouble seemed likely but does not commit to whether it occurred. (B&C (22), the Supreme Court \"uncounted votes\" case, is counterfactual, not non-committal — B&C §6.)",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "veridicality"],
-      ["connective", "before"],
-      ["complement_entailed", "false"]
+      ["reading", "nonCommittal"]
     ],
-    "comment": "before(leave, trouble) |/= trouble (non-committal)",
+    "comment": "O&ST (1a), the non-committal before of Heinämäki's classification: the complement may or may not have become true.",
     "verified": "page-image"
   },
   {
@@ -36,9 +35,30 @@
     "paperFeatures": [
       ["construction", "veridicality"],
       ["connective", "before"],
-      ["complement_entailed", "false"]
+      ["complement_entailed", "false"],
+      ["precursor", "true"]
     ],
     "comment": "before(die, finish) and not finish (counterfactual)",
+    "verified": "page-image"
+  },
+  {
+    "id": "ost2024_beethoven",
+    "source": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Beethoven died before he composed his 11th symphony.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Beethoven composed no 11th symphony, and nothing at his death was leading to one: he did not even compose a 10th.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "antiVeridical"],
+      ["precursor", "false"]
+    ],
+    "comment": "O&ST (14), marked ?: an anti-veridical before needs an eventuality at the A-time that could lead to the complement.",
     "verified": "page-image"
   },
   {
@@ -96,6 +116,33 @@
       ["reading", "counterfactual"]
     ],
     "comment": "O&ST (20c). Complement bounded to July 1999.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ost2024_ohtani_japanese",
+    "source": {"bibkey": "ogihara-steinert-threlkeld-2024", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Zannen-na koto-ni, 2021-nen-no siizun-wa Ootani-ga zyussyoome-o ageru mae ni owat-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Zannen-na koto-ni", "unfortunately"], ["2021-nen-no", "2021-year-GEN"],
+      ["siizun-wa", "season-TOP"], ["Ootani-ga", "Ohtani-NOM"], ["zyussyoome-o", "10th win-ACC"],
+      ["ageru", "earn.NON-PAST"], ["mae", "before"], ["ni", "at"], ["owat-ta", "end-PAST"]
+    ],
+    "translation": "Unfortunately, the 2021 season ended before Ohtani earned his 10th win (of the season).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "bc_counterexample"],
+      ["reading", "counterfactual"],
+      ["connective", "mae"],
+      ["matrixTense", "past"],
+      ["embeddedTense", "present"]
+    ],
+    "comment": "O&ST (21), the Japanese counterpart of (20a) with a past matrix, possible because a mae-clause is non-past.",
     "verified": "page-image"
   },
   {
