@@ -162,8 +162,7 @@ theorem optimal_regular (hl : c.left ≠ .root) (hr : c.right ≠ .root) (hv₂ 
   have h₁ := hfree {.first} (by simp)
   have h₂ := hfree {.second} (by simp)
   have h₃ := hfree {.first, .second} (by simp)
-  rw [Tableau.optimal_eq_singleton_iff (Finset.mem_univ _)]
-  intro D _ hD
+  refine Tableau.optimal_eq_singleton_iff.2 ⟨Finset.mem_univ _, fun D _ hD ↦ ?_⟩
   split_ifs at hD ⊢ with hlong
   · rcases finset_cases D with rfl | rfl | rfl | rfl
     · regular_beats 3
@@ -251,15 +250,16 @@ private theorem con_erdesz_lt_iff (i : Con) :
 /-- A ranking of Vago's constraints under which erdő-ész deletes its first vowel ranks \*VV above
 MAX on long vowels and above MAX LEX, since that vowel is long and in a root. -/
 theorem starVV_dominates_of_erdesz {r : Ranking Con 5}
-    (h : {.first} ∈ (Tableau.ofPerm (con erdesz) r [∅, {.first}, {.second}, {.first, .second}]
-      (by simp)).optimal) :
+    (h : {.first} ∈
+      (Tableau.ofRanking (con erdesz) r {∅, {.first}, {.second}, {.first, .second}}).optimal) :
     r.Dominates .starVV .maxLong ∧ r.Dominates .starVV .maxLex := by
   have hle := Tableau.le_of_mem_optimal h (d := (∅ : Finset ElidedVowel)) (by simp)
   have hlt := hle.lt_of_ne fun heq ↦ by
     have := congrArg (· (r.symm .starVV)) heq
-    simp only [Tableau.ofPerm_profile, Pi.toLex_apply, Equiv.apply_symm_apply] at this
+    simp only [Tableau.profile_apply, Tableau.ofRanking_constraints, Function.comp_apply,
+      Equiv.apply_symm_apply] at this
     exact (con_erdesz_lt_iff .starVV).2 rfl |>.ne this
-  obtain ⟨i, hi, hr⟩ := Tableau.ofPerm_profile_lt_iff_exists_dominates.1 hlt
+  obtain ⟨i, hi, hr⟩ := Tableau.ofRanking_profile_lt_iff_exists_dominates.1 hlt
   obtain rfl := (con_erdesz_lt_iff i).1 hi
   exact ⟨hr _ (by decide +kernel), hr _ (by decide +kernel)⟩
 

@@ -69,11 +69,11 @@ theorem HarmonicLT.add_right {r : Ranking (Fin n) n} {A B : ViolationProfile n}
   rw [smul_add, smul_add]
   exact add_lt_add_left h _
 
-/-- A profile is optimal in a set under a ranking when it belongs to the set and no member
-is more harmonic. -/
-def Optimal (r : Ranking (Fin n) n) (S : Set (ViolationProfile n))
+/-- A profile is optimal in a set under a ranking when it is minimal in the set for the
+ranking's reading of profiles: no member is more harmonic. -/
+abbrev Optimal (r : Ranking (Fin n) n) (S : Set (ViolationProfile n))
     (A : ViolationProfile n) : Prop :=
-  A ∈ S ∧ ∀ B ∈ S, ¬ HarmonicLT r B A
+  MinimalFor (· ∈ S) (r • ·) A
 
 /-- Dijkstra's principle for harmonic optimization (section 2): a merge that is optimal among
 the merges of two sets has an optimal first part, so every piece of an optimal mapping is
@@ -81,7 +81,8 @@ itself an optimal mapping. -/
 theorem Optimal.left_of_add {r : Ranking (Fin n) n} {S T : Set (ViolationProfile n)}
     {A B : ViolationProfile n} (h : Optimal r (S + T) (A + B)) (hA : A ∈ S) (hB : B ∈ T) :
     Optimal r S A :=
-  ⟨hA, λ C hC hlt => h.2 (C + B) (Set.add_mem_add hC hB) (hlt.add_right B)⟩
+  minimalFor_iff_forall_lt.2 ⟨hA, fun _ hlt hC ↦
+    MinimalFor.not_lt h (Set.add_mem_add hC hB) (HarmonicLT.add_right hlt B)⟩
 
 theorem Optimal.right_of_add {r : Ranking (Fin n) n} {S T : Set (ViolationProfile n)}
     {A B : ViolationProfile n} (h : Optimal r (S + T) (A + B)) (hA : A ∈ S) (hB : B ∈ T) :
@@ -119,7 +120,7 @@ def weightMap (w : Fin n → ℝ) : ViolationProfile n →+ ℝ where
     simp
   map_add' a b := by
     simp only [dotProduct, Function.comp_apply, ← Finset.sum_add_distrib]
-    exact Finset.sum_congr rfl λ i _ => by
+    exact Finset.sum_congr rfl fun i _ ↦ by
       show w i * ((a i + b i : ℕ) : ℝ) = w i * (a i : ℝ) + w i * (b i : ℝ)
       push_cast
       exact mul_add _ _ _

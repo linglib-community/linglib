@@ -84,36 +84,34 @@ theorem todConstraint_lt_iff (c₁ c₂ : Number.Features) :
   omega
 
 /-- A candidate with violations of the top constraint loses to one without. -/
-theorem not_mem_optimal_of_top_pos {C : Type*} [DecidableEq C] {candidates : List C}
-    {top : Constraint C} {rest : List (Constraint C)} {h : candidates ≠ []} {c c₀ : C}
+theorem not_mem_optimal_of_top_pos {C : Type*} [DecidableEq C] {candidates : Finset C}
+    {top : Constraint C} {rest : List (Constraint C)} {c c₀ : C}
     (hc₀ : c₀ ∈ candidates) (h0 : top c₀ = 0) (hc : 0 < top c) :
-    c ∉ (Tableau.ofRanking candidates (top :: rest) h).optimal :=
-  fun hmem ↦ hc.ne' (Tableau.ofRanking_optimal_zero_first top rest ⟨c₀, hc₀, h0⟩ hmem)
+    c ∉ (Tableau.ofList candidates (top :: rest)).optimal :=
+  fun hmem ↦ hc.ne' (Nat.le_zero.1 (h0 ▸ Tableau.constraints_zero_le_of_mem_optimal hmem hc₀))
 
 /-- Under Taboo » MP! every optimal candidate is the least specified cell. -/
-theorem tod_mp_only_minimal (candidates : List Number.Features)
+theorem tod_mp_only_minimal (candidates : Finset Number.Features)
     (hWF : ∀ c ∈ candidates, IsLowerSet (↑c : Set Number.Feature))
-    (hMin : Number.pluralF ∈ candidates)
-    (hNE : candidates ≠ []) :
-    ∀ c ∈ (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal,
+    (hMin : Number.pluralF ∈ candidates) :
+    ∀ c ∈ (Tableau.ofList candidates [todConstraint, mpConstraint]).optimal,
       c = Number.pluralF := by
   intro c hc
-  have hZero := Tableau.ofRanking_optimal_zero_first todConstraint [mpConstraint]
-    ⟨Number.pluralF, hMin, rfl⟩ hc
-  have hcWF := hWF c (Tableau.ofRanking_optimal_mem hc)
+  have hZero : todConstraint c = 0 :=
+    Nat.le_zero.1 (Tableau.constraints_zero_le_of_mem_optimal (d := Number.pluralF) hc hMin)
+  have hcWF := hWF c (Tableau.optimal_subset hc)
   rcases hcWF.eq_empty_or_eq_Iic with rfl | ⟨a, rfl⟩
   · rfl
   · cases a <;> exact absurd hZero (by decide)
 
 /-- The least specified cell is optimal under Taboo » MP!, its profile being lexicographically
 least. -/
-theorem tod_mp_minimal_mem_optimal (candidates : List Number.Features)
-    (hMin : Number.pluralF ∈ candidates) (hNE : candidates ≠ []) :
+theorem tod_mp_minimal_mem_optimal (candidates : Finset Number.Features)
+    (hMin : Number.pluralF ∈ candidates) :
     Number.pluralF ∈
-      (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal := by
+      (Tableau.ofList candidates [todConstraint, mpConstraint]).optimal := by
   rw [Tableau.mem_optimal_iff]
-  refine ⟨List.mem_toFinset.mpr hMin, fun c' _ ↦ ?_⟩
-  simp only [Tableau.ofRanking]
+  refine ⟨hMin, fun c' _ ↦ ?_⟩
   apply not_lt.mp
   intro ⟨i, hlt_eq, hlt⟩
   change ([todConstraint, mpConstraint].get i) c' <
@@ -137,24 +135,23 @@ theorem tod_mp_minimal_mem_optimal (candidates : List Number.Features)
 
 /-- Taboo » MP! selects the least specified cell alone from any well-formed candidate set
 that contains it: the emergence of the semantically unmarked. -/
-theorem tod_mp_general (candidates : List Number.Features)
+theorem tod_mp_general (candidates : Finset Number.Features)
     (hWF : ∀ c ∈ candidates, IsLowerSet (↑c : Set Number.Feature))
-    (hMin : Number.pluralF ∈ candidates)
-    (hNE : candidates ≠ []) :
-    (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal =
+    (hMin : Number.pluralF ∈ candidates) :
+    (Tableau.ofList candidates [todConstraint, mpConstraint]).optimal =
       {Number.pluralF} := by
   ext c
   simp only [Finset.mem_singleton]
-  exact ⟨tod_mp_only_minimal candidates hWF hMin hNE c,
-    fun h ↦ h ▸ tod_mp_minimal_mem_optimal candidates hMin hNE⟩
+  exact ⟨tod_mp_only_minimal candidates hWF hMin c,
+    fun h ↦ h ▸ tod_mp_minimal_mem_optimal candidates hMin⟩
 
 /-- With the taboo on top, the most specified cell, singular, local person or definite, is never
 optimal beside a less specified competitor, so these honorifics are unattested (28). -/
-theorem maximal_not_optimal_of_tod_top (candidates : List Number.Features)
-    (rest : List (Constraint Number.Features)) (hNE : candidates ≠ [])
+theorem maximal_not_optimal_of_tod_top (candidates : Finset Number.Features)
+    (rest : List (Constraint Number.Features))
     (hMin : Number.pluralF ∈ candidates) :
     Number.singularF ∉
-      (Tableau.ofRanking candidates (todConstraint :: rest) hNE).optimal :=
+      (Tableau.ofList candidates (todConstraint :: rest)).optimal :=
   not_mem_optimal_of_top_pos hMin rfl (by decide)
 
 /-! ### Articulated number systems (§5) -/
@@ -164,37 +161,37 @@ def wtodConstraint : Constraint Number.Features :=
   fun c ↦ if c.card = Fintype.card Number.Feature then 1 else 0
 
 /-- The singular, dual and plural of an articulated number system (80). -/
-def number : List Number.Features := [Number.singularF, Number.dualF, Number.pluralF]
+def number : Finset Number.Features := {Number.singularF, Number.dualF, Number.pluralF}
 
 /-- The weak taboo alone also excludes the most specified cell. -/
-theorem maximal_not_optimal_of_wtod_top (candidates : List Number.Features)
-    (rest : List (Constraint Number.Features)) (hNE : candidates ≠ [])
+theorem maximal_not_optimal_of_wtod_top (candidates : Finset Number.Features)
+    (rest : List (Constraint Number.Features))
     (hMin : Number.pluralF ∈ candidates) :
     Number.singularF ∉
-      (Tableau.ofRanking candidates (wtodConstraint :: rest) hNE).optimal :=
+      (Tableau.ofList candidates (wtodConstraint :: rest)).optimal :=
   not_mem_optimal_of_top_pos hMin rfl (by decide)
 
 /-- Strong taboo » MP! » weak taboo recruits the plural only, as in Slovenian (83b). -/
 theorem stod_mp_wtod :
-    (Tableau.ofRanking number [todConstraint, mpConstraint, wtodConstraint]).optimal =
+    (Tableau.ofList number [todConstraint, mpConstraint, wtodConstraint]).optimal =
       {Number.pluralF} := by
   decide +kernel
 
 /-- Weak taboo » MP! » strong taboo recruits the dual only, as in Mwotlap and Kharia (83a). -/
 theorem wtod_mp_stod :
-    (Tableau.ofRanking number [wtodConstraint, mpConstraint, todConstraint]).optimal =
+    (Tableau.ofList number [wtodConstraint, mpConstraint, todConstraint]).optimal =
       {Number.dualF} := by
   decide +kernel
 
 /-- The weak taboo alone leaves dual and plural, the non-escalating system of Imere (83d). -/
 theorem wtod_alone :
-    (Tableau.ofRanking number [wtodConstraint]).optimal =
+    (Tableau.ofList number [wtodConstraint]).optimal =
       {Number.dualF, Number.pluralF} := by
   decide +kernel
 
 /-- Outside respect contexts MP! on top recruits the singular. -/
 theorem mp_top :
-    (Tableau.ofRanking number [mpConstraint, todConstraint, wtodConstraint]).optimal =
+    (Tableau.ofList number [mpConstraint, todConstraint, wtodConstraint]).optimal =
       {Number.singularF} := by
   decide +kernel
 

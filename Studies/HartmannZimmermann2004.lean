@@ -178,13 +178,13 @@ def starPhi : Constraint Prosody.Tree := fun t ↦ (phSpans t).length
 /-- Under object focus alignment dominates economy and the separated parse wins, which derives
 the φ-edge after the verb. -/
 theorem focused_parse_separates :
-    (Tableau.ofRanking [wrapped, separated] [alignFocus, starPhi]).optimal
+    (Tableau.ofList {wrapped, separated} [alignFocus, starPhi]).optimal
       = {separated} := by decide
 
 /-- In an all-new utterance economy decides alone and the wrapped parse wins, so there is no
 boundary and the elision cascade applies. -/
 theorem neutral_parse_wraps :
-    (Tableau.ofRanking [wrapped, separated] [starPhi]).optimal
+    (Tableau.ofList {wrapped, separated} [starPhi]).optimal
       = {wrapped} := by decide
 
 /-- No φ spans the V–O juncture in the separated parse — elision is

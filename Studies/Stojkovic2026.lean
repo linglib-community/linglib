@@ -138,9 +138,9 @@ def corr : Candidate → Correspondence BinaryRole Segment
   | k => .parallel (input c) (output c k)
 
 /-- The candidates of a context. A front vowel is a candidate only after a palatal. -/
-def candidates : List Candidate :=
-  [.faithful, .delete, .fill true false, .fill true true] ++
-    if c.stemFinal = .palatal then [.fill false false, .fill false true] else []
+def candidates : Finset Candidate :=
+  {.faithful, .delete, .fill true false, .fill true true} ∪
+    if c.stemFinal = .palatal then {.fill false false, .fill false true} else ∅
 
 /-! ### Constraints -/
 
@@ -180,7 +180,7 @@ def ranking (vs : List (Context → Constraint Candidate)) : List (Constraint Ca
 
 /-- `optimal c vs` is the set of winners in the context `c` under the ranking `vs`. -/
 def optimal (vs : List (Context → Constraint Candidate)) : Finset Candidate :=
-  (Tableau.ofRanking (candidates c) (ranking c vs) (by simp [candidates])).optimal
+  (Tableau.ofList (candidates c) (ranking c vs)).optimal
 
 /-! ### The three groups -/
 
@@ -225,11 +225,11 @@ theorem uv_le_ov (s : StemFinal) :
 theorem uv_bounds_ov (s : StemFinal) {rk : List (Constraint Candidate)}
     (hrk : rk.Perm (paperConstraints ⟨s, .a⟩)) :
     Candidate.fill true false ∉
-      (Tableau.ofRanking (candidates ⟨s, .a⟩) rk (by simp [candidates])).optimal := by
+      (Tableau.ofList (candidates ⟨s, .a⟩) rk).optimal := by
   obtain ⟨hle, hlt⟩ := uv_le_ov s
   obtain ⟨i, hi⟩ := List.mem_iff_get.1
     (hrk.mem_iff.2 (by simp [paperConstraints] : depNonhigh ⟨s, .a⟩ ∈ paperConstraints _))
-  refine Tableau.ofPerm_notMem_optimal_of_lt (c := .fill true true) (by simp [candidates]) ?_
+  refine Tableau.ofRanking_notMem_optimal_of_lt (c := .fill true true) (by simp [candidates]) ?_
   exact Pi.lt_def.2 ⟨fun k ↦ hle _ (hrk.mem_iff.1 (rk.get_mem k)), i, by rw [hi]; exact hlt⟩
 
 /-! ### Factorial typology -/

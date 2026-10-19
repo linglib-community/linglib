@@ -59,7 +59,7 @@ theorem mem_rowGrammar_legs_iff_lex {t : Tableau C n} {w : C}
     {h : (ERC.linearExtensions (rowERCs t w)).Nonempty} {r : Ranking (Fin n) n} :
     r ∈ (rowGrammar t w h).legs ↔
       ∀ l ∈ t.candidates.erase w,
-        toLex (λ p => t.profile w (r p)) ≤ toLex (λ p => t.profile l (r p)) := by
+        r • t.profile w ≤ r • t.profile l := by
   rw [mem_rowGrammar_legs]
   unfold rowERCs
   constructor

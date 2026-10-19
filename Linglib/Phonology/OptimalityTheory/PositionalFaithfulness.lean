@@ -102,16 +102,16 @@ theorem positionalMax_lt_iff (hc : del c = {k}) (hd : del d = {k'}) :
   refine and_congr (forall_congr' fun i ↦ ?_) (exists_congr fun _ ↦ and_comm)
   split_ifs <;> simp_all
 
-variable [DecidableEq C] {n : ℕ} {cands : List C} {h : cands ≠ []}
+variable [DecidableEq C] {n : ℕ} {cands : Finset C}
 
 /-- Of two single deletions, one is the sole optimum under a ranking exactly when some constraint
 protecting only the other position outranks every constraint protecting only its own. -/
-theorem optimal_eq_singleton_positionalMax_iff (hcand : cands.toFinset = {c, d}) (hne : c ≠ d)
+theorem optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d}) (hne : c ≠ d)
     (hc : del c = {k}) (hd : del d = {k'}) (r : Ranking ι n) :
-    (Tableau.ofPerm (positionalMax P del) r cands h).optimal = {c} ↔
+    (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c} ↔
       ∃ i, P i k' ∧ ¬ P i k ∧ ∀ j, P j k → ¬ P j k' → r.Dominates i j := by
   rw [Tableau.optimal_eq_singleton_iff_pair hcand hne,
-    Tableau.ofPerm_profile_lt_iff_exists_dominates]
+    Tableau.ofRanking_profile_lt_iff_exists_dominates]
   simp only [positionalMax_lt_positionalMax_iff hc hd, positionalMax_lt_positionalMax_iff hd hc]
   exact exists_congr fun _ ↦ ⟨fun ⟨⟨h, h'⟩, hr⟩ ↦ ⟨h', h, fun j hj hj' ↦ hr j ⟨hj', hj⟩⟩,
     fun ⟨h', h, hr⟩ ↦ ⟨⟨h, h'⟩, fun j ⟨hj', hj⟩ ↦ hr j hj hj'⟩⟩
@@ -121,19 +121,19 @@ include hn
 
 /-- Of two single deletions, one is optimal under some ranking exactly when the constraints
 protecting the other position are not a proper subset of those protecting its own. -/
-theorem exists_mem_optimal_positionalMax_iff (hcand : cands.toFinset = {c, d})
+theorem exists_mem_optimal_positionalMax_iff (hcand : cands = {c, d})
     (hc : del c = {k}) (hd : del d = {k'}) :
-    (∃ r : Ranking ι n, c ∈ (Tableau.ofPerm (positionalMax P del) r cands h).optimal) ↔
+    (∃ r : Ranking ι n, c ∈ (Tableau.ofRanking (positionalMax P del) r cands).optimal) ↔
       ¬ {i | P i k'} ⊂ {i | P i k} := by
-  rw [Tableau.exists_mem_ofPerm_optimal_iff_pair hn hcand, positionalMax_lt_iff hd hc]
+  rw [Tableau.exists_mem_ofRanking_optimal_iff_pair hn hcand, positionalMax_lt_iff hd hc]
 
 /-- Of two single deletions, one is the sole optimum under some ranking exactly when some
 constraint protects the other position and not its own. -/
-theorem exists_optimal_eq_singleton_positionalMax_iff (hcand : cands.toFinset = {c, d})
+theorem exists_optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d})
     (hne : c ≠ d) (hc : del c = {k}) (hd : del d = {k'}) :
-    (∃ r : Ranking ι n, (Tableau.ofPerm (positionalMax P del) r cands h).optimal = {c}) ↔
+    (∃ r : Ranking ι n, (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c}) ↔
       ¬ {i | P i k'} ⊆ {i | P i k} := by
-  rw [Tableau.exists_ofPerm_optimal_eq_singleton_iff_pair hn hcand hne, Set.not_subset]
+  rw [Tableau.exists_ofRanking_optimal_eq_singleton_iff_pair hn hcand hne, Set.not_subset]
   simp only [positionalMax_lt_positionalMax_iff hc hd]
   exact exists_congr fun _ ↦ and_comm
 

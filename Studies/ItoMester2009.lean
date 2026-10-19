@@ -22,7 +22,7 @@ evidence of Section 3 supports for English and German, selects the recursive wor
 * Candidates are `Prosody.Tree`s and constraints `Constraint Tree` values: No-Recursion is the
   substrate's `Prosody.noRec` and Parse-into-ω its `Prosody.parseInto`; FtBin at the word level
   and Lex-to-ω are defined here, the latter for the fixed lexical word `lexω`.
-* The tableau engine is `OptimalityTheory.Tableau.ofRanking`; the winning recursive structure
+* The tableau engine is `OptimalityTheory.Tableau.ofList`; the winning recursive structure
   is a legal prosodic word of the substrate, No-Recursion being violable.
 
 ## References
@@ -84,7 +84,7 @@ violation when the lexical word is not a ω of its own. -/
 def lexToOmega : Constraint Tree := λ t => if lexHasOmega lexω t then 0 else 1
 
 /-- The candidate set. -/
-def candidates : List Tree := [fullOmega, amalgamated, omegaAdjoined, phiAttached]
+def candidates : Finset Tree := {fullOmega, amalgamated, omegaAdjoined, phiAttached}
 
 /-- Each site violates exactly one of the four constraints, (20). -/
 theorem one_violation_each :
@@ -96,26 +96,26 @@ theorem one_violation_each :
 
 /-- Demoting FtBin makes the function word its own prosodic word. -/
 theorem fullOmega_optimum :
-    (Tableau.ofRanking candidates [lexToOmega, parseInto .om, noRec, subminimalOmega]).optimal
+    (Tableau.ofList candidates [lexToOmega, parseInto .om, noRec, subminimalOmega]).optimal
       = {fullOmega} := by
   decide
 
 /-- Demoting Lex-to-ω fuses the function word into the host. -/
 theorem amalgamated_optimum :
-    (Tableau.ofRanking candidates [subminimalOmega, parseInto .om, noRec, lexToOmega]).optimal
+    (Tableau.ofList candidates [subminimalOmega, parseInto .om, noRec, lexToOmega]).optimal
       = {amalgamated} := by
   decide
 
 /-- Demoting Parse-into-ω attaches the function word to the phrase, [selkirk-1996]'s site. -/
 theorem phiAttached_optimum :
-    (Tableau.ofRanking candidates [subminimalOmega, lexToOmega, noRec, parseInto .om]).optimal
+    (Tableau.ofList candidates [subminimalOmega, lexToOmega, noRec, parseInto .om]).optimal
       = {phiAttached} := by
   decide
 
 /-- With FtBin and Lex-to-ω alone ranked, the ω-adjoined and φ-attached sites tie, each
 fulfilling both, (33) and (34). -/
 theorem adjoined_attached_tie :
-    (Tableau.ofRanking candidates [subminimalOmega, lexToOmega]).optimal
+    (Tableau.ofList candidates [subminimalOmega, lexToOmega]).optimal
       = {omegaAdjoined, phiAttached} := by
   decide
 
@@ -123,7 +123,7 @@ theorem adjoined_attached_tie :
 FtBin, Lex-to-ω ≫ Parse-into-ω ≫ No-Recursion the recursive `[ω fnc [ω lex]]` is the unique
 optimum. -/
 theorem omegaAdjunction_optimum :
-    (Tableau.ofRanking candidates [subminimalOmega, lexToOmega, parseInto .om, noRec]).optimal
+    (Tableau.ofList candidates [subminimalOmega, lexToOmega, parseInto .om, noRec]).optimal
       = {omegaAdjoined} := by
   decide
 

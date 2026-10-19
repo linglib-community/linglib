@@ -191,16 +191,12 @@ def identIO (input : List Phonology.Segment) : Constraint (List Phonology.Segmen
 def revaluations (l : List Phonology.Segment) : List (List Phonology.Segment) :=
   (l.map fun v ↦ [withATR v true, withATR v false]).sections
 
-theorem revaluations_ne_nil (l : List Phonology.Segment) : revaluations l ≠ [] :=
-  ne_nil_of_mem (a := l.map (withATR · true)) <| mem_sections.2 <| by
-    simp [forall₂_map_left_iff, forall₂_map_right_iff, forall₂_same]
-
 /-- The vP tableau ranks ATRHARM above IDENT-IO(ATR) over every revaluation of the particle,
 followed by the root vowels the vP Spell-out holds. -/
 def vPTableau (part : Morpheme) (root : List Phonology.Segment) :
     Tableau (List Phonology.Segment) 2 :=
-  Tableau.ofRanking ((revaluations part.vowels).map (· ++ root))
-    [atrHarm, identIO (part.vowels ++ root)] (by simpa using revaluations_ne_nil part.vowels)
+  Tableau.ofList ((revaluations part.vowels).map (· ++ root)).toFinset
+    [atrHarm, identIO (part.vowels ++ root)]
 
 /-- Over the particle verbs of (10)–(12), the vP tableau's unique winner gives the particle the
 root's value when the root is in the vP Spell-out, and keeps it faithful when it is not. -/
@@ -237,7 +233,7 @@ end Clause
 /-- This tableau ranks ATRHARM above IDENT-IO(ATR) over every revaluation of an input, the root's
 vowels included. -/
 def rootFreeTableau (input : List Phonology.Segment) : Tableau (List Phonology.Segment) 2 :=
-  Tableau.ofRanking (revaluations input) [atrHarm, identIO input] (revaluations_ne_nil input)
+  Tableau.ofList (revaluations input).toFinset [atrHarm, identIO input]
 
 /-- With the root free, the two constraints alone repair /jɔkʊ-ni/ at the root, against (12a),
 since one changed vowel beats two, and they leave /mɛ-nu/ undecided, against (10e). -/

@@ -135,18 +135,18 @@ theorem IsPerfect.restrictors_eq_zero {fc : Word} (h : IsPerfect fc) :
   | 2 => h.allFeetRight
 
 /-- A perfect candidate is optimal under every ranking of the restrictors. -/
-theorem isPerfect_mem_optimal {cands : List Word} {fc : Word} (hc : fc ∈ cands)
-    (h : IsPerfect fc) (r : Ranking (Fin 3) 3) (hne : cands ≠ []) :
-    fc ∈ (Tableau.ofPerm restrictors r cands hne).optimal :=
-  Tableau.ofPerm_zero_mem_optimal hc h.restrictors_eq_zero
+theorem isPerfect_mem_optimal {cands : Finset Word} {fc : Word} (hc : fc ∈ cands)
+    (h : IsPerfect fc) (r : Ranking (Fin 3) 3) :
+    fc ∈ (Tableau.ofRanking restrictors r cands).optimal :=
+  Tableau.ofRanking_zero_mem_optimal hc h.restrictors_eq_zero
 
 /-- When some candidate is perfect, only perfect candidates are optimal under the restrictors,
 whatever their ranking. -/
-theorem isPerfect_of_mem_optimal {cands : List Word} {fc₀ fc : Word} (hc₀ : fc₀ ∈ cands)
+theorem isPerfect_of_mem_optimal {cands : Finset Word} {fc₀ fc : Word} (hc₀ : fc₀ ∈ cands)
     (h₀ : IsPerfect fc₀) (hfc : fc ≠ []) (hpos : ∀ s ∈ fc.strays, s ≠ 0)
-    (r : Ranking (Fin 3) 3) (hne : cands ≠ [])
-    (hc : fc ∈ (Tableau.ofPerm restrictors r cands hne).optimal) : IsPerfect fc := by
-  have hzero := Tableau.ofPerm_eq_zero_of_mem_optimal hc₀ h₀.restrictors_eq_zero hc
+    (r : Ranking (Fin 3) 3) (hc : fc ∈ (Tableau.ofRanking restrictors r cands).optimal) :
+    IsPerfect fc := by
+  have hzero := Tableau.ofRanking_eq_zero_of_mem_optimal hc hc₀ h₀.restrictors_eq_zero
   exact (isPerfect_iff hpos).2 ⟨hfc, hzero 0, hzero 1, hzero 2⟩
 
 /-! ### Lengthening and truncation -/
@@ -159,25 +159,25 @@ abbrev heavy : Syllable.Weight := 2
 
 /-- (15): the candidates for /ja/ 'white', the lengthened bimoraic foot (jaa), the degenerate
 foot (ja) and the unfooted syllable ja. -/
-def lengtheningCandidates : List Word :=
-  [[.inl (Foot.monosyllable heavy)], [.inl (Foot.monosyllable light)], [.inr light]]
+def lengtheningCandidates : Finset Word :=
+  {[.inl (Foot.monosyllable heavy)], [.inl (Foot.monosyllable light)], [.inr light]}
 
 /-- (15): the lengthened bimoraic foot is the sole optimum. -/
 theorem lengthening :
-    (Tableau.ofPerm restrictors (Equiv.refl _) lengtheningCandidates).optimal =
+    (Tableau.ofRanking restrictors (Equiv.refl _) lengtheningCandidates).optimal =
       {[.inl (Foot.monosyllable heavy)]} := by
   decide +kernel
 
 /-- (45): the candidates for Spanish *hamaca* 'hammock', the truncated bimoraic foot (ma.ka),
 a(ma.ka) with an unfooted mora, (a.ma)ka with a foot off the right edge, and the trimoraic
 foot (a.ma.ka). -/
-def truncationCandidates : List Word :=
-  [[.inl (Foot.trochee light light)], [.inr light, .inl (Foot.trochee light light)],
-    [.inl (Foot.trochee light light), .inr light], [.inl ⟨[light, light, light], 0⟩]]
+def truncationCandidates : Finset Word :=
+  {[.inl (Foot.trochee light light)], [.inr light, .inl (Foot.trochee light light)],
+    [.inl (Foot.trochee light light), .inr light], [.inl ⟨[light, light, light], 0⟩]}
 
 /-- (45): the truncated bimoraic foot is the sole optimum. -/
 theorem truncation :
-    (Tableau.ofPerm restrictors (Equiv.refl _) truncationCandidates).optimal =
+    (Tableau.ofRanking restrictors (Equiv.refl _) truncationCandidates).optimal =
       {[.inl (Foot.trochee light light)]} := by
   decide +kernel
 
@@ -204,18 +204,18 @@ def faith (n : ℕ) : Constraint Word := λ fc =>
 def constraintsF (n : ℕ) : Fin 4 → Constraint Word := ![ftBin, parseMora, allFeetRight, faith n]
 
 /-- The light-syllable candidates of up to four moras of the tableaux (110) and (111). -/
-def typologyCandidates : List Word :=
-  [[.inr light], [.inl (Foot.monosyllable light)], [.inl (Foot.trochee light light)],
+def typologyCandidates : Finset Word :=
+  {[.inr light], [.inl (Foot.monosyllable light)], [.inl (Foot.trochee light light)],
     [.inl (Foot.trochee light light), .inr light], [.inr light, .inl (Foot.trochee light light)],
     [.inl ⟨[light, light, light], 0⟩],
     [.inl (Foot.trochee light light), .inl (Foot.trochee light light)],
     [.inr light, .inr light, .inl (Foot.trochee light light)],
     [.inl (Foot.trochee light light), .inr light, .inr light],
-    [.inr light, .inl (Foot.trochee light light), .inr light], [.inr light, .inr light]]
+    [.inr light, .inl (Foot.trochee light light), .inr light], [.inr light, .inr light]}
 
 /-- The optima for an input of `n` moras under the ranking `r` of the four constraints. -/
 def typologyOptimal (n : ℕ) (r : List (Fin 4)) : Finset Word :=
-  (Tableau.ofRanking typologyCandidates (r.map (constraintsF n))).optimal
+  (Tableau.ofList typologyCandidates (r.map (constraintsF n))).optimal
 
 /-- The rankings of the four constraints. -/
 def rankings : List (List (Fin 4)) := ([0, 1, 2, 3] : List (Fin 4)).permutations'

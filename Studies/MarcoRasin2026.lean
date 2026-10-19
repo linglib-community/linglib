@@ -74,11 +74,11 @@ def moroccan : Cand → Paradigm Seg (List Seg) :=
 
 /-- (10): majority rules — the unsuffixed *ʃrəb* joins the C-suffixed CCəC stems, twenty
 OP-MAX-V marks against twenty-four. -/
-theorem moroccan_verb : (tableau moroccan [.a, .b, .c, .d] ranking).optimal = {.a} := by
+theorem moroccan_verb : (tableau moroccan {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
 /-- (12): the one-member noun paradigm is left to SONCON, *ʃərb*. -/
-theorem moroccan_noun : (tableau (paradigms .sh .r .b [] []) [.a, .b] ranking).optimal = {.b} := by
+theorem moroccan_noun : (tableau (paradigms .sh .r .b [] []) {.a, .b} ranking).optimal = {.b} := by
   decide
 
 /-! ### Judeo-Tripolitanian Arabic verbs and nouns (§3.1) -/
@@ -92,7 +92,7 @@ bare form and before C-initial suffixes, CəCC before V-initial ones, whatever t
 of the root — are OP's optima. -/
 theorem jta_verbs :
     ∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
-      (tableau (jtaVerb r.1 r.2.1 r.2.2) [.a, .b, .c, .d] ranking).optimal = {.a} := by
+      (tableau (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
 /-- The roots of the nouns (14): CəCC with C₂ more sonorous than C₃ — *kəlb, bəntʃ, wəld,
@@ -103,8 +103,8 @@ def nouns : List (Seg × Seg × Seg) × List (Seg × Seg × Seg) :=
 
 /-- (14): the one-member noun paradigms follow SONCON. -/
 theorem jta_nouns :
-    (∀ r ∈ nouns.1, (tableau (paradigms r.1 r.2.1 r.2.2 [] []) [.a, .b] ranking).optimal = {.b}) ∧
-    ∀ r ∈ nouns.2, (tableau (paradigms r.1 r.2.1 r.2.2 [] []) [.a, .b] ranking).optimal = {.a} := by
+    (∀ r ∈ nouns.1, (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b}) ∧
+    ∀ r ∈ nouns.2, (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.a} := by
   decide
 
 /-! ### The challenge from adjectives (§3.2–3.3)
@@ -124,14 +124,14 @@ def adjectives : List (Seg × Seg × Seg) :=
 /-- (19): OP fails — the attested ⟨trəʃ, tərʃa, tərʃin⟩ draws four OP-MAX-V marks and one
 of SONCON, and the levelled ⟨tərʃ, tərʃa, tərʃin⟩ none. -/
 theorem adjective_paradigm :
-    ∀ r ∈ adjectives, (tableau (adjective r.1 r.2.1 r.2.2) [.a, .b] ranking).optimal = {.b} := by
+    ∀ r ∈ adjectives, (tableau (adjective r.1 r.2.1 r.2.2) {.a, .b} ranking).optimal = {.b} := by
   decide
 
 /-- (20): OP fails regardless of what constitutes a paradigm — as a paradigm of one, the
 adjective is left to SONCON, *tərʃ*. -/
 theorem adjective_bare :
     ∀ r ∈ adjectives,
-      (tableau (paradigms r.1 r.2.1 r.2.2 [] []) [.a, .b] ranking).optimal = {.b} := by
+      (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b} := by
   decide
 
 /-! ### Category-specific templates (§3.3) -/
@@ -154,19 +154,19 @@ def templateRanking (cat : Category) : List (Constraint (Paradigm Seg (List Seg)
 /-- (23): the template selects the attested adjectival paradigms against SONCON. -/
 theorem template_adjective :
     ∀ r ∈ adjectives,
-      (tableau (adjective r.1 r.2.1 r.2.2) [.a, .b] (templateRanking .adjective)).optimal =
+      (tableau (adjective r.1 r.2.1 r.2.2) {.a, .b} (templateRanking .adjective)).optimal =
         {.a} := by
   decide
 
 /-- The template leaves the verbs (13) and the nouns (14) as they are. -/
 theorem template_verb_noun :
     (∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
-      (tableau (jtaVerb r.1 r.2.1 r.2.2) [.a, .b, .c, .d] (templateRanking .verb)).optimal
+      (tableau (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} (templateRanking .verb)).optimal
         = {.a}) ∧
     (∀ r ∈ nouns.1,
-      (tableau (paradigms r.1 r.2.1 r.2.2 [] []) [.a, .b] (templateRanking .noun)).optimal = {.b}) ∧
+      (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} (templateRanking .noun)).optimal = {.b}) ∧
     ∀ r ∈ nouns.2,
-      (tableau (paradigms r.1 r.2.1 r.2.2 [] []) [.a, .b] (templateRanking .noun)).optimal =
+      (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} (templateRanking .noun)).optimal =
         {.a} := by
   decide
 

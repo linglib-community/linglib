@@ -195,8 +195,8 @@ def mxbm {C : Type} (basemapTier : List TRN) (extractTier : C → List TRN) : Co
 
 open OptimalityTheory.Cophonology (cophonologicalEval mergeRanking)
 
-variable {L C : Type} [DecidableEq L] [DecidableEq C] (extractTier : C → List TRN) (l : L)
-  (defaultRanking : List (L × Constraint C)) (candidates : List C) (h : candidates ≠ [])
+variable {L C : Type} [DecidableEq L] (extractTier : C → List TRN) (l : L)
+  (defaultRanking : List (L × Constraint C)) (candidates : Finset C)
 
 /-- Promoting matrix–basemap faithfulness in a cophonology selects exactly the basemap-faithful
 candidates: with a faithful candidate available, every optimal candidate's tonal tier is the
@@ -204,15 +204,15 @@ basemap's. -/
 theorem coph_selects_basemap_faithful (basemapTier : List TRN)
     (hLen : ∀ c ∈ candidates, (extractTier c).length = basemapTier.length)
     (hFaithful : ∃ c ∈ candidates, extractTier c = basemapTier) :
-    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbm basemapTier extractTier)] candidates h,
+    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbm basemapTier extractTier)] candidates,
       extractTier c = basemapTier := by
   intro c hc
   simp only [cophonologicalEval, mergeRanking] at hc
-  have hExists : ∃ c₀ ∈ candidates, mxbm basemapTier extractTier c₀ = 0 :=
-    let ⟨c₀, hc₀, he⟩ := hFaithful
-    ⟨c₀, hc₀, by simp [mxbm, he, basemapViolations_self]⟩
-  have hZero := Tableau.ofRanking_optimal_zero_first (mxbm basemapTier extractTier) _ hExists hc
-  exact eq_of_basemapViolations_eq_zero (hLen c (Tableau.ofRanking_optimal_mem hc)) hZero
+  obtain ⟨c₀, hc₀, he⟩ := hFaithful
+  have hZero : mxbm basemapTier extractTier c = 0 :=
+    Nat.le_zero.1 <| (Tableau.constraints_zero_le_of_mem_optimal hc hc₀).trans_eq
+      (by simp [mxbm, he, basemapViolations_self])
+  exact eq_of_basemapViolations_eq_zero (hLen c (Tableau.optimal_subset hc)) hZero
 
 /-- Recessive grammatical tone: under a subranking promoting faithfulness to the stem itself,
 every optimal candidate keeps the target's own tones, so the tune does not apply to a valued
@@ -220,9 +220,9 @@ target. -/
 theorem recessive (host : List (TBU S))
     (hLen : ∀ c ∈ candidates, (extractTier c).length = host.length)
     (hFaithful : ∃ c ∈ candidates, extractTier c = tonalTier host) :
-    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbm (tonalTier host) extractTier)] candidates h,
+    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbm (tonalTier host) extractTier)] candidates,
       extractTier c = tonalTier host :=
-  coph_selects_basemap_faithful extractTier l defaultRanking candidates h _
+  coph_selects_basemap_faithful extractTier l defaultRanking candidates _
     (by simpa using hLen) hFaithful
 
 /-- The basemap output: the trigger's tune docked onto the target's deficient projection, the
@@ -244,10 +244,10 @@ theorem dominant (host : List (TBU S)) (t : TRN)
     (hLen : ∀ c ∈ candidates, (extractTier c).length = host.length)
     (hFaithful : ∃ c ∈ candidates, extractTier c = host.map fun _ ↦ t) :
     ∀ c ∈ cophonologicalEval defaultRanking
-        [(l, mxbm (tonalTier (basemapOutput host ⟨[t], .left⟩)) extractTier)] candidates h,
+        [(l, mxbm (tonalTier (basemapOutput host ⟨[t], .left⟩)) extractTier)] candidates,
       extractTier c = host.map fun _ ↦ t := by
   rw [tonalTier_basemapOutput_singleton]
-  exact coph_selects_basemap_faithful extractTier l defaultRanking candidates h _
+  exact coph_selects_basemap_faithful extractTier l defaultRanking candidates _
     (by simpa using hLen) hFaithful
 
 end Rolle2018

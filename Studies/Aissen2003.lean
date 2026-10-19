@@ -297,7 +297,7 @@ def interpolation (levels : List L) (k : Nat) : List (Constraint (L × Bool)) :=
 
 /-- Whether the case-marked parse wins for an object at level `ℓ`. -/
 def markedWins (ranking : List (Constraint (L × Bool))) (ℓ : L) : Bool :=
-  decide ((Tableau.ofRanking [(ℓ, true), (ℓ, false)] ranking (by simp)).optimal
+  decide ((Tableau.ofList {(ℓ, true), (ℓ, false)} ranking).optimal
     = {(ℓ, true)})
 
 /-- Tableaux 1–2 evaluate a specific indefinite object. In Hebrew \*STRUC_C outranks

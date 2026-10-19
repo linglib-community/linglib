@@ -67,23 +67,19 @@ theorem mergeRanking_empty_sub (default : List (L × Constraint C)) :
 
 /-! ### Cophonological evaluation -/
 
-variable [DecidableEq C]
-
 /-- Cophonological evaluation takes the optimal candidates under the default ranking merged
 with the trigger's subranking. -/
 def cophonologicalEval
-    (defaultRanking subranking : List (L × Constraint C)) (candidates : List C)
-    (h : candidates ≠ [] := by decide) : Finset C :=
-  (Tableau.ofRanking candidates ((mergeRanking defaultRanking subranking).map (·.2)) h).optimal
+    (defaultRanking subranking : List (L × Constraint C)) (candidates : Finset C) : Finset C :=
+  (Tableau.ofList candidates ((mergeRanking defaultRanking subranking).map (·.2))).optimal
 
 /-- With an empty subranking, cophonological evaluation reduces to standard OT
 evaluation: CPT is a proper generalization of OT. -/
 theorem cophonologicalEval_empty_sub
-    (defaultRanking : List (L × Constraint C)) (candidates : List C) (h : candidates ≠ []) :
-    cophonologicalEval defaultRanking [] candidates h
-      = (Tableau.ofRanking candidates (defaultRanking.map (·.2)) h).optimal := by
-  show (Tableau.ofRanking candidates ((mergeRanking defaultRanking []).map (·.2)) h).optimal = _
-  rw [mergeRanking_empty_sub]
+    (defaultRanking : List (L × Constraint C)) (candidates : Finset C) :
+    cophonologicalEval defaultRanking [] candidates
+      = (Tableau.ofList candidates (defaultRanking.map (·.2))).optimal := by
+  rw [cophonologicalEval, mergeRanking_empty_sub]
 
 end Eval
 

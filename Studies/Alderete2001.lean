@@ -87,7 +87,7 @@ def ooIdentVoice (base : List Seg) : Constraint (List Seg) := fun out =>
 faithful *bet-e* violates the anti-faithfulness constraint, and the total reversal *ped-e*
 satisfies it only with a gratuitous second violation of faithfulness. -/
 theorem luo_exchange :
-    (Tableau.ofRanking [[b, e, t, e], [b, e, d, e], [p, e, d, e]]
+    (Tableau.ofList {[b, e, t, e], [b, e, d, e], [p, e, d, e]}
       [(ooIdentVoice [b, a, t]).antifaithful, ooIdentVoice [b, a, t]]).optimal =
       {[b, e, d, e]} := by
   decide
@@ -126,9 +126,9 @@ def koobeBase : List Syl := [acc "koo", un "be"]
 /-- In (21) the dominant accented suffix *-ppó* under `¬OO-MAX ≫ OO-MAX ≫ IO-MAX` deletes the
 base accent and keeps its own, giving *ada-ppó-i*. -/
 theorem dominant_accented :
-    (Tableau.ofRanking
-      [[un "a", acc "da", un "ppo", un "i"], [un "a", un "da", un "ppo", un "i"],
-        [un "a", un "da", acc "ppo", un "i"]]
+    (Tableau.ofList
+      {[un "a", acc "da", un "ppo", un "i"], [un "a", un "da", un "ppo", un "i"],
+        [un "a", un "da", acc "ppo", un "i"]}
       [(maxAccent adaInput adaBase .base).antifaithful, maxAccent adaInput adaBase .base,
         maxAccent adaInput adaBase .input]).optimal = {[un "a", un "da", acc "ppo", un "i"]} := by
   decide
@@ -136,7 +136,7 @@ theorem dominant_accented :
 /-- In (22) the recessive suffix *-tára*, with `OO-MAX ≫ ¬OO-MAX`, leaves the base accent,
 giving *yón-dara*. -/
 theorem recessive :
-    (Tableau.ofRanking [[un "yon", acc "da", un "ra"], [acc "yon", un "da", un "ra"]]
+    (Tableau.ofList {[un "yon", acc "da", un "ra"], [acc "yon", un "da", un "ra"]}
       [maxAccent yomInput yomBase .base, (maxAccent yomInput yomBase .base).antifaithful]).optimal =
       {[acc "yon", un "da", un "ra"]} := by
   decide
@@ -145,9 +145,9 @@ theorem recessive :
 `IO-DEP(Accent) ≫ CULMIN` nothing replaces it, giving *koobe-kko*, unaccented like any
 accentless word. -/
 theorem dominant_unaccented :
-    (Tableau.ofRanking
-      [[acc "koo", un "be", un "kko"], [un "koo", acc "be", un "kko"],
-        [un "koo", un "be", un "kko"]]
+    (Tableau.ofList
+      {[acc "koo", un "be", un "kko"], [un "koo", acc "be", un "kko"],
+        [un "koo", un "be", un "kko"]}
       [(maxAccent koobeInput koobeBase .base).antifaithful, depAccent koobeInput koobeBase,
         culmin]).optimal = {[un "koo", un "be", un "kko"]} := by
   decide
@@ -173,7 +173,7 @@ def noSpread (base : List Bool) : Constraint (List Bool) := fun out =>
 /-- In (52), under `ALIGN-L ≫ ¬OO-NOFLOP ≫ OO-NOFLOP` the dragging tone of *káál* loses its
 second link, giving *káal-ə*, rather than its first, which would leave a rising tone. -/
 theorem dragging_mutates :
-    (Tableau.ofRanking [[true, false], [true, true], [false, true]]
+    (Tableau.ofList {[true, false], [true, true], [false, true]}
       [alignL, (noFlop [true, true]).antifaithful, noFlop [true, true]]).optimal =
       {[true, false]} := by
   decide
@@ -181,7 +181,7 @@ theorem dragging_mutates :
 /-- In (53) a falling-tone base cannot mutate, since losing its only link leaves the rising
 tone ALIGN-L bans and spreading it violates NOSPREAD, so *stúur-ə* stays faithful. -/
 theorem falling_stays :
-    (Tableau.ofRanking [[true, false], [true, true], [false, true]]
+    (Tableau.ofList {[true, false], [true, true], [false, true]}
       [alignL, (noFlop [true, false]).antifaithful, noSpread [true, false]]).optimal =
       {[true, false]} := by
   decide

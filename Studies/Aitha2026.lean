@@ -312,7 +312,7 @@ def stemRanking : List (Constraint StemCandidate) :=
     fun c ↦ c.toFooting.footOffsets.sum]
 
 /-- The Stem parses as two moraic trochees, (ˈsa.mu)(ˌdram) ((49)). -/
-theorem stem_optimal : (Tableau.ofFintype stemRanking).optimal = {.trochees} := by decide
+theorem stem_optimal : (Tableau.ofList Finset.univ stemRanking).optimal = {.trochees} := by decide
 
 /-! ### Word- and Phrase-level rankings (§5.2–5.3)
 

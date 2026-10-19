@@ -141,14 +141,14 @@ def subCat (prefs : List Constituent) : Constraint Tree := fun t =>
 /-- A high-attaching prefix is parsed recursively: under `SubCat ≫ Match (ω, X⁰)`, with
 `Match (X⁰, ω)` undominated, the recursive parse is the unique optimum. -/
 theorem high_prefix_recursive :
-    (Tableau.ofRanking [nested [pref] stem, flat [pref] stem, phrasal]
+    (Tableau.ofList {nested [pref] stem, flat [pref] stem, phrasal}
       [matchWord, subCat [pref], matchOmega]).optimal = {nested [pref] stem} := by
   decide
 
 /-- A low-attaching prefix, carrying no frame, is parsed flat: `Match (ω, X⁰)` alone rules
 out the extra ω. -/
 theorem low_prefix_flat :
-    (Tableau.ofRanking [nested [pref] stem, flat [pref] stem, phrasal]
+    (Tableau.ofList {nested [pref] stem, flat [pref] stem, phrasal}
       [matchWord, matchOmega]).optimal = {flat [pref] stem} := by
   decide
 

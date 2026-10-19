@@ -66,49 +66,49 @@ def Paradigm.io (P : Paradigm α ι) (i : ℕ) : List (ℕ × ℕ) :=
 
 /-- The positions of two stems that realise the same input position. -/
 def compose (l₁ l₂ : List (ℕ × ℕ)) : List (ℕ × ℕ) :=
-  l₁.flatMap λ (r, p) => l₂.filterMap λ (r', q) => if r = r' then some (p, q) else none
+  l₁.flatMap fun (r, p) ↦ l₂.filterMap fun (r', q) ↦ if r = r' then some (p, q) else none
 
 /-- The positions of a stem of length `n` without an input correspondent. -/
 def epenthetic (l : List (ℕ × ℕ)) (n : ℕ) : List ℕ :=
-  (List.range n).filter λ p => ∀ rp ∈ l, rp.2 ≠ p
+  (List.range n).filter fun p ↦ ∀ rp ∈ l, rp.2 ≠ p
 
 /-- The site of a stem position: the last input position realised at or before it. -/
 def site (l : List (ℕ × ℕ)) (p : ℕ) : Option ℕ :=
-  ((l.filter λ rp => rp.2 ≤ p).map Prod.fst).max?
+  ((l.filter fun rp ↦ rp.2 ≤ p).map Prod.fst).max?
 
 /-- ℛ_OP between two stems of lengths `n₁`, `n₂` with input correspondences `l₁`, `l₂`: the
 positions realising the same input position, and the epenthetic positions at the same site. -/
 def opPairs (l₁ l₂ : List (ℕ × ℕ)) (n₁ n₂ : ℕ) : List (ℕ × ℕ) :=
-  compose l₁ l₂ ++ (epenthetic l₁ n₁).flatMap λ p =>
-    (epenthetic l₂ n₂).filterMap λ q => if site l₁ p = site l₂ q then some (p, q) else none
+  compose l₁ l₂ ++ (epenthetic l₁ n₁).flatMap fun p ↦
+    (epenthetic l₂ n₂).filterMap fun q ↦ if site l₁ p = site l₂ q then some (p, q) else none
 
 /-- The correspondence diagram of a candidate (2c): each member's input–stem relation, and
 between the stems of distinct members the relation ℛ_OP of `opPairs`. -/
 def Paradigm.corr (P : Paradigm α ι) : Correspondence Role α :=
-  .ofPairs (λ | .input => P.input | .member i => P.stem i)
-    λ | .input, .member i => P.io i
-      | .member i, .member j =>
-        if i = j then [] else opPairs (P.io i) (P.io j) (P.stem i).length (P.stem j).length
-      | _, _ => []
+  .ofPairs (fun | .input => P.input | .member i => P.stem i)
+    fun | .input, .member i => P.io i
+        | .member i, .member j =>
+          if i = j then [] else opPairs (P.io i) (P.io j) (P.stem i).length (P.stem j).length
+        | _, _ => []
 
 /-- A markedness constraint on the word of each cell, summed over the members (2b). -/
 def markedness (m : ι → List α → ℕ) : Constraint (Paradigm α ι) :=
-  λ P => (P.members.map λ x => m x.cell x.stem).sum
+  fun P ↦ (P.members.map fun x ↦ m x.cell x.stem).sum
 
 /-- An input–output faithfulness constraint summed over the members (2b). -/
 def ioFaith (f : Correspondence Role α → Role → Role → ℕ) : Constraint (Paradigm α ι) :=
-  λ P => ((List.range P.members.length).map λ i => f P.corr .input (.member i)).sum
+  fun P ↦ ((List.range P.members.length).map fun i ↦ f P.corr .input (.member i)).sum
 
 /-- An OP faithfulness constraint (2d): a correspondence constraint summed over the ordered
 pairs of distinct members. -/
 def opFaith (f : Correspondence Role α → Role → Role → ℕ) : Constraint (Paradigm α ι) :=
-  λ P => ((List.range P.members.length).flatMap λ i => (List.range P.members.length).map λ j =>
+  fun P ↦ ((List.range P.members.length).flatMap fun i ↦ (List.range P.members.length).map fun j ↦
     if i = j then 0 else f P.corr (.member i) (.member j)).sum
 
 /-- The tableau of the labelled candidate paradigms under a ranking. -/
-def tableau {L : Type*} [DecidableEq L] (cand : L → Paradigm α ι) (labels : List L)
-    (ranking : List (Constraint (Paradigm α ι))) (h : labels ≠ [] := by decide) :=
-  Tableau.ofRanking labels (ranking.map (Constraint.comap cand)) h
+def tableau {L : Type*} [DecidableEq L] (cand : L → Paradigm α ι) (labels : Finset L)
+    (ranking : List (Constraint (Paradigm α ι))) :=
+  Tableau.ofList labels (ranking.map (Constraint.comap cand))
 
 /-- The candidate paradigms of a tableau. -/
 inductive Cand
@@ -166,7 +166,7 @@ inductive Seg
 
 def IsVowel (c : Seg) : Prop := c ∈ [Seg.a, .aa, .i, .ii, .u, .schwa]
 
-instance : DecidablePred IsVowel := λ c => inferInstanceAs (Decidable (c ∈ _))
+instance : DecidablePred IsVowel := fun c ↦ inferInstanceAs (Decidable (c ∈ _))
 
 /-- The weight of a vowel: long or short. -/
 def weight : Seg → Option Bool
@@ -218,11 +218,11 @@ def feet (w : List Seg) : List (List Syllable) :=
   | fs => fs
 
 /-- SWP: stressed light syllables, the heads of (LL) feet. -/
-def swp (w : List Seg) : ℕ := ((feet w).filter λ ft => ft.length = 2).length
+def swp (w : List Seg) : ℕ := ((feet w).filter fun ft ↦ ft.length = 2).length
 
 /-- Superheavy syllables, parsed with a moraic coda (\*µµµ]σ) or a syllable appendix
 (\*APP-σ). -/
-def superheavy (w : List Seg) : ℕ := ((syllabify w).filter λ σ => 3 ≤ σ.moras).length
+def superheavy (w : List Seg) : ℕ := ((syllabify w).filter fun σ ↦ 3 ≤ σ.moras).length
 
 /-- ALIGN-L(Stem, σ): a stem-initial consonant before another is never syllable-initial. -/
 def alignL : List Seg → ℕ
@@ -258,15 +258,15 @@ unprefixed forms. The noun's one-member paradigms leave each form to markedness 
 
 /-- \*µµµ]σ. -/
 def starTrimoraic : Constraint (Paradigm Seg Cell) :=
-  markedness λ c s => if c.appendix then 0 else superheavy (c.word s)
+  markedness fun c s ↦ if c.appendix then 0 else superheavy (c.word s)
 
 /-- \*APP-σ. -/
 def starAppendix : Constraint (Paradigm Seg Cell) :=
-  markedness λ c s => if c.appendix then superheavy (c.word s) else 0
+  markedness fun c s ↦ if c.appendix then superheavy (c.word s) else 0
 
-def swpParadigm : Constraint (Paradigm Seg Cell) := markedness λ c s => swp (c.word s)
+def swpParadigm : Constraint (Paradigm Seg Cell) := markedness fun c s ↦ swp (c.word s)
 
-def alignLParadigm : Constraint (Paradigm Seg Cell) := markedness λ _ s => alignL s
+def alignLParadigm : Constraint (Paradigm Seg Cell) := markedness fun _ s ↦ alignL s
 
 def opDepV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.depViolOn IsVowel)
 
@@ -278,7 +278,7 @@ def ioDepV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.depViolOn
 def ioMaxV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.maxViolOn IsVowel)
 
 def ioMaxC : Constraint (Paradigm Seg Cell) :=
-  ioFaith (Correspondence.maxViolOn λ c => ¬IsVowel c)
+  ioFaith (Correspondence.maxViolOn fun c ↦ ¬IsVowel c)
 
 def ioIdentWt : Constraint (Paradigm Seg Cell) :=
   ioFaith (Correspondence.identViolFeature weight)
@@ -315,7 +315,7 @@ where
 
 /-- (12): the long vowel of /faʕaːl/ is shortened throughout the paradigm, ⟨faʕala, faʕaltu⟩ —
 overapplication of closed-syllable shortening, under OP-IDENT-WT >> IO-IDENT-WT. -/
-theorem shortening_overapplies : (tableau long [.a, .b, .c, .d] ranking).optimal = {.a} := by
+theorem shortening_overapplies : (tableau long {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
 /-- The paradigms of /faʕl/ in (13): epenthesis throughout, the cluster kept throughout with
@@ -335,7 +335,7 @@ where
 
 /-- (13): epenthesis into the final cluster of /faʕl/ carries through the paradigm,
 ⟨faʕila, faʕiltu⟩, under OP-DEP-V >> IO-DEP-V. -/
-theorem epenthesis_overapplies : (tableau cluster [.a, .b, .c, .d] ranking).optimal = {.a} := by
+theorem epenthesis_overapplies : (tableau cluster {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
 /-- The paradigms of /faʕal/ in (17): the (LL) feet kept, or syncopated. -/
@@ -349,12 +349,12 @@ where
   syncopated : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (4, 3)]
 
 /-- (17): SWP cannot force syncope, IO-MAX-V >> SWP. -/
-theorem no_syncope : (tableau syncope [.a, .b] ranking).optimal = {.a} := by decide
+theorem no_syncope : (tableau syncope {.a, .b} ranking).optimal = {.a} := by decide
 
 /-- The noun /fʕal/ with the case suffixes in (24): epenthesis, or the initial cluster. -/
 def noun : Cand → Paradigm Seg Cell
-  | .a => ⟨input, cases.map λ v => ⟨{ suffixes := [v] }, [.f, .i, .ayn, .a, .l], epenthetic⟩⟩
-  | _ => ⟨input, cases.map λ v => ⟨{ suffixes := [v] }, input, Correspondence.diagonalPairs 4⟩⟩
+  | .a => ⟨input, cases.map fun v ↦ ⟨{ suffixes := [v] }, [.f, .i, .ayn, .a, .l], epenthetic⟩⟩
+  | _ => ⟨input, cases.map fun v ↦ ⟨{ suffixes := [v] }, input, Correspondence.diagonalPairs 4⟩⟩
 where
   input : List Seg := [.f, .ayn, .a, .l]
   cases : List Seg := [.u, .a, .i]
@@ -362,7 +362,7 @@ where
 
 /-- (24): a [CCV noun stem is broken up by epenthesis, which SWP does not block in a
 prefixless paradigm, ALIGN-L(Stem, σ) >> IO-DEP-V. -/
-theorem noun_epenthesis : (tableau noun [.a, .b] ranking).optimal = {.a} := by decide
+theorem noun_epenthesis : (tableau noun {.a, .b} ranking).optimal = {.a} := by decide
 
 /-- The four representative cells of a verbal paradigm: the perfectives *-a*, *-tu* and the
 imperfectives *ja-…-u*, *ja-…-na*. -/
@@ -392,7 +392,7 @@ where
 make an (LL) foot, is the attractor, and *ftaʕala* keeps its misaligned cluster:
 OP-DEP-V >> SWP >> ALIGN-L(Stem, σ). -/
 theorem attraction_to_the_unmarked :
-    (tableau eighth [.a, .b, .c] ranking).optimal = {.a} := by decide
+    (tableau eighth {.a, .b, .c} ranking).optimal = {.a} := by decide
 
 /-- The paradigms of /stafʕaːl/ in (27), the candidates obeying the undominated constraints:
 levelled to the short, unepenthesized stem; epenthesized throughout; long before V-initial
@@ -424,7 +424,7 @@ where
 /-- (27): different members attract different edges — the prefixed imperfectives block
 epenthesis at the left edge via OP-DEP-V, the C-suffixed forms force shortening at the right
 edge via OP-IDENT-WT — under the single ranking (21). -/
-theorem two_attractors : (tableau tenth [.a, .b, .c, .d, .e] ranking).optimal = {.a} := by
+theorem two_attractors : (tableau tenth {.a, .b, .c, .d, .e} ranking).optimal = {.a} := by
   decide
 
 /-! ### Domination of OP faithfulness (§8.4.4)
@@ -450,8 +450,8 @@ where
 /-- (29): normal application — neither levelling wins, the vowel/zero alternation staying in
 the paradigm, \*.CᵢV.CᵢV >> IO-MAX-V, OP-MAX-V. -/
 theorem geminate_alternation :
-    (tableau geminate [.a, .b]
-      (markedness (λ c s => identicalOnsets (c.word s)) :: ranking)).optimal = {.a} := by
+    (tableau geminate {.a, .b}
+      (markedness (fun c s ↦ identicalOnsets (c.word s)) :: ranking)).optimal = {.a} := by
   decide
 
 /-! ### Moroccan Arabic majority rules (§8.5.1)
@@ -462,7 +462,7 @@ verb joins the larger class, *ʃrəb*, whereas nouns — paradigms of one — fo
 
 /-- \*ə]σ. -/
 def schwaOpen (w : List Seg) : ℕ :=
-  ((syllabify w).filter λ σ => σ.nucleus = .schwa ∧ σ.coda = []).length
+  ((syllabify w).filter fun σ ↦ σ.nucleus = .schwa ∧ σ.coda = []).length
 
 /-- \*CCC. -/
 def ccc : List Seg → ℕ
@@ -487,8 +487,8 @@ def sonCon : List Seg → ℕ
 
 /-- The ranking of (32): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON >> IO-MAX-V, IO-DEP-V. -/
 def moroccanRanking : List (Constraint (Paradigm Seg (List Seg))) :=
-  [markedness λ suf s => schwaOpen (s ++ suf), markedness λ suf s => ccc (s ++ suf),
-   opFaith (Correspondence.maxViolOn IsVowel), markedness λ suf s => sonCon (s ++ suf),
+  [markedness fun suf s ↦ schwaOpen (s ++ suf), markedness fun suf s ↦ ccc (s ++ suf),
+   opFaith (Correspondence.maxViolOn IsVowel), markedness fun suf s ↦ sonCon (s ++ suf),
    ioFaith (Correspondence.maxViolOn IsVowel), ioFaith (Correspondence.depViolOn IsVowel)]
 
 /-- A CCəC member from /ʃərb/: the input schwa deleted, a schwa epenthesized. -/
@@ -515,7 +515,7 @@ where
 /-- (32): majority rules — the unaffixed *ʃrəb* joins the five CCəC members against the two
 CəCC members, OP-MAX-V being violated once in each direction by every CCəC–CəCC pair
 (twenty against twenty-four marks). -/
-theorem majority_rules : (tableau drink [.a, .b, .c, .d] moroccanRanking).optimal = {.a} := by
+theorem majority_rules : (tableau drink {.a, .b, .c, .d} moroccanRanking).optimal = {.a} := by
   decide
 
 end Arabic
@@ -544,8 +544,8 @@ def twoSidedOpen : List Seg → ℕ
 
 /-- \*VCəCV, SON-CON >> OP-MAX-V >> \*CC#. -/
 def ranking : List (Constraint (Paradigm Seg Unit)) :=
-  [markedness λ _ s => twoSidedOpen s, markedness λ _ s => sonCon s,
-   opFaith (Correspondence.maxViolOn (· = .vowel)), markedness λ _ s => complexCoda s]
+  [markedness fun _ s ↦ twoSidedOpen s, markedness fun _ s ↦ sonCon s,
+   opFaith (Correspondence.maxViolOn (· = .vowel)), markedness fun _ s ↦ complexCoda s]
 
 /-- The paradigms of an imperfective and its truncated jussive from a stem ending in the
 cluster `x y`: the cluster kept, epenthesis throughout, or epenthesis in the jussive alone. -/
@@ -562,18 +562,18 @@ where
 
 /-- (33): *jibkɛ ~ jeːbk* 'cry' — the cluster is kept, overapplication of epenthesis being
 blocked. -/
-theorem cry : (tableau (jussive .spirant .stop) [.a, .b, .c] ranking).optimal = {.a} := by
+theorem cry : (tableau (jussive .spirant .stop) {.a, .b, .c} ranking).optimal = {.a} := by
   decide
 
 /-- fn. 34: *jɛɣlɛ ~ jɛɣɛl* 'uncover' — into a rising-sonority cluster epenthesis applies in
 the jussive alone, OP-MAX-V being dominated by SON-CON. -/
 theorem uncover :
-    (tableau (jussive .spirant .liquid) [.a, .b, .c] ranking).optimal = {.c} := by decide
+    (tableau (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by decide
 
 /-- The OP winners for *yišbē ~ yišb* 'take captive' and 'uncover' carry the forms of the
 [benua-1997] winners, (87) and (92). -/
 example :
-    (tableau (jussive .sibilant .stop) [.a, .b, .c] ranking).optimal = {.a} ∧
+    (tableau (jussive .sibilant .stop) {.a, .b, .c} ranking).optimal = {.a} ∧
     (Benua1997.Hebrew.captive .d).form .base = (jussive .sibilant .stop .a).stem 0 ∧
     (Benua1997.Hebrew.captive .d).form .derivative = (jussive .sibilant .stop .a).stem 1 ∧
     (Benua1997.Hebrew.uncover .b).form .base = (jussive .spirant .liquid .c).stem 0 ∧

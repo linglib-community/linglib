@@ -142,8 +142,8 @@ def economy (c : Numeral → ℕ) (p : Numeral × Reading) : ℕ :=
 
 /-- The paper's tableau ranks truthfulness above economy, over both words on both readings. -/
 def reportTableau (c : Numeral → ℕ) (v : ℕ) : Tableau (Numeral × Reading) 2 :=
-  Tableau.ofRanking [(.forty, .approximate), (.forty, .precise), (.thirtyNine, .approximate),
-    (.thirtyNine, .precise)] [inRange v, economy c]
+  Tableau.ofList {(.forty, .approximate), (.forty, .precise), (.thirtyNine, .approximate),
+    (.thirtyNine, .precise)} [inRange v, economy c]
 
 private theorem economy_eq {c : Numeral → ℕ} (h : c .forty < c .thirtyNine) :
     economy c = fun p ↦ if p = (.thirtyNine, .approximate) then 1 else 0 := by

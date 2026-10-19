@@ -21,12 +21,14 @@ position `p`, position `0` most dominant, and `r.symm i` is the rank position of
 `ι = Fin n` a ranking is a permutation, `Equiv.Perm (Fin n)`. `Ranking.Dominates` is the induced
 strict dominance relation, a strict total order on the constraints, and `Ranking.toRel` its
 reflexive closure, from which the ranking is recoverable (`toRel_le_toRel_iff`); `Ranking.take r k`
-is the set of its top `k` constraints. Reading two
-violation vectors in rank order and comparing them lexicographically is `Pi.Lex` under dominance
-(`toLex_comp_lt_iff`). The `Tableau` machinery evaluates under a ranking, and the
-elementary-ranking-condition layer (`ElementaryRankingCondition.lean`) infers rankings from
-winner–loser pairs. Rankings carry the discrete σ-algebra, so that a distribution over rankings,
-a partially ordered grammar's or stochastic OT's, is a `Measure`.
+is the set of its top `k` constraints. A ranking reads a violation vector `v` in rank order as
+`toLex (v ∘ r)`; comparing two such readings is the lexicographic order along an enumeration
+(`Pi.toLex_comp_lt_iff_exists` in `Core/Order/PiLex`), and comparing them under every ranking is
+the product order (`Pi.forall_toLex_comp_lt_iff`), which is harmonic bounding. The `Tableau`
+machinery evaluates under a ranking, and the elementary-ranking-condition layer
+(`ElementaryRankingCondition.lean`) infers rankings from winner–loser pairs. Rankings carry the
+discrete σ-algebra, so that a distribution over rankings, a partially ordered grammar's or
+stochastic OT's, is a `Measure`.
 
 ## Implementation notes
 
@@ -88,12 +90,6 @@ instance : IsStrictTotalOrder ι r.Dominates := InvImage.isStrictTotalOrder r.sy
 @[simp] theorem dominates_apply_iff {p q : Fin n} : r.Dominates (r p) (r q) ↔ p < q := by
   simp [Dominates]
 
-/-- Reading two vectors in rank order and comparing them lexicographically is `Pi.Lex` under
-dominance. -/
-theorem toLex_comp_lt_iff {β : Type*} [LT β] (v w : ι → β) :
-    toLex (v ∘ r) < toLex (w ∘ r) ↔ Pi.Lex r.Dominates (· < ·) v w :=
-  Pi.lex_comp_equiv r (· < ·) (· < ·) v w
-
 /-- Under the identity ranking `1`, dominance is index order. -/
 @[simp] theorem one_dominates_iff {i j : Fin n} : (1 : Ranking (Fin n) n).Dominates i j ↔ i < j :=
   Iff.rfl
@@ -119,18 +115,6 @@ theorem exists_dominates {i j : Fin n} (hij : i ≠ j) :
   rcases lt_or_gt_of_ne hij with h | h
   · exact ⟨1, one_dominates_iff.mpr h⟩
   · exact ⟨Equiv.swap i j, by simpa [Dominates] using h⟩
-
-/-- Any constraint can be ranked above all the others. -/
-theorem exists_forall_dominates [Fintype ι] (i : ι) (h : Fintype.card ι = n := by simp) :
-    ∃ r : Ranking ι n, ∀ j, j ≠ i → r.Dominates i j := by
-  classical
-  let e : Ranking ι n := (Fintype.equivFinOfCardEq h).symm
-  let r : Ranking ι n := (Equiv.swap ⟨0, (e.symm i).pos⟩ (e.symm i)).trans e
-  have hi : r.symm i = ⟨0, (e.symm i).pos⟩ := by simp [r]
-  refine ⟨r, fun j hj ↦ ?_⟩
-  rw [Dominates, hi, Fin.lt_def]
-  exact Nat.pos_of_ne_zero fun h0 ↦ hj <| r.symm.injective <|
-    Fin.ext (h0.trans (congrArg Fin.val hi).symm)
 
 /-! ### The top constraints of a ranking -/
 

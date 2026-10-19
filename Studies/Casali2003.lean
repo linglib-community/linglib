@@ -199,13 +199,13 @@ def starAtr : Constraint Word := fun o ↦
   (if o.root = s then 1 else 0) + if o.affix = s then 1 else 0
 
 /-- The four outputs for a root–affix input. -/
-def outputs : List Word :=
-  [⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩]
+def outputs : Finset Word :=
+  {⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩}
 
 /-- The root-control ranking HARMONY, MAX([ATR])root ≫ *[ATR] ≫ MAX([ATR]) over the outputs
 for input `w`: the tableaux (21) and (22). -/
 def rootControl : Tableau Word 4 :=
-  Tableau.ofRanking outputs [harmony, maxRoot s w, starAtr s, maxAtr s w]
+  Tableau.ofList outputs [harmony, maxRoot s w, starAtr s, maxAtr s w]
 
 /-- Under root control the affix takes the root's value, whatever the inputs and whichever
 value is specified: (21) and (22). -/
@@ -215,7 +215,7 @@ theorem rootControl_optimal : (rootControl s w).optimal = {⟨w.root, w.root⟩}
 
 /-- The dominant ranking promotes MAX([ATR]) above *[ATR]. -/
 def dominant : Tableau Word 4 :=
-  Tableau.ofRanking outputs [harmony, maxRoot s w, maxAtr s w, starAtr s]
+  Tableau.ofList outputs [harmony, maxRoot s w, maxAtr s w, starAtr s]
 
 /-- A dominant system assigns the specified value when either input carries it. -/
 def Word.dominantValue : Bool := if w.root = s ∨ w.affix = s then s else !s
@@ -232,11 +232,11 @@ variable (a : Bool)
 /-- An affix outside any harmonic context under the root-control order *[ATR] ≫ MAX([ATR]),
 over its two surface values. -/
 def isolated : Tableau Bool 2 :=
-  Tableau.ofRanking [true, false] [.binary (· = s), .binary fun o ↦ a = s ∧ o ≠ s]
+  Tableau.ofList {true, false} [.binary (· = s), .binary fun o ↦ a = s ∧ o ≠ s]
 
 /-- The same affix under the dominant order MAX([ATR]) ≫ *[ATR]. -/
 def isolatedDominant : Tableau Bool 2 :=
-  Tableau.ofRanking [true, false] [.binary fun o ↦ a = s ∧ o ≠ s, .binary (· = s)]
+  Tableau.ofList {true, false} [.binary fun o ↦ a = s ∧ o ≠ s, .binary (· = s)]
 
 /-- Outside harmony a root-control system strips an affix of its specification, so
 harmonizing affixes surface with the value opposite to the dominant one: weak assimilatory
@@ -261,9 +261,9 @@ structure LowSuffixCand where
 /-- Tableau (23) ranks *[+ATR, +low] and the preservation of [+low] above HARMONY above
 MAX([ATR]), over [tola], [tɔla], [tolæ] and [tole]. -/
 def reversal : Tableau LowSuffixCand 4 :=
-  Tableau.ofRanking
-    [⟨true, false, true⟩, ⟨false, false, true⟩, ⟨true, true, true⟩,
-      ⟨true, true, false⟩]
+  Tableau.ofList
+    {⟨true, false, true⟩, ⟨false, false, true⟩, ⟨true, true, true⟩,
+      ⟨true, true, false⟩}
     [.binary fun c ↦ c.suffixAtr ∧ c.suffixLow, .binary fun c ↦ ¬ c.suffixLow,
       .binary fun c ↦ c.root ≠ c.suffixAtr, .binary fun c ↦ ¬ c.root]
 
