@@ -1,7 +1,9 @@
 module
 
 public import Mathlib.Data.Finset.Insert
+public import Mathlib.Order.Interval.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Morphology.Morph
 public import Linglib.Logic.Natural.Soundness
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Logic.Trivalent.Pointwise
@@ -28,7 +30,7 @@ antecedent-worlds the antecedent is neither. Languages may lexicalize the split,
   proposition.
 * `Conditional.Reading.clauseSignature`: the projectivity signature of each clause under a
   reading, whose sign is `Conditional.Reading.clausePolarity`.
-* `Conditional.Marker`: a conditional marker with the readings it can mark.
+* `Conditional.Marker`: a conditional marker, its exponent with the readings it can mark.
 
 ## Main results
 
@@ -36,6 +38,13 @@ antecedent-worlds the antecedent is neither. Languages may lexicalize the split,
   sound.
 * `Conditional.Reading.exists_not_antitone_hypothetical_closestImp`: over the closest
   antecedent-worlds the hypothetical antecedent is not downward entailing.
+
+## Implementation notes
+
+The sources often attest a marker with one reading and say nothing about the other, so a
+marker's readings are recorded as an interval of sets of readings: the readings it is attested
+marking below, the readings it is not known to exclude above. A marker the sources describe
+fully has a one-point interval.
 
 ## References
 
@@ -177,14 +186,20 @@ end Signature
 
 end Reading
 
-/-- A conditional marker is a form together with the readings it can mark. Japanese *-ra* and German
-*falls* mark only hypothetical conditionals, and *nara*, *wenn* and English *if* mark either
+/-- A conditional marker is an exponent together with the readings it can mark. Japanese *-ra* and
+German *falls* mark only hypothetical conditionals, and *nara*, *wenn* and English *if* mark either
 ([lassiter-2025]). -/
 structure Marker where
-  /-- The marker's citation form. -/
-  form : String
-  /-- The readings the marker can mark. -/
-  readings : Finset Reading
+  /-- The exponent, in surface order. -/
+  morphs : List Morphology.Morph
+  /-- Native script form, when distinct. -/
+  script : Option String := none
+  /-- The set of readings the marker can mark lies in this interval: it contains the readings the
+  sources attest, and is contained in the readings they do not exclude. -/
+  readings : NonemptyInterval (Finset Reading)
   deriving DecidableEq
+
+/-- The surface form is the morphs' forms with their boundary notation. -/
+def Marker.form (m : Marker) : String := Morphology.Morph.surface m.morphs
 
 end Conditional

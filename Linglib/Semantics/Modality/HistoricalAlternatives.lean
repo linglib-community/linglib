@@ -32,6 +32,7 @@ determines its alternatives, the classes of its historical equivalence.
 * `actualHistoryBase_union_futureHistoryBase`: the actual and future bases together hold the
   alternatives at all times.
 * `Temporal.TWFrame.alternatives_eq_of_mem`: the alternatives of an alternative are the same.
+* `Temporal.TWFrame.antitone_metaphysicalBase`: the alternatives of a frame shrink over time.
 * `settled_not_diverse`: a settled property is not diverse.
 * `settled_alternatives_iff`: over a frame, settledness is historical necessity of the property
   or its negation.
@@ -176,6 +177,12 @@ alternatives as the world. -/
 theorem alternatives_eq_of_mem (h : v ∈ F.alternatives (w, t)) :
     F.alternatives (v, t) = F.alternatives (w, t) :=
   Set.ext fun _ ↦ ⟨(F.sim t).iseqv.trans h, (F.sim t).iseqv.trans ((F.sim t).iseqv.symm h)⟩
+
+variable (F) in
+/-- The alternatives of a world shrink as time goes on, since worlds sharing their history up to a
+time share it up to every earlier time: the backward closure of [condoravdi-2002]. -/
+theorem antitone_metaphysicalBase (w : W) : Antitone (metaphysicalBase F.alternatives w) :=
+  fun _ _ h _ hv ↦ F.antitone_sim h hv
 
 end Temporal.TWFrame
 

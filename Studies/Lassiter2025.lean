@@ -199,10 +199,11 @@ theorem coordination_bare (g₁ g₂ : Prop) :
 
 /-! ### Markers, section 2.2 -/
 
-/-- A marker heads a bare left-nested conditional iff it can mark a premise conditional:
-*nara* and *wenn* do, (18) and (23), *-ra* and *falls* do not, (19) and (24). -/
+/-- A marker is attested heading a bare left-nested conditional iff it is attested marking a
+premise conditional: *nara* and *wenn* are, (18) and (23), *-ra* and *falls* are not, (19) and
+(24). -/
 theorem heads_bare_iff (m : Marker) :
-    Acceptable (.nested .bare) (· ∈ m.readings) ↔ .premise ∈ m.readings :=
+    Acceptable (.nested .bare) (· ∈ m.readings.fst) ↔ .premise ∈ m.readings.fst :=
   acceptable_bare_iff _
 
 /-! ### Polarity items, section 2.3
@@ -319,7 +320,7 @@ and any coordinated antecedent have the discourse status the reading needs, that
 *only*-inversion force the hypothetical reading, and that its polarity item be admitted at
 its position. -/
 def demand (row : Datum) (ct : Reading) : Prop :=
-  (∀ m ∈ markerOf row, ct ∈ m.readings) ∧
+  (∀ m ∈ markerOf row, ct ∈ m.readings.fst) ∧
   (∀ g ∈ flag? row "antecedent_given", anchoring (g = true) ct) ∧
   (∀ g ∈ flag? row "coordinated_antecedent_given", anchoring (g = true) ct) ∧
   (flag? row "only_inversion" = some true → ct = .hypothetical) ∧
@@ -333,6 +334,12 @@ theorem adapters_total :
     ∀ row ∈ Examples.all,
       ((row.feature? "marker").isSome → (markerOf row).isSome) ∧
         ((row.feature? "item").isSome → (itemOf row).isSome) := by
+  decide
+
+/-- The fragments describe every marker a row names fully, so the row theorems read the
+readings each marker marks, not a bound on them. -/
+theorem markers_described :
+    ∀ row ∈ Examples.all, ∀ m ∈ markerOf row, m.readings.fst = m.readings.snd := by
   decide
 
 /-- Every row is judged felicitous iff some reading open to its shape meets its demand. Gibbard's

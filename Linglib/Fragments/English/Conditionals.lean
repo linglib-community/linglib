@@ -7,7 +7,7 @@ public import Linglib.Semantics.Modality.Exclusion
 # English conditional markers
 
 The English conditional marker *if*, typed by `Conditional.Marker`, and the language's
-X-marking exponent ([iatridou-2000], [von-fintel-iatridou-2023]).
+X-marking exponent, the fake past.
 
 ## References
 
@@ -21,10 +21,12 @@ namespace English.Conditionals
 
 /-- English *if* marks either reading; context decides between the hypothetical and the
 premise reading. -/
-def if_ : Conditional.Marker := ⟨"if", {.hypothetical, .premise}⟩
+def if_ : Conditional.Marker where
+  morphs := [.free "if"]
+  readings := .pure {.hypothetical, .premise}
 
-/-- English X-marking: Fake Past ([iatridou-2000]); the consequent adds woll
-    ([von-fintel-iatridou-2023] §2). -/
+/-- English X-marking is the fake past ([iatridou-2000]), with *woll* added in the consequent
+([von-fintel-iatridou-2023] §2). -/
 def xMarking : Option Modality.Exclusion.XMarkingExponent := some ⟨"Past", [.past, .future]⟩
 
 end English.Conditionals
