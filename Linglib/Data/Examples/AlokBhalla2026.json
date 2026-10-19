@@ -678,18 +678,18 @@
     "id": "alokbhalla2026_30a",
     "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(30a)"},
     "language": "maga1260",
-    "primaryText": "Santee-aa jaayel chahl-i-au",
+    "primaryText": "Santee-aa jaayel-au chahl-i-au",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Santee-aa", "Santee-FM"], ["jaayel", "go.INF"], ["chahl-i-au", "want.PRF-1-NHS.NHA"]
+      ["Santee-aa", "Santee-FM"], ["jaayel-au", "go.INF-NH"], ["chahl-i-au", "want.PRF-1-NHS.NHA"]
     ],
     "translation": "Santee wants to go (said to a friend)",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "ungrammatical",
     "alternatives": [
       {
-        "form": "Santee-aa jaayel-au chahl-i-au",
-        "judgment": "ungrammatical"
+        "form": "Santee-aa jaayel chahl-i-au",
+        "judgment": "acceptable"
       }
     ],
     "readings": [],
@@ -699,26 +699,26 @@
       ["clause", "embedded"],
       ["embedding", "nonfinite"]
     ],
-    "comment": "No allocutive marker on the nonfinite complement.",
+    "comment": "The paper prints jaayel-(*au): the marker is out on the nonfinite complement, and the matrix verb carries it.",
     "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_30b",
     "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(30b)"},
     "language": "maga1260",
-    "primaryText": "Ham okaraa dhekhe-se bachl-i-au",
+    "primaryText": "Ham okaraa dhekhe-se-au bachl-i-au",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ham", "I"], ["okaraa", "him.DAT.NH"], ["dhekhe-se", "seeing-INS"],
+      ["Ham", "I"], ["okaraa", "him.DAT.NH"], ["dhekhe-se-au", "seeing-INS-NH"],
       ["bachl-i-au", "avoid.PRF-1-NHS.NHA"]
     ],
     "translation": "I avoided seeing him (said to a friend)",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "ungrammatical",
     "alternatives": [
       {
-        "form": "Ham okaraa dhekhe-se-au bachl-i-au",
-        "judgment": "ungrammatical"
+        "form": "Ham okaraa dhekhe-se bachl-i-au",
+        "judgment": "acceptable"
       }
     ],
     "readings": [],

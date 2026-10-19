@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
@@ -22,7 +23,7 @@ them.
 
 * `Tamil.Pronouns.pronouns`: the personal pronouns.
 * `Tamil.Pronouns.addressee`, `Tamil.Pronouns.thirdSg`: the singular pronouns at each grade.
-* `Tamil.Pronouns.pluralSuffix`: the plural suffix, which is also the allocutive marker.
+* `Tamil.Pronouns.ŋgæ`: the plural suffix, which is also the allocutive marker.
 
 ## References
 
@@ -101,7 +102,7 @@ def pronouns : Finset PersonalPronoun :=
 
 /-- The plural suffix *-ŋgæ* of nouns and pronouns, which on the finite verb marks politeness to
 the addressee. -/
-def pluralSuffix : String := "-ŋgæ"
+def ŋgæ : Morphology.Morph := .suff "ŋgæ"
 
 end Pronouns
 
