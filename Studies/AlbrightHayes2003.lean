@@ -69,12 +69,6 @@ abbrev Context := List ContextElem
 /-- The word-specific rule of a stem ((3)). -/
 def wordSpecific (stem : List Segment) : Context := .wordBoundary :: stem.map .seg
 
-/-- The stem meets the description. -/
-def Matches (c : Context) (stem : List Segment) : Prop := matchLeftContext c stem = true
-
-instance (c : Context) (stem : List Segment) : Decidable (Matches c stem) :=
-  inferInstanceAs (Decidable (_ = true))
-
 /-- Generalization proceeds from the change site outward ((5)). Shared segments are kept, the
 first pair that differ become the class of their shared features, and everything beyond them
 is freed. -/
@@ -94,20 +88,20 @@ def learned : List (List Segment) → Context
 
 variable {c c₁ c₂ : Context} {stem : List Segment}
 
-private theorem matchRightContext_map_seg (l : List Segment) :
-    matchRightContext (l.map .seg ++ [.wordBoundary]) l = true := by
+private theorem matchesRight_map_seg (l : List Segment) :
+    MatchesRight (l.map .seg ++ [.wordBoundary]) l := by
   induction l with
-  | nil => rfl
-  | cons a l ih => simp [matchRightContext, ih]
+  | nil => trivial
+  | cons a l ih => simp [MatchesRight, ih]
 
 /-- A stem meets its own word-specific rule. -/
-theorem matches_wordSpecific : Matches (wordSpecific stem) stem := by
-  simp only [Matches, wordSpecific, matchLeftContext, List.reverse_cons, ← List.map_reverse]
-  exact matchRightContext_map_seg _
+theorem matchesLeft_wordSpecific : MatchesLeft (wordSpecific stem) stem := by
+  simp only [wordSpecific, MatchesLeft, List.reverse_cons, ← List.map_reverse]
+  exact matchesRight_map_seg _
 
 /-- A description one segment long is met by exactly the segments it subsumes. -/
-theorem matches_single_iff (k x : Segment) : Matches [.seg k] [x] ↔ k ≤ x := by
-  simp [Matches, matchLeftContext, matchRightContext]
+theorem matchesLeft_single_iff (k x : Segment) : MatchesLeft [.seg k] [x] ↔ k ≤ x := by
+  simp [MatchesLeft, MatchesRight]
 
 private theorem mgRev_comm (r₁ r₂ : List ContextElem) : mgRev r₁ r₂ = mgRev r₂ r₁ := by
   induction r₁ generalizing r₂ with
@@ -125,52 +119,52 @@ private theorem mgRev_comm (r₁ r₂ : List ContextElem) : mgRev r₁ r₂ = mg
 /-- Minimal generalization is symmetric. -/
 theorem mg_comm : mg c₁ c₂ = mg c₂ c₁ := by simp [mg, mgRev_comm]
 
-private theorem matchRightContext_mgRev {r₁ r₂ : List ContextElem} {l : List Segment}
-    (h : matchRightContext r₁ l = true) : matchRightContext (mgRev r₁ r₂) l = true := by
+private theorem matchesRight_mgRev {r₁ r₂ : List ContextElem} {l : List Segment}
+    (h : MatchesRight r₁ l) : MatchesRight (mgRev r₁ r₂) l := by
   induction r₁ generalizing r₂ l with
   | nil => cases r₂ with
-    | nil => rfl
-    | cons b bs => cases b <;> rfl
+    | nil => trivial
+    | cons b bs => cases b <;> trivial
   | cons a as ih => cases r₂ with
-    | nil => cases a <;> rfl
+    | nil => cases a <;> trivial
     | cons b bs => cases a with
       | seg a => cases b with
         | seg b =>
           cases l with
-          | nil => simp [matchRightContext] at h
+          | nil => exact h.elim
           | cons s ss =>
-            simp only [matchRightContext, Bool.and_eq_true, decide_eq_true_eq] at h
             simp only [mgRev]
             split
-            · simp [matchRightContext, h.1, ih h.2]
-            · simp [matchRightContext, inf_le_left.trans h.1]
-        | wordBoundary => rfl
+            · exact ⟨h.1, ih h.2⟩
+            · exact ⟨inf_le_left.trans h.1, trivial⟩
+        | wordBoundary => trivial
       | wordBoundary => cases b with
-        | seg _ => rfl
+        | seg _ => trivial
         | wordBoundary =>
           cases l with
-          | nil => rfl
-          | cons s ss => simp [matchRightContext] at h
+          | nil => trivial
+          | cons s ss => exact h.elim
 
 /-- The generalized rule covers everything either rule covered, so generalization only
 widens. -/
-theorem matches_mg_left (h : Matches c₁ stem) : Matches (mg c₁ c₂) stem := by
-  simp only [Matches, matchLeftContext, mg, List.reverse_reverse] at h ⊢
-  exact matchRightContext_mgRev h
+theorem matchesLeft_mg_left (h : MatchesLeft c₁ stem) : MatchesLeft (mg c₁ c₂) stem := by
+  simp only [MatchesLeft, mg, List.reverse_reverse] at h ⊢
+  exact matchesRight_mgRev h
 
-theorem matches_mg_right (h : Matches c₂ stem) : Matches (mg c₁ c₂) stem :=
-  mg_comm ▸ matches_mg_left h
+theorem matchesLeft_mg_right (h : MatchesLeft c₂ stem) : MatchesLeft (mg c₁ c₂) stem :=
+  mg_comm ▸ matchesLeft_mg_left h
 
 /-- A description one segment long reads the final segment alone, the structured similarity a
 rule is confined to. -/
-theorem matches_rtake_one (h : c.length ≤ 1) : Matches c stem ↔ Matches c (stem.rtake 1) := by
-  simp only [Matches, matchLeftContext_rtake_of_le c h]
+theorem matchesLeft_rtake_one (h : c.length ≤ 1) :
+    MatchesLeft c stem ↔ MatchesLeft c (stem.rtake 1) :=
+  (matchesLeft_rtake_of_le c h stem).symm
 
 /-! ### Reliability -/
 
 /-- The scope of a rule is the stems of a lexicon meeting its description. -/
 def scopeOf {C : Type*} (c : Context) (lex : List (List Segment × C)) : List (List Segment × C) :=
-  lex.filter (matchLeftContext c ·.1)
+  lex.filter fun x ↦ MatchesLeft c x.1
 
 /-- A rule's performance in a lexicon is the forms meeting its description and, among them,
 those whose past shows its change. -/
@@ -193,7 +187,8 @@ theorem hits_le_scope : (Stats.ofLexicon ch c lex).hits ≤ (Stats.ofLexicon ch 
 /-- Generalization never loses a form. -/
 theorem scope_mono :
     (Stats.ofLexicon ch c₁ lex).scope ≤ (Stats.ofLexicon ch (mg c₁ c₂) lex).scope :=
-  (List.monotone_filter_right lex fun _ h ↦ matches_mg_left h).length_le
+  (List.monotone_filter_right lex fun _ h ↦
+    decide_eq_true (matchesLeft_mg_left (of_decide_eq_true h))).length_le
 end
 
 /-- Raw confidence is hits over scope. -/
@@ -237,15 +232,16 @@ def pick : List Segment := [p, smallCapitalI, k]
 
 /-- The stems of an inventory that a description one segment long covers are the natural class
 of its featural term. -/
-theorem filter_matches_single (k : Segment) (I : Finset Segment) :
-    I.filter (fun x ↦ Matches [.seg k] [x]) = k.naturalClass I := by
-  simp only [matches_single_iff]; rfl
+theorem filter_matchesLeft_single (k : Segment) (I : Finset Segment) :
+    I.filter (fun x ↦ MatchesLeft [.seg k] [x]) = k.naturalClass I := by
+  simp only [matchesLeft_single_iff]; rfl
 
 /-- In (6), *vote* and *need* differ first in their final segments, so the learned `-əd` rule
 keeps what [t] and [d] share, and that featural term characterizes the class [t, d]
 uniquely. -/
 theorem learned_vote_need :
-    learned [vote, need] = [.seg (t ⊓ d)] ∧ (t ⊓ d).naturalClass English.Phonology.inventory = {t, d} := by
+    learned [vote, need] = [.seg (t ⊓ d)] ∧
+      (t ⊓ d).naturalClass English.Phonology.inventory = {t, d} := by
   decide
 
 /-- As footnote 4 observes, whatever [b], [g] and [n] share, [d] has, so the `-d` rule learned

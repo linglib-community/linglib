@@ -14,17 +14,19 @@ and its segment is the segment of that chart entry, so the values are PHOIBLE's.
 
 ## Main definitions
 
-* `English.Phonology.p`, `English.Phonology.esh` and the like: the phonemes, as segments of their chart entries.
+* `English.Phonology.p`, `English.Phonology.esh` and the like: the phonemes, as segments of their
+  chart entries.
 * `English.Phonology.inventory`: the set of them.
-* `English.Phonology.preglottalization`, `English.Phonology.postnasalDeletion`: two rules of Hayes's.
+* `English.Phonology.preglottalization`, `English.Phonology.postnasalDeletion`: two rules of
+  Hayes's.
 
 ## Main results
 
-* `English.Phonology.naturalClass_nasal`, `English.Phonology.isNaturalClass_voicelessStops`: Hayes's examples of
-  natural classes, the nasals and /p t k/.
-* `English.Phonology.isNaturalClass_sonorantConsonants`, `English.Phonology.not_isNaturalClass_stops_liquids`: the
-  sonorant consonants, contiguous in sonority, are a natural class, and the stops with the
-  liquids are not.
+* `English.Phonology.naturalClass_nasal`, `English.Phonology.isNaturalClass_voicelessStops`: Hayes's
+  examples of natural classes, the nasals and /p t k/.
+* `English.Phonology.isNaturalClass_sonorantConsonants`,
+  `English.Phonology.not_isNaturalClass_stops_liquids`: the sonorant consonants, contiguous in
+  sonority, are a natural class, and the stops with the liquids are not.
 
 ## Implementation notes
 
@@ -150,7 +152,6 @@ theorem not_isNaturalClass_stops_liquids :
 /-- Preglottalization glottalizes a voiceless stop word-finally,
 `[−cont, −voice] → [+c.g.] / __ ]word`. -/
 def preglottalization : Rule where
-  name := "Preglottalization"
   target := Segment.ofSpecs
     [(Phonology.Feature.continuant, false), (Phonology.Feature.voice, false)]
   effect := .changeFeatures (Segment.ofSpecs [(Phonology.Feature.constrGlottis, true)])
@@ -159,7 +160,6 @@ def preglottalization : Rule where
 /-- Postnasal /t/ deletion removes a voiceless coronal stop between a nasal and a vowel,
 `[−cont, +cor, +ant, −voice] → ∅ / [+nasal] __ [+syll]`. -/
 def postnasalDeletion : Rule where
-  name := "Postnasal /t/ Deletion"
   target := Segment.ofSpecs
     [(Phonology.Feature.continuant, false), (Phonology.Feature.coronal, true),
      (Phonology.Feature.anterior, true), (Phonology.Feature.voice, false)]

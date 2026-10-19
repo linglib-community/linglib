@@ -93,7 +93,6 @@ theorem subset_kor : inventory ⊆ Inventories.Korean.kor.segments :=
 
 /-- A non-affricate stop becomes a voiced nasal sonorant before a nasal. -/
 def stopNasalization : Rule where
-  name := "stop nasalization"
   target := Segment.ofSpecs [(.delayedRelease, false)]
   effect := .changeFeatures (Segment.ofSpecs [(.nasal, true), (.voice, true), (.sonorant, true)])
   rightContext := [.seg (Segment.ofSpecs [(.nasal, true)])]

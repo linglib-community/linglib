@@ -2,16 +2,6 @@
 Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
-
-## References
-
-* [N. Chomsky and M. Halle, *The Sound Pattern of English* (1968)][chomsky-halle-1968]
-* [C. D. Johnson, *Formal Aspects of Phonological Description* (1972)][johnson-1972]
-* [R. M. Kaplan and M. Kay, *Regular Models of Phonological Rule Systems* (1994)][kaplan-kay-1994]
-* [B. P. Hayes, *Introductory Phonology* (2009)][hayes-2009]
-* [J. Chandlee, *Strictly Local Phonological Processes* (2014)][chandlee-2014]
-* [J. Chandlee and J. Heinz, *Strict Locality and Phonological Maps* (2018)][chandlee-heinz-2018]
-* [M. Mohri, *Finite-State Transducers in Language and Speech Processing* (1997)][mohri-1997]
 -/
 module
 
@@ -22,7 +12,7 @@ public import Mathlib.Data.Finset.Piecewise
 /-!
 # Local phonological rewrite rules
 
-A **local rewrite rule** is a triple `(target, effect, context)` denoting a
+A local rewrite rule is a triple `(target, effect, context)` denoting a
 featurally-conditioned transformation of segment strings. The SPE notation
 `A → B / C __ D` — "every segment matching natural class `A` becomes `B`
 between context `C` and `D`" — originates with Chomsky and Halle; the
@@ -30,32 +20,33 @@ characterization of ordered SPE-rule cascades as regular relations is due to
 Johnson and to Kaplan and Kay, with pedagogical exposition in Hayes.
 
 In the modern subregular setting these rules are a surface notation for the
-**Input Strictly Local (ISL)** functions of Chandlee and of Chandlee and Heinz,
+Input Strictly Local (ISL) functions of Chandlee and of Chandlee and Heinz,
 rather than a cognitive theory of phonological grammar (that role is held by
 constraint-based frameworks such as `Phonology/OptimalityTheory/`).
 
 ## Main definitions
 
-* `ContextElem` — a segment pattern or word boundary.
-* `Effect` — feature merge, deletion, replacement, or assimilation of a feature class to a
+* `ContextElem`: a segment pattern or word boundary.
+* `Effect`: feature merge, deletion, replacement, or assimilation of a feature class to a
   neighbour (SPE alpha-variables; node spreading when the class is natural).
-* `Rule` — the `target / effect / leftContext / rightContext` schema, with
+* `Rule`: the `target / effect / leftContext / rightContext` schema, with
   `Rule.leftReach` and `Rule.rightReach` the input it inspects on each side.
-* `Rule.apply` — a single left-to-right scan with simultaneous application.
-* `derive` — an ordered-rule cascade (extrinsic ordering, the SPE convention).
-* `Rule.toISLRule`, `Rule.toSubsequentialTransducer` — the two machine
+* `MatchesLeft`, `MatchesRight`: a context matching the input on either side of the target.
+* `Rule.apply`: a single left-to-right scan with simultaneous application.
+* `derive`: an ordered-rule cascade (extrinsic ordering, the SPE convention).
+* `Rule.toISLRule`, `Rule.toSubsequentialTransducer`: the two machine
   presentations of a rule.
 
 ## Main results
 
-* `matchRightContext_take`, `matchLeftContext_rtake`, `Effect.apply_rtake`,
-  `Effect.apply_append` — contexts and effects read bounded windows, so a verdict
+* `matchesRight_take`, `matchesLeft_rtake`, `Effect.apply_rtake`,
+  `Effect.apply_append`: contexts and effects read bounded windows, so a verdict
   factors through `leftReach` symbols to the left and `rightReach` to the right.
-* `Rule.length_apply`, `length_derive` — a rule that does not delete, and a cascade of such
+* `Rule.length_apply`, `length_derive`: a rule that does not delete, and a cascade of such
   rules, preserve the length of the word.
-* `Rule.isLeftInputStrictlyLocal` — a rule reading nothing to its right is
+* `Rule.isLeftInputStrictlyLocal`: a rule reading nothing to its right is
   `(leftReach + 1)`-Left-ISL.
-* `Rule.isLeftSubsequential` — over a finite segment alphabet every rule is
+* `Rule.isLeftSubsequential`: over a finite segment alphabet every rule is
   Left-Subsequential, via a transducer that delays emission by `rightReach`
   symbols and flushes the buffer at the word end.
 
@@ -70,15 +61,25 @@ metathesis and coalescence are not expressible, and application is neither
 iterative/directional nor cyclic. Iterative spreading lies outside ISL, in the
 Output Strictly Local class (`Subregular.OSLRule.spread_not_isLeftInputStrictlyLocal`).
 
-## Todo
+## TODO
 
-* `Rule.apply` over **boundary-augmented** input. Padding the string with word
+* `Rule.apply` over boundary-augmented input. Padding the string with word
   boundaries turns the right context into lookahead the padding pays for, and
   the rule becomes `k`-Left-ISL with
   `k = r.leftReach + r.rightReach + 1`. Over raw strings that statement does
   not hold in general — a bounded left window cannot see the right context —
   which is why `Rule.isLeftInputStrictlyLocal` assumes no right reach and
   `Rule.isLeftSubsequential` is what survives without it.
+
+## References
+
+* [chomsky-halle-1968]
+* [johnson-1972]
+* [kaplan-kay-1994]
+* [hayes-2009]
+* [chandlee-2014]
+* [chandlee-heinz-2018]
+* [mohri-1997]
 -/
 
 @[expose] public section
@@ -95,7 +96,7 @@ specification) or a word boundary marker. -/
 inductive ContextElem where
   /-- A segment matching a natural-class pattern. -/
   | seg : Segment → ContextElem
-  /-- A word boundary (Hayes notation: `]word` or `#`). -/
+  /-- A word boundary, `]word` or `#` in Hayes's notation. -/
   | wordBoundary : ContextElem
 
 /-- The structural change effected by a rule. -/
@@ -169,11 +170,8 @@ theorem Effect.apply_append (e : Effect) (w : List Segment) (s : Segment) (d d' 
 * `effect` — the structural change `B`.
 * `leftContext` — preceding context `C`, ordered left-to-right (so the
   rightmost element is closest to the target).
-* `rightContext` — following context `D`, ordered left-to-right.
-
-The `name` field is informational. -/
+* `rightContext` — following context `D`, ordered left-to-right. -/
 structure Rule where
-  name : String := ""
   target : Segment
   effect : Effect
   leftContext : List ContextElem := []
@@ -189,21 +187,33 @@ def Rule.rightReach (r : Rule) : ℕ := max r.rightContext.length r.effect.right
 
 /-! ### Context matching -/
 
-/-- Whether a right-context list matches the suffix `right` to the right of the current
-position, scanning both lists head-to-head from the segment immediately following the
-target. -/
-def matchRightContext : List ContextElem → List Segment → Bool
-  | [], _ => true
-  | .wordBoundary :: rest, [] => matchRightContext rest []
-  | .wordBoundary :: _, _ :: _ => false  -- expected end of word
-  | .seg p :: rest, s :: rs => decide (p ≤ s) && matchRightContext rest rs
-  | .seg _ :: _, [] => false  -- expected segment, none follows
+/-- The right context `ctx` matches the suffix `right` to the right of the current position
+when, scanning both from the segment immediately following the target, each segment pattern
+lies below its segment and a word boundary stands at the end of the word. -/
+def MatchesRight : List ContextElem → List Segment → Prop
+  | [], _ => True
+  | .wordBoundary :: rest, [] => MatchesRight rest []
+  | .wordBoundary :: _, _ :: _ => False
+  | .seg p :: rest, s :: rs => p ≤ s ∧ MatchesRight rest rs
+  | .seg _ :: _, [] => False
 
-/-- Whether a left-context list matches the prefix `left` to the left of the current position.
-Context elements are ordered left-to-right, so the rightmost element is closest to the
-target, and both lists are reversed once and then scanned head-to-head. -/
-def matchLeftContext (ctx : List ContextElem) (left : List Segment) : Bool :=
-  matchRightContext ctx.reverse left.reverse
+instance instDecidableMatchesRight : ∀ ctx right, Decidable (MatchesRight ctx right)
+  | [], _ => isTrue trivial
+  | .wordBoundary :: rest, [] => instDecidableMatchesRight rest []
+  | .wordBoundary :: _, _ :: _ => isFalse id
+  | .seg _ :: rest, _ :: rs =>
+    haveI := instDecidableMatchesRight rest rs
+    inferInstanceAs (Decidable (_ ∧ _))
+  | .seg _ :: _, [] => isFalse id
+
+/-- The left context `ctx` matches the prefix `left` to the left of the current position.
+Context elements are ordered left to right, so the rightmost element is closest to the
+target, and both lists are reversed and then scanned from the target outward. -/
+def MatchesLeft (ctx : List ContextElem) (left : List Segment) : Prop :=
+  MatchesRight ctx.reverse left.reverse
+
+instance (ctx : List ContextElem) (left : List Segment) : Decidable (MatchesLeft ctx left) :=
+  inferInstanceAs (Decidable (MatchesRight _ _))
 
 /-! ### Rule application -/
 
@@ -221,9 +231,7 @@ where
   go : List Segment → List Segment → List Segment
     | _, [] => []
     | left, s :: right =>
-      if decide (r.target ≤ s)
-          && matchLeftContext r.leftContext left
-          && matchRightContext r.rightContext right then
+      if r.target ≤ s ∧ MatchesLeft r.leftContext left ∧ MatchesRight r.rightContext right then
         match r.effect.apply left s right with
         | some s' => s' :: go (left ++ [s]) right
         | none => go (left ++ [s]) right  -- deletion
@@ -233,7 +241,7 @@ where
 /-- Apply an ordered sequence of rules. Each rule sees the output of the
 previous rule (extrinsic ordering, the SPE convention). -/
 def derive (rules : List Rule) (input : List Segment) : List Segment :=
-  rules.foldl (fun s r => r.apply s) input
+  rules.foldl (fun s r ↦ r.apply s) input
 
 /-! ### Bounded context windows
 
@@ -244,29 +252,29 @@ exactly when the string is exhausted, so a window must be long enough to tell
 a genuinely short string from a truncated one. A window of the context's own
 length is: it is exhausted only when the string is. -/
 
-theorem matchRightContext_take (ctx : List ContextElem) (right : List Segment) :
-    matchRightContext ctx (right.take ctx.length) = matchRightContext ctx right := by
+theorem matchesRight_take (ctx : List ContextElem) (right : List Segment) :
+    MatchesRight ctx (right.take ctx.length) ↔ MatchesRight ctx right := by
   induction ctx generalizing right with
   | nil => rfl
-  | cons c rest ih => cases c <;> cases right <;> simp [matchRightContext, ih]
+  | cons c rest ih => cases c <;> cases right <;> simp [MatchesRight, ih]
 
-theorem matchLeftContext_rtake (ctx : List ContextElem) (left : List Segment) :
-    matchLeftContext ctx (left.rtake ctx.length) = matchLeftContext ctx left := by
+theorem matchesLeft_rtake (ctx : List ContextElem) (left : List Segment) :
+    MatchesLeft ctx (left.rtake ctx.length) ↔ MatchesLeft ctx left := by
   have h : (left.rtake ctx.length).reverse = left.reverse.take ctx.reverse.length := by
     simp [List.rtake_eq_reverse_take_reverse]
-  rw [matchLeftContext, h, matchRightContext_take, matchLeftContext]
+  rw [MatchesLeft, h, matchesRight_take, MatchesLeft]
 
 /-- Any window at least as long as the context reads the same. -/
-theorem matchLeftContext_rtake_of_le (ctx : List ContextElem) {n : ℕ} (h : ctx.length ≤ n)
-    (left : List Segment) : matchLeftContext ctx (left.rtake n) = matchLeftContext ctx left := by
-  rw [← matchLeftContext_rtake ctx (left.rtake n), List.rtake_rtake, min_eq_left h,
-    matchLeftContext_rtake]
+theorem matchesLeft_rtake_of_le (ctx : List ContextElem) {n : ℕ} (h : ctx.length ≤ n)
+    (left : List Segment) : MatchesLeft ctx (left.rtake n) ↔ MatchesLeft ctx left := by
+  rw [← matchesLeft_rtake ctx (left.rtake n), List.rtake_rtake, min_eq_left h,
+    matchesLeft_rtake]
 
 /-- A suffix at least as long as the context reads the same as its extensions. -/
-theorem matchRightContext_append_of_le (ctx : List ContextElem) {d : List Segment}
+theorem matchesRight_append_of_le (ctx : List ContextElem) {d : List Segment}
     (d' : List Segment) (h : ctx.length ≤ d.length) :
-    matchRightContext ctx (d ++ d') = matchRightContext ctx d := by
-  rw [← matchRightContext_take ctx d, ← matchRightContext_take ctx (d ++ d'),
+    MatchesRight ctx (d ++ d') ↔ MatchesRight ctx d := by
+  rw [← matchesRight_take ctx d, ← matchesRight_take ctx (d ++ d'),
     List.take_append_of_le_length h]
 
 /-! ### The verdict at a position -/
@@ -276,8 +284,7 @@ effect applied when target, left context `w` and right context `d` all match, an
 untouched segment otherwise. -/
 def Rule.verdict (r : Rule) (w : List Segment) (s : Segment) (d : List Segment) :
     List Segment :=
-  if decide (r.target ≤ s) && matchLeftContext r.leftContext w
-      && matchRightContext r.rightContext d then
+  if r.target ≤ s ∧ MatchesLeft r.leftContext w ∧ MatchesRight r.rightContext d then
     (r.effect.apply w s d).toList
   else [s]
 
@@ -286,22 +293,22 @@ theorem Rule.apply_go_cons (r : Rule) (left : List Segment) (s : Segment)
     (right : List Segment) :
     Rule.apply.go r left (s :: right)
       = r.verdict left s right ++ Rule.apply.go r (left ++ [s]) right := by
-  cases hc : decide (r.target ≤ s) && matchLeftContext r.leftContext left
-      && matchRightContext r.rightContext right <;>
+  by_cases hc : r.target ≤ s ∧ MatchesLeft r.leftContext left ∧
+      MatchesRight r.rightContext right <;>
     cases he : r.effect.apply left s right <;> simp [Rule.apply.go, Rule.verdict, hc, he]
 
 /-- The verdict reads only the last `leftReach` symbols of the prefix. -/
 theorem Rule.verdict_rtake (r : Rule) (w : List Segment) (s : Segment) (d : List Segment) :
     r.verdict (w.rtake r.leftReach) s d = r.verdict w s d := by
-  rw [Rule.verdict, Rule.verdict,
-    matchLeftContext_rtake_of_le r.leftContext (n := r.leftReach) (le_max_left _ _),
+  simp only [Rule.verdict,
+    matchesLeft_rtake_of_le r.leftContext (n := r.leftReach) (le_max_left _ _),
     Effect.apply_rtake r.effect (n := r.leftReach) (le_max_right _ _)]
 
 /-- The verdict reads only the first `rightReach` symbols of the suffix. -/
 theorem Rule.verdict_append (r : Rule) (w : List Segment) (s : Segment) (d e : List Segment)
     (h : r.rightReach ≤ d.length) : r.verdict w s (d ++ e) = r.verdict w s d := by
-  rw [Rule.verdict, Rule.verdict,
-    matchRightContext_append_of_le _ _
+  simp only [Rule.verdict,
+    matchesRight_append_of_le _ _
       ((le_max_left _ _ : r.rightContext.length ≤ r.rightReach).trans h),
     Effect.apply_append _ _ _ _ _ ((le_max_right _ _ : r.effect.rightReach ≤ r.rightReach).trans h)]
 
@@ -420,7 +427,7 @@ abbrev Rule.State (r : Rule) : Type :=
 to the buffer, and whatever that pushes out of the buffer has acquired its full right
 context, so it is judged and enters the left window. `finalOutput` judges the
 remaining buffer against the end of the word, where a short lookahead is exactly
-what `matchRightContext` expects. -/
+what `MatchesRight` expects. -/
 def Rule.toSubsequentialTransducer (r : Rule) :
     SubsequentialTransducer r.State Segment Segment where
   start := (⟨[], Nat.zero_le _⟩, ⟨[], Nat.zero_le _⟩)
@@ -429,7 +436,7 @@ def Rule.toSubsequentialTransducer (r : Rule) :
         List.length_rtake_le _ _⟩,
       ⟨(s.2.val ++ [x]).rtake r.rightReach, List.length_rtake_le _ _⟩)
   output s x :=
-    ((s.2.val ++ [x]).rdrop r.rightReach).flatMap fun b =>
+    ((s.2.val ++ [x]).rdrop r.rightReach).flatMap fun b ↦
       r.verdict s.1.val b ((s.2.val ++ [x]).rtake r.rightReach)
   finalOutput s := r.scan s.1.val s.2.val
 
