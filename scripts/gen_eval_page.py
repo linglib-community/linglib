@@ -26,6 +26,7 @@ import subprocess
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from gen_bibliography_page import study_name  # noqa: E402
 import site_shell  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -242,6 +243,32 @@ def build(export, base):
     scored = {(domain(r["experiment"]), r["theory"]) for r in export["verdicts"]}
     for d in domains.values():
         d["theories"] = [t["id"] for t in theories if (d["name"], t["id"]) in scored]
+
+    # The papers a domain brings together: the studies that define its theories, and the papers
+    # whose experiments score them, each linked to its study where linglib has one.
+    keys_of = {study_name(k): k for k in re.findall(r"^@\w+\{([^,\s]+),",
+                                                     (ROOT / "references.bib").read_text(
+                                                         encoding="utf-8"), re.M)}
+    cited = bib_entries(sorted(keys_of.values()))
+
+    def paper(study):
+        study_file = ROOT / "Studies" / f"{study}.lean"
+        ref = cited.get(keys_of.get(study, ""), {})
+        href = (f"{base}Studies/{study}.html" if study_file.exists() else
+                f"https://doi.org/{ref['doi']}" if ref.get("doi") else ref.get("url", ""))
+        return {"study": study, "cite": ref or None, "href": href}
+
+    def unique(xs):
+        return list(dict.fromkeys(xs))
+
+    by_id = {t["id"]: t for t in theories}
+    for d in domains.values():
+        defining = unique(names[n["name"]]["module"].split(".")[1]
+                          for t in d["theories"] for n in by_id[t]["definitions"]
+                          if names[n["name"]]["module"].startswith("Studies."))
+        d["theoryPapers"] = [paper(p) for p in defining]
+        d["dataPapers"] = [paper(p) for p in unique(e["paper"] for e in experiments
+                                                    if e["id"] in d["experiments"])]
 
     # The printed numbers behind the observations, from the papers' data files.
     papers = {}
