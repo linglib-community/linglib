@@ -13,31 +13,31 @@ public import Mathlib.Algebra.BigOperators.Pi
 
 An OT system pairs each input's candidates with a constraint set on input–output mappings
 (`ConstraintSystem`). Under a ranking, the winners of every input's tableau form the ranking's
-language; the rankings with the same language form a ranking grammar, and the grammars partition
-the rankings: the system's typology ([merchant-prince-2022]). The typology is the kernel of the
+language. Following Merchant and Prince, the rankings with the same language form a ranking
+grammar, and the grammars partition the rankings into the system's typology, the kernel of the
 language map.
 
-A system with finitely many inputs has the same typology as its joint system, a single tableau
-whose candidates choose a candidate for every input and whose violations are summed over the
-inputs, the Minkowski sum of the system's tableaux. The joint language is the product of the
-languages, so summation loses no ranking information ([prince-2015]). The reason is that the
-lexicographic order is additive, so that minimizing a sum over a product of candidate sets
-minimizes each summand ([magri-2015]; `Finset.mem_argmin_piFinset_sum`).
+A system with finitely many inputs has the same typology as its joint system. The joint system is
+a single tableau whose candidates choose a candidate for every input and whose violations are
+summed over the inputs, the Minkowski sum of the system's tableaux. Prince shows that its language
+is the product of the languages, so summation loses no ranking information. Magri traces this to
+the additivity of the lexicographic order, under which minimizing a sum over a product of
+candidate sets minimizes each summand (`Finset.mem_argmin_piFinset_sum`).
 
 ## Main definitions
 
-* `ConstraintSystem.tableau` — the tableau of an input under a ranking.
-* `ConstraintSystem.language` — the winners of each input under a ranking.
-* `ConstraintSystem.typology` — the partition of the rankings by their languages.
+* `ConstraintSystem.tableau`: the tableau of an input under a ranking.
+* `ConstraintSystem.language`: the winners of each input under a ranking.
+* `ConstraintSystem.typology`: the partition of the rankings by their languages.
 
 ## Main results
 
-* `ConstraintSystem.language_eq_singleton_iff` — a ranking selects `o` alone at an input iff `o`
+* `ConstraintSystem.language_eq_singleton_iff`: a ranking selects `o` alone at an input iff `o`
   is a candidate lexicographically below every other.
-* `ConstraintSystem.language_joint` — the language of the joint system is the product of the
+* `ConstraintSystem.language_joint`: the language of the joint system is the product of the
   languages.
-* `ConstraintSystem.typology_joint` — one tableau suffices: when every input has a candidate, the
-  joint system has the system's typology.
+* `ConstraintSystem.typology_joint`: one tableau suffices, the joint system having the system's
+  typology when every input has a candidate.
 
 ## References
 
@@ -54,16 +54,16 @@ namespace ConstraintSystem
 
 variable {I O ι : Type*} {n : ℕ} (S : ConstraintSystem I O ι) (r : Ranking ι n) (i : I)
 
-/-- The tableau of an input under a ranking: its candidates, evaluated by the system's
-constraints in rank order. -/
+/-- The tableau of an input under a ranking evaluates its candidates by the system's constraints
+in rank order. -/
 def tableau : Tableau O n := Tableau.ofRanking (S.conAt i) r (S.gen i)
 
-/-- The **language** of a ranking: the winners of each input's tableau
+/-- The **language** of a ranking assigns each input the winners of its tableau
 ([merchant-prince-2022]). -/
 def language : Finset O := (S.tableau r i).optimal
 
-/-- The **typology** of a system: rankings are equivalent when they have the same language, so
-that the classes, the ranking grammars, partition the rankings ([merchant-prince-2022]). -/
+/-- The **typology** of a system identifies the rankings with the same language, so that its
+classes, the ranking grammars, partition the rankings ([merchant-prince-2022]). -/
 def typology : Setoid (Ranking ι n) := Setoid.ker S.language
 
 variable {S r i} {o : O}
@@ -85,8 +85,8 @@ section Joint
 
 variable [Fintype I] [DecidableEq I] (S r)
 
-/-- The language of the joint system is the product of the system's languages: a tuple wins iff
-each of its candidates wins at its input ([prince-2015]). -/
+/-- The language of the joint system is the product of the system's languages, so a tuple wins
+iff each of its candidates wins at its input ([prince-2015]). -/
 theorem language_joint : S.joint.language r () = Fintype.piFinset (S.language r) := by
   have hprofile : (S.joint.tableau r ()).profile = fun g ↦ ∑ i, (S.tableau r i).profile (g i) :=
     funext fun g ↦ funext fun p ↦
@@ -97,7 +97,7 @@ theorem language_joint : S.joint.language r () = Fintype.piFinset (S.language r)
 
 variable {S}
 
-/-- **One tableau suffices** ([prince-2015]): when every input has a candidate, the joint system
+/-- **One tableau suffices** ([prince-2015]). When every input has a candidate, the joint system
 has the system's typology. -/
 theorem typology_joint [DecidableEq O] (h : ∀ i, (S.gen i).Nonempty) :
     (S.joint.typology : Setoid (Ranking ι n)) = S.typology := by

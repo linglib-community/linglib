@@ -82,9 +82,9 @@ theorem argmin_eq_argmax_of_le_iff [Preorder γ] [DecidableLE γ] {f' : α → �
   ext a; simp only [mem_argmin, mem_argmax]
   exact and_congr_right fun ha ↦ forall₂_congr fun b hb ↦ h a ha b hb
 
-/-- Membership in an argmax over `univ`, through a surjection: `a` maximizes
-`φ ∘ e` iff `e a` maximizes `φ`. Collapses argmax over a function space to
-argmax over values when the objective factors through evaluation. -/
+/-- For a surjection `e`, `a` maximizes `φ ∘ e` over `univ` iff `e a` maximizes `φ`. This
+collapses an argmax over a function space to an argmax over values when the objective factors
+through evaluation. -/
 theorem mem_argmax_comp_surjective {α' : Type*} [Fintype α] [Fintype α']
     {e : α → α'} (he : Function.Surjective e) (φ : α' → β) {a : α} :
     a ∈ Finset.univ.argmax (φ ∘ e) ↔ e a ∈ Finset.univ.argmax φ := by

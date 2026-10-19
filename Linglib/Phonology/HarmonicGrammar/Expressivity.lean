@@ -22,7 +22,8 @@ Law data.
 ## Main definitions
 
 * `ExponentiallySeparated`, `expWeights`: the HG reading of an OT ranking.
-* `RealizationProblem`: a target mapping that one grammar must realize on every input.
+* `RealizationProblem`: a constraint system with target outputs that one grammar must select on
+  every input.
 * `RealizationProblem.IsHGRealizable`, `RealizationProblem.IsOTRealizable`: realizability by a
   non-negative weighting and by a ranking.
 * `RealizationProblem.ercs`: the winner–loser ERCs of a problem.
@@ -94,7 +95,7 @@ theorem ExponentiallySeparated.pos {n M : ℕ} {w : Fin n → ℝ} (hw : Exponen
 /-- The exponential weights give constraint `i` the weight `(M+1)^(n−1−i)`, so the
     highest-ranked constraint `0` gets the largest weight `(M+1)^(n−1)`. -/
 def expWeights (n : Nat) (M : Nat) : Fin n → ℝ :=
-  fun i => ((M + 1 : ℝ) ^ (n - 1 - i.val))
+  fun i ↦ ((M + 1 : ℝ) ^ (n - 1 - i.val))
 
 /-- Exponential weights are positive. -/
 theorem expWeights_pos (n : Nat) (M : Nat) (i : Fin n) :
@@ -265,7 +266,7 @@ instance [DecidableEq Output] (P : RealizationProblem Input Output (Fin n)) :
     candidate ([prince-2002]). -/
 def ercs [Fintype ι] [DecidableEq Output] (P : RealizationProblem Input Output ι) :
     Finset (ERC ι) :=
-  P.inputs.biUnion fun i => ((P.gen i).erase (P.target i)).image fun o =>
+  P.inputs.biUnion fun i ↦ ((P.gen i).erase (P.target i)).image fun o ↦
     ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o))
 
 theorem mem_ercs [Fintype ι] [DecidableEq Output] {P : RealizationProblem Input Output ι}
@@ -290,8 +291,8 @@ theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
   · intro h i hi
     refine picksAt_iff.2 ⟨P.target_mem i hi, fun o ho hone ↦ ?_⟩
     refine lt_of_le_of_ne ((satisfiedBy_ercOfProfiles_iff_le σ _ _).mp
-      (h _ (mem_ercs.mpr ⟨i, hi, o, ho, hone, rfl⟩))) fun heq => hvp i hi o ho hone ?_
-    exact funext fun c => by simpa using congrFun (toLex_inj.mp heq) (σ.symm c)
+      (h _ (mem_ercs.mpr ⟨i, hi, o, ho, hone, rfl⟩))) fun heq ↦ hvp i hi o ho hone ?_
+    exact funext fun c ↦ by simpa using congrFun (toLex_inj.mp heq) (σ.symm c)
 
 /-- OT-realizability is consistency of the problem's ERC set
     ([prince-2002]). -/
@@ -300,26 +301,26 @@ theorem isOTRealizable_iff_linearExtensions_nonempty [DecidableEq Output]
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
       (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
     P.IsOTRealizable ↔ (ERC.linearExtensions P.ercs).Nonempty :=
-  exists_congr fun _ => (realizedByRanking_iff_satisfiedBy hvp).trans
+  exists_congr fun _ ↦ (realizedByRanking_iff_satisfiedBy hvp).trans
     ERC.mem_linearExtensions.symm
 
 end RealizationProblem
 
 /-! ### Forward containment — OT ⊆ HG -/
 
-/-- On a finite set of inputs, the language of a ranking is the HG language of exponentially
+/-- Every OT language is an HG language on a finite set of inputs. The weights are exponentially
     separated weights read off the ranking, with the largest violation count as the separation
-    bound: every OT language is an HG language. -/
+    bound. -/
 theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [Fintype ι]
     (S : ConstraintSystem Input Output ι) (X : Finset Input) (σ : Ranking ι n) :
     ∃ w : ι → ℝ, 0 ≤ w ∧ ∀ i ∈ X, S.hgLanguage w i = S.language σ i := by
   set M := (X.sup fun i ↦ (S.gen i).sup fun o ↦ Finset.univ.sup (S.con · (i, o))) + 1
-  have hbound : ∀ i ∈ X, ∀ o ∈ S.gen i, ∀ k, S.con k (i, o) ≤ M := fun i hi o ho k =>
+  have hbound : ∀ i ∈ X, ∀ o ∈ S.gen i, ∀ k, S.con k (i, o) ≤ M := fun i hi o ho k ↦
     ((Finset.le_sup (f := (S.con · (i, o))) (Finset.mem_univ k)).trans
       ((Finset.le_sup (f := fun o ↦ Finset.univ.sup (S.con · (i, o))) ho).trans
         (Finset.le_sup (f := fun i ↦ (S.gen i).sup fun o ↦ Finset.univ.sup (S.con · (i, o)))
           hi))).trans (Nat.le_succ _)
-  refine ⟨expWeights n M ∘ σ.symm, fun k => (expWeights_pos n M (σ.symm k)).le, fun i hi ↦ ?_⟩
+  refine ⟨expWeights n M ∘ σ.symm, fun k ↦ (expWeights_pos n M (σ.symm k)).le, fun i hi ↦ ?_⟩
   rw [ConstraintSystem.hgLanguage, ConstraintSystem.language,
     Tableau.optimal_eq_argmax_harmonyScore _
     (expWeights_separated n M (Nat.succ_pos _)) fun o ho k ↦ hbound i hi o ho (σ k)]
@@ -348,11 +349,11 @@ theorem hg_strictly_contains_ot :
       P.IsHGRealizable ∧ ¬ P.IsOTRealizable := by
   refine ⟨Fin 3, Bool, 3,
     { inputs := Finset.univ
-      gen := fun _ => Finset.univ
+      gen := fun _ ↦ Finset.univ
       con := fun k x ↦ if x.2 then ![![0, 1, 0], ![0, 0, 1], ![0, 1, 1]] x.1 k else ![1, 0, 0] k
       target := ![true, true, false]
-      target_mem := fun _ _ => Finset.mem_univ _ },
-    ⟨![3, 2, 2], fun k => by fin_cases k <;> norm_num, ?_⟩, ?_⟩
+      target_mem := fun _ _ ↦ Finset.mem_univ _ },
+    ⟨![3, 2, 2], fun k ↦ by fin_cases k <;> norm_num, ?_⟩, ?_⟩
   · refine fun i _ ↦ Finset.argmax_eq_singleton_iff.2 ⟨Finset.mem_univ _, fun o _ hne ↦ ?_⟩
     simp only [harmonyScore, dotProduct, Fin.sum_univ_three]
     fin_cases i <;> cases o <;>
@@ -412,7 +413,7 @@ theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
     (h : P.IsOTRealizable) : P.IsPartialOrderRealizable := by
   obtain ⟨σ, hσ⟩ := h
   exact ⟨σ.toRel, inferInstance,
-    fun τ hτ => Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
+    fun τ hτ ↦ Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
 
 /-- Under categorical realizability, OT and partial orders coincide; the
     partial order's advantage is probabilistic, the uniform measure on its linear extensions. -/

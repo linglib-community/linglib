@@ -145,7 +145,7 @@ theorem assoc_eq_initAll (c : StemC) (s : SubSt) : starAssoc (c, s) = starInitAl
 
 /-! ### The free-ranking rates -/
 
-/-- The nasal-substitution system: both decisions are available for every stem, under the six
+/-- The nasal-substitution system makes both decisions available for every stem, under the six
 constraints. -/
 def nasalSubstitution : ConstraintSystem StemC SubSt (Fin 6) := ⟨fun _ ↦ Finset.univ, con⟩
 
@@ -224,7 +224,8 @@ theorem picksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_extra :
       ∀ x ∈ active con c .yes .no, x ∉ active con c' .yes .no → x ∈ favoring con c .yes .no)
     (h_c' : PicksAt nasalSubstitution σ c' .yes) : PicksAt nasalSubstitution σ c .yes := by
-  rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c') SubSt.noConfusion] at h_c'
+  rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c') SubSt.noConfusion]
+    at h_c'
   rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c) SubSt.noConfusion]
   obtain ⟨x, hx, hmin⟩ := h_c'
   obtain ⟨z, hz, hzmin⟩ := Equiv.Perm.exists_isMinOn_symm ⟨x, h_D (mem_inter.1 hx).2⟩ σ
@@ -243,7 +244,8 @@ theorem picksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_Y : favoring con c' .yes .no ⊆ favoring con c .yes .no)
     (h_subset : favoring con c' .yes .no ⊆ active con c .yes .no)
     (h_c' : PicksAt nasalSubstitution σ c' .yes) : PicksAt nasalSubstitution σ c .yes := by
-  rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c') SubSt.noConfusion] at h_c'
+  rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c') SubSt.noConfusion]
+    at h_c'
   rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c) SubSt.noConfusion]
   obtain ⟨x, hx, hmin⟩ := h_c'
   exact ⟨x, mem_inter.2 ⟨h_Y (mem_inter.1 hx).1, h_subset (mem_inter.1 hx).1⟩,

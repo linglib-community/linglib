@@ -207,7 +207,7 @@ section System
 
 variable {I O : Type*}
 
-/-- The **HG language** of a weighting: each input's candidates of greatest harmony. -/
+/-- The **HG language** of a weighting assigns each input its candidates of greatest harmony. -/
 def _root_.OptimalityTheory.ConstraintSystem.hgLanguage [Ring R] [Preorder R] [DecidableLE R]
     (S : ConstraintSystem I O ι) (w : ι → R) (i : I) : Finset O :=
   (S.gen i).argmax (harmonyScore (S.conAt i) w)

@@ -173,8 +173,8 @@ def faith : Constraint (Syl × Syl) := Constraint.binary fun c ↦ c.1 ≠ c.2
 def con : ConstraintSet (Syl × Syl) (Fin 5) :=
   ![faith, starComplexOnset, starComplexCoda, onset, starCoda]
 
-/-- The syllabification system: every syllable type is a candidate output for every input,
-under the five constraints. -/
+/-- The syllabification system offers every syllable type as a candidate output for every
+input, under the five constraints. -/
 def syllabification : ConstraintSystem Syl Syl (Fin 5) := ⟨fun _ ↦ univ, con⟩
 
 /-- A ranking produces an input faithfully exactly when every markedness constraint the input

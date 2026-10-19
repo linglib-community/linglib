@@ -138,8 +138,8 @@ def maxFinal : Constraint Candidate := Constraint.binary fun c ↦ c.2 = .delete
 /-- The constraint set (11) lists the constraints in the paper's order. -/
 def con : ConstraintSet Candidate (Fin 4) := ![starCT, maxC, maxPreV, maxFinal]
 
-/-- The t/d deletion system: both outputs compete in every context, under the constraint set
-(11). -/
+/-- The t/d deletion system lets both outputs compete in every context, under the constraint
+set (11). -/
 def tdDeletion : ConstraintSystem Context Output (Fin 4) := ⟨fun _ ↦ univ, con⟩
 
 theorem tdDeletion_gen (ctx : Context) : tdDeletion.gen ctx = {.delete, .retain} := by
