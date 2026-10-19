@@ -53,26 +53,22 @@ open Subregular.LocalRewrite
 
 /-- A nasal takes the place of a following segment of the class `trigger`. -/
 def placeAssimilation (trigger : Segment) : Rule where
-  name := "nasal place assimilation"
   target := Segment.ofSpecs [(.nasal, true)]
   effect := .copyRight FeatureClass.place
   rightContext := [.seg trigger]
 
 /-- A nasal is not strident. -/
 def nonstrident : Rule where
-  name := "nasal stridency"
   target := Segment.ofSpecs [(.nasal, true), (.strident, true)]
   effect := .changeFeatures (Segment.ofSpecs [(.strident, false)])
 
 /-- A nasal is not lateral. -/
 def nonlateral : Rule where
-  name := "nasal laterality"
   target := Segment.ofSpecs [(.nasal, true), (.lateral, true)]
   effect := .changeFeatures (Segment.ofSpecs [(.lateral, false)])
 
 /-- A nasal with no oral articulator is the nasal `N`. -/
 def defaultPlace (N : Segment) : Rule where
-  name := "default nasal place"
   target := Segment.ofSpecs [(.nasal, true), (.labial, false), (.coronal, false), (.dorsal, false)]
   effect := .replace N
 
