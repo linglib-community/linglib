@@ -229,7 +229,7 @@ theorem deletionProb_none (ctx : Context) :
   rw [deletionProb, extensions, coe_univ,
     show {σ | Deletes σ ctx} = {σ | PicksAt cands con σ ctx .delete} from rfl,
     uniformOn_real_picksAt_discrete_binary (cands_eq ctx) (by decide), favoring_eq,
-    inter_eq_left.mpr (by cases ctx <;> decide), card_singleton, Nat.cast_one, one_div]
+    card_singleton, Nat.cast_one, one_div]
 
 /-- Row (a) of (13) prints the counts of (9). -/
 theorem deletionProb_none_eq_pocRates (ctx : Context) :

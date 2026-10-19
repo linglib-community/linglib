@@ -334,8 +334,8 @@ def realizedByWeighting [Fintype ι] (P : RealizationProblem Input Output ι) (w
 def IsHGRealizable [Fintype ι] (P : RealizationProblem Input Output ι) : Prop :=
   ∃ w : ι → ℝ, 0 ≤ w ∧ P.realizedByWeighting w
 
-/-- The ranking `σ` *OT-realizes* the target when on every input it picks the target, which
-    strictly lex-dominates every alternative under `σ`. -/
+/-- The ranking `σ` *OT-realizes* the target when on every input it picks the target, the sole
+    winner of the input's tableau under `σ`. -/
 def realizedByRanking (P : RealizationProblem Input Output ι) (σ : Ranking ι n) : Prop :=
   ∀ i ∈ P.inputs, PicksAt P.cands P.con σ i (P.target i)
 
@@ -350,14 +350,6 @@ instance [DecidableEq Output] (P : RealizationProblem Input Output ι) (σ : Ran
 instance [DecidableEq Output] (P : RealizationProblem Input Output (Fin n)) :
     Decidable P.IsOTRealizable := by
   unfold IsOTRealizable; infer_instance
-
-/-- `σ` OT-realizes `P` iff for every input the target is the unique
-    `Tableau.optimal` of the tableau of the input's constraints under `σ`. -/
-theorem realizedByRanking_iff_optimal [DecidableEq Output]
-    (P : RealizationProblem Input Output ι) (σ : Ranking ι n) :
-    P.realizedByRanking σ ↔ ∀ i ∈ P.inputs,
-      (Tableau.ofRanking (P.con.comap (i, ·)) σ (P.cands i)).optimal = {P.target i} :=
-  forall₂_congr fun _ _ ↦ by rw [Tableau.optimal_eq_singleton_iff]; rfl
 
 /-! ### OT-realization is ERC satisfaction -/
 
@@ -385,9 +377,10 @@ theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
   constructor
   · intro h α hα
     obtain ⟨i, hi, o, ho, hone, rfl⟩ := mem_ercs.mp hα
-    exact (satisfiedBy_ercOfProfiles_iff_le σ _ _).mpr ((h i hi).2 o ho hone).le
+    exact (satisfiedBy_ercOfProfiles_iff_le σ _ _).mpr
+      ((picksAt_iff.1 (h i hi)).2 o ho hone).le
   · intro h i hi
-    refine ⟨P.target_mem i hi, fun o ho hone ↦ ?_⟩
+    refine picksAt_iff.2 ⟨P.target_mem i hi, fun o ho hone ↦ ?_⟩
     refine lt_of_le_of_ne ((satisfiedBy_ercOfProfiles_iff_le σ _ _).mp
       (h _ (mem_ercs.mpr ⟨i, hi, o, ho, hone, rfl⟩))) fun heq => hvp i hi o ho hone ?_
     exact funext fun c => by simpa using congrFun (toLex_inj.mp heq) (σ.symm c)
@@ -425,7 +418,7 @@ theorem RealizationProblem.IsOTRealizable.isHGRealizable
   · intro k
     exact ⟨hbound i hi (P.target i) (P.target_mem i hi) (σ k), hbound i hi o ho (σ k)⟩
   · exact expWeights_separated n M (Nat.succ_pos _)
-  · exact (hσ i hi).2 o ho hne
+  · exact (picksAt_iff.1 (hσ i hi)).2 o ho hne
 
 /-! ### Strict containment — the cumulativity gap -/
 

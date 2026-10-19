@@ -30,8 +30,9 @@ cardinality equations, which the rate theorems restate as values of the measure.
 * `consistentTotalOrders r`: the `Finset` of linear extensions of `r`, nonempty by Szpilrajn.
 * `toGrammar`, `orderIdealAntimatroid`: a POC grammar as a `Grammar`, and its order-ideal
   antimatroid.
-* `active con i o o'`, `favoring con i o o'`: the constraints distinguishing a candidate pair, and
-  those preferring `o`.
+* `PicksAt cands con σ i o`: `o` is the sole winner of the tableau of input `i` under `σ`.
+* `active con i o o'`, `favoring con i o o'`: the non-neutral and the winner-preferring constraints
+  of the winner–loser ERC of a candidate pair.
 
 ## Main results
 
@@ -42,9 +43,11 @@ cardinality equations, which the rate theorems restate as values of the measure.
   frequencies, such as Coetzee and Pater's t/d-deletion rates, that no single ranking reproduces.
 * `picksAt_binary_iff_exists_favoring_isMinOn`: a binary competition is decided by its
   σ-earliest active constraint.
+* `ERC.uniformOn_real_satisfiedBy`: a uniformly random ranking satisfies an ERC with a
+  non-neutral constraint at rate `|W| / |W ∪ L|`.
 * `uniformOn_real_picksAt_discrete_binary`, `uniformOn_real_picksAt_stratified_binary`: `chosen`
-  wins at rate `|favoring ∩ active| / |active|`, restricted to the deciding stratum in the
-  stratified case.
+  wins at rate `|favoring| / |active|`, restricted to the deciding stratum in the stratified
+  case.
 * `uniformOn_picksAt_stratified_eq_one`: a candidate that dominates every rival at the deciding
   stratum is the categorical output.
 
@@ -387,65 +390,75 @@ variable {Input Output : Type*}
 variable {cands : Input → Finset Output} {con : ConstraintSet (Input × Output) (Fin n)}
   {r : Fin n → Fin n → Prop} {σ : Ranking (Fin n) n} {i : Input} {o o' chosen other : Output}
 
-/-- The constraints **active** on the candidate pair `o, o'` at input `i` are those assigning the
-    two candidates different violation counts ([anttila-1997]'s decisive constraints). Inactive
-    constraints cannot affect the competition. -/
+/-- The constraints **active** on the candidate pair `o, o'` at input `i` are the non-neutral
+    constraints of the winner–loser ERC of `o` against `o'`, those assigning the two candidates
+    different violation counts ([anttila-1997]'s decisive constraints). Inactive constraints
+    cannot affect the competition. -/
 def active (con : ConstraintSet (Input × Output) (Fin n)) (i : Input) (o o' : Output) :
     Finset (Fin n) :=
-  Finset.univ.filter fun c => con c (i, o) ≠ con c (i, o')
+  {c | ercOfProfiles (con · (i, o)) (con · (i, o')) c ≠ .e}
 
-/-- The constraints **favoring** `o` over `o'` at input `i` are those assigning `o` strictly
-    fewer violations. -/
+/-- The constraints **favoring** `o` over `o'` at input `i` are the winner-preferring constraints
+    of the winner–loser ERC of `o` against `o'`, those assigning `o` strictly fewer
+    violations. -/
 def favoring (con : ConstraintSet (Input × Output) (Fin n)) (i : Input) (o o' : Output) :
     Finset (Fin n) :=
-  Finset.univ.filter fun c => con c (i, o) < con c (i, o')
+  {c | ercOfProfiles (con · (i, o)) (con · (i, o')) c = .W}
 
 @[simp] theorem mem_active {c : Fin n} :
     c ∈ active con i o o' ↔ con c (i, o) ≠ con c (i, o') := by
-  simp [active]
+  rw [active, mem_filter, ne_eq, ercOfProfiles_eq_e_iff]
+  exact and_iff_right (mem_univ c)
 
 @[simp] theorem mem_favoring {c : Fin n} :
     c ∈ favoring con i o o' ↔ con c (i, o) < con c (i, o') := by
-  simp [favoring]
+  rw [favoring, mem_filter, ercOfProfiles_eq_W_iff]
+  exact and_iff_right (mem_univ c)
 
 theorem favoring_subset_active : favoring con i o o' ⊆ active con i o o' :=
   fun _ hc => mem_active.mpr (Nat.ne_of_lt (mem_favoring.mp hc))
 
-/-- σ **picks** output o for input i if o is the unique strict OT winner —
-    every other in-set candidate is lex-strictly worse than o under σ. -/
+/-- σ **picks** output `o` for input `i` when `o` is the sole winner of the tableau of `i`'s
+    candidates under σ. -/
 def PicksAt {ι : Type*} (cands : Input → Finset Output) (con : ConstraintSet (Input × Output) ι)
     (σ : Ranking ι n) (i : Input) (o : Output) : Prop :=
-  o ∈ cands i ∧
-  ∀ o' ∈ cands i, o' ≠ o → toLex (fun k ↦ con (σ k) (i, o)) < toLex (fun k ↦ con (σ k) (i, o'))
+  (Tableau.ofRanking (con.comap (i, ·)) σ (cands i)).optimal = {o}
 
-/-- A ranking picks at most one output, since strict lex domination is
-    asymmetric. -/
+/-- σ picks `o` iff `o` is a candidate whose violations, read in σ's order, are lexicographically
+    below every rival's. -/
+theorem picksAt_iff {ι : Type*} {con : ConstraintSet (Input × Output) ι} {σ : Ranking ι n} :
+    PicksAt cands con σ i o ↔ o ∈ cands i ∧ ∀ o' ∈ cands i, o' ≠ o →
+      toLex (fun k ↦ con (σ k) (i, o)) < toLex (fun k ↦ con (σ k) (i, o')) :=
+  Tableau.optimal_eq_singleton_iff
+
+/-- A ranking picks at most one output. -/
 theorem picksAt_unique {ι : Type*} {con : ConstraintSet (Input × Output) ι} {σ : Ranking ι n}
-    (h : PicksAt cands con σ i o) (h' : PicksAt cands con σ i o') :
-    o = o' := by
-  by_contra hne
-  exact absurd (h'.2 o h.1 hne) (lt_asymm (h.2 o' h'.1 fun heq => hne heq.symm))
+    (h : PicksAt cands con σ i o) (h' : PicksAt cands con σ i o') : o = o' :=
+  Finset.singleton_injective (h.symm.trans h')
 
-/-- With pairwise-distinct violation profiles, every ranking picks some
-    output — the candidate with the lex-minimal permuted profile wins
-    strictly. -/
+/-- With pairwise-distinct violation profiles, every ranking picks some output, since the
+    winners of a tableau all share one profile. -/
 theorem exists_picksAt (h_ne : (cands i).Nonempty)
     (h_inj : Set.InjOn (fun o ↦ (con · (i, o))) (cands i)) (σ : Ranking (Fin n) n) :
     ∃ o ∈ cands i, PicksAt cands con σ i o := by
-  obtain ⟨m, hm, hmin⟩ := Finset.exists_min_image (cands i)
-    (fun o => toLex (fun j : Fin n => con (σ j) (i, o))) h_ne
-  refine ⟨m, hm, hm, fun o' ho' hne' => lt_of_le_of_ne (hmin o' ho') fun heq => hne' ?_⟩
-  have h_fun : (fun j : Fin n => con (σ j) (i, m)) = fun j => con (σ j) (i, o') := toLex_inj.mp heq
-  refine h_inj ho' hm (funext fun c => ?_)
-  have := congrFun h_fun (σ.symm c)
-  simpa using this.symm
+  obtain ⟨o, ho⟩ := Tableau.optimal_nonempty
+    (t := Tableau.ofRanking (con.comap (i, ·)) σ (cands i)) h_ne
+  have hoc := Tableau.optimal_subset ho
+  refine ⟨o, hoc, Finset.eq_singleton_iff_unique_mem.2 ⟨ho, fun o' ho' ↦ ?_⟩⟩
+  have hoc' := Tableau.optimal_subset ho'
+  have heq := (Tableau.le_of_mem_optimal ho' hoc).antisymm (Tableau.le_of_mem_optimal ho hoc')
+  refine h_inj hoc' hoc (funext fun c ↦ ?_)
+  simpa using show con (σ (σ.symm c)) (i, o') = con (σ (σ.symm c)) (i, o) from
+    congrFun heq (σ.symm c)
 
 variable [DecidableEq Output]
 
+/-- Picking is decided by comparing the candidate with each rival (`picksAt_iff`), not by
+computing the winner set. -/
 instance {ι : Type*} (cands : Input → Finset Output) (con : ConstraintSet (Input × Output) ι)
     (σ : Ranking ι n) (i : Input) (o : Output) :
-    Decidable (PicksAt cands con σ i o) := by
-  unfold PicksAt; infer_instance
+    Decidable (PicksAt cands con σ i o) :=
+  decidable_of_iff _ picksAt_iff.symm
 
 /-- With pairwise-distinct violation profiles the picks-fibers over the
     candidate set partition the consistent extensions, the division-free form of
@@ -523,25 +536,25 @@ competitions without enumerating rankings. -/
 
 omit [DecidableEq Output] in
 /-- The output `o` lex-dominates `o'` under `σ` exactly when the σ-earliest active constraint
-favors `o`. -/
+favors `o`: the winner–loser ERC of the pair is satisfied, and some constraint is active. -/
 theorem lex_lt_iff_exists_favoring_isMinOn (σ : Ranking (Fin n) n) :
     toLex (fun k : Fin n => con (σ k) (i, o)) < toLex (fun k : Fin n => con (σ k) (i, o')) ↔
     ∃ x ∈ favoring con i o o' ∩ active con i o o', IsMinOn σ.symm (active con i o o') x := by
-  show (∃ k : Fin n, (∀ j, j < k → con (σ j) (i, o) = con (σ j) (i, o')) ∧
-    con (σ k) (i, o) < con (σ k) (i, o')) ↔ _
+  have hle := satisfiedBy_ercOfProfiles_iff_le σ (con · (i, o)) (con · (i, o'))
   constructor
-  · -- the first strict-difference position holds the σ-earliest active constraint
-    rintro ⟨k, h_tie, h_lt⟩
-    refine ⟨σ k, mem_inter.2 ⟨mem_favoring.2 h_lt, mem_active.2 h_lt.ne⟩,
-      isMinOn_iff.2 fun y hy => ?_⟩
-    rw [Equiv.symm_apply_apply]
-    by_contra h
-    exact mem_active.1 hy (by simpa using h_tie (σ.symm y) (lt_of_not_ge h))
-  · -- the σ-earliest active constraint marks the first strict difference
-    rintro ⟨x, hx, hmin⟩
-    refine ⟨σ.symm x, fun j hj => ?_, by simpa using mem_favoring.1 (mem_inter.1 hx).1⟩
-    by_contra h_ne'
-    exact absurd (isMinOn_iff.1 hmin (σ j) (mem_active.2 h_ne')) (by simpa using hj)
+  · intro hlt
+    have hne : ∃ k, ercOfProfiles (con · (i, o)) (con · (i, o')) k ≠ .e := by
+      by_contra! h
+      exact hlt.ne (congrArg toLex (funext fun k ↦ (ercOfProfiles_eq_e_iff _ _ _).1 (h (σ k))))
+    obtain ⟨x, hx, hmin⟩ := (ERC.satisfiedBy_iff_exists_isMinOn hne).1 (hle.2 hlt.le)
+    have hxf : x ∈ favoring con i o o' := mem_filter.2 ⟨mem_univ x, hx⟩
+    exact ⟨x, mem_inter.2 ⟨hxf, favoring_subset_active hxf⟩, hmin⟩
+  · rintro ⟨x, hx, hmin⟩
+    obtain ⟨hxf, hxa⟩ := mem_inter.1 hx
+    refine lt_of_le_of_ne (hle.1 ((ERC.satisfiedBy_iff_exists_isMinOn
+      ⟨x, (mem_filter.1 hxa).2⟩).2 ⟨x, (mem_filter.1 hxf).2, hmin⟩)) fun heq ↦ mem_active.1 hxa ?_
+    simpa using show con (σ (σ.symm x)) (i, o) = con (σ (σ.symm x)) (i, o') from
+      congrFun heq (σ.symm x)
 
 /-- For binary candidate sets, `PicksAt σ i chosen` holds exactly when the σ-earliest active
 constraint favors `chosen`. -/
@@ -549,53 +562,48 @@ theorem picksAt_binary_iff_exists_favoring_isMinOn
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking (Fin n) n) :
     PicksAt cands con σ i chosen ↔
     ∃ x ∈ favoring con i chosen other ∩ active con i chosen other,
-      IsMinOn σ.symm (active con i chosen other) x := by
-  rw [← lex_lt_iff_exists_favoring_isMinOn]
-  unfold PicksAt
-  constructor
-  · rintro ⟨_, h⟩
-    exact h other
-      (by rw [h_two]; exact Finset.mem_insert_of_mem (Finset.mem_singleton.mpr rfl))
-      (Ne.symm h_ne)
-  · intro h
-    refine ⟨by rw [h_two]; exact Finset.mem_insert_self _ _, fun o' h_o' h_o'_ne => ?_⟩
-    rw [h_two, Finset.mem_insert, Finset.mem_singleton] at h_o'
-    rcases h_o' with h' | h'
-    · exact absurd h' h_o'_ne
-    · subst h'; exact h
+      IsMinOn σ.symm (active con i chosen other) x :=
+  (Tableau.optimal_eq_singleton_iff_pair h_two h_ne).trans (lex_lt_iff_exists_favoring_isMinOn σ)
 
-/-! ### Closed-form rate for binary candidates -/
+/-! ### Closed-form rate for binary candidates
 
-/-- With binary candidates, the rankings picking `chosen` number
-`n! · |favoring ∩ active| / |active|`, stated without division. Each ranking is decided by its
-σ-earliest active constraint, and every active constraint comes first equally often. -/
-theorem card_filter_picksAt_discrete_binary
-    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
-    (Finset.univ.filter (fun σ : Ranking (Fin n) n => PicksAt cands con σ i chosen)).card *
-        (active con i chosen other).card =
-      n.factorial * (favoring con i chosen other ∩ active con i chosen other).card := by
-  classical
-  rw [Finset.filter_congr fun σ _ => picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ]
-  simpa using Equiv.Perm.card_filter_isMinOn_symm_univ_mul_card (active con i chosen other)
-    (favoring con i chosen other)
+A binary competition is won exactly by the rankings satisfying the winner–loser ERC of the pair,
+whose winner-preferring and non-neutral constraints are `favoring` and `active`, and a uniformly
+random ranking satisfies an ERC with a non-neutral constraint at rate `|W| / |W ∪ L|`
+(`ERC.card_filter_satisfiedBy_mul_card`). -/
+
+/-- A uniformly random ranking satisfies an ERC with a non-neutral constraint at rate
+`|W| / |W ∪ L|`. -/
+theorem ERC.uniformOn_real_satisfiedBy (α : ERC (Fin n)) (h : ∃ k, α k ≠ .e) :
+    (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | α.SatisfiedBy σ} =
+      (#{k | α k = .W} : ℝ) / #{k | α k ≠ .e} := by
+  obtain ⟨k, hk⟩ := h
+  rw [← Finset.coe_univ, uniformOn_finset_real_setOf, Finset.card_univ, Fintype.card_perm,
+    Fintype.card_fin, div_eq_div_iff (by positivity)
+      (by exact_mod_cast (Finset.card_pos.2 ⟨k, mem_filter.2 ⟨mem_univ k, hk⟩⟩).ne')]
+  exact_mod_cast α.card_filter_satisfiedBy_mul_card.trans (Nat.mul_comm _ _)
 
 /-- Under the discrete grammar, with every ranking a linear extension, the uniform measure on
-rankings picks `chosen` at rate `|favoring ∩ active| / |active|`. -/
+rankings picks `chosen` at rate `|favoring| / |active|`. -/
 theorem uniformOn_real_picksAt_discrete_binary
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
     (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | PicksAt cands con σ i chosen} =
-      ((favoring con i chosen other ∩ active con i chosen other).card : ℝ) /
-        (active con i chosen other).card := by
-  rw [← Finset.coe_univ, uniformOn_finset_real_setOf]
-  rcases (active con i chosen other).eq_empty_or_nonempty with h | h
+      ((favoring con i chosen other).card : ℝ) / (active con i chosen other).card := by
+  rcases (active con i chosen other).eq_empty_or_nonempty with h | ⟨k, hk⟩
   · -- no constraint distinguishes the pair, so no ranking picks `chosen`
-    rw [h, inter_empty, card_empty, Nat.cast_zero, zero_div,
-      Finset.filter_false_of_mem fun σ _ => by
-        simp [picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ, h],
-      card_empty, Nat.cast_zero, zero_div]
-  · rw [Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
-      div_eq_div_iff (by positivity) (by exact_mod_cast h.card_pos.ne')]
-    exact_mod_cast (card_filter_picksAt_discrete_binary h_two h_ne).trans (Nat.mul_comm _ _)
+    have : {σ : Ranking (Fin n) n | PicksAt cands con σ i chosen} = ∅ :=
+      Set.eq_empty_of_forall_notMem fun σ hσ ↦ by
+        obtain ⟨x, hx, -⟩ := (picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ).1 hσ
+        simp [h] at hx
+    rw [this, h, card_empty, Nat.cast_zero, div_zero, measureReal_empty]
+  · convert (ercOfProfiles (con · (i, chosen)) (con · (i, other))).uniformOn_real_satisfiedBy
+      ⟨k, (mem_filter.1 hk).2⟩ using 3 <;> try rfl
+    ext σ
+    refine (picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ).trans
+      ((exists_congr fun x ↦ ?_).trans
+        (ERC.satisfiedBy_iff_exists_isMinOn ⟨k, (mem_filter.1 hk).2⟩).symm)
+    rw [mem_inter, and_iff_left_of_imp (favoring_subset_active ·)]
+    exact and_congr (mem_filter.trans (and_iff_right (mem_univ x))) Iff.rfl
 
 /-! ### Deciding-stratum rate for stratified grammars
 
@@ -700,7 +708,7 @@ theorem picksAt_stratified_of_dominates
       ((active con i o o').filter (stratumOf · = k)).Nonempty ∧
       (active con i o o').filter (stratumOf · = k) ⊆ favoring con i o o') :
     PicksAt cands con σ i o := by
-  refine ⟨ho, fun o' ho' hne => ?_⟩
+  refine picksAt_iff.2 ⟨ho, fun o' ho' hne => ?_⟩
   obtain ⟨k, h_tie, h_dec, h_sub⟩ := h o' ho' hne
   obtain ⟨x, hx, hmin⟩ := Equiv.Perm.exists_isMinOn_symm h_dec σ
   obtain ⟨hxA, hminA⟩ := (isMinOn_active_iff_isMinOn_filter_stratum hσ h_tie h_dec).2 ⟨hx, hmin⟩
