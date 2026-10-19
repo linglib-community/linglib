@@ -21,7 +21,7 @@ position `p`, position `0` most dominant, and `r.symm i` is the rank position of
 `ι = Fin n` a ranking is a permutation, `Equiv.Perm (Fin n)`. `Ranking.Dominates` is the induced
 strict dominance relation, a strict total order on the constraints, and `Ranking.toRel` its
 reflexive closure, from which the ranking is recoverable (`toRel_le_toRel_iff`); `Ranking.take r k`
-is the set of its top `k` constraints. A ranking reads a violation vector `v` in rank order as
+is the set of its top `k` constraints, and `Ranking.swapAt` transposes two adjacent ones. A ranking reads a violation vector `v` in rank order as
 `toLex (v ∘ r)`; comparing two such readings is the lexicographic order along an enumeration
 (`Pi.toLex_comp_lt_iff_exists` in `Core/Order/PiLex`), and comparing them under every ranking is
 the product order (`Pi.forall_toLex_comp_lt_iff`), which is harmonic bounding. The `Tableau`
@@ -95,10 +95,8 @@ instance : IsStrictTotalOrder ι r.Dominates := InvImage.isStrictTotalOrder r.sy
   Iff.rfl
 
 /-- A ranking reads a lex-ordered vector in rank order, so that coordinate `p` of `r • v` is the
-value of `v` at the constraint ranked `p`-th. Reordering is the one operation that
-breaks and reconstitutes the lex order — the `Sₙ` action whose orbit structure is
-constraint ranking. (With this convention the action is a right action:
-`(r * s) • v = s • r • v`.) -/
+value of `v` at the constraint ranked `p`-th. With this convention the action of `Sₙ` is a right
+action, `(r * s) • v = s • r • v`. -/
 instance {α : Type*} : SMul (Ranking (Fin n) n) (Lex (Fin n → α)) :=
   ⟨fun r v => toLex fun p => ofLex v (r p)⟩
 
@@ -115,6 +113,35 @@ theorem exists_dominates {i j : Fin n} (hij : i ≠ j) :
   rcases lt_or_gt_of_ne hij with h | h
   · exact ⟨1, one_dominates_iff.mpr h⟩
   · exact ⟨Equiv.swap i j, by simpa [Dominates] using h⟩
+
+/-! ### Adjacent transpositions -/
+
+section AdjacentTranspositions
+
+/-- The ranking that transposes the constraints at the adjacent rank positions `k` and `k + 1`.
+Two rankings related by an adjacent transposition are neighbours in the permutohedron of
+rankings. -/
+def swapAt (k : ℕ) (hk : k + 1 < n) : Ranking ι n :=
+  (Equiv.swap ⟨k, Nat.lt_of_succ_lt hk⟩ ⟨k + 1, hk⟩).trans r
+
+variable {r} {k : ℕ} {hk : k + 1 < n}
+
+@[simp] theorem swapAt_apply_left : r.swapAt k hk ⟨k, Nat.lt_of_succ_lt hk⟩ = r ⟨k + 1, hk⟩ := by
+  simp [swapAt]
+
+@[simp] theorem swapAt_apply_right : r.swapAt k hk ⟨k + 1, hk⟩ = r ⟨k, Nat.lt_of_succ_lt hk⟩ := by
+  simp [swapAt]
+
+theorem swapAt_apply_of_ne {j : Fin n} (h₁ : j.val ≠ k) (h₂ : j.val ≠ k + 1) :
+    r.swapAt k hk j = r j := by
+  rw [swapAt, Equiv.trans_apply, Equiv.swap_apply_of_ne_of_ne (Fin.ne_of_val_ne h₁)
+    (Fin.ne_of_val_ne h₂)]
+
+@[simp] theorem swapAt_swapAt : (r.swapAt k hk).swapAt k hk = r := by
+  ext j
+  simp [swapAt]
+
+end AdjacentTranspositions
 
 /-! ### The top constraints of a ranking -/
 
@@ -216,8 +243,8 @@ theorem toRel_injective : Function.Injective (toRel (ι := ι) (n := n)) := by
   have hcomp := (hmono.strictMono_of_injective (τ.symm.injective.comp σ.injective)).eq_id
   exact Equiv.ext fun k => (Equiv.symm_apply_eq τ).mp (congr_fun hcomp k)
 
-/-- Total orders comparable in the relation lattice coincide, so `toRel` is
-rigid: nothing sits strictly between two ranking-induced orders. -/
+/-- Total orders comparable in the relation lattice coincide, so nothing sits strictly between two
+ranking-induced orders. -/
 theorem toRel_le_toRel_iff : σ.toRel ≤ τ.toRel ↔ σ = τ :=
   ⟨fun h => toRel_injective (total_eq_of_le h), fun h => h ▸ le_refl _⟩
 
