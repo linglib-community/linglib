@@ -9,33 +9,30 @@ public import Linglib.Discourse.Commitment.Table
 /-!
 # Lassiter (2025): Sorting Out Left-Nested Conditionals
 
-This file formalizes Lassiter's account of left-nested conditionals, conditionals with
-another conditional in their antecedent, such as Gibbard's *If Kripke was there if
-Strawson was, then Anscomb was there*. A conditional is construed as hypothetical or as a
-premise conditional (Iatridou); a left-nested conditional whose embedded conditional
-is bare admits only the premise reading, while an embedded modal, adverb of quantification,
-or generic operator restores the hypothetical one (`readings`). A sentence is acceptable
-when some reading open to it meets what its context and diagnostics demand (`Acceptable`), so
-for a bare left-nested conditional every diagnostic reduces to the premise reading
-(`acceptable_bare_iff`). The paper's eight diagnostics are demands on the reading. A premise
-reading needs its antecedent given in the discourse and a hypothetical one needs it open
-(`anchoring`, the discourse condition `felicitous` of Iatridou and Haegeman in the two contexts
-the paper uses, `anchoring_iff_felicitous`), so bare left-nested conditionals are odd out of
-the blue and
-improve once the embedded conditional has been asserted. Japanese *-ra* and German *falls*,
-restricted to hypothetical conditionals, cannot head a bare left-nested conditional, whereas
-*nara* and *wenn* can (`heads_bare_iff`). The clauses of the embedded conditional take their
-entailment direction from the main antecedent's (`Position.polarity`), so a bare left-nested
-conditional hosts positive polarity items and rejects negative ones, the minimizer *lift a
-finger* among them (Israel), in the embedded consequent and hosts them in the embedded
-antecedent (`bare_embedded_consequent`,
-`bare_embedded_antecedent`), the reverse of what a hypothetical reading would give
-(`polarity_diagnostic`). Coordinated antecedents share a reading
-(Haegeman and Schönenberger), so a bare left-nested conditional coordinates only with a
-given antecedent (`coordination_bare`), and initial *only* with inversion, which forces the
-hypothetical reading, excludes it (`bare_not_hypothetical`). `demand` reads each row's
-diagnostics off its features, and `acceptable_rows` checks every row's judgment against the
-model, `interpretation_rows` the reading the paper attributes to it.
+This file formalizes Lassiter's account of left-nested conditionals, conditionals with another
+conditional in their antecedent, such as Gibbard's *If Kripke was there if Strawson was, then
+Anscomb was there*. A conditional is construed as hypothetical or as a premise conditional
+(Iatridou); a left-nested conditional whose embedded conditional is bare admits only the premise
+reading, while an embedded modal, adverb of quantification, or generic operator restores the
+hypothetical one (`readings`). A sentence is acceptable when some reading open to it meets what its
+context and diagnostics demand (`Acceptable`), so for a bare left-nested conditional every
+diagnostic reduces to the premise reading (`acceptable_bare_iff`). The paper's eight diagnostics are
+demands on the reading. A premise reading needs its antecedent given in the discourse and a
+hypothetical one needs it open (`anchoring`, the discourse condition `Reading.Felicitous` of
+Iatridou and Haegeman in the two contexts the paper uses, `anchoring_iff_felicitous`), so bare
+left-nested conditionals are odd out of the blue and improve once the embedded conditional has been
+asserted. Japanese *-ra* and German *falls*, restricted to hypothetical conditionals, cannot head a
+bare left-nested conditional, whereas *nara* and *wenn* can (`heads_bare_iff`). The clauses of the
+embedded conditional take their entailment direction from the main antecedent's
+(`Position.polarity`), so a bare left-nested conditional hosts positive polarity items and rejects
+negative ones, the minimizer *lift a finger* among them (Israel), in the embedded consequent and
+hosts them in the embedded antecedent (`bare_embedded_consequent`, `bare_embedded_antecedent`), the
+reverse of what a hypothetical reading would give (`polarity_diagnostic`). Coordinated antecedents
+share a reading (Haegeman and Schönenberger), so a bare left-nested conditional coordinates only
+with a given antecedent (`coordination_bare`), and initial *only* with inversion, which forces the
+hypothetical reading, excludes it (`bare_not_hypothetical`). `demand` reads each row's diagnostics
+off its features, and `acceptable_rows` checks every row's judgment against the model,
+`interpretation_rows` the reading the paper attributes to it.
 
 ## Implementation notes
 
@@ -129,42 +126,17 @@ section Felicity
 
 variable {A W : Type*} {K : Commitment.Table A W} {p : Set W}
 
-/-- A reading is felicitous for the antecedent `p` in the commitment table `K` when `p` meets its
-discourse condition ([iatridou-1991], [haegeman-2003]). A hypothetical conditional leaves `p`
-undecided in the common ground, and a premise conditional needs `p` committed to by some
-participant or already in the common ground. -/
-def felicitous (K : Commitment.Table A W) (p : Set W) : Reading → Prop
-  | .hypothetical => ¬ (Question.polar p).DecidedBy K.commonGround
-  | .premise => (∃ a, p ∈ K.discourseCommitments a) ∨ p ∈ K.commonGround
-
-/-- An antecedent the common ground entails is read as a premise. -/
-theorem felicitous_iff_of_mem_commonGround (h : p ∈ K.commonGround) {ct : Reading} :
-    felicitous K p ct ↔ ct = .premise := by
-  cases ct
-  · exact iff_of_false (fun h' ↦ h' (Question.decidedBy_polar.2 (.inl h))) (by decide)
-  · exact iff_of_true (.inr h) rfl
-
-/-- An antecedent nobody has committed to and whose polar question is open is read
-hypothetically. -/
-theorem felicitous_iff_of_not_decidedBy (h₁ : ∀ a, p ∉ K.discourseCommitments a)
-    (h₂ : ¬ (Question.polar p).DecidedBy K.commonGround) {ct : Reading} :
-    felicitous K p ct ↔ ct = .hypothetical := by
-  cases ct
-  · exact iff_of_true h₂ rfl
-  · exact iff_of_false (fun h ↦ h.elim (fun ⟨a, ha⟩ ↦ h₁ a ha)
-      fun hp ↦ h₂ (Question.decidedBy_polar.2 (.inl hp))) (by decide)
-
 /-- `anchoring` is the felicity condition in the two contexts the paper uses: one whose common
 ground entails the antecedent, and one in which nobody has committed to it and its polar
 question is open. -/
 theorem anchoring_iff_felicitous
     (h : p ∈ K.commonGround ∨
       (∀ a, p ∉ K.discourseCommitments a) ∧ ¬ (Question.polar p).DecidedBy K.commonGround)
-    (ct : Reading) : anchoring (p ∈ K.commonGround) ct ↔ felicitous K p ct := by
+    (ct : Reading) : anchoring (p ∈ K.commonGround) ct ↔ ct.Felicitous K p := by
   rcases h with h | ⟨h₁, h₂⟩
-  · rw [felicitous_iff_of_mem_commonGround h]; simp [anchoring, h]
+  · rw [Reading.felicitous_iff_of_mem_commonGround h]; simp [anchoring, h]
   · have hp : p ∉ K.commonGround := fun hp ↦ h₂ (Question.decidedBy_polar.2 (.inl hp))
-    rw [felicitous_iff_of_not_decidedBy h₁ h₂]
+    rw [Reading.felicitous_iff_of_not_decidedBy h₁ h₂]
     cases ct <;> simp [anchoring, hp]
 
 end Felicity
@@ -199,10 +171,11 @@ theorem coordination_bare (g₁ g₂ : Prop) :
 
 /-! ### Markers, section 2.2 -/
 
-/-- A marker heads a bare left-nested conditional iff it can mark a premise conditional:
-*nara* and *wenn* do, (18) and (23), *-ra* and *falls* do not, (19) and (24). -/
+/-- A marker is attested heading a bare left-nested conditional iff it is attested marking a
+premise conditional: *nara* and *wenn* are, (18) and (23), *-ra* and *falls* are not, (19) and
+(24). -/
 theorem heads_bare_iff (m : Marker) :
-    Acceptable (.nested .bare) (· ∈ m.readings) ↔ .premise ∈ m.readings :=
+    Acceptable (.nested .bare) (· ∈ m.readings.fst) ↔ .premise ∈ m.readings.fst :=
   acceptable_bare_iff _
 
 /-! ### Polarity items, section 2.3
@@ -319,7 +292,7 @@ and any coordinated antecedent have the discourse status the reading needs, that
 *only*-inversion force the hypothetical reading, and that its polarity item be admitted at
 its position. -/
 def demand (row : Datum) (ct : Reading) : Prop :=
-  (∀ m ∈ markerOf row, ct ∈ m.readings) ∧
+  (∀ m ∈ markerOf row, ct ∈ m.readings.fst) ∧
   (∀ g ∈ flag? row "antecedent_given", anchoring (g = true) ct) ∧
   (∀ g ∈ flag? row "coordinated_antecedent_given", anchoring (g = true) ct) ∧
   (flag? row "only_inversion" = some true → ct = .hypothetical) ∧
@@ -333,6 +306,12 @@ theorem adapters_total :
     ∀ row ∈ Examples.all,
       ((row.feature? "marker").isSome → (markerOf row).isSome) ∧
         ((row.feature? "item").isSome → (itemOf row).isSome) := by
+  decide
+
+/-- The fragments describe every marker a row names fully, so the row theorems read the
+readings each marker marks, not a bound on them. -/
+theorem markers_described :
+    ∀ row ∈ Examples.all, ∀ m ∈ markerOf row, m.readings.fst = m.readings.snd := by
   decide
 
 /-- Every row is judged felicitous iff some reading open to its shape meets its demand. Gibbard's
