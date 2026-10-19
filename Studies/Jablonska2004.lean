@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Data.Examples.Jablonska2004
 public import Linglib.Data.Forms.Jablonska2004
 public import Studies.Svenonius2004
 
@@ -32,6 +33,9 @@ property, or a path.
 * `spells`: the analyses spell out the attested words.
 * `stem_perfectivity`, `stem_vendlerClass`: the aspect and the Vendler class the fragment records
   for a stem are those the model derives for it.
+* `phaseTests_judgment`, `presentTests_reading`: the perfectivity the model derives predicts the
+  judgments of the paper's sentences with a phase verb and in the present tense, by the tests of
+  Section 2.1.
 
 ## Implementation notes
 
@@ -717,9 +721,7 @@ theorem starred_not_wellFormed : ∀ a ∈ starred, ¬ WellFormed a.stem.verbali
 /-- The paper's readings of *po-* are the derived ones. -/
 theorem attested_readings : ∀ a ∈ attested, ∀ r ∈ a.readings, a.Available r := by decide
 
-/-- A prefixed attested form is imperfective exactly when the Secondary Imperfective closes it,
-by the tests of Section 2.1: (31a) and the attenuative-frequentatives pass the phasal-complement
-test, (33) fails it. -/
+/-- A prefixed attested form is imperfective exactly when the Secondary Imperfective closes it. -/
 theorem attested_perfective :
     ∀ a ∈ attested, a.layers ≠ [] →
       (Perfective a.stem.verbalizer a.layers ↔ a.layers.getLast? ≠ some .si) := by
@@ -743,6 +745,57 @@ Imperfective replaces the stem's verbalizer, which the fragment's citation forms
 separate. -/
 theorem spells : ∀ a ∈ attested ++ starred, a.form.cell = Forms.inf → .si ∉ a.layers →
     Svenonius2004.Spells a.morphs a.form.form := by
+  decide
+
+/-! ### The tests of Section 2.1
+
+The paper tests (im)perfectivity in two ways: a phase verb takes only an imperfective complement,
+and only an imperfective present-tense form has the actual present reading
+(`Aspect.viewpointPrediction`). The perfectivity the model derives for a form predicts the
+judgments of the sentences that test it. -/
+
+/-- The perfectivity of the derived predicate. -/
+def Analysis.perfectivity (a : Analysis) : Aspect.Perfectivity :=
+  if Perfective a.stem.verbalizer a.layers then .perfective else .imperfective
+
+/-- A sentence that tests the perfectivity of a verb form, with the analysis of the form. -/
+structure Test where
+  /-- The test sentence. -/
+  sentence : Datum
+  /-- The analysis of the tested form. -/
+  verb : Analysis
+
+/-- The phase-verb sentences, *zacząć* 'begin' with *po-prze-pis-ywa-ć*, (33a), and with
+*mach-ną-ć*, (46a). -/
+def phaseTests : List Test :=
+  [⟨Examples.ex_33a, ⟨Forms.f_34a, .pisac, [.lexical prze, .si, .asp3 po], true, []⟩⟩,
+   ⟨Examples.ex_46a, ⟨Forms.f_46a, .machnac, [], false, []⟩⟩]
+
+/-- The present-tense sentences: *po-prze-pis-uj-e-sz*, (33b), and *mach-ni-e-sz*, (46b), read only
+as futures, and *do-pływa*, (80b), read as an actual present. -/
+def presentTests : List Test :=
+  [⟨Examples.ex_33b, ⟨Forms.f_33b, .pisac, [.lexical prze, .si, .asp3 po], true, []⟩⟩,
+   ⟨Examples.ex_46b, ⟨Forms.f_46b, .machnac, [], false, []⟩⟩,
+   ⟨Examples.ex_80b, ⟨Forms.f_80b, .plywac, [.lexical do_, .si], false, []⟩⟩]
+
+/-- The tested forms are well-formed derivations. -/
+theorem tests_wellFormed :
+    ∀ t ∈ phaseTests ++ presentTests, WellFormed t.verb.stem.verbalizer t.verb.layers := by
+  decide
+
+/-- A phase verb with its complement is accepted exactly when the model derives an imperfective
+complement: *po-* in Asp3 and the semelfactive suffix make perfectives, (33a) and (46a). -/
+theorem phaseTests_judgment : ∀ t ∈ phaseTests,
+    (t.sentence.judgment = .acceptable ↔
+      Aspect.viewpointPrediction t.verb.perfectivity = .accept) := by
+  decide
+
+/-- A present-tense form has the actual present reading exactly when the model derives an
+imperfective: the perfectives of (33b) and (46b) are read as futures, the Secondary Imperfective
+of (80b) as an actual present. -/
+theorem presentTests_reading : ∀ t ∈ presentTests,
+    (t.sentence.readings.lookup "actual present" = some .acceptable ↔
+      Aspect.viewpointPrediction t.verb.perfectivity = .accept) := by
   decide
 
 /-! ### The paper's limits

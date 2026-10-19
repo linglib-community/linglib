@@ -645,6 +645,16 @@ def f_32b : Form Cell :=
       ⟨"jablonska-2004", "(32)"⟩
     ] }
 
+def f_33b : Form Cell :=
+  { id := "jablonska2004_33b"
+    lexeme := Lexemes.poprzepisywac
+    cell := prs_2sg
+    form := "poprzepisujesz"
+    morphs := ["po", "prze", "pis", "uj", "e", "sz"]
+    source := [
+      ⟨"jablonska-2004", "(33b)"⟩
+    ] }
+
 def f_34a : Form Cell :=
   { id := "jablonska2004_34a"
     lexeme := Lexemes.poprzepisywac
@@ -652,6 +662,7 @@ def f_34a : Form Cell :=
     form := "poprzepisywać"
     morphs := ["po", "prze", "pis", "ywa", "ć"]
     source := [
+      ⟨"jablonska-2004", "(33a)"⟩,
       ⟨"jablonska-2004", "(34a)"⟩,
       ⟨"jablonska-2004", "(34b)"⟩
     ] }
@@ -780,6 +791,16 @@ def f_45c : Form Cell :=
     judgment := .ungrammatical
     source := [
       ⟨"jablonska-2004", "(45)"⟩
+    ] }
+
+def f_46a : Form Cell :=
+  { id := "jablonska2004_46a"
+    lexeme := Lexemes.machniesz
+    cell := inf
+    form := "machnąć"
+    morphs := ["mach", "ną", "ć"]
+    source := [
+      ⟨"jablonska-2004", "(46a)"⟩
     ] }
 
 def f_46b : Form Cell :=
@@ -1639,6 +1660,9 @@ def f_32b.analysis : Analysis :=
   { form := f_32b,
     layers := some "Secondary Imperfective on a bare stem" }
 
+def f_33b.analysis : Analysis :=
+  { form := f_33b }
+
 def f_34a.analysis : Analysis :=
   { form := f_34a,
     layers := some "lexical prefix, Secondary Imperfective, po- in Asp3",
@@ -1702,6 +1726,9 @@ def f_45c.analysis : Analysis :=
   { form := f_45c,
     verbalizer := some "semelfactive",
     layers := some "po- in Asp1" }
+
+def f_46a.analysis : Analysis :=
+  { form := f_46a }
 
 def f_46b.analysis : Analysis :=
   { form := f_46b }
@@ -2046,11 +2073,11 @@ def lexemes : List Lexeme := [Lexemes.posiwiec, Lexemes.pojasniec, Lexemes.pocze
 /-- Every form the sources accept. -/
 def all : List (Form Cell) := [f_3a, f_3b, f_3c, f_3d, f_8a, f_9a, f_10a_po, f_10a_z, f_10b_po,
   f_10b_z, f_10c_po, f_10c_z, f_23a, f_24a, f_27a, f_27b, f_27c, f_27d, f_28a, f_28b, f_28c, f_28d,
-  f_30, f_31a, f_34a, f_39a, f_39b, f_39c, f_39d, f_43a, f_43b, f_46b, f_50a, f_50b, f_50c, f_50d,
-  f_51b, f_51c, f_51d, f_53, f_54a, f_54b, fn21, f_56b, f_56d, f_57a, f_57b, f_57c, f_57d,
-  f_60_bare, f_62a, f_62b, f_65a, f_67a_pf, f_67b_pf, f_67c_pf, f_69a_pf, f_69b_pf, f_69c_pf, f_75a,
-  f_75b, f_77, f_79a, f_79c, f_79d, f_80b, f_81a, f_81b, f_81c, f_81d, f_81e, f_82a, f_82b, f_82c,
-  f_82d, f_83a]
+  f_30, f_31a, f_33b, f_34a, f_39a, f_39b, f_39c, f_39d, f_43a, f_43b, f_46a, f_46b, f_50a, f_50b,
+  f_50c, f_50d, f_51b, f_51c, f_51d, f_53, f_54a, f_54b, fn21, f_56b, f_56d, f_57a, f_57b, f_57c,
+  f_57d, f_60_bare, f_62a, f_62b, f_65a, f_67a_pf, f_67b_pf, f_67c_pf, f_69a_pf, f_69b_pf, f_69c_pf,
+  f_75a, f_75b, f_77, f_79a, f_79c, f_79d, f_80b, f_81a, f_81b, f_81c, f_81d, f_81e, f_82a, f_82b,
+  f_82c, f_82d, f_83a]
 
 /-- Every form a source marks, as marginal, questionable, unacceptable or ungrammatical. -/
 def marked : List (Form Cell) := [f_24b, f_32a, f_32b, f_42a, f_42b, f_42c, f_45a, f_45b, f_45c,

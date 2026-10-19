@@ -11,7 +11,8 @@ Smith's semelfactives (`VendlerClass`), each determined by its features
 (`VendlerClass.eq_of_features`). The aspectual shifts of compositional coercion change one
 feature of a situation type (`VendlerClass.telicize` and its siblings), and Dowty's adverbial
 and progressive diagnostics are functions of the features (`forXPrediction`, `inXPrediction`,
-`progressivePrediction`). Viewpoint is the
+`progressivePrediction`), and the two tests for the Slavic perfective and imperfective are a
+function of the viewpoint (`viewpointPrediction`). Viewpoint is the
 presentation of a situation, Klein's four relations between the topic time and the situation
 time together with Smith's neutral viewpoint (`ViewpointType`), and at its coarsest the
 opposition of perfective and imperfective (`Perfectivity`). A language's aspect morphemes are
@@ -25,6 +26,8 @@ viewpoints denote are in `Semantics/Aspect/Viewpoint.lean`.
 * `Aspect.DiagnosticResult`: the outcome of a diagnostic, with the *for*-adverbial,
   *in*-adverbial and progressive tests as functions of a situation type.
 * `Aspect.ViewpointType`, `Aspect.Perfectivity`: the viewpoints.
+* `Aspect.viewpointPrediction`: the phase-verb and present-tense tests as a function of the
+  opposition of perfective and imperfective.
 
 ## References
 
@@ -33,6 +36,7 @@ viewpoints denote are in `Semantics/Aspect/Viewpoint.lean`.
 * [dowty-1979]
 * [krifka-1998]
 * [klein-1994]
+* [borik-2006]
 -/
 
 @[expose] public section
@@ -225,5 +229,17 @@ inductive Perfectivity
   | perfective
   | imperfective
   deriving DecidableEq, Repr, Inhabited
+
+/-- The tests for the Slavic perfective and imperfective [borik-2006]: the infinitival complement
+of a phase verb such as *begin*, *continue* or *finish* is imperfective, and the present-tense
+form of a perfective has no actual present reading, referring to a later time. Both tests accept
+an imperfective form and reject a perfective one. -/
+def viewpointPrediction : Perfectivity → DiagnosticResult
+  | .imperfective => .accept
+  | .perfective => .reject
+
+theorem viewpointPrediction_eq_accept_iff (p : Perfectivity) :
+    viewpointPrediction p = .accept ↔ p = .imperfective := by
+  cases p <;> decide
 
 end Aspect

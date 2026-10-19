@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Examples.Istratkova2004
 public import Linglib.Data.Forms.Istratkova2004
 public import Studies.Svenonius2004
 
@@ -29,6 +30,8 @@ AspP in the fixed order of the hierarchy (32): attenuative *po-*, inceptive *za-
   conform, and the starred stacks that reverse two heads of the hierarchy do not.
 * `spells`, `judgments`: each analysis spells out its form, accepted or rejected.
 * `attenuative_outermost`: attenuative *po-* is outermost in any ordered stack.
+* `phaseTests_necessary`: the phase-verb test admits the imperfective complements of (17), and
+  is a necessary condition only, since (17b) is excluded by its meaning.
 
 ## Implementation notes
 
@@ -350,6 +353,31 @@ theorem starred_distributive_not_wellFormed :
       (pro, .lexical)] ∧
     ¬ WellFormed [(za, .superlexical .inceptive), (po, .superlexical .distributive),
       (na, .superlexical .cumulative), (raz, .lexical)] := by
+  decide
+
+/-! ### The phase-verb test, (17) -/
+
+/-- A gloss marks the imperfective, *-IMPF*. -/
+def GlossesImperfective (g : String) : Prop := "IMPF".toList <:+ g.toList
+
+instance : DecidablePred GlossesImperfective := fun _ ↦ inferInstanceAs (Decidable (_ <:+ _))
+
+/-- The perfectivity of the complement of a phase verb, imperfective where the paper glosses the
+last word of the sentence *-IMPF*. -/
+def complementPerfectivity (d : Datum) : Option Aspect.Perfectivity :=
+  if ∃ g ∈ d.glossLine.getLast?, GlossesImperfective g then some .imperfective else none
+
+/-- The sentences (17), *započna* 'started' with a complement in *-va-*. -/
+def phaseTests : List Datum := [Examples.ex_17a, Examples.ex_17b]
+
+/-- The phase-verb test is necessary for (17) but not sufficient: the accepted sentence has an
+imperfective complement, which the test admits (`Aspect.viewpointPrediction`), but so has (17b),
+which the paper rejects for the incompatibility of completive *iz-* with beginning. -/
+theorem phaseTests_necessary :
+    (∀ d ∈ phaseTests, d.judgment = .acceptable →
+      (complementPerfectivity d).map Aspect.viewpointPrediction = some .accept) ∧
+    ∃ d ∈ phaseTests, (complementPerfectivity d).map Aspect.viewpointPrediction = some .accept ∧
+      d.judgment = .ungrammatical := by
   decide
 
 end Istratkova2004
