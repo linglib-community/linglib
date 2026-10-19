@@ -1,0 +1,549 @@
+[
+  {
+    "id": "aremu2025b_2b",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(2b)"},
+    "language": "yoru1245",
+    "primaryText": "Eku ni Adé pa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Eku", "rat"], ["ni", "FOC"], ["Adé", "A."], ["pa", "kill"]
+    ],
+    "translation": "Adé killed A RAT.",
+    "context": "Answer to: Kí ni Adé pa? 'What did Adé kill?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["fronted", "object"]
+    ],
+    "comment": "Printed under the heading Ìkálẹ̀, which belongs to (3): the text gives (2) as the Standard Yorùbá counterpart of (3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_3b",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(3b)"},
+    "language": "ikal1241",
+    "primaryText": "Tolú Adé rí rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "T."], ["Adé", "A."], ["rí", "see"], ["rín", "FOC"]
+    ],
+    "translation": "Adé saw TOLÚ.",
+    "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["fronted", "object"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_10b",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(10b)"},
+    "language": "ikal1241",
+    "primaryText": "Adé ó jẹ ejíjẹ nẹ̀ rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["ó", "RP"], ["jẹ", "eat"], ["ejíjẹ", "food"], ["nẹ̀", "DEF"], ["rín", "FOC"]
+    ],
+    "translation": "ADÉ ate the food.",
+    "context": "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_10b_noRP",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(10b)"},
+    "language": "ikal1241",
+    "primaryText": "Adé jẹ ejíjẹ nẹ̀ rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["jẹ", "eat"], ["ejíjẹ", "food"], ["nẹ̀", "DEF"], ["rín", "FOC"]
+    ],
+    "translation": "ADÉ ate the food.",
+    "context": "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"]
+    ],
+    "comment": "The variant (10b) marks with *(ó).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_10b_noRin",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(10b)"},
+    "language": "ikal1241",
+    "primaryText": "Adé ó jẹ ejíjẹ nẹ̀",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["ó", "RP"], ["jẹ", "eat"], ["ejíjẹ", "food"], ["nẹ̀", "DEF"]
+    ],
+    "translation": "ADÉ ate the food.",
+    "context": "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"]
+    ],
+    "comment": "The variant (10b) marks with *(rín).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_10c",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(10c)"},
+    "language": "ikal1241",
+    "primaryText": "Adé jẹ ejíjẹ nẹ̀",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["jẹ", "eat"], ["ejíjẹ", "food"], ["nẹ̀", "DEF"]
+    ],
+    "translation": "ADÉ ate the food.",
+    "context": "Answer to: Nọ̀ọ́ jẹ ejíjẹ nẹ̀? 'Who ate the food?'",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_16a",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(16a)"},
+    "language": "yoru1245",
+    "primaryText": "Èmi ni mo na Akin",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Èmi", "1SG"], ["ni", "FOC"], ["mo", "1SG"], ["na", "beat"], ["Akin", "Akin"]
+    ],
+    "translation": "It was me that beat Akin.",
+    "context": "Subject focus.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"],
+      ["person", "first"]
+    ],
+    "comment": "The resumptive is the first person singular weak pronoun; the example marks ó after it (*ó).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_16b",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(16b)"},
+    "language": "yoru1245",
+    "primaryText": "Ìwo ni o na Akin",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ìwo", "2SG"], ["ni", "FOC"], ["o", "2SG"], ["na", "beat"], ["Akin", "Akin"]
+    ],
+    "translation": "It was you that beat Akin.",
+    "context": "Subject focus.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"],
+      ["person", "second"]
+    ],
+    "comment": "The resumptive is the second person singular weak pronoun; the example marks ó after it (*ó).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_22b",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(22b)"},
+    "language": "ikal1241",
+    "primaryText": "Tolú Adé rí rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "T."], ["Adé", "A."], ["rí", "see"], ["rín", "FOC"]
+    ],
+    "translation": "Adé saw TOLÚ.",
+    "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["fronted", "object"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_22b_RP",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(22b)"},
+    "language": "ikal1241",
+    "primaryText": "Tolú Adé rí ó rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "T."], ["Adé", "A."], ["rí", "see"], ["ó", "RP"], ["rín", "FOC"]
+    ],
+    "translation": "Adé saw TOLÚ.",
+    "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["fronted", "object"]
+    ],
+    "comment": "The variant (22b) marks with (*ó).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_22b_noRin",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(22b)"},
+    "language": "ikal1241",
+    "primaryText": "Tolú Adé rí",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "T."], ["Adé", "A."], ["rí", "see"]
+    ],
+    "translation": "Adé saw TOLÚ.",
+    "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["fronted", "object"]
+    ],
+    "comment": "The variant (22b) marks with *(rín).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_22c",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(22c)"},
+    "language": "ikal1241",
+    "primaryText": "Adé rí Tolú",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["rí", "see"], ["Tolú", "T."]
+    ],
+    "translation": "Adé saw TOLÚ.",
+    "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_22c_rin",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(22c)"},
+    "language": "ikal1241",
+    "primaryText": "Adé rí Tolú rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["rí", "see"], ["Tolú", "T."], ["rín", "FOC"]
+    ],
+    "translation": "Adé saw TOLÚ.",
+    "context": "Answer to: Nèé Adé rí-i? 'Who did Adé see?'",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"]
+    ],
+    "comment": "The variant (22c) marks with (*rín).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_27b",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(27b)"},
+    "language": "ikal1241",
+    "primaryText": "Àná Ayọ̀ rí Tolú rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Àná", "yesterday"], ["Ayọ̀", "A."], ["rí", "see"], ["Tolú", "T"], ["rín", "FOC"]
+    ],
+    "translation": "Adé saw Tolú YESTERDAY.",
+    "context": "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "adjunct"],
+      ["fronted", "adjunct"]
+    ],
+    "comment": "The translations name the subject Ayọ̀ as Adé.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_27b_noRin",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(27b)"},
+    "language": "ikal1241",
+    "primaryText": "Àná Ayọ̀ rí Tolú",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Àná", "yesterday"], ["Ayọ̀", "A."], ["rí", "see"], ["Tolú", "T"]
+    ],
+    "translation": "Adé saw Tolú YESTERDAY.",
+    "context": "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "adjunct"],
+      ["fronted", "adjunct"]
+    ],
+    "comment": "The variant (27b) marks with *(rín).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_27c",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(27c)"},
+    "language": "ikal1241",
+    "primaryText": "Adé rí Tolú ni àná",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["rí", "see"], ["Tolú", "T."], ["ni", "at"], ["àná", "yesterday"]
+    ],
+    "translation": "Adé saw Tolú YESTERDAY.",
+    "context": "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "adjunct"]
+    ],
+    "comment": "ni here is the preposition 'at', not a focus marker.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_27c_rin",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(27c)"},
+    "language": "ikal1241",
+    "primaryText": "Adé rí Tolú ni àná rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["rí", "see"], ["Tolú", "T."], ["ni", "at"], ["àná", "yesterday"],
+      ["rín", "FOC"]
+    ],
+    "translation": "Adé saw Tolú YESTERDAY.",
+    "context": "Answer to: Ugbo Ayọ̀ rí Tolú? 'When did Adé see Tolú?'",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "adjunct"]
+    ],
+    "comment": "The variant (27c) marks with (*rín).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_29a",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(29a)"},
+    "language": "ikal1241",
+    "primaryText": "Adé rà ìwé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["rà", "buy"], ["ìwé", "book"]
+    ],
+    "translation": "Adé BOUGHT A BOOK.",
+    "context": "Answer to: What did Adé do?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "vp"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_29a_rin",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(29a)"},
+    "language": "ikal1241",
+    "primaryText": "Adé rà ìwé rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["rà", "buy"], ["ìwé", "book"], ["rín", "FOC"]
+    ],
+    "translation": "Adé BOUGHT A BOOK.",
+    "context": "Answer to: What did Adé do?",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "vp"]
+    ],
+    "comment": "The variant (29a) marks with (*rín).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_29b",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(29b)"},
+    "language": "ikal1241",
+    "primaryText": "Rí-rà Adé rà ìwé rín",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Rí-rà", "NMZL-buy"], ["Adé", "A."], ["rà", "buy"], ["ìwé", "book"], ["rín", "FOC"]
+    ],
+    "translation": "Adé BOUGHT a book.",
+    "context": "Verb focus, the fronted verb nominalized by partial reduplication and a copy left in place.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "verb"],
+      ["fronted", "verb"]
+    ],
+    "comment": "The translation closes with a double quotation mark.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_29b_noRin",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(29b)"},
+    "language": "ikal1241",
+    "primaryText": "Rí-rà Adé rà ìwé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Rí-rà", "NMZL-buy"], ["Adé", "A."], ["rà", "buy"], ["ìwé", "book"]
+    ],
+    "translation": "Adé BOUGHT a book.",
+    "context": "Verb focus, the fronted verb nominalized by partial reduplication and a copy left in place.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "verb"],
+      ["fronted", "verb"]
+    ],
+    "comment": "The variant (29b) marks with *(rín).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_31a",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(31a)"},
+    "language": "ikal1241",
+    "primaryText": "Adé ó jẹ ejíje nẹ̀ rín kìí se Bọ́lá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["ó", "RP"], ["jẹ", "eat"], ["ejíje", "food"], ["nẹ̀", "DEF"], ["rín", "FOC"],
+      ["kìí", "NEG"], ["se", "COP"], ["Bọ́lá", "B."]
+    ],
+    "translation": "ADÉ ate the food (and not Bọ́lá).",
+    "context": "Contrastive subject focus.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"],
+      ["continuation", "contrastive"]
+    ],
+    "comment": "ejíje as printed, ejíjẹ in (10).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_31b",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(31b)"},
+    "language": "ikal1241",
+    "primaryText": "Adé jẹ ejíje nẹ̀ kìí se Bọ́lá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["jẹ", "eat"], ["ejíje", "food"], ["nẹ̀", "DEF"], ["kìí", "NEG"],
+      ["se", "COP"], ["Bọ́lá", "B."]
+    ],
+    "translation": "ADÉ ate the food (and not Bọ́lá).",
+    "context": "Labelled new information subject focus.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["continuation", "contrastive"]
+    ],
+    "comment": "The example brackets rín as optional; the star covers every variant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_32a",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(32a)"},
+    "language": "ikal1241",
+    "primaryText": "Ìrẹsì Adé jẹ rín kìí se ẹ̀wà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ìrẹsì", "rice"], ["Adé", "A."], ["jẹ", "eat"], ["rín", "FOC"], ["kìí", "NEG"],
+      ["se", "COP"], ["ẹ̀wà", "beans"]
+    ],
+    "translation": "Adé ate RICE (and not beans).",
+    "context": "Contrastive object focus.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["fronted", "object"],
+      ["continuation", "contrastive"]
+    ],
+    "comment": "Labelled 'Contrastive SF', though the focus is the object.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_32b",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(32b)"},
+    "language": "ikal1241",
+    "primaryText": "Adé jẹ ìrẹsì",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["jẹ", "eat"], ["ìrẹsì", "rice"]
+    ],
+    "translation": "Adé ate RICE.",
+    "context": "New information object focus.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"]
+    ],
+    "comment": "Labelled 'New information SF', though the focus is the object.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025b_32b_contrast",
+    "source": {"bibkey": "aremu-2025b", "paperLabel": "(32b)"},
+    "language": "ikal1241",
+    "primaryText": "Adé jẹ ìrẹsì kìí se ẹ̀wà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "A."], ["jẹ", "eat"], ["ìrẹsì", "rice"], ["kìí", "NEG"], ["se", "COP"],
+      ["ẹ̀wà", "beans"]
+    ],
+    "translation": "Adé ate RICE (and not beans).",
+    "context": "New information object focus.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["continuation", "contrastive"]
+    ],
+    "comment": "The variant (32b) marks with (*kìí se ẹ̀wà).",
+    "verified": "page-image"
+  }
+]
