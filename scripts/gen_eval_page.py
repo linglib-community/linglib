@@ -140,13 +140,43 @@ def spec(paper):
     return _specs[paper]
 
 
+def sample_row(ident):
+    """A language's name and its row's codes, when a cell names a language of a paper's
+    `Data/Structures` file (`Paper.Structures.language`)."""
+    parts = ident.split(".")
+    if len(parts) < 3 or parts[-2] != "Structures":
+        return None
+    f = ROOT / "Linglib" / "Data" / "Structures" / f"{parts[-3]}.json"
+    if not f.exists():
+        return None
+    d = json.loads(f.read_text(encoding="utf-8"))
+    name = next((x["Name"] for x in d["LanguageTable"] if x["ID"] == parts[-1]), None)
+    if name is None:
+        return None
+    codes = {c["ID"]: c["Name"] for c in d["CodeTable"]}
+    values = [v for v in d["ValueTable"] if v["Language_ID"] == parts[-1]]
+
+    def column(p):
+        return unique(codes[v["Code_ID"]] for v in values if v["Parameter_ID"] == p)
+
+    return {"name": name, "codes": {p["ID"]: column(p["ID"]) for p in d["ParameterTable"]}}
+
+
+def first_clause(doc):
+    """A docstring's first clause, as the label of what it documents."""
+    return re.split(r",\s|\s\(|\.\s|\.$", " ".join(doc.split()), maxsplit=1)[0]
+
+
 def level_label(ctor):
     """The printed label of a constructor of a data type, `Paper.Type.level`, as the paper's data
-    file gives it; a triple's language and forms; a root pattern in capitals (`AAB`); and
-    otherwise its words."""
+    file gives it; a triple's language and forms; a sampled language's name; a root pattern in
+    capitals (`AAB`); and otherwise its words."""
     triple = root_classes(ctor)
     if triple:
         return f"{triple['language']} {', '.join(triple['forms'])}"
+    sampled = sample_row(ctor)
+    if sampled:
+        return sampled["name"]
     if re.fullmatch(r"[abc]{3}", ctor.split(".")[-1]):
         return ctor.split(".")[-1].upper()
     parts = ctor.split(".")
@@ -246,6 +276,13 @@ def build(export, root):
     def rank(n):
         return names.get(n, {}).get("rank", 1000)
 
+    def cell_label(x):
+        """A cell's label; for a constant no data file names, its docstring's first clause."""
+        label = level_label(x)
+        doc = names.get(x, {}).get("doc", "")
+        return first_clause(doc) if doc and label == " ".join(words(x.split(".")[-1])).lower() \
+            else label
+
     def source(n):
         return "lab" if names.get(n, {}).get("module", "").startswith("Lab.") else "registered"
 
@@ -274,11 +311,16 @@ def build(export, root):
             obs = observed.get((X, c))
             for v in variant_list or [None]:
                 seen = tree_label(obs["observed"]) if obs else None
-                # A recorded triple's observation is its root classes.
+                # A recorded triple's observation is its root classes, a sampled language's its
+                # comparative and superlative codes.
                 triple = root_classes(c[0]) if len(c) == 1 else None
+                sampled = sample_row(c[0]) if len(c) == 1 else None
                 if triple and seen == "yes":
                     seen = triple["classes"]
-                col = {"key": "|".join(c) + "#" + (v or ""), "cell": [level_label(x) for x in c],
+                if sampled and seen == "yes":
+                    seen = (f"CMPR {', '.join(sampled['codes'].get('cmpr', []))}; "
+                            f"SPRL {', '.join(sampled['codes'].get('sprl', []))}")
+                col = {"key": "|".join(c) + "#" + (v or ""), "cell": [cell_label(x) for x in c],
                        "observed": seen,
                        "observedTheorem": decl(obs["theorem"]) if obs else None}
                 if v:
@@ -328,7 +370,9 @@ def build(export, root):
 
     def paper(study):
         study_file = ROOT / "Studies" / f"{study}.lean"
-        ref = cited.get(keys_of.get(study, ""), {})
+        # A study named otherwise than its key is cited by its experiments.
+        ref = cited.get(keys_of.get(study, ""), {}) or next(
+            (e["cite"] for e in experiments if e["paper"] == study and e["cite"]), {})
         href = (f"{base}Studies/{study}.html" if study_file.exists() else
                 f"https://doi.org/{ref['doi']}" if ref.get("doi") else ref.get("url", ""))
         return {"study": study, "cite": ref or None, "href": href}

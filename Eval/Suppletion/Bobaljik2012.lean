@@ -2,6 +2,7 @@ module
 
 public import Eval.Basic
 public import Eval.Parser
+public import Eval.Suppletion.Theory
 public import Studies.Bobaljik2012
 
 /-!
@@ -13,7 +14,7 @@ comparative and superlative share a root, and the root pattern over the grades t
 gives (`Bobaljik2012.rootPattern`). A triple is observed unless a source rejects one of its forms
 in its cell (`Contested`), as the 2009 questionnaire rejects Zajkov's Karelian *äij-in*.
 
-Three theories say which root patterns three synthetic grades can show (`Theory.Generates`).
+Three theories say which root patterns three synthetic grades can show (`Eval.Suppletion.Theory`).
 Elsewhere insertion over the containment hierarchy generates the contiguous patterns, Bobaljik's
 containment with an antihomophonous and grounded vocabulary generates AAA, ABB and ABC
 (`groundedGenerable_iff`), and a theory of the grades as independent cells generates every
@@ -37,7 +38,11 @@ is never wrong (`verdict_free_naive_ne_wrong`). Pattern by pattern (`patterns`),
 hypothesis is asymmetric: a theory predicts that no observed triple shows a pattern it cannot
 generate on synthetic grades, and nothing about the others. Grounded containment alone is right
 that no triple is AAB, both containment theories are wrong that none is ABA on the surface, and
-the theory without containment predicts nothing (`verdict_patterns`).
+the theory without containment predicts nothing (`verdict_patterns`). Language by language
+(`syntheticSuperlatives`), the four rows of the two samples that fail the Synthetic Superlative
+Generalization refute both containment theories as recorded, and fit them under Bobaljik's
+analyses of §3.4, four stipulations (`verdict_syntheticSuperlatives_naive`,
+`verdict_syntheticSuperlatives_bobaljik`).
 
 ## Implementation notes
 
@@ -68,46 +73,6 @@ def Contested (r : RootClasses Cell) : Prop :=
 
 instance : DecidablePred Contested := fun _ ↦ inferInstanceAs (Decidable (∃ g ∈ marked, _))
 
-/-! ### The theories -/
-
-/-- Three theories of the root patterns of the grades. -/
-inductive Theory
-  /-- Elsewhere insertion over the containment hierarchy, from terminal antihomophonous rules. -/
-  | elsewhere
-  /-- Bobaljik's containment, with an antihomophonous and grounded vocabulary. -/
-  | grounded
-  /-- The grades as independent cells, without containment. -/
-  | free
-  deriving DecidableEq, Repr
-
-/-- A theory generates a root pattern on three synthetic grades. -/
-def Theory.Generates : Theory → Paradigm 3 ℕ → Prop
-  | .elsewhere, p => ElsewhereGenerable p
-  | .grounded, p => GroundedGenerable p
-  | .free, _ => True
-
-instance : ∀ T : Theory, DecidablePred T.Generates
-  | .elsewhere => fun p ↦ decidable_of_iff _
-      ((isContiguous_fin_three_iff p).symm.trans (isContiguous_iff_generable p))
-  | .grounded => fun p ↦ decidable_of_iff ((p 0 = p 2 → p 0 = p 1) ∧ ¬ (p 0 = p 1 ∧ p 1 ≠ p 2))
-      (by rw [Theory.Generates, groundedGenerable_iff, isContiguous_fin_three_iff])
-  | .free => fun _ ↦ isTrue trivial
-
-/-- The five root patterns over three grades, one of each class. -/
-def shapes : List (Paradigm 3 ℕ) := [Paradigm.aaa, Paradigm.abb, Paradigm.abc, Paradigm.aba,
-  Paradigm.aab]
-
-/-- A theory fits a root pattern under a parse `e`, giving the grade whose structure the root's
-word realizes in each cell, when a pattern it generates, read through `e`, classes the grades as
-the root pattern does. -/
-def Theory.Fits (T : Theory) (e : Fin 3 → Fin 3) (p : Paradigm 3 ℕ) : Prop :=
-  ∃ q ∈ shapes, T.Generates q ∧ Setoid.ker (q ∘ e) = Setoid.ker p
-
-instance (T : Theory) (e : Fin 3 → Fin 3) (p : Paradigm 3 ℕ) : Decidable (T.Fits e p) :=
-  decidable_of_iff (∃ q ∈ shapes, T.Generates q ∧ (q (e 0) = q (e 1) ↔ p 0 = p 1) ∧
-      (q (e 1) = q (e 2) ↔ p 1 = p 2) ∧ (q (e 0) = q (e 2) ↔ p 0 = p 2)) <| by
-    simp only [Theory.Fits, ker_eq_ker_iff_fin_three, Function.comp_apply]
-
 /-! ### The parses -/
 
 /-- How a theory parses a triple, from the root pattern every theory shares, into the grade
@@ -123,6 +88,7 @@ def bobaljik : TripleParser :=
   ⟨fun _ ↦ some id, List.toFinmap
     [⟨bul_many.roots, positiveEmbedding⟩, ⟨hye_many.roots, positiveEmbedding⟩]⟩
 
+/-- Reading every triple as synthetic stipulates nothing. -/
 theorem stipulations_naive : naive.stipulations = ∅ := Parser.stipulations_ofRule _
 
 /-- Bobaljik's parse stipulates the Bulgarian and the Armenian 'many'. -/
@@ -260,5 +226,102 @@ theorem verdict_patterns :
       patterns.verdict .elsewhere Paradigm.aba = .wrong ∧
       patterns.verdict .free Paradigm.aba = .silent := by
   refine ⟨?_, ?_, verdict_patterns_free _, ?_, ?_, verdict_patterns_free _⟩ <;> decide +kernel
+
+
+/-! ### Language by language: the Synthetic Superlative Generalization (§3.4)
+
+Under containment, Merger makes the comparative of a synthetic superlative synthetic, so a table
+row records the synthetic extents of its language's adjectives only if it satisfies the SSG
+(`_root_.Bobaljik2012.Records.morphComparative`). Of the rows of both samples four do not
+(`_root_.Bobaljik2012.ssg_exceptions`), and the book analyzes each: the Armenian superlative
+*amen-a-* sits on a null comparative affix, Zulu's questionable *-kazi* forms absolute
+superlatives, and Alutor has the comparative suffix that the longer description of its sister
+Koryak records. -/
+
+open _root_.Bobaljik2012.Structures (Row zulu armenian_western armenian_eastern alutor)
+
+/-- The row the samples give a language, the broad sample's first. -/
+def row (L : Data.Structures.Language) : Option Row :=
+  (_root_.Bobaljik2012.Structures.broadSample ++ _root_.Bobaljik2012.Structures.focusedSurvey).find?
+    (·.language = L)
+
+/-- How a theory reads a language's row: as recorded, or as an analysis stipulated for it. -/
+abbrev RowParser := Parser Data.Structures.Language (Option Row) (Row → Row)
+
+/-- A row with a morphological comparative, as for a null comparative affix. -/
+def withComparative (r : Row) : Row := { r with cmpr := ⟨.morphological, false, false⟩ :: r.cmpr }
+
+/-- A row whose morphological superlatives are absolute ones. -/
+def withAbsolute (r : Row) : Row :=
+  { r with sprl := r.sprl.map fun v ↦ if v.code = .morphological then { v with code := .absolute }
+      else v }
+
+namespace Rows
+
+/-- Every row read as recorded. -/
+def naive : RowParser := .ofRule fun _ ↦ some id
+
+/-- Bobaljik's analyses of the four rows that fail the SSG. -/
+def bobaljik : RowParser :=
+  ⟨fun _ ↦ some id, List.toFinmap [⟨armenian_western, withComparative⟩,
+    ⟨armenian_eastern, withComparative⟩, ⟨zulu, withAbsolute⟩, ⟨alutor, withComparative⟩]⟩
+
+/-- Reading every row as recorded stipulates nothing. -/
+theorem stipulations_naive : naive.stipulations = ∅ := Parser.stipulations_ofRule _
+
+/-- Bobaljik's analyses are stipulated for Zulu, the two Armenians and Alutor. -/
+theorem stipulations_bobaljik :
+    bobaljik.stipulations = {armenian_western, armenian_eastern, zulu, alutor} := by
+  decide +kernel
+
+end Rows
+
+/-- Each language of [bobaljik-2012]'s samples scored by whether a theory, under its reading of
+the row, accounts for it: a containment theory accounts for a row that records synthetic extents,
+and the theory without containment predicts nothing. -/
+def syntheticSuperlatives : Experiment (Theory × RowParser) Data.Structures.Language Bool where
+  observed L := (row L).map fun _ ↦ true
+  predicted Tπ L := if Tπ.1.Containment then
+      (row L).bind fun r ↦ (Tπ.2.parse row L).map fun (f : Row → Row) ↦
+        decide (∃ S, _root_.Bobaljik2012.Records (f r) S)
+    else none
+
+/-- The four languages that fail the SSG are in the samples. -/
+theorem syntheticSuperlatives_observed :
+    syntheticSuperlatives.observed zulu = some true ∧ syntheticSuperlatives.observed armenian_western = some true ∧
+      syntheticSuperlatives.observed armenian_eastern = some true ∧ syntheticSuperlatives.observed alutor = some true := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide +kernel
+
+/-- Read as recorded, the four rows refute both containment theories. -/
+theorem verdict_syntheticSuperlatives_naive :
+    syntheticSuperlatives.verdict (.elsewhere, Rows.naive) zulu = .wrong ∧
+      syntheticSuperlatives.verdict (.grounded, Rows.naive) zulu = .wrong ∧
+      syntheticSuperlatives.verdict (.free, Rows.naive) zulu = .silent ∧
+      syntheticSuperlatives.verdict (.elsewhere, Rows.naive) armenian_western = .wrong ∧
+      syntheticSuperlatives.verdict (.grounded, Rows.naive) armenian_western = .wrong ∧
+      syntheticSuperlatives.verdict (.free, Rows.naive) armenian_western = .silent ∧
+      syntheticSuperlatives.verdict (.elsewhere, Rows.naive) armenian_eastern = .wrong ∧
+      syntheticSuperlatives.verdict (.grounded, Rows.naive) armenian_eastern = .wrong ∧
+      syntheticSuperlatives.verdict (.free, Rows.naive) armenian_eastern = .silent ∧
+      syntheticSuperlatives.verdict (.elsewhere, Rows.naive) alutor = .wrong ∧
+      syntheticSuperlatives.verdict (.grounded, Rows.naive) alutor = .wrong ∧
+      syntheticSuperlatives.verdict (.free, Rows.naive) alutor = .silent := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
+
+/-- Under Bobaljik's analyses both containment theories account for the four rows. -/
+theorem verdict_syntheticSuperlatives_bobaljik :
+    syntheticSuperlatives.verdict (.elsewhere, Rows.bobaljik) zulu = .correct ∧
+      syntheticSuperlatives.verdict (.grounded, Rows.bobaljik) zulu = .correct ∧
+      syntheticSuperlatives.verdict (.free, Rows.bobaljik) zulu = .silent ∧
+      syntheticSuperlatives.verdict (.elsewhere, Rows.bobaljik) armenian_western = .correct ∧
+      syntheticSuperlatives.verdict (.grounded, Rows.bobaljik) armenian_western = .correct ∧
+      syntheticSuperlatives.verdict (.free, Rows.bobaljik) armenian_western = .silent ∧
+      syntheticSuperlatives.verdict (.elsewhere, Rows.bobaljik) armenian_eastern = .correct ∧
+      syntheticSuperlatives.verdict (.grounded, Rows.bobaljik) armenian_eastern = .correct ∧
+      syntheticSuperlatives.verdict (.free, Rows.bobaljik) armenian_eastern = .silent ∧
+      syntheticSuperlatives.verdict (.elsewhere, Rows.bobaljik) alutor = .correct ∧
+      syntheticSuperlatives.verdict (.grounded, Rows.bobaljik) alutor = .correct ∧
+      syntheticSuperlatives.verdict (.free, Rows.bobaljik) alutor = .silent := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
 
 end Eval.Suppletion.Bobaljik2012
