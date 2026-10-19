@@ -22,9 +22,9 @@ Transparency is incomparable with symmetric Kleene and supervaluation in one dir
 stronger than the incremental ones (Chemla and Schlenker's (13b)). Kalomoiros's Limited
 Symmetry lies strictly between the two Transparencies: incremental Transparency is
 stronger than it and it is stronger than symmetric Transparency, since the good finals it consults
-shrink from the incremental theory's to the sentence itself, and it is not stronger than
-incremental Transparency (Fact 3.4.3). Symmetric supervaluation is not stronger than Limited
-Symmetry (Fact 3.4.1).
+shrink from the incremental theory's to the sentence itself; it is not stronger than incremental
+Transparency (Fact 3.4.3), and symmetric Transparency is not stronger than it. Symmetric
+supervaluation is not stronger than Limited Symmetry (Fact 3.4.1).
 
 ## References
 
@@ -200,6 +200,19 @@ theorem not_supervaluationSymmetric_stronger_limitedSymmetry :
   have := (Kalomoiros2023.limitedSymmetry_and_left I).1 (h _ _ _ _ _ hs) (Set.mem_univ ())
   simp [I] at this
 
+/-- `(pp' and q)` separates the two where `p` and `q` fail: symmetric Transparency checks the
+trigger against the false second conjunct and accepts, while Limited Symmetry checks it before. -/
+theorem not_transparencySymmetric_stronger_limitedSymmetry :
+    ¬ transparencySymmetric.Stronger limitedSymmetry := by
+  let I : Fin 3 → Set Unit := fun _ ↦ ∅
+  have ht : Transparency .symmetric Set.univ
+      (Formula.occurrences I (.bin .conj (.trigger 0 1) (.atom 2))) :=
+    (satisfaction_iff_transparency I .symmetric _ _).1
+      ((satisfaction_symmetric_and_left_iff I).2 fun w _ ↦ by simp [I, Formula.truth, Connective.eval])
+  intro h
+  have := (Kalomoiros2023.limitedSymmetry_and_left I).1 (h _ _ _ _ _ ht) (Set.mem_univ ())
+  simp [I] at this
+
 end Account
 
 open Account
@@ -245,7 +258,8 @@ def cuts : List (Account × Account) :=
   [(transparencySymmetric, kleeneSymmetric), (transparencySymmetric, supervaluationSymmetric),
     (supervaluationSymmetric, kleeneSymmetric),
     (supervaluationSymmetric, supervaluationIncremental), (kleeneSymmetric, kleeneIncremental),
-    (limitedSymmetry, transparencyIncremental), (supervaluationSymmetric, limitedSymmetry)]
+    (limitedSymmetry, transparencyIncremental), (transparencySymmetric, limitedSymmetry),
+    (supervaluationSymmetric, limitedSymmetry)]
 
 theorem cuts_sound : ∀ c ∈ cuts, ¬ c.1.Stronger c.2 := by
   simp only [cuts, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
@@ -256,6 +270,7 @@ theorem cuts_sound : ∀ c ∈ cuts, ¬ c.1.Stronger c.2 := by
     not_supervaluationSymmetric_stronger_supervaluationIncremental,
     not_kleeneSymmetric_stronger_kleeneIncremental,
     not_limitedSymmetry_stronger_transparencyIncremental,
+    not_transparencySymmetric_stronger_limitedSymmetry,
     not_supervaluationSymmetric_stronger_limitedSymmetry⟩
 
 end Eval.Presupposition
