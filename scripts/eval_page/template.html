@@ -10,22 +10,23 @@
 /* Evaluations */
 :root {
   --right: #15803d; --right-bg: #dcfce7; --wrong: #b91c1c; --wrong-bg: #fee2e2;
-  --silent: #8a8a8a; --silent-bg: #ededed;
+  --silent: #8a8a8a;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --right: #4ade80; --right-bg: #1b3a27; --wrong: #f87171; --wrong-bg: #45201f;
-    --silent: #8c8d8e; --silent-bg: #2e2e33;
+    --silent: #8c8d8e;
   }
 }
 :root[data-theme="dark"] {
   --right: #4ade80; --right-bg: #1b3a27; --wrong: #f87171; --wrong-bg: #45201f;
-  --silent: #8c8d8e; --silent-bg: #2e2e33;
+  --silent: #8c8d8e;
 }
-.main :is(p, li, dd, .desc) a, .board thead a {
+.main :is(p, li, dd) a {
   text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px;
 }
-.main :is(p, li, dd, .desc) a:hover, .board thead a:hover { text-decoration-color: currentColor; }
+.main :is(p, li, dd) a:hover { text-decoration-color: currentColor; }
+.board thead a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .meta { margin: 0 0 28px; font-size: 14px; color: var(--secondary); }
 .meta a { color: inherit; }
 .small { font-size: 14px; color: var(--secondary); }
@@ -40,15 +41,12 @@ dl.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 
 /* Verdict marks */
 .v {
-  display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 4px;
-  font-size: 14px; font-weight: 600; line-height: 1;
+  display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 4px;
+  font-size: 13px; font-weight: 600; line-height: 1;
 }
 .v-correct { background: var(--right-bg); color: var(--right); }
 .v-wrong { background: var(--wrong-bg); color: var(--wrong); }
-.v-silent {
-  color: var(--silent); box-shadow: inset 0 0 0 1px var(--border);
-  background: repeating-linear-gradient(135deg, var(--silent-bg) 0 4px, transparent 4px 8px);
-}
+.v-silent { color: var(--silent); font-weight: 400; }
 button.v:hover { filter: brightness(0.94); }
 button.v[aria-current="true"] { outline: 2px solid var(--primary); outline-offset: 1px; }
 
@@ -92,18 +90,16 @@ table.board { border-collapse: separate; border-spacing: 0; width: 100%; font-si
 .board .obs { color: var(--primary); white-space: nowrap; }
 .board .obs.none { color: var(--secondary); font-style: italic; }
 .board .split { border-left: 1px solid var(--border); }
-.board .stip { display: block; font-size: 12px; }
+.board .stip { display: block; font-size: 12px; color: var(--secondary); }
 .board th[scope="row"], .board .corner {
   position: sticky; left: 0; z-index: 1; background: var(--theme); text-align: left;
   min-width: 14rem; max-width: 20rem; padding-left: 0; border-right: 1px solid var(--border);
 }
 .board .corner { color: var(--secondary); font-weight: 400; }
 .board thead .corner { color: var(--primary); font-weight: 600; vertical-align: bottom; }
-.board th[scope="row"] { font-weight: 400; padding-block: 8px; white-space: normal; }
+.board th[scope="row"] { font-weight: 400; padding-block: 5px; white-space: normal; }
 .board th[scope="row"] .name { font-weight: 600; color: var(--primary); }
 .board th[scope="row"] .name:hover { text-decoration: underline; }
-.board th[scope="row"] .desc { display: block; margin-top: 2px; font-size: 13px; line-height: 1.4; color: var(--secondary); }
-.board th[scope="row"] .desc a { color: inherit; }
 .board tbody tr:hover > * { background: var(--code-bg); }
 .board tbody tr.group > th { text-align: left; font-weight: 600; color: var(--secondary); padding: 18px 0 4px; border-top: 1px solid var(--border); background: var(--theme); }
 .board tbody tr.group:first-child > th { border-top: 0; }
@@ -136,14 +132,9 @@ table.board { border-collapse: separate; border-spacing: 0; width: 100%; font-si
 /* Pipeline, theorems */
 ol.steps { padding-inline-start: 20px; }
 ol.steps li { margin-top: 6px; }
-dl.theorems { margin: 0; }
-dl.theorems dt { margin-top: 18px; overflow-wrap: anywhere; }
-dl.theorems dt a { color: var(--primary); }
-dl.theorems dd { margin: 4px 0 0; }
 
 @media (max-width: 640px) {
   .board th[scope="row"], .board .corner { min-width: 8.5rem; max-width: 10rem; }
-  .board th[scope="row"] .desc { display: none; }
   .key, .small, .meta { font-size: 13px; }
 }
 </style>
@@ -162,9 +153,6 @@ dl.theorems dd { margin: 4px 0 0; }
   <div class="board-scroll" id="board-box"><table class="board" id="board"></table></div>
   <p class="small sources" id="sources"></p>
 
-  <h2 id="obs-h">Observations</h2>
-  <div id="papers"></div>
-
   <h2 id="how-h">How a mark is computed</h2>
   <ol class="steps">
     <li><b>Fact.</b> A judgment as printed, with its table and page: <code>Data.<wbr>Experiments</code>.</li>
@@ -172,9 +160,6 @@ dl.theorems dd { margin: 4px 0 0; }
     <li><b>Prediction.</b> The outcome the theory predicts in a cell by the experiment's linking hypothesis, or none where it says nothing: <code>Eval.<wbr>Experiment.<wbr>predicted</code>.</li>
     <li><b>Verdict.</b> The prediction against the observation: <code>Eval.<wbr>Verdict</code>.</li>
   </ol>
-
-  <h2 id="thm-h">Theorems</h2>
-  <dl class="theorems" id="theorems"></dl>
   </div>
 </main>
 
@@ -245,7 +230,7 @@ dl.theorems dd { margin: 4px 0 0; }
     h += "</tr><tr class=\"groups\">";
     for (const e of exps) {
       // With one cell, the parses span the experiment; with several, each cell spans its parses.
-      if (e.variants && new Set(e.columns.map((c) => c.cell.join())).size < 2) { h += `<th class="split" colspan="${e.columns.length}">how the theory parses the sentences</th>`; continue; }
+      if (e.variants && new Set(e.columns.map((c) => c.cell.join())).size < 2) { h += `<th class="split" colspan="${e.columns.length}"></th>`; continue; }
       const groups = [];
       for (const c of e.columns) {
         const g = e.variants ? c.cell.join(", ") : c.cell.length > 1 ? c.cell[0] : "";
@@ -262,7 +247,7 @@ dl.theorems dd { margin: 4px 0 0; }
         if (c.variant) {
           const v = c.variant, n = v.stipulations ? v.stipulations.length : null;
           h += `<th scope="col" class="${cls}"><a href="${esc(v.decl.href)}" title="${esc(strip(v.decl.doc))}">${esc(v.label)}</a>` +
-            (n === null ? "" : `<span class="stip"><b>${n}</b> stipulated</span>`) + `</th>`;
+            (n === null ? "" : `<a class="stip" href="${esc(v.stipulationsTheorem.href)}" title="${esc(strip(v.stipulationsTheorem.doc))}"><b>${n}</b> stipulated</a>`) + `</th>`;
         } else {
           h += `<th scope="col" class="${cls}">${esc(c.cell.length ? c.cell[c.cell.length - 1] : "")}</th>`;
         }
@@ -292,8 +277,7 @@ dl.theorems dd { margin: 4px 0 0; }
       if (!rows.length) continue;
       h += `<tr class="group"><th colspan="${span}" scope="colgroup"><span>${esc(label)}</span></th></tr>`;
       for (const t of rows) {
-        h += `<tr><th scope="row"><a class="name" href="${esc(page(t.id))}">${esc(t.label)}</a>` +
-          `<span class="desc">${t.decl.doc}</span></th>`;
+        h += `<tr><th scope="row"><a class="name" href="${esc(page(t.id))}" title="${esc(strip(t.decl.doc))}">${esc(t.label)}</a></th>`;
         for (const e of exps) {
           e.columns.forEach((c, i) => {
             const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
@@ -390,12 +374,6 @@ dl.theorems dd { margin: 4px 0 0; }
     return h + "</ul>";
   }
   const verified = { "page-image": "checked against the page images", "text-layer": "checked against the text", "raw-data": "from the released data" };
-  // The papers whose experiments a domain scores.
-  function papersOf(d) {
-    return Object.entries(data.papers)
-      .filter(([paper]) => exps.some((e) => e.paper === paper && d.experiments.includes(e.id)))
-      .map(([paper, p]) => paperSection(paper, p)).join("");
-  }
   function paperSection(paper, p) {
     const used = p.tables.filter((t) => exps.some((e) => e.paper === paper && t.name.startsWith(e.decl.short)));
     const title = p.cite && p.cite.doi ? `<a href="https://doi.org/${esc(p.cite.doi)}">${esc(p.cite.title)}</a>` : p.cite ? esc(p.cite.title) : "";
@@ -432,7 +410,7 @@ dl.theorems dd { margin: 4px 0 0; }
       (src ? `<br><span class="small">${src}</span>` : "") + `</dd>`;
     if (c.variant) {
       const n = c.variant.stipulations ? c.variant.stipulations.length : null;
-      h += `<dt>Parse</dt><dd>${link(c.variant.decl, esc(c.variant.label))}${n === null ? "" : `, ${n} stipulated`}</dd>`;
+      h += `<dt>Parse</dt><dd>${link(c.variant.decl, esc(c.variant.label))}${n === null ? "" : `, ${link(c.variant.stipulationsTheorem, `${n} stipulated`)}`}</dd>`;
     }
     h += `<dt>Theory</dt><dd>${defs.length ? defs.map((d) => link(d, `<code>${dotted(d.name)}</code>`)).join(", ") : link(t.decl, `<code>${dotted(t.decl.name)}</code>`)}</dd>`;
     h += `<dt>Proof</dt><dd>${link(cell.theorem, `<code>${esc(cell.theorem.short)}</code>`)}` +
@@ -492,23 +470,16 @@ dl.theorems dd { margin: 4px 0 0; }
     document.getElementById("sources").innerHTML = theories && dataFrom
       ? `Theories from ${theories}, on data from ${dataFrom}.`
       : theories ? `Theories from ${theories}.` : dataFrom ? `On data from ${dataFrom}.` : "";
-    const papers = papersOf(d);
-    document.getElementById("papers").innerHTML = papers;
-    document.getElementById("obs-h").hidden = !papers;
-    document.getElementById("theorems").innerHTML = data.theorems.filter((t) => t.domains.includes(d.name)).map((t) =>
-      `<div><dt><a href="${esc(t.href)}"><code>${esc(t.name)}</code></a></dt><dd>${t.doc || "<i>No docstring.</i>"}</dd></div>`).join("");
   }
 
-  // A theory's page: where it is defined, its verdicts in its domain, and the theorems behind them.
-  const theoremList = (used) => data.theorems.filter((t) => used.has(t.name)).map((t) =>
-    `<div><dt><a href="${esc(t.href)}"><code>${esc(t.name)}</code></a></dt><dd>${t.doc}</dd></div>`).join("");
+  // A theory's page: where it is defined, and its verdicts in its domain.
   function theoryView(t) {
     const d = data.domains.find((x) => x.theories.includes(t.id));
     const es = d.experiments.map((x) => expById.get(x));
-    const n = { correct: 0, wrong: 0, silent: 0 }, used = new Set();
+    const n = { correct: 0, wrong: 0, silent: 0 };
     for (const e of es) for (const c of e.columns) {
       const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
-      if (cell) { n[cell.verdict] += 1; used.add(cell.theorem.name); }
+      if (cell) n[cell.verdict] += 1;
     }
     const defs = (t.definitions || []).map((x) => link(x, `<code>${dotted(x.name)}</code>`)).join(", ");
     const from = (t.papers || []).map(paperLink).join(", ");
@@ -518,27 +489,22 @@ dl.theorems dd { margin: 4px 0 0; }
       (from ? `<dt>From</dt><dd>${from}</dd>` : "") +
       `<dt>${t.source === "lab" ? "In Lab as" : "Registered as"}</dt><dd>${link(t.decl, `<code>${dotted(t.decl.name)}</code>`)}</dd>` +
       `<dt>Verdicts</dt><dd>${n.correct} right, ${n.wrong} wrong, ${n.silent} silent</dd></dl>` +
-      `<div id="board-slot"></div><h2>Theorems</h2><dl class="theorems">${theoremList(used)}</dl>` };
+      `<div id="board-slot"></div>` };
   }
   // An experiment's page: its data, the verdicts of its domain's theories on it, its untested cells.
   function experimentView(e) {
     const d = data.domains.find((x) => x.experiments.includes(e.id));
     const ts = d.theories.map((x) => theoryById.get(x));
-    const used = new Set(), untested = [];
-    for (const c of e.columns) {
-      if (c.observedTheorem) used.add(c.observedTheorem.name);
-      if (c.variant && c.variant.stipulationsTheorem) used.add(c.variant.stipulationsTheorem.name);
+    const untested = [];
+    for (const c of e.columns)
       if (c.observed === null && !untested.includes(c.cell.join(", "))) untested.push(c.cell.join(", "));
-      for (const t of ts) { const cell = data.cells[`${e.id}|${t.id}|${c.key}`]; if (cell) used.add(cell.theorem.name); }
-    }
     const p = data.papers[e.paper];
     const title = e.cite ? (e.cite.doi ? `<a href="https://doi.org/${esc(e.cite.doi)}">${esc(e.cite.title)}</a>` : esc(e.cite.title)) : "";
     return { domain: d, title: e.cite ? `${cite(e.cite)}, ${esc(e.label)}` : esc(e.label), exps: [e], theories: ts, html:
       (title ? `<p class="meta"><em>${title}</em></p>` : "") + `<p>${e.decl.doc}</p>` +
       `<div id="board-slot"></div>` +
       (untested.length ? `<p class="small sources">Not tested: ${untested.map(esc).join("; ")}.</p>` : "") +
-      (p ? `<h2>Data</h2>${paperSection(e.paper, p)}` : "") +
-      `<h2>Theorems</h2><dl class="theorems">${theoremList(used)}</dl>` };
+      (p ? `<h2>Data</h2>${paperSection(e.paper, p)}` : "") };
   }
   function detail() {
     const v = data.view;

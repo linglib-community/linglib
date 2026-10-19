@@ -398,13 +398,6 @@ def build(export, root):
                            for t in s["tables"]],
                 "experiments": [x["decl"] for x in experiments if x["paper"] == e["paper"]]}
 
-    # Each theorem with the domains of the experiments or parsers it is about.
-    theorems = {}
-    for r in export["verdicts"] + export["observed"] + export["stipulations"] + export["sameParse"]:
-        t = theorems.setdefault(r["theorem"], {**decl(r["theorem"]), "domains": []})
-        d = domain(r.get("experiment") or r["variant"])
-        if d not in t["domains"]:
-            t["domains"].append(d)
     # Each theory and experiment has a page of its own.
     slugs = {t["id"]: slug(t["id"]) for t in theories}
     slugs.update({e["id"]: slug(e["id"], experiment=True) for e in experiments})
@@ -412,7 +405,6 @@ def build(export, root):
     return {"theories": theories, "experiments": experiments, "domains": sorted(
                 domains.values(), key=lambda d: d["name"]),
             "slugs": slugs, "cells": cells, "papers": papers,
-            "theorems": sorted(theorems.values(), key=lambda t: t["name"]),
             "project": bib.get(PROJECT)}
 
 
