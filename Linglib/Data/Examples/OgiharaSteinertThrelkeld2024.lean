@@ -15,18 +15,18 @@ this module; declarations live in `namespace OgiharaSteinertThrelkeld2024.Exampl
 
 namespace OgiharaSteinertThrelkeld2024.Examples
 
-def ost2024_before_noncommittal : Datum :=
-  { id := "ost2024_before_noncommittal"
-    source := ⟨"beaver-condoravdi-2003", "(43)"⟩
+def ost2024_left_country : Datum :=
+  { id := "ost2024_left_country"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "(1a)"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "I left the party before there was (any) trouble."
+    primaryText := "I left the country before anything happened."
     glossedTokens := []
-    context := "Non-committal reading of *before*: implies trouble seemed likely but does not commit to whether it occurred. (B&C (22), the Supreme Court \"uncounted votes\" case, is counterfactual, not non-committal — B&C §6.)"
+    context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")] }
+    paperFeatures := [("construction", "veridicality"), ("reading", "nonCommittal")] }
 
 def ost2024_before_counterfactual_mozart : Datum :=
   { id := "ost2024_before_counterfactual_mozart"
@@ -39,7 +39,20 @@ def ost2024_before_counterfactual_mozart : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")] }
+    paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false"), ("precursor", "true")] }
+
+def ost2024_beethoven : Datum :=
+  { id := "ost2024_beethoven"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "(14)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Beethoven died before he composed his 11th symphony."
+    glossedTokens := []
+    context := "Beethoven composed no 11th symphony, and nothing at his death was leading to one: he did not even compose a 10th."
+    judgment := .marginal
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "antiVeridical"), ("precursor", "false")] }
 
 def ost2024_ohtani : Datum :=
   { id := "ost2024_ohtani"
@@ -80,6 +93,19 @@ def ost2024_nostradamus : Datum :=
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual")] }
 
+def ost2024_ohtani_japanese : Datum :=
+  { id := "ost2024_ohtani_japanese"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "(21)"⟩
+    reportedIn := none
+    language := "nucl1643"
+    primaryText := "Zannen-na koto-ni, 2021-nen-no siizun-wa Ootani-ga zyussyoome-o ageru mae ni owat-ta."
+    glossedTokens := [("Zannen-na koto-ni", "unfortunately"), ("2021-nen-no", "2021-year-GEN"), ("siizun-wa", "season-TOP"), ("Ootani-ga", "Ohtani-NOM"), ("zyussyoome-o", "10th win-ACC"), ("ageru", "earn.NON-PAST"), ("mae", "before"), ("ni", "at"), ("owat-ta", "end-PAST")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual"), ("connective", "mae"), ("matrixTense", "past"), ("embeddedTense", "present")] }
+
 def ost2024_noncommittal_available : Datum :=
   { id := "ost2024_noncommittal_available"
     source := ⟨"ogihara-steinert-threlkeld-2024", "(22a)"⟩
@@ -106,6 +132,6 @@ def ost2024_noncommittal_unavailable : Datum :=
     readings := []
     paperFeatures := [("construction", "noncommittal"), ("noncommittal_available", "false")] }
 
-def all : List Datum := [ost2024_before_noncommittal, ost2024_before_counterfactual_mozart, ost2024_ohtani, ost2024_snow, ost2024_nostradamus, ost2024_noncommittal_available, ost2024_noncommittal_unavailable]
+def all : List Datum := [ost2024_left_country, ost2024_before_counterfactual_mozart, ost2024_beethoven, ost2024_ohtani, ost2024_snow, ost2024_nostradamus, ost2024_ohtani_japanese, ost2024_noncommittal_available, ost2024_noncommittal_unavailable]
 
 end OgiharaSteinertThrelkeld2024.Examples
