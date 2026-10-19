@@ -27,7 +27,7 @@ import subprocess
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gen_bibliography_page import study_name  # noqa: E402
+from gen_bibliography_page import study_name, tex_text  # noqa: E402
 import site_shell  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -64,11 +64,11 @@ def bib_entries(keys):
                 i += 1
             return re.sub(r"\s+", " ", body[f.end():i - 1]).strip()
 
-        surnames = [a.split(",")[0].strip().strip("{}")
+        surnames = [tex_text(a.split(",")[0].strip())
                     for a in field("author").split(" and ") if a.strip()]
         who = surnames[0] + " et al." if len(surnames) > 2 else " & ".join(surnames)
         authors = ", ".join(surnames[:-1]) + " & " + surnames[-1] if len(surnames) > 1 else who
-        title = re.sub(r"\\emph\s*|[{}]", "", field("title"))
+        title = tex_text(re.sub(r"\\emph\s*", "", field("title")))
         out[key] = {"key": key, "who": who, "authors": authors, "year": field("year"),
                     "title": title, "doi": field("doi"), "url": field("url")}
     return out
