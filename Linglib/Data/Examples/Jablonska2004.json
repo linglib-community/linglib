@@ -424,7 +424,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "actual present", "judgment": "unacceptable"},
+      {"name": "future", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["section", "2.3"],
       ["claim", "no present-tense interpretation"]
@@ -481,7 +484,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "actual present", "judgment": "unacceptable"},
+      {"name": "future", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["section", "2.3.1"],
       ["claim", "semelfactives are perfective: no present reading"]
@@ -614,7 +620,9 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "actual present", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["section", "3"],
       ["claim", "SI only through the non-directed stem"]

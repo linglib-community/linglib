@@ -1207,12 +1207,20 @@
       "Source": ["jablonska-2004[(32)]"]
     },
     {
+      "ID": "jablonska2004_33b",
+      "Lexeme_ID": "poprzepisywac",
+      "Cell": "prs_2sg",
+      "Form": "poprzepisujesz",
+      "Morphs": ["po", "prze", "pis", "uj", "e", "sz"],
+      "Source": ["jablonska-2004[(33b)]"]
+    },
+    {
       "ID": "jablonska2004_34a",
       "Lexeme_ID": "poprzepisywac",
       "Cell": "inf",
       "Form": "poprzepisywać",
       "Morphs": ["po", "prze", "pis", "ywa", "ć"],
-      "Source": ["jablonska-2004[(34a)]", "jablonska-2004[(34b)]"]
+      "Source": ["jablonska-2004[(33a)]", "jablonska-2004[(34a)]", "jablonska-2004[(34b)]"]
     },
     {
       "ID": "jablonska2004_39a",
@@ -1321,6 +1329,14 @@
       "Judgment": "ungrammatical",
       "Comment": "no continuum to measure",
       "Source": ["jablonska-2004[(45)]"]
+    },
+    {
+      "ID": "jablonska2004_46a",
+      "Lexeme_ID": "machniesz",
+      "Cell": "inf",
+      "Form": "machnąć",
+      "Morphs": ["mach", "ną", "ć"],
+      "Source": ["jablonska-2004[(46a)]"]
     },
     {
       "ID": "jablonska2004_46b",

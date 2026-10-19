@@ -24,7 +24,9 @@
     "language": "bulg1262",
     "primaryText": "Započna da raz-proda-va.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Započna", "started.F.SG"], ["da", "to"], ["raz-proda-va", "raz-sell-IMPF"]
+    ],
     "translation": "(S)he started to sell in excess.",
     "context": "",
     "judgment": "acceptable",
@@ -43,7 +45,9 @@
     "language": "bulg1262",
     "primaryText": "Započna da iz-proda-va.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Započna", "started.F.SG"], ["da", "to"], ["iz-proda-va", "iz-sell-IMPF"]
+    ],
     "translation": "(S)he started to sell completely.",
     "context": "",
     "judgment": "ungrammatical",

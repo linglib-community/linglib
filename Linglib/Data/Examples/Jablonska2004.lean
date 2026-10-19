@@ -298,7 +298,7 @@ def ex_33b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := []
+    readings := [("actual present", .unacceptable), ("future", .acceptable)]
     paperFeatures := [("section", "2.3"), ("claim", "no present-tense interpretation")] }
 
 def ex_44 : Datum :=
@@ -337,7 +337,7 @@ def ex_46b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := []
+    readings := [("actual present", .unacceptable), ("future", .acceptable)]
     paperFeatures := [("section", "2.3.1"), ("claim", "semelfactives are perfective: no present reading")] }
 
 def ex_52 : Datum :=
@@ -428,7 +428,7 @@ def ex_80b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := []
+    readings := [("actual present", .acceptable)]
     paperFeatures := [("section", "3"), ("claim", "SI only through the non-directed stem")] }
 
 def ex_83a : Datum :=
