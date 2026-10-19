@@ -33,11 +33,13 @@ entail, and the verbs of the complements of those examples.
 
 ## Main results
 
-* `Finnish.infinitiveStem_huomata`: the infinitive stems of Karlsson's contracted verbs.
-* `Finnish.infinitiveStem_tarvita`: the *tarvit-a* verbs do not gradate.
+* `Finnish.Conjugation.infinitiveStem_tulla` and its siblings: the infinitive stem of each
+  conjugation, from the shape of the inflectional stem Karlsson gives it.
+* `Finnish.infinitiveStem_contracted`: the infinitive stems of Karlsson's contracted verbs.
+* `Finnish.infinitiveStem_lukitse`: a *tarvit-a* verb whose stem gradation would weaken.
 * `Finnish.ofString?_form`: the citation form of each entry is the A infinitive of the
   infinitive stem formed from its inflectional stem.
-* `Finnish.complement_mem_cases`: each entry's complement is in a case its infinitive takes.
+* `Finnish.wellFormed_complement`: the endings of each entry's complement make a word.
 
 ## Implementation notes
 
@@ -76,37 +78,62 @@ inductive Conjugation where
   | lämmetä
   deriving DecidableEq, Repr
 
+namespace Conjugation
+
 /-- The infinitive stem of a verb of the conjugation whose inflectional stem is `w`. It is `w`
 itself for *anta-a* and *saa-da* verbs and `w` without its -se for *tarvit-a* verbs, which do
 not gradate (§6.2.5). For *tul-la* verbs it is `w` without its -e, for *huomat-a* verbs `w`
 with the linking -t for its last vowel (§4.1.4) and for *lämm-et-ä* verbs `w` with -t for its
 -ne, in the weak grade. -/
-def Conjugation.infinitiveStem : Conjugation → List Segment → List Segment
+def infinitiveStem : Conjugation → List Segment → List Segment
   | .antaa, w | .saada, w => w
   | .tulla, w => derive consonantGradation w.dropLast
   | .huomata, w => derive consonantGradation (w.dropLast ++ [t])
   | .tarvita, w => w.dropLast.dropLast
   | .lämmetä, w => derive consonantGradation (w.dropLast.dropLast ++ [t])
 
+variable (w : List Segment)
+
+@[simp] theorem infinitiveStem_antaa : antaa.infinitiveStem w = w := rfl
+
+@[simp] theorem infinitiveStem_saada : saada.infinitiveStem w = w := rfl
+
+@[simp] theorem infinitiveStem_tulla :
+    tulla.infinitiveStem (w ++ [e]) = derive consonantGradation w := by
+  simp [infinitiveStem]
+
+@[simp] theorem infinitiveStem_huomata (x : Segment) :
+    huomata.infinitiveStem (w ++ [x]) = derive consonantGradation (w ++ [t]) := by
+  simp [infinitiveStem]
+
+@[simp] theorem infinitiveStem_tarvita : tarvita.infinitiveStem (w ++ [s, e]) = w := by
+  simp [infinitiveStem, List.dropLast_append_cons]
+
+@[simp] theorem infinitiveStem_lämmetä :
+    lämmetä.infinitiveStem (w ++ [n, e]) = derive consonantGradation (w ++ [t]) := by
+  simp [infinitiveStem, List.dropLast_append_cons]
+
+end Conjugation
+
 /-- The infinitive stems of Karlsson's contracted verbs with the alternations (1) to (3) and (5)
 to (7), *sieppaa-* 'snatch', *konttaa-* 'crawl', *hakkaa-* 'hew', *hautaa-* 'bury', *rahtaa-*
 'freight' and *makaa-* 'lie', are *siepat-*, *kontat-*, *hakat-*, *haudat-*, *rahdat-* and
 *maat-* (§4.1.4). -/
-theorem infinitiveStem_huomata :
+theorem infinitiveStem_contracted :
     Conjugation.huomata.infinitiveStem [s, i, e, p, p, a, a] = [s, i, e, p, a, t] ∧
       Conjugation.huomata.infinitiveStem [k, o, n, t, t, a, a] = [k, o, n, t, a, t] ∧
       Conjugation.huomata.infinitiveStem [h, a, k, k, a, a] = [h, a, k, a, t] ∧
       Conjugation.huomata.infinitiveStem [h, a, u, t, a, a] = [h, a, u, d, a, t] ∧
       Conjugation.huomata.infinitiveStem [r, a, h, t, a, a] = [r, a, h, d, a, t] ∧
       Conjugation.huomata.infinitiveStem [m, a, k, a, a] = [m, a, a, t] := by
-  decide
+  decide +kernel
 
-/-- The *tarvit-a* verbs do not gradate (§6.2.5): the infinitive stem of *lukitse-* 'lock' is
-*lukit-*, whose stop gradation would weaken. -/
-theorem infinitiveStem_tarvita :
+/-- The infinitive stem of the *tarvit-a* verb *lukitse-* 'lock' is *lukit-*, which gradation
+would weaken to *luit-* (§6.2.5). -/
+theorem infinitiveStem_lukitse :
     Conjugation.tarvita.infinitiveStem [l, u, k, i, t, s, e] = [l, u, k, i, t] ∧
-      derive consonantGradation [l, u, k, i, t] ≠ [l, u, k, i, t] := by
-  decide
+      derive consonantGradation [l, u, k, i, t] = [l, u, i, t] := by
+  decide +kernel
 
 /-- A Finnish verb is the root entry, whose `form` is the A infinitive, together with its
 conjugation, its inflectional stem and the infinitive and case its complement takes. -/
@@ -136,7 +163,12 @@ def infinitive (v : Verb) (i : Infinitive) : List Segment := surface (i.base (v.
 
 /-- The surface forms of the infinitive `i` of the verb in the case `c`. -/
 def infinitiveForms (v : Verb) (i : Infinitive) (c : Case) : List (List Segment) :=
-  Nominal.realize (v.stem i) [⟨_, .infinitive i⟩, ⟨_, .case c⟩]
+  Nominal.realize (v.stem i) (i.endings c)
+
+/-- The nominative of an infinitive is its form before a case ending. -/
+@[simp] theorem infinitiveForms_nom (v : Verb) (i : Infinitive) :
+    v.infinitiveForms i .nom = [v.infinitive i] := by
+  simp [infinitiveForms, infinitive, Infinitive.endings, Nominal.realize, Nominal.continuations]
 
 end Verb
 
@@ -359,8 +391,9 @@ inflectional stem. -/
 theorem ofString?_form : ∀ v ∈ verbs, ofString? v.form = some (v.infinitive .a) := by
   decide +kernel
 
-/-- Each entry's complement is in a case its infinitive takes. -/
-theorem complement_mem_cases : ∀ v ∈ verbs, ∀ ic ∈ v.complement, ic.2 ∈ ic.1.cases := by
+/-- The endings of each entry's complement make a word. -/
+theorem wellFormed_complement : ∀ v ∈ verbs, ∀ ic ∈ v.complement,
+    Nominal.WellFormed (ic.1.endings ic.2) := by
   decide +kernel
 
 end Finnish
