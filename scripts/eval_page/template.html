@@ -50,14 +50,18 @@ dl.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
   background: repeating-linear-gradient(135deg, var(--silent-bg) 0 4px, transparent 4px 8px);
 }
 button.v:hover { filter: brightness(0.94); }
-button.v[aria-expanded="true"] { outline: 2px solid var(--primary); outline-offset: 1px; }
+button.v[aria-current="true"] { outline: 2px solid var(--primary); outline-offset: 1px; }
 
 /* The panel of a mark */
 .pop {
-  position: absolute; z-index: 4; width: min(380px, calc(100vw - 2 * var(--gap))); padding: 12px 14px;
-  font-size: 14px; line-height: 1.45; color: var(--content); background: var(--entry);
-  border: 1px solid var(--tertiary); border-radius: 8px; box-shadow: 0 4px 16px rgb(0 0 0 / 0.12);
+  position: fixed; z-index: 4; left: 50%; bottom: 12px; transform: translateX(-50%);
+  width: min(760px, calc(100vw - 2 * var(--gap))); max-height: 42vh; overflow-y: auto;
+  padding: 12px 40px 12px 16px; font-size: 14px; line-height: 1.45; color: var(--content);
+  background: var(--entry); border: 1px solid var(--tertiary); border-radius: 8px;
+  box-shadow: 0 4px 20px rgb(0 0 0 / 0.14);
 }
+.pop .x { position: absolute; top: 8px; right: 10px; font-size: 20px; line-height: 1; color: var(--secondary); }
+.pop .x:hover { color: var(--primary); }
 .pop p { margin: 0; }
 .pop .head { display: flex; gap: 8px; align-items: baseline; font-weight: 600; color: var(--primary); }
 .pop .head .v { width: 20px; height: 20px; font-size: 12px; flex: none; align-self: center; }
@@ -175,7 +179,7 @@ dl.theorems dd { margin: 4px 0 0; }
 </main>
 
 <!--SITE_FOOTER-->
-<div class="pop" id="pop" role="dialog" aria-label="Verdict" hidden></div>
+<div class="pop" id="pop" role="region" aria-label="Verdict" aria-live="polite" hidden></div>
 
 <script type="application/json" id="eval-data">/*EVAL_DATA*/{}</script>
 <script>
@@ -183,6 +187,8 @@ dl.theorems dd { margin: 4px 0 0; }
   "use strict";
   const data = JSON.parse(document.getElementById("eval-data").textContent);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  // A Lean name that may break after its dots.
+  const dotted = (n) => esc(n).replace(/\./g, ".<wbr>");
   const strip = (h) => { const d = document.createElement("div"); d.innerHTML = h; return d.textContent; };
   const WORD = { correct: "Right", wrong: "Wrong", silent: "Silent" };
   const MARK = { correct: "✓", wrong: "✗", silent: "–" };
@@ -295,7 +301,7 @@ dl.theorems dd { margin: 4px 0 0; }
             const what = `${WORD[cell.verdict] || cell.verdict}: ${t.label} on ${where}`;
             const k = `${e.id}|${t.id}|${c.key}`;
             marks.set(k, { e, t, c, cell });
-            h += `<td class="${cls}"><button type="button" class="v v-${esc(cell.verdict)}" data-k="${esc(k)}" aria-label="${esc(what)}" aria-haspopup="dialog">${MARK[cell.verdict] || "?"}</button></td>`;
+            h += `<td class="${cls}"><button type="button" class="v v-${esc(cell.verdict)}" data-k="${esc(k)}" title="${esc(what)}" aria-label="${esc(what)}" aria-controls="pop">${MARK[cell.verdict] || "?"}</button></td>`;
           });
         }
         h += "</tr>";
@@ -397,9 +403,10 @@ dl.theorems dd { margin: 4px 0 0; }
       `<p class="small">${used.map((t) => `${esc(t.locator)}, ${esc(verified[t.verified] || t.verified)}`).filter((x, i, a) => a.indexOf(x) === i).join("; ")}.</p></section>`;
   }
 
-  // The panel of a mark, shown on hover or focus and kept open by a click.
+  // The panel of a mark, docked at the bottom of the window so the board stays clickable: a click
+  // opens it, hovering another mark while it is open previews that mark, and Escape closes it.
   const pop = document.getElementById("pop");
-  let shown = null, pinned = false, timer = 0;
+  let pinned = null, shown = null;
   const link = (d, text) => d.href ? `<a href="${esc(d.href)}">${text}</a>` : text;
   const paperLink = (p) => {
     const c = p.cite ? cite(p.cite) : esc(p.study);
@@ -425,53 +432,43 @@ dl.theorems dd { margin: 4px 0 0; }
       const n = c.variant.stipulations ? c.variant.stipulations.length : null;
       h += `<dt>Parse</dt><dd>${link(c.variant.decl, esc(c.variant.label))}${n === null ? "" : `, ${n} stipulated`}</dd>`;
     }
-    h += `<dt>Theory</dt><dd>${defs.length ? defs.map((d) => link(d, `<code>${esc(d.name)}</code>`)).join(", ") : link(t.decl, `<code>${esc(t.decl.name)}</code>`)}</dd>`;
+    h += `<dt>Theory</dt><dd>${defs.length ? defs.map((d) => link(d, `<code>${dotted(d.name)}</code>`)).join(", ") : link(t.decl, `<code>${dotted(t.decl.name)}</code>`)}</dd>`;
     h += `<dt>Proof</dt><dd>${link(cell.theorem, `<code>${esc(cell.theorem.short)}</code>`)}` +
       (cell.theorem.doc ? `<br><span class="small">${cell.theorem.doc}</span>` : "") + `</dd>`;
     if (paper) h += `<dt>Paper</dt><dd>${paper}</dd>`;
     return h + "</dl>";
   }
-  function place(b) {
-    const r = b.getBoundingClientRect(), w = pop.offsetWidth, hgt = pop.offsetHeight, m = 16;
-    const left = Math.min(Math.max(m, r.left + r.width / 2 - w / 2), document.documentElement.clientWidth - w - m);
-    const below = r.bottom + 8 + hgt < innerHeight || r.top - 8 - hgt < 0;
-    pop.style.left = `${left + scrollX}px`;
-    pop.style.top = `${(below ? r.bottom + 8 : r.top - 8 - hgt) + scrollY}px`;
-  }
-  function open(b) {
-    clearTimeout(timer);
-    if (shown && shown !== b) shown.setAttribute("aria-expanded", "false");
+  function display(b) {
+    if (shown === b) return;
+    if (shown) shown.removeAttribute("aria-current");
     shown = b;
-    b.setAttribute("aria-expanded", "true");
-    pop.innerHTML = panel(marks.get(b.dataset.k));
+    b.setAttribute("aria-current", "true");
+    pop.innerHTML = `<button type="button" class="x" aria-label="Close">×</button>` + panel(marks.get(b.dataset.k));
     pop.hidden = false;
-    place(b);
+    // Leave room to scroll the last rows of the page above the panel.
+    document.body.style.paddingBottom = `${pop.offsetHeight + 24}px`;
   }
   function close() {
-    clearTimeout(timer);
-    if (shown) shown.setAttribute("aria-expanded", "false");
-    shown = null; pinned = false; pop.hidden = true;
+    if (shown) shown.removeAttribute("aria-current");
+    shown = pinned = null;
+    pop.hidden = true;
+    document.body.style.paddingBottom = "";
   }
-  const later = () => { clearTimeout(timer); timer = setTimeout(() => { if (!pinned) close(); }, 200); };
   const boardEl = document.getElementById("board");
-  boardEl.addEventListener("mouseover", (ev) => { const b = ev.target.closest("button.v"); if (b && !pinned) open(b); });
-  boardEl.addEventListener("mouseout", (ev) => { if (ev.target.closest("button.v") && !pinned) later(); });
-  boardEl.addEventListener("focusin", (ev) => { const b = ev.target.closest("button.v"); if (b && !pinned) open(b); });
   boardEl.addEventListener("click", (ev) => {
     const b = ev.target.closest("button.v");
     if (!b) return;
-    if (pinned && shown === b) { close(); return; }
-    open(b); pinned = true;
+    if (pinned === b) { close(); return; }
+    pinned = b;
+    display(b);
   });
-  pop.addEventListener("mouseover", () => clearTimeout(timer));
-  pop.addEventListener("mouseout", () => { if (!pinned) later(); });
-  document.addEventListener("click", (ev) => { if (pinned && !ev.target.closest("#pop, button.v")) close(); });
+  boardEl.addEventListener("mouseover", (ev) => { const b = ev.target.closest("button.v"); if (b && pinned) display(b); });
+  boardEl.addEventListener("mouseleave", () => { if (pinned) display(pinned); });
+  pop.addEventListener("click", (ev) => { if (ev.target.closest(".x")) close(); });
   document.addEventListener("keydown", (ev) => {
-    if (ev.key !== "Escape" || !shown) return;
-    const b = shown; close(); b.focus();
+    if (ev.key !== "Escape" || !pinned) return;
+    const b = pinned; close(); b.focus();
   });
-  addEventListener("resize", () => { if (shown) place(shown); }, { passive: true });
-  document.getElementById("board-box").addEventListener("scroll", () => { if (shown) place(shown); }, { passive: true });
 
   // One domain at a time, named in the address (`#Suppletion`).
   const named = () => data.domains.find((x) => x.name === decodeURIComponent(location.hash.slice(1)));
@@ -511,7 +508,6 @@ dl.theorems dd { margin: 4px 0 0; }
       const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
       if (cell) { n[cell.verdict] += 1; used.add(cell.theorem.name); }
     }
-    const dotted = (n) => esc(n).replace(/\./g, ".<wbr>");
     const defs = (t.definitions || []).map((x) => link(x, `<code>${dotted(x.name)}</code>`)).join(", ");
     const from = (t.papers || []).map(paperLink).join(", ");
     return { domain: d, title: esc(t.label) + (t.source === "lab" ? " (Lab)" : ""), exps: es, theories: [t], html:
