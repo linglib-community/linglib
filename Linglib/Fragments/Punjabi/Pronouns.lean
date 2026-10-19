@@ -5,15 +5,15 @@ public import Linglib.Syntax.Category.Pronoun.Personal
 /-!
 # Punjabi pronouns
 
-Personal pronouns of Punjabi: a two-level honorific contrast in the second
-person (*tũ* / *tusii*, the latter also the plural) and the demonstrative
-*uh* for both third-person numbers. Punjabi has allocutive agreement with
-third-person subjects only ([alok-bhalla-2026], after Kaur 2020); its marker
-forms are not recorded here.
+The second person of Punjabi has two honorific grades, *tũ* and *tusii*, the latter also the
+plural, and the demonstrative *uh* serves both third person numbers. Punjabi has allocutive
+agreement with third person subjects only, as Kaur describes and Alok and Bhalla report; its
+marker forms are not recorded here.
 
 ## References
 
-* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
+* [alok-bhalla-2026]
+* [kaur-2020]
 -/
 
 @[expose] public section
