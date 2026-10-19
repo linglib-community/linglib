@@ -1,18 +1,16 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Category.Verb.Stem
+public import Linglib.Syntax.Category.Verb.Defs
 
 /-!
 # Russian verbs
 
-Prefix morphs and verb-stem entries for the Russian verbal-prefix data
-of [svenonius-2004]. Prefixes carry only their form (`Morph.pref`);
-stems carry citation form, aspect, and gloss. Analytical classification
-(lexical vs superlexical) lives in `Studies/Svenonius2004.lean`.
-
-Transliteration follows [svenonius-2004] (*j* for palatalization, as in
-*brositj*).
+Verbal prefixes and verbs of Russian, the material of the study of verbal prefixation listed
+below. A prefix is a morph with its form only: the position a prefix occupies in a word is a
+study's analysis. A verb records its citation form, the infinitive, and its lexical aspect at the
+dictionary value. The transliteration is the study's, with *j* for palatalization, as in
+*brositj*.
 
 ## References
 
@@ -24,7 +22,6 @@ Transliteration follows [svenonius-2004] (*j* for palatalization, as in
 namespace Russian.Verbs
 
 open Morphology
-open Verb (Stem)
 
 /-! ### Prefixes -/
 
@@ -37,22 +34,32 @@ def vy : Morph := .pref "vy"
 /-- The prefix *po-*. -/
 def po : Morph := .pref "po"
 
-/-! ### Verb stems -/
+/-! ### Verbs -/
 
-/-- *brositj* 'throw' (perfective). -/
-def brosit : Stem := ⟨"brositj", .perfective, "throw"⟩
+/-- *brositj* 'throw'. -/
+def brosit : Verb where
+  morphs := [.root "brositj"]
+  perfectivity := some .perfective
 
-/-- *brosatj* 'throw' (imperfective). -/
-def brosat : Stem := ⟨"brosatj", .imperfective, "throw"⟩
+/-- *brosatj* 'throw'. -/
+def brosat : Verb where
+  morphs := [.root "brosatj"]
+  perfectivity := some .imperfective
 
-/-- *brasyvatj* — the secondary-imperfective stem of *brositj* /
-    *brosatj*, host of further prefixation in [svenonius-2004] ex. (4a). -/
-def brasyvat : Stem := ⟨"brasyvatj", .imperfective, "throw"⟩
+/-- *-brasyvatj* 'throw', the secondary imperfective stem of *brositj*, which occurs prefixed, as
+in *vy-brasyvatj* 'throw out'. -/
+def brasyvat : Verb where
+  morphs := [.root "brasyvatj"]
+  perfectivity := some .imperfective
 
-/-- *kuritj* 'smoke' (imperfective). -/
-def kurit : Stem := ⟨"kuritj", .imperfective, "smoke"⟩
+/-- *kuritj* 'smoke'. -/
+def kurit : Verb where
+  morphs := [.root "kuritj"]
+  perfectivity := some .imperfective
 
-/-- *čitatj* 'read' (imperfective). -/
-def chitat : Stem := ⟨"čitatj", .imperfective, "read"⟩
+/-- *čitatj* 'read'. -/
+def chitat : Verb where
+  morphs := [.root "čitatj"]
+  perfectivity := some .imperfective
 
 end Russian.Verbs

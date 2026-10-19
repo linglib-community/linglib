@@ -220,7 +220,7 @@ inductive ViewpointType
 
 /-- The opposition of perfective and imperfective is viewpoint aspect at its coarsest, the right
 granularity where the fact at issue is that the perfective requires actualization and the
-imperfective does not, or where the opposition is lexically encoded, as on a `Verb.Stem`. -/
+imperfective does not, or where the opposition is lexically encoded, as in `Verb.perfectivity`. -/
 inductive Perfectivity
   | perfective
   | imperfective
