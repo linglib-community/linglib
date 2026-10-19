@@ -1,47 +1,63 @@
 module
 
-public import Mathlib.Data.Finset.Basic
-public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.Cover
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Reference.Logophoricity
-public import Linglib.Syntax.Person.Category
+public import Linglib.Data.Experiments.CharnavelMateu2015
 public import Linglib.Fragments.Romance.Spanish.Clitics
 
 /-!
-# Charnavel and Mateu 2015: the clitic logophoric restriction
+# Charnavel and Mateu (2015): the clitic logophoric restriction
 
-This file formalizes the reanalysis of the Romance clitic-cluster restriction in
-[charnavel-mateu-2015]. Earlier work took the restriction on accusative clitics to be a binding
-condition; a grammaticality experiment with French and Spanish speakers finds instead that what
-degrades a cluster is the accusative clitic corefering with a logophoric center, whether or not
-the antecedent c-commands it.
-
-The account gives three logophoric centers — discourse participant, empathy locus, attitude
-holder ([sells-1987], [kuno-1987]) — each a subset of a three-feature space, arranged so that
-neighbours on the hierarchy share a feature and the two ends do not. Two centers in one domain
-clash exactly when they share a feature, which makes the Person Case Constraint and the clitic
-logophoric restriction one mechanism at two places on the hierarchy: a discourse participant with
-an empathy locus, and an empathy locus with an attitude holder. A discourse participant with an
-attitude holder is the one licit pair.
+In French and Spanish an accusative clitic clustered with a third-person dative clitic cannot
+refer de se to an attitude holder. A judgment task separates this from binding. The cluster
+degrades with a logophoric antecedent whether or not the antecedent c-commands the clitic, and not
+with a c-commanding antecedent that is not logophoric, against the binding account the paper
+replaces. Charnavel and Mateu derive the restriction, and the Person Case Constraint with it, from
+a hierarchy of logophoric centers, discourse participant over empathy locus over attitude holder,
+whose features make two centers share one exactly when they are identical or adjacent. A domain
+has a single logophoric operator, and two of its elements sharing a feature intervene.
 
 ## Main definitions
 
-* `LogoCenter`, `LogoFeature`, `LogoCenter.features` — the hierarchy and its feature subsets
-* `Clash`, `Antilogophoric` — two centers sharing a feature, and a domain containing such a pair
-* `dativeCenter`, `accusativeCenter` — the center a Spanish clitic realizes, from its person
-* `Condition`, `predictsUngrammatical` — the experiment's crossed factors and the prediction
+* `LogophoricCenter`, `LogophoricCenter.features`: the hierarchy of centers and their features.
+* `Licit`: a domain in which no two centers share a feature.
+* `center`: the center a clitic realizes by its person and case.
 
 ## Main results
 
-* `not_clash_iff` — the only licit pair is the two ends of the hierarchy, which is what unifies
-  the Person Case Constraint with the clitic logophoric restriction
-* `c_command_irrelevant` — the prediction does not read c-command
-* `spanish_le_lo_de_se_clash`, `spanish_le_me_clash`, `spanish_me_lo_de_se_licit` — the Spanish
-  clusters, with each clitic's center read off its person feature
+* `LogophoricCenter.not_disjoint_features_iff`: two centers share a feature exactly when they are
+  identical or adjacent on the hierarchy.
+* `licit_iff`: a domain is licit exactly when it holds at most one center, or a discourse
+  participant and an attitude holder.
+* `licit_dative_accusative_iff`, `licit_dative_attitudeHolder_iff`: over the Spanish clitics, a
+  dative and an accusative are licit exactly when the accusative is third person, the strong
+  Person Case Constraint, and a dative with an accusative read de se exactly when the dative is
+  first or second person, the clitic logophoric restriction.
+* `licit_domain_iff`: the hierarchy predicts every condition of the experiment.
+* `grammaticality_eq_of_eq`, `filter_violatesBinding`: conditions differing only in c-command
+  have the same result, and the binding account mispredicts conditions 3, 4 and 6.
+
+## Implementation notes
+
+* A domain is the list of the centers its clitics realize. Each clitic realizes the center its
+  person and case assign it; the uses of a center lower on the hierarchy that the paper allows,
+  a dative clitic referring to an attitude holder, are not modelled.
+* Example, table and section numbers follow the authors' accepted manuscript in Harvard's DASH
+  repository.
+
+## TODO
+
+* The French clitic fragment has only *se*; the strong Person Case Constraint and the clitic
+  logophoric restriction over French await its object clitics.
+* The paper's examples as `Data/Examples` rows, among them the epithet diagnostics (27)–(32),
+  the non-de se reading (33), the dream report (49) in which a first person escapes the Person
+  Case Constraint, and the reflexives of §3.5.3, which the paper takes to be discourse
+  participants.
 
 ## References
 
 * [charnavel-mateu-2015]
+* [bhatt-simik-2009]
 * [sells-1987]
 * [kuno-1987]
 -/
@@ -50,141 +66,179 @@ attitude holder is the one licit pair.
 
 namespace CharnavelMateu2015
 
-/-! ### The logophoric centers -/
+open scoped Function
 
-/-- Three types of logophoric center, ordered by degree of perspective
-    integration in the discourse (paper eq. 54: discourse participant >
-    empathy locus > attitude holder). -/
-inductive LogoCenter : Type where
-  /-- Speaker / addressee — directly defining the discourse. -/
-  | discourseParticipant
-  /-- Event participant the speaker empathizes with (Kuno's empathy locus).
-      In Romance, typically the 3rd-person dative clitic. -/
-  | empathyLocus
-  /-- Attitude holder whose thoughts/discourse are reported.
-      In Romance, typically a 3rd-person accusative clitic read *de se*. -/
+/-! ### The hierarchy of logophoric centers -/
+
+/-- The three kinds of logophoric center (53), in the order of the hierarchy (54), the degree to
+which their perspective is integrated in the discourse. -/
+inductive LogophoricCenter where
+  /-- One whose discourse or thoughts are reported, the source or self of [sells-1987] but not
+  the pivot (24), as a third-person accusative clitic read de se refers to. -/
   | attitudeHolder
+  /-- The event participant the speaker empathizes or identifies with ([kuno-1987]), as a
+  third-person dative clitic refers to. -/
+  | empathyLocus
+  /-- The speaker or addressee, as a first- or second-person clitic refers to. -/
+  | discourseParticipant
   deriving DecidableEq, Repr, Fintype
 
-/-! ### The feature system -/
-
-/-- The three abstract logophoric features. `B` expresses the
-    speaker-component (shared by discourse participants and empathy loci);
-    `C` expresses perspectival distance from the speaker (shared by empathy
-    loci and attitude holders). -/
-inductive LogoFeature : Type
+/-- The features of logophoric centers (63). -/
+inductive Feature where
   | A | B | C
   deriving DecidableEq, Repr, Fintype
 
-/-- Feature decomposition (paper eq. 63). -/
-def LogoCenter.features : LogoCenter → Finset LogoFeature
-  | .discourseParticipant => {.A, .B}
-  | .empathyLocus         => {.B, .C}
-  | .attitudeHolder       => {.C}
+namespace LogophoricCenter
 
-/-! ### Antilogophoric clash -/
+instance : LinearOrder LogophoricCenter := LinearOrder.lift' (·.ctorIdx) (by decide)
 
-/-- Two centers clash iff their feature sets share at least one feature.
-    Equivalent to "identical or adjacent on the hierarchy" (paper eq. 54). -/
-def Clash (x y : LogoCenter) : Prop := (x.features ∩ y.features).Nonempty
+instance : DecidableRel (α := LogophoricCenter) (· ⩿ ·) := fun _ _ ↦
+  inferInstanceAs (Decidable (_ ∧ ∀ _, _))
 
-instance (x y : LogoCenter) : Decidable (Clash x y) :=
-  inferInstanceAs (Decidable (Finset.Nonempty _))
+/-- The features of a center (63). [B] is the speaker component that discourse participants and
+empathy loci share, and [C] the perspectival distance from the speaker that empathy loci and
+attitude holders share. -/
+def features : LogophoricCenter → Finset Feature
+  | attitudeHolder => {.C}
+  | empathyLocus => {.B, .C}
+  | discourseParticipant => {.A, .B}
 
-/-- C&M's antilogophoric intervention (paper §3.5.2, generalising eq. 64):
-    a configuration of logophoric centers in a single domain is
-    antilogophoric iff some pair of distinct centers clash.
-
-    Note: a single center never clashes with itself in this formulation —
-    the "identical centers" case of (54) corresponds to multiple *positions*
-    bearing the same center type, not the abstract type clashing with
-    itself. We model the multi-position case with a `List`. -/
-def Antilogophoric (centers : List LogoCenter) : Prop :=
-  ∃ i j : Fin centers.length, i ≠ j ∧ Clash centers[i] centers[j]
-
-instance (centers : List LogoCenter) : Decidable (Antilogophoric centers) :=
-  inferInstanceAs (Decidable (∃ _ : Fin _, _))
-
-/-- Two centers clash unless they are the two ends of the hierarchy: a discourse participant and
-an attitude holder share no feature, and every other pair does. The Person Case Constraint (a
-discourse participant with an empathy locus) and the clitic logophoric restriction (an empathy
-locus with an attitude holder) are the two clashing neighbour pairs. -/
-theorem not_clash_iff (x y : LogoCenter) :
-    ¬ Clash x y ↔
-      ((x = .discourseParticipant ∧ y = .attitudeHolder) ∨
-        (x = .attitudeHolder ∧ y = .discourseParticipant)) := by
+/-- Two centers share a feature exactly when they are identical or adjacent on the hierarchy,
+which is what the features are chosen for. -/
+theorem not_disjoint_features_iff {x y : LogophoricCenter} :
+    ¬ Disjoint x.features y.features ↔ x ⩿ y ∨ y ⩿ x := by
   cases x <;> cases y <;> decide
 
-/-! ### The experiment's conditions -/
+end LogophoricCenter
 
-/-- A test condition in C&M's grammaticality experiment, parameterised by
-    the three crossed factors (paper Table 1). The 9 conditions enumerate
-    {c-command, no c-command} × {logophoric centre as antecedent, not} ×
-    {3.dat dative clitic, 1/2.dat dative clitic}, dropping the "bound 3"
-    sub-case (their condition 3) for which they collapse the same
-    prediction as condition 1. -/
-structure Condition where
-  /-- Does the antecedent c-command the accusative clitic? -/
-  cCommandingAntecedent : Bool
-  /-- Is the antecedent a logophoric centre (attitude holder)? -/
-  logoCenterAntecedent : Bool
-  /-- Is the dative clitic a 3rd-person form (an empathy locus)? -/
-  dative3rdPerson : Bool
-  deriving DecidableEq, Repr
+/-! ### Intervention -/
 
-/-- C&M's hypothesis (paper §2.1): a sentence is ungrammatical iff the
-    antecedent of the accusative clitic is a logophoric centre AND the
-    dative clitic is 3rd person. C-command is **not** the relevant factor
-    (contra Bhatt & Šimík). -/
-def predictsUngrammatical (c : Condition) : Prop :=
-  c.logoCenterAntecedent = true ∧ c.dative3rdPerson = true
+/-- A domain is licit when no two of its centers share a feature. Its one logophoric operator
+checks each feature against the element bearing it, and a second bearer intervenes (64). -/
+def Licit (l : List LogophoricCenter) : Prop :=
+  l.Pairwise (Disjoint on LogophoricCenter.features)
 
-instance (c : Condition) : Decidable (predictsUngrammatical c) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred Licit := fun l ↦ inferInstanceAs (Decidable (l.Pairwise _))
 
-/-- The hypothesis does not read c-command, which is the experiment's finding: the conditions
-that degraded were exactly those with a logophoric-center antecedent and a third-person dative,
-whether or not the antecedent c-commanded the accusative clitic. -/
-theorem c_command_irrelevant
-    (logoCenter dative3rd : Bool) :
-    predictsUngrammatical ⟨true, logoCenter, dative3rd⟩ ↔
-    predictsUngrammatical ⟨false, logoCenter, dative3rd⟩ := by
-  cases logoCenter <;> cases dative3rd <;> decide
+/-- A domain is licit exactly when it holds at most one center, or a discourse participant and an
+attitude holder, the two ends of the hierarchy. Every other pair of centers intervenes (Table 3),
+and no three centers are pairwise disjoint. -/
+theorem licit_iff {l : List LogophoricCenter} :
+    Licit l ↔ l.length ≤ 1 ∨ l.Perm [.discourseParticipant, .attitudeHolder] := by
+  match l with
+  | [] | [_] => simp [Licit]
+  | [x, y] => cases x <;> cases y <;> decide
+  | x :: y :: z :: l =>
+    have key : ∀ x y z : LogophoricCenter, Disjoint x.features y.features →
+        Disjoint x.features z.features → ¬ Disjoint y.features z.features := by decide
+    refine iff_of_false (fun h ↦ ?_) (not_or_intro (by simp) fun h ↦ by simpa using h.length_eq)
+    simp only [Licit, List.pairwise_cons, List.mem_cons, forall_eq_or_imp] at h
+    exact key x y z h.1.1 h.1.2.1 h.2.1.1
 
-/-! ### The Spanish clusters
+/-! ### Clitics as centers -/
 
-Each clitic's logophoric center is read off its person feature: a dative is a discourse
-participant when it is first or second person and an empathy locus when it is third; an
-accusative is a discourse participant when it is first or second person, and a third-person one
-is an attitude holder exactly on its *de se* reading. -/
+/-- The center a clitic realizes (53). A first- or second-person clitic is a discourse participant
+and a third-person dative an empathy locus, while a third-person accusative, which bears no person
+feature (41), realizes none unless it is read de se. -/
+def center (c : PersonalPronoun) : Option LogophoricCenter :=
+  if ∃ p ∈ c.person, p.IsSAP then some .discourseParticipant
+  else if c.case_ = some .dat then some .empathyLocus else none
 
-/-- The center a dative clitic realizes. -/
-def dativeCenter : Person → LogoCenter
-  | .third => .empathyLocus
-  | _ => .discourseParticipant
+/-- A Spanish dative and accusative clitic are licit together exactly when the accusative is third
+person, the strong Person Case Constraint (51a). A third-person accusative not read de se, as in
+(33), realizes no center and so clashes with nothing. -/
+theorem licit_dative_accusative_iff :
+    ∀ d ∈ Spanish.Clitics.dative, ∀ a ∈ Spanish.Clitics.accusative,
+      (Licit ([d, a].filterMap center) ↔ a.person = some .third) := by
+  decide +kernel
 
-/-- The center an accusative clitic realizes, given whether it is read *de se*. -/
-def accusativeCenter : Person → Bool → LogoCenter
-  | .third, true => .attitudeHolder
-  | .third, false => .empathyLocus
-  | _, _ => .discourseParticipant
+/-- A Spanish dative clitic is licit with an accusative read de se, an attitude holder, exactly
+when the dative is first or second person. A third-person dative gives the clitic logophoric
+restriction (26), and a second-person one the licit (25). -/
+theorem licit_dative_attitudeHolder_iff :
+    ∀ d ∈ Spanish.Clitics.dative,
+      (Licit ([d].filterMap center ++ [.attitudeHolder]) ↔ d.person ≠ some .third) := by
+  decide +kernel
 
-/-- *Se lo* (underlyingly *le lo*), a third-person dative with a *de se* third-person accusative,
-is the clitic logophoric restriction's configuration: empathy locus with attitude holder. -/
-theorem spanish_le_lo_de_se_clash :
-    ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.lo.person,
-      Clash (dativeCenter io) (accusativeCenter do_ true) := by decide
+/-! ### The experiment -/
 
-/-- *Le me*, a third-person dative with a first-person accusative, is the Person Case Constraint's
-configuration: empathy locus with discourse participant. -/
-theorem spanish_le_me_clash :
-    ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
-      Clash (dativeCenter io) (accusativeCenter do_ false) := by decide
+/-- The dative clitics a condition's coding admits, first- or second-person ones for `1/2` and
+third-person ones for `3` and `bound 3`. -/
+def DativePerson.Admits : DativePerson → PersonalPronoun → Prop
+  | .participant, d => ∃ p ∈ d.person, p.IsSAP
+  | .third, d | .boundThird, d => d.person = some .third
 
-/-- *Me lo* is licit even on the *de se* reading: a first-person dative is a discourse
-participant, and that is the one center an attitude holder does not clash with. -/
-theorem spanish_me_lo_de_se_licit :
-    ∃ io ∈ Spanish.Clitics.me_dat.person, ∃ do_ ∈ Spanish.Clitics.lo.person,
-      ¬ Clash (dativeCenter io) (accusativeCenter do_ true) := by decide
+instance : (v : DativePerson) → DecidablePred v.Admits
+  | .participant => fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
+  | .third | .boundThird => fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
+/-- The domain of a condition with dative clitic `d`. The accusative clitic refers de se to its
+antecedent, and so is an attitude holder when the antecedent is a logophoric center. -/
+def Result.domain (r : Result) (d : PersonalPronoun) : List LogophoricCenter :=
+  [d].filterMap center ++ if r.logophoricAntecedent = .yes then [.attitudeHolder] else []
+
+/-- The hierarchy predicts the result of every condition (Table 2), whichever Spanish dative
+clitic of the coded person realizes it. Whether the antecedent c-commands the accusative clitic,
+and whether the dative is bound, play no part. -/
+theorem licit_domain_iff :
+    ∀ r ∈ results, ∀ d ∈ Spanish.Clitics.dative, r.dativePerson.Admits d →
+      (Licit (r.domain d) ↔ r.grammaticality = .ok) := by
+  decide +kernel
+
+/-- Conditions differing only in whether the antecedent c-commands the accusative clitic have the
+same result, so what degrades a cluster is not binding (§2.4). -/
+theorem grammaticality_eq_of_eq :
+    ∀ r ∈ results, ∀ s ∈ results, r.logophoricAntecedent = s.logophoricAntecedent →
+      r.dativePerson = s.dativePerson → r.grammaticality = s.grammaticality := by
+  decide
+
+/-! ### The binding account
+
+The account the paper argues against ([bhatt-simik-2009], as reviewed in §1.2) bans a bound
+accusative clitic beside a third-person dative (13). A third person acquires person features when
+it is bound, so on the person hierarchy it ranks above a free third person as the first and
+second persons do, and a cluster must respect both that hierarchy and the argument hierarchy, on
+which the indirect object outranks the direct object. A bound dative then rescues a bound
+accusative, the weak effect the experiment's condition 3 tests. -/
+
+/-- The persons of the person hierarchy, a free third person ranked below a speech-act participant
+and a bound third person, which are unranked among themselves. The first and second persons rank
+alike against third persons and are merged, as the experiment's coding merges them. -/
+inductive Rank where
+  | third | participant | boundThird
+  deriving DecidableEq, Repr, Fintype
+
+instance : PartialOrder Rank where
+  le x y := x = y ∨ x = .third
+  le_refl _ := .inl rfl
+  le_trans x y z := by cases x <;> cases y <;> cases z <;> simp
+  le_antisymm x y := by cases x <;> cases y <;> simp
+
+instance : DecidableRel (α := Rank) (· ≤ ·) := fun x y ↦
+  inferInstanceAs (Decidable (x = y ∨ x = .third))
+
+instance : DecidableRel (α := Rank) (· < ·) := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The rank of a condition's dative clitic. -/
+def DativePerson.rank : DativePerson → Rank
+  | .third => .third
+  | .participant => .participant
+  | .boundThird => .boundThird
+
+/-- A condition violates the binding account when its accusative clitic, bound exactly when its
+antecedent c-commands it, outranks the dative on the person hierarchy. -/
+def Result.ViolatesBinding (r : Result) : Prop :=
+  r.dativePerson.rank < if r.cCommandingAntecedent = .yes then .boundThird else .third
+
+instance : DecidablePred Result.ViolatesBinding := fun _ ↦
+  inferInstanceAs (Decidable (_ < _))
+
+/-- The binding account mispredicts conditions 3, 4 and 6. A bound dative does not rescue a bound
+accusative, a bound accusative with a non-logophoric antecedent is fine, and an accusative with a
+logophoric antecedent that does not bind it is not. -/
+theorem filter_violatesBinding :
+    (results.filter fun r ↦ r.ViolatesBinding ↔ r.grammaticality = .ok).map (·.condition) =
+      [3, 4, 6] := by
+  decide
 
 end CharnavelMateu2015

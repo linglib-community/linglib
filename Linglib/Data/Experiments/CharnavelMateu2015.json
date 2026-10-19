@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "bibkey": "charnavel-mateu-2015",
+    "description": "A grammaticality judgment task on French and Spanish clusters of a dative and a third-person accusative clitic, crossing whether the accusative clitic's antecedent c-commands it, whether that antecedent is a logophoric center, and the person of the dative clitic, which in one condition is a third person bound by a quantifier. Ratings were given on a continuous scale, between subjects, against control sentences with a full noun phrase as indirect object. Locators are to the pages of the authors' accepted manuscript in Harvard's DASH repository.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Answer",
+      "doc": "A yes or no entry of the condition tables.",
+      "levels": [
+        {
+          "name": "yes",
+          "label": "yes",
+          "doc": "the condition has the property"
+        },
+        {
+          "name": "no",
+          "label": "no",
+          "doc": "the condition lacks the property"
+        }
+      ]
+    },
+    {
+      "name": "DativePerson",
+      "doc": "The person of the dative clitic.",
+      "levels": [
+        {
+          "name": "third",
+          "label": "3",
+          "doc": "a free third-person dative clitic"
+        },
+        {
+          "name": "participant",
+          "label": "1/2",
+          "doc": "a first- or second-person dative clitic"
+        },
+        {
+          "name": "boundThird",
+          "label": "bound 3",
+          "doc": "a third-person dative clitic bound by a quantifier, as in (20)"
+        }
+      ]
+    },
+    {
+      "name": "Grammaticality",
+      "doc": "The result of a condition.",
+      "levels": [
+        {
+          "name": "ungrammatical",
+          "label": "*",
+          "doc": "rated significantly lower than the control sentences"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "doc": "not rated significantly lower than the control sentences"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "frenchParticipants",
+      "type": "nat",
+      "value": 97,
+      "doc": "Native speakers of French in the French version.",
+      "locator": "§2.2, p. 7",
+      "verified": "page-image"
+    },
+    {
+      "name": "spanishParticipants",
+      "type": "nat",
+      "value": 35,
+      "doc": "Native speakers of Spanish in the Spanish version.",
+      "locator": "§2.2, p. 7",
+      "verified": "page-image"
+    },
+    {
+      "name": "testItems",
+      "type": "nat",
+      "value": 27,
+      "doc": "Test items with clitic clusters.",
+      "locator": "§2.3, p. 7",
+      "verified": "page-image"
+    },
+    {
+      "name": "controlItems",
+      "type": "nat",
+      "value": 6,
+      "doc": "Control items with an accusative clitic and a full noun phrase as indirect object.",
+      "locator": "§2.3, p. 7",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "results",
+      "structure": "Result",
+      "doc": "the conditions of the task and their results, an asterisk marking a condition rated significantly lower than the control sentences.",
+      "locator": "Table 2, p. 9",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "condition",
+          "type": "nat",
+          "doc": "The condition's number."
+        },
+        {
+          "name": "cCommandingAntecedent",
+          "type": "Answer",
+          "doc": "Whether the accusative clitic's antecedent c-commands it."
+        },
+        {
+          "name": "logophoricAntecedent",
+          "type": "Answer",
+          "doc": "Whether the accusative clitic's antecedent is a logophoric center, an attitude holder introduced by an intensional predicate or expression (§2.3)."
+        },
+        {
+          "name": "dativePerson",
+          "type": "DativePerson",
+          "doc": "The person of the dative clitic."
+        },
+        {
+          "name": "grammaticality",
+          "type": "Grammaticality",
+          "doc": "The result."
+        }
+      ],
+      "rows": [
+        {"condition": 1, "cCommandingAntecedent": "yes", "logophoricAntecedent": "yes", "dativePerson": "3", "grammaticality": "*"},
+        {"condition": 2, "cCommandingAntecedent": "yes", "logophoricAntecedent": "yes", "dativePerson": "1/2", "grammaticality": "OK"},
+        {"condition": 3, "cCommandingAntecedent": "yes", "logophoricAntecedent": "yes", "dativePerson": "bound 3", "grammaticality": "*"},
+        {"condition": 4, "cCommandingAntecedent": "yes", "logophoricAntecedent": "no", "dativePerson": "3", "grammaticality": "OK"},
+        {"condition": 5, "cCommandingAntecedent": "yes", "logophoricAntecedent": "no", "dativePerson": "1/2", "grammaticality": "OK"},
+        {"condition": 6, "cCommandingAntecedent": "no", "logophoricAntecedent": "yes", "dativePerson": "3", "grammaticality": "*"},
+        {"condition": 7, "cCommandingAntecedent": "no", "logophoricAntecedent": "yes", "dativePerson": "1/2", "grammaticality": "OK"},
+        {"condition": 8, "cCommandingAntecedent": "no", "logophoricAntecedent": "no", "dativePerson": "3", "grammaticality": "OK"},
+        {"condition": 9, "cCommandingAntecedent": "no", "logophoricAntecedent": "no", "dativePerson": "1/2", "grammaticality": "OK"}
+      ]
+    }
+  ]
+}
