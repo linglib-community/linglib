@@ -145,11 +145,11 @@ private def passiveValency (v : English.Verbs.Verb) : Valency :=
 
 /-- *The ball was kicked (by John)* satisfies the participle's derived valency. -/
 def passiveTree : Graph 4 :=
-  .ofArcs [the_, ball, was_, kickedPass] 3 [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass)]
+  .ofArcs [the_, ball, was_, kickedPass] 3 [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux)]
 
 def longPassiveTree : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, by_, john] 3
-    [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obl), (5, 4, .case_)]
+    [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obl), (5, 4, .case_)]
 
 example : passiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
   decide
@@ -159,7 +159,7 @@ example : longPassiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.V
 /-- *The ball was kicked the pizza, a passive with a leftover object. -/
 def passiveWithObj : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, the_, pizza] 3
-    [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obj), (5, 4, .det)]
+    [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obj), (5, 4, .det)]
 
 example : ¬ passiveWithObj.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
   decide
@@ -167,11 +167,11 @@ example : ¬ passiveWithObj.SatisfiesFrames (.ofList [(3, passiveValency English
 /-- In *Mary was given a book* the passive of a double-object verb keeps its second object. -/
 def ditransPassiveTree : Graph 5 :=
   .ofArcs [mary, was_, givenPass, a_, book] 2
-    [(2, 0, .nsubj), (2, 1, .auxPass), (2, 4, .obj), (4, 3, .det)]
+    [(2, 0, .nsubj), (2, 1, .aux), (2, 4, .obj), (4, 3, .det)]
 
 /-- *Mary was given, with the second object missing. -/
 def ditransPassiveNoObj : Graph 3 :=
-  .ofArcs [mary, was_, givenPass] 2 [(2, 0, .nsubj), (2, 1, .auxPass)]
+  .ofArcs [mary, was_, givenPass] 2 [(2, 0, .nsubj), (2, 1, .aux)]
 
 example :
     ditransPassiveTree.SatisfiesFrames (.ofList [(2, passiveValency English.Verbs.give)]) := by

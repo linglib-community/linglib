@@ -28,11 +28,11 @@ paper's own counterexample, a violation judged acceptable (`vote_counterexample`
 
 ## Implementation notes
 
-A valent is a direct valency-relation dependent of the predicate, a simplification of the
-paper's catena-based notion that the example set does not exercise; the first conjunct heads
-the coordinate structure in the Universal Dependencies convention, and referential
-dependence is being a pronoun. The rows of `Data/Examples/OsborneLi2023` carry the paper's
-respondent counts and mean scores.
+A valent is a direct dependent of the predicate by a core-argument or oblique relation
+(`IsValentRel`), a simplification of the paper's catena-based notion that the example set does
+not exercise; the first conjunct heads the coordinate structure in the Universal Dependencies
+convention, and referential dependence is being a pronoun. The rows of
+`Data/Examples/OsborneLi2023` carry the paper's respondent counts and mean scores.
 
 ## References
 
@@ -52,30 +52,36 @@ section Valents
 
 variable {n : ℕ} (g : Graph n)
 
-/-- The conjuncts of the coordinate structure headed at `c`: the head, the first conjunct, and
-its `conj` dependents. -/
+/-- The relations of valents are the core-argument relations and the oblique, which UD classifies
+as non-core. -/
+def IsValentRel (r : UD.DepRel) : Prop := r.IsCore ∨ r = .obl
+
+instance : DecidablePred IsValentRel := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The conjuncts of the coordinate structure headed at `c`, which are the head, the first
+conjunct, and its `conj` dependents. -/
 def allConjuncts (c : Fin n) : Finset (Fin n) :=
   insert c {w ∈ g.children c | g.label c w = some .conj}
 
-/-- Position `c` heads a coordinate structure: it has a `conj` dependent. -/
+/-- Position `c` heads a coordinate structure, having a `conj` dependent. -/
 def HasConjuncts (c : Fin n) : Prop :=
   ∃ w ∈ g.children c, g.label c w = some .conj
 
 instance (c : Fin n) : Decidable (HasConjuncts g c) := Finset.decidableExistsAndFinset
 
-/-- `valent` is a conjunct valent of `pred`: a conjunct of a coordinate structure that fills a
-valency role of `pred`. -/
+/-- `valent` is a conjunct valent of `pred` when it is a conjunct of a coordinate structure that
+fills a valency role of `pred`. -/
 def IsConjunctValent (pred valent : Fin n) : Prop :=
-  ∃ c ∈ g.children pred, ∃ r ∈ g.label pred c, r.isValencyArg ∧
+  ∃ c ∈ g.children pred, ∃ r ∈ g.label pred c, IsValentRel r ∧
     HasConjuncts g c ∧ valent ∈ allConjuncts g c
 
 instance (pred valent : Fin n) : Decidable (IsConjunctValent g pred valent) :=
   Finset.decidableExistsAndFinset
 
-/-- `valent` is a full valent of `pred`: a valent that is complete, that is, not a conjunct
-valent. -/
+/-- `valent` is a full valent of `pred` when it is a valent of `pred` that is complete, that is,
+not a conjunct valent. -/
 def IsFullValent (pred valent : Fin n) : Prop :=
-  (∃ r ∈ g.label pred valent, r.isValencyArg) ∧ ¬ IsConjunctValent g pred valent
+  (∃ r ∈ g.label pred valent, IsValentRel r) ∧ ¬ IsConjunctValent g pred valent
 
 instance (pred valent : Fin n) : Decidable (IsFullValent g pred valent) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -91,22 +97,22 @@ instance (pred ana ante : Fin n) : Decidable (Violates g pred ana ante) :=
 variable {g}
 
 /-- A conjunct valent is not a full valent, so no pair violates the constraint in both
-directions: the permitted direction is the reverse of the forbidden one. -/
+directions, and the permitted direction is the reverse of the forbidden one. -/
 theorem Violates.not_symm {pred ana ante : Fin n} (h : Violates g pred ana ante) :
     ¬ Violates g pred ante ana :=
-  λ h' => h'.2.1.2 h.2.2
+  fun h' ↦ h'.2.1.2 h.2.2
 
 /-- Without a coordinate structure the constraint is silent. -/
 theorem not_violates_of_no_conjuncts (h : ∀ c, ¬ HasConjuncts g c) (pred ana ante : Fin n) :
     ¬ Violates g pred ana ante :=
-  λ ⟨_, _, c, _, _, _, _, hc, _⟩ => h c hc
+  fun ⟨_, _, c, _, _, _, _, hc, _⟩ ↦ h c hc
 
 end Valents
 
 /-! ### The stimuli -/
 
-/-- A stimulus: the dependency tree of an example, its predicate, the referentially dependent
-expression and its intended antecedent, and the example's row. -/
+/-- A stimulus is the dependency tree of an example with its predicate, the referentially
+dependent expression and its intended antecedent, and the example's row. -/
 structure Stimulus where
   n : ℕ
   tree : Graph n
@@ -119,14 +125,14 @@ structure Stimulus where
 def Stimulus.Violates (s : Stimulus) : Prop := OsborneLi2023.Violates s.tree s.pred s.ana s.ante
 
 instance : DecidablePred Stimulus.Violates :=
-  λ s => inferInstanceAs (Decidable (Violates s.tree s.pred s.ana s.ante))
+  fun s ↦ inferInstanceAs (Decidable (Violates s.tree s.pred s.ana s.ante))
 
 /-- The stimulus contains a coordinate structure. -/
 def Stimulus.Coordinate (s : Stimulus) : Prop := ∃ c, HasConjuncts s.tree c
 
-instance : DecidablePred Stimulus.Coordinate := λ _ => Fintype.decidableExistsFintype
+instance : DecidablePred Stimulus.Coordinate := fun _ ↦ Fintype.decidableExistsFintype
 
-/-- (2a) *Max and Lucie talked about him*: a full-valent pronoun with a conjunct antecedent. -/
+/-- (2a) *Max and Lucie talked about him* has a full-valent pronoun with a conjunct antecedent. -/
 def ex2a : Stimulus :=
   ⟨6, .ofArcs
     [Word.mk' "Max" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Lucie" .PROPN,
@@ -134,7 +140,7 @@ def ex2a : Stimulus :=
     3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case_)],
    3, 5, 0, Examples.ex2a⟩
 
-/-- (3a) *John and Mary talked about himself*: the reflexive fares no better. -/
+/-- In (3a) *John and Mary talked about himself* the reflexive fares no better. -/
 def ex3a : Stimulus :=
   ⟨6, .ofArcs
     [Word.mk' "John" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN,
@@ -142,7 +148,7 @@ def ex3a : Stimulus :=
     3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case_)],
    3, 5, 0, Examples.ex3a⟩
 
-/-- (5a) *Both John and Mary love him*: the paired coordinator forces distribution, and the
+/-- In (5a) *Both John and Mary love him* the paired coordinator forces distribution, and the
 sentence is judged worse than the constraint alone predicts. -/
 def ex5a : Stimulus :=
   ⟨6, .ofArcs
@@ -151,7 +157,7 @@ def ex5a : Stimulus :=
     4 [(4, 1, .nsubj), (1, 0, .cc), (1, 2, .cc), (1, 3, .conj), (4, 5, .obj)],
    4, 5, 1, Examples.ex5a⟩
 
-/-- (9a) *Max talked about himself*: the non-coordinate reflexive baseline. -/
+/-- (9a) *Max talked about himself* is the non-coordinate reflexive baseline. -/
 def ex9a : Stimulus :=
   ⟨4, .ofArcs
     [Word.mk' "Max" .PROPN, Word.mk' "talked" .VERB, Word.mk' "about" .ADP,
@@ -159,7 +165,7 @@ def ex9a : Stimulus :=
     1 [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_)],
    1, 3, 0, Examples.ex9a⟩
 
-/-- (9b) *Max talked about him*: the non-coordinate pronoun baseline, marginal by Condition B,
+/-- (9b) *Max talked about him* is the non-coordinate pronoun baseline, marginal by Condition B,
 on which the constraint is silent. -/
 def ex9b : Stimulus :=
   ⟨4, .ofArcs
@@ -168,7 +174,7 @@ def ex9b : Stimulus :=
     1 [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_)],
    1, 3, 0, Examples.ex9b⟩
 
-/-- (11a) *Max and Lucie talked about his work*: the possessive is no valent of the verb. -/
+/-- In (11a) *Max and Lucie talked about his work* the possessive is no valent of the verb. -/
 def ex11a : Stimulus :=
   ⟨7, .ofArcs
     [Word.mk' "Max" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Lucie" .PROPN,
@@ -178,7 +184,7 @@ def ex11a : Stimulus :=
        (6, 5, .nmod)],
    3, 5, 0, Examples.ex11a⟩
 
-/-- (11e) *Max and Lucie talked about Max*: a name is not referentially dependent. -/
+/-- In (11e) *Max and Lucie talked about Max* the name is not referentially dependent. -/
 def ex11e : Stimulus :=
   ⟨6, .ofArcs
     [Word.mk' "Max" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Lucie" .PROPN,
@@ -186,7 +192,7 @@ def ex11e : Stimulus :=
     3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case_)],
    3, 5, 0, Examples.ex11e⟩
 
-/-- (20b) *Hank and Hillary appear to her to be good friends*: the experiencer of a raising
+/-- In (20b) *Hank and Hillary appear to her to be good friends* the experiencer of a raising
 predicate is a full valent. -/
 def ex20b : Stimulus :=
   ⟨10, .ofArcs
@@ -198,8 +204,8 @@ def ex20b : Stimulus :=
        (3, 9, .xcomp), (9, 6, .mark), (9, 7, .cop), (9, 8, .amod)],
    3, 5, 2, Examples.ex20b⟩
 
-/-- (24a) *John talked about himself and his mother*: the reflexive heads the coordinate object,
-so it is a conjunct valent and *John* a full valent, the permitted direction. -/
+/-- In (24a) *John talked about himself and his mother* the reflexive heads the coordinate
+object, so it is a conjunct valent and *John* a full valent, the permitted direction. -/
 def ex24a : Stimulus :=
   ⟨7, .ofArcs
     [Word.mk' "John" .PROPN, Word.mk' "talked" .VERB, Word.mk' "about" .ADP,
@@ -209,7 +215,7 @@ def ex24a : Stimulus :=
        (6, 5, .nmod)],
    1, 3, 0, Examples.ex24a⟩
 
-/-- (28d) *John expected Mary and him to be able to leave soon*: the pronoun is a conjunct of
+/-- In (28d) *John expected Mary and him to be able to leave soon* the pronoun is a conjunct of
 the raised object. -/
 def ex28d : Stimulus :=
   ⟨11, .ofArcs
@@ -235,9 +241,8 @@ theorem no_violation_acceptable :
 
 /-! ### The counterexample of the sixth section -/
 
-/-- (55a) *Who voted for Sophy? Sophy and Edgar voted for her*: a violation the informants
-accept, which the paper attributes to an identity split between the candidate and the
-voter. -/
+/-- (55a) *Who voted for Sophy? Sophy and Edgar voted for her* is a violation the informants
+accept, which the paper attributes to an identity split between the candidate and the voter. -/
 def ex55a : Stimulus :=
   ⟨6, .ofArcs
     [Word.mk' "Sophy" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Edgar" .PROPN,
