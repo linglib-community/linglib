@@ -26,21 +26,23 @@ or *i*, as in *dě* and *di*, a labial before *ě* is followed by /j/ and *m* by
 * `Czech.Phonology.dorsals`, `Czech.Phonology.palatalizing`: the velars *k*, *g* and *ch*, and
   these with *h*.
 * `Czech.Phonology.secondPalatalization`: the second palatalization of velars.
+* `Czech.Phonology.letterValues`: the phonemes each letter writes, with `valuesBeforeĚ` and
+  `valuesBeforeI` for the letters a following *ě* or *i* reads differently.
 * `Czech.Phonology.ofString?`, `Czech.Phonology.letter`: the phonemes a word writes, and the
   letter that writes a phoneme.
 
 ## Main results
 
-* `Czech.Phonology.exists_mem_ces`, `Czech.Phonology.ofPhoneme_mem_or`: the phonemes are those
-  of PHOIBLE's Czech inventory.
+* `Czech.Phonology.exists_mem_ces`, `Czech.Phonology.ofPhoneme_mem_iff`: the phonemes are those
+  of PHOIBLE's Czech inventory, save its three diphthongs.
 * `Czech.Phonology.naturalClass_palatalizing`: the segments the second palatalization changes
   are the obstruents that are neither labial nor coronal.
 * `Czech.Phonology.voiced_mem_iff`, `Czech.Phonology.devoiced_mem_iff`: the obstruents paired
   in [voice], all but *c*, *č*, *ch* and *h*.
 * `Czech.Phonology.secondPalatalization_g`, `Czech.Phonology.not_exists_merge_eq`: the reflex
   of *g* is that of *k* voiced and de-affricated, so no one feature change gives the rule.
-* `Czech.Phonology.mem_inventory_of_mem_ofString?`: the spelling writes phonemes of the
-  inventory.
+* `Czech.Phonology.forall_mem_values`, `Czech.Phonology.mem_inventory_of_mem_ofString?`: the
+  spelling writes phonemes of the inventory.
 
 ## Implementation notes
 
@@ -187,7 +189,7 @@ def ř : Segment := .ofChart .«r̝»
 distinct. -/
 def inventory : Finset Segment :=
   ⟨↑[a, e, i, o, u, p, b, m, t, d, n, ť, ď, ň, k, g, c, č, f, v, s, z, š, ž, j, ch, h, l, r, ř],
-    by decide⟩
+    by decide +kernel⟩
 
 /-- The vowels of the inventory. -/
 def vowels : Finset Segment := inventory.filter (·.IsVowel)
@@ -196,10 +198,10 @@ def vowels : Finset Segment := inventory.filter (·.IsVowel)
 def consonants : Finset Segment := inventory.filter (¬ ·.IsVowel)
 
 /-- The vowels are the five. -/
-theorem vowels_eq : vowels = {a, e, i, o, u} := by decide
+theorem vowels_eq : vowels = {a, e, i, o, u} := by decide +kernel
 
 /-- "There are twenty-five consonantal phonemes" (p. 457). -/
-theorem card_consonants : consonants.card = 25 := by decide
+theorem card_consonants : consonants.card = 25 := by decide +kernel
 
 /-- The segment of a PHOIBLE phoneme, as a vowel where PHOIBLE classes it with the vowels. -/
 def ofPhoneme (y : Data.PHOIBLE.Phoneme) : Segment :=
@@ -208,14 +210,13 @@ def ofPhoneme (y : Data.PHOIBLE.Phoneme) : Segment :=
 /-- Each phoneme is the segment of a phoneme of PHOIBLE's Czech inventory. -/
 theorem exists_mem_ces :
     ∀ x ∈ inventory, ∃ y ∈ Inventories.Czech.ces.phonemes, x = ofPhoneme y := by
-  decide
+  decide +kernel
 
 /-- Every phoneme of PHOIBLE's Czech inventory has the segment of one here, a long vowel that of
-its short counterpart, save the three diphthongs, whose height changes and which the inventory
-leaves without a value for [high]. -/
-theorem ofPhoneme_mem_or : ∀ y ∈ Inventories.Czech.ces.phonemes,
-    ofPhoneme y ∈ inventory ∨ (ofPhoneme y).Unspecified .high := by
-  decide
+its short counterpart, save the three diphthongs, whose height changes. -/
+theorem ofPhoneme_mem_iff : ∀ y ∈ Inventories.Czech.ces.phonemes,
+    ofPhoneme y ∈ inventory ↔ y.glyph ∉ ["au", "ou", "ɛu"] := by
+  decide +kernel
 
 /-! ### Natural classes -/
 
@@ -226,11 +227,11 @@ def velar : Segment := Segment.ofSpecs [(.sonorant, false), (.dorsal, true), (.c
 def dorsals : Finset Segment := velar.naturalClass inventory
 
 /-- The dorsals are Short's velars *k*, *g* and *ch*. -/
-theorem dorsals_eq : dorsals = {k, g, ch} := by decide
+theorem dorsals_eq : dorsals = {k, g, ch} := by decide +kernel
 
 /-- The dorsals are a natural class. -/
 theorem isNaturalClass_dorsals : IsNaturalClass inventory dorsals :=
-  isNaturalClass_naturalClass ⟨k, by decide⟩
+  isNaturalClass_naturalClass ⟨k, by decide +kernel⟩
 
 /-- The segments that the second palatalization changes, *k*, *g*, *h* and *ch* (p. 462). -/
 def palatalizing : Finset Segment := {k, g, h, ch}
@@ -238,18 +239,18 @@ def palatalizing : Finset Segment := {k, g, h, ch}
 /-- The palatalizing segments are the dorsals and *h*, which is not dorsal. Short files it
 among the laryngeals (p. 457), although it alternates with *z* as *g* does (p. 462). -/
 theorem palatalizing_eq : palatalizing = insert h dorsals ∧ h.HasValue .dorsal false := by
-  decide
+  decide +kernel
 
 /-- The palatalizing segments are nonetheless a natural class, the obstruents that are neither
 labial nor coronal: every other obstruent of the inventory is labial or coronal. -/
 theorem naturalClass_palatalizing :
     (Segment.ofSpecs [(.sonorant, false), (.labial, false), (.coronal, false)]).naturalClass
       inventory = palatalizing := by
-  decide
+  decide +kernel
 
 /-- The palatalizing segments are a natural class. -/
 theorem isNaturalClass_palatalizing : IsNaturalClass inventory palatalizing :=
-  naturalClass_palatalizing ▸ isNaturalClass_naturalClass ⟨k, by decide⟩
+  naturalClass_palatalizing ▸ isNaturalClass_naturalClass ⟨k, by decide +kernel⟩
 
 /-! ### Voicing pairs -/
 
@@ -258,28 +259,28 @@ theorem isNaturalClass_palatalizing : IsNaturalClass inventory palatalizing :=
 (pp. 457–458). -/
 theorem voiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false → x.HasValue .voice false →
     (x.setFeature .voice true ∈ inventory ↔ x ≠ c ∧ x ≠ č ∧ x ≠ ch) := by
-  decide
+  decide +kernel
 
 /-- The counterparts in [voice] of *c*, *č* and *ch* are [dz], [dž] and [ɣ]. Where /x/ might
 assimilate, "it voices not to /h/, but to [ɣ]" (p. 458). -/
 theorem setFeature_voice_c_č_ch :
     c.setFeature .voice true = .ofChart .«dz» ∧ č.setFeature .voice true = .ofChart .«d̠ʒ» ∧
       ch.setFeature .voice true = .ofChart .«ɣ» := by
-  decide
+  decide +kernel
 
 /-- The voiced obstruents whose counterpart in [voice] is a phoneme are all but *h*, whose
 counterpart is the voiceless glottal [h]. Where voice is neutralized Short gives /x/ as the
 voiceless counterpart of /h/ (p. 458), which differs from it in more than [voice]. -/
 theorem devoiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false →
     x.HasValue .voice true → (x.setFeature .voice false ∈ inventory ↔ x ≠ h) := by
-  decide
+  decide +kernel
 
 /-- *h* and *ch*, "a nearly matching pair of fricatives" (p. 462), differ in [voice],
 [spread glottis] and [consonantal], and in [dorsal] and the tongue-body features that go with
 it. -/
 theorem h_ch : Finset.univ.filter (fun ft ↦ h ft ≠ ch ft) =
     {.consonantal, .voice, .spreadGlottis, .dorsal, .high, .low, .front, .back} := by
-  decide
+  decide +kernel
 
 /-! ### The second palatalization -/
 
@@ -297,7 +298,7 @@ theorem secondPalatalization_of_notMem {x : Segment} (hx : x ∉ palatalizing) :
 
 /-- The reflexes are *c*, *z* and *š*. -/
 theorem image_secondPalatalization : palatalizing.image secondPalatalization = {c, z, š} := by
-  decide
+  decide +kernel
 
 /-- The reflex of a palatalizing segment is a phoneme, a coronal strident that is not dorsal,
 and has its voicing. -/
@@ -306,7 +307,7 @@ theorem secondPalatalization_mem : ∀ x ∈ palatalizing,
       (secondPalatalization x).HasValue .strident true ∧
       (secondPalatalization x).HasValue .dorsal false ∧
       secondPalatalization x .voice = x .voice := by
-  decide
+  decide +kernel
 
 /-- The reflex of *g* is that of *k* voiced, [dz], de-affricated, and *h*, the Czech reflex of
 Proto-Slavic *g* (p. 461), shares it. *k* and *g* differ in [voice] alone, and their reflexes in
@@ -318,7 +319,7 @@ theorem secondPalatalization_g :
       Finset.univ.filter (fun ft ↦ k ft ≠ g ft) = {.voice} ∧
       Finset.univ.filter (fun ft ↦ secondPalatalization k ft ≠ secondPalatalization g ft) =
         {.continuant, .voice} := by
-  decide
+  decide +kernel
 
 /-- No one feature change, merging the same values into each segment, takes both *k* and *g* to
 their reflexes, since the two agree in [continuant] and their reflexes do not. -/
@@ -330,8 +331,8 @@ theorem not_exists_merge_eq :
   have h₂ := congrFun hg .continuant
   revert h₁ h₂
   cases d .continuant with
-  | bot => decide
-  | coe v => cases v <;> decide
+  | bot => decide +kernel
+  | coe v => cases v <;> decide +kernel
 
 /-! ### Spelling -/
 
@@ -340,30 +341,35 @@ def alphabet : List String :=
   ["a", "b", "c", "č", "d", "e", "f", "g", "h", "ch", "i", "j", "k", "l", "m", "n", "o", "p", "q",
     "r", "ř", "s", "š", "t", "u", "v", "w", "x", "y", "z", "ž"]
 
-/-- The phonemes a letter writes where no neighbouring letter changes its reading. A long vowel
-is two segments, *ě* on its own writes /e/, and *q*, *w* and *x* write [kv], [v] and [ks] in
+/-- The phonemes each letter writes where no neighbouring letter changes its reading. A long
+vowel is two segments, *ě* on its own writes /e/, and *q*, *w* and *x* write [kv], [v] and [ks] in
 loan-words (p. 459). -/
-def ofChar : Char → Option (List Segment)
-  | 'a' => some [a] | 'á' => some [a, a] | 'b' => some [b] | 'c' => some [c] | 'č' => some [č]
-  | 'd' => some [d] | 'ď' => some [ď] | 'e' | 'ě' => some [e] | 'é' => some [e, e]
-  | 'f' => some [f] | 'g' => some [g] | 'h' => some [h] | 'i' | 'y' => some [i]
-  | 'í' | 'ý' => some [i, i] | 'j' => some [j] | 'k' => some [k] | 'l' => some [l]
-  | 'm' => some [m] | 'n' => some [n] | 'ň' => some [ň] | 'o' => some [o] | 'ó' => some [o, o]
-  | 'p' => some [p] | 'q' => some [k, v] | 'r' => some [r] | 'ř' => some [ř] | 's' => some [s]
-  | 'š' => some [š] | 't' => some [t] | 'ť' => some [ť] | 'u' => some [u]
-  | 'ú' | 'ů' => some [u, u] | 'v' | 'w' => some [v] | 'x' => some [k, s] | 'z' => some [z]
-  | 'ž' => some [ž] | _ => none
+def letterValues : List (Char × List Segment) :=
+  [('a', [a]), ('á', [a, a]), ('b', [b]), ('c', [c]), ('č', [č]), ('d', [d]), ('ď', [ď]),
+    ('e', [e]), ('ě', [e]), ('é', [e, e]), ('f', [f]), ('g', [g]), ('h', [h]), ('i', [i]),
+    ('y', [i]), ('í', [i, i]), ('ý', [i, i]), ('j', [j]), ('k', [k]), ('l', [l]), ('m', [m]),
+    ('n', [n]), ('ň', [ň]), ('o', [o]), ('ó', [o, o]), ('p', [p]), ('q', [k, v]), ('r', [r]),
+    ('ř', [ř]), ('s', [s]), ('š', [š]), ('t', [t]), ('ť', [ť]), ('u', [u]), ('ú', [u, u]),
+    ('ů', [u, u]), ('v', [v]), ('w', [v]), ('x', [k, s]), ('z', [z]), ('ž', [ž])]
 
-/-- The phonemes a letter writes before *ě*. There *d*, *t* and *n* write /ď/, /ť/ and /ň/,
-*b*, *p*, *v* and *f* are followed by /j/, and *m* by /ň/ (p. 459). -/
-def ofCharBeforeĚ : Char → Option (List Segment)
-  | 'd' => some [ď] | 't' => some [ť] | 'n' => some [ň] | 'b' => some [b, j] | 'p' => some [p, j]
-  | 'v' => some [v, j] | 'f' => some [f, j] | 'm' => some [m, ň] | x => ofChar x
+/-- The letters whose reading *ě* changes, with what they write before it. There *d*, *t* and *n*
+write /ď/, /ť/ and /ň/, *b*, *p*, *v* and *f* are followed by /j/, and *m* by /ň/ (p. 459). -/
+def valuesBeforeĚ : List (Char × List Segment) :=
+  [('d', [ď]), ('t', [ť]), ('n', [ň]), ('b', [b, j]), ('p', [p, j]), ('v', [v, j]), ('f', [f, j]),
+    ('m', [m, ň])]
 
-/-- The phonemes a letter writes before *i* or *í*, where *d*, *t* and *n* write /ď/, /ť/ and
-/ň/ (p. 459). -/
-def ofCharBeforeI : Char → Option (List Segment)
-  | 'd' => some [ď] | 't' => some [ť] | 'n' => some [ň] | x => ofChar x
+/-- The letters whose reading *i* or *í* changes, *d*, *t* and *n*, which write /ď/, /ť/ and /ň/
+before it (p. 459). -/
+def valuesBeforeI : List (Char × List Segment) := [('d', [ď]), ('t', [ť]), ('n', [ň])]
+
+/-- The phonemes a letter writes where no neighbouring letter changes its reading. -/
+def ofChar (x : Char) : Option (List Segment) := letterValues.lookup x
+
+/-- The phonemes a letter writes before *ě*. -/
+def ofCharBeforeĚ (x : Char) : Option (List Segment) := (valuesBeforeĚ.lookup x).or (ofChar x)
+
+/-- The phonemes a letter writes before *i* or *í*. -/
+def ofCharBeforeI (x : Char) : Option (List Segment) := (valuesBeforeI.lookup x).or (ofChar x)
 
 /-- `ofChars w` is the phonemes that the letters `w` write, if they are all Czech letters. The
 letters *c* and *h* together write /ch/, and a letter before *ě*, *i* or *í* writes what it
@@ -387,20 +393,32 @@ def letter (x : Segment) : Option String :=
 /-- Each phoneme has a letter. -/
 theorem isSome_letter : ∀ x ∈ inventory, (letter x).isSome := by decide +kernel
 
-private theorem mem_inventory_of_mem_ofChar {y : Char} {w : List Segment} (h : ofChar y = some w) :
-    ∀ x ∈ w, x ∈ inventory := by
-  unfold ofChar at h
-  split at h <;> first | (cases h; decide) | cases h
+/-- Every letter writes phonemes of the inventory, before *ě*, *i* and *í* as elsewhere. -/
+theorem forall_mem_values : ∀ p ∈ letterValues ++ valuesBeforeĚ ++ valuesBeforeI,
+    ∀ x ∈ p.2, x ∈ inventory := by
+  decide +kernel
+
+private theorem mem_inventory_of_lookup {l : List (Char × List Segment)}
+    (hl : ∀ p ∈ l, p ∈ letterValues ++ valuesBeforeĚ ++ valuesBeforeI) {y : Char}
+    {w : List Segment} (h : l.lookup y = some w) : ∀ x ∈ w, x ∈ inventory := by
+  obtain ⟨l₁, l₂, rfl, -⟩ := List.lookup_eq_some_iff.1 h
+  exact forall_mem_values _ (hl _ (List.mem_append_right _ List.mem_cons_self))
+
+private theorem mem_inventory_of_mem_ofChar {y : Char} {w : List Segment}
+    (h : ofChar y = some w) : ∀ x ∈ w, x ∈ inventory :=
+  mem_inventory_of_lookup (fun _ hp ↦ by simp [hp]) h
 
 private theorem mem_inventory_of_mem_ofCharBeforeĚ {y : Char} {w : List Segment}
     (h : ofCharBeforeĚ y = some w) : ∀ x ∈ w, x ∈ inventory := by
-  unfold ofCharBeforeĚ at h
-  split at h <;> first | exact mem_inventory_of_mem_ofChar h | (cases h; decide)
+  rcases Option.or_eq_some_iff.1 h with h | ⟨-, h⟩
+  · exact mem_inventory_of_lookup (fun _ hp ↦ by simp [hp]) h
+  · exact mem_inventory_of_mem_ofChar h
 
 private theorem mem_inventory_of_mem_ofCharBeforeI {y : Char} {w : List Segment}
     (h : ofCharBeforeI y = some w) : ∀ x ∈ w, x ∈ inventory := by
-  unfold ofCharBeforeI at h
-  split at h <;> first | exact mem_inventory_of_mem_ofChar h | (cases h; decide)
+  rcases Option.or_eq_some_iff.1 h with h | ⟨-, h⟩
+  · exact mem_inventory_of_lookup (fun _ hp ↦ by simp [hp]) h
+  · exact mem_inventory_of_mem_ofChar h
 
 /-- The letters write phonemes of the inventory. -/
 theorem mem_inventory_of_mem_ofChars {w : List Char} {l : List Segment}
@@ -410,19 +428,19 @@ theorem mem_inventory_of_mem_ofChars {w : List Char} {l : List Segment}
       Option.map_eq_some_iff] at h
   next _ ih =>
     obtain ⟨l, hl, rfl⟩ := h
-    exact List.forall_mem_cons.2 ⟨by decide, ih hl⟩
+    exact List.forall_mem_cons.2 ⟨by decide +kernel, ih hl⟩
   next _ _ ih =>
     obtain ⟨l₁, h₁, l, hl, rfl⟩ := h
     exact List.forall_mem_append.2
-      ⟨mem_inventory_of_mem_ofCharBeforeĚ h₁, List.forall_mem_cons.2 ⟨by decide, ih hl⟩⟩
+      ⟨mem_inventory_of_mem_ofCharBeforeĚ h₁, List.forall_mem_cons.2 ⟨by decide +kernel, ih hl⟩⟩
   next _ _ ih =>
     obtain ⟨l₁, h₁, l, hl, rfl⟩ := h
     exact List.forall_mem_append.2
-      ⟨mem_inventory_of_mem_ofCharBeforeI h₁, List.forall_mem_cons.2 ⟨by decide, ih hl⟩⟩
+      ⟨mem_inventory_of_mem_ofCharBeforeI h₁, List.forall_mem_cons.2 ⟨by decide +kernel, ih hl⟩⟩
   next _ _ ih =>
     obtain ⟨l₁, h₁, l, hl, rfl⟩ := h
     exact List.forall_mem_append.2 ⟨mem_inventory_of_mem_ofCharBeforeI h₁,
-      List.forall_mem_cons.2 ⟨by decide, List.forall_mem_cons.2 ⟨by decide, ih hl⟩⟩⟩
+      List.forall_mem_cons.2 ⟨by decide +kernel, List.forall_mem_cons.2 ⟨by decide +kernel, ih hl⟩⟩⟩
   next _ _ _ _ _ _ ih =>
     obtain ⟨l₁, h₁, l, hl, rfl⟩ := h
     exact List.forall_mem_append.2 ⟨mem_inventory_of_mem_ofChar h₁, ih hl⟩
