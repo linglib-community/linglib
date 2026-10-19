@@ -118,7 +118,9 @@ def theory_label(ident):
     """`transparencyIncremental` -> "Transparency, incremental"; `limitedSymmetry` -> "Limited
     Symmetry"."""
     ws = words(short(ident))
-    if len(ws) > 1 and ws[-1].lower() in ("incremental", "symmetric"):
+    if len(ws) > 1 and ws[0].lower() == "non":
+        return "Non-" + " ".join(w.lower() for w in ws[1:])
+    if len(ws) > 1 and ws[-1].lower() in ("incremental", "symmetric", "enriched"):
         return " ".join(w.capitalize() for w in ws[:-1]) + ", " + ws[-1].lower()
     return " ".join(w.capitalize() for w in ws)
 

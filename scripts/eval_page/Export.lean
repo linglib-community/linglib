@@ -74,7 +74,8 @@ def takers (A : Name) : MetaM (List Expr) := do
 
 /-- The definitions each theory rests on, which are those its term reaches. A theory that is a bare
 constructor of an enumeration reaches nothing itself, so for it they are those each definition
-taking the enumeration reaches at that constructor, less those every constructor reaches. -/
+taking the enumeration reaches at that constructor, less the shared machinery, those that more
+than half of its constructors reach. -/
 def definitions (theories : List (Name × Expr)) : MetaM (List (Name × List Name)) := do
   let env ← getEnv
   let mut cache : Std.HashMap Name (List Expr) := {}
@@ -90,12 +91,10 @@ def definitions (theories : List (Name × Expr)) : MetaM (List (Name × List Nam
         fs.foldlM (fun ns f ↦ return ns ++ ((← reaches (f.beta #[mkConst c])).getD [])) []
       let mine ← at_ T
       let .inductInfo ii ← getConstInfo ci.induct | unreachable!
-      let mut shared := if ii.ctors.length > 1 then mine else []
-      for c in ii.ctors do
-        if shared.isEmpty then break
-        let theirs ← at_ c
-        shared := shared.filter theirs.contains
-      found := mine.filter (!shared.contains ·)
+      let reached ← ii.ctors.mapM at_
+      let shared (n : Name) : Bool :=
+        ii.ctors.length > 1 && 2 * (reached.filter (·.contains n)).length > ii.ctors.length
+      found := mine.filter (!shared ·)
     out := out ++ [(T, found.eraseDups)]
   return out
 
