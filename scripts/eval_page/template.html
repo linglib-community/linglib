@@ -424,11 +424,12 @@ ol.steps li { margin-top: 6px; }
   const verified = { "page-image": "checked against the page images", "text-layer": "checked against the text", "raw-data": "from the released data" };
   function paperSection(paper, p) {
     const used = p.tables.filter((t) => exps.some((e) => e.paper === paper && t.name.startsWith(e.decl.short)));
+    const src = [...new Set(used.map((t) => `${esc(t.locator)}, ${esc(verified[t.verified] || t.verified)}`))].join("; ");
     const title = p.cite && p.cite.doi ? `<a href="https://doi.org/${esc(p.cite.doi)}">${esc(p.cite.title)}</a>` : p.cite ? esc(p.cite.title) : "";
     return `<section class="paper"><h3>${cite(p.cite)}${title ? `, <em>${title}</em>` : ""}</h3>` +
       p.experiments.map((d) => `<p>${d.doc}</p>`).join("") +
       dotPlot(p) + bars(p) + variantsOf(paper) +
-      `<p class="small">${used.map((t) => `${esc(t.locator)}, ${esc(verified[t.verified] || t.verified)}`).filter((x, i, a) => a.indexOf(x) === i).join("; ")}.</p></section>`;
+      (src ? `<p class="small">${src}.</p>` : "") + "</section>";
   }
 
   // The panel of a mark, docked at the bottom of the window so the board stays clickable: a click

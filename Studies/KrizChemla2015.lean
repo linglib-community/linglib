@@ -502,6 +502,84 @@ theorem pointwise_eq_supervaluation_of_scopeAntitone (hq : q.ScopeAntitone) :
   have := pointwise_eq_supervaluation_of_scopeMonotone (d := d) hq.compl
   rwa [pointwise_compl, supervaluation_compl, neg_involutive.injective.eq_iff] at this
 
+variable {c : List Bool}
+
+/-- A resolution of a display puts in the scope every boy whose cell is true and some of those
+whose cell is a gap. -/
+theorem count_true_mem_resolutions (hc : c ∈ resolutions d) :
+    d.count 1 ≤ c.count true ∧ c.count true ≤ d.count 1 + d.count 0 := by
+  have h := List.forall₂_map_right_iff.1 (List.mem_sections.1 hc)
+  clear hc
+  induction h with
+  | nil => simp
+  | @cons b v c d hb _ ih =>
+    rcases (by decide : ∀ v : SignType, v = 0 ∨ v = -1 ∨ v = 1) v with rfl | rfl | rfl <;>
+      cases b <;> simp_all <;> omega
+
+/-- Every number between the boys whose cell is true and those whose cell is not false is the
+number some resolution puts in the scope. -/
+theorem exists_mem_resolutions_count_true {k : ℕ} (h₁ : d.count 1 ≤ k)
+    (h₂ : k ≤ d.count 1 + d.count 0) : ∃ c ∈ resolutions d, c.count true = k := by
+  induction d generalizing k with
+  | nil => exact ⟨[], by simp [resolutions], by simp_all⟩
+  | cons v d ih =>
+    have hcons (b : Bool) (hb : b ∈ [decide (0 ≤ v), decide (v = 1)]) {c : List Bool}
+        (hc : c ∈ resolutions d) : b :: c ∈ resolutions (v :: d) :=
+      List.mem_sections.2 (.cons hb (List.mem_sections.1 hc))
+    rcases (by decide : ∀ v : SignType, v = 0 ∨ v = -1 ∨ v = 1) v with rfl | rfl | rfl <;>
+      simp only [List.count_cons] at h₁ h₂ <;> norm_num at h₁ h₂
+    · by_cases hk : k ≤ d.count 1 + d.count 0
+      · obtain ⟨c, hc, rfl⟩ := ih (by omega) hk
+        exact ⟨false :: c, hcons false (by simp) hc, by simp⟩
+      · obtain ⟨c, hc, hck⟩ := ih (k := k - 1) (by omega) (by omega)
+        exact ⟨true :: c, hcons true (by simp) hc, by simp [hck]; omega⟩
+    · obtain ⟨c, hc, rfl⟩ := ih h₁ h₂
+      exact ⟨false :: c, hcons false (by simp) hc, by simp⟩
+    · obtain ⟨c, hc, hck⟩ := ih (k := k - 1) (by omega) (by omega)
+      exact ⟨true :: c, hcons true (by simp) hc, by simp [hck]; omega⟩
+
+/-- Under a cardinal quantifier the per-boy supervaluation is true when every number between the
+true and the non-false cells is in the quantifier's set. -/
+theorem pointwise_cardinal_eq_one_iff {s : Set ℕ} [DecidablePred (· ∈ s)] :
+    pointwise (NumberTree.cardinal s) d = 1 ↔
+      ∀ k, d.count 1 ≤ k → k ≤ d.count 1 + d.count 0 → k ∈ s := by
+  rw [pointwise, SignType.supervaluation_eq_one_iff]
+  refine ⟨fun h k h₁ h₂ ↦ ?_, fun h c hc ↦ ?_⟩
+  · obtain ⟨c, hc, rfl⟩ := exists_mem_resolutions_count_true h₁ h₂
+    exact h c (List.mem_toFinset.2 hc)
+  · have := count_true_mem_resolutions (List.mem_toFinset.1 hc)
+    exact h _ this.1 this.2
+
+/-- Under a cardinal quantifier the per-boy supervaluation is false when no number between the
+true and the non-false cells is in the quantifier's set. -/
+theorem pointwise_cardinal_eq_neg_one_iff {s : Set ℕ} [DecidablePred (· ∈ s)] :
+    pointwise (NumberTree.cardinal s) d = -1 ↔
+      ∀ k, d.count 1 ≤ k → k ≤ d.count 1 + d.count 0 → k ∉ s := by
+  rw [pointwise, SignType.supervaluation_eq_neg_one_iff]
+  refine ⟨fun h k h₁ h₂ ↦ ?_, fun h ↦ ⟨⟨_, List.mem_toFinset.2 (resolve_mem_resolutions .k3 d)⟩,
+    fun c hc ↦ ?_⟩⟩
+  · obtain ⟨c, hc, rfl⟩ := exists_mem_resolutions_count_true h₁ h₂
+    exact h.2 c (List.mem_toFinset.2 hc)
+  · have := count_true_mem_resolutions (List.mem_toFinset.1 hc)
+    exact h _ this.1 this.2
+
+/-- A display without gaps, read off a resolution, has that resolution alone. -/
+theorem mem_resolutions_map_ofProp {c' : List Bool} :
+    c' ∈ resolutions (c.map fun b : Bool ↦ SignType.ofProp b) ↔ c' = c := by
+  rw [resolutions, List.map_map, List.mem_sections, List.forall₂_map_right_iff]
+  constructor
+  · intro h
+    exact List.forall₂_eq_eq_eq ▸ h.imp fun b b' hb ↦ by cases b' <;> simp_all
+  · rintro rfl
+    exact List.forall₂_same.2 fun b _ ↦ by cases b <;> simp
+
+/-- The per-boy supervaluation of a display without gaps is the quantifier's value at it. -/
+theorem pointwise_map_ofProp :
+    pointwise q (c.map fun b : Bool ↦ SignType.ofProp b) = SignType.ofProp (holds q c) := by
+  have : (resolutions (c.map fun b : Bool ↦ SignType.ofProp b)).toFinset = {c} := by
+    ext c'; simp [mem_resolutions_map_ofProp]
+  rw [pointwise, this, SignType.supervaluation_singleton]
+
 end Pointwise
 
 /-! ### The experiments -/

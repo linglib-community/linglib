@@ -6,7 +6,7 @@ public import Eval.Homogeneity.Account
 /-!
 # Scoring accounts of homogeneity on Križ and Chemla (2015)
 
-The data are the gap tests of Table 2 of [kriz-chemla-2015], read from
+The data are the gap tests of Table 2 of Križ and Chemla, read from
 `Data/Experiments/KrizChemla2015`: for each environment of the definite and each gap condition,
 whether the experiments found a truth-value gap, outside the A2 and B2 tests of *no* that the
 paper discounts (`_root_.KrizChemla2015.GapTest.Discounted`). An account predicts a gap in a
@@ -14,10 +14,11 @@ configuration when it gives every item realizing the configuration the value 0, 
 gives none of them 0 (`gaps`). Spector's supervaluation fits every configuration
 (`verdict_supervaluation`). The literal meaning against its global exhaustification misses the
 gaps under negation, under *no* and in the GAP?? configuration of *exactly 2*
-(`verdict_exhaustification`), and the supervaluation over each individual's resolution and the universal
-presupposition predict a gap in its GAP? configuration, where none was found (`verdict_pointwise`,
-`verdict_presupposition`), and so do Križ and Spector's candidate interpretations
-(`verdict_krizSpector`). The accounts that need a context are silent (`verdict_contextual`).
+(`verdict_exhaustification`), and the supervaluation over each individual's resolution and the
+universal presupposition predict a gap in its GAP? configuration, where none was found
+(`verdict_pointwise`, `verdict_presupposition`), and so do Križ and Spector's candidate
+interpretations (`verdict_krizSpector`). The accounts that need a context are silent
+(`verdict_contextual`).
 
 ## References
 
@@ -151,7 +152,15 @@ theorem verdict_contextual :
       gaps.verdict .implicatureEnriched (.no, .gap) = .silent ∧
       gaps.verdict .implicatureEnriched (.exactly, .gap) = .silent ∧
       gaps.verdict .implicatureEnriched (.exactly, .gapQ) = .silent ∧
-      gaps.verdict .implicatureEnriched (.exactly, .gapQQ) = .silent := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
+      gaps.verdict .implicatureEnriched (.exactly, .gapQQ) = .silent ∧
+      gaps.verdict .presuppositionalExhaustification (.unembedded, .gap) = .silent ∧
+      gaps.verdict .presuppositionalExhaustification (.negation, .gap) = .silent ∧
+      gaps.verdict .presuppositionalExhaustification (.all, .gap) = .silent ∧
+      gaps.verdict .presuppositionalExhaustification (.no, .gap) = .silent ∧
+      gaps.verdict .presuppositionalExhaustification (.exactly, .gap) = .silent ∧
+      gaps.verdict .presuppositionalExhaustification (.exactly, .gapQ) = .silent ∧
+      gaps.verdict .presuppositionalExhaustification (.exactly, .gapQQ) = .silent := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_,
+    ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
 
 end Eval.Homogeneity.KrizChemla2015

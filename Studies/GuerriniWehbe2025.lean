@@ -10,11 +10,12 @@ public import Linglib.Data.Examples.GuerriniWehbe2025
 Guerrini and Wehbe derive homogeneity by presuppositional exhaustification. A plural definite
 contributes Bar-Lev's existential pluralization, and the operator `pex` of Del Pinal, Bassi and
 Sauerland asserts it while presupposing that its subdomain alternatives are all true or all false.
-Accommodating the presupposition yields the universal reading as long as no alternative for a single
-atom is pruned (`pexPlural_eq_one_iff`), and pruning those yields non-maximal readings, at least
-two of three students for the pairs of (21) (`pexPlural_pairs_eq_one_iff`). Under negation the
-presupposition projects and the negated existential already entails it, so pruning has no effect
-(`pexPlural_eq_neg_one_iff`).
+Accommodating the presupposition yields the universal reading as long as no alternative for a
+single atom is pruned (`pexPlural_eq_one_iff`), and pruning those yields non-maximal readings, all
+but `m - 1` of the atoms for the alternatives over `m` of them
+(`pexPlural_subDisjsOfCard_eq_one_iff`), at least two of three students for the pairs of (21)
+(`pexPlural_pairs_eq_one_iff`). Under negation the presupposition projects and the negated
+existential already entails it, so pruning has no effect (`pexPlural_eq_neg_one_iff`).
 Non-maximality under negation needs local accommodation below negation and a second `pex` over the
 negated universal, which is the positive case for the negated predicate
 (`localAccommodation_nonMaximal`).
@@ -125,6 +126,70 @@ theorem pexPlural_eq_neg_one_iff : pexPlural D x P R w = -1 ↔ ∀ a ∈ x, a �
   obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 hw
   exact hnone a (Finset.mem_inter.1 ha).1 (Finset.mem_inter.1 ha).2 hPa
 
+/-- A sub-disjunction over fewer atoms than the plurality has is not the plurality's. -/
+private theorem biUnion_ne_of_card_lt (h : Separating D x P) {T : Finset Atom} (hT : T ⊆ x ∩ D)
+    (hlt : T.card < (x ∩ D).card) : ⋃ i ∈ T, atom P i ≠ ⋃ i ∈ x ∩ D, atom P i := by
+  intro heq
+  obtain ⟨b, hb, hbT⟩ := Finset.exists_mem_notMem_of_card_lt_card hlt
+  obtain ⟨wb, hwb⟩ := h.single b hb
+  have hin : wb ∈ ⋃ i ∈ x ∩ D, atom P i := Set.mem_biUnion hb ((hwb b hb).2 rfl)
+  rw [← heq] at hin
+  obtain ⟨i, hi, hPi⟩ := Set.mem_iUnion₂.1 hin
+  exact hbT (((hwb i (hT hi)).1 hPi) ▸ hi)
+
+section Pruning
+
+variable [∀ a w, Decidable (P a w)]
+
+/-- Keeping the alternatives over `m` atoms, as (21) keeps the pairs, `pex` makes the plural
+predication true after accommodation where all but at most `m - 1` of its atoms satisfy the
+predicate, the reading Bar-Lev's pruning yields (`exhIEII_pruned_eq_atLeast`). -/
+theorem pexPlural_subDisjsOfCard_eq_one_iff (h : Separating D x P) {m : ℕ} (hm : 0 < m)
+    (hmn : m ≤ (x ∩ D).card) :
+    pexPlural D x P (subDisjsOfCard (x ∩ D) (atom P) m) w = 1 ↔
+      w ∈ atLeast D x P ((x ∩ D).card + 1 - m) := by
+  have hne : (x ∩ D).Nonempty := Finset.card_pos.1 (by omega)
+  rw [pexIEII_eq_one_iff, pexPlural_ne_zero_iff h hne, mem_atLeast, count]
+  have key := forall_card_eq_exists_mem_iff (I := x ∩ D) (T := (x ∩ D).filter (P · w))
+    (Finset.filter_subset _ _) (m := m)
+  simp only [Finset.mem_filter] at key
+  have hS : subDisjsOfCard (x ∩ D) (atom P) m ⊆ supClosure (atom P '' ↑(x ∩ D)) :=
+    subDisjsOfCard_subset_supClosure hne hm
+  constructor
+  · rintro ⟨hhom, hw⟩
+    suffices ∀ T ⊆ x ∩ D, T.card = m → ∃ i ∈ T, i ∈ x ∩ D ∧ P i w by
+      have := key.1 this; omega
+    intro T hT hcard
+    rcases hmn.lt_or_eq with hlt | rfl
+    · have hmem (T : Finset Atom) (hT : T ⊆ x ∩ D) (hcard : T.card = m) :
+          ⋃ i ∈ T, atom P i ∈ supClosure (atom P '' ↑(x ∩ D)) \ {⋃ i ∈ x ∩ D, atom P i} ∩
+            subDisjsOfCard (x ∩ D) (atom P) m :=
+        have hR : ⋃ i ∈ T, atom P i ∈ subDisjsOfCard (x ∩ D) (atom P) m := .inr ⟨T, hT, hcard, rfl⟩
+        ⟨⟨hS hR, biUnion_ne_of_card_lt h hT (hcard ▸ hlt)⟩, hR⟩
+      rcases hhom with hall | hnone
+      · obtain ⟨i, hi, hPi⟩ := Set.mem_iUnion₂.1 (hall _ (hmem T hT hcard))
+        exact ⟨i, hi, hT hi, hPi⟩
+      · obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 hw
+        obtain ⟨T', haT', hT', hcard'⟩ := Finset.exists_subsuperset_card_eq
+          (Finset.singleton_subset_iff.2 ha) (by rw [Finset.card_singleton]; exact hm) hlt.le
+        exact absurd (Set.mem_biUnion (haT' (Finset.mem_singleton_self a)) hPa)
+          (hnone _ (hmem T' hT' hcard'))
+    · obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 hw
+      rw [Finset.eq_of_subset_of_card_le hT hcard.ge]
+      exact ⟨a, ha, ha, hPa⟩
+  · intro hk
+    have hall := key.2 (by omega)
+    have hw : w ∈ ⋃ i ∈ x ∩ D, atom P i := by
+      obtain ⟨i, hi⟩ := Finset.card_pos.1 (show 0 < ((x ∩ D).filter (P · w)).card by omega)
+      exact Set.mem_biUnion (Finset.mem_filter.1 hi).1 (Finset.mem_filter.1 hi).2
+    refine ⟨.inl ?_, hw⟩
+    rintro α ⟨-, rfl | ⟨T, hT, hcard, rfl⟩⟩
+    · exact hw
+    · obtain ⟨i, hi, -, hPi⟩ := hall T hT hcard
+      exact Set.mem_biUnion hi hPi
+
+end Pruning
+
 end Plural
 
 /-! ### Post-Accommodation Informativity (§3) -/
@@ -165,46 +230,14 @@ Worlds record who smiled, and `holds a w` says that `a` smiled at `w`. -/
 
 section Students
 
-open Finset in
-private theorem mem_pairs {α : Set (Finset (Fin 3))} :
-    α ∈ supClosure (atom holds '' ((univ ∩ univ : Finset (Fin 3)) : Set (Fin 3))) \
-        {⋃ b ∈ (univ ∩ univ : Finset (Fin 3)), atom holds b} ∩ subDisjsOfCard univ (atom holds) 2 ↔
-      ∃ S : Finset (Fin 3), S.card = 2 ∧ α = ⋃ b ∈ S, atom holds b := by
-  constructor
-  · rintro ⟨⟨-, hne⟩, rfl | ⟨S, -, hcard, rfl⟩⟩
-    · exact absurd (Set.mem_singleton _) hne
-    · exact ⟨S, hcard, rfl⟩
-  · rintro ⟨S, hcard, rfl⟩
-    refine ⟨⟨Set.mem_supClosure_image.2 ⟨S, card_pos.1 (by omega), by simp, rfl⟩, fun heq ↦ ?_⟩,
-      .inr ⟨S, subset_univ _, hcard, rfl⟩⟩
-    obtain ⟨k, hk⟩ : ∃ k, k ∉ S := by
-      by_contra! h
-      have := card_le_card (fun a _ ↦ h a : (univ : Finset (Fin 3)) ⊆ S)
-      simp [hcard] at this
-    have hin : ({k} : Finset (Fin 3)) ∈ ⋃ b ∈ (univ ∩ univ : Finset (Fin 3)), atom holds b :=
-      Set.mem_biUnion (by simp) (mem_singleton_self k)
-    rw [← Set.mem_singleton_iff.1 heq] at hin
-    obtain ⟨a, haS, ha⟩ := Set.mem_iUnion₂.1 hin
-    exact hk (mem_singleton.1 ha ▸ haS)
-
 /-- In (21), pruning to the alternatives over pairs of the three students makes *the students
 smiled* true after accommodation where at least two of them smiled. -/
 theorem pexPlural_pairs_eq_one_iff (w : Finset (Fin 3)) :
     pexPlural Finset.univ Finset.univ holds (subDisjsOfCard Finset.univ (atom holds) 2) w = 1 ↔
       2 ≤ w.card := by
-  rw [pexIEII_eq_one_iff, pexPlural_ne_zero_iff (separating_holds _ _) ⟨0, by simp⟩, Homogeneous]
-  simp only [mem_pairs, forall_exists_index, and_imp]
-  have key : ((∀ S : Finset (Fin 3), S.card = 2 → w ∈ ⋃ b ∈ S, atom holds b) ∨
-      ∀ S : Finset (Fin 3), S.card = 2 → w ∉ ⋃ b ∈ S, atom holds b) ∧
-      w ∈ ⋃ b ∈ Finset.univ ∩ Finset.univ, atom holds b ↔ 2 ≤ w.card := by
-    simp only [Set.mem_iUnion, exists_prop, atom, Set.mem_ofPred_eq]
-    revert w; decide
-  rw [← key]
-  constructor
-  · rintro ⟨h1 | h1, h2⟩
-    exacts [⟨.inl fun S hS ↦ h1 _ S hS rfl, h2⟩, ⟨.inr fun S hS ↦ h1 _ S hS rfl, h2⟩]
-  · rintro ⟨h1 | h1, h2⟩
-    exacts [⟨.inl fun _ S hS h ↦ h ▸ h1 S hS, h2⟩, ⟨.inr fun _ S hS h ↦ h ▸ h1 S hS, h2⟩]
+  have h := pexPlural_subDisjsOfCard_eq_one_iff (w := w) (separating_holds Finset.univ
+    Finset.univ) (m := 2) two_pos (by simp)
+  simpa [Finset.inter_self, count_holds] using h
 
 /-- Student `a` did not smile at `w`. -/
 abbrev notSmiled (a : Fin 3) (w : Finset (Fin 3)) : Prop := a ∉ w
