@@ -264,7 +264,7 @@ def rankings : Finset (Ranking (Fin 20) 20) := consistentTotalOrders finnishGram
 
 /-- A tableau candidate that every consistent ranking picks. -/
 def Shape.Categorical (s : Shape) (cand : List Syllable) : Prop :=
-  ∀ σ ∈ rankings, PicksAt Shape.cands tableauCon σ s cand
+  ∀ σ ∈ rankings, PicksAt ⟨Shape.cands, tableauCon⟩ σ s cand
 
 /-- Monosyllabic stems take the strong variant (32): *mai.den*, not *ma.jen* (33). -/
 theorem maa_strong : Shape.Categorical .maa [H', H] := fun _ hσ =>
@@ -335,7 +335,7 @@ def con : ConstraintSet (Motif × Variant) (Fin 20) :=
 
 /-- The rankings under which variant `v` wins motif `m`. -/
 def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20) 20) :=
-  rankings.filter fun σ => PicksAt (fun _ => Finset.univ) con σ m v
+  rankings.filter fun σ => PicksAt ⟨fun _ ↦ Finset.univ, con⟩ σ m v
 
 /-- The deciding-stratum count: once the strata above `k` tie, the rankings won by `v`
 stand to all rankings as stratum `k`'s constraints favoring `v` stand to its active ones. -/

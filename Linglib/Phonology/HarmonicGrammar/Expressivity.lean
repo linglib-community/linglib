@@ -35,6 +35,8 @@ Law data.
   winners are its HG winners.
 * `maxent_ot_limit`: MaxEnt concentrates on the OT winner as the weights are scaled up.
 * `RealizationProblem.realizedByRanking_iff_satisfiedBy`: OT-realization is ERC satisfaction.
+* `ConstraintSystem.exists_hgLanguage_eq_language`: on finitely many inputs every OT language is
+  an HG language.
 * `RealizationProblem.IsOTRealizable.isHGRealizable`, `hg_strictly_contains_ot`: OT is strictly
   contained in HG.
 * `RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable`: partially ordered grammars
@@ -215,27 +217,24 @@ variable {Input Output ι : Type*} {n : ℕ}
 
 /-! ### Realization problems -/
 
-/-- A realization problem is a target mapping that a single grammar over the constraint set `con`
-    must realize on every input at once. For OT it is the data of [tesar-smolensky-1995]'s ranking
-    problem. -/
-structure RealizationProblem (Input : Type*) (Output : Type*) (ι : Type*) where
+/-- A realization problem is a constraint system with a target output for each of finitely many
+    inputs, which a single grammar must select on every input at once. For OT it is the data of
+    [tesar-smolensky-1995]'s ranking problem. -/
+structure RealizationProblem (Input : Type*) (Output : Type*) (ι : Type*)
+    extends ConstraintSystem Input Output ι where
   /-- The grammar handles a finite set of inputs. -/
   inputs : Finset Input
-  /-- Each input has a finite candidate set. -/
-  cands : Input → Finset Output
-  /-- The constraints, evaluated on input–output mappings. -/
-  con : ConstraintSet (Input × Output) ι
   /-- The grammar must select the target output on each input. -/
   target : Input → Output
-  /-- Each target output is in its input's candidate set. -/
-  target_mem : ∀ i ∈ inputs, target i ∈ cands i
+  /-- Each target output is a candidate of its input. -/
+  target_mem : ∀ i ∈ inputs, target i ∈ gen i
 
 namespace RealizationProblem
 
 /-- The weighting `w` *HG-realizes* the target when on every input the target is the sole
     candidate of greatest harmony. -/
 def realizedByWeighting [Fintype ι] (P : RealizationProblem Input Output ι) (w : ι → ℝ) : Prop :=
-  ∀ i ∈ P.inputs, (P.cands i).argmax (harmonyScore (P.con.comap (i, ·)) w) = {P.target i}
+  ∀ i ∈ P.inputs, P.hgLanguage w i = {P.target i}
 
 /-- A problem is HG-realizable when some non-negative weighting realizes its target.
     Non-negativity is [pater-2009]'s standard HG; [coetzee-pater-2011] also discuss negative
@@ -246,7 +245,7 @@ def IsHGRealizable [Fintype ι] (P : RealizationProblem Input Output ι) : Prop 
 /-- The ranking `σ` *OT-realizes* the target when on every input it picks the target, the sole
     winner of the input's tableau under `σ`. -/
 def realizedByRanking (P : RealizationProblem Input Output ι) (σ : Ranking ι n) : Prop :=
-  ∀ i ∈ P.inputs, PicksAt P.cands P.con σ i (P.target i)
+  ∀ i ∈ P.inputs, PicksAt P.toConstraintSystem σ i (P.target i)
 
 /-- A problem is OT-realizable when some constraint ranking realizes its target. -/
 def IsOTRealizable (P : RealizationProblem Input Output (Fin n)) : Prop :=
@@ -266,12 +265,12 @@ instance [DecidableEq Output] (P : RealizationProblem Input Output (Fin n)) :
     candidate ([prince-2002]). -/
 def ercs [Fintype ι] [DecidableEq Output] (P : RealizationProblem Input Output ι) :
     Finset (ERC ι) :=
-  P.inputs.biUnion fun i => ((P.cands i).erase (P.target i)).image fun o =>
+  P.inputs.biUnion fun i => ((P.gen i).erase (P.target i)).image fun o =>
     ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o))
 
 theorem mem_ercs [Fintype ι] [DecidableEq Output] {P : RealizationProblem Input Output ι}
     {α : ERC ι} :
-    α ∈ P.ercs ↔ ∃ i ∈ P.inputs, ∃ o ∈ P.cands i, o ≠ P.target i ∧
+    α ∈ P.ercs ↔ ∃ i ∈ P.inputs, ∃ o ∈ P.gen i, o ≠ P.target i ∧
       ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o)) = α := by
   simp only [ercs, Finset.mem_biUnion, Finset.mem_image, Finset.mem_erase]
   tauto
@@ -280,7 +279,7 @@ theorem mem_ercs [Fintype ι] [DecidableEq Output] {P : RealizationProblem Input
     satisfies every winner–loser ERC ([prince-2002]). -/
 theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
     {P : RealizationProblem Input Output ι} {σ : Ranking ι n}
-    (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
+    (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
       (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
     P.realizedByRanking σ ↔ ∀ α ∈ P.ercs, α.SatisfiedBy σ := by
   constructor
@@ -298,7 +297,7 @@ theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
     ([prince-2002]). -/
 theorem isOTRealizable_iff_linearExtensions_nonempty [DecidableEq Output]
     {P : RealizationProblem Input Output (Fin n)}
-    (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
+    (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
       (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
     P.IsOTRealizable ↔ (ERC.linearExtensions P.ercs).Nonempty :=
   exists_congr fun _ => (realizedByRanking_iff_satisfiedBy hvp).trans
@@ -308,24 +307,33 @@ end RealizationProblem
 
 /-! ### Forward containment — OT ⊆ HG -/
 
-/-- An OT-realizable problem is HG-realizable by exponentially separated weights permuted by the
-    ranking, with the largest violation count as the separation bound. -/
-theorem RealizationProblem.IsOTRealizable.isHGRealizable
-    {P : RealizationProblem Input Output (Fin n)} (h : P.IsOTRealizable) : P.IsHGRealizable := by
-  obtain ⟨σ, hσ⟩ := h
-  set M := (P.inputs.sup fun i ↦ (P.cands i).sup fun o ↦ Finset.univ.sup (P.con · (i, o))) + 1
-  have hbound : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, ∀ k, P.con k (i, o) ≤ M := fun i hi o ho k =>
-    ((Finset.le_sup (f := (P.con · (i, o))) (Finset.mem_univ k)).trans
-      ((Finset.le_sup (f := fun o ↦ Finset.univ.sup (P.con · (i, o))) ho).trans
-        (Finset.le_sup (f := fun i ↦ (P.cands i).sup fun o ↦ Finset.univ.sup (P.con · (i, o)))
+/-- On a finite set of inputs, the language of a ranking is the HG language of exponentially
+    separated weights read off the ranking, with the largest violation count as the separation
+    bound: every OT language is an HG language. -/
+theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [Fintype ι]
+    (S : ConstraintSystem Input Output ι) (X : Finset Input) (σ : Ranking ι n) :
+    ∃ w : ι → ℝ, 0 ≤ w ∧ ∀ i ∈ X, S.hgLanguage w i = S.language σ i := by
+  set M := (X.sup fun i ↦ (S.gen i).sup fun o ↦ Finset.univ.sup (S.con · (i, o))) + 1
+  have hbound : ∀ i ∈ X, ∀ o ∈ S.gen i, ∀ k, S.con k (i, o) ≤ M := fun i hi o ho k =>
+    ((Finset.le_sup (f := (S.con · (i, o))) (Finset.mem_univ k)).trans
+      ((Finset.le_sup (f := fun o ↦ Finset.univ.sup (S.con · (i, o))) ho).trans
+        (Finset.le_sup (f := fun i ↦ (S.gen i).sup fun o ↦ Finset.univ.sup (S.con · (i, o)))
           hi))).trans (Nat.le_succ _)
   refine ⟨expWeights n M ∘ σ.symm, fun k => (expWeights_pos n M (σ.symm k)).le, fun i hi ↦ ?_⟩
-  rw [← hσ i hi, Tableau.optimal_eq_argmax_harmonyScore _
+  rw [ConstraintSystem.hgLanguage, ConstraintSystem.language,
+    Tableau.optimal_eq_argmax_harmonyScore _
     (expWeights_separated n M (Nat.succ_pos _)) fun o ho k ↦ hbound i hi o ho (σ k)]
   congr 1
   funext o
   simp only [harmonyScore, comp_equiv_symm_dotProduct]
   rfl
+
+/-- An OT-realizable problem is HG-realizable. -/
+theorem RealizationProblem.IsOTRealizable.isHGRealizable
+    {P : RealizationProblem Input Output (Fin n)} (h : P.IsOTRealizable) : P.IsHGRealizable := by
+  obtain ⟨σ, hσ⟩ := h
+  obtain ⟨w, hw, h⟩ := P.exists_hgLanguage_eq_language P.inputs σ
+  exact ⟨w, hw, fun i hi ↦ (h i hi).trans (hσ i hi)⟩
 
 /-! ### Strict containment — the cumulativity gap -/
 
@@ -340,7 +348,7 @@ theorem hg_strictly_contains_ot :
       P.IsHGRealizable ∧ ¬ P.IsOTRealizable := by
   refine ⟨Fin 3, Bool, 3,
     { inputs := Finset.univ
-      cands := fun _ => Finset.univ
+      gen := fun _ => Finset.univ
       con := fun k x ↦ if x.2 then ![![0, 1, 0], ![0, 0, 1], ![0, 1, 1]] x.1 k else ![1, 0, 0] k
       target := ![true, true, false]
       target_mem := fun _ _ => Finset.mem_univ _ },
