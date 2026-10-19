@@ -1,19 +1,15 @@
 module
 
 public import Linglib.Data.PHOIBLE.Inventories.Czech
-public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # Czech phonology
 
-This file defines the phonemes of Czech as segments, the natural classes of its velar
-alternations, the second palatalization of velars and the reading of Czech spelling as
-phonemes, after Short's description of the language. Czech has five vowels, each short and
-long, and twenty-five consonantal phonemes. The second palatalization replaces *k* by *c*, *h*
-and *g* by *z*, and *ch* by *š*. Short files *h* among the laryngeals, and in the features of
-the PHOIBLE chart it is not dorsal, so the four segments the rule changes are not the dorsals.
-They are a natural class all the same, the obstruents that are neither labial nor coronal.
+This file defines the phonemes of Czech as segments, after Short's description of the language,
+with the second palatalization of velars and the reading of Czech spelling as phonemes. Czech
+has five vowels, each short and long, and twenty-five consonantal phonemes. The second
+palatalization replaces *k* by *c*, *h* and *g* by *z*, and *ch* by *š*.
 
 The spelling is close to the phonemes. A palatal *ď*, *ť* or *ň* is written on a following *ě*
 or *i*, as in *dě* and *di*, a labial before *ě* is followed by /j/ and *m* by /ň/, and *i* and
@@ -23,9 +19,8 @@ or *i*, as in *dě* and *di*, a labial before *ě* is followed by /j/ and *m* by
 
 * `Czech.Phonology.a`, `Czech.Phonology.ch` and the like: the phonemes, named by the letters
   Short writes them with, and `Czech.Phonology.inventory` the set of them.
-* `Czech.Phonology.dorsals`, `Czech.Phonology.palatalizing`: the velars *k*, *g* and *ch*, and
-  these with *h*.
-* `Czech.Phonology.secondPalatalization`: the second palatalization of velars.
+* `Czech.Phonology.palatalizing`, `Czech.Phonology.secondPalatalization`: the segments the second
+  palatalization of velars changes, *k*, *g*, *h* and *ch*, and the rule.
 * `Czech.Phonology.letterValues`: the phonemes each letter writes, with `valuesBeforeĚ` and
   `valuesBeforeI` for the letters a following *ě* or *i* reads differently.
 * `Czech.Phonology.ofString?`, `Czech.Phonology.letter`: the phonemes a word writes, and the
@@ -33,16 +28,9 @@ or *i*, as in *dě* and *di*, a labial before *ě* is followed by /j/ and *m* by
 
 ## Main results
 
-* `Czech.Phonology.exists_mem_ces`, `Czech.Phonology.ofPhoneme_mem_iff`: the phonemes are those
-  of PHOIBLE's Czech inventory, save its three diphthongs.
-* `Czech.Phonology.naturalClass_palatalizing`: the segments the second palatalization changes
-  are the obstruents that are neither labial nor coronal.
-* `Czech.Phonology.voiced_mem_iff`, `Czech.Phonology.devoiced_mem_iff`: the obstruents paired
-  in [voice], all but *c*, *č*, *ch* and *h*.
-* `Czech.Phonology.secondPalatalization_g`, `Czech.Phonology.not_exists_merge_eq`: the reflex
-  of *g* is that of *k* voiced and de-affricated, so no one feature change gives the rule.
-* `Czech.Phonology.forall_mem_values`, `Czech.Phonology.mem_inventory_of_mem_ofString?`: the
-  spelling writes phonemes of the inventory.
+* `Czech.Phonology.exists_mem_ces`: each phoneme is the segment of a phoneme of PHOIBLE's Czech
+  inventory.
+* `Czech.Phonology.isSome_letter`: each phoneme has a letter.
 
 ## Implementation notes
 
@@ -197,12 +185,6 @@ def vowels : Finset Segment := inventory.filter (·.IsVowel)
 /-- The consonantal phonemes of the inventory. -/
 def consonants : Finset Segment := inventory.filter (¬ ·.IsVowel)
 
-/-- The vowels are the five. -/
-theorem vowels_eq : vowels = {a, e, i, o, u} := by decide +kernel
-
-/-- "There are twenty-five consonantal phonemes" (p. 457). -/
-theorem card_consonants : consonants.card = 25 := by decide +kernel
-
 /-- The segment of a PHOIBLE phoneme, as a vowel where PHOIBLE classes it with the vowels. -/
 def ofPhoneme (y : Data.PHOIBLE.Phoneme) : Segment :=
   if y.segmentClass = .vowel then vowel y.features else .ofChart y.features
@@ -212,127 +194,16 @@ theorem exists_mem_ces :
     ∀ x ∈ inventory, ∃ y ∈ Inventories.Czech.ces.phonemes, x = ofPhoneme y := by
   decide +kernel
 
-/-- Every phoneme of PHOIBLE's Czech inventory has the segment of one here, a long vowel that of
-its short counterpart, save the three diphthongs, whose height changes. -/
-theorem ofPhoneme_mem_iff : ∀ y ∈ Inventories.Czech.ces.phonemes,
-    ofPhoneme y ∈ inventory ↔ y.glyph ∉ ["au", "ou", "ɛu"] := by
-  decide +kernel
-
-/-! ### Natural classes -/
-
-/-- The description of the velar obstruents, dorsal and not coronal. -/
-def velar : Segment := Segment.ofSpecs [(.sonorant, false), (.dorsal, true), (.coronal, false)]
-
-/-- The dorsals, the natural class of the velar obstruents. -/
-def dorsals : Finset Segment := velar.naturalClass inventory
-
-/-- The dorsals are Short's velars *k*, *g* and *ch*. -/
-theorem dorsals_eq : dorsals = {k, g, ch} := by decide +kernel
-
-/-- The dorsals are a natural class. -/
-theorem isNaturalClass_dorsals : IsNaturalClass inventory dorsals :=
-  isNaturalClass_naturalClass ⟨k, by decide +kernel⟩
+/-! ### The second palatalization -/
 
 /-- The segments that the second palatalization changes, *k*, *g*, *h* and *ch* (p. 462). -/
 def palatalizing : Finset Segment := {k, g, h, ch}
-
-/-- The palatalizing segments are the dorsals and *h*, which is not dorsal. Short files it
-among the laryngeals (p. 457), although it alternates with *z* as *g* does (p. 462). -/
-theorem palatalizing_eq : palatalizing = insert h dorsals ∧ h.HasValue .dorsal false := by
-  decide +kernel
-
-/-- The palatalizing segments are nonetheless a natural class, the obstruents that are neither
-labial nor coronal: every other obstruent of the inventory is labial or coronal. -/
-theorem naturalClass_palatalizing :
-    (Segment.ofSpecs [(.sonorant, false), (.labial, false), (.coronal, false)]).naturalClass
-      inventory = palatalizing := by
-  decide +kernel
-
-/-- The palatalizing segments are a natural class. -/
-theorem isNaturalClass_palatalizing : IsNaturalClass inventory palatalizing :=
-  naturalClass_palatalizing ▸ isNaturalClass_naturalClass ⟨k, by decide +kernel⟩
-
-/-! ### Voicing pairs -/
-
-/-- The voiceless obstruents whose counterpart in [voice] is a phoneme are all but *c*, *č* and
-*ch*, whose counterparts [dz], [dž] and [ɣ] occur only as positional variants
-(pp. 457–458). -/
-theorem voiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false → x.HasValue .voice false →
-    (x.setFeature .voice true ∈ inventory ↔ x ≠ c ∧ x ≠ č ∧ x ≠ ch) := by
-  decide +kernel
-
-/-- The counterparts in [voice] of *c*, *č* and *ch* are [dz], [dž] and [ɣ]. Where /x/ might
-assimilate, "it voices not to /h/, but to [ɣ]" (p. 458). -/
-theorem setFeature_voice_c_č_ch :
-    c.setFeature .voice true = .ofChart .«dz» ∧ č.setFeature .voice true = .ofChart .«d̠ʒ» ∧
-      ch.setFeature .voice true = .ofChart .«ɣ» := by
-  decide +kernel
-
-/-- The voiced obstruents whose counterpart in [voice] is a phoneme are all but *h*, whose
-counterpart is the voiceless glottal [h]. Where voice is neutralized Short gives /x/ as the
-voiceless counterpart of /h/ (p. 458), which differs from it in more than [voice]. -/
-theorem devoiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false →
-    x.HasValue .voice true → (x.setFeature .voice false ∈ inventory ↔ x ≠ h) := by
-  decide +kernel
-
-/-- *h* and *ch*, "a nearly matching pair of fricatives" (p. 462), differ in [voice],
-[spread glottis] and [consonantal], and in [dorsal] and the tongue-body features that go with
-it. -/
-theorem h_ch : Finset.univ.filter (fun ft ↦ h ft ≠ ch ft) =
-    {.consonantal, .voice, .spreadGlottis, .dorsal, .high, .low, .front, .back} := by
-  decide +kernel
-
-/-! ### The second palatalization -/
 
 /-- The second palatalization of velars, "*k* › *c*; *h* › *z*; *ch* › *š* (NB not *s*). Here
 too the reflex of *g* has de-affricated from *dz* to *z*" (p. 462). Every other segment is left
 as it is. -/
 def secondPalatalization (x : Segment) : Segment :=
   if x = k then c else if x = g ∨ x = h then z else if x = ch then š else x
-
-/-- The second palatalization leaves every segment but the four as it is. -/
-theorem secondPalatalization_of_notMem {x : Segment} (hx : x ∉ palatalizing) :
-    secondPalatalization x = x := by
-  simp only [palatalizing, Finset.mem_insert, Finset.mem_singleton, not_or] at hx
-  simp [secondPalatalization, hx]
-
-/-- The reflexes are *c*, *z* and *š*. -/
-theorem image_secondPalatalization : palatalizing.image secondPalatalization = {c, z, š} := by
-  decide +kernel
-
-/-- The reflex of a palatalizing segment is a phoneme, a coronal strident that is not dorsal,
-and has its voicing. -/
-theorem secondPalatalization_mem : ∀ x ∈ palatalizing,
-    secondPalatalization x ∈ inventory ∧ (secondPalatalization x).HasValue .coronal true ∧
-      (secondPalatalization x).HasValue .strident true ∧
-      (secondPalatalization x).HasValue .dorsal false ∧
-      secondPalatalization x .voice = x .voice := by
-  decide +kernel
-
-/-- The reflex of *g* is that of *k* voiced, [dz], de-affricated, and *h*, the Czech reflex of
-Proto-Slavic *g* (p. 461), shares it. *k* and *g* differ in [voice] alone, and their reflexes in
-[continuant] as well. -/
-theorem secondPalatalization_g :
-    (secondPalatalization k).setFeature .voice true = .ofChart .«dz» ∧
-      (Segment.ofChart .«dz»).setFeature .continuant true = secondPalatalization g ∧
-      secondPalatalization h = secondPalatalization g ∧
-      Finset.univ.filter (fun ft ↦ k ft ≠ g ft) = {.voice} ∧
-      Finset.univ.filter (fun ft ↦ secondPalatalization k ft ≠ secondPalatalization g ft) =
-        {.continuant, .voice} := by
-  decide +kernel
-
-/-- No one feature change, merging the same values into each segment, takes both *k* and *g* to
-their reflexes, since the two agree in [continuant] and their reflexes do not. -/
-theorem not_exists_merge_eq :
-    ¬ ∃ d : Segment, (fun f ↦ (d f).or (k f)) = secondPalatalization k ∧
-      (fun f ↦ (d f).or (g f)) = secondPalatalization g := by
-  rintro ⟨d, hk, hg⟩
-  have h₁ := congrFun hk .continuant
-  have h₂ := congrFun hg .continuant
-  revert h₁ h₂
-  cases d .continuant with
-  | bot => decide +kernel
-  | coe v => cases v <;> decide +kernel
 
 /-! ### Spelling -/
 
@@ -392,109 +263,5 @@ def letter (x : Segment) : Option String :=
 
 /-- Each phoneme has a letter. -/
 theorem isSome_letter : ∀ x ∈ inventory, (letter x).isSome := by decide +kernel
-
-/-- Every letter writes phonemes of the inventory, before *ě*, *i* and *í* as elsewhere. -/
-theorem forall_mem_values : ∀ p ∈ letterValues ++ valuesBeforeĚ ++ valuesBeforeI,
-    ∀ x ∈ p.2, x ∈ inventory := by
-  decide +kernel
-
-private theorem mem_inventory_of_lookup {l : List (Char × List Segment)}
-    (hl : ∀ p ∈ l, p ∈ letterValues ++ valuesBeforeĚ ++ valuesBeforeI) {y : Char}
-    {w : List Segment} (h : l.lookup y = some w) : ∀ x ∈ w, x ∈ inventory := by
-  obtain ⟨l₁, l₂, rfl, -⟩ := List.lookup_eq_some_iff.1 h
-  exact forall_mem_values _ (hl _ (List.mem_append_right _ List.mem_cons_self))
-
-private theorem mem_inventory_of_mem_ofChar {y : Char} {w : List Segment}
-    (h : ofChar y = some w) : ∀ x ∈ w, x ∈ inventory :=
-  mem_inventory_of_lookup (fun _ hp ↦ by simp [hp]) h
-
-private theorem mem_inventory_of_mem_ofCharBeforeĚ {y : Char} {w : List Segment}
-    (h : ofCharBeforeĚ y = some w) : ∀ x ∈ w, x ∈ inventory := by
-  rcases Option.or_eq_some_iff.1 h with h | ⟨-, h⟩
-  · exact mem_inventory_of_lookup (fun _ hp ↦ by simp [hp]) h
-  · exact mem_inventory_of_mem_ofChar h
-
-private theorem mem_inventory_of_mem_ofCharBeforeI {y : Char} {w : List Segment}
-    (h : ofCharBeforeI y = some w) : ∀ x ∈ w, x ∈ inventory := by
-  rcases Option.or_eq_some_iff.1 h with h | ⟨-, h⟩
-  · exact mem_inventory_of_lookup (fun _ hp ↦ by simp [hp]) h
-  · exact mem_inventory_of_mem_ofChar h
-
-/-- The letters write phonemes of the inventory. -/
-theorem mem_inventory_of_mem_ofChars {w : List Char} {l : List Segment}
-    (h : ofChars w = some l) : ∀ x ∈ l, x ∈ inventory := by
-  fun_induction ofChars w generalizing l <;>
-    simp only [bind, Option.bind_eq_some_iff, pure, Option.some.injEq, Option.map_eq_map,
-      Option.map_eq_some_iff] at h
-  next _ ih =>
-    obtain ⟨l, hl, rfl⟩ := h
-    exact List.forall_mem_cons.2 ⟨by decide +kernel, ih hl⟩
-  next _ _ ih =>
-    obtain ⟨l₁, h₁, l, hl, rfl⟩ := h
-    exact List.forall_mem_append.2
-      ⟨mem_inventory_of_mem_ofCharBeforeĚ h₁, List.forall_mem_cons.2 ⟨by decide +kernel, ih hl⟩⟩
-  next _ _ ih =>
-    obtain ⟨l₁, h₁, l, hl, rfl⟩ := h
-    exact List.forall_mem_append.2
-      ⟨mem_inventory_of_mem_ofCharBeforeI h₁, List.forall_mem_cons.2 ⟨by decide +kernel, ih hl⟩⟩
-  next _ _ ih =>
-    obtain ⟨l₁, h₁, l, hl, rfl⟩ := h
-    exact List.forall_mem_append.2 ⟨mem_inventory_of_mem_ofCharBeforeI h₁,
-      List.forall_mem_cons.2 ⟨by decide +kernel, List.forall_mem_cons.2 ⟨by decide +kernel, ih hl⟩⟩⟩
-  next _ _ _ _ _ _ ih =>
-    obtain ⟨l₁, h₁, l, hl, rfl⟩ := h
-    exact List.forall_mem_append.2 ⟨mem_inventory_of_mem_ofChar h₁, ih hl⟩
-  next =>
-    subst h
-    simp
-
-/-- The spelling writes phonemes of the inventory. -/
-theorem mem_inventory_of_mem_ofString? {w : String} {l : List Segment}
-    (h : ofString? w = some l) : ∀ x ∈ l, x ∈ inventory :=
-  mem_inventory_of_mem_ofChars h
-
-/-- Length is phonemic, as in Short's pairs *dal* 'he gave' and *dál* 'further', *dul* 'blew'
-and *důl* 'mine', and *ryby* 'fish' and *rybí* 'fish-', where *y* and *i* write one vowel
-(p. 456). -/
-theorem ofString?_length :
-    ofString? "dal" = some [d, a, l] ∧ ofString? "dál" = some [d, a, a, l] ∧
-      ofString? "dul" = some [d, u, l] ∧ ofString? "důl" = some [d, u, u, l] ∧
-      ofString? "ryby" = some [r, i, b, i] ∧ ofString? "rybí" = some [r, i, b, i, i] := by
-  decide +kernel
-
-/-- The diphthong of *soud* 'court' against the vowel of *sud* 'barrel' (p. 456). -/
-theorem ofString?_diphthong :
-    ofString? "sud" = some [s, u, d] ∧ ofString? "soud" = some [s, o, u, d] := by
-  decide +kernel
-
-/-- *b*, *p*, *v* and *f* before *ě* are followed by /j/, and *m* by /ň/, in Short's *pěna*
-/pjena/ 'foam', *věno* /vjeno/ 'dowry', *harfě* /harfje/ 'harp' and *město* /mňesto/ 'town',
-and in *oběd* 'lunch', whose /objet/ has the final devoicing that `ofString?` leaves out
-(p. 459). -/
-theorem ofString?_labial_ě :
-    ofString? "pěna" = some [p, j, e, n, a] ∧ ofString? "věno" = some [v, j, e, n, o] ∧
-      ofString? "harfě" = some [h, a, r, f, j, e] ∧ ofString? "město" = some [m, ň, e, s, t, o] ∧
-      ofString? "oběd" = some [o, b, j, e, d] := by
-  decide +kernel
-
-/-- The alternation of *d* with *ď* before a front vowel, in Short's *mladý*, *mladí*, *mladě*
-'young' (p. 462), and *ď* written with the háček before a back vowel, as in *ďábel* 'devil'
-(p. 459). -/
-theorem ofString?_d_ď :
-    ofString? "mladý" = some [m, l, a, d, i, i] ∧ ofString? "mladí" = some [m, l, a, ď, i, i] ∧
-      ofString? "mladě" = some [m, l, a, ď, e] ∧ ofString? "ďábel" = some [ď, a, a, b, e, l] := by
-  decide +kernel
-
-/-- The alternation of *t* with *ť*, in Short's *krutý*, *krutí*, *krutě* 'cruel' (p. 462), and
-*ť* before a back vowel, as in *ťuhýk* 'shrike' (p. 459). -/
-theorem ofString?_t_ť :
-    ofString? "krutý" = some [k, r, u, t, i, i] ∧ ofString? "krutí" = some [k, r, u, ť, i, i] ∧
-      ofString? "krutě" = some [k, r, u, ť, e] ∧ ofString? "ťuhýk" = some [ť, u, h, i, i, k] := by
-  decide +kernel
-
-/-- The alternation of *n* with *ň*, in Short's *plný*, *plně* 'full' (p. 462). -/
-theorem ofString?_n_ň :
-    ofString? "plný" = some [p, l, n, i, i] ∧ ofString? "plně" = some [p, l, ň, e] := by
-  decide +kernel
 
 end Czech.Phonology
