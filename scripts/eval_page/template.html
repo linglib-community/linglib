@@ -90,7 +90,7 @@ table.board { border-collapse: separate; border-spacing: 0; width: 100%; font-si
 .board .obs { color: var(--primary); white-space: nowrap; }
 .board .obs.none { color: var(--secondary); font-style: italic; }
 .board .split { border-left: 1px solid var(--border); }
-.board .stip { display: block; font-size: 12px; }
+.board .stip { display: block; font-size: 12px; color: var(--secondary); }
 .board th[scope="row"], .board .corner {
   position: sticky; left: 0; z-index: 1; background: var(--theme); text-align: left;
   min-width: 14rem; max-width: 20rem; padding-left: 0; border-right: 1px solid var(--border);
@@ -132,10 +132,6 @@ table.board { border-collapse: separate; border-spacing: 0; width: 100%; font-si
 /* Pipeline, theorems */
 ol.steps { padding-inline-start: 20px; }
 ol.steps li { margin-top: 6px; }
-dl.theorems { margin: 0; }
-dl.theorems dt { margin-top: 18px; overflow-wrap: anywhere; }
-dl.theorems dt a { color: var(--primary); }
-dl.theorems dd { margin: 4px 0 0; }
 
 @media (max-width: 640px) {
   .board th[scope="row"], .board .corner { min-width: 8.5rem; max-width: 10rem; }
@@ -251,7 +247,7 @@ dl.theorems dd { margin: 4px 0 0; }
         if (c.variant) {
           const v = c.variant, n = v.stipulations ? v.stipulations.length : null;
           h += `<th scope="col" class="${cls}"><a href="${esc(v.decl.href)}" title="${esc(strip(v.decl.doc))}">${esc(v.label)}</a>` +
-            (n === null ? "" : `<span class="stip"><b>${n}</b> stipulated</span>`) + `</th>`;
+            (n === null ? "" : `<a class="stip" href="${esc(v.stipulationsTheorem.href)}" title="${esc(strip(v.stipulationsTheorem.doc))}"><b>${n}</b> stipulated</a>`) + `</th>`;
         } else {
           h += `<th scope="col" class="${cls}">${esc(c.cell.length ? c.cell[c.cell.length - 1] : "")}</th>`;
         }
@@ -414,7 +410,7 @@ dl.theorems dd { margin: 4px 0 0; }
       (src ? `<br><span class="small">${src}</span>` : "") + `</dd>`;
     if (c.variant) {
       const n = c.variant.stipulations ? c.variant.stipulations.length : null;
-      h += `<dt>Parse</dt><dd>${link(c.variant.decl, esc(c.variant.label))}${n === null ? "" : `, ${n} stipulated`}</dd>`;
+      h += `<dt>Parse</dt><dd>${link(c.variant.decl, esc(c.variant.label))}${n === null ? "" : `, ${link(c.variant.stipulationsTheorem, `${n} stipulated`)}`}</dd>`;
     }
     h += `<dt>Theory</dt><dd>${defs.length ? defs.map((d) => link(d, `<code>${dotted(d.name)}</code>`)).join(", ") : link(t.decl, `<code>${dotted(t.decl.name)}</code>`)}</dd>`;
     h += `<dt>Proof</dt><dd>${link(cell.theorem, `<code>${esc(cell.theorem.short)}</code>`)}` +
@@ -476,16 +472,14 @@ dl.theorems dd { margin: 4px 0 0; }
       : theories ? `Theories from ${theories}.` : dataFrom ? `On data from ${dataFrom}.` : "";
   }
 
-  // A theory's page: where it is defined, its verdicts in its domain, and the theorems behind them.
-  const theoremList = (used) => data.theorems.filter((t) => used.has(t.name)).map((t) =>
-    `<div><dt><a href="${esc(t.href)}"><code>${esc(t.name)}</code></a></dt><dd>${t.doc}</dd></div>`).join("");
+  // A theory's page: where it is defined, and its verdicts in its domain.
   function theoryView(t) {
     const d = data.domains.find((x) => x.theories.includes(t.id));
     const es = d.experiments.map((x) => expById.get(x));
-    const n = { correct: 0, wrong: 0, silent: 0 }, used = new Set();
+    const n = { correct: 0, wrong: 0, silent: 0 };
     for (const e of es) for (const c of e.columns) {
       const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
-      if (cell) { n[cell.verdict] += 1; used.add(cell.theorem.name); }
+      if (cell) n[cell.verdict] += 1;
     }
     const defs = (t.definitions || []).map((x) => link(x, `<code>${dotted(x.name)}</code>`)).join(", ");
     const from = (t.papers || []).map(paperLink).join(", ");
@@ -495,27 +489,22 @@ dl.theorems dd { margin: 4px 0 0; }
       (from ? `<dt>From</dt><dd>${from}</dd>` : "") +
       `<dt>${t.source === "lab" ? "In Lab as" : "Registered as"}</dt><dd>${link(t.decl, `<code>${dotted(t.decl.name)}</code>`)}</dd>` +
       `<dt>Verdicts</dt><dd>${n.correct} right, ${n.wrong} wrong, ${n.silent} silent</dd></dl>` +
-      `<div id="board-slot"></div><h2>Theorems</h2><dl class="theorems">${theoremList(used)}</dl>` };
+      `<div id="board-slot"></div>` };
   }
   // An experiment's page: its data, the verdicts of its domain's theories on it, its untested cells.
   function experimentView(e) {
     const d = data.domains.find((x) => x.experiments.includes(e.id));
     const ts = d.theories.map((x) => theoryById.get(x));
-    const used = new Set(), untested = [];
-    for (const c of e.columns) {
-      if (c.observedTheorem) used.add(c.observedTheorem.name);
-      if (c.variant && c.variant.stipulationsTheorem) used.add(c.variant.stipulationsTheorem.name);
+    const untested = [];
+    for (const c of e.columns)
       if (c.observed === null && !untested.includes(c.cell.join(", "))) untested.push(c.cell.join(", "));
-      for (const t of ts) { const cell = data.cells[`${e.id}|${t.id}|${c.key}`]; if (cell) used.add(cell.theorem.name); }
-    }
     const p = data.papers[e.paper];
     const title = e.cite ? (e.cite.doi ? `<a href="https://doi.org/${esc(e.cite.doi)}">${esc(e.cite.title)}</a>` : esc(e.cite.title)) : "";
     return { domain: d, title: e.cite ? `${cite(e.cite)}, ${esc(e.label)}` : esc(e.label), exps: [e], theories: ts, html:
       (title ? `<p class="meta"><em>${title}</em></p>` : "") + `<p>${e.decl.doc}</p>` +
       `<div id="board-slot"></div>` +
       (untested.length ? `<p class="small sources">Not tested: ${untested.map(esc).join("; ")}.</p>` : "") +
-      (p ? `<h2>Data</h2>${paperSection(e.paper, p)}` : "") +
-      `<h2>Theorems</h2><dl class="theorems">${theoremList(used)}</dl>` };
+      (p ? `<h2>Data</h2>${paperSection(e.paper, p)}` : "") };
   }
   function detail() {
     const v = data.view;
