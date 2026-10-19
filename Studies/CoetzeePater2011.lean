@@ -138,18 +138,20 @@ def maxFinal : Constraint Candidate := Constraint.binary fun c ↦ c.2 = .delete
 /-- The constraint set (11) lists the constraints in the paper's order. -/
 def con : ConstraintSet Candidate (Fin 4) := ![starCT, maxC, maxPreV, maxFinal]
 
-/-- Both outputs compete in every context. -/
-def cands : Context → Finset Output := fun _ ↦ univ
+/-- The t/d deletion system lets both outputs compete in every context, under the constraint
+set (11). -/
+def tdDeletion : ConstraintSystem Context Output (Fin 4) := ⟨fun _ ↦ univ, con⟩
 
-theorem cands_eq (ctx : Context) : cands ctx = {.delete, .retain} := by cases ctx <;> decide
+theorem tdDeletion_gen (ctx : Context) : tdDeletion.gen ctx = {.delete, .retain} := by
+  cases ctx <;> decide
 
 /-! ### Categorical systems (12) -/
 
 /-- Ranking `σ` deletes in `ctx` if deletion is its unique optimum. -/
-def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := PicksAt cands con σ ctx .delete
+def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := PicksAt tdDeletion σ ctx .delete
 
 instance (σ : Ranking (Fin 4) 4) (ctx : Context) : Decidable (Deletes σ ctx) :=
-  inferInstanceAs (Decidable (PicksAt cands con σ ctx .delete))
+  inferInstanceAs (Decidable (PicksAt tdDeletion σ ctx .delete))
 
 /-- Pre-consonantal deletion needs only \*CT ≫ MAX. -/
 theorem deletes_preC_iff : ∀ σ : Ranking (Fin 4) 4, Deletes σ .preC ↔ σ.Dominates 0 1 := by decide
@@ -227,8 +229,9 @@ before a consonant, a vowel and a pause. -/
 theorem deletionProb_none (ctx : Context) :
     deletionProb .none ctx = ((active con ctx .delete .retain).card : ℝ)⁻¹ := by
   rw [deletionProb, extensions, coe_univ,
-    show {σ | Deletes σ ctx} = {σ | PicksAt cands con σ ctx .delete} from rfl,
-    uniformOn_real_picksAt_discrete_binary (cands_eq ctx) (by decide), favoring_eq,
+    show {σ | Deletes σ ctx} = {σ | PicksAt tdDeletion σ ctx .delete} from rfl,
+    uniformOn_real_picksAt_discrete_binary (tdDeletion_gen ctx) (by decide),
+    show tdDeletion.con = con from rfl, favoring_eq,
     card_singleton, Nat.cast_one, one_div]
 
 /-- Row (a) of (13) prints the counts of (9). -/
@@ -290,10 +293,10 @@ theorem deletionProb_maxPreVOverStarCT_preC_not_mem :
 /-- As Boersma and Hayes point out (§3.3), a POC grammar that gives an output probability .01 has
 at least 100 linear extensions, and so at least five constraints. -/
 theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq Output]
-    {cands : Input → Finset Output} {con : ConstraintSet (Input × Output) (Fin n)}
+    {S : ConstraintSystem Input Output (Fin n)}
     {r : Fin n → Fin n → Prop} [DecidableRel r] {i : Input} {o : Output}
     (h : (uniformOn (consistentTotalOrders r : Set (Ranking (Fin n) n))).real
-      {σ | PicksAt cands con σ i o} = 1/100) : 5 ≤ n := by
+      {σ | PicksAt S σ i o} = 1/100) : 5 ≤ n := by
   rw [uniformOn_finset_real_setOf] at h
   have ht : (consistentTotalOrders r).card ≤ n.factorial := (card_le_univ _).trans_eq (by
     rw [show Fintype.card (Ranking (Fin n) n) = Fintype.card (Equiv.Perm (Fin n)) from rfl,
@@ -301,7 +304,7 @@ theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq
   have h0 : (consistentTotalOrders r).card ≠ 0 := by
     rintro h0; rw [h0, Nat.cast_zero, div_zero] at h; norm_num at h
   rw [div_eq_div_iff (by exact_mod_cast h0) (by norm_num)] at h
-  generalize ((consistentTotalOrders r).filter (PicksAt cands con · i o)).card = k at h
+  generalize ((consistentTotalOrders r).filter (PicksAt S · i o)).card = k at h
   generalize (consistentTotalOrders r).card = t at h ht h0
   have hkt : 100 * k = t := by exact_mod_cast (by linarith : (100 * k : ℝ) = t)
   by_contra hn
@@ -312,14 +315,13 @@ theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq
 /-- Five freely ranked constraints do not suffice for a probability of .01 either, since 1/100
 is not a multiple of 1/120. -/
 theorem uniformOn_univ_real_picksAt_ne {Input Output : Type*} [DecidableEq Output]
-    (cands : Input → Finset Output) (con : ConstraintSet (Input × Output) (Fin 5)) (i : Input)
-    (o : Output) :
-    (uniformOn (Set.univ : Set (Ranking (Fin 5) 5))).real {σ | PicksAt cands con σ i o} ≠
+    (S : ConstraintSystem Input Output (Fin 5)) (i : Input) (o : Output) :
+    (uniformOn (Set.univ : Set (Ranking (Fin 5) 5))).real {σ | PicksAt S σ i o} ≠
       1/100 := by
   rw [← coe_univ, uniformOn_finset_real_setOf, card_univ, Fintype.card_perm, Fintype.card_fin]
   intro h
   rw [div_eq_div_iff (by positivity) (by norm_num)] at h
-  generalize (univ.filter fun σ : Ranking (Fin 5) 5 ↦ PicksAt cands con σ i o).card = k at h
+  generalize (univ.filter fun σ : Ranking (Fin 5) 5 ↦ PicksAt S σ i o).card = k at h
   norm_num [Nat.factorial] at h
   have : k * 100 = 120 := by exact_mod_cast h
   omega
@@ -541,7 +543,7 @@ def voicedGeminate : Constraint (Loan × Voicing) :=
 \*VOICED-GEMINATE, after Itô and Mester and Kawahara, in which only *guddo* devoices. -/
 def loanwordDevoicing : RealizationProblem Loan Voicing (Fin 3) where
   inputs := univ
-  cands _ := univ
+  gen _ := univ
   con := ![identVoice, ocpVoice, voicedGeminate]
   target
     | .guddo => .devoiced
@@ -562,7 +564,7 @@ theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizab
 
 /-- Ranking `σ` devoices loanword `l`. -/
 def Devoices (σ : Ranking (Fin 3) 3) (l : Loan) : Prop :=
-  PicksAt loanwordDevoicing.cands loanwordDevoicing.con σ l .devoiced
+  PicksAt loanwordDevoicing.toConstraintSystem σ l .devoiced
 
 /-- A ranking devoices *guddo* exactly when it devoices *bobu* or *webbu*, when OCP-VOICE or
 \*VOICED-GEMINATE outranks IDENT-VOICE (p. 18). -/

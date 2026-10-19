@@ -145,22 +145,24 @@ theorem assoc_eq_initAll (c : StemC) (s : SubSt) : starAssoc (c, s) = starInitAl
 
 /-! ### The free-ranking rates -/
 
-/-- Both decisions are available for every stem. -/
-def nsCands : StemC → Finset SubSt := λ _ => Finset.univ
+/-- The nasal-substitution system makes both decisions available for every stem, under the six
+constraints. -/
+def nasalSubstitution : ConstraintSystem StemC SubSt (Fin 6) := ⟨fun _ ↦ Finset.univ, con⟩
 
-private theorem nsCands_two (c : StemC) : nsCands c = {SubSt.yes, SubSt.no} := by
-  unfold nsCands
+private theorem nasalSubstitution_gen (c : StemC) :
+    nasalSubstitution.gen c = {SubSt.yes, SubSt.no} := by
+  unfold nasalSubstitution
   ext o
   cases o <;> simp
 
 /-- `subProb c` is the share of the 720 total orders on which stem `c` substitutes. -/
 noncomputable def subProb (c : StemC) : ℝ :=
-  (uniformOn (Set.univ : Set (Ranking (Fin 6) 6))).real {σ | PicksAt nsCands con σ c .yes}
+  (uniformOn (Set.univ : Set (Ranking (Fin 6) 6))).real {σ | PicksAt nasalSubstitution σ c .yes}
 
 /-- The share is the fraction of distinguishing constraints that favour substitution. -/
 private theorem subProb_eq_rate (c : StemC) :
     subProb c = ((favoring con c .yes .no).card : ℝ) / (active con c .yes .no).card :=
-  uniformOn_real_picksAt_discrete_binary (nsCands_two c) fun heq ↦ SubSt.noConfusion heq
+  uniformOn_real_picksAt_discrete_binary (nasalSubstitution_gen c) fun heq ↦ SubSt.noConfusion heq
 
 theorem subProb_p : subProb .p = 1/2 := by
   rw [subProb_eq_rate, show (favoring con .p .yes .no).card = 2 by
@@ -221,9 +223,10 @@ theorem picksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_Y : favoring con c' .yes .no ⊆ favoring con c .yes .no)
     (h_extra :
       ∀ x ∈ active con c .yes .no, x ∉ active con c' .yes .no → x ∈ favoring con c .yes .no)
-    (h_c' : PicksAt nsCands con σ c' .yes) : PicksAt nsCands con σ c .yes := by
-  rw [picksAt_binary_iff_exists_favoring_isMinOn (nsCands_two c') SubSt.noConfusion] at h_c'
-  rw [picksAt_binary_iff_exists_favoring_isMinOn (nsCands_two c) SubSt.noConfusion]
+    (h_c' : PicksAt nasalSubstitution σ c' .yes) : PicksAt nasalSubstitution σ c .yes := by
+  rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c') SubSt.noConfusion]
+    at h_c'
+  rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c) SubSt.noConfusion]
   obtain ⟨x, hx, hmin⟩ := h_c'
   obtain ⟨z, hz, hzmin⟩ := Equiv.Perm.exists_isMinOn_symm ⟨x, h_D (mem_inter.1 hx).2⟩ σ
   refine ⟨z, mem_inter.2 ⟨?_, hz⟩, hzmin⟩
@@ -240,54 +243,55 @@ theorem picksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_D : active con c .yes .no ⊆ active con c' .yes .no)
     (h_Y : favoring con c' .yes .no ⊆ favoring con c .yes .no)
     (h_subset : favoring con c' .yes .no ⊆ active con c .yes .no)
-    (h_c' : PicksAt nsCands con σ c' .yes) : PicksAt nsCands con σ c .yes := by
-  rw [picksAt_binary_iff_exists_favoring_isMinOn (nsCands_two c') SubSt.noConfusion] at h_c'
-  rw [picksAt_binary_iff_exists_favoring_isMinOn (nsCands_two c) SubSt.noConfusion]
+    (h_c' : PicksAt nasalSubstitution σ c' .yes) : PicksAt nasalSubstitution σ c .yes := by
+  rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c') SubSt.noConfusion]
+    at h_c'
+  rw [picksAt_binary_iff_exists_favoring_isMinOn (nasalSubstitution_gen c) SubSt.noConfusion]
   obtain ⟨x, hx, hmin⟩ := h_c'
   exact ⟨x, mem_inter.2 ⟨h_Y (mem_inter.1 hx).1, h_subset (mem_inter.1 hx).1⟩,
     hmin.of_subset (coe_subset.2 h_D)⟩
 
 /-- Substitution on voiced *b* entails substitution on voiceless *p*. -/
 theorem voicing_b_implies_p (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands con σ .b .yes → PicksAt nsCands con σ .p .yes :=
+    PicksAt nasalSubstitution σ .b .yes → PicksAt nasalSubstitution σ .p .yes :=
   picksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- Substitution on voiced *d* entails substitution on voiceless *t*. -/
 theorem voicing_d_implies_t (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands con σ .d .yes → PicksAt nsCands con σ .t .yes :=
+    PicksAt nasalSubstitution σ .d .yes → PicksAt nasalSubstitution σ .t .yes :=
   picksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- Substitution on voiced *g* entails substitution on voiceless *k*. -/
 theorem voicing_g_implies_k (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands con σ .g .yes → PicksAt nsCands con σ .k .yes :=
+    PicksAt nasalSubstitution σ .g .yes → PicksAt nasalSubstitution σ .k .yes :=
   picksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- Substitution on velar *k* entails substitution on coronal *t*. -/
 theorem place_k_implies_t (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands con σ .k .yes → PicksAt nsCands con σ .t .yes :=
+    PicksAt nasalSubstitution σ .k .yes → PicksAt nasalSubstitution σ .t .yes :=
   picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on coronal *t* entails substitution on labial *p*. -/
 theorem place_t_implies_p (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands con σ .t .yes → PicksAt nsCands con σ .p .yes :=
+    PicksAt nasalSubstitution σ .t .yes → PicksAt nasalSubstitution σ .p .yes :=
   picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on velar *g* entails substitution on coronal *d*. -/
 theorem place_g_implies_d (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands con σ .g .yes → PicksAt nsCands con σ .d .yes :=
+    PicksAt nasalSubstitution σ .g .yes → PicksAt nasalSubstitution σ .d .yes :=
   picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on coronal *d* entails substitution on labial *b*. -/
 theorem place_d_implies_b (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands con σ .d .yes → PicksAt nsCands con σ .b .yes :=
+    PicksAt nasalSubstitution σ .d .yes → PicksAt nasalSubstitution σ .b .yes :=
   picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on voiced velar *g* entails substitution on every stop, the top of the
 implicational hierarchy of Table 5. -/
-theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nsCands con σ .g .yes) :
-    PicksAt nsCands con σ .p .yes ∧ PicksAt nsCands con σ .t .yes ∧
-    PicksAt nsCands con σ .k .yes ∧ PicksAt nsCands con σ .b .yes ∧
-    PicksAt nsCands con σ .d .yes ∧ PicksAt nsCands con σ .g .yes := by
+theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nasalSubstitution σ .g .yes) :
+    PicksAt nasalSubstitution σ .p .yes ∧ PicksAt nasalSubstitution σ .t .yes ∧
+    PicksAt nasalSubstitution σ .k .yes ∧ PicksAt nasalSubstitution σ .b .yes ∧
+    PicksAt nasalSubstitution σ .d .yes ∧ PicksAt nasalSubstitution σ .g .yes := by
   have h_d := place_g_implies_d σ h
   have h_b := place_d_implies_b σ h_d
   have h_k := voicing_g_implies_k σ h
@@ -299,9 +303,9 @@ theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nsCands con σ .g .
 Sarangani Manobo. The identity ranking, with `DEP-C` on top, is one. -/
 theorem pattern_j_witness :
     ∃ σ : Equiv.Perm (Fin 6),
-      PicksAt nsCands con σ .p .yes ∧ PicksAt nsCands con σ .t .yes ∧
-      PicksAt nsCands con σ .k .yes ∧ PicksAt nsCands con σ .b .yes ∧
-      PicksAt nsCands con σ .d .yes ∧ PicksAt nsCands con σ .g .yes :=
+      PicksAt nasalSubstitution σ .p .yes ∧ PicksAt nasalSubstitution σ .t .yes ∧
+      PicksAt nasalSubstitution σ .k .yes ∧ PicksAt nasalSubstitution σ .b .yes ∧
+      PicksAt nasalSubstitution σ .d .yes ∧ PicksAt nasalSubstitution σ .g .yes :=
   ⟨1, by decide, by decide, by decide, by decide, by decide, by decide⟩
 
 end Zuraw2010

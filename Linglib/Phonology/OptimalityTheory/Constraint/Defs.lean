@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Fintype.Pi
 
 /-!
 # Constraints
@@ -28,6 +29,8 @@ vanishes on the identity candidate, and a constraint over an opaque candidate ty
 * `ConstraintSet C ι`: a grammar's constraint set, CON, a family of constraints indexed by `ι`.
 * `Constraint.joint`, `ConstraintSet.joint`: joint evaluation on output tuples by constraint
   summation.
+* `ConstraintSystem I O ι`: a constraint system, each input's candidates (GEN) and a constraint
+  set on input–output mappings (CON); `ConstraintSystem.joint` its single-input Minkowski sum.
 
 The Harmonic Grammar scores of a constraint set are in `HarmonicGrammar/Harmony.lean`.
 
@@ -137,5 +140,33 @@ def joint (inputs : κ → I) (con : ConstraintSet (I × O) ι) : ConstraintSet 
     con.joint inputs j = (con j).joint inputs := rfl
 
 end ConstraintSet
+
+/-! ### Constraint systems -/
+
+/-- A **constraint system** pairs each input's candidate outputs, GEN, with a constraint set on
+input–output mappings, CON ([prince-smolensky-1993]). Optimality Theory ranks the constraints and
+Harmonic Grammar weights them, and either way a grammar evaluates each input's candidates. -/
+structure ConstraintSystem (I O ι : Type*) where
+  /-- The candidate outputs of each input. -/
+  gen : I → Finset O
+  /-- The constraints, evaluated on input–output mappings. -/
+  con : ConstraintSet (I × O) ι
+
+/-- The constraints of a system at an input, evaluated on its outputs. -/
+def ConstraintSystem.conAt {I O ι : Type*} (S : ConstraintSystem I O ι) (i : I) :
+    ConstraintSet O ι :=
+  S.con.comap (i, ·)
+
+@[simp] theorem ConstraintSystem.conAt_apply {I O ι : Type*} (S : ConstraintSystem I O ι) (i : I)
+    (j : ι) (o : O) : S.conAt i j o = S.con j (i, o) := rfl
+
+/-- The **joint** system of a system with finitely many inputs has a single input, whose
+candidates are the tuples choosing a candidate for every input; each constraint sums its
+violations over the inputs. Its tableau is the Minkowski sum of the system's tableaux
+([prince-2015]). -/
+def ConstraintSystem.joint {I O ι : Type*} [Fintype I] [DecidableEq I]
+    (S : ConstraintSystem I O ι) : ConstraintSystem Unit (I → O) ι where
+  gen _ := Fintype.piFinset S.gen
+  con := (S.con.joint id).comap Prod.snd
 
 end OptimalityTheory

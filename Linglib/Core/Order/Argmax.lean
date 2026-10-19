@@ -82,9 +82,9 @@ theorem argmin_eq_argmax_of_le_iff [Preorder γ] [DecidableLE γ] {f' : α → �
   ext a; simp only [mem_argmin, mem_argmax]
   exact and_congr_right fun ha ↦ forall₂_congr fun b hb ↦ h a ha b hb
 
-/-- Membership in an argmax over `univ`, through a surjection: `a` maximizes
-`φ ∘ e` iff `e a` maximizes `φ`. Collapses argmax over a function space to
-argmax over values when the objective factors through evaluation. -/
+/-- For a surjection `e`, `a` maximizes `φ ∘ e` over `univ` iff `e a` maximizes `φ`. This
+collapses an argmax over a function space to an argmax over values when the objective factors
+through evaluation. -/
 theorem mem_argmax_comp_surjective {α' : Type*} [Fintype α] [Fintype α']
     {e : α → α'} (he : Function.Surjective e) (φ : α' → β) {a : α} :
     a ∈ Finset.univ.argmax (φ ∘ e) ↔ e a ∈ Finset.univ.argmax φ := by
@@ -118,6 +118,48 @@ theorem argmax_nonempty (hs : s.Nonempty) : (s.argmax f).Nonempty := by
 end Total
 
 end Preorder
+
+section OrderedCancelAddCommMonoid
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι] {κ : ι → Type*} {K : Type*} [AddCommMonoid K]
+  [PartialOrder K] [IsOrderedCancelAddMonoid K] [DecidableLE K] (s : ∀ i, Finset (κ i))
+  (φ : ∀ i, κ i → K) {g : ∀ i, κ i}
+
+/-- The maximizers of a sum of independent scores over a product of finsets are the families of
+maximizers of the summands. -/
+theorem mem_argmax_piFinset_sum :
+    g ∈ (Fintype.piFinset s).argmax (fun g' ↦ ∑ i, φ i (g' i)) ↔
+      ∀ i, g i ∈ (s i).argmax (φ i) := by
+  simp only [mem_argmax, Fintype.mem_piFinset]
+  refine ⟨fun ⟨hg, h⟩ i ↦ ⟨hg i, fun b hb ↦ ?_⟩, fun h ↦ ⟨fun i ↦ (h i).1,
+    fun g' hg' ↦ sum_le_sum fun i _ ↦ (h i).2 _ (hg' i)⟩⟩
+  have key := h (Function.update g i b) fun j ↦ by
+    rcases eq_or_ne j i with rfl | hj
+    · simpa using hb
+    · simpa [hj] using hg j
+  simp only [Function.apply_update (fun k y ↦ φ k y)] at key
+  rw [sum_update_of_mem (mem_univ i), ← erase_eq,
+    ← add_sum_erase _ (fun k ↦ φ k (g k)) (mem_univ i)] at key
+  exact le_of_add_le_add_right key
+
+/-- The minimizers of a sum of independent scores over a product of finsets are the families of
+minimizers of the summands. -/
+theorem mem_argmin_piFinset_sum :
+    g ∈ (Fintype.piFinset s).argmin (fun g' ↦ ∑ i, φ i (g' i)) ↔
+      ∀ i, g i ∈ (s i).argmin (φ i) := by
+  simp only [mem_argmin, Fintype.mem_piFinset]
+  refine ⟨fun ⟨hg, h⟩ i ↦ ⟨hg i, fun b hb ↦ ?_⟩, fun h ↦ ⟨fun i ↦ (h i).1,
+    fun g' hg' ↦ sum_le_sum fun i _ ↦ (h i).2 _ (hg' i)⟩⟩
+  have key := h (Function.update g i b) fun j ↦ by
+    rcases eq_or_ne j i with rfl | hj
+    · simpa using hb
+    · simpa [hj] using hg j
+  simp only [Function.apply_update (fun k y ↦ φ k y)] at key
+  rw [sum_update_of_mem (mem_univ i), ← erase_eq,
+    ← add_sum_erase _ (fun k ↦ φ k (g k)) (mem_univ i)] at key
+  exact le_of_add_le_add_right key
+
+end OrderedCancelAddCommMonoid
 
 section LinearOrder
 
@@ -157,13 +199,7 @@ theorem mem_argmax_pi_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
     (φ : ∀ i, Y i → K) {g : ∀ i, Y i} :
     g ∈ Finset.univ.argmax (fun g' : (∀ i, Y i) ↦ ∑ i, φ i (g' i)) ↔
       ∀ i, g i ∈ Finset.univ.argmax (φ i) := by
-  simp only [mem_argmax, Finset.mem_univ, true_and, true_implies]
-  refine ⟨fun h i b ↦ ?_, fun h g' ↦ Finset.sum_le_sum fun i _ ↦ h i (g' i)⟩
-  have key := h (Function.update g i b)
-  simp only [Function.apply_update (fun k y ↦ φ k y)] at key
-  rw [Finset.sum_update_of_mem (Finset.mem_univ i), ← Finset.erase_eq,
-    ← Finset.add_sum_erase _ (fun k ↦ φ k (g k)) (Finset.mem_univ i)] at key
-  exact le_of_add_le_add_right key
+  simpa [Fintype.piFinset_univ] using mem_argmax_piFinset_sum (fun i ↦ (univ : Finset (Y i))) φ
 
 end LinearOrder
 

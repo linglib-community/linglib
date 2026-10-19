@@ -74,7 +74,7 @@ def Weight.prominent : Weight → Bool
   | .heavy => true
   | .light => false
 
-/-- A syllable of a candidate: its stress, and its weight and nuclear sonority where the
+/-- A syllable of a candidate records its stress, and its weight and nuclear sonority where the
 tableau specifies them (`X` leaves both open). -/
 structure Syllable where
   stressed : Bool
@@ -82,8 +82,8 @@ structure Syllable where
   nucleus : Option Sonority := none
   deriving DecidableEq, Repr
 
-/-- The constraints of (50): a starred stress–weight, weight–sonority, or stress–sonority
-combination within a syllable (28), or a starred adjacency of equal stress or weight (29). -/
+/-- Each constraint of (50) stars a stress–weight, weight–sonority, or stress–sonority
+combination within a syllable (28), or an adjacency of equal stress or weight (29). -/
 inductive Constraint
   | stressWeight (stressed : Bool) (w : Weight)
   | weightSonority (w : Weight) (s : Sonority)
@@ -92,8 +92,8 @@ inductive Constraint
   | collision (w : Weight)
   deriving DecidableEq, Repr, Fintype
 
-/-- Violations on a syllable string: the syllables showing the starred combination, or the
-adjacent pairs sharing the starred value. -/
+/-- A constraint's violations on a syllable string are the syllables showing the starred
+combination, or the adjacent pairs sharing the starred value. -/
 def Constraint.violations : Constraint → List Syllable → ℕ
   | .stressWeight st w, l => l.countP fun σ => decide (σ.stressed = st ∧ σ.weight = some w)
   | .weightSonority w s, l => l.countP fun σ => decide (σ.weight = some w ∧ σ.nucleus = some s)
@@ -105,15 +105,16 @@ def Constraint.violations : Constraint → List Syllable → ℕ
 
 /-! ### The grammar for Finnish (28), (50) -/
 
-/-- Harmonic alignment (27) of sonority with a binary scale: on the scale's prominent value the
-constraint against the less sonorous nucleus ranks higher; on the other value, the more. -/
+/-- Harmonic alignment (27) of sonority with a binary scale ranks the constraint against the less
+sonorous nucleus higher on the scale's prominent value, and the one against the more sonorous
+nucleus higher on the other value. -/
 def alignedAbove (prominent : Bool) (s s' : Sonority) : Prop :=
   if prominent then s < s' else s' < s
 
 instance (p : Bool) (s s' : Sonority) : Decidable (alignedAbove p s s') := by
   unfold alignedAbove; infer_instance
 
-/-- The universal rankings (28): the stress–weight mismatches outrank the matches, and
+/-- In the universal rankings (28) the stress–weight mismatches outrank the matches, and
 sonority aligns with weight and with stress. -/
 def Universal : Constraint → Constraint → Prop
   | .stressWeight st w, .stressWeight st' w' => st ≠ w.prominent ∧ st' = w'.prominent
@@ -154,8 +155,8 @@ theorem Universal.asymm {a b : Constraint} (hab : Universal a b) (hba : Universa
   · obtain ⟨rfl, h⟩ := hab
     exact alignedAbove_asymm h hba.2
 
-/-- The strata of (50): No Clash; the two stress–weight mismatches; the intermediary sets
-(49); the rest. -/
+/-- The strata of (50) are No Clash, the two stress–weight mismatches, the intermediary sets
+(49), and the rest. -/
 def Constraint.set : Constraint → Fin 5
   | .clash true => 0
   | .stressWeight true .light | .stressWeight false .heavy => 1
@@ -164,7 +165,7 @@ def Constraint.set : Constraint → Fin 5
   | .collision .heavy | .stressWeight true .heavy | .clash false => 3
   | _ => 4
 
-/-- Finnish only adds rankings to (28): no universal ranking is reversed across strata. -/
+/-- Finnish only adds rankings to (28), reversing no universal ranking across strata. -/
 theorem set_mono : ∀ a b, Universal a b → a.set ≤ b.set := by decide
 
 /-- The roster in the column order of (50). -/
@@ -221,7 +222,8 @@ instance : DecidableRel finnishGrammar :=
 
 /-! ### Categorical predictions (§5.1) -/
 
-/-- Tableau syllables: stressed or unstressed, of unspecified, heavy, or light weight. -/
+/-- The tableau syllables are stressed or unstressed, and of unspecified, heavy, or light
+weight. -/
 def X' : Syllable := ⟨true, none, none⟩
 def X : Syllable := ⟨false, none, none⟩
 def H' : Syllable := ⟨true, some .heavy, none⟩
@@ -229,7 +231,7 @@ def H : Syllable := ⟨false, some .heavy, none⟩
 def L' : Syllable := ⟨true, some .light, none⟩
 def L : Syllable := ⟨false, some .light, none⟩
 
-/-- The stem shapes of the categorical tableaux, by their examples: (33) *maa*, (35) *kala*,
+/-- The stem shapes of the categorical tableaux, named by their examples (33) *maa*, (35) *kala*,
 (37) *maailma*, (39) *ministeri*, (40) *margariini*, (42) *Aleksanteri*, (43)
 *koordinaatisto*, (44) *italiaano*. -/
 inductive Shape
@@ -243,7 +245,7 @@ inductive Shape
   | italiaano
   deriving DecidableEq, Repr, Fintype
 
-/-- The candidates of the tableaux (32), (34), (36), (38), (41): the weak variant, the strong
+/-- The candidates of the tableaux (32), (34), (36), (38), (41) are the weak variant, the strong
 one, and after a heavy antepenult the strong one with its stress shifted. -/
 def Shape.cands : Shape → Finset (List Syllable)
   | .maa => {[H', H], [L', H]}
@@ -264,33 +266,33 @@ def rankings : Finset (Ranking (Fin 20) 20) := consistentTotalOrders finnishGram
 
 /-- A tableau candidate that every consistent ranking picks. -/
 def Shape.Categorical (s : Shape) (cand : List Syllable) : Prop :=
-  ∀ σ ∈ rankings, PicksAt Shape.cands tableauCon σ s cand
+  ∀ σ ∈ rankings, PicksAt ⟨Shape.cands, tableauCon⟩ σ s cand
 
-/-- Monosyllabic stems take the strong variant (32): *mai.den*, not *ma.jen* (33). -/
+/-- Monosyllabic stems take the strong variant (32), *mai.den* and not *ma.jen* (33). -/
 theorem maa_strong : Shape.Categorical .maa [H', H] := fun _ hσ =>
   picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
-/-- Disyllabic CV-final stems take the weak variant (34): *ka.lo.jen*, not *ka.loi.den*
+/-- Disyllabic CV-final stems take the weak variant (34), *ka.lo.jen* and not *ka.loi.den*
 (35). -/
 theorem kala_weak : Shape.Categorical .kala [X', L, H] := fun _ hσ =>
   picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
-/-- A heavy antepenult in a 4-syllabic stem is stressed and forces a light penult (38):
+/-- A heavy antepenult in a 4-syllabic stem is stressed and forces a light penult (38), giving
 *mar.ga.rii.ni.en* only (40). -/
 theorem margariini_weak : Shape.Categorical .margariini [X', X, H', L, H] := fun _ hσ =>
   picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
-/-- A light ante-antepenult before a heavy antepenult likewise (41): *i.ta.li.aa.no.jen* only
-(44). -/
+/-- A light ante-antepenult before a heavy antepenult likewise forces a light penult (41),
+giving *i.ta.li.aa.no.jen* only (44). -/
 theorem italiaano_weak : Shape.Categorical .italiaano [X', X, L, H', L, H] := fun _ hσ =>
   picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
 /-- After a light antepenult, or a heavy one following a heavy ante-antepenult, the stress
-constraints tie (36), (38), (41): secondary stress is optional, and both variants survive
+constraints tie (36), (38), (41), so secondary stress is optional and both variants survive
 Sets 1 and 2. -/
 theorem stress_tie :
     ∀ s ∈ [Shape.maailma, .ministeri, .aleksanteri, .koordinaatisto],
@@ -316,15 +318,15 @@ theorem Variant.ne_other (v : Variant) : v ≠ v.other := by cases v <;> decide
 theorem Variant.univ_eq_pair (v : Variant) :
     (Finset.univ : Finset Variant) = {v, v.other} := by cases v <;> decide
 
-/-- A motif of (52): the antepenult's weight and the stem-final vowel. -/
+/-- A motif of (52) pairs the antepenult's weight with the stem-final vowel. -/
 abbrev Motif := Weight × Sonority
 
-/-- The penult of a variant with nucleus `s`: stressed and heavy, or unstressed and light. -/
+/-- The penult of a variant with nucleus `s` is stressed and heavy, or unstressed and light. -/
 def penult : Variant → Sonority → Syllable
   | .strong, s => ⟨true, some .heavy, some s⟩
   | .weak, s => ⟨false, some .light, some s⟩
 
-/-- A trisyllabic candidate of (52): initial stress, an unstressed antepenult of the motif's
+/-- A trisyllabic candidate of (52) has initial stress, an unstressed antepenult of the motif's
 weight, the variant's penult, and an unstressed heavy final. -/
 def word : Motif → Variant → List Syllable
   | (w, s), v => [X', ⟨false, some w, none⟩, penult v s, H]
@@ -335,10 +337,10 @@ def con : ConstraintSet (Motif × Variant) (Fin 20) :=
 
 /-- The rankings under which variant `v` wins motif `m`. -/
 def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20) 20) :=
-  rankings.filter fun σ => PicksAt (fun _ => Finset.univ) con σ m v
+  rankings.filter fun σ ↦ PicksAt ⟨fun _ ↦ Finset.univ, con⟩ σ m v
 
-/-- The deciding-stratum count: once the strata above `k` tie, the rankings won by `v`
-stand to all rankings as stratum `k`'s constraints favoring `v` stand to its active ones. -/
+/-- Once the strata above `k` tie, the rankings won by `v` stand to all rankings as stratum
+`k`'s constraints favoring `v` stand to its active ones. -/
 theorem card_wins_mul (m : Motif) (v : Variant) (k : Fin 5)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → universalOn a b → a = b)
     (h_tie : ∀ c, stratumOf c < k → con c (m, v) = con c (m, v.other))
@@ -358,8 +360,8 @@ theorem card_wins_of_counts (m : Motif) (v : Variant) (k : Fin 5) (n t : ℕ)
     (wins m v).card * t = rankings.card * n := by
   rw [← hn, ← ht]; exact card_wins_mul m v k h_triv h_tie h_dec
 
-/-- The result column of (52) for the strong variant: its share of the rankings, as the
-paper's fraction. -/
+/-- The result column of (52) gives the strong variant's share of the rankings as the paper's
+fraction. -/
 def predictedStrong : Motif → ℕ × ℕ
   | (.light, .i) => (1, 3)
   | (.light, _) => (1, 1)
@@ -381,8 +383,8 @@ theorem card_wins_strong_of {m : Motif} {n t : ℕ} (hp : predictedStrong m = (n
   subst hn ht
   exact h
 
-/-- The shares of (52): decided in Set 3 after a light antepenult and for *h.tii*, in Set 4
-for *h.taa* and *h.too*; the strata below never matter. -/
+/-- The shares of (52) are decided in Set 3 after a light antepenult and for *h.tii*, and in
+Set 4 for *h.taa* and *h.too*; the strata below never matter. -/
 theorem card_wins_strong : ∀ m : Motif,
     (wins m .strong).card * (predictedStrong m).2 = rankings.card * (predictedStrong m).1
   | (.light, .i) => card_wins_strong_of rfl
@@ -451,8 +453,8 @@ def Sonority.ofChar? : Char → Option Sonority
   | 'i' => some .i
   | _ => none
 
-/-- A motif label of (52)–(53): antepenult weight, `t`, and the stem-final vowel, doubled for
-the strong variant. -/
+/-- A motif label of (52)–(53) writes the antepenult weight, `t`, and the stem-final vowel,
+doubled for the strong variant. -/
 def Motif.parse? (s : String) : Option (Motif × Variant) :=
   match s.toList with
   | [w, '.', 't', v] => do pure ((← Weight.ofChar? w, ← Sonority.ofChar? v), .weak)
@@ -467,7 +469,7 @@ def digits (l : List Char) : ℕ := l.foldl (fun n c => 10 * n + (c.toNat - '0'.
 def percent? (s : String) : Option ℕ :=
   if s.toList.all Char.isDigit then some (digits s.toList) else none
 
-/-- A printed percentage in tenths: `99.4` as `994`, `100` as `1000`. -/
+/-- A printed percentage in tenths, reading `99.4` as `994` and `100` as `1000`. -/
 def tenths? (s : String) : Option ℕ :=
   match s.toList.span (· ≠ '.') with
   | (int, []) => if int.all Char.isDigit then some (10 * digits int) else none
@@ -475,8 +477,7 @@ def tenths? (s : String) : Option ℕ :=
     if int.all Char.isDigit && d.isDigit then some (10 * digits int + digits [d]) else none
   | _ => none
 
-/-- Table (53): the paper's predicted percentage is the share of (52) to the nearest
-percent. -/
+/-- The predicted percentage of Table (53) is the share of (52) to the nearest percent. -/
 theorem rows_predicted :
     ∀ r ∈ Examples.all, r.feature? "syllables" = some "3" →
       ∀ mv ∈ (r.feature? "motif" >>= Motif.parse?).toList,
@@ -486,7 +487,7 @@ theorem rows_predicted :
             200 * (predicted mv.1 mv.2).1 ≤ (2 * p + 1) * (predicted mv.1 mv.2).2 := by
   decide +kernel
 
-/-- Tables (48) and (53): the variant the grammar favors is the more frequent one. -/
+/-- In Tables (48) and (53) the variant the grammar favors is the more frequent one. -/
 theorem rows_frequency :
     ∀ r ∈ Examples.all, r.feature? "syllables" = some "3" →
       ∀ mv ∈ (r.feature? "motif" >>= Motif.parse?).toList,

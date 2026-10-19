@@ -173,13 +173,14 @@ def faith : Constraint (Syl × Syl) := Constraint.binary fun c ↦ c.1 ≠ c.2
 def con : ConstraintSet (Syl × Syl) (Fin 5) :=
   ![faith, starComplexOnset, starComplexCoda, onset, starCoda]
 
-/-- Every syllable type is a candidate output for every input. -/
-def cands : Syl → Finset Syl := fun _ ↦ univ
+/-- The syllabification system offers every syllable type as a candidate output for every
+input, under the five constraints. -/
+def syllabification : ConstraintSystem Syl Syl (Fin 5) := ⟨fun _ ↦ univ, con⟩
 
 /-- A ranking produces an input faithfully exactly when every markedness constraint the input
 violates is ranked below FAITH. -/
 theorem faithful_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
-    PicksAt cands con σ i i ↔ ∀ k, con k (i, i) = 1 → σ.Dominates 0 k := by
+    PicksAt syllabification σ i i ↔ ∀ k, con k (i, i) = 1 → σ.Dominates 0 k := by
   revert σ i; decide +kernel
 
 /-- The syllable types produced faithfully once the markedness constraints in `S` are below
@@ -188,7 +189,7 @@ def produced (S : Finset (Fin 5)) : Finset Syl := univ.filter fun i ↦ ∀ k, c
 
 /-- The types a ranking produces faithfully are those of the stage it is at. -/
 theorem mem_produced_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
-    i ∈ produced (univ.filter (σ.Dominates 0)) ↔ PicksAt cands con σ i i := by
+    i ∈ produced (univ.filter (σ.Dominates 0)) ↔ PicksAt syllabification σ i i := by
   simp [produced, faithful_iff]
 
 /-- The stages at which FAITH overtakes *CODA, ONSET, *COMPLEXCODA and *COMPLEXONSET in turn

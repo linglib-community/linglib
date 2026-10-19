@@ -3,6 +3,7 @@ module
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.Antimatroid
 public import Linglib.Phonology.OptimalityTheory.Grammar
+public import Linglib.Phonology.OptimalityTheory.Typology
 public import Linglib.Core.GroupTheory.Perm.MinOn
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Algebra.BigOperators.Field
@@ -30,7 +31,7 @@ cardinality equations, which the rate theorems restate as values of the measure.
 * `consistentTotalOrders r`: the `Finset` of linear extensions of `r`, nonempty by Szpilrajn.
 * `toGrammar`, `orderIdealAntimatroid`: a POC grammar as a `Grammar`, and its order-ideal
   antimatroid.
-* `PicksAt cands con σ i o`: `o` is the sole winner of the tableau of input `i` under `σ`.
+* `PicksAt S σ i o`: `o` alone is the language of `σ` at input `i`.
 * `active con i o o'`, `favoring con i o o'`: the non-neutral and the winner-preferring constraints
   of the winner–loser ERC of a candidate pair.
 
@@ -380,14 +381,14 @@ def toGrammar (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
 A POC grammar draws one of its linear extensions uniformly at each evaluation
 ([anttila-1997]), so it is the probability measure `uniformOn ↑(consistentTotalOrders r)` on
 rankings, and the probability that it selects `o` for input `i` is that measure at
-`{σ | PicksAt cands con σ i o}`: the fraction of linear extensions picking `o`. -/
+`{σ | PicksAt S σ i o}`: the fraction of linear extensions picking `o`. -/
 
 instance (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] [DecidableRel r] :
     IsProbabilityMeasure (uniformOn (consistentTotalOrders r : Set (Ranking (Fin n) n))) :=
   isProbabilityMeasure_uniformOn (Set.toFinite _) (consistentTotalOrders_nonempty r)
 
 variable {Input Output : Type*}
-variable {cands : Input → Finset Output} {con : ConstraintSet (Input × Output) (Fin n)}
+variable {S : ConstraintSystem Input Output (Fin n)} {con : ConstraintSet (Input × Output) (Fin n)}
   {r : Fin n → Fin n → Prop} {σ : Ranking (Fin n) n} {i : Input} {o o' chosen other : Output}
 
 /-- The constraints **active** on the candidate pair `o, o'` at input `i` are the non-neutral
@@ -418,64 +419,62 @@ def favoring (con : ConstraintSet (Input × Output) (Fin n)) (i : Input) (o o' :
 theorem favoring_subset_active : favoring con i o o' ⊆ active con i o o' :=
   fun _ hc => mem_active.mpr (Nat.ne_of_lt (mem_favoring.mp hc))
 
-/-- σ **picks** output `o` for input `i` when `o` is the sole winner of the tableau of `i`'s
-    candidates under σ. -/
-def PicksAt {ι : Type*} (cands : Input → Finset Output) (con : ConstraintSet (Input × Output) ι)
-    (σ : Ranking ι n) (i : Input) (o : Output) : Prop :=
-  (Tableau.ofRanking (con.comap (i, ·)) σ (cands i)).optimal = {o}
+/-- σ **picks** output `o` for input `i` when `o` alone is the language of `σ` at `i`, the sole
+    winner of the input's tableau. -/
+def PicksAt {ι : Type*} (S : ConstraintSystem Input Output ι) (σ : Ranking ι n) (i : Input)
+    (o : Output) : Prop :=
+  S.language σ i = {o}
 
 /-- σ picks `o` iff `o` is a candidate whose violations, read in σ's order, are lexicographically
     below every rival's. -/
-theorem picksAt_iff {ι : Type*} {con : ConstraintSet (Input × Output) ι} {σ : Ranking ι n} :
-    PicksAt cands con σ i o ↔ o ∈ cands i ∧ ∀ o' ∈ cands i, o' ≠ o →
-      toLex (fun k ↦ con (σ k) (i, o)) < toLex (fun k ↦ con (σ k) (i, o')) :=
-  Tableau.optimal_eq_singleton_iff
+theorem picksAt_iff {ι : Type*} {S : ConstraintSystem Input Output ι} {σ : Ranking ι n} :
+    PicksAt S σ i o ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
+      toLex (fun k ↦ S.con (σ k) (i, o)) < toLex (fun k ↦ S.con (σ k) (i, o')) :=
+  ConstraintSystem.language_eq_singleton_iff
 
 /-- A ranking picks at most one output. -/
-theorem picksAt_unique {ι : Type*} {con : ConstraintSet (Input × Output) ι} {σ : Ranking ι n}
-    (h : PicksAt cands con σ i o) (h' : PicksAt cands con σ i o') : o = o' :=
+theorem picksAt_unique {ι : Type*} {S : ConstraintSystem Input Output ι} {σ : Ranking ι n}
+    (h : PicksAt S σ i o) (h' : PicksAt S σ i o') : o = o' :=
   Finset.singleton_injective (h.symm.trans h')
 
 /-- With pairwise-distinct violation profiles, every ranking picks some output, since the
     winners of a tableau all share one profile. -/
-theorem exists_picksAt (h_ne : (cands i).Nonempty)
-    (h_inj : Set.InjOn (fun o ↦ (con · (i, o))) (cands i)) (σ : Ranking (Fin n) n) :
-    ∃ o ∈ cands i, PicksAt cands con σ i o := by
-  obtain ⟨o, ho⟩ := Tableau.optimal_nonempty
-    (t := Tableau.ofRanking (con.comap (i, ·)) σ (cands i)) h_ne
+theorem exists_picksAt (h_ne : (S.gen i).Nonempty)
+    (h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) (σ : Ranking (Fin n) n) :
+    ∃ o ∈ S.gen i, PicksAt S σ i o := by
+  obtain ⟨o, ho⟩ := ConstraintSystem.language_nonempty (r := σ) h_ne
   have hoc := Tableau.optimal_subset ho
   refine ⟨o, hoc, Finset.eq_singleton_iff_unique_mem.2 ⟨ho, fun o' ho' ↦ ?_⟩⟩
   have hoc' := Tableau.optimal_subset ho'
   have heq := (Tableau.le_of_mem_optimal ho' hoc).antisymm (Tableau.le_of_mem_optimal ho hoc')
   refine h_inj hoc' hoc (funext fun c ↦ ?_)
-  simpa using show con (σ (σ.symm c)) (i, o') = con (σ (σ.symm c)) (i, o) from
+  simpa using show S.con (σ (σ.symm c)) (i, o') = S.con (σ (σ.symm c)) (i, o) from
     congrFun heq (σ.symm c)
 
 variable [DecidableEq Output]
 
 /-- Picking is decided by comparing the candidate with each rival (`picksAt_iff`), not by
 computing the winner set. -/
-instance {ι : Type*} (cands : Input → Finset Output) (con : ConstraintSet (Input × Output) ι)
-    (σ : Ranking ι n) (i : Input) (o : Output) :
-    Decidable (PicksAt cands con σ i o) :=
+instance {ι : Type*} (S : ConstraintSystem Input Output ι) (σ : Ranking ι n) (i : Input)
+    (o : Output) : Decidable (PicksAt S σ i o) :=
   decidable_of_iff _ picksAt_iff.symm
 
 /-- With pairwise-distinct violation profiles the picks-fibers over the
     candidate set partition the consistent extensions, the division-free form of
     `sum_measure_setOf_picksAt`. -/
 theorem sum_card_filter_picksAt [DecidableRel r]
-    (h_ne : (cands i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (con · (i, o))) (cands i)) :
-    ∑ o ∈ cands i, ((consistentTotalOrders r).filter
-      (fun σ => PicksAt cands con σ i o)).card = (consistentTotalOrders r).card := by
+    (h_ne : (S.gen i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) :
+    ∑ o ∈ S.gen i, ((consistentTotalOrders r).filter
+      (fun σ => PicksAt S σ i o)).card = (consistentTotalOrders r).card := by
   classical
-  have h_disjoint : (↑(cands i) : Set Output).PairwiseDisjoint
-      (fun o => (consistentTotalOrders r).filter (fun σ => PicksAt cands con σ i o)) := by
+  have h_disjoint : (↑(S.gen i) : Set Output).PairwiseDisjoint
+      (fun o => (consistentTotalOrders r).filter (fun σ => PicksAt S σ i o)) := by
     intro o _ o' _ hne'
     simp only [Function.onFun, Finset.disjoint_left, Finset.mem_filter]
     rintro σ ⟨_, h₁⟩ ⟨_, h₂⟩
     exact hne' (picksAt_unique h₁ h₂)
-  have h_union : (cands i).biUnion (fun o => (consistentTotalOrders r).filter
-      (fun σ => PicksAt cands con σ i o)) = consistentTotalOrders r := by
+  have h_union : (S.gen i).biUnion (fun o => (consistentTotalOrders r).filter
+      (fun σ => PicksAt S σ i o)) = consistentTotalOrders r := by
     ext σ
     simp only [Finset.mem_biUnion, Finset.mem_filter]
     constructor
@@ -483,22 +482,22 @@ theorem sum_card_filter_picksAt [DecidableRel r]
     · intro hσ
       obtain ⟨o, ho, hpick⟩ := exists_picksAt h_ne h_inj σ
       exact ⟨o, ho, hσ, hpick⟩
-  calc ∑ o ∈ cands i, ((consistentTotalOrders r).filter
-        (fun σ => PicksAt cands con σ i o)).card
-      = ((cands i).biUnion (fun o => (consistentTotalOrders r).filter
-          (fun σ => PicksAt cands con σ i o))).card :=
+  calc ∑ o ∈ S.gen i, ((consistentTotalOrders r).filter
+        (fun σ => PicksAt S σ i o)).card
+      = ((S.gen i).biUnion (fun o => (consistentTotalOrders r).filter
+          (fun σ => PicksAt S σ i o))).card :=
         (Finset.card_biUnion h_disjoint).symm
     _ = (consistentTotalOrders r).card := by rw [h_union]
 
 /-- Two distinct candidates with distinct violation profiles partition the
     consistent rankings. -/
 theorem card_filter_picksAt_binary_add [DecidableRel r]
-    {o₁ o₂ : Output} (h_two : cands i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
-    (h_vp : (con · (i, o₁)) ≠ (con · (i, o₂))) :
-    ((consistentTotalOrders r).filter (fun σ => PicksAt cands con σ i o₁)).card +
-      ((consistentTotalOrders r).filter (fun σ => PicksAt cands con σ i o₂)).card =
+    {o₁ o₂ : Output} (h_two : S.gen i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
+    (h_vp : (S.con · (i, o₁)) ≠ (S.con · (i, o₂))) :
+    ((consistentTotalOrders r).filter (fun σ => PicksAt S σ i o₁)).card +
+      ((consistentTotalOrders r).filter (fun σ => PicksAt S σ i o₂)).card =
     (consistentTotalOrders r).card := by
-  have h_inj : Set.InjOn (fun o ↦ (con · (i, o))) (cands i) := by
+  have h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i) := by
     intro o ho o' ho' hvv
     rw [h_two] at ho ho'
     simp only [Finset.coe_insert, Set.mem_insert_iff, Finset.coe_singleton,
@@ -514,9 +513,9 @@ omit [DecidableEq Output] in
 any probability measure on rankings, a POC grammar's or stochastic OT's, the candidates'
 probabilities sum to one. -/
 theorem sum_measure_setOf_picksAt (μ : Measure (Ranking (Fin n) n)) [IsProbabilityMeasure μ]
-    (h_ne : (cands i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (con · (i, o))) (cands i)) :
-    ∑ o ∈ cands i, μ {σ | PicksAt cands con σ i o} = 1 := by
-  rw [← measure_biUnion_finset (f := fun o ↦ {σ | PicksAt cands con σ i o})
+    (h_ne : (S.gen i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) :
+    ∑ o ∈ S.gen i, μ {σ | PicksAt S σ i o} = 1 := by
+  rw [← measure_biUnion_finset (f := fun o ↦ {σ | PicksAt S σ i o})
       (fun _ _ _ _ hne ↦ Set.disjoint_left.mpr fun _ h h' ↦ hne (picksAt_unique h h'))
       fun _ _ ↦ .of_discrete, ← measure_univ (μ := μ)]
   congr 1
@@ -526,11 +525,11 @@ theorem sum_measure_setOf_picksAt (μ : Measure (Ranking (Fin n) n)) [IsProbabil
 
 /-! ### Binary competitions are decided by the earliest active constraint
 
-For binary candidate sets `cands i = {chosen, other}`, `PicksAt σ i chosen` reduces to lex
+For binary candidate sets `S.gen i = {chosen, other}`, `PicksAt σ i chosen` reduces to lex
 domination of the permuted profile of `chosen`, which is decided at the first position where the
 profiles differ. So `chosen` wins exactly when the σ-earliest constraint of
-`active con i chosen other`, the one at which `σ.symm` is least, lies in
-`favoring con i chosen other`. Counting rankings by their σ-earliest active constraint
+`active S.con i chosen other`, the one at which `σ.symm` is least, lies in
+`favoring S.con i chosen other`. Counting rankings by their σ-earliest active constraint
 (`Equiv.Perm.card_filter_isMinOn_symm_mul_card`) then gives closed-form rates for binary POC
 competitions without enumerating rankings. -/
 
@@ -559,10 +558,10 @@ theorem lex_lt_iff_exists_favoring_isMinOn (σ : Ranking (Fin n) n) :
 /-- For binary candidate sets, `PicksAt σ i chosen` holds exactly when the σ-earliest active
 constraint favors `chosen`. -/
 theorem picksAt_binary_iff_exists_favoring_isMinOn
-    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking (Fin n) n) :
-    PicksAt cands con σ i chosen ↔
-    ∃ x ∈ favoring con i chosen other ∩ active con i chosen other,
-      IsMinOn σ.symm (active con i chosen other) x :=
+    (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking (Fin n) n) :
+    PicksAt S σ i chosen ↔
+    ∃ x ∈ favoring S.con i chosen other ∩ active S.con i chosen other,
+      IsMinOn σ.symm (active S.con i chosen other) x :=
   (Tableau.optimal_eq_singleton_iff_pair h_two h_ne).trans (lex_lt_iff_exists_favoring_isMinOn σ)
 
 /-! ### Closed-form rate for binary candidates
@@ -586,17 +585,17 @@ theorem ERC.uniformOn_real_satisfiedBy (α : ERC (Fin n)) (h : ∃ k, α k ≠ .
 /-- Under the discrete grammar, with every ranking a linear extension, the uniform measure on
 rankings picks `chosen` at rate `|favoring| / |active|`. -/
 theorem uniformOn_real_picksAt_discrete_binary
-    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
-    (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | PicksAt cands con σ i chosen} =
-      ((favoring con i chosen other).card : ℝ) / (active con i chosen other).card := by
-  rcases (active con i chosen other).eq_empty_or_nonempty with h | ⟨k, hk⟩
+    (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other) :
+    (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | PicksAt S σ i chosen} =
+      ((favoring S.con i chosen other).card : ℝ) / (active S.con i chosen other).card := by
+  rcases (active S.con i chosen other).eq_empty_or_nonempty with h | ⟨k, hk⟩
   · -- no constraint distinguishes the pair, so no ranking picks `chosen`
-    have : {σ : Ranking (Fin n) n | PicksAt cands con σ i chosen} = ∅ :=
+    have : {σ : Ranking (Fin n) n | PicksAt S σ i chosen} = ∅ :=
       Set.eq_empty_of_forall_notMem fun σ hσ ↦ by
         obtain ⟨x, hx, -⟩ := (picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ).1 hσ
         simp [h] at hx
     rw [this, h, card_empty, Nat.cast_zero, div_zero, measureReal_empty]
-  · convert (ercOfProfiles (con · (i, chosen)) (con · (i, other))).uniformOn_real_satisfiedBy
+  · convert (ercOfProfiles (S.con · (i, chosen)) (S.con · (i, other))).uniformOn_real_satisfiedBy
       ⟨k, (mem_filter.1 hk).2⟩ using 3 <;> try rfl
     ext σ
     refine (picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ).trans
@@ -619,11 +618,11 @@ omit [DecidableEq Output] in
 theorem isMinOn_active_iff_isMinOn_filter_stratum
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
     (hσ : IsConsistent (stratified stratumOf inner) σ)
-    (h_tie : ∀ c, stratumOf c < k → con c (i, chosen) = con c (i, other))
-    (h_dec : ((active con i chosen other).filter (stratumOf · = k)).Nonempty) {x : Fin n} :
-    x ∈ active con i chosen other ∧ IsMinOn σ.symm (active con i chosen other) x ↔
-      x ∈ (active con i chosen other).filter (stratumOf · = k) ∧
-        IsMinOn σ.symm ((active con i chosen other).filter (stratumOf · = k)) x := by
+    (h_tie : ∀ c, stratumOf c < k → S.con c (i, chosen) = S.con c (i, other))
+    (h_dec : ((active S.con i chosen other).filter (stratumOf · = k)).Nonempty) {x : Fin n} :
+    x ∈ active S.con i chosen other ∧ IsMinOn σ.symm (active S.con i chosen other) x ↔
+      x ∈ (active S.con i chosen other).filter (stratumOf · = k) ∧
+        IsMinOn σ.symm ((active S.con i chosen other).filter (stratumOf · = k)) x := by
   refine ⟨fun ⟨hx, hmin⟩ => ⟨mem_filter.2 ⟨hx, ?_⟩, hmin.of_subset (filter_subset _ _)⟩,
     fun ⟨hx, hmin⟩ => ⟨(mem_filter.1 hx).1, isMinOn_iff.2 fun y hy => ?_⟩⟩
   · obtain ⟨z, hz⟩ := h_dec
@@ -645,20 +644,20 @@ cannot affect the outcome. -/
 theorem card_filter_picksAt_stratified_binary
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
-    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
+    (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
-    (h_tie : ∀ c, stratumOf c < k → con c (i, chosen) = con c (i, other))
-    (h_dec : ((active con i chosen other).filter (stratumOf · = k)).Nonempty) :
+    (h_tie : ∀ c, stratumOf c < k → S.con c (i, chosen) = S.con c (i, other))
+    (h_dec : ((active S.con i chosen other).filter (stratumOf · = k)).Nonempty) :
     ((consistentTotalOrders (stratified stratumOf inner)).filter
-        (fun σ => PicksAt cands con σ i chosen)).card *
-        ((active con i chosen other).filter (stratumOf · = k)).card =
+        (fun σ => PicksAt S σ i chosen)).card *
+        ((active S.con i chosen other).filter (stratumOf · = k)).card =
       (consistentTotalOrders (stratified stratumOf inner)).card *
-        (favoring con i chosen other ∩
-          (active con i chosen other).filter (stratumOf · = k)).card := by
+        (favoring S.con i chosen other ∩
+          (active S.con i chosen other).filter (stratumOf · = k)).card := by
   classical
-  set D := (active con i chosen other).filter (stratumOf · = k)
+  set D := (active S.con i chosen other).filter (stratumOf · = k)
   have key (σ) (hσ : σ ∈ consistentTotalOrders (stratified stratumOf inner)) :
-      PicksAt cands con σ i chosen ↔ ∃ x ∈ favoring con i chosen other ∩ D, IsMinOn σ.symm D x := by
+      PicksAt S σ i chosen ↔ ∃ x ∈ favoring S.con i chosen other ∩ D, IsMinOn σ.symm D x := by
     have h := fun x => isMinOn_active_iff_isMinOn_filter_stratum (x := x)
       (mem_consistentTotalOrders.mp hσ) h_tie h_dec
     rw [picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ]
@@ -680,15 +679,15 @@ the deciding-stratum rate `|favoring ∩ Dₖ| / |Dₖ|`. -/
 theorem uniformOn_real_picksAt_stratified_binary
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
-    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
+    (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
-    (h_tie : ∀ c, stratumOf c < k → con c (i, chosen) = con c (i, other))
-    (h_dec : ((active con i chosen other).filter (stratumOf · = k)).Nonempty) :
+    (h_tie : ∀ c, stratumOf c < k → S.con c (i, chosen) = S.con c (i, other))
+    (h_dec : ((active S.con i chosen other).filter (stratumOf · = k)).Nonempty) :
     (uniformOn (consistentTotalOrders (stratified stratumOf inner) : Set (Ranking (Fin n) n))).real
-        {σ | PicksAt cands con σ i chosen} =
-      ((favoring con i chosen other ∩
-          (active con i chosen other).filter (stratumOf · = k)).card : ℝ) /
-        ((active con i chosen other).filter (stratumOf · = k)).card := by
+        {σ | PicksAt S σ i chosen} =
+      ((favoring S.con i chosen other ∩
+          (active S.con i chosen other).filter (stratumOf · = k)).card : ℝ) /
+        ((active S.con i chosen other).filter (stratumOf · = k)).card := by
   rw [uniformOn_finset_real_setOf, div_eq_div_iff
     (by exact_mod_cast (consistentTotalOrders_card_pos _).ne')
     (by exact_mod_cast h_dec.card_pos.ne')]
@@ -702,12 +701,12 @@ omit [DecidableEq Output] in
 first stratum on which they differ has all its active constraints favoring `o`. -/
 theorem picksAt_stratified_of_dominates
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
-    (hσ : IsConsistent (stratified stratumOf inner) σ) (ho : o ∈ cands i)
-    (h : ∀ o' ∈ cands i, o' ≠ o → ∃ k : Fin s,
-      (∀ c, stratumOf c < k → con c (i, o) = con c (i, o')) ∧
-      ((active con i o o').filter (stratumOf · = k)).Nonempty ∧
-      (active con i o o').filter (stratumOf · = k) ⊆ favoring con i o o') :
-    PicksAt cands con σ i o := by
+    (hσ : IsConsistent (stratified stratumOf inner) σ) (ho : o ∈ S.gen i)
+    (h : ∀ o' ∈ S.gen i, o' ≠ o → ∃ k : Fin s,
+      (∀ c, stratumOf c < k → S.con c (i, o) = S.con c (i, o')) ∧
+      ((active S.con i o o').filter (stratumOf · = k)).Nonempty ∧
+      (active S.con i o o').filter (stratumOf · = k) ⊆ favoring S.con i o o') :
+    PicksAt S σ i o := by
   refine picksAt_iff.2 ⟨ho, fun o' ho' hne => ?_⟩
   obtain ⟨k, h_tie, h_dec, h_sub⟩ := h o' ho' hne
   obtain ⟨x, hx, hmin⟩ := Equiv.Perm.exists_isMinOn_symm h_dec σ
@@ -718,13 +717,13 @@ omit [DecidableEq Output] in
 /-- A candidate dominating every rival at the deciding stratum wins with probability one. -/
 theorem uniformOn_picksAt_stratified_eq_one
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
-    [IsPartialOrder (Fin n) inner] [DecidableRel inner] (ho : o ∈ cands i)
-    (h : ∀ o' ∈ cands i, o' ≠ o → ∃ k : Fin s,
-      (∀ c, stratumOf c < k → con c (i, o) = con c (i, o')) ∧
-      ((active con i o o').filter (stratumOf · = k)).Nonempty ∧
-      (active con i o o').filter (stratumOf · = k) ⊆ favoring con i o o') :
+    [IsPartialOrder (Fin n) inner] [DecidableRel inner] (ho : o ∈ S.gen i)
+    (h : ∀ o' ∈ S.gen i, o' ≠ o → ∃ k : Fin s,
+      (∀ c, stratumOf c < k → S.con c (i, o) = S.con c (i, o')) ∧
+      ((active S.con i o o').filter (stratumOf · = k)).Nonempty ∧
+      (active S.con i o o').filter (stratumOf · = k) ⊆ favoring S.con i o o') :
     uniformOn (consistentTotalOrders (stratified stratumOf inner) : Set (Ranking (Fin n) n))
-      {σ | PicksAt cands con σ i o} = 1 :=
+      {σ | PicksAt S σ i o} = 1 :=
   uniformOn_eq_one_of (Set.toFinite _) (consistentTotalOrders_nonempty _) fun _ hσ ↦
     picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp (Finset.mem_coe.mp hσ)) ho h
 

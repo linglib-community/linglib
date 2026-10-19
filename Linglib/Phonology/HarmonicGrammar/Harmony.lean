@@ -9,6 +9,7 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
+public import Linglib.Core.Order.Argmax
 
 /-!
 # Harmony
@@ -34,6 +35,8 @@ violations than another on every constraint has at least its harmony, which is h
   case of counted violations.
 * `OptimalityTheory.ConstraintSet.violationDiff`: the violation difference `C(a) - C(b)`.
 * `harmonyDominates`: harmonic dominance, `H(a) > H(b)`.
+* `ConstraintSystem.hgLanguage`: each input's candidates of greatest harmony under a
+  weighting.
 
 ## Main results
 
@@ -46,6 +49,8 @@ violations than another on every constraint has at least its harmony, which is h
 * `harmonyScore_le_of_forall_le`, `harmonyDominates_of_lt`: a Pareto-dominant candidate has at
   least, and given a strict advantage on a positively weighted constraint strictly greater,
   harmony.
+* `ConstraintSystem.hgLanguage_joint`: one HG tableau suffices, the HG language of the joint
+  system being the product of the HG languages.
 
 ## References
 
@@ -54,6 +59,7 @@ violations than another on every constraint has at least its harmony, which is h
 * [A. Prince and P. Smolensky, *Optimality Theory: Constraint Interaction in Generative Grammar*
   (1993)][prince-smolensky-1993]
 * [G. Magri and B. Storme, *Constraint Summation in Phonological Theory* (2021)][magri-storme-2021]
+* [G. Magri, *When is it the case that one tableau suffices?* (2015)][magri-2015]
 -/
 
 @[expose] public section
@@ -194,5 +200,29 @@ theorem harmonyDominates_of_lt (hw : 0 ≤ w) (hle : ∀ i, con i a ≤ con i b)
     harmonyDominates con w a b :=
   neg_lt_neg (dotProduct_lt_dotProduct_of_nonneg_left (fun i ↦ Nat.cast_le.2 (hle i)) hw
     (hlt.imp fun _ h ↦ ⟨h.1, Nat.cast_lt.2 h.2⟩))
+
+/-! ### The languages of a constraint system -/
+
+section System
+
+variable {I O : Type*}
+
+/-- The **HG language** of a weighting assigns each input its candidates of greatest harmony. -/
+def _root_.OptimalityTheory.ConstraintSystem.hgLanguage [Ring R] [Preorder R] [DecidableLE R]
+    (S : ConstraintSystem I O ι) (w : ι → R) (i : I) : Finset O :=
+  (S.gen i).argmax (harmonyScore (S.conAt i) w)
+
+/-- The HG language of the joint system is the product of the system's HG languages, so that one
+HG tableau suffices as one OT tableau does ([magri-2015]). -/
+theorem _root_.OptimalityTheory.ConstraintSystem.hgLanguage_joint [Fintype I] [DecidableEq I]
+    (S : ConstraintSystem I O ι) (w : ι → ℝ) :
+    S.joint.hgLanguage w () = Fintype.piFinset (S.hgLanguage w) := by
+  ext f
+  rw [Fintype.mem_piFinset, ConstraintSystem.hgLanguage,
+    show harmonyScore (S.joint.conAt ()) w = fun g ↦ ∑ i, harmonyScore (S.conAt i) w (g i) from
+      funext fun g ↦ harmonyScore_joint id S.con w g]
+  exact Finset.mem_argmax_piFinset_sum S.gen fun i ↦ harmonyScore (S.conAt i) w
+
+end System
 
 end HarmonicGrammar
