@@ -30,6 +30,12 @@
 .meta a { color: inherit; }
 .small { font-size: 14px; color: var(--secondary); }
 .sources { margin: 12px 0 0; }
+.crumbs { margin: 24px 0 0; font-size: 14px; color: var(--secondary); }
+.crumbs a { color: inherit; }
+.crumbs + h1 { margin-top: 4px; }
+dl.facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 16px 0 24px; }
+dl.facts dt { color: var(--secondary); }
+dl.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .sources a { color: inherit; }
 
 /* Verdict marks */
@@ -142,7 +148,10 @@ dl.theorems dd { margin: 4px 0 0; }
 <!--SITE_HEADER-->
 
 <main class="main">
-  <h1>Evaluations</h1>
+  <nav class="crumbs" id="crumbs" aria-label="Breadcrumb" hidden></nav>
+  <h1 id="title">Evaluations</h1>
+  <div id="detail" hidden></div>
+  <div id="overview">
   <p class="meta" id="project"></p>
   <nav class="domains" id="domains" aria-label="Domains"></nav>
 
@@ -162,6 +171,7 @@ dl.theorems dd { margin: 4px 0 0; }
 
   <h2 id="thm-h">Theorems</h2>
   <dl class="theorems" id="theorems"></dl>
+  </div>
 </main>
 
 <!--SITE_FOOTER-->
@@ -178,6 +188,8 @@ dl.theorems dd { margin: 4px 0 0; }
   const MARK = { correct: "✓", wrong: "✗", silent: "–" };
   const cite = (c) => c ? `${esc(c.who)} (${esc(c.year)})` : "";
   const exps = data.experiments;
+  // The page of a theory or an experiment, from this page.
+  const page = (id) => `${data.up || ""}${data.slugs[id]}/`;
 
   // The project the page belongs to.
   const proj = data.project;
@@ -223,7 +235,7 @@ dl.theorems dd { margin: 4px 0 0; }
   function board(exps, theories) {
     marks.clear();
     let h = "<thead><tr class=\"datasets\"><th class=\"corner\" rowspan=\"3\" scope=\"col\">Theory</th>";
-    for (const e of exps) h += `<th class="split" colspan="${e.columns.length}">${cite(e.cite)}<small>${esc(e.label)}</small></th>`;
+    for (const e of exps) h += `<th class="split" colspan="${e.columns.length}"><a href="${esc(page(e.id))}">${e.cite ? cite(e.cite) : esc(e.label)}</a>${e.cite ? `<small>${esc(e.label)}</small>` : ""}</th>`;
     h += "</tr><tr class=\"groups\">";
     for (const e of exps) {
       if (e.variants) { h += `<th class="split" colspan="${e.columns.length}">how the theory parses the sentences</th>`; continue; }
@@ -272,11 +284,7 @@ dl.theorems dd { margin: 4px 0 0; }
       if (!rows.length) continue;
       h += `<tr class="group"><th colspan="${span}" scope="colgroup"><span>${esc(label)}</span></th></tr>`;
       for (const t of rows) {
-        // The name leads to the theory's definition, past its registration, unless it is under development.
-        const defs = t.definitions || [];
-        const home = defs.length && t.source === "registered" ? defs[0] : t.decl;
-        const defined = defs.length ? `Defined by ${defs.map((d) => d.name).join(", ")}` : home.name;
-        h += `<tr><th scope="row"><a class="name" href="${esc(home.href)}" title="${esc(defined)}">${esc(t.label)}</a>` +
+        h += `<tr><th scope="row"><a class="name" href="${esc(page(t.id))}">${esc(t.label)}</a>` +
           `<span class="desc">${t.decl.doc}</span></th>`;
         for (const e of exps) {
           e.columns.forEach((c, i) => {
@@ -376,23 +384,27 @@ dl.theorems dd { margin: 4px 0 0; }
   const verified = { "page-image": "checked against the page images", "text-layer": "checked against the text", "raw-data": "from the released data" };
   // The papers whose experiments a domain scores.
   function papersOf(d) {
-    let papers = "";
-    for (const [paper, p] of Object.entries(data.papers)) {
-      if (!exps.some((e) => e.paper === paper && d.experiments.includes(e.id))) continue;
-      const used = p.tables.filter((t) => exps.some((e) => e.paper === paper && t.name.startsWith(e.decl.short)));
-      const title = p.cite && p.cite.doi ? `<a href="https://doi.org/${esc(p.cite.doi)}">${esc(p.cite.title)}</a>` : p.cite ? esc(p.cite.title) : "";
-      papers += `<section class="paper"><h3>${cite(p.cite)}${title ? `, <em>${title}</em>` : ""}</h3>` +
-        p.experiments.map((d) => `<p>${d.doc}</p>`).join("") +
-        dotPlot(p) + bars(p) + variantsOf(paper) +
-        `<p class="small">${used.map((t) => `${esc(t.locator)}, ${esc(verified[t.verified] || t.verified)}`).filter((x, i, a) => a.indexOf(x) === i).join("; ")}.</p></section>`;
-    }
-    return papers;
+    return Object.entries(data.papers)
+      .filter(([paper]) => exps.some((e) => e.paper === paper && d.experiments.includes(e.id)))
+      .map(([paper, p]) => paperSection(paper, p)).join("");
+  }
+  function paperSection(paper, p) {
+    const used = p.tables.filter((t) => exps.some((e) => e.paper === paper && t.name.startsWith(e.decl.short)));
+    const title = p.cite && p.cite.doi ? `<a href="https://doi.org/${esc(p.cite.doi)}">${esc(p.cite.title)}</a>` : p.cite ? esc(p.cite.title) : "";
+    return `<section class="paper"><h3>${cite(p.cite)}${title ? `, <em>${title}</em>` : ""}</h3>` +
+      p.experiments.map((d) => `<p>${d.doc}</p>`).join("") +
+      dotPlot(p) + bars(p) + variantsOf(paper) +
+      `<p class="small">${used.map((t) => `${esc(t.locator)}, ${esc(verified[t.verified] || t.verified)}`).filter((x, i, a) => a.indexOf(x) === i).join("; ")}.</p></section>`;
   }
 
   // The panel of a mark, shown on hover or focus and kept open by a click.
   const pop = document.getElementById("pop");
   let shown = null, pinned = false, timer = 0;
   const link = (d, text) => d.href ? `<a href="${esc(d.href)}">${text}</a>` : text;
+  const paperLink = (p) => {
+    const c = p.cite ? cite(p.cite) : esc(p.study);
+    return p.href ? `<a href="${esc(p.href)}">${c}</a>` : c;
+  };
   function sources(e) {
     const paper = data.papers[e.paper];
     if (!paper) return "";
@@ -474,7 +486,7 @@ dl.theorems dd { margin: 4px 0 0; }
     fit();
     // The papers the board brings together.
     const names = (ps) => {
-      const xs = ps.map((p) => p.href ? `<a href="${esc(p.href)}">${p.cite ? cite(p.cite) : esc(p.study)}</a>` : (p.cite ? cite(p.cite) : esc(p.study)));
+      const xs = ps.map(paperLink);
       return xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`;
     };
     const theories = names(d.theoryPapers), dataFrom = names(d.dataPapers);
@@ -487,8 +499,70 @@ dl.theorems dd { margin: 4px 0 0; }
     document.getElementById("theorems").innerHTML = data.theorems.filter((t) => t.domains.includes(d.name)).map((t) =>
       `<div><dt><a href="${esc(t.href)}"><code>${esc(t.name)}</code></a></dt><dd>${t.doc || "<i>No docstring.</i>"}</dd></div>`).join("");
   }
-  addEventListener("hashchange", () => { const d = named(); if (d) { current = d; show(); } });
-  show();
+
+  // A theory's page: where it is defined, its verdicts in its domain, and the theorems behind them.
+  const theoremList = (used) => data.theorems.filter((t) => used.has(t.name)).map((t) =>
+    `<div><dt><a href="${esc(t.href)}"><code>${esc(t.name)}</code></a></dt><dd>${t.doc}</dd></div>`).join("");
+  function theoryView(t) {
+    const d = data.domains.find((x) => x.theories.includes(t.id));
+    const es = d.experiments.map((x) => expById.get(x));
+    const n = { correct: 0, wrong: 0, silent: 0 }, used = new Set();
+    for (const e of es) for (const c of e.columns) {
+      const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
+      if (cell) { n[cell.verdict] += 1; used.add(cell.theorem.name); }
+    }
+    const dotted = (n) => esc(n).replace(/\./g, ".<wbr>");
+    const defs = (t.definitions || []).map((x) => link(x, `<code>${dotted(x.name)}</code>`)).join(", ");
+    const from = (t.papers || []).map(paperLink).join(", ");
+    return { domain: d, title: esc(t.label) + (t.source === "lab" ? " (Lab)" : ""), exps: es, theories: [t], html:
+      `<p>${t.decl.doc}</p><dl class="facts">` +
+      (defs ? `<dt>Defined by</dt><dd>${defs}</dd>` : "") +
+      (from ? `<dt>From</dt><dd>${from}</dd>` : "") +
+      `<dt>${t.source === "lab" ? "In Lab as" : "Registered as"}</dt><dd>${link(t.decl, `<code>${dotted(t.decl.name)}</code>`)}</dd>` +
+      `<dt>Verdicts</dt><dd>${n.correct} right, ${n.wrong} wrong, ${n.silent} silent</dd></dl>` +
+      `<div id="board-slot"></div><h2>Theorems</h2><dl class="theorems">${theoremList(used)}</dl>` };
+  }
+  // An experiment's page: its data, the verdicts of its domain's theories on it, its untested cells.
+  function experimentView(e) {
+    const d = data.domains.find((x) => x.experiments.includes(e.id));
+    const ts = d.theories.map((x) => theoryById.get(x));
+    const used = new Set(), untested = [];
+    for (const c of e.columns) {
+      if (c.observedTheorem) used.add(c.observedTheorem.name);
+      if (c.variant && c.variant.stipulationsTheorem) used.add(c.variant.stipulationsTheorem.name);
+      if (c.observed === null && !untested.includes(c.cell.join(", "))) untested.push(c.cell.join(", "));
+      for (const t of ts) { const cell = data.cells[`${e.id}|${t.id}|${c.key}`]; if (cell) used.add(cell.theorem.name); }
+    }
+    const p = data.papers[e.paper];
+    const title = e.cite ? (e.cite.doi ? `<a href="https://doi.org/${esc(e.cite.doi)}">${esc(e.cite.title)}</a>` : esc(e.cite.title)) : "";
+    return { domain: d, title: e.cite ? `${cite(e.cite)}, ${esc(e.label)}` : esc(e.label), exps: [e], theories: ts, html:
+      (title ? `<p class="meta"><em>${title}</em></p>` : "") + `<p>${e.decl.doc}</p>` +
+      `<div id="board-slot"></div>` +
+      (untested.length ? `<p class="small sources">Not tested: ${untested.map(esc).join("; ")}.</p>` : "") +
+      (p ? `<h2>Data</h2>${paperSection(e.paper, p)}` : "") +
+      `<h2>Theorems</h2><dl class="theorems">${theoremList(used)}</dl>` };
+  }
+  function detail() {
+    const v = data.view;
+    const r = v.kind === "theory" ? theoryView(theoryById.get(v.id)) : experimentView(expById.get(v.id));
+    const crumbs = document.getElementById("crumbs");
+    crumbs.innerHTML = `<a href="${data.up}">Evaluations</a> › <a href="${data.up}#${esc(r.domain.name)}">${esc(r.domain.name)}</a>`;
+    crumbs.hidden = false;
+    document.getElementById("title").innerHTML = r.title;
+    document.getElementById("overview").hidden = true;
+    const el = document.getElementById("detail");
+    el.innerHTML = r.html;
+    el.hidden = false;
+    document.getElementById("board-slot").replaceWith(box);
+    document.getElementById("board").innerHTML = board(r.exps, r.theories);
+    fit();
+  }
+
+  if (data.view) detail();
+  else {
+    addEventListener("hashchange", () => { const d = named(); if (d) { current = d; show(); } });
+    show();
+  }
 })();
 </script>
 <!--SITE_SCRIPT-->
