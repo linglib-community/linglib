@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.Exclusion
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Discourse.CommonGround
 public import Linglib.Fragments.English.Conditionals
 public import Linglib.Fragments.Japanese.Conditionals
 public import Linglib.Fragments.Mandarin.Conditionals
@@ -22,25 +22,32 @@ historical present, to an earlier time with more live possibilities. The same st
 counterfactuality excludes X-marked future-less-vivid conditionals, so X-marking is available in
 both constructions or in neither.
 
-Each construction is a `Scenario` over a T × W frame of dated facts, in which live possibilities
-shrink as facts are established. The felicity of each strategy is derived in each scenario
-(`xFelicitous_jones_iff`, `oFelicitous_jones_iff`, `xFelicitous_party_iff`, `oFelicitous_party`),
-so the constructions stand or fall together (`xFelicitous_jones_iff_party`). One parameter per
-language, whether its X-marking signals strong counterfactuality, predicts the judgment of every
-row and of its alternatives (`rows_felicity`).
+A `Scenario` is a common ground that grows over time, with the antecedent and consequent of a
+conditional; its context set at the time of utterance is `D`. A strategy is felicitous when it
+can quantify over a domain that leaves the consequent open: X-marking over any proper extension
+of `D` whose presupposition holds, O-marking over `D` or, where X-marking fails, the context set of
+an earlier time. Each strategy's felicity is derived in each construction (`xFelicitous_jones_iff`,
+`oFelicitous_jones_iff`, `xFelicitous_party_iff`, `oFelicitous_party`), so the constructions stand
+or fall together (`xFelicitous_jones_iff_party`). One parameter per language, whether its
+X-marking signals strong counterfactuality, predicts the judgment of every row and of its
+alternatives (`rows_felicity`).
 
 ## Implementation notes
 
-The live possibilities at a time are the worlds agreeing with the world of utterance on the facts
-established by then; footnote 5 reads `D` as a proxy for the context set. X-marking's domain is
-the set of all worlds, where the paper requires only some `D⁺ ⊃ D`. The Mandarin exponent *le* is
-study-local, resting on the paper's single consultant.
+Footnote 5 reads `D` as a proxy for the Stalnakerian context set, so a scenario's information is
+a common ground at each time, the facts established by then asserted in order, and the live
+possibilities are its context set. Whether the member of (1) who proposes that Jones *must* have
+taken arsenic is thereby committed to the antecedent decides whether the premise reading is
+felicitous too; `felicitous_iff_of_open` takes that no participant is committed to it as a
+hypothesis. The Mandarin exponent *le* is study-local, resting on the paper's single consultant.
 
 ## References
 
 * [mizuno-2024]
 * [anderson-1951]
+* [stalnaker-1978]
 * [iatridou-1991]
+* [haegeman-2003]
 * [schlenker-2004a]
 * [von-fintel-iatridou-2023]
 * [iatridou-2000]
@@ -48,7 +55,6 @@ study-local, resting on the paper's single consultant.
 * [mizuno-kaufmann-2019]
 * [mackay-2015]
 * [mackay-2019]
-* [condoravdi-2002]
 -/
 
 @[expose] public section
@@ -56,28 +62,38 @@ study-local, resting on the paper's single consultant.
 namespace Mizuno2024
 
 open Modality.Exclusion (MarkingStrategy XMarkingExponent)
-open Conditional (strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
-open Temporal (TWFrame)
+open Conditional (Reading strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
 
 /-! ### Scenarios and felicity
 
 A conditional is true when the consequent holds at every antecedent-world of its domain (§1). An
-O-marked conditional quantifies over the live possibilities at the time of utterance, and is
-trivial when the consequent holds throughout them (§2). X-marking expands the domain beyond the
-live possibilities (§2, after [mackay-2015] and [mackay-2019]); a strongly counterfactual
-X-marking further implies that the antecedent holds at no live possibility (§3.2, §4.2). A
-language whose X-marking cannot expand the domain may shift the O-marked domain to an earlier
-time, as in the historical present ([schlenker-2004a]; §3.3), a covert option blocked where the
-overt one serves (fn. 14). -/
+O-marked conditional quantifies over the live possibilities, and is trivial when the consequent
+holds throughout them (§2). X-marking expands the domain beyond the live possibilities (§2, after
+[mackay-2015] and [mackay-2019]); a strongly counterfactual X-marking further presupposes that
+the antecedent holds at no live possibility (§3.2, §4.2). A language whose X-marking cannot serve
+may shift the O-marked domain to an earlier time, as in the historical present
+([schlenker-2004a]; §3.3), a covert option that the overt one blocks where it serves (fn. 14). -/
 
-/-- A scenario of utterance for a conditional consists of a T × W frame dating the facts
-established in it, the world and time of utterance, and the conditional's antecedent and
-consequent. -/
+/-- Whether a language's X-marking only expands the domain, allowing the unlikeliness reading of
+(8), or signals strong counterfactuality. -/
+inductive Counterfactuality
+  | weak
+  | strong
+  deriving DecidableEq, Repr
+
+/-- An X-marking admits an antecedent over the live possibilities when its presupposition holds:
+strong counterfactuality presupposes that the antecedent holds at no live possibility. -/
+def Counterfactuality.Admits {W : Type*} : Counterfactuality → Set W → Set W → Prop
+  | .weak, _, _ => True
+  | .strong, A, D => Disjoint A D
+
+/-- A scenario of utterance for a conditional is a common ground that only grows over time, a
+time of utterance, and the conditional's antecedent and consequent. -/
 structure Scenario (W : Type*) where
-  /-- The frame dating the facts established in the scenario. -/
-  frame : TWFrame W ℤ
-  /-- The world of utterance. -/
-  world : W
+  /-- The common ground at each time. -/
+  commonGround : ℤ → Filter W
+  /-- Information only grows. -/
+  antitone_commonGround : Antitone commonGround
   /-- The time of utterance. -/
   time : ℤ
   /-- The antecedent of the conditional. -/
@@ -85,51 +101,104 @@ structure Scenario (W : Type*) where
   /-- The consequent of the conditional. -/
   consequent : Set W
 
-/-- Whether a language's X-marking only expands the domain, allowing the unlikeliness reading of
-(8), or signals strong counterfactuality, that the antecedent holds at no live possibility. -/
-inductive Counterfactuality
-  | weak
-  | strong
-  deriving DecidableEq, Repr
-
 namespace Scenario
 
-variable {W : Type*} (S : Scenario W) (κ : Counterfactuality)
+variable {W : Type*}
 
-/-- The live possibilities at a time are the worlds agreeing with the world of utterance on the
-facts established by then. -/
-def live (t : ℤ) : Set W := S.frame.alternatives (S.world, t)
+/-- The scenario whose common ground at each time is the trivial one with every fact dated by then
+asserted. -/
+@[simps time antecedent consequent]
+def ofDatedFacts (facts : List (ℤ × Set W)) (time : ℤ) (antecedent consequent : Set W) :
+    Scenario W where
+  commonGround t := HasCommonGround.commonGround
+    (HasAssertion.play (HasAssertion.initial : Filter W) ((facts.filter (·.1 ≤ t)).map (·.2)))
+  antitone_commonGround := HasAssertion.antitone_commonGround_play _ fun _ _ h ↦
+    List.map_subset _ fun _ hf ↦ by
+      simp only [List.mem_filter, decide_eq_true_eq] at hf ⊢
+      exact ⟨hf.1, hf.2.trans h⟩
+  time := time
+  antecedent := antecedent
+  consequent := consequent
+
+variable (S : Scenario W) (κ : Counterfactuality)
+
+/-- The live possibilities at a time, the context set of the common ground then. -/
+def live (t : ℤ) : Set W := (S.commonGround t).ker
 
 /-- The domain `D` of an O-marked conditional, the live possibilities at the time of
 utterance. -/
 abbrev domain : Set W := S.live S.time
 
-/-- An X-marked conditional is felicitous when its domain, every world, leaves the consequent
-open and, if the X-marking signals strong counterfactuality, the antecedent holds at no live
-possibility. -/
+/-- An X-marked conditional quantifies over a domain properly extending the live possibilities.
+It is felicitous when some such domain leaves the consequent open and the X-marking admits the
+antecedent. -/
 def XFelicitous : Prop :=
-  ¬ Set.univ ⊆ S.consequent ∧ (κ = .strong → Disjoint S.antecedent S.domain)
+  (∃ D, S.domain ⊂ D ∧ ¬ D ⊆ S.consequent) ∧ κ.Admits S.antecedent S.domain
 
-/-- An O-marked conditional is felicitous when the live possibilities leave the consequent open,
-at the time of utterance or, where X-marking is not felicitous, at an earlier time. -/
-def OFelicitous : Prop :=
-  ¬ S.domain ⊆ S.consequent ∨ ¬ S.XFelicitous κ ∧ ∃ t < S.time, ¬ S.live t ⊆ S.consequent
+/-- The domains an O-marked conditional can quantify over are the live possibilities at the time
+of utterance and, unless X-marking is felicitous, those at an earlier time. -/
+def oDomains : Set (Set W) :=
+  {D | D = S.domain ∨ ¬ S.XFelicitous κ ∧ ∃ t < S.time, D = S.live t}
+
+/-- An O-marked conditional is felicitous when one of its domains leaves the consequent open. -/
+def OFelicitous : Prop := ∃ D ∈ S.oDomains κ, ¬ D ⊆ S.consequent
 
 variable {S κ}
 
-/-- Where the antecedent is live and some world fails the consequent, X-marking is felicitous
-exactly when it does not signal strong counterfactuality. -/
-theorem xFelicitous_iff_of_live (hA : ¬ Disjoint S.antecedent S.domain)
-    (hC : ¬ Set.univ ⊆ S.consequent) : S.XFelicitous κ ↔ κ = .weak := by
-  cases κ <;> simp [XFelicitous, hA, hC]
+theorem mem_live_ofDatedFacts {facts : List (ℤ × Set W)} {time : ℤ} {A C : Set W} {t : ℤ}
+    {v : W} : v ∈ (ofDatedFacts facts time A C).live t ↔ ∀ f ∈ facts, f.1 ≤ t → v ∈ f.2 := by
+  simp only [live, ofDatedFacts, HasAssertion.commonGround_play_initial, Filter.ker_principal,
+    Set.mem_iInter, List.mem_map, List.mem_filter, decide_eq_true_eq]
+  exact ⟨fun h f hf ht ↦ h _ ⟨f, ⟨hf, ht⟩, rfl⟩, fun h _ ⟨f, ⟨hf, ht⟩, hp⟩ ↦ hp ▸ h f hf ht⟩
 
-/-- X-marking stands or falls together in any two scenarios whose antecedents are live and whose
-consequents some world fails (§4.2). -/
-theorem xFelicitous_iff_of_live_of_live {W' : Type*} {S' : Scenario W'}
-    (hA : ¬ Disjoint S.antecedent S.domain) (hC : ¬ Set.univ ⊆ S.consequent)
-    (hA' : ¬ Disjoint S'.antecedent S'.domain) (hC' : ¬ Set.univ ⊆ S'.consequent) :
+/-- The live possibilities only shrink. -/
+theorem antitone_live : Antitone S.live :=
+  Filter.ker_mono.comp_antitone S.antitone_commonGround
+
+/-- An antecedent open among the live possibilities is undecided by the common ground. -/
+theorem not_decidedBy_of_open (h₁ : ¬ S.domain ⊆ S.antecedent)
+    (h₂ : ¬ Disjoint S.antecedent S.domain) :
+    ¬ (Question.polar S.antecedent).DecidedBy (S.commonGround S.time) := by
+  rw [Question.decidedBy_polar]
+  rintro (h | h)
+  · exact h₁ (Filter.subset_ker.1 subset_rfl _ h)
+  · exact h₂ (Set.subset_compl_iff_disjoint_right.1 (Filter.subset_ker.1 subset_rfl _ h)).symm
+
+/-- In a context leaving the antecedent open, and with no participant committed to it, only the
+hypothetical reading is felicitous ([iatridou-1991], [haegeman-2003]). -/
+theorem felicitous_iff_of_open {A : Type*} {K : Commitment.Table A W}
+    (hK : K.commonGround = S.commonGround S.time) (h : ∀ a, S.antecedent ∉ K.discourseCommitments a)
+    (h₁ : ¬ S.domain ⊆ S.antecedent) (h₂ : ¬ Disjoint S.antecedent S.domain) {ct : Reading} :
+    ct.Felicitous K S.antecedent ↔ ct = .hypothetical :=
+  Reading.felicitous_iff_of_not_decidedBy h (hK ▸ not_decidedBy_of_open h₁ h₂)
+
+/-- Where the antecedent is live and the domain can be expanded so as to leave the consequent
+open, X-marking is felicitous exactly when it does not signal strong counterfactuality. -/
+theorem xFelicitous_iff (hA : ¬ Disjoint S.antecedent S.domain)
+    (hX : ∃ D, S.domain ⊂ D ∧ ¬ D ⊆ S.consequent) : S.XFelicitous κ ↔ κ = .weak := by
+  cases κ <;> simp [XFelicitous, Counterfactuality.Admits, hA, hX]
+
+/-- X-marking stands or falls together in any two such scenarios (§4.2). -/
+theorem xFelicitous_iff_xFelicitous {W' : Type*} {S' : Scenario W'}
+    (hA : ¬ Disjoint S.antecedent S.domain) (hX : ∃ D, S.domain ⊂ D ∧ ¬ D ⊆ S.consequent)
+    (hA' : ¬ Disjoint S'.antecedent S'.domain) (hX' : ∃ D, S'.domain ⊂ D ∧ ¬ D ⊆ S'.consequent) :
     S.XFelicitous κ ↔ S'.XFelicitous κ := by
-  rw [xFelicitous_iff_of_live hA hC, xFelicitous_iff_of_live hA' hC']
+  rw [xFelicitous_iff hA hX, xFelicitous_iff hA' hX']
+
+/-- Where the consequent is open among the live possibilities, O-marking is felicitous. -/
+theorem oFelicitous_of_not_subset (h : ¬ S.domain ⊆ S.consequent) : S.OFelicitous κ :=
+  ⟨_, .inl rfl, h⟩
+
+/-- Where the consequent is settled among the live possibilities, O-marking is felicitous exactly
+when X-marking is not and the consequent was open at an earlier time. -/
+theorem oFelicitous_iff_of_subset (h : S.domain ⊆ S.consequent) :
+    S.OFelicitous κ ↔ ¬ S.XFelicitous κ ∧ ∃ t < S.time, ¬ S.live t ⊆ S.consequent := by
+  constructor
+  · rintro ⟨D, hD | ⟨hX, t, ht, rfl⟩, hC⟩
+    · exact absurd (hD ▸ h) hC
+    · exact ⟨hX, t, ht, hC⟩
+  · rintro ⟨hX, t, ht, hC⟩
+    exact ⟨_, .inr ⟨hX, t, ht, rfl⟩, hC⟩
 
 end Scenario
 
@@ -146,17 +215,15 @@ inductive Jones
   | unpoisoned
   deriving DecidableEq, Repr
 
-/-- The Jones scenario of (1) and (4), uttered where Jones took arsenic. The antecedent is that he
-took arsenic, and the consequent that he shows the symptoms. -/
-def jones : Scenario Jones where
-  frame := .ofDatedFacts (fun _ : Unit ↦ 1) fun w _ ↦ w ≠ .unpoisoned
-  world := .arsenic
-  time := 1
-  antecedent := {.arsenic}
-  consequent := {w | w ≠ .unpoisoned}
+/-- The proposition that Jones shows the symptoms. -/
+def symptoms : Set Jones := {w | w ≠ .unpoisoned}
 
-theorem mem_live_jones {v : Jones} {t : ℤ} : v ∈ jones.live t ↔ (1 ≤ t → v ≠ .unpoisoned) :=
-  ⟨fun h ht ↦ (h () ht).1 nofun, fun h _ ht ↦ ⟨fun _ ↦ h ht, fun _ ↦ nofun⟩⟩
+/-- The Jones scenario of (1) and (4). The antecedent is that Jones took arsenic, and the
+consequent that he shows the symptoms. -/
+def jones : Scenario Jones := .ofDatedFacts [(1, symptoms)] 1 {.arsenic} symptoms
+
+theorem mem_live_jones {v : Jones} {t : ℤ} : v ∈ jones.live t ↔ (1 ≤ t → v ≠ .unpoisoned) := by
+  simp [jones, Scenario.mem_live_ofDatedFacts, symptoms]
 
 /-- Over `D` the consequent is settled, since the symptoms are established (§2). -/
 theorem domain_subset_consequent_jones : jones.domain ⊆ jones.consequent :=
@@ -164,54 +231,52 @@ theorem domain_subset_consequent_jones : jones.domain ⊆ jones.consequent :=
 
 /-- An O-marked Anderson conditional is true for any antecedent, the triviality behind the
 infelicity of (2). -/
-theorem oMarking_trivial (A : Set Jones) :
-    (jones.world, jones.time) ∈ strictImp jones.frame.alternatives A jones.consequent :=
+theorem oMarking_trivial (A : Set Jones) : jones.time ∈ strictImp jones.live A jones.consequent :=
   mem_strictImp_of_subset domain_subset_consequent_jones
 
 theorem unpoisoned_not_mem_domain : Jones.unpoisoned ∉ jones.domain :=
   fun h ↦ mem_live_jones.1 h le_rfl rfl
 
-/-- X-marking strictly expands the domain, the paper's `D ⊂ D⁺` (§2). -/
-theorem domain_ssubset_univ : jones.domain ⊂ Set.univ :=
-  Set.ssubset_univ_iff.2 fun h ↦ unpoisoned_not_mem_domain (h ▸ trivial)
+/-- X-marking can expand the domain so as to leave the consequent open (§2). -/
+theorem exists_ssuperset_jones : ∃ D, jones.domain ⊂ D ∧ ¬ D ⊆ jones.consequent :=
+  ⟨Set.univ, Set.ssubset_univ_iff.2 fun h ↦ unpoisoned_not_mem_domain (h ▸ trivial),
+    fun h ↦ h (Set.mem_univ Jones.unpoisoned) rfl⟩
 
 /-- The historical-present shift to time `0` strictly expands the domain, since the live
 possibilities shrink as facts are established (§3.3). -/
 theorem domain_ssubset_live_zero : jones.domain ⊂ jones.live 0 :=
-  (Set.ssubset_iff_of_subset (jones.frame.antitone_metaphysicalBase _ zero_le_one)).2
+  (Set.ssubset_iff_of_subset (jones.antitone_live zero_le_one)).2
     ⟨.unpoisoned, mem_live_jones.2 (by decide), unpoisoned_not_mem_domain⟩
 
 /-- After the historical-present shift the consequent is open (§3.3). -/
 theorem not_live_zero_subset_consequent : ¬ jones.live 0 ⊆ jones.consequent :=
   fun h ↦ h (mem_live_jones.2 (by decide)) rfl
 
-/-- A true Anderson conditional at the shifted index excludes a live possibility, so "one can
-make a meaningful, contingent claim" (§2). -/
+/-- A true Anderson conditional at the shifted time excludes a live possibility, so "one can make
+a meaningful, contingent claim" (§2). -/
 theorem not_live_zero_subset_of_mem_strictImp {A : Set Jones}
-    (h : (jones.world, 0) ∈ strictImp jones.frame.alternatives A jones.consequent) :
-    ¬ jones.live 0 ⊆ A :=
+    (h : 0 ∈ strictImp jones.live A jones.consequent) : ¬ jones.live 0 ⊆ A :=
   not_subset_of_mem_strictImp h not_live_zero_subset_consequent
+
+theorem mimic_mem_domain : Jones.mimic ∈ jones.domain := mem_live_jones.2 nofun
 
 /-- That Jones took arsenic is a live possibility, as the follow-up (1b) requires. -/
 theorem antecedent_live_jones : ¬ Disjoint jones.antecedent jones.domain :=
-  Set.not_disjoint_iff.2 ⟨.arsenic, rfl, mem_live_jones.2 fun _ ↦ by decide⟩
-
-theorem not_univ_subset_consequent_jones : ¬ Set.univ ⊆ jones.consequent :=
-  fun h ↦ h (Set.mem_univ Jones.unpoisoned) rfl
+  Set.not_disjoint_iff.2 ⟨.arsenic, rfl, mem_live_jones.2 nofun⟩
 
 /-- An X-marked Anderson conditional is felicitous exactly when the X-marking does not signal
 strong counterfactuality: English (1a) and not Japanese (4a) with *-ta* (§3.2). -/
 theorem xFelicitous_jones_iff {κ : Counterfactuality} : jones.XFelicitous κ ↔ κ = .weak :=
-  Scenario.xFelicitous_iff_of_live antecedent_live_jones not_univ_subset_consequent_jones
+  Scenario.xFelicitous_iff antecedent_live_jones exists_ssuperset_jones
 
 /-- An O-marked Anderson conditional is felicitous exactly when the X-marking signals strong
 counterfactuality, which leaves the historical-present shift open: Japanese (4a) and not English
 (2) (§3.3, fn. 14). -/
 theorem oFelicitous_jones_iff {κ : Counterfactuality} : jones.OFelicitous κ ↔ κ = .strong := by
-  rw [Scenario.OFelicitous, xFelicitous_jones_iff]
+  rw [Scenario.oFelicitous_iff_of_subset domain_subset_consequent_jones, xFelicitous_jones_iff]
   cases κ
-  · simp [domain_subset_consequent_jones]
-  · exact iff_of_true (.inr ⟨nofun, 0, zero_lt_one, not_live_zero_subset_consequent⟩) rfl
+  · simp
+  · exact iff_of_true ⟨nofun, 0, zero_lt_one, not_live_zero_subset_consequent⟩ rfl
 
 /-- An Anderson conditional takes exactly one strategy. -/
 theorem oFelicitous_jones_iff_not {κ : Counterfactuality} :
@@ -219,64 +284,68 @@ theorem oFelicitous_jones_iff_not {κ : Counterfactuality} :
   rw [oFelicitous_jones_iff, xFelicitous_jones_iff]
   cases κ <;> decide
 
+/-- The Jones scenario once it is established that he took the mimic poison. -/
+def jonesIdentified : Scenario Jones := .ofDatedFacts [(1, {.mimic})] 1 {.arsenic} symptoms
+
 /-- Once the mimic poison is identified, the arsenic antecedent is no longer live, and a strongly
 counterfactual X-marking is felicitous, as §3.2 notes for (4a) with *-ta*. -/
-theorem xFelicitous_strong_of_identified :
-    { jones with frame := .ofDatedFacts (fun _ : Jones ↦ 1) (· = ·), world := .mimic }.XFelicitous
-      .strong := by
-  refine ⟨not_univ_subset_consequent_jones, fun _ ↦ Set.disjoint_left.2 ?_⟩
-  rintro _ rfl h
-  exact absurd ((h .mimic le_rfl).1 rfl) (by decide)
+theorem xFelicitous_strong_identified : jonesIdentified.XFelicitous .strong := by
+  have hD : jonesIdentified.domain = {.mimic} := by
+    ext v; simp [jonesIdentified, Scenario.mem_live_ofDatedFacts]
+  refine ⟨⟨Set.univ, ?_, fun h ↦ h (Set.mem_univ Jones.unpoisoned) rfl⟩, ?_⟩
+  · rw [hD]; exact Set.ssubset_univ_iff.2 fun h ↦ absurd (h ▸ Set.mem_univ Jones.arsenic) nofun
+  · rw [hD]; exact Set.disjoint_singleton.2 nofun
 
 /-! ### Future-less-vivid conditionals (§4.2)
 
-The scenario of (8): whether John comes tomorrow, and whether the party is fun, is established at
-time `2`, after the time of utterance `1`. -/
+The scenario of (8): the party is set before the time of utterance `1`, and whether John comes,
+and whether the party is fun, is established at time `2`. -/
 
-/-- In a world of the party scenario, John comes and the party is fun, or he stays away and the
-party is fun anyway or dull. -/
+/-- In a world of the party scenario, John comes and the party is fun, he stays away and the party
+is fun anyway or dull, or the party is cancelled. -/
 inductive Party
   | johnComes
   | funAnyway
   | dull
+  | cancelled
   deriving DecidableEq, Repr
 
-/-- The party scenario of (8) and (9), uttered where John stays away and the party is dull. The
+/-- The party scenario of (8) and (9), in which John stays away and the party is dull. The
 antecedent is that John comes, and the consequent that the party is fun. -/
-def party : Scenario Party where
-  frame := .ofDatedFacts (fun _ : Party ↦ 2) (· = ·)
-  world := .dull
-  time := 1
-  antecedent := {.johnComes}
-  consequent := {.johnComes, .funAnyway}
+def party : Scenario Party :=
+  .ofDatedFacts [(0, {w | w ≠ .cancelled}), (2, {.dull})] 1 {.johnComes} {.johnComes, .funAnyway}
 
-/-- Nothing about tomorrow is established at the time of utterance. -/
-theorem mem_domain_party (v : Party) : v ∈ party.domain :=
-  fun _ (h : (2 : ℤ) ≤ 1) ↦ absurd h (by decide)
+theorem mem_domain_party {v : Party} : v ∈ party.domain ↔ v ≠ .cancelled := by
+  simp [party, Scenario.mem_live_ofDatedFacts]
 
 /-- The consequent is open over `D`, so O-marking is not trivial. -/
 theorem not_domain_subset_consequent_party : ¬ party.domain ⊆ party.consequent :=
-  fun h ↦ absurd (h (mem_domain_party .dull)) (by simp [party])
+  fun h ↦ absurd (h ((mem_domain_party (v := .dull)).2 nofun)) (by simp [party])
 
 /-- That John comes is a live possibility, as the follow-up (8b) requires. -/
 theorem antecedent_live_party : ¬ Disjoint party.antecedent party.domain :=
-  Set.not_disjoint_iff.2 ⟨.johnComes, rfl, mem_domain_party _⟩
+  Set.not_disjoint_iff.2 ⟨.johnComes, rfl, mem_domain_party.2 nofun⟩
+
+/-- X-marking can expand the domain to the cancelled party, leaving the consequent open. -/
+theorem exists_ssuperset_party : ∃ D, party.domain ⊂ D ∧ ¬ D ⊆ party.consequent :=
+  ⟨Set.univ, Set.ssubset_univ_iff.2 fun h ↦ mem_domain_party.1 (h ▸ trivial) rfl,
+    fun h ↦ absurd (h (Set.mem_univ Party.dull)) (by simp [party])⟩
 
 /-- An X-marked future-less-vivid conditional is felicitous exactly when the X-marking does not
 signal strong counterfactuality: English (8) and not Japanese (10) or Mandarin (12). -/
 theorem xFelicitous_party_iff {κ : Counterfactuality} : party.XFelicitous κ ↔ κ = .weak :=
-  Scenario.xFelicitous_iff_of_live antecedent_live_party
-    fun h ↦ absurd (h (Set.mem_univ Party.dull)) (by simp [party])
+  Scenario.xFelicitous_iff antecedent_live_party exists_ssuperset_party
 
 /-- An O-marked future-less-vivid conditional is felicitous, (9) and (11). -/
 theorem oFelicitous_party {κ : Counterfactuality} : party.OFelicitous κ :=
-  .inl not_domain_subset_consequent_party
+  Scenario.oFelicitous_of_not_subset not_domain_subset_consequent_party
 
 /-- X-marking is available for Anderson conditionals iff it is for future-less-vivid ones: they
 "stand or fall together" (§4.2). -/
 theorem xFelicitous_jones_iff_party {κ : Counterfactuality} :
-    jones.XFelicitous κ ↔ party.XFelicitous κ := by
-  rw [xFelicitous_jones_iff, xFelicitous_party_iff]
+    jones.XFelicitous κ ↔ party.XFelicitous κ :=
+  Scenario.xFelicitous_iff_xFelicitous antecedent_live_jones exists_ssuperset_jones
+    antecedent_live_party exists_ssuperset_party
 
 /-! ### The rows -/
 
@@ -353,16 +422,28 @@ theorem xExponent_isSome : (∀ e ∈ Examples.all, (xExponent e.language).isSom
 
 /-! ### The conditional markers
 
-Both scenarios leave the antecedent open, neither established nor excluded by the live
-possibilities, the discourse condition of a hypothetical conditional ([iatridou-1991]), and the
-markers heading the rows are attested in hypothetical conditionals. -/
+Both scenarios leave the antecedent open, so with no participant committed to it a conditional
+is read hypothetically, and the markers heading the rows are attested marking hypothetical
+conditionals. -/
 
-theorem antecedent_open :
-    (¬ Disjoint jones.antecedent jones.domain ∧ ¬ jones.domain ⊆ jones.antecedent) ∧
-      ¬ Disjoint party.antecedent party.domain ∧ ¬ party.domain ⊆ party.antecedent :=
-  ⟨⟨antecedent_live_jones, fun h ↦ absurd (h (mem_live_jones.2 fun _ ↦ by decide :
-      Jones.mimic ∈ jones.domain)) (by simp [jones])⟩,
-    antecedent_live_party, fun h ↦ absurd (h (mem_domain_party .dull)) (by simp [party])⟩
+/-- Only the hypothetical reading is felicitous for the Anderson antecedent, given that no
+participant is committed to it. -/
+theorem felicitous_jones_iff {A : Type*} {K : Commitment.Table A Jones}
+    (hK : K.commonGround = jones.commonGround jones.time)
+    (h : ∀ a, jones.antecedent ∉ K.discourseCommitments a) {ct : Reading} :
+    ct.Felicitous K jones.antecedent ↔ ct = .hypothetical :=
+  Scenario.felicitous_iff_of_open hK h
+    (fun h' ↦ absurd (h' mimic_mem_domain) nofun) antecedent_live_jones
+
+/-- Only the hypothetical reading is felicitous for the future-less-vivid antecedent, given that
+no participant is committed to it. -/
+theorem felicitous_party_iff {A : Type*} {K : Commitment.Table A Party}
+    (hK : K.commonGround = party.commonGround party.time)
+    (h : ∀ a, party.antecedent ∉ K.discourseCommitments a) {ct : Reading} :
+    ct.Felicitous K party.antecedent ↔ ct = .hypothetical :=
+  Scenario.felicitous_iff_of_open hK h
+    (fun h' ↦ absurd (h' (mem_domain_party.2 nofun : Party.dull ∈ party.domain)) nofun)
+    antecedent_live_party
 
 /-- The rows of each sampled language are headed by English *if*, by Japanese *-(e)ba*, to which
 the paper restricts its attention (fn. 8), or by Mandarin *rúguǒ*. -/
