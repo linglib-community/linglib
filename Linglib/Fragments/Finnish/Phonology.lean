@@ -86,13 +86,13 @@ is copied last.
 A rule has one right context, so each alternation is two rules, one for an ending of a
 single consonant and one for an ending that begins with two. The qualitative rules apply
 first, since the short stop that quantitative gradation leaves does not weaken again. The
-qualitative rules are stated after a vowel. A long stop is two segments, and so is a long
-vowel, which the rules do not yet tell from a short one.
+qualitative rules are stated after a vowel, and that of /t/ also after /h/. A long stop is two
+segments, and so is a long vowel, which the rules do not yet tell from a short one.
 
 ## TODO
 
-* The qualitative alternations after /h l r/ and the assimilations after a nasal or liquid,
-  Karlsson's types (6) and (8) to (12), the rare types (13) to (16), the ban on gradation
+* The alternations of /p/ and /k/ after /l r/ and the assimilations after a nasal or liquid,
+  Karlsson's types (8) to (12), the rare types (13) to (16), the ban on gradation
   before a long vowel, and rule B for verbs.
 
 ## References
@@ -311,11 +311,11 @@ def gradation (target : Segment) (effect : Effect) (left : ContextElem) : List R
   [[.seg V, .seg C, .wordBoundary], [.seg V, .seg C, .seg C]].map fun right ↦
     { target, effect, leftContext := [left], rightContext := right }
 
-/-- In qualitative gradation after a vowel, /p/ becomes /v/, /t/ becomes /d/ and /k/ is
-lost. -/
+/-- In qualitative gradation /p/ becomes /v/ and /k/ is lost after a vowel, and /t/ becomes
+/d/ after a vowel and after /h/. -/
 def qualitativeGradation : List Rule :=
-  gradation p (.replace v) (.seg V) ++
-    gradation t (.changeFeatures (Segment.ofSpecs [(.voice, true)])) (.seg V) ++
+  let voice : Effect := .changeFeatures (Segment.ofSpecs [(.voice, true)])
+  gradation p (.replace v) (.seg V) ++ gradation t voice (.seg V) ++ gradation t voice (.seg h) ++
     gradation k .delete (.seg V)
 
 /-- In quantitative gradation a long stop loses its second half. -/
@@ -340,10 +340,12 @@ theorem quantitative_gradation :
       derive consonantGradation [k, u, k, k, a, n] = [k, u, k, a, n] := by
   decide
 
-/-- Qualitative gradation in *tupa* 'hut', *katu* 'street' and *tauko* 'pause'. -/
+/-- Qualitative gradation in *tupa* 'hut', *katu* 'street', *lähte-* 'leave' and *tauko*
+'pause'. -/
 theorem qualitative_gradation :
     derive consonantGradation [t, u, p, a, s, s, a] = [t, u, v, a, s, s, a] ∧
       derive consonantGradation [k, a, t, u, l, l, a] = [k, a, d, u, l, l, a] ∧
+      derive consonantGradation [l, ä, h, t, e, n] = [l, ä, h, d, e, n] ∧
       derive consonantGradation [t, a, u, k, o, n] = [t, a, u, o, n] := by
   decide
 

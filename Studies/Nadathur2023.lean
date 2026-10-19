@@ -11,20 +11,20 @@ public import Linglib.Data.Examples.Nadathur2023
 # Nadathur (2023)
 
 Nadathur analyses an implicative as Karttunen's presupposition–proposition pair with causal
-conditions, her Proposal (32). The verb presupposes that its prerequisite is causally necessary
-for the complement and, if it is two-way, causally sufficient, both relative to a background
-situation, and it asserts the prerequisite. Under this causal interpretation of the conditions
-(`causalInterpretation`), which is sound at every context of the background, a verb implies what its
-implication signature says.
+conditions, the paper's Proposal (32). The verb presupposes that its prerequisite is causally
+necessary for the complement and, if it is two-way, causally sufficient, both relative to a
+background situation, and it asserts the prerequisite. Under this causal interpretation of the
+conditions (`causalInterpretation`), which is sound at every context of the background, a verb
+implies what its implication signature says.
 
-In her Dreyfus scenario, an eight-vertex causal model, the nerve that *dare* names is causally
-necessary and sufficient for sending the message, so *dare* is felicitous there and its assertion
-and denial decide the message (`dare_felicitous_for_msg`, `msg_of_dare`, `not_msg_of_not_dare`).
-The nerve is necessary but not sufficient for establishing communication and for spying, so *dare*
-is infelicitous there (`dare_infelicitous_for_com`, `dare_infelicitous_for_spy`). The Finnish
-fragment's entries carry the implication signatures of the paper's Finnish implicatives
-(`implicative_eq`), and each of the paper's minimal pairs implies what its verb's signature says for
-its matrix polarity (`rows_agree`).
+In the paper's Dreyfus scenario, an eight-vertex causal model, the nerve that *dare* names is
+causally necessary and sufficient for sending the message, so *dare* is felicitous there and its
+assertion and denial decide the message (`dare_felicitous_for_msg`, `msg_of_dare`,
+`not_msg_of_not_dare`). The nerve is necessary but not sufficient for establishing communication and
+for spying, so *dare* is infelicitous there (`dare_infelicitous_for_com`,
+`dare_infelicitous_for_spy`). Each of the paper's Finnish minimal pairs implies what the signature
+of its verb's Fragment entry says for its matrix polarity (`rows_agree`), and its complement is a
+Fragment verb in the infinitive and case that verb governs (`complement_mem_infinitiveForms`).
 
 ## Implementation notes
 
@@ -303,29 +303,14 @@ theorem not_nrv_necessary_for_spy :
 
 end Consistent
 
-/-! ### The Finnish implicatives -/
+/-! ### The Finnish implicatives
 
-/-- The implication signatures of the Finnish verbs. *Onnistua* is the bleached two-way verb,
-and *uskaltaa*, *viitsiä*, *malttaa*, *hennoa*, *kehdata* and *ehtiä* name their prerequisites,
-courage, engagement, patience, hard-heartedness, the lack of shame and time. *Jaksaa* names
-strength and *mahtua* being small enough, and both imply only when negated, as does *pystyä*, which
-the paper also allows might be a modal; *laiminlyödä* and *epäröidä* reverse the polarity. -/
-def finnish : List (Finnish.Verb × ImplicationSignature) :=
-  [(Finnish.onnistua, ⟨.some .positive, .some .negative⟩),
-    (Finnish.uskaltaa, ⟨.some .positive, .some .negative⟩),
-    (Finnish.viitsiä, ⟨.some .positive, .some .negative⟩),
-    (Finnish.malttaa, ⟨.some .positive, .some .negative⟩),
-    (Finnish.hennoa, ⟨.some .positive, .some .negative⟩),
-    (Finnish.kehdata, ⟨.some .positive, .some .negative⟩),
-    (Finnish.ehtiä, ⟨.some .positive, .some .negative⟩),
-    (Finnish.jaksaa, ⟨⊥, .some .negative⟩), (Finnish.mahtua, ⟨⊥, .some .negative⟩),
-    (Finnish.pystyä, ⟨⊥, .some .negative⟩),
-    (Finnish.laiminlyödä, ⟨.some .negative, .some .positive⟩),
-    (Finnish.epäröidä, ⟨⊥, .some .positive⟩)]
-
-/-- Each signature is the one the Fragment's entry carries. -/
-theorem implicative_eq : ∀ p ∈ finnish, p.1.implicative = p.2 := by
-  decide
+*Onnistua* is the bleached two-way verb, and *uskaltaa*, *viitsiä*, *malttaa*, *hennoa*,
+*kehdata* and *ehtiä* name their prerequisites, courage, engagement, patience,
+hard-heartedness, the lack of shame and time. *Jaksaa* names strength and *mahtua* being small
+enough, and both imply only when negated, as does *pystyä*, which the paper also allows might be
+a modal; *laiminlyödä* and *epäröidä* reverse the polarity. The Fragment's entries carry these
+signatures. -/
 
 /-- A minimal-pair member records the implication signature of its verb, the polarity of its
 matrix, and the polarity of the complement the paper says it implies, if any. -/
@@ -334,9 +319,9 @@ structure Row where
   matrix : Polarity
   entails : Flat Polarity
 
-/-- A row from the paper's features. -/
+/-- A row from the paper's features, with the signature of the Fragment's entry for its verb. -/
 def Row.ofDatum (e : Datum) : Option Row := do
-  let k ← e.parse? "verb" (finnish.map fun p ↦ (p.1.form, p.2))
+  let k ← e.parse? "verb" (Finnish.verbs.map fun v ↦ (v.form, v.implicative))
   let m ← e.parse? "matrix" [("positive", Polarity.positive), ("negated", .negative)]
   let ent : Flat Polarity ← e.parse? "entails"
     [("complement", ↑Polarity.positive), ("negation", ↑Polarity.negative), ("nothing", ⊥)]
@@ -352,5 +337,17 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 /-- Each claim implies what its verb's signature says for its matrix polarity. -/
 theorem rows_agree : ∀ r ∈ rows, r.signature.implied r.matrix = r.entails := by
   decide
+
+/-- The complement of an example, its word glossed as an infinitive. -/
+def complement? (e : Datum) : Option (List Phonology.Segment) := do
+  let w ← e.glossedTokens.find? fun w ↦ decide (['I', 'N', 'F'] <:+: w.2.toList)
+  (w.1.toList.filter (· ≠ '-')).mapM Finnish.ofChar
+
+/-- The complement of each example is a verb of the Fragment in the infinitive and the case that
+its matrix verb governs. -/
+theorem complement_mem_infinitiveForms : ∀ e ∈ Examples.all, ∃ v ∈ Finnish.verbs,
+    e.feature? "verb" = some v.form ∧ ∃ ic ∈ v.complement, ∃ x ∈ complement? e,
+      ∃ u ∈ Finnish.verbs, x ∈ u.infinitiveForms ic.1 ic.2 := by
+  decide +kernel
 
 end Nadathur2023
