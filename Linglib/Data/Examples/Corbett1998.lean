@@ -39,7 +39,7 @@ def ex_1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("gender", "masc"), ("number", "sg"), ("ending", "yj")] }
+    paperFeatures := [("gender", "masc"), ("number", "sg"), ("ending", "yj"), ("case", "nom")] }
 
 def ex_2 : Datum :=
   { id := "corbett1998_2"
@@ -52,7 +52,7 @@ def ex_2 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("gender", "fem"), ("number", "sg"), ("ending", "aja")] }
+    paperFeatures := [("gender", "fem"), ("number", "sg"), ("ending", "aja"), ("case", "nom")] }
 
 def ex_3 : Datum :=
   { id := "corbett1998_3"
@@ -65,7 +65,7 @@ def ex_3 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("gender", "neut"), ("number", "sg"), ("ending", "oe")] }
+    paperFeatures := [("gender", "neut"), ("number", "sg"), ("ending", "oe"), ("case", "nom")] }
 
 def ex_4 : Datum :=
   { id := "corbett1998_4"
@@ -78,7 +78,7 @@ def ex_4 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("gender", "masc"), ("number", "pl"), ("ending", "ye")] }
+    paperFeatures := [("gender", "masc"), ("number", "pl"), ("ending", "ye"), ("case", "nom")] }
 
 def ex_5 : Datum :=
   { id := "corbett1998_5"
@@ -91,7 +91,7 @@ def ex_5 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("gender", "masc"), ("number", "sg"), ("case", "loc")] }
+    paperFeatures := [("gender", "masc"), ("number", "sg"), ("case", "loc"), ("ending", "om")] }
 
 def s2_3a : Datum :=
   { id := "corbett1998_s2_3a"
@@ -104,7 +104,7 @@ def s2_3a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("person", "1")] }
+    paperFeatures := [("person", "1"), ("number", "sg"), ("ending", "u")] }
 
 def s2_3b : Datum :=
   { id := "corbett1998_s2_3b"
@@ -117,7 +117,7 @@ def s2_3b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("person", "2")] }
+    paperFeatures := [("person", "2"), ("number", "sg"), ("ending", "eš'")] }
 
 def s2_3c : Datum :=
   { id := "corbett1998_s2_3c"
@@ -130,7 +130,7 @@ def s2_3c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("person", "3")] }
+    paperFeatures := [("person", "3"), ("number", "sg"), ("ending", "et")] }
 
 def ex_6 : Datum :=
   { id := "corbett1998_6"

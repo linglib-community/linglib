@@ -8,26 +8,27 @@ public import Linglib.Syntax.Category.Noun.Basic
 
 This file defines the three controller genders of Russian, masculine, feminine and neuter, and
 nouns with their gender, the gender of their referents where they have one, and their declension
-class. Gender is partly fixed by the referent and partly by the declension ([corbett-1991]):
+class. Gender is partly fixed by the referent and partly by the declension (Corbett):
 *djadja* 'uncle' declines like most feminines and is masculine by its referents, and the
-soft-sign nouns are feminine as a rule ([wade-2020] §63) but for *put'* 'way', of which "Despite
+soft-sign nouns are feminine as a rule (Wade §63) but for *put'* 'way', of which "Despite
 feminine endings in the genitive, dative and prepositional singular, путь is qualified by masculine
-adjectives" (§66). The declension classes are Corbett's as [kramer-2020] reports them: *zakon*,
+adjectives" (§66). The declension classes are Corbett's as Kramer reports them: *zakon*,
 *škola*, *kost'* and *vino* are her examples of the correlation of class and gender (18), the
 neuter *znamja* 'banner' (Wade §64) and the masculine *put'* of its exceptions (19), and the
 kinship and animal nouns stand for the semantic core (17). *Vrač* 'doctor' is masculine but takes
 feminine agreement on a predicate when the referent is female, *Врач обязана помочь больному* 'The
-doctor is obliged to help the patient' ([wade-2020] §313); the file records its declensional
+doctor is obliged to help the patient' (Wade §313); the file records its declensional
 gender, and the hybrid agreement is in `Studies/Kramer2020.lean`.
 
-The past-tense concord of the verb and the nominative endings of the adjective are the agreement
-evidence that the three genders are distinct ([corbett-1991]).
+Each gender divides into an animate and an inanimate subgender, by which the accusative of a
+masculine singular or a plural takes the form of the genitive or of the nominative (Wade §47). The
+agreement evidence that the genders are distinct, the endings of the adjectives and of the past
+tense, is in `Fragments/Slavic/Russian/Agreement.lean`.
 
 ## References
 
 * [wade-2020]
 * [corbett-1991]
-* [corbett-1998]
 * [kramer-2020]
 -/
 
@@ -140,49 +141,22 @@ def remainderNouns : List Noun :=
 def allNouns : List Noun :=
   semanticCoreNouns ++ remainderNouns ++ [vrač]
 
-/-- The declension class does not fix the gender: *znamja* and *kost'* share a class and differ in
-gender. -/
+/-- The declension class does not fix the gender, since *znamja* and *kost'* share a class and
+differ in gender. -/
 theorem declClass_ne_gender :
     znamja.declClass = kost'.declClass ∧ znamja.gender ≠ kost'.gender := ⟨rfl, by decide⟩
 
-/-! ### Agreement evidence -/
+/-! ### Subgenders and number -/
 
-/-- The past-tense concord endings of the verb, *-∅*, *-a* and *-o*. -/
-inductive PastConcord where
-  | zero
-  | a
-  | o
-  deriving DecidableEq, Repr
-
-/-- The past-tense concord ending of each gender. -/
-def Value.pastConcord : Value → PastConcord
-  | .masc => .zero
-  | .fem  => .a
-  | .neut => .o
-
-/-- The nominative endings of a hard-stem adjective such as *novyj* 'new': *-yj*, *-aja*,
-*-oe* by gender in the singular, *-ye* for all three in the plural ([wade-2020];
-[corbett-1998]). -/
-inductive AdjEnding where
-  | yj
-  | aja
-  | oe
-  | ye
+/-- Each gender has an animate and an inanimate subgender. Human beings and animals, among others,
+are animate, and with an animate controller the accusative of a masculine singular or a plural
+takes the genitive's form, with an inanimate one the nominative's ([wade-2020] §47). -/
+inductive Animacy where
+  | animate
+  | inanimate
   deriving DecidableEq, Repr, Fintype
 
 /-- Russian distinguishes the singular and the plural. -/
 def numberSystem : Number.System := { values := {.singular, .plural} }
-
-/-- The nominative ending by gender and number. -/
-def Value.adjEnding (g : Value) : numberSystem.values → AdjEnding :=
-  numberSystem.elim (match g with | .masc => .yj | .fem => .aja | .neut => .oe) .ye
-
-/-- The singular ending alone distinguishes the three genders. -/
-theorem faithful_adjEnding :
-    Function.Injective (Value.adjEnding · (numberSystem.value .singular)) := by
-  decide
-
-/-- The past-tense concord distinguishes the three genders on a single target. -/
-theorem faithful_pastConcord : Function.Injective Value.pastConcord := by decide
 
 end Russian.Gender

@@ -46,15 +46,17 @@ namespace AlexeyenkoZeijlstra2025
 
 /-! ### Agreement marking -/
 
-/-- An adjectival form: the positions it is used at and the features its agreement marker
-is specified for, a bare form being specified for none. -/
+/-- An adjectival form is used at some positions, and its agreement marker is specified for some
+features, a bare form's for none. -/
 structure Form where
   uses : Finset Agreement.Position
   features : Finset Agreement.Dimension
   deriving DecidableEq
 
-/-- An adjectival target of the Russian fragment as a form. -/
-def form (t : Russian.Agreement.Target) : Form := ⟨t.positions, t.features⟩
+/-- An adjectival target of the Russian fragment as a form, its marker specified for the
+dimensions the target inflects for. -/
+def form {F : Type*} (t : Agreement.Target Russian.Agreement.Value F) : Form :=
+  ⟨t.positions, t.inflection⟩
 
 /-! ### Attributivizers -/
 
@@ -67,9 +69,9 @@ inductive AttrStatus
   | nominalAffix
   deriving DecidableEq
 
-/-- An affix takes the head it selects as its host (the Input Correspondence
-    Principle), and the paper extends this to null affixes; clitics, free words and
-    affixes on the noun leave the adjective free. -/
+/-- An affix takes the head it selects as its host (the Input Correspondence Principle), and the
+paper extends this to null affixes; clitics, free words and affixes on the noun leave the
+adjective free. -/
 def AttrStatus.Adjacent : AttrStatus → Prop
   | .adjectivalAffix | .null => True
   | _ => False
@@ -129,7 +131,7 @@ to gender, number and definiteness; Icelandic and Serbo-Croatian attributive for
 definiteness to what the predicative forms carry. The rest have one uninflected form. -/
 def forms : Language → Finset Form
   | .greek | .latin => {⟨{.attributive, .predicate}, φκ⟩}
-  | .russian => {form .longAdjective, form .shortAdjective}
+  | .russian => {form Russian.Agreement.longAdjective, form Russian.Agreement.shortAdjective}
   | .kalaallisut => {⟨{.attributive, .predicate}, {.number, .case}⟩}
   | .italian => {⟨{.attributive, .predicate}, {.number, .gender}⟩}
   | .german => {⟨{.attributive}, φκ⟩, ⟨{.predicate}, ∅⟩}
@@ -145,8 +147,8 @@ def phi : Language → Finset Agreement.Dimension
   | .dutch | .icelandic | .serboCroatian => {.number, .gender, .definiteness}
   | _ => ∅
 
-/-- The attributivizer a language's adjectives take: none, a null or overt adjectival affix,
-or a clitic such as Mandarin *de*, the Tagalog linker or the Farsi ezafe. -/
+/-- A language's adjectives take no attributivizer, a null or overt adjectival affix, or a clitic
+such as Mandarin *de*, the Tagalog linker or the Farsi ezafe. -/
 def attributivizer : Language → Option AttrStatus
   | .greek | .russian | .latin | .kalaallisut => none
   | .italian | .english | .basque | .japanese => some .null
@@ -174,9 +176,9 @@ theorem attributivizer_ne_none (l : Language) (h : ¬ l.PhiKappaComplete) :
     l.attributivizer ≠ none := by
   revert h; cases l <;> decide
 
-/-- An XP may separate the adjective from the noun on the given side: the AP order creates
-the configuration, and either the adjectives are φ/κ-complete or the attributivizer does
-not need to be adjacent to the adjective. -/
+/-- An XP may separate the adjective from the noun on the given side when the AP order creates
+the configuration and either the adjectives are φ/κ-complete or the attributivizer does not need
+to be adjacent to the adjective. -/
 def Possible (l : Language) (s : Side) : Prop :=
   s.intervening ∈ l.apOrders ∧ (l.PhiKappaComplete ∨ ∃ a ∈ l.attributivizer, ¬ a.Adjacent)
 
@@ -195,8 +197,8 @@ end Language
 
 /-! ### Table 3 -/
 
-/-- A language of the sample: name, glottocode, side of the noun, and whether an XP
-    can intervene. -/
+/-- A language of the sample, with its name, its glottocode, the side of the noun its adjectives
+occupy, and whether an XP can intervene. -/
 structure Sample where
   name : String
   glottocode : String
@@ -238,9 +240,8 @@ theorem table3_predicted :
     ∀ s ∈ table3, ∀ l ∈ languageOf s.glottocode, (l.Possible s.side ↔ s.intervention) := by
   decide +kernel
 
-/-- The side of the noun alone decides nothing: each block of the table holds both
-    verdicts, so no filter stated on the side — the Head-Final Filter or its mirror —
-    fits the sample. -/
+/-- The side of the noun alone decides nothing. Each block of the table holds both verdicts, so
+no filter stated on the side, the Head-Final Filter or its mirror, fits the sample. -/
 theorem side_insufficient (side : Side) :
     ∃ s ∈ table3, ∃ t ∈ table3, s.side = side ∧ t.side = side ∧ s.intervention ∧
       ¬ t.intervention := by
@@ -253,9 +254,9 @@ inductive Host
   | adjective
   | degreeWord
 
-/-- A null affix attaches to the head of the phrase it selects, DegP included; an
-    overt affix may attach to a non-lexical head only if that head is itself an
-    affix (the Affix Continuity Constraint), which *enough* and *genoeg* are not. -/
+/-- A null affix attaches to the head of the phrase it selects, DegP included; an overt affix may
+attach to a non-lexical head only if that head is itself an affix (the Affix Continuity
+Constraint), which *enough* and *genoeg* are not. -/
 def AttrStatus.MayHost : AttrStatus → Host → Prop
   | .null, _ => True
   | .adjectivalAffix, .adjective => True
@@ -308,9 +309,8 @@ inductive Order
   | aDegN
   deriving DecidableEq
 
-/-- The order of a row from its anchors: the adjective, the modified noun (absent in
-    predicative use), the first word of the adjective's dependent, and a degree
-    word. -/
+/-- The order of a row is read off its anchors, the adjective, the modified noun (absent in
+predicative use), the first word of the adjective's dependent, and a degree word. -/
 def orderOf (row : Datum) : Option Order :=
   match anchor row "head", anchor row "noun", anchor row "dependent", anchor row "degree" with
   | some _, none, none, _ => some .bare
@@ -330,10 +330,9 @@ example : orderOf Examples.az2025_36b = some .nAXp := by decide +kernel
 example : orderOf Examples.az2025_41b = some .xpAN := by decide +kernel
 example : orderOf Examples.az2025_71c = some .aDegN := by decide +kernel
 
-/-- Every attributive row stands on a side of the noun the language allows, every
-    predicative order attested is in the language's AP orders, and every judgment on an
-    intervening order is the generalization's; relative-clause paraphrases are
-    outside the generalization. -/
+/-- Every attributive row stands on a side of the noun the language allows, every predicative
+order attested is in the language's AP orders, and every judgment on an intervening order is the
+generalization's; relative-clause paraphrases are outside the generalization. -/
 theorem rows_agree :
     ∀ row ∈ Examples.all, ∀ l ∈ languageOf row.language, row.feature? "construction" = none →
       ∀ o ∈ orderOf row,
