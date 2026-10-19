@@ -30,9 +30,8 @@ subjunctive, keeps the past indicative (`antecedent_french`).
 
 ## Implementation notes
 
-* Exclusion is disjointness of sets of times or worlds, the speaker's coordinate being a set
-  of epistemically accessible alternatives; the *before* of temporal past is `TemporalPast`.
-* The counterfactual types keep the name `CounterfactualType`, which `Mizuno2024` refers to.
+Exclusion is disjointness of sets of times or worlds, the speaker's coordinate being a set of
+epistemically accessible alternatives; the *before* of temporal past is `TemporalPast`.
 
 ## References
 
@@ -59,7 +58,7 @@ def TemporalPast [Preorder X] (topic speaker : Set X) : Prop :=
 
 theorem excludes_of_temporalPast [Preorder X] {topic speaker : Set X}
     (h : TemporalPast topic speaker) : Excludes topic speaker :=
-  Set.disjoint_left.2 λ t ht hu => lt_irrefl t (h t ht t hu)
+  Set.disjoint_left.2 fun t ht hu ↦ lt_irrefl t (h t ht t hu)
 
 /-- What the feature contributes to an assertion: the situation, the p-worlds or the
 situation time, holds throughout a topic that excludes the speaker's. -/
@@ -192,7 +191,7 @@ def AspectLanguage.cfAspect : AspectLanguage → CFAspect
 
 /-- The imperfective is not an ingredient of counterfactuality. -/
 theorem imperfective_not_universal : ¬ ∀ l, AspectLanguage.cfAspect l = .imperfective :=
-  λ h => absurd (h .english) (by decide)
+  fun h ↦ absurd (h .english) (by decide)
 
 /-- Whether a language has a past subjunctive paradigm (Section 6.1). -/
 inductive SubjunctiveParadigm where
