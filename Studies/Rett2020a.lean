@@ -1,6 +1,6 @@
 module
 
-public import Studies.Anscombe1964
+public import Studies.BeaverCondoravdi2003
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Data.Examples.Rett2020a
 
@@ -24,6 +24,13 @@ account's route to NPI licensing, and the coerced readings are not,
 time of the embedded clause, is the default reading whenever the embedded clause has a first
 time, `before_iff_beforeEver`.
 
+*After* is *before* on the reversed time line, `after_iff_before_dual`, so the two share whatever
+order reversal preserves: `after_antitone` follows from `before_antitone`, and both are
+veridical, `nonempty_of_before` and `nonempty_of_after`. *Before* is Beaver and Condoravdi's
+uniform *before*, `before_iff_uniform`, and so agrees with *before ever* on a clause exactly when
+the clause has a first time or no time precedes all of it, `forall_before_iff_beforeEver`, while
+*after* agrees with Anscombe's exactly on an instantaneous clause, `forall_after_iff_after`.
+
 ## Implementation notes
 
 Run times are sets of intervals, and an eventuality's duration is its `timeTrace`; the
@@ -31,8 +38,9 @@ coercions act on the trace, so an eventuality's class enters only through which 
 `readings` makes available, as in the paper's (19) and (21). Of the typological
 survey of section 2.4, the rows record the Serbo-Croatian and Tagalog sentences whose overt aspect
 selects a reading, `Marking.select`, with the unambiguous Tagalog *before* and German *after*
-sentences; the veridicality asymmetry and the NPI facts of (25) and (26) receive no proposal in
-the paper beyond monotonicity.
+sentences. The paper takes the veridicality asymmetry from Condoravdi's branching time
+(§3.3.2), which this file does not formalize, and NPI licensing from the monotonicity of the
+default readings.
 
 ## References
 
@@ -275,6 +283,45 @@ theorem example24 :
         (inchoative (Set.Iic ⟨⟨2021, 2028⟩, by omega⟩)) := by
   simp [after_process_end, after_process_onset]
 
+/-! ### Antonymy as order duality
+
+On the reversed time line the *after* scale is the *before* scale, so *after* is *before* there.
+Whatever order reversal preserves *before* and *after* then share, among it monotonicity in the
+embedded clause and veridicality, so the asymmetries between them cannot come from the
+connectives. The paper derives veridicality from branching time instead (§3.3.2). -/
+
+section Duality
+
+variable {A}
+
+private theorem timeTrace_image_dual (A : Set (NonemptyInterval T)) :
+    timeTrace (NonemptyInterval.dual '' A) = OrderDual.ofDual ⁻¹' timeTrace A := by
+  ext t
+  simp only [mem_timeTrace, Set.mem_image, exists_exists_and_eq_and, Set.mem_preimage,
+    NonemptyInterval.mem_def, NonemptyInterval.fst_dual, NonemptyInterval.snd_dual,
+    OrderDual.toDual_le, OrderDual.le_toDual]
+  exact exists_congr fun _ ↦ and_congr_right fun _ ↦ and_comm
+
+/-- *After* is *before* on the reversed time line. -/
+theorem after_iff_before_dual :
+    after A B ↔ before (NonemptyInterval.dual '' A) (NonemptyInterval.dual '' B) := by
+  simp only [after, before, timeTrace_image_dual, maxOnScale_lt_eq, maxOnScale_gt_eq]
+  exact Iff.rfl
+
+/-- *Before* is veridical, relating its main clause to a time of the embedded clause. -/
+theorem nonempty_of_before : before A B → (timeTrace B).Nonempty := by
+  rintro ⟨-, -, m, hm, -⟩
+  rw [maxOnScale_lt_eq, Set.mem_ofPred_eq] at hm
+  exact ⟨m, hm.1⟩
+
+/-- So is *after*, being *before* on the reversed time line. -/
+theorem nonempty_of_after (h : after A B) : (timeTrace B).Nonempty := by
+  obtain ⟨t, ht⟩ := nonempty_of_before (after_iff_before_dual.1 h)
+  rw [timeTrace_image_dual] at ht
+  exact ⟨_, ht⟩
+
+end Duality
+
 /-! ### Monotonicity -/
 
 /-- *Before* on its default reading is downward entailing in the embedded clause, since a
@@ -286,14 +333,14 @@ theorem before_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ ti
   rw [maxOnScale_lt_eq] at hm
   exact ⟨t, ht, m', by rw [maxOnScale_lt_eq]; exact hm', htm.trans_le (hm.2 (h hm'.1))⟩
 
-/-- *After* on its default reading is downward entailing in the embedded clause, since a
-sub-eventuality with a last time ends no later. -/
+/-- *After* on its default reading is downward entailing in the embedded clause, being *before*
+on the reversed time line. -/
 theorem after_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ timeTrace B)
     (hB' : ∃ m', IsGreatest (timeTrace B') m') : after A B → after A B' := by
-  rintro ⟨t, ht, m, hm, htm⟩
   obtain ⟨m', hm'⟩ := hB'
-  rw [maxOnScale_gt_eq] at hm
-  exact ⟨t, ht, m', by rw [maxOnScale_gt_eq]; exact hm', (hm.2 (h hm'.1)).trans_lt htm⟩
+  simp only [after_iff_before_dual]
+  exact before_antitone _ (by simpa only [timeTrace_image_dual] using Set.preimage_mono h)
+    ⟨OrderDual.toDual m', by simpa only [timeTrace_image_dual] using hm'.dual⟩
 
 /-- The coerced reading is not downward entailing, since precedence of a telos does not carry over
 to a sub-eventuality with an earlier telos, so a *before* clause licenses NPIs only on its default
@@ -330,6 +377,42 @@ of the embedded clause. -/
 theorem after_imp_after : after A B → Anscombe.after A B := by
   rintro ⟨t, ht, m, hm, htm⟩
   exact ⟨t, ht, m, hm.1, htm⟩
+
+section Divergence
+
+variable {A}
+
+/-- Against a clause with a last time, *after* agrees with Anscombe's existential *after* exactly
+when the clause is instantaneous, since *after* reads the clause against its end and Anscombe's
+against its onset. -/
+theorem forall_after_iff_after (hB : IsGreatest (timeTrace B) m) :
+    (∀ A, after A B ↔ Anscombe.after A B) ↔ Instantaneous B := by
+  refine ⟨fun h ↦ ⟨m, Set.eq_singleton_iff_unique_mem.2 ⟨hB.1, fun t ht ↦ ?_⟩⟩, fun ⟨t, ht⟩ A ↦ ?_⟩
+  · refine (hB.2 ht).eq_of_not_lt fun hlt ↦ ?_
+    obtain ⟨_, hs, m', hm', hlt'⟩ := (h {NonemptyInterval.pure m}).2 ⟨m, by simp, t, ht, hlt⟩
+    rw [maxOnScale_gt_eq, Set.mem_ofPred_eq] at hm'
+    rw [mem_timeTrace_pure.1 hs, hm'.unique hB] at hlt'
+    exact lt_irrefl m hlt'
+  · rw [after_iff_of_isGreatest (by rw [ht]; exact isGreatest_singleton),
+      after_iff_least_lt (by rw [ht]; exact isLeast_singleton)]
+
+/-! ### Beaver and Condoravdi -/
+
+/-- *Before* is the uniform *before* of Beaver and Condoravdi, the least time of the clause on
+the *before* scale being its earliest. -/
+theorem before_iff_uniform :
+    before A B ↔ BeaverCondoravdi2003.uniform (· < ·) (timeTrace A) (timeTrace B) := by
+  simp only [before, BeaverCondoravdi2003.uniform, maxOnScale_lt_eq, Set.mem_ofPred_eq]
+
+/-- So *before* agrees with Anscombe's *before ever* on a clause exactly when the clause has a
+first time or no time precedes all of it, the condition of Proposition 2 of Beaver and
+Condoravdi. -/
+theorem forall_before_iff_beforeEver :
+    (∀ A, before A B ↔ beforeEver A B) ↔
+      (∃ m, IsLeast (timeTrace B) m) ∨ strictLowerBounds (timeTrace B) = ∅ := by
+  simpa only [before_iff_uniform] using BeaverCondoravdi2003.forall_uniform_lt_iff_beforeEver
+
+end Divergence
 
 /-! ### Overt aspect marking -/
 

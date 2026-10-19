@@ -28,6 +28,8 @@ context sorts (48).
 
 * `uniform_lt_iff_beforeEver`, `uniform_gt_iff_after`: Proposition 2, the uniform connective is
   Anscombe's *before* and *after* on a temporal clause with a first time.
+* `forall_uniform_lt_iff_beforeEver`: the first time is needed, the two *before*s agreeing on a
+  clause exactly when it has one or no time precedes all of it.
 * `isStrawsonDE_before`, `isStrawsonUE_after`: the uniform *before* is Strawson downward
   entailing in its temporal clause and *after* Strawson upward entailing.
 * `connective_iff_uniform_of_inst`: on an instantiated temporal clause, (47) is (45).
@@ -118,6 +120,20 @@ theorem anscombe_before_of_empty (hB : timeTrace B = ∅) (hA : (timeTrace A).No
     beforeEver A B :=
   let ⟨t, ht⟩ := hA
   ⟨t, ht, fun t' ht' ↦ absurd (hB ▸ ht') (Set.notMem_empty t')⟩
+
+/-- The uniform *before* is Anscombe's on a temporal clause exactly when the clause has a first
+time, the hypothesis of Proposition 2, or no time precedes all of it. -/
+theorem forall_uniform_lt_iff_beforeEver :
+    (∀ A, uniform (· < ·) (timeTrace A) (timeTrace B) ↔ beforeEver A B) ↔
+      (∃ e, IsLeast (timeTrace B) e) ∨ strictLowerBounds (timeTrace B) = ∅ := by
+  refine ⟨fun h ↦ or_iff_not_imp_left.2 fun hB ↦ Set.eq_empty_of_forall_notMem fun t ht ↦ hB ?_,
+    fun hB A ↦ hB.elim uniform_lt_iff_beforeEver fun hB ↦ iff_of_false ?_ ?_⟩
+  · obtain ⟨_, _, e, he, _⟩ := (h {NonemptyInterval.pure t}).2 ⟨t, by simp, ht⟩
+    exact ⟨e, he⟩
+  · rintro ⟨t, -, e, he, hte⟩
+    exact Set.eq_empty_iff_forall_notMem.1 (he.strictLowerBounds_eq ▸ hB) t hte
+  · rintro ⟨t, -, ht⟩
+    exact Set.eq_empty_iff_forall_notMem.1 hB t ht
 
 end Uniform
 

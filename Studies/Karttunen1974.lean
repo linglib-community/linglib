@@ -17,8 +17,8 @@ married until she died* (23) commits the speaker to a marriage at her death.
 
 ## Main statements
 
-* `notUntil_iff`, `not_notUntil_iff`: every occurrence of `A` has a time of `T` at or before it,
-  and the denial is *A before T*.
+* `notUntil_iff`, `not_notUntil_iff`: `T` holds or has held at every time of `A`, and the denial
+  is *A before T*.
 * `notUntil_empty`: the logical form holds of a clause that never happens.
 * `notUntil_when`: assertion and presupposition together yield *A when T*.
 * `notUntil_iff_when_of_presupposition`: for point events the two logical forms coincide given
@@ -51,9 +51,9 @@ def presupposition : Prop := Tense.beforeEver A B ∨ when_ A B
 theorem until_veridical_complement : until_ A B → ∃ t, t ∈ timeTrace B :=
   fun ⟨t, _, ht⟩ ↦ ⟨t, ht⟩
 
-/-- Every occurrence of `A` has a time of `B` at or before it. -/
-theorem notUntil_iff : notUntil A B ↔ ∀ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' ≤ t := by
-  simp only [notUntil, Tense.beforeEver, not_exists, not_and, not_forall, not_lt, exists_prop]
+/-- Every time of `A` is one at which `B` holds or has held. -/
+theorem notUntil_iff : notUntil A B ↔ timeTrace A ⊆ upperClosure (timeTrace B) := by
+  rw [notUntil, beforeEver_iff_not_subset_upperClosure, not_not]
 
 /-- Denying *A not until B* is asserting *A before B*, (30)–(31). -/
 theorem not_notUntil_iff : ¬ notUntil A B ↔ Tense.beforeEver A B := not_not

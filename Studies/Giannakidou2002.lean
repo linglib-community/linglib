@@ -145,8 +145,8 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
     rw [NonemptyInterval.mem_pure] at hsj
     subst hsj
     refine ⟨⟨e, he, hs⟩, fun e' he' ↦ ?_⟩
-    obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ := (notUntil_iff _ _).mp hnu (τ e').fst
-      ⟨τ e', ⟨e', he', rfl⟩, NonemptyInterval.mem_def.mpr ⟨le_rfl, (τ e').fst_le_snd⟩⟩
+    obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ := mem_upperClosure.1 ((notUntil_iff _ _).mp hnu
+      ⟨τ e', ⟨e', he', rfl⟩, NonemptyInterval.mem_def.mpr ⟨le_rfl, (τ e').fst_le_snd⟩⟩)
     obtain rfl := Set.mem_singleton_iff.mp hj
     rw [NonemptyInterval.mem_pure] at ht'
     exact ht' ▸ hle

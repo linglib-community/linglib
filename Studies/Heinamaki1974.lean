@@ -12,9 +12,12 @@ time of `A` is a time of `B` (`while_`), *A whenever B* the converse containment
 *A since B* that some time of `B` lies at or before every time of `A` (`since`), and *A by B* that
 some time of `A` lies at or before every time of `B` (`by_`). *Since* and *by* are the non-strict
 counterparts of Anscombe's quantificational *before*, with the roles of the clauses exchanged, so
-*before ever* entails *by* but not conversely (`before_by`, `by_not_before`). The existential
-connectives commit the speaker to both clauses; the universal ones do so only given the clause
-they quantify over, and are not symmetric (`while_not_symm`).
+*before ever* entails *by* but not conversely (`before_by`, `by_not_before`). At a single time of
+the main clause *before* is the negation of *when* and *after*, and *by* the negation of *after*
+(`beforeEver_iff_exists_not_when_not_after`, `by_iff_exists_not_after`), so the two hold of a
+temporal clause that never happens. The existential connectives commit the speaker to both
+clauses; the universal ones do so only given the clause they quantify over, and are not symmetric
+(`while_not_symm`).
 
 ## References
 
@@ -71,6 +74,24 @@ theorem by_veridical_main : by_ A B → ∃ t, t ∈ timeTrace A := fun ⟨t, ht
 /-- *Before ever* is strict *by*. -/
 theorem before_by : Tense.beforeEver A B → by_ A B :=
   fun ⟨t, ht, h⟩ ↦ ⟨t, ht, fun t' ht' ↦ (h t' ht').le⟩
+
+/-! ### Before and by as negations of when and after -/
+
+/-- *Before* is *not yet*. `A` is before ever `B` exactly when at some time of `A` it is neither
+*when* `B` nor *after* `B`. -/
+theorem beforeEver_iff_exists_not_when_not_after :
+    Tense.beforeEver A B ↔ ∃ t ∈ timeTrace A, ¬ when_ {pure t} B ∧ ¬ Anscombe.after {pure t} B := by
+  rw [beforeEver_iff_not_subset_upperClosure, Set.not_subset]
+  simp only [SetLike.mem_coe, mem_upperClosure, when_, Anscombe.after, timeTrace_singleton,
+    mem_pure, exists_eq_left, not_exists, not_and, not_le, not_lt]
+  refine exists_congr fun t ↦ and_congr_right fun _ ↦ ?_
+  exact ⟨fun h ↦ ⟨fun ht ↦ lt_irrefl t (h t ht), fun x hx ↦ (h x hx).le⟩,
+    fun ⟨h₁, h₂⟩ x hx ↦ (h₂ x hx).lt_of_ne fun e ↦ h₁ (e ▸ hx)⟩
+
+/-- *By* is *not after*. `A` is by `B` exactly when at some time of `A` it is not *after* `B`. -/
+theorem by_iff_exists_not_after : by_ A B ↔ ∃ t ∈ timeTrace A, ¬ Anscombe.after {pure t} B := by
+  simp only [by_, Anscombe.after, timeTrace_singleton, SetLike.mem_coe, mem_pure, exists_eq_left,
+    not_exists, not_and, not_lt]
 
 /-- *A before B* by the reference point holds when some time of `A` precedes `B`'s first time `lb`.
 -/

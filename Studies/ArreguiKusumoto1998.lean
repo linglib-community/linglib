@@ -25,6 +25,10 @@ which gives a past under *mae* and a present under *ato* no denotation.
 
 * `interpretable_selected`: of the four tensed clauses under *mae* and *ato*, the present under
   *mae* and the past under *ato* compose.
+* `interpretable_iff_tense`, `relativeTense_iff_tense`: both accounts derive the tenses the
+  fragment records for *mae* and *ato*, and the selection account those of *toki*.
+* `beforeEver_of_before`, `not_forall_before_of_beforeEver`: on intervals (19) is strictly
+  stronger than Anscombe's *before ever*.
 * `extension_after_past`: on dense time *after* absorbs the past operator of the clause it
   selects, the step the paper takes without comment, and on discrete time it does not.
 * `judgment_iff_relativeTense`: the relative-tense account errs on the past in a Japanese
@@ -71,7 +75,7 @@ which gives a past under *mae* and a present under *ato* no denotation.
 namespace ArreguiKusumoto1998
 
 open Montague PhraseStructure.Tree PhraseStructure Semantics ModalLogic Tense
-open Japanese.TemporalConnectives (mae ato)
+open Japanese.TemporalConnectives (mae ato toki)
 open scoped SetRel
 
 /-! ### The fragment -/
@@ -168,6 +172,17 @@ universal *before* of Anscombe. -/
 theorem beforeEver_of_before {A B : Set (NonemptyInterval T)} (ht : t ∈ A)
     (h : before (· ∈ B) t) : beforeEver A B :=
   ⟨t.snd, ⟨t, ht, t.fst_le_snd, le_rfl⟩, fun _ ⟨t', ht', h'⟩ ↦ (h t' ht').trans_le h'.1⟩
+
+/-- The converse fails, since on intervals (19) asks a time of the main clause to end before every
+time of the clause begins, while Anscombe's *before ever* lets it reach into one. -/
+theorem not_forall_before_of_beforeEver :
+    ¬ ∀ A B : Set (NonemptyInterval ℤ), beforeEver A B → ∃ t ∈ A, before (· ∈ B) t := by
+  intro h
+  obtain ⟨_, rfl, ht⟩ := h {⟨(1, 5), by decide⟩} {⟨(3, 8), by decide⟩}
+    ⟨1, by simp [NonemptyInterval.mem_def], fun _ ht' ↦ by
+      simp only [timeTrace_singleton, SetLike.mem_coe, NonemptyInterval.mem_def] at ht'
+      omega⟩
+  exact absurd (ht _ rfl) (by decide)
 
 /-! ### Tense as operator and as variable -/
 
@@ -399,28 +414,28 @@ structure Language where
   sot : Bool
   /-- The positions the present admits against its evaluation time. -/
   present : Finset Ordering
-  /-- *Before* and *after* select a tensed clause, where they otherwise take a relative clause
-  over times. -/
-  selectsTP : Bool
+  /-- The relations whose connectives select a tensed clause, where a connective otherwise takes
+  a relative clause over times. -/
+  tensed : Finset Connective.Relation
 
 /-- English has the sequence-of-tense rule, and its adjuncts are relative clauses. -/
 def english : Language where
   sot := true
   present := ⟦present⟧
-  selectsTP := false
+  tensed := ∅
 
 /-- Polish has no sequence-of-tense rule, and its adjuncts are relative clauses. -/
 def polish : Language where
   sot := false
   present := ⟦present⟧
-  selectsTP := false
+  tensed := ∅
 
-/-- Japanese has no sequence-of-tense rule, a present with a future interpretation (fn. 1), and
-*before* and *after* that select a tensed clause. -/
+/-- Japanese has no sequence-of-tense rule and a present with a future interpretation (fn. 1),
+and its *before* and *after*, *mae* and *ato*, select a tensed clause (p. 12). -/
 def japanese : Language where
   sot := false
   present := nonpast
-  selectsTP := true
+  tensed := {.before, .after}
 
 /-- The positions a tense of a language admits against its evaluation time. -/
 def Language.cell (L : Language) : Tense → Finset Ordering
@@ -430,15 +445,15 @@ def Language.cell (L : Language) : Tense → Finset Ordering
 /-- The adjunct of a temporal relation over a verb phrase in the tense `τ`. A *when*-clause in a
 tense variable restricts the adverb of quantification that binds the variable, the form the
 paper gives the Japanese present (34c), and is otherwise a relative clause over times (16). The
-clause of *before* and *after* is a relative clause (23) unless they select a tensed clause
-(27), over whose tense variable *before*, bearing a binder index, abstracts (30). -/
+clause of *before* and *after* is a relative clause (23) unless their connective selects a tensed
+clause (27), over whose tense variable *before*, bearing a binder index, abstracts (30). -/
 def Language.adjunct (L : Language) : Connective.Relation → LF → LF → Option LF
   | .when_, .tr i, vp => some (quantificational (.tr i) vp)
   | .when_, τ, vp => some (relative τ (atTrace vp))
   | .before, τ, vp => some (.bin (.leaf .before)
-      (if L.selectsTP then .binder 0 (.bin τ vp) else relative τ (atTrace vp)))
+      (if .before ∈ L.tensed then .binder 0 (.bin τ vp) else relative τ (atTrace vp)))
   | .after, τ, vp => some (.bin (.leaf .after)
-      (if L.selectsTP then .bin τ vp else relative τ (atTrace vp)))
+      (if .after ∈ L.tensed then .bin τ vp else relative τ (atTrace vp)))
   | _, _, _ => none
 
 /-- The tense heads the paper analyses, the past an operator and the present a variable. The
@@ -448,13 +463,13 @@ def head? : Tense → Option LF
   | .present => some presentVariable
   | .future => none
 
-/-- *mae* takes the present and not the past, and *ato* the past and not the present, (5) and
-(6). -/
-theorem interpretable_mae_ato :
-    (∃ lf ∈ japanese.adjunct mae.relation presentVariable (.leaf (.vp 0)), Interpretable lf) ∧
-      (∃ lf ∈ japanese.adjunct mae.relation pastOperator (.leaf (.vp 0)), ¬ Interpretable lf) ∧
-      (∃ lf ∈ japanese.adjunct ato.relation pastOperator (.leaf (.vp 0)), Interpretable lf) ∧
-      ∃ lf ∈ japanese.adjunct ato.relation presentVariable (.leaf (.vp 0)), ¬ Interpretable lf := by
+/-- A past or present clause under *mae*, *ato* or *toki* composes exactly when the connective
+fixes no tense or fixes that one, so the analysis derives the tenses the fragment records, the
+present for *mae* (5), the past for *ato* (6) and either for *toki*, (31a) and (31b). -/
+theorem interpretable_iff_tense :
+    ∀ c ∈ [mae, ato, toki], ∀ τ ∈ [Tense.past, .present], ∀ h ∈ head? τ,
+      ∀ lf ∈ japanese.adjunct c.relation h (.leaf (.vp 0)),
+        (Interpretable lf ↔ ∀ τ' ∈ c.tense, τ' = τ) := by
   decide
 
 /-! ### The relative-tense account -/
@@ -475,11 +490,11 @@ def Language.RelativeTense (L : Language) (c : Finset Ordering) (τ : Tense) : P
 instance (L : Language) (c : Finset Ordering) (τ : Tense) : Decidable (L.RelativeTense c τ) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- On *mae* and *ato* the two accounts agree. -/
-theorem relativeTense_iff_interpretable :
-    ∀ rel ∈ [Connective.Relation.before, .after], ∀ τ ∈ [Tense.past, .present],
-      ∃ c ∈ adjunctCell? rel, ∃ h ∈ head? τ, ∃ lf ∈ japanese.adjunct rel h (.leaf (.vp 0)),
-        (japanese.RelativeTense c τ ↔ Interpretable lf) := by
+/-- The relative-tense account derives the tenses of *mae* and *ato* as well, so on them the two
+accounts agree. It fails on *toki*, ruling out the past of (31a), `judgment_iff_relativeTense`. -/
+theorem relativeTense_iff_tense :
+    ∀ c ∈ [mae, ato], ∀ τ ∈ [Tense.past, .present], ∃ cell ∈ adjunctCell? c.relation,
+      (japanese.RelativeTense cell τ ↔ ∀ τ' ∈ c.tense, τ' = τ) := by
   decide
 
 /-! ### The examples -/
@@ -520,7 +535,7 @@ theorem judgment_iff_interpretable :
       ∀ τ ∈ r.parse? "embeddedTense" tenses, ∀ h ∈ head? τ, ∃ L ∈ languages.lookup r.language,
         ∃ lf ∈ L.adjunct rel h (.leaf (.vp 0)),
           ((r.judgment = .acceptable ↔ Interpretable lf) ↔
-            ¬ (τ = .present ∧ rel ≠ .when_ ∧ ¬ L.selectsTP)) := by
+            ¬ (τ = .present ∧ rel ≠ .when_ ∧ rel ∉ L.tensed)) := by
   decide
 
 /-- The relative-tense account gives the judgment on an adjunct except, in a language without
@@ -533,7 +548,7 @@ theorem judgment_iff_relativeTense :
       ∃ τ ∈ r.parse? "embeddedTense" tenses, ∃ L ∈ languages.lookup r.language,
         ∃ c ∈ adjunctCell? rel,
           ((r.judgment = .acceptable ↔ L.RelativeTense c τ) ↔
-            ¬ (¬ L.sot ∧ (τ = .past ∧ (rel = .when_ ∨ rel = .before ∧ ¬ L.selectsTP) ∨
+            ¬ (¬ L.sot ∧ (τ = .past ∧ (rel = .when_ ∨ rel = .before ∧ rel ∉ L.tensed) ∨
               τ = .future))) := by
   decide
 
@@ -554,7 +569,7 @@ clause having no pronoun to bind a trace in it (26). -/
 theorem downstairs_iff :
     ∀ r ∈ Examples.all, r.feature? "embeddedClauses" = some "2" →
       ∃ rel ∈ r.parse? "clause" relations, ∃ L ∈ languages.lookup r.language,
-        (r.readings.lookup "downstairs" = some .acceptable ↔ rel = .when_ ∨ ¬ L.selectsTP) := by
+        (r.readings.lookup "downstairs" = some .acceptable ↔ rel ∉ L.tensed) := by
   decide
 
 /-- A Japanese *when*-clause has the habitual reading exactly where its tense composes as the
