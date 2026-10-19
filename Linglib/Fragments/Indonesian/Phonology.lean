@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.PHOIBLE.Inventories.Indonesian
 public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Phonology.NasalSubstitution
 
 /-!
@@ -212,12 +213,12 @@ def peN : List Segment → List Segment := prefixN [p, e]
 
 /-- The substituting consonants are voiceless obstruents. -/
 theorem substituting_subset :
-    substituting ⊆ consonants.filter (voicelessObstruent ≤ ·) := by
+    substituting ⊆ voicelessObstruent.naturalClass consonants := by
   decide
 
 /-- The voiceless obstruents that do not substitute are `c` and the fricatives of loans. -/
 theorem voicelessObstruents_sdiff_substituting :
-    consonants.filter (voicelessObstruent ≤ ·) \ substituting = {c, f, sy, kh} := by
+    voicelessObstruent.naturalClass consonants \ substituting = {c, f, sy, kh} := by
   decide
 
 /-- A substituting consonant is replaced by one nasal. -/

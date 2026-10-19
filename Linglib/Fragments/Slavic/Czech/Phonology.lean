@@ -228,8 +228,9 @@ def dorsals : Finset Segment := velar.naturalClass inventory
 /-- The dorsals are Short's velars *k*, *g* and *ch*. -/
 theorem dorsals_eq : dorsals = {k, g, ch} := by decide
 
-/-- The dorsals are the natural class of what they share. -/
-theorem isNaturalClass_dorsals : IsNaturalClass inventory dorsals := by decide
+/-- The dorsals are a natural class. -/
+theorem isNaturalClass_dorsals : IsNaturalClass inventory dorsals :=
+  isNaturalClass_naturalClass ⟨k, by decide⟩
 
 /-- The segments that the second palatalization changes, *k*, *g*, *h* and *ch* (p. 462). -/
 def palatalizing : Finset Segment := {k, g, h, ch}
@@ -246,8 +247,9 @@ theorem naturalClass_palatalizing :
       inventory = palatalizing := by
   decide
 
-/-- The palatalizing segments are the natural class of what they share. -/
-theorem isNaturalClass_palatalizing : IsNaturalClass inventory palatalizing := by decide
+/-- The palatalizing segments are a natural class. -/
+theorem isNaturalClass_palatalizing : IsNaturalClass inventory palatalizing :=
+  naturalClass_palatalizing ▸ isNaturalClass_naturalClass ⟨k, by decide⟩
 
 /-! ### Voicing pairs -/
 
