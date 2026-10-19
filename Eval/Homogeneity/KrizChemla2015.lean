@@ -16,7 +16,8 @@ gives none of them 0 (`gaps`). Spector's supervaluation fits every configuration
 gaps under negation, under *no* and in the GAP?? configuration of *exactly 2*
 (`verdict_exhaustification`), and the supervaluation over each individual's resolution and the universal
 presupposition predict a gap in its GAP? configuration, where none was found (`verdict_pointwise`,
-`verdict_presupposition`). The accounts that need a context are silent (`verdict_contextual`).
+`verdict_presupposition`), and so do Križ and Spector's candidate interpretations
+(`verdict_krizSpector`). The accounts that need a context are silent (`verdict_contextual`).
 
 ## References
 
@@ -47,7 +48,7 @@ items. -/
 def gaps : Eval.Experiment Account (Embedding × Condition) Bool where
   observed ec := found ec.1 ec.2
   predicted a ec :=
-    match (itemsOf ec.1 ec.2).mapM fun i ↦ a.value ec.1.tree i.display with
+    match (itemsOf ec.1 ec.2).mapM fun i ↦ a.value ec.1.tree i.cells with
     | none => none
     | some vs =>
       if vs.isEmpty then none
@@ -88,6 +89,19 @@ theorem verdict_pointwise :
       gaps.verdict .pointwise (.exactly, .gap) = .correct ∧
       gaps.verdict .pointwise (.exactly, .gapQ) = .wrong ∧
       gaps.verdict .pointwise (.exactly, .gapQQ) = .correct := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
+
+/-- Križ and Spector's candidate interpretations, each cell's plurality taking its own domain, are
+the pointwise supervaluation on these displays (`KrizSpector2021.displayValue_eq_pointwise`), so
+they too predict a gap in the GAP? configuration, where none was found. -/
+theorem verdict_krizSpector :
+    gaps.verdict .krizSpector (.unembedded, .gap) = .correct ∧
+      gaps.verdict .krizSpector (.negation, .gap) = .correct ∧
+      gaps.verdict .krizSpector (.all, .gap) = .correct ∧
+      gaps.verdict .krizSpector (.no, .gap) = .correct ∧
+      gaps.verdict .krizSpector (.exactly, .gap) = .correct ∧
+      gaps.verdict .krizSpector (.exactly, .gapQ) = .wrong ∧
+      gaps.verdict .krizSpector (.exactly, .gapQQ) = .correct := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
 
 /-- The literal meaning against its global exhaustification misses the gaps under negation, under

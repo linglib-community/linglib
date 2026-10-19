@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Homogeneity.Plural
 public import Studies.Kriz2016
+public import Studies.KrizChemla2015
 public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.UpperLower.Closure
@@ -977,5 +978,87 @@ theorem valueUp_eq_generalisedTruthValue {x : Finset Atom} (hx : x.Nonempty)
 end Upward
 
 end Parameters
+
+
+/-! ### Križ and Chemla's displays
+
+On a display of [kriz-chemla-2015] each cell is a plurality of nine objects, some of which have
+the property, and a quantifier binds the definite, so the homogeneity parameter gives each cell's
+plurality a candidate domain of its own. A cell's candidates resolve it as Križ and Chemla's
+pointwise supervaluation does, true on every candidate when all nine objects have the property,
+false when none does, and either way otherwise (`mem_cellResolutions_iff`). On every display the
+value is therefore the pointwise supervaluation (`displayValue_eq_pointwise`), with its gap in the
+GAP? configuration of *exactly 2*, as the paper concedes. -/
+
+section KrizChemla
+
+/-- The nine objects of a cell, of which those below `n` have the property. -/
+def colored (n : ℕ) : Finset (Fin 9) := Finset.univ.filter (·.val < n)
+
+/-- A cell's resolution under a candidate domain for its nine objects: whether some member of the
+domain has the property throughout. -/
+def resolveCell (n : ℕ) (D : Finset (Finset (Fin 9))) : Bool := decide (∃ z ∈ D, z ⊆ colored n)
+
+/-- The resolutions of a cell with `n` of its nine objects having the property. -/
+def cellResolutions (n : ℕ) : List Bool :=
+  if n = 0 then [false] else if 9 ≤ n then [true] else [false, true]
+
+/-- A cell's candidates resolve it exactly as `cellResolutions` lists: a candidate's members are
+nonempty parts, it contains the whole plurality, and the singleton domain of the plurality and
+the domain of all its parts are candidates. -/
+theorem mem_cellResolutions_iff {n : ℕ} {b : Bool} :
+    b ∈ cellResolutions n ↔ ∃ D ∈ Cand (Finset.univ : Finset (Fin 9)), resolveCell n D = b := by
+  have hu : (Finset.univ : Finset (Fin 9)).Nonempty := Finset.univ_nonempty
+  have hall : Finset.univ ⊆ colored n ↔ 9 ≤ n := by
+    simp only [colored, Finset.univ_subset_iff, Finset.filter_eq_self, Finset.mem_univ,
+      true_implies]
+    exact ⟨fun h ↦ by have := h 8; simp at this; omega, fun h i ↦ by omega⟩
+  constructor
+  · intro hb
+    unfold cellResolutions at hb
+    split_ifs at hb with h0 h9
+    · rw [List.mem_singleton] at hb
+      exact ⟨{Finset.univ}, singleton_mem_Cand _, by simp [resolveCell, hb, hall]; omega⟩
+    · rw [List.mem_singleton] at hb
+      exact ⟨{Finset.univ}, singleton_mem_Cand _, by simp [resolveCell, hb, hall.2 h9]⟩
+    · cases b
+      · exact ⟨{Finset.univ}, singleton_mem_Cand _, by simp [resolveCell, hall]; omega⟩
+      · refine ⟨parts Finset.univ, parts_mem_Cand hu, ?_⟩
+        simp only [resolveCell, decide_eq_true_eq]
+        exact ⟨{0}, mem_parts.2 ⟨Finset.singleton_nonempty _, Finset.subset_univ _⟩, by
+          simp [colored]; omega⟩
+  · rintro ⟨D, hD, rfl⟩
+    unfold cellResolutions
+    split_ifs with h0 h9
+    · simp only [List.mem_singleton, resolveCell, decide_eq_false_iff_not, not_exists, not_and]
+      intro z hz hzc
+      obtain ⟨a, ha⟩ := (mem_parts.1 (mem_parts_of_mem_Cand hu hD hz)).1
+      simpa [colored, h0] using hzc ha
+    · simp only [List.mem_singleton, resolveCell, decide_eq_true_eq]
+      exact ⟨_, self_mem_of_mem_Cand hD, hall.2 h9⟩
+    · cases resolveCell n D <;> simp
+
+/-- The value of a sentence under the quantifier `q` on a display, a cell for each count of
+objects with the property: true when every choice of a candidate for each cell makes it true,
+false when none does, and a gap otherwise. -/
+def displayValue (q : Quantifier.NumberTree) [DecidableRel q] (counts : List ℕ) : SignType :=
+  SignType.supervaluation (counts.map cellResolutions).sections.toFinset (KrizChemla2015.holds q)
+
+/-- On every display the account's value is Križ and Chemla's pointwise supervaluation. -/
+theorem displayValue_eq_pointwise (q : Quantifier.NumberTree) [DecidableRel q] (counts : List ℕ) :
+    displayValue q counts = KrizChemla2015.pointwise q (counts.map KrizChemla2015.cell) := by
+  have hcell (n : ℕ) (b : Bool) : b ∈ cellResolutions n ↔
+      b ∈ [decide (0 ≤ KrizChemla2015.cell n), decide (KrizChemla2015.cell n = 1)] := by
+    simp only [KrizChemla2015.designated_lp_cell, KrizChemla2015.designated_k3_cell,
+      cellResolutions]
+    split_ifs <;> cases b <;> simp <;> omega
+  unfold displayValue KrizChemla2015.pointwise KrizChemla2015.resolutions
+  congr 1
+  ext r
+  simp only [List.mem_toFinset, List.mem_sections, List.map_map, List.forall₂_map_right_iff,
+    Function.comp_def]
+  exact ⟨fun h ↦ h.imp fun {b n} ↦ (hcell n b).1, fun h ↦ h.imp fun {b n} ↦ (hcell n b).2⟩
+
+end KrizChemla
 
 end KrizSpector2021

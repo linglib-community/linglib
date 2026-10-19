@@ -50,24 +50,25 @@ def found (x : Run) (e : Effect) : Option Bool :=
   (tests.find? fun t ↦ t.experiment = x ∧ t.model = .mixed ∧ t.effect = e).map fun t ↦
     decide (t.p.toRat < 1 / 20)
 
-/-- An account predicts a context effect for a quantifier when on some mixed picture it accepts the
-sentence in one context and not the other. -/
-def ContextEffect (a : Account) (x : Run) (q : Quantifier) : Prop :=
-  ∃ p ∈ mixed x q, ¬ (a.accepts q .existential p.display ↔ a.accepts q .universal p.display)
-
-instance (a : Account) (x : Run) (q : Quantifier) : Decidable (ContextEffect a x q) := by
-  unfold ContextEffect; infer_instance
+/-- Whether an account predicts a context effect for a quantifier, where linglib states its
+verdicts in a context: whether on some mixed picture it accepts the sentence in one context and
+not the other. -/
+def contextEffect (a : Account) (x : Run) (q : Quantifier) : Option Bool :=
+  ((mixed x q).mapM fun (p : Picture) ↦ do
+    let e ← a.accepts q .existential p.opened
+    let u ← a.accepts q .universal p.opened
+    pure (e != u)).map fun (es : List Bool) ↦ es.any id
 
 /-- The context effect and its interaction with polarity in each experiment of
 [augurzky-etal-2023], scored by whether an account predicts them. -/
 def contexts : Eval.Experiment Account (Run × Effect) Bool where
   observed xe := found xe.1 xe.2
   predicted a xe :=
-    match xe.2 with
-    | .context => some (decide (∃ q ∈ quantifiers xe.1, ContextEffect a xe.1 q))
-    | .interaction => some (decide (∃ q ∈ quantifiers xe.1, ∃ q' ∈ quantifiers xe.1,
-        ContextEffect a xe.1 q ∧ ¬ ContextEffect a xe.1 q'))
-    | _ => none
+    ((quantifiers xe.1).mapM (contextEffect a xe.1)).bind fun (es : List Bool) ↦
+      match xe.2 with
+      | .context => some (es.any id)
+      | .interaction => some (es.any id && es.any (!·))
+      | _ => none
 
 /-- Both experiments found a context effect, and only Experiment 1 found it to interact with
 polarity. -/
@@ -123,6 +124,14 @@ theorem verdict_implicatureEnriched :
       contexts.verdict .implicatureEnriched (.one, .interaction) = .correct ∧
       contexts.verdict .implicatureEnriched (.two, .context) = .correct ∧
       contexts.verdict .implicatureEnriched (.two, .interaction) = .correct := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide +kernel
+
+/-- Križ and Spector's non-maximality is not stated on these pictures, so they are silent. -/
+theorem verdict_krizSpector :
+    contexts.verdict .krizSpector (.one, .context) = .silent ∧
+      contexts.verdict .krizSpector (.one, .interaction) = .silent ∧
+      contexts.verdict .krizSpector (.two, .context) = .silent ∧
+      contexts.verdict .krizSpector (.two, .interaction) = .silent := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide +kernel
 
 end Eval.Homogeneity.AugurzkyEtAl2023
