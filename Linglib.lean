@@ -963,7 +963,6 @@ import Linglib.Syntax.Category.Pronoun.Reciprocal
 import Linglib.Syntax.Category.Verb.Argument
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Verb.Defs
-import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Syntax.Clause.Arguments
 import Linglib.Syntax.Clause.Basic

@@ -135,8 +135,8 @@ structure ArgStructure where
   perfectAuxiliaries : Finset Verb.PerfectAuxiliary := ∅
   deriving BEq
 
-/-- The aspectual class of a verb is its Vendler class, degree-achievement scale, direction of
-    motion, incrementality and phasal class. -/
+/-- The aspectual class of a verb is its Vendler class, lexical viewpoint, degree-achievement
+    scale, direction of motion, incrementality and phasal class. -/
 structure Aspect where
   /-- [vendler-1957] aspectual class of the verb's base VP.
       For verbs whose class depends on the object NP (eat apples = activity,
@@ -144,6 +144,10 @@ structure Aspect where
       (bounded) object. `none` for verbs where Vendler class is inapplicable
       (e.g., clause-embedding verbs). -/
   vendlerClass : Option VendlerClass := none
+  /-- The viewpoint the stem lexicalizes, in a language that encodes the opposition of perfective
+      and imperfective on verb stems, as the Slavic languages do, at its dictionary value; `none`
+      where the language does not. -/
+  perfectivity : Option Perfectivity := none
   /-- The dimension of the scale along which a degree achievement measures change. -/
   scaleDimension : Option Degree.ScalarDimension := none
   /-- The pole of the dimension towards which a degree achievement measures change, negative
