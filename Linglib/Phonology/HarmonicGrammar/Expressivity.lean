@@ -5,6 +5,7 @@ public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Core.Algebra.Order.BigOperators.Ring.Finset
 
 /-!
 # Expressivity of OT, Harmonic Grammar, and MaxEnt
@@ -28,6 +29,8 @@ Law data.
 
 ## Main results
 
+* `Pi.strictMonoOn_sum_mul_iff` (in `Core`): a weighting orders the `M`-bounded violation
+  profiles lexicographically exactly when it is exponentially separated.
 * `Tableau.optimal_eq_argmax_harmonyScore`: under exponentially separated weights a tableau's OT
   winners are its HG winners.
 * `maxent_ot_limit`: MaxEnt concentrates on the OT winner as the weights are scaled up.
@@ -74,11 +77,17 @@ weighted-constraint object. -/
 /-! ### Exponentially separated weights -/
 
 /-- Weights are **exponentially separated** with violation bound `M` when each weight exceeds `M`
-    times the sum of all lower-ranked weights. No combination of lower-ranked violations can then
-    override a single higher-ranked violation difference, as under OT's strict ranking. -/
+    times the sum of all lower-ranked weights. These are exactly the weightings whose weighted
+    sums order the `M`-bounded violation profiles lexicographically
+    (`Pi.strictMonoOn_sum_mul_iff`), so that no combination of lower-ranked violations overrides
+    a single higher-ranked violation difference, as under OT's strict ranking. -/
 def ExponentiallySeparated {n : Nat} (w : Fin n → ℝ) (M : Nat) : Prop :=
-  (∀ i, 0 < w i) ∧
-  ∀ k : Fin n, (M : ℝ) * (univ.filter (· > k)).sum w < w k
+  ∀ k : Fin n, (M : ℝ) * ∑ i ∈ Ioi k, w i < w k
+
+/-- Exponentially separated weights are positive. -/
+theorem ExponentiallySeparated.pos {n M : ℕ} {w : Fin n → ℝ} (hw : ExponentiallySeparated w M)
+    (k : Fin n) : 0 < w k :=
+  Pi.pos_of_forall_natCast_mul_sum_Ioi_lt hw k
 
 /-- The exponential weights give constraint `i` the weight `(M+1)^(n−1−i)`, so the
     highest-ranked constraint `0` gets the largest weight `(M+1)^(n−1)`. -/
@@ -127,8 +136,9 @@ private lemma expWeights_bound (n M : ℕ) (hM : 0 < M) (k : Fin n) :
 
 /-- Exponential weights are exponentially separated. -/
 theorem expWeights_separated (n : Nat) (M : Nat) (hM : 0 < M) :
-    ExponentiallySeparated (expWeights n M) M :=
-  ⟨expWeights_pos n M, fun k => expWeights_bound n M hM k⟩
+    ExponentiallySeparated (expWeights n M) M := fun k ↦ by
+  rw [← filter_lt_eq_Ioi]
+  exact expWeights_bound n M hM k
 
 /-! ### Ganging (complement of exponential separation) -/
 
@@ -147,11 +157,8 @@ theorem ganging_example : Ganging 2 2 3 := by
 /-- With exponentially separated weights (M = 1), each constraint
     outweighs the total of all lower weights. -/
 theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℝ)
-    (hw : ExponentiallySeparated w 1) (k : Fin n) :
-    (univ.filter (· > k)).sum w < w k := by
-  have h := hw.2 k
-  simp only [Nat.cast_one, one_mul] at h
-  exact h
+    (hw : ExponentiallySeparated w 1) (k : Fin n) : ∑ i ∈ Ioi k, w i < w k := by
+  simpa using hw k
 
 /-- With exponentially separated weights (`M = 1`), no two distinct lower-ranked constraints `i`
     and `j` gang against a higher-ranked `k`, since their combined weight is at most the total
@@ -161,104 +168,14 @@ theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
     (hi : k < i) (hj : k < j) (hij : i ≠ j) :
     ¬ Ganging (w i) (w j) (w k) := by
   rintro ⟨_, _, _, _, _, hgang⟩
-  have hsum : (univ.filter (· > k)).sum w < w k := no_ganging_when_separated w hw k
-  have hsub : ({i, j} : Finset (Fin n)) ⊆ univ.filter (· > k) := by
-    intro x hx
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, gt_iff_lt]
-    rcases hx with rfl | rfl <;> assumption
-  have hpair : w i + w j ≤ (univ.filter (· > k)).sum w := by
+  have hsub : ({i, j} : Finset (Fin n)) ⊆ Ioi k := by
+    simp [Finset.insert_subset_iff, hi, hj]
+  have hpair : w i + w j ≤ ∑ l ∈ Ioi k, w l := by
     rw [← Finset.sum_pair hij]
-    exact Finset.sum_le_sum_of_subset_of_nonneg hsub (fun l _ _ => (hw.1 l).le)
-  linarith
+    exact Finset.sum_le_sum_of_subset_of_nonneg hsub fun l _ _ ↦ (hw.pos l).le
+  linarith [no_ganging_when_separated w hw k]
 
 /-! ### HG–OT agreement -/
-
-/-- The **HG–OT agreement lemma** states that with exponentially separated weights and bounded
-    violations, lexicographic dominance implies strictly lower weighted violations, so the
-    lexicographically better candidate has strictly higher harmony. The proof splits the
-    difference of the weighted sums at the first coordinate `k` where the profiles differ.
-    Earlier terms cancel, the term at `k` contributes at least `wₖ`, and the later terms total at
-    most `M` times the sum of the lower weights, which separation bounds below `wₖ`. -/
-theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
-    (va vb : Fin n → Nat)
-    (hM : ∀ i, va i ≤ M ∧ vb i ≤ M)
-    (hw : ExponentiallySeparated w M)
-    (hlex : toLex va < toLex vb) :
-    w ⬝ᵥ (Nat.cast ∘ va) < w ⬝ᵥ (Nat.cast ∘ vb) := by
-  obtain ⟨k, h_agree, h_lt⟩ :
-      ∃ k : Fin n, (∀ i, i < k → va i = vb i) ∧ va k < vb k := hlex
-  simp only [dotProduct, Function.comp_apply]
-  -- Suffices: 0 < Σ w_i · (vb_i − va_i)
-  suffices hpos : (0 : ℝ) <
-      univ.sum (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) by
-    have hlink : univ.sum (fun i ↦ w i * (va i : ℝ)) +
-        univ.sum (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) =
-        univ.sum (fun i ↦ w i * (vb i : ℝ)) := by
-      rw [← Finset.sum_add_distrib]; congr 1; ext i; ring
-    linarith
-  -- Split the sum: f(k) + Σ_{i≠k} f(i)
-  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ k)]
-  -- Split erase k into i < k and i > k
-  have hsplit : univ.erase k =
-      univ.filter (· < k) ∪ univ.filter (· > k) := by
-    ext i
-    constructor
-    · intro hi
-      rw [Finset.mem_erase] at hi
-      rw [Finset.mem_union, Finset.mem_filter, Finset.mem_filter]
-      rcases lt_or_gt_of_ne hi.1 with h | h
-      · exact Or.inl ⟨Finset.mem_univ _, h⟩
-      · exact Or.inr ⟨Finset.mem_univ _, h⟩
-    · intro hi
-      rw [Finset.mem_union, Finset.mem_filter, Finset.mem_filter] at hi
-      rw [Finset.mem_erase]
-      rcases hi with ⟨_, h⟩ | ⟨_, h⟩
-      · exact ⟨ne_of_lt h, Finset.mem_univ _⟩
-      · exact ⟨ne_of_gt h, Finset.mem_univ _⟩
-  have hdisj : Disjoint (univ.filter (· < k) : Finset (Fin n))
-      (univ.filter (· > k)) := by
-    rw [Finset.disjoint_left]
-    intro i; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    omega
-  rw [hsplit, Finset.sum_union hdisj]
-  -- Terms i < k: each is 0
-  have hlt_zero : (univ.filter (· < k)).sum
-      (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) = 0 := by
-    apply Finset.sum_eq_zero; intro i hi
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
-    rw [h_agree i hi, sub_self, mul_zero]
-  -- Term at k: w_k · (vb_k − va_k) ≥ w_k > 0
-  have hk_bound : w k ≤ w k * ((vb k : ℝ) - (va k : ℝ)) := by
-    have h1 : (va k : ℝ) + 1 ≤ (vb k : ℝ) := by exact_mod_cast h_lt
-    nlinarith [(hw.1 k).le]
-  -- Terms i > k: each ≥ −w_i · M, so sum ≥ −M · Σ_{i>k} w_i
-  have hgt_bound : -(M : ℝ) * (univ.filter (· > k)).sum w ≤
-      (univ.filter (· > k)).sum
-        (fun i ↦ w i * ((vb i : ℝ) - (va i : ℝ))) := by
-    have h_each : ∀ i ∈ univ.filter (· > k),
-        -(w i * (M : ℝ)) ≤ w i * ((vb i : ℝ) - (va i : ℝ)) := by
-      intro i hi
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
-      have hva : (va i : ℝ) ≤ (M : ℝ) := by exact_mod_cast (hM i).1
-      nlinarith [(hw.1 i).le]
-    have h_neg_sum : (univ.filter (· > k)).sum (fun i ↦ -(w i * (M : ℝ))) =
-        -(M : ℝ) * (univ.filter (· > k)).sum w := by
-      trans (univ.filter (· > k)).sum (fun i ↦ -(M : ℝ) * w i)
-      · apply Finset.sum_congr rfl; intro i _; ring
-      · rw [← Finset.mul_sum]
-    linarith [Finset.sum_le_sum h_each]
-  -- Combine: w_k − M · Σ_{i>k} w_i > 0 from ExponentiallySeparated
-  linarith [hw.2 k, hlt_zero]
-
-/-- An exponentially separated weighting is strictly monotone on the `M`-bounded part of the
-lexicographic order. This is a concrete form of [riggle-2009b]'s order-preserving map from the
-violation semiring to tropical costs. -/
-theorem strictMonoOn_dotProduct {n : Nat} {w : Fin n → ℝ} {M : Nat}
-    (hw : ExponentiallySeparated w M) :
-    StrictMonoOn (fun v : ViolationProfile n => w ⬝ᵥ (Nat.cast ∘ ofLex v))
-      {v | ∀ i, ofLex v i ≤ M} :=
-  fun _ ha _ hb hlex => lex_imp_lower_violations w M _ _ (fun i => ⟨ha i, hb i⟩) hw hlex
 
 /-- With exponentially separated weights bounding every violation, a tableau's OT winners are
 its HG winners: the candidates of lexicographically least profile are those of greatest
@@ -269,7 +186,7 @@ theorem _root_.OptimalityTheory.Tableau.optimal_eq_argmax_harmonyScore {C : Type
     t.optimal = t.candidates.argmax (harmonyScore t.constraints w) :=
   Finset.argmin_eq_argmax_of_le_iff fun a ha b hb ↦ by
     rw [harmonyScore, harmonyScore, neg_le_neg_iff]
-    exact ((strictMonoOn_dotProduct hw).le_iff_le (hM a ha) (hM b hb)).symm
+    exact ((Pi.strictMonoOn_sum_mul hw).le_iff_le (hM a ha) (hM b hb)).symm
 
 /-! ### MaxEnt → OT limit -/
 
