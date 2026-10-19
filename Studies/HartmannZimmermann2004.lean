@@ -127,8 +127,7 @@ theorem focus_marking_not_obligatory :
 /-- Tangale refutes the universalist claim that every focus receives an
 overt reflex — the Tangale side of the counterexample the Hausa
 chapter states against the Basic Focus Rule. -/
-theorem tangale_refutes_perceptibility :
-    ¬ ∀ c, (realize c).Nonempty :=
+theorem tangale_refutes_perceptibility : ¬ Perceptible realize :=
   fun h ↦ Finset.not_nonempty_empty (h ⟨.object, .continuous, true⟩)
 
 /-- The boundary underdetermines the focus extent. On the transitive perfective non-subject

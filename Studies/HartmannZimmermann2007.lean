@@ -331,7 +331,7 @@ theorem hasMorphosyntacticReflex_iff (u : FocusUtterance) :
 receives an overt reflex — the same shape Tangale refutes in
 `HartmannZimmermann2004.lean`. -/
 theorem hausa_refutes_perceptibility :
-    ¬ ∀ u : {u : FocusUtterance // u.IsHausaLicensed}, u.1.reflexes.Nonempty :=
+    ¬ Reflex.Perceptible fun u : {u : FocusUtterance // u.IsHausaLicensed} ↦ u.1.reflexes :=
   fun h ↦ absurd
     ((hasMorphosyntacticReflex_iff inSitu_newInfo).mpr (h ⟨inSitu_newInfo, by decide⟩))
     (by decide)

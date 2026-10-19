@@ -1,0 +1,491 @@
+[
+  {
+    "id": "aremu2025a_157b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(157-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ra bàtà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ra", "buy"], ["bàtà", "shoe"]
+    ],
+    "translation": "Adé bought A SHOE.",
+    "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_157b_ni",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(157-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ra bàtà ni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ra", "buy"], ["bàtà", "shoe"], ["ni", "FOC"]
+    ],
+    "translation": "Adé bought A SHOE.",
+    "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"]
+    ],
+    "comment": "The variant (157-b) marks with (*ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_157c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(157-c)"},
+    "language": "yoru1245",
+    "primaryText": "Bàtà ni Adé rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bàtà", "shoe"], ["ni", "FOC"], ["Adé", "Adé"], ["rà", "buy"]
+    ],
+    "translation": "Adé bought A SHOE.",
+    "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["fronted", "object"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_158b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(158-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ra bàtà. Ó ra aṣọ pẹ̀lu.",
+    "discourseSegments": [
+      "Adé ra bàtà.",
+      "Ó ra aṣọ pẹ̀lu."
+    ],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ra", "buy"], ["bàtà", "shoe"], ["Ó", "3SG"], ["ra", "buy"],
+      ["aṣọ", "cloth"], ["pẹ̀lu", "also"]
+    ],
+    "translation": "Adé bought A SHOE. He also bought a cloth.",
+    "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["continuation", "additive"]
+    ],
+    "comment": "In-situ focus is not exhaustive, so an additive continuation is felicitous.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_158c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(158-c)"},
+    "language": "yoru1245",
+    "primaryText": "Bàtà ni Adé rà. Ó ra aṣọ pẹ̀lu.",
+    "discourseSegments": [
+      "Bàtà ni Adé rà.",
+      "Ó ra aṣọ pẹ̀lu."
+    ],
+    "glossedTokens": [
+      ["Bàtà", "shoe"], ["ni", "FOC"], ["Adé", "Adé"], ["rà", "buy"], ["Ó", "3SG"], ["ra", "buy"],
+      ["aṣọ", "cloth"], ["pẹ̀lu", "also"]
+    ],
+    "translation": "Adé bought A SHOE. He also bought a cloth.",
+    "context": "Answer to: Kí ni Adé rà? 'What did Adé buy?'",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "object"],
+      ["fronted", "object"],
+      ["continuation", "additive"]
+    ],
+    "comment": "Ex-situ focus is exhaustive, so an additive continuation is infelicitous.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_159b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(159-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé rà bàtà ní àná",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["rà", "buy"], ["bàtà", "shoe"], ["ní", "LOC"], ["àná", "yesterday"]
+    ],
+    "translation": "Adé bought a shoe YESTERDAY.",
+    "context": "Answer to: Igba wo ni Adé rà bàtà? 'When did Adé buy a shoe?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "adjunct"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_159c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(159-c)"},
+    "language": "yoru1245",
+    "primaryText": "Àná ni Adé rà bàtà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Àná", "yesterday"], ["ni", "FOC"], ["Adé", "Adé"], ["rà", "buy"], ["bàtà", "shoe"]
+    ],
+    "translation": "Adé bought a shoe YESTERDAY.",
+    "context": "Answer to: Igba wo ni Adé rà bàtà? 'When did Adé buy a shoe?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "adjunct"],
+      ["fronted", "adjunct"]
+    ],
+    "comment": "The gloss line prints 'yesterday' twice.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_160b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(160-b)"},
+    "language": "yoru1245",
+    "primaryText": "Ó fọ́ o",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ó", "3SG.NOM"], ["fọ́", "break"], ["o", "3SG.ACC"]
+    ],
+    "translation": "He BROKE it.",
+    "context": "Answer to: Ki ni Adé ṣe sí fèrèsé? 'What did Adé do to the window?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "verb"]
+    ],
+    "comment": "No prosodic prominence or difference, the text says.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_161",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(161)"},
+    "language": "yoru1245",
+    "primaryText": "Fífọ́ ni Adé fọ́ fèrèsé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Fífọ́", "NMLZ.break"], ["ni", "FOC"], ["Adé", "Adé"], ["fọ́", "break"],
+      ["fèrèsé", "window"]
+    ],
+    "translation": "Adé BROKE the window.",
+    "context": "Verb focus, the fronted verb nominalized and a copy left in place.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "verb"],
+      ["fronted", "verb"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_162b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(162-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé fọ́ fèrèsé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["fọ́", "break"], ["fèrèsé", "window"]
+    ],
+    "translation": "Adé BROKE A WINDOW.",
+    "context": "Answer to: Ki ni Adé ṣe? 'What did Adé do?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "vp"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_162c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(162-c)"},
+    "language": "yoru1245",
+    "primaryText": "Fífọ́ fèrèsé ni Adé fọ́ fèrèsé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Fífọ́", "NMLZ.break"], ["fèrèsé", "window"], ["ni", "FOC"], ["Adé", "Adé"],
+      ["fọ́", "break"], ["fèrèsé", "window"]
+    ],
+    "translation": "Adé BROKE THE WINDOW.",
+    "context": "Answer to: Ki ni Adé ṣe? 'What did Adé do?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "vp"],
+      ["fronted", "vp"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_163b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(163-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni ó rà bàtà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["ó", "3SG"], ["rà", "buy"], ["bàtà", "shoe"]
+    ],
+    "translation": "ADÉ bought a shoe.",
+    "context": "Answer to: Ta ni ó rà bàtà? 'Who bought a shoe?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_163c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(163-c)"},
+    "language": "yoru1245",
+    "primaryText": "Adé rà bàtà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["rà", "buy"], ["bàtà", "shoe"]
+    ],
+    "translation": "ADÉ bought a shoe.",
+    "context": "Answer to: Ta ni ó rà bàtà? 'Who bought a shoe?'",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_165b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(165-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú ni ó jẹ iṣu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["ni", "FOC"], ["ó", "3SG"], ["jẹ", "eat"], ["iṣu", "yam"]
+    ],
+    "translation": "TOLÚ ATE YAM.",
+    "context": "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "clause"],
+      ["fronted", "subject"]
+    ],
+    "comment": "The logical focus is the clause, but the subject is marked.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_165c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(165-c)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú jẹ iṣu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["jẹ", "eat"], ["iṣu", "yam"]
+    ],
+    "translation": "TOLÚ ATE YAM.",
+    "context": "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "clause"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_166b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(166-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú pa eku",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["pa", "kill"], ["eku", "rat"]
+    ],
+    "translation": "Tolú KILLED A RAT.",
+    "context": "Answer to: Kí ni Tolú se? 'What did Tolú do?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "vp"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_166c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(166-c)"},
+    "language": "yoru1245",
+    "primaryText": "Eku ni Tolú pa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Eku", "rat"], ["ni", "FOC"], ["Tolú", "Tolú"], ["pa", "kill"]
+    ],
+    "translation": "Tolú killed a rat.",
+    "context": "Answer to: Kí ni Tolú se? 'What did Tolú do?'",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "vp"],
+      ["fronted", "object"]
+    ],
+    "comment": "The direct object of a focused verb phrase cannot be marked.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_167b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(167-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú ni ó subú",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["ni", "FOC"], ["ó", "3SG"], ["subú", "fall"]
+    ],
+    "translation": "TOLÚ FELL.",
+    "context": "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "clause"],
+      ["fronted", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_167c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(167-c)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú ni ó sùn",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["ni", "FOC"], ["ó", "3SG"], ["sùn", "sleep"]
+    ],
+    "translation": "TOLÚ SLEPT.",
+    "context": "Answer to: Kí ni ó ṣẹlẹ̀? 'What happened?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "clause"],
+      ["fronted", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_168",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(168)"},
+    "language": "yoru1245",
+    "primaryText": "Enikan ni ó jí ọkọ̀",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Enikan", "someone"], ["ni", "FOC"], ["ó", "3SG"], ["jí", "steal"], ["ọkọ̀", "car"]
+    ],
+    "translation": "SOMEONE STOLE A CAR.",
+    "context": "Clause focus with an indefinite subject.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "clause"],
+      ["fronted", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_169",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(169)"},
+    "language": "yoru1245",
+    "primaryText": "Pípa eku ni Tolú pa eku",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pípa", "kill.NMNL"], ["eku", "rat"], ["ni", "FOC"], ["Tolú", "Tolú"], ["pa", "kill"],
+      ["eku", "rat"]
+    ],
+    "translation": "Tolú SLAUGHTERED A RAT.",
+    "context": "Verb phrase focus, the verb phrase fronted with its verb nominalized.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "vp"],
+      ["fronted", "vp"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_188a",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(188-a)"},
+    "language": "yoru1245",
+    "primaryText": "Àwọn ọmọ ni wọ́n ra bàtà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Àwọn", "PL"], ["ọmọ", "child"], ["ni", "FOC"], ["wọ́n", "3PL"], ["ra", "buy"],
+      ["bàtà", "shoe"]
+    ],
+    "translation": "THE CHILDREN bought a shoe.",
+    "context": "Subject focus.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"],
+      ["number", "plural"]
+    ],
+    "comment": "The resumptive agrees in number with the focused subject.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_188b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "(188-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni ó ra bàtà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["ó", "3SG"], ["ra", "buy"], ["bàtà", "shoe"]
+    ],
+    "translation": "ADÉ bought a shoe.",
+    "context": "Subject focus.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

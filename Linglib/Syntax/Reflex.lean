@@ -25,6 +25,7 @@ consumes it as machinery.
 * `Reflex`: the four kinds of reflex, `Reflex.morpheme` carrying its marker as a list of morphs
   so that one morpheme at two hosts is one marker twice.
 * `Reflex.IsOvert`: a morpheme reflex has a nonempty marker.
+* `Reflex.Perceptible`: every designated target of a marking system receives a reflex.
 * `Reflex.PiedPipes`, `Reflex.AntiPiedPipes`, `Reflex.ExactlyTargets`: Branan and Erlewine's
   three configurations of host and target in the containment order.
 * `Reflex.ExactlyTargets.piedPipes_iff`, `Reflex.ExactlyTargets.antiPiedPipes_iff`: reflexes
@@ -47,8 +48,8 @@ consumes it as machinery.
   as with the verb-hosted extraction morphology of the Mayan Agent Focus configuration). The
   predicates are stated in the order vocabulary over a reflex set and an explicit target, so a
   study asserts the target in the claim.
-* The claim that every designated target receives an overt reflex is `∀ i, (realize i).Nonempty`
-  over a marking system, which Tangale and Hausa focus each refute.
+* `Reflex.Perceptible` is the claim that every designated target receives an overt reflex,
+  which Tangale, Hausa and Yorùbá focus each refute.
 
 ## TODO
 
@@ -140,6 +141,10 @@ def IsOvert : Reflex C → Prop
 instance : ∀ ρ : Reflex C, Decidable ρ.IsOvert
   | .morpheme _ _ => inferInstanceAs (Decidable (_ ≠ _))
   | .displacement _ | .boundary _ | .prominence _ => inferInstanceAs (Decidable True)
+
+/-- A marking system is perceptible when every designated target receives a reflex. -/
+def Perceptible {ι : Type*} (realize : ι → Finset (Reflex C)) : Prop :=
+  ∀ i, (realize i).Nonempty
 
 /-! ### Host–target containment
 
