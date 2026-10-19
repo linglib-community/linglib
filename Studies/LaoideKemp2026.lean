@@ -9,6 +9,7 @@ public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Morphology.Morphotactics.CVTemplate
 public import Linglib.Phonology.Autosegmental.Melody
 public import Linglib.Phonology.RuleInteraction
+public import Linglib.Phonology.StrictCV.Skeleton
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -39,6 +40,8 @@ out `{L}` as a prefix and *d'* afterwards; it fails on the past-tense impersonal
   Figure 1, `d` is pronounced before *ól* and *fág* but not before *bog*.
 * `lenition_feeds_linking`, `not_linking_feeds_lenition`: lenition feeds the linking of `d` and
   not conversely, so the order of the two processes is intrinsic.
+* `historic_freagair`, `historic_rith`: `d` links before lenited *fr-*, whose emptied C-slot stays
+  in a domain of infrasegmental government, and not before *r-* (Figure 2).
 * `isFloating_of_emptyCV`: whatever the stem, no object of a floating exponent docks before an
   empty CV unit; `conditional_impersonals`, the same resistance after the trigger *má*.
 * `beginsWithEmptyC_iff_realizes_d`, `beginsWithEmptyC_pstImpers`, `beginsWithEmptyC_of_emptyCV`:
@@ -58,15 +61,16 @@ slot of the consonant it acts on, and of its effects only the deletion of *f* is
 leaves the C-slot, as Gussmann argues. The palatalization such a slot keeps, a lexical property of
 the following word as Ní Chiosáin shows, is not modelled. The condition on `d` applies to every
 floating segment, as §4.3 extends it to the prothetic consonants; of the masculine article only
-its floating `t` is modelled. The phonology is defined for any type of sponsoring morpheme, so it
-cannot consult the morphosyntax, which is Bermúdez-Otero's strict modularity. Suffixes are not
-modelled, and Munster *dh'* is written `d`, as the paper writes it.
+its floating `t` is modelled. Whether a nucleus is enclosed in a domain of infrasegmental
+government is Strict CV's notion, after Scheer; the domains are read off the underlying form,
+since "the IG domain structure remains intact, even after the initial f has been deleted", and a
+liquid may govern an obstruent before it. The phonology is defined for any type of sponsoring
+morpheme, so it cannot consult the morphosyntax, which is Bermúdez-Otero's strict modularity.
+Suffixes are not modelled, and Munster *dh'* is written `d`, as the paper writes it.
 
 ## TODO
 
-Model the infrasegmental-government domains of Figure 2, after Scheer, which license `d` before
-lenited *fl-* and *fr-* clusters ((12)), and prove the distribution of `d` for every stem, not only
-for the paper's verbs.
+Prove the distribution of `d` for every stem, not only for the paper's verbs.
 
 ## References
 
@@ -76,6 +80,7 @@ for the paper's verbs.
 * [gussmann-1986]
 * [ni-chiosain-1991]
 * [scheer-1998]
+* [scheer-2004]
 -/
 
 @[expose] public section
@@ -90,7 +95,7 @@ open Morphology (CVSlot)
 
 /-- The segments of the paper's examples, written orthographically as in its CV diagrams. -/
 inductive Segment
-  | a | á | b | d | ea | f | g | i | í | l | m | n | o | ó | t
+  | a | á | b | d | ea | f | g | i | í | l | m | n | o | ó | r | t
   deriving DecidableEq, Repr, Fintype
 
 /-- An object of the melodic tier is a segment or the lenition-inducing bundle `{L}`, whose
@@ -101,6 +106,27 @@ inductive Autosegment
   /-- The lenition-inducing bundle `{L}`. -/
   | L
   deriving DecidableEq, Repr
+
+/-- The segments, as against the bundle `{L}`. -/
+def Autosegment.IsSegment : Autosegment → Prop
+  | .seg _ => True
+  | .L => False
+
+instance : DecidablePred Autosegment.IsSegment
+  | .seg _ => isTrue trivial
+  | .L => isFalse id
+
+theorem Autosegment.isSegment_iff {a : Autosegment} : a.IsSegment ↔ ∃ s, a = .seg s := by
+  cases a <;> simp [Autosegment.IsSegment]
+
+/-- A liquid may govern an obstruent before it, as in the clusters *fr-* and *fl-* of (12) and
+*dr-* and *gl-* of §4.1: the governing onset hosts *r* or *l*, and the governed one an
+obstruent. -/
+def MayGovern (governor governee : List Autosegment) : Prop :=
+  (.seg .r ∈ governor ∨ .seg .l ∈ governor) ∧ ∃ s ∈ [Segment.b, .d, .f, .g, .t], .seg s ∈ governee
+
+instance (governor governee : List Autosegment) : Decidable (MayGovern governor governee) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A form of the paper is a melodic tier of `Autosegment`s over a strict-CV skeleton, each object
 and slot sponsored by a morpheme in `M`. -/
@@ -155,16 +181,25 @@ an object before it. -/
 def nextSlot (k : Fin u.upper.length) : Option (Fin u.lower.length) :=
   Fin.find? fun i ↦ ∀ j ∈ leftIndices c.links k, j < i
 
+/-- The profile a candidate presents to the lateral computation has the nuclei hosting a segment,
+and the domains of infrasegmental government of the form itself, a structure that "remains
+intact, even after the initial f has been deleted" (§4.1). -/
+def profile : StrictCV.Profile (StrictCV.units u) where
+  full := StrictCV.hosting c Autosegment.IsSegment
+  cluster := StrictCV.clusters (.input u) MayGovern
+
 /-- A docking site for `{L}` is a C-slot hosting the consonant it acts on, and for a segment a
-segmentally empty C-slot directly followed by a V-slot hosting a segment. -/
+segmentally empty C-slot whose nucleus hosts a segment or is enclosed in a domain of
+infrasegmental government (§4.1). -/
 def IsDockingSite : Autosegment → Fin u.lower.length → Prop
   | .L, i => u.lower[i].value.IsC ∧ HostsSegment c i
   | .seg _, i => u.lower[i].value.IsC ∧ ¬ HostsSegment c i ∧
-      ∃ i' : Fin u.lower.length, i'.val = i.val + 1 ∧ u.lower[i'].value.IsV ∧ HostsSegment c i'
+      ∃ j, StrictCV.onset u j = i ∧
+        (j ∈ (profile c).full ∨ StrictCV.Enclosed (profile c) (profile c).full j)
 
 instance : ∀ a i, Decidable (IsDockingSite c a i)
   | .L, _ => inferInstanceAs (Decidable (_ ∧ _))
-  | .seg _, _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+  | .seg _, _ => inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ _, _))
 
 variable {c} in
 theorem IsDockingSite.isC {i : Fin u.lower.length} : ∀ {a}, IsDockingSite c a i →
@@ -313,10 +348,27 @@ section EmptyCV
 
 variable {M : Type*} {u : Form M} {c : Candidate u}
 
-theorem not_isDockingSite_of_emptyCV {i i' : Fin u.lower.length} (hi' : i'.val = i.val + 1)
-    (hc : ¬ HostsSegment c i) (hv : ¬ HostsSegment c i') : ∀ a, ¬ IsDockingSite c a i
+theorem mem_profile_full {j : Fin (StrictCV.units u)} :
+    j ∈ (profile c).full ↔ HostsSegment c (StrictCV.nucleus u j) := by
+  simp only [profile, StrictCV.mem_hosting, HostsSegment, Autosegment.isSegment_iff]
+  exact ⟨fun ⟨k, hk, s', h⟩ ↦ ⟨k, s', hk, h⟩, fun ⟨k, s', hk, h⟩ ↦ ⟨k, hk, s', h⟩⟩
+
+/-- A CV unit whose slots host no segment and which no domain of infrasegmental government spans
+is no docking site for anything: `{L}` finds no consonant on its onset, and a segment finds its
+nucleus empty and not enclosed. -/
+theorem not_isDockingSite_onset {j : Fin (StrictCV.units u)}
+    (hc : ¬ HostsSegment c (StrictCV.onset u j)) (hv : ¬ HostsSegment c (StrictCV.nucleus u j))
+    (hcl : j ∉ StrictCV.clusters (.input u) MayGovern) :
+    ∀ a, ¬ IsDockingSite c a (StrictCV.onset u j)
   | .L, h => hc h.2
-  | .seg _, ⟨_, _, _, hi'', _, h⟩ => hv (Fin.ext (hi'.trans hi''.symm) ▸ h)
+  | .seg _, ⟨_, _, j', hj', h⟩ => by
+    obtain rfl : j' = j := Fin.ext (by
+      have := congrArg Fin.val hj'
+      simp only [StrictCV.onset] at this
+      omega)
+    rcases h with h | h
+    · exact hv (mem_profile_full.1 h)
+    · exact hcl h.2.1
 
 variable {m m' : M} {objs : List Autosegment} {s : Form M}
   {c c' : Candidate (floating m objs * (emptyCV m' * s))}
@@ -330,6 +382,18 @@ private theorem le_of_mem_links {p} (hp : p ∈ (floating m objs * (emptyCV m' *
   simp only [floating, emptyCV, Form.melody_upper, Form.melody_lower, List.length_map,
     List.length_cons, List.length_nil] at h₁ h₂ h₄
   omega
+
+/-- No domain of infrasegmental government spans an empty CV unit, whose onset hosts no
+consonant. -/
+private theorem zero_notMem_clusters
+    (h0 : 0 < StrictCV.units (floating m objs * (emptyCV m' * s))) :
+    (⟨0, h0⟩ : Fin _) ∉
+      StrictCV.clusters (.input (floating m objs * (emptyCV m' * s))) MayGovern := by
+  simp only [StrictCV.clusters, Finset.mem_filter, Finset.mem_univ, true_and, not_exists, not_and]
+  rintro k - ⟨-, s', -, hs'⟩
+  obtain ⟨k', hk', -⟩ := Candidate.mem_tierValues.1 hs'
+  have := (le_of_mem_links hk').2
+  simp [StrictCV.onset] at this
 
 /-- Before an empty CV unit, the objects of a floating exponent float and the unit hosts no
 segment. -/
@@ -347,8 +411,15 @@ private theorem le_of_canDock (h : Blocked c) {k : Fin _} (hk : CanDock c k) :
     objs.length ≤ k.val ∧ ∀ i ∈ nextSlot c k, 2 ≤ i.val := by
   have hlen : 1 < (floating m objs * (emptyCV m' * s)).lower.length := by simp [emptyCV]
   obtain ⟨-, i, hi, hs⟩ := hk
-  have hi0 : i.val ≠ 0 := fun h0 ↦ not_isDockingSite_of_emptyCV (i' := ⟨1, hlen⟩) (by simp [h0])
-    (h.2 _ (by omega)) (h.2 _ (by simp)) _ hs
+  have hi0 : i.val ≠ 0 := fun h0 ↦ by
+    have hu : 0 < StrictCV.units (floating m objs * (emptyCV m' * s)) := by
+      simp only [StrictCV.units, Form.mul_eq_concat, Form.concat_lower, floating, emptyCV,
+        Form.melody_lower, List.map_nil, List.map_cons, List.nil_append, List.length_cons,
+        List.cons_append]
+      omega
+    obtain rfl : i = StrictCV.onset _ ⟨0, hu⟩ := Fin.ext (by simp [StrictCV.onset, h0])
+    exact not_isDockingSite_onset (h.2 _ (by simp only [StrictCV.onset]; omega))
+      (h.2 _ (by simp only [StrictCV.nucleus]; omega)) (zero_notMem_clusters hu) _ hs
   have hi1 : i.val ≠ 1 := fun h1 ↦ by
     obtain rfl : i = ⟨1, hlen⟩ := Fin.ext h1
     exact hs.isC
@@ -435,6 +506,13 @@ def ól : Form Morpheme := .melody .root [.seg .ó, .seg .l] [.C, .V, .C, .V] {(
 def fág : Form Morpheme :=
   .melody .root [.seg .f, .seg .á, .seg .g] [.C, .V, .C, .V] {(0, 0), (1, 1), (2, 2)}
 
+/-- *freagair* 'answer', with the initial cluster *fr-* (Figure 2b). -/
+def freagair : Form Morpheme :=
+  .melody .root [.seg .f, .seg .r, .seg .ea] [.C, .V, .C, .V] {(0, 0), (1, 2), (2, 3)}
+
+/-- *rith* 'run', *r*-initial (Figure 2a). -/
+def rith : Form Morpheme := .melody .root [.seg .r, .seg .i] [.C, .V] {(0, 0), (1, 1)}
+
 /-- *imigh* 'go away', vowel-initial (Table 2). -/
 def imigh : Form Morpheme := .melody .root [.seg .i] [.C, .V] {(0, 1)}
 
@@ -501,6 +579,28 @@ theorem lenition_feeds_linking : Feeds (fun k c ↦ dock c k) (fun k c ↦ CanDo
 precedes it on the melodic tier; the form is *d' ól*, not *dh' ól* (§4.2). -/
 theorem not_linking_feeds_lenition : ¬ Feeds (fun k c ↦ dock c k) (fun k c ↦ CanDock c k)
     (d ól) (bundle ól) (.input (historic Morpheme.hist * ól)) := by
+  decide
+
+/-! ### Figure 2 -/
+
+/-- In Figure 2b, *freagair* → *d' fhreagair*, `{L}` deletes the *f*, and `d` links to the
+emptied C-slot, which an empty V-slot follows but which stays in the domain of infrasegmental
+government that *r* contracts with it ((12b)). -/
+theorem historic_freagair : ∀ c ∈ surfaces (.input (historic Morpheme.hist * freagair)),
+    Realizes c (.seg .d) ∧ Realizes c .L ∧ ¬ Realizes c (.seg .f) := by
+  decide
+
+/-- In Figure 2a, *rith* → *rith*, `{L}` docks on the *r*, which fills the C-slot, so `d` cannot
+link ((13b)). Both forms begin with *r* on the surface, and only the one derived from an
+*f*-initial verb has *d'* (§3). -/
+theorem historic_rith : ∀ c ∈ surfaces (.input (historic Morpheme.hist * rith)),
+    ¬ Realizes c (.seg .d) ∧ Realizes c .L := by
+  decide
+
+/-- The forms of Figures 1, 2 and 5 are strict CV forms. -/
+theorem isStrict_forms : ∀ s ∈ [bog, ól, fág, freagair, rith],
+    StrictCV.IsStrict (historic Morpheme.hist * s) ∧
+      StrictCV.IsStrict (historic Morpheme.hist * (emptyCV Morpheme.pstImpers * s)) := by
   decide
 
 /-! ### Figure 5 and the past-tense impersonal -/
