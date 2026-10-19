@@ -48,7 +48,7 @@ derives where the egophoric form is excluded, not where it is required.
 namespace CoppockWechsler2018
 
 open Commitment Question Filter
-open Pearson2015 (Centered sayDeSe)
+open Pearson2015 (Centered SayDeSe)
 
 variable {W E P T : Type*}
 
@@ -293,10 +293,9 @@ variable {R : Centered W E → Centered W E → Prop} {φ : CenteredProp W E} {w
 @[simp] theorem report_eq_one_iff {p : Centered W E} : report R x φ p = 1 ↔ Says R x φ p.1 := by
   simp [report]
 
-/-- `Says` agrees with `Pearson2015.sayDeSe` when the say relation is listed as alternatives. -/
-theorem says_iff_sayDeSe {alts : List (Centered W E)} (h : ∀ p, R (w, x) p ↔ p ∈ alts) :
-    Says R x φ w ↔ sayDeSe alts fun a w' ↦ φ (w', a) = 1 := by
-  simp [Says, sayDeSe, h]
+/-- `Says` is `Pearson2015.SayDeSe` over the alternatives of the say relation. -/
+theorem says_iff_sayDeSe : Says R x φ w ↔ SayDeSe {p | R (w, x) p} fun a w' ↦ φ (w', a) = 1 :=
+  Iff.rfl
 
 /-- An egophoric report is true exactly when the reported speaker takes the subject to be
 herself and ascribes the property to herself. -/

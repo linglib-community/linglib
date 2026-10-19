@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.Partition.Finpartition
 public import Linglib.Semantics.Questions.Value
+public import Studies.Aloni2001
 public import Linglib.Data.Examples.VanRooy2003
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Setoid.Partition
@@ -30,6 +31,9 @@ more relevant true value, and this one rule yields both mention-all and mention-
 * `killer_byName`, `killer_byMask`, `liveIn_visit`, `beatles_questionR`: the decision problem
   decides the partition, by name or by mask for *Who killed spiderman?*, by city or by address for
   *Where do you live?*, and by an autograph hierarchy for *Which Beatles' autograph do you have?*.
+* `killer_byName_eq_whoUnder`, `killer_byMask_eq_whoUnder`, `not_isCover_range_val`: with the
+  wh-phrase ranging over all four concepts, which form no conceptual cover, the partitions by name
+  and by mask are exactly Aloni's questions under the name cover and the cover by masks.
 
 ## Implementation notes
 
@@ -568,6 +572,22 @@ inductive SpiderW where
   | billGreen
   deriving DecidableEq, Fintype
 
+/-- The suspects. -/
+inductive Suspect where
+  | john
+  | bill
+  deriving DecidableEq, Fintype
+
+/-- The suspect who killed spiderman in each world. -/
+@[simp] def culprit : SpiderW → Suspect
+  | .johnBlue | .johnGreen => .john
+  | .billBlue | .billGreen => .bill
+
+/-- The worlds in which `d` killed spiderman. -/
+def killed (d : Suspect) : Set SpiderW := {w | culprit w = d}
+
+@[simp] theorem mem_killed {d : Suspect} {w : SpiderW} : w ∈ killed d ↔ culprit w = d := Iff.rfl
+
 /-- The concepts that may identify the killer are two names and two masks. -/
 inductive Concept where
   | john
@@ -576,12 +596,21 @@ inductive Concept where
   | green
   deriving DecidableEq, Fintype
 
-/-- The concepts true of the killer in each world. -/
-def killer : SpiderW → Set Concept
-  | .johnBlue => {.john, .blue}
-  | .johnGreen => {.john, .green}
-  | .billBlue => {.bill, .blue}
-  | .billGreen => {.bill, .green}
+/-- Each label stands for an individual concept, a name picking out its bearer in every world and
+a mask whoever wears it, each suspect wearing one of the two masks. -/
+@[simp] def Concept.val : Concept → SpiderW → Suspect
+  | .john, _ => .john
+  | .bill, _ => .bill
+  | .blue, .johnBlue | .blue, .billGreen => .john
+  | .blue, .johnGreen | .blue, .billBlue => .bill
+  | .green, .johnGreen | .green, .billBlue => .john
+  | .green, .johnBlue | .green, .billGreen => .bill
+
+/-- The concepts true of the killer in each world, those that pick out the culprit. -/
+def killer (w : SpiderW) : Set Concept := {c | w ∈ killed (c.val w)}
+
+theorem mem_killer {c : Concept} {w : SpiderW} : c ∈ killer w ↔ culprit w = c.val w :=
+  Iff.rfl
 
 /-- A questioner who has to know the culprit's name decides whom to accuse. -/
 def byName : SpiderW → Concept → ℝ
@@ -607,10 +636,14 @@ private theorem mem_optimalValues_resolves {U : SpiderW → Concept → ℝ}
   exact and_congr_right fun _ ↦ ⟨fun h ⟨c', hc', hr⟩ ↦ by_contra fun hn ↦ h c' hc' ⟨hn, hr⟩,
     fun h c' hc' ⟨hn, hr⟩ ↦ hn (h ⟨c', hc', hr⟩)⟩
 
-private theorem killer_johnBlue : killer .johnBlue = {.john, .blue} := rfl
-private theorem killer_johnGreen : killer .johnGreen = {.john, .green} := rfl
-private theorem killer_billBlue : killer .billBlue = {.bill, .blue} := rfl
-private theorem killer_billGreen : killer .billGreen = {.bill, .green} := rfl
+private theorem killer_johnBlue : killer .johnBlue = {.john, .blue} := by
+  ext c; cases c <;> simp [mem_killer]
+private theorem killer_johnGreen : killer .johnGreen = {.john, .green} := by
+  ext c; cases c <;> simp [mem_killer]
+private theorem killer_billBlue : killer .billBlue = {.bill, .blue} := by
+  ext c; cases c <;> simp [mem_killer]
+private theorem killer_billGreen : killer .billGreen = {.bill, .green} := by
+  ext c; cases c <;> simp [mem_killer]
 
 /-- The culprit's name in each world. -/
 def nameOf : SpiderW → Concept
@@ -630,22 +663,22 @@ private theorem whAnswers_pair {f : SpiderW → Concept} {c₁ c₂ : Concept} {
   rw [show {v | f v = c₁} = S₁ from Set.ext h₁, show {v | f v = c₂} = S₂ from Set.ext h₂]
 
 /-- For a questioner who has to know the culprit's name, *Who killed spiderman?* denotes the
-partition by name, as if quantifying over the cover {John, Bill}. -/
+partition by name. -/
 theorem killer_byName :
     questionR killer (fun _ c ↦ IsResolved byName {v | c ∈ killer v}) =
       {{.johnBlue, .johnGreen}, {.billBlue, .billGreen}} := by
   have hjohn : IsResolved byName {v | .john ∈ killer v} :=
-    ⟨.john, fun b v hv ↦ by cases v <;> cases b <;> simp_all [killer, byName]⟩
+    ⟨.john, fun b v hv ↦ by cases v <;> cases b <;> simp_all [mem_killer, byName]⟩
   have hbill : IsResolved byName {v | .bill ∈ killer v} :=
-    ⟨.bill, fun b v hv ↦ by cases v <;> cases b <;> simp_all [killer, byName]⟩
+    ⟨.bill, fun b v hv ↦ by cases v <;> cases b <;> simp_all [mem_killer, byName]⟩
   have hblue : ¬ IsResolved byName {v | .blue ∈ killer v} := fun ⟨a, h⟩ ↦ by
-    have h₁ := h .john .johnBlue (by simp [killer])
-    have h₂ := h .bill .billBlue (by simp [killer])
+    have h₁ := h .john .johnBlue (by simp [mem_killer])
+    have h₂ := h .bill .billBlue (by simp [mem_killer])
     revert h₁ h₂
     cases a <;> norm_num [byName]
   have hgreen : ¬ IsResolved byName {v | .green ∈ killer v} := fun ⟨a, h⟩ ↦ by
-    have h₁ := h .john .johnGreen (by simp [killer])
-    have h₂ := h .bill .billGreen (by simp [killer])
+    have h₁ := h .john .johnGreen (by simp [mem_killer])
+    have h₂ := h .bill .billGreen (by simp [mem_killer])
     revert h₁ h₂
     cases a <;> norm_num [byName]
   have hop : optimalValues killer (fun _ c ↦ IsResolved byName {v | c ∈ killer v}) =
@@ -664,22 +697,22 @@ theorem killer_byName :
   all_goals cases v <;> simp [nameOf]
 
 /-- For a questioner who has to know what the culprit looks like, *Who killed spiderman?*
-denotes the partition by mask, as if quantifying over the cover {blue, green}. -/
+denotes the partition by mask. -/
 theorem killer_byMask :
     questionR killer (fun _ c ↦ IsResolved byMask {v | c ∈ killer v}) =
       {{.johnBlue, .billBlue}, {.johnGreen, .billGreen}} := by
   have hblue : IsResolved byMask {v | .blue ∈ killer v} :=
-    ⟨.blue, fun b v hv ↦ by cases v <;> cases b <;> simp_all [killer, byMask]⟩
+    ⟨.blue, fun b v hv ↦ by cases v <;> cases b <;> simp_all [mem_killer, byMask]⟩
   have hgreen : IsResolved byMask {v | .green ∈ killer v} :=
-    ⟨.green, fun b v hv ↦ by cases v <;> cases b <;> simp_all [killer, byMask]⟩
+    ⟨.green, fun b v hv ↦ by cases v <;> cases b <;> simp_all [mem_killer, byMask]⟩
   have hjohn : ¬ IsResolved byMask {v | .john ∈ killer v} := fun ⟨a, h⟩ ↦ by
-    have h₁ := h .blue .johnBlue (by simp [killer])
-    have h₂ := h .green .johnGreen (by simp [killer])
+    have h₁ := h .blue .johnBlue (by simp [mem_killer])
+    have h₂ := h .green .johnGreen (by simp [mem_killer])
     revert h₁ h₂
     cases a <;> norm_num [byMask]
   have hbill : ¬ IsResolved byMask {v | .bill ∈ killer v} := fun ⟨a, h⟩ ↦ by
-    have h₁ := h .blue .billBlue (by simp [killer])
-    have h₂ := h .green .billGreen (by simp [killer])
+    have h₁ := h .blue .billBlue (by simp [mem_killer])
+    have h₂ := h .green .billGreen (by simp [mem_killer])
     revert h₁ h₂
     cases a <;> norm_num [byMask]
   have hop : optimalValues killer (fun _ c ↦ IsResolved byMask {v | c ∈ killer v}) =
@@ -707,14 +740,89 @@ theorem killer_anyConcept :
     simp only [Set.mem_iUnion, Set.mem_insert_iff, Set.mem_singleton_iff]
     refine ⟨fun _ ↦ by cases c <;> simp, fun _ ↦ ?_⟩
     cases c
-    exacts [⟨.johnBlue, by simp [killer]⟩, ⟨.billBlue, by simp [killer]⟩,
-      ⟨.johnBlue, by simp [killer]⟩, ⟨.johnGreen, by simp [killer]⟩]
+    exacts [⟨.johnBlue, by simp [mem_killer]⟩, ⟨.billBlue, by simp [mem_killer]⟩,
+      ⟨.johnBlue, by simp [mem_killer]⟩, ⟨.johnGreen, by simp [mem_killer]⟩]
   have h (c : Concept) (S : Set SpiderW) (hS : ∀ w, c ∈ killer w ↔ w ∈ S) :
       {w | c ∈ killer w} = S := Set.ext hS
   rw [questionR_const, whAnswers_eq_image, hU, Set.image_insert_eq, Set.image_insert_eq,
     Set.image_insert_eq, Set.image_singleton, h .john {.johnBlue, .johnGreen},
     h .bill {.billBlue, .billGreen}, h .blue {.johnBlue, .billBlue},
-    h .green {.johnGreen, .billGreen}] <;> intro w <;> cases w <;> simp [killer]
+    h .green {.johnGreen, .billGreen}] <;> intro w <;> cases w <;> simp [mem_killer]
+
+/-! #### Aloni's covers
+
+Van Rooy's wh-phrase ranges over all four concepts, which form no conceptual cover in Aloni's
+sense, and the decision problem selects the partitions Aloni obtains by quantifying over a cover,
+by name or by mask. -/
+
+/-- The names identify the suspects rigidly, forming the name cover `A`. -/
+theorem image_val_names : Concept.val '' {.john, .bill} = Aloni2001.names := by
+  ext c
+  constructor
+  · rintro ⟨_, rfl | rfl, rfl⟩
+    exacts [⟨.john, rfl⟩, ⟨.bill, rfl⟩]
+  · rintro ⟨d, rfl⟩
+    cases d
+    exacts [⟨.john, .inl rfl, rfl⟩, ⟨.bill, .inr rfl, rfl⟩]
+
+/-- The masks form the cover `B`. -/
+theorem isCover_masks : Aloni2001.IsCover (Concept.val '' {.blue, .green}) := by
+  intro w
+  refine ⟨Set.mapsTo_univ _ _, ?_, fun d _ ↦ ?_⟩
+  · rintro _ ⟨_, rfl | rfl, rfl⟩ _ ⟨_, rfl | rfl, rfl⟩ e <;> first | rfl | (cases w <;> cases e)
+  · have hb : Concept.val .blue ∈ Concept.val '' {.blue, .green} := ⟨.blue, .inl rfl, rfl⟩
+    have hg : Concept.val .green ∈ Concept.val '' {.blue, .green} := ⟨.green, .inr rfl, rfl⟩
+    cases w <;> cases d
+    exacts [⟨_, hb, rfl⟩, ⟨_, hg, rfl⟩, ⟨_, hg, rfl⟩, ⟨_, hb, rfl⟩, ⟨_, hg, rfl⟩, ⟨_, hb, rfl⟩,
+      ⟨_, hb, rfl⟩, ⟨_, hg, rfl⟩]
+
+/-- The four concepts form no cover, since the culprit is counted twice, by name and by mask. -/
+theorem not_isCover_range_val : ¬ Aloni2001.IsCover (Set.range Concept.val) := fun h ↦ by
+  have e := h.eq_of_apply_eq ⟨.john, rfl⟩ ⟨.blue, rfl⟩ (w := .johnBlue) rfl
+  cases congrFun e .johnGreen
+
+/-- A partition of the spiderman worlds with one cell through each of two worlds. -/
+private theorem classes_eq_pair {Q : Setoid SpiderW} {S₁ S₂ : Set SpiderW} {w₁ w₂ : SpiderW}
+    (h₁ : Q.cell w₁ = S₁) (h₂ : Q.cell w₂ = S₂) (h : ∀ w, Q w w₁ ∨ Q w w₂) :
+    Q.classes = {S₁, S₂} := by
+  ext s
+  refine ⟨?_, ?_⟩
+  · rintro ⟨w, rfl⟩
+    exact (h w).imp (fun hw ↦ (Q.cell_eq_of_rel hw).trans h₁)
+      fun hw ↦ (Q.cell_eq_of_rel hw).trans h₂
+  · rintro (rfl | rfl)
+    exacts [⟨w₁, h₁.symm⟩, ⟨w₂, h₂.symm⟩]
+
+/-- For a questioner who has to know the culprit's name, *Who killed spiderman?* is exactly Aloni's
+question `Q_A` under the name cover (section 5.3), by `image_val_names` and
+`Aloni2001.whoUnder_names` Groenendijk and Stokhof's partition. -/
+theorem killer_byName_eq_whoUnder :
+    questionR killer (fun _ c ↦ IsResolved byName {v | c ∈ killer v}) =
+      (Aloni2001.whoUnder (Concept.val '' {.john, .bill}) killed).classes := by
+  rw [killer_byName]
+  refine (classes_eq_pair (w₁ := .johnBlue) (w₂ := .billBlue) (Set.ext fun v ↦ ?_)
+    (Set.ext fun v ↦ ?_) fun w ↦ ?_).symm
+  · rw [Setoid.mem_cell, Aloni2001.whoUnder_iff]
+    cases v <;> simp
+  · rw [Setoid.mem_cell, Aloni2001.whoUnder_iff]
+    cases v <;> simp
+  · rw [Aloni2001.whoUnder_iff, Aloni2001.whoUnder_iff]
+    cases w <;> simp
+
+/-- For a questioner who has to know what the culprit looks like, *Who killed spiderman?* is
+exactly Aloni's question `Q_B` under the cover by masks (section 5.3). -/
+theorem killer_byMask_eq_whoUnder :
+    questionR killer (fun _ c ↦ IsResolved byMask {v | c ∈ killer v}) =
+      (Aloni2001.whoUnder (Concept.val '' {.blue, .green}) killed).classes := by
+  rw [killer_byMask]
+  refine (classes_eq_pair (w₁ := .johnBlue) (w₂ := .johnGreen) (Set.ext fun v ↦ ?_)
+    (Set.ext fun v ↦ ?_) fun w ↦ ?_).symm
+  · rw [Setoid.mem_cell, Aloni2001.whoUnder_iff]
+    cases v <;> simp
+  · rw [Setoid.mem_cell, Aloni2001.whoUnder_iff]
+    cases v <;> simp
+  · rw [Aloni2001.whoUnder_iff, Aloni2001.whoUnder_iff]
+    cases w <;> simp
 
 /-! #### Scalar questions -/
 
