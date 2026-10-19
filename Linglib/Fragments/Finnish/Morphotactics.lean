@@ -34,6 +34,7 @@ vowel the third person is usually -Vn, as in *talo-ssa-an* 'in his house', besid
   their exponents and their order.
 * `Finnish.Nominal.WellFormed`: the strings of endings that make a word.
 * `Finnish.Nominal.realize`: the surface forms of a stem with a string of endings.
+* `Finnish.Infinitive.endings`: the endings of an infinitive in a case.
 
 ## Main results
 
@@ -168,14 +169,16 @@ def WellFormed (es : List (Σ σ, Exponent σ)) : Prop :=
 
 instance : DecidablePred WellFormed := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The nominative plural takes no case ending: *pullo-t* but not *pullo-t-ssa*. -/
+/-- The nominative plural takes no case ending, so *pullo-t* is a word and *pullo-t-ssa* is
+not. -/
 theorem not_wellFormed_nominativePlural_case (c : Case) :
     ¬ WellFormed [⟨_, .nominativePlural⟩, ⟨_, .case c⟩] := by
   intro h
   have := h.2.1
   cases c <;> simp_all [Exponent.fills]
 
-/-- A comitative needs a possessive ending: *vaimo-ine-ni* but not *vaimo-ine*. -/
+/-- A comitative needs a possessive ending, so *vaimo-ine-ni* is a word and *vaimo-ine* is
+not. -/
 theorem not_wellFormed_comitative : ¬ WellFormed [⟨_, .case .com⟩] := by
   decide
 
@@ -266,5 +269,10 @@ theorem realize_gen_possessive (w : List Segment) (p : Bundle) :
     BeforePossessive, possessiveForms, hn, hg]
 
 end Nominal
+
+/-- The endings of the infinitive `i` in the case `c` are its function ending and the case
+ending, of which the nominative has none. -/
+def Infinitive.endings (i : Infinitive) (c : Case) : List (Σ σ, Nominal.Exponent σ) :=
+  ⟨_, .infinitive i⟩ :: if c = .nom then [] else [⟨_, .case c⟩]
 
 end Finnish
