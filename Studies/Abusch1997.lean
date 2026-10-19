@@ -64,12 +64,13 @@ variable {E W T : Type*}
 /-! ### De re interpretation across attitude contexts -/
 
 /-- On the simultaneous reading of *Mary believed it was raining* (`Examples.ex2`) the embedded past
-is anaphoric to the matrix past, hence de re, with identity to the now as acquaintance relation, and
-the believed centered proposition is rain at the believer's now. This is also what the reading
-licensed by the matrix past ascribes, so the sentence has two equivalent logical forms. -/
-theorem simultaneous_deRe (rain : T → W → Prop) :
-    deRe (identity (E := E)) (fun t _ w ↦ rain t w) = fun _ t w ↦ rain t w :=
-  deRe_identity _
+is anaphoric to the matrix past, hence de re, with identity to the now as acquaintance relation:
+Mary ascribes raining to her now under identity with it exactly when it rains at the now of each
+of her alternatives. This is also what the reading licensed by the matrix past ascribes, so the
+sentence has two equivalent logical forms. -/
+theorem simultaneous_deRe {C : Type*} (now : C → T) (rain : T → Set C) (A : Set C) (p : C) :
+    AscribesUnder A p (ofConcept now) (now p) rain ↔ ∀ q ∈ A, q ∈ rain (now q) :=
+  ascribesUnder_ofConcept_apply
 
 /-! ### The upper limit constraint
 
