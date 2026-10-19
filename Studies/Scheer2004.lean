@@ -42,6 +42,15 @@ namespace Scheer2004
 
 open StrictCV
 
+/-- A full vowel, whose melody is associated ((73a)). -/
+def vowel : Nucleus := { melody := .associated }
+
+/-- A yer, a vowel that alternates with zero, whose melody floats ((73b)). -/
+def yer : Nucleus := { melody := .floating }
+
+/-- A nucleus without melody ((73c)). -/
+def empty : Nucleus := { melody := .empty }
+
 /-! ### Havlík's Law -/
 
 /-- The final nucleus of Common Slavic, Old Czech and Czech may be empty and does not govern. -/
@@ -49,38 +58,45 @@ def slavicFinal : FinalNucleus := ⟨true, false⟩
 
 /-- In a word of yers alone, a yer survives iff its distance to the end of the word is even, so that
 every other yer survives, counting from the right edge of the sequence ((304a)). -/
-theorem havlik {n : ℕ} (x : Fin n) :
-    x ∈ standard slavicFinal ({ full := ∅ } : Profile n) ↔ Even (n - x.val) :=
-  mem_standard_iff_even_of_final (b := ⟨0, Nat.zero_lt_of_lt x.isLt⟩) rfl rfl
-    (fun _ _ ↦ ⟨Finset.notMem_empty _, Finset.notMem_empty _, Finset.notMem_empty _⟩)
-    (Fin.le_def.2 (Nat.zero_le _))
+theorem havlik (n : ℕ) :
+    standard slavicFinal (List.replicate n yer) =
+      (List.replicate n yer).mapIdx fun i x ↦ (x, decide (Even (n - i))) := by
+  simpa using standard_append_of_floating (p := slavicFinal) (xs := List.replicate n yer)
+    (ys := []) (fun x hx ↦ by rw [List.eq_of_mem_replicate hx]; exact ⟨rfl, rfl⟩)
+    (.inr ⟨rfl, rfl, rfl⟩)
 
 /-- Common Slavic *sъ pьs-ъmь* gives Old Czech *se psem* 'with the dog', in which the second and
 fourth of its four yers from the right survive ((304b)). -/
-theorem se_psem : standard slavicFinal ({ full := ∅ } : Profile 4) = {0, 2} := by
+theorem se_psem :
+    (standard slavicFinal (List.replicate 4 yer)).map Prod.snd = [true, false, true, false] := by
   decide
 
 /-- Common Slavic *sъ šьv-ьc-ьmь* gives Old Czech *s ševcem* 'with the shoemaker', in which the
 second and fourth of its five yers from the right survive ((304b)). -/
-theorem s_sevcem : standard slavicFinal ({ full := ∅ } : Profile 5) = {1, 3} := by
+theorem s_sevcem :
+    (standard slavicFinal (List.replicate 5 yer)).map Prod.snd =
+      [false, true, false, true, false] := by
   decide
 
 /-! ### Czech prefixes -/
 
-/-- The nuclei of *pode-brat* 'to seize from below' are *o*, the yer of the prefix, the zero-grade
-yer between *b* and *r*, *a*, and the final nucleus. -/
-def podeBrat : Profile 5 := { full := {0, 3} }
+/-- The nuclei of *pode-brat* 'to seize from below' are *o*, the yer of the prefix, the
+zero-grade yer between *b* and *r*, which could contract infrasegmental government, *a*, and
+the final nucleus. -/
+def podeBrat : List Nucleus := [vowel, yer, { yer with cluster := true }, vowel, empty]
 
 /-- The nuclei of *podø-bradek* 'double chin' are *o*, the yer of the prefix, the empty nucleus of
 the branching onset *br*, *a*, the yer of *-ek*, and the final nucleus. -/
-def podBradek : Profile 6 := { full := {0, 3}, cluster := {2} }
+def podBradek : List Nucleus := [vowel, yer, { empty with cluster := true }, vowel, yer, empty]
 
-/-- Before *brat* the prefix is vocalised, since the root's zero-grade yer needs government from
-*a*, which therefore cannot reach the prefix. Before *bradek* it is not, since the empty nucleus of
-*br* is enclosed in a domain of infrasegmental government, government passes over it, and *a*
-governs the prefix ((21), §75). -/
+/-- Before *brat* the prefix is vocalised: *b* and *r* enclose a yer, a "hidden" zero, which no
+domain of infrasegmental government spans, so the yer needs government from *a*, which therefore
+cannot reach the prefix. Before *bradek* it is not, since the empty nucleus of *br* is enclosed
+in a domain of infrasegmental government, government passes over it, and *a* governs the prefix
+((21), §75). -/
 theorem pode_brat_podbradek :
-    standard slavicFinal podeBrat = {0, 1, 3} ∧ standard slavicFinal podBradek = {0, 3, 4} := by
+    (standard slavicFinal podeBrat).map Prod.snd = [true, true, false, true, false] ∧
+      (standard slavicFinal podBradek).map Prod.snd = [true, false, false, true, true, false] := by
   decide
 
 end Scheer2004

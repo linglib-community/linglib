@@ -420,12 +420,16 @@ empty final nucleus but does not let it govern. -/
 /-- A Czech final nucleus may be empty and then neither governs nor licenses. -/
 def czechFinal : StrictCV.FinalNucleus := ⟨true, false⟩
 
-/-- In *loket* 'elbow.NOM.SG' the final nucleus is empty and governs nothing, so the nucleus before
-it is pronounced; in *lok_te* 'elbow.GEN.SG' the suffix vowel governs it and it stays silent
-(§3.3). The nuclei are those of *lo*, *ke* and *t(e)*. -/
+/-- In *loket* 'elbow.NOM.SG' the final nucleus is empty and governs nothing, so the alternating
+vowel before it is pronounced; in *lok_te* 'elbow.GEN.SG' the suffix vowel governs it and it
+stays silent (§3.3). The nuclei are those of *lo*, *ke* and *t(e)*. -/
 theorem loket_lokte :
-    StrictCV.standard czechFinal ({ full := {0} } : StrictCV.Profile 3) = {0, 1} ∧
-      StrictCV.standard czechFinal ({ full := {0, 2} } : StrictCV.Profile 3) = {0, 2} := by
+    (StrictCV.standard czechFinal
+        [{ melody := .associated }, { melody := .floating }, { melody := .empty }]).map
+        Prod.snd = [true, true, false] ∧
+      (StrictCV.standard czechFinal
+        [{ melody := .associated }, { melody := .floating }, { melody := .associated }]).map
+        Prod.snd = [true, false, true] := by
   decide
 
 end CaviraniVandenWyngaerd2026

@@ -7,7 +7,6 @@ public import Linglib.Fragments.Tigrinya.Phonology
 public import Linglib.Fragments.Tigre.Phonology
 public import Linglib.Data.Examples.FaustLampitelli2026
 public import Linglib.Phonology.StrictCV.Basic
-public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Faust and Lampitelli (2026): Guttural syneresis in Tigrinya and Tigre
@@ -617,34 +616,37 @@ theorem rows_unpredicted : ∀ r ∈ rows, ¬ r.predicted → ∀ f ∈ r.forms,
 /-- The gerund of 'hear' with the suffix *-u*, /m_s_maʕ-u/ (37a). -/
 def gerund37a : Form := attach ((instantiate gerA ⟨["s", "m", "ʕ"]⟩).getD []) ⟨some .u, []⟩
 
-/-- The positions of the nuclei of a form that carry a lexical vowel. -/
-def contentful (f : Form) : Finset ℕ := (Finset.range f.length).filter (Contentful f)
+/-- The nuclei of a form as the lateral computation reads them: a contentful nucleus has
+associated melody, and the first must be pronounced, since an initial empty CV unit needs its
+government (fn. 21). -/
+def nuclei (f : Form) : List StrictCV.Nucleus :=
+  f.mapIdx fun i _ ↦
+    { melody := if Contentful f i then .associated else .empty, forced := decide (i = 0) }
 
-/-- The positions of the nuclei of a form that are pronounced: lexical vowels and nuclei marked
-for epenthesis. -/
-def pronounced (f : Form) : Finset ℕ :=
-  (Finset.range f.length).filter fun i ↦ Contentful f i ∨ f[i]?.map CV.v = some .mark
+/-- Whether each nucleus of a form is pronounced: a lexical vowel or a nucleus marked for
+epenthesis. -/
+def pronounced (f : Form) : List Bool := f.map fun u ↦ decide (u.v ≠ .empty)
 
-/-- The nuclei of (37a) after fusion and dissociation: a lexical vowel last, and a first nucleus
-that must be pronounced, since an initial empty CV unit needs its government (fn. 21). -/
-def profile37a : StrictCV.Profile 4 := { full := {3}, forced := {0} }
-
-/-- The realizations of a profile that satisfy the ECP, pronounce the required nuclei, and
-pronounce as few nuclei as possible. -/
-def economical {n : ℕ} (p : StrictCV.FinalNucleus) (w : StrictCV.Profile n) :
-    Finset (Finset (Fin n)) :=
-  let admissible := Finset.univ.filter fun R ↦ StrictCV.SatisfiesECP p w R ∧ w.forced ⊆ R
-  admissible.filter fun R ↦ ∀ R' ∈ admissible, R.card ≤ R'.card
+/-- The realizations of a sequence of nuclei that satisfy the ECP, pronounce the required nuclei,
+and pronounce as few nuclei as possible. -/
+def economical (p : StrictCV.FinalNucleus) (l : List StrictCV.Nucleus) :
+    List (List (StrictCV.Nucleus × Bool)) :=
+  let admissible := (l.map fun x ↦ [(x, false), (x, true)]).sections.filter fun r ↦
+    decide (StrictCV.SatisfiesECP p r ∧ ∀ y ∈ r, y.1.forced = true → y.2 = true)
+  admissible.filter fun r ↦ admissible.all fun r' ↦ r.countP (·.2) ≤ r'.countP (·.2)
 
 /-- In (37a) a left-aligned run of three empty nuclei precedes the lexical vowel, and the ECP
 needs two epentheses, [C▪C▪C_C] or [C▪C_C▪C], whatever the final nucleus. The first is the
 standard realization; the derivation yields the second, which Ethiosemitic always takes
 (§3.3.3). -/
 theorem syneresis_37a :
-    contentful (dissociation (fusion gerund37a)) = {3} ∧
-      (∀ p, (economical p profile37a).image (·.map Fin.valEmbedding) = {{0, 1, 3}, {0, 2, 3}}) ∧
-      (∀ p, (StrictCV.standard p profile37a).map Fin.valEmbedding = {0, 1, 3}) ∧
-      pronounced (derive gerund37a) = {0, 2, 3} := by
+    (nuclei (dissociation (fusion gerund37a))).map (·.melody) =
+        [.empty, .empty, .empty, .associated] ∧
+      (∀ p, (economical p (nuclei (dissociation (fusion gerund37a)))).map (·.map Prod.snd) =
+        [[true, true, false, true], [true, false, true, true]]) ∧
+      (∀ p, (StrictCV.standard p (nuclei (dissociation (fusion gerund37a)))).map Prod.snd =
+        [true, true, false, true]) ∧
+      pronounced (derive gerund37a) = [true, false, true, true] := by
   decide +kernel
 
 end FaustLampitelli2026
