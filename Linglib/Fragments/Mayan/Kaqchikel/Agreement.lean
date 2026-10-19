@@ -83,6 +83,6 @@ theorem isErgative_perfective : Alignment.IsErgative (assignCase .Perf) :=
   Alignment.isErgative_ergative
 
 /-- The cases the core roles realize in the perfective, the ergative and the absolutive. -/
-def caseInventory : Finset Case := (ArgumentRole.core.map (assignCase .Perf)).toFinset
+def caseInventory : Finset Case := ArgumentRole.core.image (assignCase .Perf)
 
 end Kaqchikel

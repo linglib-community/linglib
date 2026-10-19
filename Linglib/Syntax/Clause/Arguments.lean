@@ -1,30 +1,29 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.Valency
-public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Core arguments of a clause token
 
-What each core-argument position of a clause (`ArgumentStructure.ArgPosition`)
-bears — a DP, its φ-features, its number — with `none` at an unfilled
-position. The filled positions are the clause's valency.
+`Clause.Arguments α` assigns an `α`, such as a DP, its φ-features or its number, to each
+core-argument position of a clause token (`ArgumentStructure.ArgPosition`), with `none` at an
+unfilled position. The filled positions are the clause's valency, off which
+`ArgumentStructure.Valency.role` reads their comparative roles.
 
 ## Main definitions
 
-* `Clause.Arguments α` — the assignment of an `α` to each filled position.
-* `Clause.Arguments.unaccusative`, `unergative`, `transitive`, `empty` — the
-  clause shapes by which positions are filled.
-* `Clause.Arguments.valency` — the filled positions.
-* `Clause.Arguments.codingRole` — the comparative S/A/P classification of
-  a filled position; the clause, not the predicate, takes the
-  classification.
+* `Clause.Arguments`: the assignment of an `α` to each filled position.
+* `Clause.Arguments.unaccusative`, `unergative`, `transitive`, `empty`: the clause shapes.
+* `Clause.Arguments.valency`: the filled positions.
 
 ## Main results
 
-* `Clause.Arguments.unaccusative_isRootValency`,
-  `transitive_isTransitive` — the shapes land in the valency classes of
-  [coon-2019]'s division of labor.
+* `Clause.Arguments.unaccusative_isRootValency`, `unergative_isVoiceValency`,
+  `transitive_isTransitive`: the shapes land in the valency classes of Coon's division of labor.
+
+## References
+
+* [coon-2019]
 -/
 
 @[expose] public section
@@ -58,29 +57,10 @@ def transitive : Arguments α
   | .external => some subj
 
 /-- A clause with no core argument filled. -/
-def empty : Arguments α := fun _ => none
+def empty : Arguments α := fun _ ↦ none
 
 /-- The filled positions. -/
-def valency (c : Arguments α) : Valency := Finset.univ.filter fun p => (c p).isSome
-
-/-- The comparative classification of a filled position — the *clause*
-    takes the classification: the sole argument of a one-place clause is S;
-    in a two-place clause the external argument is A and the internal P.
-    `ArgumentFrame.argumentRole` classifies the slots of an argument frame by their
-    coding. -/
-def codingRole (c : Arguments α) : ArgPosition → Option ArgumentRole
-  | .external => (c .external).map fun _ => if (c .internal).isSome then .A else .S
-  | .internal => (c .internal).map fun _ => if (c .external).isSome then .P else .S
-
-@[simp] theorem codingRole_unaccusative :
-    (unaccusative x).codingRole .internal = some .S := rfl
-
-@[simp] theorem codingRole_unergative :
-    (unergative x).codingRole .external = some .S := rfl
-
-@[simp] theorem codingRole_transitive :
-    (transitive obj subj).codingRole .external = some .A ∧
-    (transitive obj subj).codingRole .internal = some .P := ⟨rfl, rfl⟩
+def valency (c : Arguments α) : Valency := Finset.univ.filter fun p ↦ (c p).isSome
 
 @[simp] theorem valency_unaccusative : (unaccusative x).valency = {.internal} := by
   ext p; cases p <;> simp [valency, unaccusative]

@@ -96,45 +96,46 @@ def caseOf : ArgumentRole → Option Case
   | .P => if L.VerbAssignsAbs then some .abs else L.phaseHead .P
   | .R | .T => none
 
-/-- Kaqchikel: the requirement holds, high absolutive as its verbal complex has it, no
-suffix. -/
+/-- In Kaqchikel the requirement holds, the absolutive is high as its verbal complex has it,
+and there is no suffix. -/
 def kaqchikel : Nominalization := ⟨.required, Mayan.absPosition Kaqchikel.template, False⟩
 
-/-- Chol: the requirement need not apply, low absolutive. -/
+/-- In Chol the requirement need not apply and the absolutive is low. -/
 def chol : Nominalization := ⟨.optional, Mayan.absPosition Chol.template, False⟩
 
-/-- Q'anjob'al: the requirement need not apply, high absolutive, the suffix *-on* supplying
-object Case. -/
+/-- In Q'anjob'al the requirement need not apply, the absolutive is high, and the suffix *-on*
+supplies object Case. -/
 def qanjobal : Nominalization := ⟨.optional, Mayan.absPosition Qanjobal.template, True⟩
 
-/-- Tojolabal, (178): low absolutive but subject to the requirement, so Kaqchikel-type. -/
+/-- Tojolabal, (178), has a low absolutive but is subject to the requirement, so it is
+Kaqchikel-type. -/
 def tojolabal : Nominalization := ⟨.required, .low, False⟩
 
 /-- Kaqchikel's accusative side is the library's inverted ergative alignment, (87): subjects
 absolutive, the object ergative. -/
 theorem caseOf_kaqchikel :
-    ∀ r ∈ [ArgumentRole.A, .S, .P], kaqchikel.caseOf r = some (invertedErgative r) := by
+    ∀ r ∈ ArgumentRole.core, kaqchikel.caseOf r = some (invertedErgative r) := by
   decide
 
 /-- Chol's accusative side is the extended ergative alignment, (88). -/
 theorem caseOf_chol :
-    ∀ r ∈ [ArgumentRole.A, .S, .P], chol.caseOf r = some (extendedErgative r) := by
+    ∀ r ∈ ArgumentRole.core, chol.caseOf r = some (extendedErgative r) := by
   decide
 
 /-- Q'anjob'al's accusative side is the extended ergative alignment, its object Case coming
 from the suffix rather than from Voice. -/
 theorem caseOf_qanjobal :
-    ∀ r ∈ [ArgumentRole.A, .S, .P], qanjobal.caseOf r = some (extendedErgative r) := by
+    ∀ r ∈ ArgumentRole.core, qanjobal.caseOf r = some (extendedErgative r) := by
   decide
 
 /-- Tojolabal patterns with Kaqchikel: the requirement, not the absolutive parameter,
 decides the type, (178). -/
 theorem caseOf_tojolabal :
-    ∀ r ∈ [ArgumentRole.A, .S, .P], tojolabal.caseOf r = some (invertedErgative r) := by
+    ∀ r ∈ ArgumentRole.core, tojolabal.caseOf r = some (invertedErgative r) := by
   decide
 
 /-- The fragment's progressive entries are the mechanism's outputs. -/
-theorem caseKaqchikel_prog (r : ArgumentRole) (h : r ∈ [ArgumentRole.A, .S, .P]) :
+theorem caseKaqchikel_prog (r : ArgumentRole) (h : r ∈ ArgumentRole.core) :
     kaqchikel.caseOf r = some (Kaqchikel.assignCase .Prog r) :=
   caseOf_kaqchikel r h
 

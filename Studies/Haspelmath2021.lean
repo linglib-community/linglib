@@ -302,17 +302,17 @@ instance (r : ArgumentRole) (c : α → L)
 
 /-- For A and R, Universal 3 says the coding is longer for the less prominent argument, which is
 Universal 6 (21) and Universal 7 (26). -/
-theorem singleArgumentUniversal_iff_antitone {r : ArgumentRole} (h : r.IsHighDefault)
+theorem singleArgumentUniversal_iff_antitone {r : ArgumentRole} (h : r.IsHigherRanked)
     {c : α → L} : SingleArgumentUniversal r c ↔ Antitone c :=
   ⟨fun H ↦ antitone_iff_forall_lt.2 fun _ _ hab ↦ H (.inl ⟨h, hab⟩),
-    fun H _ _ hst ↦ hst.elim (fun h ↦ H h.2.le) fun h' ↦ (h.not_isLowDefault h'.1).elim⟩
+    fun H _ _ hst ↦ hst.elim (fun h ↦ H h.2.le) fun h' ↦ (h.not_isLowerRanked h'.1).elim⟩
 
 /-- For P and T, Universal 3 says the coding is longer for the more prominent argument, which is
 Universal 4 (14) and Universal 8 (27). -/
-theorem singleArgumentUniversal_iff_monotone {r : ArgumentRole} (h : r.IsLowDefault)
+theorem singleArgumentUniversal_iff_monotone {r : ArgumentRole} (h : r.IsLowerRanked)
     {c : α → L} : SingleArgumentUniversal r c ↔ Monotone c :=
   ⟨fun H ↦ monotone_iff_forall_lt.2 fun _ _ hab ↦ H (.inr ⟨h, hab⟩),
-    fun H _ _ hst ↦ hst.elim (fun h' ↦ (h.not_isHighDefault h'.1).elim) fun h ↦ H h.2.le⟩
+    fun H _ _ hst ↦ hst.elim (fun h' ↦ (h.not_isHigherRanked h'.1).elim) fun h ↦ H h.2.le⟩
 
 /-- Universal 5 (16), the scenario universal, says that coding is longest for upstream, shortest for
 downstream and intermediate for balanced scenarios. Universal 10 (54) is its restriction to
@@ -422,12 +422,12 @@ The cited splits are cutoffs on a scale (`atLeast x`, `below x`); a scenario spl
 cutoff on one argument's prominence or on the kind. -/
 
 /-- A P or T split from a cutoff up obeys Universal 3, hence Universals 4 and 8. -/
-theorem singleArgumentUniversal_atLeast {r : ArgumentRole} (h : r.IsLowDefault) (x : α) :
+theorem singleArgumentUniversal_atLeast {r : ArgumentRole} (h : r.IsLowerRanked) (x : α) :
     SingleArgumentUniversal r (atLeast x) :=
   (singleArgumentUniversal_iff_monotone h).2 (atLeast_monotone x)
 
 /-- An A or R split below a cutoff obeys Universal 3, hence Universals 6 and 7. -/
-theorem singleArgumentUniversal_below {r : ArgumentRole} (h : r.IsHighDefault) (x : α) :
+theorem singleArgumentUniversal_below {r : ArgumentRole} (h : r.IsHigherRanked) (x : α) :
     SingleArgumentUniversal r (below x) :=
   (singleArgumentUniversal_iff_antitone h).2 (below_antitone x)
 
@@ -502,30 +502,30 @@ theorem universal4_splitP :
     SingleArgumentUniversal .P sakhaP ∧ SingleArgumentUniversal .P sardinianP ∧
       SingleArgumentUniversal .P persianP ∧ SingleArgumentUniversal .P abruzzeseP ∧
       SingleArgumentUniversal .P englishP :=
-  ⟨singleArgumentUniversal_atLeast (.inl rfl) _, singleArgumentUniversal_atLeast (.inl rfl) _,
-    singleArgumentUniversal_atLeast (.inl rfl) _, singleArgumentUniversal_atLeast (.inl rfl) _,
-    singleArgumentUniversal_atLeast (.inl rfl) _⟩
+  ⟨singleArgumentUniversal_atLeast (by decide) _, singleArgumentUniversal_atLeast (by decide) _,
+    singleArgumentUniversal_atLeast (by decide) _, singleArgumentUniversal_atLeast (by decide) _,
+    singleArgumentUniversal_atLeast (by decide) _⟩
 
 /-- The split A flagging systems obey Universal 6 (§4.2). -/
 theorem universal6_splitA :
     SingleArgumentUniversal .A godoberiA ∧ SingleArgumentUniversal .A warrgamayA ∧
       SingleArgumentUniversal .A mangarrayiA ∧ SingleArgumentUniversal .A tibetanA :=
-  ⟨singleArgumentUniversal_below (.inl rfl) _, singleArgumentUniversal_below (.inl rfl) _,
-    singleArgumentUniversal_below (.inl rfl) _, singleArgumentUniversal_below (.inl rfl) _⟩
+  ⟨singleArgumentUniversal_below (by decide) _, singleArgumentUniversal_below (by decide) _,
+    singleArgumentUniversal_below (by decide) _, singleArgumentUniversal_below (by decide) _⟩
 
 /-- The split R flagging systems obey Universal 7 (§5.1). -/
 theorem universal7_splitR :
     SingleArgumentUniversal .R frenchR ∧ SingleArgumentUniversal .R neoAramaicR ∧
       SingleArgumentUniversal .R yakkhaR ∧ SingleArgumentUniversal .R wolofR :=
-  ⟨singleArgumentUniversal_below (.inr rfl) _, singleArgumentUniversal_below (.inr rfl) _,
-    singleArgumentUniversal_below (.inr rfl) _, singleArgumentUniversal_below (.inr rfl) _⟩
+  ⟨singleArgumentUniversal_below (by decide) _, singleArgumentUniversal_below (by decide) _,
+    singleArgumentUniversal_below (by decide) _, singleArgumentUniversal_below (by decide) _⟩
 
 /-- The split T flagging systems obey Universal 8 (§5.2). -/
 theorem universal8_splitT :
     SingleArgumentUniversal .T eweT ∧ SingleArgumentUniversal .T akanT ∧
       SingleArgumentUniversal .T georgianT :=
-  ⟨singleArgumentUniversal_atLeast (.inr rfl) _, singleArgumentUniversal_atLeast (.inr rfl) _,
-    singleArgumentUniversal_atLeast (.inr rfl) _⟩
+  ⟨singleArgumentUniversal_atLeast (by decide) _, singleArgumentUniversal_atLeast (by decide) _,
+    singleArgumentUniversal_atLeast (by decide) _⟩
 
 /-! ### Scenario splits (§6, §7) -/
 
@@ -692,7 +692,7 @@ def makassarVNominality : BinaryNominality → ℕ := atLeast .personForm
 /-- Makassarese's verb coding is shaped like a split obeying Universal 8 (§9). -/
 theorem makassar_universal8 :
     SingleArgumentUniversal .T makassarV ∧ SingleArgumentUniversal .T makassarVNominality :=
-  ⟨singleArgumentUniversal_atLeast (.inr rfl) _, singleArgumentUniversal_atLeast (.inr rfl) _⟩
+  ⟨singleArgumentUniversal_atLeast (by decide) _, singleArgumentUniversal_atLeast (by decide) _⟩
 
 /-! ### Splitting alternations (§10.2) -/
 

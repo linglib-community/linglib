@@ -100,9 +100,9 @@ theorem deviation_shorter {r : ρ} {p : Prominence} (h : Deviates θ dflt r p)
 
 end Principle
 
-/-- The default prominence of the transitive roles puts A above the threshold and P below it,
-the role-reference associations of [haspelmath-2021]. -/
-def transitiveDefault (r : ArgumentRole) : Bool := decide r.IsHighDefault
+/-- A transitive role's default prominence follows its rank, prominent for the higher-ranked A
+and not for the lower-ranked P, the role-reference associations of [haspelmath-2021]. -/
+def transitiveDefault (r : ArgumentRole) : Bool := decide r.IsHigherRanked
 
 /-- A non-prominent A and a prominent P both deviate from their defaults; the A is coded
 shorter than a default A and the P longer than a default P. -/

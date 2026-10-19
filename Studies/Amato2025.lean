@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Case.Alignment
 public import Linglib.Syntax.Minimalist.Agree.Basic
 public import Linglib.Syntax.Minimalist.Probe.Run
 public import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -42,6 +43,7 @@ open Minimalist
 open Minimalist.FeatureBundle (ofList)
 open ArgumentStructure (TransitivityClass)
 open Verb (PerfectAuxiliary)
+open Alignment (IsIndirective IsSecundative)
 
 variable {H : Type*} [DecidableEq H]
 
@@ -95,29 +97,29 @@ where
   go : Option H → List FeatureType → State H → List (Option H) × State H
   | _, [], s => ([], s)
   | prev, t :: ts, s =>
-    let r := (Probe.relativized (goalMatches s α t)).run (λ g s => agree act s α t g) s
-      (prev.elim dom (λ β => dom.dropWhile (λ x => decide (x ≠ β))))
+    let r := (Probe.relativized (goalMatches s α t)).run (fun g s ↦ agree act s α t g) s
+      (prev.elim dom fun β ↦ dom.dropWhile fun x ↦ decide (x ≠ β))
     let rest := go r.halt ts r.state
     (r.halt :: rest.1, rest.2)
 
 /-- The domain of a probe nested under the goal `β` is the suffix of the c-command order from `β`.
 -/
 theorem nestedDomain {pre post : List H} {β : H} (hβ : β ∉ pre) :
-    (pre ++ β :: post).dropWhile (λ x => decide (x ≠ β)) = β :: post := by
+    (pre ++ β :: post).dropWhile (fun x ↦ decide (x ≠ β)) = β :: post := by
   induction pre with
   | nil => simp
   | cons a pre ih =>
-    have ha : a ≠ β := λ h => hβ (h ▸ List.mem_cons.2 (Or.inl rfl))
-    simpa [ha] using ih λ h => hβ (List.mem_cons_of_mem _ h)
+    have ha : a ≠ β := fun h ↦ hβ (h ▸ List.mem_cons.2 (Or.inl rfl))
+    simpa [ha] using ih fun h ↦ hβ (List.mem_cons_of_mem _ h)
 
 /-- In trees (2)–(3), the alleged intervener `δ`, c-commanded above the goal `β` of the first probe,
 lies outside the domain of every probe nested under `β`. -/
 theorem notMem_nestedDomain {pre post : List H} {β δ : H}
     (hnd : (pre ++ β :: post).Nodup) (hδ : δ ∈ pre) :
-    δ ∉ (pre ++ β :: post).dropWhile (λ x => decide (x ≠ β)) := by
+    δ ∉ (pre ++ β :: post).dropWhile (fun x ↦ decide (x ≠ β)) := by
   obtain ⟨-, -, hdisj⟩ := List.nodup_append.1 hnd
-  rw [nestedDomain λ h => hdisj β h β (List.mem_cons.2 (Or.inl rfl)) rfl]
-  exact λ h => hdisj δ hδ δ h rfl
+  rw [nestedDomain fun h ↦ hdisj β h β (List.mem_cons.2 (Or.inl rfl)) rfl]
+  exact fun h ↦ hdisj δ hδ δ h rfl
 
 /-- Under Multiple Agree `[∗wh∗]` reaches every matching goal in c-command order (§4.2.3). -/
 def multipleAgree (s : State H) (α : H) (t : FeatureType) (dom : List H) : List H :=
@@ -131,7 +133,7 @@ def whFronting (s : State H) (α : H) (dom : List H) : List H :=
   match (multipleAgree s α .wh dom).getLast? with
   | none => []
   | some β =>
-    (p.search (dom.dropWhile (λ x => decide (x ≠ β)))).toList ++ rest p dom.length (dom.erase β)
+    (p.search (dom.dropWhile fun x ↦ decide (x ≠ β))).toList ++ rest p dom.length (dom.erase β)
 where
   rest (p : Probe H) : Nat → List H → List H
   | 0, _ => []
@@ -154,7 +156,7 @@ def isPhase : Head → Bool
   | _ => false
 
 /-- Every goal values its probe. -/
-def allActive : Head → FeatureType → Bool := λ _ _ => true
+def allActive : Head → FeatureType → Bool := fun _ _ ↦ true
 
 /-- `[ϕ:p]`. -/
 def person (p : Person) : Σ t : FeatureType, FeatureSlot t.ValueOf := ⟨.person, .valued p⟩
@@ -330,40 +332,57 @@ def ditransitiveInitial (applDat : Bool) : Head → FeatureBundle
   | .dpT => ofList [person .third, ⟨.case, .unvalued⟩]
   | _ => ⊥
 
-/-- Which argument v assigns accusative to and which it ϕ-agrees with. -/
-structure Alignment where
-  caseTarget : Option Head
-  agrTarget : Option Head
-  deriving DecidableEq, Repr
+/-- The derivation of (25)–(28): v's probes, in order `o`, over the recipient, Appl, the verb and
+the theme. -/
+def ditransitive (o : ProbeOrder) (applDat : Bool) : List (Option Head) × State Head :=
+  run allActive .v [.dpR, .appl, .verb, .dpT] o.probes (ditransitiveInitial applDat)
 
-/-- The alignment v derives under ordering `o` with or without dative from Appl. -/
-def ditransitive (o : ProbeOrder) (applDat : Bool) : Alignment :=
-  match o, (run allActive .v [.dpR, .appl, .verb, .dpT] o.probes (ditransitiveInitial applDat)).1
-    with
-  | .caseFirst, [c, a] => ⟨c, a⟩
-  | .phiFirst, [a, c] => ⟨c, a⟩
-  | _, _ => ⟨none, none⟩
+/-- The goal of v's ϕ-probe. -/
+def phiGoal (o : ProbeOrder) (applDat : Bool) : Option Head :=
+  match o, (ditransitive o applDat).1 with
+  | .caseFirst, [_, a] | .phiFirst, [a, _] => a
+  | _, _ => none
 
-/-- Example (25) has indirective case and agreement, ϕ-Agree with the theme across the recipient. -/
-theorem ditransitive_caseFirst_dat : ditransitive .caseFirst true = ⟨some .dpT, some .dpT⟩ := by
+/-- The case of each object, the recipient and the theme as the derivation leaves them and P
+with the accusative v assigns a transitive object; S and A are not read. -/
+def caseMarking (o : ProbeOrder) (applDat : Bool) : ArgumentRole → FeatureSlot Case
+  | .R => (ditransitive o applDat).2 .dpR .case
+  | .T => (ditransitive o applDat).2 .dpT .case
+  | _ => .valued .acc
+
+/-- Whether v ϕ-agrees with each object: with a transitive object P, and with whichever of the
+recipient and the theme its ϕ-probe finds; S and A are not read. -/
+def agreement (o : ProbeOrder) (applDat : Bool) : ArgumentRole → Bool
+  | .R => phiGoal o applDat = some .dpR
+  | .T => phiGoal o applDat = some .dpT
+  | _ => true
+
+/-- Example (25) has indirective case and agreement, v's ϕ-probe reaching the theme across the
+recipient. -/
+theorem ditransitive_caseFirst_dat :
+    IsIndirective (caseMarking .caseFirst true) ∧ IsIndirective (agreement .caseFirst true) ∧
+      phiGoal .caseFirst true = some .dpT := by
   decide
 
 /-- Example (26) has secundative case and agreement. -/
 theorem ditransitive_caseFirst_noDat :
-    ditransitive .caseFirst false = ⟨some .dpR, some .dpR⟩ := by decide
+    IsSecundative (caseMarking .caseFirst false) ∧ IsSecundative (agreement .caseFirst false) := by
+  decide
 
 /-- Example (27) has indirective case and secundative agreement. -/
-theorem ditransitive_phiFirst_dat : ditransitive .phiFirst true = ⟨some .dpT, some .dpR⟩ := by
+theorem ditransitive_phiFirst_dat :
+    IsIndirective (caseMarking .phiFirst true) ∧ IsSecundative (agreement .phiFirst true) := by
   decide
 
 /-- Example (28) has secundative case and agreement again. -/
 theorem ditransitive_phiFirst_noDat :
-    ditransitive .phiFirst false = ⟨some .dpR, some .dpR⟩ := by decide
+    IsSecundative (caseMarking .phiFirst false) ∧ IsSecundative (agreement .phiFirst false) := by
+  decide
 
-/-- Table 1's gap ([barany-2024]): no ordering and no Appl setting gives accusative on
-the recipient with agreement on the theme. -/
-theorem no_secundativeCase_indirectiveAgreement (o : ProbeOrder) (d : Bool) :
-    ditransitive o d ≠ ⟨some .dpR, some .dpT⟩ := by
+/-- Table 1's gap ([barany-2024]): under either ordering and either Appl setting, indirective
+agreement comes only with indirective case. -/
+theorem isIndirective_caseMarking_of_agreement (o : ProbeOrder) (d : Bool) :
+    IsIndirective (agreement o d) → IsIndirective (caseMarking o d) := by
   revert o d; decide
 
 /-! ### Icelandic DAT-NOM constructions (§4.1.2) -/
