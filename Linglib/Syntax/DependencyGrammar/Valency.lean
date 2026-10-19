@@ -127,18 +127,13 @@ instance (g : Graph n) (v : Fin n) (val : Valency) :
     Decidable (SatisfiesValency g v val) :=
   List.decidableBAll _ val
 
-/-- Core argument relations governed by lexical frames. Deliberately the
-    nominal core only — UD's clausal core relations (csubj, ccomp, xcomp)
-    are licensed by clause-embedding frames, which `Valency.ofFrame`
-    does not schematize. -/
-def coreArgRels : List UD.DepRel := [.nsubj, .obj, .iobj]
-
-/-- Every core-argument dependent of `v` is licensed by a slot of `val` —
-    the closed-world half of valency checking (`SatisfiesValency` only
-    checks that required slots are filled). -/
+/-- Every nominal core-argument dependent of `v` is licensed by a slot of `val`, the closed-world
+half of valency checking (`SatisfiesValency` only checks that required slots are filled). The
+clausal core relations are licensed by clause-embedding frames, which `Valency.ofFrame` does not
+schematize. -/
 def CoreArgsLicensed (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
   ∀ w ∈ g.children v, ∀ r ∈ g.label v w,
-    r ∈ coreArgRels → ∃ slot ∈ val, slot.depType = r
+    r.kind = .cell .core .nominal → ∃ slot ∈ val, slot.depType = r
 
 instance (g : Graph n) (v : Fin n) (val : Valency) :
     Decidable (CoreArgsLicensed g v val) :=
