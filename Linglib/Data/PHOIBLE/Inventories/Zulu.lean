@@ -74,14 +74,13 @@ def zul : Inventory :=
       allophones := some ["kxʼ", "kʟ͓̥ʼ"],
       marginal := none,
       segmentClass := .consonant,
-      features := .ofList [
-        (.syllabic, false), (.short, false), (.long, false), (.consonantal, true),
-        (.tap, false), (.trill, false), (.nasal, false), (.labial, false), (.coronal, false),
-        (.dorsal, true), (.high, true), (.low, false), (.front, false), (.back, false),
-        (.retractedTongueRoot, false), (.advancedTongueRoot, false),
-        (.periodicGlottalSource, false), (.epilaryngealSource, false), (.spreadGlottis, false),
-        (.fortis, false), (.lenis, false), (.loweredLarynxImplosive, false), (.click, false),
-        (.stress, false)] },
+      features := .ofRow {
+        syllabic := false, short := false, long := false, consonantal := true, tap := false,
+        trill := false, nasal := false, labial := false, coronal := false, dorsal := true,
+        high := true, low := false, front := false, back := false, retractedTongueRoot := false,
+        advancedTongueRoot := false, periodicGlottalSource := false,
+        epilaryngealSource := false, spreadGlottis := false, fortis := false, lenis := false,
+        loweredLarynxImplosive := false, click := false, stress := false } },
     { glyph := "kʰ",
       allophones := some ["kʰ"],
       marginal := none,
@@ -216,20 +215,20 @@ def zul : Inventory :=
       allophones := some ["˥", "˩˨"],
       marginal := none,
       segmentClass := .tone,
-      features := .ofList [
-        (.tone, true)] },
+      features := .ofRow {
+        tone := true } },
     { glyph := "˥˦",
       allophones := some ["˥˦", "˩˨˩"],
       marginal := none,
       segmentClass := .tone,
-      features := .ofList [
-        (.tone, true)] },
+      features := .ofRow {
+        tone := true } },
     { glyph := "˩",
       allophones := some ["˧", "˩"],
       marginal := none,
       segmentClass := .tone,
-      features := .ofList [
-        (.tone, true)] },
+      features := .ofRow {
+        tone := true } },
     { glyph := "i",
       allophones := some ["i"],
       marginal := none,

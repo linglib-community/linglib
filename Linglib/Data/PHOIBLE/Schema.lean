@@ -18,6 +18,8 @@ gives the feature matrix of each glyph.
 
 * `Data.PHOIBLE.Feature`: the features, one column of the table each.
 * `Data.PHOIBLE.FeatureMatrix`: an assignment of `+` and `−` to some of the features.
+* `Data.PHOIBLE.FeatureRow`, `Data.PHOIBLE.FeatureMatrix.ofRow`: a row of the table on its
+  feature columns, and its feature matrix.
 * `Data.PHOIBLE.Source`: the source databases.
 * `Data.PHOIBLE.Phoneme`, `Data.PHOIBLE.Inventory`: a phoneme of an inventory, and an inventory.
 * `Data.PHOIBLE.Inventory.featureMatrices`: the feature matrices of an inventory's phonemes.
@@ -27,6 +29,11 @@ gives the feature matrix of each glyph.
 Where PHOIBLE has `NA`, a field is `none`. This means that the source does not record the value,
 not that it records an absence; `Source` says what each source records. A blank dialect, which
 the SAPHON source writes in place of `NA`, is `none` too.
+
+The generated feature matrices are given by their rows, so that the value of one at a feature is
+read by a single case split. A proof by `decide` about segments built from the chart evaluates
+their matrices at every feature, and a search through a list of the specified values made that
+its main cost.
 
 A complex segment, such as a prenasalized stop or a diphthong, has a contour value such as `+,-`
 on a feature that changes within it. The feature matrix of such a segment takes the meet of the
@@ -88,9 +95,88 @@ inductive Feature where
 others unspecified, as PHOIBLE's value `0`, not applicable, does. -/
 abbrev FeatureMatrix := Feature → Flat Bool
 
-/-- The feature matrix that gives each listed feature its value, the first where a feature is
-listed twice, and leaves the others unspecified. -/
-def FeatureMatrix.ofList (l : List (Feature × Bool)) : FeatureMatrix := fun f ↦ l.lookup f
+/-- A row of the table on its feature columns, a value for each feature, unspecified unless
+given. -/
+structure FeatureRow where
+  syllabic : Flat Bool := ⊥
+  short : Flat Bool := ⊥
+  long : Flat Bool := ⊥
+  consonantal : Flat Bool := ⊥
+  sonorant : Flat Bool := ⊥
+  continuant : Flat Bool := ⊥
+  delayedRelease : Flat Bool := ⊥
+  approximant : Flat Bool := ⊥
+  tap : Flat Bool := ⊥
+  trill : Flat Bool := ⊥
+  nasal : Flat Bool := ⊥
+  lateral : Flat Bool := ⊥
+  labial : Flat Bool := ⊥
+  round : Flat Bool := ⊥
+  labiodental : Flat Bool := ⊥
+  coronal : Flat Bool := ⊥
+  anterior : Flat Bool := ⊥
+  distributed : Flat Bool := ⊥
+  strident : Flat Bool := ⊥
+  dorsal : Flat Bool := ⊥
+  high : Flat Bool := ⊥
+  low : Flat Bool := ⊥
+  front : Flat Bool := ⊥
+  back : Flat Bool := ⊥
+  tense : Flat Bool := ⊥
+  retractedTongueRoot : Flat Bool := ⊥
+  advancedTongueRoot : Flat Bool := ⊥
+  periodicGlottalSource : Flat Bool := ⊥
+  epilaryngealSource : Flat Bool := ⊥
+  spreadGlottis : Flat Bool := ⊥
+  constrictedGlottis : Flat Bool := ⊥
+  fortis : Flat Bool := ⊥
+  lenis : Flat Bool := ⊥
+  raisedLarynxEjective : Flat Bool := ⊥
+  loweredLarynxImplosive : Flat Bool := ⊥
+  click : Flat Bool := ⊥
+  tone : Flat Bool := ⊥
+  stress : Flat Bool := ⊥
+
+/-- The feature matrix of a row reads each feature off its column. -/
+def FeatureMatrix.ofRow (r : FeatureRow) : FeatureMatrix := fun
+  | .syllabic => r.syllabic
+  | .short => r.short
+  | .long => r.long
+  | .consonantal => r.consonantal
+  | .sonorant => r.sonorant
+  | .continuant => r.continuant
+  | .delayedRelease => r.delayedRelease
+  | .approximant => r.approximant
+  | .tap => r.tap
+  | .trill => r.trill
+  | .nasal => r.nasal
+  | .lateral => r.lateral
+  | .labial => r.labial
+  | .round => r.round
+  | .labiodental => r.labiodental
+  | .coronal => r.coronal
+  | .anterior => r.anterior
+  | .distributed => r.distributed
+  | .strident => r.strident
+  | .dorsal => r.dorsal
+  | .high => r.high
+  | .low => r.low
+  | .front => r.front
+  | .back => r.back
+  | .tense => r.tense
+  | .retractedTongueRoot => r.retractedTongueRoot
+  | .advancedTongueRoot => r.advancedTongueRoot
+  | .periodicGlottalSource => r.periodicGlottalSource
+  | .epilaryngealSource => r.epilaryngealSource
+  | .spreadGlottis => r.spreadGlottis
+  | .constrictedGlottis => r.constrictedGlottis
+  | .fortis => r.fortis
+  | .lenis => r.lenis
+  | .raisedLarynxEjective => r.raisedLarynxEjective
+  | .loweredLarynxImplosive => r.loweredLarynxImplosive
+  | .click => r.click
+  | .tone => r.tone
+  | .stress => r.stress
 
 /-- A phoneme of an inventory is a glyph with its feature matrix and what the inventory's source
 records about it. -/
