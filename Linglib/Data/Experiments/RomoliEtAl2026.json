@@ -1,0 +1,355 @@
+{
+  "meta": {
+    "bibkey": "romoli-etal-2026",
+    "description": "Three web-based truth-value judgment experiments with a plural definite bound by a quantifier: 'Every boy opened his presents' against 'No boy opened his presents' (Experiment 1) and against 'Not every boy opened his presents' (Experiment 2), and 'Exactly two boys opened their presents' (Experiment 3). Experiments 1 and 2 are those of Augurzky et al. (2023), reanalysed. Each picture shows four children with nine presents each, opened ones coloured and closed ones grey. CONTEXT, a family rule that opening the presents is prohibited (PROHIBITED) or required (REQUIRED) before the guests arrive, is between participants and is reinforced by a first task asking whether the rule was obeyed; PICTURE (control or target) and POLARITY (the positive or negative quantifier, or the positive or negative part of exactly two) are within participants. Participants rated how well the sentence describes the picture on a five-point scale from 'completely true' to 'completely false'. The target conditions are analysed by proportional-odds cumulative logit mixed-effects models with CONTEXT sum-coded (STRICT -0.5, LAX 0.5, LAX being PROHIBITED for the positive condition and REQUIRED for the negative) and POLARITY treatment-coded with the negative condition as reference level. The random-effect estimates of Tables 5, 8 and 11 are not transcribed.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Experiment",
+      "doc": "The experiment.",
+      "levels": [
+        {"name": "one", "label": "Experiment 1", "doc": "every against no"},
+        {"name": "two", "label": "Experiment 2", "doc": "every against not every"},
+        {"name": "three", "label": "Experiment 3", "doc": "exactly two"}
+      ]
+    },
+    {
+      "name": "Quantifier",
+      "doc": "The quantifier binding the plural definite, (23).",
+      "levels": [
+        {"name": "every", "label": "every", "doc": "'Every boy opened his presents'"},
+        {"name": "no", "label": "no", "doc": "'No boy opened his presents'"},
+        {"name": "notEvery", "label": "not every", "doc": "'Not every boy opened his presents'"},
+        {"name": "exactlyTwo", "label": "exactly two", "doc": "'Exactly two boys opened their presents'"}
+      ]
+    },
+    {
+      "name": "Polarity",
+      "doc": "The factor POLARITY: the positive or negative quantifier, or the positive or negative part of the meaning of exactly two.",
+      "levels": [
+        {"name": "positive", "label": "POSITIVE", "doc": "every, or the positive part of exactly two"},
+        {"name": "negative", "label": "NEGATIVE", "doc": "no or not every, or the negative part of exactly two"}
+      ]
+    },
+    {
+      "name": "Context",
+      "doc": "The factor CONTEXT: the family rule.",
+      "levels": [
+        {"name": "prohibited", "label": "PROHIBITED", "doc": "opening the presents is prohibited before the grandparents arrive, which raises whether any boy opened any of his presents"},
+        {"name": "required", "label": "REQUIRED", "doc": "opening the presents is required before the aunt and uncle arrive, which raises whether every boy opened all of his presents"}
+      ]
+    },
+    {
+      "name": "Recoding",
+      "doc": "CONTEXT as Figures 4 and 6 recode it.",
+      "levels": [
+        {"name": "lax", "label": "LAX", "doc": "the context favouring non-maximality, PROHIBITED for the positive condition and REQUIRED for the negative"},
+        {"name": "strict", "label": "STRICT", "doc": "the context favouring maximality"}
+      ]
+    },
+    {
+      "name": "Picture",
+      "doc": "The factor PICTURE, as the captions of Figures 3, 5 and 7 name its levels.",
+      "levels": [
+        {"name": "control", "label": "CONTROL", "doc": "a control picture, true for one sentence and false for the other"},
+        {"name": "trueControl", "label": "TRUE CONTROL", "doc": "a control picture on which the sentence is true"},
+        {"name": "falseControl", "label": "FALSE CONTROL", "doc": "a control picture on which the sentence is false"},
+        {"name": "target", "label": "TARGET", "doc": "a picture on which the sentence is true on a non-maximal reading only"}
+      ]
+    },
+    {
+      "name": "Truth",
+      "doc": "A picture in the legends of Figures 4, 6 and 8.",
+      "levels": [
+        {"name": "trueControl", "label": "True", "doc": "the true control"},
+        {"name": "target", "label": "Target", "doc": "the target"},
+        {"name": "falseControl", "label": "False", "doc": "the false control"}
+      ]
+    },
+    {
+      "name": "Effect",
+      "doc": "The term of a model that a test is of.",
+      "levels": [
+        {"name": "context", "label": "CONTEXT", "doc": "the simple effect of CONTEXT on the negative condition, the reference level of POLARITY"},
+        {"name": "polarity", "label": "POLARITY", "doc": "the main effect of POLARITY"},
+        {"name": "interaction", "label": "CONTEXT × POLARITY", "doc": "the interaction of CONTEXT and POLARITY"}
+      ]
+    },
+    {
+      "name": "Term",
+      "doc": "A fixed effect of a model.",
+      "levels": [
+        {"name": "theta1", "label": "θ1", "doc": "the first threshold"},
+        {"name": "theta2", "label": "θ2", "doc": "the second threshold"},
+        {"name": "theta3", "label": "θ3", "doc": "the third threshold"},
+        {"name": "theta4", "label": "θ4", "doc": "the fourth threshold"},
+        {"name": "context", "label": "CONTEXT", "doc": "CONTEXT"},
+        {"name": "polarity", "label": "POLARITY", "doc": "POLARITY"},
+        {"name": "interaction", "label": "CONTEXT × POLARITY", "doc": "their interaction"}
+      ]
+    },
+    {
+      "name": "Bound",
+      "doc": "How a p-value is printed.",
+      "levels": [
+        {"name": "below", "label": "<", "doc": "as an upper bound"},
+        {"name": "exact", "label": "=", "doc": "as a value"}
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "boys",
+      "type": "nat",
+      "value": 4,
+      "doc": "The children in a picture.",
+      "locator": "§3.3.1",
+      "verified": "text-layer"
+    },
+    {
+      "name": "presents",
+      "type": "nat",
+      "value": 9,
+      "doc": "The presents of each child.",
+      "locator": "§3.3.1",
+      "verified": "text-layer"
+    },
+    {
+      "name": "scalePoints",
+      "type": "nat",
+      "value": 5,
+      "doc": "The points of the rating scale.",
+      "locator": "§3.1",
+      "verified": "text-layer"
+    },
+    {
+      "name": "lists",
+      "type": "nat",
+      "value": 8,
+      "doc": "The lists the items of each experiment were spread over, 2 contexts × 2 genders × 2 ways of labelling the response buttons.",
+      "locator": "§3.3.1, §3.4.1, §3.5.1",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "participants",
+      "structure": "Participants",
+      "doc": "the native speakers of English recruited on Prolific for an experiment, those excluded for 75% or less accuracy on the control items or those retained, as the paper prints them, and the mean accuracy of the retained on the control items.",
+      "locator": "§3.3.1, §3.4.1, §3.5.1",
+      "verified": "page-image",
+      "key": ["experiment"],
+      "columns": [
+        {"name": "experiment", "type": "Experiment", "doc": "The experiment."},
+        {"name": "recruited", "type": "nat", "doc": "The participants recruited."},
+        {"name": "excluded", "type": "option nat", "doc": "The participants excluded, where printed."},
+        {"name": "retained", "type": "option nat", "doc": "The participants retained, where printed."},
+        {"name": "accuracy", "type": "decimal", "doc": "The mean accuracy on the control items, in percent."}
+      ],
+      "rows": [
+        {"experiment": "Experiment 1", "recruited": 192, "excluded": 4, "retained": null, "accuracy": "98.1"},
+        {"experiment": "Experiment 2", "recruited": 192, "excluded": 6, "retained": null, "accuracy": "97.4"},
+        {"experiment": "Experiment 3", "recruited": 192, "excluded": null, "retained": 180, "accuracy": "98.3"}
+      ]
+    },
+    {
+      "name": "sentences",
+      "structure": "Sentence",
+      "doc": "the quantifier of the sentence each level of POLARITY tests in an experiment.",
+      "locator": "(31), (32), (34)",
+      "verified": "text-layer",
+      "key": ["experiment", "polarity"],
+      "columns": [
+        {"name": "experiment", "type": "Experiment", "doc": "The experiment."},
+        {"name": "polarity", "type": "Polarity", "doc": "The level of POLARITY."},
+        {"name": "quantifier", "type": "Quantifier", "doc": "The quantifier of the sentence."}
+      ],
+      "rows": [
+        {"experiment": "Experiment 1", "polarity": "POSITIVE", "quantifier": "every"},
+        {"experiment": "Experiment 1", "polarity": "NEGATIVE", "quantifier": "no"},
+        {"experiment": "Experiment 2", "polarity": "POSITIVE", "quantifier": "every"},
+        {"experiment": "Experiment 2", "polarity": "NEGATIVE", "quantifier": "not every"},
+        {"experiment": "Experiment 3", "polarity": "POSITIVE", "quantifier": "exactly two"},
+        {"experiment": "Experiment 3", "polarity": "NEGATIVE", "quantifier": "exactly two"}
+      ]
+    },
+    {
+      "name": "pictures",
+      "structure": "Item",
+      "doc": "an example picture of an experiment: its level of PICTURE, the levels of POLARITY a target picture is for, and how many of his nine presents each child opened, in the figure's order of the children.",
+      "locator": "Figures 3, 5 and 7",
+      "verified": "page-image",
+      "columns": [
+        {"name": "experiment", "type": "Experiment", "doc": "The experiment."},
+        {"name": "picture", "type": "Picture", "doc": "The level of PICTURE."},
+        {"name": "targetFor", "type": "list Polarity", "doc": "The levels of POLARITY a target picture is for."},
+        {"name": "opened", "type": "list nat", "doc": "The presents each child opened."}
+      ],
+      "rows": [
+        {"experiment": "Experiment 1", "picture": "CONTROL", "targetFor": [], "opened": [9, 9, 9, 9]},
+        {"experiment": "Experiment 1", "picture": "CONTROL", "targetFor": [], "opened": [0, 0, 0, 0]},
+        {"experiment": "Experiment 1", "picture": "TARGET", "targetFor": ["POSITIVE"], "opened": [5, 9, 3, 9]},
+        {"experiment": "Experiment 1", "picture": "TARGET", "targetFor": ["NEGATIVE"], "opened": [0, 4, 0, 3], "note": "Nathan, Leo, Frank, Mike"},
+        {"experiment": "Experiment 2", "picture": "CONTROL", "targetFor": [], "opened": [9, 9, 9, 9]},
+        {"experiment": "Experiment 2", "picture": "CONTROL", "targetFor": [], "opened": [0, 9, 0, 9]},
+        {"experiment": "Experiment 2", "picture": "TARGET", "targetFor": ["POSITIVE", "NEGATIVE"], "opened": [5, 9, 3, 9]},
+        {"experiment": "Experiment 3", "picture": "TRUE CONTROL", "targetFor": [], "opened": [0, 9, 0, 9]},
+        {"experiment": "Experiment 3", "picture": "FALSE CONTROL", "targetFor": [], "opened": [9, 9, 9, 9]},
+        {"experiment": "Experiment 3", "picture": "TARGET", "targetFor": ["POSITIVE"], "opened": [0, 4, 0, 3], "note": "Nathan, Leo, Frank, Mike"},
+        {"experiment": "Experiment 3", "picture": "TARGET", "targetFor": ["NEGATIVE"], "opened": [5, 9, 3, 9]}
+      ]
+    },
+    {
+      "name": "means",
+      "structure": "Mean",
+      "doc": "the mean rating of a picture for the sentence of a level of POLARITY in a recoded context.",
+      "locator": "Figures 4 and 6",
+      "verified": "page-image",
+      "columns": [
+        {"name": "experiment", "type": "Experiment", "doc": "The experiment."},
+        {"name": "polarity", "type": "Polarity", "doc": "The level of POLARITY."},
+        {"name": "recoding", "type": "Recoding", "doc": "The recoded context."},
+        {"name": "truth", "type": "Truth", "doc": "The picture."},
+        {"name": "mean", "type": "decimal", "doc": "The mean rating."}
+      ],
+      "rows": [
+        {"experiment": "Experiment 1", "polarity": "POSITIVE", "recoding": "LAX", "truth": "True", "mean": "4.98"},
+        {"experiment": "Experiment 1", "polarity": "POSITIVE", "recoding": "LAX", "truth": "Target", "mean": "3.76"},
+        {"experiment": "Experiment 1", "polarity": "POSITIVE", "recoding": "LAX", "truth": "False", "mean": "1.13"},
+        {"experiment": "Experiment 1", "polarity": "POSITIVE", "recoding": "STRICT", "truth": "True", "mean": "4.96"},
+        {"experiment": "Experiment 1", "polarity": "POSITIVE", "recoding": "STRICT", "truth": "Target", "mean": "2.63"},
+        {"experiment": "Experiment 1", "polarity": "POSITIVE", "recoding": "STRICT", "truth": "False", "mean": "1.04"},
+        {"experiment": "Experiment 1", "polarity": "NEGATIVE", "recoding": "LAX", "truth": "True", "mean": "4.91"},
+        {"experiment": "Experiment 1", "polarity": "NEGATIVE", "recoding": "LAX", "truth": "Target", "mean": "2.30"},
+        {"experiment": "Experiment 1", "polarity": "NEGATIVE", "recoding": "LAX", "truth": "False", "mean": "1.10"},
+        {"experiment": "Experiment 1", "polarity": "NEGATIVE", "recoding": "STRICT", "truth": "True", "mean": "4.87"},
+        {"experiment": "Experiment 1", "polarity": "NEGATIVE", "recoding": "STRICT", "truth": "Target", "mean": "1.80"},
+        {"experiment": "Experiment 1", "polarity": "NEGATIVE", "recoding": "STRICT", "truth": "False", "mean": "1.08"},
+        {"experiment": "Experiment 2", "polarity": "POSITIVE", "recoding": "LAX", "truth": "True", "mean": "4.89"},
+        {"experiment": "Experiment 2", "polarity": "POSITIVE", "recoding": "LAX", "truth": "Target", "mean": "3.94"},
+        {"experiment": "Experiment 2", "polarity": "POSITIVE", "recoding": "LAX", "truth": "False", "mean": "1.33"},
+        {"experiment": "Experiment 2", "polarity": "POSITIVE", "recoding": "STRICT", "truth": "True", "mean": "4.97"},
+        {"experiment": "Experiment 2", "polarity": "POSITIVE", "recoding": "STRICT", "truth": "Target", "mean": "2.34"},
+        {"experiment": "Experiment 2", "polarity": "POSITIVE", "recoding": "STRICT", "truth": "False", "mean": "1.27"},
+        {"experiment": "Experiment 2", "polarity": "NEGATIVE", "recoding": "LAX", "truth": "True", "mean": "4.66"},
+        {"experiment": "Experiment 2", "polarity": "NEGATIVE", "recoding": "LAX", "truth": "Target", "mean": "3.96"},
+        {"experiment": "Experiment 2", "polarity": "NEGATIVE", "recoding": "LAX", "truth": "False", "mean": "1.10"},
+        {"experiment": "Experiment 2", "polarity": "NEGATIVE", "recoding": "STRICT", "truth": "True", "mean": "4.52"},
+        {"experiment": "Experiment 2", "polarity": "NEGATIVE", "recoding": "STRICT", "truth": "Target", "mean": "2.05"},
+        {"experiment": "Experiment 2", "polarity": "NEGATIVE", "recoding": "STRICT", "truth": "False", "mean": "1.13"}
+      ]
+    },
+    {
+      "name": "meansExactlyTwo",
+      "structure": "MeanExactlyTwo",
+      "doc": "the mean rating of a picture in Experiment 3 in a context, not recoded, a target picture with the level of POLARITY it is for.",
+      "locator": "Figure 8",
+      "verified": "page-image",
+      "columns": [
+        {"name": "context", "type": "Context", "doc": "The context."},
+        {"name": "truth", "type": "Truth", "doc": "The picture."},
+        {"name": "polarity", "type": "option Polarity", "doc": "The level of POLARITY of a target."},
+        {"name": "mean", "type": "decimal", "doc": "The mean rating."}
+      ],
+      "rows": [
+        {"context": "PROHIBITED", "truth": "True", "polarity": null, "mean": "4.95"},
+        {"context": "PROHIBITED", "truth": "Target", "polarity": "POSITIVE", "mean": "4.00"},
+        {"context": "PROHIBITED", "truth": "Target", "polarity": "NEGATIVE", "mean": "2.03"},
+        {"context": "PROHIBITED", "truth": "False", "polarity": null, "mean": "1.32"},
+        {"context": "REQUIRED", "truth": "True", "polarity": null, "mean": "4.92"},
+        {"context": "REQUIRED", "truth": "Target", "polarity": "POSITIVE", "mean": "3.74"},
+        {"context": "REQUIRED", "truth": "Target", "polarity": "NEGATIVE", "mean": "2.36"},
+        {"context": "REQUIRED", "truth": "False", "polarity": null, "mean": "1.34"}
+      ]
+    },
+    {
+      "name": "tests",
+      "structure": "Test",
+      "doc": "a likelihood-ratio χ² test of a term of the cumulative logit mixed-effects model fitted to an experiment's target conditions.",
+      "locator": "§3.3.3, §3.4.3, §3.5.3",
+      "verified": "page-image",
+      "key": ["experiment", "effect"],
+      "columns": [
+        {"name": "experiment", "type": "Experiment", "doc": "The experiment."},
+        {"name": "effect", "type": "Effect", "doc": "The term tested."},
+        {"name": "df", "type": "nat", "doc": "The degrees of freedom of the chi-square statistic."},
+        {"name": "chiSq", "type": "decimal", "doc": "The chi-square statistic."},
+        {"name": "bound", "type": "Bound", "doc": "How the p-value is printed."},
+        {"name": "p", "type": "decimal", "doc": "The p-value."}
+      ],
+      "rows": [
+        {"experiment": "Experiment 1", "effect": "CONTEXT", "df": 1, "chiSq": "12.7", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 1", "effect": "POLARITY", "df": 1, "chiSq": "52.2", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 1", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "10.9", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 2", "effect": "CONTEXT", "df": 1, "chiSq": "97.3", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 2", "effect": "POLARITY", "df": 1, "chiSq": "0.53", "bound": "=", "p": "0.469"},
+        {"experiment": "Experiment 2", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "0.24", "bound": "=", "p": "0.624"},
+        {"experiment": "Experiment 3", "effect": "CONTEXT", "df": 1, "chiSq": "15.8", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 3", "effect": "POLARITY", "df": 1, "chiSq": "34.2", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 3", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "0.019", "bound": "=", "p": "0.892"}
+      ]
+    },
+    {
+      "name": "estimates",
+      "structure": "Estimate",
+      "doc": "a fixed-effect estimate of the cumulative logit mixed-effects model fitted to an experiment's target conditions, with the p-value of its likelihood-ratio test where printed.",
+      "locator": "Tables 5, 8 and 11",
+      "verified": "page-image",
+      "key": ["experiment", "term"],
+      "columns": [
+        {"name": "experiment", "type": "Experiment", "doc": "The experiment."},
+        {"name": "term", "type": "Term", "doc": "The fixed effect."},
+        {"name": "beta", "type": "decimal", "doc": "The estimate."},
+        {"name": "se", "type": "decimal", "doc": "Its standard error."},
+        {"name": "bound", "type": "option Bound", "doc": "How the p-value is printed, where it is."},
+        {"name": "p", "type": "option decimal", "doc": "The p-value, where printed."}
+      ],
+      "rows": [
+        {"experiment": "Experiment 1", "term": "θ1", "beta": "-0.49", "se": "0.21", "bound": null, "p": null},
+        {"experiment": "Experiment 1", "term": "θ2", "beta": "1.34", "se": "0.23", "bound": null, "p": null},
+        {"experiment": "Experiment 1", "term": "θ3", "beta": "3.07", "se": "0.28", "bound": null, "p": null},
+        {"experiment": "Experiment 1", "term": "θ4", "beta": "7.23", "se": "0.51", "bound": null, "p": null},
+        {"experiment": "Experiment 1", "term": "CONTEXT", "beta": "1.41", "se": "0.40", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 1", "term": "POLARITY", "beta": "3.36", "se": "0.37", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 1", "term": "CONTEXT × POLARITY", "beta": "2.43", "se": "0.74", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 2", "term": "θ1", "beta": "-1.88", "se": "0.10", "bound": null, "p": null},
+        {"experiment": "Experiment 2", "term": "θ2", "beta": "-0.60", "se": "0.09", "bound": null, "p": null},
+        {"experiment": "Experiment 2", "term": "θ3", "beta": "0.20", "se": "0.09", "bound": null, "p": null},
+        {"experiment": "Experiment 2", "term": "θ4", "beta": "2.15", "se": "0.10", "bound": null, "p": null},
+        {"experiment": "Experiment 2", "term": "CONTEXT", "beta": "3.26", "se": "0.17", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 2", "term": "POLARITY", "beta": "0.13", "se": "0.17", "bound": "=", "p": "0.47"},
+        {"experiment": "Experiment 2", "term": "CONTEXT × POLARITY", "beta": "-0.17", "se": "0.35", "bound": "=", "p": "0.62"},
+        {"experiment": "Experiment 3", "term": "θ1", "beta": "-0.11", "se": "0.26", "bound": null, "p": null},
+        {"experiment": "Experiment 3", "term": "θ2", "beta": "0.73", "se": "0.26", "bound": null, "p": null},
+        {"experiment": "Experiment 3", "term": "θ3", "beta": "1.50", "se": "0.27", "bound": null, "p": null},
+        {"experiment": "Experiment 3", "term": "θ4", "beta": "2.93", "se": "0.28", "bound": null, "p": null},
+        {"experiment": "Experiment 3", "term": "CONTEXT", "beta": "0.61", "se": "0.15", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 3", "term": "POLARITY", "beta": "3.15", "se": "0.41", "bound": "<", "p": "0.001"},
+        {"experiment": "Experiment 3", "term": "CONTEXT × POLARITY", "beta": "0.06", "se": "0.41", "bound": "=", "p": "0.89"}
+      ]
+    },
+    {
+      "name": "effectSizes",
+      "structure": "EffectSize",
+      "doc": "the effect size of the context manipulation on the target condition of a level of POLARITY in an experiment: the difference of the mean ratings in the lax and the strict context, and in log-odds from the model's fixed-effect estimates.",
+      "locator": "Table 12",
+      "verified": "page-image",
+      "key": ["experiment", "polarity"],
+      "columns": [
+        {"name": "experiment", "type": "Experiment", "doc": "The experiment."},
+        {"name": "polarity", "type": "Polarity", "doc": "The level of POLARITY."},
+        {"name": "likert", "type": "decimal", "doc": "The difference of the mean ratings."},
+        {"name": "logOdds", "type": "decimal", "doc": "The effect in log-odds."}
+      ],
+      "rows": [
+        {"experiment": "Experiment 1", "polarity": "POSITIVE", "likert": "1.13", "logOdds": "3.84"},
+        {"experiment": "Experiment 2", "polarity": "POSITIVE", "likert": "1.60", "logOdds": "3.09"},
+        {"experiment": "Experiment 2", "polarity": "NEGATIVE", "likert": "1.91", "logOdds": "3.26"},
+        {"experiment": "Experiment 1", "polarity": "NEGATIVE", "likert": "0.50", "logOdds": "1.41"},
+        {"experiment": "Experiment 3", "polarity": "POSITIVE", "likert": "0.26", "logOdds": "0.66"},
+        {"experiment": "Experiment 3", "polarity": "NEGATIVE", "likert": "0.33", "logOdds": "0.61"}
+      ]
+    }
+  ]
+}

@@ -133,7 +133,24 @@ private theorem resolve_map_ofProp (δ : Designation) (c : List Bool) :
 
 section NonImplicature
 
-variable (q : NumberTree) [DecidableRel q]
+variable (q : NumberTree)
+
+/-- Under any question at least as fine as the polar question on the reading at `δ` and at most
+as fine as the resolution at `δ`, a trivalent sentence true only where that reading holds, false
+only where it fails, and true on a resolution read back as a display where the quantifier holds
+of it, is usable exactly where that reading holds. -/
+theorem usable_iff_reading_of {S : Display → SignType} {δ : Designation}
+    (htrue : ∀ d, S d = 1 → reading q d δ) (hfalse : ∀ d, S d = -1 → ¬ reading q d δ)
+    (hres : ∀ c, KrizChemla2015.holds q c → S (c.map fun b : Bool ↦ SignType.ofProp b) = 1)
+    {Q : Setoid Display} (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ})
+    (d : Display) : Homogeneity.usable Q S d ↔ reading q d δ := by
+  have hcell : ∀ {d d'}, Q d d' → (reading q d δ ↔ reading q d' δ) := fun h ↦ h₂.iff h
+  exact ⟨fun ⟨_, ⟨d', hd', h'⟩, _⟩ ↦ (hcell hd').2 (htrue d' h'), fun h ↦
+    ⟨fun hf ↦ hfalse d hf h, ⟨(resolve δ d).map (fun b : Bool ↦ SignType.ofProp b),
+      h₁ (Setoid.ker_def.2 (resolve_map_ofProp δ _).symm), hres _ h⟩,
+      fun ⟨d₁, d₂, h₁₂, ht, hf⟩ ↦ hfalse d₂ hf ((hcell h₁₂).1 (htrue d₁ ht))⟩⟩
+
+variable [DecidableRel q]
 
 /-- Under any question at least as fine as the polar question on the reading at `δ` and at most
 as fine as the resolution at `δ`, the trivalent sentence is usable exactly where that reading
@@ -141,21 +158,15 @@ holds. -/
 theorem usable_iff_reading {Q : Setoid Display} {δ : Designation}
     (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ}) (d : Display) :
     Homogeneity.usable Q (supervaluation q) d ↔ reading q d δ := by
-  have hcell : ∀ {d d'}, Q d d' → (reading q d δ ↔ reading q d' δ) := fun h ↦ h₂.iff h
-  have htrue : ∀ d', supervaluation q d' = 1 → reading q d' δ := fun d' h ↦ by
-    rw [supervaluation_eq_designations, SignType.supervaluation_eq_one_iff] at h
+  refine usable_iff_reading_of q (fun d' h ↦ ?_) (fun d' h ↦ ?_) (fun c h ↦ ?_) h₁ h₂ d
+  · rw [supervaluation_eq_designations, SignType.supervaluation_eq_one_iff] at h
     exact h δ (Finset.mem_univ δ)
-  have hfalse : ∀ d', supervaluation q d' = -1 → ¬ reading q d' δ := fun d' h ↦ by
-    rw [supervaluation_eq_designations, SignType.supervaluation_eq_neg_one_iff] at h
+  · rw [supervaluation_eq_designations, SignType.supervaluation_eq_neg_one_iff] at h
     exact h.2 δ (Finset.mem_univ δ)
-  refine ⟨fun ⟨_, ⟨d', hd', h'⟩, _⟩ ↦ (hcell hd').2 (htrue d' h'), fun h ↦
-    ⟨fun hf ↦ hfalse d hf h, ⟨(resolve δ d).map (fun b : Bool ↦ SignType.ofProp b),
-      h₁ (Setoid.ker_def.2 (resolve_map_ofProp δ _).symm), ?_⟩,
-      fun ⟨d₁, d₂, h₁₂, ht, hf⟩ ↦ hfalse d₂ hf ((hcell h₁₂).1 (htrue d₁ ht))⟩⟩
-  rw [supervaluation_eq_designations, SignType.supervaluation_eq_one_iff]
-  intro δ' _
-  rw [reading, resolve_map_ofProp]
-  exact h
+  · rw [supervaluation_eq_designations, SignType.supervaluation_eq_one_iff]
+    intro δ' _
+    rw [reading, resolve_map_ofProp]
+    exact h
 
 /-- The non-implicature verdict is the usability of the trivalent sentence at the display relative
 to the question the context raises. -/
