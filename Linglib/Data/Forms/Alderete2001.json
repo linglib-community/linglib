@@ -1,0 +1,952 @@
+{
+  "description": "The words of Alderete (2001): the Luo singular and plural nouns of (6), the Tokyo Japanese derivatives of (1), (17) and (18) and the underived hasi of (12), and the Limburg Dutch adjectives of (42) and (48) with their bases; the analysis gives the paper's underlying forms and the output-output correspondence relation each derivative's affix subcategorizes for.",
+  "Types": {
+    "OORelation": [
+      {"Value": "dom", "Lean": "dominant", "Description": "OO_Dom, the relation of a dominant affix ((20), (54))"},
+      {"Value": "rec", "Lean": "recessive", "Description": "OO_Rec, the relation of a recessive affix ((20), (54))"},
+      {"Value": "ex", "Lean": "exchange", "Description": "OO_Ex, the relation of the Luo exchange-inducing plural (§2.2.2)"}
+    ]
+  },
+  "CellTable": [
+    {
+      "ID": "sg",
+      "Name": "singular",
+      "Features": "Number=Sing"
+    },
+    {
+      "ID": "pl",
+      "Name": "plural",
+      "Features": "Number=Plur"
+    },
+    {
+      "ID": "cnd",
+      "Name": "conditional",
+      "Features": "Mood=Cnd"
+    },
+    {
+      "ID": "masc",
+      "Name": "masculine",
+      "Features": "Gender=Masc"
+    },
+    {
+      "ID": "fem",
+      "Name": "feminine",
+      "Features": "Gender=Fem"
+    },
+    {
+      "ID": "cmp",
+      "Name": "comparative",
+      "Features": "Degree=Cmp"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "arm",
+      "Name": "arm",
+      "Description": ""
+    },
+    {
+      "ID": "walking_stick",
+      "Name": "walking stick",
+      "Description": ""
+    },
+    {
+      "ID": "bone",
+      "Name": "bone",
+      "Description": ""
+    },
+    {
+      "ID": "brother",
+      "Name": "brother",
+      "Description": ""
+    },
+    {
+      "ID": "read",
+      "Name": "read",
+      "Description": ""
+    },
+    {
+      "ID": "call",
+      "Name": "call",
+      "Description": ""
+    },
+    {
+      "ID": "oily",
+      "Name": "oily",
+      "Description": ""
+    },
+    {
+      "ID": "sniffily",
+      "Name": "sniffily",
+      "Description": ""
+    },
+    {
+      "ID": "childish",
+      "Name": "childish",
+      "Description": ""
+    },
+    {
+      "ID": "coquettish",
+      "Name": "coquettish",
+      "Description": ""
+    },
+    {
+      "ID": "zealous",
+      "Name": "zealous",
+      "Description": ""
+    },
+    {
+      "ID": "affected",
+      "Name": "affected",
+      "Description": ""
+    },
+    {
+      "ID": "native_of_tokyo",
+      "Name": "native of Tokyo",
+      "Description": ""
+    },
+    {
+      "ID": "native_of_nigata",
+      "Name": "native of Nigata",
+      "Description": ""
+    },
+    {
+      "ID": "native_of_osaka",
+      "Name": "native of Osaka",
+      "Description": ""
+    },
+    {
+      "ID": "native_of_kobe",
+      "Name": "native of Kobe",
+      "Description": ""
+    },
+    {
+      "ID": "native_of_nagoya",
+      "Name": "native of Nagoya",
+      "Description": ""
+    },
+    {
+      "ID": "native_of_new_york",
+      "Name": "native of New York",
+      "Description": ""
+    },
+    {
+      "ID": "edge",
+      "Name": "edge",
+      "Description": ""
+    },
+    {
+      "ID": "wise",
+      "Name": "wise",
+      "Description": ""
+    },
+    {
+      "ID": "stiff",
+      "Name": "stiff",
+      "Description": ""
+    },
+    {
+      "ID": "bald",
+      "Name": "bald",
+      "Description": ""
+    },
+    {
+      "ID": "paralysed",
+      "Name": "paralysed",
+      "Description": ""
+    },
+    {
+      "ID": "refined",
+      "Name": "refined",
+      "Description": ""
+    },
+    {
+      "ID": "tough",
+      "Name": "tough (of people)",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "arm",
+      "Language_ID": "luok1236",
+      "Parameter_ID": "arm",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "walking_stick",
+      "Language_ID": "luok1236",
+      "Parameter_ID": "walking_stick",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "bone",
+      "Language_ID": "luok1236",
+      "Parameter_ID": "bone",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "brother",
+      "Language_ID": "luok1236",
+      "Parameter_ID": "brother",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "read",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "read",
+      "POS": "VERB"
+    },
+    {
+      "ID": "call",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "call",
+      "POS": "VERB"
+    },
+    {
+      "ID": "oily",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "oily",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "sniffily",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "sniffily",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "childish",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "childish",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "coquettish",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "coquettish",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "zealous",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "zealous",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "affected",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "affected",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "native_of_tokyo",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "native_of_tokyo",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "native_of_nigata",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "native_of_nigata",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "native_of_osaka",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "native_of_osaka",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "native_of_kobe",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "native_of_kobe",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "native_of_nagoya",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "native_of_nagoya",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "native_of_new_york",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "native_of_new_york",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "edge",
+      "Language_ID": "nucl1643",
+      "Variety": "Tokyo",
+      "Parameter_ID": "edge",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "wise",
+      "Language_ID": "limb1263",
+      "Variety": "Maasbracht",
+      "Parameter_ID": "wise",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "stiff",
+      "Language_ID": "limb1263",
+      "Variety": "Maasbracht",
+      "Parameter_ID": "stiff",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "bald",
+      "Language_ID": "limb1263",
+      "Variety": "Maasbracht",
+      "Parameter_ID": "bald",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "paralysed",
+      "Language_ID": "limb1263",
+      "Variety": "Maasbracht",
+      "Parameter_ID": "paralysed",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "refined",
+      "Language_ID": "limb1263",
+      "Variety": "Maasbracht",
+      "Parameter_ID": "refined",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "tough",
+      "Language_ID": "limb1263",
+      "Variety": "Maasbracht",
+      "Parameter_ID": "tough",
+      "POS": "ADJ"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "alderete2001_arm_sg",
+      "Lexeme_ID": "arm",
+      "Cell": "sg",
+      "Form": "bat",
+      "Source": ["alderete-2001[(6a)]", "alderete-2001[(7)]", "alderete-2001[(11a)]"]
+    },
+    {
+      "ID": "alderete2001_arm_pl",
+      "Lexeme_ID": "arm",
+      "Cell": "pl",
+      "Form": "bed-e",
+      "Source": ["alderete-2001[(6a)]", "alderete-2001[(7)]", "alderete-2001[(11a)]"]
+    },
+    {
+      "ID": "alderete2001_walking_stick_sg",
+      "Lexeme_ID": "walking_stick",
+      "Cell": "sg",
+      "Form": "luθ",
+      "Source": ["alderete-2001[(6a)]"]
+    },
+    {
+      "ID": "alderete2001_walking_stick_pl",
+      "Lexeme_ID": "walking_stick",
+      "Cell": "pl",
+      "Form": "luð-e",
+      "Source": ["alderete-2001[(6a)]"]
+    },
+    {
+      "ID": "alderete2001_bone_sg",
+      "Lexeme_ID": "bone",
+      "Cell": "sg",
+      "Form": "čogo",
+      "Source": ["alderete-2001[(6b)]", "alderete-2001[(7)]", "alderete-2001[(11b)]"]
+    },
+    {
+      "ID": "alderete2001_bone_pl",
+      "Lexeme_ID": "bone",
+      "Cell": "pl",
+      "Form": "čok-e",
+      "Source": ["alderete-2001[(6b)]", "alderete-2001[(7)]", "alderete-2001[(11b)]"]
+    },
+    {
+      "ID": "alderete2001_brother_sg",
+      "Lexeme_ID": "brother",
+      "Cell": "sg",
+      "Form": "owadu",
+      "Source": ["alderete-2001[(6b)]"]
+    },
+    {
+      "ID": "alderete2001_brother_pl",
+      "Lexeme_ID": "brother",
+      "Cell": "pl",
+      "Form": "owet-e",
+      "Source": ["alderete-2001[(6b)]"]
+    },
+    {
+      "ID": "alderete2001_yondara",
+      "Lexeme_ID": "read",
+      "Cell": "cnd",
+      "Form": "yón-dara",
+      "Source": ["alderete-2001[(1)]"]
+    },
+    {
+      "ID": "alderete2001_yondara_call",
+      "Lexeme_ID": "call",
+      "Cell": "cnd",
+      "Form": "yon-dára",
+      "Source": ["alderete-2001[(1)]"]
+    },
+    {
+      "ID": "alderete2001_aburappoi",
+      "Lexeme_ID": "oily",
+      "Form": "abura-ppó-i",
+      "Source": ["alderete-2001[(17a)]"]
+    },
+    {
+      "ID": "alderete2001_kazeppoi",
+      "Lexeme_ID": "sniffily",
+      "Form": "kaze-ppó-i",
+      "Source": ["alderete-2001[(2a)]", "alderete-2001[(17a)]"]
+    },
+    {
+      "ID": "alderete2001_kodomoppoi",
+      "Lexeme_ID": "childish",
+      "Form": "kodomo-ppó-i",
+      "Source": ["alderete-2001[(17a)]"]
+    },
+    {
+      "ID": "alderete2001_adappoi",
+      "Lexeme_ID": "coquettish",
+      "Form": "ada-ppó-i",
+      "Source": ["alderete-2001[(2a)]", "alderete-2001[(17b)]", "alderete-2001[(21)]"]
+    },
+    {
+      "ID": "alderete2001_netuppoi",
+      "Lexeme_ID": "zealous",
+      "Form": "netu-ppó-i",
+      "Source": ["alderete-2001[(17b)]"]
+    },
+    {
+      "ID": "alderete2001_kizappoi",
+      "Lexeme_ID": "affected",
+      "Form": "kiza-ppó-i",
+      "Source": ["alderete-2001[(17b)]"]
+    },
+    {
+      "ID": "alderete2001_edokko",
+      "Lexeme_ID": "native_of_tokyo",
+      "Form": "edo-kko",
+      "Source": ["alderete-2001[(2b)]", "alderete-2001[(18a)]"]
+    },
+    {
+      "ID": "alderete2001_niigatakko",
+      "Lexeme_ID": "native_of_nigata",
+      "Form": "niigata-kko",
+      "Source": ["alderete-2001[(18a)]"]
+    },
+    {
+      "ID": "alderete2001_oosakakko",
+      "Lexeme_ID": "native_of_osaka",
+      "Form": "oosaka-kko",
+      "Source": ["alderete-2001[(18a)]"]
+    },
+    {
+      "ID": "alderete2001_koobekko",
+      "Lexeme_ID": "native_of_kobe",
+      "Form": "koobe-kko",
+      "Source": ["alderete-2001[(2b)]", "alderete-2001[(18b)]", "alderete-2001[(23)]", "alderete-2001[(25a)]", "alderete-2001[(28)]"]
+    },
+    {
+      "ID": "alderete2001_nagoyakko",
+      "Lexeme_ID": "native_of_nagoya",
+      "Form": "nagoya-kko",
+      "Source": ["alderete-2001[(18b)]"]
+    },
+    {
+      "ID": "alderete2001_nyuuyookukko",
+      "Lexeme_ID": "native_of_new_york",
+      "Form": "nyuuyooku-kko",
+      "Source": ["alderete-2001[(18b)]"]
+    },
+    {
+      "ID": "alderete2001_hasi",
+      "Lexeme_ID": "edge",
+      "Form": "hasi",
+      "Source": ["alderete-2001[(12)]", "alderete-2001[(28)]"]
+    },
+    {
+      "ID": "alderete2001_wise",
+      "Lexeme_ID": "wise",
+      "Form": "wíís",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_wise_masc",
+      "Lexeme_ID": "wise",
+      "Cell": "masc",
+      "Form": "wíiz-ə",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_wise_fem",
+      "Lexeme_ID": "wise",
+      "Cell": "fem",
+      "Form": "wíis",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_wise_cmp",
+      "Lexeme_ID": "wise",
+      "Cell": "cmp",
+      "Form": "wíiz-ər",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_stiff",
+      "Lexeme_ID": "stiff",
+      "Form": "stííf",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_stiff_masc",
+      "Lexeme_ID": "stiff",
+      "Cell": "masc",
+      "Form": "stíiv-ə",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_stiff_fem",
+      "Lexeme_ID": "stiff",
+      "Cell": "fem",
+      "Form": "stíif",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_stiff_cmp",
+      "Lexeme_ID": "stiff",
+      "Cell": "cmp",
+      "Form": "stíiv-ər",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_bald",
+      "Lexeme_ID": "bald",
+      "Form": "káál",
+      "Source": ["alderete-2001[(42)]", "alderete-2001[(48a)]", "alderete-2001[(50)]", "alderete-2001[(52)]"]
+    },
+    {
+      "ID": "alderete2001_bald_masc",
+      "Lexeme_ID": "bald",
+      "Cell": "masc",
+      "Form": "káal-ə",
+      "Source": ["alderete-2001[(42)]", "alderete-2001[(48a)]", "alderete-2001[(50)]", "alderete-2001[(52)]"]
+    },
+    {
+      "ID": "alderete2001_bald_fem",
+      "Lexeme_ID": "bald",
+      "Cell": "fem",
+      "Form": "káal",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_bald_cmp",
+      "Lexeme_ID": "bald",
+      "Cell": "cmp",
+      "Form": "káal-ər",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_paralysed",
+      "Lexeme_ID": "paralysed",
+      "Form": "láám",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_paralysed_masc",
+      "Lexeme_ID": "paralysed",
+      "Cell": "masc",
+      "Form": "láam-ə",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_paralysed_fem",
+      "Lexeme_ID": "paralysed",
+      "Cell": "fem",
+      "Form": "láam",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_paralysed_cmp",
+      "Lexeme_ID": "paralysed",
+      "Cell": "cmp",
+      "Form": "láam-ər",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_refined",
+      "Lexeme_ID": "refined",
+      "Form": "fíín",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_refined_masc",
+      "Lexeme_ID": "refined",
+      "Cell": "masc",
+      "Form": "fíin-ə",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_refined_fem",
+      "Lexeme_ID": "refined",
+      "Cell": "fem",
+      "Form": "fíin",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_refined_cmp",
+      "Lexeme_ID": "refined",
+      "Cell": "cmp",
+      "Form": "fíin-ər",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_tough",
+      "Lexeme_ID": "tough",
+      "Form": "stúur",
+      "Source": ["alderete-2001[(48b)]", "alderete-2001[(53)]"]
+    },
+    {
+      "ID": "alderete2001_tough_masc",
+      "Lexeme_ID": "tough",
+      "Cell": "masc",
+      "Form": "stúur-ə",
+      "Source": ["alderete-2001[(48b)]", "alderete-2001[(53)]"]
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "alderete2001_r_arm_pl",
+      "Form_ID": "alderete2001_arm_sg",
+      "Target_ID": "alderete2001_arm_pl",
+      "Relation": "plural",
+      "Source": ["alderete-2001[(6a)]"]
+    },
+    {
+      "ID": "alderete2001_r_walking_stick_pl",
+      "Form_ID": "alderete2001_walking_stick_sg",
+      "Target_ID": "alderete2001_walking_stick_pl",
+      "Relation": "plural",
+      "Source": ["alderete-2001[(6a)]"]
+    },
+    {
+      "ID": "alderete2001_r_bone_pl",
+      "Form_ID": "alderete2001_bone_sg",
+      "Target_ID": "alderete2001_bone_pl",
+      "Relation": "plural",
+      "Source": ["alderete-2001[(6b)]"]
+    },
+    {
+      "ID": "alderete2001_r_brother_pl",
+      "Form_ID": "alderete2001_brother_sg",
+      "Target_ID": "alderete2001_brother_pl",
+      "Relation": "plural",
+      "Source": ["alderete-2001[(6b)]"]
+    },
+    {
+      "ID": "alderete2001_r_wise_masc",
+      "Form_ID": "alderete2001_wise",
+      "Target_ID": "alderete2001_wise_masc",
+      "Relation": "masculine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_wise_fem",
+      "Form_ID": "alderete2001_wise",
+      "Target_ID": "alderete2001_wise_fem",
+      "Relation": "feminine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_wise_cmp",
+      "Form_ID": "alderete2001_wise",
+      "Target_ID": "alderete2001_wise_cmp",
+      "Relation": "comparative",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_stiff_masc",
+      "Form_ID": "alderete2001_stiff",
+      "Target_ID": "alderete2001_stiff_masc",
+      "Relation": "masculine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_stiff_fem",
+      "Form_ID": "alderete2001_stiff",
+      "Target_ID": "alderete2001_stiff_fem",
+      "Relation": "feminine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_stiff_cmp",
+      "Form_ID": "alderete2001_stiff",
+      "Target_ID": "alderete2001_stiff_cmp",
+      "Relation": "comparative",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_bald_masc",
+      "Form_ID": "alderete2001_bald",
+      "Target_ID": "alderete2001_bald_masc",
+      "Relation": "masculine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_bald_fem",
+      "Form_ID": "alderete2001_bald",
+      "Target_ID": "alderete2001_bald_fem",
+      "Relation": "feminine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_bald_cmp",
+      "Form_ID": "alderete2001_bald",
+      "Target_ID": "alderete2001_bald_cmp",
+      "Relation": "comparative",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_paralysed_masc",
+      "Form_ID": "alderete2001_paralysed",
+      "Target_ID": "alderete2001_paralysed_masc",
+      "Relation": "masculine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_paralysed_fem",
+      "Form_ID": "alderete2001_paralysed",
+      "Target_ID": "alderete2001_paralysed_fem",
+      "Relation": "feminine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_paralysed_cmp",
+      "Form_ID": "alderete2001_paralysed",
+      "Target_ID": "alderete2001_paralysed_cmp",
+      "Relation": "comparative",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_refined_masc",
+      "Form_ID": "alderete2001_refined",
+      "Target_ID": "alderete2001_refined_masc",
+      "Relation": "masculine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_refined_fem",
+      "Form_ID": "alderete2001_refined",
+      "Target_ID": "alderete2001_refined_fem",
+      "Relation": "feminine",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_refined_cmp",
+      "Form_ID": "alderete2001_refined",
+      "Target_ID": "alderete2001_refined_cmp",
+      "Relation": "comparative",
+      "Source": ["alderete-2001[(42)]"]
+    },
+    {
+      "ID": "alderete2001_r_tough_masc",
+      "Form_ID": "alderete2001_tough",
+      "Target_ID": "alderete2001_tough_masc",
+      "Relation": "masculine",
+      "Source": ["alderete-2001[(48b)]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Underlying",
+      "Lean": "underlying",
+      "Type": "String",
+      "Description": "the input the paper gives the form"
+    },
+    {
+      "Name": "Relation",
+      "Lean": "relation",
+      "Type": "OORelation",
+      "Description": "the output-output correspondence relation the form's affix subcategorizes for"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "alderete2001_arm_pl",
+      "Relation": "ex"
+    },
+    {
+      "Form_ID": "alderete2001_walking_stick_pl",
+      "Relation": "ex"
+    },
+    {
+      "Form_ID": "alderete2001_bone_pl",
+      "Relation": "ex"
+    },
+    {
+      "Form_ID": "alderete2001_brother_pl",
+      "Relation": "ex"
+    },
+    {
+      "Form_ID": "alderete2001_yondara",
+      "Underlying": "/yóm+tára/",
+      "Relation": "rec"
+    },
+    {
+      "Form_ID": "alderete2001_yondara_call",
+      "Underlying": "/yob+tára/",
+      "Relation": "rec"
+    },
+    {
+      "Form_ID": "alderete2001_aburappoi",
+      "Underlying": "/abura+ppó+i/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_kazeppoi",
+      "Underlying": "/kaze+ppó+i/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_kodomoppoi",
+      "Underlying": "/kodomo+ppó+i/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_adappoi",
+      "Underlying": "/adá+ppó+i/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_netuppoi",
+      "Underlying": "/netú+ppó+i/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_kizappoi",
+      "Underlying": "/kíza+ppó+i/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_edokko",
+      "Underlying": "/edo+kko/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_niigatakko",
+      "Underlying": "/niigata+kko/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_oosakakko",
+      "Underlying": "/oosaka+kko/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_koobekko",
+      "Underlying": "/kóobe+kko/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_nagoyakko",
+      "Underlying": "/nágoya+kko/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_nyuuyookukko",
+      "Underlying": "/nyuuyóoku+kko/",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_hasi",
+      "Underlying": "/hasi/"
+    },
+    {
+      "Form_ID": "alderete2001_wise_masc",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_wise_fem",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_wise_cmp",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_stiff_masc",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_stiff_fem",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_stiff_cmp",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_bald_masc",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_bald_fem",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_bald_cmp",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_paralysed_masc",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_paralysed_fem",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_paralysed_cmp",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_refined_masc",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_refined_fem",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_refined_cmp",
+      "Relation": "dom"
+    },
+    {
+      "Form_ID": "alderete2001_tough_masc",
+      "Relation": "dom"
+    }
+  ]
+}

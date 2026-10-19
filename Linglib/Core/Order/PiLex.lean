@@ -15,10 +15,10 @@ public import Mathlib.Data.Fintype.EquivFin
 
 This file relates `Pi.Lex` on `Fin n → α` to the lexicographic order on lists and characterizes it
 by the first differing coordinate. The order on `Fin (n + 1)`-tuples compares heads and then tails
-(`Pi.toLex_lt_toLex_iff_succ`), so it is the order of the tuples' lists (`List.ofFn_lex_lt_iff`,
-`List.ofFn_le_ofFn_iff`); since the list order is decidable, so is the tuple order
-(`Pi.Lex.decidableLT`, `Pi.Lex.decidableLE`), where mathlib's `LinearOrder` on `Pi.Lex` carries only
-a classical instance. A tuple is lexicographically at most another when every coordinate where it
+(`Pi.toLex_lt_toLex_iff_succ`, `Pi.toLex_le_toLex_iff_succ`), so it is the order of the tuples'
+lists (`List.ofFn_lex_lt_iff`, `List.ofFn_le_ofFn_iff`); since the list order is decidable, so is
+the tuple order (`Pi.Lex.decidableLT`, `Pi.Lex.decidableLE`), where mathlib's `LinearOrder` on
+`Pi.Lex` carries only a classical instance. A tuple is lexicographically at most another when every coordinate where it
 exceeds the other is preceded by one where it falls short (`Pi.lex_le_iff_forall`), which is to say
 that it falls short at the first coordinate where they differ (`Pi.lex_le_iff_find`). Reindexing
 both tuples along an equivalence transports the index relation (`Pi.lex_comp_equiv`). Read along an
@@ -69,6 +69,15 @@ theorem toLex_lt_toLex_iff_succ (f g : Fin (n + 1) → α) :
       rcases Fin.eq_zero_or_eq_succ j with rfl | ⟨j', rfl⟩
       · exact h0
       · exact hb j' (Fin.succ_lt_succ_iff.mp hj)
+
+/-- The lexicographic order on `Fin (n + 1)`-tuples compares heads, then tails. -/
+theorem toLex_le_toLex_iff_succ (f g : Fin (n + 1) → α) :
+    toLex f ≤ toLex g ↔ f 0 < g 0 ∨ f 0 = g 0 ∧ toLex (Fin.tail f) ≤ toLex (Fin.tail g) := by
+  have h : f = g ↔ f 0 = g 0 ∧ Fin.tail f = Fin.tail g :=
+    ⟨fun h ↦ h ▸ ⟨rfl, rfl⟩, fun ⟨h0, ht⟩ ↦ by
+      rw [← Fin.cons_self_tail f, ← Fin.cons_self_tail g, h0, ht]⟩
+  rw [le_iff_lt_or_eq, le_iff_lt_or_eq, toLex_lt_toLex_iff_succ, toLex_inj, toLex_inj, h]
+  tauto
 
 end Pi
 
