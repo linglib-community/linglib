@@ -1,0 +1,2588 @@
+{
+  "description": "The Polish words of Jabłońska (2004): the forms prefixed with po- and the other prefixes over the verbalizer classes, their secondary imperfectives, and the verbs of the sentences the paper analyses, with the paper's segmentation.",
+  "CellTable": [
+    {
+      "ID": "inf",
+      "Name": "infinitive",
+      "Features": "VerbForm=Inf"
+    },
+    {
+      "ID": "pst_pl_vir",
+      "Name": "pst.pl.vir",
+      "Features": "Tense=Past|Number=Plur"
+    },
+    {
+      "ID": "pst_m_sg_1",
+      "Name": "pst.m.sg.1",
+      "Features": "Tense=Past|Gender=Masc|Number=Sing|Person=1"
+    },
+    {
+      "ID": "pst_f_sg",
+      "Name": "pst.f.sg",
+      "Features": "Tense=Past|Gender=Fem|Number=Sing"
+    },
+    {
+      "ID": "pst_vir_1pl",
+      "Name": "pst.vir.1pl",
+      "Features": "Tense=Past|Number=Plur|Person=1"
+    },
+    {
+      "ID": "prs_2sg",
+      "Name": "prs.2sg",
+      "Features": "Tense=Pres|Number=Sing|Person=2"
+    },
+    {
+      "ID": "prs_3sg",
+      "Name": "prs.3sg",
+      "Features": "Tense=Pres|Number=Sing|Person=3"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "turn_grey",
+      "Name": "turn grey",
+      "Description": ""
+    },
+    {
+      "ID": "get_bright",
+      "Name": "get bright",
+      "Description": ""
+    },
+    {
+      "ID": "get_red",
+      "Name": "get red",
+      "Description": ""
+    },
+    {
+      "ID": "get_sad",
+      "Name": "get sad",
+      "Description": ""
+    },
+    {
+      "ID": "get_expensive",
+      "Name": "get expensive",
+      "Description": ""
+    },
+    {
+      "ID": "get_green",
+      "Name": "get green",
+      "Description": ""
+    },
+    {
+      "ID": "get_dark",
+      "Name": "get dark",
+      "Description": ""
+    },
+    {
+      "ID": "get_old",
+      "Name": "get old",
+      "Description": ""
+    },
+    {
+      "ID": "become_effeminate",
+      "Name": "become effeminate",
+      "Description": ""
+    },
+    {
+      "ID": "read_through_distributively",
+      "Name": "read through distributively",
+      "Description": ""
+    },
+    {
+      "ID": "read_for_a_while",
+      "Name": "read for a while",
+      "Description": ""
+    },
+    {
+      "ID": "play_for_a_while",
+      "Name": "play for a while",
+      "Description": ""
+    },
+    {
+      "ID": "walk_for_a_while",
+      "Name": "walk for a while",
+      "Description": ""
+    },
+    {
+      "ID": "smoke_for_a_while",
+      "Name": "smoke for a while",
+      "Description": ""
+    },
+    {
+      "ID": "hide_distributively_or_for_a_while",
+      "Name": "hide distributively or for a while",
+      "Description": ""
+    },
+    {
+      "ID": "rewrite_distributively_or_for_a_while",
+      "Name": "rewrite distributively or for a while",
+      "Description": ""
+    },
+    {
+      "ID": "sing_for_a_while",
+      "Name": "sing for a while",
+      "Description": ""
+    },
+    {
+      "ID": "enter_distributively",
+      "Name": "enter distributively",
+      "Description": ""
+    },
+    {
+      "ID": "rewrite",
+      "Name": "rewrite",
+      "Description": ""
+    },
+    {
+      "ID": "make_v_impf_inf",
+      "Name": "make-V-impf-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "whistle_v_impf_inf",
+      "Name": "whistle-v-impf-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "rewrite_for_a_while",
+      "Name": "rewrite for a while",
+      "Description": ""
+    },
+    {
+      "ID": "freeze_distributively",
+      "Name": "freeze distributively",
+      "Description": ""
+    },
+    {
+      "ID": "go_deaf_distributively",
+      "Name": "go deaf distributively",
+      "Description": ""
+    },
+    {
+      "ID": "wither_distributively",
+      "Name": "wither distributively",
+      "Description": ""
+    },
+    {
+      "ID": "go_blind_distributively",
+      "Name": "go blind distributively",
+      "Description": ""
+    },
+    {
+      "ID": "po_pref_lose",
+      "Name": "PO-pref-lose",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "po_around_dig",
+      "Name": "PO-around-dig",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "po_out_throw",
+      "Name": "PO-out-throw",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "dig_around_distributively_for_a_while",
+      "Name": "dig around distributively / for a while",
+      "Description": ""
+    },
+    {
+      "ID": "throw_out_distributively_for_a_while",
+      "Name": "throw out distributively / for a while",
+      "Description": ""
+    },
+    {
+      "ID": "po_snarl_sem_inf",
+      "Name": "PO-snarl-sem-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "po_kick_sem_inf",
+      "Name": "PO-kick-sem-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "po_wave_sem_inf",
+      "Name": "PO-wave-sem-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "wave_once",
+      "Name": "wave once",
+      "Description": ""
+    },
+    {
+      "ID": "po_snarl_sem_impf_inf",
+      "Name": "PO-snarl-sem-impf-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "go_away",
+      "Name": "go away",
+      "Description": ""
+    },
+    {
+      "ID": "run_away",
+      "Name": "run away",
+      "Description": ""
+    },
+    {
+      "ID": "fly_away",
+      "Name": "fly away",
+      "Description": ""
+    },
+    {
+      "ID": "drag_a_bit",
+      "Name": "drag a bit",
+      "Description": ""
+    },
+    {
+      "ID": "run_for_a_while",
+      "Name": "run for a while",
+      "Description": ""
+    },
+    {
+      "ID": "fly_for_a_while",
+      "Name": "fly for a while",
+      "Description": ""
+    },
+    {
+      "ID": "drag_for_a_while",
+      "Name": "drag for a while",
+      "Description": ""
+    },
+    {
+      "ID": "to_start_being_bright",
+      "Name": "to start being bright",
+      "Description": ""
+    },
+    {
+      "ID": "start_loving",
+      "Name": "start loving",
+      "Description": ""
+    },
+    {
+      "ID": "start_liking",
+      "Name": "start liking",
+      "Description": ""
+    },
+    {
+      "ID": "sit_for_a_while",
+      "Name": "sit for a while",
+      "Description": ""
+    },
+    {
+      "ID": "from_time_to_time_read_for_a_while",
+      "Name": "from time to time read for a while",
+      "Description": ""
+    },
+    {
+      "ID": "from_time_to_time_play_for_a_while",
+      "Name": "from time to time play for a while",
+      "Description": ""
+    },
+    {
+      "ID": "from_time_to_time_walk_for_a_while",
+      "Name": "from time to time walk for a while",
+      "Description": ""
+    },
+    {
+      "ID": "from_time_to_time_smoke_for_a_while",
+      "Name": "from time to time smoke for a while",
+      "Description": ""
+    },
+    {
+      "ID": "cry_a_bit_from_time_to_time",
+      "Name": "cry a bit from time to time",
+      "Description": ""
+    },
+    {
+      "ID": "cough_a_bit_from_time_to_time",
+      "Name": "cough a bit from time to time",
+      "Description": ""
+    },
+    {
+      "ID": "meow_a_bit_from_time_to_time",
+      "Name": "meow a bit from time to time",
+      "Description": ""
+    },
+    {
+      "ID": "whistle_a_bit_from_time_to_time",
+      "Name": "whistle a bit from time to time",
+      "Description": ""
+    },
+    {
+      "ID": "po_step_v_impf_inf",
+      "Name": "PO-step-v-impf-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "po_dance_v_impf_inf",
+      "Name": "PO-dance-v-impf-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "po_love_v_impf_inf",
+      "Name": "PO-love-v-impf-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "play_regularly_as_a_habit",
+      "Name": "play regularly as a habit",
+      "Description": ""
+    },
+    {
+      "ID": "for_some_time_play_irregularly_from_time_to_time",
+      "Name": "for some time play irregularly from time to time",
+      "Description": ""
+    },
+    {
+      "ID": "for_some_time_smoke_from_time_to_time",
+      "Name": "for some time smoke from time to time",
+      "Description": ""
+    },
+    {
+      "ID": "eat_at_low_intensity",
+      "Name": "eat at low intensity",
+      "Description": ""
+    },
+    {
+      "ID": "meow_once_at_low_intensity",
+      "Name": "meow once at low intensity",
+      "Description": ""
+    },
+    {
+      "ID": "blow_a_bit_from_time_to_time",
+      "Name": "blow a bit from time to time",
+      "Description": ""
+    },
+    {
+      "ID": "lose",
+      "Name": "lose",
+      "Description": ""
+    },
+    {
+      "ID": "make",
+      "Name": "make",
+      "Description": ""
+    },
+    {
+      "ID": "hide",
+      "Name": "hide",
+      "Description": ""
+    },
+    {
+      "ID": "dirty",
+      "Name": "dirty",
+      "Description": ""
+    },
+    {
+      "ID": "beat_up",
+      "Name": "beat up",
+      "Description": ""
+    },
+    {
+      "ID": "praise",
+      "Name": "praise",
+      "Description": ""
+    },
+    {
+      "ID": "perf_wild_v_impf_inf",
+      "Name": "PERF-wild-V-IMPF-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "expire",
+      "Name": "expire",
+      "Description": ""
+    },
+    {
+      "ID": "go_out",
+      "Name": "go out",
+      "Description": ""
+    },
+    {
+      "ID": "make_a_quiet_suggestion",
+      "Name": "make a quiet suggestion",
+      "Description": ""
+    },
+    {
+      "ID": "whisper",
+      "Name": "whisper",
+      "Description": ""
+    },
+    {
+      "ID": "reach_by_swimming",
+      "Name": "reach by swimming",
+      "Description": ""
+    },
+    {
+      "ID": "humiliate",
+      "Name": "humiliate",
+      "Description": ""
+    },
+    {
+      "ID": "console",
+      "Name": "console",
+      "Description": ""
+    },
+    {
+      "ID": "compare",
+      "Name": "compare",
+      "Description": ""
+    },
+    {
+      "ID": "sue",
+      "Name": "sue",
+      "Description": ""
+    },
+    {
+      "ID": "die_in_a_battle",
+      "Name": "die in a battle",
+      "Description": ""
+    },
+    {
+      "ID": "po_mushroom_v_inf",
+      "Name": "PO-mushroom-V-inf",
+      "Description": "the morpheme gloss; the source gives no translation"
+    },
+    {
+      "ID": "compare_distributively",
+      "Name": "compare distributively",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "posiwiec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "turn_grey",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pojasniec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_bright",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poczerwieniec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_red",
+      "POS": "VERB"
+    },
+    {
+      "ID": "posmutniec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_sad",
+      "POS": "VERB"
+    },
+    {
+      "ID": "drozec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_expensive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zieleniec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_green",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pociemniec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_dark",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zciemniec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_dark",
+      "POS": "VERB"
+    },
+    {
+      "ID": "podrozec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_expensive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zdrozec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_expensive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "postarzec_sie",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_old",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zestarzec_sie",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "get_old",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pobabieli",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "become_effeminate",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poprzeczytywalem",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "read_through_distributively",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poprzeczytalem",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "read_through_distributively",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poczytac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "read_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pograc",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "play_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pochodzic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "walk_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "popalic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "smoke_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pochowala",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "hide_distributively_or_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poprzepisywala",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "rewrite_distributively_or_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pospiewali",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "sing_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "powchodzili",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "enter_distributively",
+      "POS": "VERB"
+    },
+    {
+      "ID": "przepisac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "rewrite",
+      "POS": "VERB"
+    },
+    {
+      "ID": "robiac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "make_v_impf_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "gwizdywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "whistle_v_impf_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poprzepisywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "rewrite_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pomarznac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "freeze_distributively",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pogluchnac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "go_deaf_distributively",
+      "POS": "VERB"
+    },
+    {
+      "ID": "powiednac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "wither_distributively",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poslepnac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "go_blind_distributively",
+      "POS": "VERB"
+    },
+    {
+      "ID": "postracic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_pref_lose",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poobkopac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_around_dig",
+      "POS": "VERB"
+    },
+    {
+      "ID": "powyrzucic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_out_throw",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poobkopywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "dig_around_distributively_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "powyrzucac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "throw_out_distributively_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "powarknac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_snarl_sem_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pokopnac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_kick_sem_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pomachnac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_wave_sem_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "machniesz",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "wave_once",
+      "POS": "VERB"
+    },
+    {
+      "ID": "powarknywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_snarl_sem_impf_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pojsc",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "go_away",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pobiec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "run_away",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poleciec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "fly_away",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pociagnac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "drag_a_bit",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pobiegac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "run_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "polatac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "fly_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pociagac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "drag_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zajasniec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "to_start_being_bright",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pokochac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "start_loving",
+      "POS": "VERB"
+    },
+    {
+      "ID": "polubic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "start_liking",
+      "POS": "VERB"
+    },
+    {
+      "ID": "posiedziec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "sit_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poczytywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "from_time_to_time_read_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pogrywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "from_time_to_time_play_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pochadzac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "from_time_to_time_walk_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "popalac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "from_time_to_time_smoke_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poplakiwac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "cry_a_bit_from_time_to_time",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pokaslywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "cough_a_bit_from_time_to_time",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pomiaukiwac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "meow_a_bit_from_time_to_time",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pogwizdywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "whistle_a_bit_from_time_to_time",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pokroczac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_step_v_impf_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "potanczac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_dance_v_impf_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pokochiwac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_love_v_impf_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "grywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "play_regularly_as_a_habit",
+      "POS": "VERB"
+    },
+    {
+      "ID": "popogrywac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "for_some_time_play_irregularly_from_time_to_time",
+      "POS": "VERB"
+    },
+    {
+      "ID": "popopalac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "for_some_time_smoke_from_time_to_time",
+      "POS": "VERB"
+    },
+    {
+      "ID": "podjesc",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "eat_at_low_intensity",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pomiauknac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "meow_once_at_low_intensity",
+      "POS": "VERB"
+    },
+    {
+      "ID": "podmuchiwala",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "blow_a_bit_from_time_to_time",
+      "POS": "VERB"
+    },
+    {
+      "ID": "stracic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "lose",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zrobic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "make",
+      "POS": "VERB"
+    },
+    {
+      "ID": "schowac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "hide",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pobrudzic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "dirty",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pobic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "beat_up",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pochwalic",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "praise",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zdziczac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "perf_wild_v_impf_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "wygasnac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "expire",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zgasnac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "go_out",
+      "POS": "VERB"
+    },
+    {
+      "ID": "podszepnac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "make_a_quiet_suggestion",
+      "POS": "VERB"
+    },
+    {
+      "ID": "szeptac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "whisper",
+      "POS": "VERB"
+    },
+    {
+      "ID": "doplywa",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "reach_by_swimming",
+      "POS": "VERB"
+    },
+    {
+      "ID": "ponizyc",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "humiliate",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pocieszyc",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "console",
+      "POS": "VERB"
+    },
+    {
+      "ID": "porownac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "compare",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pozwac",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "sue",
+      "POS": "VERB"
+    },
+    {
+      "ID": "polec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "die_in_a_battle",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pogrzybiec",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "po_mushroom_v_inf",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poporownywalismy",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "compare_distributively",
+      "POS": "VERB"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "jablonska2004_3a",
+      "Lexeme_ID": "posiwiec",
+      "Cell": "inf",
+      "Form": "posiwieć",
+      "Morphs": ["po", "siwi", "e", "ć"],
+      "Source": ["jablonska-2004[(3a)]"]
+    },
+    {
+      "ID": "jablonska2004_3b",
+      "Lexeme_ID": "pojasniec",
+      "Cell": "inf",
+      "Form": "pojaśnieć",
+      "Morphs": ["po", "jaśni", "e", "ć"],
+      "Source": ["jablonska-2004[(3b)]"]
+    },
+    {
+      "ID": "jablonska2004_3c",
+      "Lexeme_ID": "poczerwieniec",
+      "Cell": "inf",
+      "Form": "poczerwienieć",
+      "Morphs": ["po", "czerwieni", "e", "ć"],
+      "Source": ["jablonska-2004[(3c)]"]
+    },
+    {
+      "ID": "jablonska2004_3d",
+      "Lexeme_ID": "posmutniec",
+      "Cell": "inf",
+      "Form": "posmutnieć",
+      "Morphs": ["po", "smutni", "e", "ć"],
+      "Source": ["jablonska-2004[(3d)]"]
+    },
+    {
+      "ID": "jablonska2004_8a",
+      "Lexeme_ID": "drozec",
+      "Cell": "inf",
+      "Form": "drożeć",
+      "Morphs": ["drożeć"],
+      "Source": ["jablonska-2004[(8a)]"]
+    },
+    {
+      "ID": "jablonska2004_9a",
+      "Lexeme_ID": "zieleniec",
+      "Cell": "inf",
+      "Form": "zielenieć",
+      "Morphs": ["zielenieć"],
+      "Source": ["jablonska-2004[(9a)]"]
+    },
+    {
+      "ID": "jablonska2004_10a_po",
+      "Lexeme_ID": "pociemniec",
+      "Cell": "inf",
+      "Form": "pociemnieć",
+      "Morphs": ["po", "ciem", "ni", "e", "ć"],
+      "Source": ["jablonska-2004[(10a)]"]
+    },
+    {
+      "ID": "jablonska2004_10a_z",
+      "Lexeme_ID": "zciemniec",
+      "Cell": "inf",
+      "Form": "zciemnieć",
+      "Morphs": ["z", "ciem", "ni", "e", "ć"],
+      "Comment": "spelled ściemnieć",
+      "Source": ["jablonska-2004[(10a)]"]
+    },
+    {
+      "ID": "jablonska2004_10b_po",
+      "Lexeme_ID": "podrozec",
+      "Cell": "inf",
+      "Form": "podrożeć",
+      "Morphs": ["po", "droż", "e", "ć"],
+      "Source": ["jablonska-2004[(10b)]"]
+    },
+    {
+      "ID": "jablonska2004_10b_z",
+      "Lexeme_ID": "zdrozec",
+      "Cell": "inf",
+      "Form": "zdrożeć",
+      "Morphs": ["z", "droż", "e", "ć"],
+      "Source": ["jablonska-2004[(10b)]"]
+    },
+    {
+      "ID": "jablonska2004_10c_po",
+      "Lexeme_ID": "postarzec_sie",
+      "Cell": "inf",
+      "Form": "postarzeć się",
+      "Morphs": ["po", "starz", "e", "ć", "się"],
+      "Source": ["jablonska-2004[(10c)]"]
+    },
+    {
+      "ID": "jablonska2004_10c_z",
+      "Lexeme_ID": "zestarzec_sie",
+      "Cell": "inf",
+      "Form": "zestarzeć się",
+      "Morphs": ["ze", "starz", "e", "ć", "się"],
+      "Source": ["jablonska-2004[(10c)]"]
+    },
+    {
+      "ID": "jablonska2004_23a",
+      "Lexeme_ID": "pobabieli",
+      "Cell": "pst_pl_vir",
+      "Form": "pobabieli",
+      "Morphs": ["po", "babi", "e", "li"],
+      "Source": ["jablonska-2004[(23a)]"]
+    },
+    {
+      "ID": "jablonska2004_24a",
+      "Lexeme_ID": "poprzeczytywalem",
+      "Cell": "pst_m_sg_1",
+      "Form": "poprzeczytywałem",
+      "Morphs": ["po", "prze", "czyt", "ø", "ywa", "łem"],
+      "Source": ["jablonska-2004[(24a)]"]
+    },
+    {
+      "ID": "jablonska2004_24b",
+      "Lexeme_ID": "poprzeczytalem",
+      "Cell": "pst_m_sg_1",
+      "Form": "poprzeczytałem",
+      "Morphs": ["po", "prze", "czyt", "a", "łem"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(24b)]"]
+    },
+    {
+      "ID": "jablonska2004_27a",
+      "Lexeme_ID": "poczytac",
+      "Cell": "inf",
+      "Form": "poczytać",
+      "Morphs": ["po", "czyt", "a", "ć"],
+      "Source": ["jablonska-2004[(27a)]"]
+    },
+    {
+      "ID": "jablonska2004_27b",
+      "Lexeme_ID": "pograc",
+      "Cell": "inf",
+      "Form": "pograć",
+      "Morphs": ["po", "gr", "a", "ć"],
+      "Source": ["jablonska-2004[(27b)]"]
+    },
+    {
+      "ID": "jablonska2004_27c",
+      "Lexeme_ID": "pochodzic",
+      "Cell": "inf",
+      "Form": "pochodzić",
+      "Morphs": ["po", "chodz", "i", "ć"],
+      "Source": ["jablonska-2004[(27c)]", "jablonska-2004[(51a)]"]
+    },
+    {
+      "ID": "jablonska2004_27d",
+      "Lexeme_ID": "popalic",
+      "Cell": "inf",
+      "Form": "popalić",
+      "Morphs": ["po", "pal", "i", "ć"],
+      "Source": ["jablonska-2004[(27d)]"]
+    },
+    {
+      "ID": "jablonska2004_28a",
+      "Lexeme_ID": "pochowala",
+      "Cell": "pst_f_sg",
+      "Form": "pochowała",
+      "Morphs": ["po", "chowa", "ła"],
+      "Source": ["jablonska-2004[(28a)]"]
+    },
+    {
+      "ID": "jablonska2004_28b",
+      "Lexeme_ID": "poprzepisywala",
+      "Cell": "pst_f_sg",
+      "Form": "poprzepisywała",
+      "Morphs": ["po", "prze", "pis", "ywa", "ła"],
+      "Source": ["jablonska-2004[(28b)]"]
+    },
+    {
+      "ID": "jablonska2004_28c",
+      "Lexeme_ID": "pospiewali",
+      "Cell": "pst_pl_vir",
+      "Form": "pośpiewali",
+      "Morphs": ["po", "śpiewa", "li"],
+      "Source": ["jablonska-2004[(28c)]"]
+    },
+    {
+      "ID": "jablonska2004_28d",
+      "Lexeme_ID": "powchodzili",
+      "Cell": "pst_pl_vir",
+      "Form": "powchodzili",
+      "Morphs": ["po", "w", "chodzi", "li"],
+      "Source": ["jablonska-2004[(28d)]"]
+    },
+    {
+      "ID": "jablonska2004_30",
+      "Lexeme_ID": "przepisac",
+      "Cell": "inf",
+      "Form": "przepisać",
+      "Morphs": ["prze", "pisać"],
+      "Source": ["jablonska-2004[(30)]"]
+    },
+    {
+      "ID": "jablonska2004_31a",
+      "Lexeme_ID": "przepisac",
+      "Cell": "inf",
+      "Form": "przepisywać",
+      "Morphs": ["prze", "pis", "ywa", "ć"],
+      "Source": ["jablonska-2004[(31a)]"]
+    },
+    {
+      "ID": "jablonska2004_32a",
+      "Lexeme_ID": "robiac",
+      "Cell": "inf",
+      "Form": "robiać",
+      "Morphs": ["rob", "i", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "SI needs a delimited interval (66)",
+      "Source": ["jablonska-2004[(32)]"]
+    },
+    {
+      "ID": "jablonska2004_32b",
+      "Lexeme_ID": "gwizdywac",
+      "Cell": "inf",
+      "Form": "gwizdywać",
+      "Morphs": ["gwizd", "ø", "ywa", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(32)]"]
+    },
+    {
+      "ID": "jablonska2004_34a",
+      "Lexeme_ID": "poprzepisywac",
+      "Cell": "inf",
+      "Form": "poprzepisywać",
+      "Morphs": ["po", "prze", "pis", "ywa", "ć"],
+      "Source": ["jablonska-2004[(34a)]", "jablonska-2004[(34b)]"]
+    },
+    {
+      "ID": "jablonska2004_39a",
+      "Lexeme_ID": "pomarznac",
+      "Cell": "inf",
+      "Form": "pomarznąć",
+      "Morphs": ["po", "marz", "ną", "ć"],
+      "Source": ["jablonska-2004[(39a)]"]
+    },
+    {
+      "ID": "jablonska2004_39b",
+      "Lexeme_ID": "pogluchnac",
+      "Cell": "inf",
+      "Form": "pogłuchnąć",
+      "Morphs": ["po", "głuch", "n", "ą", "ć"],
+      "Source": ["jablonska-2004[(39b)]"]
+    },
+    {
+      "ID": "jablonska2004_39c",
+      "Lexeme_ID": "powiednac",
+      "Cell": "inf",
+      "Form": "powiędnąć",
+      "Morphs": ["po", "więd", "ną", "ć"],
+      "Source": ["jablonska-2004[(39c)]"]
+    },
+    {
+      "ID": "jablonska2004_39d",
+      "Lexeme_ID": "poslepnac",
+      "Cell": "inf",
+      "Form": "poślepnąć",
+      "Morphs": ["po", "ślep", "ną", "ć"],
+      "Source": ["jablonska-2004[(39d)]"]
+    },
+    {
+      "ID": "jablonska2004_42a",
+      "Lexeme_ID": "postracic",
+      "Cell": "inf",
+      "Form": "postracić",
+      "Morphs": ["po", "s", "tracić"],
+      "Judgment": "ungrammatical",
+      "Comment": "a single Agree with Asp1",
+      "Source": ["jablonska-2004[(42)]"]
+    },
+    {
+      "ID": "jablonska2004_42b",
+      "Lexeme_ID": "poobkopac",
+      "Cell": "inf",
+      "Form": "poobkopać",
+      "Morphs": ["po", "ob", "kopać"],
+      "Judgment": "ungrammatical",
+      "Comment": "a single Agree with Asp1",
+      "Source": ["jablonska-2004[(42)]"]
+    },
+    {
+      "ID": "jablonska2004_42c",
+      "Lexeme_ID": "powyrzucic",
+      "Cell": "inf",
+      "Form": "powyrzucić",
+      "Morphs": ["po", "wy", "rzucić"],
+      "Judgment": "ungrammatical",
+      "Comment": "a single Agree with Asp1",
+      "Source": ["jablonska-2004[(42)]"]
+    },
+    {
+      "ID": "jablonska2004_43a",
+      "Lexeme_ID": "poobkopywac",
+      "Cell": "inf",
+      "Form": "poobkopywać",
+      "Morphs": ["po", "ob", "kop", "ywa", "ć"],
+      "Source": ["jablonska-2004[(43)]"]
+    },
+    {
+      "ID": "jablonska2004_43b",
+      "Lexeme_ID": "powyrzucac",
+      "Cell": "inf",
+      "Form": "powyrzucać",
+      "Morphs": ["po", "wy", "rzuc", "a", "ć"],
+      "Source": ["jablonska-2004[(43)]"]
+    },
+    {
+      "ID": "jablonska2004_45a",
+      "Lexeme_ID": "powarknac",
+      "Cell": "inf",
+      "Form": "powarknąć",
+      "Morphs": ["po", "wark", "ną", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "no continuum to measure",
+      "Source": ["jablonska-2004[(45)]"]
+    },
+    {
+      "ID": "jablonska2004_45b",
+      "Lexeme_ID": "pokopnac",
+      "Cell": "inf",
+      "Form": "pokopnąć",
+      "Morphs": ["po", "kop", "ną", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "no continuum to measure",
+      "Source": ["jablonska-2004[(45)]"]
+    },
+    {
+      "ID": "jablonska2004_45c",
+      "Lexeme_ID": "pomachnac",
+      "Cell": "inf",
+      "Form": "pomachnąć",
+      "Morphs": ["po", "mach", "ną", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "no continuum to measure",
+      "Source": ["jablonska-2004[(45)]"]
+    },
+    {
+      "ID": "jablonska2004_46b",
+      "Lexeme_ID": "machniesz",
+      "Cell": "prs_2sg",
+      "Form": "machniesz",
+      "Morphs": ["mach", "ni", "e", "sz"],
+      "Source": ["jablonska-2004[(46b)]"]
+    },
+    {
+      "ID": "jablonska2004_48",
+      "Lexeme_ID": "powarknywac",
+      "Cell": "inf",
+      "Form": "powarknywać",
+      "Morphs": ["po", "wark", "n", "ywa", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "no interval for SI",
+      "Source": ["jablonska-2004[(48)]"]
+    },
+    {
+      "ID": "jablonska2004_50a",
+      "Lexeme_ID": "pojsc",
+      "Cell": "inf",
+      "Form": "pójść",
+      "Morphs": ["pó", "jść"],
+      "Source": ["jablonska-2004[(50a)]"]
+    },
+    {
+      "ID": "jablonska2004_50b",
+      "Lexeme_ID": "pobiec",
+      "Cell": "inf",
+      "Form": "pobiec",
+      "Morphs": ["po", "biec"],
+      "Source": ["jablonska-2004[(50b)]"]
+    },
+    {
+      "ID": "jablonska2004_50c",
+      "Lexeme_ID": "poleciec",
+      "Cell": "inf",
+      "Form": "polecieć",
+      "Morphs": ["po", "lecieć"],
+      "Source": ["jablonska-2004[(50c)]"]
+    },
+    {
+      "ID": "jablonska2004_50d",
+      "Lexeme_ID": "pociagnac",
+      "Cell": "inf",
+      "Form": "pociągnąć",
+      "Morphs": ["po", "ciągnąć"],
+      "Source": ["jablonska-2004[(50d)]"]
+    },
+    {
+      "ID": "jablonska2004_51b",
+      "Lexeme_ID": "pobiegac",
+      "Cell": "inf",
+      "Form": "pobiegać",
+      "Morphs": ["po", "biegać"],
+      "Source": ["jablonska-2004[(51b)]"]
+    },
+    {
+      "ID": "jablonska2004_51c",
+      "Lexeme_ID": "polatac",
+      "Cell": "inf",
+      "Form": "polatać",
+      "Morphs": ["po", "latać"],
+      "Source": ["jablonska-2004[(51c)]"]
+    },
+    {
+      "ID": "jablonska2004_51d",
+      "Lexeme_ID": "pociagac",
+      "Cell": "inf",
+      "Form": "pociągać",
+      "Morphs": ["po", "ciągać"],
+      "Source": ["jablonska-2004[(51d)]"]
+    },
+    {
+      "ID": "jablonska2004_53",
+      "Lexeme_ID": "zajasniec",
+      "Cell": "inf",
+      "Form": "zajaśnieć",
+      "Morphs": ["za", "jaś", "ni", "e", "ć"],
+      "Source": ["jablonska-2004[(53)]"]
+    },
+    {
+      "ID": "jablonska2004_54a",
+      "Lexeme_ID": "pokochac",
+      "Cell": "inf",
+      "Form": "pokochać",
+      "Morphs": ["po", "kochać"],
+      "Source": ["jablonska-2004[(54a)]"]
+    },
+    {
+      "ID": "jablonska2004_54b",
+      "Lexeme_ID": "polubic",
+      "Cell": "inf",
+      "Form": "polubić",
+      "Morphs": ["po", "lubić"],
+      "Source": ["jablonska-2004[(54b)]"]
+    },
+    {
+      "ID": "jablonska2004_fn21",
+      "Lexeme_ID": "posiedziec",
+      "Cell": "inf",
+      "Form": "posiedzieć",
+      "Morphs": ["po", "siedzieć"],
+      "Source": ["jablonska-2004[fn. 21]"]
+    },
+    {
+      "ID": "jablonska2004_56a",
+      "Lexeme_ID": "poczytywac",
+      "Cell": "inf",
+      "Form": "poczytywać",
+      "Morphs": ["po", "czyt", "ø", "ywa", "ć"],
+      "Judgment": "marginal",
+      "Source": ["jablonska-2004[(56a)]"]
+    },
+    {
+      "ID": "jablonska2004_56b",
+      "Lexeme_ID": "pogrywac",
+      "Cell": "inf",
+      "Form": "pogrywać",
+      "Morphs": ["po", "gr", "ø", "ywa", "ć"],
+      "Comment": "the attenuative impression comes from delimitative po- under SI (64)",
+      "Source": ["jablonska-2004[(56b)]", "jablonska-2004[(60)]"]
+    },
+    {
+      "ID": "jablonska2004_56c",
+      "Lexeme_ID": "pochadzac",
+      "Cell": "inf",
+      "Form": "pochadzać",
+      "Morphs": ["po", "chadz", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "Not productive; the paper offers no rule.",
+      "Source": ["jablonska-2004[(56c)]"]
+    },
+    {
+      "ID": "jablonska2004_56d",
+      "Lexeme_ID": "popalac",
+      "Cell": "inf",
+      "Form": "popalać",
+      "Morphs": ["po", "pal", "ø", "a", "ć"],
+      "Source": ["jablonska-2004[(56d)]"]
+    },
+    {
+      "ID": "jablonska2004_57a",
+      "Lexeme_ID": "poplakiwac",
+      "Cell": "inf",
+      "Form": "popłakiwać",
+      "Morphs": ["po", "płak", "ø", "iwa", "ć"],
+      "Source": ["jablonska-2004[(57a)]"]
+    },
+    {
+      "ID": "jablonska2004_57b",
+      "Lexeme_ID": "pokaslywac",
+      "Cell": "inf",
+      "Form": "pokasływać",
+      "Morphs": ["po", "kasł", "ø", "ywa", "ć"],
+      "Source": ["jablonska-2004[(57b)]"]
+    },
+    {
+      "ID": "jablonska2004_57c",
+      "Lexeme_ID": "pomiaukiwac",
+      "Cell": "inf",
+      "Form": "pomiaukiwać",
+      "Morphs": ["po", "miauk", "ø", "iwa", "ć"],
+      "Source": ["jablonska-2004[(57c)]"]
+    },
+    {
+      "ID": "jablonska2004_57d",
+      "Lexeme_ID": "pogwizdywac",
+      "Cell": "inf",
+      "Form": "pogwizdywać",
+      "Morphs": ["po", "gwizd", "ø", "ywać"],
+      "Source": ["jablonska-2004[(57d)]"]
+    },
+    {
+      "ID": "jablonska2004_58a",
+      "Lexeme_ID": "pokroczac",
+      "Cell": "inf",
+      "Form": "pokroczać",
+      "Morphs": ["po", "krocz", "ø", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "Not productive; the paper offers no rule.",
+      "Source": ["jablonska-2004[(58a)]"]
+    },
+    {
+      "ID": "jablonska2004_58b",
+      "Lexeme_ID": "potanczac",
+      "Cell": "inf",
+      "Form": "potańczać",
+      "Morphs": ["po", "tańcz", "ø", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "Not productive; the paper offers no rule.",
+      "Source": ["jablonska-2004[(58b)]"]
+    },
+    {
+      "ID": "jablonska2004_58c",
+      "Lexeme_ID": "pokochiwac",
+      "Cell": "inf",
+      "Form": "pokochiwać",
+      "Morphs": ["po", "koch", "ø", "iwa", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "Not productive; the paper offers no rule.",
+      "Source": ["jablonska-2004[(58c)]"]
+    },
+    {
+      "ID": "jablonska2004_59a",
+      "Lexeme_ID": "posiwiec",
+      "Cell": "inf",
+      "Form": "posiwiać",
+      "Morphs": ["po", "siwi", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "low verbalizers denote no interval",
+      "Source": ["jablonska-2004[(59a)]"]
+    },
+    {
+      "ID": "jablonska2004_60_bare",
+      "Lexeme_ID": "grywac",
+      "Cell": "inf",
+      "Form": "grywać",
+      "Morphs": ["gr", "ywa", "ć"],
+      "Comment": "exceptional: SI without a prefix, fn. 23",
+      "Source": ["jablonska-2004[(60)]"]
+    },
+    {
+      "ID": "jablonska2004_61a",
+      "Lexeme_ID": "popogrywac",
+      "Cell": "inf",
+      "Form": "popogrywać",
+      "Morphs": ["po", "po", "gr", "ywa", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "the iterated delimited events are not S-summable (36)",
+      "Source": ["jablonska-2004[(61a)]"]
+    },
+    {
+      "ID": "jablonska2004_61b",
+      "Lexeme_ID": "popopalac",
+      "Cell": "inf",
+      "Form": "popopalać",
+      "Morphs": ["po", "po", "pal", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(61b)]"]
+    },
+    {
+      "ID": "jablonska2004_62a",
+      "Lexeme_ID": "podjesc",
+      "Cell": "inf",
+      "Form": "podjeść",
+      "Morphs": ["pod", "jeść"],
+      "Source": ["jablonska-2004[(62a)]"]
+    },
+    {
+      "ID": "jablonska2004_62b",
+      "Lexeme_ID": "podjesc",
+      "Cell": "inf",
+      "Form": "podjadać",
+      "Morphs": ["pod", "jad", "a", "ć"],
+      "Source": ["jablonska-2004[(62b)]"]
+    },
+    {
+      "ID": "jablonska2004_63b",
+      "Lexeme_ID": "pomiauknac",
+      "Cell": "inf",
+      "Form": "pomiauknąć",
+      "Morphs": ["po", "miauk", "ną", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(63b)]"]
+    },
+    {
+      "ID": "jablonska2004_65a",
+      "Lexeme_ID": "podmuchiwala",
+      "Cell": "pst_f_sg",
+      "Form": "podmuchiwała",
+      "Morphs": ["po", "dmuch", "iwa", "ła"],
+      "Source": ["jablonska-2004[(65a)]"]
+    },
+    {
+      "ID": "jablonska2004_67a_pf",
+      "Lexeme_ID": "stracic",
+      "Cell": "inf",
+      "Form": "stracić",
+      "Morphs": ["s", "trac", "i", "ć"],
+      "Source": ["jablonska-2004[(67a)]"]
+    },
+    {
+      "ID": "jablonska2004_67a_si",
+      "Lexeme_ID": "stracic",
+      "Cell": "inf",
+      "Form": "stracać",
+      "Morphs": ["s", "trac", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "no SI of a purely perfectivized stem (68)",
+      "Source": ["jablonska-2004[(67a)]"]
+    },
+    {
+      "ID": "jablonska2004_67b_pf",
+      "Lexeme_ID": "zrobic",
+      "Cell": "inf",
+      "Form": "zrobić",
+      "Morphs": ["z", "rob", "i", "ć"],
+      "Source": ["jablonska-2004[(67b)]"]
+    },
+    {
+      "ID": "jablonska2004_67b_si",
+      "Lexeme_ID": "zrobic",
+      "Cell": "inf",
+      "Form": "zrabiać",
+      "Morphs": ["z", "rab", "i", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "no SI of a purely perfectivized stem (68)",
+      "Source": ["jablonska-2004[(67b)]"]
+    },
+    {
+      "ID": "jablonska2004_67c_pf",
+      "Lexeme_ID": "schowac",
+      "Cell": "inf",
+      "Form": "schować",
+      "Morphs": ["s", "chow", "a", "ć"],
+      "Source": ["jablonska-2004[(67c)]"]
+    },
+    {
+      "ID": "jablonska2004_67c_si",
+      "Lexeme_ID": "schowac",
+      "Cell": "inf",
+      "Form": "schowywać",
+      "Morphs": ["s", "chow", "ywa", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "no SI of a purely perfectivized stem (68)",
+      "Source": ["jablonska-2004[(67c)]"]
+    },
+    {
+      "ID": "jablonska2004_69a_pf",
+      "Lexeme_ID": "pobrudzic",
+      "Cell": "inf",
+      "Form": "pobrudzić",
+      "Morphs": ["po", "brudzić"],
+      "Source": ["jablonska-2004[(69a)]"]
+    },
+    {
+      "ID": "jablonska2004_69a_si",
+      "Lexeme_ID": "pobrudzic",
+      "Cell": "inf",
+      "Form": "pobrudzać",
+      "Morphs": ["po", "brudz", "ø", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(69a)]"]
+    },
+    {
+      "ID": "jablonska2004_69b_pf",
+      "Lexeme_ID": "pobic",
+      "Cell": "inf",
+      "Form": "pobić",
+      "Morphs": ["po", "bić"],
+      "Source": ["jablonska-2004[(69b)]"]
+    },
+    {
+      "ID": "jablonska2004_69b_si",
+      "Lexeme_ID": "pobic",
+      "Cell": "inf",
+      "Form": "pobijać",
+      "Morphs": ["po", "bij", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(69b)]"]
+    },
+    {
+      "ID": "jablonska2004_69c_pf",
+      "Lexeme_ID": "pochwalic",
+      "Cell": "inf",
+      "Form": "pochwalić",
+      "Morphs": ["po", "chwalić"],
+      "Source": ["jablonska-2004[(69c)]"]
+    },
+    {
+      "ID": "jablonska2004_69c_si",
+      "Lexeme_ID": "pochwalic",
+      "Cell": "inf",
+      "Form": "pochwalać",
+      "Morphs": ["po", "chwal", "ø", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(69c)]"]
+    },
+    {
+      "ID": "jablonska2004_73a",
+      "Lexeme_ID": "zdziczac",
+      "Cell": "inf",
+      "Form": "zdziczać",
+      "Morphs": ["z", "dzicz", "ø", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(73a)]"]
+    },
+    {
+      "ID": "jablonska2004_74",
+      "Lexeme_ID": "posiwiec",
+      "Cell": "inf",
+      "Form": "posiwać",
+      "Morphs": ["po", "siw", "ø", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(74)]"]
+    },
+    {
+      "ID": "jablonska2004_75a",
+      "Lexeme_ID": "wygasnac",
+      "Cell": "inf",
+      "Form": "wygasnąć",
+      "Morphs": ["wy", "gas", "ną", "ć"],
+      "Source": ["jablonska-2004[(75a)]"]
+    },
+    {
+      "ID": "jablonska2004_75b",
+      "Lexeme_ID": "zgasnac",
+      "Cell": "inf",
+      "Form": "zgasnąć",
+      "Morphs": ["z", "gas", "ną", "ć"],
+      "Source": ["jablonska-2004[(75b)]"]
+    },
+    {
+      "ID": "jablonska2004_76_a",
+      "Lexeme_ID": "wygasnac",
+      "Cell": "inf",
+      "Form": "wygasnać",
+      "Morphs": ["wy", "gas", "n", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(76)]"]
+    },
+    {
+      "ID": "jablonska2004_76_b",
+      "Lexeme_ID": "wygasnac",
+      "Cell": "inf",
+      "Form": "wygasnywać",
+      "Morphs": ["wy", "gas", "n", "ywa", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(76)]"]
+    },
+    {
+      "ID": "jablonska2004_77",
+      "Lexeme_ID": "wygasnac",
+      "Cell": "inf",
+      "Form": "wygasać",
+      "Morphs": ["wy", "gas", "a", "ć"],
+      "Comment": "the root shifts to the high -aj- class under SI",
+      "Source": ["jablonska-2004[(77)]"]
+    },
+    {
+      "ID": "jablonska2004_78",
+      "Lexeme_ID": "zgasnac",
+      "Cell": "inf",
+      "Form": "zgasać",
+      "Morphs": ["z", "gas", "a", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(78)]"]
+    },
+    {
+      "ID": "jablonska2004_79a",
+      "Lexeme_ID": "podszepnac",
+      "Cell": "inf",
+      "Form": "podszepnąć",
+      "Morphs": ["pod", "szep", "ną", "ć"],
+      "Source": ["jablonska-2004[(79a)]"]
+    },
+    {
+      "ID": "jablonska2004_79b",
+      "Lexeme_ID": "podszepnac",
+      "Cell": "inf",
+      "Form": "podszepnywać",
+      "Morphs": ["pod", "szep", "n", "ywa", "ć"],
+      "Judgment": "ungrammatical",
+      "Source": ["jablonska-2004[(79b)]"]
+    },
+    {
+      "ID": "jablonska2004_79c",
+      "Lexeme_ID": "szeptac",
+      "Cell": "inf",
+      "Form": "szeptać",
+      "Morphs": ["szept", "a", "ć"],
+      "Comment": "the non-semelfactive stem of the same root",
+      "Source": ["jablonska-2004[(79c)]"]
+    },
+    {
+      "ID": "jablonska2004_79d",
+      "Lexeme_ID": "podszepnac",
+      "Cell": "inf",
+      "Form": "podszeptywać",
+      "Morphs": ["pod", "szept", "ø", "ywa", "ć"],
+      "Comment": "SI from the non-semelfactive -a- stem of the same root",
+      "Source": ["jablonska-2004[(79d)]"]
+    },
+    {
+      "ID": "jablonska2004_80b",
+      "Lexeme_ID": "doplywa",
+      "Cell": "prs_3sg",
+      "Form": "dopływa",
+      "Morphs": ["do", "pływa"],
+      "Source": ["jablonska-2004[(80b)]"]
+    },
+    {
+      "ID": "jablonska2004_81a",
+      "Lexeme_ID": "ponizyc",
+      "Cell": "inf",
+      "Form": "poniżyć",
+      "Morphs": ["po", "niż", "y", "ć"],
+      "Source": ["jablonska-2004[(81a)]"]
+    },
+    {
+      "ID": "jablonska2004_81b",
+      "Lexeme_ID": "pocieszyc",
+      "Cell": "inf",
+      "Form": "pocieszyć",
+      "Morphs": ["po", "ciesz", "y", "ć"],
+      "Source": ["jablonska-2004[(81b)]"]
+    },
+    {
+      "ID": "jablonska2004_81c",
+      "Lexeme_ID": "porownac",
+      "Cell": "inf",
+      "Form": "porównać",
+      "Morphs": ["po", "równ", "a", "ć"],
+      "Source": ["jablonska-2004[(81c)]"]
+    },
+    {
+      "ID": "jablonska2004_81d",
+      "Lexeme_ID": "pozwac",
+      "Cell": "inf",
+      "Form": "pozwać",
+      "Morphs": ["po", "zw", "ać"],
+      "Source": ["jablonska-2004[(81d)]"]
+    },
+    {
+      "ID": "jablonska2004_81e",
+      "Lexeme_ID": "polec",
+      "Cell": "inf",
+      "Form": "polec",
+      "Morphs": ["po", "le", "c"],
+      "Source": ["jablonska-2004[(81e)]"]
+    },
+    {
+      "ID": "jablonska2004_81f",
+      "Lexeme_ID": "pogrzybiec",
+      "Cell": "inf",
+      "Form": "pogrzybieć",
+      "Morphs": ["po", "grzybi", "e", "ć"],
+      "Judgment": "ungrammatical",
+      "Comment": "an adjectival base has no Result phrase",
+      "Source": ["jablonska-2004[(81f)]"]
+    },
+    {
+      "ID": "jablonska2004_82a",
+      "Lexeme_ID": "ponizyc",
+      "Cell": "inf",
+      "Form": "poniżać",
+      "Morphs": ["po", "niż", "ø", "a", "ć"],
+      "Source": ["jablonska-2004[(82a)]"]
+    },
+    {
+      "ID": "jablonska2004_82b",
+      "Lexeme_ID": "pocieszyc",
+      "Cell": "inf",
+      "Form": "pocieszać",
+      "Morphs": ["po", "ciesz", "ø", "a", "ć"],
+      "Source": ["jablonska-2004[(82b)]"]
+    },
+    {
+      "ID": "jablonska2004_82c",
+      "Lexeme_ID": "porownac",
+      "Cell": "inf",
+      "Form": "porównywać",
+      "Morphs": ["po", "równ", "ø", "ywa", "ć"],
+      "Source": ["jablonska-2004[(82c)]"]
+    },
+    {
+      "ID": "jablonska2004_82d",
+      "Lexeme_ID": "pozwac",
+      "Cell": "inf",
+      "Form": "pozywać",
+      "Morphs": ["po", "zyw", "a", "ć"],
+      "Source": ["jablonska-2004[(82d)]"]
+    },
+    {
+      "ID": "jablonska2004_83a",
+      "Lexeme_ID": "poporownywalismy",
+      "Cell": "pst_vir_1pl",
+      "Form": "poporównywaliśmy",
+      "Morphs": ["po", "po", "równ", "ywa", "li", "śmy"],
+      "Source": ["jablonska-2004[(83a)]"]
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "jablonska2004_r_31a_imperfective",
+      "Form_ID": "jablonska2004_30",
+      "Target_ID": "jablonska2004_31a",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(31a)]"]
+    },
+    {
+      "ID": "jablonska2004_r_59a_imperfective",
+      "Form_ID": "jablonska2004_3a",
+      "Target_ID": "jablonska2004_59a",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(59a)]"]
+    },
+    {
+      "ID": "jablonska2004_r_62b_imperfective",
+      "Form_ID": "jablonska2004_62a",
+      "Target_ID": "jablonska2004_62b",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(62b)]"]
+    },
+    {
+      "ID": "jablonska2004_r_67a_si_imperfective",
+      "Form_ID": "jablonska2004_67a_pf",
+      "Target_ID": "jablonska2004_67a_si",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(67a)]"]
+    },
+    {
+      "ID": "jablonska2004_r_67b_si_imperfective",
+      "Form_ID": "jablonska2004_67b_pf",
+      "Target_ID": "jablonska2004_67b_si",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(67b)]"]
+    },
+    {
+      "ID": "jablonska2004_r_67c_si_imperfective",
+      "Form_ID": "jablonska2004_67c_pf",
+      "Target_ID": "jablonska2004_67c_si",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(67c)]"]
+    },
+    {
+      "ID": "jablonska2004_r_69a_si_imperfective",
+      "Form_ID": "jablonska2004_69a_pf",
+      "Target_ID": "jablonska2004_69a_si",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(69a)]"]
+    },
+    {
+      "ID": "jablonska2004_r_69b_si_imperfective",
+      "Form_ID": "jablonska2004_69b_pf",
+      "Target_ID": "jablonska2004_69b_si",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(69b)]"]
+    },
+    {
+      "ID": "jablonska2004_r_69c_si_imperfective",
+      "Form_ID": "jablonska2004_69c_pf",
+      "Target_ID": "jablonska2004_69c_si",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(69c)]"]
+    },
+    {
+      "ID": "jablonska2004_r_74_imperfective",
+      "Form_ID": "jablonska2004_3a",
+      "Target_ID": "jablonska2004_74",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(74)]"]
+    },
+    {
+      "ID": "jablonska2004_r_76_a_imperfective",
+      "Form_ID": "jablonska2004_75a",
+      "Target_ID": "jablonska2004_76_a",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(76)]"]
+    },
+    {
+      "ID": "jablonska2004_r_76_b_imperfective",
+      "Form_ID": "jablonska2004_75a",
+      "Target_ID": "jablonska2004_76_b",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(76)]"]
+    },
+    {
+      "ID": "jablonska2004_r_77_imperfective",
+      "Form_ID": "jablonska2004_75a",
+      "Target_ID": "jablonska2004_77",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(77)]"]
+    },
+    {
+      "ID": "jablonska2004_r_78_imperfective",
+      "Form_ID": "jablonska2004_75b",
+      "Target_ID": "jablonska2004_78",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(78)]"]
+    },
+    {
+      "ID": "jablonska2004_r_79b_imperfective",
+      "Form_ID": "jablonska2004_79a",
+      "Target_ID": "jablonska2004_79b",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(79b)]"]
+    },
+    {
+      "ID": "jablonska2004_r_79d_imperfective",
+      "Form_ID": "jablonska2004_79a",
+      "Target_ID": "jablonska2004_79d",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(79d)]"]
+    },
+    {
+      "ID": "jablonska2004_r_82a_imperfective",
+      "Form_ID": "jablonska2004_81a",
+      "Target_ID": "jablonska2004_82a",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(82a)]"]
+    },
+    {
+      "ID": "jablonska2004_r_82b_imperfective",
+      "Form_ID": "jablonska2004_81b",
+      "Target_ID": "jablonska2004_82b",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(82b)]"]
+    },
+    {
+      "ID": "jablonska2004_r_82c_imperfective",
+      "Form_ID": "jablonska2004_81c",
+      "Target_ID": "jablonska2004_82c",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(82c)]"]
+    },
+    {
+      "ID": "jablonska2004_r_82d_imperfective",
+      "Form_ID": "jablonska2004_81d",
+      "Target_ID": "jablonska2004_82d",
+      "Relation": "imperfective",
+      "Source": ["jablonska-2004[(82d)]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Verbalizer",
+      "Lean": "verbalizer",
+      "Type": "String",
+      "Description": "the verbalizer the paper names for the stem"
+    },
+    {
+      "Name": "Layers",
+      "Lean": "layers",
+      "Type": "String",
+      "Description": "the positions the paper assigns the prefixes and the Secondary Imperfective"
+    },
+    {
+      "Name": "Reading",
+      "Lean": "reading",
+      "Type": "String",
+      "Description": "the reading of po- the paper gives"
+    },
+    {
+      "Name": "Scale",
+      "Lean": "scale",
+      "Type": "String",
+      "Description": "the scale of a degree achievement, open or closed"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "jablonska2004_3a",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1"
+    },
+    {
+      "Form_ID": "jablonska2004_3b",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1"
+    },
+    {
+      "Form_ID": "jablonska2004_3c",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1"
+    },
+    {
+      "Form_ID": "jablonska2004_3d",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1"
+    },
+    {
+      "Form_ID": "jablonska2004_8a",
+      "Scale": "open"
+    },
+    {
+      "Form_ID": "jablonska2004_9a",
+      "Scale": "closed"
+    },
+    {
+      "Form_ID": "jablonska2004_10a_po",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1",
+      "Reading": "considerable change"
+    },
+    {
+      "Form_ID": "jablonska2004_10a_z",
+      "Verbalizer": "low -ej-",
+      "Layers": "purely perfectivizing prefix in Asp2"
+    },
+    {
+      "Form_ID": "jablonska2004_10b_po",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1",
+      "Reading": "considerable change"
+    },
+    {
+      "Form_ID": "jablonska2004_10b_z",
+      "Verbalizer": "low -ej-",
+      "Layers": "purely perfectivizing prefix in Asp2"
+    },
+    {
+      "Form_ID": "jablonska2004_10c_po",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1",
+      "Reading": "considerable change"
+    },
+    {
+      "Form_ID": "jablonska2004_10c_z",
+      "Verbalizer": "low -ej-",
+      "Layers": "purely perfectivizing prefix in Asp2"
+    },
+    {
+      "Form_ID": "jablonska2004_23a",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1",
+      "Reading": "distributive"
+    },
+    {
+      "Form_ID": "jablonska2004_24a",
+      "Verbalizer": "high -aj-",
+      "Layers": "lexical prefix, Secondary Imperfective, po- in Asp3",
+      "Reading": "distributive"
+    },
+    {
+      "Form_ID": "jablonska2004_24b",
+      "Verbalizer": "high -aj-",
+      "Layers": "lexical prefix, po-"
+    },
+    {
+      "Form_ID": "jablonska2004_27a",
+      "Verbalizer": "high processual",
+      "Layers": "po- in Asp1",
+      "Reading": "delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_27b",
+      "Verbalizer": "high processual",
+      "Layers": "po- in Asp1",
+      "Reading": "delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_27c",
+      "Verbalizer": "high processual",
+      "Layers": "po- in Asp1",
+      "Reading": "delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_27d",
+      "Verbalizer": "high processual",
+      "Layers": "po- in Asp1",
+      "Reading": "delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_28a",
+      "Verbalizer": "high -aj-",
+      "Reading": "distributive or delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_28b",
+      "Layers": "lexical prefix, Secondary Imperfective, po- in Asp3",
+      "Reading": "distributive or delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_28c",
+      "Reading": "delimitative only: the external argument is outside the scope of po-"
+    },
+    {
+      "Form_ID": "jablonska2004_28d",
+      "Reading": "distributive or delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_30",
+      "Layers": "lexical prefix valuing Asp1: RT after ET"
+    },
+    {
+      "Form_ID": "jablonska2004_31a",
+      "Layers": "lexical prefix, Secondary Imperfective",
+      "Reading": "progressive: RT within ET"
+    },
+    {
+      "Form_ID": "jablonska2004_32a",
+      "Verbalizer": "high -i-",
+      "Layers": "Secondary Imperfective on a bare stem"
+    },
+    {
+      "Form_ID": "jablonska2004_32b",
+      "Layers": "Secondary Imperfective on a bare stem"
+    },
+    {
+      "Form_ID": "jablonska2004_34a",
+      "Layers": "lexical prefix, Secondary Imperfective, po- in Asp3",
+      "Reading": "delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_39a",
+      "Verbalizer": "low inchoative -n-",
+      "Layers": "po- in Asp1",
+      "Reading": "distributive"
+    },
+    {
+      "Form_ID": "jablonska2004_39b",
+      "Verbalizer": "low inchoative -n-",
+      "Layers": "po- in Asp1",
+      "Reading": "distributive"
+    },
+    {
+      "Form_ID": "jablonska2004_39c",
+      "Verbalizer": "low inchoative -n-",
+      "Layers": "po- in Asp1",
+      "Reading": "distributive"
+    },
+    {
+      "Form_ID": "jablonska2004_39d",
+      "Verbalizer": "low inchoative -n-",
+      "Layers": "po- in Asp1",
+      "Reading": "distributive"
+    },
+    {
+      "Form_ID": "jablonska2004_42a",
+      "Layers": "po- over a lexical prefix without SI"
+    },
+    {
+      "Form_ID": "jablonska2004_42b",
+      "Layers": "po- over a lexical prefix without SI"
+    },
+    {
+      "Form_ID": "jablonska2004_42c",
+      "Layers": "po- over a lexical prefix without SI"
+    },
+    {
+      "Form_ID": "jablonska2004_43a",
+      "Layers": "lexical prefix, Secondary Imperfective, po- in Asp3"
+    },
+    {
+      "Form_ID": "jablonska2004_43b",
+      "Layers": "lexical prefix, Secondary Imperfective, po- in Asp3"
+    },
+    {
+      "Form_ID": "jablonska2004_45a",
+      "Verbalizer": "semelfactive",
+      "Layers": "po- in Asp1"
+    },
+    {
+      "Form_ID": "jablonska2004_45b",
+      "Verbalizer": "semelfactive",
+      "Layers": "po- in Asp1"
+    },
+    {
+      "Form_ID": "jablonska2004_45c",
+      "Verbalizer": "semelfactive",
+      "Layers": "po- in Asp1"
+    },
+    {
+      "Form_ID": "jablonska2004_48",
+      "Verbalizer": "semelfactive",
+      "Layers": "Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_50a",
+      "Verbalizer": "directed motion",
+      "Layers": "po- in Asp1",
+      "Reading": "centrifugal"
+    },
+    {
+      "Form_ID": "jablonska2004_50b",
+      "Verbalizer": "directed motion",
+      "Layers": "po- in Asp1",
+      "Reading": "centrifugal"
+    },
+    {
+      "Form_ID": "jablonska2004_50c",
+      "Verbalizer": "directed motion",
+      "Layers": "po- in Asp1",
+      "Reading": "centrifugal"
+    },
+    {
+      "Form_ID": "jablonska2004_50d",
+      "Verbalizer": "directed motion",
+      "Layers": "po- in Asp1",
+      "Reading": "centrifugal"
+    },
+    {
+      "Form_ID": "jablonska2004_51b",
+      "Verbalizer": "non-directed motion",
+      "Layers": "po- in Asp1",
+      "Reading": "delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_51c",
+      "Verbalizer": "non-directed motion",
+      "Layers": "po- in Asp1",
+      "Reading": "delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_51d",
+      "Verbalizer": "non-directed motion",
+      "Layers": "po- in Asp1",
+      "Reading": "delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_53",
+      "Verbalizer": "low -ej-",
+      "Reading": "inceptive of a state, not of a becoming"
+    },
+    {
+      "Form_ID": "jablonska2004_54a",
+      "Verbalizer": "stative",
+      "Layers": "po- in Asp1",
+      "Reading": "inceptive"
+    },
+    {
+      "Form_ID": "jablonska2004_54b",
+      "Verbalizer": "stative",
+      "Reading": "inceptive"
+    },
+    {
+      "Form_ID": "jablonska2004_fn21",
+      "Verbalizer": "stative",
+      "Layers": "po- in Asp1",
+      "Reading": "delimitative"
+    },
+    {
+      "Form_ID": "jablonska2004_56a",
+      "Layers": "po- in Asp1, Secondary Imperfective",
+      "Reading": "attenuative-frequentative"
+    },
+    {
+      "Form_ID": "jablonska2004_56b",
+      "Layers": "po- in Asp1, Secondary Imperfective",
+      "Reading": "attenuative-frequentative"
+    },
+    {
+      "Form_ID": "jablonska2004_56c",
+      "Layers": "po- in Asp1, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_56d",
+      "Layers": "po- in Asp1, Secondary Imperfective",
+      "Reading": "attenuative-frequentative"
+    },
+    {
+      "Form_ID": "jablonska2004_57a",
+      "Verbalizer": "-a-",
+      "Layers": "po- in Asp1, Secondary Imperfective",
+      "Reading": "attenuative-frequentative"
+    },
+    {
+      "Form_ID": "jablonska2004_57b",
+      "Verbalizer": "-aj-",
+      "Layers": "po- in Asp1, Secondary Imperfective",
+      "Reading": "attenuative-frequentative"
+    },
+    {
+      "Form_ID": "jablonska2004_57c",
+      "Verbalizer": "-e-",
+      "Layers": "po- in Asp1, Secondary Imperfective",
+      "Reading": "attenuative-frequentative"
+    },
+    {
+      "Form_ID": "jablonska2004_57d",
+      "Verbalizer": "-a-",
+      "Layers": "po- in Asp1, Secondary Imperfective",
+      "Reading": "attenuative-frequentative"
+    },
+    {
+      "Form_ID": "jablonska2004_58a",
+      "Verbalizer": "-i-",
+      "Layers": "po- in Asp1, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_58b",
+      "Verbalizer": "-i-",
+      "Layers": "po- in Asp1, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_58c",
+      "Verbalizer": "-aj-",
+      "Layers": "po- in Asp1, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_59a",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_60_bare",
+      "Layers": "Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_61a",
+      "Layers": "po- in Asp1, Secondary Imperfective, po- in Asp3"
+    },
+    {
+      "Form_ID": "jablonska2004_61b",
+      "Layers": "po- in Asp1, Secondary Imperfective, po- in Asp3"
+    },
+    {
+      "Form_ID": "jablonska2004_62a",
+      "Layers": "lexical attenuative prefix pod-"
+    },
+    {
+      "Form_ID": "jablonska2004_62b",
+      "Layers": "lexical prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_63b",
+      "Verbalizer": "semelfactive"
+    },
+    {
+      "Form_ID": "jablonska2004_65a",
+      "Reading": "progressive of an attenuative-frequentative"
+    },
+    {
+      "Form_ID": "jablonska2004_67a_pf",
+      "Layers": "purely perfectivizing prefix in Asp2"
+    },
+    {
+      "Form_ID": "jablonska2004_67a_si",
+      "Layers": "purely perfectivizing prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_67b_pf",
+      "Layers": "purely perfectivizing prefix in Asp2"
+    },
+    {
+      "Form_ID": "jablonska2004_67b_si",
+      "Layers": "purely perfectivizing prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_67c_pf",
+      "Layers": "purely perfectivizing prefix in Asp2"
+    },
+    {
+      "Form_ID": "jablonska2004_67c_si",
+      "Layers": "purely perfectivizing prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_69a_pf",
+      "Layers": "po- as a purely perfectivizing prefix in Asp2"
+    },
+    {
+      "Form_ID": "jablonska2004_69a_si",
+      "Layers": "po- as a purely perfectivizing prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_69b_pf",
+      "Layers": "po- as a purely perfectivizing prefix in Asp2"
+    },
+    {
+      "Form_ID": "jablonska2004_69b_si",
+      "Layers": "po- as a purely perfectivizing prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_69c_pf",
+      "Layers": "po- as a purely perfectivizing prefix in Asp2"
+    },
+    {
+      "Form_ID": "jablonska2004_69c_si",
+      "Layers": "po- as a purely perfectivizing prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_73a",
+      "Verbalizer": "low -ej-",
+      "Layers": "purely perfectivizing prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_74",
+      "Verbalizer": "low -ej-",
+      "Layers": "po- in Asp1, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_75a",
+      "Verbalizer": "low inchoative -n-",
+      "Layers": "lexical prefix"
+    },
+    {
+      "Form_ID": "jablonska2004_75b",
+      "Verbalizer": "low inchoative -n-",
+      "Layers": "purely perfectivizing prefix"
+    },
+    {
+      "Form_ID": "jablonska2004_76_a",
+      "Verbalizer": "low inchoative -n-",
+      "Layers": "lexical prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_76_b",
+      "Verbalizer": "low inchoative -n-",
+      "Layers": "lexical prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_78",
+      "Layers": "purely perfectivizing prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_79a",
+      "Verbalizer": "semelfactive",
+      "Layers": "lexical prefix"
+    },
+    {
+      "Form_ID": "jablonska2004_79b",
+      "Verbalizer": "semelfactive",
+      "Layers": "lexical prefix, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_79c",
+      "Verbalizer": "-a-"
+    },
+    {
+      "Form_ID": "jablonska2004_81a",
+      "Verbalizer": "high -i-",
+      "Layers": "lexical po-"
+    },
+    {
+      "Form_ID": "jablonska2004_81b",
+      "Verbalizer": "high -i-",
+      "Layers": "lexical po-"
+    },
+    {
+      "Form_ID": "jablonska2004_81c",
+      "Verbalizer": "high -aj-",
+      "Layers": "lexical po-"
+    },
+    {
+      "Form_ID": "jablonska2004_81d",
+      "Verbalizer": "-C-",
+      "Layers": "lexical po-"
+    },
+    {
+      "Form_ID": "jablonska2004_81e",
+      "Verbalizer": "-C- or inchoative",
+      "Layers": "lexical po-"
+    },
+    {
+      "Form_ID": "jablonska2004_81f",
+      "Verbalizer": "low -ej-",
+      "Layers": "lexical po-"
+    },
+    {
+      "Form_ID": "jablonska2004_82a",
+      "Layers": "lexical po-, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_82b",
+      "Layers": "lexical po-, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_82c",
+      "Layers": "lexical po-, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_82d",
+      "Layers": "lexical po-, Secondary Imperfective"
+    },
+    {
+      "Form_ID": "jablonska2004_83a",
+      "Layers": "lexical po-, Secondary Imperfective, po- in Asp3",
+      "Reading": "distributive"
+    }
+  ]
+}

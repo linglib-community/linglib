@@ -1,0 +1,259 @@
+{
+  "description": "The prefixed verbs of Svenonius (2004): Russian, Polish and Bulgarian forms with lexical and superlexical prefixes, and the reversed stacks the paper stars.",
+  "CellTable": [
+    {
+      "ID": "inf",
+      "Name": "infinitive",
+      "Features": "VerbForm=Inf"
+    },
+    {
+      "ID": "prs_1sg",
+      "Name": "1sg.prs",
+      "Features": "Tense=Pres|Number=Sing|Person=1"
+    },
+    {
+      "ID": "pst",
+      "Name": "past",
+      "Features": "Tense=Past"
+    },
+    {
+      "ID": "pst_pl",
+      "Name": "pst.pl",
+      "Features": "Tense=Past|Number=Plur"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "throw_into",
+      "Name": "throw into",
+      "Description": ""
+    },
+    {
+      "ID": "give_up",
+      "Name": "give up",
+      "Description": ""
+    },
+    {
+      "ID": "begin_to_throw",
+      "Name": "begin to throw",
+      "Description": ""
+    },
+    {
+      "ID": "throw_out_one_by_one",
+      "Name": "throw out one by one",
+      "Description": ""
+    },
+    {
+      "ID": "walk_in_one_by_one",
+      "Name": "walk in one by one",
+      "Description": ""
+    },
+    {
+      "ID": "tell_a_little_of_many",
+      "Name": "tell a little of many",
+      "Description": ""
+    },
+    {
+      "ID": "renarrate_completely_one_by_one_of_many",
+      "Name": "renarrate completely one by one, of many",
+      "Description": ""
+    },
+    {
+      "ID": "start_smoking",
+      "Name": "start smoking",
+      "Description": ""
+    },
+    {
+      "ID": "read_for_a_little_while",
+      "Name": "read for a little while",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "zabrosil_throw_into",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "throw_into",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zabrosil_give_up",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "give_up",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zabrosal_begin_to_throw",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "begin_to_throw",
+      "POS": "VERB"
+    },
+    {
+      "ID": "povybrasyvatj",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "throw_out_one_by_one",
+      "POS": "VERB"
+    },
+    {
+      "ID": "powchodzili",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "walk_in_one_by_one",
+      "POS": "VERB"
+    },
+    {
+      "ID": "ponarazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "tell_a_little_of_many",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izponaprerazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "renarrate_completely_one_by_one_of_many",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zakuritj",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "start_smoking",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pocitatj",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "read_for_a_little_while",
+      "POS": "VERB"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "svenonius2004_1a",
+      "Lexeme_ID": "zabrosil_throw_into",
+      "Cell": "pst",
+      "Form": "zabrosil",
+      "Morphs": ["za", "brosil"],
+      "Source": ["svenonius-2004[(1a)]"]
+    },
+    {
+      "ID": "svenonius2004_1b",
+      "Lexeme_ID": "zabrosil_give_up",
+      "Cell": "pst",
+      "Form": "zabrosil",
+      "Morphs": ["za", "brosil"],
+      "Source": ["svenonius-2004[(1b)]"]
+    },
+    {
+      "ID": "svenonius2004_1c",
+      "Lexeme_ID": "zabrosal_begin_to_throw",
+      "Cell": "pst",
+      "Form": "zabrosal",
+      "Morphs": ["za", "brosal"],
+      "Source": ["svenonius-2004[(1c)]"]
+    },
+    {
+      "ID": "svenonius2004_4a",
+      "Lexeme_ID": "povybrasyvatj",
+      "Cell": "inf",
+      "Form": "povybrasyvatj",
+      "Morphs": ["po", "vy", "brasyvatj"],
+      "Comment": "Superlexical distributive po- stacked outside lexical vy- on the secondary-imperfective stem brasyvatj. His (4a) with the reversed order (4b) *vy-po-brasyvatj: the superlexical prefix always appears outside the lexical prefix.",
+      "Source": ["svenonius-2004[(4a)]"]
+    },
+    {
+      "ID": "svenonius2004_4b",
+      "Lexeme_ID": "povybrasyvatj",
+      "Cell": "inf",
+      "Form": "vypobrasyvatj",
+      "Morphs": ["vy", "po", "brasyvatj"],
+      "Judgment": "ungrammatical",
+      "Source": ["svenonius-2004[(4b)]"]
+    },
+    {
+      "ID": "svenonius2004_4c",
+      "Lexeme_ID": "powchodzili",
+      "Cell": "pst_pl",
+      "Form": "powchodzili",
+      "Morphs": ["po", "w", "chodzili"],
+      "Comment": "Polish counterpart of (4a): superlexical distributive po- outside lexical w-. Attributed by Svenonius to Jabłońska 2004; not locatable as a numbered example in her paper. Reversed order (4d) *w-po-chodzili is ungrammatical.",
+      "Source": ["svenonius-2004[(4c)]"]
+    },
+    {
+      "ID": "svenonius2004_4d",
+      "Lexeme_ID": "powchodzili",
+      "Cell": "pst_pl",
+      "Form": "wpochodzili",
+      "Morphs": ["w", "po", "chodzili"],
+      "Judgment": "ungrammatical",
+      "Source": ["svenonius-2004[(4d)]"]
+    },
+    {
+      "ID": "svenonius2004_3a",
+      "Lexeme_ID": "ponarazkaza",
+      "Cell": "prs_1sg",
+      "Form": "ponarazkaža",
+      "Morphs": ["po", "na", "razkaža"],
+      "Comment": "Two superlexical prefixes stacked on the quantized perfective stem razkaža 'narrate'. Svenonius glosses the outer po- DLMT; on Istratkova's own taxonomy the po- that stacks over na- is her attenuative po- (her (23c)), her delimitative po- does not stack.",
+      "Source": ["istratkova-2004[Table 1]", "svenonius-2004[(3a)]"]
+    },
+    {
+      "ID": "svenonius2004_3e",
+      "Lexeme_ID": "izponaprerazkaza",
+      "Cell": "prs_1sg",
+      "Form": "izponaprerazkaža",
+      "Morphs": ["iz", "po", "na", "pre", "razkaža"],
+      "Comment": "Four superlexical prefixes stacked on the quantized perfective stem razkaža 'narrate'. The deepest razkaža stack Svenonius cites from Istratkova's data; the po- after iz- is her distributive po-.",
+      "Source": ["istratkova-2004[Table 1]", "svenonius-2004[(3e)]"]
+    },
+    {
+      "ID": "svenonius2004_58za",
+      "Lexeme_ID": "zakuritj",
+      "Cell": "inf",
+      "Form": "zakuritj",
+      "Morphs": ["za", "kuritj"],
+      "Comment": "Inceptive za- almost never forms secondary imperfectives in Russian. Datum for his (58a-i): inceptive za- blocks secondary imperfectivization, consistent with attachment above the SI position.",
+      "Source": ["svenonius-2004[§4.1 (58) discussion]"]
+    },
+    {
+      "ID": "svenonius2004_58za_alt",
+      "Lexeme_ID": "zakuritj",
+      "Cell": "inf",
+      "Form": "zakurivatj",
+      "Morphs": ["za", "kurivatj"],
+      "Judgment": "ungrammatical",
+      "Source": ["svenonius-2004[§4.1 (58) discussion]"]
+    },
+    {
+      "ID": "svenonius2004_58po",
+      "Lexeme_ID": "pocitatj",
+      "Cell": "inf",
+      "Form": "počitatj",
+      "Morphs": ["po", "čitatj"],
+      "Comment": "Attenuative po- generally resists secondary imperfectivization but sometimes allows it. Datum for his (58b): attenuative po- sometimes allows the secondary imperfective (po-čityvatj), unlike inceptive za-.",
+      "Source": ["svenonius-2004[§4.1 (58) discussion]"]
+    },
+    {
+      "ID": "svenonius2004_58po_alt",
+      "Lexeme_ID": "pocitatj",
+      "Cell": "inf",
+      "Form": "počityvatj",
+      "Morphs": ["po", "čityvatj"],
+      "Source": ["svenonius-2004[§4.1 (58) discussion]"]
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "svenonius2004_r_58za_alt_imperfective",
+      "Form_ID": "svenonius2004_58za",
+      "Target_ID": "svenonius2004_58za_alt",
+      "Relation": "imperfective",
+      "Source": ["svenonius-2004[§4.1 (58) discussion]"]
+    },
+    {
+      "ID": "svenonius2004_r_58po_alt_imperfective",
+      "Form_ID": "svenonius2004_58po",
+      "Target_ID": "svenonius2004_58po_alt",
+      "Relation": "imperfective",
+      "Source": ["svenonius-2004[§4.1 (58) discussion]"]
+    }
+  ]
+}
