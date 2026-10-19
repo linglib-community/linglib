@@ -38,9 +38,9 @@ rather than the resolved one. The chapter's examples are the rows of
 ## Implementation notes
 
 * The asymmetry criterion is read off where a covarying feature's value originates, the
-  chapter's classification of the five dimensions carried as data; the Russian fragment
-  records what each target is inflected for, and what a target agrees in is the inflected
-  dimensions whose origin is the controller.
+  chapter's classification of the five dimensions carried as data; what a Russian target is
+  inflected for is derived from its forms in the fragment, and what it agrees in is the
+  inflected dimensions whose origin is the controller.
 * Polarity is the substrate's `Gender.Polar`, which the Somali fragment proves of its
   article (Table 9.1); the verbal prefix is shown not to be polar, the plural prefix
   coinciding with the masculine singular's instead.
@@ -110,14 +110,14 @@ namespace Russian
 open _root_.Russian.Agreement
 
 /-- The attributive adjective is inflected for case, (5). -/
-theorem case_mem_features_longAdjective : .case ∈ Target.longAdjective.features := by decide
+theorem case_mem_inflection_longAdjective : .case ∈ longAdjective.inflection := by decide
 
 /-- Case is imposed by government, covariance without asymmetry. -/
 theorem not_isAgreementFeature_case : ¬ IsAgreementFeature .case := by decide
 
 /-- The attributive adjective agrees in number and gender, (1)–(5). -/
 theorem agreementFeatures_longAdjective :
-    agreementFeatures Target.longAdjective.features = {.number, .gender} := by decide
+    agreementFeatures longAdjective.inflection = {.number, .gender} := by decide
 
 end Russian
 
@@ -143,22 +143,23 @@ namespace Russian
 
 open _root_.Russian.Gender _root_.Russian.Agreement
 
-/-- Adjectives distinguish gender only in the singular, (1)–(4), a convergent system. -/
+/-- Adjectives distinguish gender only in the singular, (1)–(4), a convergent system, with the
+inanimate nouns of the examples. -/
 theorem convergent :
-    Gender.Convergent (Value.adjEnding · (numberSystem.value .singular))
-      (Value.adjEnding · (numberSystem.value .plural)) := by
+    Gender.Convergent (longEnding · .inanimate (numberSystem.value .singular) .nom)
+      (longEnding · .inanimate (numberSystem.value .plural) .nom) := by
   decide
 
 /-- Greenberg's Universal 37 as its corollary. -/
-theorem card_adjEnding_pl_le :
-    Nat.card (Set.range (Value.adjEnding · (numberSystem.value .plural))) ≤
-      Nat.card (Set.range (Value.adjEnding · (numberSystem.value .singular))) :=
+theorem card_longEnding_pl_le :
+    Nat.card (Set.range (longEnding · .inanimate (numberSystem.value .plural) .nom)) ≤
+      Nat.card (Set.range (longEnding · .inanimate (numberSystem.value .singular) .nom)) :=
   convergent.1.card_range_le
 
 /-- Gender agreement on the verb is confined to the past tense, which is inflected for gender
-where the nonpast is not. -/
-theorem gender_mem_features_pastVerb :
-    .gender ∈ Target.pastVerb.features ∧ .gender ∉ Target.nonpastVerb.features := by decide
+where the nonpast of either conjugation is not. -/
+theorem gender_mem_inflection_pastVerb :
+    .gender ∈ pastVerb.inflection ∧ ∀ k, .gender ∉ (nonpastVerb k).inflection := by decide
 
 end Russian
 
@@ -227,8 +228,9 @@ open _root_.Russian.Agreement
 
 /-- Agreement varies within a word class too. Russian verbs agree in person and number, except in
 the past tense, which agrees in gender and number. -/
-theorem features_nonpastVerb_ne_pastVerb :
-    Target.nonpastVerb.features ≠ Target.pastVerb.features := by decide
+theorem inflection_nonpastVerb_ne_pastVerb (k : Conjugation) :
+    (nonpastVerb k).inflection ≠ pastVerb.inflection := by
+  cases k <;> decide
 
 end Russian
 
@@ -304,15 +306,29 @@ end Chichewa
 
 /-! ### The chapter's examples -/
 
-/-- In the Russian adjectives of (1)–(4) the ending is the fragment's by gender and number. -/
+/-- In the Russian adjectives of (1)–(5) the ending is the fragment's by gender, number and case,
+the nouns *avtomobil'*, *mašina* and *taksi* being inanimate. -/
 theorem russian_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
     ∀ g ∈ row.parse? "gender"
       [("masc", _root_.Russian.Gender.Value.masc), ("fem", .fem), ("neut", .neut)],
-    ∀ pl ∈ row.parse? "number" [("sg", _root_.Russian.Gender.numberSystem.value .singular),
+    ∀ n ∈ row.parse? "number" [("sg", _root_.Russian.Gender.numberSystem.value .singular),
+      ("pl", _root_.Russian.Gender.numberSystem.value .plural)],
+    ∀ c ∈ row.parse? "case" [("nom", _root_.Russian.Case.nom), ("loc", .loc)],
+    ∀ e ∈ row.parse? "ending"
+      [("yj", _root_.Russian.Agreement.LongEnding.yj), ("aja", .aja), ("oe", .oe), ("ye", .ye),
+        ("om", .om)],
+      e = _root_.Russian.Agreement.longEnding g .inanimate n c := by
+  decide +kernel
+
+/-- In the Russian verbs of §2.3, *beru*, *bereš'* and *beret* 'take', of the first
+conjugation, the ending is the fragment's by person and number. -/
+theorem russian_verb_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
+    ∀ p ∈ row.parse? "person" [("1", Person.first), ("2", .second), ("3", .third)],
+    ∀ n ∈ row.parse? "number" [("sg", _root_.Russian.Gender.numberSystem.value .singular),
       ("pl", _root_.Russian.Gender.numberSystem.value .plural)],
     ∀ e ∈ row.parse? "ending"
-      [("yj", _root_.Russian.Gender.AdjEnding.yj), ("aja", .aja), ("oe", .oe), ("ye", .ye)],
-      e = g.adjEnding pl := by
+      [("u", _root_.Russian.Agreement.NonpastEnding.u), ("eš'", .eš'), ("et", .et)],
+      e = _root_.Russian.Agreement.nonpastEnding .first p n := by
   decide +kernel
 
 /-- In the Marind rows (6)–(9) the adjective and the demonstrative are the fragment's by gender. -/

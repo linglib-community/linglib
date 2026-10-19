@@ -24,7 +24,7 @@ adjective and noun within the predicate, is `Corbett2000.PredicateTarget`.
 
 ## Main definitions
 
-* `Agreement.Position`: the four positions, a chain lifted along `Position.rank`.
+* `Agreement.Position`: the four positions, a chain from the personal pronoun up.
 * `Agreement.Kind`: syntactic or semantic agreement.
 * `Agreement.Availability`: the five degrees of availability of semantic agreement, from
   syntactic only to semantic only, linearly ordered.
@@ -53,34 +53,22 @@ are compared only across comparable positions that both carry one.
 
 namespace Agreement
 
-/-- A position of the Agreement Hierarchy ([corbett-1979]). -/
+/-- A position of the Agreement Hierarchy ([corbett-1979]), declared from the bottom of the
+hierarchy. -/
 inductive Position where
-  /-- The attributive modifier (French *un bon livre*). -/
-  | attributive
-  /-- The predicate, a finite verb or a predicate adjective (Russian *kniga interesna*). -/
-  | predicate
-  /-- The relative pronoun (German *der ~ die ~ das*). -/
-  | relativePronoun
   /-- The personal pronoun (English *he ~ she ~ it*). -/
   | personalPronoun
+  /-- The relative pronoun (German *der ~ die ~ das*). -/
+  | relativePronoun
+  /-- The predicate, a finite verb or a predicate adjective (Russian *kniga interesna*). -/
+  | predicate
+  /-- The attributive modifier (French *un bon livre*). -/
+  | attributive
   deriving DecidableEq, Repr, Inhabited, Fintype
-
-namespace Position
-
-/-- The place of a position in the chain, the attributive highest. -/
-def rank : Position → ℕ
-  | .attributive => 3
-  | .predicate => 2
-  | .relativePronoun => 1
-  | .personalPronoun => 0
-
-theorem rank_injective : Function.Injective rank := by decide
 
 /-- The Agreement Hierarchy as a chain:
 `personalPronoun < relativePronoun < predicate < attributive`. -/
-instance : LinearOrder Position := LinearOrder.lift' rank rank_injective
-
-end Position
+instance : LinearOrder Position := LinearOrder.lift' Position.ctorIdx (by decide)
 
 /-- Whether an agreement form follows the feature value the controller is assigned or the
 controller's meaning. -/
@@ -102,17 +90,8 @@ inductive Availability where
 
 namespace Availability
 
-/-- The rank of an availability in the order of likelihood of semantic agreement. -/
-def rank : Availability → ℕ
-  | .syntacticOnly => 0
-  | .mostlySyntactic => 1
-  | .both => 2
-  | .mostlySemantic => 3
-  | .semanticOnly => 4
-
-theorem rank_injective : Function.Injective rank := by decide
-
-instance : LinearOrder Availability := LinearOrder.lift' rank rank_injective
+/-- Availabilities are ordered by the likelihood of semantic agreement. -/
+instance : LinearOrder Availability := LinearOrder.lift' Availability.ctorIdx (by decide)
 
 /-- Which agreement an availability admits. -/
 def Allows : Availability → Kind → Prop

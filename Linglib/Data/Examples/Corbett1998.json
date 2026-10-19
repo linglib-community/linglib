@@ -61,6 +61,10 @@
       [
         "ending",
         "yj"
+      ],
+      [
+        "case",
+        "nom"
       ]
     ],
     "comment": "",
@@ -103,6 +107,10 @@
       [
         "ending",
         "aja"
+      ],
+      [
+        "case",
+        "nom"
       ]
     ],
     "comment": "",
@@ -145,6 +153,10 @@
       [
         "ending",
         "oe"
+      ],
+      [
+        "case",
+        "nom"
       ]
     ],
     "comment": "",
@@ -187,6 +199,10 @@
       [
         "ending",
         "ye"
+      ],
+      [
+        "case",
+        "nom"
       ]
     ],
     "comment": "",
@@ -233,6 +249,10 @@
       [
         "case",
         "loc"
+      ],
+      [
+        "ending",
+        "om"
       ]
     ],
     "comment": "The preposition governs the locative, which noun and adjective both take: covariance imposed on both alike, not agreement.",
@@ -258,6 +278,14 @@
       [
         "person",
         "1"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "ending",
+        "u"
       ]
     ],
     "comment": "Person is inherent to the pronoun and marked on the verb.",
@@ -283,6 +311,14 @@
       [
         "person",
         "2"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "ending",
+        "eš'"
       ]
     ],
     "comment": "",
@@ -308,6 +344,14 @@
       [
         "person",
         "3"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "ending",
+        "et"
       ]
     ],
     "comment": "Also ona beret 'she takes'.",
