@@ -1,0 +1,381 @@
+{
+  "ParameterTable": [
+    {
+      "ID": "dal",
+      "Name": "he gave",
+      "Description": ""
+    },
+    {
+      "ID": "dal_long",
+      "Name": "further, come in!",
+      "Description": ""
+    },
+    {
+      "ID": "dul",
+      "Name": "blew",
+      "Description": ""
+    },
+    {
+      "ID": "dul_long",
+      "Name": "mine",
+      "Description": ""
+    },
+    {
+      "ID": "ryby",
+      "Name": "fish",
+      "Description": ""
+    },
+    {
+      "ID": "ryby_long",
+      "Name": "fish-",
+      "Description": ""
+    },
+    {
+      "ID": "sud",
+      "Name": "barrel",
+      "Description": ""
+    },
+    {
+      "ID": "soud",
+      "Name": "court",
+      "Description": ""
+    },
+    {
+      "ID": "pena",
+      "Name": "foam",
+      "Description": ""
+    },
+    {
+      "ID": "veno",
+      "Name": "dowry",
+      "Description": ""
+    },
+    {
+      "ID": "harfe",
+      "Name": "harp (DAT/LOC SG)",
+      "Description": ""
+    },
+    {
+      "ID": "mesto",
+      "Name": "town",
+      "Description": ""
+    },
+    {
+      "ID": "obed",
+      "Name": "lunch",
+      "Description": ""
+    },
+    {
+      "ID": "dabel",
+      "Name": "devil",
+      "Description": ""
+    },
+    {
+      "ID": "tuhyk",
+      "Name": "shrike",
+      "Description": ""
+    },
+    {
+      "ID": "mlady",
+      "Name": "young (M SG)",
+      "Description": ""
+    },
+    {
+      "ID": "mladi",
+      "Name": "young (M PL AN)",
+      "Description": ""
+    },
+    {
+      "ID": "mlade",
+      "Name": "young (ADVERB)",
+      "Description": ""
+    },
+    {
+      "ID": "kruty",
+      "Name": "cruel (M SG)",
+      "Description": ""
+    },
+    {
+      "ID": "kruti",
+      "Name": "cruel (M PL AN)",
+      "Description": ""
+    },
+    {
+      "ID": "krute",
+      "Name": "cruel (ADVERB)",
+      "Description": ""
+    },
+    {
+      "ID": "plny",
+      "Name": "full",
+      "Description": ""
+    },
+    {
+      "ID": "plne",
+      "Name": "full (ADVERB)",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "dal",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "dal"
+    },
+    {
+      "ID": "dal_long",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "dal_long"
+    },
+    {
+      "ID": "dul",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "dul"
+    },
+    {
+      "ID": "dul_long",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "dul_long"
+    },
+    {
+      "ID": "ryby",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "ryby"
+    },
+    {
+      "ID": "ryby_long",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "ryby_long"
+    },
+    {
+      "ID": "sud",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "sud"
+    },
+    {
+      "ID": "soud",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "soud"
+    },
+    {
+      "ID": "pena",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "pena"
+    },
+    {
+      "ID": "veno",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "veno"
+    },
+    {
+      "ID": "harfe",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "harfe"
+    },
+    {
+      "ID": "mesto",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "mesto"
+    },
+    {
+      "ID": "obed",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "obed"
+    },
+    {
+      "ID": "dabel",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "dabel"
+    },
+    {
+      "ID": "tuhyk",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "tuhyk"
+    },
+    {
+      "ID": "mlady",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "mlady"
+    },
+    {
+      "ID": "mladi",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "mladi"
+    },
+    {
+      "ID": "mlade",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "mlade"
+    },
+    {
+      "ID": "kruty",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "kruty"
+    },
+    {
+      "ID": "kruti",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "kruti"
+    },
+    {
+      "ID": "krute",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "krute"
+    },
+    {
+      "ID": "plny",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "plny"
+    },
+    {
+      "ID": "plne",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "plne"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "short1993_dal",
+      "Lexeme_ID": "dal",
+      "Form": "dal",
+      "Source": ["short-1993-czech[p. 456]"]
+    },
+    {
+      "ID": "short1993_dal_long",
+      "Lexeme_ID": "dal_long",
+      "Form": "dál",
+      "Source": ["short-1993-czech[p. 456]"]
+    },
+    {
+      "ID": "short1993_dul",
+      "Lexeme_ID": "dul",
+      "Form": "dul",
+      "Source": ["short-1993-czech[p. 456]"]
+    },
+    {
+      "ID": "short1993_dul_long",
+      "Lexeme_ID": "dul_long",
+      "Form": "důl",
+      "Source": ["short-1993-czech[p. 456]"]
+    },
+    {
+      "ID": "short1993_ryby",
+      "Lexeme_ID": "ryby",
+      "Form": "ryby",
+      "Source": ["short-1993-czech[p. 456]"]
+    },
+    {
+      "ID": "short1993_ryby_long",
+      "Lexeme_ID": "ryby_long",
+      "Form": "rybí",
+      "Source": ["short-1993-czech[p. 456]"]
+    },
+    {
+      "ID": "short1993_sud",
+      "Lexeme_ID": "sud",
+      "Form": "sud",
+      "Source": ["short-1993-czech[p. 456]"]
+    },
+    {
+      "ID": "short1993_soud",
+      "Lexeme_ID": "soud",
+      "Form": "soud",
+      "Source": ["short-1993-czech[p. 456]"]
+    },
+    {
+      "ID": "short1993_pena",
+      "Lexeme_ID": "pena",
+      "Form": "pěna",
+      "Segments": ["p", "j", "e", "n", "a"],
+      "Source": ["short-1993-czech[p. 459]"]
+    },
+    {
+      "ID": "short1993_veno",
+      "Lexeme_ID": "veno",
+      "Form": "věno",
+      "Segments": ["v", "j", "e", "n", "o"],
+      "Source": ["short-1993-czech[p. 459]"]
+    },
+    {
+      "ID": "short1993_harfe",
+      "Lexeme_ID": "harfe",
+      "Form": "harfě",
+      "Segments": ["h", "a", "r", "f", "j", "e"],
+      "Source": ["short-1993-czech[p. 459]"]
+    },
+    {
+      "ID": "short1993_mesto",
+      "Lexeme_ID": "mesto",
+      "Form": "město",
+      "Segments": ["m", "ň", "e", "s", "t", "o"],
+      "Source": ["short-1993-czech[p. 459]"]
+    },
+    {
+      "ID": "short1993_obed",
+      "Lexeme_ID": "obed",
+      "Form": "oběd",
+      "Segments": ["o", "b", "j", "e", "t"],
+      "Source": ["short-1993-czech[p. 459]"]
+    },
+    {
+      "ID": "short1993_dabel",
+      "Lexeme_ID": "dabel",
+      "Form": "ďábel",
+      "Source": ["short-1993-czech[p. 459]"]
+    },
+    {
+      "ID": "short1993_tuhyk",
+      "Lexeme_ID": "tuhyk",
+      "Form": "ťuhýk",
+      "Source": ["short-1993-czech[p. 459]"]
+    },
+    {
+      "ID": "short1993_mlady",
+      "Lexeme_ID": "mlady",
+      "Form": "mladý",
+      "Source": ["short-1993-czech[p. 462]"]
+    },
+    {
+      "ID": "short1993_mladi",
+      "Lexeme_ID": "mladi",
+      "Form": "mladí",
+      "Source": ["short-1993-czech[p. 462]"]
+    },
+    {
+      "ID": "short1993_mlade",
+      "Lexeme_ID": "mlade",
+      "Form": "mladě",
+      "Source": ["short-1993-czech[p. 462]"]
+    },
+    {
+      "ID": "short1993_kruty",
+      "Lexeme_ID": "kruty",
+      "Form": "krutý",
+      "Source": ["short-1993-czech[p. 462]"]
+    },
+    {
+      "ID": "short1993_kruti",
+      "Lexeme_ID": "kruti",
+      "Form": "krutí",
+      "Source": ["short-1993-czech[p. 462]"]
+    },
+    {
+      "ID": "short1993_krute",
+      "Lexeme_ID": "krute",
+      "Form": "krutě",
+      "Source": ["short-1993-czech[p. 462]"]
+    },
+    {
+      "ID": "short1993_plny",
+      "Lexeme_ID": "plny",
+      "Form": "plný",
+      "Source": ["short-1993-czech[p. 462]"]
+    },
+    {
+      "ID": "short1993_plne",
+      "Lexeme_ID": "plne",
+      "Form": "plně",
+      "Source": ["short-1993-czech[p. 462]"]
+    }
+  ]
+}
