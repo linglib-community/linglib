@@ -69,8 +69,8 @@ structure SpanishVerbEntry extends Verb where
 abbrev SpanishVerbEntry.Alternates (v : SpanishVerbEntry) : Prop :=
   v.toVerb.Alternates Voice.anticausative
 
-/-- The subject of a verb whose causer need only cause the change, whether an agent, an
-instrument, a natural force or an event: [koontz-garboden-2009]'s EFFECTOR. -/
+/-- [koontz-garboden-2009]'s EFFECTOR, the subject of a verb whose causer need only cause the
+change, whether an agent, an instrument, a natural force or an event. -/
 def effectorSubject : EntailmentProfile := {.causation, .independentExistence}
 
 /-- *abrir* 'open', with a marked intransitive *abrirse*. Its causer may be an agent, an
@@ -356,7 +356,7 @@ infinitive under subject control. -/
 def querer : Verb where
   morphs := [.root "querer"]
   valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -367,7 +367,7 @@ does not cover. -/
 def esperar : Verb where
   morphs := [.root "esperar"]
   valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -376,8 +376,9 @@ def esperar : Verb where
 the subjunctive. -/
 def hacer : Verb where
   morphs := [.root "hacer"]
-  valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .of
+    [(ArgumentFrame.infinitival.withObject, [0, 2, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
+    (controllers := [some 2])
 
 /-- *convencer* 'convince' takes an object and a *de que* clause, which reports an intention in
 the subjunctive and a belief in the indicative. -/

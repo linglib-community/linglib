@@ -29,8 +29,7 @@ open ArgumentStructure Aspect Degree
 /-- *cause* takes an object and an infinitive, *cause the vase to fall*. -/
 def cause : Verb where
   morphs := [.root "cause"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
   levinClasses := {LevinClass.engender}
@@ -40,8 +39,7 @@ def cause : Verb where
 def make : Verb where
   morphs := [.root "make"]
   past := "made"
-  valency := .ofFrame ArgumentFrame.smallClause
-  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
   levinExcluded := {LevinClass.build, .dub}
@@ -50,8 +48,7 @@ def make : Verb where
 def let_ : Verb where
   morphs := [.root "let"]
   past := "let"
-  valency := .ofFrame ArgumentFrame.smallClause
-  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
   vendlerClass := some .achievement
 
 /-- *have* in its causative use takes an object and a bare infinitive, *have him leave*. -/
@@ -59,8 +56,7 @@ def have_caus : Verb where
   morphs := [.root "have"]
   thirdSg := "has"
   past := "had"
-  valency := .ofFrame ArgumentFrame.smallClause
-  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
   vendlerClass := some .achievement
   implicative := ⟨.some .positive, ⊥⟩
   senseTag := .causative
@@ -71,8 +67,7 @@ def get_caus : Verb where
   morphs := [.root "get"]
   past := "got"
   pastPart := "gotten"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   senseTag := .causative
   levinExcluded := {LevinClass.get}
@@ -80,16 +75,14 @@ def get_caus : Verb where
 /-- *force* takes an object and an infinitive, *force him to leave*. -/
 def force : Verb where
   morphs := [.root "force"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
 
 /-- *prevent* takes an object and a *from*-gerund, *prevent him from leaving*. -/
 def prevent : Verb where
   morphs := [.root "prevent"]
-  valency := .ofFrame ArgumentFrame.gerund
-  readings := [{ frame := ArgumentFrame.gerund, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.gerund.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   implicative := ⟨.some .negative, ⊥⟩
 
@@ -129,13 +122,12 @@ def break_ : Verb where
   } }
   levinClasses := {LevinClass.appear, .break_, .cheat, .hurt, .split}
 
-/-- "tear" — Levin 45.1 Break Verbs. Contrary-direction separation with force.
-    Unlike *break*, *tear* implies a specific directionality (bidirectional /
-    pulling apart) and is compatible with careful controlled action.
-    Patient restriction: any solid capable of irregular separation.
-    [spalek-mcnally-2026] (§3.1–3.2).
-    In [majid-boster-bowerman-2008] ten of twenty-eight languages have a verb used only for
-    tearing cloth by hand, and English speakers extend *tear* to pulling yarn apart. -/
+/-- *tear* is a break verb (Levin's 45.1) of separation in contrary directions with force. Unlike
+    *break*, it implies a direction, bidirectional or pulling apart, is compatible with careful
+    controlled action, and takes as patient any solid capable of irregular separation
+    ([spalek-mcnally-2026] §3.1–3.2). In [majid-boster-bowerman-2008] ten of twenty-eight
+    languages have a verb used only for tearing cloth by hand, and English speakers extend
+    *tear* to pulling yarn apart. -/
 def tear_ : Verb where
   morphs := [.root "tear"]
   past := "tore"

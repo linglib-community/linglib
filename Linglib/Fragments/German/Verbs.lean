@@ -75,16 +75,14 @@ open ArgumentStructure Conjugation
 let him go'. -/
 def lassen : Verb :=
   { Verb.ofStem (strong "lassen" "lässt" "ließ" "gelassen") with
-    valency := .ofFrame ArgumentFrame.smallClause
-    readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+    valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
     objects := [.acc] }
 
 /-- *machen* 'make' is the productive causative, as in *Das macht mich traurig* 'that makes me
 sad'. -/
 def machen : Verb :=
   { Verb.ofStem (weak "machen") with
-    valency := .ofFrame ArgumentFrame.smallClause
-    readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+    valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
     objects := [.acc] }
 
 /-- *töten* 'kill' is a lexical causative formed on the adjective *tot* 'dead'. -/

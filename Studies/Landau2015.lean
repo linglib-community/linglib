@@ -65,8 +65,8 @@ def Tier.mechanism : Tier → Control.Mechanism
 
 /-! ### Predicate classes ((4), (5)) -/
 
-/-- The control predicate classes of [landau-2000]: four selecting untensed complements (4),
-four selecting tensed complements (5), [landau-2004]'s correlation. Membership is a property
+/-- The control predicate classes of [landau-2000], four selecting untensed complements (4) and
+four selecting tensed ones (5), [landau-2004]'s correlation. Membership is a property
 of predicate–complement pairs, not lexemes, and the evaluative class is the *of*-frame
 adjectives; [pearson-2016]'s rival cut is temporal rather than attitudinal. -/
 inductive PredicateClass where
@@ -100,8 +100,8 @@ def PredicateClass.tier : PredicateClass → Tier
 inductive Table80Row where
   /-- Obligatory control into an inflected complement, the OC-NC generalization (70). -/
   | inflectedComplement
-  /-- A non-human PRO ((81)): the logophoric binder is the author or addressee coordinate,
-  defined only for humans. -/
+  /-- A non-human PRO ((81)) has no logophoric binder, which is the author or addressee
+  coordinate and defined only for humans. -/
   | nonhumanPRO
   /-- An implicit controller ((90), (93)) is out under predication, which needs a syntactically
   represented argument, so exhaustive-control verbs resist impersonal passives (98). -/
@@ -189,7 +189,7 @@ def derivedLandauClass (v : Verb) : Option PredicateClass :=
 /-- A fragment control verb is on the tier of its class, or else logophoric exactly when it
 selects an attitude complement; a verb without control has no tier. -/
 def derivedControlTier (v : Verb) : Option Tier :=
-  if v.controlType == ControlType.none && v.altControlType == ControlType.none then Option.none
+  if ¬ v.HasController then Option.none
   else match derivedLandauClass v with
     | some cls => some cls.tier
     | none =>
@@ -201,13 +201,13 @@ section Verbs
 open English
 open English.Verbs hiding Verb
 
-/-- The fragment's exhaustive-control verbs: aspectual and implicative. -/
+/-- The fragment's exhaustive-control verbs, the aspectual and implicative ones. -/
 def exhaustiveControlVerbs : List Verb :=
   [stop.toVerb, start.toVerb, begin_.toVerb, continue_.toVerb, manage.toVerb, fail.toVerb,
     remember.toVerb, forget.toVerb, force.toVerb]
 
-/-- The fragment's partial-control verbs: desiderative, factive, propositional, and
-interrogative. -/
+/-- The fragment's partial-control verbs, the desiderative, factive, propositional and
+interrogative ones. -/
 def partialControlVerbs : List Verb :=
   [want.toVerb, hope.toVerb, promise.toVerb, persuade.toVerb, regret.toVerb, know.toVerb,
     believe.toVerb, think.toVerb, wonder.toVerb]

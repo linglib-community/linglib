@@ -16,10 +16,11 @@ is a clitic pronoun that refers to the matrix subject, and its time is the matri
 ## Implementation notes
 
 A finite complement is `ArgumentFrame.finiteClause`. An irrealis complement is
-`subjunctiveFrame`, in [noonan-2007]'s subjunctive coding with an overt subject. A verb whose
-irrealis complement has a coreferent subject carries `controlReading`, subject control; the
-other irrealis-taking verbs carry no reading. The forms are the citation forms of the source's
-predicate lists, with its tone marks, and each entry is named by its English gloss.
+`subjunctiveFrame`, in Noonan's subjunctive coding with an overt subject. A verb whose
+irrealis complement has a coreferent subject has its subject as the controller of that
+complement; the other irrealis-taking verbs have no controller. The forms are the citation
+forms of the source's predicate lists, with its tone marks, and each entry is named by its
+English gloss.
 
 ## References
 
@@ -35,10 +36,6 @@ namespace Mixtec.SMPM
 subject. -/
 def subjunctiveFrame : ArgumentFrame :=
   ⟨some .nominal, [.clausal (some .subjunctive) (.only .declarative) (some (.overt none))]⟩
-
-/-- The reading of an irrealis complement whose subject refers to the matrix subject. -/
-def controlReading : Verb.Reading :=
-  { frame := subjunctiveFrame, control := some .subjectControl }
 
 /-! ### Verbs taking a finite complement ((27a)) -/
 
@@ -62,7 +59,7 @@ an irrealis complement with a coreferent subject ((27c)). -/
 def know : Verb where
   morphs := [.root "kònì"]
   valency := .of [(.finiteClause, [0, 1]), (subjunctiveFrame, [0, 1])]
-  readings := [controlReading]
+    (controllers := [none, some 0])
 
 /-- *kà'àn* 'say' takes a finite complement. -/
 def say : Verb where
@@ -151,70 +148,59 @@ def getIdea : Verb where
 /-- *ntukú* 'try' (lit. 'look for') takes an irrealis complement with a coreferent subject. -/
 def try_ : Verb where
   morphs := [.root "ntukú"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *nakú'ún ini* 'remember' takes an irrealis complement with a coreferent subject. -/
 def remember : Verb where
   morphs := [.root "nakú'ún", .root "ini"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *nantǒso* 'forget' takes an irrealis complement with a coreferent subject. -/
 def forget : Verb where
   morphs := [.root "nantǒso"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *kutô* 'like to' takes an irrealis complement with a coreferent subject. -/
 def likeTo : Verb where
   morphs := [.root "kutô"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *kixǎ* 'start, begin' takes an irrealis complement with a coreferent subject. -/
 def start : Verb where
   morphs := [.root "kixǎ"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *ntsi'i* 'finish' takes an irrealis complement with a coreferent subject. -/
 def finish : Verb where
   morphs := [.root "ntsi'i"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *xikwîn* 'stop' takes an irrealis complement with a coreferent subject. -/
 def stop : Verb where
   morphs := [.root "xikwîn"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *kò xikwîn* 'continue' (lit. 'not stop') takes an irrealis complement with a coreferent
 subject. -/
 def continue_ : Verb where
   morphs := [.free "kò", .root "xikwîn"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *xiniñu'u* 'need' takes an irrealis complement with a coreferent subject. -/
 def need : Verb where
   morphs := [.root "xiniñu'u"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *sakwǎ'a* 'learn how to' takes an irrealis complement with a coreferent subject. -/
 def learn : Verb where
   morphs := [.root "sakwǎ'a"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- *kò ntaa* 'not bother' (lit. 'not climb') takes an irrealis complement with a coreferent
 subject. -/
 def notBother : Verb where
   morphs := [.free "kò", .root "ntaa"]
-  valency := .ofFrame subjunctiveFrame
-  readings := [controlReading]
+  valency := .ofFrame subjunctiveFrame (controller := some 0)
 
 /-- The complement-taking verbs of the source's lists. -/
 def verbs : List Verb :=

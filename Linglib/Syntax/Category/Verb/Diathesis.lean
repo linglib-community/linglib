@@ -17,8 +17,10 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
 
 ## Main definitions
 
-* `Diathesis n`: an argument frame and the slot of each of `n` participants.
+* `Diathesis n`: an argument frame, the slot of each of `n` participants, and the participant
+  that controls the clausal complement.
 * `Diathesis.ofSlots`: the diathesis whose slots, in order, hold the listed participants.
+* `Diathesis.controllerRole`: the argument role of the controller.
 * `Verb.Valency`: a verb's participants, with their entailment profiles, and its diatheses, the
   basic diathesis first.
 
@@ -34,9 +36,15 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
   intransitive of *break* leaves out the breaker, so a causative or anticausative pair is two
   diatheses of one verb. Mel'čuk's narrower diathesis keeps the semantic actants fixed and
   treats such a pair as two lexical units.
+* Control is a participant, as Chierchia's controller is an argument of the verb: the
+  participant understood as the subject of the clausal complement. Subject and object control
+  are then the controller's argument role in the diathesis, never stored, and the controller
+  can be followed across diatheses, as Visser's and Bach's generalizations need. A raising
+  diathesis has no controller, its subject being no participant of the verb.
 
 ## References
 
+* [chierchia-1984]
 * [melcuk-1993]
 * [zuniga-kittila-2019]
 -/
@@ -46,20 +54,27 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
 open ArgumentFrame (Slot)
 
 /-- A diathesis of `n` participants is an argument frame together with the slot each participant
-occupies in it, `none` for a participant the construction leaves out. -/
+occupies in it, `none` for a participant the construction leaves out, and the participant that
+controls its clausal complement. -/
 structure Diathesis (n : ℕ) extends ArgumentFrame where
   /-- The slot each participant occupies. -/
   links : Vector (Option Slot) n
+  /-- The participant understood as the subject of the clausal complement, `none` where no
+  participant controls it, as under raising. -/
+  controller : Option (Fin n) := none
   deriving DecidableEq, Repr
 
 namespace Diathesis
 
 variable {n : ℕ}
 
-/-- `ofSlots fr ps` is the diathesis of `fr` whose slots, in the order of `ArgumentFrame.slots`,
-hold the participants `ps`; a participant `ps` does not list is left out. -/
-def ofSlots (fr : ArgumentFrame) (ps : List ℕ) : Diathesis n :=
-  { fr with links := .ofFn fun i ↦ ((fr.slots.zip ps).find? (·.2 = i.val)).map (·.1) }
+/-- `ofSlots fr ps c` is the diathesis of `fr` whose slots, in the order of
+`ArgumentFrame.slots`, hold the participants `ps`, and whose clausal complement participant `c`
+controls; a participant `ps` does not list is left out. -/
+def ofSlots (fr : ArgumentFrame) (ps : List ℕ) (c : Option ℕ := none) : Diathesis n :=
+  { fr with
+    links := .ofFn fun i ↦ ((fr.slots.zip ps).find? (·.2 = i.val)).map (·.1)
+    controller := c.bind fun i ↦ if h : i < n then some ⟨i, h⟩ else none }
 
 /-- The participant occupying a slot, the first if several share it. -/
 def participantAt (d : Diathesis n) (s : Slot) : Option (Fin n) :=
@@ -68,6 +83,11 @@ def participantAt (d : Diathesis n) (s : Slot) : Option (Fin n) :=
 /-- The argument role of a participant, that of its slot. -/
 def participantRole (d : Diathesis n) (i : Fin n) : Option ArgumentRole :=
   (d.links.get i).bind d.argumentRole
+
+/-- The argument role of the controller is that of its slot, S or A under subject control and P
+under object control. -/
+def controllerRole (d : Diathesis n) : Option ArgumentRole :=
+  d.controller.bind d.participantRole
 
 end Diathesis
 
@@ -87,16 +107,19 @@ structure Verb.Valency where
 namespace Verb.Valency
 
 /-- The valency whose diatheses are given as frames with the participants of their slots in slot
-order, and whose participants have the listed profiles; the participants are numbered from 0. -/
-def of (frs : List (ArgumentFrame × List ℕ)) (profiles : List (Option EntailmentProfile) := []) :
-    Valency :=
+order, and the controllers of their clausal complements in the same order, and whose
+participants have the listed profiles; the participants are numbered from 0. -/
+def of (frs : List (ArgumentFrame × List ℕ)) (profiles : List (Option EntailmentProfile) := [])
+    (controllers : List (Option ℕ) := []) : Valency :=
   let n := max profiles.length ((frs.flatMap (·.2)).foldr (fun p m ↦ max (p + 1) m) 0)
-  ⟨n, .ofFn fun i ↦ profiles[i.val]?.join, frs.map fun x ↦ Diathesis.ofSlots x.1 x.2⟩
+  ⟨n, .ofFn fun i ↦ profiles[i.val]?.join,
+    frs.mapIdx fun i x ↦ Diathesis.ofSlots x.1 x.2 controllers[i]?.join⟩
 
 /-- The valency of a verb with one diathesis, each slot of its frame holding its own participant
-in slot order. -/
-def ofFrame (fr : ArgumentFrame) (profiles : List (Option EntailmentProfile) := []) : Valency :=
-  of [(fr, List.range fr.slots.length)] profiles
+in slot order, and its clausal complement controlled by `controller`. -/
+def ofFrame (fr : ArgumentFrame) (profiles : List (Option EntailmentProfile) := [])
+    (controller : Option ℕ := none) : Valency :=
+  of [(fr, List.range fr.slots.length)] profiles [controller]
 
 variable (V : Valency)
 
@@ -111,7 +134,8 @@ def profileAt (d : Diathesis V.arity) (s : Slot) : Option EntailmentProfile :=
   (d.participantAt s).bind V.profiles.get
 
 @[simp] theorem frames_of (frs : List (ArgumentFrame × List ℕ))
-    (ps : List (Option EntailmentProfile)) : (of frs ps).frames = frs.map (·.1) := by
-  simp [of, frames, Diathesis.ofSlots, Function.comp_def]
+    (ps : List (Option EntailmentProfile)) (cs : List (Option ℕ)) :
+    (of frs ps cs).frames = frs.map (·.1) := by
+  apply List.ext_getElem <;> simp [of, frames, Diathesis.ofSlots]
 
 end Verb.Valency

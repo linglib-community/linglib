@@ -63,14 +63,12 @@ open ArgumentStructure
 lire* 'make read'. -/
 def faire : Verb where
   morphs := [.root "faire"]
-  valency := .ofFrame ArgumentFrame.smallClause
-  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
 
 /-- *laisser* 'let', the permissive causative. -/
 def laisser : Verb where
   morphs := [.root "laisser"]
-  valency := .ofFrame ArgumentFrame.smallClause
-  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
 
 /-! ### Anticausatives
 
@@ -134,7 +132,7 @@ the accomplishment template's profiles, the psych verbs an experiencer subject, 
 of following and accompaniment an object that merely exists independently of the event. -/
 
 /-- An argument entailed only to exist independently of the event, neither agentive nor
-affected: the object of a psych verb or of a verb of accompaniment, and the subject of a
+affected, as the object of a psych verb or of a verb of accompaniment is, and the subject of a
 stative positional verb. -/
 def independentParticipant : EntailmentProfile := {.independentExistence}
 
@@ -409,8 +407,8 @@ Each monadic entry records the auxiliaries of its perfect: *être* for the close
 d'état"; both for the verbs of §813a, *avoir* when they express the action and *être* when they
 express the state that results; and *avoir* for the others (§811). -/
 
-/-- *Marie a couru jusqu'à la maison* ([sorace-2000] (42b)): a directional phrase is an adjunct to
-*courir*, which it leaves as it is. -/
+/-- In *Marie a couru jusqu'à la maison* ([sorace-2000] (42b)) the directional phrase is an
+adjunct to *courir*, which it leaves as it is. -/
 example : courir.withPath Adposition.into = courir := rfl
 
 /-! ### Attitude verbs
@@ -423,7 +421,7 @@ control. -/
 def vouloir : Verb where
   morphs := [.root "vouloir"]
   valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -434,7 +432,7 @@ entry does not cover. -/
 def esperer : Verb where
   morphs := [.root "espérer"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)

@@ -42,7 +42,7 @@ control. -/
 def querer : Verb where
   morphs := [.root "querer"]
   valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [none, some 0])
 
 /-- *esperar* 'hope' takes a *que*-clause in the subjunctive or in the indicative. -/
 def esperar : Verb where
@@ -54,14 +54,15 @@ subjunctive. -/
 def pretender : Verb where
   morphs := [.root "pretender"]
   valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [some 0])
 
 /-- The causative *fazer* 'make' takes an infinitive under object control and, as *fazer com
 que*, a finite clause in the subjunctive. -/
 def fazer : Verb where
   morphs := [.root "fazer"]
-  valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .of
+    [(ArgumentFrame.infinitival.withObject, [0, 2, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
+    (controllers := [some 2])
 
 /-! ### Lexical reciprocals -/
 

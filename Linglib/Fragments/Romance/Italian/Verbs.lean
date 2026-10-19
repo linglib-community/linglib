@@ -22,13 +22,13 @@ the coding of each complement. Fusco and Sgrizzi's analysis of the *di* and *a* 
 read reciprocally without *si* are ordinary entries here, and Palmieri's list of them is
 `Studies/Palmieri2024.lean`.
 
-An intransitive verb forms its perfect with *essere* when it expresses a change of location, state
-or condition, the continuation of a state or existence in a state, and with *avere* when an
+An intransitive verb forms its perfect with *essere* when it expresses a change of location,
+state or condition, the continuation of a state or existence in a state, and with *avere* when an
 activity is in the foreground, whether or not its subject controls it
-(`Italian.Verbs.perfectAuxiliary`): *Maria è arrivata* 'Maria has arrived' but *Mario ha tossito* 'Mario has coughed'. *Correre*
-'run' takes *essere* with a phrase that brings it to an endpoint, *È corso al campo sportivo in
-un'ora* 'he ran to the sports ground in an hour', and *nuotare* 'swim', which selects no such
-phrase, keeps *avere*.
+(`Italian.Verbs.perfectAuxiliary`): *Maria è arrivata* 'Maria has arrived' but *Mario ha
+tossito* 'Mario has coughed'. *Correre* 'run' takes *essere* with a phrase that brings it to an
+endpoint, *È corso al campo sportivo in un'ora* 'he ran to the sports ground in an hour', and
+*nuotare* 'swim', which selects no such phrase, keeps *avere*.
 
 ## Implementation notes
 
@@ -95,8 +95,7 @@ subject or object control, and one with *a*, which reports an intention and allo
 control only. -/
 def convincere : Verb where
   morphs := [.root "convincere"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
   opaqueContext := true
   clauseTypers := [di, a]
 
@@ -104,8 +103,7 @@ def convincere : Verb where
 meaning as *convincere*. -/
 def pensare : Verb where
   morphs := [.root "pensare"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   opaqueContext := true
   clauseTypers := [di, a]
 
@@ -114,7 +112,7 @@ some speakers, and a bare infinitive under subject control. -/
 def volere : Verb where
   morphs := [.root "volere"]
   valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -134,8 +132,7 @@ def sperare : Verb where
 in either mood; the periphrasis *avere intenzione di* takes the infinitive with *di*. -/
 def intendere : Verb where
   morphs := [.root "intendere"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -144,8 +141,9 @@ def intendere : Verb where
 only as *fare sì che* with the subjunctive, never the indicative. -/
 def fare : Verb where
   morphs := [.root "fare"]
-  valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .of
+    [(ArgumentFrame.infinitival.withObject, [0, 2, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
+    (controllers := [some 2])
   clauseTypers := [che]
 
 /-! ### Transitive verbs with a lexical reciprocal use -/

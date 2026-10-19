@@ -29,7 +29,7 @@ def stop : Verb where
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
-  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
+    (controllers := [some 0])
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .cessation
@@ -43,7 +43,7 @@ def quit : Verb where
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
-  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
+    (controllers := [some 0])
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .cessation
@@ -56,7 +56,7 @@ def start : Verb where
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
-  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
+    (controllers := [some 0])
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .inception
@@ -72,7 +72,7 @@ def begin_ : Verb where
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
-  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
+    (controllers := [some 0])
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .inception
@@ -85,7 +85,7 @@ def continue_ : Verb where
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
-  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
+    (controllers := [some 0])
   vendlerClass := some .activity
   passivizable := false
   phasal := some .continuation
@@ -99,7 +99,7 @@ def keep : Verb where
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1])]
-  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
+    (controllers := [some 0])
   vendlerClass := some .activity
   passivizable := false
   phasal := some .continuation

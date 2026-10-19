@@ -126,8 +126,7 @@ each predicate selects are the analysis of Liu and Yip and live in `Studies/LiuY
 def xiang : Verb := {
   morphs := [.root "xiǎng"]
   script := some "想"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true) }
@@ -136,8 +135,7 @@ def xiang : Verb := {
 def rang : Verb := {
   morphs := [.root "ràng"]
   script := some "让"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
   passivizable := false
   opaqueContext := false }
 
@@ -154,8 +152,7 @@ def xiangxin : Verb := {
 def quan : Verb := {
   morphs := [.root "quàn"]
   script := some "劝"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
   passivizable := true
   opaqueContext := false }
 
@@ -163,8 +160,7 @@ def quan : Verb := {
 def bi : Verb := {
   morphs := [.root "bī"]
   script := some "逼"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
   passivizable := true
   opaqueContext := false }
 
@@ -172,8 +168,7 @@ def bi : Verb := {
 def dasuan : Verb := {
   morphs := [.root "dǎsuàn"]
   script := some "打算"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true) }
@@ -182,8 +177,7 @@ def dasuan : Verb := {
 def shefa : Verb := {
   morphs := [.root "shèfǎ"]
   script := some "设法"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   passivizable := false
   opaqueContext := false }
 

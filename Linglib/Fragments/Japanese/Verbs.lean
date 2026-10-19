@@ -84,15 +84,13 @@ def shinpai : Verb where
 def ik_ase : Verb where
   morphs := [.root "ik", .suff "ase", .suff "ru"]
   script := some "行かせる"
-  valency := .ofFrame ArgumentFrame.smallClause
-  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
 
 /-- 食べさせる *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
 def tabe_sase : Verb where
   morphs := [.root "tabe", .suff "sase", .suff "ru"]
   script := some "食べさせる"
-  valency := .ofFrame ArgumentFrame.smallClause
-  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
 
 /-! ### Departure verbs -/
 

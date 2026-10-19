@@ -27,29 +27,27 @@ def controlled : ArgumentFrame.Position :=
 def controlledFrame : ArgumentFrame := { complements := [controlled] }
 
 /-- The frame of an object and a complement it controls. -/
-def objectControlledFrame : ArgumentFrame := { complements := [.nominal, controlled] }
+def objectControlledFrame : ArgumentFrame := controlledFrame.withObject
 
 /-- *ingin* 'want' takes a controlled complement, *Mereka ingin datang besok*. -/
 def ingin : Verb :=
-  { morphs := [.root "ingin"], valency := .ofFrame controlledFrame,
-    readings := [{ frame := controlledFrame, control := some .subjectControl }] }
+  { morphs := [.root "ingin"], valency := .ofFrame controlledFrame (controller := some 0) }
 
 /-- *belajar* 'learn, study' takes a controlled complement, *Saya belajar menembak*. -/
 def belajar : Verb :=
-  { morphs := [.root "belajar"], valency := .ofFrame controlledFrame,
-    readings := [{ frame := controlledFrame, control := some .subjectControl }] }
+  { morphs := [.root "belajar"], valency := .ofFrame controlledFrame (controller := some 0) }
 
 /-- *menyuruh* 'order, ask' takes an object and a complement it controls, *Saya menyuruh dia
 makan*. -/
 def menyuruh : Verb :=
-  { morphs := [.root "menyuruh"], valency := .ofFrame objectControlledFrame,
-    readings := [{ frame := objectControlledFrame, control := some .objectControl }] }
+  { morphs := [.root "menyuruh"],
+    valency := .ofFrame objectControlledFrame (controller := some 1) }
 
 /-- *mendorong* 'push' takes an object and a resultative complement it controls, *Orang itu
 mendorong saya jatuh*. -/
 def mendorong : Verb :=
-  { morphs := [.root "mendorong"], valency := .ofFrame objectControlledFrame,
-    readings := [{ frame := objectControlledFrame, control := some .objectControl }] }
+  { morphs := [.root "mendorong"],
+    valency := .ofFrame objectControlledFrame (controller := some 1) }
 
 /-- *tahu* 'know' takes a finite *bahwa* clause, *Saya tahu bahwa mereka akan datang*. -/
 def tahu : Verb := { morphs := [.root "tahu"], valency := .ofFrame ArgumentFrame.finiteClause }

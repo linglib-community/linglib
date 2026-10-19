@@ -109,8 +109,8 @@ theorem no_agreement_rows :
         r₁.feature? "person" ≠ r₂.feature? "person" := by
   decide +kernel
 
-/-- The paper's cell of [wals-2013]'s 101A: subject pronouns are obligatory
-    and object pronouns omissible (§4.2). -/
+/-- In the paper's cell of [wals-2013]'s 101A, subject pronouns are obligatory and object
+    pronouns omissible (§4.2). -/
 def pronominalSubjects : Data.WALS.F101A.ExpressionOfPronominalSubjects :=
   .obligatoryPronounsInSubjectPosition
 
@@ -138,21 +138,22 @@ theorem frame_takes_iff (c d : EmbeddedClauseType) :
 
 /-- A verb takes `ni` exactly when some frame of it is controlled. -/
 theorem takes_ni_iff_control :
-    ∀ v ∈ verbs, v.Takes ni ↔ ∃ r ∈ v.readings, r.control.isSome := by
+    ∀ v ∈ verbs, v.Takes ni ↔ v.HasController := by
   decide
 
-/-- [wurmbrand-lohninger-2023]'s hierarchy at Gã's granularity: a proposition
-    complement is exactly one whose frame takes a finite complementizer;
-    situations and events share the infinitival `ni`-frame. -/
+/-- At Gã's granularity, [wurmbrand-lohninger-2023]'s hierarchy makes a proposition complement
+    exactly one whose frame takes a finite complementizer, situations and events sharing the
+    infinitival `ni`-frame. -/
 theorem proposition_iff_finite :
     ∀ v ∈ verbs, ∀ r ∈ v.readings, ∀ s ∈ r.size,
       (s = .proposition ↔ ∃ z ∈ complementizers, r.frame.Takes z ∧ z.IsFinite) := by
   decide
 
-/-- Subject and object control are both in the inventory (Table 2). -/
+/-- Both subject and object control are in the inventory (Table 2), the controller of some verb
+being its sole core argument, S, and that of another its object, P. -/
 theorem control_rows :
-    (∃ v ∈ verbs, ∃ r ∈ v.readings, r.control = some .subjectControl) ∧
-      ∃ v ∈ verbs, ∃ r ∈ v.readings, r.control = some .objectControl := by
+    (∃ v ∈ verbs, ∃ d ∈ v.valency.diatheses, d.controllerRole = some .S) ∧
+      ∃ v ∈ verbs, ∃ d ∈ v.valency.diatheses, d.controllerRole = some .P := by
   decide
 
 /-! ### Rows -/
@@ -279,8 +280,8 @@ theorem cCommand_rows :
       (row.judgment = .acceptable ↔ row.feature? "antecedent" = some "cCommanding") := by
   decide +kernel
 
-/-- No long-distance antecedent (exx 47–49): grammatical exactly under the local
-    coindexation. -/
+/-- There is no long-distance antecedent (exx 47–49), the sentences being grammatical exactly
+    under the local coindexation. -/
 theorem longDistance_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "longDistance" →
       (row.judgment = .acceptable ↔ row.feature? "antecedent" = some "local") := by
@@ -299,7 +300,7 @@ theorem free_reading_rows :
       (j = .acceptable ↔ c.complementizer.IsFinite) := by
   decide +kernel
 
-/-- Ex 53 witnesses the *de se* row: infelicitous in its context. -/
+/-- Ex 53 witnesses the *de se* row, being infelicitous in its context. -/
 theorem deSe_witness :
     ∃ row ∈ Examples.all, row.feature? "diagnostic" = some "deSe" ∧
       row.judgment = .unacceptable ∧ row.context ≠ "" := by
@@ -333,8 +334,8 @@ def attested (c : EmbeddedClauseType) : Set Diagnostic :=
 instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d => by
   unfold attested; infer_instance
 
-/-- The control profile of a clause type in [landau-2013]'s signature: the
-    clauses no attested diagnostic refutes. -/
+/-- The control profile of a clause type in [landau-2013]'s signature, the clauses no attested
+    diagnostic refutes. -/
 def gaProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
   ofAttested (attested c)
 

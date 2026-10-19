@@ -112,65 +112,60 @@ def think : Verb where
 /-- "want" — preferential attitude verb with infinitival complement -/
 def want : Verb where
   morphs := [.root "want"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
   levinClasses := {LevinClass.appoint, .want}
 
-/-- "intend" — intention-reporting attitude verb ([grano-2024]).
-    Primary frame: infinitival with subject control ("intend to leave").
-    Alternate frame: for-to non-control ("intend for Ben to come along").
-    Rejects indicative complements cross-linguistically: *"Kim intends
-    that Sandy leaves." Requires eventuality abstraction (cause* binds
-    the complement's event argument). -/
+/-- *intend* reports an intention ([grano-2024]). Its subject controls its infinitive (*intend
+    to leave*); its non-control *for*–*to* complement (*intend for Ben to come along*) is not
+    entered. It rejects indicative complements cross-linguistically, as in the ungrammatical
+    *Kim intends that Sandy leaves*, since it needs an eventuality abstract, `cause*` binding
+    the complement's event argument. -/
 def intend : Verb where
   morphs := [.root "intend"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
   levinClasses := {LevinClass.characterize}
 
-/-- "decide" — belief/intention hybrid attitude verb ([grano-2024], §6.1).
-    Nonfinite complement → intention formation: "Kim decided to quit smoking"
-    Finite complement → belief formation: "Kim decided that smoking is harmful"
-    The complement type determines the reading, as with Italian *convincere*
+/-- *decide* is a hybrid of belief and intention ([grano-2024], §6.1). With a nonfinite
+    complement, which its subject controls, it reports forming an intention (*Kim decided to quit
+    smoking*), and with a finite one forming a belief (*Kim decided that smoking is harmful*). The
+    complement type determines the reading, as with Italian *convincere*
     ([fusco-sgrizzi-2026]). -/
 def decide_ : Verb where
   morphs := [.root "decide"]
   valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [some 0])
   vendlerClass := some .achievement
   opaqueContext := true
   attitude := some (.preferential .positive true)
 
-/-- "hope" — preferential attitude verb.
-    Primary frame: finite clause ("hope that John leaves").
-    Alternate frame: infinitival with subject control ("hope to leave"). -/
+/-- *hope* is a preferential attitude verb that takes a finite clause (*hope that John leaves*)
+    or an infinitive its subject controls (*hope to leave*). -/
 def hope : Verb where
   morphs := [.root "hope"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [none, some 0])
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
   levinClasses := {LevinClass.long}
 
-/-- "pray" — preferential attitude verb, permits future temporal orientation.
-    [klecha-2016]: like *hope*, *pray* can take a circumstantial modal base,
-    allowing future-oriented readings under past tense morphology.
-    Primary frame: finite clause ("pray that God helps").
-    Alternate frame: infinitival with subject control ("pray to be saved"). -/
+/-- *pray* is a preferential attitude verb that permits future temporal orientation. Like
+    *hope*, it can take a circumstantial modal base, allowing future-oriented readings under past
+    tense morphology ([klecha-2016]). It takes a finite clause (*pray that God helps*) or an
+    infinitive its subject controls (*pray to be saved*). -/
 def pray : Verb where
   morphs := [.root "pray"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    (controllers := [none, some 0])
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -232,7 +227,7 @@ def worry : Verb where
     Predicates already defined above: know, discover, see, think, say, hear.
     "be annoyed" and "be right" are copular constructions, not simple verbs. -/
 
-/-- "reveal" — factive communication verb ([degen-tonhauser-2022]: canonically factive) -/
+/-- *reveal* is a communication verb that [degen-tonhauser-2022] find canonically factive. -/
 def reveal : Verb where
   morphs := [.root "reveal"]
   valency := .ofFrame ArgumentFrame.finiteClause
@@ -356,7 +351,7 @@ def investigate : Verb where
   vendlerClass := some .activity
   levinClasses := {LevinClass.investigate, .sight}
 
-/-- "depend_on" — rogative, embeds interrogatives only ([dayal-2025]: a rogative predicate) -/
+/-- *depend on* is a rogative predicate, embedding only interrogatives ([dayal-2025]). -/
 def depend_on : Verb where
   morphs := [.root "depend", .free "on"]
   valency := .ofFrame ArgumentFrame.question

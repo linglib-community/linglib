@@ -33,8 +33,7 @@ open ArgumentStructure
 def soeng : Verb where
   morphs := [.root "soeng2"]
   script := some "想"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -43,29 +42,25 @@ def soeng : Verb where
 def hyun : Verb where
   morphs := [.root "hyun3"]
   script := some "勸"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
 
 /-- 逼 *bik* 'force'. -/
 def bik : Verb where
   morphs := [.root "bik1"]
   script := some "逼"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
 
 /-- 叫 *giu* 'ask, tell'. -/
 def giu : Verb where
   morphs := [.root "giu3"]
   script := some "叫"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
 
 /-- 打算 *daasyun* 'intend, plan'. -/
 def daasyun : Verb where
   morphs := [.root "daa2syun3"]
   script := some "打算"
-  valency := .ofFrame ArgumentFrame.infinitival
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
