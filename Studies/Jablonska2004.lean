@@ -1,27 +1,37 @@
 module
 
 public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Data.Examples.Jablonska2004
+public import Linglib.Data.Forms.Jablonska2004
 public import Studies.Svenonius2004
 
 /-!
 # Jabłońska (2004): When the Prefixes Meet the Suffixes
 
-This file formalizes [jablonska-2004], the account of the readings of the Polish prefix *po-*
-as a function of the verbalizer it attaches to. The verbalizer classes of Table 1 and Table 2
-(`Verbalizer`) each carry an Aktionsart profile (`Verbalizer.profile`) and a continuum for
-*po-* to measure along, (40): the run time of a process, the scale of a gradable property, (16),
-or a path, (55). A derivation stacks the four prefix positions of (41) and the Secondary
-Imperfective as layers (`Layer`) over a stem, each merging only when its selectional
-requirement is met (`Layer.merge`), and well-formedness (`WellFormed`) and perfectivity
-(`Perfective`) are read off the resulting profile. The seven shapes of a well-formed derivation
-(`wellFormed_iff`) yield the paper's generalizations: stacking is contingent on the Secondary
-Imperfective (`si_of_asp3`), a purely perfectivizing prefix stacks with nothing (`eq_of_perf`),
-only the interval-denoting classes form Secondary Imperfectives (`denotesInterval_of_si`), and
-the stacking generalization of [svenonius-2004] follows (`wellStacked`). The readings of *po-*
-follow from the continuum and the boundaries of the stem (`Asp1Reading`, `Asp3Reading`) and
-reproduce Table 2 (`asp1Reading_iff_table2`). The attested forms are analysed (`attested`) and
-the starred ones excluded (`starred_not_wellFormed`).
+Jabłońska explains the readings of the Polish prefix *po-* by the verbalizer of the stem it
+attaches to. A derivation stacks the prefix positions of (41) and the Secondary Imperfective as
+layers over a stem, each merging only when its selectional requirement is met, and *po-* measures
+along the continuum the verbalizer supplies: the run time of a process, the scale of a gradable
+property, or a path.
+
+## Main definitions
+
+* `Verbalizer`: the classes of Table 1 and Table 2, with an Aktionsart profile and a continuum.
+* `Layer`, `Layer.merge`: the four prefix positions of (41) and the Secondary Imperfective, with
+  their selectional requirements.
+* `WellFormed`, `Perfective`: every requirement of a derivation is met; its predicate is
+  perfective.
+* `Stem`: a fragment verb with the verbalizer class the paper assigns it.
+* `attested`, `starred`: the paper's analyses of the forms it accepts and rejects.
+
+## Main results
+
+* `wellFormed_iff`: the seven shapes of a well-formed derivation, whence `si_of_asp3`,
+  `eq_of_perf`, `denotesInterval_of_si` and Svenonius's stacking generalization, `wellStacked`.
+* `asp1Reading_iff_table2`: the readings of *po-* in Asp1 are those of Table 2.
+* `attested_wellFormed`, `starred_not_wellFormed`, `attested_readings`: the analyses hold.
+* `spells`: the analyses spell out the attested words.
+* `stem_perfectivity`, `stem_vendlerClass`: the aspect and the Vendler class the fragment records
+  for a stem are those the model derives for it.
 
 ## Implementation notes
 
@@ -37,6 +47,14 @@ the starred ones excluded (`starred_not_wellFormed`).
 * The "considerable change" reading is confined to *-ej-* stems: fn. 22 records that
   inchoative *-n-* stems lack it without deriving the gap. The inceptive *za-* of (53) reads an
   *-ej-* stem as a state and is recorded as a row only.
+* (24) glosses *prze-* as perfectivizing before the positions of (41) are introduced; with (30) to
+  (34) it is the lexical prefix of a stem that forms a Secondary Imperfective.
+* In (77) the root of *gasnąć* is redirected to the *-aj-* verbalizer under the Secondary
+  Imperfective, so the analysis is over a stem of its own (`gasac`). *pó-jść*, (50a), is not
+  analysed, since neither the prefix nor the stem has its citation form there.
+* Two forms part with the model, as the paper notes: *po-chadz-a-ć*, (56c), is a gap of the
+  unproductive attenuative-frequentative (`gap56c_wellFormed`), and *gr-ywa-ć*, (60), forms a
+  Secondary Imperfective without a prefix (`exception60_not_wellFormed`).
 
 ## References
 
@@ -51,6 +69,7 @@ the starred ones excluded (`starred_not_wellFormed`).
 namespace Jablonska2004
 
 open Morphology Polish.Verbs
+open Data.Forms (Form)
 
 /-! ### Verbalizers -/
 
@@ -60,7 +79,7 @@ inductive Verbalizer
   | processual
   /-- The high instantaneous verbalizer, semelfactive *-n-*. -/
   | semelfactive
-  /-- The low verbalizer *-ej-*: a degree achievement over an adjectival base, (2b). -/
+  /-- The low verbalizer *-ej-*, forming a degree achievement over an adjectival base, (2b). -/
   | degree
   /-- The low inchoative verbalizer *-n-*, (2a). -/
   | inchoative
@@ -81,8 +100,8 @@ inductive Continuum
 
 namespace Verbalizer
 
-/-- The Aktionsart profile of a bare stem: atelic, lacking a right boundary, Section 2.3;
-punctual for the semelfactive, Section 2.3.1; stative for the statives, which lack a left
+/-- The Aktionsart profile of a bare stem is atelic, lacking a right boundary, Section 2.3; it is
+punctual for the semelfactive, Section 2.3.1, and stative for the statives, which lack a left
 boundary, Section 5. -/
 def profile : Verbalizer → Aspect.VendlerClass
   | semelfactive => .semelfactive
@@ -96,36 +115,37 @@ def continuum : Verbalizer → Option Continuum
   | directedMotion => some .path
   | semelfactive => none
 
-/-- Punctual: no continuum to measure along, (45). -/
+/-- A punctual stem has no continuum to measure along, (45). -/
 def IsPunctual (v : Verbalizer) : Prop := v.profile.duration = .punctual
 
-instance : DecidablePred IsPunctual := λ v => inferInstanceAs (Decidable (v.profile.duration = _))
+instance : DecidablePred IsPunctual := fun v ↦ inferInstanceAs (Decidable (v.profile.duration = _))
 
 /-- Dynamic eventualities come with a left boundary, the preceding state at which the event does
 not hold, Section 2.3; states do not. -/
 def HasLeftBoundary (v : Verbalizer) : Prop := v.profile.dynamicity = .dynamic
 
 instance : DecidablePred HasLeftBoundary :=
-  λ v => inferInstanceAs (Decidable (v.profile.dynamicity = _))
+  fun v ↦ inferInstanceAs (Decidable (v.profile.dynamicity = _))
 
-/-- A natural telos for a purely perfectivizing prefix to coincide with, (10): the end of the
-scale of a gradable property, or the change of state of the affected object of a processual
-verb, Section 2.2. -/
+/-- The stem has a natural telos for a purely perfectivizing prefix to coincide with, (10), the
+end of the scale of a gradable property or the change of state of the affected object of a
+processual verb, Section 2.2. -/
 def HasTelos (v : Verbalizer) : Prop := v = processual ∨ v = degree ∨ v = inchoative
 
-instance : DecidablePred HasTelos := λ v => inferInstanceAs (Decidable (v = _ ∨ v = _ ∨ v = _))
+instance : DecidablePred HasTelos := fun v ↦ inferInstanceAs (Decidable (v = _ ∨ v = _ ∨ v = _))
 
-/-- An adjectival base in the derivational history, (2b) and (72): no Result phrase. -/
+/-- The stem has an adjectival base in its derivational history, (2b) and (72), and so no Result
+phrase. -/
 def IsAdjectival (v : Verbalizer) : Prop := v = degree
 
-instance : DecidablePred IsAdjectival := λ v => inferInstanceAs (Decidable (v = _))
+instance : DecidablePred IsAdjectival := fun v ↦ inferInstanceAs (Decidable (v = _))
 
 /-- Denotes a delimitable interval, the selectional requirement of the Secondary Imperfective,
 (66): a temporal continuum and a left boundary. -/
 def DenotesInterval (v : Verbalizer) : Prop := v.continuum = some .temporal ∧ v.HasLeftBoundary
 
 instance : DecidablePred DenotesInterval :=
-  λ v => inferInstanceAs (Decidable (v.continuum = _ ∧ v.HasLeftBoundary))
+  fun v ↦ inferInstanceAs (Decidable (v.continuum = _ ∧ v.HasLeftBoundary))
 
 @[simp] theorem isPunctual_iff (v : Verbalizer) : v.IsPunctual ↔ v = semelfactive := by
   cases v <;> decide
@@ -154,8 +174,8 @@ inductive Level
   | asp3
   deriving DecidableEq
 
-/-- The aspectual profile of the predicate built so far: the highest projection merged; whether
-it is [+Perf], bounded by a Reference Time AFTER its Event Time; and whether its delimited
+/-- The aspectual profile of the predicate built so far records the highest projection merged,
+whether it is [+Perf], bounded by a Reference Time AFTER its Event Time, and whether its delimited
 subevents are changes of state of their participants, the contribution of a lexical prefix,
 (30), so that iterated subevents can overlap and be S-summed, (36) and (37). -/
 structure Profile where
@@ -214,10 +234,16 @@ end Layer
 
 /-! ### Derivations -/
 
-/-- The profile after merging the layers `ls`, innermost first, over profile `p`. -/
-def profileFrom (v : Verbalizer) : Profile → List Layer → Option Profile
-  | p, [] => some p
-  | p, l :: ls => (l.merge v p).bind (profileFrom v · ls)
+/-- The profile after merging the layers `ls`, innermost first, in turn over profile `p`. -/
+def profileFrom (v : Verbalizer) (p : Profile) (ls : List Layer) : Option Profile :=
+  ls.foldlM (fun p l ↦ l.merge v p) p
+
+@[simp] theorem profileFrom_nil (v : Verbalizer) (p : Profile) : profileFrom v p [] = some p :=
+  rfl
+
+@[simp] theorem profileFrom_cons (v : Verbalizer) (p : Profile) (l : Layer) (ls : List Layer) :
+    profileFrom v p (l :: ls) = (l.merge v p).bind (profileFrom v · ls) :=
+  rfl
 
 /-- The profile of a derivation over a bare stem of class `v`. -/
 def profile (v : Verbalizer) (ls : List Layer) : Option Profile :=
@@ -248,7 +274,7 @@ instance (v : Verbalizer) (ls : List Layer) : Decidable (Perfective v ls) := by
     {a : α} {f : α → Option β} : (if c then some a else none).bind f = if c then f a else none := by
   split_ifs <;> rfl
 
-/-- The seven shapes of a well-formed derivation: a bare stem; a lexical prefix, (30); *po-* in
+/-- A well-formed derivation has one of seven shapes: a bare stem; a lexical prefix, (30); *po-* in
 Asp1, (27); a purely perfectivizing prefix, (67); a lexically prefixed or Asp1-delimited stem
 under the Secondary Imperfective, (31a) and (56); and *po-* in Asp3 over a lexically prefixed
 Secondary Imperfective, (34). -/
@@ -267,15 +293,15 @@ theorem wellFormed_iff {v : Verbalizer} {ls : List Layer} :
     clear h
     rcases ls with _ | ⟨a, ls⟩
     · exact Or.inl rfl
-    cases a <;> simp_all [profile, profileFrom, Layer.merge] <;>
-      rcases ls with _ | ⟨b, ls⟩ <;> simp_all [profileFrom, Layer.merge] <;>
+    cases a <;> simp_all [profile, Layer.merge] <;>
+      rcases ls with _ | ⟨b, ls⟩ <;> simp_all [Layer.merge] <;>
       cases b <;> simp_all <;>
-      rcases ls with _ | ⟨c, ls⟩ <;> simp_all [profileFrom, Layer.merge]
+      rcases ls with _ | ⟨c, ls⟩ <;> simp_all [Layer.merge]
     cases c <;> simp_all
-    rcases ls with _ | ⟨d, ls⟩ <;> simp_all [profileFrom, Layer.merge]
+    rcases ls with _ | ⟨d, ls⟩ <;> simp_all [Layer.merge]
   · rintro (rfl | ⟨m, rfl, h⟩ | ⟨m, rfl, h⟩ | ⟨m, rfl, h₁, h₂⟩ | ⟨m, rfl, h₁, h₂⟩ |
         ⟨m, rfl, h₁, h₂⟩ | ⟨m, m', rfl, h₁, h₂⟩) <;>
-      simp_all [WellFormed, profile, profileFrom, Layer.merge]
+      simp_all [WellFormed, profile, Layer.merge]
 
 /-- The seven shapes, as a case split on a well-formedness hypothesis. -/
 local macro "shapes" h:term : tactic =>
@@ -290,7 +316,7 @@ variable {v : Verbalizer} {ls : List Layer} {m m' : Morph}
 
 /-- A bare stem is perfective exactly when it is a semelfactive, (46). -/
 theorem perfective_nil_iff : Perfective v [] ↔ v.IsPunctual := by
-  simp [Perfective, profile, profileFrom]
+  simp [Perfective, profile]
 
 /-- Stacking is contingent on the Secondary Imperfective, Section 5: *po-* in Asp3 stacks only
 over a secondary imperfective, (24) and (42), and never over an attenuative-frequentative, (61). -/
@@ -316,21 +342,21 @@ theorem not_lexical_and_asp1 (h : WellFormed v ls) : ¬ (.lexical m ∈ ls ∧ .
 
 /-- *po-* in Asp3 makes the derivation perfective, (33). -/
 theorem perfective_of_asp3 (h : WellFormed v ls) (hm : .asp3 m ∈ ls) : Perfective v ls := by
-  shapes h <;> cases v <;> simp_all [Perfective, profile, profileFrom, Layer.merge]
+  shapes h <;> cases v <;> simp_all [Perfective, profile, Layer.merge]
 
 /-- A derivation closed by the Secondary Imperfective is imperfective: the
 attenuative-frequentative forms, (56) and (64), are imperfectives, and Asp3 *po-* selects for
 [-Perf], (25). -/
 theorem not_perfective_of_getLast_si (h : WellFormed v ls) (hl : ls.getLast? = some .si) :
     ¬ Perfective v ls := by
-  shapes h <;> cases v <;> simp_all [Perfective, profile, profileFrom, Layer.merge]
+  shapes h <;> cases v <;> simp_all [Perfective, profile, Layer.merge]
 
 /-- The prefix sequence of a derivation, outermost first, under any classification `f` that
 agrees with the lexical/superlexical split, is well-stacked in the sense of [svenonius-2004]:
 the superlexical prefix is always outside the lexical one. -/
 theorem wellStacked (h : WellFormed v ls) (f : Layer → Svenonius2004.PrefixClass)
     (hf : ∀ l, (f l).IsSuperlexical ↔ ¬ l.IsLexical) :
-    Svenonius2004.WellStacked (ls.reverse.filterMap λ l => l.prefix?.map (·, f l)) := by
+    Svenonius2004.WellStacked (ls.reverse.filterMap fun l ↦ l.prefix?.map (·, f l)) := by
   shapes h <;> simp_all [Svenonius2004.WellStacked, Layer.prefix?, Layer.IsLexical]
 
 end Generalizations
@@ -341,15 +367,16 @@ section Table2
 
 variable (v : Verbalizer) (m : Morph)
 
-/-- Table 2, Asp2: a purely perfectivizing prefix needs a telos, (10) and (67), which the
-motion stems and the statives lack, and an unbounded stem, which the semelfactive is not, (47):
-the cell Table 2 hedges as "yes ???" is closed. -/
+/-- In the Asp2 column of Table 2, a purely perfectivizing prefix needs a telos, (10) and (67),
+which the motion stems and the statives lack, and an unbounded stem, which the semelfactive is
+not, (47), so the cell Table 2 hedges as "yes ???" is closed. -/
 theorem wellFormed_perf_iff :
     WellFormed v [.perf m] ↔ v = .processual ∨ v = .degree ∨ v = .inchoative := by
   cases v <;> simp [wellFormed_iff]
 
-/-- Table 2, the Secondary Imperfective: the processual and non-directed motion stems, which
-are also the classes on which *po-* stacks in Asp3, (43) and (83). -/
+/-- In the Secondary Imperfective column of Table 2, the stems that form one are the processual
+and non-directed motion stems, which are also the classes on which *po-* stacks in Asp3, (43)
+and (83). -/
 theorem wellFormed_lexical_si_iff :
     WellFormed v [.lexical m, .si] ↔ v = .processual ∨ v = .nonDirectedMotion := by
   cases v <;> simp [wellFormed_iff]
@@ -360,11 +387,11 @@ end Table2
 
 /-- The readings of superlexical *po-*. -/
 inductive Reading
-  /-- 'for a while': an arbitrary Reference Time, short of any telos, (12) and (27). -/
+  /-- *po-* 'for a while' sets an arbitrary Reference Time, short of any telos, (12) and (27). -/
   | delimitative
   /-- A degree of change short of the end of the scale, (11) and (22). -/
   | considerableChange
-  /-- 'away': ground covered along the path, (50). -/
+  /-- *po-* 'away' measures the ground covered along the path, (50). -/
   | centrifugal
   /-- A Reference Time after the last of the S-summed subevents, one per atom of the plural
   internal argument, each reaching its telos, (23) and (28). -/
@@ -385,18 +412,18 @@ def Asp1Reading (v : Verbalizer) (plural : Bool) : Reading → Prop
   | .distributive => plural = true ∧ v.HasTelos
   | .inceptive => ¬ v.HasLeftBoundary
 
-instance (v : Verbalizer) (plural : Bool) : DecidablePred (Asp1Reading v plural) := λ r => by
+instance (v : Verbalizer) (plural : Bool) : DecidablePred (Asp1Reading v plural) := fun r ↦ by
   cases r <;> unfold Asp1Reading <;> infer_instance
 
-/-- The readings of *po-* in Spec,Asp3P, (34): delimitative when the third Reference Time
-falls WITHIN the inherited first one, distributive when it follows the last iterated subevent,
+/-- The reading of *po-* in Spec,Asp3P, (34), is delimitative when the third Reference Time falls
+WITHIN the inherited first one, and distributive when it follows the last iterated subevent,
 which needs a plural internal argument, (28e). -/
 def Asp3Reading (plural : Bool) : Reading → Prop
   | .delimitative => True
   | .distributive => plural = true
   | _ => False
 
-instance (plural : Bool) : DecidablePred (Asp3Reading plural) := λ r => by
+instance (plural : Bool) : DecidablePred (Asp3Reading plural) := fun r ↦ by
   cases r <;> unfold Asp3Reading <;> infer_instance
 
 /-- The Asp1 column of Table 2. -/
@@ -421,112 +448,328 @@ delimitative reading, the external argument being outside the scope of *po-*, (2
 theorem not_asp1Reading_distributive (v : Verbalizer) : ¬ Asp1Reading v false .distributive := by
   simp [Asp1Reading]
 
+/-! ### Stems -/
+
+/-- A stem of the analysis is a fragment verb with the verbalizer class the paper assigns it, so
+that the class belongs to the stem and every analysis over the stem shares it. -/
+structure Stem where
+  /-- The fragment verb. -/
+  verb : Verb
+  /-- The verbalizer class of Table 1 and Table 2. -/
+  verbalizer : Verbalizer
+
+/-- *-gasać* is the *-aj-* stem of the root of *gasnąć*, the high processual verbalizer to which the
+root is redirected under the Secondary Imperfective, (77). It occurs only prefixed, as in
+*wy-gas-a-ć*, and so has no dictionary aspect of its own. -/
+def gasac : Verb where
+  morphs := [.root "gasać"]
+
+namespace Stem
+
+/-! The degree achievements in *-ej-*. -/
+
+/-- *siwieć* 'turn grey'. -/
+def siwiec : Stem := ⟨Polish.Verbs.siwiec, .degree⟩
+/-- *jaśnieć* 'be bright'. -/
+def jasniec : Stem := ⟨Polish.Verbs.jasniec, .degree⟩
+/-- *ciemnieć* 'get dark'. -/
+def ciemniec : Stem := ⟨Polish.Verbs.ciemniec, .degree⟩
+/-- *drożeć* 'get expensive'. -/
+def drozec : Stem := ⟨Polish.Verbs.drozec, .degree⟩
+/-- *babieć* 'become effeminate'. -/
+def babiec : Stem := ⟨Polish.Verbs.babiec, .degree⟩
+/-- *smutnieć* 'get sad'. -/
+def smutniec : Stem := ⟨Polish.Verbs.smutniec, .degree⟩
+/-- *dziczeć* 'go wild'. -/
+def dziczec : Stem := ⟨Polish.Verbs.dziczec, .degree⟩
+
+/-! The inchoatives in *-n-*. -/
+
+/-- *marznąć* 'freeze'. -/
+def marznac : Stem := ⟨Polish.Verbs.marznac, .inchoative⟩
+/-- *głuchnąć* 'go deaf'. -/
+def gluchnac : Stem := ⟨Polish.Verbs.gluchnac, .inchoative⟩
+/-- *więdnąć* 'wither'. -/
+def wiednac : Stem := ⟨Polish.Verbs.wiednac, .inchoative⟩
+/-- *ślepnąć* 'go blind'. -/
+def slepnac : Stem := ⟨Polish.Verbs.slepnac, .inchoative⟩
+/-- *gasnąć* 'go out'. -/
+def gasnac : Stem := ⟨Polish.Verbs.gasnac, .inchoative⟩
+
+/-! The semelfactives in *-n-*. -/
+
+/-- *warknąć* 'snarl once'. -/
+def warknac : Stem := ⟨Polish.Verbs.warknac, .semelfactive⟩
+/-- *kopnąć* 'kick once'. -/
+def kopnac : Stem := ⟨Polish.Verbs.kopnac, .semelfactive⟩
+/-- *machnąć* 'wave once'. -/
+def machnac : Stem := ⟨Polish.Verbs.machnac, .semelfactive⟩
+/-- *miauknąć* 'meow once'. -/
+def miauknac : Stem := ⟨Polish.Verbs.miauknac, .semelfactive⟩
+/-- *szepnąć* 'whisper once'. -/
+def szepnac : Stem := ⟨Polish.Verbs.szepnac, .semelfactive⟩
+
+/-! The high processual verbalizers *-i/y-* and *-aj-*. -/
+
+/-- *czytać* 'read'. -/
+def czytac : Stem := ⟨Polish.Verbs.czytac, .processual⟩
+/-- *grać* 'play'. -/
+def grac : Stem := ⟨Polish.Verbs.grac, .processual⟩
+/-- *palić* 'smoke'. -/
+def palic : Stem := ⟨Polish.Verbs.palic, .processual⟩
+/-- *chować* 'hide'. -/
+def chowac : Stem := ⟨Polish.Verbs.chowac, .processual⟩
+/-- *pisać* 'write'. -/
+def pisac : Stem := ⟨Polish.Verbs.pisac, .processual⟩
+/-- *śpiewać* 'sing'. -/
+def spiewac : Stem := ⟨Polish.Verbs.spiewac, .processual⟩
+/-- *kopać* 'dig'. -/
+def kopac : Stem := ⟨Polish.Verbs.kopac, .processual⟩
+/-- *dmuchać* 'blow'. -/
+def dmuchac : Stem := ⟨Polish.Verbs.dmuchac, .processual⟩
+/-- *szeptać* 'whisper', the non-semelfactive stem of the root of *szepnąć*, (79c). -/
+def szeptac : Stem := ⟨Polish.Verbs.szeptac, .processual⟩
+/-- *tracić* 'lose'. -/
+def tracic : Stem := ⟨Polish.Verbs.tracic, .processual⟩
+/-- *robić* 'make'. -/
+def robic : Stem := ⟨Polish.Verbs.robic, .processual⟩
+/-- *brudzić* 'dirty'. -/
+def brudzic : Stem := ⟨Polish.Verbs.brudzic, .processual⟩
+/-- *bić* 'beat'. -/
+def bic : Stem := ⟨Polish.Verbs.bic, .processual⟩
+/-- *chwalić* 'praise'. -/
+def chwalic : Stem := ⟨Polish.Verbs.chwalic, .processual⟩
+/-- *równać* 'level'. -/
+def rownac : Stem := ⟨Polish.Verbs.rownac, .processual⟩
+/-- *-gasać*, the root of *gasnąć* redirected to *-aj-*, (77). -/
+def gasAj : Stem := ⟨gasac, .processual⟩
+
+/-! The verbs of motion and the statives. -/
+
+/-- *biec* 'run', directed. -/
+def biec : Stem := ⟨Polish.Verbs.biec, .directedMotion⟩
+/-- *lecieć* 'fly', directed. -/
+def leciec : Stem := ⟨Polish.Verbs.leciec, .directedMotion⟩
+/-- *ciągnąć* 'drag', directed. -/
+def ciagnac : Stem := ⟨Polish.Verbs.ciagnac, .directedMotion⟩
+/-- *chodzić* 'walk', non-directed. -/
+def chodzic : Stem := ⟨Polish.Verbs.chodzic, .nonDirectedMotion⟩
+/-- *biegać* 'run', non-directed. -/
+def biegac : Stem := ⟨Polish.Verbs.biegac, .nonDirectedMotion⟩
+/-- *latać* 'fly', non-directed. -/
+def latac : Stem := ⟨Polish.Verbs.latac, .nonDirectedMotion⟩
+/-- *ciągać* 'drag', non-directed. -/
+def ciagac : Stem := ⟨Polish.Verbs.ciagac, .nonDirectedMotion⟩
+/-- *pływać* 'swim', non-directed. -/
+def plywac : Stem := ⟨Polish.Verbs.plywac, .nonDirectedMotion⟩
+/-- *siedzieć* 'sit'. -/
+def siedziec : Stem := ⟨Polish.Verbs.siedziec, .stative⟩
+/-- *kochać* 'love'. -/
+def kochac : Stem := ⟨Polish.Verbs.kochac, .stative⟩
+/-- *lubić* 'like'. -/
+def lubic : Stem := ⟨Polish.Verbs.lubic, .stative⟩
+
+end Stem
+
 /-! ### The paper's analyses -/
 
-/-- An analysis of an attested form: the fragment stem, its verbalizer class, the layers
-innermost first, the plurality of the internal argument, and the paper's readings of the
-superlexical *po-*, if any. -/
+/-- An analysis of an attested form gives the form, its stem, the layers innermost first, the
+plurality of the internal argument, and the paper's readings of the superlexical *po-*, if any. -/
 structure Analysis where
-  ex : Datum
-  stem : Verb.Stem
-  verbalizer : Verbalizer
+  /-- The attested form. -/
+  form : Form UD.MorphFeatures
+  /-- The stem the layers are merged over. -/
+  stem : Stem
+  /-- The layers, innermost first. -/
   layers : List Layer
+  /-- Whether the internal argument is plural. -/
   plural : Bool
+  /-- The paper's readings of the superlexical *po-*. -/
   readings : List Reading
+
+namespace Analysis
+
+/-- The morphs of the analysed word are the prefixes, outermost first, then the stem. -/
+def morphs (a : Analysis) : List Morph :=
+  (a.layers.filterMap Layer.prefix?).reverse ++ a.stem.verb.morphs
 
 /-- The reading is available to the superlexical *po-* of the analysis, at Asp3 when the
 derivation is closed by *po-* there and at Asp1 otherwise. -/
-def Analysis.Available (a : Analysis) (r : Reading) : Prop :=
+def Available (a : Analysis) (r : Reading) : Prop :=
   match a.layers.getLast? with
   | some (.asp3 _) => Asp3Reading a.plural r
-  | _ => Asp1Reading a.verbalizer a.plural r
+  | _ => Asp1Reading a.stem.verbalizer a.plural r
 
 instance (a : Analysis) (r : Reading) : Decidable (a.Available r) := by
-  unfold Analysis.Available; split <;> infer_instance
+  unfold Available; split <;> infer_instance
 
-/-- The attested forms: the degree achievements of (10) and (23), the processual stems of (24),
-(27), (28), (30), (31), (34) and (43), the inchoatives of (39), the semelfactive of (46), the
-motion stems of (50), (51) and (80), the statives of (54) and fn. 21, the
-attenuative-frequentatives of (56) and (65), the purely perfectivized stems of (67), (69) and
-(75), the class shift of (77), the lexically prefixed semelfactive of (79) and the lexical *po-*
-of (81) to (83). -/
+end Analysis
+
+/-- The attested forms are the degree achievements of (3), (8), (10) and (23), the processual stems
+of (24), (27), (28), (30), (31), (34) and (43), the inchoatives of (39), the semelfactive of
+(46), the motion verbs of (50), (51) and (80), the statives of (54) and fn. 21, the
+attenuative-frequentatives of (56) and (65), the purely perfectivized stems of (67) and (69), the
+inchoatives of (75), the class shift of (77), the semelfactive and its non-semelfactive stem of
+(79), and the lexical *po-* of (81) to (83). -/
 def attested : List Analysis :=
-  [⟨Examples.ex_10a_po, ciemniec, .degree, [.asp1 po], false, [.considerableChange]⟩,
-   ⟨Examples.ex_10a_z, ciemniec, .degree, [.perf z], false, []⟩,
-   ⟨Examples.ex_23a, babiec, .degree, [.asp1 po], true, [.distributive]⟩,
-   ⟨Examples.ex_24a, czytac, .processual, [.lexical prze, .si, .asp3 po], true, [.distributive]⟩,
-   ⟨Examples.ex_27a, czytac, .processual, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Examples.ex_28a, chowac, .processual, [.asp1 po], true, [.distributive, .delimitative]⟩,
-   ⟨Examples.ex_28b, pisac, .processual, [.lexical prze, .si, .asp3 po], true,
-     [.distributive, .delimitative]⟩,
-   ⟨Examples.ex_28c, spiewac, .processual, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Examples.ex_28d, chodzic, .nonDirectedMotion, [.lexical w, .si, .asp3 po], true,
-     [.distributive, .delimitative]⟩,
-   ⟨Examples.ex_30, pisac, .processual, [.lexical prze], false, []⟩,
-   ⟨Examples.ex_31a, pisac, .processual, [.lexical prze, .si], false, []⟩,
-   ⟨Examples.ex_34a, pisac, .processual, [.lexical prze, .si, .asp3 po], true, [.delimitative]⟩,
-   ⟨Examples.ex_34b, pisac, .processual, [.lexical prze, .si, .asp3 po], true, [.distributive]⟩,
-   ⟨Examples.ex_39a, marznac, .inchoative, [.asp1 po], true, [.distributive]⟩,
-   ⟨Examples.ex_43a, kopac, .processual, [.lexical ob, .si, .asp3 po], true,
-     [.distributive, .delimitative]⟩,
-   ⟨Examples.ex_46b, machnac, .semelfactive, [], false, []⟩,
-   ⟨Examples.ex_50b, biec, .directedMotion, [.asp1 po], false, [.centrifugal]⟩,
-   ⟨Examples.ex_51a, chodzic, .nonDirectedMotion, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Examples.ex_54a, kochac, .stative, [.asp1 po], false, [.inceptive]⟩,
-   ⟨Examples.fn21, siedziec, .stative, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Examples.ex_56b, grac, .processual, [.asp1 po, .si], false, [.delimitative]⟩,
-   ⟨Examples.ex_65a, dmuchac, .processual, [.asp1 po, .si], false, [.delimitative]⟩,
-   ⟨Examples.ex_67a_pf, tracic, .processual, [.perf s], false, []⟩,
-   ⟨Examples.ex_69a_pf, brudzic, .processual, [.perf po], false, []⟩,
-   ⟨Examples.ex_75a, gasnac, .inchoative, [.lexical wy], false, []⟩,
-   ⟨Examples.ex_75b, gasnac, .inchoative, [.perf z], false, []⟩,
-   ⟨Examples.ex_77, gasnac, .processual, [.lexical wy, .si], false, []⟩,
-   ⟨Examples.ex_79a, szepnac, .semelfactive, [.lexical pod], false, []⟩,
-   ⟨Examples.ex_80b, plywac, .nonDirectedMotion, [.lexical do_, .si], false, []⟩,
-   ⟨Examples.ex_81c, rownac, .processual, [.lexical po], false, []⟩,
-   ⟨Examples.ex_82c, rownac, .processual, [.lexical po, .si], false, []⟩,
-   ⟨Examples.ex_83a, rownac, .processual, [.lexical po, .si, .asp3 po], true, [.distributive]⟩]
+  [⟨Forms.f_3a, .siwiec, [.asp1 po], false, []⟩,
+   ⟨Forms.f_3b, .jasniec, [.asp1 po], false, []⟩,
+   ⟨Forms.f_3d, .smutniec, [.asp1 po], false, []⟩,
+   ⟨Forms.f_8a, .drozec, [], false, []⟩,
+   ⟨Forms.f_10a_po, .ciemniec, [.asp1 po], false, [.considerableChange]⟩,
+   ⟨Forms.f_10a_z, .ciemniec, [.perf z], false, []⟩,
+   ⟨Forms.f_10b_po, .drozec, [.asp1 po], false, [.considerableChange]⟩,
+   ⟨Forms.f_10b_z, .drozec, [.perf z], false, []⟩,
+   ⟨Forms.f_23a, .babiec, [.asp1 po], true, [.distributive]⟩,
+   ⟨Forms.f_24a, .czytac, [.lexical prze, .si, .asp3 po], true, [.distributive]⟩,
+   ⟨Forms.f_27a, .czytac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Forms.f_27b, .grac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Forms.f_27c, .chodzic, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Forms.f_27d, .palic, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Forms.f_28a, .chowac, [.asp1 po], true, [.distributive, .delimitative]⟩,
+   ⟨Forms.f_28b, .pisac, [.lexical prze, .si, .asp3 po], true, [.distributive, .delimitative]⟩,
+   ⟨Forms.f_28c, .spiewac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Forms.f_28d, .chodzic, [.lexical w, .si, .asp3 po], true, [.distributive, .delimitative]⟩,
+   ⟨Forms.f_30, .pisac, [.lexical prze], false, []⟩,
+   ⟨Forms.f_31a, .pisac, [.lexical prze, .si], false, []⟩,
+   ⟨Forms.f_34a, .pisac, [.lexical prze, .si, .asp3 po], true, [.delimitative]⟩,
+   ⟨Forms.f_34a, .pisac, [.lexical prze, .si, .asp3 po], true, [.distributive]⟩,
+   ⟨Forms.f_39a, .marznac, [.asp1 po], true, [.distributive]⟩,
+   ⟨Forms.f_39b, .gluchnac, [.asp1 po], true, [.distributive]⟩,
+   ⟨Forms.f_39c, .wiednac, [.asp1 po], true, [.distributive]⟩,
+   ⟨Forms.f_39d, .slepnac, [.asp1 po], true, [.distributive]⟩,
+   ⟨Forms.f_43a, .kopac, [.lexical ob, .si, .asp3 po], true, [.distributive, .delimitative]⟩,
+   ⟨Forms.f_46b, .machnac, [], false, []⟩,
+   ⟨Forms.f_50b, .biec, [.asp1 po], false, [.centrifugal]⟩,
+   ⟨Forms.f_50c, .leciec, [.asp1 po], false, [.centrifugal]⟩,
+   ⟨Forms.f_50d, .ciagnac, [.asp1 po], false, [.centrifugal]⟩,
+   ⟨Forms.f_51b, .biegac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Forms.f_51c, .latac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Forms.f_51d, .ciagac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Forms.f_54a, .kochac, [.asp1 po], false, [.inceptive]⟩,
+   ⟨Forms.f_54b, .lubic, [.asp1 po], false, [.inceptive]⟩,
+   ⟨Forms.fn21, .siedziec, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Forms.f_56b, .grac, [.asp1 po, .si], false, [.delimitative]⟩,
+   ⟨Forms.f_56d, .palic, [.asp1 po, .si], false, [.delimitative]⟩,
+   ⟨Forms.f_65a, .dmuchac, [.asp1 po, .si], false, [.delimitative]⟩,
+   ⟨Forms.f_67a_pf, .tracic, [.perf s], false, []⟩,
+   ⟨Forms.f_67b_pf, .robic, [.perf z], false, []⟩,
+   ⟨Forms.f_67c_pf, .chowac, [.perf s], false, []⟩,
+   ⟨Forms.f_69a_pf, .brudzic, [.perf po], false, []⟩,
+   ⟨Forms.f_69b_pf, .bic, [.perf po], false, []⟩,
+   ⟨Forms.f_69c_pf, .chwalic, [.perf po], false, []⟩,
+   ⟨Forms.f_75a, .gasnac, [.lexical wy], false, []⟩,
+   ⟨Forms.f_75b, .gasnac, [.perf z], false, []⟩,
+   ⟨Forms.f_77, .gasAj, [.lexical wy, .si], false, []⟩,
+   ⟨Forms.f_79a, .szepnac, [.lexical pod], false, []⟩,
+   ⟨Forms.f_79c, .szeptac, [], false, []⟩,
+   ⟨Forms.f_79d, .szeptac, [.lexical pod, .si], false, []⟩,
+   ⟨Forms.f_80b, .plywac, [.lexical do_, .si], false, []⟩,
+   ⟨Forms.f_81c, .rownac, [.lexical po], false, []⟩,
+   ⟨Forms.f_82c, .rownac, [.lexical po, .si], false, []⟩,
+   ⟨Forms.f_83a, .rownac, [.lexical po, .si, .asp3 po], true, [.distributive]⟩]
 
-/-- The starred forms: *po-* in Asp3 over a perfective, (24b) and (42); the Secondary
-Imperfective of a bare stem, (32), of a semelfactive, (48) and (79b), of a purely perfectivized
-stem, (67), (69), (73) and (78), of a degree achievement, (74), and of an inchoative, (76);
-*po-* on a semelfactive, (45) and (63b); and *po-* over an attenuative-frequentative, (61). -/
+/-- The starred forms put *po-* in Asp3 over a perfective, (24b); form the Secondary Imperfective
+of a bare stem, (32), of a semelfactive, (48) and (79b), of a purely perfectivized stem, (67),
+(69), (73) and (78), of a degree achievement, (59) and (74), of a stative, (58c), and of an
+inchoative, (76); and put *po-* with a lexical or purely perfectivizing prefix, (42), on a
+semelfactive, (45) and (63b), or over an attenuative-frequentative, (61). -/
 def starred : List Analysis :=
-  [⟨Examples.ex_24b, czytac, .processual, [.lexical prze, .asp3 po], true, []⟩,
-   ⟨Examples.ex_32a, robic, .processual, [.si], false, []⟩,
-   ⟨Examples.ex_42b, kopac, .processual, [.lexical ob, .asp3 po], false, []⟩,
-   ⟨Examples.ex_45a, warknac, .semelfactive, [.asp1 po], false, []⟩,
-   ⟨Examples.ex_48, warknac, .semelfactive, [.asp1 po, .si], false, []⟩,
-   ⟨Examples.ex_61a, grac, .processual, [.asp1 po, .si, .asp3 po], false, []⟩,
-   ⟨Examples.ex_63b, miauknac, .semelfactive, [.asp1 po], false, []⟩,
-   ⟨Examples.ex_67a_si, tracic, .processual, [.perf s, .si], false, []⟩,
-   ⟨Examples.ex_69a_si, brudzic, .processual, [.perf po, .si], false, []⟩,
-   ⟨Examples.ex_73a, dziczec, .degree, [.perf z, .si], false, []⟩,
-   ⟨Examples.ex_74, siwiec, .degree, [.asp1 po, .si], false, []⟩,
-   ⟨Examples.ex_76, gasnac, .inchoative, [.lexical wy, .si], false, []⟩,
-   ⟨Examples.ex_78, gasnac, .inchoative, [.perf z, .si], false, []⟩,
-   ⟨Examples.ex_79b, szepnac, .semelfactive, [.lexical pod, .si], false, []⟩]
+  [⟨Forms.f_24b, .czytac, [.lexical prze, .asp3 po], true, []⟩,
+   ⟨Forms.f_32a, .robic, [.si], false, []⟩,
+   ⟨Forms.f_42a, .tracic, [.perf s, .asp1 po], false, []⟩,
+   ⟨Forms.f_42b, .kopac, [.lexical ob, .asp1 po], false, []⟩,
+   ⟨Forms.f_45a, .warknac, [.asp1 po], false, []⟩,
+   ⟨Forms.f_45b, .kopnac, [.asp1 po], false, []⟩,
+   ⟨Forms.f_45c, .machnac, [.asp1 po], false, []⟩,
+   ⟨Forms.f_48, .warknac, [.asp1 po, .si], false, []⟩,
+   ⟨Forms.f_58c, .kochac, [.asp1 po, .si], false, []⟩,
+   ⟨Forms.f_59a, .siwiec, [.asp1 po, .si], false, []⟩,
+   ⟨Forms.f_61a, .grac, [.asp1 po, .si, .asp3 po], false, []⟩,
+   ⟨Forms.f_61b, .palic, [.asp1 po, .si, .asp3 po], false, []⟩,
+   ⟨Forms.f_63b, .miauknac, [.asp1 po], false, []⟩,
+   ⟨Forms.f_67a_si, .tracic, [.perf s, .si], false, []⟩,
+   ⟨Forms.f_67b_si, .robic, [.perf z, .si], false, []⟩,
+   ⟨Forms.f_67c_si, .chowac, [.perf s, .si], false, []⟩,
+   ⟨Forms.f_69a_si, .brudzic, [.perf po, .si], false, []⟩,
+   ⟨Forms.f_69b_si, .bic, [.perf po, .si], false, []⟩,
+   ⟨Forms.f_69c_si, .chwalic, [.perf po, .si], false, []⟩,
+   ⟨Forms.f_73a, .dziczec, [.perf z, .si], false, []⟩,
+   ⟨Forms.f_74, .siwiec, [.asp1 po, .si], false, []⟩,
+   ⟨Forms.f_76_a, .gasnac, [.lexical wy, .si], false, []⟩,
+   ⟨Forms.f_76_b, .gasnac, [.lexical wy, .si], false, []⟩,
+   ⟨Forms.f_78, .gasnac, [.perf z, .si], false, []⟩,
+   ⟨Forms.f_79b, .szepnac, [.lexical pod, .si], false, []⟩]
+
+/-- The attested forms are accepted and the starred ones rejected. -/
+theorem judgments :
+    (∀ a ∈ attested, a.form.judgment = .acceptable) ∧
+      ∀ a ∈ starred, a.form.judgment = .ungrammatical := by
+  decide
 
 /-- Every attested form is a well-formed derivation. -/
-theorem attested_wellFormed : ∀ a ∈ attested, WellFormed a.verbalizer a.layers := by decide
+theorem attested_wellFormed : ∀ a ∈ attested, WellFormed a.stem.verbalizer a.layers := by decide
 
 /-- Every starred form is excluded. -/
-theorem starred_not_wellFormed : ∀ a ∈ starred, ¬ WellFormed a.verbalizer a.layers := by decide
+theorem starred_not_wellFormed : ∀ a ∈ starred, ¬ WellFormed a.stem.verbalizer a.layers := by
+  decide
 
 /-- The paper's readings of *po-* are the derived ones. -/
 theorem attested_readings : ∀ a ∈ attested, ∀ r ∈ a.readings, a.Available r := by decide
 
-/-- The fragment's dictionary aspect of each analysed stem is the bare-stem perfectivity the
-model derives: perfective for the semelfactives, imperfective otherwise, (46). -/
-theorem attested_stem_perfectivity :
-    ∀ a ∈ attested, (a.stem.perfectivity = .perfective ↔ Perfective a.verbalizer []) := by
+/-- A prefixed attested form is imperfective exactly when the Secondary Imperfective closes it,
+by the tests of Section 2.1: (31a) and the attenuative-frequentatives pass the phasal-complement
+test, (33) fails it. -/
+theorem attested_perfective :
+    ∀ a ∈ attested, a.layers ≠ [] →
+      (Perfective a.stem.verbalizer a.layers ↔ a.layers.getLast? ≠ some .si) := by
   decide
 
-/-- The attested derivations closed by the Secondary Imperfective are imperfective and the rest
-perfective, by the tests of Section 2.1: (31a) and the attenuative-frequentatives pass the
-phasal-complement test, (33) and (46) fail it. -/
-theorem attested_perfective :
-    ∀ a ∈ attested, (Perfective a.verbalizer a.layers ↔ a.layers.getLast? ≠ some .si) := by
+/-- The fragment's aspect of each stem is the perfectivity the model derives for the bare stem:
+perfective exactly for the semelfactives, (46). -/
+theorem stem_perfectivity : ∀ a ∈ attested ++ starred,
+    (a.stem.verb.perfectivity = some .perfective ↔ Perfective a.stem.verbalizer []) := by
+  decide
+
+/-- The fragment's Vendler class of a stem, where it records one, is the profile of the stem's
+verbalizer: the statives are states and the semelfactives semelfactive. -/
+theorem stem_vendlerClass : ∀ a ∈ attested ++ starred,
+    a.stem.verb.vendlerClass ∈ [none, some a.stem.verbalizer.profile] := by
+  decide
+
+/-- Every infinitive without the Secondary Imperfective spells out its form: the prefixes, outermost
+first, and the stem are the morphs of the attested word, accepted or starred. The Secondary
+Imperfective replaces the stem's verbalizer, which the fragment's citation forms do not
+separate. -/
+theorem spells : ∀ a ∈ attested ++ starred, a.form.cell = Forms.inf → .si ∉ a.layers →
+    Svenonius2004.Spells a.morphs a.form.form := by
+  decide
+
+/-! ### The paper's limits
+
+Two forms part with the model, as the paper notes: the attenuative-frequentative is not
+productive, so a well-formed derivation can be a gap, and *gr-ywa-ć* is exceptional in forming a
+Secondary Imperfective without a prefix. -/
+
+/-- *po-chadz-a-ć*, (56c), which the paper rejects, has *po-* in Asp1 under the Secondary
+Imperfective of a non-directed motion stem. -/
+def gap56c : Analysis := ⟨Forms.f_56c, .chodzic, [.asp1 po, .si], false, []⟩
+
+/-- *gr-ywa-ć*, (60), which the paper accepts, fn. 23, is the Secondary Imperfective of a bare
+processual stem. -/
+def exception60 : Analysis := ⟨Forms.f_60_bare, .grac, [.si], false, []⟩
+
+/-- The gap (56c) is a well-formed derivation: attenuative-frequentative formation is not
+productive, (56) to (58), and the paper gives no rule for which stems lack it. -/
+theorem gap56c_wellFormed :
+    gap56c.form.judgment = .ungrammatical ∧ WellFormed gap56c.stem.verbalizer gap56c.layers := by
+  decide
+
+/-- The exception (60) is excluded by the requirement of (32) that the Secondary Imperfective find
+a delimited interval. -/
+theorem exception60_not_wellFormed :
+    exception60.form.judgment = .acceptable ∧
+      ¬ WellFormed exception60.stem.verbalizer exception60.layers := by
   decide
 
 end Jablonska2004

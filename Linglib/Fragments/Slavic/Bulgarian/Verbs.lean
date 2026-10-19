@@ -1,17 +1,16 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Category.Verb.Stem
+public import Linglib.Syntax.Category.Verb.Defs
 
 /-!
 # Bulgarian verbs
 
-Prefix morphs and verb-stem entries for the Bulgarian multiple-
-prefixation data of [istratkova-2004]. Citation forms are first-person
-singular present (Bulgarian has no infinitive). Aspect values are the
-dictionary-consensus ones; the paper's reclassification of the simplex
-imperfectives as aspectless homogeneous verbs, like the classification
-of prefix occurrences, lives in `Studies/Istratkova2004.lean`.
+Verbal prefixes and verbs of Bulgarian, the material of the study of multiple prefixation listed
+below. A prefix is a morph with its form only. A verb records its citation form, the first person
+singular present, Bulgarian having no infinitive, and its lexical aspect at the dictionary value.
+The study's reclassification of the simplex imperfectives as aspectless, like its classification
+of prefix occurrences, belongs to the study.
 
 ## References
 
@@ -23,7 +22,6 @@ of prefix occurrences, lives in `Studies/Istratkova2004.lean`.
 namespace Bulgarian.Verbs
 
 open Morphology
-open Verb (Stem)
 
 /-! ### Prefixes -/
 
@@ -51,45 +49,66 @@ def raz : Morph := .pref "raz"
 /-- The prefix *do-*. -/
 def do_ : Morph := .pref "do"
 
-/-! ### Verb stems -/
+/-! ### Verbs -/
 
-/-- *piša* 'write' (imperfective simplex). -/
-def pisha : Stem := ⟨"piša", .imperfective, "write"⟩
+/-- *piša* 'write'. -/
+def pisha : Verb where
+  morphs := [.root "piša"]
+  perfectivity := some .imperfective
 
-/-- *misl'a* 'think' (imperfective simplex). -/
-def misla : Stem := ⟨"misl'a", .imperfective, "think"⟩
+/-- *misl'a* 'think'. -/
+def misla : Verb where
+  morphs := [.root "misl'a"]
+  perfectivity := some .imperfective
 
-/-- *znam* 'know' (imperfective simplex). -/
-def znam : Stem := ⟨"znam", .imperfective, "know"⟩
+/-- *znam* 'know'. -/
+def znam : Verb where
+  morphs := [.root "znam"]
+  perfectivity := some .imperfective
 
-/-- *blest'a* 'glitter' (imperfective simplex). -/
-def blesta : Stem := ⟨"blest'a", .imperfective, "glitter"⟩
+/-- *blest'a* 'glitter'. -/
+def blesta : Verb where
+  morphs := [.root "blest'a"]
+  perfectivity := some .imperfective
 
-/-- *običam* 'love' (imperfective simplex). -/
-def obicham : Stem := ⟨"običam", .imperfective, "love"⟩
+/-- *običam* 'love'. -/
+def obicham : Verb where
+  morphs := [.root "običam"]
+  perfectivity := some .imperfective
 
-/-- *četa* 'read' (imperfective simplex). -/
-def cheta : Stem := ⟨"četa", .imperfective, "read"⟩
+/-- *četa* 'read'. -/
+def cheta : Verb where
+  morphs := [.root "četa"]
+  perfectivity := some .imperfective
 
-/-- *razkaža* 'narrate' (perfective; etymologically *raz-kaža*
-    'around-say'). -/
-def razkazha : Stem := ⟨"razkaža", .perfective, "narrate"⟩
+/-- *razkaža* 'narrate', historically *raz-kaža* 'around-say'. -/
+def razkazha : Verb where
+  morphs := [.root "razkaža"]
+  perfectivity := some .perfective
 
-/-- *dam* 'give' (perfective simplex; host of *pro-dam* 'sell' and
-    its prefix stacks). -/
-def dam : Stem := ⟨"dam", .perfective, "give"⟩
+/-- *dam* 'give', the base of *pro-dam* 'sell'. -/
+def dam : Verb where
+  morphs := [.root "dam"]
+  perfectivity := some .perfective
 
-/-- *kaža* 'tell, say' (perfective simplex; host of *raz-kaža* 'narrate'
-    and its prefix stacks). -/
-def kazha : Stem := ⟨"kaža", .perfective, "tell, say"⟩
+/-- *kaža* 'tell, say', the base of *raz-kaža* 'narrate'. -/
+def kazha : Verb where
+  morphs := [.root "kaža"]
+  perfectivity := some .perfective
 
-/-- *kup'a* 'buy' (perfective simplex). -/
-def kupja : Stem := ⟨"kup'a", .perfective, "buy"⟩
+/-- *kup'a* 'buy'. -/
+def kupja : Verb where
+  morphs := [.root "kup'a"]
+  perfectivity := some .perfective
 
-/-- *peja* 'sing' (imperfective simplex). -/
-def peja : Stem := ⟨"peja", .imperfective, "sing"⟩
+/-- *peja* 'sing'. -/
+def peja : Verb where
+  morphs := [.root "peja"]
+  perfectivity := some .imperfective
 
-/-- *reža* 'cut' (imperfective simplex). -/
-def rezha : Stem := ⟨"reža", .imperfective, "cut"⟩
+/-- *reža* 'cut'. -/
+def rezha : Verb where
+  morphs := [.root "reža"]
+  perfectivity := some .imperfective
 
 end Bulgarian.Verbs

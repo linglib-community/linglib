@@ -1,0 +1,2883 @@
+{
+  "description": "The Bulgarian verbs of Istratkova (2004): simplex verbs, their prefixed forms and prefix stacks up to seven deep, with the imperfectives the paper prints and its segmentation, at the citation form, the first person singular present.",
+  "CellTable": [
+    {
+      "ID": "prs_1sg",
+      "Name": "1sg.prs",
+      "Features": "Tense=Pres|Number=Sing|Person=1"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "put_down_in_writing",
+      "Name": "put down in writing",
+      "Description": ""
+    },
+    {
+      "ID": "write_down",
+      "Name": "write down",
+      "Description": ""
+    },
+    {
+      "ID": "copy_cheat",
+      "Name": "copy; cheat",
+      "Description": ""
+    },
+    {
+      "ID": "sign",
+      "Name": "sign",
+      "Description": ""
+    },
+    {
+      "ID": "bring_someone",
+      "Name": "bring someone",
+      "Description": ""
+    },
+    {
+      "ID": "take_someone",
+      "Name": "take someone",
+      "Description": ""
+    },
+    {
+      "ID": "take_someone_out",
+      "Name": "take someone out",
+      "Description": ""
+    },
+    {
+      "ID": "see",
+      "Name": "see",
+      "Description": ""
+    },
+    {
+      "ID": "envy",
+      "Name": "envy",
+      "Description": ""
+    },
+    {
+      "ID": "put_on_shoes_trousers_etc",
+      "Name": "put on shoes, trousers, etc.",
+      "Description": ""
+    },
+    {
+      "ID": "change_shoes_trousers_etc",
+      "Name": "change shoes, trousers, etc.",
+      "Description": ""
+    },
+    {
+      "ID": "think",
+      "Name": "think",
+      "Description": ""
+    },
+    {
+      "ID": "love",
+      "Name": "love",
+      "Description": ""
+    },
+    {
+      "ID": "know",
+      "Name": "know",
+      "Description": ""
+    },
+    {
+      "ID": "glitter",
+      "Name": "glitter",
+      "Description": ""
+    },
+    {
+      "ID": "sleep",
+      "Name": "sleep",
+      "Description": ""
+    },
+    {
+      "ID": "write",
+      "Name": "write",
+      "Description": ""
+    },
+    {
+      "ID": "live",
+      "Name": "live",
+      "Description": ""
+    },
+    {
+      "ID": "read",
+      "Name": "read",
+      "Description": ""
+    },
+    {
+      "ID": "make_up_a_story",
+      "Name": "make up (a story)",
+      "Description": ""
+    },
+    {
+      "ID": "start_to_love",
+      "Name": "start to love",
+      "Description": ""
+    },
+    {
+      "ID": "guess",
+      "Name": "guess",
+      "Description": ""
+    },
+    {
+      "ID": "start_to_glitter",
+      "Name": "start to glitter",
+      "Description": ""
+    },
+    {
+      "ID": "flash",
+      "Name": "flash",
+      "Description": ""
+    },
+    {
+      "ID": "fall_asleep",
+      "Name": "fall asleep",
+      "Description": ""
+    },
+    {
+      "ID": "live_through",
+      "Name": "live through",
+      "Description": ""
+    },
+    {
+      "ID": "read_completely",
+      "Name": "read completely",
+      "Description": ""
+    },
+    {
+      "ID": "buy",
+      "Name": "buy",
+      "Description": ""
+    },
+    {
+      "ID": "give",
+      "Name": "give",
+      "Description": ""
+    },
+    {
+      "ID": "buy_everything_completely",
+      "Name": "buy everything, completely",
+      "Description": ""
+    },
+    {
+      "ID": "sell",
+      "Name": "sell",
+      "Description": ""
+    },
+    {
+      "ID": "depend",
+      "Name": "depend",
+      "Description": ""
+    },
+    {
+      "ID": "the_simplex_of_depend",
+      "Name": "the simplex of depend",
+      "Description": ""
+    },
+    {
+      "ID": "be_subject_to",
+      "Name": "be subject to",
+      "Description": ""
+    },
+    {
+      "ID": "the_simplex_of_be_subject_to",
+      "Name": "the simplex of be subject to",
+      "Description": ""
+    },
+    {
+      "ID": "sense",
+      "Name": "sense",
+      "Description": ""
+    },
+    {
+      "ID": "the_simplex_of_sense",
+      "Name": "the simplex of sense",
+      "Description": ""
+    },
+    {
+      "ID": "precede",
+      "Name": "precede",
+      "Description": ""
+    },
+    {
+      "ID": "the_simplex_of_precede",
+      "Name": "the simplex of precede",
+      "Description": ""
+    },
+    {
+      "ID": "be_due",
+      "Name": "be due",
+      "Description": ""
+    },
+    {
+      "ID": "the_simplex_of_be_due",
+      "Name": "the simplex of be due",
+      "Description": ""
+    },
+    {
+      "ID": "be_distant_from",
+      "Name": "be distant from",
+      "Description": ""
+    },
+    {
+      "ID": "defend_ones_opinion",
+      "Name": "defend one's opinion",
+      "Description": ""
+    },
+    {
+      "ID": "sell_completely_many_things_in_excess_one_by_one",
+      "Name": "sell completely many things in excess one by one",
+      "Description": ""
+    },
+    {
+      "ID": "express",
+      "Name": "express",
+      "Description": ""
+    },
+    {
+      "ID": "narrate",
+      "Name": "narrate",
+      "Description": ""
+    },
+    {
+      "ID": "publish",
+      "Name": "publish",
+      "Description": ""
+    },
+    {
+      "ID": "distribute",
+      "Name": "distribute",
+      "Description": ""
+    },
+    {
+      "ID": "narrate_completely",
+      "Name": "narrate completely",
+      "Description": ""
+    },
+    {
+      "ID": "distribute_completely",
+      "Name": "distribute completely",
+      "Description": ""
+    },
+    {
+      "ID": "give_many_things_or_to_many",
+      "Name": "give many things, or to many",
+      "Description": ""
+    },
+    {
+      "ID": "punish_say_many_things",
+      "Name": "punish; say many things",
+      "Description": ""
+    },
+    {
+      "ID": "punish_completely_little_by_little_tell_many_things_complete",
+      "Name": "punish completely little by little; tell many things completely little by little",
+      "Description": ""
+    },
+    {
+      "ID": "sell_again_in_excess",
+      "Name": "sell again in excess",
+      "Description": ""
+    },
+    {
+      "ID": "sell_again_a_little_bit",
+      "Name": "sell again a little bit",
+      "Description": ""
+    },
+    {
+      "ID": "sell_again_many_things",
+      "Name": "sell again many things",
+      "Description": ""
+    },
+    {
+      "ID": "narrate_again_a_lot",
+      "Name": "narrate again a lot",
+      "Description": ""
+    },
+    {
+      "ID": "sell_again_completely",
+      "Name": "sell again completely",
+      "Description": ""
+    },
+    {
+      "ID": "completely_narrate_again",
+      "Name": "completely narrate again",
+      "Description": ""
+    },
+    {
+      "ID": "sell_again_a_few_things_with_low_intensity",
+      "Name": "sell again a few things/with low intensity",
+      "Description": ""
+    },
+    {
+      "ID": "completely_sell_again_to_the_very_end_in_excess",
+      "Name": "completely sell again to the very end/in excess",
+      "Description": ""
+    },
+    {
+      "ID": "sell_again_a_lot_of_things",
+      "Name": "sell again a lot of things",
+      "Description": ""
+    },
+    {
+      "ID": "sell_a_lot",
+      "Name": "sell a lot",
+      "Description": ""
+    },
+    {
+      "ID": "sell_a_little",
+      "Name": "sell a little",
+      "Description": ""
+    },
+    {
+      "ID": "sell_a_lot_to_the_end",
+      "Name": "sell a lot to the end",
+      "Description": ""
+    },
+    {
+      "ID": "completely_sell_a_lot",
+      "Name": "completely sell a lot",
+      "Description": ""
+    },
+    {
+      "ID": "sell_completely_a_lot_of_things_one_by_one_or_little_by_litt",
+      "Name": "sell completely a lot of things one by one (or little by little)",
+      "Description": ""
+    },
+    {
+      "ID": "sell_in_excess_a_lot_of_things_one_by_one_or_little_by_littl",
+      "Name": "sell in excess a lot of things one by one (or little by little)",
+      "Description": ""
+    },
+    {
+      "ID": "completely_sell_again_one_by_one",
+      "Name": "completely sell again one by one",
+      "Description": ""
+    },
+    {
+      "ID": "sell_almost_everything",
+      "Name": "sell almost everything",
+      "Description": ""
+    },
+    {
+      "ID": "sell_almost_completely",
+      "Name": "sell almost completely",
+      "Description": ""
+    },
+    {
+      "ID": "sell_a_little_bit",
+      "Name": "sell a little bit",
+      "Description": ""
+    },
+    {
+      "ID": "sell_a_little_bit_for_a_while",
+      "Name": "sell a little bit / for a while",
+      "Description": ""
+    },
+    {
+      "ID": "start_arranging",
+      "Name": "start arranging",
+      "Description": ""
+    },
+    {
+      "ID": "start_singing",
+      "Name": "start singing",
+      "Description": ""
+    },
+    {
+      "ID": "finish_selling",
+      "Name": "finish selling",
+      "Description": ""
+    },
+    {
+      "ID": "finish_selling_again",
+      "Name": "finish selling again",
+      "Description": ""
+    },
+    {
+      "ID": "finish_selling_again_to_the_very_end",
+      "Name": "finish selling again to the very end",
+      "Description": ""
+    },
+    {
+      "ID": "finish_re_selling_everything_to_the_end",
+      "Name": "finish re-selling everything to the end",
+      "Description": ""
+    },
+    {
+      "ID": "almost_finish_reselling_to_the_end",
+      "Name": "almost finish reselling to the end",
+      "Description": ""
+    },
+    {
+      "ID": "start_to_finish_re_selling_everything_to_the_end",
+      "Name": "start to finish re-selling everything to the end",
+      "Description": ""
+    },
+    {
+      "ID": "finish_singing",
+      "Name": "finish singing",
+      "Description": ""
+    },
+    {
+      "ID": "sing_for_a_while",
+      "Name": "sing for a while",
+      "Description": ""
+    },
+    {
+      "ID": "play_for_a_while",
+      "Name": "play for a while",
+      "Description": ""
+    },
+    {
+      "ID": "completely_sell",
+      "Name": "completely sell",
+      "Description": ""
+    },
+    {
+      "ID": "sell_completely_one_by_one",
+      "Name": "sell completely one by one",
+      "Description": ""
+    },
+    {
+      "ID": "the_source_gives_no_translation",
+      "Name": "the source gives no translation",
+      "Description": ""
+    },
+    {
+      "ID": "narrate_completely_one_by_one",
+      "Name": "narrate completely one by one",
+      "Description": ""
+    },
+    {
+      "ID": "narrate_completely_many_stories_one_by_one",
+      "Name": "narrate completely many stories one by one",
+      "Description": ""
+    },
+    {
+      "ID": "start_narrating_many_stories_one_by_one",
+      "Name": "start narrating many stories one by one",
+      "Description": ""
+    },
+    {
+      "ID": "sell_get_back_and_then_sell_again_to_the_end",
+      "Name": "sell, get back, and then sell again to the end",
+      "Description": ""
+    },
+    {
+      "ID": "read_through_completely_little_by_little",
+      "Name": "read through completely little by little",
+      "Description": ""
+    },
+    {
+      "ID": "start_singing_a_bit",
+      "Name": "start singing a bit",
+      "Description": ""
+    },
+    {
+      "ID": "cut_completely_into_many_pieces_little_by_little",
+      "Name": "cut completely into many pieces little by little",
+      "Description": ""
+    },
+    {
+      "ID": "tell_a_few_stories",
+      "Name": "tell a few stories",
+      "Description": ""
+    },
+    {
+      "ID": "narrate_again_many_stories_completely_little_by_little",
+      "Name": "narrate again many stories completely little by little",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "zapisa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "put_down_in_writing",
+      "POS": "VERB"
+    },
+    {
+      "ID": "napisa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "write_down",
+      "POS": "VERB"
+    },
+    {
+      "ID": "prepisa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "copy_cheat",
+      "POS": "VERB"
+    },
+    {
+      "ID": "podpisa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sign",
+      "POS": "VERB"
+    },
+    {
+      "ID": "doveda",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "bring_someone",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zaveda",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "take_someone",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izveda",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "take_someone_out",
+      "POS": "VERB"
+    },
+    {
+      "ID": "vida",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "see",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zavida",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "envy",
+      "POS": "VERB"
+    },
+    {
+      "ID": "obuja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "put_on_shoes_trousers_etc",
+      "POS": "VERB"
+    },
+    {
+      "ID": "preobuja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "change_shoes_trousers_etc",
+      "POS": "VERB"
+    },
+    {
+      "ID": "misla",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "think",
+      "POS": "VERB"
+    },
+    {
+      "ID": "obicam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "love",
+      "POS": "VERB"
+    },
+    {
+      "ID": "znam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "know",
+      "POS": "VERB"
+    },
+    {
+      "ID": "blesta",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "glitter",
+      "POS": "VERB"
+    },
+    {
+      "ID": "spa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sleep",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pisa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "write",
+      "POS": "VERB"
+    },
+    {
+      "ID": "ziveja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "live",
+      "POS": "VERB"
+    },
+    {
+      "ID": "ceta",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "read",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izmisla",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "make_up_a_story",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zaobicam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "start_to_love",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poznam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "guess",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zablesta",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "start_to_glitter",
+      "POS": "VERB"
+    },
+    {
+      "ID": "blesna",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "flash",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zaspa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "fall_asleep",
+      "POS": "VERB"
+    },
+    {
+      "ID": "doziveja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "live_through",
+      "POS": "VERB"
+    },
+    {
+      "ID": "proceta",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "read_completely",
+      "POS": "VERB"
+    },
+    {
+      "ID": "kupa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "buy",
+      "POS": "VERB"
+    },
+    {
+      "ID": "dam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "give",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izkupa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "buy_everything_completely",
+      "POS": "VERB"
+    },
+    {
+      "ID": "prodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zavisa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "depend",
+      "POS": "VERB"
+    },
+    {
+      "ID": "visa",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_simplex_of_depend",
+      "POS": "VERB"
+    },
+    {
+      "ID": "podleza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "be_subject_to",
+      "POS": "VERB"
+    },
+    {
+      "ID": "leza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_simplex_of_be_subject_to",
+      "POS": "VERB"
+    },
+    {
+      "ID": "predcuvstvam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sense",
+      "POS": "VERB"
+    },
+    {
+      "ID": "cuvstvam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_simplex_of_sense",
+      "POS": "VERB"
+    },
+    {
+      "ID": "predsestvam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "precede",
+      "POS": "VERB"
+    },
+    {
+      "ID": "sestvam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_simplex_of_precede",
+      "POS": "VERB"
+    },
+    {
+      "ID": "predstoja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "be_due",
+      "POS": "VERB"
+    },
+    {
+      "ID": "stoja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_simplex_of_be_due",
+      "POS": "VERB"
+    },
+    {
+      "ID": "otstoja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "be_distant_from",
+      "POS": "VERB"
+    },
+    {
+      "ID": "otstoja_2",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "defend_ones_opinion",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izponarazprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_completely_many_things_in_excess_one_by_one",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "express",
+      "POS": "VERB"
+    },
+    {
+      "ID": "razkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "narrate",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izdam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "publish",
+      "POS": "VERB"
+    },
+    {
+      "ID": "razdam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "distribute",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izrazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "narrate_completely",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izrazdam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "distribute_completely",
+      "POS": "VERB"
+    },
+    {
+      "ID": "nadam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "give_many_things_or_to_many",
+      "POS": "VERB"
+    },
+    {
+      "ID": "nakaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "punish_say_many_things",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izponakaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "punish_completely_little_by_little_tell_many_things_complete",
+      "POS": "VERB"
+    },
+    {
+      "ID": "razpreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_again_in_excess",
+      "POS": "VERB"
+    },
+    {
+      "ID": "popreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_again_a_little_bit",
+      "POS": "VERB"
+    },
+    {
+      "ID": "napreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_again_many_things",
+      "POS": "VERB"
+    },
+    {
+      "ID": "naprerazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "narrate_again_a_lot",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izpreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_again_completely",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izprerazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "completely_narrate_again",
+      "POS": "VERB"
+    },
+    {
+      "ID": "porazpreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_again_a_few_things_with_low_intensity",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izrazpreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "completely_sell_again_to_the_very_end_in_excess",
+      "POS": "VERB"
+    },
+    {
+      "ID": "napreprodam_2",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_again_a_lot_of_things",
+      "POS": "VERB"
+    },
+    {
+      "ID": "naprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_a_lot",
+      "POS": "VERB"
+    },
+    {
+      "ID": "ponaprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_a_little",
+      "POS": "VERB"
+    },
+    {
+      "ID": "narazprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_a_lot_to_the_end",
+      "POS": "VERB"
+    },
+    {
+      "ID": "iznaprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "completely_sell_a_lot",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izponaprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_completely_a_lot_of_things_one_by_one_or_little_by_litt",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izporazprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_in_excess_a_lot_of_things_one_by_one_or_little_by_littl",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izpopreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "completely_sell_again_one_by_one",
+      "POS": "VERB"
+    },
+    {
+      "ID": "porazprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_almost_everything",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poizprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_almost_completely",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_a_little_bit",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poprodavam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_a_little_bit_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zaizponareda",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "start_arranging",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zapeja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "start_singing",
+      "POS": "VERB"
+    },
+    {
+      "ID": "doprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "finish_selling",
+      "POS": "VERB"
+    },
+    {
+      "ID": "dopreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "finish_selling_again",
+      "POS": "VERB"
+    },
+    {
+      "ID": "dorazpreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "finish_selling_again_to_the_very_end",
+      "POS": "VERB"
+    },
+    {
+      "ID": "doprerazprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "finish_selling_again_to_the_very_end",
+      "POS": "VERB"
+    },
+    {
+      "ID": "doizporazpreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "finish_re_selling_everything_to_the_end",
+      "POS": "VERB"
+    },
+    {
+      "ID": "podoizrazprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "almost_finish_reselling_to_the_end",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zadoizponarazpreprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "start_to_finish_re_selling_everything_to_the_end",
+      "POS": "VERB"
+    },
+    {
+      "ID": "dopeja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "finish_singing",
+      "POS": "VERB"
+    },
+    {
+      "ID": "popeja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sing_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poigraja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "play_for_a_while",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "completely_sell",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izpoprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_completely_one_by_one",
+      "POS": "VERB"
+    },
+    {
+      "ID": "iznarazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_source_gives_no_translation",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izporazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "narrate_completely_one_by_one",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izponarazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "narrate_completely_many_stories_one_by_one",
+      "POS": "VERB"
+    },
+    {
+      "ID": "zaizponarazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "start_narrating_many_stories_one_by_one",
+      "POS": "VERB"
+    },
+    {
+      "ID": "prerazprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "sell_get_back_and_then_sell_again_to_the_end",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izpoproceta",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "read_through_completely_little_by_little",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pozapeja",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "start_singing_a_bit",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izponareza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "cut_completely_into_many_pieces_little_by_little",
+      "POS": "VERB"
+    },
+    {
+      "ID": "napoprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_source_gives_no_translation",
+      "POS": "VERB"
+    },
+    {
+      "ID": "razpoprodam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_source_gives_no_translation",
+      "POS": "VERB"
+    },
+    {
+      "ID": "prenarazdam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_source_gives_no_translation",
+      "POS": "VERB"
+    },
+    {
+      "ID": "poprenarazdam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_source_gives_no_translation",
+      "POS": "VERB"
+    },
+    {
+      "ID": "naprerazdam",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "the_source_gives_no_translation",
+      "POS": "VERB"
+    },
+    {
+      "ID": "ponarazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "tell_a_few_stories",
+      "POS": "VERB"
+    },
+    {
+      "ID": "izponaprerazkaza",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "narrate_again_many_stories_completely_little_by_little",
+      "POS": "VERB"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "istratkova2004_1a",
+      "Lexeme_ID": "zapisa",
+      "Cell": "prs_1sg",
+      "Form": "zapiša",
+      "Morphs": ["za", "piša"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1a)]"]
+    },
+    {
+      "ID": "istratkova2004_1a_ipf",
+      "Lexeme_ID": "zapisa",
+      "Cell": "prs_1sg",
+      "Form": "zapisvam",
+      "Morphs": ["za", "pis", "va", "m"],
+      "Source": ["istratkova-2004[(1a)]"]
+    },
+    {
+      "ID": "istratkova2004_1b",
+      "Lexeme_ID": "napisa",
+      "Cell": "prs_1sg",
+      "Form": "napiša",
+      "Morphs": ["na", "piša"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1b)]"]
+    },
+    {
+      "ID": "istratkova2004_1b_ipf",
+      "Lexeme_ID": "napisa",
+      "Cell": "prs_1sg",
+      "Form": "napisvam",
+      "Morphs": ["na", "pis", "va", "m"],
+      "Source": ["istratkova-2004[(1b)]"]
+    },
+    {
+      "ID": "istratkova2004_1c",
+      "Lexeme_ID": "prepisa",
+      "Cell": "prs_1sg",
+      "Form": "prepiša",
+      "Morphs": ["pre", "piša"],
+      "Comment": "prefixes attach to both perfective and imperfective stems prefixation quantizes a homogeneous verb, yielding an aspectual pair The imperfective is printed pre-pis-va-m.",
+      "Source": ["istratkova-2004[(1c)]", "istratkova-2004[(3g)]"]
+    },
+    {
+      "ID": "istratkova2004_1c_ipf",
+      "Lexeme_ID": "prepisa",
+      "Cell": "prs_1sg",
+      "Form": "prepisvam",
+      "Morphs": ["pre", "pis", "va", "m"],
+      "Source": ["istratkova-2004[(1c)]"]
+    },
+    {
+      "ID": "istratkova2004_1d",
+      "Lexeme_ID": "podpisa",
+      "Cell": "prs_1sg",
+      "Form": "podpiša",
+      "Morphs": ["pod", "piša"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1d)]"]
+    },
+    {
+      "ID": "istratkova2004_1d_ipf",
+      "Lexeme_ID": "podpisa",
+      "Cell": "prs_1sg",
+      "Form": "podpisvam",
+      "Morphs": ["pod", "pis", "va", "m"],
+      "Source": ["istratkova-2004[(1d)]"]
+    },
+    {
+      "ID": "istratkova2004_1e",
+      "Lexeme_ID": "doveda",
+      "Cell": "prs_1sg",
+      "Form": "doveda",
+      "Morphs": ["do", "veda"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1e)]"]
+    },
+    {
+      "ID": "istratkova2004_1e_ipf",
+      "Lexeme_ID": "doveda",
+      "Cell": "prs_1sg",
+      "Form": "doveždam",
+      "Morphs": ["do", "vežd", "a", "m"],
+      "Source": ["istratkova-2004[(1e)]"]
+    },
+    {
+      "ID": "istratkova2004_1f",
+      "Lexeme_ID": "zaveda",
+      "Cell": "prs_1sg",
+      "Form": "zaveda",
+      "Morphs": ["za", "veda"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1f)]"]
+    },
+    {
+      "ID": "istratkova2004_1f_ipf",
+      "Lexeme_ID": "zaveda",
+      "Cell": "prs_1sg",
+      "Form": "zaveždam",
+      "Morphs": ["za", "vežd", "a", "m"],
+      "Source": ["istratkova-2004[(1f)]"]
+    },
+    {
+      "ID": "istratkova2004_1g",
+      "Lexeme_ID": "izveda",
+      "Cell": "prs_1sg",
+      "Form": "izveda",
+      "Morphs": ["iz", "veda"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1g)]"]
+    },
+    {
+      "ID": "istratkova2004_1g_ipf",
+      "Lexeme_ID": "izveda",
+      "Cell": "prs_1sg",
+      "Form": "izveždam",
+      "Morphs": ["iz", "vežd", "a", "m"],
+      "Source": ["istratkova-2004[(1g)]"]
+    },
+    {
+      "ID": "istratkova2004_1h",
+      "Lexeme_ID": "vida",
+      "Cell": "prs_1sg",
+      "Form": "vid'a",
+      "Morphs": ["vid'a"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1h)]"]
+    },
+    {
+      "ID": "istratkova2004_1h_ipf",
+      "Lexeme_ID": "vida",
+      "Cell": "prs_1sg",
+      "Form": "viždam",
+      "Morphs": ["vižd", "a", "m"],
+      "Source": ["istratkova-2004[(1h)]"]
+    },
+    {
+      "ID": "istratkova2004_1i",
+      "Lexeme_ID": "zavida",
+      "Cell": "prs_1sg",
+      "Form": "zavid'a",
+      "Morphs": ["za", "vid'a"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1i)]"]
+    },
+    {
+      "ID": "istratkova2004_1i_ipf",
+      "Lexeme_ID": "zavida",
+      "Cell": "prs_1sg",
+      "Form": "zaviždam",
+      "Morphs": ["za", "vižd", "a", "m"],
+      "Source": ["istratkova-2004[(1i)]"]
+    },
+    {
+      "ID": "istratkova2004_1j",
+      "Lexeme_ID": "obuja",
+      "Cell": "prs_1sg",
+      "Form": "obuja",
+      "Morphs": ["obuja"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1j)]"]
+    },
+    {
+      "ID": "istratkova2004_1j_ipf",
+      "Lexeme_ID": "obuja",
+      "Cell": "prs_1sg",
+      "Form": "obuvam",
+      "Morphs": ["obu", "va", "m"],
+      "Source": ["istratkova-2004[(1j)]"]
+    },
+    {
+      "ID": "istratkova2004_1k",
+      "Lexeme_ID": "preobuja",
+      "Cell": "prs_1sg",
+      "Form": "preobuja",
+      "Morphs": ["pre", "obuja"],
+      "Comment": "prefixes attach to both perfective and imperfective stems",
+      "Source": ["istratkova-2004[(1k)]"]
+    },
+    {
+      "ID": "istratkova2004_1k_ipf",
+      "Lexeme_ID": "preobuja",
+      "Cell": "prs_1sg",
+      "Form": "preobuvam",
+      "Morphs": ["pre", "obu", "va", "m"],
+      "Source": ["istratkova-2004[(1k)]"]
+    },
+    {
+      "ID": "istratkova2004_2a",
+      "Lexeme_ID": "misla",
+      "Cell": "prs_1sg",
+      "Form": "misl'a",
+      "Morphs": ["misl'a"],
+      "Source": ["istratkova-2004[(2a)]"]
+    },
+    {
+      "ID": "istratkova2004_2b",
+      "Lexeme_ID": "obicam",
+      "Cell": "prs_1sg",
+      "Form": "običam",
+      "Morphs": ["običam"],
+      "Source": ["istratkova-2004[(2b)]"]
+    },
+    {
+      "ID": "istratkova2004_2c",
+      "Lexeme_ID": "znam",
+      "Cell": "prs_1sg",
+      "Form": "znam",
+      "Morphs": ["znam"],
+      "Source": ["istratkova-2004[(2c)]"]
+    },
+    {
+      "ID": "istratkova2004_2d",
+      "Lexeme_ID": "blesta",
+      "Cell": "prs_1sg",
+      "Form": "blest'a",
+      "Morphs": ["blest'a"],
+      "Source": ["istratkova-2004[(2d)]"]
+    },
+    {
+      "ID": "istratkova2004_2e",
+      "Lexeme_ID": "spa",
+      "Cell": "prs_1sg",
+      "Form": "sp'a",
+      "Morphs": ["sp'a"],
+      "Source": ["istratkova-2004[(2e)]"]
+    },
+    {
+      "ID": "istratkova2004_2f",
+      "Lexeme_ID": "pisa",
+      "Cell": "prs_1sg",
+      "Form": "piša",
+      "Morphs": ["piša"],
+      "Source": ["istratkova-2004[(2f)]"]
+    },
+    {
+      "ID": "istratkova2004_2g",
+      "Lexeme_ID": "ziveja",
+      "Cell": "prs_1sg",
+      "Form": "živeja",
+      "Morphs": ["živeja"],
+      "Source": ["istratkova-2004[(2g)]"]
+    },
+    {
+      "ID": "istratkova2004_2h",
+      "Lexeme_ID": "ceta",
+      "Cell": "prs_1sg",
+      "Form": "četa",
+      "Morphs": ["četa"],
+      "Source": ["istratkova-2004[(2h)]"]
+    },
+    {
+      "ID": "istratkova2004_3a",
+      "Lexeme_ID": "izmisla",
+      "Cell": "prs_1sg",
+      "Form": "izmisl'a",
+      "Morphs": ["iz", "misl'a"],
+      "Comment": "prefixation quantizes a homogeneous verb, yielding an aspectual pair",
+      "Source": ["istratkova-2004[(3a)]"]
+    },
+    {
+      "ID": "istratkova2004_3a_ipf",
+      "Lexeme_ID": "izmisla",
+      "Cell": "prs_1sg",
+      "Form": "izmisl'am",
+      "Morphs": ["iz", "misl'", "a", "m"],
+      "Source": ["istratkova-2004[(3a)]"]
+    },
+    {
+      "ID": "istratkova2004_3b",
+      "Lexeme_ID": "zaobicam",
+      "Cell": "prs_1sg",
+      "Form": "zaobičam",
+      "Morphs": ["za", "običam"],
+      "Comment": "prefixation quantizes a homogeneous verb, yielding an aspectual pair",
+      "Source": ["istratkova-2004[(3b)]"]
+    },
+    {
+      "ID": "istratkova2004_3b_ipf",
+      "Lexeme_ID": "zaobicam",
+      "Cell": "prs_1sg",
+      "Form": "zaobičvam",
+      "Morphs": ["za", "obič", "va", "m"],
+      "Source": ["istratkova-2004[(3b)]"]
+    },
+    {
+      "ID": "istratkova2004_3c",
+      "Lexeme_ID": "poznam",
+      "Cell": "prs_1sg",
+      "Form": "poznam",
+      "Morphs": ["po", "znam"],
+      "Comment": "prefixation quantizes a homogeneous verb, yielding an aspectual pair",
+      "Source": ["istratkova-2004[(3c)]"]
+    },
+    {
+      "ID": "istratkova2004_3c_ipf",
+      "Lexeme_ID": "poznam",
+      "Cell": "prs_1sg",
+      "Form": "poznavam",
+      "Morphs": ["po", "zna", "va", "m"],
+      "Source": ["istratkova-2004[(3c)]"]
+    },
+    {
+      "ID": "istratkova2004_3d",
+      "Lexeme_ID": "zablesta",
+      "Cell": "prs_1sg",
+      "Form": "zablest'a",
+      "Morphs": ["za", "blest'a"],
+      "Comment": "prefixation quantizes a homogeneous verb, yielding an aspectual pair",
+      "Source": ["istratkova-2004[(3d)]"]
+    },
+    {
+      "ID": "istratkova2004_3d_ipf",
+      "Lexeme_ID": "zablesta",
+      "Cell": "prs_1sg",
+      "Form": "zablet'avam",
+      "Morphs": ["za", "blet'", "ava", "m"],
+      "Source": ["istratkova-2004[(3d)]"]
+    },
+    {
+      "ID": "istratkova2004_3e",
+      "Lexeme_ID": "blesna",
+      "Cell": "prs_1sg",
+      "Form": "blesna",
+      "Morphs": ["bles", "na"],
+      "Comment": "prefixation quantizes a homogeneous verb, yielding an aspectual pair",
+      "Source": ["istratkova-2004[(3e)]"]
+    },
+    {
+      "ID": "istratkova2004_3e_ipf",
+      "Lexeme_ID": "blesna",
+      "Cell": "prs_1sg",
+      "Form": "blesvam",
+      "Morphs": ["bles", "va", "m"],
+      "Source": ["istratkova-2004[(3e)]"]
+    },
+    {
+      "ID": "istratkova2004_3f",
+      "Lexeme_ID": "zaspa",
+      "Cell": "prs_1sg",
+      "Form": "zasp'a",
+      "Morphs": ["za", "sp'a"],
+      "Comment": "prefixation quantizes a homogeneous verb, yielding an aspectual pair",
+      "Source": ["istratkova-2004[(3f)]"]
+    },
+    {
+      "ID": "istratkova2004_3f_ipf",
+      "Lexeme_ID": "zaspa",
+      "Cell": "prs_1sg",
+      "Form": "zaspivam",
+      "Morphs": ["za", "spi", "va", "m"],
+      "Source": ["istratkova-2004[(3f)]"]
+    },
+    {
+      "ID": "istratkova2004_3h",
+      "Lexeme_ID": "doziveja",
+      "Cell": "prs_1sg",
+      "Form": "doživeja",
+      "Morphs": ["do", "živeja"],
+      "Comment": "prefixation quantizes a homogeneous verb, yielding an aspectual pair",
+      "Source": ["istratkova-2004[(3h)]"]
+    },
+    {
+      "ID": "istratkova2004_3h_ipf",
+      "Lexeme_ID": "doziveja",
+      "Cell": "prs_1sg",
+      "Form": "doživ'avam",
+      "Morphs": ["do", "živ'", "ava", "m"],
+      "Source": ["istratkova-2004[(3h)]"]
+    },
+    {
+      "ID": "istratkova2004_3i",
+      "Lexeme_ID": "proceta",
+      "Cell": "prs_1sg",
+      "Form": "pročeta",
+      "Morphs": ["pro", "četa"],
+      "Comment": "prefixation quantizes a homogeneous verb, yielding an aspectual pair",
+      "Source": ["istratkova-2004[(3i)]"]
+    },
+    {
+      "ID": "istratkova2004_3i_ipf",
+      "Lexeme_ID": "proceta",
+      "Cell": "prs_1sg",
+      "Form": "pročitam",
+      "Morphs": ["pro", "čit", "a", "m"],
+      "Source": ["istratkova-2004[(3i)]"]
+    },
+    {
+      "ID": "istratkova2004_4a",
+      "Lexeme_ID": "kupa",
+      "Cell": "prs_1sg",
+      "Form": "kup'a",
+      "Morphs": ["kup'a"],
+      "Source": ["istratkova-2004[(4a)]"]
+    },
+    {
+      "ID": "istratkova2004_4a_ipf",
+      "Lexeme_ID": "kupa",
+      "Cell": "prs_1sg",
+      "Form": "kupuvam",
+      "Morphs": ["kup", "uva", "m"],
+      "Source": ["istratkova-2004[(4a)]"]
+    },
+    {
+      "ID": "istratkova2004_4b",
+      "Lexeme_ID": "dam",
+      "Cell": "prs_1sg",
+      "Form": "dam",
+      "Morphs": ["dam"],
+      "Source": ["istratkova-2004[(4b)]"]
+    },
+    {
+      "ID": "istratkova2004_4b_ipf",
+      "Lexeme_ID": "dam",
+      "Cell": "prs_1sg",
+      "Form": "davam",
+      "Morphs": ["da", "va", "m"],
+      "Source": ["istratkova-2004[(4b)]"]
+    },
+    {
+      "ID": "istratkova2004_5a",
+      "Lexeme_ID": "izkupa",
+      "Cell": "prs_1sg",
+      "Form": "izkup'a",
+      "Morphs": ["iz", "kup'a"],
+      "Comment": "prefixation adds Aktionsart to a quantized verb",
+      "Source": ["istratkova-2004[(5a)]"]
+    },
+    {
+      "ID": "istratkova2004_5a_ipf",
+      "Lexeme_ID": "izkupa",
+      "Cell": "prs_1sg",
+      "Form": "izkupuvam",
+      "Morphs": ["iz", "kup", "uva", "m"],
+      "Source": ["istratkova-2004[(5a)]"]
+    },
+    {
+      "ID": "istratkova2004_5b",
+      "Lexeme_ID": "prodam",
+      "Cell": "prs_1sg",
+      "Form": "prodam",
+      "Morphs": ["pro", "dam"],
+      "Comment": "lexical prefix changes the meaning of a quantized verb",
+      "Source": ["istratkova-2004[(5b)]"]
+    },
+    {
+      "ID": "istratkova2004_5b_ipf",
+      "Lexeme_ID": "prodam",
+      "Cell": "prs_1sg",
+      "Form": "prodavam",
+      "Morphs": ["pro", "da", "va", "m"],
+      "Source": ["istratkova-2004[(5b)]"]
+    },
+    {
+      "ID": "istratkova2004_6a",
+      "Lexeme_ID": "zavisa",
+      "Cell": "prs_1sg",
+      "Form": "zavis'a",
+      "Morphs": ["za", "vis'a"],
+      "Comment": "a non-quantizing prefix leaves the verb imperfective; no -va- form",
+      "Source": ["istratkova-2004[(6a)]"]
+    },
+    {
+      "ID": "istratkova2004_6a_alt",
+      "Lexeme_ID": "zavisa",
+      "Cell": "prs_1sg",
+      "Form": "zavis'avam",
+      "Morphs": ["za", "vis'a", "va", "m"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[(6a)]"]
+    },
+    {
+      "ID": "istratkova2004_6a_base",
+      "Lexeme_ID": "visa",
+      "Cell": "prs_1sg",
+      "Form": "vis'a",
+      "Morphs": ["vis'a"],
+      "Source": ["istratkova-2004[(6a)]"]
+    },
+    {
+      "ID": "istratkova2004_6b",
+      "Lexeme_ID": "podleza",
+      "Cell": "prs_1sg",
+      "Form": "podleža",
+      "Morphs": ["pod", "leža"],
+      "Comment": "a non-quantizing prefix leaves the verb imperfective; no -va- form",
+      "Source": ["istratkova-2004[(6b)]"]
+    },
+    {
+      "ID": "istratkova2004_6b_alt",
+      "Lexeme_ID": "podleza",
+      "Cell": "prs_1sg",
+      "Form": "podležavam",
+      "Morphs": ["pod", "leža", "va", "m"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[(6b)]"]
+    },
+    {
+      "ID": "istratkova2004_6b_base",
+      "Lexeme_ID": "leza",
+      "Cell": "prs_1sg",
+      "Form": "leža",
+      "Morphs": ["leža"],
+      "Source": ["istratkova-2004[(6b)]"]
+    },
+    {
+      "ID": "istratkova2004_6c",
+      "Lexeme_ID": "predcuvstvam",
+      "Cell": "prs_1sg",
+      "Form": "predčuvstvam",
+      "Morphs": ["pred", "čuvstvam"],
+      "Comment": "a non-quantizing prefix leaves the verb imperfective; no -va- form",
+      "Source": ["istratkova-2004[(6c)]"]
+    },
+    {
+      "ID": "istratkova2004_6c_alt",
+      "Lexeme_ID": "predcuvstvam",
+      "Cell": "prs_1sg",
+      "Form": "predčuvstvavam",
+      "Morphs": ["pred", "čuvstva", "va", "m"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[(6c)]"]
+    },
+    {
+      "ID": "istratkova2004_6c_base",
+      "Lexeme_ID": "cuvstvam",
+      "Cell": "prs_1sg",
+      "Form": "čuvstvam",
+      "Morphs": ["čuvstvam"],
+      "Source": ["istratkova-2004[(6c)]"]
+    },
+    {
+      "ID": "istratkova2004_6d",
+      "Lexeme_ID": "predsestvam",
+      "Cell": "prs_1sg",
+      "Form": "predšestvam",
+      "Morphs": ["pred", "šestvam"],
+      "Comment": "a non-quantizing prefix leaves the verb imperfective; no -va- form",
+      "Source": ["istratkova-2004[(6d)]"]
+    },
+    {
+      "ID": "istratkova2004_6d_alt",
+      "Lexeme_ID": "predsestvam",
+      "Cell": "prs_1sg",
+      "Form": "predšestvavam",
+      "Morphs": ["pred", "šestva", "va", "m"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[(6d)]"]
+    },
+    {
+      "ID": "istratkova2004_6d_base",
+      "Lexeme_ID": "sestvam",
+      "Cell": "prs_1sg",
+      "Form": "šestvam",
+      "Morphs": ["šestvam"],
+      "Source": ["istratkova-2004[(6d)]"]
+    },
+    {
+      "ID": "istratkova2004_6e",
+      "Lexeme_ID": "predstoja",
+      "Cell": "prs_1sg",
+      "Form": "predstoja",
+      "Morphs": ["pred", "stoja"],
+      "Comment": "a non-quantizing prefix leaves the verb imperfective; no -va- form",
+      "Source": ["istratkova-2004[(6e)]"]
+    },
+    {
+      "ID": "istratkova2004_6e_alt",
+      "Lexeme_ID": "predstoja",
+      "Cell": "prs_1sg",
+      "Form": "predstojavam",
+      "Morphs": ["pred", "stoja", "va", "m"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[(6e)]"]
+    },
+    {
+      "ID": "istratkova2004_6e_base",
+      "Lexeme_ID": "stoja",
+      "Cell": "prs_1sg",
+      "Form": "stoja",
+      "Morphs": ["stoja"],
+      "Source": ["istratkova-2004[(6e)]"]
+    },
+    {
+      "ID": "istratkova2004_6f",
+      "Lexeme_ID": "otstoja",
+      "Cell": "prs_1sg",
+      "Form": "otstoja",
+      "Morphs": ["ot", "stoja"],
+      "Comment": "a non-quantizing prefix leaves the verb imperfective; no -va- form",
+      "Source": ["istratkova-2004[(6f)]"]
+    },
+    {
+      "ID": "istratkova2004_6f_alt",
+      "Lexeme_ID": "otstoja",
+      "Cell": "prs_1sg",
+      "Form": "otstojavam",
+      "Morphs": ["ot", "stoja", "va", "m"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[(6f)]"]
+    },
+    {
+      "ID": "istratkova2004_7",
+      "Lexeme_ID": "otstoja_2",
+      "Cell": "prs_1sg",
+      "Form": "otstoja",
+      "Morphs": ["ot", "stoja"],
+      "Comment": "the quantized meaning of the same prefixed verb forms an aspectual pair",
+      "Source": ["istratkova-2004[(7)]"]
+    },
+    {
+      "ID": "istratkova2004_7_ipf",
+      "Lexeme_ID": "otstoja_2",
+      "Cell": "prs_1sg",
+      "Form": "otstojavam",
+      "Morphs": ["ot", "stoja", "va", "m"],
+      "Source": ["istratkova-2004[(7)]"]
+    },
+    {
+      "ID": "istratkova2004_11",
+      "Lexeme_ID": "izponarazprodam",
+      "Cell": "prs_1sg",
+      "Form": "izponarazprodam",
+      "Morphs": ["iz", "po", "na", "raz", "pro", "dam"],
+      "Comment": "The imperfective is printed iz-po-na-raz-pro-da(-va)-m.",
+      "Source": ["istratkova-2004[(11)]"]
+    },
+    {
+      "ID": "istratkova2004_12a",
+      "Lexeme_ID": "izkaza",
+      "Cell": "prs_1sg",
+      "Form": "izkaža",
+      "Morphs": ["iz", "kaža"],
+      "Source": ["istratkova-2004[(12)]"]
+    },
+    {
+      "ID": "istratkova2004_12b",
+      "Lexeme_ID": "razkaza",
+      "Cell": "prs_1sg",
+      "Form": "razkaža",
+      "Morphs": ["raz", "kaža"],
+      "Source": ["istratkova-2004[(12)]"]
+    },
+    {
+      "ID": "istratkova2004_12c",
+      "Lexeme_ID": "izdam",
+      "Cell": "prs_1sg",
+      "Form": "izdam",
+      "Morphs": ["iz", "dam"],
+      "Source": ["istratkova-2004[(12)]"]
+    },
+    {
+      "ID": "istratkova2004_12d",
+      "Lexeme_ID": "razdam",
+      "Cell": "prs_1sg",
+      "Form": "razdam",
+      "Morphs": ["raz", "dam"],
+      "Source": ["istratkova-2004[(12)]"]
+    },
+    {
+      "ID": "istratkova2004_13a",
+      "Lexeme_ID": "izrazkaza",
+      "Cell": "prs_1sg",
+      "Form": "izrazkaža",
+      "Morphs": ["iz", "raz", "kaža"],
+      "Source": ["istratkova-2004[(13)]"]
+    },
+    {
+      "ID": "istratkova2004_13b",
+      "Lexeme_ID": "izrazdam",
+      "Cell": "prs_1sg",
+      "Form": "izrazdam",
+      "Morphs": ["iz", "raz", "dam"],
+      "Source": ["istratkova-2004[(13)]"]
+    },
+    {
+      "ID": "istratkova2004_14a",
+      "Lexeme_ID": "nadam",
+      "Cell": "prs_1sg",
+      "Form": "nadam",
+      "Morphs": ["na", "dam"],
+      "Source": ["istratkova-2004[(14a)]", "istratkova-2004[(20a)]"]
+    },
+    {
+      "ID": "istratkova2004_14b",
+      "Lexeme_ID": "nakaza",
+      "Cell": "prs_1sg",
+      "Form": "nakaža",
+      "Morphs": ["na", "kaža"],
+      "Source": ["istratkova-2004[(14b)]"]
+    },
+    {
+      "ID": "istratkova2004_15",
+      "Lexeme_ID": "izponakaza",
+      "Cell": "prs_1sg",
+      "Form": "izponakaža",
+      "Morphs": ["iz", "po", "na", "kaža"],
+      "Source": ["istratkova-2004[(15)]"]
+    },
+    {
+      "ID": "istratkova2004_18a",
+      "Lexeme_ID": "razpreprodam",
+      "Cell": "prs_1sg",
+      "Form": "razpreprodam",
+      "Morphs": ["raz", "pre", "pro", "dam"],
+      "Source": ["istratkova-2004[(18a)]", "istratkova-2004[(30a)]"]
+    },
+    {
+      "ID": "istratkova2004_18b",
+      "Lexeme_ID": "popreprodam",
+      "Cell": "prs_1sg",
+      "Form": "popreprodam",
+      "Morphs": ["po", "pre", "pro", "dam"],
+      "Source": ["istratkova-2004[(18b)]"]
+    },
+    {
+      "ID": "istratkova2004_18c",
+      "Lexeme_ID": "napreprodam",
+      "Cell": "prs_1sg",
+      "Form": "napreprodam",
+      "Morphs": ["na", "pre", "pro", "dam"],
+      "Judgment": "marginal",
+      "Comment": "Marked ?.",
+      "Source": ["istratkova-2004[(18c)]"]
+    },
+    {
+      "ID": "istratkova2004_18d",
+      "Lexeme_ID": "naprerazkaza",
+      "Cell": "prs_1sg",
+      "Form": "naprerazkaža",
+      "Morphs": ["na", "pre", "raz", "kaža"],
+      "Judgment": "ungrammatical",
+      "Comment": "Conforms to the hierarchy (32); the paper offers no rule for its ungrammaticality.",
+      "Source": ["istratkova-2004[(18d)]"]
+    },
+    {
+      "ID": "istratkova2004_18e",
+      "Lexeme_ID": "izpreprodam",
+      "Cell": "prs_1sg",
+      "Form": "izpreprodam",
+      "Morphs": ["iz", "pre", "pro", "dam"],
+      "Judgment": "marginal",
+      "Comment": "Marked ?.",
+      "Source": ["istratkova-2004[(18e)]"]
+    },
+    {
+      "ID": "istratkova2004_18f",
+      "Lexeme_ID": "izprerazkaza",
+      "Cell": "prs_1sg",
+      "Form": "izprerazkaža",
+      "Morphs": ["iz", "pre", "raz", "kaža"],
+      "Judgment": "marginal",
+      "Comment": "Marked ?.",
+      "Source": ["istratkova-2004[(18f)]"]
+    },
+    {
+      "ID": "istratkova2004_19a",
+      "Lexeme_ID": "porazpreprodam",
+      "Cell": "prs_1sg",
+      "Form": "porazpreprodam",
+      "Morphs": ["po", "raz", "pre", "pro", "dam"],
+      "Source": ["istratkova-2004[(19a)]"]
+    },
+    {
+      "ID": "istratkova2004_19b",
+      "Lexeme_ID": "izrazpreprodam",
+      "Cell": "prs_1sg",
+      "Form": "izrazpreprodam",
+      "Morphs": ["iz", "raz", "pre", "pro", "dam"],
+      "Source": ["istratkova-2004[(19b)]"]
+    },
+    {
+      "ID": "istratkova2004_20b",
+      "Lexeme_ID": "napreprodam_2",
+      "Cell": "prs_1sg",
+      "Form": "napreprodam",
+      "Morphs": ["na", "pre", "pro", "dam"],
+      "Source": ["istratkova-2004[(20b)]"]
+    },
+    {
+      "ID": "istratkova2004_20c",
+      "Lexeme_ID": "naprodam",
+      "Cell": "prs_1sg",
+      "Form": "naprodam",
+      "Morphs": ["na", "pro", "dam"],
+      "Source": ["istratkova-2004[(20c)]"]
+    },
+    {
+      "ID": "istratkova2004_20d",
+      "Lexeme_ID": "ponaprodam",
+      "Cell": "prs_1sg",
+      "Form": "ponaprodam",
+      "Morphs": ["po", "na", "pro", "dam"],
+      "Source": ["istratkova-2004[(20d)]"]
+    },
+    {
+      "ID": "istratkova2004_20e",
+      "Lexeme_ID": "narazprodam",
+      "Cell": "prs_1sg",
+      "Form": "narazprodam",
+      "Morphs": ["na", "raz", "pro", "dam"],
+      "Judgment": "ungrammatical",
+      "Comment": "Meaning incompatibility of na- 'a lot but not everything' with raz- 'to the end'; conforms to the hierarchy (32).",
+      "Source": ["istratkova-2004[(20e)]"]
+    },
+    {
+      "ID": "istratkova2004_20f",
+      "Lexeme_ID": "iznaprodam",
+      "Cell": "prs_1sg",
+      "Form": "iznaprodam",
+      "Morphs": ["iz", "na", "pro", "dam"],
+      "Judgment": "ungrammatical",
+      "Comment": "Meaning incompatibility; conforms to the hierarchy (32).",
+      "Source": ["istratkova-2004[(20f)]", "istratkova-2004[(27a)]"]
+    },
+    {
+      "ID": "istratkova2004_21a",
+      "Lexeme_ID": "izponaprodam",
+      "Cell": "prs_1sg",
+      "Form": "izponaprodam",
+      "Morphs": ["iz", "po", "na", "pro", "dam"],
+      "Source": ["istratkova-2004[(21a)]", "istratkova-2004[(27d)]"]
+    },
+    {
+      "ID": "istratkova2004_21b",
+      "Lexeme_ID": "izporazprodam",
+      "Cell": "prs_1sg",
+      "Form": "izporazprodam",
+      "Morphs": ["iz", "po", "raz", "pro", "dam"],
+      "Source": ["istratkova-2004[(21b)]"]
+    },
+    {
+      "ID": "istratkova2004_21c",
+      "Lexeme_ID": "izpopreprodam",
+      "Cell": "prs_1sg",
+      "Form": "izpopreprodam",
+      "Morphs": ["iz", "po", "pre", "pro", "dam"],
+      "Source": ["istratkova-2004[(21c)]"]
+    },
+    {
+      "ID": "istratkova2004_23b",
+      "Lexeme_ID": "porazprodam",
+      "Cell": "prs_1sg",
+      "Form": "porazprodam",
+      "Morphs": ["po", "raz", "pro", "dam"],
+      "Source": ["istratkova-2004[(23b)]"]
+    },
+    {
+      "ID": "istratkova2004_23d",
+      "Lexeme_ID": "poizprodam",
+      "Cell": "prs_1sg",
+      "Form": "poizprodam",
+      "Morphs": ["po", "iz", "pro", "dam"],
+      "Source": ["istratkova-2004[(23d)]"]
+    },
+    {
+      "ID": "istratkova2004_23e",
+      "Lexeme_ID": "poprodam",
+      "Cell": "prs_1sg",
+      "Form": "poprodam",
+      "Morphs": ["po", "pro", "dam"],
+      "Source": ["istratkova-2004[(23e)]"]
+    },
+    {
+      "ID": "istratkova2004_23f",
+      "Lexeme_ID": "poprodavam",
+      "Cell": "prs_1sg",
+      "Form": "poprodavam",
+      "Morphs": ["po", "pro", "da", "va", "m"],
+      "Comment": "attenuative po- reads 'for a while' on imperfectives",
+      "Source": ["istratkova-2004[(23f)]"]
+    },
+    {
+      "ID": "istratkova2004_24a",
+      "Lexeme_ID": "zaizponareda",
+      "Cell": "prs_1sg",
+      "Form": "zaizponared'a",
+      "Morphs": ["za", "iz", "po", "nared'a"],
+      "Judgment": "ungrammatical",
+      "Comment": "high za- selects an imperfective output",
+      "Source": ["istratkova-2004[(24a)]"]
+    },
+    {
+      "ID": "istratkova2004_24a_alt",
+      "Lexeme_ID": "zaizponareda",
+      "Cell": "prs_1sg",
+      "Form": "zaizponareždam",
+      "Morphs": ["za", "iz", "po", "narežd", "a", "m"],
+      "Source": ["istratkova-2004[(24a)]"]
+    },
+    {
+      "ID": "istratkova2004_24b",
+      "Lexeme_ID": "zapeja",
+      "Cell": "prs_1sg",
+      "Form": "zapeja",
+      "Morphs": ["za", "peja"],
+      "Source": ["istratkova-2004[(24b)]"]
+    },
+    {
+      "ID": "istratkova2004_24b_ipf",
+      "Lexeme_ID": "zapeja",
+      "Cell": "prs_1sg",
+      "Form": "zap'avam",
+      "Morphs": ["za", "p'a", "va", "m"],
+      "Source": ["istratkova-2004[(24b)]"]
+    },
+    {
+      "ID": "istratkova2004_25a",
+      "Lexeme_ID": "doprodam",
+      "Cell": "prs_1sg",
+      "Form": "doprodam",
+      "Morphs": ["do", "pro", "dam"],
+      "Source": ["istratkova-2004[(25a)]"]
+    },
+    {
+      "ID": "istratkova2004_25b",
+      "Lexeme_ID": "dopreprodam",
+      "Cell": "prs_1sg",
+      "Form": "dopreprodam",
+      "Morphs": ["do", "pre", "pro", "dam"],
+      "Source": ["istratkova-2004[(25b)]"]
+    },
+    {
+      "ID": "istratkova2004_25b_alt",
+      "Lexeme_ID": "dopreprodam",
+      "Cell": "prs_1sg",
+      "Form": "predoprodam",
+      "Morphs": ["pre", "do", "prodam"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[(25b)]"]
+    },
+    {
+      "ID": "istratkova2004_25c1",
+      "Lexeme_ID": "dorazpreprodam",
+      "Cell": "prs_1sg",
+      "Form": "dorazpreprodam",
+      "Morphs": ["do", "raz", "pre", "pro", "dam"],
+      "Source": ["istratkova-2004[(25c)]"]
+    },
+    {
+      "ID": "istratkova2004_25c2",
+      "Lexeme_ID": "doprerazprodam",
+      "Cell": "prs_1sg",
+      "Form": "doprerazprodam",
+      "Morphs": ["do", "pre", "raz", "pro", "dam"],
+      "Comment": "Places repetitive pre- above excessive raz-, against the order of (32); the paper allows raz- and pre- to flip, (30).",
+      "Source": ["istratkova-2004[(25c)]"]
+    },
+    {
+      "ID": "istratkova2004_25d",
+      "Lexeme_ID": "doizporazpreprodam",
+      "Cell": "prs_1sg",
+      "Form": "doizporazpreprodam",
+      "Morphs": ["do", "iz", "po", "raz", "pre", "pro", "dam"],
+      "Source": ["istratkova-2004[(25d)]"]
+    },
+    {
+      "ID": "istratkova2004_25e",
+      "Lexeme_ID": "podoizrazprodam",
+      "Cell": "prs_1sg",
+      "Form": "podoizrazprodam",
+      "Morphs": ["po", "do", "iz", "raz", "pro", "dam"],
+      "Source": ["istratkova-2004[(25e)]"]
+    },
+    {
+      "ID": "istratkova2004_25f",
+      "Lexeme_ID": "zadoizponarazpreprodam",
+      "Cell": "prs_1sg",
+      "Form": "zadoizponarazpreprodam",
+      "Morphs": ["za", "do", "iz", "po", "na", "raz", "pre", "pro", "dam"],
+      "Judgment": "marginal",
+      "Comment": "Marked ?.",
+      "Source": ["istratkova-2004[(25f)]"]
+    },
+    {
+      "ID": "istratkova2004_25g",
+      "Lexeme_ID": "dopeja",
+      "Cell": "prs_1sg",
+      "Form": "dopeja",
+      "Morphs": ["do", "peja"],
+      "Source": ["istratkova-2004[(25g)]"]
+    },
+    {
+      "ID": "istratkova2004_25g_ipf",
+      "Lexeme_ID": "dopeja",
+      "Cell": "prs_1sg",
+      "Form": "dop'avam",
+      "Morphs": ["do", "p'a", "va", "m"],
+      "Source": ["istratkova-2004[(25g)]"]
+    },
+    {
+      "ID": "istratkova2004_26a",
+      "Lexeme_ID": "popeja",
+      "Cell": "prs_1sg",
+      "Form": "popeja",
+      "Morphs": ["po", "peja"],
+      "Source": ["istratkova-2004[(26a)]"]
+    },
+    {
+      "ID": "istratkova2004_26a_ipf",
+      "Lexeme_ID": "popeja",
+      "Cell": "prs_1sg",
+      "Form": "pop'avam",
+      "Morphs": ["po", "p'a", "va", "m"],
+      "Source": ["istratkova-2004[(26a)]"]
+    },
+    {
+      "ID": "istratkova2004_26b",
+      "Lexeme_ID": "poigraja",
+      "Cell": "prs_1sg",
+      "Form": "poigraja",
+      "Morphs": ["po", "igraja"],
+      "Source": ["istratkova-2004[(26b)]"]
+    },
+    {
+      "ID": "istratkova2004_26b_ipf",
+      "Lexeme_ID": "poigraja",
+      "Cell": "prs_1sg",
+      "Form": "poigravam",
+      "Morphs": ["po", "igra", "va", "m"],
+      "Source": ["istratkova-2004[(26b)]"]
+    },
+    {
+      "ID": "istratkova2004_27b",
+      "Lexeme_ID": "izprodam",
+      "Cell": "prs_1sg",
+      "Form": "izprodam",
+      "Morphs": ["iz", "pro", "dam"],
+      "Judgment": "marginal",
+      "Comment": "Marked ?: more prefixes improve it.",
+      "Source": ["istratkova-2004[(27b)]", "istratkova-2004[(22c)]"]
+    },
+    {
+      "ID": "istratkova2004_27c",
+      "Lexeme_ID": "izpoprodam",
+      "Cell": "prs_1sg",
+      "Form": "izpoprodam",
+      "Morphs": ["iz", "po", "pro", "dam"],
+      "Source": ["istratkova-2004[(27c)]", "istratkova-2004[(22c)]"]
+    },
+    {
+      "ID": "istratkova2004_28a",
+      "Lexeme_ID": "iznarazkaza",
+      "Cell": "prs_1sg",
+      "Form": "iznarazkaža",
+      "Morphs": ["iz", "na", "raz", "kaža"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[(28a)]"]
+    },
+    {
+      "ID": "istratkova2004_28b",
+      "Lexeme_ID": "izrazkaza",
+      "Cell": "prs_1sg",
+      "Form": "izrazkaža",
+      "Morphs": ["iz", "raz", "kaža"],
+      "Judgment": "marginal",
+      "Comment": "Marked ?.",
+      "Source": ["istratkova-2004[(28b)]"]
+    },
+    {
+      "ID": "istratkova2004_28c",
+      "Lexeme_ID": "izporazkaza",
+      "Cell": "prs_1sg",
+      "Form": "izporazkaža",
+      "Morphs": ["iz", "po", "raz", "kaža"],
+      "Source": ["istratkova-2004[(28c)]"]
+    },
+    {
+      "ID": "istratkova2004_28d",
+      "Lexeme_ID": "izponarazkaza",
+      "Cell": "prs_1sg",
+      "Form": "izponarazkaža",
+      "Morphs": ["iz", "po", "na", "raz", "kaža"],
+      "Source": ["istratkova-2004[(28d)]"]
+    },
+    {
+      "ID": "istratkova2004_29",
+      "Lexeme_ID": "zaizponarazkaza",
+      "Cell": "prs_1sg",
+      "Form": "zaizponarazkaža",
+      "Morphs": ["za", "iz", "po", "na", "raz", "kaža"],
+      "Source": ["istratkova-2004[(29)]"]
+    },
+    {
+      "ID": "istratkova2004_29_alt",
+      "Lexeme_ID": "zaizponarazkaza",
+      "Cell": "prs_1sg",
+      "Form": "zaponarazkaža",
+      "Morphs": ["za", "po", "na", "raz", "kaža"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[(29)]"]
+    },
+    {
+      "ID": "istratkova2004_30b",
+      "Lexeme_ID": "prerazprodam",
+      "Cell": "prs_1sg",
+      "Form": "prerazprodam",
+      "Morphs": ["pre", "raz", "pro", "dam"],
+      "Judgment": "marginal",
+      "Comment": "Marked ?: the flipped order yields a different scope reading, against the order of (32).",
+      "Source": ["istratkova-2004[(30b)]"]
+    },
+    {
+      "ID": "istratkova2004_33a",
+      "Lexeme_ID": "izpoproceta",
+      "Cell": "prs_1sg",
+      "Form": "izpopročeta",
+      "Morphs": ["iz", "po", "pro", "četa"],
+      "Source": ["istratkova-2004[(33a)]"]
+    },
+    {
+      "ID": "istratkova2004_34a",
+      "Lexeme_ID": "pozapeja",
+      "Cell": "prs_1sg",
+      "Form": "pozapeja",
+      "Morphs": ["po", "za", "peja"],
+      "Source": ["istratkova-2004[(34a)]"]
+    },
+    {
+      "ID": "istratkova2004_35a",
+      "Lexeme_ID": "izponareza",
+      "Cell": "prs_1sg",
+      "Form": "izponareža",
+      "Morphs": ["iz", "po", "na", "reža"],
+      "Source": ["istratkova-2004[(35a)]"]
+    },
+    {
+      "ID": "istratkova2004_t3_na_po_pro_dam",
+      "Lexeme_ID": "napoprodam",
+      "Cell": "prs_1sg",
+      "Form": "napoprodam",
+      "Morphs": ["na", "po", "pro", "dam"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[Table 3]"]
+    },
+    {
+      "ID": "istratkova2004_t3_raz_po_pro_dam",
+      "Lexeme_ID": "razpoprodam",
+      "Cell": "prs_1sg",
+      "Form": "razpoprodam",
+      "Morphs": ["raz", "po", "pro", "dam"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[Table 3]"]
+    },
+    {
+      "ID": "istratkova2004_t2_pre_na_raz_dam",
+      "Lexeme_ID": "prenarazdam",
+      "Cell": "prs_1sg",
+      "Form": "prenarazdam",
+      "Morphs": ["pre", "na", "raz", "dam"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[Table 2]"]
+    },
+    {
+      "ID": "istratkova2004_t2_po_pre_na_raz_dam",
+      "Lexeme_ID": "poprenarazdam",
+      "Cell": "prs_1sg",
+      "Form": "poprenarazdam",
+      "Morphs": ["po", "pre", "na", "raz", "dam"],
+      "Judgment": "ungrammatical",
+      "Source": ["istratkova-2004[Table 2]"]
+    },
+    {
+      "ID": "istratkova2004_t2_na_pre_raz_dam",
+      "Lexeme_ID": "naprerazdam",
+      "Cell": "prs_1sg",
+      "Form": "naprerazdam",
+      "Morphs": ["na", "pre", "raz", "dam"],
+      "Judgment": "ungrammatical",
+      "Comment": "Conforms to the hierarchy (32); the paper offers no rule for its ungrammaticality.",
+      "Source": ["istratkova-2004[Table 2]"]
+    },
+    {
+      "ID": "istratkova2004_t1_po_na_raz_kazha",
+      "Lexeme_ID": "ponarazkaza",
+      "Cell": "prs_1sg",
+      "Form": "ponarazkaža",
+      "Morphs": ["po", "na", "raz", "kaža"],
+      "Source": ["istratkova-2004[Table 1]"]
+    },
+    {
+      "ID": "istratkova2004_t1_iz_po_na_pre_raz_kazha",
+      "Lexeme_ID": "izponaprerazkaza",
+      "Cell": "prs_1sg",
+      "Form": "izponaprerazkaža",
+      "Morphs": ["iz", "po", "na", "pre", "raz", "kaža"],
+      "Source": ["istratkova-2004[Table 1]"]
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "istratkova2004_r_1a_ipf_imperfective",
+      "Form_ID": "istratkova2004_1a",
+      "Target_ID": "istratkova2004_1a_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1a)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1b_ipf_imperfective",
+      "Form_ID": "istratkova2004_1b",
+      "Target_ID": "istratkova2004_1b_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1b)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1c_ipf_imperfective",
+      "Form_ID": "istratkova2004_1c",
+      "Target_ID": "istratkova2004_1c_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1c)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1d_ipf_imperfective",
+      "Form_ID": "istratkova2004_1d",
+      "Target_ID": "istratkova2004_1d_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1d)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1e_ipf_imperfective",
+      "Form_ID": "istratkova2004_1e",
+      "Target_ID": "istratkova2004_1e_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1e)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1f_ipf_imperfective",
+      "Form_ID": "istratkova2004_1f",
+      "Target_ID": "istratkova2004_1f_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1f)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1g_ipf_imperfective",
+      "Form_ID": "istratkova2004_1g",
+      "Target_ID": "istratkova2004_1g_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1g)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1h_ipf_imperfective",
+      "Form_ID": "istratkova2004_1h",
+      "Target_ID": "istratkova2004_1h_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1h)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1i_ipf_imperfective",
+      "Form_ID": "istratkova2004_1i",
+      "Target_ID": "istratkova2004_1i_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1i)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1j_ipf_imperfective",
+      "Form_ID": "istratkova2004_1j",
+      "Target_ID": "istratkova2004_1j_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1j)]"]
+    },
+    {
+      "ID": "istratkova2004_r_1k_ipf_imperfective",
+      "Form_ID": "istratkova2004_1k",
+      "Target_ID": "istratkova2004_1k_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(1k)]"]
+    },
+    {
+      "ID": "istratkova2004_r_3a_ipf_imperfective",
+      "Form_ID": "istratkova2004_3a",
+      "Target_ID": "istratkova2004_3a_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(3a)]"]
+    },
+    {
+      "ID": "istratkova2004_r_3b_ipf_imperfective",
+      "Form_ID": "istratkova2004_3b",
+      "Target_ID": "istratkova2004_3b_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(3b)]"]
+    },
+    {
+      "ID": "istratkova2004_r_3c_ipf_imperfective",
+      "Form_ID": "istratkova2004_3c",
+      "Target_ID": "istratkova2004_3c_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(3c)]"]
+    },
+    {
+      "ID": "istratkova2004_r_3d_ipf_imperfective",
+      "Form_ID": "istratkova2004_3d",
+      "Target_ID": "istratkova2004_3d_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(3d)]"]
+    },
+    {
+      "ID": "istratkova2004_r_3e_ipf_imperfective",
+      "Form_ID": "istratkova2004_3e",
+      "Target_ID": "istratkova2004_3e_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(3e)]"]
+    },
+    {
+      "ID": "istratkova2004_r_3f_ipf_imperfective",
+      "Form_ID": "istratkova2004_3f",
+      "Target_ID": "istratkova2004_3f_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(3f)]"]
+    },
+    {
+      "ID": "istratkova2004_r_3h_ipf_imperfective",
+      "Form_ID": "istratkova2004_3h",
+      "Target_ID": "istratkova2004_3h_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(3h)]"]
+    },
+    {
+      "ID": "istratkova2004_r_3i_ipf_imperfective",
+      "Form_ID": "istratkova2004_3i",
+      "Target_ID": "istratkova2004_3i_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(3i)]"]
+    },
+    {
+      "ID": "istratkova2004_r_4a_ipf_imperfective",
+      "Form_ID": "istratkova2004_4a",
+      "Target_ID": "istratkova2004_4a_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(4a)]"]
+    },
+    {
+      "ID": "istratkova2004_r_4b_ipf_imperfective",
+      "Form_ID": "istratkova2004_4b",
+      "Target_ID": "istratkova2004_4b_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(4b)]"]
+    },
+    {
+      "ID": "istratkova2004_r_5a_ipf_imperfective",
+      "Form_ID": "istratkova2004_5a",
+      "Target_ID": "istratkova2004_5a_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(5a)]"]
+    },
+    {
+      "ID": "istratkova2004_r_5b_ipf_imperfective",
+      "Form_ID": "istratkova2004_5b",
+      "Target_ID": "istratkova2004_5b_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(5b)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6a_alt_imperfective",
+      "Form_ID": "istratkova2004_6a",
+      "Target_ID": "istratkova2004_6a_alt",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(6a)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6a_prefixation",
+      "Form_ID": "istratkova2004_6a_base",
+      "Target_ID": "istratkova2004_6a",
+      "Relation": "prefixation",
+      "Source": ["istratkova-2004[(6a)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6b_alt_imperfective",
+      "Form_ID": "istratkova2004_6b",
+      "Target_ID": "istratkova2004_6b_alt",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(6b)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6b_prefixation",
+      "Form_ID": "istratkova2004_6b_base",
+      "Target_ID": "istratkova2004_6b",
+      "Relation": "prefixation",
+      "Source": ["istratkova-2004[(6b)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6c_alt_imperfective",
+      "Form_ID": "istratkova2004_6c",
+      "Target_ID": "istratkova2004_6c_alt",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(6c)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6c_prefixation",
+      "Form_ID": "istratkova2004_6c_base",
+      "Target_ID": "istratkova2004_6c",
+      "Relation": "prefixation",
+      "Source": ["istratkova-2004[(6c)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6d_alt_imperfective",
+      "Form_ID": "istratkova2004_6d",
+      "Target_ID": "istratkova2004_6d_alt",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(6d)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6d_prefixation",
+      "Form_ID": "istratkova2004_6d_base",
+      "Target_ID": "istratkova2004_6d",
+      "Relation": "prefixation",
+      "Source": ["istratkova-2004[(6d)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6e_alt_imperfective",
+      "Form_ID": "istratkova2004_6e",
+      "Target_ID": "istratkova2004_6e_alt",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(6e)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6e_prefixation",
+      "Form_ID": "istratkova2004_6e_base",
+      "Target_ID": "istratkova2004_6e",
+      "Relation": "prefixation",
+      "Source": ["istratkova-2004[(6e)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6f_alt_imperfective",
+      "Form_ID": "istratkova2004_6f",
+      "Target_ID": "istratkova2004_6f_alt",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(6f)]"]
+    },
+    {
+      "ID": "istratkova2004_r_6f_prefixation",
+      "Form_ID": "istratkova2004_6e_base",
+      "Target_ID": "istratkova2004_6f",
+      "Relation": "prefixation",
+      "Source": ["istratkova-2004[(6f)]"]
+    },
+    {
+      "ID": "istratkova2004_r_7_ipf_imperfective",
+      "Form_ID": "istratkova2004_7",
+      "Target_ID": "istratkova2004_7_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(7)]"]
+    },
+    {
+      "ID": "istratkova2004_r_24a_alt_imperfective",
+      "Form_ID": "istratkova2004_24a",
+      "Target_ID": "istratkova2004_24a_alt",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(24a)]"]
+    },
+    {
+      "ID": "istratkova2004_r_24b_ipf_imperfective",
+      "Form_ID": "istratkova2004_24b",
+      "Target_ID": "istratkova2004_24b_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(24b)]"]
+    },
+    {
+      "ID": "istratkova2004_r_25g_ipf_imperfective",
+      "Form_ID": "istratkova2004_25g",
+      "Target_ID": "istratkova2004_25g_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(25g)]"]
+    },
+    {
+      "ID": "istratkova2004_r_26a_ipf_imperfective",
+      "Form_ID": "istratkova2004_26a",
+      "Target_ID": "istratkova2004_26a_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(26a)]"]
+    },
+    {
+      "ID": "istratkova2004_r_26b_ipf_imperfective",
+      "Form_ID": "istratkova2004_26b",
+      "Target_ID": "istratkova2004_26b_ipf",
+      "Relation": "imperfective",
+      "Source": ["istratkova-2004[(26b)]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Stack",
+      "Lean": "stack",
+      "Type": "String",
+      "Description": "the classes the paper gives the prefixes of the stack"
+    },
+    {
+      "Name": "Class",
+      "Lean": "class_",
+      "Type": "String",
+      "Description": "the paper's class of a simplex verb"
+    },
+    {
+      "Name": "Prefix",
+      "Lean": "prefix_",
+      "Type": "String",
+      "Description": "the paper's class of a single prefix"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "istratkova2004_2a",
+      "Class": "simplex homogeneous verb, no perfective counterpart"
+    },
+    {
+      "Form_ID": "istratkova2004_2b",
+      "Class": "simplex homogeneous verb, no perfective counterpart"
+    },
+    {
+      "Form_ID": "istratkova2004_2c",
+      "Class": "simplex homogeneous verb, no perfective counterpart"
+    },
+    {
+      "Form_ID": "istratkova2004_2d",
+      "Class": "simplex homogeneous verb, no perfective counterpart"
+    },
+    {
+      "Form_ID": "istratkova2004_2e",
+      "Class": "simplex homogeneous verb, no perfective counterpart"
+    },
+    {
+      "Form_ID": "istratkova2004_2f",
+      "Class": "simplex homogeneous verb, no perfective counterpart"
+    },
+    {
+      "Form_ID": "istratkova2004_2g",
+      "Class": "simplex homogeneous verb, no perfective counterpart"
+    },
+    {
+      "Form_ID": "istratkova2004_2h",
+      "Class": "simplex homogeneous verb, no perfective counterpart"
+    },
+    {
+      "Form_ID": "istratkova2004_4a",
+      "Class": "simplex quantized verb"
+    },
+    {
+      "Form_ID": "istratkova2004_4b",
+      "Class": "simplex quantized verb"
+    },
+    {
+      "Form_ID": "istratkova2004_11",
+      "Stack": "completive iz-, distributive po-, cumulative na-, excessive raz-, lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_12a",
+      "Prefix": "lexical iz-"
+    },
+    {
+      "Form_ID": "istratkova2004_12b",
+      "Prefix": "lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_12c",
+      "Prefix": "lexical iz-"
+    },
+    {
+      "Form_ID": "istratkova2004_12d",
+      "Prefix": "lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_13a",
+      "Stack": "completive iz- outside lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_13b",
+      "Stack": "completive iz- outside lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_14a",
+      "Prefix": "cumulative na- on a simplex"
+    },
+    {
+      "Form_ID": "istratkova2004_14b",
+      "Prefix": "lexical or cumulative na-"
+    },
+    {
+      "Form_ID": "istratkova2004_15",
+      "Stack": "innermost prefix read as lexical out of context"
+    },
+    {
+      "Form_ID": "istratkova2004_18a",
+      "Stack": "excessive raz-, repetitive pre-, lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_18b",
+      "Stack": "attenuative po-, repetitive pre-, lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_18c",
+      "Stack": "cumulative na-, repetitive pre-, lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_18d",
+      "Stack": "cumulative na-, repetitive pre-, lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_18e",
+      "Stack": "completive iz-, repetitive pre-, lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_18f",
+      "Stack": "completive iz-, repetitive pre-, lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_19a",
+      "Stack": "attenuative po- over excessive raz- over repetitive pre-"
+    },
+    {
+      "Form_ID": "istratkova2004_19b",
+      "Stack": "completive iz- over excessive raz- over repetitive pre-"
+    },
+    {
+      "Form_ID": "istratkova2004_20b",
+      "Stack": "cumulative na- over repetitive pre-"
+    },
+    {
+      "Form_ID": "istratkova2004_20c",
+      "Stack": "cumulative na- over lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_20d",
+      "Stack": "attenuative po- modifies cumulative na-"
+    },
+    {
+      "Form_ID": "istratkova2004_20e",
+      "Stack": "cumulative na- over excessive raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_20f",
+      "Stack": "completive iz- directly over cumulative na-"
+    },
+    {
+      "Form_ID": "istratkova2004_21a",
+      "Stack": "completive iz-, distributive po-, cumulative na-, lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_21b",
+      "Stack": "completive iz-, distributive po-, excessive raz-, lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_21c",
+      "Stack": "completive iz-, distributive po-, repetitive pre-, lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_23b",
+      "Stack": "attenuative po- lowers the intensity of excessive raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_23d",
+      "Stack": "attenuative po- over completive iz-"
+    },
+    {
+      "Form_ID": "istratkova2004_23e",
+      "Stack": "attenuative po- over lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_24a",
+      "Stack": "high inceptive za- outside completive iz-"
+    },
+    {
+      "Form_ID": "istratkova2004_24b",
+      "Stack": "low inceptive za- on a homogeneous simplex"
+    },
+    {
+      "Form_ID": "istratkova2004_25a",
+      "Stack": "terminative do- over lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_25b",
+      "Stack": "terminative do- over repetitive pre-"
+    },
+    {
+      "Form_ID": "istratkova2004_25c1",
+      "Stack": "terminative do-, excessive raz-, repetitive pre-"
+    },
+    {
+      "Form_ID": "istratkova2004_25c2",
+      "Stack": "terminative do-, repetitive pre-, excessive raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_25d",
+      "Stack": "six prefixes in hierarchy order"
+    },
+    {
+      "Form_ID": "istratkova2004_25e",
+      "Stack": "attenuative po- outermost, over terminative do-"
+    },
+    {
+      "Form_ID": "istratkova2004_25f",
+      "Stack": "seven prefixes"
+    },
+    {
+      "Form_ID": "istratkova2004_25g",
+      "Stack": "low terminative do- on a homogeneous simplex"
+    },
+    {
+      "Form_ID": "istratkova2004_26a",
+      "Stack": "delimitative po- on a simplex atelic verb; no stacking"
+    },
+    {
+      "Form_ID": "istratkova2004_26b",
+      "Stack": "delimitative po-"
+    },
+    {
+      "Form_ID": "istratkova2004_27b",
+      "Stack": "completive iz- over lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_27c",
+      "Stack": "completive iz-, distributive po-, lexical pro-"
+    },
+    {
+      "Form_ID": "istratkova2004_28a",
+      "Stack": "completive iz- directly over cumulative na-"
+    },
+    {
+      "Form_ID": "istratkova2004_28b",
+      "Stack": "completive iz- over lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_28c",
+      "Stack": "completive iz-, distributive po-, lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_28d",
+      "Stack": "completive iz-, distributive po-, cumulative na-, lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_29",
+      "Stack": "inceptive za- requires completive iz- inside"
+    },
+    {
+      "Form_ID": "istratkova2004_30b",
+      "Stack": "repetitive pre- over excessive raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_33a",
+      "Stack": "superlexicals above AspP over lexical pro- in Q1"
+    },
+    {
+      "Form_ID": "istratkova2004_34a",
+      "Stack": "attenuative po- over low inceptive za- in Q2"
+    },
+    {
+      "Form_ID": "istratkova2004_35a",
+      "Stack": "completive iz-, distributive po- over low cumulative na- in Q2"
+    },
+    {
+      "Form_ID": "istratkova2004_t3_na_po_pro_dam",
+      "Stack": "cumulative na- over po-"
+    },
+    {
+      "Form_ID": "istratkova2004_t3_raz_po_pro_dam",
+      "Stack": "excessive raz- over po-"
+    },
+    {
+      "Form_ID": "istratkova2004_t2_pre_na_raz_dam",
+      "Stack": "repetitive pre- over cumulative na-"
+    },
+    {
+      "Form_ID": "istratkova2004_t2_po_pre_na_raz_dam",
+      "Stack": "repetitive pre- over cumulative na-"
+    },
+    {
+      "Form_ID": "istratkova2004_t2_na_pre_raz_dam",
+      "Stack": "cumulative na- over repetitive pre-"
+    },
+    {
+      "Form_ID": "istratkova2004_t1_po_na_raz_kazha",
+      "Stack": "attenuative po- over cumulative na- over lexical raz-"
+    },
+    {
+      "Form_ID": "istratkova2004_t1_iz_po_na_pre_raz_kazha",
+      "Stack": "completive iz-, distributive po-, cumulative na-, repetitive pre-, lexical raz-"
+    }
+  ]
+}
