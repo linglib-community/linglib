@@ -23,7 +23,6 @@ in `Studies/Deal2026.lean`.
 ## References
 
 * [caponigro-polinsky-2011]
-* [noonan-2007]
 -/
 
 @[expose] public section
@@ -54,11 +53,9 @@ inductive ComplementCase where
   | obl
   deriving DecidableEq, Repr
 
-/-- An Adyghe complement-taking predicate is a verb entry with its [noonan-2007] class and the
-case it assigns to a clausal complement. -/
+/-- An Adyghe complement-taking predicate is a verb entry with the case it assigns to a clausal
+complement. -/
 structure Verb extends _root_.Verb where
-  /-- The [noonan-2007] class, `none` where the data give no clear assignment. -/
-  predicateClass : Option Complement.PredicateClass
   /-- The case suffix on the clausal complement, `none` for an infinitival complement. -/
   complementCase : Option ComplementCase
 
@@ -67,7 +64,6 @@ and takes plain noun-phrase objects ((96), (98), (102)). -/
 def gwepshesa : Verb where
   morphs := [.root "gʷəpšəsa"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
-  predicateClass := some .propAttitude
   attitude := some (.doxastic .nonVeridical)
   complementCase := some .abs
 
@@ -77,7 +73,6 @@ constituent-question complement is a headless relative; it takes plain noun-phra
 def chewepcha : Verb where
   morphs := [.root "qəč'ewəpč'a"]
   valency := .of [(ArgumentFrame.question, [0, 1]), (ArgumentFrame.np, [0, 1])]
-  predicateClass := some .utterance
   speechActVerb := true
   complementCase := some .obl
 
@@ -86,7 +81,6 @@ declarative and the polar reading ((101)). -/
 def she : Verb where
   morphs := [.root "ŝe"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
-  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   complementCase := some .abs
@@ -96,7 +90,6 @@ without an overt head noun 'news' or 'verity' ((108)–(110)). -/
 def gwereqwe : Verb where
   morphs := [.root "gʷərəʔʷe"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   complementCase := some .abs
@@ -105,7 +98,6 @@ def gwereqwe : Verb where
 def qwa : Verb where
   morphs := [.root "ʔʷa"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := some .utterance
   speechActVerb := true
   complementCase := some .abs
 
@@ -113,7 +105,6 @@ def qwa : Verb where
 def raqezha : Verb where
   morphs := [.root "raʔežʼa"]
   valency := .ofFrame ArgumentFrame.infinitival
-  predicateClass := some .phasal
   complementCase := none
 
 /-- The predicates with per-predicate data in the paper. -/

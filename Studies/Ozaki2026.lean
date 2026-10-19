@@ -55,18 +55,18 @@ def diagnostic (e : Datum) : Option String := e.feature? "diagnostic"
 /-- The marking of the source in an example. -/
 def marking (e : Datum) : Option String := e.feature? "marking"
 
-/-- The verdict the argument assigns to each diagnostic: the alternation, the argumenthood
-diagnostics, and the indirect passive succeed, the direct passive and the wh-adjunct fail. -/
+/-- The argument's verdict on a diagnostic is that the alternation, the argumenthood
+diagnostics and the indirect passive succeed, and the direct passive and the wh-adjunct fail. -/
 def verdict : Option String → Judgment
   | some "direct_passive" | some "nani_o" => .ungrammatical
   | _ => .acceptable
 
-/-- Every example's judgment is its diagnostic's verdict: the marking of the source plays no
-role. -/
+/-- Every example's judgment is its diagnostic's verdict, whatever the marking of the
+source. -/
 theorem judgment_eq_verdict : ∀ e ∈ Examples.all, e.judgment = verdict (diagnostic e) := by decide
 
-/-- Both markings are attested with each marking-sensitive diagnostic: the source elides and
-scrambles, and the wh-adjunct is out, under accusative and under ablative alike. -/
+/-- Both markings are attested with each marking-sensitive diagnostic, the source eliding and
+scrambling and the wh-adjunct out under accusative and under ablative alike. -/
 theorem diagnostics_both_markings :
     ∀ m ∈ ["acc", "abl"],
       (∃ e ∈ Examples.all, marking e = some m ∧ diagnostic e = some "ellipsis" ∧
@@ -81,29 +81,29 @@ theorem diagnostics_both_markings :
 is derived, and as non-passivizable. -/
 theorem alternation_verbs_unaccusative :
     ∀ v ∈ [Japanese.hanareru, Japanese.deru],
-      v.voiceType = some .nonThematic ∧ v.toVerb.IsUnaccusative ∧
+      v.voiceType = some .nonThematic ∧ v.IsUnaccusative ∧
         v.passivizable = false := by
   decide
 
 /-- The direct passive requires a verb introducing an external argument, which the
-non-thematic head does not provide: (20) is out. -/
+non-thematic head does not provide, so (20) is out. -/
 theorem not_directPassivizable :
-    ¬ Japanese.DirectPassivizable Japanese.hanareru.toVerb ∧ ¬ anticausative.AssignsTheta := by
+    ¬ Japanese.DirectPassivizable Japanese.hanareru ∧ ¬ anticausative.AssignsTheta := by
   decide
 
 /-! ### Case assignment (§3) -/
 
-/-- The participants of *hanareru* 'leave': the leaver and the source, the leaver
+/-- The participants of *hanareru* 'leave' are the leaver and the source, the leaver
 c-commanding the source in the one Spell-Out domain. -/
 inductive Participant
   | leaver
   | source
   deriving DecidableEq, Repr
 
-/-- The accusative variant (28): leaver and source are caseless noun phrases. -/
+/-- In the accusative variant (28) leaver and source are caseless noun phrases. -/
 def accVariant : Participant → Option Case := fun _ ↦ none
 
-/-- The ablative variant (29): the postposition has valued the source ablative. -/
+/-- In the ablative variant (29) the postposition has valued the source ablative. -/
 def ablVariant : Participant → Option Case
   | .leaver => none
   | .source => some .abl
@@ -126,8 +126,8 @@ theorem abl_variant :
       (cases ablVariant).valueOf .leaver = some (.nom, .unmarked) := by
   decide
 
-/-- Accusative without thematic Voice: the non-thematic head assigns no θ-role, and the
-source's accusative is configurational rather than assigned by a functional head. -/
+/-- The accusative needs no thematic Voice, since the non-thematic head assigns no θ-role
+and the source's accusative is configurational rather than assigned by a functional head. -/
 theorem accusative_without_voice :
     ¬ anticausative.AssignsTheta ∧
       ((cases accVariant).valueOf .source).map (·.2) = some .dependent := by

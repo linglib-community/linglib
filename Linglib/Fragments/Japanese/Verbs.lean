@@ -16,7 +16,6 @@ non-thematic.
 
 ## Main definitions
 
-* `Japanese.Verb` — a Japanese verb, the root `Verb` with its spelling
 * `Japanese.verbs` — the attitude, causative and departure verbs
 
 ## References
@@ -32,18 +31,12 @@ namespace Japanese
 
 open ArgumentStructure
 
-/-- A Japanese verb is the root entry, with its romanized citation form, and its spelling. -/
-structure Verb extends _root_.Verb where
-  /-- The spelling in kanji and kana. -/
-  script : String
-  deriving BEq
-
 /-! ### Preferential attitudes -/
 
 /-- 楽しみ *tanoshimi* 'look forward to', a positive preference relative to relevance. -/
 def tanoshimi : Verb where
   morphs := [.root "tanoshimi"]
-  script := "楽しみ"
+  script := some "楽しみ"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -52,7 +45,7 @@ def tanoshimi : Verb where
 /-- 恐れ *osore* 'fear', a negative preference by comparison of degrees. -/
 def osore : Verb where
   morphs := [.root "osore"]
-  script := "恐れ"
+  script := some "恐れ"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -61,7 +54,7 @@ def osore : Verb where
 /-- 期待 *kitai* 'expect, hope', a positive preference by comparison of degrees. -/
 def kitai : Verb where
   morphs := [.root "kitai"]
-  script := "期待"
+  script := some "期待"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -70,7 +63,7 @@ def kitai : Verb where
 /-- 望む *nozomu* 'hope', a positive preference by comparison of degrees. -/
 def nozomu : Verb where
   morphs := [.root "nozomu"]
-  script := "望む"
+  script := some "望む"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -79,7 +72,7 @@ def nozomu : Verb where
 /-- 心配 *shinpai* 'worry', a preference relative to uncertainty. -/
 def shinpai : Verb where
   morphs := [.root "shinpai"]
-  script := "心配"
+  script := some "心配"
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
@@ -90,14 +83,14 @@ def shinpai : Verb where
 /-- 行かせる *ik-ase-ru* 'make go', the causative of *iku* with an accusative causee. -/
 def ik_ase : Verb where
   morphs := [.root "ik", .suff "ase", .suff "ru"]
-  script := "行かせる"
+  script := some "行かせる"
   valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
 
 /-- 食べさせる *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
 def tabe_sase : Verb where
   morphs := [.root "tabe", .suff "sase", .suff "ru"]
-  script := "食べさせる"
+  script := some "食べさせる"
   valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
 
@@ -107,7 +100,7 @@ def tabe_sase : Verb where
 ablative, with no thematic Voice. -/
 def hanareru : Verb where
   morphs := [.root "hanareru"]
-  script := "離れる"
+  script := some "離れる"
   valency := .ofFrame ArgumentFrame.np
   voiceType := some .nonThematic
   passivizable := false
@@ -116,7 +109,7 @@ def hanareru : Verb where
 with no thematic Voice. -/
 def deru : Verb where
   morphs := [.root "deru"]
-  script := "出る"
+  script := some "出る"
   valency := .ofFrame ArgumentFrame.np
   voiceType := some .nonThematic
   passivizable := false

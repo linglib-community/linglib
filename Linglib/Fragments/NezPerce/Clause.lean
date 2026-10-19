@@ -26,7 +26,6 @@ of `Data/Examples/Deal2026.json`, and the relative-embedding analysis is
 
 * [deal-2026]
 * [deal-2016a]
-* [noonan-2007]
 -/
 
 @[expose] public section
@@ -42,15 +41,10 @@ def ke : Complementizer where
 
 /-! ### Predicates -/
 
-/-- A Nez Perce complement-taking predicate is a verb entry with its [noonan-2007] class. -/
-structure Verb extends _root_.Verb where
-  predicateClass : Complement.PredicateClass
-
 /-- *lilooy* 'be happy' ((27a), (28a), (33)). -/
 def liloy : Verb where
   morphs := [.root "lilooy"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .commentative
   attitude := some (.preferential .positive true)
   factivity := some .full
 
@@ -58,7 +52,6 @@ def liloy : Verb where
 def etqew : Verb where
   morphs := [.root "’etqew"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -66,14 +59,12 @@ def etqew : Verb where
 def cicwaay : Verb where
   morphs := [.root "cicwaay"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .commentative
   factivity := some .full
 
 /-- *’eey’s* 'be joyful', which takes no noun-phrase object ((27e), (41)). -/
 def eeys : Verb where
   morphs := [.root "’eey’s"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .commentative
   attitude := some (.preferential .positive true)
   factivity := some .full
 
@@ -81,7 +72,6 @@ def eeys : Verb where
 def qeese : Verb where
   morphs := [.root "q’eese’"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -89,7 +79,6 @@ def qeese : Verb where
 def timneneki : Verb where
   morphs := [.root "tim’neeneki"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .commentative
   attitude := some (.preferential .negative false)
   factivity := some .full
 
@@ -97,7 +86,6 @@ def timneneki : Verb where
 def timiipni : Verb where
   morphs := [.root "timiipni"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -105,7 +93,6 @@ def timiipni : Verb where
 def neki : Verb where
   morphs := [.root "neki"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .propAttitude
   attitude := some (.doxastic .nonVeridical)
 
 /-- *hi* 'say, tell', with an accusative addressee before the clause ((47), (65b)). -/
@@ -114,14 +101,12 @@ def hi : Verb where
   valency := .ofFrame
     { complements :=
         [.nominal, .clausal (coding := some .indicative) (types := .only .declarative)] }
-  predicateClass := .utterance
   speechActVerb := true
 
 /-- *cuukwe* 'know', whose complement projects from a conditional antecedent ((66), (68)). -/
 def cuukwe : Verb where
   morphs := [.root "cuukwe"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 

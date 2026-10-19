@@ -28,8 +28,12 @@ aspectual suffixes, take exceptional scope across a vP and across nothing larger
 repetitive *-gwo*, the continuous *-zyu* and the phase complements, never do
 (`not_exceptionalScope_inner`), which is the argument that vP is the minimal size of a nonfinite
 clause; and transparency is downward closed along the size hierarchy
-(`ExceptionalScope.anti`), the implicational complementation hierarchy of
-Wurmbrand and Lohninger. Mandarin *you* alone carries the unvalued dynamic feature of
+(`antitone_exceptionalScope`), the implicational complementation hierarchy of
+Wurmbrand and Lohninger. A Cantonese nonfinite complement is a vP or a TP and a finite one a CP
+(`sizes`), so *-faan* embedded under a verb takes wide scope over it exactly when the verb's frame
+in the fragment is nonfinite, and then ambiguously (`faan_crossesComplement_iff`,
+`faan_ambiguous`), which sorts the fragment's verbs into the paper's two lists (`faan_lowering`).
+Mandarin *you* alone carries the unvalued dynamic feature of
 Lin and Liu and must be licensed by an outer aspect head bearing `[+D]`, which the paper's
 selectional table for *xiang* 'want', *rang* 'let' and *xiangxin* 'believe' turns into the
 embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect lowering by an embedded
@@ -45,13 +49,17 @@ embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect loweri
   associates with, and the dynamic feature of *you*.
 * `aspectProjection`, `phaseComplementProjection` — the association of the Cantonese aspect suffixes
   and phase complements.
-* `Pred.selects`, `Complement.LicensesDynamic`, `CPred.size` — the complements the Mandarin
-  and Cantonese predicates select.
+* `Pred.selects`, `Complement.LicensesDynamic` — the complements the Mandarin predicates select.
+* `sizes`, `Again.CrossesComplement` — the sizes of a Cantonese complement by its finiteness, and
+  the exceptional scope of an element across the complement of a verb.
 
 ## Main results
 
-* `exceptionalScope_outer_iff`, `not_exceptionalScope_inner`, `ExceptionalScope.anti` — the
+* `exceptionalScope_outer_iff`, `not_exceptionalScope_inner`, `antitone_exceptionalScope` — the
   scope pattern by size and projection, and the implicational hierarchy.
+* `faan_crossesComplement_iff`, `not_gwo_crossesComplement`, `faan_ambiguous`, `faan_lowering` —
+  *-faan* lowering onto the verbs with a nonfinite complement, ambiguously, and *-gwo* lowering
+  onto none.
 * `generalization_I`, `generalization_II`, `correlation_I`, `correlation_II` — the Mandarin
   generalizations as consequences.
 * `cantonese_lowering`, `aspect_lowering`, `no_phaseComplement_lowering` — the Cantonese
@@ -61,10 +69,10 @@ embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect loweri
 
 ## Implementation notes
 
-The two projections are the binary split of [travis-2010], [macdonald-2008], [tsai-2008] and
-[sybesma-2017]; their heights are those of the functional sequence in
-`Syntax/Minimalist/Category/FunctionalSequence`, outer aspect at the level of T and inner aspect at the
-level of v, so containment is a comparison of levels. Chomsky's defective intervention is not a
+The two projections are the binary split of Travis, MacDonald, Tsai and Sybesma; their
+heights are those of the functional sequence in `Syntax/Minimalist/Category/FunctionalSequence`,
+outer aspect at the level of T and inner aspect at the level of v, so containment is a
+comparison of levels. Chomsky's defective intervention is not a
 relation between heads: an embedded projection blocks association whatever its features, which
 is the paper's claim. The semicomplementizer and Exfoliation, the restitutive reading, the
 Italian parallel and the crosstype ambiguity of *dasuan* 'plan' are not represented.
@@ -89,8 +97,8 @@ open Minimalist
 
 /-! ### Clause sizes and the projections they contain -/
 
-/-- The two aspect projections of the split aspect approach: the outer one above vP, which
-hosts viewpoint aspect, and the inner one in the v shell, which hosts Aktionsart. -/
+/-- The split aspect approach has two aspect projections, the outer one above vP, which hosts
+viewpoint aspect, and the inner one in the v shell, which hosts Aktionsart. -/
 inductive AspProjection where
   | outer
   | inner
@@ -136,9 +144,8 @@ instance (f : AspProjection) (s : ComplementSize) : Decidable (ExceptionalScope 
 
 /-- Transparency is downward closed along the size hierarchy, the implicational complementation
 hierarchy, so what crosses a larger complement crosses a smaller one. -/
-theorem ExceptionalScope.anti {f : AspProjection} {s s' : ComplementSize} (h : s ≤ s')
-    (hs : ExceptionalScope f s') : ExceptionalScope f s :=
-  fun hc ↦ hs (le_trans hc (ComplementSize.le_def.mp h))
+theorem antitone_exceptionalScope (f : AspProjection) : Antitone (ExceptionalScope f) :=
+  fun _ _ h hs hc ↦ hs (hc.trans h)
 
 /-- Outer-associated elements take exceptional scope across a complement smaller than a TP,
 the vP, and across nothing larger. -/
@@ -146,8 +153,8 @@ theorem exceptionalScope_outer_iff (s : ComplementSize) :
     ExceptionalScope .outer s ↔ s < ComplementSize.tP :=
   Nat.not_le
 
-/-- Inner-associated elements never take exceptional scope: every complement contains inner
-aspect, so vP is the minimal size of a nonfinite clause. -/
+/-- Inner-associated elements never take exceptional scope, since every complement contains
+inner aspect, so vP is the minimal size of a nonfinite clause. -/
 theorem not_exceptionalScope_inner {s : ComplementSize} (h : ComplementSize.vP ≤ s) :
     ¬ ExceptionalScope .inner s :=
   fun hs ↦ hs (contains_inner h)
@@ -159,9 +166,28 @@ theorem generalization_II :
       ¬ ExceptionalScope .outer typeI := by
   decide
 
+/-- The sizes a clausal complement of the frame can have, a CP (Type I) for a finite clause and
+a TP (Type II) or a vP (Type III) for a nonfinite one. -/
+def sizes (fr : ArgumentFrame) : Finset ComplementSize :=
+  if fr.HasFinite then {typeI} else if fr.HasClausal then {typeIII, typeII} else ∅
+
+/-- Every size a complement can have is at least a vP. -/
+theorem vP_le_of_mem_sizes {fr : ArgumentFrame} {s : ComplementSize} (h : s ∈ sizes fr) :
+    ComplementSize.vP ≤ s := by
+  unfold sizes at h
+  split_ifs at h <;> simp only [Finset.mem_singleton, Finset.mem_insert,
+    Finset.notMem_empty] at h <;> rcases h with rfl | rfl <;> decide
+
+/-- An outer-associated element can take exceptional scope across a complement of the frame
+exactly when the complement is a nonfinite clause, which can be a vP. -/
+theorem exists_mem_sizes_exceptionalScope_outer_iff (fr : ArgumentFrame) :
+    (∃ s ∈ sizes fr, ExceptionalScope .outer s) ↔ fr.HasClausal ∧ ¬ fr.HasFinite := by
+  unfold sizes
+  split_ifs <;> simp_all <;> decide
+
 /-! ### The *again*-elements and their projections -/
 
-/-- The *again*-type elements of the two languages: Mandarin preverbal *you* and *zai*,
+/-- The *again*-type elements of the two languages, Mandarin preverbal *you* and *zai*,
 Cantonese preverbal *jau* and *zoi* and postverbal *-faan* and repetitive *-gwo*. -/
 inductive Again where
   | you
@@ -202,8 +228,7 @@ instance : DecidablePred Again.NeedsDynamic := fun a ↦ inferInstanceAs (Decida
 def Again.Skips (a : Again) : Prop :=
   ∃ f ∈ a.projection, ∃ s ∈ [typeI, typeII, typeIII], ExceptionalScope f s
 
-instance : DecidablePred Again.Skips := fun a ↦ by
-  unfold Again.Skips; cases a.projection <;> simp only [Option.mem_def] <;> infer_instance
+instance : DecidablePred Again.Skips := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- An element takes exceptional scope somewhere exactly when it associates with the outer
 projection. -/
@@ -278,7 +303,7 @@ def Complement.LicensesDynamic (c : Complement) : Prop := c = .tP .dynamic ∨ c
 instance : DecidablePred Complement.LicensesDynamic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A complement that licenses *you* contains outer aspect, so nothing outer-associated takes
-exceptional scope across it: an embedded *you* blocks aspect lowering. -/
+exceptional scope across it, and an embedded *you* blocks aspect lowering. -/
 theorem not_exceptionalScope_of_licensesDynamic {c : Complement} (h : c.LicensesDynamic) :
     ¬ ExceptionalScope .outer c.size := by
   rcases h with rfl | rfl <;> decide
@@ -291,7 +316,7 @@ inductive Pred where
   deriving DecidableEq, Repr
 
 /-- The lexical entry of a predicate. -/
-def Pred.entry : Pred → Mandarin.Verb
+def Pred.entry : Pred → Verb
   | .xiang => Mandarin.xiang
   | .rang => Mandarin.rang
   | .xiangxin => Mandarin.xiangxin
@@ -321,41 +346,10 @@ theorem embedsYou :
       (Pred.xiangxin.EmbedsYou ∧ ¬ Pred.xiangxin.SkipsYou) := by
   decide
 
-/-- The Cantonese predicates and the size of the complement each selects. The nonfinite
-clause-taking *soeng* 'want', *hyun* 'urge', *bik* 'force', *giu* 'ask' and *daasyun* 'intend'
-select a vP, and the finite clause-taking *seon* 'believe', *gong* 'say' and *geidak* 'remember'
-a CP. -/
-inductive CPred where
-  | soeng
-  | hyun
-  | bik
-  | giu
-  | daasyun
-  | seon
-  | gong
-  | geidak
-  deriving DecidableEq, Repr
-
-/-- The lexical entry of a predicate. -/
-def CPred.entry : CPred → Cantonese.Verbs.Verb
-  | .soeng => Cantonese.Verbs.soeng
-  | .hyun => Cantonese.Verbs.hyun
-  | .bik => Cantonese.Verbs.bik
-  | .giu => Cantonese.Verbs.giu
-  | .daasyun => Cantonese.Verbs.daasyun
-  | .seon => Cantonese.Verbs.seon
-  | .gong => Cantonese.Verbs.gong
-  | .geidak => Cantonese.Verbs.geidak
-
-/-- The size of the complement each predicate selects. -/
-def CPred.size : CPred → ComplementSize
-  | .soeng | .hyun | .bik | .giu | .daasyun => .vP
-  | .seon | .gong | .geidak => .cP
-
-/-- The sizes agree with the fragment's frames, in that a predicate selects a CP iff its
-basic frame is a finite clause. -/
-theorem CPred.size_eq_cP_iff (p : CPred) :
-    p.size = .cP ↔ ∃ fr ∈ p.entry.valency.frames.head?, fr.HasFinite := by
+/-- The selectional table refines the sizes of the fragment's frames, in that every complement
+a predicate selects has a size its frame allows. -/
+theorem Pred.size_mem_sizes (p : Pred) :
+    ∀ c ∈ p.selects, ∃ fr ∈ p.entry.valency.frames, c.size ∈ sizes fr := by
   cases p <;> decide
 
 /-- Among the Mandarin predicates *xiangxin* alone selects a CP. -/
@@ -363,10 +357,46 @@ theorem Pred.selects_cP_iff (p : Pred) :
     Complement.cP ∈ p.selects ↔ ∃ fr ∈ p.entry.valency.frames.head?, fr.HasFinite := by
   cases p <;> decide
 
-/-- *-Faan* lowers across the complement of *soeng* 'want' and not across that of *seon*
-'believe'. -/
+/-! ### *-Faan* lowering in Cantonese -/
+
+/-- An *again*-element takes exceptional scope across the complement of the verb, by movement
+or agreement with the matrix projection, when the complement of some frame of the verb can
+have a size that lacks a projection of the element's kind. -/
+def Again.CrossesComplement (a : Again) (v : Verb) : Prop :=
+  ∃ f ∈ a.projection, ∃ fr ∈ v.valency.frames, ∃ s ∈ sizes fr, ExceptionalScope f s
+
+instance (a : Again) (v : Verb) : Decidable (a.CrossesComplement v) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- *-Faan* embedded under a verb takes wide scope over it exactly when some frame of the verb
+has a nonfinite clausal complement. -/
+theorem faan_crossesComplement_iff (v : Verb) :
+    Again.faan.CrossesComplement v ↔ ∃ fr ∈ v.valency.frames, fr.HasClausal ∧ ¬ fr.HasFinite := by
+  simp [Again.CrossesComplement, Again.projection, exists_mem_sizes_exceptionalScope_outer_iff]
+
+/-- *-Gwo* associates with inner aspect, which every complement contains, so it never takes wide
+scope over the verb, (72b) and (76b). -/
+theorem not_gwo_crossesComplement (v : Verb) : ¬ Again.gwo.CrossesComplement v := by
+  rintro ⟨f, hf, fr, -, s, hs, h⟩
+  cases hf
+  exact not_exceptionalScope_inner (vP_le_of_mem_sizes hs) h
+
+/-- *-Faan* in a nonfinite complement is scopally ambiguous (93), since the complement can be a
+TP, whose outer aspect head *-faan* agrees with for narrow scope, or a vP, which has none, so
+that *-faan* agrees with the matrix one for wide scope. -/
+theorem faan_ambiguous {fr : ArgumentFrame} (hc : fr.HasClausal) (hf : ¬ fr.HasFinite) :
+    (∃ s ∈ sizes fr, Contains s .outer) ∧ ∃ s ∈ sizes fr, ExceptionalScope .outer s := by
+  simp only [sizes, hf, hc, ↓reduceIte]
+  decide
+
+open Cantonese.Verbs in
+/-- By their frames, the fragment's verbs fall into the paper's two lists. An embedded *-faan*
+takes wide scope over the nonfinite clause-taking *soeng* 'want', *hyun* 'urge', *bik* 'force',
+*giu* 'ask' and *daasyun* 'intend' (79), and not over the finite clause-taking *seon*
+'believe', *gong* 'say' and *geidak* 'remember' (80). -/
 theorem faan_lowering :
-    ExceptionalScope .outer CPred.soeng.size ∧ ¬ ExceptionalScope .outer CPred.seon.size := by
+    (∀ v ∈ [soeng, hyun, bik, giu, daasyun], Again.faan.CrossesComplement v) ∧
+      ∀ v ∈ [seon, gong, geidak], ¬ Again.faan.CrossesComplement v := by
   decide
 
 /-! ### The implicational complementation hierarchy -/
@@ -388,6 +418,6 @@ def ComplementClass.size : ComplementClass → ComplementSize
 /-- A dependency transparent for a class is transparent for every more integrated class. -/
 theorem ComplementClass.exceptionalScope_of_le {f : AspProjection} {c c' : ComplementClass}
     (h : c.size ≤ c'.size) (hs : ExceptionalScope f c'.size) : ExceptionalScope f c.size :=
-  hs.anti h
+  antitone_exceptionalScope f h hs
 
 end LiuYip2026

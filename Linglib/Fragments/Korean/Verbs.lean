@@ -14,7 +14,6 @@ stem and denotes immediate causation, as in *jug-i-da* 'kill' from *jug-da* 'die
 
 ## Main definitions
 
-* `Korean.Verb` — a Korean verb, the root `Verb`
 * `Korean.verbs` — the causative verbs of the two constructions
 
 ## References
@@ -28,10 +27,6 @@ stem and denotes immediate causation, as in *jug-i-da* 'kill' from *jug-da* 'die
 namespace Korean
 
 open ArgumentStructure
-
-/-- A Korean verb, the root entry with its citation form in *-ta*. -/
-structure Verb extends _root_.Verb where
-  deriving BEq
 
 /-- *wus-ke ha-ta* 'cause to smile', the periphrastic causative. -/
 def wus_ke_ha : Verb where

@@ -28,7 +28,6 @@ analysis of *deto* and the double requirement behind its distribution are stated
 * [krapova-2010]
 * [kiparsky-kiparsky-1970]
 * [karttunen-1971b]
-* [noonan-2007]
 -/
 
 @[expose] public section
@@ -58,11 +57,6 @@ def zadeto : Complementizer where
 
 /-! ### Predicates -/
 
-/-- A Bulgarian complement-taking predicate is a verb entry with its [noonan-2007] class. -/
-structure Verb extends _root_.Verb where
-  /-- The [noonan-2007] class, `none` where the data give no clear assignment. -/
-  predicateClass : Option Complement.PredicateClass
-
 /-- The frames of an emotive factive, a finite clause or a *za* phrase (59). -/
 def emotiveFrames : List ArgumentFrame := [ArgumentFrame.finiteClause, ArgumentFrame.pp]
 
@@ -70,7 +64,6 @@ def emotiveFrames : List ArgumentFrame := [ArgumentFrame.finiteClause, ArgumentF
 def sazhaljavam : Verb where
   morphs := [.root "săžaljavam"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
-  predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -78,7 +71,6 @@ def sazhaljavam : Verb where
 def vinovenSam : Verb where
   morphs := [.root "vinoven", .free "săm"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
-  predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -86,7 +78,6 @@ def vinovenSam : Verb where
 def jadMeE : Verb where
   morphs := [.root "jad", .free "me", .free "e"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
-  predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -94,7 +85,6 @@ def jadMeE : Verb where
 def radvamSe : Verb where
   morphs := [.root "radvam", .free "se"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
-  predicateClass := some .commentative
   attitude := some (.preferential .positive true)
   factivity := some .full
 
@@ -102,7 +92,6 @@ def radvamSe : Verb where
 def nedovolstvam : Verb where
   morphs := [.root "nedovolstvam"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
-  predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -110,7 +99,6 @@ def nedovolstvam : Verb where
 def pritesnjavamSe : Verb where
   morphs := [.root "pritesnjavam", .free "se"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
-  predicateClass := some .commentative
   attitude := some (.preferential .negative false)
   factivity := some .full
 
@@ -118,7 +106,6 @@ def pritesnjavamSe : Verb where
 def zhalMiE : Verb where
   morphs := [.root "žal", .free "mi", .free "e"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
-  predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -126,7 +113,6 @@ def zhalMiE : Verb where
 def machnoMiE : Verb where
   morphs := [.root "măčno", .free "mi", .free "e"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
-  predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -134,7 +120,6 @@ def machnoMiE : Verb where
 def sramMeE : Verb where
   morphs := [.root "sram", .free "me", .free "e"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
-  predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -142,7 +127,6 @@ def sramMeE : Verb where
 def vazmushtavamSe : Verb where
   morphs := [.root "văzmuštavam", .free "se"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
 
@@ -150,7 +134,6 @@ def vazmushtavamSe : Verb where
 def razbiram : Verb where
   morphs := [.root "razbiram"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .full
 
@@ -158,7 +141,6 @@ def razbiram : Verb where
 def vzemamPredvid : Verb where
   morphs := [.root "vzemam", .free "predvid"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .full
 
@@ -166,7 +148,6 @@ def vzemamPredvid : Verb where
 def imamPredvid : Verb where
   morphs := [.root "imam", .free "predvid"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .full
 
@@ -174,7 +155,6 @@ def imamPredvid : Verb where
 def prenebregvam : Verb where
   morphs := [.root "prenebregvam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .full
 
@@ -182,7 +162,6 @@ def prenebregvam : Verb where
 def grizhaSe : Verb where
   morphs := [.root "griža", .free "se"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .full
 
@@ -190,7 +169,6 @@ def grizhaSe : Verb where
 def znaja : Verb where
   morphs := [.root "znaja"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -198,7 +176,6 @@ def znaja : Verb where
 def pomnja : Verb where
   morphs := [.root "pomnja"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -206,7 +183,6 @@ def pomnja : Verb where
 def otkrivam : Verb where
   morphs := [.root "otkrivam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -214,7 +190,6 @@ def otkrivam : Verb where
 def vizhdam : Verb where
   morphs := [.root "viždam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := some .perception
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -222,7 +197,6 @@ def vizhdam : Verb where
 def chuvam : Verb where
   morphs := [.root "čuvam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := some .perception
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -230,7 +204,6 @@ def chuvam : Verb where
 def zabeljazvam : Verb where
   morphs := [.root "zabeljazvam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
