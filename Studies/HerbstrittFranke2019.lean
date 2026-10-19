@@ -21,13 +21,15 @@ accesses, whose marginals are (19) and (20). A complex expression holds at an ob
 when the belief it induces gives the inner expression's extension more than the outer threshold,
 `ComplexThresholds.complex`.
 
-Because the Hellinger distance is bounded, every message is used with positive probability at every
+Because the Hellinger distance is finite, every message is used with positive probability at every
 observation (`speaker_apply_singleton_ne_zero`), where the Kullback–Leibler speaker of Goodman and
 Stuhlmüller never uses a message whose extension misses a state of positive belief, the paper's
-*probably red* after three red balls of four. With complete access the belief is a point mass, so a
-true message beats a false one, and among true messages the one whose extension carries less prior
-mass wins, the scalar implicature of the paper's introductory example; the pragmatic listener never
-rules a state out entirely; and with complete access an outer modifier below one is vacuous.
+*probably red* after three red balls of four. The distance is also at most one, so the utility is
+at least minus one. With complete access the belief is a point mass, so a false message has that
+least utility and a true message beats it, and among true messages the one whose extension carries
+less prior mass wins, the scalar implicature of the paper's introductory example; the pragmatic
+listener never rules a state out entirely; and with complete access an outer modifier below one is
+vacuous.
 
 ## Implementation notes
 
@@ -37,6 +39,9 @@ rules a state out entirely; and with complete access an outer modifier below one
   and 9) being prose. The bare copula of Experiment 3 is the simple expression.
 * The Kullback–Leibler speaker is stated to make the contrast of the paper's footnote on
   utilities a theorem; the paper does not run it.
+* At a message whose extension has prior mass zero, where Bayes' rule in (15) is undefined, the
+  literal listener is the zero measure; the complete-access theorems about a false message assume
+  its extension has positive prior mass.
 
 ## TODO
 
@@ -99,7 +104,8 @@ instance (a : Access) : IsMarkovKernel (belief P a) := inferInstanceAs (IsMarkov
 theorem belief_apply_singleton_ne_zero {a : Access} {o : Obs} {s : State} (hP : P {s} ≠ 0)
     (h : hypergeometricCount 10 s a o ≠ 0) : belief P a o {s} ≠ 0 :=
   have ho := (obs_apply_singleton_ne_zero_iff a s o).2 h
-  (posterior_apply_singleton_ne_zero_iff _ _ (Measure.comp_apply_singleton_ne_zero _ _ hP ho) s).2 ⟨hP, ho⟩
+  (posterior_apply_singleton_ne_zero_iff _ _ (Measure.comp_apply_singleton_ne_zero _ _ hP ho) s).2
+    ⟨hP, ho⟩
 
 /-- With complete access the belief is the point mass at the observed state. -/
 theorem belief_full {o : Obs} (hP : P {o} ≠ 0) : belief P 10 o = Measure.dirac o :=
@@ -172,22 +178,26 @@ noncomputable def L0 : Kernel SimpleExpr State := RSA.listener P (truthful θ.ex
 
 instance : IsFiniteKernel (L0 θ P) := inferInstanceAs (IsFiniteKernel (RSA.listener _ (truthful _)))
 
+instance (m : SimpleExpr) : IsZeroOrProbabilityMeasure (L0 θ P m) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.listener _ (truthful _) m))
+
+/-- The literal listener is a probability measure at a message whose extension has positive prior
+mass. -/
+theorem isProbabilityMeasure_L0 [IsFiniteMeasure P] {m : SimpleExpr} (h : P (θ.ext m) ≠ 0) :
+    IsProbabilityMeasure (L0 θ P m) :=
+  ⟨listener_truthful_apply_univ P θ.ext h⟩
+
 theorem L0_apply_singleton_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
     L0 θ P m {s} = 0 :=
   listener_truthful_apply_singleton_of_notMem P θ.ext h
-
-theorem L0_apply_singleton_of_mem {m : SimpleExpr} {s : State} (h : s ∈ θ.ext m) :
-    L0 θ P m {s} = (P (θ.ext m))⁻¹ * P {s} :=
-  listener_truthful_apply_singleton P θ.ext h
 
 theorem L0_real_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
     (L0 θ P m).real {s} = 0 := by
   rw [measureReal_def, L0_apply_singleton_of_notMem θ P h, ENNReal.toReal_zero]
 
 theorem L0_real_of_mem {m : SimpleExpr} {s : State} (h : s ∈ θ.ext m) :
-    (L0 θ P m).real {s} = P.real {s} / P.real (θ.ext m) := by
-  rw [measureReal_def, L0_apply_singleton_of_mem θ P h, ENNReal.toReal_mul, ENNReal.toReal_inv,
-    div_eq_inv_mul, measureReal_def, measureReal_def]
+    (L0 θ P m).real {s} = P.real {s} / P.real (θ.ext m) :=
+  listener_truthful_real_singleton P θ.ext h
 
 end Listener
 
@@ -201,6 +211,16 @@ variable (lam : ℝ) (θ : Thresholds) (P : Measure State) [IsFiniteMeasure P]
 belief after her observation and the literal listener's belief after the message. -/
 noncomputable def utility (x : Obs × Access) (m : SimpleExpr) : ℝ :=
   -hellingerDist (belief P x.2 x.1) (L0 θ P m)
+
+/-- The utility is minus the Hellinger distance of the paper's footnote on utilities. -/
+theorem utility_eq (x : Obs × Access) (m : SimpleExpr) :
+    utility θ P x m = -(√(∑ s, (√((belief P x.2 x.1).real {s}) - √((L0 θ P m).real {s})) ^ 2) /
+      √2) := by
+  simp [utility, hellingerDist, EuclideanSpace.dist_eq, Real.dist_eq]
+
+/-- The utility of a message is at least minus one. -/
+theorem neg_one_le_utility (x : Obs × Access) (m : SimpleExpr) : -1 ≤ utility θ P x m :=
+  neg_le_neg (hellingerDist_le_one _ _)
 
 /-- The speaker of (17) is the softmax of the utility at the rationality `lam`. -/
 noncomputable def speaker : Kernel (Obs × Access) SimpleExpr :=
@@ -216,13 +236,12 @@ instance : IsMarkovKernel (speaker lam θ P) :=
   Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨.possibly, EReal.coe_ne_bot _⟩)
     fun _ _ ↦ EReal.coe_ne_top _
 
-/-- The speaker prefers the message whose literal listener lies closer to her belief. -/
+/-- The speaker prefers the message of higher utility, whose literal listener lies closer to her
+belief. -/
 theorem speaker_real_lt_iff (hlam : 0 < lam) (x : Obs × Access) (m m' : SimpleExpr) :
     (speaker lam θ P x).real {m} < (speaker lam θ P x).real {m'} ↔
-      hellingerDist (belief P x.2 x.1) (L0 θ P m') <
-        hellingerDist (belief P x.2 x.1) (L0 θ P m) := by
-  rw [speaker, Kernel.softmax_coe_real_singleton_lt_iff, mul_lt_mul_iff_of_pos_left hlam, utility,
-    utility, neg_lt_neg_iff]
+      utility θ P x m < utility θ P x m' := by
+  rw [speaker, Kernel.softmax_coe_real_singleton_lt_iff, mul_lt_mul_iff_of_pos_left hlam]
 
 /-- The speaker of [goodman-stuhlmuller-2013], with the Kullback–Leibler divergence in place
 of the Hellinger distance (the paper's footnote on utilities). -/
@@ -246,24 +265,34 @@ section FullAccess
 
 variable {lam : ℝ} (θ : Thresholds) (P : Measure State) [IsFiniteMeasure P] {s : State}
 
-/-- With complete access the utility of a message is minus the Hellinger distance of the
-point mass at the state from the literal listener. -/
-theorem utility_full (hP : P {s} ≠ 0) (m : SimpleExpr) :
+/-- With complete access the utility of a message whose extension has positive prior mass is
+minus the Hellinger distance of the point mass at the state from the literal listener. -/
+theorem utility_full (hP : P {s} ≠ 0) {m : SimpleExpr} (hm : P (θ.ext m) ≠ 0) :
     utility θ P (s, 10) m = -√(1 - √((L0 θ P m).real {s})) := by
+  have := isProbabilityMeasure_L0 θ P hm
   rw [utility, belief_full P hP, hellingerDist_dirac_left]
 
-/-- A false message has the worst utility, minus one. -/
-theorem utility_full_of_notMem (hP : P {s} ≠ 0) {m : SimpleExpr} (h : s ∉ θ.ext m) :
-    utility θ P (s, 10) m = -1 := by
-  rw [utility_full θ P hP, L0_real_of_notMem θ P h, Real.sqrt_zero, sub_zero, Real.sqrt_one]
+/-- With complete access a false message whose extension has positive prior mass has the least
+utility, minus one. -/
+theorem utility_full_of_notMem (hP : P {s} ≠ 0) {m : SimpleExpr} (hm : P (θ.ext m) ≠ 0)
+    (h : s ∉ θ.ext m) : utility θ P (s, 10) m = -1 := by
+  rw [utility_full θ P hP hm, L0_real_of_notMem θ P h, Real.sqrt_zero, sub_zero, Real.sqrt_one]
 
-/-- With complete access a true message beats a false one. -/
+/-- With complete access the utility of a true message is fixed by the state's share of the prior
+mass of the extension. -/
+theorem utility_full_of_mem (hP : P {s} ≠ 0) {m : SimpleExpr} (h : s ∈ θ.ext m) :
+    utility θ P (s, 10) m = -√(1 - √(P.real {s} / P.real (θ.ext m))) := by
+  rw [utility_full θ P hP (measure_pos_of_superset (Set.singleton_subset_iff.2 h) hP).ne',
+    L0_real_of_mem θ P h]
+
+/-- With complete access a true message beats a false one whose extension has positive prior
+mass. -/
 theorem speaker_full_lt_of_notMem_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m m' : SimpleExpr}
-    (h : s ∉ θ.ext m) (h' : s ∈ θ.ext m') :
+    (hm : P (θ.ext m) ≠ 0) (h : s ∉ θ.ext m) (h' : s ∈ θ.ext m') :
     (speaker lam θ P (s, 10)).real {m} < (speaker lam θ P (s, 10)).real {m'} := by
-  rw [speaker_real_lt_iff lam θ P hlam, belief_full P hP, hellingerDist_dirac_left,
-    hellingerDist_dirac_left, L0_real_of_notMem θ P h, L0_real_of_mem θ P h', Real.sqrt_zero,
-    sub_zero, Real.sqrt_one, Real.sqrt_lt' one_pos, one_pow, sub_lt_self_iff, Real.sqrt_pos]
+  rw [speaker_real_lt_iff lam θ P hlam, utility_full_of_notMem θ P hP hm h,
+    utility_full_of_mem θ P hP h', neg_lt_neg_iff, Real.sqrt_lt' one_pos, one_pow,
+    sub_lt_self_iff, Real.sqrt_pos]
   have hs : 0 < P.real {s} := ENNReal.toReal_pos hP (measure_ne_top _ _)
   exact div_pos hs (hs.trans_le (measureReal_mono (Set.singleton_subset_iff.2 h')))
 
@@ -279,10 +308,10 @@ theorem speaker_full_lt_iff_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m m' : S
     hs.trans_le (measureReal_mono (Set.singleton_subset_iff.2 h'))
   have hle : √(P.real {s} / P.real (θ.ext m')) ≤ 1 :=
     Real.sqrt_le_one.2 ((div_le_one hE').2 (measureReal_mono (Set.singleton_subset_iff.2 h')))
-  rw [speaker_real_lt_iff lam θ P hlam, belief_full P hP, hellingerDist_dirac_left,
-    hellingerDist_dirac_left, L0_real_of_mem θ P h, L0_real_of_mem θ P h',
-    Real.sqrt_lt_sqrt_iff (by linarith), sub_lt_sub_iff_left,
-    Real.sqrt_lt_sqrt_iff (div_nonneg hs.le hE.le), div_lt_div_iff_of_pos_left hs hE hE']
+  rw [speaker_real_lt_iff lam θ P hlam, utility_full_of_mem θ P hP h,
+    utility_full_of_mem θ P hP h', neg_lt_neg_iff, Real.sqrt_lt_sqrt_iff (by linarith),
+    sub_lt_sub_iff_left, Real.sqrt_lt_sqrt_iff (div_nonneg hs.le hE.le),
+    div_lt_div_iff_of_pos_left hs hE hE']
 
 /-- With complete access and a prior positive on every state, a message strictly entailing
 another is preferred to it whenever both are true, the scalar implicature of the introductory
