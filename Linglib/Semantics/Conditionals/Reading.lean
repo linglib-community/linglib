@@ -1,7 +1,10 @@
 module
 
 public import Mathlib.Data.Finset.Insert
+public import Mathlib.Order.Interval.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Morphology.Morph
+public import Linglib.Discourse.Commitment.Table
 public import Linglib.Logic.Natural.Soundness
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Logic.Trivalent.Pointwise
@@ -26,9 +29,10 @@ antecedent-worlds the antecedent is neither. Languages may lexicalize the split,
 * `Conditional.Reading`: the hypothetical and premise readings.
 * `Conditional.Reading.denote`: the denotation of *if p, q* under a reading, a trivalent
   proposition.
+* `Conditional.Reading.Felicitous`: the discourse condition of each reading on its antecedent.
 * `Conditional.Reading.clauseSignature`: the projectivity signature of each clause under a
   reading, whose sign is `Conditional.Reading.clausePolarity`.
-* `Conditional.Marker`: a conditional marker with the readings it can mark.
+* `Conditional.Marker`: a conditional marker, its exponent with the readings it can mark.
 
 ## Main results
 
@@ -36,6 +40,13 @@ antecedent-worlds the antecedent is neither. Languages may lexicalize the split,
   sound.
 * `Conditional.Reading.exists_not_antitone_hypothetical_closestImp`: over the closest
   antecedent-worlds the hypothetical antecedent is not downward entailing.
+
+## Implementation notes
+
+The sources often attest a marker with one reading and say nothing about the other, so a
+marker's readings are recorded as an interval of sets of readings: the readings it is attested
+marking below, the readings it is not known to exclude above. A marker the sources describe
+fully has a one-point interval.
 
 ## References
 
@@ -99,6 +110,42 @@ theorem denote_hypothetical_materialImp_eq_premise (hw : w ∈ p) :
   refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;> simp [denote, hw, mem_materialImp]
 
 end Denotation
+
+/-! ### Discourse conditions
+
+A hypothetical conditional leaves its antecedent open, and a premise conditional echoes it: some
+participant is committed to the antecedent, or it is already common ground. -/
+
+section Felicity
+
+variable {A W : Type*} {K : Commitment.Table A W} {p : Set W}
+
+/-- A reading is felicitous for the antecedent `p` in the commitment table `K` when `p` meets its
+discourse condition ([iatridou-1991], [haegeman-2003]). A hypothetical conditional leaves `p`
+undecided in the common ground, and a premise conditional needs `p` committed to by some
+participant or already in the common ground. -/
+def Felicitous (K : Commitment.Table A W) (p : Set W) : Reading → Prop
+  | .hypothetical => ¬ (Question.polar p).DecidedBy K.commonGround
+  | .premise => (∃ a, p ∈ K.discourseCommitments a) ∨ p ∈ K.commonGround
+
+/-- An antecedent the common ground entails is read as a premise. -/
+theorem felicitous_iff_of_mem_commonGround (h : p ∈ K.commonGround) {ct : Reading} :
+    ct.Felicitous K p ↔ ct = .premise := by
+  cases ct
+  · exact iff_of_false (fun h' ↦ h' (Question.decidedBy_polar.2 (.inl h))) (by decide)
+  · exact iff_of_true (.inr h) rfl
+
+/-- An antecedent nobody has committed to and whose polar question is open is read
+hypothetically. -/
+theorem felicitous_iff_of_not_decidedBy (h₁ : ∀ a, p ∉ K.discourseCommitments a)
+    (h₂ : ¬ (Question.polar p).DecidedBy K.commonGround) {ct : Reading} :
+    ct.Felicitous K p ↔ ct = .hypothetical := by
+  cases ct
+  · exact iff_of_true h₂ rfl
+  · exact iff_of_false (fun h ↦ h.elim (fun ⟨a, ha⟩ ↦ h₁ a ha)
+      fun hp ↦ h₂ (Question.decidedBy_polar.2 (.inl hp))) (by decide)
+
+end Felicity
 
 /-! ### Entailment directions
 
@@ -177,14 +224,20 @@ end Signature
 
 end Reading
 
-/-- A conditional marker is a form together with the readings it can mark. Japanese *-ra* and German
-*falls* mark only hypothetical conditionals, and *nara*, *wenn* and English *if* mark either
+/-- A conditional marker is an exponent together with the readings it can mark. Japanese *-ra* and
+German *falls* mark only hypothetical conditionals, and *nara*, *wenn* and English *if* mark either
 ([lassiter-2025]). -/
 structure Marker where
-  /-- The marker's citation form. -/
-  form : String
-  /-- The readings the marker can mark. -/
-  readings : Finset Reading
+  /-- The exponent, in surface order. -/
+  morphs : List Morphology.Morph
+  /-- Native script form, when distinct. -/
+  script : Option String := none
+  /-- The set of readings the marker can mark lies in this interval: it contains the readings the
+  sources attest, and is contained in the readings they do not exclude. -/
+  readings : NonemptyInterval (Finset Reading)
   deriving DecidableEq
+
+/-- The surface form is the morphs' forms with their boundary notation. -/
+def Marker.form (m : Marker) : String := Morphology.Morph.surface m.morphs
 
 end Conditional
