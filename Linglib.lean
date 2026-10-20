@@ -59,7 +59,6 @@ import Linglib.Core.Computability.SyntacticSemigroup
 import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Computability.Variety.Definite
-import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.Fin.VecNotation
 import Linglib.Core.Data.Fintype.List
 import Linglib.Core.Data.Fintype.Sets
@@ -84,7 +83,6 @@ import Linglib.Core.InformationTheory.Entropy
 import Linglib.Core.InformationTheory.Hellinger
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Linglib.Core.LinearAlgebra.AffineSpace.Centroid
-import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Logic.Aristotelian.Morphism
 import Linglib.Logic.Aristotelian.Square
 import Linglib.Logic.Assignment
@@ -159,7 +157,6 @@ import Linglib.Core.Probability.UniformOn
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.RingTheory.Bialgebra.Primitive
-import Linglib.Core.RingTheory.HopfAlgebra.SymmetricAlgebra
 import Linglib.Data.Complementation.Noonan2007
 import Linglib.Data.Complementation.Schema
 import Linglib.Data.Examples.Abusch1997
