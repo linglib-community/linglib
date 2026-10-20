@@ -1,0 +1,890 @@
+[
+  {
+    "id": "landau2024a_20a",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(20a)"
+    },
+    "language": "norw1258",
+    "primaryText": "Jeg ble lovet å gi meg gaver.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Jeg",
+        "I"
+      ],
+      [
+        "ble",
+        "was"
+      ],
+      [
+        "lovet",
+        "promised"
+      ],
+      [
+        "å",
+        "COMP"
+      ],
+      [
+        "gi",
+        "give.INF"
+      ],
+      [
+        "meg",
+        "me.ACC"
+      ],
+      [
+        "gaver",
+        "gifts"
+      ]
+    ],
+    "translation": "(Lit.) I was promised to give me gifts.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "controller",
+        "implicit"
+      ],
+      [
+        "tAgrees",
+        "referential"
+      ]
+    ],
+    "comment": "T agrees with the promisee jeg, so the implicit agent cannot control.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_20b",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(20b)"
+    },
+    "language": "norw1258",
+    "primaryText": "Det ble lovet å gi meg gaver.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Det",
+        "there"
+      ],
+      [
+        "ble",
+        "was"
+      ],
+      [
+        "lovet",
+        "promised"
+      ],
+      [
+        "å",
+        "COMP"
+      ],
+      [
+        "gi",
+        "give.INF"
+      ],
+      [
+        "meg",
+        "me.ACC"
+      ],
+      [
+        "gaver",
+        "gifts"
+      ]
+    ],
+    "translation": "(Lit.) It was promised to give me gifts.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "controller",
+        "implicit"
+      ],
+      [
+        "tAgrees",
+        "expletive"
+      ]
+    ],
+    "comment": "An impersonal passive: T agrees with the expletive, and the implicit agent controls.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_22a",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary was asked where to throw the trash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "controller",
+        "implicit"
+      ],
+      [
+        "tAgrees",
+        "referential"
+      ]
+    ],
+    "comment": "Implicit agent control into an interrogative complement while T agrees with Mary; the Element calls it a genuine exception to the RVG.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_35a",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(35a)"
+    },
+    "language": "kore1280",
+    "primaryText": "Inho-ka Hwun-eykey swuyeng-ha-n-ta-ko mal-ha-yess-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Inho-ka",
+        "Inho-NOM"
+      ],
+      [
+        "Hwun-eykey",
+        "Hwun-DAT"
+      ],
+      [
+        "swuyeng-ha-n-ta-ko",
+        "swim-do-IND-DC-C"
+      ],
+      [
+        "mal-ha-yess-ta",
+        "tell-do-PST-DC"
+      ]
+    ],
+    "translation": "Inho told Hwun that he/she/someone is swimming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "subject",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "object",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "free",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "verb",
+        "mal"
+      ],
+      [
+        "mood",
+        "indicative"
+      ]
+    ],
+    "comment": "The embedded subject is pro, indexed 1/2/3: the indicative induces no control.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_35b",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(35b)"
+    },
+    "language": "kore1280",
+    "primaryText": "Inho-ka Hwun-eykey swuyeng-ha-keyss-ta-ko mal-ha-yess-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Inho-ka",
+        "Inho-NOM"
+      ],
+      [
+        "Hwun-eykey",
+        "Hwun-DAT"
+      ],
+      [
+        "swuyeng-ha-keyss-ta-ko",
+        "swim-VOL-DC-C"
+      ],
+      [
+        "mal-ha-yess-ta",
+        "tell-do-PST-DC"
+      ]
+    ],
+    "translation": "Inho said to Hwun that he/*she/*someone would swim.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "subject",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "object",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "free",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "verb",
+        "mal"
+      ],
+      [
+        "mood",
+        "volitional"
+      ]
+    ],
+    "comment": "Subject control, per the translation and the prose; the page prints the PRO index as *1/2/*3, contradicting both.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_35c",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(35c)"
+    },
+    "language": "kore1280",
+    "primaryText": "Inho-ka Hwun-eykey swuyeng-ha-la-ko mal-ha-yess-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Inho-ka",
+        "Inho-NOM"
+      ],
+      [
+        "Hwun-eykey",
+        "Hwun-DAT"
+      ],
+      [
+        "swuyeng-ha-la-ko",
+        "swim-do-IMP-C"
+      ],
+      [
+        "mal-ha-yess-ta",
+        "tell-do-PST-DC"
+      ]
+    ],
+    "translation": "Inho told Hwun to swim.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "subject",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "object",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "free",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "verb",
+        "mal"
+      ],
+      [
+        "mood",
+        "imperative"
+      ]
+    ],
+    "comment": "PRO indexed *1/2/*3: object control.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_35d",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(35d)"
+    },
+    "language": "kore1280",
+    "primaryText": "Inho-ka Hwun-eykey swuyeng-ha-ca-ko mal-ha-yess-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Inho-ka",
+        "Inho-NOM"
+      ],
+      [
+        "Hwun-eykey",
+        "Hwun-DAT"
+      ],
+      [
+        "swuyeng-ha-ca-ko",
+        "swim-do-EXH-C"
+      ],
+      [
+        "mal-ha-yess-ta",
+        "tell-do-PST-DC"
+      ]
+    ],
+    "translation": "Inho said to Hwun that they should go swimming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "split",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "subject",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "object",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "free",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "verb",
+        "mal"
+      ],
+      [
+        "mood",
+        "exhortative"
+      ]
+    ],
+    "comment": "PRO indexed 1+2/*1/*2/*3: split control.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_36b",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(36b)"
+    },
+    "language": "stan1293",
+    "primaryText": "We thought that Bill regretted meeting without a concrete agenda.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "regret"
+      ],
+      [
+        "reading",
+        "partial"
+      ]
+    ],
+    "comment": "PRO indexed i+.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_36c",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(36c)"
+    },
+    "language": "stan1293",
+    "primaryText": "We thought that Mary wondered whether to apply together for the grant.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "wonder"
+      ],
+      [
+        "reading",
+        "partial"
+      ]
+    ],
+    "comment": "PRO indexed i+.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_37a",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(37a)"
+    },
+    "language": "stan1293",
+    "primaryText": "We thought that John managed to gather at 6.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "manage"
+      ],
+      [
+        "reading",
+        "partial"
+      ]
+    ],
+    "comment": "PRO indexed i+; the page brackets the frame: * (We thought that) John managed to gather at 6.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_41a",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(41a)"
+    },
+    "language": "stan1288",
+    "primaryText": "Juan quería comprar un caballo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "quería",
+        "wanted"
+      ],
+      [
+        "comprar",
+        "to.buy"
+      ],
+      [
+        "un",
+        "a"
+      ],
+      [
+        "caballo",
+        "horse"
+      ]
+    ],
+    "translation": "Juan wanted to buy a horse.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "clause",
+        "infinitive"
+      ],
+      [
+        "position",
+        "complement"
+      ]
+    ],
+    "comment": "PRO indexed i/*j. The page closes the bracket and the sentence after comprar: [PRO comprar]. un caballo.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_41b",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(41b)"
+    },
+    "language": "stan1288",
+    "primaryText": "Comprar un caballo sería un error.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "comprar",
+        "to.buy"
+      ],
+      [
+        "un",
+        "a"
+      ],
+      [
+        "caballo",
+        "horse"
+      ],
+      [
+        "sería",
+        "would.be"
+      ],
+      [
+        "un",
+        "an"
+      ],
+      [
+        "error",
+        "error"
+      ]
+    ],
+    "translation": "To buy a horse would be an error.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "clause",
+        "infinitive"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ],
+    "comment": "The page prints a period after sería: [PRO comprar un caballo] sería. un error.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_41c",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(41c)"
+    },
+    "language": "stan1288",
+    "primaryText": "Juan recordó que había comprado un caballo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "recordó",
+        "remembered"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "había",
+        "had"
+      ],
+      [
+        "comprado",
+        "bought"
+      ],
+      [
+        "un",
+        "a"
+      ],
+      [
+        "caballo",
+        "horse"
+      ]
+    ],
+    "translation": "Juan remembered that he had bought a horse.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "clause",
+        "finite"
+      ],
+      [
+        "position",
+        "complement"
+      ]
+    ],
+    "comment": "pro indexed i/j.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_41d",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(41d)"
+    },
+    "language": "stan1288",
+    "primaryText": "Que compro un caballo fue un error.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Que",
+        "that"
+      ],
+      [
+        "compro",
+        "bought"
+      ],
+      [
+        "un",
+        "a"
+      ],
+      [
+        "caballo",
+        "horse"
+      ],
+      [
+        "fue",
+        "was"
+      ],
+      [
+        "un",
+        "an"
+      ],
+      [
+        "error",
+        "error"
+      ]
+    ],
+    "translation": "That he bought a horse was a mistake.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "clause",
+        "finite"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ],
+    "comment": "compro as printed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_52a",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(52a)"
+    },
+    "language": "stan1293",
+    "primaryText": "What about the certificates of appreciation? What happened to them? They were handed out before announcing the winners.",
+    "discourseSegments": [
+      "A: What about the certificates of appreciation? What happened to them?",
+      "B: They were handed out before announcing the winners."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "control",
+        "NOC"
+      ],
+      [
+        "controller",
+        "implicit agent"
+      ],
+      [
+        "topic",
+        "-"
+      ],
+      [
+        "logophoric",
+        "+"
+      ]
+    ],
+    "comment": "The controller, the implicit agent of handed out, is a logophoric center that is no topic.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_52b",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(52b)"
+    },
+    "language": "stan1293",
+    "primaryText": "What about Mary? Is she available? Well, after sneaking outside last night, her father grounded her for a week.",
+    "discourseSegments": [
+      "A: What about Mary? Is she available?",
+      "B: Well, after sneaking outside last night, her father grounded her for a week."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "control",
+        "NOC"
+      ],
+      [
+        "controller",
+        "Mary"
+      ],
+      [
+        "topic",
+        "+"
+      ],
+      [
+        "logophoric",
+        "-"
+      ]
+    ],
+    "comment": "The controller, Mary, is the established topic but no logophoric center; the logophoric center is her father.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_87a",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(87a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill wept for his wife to hear the tragic story.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "stimulus"
+      ],
+      [
+        "subject",
+        "lexical"
+      ]
+    ],
+    "comment": "The page marks the bracketed subject optional and starred: Bill wept [(*for his wife) to hear the tragic story].",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_87b",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(87b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Her kids wept to hear the tragic story.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "stimulus"
+      ],
+      [
+        "antecedent",
+        "nonCCommanding"
+      ]
+    ],
+    "comment": "PRO indexed j/*i: control by the non-c-commanding her is out, control by her kids fine.",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_88a",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(88a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Our life was blessed for her being so much a part of it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "justification"
+      ],
+      [
+        "subject",
+        "lexical"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "landau2024a_88b",
+    "source": {
+      "bibkey": "landau-2024a",
+      "paperLabel": "(88b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Her kids were punished for letting them ruin the place.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjunct",
+        "justification"
+      ],
+      [
+        "antecedent",
+        "nonCCommanding"
+      ]
+    ],
+    "comment": "PRO indexed i, controlled by the non-c-commanding her.",
+    "verified": "page-image"
+  }
+]
