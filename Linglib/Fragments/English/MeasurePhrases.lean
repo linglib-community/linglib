@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Degree.Measure.Quantity
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Rat.Cast.Order
+public import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # English measure phrases
@@ -10,11 +11,15 @@ public import Mathlib.Data.Rat.Cast.Order
 The English nouns that quantize a mass noun in a pseudo-partitive (*three grams of salt*,
 *three glasses of water*, *three grains of rice*) are measure terms, which name a unit quantity
 of a dimension, and the container nouns and atomizers of Scontras's classification. A measure
-term carries the size of its unit in the dimension's reference unit, so that a kilogram is a
-thousand grams (`kilogram_quantity`).
+term carries the size of its unit in the coherent unit of its dimension, so that a kilogram is a
+thousand grams (`kilogram_quantity`) and a cubic meter a thousand liters
+(`meter_quantity_pow_three`).
 
 ## Implementation notes
 
+* The reference units are the coherent CGS units, the gram, the centimeter, the second and their
+  products, so that a milliliter, a cubic centimeter, has size `1`. Quantities multiply
+  componentwise only because the units are coherent.
 * A unit's size is a convention, and the conventions are exact rationals: the SI prefixes are
   powers of ten, and the pound and the mile are exact decimals of the kilogram and the meter. The
   fragment stores them in `ℚ`, and a measure term denotes a quantity with real magnitude.
@@ -23,13 +28,14 @@ thousand grams (`kilogram_quantity`).
 
 * [scontras-2014]
 * [bale-schwarz-2022]
+* [bipm-2019]
 -/
 
 @[expose] public section
 
 namespace English.MeasurePhrases
 
-open Degree (Dimension QuantizingNounClass)
+open Degree (QuantityDimension QuantizingNounClass)
 
 /-- A measure term, a noun naming a unit quantity of a dimension. -/
 structure MeasureTerm where
@@ -37,9 +43,9 @@ structure MeasureTerm where
   formPlural : String
   /-- The unit's symbol in the quantity calculus (`g`, `mL`, `km`). -/
   symbol : String
-  dimension : Dimension
-  /-- The size of the unit in the dimension's reference unit (gram, milliliter, meter, second);
-  a kilogram is `1000` grams and a mile `1609.344` meters. -/
+  dimension : QuantityDimension
+  /-- The size of the unit in the coherent CGS unit of its dimension; a kilogram is `1000` grams
+  and a meter `100` centimeters. -/
   magnitude : ℚ := 1
   magnitude_pos : 0 < magnitude := by decide +kernel
   deriving Repr
@@ -50,13 +56,13 @@ open Degree
 
 /-- The unit quantity a measure term denotes, its size in the reference unit times the unit
 quantity of its dimension. -/
-def quantity (t : MeasureTerm) : Quantity ℝ := ((t.magnitude : ℝ), .of t.dimension)
+def quantity (t : MeasureTerm) : Quantity ℝ := ((t.magnitude : ℝ), t.dimension)
 
 variable {t t' : MeasureTerm} {k : ℝ}
 
 @[simp] theorem quantity_fst (t : MeasureTerm) : t.quantity.1 = t.magnitude := rfl
 
-@[simp] theorem quantity_snd (t : MeasureTerm) : t.quantity.2 = .of t.dimension := rfl
+@[simp] theorem quantity_snd (t : MeasureTerm) : t.quantity.2 = t.dimension := rfl
 
 /-- A unit has positive size. -/
 theorem cast_magnitude_pos (t : MeasureTerm) : (0 : ℝ) < t.magnitude :=
@@ -73,17 +79,18 @@ end MeasureTerm
 
 /-- *gram*. -/
 def gram : MeasureTerm :=
-  { form := "gram", formPlural := "grams", symbol := "g", dimension := .mass }
+  { form := "gram", formPlural := "grams", symbol := "g", dimension := .of .mass }
 /-- *kilogram*. -/
 def kilogram : MeasureTerm :=
-  { form := "kilogram", formPlural := "kilograms", symbol := "kg", dimension := .mass,
+  { form := "kilogram", formPlural := "kilograms", symbol := "kg", dimension := .of .mass,
     magnitude := 1000 }
 /-- *kilo*. -/
 def kilo : MeasureTerm :=
-  { form := "kilo", formPlural := "kilos", symbol := "kg", dimension := .mass, magnitude := 1000 }
+  { form := "kilo", formPlural := "kilos", symbol := "kg", dimension := .of .mass,
+    magnitude := 1000 }
 /-- *pound*. -/
 def pound : MeasureTerm :=
-  { form := "pound", formPlural := "pounds", symbol := "lb", dimension := .mass,
+  { form := "pound", formPlural := "pounds", symbol := "lb", dimension := .of .mass,
     magnitude := 45359237 / 100000 }
 /-- *milliliter*. -/
 def milliliter : MeasureTerm :=
@@ -95,21 +102,23 @@ def liter : MeasureTerm :=
     magnitude := 1000 }
 /-- *mile*. -/
 def mile : MeasureTerm :=
-  { form := "mile", formPlural := "miles", symbol := "mi", dimension := .distance,
-    magnitude := 1609344 / 1000 }
+  { form := "mile", formPlural := "miles", symbol := "mi", dimension := .of .length,
+    magnitude := 1609344 / 10 }
 /-- *kilometer*. -/
 def kilometer : MeasureTerm :=
-  { form := "kilometer", formPlural := "kilometers", symbol := "km", dimension := .distance,
-    magnitude := 1000 }
+  { form := "kilometer", formPlural := "kilometers", symbol := "km", dimension := .of .length,
+    magnitude := 100000 }
 /-- *meter*. -/
 def meter : MeasureTerm :=
-  { form := "meter", formPlural := "meters", symbol := "m", dimension := .distance }
+  { form := "meter", formPlural := "meters", symbol := "m", dimension := .of .length,
+    magnitude := 100 }
 /-- *hour*. -/
 def hour : MeasureTerm :=
-  { form := "hour", formPlural := "hours", symbol := "h", dimension := .time, magnitude := 3600 }
+  { form := "hour", formPlural := "hours", symbol := "h", dimension := .of .time,
+    magnitude := 3600 }
 /-- *second*. -/
 def second_ : MeasureTerm :=
-  { form := "second", formPlural := "seconds", symbol := "s", dimension := .time }
+  { form := "second", formPlural := "seconds", symbol := "s", dimension := .of .time }
 
 /-- A kilogram is a thousand grams. -/
 theorem kilogram_quantity : kilogram.quantity = .pure 1000 * gram.quantity := by
@@ -118,6 +127,12 @@ theorem kilogram_quantity : kilogram.quantity = .pure 1000 * gram.quantity := by
 /-- A liter is a thousand milliliters. -/
 theorem liter_quantity : liter.quantity = .pure 1000 * milliliter.quantity := by
   simp [MeasureTerm.quantity_eq_pure_mul_iff, liter, milliliter]
+
+/-- A cubic meter is a thousand liters. -/
+theorem meter_quantity_pow_three : meter.quantity ^ 3 = .pure 1000 * liter.quantity := by
+  ext
+  · norm_num [MeasureTerm.quantity, meter, liter]
+  · simp [MeasureTerm.quantity, meter, liter, QuantityDimension.volume]
 
 /-- The measure terms. -/
 def allMeasureTerms : List MeasureTerm :=
@@ -135,7 +150,7 @@ structure QuantizingNoun where
   nounClass : QuantizingNounClass
   /-- The dimension a measure term names, or that a container noun measures on its
   measure reading; atomizers name no measure function. -/
-  dimension : Option Dimension := none
+  dimension : Option QuantityDimension := none
   deriving Repr, BEq
 
 /-- A measure term as a quantizing noun. -/

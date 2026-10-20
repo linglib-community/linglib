@@ -17,7 +17,7 @@ pure number.
 
 ## Main definitions
 
-* `Quantity`, `Quantity.pure`, `Quantity.unit`: quantities, pure numbers, unit quantities.
+* `Quantity`, `Quantity.pure`: quantities and pure numbers.
 * `DimensionedMeasure.quantity`: the value of a measure function as a quantity.
 
 ## References
@@ -41,13 +41,8 @@ variable {K : Type*}
 /-- The pure number `n`, a quantity `(n, 1)` of the identity dimension. -/
 def pure (n : K) : Quantity K := (n, 1)
 
-/-- The unit quantity `(1, d)` of the base dimension `d`. -/
-def unit [One K] (d : Dimension) : Quantity K := (1, .of d)
-
 @[simp] theorem pure_fst (n : K) : (pure n).1 = n := rfl
 @[simp] theorem pure_snd (n : K) : (pure n).2 = 1 := rfl
-@[simp] theorem unit_fst [One K] (d : Dimension) : (unit d : Quantity K).1 = 1 := rfl
-@[simp] theorem unit_snd [One K] (d : Dimension) : (unit d : Quantity K).2 = .of d := rfl
 
 variable [CommGroupWithZero K]
 
@@ -77,18 +72,12 @@ variable {E : Type*} {K : Type}
 
 /-- The value of `μ` at `x` as a quantity of `μ`'s dimension. -/
 def DimensionedMeasure.quantity (μ : DimensionedMeasure E K) (x : E) : Quantity K :=
-  (μ x, .of μ.dimension)
+  (μ x, μ.dimension)
 
 @[simp] theorem DimensionedMeasure.quantity_fst (μ : DimensionedMeasure E K) (x : E) :
     (μ.quantity x).1 = μ x := rfl
 
 @[simp] theorem DimensionedMeasure.quantity_snd (μ : DimensionedMeasure E K) (x : E) :
-    (μ.quantity x).2 = .of μ.dimension := rfl
-
-/-- Measuring `n` units is having the quantity `n` times the unit. -/
-theorem DimensionedMeasure.quantity_eq_pure_mul_unit_iff [MulOneClass K]
-    (μ : DimensionedMeasure E K) (n : K) (x : E) :
-    μ.quantity x = .pure n * .unit μ.dimension ↔ μ x = n := by
-  simp [Prod.ext_iff]
+    (μ.quantity x).2 = μ.dimension := rfl
 
 end Degree
