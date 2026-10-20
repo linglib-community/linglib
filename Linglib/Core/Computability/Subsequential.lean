@@ -62,7 +62,7 @@ keep the Choffrut spelling. `Mealy` is the letter-to-letter case.
 
 `step` is total, so only the *total* subsequential functions are modelled, since a sink state
 does not recover partiality, and Sakarovitch's initial-output function is omitted. The state run
-`stateAfter` and its lemmas are those of the underlying `Mealy` machine. There are two disjoint
+`evalFrom` and its lemmas are those of the underlying `Mealy` machine. There are two disjoint
 sets of simp lemmas, one for `run` and another for `runFrom`; switch from the former to the
 latter via `simp [run]`.
 
@@ -108,7 +108,7 @@ def emitted (s : σ) (xs : List α) : List β := (T.toMealy.runFrom s xs).flatte
 /-- `T.runFrom s x` runs `T` on the input `x` from the state `s`, emitting the output followed
 by the final flush. -/
 def runFrom (s : σ) (xs : List α) : List β :=
-  T.emitted s xs ++ T.finalOutput (T.stateAfter s xs)
+  T.emitted s xs ++ T.finalOutput (T.evalFrom s xs)
 
 /-- `T.run x` runs `T` on the input `x` from the state `T.start`. -/
 def run : List α → List β := T.runFrom T.start
@@ -139,15 +139,15 @@ variable (s : σ) (x : α) (xs ys : List α)
   simp [runRight]
 
 theorem emitted_append :
-    T.emitted s (xs ++ ys) = T.emitted s xs ++ T.emitted (T.stateAfter s xs) ys := by
+    T.emitted s (xs ++ ys) = T.emitted s xs ++ T.emitted (T.evalFrom s xs) ys := by
   simp [emitted, Mealy.runFrom_append]
 
 theorem runFrom_append :
-    T.runFrom s (xs ++ ys) = T.emitted s xs ++ T.runFrom (T.stateAfter s xs) ys := by
-  simp [runFrom, emitted_append, Mealy.stateAfter_append]
+    T.runFrom s (xs ++ ys) = T.emitted s xs ++ T.runFrom (T.evalFrom s xs) ys := by
+  simp [runFrom, emitted_append, Mealy.evalFrom_append]
 
 theorem run_append :
-    T.run (xs ++ ys) = T.emitted T.start xs ++ T.runFrom (T.stateAfter T.start xs) ys :=
+    T.run (xs ++ ys) = T.emitted T.start xs ++ T.runFrom (T.eval xs) ys :=
   T.runFrom_append T.start xs ys
 
 end
@@ -193,7 +193,7 @@ is the construction behind the closure of the subsequential functions under comp
 @[simps]
 def comp : SubsequentialTransducer (σ' × σ) α γ where
   start := (T₂.start, T₁.start)
-  step p x := (T₂.stateAfter p.1 (T₁.output p.2 x), T₁.step p.2 x)
+  step p x := (T₂.evalFrom p.1 (T₁.output p.2 x), T₁.step p.2 x)
   output p x := T₂.emitted p.1 (T₁.output p.2 x)
   finalOutput p := T₂.runFrom p.1 (T₁.finalOutput p.2)
 
@@ -225,7 +225,7 @@ def _root_.DFA.comapSubsequential : DFA α (σ × τ) where
 
 @[simp] theorem _root_.DFA.evalFrom_comapSubsequential (p : σ × τ) (xs : List α) :
     (M.comapSubsequential T).evalFrom p xs
-      = (T.stateAfter p.1 xs, M.evalFrom p.2 (T.emitted p.1 xs)) := by
+      = (T.evalFrom p.1 xs, M.evalFrom p.2 (T.emitted p.1 xs)) := by
   induction xs generalizing p <;> simp [DFA.evalFrom_of_append, *]
 
 @[simp] theorem _root_.DFA.accepts_comapSubsequential :

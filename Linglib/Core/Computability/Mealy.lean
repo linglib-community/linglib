@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Computability.DFA
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.List.Basic
 public import Mathlib.Logic.Equiv.Defs
@@ -26,13 +25,13 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 ## Main definitions
 
 * `Mealy σ α β`: transducer with states `σ`, input alphabet `α`, output alphabet `β`
+* `Mealy.evalFrom`, `Mealy.eval`: the state reached after reading a word
 * `Mealy.run`, `Mealy.runRight`: the left-to-right and right-to-left passes
 * `Mealy.comp`: the cascade connection, computing the composite function
 * `Mealy.ofFn`: the single-state machine applying a fixed symbol map letter-wise
 * `Mealy.ofFlag`: the one-bit machine tracking whether an earlier symbol satisfies `p`
 * `Mealy.map`: transport along an equivalence on states
 * `IsMealyComputable f`: `f` is computed by some finite-state `Mealy`
-* `DFA.comapMealy`: pulls an acceptor back along a transducer
 
 ## Main theorems
 
@@ -47,8 +46,6 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 * `Mealy.isMealyComputable`: a finite-state machine computes a Mealy-computable function,
   whatever the universe of its state type
 * `IsMealyComputable.comp`: closure under composition
-* `IsMealyComputable.isRegular_preimage`: Mealy-computable maps pull back regular
-  languages
 
 ## Implementation notes
 
@@ -107,8 +104,11 @@ namespace Mealy
 
 variable (T : Mealy σ α β)
 
-/-- `T.stateAfter s x` is the state reached from `s` after consuming the input `x`. -/
-def stateAfter (s : σ) : List α → σ := List.foldl T.step s
+/-- `T.evalFrom s x` evaluates `T` with input `x` starting from the state `s`. -/
+def evalFrom (s : σ) : List α → σ := List.foldl T.step s
+
+/-- `T.eval x` evaluates `T` with input `x` starting from the state `T.start`. -/
+def eval : List α → σ := T.evalFrom T.start
 
 /-- `T.runFrom s x` runs `T` on the input `x` starting from the state `s`, emitting one
 output symbol per input symbol. -/
@@ -128,14 +128,15 @@ variable (s : σ) (x : α) (xs ys : List α)
 @[simp] theorem runFrom_nil : T.runFrom s [] = [] := rfl
 @[simp] theorem runFrom_cons :
     T.runFrom s (x :: xs) = T.output s x :: T.runFrom (T.step s x) xs := rfl
-@[simp] theorem stateAfter_nil : T.stateAfter s [] = s := rfl
-@[simp] theorem stateAfter_cons : T.stateAfter s (x :: xs) = T.stateAfter (T.step s x) xs := rfl
+@[simp] theorem evalFrom_nil : T.evalFrom s [] = s := rfl
+@[simp] theorem evalFrom_cons : T.evalFrom s (x :: xs) = T.evalFrom (T.step s x) xs := rfl
+@[simp] theorem eval_nil : T.eval [] = T.start := rfl
 
-theorem stateAfter_append : T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys :=
+theorem evalFrom_append : T.evalFrom s (xs ++ ys) = T.evalFrom (T.evalFrom s xs) ys :=
   List.foldl_append
 
 theorem runFrom_append :
-    T.runFrom s (xs ++ ys) = T.runFrom s xs ++ T.runFrom (T.stateAfter s xs) ys := by
+    T.runFrom s (xs ++ ys) = T.runFrom s xs ++ T.runFrom (T.evalFrom s xs) ys := by
   induction xs generalizing s <;> simp [*]
 
 /-- The run is length-preserving (one output symbol per input symbol). -/
@@ -154,20 +155,19 @@ theorem runFrom_append :
 /-- The right-to-left pass emits the head output at the state reached over the entire
 reversed tail, so the right scan reads the future. -/
 @[simp] theorem runRight_cons :
-    T.runRight (x :: xs)
-      = T.output (T.stateAfter T.start xs.reverse) x :: T.runRight xs := by
-  simp [runRight, run, runFrom_append]
+    T.runRight (x :: xs) = T.output (T.eval xs.reverse) x :: T.runRight xs := by
+  simp [runRight, run, eval, runFrom_append]
 
 /-- Output coordinate `i` of the run is the output at the state reached after the
 first `i` input symbols. -/
 theorem getElem?_runFrom (i : ℕ) :
-    (T.runFrom s xs)[i]? = xs[i]?.map (T.output (T.stateAfter s (xs.take i))) := by
+    (T.runFrom s xs)[i]? = xs[i]?.map (T.output (T.evalFrom s (xs.take i))) := by
   induction xs generalizing s i <;> cases i <;> simp [*]
 
 /-- Output coordinate `i` of `T.run` is the output at the state reached after the
 first `i` input symbols. -/
 theorem getElem?_run (i : ℕ) :
-    (T.run xs)[i]? = xs[i]?.map (T.output (T.stateAfter T.start (xs.take i))) :=
+    (T.run xs)[i]? = xs[i]?.map (T.output (T.eval (xs.take i))) :=
   T.getElem?_runFrom T.start xs i
 
 /-- From any state, the run of a prefix is the prefix of the run. -/
@@ -182,7 +182,7 @@ theorem run_take (n : ℕ) : T.run (xs.take n) = (T.run xs).take n := T.runFrom_
 strict suffix. -/
 theorem getElem?_runRight (i : ℕ) :
     (T.runRight xs)[i]? =
-      xs[i]?.map (T.output (T.stateAfter T.start (xs.drop (i + 1)).reverse)) := by
+      xs[i]?.map (T.output (T.eval (xs.drop (i + 1)).reverse)) := by
   induction xs generalizing i with
   | nil => simp
   | cons x xs ih => cases i <;> simp [ih]
@@ -228,6 +228,8 @@ def ofFn (h : α → β) : Mealy Unit α β where
 
 /-! ### Flag machines -/
 
+section Flag
+
 variable (p : α → Bool) (out : Bool → α → β)
 
 /-- The Mealy machine whose state is the monotone flag "a symbol satisfying `p` has
@@ -244,9 +246,12 @@ def ofFlag : Mealy Bool α β where
 
 @[simp] theorem ofFlag_output : (ofFlag p out).output = out := rfl
 
-@[simp] theorem ofFlag_stateAfter (b : Bool) (xs : List α) :
-    (ofFlag p out).stateAfter b xs = (b || xs.any p) := by
+@[simp] theorem ofFlag_evalFrom (b : Bool) (xs : List α) :
+    (ofFlag p out).evalFrom b xs = (b || xs.any p) := by
   induction xs generalizing b <;> simp [*, Bool.or_assoc]
+
+@[simp] theorem ofFlag_eval (xs : List α) : (ofFlag p out).eval xs = xs.any p := by
+  simp [eval]
 
 /-- Each coordinate of a flag machine sees the flag over its strict prefix. -/
 theorem getElem?_ofFlag_run (xs : List α) (i : ℕ) :
@@ -258,6 +263,8 @@ suffix. -/
 theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
     ((ofFlag p out).runRight xs)[i]? = xs[i]?.map (out ((xs.drop (i + 1)).any p)) := by
   simp [getElem?_runRight]
+
+end Flag
 
 /-! ### Transport along state equivalences -/
 
@@ -275,8 +282,8 @@ def map (g : σ ≃ τ) (T : Mealy σ α β) : Mealy τ α β where
 @[simp] theorem map_map {υ : Type*} (g : σ ≃ τ) (h : τ ≃ υ) :
     map h (map g T) = map (g.trans h) T := rfl
 
-@[simp] theorem stateAfter_map (g : σ ≃ τ) (t : τ) (xs : List α) :
-    (map g T).stateAfter t xs = g (T.stateAfter (g.symm t) xs) := by
+@[simp] theorem evalFrom_map (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (map g T).evalFrom t xs = g (T.evalFrom (g.symm t) xs) := by
   induction xs generalizing t <;> simp [*]
 
 @[simp] theorem runFrom_map (g : σ ≃ τ) (t : τ) (xs : List α) :
@@ -313,40 +320,4 @@ theorem isMealyComputable_map (h : α → β) : IsMealyComputable (List.map h) :
 
 theorem isMealyComputable_id : IsMealyComputable (id : List α → List α) := by
   simpa using isMealyComputable_map (id : α → α)
-
-/-! ### Pulling back acceptors -/
-
-section ComapMealy
-
-variable {τ : Type*} (M : DFA β τ) (T : Mealy σ α β)
-
-/-- `M.comapMealy T` pulls the acceptor `M` back along the transducer `T`. The product
-machine runs `T` and feeds its output symbols to `M`, so it accepts `x` if and only if
-`M` accepts `T.run x`. -/
-@[simps]
-def _root_.DFA.comapMealy : DFA α (σ × τ) where
-  step p a := (T.step p.1 a, M.step p.2 (T.output p.1 a))
-  start := (T.start, M.start)
-  accept := {p | p.2 ∈ M.accept}
-
-@[simp] theorem _root_.DFA.evalFrom_comapMealy (p : σ × τ) (xs : List α) :
-    (M.comapMealy T).evalFrom p xs
-      = (T.stateAfter p.1 xs, M.evalFrom p.2 (T.runFrom p.1 xs)) := by
-  induction xs generalizing p <;> simp [*]
-
-@[simp] theorem _root_.DFA.accepts_comapMealy :
-    (M.comapMealy T).accepts = T.run ⁻¹' M.accepts := by
-  ext xs
-  simp [DFA.mem_accepts, DFA.eval, Mealy.run]
-  rfl
-
-end ComapMealy
-
-/-- Mealy-computable maps pull back regular languages (`DFA.comapMealy`). -/
-theorem IsMealyComputable.isRegular_preimage {f : List α → List β}
-    (hf : IsMealyComputable f) {L : Language β} (hL : L.IsRegular) :
-    Language.IsRegular (f ⁻¹' L) := by
-  obtain ⟨σ, _, T, rfl⟩ := hf
-  obtain ⟨τ, _, M, rfl⟩ := hL
-  exact ⟨σ × τ, inferInstance, M.comapMealy T, M.accepts_comapMealy T⟩
 

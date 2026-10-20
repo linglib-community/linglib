@@ -220,21 +220,21 @@ def resolveLeft : Mealy (Option Bool) Mark Seg where
     | .seg s => s
     | .undecided h => .pfx h !(b.getD h)
 
-private theorem markRight_stateAfter (p : Bool × Bool) (xs : List Seg) :
-    markRight.stateAfter p xs =
+private theorem markRight_evalFrom (p : Bool × Bool) (xs : List Seg) :
+    markRight.evalFrom p xs =
       (p.1 || decide (.root true ∈ xs), p.2 || decide (∃ a, .pfx false a ∈ xs)) := by
   induction xs generalizing p with
   | nil => simp
   | cons x xs ih =>
-    rw [Mealy.stateAfter_cons, ih]
+    rw [Mealy.evalFrom_cons, ih]
     rcases x with ⟨_ | _, _⟩ | _ | _ <;> simp [markRight]
 
-private theorem resolveLeft_stateAfter (xs : List Mark) :
-    resolveLeft.stateAfter none xs = xs.head?.map Mark.isHigh := by
+private theorem resolveLeft_eval (xs : List Mark) :
+    resolveLeft.eval xs = xs.head?.map Mark.isHigh := by
   cases xs with
   | nil => rfl
   | cons x xs =>
-    simp only [Mealy.stateAfter_cons, List.head?_cons, Option.map_some]
+    simp only [Mealy.eval, Mealy.evalFrom_cons, List.head?_cons, Option.map_some]
     induction xs generalizing x with
     | nil => rfl
     | cons y ys ih => simpa [resolveLeft] using ih x
@@ -260,9 +260,8 @@ theorem tutrugbu_map_eq_resolve_mark (w : List Seg) :
     tutrugbu.map w = resolveLeft.run (markRight.runRight w) := by
   refine List.ext_getElem? fun i ↦ ?_
   rw [Docking.map_getElem?, Mealy.getElem?_run, Mealy.getElem?_runRight,
-    show resolveLeft.start = none from rfl, resolveLeft_stateAfter,
-    head?_take_markRight_runRight, show markRight.start = (false, false) from rfl,
-    markRight_stateAfter]
+    resolveLeft_eval, head?_take_markRight_runRight, Mealy.eval,
+    show markRight.start = (false, false) from rfl, markRight_evalFrom]
   rcases ha : w[i]? with _ | a
   · rfl
   obtain ⟨hi, rfl⟩ := List.getElem?_eq_some_iff.mp ha

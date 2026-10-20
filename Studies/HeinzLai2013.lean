@@ -232,7 +232,7 @@ private theorem php_run_split (k : ℕ) {rest : List Seg} (hrest : PlusMinus res
     php.run (replicate k .minus ++ .plus :: rest) =
       replicate k .minus ++ replicate (rest.length + 1) .plus := by
   rw [Mealy.run, Mealy.runFrom_append, show php.start = false from rfl,
-    php_runFrom_false_replicate, show php.stateAfter false (replicate k .minus) = false by
+    php_runFrom_false_replicate, show php.evalFrom false (replicate k .minus) = false by
       simp [php], Mealy.runFrom_cons, show php.step false Seg.plus = true from rfl,
     php_runFrom_true hrest]
   rfl

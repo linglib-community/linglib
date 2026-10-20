@@ -193,6 +193,14 @@ theorem isPrefix_append_of_append_singleton (hf : ∀ u x, f u <+: f (u ++ [x]))
   | nil => simp
   | append_singleton v x ih => exact ih.trans (List.append_assoc u v [x] ▸ hf (u ++ v) x)
 
+/-- A summary updated letter by letter is the fold of its update over the rest of the
+input. -/
+theorem foldl_eq_of_append_singleton {δ : γ → α → γ} (hW : ∀ u x, W (u ++ [x]) = δ (W u) x)
+    (u v : List α) : v.foldl δ (W u) = W (u ++ v) := by
+  induction v using List.reverseRecOn with
+  | nil => simp
+  | append_singleton v x ih => rw [List.foldl_concat, ih, ← hW, List.append_assoc]
+
 /-- Residuals of a function built block by block from a state summary factor through it. -/
 theorem factorsThrough_residual_of_append_singleton (δ : γ → α → γ) (g : γ → α → List β)
     (hW : ∀ u x, W (u ++ [x]) = δ (W u) x) (hf : ∀ u x, f (u ++ [x]) = f u ++ g (W u) x) :
@@ -205,10 +213,7 @@ theorem factorsThrough_residual_of_append_singleton (δ : γ → α → γ) (g :
   | nil => simp
   | append_singleton v x ih =>
     have hWv : W (u₁ ++ v) = W (u₂ ++ v) := by
-      clear ih
-      induction v using List.reverseRecOn with
-      | nil => simpa using h
-      | append_singleton v y ihv => rw [← List.append_assoc, hW, ihv, ← hW, List.append_assoc]
+      rw [← foldl_eq_of_append_singleton hW, ← foldl_eq_of_append_singleton hW, h]
     rw [← List.append_assoc, hf, List.drop_append_of_le_length (hpre u₁ v).length_le, ih,
       ← List.append_assoc, hf, List.drop_append_of_le_length (hpre u₂ v).length_le, hWv]
 
@@ -235,7 +240,7 @@ variable {f}
 
 /-- Residuals of a transducer's run factor through its states. -/
 theorem SubsequentialTransducer.residual_run {σ : Type*} (T : SubsequentialTransducer σ α β)
-    (u : List α) : T.run.residual u = (T.runFrom (T.stateAfter T.start u)).residual [] :=
+    (u : List α) : T.run.residual u = (T.runFrom (T.eval u)).residual [] :=
   residual_eq_of_forall (P := T.emitted T.start u) fun w ↦ by
     rw [List.nil_append]; exact T.run_append u w
 
@@ -286,13 +291,27 @@ theorem isRightSubsequential_iff_finite_range_residual :
 
 end Subsequential
 
+/-- A length-preserving function whose output at the split point of `u ++ x :: w` is
+`c u x w` reads each output coordinate off the split of the input there. -/
+private theorem getElem?_eq_of_append_cons {f : List α → List β}
+    (hlen : ∀ xs, (f xs).length = xs.length) {c : List α → α → List α → β}
+    (hc : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (c u x w)) (xs : List α) (i : ℕ) :
+    (f xs)[i]? = xs[i]?.map fun a ↦ c (xs.take i) a (xs.drop (i + 1)) := by
+  rcases lt_or_ge i xs.length with hi | hi
+  · have key := hc (xs.take i) xs[i] (xs.drop (i + 1))
+    rw [List.length_take_of_le hi.le, ← List.drop_eq_getElem_cons hi,
+      List.take_append_drop] at key
+    rw [key, List.getElem?_eq_getElem hi, Option.map_some]
+  · rw [List.getElem?_eq_none ((hlen xs).le.trans hi), List.getElem?_eq_none hi,
+      Option.map_none]
+
 /-! ### Myhill–Nerode for Mealy machines -/
 
 /-- Residuals of a machine's run are its runs from the states it reaches. -/
 theorem Mealy.residual_run {σ : Type*} (T : Mealy σ α β) (u : List α) :
-    T.run.residual u = T.runFrom (T.stateAfter T.start u) := by
+    T.run.residual u = T.runFrom (T.eval u) := by
   rw [residual_eq_of_forall (P := T.runFrom T.start u) (v := [])
-    (g := T.runFrom (T.stateAfter T.start u)) fun w ↦ by
+    (g := T.runFrom (T.eval u)) fun w ↦ by
       rw [List.nil_append]; exact T.runFrom_append T.start u w]
   exact residual_nil rfl
 
@@ -321,22 +340,10 @@ theorem isMealyComputable_of_stateSummary
     IsMealyComputable f := by
   set T : Mealy σ α β := ⟨state [], δ, out⟩
   suffices T.run = f from this ▸ T.isMealyComputable
-  have hstate : ∀ ps : List α, T.stateAfter T.start ps = state ps := by
-    intro ps
-    induction ps using List.reverseRecOn with
-    | nil => rfl
-    | append_singleton ps x ih => rw [T.stateAfter_append, ih, hδ]; rfl
+  have hstate : ∀ u, T.eval u = state u := foldl_eq_of_append_singleton hδ []
   funext xs
-  apply List.ext_getElem?
-  intro i
-  rw [T.getElem?_run xs i, hstate]
-  rcases lt_or_ge i xs.length with hi | hi
-  · have key := hout (xs.take i) xs[i] (xs.drop (i + 1))
-    rw [List.length_take_of_le hi.le, ← List.drop_eq_getElem_cons hi,
-      List.take_append_drop] at key
-    rw [List.getElem?_eq_getElem hi, Option.map_some, key]
-  · rw [List.getElem?_eq_none hi, List.getElem?_eq_none ((hlen xs).le.trans hi),
-      Option.map_none]
+  refine List.ext_getElem? fun i ↦ ?_
+  rw [T.getElem?_run, getElem?_eq_of_append_cons hlen hout, hstate]
 
 /-- A length-preserving, prefix-preserving function with finitely many residuals is
 Mealy-computable, with the residuals themselves as the states. -/
@@ -425,16 +432,6 @@ section Bimachine
 
 variable {L R : Type*} (B : Bimachine L R α β)
 
-/-- Scanning past a prefix reseeds the left state. -/
-theorem Bimachine.lState_append (u v : List α) :
-    B.lState (u ++ v) = B.lStateAfter (B.lState u) v := by
-  simp [Bimachine.lState, Bimachine.lStateAfter, List.foldl_append]
-
-/-- A pending suffix reseeds the right state. -/
-theorem Bimachine.rState_append (u y : List α) :
-    B.rState (u ++ y) = Bimachine.rState {B with rInit := B.rState y} u := by
-  simp [Bimachine.rState, List.foldr_append]
-
 /-- Dropping a scanned prefix of a letter-to-letter bimachine run reseeds the left
 state. -/
 theorem Bimachine.drop_runFrom_append (w : B.LetterToLetter) (l : L) (x v : List α) :
@@ -495,30 +492,16 @@ theorem isLengthPreservingBimachineComputable_of_stateSummaries
   set B : Bimachine L R α β := ⟨stateL [], δL, stateR [], δR, fun l a r ↦ [out l a r]⟩
   suffices B.run = f from
     this ▸ B.isLengthPreservingBimachineComputable ⟨⟨out, fun _ _ _ ↦ rfl⟩⟩
-  have hL : ∀ ps : List α, B.lState ps = stateL ps := by
-    intro ps
-    induction ps using List.reverseRecOn with
+  have hL : ∀ u, B.lState u = stateL u := foldl_eq_of_append_singleton hδL []
+  have hR : ∀ w, B.rState w = stateR w := fun w ↦ by
+    induction w with
     | nil => rfl
-    | append_singleton ps x ih =>
-      rw [B.lState_append, hδL, ← ih]
-      rfl
-  have hR : ∀ ss : List α, B.rState ss = stateR ss := by
-    intro ss
-    induction ss with
-    | nil => rfl
-    | cons x ss ih => rw [B.rState_cons, ih, hδR]
+    | cons x w ih => rw [B.rState_cons, ih, hδR]
   funext xs
-  apply List.ext_getElem?
-  intro i
-  rw [(⟨out, fun _ _ _ ↦ rfl⟩ : B.LetterToLetter).getElem?_run xs i]
+  refine List.ext_getElem? fun i ↦ ?_
+  rw [(⟨out, fun _ _ _ ↦ rfl⟩ : B.LetterToLetter).getElem?_run,
+    getElem?_eq_of_append_cons hlen hout]
   simp only [hL, hR]
-  rcases lt_or_ge i xs.length with hi | hi
-  · have key := hout (xs.take i) xs[i] (xs.drop (i + 1))
-    rw [List.length_take_of_le hi.le, ← List.drop_eq_getElem_cons hi,
-      List.take_append_drop] at key
-    rw [List.getElem?_eq_getElem hi, Option.map_some, key]
-  · rw [List.getElem?_eq_none hi, List.getElem?_eq_none ((hlen xs).le.trans hi),
-      Option.map_none]
 
 /-- A length-preserving function with finitely many residuals and coresiduals is
 bimachine-computable, with syncResidual classes as the left states and syncCoresidual classes as the

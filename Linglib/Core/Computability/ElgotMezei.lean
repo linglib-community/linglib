@@ -71,8 +71,8 @@ emitted. -/
 def rightComp : Bimachine (Bool × σ₁) (Bool × (σ₁ → σ₂)) α γ where
   lInit := (true, T₁.start)
   lStep l a := (false, T₁.step l.2 a)
-  rInit := (true, fun s ↦ T₂.stateAfter T₂.start (T₁.finalOutput s).reverse)
-  rStep r a := (false, fun s ↦ T₂.stateAfter (r.2 (T₁.step s a)) (T₁.output s a).reverse)
+  rInit := (true, fun s ↦ T₂.eval (T₁.finalOutput s).reverse)
+  rStep r a := (false, fun s ↦ T₂.evalFrom (r.2 (T₁.step s a)) (T₁.output s a).reverse)
   output l a r :=
     (if l.1 then T₂.runFrom (r.2 (T₁.step l.2 a)) (T₁.output l.2 a).reverse
       else T₂.emitted (r.2 (T₁.step l.2 a)) (T₁.output l.2 a).reverse).reverse
@@ -85,8 +85,8 @@ def rightComp : Bimachine (Bool × σ₁) (Bool × (σ₁ → σ₂)) α γ wher
 
 @[simp] theorem rightComp_rState_snd (suf : List α) (s : σ₁) :
     ((T₂.rightComp T₁).rState suf).2 s
-      = T₂.stateAfter T₂.start (T₁.runFrom s suf).reverse := by
-  induction suf generalizing s <;> simp [Mealy.stateAfter_append, *]
+      = T₂.eval (T₁.runFrom s suf).reverse := by
+  induction suf generalizing s <;> simp [Mealy.eval, Mealy.evalFrom_append, *]
 
 /-- Each cell emits the reverse of what `T₂` produces over the reversed image of the
 input, its whole run at the left end and its emission alone, without the flush, elsewhere. -/
@@ -95,7 +95,7 @@ theorem rightComp_runFrom (b : Bool) (s : σ₁) (a : α) (xs : List α) :
       = (if b then T₂.runFrom T₂.start (T₁.runFrom s (a :: xs)).reverse
           else T₂.emitted T₂.start (T₁.runFrom s (a :: xs)).reverse).reverse := by
   induction xs generalizing b s a <;>
-    cases b <;> simp [runFrom, emitted_append, Mealy.stateAfter_append, *]
+    cases b <;> simp [runFrom, emitted_append, Mealy.eval, Mealy.evalFrom_append, *]
 
 /-- The bimachine computes the composite on every nonempty input — the empty word is the
 only obstruction. -/

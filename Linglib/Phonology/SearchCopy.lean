@@ -230,8 +230,8 @@ def apply : List α → List α :=
 direction. -/
 def sourceAfter (w : List α) : Option α :=
   match r.direction with
-  | .left => r.toMealy.stateAfter none w
-  | .right => r.toMealy.stateAfter none w.reverse
+  | .left => r.toMealy.evalFrom none w
+  | .right => r.toMealy.evalFrom none w.reverse
 
 /-- The value a string offers to a target that follows it in the rule's direction. -/
 def sourceValue (w : List α) : Option Bool := (r.sourceAfter w).bind r.value
@@ -287,12 +287,12 @@ theorem toOSLRule_applyOnTier (hw : r.TierClosed) : r.toOSLRule.applyOnTier r.ti
   induction w using List.reverseRecOn with
   | nil => rfl
   | append_singleton w x ih =>
-    have hv : ((r.scan w).filter (r.tier ·)).getLast? = r.toMealy.stateAfter none w := by
+    have hv : ((r.scan w).filter (r.tier ·)).getLast? = r.toMealy.evalFrom none w := by
       clear ih
       induction w using List.reverseRecOn with
       | nil => rfl
       | append_singleton w y ihw =>
-        rw [scan_eq_runFrom, Mealy.runFrom_append, Mealy.stateAfter_append, List.filter_append,
+        rw [scan_eq_runFrom, Mealy.runFrom_append, Mealy.evalFrom_append, List.filter_append,
           ← scan_eq_runFrom]
         by_cases hy : r.tier y
         · simp [hy, r.tier_emit hw hy, ihw]
