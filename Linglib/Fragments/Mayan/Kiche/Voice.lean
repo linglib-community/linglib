@@ -12,11 +12,15 @@ makes the object the subject of an intransitive conjugation and admits the agent
 third person, in a phrase with the relational noun *-umaal* 'by'; the completed passive, which
 presents the state of the object resulting from the action; the absolutive antipassive, which
 drops the object or expresses it indirectly with *ch-ee* 'to', the verb conjugating as an
-intransitive; and the agent-focus antipassive, which keeps subject, verb and object and
-emphasizes the agent, and is the form the extraction of a transitive subject takes
-(`Extraction.lean`). The markers depend on the class of the verb. A derived transitive verb,
-with a polysyllabic vowel-final root, takes *-j*, *-x*, *-taj*, *-n* and *-n*, its two
-antipassives syncretic. A radical transitive verb, with a monosyllabic root ending in a
+intransitive; and agent focus, Mondloch's agent-focus antipassive, which emphasizes the agent and
+is the form the extraction of a transitive subject takes (`Extraction.lean`). In agent focus
+subject, verb and object are all present and both arguments stay core, while the verb has a
+single Set B prefix, for the agent or the patient by the person hierarchy, and no Set A. In some
+varieties a verb agreeing with the agent takes the patient as an oblique of a relational noun
+instead, the structure of agent focus for which Aissen finds the antipassive analysis warranted.
+The markers depend on the class of the verb. A derived transitive verb, with a polysyllabic
+vowel-final root, takes *-j*, *-x*, *-taj*, *-n* and *-n*, the absolutive antipassive and agent
+focus syncretic. A radical transitive verb, with a monosyllabic root ending in a
 consonant or a glottal stop, takes no suffix in the active and none in the simple passive,
 where a root ending in a consonant lengthens its vowel, and *-Vtaj*, *-Vn* and *-Vw*, with a
 copy or epenthetic vowel, in the other three. Can Pixabaj's sketch calls the completed passive
@@ -31,22 +35,31 @@ active by its intransitive conjugation, which the frame pair records. The vowel 
 a consonant-final root in the simple passive is a stem alternation the morph vocabulary does
 not express.
 
+A voice records which participants are core terms, so agent focus with a core patient is the
+active's construction under its own marker. The intransitive inflection of its verb, without
+Set A, is `Mayan.VerbForm.HasSetA`, which the voice does not record.
+
 ## Main definitions
 
 * `Kiche.active`, `simplePassive`, `completedPassive`, `absolutiveAntipassive`,
   `agentFocus` — the five voices of a verb of either class
+* `Kiche.agentFocusOblique` — agent focus with an oblique patient, in the varieties that have
+  it
 * `Kiche.voices` — the inventory of a class
 
 ## Main results
 
 * `Kiche.isSymmetrical_iff` — agent focus alone beside the active keeps both core terms core
+* `Kiche.agentFocus_agentFocusOblique_fate` — the two structures of agent focus differ in the
+  patient, a core term or an oblique
 * `Kiche.not_isTransitive_iff` — the passives and the absolutive antipassive derive an
   intransitive construction
-* `Kiche.marker_agentFocus_eq_iff` — the two antipassives share a marker exactly on derived
-  verbs
+* `Kiche.marker_agentFocus_eq_iff` — the absolutive antipassive and agent focus share a marker
+  exactly on derived verbs
 
 ## References
 
+* [aissen-1999a]
 * [can-pixabaj-2017]
 * [mondloch-2017]
 -/
@@ -55,41 +68,47 @@ not express.
 
 namespace Kiche
 
-/-- The active: *-j* on a derived verb, no suffix on a radical one. -/
+/-- The active takes *-j* on a derived verb and no suffix on a radical one. -/
 def active : Mayan.VerbClass → Voice
   | .derived => Voice.active.marked [.suff "j"]
   | .radical => Voice.active
 
-/-- The simple passive: *-x* on a derived verb; a radical verb takes no suffix and conjugates
+/-- The simple passive takes *-x* on a derived verb; a radical verb takes no suffix and conjugates
 as an intransitive, a consonant-final root lengthening its vowel. -/
 def simplePassive : Mayan.VerbClass → Voice
   | .derived => Voice.passive.marked [.suff "x"]
   | .radical => Voice.passive
 
-/-- The completed passive, the state of the object: *-taj* on a derived verb, *-Vtaj* on a
-radical one. -/
+/-- The completed passive, the state of the object, takes *-taj* on a derived verb and *-Vtaj* on
+a radical one. -/
 def completedPassive : Mayan.VerbClass → Voice
   | .derived => Voice.passive.marked [.suff "taj"]
   | .radical => Voice.passive.marked [.suff "Vtaj"]
 
-/-- The absolutive antipassive, the object dropped or indirect with *ch-ee*: *-n* on a derived
-verb, *-Vn* on a radical one. -/
+/-- The absolutive antipassive, the object dropped or indirect with *ch-ee*, takes *-n* on a
+derived verb and *-Vn* on a radical one. -/
 def absolutiveAntipassive : Mayan.VerbClass → Voice
   | .derived => Voice.antipassive.marked [.suff "n"]
   | .radical => Voice.antipassive.marked [.suff "Vn"]
 
-/-- The agent-focus antipassive, subject, verb and object present and the agent emphasized:
-*-n* on a derived verb, *-Vw* on a radical one. -/
+/-- Agent focus keeps the patient a core term beside the agent, with *-n* on a derived verb and
+*-Vw* on a radical one. -/
 def agentFocus : Mayan.VerbClass → Voice
   | .derived => Voice.agentVoice.marked [.suff "n"]
   | .radical => Voice.agentVoice.marked [.suff "Vw"]
+
+/-- In the varieties where a verb in agent focus agreeing with the agent takes the patient as an
+oblique of a relational noun ([can-pixabaj-2017]), agent focus is the antipassive under the
+agent-focus marker ([aissen-1999a]). -/
+def agentFocusOblique (c : Mayan.VerbClass) : Voice :=
+  Voice.antipassive.marked (agentFocus c).marker
 
 /-- The five voices of a verb of a class. -/
 def voices (c : Mayan.VerbClass) : Finset Voice :=
   {active c, simplePassive c, completedPassive c, absolutiveAntipassive c, agentFocus c}
 
-/-- Agent focus is the one voice beside the active that keeps both core terms core
-([mondloch-2017]). -/
+/-- Agent focus is the one voice beside the active that neither makes a participant a core term
+nor demotes one, its subject, verb and object all present ([mondloch-2017]). -/
 theorem isSymmetrical_iff (c : Mayan.VerbClass) :
     ∀ v ∈ voices c, v.IsSymmetrical ↔ v = active c ∨ v = agentFocus c := by
   cases c <;> decide
@@ -101,8 +120,15 @@ theorem not_isTransitive_iff (c : Mayan.VerbClass) :
       v = simplePassive c ∨ v = completedPassive c ∨ v = absolutiveAntipassive c := by
   cases c <;> decide
 
-/-- The two antipassives are syncretic on derived verbs, both *-n*, and distinct on radical
-ones, *-Vn* against *-Vw* ([mondloch-2017]). -/
+/-- The two structures of agent focus differ in the patient, a core term beside the agent or an
+oblique ([can-pixabaj-2017]). -/
+theorem agentFocus_agentFocusOblique_fate (c : Mayan.VerbClass) :
+    (agentFocus c).fateOfRole .P = .maintained ∧
+      (agentFocusOblique c).fateOfRole .P = .denucleativized := by
+  cases c <;> decide
+
+/-- The absolutive antipassive and agent focus are syncretic on derived verbs, both *-n*, and
+distinct on radical ones, *-Vn* against *-Vw* ([mondloch-2017]). -/
 theorem marker_agentFocus_eq_iff (c : Mayan.VerbClass) :
     (agentFocus c).marker = (absolutiveAntipassive c).marker ↔ c = .derived := by
   cases c <;> decide

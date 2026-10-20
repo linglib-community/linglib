@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Probe.Phi
 public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+public import Linglib.Fragments.Mayan.Kiche.Agreement
 public import Studies.BejarRezac2003
 
 /-!
@@ -15,6 +16,8 @@ seeking [plural], whose exponent surfaces only when no clitic fills the slot (65
 Béjar and Rezac's Person Licensing Condition makes the person restriction, at most one 1st/2nd
 person core argument, the consequence of a single person probe (75), (76), and under the
 obligatory-operations model of chapter 5 a probe that finds no goal ends unvalued (112), (113).
+The probes read agreement features, not salience, so the K'ichee' formal addressee, which agrees as
+a third person singular, does not outrank the third person (§7.1).
 
 ## Main results
 
@@ -32,6 +35,8 @@ obligatory-operations model of chapter 5 a probe that finds no goal ends unvalue
   Case Constraint (§4.2).
 * `Preminger2014.hierarchy_silent_on_restriction`: a hierarchy cannot state the person
   restriction (§7.1).
+* `Preminger2014.formal_addressee`: the K'ichee' formal addressee patterns as a third person
+  singular (§7.1).
 
 ## Implementation notes
 
@@ -211,6 +216,19 @@ theorem hierarchy_silent_on_restriction :
         exponent (.personNumber .first .singular) ∧
       afMarker (.personNumber .third .plural) (.personNumber .third .plural) =
         some (exponent (.personNumber .third .plural)) := by
+  decide
+
+/-- The K'ichee' formal addressee *laal* does not outrank the third person (§7.1, quoting
+Stiebels). It denotes the hearer, as *at* does, but agrees as a third person singular, and the
+probes read agreement: beside a first person singular argument the slot reflects the first
+person, where *at* violates the person restriction, and beside a third person plural it reflects
+the plural. -/
+theorem formal_addressee :
+    afTarget (phi Kiche.laal) (.personNumber .first .singular) =
+        some (.personNumber .first .singular) ∧
+      ¬ PersonRestriction (phi Kiche.at_) (.personNumber .first .singular) ∧
+      afTarget (phi Kiche.laal) (.personNumber .third .plural) =
+        some (.personNumber .third .plural) := by
   decide
 
 end Preminger2014
