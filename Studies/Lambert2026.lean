@@ -68,6 +68,8 @@ only (62) is proved (`Language.exists_isBTK_iff`).
 namespace Lambert2026
 
 open Language Subregular List
+open Subregular.TierStrictlyLocalGrammar (mem_agree_language_iff_forall_sublist_pair
+  mem_ofForbiddenPairs_language_iff)
 
 /-! ### Bookended witnesses
 
@@ -309,7 +311,7 @@ tier-based strictly local and strictly piecewise. -/
 theorem navajo_eq_agree :
     navajo = (TierStrictlyLocalGrammar.agree (·.isSome)).language := by
   ext w
-  rw [mem_agree_lang_iff_forall_sublist_pair]
+  rw [mem_agree_language_iff_forall_sublist_pair]
   show (w.filter isAnterior = [] ∨ w.filter isPosterior = []) ↔ _
   simp only [filter_eq_nil_iff]
   constructor
@@ -374,7 +376,7 @@ private lemma tsuutina_tierAffixes (k : ℕ) (T : Option Bool → Bool) :
 private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
   show tsuutinaIn k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
     (·.isSome)).language
-  rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
+  rw [mem_ofForbiddenPairs_language_iff]
   have h_filter : (tsuutinaIn k).filter (fun x ↦ decide (x.isSome = true)) = tsuutinaIn k := by
     unfold tsuutinaIn sandwich
     simp
@@ -395,7 +397,7 @@ private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
 private lemma tsuutinaOut_notMem (k : ℕ) : tsuutinaOut k ∉ tsuutina := by
   show ¬ (tsuutinaOut k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
     (·.isSome)).language)
-  rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
+  rw [mem_ofForbiddenPairs_language_iff]
   have h_filter : (tsuutinaOut k).filter (fun x ↦ decide (x.isSome = true)) = tsuutinaOut k := by
     unfold tsuutinaOut sandwich
     simp

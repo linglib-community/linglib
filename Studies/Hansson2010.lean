@@ -52,6 +52,8 @@ Rose and Walker's Agreement by Correspondence is in `Studies/RoseWalker2004.lean
 namespace Hansson2010
 
 open Subregular Phonology Phonology.Harmony Data.PHOIBLE
+open Subregular.TierStrictlyLocalGrammar (map_mem_ofForbiddenPairs_language_iff
+  mem_ofForbiddenPairs_language_iff ofForbiddenPairs_language_congr)
 
 /-! ### The harmony tier -/
 
@@ -164,7 +166,7 @@ theorem mem_language_iff (w : List Segment) :
       ∀ x ∈ sibilants w, ∀ y ∈ sibilants w, x .anterior = y .anterior := by
   have : IsTrans Segment (fun x y ↦ x .anterior = y .anterior) := ⟨fun _ _ _ ↦ Eq.trans⟩
   have : Std.Symm (fun x y : Segment ↦ x .anterior = y .anterior) := ⟨fun _ _ ↦ Eq.symm⟩
-  rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
+  rw [mem_ofForbiddenPairs_language_iff]
   simp only [ne_eq, not_not]
   exact ⟨fun h ↦ h.pairwise.forall_of_forall fun _ _ ↦ rfl,
     fun h ↦ (List.pairwise_of_forall_mem_list h).isChain⟩
@@ -175,7 +177,7 @@ theorem language_eq_preimage : navajoSibilantHarmony.language =
     List.map sibilantClass ⁻¹' (TierStrictlyLocalGrammar.agree (·.isSome)).language := by
   ext w
   show _ ↔ w.map sibilantClass ∈ (TierStrictlyLocalGrammar.agree (·.isSome)).language
-  rw [TierStrictlyLocalGrammar.agree, mem_ofForbiddenPairs_language_map_iff]
+  rw [TierStrictlyLocalGrammar.agree, map_mem_ofForbiddenPairs_language_iff]
   exact Eq.to_iff (congrArg (w ∈ ·) (ofForbiddenPairs_language_congr (fun _ ↦ Iff.rfl)
     fun x y hx hy ↦ by rw [sibilantClass_of_onTier hx, sibilantClass_of_onTier hy]))
 
@@ -265,14 +267,14 @@ theorem anticipatory_eq_self_of_mem {w : List Segment}
     exact Function.update_eq_self_iff.mpr hxv.symm
   · exact harmonize_of_not_onTier hon
 
-/-- The surface language is exactly the set of fixed points of anticipatory harmony: the
+/-- The surface language is exactly the set of fixed points of anticipatory harmony, so the
 stringset the tier-based grammar recognizes and the map the harmony computes are one object. -/
 theorem mem_language_iff_anticipatory_eq (w : List Segment) :
     w ∈ navajoSibilantHarmony.language ↔ anticipatory w = w :=
   ⟨anticipatory_eq_self_of_mem, fun h ↦ h ▸ anticipatory_mem_language w⟩
 
-/-- Neutralization (4): prefixes whose sibilants differ only in [anterior] surface alike once a
-sibilant follows. -/
+/-- In the neutralization of (4), prefixes whose sibilants differ only in [anterior] surface
+alike once a sibilant follows. -/
 theorem anticipatory_cons_eq {a b : Segment} {w : List Segment} (ha : OnTier a) (hb : OnTier b)
     (hab : ∀ f ≠ .anterior, a f = b f) (hw : sibilants w ≠ []) :
     anticipatory (a :: w) = anticipatory (b :: w) := by
@@ -297,14 +299,14 @@ example (w : List Segment) (hw : sibilants w ≠ []) :
 
 /-! ### The examples -/
 
-/-- The anticipatory examples of (3), (4), (6), (11), (13), and (15): the map takes each
+/-- On the anticipatory examples of (3), (4), (6), (11), (13), and (15) the map takes each
 underlying form to the classes of its surface sibilants. -/
 theorem anticipatory_rows :
     ∀ e ∈ Examples.all, e.feature? "directionality" = some "anticipatory" →
       (anticipatory (ur e)).map sibilantClass = (sr e).map sibilantClass := by
   decide
 
-/-- The book's qualification (section 3.1.2): the s-perfective (12) and s-destruct (14)
+/-- The book qualifies the account in section 3.1.2. The s-perfective (12) and s-destruct (14)
 prefixes assimilate the following first-person prefix perseveratively, which the anticipatory
 map mispredicts. -/
 theorem perseveratory_rows :

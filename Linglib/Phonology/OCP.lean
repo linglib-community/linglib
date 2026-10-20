@@ -67,17 +67,10 @@ abbrev IsClean (xs : List α) : Prop :=
 
 @[simp] theorem isClean_singleton (x : α) : IsClean [x] := List.isChain_singleton x
 
-@[simp] theorem isClean_cons_cons_iff (x y : α) (rs : List α) :
-    IsClean (x :: y :: rs) ↔ x ≠ y ∧ IsClean (y :: rs) := by
-  simp only [IsClean, List.isChain_cons_cons]
-
 /-- The OCP on the tier projected from `xs` by keeping the `p`-elements and reading them
 through `proj`. Flat `IsClean` is the case `p = ⊤`, `proj = id`. -/
 def IsCleanOn (p : α → Prop) [DecidablePred p] (proj : α → β) (xs : List α) : Prop :=
   IsClean ((xs.filter (fun a ↦ decide (p a))).map proj)
-
-instance decidableIsClean [DecidableEq α] : DecidablePred (IsClean (α := α)) :=
-  fun xs ↦ inferInstanceAs (Decidable (List.IsChain (· ≠ ·) xs))
 
 instance decidableIsCleanOn [DecidableEq β] (p : α → Prop)
     [DecidablePred p] (proj : α → β) : DecidablePred (IsCleanOn p proj) :=
@@ -127,9 +120,6 @@ onto them. -/
 /-- The output of the fusion repair is a sublist of its input. -/
 theorem collapse_sublist (xs : List α) : (collapse xs).Sublist xs :=
   List.destutter_sublist _ xs
-
-theorem collapse_length_le (xs : List α) : (collapse xs).length ≤ xs.length :=
-  (collapse_sublist xs).length_le
 
 /-! ### Merging at a seam
 

@@ -13,12 +13,10 @@ public import Linglib.Core.Data.List.Factors
 /-!
 # Subregular Languages: Boundary Augmentation
 
-Boundary augmentation of strings and a boundary-vacuity predicate relating the
-chain-membership of a padded string to that of its unpadded core. The strictly-local,
-locally-testable, and tier-relativized classes are built on this infrastructure. The
-contiguous `k`-factors
-the hierarchy quantifies over are a generic list combinator and live in
-`Core/Data/List/Factors.lean` (`List.kFactors`).
+Boundary augmentation pads a string with `k - 1` boundary markers on each side, so that the
+`k`-factors of the padded string see the edges of the word. The strictly local, locally testable,
+and tier-based classes are built on it. The contiguous `k`-factors themselves are the generic
+`List.kFactors` of `Core/Data/List/Factors.lean`.
 
 ## Main definitions
 
@@ -26,13 +24,11 @@ the hierarchy quantifies over are a generic list combinator and live in
   with `none` the boundary marker.
 * `boundary k w`: `w` injected into `Augmented α` and padded with
   `k - 1` boundary markers on each side.
-* `IsBoundaryVacuous R`: `R` holds whenever either argument is the
-  boundary marker `none`.
+* `window k w i`: the integer-indexed entries of `w` on `[i, i + k)`.
 
 ## Main results
 
-* `IsBoundaryVacuous.isChain_boundary_two_iff`: boundary padding does
-  not change `IsChain`-membership for a boundary-vacuous relation.
+* `mem_kFactors_boundary_iff`: the `k`-factors of the augmented word are exactly its windows.
 
 ## Implementation notes
 
@@ -183,26 +179,3 @@ lemma mem_kFactors_boundary_iff {f : List (Option α)} (hk : 1 ≤ k) :
         by omega]
 
 end Pinning
-
-/-! ### Boundary-vacuous relations -/
-
-/-- A relation on `Option α` is **boundary-vacuous** when `none` satisfies it on
-either side (`R none u`, `R u none`) — so only `(some a, some b)` pairs can
-witness a violation. Subregular edge constraints (OCP, no-clash, no-lapse) all
-share this shape. -/
-structure IsBoundaryVacuous (R : Option α → Option α → Prop) : Prop where
-  none_left : ∀ u, R none u
-  none_right : ∀ u, R u none
-
-namespace IsBoundaryVacuous
-
-variable {R : Option α → Option α → Prop}
-
-/-- 2-boundary padding preserves `IsChain` for a boundary-vacuous relation. -/
-lemma isChain_boundary_two_iff (hR : IsBoundaryVacuous R) (ys : List α) :
-    (boundary 2 ys).IsChain R ↔ (ys.map some).IsChain R := by
-  show (none :: (ys.map some ++ [none])).IsChain R ↔ _
-  simp [List.isChain_cons, List.isChain_append, hR.none_left, hR.none_right]
-
-end IsBoundaryVacuous
-

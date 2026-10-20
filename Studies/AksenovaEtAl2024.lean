@@ -26,8 +26,8 @@ harmony.
 
 ## Main statements
 
-* `lokaa_not_isStrictlyLocal`, `lokaa_language_eq_sp`: Lokaa is SL at no width, and its TSL₂
-  grammar and SP₂ grammar generate one language.
+* `lokaa_not_isStrictlyLocal`, `lokaa_language_eq_strictlyPiecewise`: Lokaa is SL at no width,
+  and its TSL₂ grammar and SP₂ grammar generate one language.
 * `buryat_language`, `buryat_not_isStrictlyPiecewise`: Buryat's grammar is ATR harmony and
   blocked rounding harmony on one tier, and SP at no width.
 * `yakut_rounding_not_pattern`: no segment-level pattern beside fronting harmony gives Yakut.
@@ -57,6 +57,8 @@ harmony.
 namespace AksenovaEtAl2024
 
 open Phonology.Harmony Subregular
+open Subregular.TierStrictlyLocalGrammar (mem_ofForbiddenPairs_language_iff
+  mem_ofForbiddenPairs_or_language_iff ofForbiddenPairs_language_congr)
 
 /-! ### Grammars on a tier -/
 
@@ -82,7 +84,7 @@ abbrev tierGrammar (R : V → V → Prop) : TierStrictlyLocalGrammar 2 (Option V
 /-- Transparent material between two tier symbols leaves them adjacent on the tier. -/
 private theorem mem_tierGrammar_window (R : V → V → Prop) (a b : V) (n : ℕ) :
     [some a] ++ List.replicate n none ++ [some b] ∈ (tierGrammar R).language ↔ ¬ R a b := by
-  rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
+  rw [mem_ofForbiddenPairs_language_iff]
   simp [List.filter_append, TierRel]
 
 end Tier
@@ -102,7 +104,8 @@ theorem harmonic_and_iff_mem_tsl {α W W' : Type*} (p : Pattern α W) (q : Patte
     (h : ∀ s, p.OnTier s ↔ q.OnTier s) (w : List α) :
     p.Harmonic w ∧ q.Harmonic w ↔ w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs
       (fun a b ↦ ¬ p.Compatible a b ∨ ¬ q.Compatible a b) p.OnTier).language := by
-  rw [Pattern.harmonic_iff_mem_tsl, Pattern.harmonic_iff_mem_tsl, mem_language_R_sup_iff,
+  rw [Pattern.harmonic_iff_mem_tsl, Pattern.harmonic_iff_mem_tsl,
+    mem_ofForbiddenPairs_or_language_iff,
     ofForbiddenPairs_language_congr (p := q.OnTier) (p' := p.OnTier) (fun s ↦ (h s).symm)
       fun _ _ _ _ ↦ Iff.rfl]
 
@@ -156,8 +159,8 @@ def lokaaSP : StrictlyPiecewiseGrammar (Option LokaaV) :=
   .ofForbiddenPairs (TierRel lokaaBanned) (·.isSome)
 
 /-- The TSL₂ grammar of Table 34.2 and the SP₂ grammar of Table 34.1 generate one language. -/
-theorem lokaa_language_eq_sp : lokaa.language = lokaaSP.language 2 :=
-  TierStrictlyLocalGrammar.ofForbiddenPairs_language_eq_sp (by decide)
+theorem lokaa_language_eq_strictlyPiecewise : lokaa.language = lokaaSP.language 2 :=
+  TierStrictlyLocalGrammar.ofForbiddenPairs_language_eq_strictlyPiecewise (by decide)
 
 /-! ### Kirghiz ((5), Table 34.3): fronting and rounding on one tier -/
 
@@ -394,8 +397,7 @@ abbrev kikongoNasal : TierStrictlyLocalGrammar 2 KikongoSeg :=
 def kikongo : Language KikongoSeg := kikongoVowel.language ⊓ kikongoNasal.language
 
 instance : DecidablePred (· ∈ kikongo) := fun w ↦
-  @instDecidableAnd _ _ (decidableMemOfForbiddenPairsLang _ _ w)
-    (decidableMemOfForbiddenPairsLang _ _ w)
+  inferInstanceAs (Decidable (w ∈ kikongoVowel.language ∧ w ∈ kikongoNasal.language))
 
 /-- The (16) and (18) forms are accepted and the starred forms of Figure 34.6 rejected. -/
 theorem kikongo_rows :
@@ -410,8 +412,8 @@ private theorem mem_kikongo_window (x y : KikongoSeg) (hx : x.isVowel = false)
     (hy : y.isVowel = false) (n : ℕ) :
     [x] ++ List.replicate n KikongoSeg.e ++ [y] ∈ kikongo ↔ ¬ (x.isNasal ∧ ¬ y.isNasal) := by
   show _ ∈ kikongoVowel.language ∧ _ ∈ kikongoNasal.language ↔ _
-  rw [mem_ofForbiddenPairs_language_iff_filter_isChain,
-    mem_ofForbiddenPairs_language_iff_filter_isChain]
+  rw [mem_ofForbiddenPairs_language_iff,
+    mem_ofForbiddenPairs_language_iff]
   have he : KikongoSeg.e.isVowel = true := rfl
   simp [List.filter_append, hx, hy, he, List.isChain_replicate_of_rel]
 
