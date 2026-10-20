@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Discourse.SpeechAct
 public import Linglib.Fragments.Romance.Italian.PolarityItems
 public import Linglib.Semantics.Mood.Defs
 public import Linglib.Semantics.Polarity.Basic

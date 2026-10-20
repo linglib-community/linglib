@@ -107,7 +107,7 @@ imperative's directive-making semantics: the imperative's own deontic necessity,
 questioning of the addressee's ability, or a possibility modal's enablement. -/
 def NonLiteralist.DirectivePrimary (c : Construction) : Prop :=
   c.sentenceType = .imperative ∨
-    (∃ m ∈ c.modal, (.necessity, primaryFlavor .imperative) ∈ m.meaning) ∨
+    (∃ m ∈ c.modal, ∃ φ ∈ primaryFlavor .imperative, (.necessity, φ) ∈ m.meaning) ∨
     c.queriedPrep = some .ability ∨ ∃ m ∈ c.modal, .possibility ∈ m.forces
 
 instance (c : Construction) : Decidable (Literalist.DirectivePrimary c) := by

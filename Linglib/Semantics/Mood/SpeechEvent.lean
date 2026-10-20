@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Discourse.SpeechAct
 public import Linglib.Semantics.Mood.State
 public import Linglib.Semantics.Modality.Basic
 
@@ -21,6 +22,8 @@ off that component.
 
 ## Main definitions
 
+* `Discourse.SpeechAct.Force.target`: Portner's classification of a force by the component of
+  the mood state it relates to.
 * `Mood.SpeechEvent`: a force together with `CON(e*)`.
 * `Mood.SpeechEvent.toState`, `Mood.SpeechEvent.modal`: the induced state and its modal.
 * `Discourse.SpeechAct.Force.primaryFlavor`: Hacquard's flavor of a speech act, read off its
@@ -32,7 +35,7 @@ off that component.
   subjunctive; `Discourse.SpeechAct.Force` has no subjunctive and adds the promissive and the
   exclamative.
 * Hacquard gives content only to declaratives and imperatives, so an interrogative induces the
-  initial state.
+  initial state and its component licenses no flavor.
 * Which event binds a modal is the business of `Semantics/Modality/EventRelativity.lean`.
 
 ## References
@@ -41,6 +44,8 @@ off that component.
 * [speas-tenny-2003]
 * [portner-2004]
 * [portner-2018]
+* [zanuttini-pak-portner-2012]
+* [zanuttini-portner-2003]
 * [kratzer-1981]
 -/
 
@@ -50,10 +55,27 @@ namespace Mood
 
 open DynamicSemantics
 open Modality (ModalFlavor)
-open HasTarget (target)
 open Discourse.SpeechAct (Force)
 
 variable {W : Type*}
+
+/-! ### The component of a force -/
+
+/-- The component of the mood state a force relates to, Portner's classification of the
+sentence moods: the declarative relates to the context set and the imperative to the ordering.
+The promissive is a jussive with the imperative, added to the speaker's To-Do List rather than
+the addressee's ([zanuttini-pak-portner-2012], their (49)), and the interrogative relates to the
+inquiry. The exclamative relates to none: its widening acts on the domain of its wh-operator
+([zanuttini-portner-2003]). -/
+def _root_.Discourse.SpeechAct.Force.target : Force → Option Component
+  | .declarative => some .informational
+  | .imperative | .promissive => some .preferential
+  | .interrogative => some .inquisitive
+  | .exclamative => none
+
+theorem _root_.Discourse.SpeechAct.Force.target_eq_none_iff {f : Force} :
+    f.target = none ↔ f = .exclamative := by
+  cases f <;> simp [Force.target]
 
 /-! ### Speech events -/
 
@@ -77,13 +99,13 @@ def SpeechEvent.imperative (todo : W → List (W → Prop)) : SpeechEvent W :=
 
 /-! ### The induced state -/
 
-/-- The state a speech event induces at anchor world `w₀` folds
-`CON(e*)(w₀)` through the targeted component's update. -/
+/-- The state a speech event induces at anchor world `w₀` folds `CON(e*)(w₀)` through the update
+of the force's component, and is the initial state for a force without content. -/
 def SpeechEvent.toState (sa : SpeechEvent W) (w₀ : W) : ExpState W :=
-  match target sa.force with
-  | .informational => (sa.content w₀).foldl ExpState.assert ExpState.init
-  | .preferential  => (sa.content w₀).foldl ExpState.promote ExpState.init
-  | .inquisitive   => ExpState.init
+  match sa.force.target with
+  | some .informational => (sa.content w₀).foldl ExpState.assert ExpState.init
+  | some .preferential => (sa.content w₀).foldl ExpState.promote ExpState.init
+  | some .inquisitive | none => ExpState.init
 
 @[simp] theorem SpeechEvent.toState_declarative
     (beliefs : W → List (W → Prop)) (w₀ : W) :
@@ -122,21 +144,23 @@ theorem SpeechEvent.toState_imperative_info
 
 /-! ### The licensed modal -/
 
-/-- The necessity modal a speech event licenses is the targeted
-component's modal on the induced state ([hacquard-2006]'s epistemic
-and deontic readings). -/
-def SpeechEvent.modal (sa : SpeechEvent W) (w₀ : W) : (W → Prop) → Prop :=
-  (target sa.force).boxOn (State.ofExpState (sa.toState w₀))
+/-- The necessity modal a speech event licenses is the modal of its force's component on the
+induced state ([hacquard-2006]'s epistemic and deontic readings); a force without a component
+licenses none. -/
+def SpeechEvent.modal (sa : SpeechEvent W) (w₀ : W) (p : W → Prop) : Prop :=
+  ∃ c ∈ sa.force.target, c.boxOn (State.ofExpState (sa.toState w₀)) p
 
 @[simp] theorem SpeechEvent.modal_declarative
     (beliefs : W → List (W → Prop)) (w₀ : W) (p : W → Prop) :
-    (SpeechEvent.declarative beliefs).modal w₀ p =
-      ((SpeechEvent.declarative beliefs).toState w₀).boxCs p := rfl
+    (SpeechEvent.declarative beliefs).modal w₀ p ↔
+      ((SpeechEvent.declarative beliefs).toState w₀).boxCs p := by
+  simp [SpeechEvent.modal, SpeechEvent.declarative, Force.target]
 
 @[simp] theorem SpeechEvent.modal_imperative
     (todo : W → List (W → Prop)) (w₀ : W) (p : W → Prop) :
-    (SpeechEvent.imperative todo).modal w₀ p =
-      ((SpeechEvent.imperative todo).toState w₀).boxLe p := rfl
+    (SpeechEvent.imperative todo).modal w₀ p ↔
+      ((SpeechEvent.imperative todo).toState w₀).boxLe p := by
+  simp [SpeechEvent.modal, SpeechEvent.imperative, Force.target]
 
 /-- The declarative modal quantifies over exactly the
 belief-compatible worlds. -/
@@ -144,6 +168,7 @@ theorem SpeechEvent.modal_declarative_iff
     (beliefs : W → List (W → Prop)) (w₀ : W) (p : W → Prop) :
     (SpeechEvent.declarative beliefs).modal w₀ p ↔
       ∀ v, (∀ q ∈ beliefs w₀, q v) → p v := by
+  rw [SpeechEvent.modal_declarative]
   constructor
   · intro h v hv
     exact h v ((mem_toState_declarative_info beliefs w₀ v).mpr hv)
@@ -155,37 +180,35 @@ theorem SpeechEvent.modal_declarative_iff
 /-- A modal flavor targets the component its Kratzer parameter feeds, the informational one for
 the modal-base flavors and the preferential one for the ordering-source flavors, as in Portner's
 gloss of his (3) ([portner-2018], p. 234). -/
-instance : HasTarget Modality.ModalFlavor where
-  target
-    | .epistemic      => .informational
-    | .deontic        => .preferential
-    | .bouletic       => .preferential
-    | .circumstantial => .informational
+def _root_.Modality.ModalFlavor.target : ModalFlavor → Component
+  | .epistemic      => .informational
+  | .deontic        => .preferential
+  | .bouletic       => .preferential
+  | .circumstantial => .informational
 
-/-- The flavor a component licenses on [hacquard-2006]'s reading of
-`CON(e*)`; the inquisitive component is routed to epistemic pending
-an interrogative-content story. -/
-def Component.flavor : Component → ModalFlavor
-  | .informational => .epistemic
-  | .preferential  => .deontic
-  | .inquisitive   => .epistemic
+/-- The flavor a component licenses on [hacquard-2006]'s reading of `CON(e*)`: epistemic for the
+speaker's beliefs and deontic for the To-Do List. Hacquard gives an interrogative no content, so
+the inquiry licenses none. -/
+def Component.flavor : Component → Option ModalFlavor
+  | .informational => some .epistemic
+  | .preferential  => some .deontic
+  | .inquisitive   => none
 
-/-- The primary flavor a speech act licenses ([hacquard-2006]):
-the targeted component's flavor. -/
-def _root_.Discourse.SpeechAct.Force.primaryFlavor (f : Force) : ModalFlavor :=
-  (target f).flavor
+/-- The primary flavor a speech act licenses is the flavor of its force's component
+([hacquard-2006]). -/
+def _root_.Discourse.SpeechAct.Force.primaryFlavor (f : Force) : Option ModalFlavor :=
+  f.target.bind Component.flavor
 
-/-- On the informational and preferential components the flavor of a component targets that
-component back. -/
-theorem target_flavor (c : Component) (h : c ≠ .inquisitive) :
-    target c.flavor = c := by
-  cases c <;> first | rfl | exact absurd rfl h
+/-- The flavor a component licenses targets that component back. -/
+theorem Component.target_of_mem_flavor {c : Component} {φ : ModalFlavor} (h : φ ∈ c.flavor) :
+    φ.target = c := by
+  cases c <;> cases h <;> rfl
 
 @[simp] theorem primaryFlavor_declarative :
-    Force.declarative.primaryFlavor = .epistemic := rfl
+    Force.declarative.primaryFlavor = some .epistemic := rfl
 
 @[simp] theorem primaryFlavor_imperative :
-    Force.imperative.primaryFlavor = .deontic := rfl
+    Force.imperative.primaryFlavor = some .deontic := rfl
 
 /-- The declarative and the imperative license different flavors, so *must* varies in flavor
 without being lexically ambiguous. -/
@@ -215,8 +238,8 @@ open. -/
 theorem declarative_leave_not_necessary :
     ¬ declarativeEvidence.modal .leave (· = .leave) := by
   intro h
-  exact LeaveWorld.noConfusion
-    (h .stay ((SpeechEvent.mem_toState_declarative_info _ _ _).mpr (by simp)))
+  exact LeaveWorld.noConfusion ((SpeechEvent.modal_declarative _ _ _).mp h .stay
+    ((SpeechEvent.mem_toState_declarative_info _ _ _).mpr (by simp)))
 
 /-- Under the imperative, every TDL-best world is a leave-world. -/
 theorem imperative_leave_required :
@@ -234,6 +257,6 @@ theorem imperative_leave_required :
     have hvl := hv.2 hmem hle
     exact hstay ((SpeechEvent.toState_imperative_le _ LeaveWorld.leave v
       LeaveWorld.leave).mp hvl (· = LeaveWorld.leave) (List.mem_singleton_self _) rfl)
-  exact hchar
+  exact (SpeechEvent.modal_imperative _ _ _).mpr hchar
 
 end Mood

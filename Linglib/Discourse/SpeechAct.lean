@@ -90,7 +90,7 @@ protected def le : PreparatoryCondition → PreparatoryCondition → Prop
   | .memory, .knowledge | .source, .knowledge => True
   | c, d => c = d
 
-instance : DecidableRel PreparatoryCondition.le := λ c d => by
+instance : DecidableRel PreparatoryCondition.le := fun c d ↦ by
   cases c <;> cases d <;> unfold PreparatoryCondition.le <;> infer_instance
 
 instance : LE PreparatoryCondition := ⟨PreparatoryCondition.le⟩

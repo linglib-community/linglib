@@ -58,7 +58,6 @@ every situation. The desires behind *hope* are consistent with the beliefs and t
 namespace PortnerRubinstein2020
 
 open Modality Mood
-open HasTarget (target)
 
 variable {W : Type*}
 
@@ -74,10 +73,9 @@ inductive Content (W : Type*) where
 
 /-- One background targets the informational component and a pair, whose ordering source ranks
 worlds, the preferential one. -/
-instance : HasTarget (Content W) where
-  target
-    | .single _ => .informational
-    | .pair _ _ => .preferential
+def Content.target : Content W → Component
+  | .single _ => .informational
+  | .pair _ _ => .preferential
 
 /-- The mood state a content induces at a world. -/
 def Content.state : Content W → W → State W
@@ -87,7 +85,7 @@ def Content.state : Content W → W → State W
 /-- The Spanish moods relate a clause to a world through the force of the mood applied to the
 content. A mood and a content that target different components do not combine. -/
 def spanish (m : Grammatical) (c : Content W) : Option ((W → Prop) → W → Prop) :=
-  if target m = target c then some fun p w ↦ m.interp (c.state w) p else none
+  if m.target = c.target then some fun p w ↦ m.interp (c.state w) p else none
 
 @[simp] theorem spanish_indicative_single (f : Background W) :
     spanish .indicative (.single f) = some (simpleNecessity f) := rfl
