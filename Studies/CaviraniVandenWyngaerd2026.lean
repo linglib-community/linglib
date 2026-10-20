@@ -71,7 +71,7 @@ The reflexes of /ɦ/ pattern as those of /k/ do, small against medium and big.
 namespace CaviraniVandenWyngaerd2026
 
 open ElementTheory Data.Forms
-open Autosegmental (CVSlot)
+open Autosegmental (Slot)
 
 /-! ### The plain consonants -/
 
@@ -251,7 +251,7 @@ consonant. Elements left afloat join a floating vowel on the base-final V slot, 
 root node of their own (31), (33). Before a linked vowel they take the base-final V slot (28),
 unless the consonant spreads to the C slot of the suffix and so bars the way, when they associate
 with that slot if it does not repel them (29) and otherwise stay afloat (34). -/
-def derive (b : Segment) (σ : Suffix) : List (CVSlot × Segment) :=
+def derive (b : Segment) (σ : Suffix) : List (Slot × Segment) :=
   let c := associate b σ.palataliser
   (.C, c.1) :: if c.2 = ⊥ ∨ σ.link = .floating then [] else
     match spread c.1 with
@@ -359,7 +359,7 @@ causative. -/
 def rows : List Row := Forms.relations.filterMap Row.ofRelation
 
 /-- The root nodes that the analysis builds for a row, if it gives the base a melody. -/
-def Row.roots (a : Row) : Option (List (CVSlot × Segment)) := a.melody.map (derive · a.suffix)
+def Row.roots (a : Row) : Option (List (Slot × Segment)) := a.melody.map (derive · a.suffix)
 
 /-- Small palatalisation of a velar is the second palatalisation of velars. -/
 theorem alternant_eq_secondPalatalization : ∀ a ∈ rows, a.suffix = locDat →
@@ -371,12 +371,12 @@ theorem alternant_eq_secondPalatalization : ∀ a ∈ rows, a.suffix = locDat �
 
 /-- The phonetic lexicon that the rows induce, each root node that the analysis builds with the
 phoneme attested for it. A plain consonant is listed first, with its melody. -/
-def lexicon : List ((CVSlot × Segment) × Phonology.Segment) :=
+def lexicon : List ((Slot × Segment) × Phonology.Segment) :=
   consonants.filterMap (fun a ↦ a.2.2.map fun c ↦ ((.C, c), a.2.1)) ++
     rows.flatMap fun a ↦ (a.roots.getD []).zip ((alternant a.form).getD [])
 
 /-- Lexical access pronounces a root node as the lexicon lists it. -/
-def interpret (c : CVSlot × Segment) : Option Phonology.Segment := lexicon.lookup c
+def interpret (c : Slot × Segment) : Option Phonology.Segment := lexicon.lookup c
 
 /-- Outside /ɦ/, the root nodes that the analysis builds for a row are pronounced as the phonemes
 of its alternant. Since the lexicon is read off the rows, this says that there is a root node for

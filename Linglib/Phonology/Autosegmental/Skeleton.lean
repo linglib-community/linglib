@@ -18,7 +18,7 @@ consonantal and vocalic slots.
 
 ## Main definitions
 
-* `CVSlot`: a consonantal or vocalic timing slot.
+* `Slot`: a consonantal or vocalic timing slot.
 * `Skeleton`: a sequence of slots, with `Skeleton.cSlots` and `Skeleton.vSlots` the positions of
   its consonantal and vocalic slots.
 
@@ -33,7 +33,7 @@ consonantal and vocalic slots.
 namespace Autosegmental
 
 /-- A slot of the skeleton is consonantal or vocalic. -/
-inductive CVSlot where
+inductive Slot where
   /-- A consonantal slot. -/
   | C
   /-- A vocalic slot. -/
@@ -41,7 +41,7 @@ inductive CVSlot where
   deriving DecidableEq, Repr
 
 /-- A skeleton is a sequence of timing slots. -/
-abbrev Skeleton := List CVSlot
+abbrev Skeleton := List Slot
 
 namespace Skeleton
 

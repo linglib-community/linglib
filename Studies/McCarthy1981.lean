@@ -107,8 +107,8 @@ def cvcvcvc : Skeleton := [.C, .V, .C, .V, .C, .V, .C]
 /-- The prosodic template schema (14a), `[({C, CV}) CV ([+seg]) CVC]`, as the nine templates its
 optional choices generate. -/
 def schema : List Skeleton :=
-  ([[], [.C], [.C, .V]] : List (List CVSlot)).flatMap fun pre ↦
-    ([[], [.C], [.V]] : List (List CVSlot)).map fun s ↦ pre ++ [.C, .V] ++ s ++ [.C, .V, .C]
+  ([[], [.C], [.C, .V]] : List (List Slot)).flatMap fun pre ↦
+    ([[], [.C], [.V]] : List (List Slot)).map fun s ↦ pre ++ [.C, .V] ++ s ++ [.C, .V, .C]
 
 /-- Rule (14b), `V → ∅ / [CVC _ CVC]`, elides the middle vowel of the whole template CVCVCVC. -/
 def elide (t : Skeleton) : Skeleton := if t = cvcvcvc then cvccvc else t
@@ -176,7 +176,7 @@ structure Spec (α : Type*) where
   respread : AssocSource := .root
 
 /-- The specification of a binyan, with `plusSeg` the realization of the [+seg] slot of XI. -/
-def spec (ax : Affixes α) (plusSeg : CVSlot) : Binyan → Spec α
+def spec (ax : Affixes α) (plusSeg : Slot) : Binyan → Spec α
   | .I => { template := cvcvc }
   | .II => { template := cvccvc, erasure := true }
   | .III => { template := cvvcvc }
@@ -238,7 +238,7 @@ def erasure (m : TemplateMatch α) : TemplateMatch α :=
 /-- The consonantism of a binyan, with the affixes placed, the root associated by the
 conventions, and, where Erasure applies, the conventions again with the binyan's respreading
 tier. -/
-def consonantism (ax : Affixes α) (plusSeg : CVSlot) (b : Binyan) (r : ConsonantalRoot α) :
+def consonantism (ax : Affixes α) (plusSeg : Slot) (b : Binyan) (r : ConsonantalRoot α) :
     TemplateMatch α :=
   let sp := spec ax plusSeg b
   let m := (placeAffixes sp r).associate .root
@@ -338,7 +338,7 @@ section Map
 
 variable (f : α → β) (ax : Affixes α) (m : TemplateMatch α)
 
-theorem spec_map (plusSeg : CVSlot) (b : Binyan) :
+theorem spec_map (plusSeg : Slot) (b : Binyan) :
     spec (ax.map f) plusSeg b = (spec ax plusSeg b).map f := by
   cases b <;> rfl
 
@@ -359,7 +359,7 @@ theorem placeAffixes_map (sp : Spec α) (r : ConsonantalRoot α) :
 
 theorem erasure_map : erasure (m.map f) = (erasure m).map f := rfl
 
-theorem consonantism_map (plusSeg : CVSlot) (b : Binyan) (r : ConsonantalRoot α) :
+theorem consonantism_map (plusSeg : Slot) (b : Binyan) (r : ConsonantalRoot α) :
     consonantism (ax.map f) plusSeg b (r.map f) = (consonantism ax plusSeg b r).map f := by
   simp only [consonantism, spec_map, placeAffixes_map, TemplateMatch.associate_map,
     Spec.erasure_map, Spec.respread_map]
@@ -414,19 +414,19 @@ private def label (ax : Affixes α) (xs : List α) : ℕ → α
 
 variable (ax : Affixes α) (v w x y z : α)
 
-private theorem consonantism_eq_map {p : CVSlot} {b : Binyan} {xs : List α}
+private theorem consonantism_eq_map {p : Slot} {b : Binyan} {xs : List α}
     {r : ConsonantalRoot ℕ} (hr : r.map (label ax xs) = ⟨xs⟩) :
     consonantism ax p b ⟨xs⟩ = (consonantism numeralAffixes p b r).map (label ax xs) := by
   rw [← consonantism_map, hr]
   rfl
 
-private theorem spellout_eq {p : CVSlot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
+private theorem spellout_eq {p : Slot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
     (hr : r.map (label ax xs) = ⟨xs⟩) {out : List ℕ}
     (h : (consonantism numeralAffixes p b r).spellout = out) :
     (consonantism ax p b ⟨xs⟩).spellout = out.map (label ax xs) := by
   rw [consonantism_eq_map ax hr, TemplateMatch.spellout_map, h]
 
-private theorem linkCount_eq {p : CVSlot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
+private theorem linkCount_eq {p : Slot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
     (hr : r.map (label ax xs) = ⟨xs⟩) (s : AssocSource) (k : ℕ) :
     linkCount (consonantism ax p b ⟨xs⟩) s k =
       linkCount (consonantism numeralAffixes p b r) s k := by

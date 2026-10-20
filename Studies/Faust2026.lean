@@ -281,14 +281,14 @@ def realizeSlot (m : TemplateMatch String) (s : Nat) : Option String :=
 
 /-- `collapses x l` says that the V-slot realized `x` is followed by a vacant C-slot and a V-slot
 realized the same. -/
-def collapses (x : String) : List (CVSlot × Option String) → Bool
+def collapses (x : String) : List (Slot × Option String) → Bool
   | (c, none) :: (.V, some y) :: _ => c == .C && x == y
   | _ => false
 
 /-- `collapse` lists the realized slots in order, V-slots around a vacant C-slot with the same
 realization surfacing once, since "the phonological length of these vowels is not translated to
 phonetic length" (13). The flag records that the vowel has already been realized. -/
-def collapse : Bool → List (CVSlot × Option String) → List String
+def collapse : Bool → List (Slot × Option String) → List String
   | _, [] => []
   | skip, (_, none) :: tl => collapse skip tl
   | true, (.V, some _) :: tl => collapse false tl

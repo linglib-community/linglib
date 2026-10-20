@@ -129,7 +129,7 @@ instance (governor governee : List Autosegment) : Decidable (MayGovern governor 
 
 /-- A form of the paper is a melodic tier of `Autosegment`s over a strict-CV skeleton, each object
 and slot sponsored by a morpheme in `M`. -/
-abbrev Form (M : Type*) := Autosegmental.Form CVSlot Autosegment M
+abbrev Form (M : Type*) := Autosegmental.Form Slot Autosegment M
 
 section Exponents
 

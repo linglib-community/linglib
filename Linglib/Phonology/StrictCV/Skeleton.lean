@@ -40,7 +40,7 @@ namespace StrictCV
 
 open Autosegmental
 
-variable {T M : Type*} (u : Form CVSlot T M)
+variable {T M : Type*} (u : Form Slot T M)
 
 /-- A skeleton is strict when it is a sequence of CV units. -/
 def IsStrict : Prop :=
