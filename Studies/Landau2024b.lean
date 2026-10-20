@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Minimalist.SyntacticObject.FormCopy
 public import Linglib.Syntax.Control.Basic
 public import Linglib.Fragments.Mixtec.SMPM.Pronouns
+public import Linglib.Fragments.Mixtec.SMPM.Verbs
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Landau2024b
 
@@ -68,20 +69,19 @@ noncomputable def naJuana : SyntacticObject :=
   merge (leaf ⟨.of .D [.N] "ña", 0⟩) (leaf ⟨.of .N [] "Juana", 1⟩)
 
 /-- *ña Juana* from fresh tokens, the controlled subject of (46c) on the Form Copy theory. -/
-noncomputable def naJuana' : SyntacticObject :=
-  merge (leaf ⟨.of .D [.N] "ña", 2⟩) (leaf ⟨.of .N [] "Juana", 3⟩)
+noncomputable def naJuana' : SyntacticObject := naJuana.renumber 2
 
 /-- (46c) as the Form Copy theory builds it, *ña Juana* merged into the theta positions of
-*nàntŏso* 'forgot' and *nakatsya* 'wash'. -/
+*nantǒso* 'forget', the fragment's entry (Landau prints *nàntŏso*), and *nakatsya* 'wash'. -/
 noncomputable def forgotToWash : SyntacticObject :=
-  merge naJuana (merge (leaf ⟨.of .V [.V] "nàntŏso", 4⟩)
+  merge naJuana (merge (leaf ⟨.of .V [.V] Mixtec.SMPM.forget.form, 4⟩)
     (merge naJuana' (leaf ⟨.of .V [] "nakatsya míí tsyàà", 5⟩)))
 
 /-- Form Copy relates a lexical controllee to its controller, so the controllee goes unpronounced.
 The theory thus derives the silent controlled subject that (46c) stars. -/
 theorem naJuana_mem_copyRel : (naJuana, naJuana') ∈ forgotToWash.copyRel :=
-  mk_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains]) <|
-    .merge (by simp [StructurallyIdentical]) (by simp [StructurallyIdentical])
+  mk_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains])
+    (structurallyIdentical_renumber 2 naJuana)
 
 /-- The controlled subject of (46c), the feminine clitic *=ñá*. -/
 def nya : SyntacticObject := leaf ⟨.of .D [] (Mixtec.SMPM.cl3 .feminine).form, 6⟩
@@ -97,7 +97,7 @@ theorem pronoun_not_mem_copyRel (s : SyntacticObject) : (naJuana, nya) ∉ s.cop
 def john : SyntacticObject := leaf ⟨.of .N [] "John", 0⟩
 
 /-- *John* from a fresh token, the controlled subject of (48a) on the Form Copy theory. -/
-def john' : SyntacticObject := leaf ⟨.of .N [] "John", 3⟩
+def john' : SyntacticObject := john.renumber 3
 
 /-- (48a) *John arranged to meet at noon*, the controller and the controlled subject merged
 separately into the theta positions of *arranged* and *meet*. -/
@@ -107,8 +107,8 @@ noncomputable def arrangedToMeet : SyntacticObject :=
 
 /-- Form Copy relates the controller of (48a) to its controlled subject. -/
 theorem john_mem_copyRel : (john, john') ∈ arrangedToMeet.copyRel :=
-  mk_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains]) (by simp [john, john',
-    StructurallyIdentical])
+  mk_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains])
+    (structurallyIdentical_renumber 3 john)
 
 /-- The partial reading of (48a), on which the controlled subject denotes a group of John, `0`,
 and an associate, `1`. -/
@@ -118,7 +118,7 @@ def pcReading (x : SyntacticObject) : Set ℕ := if x = john' then {0, 1} else {
 strictly contains John. -/
 theorem isPartial_pcReading : IsPartial pcReading arrangedToMeet.copyRel :=
   ⟨john, john', john_mem_copyRel, by
-    have hne : john ≠ john' := by simp [john, john']
+    have hne : john ≠ john' := by simp [john, john', renumber]
     simp only [pcReading, hne, ↓reduceIte]
     exact (Set.ssubset_iff_of_subset (by simp)).2 ⟨1, by simp, by simp⟩⟩
 
@@ -147,28 +147,25 @@ noncomputable def appearedToGather : SyntacticObject :=
 theorem chair_mem_copyRel : (chair, chair) ∈ appearedToGather.copyRel :=
   self_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains])
 
-/-- The copy relation of `appearedToGather` relates each inscription only to itself. -/
-theorem eq_of_mem_copyRel_appearedToGather {x y : SyntacticObject}
-    (h : (x, y) ∈ appearedToGather.copyRel) : x = y := by
-  obtain ⟨hc, hxy⟩ := h
-  have hy := hc.mem_terms
-  obtain ⟨z, -, hs, -⟩ := hc
-  have hx := hs.mem_left
+/-- Distinct tokens of `appearedToGather` inscribe distinct items. -/
+theorem hasDistinctItems_appearedToGather : appearedToGather.HasDistinctItems := by
+  intro a b ha hb hab
   simp only [appearedToGather, chair, terms_merge, terms_leaf, Multiset.mem_cons, Multiset.mem_add,
-    Multiset.mem_singleton] at hx hy
-  rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-  rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-  first
-  | rfl
-  | (exfalso; simpa using hxy.numNodes_eq)
-  | (exfalso; simpa [StructurallyIdentical, LexicalItem.of] using congrArg UnorderedTree.value hxy)
+    Multiset.mem_singleton, leaf_inj, leaf_ne_merge, traceOf_ne_merge, traceOf_ne_leaf, false_or,
+    or_false] at ha hb
+  rcases ha with rfl | rfl | rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl | rfl | rfl <;>
+    first | rfl | simp [LexicalItem.of] at hab
 
-/-- There is no partial raising. The copy relation of `appearedToGather` holds no repetition, so
-no valuation is partial on it. -/
+/-- So every valuation interprets the copies of `appearedToGather` alike: on a raising structure
+the semantic clause of Form Copy holds for free. -/
+theorem isExhaustive_appearedToGather {Ref : Type*} (val : SyntacticObject → Ref) :
+    IsExhaustive val appearedToGather.copyRel :=
+  .of_subset_id (copyRel_subset_id hasDistinctItems_appearedToGather)
+
+/-- There is no partial raising. -/
 theorem not_isPartial_appearedToGather {Ref : Type*} [Preorder Ref]
-    (val : SyntacticObject → Ref) : ¬ IsPartial val appearedToGather.copyRel := fun h ↦
-  let ⟨_, _, hxy, ⟨_, hne⟩, _⟩ := exists_isRepetition_of_isPartial h
-  hne (eq_of_mem_copyRel_appearedToGather hxy)
+    (val : SyntacticObject → Ref) : ¬ IsPartial val appearedToGather.copyRel :=
+  (isExhaustive_appearedToGather val).not_isPartial
 
 /-! ### Partial control by deletion of a *for*-subject (§7) -/
 

@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+public import Linglib.Core.Data.Multiset.ZeroCons
 public import Linglib.Core.Data.UnorderedTree.DecEq
 public import Linglib.Core.Data.UnorderedTree.Licensed
 public import Linglib.Syntax.Minimalist.LexicalItem
@@ -21,8 +22,8 @@ bare label `Vertex.bare` on a binary internal node. The right summand is a trace
 `Vertex.trace`, or the trace `Vertex.traceOf tok` of a token, the cancellation `T/T_v` remembering
 the head of `T_v`. Traces are exactly the right summand, the convention of the trace coproduct.
 `SyntacticObject` is the well-formed unordered tree over `Vertex`, the object Merge builds, and
-`PlanarSyntacticObject` the well-formed ordered tree, [marcolli-chomsky-berwick-2025]'s planar
-embedding, the form linearization and PF read. Well-formedness is a local condition, each vertex
+`PlanarSyntacticObject` the well-formed ordered tree, the planar embedding of Marcolli, Chomsky
+and Berwick, the form linearization and PF read. Well-formedness is a local condition, each vertex
 licensing its children (`Vertex.Licenses`), so it descends to the quotient;
 `PlanarSyntacticObject.toSyntacticObject` forgets the order and is a homomorphism for the vocabulary
 the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
@@ -183,7 +184,7 @@ def traceOf (tok : LexicalItem.Token) : SyntacticObject :=
 theorem isSyntacticObject_merge_iff (a b : UnorderedTree Vertex) :
     IsSyntacticObject (UnorderedTree.node Vertex.bare {a, b}) ↔
       IsSyntacticObject a ∧ IsSyntacticObject b := by
-  refine Quotient.inductionOn₂ a b fun pa pb => ?_
+  refine Quotient.inductionOn₂ a b fun pa pb ↦ ?_
   show IsSyntacticObject (UnorderedTree.node Vertex.bare {UnorderedTree.mk pa,
     UnorderedTree.mk pb}) ↔
     IsSyntacticObject (UnorderedTree.mk pa) ∧ IsSyntacticObject (UnorderedTree.mk pb)
@@ -202,6 +203,30 @@ noncomputable def merge (l r : SyntacticObject) : SyntacticObject :=
 
 theorem merge_comm (l r : SyntacticObject) : merge l r = merge r l :=
   Subtype.ext (by rw [merge_val, merge_val, Multiset.pair_comm])
+
+/-- Merge is injective up to the order of its daughters. -/
+theorem merge_eq_merge_iff {l r l' r' : SyntacticObject} :
+    merge l r = merge l' r' ↔ l = l' ∧ r = r' ∨ l = r' ∧ r = l' := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · have := congrArg (fun s : SyntacticObject ↦ s.val.children) h
+    simp only [merge_val, UnorderedTree.children_node] at this
+    rcases Multiset.pair_eq_pair_iff.1 this with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
+    exacts [.inl ⟨Subtype.ext h₁, Subtype.ext h₂⟩, .inr ⟨Subtype.ext h₁, Subtype.ext h₂⟩]
+  · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+    exacts [rfl, merge_comm _ _]
+
+@[simp]
+theorem leaf_ne_merge (tok : LexicalItem.Token) (l r : SyntacticObject) : leaf tok ≠ merge l r :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
+
+@[simp]
+theorem traceOf_ne_merge (tok : LexicalItem.Token) (l r : SyntacticObject) :
+    traceOf tok ≠ merge l r :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
+
+@[simp]
+theorem traceOf_ne_leaf (a b : LexicalItem.Token) : traceOf a ≠ leaf b :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
 
 /-- Merge of two ordered-built objects is the ordered binary node, so concrete results reduce. -/
 theorem merge_mk (pl pr : RoseTree Vertex)
@@ -281,8 +306,8 @@ theorem ind {motive : SyntacticObject → Prop}
   suffices H : ∀ n (p : RoseTree Vertex) (hp : IsSyntacticObject (UnorderedTree.mk p)),
       p.numNodes = n → motive ⟨UnorderedTree.mk p, hp⟩ by
     obtain ⟨t, ht⟩ := s
-    refine Quotient.inductionOn (motive := fun t => ∀ (ht : IsSyntacticObject t), motive ⟨t, ht⟩)
-      t (fun p ht => H p.numNodes p ht rfl) ht
+    refine Quotient.inductionOn (motive := fun t ↦ ∀ (ht : IsSyntacticObject t), motive ⟨t, ht⟩)
+      t (fun p ht ↦ H p.numNodes p ht rfl) ht
   intro n
   induction n using Nat.strong_induction_on with
   | _ n IH =>

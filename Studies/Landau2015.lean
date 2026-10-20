@@ -129,8 +129,8 @@ inductive Table80Row where
   | splitControl
   deriving DecidableEq, Repr
 
-/-- The clause class of an inflected complement on each tier: untensed under predication, tensed
-under logophoric control ((4), (5)). -/
+/-- The clause class of an inflected complement on each tier, untensed under predication and
+tensed under logophoric control ((4), (5)). -/
 def Tier.inflectedClass : Tier → ClauseClass
   | .predicative => .cSubjunctive
   | .logophoric => .fSubjunctive

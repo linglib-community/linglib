@@ -25,7 +25,9 @@ object, so that the coproduct extracts identified copies only together.
 * `SyntacticObject.erase`: the tree of lexical items an object inscribes, forgetting its tokens
 * `SyntacticObject.StructurallyIdentical`: two inscriptions with one erasure
 * `SyntacticObject.IsRepetition`: structurally identical inscriptions that are distinct objects
+* `SyntacticObject.renumber`: an inscription of an object from fresh tokens
 * `SyntacticObject.copyRel`: the copy relation Form Copy assigns in an object
+* `SyntacticObject.HasDistinctItems`: no two tokens of an object inscribe one lexical item
 
 ## Main results
 
@@ -34,6 +36,10 @@ object, so that the coproduct extracts identified copies only together.
   structurally identical inscription inside that term
 * `SyntacticObject.self_mem_copyRel_merge`: the copy Internal Merge leaves is related to its
   antecedent
+* `SyntacticObject.structurallyIdentical_renumber`: a fresh inscription is structurally identical
+  to the original
+* `SyntacticObject.copyRel_subset_id`: in an object whose tokens inscribe distinct items, Form Copy
+  relates each inscription only to itself
 
 ## Implementation notes
 
@@ -70,6 +76,10 @@ def erase (s : SyntacticObject) : UnorderedTree (Option LexicalItem ⊕ Option L
 @[simp]
 theorem erase_leaf (tok : LexicalItem.Token) :
     (leaf tok).erase = UnorderedTree.leaf (.inl (some tok.item)) :=
+  map_leaf _ _
+
+@[simp]
+theorem erase_trace : trace.erase = UnorderedTree.leaf (.inr none) :=
   map_leaf _ _
 
 @[simp]
@@ -119,6 +129,65 @@ def IsRepetition (x y : SyntacticObject) : Prop := StructurallyIdentical x y ∧
 
 instance : DecidableRel IsRepetition := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
+/-! ### Fresh inscriptions -/
+
+/-- The vertex map renaming the token of a lexical leaf or a trace by `f`. -/
+def Vertex.mapToken (f : LexicalItem.Token → LexicalItem.Token) : Vertex → Vertex :=
+  Sum.map (Option.map f) (Option.map f)
+
+theorem isSyntacticObject_map_mapToken (f : LexicalItem.Token → LexicalItem.Token)
+    (s : SyntacticObject) : IsSyntacticObject (s.val.map (Vertex.mapToken f)) := by
+  induction s using ind with
+  | leaf tok => exact (leaf (f tok)).2
+  | trace => exact trace.2
+  | traceOf tok => exact (traceOf (f tok)).2
+  | merge l r hl hr =>
+    convert (merge ⟨_, hl⟩ ⟨_, hr⟩).2 using 1
+    simp [map_node, Vertex.mapToken]
+
+/-- The object `s` with each of its tokens renamed by `f`. -/
+def mapTokens (f : LexicalItem.Token → LexicalItem.Token) (s : SyntacticObject) :
+    SyntacticObject :=
+  ⟨s.val.map (Vertex.mapToken f), isSyntacticObject_map_mapToken f s⟩
+
+variable {f : LexicalItem.Token → LexicalItem.Token}
+
+@[simp]
+theorem mapTokens_leaf (tok : LexicalItem.Token) : (leaf tok).mapTokens f = leaf (f tok) :=
+  Subtype.ext (map_leaf _ _)
+
+@[simp]
+theorem mapTokens_trace : trace.mapTokens f = trace :=
+  Subtype.ext (map_leaf _ _)
+
+@[simp]
+theorem mapTokens_traceOf (tok : LexicalItem.Token) :
+    (traceOf tok).mapTokens f = traceOf (f tok) :=
+  Subtype.ext (map_leaf _ _)
+
+@[simp]
+theorem mapTokens_merge (l r : SyntacticObject) :
+    (merge l r).mapTokens f = merge (l.mapTokens f) (r.mapTokens f) :=
+  Subtype.ext (by simp [mapTokens, map_node, Vertex.mapToken])
+
+/-- Renaming tokens within their lexical items leaves the inscribed tree in place. -/
+theorem erase_mapTokens (hf : ∀ t, (f t).item = t.item) (s : SyntacticObject) :
+    (s.mapTokens f).erase = s.erase := by
+  simp only [erase, mapTokens, map_map]
+  congr 1
+  funext v
+  rcases v with (_ | t) | (_ | t) <;> simp [Vertex.mapToken, hf]
+
+/-- The inscription of `s` from fresh tokens, each index raised by `k`, as External Merge
+introduces a second inscription of an object. -/
+def renumber (k : ℕ) : SyntacticObject → SyntacticObject :=
+  mapTokens fun t ↦ ⟨t.item, t.id + k⟩
+
+/-- A renumbered inscription is structurally identical to the original. -/
+theorem structurallyIdentical_renumber (k : ℕ) (s : SyntacticObject) :
+    StructurallyIdentical s (s.renumber k) :=
+  (erase_mapTokens (f := fun t ↦ ⟨t.item, t.id + k⟩) (fun _ ↦ rfl) s).symm
+
 /-! ### The copy relation -/
 
 /-- The copy relation Form Copy assigns in `s` holds of a pair of structurally identical
@@ -150,5 +219,45 @@ theorem mk_mem_copyRel_merge (h : Contains t y) (hxy : StructurallyIdentical x y
 containing it c-commands its own lower occurrence. -/
 theorem self_mem_copyRel_merge (h : Contains t x) : (x, x) ∈ (merge x t).copyRel :=
   mk_mem_copyRel_merge h rfl
+
+/-! ### Objects without repetitions -/
+
+/-- No two distinct tokens of `s` inscribe one lexical item, at a leaf or at a trace. -/
+def HasDistinctItems (s : SyntacticObject) : Prop :=
+  ∀ ⦃a b : LexicalItem.Token⦄, (leaf a ∈ s.terms ∨ traceOf a ∈ s.terms) →
+    (leaf b ∈ s.terms ∨ traceOf b ∈ s.terms) → a.item = b.item → a = b
+
+/-- In an object whose tokens inscribe distinct items, structurally identical terms are equal, so
+no inscription repeats another. -/
+theorem StructurallyIdentical.eq_of_mem_terms (hs : s.HasDistinctItems) (hx : x ∈ s.terms)
+    (hy : y ∈ s.terms) (h : StructurallyIdentical x y) : x = y := by
+  induction x using ind generalizing y with
+  | leaf a =>
+    rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
+      have hv := congrArg UnorderedTree.value h <;> simp at hv
+    exact congrArg leaf (hs (.inl hx) (.inl hy) hv)
+  | trace =>
+    rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
+      have hv := congrArg UnorderedTree.value h <;> simp at hv
+    rfl
+  | traceOf a =>
+    rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l, r, rfl⟩ <;>
+      have hv := congrArg UnorderedTree.value h <;> simp at hv
+    exact congrArg traceOf (hs (.inr hx) (.inr hy) hv)
+  | merge l r ihl ihr =>
+    rcases exists_form y with ⟨b, rfl⟩ | rfl | ⟨b, rfl⟩ | ⟨l', r', rfl⟩
+    iterate 3 (have hv := congrArg UnorderedTree.value h; simp at hv)
+    have hc := congrArg UnorderedTree.children h
+    simp only [erase_merge, children_node] at hc
+    obtain ⟨hl, hr⟩ := mem_terms_of_merge_mem_terms hx
+    obtain ⟨hl', hr'⟩ := mem_terms_of_merge_mem_terms hy
+    rcases Multiset.pair_eq_pair_iff.1 hc with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
+    · rw [ihl hl hl' h₁, ihr hr hr' h₂]
+    · rw [ihl hl hr' h₁, ihr hr hl' h₂, SyntacticObject.merge_comm]
+
+/-- In such an object Form Copy relates each inscription only to itself: its copies are those
+Internal Merge leaves. -/
+theorem copyRel_subset_id (hs : s.HasDistinctItems) : s.copyRel ⊆ .id :=
+  fun ⟨_, _⟩ ⟨hc, h⟩ ↦ h.eq_of_mem_terms hs hc.left_mem_terms hc.mem_terms
 
 end Minimalist.SyntacticObject

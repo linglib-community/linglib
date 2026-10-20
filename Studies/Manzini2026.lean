@@ -14,8 +14,9 @@ merging *Gianni* twice and one leaving a copy by Internal Merge, are structurall
 the same pair of positions related by Form Copy (`dovere_transfer`). The unification has a cost
 Manzini draws herself: a condition stated on the structure Transfer sees cannot tell the parses
 apart (`structural_iff`), so partial control without partial raising must come from the
-derivational history (§5.2): the root parse relates a repetition, the epistemic parse the copy
-Internal Merge leaves (`isRepetition_rootParse`).
+derivational history (§5.2). The root parse relates a repetition and admits a partial reading of
+its copy relation, while the epistemic parse relates the copy Internal Merge leaves and admits
+none (`isPartial_rootParse_not_epistemicParse`).
 
 ## Implementation notes
 
@@ -35,13 +36,13 @@ so they fall outside it (`Landau2024b.pronoun_not_mem_copyRel`).
 
 namespace Manzini2026
 
-open Minimalist SyntacticObject
+open Minimalist SyntacticObject Control
 
 /-- *Gianni*, the matrix subject of (31a). -/
 def gianni : SyntacticObject := leaf ⟨.of .N [] "Gianni", 0⟩
 
 /-- *Gianni* from a fresh token, the embedded subject of the root parse. -/
-def gianni' : SyntacticObject := leaf ⟨.of .N [] "Gianni", 3⟩
+def gianni' : SyntacticObject := gianni.renumber 3
 
 /-- *berlo* 'drink it'. -/
 noncomputable def berlo : SyntacticObject :=
@@ -63,9 +64,9 @@ Internal Merge copy in the epistemic one. -/
 theorem dovere_transfer :
     StructurallyIdentical rootParse epistemicParse ∧ (gianni, gianni') ∈ rootParse.copyRel ∧
       (gianni, gianni) ∈ epistemicParse.copyRel :=
-  ⟨.merge rfl (.merge rfl (.merge (by simp [gianni, gianni', StructurallyIdentical]) rfl)),
+  ⟨.merge rfl (.merge rfl (.merge (structurallyIdentical_renumber 3 gianni).symm rfl)),
     mk_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains])
-      (by simp [gianni, gianni', StructurallyIdentical]),
+      (structurallyIdentical_renumber 3 gianni),
     self_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains])⟩
 
 /-- A condition on the structure Transfer sees holds of the root parse exactly when it holds of
@@ -75,10 +76,28 @@ theorem structural_iff (P : SyntacticObject → Prop)
     (hP : ∀ a b, StructurallyIdentical a b → (P a ↔ P b)) : P rootParse ↔ P epistemicParse :=
   hP _ _ dovere_transfer.1
 
-/-- The derivations leave the parses apart. The root parse relates a repetition, two inscriptions
-of *Gianni*, and the epistemic parse one object at two positions, so only the root parse can host
-a partial reading (`Landau2024b.exists_isRepetition_of_isPartial`). -/
-theorem isRepetition_rootParse : IsRepetition gianni gianni' ∧ ¬ IsRepetition gianni gianni :=
-  ⟨⟨by simp [gianni, gianni', StructurallyIdentical], by simp [gianni, gianni']⟩, fun h ↦ h.2 rfl⟩
+/-- Distinct tokens of the epistemic parse inscribe distinct items. -/
+theorem hasDistinctItems_epistemicParse : epistemicParse.HasDistinctItems := by
+  intro a b ha hb hab
+  simp only [epistemicParse, gianni, berlo, terms_merge, terms_leaf, Multiset.mem_cons,
+    Multiset.mem_add, Multiset.mem_singleton, leaf_inj, leaf_ne_merge, traceOf_ne_merge,
+    traceOf_ne_leaf, false_or, or_false] at ha hb
+  rcases ha with rfl | rfl | rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl | rfl | rfl <;>
+    first | rfl | simp [LexicalItem.of] at hab
+
+/-- What separates the parses is the derivation. The root parse relates a repetition, two
+inscriptions of *Gianni*, so a valuation can read its embedded subject as a group containing
+Gianni; the epistemic parse relates one object at two positions, and a partial reading needs a
+repetition (`Landau2024b.exists_isRepetition_of_isPartial`), so it admits none. -/
+theorem isPartial_rootParse_not_epistemicParse :
+    (∃ val : SyntacticObject → Set ℕ, IsPartial val rootParse.copyRel) ∧
+      ∀ val : SyntacticObject → Set ℕ, ¬ IsPartial val epistemicParse.copyRel := by
+  refine ⟨⟨fun x ↦ if x = gianni' then {0, 1} else {0}, gianni, gianni', dovere_transfer.2.1,
+    ?_⟩, fun val h ↦ ?_⟩
+  · have hne : gianni ≠ gianni' := by simp [gianni, gianni', renumber]
+    simp only [hne, ↓reduceIte]
+    exact (Set.ssubset_iff_of_subset (by simp)).2 ⟨1, by simp, by simp⟩
+  · obtain ⟨_, _, hxy, ⟨_, hne⟩, _⟩ := Landau2024b.exists_isRepetition_of_isPartial h
+    exact hne (copyRel_subset_id hasDistinctItems_epistemicParse hxy)
 
 end Manzini2026

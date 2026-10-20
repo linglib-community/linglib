@@ -11,7 +11,7 @@ public import Linglib.Data.Examples.Schema
 /-!
 # Landau (2013): Control in Generative Grammar: A Research Companion
 
-This file formalizes the signature of obligatory control of [landau-2013]: the controller must
+Landau's signature of obligatory control has two clauses: the controller must
 be a co-dependent of the clause, and the controlled element, or part of it, is interpreted as a
 bound variable. The familiar criteria follow from the two clauses: co-dependence excludes
 arbitrary, long-distance, and non-c-commanding control and forces the sloppy reading under
@@ -19,18 +19,18 @@ ellipsis, and variable binding excludes the strict reading under *only*. The `Co
 instance records this derivation, so that the library's `Control.admits` returns the book's
 characterizations: a profile satisfying both clauses admits no criterial configuration and one
 satisfying neither admits them all. `ofNoncoreferential` reads such a profile off whether a
-clause type licenses a noncoreferential subject — a free reading of the controlled position,
-refuting co-dependence — which the studies of overt controlled subjects consume.
+clause type licenses a noncoreferential subject, a free reading of the controlled position
+refuting co-dependence, and `attests` reads a row of example data as the diagnostics it attests;
+the studies of controlled subjects consume both.
 
 ## Implementation notes
 
 The signature is the book's (74), in the section on the obligatory-control signature of the
 first chapter, and the derivation of the criteria from it runs through (75)–(79). Obligatory
-*de se* is not
-criterial for obligatory control, being a property of the attitude tier, and the lexical-subject
-diagnostic is a criterion of obligatory nullness rather than of obligatory control, the
-separation the overt-subject studies turn on; the positive human-reference clause of the
-non-obligatory signature is not modelled.
+*de se* is not criterial for obligatory control, being a property of the attitude tier, and the
+lexical-subject diagnostic is a criterion of obligatory nullness rather than of obligatory
+control, the separation the overt-subject studies turn on; the positive human-reference clause of
+the non-obligatory signature is not modelled.
 
 ## References
 
@@ -43,7 +43,7 @@ namespace Landau2013
 
 open Control
 
-/-- The two clauses of the signature of obligatory control: the co-dependence clause admits
+/-- The two clauses of the signature of obligatory control. The co-dependence clause admits
 implicit, split, and, through "part of it", partial control. -/
 inductive Clause74 where
   /-- The controller or controllers must be co-dependents of the clause. -/
@@ -52,9 +52,9 @@ inductive Clause74 where
   | boundVariable
   deriving DecidableEq, Repr, Fintype
 
-/-- The derivation of the criteria from the signature: co-dependence excludes the three
-antecedence configurations and the strict ellipsis reading, variable binding the strict reading
-under *only*. -/
+/-- The signature derives the criteria. Co-dependence excludes the three antecedence
+configurations and the strict ellipsis reading, and variable binding the strict reading under
+*only*. -/
 instance : Excludes Clause74 where
   excludedBy
     | .strictUnderOnly => .boundVariable
@@ -63,8 +63,8 @@ instance : Excludes Clause74 where
     rintro (_ | _)
     exacts [⟨.arbitraryControl, rfl⟩, ⟨.strictUnderOnly, rfl⟩]
 
-/-- The profile determined by whether a clause type licenses noncoreferential subjects: free
-reference attests a free reading of the controlled position, refuting co-dependence;
+/-- The profile determined by whether a clause type licenses noncoreferential subjects. Free
+reference attests a free reading of the controlled position, refuting co-dependence, and
 obligatory coreference attests nothing. -/
 def ofNoncoreferential (noncoreferential : Bool) : Set Clause74 :=
   ofAttested {d | noncoreferential = true ∧ d = .arbitraryControl}

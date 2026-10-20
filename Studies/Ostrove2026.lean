@@ -163,7 +163,7 @@ antecedents nor readings under *only*. -/
 def attested (c : EmbeddedClauseType) : Set Diagnostic :=
   {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ Landau2013.attests row d}
 
-instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d => by
+instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by
   unfold attested; infer_instance
 
 /-- No row attests a criterial configuration of an untensed subjunctive, and every other clause

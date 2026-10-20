@@ -27,11 +27,11 @@ a well-founded strict order and decides it.
   containment.
 * `SyntacticObject.terms`: the terms of an object, itself included, one per vertex.
 * `SyntacticObject.accessibleTerms`: the terms at the non-root vertices, the
-  accessible terms of [marcolli-chomsky-berwick-2025].
+  accessible terms of Marcolli, Chomsky and Berwick.
 * `SyntacticObject.Sisters`: `x` and `y` are sisters in `root` when they are
   distinct daughters of one term of `root`.
 * `SyntacticObject.CCommands`: `x` c-commands `y` in `root` when a sister of `x`
-  reflexively contains `y` ([reinhart-1976]).
+  reflexively contains `y`, after Reinhart.
 * `SyntacticObject.AsymmCCommands`: c-command in one direction only.
 * `SyntacticObject.cCommandDomain`: the c-command domain of `x` in `root`, the terms it
   c-commands.
@@ -234,6 +234,14 @@ theorem self_mem_terms (s : SyntacticObject) : s ∈ s.terms :=
 theorem terms_subset_terms (h : ContainsOrEq x y) : y.terms ⊆ x.terms :=
   fun _ hz ↦ mem_terms.2 (ReflTransGen.trans h (mem_terms.1 hz))
 
+/-- The daughters of a term are terms. -/
+theorem mem_terms_of_merge_mem_terms {s : SyntacticObject} (h : merge l r ∈ s.terms) :
+    l ∈ s.terms ∧ r ∈ s.terms :=
+  ⟨terms_subset_terms (mem_terms.1 h) (mem_terms.2 (.single ((immediatelyContains_merge _ _ _).2
+      (.inl rfl)))),
+    terms_subset_terms (mem_terms.1 h) (mem_terms.2 (.single ((immediatelyContains_merge _ _ _).2
+      (.inr rfl))))⟩
+
 /-- One term per vertex. -/
 theorem card_terms (s : SyntacticObject) : s.terms.card = s.val.numNodes := by
   rw [terms, Multiset.card_pmap, UnorderedTree.card_subtrees]
@@ -316,6 +324,11 @@ theorem Sisters.cCommands (h : Sisters root x y) : CCommands root x y :=
 theorem CCommands.mem_terms (h : CCommands root x y) : y ∈ root.terms :=
   let ⟨_, hz, _, hzy⟩ := h
   terms_subset_terms (SyntacticObject.mem_terms.1 hz) (SyntacticObject.mem_terms.2 hzy)
+
+/-- A c-commanding object is a term of the root. -/
+theorem CCommands.left_mem_terms (h : CCommands root x y) : x ∈ root.terms :=
+  let ⟨_, _, hs, _⟩ := h
+  hs.mem_left
 
 /-- The c-command domain of `x` in `root`, the search space of a probe sitting at `x`. -/
 def cCommandDomain (root x : SyntacticObject) : Multiset SyntacticObject :=
