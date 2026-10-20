@@ -7,18 +7,18 @@ module
 
 public import Linglib.Core.MeasureTheory.Measure.Stieltjes
 public import Mathlib.MeasureTheory.Group.Measure
-public import Mathlib.MeasureTheory.Measure.OpenPos
 public import Mathlib.Probability.CDF
 public import Mathlib.Topology.Order.AtTopBotIxx
 
 /-!
 # Regularity of the cdf of a real probability measure
 
-Each regularity property of `ProbabilityTheory.cdf μ` is the image of a property of `μ`. The cdf is
-continuous at the points that are not atoms, strictly monotone when `μ` charges every nonempty open
-set, and satisfies the reflection formula `cdf μ (-x) = 1 - cdf μ x` when `μ` is invariant under
-negation. A measure with the first two properties has a cdf that is an order isomorphism from `ℝ`
-onto `(0, 1)`, whose inverse is the quantile function. `[UPSTREAM]` candidate for
+Each regularity property of `ProbabilityTheory.cdf μ` is the image of a property of `μ`, read off
+the Stieltjes function `cdf μ` whose measure is `μ`. The cdf is continuous exactly at the points
+that are not atoms, strictly monotone when `μ` charges every nonempty open set, and, when `μ` has no
+atoms, satisfies the reflection formula `cdf μ (-x) = 1 - cdf μ x` exactly when `μ` is invariant
+under negation. A measure with the first two properties has a cdf that is an order isomorphism from
+`ℝ` onto `(0, 1)`, whose inverse is the quantile function. `[UPSTREAM]` candidate for
 `Mathlib/Probability/CDF.lean`.
 
 ## Main definitions
@@ -29,7 +29,11 @@ onto `(0, 1)`, whose inverse is the quantile function. `[UPSTREAM]` candidate fo
 
 * `ProbabilityTheory.continuousAt_cdf_iff`: the cdf is continuous at `x` iff `μ {x} = 0`.
 * `ProbabilityTheory.strictMono_cdf`: the cdf of an open-positive measure is strictly monotone.
+* `ProbabilityTheory.measureReal_Ioi_eq_cdf_neg`: the upper tail of a negation-invariant measure
+  is the cdf at the reflected point.
 * `ProbabilityTheory.cdf_neg`: the reflection formula for a negation-invariant measure.
+* `ProbabilityTheory.isNegInvariant_iff_cdf_neg`: a measure without atoms is negation-invariant iff
+  its cdf satisfies the reflection formula.
 * `ProbabilityTheory.range_cdf`: the cdf of an atomless open-positive measure has range `(0, 1)`.
 -/
 
@@ -46,23 +50,40 @@ variable (μ : Measure ℝ) [IsProbabilityMeasure μ] {x : ℝ}
 
 /-- The cdf is continuous at `x` iff `x` is not an atom. -/
 theorem continuousAt_cdf_iff : ContinuousAt (cdf μ) x ↔ μ {x} = 0 := by
-  rw [StieltjesFunction.continuousAt_iff_measure_singleton, measure_cdf]
+  rw [StieltjesFunction.continuousAt_iff_measure_singleton_eq_zero, measure_cdf]
 
 /-- The cdf of a measure without atoms is continuous. -/
 theorem continuous_cdf [NullSingletonClass μ] : Continuous (cdf μ) :=
-  continuous_iff_continuousAt.2 fun x ↦ (continuousAt_cdf_iff μ).2 (measure_singleton x)
+  (cdf μ).continuous_iff_nullSingletonClass.2 (by rw [measure_cdf]; infer_instance)
 
 /-! ### Reflection -/
 
+/-- The upper tail of a negation-invariant measure at a point that is not an atom is the cdf at
+the reflected point. -/
+theorem measureReal_Ioi_eq_cdf_neg [μ.IsNegInvariant] (hx : μ {x} = 0) :
+    μ.real (Ioi x) = cdf μ (-x) := by
+  rw [cdf_eq_real, ← neg_Ici, measureReal_congr (Ioi_ae_eq_Ici' hx), measureReal_def,
+    measureReal_def, μ.measure_neg]
+
 /-- The reflection formula for the cdf of a negation-invariant measure, away from atoms. -/
 theorem cdf_neg [μ.IsNegInvariant] (hx : μ {x} = 0) : cdf μ (-x) = 1 - cdf μ x := by
-  rw [cdf_eq_real, cdf_eq_real, ← neg_Ici, measureReal_def, μ.measure_neg, ← measureReal_def,
-    ← measureReal_congr (Ioi_ae_eq_Ici' hx), ← compl_Iic,
-    probReal_compl_eq_one_sub measurableSet_Iic]
+  rw [← measureReal_Ioi_eq_cdf_neg μ hx, ← compl_Iic, probReal_compl_eq_one_sub measurableSet_Iic,
+    cdf_eq_real]
 
 /-- A negation-invariant measure with no atom at `0` has median `0`. -/
 theorem cdf_zero [μ.IsNegInvariant] (h : μ {0} = 0) : cdf μ 0 = 2⁻¹ := by
   linarith [cdf_neg μ h, congrArg (cdf μ) neg_zero]
+
+/-- A measure without atoms is invariant under negation iff its cdf satisfies the reflection
+formula. -/
+theorem isNegInvariant_iff_cdf_neg [NullSingletonClass μ] :
+    μ.IsNegInvariant ↔ ∀ x, cdf μ (-x) = 1 - cdf μ x := by
+  refine ⟨fun _ x ↦ cdf_neg μ (measure_singleton x), fun h ↦ ⟨?_⟩⟩
+  have : IsProbabilityMeasure μ.neg := inferInstanceAs (IsProbabilityMeasure (μ.map Neg.neg))
+  refine Measure.eq_of_cdf _ _ (StieltjesFunction.ext fun x ↦ ?_)
+  rw [cdf_eq_real, measureReal_def, Measure.neg_apply, neg_Iic, ← measureReal_def,
+    ← measureReal_congr (Ioi_ae_eq_Ici' (measure_singleton _)), ← compl_Iic,
+    probReal_compl_eq_one_sub measurableSet_Iic, ← cdf_eq_real, h, sub_sub_cancel]
 
 /-! ### Strict monotonicity -/
 
@@ -71,12 +92,8 @@ section IsOpenPosMeasure
 variable [μ.IsOpenPosMeasure]
 
 /-- The cdf of a measure that charges every nonempty open set is strictly monotone. -/
-theorem strictMono_cdf : StrictMono (cdf μ) := fun a b hab ↦ by
-  have h : 0 < (cdf μ).measure (Ioc a b) := by
-    rw [measure_cdf]
-    exact (isOpen_Ioo.measure_pos μ (nonempty_Ioo.2 hab)).trans_le
-      (measure_mono Ioo_subset_Ioc_self)
-  rwa [StieltjesFunction.measure_Ioc, ENNReal.ofReal_pos, sub_pos] at h
+theorem strictMono_cdf : StrictMono (cdf μ) :=
+  (cdf μ).strictMono_iff_isOpenPosMeasure.2 (by rw [measure_cdf]; infer_instance)
 
 theorem cdf_pos (x : ℝ) : 0 < cdf μ x :=
   (cdf_nonneg μ (x - 1)).trans_lt (strictMono_cdf μ (sub_one_lt x))

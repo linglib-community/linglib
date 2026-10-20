@@ -6,16 +6,18 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
-public import Mathlib.Probability.CDF
+public import Linglib.Core.Probability.CDF
 
 /-!
 # The logistic distribution
 
 The standard logistic distribution is the probability measure on `ℝ` whose distribution function is
 the sigmoid `σ x = 1 / (1 + exp (-x))`. It is the Stieltjes measure of `Real.sigmoid`, so its cdf is
-the sigmoid (`cdf_logisticMeasure`) and its upper tail at `x` is `σ (-x)`
-(`logisticMeasure_real_Ioi`), so the log-odds `Real.logit` invert the distribution function on
-`(0, 1)`. `[UPSTREAM]` candidate for `Mathlib/Probability/Distributions/Logistic.lean`.
+the sigmoid (`cdf_logisticMeasure`) and the log-odds `Real.logit` invert the distribution function
+on `(0, 1)`. Since the sigmoid is continuous, strictly monotone and satisfies `σ (-x) = 1 - σ x`,
+the distribution has no atoms, charges every nonempty open set and is symmetric about `0`, so the
+regularity results of `Linglib/Core/Probability/CDF.lean` apply to it. `[UPSTREAM]` candidate for
+`Mathlib/Probability/Distributions/Logistic.lean`.
 
 ## Main definitions
 
@@ -25,12 +27,11 @@ the sigmoid (`cdf_logisticMeasure`) and its upper tail at `x` is `σ (-x)`
 
 * `ProbabilityTheory.cdf_logisticMeasure`: the cdf of the standard logistic distribution is the
   sigmoid.
-* `ProbabilityTheory.logisticMeasure_real_Ioi`: its upper tail at `x` is `σ (-x)`.
 -/
 
 @[expose] public section
 
-open MeasureTheory Filter Set
+open MeasureTheory
 
 namespace ProbabilityTheory
 
@@ -55,10 +56,13 @@ theorem cdf_logisticMeasure (x : ℝ) : cdf logisticMeasure x = Real.sigmoid x :
     cdf_measure_stieltjesFunction _ Real.tendsto_sigmoid_atBot Real.tendsto_sigmoid_atTop,
     sigmoidStieltjes_apply]
 
-/-- The upper tail of the standard logistic distribution at `x` is the sigmoid at `-x`. -/
-theorem logisticMeasure_real_Ioi (x : ℝ) : logisticMeasure.real (Ioi x) = Real.sigmoid (-x) := by
-  rw [measureReal_def, logisticMeasure, sigmoidStieltjes.measure_Ioi Real.tendsto_sigmoid_atTop,
-    sigmoidStieltjes_apply, ENNReal.toReal_ofReal (sub_nonneg.2 (Real.sigmoid_le_one x)),
-    Real.sigmoid_neg]
+instance : NullSingletonClass logisticMeasure :=
+  sigmoidStieltjes.continuous_iff_nullSingletonClass.1 continuous_sigmoid
+
+instance : logisticMeasure.IsOpenPosMeasure :=
+  sigmoidStieltjes.strictMono_iff_isOpenPosMeasure.1 Real.sigmoid_strictMono
+
+instance : logisticMeasure.IsNegInvariant :=
+  (isNegInvariant_iff_cdf_neg _).2 fun x ↦ by simp only [cdf_logisticMeasure, Real.sigmoid_neg]
 
 end ProbabilityTheory
