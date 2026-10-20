@@ -2,15 +2,12 @@
 Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
-
-[UPSTREAM] candidate: `Mathlib.Computability.Bimachine`.
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
 public import Linglib.Core.Computability.Mealy
 public import Linglib.Core.Computability.Edge
-public import Linglib.Core.Data.Fintype.Transfer
+public import Mathlib.Data.Fintype.Shrink
 
 /-!
 # Bimachines
@@ -40,10 +37,12 @@ letter-to-letter machines here compute the total length-preserving ones.
 
 Only the left state is threaded through the run (`Bimachine.runFrom`); the recursion
 reads each tail's right state on the spot. The class existentials pin state types at
-`Type 0`; the universe-polymorphic `isBimachineComputable_iff` recovers generality.
-The identification of
-`IsBimachineComputable` with the total rational functions preserving the empty word is
-classical and not formalized here; `ElgotMezei.lean` proves the composition half.
+`Type`, as `Language.IsRegular` does; `Bimachine.isBimachineComputable` reaches the class from
+state types in any universes through `Shrink`. The identification of `IsBimachineComputable`
+with the total rational functions preserving the empty word is classical and not formalized
+here; `ElgotMezei.lean` proves the composition half.
+
+[UPSTREAM] candidate: `Mathlib.Computability.Bimachine`.
 
 ## References
 
@@ -197,19 +196,6 @@ def map (eL : L ≃ L') (eR : R ≃ R') (B : Bimachine L R α β) : Bimachine L'
     (map eL eR B).run = B.run := by
   funext xs; simp [run]
 
-/-- `reindex eL eR` is `map eL eR` as an equivalence of bimachines. -/
-def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine L' R' α β where
-  toFun := map eL eR
-  invFun := map eL.symm eR.symm
-  left_inv B := by simp
-  right_inv B := by simp
-
-@[simp] theorem coe_reindex (eL : L ≃ L') (eR : R ≃ R') :
-    ⇑(reindex (α := α) (β := β) eL eR) = map eL eR := rfl
-
-@[simp] theorem symm_reindex (eL : L ≃ L') (eR : R ≃ R') :
-    (reindex (α := α) (β := β) eL eR).symm = reindex eL.symm eR.symm := rfl
-
 /-- Cells agree exactly when the underlying word-valued outputs do. -/
 theorem LetterToLetter.cell_inj {B : Bimachine L R α β} (w : B.LetterToLetter)
     {l l' : L} {a a' : α} {r r' : R} :
@@ -349,21 +335,12 @@ def IsBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
     B.run = f
 
-/-- `f` is bimachine-computable if and only if it is computed by a finite bimachine
-with state types in any universes. -/
-theorem isBimachineComputable_iff.{v, w} {f : List α → List β} :
-    IsBimachineComputable f
-      ↔ ∃ (L : Type v) (_ : Fintype L) (R : Type w) (_ : Fintype R)
-          (B : Bimachine L R α β), B.run = f :=
-  exists_fintype₂_congr
-    (fun eL eR ⟨B, hB⟩ ↦ ⟨.map eL eR B, (B.run_map eL eR).trans hB⟩)
-    (fun eL eR ⟨B, hB⟩ ↦ ⟨.map eL eR B, (B.run_map eL eR).trans hB⟩)
-
 /-- Every finite-state bimachine computes a bimachine-computable function, whatever
 the universes of its state types. -/
 theorem Bimachine.isBimachineComputable {L R : Type*} [Fintype L] [Fintype R]
     (B : Bimachine L R α β) : IsBimachineComputable B.run :=
-  isBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance, B, rfl⟩
+  ⟨Shrink L, inferInstance, Shrink R, inferInstance, B.map (equivShrink.{0} L) (equivShrink.{0} R),
+    B.run_map _ _⟩
 
 /-- The reverse conjugate of a bimachine-computable function is bimachine-computable. -/
 protected theorem IsBimachineComputable.revConj {f : List α → List β}
@@ -381,17 +358,14 @@ def IsLengthPreservingBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
     B.IsLetterToLetter ∧ B.run = f
 
-/-- `f` is computed by a finite letter-to-letter bimachine iff it is computed by one with
-state types in any universes. -/
-theorem isLengthPreservingBimachineComputable_iff.{v, w} {f : List α → List β} :
-    IsLengthPreservingBimachineComputable f
-      ↔ ∃ (L : Type v) (_ : Fintype L) (R : Type w) (_ : Fintype R)
-          (B : Bimachine L R α β), B.IsLetterToLetter ∧ B.run = f :=
-  exists_fintype₂_congr
-    (fun eL eR ⟨B, ⟨w⟩, hB⟩ ↦
-      ⟨.map eL eR B, ⟨w.map eL eR⟩, (B.run_map eL eR).trans hB⟩)
-    (fun eL eR ⟨B, ⟨w⟩, hB⟩ ↦
-      ⟨.map eL eR B, ⟨w.map eL eR⟩, (B.run_map eL eR).trans hB⟩)
+/-- Every finite letter-to-letter bimachine computes a length-preserving
+bimachine-computable function, whatever the universes of its state types. -/
+theorem Bimachine.isLengthPreservingBimachineComputable {L R : Type*} [Fintype L]
+    [Fintype R] (B : Bimachine L R α β) (h : B.IsLetterToLetter) :
+    IsLengthPreservingBimachineComputable B.run :=
+  have ⟨w⟩ := h
+  ⟨Shrink L, inferInstance, Shrink R, inferInstance, B.map (equivShrink.{0} L) (equivShrink.{0} R),
+    ⟨w.map _ _⟩, B.run_map _ _⟩
 
 /-- A length-preserving bimachine-computable function is bimachine-computable. -/
 theorem IsBimachineComputable.of_lengthPreserving {f : List α → List β}
