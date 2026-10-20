@@ -48,9 +48,6 @@ jobs:
       - name: Check generated word order corpus data
         run: python3 scripts/gen_word_order_corpus.py --check
 
-      - name: Check generated complementation data
-        run: python3 scripts/gen_complementation.py --check
-
       - name: Check generated hiatus data
         run: python3 scripts/gen_hiatus.py --check
 

@@ -360,10 +360,10 @@ theorem landau_predicts_control (c : EmbeddedClauseType) (hc : c ≠ .keji) (agr
   | ni => exact iff_of_true ni_obligatory (by cases agr <;> decide)
   | ake => exact iff_of_false ake_not_obligatory (by cases agr <;> decide)
 
-/-- In [noonan-2007]'s typology the non-finite clause is the reduced one:
-    `.infinitive`, the paper's own term for the bare-root `ni`-complement. -/
-theorem reduced_iff_not_finite (c : EmbeddedClauseType) :
-    (∀ cd ∈ c.frame.codings, cd.isReduced = true) ↔ ¬ c.complementizer.IsFinite := by
+/-- The clause a non-finite complementizer types has a non-finite [noonan-2007] coding:
+`.infinitive`, the paper's own term for the bare-root `ni`-complement. -/
+theorem not_isFinite_codings_iff (c : EmbeddedClauseType) :
+    (∀ cd ∈ c.frame.codings, ¬ cd.IsFinite) ↔ ¬ c.complementizer.IsFinite := by
   cases c <;> decide
 
 /-! ### Table 4 -/
