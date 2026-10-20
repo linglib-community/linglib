@@ -208,25 +208,21 @@ open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
 
 /-! ### Internal Merge: an example (§1.4.4) -/
 
-/-- A token of the simple lexical item of category `c` selecting `sel`, pronounced `pf`. -/
-def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LexicalItem.Token :=
-  ⟨.of c sel (phonForm := pf), i⟩
-
 /-- *the apple*, the term `T₂` that Internal Merge raises in §1.4.4. -/
 private def theApple : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf (tok .D [.N] "the" 0))
-    (.leaf (tok .N [] "apple" 1))).toSyntacticObject
+  (PlanarSyntacticObject.merge (.leaf ⟨.of .D [.N] "the", 0⟩)
+    (.leaf ⟨.of .N [] "apple", 1⟩)).toSyntacticObject
 
 /-- The workspace `T = {was, {eaten, {the, apple}}}` of §1.4.4. -/
 private def wasEatenTheApple : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf (tok .T [.V] "was" 2))
-    (.merge (.leaf (tok .V [.D] "eaten" 3))
-      (.merge (.leaf (tok .D [.N] "the" 0)) (.leaf (tok .N [] "apple" 1))))).toSyntacticObject
+  (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
+    (.merge (.leaf ⟨.of .V [.D] "eaten", 3⟩)
+      (.merge (.leaf ⟨.of .D [.N] "the", 0⟩) (.leaf ⟨.of .N [] "apple", 1⟩)))).toSyntacticObject
 
 /-- The quotient `T/T₂`, with the trace of the head *the* in place of *the apple*. -/
 private def wasEatenTrace : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf (tok .T [.V] "was" 2))
-    (.merge (.leaf (tok .V [.D] "eaten" 3)) (.traceOf (tok .D [.N] "the" 0)))).toSyntacticObject
+  (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
+    (.merge (.leaf ⟨.of .V [.D] "eaten", 3⟩) (.traceOf ⟨.of .D [.N] "the", 0⟩))).toSyntacticObject
 
 /-- The remainder of raising *the apple* out of `T` is the quotient `T/T₂`. -/
 example : deleteAccessible theApple wasEatenTheApple = wasEatenTrace := by decide
@@ -282,15 +278,15 @@ because the trace of *the* takes the place of *the*. -/
 
 /-- *the*, a term of *the apple*. -/
 private def theD : SyntacticObject :=
-  (PlanarSyntacticObject.leaf (tok .D [.N] "the" 0)).toSyntacticObject
+  (PlanarSyntacticObject.leaf ⟨.of .D [.N] "the", 0⟩).toSyntacticObject
 
 /-- *apple*, the other term of *the apple*. -/
 private def appleN : SyntacticObject :=
-  (PlanarSyntacticObject.leaf (tok .N [] "apple" 1)).toSyntacticObject
+  (PlanarSyntacticObject.leaf ⟨.of .N [] "apple", 1⟩).toSyntacticObject
 
 /-- *eaten*, the other component of the workspace of §1.3.4. -/
 private def eaten : SyntacticObject :=
-  (PlanarSyntacticObject.leaf (tok .V [.D] "eaten" 3)).toSyntacticObject
+  (PlanarSyntacticObject.leaf ⟨.of .V [.D] "eaten", 3⟩).toSyntacticObject
 
 /-- External Merge of *the apple* with *eaten* loses no complexity graded by the size `σ`: its term
     of Merge takes both whole (Proposition 1.6.10). -/
@@ -310,8 +306,8 @@ private theorem cutSummandsN_theApple : cutSummandsN theApple.val =
   rw [show theApple.val = UnorderedTree.node Vertex.bare {theD.val, appleN.val} from
       congrArg Subtype.val (by decide : theApple = merge theD appleN),
     cutSummandsN_node, forestCutsG_pair,
-    show theD.val = UnorderedTree.leaf (Vertex.lex (tok .D [.N] "the" 0)) from rfl,
-    show appleN.val = UnorderedTree.leaf (Vertex.lex (tok .N [] "apple" 1)) from rfl,
+    show theD.val = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
+    show appleN.val = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
     treeCutsG, treeCutsG, cutSummandsN_leaf, cutSummandsN_leaf]
   simp [combinerProjG, Multiset.cons_product, -cutSummandsN_mk]
   exact Multiset.cons_swap _ _ _
@@ -320,16 +316,16 @@ private theorem cutSummandsN_theApple : cutSummandsN theApple.val =
 private theorem filter_cutSummandsN_theApple :
     (cutSummandsN theApple.val).filter (·.1 = {theD.val}) =
       {({theD.val}, UnorderedTree.node Vertex.bare {appleN.val})} := by
-  have hne : (UnorderedTree.leaf (Vertex.lex (tok .N [] "apple" 1)) : UnorderedTree Vertex) ≠
-      UnorderedTree.leaf (Vertex.lex (tok .D [.N] "the" 0)) :=
+  have hne : (UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) : UnorderedTree Vertex) ≠
+      UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) :=
     fun h ↦ (by decide : appleN ≠ theD) (Subtype.ext h)
   have hcard (a b : UnorderedTree Vertex) : a ::ₘ {b} ≠ {a} := fun h ↦ by
     simpa using congrArg Multiset.card h
   rw [show theApple.val = UnorderedTree.node Vertex.bare {theD.val, appleN.val} from
       congrArg Subtype.val (by decide : theApple = merge theD appleN),
     cutSummandsN_node, forestCutsG_pair,
-    show theD.val = UnorderedTree.leaf (Vertex.lex (tok .D [.N] "the" 0)) from rfl,
-    show appleN.val = UnorderedTree.leaf (Vertex.lex (tok .N [] "apple" 1)) from rfl,
+    show theD.val = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
+    show appleN.val = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
     treeCutsG, treeCutsG, cutSummandsN_leaf, cutSummandsN_leaf]
   simp [combinerProjG, Multiset.cons_product, Multiset.filter_singleton, hne, hcard,
     -cutSummandsN_mk]
@@ -835,7 +831,7 @@ instance : CommSemiring Consistency where
   mul := and
   zero := inconsistent
   one := consistent
-  nsmul n a := n.rec inconsistent fun _ acc => or acc a
+  nsmul n a := n.rec inconsistent fun _ acc ↦ or acc a
   nsmul_zero _ := rfl
   nsmul_succ _ _ := rfl
   add_assoc := by rintro ⟨⟩ ⟨⟩ ⟨⟩ <;> rfl
@@ -1044,28 +1040,25 @@ end Laurent
 
 /-- The controller *the man*, from tokens 0 and 1. -/
 noncomputable def theMan : SyntacticObject :=
-  merge (leaf (tok .D [.N] "the" 0)) (leaf (tok .N [] "man" 1))
+  merge (leaf ⟨.of .D [.N] "the", 0⟩) (leaf ⟨.of .N [] "man", 1⟩)
 
 /-- The controlled subject *the man*, from fresh tokens 4 and 5. -/
-noncomputable def theMan' : SyntacticObject :=
-  merge (leaf (tok .D [.N] "the" 4)) (leaf (tok .N [] "man" 5))
+noncomputable def theMan' : SyntacticObject := theMan.renumber 4
 
 /-- *a book*, the object of *read*. -/
 noncomputable def aBook : SyntacticObject :=
-  merge (leaf (tok .D [.N] "a" 7)) (leaf (tok .N [] "book" 8))
+  merge (leaf ⟨.of .D [.N] "a", 7⟩) (leaf ⟨.of .N [] "book", 8⟩)
 
 /-- The syntactic object (3.8.4) of *the man tried to read a book* is built by External Merge
 alone. The controller merges into the theta position of *tried* and the controlled subject into
 that of *read*, since Internal Merge into a theta position would break the dichotomy of §3.8.1. -/
 noncomputable def triedToRead : SyntacticObject :=
-  merge theMan (merge (leaf (tok .V [.T] "tried" 2)) (merge (leaf (tok .T [.V] "to" 3))
-    (merge theMan' (merge (leaf (tok .V [.D] "read" 6)) aBook))))
+  merge theMan (merge (leaf ⟨.of .V [.T] "tried", 2⟩) (merge (leaf ⟨.of .T [.V] "to", 3⟩)
+    (merge theMan' (merge (leaf ⟨.of .V [.D] "read", 6⟩) aBook))))
 
 /-- The two inscriptions of *the man* are repetitions, structurally identical distinct tokens. -/
-theorem theMan_isRepetition : IsRepetition theMan theMan' := by
-  refine ⟨by simp [StructurallyIdentical, theMan, theMan', tok], fun h ↦ ?_⟩
-  have : ImmediatelyContains theMan' (leaf (tok .D [.N] "the" 0)) := h ▸ by simp [theMan]
-  simp [theMan', tok] at this
+theorem theMan_isRepetition : IsRepetition theMan theMan' :=
+  ⟨structurallyIdentical_renumber 4 theMan, by simp [theMan, theMan', renumber, merge_eq_merge_iff]⟩
 
 /-- Form Copy relates the controller to the controlled subject, the restriction of (3.8.4) to
 the diagonal `Diag₁,₄` of (3.8.5). -/
@@ -1076,7 +1069,7 @@ theorem theMan_mem_copyRel : (theMan, theMan') ∈ triedToRead.copyRel :=
 inscriptions. -/
 theorem not_mem_copyRel_aBook : (theMan, aBook) ∉ triedToRead.copyRel := fun h ↦ by
   have := h.2
-  simp only [StructurallyIdentical, theMan, aBook, erase_merge, erase_leaf, tok] at this
+  simp only [StructurallyIdentical, theMan, aBook, erase_merge, erase_leaf] at this
   exact absurd this (by decide)
 
 end MarcolliChomskyBerwick2025

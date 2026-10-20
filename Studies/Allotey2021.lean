@@ -12,7 +12,7 @@ public import Linglib.Data.Examples.Allotey2021
 /-!
 # Allotey (2021): overt pronouns of infinitival predicates of Gã
 
-This file formalizes [allotey-2021]. Obligatory control into Gã irrealis
+Allotey studies obligatory control into Gã irrealis
 `ni`-clauses requires an overt subject proclitic: null PRO is ungrammatical, a
 lexical subject is ungrammatical, and the proclitic shows the whole OC signature
 (Table 2). The controlled clause is non-finite and irrealis rather than
@@ -21,12 +21,12 @@ licenses NPIs across its boundary, negates preverbally, and carries the irrealis
 marker only as a high tone on its subject (Table 4). The pronoun is overt
 because that tone needs a segmental host. The subject markers are pronouns,
 not agreement: the verb is invariant across subjects (§4.4) and a marker
-cannot double a lexical subject (§6.1), against the affixal analysis of
-[campbell-2017]; Gã is therefore a non-pro-drop language (§2.1). [wals-2013]'s
-101A coding of Gã, made from [ablorh-odjidja-1968], is affixal too.
+cannot double a lexical subject (§6.1), against Campbell's affixal analysis;
+Gã is therefore a non-pro-drop language (§2.1). The WALS 101A coding of Gã,
+made from Ablorh-Odjidja's grammar, is affixal too.
 
 Everything is read off the paper's example rows and the Fragment. The control
-profile of a clause type is [landau-2013]'s signature as the rows attest it
+profile of a clause type is Landau's signature as the rows attest it
 (`Control.ofAttested`): no row attests a criterial configuration of the
 `ni`-clause, so it is obligatory control, while the finite `akɛ`-clause attests
 free reference. Complementizer selection is `Verb.Takes` over the Fragment's
@@ -39,13 +39,13 @@ requirement then derives the overt pronoun from the minimal-pronoun inventory.
 
 The paper's pro-drop status is its own reading of its 101A cell, obligatory
 subject pronouns (§4.2), and is stated here rather than in the Fragment because
-[wals-2013] codes the same markers as affixes; `wals_codes_affixes` records
+WALS codes the same markers as affixes; `wals_codes_affixes` records
 the discrepancy and `no_agreement_rows` the paper's evidence against it. The
 bound-variable row of Table 2 rests on the *de se* example (53); the paper
 has no *only* test, so `Control.Diagnostic.strictUnderOnly` is never attested
 and the bound-variable clause of the signature holds unrefuted rather than
 tested. The paper tests reference only in the `ni`- and `akɛ`-clauses, so the
-comparison with [landau-2004]'s scale is stated for those two.
+comparison with Landau's scale of finiteness is stated for those two.
 
 ## References
 
@@ -183,12 +183,6 @@ def clauseTypeOf (row : Datum) : Option EmbeddedClauseType :=
   | none, some "finite" => some .ake
   | _, _ => none
 
-/-- A row records reading `r` with judgment `j`. -/
-def reads (row : Datum) (r : String) (j : Judgment) : Prop :=
-  ∃ x ∈ row.readings, x = (r, j)
-
-instance (row : Datum) (r : String) (j : Judgment) : Decidable (reads row r j) :=
-  inferInstanceAs (Decidable (∃ x ∈ row.readings, _))
 
 /-- The realized form of a row's embedded subject. -/
 def formOf (row : Datum) : Option Form :=
@@ -290,13 +284,13 @@ theorem longDistance_rows :
 /-- Under ellipsis the controlled pronoun has the sloppy reading only (ex 52). -/
 theorem sloppy_only :
     ∃ row ∈ Examples.all, row.feature? "diagnostic" = some "ellipsis" ∧
-      reads row "sloppy" .acceptable ∧ reads row "strict" .unacceptable := by
+      ("sloppy", .acceptable) ∈ row.readings ∧ ("strict", .unacceptable) ∈ row.readings := by
   decide +kernel
 
 /-- A free reading of the embedded subject is available exactly in the finite
     complement (exx 110–111 vs 92, 112). -/
 theorem free_reading_rows :
-    ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ j, reads row "free" j →
+    ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ j, ("free", j) ∈ row.readings →
       (j = .acceptable ↔ c.complementizer.IsFinite) := by
   decide +kernel
 
@@ -312,26 +306,11 @@ theorem controlled_form_covaries :
     subjectForms .second .singular ≠ subjectForms .second .plural := by
   decide +kernel
 
-/-- An acceptable row attests one control diagnostic, a non-c-commanding or long-distance
-    antecedent by the paper's coindexation, a free reading of the embedded subject, or a strict
-    reading under ellipsis. -/
-def attests (row : Datum) : Diagnostic → Prop
-  | .nonCCommandingControl =>
-    row.feature? "antecedent" = some "nonCCommanding" ∧ row.judgment = .acceptable
-  | .longDistanceControl =>
-    row.feature? "antecedent" = some "longDistance" ∧ row.judgment = .acceptable
-  | .arbitraryControl => reads row "free" .acceptable
-  | .strictEllipsis => reads row "strict" .acceptable
-  | .strictUnderOnly => False
-
-instance (row : Datum) : DecidablePred (attests row) := fun d => by
-  cases d <;> unfold attests <;> infer_instance
-
 /-- The diagnostics the rows attest for a clause type. -/
 def attested (c : EmbeddedClauseType) : Set Diagnostic :=
-  {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ attests row d}
+  {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ Landau2013.attests row d}
 
-instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d => by
+instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by
   unfold attested; infer_instance
 
 /-- The control profile of a clause type in [landau-2013]'s signature, the clauses no attested
@@ -356,7 +335,7 @@ theorem arbitrary_mem_attested_ake : .arbitraryControl ∈ attested .ake := by
   decide +kernel
 
 /-- So it is not obligatory control. -/
-theorem ake_not_obligatory : gaProfile .ake ≠ Set.univ := fun h =>
+theorem ake_not_obligatory : gaProfile .ake ≠ Set.univ := fun h ↦
   Set.notMem_empty _ (ofAttested_eq_univ_iff.1 h ▸ arbitrary_mem_attested_ake)
 
 /-! ### Landau's scale -/
@@ -421,18 +400,18 @@ def shows (row : Datum) : Exponent → Prop
   | .verbTone => row.feature? "verbTone" = some "high"
   | .vowel => row.feature? "irrealisVowel" = some "present"
 
-instance (row : Datum) : DecidablePred (shows row) := fun e => by
+instance (row : Datum) : DecidablePred (shows row) := fun e ↦ by
   cases e <;> unfold shows <;> infer_instance
 
 /-- The rows in an irrealis context with judgment `j`. -/
 def rowsIn (ctx : IrrealisContext) (j : Judgment) : List Datum :=
-  Examples.all.filter fun row =>
+  Examples.all.filter fun row ↦
     decide ((row.feature? "clauseContext").bind contextOf = some ctx ∧ row.judgment = j)
 
 /-- Table 4 is read off the rows, as the exponents some grammatical row shows in the context
     (exx 85–86, 93–97, 100–103). -/
 def realization (ctx : IrrealisContext) : Finset Exponent :=
-  Finset.univ.filter fun e => ∃ row ∈ rowsIn ctx .acceptable, shows row e
+  Finset.univ.filter fun e ↦ ∃ row ∈ rowsIn ctx .acceptable, shows row e
 
 /-- Embedded control realizes the marker as the subject's high tone alone. -/
 theorem realization_control : realization .embeddedControl = {.subjectTone} := by
@@ -466,11 +445,11 @@ def HostsControlTone (inv : Vocabulary Form) : Prop :=
 /-- Null PRO is impossible in Gã: a null controlled-subject form cannot host
     the irrealis tone. -/
 theorem null_pro_impossible (inv : Vocabulary Form) (h : inv.controlForm = .null) :
-    ¬ HostsControlTone inv := fun hc =>
+    ¬ HostsControlTone inv := fun hc ↦
   hc (realization_control ▸ Finset.mem_singleton_self _) h
 
 /-- The Gã inventory meets the tone-hosting requirement. -/
-theorem ga_hostsControlTone : HostsControlTone gaInventory := fun _ h => nomatch h
+theorem ga_hostsControlTone : HostsControlTone gaInventory := fun _ h ↦ nomatch h
 
 /-- Controlled subjects surface as overt pronouns. -/
 theorem ga_overt_pro : gaInventory.controlForm = .pronoun := rfl

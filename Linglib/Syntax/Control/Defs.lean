@@ -17,17 +17,17 @@ A control dependency is a relation `SetRel Pos Pos` on argument positions, read
 Stiebels's definition of control as referential inclusion, "open as to how the control reading
 is obtained". The reading types are Landau's: exhaustive, partial and split. Control shift varies
 the antecedent across readings of one construction, so it is not a property of a single
-dependency. `Mechanism` names what a dependency shares, after Bresnan's cut between functional
-and anaphoric control, and `IsSaturating` is the bi-unique, exhaustive profile of saturation
-(predication, structure sharing). Grammatical dependencies share Koster's configurational-matrix
-format, as Neeleman and van de Koot state it, and its clauses are mathlib vocabulary: refinement
-`r ⊆ s`, `Relator.LeftUnique` and `dependent ⊆ r.cod`. Lemmas are in
+dependency. What a dependency shares is a choice of valuation: functional control, in Bresnan's
+sense, shares the occupant of each position, anaphoric control only its referent, so the two
+are `IsExhaustive` at different valuations. `IsSaturating` is the bi-unique, exhaustive profile
+of saturation (predication, structure sharing). Grammatical dependencies share Koster's
+configurational-matrix format, as Neeleman and van de Koot state it, and its clauses are mathlib
+vocabulary: refinement `r ⊆ s`, `Relator.LeftUnique` and `dependent ⊆ r.cod`. Lemmas are in
 `Syntax/Control/Basic.lean`.
 
 ## Main definitions
 
 * `Control.IsExhaustive`, `Control.IsPartial`, `Control.IsSplit`
-* `Control.Mechanism`
 * `Control.IsSaturating`
 
 ## References
@@ -62,23 +62,9 @@ not left-unique. -/
 abbrev IsSplit (d : SetRel Pos Pos) : Prop :=
   ¬ Relator.LeftUnique (· ~[d] ·)
 
-/-- What a control dependency shares, the cut behind the oppositions of movement and
-base generation and of functional and anaphoric control ([bresnan-1982]). -/
-inductive Mechanism where
-  /-- The occupant assignment itself is shared, as in movement chains and LFG functional
-  control. -/
-  | occupant
-  /-- Only the referents are shared, as in LFG anaphoric control and predication. -/
-  | referent
-  /-- A binding leg is composed over a predication leg ([landau-2024a]). -/
-  | composite
-  /-- There is no grammatical dependency, as in non-obligatory control. -/
-  | free
-  deriving DecidableEq, Repr
-
-/-- The profile of a dependency enforced by saturation (predication, structure sharing): each
-dependent has a unique controller, each controller saturates a single slot, and the referent is
-shared exhaustively. -/
+/-- A dependency is saturating, as predication and structure sharing are, when each dependent has a
+unique controller, each controller saturates a single slot, and the referent is shared
+exhaustively. -/
 structure IsSaturating (val : Pos → Ref) (d : SetRel Pos Pos) : Prop where
   biUnique : Relator.BiUnique (· ~[d] ·)
   exhaustive : IsExhaustive val d

@@ -104,12 +104,6 @@ theorem clauseTypeOf_mem_verbOf : ∀ row ∈ Examples.all, ∀ c ∈ clauseType
     ∃ v ∈ verbOf row, ∃ d ∈ v.valency.diatheses, EmbeddedClauseType.ofDiathesis d = c := by
   decide +kernel
 
-/-- A row records reading `r` with judgment `j`. -/
-def reads (row : Datum) (r : String) (j : Judgment) : Prop :=
-  ∃ x ∈ row.readings, x = (r, j)
-
-instance (row : Datum) (r : String) (j : Judgment) : Decidable (reads row r j) :=
-  inferInstanceAs (Decidable (∃ x ∈ row.readings, _))
 
 /-! ### The clause typology (26) from the rows -/
 
@@ -164,24 +158,12 @@ theorem frontingOut_iff : ∀ row ∈ Examples.all, row.feature? "fronting" = so
 
 /-! ### Obligatory control (§4) -/
 
-/-- The control diagnostic an acceptable reading of a row attests, a free reading of the
-embedded subject, a strict reading under ellipsis, or a non-c-commanding antecedent. The paper
-tests neither long-distance antecedents nor readings under *only*. -/
-def attests (row : Datum) : Diagnostic → Prop
-  | .arbitraryControl => reads row "free" .acceptable
-  | .strictEllipsis => reads row "strict" .acceptable
-  | .nonCCommandingControl =>
-    row.feature? "antecedent" = some "nonCCommanding" ∧ row.judgment = .acceptable
-  | .longDistanceControl | .strictUnderOnly => False
-
-instance (row : Datum) : DecidablePred (attests row) := fun d => by
-  cases d <;> unfold attests <;> infer_instance
-
-/-- The diagnostics the rows attest for a clause type. -/
+/-- The diagnostics the rows attest for a clause type. The paper tests neither long-distance
+antecedents nor readings under *only*. -/
 def attested (c : EmbeddedClauseType) : Set Diagnostic :=
-  {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ attests row d}
+  {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ Landau2013.attests row d}
 
-instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d => by
+instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by
   unfold attested; infer_instance
 
 /-- No row attests a criterial configuration of an untensed subjunctive, and every other clause
