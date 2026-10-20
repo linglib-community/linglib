@@ -86,7 +86,7 @@ open Deal2024 Minimalist.PersonSegment
 it never Agrees with that goal and otherwise the goals it Agreed with before, whose φ-features it
 carries and transfers there with its own ((31)). -/
 def flag (g : Deal2024.Grammar) (goals : List Person) : Option (List Person) :=
-  let agreed := (run g goals).goals.map (·.2)
+  let agreed := (run g goals).interacted.map (·.2)
   let last := goals.length - 1
   if last ∈ agreed then some ((agreed.filter (· < last)).filterMap fun i ↦ goals[i]?) else none
 
@@ -153,7 +153,7 @@ instance (subj obj : Person) (pos : ObjectPosition) : Decidable (Ergative subj o
 /-- A first-person object bears [SPKR] and satisfies the probe, which halts, so the subject is
     never reached, whatever its person (15). -/
 theorem halt_of_spkr_object (subj obj : Person) (h : .speaker ∈ spec obj) :
-    (run strictlyDescending [obj, subj]).halt.isSome ∧
+    (run strictlyDescending [obj, subj]).satisfier.isSome ∧
       flag strictlyDescending [obj, subj] = none := by
   revert h; cases obj <;> cases subj <;> decide
 

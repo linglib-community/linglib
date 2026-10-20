@@ -105,13 +105,13 @@ def agreeWith (f : Nominal → Nominal) (ns : List Nominal) : List Nominal :=
 
 /-- `agreeWith f` updates exactly the goal `phiProbe` Agrees with. -/
 theorem agreeWith_eq (f : Nominal → Nominal) (ns : List Nominal) :
-    agreeWith f ns = match phiProbe.agree ns with
+    agreeWith f ns = match phiProbe.goal ns with
       | some n => f n :: ns.tail
       | none => ns := by
   cases ns with
   | nil => rfl
   | cons n ns =>
-    simp only [agreeWith, List.modifyHead_cons, Probe.agree, phiProbe, Probe.ofInt_search,
+    simp only [agreeWith, List.modifyHead_cons, Probe.goal, phiProbe, Probe.ofInt_search,
       List.head?_cons, Option.filter_some, Probe.ofInt_int, List.tail_cons]
     cases n.isActive <;> simp
 

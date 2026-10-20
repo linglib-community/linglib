@@ -12,7 +12,7 @@ public import Studies.Deal2024
 
 Deal traces the Agree operation from Chomsky's uninterpretable features to the interaction and
 satisfaction theory, and states the latter as an algorithm, (30) of the appendix, which
-`Minimalist.Probe.Spec.run` implements. The appendix adds dynamic interaction to the main text's
+`Minimalist.Probe.Spec.agree` implements. The appendix adds dynamic interaction to the main text's
 algorithm: a goal bearing a feature marked for it resets the probe's interaction condition to that
 feature and the features it dominates. In the 2024 derivations a feature copied from a goal instead
 joins a set of features that every later goal must bear. This file runs the grammars of the 2024
@@ -48,7 +48,7 @@ def toSpec (g : Grammar) : Probe.Spec PersonSegment := ⟨Finset.univ, g.satisfa
 /-- A clitic combination ⟨IO, DO⟩ is licit under (30) when the probe, meeting the direct object
 first, interacts with both objects. -/
 def Licit (g : Grammar) (s : Scenario Person) : Prop :=
-  ((toSpec g).run (spec ·.1) g.dynamic [s.low, s.high].zipIdx).goals.map (·.2) = [0, 1]
+  ((toSpec g).agree (spec ·.1) g.dynamic [s.low, s.high].zipIdx).interacted.map (·.2) = [0, 1]
 
 instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 

@@ -401,7 +401,7 @@ def kaurProbe : Minimalist.Probe Goal := .relativized fun g ↦ decide g.person.
 /-- The probe reaches the addressee exactly past a third person subject, so Punjabi allocutivity is
 out with first and second person subjects. -/
 theorem allocutive_iff_third (p : Person) :
-    kaurProbe.agree [.subject p, .addressee] = some .addressee ↔ p = .third := by
+    kaurProbe.goal [.subject p, .addressee] = some .addressee ↔ p = .third := by
   cases p <;> decide
 
 end AlokBhalla2026

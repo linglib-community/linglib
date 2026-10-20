@@ -3,14 +3,14 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Case.Alignment
 public import Linglib.Syntax.Minimalist.Agree.Basic
-public import Linglib.Syntax.Minimalist.Probe.Run
+public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
-# Nested Agree and apparent minimality violations: [amato-2025]
+# Amato (2025): Nested Agree and apparent minimality violations
 
-[amato-2025] derives apparent minimality violations from *Nested Agree*
+Amato derives apparent minimality violations from *Nested Agree*
 (Definition (1)): the probes on a head are extrinsically ordered, and a later
 probe must exploit the dependency an earlier one established, so its search
 starts from the earlier probe's goal — everything the head c-commands above
@@ -28,11 +28,16 @@ The paper's derivations then run as stated: Standard Italian auxiliary
 selection ((9)–(20), over the substrate's `TransitivityClass` and impersonal/passive
 `Voice.Flavor`) under the Vocabulary Items (14), the Ariellese and Tufillese orderings and entries
 (22)–(24), the ditransitive case/agreement alignments (25)–(28) with
-[barany-2024]'s typological gap, Icelandic DAT-NOM (29a/b), Lak perfective
+Bárány's typological gap, Icelandic DAT-NOM (29a/b), Lak perfective
 agreement (32), Spanish VOS (34), Bulgarian multiple wh-fronting (36), and
 Hindi-Urdu (38)–(40). Out of scope: Merge and binding inside v's cycle (the SCC
 ordering of (16)–(17) enters as v's input), participle agreement (§4.3.2), and
 the Appendix's comparison with MME, Multitasking and ECoMPS.
+
+## References
+
+* [amato-2025]
+* [barany-2024]
 -/
 
 @[expose] public section
@@ -64,7 +69,7 @@ def domain (phase : H → Bool) : List (Layer H) → List H
   | [] => []
   | l :: ls => l.specs ++ l.head :: (if phase l.head then [] else domain phase ls)
 
-/-- Goal `g` matches the probe at dimension `t` on `α` (fn. 23): an unvalued probe
+/-- Goal `g` matches the probe at dimension `t` on `α` (fn. 23). An unvalued probe
 matches any specified slot — an unvalued one too, defective intervention — while a
 valued probe (a case assigner, `[∗Infl:perf∗]`) matches only an unvalued slot, so a
 DP whose case is already valued is invisible to case assignment. -/
@@ -85,8 +90,8 @@ def agree (act : H → FeatureType → Bool) (s : State H) (α : H) (t : Feature
   | .valued v, .unvalued => Function.update s g ((s g).valueAt t v)
   | _, _ => s
 
-/-- Discharge the probes on `α` in their extrinsic order over `dom` (Definition (1)):
-each probe searches for its closest matching goal from the previous probe's goal on —
+/-- Discharge the probes on `α` in their extrinsic order over `dom` (Definition (1)).
+Each probe searches for its closest matching goal from the previous probe's goal on —
 reusing that "Agree-channel", so what `α` c-commands above it is outside the search —
 and from the top of `dom` when the previous probe found no goal (§4.1.2). Returns each
 probe's goal and the resulting state. -/
@@ -97,10 +102,10 @@ where
   go : Option H → List FeatureType → State H → List (Option H) × State H
   | _, [], s => ([], s)
   | prev, t :: ts, s =>
-    let r := (Probe.relativized (goalMatches s α t)).run (fun g s ↦ agree act s α t g) s
+    let r := (Probe.relativized (goalMatches s α t)).agree (fun g s ↦ agree act s α t g) s
       (prev.elim dom fun β ↦ dom.dropWhile fun x ↦ decide (x ≠ β))
-    let rest := go r.halt ts r.state
-    (r.halt :: rest.1, rest.2)
+    let rest := go r.satisfier ts r.state
+    (r.satisfier :: rest.1, rest.2)
 
 /-- The domain of a probe nested under the goal `β` is the suffix of the c-command order from `β`.
 -/
@@ -332,8 +337,8 @@ def ditransitiveInitial (applDat : Bool) : Head → FeatureBundle
   | .dpT => ofList [person .third, ⟨.case, .unvalued⟩]
   | _ => ⊥
 
-/-- The derivation of (25)–(28): v's probes, in order `o`, over the recipient, Appl, the verb and
-the theme. -/
+/-- The derivation of (25)–(28), in which v's probes, in order `o`, search the recipient, Appl, the
+verb and the theme. -/
 def ditransitive (o : ProbeOrder) (applDat : Bool) : List (Option Head) × State Head :=
   run allActive .v [.dpR, .appl, .verb, .dpT] o.probes (ditransitiveInitial applDat)
 
@@ -350,8 +355,8 @@ def caseMarking (o : ProbeOrder) (applDat : Bool) : ArgumentRole → FeatureSlot
   | .T => (ditransitive o applDat).2 .dpT .case
   | _ => .valued .acc
 
-/-- Whether v ϕ-agrees with each object: with a transitive object P, and with whichever of the
-recipient and the theme its ϕ-probe finds; S and A are not read. -/
+/-- Whether v ϕ-agrees with each object. It agrees with a transitive object P and with whichever
+of the recipient and the theme its ϕ-probe finds; S and A are not read. -/
 def agreement (o : ProbeOrder) (applDat : Bool) : ArgumentRole → Bool
   | .R => phiGoal o applDat = some .dpR
   | .T => phiGoal o applDat = some .dpT
@@ -379,7 +384,7 @@ theorem ditransitive_phiFirst_noDat :
     IsSecundative (caseMarking .phiFirst false) ∧ IsSecundative (agreement .phiFirst false) := by
   decide
 
-/-- Table 1's gap ([barany-2024]): under either ordering and either Appl setting, indirective
+/-- Table 1's gap ([barany-2024]). Under either ordering and either Appl setting, indirective
 agreement comes only with indirective case. -/
 theorem isIndirective_caseMarking_of_agreement (o : ProbeOrder) (d : Bool) :
     IsIndirective (agreement o d) → IsIndirective (caseMarking o d) := by
@@ -402,7 +407,7 @@ def icelandicInitial : Clausal → Head → FeatureBundle
   | .biclausal, .dpNom => ofList [⟨.number, .valued .plural⟩, ⟨.case, .valued .nom⟩]
   | _, _ => ⊥
 
-/-- Datives are defective goals for ϕ-Agree: matched, never valuing. -/
+/-- Datives are defective goals for ϕ-Agree, matched but never valuing. -/
 def icelandicActive : Head → FeatureType → Bool
   | .dpDat, .number => false
   | _, _ => true

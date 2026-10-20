@@ -232,21 +232,21 @@ def vnDomain : ArgumentRole → List Encounter
 /-- In a transitive clause Infl's probe halts at transitive Voice and agrees with nothing,
 whatever lies below (60), (61). -/
 theorem inflProbe_transitive (rest : List Encounter) :
-    inflProbe.agree (voiceTR :: rest) = none := rfl
+    inflProbe.goal (voiceTR :: rest) = none := rfl
 
 /-- In an intransitive clause Infl's probe agrees with the subject (64). -/
-theorem inflProbe_intransitive : inflProbe.agree [dp .S] = some (dp .S) := rfl
+theorem inflProbe_intransitive : inflProbe.goal [dp .S] = some (dp .S) := rfl
 
 /-- Under the agreeing-object grammar Infl's probe passes transitive Voice and agrees with the
 object (56), (57). -/
 theorem standardInflProbe_transitive (rest : List Encounter) :
-    standardInflProbe.agree (voiceTR :: dp .P :: rest) = some (dp .P) := rfl
+    standardInflProbe.goal (voiceTR :: dp .P :: rest) = some (dp .P) := rfl
 
 /-- The probe that copies an argument's features sits on Infl for the intransitive subject and on
 Voice or Poss for the transitive subject; no probe copies the object's. -/
 def agreedBy (r : ArgumentRole) : Option Locus :=
-  if (inflProbe.agree (inflDomain r)).bind (·.role) = some r then some .infl
-  else if (vnProbe.agree (vnDomain r)).bind (·.role) = some r then some .vn
+  if (inflProbe.goal (inflDomain r)).bind (·.role) = some r then some .infl
+  else if (vnProbe.goal (vnDomain r)).bind (·.role) = some r then some .vn
   else none
 
 theorem agreedBy_S : agreedBy .S = some .infl := rfl
@@ -283,7 +283,7 @@ theorem setA_realize (c : PronCell) :
       = (insert1 (vnTerminal c)).map ([·]) := by
   cases c <;> decide
 
-/-- *chin* and *qin* compete (Table 4.10): both realize first-person singular, the Infl-specified
+/-- *chin* and *qin* compete (Table 4.10). Both realize first-person singular, the Infl-specified
 item wins on Infl, and only the context-free base is available off it. -/
 theorem chin_beats_qin :
     insert1 (copied .firstSg ++ [.head .infl]) = some (.free "chin") ∧
@@ -322,7 +322,7 @@ def pronounTerminal (l : Option Locus) (c : PronCell) : List Feat :=
   cellFeats c ++ (l.map fun l ↦ [Feat.flag l]).getD []
 
 /-- The form of a pronoun in a cell under a grammar with impoverishment rules `rules`, flagged
-by `l`: the rules apply and every licensed item is inserted. -/
+by `l`, in which the rules apply and every licensed item is inserted. -/
 def formWith (rules : List (ImpoverishmentRule (List Feat) Dim)) (l : Option Locus) (c : PronCell) :
     List Morph :=
   insertAll (runChain (ImpoverishmentRule.apply delete) rules ↑(pronounTerminal l c))
@@ -363,22 +363,22 @@ theorem form_rule93 :
 /-- An argument in a cell takes the form flagged by the probe that agreed with it. -/
 def formAt (r : ArgumentRole) (c : PronCell) : List Morph := form (agreedBy r) c
 
-/-- Reduction is nominatively aligned ((3), (8)): subjects take the reduced series and the object
-the independent series. -/
+/-- Reduction is nominatively aligned ((3), (8)), as subjects take the reduced series and the
+object the independent series. -/
 theorem formAt_eq (c : PronCell) :
     formAt .S c = morphemes (subjPossOf c) ∧ formAt .A c = morphemes (subjPossOf c) ∧
       formAt .P c = morphemes (independentOf c) :=
   ⟨form_flagged .infl c, form_flagged .vn c, form_unflagged c⟩
 
-/-- The disagreement generalization ([noyer-1992], §4.3.3), read off the fragment: a cell's
+/-- The disagreement generalization ([noyer-1992], §4.3.3), read off the fragment. A cell's
 independent pronoun contains the enclitic exactly when its author and participant features
 disagree. -/
 theorem encl_mem_independent_iff (c : PronCell) :
     Morph.encl "i" ∈ morphemes (independentOf c) ↔ c.sign .author ≠ c.sign .participant := by
   cases c <;> decide
 
-/-- Reduction is first-personhood: the subject and possessor pronoun differs from the independent
-one exactly at the [+author] cells (Table 4.1). -/
+/-- Reduction is first-personhood, as the subject and possessor pronoun differs from the
+independent one exactly at the [+author] cells (Table 4.1). -/
 theorem reduced_iff_author (c : PronCell) :
     subjPossOf c ≠ independentOf c ↔ c.sign .author = true := by
   cases c <;> decide
