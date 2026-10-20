@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
-public import Linglib.Syntax.Minimalist.Probe.Run
+public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Linglib.Syntax.Minimalist.Agree.PersonSegment
 public import Studies.CoonKeine2021
 public import Studies.Haspelmath2021
@@ -76,15 +76,16 @@ when it bears them all; interacting with it copies its dynamic features into the
 and (45); and only a visible goal bearing the satisfaction feature satisfies the probe, (8b). -/
 def run (g : Grammar) (goals : List Person) :
     Probe.Result (Person × ℕ) (Finset PersonSegment) :=
-  Probe.runWith (fun int t ↦ decide (int ⊆ spec t.1))
-    (fun int t ↦ decide (int ⊆ spec t.1) && g.satisfaction.any (· ∈ spec t.1))
+  Probe.Dynamic.agree
+    (fun int ↦ ⟨fun t ↦ decide (int ⊆ spec t.1),
+      fun t ↦ decide (int ⊆ spec t.1) && g.satisfaction.any (· ∈ spec t.1)⟩)
     (fun t int ↦ int ∪ g.dynamic ∩ spec t.1) (fun _ int ↦ int) {.pi} goals.zipIdx
 
 /-- A clitic combination ⟨IO, DO⟩ is licit when the probe, meeting the direct object first,
 interacts with both objects, section 3.1; the reverse PCC of section 6.2, where the probe meets
 the indirect object first, is licitness of the swapped pair. -/
 def Licit (g : Grammar) (s : Scenario Person) : Prop :=
-  (run g [s.low, s.high]).goals.map (·.2) = [0, 1]
+  (run g [s.low, s.high]).interacted.map (·.2) = [0, 1]
 
 instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 

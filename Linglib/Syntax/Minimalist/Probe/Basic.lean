@@ -15,7 +15,7 @@ unvalued outcome is failed Agree, tolerated under Preminger's obligatory-operati
 licensed when the search reaches it, as for Béjar and Rezac; which goals need licensing and which
 satisfy the probe come apart in general, as for Halpert's Zulu L⁰, which every goal satisfies while
 only augmentless nominals need it. The full operation, which copies from every interacting goal up
-to the satisfier, is `Probe.run` in `Probe/Run.lean`.
+to the satisfier, is `Probe.agree` in `Probe/Agree.lean`.
 
 Probe *specifications*, such as relativized targets, horizon profiles and articulated probes,
 denote a `Probe` by a `toProbe` map rather than re-implementing search.
@@ -26,8 +26,8 @@ denote a `Probe` by a `toProbe` map rather than re-implementing search.
 * `Minimalist.Probe.relativized`, `Minimalist.Probe.ofInt`, `Minimalist.Probe.insatiable`,
   `Minimalist.Probe.indiscriminate`: the probes `[INT:F, SAT:F]`, `[INT:F, SAT:⊤]`,
   `[INT:F, SAT:⊥]` and `[INT:⊤, SAT:⊤]`.
-* `Minimalist.Probe.search`, `Minimalist.Probe.agree`: the first satisfying goal, and that goal
-  when it interacts.
+* `Minimalist.Probe.search`, `Minimalist.Probe.goal`: the first satisfying goal, and that goal
+  when it interacts, the goal of Agree.
 * `Minimalist.Probe.outcome`: `valued` iff the search finds a goal.
 * `Minimalist.Probe.Licensed`, `Minimalist.Probe.AllLicensed`: a goal the search reaches, and
   every needy goal occurrence being reached.
@@ -105,9 +105,9 @@ def indiscriminate : Probe α := relativized fun _ => true
 def search (p : Probe α) (goals : List α) : Option α :=
   goals.find? p.sat
 
-/-- The found goal, if it interacts with the probe. A satisfying goal that does not interact
-absorbs the probe. -/
-def agree (p : Probe α) (goals : List α) : Option α :=
+/-- The goal of Agree, the found goal if it interacts with the probe. A satisfying goal that does
+not interact absorbs the probe. -/
+def goal (p : Probe α) (goals : List α) : Option α :=
   (p.search goals).filter p.int
 
 variable {p : Probe α} {goals : List α}
@@ -134,12 +134,12 @@ theorem search_pair_of_imp {a b : α} (h : p.sat b → p.sat a) :
   revert h; cases p.sat a <;> cases p.sat b <;> simp
 
 /-- The probe Agrees with `a` iff the search finds `a` and `a` interacts. -/
-theorem agree_eq_some_iff {a : α} :
-    p.agree goals = some a ↔ p.search goals = some a ∧ p.int a := by
+theorem goal_eq_some_iff {a : α} :
+    p.goal goals = some a ↔ p.search goals = some a ∧ p.int a := by
   cases h : p.search goals with
-  | none => simp [agree, h]
+  | none => simp [goal, h]
   | some b =>
-    simp only [agree, h, Option.filter_some, Option.ite_none_right_eq_some, Option.some.injEq]
+    simp only [goal, h, Option.filter_some, Option.ite_none_right_eq_some, Option.some.injEq]
     constructor
     · rintro ⟨hb, rfl⟩
       exact ⟨rfl, hb⟩
@@ -151,36 +151,36 @@ theorem agree_eq_some_iff {a : α} :
   cases goals <;> rfl
 
 /-- A probe satisfied by every goal Agrees with the closest one iff it interacts. -/
-theorem ofInt_agree_eq_some_iff {int : α → Bool} {a : α} :
-    (ofInt int).agree goals = some a ↔ goals.head? = some a ∧ int a := by
-  rw [agree_eq_some_iff, ofInt_search]; rfl
+theorem ofInt_goal_eq_some_iff {int : α → Bool} {a : α} :
+    (ofInt int).goal goals = some a ↔ goals.head? = some a ∧ int a := by
+  rw [goal_eq_some_iff, ofInt_search]; rfl
 
 /-- A satisfying goal that does not interact absorbs the probe. -/
-theorem agree_eq_none_of_not_int {a : α} (h : p.search goals = some a) (ha : p.int a = false) :
-    p.agree goals = none := by
-  simp [agree, h, Option.filter_some, ha]
+theorem goal_eq_none_of_not_int {a : α} (h : p.search goals = some a) (ha : p.int a = false) :
+    p.goal goals = none := by
+  simp [goal, h, Option.filter_some, ha]
 
 @[simp] theorem search_nil : p.search [] = none := rfl
 
 /-- What the probe Agrees with, it found. -/
-theorem agree_le_search {a : α} (h : p.agree goals = some a) : p.search goals = some a :=
-  (agree_eq_some_iff.mp h).1
+theorem goal_le_search {a : α} (h : p.goal goals = some a) : p.search goals = some a :=
+  (goal_eq_some_iff.mp h).1
 
 /-- When every satisfying goal interacts, Agree coincides with search. -/
-theorem agree_eq_search_of_int (h : ∀ a, p.sat a → p.int a) :
-    p.agree goals = p.search goals := by
-  rw [agree]
+theorem goal_eq_search_of_int (h : ∀ a, p.sat a → p.int a) :
+    p.goal goals = p.search goals := by
+  rw [goal]
   cases hs : p.search goals with
   | none => rfl
   | some a => rw [Option.filter_some, ite_eq_left (h a (sat_of_search_eq_some hs))]
 
 /-- A relativized probe Agrees with the goal it finds. -/
-theorem relativized_agree (f : α → Bool) :
-    (relativized f).agree goals = (relativized f).search goals :=
-  agree_eq_search_of_int fun _ h => h
+theorem relativized_goal (f : α → Bool) :
+    (relativized f).goal goals = (relativized f).search goals :=
+  goal_eq_search_of_int fun _ h ↦ h
 
-theorem agree_eq_none_iff : p.agree goals = none ↔ ¬ ∃ a, p.search goals = some a ∧ p.int a := by
-  simp only [← Option.not_isSome_iff_eq_none, Option.isSome_iff_exists, agree_eq_some_iff]
+theorem goal_eq_none_iff : p.goal goals = none ↔ ¬ ∃ a, p.search goals = some a ∧ p.int a := by
+  simp only [← Option.not_isSome_iff_eq_none, Option.isSome_iff_exists, goal_eq_some_iff]
 
 /-- Locality as list search. The probe finds `a` iff `a` satisfies it and every earlier goal
 does not, so that nothing intervenes. -/
@@ -192,7 +192,7 @@ theorem search_eq_some_iff_closest {a : α} :
 /-- Over a goal sequence in which no later goal precedes an earlier one, the found goal is
 minimal among the satisfying goals. -/
 theorem not_rel_of_search_eq_some {r : α → α → Prop} {a : α}
-    (hord : goals.Pairwise λ x y => ¬ r y x) (h : p.search goals = some a) :
+    (hord : goals.Pairwise fun x y ↦ ¬ r y x) (h : p.search goals = some a) :
     ∀ b ∈ goals, p.sat b → b ≠ a → ¬ r b a := by
   obtain ⟨-, l₁, l₂, rfl, hl₁⟩ := search_eq_some_iff_closest.mp h
   intro b hb hvb hne hba
