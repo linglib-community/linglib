@@ -262,7 +262,14 @@ def all : List (Form Cell) := [vain_masc, vain_fem, vain_espoir, vain_espoir_fem
 def marked : List (Form Cell) := [jolit_enfant, parodiable]
 
 /-- Every relation the sources assert between forms. -/
-def relations : List (FormRelation (Form Cell)) := []
+def relations : List (FormRelation (Form Cell)) := [
+  { id := "remedy_remediable", form := remedy, target := remediable, relation := "able", source := [
+      ⟨"steriade-1997", "(14)"⟩
+    ] },
+  { id := "parody_parodiable", form := parody, target := parodiable, relation := "able", source := [
+      ⟨"steriade-1997", "(14)"⟩,
+      ⟨"steriade-1997", "(16b)"⟩
+    ] }]
 
 /-- Every paradigm of the data. -/
 def paradigms : List (Paradigm Cell) := [vain_listed.paradigm, joli_listed.paradigm,
