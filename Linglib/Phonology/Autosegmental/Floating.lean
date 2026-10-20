@@ -270,8 +270,10 @@ theorem lt_of_mem_lines {p : ℕ × ℕ} (h : p ∈ f.lines) :
   obtain ⟨q, -, h₁, h₂⟩ := mem_lines.1 h
   exact ⟨h₁ ▸ q.1.isLt, h₂ ▸ q.2.isLt⟩
 
-theorem isNonCrossing_lines_iff : IsNonCrossing f.lines ↔ IsNonCrossing f.links := by
-  rw [lines, Finset.map_eq_image, isNonCrossing_image]
+theorem isNonCrossing_lines_iff :
+    IsNonCrossing (f.lines : SetRel ℕ ℕ) ↔
+      IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)) := by
+  rw [lines, Finset.coe_map, isNonCrossing_image]
   rfl
 
 end Form
@@ -309,9 +311,10 @@ instance : Finite f.toAR.obj.V := inferInstanceAs (Finite (AR.ofWords _ _ _).obj
 
 /-- The presented representation obeys the NCC iff the lines are non-crossing. -/
 theorem noCrossing_toAR_iff :
-    NoCrossing f.toAR.obj.edges f.toAR.obj.arcs ↔ IsNonCrossing f.links := by
+    NoCrossing f.toAR.obj.edges f.toAR.obj.arcs ↔
+      IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)) := by
   refine AR.noCrossing_ofWords_iff.trans ?_
-  rw [← isNonCrossing_lines_iff, IsNonCrossing]
+  rw [← isNonCrossing_lines_iff]
   congr! 1
   ext ⟨p, q⟩
   simp only [Set.mem_ofPred_eq, Finset.mem_coe]
@@ -336,8 +339,11 @@ noncomputable def toARConcatIso : Graph.Iso (f.concat g).toAR.obj (f.toAR ⊗ g.
 
 /-- Concatenation preserves the No-Crossing Constraint, as concatenation of representations
 does ([jardine-2016b] Theorem 4). -/
-theorem isNonCrossing_links_concat (h₁ : IsNonCrossing f.links) (h₂ : IsNonCrossing g.links) :
-    IsNonCrossing (f.concat g).links :=
+theorem isNonCrossing_links_concat
+    (h₁ : IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)))
+    (h₂ : IsNonCrossing (g.links : SetRel (Fin g.upper.length) (Fin g.lower.length))) :
+    IsNonCrossing ((f.concat g).links :
+      SetRel (Fin (f.concat g).upper.length) (Fin (f.concat g).lower.length)) :=
   (f.concat g).noCrossing_toAR_iff.1 <| (f.toARConcatIso g).noCrossing_iff.2 <|
     Graph.noCrossing_concat _ (f.noCrossing_toAR_iff.2 h₁) (g.noCrossing_toAR_iff.2 h₂)
 
@@ -522,16 +528,19 @@ section Gen
 variable {c' : Candidate u}
 
 /-- `gen c` is the one-step GEN of harmonic serialism. It contains `c` itself, the deletion of
-    each undeleted autosegment, and each line from a floating autosegment to a slot that
-    crosses no surface line; insert-and-associate and shift are omitted. -/
+    each undeleted autosegment, and each line from a floating autosegment to a slot in its
+    window, which crosses no surface line; insert-and-associate and shift are omitted. -/
 def gen (c : Candidate u) : Finset (Candidate u) :=
   insert c <|
     (Finset.univ.filter (· ∉ c.deleted)).image c.deleteTierElem ∪
       ((Finset.univ.filter c.IsFloating ×ˢ Finset.univ).filter
-        fun p ↦ ¬ IndexCrosses c.links p).image fun p ↦ c.insertLink p.1 p.2
+        fun p ↦ p.2 ∈ window (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) p.1).image
+          fun p ↦ c.insertLink p.1 p.2
 
 theorem mem_gen : c' ∈ c.gen ↔ c' = c ∨ (∃ k ∉ c.deleted, c' = c.deleteTierElem k) ∨
-    ∃ k i, c.IsFloating k ∧ ¬ IndexCrosses c.links (k, i) ∧ c' = c.insertLink k i := by
+    ∃ k i, c.IsFloating k ∧
+      i ∈ window (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) k ∧
+        c' = c.insertLink k i := by
   simp only [gen, Finset.mem_insert, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
     Finset.mem_univ, true_and, Finset.mem_product, and_true, Prod.exists, and_assoc,
     eq_comm (a := c')]
@@ -541,7 +550,8 @@ theorem mem_gen : c' ∈ c.gen ↔ c' = c ∨ (∃ k ∉ c.deleted, c' = c.delet
 theorem deleteTierElem_mem_gen (hd : k ∉ c.deleted) : c.deleteTierElem k ∈ c.gen :=
   mem_gen.2 (.inr (.inl ⟨k, hd, rfl⟩))
 
-theorem insertLink_mem_gen (hk : c.IsFloating k) (hx : ¬ IndexCrosses c.links (k, i)) :
+theorem insertLink_mem_gen (hk : c.IsFloating k)
+    (hx : i ∈ window (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) k) :
     c.insertLink k i ∈ c.gen :=
   mem_gen.2 (.inr (.inr ⟨k, i, hk, hx, rfl⟩))
 
@@ -551,11 +561,15 @@ theorem deleted_subset_of_mem_gen (hc : c' ∈ c.gen) : c.deleted ⊆ c'.deleted
   exacts [subset_rfl, Finset.subset_insert _ _, subset_rfl]
 
 /-- GEN is closed on the No-Crossing Constraint, since deletion shrinks the surface lines and
-    each inserted line passed the crossing filter. -/
-theorem isNonCrossing_links_of_mem_gen (h : IsNonCrossing c.links) (hc : c' ∈ c.gen) :
-    IsNonCrossing c'.links := by
+    each inserted line ends in its node's window. -/
+theorem isNonCrossing_links_of_mem_gen
+    (h : IsNonCrossing (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)))
+    (hc : c' ∈ c.gen) :
+    IsNonCrossing (c'.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) := by
   rcases mem_gen.1 hc with rfl | ⟨_, -, rfl⟩ | ⟨_, _, -, hx, rfl⟩
-  exacts [h, h.subset links_deleteTierElem_subset, h.insert_of_not_indexCrosses hx]
+  · exact h
+  · exact h.subset (Finset.coe_subset.2 links_deleteTierElem_subset)
+  · simpa using h.insert_of_mem_window hx
 
 end Gen
 

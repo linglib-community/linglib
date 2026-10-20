@@ -219,7 +219,8 @@ otherwise the consonant floats (13b–c). -/
 def intrude (m : TemplateMatch String) : TemplateMatch String :=
   match m.unfilledCSlots.max? with
   | some s =>
-    if s ∈ window (melodyLinks m) m.root.arity then intrudeAt m s else { m with affix := ["t"] }
+    if s ∈ window (melodyLinks m : SetRel ℕ ℕ) m.root.arity then intrudeAt m s
+    else { m with affix := ["t"] }
   | none => { m with affix := ["t"] }
 
 theorem misaligned_intrudeAt (m : TemplateMatch String) (s : Nat) :
@@ -239,11 +240,12 @@ theorem misaligned_intrude (m : TemplateMatch String) : Misaligned (intrude m) �
 /-- The intruder's line never crosses a root line, so intrusion keeps the merged melody
 non-crossing. -/
 theorem isNonCrossing_melodyLinks_intrude (m : TemplateMatch String)
-    (h : IsNonCrossing (melodyLinks m)) : IsNonCrossing (melodyLinks (intrude m)) := by
+    (h : IsNonCrossing (melodyLinks m : SetRel ℕ ℕ)) :
+    IsNonCrossing (melodyLinks (intrude m) : SetRel ℕ ℕ) := by
   unfold intrude
   split
   · split
-    · rw [melodyLinks_intrudeAt, isNonCrossing_insert_iff_mem_window]
+    · rw [melodyLinks_intrudeAt, Finset.coe_insert, isNonCrossing_insert_iff_mem_window]
       exact ⟨h, ‹_›⟩
     · exact h
   · exact h
@@ -451,7 +453,7 @@ theorem fdj_grnd :
     ⟨.affix, 0, 3⟩ ∈ (derive amharicGrnd fdj).associations ∧
     (derive amharicGrnd fdj).allCSlotsFilled ∧
     ¬ Misaligned (derive amharicGrnd fdj) ∧
-    IsNonCrossing (melodyLinks (derive amharicGrnd fdj)) := by
+    IsNonCrossing (melodyLinks (derive amharicGrnd fdj) : SetRel ℕ ℕ) := by
   decide
 
 /-- All three INF derivations leave a C-slot vacant, but the intruder associates only in (13a),

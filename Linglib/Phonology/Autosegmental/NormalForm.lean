@@ -10,8 +10,8 @@ public import Mathlib.Basic.Finite.Sum
 public import Mathlib.Data.Fintype.Sort
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Logic.Equiv.Fin.Basic
-public import Mathlib.Order.Monotone.Monovary
 public import Linglib.Phonology.Autosegmental.AR
+public import Linglib.Phonology.Autosegmental.NonCrossing
 
 /-!
 # Normal forms of autosegmental representations
@@ -40,8 +40,8 @@ definitional: `normalize` pulls the graph back along the enumeration equivalence
 * `AR.tierWord_tensor`, `AR.link_tensor`: concatenation appends tier words and
   shifts links blockwise.
 * `AR.nonempty_fullIso_iff`: `(tierWord, link)` is a complete isomorphism invariant.
-* `AR.noCrossing_iff`: the NCC is the monovariance of each tier pair's link set, the
-  coordinate No-Crossing Constraint of `IsNonCrossing`.
+* `AR.noCrossing_iff`: the NCC says that the link relation of each tier pair is
+  `IsNonCrossing`.
 -/
 
 @[expose] public section
@@ -373,8 +373,8 @@ open scoped MonoidalCategory in
   fun ⟨hp, _, _⟩ ↦ by simp at hp
 
 open scoped Classical in
-/-- The two-tier reading of tiers `i` over `j`: each tier-`j` position's label
-    paired with its linked tier-`i` labels in ascending order. -/
+/-- The two-tier reading of tiers `i` over `j` pairs each tier-`j` position's label
+    with its linked tier-`i` labels in ascending order. -/
 noncomputable def linearize [Finite X.obj.V] (i j : ι) :
     List (τ j × List (τ i)) :=
   (X.tierWord j).zipIdx.map fun bq ↦
@@ -616,11 +616,11 @@ theorem arcs_normalize_iff {i j : ι} (p : Fin (X.tierLength i)) (q : Fin (X.tie
   · exact (arcs_normalize (X := X) i p q).trans ⟨fun h ↦ ⟨rfl, h⟩, fun h ↦ h.2⟩
   · exact iff_of_false (arcs_normalize_ne h p q) fun h' ↦ h h'.1
 
-/-- A finite representation obeys the NCC iff the link set of each tier pair monovaries, that
-is, its links respect the position order on both tiers. -/
+/-- A finite representation obeys the NCC iff the link relation of each tier pair is
+non-crossing in position coordinates. -/
 theorem noCrossing_iff :
     NoCrossing X.obj.edges X.obj.arcs ↔
-      ∀ i j, MonovaryOn Prod.snd Prod.fst {x : ℕ × ℕ | X.link i j x.1 x.2} := by
+      ∀ i j, IsNonCrossing {x : ℕ × ℕ | X.link i j x.1 x.2} := by
   rw [← X.normalizeFullIso.noCrossing_iff]
   constructor
   · rintro h i j ⟨p, q⟩ ⟨hp, hq, hl⟩ ⟨p', q'⟩ ⟨hp', hq', hl'⟩ hpp'
