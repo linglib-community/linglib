@@ -42,7 +42,7 @@ def verbs : List Verb :=
    burn, destroy, melt, activate, affect, change, damage, eliminate,
    hurt, restore, trigger, bury, drop, lift, lock, shut,
    spread, stretch, switch, devour, drink, read, build, write,
-   sweep, sweep_instr, say, tell, claim, reveal, acknowledge, admit,
+   do_, sweep, sweep_instr, say, tell, claim, reveal, acknowledge, admit,
    announce, confess, inform, suggest, pretend, confirm, demonstrate, establish,
    prove, whisper, murmur, shout, cry, scream, mumble, mutter,
    shriek, yell, groan, grumble, hiss, sigh, whimper, snap,

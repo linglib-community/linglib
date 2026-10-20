@@ -31,6 +31,7 @@ its citation form, less the classes that list the form in a sense the entry is n
 * [bruening-2021]
 * [fillmore-1986]
 * [levin-hovav-1995]
+* [huddleston-pullum-2002]
 -/
 
 @[expose] public section
@@ -61,7 +62,9 @@ structure Verb extends _root_.Verb where
 inductive Verb.Cell where
   | base
   | thirdSg
-  | presentPlural
+  /-- The plain present, of every subject but the third person singular
+  ([huddleston-pullum-2002] ch. 3 §1.1). -/
+  | plainPresent
   | past
   | pastParticiple
   | presentParticiple
@@ -76,7 +79,7 @@ def Verb.onRoot (v : Verb) (listed : Option String) (suffix : Morph) : List Morp
 /-- The morphs of an entry in each cell. The past participle is the past unless the entry lists
 one, and no entry lists a present participle. -/
 def Verb.inflect (v : Verb) : Verb.Cell → List Morph
-  | .base | .presentPlural => v.morphs
+  | .base | .plainPresent => v.morphs
   | .thirdSg => v.onRoot v.thirdSg Inflection.s
   | .past => v.onRoot v.past Inflection.ed
   | .pastParticiple => v.onRoot (v.pastPart <|> v.past) Inflection.ed
@@ -85,8 +88,8 @@ def Verb.inflect (v : Verb) : Verb.Cell → List Morph
 /-- The form an entry realizes in each cell, the spelling of its morphs there. -/
 def Verb.realize (v : Verb) (c : Verb.Cell) : String := Inflection.spell (v.inflect c) v.doubling
 
-@[simp] theorem Verb.realize_presentPlural (v : Verb) :
-    v.realize .presentPlural = v.realize .base := rfl
+@[simp] theorem Verb.realize_plainPresent (v : Verb) :
+    v.realize .plainPresent = v.realize .base := rfl
 
 /-- A verb that lists no past participle has the form of its past for one. -/
 theorem Verb.realize_pastParticiple {v : Verb} (h : v.pastPart = none) :
@@ -416,6 +419,14 @@ def write : Verb where
   incrementality := some .strict
   levinClasses := {LevinClass.performance, .scribble, .transferOfMessage}
 
+/-- "do", the lexical verb of *She does her best*, a lexeme apart from the auxiliary *do*
+([huddleston-pullum-2002] ch. 3 §2). -/
+def do_ : Verb where
+  morphs := [.root "do"]
+  past := "did"
+  pastPart := "done"
+  valency := .ofFrame ArgumentFrame.np
+
 /-- "sweep" — motion + sustained contact, variable agentivity (default sense). -/
 def sweep : Verb where
   morphs := [.root "sweep"]
@@ -464,7 +475,7 @@ def Verb.Cell.features : Verb.Cell → Features
   | .base => Features.of (verbForm := some .Inf)
   | .thirdSg => Features.of (number := some .singular) (person := some .third)
       (voice := some .Act) (verbForm := some .Fin) (tense := some .Pres)
-  | .presentPlural => Features.of (number := some .plural) (tense := some .Pres)
+  | .plainPresent => Features.of (voice := some .Act) (verbForm := some .Fin) (tense := some .Pres)
   | .past => Features.of (verbForm := some .Fin) (voice := some .Act) (tense := some .Past)
   | .pastParticiple => Features.of (verbForm := some .Part)
   | .presentParticiple => Features.of (verbForm := some .Part)

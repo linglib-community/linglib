@@ -157,7 +157,7 @@ private abbrev herself := Pronouns.herself.toWord
 private abbrev they := Pronouns.they.toWord
 private abbrev themselves := Pronouns.themselves.toWord
 private abbrev sees := Verbs.see.toWord .thirdSg
-private abbrev see := Verbs.see.toWord .presentPlural
+private abbrev see := Verbs.see.toWord .plainPresent
 private abbrev likes := Verbs.like.toWord .thirdSg
 private abbrev thinks := Verbs.think.toWord .thirdSg
 
