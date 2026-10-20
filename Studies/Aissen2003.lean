@@ -5,7 +5,7 @@ public import Linglib.Semantics.Reference.Nominality
 public import Mathlib.Order.Prod.Lex.Basic
 public import Linglib.Fragments.Turkish.ObjectMarking
 public import Linglib.Syntax.Case.Alignment
-public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -122,7 +122,7 @@ abbrev catalanDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .
 abbrev pitjantjatjaraDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .properName)
 
 /-- Catalan's and Pitjantjatjara's cuts lie in the nominality the scale puts above the
-definites: Catalan marks exactly the pronouns, and Pitjantjatjara the pronouns and names. -/
+definites. Catalan marks exactly the pronouns, and Pitjantjatjara the pronouns and names. -/
 theorem catalan_pitjantjatjara_nominality (a : Animacy) (d : DefinitenessScale) :
     ((a, d) ∈ catalanDOM ↔ d.nominality = .pronoun) ∧
       ((a, d) ∈ pitjantjatjaraDOM ↔ .properName ≤ d.nominality) := by

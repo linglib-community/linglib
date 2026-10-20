@@ -35,7 +35,7 @@ it is sublist-closed.
 * `Language.IsStrictlyPiecewise.mem_of_sublist`: SP languages are subsequence-closed.
 * `Language.IsStrictlyPiecewise.preimage_map`: SP languages are closed under inverse images of
   letter-to-letter maps.
-* `Language.IsStrictlyPiecewise.succ`: `SP_k ⊆ SP_(k+1)`.
+* `Language.IsStrictlyPiecewise.mono`: `SP_k ⊆ SP_k'` for `k ≤ k'`.
 * `Language.IsStrictlyPiecewise.toIsPiecewiseTestable`: `SP_k ⊆ PT_k`.
 * `Language.IsStrictlyPiecewise.isStarFree`: `SP_k ⊆ SF` over a finite alphabet.
 * `Language.isStrictlyPiecewise_avoid`: shuffle-ideal complements are SP.
@@ -76,7 +76,7 @@ def language (k : ℕ) (G : StrictlyPiecewiseGrammar α) : Language α :=
     w ∈ G.language k ↔ ∀ s, s.length ≤ k → s <+ w → s ∈ G :=
   Iff.rfl
 
-/-- SP languages are **subsequence-closed**: deleting symbols cannot create a subsequence
+/-- SP languages are **subsequence-closed**, since deleting symbols cannot create a subsequence
 that was not already there. -/
 theorem mem_language_of_sublist {k : ℕ} {G : StrictlyPiecewiseGrammar α} {v w : List α}
     (hvw : v <+ w) (hw : w ∈ G.language k) : v ∈ G.language k :=
@@ -166,6 +166,13 @@ theorem IsStrictlyPiecewise.succ (h : L.IsStrictlyPiecewise k) :
   refine le_antisymm (fun w hw ↦ ?_) fun w hw s _ hs ↦ h.mem_of_sublist hs hw
   rw [← h]
   exact fun s hlen hs ↦ hw s (hlen.trans (Nat.le_succ k)) hs
+
+/-- `SP_k ⊆ SP_k'` for `k ≤ k'`. -/
+theorem IsStrictlyPiecewise.mono {k' : ℕ} (h : L.IsStrictlyPiecewise k) (hk : k ≤ k') :
+    L.IsStrictlyPiecewise k' := by
+  induction hk with
+  | refl => exact h
+  | step _ ih => exact ih.succ
 
 /-- The strictly-piecewise test, that every subsequence of length at most `k` is permitted,
 depends only on `subseqSet k`, so `SP_k ⊆ PT_k`. -/

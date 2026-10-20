@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Fragments.Tagalog.Phonology
 
@@ -96,31 +96,31 @@ theorem substitute_segment (c : StemC) : Tagalog.substitute c.segment = [c.nasal
 cluster violates it for every stem. It is named after [zuraw-hayes-2017]'s markedness `NasSub`,
 which has the same violation profile on this candidate space. -/
 def nasSub : Constraint NSCand :=
-  Constraint.binary λ c => c.2 = SubSt.no
+  Constraint.binary fun c ↦ c.2 = SubSt.no
 
 /-- *NC of (17), after [pater-1999], forbids a nasal followed by a voiceless obstruent, so the
 faithful cluster violates it for voiceless stems. -/
 def starNC : Constraint NSCand :=
-  Constraint.binary λ c => c.1 ∈ [StemC.p, .t, .k] ∧ c.2 = .no
+  Constraint.binary fun c ↦ c.1 ∈ [StemC.p, .t, .k] ∧ c.2 = .no
 
 /-- *ASSOCIATE of (7) forbids new association lines across a morpheme boundary, so coalescence
 violates it for every stem. -/
 def starAssoc : Constraint NSCand :=
-  Constraint.binary λ c => c.2 = SubSt.yes
+  Constraint.binary fun c ↦ c.2 = SubSt.yes
 
 /-- *[ŋ of (19) forbids a stem to begin with ŋ, so coalescence violates it on velar stems. -/
 def starInitVelar : Constraint NSCand :=
-  Constraint.binary λ c => c.1 ∈ [StemC.k, .g] ∧ c.2 = .yes
+  Constraint.binary fun c ↦ c.1 ∈ [StemC.k, .g] ∧ c.2 = .yes
 
 /-- *[n of (19) forbids a stem to begin with n or a backer nasal, so coalescence violates it on
 coronal and velar stems. -/
 def starInitCorVel : Constraint NSCand :=
-  Constraint.binary λ c => c.1 ∈ [StemC.t, .d, .k, .g] ∧ c.2 = .yes
+  Constraint.binary fun c ↦ c.1 ∈ [StemC.t, .d, .k, .g] ∧ c.2 = .yes
 
 /-- *[m of (19) forbids a stem to begin with m or a backer nasal, so coalescence violates it on
 every stem. -/
 def starInitAll : Constraint NSCand :=
-  Constraint.binary λ c => c.2 = SubSt.yes
+  Constraint.binary fun c ↦ c.2 = SubSt.yes
 
 /-- The six constraints are listed in the order of the paper's footnote on free ranking. -/
 def con : ConstraintSet NSCand (Fin 6)

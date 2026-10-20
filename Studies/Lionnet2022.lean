@@ -13,10 +13,9 @@ public import Linglib.Fragments.Laal.Prosody
 /-!
 # Lionnet (2022): The Features and Geometry of Tone in Laal
 
-This file formalizes the subtonal analysis of the three-height tone system of Laal in
-[lionnet-2022]. The heights are bundles of two register features on a tonal root node, in
-the two-feature model of [yip-1980] and [pulleyblank-1986] and the geometry of [snider-2020]:
-H is `[+upper, −raised]`, M is `[−upper, +raised]`, L is `[−upper, −raised]`, and
+Lionnet analyses the three tone heights of Laal subtonally, as bundles of two register
+features on a tonal root node, in the two-feature model of Yip and Pulleyblank and the geometry
+of Snider. H is `[+upper, −raised]`, M is `[−upper, +raised]`, L is `[−upper, −raised]`, and
 `[+upper, +raised]` is the system's gap (`featural_analysis`, `superHigh_is_the_gap`). The
 analysis unifies the behaviour of the mid tone. It never shares a stem with another height
 (`M_exclusive`); it lowers to L under a `[−raised]` neighbour, the only `[+raised]` tone being
@@ -41,7 +40,6 @@ deletion processes of the paper's §6, its vowel harmony, and the alternative an
 * [yip-1980]
 * [pulleyblank-1986]
 * [snider-2020]
-* [chandlee-jardine-2019]
 -/
 
 @[expose] public section
@@ -65,7 +63,7 @@ theorem featural_analysis :
     TRN.M = ⟨some false, some true⟩ ∧
     TRN.L = ⟨some false, some false⟩ := ⟨rfl, rfl, rfl⟩
 
-/-- Paradigmatic pitch (§5.1): `[upper]` counts two and `[raised]` one, independently per
+/-- Paradigmatic pitch (§5.1) counts `[upper]` as two and `[raised]` as one, independently per
 node, with no register state. -/
 def absolutePitch (t : TRN) : Int :=
   (if t.upper = some true then 2 else 0) + if t.raised = some true then 1 else 0
@@ -78,22 +76,22 @@ theorem absolutePitch_ordered :
 
 /-! ### M-exclusivity: `*MX/XM` (§3, §5.4) -/
 
-/-- **M-exclusivity** (`*MX/XM`): in every attested stem melody, if M occurs then
-the melody is *all* M — M never co-occurs with a different tone at stem level. -/
+/-- **M-exclusivity** (`*MX/XM`). An attested stem melody containing M is *all* M, so M never
+co-occurs with a different tone at stem level. -/
 theorem M_exclusive :
     ∀ m ∈ attestedMelodies, Tone.M ∈ m → ∀ t ∈ m, t = Tone.M := by decide
 
 /-! ### M-lowering as `[−raised]` assimilation (§5.2) -/
 
-/-- M-lowering is `[−raised]` assimilation: an L trigger (`[−raised]`) spreads its
+/-- M-lowering is `[−raised]` assimilation. An L trigger (`[−raised]`) spreads its
 `[raised]` value onto M (the only `[+raised]` tone), turning it into L. -/
 theorem mLowering_from_L : TRN.assimilate .raised TRN.L TRN.M = TRN.L := by decide
 
 /-- M-lowering from a `[−raised]` H trigger likewise turns M into L. -/
 theorem mLowering_from_H : TRN.assimilate .raised TRN.H TRN.M = TRN.L := by decide
 
-/-- Only M is targeted: H is inert under `[−raised]` assimilation (already
-`[−raised]`), explaining why H- and L-toned roots never lower. -/
+/-- Only M is targeted. H is inert under `[−raised]` assimilation, being already
+`[−raised]`, which is why H- and L-toned roots never lower. -/
 theorem H_stable : TRN.assimilate .raised TRN.L TRN.H = TRN.H := by decide
 
 /-- L is likewise inert under `[−raised]` assimilation. -/
@@ -101,8 +99,8 @@ theorem L_stable : TRN.assimilate .raised TRN.H TRN.L = TRN.L := by decide
 
 /-! ### The ventive suffix (§5.5) -/
 
-/-- The ventive suffix (ex. 60) is a floating `[−raised]` feature with `[upper]`
-inherited from the root: `TRN.dock .raised false`. It surfaces as H after a
+/-- The ventive suffix (ex. 60) is a floating `[−raised]` feature, `TRN.dock .raised false`,
+with `[upper]` inherited from the root. It surfaces as H after a
 `[+upper]` (H) root and as L after `[−upper]` (M or L) roots — the M-lowering
 realisation `kárá`/`dàgà`/`jàrà`. -/
 theorem ventive_after_H : TRN.dock .raised false TRN.H = TRN.H := by decide
@@ -114,8 +112,8 @@ theorem ventive_after_L : TRN.dock .raised false TRN.L = TRN.L := by decide
 /-- The Laal tone inventory, as TRNs. -/
 def laalToneInventory : List TRN := ([Tone.H, Tone.M, Tone.L]).map toneToTRN
 
-/-- The fourth feature combination `[+upper, +raised]` (`TRN.superHigh`) is absent:
-it is the systematic gap that makes Laal a Table-4 type-A system (§5.6). -/
+/-- The fourth feature combination `[+upper, +raised]` (`TRN.superHigh`) is absent, the
+systematic gap that makes Laal a Table-4 type-A system (§5.6). -/
 theorem superHigh_is_the_gap : TRN.superHigh ∉ laalToneInventory := by decide
 
 /-! ### The optional OCP-`[raised]` merger (§5.2, ex. 53–55, 58) -/
@@ -127,19 +125,19 @@ multiply-linked autosegment; for fully identical adjacent tones that fusion is
 theorem ocp_raised_merge_LL :
     OCP.collapse [TRN.L, TRN.L] = [TRN.L] := by decide
 
-/-- OCP-`[raised]` is **tier-relative** ([chandlee-jardine-2019]): it constrains the
-`[raised]`-projected tier (`IsCleanOn` reading `.raised`), not whole TRNs. H and L
+/-- OCP-`[raised]` is **tier-relative**. It constrains the `[raised]`-projected tier
+(`IsCleanOn` reading `.raised`), not whole TRNs. H and L
 are distinct *tones* but both `[−raised]`, so adjacent they violate OCP-`[raised]`
 even though `[TRN.H, TRN.L]` is clean as a whole-TRN tier. -/
 theorem ocp_raised_is_tier_relative :
-    ¬ OCP.IsCleanOn (λ _ : TRN => True) (·.raised) [TRN.H, TRN.L] ∧
+    ¬ OCP.IsCleanOn (fun _ : TRN ↦ True) (·.raised) [TRN.H, TRN.L] ∧
       OCP.IsClean [TRN.H, TRN.L] := by decide
 
 /-- Under the optional economy, fusing adjacent identical `[raised]` autosegments leaves
 the `[raised]`-projected tier OCP-clean. -/
 theorem ocp_raised_merge_clean (tier : List TRN) :
     OCP.IsClean (OCP.collapse (tier.map (·.raised))) :=
-  OCP.collapse_clean _
+  OCP.isClean_collapse _
 
 /-! ### The register-tier geometry on the multi-tier substrate (§5–§6)
 
@@ -159,8 +157,8 @@ abbrev laalTier : Fin 4 → Type := ![Option Bool, Option Bool, Unit, Unit]
 def laalWords : ∀ i : Fin 4, List (laalTier i) :=
   Fin.cons [some false] (Fin.cons [some true] (Fin.cons [()] (Fin.cons [()] finZeroElim)))
 
-/-- The hub-and-spoke links (ex. 52): register, `[raised]`, and mora each
-    associate to the TRN. -/
+/-- In the hub-and-spoke links (ex. 52) register, `[raised]`, and mora each associate to the
+TRN. -/
 def laalSpokes (i j : Fin 4) (p q : ℕ) : Prop :=
   ((i, j) = (0, 2) ∨ (i, j) = (1, 2) ∨ (i, j) = (2, 3)) ∧ p = 0 ∧ q = 0
 
@@ -185,8 +183,8 @@ theorem mForm_noCrossing : NoCrossing mForm.obj.edges mForm.obj.arcs := by
   unfold NoCrossing
   decide
 
-/-- **Partial activity** (§5): delinking a feature acts on one tier-pair layer
-    alone — here `[raised]`↔TRN, the pair `(1, 2)`. -/
+/-- Delinking a feature acts on one tier-pair layer alone (**partial activity**, §5), here
+`[raised]`↔TRN, the pair `(1, 2)`. -/
 def delink (L : Fin 4 → Fin 4 → ℕ → ℕ → Prop) (i₀ j₀ : Fin 4)
     (i j : Fin 4) (p q : ℕ) : Prop :=
   ¬ (i = i₀ ∧ j = j₀) ∧ L i j p q
@@ -200,7 +198,7 @@ instance : Finite mForm.obj.V := inferInstanceAs (Finite ((_ : Fin 4) × Fin _))
 instance : Finite delinkRaised.obj.V := inferInstanceAs (Finite ((_ : Fin 4) × Fin _))
 
 /-- Delinking the subtonal `[−raised]` feature leaves the node-to-mora layer, the tier pair
-`(2, 3)`, untouched: partial activity is independent of full activity. -/
+`(2, 3)`, untouched, so partial activity is independent of full activity. -/
 theorem partial_indep_of_full (p q : ℕ) :
     delinkRaised.link 2 3 p q ↔ mForm.link 2 3 p q := by
   unfold delinkRaised mForm
