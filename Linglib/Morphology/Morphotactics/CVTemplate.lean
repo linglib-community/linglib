@@ -15,9 +15,9 @@ A CV template, the prosodic template or CV skeleton of McCarthy's prosodic theor
 nonconcatenative morphology, is an ordered sequence of consonantal and vocalic timing slots, the
 skeletal sibling of the position-class `AffixTemplate`. A `TemplateMatch` pairs a consonantal
 root, a vocalism, and affixal material with a template and a list of association lines, and
-`spellout` reads off the surface segments. Gemination is one melody element associated to several slots, and a slot with
-no association line receives no phonetic realization. The association conventions that draw
-the lines are in `Morphology/Morphotactics/Association.lean`.
+`spellout` reads off the surface segments. Gemination is one melody element associated to
+several slots, and a slot with no association line receives no phonetic realization. The
+association conventions that draw the lines are in `Morphology/Morphotactics/Association.lean`.
 
 ## Main definitions
 
