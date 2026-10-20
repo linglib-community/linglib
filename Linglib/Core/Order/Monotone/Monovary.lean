@@ -26,10 +26,10 @@ beside `MonovaryOn.empty` and `MonovaryOn.comp_right`.
 
 ## Main results
 
-* `monovaryOn_singleton` / `monovaryOn_union` / `monovaryOn_insert` — the
-  `Set.pairwise_*` analogues (and `antivaryOn_*` twins).
-* `monovaryOn_image` — `MonovaryOn f g (k '' u) ↔ MonovaryOn (f ∘ k) (g ∘ k) u`,
-  the image companion of `MonovaryOn.comp_right` (and `antivaryOn_image` twin).
+* `monovaryOn_singleton`, `monovaryOn_union`, `monovaryOn_insert`: the `Set.pairwise_*`
+  analogues, with `antivaryOn_*` twins.
+* `monovaryOn_image`: `MonovaryOn f g (k '' u) ↔ MonovaryOn (f ∘ k) (g ∘ k) u`, the image
+  companion of `MonovaryOn.comp_right`, with an `antivaryOn_image` twin.
 * `MonovaryOn` and `AntivaryOn` on a finset are decidable, so `decide` checks them on finite
   data.
 -/
@@ -41,48 +41,47 @@ variable {ι ι' α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g :
 
 /-! ### Monovary -/
 
-/-- `MonovaryOn` holds vacuously on a singleton: there is only one index. -/
+/-- Any two functions monovary on a singleton. -/
 @[simp] theorem monovaryOn_singleton (a : ι) : MonovaryOn f g {a} := by
   simp [MonovaryOn]
 
-/-- `MonovaryOn` on a union: monovary on each part, plus neither part inverts the
-    order against the other. The `Monovary` analogue of `Set.pairwise_union`. -/
+/-- Two functions monovary on a union iff they monovary on each part and neither part inverts
+the order against the other. The `Monovary` analogue of `Set.pairwise_union`. -/
 theorem monovaryOn_union : MonovaryOn f g (s ∪ t) ↔ MonovaryOn f g s ∧ MonovaryOn f g t ∧
     ∀ a ∈ s, ∀ b ∈ t, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
   grind [MonovaryOn]
 
-/-- `MonovaryOn` on `insert a s`. The `Monovary` analogue of `Set.pairwise_insert`. -/
+/-- The `Monovary` analogue of `Set.pairwise_insert`. -/
 theorem monovaryOn_insert {a : ι} :
     MonovaryOn f g (insert a s) ↔
       MonovaryOn f g s ∧ ∀ b ∈ s, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
   grind [MonovaryOn]
 
-/-- `MonovaryOn` transports across an image: `f, g` monovary on `k '' u` iff
-    `f ∘ k, g ∘ k` monovary on `u`. The image companion of `MonovaryOn.comp_right`
-    (the preimage form). -/
+/-- `f` and `g` monovary on `k '' u` iff `f ∘ k` and `g ∘ k` monovary on `u`. The image
+companion of `MonovaryOn.comp_right`. -/
 theorem monovaryOn_image (k : ι' → ι) (u : Set ι') :
     MonovaryOn f g (k '' u) ↔ MonovaryOn (f ∘ k) (g ∘ k) u := by
   grind [MonovaryOn]
 
 /-! ### Antivary -/
 
-/-- `AntivaryOn` holds vacuously on a singleton: there is only one index. -/
+/-- Any two functions antivary on a singleton. -/
 @[simp] theorem antivaryOn_singleton (a : ι) : AntivaryOn f g {a} := by
   simp [AntivaryOn]
 
-/-- `AntivaryOn` on a union. The `Antivary` analogue of `Set.pairwise_union`. -/
+/-- The `Antivary` analogue of `Set.pairwise_union`. -/
 theorem antivaryOn_union : AntivaryOn f g (s ∪ t) ↔ AntivaryOn f g s ∧ AntivaryOn f g t ∧
     ∀ a ∈ s, ∀ b ∈ t, (g a < g b → f b ≤ f a) ∧ (g b < g a → f a ≤ f b) := by
   grind [AntivaryOn]
 
-/-- `AntivaryOn` on `insert a s`. The `Antivary` analogue of `Set.pairwise_insert`. -/
+/-- The `Antivary` analogue of `Set.pairwise_insert`. -/
 theorem antivaryOn_insert {a : ι} :
     AntivaryOn f g (insert a s) ↔
       AntivaryOn f g s ∧ ∀ b ∈ s, (g a < g b → f b ≤ f a) ∧ (g b < g a → f a ≤ f b) := by
   grind [AntivaryOn]
 
-/-- `AntivaryOn` transports across an image. The image companion of
-    `AntivaryOn.comp_right`. -/
+/-- `f` and `g` antivary on `k '' u` iff `f ∘ k` and `g ∘ k` antivary on `u`. The image
+companion of `AntivaryOn.comp_right`. -/
 theorem antivaryOn_image (k : ι' → ι) (u : Set ι') :
     AntivaryOn f g (k '' u) ↔ AntivaryOn (f ∘ k) (g ∘ k) u := by
   grind [AntivaryOn]

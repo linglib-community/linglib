@@ -14,22 +14,22 @@ public import Linglib.Phonology.Autosegmental.Realization
 A two-tier representation has a melody tier over `true` and a timing tier over `false`,
 labelled by `TwoTier α β`. `AR.ofWords as bs L` presents one by its two tier words and a
 relation `L` between their positions, the form in which the tone studies write
-representations; `AR.primitive` is [jardine-2019]'s autosegmental graph primitive, a melody
-over one timing slot. On these presentations the No-Crossing Constraint is order-respecting
+representations; `AR.primitive` is Jardine's autosegmental graph primitive, a melody over one
+timing slot. On these presentations the No-Crossing Constraint is order-respecting
 association, factor embedding is a bounded search over a pair of tier offsets, and the
 realization of a string of presentations is again one.
 
 ## Main definitions
 
 * `TwoTier α β`, `AR.ofWords`: the two-tier alphabet, and a representation from words.
-* `AR.primitive`: a melody fully associated to one timing slot ([jardine-2019] Definition 1).
+* `AR.primitive`: a melody fully associated to one timing slot.
 * `BlockLinks`: the lines of a realized string of presentations.
 * `AR.SurfacesWith`: a timing slot linked to a given melody label.
 
 ## Main results
 
 * `AR.noCrossing_ofWords_iff`, `AR.noCrossing_primitive`: the NCC on presentations, and
-  for primitives ([jardine-2016b] Theorem 4).
+  for primitives (Theorem 4 of Jardine's dissertation).
 * `AR.factorEmbeds_ofWords_iff`: factor embedding between presentations, hence decidable.
 * `AR.free_realize_ofWords_iff`: a realized string of presentations reads as one.
 
@@ -113,7 +113,7 @@ theorem link_iff_of_true_false {τ : Bool → Type*} {X Y : TieredAR Bool τ}
     X.link i j p q ↔ Y.link i j p q := by
   cases i <;> cases j <;> grind [not_link_self_tier, link_symm]
 
-/-- An autosegmental graph primitive ([jardine-2019] Definition 1): one timing slot `b`,
+/-- The autosegmental graph primitive of [jardine-2019] Definition 1 has one timing slot `b`,
 with every node of the melody `as` associated to it, as in the primitives of `gT`. -/
 abbrev primitive (as : List α) (b : β) : TieredAR Bool (TwoTier α β) :=
   ofWords as [b] fun _ _ => True
@@ -122,21 +122,17 @@ abbrev primitive (as : List α) (b : β) : TieredAR Bool (TwoTier α β) :=
 
 /-- On two tiers, the NCC is order-respecting association from melody to timing. -/
 theorem noCrossing_iff_two_tier {τ : Bool → Type*} (X : TieredAR Bool τ) [Finite X.obj.V] :
-    NoCrossing X.obj.edges X.obj.arcs ↔
-      MonovaryOn Prod.snd Prod.fst {x : ℕ × ℕ | X.link true false x.1 x.2} := by
-  refine (noCrossing_iff X).trans ⟨fun h => h true false, fun h i j => ?_⟩
+    NoCrossing X.obj.edges X.obj.arcs ↔ IsNonCrossing {x : ℕ × ℕ | X.link true false x.1 x.2} := by
+  refine (noCrossing_iff X).trans ⟨fun h ↦ h true false, fun h i j ↦ ?_⟩
   cases i <;> cases j
-  · exact fun a ha => (X.not_link_self_tier _ _ _ ha).elim
-  · rw [monovaryOn_comm]
-    exact fun a ha b hb => h (show (a.2, a.1) ∈ _ from X.link_symm ha)
-      (show (b.2, b.1) ∈ _ from X.link_symm hb)
+  · exact fun a ha ↦ (X.not_link_self_tier _ _ _ ha).elim
+  · exact (isNonCrossing_inv.2 h).subset fun _ hx ↦ X.link_symm hx
   · exact h
-  · exact fun a ha => (X.not_link_self_tier _ _ _ ha).elim
+  · exact fun a ha ↦ (X.not_link_self_tier _ _ _ ha).elim
 
 theorem noCrossing_ofWords_iff :
     NoCrossing (ofWords as bs L).obj.edges (ofWords as bs L).obj.arcs ↔
-      MonovaryOn Prod.snd Prod.fst
-        {x : ℕ × ℕ | x.1 < as.length ∧ x.2 < bs.length ∧ L x.1 x.2} := by
+      IsNonCrossing {x : ℕ × ℕ | x.1 < as.length ∧ x.2 < bs.length ∧ L x.1 x.2} := by
   simp only [noCrossing_iff_two_tier, link_ofWords]
 
 /-- A two-tier representation with at most one timing slot obeys the NCC. -/

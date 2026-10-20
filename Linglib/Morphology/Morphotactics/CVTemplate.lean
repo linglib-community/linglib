@@ -11,46 +11,44 @@ public import Linglib.Phonology.Autosegmental.NonCrossing
 /-!
 # CV templates and template association
 
-The skeletal species of template — [mccarthy-1981]'s *prosodic template*,
-also called the CV-skeleton — as the sibling of the position-class
-`AffixTemplate`: an ordered sequence of consonantal and vocalic timing
-slots. A `TemplateMatch` pairs a consonantal root, a vocalism, and affixal
-material with a template and a list of association lines; `spellout` reads
-off the surface segments. Gemination is a one-to-many association from one
-melody element to several slots ([mccarthy-1981]); a slot with no
-association line receives no phonetic realization.
+A CV template, the prosodic template or CV skeleton of McCarthy's prosodic theory of
+nonconcatenative morphology, is an ordered sequence of consonantal and vocalic timing slots, the
+skeletal sibling of the position-class `AffixTemplate`. A `TemplateMatch` pairs a consonantal
+root, a vocalism, and affixal material with a template and a list of association lines, and
+`spellout` reads off the surface segments. Gemination is one melody element associated to several slots, and a slot with
+no association line receives no phonetic realization. The association conventions that draw
+the lines are in `Morphology/Morphotactics/Association.lean`.
 
-The universal association conventions that build the lines are in
-`Morphology/Morphotactics/Association.lean`; this file provides the
-representations they manipulate.
+## Main definitions
 
-## Main declarations
-
-* `CVSlot`, `CVTemplate` — skeletal slots and templates.
-* `Association` — a sourced melody-to-slot association line.
-* `TemplateMatch` — a root, vocalism, and affix matched to a template.
-* `TemplateMatch.spellout` — the surface segments of a match, and
-  `TemplateMatch.map`, which relabels its melodies.
-* `TemplateMatch.OrderedOn` — the tier-internal well-formedness condition.
-* `TemplateMatch.links` — the per-tier link sets, in the coordinates of the
-  autosegmental substrate.
+* `CVSlot`, `CVTemplate`: skeletal slots and templates.
+* `Association`: a melody-to-slot association line with its source tier.
+* `TemplateMatch`: a root, vocalism, and affix matched to a template.
+* `TemplateMatch.spellout`, `TemplateMatch.map`: the surface segments of a match, and the
+  relabelling of its melodies.
+* `TemplateMatch.OrderedOn`: the association lines of a tier do not cross.
+* `TemplateMatch.links`: the lines of a tier in the position coordinates of
+  `Autosegmental.IsNonCrossing`.
 
 ## Main results
 
-* `TemplateMatch.orderedOn_iff` — `OrderedOn` decomposes into the
-  substrate's `Autosegmental.IsNonCrossing` plus [mccarthy-1981]'s
-  prohibition against many-to-one associations (`SlotUnique`), so the
-  list-level representation here interprets into
-  `Phonology/Autosegmental/NonCrossing.lean` rather than duplicating it.
-* `TemplateMatch.spellout_map` — relabeling the melodies relabels the surface
-  segments.
+* `TemplateMatch.orderedOn_iff`: `OrderedOn` is `Autosegmental.IsNonCrossing` together with
+  the ban on many-to-one association (`SlotUnique`).
+* `TemplateMatch.spellout_map`: relabelling the melodies relabels the surface segments.
+
+## References
+
+* [mccarthy-1981]
+* [lowenstamm-1996]
+* [faust-2026]
+* [goldsmith-1976]
 -/
 
 @[expose] public section
 
 namespace Morphology
 
-/-- A slot in a CV-skeletal template ([mccarthy-1981], [lowenstamm-1996]):
+/-- A slot in a CV-skeletal template ([mccarthy-1981], [lowenstamm-1996]) is
 a bare consonantal timing slot, a vowel timing slot, or a C-slot bearing
 [+consonantal], which blocks association from glides ([faust-2026]). -/
 inductive CVSlot where
@@ -89,7 +87,7 @@ instance : DecidablePred RequiresConsonantal := fun s => by
 
 end CVSlot
 
-/-- A CV-skeletal template: an ordered sequence of timing slots. -/
+/-- A CV-skeletal template is an ordered sequence of timing slots. -/
 structure CVTemplate where
   /-- The slots, in order. -/
   slots : List CVSlot
@@ -126,9 +124,9 @@ def vSlots (t : CVTemplate) : List Nat :=
 
 end CVTemplate
 
-/-- The tier a melody element on one end of an association line belongs to:
-the consonantal root, the vocalism, or affixal material. Tiers are
-morphologically defined ([mccarthy-1981]) — one melody per morpheme class. -/
+/-- The tier that the melody element at one end of an association line belongs to, which is
+the consonantal root, the vocalism, or affixal material. Tiers are morphologically defined
+([mccarthy-1981]), with one melody per morpheme class. -/
 inductive AssocSource where
   /-- The consonantal root tier. -/
   | root
@@ -182,9 +180,9 @@ def melody : AssocSource → List α
 /-- The segment an association line contributes, if its index is in range. -/
 def segmentAt (a : Association) : Option α := (m.melody a.source)[a.melodyIndex]?
 
-/-- The surface segments of the match: each slot contributes the segment of
-its first association line; a slot with no association receives no phonetic
-realization ([mccarthy-1981]). -/
+/-- The surface segments of the match. Each slot contributes the segment of its first
+association line, and a slot with no association receives no phonetic realization
+([mccarthy-1981]). -/
 def spellout : List α :=
   (List.range m.template.length).filterMap fun i =>
     (m.associations.find? (·.slotIndex == i)).bind m.segmentAt
@@ -203,9 +201,9 @@ abbrev inBounds : Prop :=
   ∀ a ∈ m.associations,
     a.slotIndex < m.template.length ∧ a.melodyIndex < (m.melody a.source).length
 
-/-- `m.OrderedOn s` asserts that the association lines from tier `s` do not
-cross: distinct melody elements associate to slots in melody order
-([goldsmith-1976]'s no-crossing condition, within one tier). -/
+/-- `m.OrderedOn s` asserts that distinct melody elements of tier `s` associate to slots in
+melody order, so that the association lines from `s` do not cross ([goldsmith-1976]'s
+no-crossing condition, within one tier). -/
 def OrderedOn (s : AssocSource) : Prop :=
   ∀ a ∈ m.associations, ∀ b ∈ m.associations,
     a.source = s → b.source = s →
@@ -263,9 +261,8 @@ theorem spellout_nil (r : ConsonantalRoot α) (t : CVTemplate) :
 
 open Autosegmental
 
-/-- The link set of tier `s`, in the two-layer coordinates of
-`Phonology/Autosegmental/NonCrossing.lean`: one `(melodyIndex, slotIndex)`
-pair per association line from `s`. -/
+/-- The lines of tier `s` in the position coordinates of `Autosegmental.IsNonCrossing`, one
+`(melodyIndex, slotIndex)` pair per association line from `s`. -/
 def links (s : AssocSource) : Finset (Nat × Nat) :=
   ((m.associations.filter (·.source == s)).map fun a =>
     (a.melodyIndex, a.slotIndex)).toFinset
@@ -290,12 +287,11 @@ theorem mem_links (p : Nat × Nat) (s : AssocSource) :
   · rintro ⟨a, ha, hs, h1, h2⟩
     exact ⟨a, ⟨ha, hs⟩, by cases p; simp_all⟩
 
-/-- A tier is `OrderedOn` iff its link set is non-crossing in the sense of
-the autosegmental substrate *and* one-to-one per slot: [goldsmith-1976]'s
-No-Crossing Constraint plus [mccarthy-1981]'s prohibition against
+/-- A tier is `OrderedOn` iff its lines are non-crossing and one-to-one per slot, which is
+[goldsmith-1976]'s No-Crossing Constraint plus [mccarthy-1981]'s prohibition against
 many-to-one associations. -/
 theorem orderedOn_iff (s : AssocSource) :
-    m.OrderedOn s ↔ IsNonCrossing (m.links s) ∧ m.SlotUnique s := by
+    m.OrderedOn s ↔ IsNonCrossing (m.links s : SetRel ℕ ℕ) ∧ m.SlotUnique s := by
   constructor
   · refine fun h => ⟨isNonCrossing_iff.mpr ?_, fun a ha b hb has hbs hslot => ?_⟩
     · rintro p hp q hq hlt
