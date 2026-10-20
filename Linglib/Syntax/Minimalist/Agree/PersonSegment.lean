@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Agreement.Geometry
+public import Mathlib.Order.Interval.Finset.Defs
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -75,6 +76,10 @@ instance : DecidableLE PersonSegment := fun a b ↦ inferInstanceAs (Decidable (
 instance : OrderBot PersonSegment where
   bot := .pi
   bot_le := by decide
+
+/-- `Finset.Ici a` is the segment `a` and the segments it dominates. -/
+instance : LocallyFiniteOrderTop PersonSegment :=
+  .ofIci' PersonSegment (fun a ↦ Finset.univ.filter (a ≤ ·)) fun _ _ ↦ by simp
 
 /-- The segments a person bears, the nodes of its geometry. -/
 def spec (p : Person) : Finset PersonSegment := Finset.univ.filter (·.toNode ∈ personFeatures p)
