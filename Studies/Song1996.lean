@@ -6,11 +6,12 @@ public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.IntervalCases
 public import Linglib.Semantics.Causation.Morphological
 public import Linglib.Data.Examples.Song1996
+public import Linglib.Fragments.Korean.Verbs
 
 /-!
 # Song (1996): Causatives and causation
 
-[song-1996] classifies causative constructions by what joins the expression of cause to the
+Song classifies causative constructions by what joins the expression of cause to the
 expression of effect. In the COMPACT type [Vcause] and [Veffect] share one clause, fused (English
 *kill*), bound (Turkish *öl-dür*) or free (French *faire lire*); in the AND type a clause of cause
 and a clause of effect are coordinated, in that order (Vata *le*); in the PURP type the clause of
@@ -30,16 +31,19 @@ when it expresses RESULT (`forall_meaning_subset_iff`), so the AND type is impli
 PURP type is not (`and_meaning_subset`, `purp_not_implicative`), as the example (7) bears out
 (`effectNegated_rows`), while COMPACT causatives go either way (`compact_implicativity_varies`);
 the success assumption restores implicativity (`meaning_subset_of_success`). The paradigm
-causative of [comrie-1989]'s case hierarchy never has more than three core NPs
+causative of Comrie's case hierarchy never has more than three core NPs
 (`paradigmCoreNPs_le_three`), so a language capped at two refutes the hierarchy for transitive
-bases (`paradigmCoreNPs_two`).
+bases (`paradigmCoreNPs_two`). Korean has causatives of all three traditional classes
+(`korean_types`). Its causative *ha-* needs its clause of effect, which a purposive main verb does
+not (`clause_omitted_rows`), and the causee is nominative exactly where *ha-* controls nothing
+(`causee_rows`), as the subject of a clause of purpose always is (`purposive_subject_rows`).
 
 ## Implementation notes
 
 * A form records the structure Song reads off an example: one clause and how [Vcause] is
   realized, or two clauses, their link and their order. The forms of the examples are row
   features, and their types are computed.
-* The traditional class of a free [Vcause] is morphological, after [comrie-1989]'s treatment of
+* The traditional class of a free [Vcause] is morphological, after Comrie's treatment of
   the French causative as quasi-morphological, which Song reports (p. 161); Song's own
   description of the traditional typology (p. 135) does not place it.
 * The semantic structures are those of the prototypical types. A model interprets the three
@@ -81,9 +85,9 @@ inductive Vcause where
   | free
   deriving DecidableEq, Repr, Fintype
 
-/-- The term joining the two clauses of a biclausal causative: AND, a coordinator or nothing, the
-order of the clauses registering their sequence (§2.4), or PURP, a marker of goal or purpose on
-the clause of effect (§2.5). -/
+/-- The term joining the two clauses of a biclausal causative is AND, a coordinator or nothing,
+the order of the clauses registering their sequence (§2.4), or PURP, a marker of goal or purpose
+on the clause of effect (§2.5). -/
 inductive Link where
   | and_
   | purp
@@ -95,8 +99,8 @@ inductive ClauseOrder where
   | effectCause
   deriving DecidableEq, Repr, Fintype
 
-/-- A causative construction's form in Song's operating terms (§2.2): [Vcause] and [Veffect] in
-one clause, or a clause of cause and a clause of effect joined by a link. -/
+/-- A causative construction's form, in Song's operating terms (§2.2), is [Vcause] and [Veffect]
+in one clause, or a clause of cause and a clause of effect joined by a link. -/
 inductive Form where
   | oneClause (v : Vcause)
   | twoClauses (link : Link) (order : ClauseOrder)
@@ -111,10 +115,10 @@ inductive CausativeType where
 
 namespace Form
 
-/-- The type of a form, by the schemas (3), (29) and (60): one clause is COMPACT whatever the
-order of [Vcause] and [Veffect]; a clause of purpose makes PURP in either order of the clauses;
-coordinated clauses make AND only with the clause of cause first, their order being fixed
-(p. 35). -/
+/-- The type of a form follows the schemas (3), (29) and (60). One clause is COMPACT whatever
+the order of [Vcause] and [Veffect], a clause of purpose makes PURP in either order of the
+clauses, and coordinated clauses make AND only with the clause of cause first, their order being
+fixed (p. 35). -/
 def type : Form → Option CausativeType
   | oneClause _ => some .compact
   | twoClauses .purp _ => some .purp
@@ -162,7 +166,7 @@ theorem not_factorsThrough_traditional : ¬ Function.FactorsThrough Form.type Fo
 
 /-! ### Implicativity and the cognitive structure of causation (chapter 5) -/
 
-/-- The stages of the cognitive structure of causation, in their temporal order (10): the
+/-- The stages of the cognitive structure of causation are, in their temporal order (10), the
 perception of a desire or wish (GOAL), the deliberate attempt to realize it (EVENT), and its
 accomplishment (RESULT). -/
 inductive Stage where
@@ -182,13 +186,13 @@ def Stage.prop (goal event effect : Set W) : Stage → Set W
   | .event => event
   | .result => effect
 
-/-- The semantic structure of the type a link forms (11): EVENT and RESULT for the AND type, GOAL
-and EVENT for the PURP type. -/
+/-- The semantic structure of the type a link forms (11) is EVENT and RESULT for the AND type and
+GOAL and EVENT for the PURP type. -/
 def Link.stages : Link → Finset Stage
   | .and_ => {.event, .result}
   | .purp => {.goal, .event}
 
-/-- What a biclausal causative asserts: every stage its semantic structure expresses. -/
+/-- A biclausal causative asserts every stage its semantic structure expresses. -/
 def Link.meaning (l : Link) (goal event effect : Set W) : Set W :=
   l.stages.inf (Stage.prop goal event effect)
 
@@ -216,9 +220,9 @@ theorem purp_not_implicative :
     ¬ ∀ (W : Type) (goal event effect : Set W), Link.purp.meaning goal event effect ⊆ effect :=
   fun h ↦ absurd ((forall_meaning_subset_iff .purp).1 h) (by decide)
 
-/-- Implicativity restored (§5.4): under the assumption (19) that people generally succeed in
-realizing the goals they act for, a causative of either type entails its effect, the PURP type by
-the inference from (20) to (21). -/
+/-- Under the assumption (19) that people generally succeed in realizing the goals they act for,
+a causative of either type entails its effect, the PURP type by the inference from (20) to (21),
+which restores implicativity (§5.4). -/
 theorem meaning_subset_of_success (l : Link) {goal event effect : Set W}
     (h : goal ∩ event ⊆ effect) : l.meaning goal event effect ⊆ effect := by
   cases l
@@ -227,15 +231,18 @@ theorem meaning_subset_of_success (l : Link) {goal event effect : Set W}
 
 end Meaning
 
-/-- Song's diagnostic on his biclausal examples: denying the effect is acceptable exactly when the
-link's semantic structure lacks RESULT, as for the PURP causative (7) (pp. 12–13). -/
+/-- On Song's biclausal examples, denying the effect is acceptable exactly when the link's
+semantic structure lacks RESULT, as for the PURP causatives (7) (pp. 12–13) and ch. 4 (11). -/
 theorem effectNegated_rows : ∀ e ∈ Examples.all, e.feature? "effect" = some "negated" →
     ∀ l o, Form.ofRow e = some (.twoClauses l o) →
       (e.judgment = .acceptable ↔ Stage.result ∉ l.stages) := by
   decide +kernel
 
-/-- Every example's form parses, so that `effectNegated_rows` reads each row. -/
-example : ∀ e ∈ Examples.all, (Form.ofRow e).isSome := by decide +kernel
+/-- Every example that records its clauses has a form, and every example with its effect denied
+records them, so that `effectNegated_rows` reads each such row. -/
+example : ∀ e ∈ Examples.all, ((e.feature? "clauses").isSome → (Form.ofRow e).isSome) ∧
+    (e.feature? "effect" = some "negated" → (e.feature? "clauses").isSome) := by
+  decide +kernel
 
 /-- The PURP causative (7) meets the premises of `effectNegated_rows`. -/
 example : Examples.ex_7.feature? "effect" = some "negated" ∧
@@ -251,6 +258,46 @@ theorem compact_implicativity_varies : ∃ e₁ ∈ Examples.all, ∃ e₂ ∈ E
     e₁.judgment = .ungrammatical ∧ e₂.judgment = .acceptable :=
   ⟨Examples.ex_6, by simp [Examples.all], Examples.ex_104, by simp [Examples.all],
     by decide +kernel⟩
+
+/-! ### Korean (chapter 4) -/
+
+/-- Korean has a lexical, a morphological and a syntactic causative, the first two of the
+COMPACT type and the third of the PURP type (§4.2 (1)–(3)). -/
+theorem korean_types :
+    [Examples.ch4_1b, Examples.ch4_2b, Examples.ch4_3].map (fun e ↦
+        (Form.ofRow e).map fun f ↦ (f.traditional, f.type)) =
+      [some (.lexical, some .compact), some (.morphological, some .compact),
+        some (.periphrastic, some .purp)] := by
+  decide +kernel
+
+/-- The causative *ha-* takes its clause of effect in every diathesis, while a clause of purpose
+is an adjunct, so (3) without its clause is out (6) and (4) without its clause stands (7)
+(§4.2). -/
+theorem clause_omitted_rows : (∀ fr ∈ Korean.ha.valency.frames, fr.HasClausal) ∧
+    ∀ e ∈ Examples.all, e.feature? "clause" = some "omitted" →
+      (e.judgment = .acceptable ↔ e.feature? "construction" = some "purposive") := by
+  decide +kernel
+
+/-- The diathesis of `Korean.ha` in a long causative, the first in the PURP causative and the
+second in the complement causative. -/
+def haDiathesis? (e : Datum) : Option (Diathesis Korean.ha.valency.arity) :=
+  (e.parse? "construction" [("PURP causative", 0), ("complement causative", 1)]).bind
+    (Korean.ha.valency.diatheses[·]?)
+
+/-- The causee of a long causative is nominative exactly when no participant of *ha-* controls
+the clause of effect. In the PURP causative it is the dative or accusative object of *ha-*
+controlling the clause, in the complement causative the subject of the clause (§4.2 (3), (5),
+(8), (11); §4.6). -/
+theorem causee_rows : Korean.ha.valency.diatheses.map (·.controllerRole) = [some .P, none] ∧
+    ∀ e ∈ Examples.all, ∀ d ∈ haDiathesis? e, ∀ c ∈ e.feature? "causee",
+      e.judgment = .acceptable → (c = "NOM" ↔ d.controller = none) := by
+  decide +kernel
+
+/-- The subject of a clause of purpose is nominative only (§4.2 (4), (9), (10)). -/
+theorem purposive_subject_rows : ∀ e ∈ Examples.all,
+    e.feature? "construction" = some "purposive" → ∀ c ∈ e.feature? "subject",
+      (e.judgment = .acceptable ↔ c = "NOM") := by
+  decide +kernel
 
 /-! ### NP density control and the case hierarchy (chapter 6) -/
 

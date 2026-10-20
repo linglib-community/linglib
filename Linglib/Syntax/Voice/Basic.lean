@@ -442,6 +442,15 @@ def marked (ms : List Morphology.Morph) : Voice := { v with marker := ms }
 
 @[simp] theorem marker_marked (ms : List Morphology.Morph) : (v.marked ms).marker = ms := rfl
 
+@[simp] theorem coding_marked (ms : List Morphology.Morph) :
+    (v.marked ms).coding = .ofMarker ms := rfl
+
+@[simp] theorem fateOfRole_marked (ms : List Morphology.Morph) (r : TermRole) :
+    (v.marked ms).fateOfRole r = v.fateOfRole r := rfl
+
+@[simp] theorem newParticipant_marked (ms : List Morphology.Morph) :
+    (v.marked ms).newParticipant = v.newParticipant := rfl
+
 theorem coding_eq_uncoded_iff : v.coding = .uncoded ↔ v.marker = [] := by
   unfold coding Coding.ofMarker
   split_ifs <;> simp_all
