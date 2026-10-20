@@ -16,16 +16,15 @@ seeking [plural], whose exponent surfaces only when no clitic fills the slot (65
 Béjar and Rezac's Person Licensing Condition makes the person restriction, at most one 1st/2nd
 person core argument, the consequence of a single person probe (75), (76), and under the
 obligatory-operations model of chapter 5 a probe that finds no goal ends unvalued (112), (113).
-The probes read features, not salience: the K'ichee' formal addressee, whose agreement is
-third person singular, does not outrank the third person (§7.1).
+The probes read agreement features, not salience, so the K'ichee' formal addressee, which agrees as
+a third person singular, does not outrank the third person (§7.1).
 
 ## Main results
 
 * `Preminger2014.afTarget_eq`, `Preminger2014.afTarget_eq_rank`: the slot reflects the
   participant if there is one, otherwise the plural argument.
 * `Preminger2014.af_paradigm`, `Preminger2014.afMarker_comm`: the probes deliver the hierarchy's
-  marker, symmetrically in subject and object, in any paradigm with a null third person
-  singular.
+  marker, symmetrically in subject and object.
 * `Preminger2014.personRestriction_iff_plc`: the person restriction is the Person Licensing
   Condition.
 * `Preminger2014.participant_marker`: the clitic carries its goal's whole φ-set (68), (69).
@@ -42,10 +41,10 @@ third person singular, does not outrank the third person (§7.1).
 ## Implementation notes
 
 The probes are the substrate's `Probe.Target.participant` and `.plural`, and their competition
-for the slot (71) is their `Probe.cascade`; the marker is a language's Set B exponent of the
-cascade's goal, Kaqchikel's or K'ichee''s. The paradigm (22) enters as the hierarchy (23) read
-as `rank`. The morphophonology (§3.4), §4.5–§4.6, and the Zulu and Basque studies of chapter 6
-are prose; the Zulu analysis is `Studies/Halpert2012.lean`.
+for the slot (71) is their `Probe.cascade`; the marker is the fragment's Set B exponent of the
+cascade's goal. The paradigm (22) enters as the hierarchy (23) read as `rank`. The
+morphophonology (§3.4), §4.5–§4.6, and the Zulu and Basque studies of chapter 6 are prose; the
+Zulu analysis is `Studies/Halpert2012.lean`.
 
 ## References
 
@@ -82,13 +81,13 @@ def Plc (subj obj : Bundle) : Prop :=
 instance (subj obj : Bundle) : Decidable (Plc subj obj) :=
   inferInstanceAs (Decidable (Probe.AllLicensed _ _ _))
 
-/-- The absolutive exponent of a cell in a paradigm, empty where the paradigm has none. -/
-def exponent (t : Mayan.ExponentTable) (c : Bundle) : List Morphology.Morph := (t.realize c).getD []
+/-- The absolutive exponent of a cell, empty where the paradigm has none. -/
+def exponent (c : Bundle) : List Morphology.Morph := (setBExponent.realize c).getD []
 
 /-- The Agent-Focus marker is the exponent of the slot's goal, the empty exponent when both probes
 fail, and undefined when the Person Licensing Condition fails. -/
-def afMarker (t : Mayan.ExponentTable) (subj obj : Bundle) : Option (List Morphology.Morph) :=
-  if Plc subj obj then some (((afTarget subj obj).map (exponent t)).getD []) else none
+def afMarker (subj obj : Bundle) : Option (List Morphology.Morph) :=
+  if Plc subj obj then some (((afTarget subj obj).map exponent).getD []) else none
 
 /-- The person restriction (25) allows at most one core argument to bear [participant]. -/
 def PersonRestriction (subj obj : Bundle) : Prop := ¬ (subj.IsParticipant ∧ obj.IsParticipant)
@@ -123,8 +122,22 @@ theorem afTarget_eq_rank (s o : Bundle) :
 
 /-- The hierarchy (23) as an account is the morphological competition of §3.3.2, in which the slot
 shows the higher-ranked argument's absolutive marker. -/
-def hierarchyMarker (t : Mayan.ExponentTable) (subj obj : Bundle) : List Morphology.Morph :=
-  exponent t (if rank obj ≤ rank subj then subj else obj)
+def hierarchyMarker (subj obj : Bundle) : List Morphology.Morph :=
+  exponent (if rank obj ≤ rank subj then subj else obj)
+
+/-- On every licit pair of person–number cells of the paradigm (22), (74), the probes deliver the
+hierarchy's marker. -/
+theorem af_paradigm :
+    ∀ s ∈ Bundle.personNumberCells, ∀ o ∈ Bundle.personNumberCells,
+      PersonRestriction s o → afMarker s o = some (hierarchyMarker s o) := by
+  decide
+
+/-- The marker is symmetric in subject and object (22, note a), (74), a consequence of skipping,
+since the probe finds its goal in either position. -/
+theorem afMarker_comm :
+    ∀ s ∈ Bundle.personNumberCells, ∀ o ∈ Bundle.personNumberCells,
+      afMarker s o = afMarker o s := by
+  decide
 
 /-! ### Licensing (§4.4.2) -/
 
@@ -138,55 +151,16 @@ theorem personRestriction_iff_plc (s o : Bundle) : PersonRestriction s o ↔ Plc
 
 /-- The marker is undefined exactly when the person restriction is violated; two plural
 arguments in particular are never excluded (77). -/
-theorem afMarker_eq_none_iff (t : Mayan.ExponentTable) (s o : Bundle) :
-    afMarker t s o = none ↔ ¬ PersonRestriction s o := by
+theorem afMarker_eq_none_iff (s o : Bundle) : afMarker s o = none ↔ ¬ PersonRestriction s o := by
   rw [afMarker, personRestriction_iff_plc]
   split_ifs with h <;> simp [h]
-
-private theorem eq_thirdSg_of_rank_eq_zero : ∀ c ∈ Bundle.personNumberCells, rank c = 0 →
-    c = .personNumber .third .singular := by
-  decide
-
-/-- On every licit pair of person–number cells, the probes deliver the hierarchy's marker (22),
-(74) in any paradigm with a null third person singular, Kaqchikel's and K'ichee''s among them,
-agreement in Agent-Focus being essentially the same in the two (chapter 7, note 1). -/
-theorem af_paradigm (t : Mayan.ExponentTable) (ht : t.IsThirdSgZero) :
-    ∀ s ∈ Bundle.personNumberCells, ∀ o ∈ Bundle.personNumberCells,
-      PersonRestriction s o → afMarker t s o = some (hierarchyMarker t s o) := by
-  intro s hs o _ h
-  rw [afMarker, ite_eq_left ((personRestriction_iff_plc s o).1 h), afTarget_eq_rank,
-    hierarchyMarker]
-  split_ifs with h0 h1
-  · rw [eq_thirdSg_of_rank_eq_zero s hs h0.1]
-    simp [exponent, show t.realize (.personNumber .third .singular) = some [] from ht]
-  · omega
-  · rfl
-  · rfl
-
-/-- The slot's goal is symmetric in subject and object on every licit pair of cells, a
-consequence of skipping, since the probe finds its goal in either position. -/
-theorem afTarget_comm : ∀ s ∈ Bundle.personNumberCells, ∀ o ∈ Bundle.personNumberCells,
-    PersonRestriction s o → afTarget s o = afTarget o s := by
-  decide
-
-/-- The marker is symmetric in subject and object (22, note a), (74), in any paradigm. -/
-theorem afMarker_comm (t : Mayan.ExponentTable) :
-    ∀ s ∈ Bundle.personNumberCells, ∀ o ∈ Bundle.personNumberCells,
-      afMarker t s o = afMarker t o s := by
-  intro s hs o ho
-  have hos : PersonRestriction s o ↔ PersonRestriction o s := not_congr and_comm
-  by_cases h : PersonRestriction s o
-  · rw [afMarker, afMarker, ite_eq_left ((personRestriction_iff_plc s o).1 h),
-      ite_eq_left ((personRestriction_iff_plc o s).1 (hos.1 h)), afTarget_comm s hs o ho h]
-  · rw [(afMarker_eq_none_iff t s o).2 h, (afMarker_eq_none_iff t o s).2 (mt hos.2 h)]
 
 /-- The clitic is featurally coarse (68), (69). With one participant argument, the marker is
 that argument's whole exponent, its number included, whether it is the subject or the object
 and whatever the other argument's number. -/
-theorem participant_marker (t : Mayan.ExponentTable) (s o : Bundle)
-    (h : ¬ (s.IsParticipant ∧ o.IsParticipant)) :
-    (s.IsParticipant → afMarker t s o = some (exponent t s)) ∧
-      (o.IsParticipant → afMarker t s o = some (exponent t o)) := by
+theorem participant_marker (s o : Bundle) (h : ¬ (s.IsParticipant ∧ o.IsParticipant)) :
+    (s.IsParticipant → afMarker s o = some (exponent s)) ∧
+      (o.IsParticipant → afMarker s o = some (exponent o)) := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 h
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
   refine ⟨fun hs ↦ by simp [hs], fun ho ↦ ?_⟩
@@ -206,19 +180,18 @@ theorem afTarget_eq_none_iff (s o : Bundle) :
 
 /-- Failed Agree is tolerated (112), (113). With no participant and no plural argument, both
 probes end unvalued, the derivation converges, and the slot carries the null exponent. -/
-theorem failed_agree_tolerated (t : Mayan.ExponentTable) (s o : Bundle)
-    (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant) (hsp : ¬ s.IsPlural) (hop : ¬ o.IsPlural) :
-    afTarget s o = none ∧ afMarker t s o = some [] := by
+theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant)
+    (hsp : ¬ s.IsPlural) (hop : ¬ o.IsPlural) :
+    afTarget s o = none ∧ afMarker s o = some [] := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 fun h ↦ hs h.1
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
   simp [hs, ho, hsp, hop]
 
 /-- There is no gratuitous nonagreement (114). With no participant argument, a plural argument
 must be agreed with, and the slot carries its exponent, the subject's first. -/
-theorem plural_marker (t : Mayan.ExponentTable) (s o : Bundle) (hs : ¬ s.IsParticipant)
-    (ho : ¬ o.IsParticipant) :
-    (s.IsPlural → afMarker t s o = some (exponent t s)) ∧
-      (¬ s.IsPlural → o.IsPlural → afMarker t s o = some (exponent t o)) := by
+theorem plural_marker (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant) :
+    (s.IsPlural → afMarker s o = some (exponent s)) ∧
+      (¬ s.IsPlural → o.IsPlural → afMarker s o = some (exponent o)) := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 fun h ↦ hs h.1
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
   exact ⟨fun hsp ↦ by simp [hs, ho, hsp], fun hsp hop ↦ by simp [hs, ho, hsp, hop]⟩
@@ -238,27 +211,24 @@ theorem relativization_contrast :
 /-- There is an asymmetry a hierarchy cannot state (§7.1). It assigns a marker to two participant
 arguments, which the probes exclude, while two plural arguments are admitted by both. -/
 theorem hierarchy_silent_on_restriction :
-    afMarker setBExponent (.personNumber .first .singular) (.personNumber .second .singular) =
-        none ∧
-      hierarchyMarker setBExponent (.personNumber .first .singular)
-          (.personNumber .second .singular) =
-        exponent setBExponent (.personNumber .first .singular) ∧
-      afMarker setBExponent (.personNumber .third .plural) (.personNumber .third .plural) =
-        some (exponent setBExponent (.personNumber .third .plural)) := by
+    afMarker (.personNumber .first .singular) (.personNumber .second .singular) = none ∧
+      hierarchyMarker (.personNumber .first .singular) (.personNumber .second .singular) =
+        exponent (.personNumber .first .singular) ∧
+      afMarker (.personNumber .third .plural) (.personNumber .third .plural) =
+        some (exponent (.personNumber .third .plural)) := by
   decide
 
-/-- The K'ichee' formal addressee does not outrank the third person (§7.1, quoting Stiebels):
-the slot follows its agreement cell, the third person singular's, not its reference to the
-hearer. Beside a first person singular argument the slot shows the first person, where the
-familiar addressee violates the person restriction, and beside a third person plural it shows
+/-- The K'ichee' formal addressee *laal* does not outrank the third person (§7.1, quoting
+Stiebels). It denotes the hearer, as *at* does, but agrees as a third person singular, and the
+probes read agreement: beside a first person singular argument the slot reflects the first
+person, where *at* violates the person restriction, and beside a third person plural it reflects
 the plural. -/
 theorem formal_addressee :
-    afMarker Kiche.setBExponent (Kiche.addresseeCell .honorific .singular)
-        (.personNumber .first .singular) = some [.pref "in"] ∧
-      afMarker Kiche.setBExponent (Kiche.addresseeCell .nonhonorific .singular)
-        (.personNumber .first .singular) = none ∧
-      afMarker Kiche.setBExponent (Kiche.addresseeCell .honorific .singular)
-        (.personNumber .third .plural) = some [.pref "ee"] := by
+    afTarget (phi Kiche.laal) (.personNumber .first .singular) =
+        some (.personNumber .first .singular) ∧
+      ¬ PersonRestriction (phi Kiche.at_) (.personNumber .first .singular) ∧
+      afTarget (phi Kiche.laal) (.personNumber .third .plural) =
+        some (.personNumber .third .plural) := by
   decide
 
 end Preminger2014

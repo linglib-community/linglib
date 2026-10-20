@@ -16,9 +16,9 @@ consonant and *w-*, *aw-*, *r-*, *q-*, *iw-* and *k-* before a vowel, indexes th
 subject and the possessor of a noun, where the first person singular possessive is *nu-*. The
 alignment is ergative in every aspect. The verbal complex runs aspect, Set B, Set A, stem,
 status suffix, so that Set B precedes the stem and K'iche' is a high-absolutive language. The
-honorific second person is marked by the enclitics *=la* in the singular and *=alaq* in the
-plural, after the verb whatever their function, and leaves the prefix slot empty, as the third
-person singular does. The independent pronouns are the Set B forms
+honorific second person agrees as a third person singular, leaving the prefix slot empty, and is
+marked by the enclitics *=la* in the singular and *=alaq* in the plural, after the verb whatever
+their function. The independent pronouns are the Set B forms
 in the first and second persons, *in*, *at*, *oj*, *ix* and the honorific *laal* and *alaq*, and
 *are'* and *a're'* in the third, usually with a determiner. Can Pixabaj's sketch and Mondloch's
 grammar are the sources.
@@ -29,7 +29,11 @@ grammar are the sources.
 * `Kiche.laEncl`, `Kiche.alaqEncl`: the honorific second person enclitics.
 * `Kiche.template`, `Kiche.assignCase`: the verbal complex and the ergative case function.
 * `Kiche.pronouns`: the independent pronouns.
-* `Kiche.addresseeCell`: the Set B cell the second person controls at each grade.
+
+## Main results
+
+* `Kiche.addressee_honorific`: the honorific second person denotes what the nonhonorific one
+  does and agrees as the third person singular.
 
 ## References
 
@@ -96,8 +100,10 @@ def in_ : PersonalPronoun := { form := "in", person := some .first, number := so
 /-- The second person singular *at*. -/
 def at_ : PersonalPronoun := { form := "at", person := some .second, number := some .singular }
 
-/-- The honorific second person singular *laal*. -/
-def laal : PersonalPronoun := { form := "laal", person := some .second, number := some .singular }
+/-- The honorific second person singular *laal*. It agrees as a third person singular and
+denotes the addressee. -/
+def laal : PersonalPronoun :=
+  { form := "laal", person := some .third, number := some .singular, referential := {.addressee} }
 
 /-- The third person singular *are'*, usually with a determiner, *ri are'*. -/
 def are' : PersonalPronoun := { form := "are'", person := some .third, number := some .singular }
@@ -108,8 +114,11 @@ def oj : PersonalPronoun := { form := "oj", person := some .first, number := som
 /-- The second person plural *ix*. -/
 def ix : PersonalPronoun := { form := "ix", person := some .second, number := some .plural }
 
-/-- The honorific second person plural *alaq*. -/
-def alaq : PersonalPronoun := { form := "alaq", person := some .second, number := some .plural }
+/-- The honorific second person plural *alaq*. It agrees as a third person singular and
+denotes the addressee with others. -/
+def alaq : PersonalPronoun :=
+  { form := "alaq", person := some .third, number := some .singular,
+    referential := {.addresseeOthers} }
 
 /-- The third person plural *a're'*, usually with a determiner, *ri a're'*. -/
 def a're' : PersonalPronoun := { form := "a're'", person := some .third, number := some .plural }
@@ -124,17 +133,12 @@ def addresseePl : Grade → PersonalPronoun
   | .nonhonorific => ix
   | .honorific => alaq
 
-/-- The Set B cell of the second person at a grade, its own at the nonhonorific grade and the
-third person singular's at the honorific grade, whose prefix is empty and whose person the
-enclitic *=la* or *=alaq* carries. -/
-def addresseeCell : Grade → Number → Agreement.Bundle
-  | .nonhonorific, n => .personNumber .second n
-  | .honorific, _ => .personNumber .third .singular
-
-/-- The honorific second person has no Set B prefix. -/
-theorem setBExponent_realize_addresseeCell_honorific (n : Number) :
-    setBExponent.realize (addresseeCell .honorific n) = some [] := by
-  cases n <;> decide
+/-- The honorific second person denotes what the nonhonorific one does and agrees as the third
+person singular *are'* does. -/
+theorem addressee_honorific :
+    laal.referential = at_.referential ∧ alaq.referential = ix.referential ∧
+      phi laal = phi are' ∧ phi alaq = phi are' := by
+  decide
 
 /-- The independent pronouns. -/
 def pronouns : Finset PersonalPronoun := {in_, at_, laal, are', oj, ix, alaq, a're'}
