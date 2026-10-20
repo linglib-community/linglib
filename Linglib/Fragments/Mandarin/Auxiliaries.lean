@@ -33,37 +33,37 @@ namespace Mandarin.Auxiliaries
 /-- *yīnggāi* 应该 'ought to, should'. -/
 def yinggai : Auxiliary where
   form := "yīnggāi"
-  modality := {.weakNecessity} ×ˢ {.deontic}
+  meaning := {.weakNecessity} ×ˢ {.deontic}
 
 /-- *yīngdāng* 应当 'ought to, should'. -/
 def yingdang : Auxiliary where
   form := "yīngdāng"
-  modality := {.weakNecessity} ×ˢ {.deontic}
+  meaning := {.weakNecessity} ×ˢ {.deontic}
 
 /-- *gāi* 该 'ought to, should'. -/
 def gai : Auxiliary where
   form := "gāi"
-  modality := {.weakNecessity} ×ˢ {.deontic}
+  meaning := {.weakNecessity} ×ˢ {.deontic}
 
 /-- *néng* 能 'be able to', 'have permission to'. -/
 def neng : Auxiliary where
   form := "néng"
-  modality := {.possibility} ×ˢ {.circumstantial, .deontic}
+  meaning := {.possibility} ×ˢ {.circumstantial, .deontic}
 
 /-- *nénggòu* 能够 'be able to'. -/
 def nenggou : Auxiliary where
   form := "nénggòu"
-  modality := {.possibility} ×ˢ {.circumstantial}
+  meaning := {.possibility} ×ˢ {.circumstantial}
 
 /-- *huì* 会 'be able to, know how'; its sense 'will' is not a flavor. -/
 def hui : Auxiliary where
   form := "huì"
-  modality := {.possibility} ×ˢ {.circumstantial}
+  meaning := {.possibility} ×ˢ {.circumstantial}
 
 /-- *kěyǐ* 可以 'be able to', 'have permission to'. -/
 def keyi : Auxiliary where
   form := "kěyǐ"
-  modality := {.possibility} ×ˢ {.circumstantial, .deontic}
+  meaning := {.possibility} ×ˢ {.circumstantial, .deontic}
 
 /-- *gǎn* 敢 'dare'. -/
 def gan : Auxiliary where
@@ -76,28 +76,28 @@ def ken : Auxiliary where
 /-- *děi* 得 'must, ought to'. -/
 def dei : Auxiliary where
   form := "děi"
-  modality := {.necessity} ×ˢ {.deontic}
+  meaning := {.necessity} ×ˢ {.deontic}
 
 /-- *bìxū* 必须 'must, ought to'. -/
 def bixu : Auxiliary where
   form := "bìxū"
-  modality := {.necessity} ×ˢ {.deontic}
+  meaning := {.necessity} ×ˢ {.deontic}
 
 /-- *bìyào* 必要 'must, ought to'. -/
 def biyao : Auxiliary where
   form := "bìyào"
-  modality := {.necessity} ×ˢ {.deontic}
+  meaning := {.necessity} ×ˢ {.deontic}
 
 /-- *bìděi* 必得 'must, ought to'. -/
 def bidei : Auxiliary where
   form := "bìděi"
-  modality := {.necessity} ×ˢ {.deontic}
+  meaning := {.necessity} ×ˢ {.deontic}
 
 /-- The auxiliary verbs. -/
 def auxiliaries : List Auxiliary :=
   [yinggai, yingdang, gai, neng, nenggou, hui, keyi, gan, ken, dei, bixu, biyao, bidei]
 
 /-- The modal auxiliaries, those with a modality. -/
-def modals : List Auxiliary := auxiliaries.filter (·.modality.Nonempty)
+def modals : List Auxiliary := auxiliaries.filter (·.meaning.Nonempty)
 
 end Mandarin.Auxiliaries

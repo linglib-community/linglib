@@ -260,7 +260,7 @@ def ModalVerb.aux : ModalVerb → Auxiliary
   | .must => English.Auxiliaries.must
 
 /-- The epistemic forces of each modal verb, read off the fragment. -/
-def ModalVerb.forces (v : ModalVerb) : Finset ModalForce := v.aux.toModalItem.forcesOf .epistemic
+def ModalVerb.forces (v : ModalVerb) : Finset ModalForce := v.aux.forcesOf .epistemic
 
 theorem forces_might : ModalVerb.might.forces = {.possibility} := by decide
 

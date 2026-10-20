@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Category.Auxiliary.Constructions
 public import Linglib.Data.Examples.Anderson2006a
 public import Mathlib.Data.Finset.Basic
 
@@ -21,6 +20,7 @@ by the inflectional-head criterion.
 
 ## Main definitions
 
+* `InflectionPattern`: the five inflectional macro-patterns (13).
 * `Category`: the inflectional categories the book's examples record.
 * `InflectionalMarking`: which categories each element carries;
   `InflectionalMarking.pattern` reads the macro-pattern (13) off it.
@@ -34,9 +34,26 @@ by the inflectional-head criterion.
 
 namespace Anderson2006a
 
-open AuxiliaryVerbs
-
 /-! ### Where the inflection is marked -/
+
+/-- The five inflectional patterns of auxiliary verb constructions, by which of the auxiliary
+and the lexical verb carries the inflection. -/
+inductive InflectionPattern where
+  /-- The auxiliary hosts the inflection and the lexical verb is nonfinite: English *have
+  eaten*, French *va manger*. -/
+  | auxHeaded
+  /-- The lexical verb hosts the inflection and the auxiliary is grammaticalized: Pipil *weli
+  ni-nehnemi*. -/
+  | lexHeaded
+  /-- Both elements carry the same categories: Gorum *miŋ ne-gaʔ-ru ne-laʔ-ru*, subject and TAM
+  on each. -/
+  | doubled
+  /-- The categories divide between the elements with no overlap: Jakaltek *šk-ach w-ila*,
+  absolutive on the auxiliary and ergative on the lexical verb. -/
+  | split
+  /-- The categories divide, but some are carried by both elements, the patterns of ch. 5 §5.2. -/
+  | splitDoubled
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The inflectional categories the book's examples record on the auxiliary and the lexical
 verb. Agreement is subject or object agreement, as the book files it: Jakaltek's ergative
