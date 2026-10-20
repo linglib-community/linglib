@@ -98,7 +98,7 @@ inductive Position where
   | nominal
   | adpositional (relation : Option Case.Kind := none)
       (adposition : Option Adposition := none)
-  | clausal (coding : Option Complement.Coding := none)
+  | clausal (coding : Option Clause.ComplementType := none)
       (types : Clause.Selection := ⊥)
       (embeddedSubject : Option Clause.EmbeddedSubject := none)
   | implicit (interp : Option ImplicitInterp := none)
@@ -112,7 +112,7 @@ one type. -/
 def adposition (p : Adposition) : Position := .adpositional p.kind? (some p)
 
 /-- The position's recorded coding, if clausal. -/
-def coding? : Position → Option Complement.Coding
+def coding? : Position → Option Clause.ComplementType
   | clausal c _ _ => c
   | _ => none
 
@@ -193,7 +193,7 @@ inductive Axis where
 /-- The carrier of an axis is a flat slot over the values of an enumerated axis, and a
     selection of sentence types for the `types` axis. -/
 def Axis.Carrier : Axis → Type
-  | coding => Flat Complement.Coding
+  | coding => Flat Clause.ComplementType
   | types => Clause.Selection
   | embeddedSubject => Flat Clause.EmbeddedSubject
   | relation => Flat Case.Kind
@@ -201,7 +201,7 @@ def Axis.Carrier : Axis → Type
   | interp => Flat ImplicitInterp
 
 instance : ∀ a : Axis, PartialOrder a.Carrier
-  | .coding => inferInstanceAs (PartialOrder (Flat Complement.Coding))
+  | .coding => inferInstanceAs (PartialOrder (Flat Clause.ComplementType))
   | .types => inferInstanceAs (PartialOrder Clause.Selection)
   | .embeddedSubject => inferInstanceAs (PartialOrder (Flat Clause.EmbeddedSubject))
   | .relation => inferInstanceAs (PartialOrder (Flat Case.Kind))
@@ -209,7 +209,7 @@ instance : ∀ a : Axis, PartialOrder a.Carrier
   | .interp => inferInstanceAs (PartialOrder (Flat ImplicitInterp))
 
 instance : ∀ a : Axis, OrderBot a.Carrier
-  | .coding => inferInstanceAs (OrderBot (Flat Complement.Coding))
+  | .coding => inferInstanceAs (OrderBot (Flat Clause.ComplementType))
   | .types => inferInstanceAs (OrderBot Clause.Selection)
   | .embeddedSubject => inferInstanceAs (OrderBot (Flat Clause.EmbeddedSubject))
   | .relation => inferInstanceAs (OrderBot (Flat Case.Kind))
@@ -217,7 +217,7 @@ instance : ∀ a : Axis, OrderBot a.Carrier
   | .interp => inferInstanceAs (OrderBot (Flat ImplicitInterp))
 
 instance : ∀ a : Axis, PartialUnify a.Carrier
-  | .coding => inferInstanceAs (PartialUnify (Flat Complement.Coding))
+  | .coding => inferInstanceAs (PartialUnify (Flat Clause.ComplementType))
   | .types => inferInstanceAs (PartialUnify Clause.Selection)
   | .embeddedSubject => inferInstanceAs (PartialUnify (Flat Clause.EmbeddedSubject))
   | .relation => inferInstanceAs (PartialUnify (Flat Case.Kind))
@@ -225,7 +225,7 @@ instance : ∀ a : Axis, PartialUnify a.Carrier
   | .interp => inferInstanceAs (PartialUnify (Flat ImplicitInterp))
 
 instance : ∀ a : Axis, DecidableEq a.Carrier
-  | .coding => inferInstanceAs (DecidableEq (Flat Complement.Coding))
+  | .coding => inferInstanceAs (DecidableEq (Flat Clause.ComplementType))
   | .types => inferInstanceAs (DecidableEq Clause.Selection)
   | .embeddedSubject => inferInstanceAs (DecidableEq (Flat Clause.EmbeddedSubject))
   | .relation => inferInstanceAs (DecidableEq (Flat Case.Kind))
@@ -233,7 +233,7 @@ instance : ∀ a : Axis, DecidableEq a.Carrier
   | .interp => inferInstanceAs (DecidableEq (Flat ImplicitInterp))
 
 instance : ∀ a : Axis, DecidableLE a.Carrier
-  | .coding => inferInstanceAs (DecidableLE (Flat Complement.Coding))
+  | .coding => inferInstanceAs (DecidableLE (Flat Clause.ComplementType))
   | .types => inferInstanceAs (DecidableLE Clause.Selection)
   | .embeddedSubject => inferInstanceAs (DecidableLE (Flat Clause.EmbeddedSubject))
   | .relation => inferInstanceAs (DecidableLE (Flat Case.Kind))
@@ -402,7 +402,7 @@ leave*. -/
 def withObject : ArgumentFrame := { fr with complements := .nominal :: fr.complements }
 
 /-- The [noonan-2007] codings recorded across the frame's complements. -/
-def codings : List Complement.Coding := fr.complements.filterMap (·.coding?)
+def codings : List Clause.ComplementType := fr.complements.filterMap (·.coding?)
 
 /-- Some complement of the frame selects the sentence type `t`. -/
 def hasType (t : Clause.SentenceType) : Prop := ∃ p ∈ fr.complements, t ∈ p.types

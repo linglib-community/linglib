@@ -74,7 +74,7 @@ inductive EmbeddedClauseType where
 /-- A verb's complement in a diathesis is finite in the indicative coding and otherwise a
 subjunctive, untensed exactly when a participant of the diathesis controls it (§3). -/
 def EmbeddedClauseType.ofDiathesis {n : ℕ} (d : Diathesis n) : EmbeddedClauseType :=
-  if Complement.Coding.indicative ∈ d.codings then .finite
+  if Clause.ComplementType.indicative ∈ d.codings then .finite
   else if d.controller.isSome then .untensedSubjunctive
   else .tensedSubjunctive
 
