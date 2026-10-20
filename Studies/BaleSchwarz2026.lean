@@ -27,8 +27,14 @@ only a composed *per*-PP can be fronted. Both facts reduce to dimensions: a comp
 * `ratio_eq_mathSpeak_iff`, `ratio_ne_anaphoricMP`, `not_much_mathSpeak`: a predicate of a
   quotient dimension accepts the verbalized quotient and never a composed *per*-phrase, and a
   predicate of a simplex dimension never accepts the verbalized quotient.
-* `rows_dimension`: the *per*-phrase's dimension matches the predicate's exactly in the
+* `rows_dimension`: the measure phrase's dimension matches the predicate's exactly in the
   felicitous examples.
+
+## TODO
+
+`rows_dimension` passes over five rows. *Pounds per square inch* in (22) is an idiom for *psi*
+over the pound-force, not the pound of the fragment; (25b) and (26b) verbalize the symbol `mph`;
+and (3) and (24) name no predicate dimension.
 
 ## References
 
@@ -55,7 +61,7 @@ variable {E : Type*} {w : World E} {D D₁ D₂ : QuantityDimension} {x y : E} {
 /-- The pure number `μ_dim(r)(y) / r` is the unique `n` with `n ⋅ r = μ_dim(r)(y)` ((21)). -/
 theorem anaphoricPer_eq_pure_iff :
     anaphoricPer w r y = pure n ↔ pure n * r.quantity = w.quantity r.dimension y :=
-  div_eq_pure_iff r.cast_magnitude_pos.ne' rfl
+  r.isUnit_quantity.div_eq_iff.trans eq_comm
 
 theorem existsUnique_pure_mul : ∃! n : ℝ, pure n * r.quantity = w.quantity r.dimension y :=
   ⟨(anaphoricPer w r y).1, anaphoricPer_eq_pure_iff.1 (Prod.ext rfl anaphoricPer_snd),
@@ -111,7 +117,6 @@ theorem not_much_mathSpeak (hu : u.dimension = D) (hr : r.dimension ≠ 1) :
 
 /-! ### The paper's examples -/
 
-
 /-- The dimension a predicate measures in. -/
 def predicateDimension? : String → Option QuantityDimension
   | "weight" => some (.of .mass)
@@ -122,17 +127,21 @@ def predicateDimension? : String → Option QuantityDimension
   | _ => none
 
 /-- The measure term with symbol `s`. -/
-def symbol? (s : String) : Option MeasureTerm := allMeasureTerms.find? (·.symbol = s)
+def symbol? (s : String) : Option MeasureTerm := measureTerms.find? (·.symbol = s)
 
-/-- The head unit and *per*-unit of a row's *per*-phrase, from its unit nouns or from the
-symbols of the term it verbalizes (`13 g/mL`). -/
-def units? (e : Datum) : Option (MeasureTerm × MeasureTerm) :=
+/-- The head unit of a row's measure phrase and, for a *per*-phrase, its *per*-unit, from its unit
+nouns or from the symbols of the term it verbalizes (`13 g/mL`). -/
+def units? (e : Datum) : Option (MeasureTerm × Option MeasureTerm) :=
   match e.feature? "verbalizes" with
   | some v =>
     match (v.toList.dropWhile (· ≠ ' ')).drop 1 |>.span (· ≠ '/') with
-    | (a, _ :: b) => do pure (← symbol? (String.ofList a), ← symbol? (String.ofList b))
+    | (a, _ :: b) => do pure (← symbol? (String.ofList a), some (← symbol? (String.ofList b)))
     | _ => none
-  | none => do pure (← measureTerm? (← e.feature? "unit"), ← measureTerm? (← e.feature? "per_unit"))
+  | none => do
+    let u ← measureTerm? (← e.feature? "unit")
+    match e.feature? "per_unit" with
+    | none => pure (u, none)
+    | some r => pure (u, some (← measureTerm? r))
 
 /-- Whether a row's *per*-phrase is composed. A fronted *per*-PP has been, a verbalization of
 notation has not, and otherwise the paper's classification decides. -/
@@ -144,14 +153,15 @@ def composed? (e : Datum) : Option Bool :=
     | some "math speak" => some false
     | _ => none
 
-/-- A row's predicate dimension and the dimension of its *per*-phrase's denotation. -/
+/-- A row's predicate dimension and the dimension of its measure phrase's denotation. A bare
+measure phrase and a composed *per*-phrase have the dimension of their head unit. -/
 def dimensions? (e : Datum) : Option (QuantityDimension × QuantityDimension) := do
   let p ← predicateDimension? (← e.feature? "predicate_dimension")
-  let (u, r) ← units? e
-  let c ← composed? e
-  pure (p, if c then u.dimension else u.dimension / r.dimension)
+  match ← units? e with
+  | (u, none) => pure (p, u.dimension)
+  | (u, some r) => pure (p, if ← composed? e then u.dimension else u.dimension / r.dimension)
 
-/-- The *per*-phrase's dimension matches the predicate's exactly in the felicitous rows. -/
+/-- The measure phrase's dimension matches the predicate's exactly in the felicitous rows. -/
 theorem rows_dimension : ∀ e ∈ Examples.all, ∀ p ∈ dimensions? e,
     (p.1 = p.2 ↔ e.judgment = .acceptable) := by
   decide +kernel

@@ -76,12 +76,8 @@ variable {E : Type*}
 /-- A world assigns each dimension `D` its measure function `μ_D`. -/
 abbrev World (E : Type*) := QuantityDimension → E → ℝ
 
-/-- `w.measure D` is the measure function `μ_D` as a measure of dimension `D`. -/
-def World.measure (w : World E) (D : QuantityDimension) : DimensionedMeasure E ℝ := ⟨D, w D⟩
-
 /-- `w.quantity D x` is `μ_D(x)`, a quantity of dimension `D`. -/
-def World.quantity (w : World E) (D : QuantityDimension) (x : E) : Quantity ℝ :=
-  (w.measure D).quantity x
+def World.quantity (w : World E) (D : QuantityDimension) (x : E) : Quantity ℝ := (w D x, D)
 
 @[simp] theorem World.quantity_fst (w : World E) (D : QuantityDimension) (x : E) :
     (w.quantity D x).1 = w D x := rfl
@@ -184,8 +180,9 @@ theorem much_anaphoricMP_iff (hu : u.dimension = D) :
 subject and on (31) and (32) with it the container. -/
 theorem much_divisionMP_iff_anaphoricMP (hy : w r.dimension y ≠ 0) :
     much (fun x ↦ w.quantity D x / w.quantity r.dimension y) (divisionMP n u r) x ↔
-      much (w.quantity D) (anaphoricMP w n u r y) x :=
-  div_eq_div_iff_eq_mul_div hy r.cast_magnitude_pos.ne'
+      much (w.quantity D) (anaphoricMP w n u r y) x := by
+  rw [much, much, (Quantity.isUnit_iff.2 hy).div_eq_iff, divisionMP, divisionPer, anaphoricMP,
+    anaphoricPer, div_mul_eq_mul_div, mul_div_assoc]
 
 theorem contains_divisionMP_iff_anaphoricMP (hm : w r.dimension m ≠ 0) :
     contains salt contain (fun x ↦ w.quantity D x / w.quantity r.dimension m)
@@ -201,7 +198,7 @@ theorem divisionMP_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantity
     (hr : r'.quantity = pure k * r.quantity) :
     divisionMP n u' r' = divisionMP n u r := by
   rw [divisionMP, divisionMP, divisionPer, divisionPer, hu, hr, mul_left_comm,
-    pure_mul_div_pure_mul hk]
+    (Quantity.isUnit_iff (q := pure k)).2 hk |>.mul_div_mul_left]
 
 /-- So it gives *0.1 kilograms per liter* the meaning of *0.1 grams per milliliter*, since
 `kg / L = g / mL` ((36)). -/

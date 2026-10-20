@@ -1,8 +1,8 @@
 module
 
 public import Mathlib.Algebra.Group.Prod
-public import Mathlib.Algebra.GroupWithZero.Basic
-public import Linglib.Semantics.Degree.Measure.Dimensioned
+public import Mathlib.Algebra.GroupWithZero.Units.Basic
+public import Linglib.Semantics.Degree.Measure.Dimension
 
 /-!
 # The quantity calculus
@@ -18,7 +18,11 @@ pure number.
 ## Main definitions
 
 * `Quantity`, `Quantity.pure`: quantities and pure numbers.
-* `DimensionedMeasure.quantity`: the value of a measure function as a quantity.
+
+## Main statements
+
+* `Quantity.isUnit_iff`: a quantity is invertible exactly when its magnitude is nonzero, so the
+  division lemmas of mathlib's `IsUnit` API apply to it.
 
 ## References
 
@@ -44,40 +48,10 @@ def pure (n : K) : Quantity K := (n, 1)
 @[simp] theorem pure_fst (n : K) : (pure n).1 = n := rfl
 @[simp] theorem pure_snd (n : K) : (pure n).2 = 1 := rfl
 
-variable [CommGroupWithZero K]
-
-/-- Scaling both quantities by the same nonzero pure number leaves their quotient unchanged, so
-that `0.1 kg / L = 0.1 g / mL`. -/
-theorem pure_mul_div_pure_mul {k : K} (hk : k ≠ 0) (q r : Quantity K) :
-    pure k * q / (pure k * r) = q / r := by
-  ext <;> simp [mul_div_mul_left _ _ hk]
-
-/-- `a / b = q / r ↔ a = q * (b / r)` when the magnitudes of `b` and `r` are nonzero. -/
-theorem div_eq_div_iff_eq_mul_div {a b q r : Quantity K} (hb : b.1 ≠ 0) (hr : r.1 ≠ 0) :
-    a / b = q / r ↔ a = q * (b / r) := by
-  rw [Prod.ext_iff, Prod.ext_iff]
-  simp only [Prod.fst_div, Prod.snd_div, Prod.fst_mul, Prod.snd_mul, ← mul_div_assoc]
-  rw [div_eq_div_iff hb hr, eq_div_iff hr, div_eq_div_iff_mul_eq_mul, eq_div_iff_mul_eq']
-
-/-- The quotient of two quantities of one dimension is the pure number `n` with `n ⋅ q = a`. -/
-theorem div_eq_pure_iff {a q : Quantity K} {n : K} (hq : q.1 ≠ 0) (h : a.2 = q.2) :
-    a / q = pure n ↔ pure n * q = a := by
-  simp only [Prod.ext_iff, Prod.fst_div, Prod.snd_div, Prod.fst_mul, Prod.snd_mul, pure_fst,
-    pure_snd, h, div_self', one_mul, and_true, div_eq_iff hq]
-  exact eq_comm
+/-- A quantity is invertible exactly when its magnitude is, since every dimension is. -/
+theorem isUnit_iff [CommGroupWithZero K] {q : Quantity K} : IsUnit q ↔ q.1 ≠ 0 := by
+  simp [Prod.isUnit_iff, Group.isUnit, isUnit_iff_ne_zero]
 
 end Quantity
-
-variable {E : Type*} {K : Type}
-
-/-- The value of `μ` at `x` as a quantity of `μ`'s dimension. -/
-def DimensionedMeasure.quantity (μ : DimensionedMeasure E K) (x : E) : Quantity K :=
-  (μ x, μ.dimension)
-
-@[simp] theorem DimensionedMeasure.quantity_fst (μ : DimensionedMeasure E K) (x : E) :
-    (μ.quantity x).1 = μ x := rfl
-
-@[simp] theorem DimensionedMeasure.quantity_snd (μ : DimensionedMeasure E K) (x : E) :
-    (μ.quantity x).2 = μ.dimension := rfl
 
 end Degree
