@@ -113,50 +113,51 @@ def artista : Value → Noun := .ofNaturalGender "artista" "artist" .human
 /-! ### Nouns of one gender for either sex -/
 
 /-- *persona* 'person', feminine whatever the referent's sex. -/
-def persona : Noun := ⟨⟨⟨"persona", "person"⟩, .fem, none⟩, .human⟩
+def persona : Noun := { form := "persona", gloss := "person", gender := .fem, animacy := .human }
 
 /-- *ángel* 'angel', masculine whatever the referent's sex. -/
-def ángel : Noun := ⟨⟨⟨"ángel", "angel"⟩, .masc, none⟩, .human⟩
+def ángel : Noun := { form := "ángel", gloss := "angel", gender := .masc, animacy := .human }
 
 /-! ### Nouns of arbitrary gender -/
 
 /-- *mesa* 'table'. -/
-def mesa : Noun := ⟨⟨⟨"mesa", "table"⟩, .fem, none⟩, .inanimate⟩
+def mesa : Noun := { form := "mesa", gloss := "table", gender := .fem, animacy := .inanimate }
 
 /-- *silla* 'chair'. -/
-def silla : Noun := ⟨⟨⟨"silla", "chair"⟩, .fem, none⟩, .inanimate⟩
+def silla : Noun := { form := "silla", gloss := "chair", gender := .fem, animacy := .inanimate }
 
 /-- *casa* 'house'. -/
-def casa : Noun := ⟨⟨⟨"casa", "house"⟩, .fem, none⟩, .inanimate⟩
+def casa : Noun := { form := "casa", gloss := "house", gender := .fem, animacy := .inanimate }
 
 /-- *puerta* 'door'. -/
-def puerta : Noun := ⟨⟨⟨"puerta", "door"⟩, .fem, none⟩, .inanimate⟩
+def puerta : Noun := { form := "puerta", gloss := "door", gender := .fem, animacy := .inanimate }
 
 /-- *ventana* 'window'. -/
-def ventana : Noun := ⟨⟨⟨"ventana", "window"⟩, .fem, none⟩, .inanimate⟩
+def ventana : Noun :=
+  { form := "ventana", gloss := "window", gender := .fem, animacy := .inanimate }
 
 /-- *cama* 'bed'. -/
-def cama : Noun := ⟨⟨⟨"cama", "bed"⟩, .fem, none⟩, .inanimate⟩
+def cama : Noun := { form := "cama", gloss := "bed", gender := .fem, animacy := .inanimate }
 
 /-- *libro* 'book'. -/
-def libro : Noun := ⟨⟨⟨"libro", "book"⟩, .masc, none⟩, .inanimate⟩
+def libro : Noun := { form := "libro", gloss := "book", gender := .masc, animacy := .inanimate }
 
 /-- *zapato* 'shoe'. -/
-def zapato : Noun := ⟨⟨⟨"zapato", "shoe"⟩, .masc, none⟩, .inanimate⟩
+def zapato : Noun := { form := "zapato", gloss := "shoe", gender := .masc, animacy := .inanimate }
 
 /-- *coche* 'car'. -/
-def coche : Noun := ⟨⟨⟨"coche", "car"⟩, .masc, none⟩, .inanimate⟩
+def coche : Noun := { form := "coche", gloss := "car", gender := .masc, animacy := .inanimate }
 
 /-- *árbol* 'tree'. -/
-def árbol : Noun := ⟨⟨⟨"árbol", "tree"⟩, .masc, none⟩, .inanimate⟩
+def árbol : Noun := { form := "árbol", gloss := "tree", gender := .masc, animacy := .inanimate }
 
 /-- *cielo* 'sky'. -/
-def cielo : Noun := ⟨⟨⟨"cielo", "sky"⟩, .masc, none⟩, .inanimate⟩
+def cielo : Noun := { form := "cielo", gloss := "sky", gender := .masc, animacy := .inanimate }
 
 /-- *vaso* 'glass'. -/
-def vaso : Noun := ⟨⟨⟨"vaso", "glass"⟩, .masc, none⟩, .inanimate⟩
+def vaso : Noun := { form := "vaso", gloss := "glass", gender := .masc, animacy := .inanimate }
 
-/-- The nouns, with the entries for either sex of the nouns of one form for both. -/
+/-- The nouns, with both entries of each noun of one form for either sex. -/
 def allNouns : List Noun :=
   [hombre, mujer, niño, niña, rey, reina, gato, gata] ++
     ([soldado, estudiante, artista].flatMap fun n ↦ [n .masc, n .fem]) ++

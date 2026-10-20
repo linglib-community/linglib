@@ -47,16 +47,15 @@ hand-typed example, since the Russian Fragment records only the morphological ge
 namespace Kramer2020
 
 open DistributedMorphology
+open Spanish.Gender (Value allNouns estudiante persona numberSystem)
 
 /-! ### The semantic core (§1.2) -/
 
 /-- The minimal properties of (3) are animacy, humanness, and social gender or
 biological sex. -/
-def IsCore : Corbett1991.Criterion → Prop
-  | .animacy | .humanness | .sex => True
-  | _ => False
+def IsCore (b : Corbett1991.Criterion) : Prop := b ∈ ({.animacy, .humanness, .sex} : Finset _)
 
-instance : DecidablePred IsCore := fun b ↦ by cases b <;> unfold IsCore <;> infer_instance
+instance : DecidablePred IsCore := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
 /-- By the semantic core generalization (2), a language with gender assigns it
 to some nouns by a property of (3). -/
@@ -127,8 +126,7 @@ def tamil : Remainder Gender := ⟨{.masculine, .feminine}, {.neuter}⟩
 /-- Spanish splits the remainder arbitrarily over both core genders (Table 1), as the
 Fragment records. -/
 def spanish : Remainder Gender :=
-  ofNouns Spanish.Gender.allNouns (·.IsNaturalGender Spanish.Gender.Value.toLabel)
-    (·.gender.toLabel)
+  ofNouns allNouns (·.IsNaturalGender Value.toLabel) (·.gender.toLabel)
 
 /-- Blackfoot makes animates animate and puts inanimates in a novel inanimate gender or
 the recycled animate one. -/
@@ -211,6 +209,12 @@ def gender (e : LexicalEntry) : Gender := if e.f then .feminine else .masculine
 
 end LexicalEntry
 
+/-- A noun is a hybrid when its referents have a gender other than its own. -/
+def IsHybrid (n : Spanish.Gender.Noun) : Prop := ∃ g ∈ n.naturalGender, g ≠ n.gender.toLabel
+
+instance (n : Spanish.Gender.Noun) : Decidable (IsHybrid n) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
 /-- A Fragment noun's lexical entry is [human] when its referents are human, or animals whose
 gender is their sex (higher animals honoris causa), [female] when its referents are female,
 and carries a listed [f] when it is feminine without its referents having a gender. -/
@@ -219,31 +223,29 @@ def lexicalEntry (n : Spanish.Gender.Noun) : LexicalEntry :=
     decide (n.naturalGender = some .feminine),
     decide (n.naturalGender = none ∧ n.gender = .fem)⟩
 
-/-- The lexical account recovers the gender of every noun of the Fragment's shape whose gender
-is natural where its referents have one, that is, of every noun but a hybrid. -/
-theorem lexical_faithful (n : Spanish.Gender.Noun)
-    (h : n.naturalGender.isSome → n.IsNaturalGender Spanish.Gender.Value.toLabel) :
+/-- The lexical account recovers the gender of every noun of the Fragment's shape but a
+hybrid. -/
+theorem lexical_faithful (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
     (lexicalEntry n).humanGender.gender = n.gender.toLabel := by
-  obtain ⟨⟨_, g, b⟩, a⟩ := n
-  cases g <;> rcases b with _ | l <;> (try cases l) <;> cases a <;>
-    simp_all [lexicalEntry, LexicalEntry.humanGender, LexicalEntry.gender,
-      GenderedNoun.IsNaturalGender, Spanish.Gender.Value.toLabel]
+  obtain ⟨⟨_, g, b⟩, _⟩ := n
+  cases g <;> rcases b with _ | l <;> (try cases l) <;>
+    simp_all [IsHybrid, lexicalEntry, LexicalEntry.humanGender, LexicalEntry.gender,
+      Value.toLabel]
 
 /-- No noun of the Fragment is a hybrid, so the lexical account recovers the gender of each. -/
-theorem allNouns_not_hybrid : ∀ n ∈ Spanish.Gender.allNouns,
-    n.naturalGender.isSome → n.IsNaturalGender Spanish.Gender.Value.toLabel := by
+theorem allNouns_not_hybrid : ∀ n ∈ allNouns, ¬ IsHybrid n := by
   decide
 
 /-- Human Cloning of *el estudiante* yields an entry of each gender: the lexical account
 derives *la estudiante* (14a). -/
 theorem estudiante_cloned :
-    (lexicalEntry (Spanish.Gender.estudiante .masc)).humanCloning.map (·.humanGender.gender) =
+    (lexicalEntry (estudiante .masc)).humanCloning.map (·.humanGender.gender) =
       [.masculine, .feminine] := by
   decide
 
 /-- *persona*, listed with [f], stays feminine under Human Cloning. -/
 theorem persona_cloned_feminine :
-    (lexicalEntry Spanish.Gender.persona).humanCloning.map (·.humanGender.gender) =
+    (lexicalEntry persona).humanCloning.map (·.humanGender.gender) =
       [.feminine, .feminine] := by
   decide
 
@@ -268,8 +270,8 @@ theorem nHead_mem_spanishHeads (n : Spanish.Gender.Noun) : nHead n ∈ spanishHe
 
 /-- The n of either entry of *estudiante* bears an interpretable gender feature: its gender is
 its referent's (14a). -/
-theorem nHead_estudiante (g : Spanish.Gender.Value) :
-    (nHead (Spanish.Gender.estudiante g)).gender.map (·.interp) = some .interpretable := by
+theorem nHead_estudiante (g : Value) :
+    (nHead (estudiante g)).gender.map (·.interp) = some .interpretable := by
   cases g <;> decide
 
 /-- A definite determiner bears [d], [def], and the gender it
@@ -305,14 +307,12 @@ theorem determiner_iFem_eq_uFem :
 /-- The structural account recovers the Fragment's singular definite article for every noun of
 its shape. -/
 theorem structural_faithful (n : Spanish.Gender.Noun) :
-    determiner (nHead n) =
-      some (n.gender.definiteArticle (Spanish.Gender.numberSystem.value .singular)) := by
+    determiner (nHead n) = some (n.gender.definiteArticle (numberSystem.value .singular)) := by
   obtain ⟨⟨_, g, b⟩, _⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
     dsimp only [nHead] <;> decide
 
 /-- On Spanish the two accounts agree (§3.3), noun by noun, for every noun but a hybrid. -/
-theorem lexical_eq_structural (n : Spanish.Gender.Noun)
-    (h : n.naturalGender.isSome → n.IsNaturalGender Spanish.Gender.Value.toLabel) :
+theorem lexical_eq_structural (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
     (lexicalEntry n).humanGender.gender = .feminine ↔ determiner (nHead n) = some "la" := by
   rw [lexical_faithful n h, structural_faithful]
   obtain ⟨⟨_, g, _⟩, _⟩ := n

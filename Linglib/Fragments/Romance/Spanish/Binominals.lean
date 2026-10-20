@@ -42,6 +42,7 @@ inductive BinominalType where
 structure BinominalNoun extends GenderedNoun Spanish.Gender.Value where
   /-- The type of binominal the noun heads. -/
   binominalType : BinominalType
+  deriving DecidableEq, Repr
 
 /-- *grupo* 'group'. -/
 def grupo : BinominalNoun :=
