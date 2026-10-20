@@ -26,6 +26,8 @@ violate.
   book assigns it.
 * `voices_typed`: the substrate's voices realize the types they are named for.
 * `stacking_tswana`, `stacking_nahuatl`: stacked voice markers compose their alternations.
+* `balinese_symmetrical`: beside a passive, an applicative and a causative, the symmetrical
+  voices of Balinese are its agent and patient voices.
 * `break_decausativization`: the English fragment's *break* is a decausativization in its own
   diatheses.
 * `weakReciprocity_pair_iff`, `liftRel_singleton_iff`, `not_weakReciprocity_singleton`: the
@@ -573,16 +575,59 @@ theorem portative_rows :
 
 /-! ### Symmetrical voice systems (§8.5) -/
 
-/-- Balinese (47) has a binary symmetrical system, the patient voice bare and initial, the
-agent voice marked by a nasal prefix, both keeping the taker and the shirt core terms. -/
-def balinese : Finset Voice := {patientVoice, agentVoice.marked [.pref "N"]}
+open ArgumentFrame.Slot in
+/-- The Balinese passive (49) in *ka-* makes the water, the initial P, the S and expresses the
+drinker, the initial A, as an oblique flagged by *teken* 'by'. -/
+def balinesePassive : Voice :=
+  (Voice.of .np .pp [some (complement 0), some external]).marked [.pref "ka"]
+
+open ArgumentFrame.Slot in
+/-- The Balinese applicative (50) in *-in* makes the person, an oblique flagged by *sig*, the
+first P of a double-P construction and the rice the second. -/
+def balineseApplicative : Voice :=
+  (Voice.of .np_pp .np_np [some external, some (complement 1), some (complement 0)]).marked
+    [.suff "in"]
+
+open ArgumentFrame.Slot in
+/-- The Balinese causative (51) in *-ang* makes the causer the A, the kisser the P and the
+kissed sibling an oblique flagged by *sig*. -/
+def balineseCausative : Voice :=
+  (Voice.of .np .np_pp [some (complement 0), some (complement 1), some external]).marked
+    [.suff "ang"]
+
+/-- The passive is a passivization. -/
+theorem balinesePassive_passivization :
+    Passivization balinesePassive.initial.construction balinesePassive.derived.construction := by
+  decide
+
+/-- The applicative and the causative relate the constructions of rows (50) and (51), which list
+the participants in the same order. -/
+theorem balinese_rows : ∀ i : Fin 3,
+    balineseApplicative.initial.construction i = construction ex_8_50a (Fin.castLE (by omega) i) ∧
+    balineseApplicative.derived.construction i = construction ex_8_50b (Fin.castLE (by omega) i) ∧
+    balineseCausative.initial.construction i = construction ex_8_51a (Fin.castLE (by omega) i) ∧
+    balineseCausative.derived.construction i = construction ex_8_51b (Fin.castLE (by omega) i) := by
+  decide +kernel
+
+/-- Balinese (47) has a binary symmetrical system, the patient voice bare and initial, the agent
+voice marked by a nasal prefix, both keeping the taker and the shirt core terms; beside them it
+has the passive (49), the applicative (50) and the causative (51) (§8.5.3). -/
+def balinese : Voice.System :=
+  {patientVoice, agentVoice.marked [.pref "N"], balinesePassive, balineseApplicative,
+    balineseCausative}
+
+/-- The passive, the applicative and the causative change the construction, so the symmetrical
+voices of Balinese are its agent and patient voices (§8.5.3). -/
+theorem balinese_symmetrical :
+    balinese.symmetrical = {patientVoice, agentVoice.marked [.pref "N"]} := by
+  decide
 
 /-- Tagalog (48) has a multiple symmetrical system, every voice marked and the pivot flagged
 by *ang* in place of its own flag. The agent voice is marked by the infix *-um-*, the patient
 voice by *-in*, null in the realis, the locative voice, which selects the store, a spatial
 oblique, by *-an*, and the conveyance and instrumental voices, which select the child and the
 money, by *i-* and *ipaN-*. -/
-def tagalog : Finset Voice :=
+def tagalog : Voice.System :=
   {agentVoice.marked [.infixed "um"], patientVoice.marked [.suff "in"],
     locativeVoice.marked [.suff "an"], (obliqueVoice .semantic).marked [.pref "i"],
     (obliqueVoice .semantic).marked [.pref "ipaN"]}
@@ -590,11 +635,15 @@ def tagalog : Finset Voice :=
 /-- Balinese is symmetrical and binary although morphologically oriented, so symmetry in the
 book's sense does not require equipollent marking (§8.1.7, §8.5.1). -/
 theorem balinese_binary :
-    Voice.Symmetrical balinese ∧ ¬ Multiple balinese ∧ ¬ Equipollent balinese := by
+    balinese.IsSymmetrical ∧ ¬ balinese.IsMultiple ∧ ¬ balinese.IsEquipollent := by
   decide
 
-/-- Tagalog is symmetrical and multiple: an oblique may be the pivot (§8.5.2). -/
-theorem tagalog_multiple : Voice.Symmetrical tagalog ∧ Multiple tagalog := by decide
+/-- The Tagalog voices select the agent, the patient and obliques as pivot (§8.5.2). -/
+theorem tagalog_pivotRoles : tagalog.symmetrical.pivotRoles = {some .A, some .P, some .X} := by
+  decide
+
+/-- Tagalog is a multiple symmetrical system, since an oblique may be the pivot (§8.5.2). -/
+theorem tagalog_isMultiple : tagalog.IsMultiple := by decide
 
 /-- Every Tagalog voice is coded on the verb by an affix, the agent voice by the infix *-um-*. -/
 theorem tagalog_synthetic : ∀ v ∈ tagalog, v.coding = .synthetic := by decide

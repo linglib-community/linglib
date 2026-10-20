@@ -25,7 +25,7 @@ support them, live in the studies that propose them.
 
 ## Main results
 
-* `TobaBatak.symmetrical_voices`, `not_multiple_voices`, `equipollent_voices` — a binary
+* `TobaBatak.isSymmetrical_voices`, `not_isMultiple_voices`, `isEquipollent_voices` — a binary
   symmetrical system with equipollent marking
 
 ## References
@@ -38,19 +38,19 @@ support them, live in the studies that propose them.
 
 namespace TobaBatak
 
-/-- The actor voice *mang-*: the agent is the pivot. -/
+/-- In the actor voice *mang-* the agent is the pivot. -/
 def actorVoice : Voice := Voice.agentVoice.marked [.pref "mang"]
 
-/-- The object voice *di-*: the patient is the pivot, the agent a core term still. -/
+/-- In the object voice *di-* the patient is the pivot and the agent is still a core term. -/
 def objectVoice : Voice := Voice.patientVoice.marked [.pref "di"]
 
 /-- The two voices. -/
-def voices : Finset Voice := {actorVoice, objectVoice}
+def voices : Voice.System := {actorVoice, objectVoice}
 
-theorem symmetrical_voices : Voice.Symmetrical voices := by decide
+theorem isSymmetrical_voices : voices.IsSymmetrical := by decide
 
-theorem not_multiple_voices : ¬ Voice.Multiple voices := by decide
+theorem not_isMultiple_voices : ¬ voices.IsMultiple := by decide
 
-theorem equipollent_voices : Voice.Equipollent voices := by decide
+theorem isEquipollent_voices : voices.IsEquipollent := by decide
 
 end TobaBatak

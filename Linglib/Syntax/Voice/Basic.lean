@@ -313,7 +313,7 @@ def _root_.Diathesis.construction {n : ℕ} (d : Diathesis n) : Construction (Fi
 
 /-- A voice is coded on the verb by verbal morphology, by an analytic construction, or not at
 all, as the unmarked voice of a system and a flexivalent alternation are ([creissels-2024]
-§1.1.3). Equipollence is a property of a system, `Voice.Equipollent`. -/
+§1.1.3). Equipollence is a property of a system, `Voice.System.IsEquipollent`. -/
 inductive Coding where
   | synthetic
   | analytic
