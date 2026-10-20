@@ -111,7 +111,7 @@ inductive Effect where
   | replace : Segment → Effect
   /-- Assimilating the features of the class `C` to the following segment, which is the
       alpha-variable change `A → [αF, βG, …] / __ [αF, βG, …]` for `C = {F, G, …}` and the
-      spreading of a class node when `C` is a natural class (`Phonology/FeatureGeometry.lean`). -/
+      spreading of a class node when `C` is its feature class (`Phonology/FeatureGeometry.lean`). -/
   | copyRight : Finset Feature → Effect
   /-- Assimilate the features of the class `C` to the preceding segment. -/
   | copyLeft : Finset Feature → Effect
