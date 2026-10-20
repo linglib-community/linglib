@@ -16,7 +16,7 @@ of the clause it introduces (`Complementizer.coding`).
 
 * `Complement.Coding`: the six complement types.
 * `Complement.Coding.IsFinite`: the coding is a clause whose verb can agree with its subject.
-* `Complement.Coding.IsSLike`: the coding is sentence-like, its predicate related to its
+* `Complement.Coding.IsSentenceLike`: the coding is sentence-like, its predicate related to its
   arguments as in a main clause.
 
 ## Implementation notes
@@ -24,7 +24,7 @@ of the clause it introduces (`Complementizer.coding`).
 A complement type is reduced when it has fewer syntactic and inflectional possibilities than an
 indicative main clause. That is a fact about a language's complement types rather than about the
 six labels, since the subjunctive is typically reduced but need not be, so no predicate on
-`Coding` states it; the predicate that is a fact about the labels is `Coding.IsSLike`.
+`Coding` states it; the predicate that is a fact about the labels is `Coding.IsSentenceLike`.
 
 ## References
 
@@ -67,11 +67,12 @@ instance : DecidablePred IsFinite := fun c ↦ by cases c <;> unfold IsFinite <;
 arguments that it has in a main clause ([noonan-2007] §1.3.1), as in the indicative and the
 subjunctive. A paratactic clause is fully inflected but does not form a constituent with its
 subject. -/
-def IsSLike : Coding → Prop
+def IsSentenceLike : Coding → Prop
   | indicative | subjunctive => True
   | paratactic | infinitive | nominalized | participle => False
 
-instance : DecidablePred IsSLike := fun c ↦ by cases c <;> unfold IsSLike <;> infer_instance
+instance : DecidablePred IsSentenceLike := fun c ↦ by
+  cases c <;> unfold IsSentenceLike <;> infer_instance
 
 end Coding
 

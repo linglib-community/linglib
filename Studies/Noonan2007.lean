@@ -14,8 +14,8 @@ chapter's examples.
 
 Equi-deletion, the deletion of a complement subject coreferential with a matrix argument, always
 leaves a complement that is not sentence-like (§2.1). No complement of an English verb that a
-participant controls is indicative or subjunctive (`not_isSLike_of_controlled`), and *hope* takes
-a controlled infinitive beside an uncontrolled indicative (`hope_diatheses`).
+participant controls is indicative or subjunctive (`not_isSentenceLike_of_controlled`), and *hope*
+takes a controlled infinitive beside an uncontrolled indicative (`hope_diatheses`).
 
 Negative raising, the reading of a matrix negation in the complement, is confined to propositional
 attitude, desiderative and modal predicates (§2.7). *Think*, *believe* and *want* allow it in
@@ -24,8 +24,8 @@ attitude, desiderative and modal predicates (§2.7). *Think*, *believe* and *wan
 A complement has dependent time reference (dtr) when its time is fixed by the meaning of the ctp,
 and independent time reference (itr) otherwise (§3.1.1). Each class's complements have one or the
 other (§3.2), and the two go with reduced and indicative complements respectively (§3.1.2). No
-English verb of a dtr class takes an s-like complement (`not_isSLike_of_dependent`), and every one
-of an itr class whose complement the fragment codes takes an indicative
+English verb of a dtr class takes a sentence-like complement (`not_isSentenceLike_of_dependent`),
+and every one of an itr class whose complement the fragment codes takes an indicative
 (`indicative_mem_codings_of_independent`). The desideratives fit neither, since *want* takes only
 a reduced complement and *wish* an indicative (`want_wish_codings`), as the chapter's want-class
 (dtr) and wish-class (itr) predict.
@@ -69,9 +69,9 @@ open English.Verbs (verbs hope think believe want regret wish)
 /-! ### Equi-deletion -/
 
 /-- Equi-deletion always results in a non-sentence-like complement ([noonan-2007] §2.1). No
-complement of an English verb that a participant controls is s-like. -/
-theorem not_isSLike_of_controlled : ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses,
-    d.controller.isSome → ∀ c ∈ d.codings, ¬ c.IsSLike := by
+complement of an English verb that a participant controls is sentence-like. -/
+theorem not_isSentenceLike_of_controlled : ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses,
+    d.controller.isSome → ∀ c ∈ d.codings, ¬ c.IsSentenceLike := by
   decide +kernel
 
 /-- *hope* takes an indicative complement nobody controls and an infinitive its subject controls,
@@ -195,9 +195,9 @@ def PredicateClass.timeReference : PredicateClass → Option TimeReference
   | .desiderative | .conjunctive => none
 
 /-- Reduced complements go with dtr ([noonan-2007] §3.1.2). No English verb of a dtr class takes
-an s-like complement. -/
-theorem not_isSLike_of_dependent : ∀ k : PredicateClass, k.timeReference = some .dependent →
-    ∀ v ∈ verbs, v.toVerb ∈ k → ∀ c ∈ v.codings, ¬ c.IsSLike := by
+a sentence-like complement. -/
+theorem not_isSentenceLike_of_dependent : ∀ k : PredicateClass, k.timeReference = some .dependent →
+    ∀ v ∈ verbs, v.toVerb ∈ k → ∀ c ∈ v.codings, ¬ c.IsSentenceLike := by
   decide +kernel
 
 /-- Indicatives go with itr ([noonan-2007] §3.1.2). Every English verb of an itr class whose
@@ -210,7 +210,7 @@ theorem indicative_mem_codings_of_independent : ∀ k : PredicateClass,
 /-- The desiderative *want* takes only a reduced complement and the desiderative *wish* an
 indicative, so the class has no one time reference. -/
 theorem want_wish_codings : want.toVerb ∈ PredicateClass.desiderative ∧
-    wish.toVerb ∈ PredicateClass.desiderative ∧ (∀ c ∈ want.codings, ¬ c.IsSLike) ∧
+    wish.toVerb ∈ PredicateClass.desiderative ∧ (∀ c ∈ want.codings, ¬ c.IsSentenceLike) ∧
       .indicative ∈ wish.codings := by
   decide
 
