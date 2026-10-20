@@ -11,29 +11,44 @@ public import Linglib.Core.Order.Interval.Basic
 public import Mathlib.Data.Set.Pairwise.Basic
 
 /-!
-# Sagey (1986): The Representation of Features and Relations in Non-Linear Phonology
+# Sagey (1986): the representation of features and relations in non-linear phonology
 
-This file formalizes the feature geometry of the dissertation and its account of association
-lines. The geometry has a class node for each independently functioning articulator, the
+Sagey's feature geometry has a class node for each independently functioning articulator, the
 larynx, the soft palate, the lips, the tongue front and the tongue body, grouped under a
-laryngeal and a supralaryngeal node with a place node over the three oral articulators, and
-each terminal feature hangs from one class node, the degree-of-closure features `[continuant]`
-and `[consonantal]` directly from the root (`Node`, `node`). A class node is present or absent,
-never minus, and a terminal feature under an articulator node implies that articulator
-(`Segment.Licensed`). Three consequences follow from the natural classes of the tree: place
-assimilation leaves degree of closure and nasality untouched, as in Kpelle and Sanskrit
-(`degreeOfClosure_mem_naturalClass_iff`), features of distinct articulators can stand in no
-dependency, so the rounding-under-height structure proposed for Yawelmani is unrepresentable
-(`disjoint_naturalClass_of_articulators`), and a rounded coronal is a complex segment, so a
-language that admits one articulator under the place node rounds only labials
-(`isComplex_of_round_of_coronal`).
+laryngeal and a supralaryngeal node with a place node over the three oral articulators. Each
+terminal feature hangs from one class node, and the degree-of-closure features `[continuant]`
+and `[consonantal]` hang directly from the root. A class node is present or absent, never minus,
+and a terminal feature under an articulator node implies that articulator. Three consequences
+follow from the feature classes of the tree: place assimilation leaves degree of closure and
+nasality untouched, as in Kpelle and Sanskrit; features of distinct articulators can stand in no
+dependency, so the rounding-under-height structure proposed for Yawelmani is unrepresentable;
+and a rounded coronal is a complex segment, so a language that admits one articulator under the
+place node rounds only labials.
 
-Association lines represent overlap in time rather than simultaneity (`Association.Valid`),
-which lets a contour segment share one timing slot and a geminate one melody. Two valid
-associations cannot cross (`Association.Valid.not_crosses`), so the well-formedness condition
-of [goldsmith-1976] is eliminated: the index-level No-Crossing Constraint of
-`Phonology/Autosegmental/NonCrossing` holds of any link set realised by valid associations
-(`isNonCrossing_of_valid`).
+Association lines represent overlap in time rather than simultaneity, which lets a contour
+segment share one timing slot and a geminate one melody. Two valid associations cannot cross, so
+Goldsmith's well-formedness condition against crossing lines is eliminated: the index-level
+No-Crossing Constraint of `Phonology/Autosegmental/NonCrossing` holds of any link set realised by
+valid associations.
+
+## Main definitions
+
+* `Node`, `node` — the articulator geometry and the class node of each terminal feature, an
+  instance of `Phonology.FeatureGeometry`.
+* `Segment.Licensed` — a terminal feature under an articulator node implies that articulator.
+* `Association`, `Association.Valid`, `TierRealization` — association lines as overlap in time,
+  and two tiers placed in time.
+
+## Main results
+
+* `degreeOfClosure_mem_featureClass_iff`, `nasal_mem_featureClass_iff` — degree of closure lies
+  in the root's class alone and nasality in the classes of the soft palate and its ancestors, so
+  place assimilation leaves both untouched.
+* `disjoint_featureClass_of_articulators` — distinct articulators have disjoint classes.
+* `isComplex_of_round_of_coronal`, `occlusions_isComplex` — a licensed rounded coronal and every
+  multiple occlusion are complex.
+* `Association.Valid.not_crosses`, `isNonCrossing_of_valid` — valid associations do not cross,
+  so the No-Crossing Constraint is derived.
 
 ## Implementation notes
 
@@ -47,9 +62,10 @@ features that motivates the pointer is.
 
 ## References
 
-* [sagey-1986]
-* [goldsmith-1976]
-* [clements-1985]
+* [E. C. Sagey, *The Representation of Features and Relations in Non-Linear Phonology*
+  (1986)][sagey-1986]
+* [J. A. Goldsmith, *Autosegmental Phonology* (1976)][goldsmith-1976]
+* [G. N. Clements, *The Geometry of Phonological Features* (1985)][clements-1985]
 -/
 
 @[expose] public section
@@ -116,14 +132,14 @@ def feature? : Node → Option Feature
 /-- The articulator nodes under place, whose distinct combinations are the complex segments. -/
 def articulators : Finset Node := {.labial, .coronal, .dorsal}
 
-/-- Distinct articulators are independent: neither dominates the other. -/
+/-- Neither of two distinct articulators dominates the other. -/
 theorem not_le_of_mem_articulators {a b : Node} (ha : a ∈ articulators) (hb : b ∈ articulators)
     (hab : a ≠ b) : ¬ a ≤ b := by
   revert a b; decide
 
 end Node
 
-/-- Each terminal feature hangs from a class node: the degree-of-closure features from the
+/-- Each terminal feature hangs from a class node. The degree-of-closure features hang from the
 root, the glottal features from the laryngeal node, nasality from the soft palate, laterality
 from the supralaryngeal node, and the place features from their articulators. -/
 def node : Feature → Option Node
@@ -137,27 +153,27 @@ def node : Feature → Option Node
   | .syllabic | .sonorant | .approximant | .delayedRelease | .strident | .tap | .trill
   | .labiodental | .front | .tense | .atr | .rtr => none
 
-/-! ### Natural classes -/
+/-! ### Feature classes -/
 
-/-- The degree-of-closure features belong to the root's class alone: spreading any class node
+/-- The degree-of-closure features belong to the root's class alone, so spreading any class node
 below the root, as place assimilation does, leaves the degree of closure untouched. -/
-theorem degreeOfClosure_mem_naturalClass_iff :
+theorem degreeOfClosure_mem_featureClass_iff :
     ∀ f ∈ ({.continuant, .consonantal} : Finset Feature), ∀ a : Node,
-      f ∈ naturalClass node a ↔ a = ⊥ := by
+      f ∈ featureClass node a ↔ a = ⊥ := by
   decide
 
-/-- Nasality is in the classes of the soft palate node and its ancestors alone: place
-assimilation leaves it, and spreading the supralaryngeal node carries it, as in Klamath. -/
-theorem nasal_mem_naturalClass_iff (a : Node) :
-    .nasal ∈ naturalClass node a ↔ a ≤ .softPalate := by
+/-- Nasality is in the classes of the soft palate node and its ancestors alone, so place
+assimilation leaves it and spreading the supralaryngeal node carries it, as in Klamath. -/
+theorem nasal_mem_featureClass_iff (a : Node) :
+    .nasal ∈ featureClass node a ↔ a ≤ .softPalate := by
   revert a; decide
 
-/-- Distinct articulators have disjoint classes: a feature of one, such as rounding, can depend
+/-- Distinct articulators have disjoint classes, so a feature of one, such as rounding, can depend
 on no node of another, such as height. -/
-theorem disjoint_naturalClass_of_articulators {a b : Node} (ha : a ∈ Node.articulators)
+theorem disjoint_featureClass_of_articulators {a b : Node} (ha : a ∈ Node.articulators)
     (hb : b ∈ Node.articulators) (hab : a ≠ b) :
-    Disjoint (naturalClass node a : Finset Feature) (naturalClass node b) :=
-  disjoint_naturalClass ⟨Node.not_le_of_mem_articulators ha hb hab,
+    Disjoint (featureClass node a : Finset Feature) (featureClass node b) :=
+  disjoint_featureClass ⟨Node.not_le_of_mem_articulators ha hb hab,
     Node.not_le_of_mem_articulators hb ha hab.symm⟩
 
 /-! ### Complex segments -/
@@ -213,8 +229,8 @@ structure Association (T : Type*) [LinearOrder T] where
   timing : NonemptyInterval T
   melody : NonemptyInterval T
 
-/-- An association line represents overlap in time: some instant of the melody is simultaneous
-with some instant of the timing position. -/
+/-- An association line is valid when some instant of the melody is simultaneous with some
+instant of the timing position, so that it represents overlap in time. -/
 def Association.Valid (a : Association T) : Prop := a.timing.Overlaps a.melody
 
 instance (a : Association T) : Decidable a.Valid :=
@@ -225,8 +241,8 @@ the other. -/
 def Association.Crosses (a b : Association T) : Prop :=
   a.timing.Precedes b.timing ∧ b.melody.Precedes a.melody
 
-/-- Valid associations do not cross: the two precedences and the two overlaps would chain
-into an instant preceding itself, so the relations a crossing encodes are contradictory. -/
+/-- Valid associations do not cross, since the two precedences and the two overlaps of a
+crossing would chain into an instant preceding itself. -/
 theorem Association.Valid.not_crosses {a b : Association T} (ha : a.Valid) (hb : b.Valid) :
     ¬ a.Crosses b := by
   rintro ⟨ht, hm⟩
@@ -253,8 +269,8 @@ structure TierRealization (T : Type*) [LinearOrder T] where
 def TierRealization.assoc (R : TierRealization T) (k i : ℕ) : Association T :=
   ⟨R.timing i, R.melody k⟩
 
-/-- Goldsmith's index-level No-Crossing Constraint is derived: a link set whose links are all
-realised as valid associations satisfies it. -/
+/-- A link set whose links are all realised as valid associations satisfies Goldsmith's
+index-level No-Crossing Constraint. -/
 theorem isNonCrossing_of_valid (R : TierRealization T) {links : Finset (ℕ × ℕ)}
     (h : ∀ p ∈ links, (R.assoc p.1 p.2).Valid) : IsNonCrossing links := by
   rw [isNonCrossing_iff]
