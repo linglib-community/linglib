@@ -5,7 +5,7 @@ public import Linglib.Fragments.English.Verbs.Inventory
 /-!
 # Majid, Boster and Bowerman (2008): The Cross-Linguistic Categorization of Everyday Events
 
-This file formalizes the stimulus clips of [majid-boster-bowerman-2008] and the English
+This file formalizes the stimulus clips of Majid, Boster and Bowerman and the English
 descriptions they report. Speakers of twenty-eight languages described sixty-one clips of
 separation events, and a correspondence analysis of which clips shared a verb found four
 dimensions across the forty-three agentive cutting-and-breaking clips: the predictability of
@@ -102,21 +102,21 @@ theorem dim1_not_factorsThrough {P : Type*} [Preorder P] (pos : ℕ → P)
 /-- English speakers labeled the tearing clips *tear* and extended the verb to pulling yarn
 apart (§3.1, Dimension 2); the fragment's *tear* is compatible with all four clips. -/
 theorem tear_overlaps_stimulus :
-    ∀ c ∈ tearing ∪ pullingYarn, tear_.rootContent.Overlaps (stimulus c) := by
+    ∀ c ∈ tearing ∪ pullingYarn, tear_.root.content.Overlaps (stimulus c) := by
   decide
 
 /-- English speakers labeled the tearing clips *tear* as distinct from *cut* and *break*
 (§3.1), and the fragment's *cut* and *break*, which want a blade and a fractured or fragmented
 result, reject them. -/
 theorem not_cut_not_break_of_tearing : ∀ c ∈ tearing,
-    ¬ cut.rootContent.Overlaps (stimulus c) ∧ ¬ break_.rootContent.Overlaps (stimulus c) := by
+    ¬ cut.root.content.Overlaps (stimulus c) ∧ ¬ break_.root.content.Overlaps (stimulus c) := by
   decide
 
 /-- Some English speakers grouped the snapping and smashing clips together under *break*
 (§3.1, Dimension 3), the general verb beside the specific *snap* and *smash* to which the paper
 attributes the intermediate correlation of English with that dimension (§3.1.1). -/
 theorem break_overlaps_stimulus :
-    ∀ c ∈ snapping ∪ smashing, break_.rootContent.Overlaps (stimulus c) := by
+    ∀ c ∈ snapping ∪ smashing, break_.root.content.Overlaps (stimulus c) := by
   decide
 
 end MajidBosterBowerman2008

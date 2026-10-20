@@ -6,24 +6,23 @@ public import Linglib.Fragments.Romance.Spanish.Verbs
 /-!
 # Spalek & McNally (2026): The Anatomy of a Verb
 
-This file formalizes the contrastive analysis of English *tear* and Spanish *rasgar* of
-Spalek and McNally. The two verbs are counterparts in comparative lexical databases and
-share an event structure: both are simple result verbs of Levin's break class
-describing a minimal, binary-scale change, the partly uncontrolled loss of integrity of a
-whole, with a causative alternation and no agentive intransitive use. They differ in root
-content, the fine within-class half of a root's meaning beside its templatic kinds
-in the sense of Beavers and Koontz-Garboden: *rasgar* requires a flimsy or insubstantial patient and
-implies a linear, gash-like separation without much force, where *tear* takes patients of
-any robustness, implies separation in contrary directions, often with force, and is
-compatible with careful action. Figurative extensions follow the root content, the case
-complementary to the event-structural contrasts of McNally and Spalek's 2022 paper: *rasgar* disturbs
-fragile states, silence and darkness, and describes linear movement through an
+This file formalizes the contrastive analysis of English *tear* and Spanish *rasgar* of Spalek and
+McNally. The two verbs are counterparts in comparative lexical databases and share an event
+structure: both are simple result verbs of Levin's break class describing a minimal, binary-scale
+change, the partly uncontrolled loss of integrity of a whole, with a causative alternation and no
+agentive intransitive use. They differ in root content, the fine within-class half of a root's
+meaning beside its templatic kinds in the sense of Beavers and Koontz-Garboden: *rasgar* requires a
+flimsy or insubstantial patient and implies a linear, gash-like separation without much force, where
+*tear* takes patients of any robustness, implies separation in contrary directions, often with
+force, and is compatible with careful action. Figurative extensions follow the root content, the
+case complementary to the event-structural contrasts of McNally and Spalek's 2022 paper: *rasgar*
+disturbs fragile states, silence and darkness, and describes linear movement through an
 insubstantial medium; *tear* rends with force and describes fast motion along a path. In the
-bidirectional parallel corpus the verbs are asymmetric translation equivalents: *rasgar* is
-one of the rarer renderings of *tear*, whose most frequent counterpart is *arrancar*, while
-*tear* is the usual rendering of *rasgar*.
+bidirectional parallel corpus the verbs are asymmetric translation equivalents: *rasgar* is one of
+the rarer renderings of *tear*, whose most frequent counterpart is *arrancar*, while *tear* is the
+usual rendering of *rasgar*.
 
-The root contents are the fragment entries' `Verb.rootContent`, regions of the substrate's
+The root contents are the fragment entries' `root.content`, regions of the substrate's
 `Root.Content` space, and the paper's examples are points of it, `Root.Content.Situation`s, a
 described event's value on every dimension. A root admits a situation when the situation lies
 in its region, and the substrate's `overlaps_iff_exists_mem` identifies `Overlaps` with the
@@ -56,59 +55,58 @@ open Semantics.Root Semantics.Root.Content English Spanish.Verbs English.Verbs
 
 /-! ### The paper's situations -/
 
-/-- Tearing soft contact lenses with one's nails (16a): a flimsy patient separated by a
-moderate, linear force. -/
+/-- Tearing soft contact lenses with one's nails (16a) separates a flimsy patient by a moderate,
+linear force. -/
 def lenses : Situation :=
   ⟨.moderate, .unidirectional, .hands, .neutral, .separation, .flimsy, .twoD⟩
 
-/-- Tearing a chunk off a slice of bread (14): a robust patient. -/
+/-- Tearing a chunk off a slice of bread (14) has a robust patient. -/
 def bread : Situation := { lenses with patientRobustness := .robust }
 
-/-- An awl engraving cement (16b): a gash on a surface, with no separation in contrary
+/-- An awl engraving cement (16b) makes a gash on a surface, with no separation in contrary
 directions. -/
 def cement : Situation := { lenses with resultGeometry := .surfaceBreach }
 
-/-- Children carefully tearing tin foil (17): controlled action. -/
+/-- Children carefully tearing tin foil (17) control the action. -/
 def foil : Situation := { lenses with agentControl := .compatible }
 
-/-- A rooster tearing the silence of the dawn (18): a fragile state, disturbed by the least
+/-- A rooster tearing the silence of the dawn (18) disturbs a fragile state with the least
 force. -/
 def silence : Situation := { lenses with force := .low, patientRobustness := .insubstantial }
 
-/-- A ball tearing through the rough (23): movement with considerable energy. -/
+/-- A ball tearing through the rough (23) moves with considerable energy. -/
 def rough : Situation := { lenses with force := .high }
 
 /-- The contact lenses lie in both roots' regions. -/
-theorem lenses_admitted : lenses ∈ tear_.rootContent ∧ lenses ∈ rasgar.rootContent := by
+theorem lenses_admitted : lenses ∈ tear_.root.content ∧ lenses ∈ rasgar.root.content := by
   decide
 
-/-- The two roots overlap: the contact lenses witness the zone where the verbs translate each
+/-- The two roots overlap, the contact lenses witnessing the zone where the verbs translate each
 other. -/
-theorem roots_overlap : tear_.rootContent.Overlaps rasgar.rootContent :=
+theorem roots_overlap : tear_.root.content.Overlaps rasgar.root.content :=
   overlaps_iff_exists_mem.2 ⟨lenses, lenses_admitted⟩
 
-/-- The bread: *tear* takes a robust patient, *rasgar* does not. -/
-theorem bread_contrast : bread ∈ tear_.rootContent ∧ bread ∉ rasgar.rootContent := by
+/-- *Tear* takes the robust bread as its patient and *rasgar* does not. -/
+theorem bread_contrast : bread ∈ tear_.root.content ∧ bread ∉ rasgar.root.content := by
   decide
 
-/-- The cement: a gash without contrary separation is a *rasgar* result, not a *tear*. -/
-theorem cement_contrast :
-    cement ∉ tear_.rootContent ∧ cement ∈ rasgar.rootContent := by
+/-- The engraved cement, a gash without contrary separation, is a *rasgar* result and not a
+*tear* one. -/
+theorem cement_contrast : cement ∉ tear_.root.content ∧ cement ∈ rasgar.root.content := by
   decide
 
-/-- The foil: careful action is compatible with *tear* and not with *rasgar*. -/
-theorem foil_contrast : foil ∈ tear_.rootContent ∧ foil ∉ rasgar.rootContent := by
+/-- The careful tearing of the foil is compatible with *tear* and not with *rasgar*. -/
+theorem foil_contrast : foil ∈ tear_.root.content ∧ foil ∉ rasgar.root.content := by
   decide
 
-/-- The silence: a fragile state disturbed without force is torn by *rasgar*, while *tear*
-wants force and contrary motion. -/
-theorem silence_contrast :
-    silence ∉ tear_.rootContent ∧ silence ∈ rasgar.rootContent := by
+/-- *Rasgar* tears the silence, a fragile state disturbed without force, while *tear* wants more
+force and a patient of some substance. -/
+theorem silence_contrast : silence ∉ tear_.root.content ∧ silence ∈ rasgar.root.content := by
   decide
 
-/-- The rough: energetic motion is a *tear* extension and not a *rasgar* one, whose flimsy
+/-- Energetic motion through the rough is a *tear* extension and not a *rasgar* one, whose flimsy
 patients call for no such force. -/
-theorem rough_contrast : rough ∈ tear_.rootContent ∧ rough ∉ rasgar.rootContent := by
+theorem rough_contrast : rough ∈ tear_.root.content ∧ rough ∉ rasgar.root.content := by
   decide
 
 end SpalekMcNally2026
