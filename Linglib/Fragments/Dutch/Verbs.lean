@@ -319,11 +319,12 @@ def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
 /-- A bounded directional phrase gives a dynamic intransitive verb *zijn*, as in *De jongen is
 naar Groningen gewandeld* (§2.2, (274b)). -/
 theorem perfect_withPath_intransitive {v : Verb} {p : Adposition.SpatialReading}
-    (hv : v.TakesSpatial) (hd : p.direction ≠ .place) (hb : p.IsBounded) {c : Aspect.VendlerClass}
+    (hv : v.TakesSpatial) (hb : p.IsBounded) {c : Aspect.VendlerClass}
     (hc : v.vendlerClass = some c) (hdyn : c.dynamicity = .dynamic) :
     perfectAuxiliary (v.withPath p) .intransitive = .be := by
-  simp [perfectAuxiliary, Verb.withPath, hv, hd, hb, hc, ArgumentFrame.intransitive,
-    ArgumentFrame.IsIntransitive, Aspect.VendlerClass.telicity_telicize hdyn]
+  simp [perfectAuxiliary, Verb.withPath, hv, hb.direction_ne_place, hb, hc,
+    ArgumentFrame.intransitive, ArgumentFrame.IsIntransitive,
+    Aspect.VendlerClass.telicity_telicize hdyn]
 
 /-- *Wandelen* takes *hebben*, with *zijn* under a directional phrase and *hebben* under a
 locational one (§2.2, (273)–(275)). -/

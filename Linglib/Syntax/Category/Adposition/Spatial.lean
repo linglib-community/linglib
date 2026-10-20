@@ -19,6 +19,11 @@ axial parts are what case morphology lacks, a flat paradigm rather than a ranked
 * `Adposition.SpatialReading.direction`, `IsBounded`: the direction and boundedness of a
   reading, read off its shape.
 
+## Main results
+
+* `Adposition.SpatialReading.direction_eq_place_iff`: a reading is locative exactly when it has no
+  path.
+
 ## References
 
 * [svenonius-2010]
@@ -66,6 +71,17 @@ def IsBounded (r : SpatialReading) : Prop := ∃ s ∈ r.shape, s.IsBounded
 
 instance : DecidablePred IsBounded := fun r ↦
   inferInstanceAs (Decidable (∃ s ∈ r.shape, s.IsBounded))
+
+variable {r : SpatialReading}
+
+theorem direction_eq_place_iff : r.direction = .place ↔ r.shape = none := by
+  rcases r with ⟨_, _, _ | s⟩
+  · simp [direction]
+  · cases s <;> simp [direction, Spatial.Path.Shape.direction]
+
+theorem IsBounded.direction_ne_place (h : r.IsBounded) : r.direction ≠ .place := by
+  obtain ⟨s, hs, -⟩ := h
+  simp_all [direction_eq_place_iff]
 
 end SpatialReading
 

@@ -243,7 +243,7 @@ inductive Causer
 causer that must be an agent entails volition, one that need only cause the change is an
 EFFECTOR, and a subject that causes nothing is no causer. -/
 def causer (v : Verb) : Option Causer :=
-  v.subjectEntailments.bind fun p ↦
+  (v.slotProfile? .external).bind fun p ↦
     if .volition ∈ p then some .agent else if .causation ∈ p then some .effector else none
 
 /-- Only causative verbs with underspecified causers have derived inchoatives (§3.1–§3.2), so

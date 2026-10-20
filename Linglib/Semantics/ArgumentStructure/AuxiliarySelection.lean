@@ -116,6 +116,9 @@ instance : BoundedOrder AuxiliarySelectionHierarchy where
   top := nonmotionalProcess
   le_top := by decide
 
+@[simp] theorem bot_eq_changeOfLocation : (⊥ : AuxiliarySelectionHierarchy) = changeOfLocation :=
+  rfl
+
 /-! ### The type of a verb entry -/
 
 /-- The type of a monadic verb, read off its entry ([sorace-2000] §§3–4). A state is the
@@ -140,11 +143,9 @@ def ofVerb (v : Verb) : Option AuxiliarySelectionHierarchy := do
 bottom of the hierarchy: the directed motion use in which verbs of manner of motion take *be*
 ([sorace-2000] §4.3, [levin-hovav-1995] p. 185). -/
 theorem ofVerb_withPath_eq_bot {v : Verb} {p : Adposition.SpatialReading} (hv : v.TakesSpatial)
-    (hd : p.direction ≠ .place) (hb : p.IsBounded) {c : Aspect.VendlerClass}
-    (hc : v.vendlerClass = some c) (hdyn : c.dynamicity = .dynamic) :
-    ofVerb (v.withPath p) = some ⊥ := by
-  simp [ofVerb, hv, hd, hb, hc, hdyn, Aspect.VendlerClass.telicity_telicize hdyn]
-  rfl
+    (hb : p.IsBounded) {c : Aspect.VendlerClass} (hc : v.vendlerClass = some c)
+    (hdyn : c.dynamicity = .dynamic) : ofVerb (v.withPath p) = some ⊥ := by
+  simp [ofVerb, hv, hb.direction_ne_place, hb, hc, hdyn, Aspect.VendlerClass.telicity_telicize hdyn]
 
 end AuxiliarySelectionHierarchy
 

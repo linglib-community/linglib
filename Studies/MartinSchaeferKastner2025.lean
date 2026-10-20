@@ -86,13 +86,13 @@ inductive ResponsibilityGoal where
 /-- The control level is not derivable from the entailment profile, since the limited-control
 *rougir* and the in-control *refroidir* share one. -/
 theorem control_level_not_from_entailments :
-    rougir.subjectEntailments = refroidir.subjectEntailments := by decide
+    rougir.slotProfile? .external = refroidir.slotProfile? .external := by decide
 
 /-- Movement entailments suffice for in-control status, *approcher*, but are not necessary,
 *refroidir* being in-control without them. -/
 theorem movement_sufficient_not_necessary :
-    approcher.subjectEntailments = some movingUndergoer ∧
-      refroidir.subjectEntailments = some undergoer ∧
+    approcher.slotProfile? .external = some movingUndergoer ∧
+      refroidir.slotProfile? .external = some undergoer ∧
       .movement ∈ movingUndergoer ∧ .movement ∉ undergoer := by
   decide
 
