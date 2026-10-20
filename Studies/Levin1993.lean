@@ -51,10 +51,11 @@ condition has the whole lattice. A pure change of state may carry a cause, as *b
 transitive" (p. 9), so the causative/inchoative's interval runs from the change of state to the
 change of state with its cause.
 
-A causee's entailments are the entry's own or else those its classes' templates agree on
-(`Verb.participantProfile?`). Where neither is recorded the causee meets no condition, so a verb
-shows the causative/inchoative or the induced action alternation only where Levin's condition is
-verified.
+A causee's entailments are the entry's own, or else a change of state where Levin classes the verb
+with her verbs of change of state, the classes of chapter 45 (`causeeProfile?`); the verbs of change
+of position the causative/inchoative also covers are not mapped. Where neither is recorded the
+causee meets no condition, so a verb shows the causative/inchoative or the induced action
+alternation only where Levin's condition is verified.
 
 ## References
 
@@ -178,14 +179,14 @@ def quadruple : List (LevinClass × Finset MeaningComponent) :=
   [(.break_, {changeOfState, causation}), (.cut, {changeOfState, causation, contact, motion}),
     (.hit, {contact, motion}), (.touch, {contact})]
 
-/-- The Introduction's conditions are necessary on the quadruple: every alternation a class
+/-- The Introduction's conditions are necessary on the quadruple, since every alternation a class
 page of Part II attests is open to the class's meaning components. -/
 theorem quadruple_mem_sensitivity_of_participates :
     ∀ p ∈ quadruple, ∀ a : DiathesisAlternation, p.1.Participates a → p.2 ∈ sensitivity a := by
   decide +kernel
 
-/-- On the diagnostic alternations the conditions also suffice: the quadruple's meaning
-components predict the class pages exactly. -/
+/-- On the diagnostic alternations the conditions also suffice, the quadruple's meaning components
+predicting the class pages exactly. -/
 theorem quadruple_prediction_matches :
     ∀ p ∈ quadruple, ∀ a ∈ diagnosticAlternations, (p.2 ∈ sensitivity a ↔ p.1.Participates a) := by
   decide +kernel
@@ -269,11 +270,28 @@ def CauseeCondition : DiathesisAlternation → EntailmentProfile → Prop
 instance (a : DiathesisAlternation) (θ : EntailmentProfile) : Decidable (CauseeCondition a θ) := by
   cases a <;> unfold CauseeCondition <;> infer_instance
 
+/-- The classes of chapter 45, the verbs of change of state. -/
+def changeOfStateClasses : Finset LevinClass :=
+  {.break_, .bend, .cooking, .otherChangeOfState, .entitySpecificChangeOfState,
+    .calibratableChangeOfState}
+
+/-- The verbs of change of state are the classes Levin numbers in chapter 45. -/
+theorem mem_changeOfStateClasses_iff (c : LevinClass) :
+    c ∈ changeOfStateClasses ↔ "45.".toList <+: c.numberString.toList := by
+  revert c
+  decide +kernel
+
+/-- The entailments of a causee, the entry's own or else a change of state when Levin classes the
+verb with the verbs of change of state. -/
+def causeeProfile? (v : Verb) (i : Fin v.valency.arity) : Option EntailmentProfile :=
+  v.valency.profiles.get i <|>
+    if Disjoint v.levinClasses changeOfStateClasses then none else some {.changeOfState}
+
 /-- A verb shows an alternation when the alternation's schema relates two of its diatheses and the
-profile of each causee, the entry's or its classes', meets the alternation's condition. -/
+profile of each causee meets the alternation's condition. -/
 def Shows (v : Verb) (a : DiathesisAlternation) : Prop :=
   ∃ σ ∈ schema? a, ∃ c ∈ v.valency.diatheses, ∃ d ∈ v.valency.diatheses, σ.Relates c d ∧
-    ∀ i, IsCausee c d i → ∃ θ ∈ v.participantProfile? i, CauseeCondition a θ
+    ∀ i, IsCausee c d i → ∃ θ ∈ causeeProfile? v i, CauseeCondition a θ
 
 instance (v : Verb) (a : DiathesisAlternation) : Decidable (Shows v a) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, ∃ _ ∈ _, _ ∧ ∀ _, _ → _))

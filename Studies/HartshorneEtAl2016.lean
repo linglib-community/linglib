@@ -2,12 +2,13 @@ module
 
 public import Mathlib.Data.List.MinMax
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Studies.Pesetsky1995
 
 /-!
 # Hartshorne et al. (2016): Psych verbs, the linking problem, and the acquisition of language
 
-This file formalizes [hartshorne-etal-2016]'s resolution of the psych-verb linking problem.
+This file formalizes Hartshorne et al.'s resolution of the psych-verb linking problem.
 Fear-type verbs (*Agnes feared Bartholomew*) and frighten-type verbs (*Bartholomew frightened
 Agnes*) describe the same emotions with reversed linking, the strongest apparent case against
 systematic mappings from meaning to form. The paper's proposal is that they lexicalize two
@@ -22,9 +23,9 @@ over the semantic structures of Fig. 11, prominence preservation: `Sem.subject` 
 least embedded argument of such a structure, and since the causer of CAUSE and the holder of BE
 are highest whatever they embed (`subject_cause`), the experiencer heads the attitude and the
 stimulus the episode (`attitude_subject`, `episode_subject`), while the causation judgments
-answer to whether the structure contains CAUSE at all. The linking agrees with
-[belletti-rizzi-1988]'s Class I and Class II as recorded in `Pesetsky1995` and with
-[levin-1993]'s admire and amuse classes (`agrees_with_levin`).
+answer to whether the structure contains CAUSE at all. The linking agrees with Belletti and
+Rizzi's Class I and Class II as recorded in `Pesetsky1995` and with Levin's admire and amuse
+classes (`agrees_with_levin`).
 
 ## Implementation notes
 
@@ -57,16 +58,16 @@ namespace HartshorneEtAl2016
 
 open ArgumentStructure
 
-/-- The argument positions of Fig. 11: the experiencer, the target an attitude is directed
-at, and the stimulus that causes an episode. -/
+/-- The argument positions of Fig. 11, the experiencer, the target an attitude is directed at,
+and the stimulus that causes an episode. -/
 inductive Participant where
   | experiencer
   | target
   | stimulus
   deriving DecidableEq, Repr
 
-/-- A semantic structure (§5.4.1, Figs. 10–11): primitive predicates embedding one another,
-variables marking argument positions and the verbal root modifying a state. -/
+/-- A semantic structure of primitive predicates embedding one another, with variables marking
+argument positions and the verbal root modifying a state (§5.4.1, Figs. 10–11). -/
 inductive Sem (α : Type) where
   /-- An argument position. -/
   | var (x : α)
@@ -92,7 +93,7 @@ def vars : Sem α → List (α × ℕ)
   | cause x e => (x.vars ++ e.vars).map λ p => (p.1, p.2 + 1)
   | about s y => (s.vars ++ y.vars).map λ p => (p.1, p.2 + 1)
 
-/-- Prominence preservation: the least embedded argument position becomes the subject. -/
+/-- Under prominence preservation the least embedded argument position becomes the subject. -/
 def subject (s : Sem α) : Option α := (s.vars.argmin Prod.snd).map Prod.fst
 
 /-- Whether the structure contains CAUSE. -/
@@ -138,11 +139,11 @@ end Sem
 
 open Sem Participant
 
-/-- Fig. 11a, the habitual attitude: the experiencer is in the emotional state the root
+/-- The habitual attitude of Fig. 11a, in which the experiencer is in the emotional state the root
 names, directed at the target. -/
 def attitude : Sem Participant := be (var experiencer) (about root (var target))
 
-/-- Fig. 11b, the caused emotional episode: the stimulus causes the experiencer to be in
+/-- The caused emotional episode of Fig. 11b, in which the stimulus causes the experiencer to be in
 the emotional state. -/
 def episode : Sem Participant := cause (var stimulus) (be (var experiencer) root)
 
@@ -152,12 +153,12 @@ theorem attitude_subject : attitude.subject = some experiencer := subject_be _ _
 /-- Frighten-type verbs map the stimulus onto the subject. -/
 theorem episode_subject : episode.subject = some stimulus := subject_cause _ _
 
-/-- The episode encodes the stimulus as a cause, the attitude encodes no cause: the structural
+/-- The episode encodes the stimulus as a cause and the attitude encodes none, the structural
 content behind the causation judgments of their Experiments 2–4. -/
 theorem episode_hasCause_attitude_not : episode.HasCause ∧ ¬ attitude.HasCause := by decide
 
-/-- §5.4.3: the structures admit a target in the episode, still headed by the stimulus,
-which predicts the unattested (7). -/
+/-- The structures admit a target in the episode, still headed by the stimulus, which predicts the
+unattested (7) (§5.4.3). -/
 def episodeWithTarget : Sem Participant :=
   cause (var stimulus) (be (var experiencer) (about root (var target)))
 
@@ -185,13 +186,19 @@ def Participant.thetaRole : Participant → ThetaRole
   | stimulus => .stimulus
   | target => .goal
 
-/-- The prominence subjects are the subject roles of [levin-1993]'s admire and amuse classes,
-read off their entailment profiles. -/
+/-- The subject role of Levin's transitive psych-verb classes, which she sorts by "whether the
+experiencer is the subject (the admire verbs) or the object (the amuse verbs)", the other argument
+being the stimulus ([levin-1993] p. 189); an amuse verb's subject is "the cause of the change in
+psychological state" (p. 191). -/
+def levinSubjectRole : LevinClass → Option ThetaRole
+  | .admire => some .experiencer
+  | .amuse => some .stimulus
+  | _ => none
+
+/-- The prominence subjects are the subjects of Levin's admire and amuse classes. -/
 theorem agrees_with_levin :
-    attitude.subject.map Participant.thetaRole =
-        (LevinClass.subjectProfile .admire).bind EntailmentProfile.toRole ∧
-      episode.subject.map Participant.thetaRole =
-        (LevinClass.subjectProfile .amuse).bind EntailmentProfile.toRole := by
+    attitude.subject.map Participant.thetaRole = levinSubjectRole .admire ∧
+      episode.subject.map Participant.thetaRole = levinSubjectRole .amuse := by
   decide
 
 end HartshorneEtAl2016
