@@ -110,7 +110,7 @@ end Parse
 
 /-- The level at which a speaker analyses a name. -/
 inductive Level where
-  /-- A pattern of meaningless elements: the name in isolation. -/
+  /-- A pattern of meaningless elements, the name in isolation. -/
   | phonology
   /-- A form linked to the meaning of a taught base. -/
   | morphology
@@ -155,14 +155,14 @@ variable [DecidableEq α]
 def ocp : Constraint (Parse α) := fun p ↦ (p.morphemes.map Constraint.ocp).sum
 
 @[simp] theorem ocp_simplex_double (x : α) : ocp (.simplex [x, x]) = 1 := by
-  simp [ocp, Parse.morphemes, Constraint.ocp, Constraint.forbidPairs, Subregular.countAdjacent]
+  simp [ocp, Parse.morphemes]
 
 @[simp] theorem ocp_simplex_pair (h : x ≠ y) : ocp (.simplex [x, y]) = 0 := by
-  simp [ocp, Parse.morphemes, Constraint.ocp, Constraint.forbidPairs, Subregular.countAdjacent, h]
+  simp [ocp, Parse.morphemes, h]
 
 /-- The OCP is inapplicable to a base and its copy, which are separate morphemes. -/
 @[simp] theorem ocp_reduplicated_singleton (x : α) : ocp (.reduplicated [x]) = 0 := by
-  simp [ocp, Parse.morphemes, Constraint.ocp, Constraint.forbidPairs, Subregular.countAdjacent]
+  simp [ocp, Parse.morphemes]
 
 /-! ### The competition between a doubled name and its control -/
 
@@ -211,7 +211,7 @@ variable {l : SpokenLanguage M} {f g : M}
 
 /-- A speaker parses doubling with meaning `f` morphologically when the spoken language
 gives positive evidence that morphology expresses `f` and no negative evidence that
-reduplication cannot: if it reduplicates at all, it does so for `f`. -/
+reduplication cannot, so that if it reduplicates at all, it does so for `f`. -/
 def Licenses (l : SpokenLanguage M) (f : M) : Prop :=
   f ∈ l.marked ∧ (l.reduplicated.Nonempty → f ∈ l.reduplicated)
 

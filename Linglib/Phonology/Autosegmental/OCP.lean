@@ -177,7 +177,7 @@ theorem AR.link_collapse (i j : ι) (r s : ℕ) :
 
 /-- The collapse is OCP-clean at the collapsed tier. -/
 theorem AR.isCleanAt_collapse : (X.collapse m).IsCleanAt m := by
-  simpa [AR.IsCleanAt] using collapse_clean (X.tierWord m)
+  simpa [AR.IsCleanAt] using isClean_collapse (X.tierWord m)
 
 /-- The collapse preserves the NCC, since it repoints links monotonically. -/
 theorem AR.noCrossing_collapse (h : NoCrossing X.obj.edges X.obj.arcs) :
@@ -193,7 +193,7 @@ noncomputable def AR.IsCleanAt.collapseFullIso (h : X.IsCleanAt m) :
   AR.fullIsoOfReaderEq
     (fun i ↦ by
       rcases eq_or_ne i m with rfl | hi
-      · simpa using collapse_idempotent_on_clean h
+      · simpa using IsClean.collapse_eq h
       · simp [hi])
     fun i j r s ↦ by
       rw [AR.link_collapse]

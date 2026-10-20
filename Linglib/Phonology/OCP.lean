@@ -13,13 +13,12 @@ public import Linglib.Core.Data.List.Destutter
 
 The Obligatory Contour Principle (OCP) bans two identical adjacent autosegments on one tier.
 Here it is categorical and bans strict identity, either on the tier itself (`IsClean`, after
-Leben and McCarthy) or on a projection of it (`IsCleanOn`, after Chandlee and Jardine). Fusion,
-`collapse`, repairs a violation by merging each run of identical elements into one; it is
-`List.destutter (· ≠ ·)`, a retraction onto the clean tiers. `mergeAppend` concatenates two
-words and merges identical elements at the seam only; the collapse of a concatenation is the
-merging append of the collapses. The run index `runIdx` tracks where each position lands under
-fusion. `Phonology/Subregular/OCP.lean` shows that the
-constraint is tier-based strictly local and that fusion is input strictly local.
+Leben and McCarthy) or on a projection of it (`IsCleanOn`). Fusion, `collapse`, repairs a
+violation by merging each run of identical elements into one; it is `List.destutter (· ≠ ·)`, a
+retraction onto the clean tiers, as `List.dedup` is onto the lists without duplicates.
+`mergeAppend` concatenates two words and merges identical elements at the seam only; the collapse
+of a concatenation is the merging append of the collapses. The run index `runIdx` tracks where
+each position lands under fusion.
 
 The gradient OCP of Frisch, Pierrehumbert and Broe, which scales with the similarity of the two
 consonants, is a different object and lives in that paper's study.
@@ -34,7 +33,8 @@ consonants, is a different object and lives in that paper's study.
 
 ## Main statements
 
-* `OCP.collapse_eq_self_iff`: `collapse` fixes exactly the clean tiers.
+* `OCP.isClean_collapse`, `OCP.collapse_eq_self_iff`: `collapse` lands in the clean tiers and
+  fixes exactly them.
 * `OCP.collapse_append`: the collapse of a concatenation is the merging append of the
   collapses.
 * `OCP.runIdx_append_left`, `OCP.runIdx_append_right`: the run indices of a concatenation.
@@ -46,9 +46,7 @@ consonants, is a different object and lives in that paper's study.
 * [mccarthy-1986]
 * [mccarthy-prince-1995]
 * [frisch-pierrehumbert-broe-2004]
-* [heinz-rawal-tanner-2011]
-* [chandlee-heinz-2018]
-* [chandlee-jardine-2019]
+* [jardine-heinz-2015]
 -/
 
 @[expose] public section
@@ -105,20 +103,20 @@ theorem collapse_eq_destutter (xs : List α) : collapse xs = xs.destutter (· �
   List.destutter_replicate (fun h ↦ h rfl) n
 
 /-- `collapse` lands in the OCP-clean set. -/
-theorem collapse_clean (xs : List α) : IsClean (collapse xs) :=
+theorem isClean_collapse (xs : List α) : IsClean (collapse xs) :=
   List.isChain_destutter _ xs
 
 /-- `collapse` fixes OCP-clean lists. -/
-theorem collapse_idempotent_on_clean {xs : List α} (h : IsClean xs) : collapse xs = xs :=
+protected theorem IsClean.collapse_eq {xs : List α} (h : IsClean xs) : collapse xs = xs :=
   List.destutter_of_isChain _ xs h
 
-/-- `collapse` fixes exactly the OCP-clean tiers, so with `collapse_clean` it is a retraction
+/-- `collapse` fixes exactly the OCP-clean tiers, so with `isClean_collapse` it is a retraction
 onto them. -/
 @[simp] theorem collapse_eq_self_iff (xs : List α) : collapse xs = xs ↔ IsClean xs :=
   List.destutter_eq_self_iff _ xs
 
 /-- The fusion repair is a retraction onto the OCP-clean set. -/
-theorem collapse_idempotent (xs : List α) : collapse (collapse xs) = collapse xs :=
+@[simp] theorem collapse_idem (xs : List α) : collapse (collapse xs) = collapse xs :=
   List.destutter_idem _ _
 
 /-! ### Normal-form lemmas -/
@@ -132,9 +130,6 @@ theorem collapse_sublist (xs : List α) : (collapse xs).Sublist xs :=
 
 theorem collapse_length_le (xs : List α) : (collapse xs).length ≤ xs.length :=
   (collapse_sublist xs).length_le
-
-theorem mem_collapse {a : α} {xs : List α} (ha : a ∈ collapse xs) : a ∈ xs :=
-  (collapse_sublist xs).mem ha
 
 /-! ### Merging at a seam
 
@@ -210,7 +205,8 @@ theorem mergeOffset_mergeAppend_right (hys : ys ≠ []) :
   mergeOffset_congr_right (head?_mergeAppend hys)
 
 theorem mergeOffset_mergeAppend_left (xs ys zs : List α) :
-    mergeOffset (mergeAppend xs ys) zs = mergeOffset xs (mergeAppend ys zs) + mergeOffset ys zs := by
+    mergeOffset (mergeAppend xs ys) zs =
+      mergeOffset xs (mergeAppend ys zs) + mergeOffset ys zs := by
   rcases eq_or_ne ys [] with rfl | hys
   · simp
   have hpos := List.length_pos_iff.mpr hys
@@ -251,12 +247,35 @@ theorem collapse_append_of_isClean (hx : IsClean xs) (hy : IsClean ys) :
 collapses. -/
 theorem collapse_append (xs ys : List α) :
     collapse (xs ++ ys) = mergeAppend (collapse xs) (collapse ys) := by
-  rw [← collapse_append_of_isClean (collapse_clean xs) (collapse_clean ys)]
+  rw [← collapse_append_of_isClean (isClean_collapse xs) (isClean_collapse ys)]
   exact (List.destutter_append_destutter xs ys).symm
+
+/-- Fusion keeps the last element. -/
+@[simp] theorem getLast?_collapse (xs : List α) : (collapse xs).getLast? = xs.getLast? := by
+  induction xs using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton xs x _ =>
+    rw [collapse_append, collapse_singleton, getLast?_mergeAppend (List.cons_ne_nil _ _)]
+    simp
+
+/-- A symbol appended to a word fuses with the word's last element when it repeats it. -/
+theorem collapse_append_singleton (xs : List α) (x : α) :
+    collapse (xs ++ [x]) = if xs.getLast? = some x then collapse xs else collapse xs ++ [x] := by
+  rw [collapse_append, collapse_singleton, mergeAppend, getLast?_collapse]
+  simp
+
+@[simp] theorem mem_collapse {a : α} {xs : List α} : a ∈ collapse xs ↔ a ∈ xs := by
+  induction xs using List.reverseRecOn with
+  | nil => simp
+  | append_singleton xs x ih =>
+    rw [collapse_append_singleton]
+    split_ifs with h
+    · simpa [ih] using fun hax ↦ hax ▸ List.mem_of_getLast? h
+    · simp [ih]
 
 /-- Merging at the seam keeps clean words clean. -/
 theorem isClean_mergeAppend (hx : IsClean xs) (hy : IsClean ys) : IsClean (mergeAppend xs ys) :=
-  collapse_append_of_isClean hx hy ▸ collapse_clean _
+  collapse_append_of_isClean hx hy ▸ isClean_collapse _
 
 end
 
@@ -275,7 +294,7 @@ theorem runIdx_monotone (xs : List α) : Monotone (runIdx xs) := by
   unfold runIdx
   have hsub : (collapse (xs.take (a + 1))).Sublist (xs.take (b + 1)) :=
     (collapse_sublist _).trans (List.take_sublist_take_left (by omega))
-  have hlen := List.IsChain.length_le_length_destutter_ne hsub (collapse_clean _)
+  have hlen := List.IsChain.length_le_length_destutter_ne hsub (isClean_collapse _)
   simp only [collapse_eq_destutter] at hlen ⊢
   omega
 
@@ -294,7 +313,7 @@ theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) 
     runIdx xs k < (collapse xs).length := by
   have hsub : (collapse (xs.take (k + 1))).Sublist xs :=
     (collapse_sublist _).trans (List.take_sublist _ _)
-  have hlen := List.IsChain.length_le_length_destutter_ne hsub (collapse_clean _)
+  have hlen := List.IsChain.length_le_length_destutter_ne hsub (isClean_collapse _)
   rw [← collapse_eq_destutter, length_collapse_take_succ hk] at hlen
   omega
 
@@ -310,7 +329,7 @@ theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) 
 /-- On a clean tier `runIdx` is the identity. -/
 theorem runIdx_clean (hc : IsClean xs) {k : ℕ} (h : k < xs.length) : runIdx xs k = k := by
   unfold runIdx
-  rw [collapse_idempotent_on_clean (hc.take (k + 1)), List.length_take_of_le (by omega)]
+  rw [IsClean.collapse_eq (hc.take (k + 1)), List.length_take_of_le (by omega)]
   omega
 
 /-! ### Run indices of a concatenation
