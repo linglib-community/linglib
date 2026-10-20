@@ -180,14 +180,14 @@ it deliberately*, is confined to non-affirmative contexts. -/
 def can : Auxiliary where
   form := "can"
   features := finite .Pres
-  modality := {.possibility} ×ˢ {.deontic, .circumstantial}
+  meaning := {.possibility} ×ˢ {.deontic, .circumstantial}
 
 /-- *could*, the preterite of *can*: the deontic and dynamic uses of *can* in past time, and the
 epistemic possibility that *can* lacks ([huddleston-pullum-2002] ch. 3 §9.8). -/
 def could : Auxiliary where
   form := "could"
   features := finite .Past
-  modality := {.possibility} ×ˢ {.epistemic, .deontic, .circumstantial}
+  meaning := {.possibility} ×ˢ {.epistemic, .deontic, .circumstantial}
 
 /-- *will*, strong modality of low degree ([huddleston-pullum-2002] ch. 3 §9.5): epistemic,
 futurity among it, and dynamic volition. Its deontic use, *You will report back for duty*, is an
@@ -195,14 +195,14 @@ implicature. -/
 def will : Auxiliary where
   form := "will"
   features := finite .Pres
-  modality := {.necessity} ×ˢ {.epistemic, .circumstantial}
+  meaning := {.necessity} ×ˢ {.epistemic, .circumstantial}
 
 /-- *would*, the preterite of *will*: volition and futurity in past time, and the tentative
 epistemic use of *He'd be about sixty* ([huddleston-pullum-2002] ch. 3 §9.8). -/
 def would : Auxiliary where
   form := "would"
   features := finite .Past
-  modality := {.necessity} ×ˢ {.epistemic, .circumstantial}
+  meaning := {.necessity} ×ˢ {.epistemic, .circumstantial}
 
 /-- *shall*, strong deontic modality in regulations, the speaker's guarantee and direction
 questions, and with a first person subject a variant of *will* for futurity and volition,
@@ -211,7 +211,7 @@ def shall : Auxiliary where
   form := "shall"
   features := finite .Pres
   register := .formal
-  modality := {.necessity} ×ˢ {.deontic, .epistemic, .circumstantial}
+  meaning := {.necessity} ×ˢ {.deontic, .epistemic, .circumstantial}
 
 /-- *should*, the preterite of *shall*, whose most frequent uses are idiomatic: medium strength
 deontic and epistemic modality, interchangeable with *ought* ([huddleston-pullum-2002] ch. 3
@@ -219,14 +219,14 @@ deontic and epistemic modality, interchangeable with *ought* ([huddleston-pullum
 def should : Auxiliary where
   form := "should"
   features := finite .Past
-  modality := {.weakNecessity} ×ˢ {.deontic, .epistemic}
+  meaning := {.weakNecessity} ×ˢ {.deontic, .epistemic}
 
 /-- *may*, weak modality ([huddleston-pullum-2002] ch. 3 §9.3): epistemic possibility, and in
 formal style deontic permission and dynamic possibility. -/
 def may : Auxiliary where
   form := "may"
   features := finite .Pres
-  modality := {.possibility} ×ˢ {.epistemic, .deontic, .circumstantial}
+  meaning := {.possibility} ×ˢ {.epistemic, .deontic, .circumstantial}
 
 /-- *might*, the preterite of *may*, or for some speakers a lexeme of its own: tentative
 epistemic possibility, and the deontic and dynamic uses of *Might I have a little more sugar?*
@@ -234,14 +234,14 @@ and *It might be described as an act of provocation* ([huddleston-pullum-2002] c
 def might : Auxiliary where
   form := "might"
   features := finite .Past
-  modality := {.possibility} ×ˢ {.epistemic, .deontic, .circumstantial}
+  meaning := {.possibility} ×ˢ {.epistemic, .deontic, .circumstantial}
 
 /-- *must*, strong modality with no preterite ([huddleston-pullum-2002] ch. 3 §9.3): epistemic
 and deontic necessity, and the fairly rare dynamic necessity of an internal need. -/
 def must : Auxiliary where
   form := "must"
   features := finite .Pres
-  modality := {.necessity} ×ˢ {.epistemic, .deontic, .circumstantial}
+  meaning := {.necessity} ×ˢ {.epistemic, .deontic, .circumstantial}
 
 /-- *need*, strong modality with no preterite, confined to non-affirmative contexts
 ([huddleston-pullum-2002] ch. 3 §2.5.5, §9.3): epistemic in *He needn't have done it
@@ -249,7 +249,7 @@ deliberately* and deontic in *You needn't attend the lectures*. -/
 def need : Auxiliary where
   form := "need"
   features := finite .Pres
-  modality := {.necessity} ×ˢ {.epistemic, .deontic}
+  meaning := {.necessity} ×ˢ {.epistemic, .deontic}
 
 /-- *dare*, confined to non-affirmative contexts ([huddleston-pullum-2002] ch. 3 §2.5.5): the
 dynamic modality of *I daren't tell her*, 'have the courage', which its entailments put with
@@ -257,14 +257,14 @@ the weak modals (§9.7). -/
 def dare : Auxiliary where
   form := "dare"
   features := finite .Pres
-  modality := {.possibility} ×ˢ {.circumstantial}
+  meaning := {.possibility} ×ˢ {.circumstantial}
 
 /-- *ought*, medium strength deontic and epistemic modality like *should*, with a
 *to*-infinitival complement and no preterite ([huddleston-pullum-2002] ch. 3 §2.5.4, §9.4). -/
 def ought : Auxiliary where
   form := "ought"
   features := finite .Pres
-  modality := {.weakNecessity} ×ˢ {.deontic, .epistemic}
+  meaning := {.weakNecessity} ×ˢ {.deontic, .epistemic}
 
 /-! ### *Be*, *have* and *do* -/
 

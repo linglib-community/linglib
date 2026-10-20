@@ -9,17 +9,17 @@ public import Linglib.Data.Examples.Ferreira2023
 /-!
 # Ferreira (2023): A square of necessities
 
-This file formalizes [ferreira-2023]'s square of necessities. Portuguese has a weak necessity
-modal *dever* between *poder* and *ter que* ((28)–(29), by the test of [rubinstein-2021] in
+This file formalizes Ferreira's square of necessities. Portuguese has a weak necessity
+modal *dever* between *poder* and *ter que* ((28)–(29), by the test of Rubinstein (2021) in
 (27)), and both necessity modals take past imperfect morphology (*devia*, *tinha que*) without
-a change of force. That morphology is [von-fintel-iatridou-2023]'s X-marking, read after
-[stalnaker-1975] as the suspension of a presupposition: the modal base is replaced by its
+a change of force. That morphology is von Fintel and Iatridou's X-marking, read after
+Stalnaker (1975) as the suspension of a presupposition: the modal base is replaced by its
 ∗-revision for the prejacent, which adds the prejacent-worlds most similar to the accessible
-ones ((79), after [grano-phillips-brown-2022]). The weak/strong contrast is X-marking of the
+ones ((79), after Grano and Phillips-Brown 2022). The weak/strong contrast is X-marking of the
 other parameter: the ∗∗-revision of an ordering source for a proposition makes every best world
 satisfying it better than every best world failing it (131), and strong necessity under the
-revised ordering is [von-fintel-iatridou-2008]'s weak necessity, the best of the best worlds
-under [kratzer-2012]'s ordering ((129), (133)). The two shifters generate the square (134),
+revised ordering is von Fintel and Iatridou's weak necessity, the best of the best worlds
+under Kratzer's ordering ((129), (133)). The two shifters generate the square (134),
 which Portuguese fills with *tem que*, *tinha que*, *deve*, *devia* (135).
 
 ## Main definitions
@@ -511,8 +511,8 @@ def interpret (φ : ModalForce) (f g : Background W) (p q : W → Prop)
 /-- The Portuguese necessity modal at each vertex (135). X-marking the ordering source is
 lexical, from *ter que* to *dever*, and X-marking the modal base is the past imperfect. -/
 def modalAt : Vertex → Auxiliary
-  | ⟨false, false⟩ => Portuguese.Modals.terQue
-  | ⟨false, true⟩ => Portuguese.Modals.dever
+  | ⟨false, false⟩ => Portuguese.Modals.temQue
+  | ⟨false, true⟩ => Portuguese.Modals.deve
   | ⟨true, false⟩ => Portuguese.Modals.tinhaQue
   | ⟨true, true⟩ => Portuguese.Modals.devia
 
@@ -521,7 +521,8 @@ def square (v : Vertex) : ModalItem := (modalAt v).toModalItem
 
 /-- The fragment's modal at a vertex is in the past imperfect exactly when the modal base is
 X-marked (135). -/
-theorem tense_square : ∀ v : Vertex, (modalAt v).tense = some .Imp ↔ v.xf = true := by decide
+theorem tense_square : ∀ v : Vertex, (modalAt v).features .tense = some .Imp ↔ v.xf = true := by
+  decide
 
 /-- The fragment's force at a vertex is weak necessity exactly when the ordering source is
 X-marked (83), (135). -/

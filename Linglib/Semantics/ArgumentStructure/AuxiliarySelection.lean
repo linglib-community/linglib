@@ -18,8 +18,8 @@ refines the intransitives into the Auxiliary Selection
 Hierarchy, a chain of seven aspectual and thematic verb types along which the preference for
 *be* falls: the verbs at the two ends choose their auxiliary categorically and in every language,
 the verbs between them vary, and each language draws its cutoff between *be* and *have* at its
-own point. The inflectional typology of auxiliary verb constructions lives in
-`Syntax/Category/Auxiliary/Constructions.lean`.
+own point. The inflectional typology of auxiliary verb constructions is in
+`Studies/Anderson2006a.lean`.
 
 ## Main definitions
 
