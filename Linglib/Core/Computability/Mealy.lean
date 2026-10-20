@@ -11,7 +11,6 @@ public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.List.Basic
 public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Core.Data.Fintype.Transfer
-public import Linglib.Core.Data.List.DependsOn
 
 /-!
 # Mealy machines
@@ -20,7 +19,7 @@ A Mealy machine [mealy-1955] is a deterministic transducer which reads its input
 right and emits exactly one output symbol per input symbol, so the function it computes
 is length-preserving by construction. Output coordinate `i` of the run is the output
 at the state reached after the length-`i` input prefix (`Mealy.getElem?_run`),
-so the output is prefix-determined at every coordinate.
+so the run of a prefix is the prefix of the run (`Mealy.run_take`).
 
 Note that this definition allows for machines with infinite states; a `Fintype`
 instance must be supplied for the finite-state class `IsMealyComputable`.
@@ -40,6 +39,7 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 
 * `Mealy.getElem?_run`: output coordinate `i` is the output at the state reached
   after the length-`i` input prefix
+* `Mealy.run_take`: the run of a prefix is the prefix of the run
 * `Mealy.getElem?_runRight`: output coordinate `i` of the right-to-left pass is the output at
   the state reached over the reversed strict suffix
 * `Mealy.getElem?_ofFlag_run`, `Mealy.getElem?_ofFlag_runRight`: each coordinate of a
@@ -160,6 +160,14 @@ first `i` input symbols. -/
 theorem getElem?_run (i : ℕ) :
     (T.run xs)[i]? = xs[i]?.map (T.output (T.stateAfter T.start (xs.take i))) :=
   T.getElem?_runFrom T.start xs i
+
+/-- From any state, the run of a prefix is the prefix of the run. -/
+theorem runFrom_take (n : ℕ) : T.runFrom s (xs.take n) = (T.runFrom s xs).take n := by
+  induction xs generalizing s n <;> cases n <;> simp [*]
+
+/-- The run of a prefix is the prefix of the run, so output coordinate `i` reads only the input
+through `i`. -/
+theorem run_take (n : ℕ) : T.run (xs.take n) = (T.run xs).take n := T.runFrom_take T.start xs n
 
 /-- Output coordinate `i` of `T.runRight` is the output at the state reached over the reversed
 strict suffix. -/
@@ -353,22 +361,3 @@ theorem IsMealyComputable.isRegular_preimage {f : List α → List β}
   obtain ⟨τ, _, M, rfl⟩ := hL
   exact ⟨σ × τ, inferInstance, M.comapMealy T, M.accepts_comapMealy T⟩
 
-
-/-! ### Causality -/
-
-/-- A sequential machine's output coordinate `i` depends only on the input prefix
-`Set.Iic i`. -/
-theorem Mealy.dependsOn_run_Iic {σ : Type*} (T : Mealy σ α β) (i : ℕ) :
-    ∀ n, DependsOn (fun x : Fin n → α ↦ (T.run (List.ofFn x))[i]?) (Fin.val ⁻¹' Set.Iic i) :=
-  (List.forall_dependsOn_ofFn_iff fun u ↦ (T.run u)[i]?).mpr fun u v _ hag ↦ by
-    show (T.run u)[i]? = (T.run v)[i]?
-    rw [T.getElem?_run u, T.getElem?_run v, hag.getElem?_eq (Set.mem_Iic.mpr le_rfl),
-      List.ext_take_getElem? fun k hk => hag.getElem?_eq (Set.mem_Iic.mpr hk.le)]
-
-/-- A Mealy-computable map's output coordinate `i` depends only on the input prefix
-`Set.Iic i`. -/
-theorem IsMealyComputable.dependsOn_Iic {f : List α → List β}
-    (hf : IsMealyComputable f) (i : ℕ) :
-    ∀ n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?) (Fin.val ⁻¹' Set.Iic i) := by
-  obtain ⟨σ, _, T, rfl⟩ := hf
-  exact T.dependsOn_run_Iic i

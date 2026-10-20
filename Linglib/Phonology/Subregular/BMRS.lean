@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.WindowFormula
-public import Linglib.Core.Data.List.DependsOn
+public import Linglib.Core.Data.List.TakeDrop
 public import Mathlib.Data.Fintype.Prod
 
 /-!
@@ -35,8 +35,8 @@ rounds settle by round `card F * n`, so evaluation is decidable.
 ## Main statements
 
 * `Program.eval_eq_some_iff`: the rounds settle on the derivation system, so `Eval` is decidable.
-* `Eval.congr_eqOn_Iic` / `Eval.congr_eqOn_Ici`: one-sided locality: a backward program evaluated
-  at `i` reads only positions `≤ i` (dually `≥ i`).
+* `Eval.congr_take` / `Eval.congr_drop`: one-sided locality: a backward program evaluated at `i`
+  reads only the prefix through `i` (dually, the suffix from `i`).
 
 ## Implementation notes
 
@@ -266,28 +266,30 @@ theorem Eval.congr_of_allWalks {p : Walk → Prop} {r : ℕ → ℕ → Prop} [I
   | final_true h => exact fun _ _ ↦ .final_true (ht.trans (hlen ▸ h))
   | final_false h hv => exact fun _ _ ↦ .final_false (ht.trans h) (hlen ▸ hv)
   | label_true h hl has =>
-    exact fun he hag ↦ .label_true (ht.trans h) (hag.getElem?_eq (hp he h) ▸ hl) has
+    exact fun he hag ↦ .label_true (ht.trans h) ((hag (hp he h)).symm.trans hl) has
   | label_false h hl has =>
-    exact fun he hag ↦ .label_false (ht.trans h) (hag.getElem?_eq (hp he h) ▸ hl) has
+    exact fun he hag ↦ .label_false (ht.trans h) ((hag (hp he h)).symm.trans hl) has
   | call h _ ih =>
     exact fun he hag ↦ .call (ht.trans h)
       (ih (hP _) (hag.mono fun _ hu ↦ trans_of r hu (hp he h)))
   | ite_true _ _ ihc ih₁ => exact fun he hag ↦ .ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false _ _ ihc ih₂ => exact fun he hag ↦ .ite_false (ihc he.1 hag) (ih₂ he.2.2 hag)
 
-/-- A successor-free program evaluated at `i` reads only positions `≤ i`, so equal-length words
-agreeing up to `i` evaluate identically. -/
-theorem Eval.congr_eqOn_Iic (hP : P.Backward) (hlen : w.length = w'.length)
+/-- A successor-free program evaluated at `i` reads only the prefix through `i`, so equal-length
+words with that prefix in common evaluate identically. -/
+theorem Eval.congr_take (hP : P.Backward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :
-    e.AllWalks Walk.Backward → EqOn (w[·]?) (w'[·]?) (Iic i) → Eval P w' i e b :=
-  h.congr_of_allWalks (r := (· ≤ ·)) (fun ht hv ↦ Walk.eval_le_of_backward ht hv) hP hlen
+    e.AllWalks Walk.Backward → w.take (i + 1) = w'.take (i + 1) → Eval P w' i e b := fun he hw ↦
+  h.congr_of_allWalks (r := (· ≤ ·)) (fun ht hv ↦ Walk.eval_le_of_backward ht hv) hP hlen he
+    fun _ hk ↦ List.take_eq_take_iff_getElem?.mp hw _ (Nat.lt_succ_of_le hk)
 
-/-- A predecessor-free program evaluated at `i` reads only positions `≥ i`, so equal-length
-words agreeing from `i` on evaluate identically. -/
-theorem Eval.congr_eqOn_Ici (hP : P.Forward) (hlen : w.length = w'.length)
+/-- A predecessor-free program evaluated at `i` reads only the suffix from `i`, so equal-length
+words with that suffix in common evaluate identically. -/
+theorem Eval.congr_drop (hP : P.Forward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :
-    e.AllWalks Walk.Forward → EqOn (w[·]?) (w'[·]?) (Ici i) → Eval P w' i e b :=
-  h.congr_of_allWalks (r := (· ≥ ·)) (fun ht hv ↦ Walk.le_eval_of_forward ht hv) hP hlen
+    e.AllWalks Walk.Forward → w.drop i = w'.drop i → Eval P w' i e b := fun he hw ↦
+  h.congr_of_allWalks (r := (· ≥ ·)) (fun ht hv ↦ Walk.le_eval_of_forward ht hv) hP hlen he
+    fun _ hk ↦ List.drop_eq_drop_iff_getElem?.mp hw _ hk
 
 /-! ### Evaluation in rounds
 

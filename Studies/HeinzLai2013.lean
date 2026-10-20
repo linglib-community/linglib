@@ -176,13 +176,8 @@ theorem not_isRightSubsequential_of_isSourGrapes {f : List Seg → List Seg}
     (hnone : ∀ n, f (replicate n .minus) = replicate n .minus) : ¬ IsRightSubsequential f := by
   intro hR
   obtain ⟨N, hN⟩ := hR.boundedDependence_left hlen
-  have h := (List.forall_dependsOn_ofFn_iff fun u ↦ (f u)[N + 1]?).mp (hN (N + 1))
-    (u := .plus :: replicate (N + 1) .minus) (v := .minus :: replicate (N + 1) .minus) (by simp)
-    (fun k hk ↦ by
-      simp only [Edge.window_left, Set.mem_Ici] at hk
-      rcases k with _ | k
-      · omega
-      · rfl)
+  have h : (f (.plus :: replicate (N + 1) .minus))[N + 1]?
+      = (f (.minus :: replicate (N + 1) .minus))[N + 1]? := hN (N + 1) (by simp)
   rw [(hf (N + 1)).1, ← replicate_succ, hnone] at h
   simp at h
 

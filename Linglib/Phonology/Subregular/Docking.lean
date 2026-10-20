@@ -31,7 +31,8 @@ only that window, so the map depends boundedly on both sides in the sense of
 * `Docking.requiresBothSides_of_flanks` — the flank-witness template, from three docking facts.
 * `Docking.ofQF_map_getElem?_congr` — with a bounded guard, the output at a position reads
   only the guard's window.
-* `Docking.ofQF_boundedDependence` — hence bounded dependence on both sides.
+* `Docking.ofQF_boundedDependence_left`, `Docking.ofQF_boundedDependence_right` — hence bounded
+  dependence on both sides.
 
 ## References
 
@@ -116,38 +117,34 @@ def ofQF (φ : WindowFormula α) (dock : α → α) : Docking α where
 /-- With a guard bounded by `l` back and `r` forward, the output at a position reads only the
 input on that window. -/
 theorem ofQF_map_getElem?_congr {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bounded l r) (dock : α → α)
-    {w w' : List α} (hlen : w.length = w'.length)
-    (hag : ∀ j, i - l ≤ j → j ≤ i + r → w[j]? = w'[j]?) :
+    {w w' : List α} (hag : ∀ j, i - l ≤ j → j ≤ i + r → w[j]? = w'[j]?) :
     ((ofQF φ dock).map w)[i]? = ((ofQF φ dock).map w')[i]? := by
+  have hlt : ∀ j, i - l ≤ j → j ≤ i + r → (j < w.length ↔ j < w'.length) := fun j h₁ h₂ ↦ by
+    rw [← not_iff_not, not_lt, not_lt, ← List.getElem?_eq_none_iff, ← List.getElem?_eq_none_iff,
+      hag j h₁ h₂]
   rw [map_getElem?, map_getElem?]
   by_cases hi : i < w.length
-  · have hi' : i < w'.length := hlen ▸ hi
+  · have hi' : i < w'.length := (hlt i (by omega) (by omega)).mp hi
     have hR : φ.Realize w i ↔ φ.Realize w' i :=
       WindowFormula.Bounded.realize_congr hi hi'
         (fun j hj ↦ ⟨Iff.rfl, fun _ ↦ hag _ (by omega) (by omega)⟩)
-        (fun j hj ↦ ⟨by rw [hlen], hag _ (by omega) (by omega)⟩) hφ
+        (fun j hj ↦ ⟨hlt _ (by omega) (by omega), hag _ (by omega) (by omega)⟩) hφ
     simp only [ofQF, hag i (by omega) (by omega), hi, hi', hR]
-  · have hi' : ¬ i < w'.length := hlen ▸ hi
+  · have hi' : ¬ i < w'.length := (hlt i (by omega) (by omega)).not.mp hi
     simp [List.getElem?_eq_none (Nat.le_of_not_lt hi),
       List.getElem?_eq_none (Nat.le_of_not_lt hi')]
 
 /-- A quantifier-free docking process with a bounded guard depends boundedly on the left. -/
 theorem ofQF_boundedDependence_left {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bounded l r)
     (dock : α → α) : BoundedDependence (ofQF φ dock).map .left :=
-  ⟨l, fun i n x y hxy ↦ ofQF_map_getElem?_congr hφ dock (by simp) fun j h1 _ ↦ by
-    simp only [List.getElem?_ofFn]
-    split_ifs with h
-    · rw [hxy ⟨j, h⟩ (by simpa using h1)]
-    · rfl⟩
+  ⟨l, fun _ _ _ h ↦ ofQF_map_getElem?_congr hφ dock fun j h₁ _ ↦
+    List.drop_eq_drop_iff_getElem?.mp h j h₁⟩
 
 /-- A quantifier-free docking process with a bounded guard depends boundedly on the right. -/
 theorem ofQF_boundedDependence_right {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bounded l r)
     (dock : α → α) : BoundedDependence (ofQF φ dock).map .right :=
-  ⟨r, fun i n x y hxy ↦ ofQF_map_getElem?_congr hφ dock (by simp) fun j _ h2 ↦ by
-    simp only [List.getElem?_ofFn]
-    split_ifs with h
-    · rw [hxy ⟨j, h⟩ (by simpa using h2)]
-    · rfl⟩
+  ⟨r, fun _ _ _ h ↦ ofQF_map_getElem?_congr hφ dock fun j _ h₂ ↦
+    List.take_eq_take_iff_getElem?.mp h j (by omega)⟩
 
 end Docking
 
