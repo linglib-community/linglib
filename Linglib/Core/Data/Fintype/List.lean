@@ -8,12 +8,13 @@ module
 public import Mathlib.Basic.Finite.Sigma
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Vector
+public import Mathlib.Order.Interval.Finset.Nat
 
 /-!
 # Lists of bounded length are finite
 
-Over a finite type, the lists of length at most `n` form a finite type, being equivalent to
-vectors of some length `m ≤ n`. The set form is `List.finite_length_le`.
+Over a finite type, the lists of length at most `n` form a finite type: fibred by `length`, they
+are the vectors of each length `m ≤ n`. The set form is `List.finite_length_le`.
 -/
 
 @[expose] public section
@@ -22,18 +23,12 @@ namespace List
 
 variable {α : Type*}
 
-/-- A list of length at most `n` is a vector of some length `m ≤ n`. -/
-def subtypeLengthLEEquivSigmaVector (n : ℕ) :
-    {l : List α // l.length ≤ n} ≃ Σ m : Fin (n + 1), List.Vector α m where
-  toFun l := ⟨⟨l.1.length, Nat.lt_succ_of_le l.2⟩, ⟨l.1, rfl⟩⟩
-  invFun s := ⟨s.2.toList, s.2.toList_length.trans_le (Nat.le_of_lt_succ s.1.2)⟩
-  left_inv _ := rfl
-  right_inv s := Sigma.subtype_ext (Fin.ext s.2.2) rfl
-
 instance finite_subtype_length_le [Finite α] (n : ℕ) : Finite {l : List α // l.length ≤ n} :=
-  .of_equiv _ (subtypeLengthLEEquivSigmaVector n).symm
+  .of_equiv (Σ m : Set.Iic n, List.Vector α m)
+    (Equiv.sigmaSubtypeFiberEquivSubtype length fun _ ↦ .rfl)
 
 instance fintypeSubtypeLengthLE [Fintype α] (n : ℕ) : Fintype {l : List α // l.length ≤ n} :=
-  fast_instance% .ofEquiv _ (subtypeLengthLEEquivSigmaVector n).symm
+  fast_instance% .ofEquiv (Σ m : Set.Iic n, List.Vector α m)
+    (Equiv.sigmaSubtypeFiberEquivSubtype length fun _ ↦ .rfl)
 
 end List
