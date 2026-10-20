@@ -259,12 +259,8 @@ def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
 
 /-! ### ArgumentFrame accessors
 
-Readers over the frames of `Verb.valency` and over `Verb.readings`: whether some diathesis has a
-controller, and the entailment profile the entry records for the basic diathesis's subject. -/
-
-/-- The entailment profile the entry records for the subject of its basic diathesis. -/
-def Verb.subjectEntailments (v : Verb) : Option EntailmentProfile :=
-  v.valency.basic?.bind (v.valency.profileAt · .external)
+Readers over the frames of `Verb.valency` and over `Verb.readings`, such as whether some diathesis
+has a controller. -/
 
 /-- The reading keyed to frame `fr` is the first whose frame `fr` refines. -/
 def Verb.reading? (v : Verb) (fr : ArgumentFrame) : Option Verb.Reading :=

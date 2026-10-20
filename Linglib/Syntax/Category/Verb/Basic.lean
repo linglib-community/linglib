@@ -20,6 +20,13 @@ with their theories, each under the `Verb` namespace: factivity and trigger stat
 * `Verb.find?`: the entry with a citation form and sense.
 * `Verb.withPath`: the predicate a verb forms with a path phrase.
 
+## Main results
+
+* `Verb.participantProfile?_of_get_eq_some`: a profile the entry records wins over the Levin
+  classes'.
+* `Verb.slotProfile?_of_levinClasses_eq_empty`: without Levin classes a slot's profile is the
+  recorded one.
+
 ## References
 
 * [levin-1993]
@@ -48,6 +55,26 @@ def participantProfile? (v : Verb) (i : Fin v.valency.arity) : Option Entailment
 /-- The entailment profile of the participant in slot `s` of the basic diathesis. -/
 def slotProfile? (v : Verb) (s : ArgumentFrame.Slot) : Option EntailmentProfile :=
   v.valency.basic?.bind fun d ↦ (d.participantAt s).bind v.participantProfile?
+
+section profile
+
+variable {v : Verb}
+
+theorem participantProfile?_of_get_eq_some {i : Fin v.valency.arity} {θ : EntailmentProfile}
+    (h : v.valency.profiles.get i = some θ) : v.participantProfile? i = some θ := by
+  simp [participantProfile?, h]
+
+theorem participantProfile?_of_levinClasses_eq_empty (h : v.levinClasses = ∅)
+    (i : Fin v.valency.arity) : v.participantProfile? i = v.valency.profiles.get i := by
+  rcases hi : v.valency.profiles.get i with _ | θ
+  · rcases v.valency.basic? with _ | d <;> simp [participantProfile?, hi, h]
+  · exact participantProfile?_of_get_eq_some hi
+
+theorem slotProfile?_of_levinClasses_eq_empty (h : v.levinClasses = ∅) (s : ArgumentFrame.Slot) :
+    v.slotProfile? s = v.valency.basic?.bind (v.valency.profileAt · s) := by
+  simp [slotProfile?, Valency.profileAt, participantProfile?_of_levinClasses_eq_empty h]
+
+end profile
 
 /-- The entry with the given citation form and sense, if the list has one. -/
 def find? (verbs : List Verb) (form : String) (tag : SenseTag := .default) : Option Verb :=
@@ -81,10 +108,14 @@ variable {v : Verb} {p : Adposition.SpatialReading}
     (v.withPath p).direction = some p.direction := by
   simp [withPath, hv, h]
 
-@[simp] theorem vendlerClass_withPath (hv : v.TakesSpatial) (h : p.direction ≠ .place) :
-    (v.withPath p).vendlerClass =
-      if p.IsBounded then v.vendlerClass.map (·.telicize) else v.vendlerClass := by
-  simp [withPath, hv, h]
+@[simp] theorem vendlerClass_withPath_of_isBounded (hv : v.TakesSpatial) (hb : p.IsBounded) :
+    (v.withPath p).vendlerClass = v.vendlerClass.map (·.telicize) := by
+  simp [withPath, hv, hb.direction_ne_place, hb]
+
+@[simp] theorem vendlerClass_withPath_of_not_isBounded (hb : ¬ p.IsBounded) :
+    (v.withPath p).vendlerClass = v.vendlerClass := by
+  unfold withPath
+  split_ifs <;> rfl
 
 end withPath
 

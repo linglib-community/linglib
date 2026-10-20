@@ -766,6 +766,10 @@ def LevinClass.commonProfile (f : LevinClass → Option EntailmentProfile)
     (s : Finset LevinClass) : Option EntailmentProfile :=
   (s.fold agree none fun c ↦ (f c).map some).bind id
 
+@[simp] theorem LevinClass.commonProfile_empty (f : LevinClass → Option EntailmentProfile) :
+    LevinClass.commonProfile f ∅ = none :=
+  rfl
+
 /-- In no class's template does the object outrank the subject under [dowty-1991]'s Argument
     Selection Principle, as [levin-rappaport-hovav-2005] present it. Where dominance is strict
     the principle derives the stored linking; at the psych doublets *like* and *please*
