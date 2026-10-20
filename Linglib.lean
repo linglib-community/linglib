@@ -807,7 +807,6 @@ import Linglib.Semantics.Degree.Delineation
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Measure.Dimension
-import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Semantics.Degree.Measure.Quantity
 import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.Quantifier

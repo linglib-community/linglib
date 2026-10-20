@@ -1,8 +1,10 @@
 module
 
 public import Linglib.Semantics.Degree.Measure.Quantity
+public import Linglib.Fragments.English.Nouns
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Rat.Cast.Order
+public import Mathlib.Tactic.NormNum.Inv
 public import Mathlib.Tactic.NormNum.Pow
 
 /-!
@@ -10,10 +12,16 @@ public import Mathlib.Tactic.NormNum.Pow
 
 The English nouns that quantize a mass noun in a pseudo-partitive (*three grams of salt*,
 *three glasses of water*, *three grains of rice*) are measure terms, which name a unit quantity
-of a dimension, and the container nouns and atomizers of Scontras's classification. A measure
-term carries the size of its unit in the coherent unit of its dimension, so that a kilogram is a
-thousand grams (`kilogram_quantity`) and a cubic meter a thousand liters
-(`meter_quantity_pow_three`).
+of a dimension, container nouns and atomizers. A measure term carries the size of its unit in the
+coherent unit of its dimension, so that a kilogram is a thousand grams (`kilogram_quantity`), a
+cubic meter a thousand liters (`meter_quantity_pow_three`), and a psi the weight of a pound under
+standard gravity spread over a square inch (`psi_quantity`). Container nouns and atomizers are
+plain count nouns, listed in `containerNouns` and `atomizers`.
+
+## Main definitions
+
+* `MeasureTerm`: a count noun naming a unit quantity, with `MeasureTerm.quantity`.
+* `measureTerms`, `containerNouns`, `atomizers`: the three inventories.
 
 ## Implementation notes
 
@@ -28,6 +36,7 @@ thousand grams (`kilogram_quantity`) and a cubic meter a thousand liters
 
 * [scontras-2014]
 * [bale-schwarz-2022]
+* [bale-schwarz-2026]
 * [bipm-2019]
 -/
 
@@ -35,24 +44,20 @@ thousand grams (`kilogram_quantity`) and a cubic meter a thousand liters
 
 namespace English.MeasurePhrases
 
-open Degree (QuantityDimension QuantizingNounClass)
+open Degree (QuantityDimension Quantity)
 
-/-- A measure term, a noun naming a unit quantity of a dimension. -/
-structure MeasureTerm where
-  form : String
-  formPlural : String
+/-- A measure term, a count noun naming a unit quantity of a dimension. -/
+structure MeasureTerm extends toEnglishNoun : Nouns.Noun where
   /-- The unit's symbol in the quantity calculus (`g`, `mL`, `km`). -/
   symbol : String
+  /-- The dimension of the unit. -/
   dimension : QuantityDimension
   /-- The size of the unit in the coherent CGS unit of its dimension; a kilogram is `1000` grams
   and a meter `100` centimeters. -/
   magnitude : ℚ := 1
   magnitude_pos : 0 < magnitude := by decide +kernel
-  deriving Repr
 
 namespace MeasureTerm
-
-open Degree
 
 /-- The unit quantity a measure term denotes, its size in the reference unit times the unit
 quantity of its dimension. -/
@@ -68,6 +73,10 @@ variable {t t' : MeasureTerm} {k : ℝ}
 theorem cast_magnitude_pos (t : MeasureTerm) : (0 : ℝ) < t.magnitude :=
   Rat.cast_pos.mpr t.magnitude_pos
 
+/-- A unit quantity is invertible. -/
+theorem isUnit_quantity (t : MeasureTerm) : IsUnit t.quantity :=
+  Quantity.isUnit_iff.2 t.cast_magnitude_pos.ne'
+
 /-- One unit is `k` of another when its size is `k` times the other's in their common
 dimension. -/
 theorem quantity_eq_pure_mul_iff :
@@ -77,48 +86,57 @@ theorem quantity_eq_pure_mul_iff :
 
 end MeasureTerm
 
+/-! ### Measure terms -/
+
 /-- *gram*. -/
-def gram : MeasureTerm :=
-  { form := "gram", formPlural := "grams", symbol := "g", dimension := .of .mass }
+def gram : MeasureTerm := { Nouns.Noun.common "gram" with symbol := "g", dimension := .of .mass }
 /-- *kilogram*. -/
 def kilogram : MeasureTerm :=
-  { form := "kilogram", formPlural := "kilograms", symbol := "kg", dimension := .of .mass,
-    magnitude := 1000 }
-/-- *kilo*. -/
+  { Nouns.Noun.common "kilogram" with symbol := "kg", dimension := .of .mass, magnitude := 1000 }
+/-- *kilo*, a clipping of *kilogram*, which takes the plural *kilos*. -/
 def kilo : MeasureTerm :=
-  { form := "kilo", formPlural := "kilos", symbol := "kg", dimension := .of .mass,
-    magnitude := 1000 }
+  { Nouns.Noun.common "kilo" with
+    plural := some "kilos", symbol := "kg", dimension := .of .mass, magnitude := 1000 }
 /-- *pound*. -/
 def pound : MeasureTerm :=
-  { form := "pound", formPlural := "pounds", symbol := "lb", dimension := .of .mass,
-    magnitude := 45359237 / 100000 }
+  { Nouns.Noun.common "pound" with
+    symbol := "lb", dimension := .of .mass, magnitude := 45359237 / 100000 }
 /-- *milliliter*. -/
 def milliliter : MeasureTerm :=
-  { form := "milliliter", formPlural := "milliliters", symbol := "mL",
-    dimension := .volume }
+  { Nouns.Noun.common "milliliter" with symbol := "mL", dimension := .volume }
 /-- *liter*. -/
 def liter : MeasureTerm :=
-  { form := "liter", formPlural := "liters", symbol := "L", dimension := .volume,
-    magnitude := 1000 }
+  { Nouns.Noun.common "liter" with symbol := "L", dimension := .volume, magnitude := 1000 }
+/-- *inch*. -/
+def inch : MeasureTerm :=
+  { Nouns.Noun.common "inch" with symbol := "in", dimension := .of .length, magnitude := 254 / 100 }
 /-- *mile*. -/
 def mile : MeasureTerm :=
-  { form := "mile", formPlural := "miles", symbol := "mi", dimension := .of .length,
-    magnitude := 1609344 / 10 }
+  { Nouns.Noun.common "mile" with
+    symbol := "mi", dimension := .of .length, magnitude := 1609344 / 10 }
 /-- *kilometer*. -/
 def kilometer : MeasureTerm :=
-  { form := "kilometer", formPlural := "kilometers", symbol := "km", dimension := .of .length,
-    magnitude := 100000 }
+  { Nouns.Noun.common "kilometer" with
+    symbol := "km", dimension := .of .length, magnitude := 100000 }
 /-- *meter*. -/
 def meter : MeasureTerm :=
-  { form := "meter", formPlural := "meters", symbol := "m", dimension := .of .length,
-    magnitude := 100 }
+  { Nouns.Noun.common "meter" with symbol := "m", dimension := .of .length, magnitude := 100 }
 /-- *hour*. -/
 def hour : MeasureTerm :=
-  { form := "hour", formPlural := "hours", symbol := "h", dimension := .of .time,
-    magnitude := 3600 }
+  { Nouns.Noun.common "hour" with symbol := "h", dimension := .of .time, magnitude := 3600 }
 /-- *second*. -/
-def second_ : MeasureTerm :=
-  { form := "second", formPlural := "seconds", symbol := "s", dimension := .of .time }
+def second : MeasureTerm :=
+  { Nouns.Noun.common "second" with symbol := "s", dimension := .of .time }
+/-- *psi*, pound-force per square inch, a unit noun to the speakers who know it only as an
+initialism ([bale-schwarz-2026]); its plural is *psi*. -/
+def psi : MeasureTerm :=
+  { Nouns.Noun.common "psi" with
+    plural := some "psi", symbol := "psi", dimension := .pressure
+    magnitude := pound.magnitude * (980665 / 1000) / inch.magnitude ^ 2 }
+
+/-- The standard acceleration of gravity, `980.665 cm/s²` ([bipm-2019]), under which a mass of a
+pound weighs a pound-force. -/
+def standardGravity : Quantity ℝ := ((980665 / 1000 : ℚ), .of .length / .of .time ^ 2)
 
 /-- A kilogram is a thousand grams. -/
 theorem kilogram_quantity : kilogram.quantity = .pure 1000 * gram.quantity := by
@@ -134,67 +152,60 @@ theorem meter_quantity_pow_three : meter.quantity ^ 3 = .pure 1000 * liter.quant
   · norm_num [MeasureTerm.quantity, meter, liter]
   · simp [MeasureTerm.quantity, meter, liter, QuantityDimension.volume]
 
+/-- A mile is 63360 inches. -/
+theorem mile_quantity : mile.quantity = .pure 63360 * inch.quantity := by
+  norm_num [MeasureTerm.quantity_eq_pure_mul_iff, mile, inch]
+
+/-- A psi is the weight of a pound under standard gravity spread over a square inch. -/
+theorem psi_quantity :
+    psi.quantity = pound.quantity * standardGravity / inch.quantity ^ 2 := by
+  refine Prod.ext ?_ ?_
+  · norm_num [MeasureTerm.quantity, psi, pound, inch, standardGravity]
+  · simp only [MeasureTerm.quantity, standardGravity, Prod.snd_div, Prod.snd_mul, Prod.pow_snd]
+    decide
+
 /-- The measure terms. -/
-def allMeasureTerms : List MeasureTerm :=
-  [gram, kilogram, kilo, pound, milliliter, liter, mile, kilometer, meter, hour, second_]
+def measureTerms : List MeasureTerm :=
+  [gram, kilogram, kilo, pound, milliliter, liter, inch, mile, kilometer, meter, hour, second,
+    psi]
 
 /-- The measure term with singular or plural form `s`. -/
 def measureTerm? (s : String) : Option MeasureTerm :=
-  allMeasureTerms.find? fun t ↦ t.form = s ∨ t.formPlural = s
+  measureTerms.find? fun t ↦ t.form = s ∨ t.plural = some s
 
-/-- A quantizing noun turns a mass term into a countable expression, as a measure term, a
-container noun or an atomizer. -/
-structure QuantizingNoun where
-  form : String
-  formPlural : String
-  nounClass : QuantizingNounClass
-  /-- The dimension a measure term names, or that a container noun measures on its
-  measure reading; atomizers name no measure function. -/
-  dimension : Option QuantityDimension := none
-  deriving Repr, BEq
-
-/-- A measure term as a quantizing noun. -/
-def MeasureTerm.toQuantizingNoun (t : MeasureTerm) : QuantizingNoun :=
-  { form := t.form, formPlural := t.formPlural, nounClass := .measureTerm,
-    dimension := some t.dimension }
-
-instance : Coe MeasureTerm QuantizingNoun := ⟨MeasureTerm.toQuantizingNoun⟩
+/-! ### Container nouns and atomizers -/
 
 /-- *glass*. -/
-def glass : QuantizingNoun :=
-  { form := "glass", formPlural := "glasses", nounClass := .containerNoun,
-    dimension := some .volume }
+def glass : Nouns.Noun := .common "glass"
 /-- *box*. -/
-def box : QuantizingNoun :=
-  { form := "box", formPlural := "boxes", nounClass := .containerNoun, dimension := some .volume }
+def box : Nouns.Noun := .common "box"
 /-- *cup*. -/
-def cup : QuantizingNoun :=
-  { form := "cup", formPlural := "cups", nounClass := .containerNoun, dimension := some .volume }
+def cup : Nouns.Noun := .common "cup"
 /-- *bag*. -/
-def bag : QuantizingNoun :=
-  { form := "bag", formPlural := "bags", nounClass := .containerNoun, dimension := some .volume }
+def bag : Nouns.Noun := .common "bag"
 /-- *bottle*. -/
-def bottle : QuantizingNoun :=
-  { form := "bottle", formPlural := "bottles", nounClass := .containerNoun,
-    dimension := some .volume }
+def bottle : Nouns.Noun := .common "bottle"
+/-- *bucket*. -/
+def bucket : Nouns.Noun := .common "bucket"
 /-- *grain*. -/
-def grain : QuantizingNoun :=
-  { form := "grain", formPlural := "grains", nounClass := .atomizer }
+def grain : Nouns.Noun := .common "grain"
 /-- *piece*. -/
-def piece : QuantizingNoun :=
-  { form := "piece", formPlural := "pieces", nounClass := .atomizer }
+def piece : Nouns.Noun := .common "piece"
 /-- *drop*. -/
-def drop : QuantizingNoun :=
-  { form := "drop", formPlural := "drops", nounClass := .atomizer }
+def drop : Nouns.Noun := .common "drop"
 /-- *slice*. -/
-def slice : QuantizingNoun :=
-  { form := "slice", formPlural := "slices", nounClass := .atomizer }
+def slice : Nouns.Noun := .common "slice"
 /-- *chunk*. -/
-def chunk : QuantizingNoun :=
-  { form := "chunk", formPlural := "chunks", nounClass := .atomizer }
+def chunk : Nouns.Noun := .common "chunk"
+/-- *quantity*. -/
+def quantity : Nouns.Noun := .common "quantity"
 
-/-- The quantizing nouns. -/
-def allQuantizingNouns : List QuantizingNoun :=
-  allMeasureTerms.map (↑) ++ [glass, box, cup, bag, bottle, grain, piece, drop, slice, chunk]
+/-- The container nouns, count nouns of containers that measure by their capacity on a measure
+reading, as in *three glasses of water*. -/
+def containerNouns : List Nouns.Noun := [glass, box, cup, bag, bottle, bucket]
+
+/-- The atomizers, count nouns that partition a substance into countable units, as in *three
+grains of rice*. -/
+def atomizers : List Nouns.Noun := [grain, piece, drop, slice, chunk, quantity]
 
 end English.MeasurePhrases

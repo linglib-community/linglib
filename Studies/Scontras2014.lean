@@ -1,28 +1,28 @@
 module
 
-public import Linglib.Semantics.Degree.Measure.Dimensioned
+public import Linglib.Fragments.English.MeasurePhrases
 public import Linglib.Semantics.Mereology.Topology
 public import Linglib.Data.Examples.Scontras2014
 
 /-!
 # Scontras (2014): The Semantics of Measurement
 
-Scontras's third chapter studies quantizing nouns, the words that package a substance for
-counting or measuring. Diagnostics adapted from Rothstein separate three
-readings of *n Q of S* and three classes of noun (`Data/Examples/Scontras2014`): a container noun
-like *glass* is a plain predicate whose container reading arises from intersective modification
-by the preposition *of*, contributing the filled-with relation ((38), `containerReading`); a
-measure term like *liter* is a relation between a numeral and the instances of the substance that
-measure it ((41), `measureReading`); an atomizer like *grain* partitions the substance into
-countable units ((77), `atomizingReading`). The readings differ in what they refer to (Table 3.1):
-a container reading refers to containers, the quantizing noun's own denotation, while measure
-and atomizing readings refer to the substance (`containerReading_subset`,
-`measureReading_subset`, `atomizingReading_subset`); the measure reading is moreover
-quantity-uniform under the term's measure (`measureReading_quantity_uniform`). Each of the
-first two classes has uses as the other, the container noun by a shift on the model of the
-measure suffix *-ful* ((47), `shiftCM`) and the measure term by lexical reinterpretation as the
-class of containers of a unit quantity ((52), `shiftMC`); atomizers, being neither predicates of
-containers nor measures, have no measure use.
+Scontras's third chapter studies quantizing nouns, the words that package a substance for counting
+or measuring. Diagnostics adapted from Rothstein separate three readings of *n Q of S* and three
+classes of noun (`Data/Examples/Scontras2014`), and the English fragment lists each example's noun
+under the class the chapter assigns it (`rows_nounClass`). A container noun like *glass* is a plain
+predicate whose container reading arises from intersective modification by the preposition *of*,
+contributing the filled-with relation ((38), `containerReading`); a measure term like *liter* is a
+relation between a numeral and the instances of the substance that measure it ((41),
+`measureReading`); an atomizer like *grain* partitions the substance into countable units ((77),
+`atomizingReading`). The readings differ in what they refer to (Table 3.1): a container reading
+refers to containers, the quantizing noun's own denotation, while measure and atomizing readings
+refer to the substance (`containerReading_subset`, `measureReading_subset`,
+`atomizingReading_subset`); the measure reading is moreover quantity-uniform under the term's
+measure (`measureReading_quantity_uniform`). Each of the first two classes has uses as the other,
+the container noun by a shift on the model of the measure suffix *-ful* ((47), `shiftCM`) and the
+measure term by lexical reinterpretation as the class of containers of a unit quantity ((52),
+`shiftMC`); atomizers, being neither predicates of containers nor measures, have no measure use.
 
 Countable units are the maximally self-connected instances of a kind in Grimm's mereotopology,
 parthood with a connection relation ((72), (73), `Mereology.IsConnection`) and
@@ -56,13 +56,12 @@ each of them measures one relative atom under the relative-atom measure of (68)
 * [chierchia-1998]
 * [rothstein-2009]
 * [grimm-2012]
+* [zabbal-2005]
 -/
 
 @[expose] public section
 
 namespace Scontras2014
-
-open Degree
 
 variable {E : Type*} {D : Type}
 
@@ -80,7 +79,7 @@ def containerReading (P : E → Prop) (filledWith : E → E → Prop) (k : E →
 
 /-- The measure reading ((41), (42)) of a measure term with measure `μ`, numeral `n` and
 substance `k` holds of the instances of the substance that measure `n`. -/
-def measureReading (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) (x : E) : Prop :=
+def measureReading (μ : E → D) (k : E → Prop) (n : D) (x : E) : Prop :=
   k x ∧ μ x = n
 
 /-- The atomizing reading (77) of an atomizer with partitioning function `π` and substance `k`
@@ -98,13 +97,13 @@ theorem containerReading_subset (P : E → Prop) (filledWith : E → E → Prop)
     ∀ x, containerReading P filledWith k x → P x := fun _ h ↦ h.1
 
 /-- A measure reading refers to instances of the substance (Table 3.1). -/
-theorem measureReading_subset (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
+theorem measureReading_subset (μ : E → D) (k : E → Prop) (n : D) :
     ∀ x, measureReading μ k n x → k x := fun _ h ↦ h.1
 
 /-- The measure reading with numeral `n` is quantity-uniform under the term's measure, since the
 measure takes the single value `n` on it. -/
-theorem measureReading_quantity_uniform (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
-    (⇑μ '' {x | measureReading μ k n x}).Subsingleton := by
+theorem measureReading_quantity_uniform (μ : E → D) (k : E → Prop) (n : D) :
+    (μ '' {x | measureReading μ k n x}).Subsingleton := by
   rintro _ ⟨_, hx, rfl⟩ _ ⟨_, hy, rfl⟩
   exact hx.2.trans hy.2.symm
 
@@ -122,12 +121,12 @@ theorem shiftCM_subset (P : E → Prop) (filledWith : E → E → Prop) (card : 
 
 /-- The measure-term-to-container shift (52) yields the objects filled with a unit quantity of
 some substance, which lexical reinterpretation narrows to a salient class of containers. -/
-def shiftMC [Preorder D] [One D] (μ : DimensionedMeasure E D) (filledWith : E → E → Prop)
+def shiftMC [Preorder D] [One D] (μ : E → D) (filledWith : E → E → Prop)
     (x : E) : Prop :=
   ∃ (k : E → Prop) (y : E), measureReading μ k 1 y ∧ filledWith y x
 
 /-- A shifted measure term with an *of*-phrase yields a container reading. -/
-theorem containerReading_shiftMC [Preorder D] [One D] (μ : DimensionedMeasure E D)
+theorem containerReading_shiftMC [Preorder D] [One D] (μ : E → D)
     (filledWith : E → E → Prop) (k : E → Prop) (x : E) :
     containerReading (shiftMC μ filledWith) filledWith k x ↔
       shiftMC μ filledWith x ∧ ∃ y, k y ∧ filledWith y x :=
@@ -188,5 +187,45 @@ theorem atomizingReading_subset {π : (E → Prop) → E → Prop} {k : E → Pr
   fun _ hx ↦ (hπ _ hx).1.2
 
 end Mereotopology
+
+/-! ### The three classes (§3.2) -/
+
+/-- Quantizing nouns turn substance terms into countable expressions, and [scontras-2014] (Ch. 3)
+identifies three classes with Rothstein-style diagnostics (Table 3.5, p. 89). Measure terms
+(kilo, liter) name a measure function directly and always license a MEASURE reading. Container
+nouns (glass, box) are non-relational predicates with a CONTAINER reading by default, ambiguous
+toward MEASURE when the container's volume can serve as a measure unit. Atomizers (grain, drop,
+piece) are relational, partitioning nouns (eqs. (77), (87)) that impose a partition into
+self-connected atoms via π, and the cardinality measure of [zabbal-2005]'s Num head card counts
+the partition rather than measuring it. -/
+inductive QuantizingNounClass where
+  /-- A measure term, such as *kilo*, *liter* or *meter*. -/
+  | measureTerm
+  /-- A container noun, such as *glass*, *box* or *cup*. -/
+  | containerNoun
+  /-- An atomizer, such as *grain*, *piece* or *drop*. -/
+  | atomizer
+  deriving DecidableEq
+
+open English.MeasurePhrases in
+/-- The singular forms of the English nouns of a class, from the fragment's inventory of it. -/
+def QuantizingNounClass.forms : QuantizingNounClass → List String
+  | .measureTerm => measureTerms.map (·.form)
+  | .containerNoun => containerNouns.map (·.form)
+  | .atomizer => atomizers.map (·.form)
+
+/-- The class the chapter assigns an example's noun. -/
+def nounClass? (e : Datum) : Option QuantizingNounClass :=
+  match e.feature? "nounClass" with
+  | some "measureTerm" => some .measureTerm
+  | some "containerNoun" => some .containerNoun
+  | some "atomizer" => some .atomizer
+  | _ => none
+
+/-- The fragment lists each example's noun among the nouns of the class the chapter assigns
+it. -/
+theorem rows_nounClass :
+    ∀ e ∈ Examples.all, ∃ c ∈ nounClass? e, ∃ s ∈ e.feature? "noun", s ∈ c.forms := by
+  decide +kernel
 
 end Scontras2014
