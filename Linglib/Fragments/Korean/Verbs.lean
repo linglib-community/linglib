@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.Korean.Voice
+public import Linglib.Fragments.Korean.Complementizers
 
 /-!
 # Korean verbs
@@ -15,13 +16,18 @@ those of Bondarenko's Korean data.
 
 ## Main definitions
 
-* `Korean.derive`: a verb in a voice.
-* `Korean.ha`: the verb of the long causative.
+* `Korean.Verb`: a verb entry with its stem.
+* `Korean.derive`, `Korean.shortCausative`, `Korean.shortPassive`: a verb in a voice.
+* `Korean.causativeVoice`: the causative voice that the frame of a base calls for.
+* `Korean.Applies`: a voice applies to a verb with a frame refining its initial frame.
+* `Korean.purpCausative`, `Korean.complementCausative`: the diatheses of `Korean.ha`, the verb of
+  the long causative.
 * `Korean.longCausative`: the predicate of the long causative of a verb.
 * `Korean.verbs`: the inventory.
 
 ## Main results
 
+* `Korean.applies_causativeVoice`: the voice of a short causative applies to its base.
 * `Korean.wordsAt_derive`, `Korean.wordsAt_longCausative`: a verb in a voice is one word and a
   long causative two.
 * `Korean.form_ilk_hi_passive`: *ilk-hi-ta* 'be read' and *ilk-hi-ta* 'cause to read' share a
@@ -31,9 +37,7 @@ those of Bondarenko's Korean data.
 
 * Forms are in the Yale romanization, which spells a stem alike before every suffix, and the
   Hangul spelling is the `script`.
-* The two diatheses of `Korean.ha` are Song's two long causatives: the PURP causative, whose
-  dative or accusative causee is an object of *ha* controlling the clause, and the complement
-  causative, whose nominative causee is the subject of the clause.
+* The diatheses of `Korean.ha` are Song's two long causatives.
 
 ## References
 
@@ -48,121 +52,161 @@ namespace Korean
 
 open Morphology (Morph)
 
+/-- A Korean verb is a verb entry with its stem, the citation form being the stem in the
+declarative ending *-ta*. -/
+structure Verb extends _root_.Verb where
+  /-- The stem is the citation form without its ending. -/
+  stem : List Morph
+  morphs := stem ++ Complementizers.ta.morphs
+  /-- The citation form is the stem in *-ta*. -/
+  morphs_eq : morphs = stem ++ Complementizers.ta.morphs := by rfl
+
 /-! ### Verbs in a voice -/
 
-/-- The verb `v` in the voice `w` has the marker of `w` between the stem of `v` and the
-declarative ending *-ta*, and the derived diathesis of `w`. -/
+/-- A voice applies to a verb with a frame refining the voice's initial frame. -/
+def Applies (w : Voice) (v : Verb) : Prop :=
+  ∃ fr ∈ v.valency.frames, w.initial.toArgumentFrame ≤ fr
+
+instance (w : Voice) (v : Verb) : Decidable (Applies w v) :=
+  inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
+
+/-- The verb `v` in the voice `w` has the marker of `w` after the stem of `v`, and the derived
+diathesis of `w`. -/
 def derive (w : Voice) (v : Verb) : Verb where
-  morphs := v.morphs.dropLast ++ w.marker ++ [.suff "ta"]
+  stem := v.stem ++ w.marker
   valency := ⟨w.arity, .replicate w.arity none, [w.derived]⟩
+
+/-- The causative voice of `v` in the suffix `sfx` is that of a transitive verb when `v` takes a
+nominal complement and that of an intransitive verb otherwise ([sohn-1999] p. 375). -/
+def causativeVoice (v : Verb) (sfx : causativeSuffixes) : Voice :=
+  if v.TakesNominal then causativeOfTransitive sfx else causative sfx
+
+/-- The short causative of `v` in the suffix `sfx`. -/
+def shortCausative (v : Verb) (sfx : causativeSuffixes) : Verb := derive (causativeVoice v sfx) v
+
+/-- The short passive of `v` in the suffix `sfx`. -/
+def shortPassive (v : Verb) (sfx : passiveSuffixes) : Verb := derive (passive sfx) v
 
 section derive
 
 variable {w : Voice} {v : Verb}
 
-theorem morphs_derive {stem : List Morph} (h : v.morphs = stem ++ [.suff "ta"]) :
-    (derive w v).morphs = stem ++ w.marker ++ [.suff "ta"] := by
-  simp [derive, h]
+@[simp] theorem stem_derive : (derive w v).stem = v.stem ++ w.marker := rfl
 
 @[simp] theorem frames_derive : (derive w v).valency.frames = [w.derived.toArgumentFrame] := rfl
 
-/-- A root followed by suffixes is one word. -/
-private theorem wordsAt_root_cons {r : String} {S : List Morph}
-    (hS : ∀ s ∈ S, s.kind = .bound .after .affix) :
-    Morph.wordsAt .affix (.root r :: S) = [.root r :: S] :=
-  Morph.wordsAt_append_cons (P := []) _ (by simp) fun s hs ↦
-    ⟨.after, by decide, .affix, le_rfl, hS s hs⟩
+/-- The causative voice of a verb whose frames are intransitive or transitive applies to it. -/
+theorem applies_causativeVoice (hv : ∀ fr ∈ v.valency.frames, fr = .intransitive ∨ fr = .np)
+    (hne : v.valency.frames ≠ []) (sfx : causativeSuffixes) :
+    Applies (causativeVoice v sfx) v := by
+  unfold causativeVoice
+  split_ifs with h
+  · obtain ⟨fr, hfr, hn⟩ := h
+    rcases hv fr hfr with rfl | rfl
+    · exact absurd hn (by decide)
+    · exact ⟨_, hfr, le_rfl⟩
+  · obtain ⟨fr, hfr⟩ := List.exists_mem_of_ne_nil _ hne
+    rcases hv fr hfr with rfl | rfl
+    · exact ⟨_, hfr, le_rfl⟩
+    · exact absurd ⟨_, hfr, by decide⟩ h
 
-/-- A verb in a voice marked by suffixes is one word, so nothing comes between its stem and the
-suffix ([sohn-1999] p. 377). -/
-theorem wordsAt_derive {r : String} {S : List Morph} (h : v.morphs = .root r :: S ++ [.suff "ta"])
-    (hS : ∀ s ∈ S, s.kind = .bound .after .affix)
+/-- The passive applies to a transitive verb. -/
+theorem applies_passive (h : ArgumentFrame.np ∈ v.valency.frames) (sfx : passiveSuffixes) :
+    Applies (passive sfx) v :=
+  ⟨_, h, le_rfl⟩
+
+/-- A verb in a voice marked by suffixes is one word when its stem is, so nothing comes between
+its stem and the suffix ([sohn-1999] p. 377). -/
+theorem wordsAt_derive (hv : Morph.wordsAt .affix v.stem = [v.stem])
     (hw : ∀ m ∈ w.marker, m.kind = .bound .after .affix) :
     Morph.wordsAt .affix (derive w v).morphs = [(derive w v).morphs] := by
-  rw [morphs_derive (stem := .root r :: S) h, List.cons_append, List.cons_append]
-  refine wordsAt_root_cons fun s hs ↦ ?_
-  simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at hs
-  rcases hs with (hs | hs) | rfl
-  exacts [hS s hs, hw s hs, rfl]
+  have hs {S : List Morph} (hS : ∀ m ∈ S, m.kind = .bound .after .affix) :
+      ∀ m ∈ S, ∃ q ≠ .before, ∃ a ≤ Morph.Attachment.affix, m.kind = .bound q a :=
+    fun m hm ↦ ⟨.after, by decide, .affix, le_rfl, hS m hm⟩
+  rw [(derive w v).morphs_eq, stem_derive]
+  exact Morph.wordsAt_append_of_eq_singleton (Morph.wordsAt_append_of_eq_singleton hv (hs hw))
+    (hs (by simp [Complementizers.ta]))
 
 end derive
 
 /-! ### The long causative -/
 
-/-- *ha-ta* 'do, make, cause', after a clause in *-key* ([sohn-1999] p. 376). Its causee is a
-dative or accusative object controlling the clause, or the nominative subject of the clause
-([song-1996] §4.2 (3), (5), (8)). -/
+/-- The PURP causative is the diathesis of `Korean.ha` in which the causer, the causee and the
+clause of effect are participants 0, 1 and 2, and the causee is a dative or accusative object
+that controls the clause ([song-1996] §4.2 (3), (8)). -/
+def purpCausative : Diathesis 3 :=
+  .ofSlots ⟨some .nominal, [.nominal, .clausal]⟩ [0, 1, 2] (some 1)
+
+/-- The complement causative is the diathesis of `Korean.ha` whose clause of effect, with the
+causee as its nominative subject, is the argument of *ha* ([song-1996] §4.2 (5)). -/
+def complementCausative : Diathesis 3 := .ofSlots ⟨some .nominal, [.clausal]⟩ [0, 2]
+
+/-- *ha-ta* 'do, make, cause', after a clause in *-key* ([sohn-1999] p. 376). -/
 def ha : Verb where
-  morphs := [.root "ha", .suff "ta"]
+  stem := [.root "ha"]
   script := some "하다"
   senseTag := .causative
-  valency := .of [(⟨some .nominal, [.nominal, .clausal]⟩, [0, 1, 2]),
-    (⟨some .nominal, [.clausal]⟩, [0, 2])] (controllers := [some 1, none])
+  valency := ⟨3, .replicate 3 none, [purpCausative, complementCausative]⟩
+
+@[simp] theorem diatheses_ha : ha.valency.diatheses = [purpCausative, complementCausative] := rfl
 
 /-- The long causative of `v` is the stem of `v` in the adverbializer *-key* followed by
 `Korean.ha`. -/
-def longCausative (v : Verb) : List Morph := v.morphs.dropLast ++ .suff "key" :: ha.morphs
+def longCausative (v : Verb) : List Morph := v.stem ++ .suff "key" :: ha.morphs
 
 /-- A long causative is two words, so the honorific *-usi-* can come between the stem and
 *-key* and a particle after *-key* ([sohn-1999] p. 377). -/
-theorem wordsAt_longCausative {v : Verb} {r : String} {S : List Morph}
-    (h : v.morphs = .root r :: S ++ [.suff "ta"]) (hS : ∀ s ∈ S, s.kind = .bound .after .affix) :
-    Morph.wordsAt .affix (longCausative v) = [.root r :: S ++ [.suff "key"], ha.morphs] := by
-  have e : longCausative v = (.root r :: S ++ [.suff "key"]) ++ ha.morphs := by
-    rw [longCausative, h, List.dropLast_concat, List.append_cons]
-  have hj : ∀ x ∈ (Morph.root r :: S ++ [Morph.suff "key"]).getLast?, ∀ y ∈ ha.morphs.head?,
-      decide (Morph.JoinsAt .affix x y) = false := by
+theorem wordsAt_longCausative {v : Verb} (hv : Morph.wordsAt .affix v.stem = [v.stem]) :
+    Morph.wordsAt .affix (longCausative v) = [v.stem ++ [.suff "key"], ha.morphs] := by
+  have hj : ∀ x ∈ (v.stem ++ [Morph.suff "key"]).getLast?, ∀ y ∈ ha.morphs.head?,
+      ¬ Morph.JoinsAt .affix x y := by
     rw [List.getLast?_concat]
-    simp [ha, Morph.JoinsAt, Morph.Kind.JoinsAt]
-  rw [e, Morph.wordsAt, List.splitBy_append hj, ← Morph.wordsAt, ← Morph.wordsAt,
-    List.cons_append, wordsAt_root_cons]
-  · rfl
-  · simpa using fun s hs ↦ hs.elim (hS s) fun hs ↦ hs ▸ rfl
+    simp [ha, Complementizers.ta, Morph.JoinsAt, Morph.Kind.JoinsAt]
+  rw [longCausative, List.append_cons, Morph.wordsAt_append hj,
+    Morph.wordsAt_append_of_eq_singleton hv fun m hm ↦ ⟨.after, by decide, .affix, le_rfl, by
+      simp_all⟩]
+  rfl
 
 /-! ### Basic verbs -/
 
 /-- *cwuk-ta* 'die'. -/
 def cwuk : Verb where
-  morphs := [.root "cwuk", .suff "ta"]
+  stem := [.root "cwuk"]
   script := some "죽다"
   valency := .ofFrame .intransitive
 
 /-- *wus-ta* 'laugh, smile'. -/
 def wus : Verb where
-  morphs := [.root "wus", .suff "ta"]
+  stem := [.root "wus"]
   script := some "웃다"
   valency := .ofFrame .intransitive
 
 /-- *ilk-ta* 'read'. -/
 def ilk : Verb where
-  morphs := [.root "ilk", .suff "ta"]
+  stem := [.root "ilk"]
   script := some "읽다"
   valency := .ofFrame .np
 
 /-! ### Verbs in a voice -/
 
 /-- *cwuk-i-ta* 'kill' ([sohn-1999] (190b)). -/
-def cwuk_i : Verb :=
-  { derive (causative ⟨"i", by decide⟩) cwuk with script := some "죽이다" }
+def cwuk_i : Verb := { shortCausative cwuk ⟨"i", by decide⟩ with script := some "죽이다" }
 
 /-- *wus-ki-ta* 'make laugh' ([sohn-1999] (192)). -/
-def wus_ki : Verb :=
-  { derive (causative ⟨"ki", by decide⟩) wus with script := some "웃기다" }
+def wus_ki : Verb := { shortCausative wus ⟨"ki", by decide⟩ with script := some "웃기다" }
 
 /-- *ilk-hi-ta* 'cause to read' ([sohn-1999] (192)). -/
 def ilk_hi_causative : Verb :=
-  { derive (causativeOfTransitive ⟨"hi", by decide⟩) ilk with
-    script := some "읽히다", senseTag := .causative }
+  { shortCausative ilk ⟨"hi", by decide⟩ with script := some "읽히다", senseTag := .causative }
 
 /-- *ilk-hi-ta* 'be read' ([sohn-1999] (181b)). -/
-def ilk_hi_passive : Verb :=
-  { derive (passive ⟨"hi", by decide⟩) ilk with script := some "읽히다" }
+def ilk_hi_passive : Verb := { shortPassive ilk ⟨"hi", by decide⟩ with script := some "읽히다" }
 
 /-! ### Clause-embedding verbs -/
 
 /-- *yukamsuleweha-ta* 'regret', a stative negative preference. -/
 def yukamsuleweha : Verb where
-  morphs := [.root "yukamsuleweha", .suff "ta"]
+  stem := [.root "yukamsuleweha"]
   script := some "유감스러워하다"
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative true)
@@ -170,7 +214,7 @@ def yukamsuleweha : Verb where
 
 /-- *mit-ta* 'believe', a stative non-veridical doxastic. -/
 def mit : Verb where
-  morphs := [.root "mit", .suff "ta"]
+  stem := [.root "mit"]
   script := some "믿다"
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .nonVeridical)
@@ -179,7 +223,7 @@ def mit : Verb where
 
 /-- *sayngkakha-ta* 'think', a non-veridical doxastic activity. -/
 def sayngkakha : Verb where
-  morphs := [.root "sayngkakha", .suff "ta"]
+  stem := [.root "sayngkakha"]
   script := some "생각하다"
   valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .nonVeridical)
@@ -188,7 +232,7 @@ def sayngkakha : Verb where
 
 /-- *haysekha-ta* 'interpret'. -/
 def haysekha : Verb where
-  morphs := [.root "haysekha", .suff "ta"]
+  stem := [.root "haysekha"]
   script := some "해석하다"
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
@@ -196,7 +240,7 @@ def haysekha : Verb where
 
 /-- *selmyengha-ta* 'explain', which takes its clause as a theme argument. -/
 def selmyengha : Verb where
-  morphs := [.root "selmyengha", .suff "ta"]
+  stem := [.root "selmyengha"]
   script := some "설명하다"
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .accomplishment
@@ -207,6 +251,19 @@ def verbs : List Verb :=
     sayngkakha, haysekha, selmyengha]
 
 /-! ### Properties of the entries -/
+
+/-- The short causative of *ilk-ta* is in the causative of a transitive verb, and the voices of
+the entries apply to their bases, while the passive does not apply to intransitive *cwuk-ta*. -/
+example : causativeVoice ilk ⟨"hi", by decide⟩ = causativeOfTransitive ⟨"hi", by decide⟩ ∧
+    Applies (causativeVoice cwuk ⟨"i", by decide⟩) cwuk ∧
+    Applies (causativeVoice ilk ⟨"hi", by decide⟩) ilk ∧ Applies (passive ⟨"hi", by decide⟩) ilk ∧
+    ¬ Applies (passive ⟨"hi", by decide⟩) cwuk := by
+  decide
+
+/-- The stem of *cwuk-ta* is one word, so `Korean.wordsAt_derive` reads its short causative. -/
+example : Morph.wordsAt .affix (shortCausative cwuk ⟨"i", by decide⟩).morphs =
+    [(shortCausative cwuk ⟨"i", by decide⟩).morphs] :=
+  wordsAt_derive rfl (by decide)
 
 /-- *ilk-hi-ta* 'be read' and *ilk-hi-ta* 'cause to read' share a form and differ in
 valency. -/

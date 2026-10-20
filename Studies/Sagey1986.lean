@@ -28,26 +28,26 @@ place node rounds only labials.
 Association lines represent overlap in time rather than simultaneity, which lets a contour
 segment share one timing slot and a geminate one melody. Two valid associations cannot cross, so
 Goldsmith's well-formedness condition against crossing lines is eliminated: the index-level
-No-Crossing Constraint of `Phonology/Autosegmental/NonCrossing` holds of any link set realised by
-valid associations.
+No-Crossing Constraint of `Phonology/Autosegmental/NonCrossing` holds of any link relation
+realised by valid associations.
 
 ## Main definitions
 
-* `Node`, `node` — the articulator geometry and the class node of each terminal feature, an
+* `Node`, `node`: the articulator geometry and the class node of each terminal feature, an
   instance of `Phonology.FeatureGeometry`.
-* `Segment.Licensed` — a terminal feature under an articulator node implies that articulator.
-* `Association`, `Association.Valid`, `TierRealization` — association lines as overlap in time,
+* `Segment.Licensed`: a terminal feature under an articulator node implies that articulator.
+* `Association`, `Association.Valid`, `TierRealization`: association lines as overlap in time,
   and two tiers placed in time.
 
 ## Main results
 
-* `degreeOfClosure_mem_featureClass_iff`, `nasal_mem_featureClass_iff` — degree of closure lies
+* `degreeOfClosure_mem_featureClass_iff`, `nasal_mem_featureClass_iff`: degree of closure lies
   in the root's class alone and nasality in the classes of the soft palate and its ancestors, so
   place assimilation leaves both untouched.
-* `disjoint_featureClass_of_articulators` — distinct articulators have disjoint classes.
-* `isComplex_of_round_of_coronal`, `occlusions_isComplex` — a licensed rounded coronal and every
+* `disjoint_featureClass_of_articulators`: distinct articulators have disjoint classes.
+* `isComplex_of_round_of_coronal`, `occlusions_isComplex`: a licensed rounded coronal and every
   multiple occlusion are complex.
-* `Association.Valid.not_crosses`, `isNonCrossing_of_valid` — valid associations do not cross,
+* `Association.Valid.not_crosses`, `isNonCrossing_of_valid`: valid associations do not cross,
   so the No-Crossing Constraint is derived.
 
 ## Implementation notes
@@ -271,7 +271,7 @@ def TierRealization.assoc (R : TierRealization T) (k i : ℕ) : Association T :=
 
 /-- A link set whose links are all realised as valid associations satisfies Goldsmith's
 index-level No-Crossing Constraint. -/
-theorem isNonCrossing_of_valid (R : TierRealization T) {links : Finset (ℕ × ℕ)}
+theorem isNonCrossing_of_valid (R : TierRealization T) {links : SetRel ℕ ℕ}
     (h : ∀ p ∈ links, (R.assoc p.1 p.2).Valid) : IsNonCrossing links := by
   rw [isNonCrossing_iff]
   intro l₁ hl₁ l₂ hl₂ hlt
