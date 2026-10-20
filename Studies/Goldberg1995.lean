@@ -170,7 +170,7 @@ def causedMotion : Construction Sem :=
   , meaning :=
       { pred := .causeMove
         link :=
-          { frame := ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩
+          { frame := .np_spatialPP
             roles := [(external, ⟨causers, true⟩), (complement 0, ⟨{.theme}, false⟩),
               (complement 1, ⟨{.goal}, false⟩)] }
         relations := [(.subtype, ∅), (.means, ∅)] } }

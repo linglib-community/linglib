@@ -15,6 +15,7 @@ appearance, motion and weather, each with the frames Levin's alternations requir
 * [degen-tonhauser-2022]
 * [majid-boster-bowerman-2008]
 * [smith-1997]
+* [levin-hovav-1995]
 -/
 
 @[expose] public section
@@ -54,7 +55,7 @@ def spray : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 2]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 1, 2]),
+     (ArgumentFrame.np_spatialPP, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 2, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -67,7 +68,7 @@ def load : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 2]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 1, 2]),
+     (ArgumentFrame.np_spatialPP, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 2, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -89,7 +90,7 @@ def clean : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 2, 1]),
+     (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
   vendlerClass := some .accomplishment
   scaleDimension := some .cleanliness
@@ -525,14 +526,14 @@ def drown : Verb where
 
 /-! ### Emission (§ 43) -/
 
-/-- "glow" — Levin 43.1 Light Emission verbs. -/
+/-- *glow*, a verb of light emission. Among these only *beam*, *shine* and *flash* have a causative
+use ([levin-hovav-1995] p. 116), so the entry records none. -/
 def glow : Verb where
   morphs := [.root "glow"]
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
-     (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.spatialPP, [0, 2]),
-     (ArgumentFrame.pp (some Adpositions.with_), [2, 0])]
+     (ArgumentFrame.spatialPP, [0, 1]),
+     (ArgumentFrame.pp (some Adpositions.with_), [1, 0])]
   passivizable := false
   vendlerClass := some .state
   levinClasses := {LevinClass.lightEmission}
@@ -575,18 +576,20 @@ def bleed : Verb where
 
 /-! ### Existence, Appearance, Position (§ 47–50) -/
 
-/-- "exist" — Levin 47.1 Exist verbs. Pure state. -/
+/-- *exist*, an unaccusative stative verb of existence (47.1). -/
 def exist : Verb where
   morphs := [.root "exist"]
   valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
   passivizable := false
   vendlerClass := some .state
   levinClasses := {LevinClass.exist, .gorge}
 
-/-- "appear" — Levin 48.1 Appear verbs. Punctual emergence. -/
+/-- *appear*, an unaccusative verb of appearance (48.1.1). -/
 def appear : Verb where
   morphs := [.root "appear"]
   valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
   passivizable := false
   vendlerClass := some .achievement
   levinClasses := {LevinClass.appear}
@@ -649,14 +652,15 @@ def walk : Verb where
   direction := some .place
   levinClasses := {LevinClass.run}
 
-/-- "swim" — Levin 51.3 Manner of Motion verbs. -/
+/-- *swim*, an agentive verb of manner of motion, whose causative takes a directional phrase as
+the causatives of all such verbs do ([levin-hovav-1995] p. 111). -/
 def swim : Verb where
   morphs := [.root "swim"]
   past := "swam"
   pastPart := "swum"
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
-     (ArgumentFrame.np, [1, 0]),
+     (ArgumentFrame.np_spatialPP, [1, 0, 2]),
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
   passivizable := false

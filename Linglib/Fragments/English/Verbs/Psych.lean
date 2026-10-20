@@ -463,7 +463,7 @@ def scrape : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 2, 1]),
+     (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.cut, .funnel, .wipeManner}
@@ -475,7 +475,7 @@ def wipe : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 2, 1]),
+     (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.funnel, .wipeManner}

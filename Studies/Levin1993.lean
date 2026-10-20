@@ -31,10 +31,10 @@ attest the alternations (`quadruple_mem_sensitivity_of_participates`,
 categorical alternation judgment among the book's examples in `Data/Examples/Levin1993.json`
 agrees with the profile of the verb's class (`participation_matches_profile`). The
 alternations that pair two argument frames are frame-pair schemas (`schema?`), which relate two
-diatheses of a verb when the verb's participants move as the schema says; the causative/inchoative
-and induced action alternations, which relate the same diatheses, are told apart by the causee's
-volition (`Shows`, `run_shatter`), and every English fragment verb Levin lists has a class whose
-page it realizes (`shows_class_alternations`).
+diatheses of a verb when the verb's participants move as the schema says; the induced action
+alternation differs from the causative/inchoative one in the directional phrase of its transitive
+and in its volitional causee (`Shows`, `run_shatter`), and every English fragment verb Levin lists
+has a class whose page it realizes (`shows_class_alternations`).
 
 ## Implementation notes
 
@@ -205,7 +205,8 @@ open Voice English.Adpositions ArgumentFrame.Slot in
 /-- The frame-pair schema of an alternation, where it has one. -/
 def schema? : DiathesisAlternation → Option Voice
   | .causativeInchoative => some anticausative
-  | .inducedAction => some causative
+  | .inducedAction =>
+    some (of .spatialPP .np_spatialPP [some (complement 0), some (complement 1), some external])
   | .conative => some (of .np (.pp (some at_)) [some external, some (complement 0)])
   | .substanceSource => some (of (.pp (some from_)) .np [some (complement 0), some external])
   | .unspecifiedObject => some (leaveImplicit .np 0 (some .indef))
@@ -215,7 +216,7 @@ def schema? : DiathesisAlternation → Option Voice
   | .dative => some (toDoubleObject to_)
   | .benefactive => some (toDoubleObject for_)
   | .locative => some <|
-      of ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩ (.np_pp (some with_))
+      of .np_spatialPP (.np_pp (some with_))
         [some external, some (complement 1), some (complement 0)]
   | .bodyPartPossessorAscension => some <|
       of .np (.np_pp (some on)) [some external, some (complement 1), some (complement 0)]
@@ -240,12 +241,13 @@ where
 
 /-! ### The causee
 
-On the links the causative/inchoative and induced action alternations relate the same pairs of
-diatheses, a transitive whose object is the subject of an intransitive. Levin tells them apart by
-that participant, the causee: the induced action alternation "differs from the
-causative/inchoative alternation in that the causee is typically an animate volitional entity"
-(p. 31), and the verbs of the causative/inchoative alternation are "verbs of change of state or
-change of position" (p. 30). -/
+The causative/inchoative and induced action alternations both relate a transitive whose object is
+the subject of an intransitive. In the induced action alternation the transitive "must be
+accompanied by a directional phrase" (p. 31), and Levin also tells the two apart by that
+participant, the causee: the induced action alternation "differs from the causative/inchoative
+alternation in that the causee is typically an animate volitional entity" (p. 31), and the verbs of
+the causative/inchoative alternation are "verbs of change of state or change of position"
+(p. 30). -/
 
 /-- A causee of two diatheses is a participant that is the object of one and the subject without
 an object of the other. -/
@@ -297,14 +299,11 @@ theorem shows_class_alternations :
   decide +kernel
 
 open English.Verbs in
-/-- The causee tells the two causative alternations apart. On the links the diatheses of *run* and
-of *shatter* each fit both schemas, but *run* shows the induced action alternation alone, its
-causee volitional, and *shatter* the causative/inchoative alternation alone. -/
+/-- *run* shows the induced action alternation alone, with its directional phrase and its
+volitional causee, and *shatter* the causative/inchoative alternation alone. -/
 theorem run_shatter :
-    (run.Alternates Voice.anticausative ∧ Shows run.toVerb .inducedAction ∧
-      ¬ Shows run.toVerb .causativeInchoative) ∧
-    shatter.Alternates Voice.causative ∧ Shows shatter.toVerb .causativeInchoative ∧
-      ¬ Shows shatter.toVerb .inducedAction := by
+    (Shows run.toVerb .inducedAction ∧ ¬ Shows run.toVerb .causativeInchoative) ∧
+      Shows shatter.toVerb .causativeInchoative ∧ ¬ Shows shatter.toVerb .inducedAction := by
   decide
 
 end Levin1993
