@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar
+public import Linglib.Core.Computability.ContextFreeGrammar.Regular
 public import Linglib.Core.Computability.MyhillNerode
 
 /-!
