@@ -252,7 +252,7 @@ def ModalVerb.threshold (Θ : Thresholds) : ModalVerb → ℝ≥0∞
   | .must => Θ.must
 
 /-- The English auxiliary of each modal verb. -/
-def ModalVerb.aux : ModalVerb → Auxiliary
+def ModalVerb.aux : ModalVerb → ModalAuxiliary
   | .could => English.Auxiliaries.could
   | .might => English.Auxiliaries.might
   | .may => English.Auxiliaries.may

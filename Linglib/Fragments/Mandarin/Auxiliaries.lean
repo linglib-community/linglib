@@ -31,37 +31,37 @@ auxiliaries without modality.
 namespace Mandarin.Auxiliaries
 
 /-- *yīnggāi* 应该 'ought to, should'. -/
-def yinggai : Auxiliary where
+def yinggai : ModalAuxiliary where
   form := "yīnggāi"
   meaning := {.weakNecessity} ×ˢ {.deontic}
 
 /-- *yīngdāng* 应当 'ought to, should'. -/
-def yingdang : Auxiliary where
+def yingdang : ModalAuxiliary where
   form := "yīngdāng"
   meaning := {.weakNecessity} ×ˢ {.deontic}
 
 /-- *gāi* 该 'ought to, should'. -/
-def gai : Auxiliary where
+def gai : ModalAuxiliary where
   form := "gāi"
   meaning := {.weakNecessity} ×ˢ {.deontic}
 
 /-- *néng* 能 'be able to', 'have permission to'. -/
-def neng : Auxiliary where
+def neng : ModalAuxiliary where
   form := "néng"
   meaning := {.possibility} ×ˢ {.circumstantial, .deontic}
 
 /-- *nénggòu* 能够 'be able to'. -/
-def nenggou : Auxiliary where
+def nenggou : ModalAuxiliary where
   form := "nénggòu"
   meaning := {.possibility} ×ˢ {.circumstantial}
 
 /-- *huì* 会 'be able to, know how'; its sense 'will' is not a flavor. -/
-def hui : Auxiliary where
+def hui : ModalAuxiliary where
   form := "huì"
   meaning := {.possibility} ×ˢ {.circumstantial}
 
 /-- *kěyǐ* 可以 'be able to', 'have permission to'. -/
-def keyi : Auxiliary where
+def keyi : ModalAuxiliary where
   form := "kěyǐ"
   meaning := {.possibility} ×ˢ {.circumstantial, .deontic}
 
@@ -74,30 +74,30 @@ def ken : Auxiliary where
   form := "kěn"
 
 /-- *děi* 得 'must, ought to'. -/
-def dei : Auxiliary where
+def dei : ModalAuxiliary where
   form := "děi"
   meaning := {.necessity} ×ˢ {.deontic}
 
 /-- *bìxū* 必须 'must, ought to'. -/
-def bixu : Auxiliary where
+def bixu : ModalAuxiliary where
   form := "bìxū"
   meaning := {.necessity} ×ˢ {.deontic}
 
 /-- *bìyào* 必要 'must, ought to'. -/
-def biyao : Auxiliary where
+def biyao : ModalAuxiliary where
   form := "bìyào"
   meaning := {.necessity} ×ˢ {.deontic}
 
 /-- *bìděi* 必得 'must, ought to'. -/
-def bidei : Auxiliary where
+def bidei : ModalAuxiliary where
   form := "bìděi"
   meaning := {.necessity} ×ˢ {.deontic}
 
-/-- The auxiliary verbs. -/
-def auxiliaries : List Auxiliary :=
-  [yinggai, yingdang, gai, neng, nenggou, hui, keyi, gan, ken, dei, bixu, biyao, bidei]
+/-- The modal auxiliaries. -/
+def modals : List ModalAuxiliary :=
+  [yinggai, yingdang, gai, neng, nenggou, hui, keyi, dei, bixu, biyao, bidei]
 
-/-- The modal auxiliaries, those with a modality. -/
-def modals : List Auxiliary := auxiliaries.filter (·.meaning.Nonempty)
+/-- The auxiliary verbs. -/
+def auxiliaries : List Auxiliary := modals.map (↑) ++ [gan, ken]
 
 end Mandarin.Auxiliaries

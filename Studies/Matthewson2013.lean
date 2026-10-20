@@ -12,13 +12,13 @@ public import Studies.Deal2011
 /-!
 # Matthewson (2013): Gitksan Modals
 
-This file formalizes the description of the Gitksan modal system in [matthewson-2013]. Gitksan
+This file formalizes the description of the Gitksan modal system in Matthewson (2013). Gitksan
 is a mixed system (Fig. 1): every modal is specified for modality type, epistemic or
 circumstantial, and modal strength is encoded among the circumstantial modals, *da'aḵhlxw* and
 *anooḵ* for possibility against *sgi* for (weak) necessity, but not among the epistemic clitics
 *ima('a)* and *g̱at*, which are compatible with necessity and possibility contexts alike
-([peterson-2010]). With the paper's lexical forces, existential for all but *sgi*,
-[deal-2011]'s account of modals without scales predicts every modal's uses: the epistemics
+(Peterson 2010). With the paper's lexical forces, existential for all but *sgi*,
+Deal's account of modals without scales predicts every modal's uses: the epistemics
 share a force and so form no scale, and are used for both, while *sgi* is the scalemate of
 *da'aḵhlxw* and *anooḵ*, and each circumstantial modal is used for its own force. The system
 fills the empty diagonal of the classification of modal systems
@@ -32,25 +32,25 @@ predicts the gap, so it is not one of modal strength, and the paper suggests *sg
 non-empty ordering source.
 
 Gitksan modals are not inherently future-oriented, against the English analysis of
-[condoravdi-2002]: the prospective *dim* is present exactly when the prejacent is
+Condoravdi (2002): the prospective *dim* is present exactly when the prejacent is
 future-oriented, and it is obligatory with the circumstantial modals because they are
 future-oriented. Every cell of Fig. 4, perspective by orientation, is attested. The
 circumstantial possibility modal has no actuality entailment, its obligatory *dim* keeping it
-out of the perfective configuration of [hacquard-2006].
+out of the perfective configuration of Hacquard (2006).
 
 ## Implementation notes
 
-* The paper is agnostic between [peterson-2010]'s analysis of *ima('a)* as a possibility modal
-  strengthened by an ordering source and a possibility modal without a scale, as [deal-2011]
+* The paper is agnostic between Peterson's analysis of *ima('a)* as a possibility modal
+  strengthened by an ordering source and a possibility modal without a scale, as Deal (2011)
   analyses Nez Perce *o'qa*, the negation diagnostic (30) not separating them, and adopts what
   the two share, an existential quantifier over worlds. The prediction of the modals' uses
-  follows [deal-2011]'s mechanism, which the paper raises for the circumstantial modals
+  follows Deal's mechanism, which the paper raises for the circumstantial modals
   (§5.1); forces are compared on Fig. 1's two columns, weak necessity counting as necessity.
 * The rows record the paper's flavour labels; its pure circumstantial and teleological readings
   are the library's circumstantial flavour. A row's force is recorded only where the paper
   labels the context's strength.
 * The primed rows are the *dim*-less variants that the paper's #(dim) marks as infelicitous.
-* Fig. 2's Javanese cell is checked on the Paciran Javanese inventory of [vander-klok-2013a].
+* Fig. 2's Javanese cell is checked on the Paciran Javanese inventory of Vander Klok (2013).
   Fig. 3 summarizes an earlier description by Vander Klok, whose possibility modals *ento* and
   *mungkin* are not in that inventory.
 
@@ -185,8 +185,8 @@ theorem gitksan_mixed : Mixed modals := by decide
 not strength, and Javanese both (Fig. 3), a cell that the classification of
 [rullmann-matthewson-davis-2008] left open. -/
 theorem fig2 :
-    (StrengthSelective (English.Auxiliaries.modals.map Auxiliary.toModalItem) ∧
-        ¬ TypeSelective (English.Auxiliaries.modals.map Auxiliary.toModalItem)) ∧
+    (StrengthSelective (English.Auxiliaries.modals.map ModalAuxiliary.toModalItem) ∧
+        ¬ TypeSelective (English.Auxiliaries.modals.map ModalAuxiliary.toModalItem)) ∧
       (TypeSelective Statimcets.modals ∧
         ¬ StrengthSelective Statimcets.modals) ∧
       TypeSelective Javanese.Paciran.modals ∧

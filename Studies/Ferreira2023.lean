@@ -510,7 +510,7 @@ def interpret (φ : ModalForce) (f g : Background W) (p q : W → Prop)
 
 /-- The Portuguese necessity modal at each vertex (135). X-marking the ordering source is
 lexical, from *ter que* to *dever*, and X-marking the modal base is the past imperfect. -/
-def modalAt : Vertex → Auxiliary
+def modalAt : Vertex → ModalAuxiliary
   | ⟨false, false⟩ => Portuguese.Modals.temQue
   | ⟨false, true⟩ => Portuguese.Modals.deve
   | ⟨true, false⟩ => Portuguese.Modals.tinhaQue
