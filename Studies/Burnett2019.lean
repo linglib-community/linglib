@@ -15,7 +15,9 @@ compatible with the personae sharing a property with its indexical field, the li
 persona from the variant against a prior, and the speaker chooses the variant that best conveys the
 persona they are after. Two kinds of variation come out of the one model. A speaker holding a
 persona fixed changes variants as the context changes the listener's prior, style shifting, here
-Labov's Obama who prefers *-in'* at a barbecue and *-ing* with the journalists; and a listener
+Labov's Obama, who prefers *-in'* at a barbecue and *-ing* with the journalists and avoids *-in'*
+at the convention, where he constructs a persona it cannot convey, so that the model orders
+Labov's three occasions as his observed rates do (`apicalRate_lt_iff`); and a listener
 holding the variant fixed infers different personae from different speakers, so that a strongly
 stereotyped speaker such as the paper's Bush conveys nothing by the choice.
 
@@ -270,18 +272,76 @@ theorem rice_indifferent :
         (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))]
       simp [excluded, riceWeight]
 
-/-- The predicted direction is the observed one, the cool guy taking *-in'* at the barbecue
-and *-ing* with the journalists while Obama's rate of *-in'* falls from the casual through the
-careful to the formal style ([labov-2012]). -/
-theorem matches_labov_direction :
-    (S1 (Measure.ofWeights (casualWeight ·)) coolGuy).real {.velar}
-        < (S1 (Measure.ofWeights (casualWeight ·)) coolGuy).real {.apical} ∧
-      (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.apical}
-        < (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.velar} ∧
-      Labov2012.obama_ING.casual > Labov2012.obama_ING.careful ∧
-      Labov2012.obama_ING.careful > Labov2012.obama_ING.formal :=
-  ⟨casual_coolGuy_prefers_apical, careful_coolGuy_prefers_velar,
-    Labov2012.obama_ING_monotone.1, Labov2012.obama_ING_monotone.2⟩
+/-! ### Labov's occasions
+
+On each of the three occasions Labov recorded, Obama constructs a persona against his
+listeners' prior (pp. 435–436): the cool guy at the barbecue and with the journalists, and the
+stern leader at the convention, where aloofness is valued and which *-in'* cannot convey. The
+paper gives no prior for the convention, and none is needed. -/
+
+/-- The persona Obama constructs in each of Labov's styles. -/
+def occasionPersona : Labov2012.Style → Persona
+  | .casual | .careful => coolGuy
+  | .formal => sternLeader
+
+/-- The prior of each of Labov's styles, the convention's left open. -/
+noncomputable def occasionPrior (formal : Measure Persona) : Labov2012.Style → Measure Persona
+  | .casual => Measure.ofWeights (casualWeight ·)
+  | .careful => Measure.ofWeights (carefulWeight ·)
+  | .formal => formal
+
+/-- The model's rate of *-in'* in each of Labov's styles. -/
+noncomputable def apicalRate (formal : Measure Persona) (s : Labov2012.Style) : ℝ :=
+  (S1 (occasionPrior formal s) (occasionPersona s)).real {.apical}
+
+/-- A persona of positive prior that some variant conveys divides its production between the
+two variants. -/
+private theorem S1_real_apical (prior : Measure Persona) [IsFiniteMeasure prior] {p : Persona}
+    {v : INGVariant} (hp : prior {p} ≠ 0) (hv : p ∈ ingField.personae v) :
+    (S1 prior p).real {.apical} = 1 - (S1 prior p).real {.velar} := by
+  have := isProbabilityMeasure_speaker_dirac (by norm_num : (0 : ℝ) ≤ 6) (fun _ ↦ 0) (L0 prior)
+    ⟨v, (listener_truthful_apply_singleton_ne_zero_iff prior _ v p).2 ⟨hv, hp⟩⟩
+  rw [← probReal_compl_eq_one_sub (measurableSet_singleton _)]
+  congr 1
+  ext u
+  cases u <;> simp
+
+/-- The rate of *-in'* falls strictly with the formality of the style. It is above one half at
+the barbecue, where the cool guy prefers it, below one half but positive with the journalists,
+and nil at the convention. -/
+theorem apicalRate_strictAnti (formal : Measure Persona) : StrictAnti (apicalRate formal) := by
+  have hcasual : 1 / 2 < apicalRate formal .casual := by
+    have := S1_real_apical (Measure.ofWeights (casualWeight ·)) (v := .velar)
+      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))
+      (by decide +kernel : coolGuy ∈ _)
+    have := casual_coolGuy_prefers_apical
+    simp only [apicalRate, occasionPrior, occasionPersona]
+    linarith
+  have hcareful : apicalRate formal .careful < 1 / 2 := by
+    have := S1_real_apical (Measure.ofWeights (carefulWeight ·)) (v := .velar)
+      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))
+      (by decide +kernel : coolGuy ∈ _)
+    have := careful_coolGuy_prefers_velar
+    simp only [apicalRate, occasionPrior, occasionPersona]
+    linarith
+  have hpos : 0 < apicalRate formal .careful :=
+    show 0 < (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.apical} from
+    ENNReal.toReal_pos ((speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff
+      (by norm_num) _ _ _ _ _).2 ⟨Finset.mem_coe.2 (by decide +kernel),
+        Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel))⟩)
+      (measure_ne_top _ _)
+  have hformal : apicalRate formal .formal = 0 :=
+    speaker_listener_truthful_dirac_real_singleton_eq_zero (by norm_num) _ _ _
+      (Finset.mem_coe.not.2 (by decide +kernel))
+  intro s t h
+  cases s <;> cases t <;> first | exact absurd h (by decide) | linarith
+
+/-- The model orders Labov's styles as Obama's observed rates of *-in'* do, whatever the prior
+at the convention. -/
+theorem apicalRate_lt_iff (formal : Measure Persona) {s t : Labov2012.Style} :
+    apicalRate formal s < apicalRate formal t
+      ↔ (Labov2012.ingByStyle s).percent < (Labov2012.ingByStyle t).percent :=
+  (apicalRate_strictAnti formal).lt_iff_gt.trans Labov2012.ingByStyle_strictAnti.lt_iff_gt.symm
 
 /-! ### Interpretation
 
