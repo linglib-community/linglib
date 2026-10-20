@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.Fintype.List
 public import Linglib.Core.Data.List.DropRight
 public import Linglib.Core.Computability.Subsequential
 public import Linglib.Core.Computability.Residual

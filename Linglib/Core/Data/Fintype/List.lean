@@ -5,29 +5,30 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Basic.Finite.Sigma
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Vector
+public import Mathlib.Order.Interval.Finset.Nat
 
 /-!
-# Finiteness of bounded-length lists
+# Lists of bounded length are finite
 
-Over a finite alphabet, the lists of length at most `n` form a finite type — the state
-space of window-based transducers.
+Over a finite type, the lists of length at most `n` form a finite type: fibred by `length`, they
+are the vectors of each length `m ≤ n`. The set form is `List.finite_length_le`.
 -/
 
 @[expose] public section
 
-/-- The "lists of length at most `n`" subtype is finite when `α` is: it is a surjective
-image of `Σ m : Fin (n + 1), List.Vector α m`. Uses `classical` for the `DecidableEq`
-side condition rather than imposing it on consumers. -/
-noncomputable instance List.fintypeSubtypeLengthLE {α : Type*} [Fintype α] (n : ℕ) :
-    Fintype {l : List α // l.length ≤ n} := by
-  classical
-  exact Fintype.ofSurjective
-    (fun (s : Σ m : Fin (n + 1), List.Vector α m) =>
-      (⟨s.snd.toList, by
-        rw [List.Vector.toList_length]
-        exact Nat.lt_succ_iff.mp s.fst.isLt⟩ :
-        {l : List α // l.length ≤ n}))
-    (fun l => ⟨⟨⟨l.val.length, Nat.lt_succ_iff.mpr l.property⟩,
-                  ⟨l.val, rfl⟩⟩, rfl⟩)
+namespace List
+
+variable {α : Type*}
+
+instance finite_subtype_length_le [Finite α] (n : ℕ) : Finite {l : List α // l.length ≤ n} :=
+  .of_equiv (Σ m : Set.Iic n, List.Vector α m)
+    (Equiv.sigmaSubtypeFiberEquivSubtype length fun _ ↦ .rfl)
+
+instance fintypeSubtypeLengthLE [Fintype α] (n : ℕ) : Fintype {l : List α // l.length ≤ n} :=
+  fast_instance% .ofEquiv (Σ m : Set.Iic n, List.Vector α m)
+    (Equiv.sigmaSubtypeFiberEquivSubtype length fun _ ↦ .rfl)
+
+end List
