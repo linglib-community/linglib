@@ -170,13 +170,13 @@ def segProbe (s : PersonSegment) : Probe Person := .ofInt fun p ↦ decide (s �
 with it from the next projection of v, whose domain has the external argument closest and the
 internal one below. -/
 def EALicensed : Prop :=
-  ∃ x ∈ sys.residue s.low, (sys.segProbe x).agree [s.high, s.low] = some s.high
+  ∃ x ∈ sys.residue s.low, (sys.segProbe x).goal [s.high, s.low] = some s.high
 
 instance : DecidablePred sys.EALicensed := fun _ ↦ List.decidableBEx _ _
 
 /-- The core probe licenses the external argument exactly in direct contexts. -/
 theorem eaLicensed_iff_isDirect : sys.EALicensed s ↔ sys.IsDirect s := by
-  simp only [EALicensed, IsDirect, segProbe, Probe.ofInt_agree_eq_some_iff, List.head?_cons,
+  simp only [EALicensed, IsDirect, segProbe, Probe.ofInt_goal_eq_some_iff, List.head?_cons,
     true_and, decide_eq_true_eq]
 
 /-- Arguments of the same person make an inverse context. -/

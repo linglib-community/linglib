@@ -247,8 +247,8 @@ theorem segmentProbe_pi (geom : PersonGeometry) :
 /-- No segment reaches a nominal behind an oblique one, so a participant there goes unlicensed,
 the Person Case Constraint (14). -/
 theorem pcc (geom : PersonGeometry) (s : PersonSegment) (cd cn : Bundle) :
-    (segmentProbe geom s).agree [.dat cd, .caseless cn] = none := by
-  simp [segmentProbe, Probe.agree, Probe.ofInt_search]
+    (segmentProbe geom s).goal [.dat cd, .caseless cn] = none := by
+  simp [segmentProbe, Probe.goal, Probe.ofInt_search]
 
 /-- A segment searching for the closest nominal bearing it would skip a third-person dative and
 reach a participant theme, the prediction fn. 6 excludes. -/
