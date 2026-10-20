@@ -1,51 +1,60 @@
 module
 
-public import Mathlib.Tactic.FinCases
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Data.Experiments.Steriade1997
+public import Linglib.Data.Forms.Steriade1997
+public import Linglib.Data.PHOIBLE.Chart
 public import Linglib.Phonology.Hiatus
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.Segmental.PHOIBLE
+public import Mathlib.Data.List.SplitBy
 
 /-!
 # Steriade (1997): Lexical Conservatism
 
-This file formalizes Steriade's lexical conservatism, a family of grammatical
-conditions against phonologically novel forms: a property of the allomorph under evaluation
-must have a precedent in some listed allomorph of the same morpheme. The Lex(P) conditions
-(`lexP`) require a precedent for a phonological property, and the Lex(P, M) conditions
-(`lexPM`) require the target to share a property with a listed allomorph bearing a
-morphosyntactic feature the target must encode; unlike the correspondence conditions of
-McCarthy and Prince, both search the whole paradigm rather than compare with one base,
-and the morphosyntactic base is only the listed allomorph carrying the required features
-(`IsBase`). Listed allomorphs are conservative by construction (`lexP_of_mem`), and with a
-single listed allomorph every precedent is that base (`lexP_singleton`), one of the sources
-of the appearance of single-base derivation.
+A novel form may take its phonology from several listed allomorphs of its morpheme at once, the
+split-base effect. Steriade derives it from lexical conservatism. A Lex(P) condition lets the
+allomorph under evaluation have a phonological property only if some listed allomorph has it, and
+a Lex(P, M) condition requires it to share the properties of the listed allomorphs that bear a
+morphosyntactic feature it must encode. With one listed allomorph the two together are identity
+to it, which is how single-base derivation appears.
 
-The split-base effect arises when a phonological property is desirable in a novel form but
-absent from the morphosyntactic base and present in another listed allomorph: the novel form
-adopts the property from the second allomorph and a property identifying the base from the
-first, and satisfies the precedent condition, the phonological constraint and the
-base-identity condition at once, whereas each listed allomorph violates one of them
-(`split_base`). The forms compete under the ranking schema in which the precedent condition
-and the phonological constraint outrank the base-identity condition
-(`split_wins_of_phono_over_lexPM`), and the base-faithful form wins under the reverse
-ranking (`base_wins_of_lexPM_over_phono`). The French masculine liaison allomorph of *vain*,
-the masculine vowel with the feminine consonant, is the split-base form for speakers who
-rank identity of the accented vowel to the masculine above identity of the whole rime to a
-listed allomorph; the feminine form wins for the others (`vain_split`, `vain_feminine`). The
-English *-able* adjective on *remedy* adopts the stress of *remedial* to avoid a lapse for
-speakers who rank the lapse constraint above stress identity to the verbal allomorph, and
-keeps the verb's stress for the others, while *parody*, with no listed amphibrachic
-allomorph, admits only the lapsed form (`remediable`, `parodiable`).
+The French liaison form *[vɛ̃n] espoir* takes its consonant from the feminine *vaine* and its
+vowel from the masculine *vain*, while *joli*, with no consonant to borrow, keeps its hiatus.
+English *remédiable* takes the stress of *remédial* to avoid a lapse, and *parody*, whose
+paradigm lists no such stem, keeps the lapse of *párodiable*.
+
+## Main definitions
+
+* `lexP`, `lexPM`: the conditions (7) and (9) over a family of phonological properties.
+* `Liaison.lexC`, `Liaison.lexVGender`, `Liaison.lexSyllable`: Lex C], Lex 'V-gender, Lex σ'.
+* `Able.lexStress`, `Able.noLapse`, `Able.lexStressVerb`: Lex [±stress], \*Lapse σσσ and
+  Lex([±stress], lexcat).
+
+## Main results
+
+* `lexP_singleton_and_lexPM_singleton_iff`: one listed allomorph is a base to be identical to.
+* `Liaison.mem_optimal_iff`: Lex C] ≫ \*Hiatus selects the liaison forms the sources accept (8).
+* `Liaison.vain_split`, `Liaison.vain_feminine`: the two rankings of Lex 'V-gender and Lex σ'.
+* `Able.remediable`, `Able.parodiable`: the tableaux (16) under both rankings of (18).
+* `Able.mem_optimal_iff_most_responses`: the winners of (18) are the majority responses of (14).
 
 ## Implementation notes
 
-The listed allomorphs are treated as categorical, as the paper does, and only the properties
-the analysed conditions mention are represented. A French adjective form is its string of
-segments and its gender, from which its accented vowel, its final consonant, its rime and its
-hiatus with the following noun are read, and an English stem allomorph is its stress pattern
-and its lexical category. The paper's survey of *-able* forms, in which the accentually
-heterogeneous paradigms take the stress of the non-verbal allomorph in most responses and
-the homogeneous ones keep the verb's stress, and its corpus of 186 forms, are described and
-not reproduced. The lapse constraint is the paper's three-stressless-syllable version.
+A listed allomorph is a form of the paradigm that (8) or (13) prints, its gender or lexical
+category in its cell. A condition is violated once however many properties lack a precedent, as
+the tableaux mark it. Lex σ' compares rimes, as footnote 3 states it. \*Lapse σσσ counts the
+syllables with onsets in a stretch of stressless syllables, the reading on which *rémediable*
+violates it in (16a). The stems that (14) prints only in spelling have the segments of the verb.
+
+## TODO
+
+* (14) gives *rémediable* 3 of 24 responses, where (23) prints 20/4 for *remédiable*.
+* (19) marks *descríptable* as violating Lex([±stress], lexcat), though its stress matches that
+  of *descríbe*.
+* Lex (C], lexcat) (27), Lex σ' (28) and the tableau (29) need the coda of the English stressed
+  syllable.
+* The heterogeneous paradigms of (23), printed in spelling only, and the loose correspondence of
+  footnote 3, which rules out *\*[nuvol] an*.
 
 ## References
 
@@ -58,281 +67,314 @@ not reproduced. The lapse constraint is the paper's three-stressless-syllable ve
 
 namespace Steriade1997
 
-open OptimalityTheory Phonology
+open OptimalityTheory Phonology Data.PHOIBLE Data.Forms
 
 /-! ### Lexical conservatism conditions -/
 
 section Conditions
 
-variable {Form : Type*} (L : List Form) (P Q M : Form → Prop) [DecidablePred P]
-  [DecidablePred Q] [DecidablePred M]
+variable {Form π : Type*} [DecidableEq π] (L : List Form) (P : Form → Finset π)
+  (M : Form → Prop) [DecidablePred M] {b t : Form}
 
-/-- Lex(P), the paper's (7), lets the target allomorph have the property `P` only if some
-listed allomorph of the morpheme has it. -/
-def lexP : Constraint Form := Constraint.binary fun t ↦ P t ∧ ∀ l ∈ L, ¬ P l
+/-- Lex(P), the paper's (7), lets the allomorph under evaluation have a property of the family
+`P` only if some listed allomorph has it. -/
+def lexP : Constraint Form := Constraint.binary fun t ↦ ¬ ∀ p ∈ P t, ∃ l ∈ L, p ∈ P l
 
-/-- Lex(P, M), the paper's (9), requires the target to have the property `P` if some listed
-allomorph has `P` and the morphosyntactic feature `M` the target must encode. -/
-def lexPM : Constraint Form := Constraint.binary fun t ↦ (∃ l ∈ L, P l ∧ M l) ∧ ¬ P t
+/-- Lex(P, M), the paper's (9), requires the allomorph under evaluation to have every property
+of the family `P` that a listed allomorph with the morphosyntactic feature `M` has. -/
+def lexPM : Constraint Form := Constraint.binary fun t ↦ ¬ ∀ l ∈ L, M l → P l ⊆ P t
 
-/-- A phonological well-formedness constraint demanding the property `P`. -/
-def wellFormed : Constraint Form := Constraint.binary fun t ↦ ¬ P t
+theorem lexP_eq_zero_iff : lexP L P t = 0 ↔ ∀ p ∈ P t, ∃ l ∈ L, p ∈ P l := by
+  simp [lexP]
 
-/-- The morphosyntactically appropriate base, the paper's (12), is a listed allomorph with the
-required features. -/
-def IsBase (b : Form) : Prop := b ∈ L ∧ M b
+theorem lexPM_eq_zero_iff : lexPM L P M t = 0 ↔ ∀ l ∈ L, M l → P l ⊆ P t := by
+  simp [lexPM]
 
-theorem lexP_eq_zero_iff (t : Form) : lexP L P t = 0 ↔ (P t → ∃ l ∈ L, P l) := by
-  simp [lexP, Constraint.binary]
+/-- A listed allomorph is its own precedent. -/
+theorem lexP_of_mem (h : t ∈ L) : lexP L P t = 0 :=
+  (lexP_eq_zero_iff L P).2 fun _ hp ↦ ⟨t, h, hp⟩
 
-theorem lexPM_eq_zero_iff (t : Form) : lexPM L P M t = 0 ↔ ((∃ l ∈ L, P l ∧ M l) → P t) := by
-  simp [lexPM, Constraint.binary]
+theorem lexP_singleton : lexP [b] P t = 0 ↔ P t ⊆ P b := by
+  simp [lexP_eq_zero_iff, Finset.subset_iff]
 
-theorem wellFormed_eq_zero_iff (t : Form) : wellFormed P t = 0 ↔ P t := by
-  simp [wellFormed, Constraint.binary]
+theorem lexPM_singleton (hb : M b) : lexPM [b] P M t = 0 ↔ P b ⊆ P t := by
+  simp [lexPM_eq_zero_iff, hb]
 
-/-- A listed allomorph never violates a Lex(P) condition. -/
-theorem lexP_of_mem {t : Form} (h : t ∈ L) : lexP L P t = 0 :=
-  (lexP_eq_zero_iff L P t).mpr fun hp ↦ ⟨t, h, hp⟩
-
-/-- With a single listed allomorph, a precedent is identity to that allomorph, which gives the
-appearance of single-base derivation from an impoverished paradigm. -/
-theorem lexP_singleton (b t : Form) : lexP [b] P t = 0 ↔ (P t → P b) := by
-  simp [lexP_eq_zero_iff]
-
-/-! ### The split-base effect -/
-
-/-- The constraints of the paper's (30) are the precedent condition for the desired property
-`P`, the phonological constraint demanding it, and the base-identity condition for the
-property `Q` of the listed allomorphs carrying the feature `M`. -/
-def con30 : ConstraintSet Form (Fin 3) := ![lexP L P, wellFormed P, lexPM L Q M]
-
-/-- The reverse ranking, with the base-identity condition above the phonological one. -/
-def con30' : ConstraintSet Form (Fin 3) := ![lexP L P, lexPM L Q M, wellFormed P]
-
-/-- The profile of a form under the ranking of (30), constraint by constraint. -/
-theorem con30_profile (t : Form) :
-    toLex ((con30 L P Q M) · t) =
-      toLex ![lexP L P t, wellFormed P t, lexPM L Q M t] := by
-  rw [toLex_inj]
-  funext i; fin_cases i <;> rfl
-
-theorem con30'_profile (t : Form) :
-    toLex ((con30' L P Q M) · t) =
-      toLex ![lexP L P t, lexPM L Q M t, wellFormed P t] := by
-  rw [toLex_inj]
-  funext i; fin_cases i <;> rfl
-
-theorem lexPM_eq_one {μ t : Form} (h : μ ∈ L) (hP : P μ) (hM : M μ) (ht : ¬ P t) :
-    lexPM L P M t = 1 := by
-  simp [lexPM, Constraint.binary, ht]; exact ⟨μ, h, hP, hM⟩
-
-theorem wellFormed_eq_one {t : Form} (ht : ¬ P t) : wellFormed P t = 1 := by
-  simp [wellFormed, Constraint.binary, ht]
-
-/-- The split-base effect, the paper's (11): with a listed allomorph `μ₁` carrying `M` and
-the identifying property `Q` but not `P`, and another `μ₂` with `P` but not `Q`, a novel
-form with `P` and `Q` violates none of the three constraints, while `μ₁` violates the
-phonological constraint and `μ₂` the base-identity condition. -/
-theorem split_base {μ₁ μ₂ t : Form} (h₁ : μ₁ ∈ L) (hM₁ : M μ₁) (hQ₁ : Q μ₁) (hP₁ : ¬ P μ₁)
-    (h₂ : μ₂ ∈ L) (hP₂ : P μ₂) (hQ₂ : ¬ Q μ₂) (hPt : P t) (hQt : Q t) :
-    toLex ((con30 L P Q M) · t) = toLex ![0, 0, 0] ∧ wellFormed P μ₁ = 1 ∧
-      lexPM L Q M μ₂ = 1 :=
-  ⟨by rw [con30_profile, (lexP_eq_zero_iff L P t).mpr fun _ ↦ ⟨μ₂, h₂, hP₂⟩,
-      (wellFormed_eq_zero_iff P t).mpr hPt, (lexPM_eq_zero_iff L Q M t).mpr fun _ ↦ hQt],
-    wellFormed_eq_one P hP₁, lexPM_eq_one L Q M h₁ hQ₁ hM₁ hQ₂⟩
-
-/-- Under the ranking of (30) the form adopting `P` from a non-base allomorph beats the form
-faithful to the base's `Q` but lacking `P`. -/
-theorem split_wins_of_phono_over_lexPM {μ₁ μ₂ a b : Form} (h₁ : μ₁ ∈ L) (hM₁ : M μ₁)
-    (hQ₁ : Q μ₁) (h₂ : μ₂ ∈ L) (hP₂ : P μ₂) (hPa : P a) (hQa : ¬ Q a) (hPb : ¬ P b)
-    (hQb : Q b) :
-    toLex ((con30 L P Q M) · a) < toLex ((con30 L P Q M) · b) := by
-  rw [con30_profile, con30_profile, (lexP_eq_zero_iff L P a).mpr fun _ ↦ ⟨μ₂, h₂, hP₂⟩,
-    (wellFormed_eq_zero_iff P a).mpr hPa, lexPM_eq_one L Q M h₁ hQ₁ hM₁ hQa,
-    (lexP_eq_zero_iff L P b).mpr fun h ↦ absurd h hPb, wellFormed_eq_one P hPb,
-    (lexPM_eq_zero_iff L Q M b).mpr fun _ ↦ hQb]
-  decide
-
-/-- Under the reverse ranking the base-faithful form wins. -/
-theorem base_wins_of_lexPM_over_phono {μ₁ μ₂ a b : Form} (h₁ : μ₁ ∈ L) (hM₁ : M μ₁)
-    (hQ₁ : Q μ₁) (h₂ : μ₂ ∈ L) (hP₂ : P μ₂) (hPa : P a) (hQa : ¬ Q a) (hPb : ¬ P b)
-    (hQb : Q b) :
-    toLex ((con30' L P Q M) · b) < toLex ((con30' L P Q M) · a) := by
-  rw [con30'_profile, con30'_profile, (lexP_eq_zero_iff L P a).mpr fun _ ↦ ⟨μ₂, h₂, hP₂⟩,
-    (wellFormed_eq_zero_iff P a).mpr hPa, lexPM_eq_one L Q M h₁ hQ₁ hM₁ hQa,
-    (lexP_eq_zero_iff L P b).mpr fun h ↦ absurd h hPb, wellFormed_eq_one P hPb,
-    (lexPM_eq_zero_iff L Q M b).mpr fun _ ↦ hQb]
-  decide
+/-- With one listed allomorph, bearing the feature the target must encode, Lex(P) and Lex(P, M)
+together are identity to it in the property family, so an impoverished paradigm gives the
+appearance of single-base derivation (p. 12). -/
+theorem lexP_singleton_and_lexPM_singleton_iff (hb : M b) :
+    lexP [b] P t = 0 ∧ lexPM [b] P M t = 0 ↔ P t = P b := by
+  rw [lexP_singleton, lexPM_singleton _ _ hb, Finset.Subset.antisymm_iff]
 
 end Conditions
 
+/-! ### Segments -/
+
+/-- The segment of a printed token is PHOIBLE's chart entry for its glyph, without its accent.
+The English [r] is the approximant ɹ. -/
+def segment : String → Segment
+  | "v" => FeatureMatrix.«v».toSegment | "ɛ̃" => FeatureMatrix.«ɛ̃».toSegment
+  | "ɛ" => FeatureMatrix.«ɛ».toSegment | "n" => FeatureMatrix.«n».toSegment
+  | "s" => FeatureMatrix.«s».toSegment | "p" => FeatureMatrix.«p».toSegment
+  | "w" => FeatureMatrix.«w».toSegment | "a" => FeatureMatrix.«a».toSegment
+  | "ʁ" => FeatureMatrix.«ʁ».toSegment | "ʒ" => FeatureMatrix.«ʒ».toSegment
+  | "o" => FeatureMatrix.«o».toSegment | "l" => FeatureMatrix.«l».toSegment
+  | "i" => FeatureMatrix.«i».toSegment | "ɑ̃" => FeatureMatrix.«ɑ̃».toSegment
+  | "f" => FeatureMatrix.«f».toSegment | "t" => FeatureMatrix.«t».toSegment
+  | "r" => FeatureMatrix.«ɹ».toSegment | "ɛ́" => FeatureMatrix.«ɛ».toSegment
+  | "m" => FeatureMatrix.«m».toSegment | "ə" => FeatureMatrix.«ə».toSegment
+  | "ɾ" => FeatureMatrix.«ɾ».toSegment | "í" => FeatureMatrix.«i».toSegment
+  | "d" => FeatureMatrix.«d».toSegment | "ǽ" => FeatureMatrix.«æ».toSegment
+  | "ó" => FeatureMatrix.«o».toSegment | "b" => FeatureMatrix.«b».toSegment
+  | "l̩" => FeatureMatrix.«l̩».toSegment
+  | _ => ⊥
+
+/-- The tokens an accent marks as stressed. -/
+def accented : List String := ["ɛ́", "í", "ǽ", "ó"]
+
 /-! ### French liaison -/
 
-section French
+namespace Liaison
 
-/-- Grammatical gender. -/
-inductive Gender
-  | masculine
-  | feminine
-  deriving DecidableEq, Repr
-
-/-- The consonant [v]. -/
-def v : Segment :=
-  Segment.ofSpecs [(.syllabic, false), (.consonantal, true), (.labial, true), (.voice, true),
-    (.continuant, true)]
-
-/-- The consonant [n]. -/
-def n : Segment :=
-  Segment.ofSpecs [(.syllabic, false), (.consonantal, true), (.coronal, true), (.nasal, true)]
-
-/-- The oral vowel [ɛ], the accented vowel of the feminine *vaine* and the first vowel of
-*espoir*. -/
-def eOral : Segment :=
-  Segment.ofSpecs [(.syllabic, true), (.consonantal, false), (.high, false), (.back, false),
-    (.nasal, false)]
-
-/-- The nasal vowel [ɛ̃], the accented vowel of the masculine *vain*. -/
-def eNasal : Segment :=
-  Segment.ofSpecs [(.syllabic, true), (.consonantal, false), (.high, false), (.back, false),
-    (.nasal, true)]
-
-/-- A form of a French adjective is its string of segments and its gender. -/
+/-- A French adjective allomorph, its segments and its cell. -/
 structure Adjective where
+  /-- The segments. -/
   segments : List Segment
-  gender : Gender
+  /-- The cell. -/
+  cell : Forms.Cell
   deriving DecidableEq
 
-/-- The accented vowel of a form, its last vowel. -/
-def Adjective.accentedVowel (t : Adjective) : Option Segment :=
-  (t.segments.filter fun s ↦ decide s.IsVowel).getLast?
+/-- The adjective of a form, its segments before the word boundary, in the form's cell. -/
+def Adjective.ofForm (f : Form Forms.Cell) : Adjective :=
+  ⟨(f.segments.takeWhile (· ≠ "_")).map segment, f.cell⟩
 
-/-- The rime of the accented syllable of a monosyllabic form, its segments from the vowel
-on. -/
-def Adjective.rime (t : Adjective) : List Segment :=
-  t.segments.dropWhile fun s ↦ decide (¬ s.IsVowel)
+/-- The noun after the adjective of a phrase, its segments after the word boundary. -/
+def noun (f : Form Forms.Cell) : List Segment :=
+  ((f.segments.dropWhile (· ≠ "_")).drop 1).map segment
 
-/-- The listed allomorphs of *vain* are the citation masculine [vɛ̃] and the citation feminine
-[vɛn]. -/
-def vainListed : List Adjective := [⟨[v, eNasal], .masculine⟩, ⟨[v, eOral, n], .feminine⟩]
+/-- The listed allomorphs of an adjective, the citation forms of its paradigm. -/
+def listed (x : Paradigm Forms.Cell) : List Adjective := x.forms.map .ofForm
 
-/-- The masculine liaison candidates are the citation masculine [vɛ̃], the citation feminine
-[vɛn], and the split-base blend [vɛ̃n] of the masculine vowel with the feminine consonant. -/
-def vainMasc : Adjective := ⟨[v, eNasal], .masculine⟩
-def vainFem : Adjective := ⟨[v, eOral, n], .masculine⟩
-def vainBlend : Adjective := ⟨[v, eNasal, n], .masculine⟩
+/-- The liaison forms the sources record for an adjective, accepted or marked. -/
+def liaisonForms (x : Lexeme) : List (Form Forms.Cell) :=
+  (Forms.all ++ Forms.marked).filter fun f ↦ f.lexeme = x ∧ f.cell = Forms.masc_liaison
 
-/-- Lex C], the paper's (8), requires a listed precedent for the final consonant [n]. -/
-def lexC : Constraint Adjective := lexP vainListed (·.segments.getLast? = some n)
+/-- The candidates for the liaison form of an adjective are its recorded liaison allomorphs and
+its listed allomorphs, all in the masculine liaison cell, as in (8). -/
+def candidates (x : Paradigm Forms.Cell) : Finset Adjective :=
+  ((liaisonForms x.lexeme).map Adjective.ofForm ++
+    (listed x).map fun a : Adjective ↦ { a with cell := Forms.masc_liaison }).toFinset
 
-/-- \*Hiatus counts the adjacent vowels of the adjective followed by the vowel-initial noun
-*espoir*. -/
-def noHiatus : Constraint Adjective := fun t ↦ Hiatus.count (t.segments ++ [eOral])
+/-- The final consonant of an allomorph, if it ends in one. -/
+def finalConsonant (a : Adjective) : Finset Segment :=
+  (a.segments.getLast?.filter fun s ↦ !decide s.IsVowel).toFinset
 
-/-- Lex 'V-gender, the paper's (10), requires the accented vowel to be that of a listed
-allomorph of the same gender, here the nasal vowel of the masculine. -/
-def lexVGender : Constraint Adjective :=
-  lexPM vainListed (·.accentedVowel = some eNasal) (·.gender = .masculine)
+/-- Lex C], the paper's (8), requires the final consonant of the allomorph to have a featurally
+identical counterpart in some listed allomorph. -/
+def lexC (L : List Adjective) : Constraint Adjective := lexP L finalConsonant
 
-/-- Lex σ' requires the rime of the accented syllable to be identical in its entirety to that
-of some listed allomorph. -/
-def lexSyllable : Constraint Adjective :=
-  Constraint.binary fun t ↦ ∀ l ∈ vainListed, l.rime ≠ t.rime
+/-- \*Hiatus counts the adjacent vowels of the adjective and the noun after it. -/
+def noHiatus (n : List Segment) : Constraint Adjective :=
+  fun a ↦ Hiatus.count (a.segments ++ n)
 
-/-- The three candidates differ on \*Hiatus as the paper's tableau has them. The citation
-masculine [vɛ̃] *espoir* has a hiatus, and the two consonant-final forms have none. -/
-theorem noHiatus_vain :
-    noHiatus vainMasc = 1 ∧ noHiatus vainFem = 0 ∧ noHiatus vainBlend = 0 := by
-  decide
+/-- The accented vowel of an allomorph, its last vowel. -/
+def accentedVowel (a : Adjective) : Finset Segment :=
+  (a.segments.filter fun s ↦ decide s.IsVowel).getLast?.toFinset
 
-/-- Speakers ranking Lex 'V-gender above Lex σ' select the split-base form *[vɛ̃n] espoir*
-over both citation forms. -/
+/-- Lex 'V-gender, the paper's (10), requires the accented vowel of the allomorph to be that of
+each listed allomorph of its gender, masculine. -/
+def lexVGender (L : List Adjective) : Constraint Adjective :=
+  lexPM L accentedVowel (·.cell.gender = ↑UD.Gender.Masc)
+
+/-- The rime of the last syllable, the segments from the last vowel on. -/
+def rime : List Segment → List Segment
+  | [] => []
+  | s :: ss => if ∃ x ∈ ss, x.IsVowel then rime ss else s :: ss
+
+/-- Lex σ' (p. 10) requires the stressed syllable of the allomorph to be identical in its
+entirety to that of some listed allomorph. -/
+def lexSyllable (L : List Adjective) : Constraint Adjective := lexP L fun a ↦ {rime a.segments}
+
+/-- The tableau (8) of an adjective's liaison form before a noun ranks Lex C] above
+\*Hiatus. -/
+def tableau (x : Paradigm Forms.Cell) (n : List Segment) :=
+  Tableau.ofList (candidates x) [lexC (listed x), noHiatus n]
+
+/-- Under Lex C] ≫ \*Hiatus, the paper's (8), a recorded liaison form wins iff the sources accept
+it. Both forms of *vain espoir* win, and *joli enfant* with its hiatus beats *\*jolit enfant*,
+whose [t] has no precedent. -/
+theorem mem_optimal_iff :
+    ∀ x ∈ [Forms.vain_listed.paradigm, Forms.joli_listed.paradigm], ∀ f ∈ liaisonForms x.lexeme,
+      Adjective.ofForm f ∈ (tableau x (noun f)).optimal ↔ f ∈ Forms.all := by
+  decide +kernel
+
+/-- The citation masculine *[vɛ̃] espoir* loses on \*Hiatus, leaving the two winners of (8b). -/
+theorem vain_optimal :
+    (tableau Forms.vain_listed.paradigm (noun Forms.vain_espoir)).optimal =
+      {.ofForm Forms.vain_espoir, .ofForm Forms.vain_espoir_fem} := by
+  decide +kernel
+
+/-- In the split-base effect (11), *[vɛ̃n] espoir* takes its consonant from the feminine and its
+vowel from the masculine. It satisfies Lex C], \*Hiatus and Lex 'V-gender, and being identical to
+no listed allomorph it violates Lex σ'. -/
+theorem split_base :
+    let L := listed Forms.vain_listed.paradigm
+    let s := Adjective.ofForm Forms.vain_espoir
+    lexC L s = 0 ∧ noHiatus (noun Forms.vain_espoir) s = 0 ∧ lexVGender L s = 0 ∧
+      lexSyllable L s = 1 ∧ ∀ l ∈ L, l.segments ≠ s.segments := by
+  decide +kernel
+
+/-- Speakers ranking Lex 'V-gender above Lex σ' say the split-base *[vɛ̃n] espoir* (10). -/
 theorem vain_split :
-    let con : ConstraintSet Adjective (Fin 4) := ![lexC, noHiatus, lexVGender, lexSyllable]
-    toLex (con · vainBlend) < toLex (con · vainMasc) ∧
-      toLex (con · vainBlend) < toLex (con · vainFem) := by
-  decide
+    let L := listed Forms.vain_listed.paradigm
+    (Tableau.ofList (candidates Forms.vain_listed.paradigm)
+      [lexC L, noHiatus (noun Forms.vain_espoir), lexVGender L, lexSyllable L]).optimal =
+        {.ofForm Forms.vain_espoir} := by
+  decide +kernel
 
-/-- Speakers ranking Lex σ' above Lex 'V-gender select the citation feminine *[vɛn] espoir*. -/
+/-- Speakers ranking Lex σ' above Lex 'V-gender say the feminine *[vɛn] espoir* (p. 10). -/
 theorem vain_feminine :
-    let con : ConstraintSet Adjective (Fin 4) := ![lexC, noHiatus, lexSyllable, lexVGender]
-    toLex (con · vainFem) < toLex (con · vainMasc) ∧
-      toLex (con · vainFem) < toLex (con · vainBlend) := by
-  decide
+    let L := listed Forms.vain_listed.paradigm
+    (Tableau.ofList (candidates Forms.vain_listed.paradigm)
+      [lexC L, noHiatus (noun Forms.vain_espoir), lexSyllable L, lexVGender L]).optimal =
+        {.ofForm Forms.vain_espoir_fem} := by
+  decide +kernel
 
-end French
+end Liaison
 
 /-! ### English *-able* -/
 
-section English
+namespace Able
 
-/-- The stress patterns of a trisyllabic stem allomorph. -/
-inductive Stress
-  | dactyl
-  | amphibrach
-  deriving DecidableEq, Repr
-
-/-- Lexical category of a listed allomorph. -/
-inductive LexCat
-  | verb
-  | adjective
-  deriving DecidableEq, Repr
-
-/-- A stem allomorph by its stress pattern and lexical category. -/
+/-- An English stem allomorph is its segments, its stressed syllables counted from zero, and
+its cell. -/
 structure Stem where
-  stress : Stress
-  lexcat : LexCat
-  deriving DecidableEq, Repr
+  /-- The segments. -/
+  segments : List Segment
+  /-- The stressed syllables. -/
+  stressed : Finset ℕ
+  /-- The cell. -/
+  cell : Forms.Cell
+  deriving DecidableEq
 
-/-- The listed allomorphs of *remedy* are the dactylic verb *rémedy* and the amphibrachic
-adjective stem of *remédial*, the paper's (13). -/
-def remedyListed : List Stem := [⟨.dactyl, .verb⟩, ⟨.amphibrach, .adjective⟩]
+/-- The nuclei of a string of segments, its syllabic segments. -/
+def nuclei (w : List String) : List String := w.filter fun x ↦ decide (segment x).IsVowel
 
-/-- The only listed allomorph of *parody* is the dactylic verb. -/
-def parodyListed : List Stem := [⟨.dactyl, .verb⟩]
+/-- The stem of a form, its segments before the morph boundary, with the syllables an accent
+marks as stressed. -/
+def Stem.ofForm (f : Form Forms.Cell) : Stem :=
+  let w := f.segments.takeWhile (· ≠ "+")
+  ⟨w.map segment, (((nuclei w).zipIdx.filter (·.1 ∈ accented)).map (·.2)).toFinset, f.cell⟩
 
-/-- The *-able* stem is verbal; the candidates differ in stress. -/
-def dactylAble : Stem := ⟨.dactyl, .verb⟩
-def amphibrachAble : Stem := ⟨.amphibrach, .verb⟩
+/-- The nuclear vowels of a stem's stressed syllables, by position. -/
+def stressedNuclei (s : Stem) : Finset (ℕ × Option Segment) :=
+  s.stressed.image fun i ↦ (i, (s.segments.filter fun x ↦ decide x.IsVowel)[i]?)
 
-/-- Lex [±stress], the paper's (15), requires a listed precedent for the stress pattern. -/
-def lexStress (L : List Stem) : Constraint Stem := lexP L (·.stress = .amphibrach)
+/-- Lex [±stress], the paper's (15), requires each stressed syllable of the stem to have a
+stressed correspondent with the same nuclear vowel in some listed allomorph. -/
+def lexStress (L : List Stem) : Constraint Stem := lexP L stressedNuclei
 
-/-- \*Lapse σσσ bans three stressless syllables before *-able*, so the stem must shift its
-stress rightward. -/
-def noLapse : Constraint Stem := wellFormed (·.stress = .amphibrach)
+/-- The [±stress] value of each syllable of a stem, by position. -/
+def stressValues (s : Stem) : Finset (ℕ × Bool) :=
+  (Finset.range (s.segments.countP fun x ↦ decide x.IsVowel)).image
+    fun i ↦ (i, decide (i ∈ s.stressed))
 
-/-- Lex([±stress], lexcat), the paper's (17), requires the stress pattern of the verbal target
-to match that of a listed verbal allomorph. -/
-def lexStressLexcat (L : List Stem) : Constraint Stem :=
-  lexPM L (·.stress = .dactyl) (·.lexcat = .verb)
+/-- Lex([±stress], lexcat), the paper's (17), requires each vowel of the stem to agree in
+[±stress] with its correspondent in each listed verbal allomorph. -/
+def lexStressVerb (L : List Stem) : Constraint Stem :=
+  lexPM L stressValues (·.cell.category = ↑Forms.Category.verb)
 
-/-- *remédiable* wins under the ranking Lex [±stress] ≫ *Lapse ≫ Lex([±stress], lexcat) and
-*rémediable* under Lex [±stress] ≫ Lex([±stress], lexcat) ≫ *Lapse, the paper's (18). -/
+/-- The suffix *-able*, [əbl̩], after the morph boundary of the printed *remédiable*. -/
+def able : List Segment := ((Forms.remediable.segments.dropWhile (· ≠ "+")).drop 1).map segment
+
+/-- `onsets p w` records whether each syllable of `w` has an onset, `p` being the segment before
+`w`. Each syllabic segment heads a syllable, with an onset when a nonsyllabic segment precedes
+it. -/
+def onsets : Option Segment → List Segment → List Bool
+  | _, [] => []
+  | p, x :: xs =>
+    if x.IsVowel then (p.any fun q ↦ !decide q.IsVowel) :: onsets (some x) xs
+    else onsets (some x) xs
+
+/-- The syllables of a stem's *-able* form, each as whether it is stressed and whether it has an
+onset. The suffix is stressless. -/
+def ableSyllables (s : Stem) : List (Bool × Bool) :=
+  (onsets none (s.segments ++ able)).zipIdx.map fun p ↦ (decide (p.2 ∈ s.stressed), p.1)
+
+/-- \*Lapse σσσ (p. 15) is violated when the *-able* form has three syllables with onsets in
+one stretch of stressless syllables. -/
+def noLapse : Constraint Stem := Constraint.binary fun s ↦
+  ∃ r ∈ (ableSyllables s).splitBy (fun x y : Bool × Bool ↦ !x.1 && !y.1),
+    3 ≤ r.countP fun x ↦ !x.1 && x.2
+
+/-- The verb of a base. -/
+def verb : Base → Form Forms.Cell
+  | .remedy => Forms.remedy
+  | .parody => Forms.parody
+
+/-- The listed allomorphs of a base's paradigm, (13). -/
+def listed : Base → List Stem
+  | .remedy => Forms.remedy_listed.paradigm.forms.map .ofForm
+  | .parody => Forms.parody_listed.paradigm.forms.map .ofForm
+
+/-- The *-able* form of a base stressed on the second syllable, as (14) prints it. -/
+def ableForm : Base → Form Forms.Cell
+  | .remedy => Forms.remediable
+  | .parody => Forms.parodiable
+
+/-- The verbal stem of the *-able* form with a stress pattern of (14). Unchanged it is the verb,
+shifted to the second syllable it is the stem of the printed *-able* form, and on the first and
+third syllables it is the verb restressed. -/
+def candidate (b : Base) : Pattern → Stem
+  | .sameAsBase => .ofForm (verb b)
+  | .second => { Stem.ofForm (ableForm b) with cell := Forms.verb }
+  | .firstThird => { Stem.ofForm (verb b) with stressed := {0, 2} }
+
+/-- The tableau of a base's *-able* form under a ranking, its candidates those of (14). -/
+def tableau (b : Base) (cs : List (Constraint Stem)) :=
+  Tableau.ofList (Finset.univ.image (candidate b)) cs
+
+/-- Lex [±stress] ≫ \*Lapse σσσ ≫ Lex([±stress], lexcat), the first ranking of (18). -/
+def lapseRanking (b : Base) : List (Constraint Stem) :=
+  [lexStress (listed b), noLapse, lexStressVerb (listed b)]
+
+/-- Lex [±stress] ≫ Lex([±stress], lexcat) ≫ \*Lapse σσσ, the second ranking of (18). -/
+def verbRanking (b : Base) : List (Constraint Stem) :=
+  [lexStress (listed b), lexStressVerb (listed b), noLapse]
+
+/-- The stem of the verb lapses before *-able*, and the stem stressed on its second syllable
+does not (16). -/
+theorem noLapse_candidate :
+    ∀ b, noLapse (candidate b .sameAsBase) = 1 ∧ noLapse (candidate b .second) = 0 := by
+  decide +kernel
+
+/-- A stem stressed on its third syllable has no stressed precedent there, which is why
+*rèmedíable* and *pàrodíable* are dispreferred (p. 16). -/
+theorem lexStress_firstThird : ∀ b, lexStress (listed b) (candidate b .firstThird) = 1 := by
+  decide +kernel
+
+/-- Under the first ranking of (18) *remédiable* wins (16a), and under the second
+*rémediable*. -/
 theorem remediable :
-    toLex ((con30 remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) · amphibrachAble) <
-      toLex ((con30 remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) · dactylAble) ∧
-    toLex ((con30' remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) · dactylAble) <
-      toLex ((con30' remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) · amphibrachAble) := by
-  decide
+    (tableau .remedy (lapseRanking .remedy)).optimal = {candidate .remedy .second} ∧
+      (tableau .remedy (verbRanking .remedy)).optimal = {candidate .remedy .sameAsBase} := by
+  decide +kernel
 
-/-- With no amphibrachic allomorph listed, *paródiable* violates Lex [±stress], so
-*párodiable* wins under either ranking despite its lapse. -/
+/-- With no stem stressed on its second syllable listed, *paródiable* violates Lex [±stress],
+and *párodiable* wins under either ranking despite its lapse (16b). -/
 theorem parodiable :
-    toLex ((con30 parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) · dactylAble) <
-      toLex ((con30 parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) · amphibrachAble) ∧
-    toLex ((con30' parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) · dactylAble) <
-      toLex ((con30' parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) · amphibrachAble) := by
-  decide
+    (tableau .parody (lapseRanking .parody)).optimal = {candidate .parody .sameAsBase} ∧
+      (tableau .parody (verbRanking .parody)).optimal = {candidate .parody .sameAsBase} := by
+  decide +kernel
 
-end English
+/-- The winners under the first ranking of (18) are the stress patterns with the most responses
+in the survey (14). -/
+theorem mem_optimal_iff_most_responses :
+    ∀ b p, candidate b p ∈ (tableau b (lapseRanking b)).optimal ↔
+      ∀ q, (responses b q).count ≤ (responses b p).count := by
+  decide +kernel
+
+end Able
 
 end Steriade1997

@@ -1,0 +1,254 @@
+{
+  "description": "The words of Steriade (1997): the citation forms of the French adjectives vain and joli and their masculine forms before a vowel-initial noun, (3b), (8) and (10) and the prose after (6), and the English stem allomorphs of remedy and parody of (13) with the -able adjectives (14) and (16) transcribe.",
+  "Types": {
+    "Sandhi": [
+      {"Value": "liaison", "Lean": "liaison", "Description": "the form a prenominal adjective takes before a vowel-initial noun (2)"}
+    ],
+    "Category": [
+      {"Value": "verb", "Lean": "verb", "Description": "the lexical category of a stem occurring in a verb ((17), p. 16)"},
+      {"Value": "adjective", "Lean": "adjective", "Description": "the lexical category of a stem occurring in an adjective ((17))"}
+    ]
+  },
+  "CellTable": [
+    {
+      "ID": "masc",
+      "Name": "masculine",
+      "Features": "Gender=Masc"
+    },
+    {
+      "ID": "fem",
+      "Name": "feminine",
+      "Features": "Gender=Fem"
+    },
+    {
+      "ID": "masc_liaison",
+      "Name": "masculine liaison",
+      "Features": "Gender=Masc|Sandhi=liaison"
+    },
+    {
+      "ID": "verb",
+      "Name": "verbal stem",
+      "Features": "Category=verb"
+    },
+    {
+      "ID": "adj",
+      "Name": "adjectival stem",
+      "Features": "Category=adjective"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "vain",
+      "Name": "vain",
+      "Description": ""
+    },
+    {
+      "ID": "pretty",
+      "Name": "pretty",
+      "Description": ""
+    },
+    {
+      "ID": "remedy",
+      "Name": "remedy",
+      "Description": ""
+    },
+    {
+      "ID": "parody",
+      "Name": "parody",
+      "Description": ""
+    },
+    {
+      "ID": "remediable",
+      "Name": "remediable",
+      "Description": ""
+    },
+    {
+      "ID": "parodiable",
+      "Name": "parodiable",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "vain",
+      "Language_ID": "stan1290",
+      "Parameter_ID": "vain",
+      "Name": "vain",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "joli",
+      "Language_ID": "stan1290",
+      "Parameter_ID": "pretty",
+      "Name": "joli",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "remedy",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "remedy",
+      "Name": "remedy",
+      "POS": "VERB"
+    },
+    {
+      "ID": "parody",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "parody",
+      "Name": "parody",
+      "POS": "VERB"
+    },
+    {
+      "ID": "remediable",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "remediable",
+      "Name": "remediable",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "parodiable",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "parodiable",
+      "Name": "parodiable",
+      "POS": "ADJ"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "steriade1997_vain_masc",
+      "Lexeme_ID": "vain",
+      "Cell": "masc",
+      "Form": "vɛ̃",
+      "Segments": ["v", "ɛ̃"],
+      "Source": ["steriade-1997[(3b)]", "steriade-1997[(8b)]"]
+    },
+    {
+      "ID": "steriade1997_vain_fem",
+      "Lexeme_ID": "vain",
+      "Cell": "fem",
+      "Form": "vɛn",
+      "Segments": ["v", "ɛ", "n"],
+      "Source": ["steriade-1997[(3b)]", "steriade-1997[(8b)]"]
+    },
+    {
+      "ID": "steriade1997_vain_espoir",
+      "Lexeme_ID": "vain",
+      "Cell": "masc_liaison",
+      "Form": "vɛ̃n ɛspwaʁ",
+      "Segments": ["v", "ɛ̃", "n", "_", "ɛ", "s", "p", "w", "a", "ʁ"],
+      "Source": ["steriade-1997[(3b)]", "steriade-1997[(8b)]", "steriade-1997[(10)]"]
+    },
+    {
+      "ID": "steriade1997_vain_espoir_fem",
+      "Lexeme_ID": "vain",
+      "Cell": "masc_liaison",
+      "Form": "vɛn ɛspwaʁ",
+      "Segments": ["v", "ɛ", "n", "_", "ɛ", "s", "p", "w", "a", "ʁ"],
+      "Comment": "(8b) and (10) print the noun in spelling; its segments are those of (3b).",
+      "Source": ["steriade-1997[(8b)]", "steriade-1997[(10)]"]
+    },
+    {
+      "ID": "steriade1997_joli_masc",
+      "Lexeme_ID": "joli",
+      "Cell": "masc",
+      "Form": "ʒoli",
+      "Segments": ["ʒ", "o", "l", "i"],
+      "Source": ["steriade-1997[(8a)]"]
+    },
+    {
+      "ID": "steriade1997_joli_fem",
+      "Lexeme_ID": "joli",
+      "Cell": "fem",
+      "Form": "ʒoli",
+      "Segments": ["ʒ", "o", "l", "i"],
+      "Source": ["steriade-1997[(8a)]"]
+    },
+    {
+      "ID": "steriade1997_joli_enfant",
+      "Lexeme_ID": "joli",
+      "Cell": "masc_liaison",
+      "Form": "ʒoli ɑ̃fɑ̃",
+      "Segments": ["ʒ", "o", "l", "i", "_", "ɑ̃", "f", "ɑ̃"],
+      "Comment": "The prose after (6) transcribes the phrase.",
+      "Source": ["steriade-1997[(8a)]"]
+    },
+    {
+      "ID": "steriade1997_jolit_enfant",
+      "Lexeme_ID": "joli",
+      "Cell": "masc_liaison",
+      "Form": "ʒolit ɑ̃fɑ̃",
+      "Segments": ["ʒ", "o", "l", "i", "t", "_", "ɑ̃", "f", "ɑ̃"],
+      "Judgment": "ungrammatical",
+      "Comment": "The prose after (6) transcribes the phrase.",
+      "Source": ["steriade-1997[(8a)]"]
+    },
+    {
+      "ID": "steriade1997_remedy",
+      "Lexeme_ID": "remedy",
+      "Cell": "verb",
+      "Form": "rɛ́məɾi",
+      "Segments": ["r", "ɛ́", "m", "ə", "ɾ", "i"],
+      "Source": ["steriade-1997[(13)]"]
+    },
+    {
+      "ID": "steriade1997_remedial_stem",
+      "Lexeme_ID": "remedy",
+      "Cell": "adj",
+      "Form": "rəmídi-",
+      "Segments": ["r", "ə", "m", "í", "d", "i"],
+      "Comment": "The stem of the adjective remedial, as (13) prints it.",
+      "Source": ["steriade-1997[(13)]"]
+    },
+    {
+      "ID": "steriade1997_parody",
+      "Lexeme_ID": "parody",
+      "Cell": "verb",
+      "Form": "pǽrəɾi",
+      "Segments": ["p", "ǽ", "r", "ə", "ɾ", "i"],
+      "Source": ["steriade-1997[(13)]"]
+    },
+    {
+      "ID": "steriade1997_remediable",
+      "Lexeme_ID": "remediable",
+      "Form": "rəmídiəbl̩",
+      "Segments": ["r", "ə", "m", "í", "d", "i", "+", "ə", "b", "l̩"],
+      "Morphs": ["rəmídi", "əbl̩"],
+      "Comment": "Also in Webster's Third, as (14) reports.",
+      "Source": ["steriade-1997[(14)]"]
+    },
+    {
+      "ID": "steriade1997_parodiable",
+      "Lexeme_ID": "parodiable",
+      "Form": "pəródiəbl̩",
+      "Segments": ["p", "ə", "r", "ó", "d", "i", "+", "ə", "b", "l̩"],
+      "Morphs": ["pəródi", "əbl̩"],
+      "Judgment": "ungrammatical",
+      "Source": ["steriade-1997[(14)]", "steriade-1997[(16b)]"]
+    }
+  ],
+  "ParadigmTable": [
+    {
+      "ID": "vain_listed",
+      "Lexeme_ID": "vain",
+      "Form_IDs": ["steriade1997_vain_masc", "steriade1997_vain_fem"],
+      "Source": ["steriade-1997[(8b)]", "steriade-1997[(10)]"]
+    },
+    {
+      "ID": "joli_listed",
+      "Lexeme_ID": "joli",
+      "Form_IDs": ["steriade1997_joli_masc", "steriade1997_joli_fem"],
+      "Source": ["steriade-1997[(8a)]"]
+    },
+    {
+      "ID": "remedy_listed",
+      "Lexeme_ID": "remedy",
+      "Form_IDs": ["steriade1997_remedy", "steriade1997_remedial_stem"],
+      "Source": ["steriade-1997[(13)]", "steriade-1997[(16a)]", "steriade-1997[(17)]"]
+    },
+    {
+      "ID": "parody_listed",
+      "Lexeme_ID": "parody",
+      "Form_IDs": ["steriade1997_parody"],
+      "Source": ["steriade-1997[(13)]", "steriade-1997[(16b)]"]
+    }
+  ]
+}
