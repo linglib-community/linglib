@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Computability.ShuffleIdeal
 public import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
+public import Linglib.Core.Computability.ContextFreeGrammar.Map
 public import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 public import Linglib.Fragments.German.Zurich.Verbs
 public import Linglib.Data.Examples.Shieber1985
@@ -162,9 +163,8 @@ theorem stringMap_eraseFrame_crossSerial :
     exact ⟨_, ⟨m, n, rfl⟩, flatMap_eraseFrame_clause m n m n⟩
 
 /-- `w aᵐ bⁿ x cᵐ dⁿ y` is not context-free, since erasing the frame leaves `aᵐ bⁿ cᵐ dⁿ`. -/
-theorem not_isContextFree_crossSerial : ¬ crossSerial.IsContextFree :=
-  not_isContextFree_of_stringMap_not eraseFrame
-    (stringMap_eraseFrame_crossSerial ▸ not_isContextFree_ambncmdn (by decide))
+theorem not_isContextFree_crossSerial : ¬ crossSerial.IsContextFree := fun h ↦
+  not_isContextFree_ambncmdn (by decide) (stringMap_eraseFrame_crossSerial ▸ h.stringMap eraseFrame)
 
 /-! ### The claims and the argument -/
 
@@ -194,10 +194,9 @@ theorem Claims.map_inf_caseSorted (h : Claims f L) : L.map f ⊓ caseSorted = cr
     exact ⟨⟨s, hs, he.trans hl.symm⟩, m, n, m, n, hl⟩
 
 /-- A language meeting the four claims is not context-free. -/
-theorem Claims.not_isContextFree (h : Claims f L) : ¬ L.IsContextFree :=
-  not_isContextFree_via_witness (fun t ↦ [f t]) caseSorted isRegular_caseSorted <| by
-    rw [stringMap_singleton, h.map_inf_caseSorted]
-    exact not_isContextFree_crossSerial
+theorem Claims.not_isContextFree (h : Claims f L) : ¬ L.IsContextFree := fun hL ↦
+  not_isContextFree_crossSerial <|
+    h.map_inf_caseSorted ▸ (hL.map f).inf_isRegular isRegular_caseSorted
 
 /-- A language is not context-free if every clause `w aⁿ bⁿ x cⁿ dⁿ y` is grammatical and every
 object noun phrase of a clause of the schema has a verb requiring its case, objects being
@@ -205,17 +204,15 @@ optional. -/
 theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clause n n n n)
     (hle : ∀ s ∈ L, s.map f ∈ schema →
       (s.map f).count a ≤ (s.map f).count c ∧ (s.map f).count b ≤ (s.map f).count d) :
-    ¬ L.IsContextFree :=
-  not_isContextFree_via_witness (fun t ↦ [f t]) caseSorted isRegular_caseSorted <| by
-    rw [stringMap_singleton]
-    refine not_isContextFree_of_stringMap_not eraseFrame
-      (not_isContextFree_of_replicate_mem_of_count_le (by decide : [a, b, c, d].Nodup)
-        (.of_forall fun n ↦ ?_) ?_)
-    · obtain ⟨s, hs, he⟩ := hmem n
-      exact ⟨clause n n n n, ⟨⟨s, hs, he⟩, n, n, n, n, rfl⟩, flatMap_eraseFrame_clause n n n n⟩
-    · rintro _ ⟨_, ⟨⟨s, hs, rfl⟩, p, q, r, u, he⟩, rfl⟩
-      have := hle s hs (he ▸ clause_mem_schema p q r u)
-      simpa [he, count_clause, flatMap_eraseFrame_clause, count_replicate] using this
+    ¬ L.IsContextFree := fun hL ↦ by
+  refine not_isContextFree_of_replicate_mem_of_count_le (by decide : [a, b, c, d].Nodup)
+    (.of_forall fun n ↦ ?_) ?_
+    (((hL.map f).inf_isRegular isRegular_caseSorted).stringMap eraseFrame)
+  · obtain ⟨s, hs, he⟩ := hmem n
+    exact ⟨clause n n n n, ⟨⟨s, hs, he⟩, n, n, n, n, rfl⟩, flatMap_eraseFrame_clause n n n n⟩
+  · rintro _ ⟨_, ⟨⟨s, hs, rfl⟩, p, q, r, u, he⟩, rfl⟩
+    have := hle s hs (he ▸ clause_mem_schema p q r u)
+    simpa [he, count_clause, flatMap_eraseFrame_clause, count_replicate] using this
 
 /-! ### The claims are consistent and not idle -/
 

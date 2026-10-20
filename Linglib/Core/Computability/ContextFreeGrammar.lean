@@ -159,6 +159,12 @@ theorem rewrites_map_terminal_append_singleton_append_iff {r : ContextFreeRule T
       | cons _ h => cases h
   · exact h₂.not_map_terminal.elim
 
+/-- A rewrite of a single nonterminal replaces it by the output of a rule with that input. -/
+theorem rewrites_singleton_iff {r : ContextFreeRule T N} {A : N} {v : List (Symbol T N)} :
+    r.Rewrites [.nonterminal A] v ↔ r.input = A ∧ v = r.output := by
+  simpa using rewrites_map_terminal_append_singleton_append_iff (r := r) (A := A) (w := [])
+    (u := []) (v := v)
+
 end ContextFreeRule
 
 namespace ContextFreeGrammar
@@ -210,6 +216,11 @@ theorem produces_map_terminal_append_singleton_iff {A : g.NT} {w : List T}
       ∃ r ∈ g.rules, r.input = A ∧ v = w.map .terminal ++ r.output := by
   simpa using produces_map_terminal_append_singleton_append_iff (A := A) (w := w) (u := []) (v := v)
 
+/-- A single nonterminal produces exactly the outputs of its rules. -/
+theorem produces_singleton_iff {A : g.NT} {v : List (Symbol T g.NT)} :
+    g.Produces [.nonterminal A] v ↔ ∃ r ∈ g.rules, r.input = A ∧ v = r.output := by
+  simp only [Produces, ContextFreeRule.rewrites_singleton_iff]
+
 /-- A terminal of a derived word is a terminal of the source word or of the output of a rule. -/
 theorem Derives.terminal_mem {u v : List (Symbol T g.NT)} (h : g.Derives u v) {a : T}
     (ha : .terminal a ∈ v) : .terminal a ∈ u ∨ ∃ r ∈ g.rules, .terminal a ∈ r.output := by
@@ -237,8 +248,8 @@ namespace DFA
 variable {α : Type*} {σ : Type} [Fintype α] [Fintype σ] (M : DFA α σ)
   [DecidablePred (· ∈ M.accept)]
 
-/-- The right-linear grammar of `M`: a nonterminal for each state, a rule `q → a (M.step q a)` for
-each state `q` and letter `a`, and a rule `q → ε` for each accepting state `q`. -/
+/-- The right-linear grammar of `M` has a nonterminal for each state, a rule `q → a (M.step q a)`
+for each state `q` and letter `a`, and a rule `q → ε` for each accepting state `q`. -/
 def toContextFreeGrammar : ContextFreeGrammar α where
   NT := σ
   initial := M.start

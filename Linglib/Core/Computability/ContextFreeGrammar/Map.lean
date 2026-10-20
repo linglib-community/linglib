@@ -12,8 +12,7 @@ public import Linglib.Core.Computability.ContextFreeGrammar
 
 A map `f : T → List T'` on letters extends to a monoid homomorphism on words, `List.flatMap f`,
 and to a semiring homomorphism `Language.stringMap f` on languages. The image of a context-free
-language under it is context-free: replace every terminal `a` in every rule by the string `f a`
-([hopcroft-motwani-ullman-2000]).
+language under it is context-free: replace every terminal `a` in every rule by the string `f a`.
 
 ## Main definitions
 
@@ -24,8 +23,8 @@ language under it is context-free: replace every terminal `a` in every rule by t
 ## Main results
 
 * `ContextFreeGrammar.applyHom_language`: the image grammar generates the image language.
-* `Language.IsContextFree.stringMap`: closure under string homomorphisms, with its
-  contrapositive `Language.not_isContextFree_of_stringMap_not`.
+* `Language.IsContextFree.stringMap`: closure under string homomorphisms, and
+  `Language.IsContextFree.map` under maps of letters.
 
 ## References
 
@@ -33,8 +32,6 @@ language under it is context-free: replace every terminal `a` in every rule by t
 -/
 
 @[expose] public section
-
-open scoped Classical
 
 variable {T T' N : Type*}
 
@@ -57,8 +54,8 @@ theorem Language.stringMap_singleton (f : T → T') (L : Language T) :
 
 namespace Symbol
 
-/-- A string homomorphism on terminals applied to a symbol: a terminal becomes the string of
-terminals it maps to, a nonterminal stays. -/
+/-- The string homomorphism `h` sends a terminal to the string of terminals it maps to and keeps
+a nonterminal. -/
 def applyHom (h : T → List T') : Symbol T N → List (Symbol T' N)
   | terminal a => (h a).map terminal
   | nonterminal A => [nonterminal A]
@@ -148,8 +145,9 @@ namespace ContextFreeGrammar
 
 variable (h : T → List T') {G : ContextFreeGrammar T}
 
-/-- A string homomorphism applied to a grammar: every terminal in every rule is replaced by its
-image. -/
+open scoped Classical in
+/-- The grammar `G.applyHom h` replaces every terminal in every rule of `G` by its image under
+`h`. -/
 noncomputable def applyHom (G : ContextFreeGrammar T) : ContextFreeGrammar T' :=
   ⟨G.NT, G.initial, G.rules.image (ContextFreeRule.applyHom h)⟩
 
@@ -158,8 +156,8 @@ noncomputable def applyHom (G : ContextFreeGrammar T) : ContextFreeGrammar T' :=
 @[simp] theorem applyHom_initial : (G.applyHom h).initial = G.initial := rfl
 
 theorem mem_applyHom_rules {r' : ContextFreeRule T' G.NT} :
-    r' ∈ (G.applyHom h).rules ↔ ∃ r ∈ G.rules, r.applyHom h = r' :=
-  Finset.mem_image
+    r' ∈ (G.applyHom h).rules ↔ ∃ r ∈ G.rules, r.applyHom h = r' := by
+  classical exact Finset.mem_image
 
 theorem Produces.applyHom {u v : List (Symbol T G.NT)} (huv : G.Produces u v) :
     (G.applyHom h).Produces (u.flatMap (Symbol.applyHom h)) (v.flatMap (Symbol.applyHom h)) :=
@@ -215,7 +213,7 @@ theorem Language.IsContextFree.stringMap (f : T → List T') {L : Language T}
   let ⟨G, hG⟩ := hL
   ⟨G.applyHom f, by rw [ContextFreeGrammar.applyHom_language, hG]⟩
 
-/-- If the homomorphic image of `L` is not context-free, then `L` is not context-free. -/
-theorem Language.not_isContextFree_of_stringMap_not (f : T → List T') {L : Language T}
-    (h : ¬ (Language.stringMap f L).IsContextFree) : ¬ L.IsContextFree :=
-  fun hL => h (hL.stringMap f)
+/-- Context-free languages are closed under maps of letters. -/
+theorem Language.IsContextFree.map (f : T → T') {L : Language T} (hL : L.IsContextFree) :
+    (Language.map f L).IsContextFree :=
+  Language.stringMap_singleton f L ▸ hL.stringMap _
