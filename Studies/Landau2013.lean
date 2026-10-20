@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Control.Diagnostics
+public import Linglib.Data.Examples.Schema
 
 /-!
 # Landau (2013): Control in Generative Grammar: A Research Companion
@@ -72,5 +73,23 @@ def ofNoncoreferential (noncoreferential : Bool) : Set Clause74 :=
     ofNoncoreferential b = Set.univ ↔ b = false := by
   rw [ofNoncoreferential, ofAttested_eq_univ_iff]
   cases b <;> simp [Set.eq_empty_iff_forall_notMem]
+
+/-- The diagnostic a row of example data attests. A free reading of the embedded subject is
+arbitrary control; a strict reading is the strict reading of the row's test, ellipsis or *only*;
+and an acceptable row whose antecedent the paper marks non-c-commanding or long-distance attests
+that antecedence. -/
+def attests (row : Datum) : Diagnostic → Prop
+  | .arbitraryControl => ("free", .acceptable) ∈ row.readings
+  | .strictEllipsis =>
+    row.feature? "diagnostic" = some "ellipsis" ∧ ("strict", .acceptable) ∈ row.readings
+  | .strictUnderOnly =>
+    row.feature? "diagnostic" = some "only" ∧ ("strict", .acceptable) ∈ row.readings
+  | .nonCCommandingControl =>
+    row.feature? "antecedent" = some "nonCCommanding" ∧ row.judgment = .acceptable
+  | .longDistanceControl =>
+    row.feature? "antecedent" = some "longDistance" ∧ row.judgment = .acceptable
+
+instance (row : Datum) : DecidablePred (attests row) := fun d ↦ by
+  cases d <;> unfold attests <;> infer_instance
 
 end Landau2013

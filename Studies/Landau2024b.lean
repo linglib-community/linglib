@@ -34,8 +34,8 @@ blind to.
 
 The controlled subject of (46c) is the feminine clitic of the San Martín Peras Mixtec fragment.
 The semantic clause of Form Copy, copies interpreted in exactly the same way, is exhaustive
-control over the copy relation (`Control.IsExhaustive`). The readings of the example rows are
-read through the signature of `Studies/Landau2013.lean`: a reading on which the embedded subject
+control over the copy relation (`Control.IsExhaustive`). The example rows are read as
+diagnostics by `Landau2013.attests`: a reading on which the embedded subject
 excludes its antecedent ((56), (57)) is a free reading, refuting co-dependence, and a strict
 reading under *only* ((58), (59)) refutes variable binding. Every row with a silent subject is
 partial control, which the paper marks by indexing the subject `i+`.
@@ -183,20 +183,9 @@ inductive Subject where
 def subjectOf (row : Datum) : Option Subject :=
   row.parse? "embeddedSubject" [("PRO", .pro), ("for", .forNP)]
 
-/-- A row attests a diagnostic of the signature by a reading the paper allows. A reading of the
-embedded subject that excludes its antecedent is a free reading, and a strict reading under
-*only* is one too. -/
-def attests (row : Datum) : Diagnostic → Prop
-  | .arbitraryControl => ("free", .acceptable) ∈ row.readings
-  | .strictUnderOnly => ("strict", .acceptable) ∈ row.readings
-  | _ => False
-
-instance (row : Datum) : DecidablePred (attests row) := fun d ↦ by
-  cases d <;> unfold attests <;> infer_instance
-
 /-- The diagnostics the rows attest for a kind of subject. -/
 def attested (s : Subject) : Set Diagnostic :=
-  {d | ∃ row ∈ Examples.all, subjectOf row = some s ∧ attests row d}
+  {d | ∃ row ∈ Examples.all, subjectOf row = some s ∧ Landau2013.attests row d}
 
 instance (s : Subject) : DecidablePred (· ∈ attested s) := fun d ↦ by
   unfold attested; infer_instance
@@ -212,14 +201,8 @@ theorem profile_pro_eq_univ : profile .pro = Set.univ :=
 
 /-- The *for*-subject has a free reading ((56a), (57c)) and a strict reading under *only* ((58a),
 (59a)), refuting both clauses. -/
-theorem profile_forNP_eq_empty : profile .forNP = ∅ := by
-  have hfree : Diagnostic.arbitraryControl ∈ attested .forNP := by decide +kernel
-  have hstrict : Diagnostic.strictUnderOnly ∈ attested .forNP := by decide +kernel
-  ext c
-  simp only [profile, ofAttested, Set.mem_compl_iff, Set.mem_image, Set.mem_empty_iff_false,
-    iff_false, not_not]
-  cases c
-  exacts [⟨_, hfree, rfl⟩, ⟨_, hstrict, rfl⟩]
+theorem profile_forNP_eq_empty : profile .forNP = ∅ :=
+  ofAttested_eq_empty_iff.2 <| by decide +kernel
 
 /-- Deleting the *for*-subject leaves the readings of the source in place, so the Form Copy theory
 predicts partial control to have the profile of its source. It does not. -/

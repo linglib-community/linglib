@@ -183,12 +183,6 @@ def clauseTypeOf (row : Datum) : Option EmbeddedClauseType :=
   | none, some "finite" => some .ake
   | _, _ => none
 
-/-- A row records reading `r` with judgment `j`. -/
-def reads (row : Datum) (r : String) (j : Judgment) : Prop :=
-  ∃ x ∈ row.readings, x = (r, j)
-
-instance (row : Datum) (r : String) (j : Judgment) : Decidable (reads row r j) :=
-  inferInstanceAs (Decidable (∃ x ∈ row.readings, _))
 
 /-- The realized form of a row's embedded subject. -/
 def formOf (row : Datum) : Option Form :=
@@ -290,13 +284,13 @@ theorem longDistance_rows :
 /-- Under ellipsis the controlled pronoun has the sloppy reading only (ex 52). -/
 theorem sloppy_only :
     ∃ row ∈ Examples.all, row.feature? "diagnostic" = some "ellipsis" ∧
-      reads row "sloppy" .acceptable ∧ reads row "strict" .unacceptable := by
+      ("sloppy", .acceptable) ∈ row.readings ∧ ("strict", .unacceptable) ∈ row.readings := by
   decide +kernel
 
 /-- A free reading of the embedded subject is available exactly in the finite
     complement (exx 110–111 vs 92, 112). -/
 theorem free_reading_rows :
-    ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ j, reads row "free" j →
+    ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ j, ("free", j) ∈ row.readings →
       (j = .acceptable ↔ c.complementizer.IsFinite) := by
   decide +kernel
 
@@ -312,24 +306,9 @@ theorem controlled_form_covaries :
     subjectForms .second .singular ≠ subjectForms .second .plural := by
   decide +kernel
 
-/-- An acceptable row attests one control diagnostic, a non-c-commanding or long-distance
-    antecedent by the paper's coindexation, a free reading of the embedded subject, or a strict
-    reading under ellipsis. -/
-def attests (row : Datum) : Diagnostic → Prop
-  | .nonCCommandingControl =>
-    row.feature? "antecedent" = some "nonCCommanding" ∧ row.judgment = .acceptable
-  | .longDistanceControl =>
-    row.feature? "antecedent" = some "longDistance" ∧ row.judgment = .acceptable
-  | .arbitraryControl => reads row "free" .acceptable
-  | .strictEllipsis => reads row "strict" .acceptable
-  | .strictUnderOnly => False
-
-instance (row : Datum) : DecidablePred (attests row) := fun d => by
-  cases d <;> unfold attests <;> infer_instance
-
 /-- The diagnostics the rows attest for a clause type. -/
 def attested (c : EmbeddedClauseType) : Set Diagnostic :=
-  {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ attests row d}
+  {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ Landau2013.attests row d}
 
 instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d => by
   unfold attested; infer_instance

@@ -109,4 +109,9 @@ theorem subset_admits_ofAttested : A ⊆ admits (ofAttested (ι := ι) A) := by
 @[simp] theorem ofAttested_eq_univ_iff : ofAttested (ι := ι) A = Set.univ ↔ A = ∅ := by
   rw [ofAttested, Set.compl_univ_iff, Set.image_eq_empty]
 
+/-- No clause holds exactly when every clause is refuted by some attested diagnostic. -/
+@[simp] theorem ofAttested_eq_empty_iff :
+    ofAttested (ι := ι) A = ∅ ↔ ∀ c : ι, ∃ d ∈ A, excludedBy d = c := by
+  simp [ofAttested, Set.eq_univ_iff_forall]
+
 end Control
