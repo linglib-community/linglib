@@ -17,7 +17,8 @@ subject and the possessor of a noun, where the first person singular possessive 
 alignment is ergative in every aspect. The verbal complex runs aspect, Set B, Set A, stem,
 status suffix, so that Set B precedes the stem and K'iche' is a high-absolutive language. The
 honorific second person is marked by the enclitics *=la* in the singular and *=alaq* in the
-plural, after the verb whatever their function. The independent pronouns are the Set B forms
+plural, after the verb whatever their function, and leaves the prefix slot empty, as the third
+person singular does. The independent pronouns are the Set B forms
 in the first and second persons, *in*, *at*, *oj*, *ix* and the honorific *laal* and *alaq*, and
 *are'* and *a're'* in the third, usually with a determiner. Can Pixabaj's sketch and Mondloch's
 grammar are the sources.
@@ -28,6 +29,7 @@ grammar are the sources.
 * `Kiche.laEncl`, `Kiche.alaqEncl`: the honorific second person enclitics.
 * `Kiche.template`, `Kiche.assignCase`: the verbal complex and the ergative case function.
 * `Kiche.pronouns`: the independent pronouns.
+* `Kiche.addresseeCell`: the Set B cell the second person controls at each grade.
 
 ## References
 
@@ -121,6 +123,18 @@ def addresseeSg : Grade → PersonalPronoun
 def addresseePl : Grade → PersonalPronoun
   | .nonhonorific => ix
   | .honorific => alaq
+
+/-- The Set B cell of the second person at a grade, its own at the nonhonorific grade and the
+third person singular's at the honorific grade, whose prefix is empty and whose person the
+enclitic *=la* or *=alaq* carries. -/
+def addresseeCell : Grade → Number → Agreement.Bundle
+  | .nonhonorific, n => .personNumber .second n
+  | .honorific, _ => .personNumber .third .singular
+
+/-- The honorific second person has no Set B prefix. -/
+theorem setBExponent_realize_addresseeCell_honorific (n : Number) :
+    setBExponent.realize (addresseeCell .honorific n) = some [] := by
+  cases n <;> decide
 
 /-- The independent pronouns. -/
 def pronouns : Finset PersonalPronoun := {in_, at_, laal, are', oj, ix, alaq, a're'}
