@@ -1,65 +1,92 @@
 module
 
-public import Linglib.Syntax.Category.Complementizer.Basic
+public import Linglib.Fragments.English.Verbs.Attitude
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 
 /-!
 # English complementizers
 
-English has three complementizers: *that*, which introduces a declarative complement in the
-indicative and is omissible under most verbs, and *if* and *whether*, which introduce an
-embedded polar question, *if* also introducing a conditional protasis. The adverbial
-subordinators *because*, *although* and *while* are not complementizers, adverbial
-subordination lying outside complementation in Noonan's sense, and are recorded as
-subordinating conjunctions. The preposition *to* is `English.Adpositions.to_` and the
-infinitival particle *to* is `English.Auxiliaries.toInf`.
+The four English subordinators: *that* and *for*, which mark finite and infinitival
+declaratives, and *whether* and its variant *if*, which mark closed interrogatives. *that*
+fixes no mood, since the matrix predicate licenses a subjunctive (*we insist that the work be
+finished*, *\*we hope that the work be finished*), and *if*, unlike *whether*, types no
+infinitival (*she can't make up her mind whether to accept*, *\*if to accept*). Conditional
+*if* is `English.Conditionals.if_`, the preposition *for* is `English.Adpositions.for_`, and
+the infinitival marker *to* is `English.Auxiliaries.toInf`.
 
-## Main definitions
+## TODO
 
-* `English.Complementizers.that`, `English.Complementizers.if_`,
-  `English.Complementizers.whether`, `English.Complementizers.complementizers`: the
-  complementizers.
-* `English.Complementizers.because`, `English.Complementizers.although`,
-  `English.Complementizers.while_`: the adverbial subordinators.
+*for* requires an overt accusative subject right after it (*for her to be interviewed*), a
+requirement the selection relation reads off the position alone, so every infinitival frame
+takes *for*, the raising and control frames included.
 
 ## References
 
+* [huddleston-pullum-2002]
 * [noonan-2007]
 -/
 
 @[expose] public section
 
-open Morphology (Word)
-
 namespace English.Complementizers
 
-/-- *that*, the declarative complementizer, omissible under most verbs. -/
+/-- *that*, the subordinator of finite declaratives, omissible under most verbs. The clause is
+indicative or, under a mandative predicate, subjunctive ([huddleston-pullum-2002] ch. 11
+§3.2, §7.1.1), so no coding is recorded. -/
 def that : Complementizer where
   morphs := [.free "that"]
-  coding := some .indicative
   types := .only .declarative
+  verbForm := some .Fin
 
-/-- *if*, the embedded polar-question complementizer, also the conditional subordinator. -/
+/-- *if*, the variant of *whether* confined to finite clauses ([huddleston-pullum-2002]
+ch. 11 §5.2). -/
 def if_ : Complementizer where
   morphs := [.free "if"]
-  types := .only .polar
+  coding := some .indicative
+  types := .of {.polar, .alternative}
+  verbForm := some .Fin
 
-/-- *whether*, the embedded polar-question complementizer. -/
+/-- *whether*, the subordinator of closed interrogatives, finite or infinitival. -/
 def whether : Complementizer where
   morphs := [.free "whether"]
-  types := .only .polar
+  types := .of {.polar, .alternative}
+
+/-- *for*, the subordinator of infinitival declaratives with a subject
+([huddleston-pullum-2002] ch. 14 §1.4.1). -/
+def for_ : Complementizer where
+  morphs := [.free "for"]
+  coding := some .infinitive
+  types := .only .declarative
+  verbForm := some .Inf
 
 /-- The complementizers. -/
-def complementizers : List Complementizer := [that, if_, whether]
+def complementizers : List Complementizer := [that, if_, whether, for_]
 
-/-! ### Adverbial subordinators -/
+/-- The infinitival interrogative complement, *make up one's mind whether to accept*. -/
+def infinitivalQuestion : ArgumentFrame :=
+  ⟨some .nominal, [.clausal (coding := some .infinitive) (types := .interrogatives)]⟩
 
-/-- *because*, a subordinating conjunction. -/
-def because : Word := { form := "because", cat := .SCONJ }
+/-! ### Selection -/
 
-/-- *although*, a subordinating conjunction. -/
-def although : Word := { form := "although", cat := .SCONJ }
+/-- A mandative subjunctive is a *that*-clause. -/
+theorem subjunctiveClause_takes_that : ArgumentFrame.subjunctiveClause.Takes that := by
+  decide
 
-/-- *while*, a subordinating conjunction. -/
-def while_ : Word := { form := "while", cat := .SCONJ }
+/-- An infinitival interrogative takes *whether* and not *if*. -/
+theorem infinitivalQuestion_takes :
+    infinitivalQuestion.Takes whether ∧ ¬ infinitivalQuestion.Takes if_ := by
+  decide
+
+/-- *know* takes declaratives and interrogatives. -/
+theorem typers_know : Verbs.know.typers complementizers = [that, if_, whether] := by
+  decide
+
+/-- *believe* takes declaratives only. -/
+theorem typers_believe : Verbs.believe.typers complementizers = [that] := by
+  decide
+
+/-- *wonder* takes interrogatives only. -/
+theorem typers_wonder : Verbs.wonder.typers complementizers = [if_, whether] := by
+  decide
 
 end English.Complementizers

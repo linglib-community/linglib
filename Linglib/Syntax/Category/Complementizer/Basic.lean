@@ -7,10 +7,6 @@ public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
 
-@[expose] public section
-
-open Morphology (Morph)
-
 /-!
 # Complementizer
 
@@ -23,11 +19,11 @@ subordinators like *that* and *oti*, affixal clause-typers like Buryat
 
 ## Main declarations
 
-* `Complementizer` — the general complementizer object
-* `Complementizer.Licenser` — adnominal vs adverbal licensing category
-* `Complementizer.form` — the surface form with boundary notation
-* `Complementizer.IsFinite` — finiteness of the typed clause, read off the
-  verb form
+* `Complementizer`: the general complementizer object.
+* `Complementizer.Licenser`: the adnominal or adverbal licensing category.
+* `Complementizer.form`: the surface form with boundary notation.
+* `Complementizer.IsFinite`: finiteness of the typed clause, read off the verb form or the
+  coding.
 
 ## Implementation notes
 
@@ -47,9 +43,13 @@ conventions:
   host stem (which for a suffixal clause-typer is the verb it
   attaches to).
 - `factive` records only a lexical factive presupposition carried by
-  the morpheme itself (Greek *pu*); leave `none` when factivity tracks
+  the morpheme itself (Greek *pu*); it stays `false` when factivity tracks
   the verb or the construction — derived in Studies, never stored.
 -/
+
+@[expose] public section
+
+open Morphology (Morph)
 
 /-- Category of the adjacent projection licensing an affixal
 clause-typer: adnominal (Buryat *-Aːša*) vs adverbal (Buryat *-žA*). -/
@@ -63,8 +63,6 @@ axes. -/
 structure Complementizer where
   /-- The exponent, in surface order. -/
   morphs : List Morph
-  /-- Native script form, when distinct. -/
-  script : Option String := none
   /-- [noonan-2007] coding of the clause this morpheme types. -/
   coding : Option Complement.Coding := none
   /-- The sentence types of the clauses this morpheme types. -/
@@ -73,8 +71,8 @@ structure Complementizer where
   verbForm : Option UD.VerbForm := none
   /-- Category of the adjacent licensing projection. -/
   licenser : Option Complementizer.Licenser := none
-  /-- Lexical factive presupposition. -/
-  factive : Option Bool := none
+  /-- The morpheme itself carries a factive presupposition. -/
+  factive : Bool := false
   deriving Repr, DecidableEq
 
 namespace Complementizer
@@ -82,10 +80,10 @@ namespace Complementizer
 /-- The surface form is the morphs' forms with their boundary notation. -/
 def form (c : Complementizer) : String := Morph.surface c.morphs
 
-/-- A complementizer is finite when the clause it types has a finite verb form. -/
-def IsFinite (c : Complementizer) : Prop := c.verbForm = some .Fin
+/-- A complementizer is finite when its verb form or its coding is finite. -/
+def IsFinite (c : Complementizer) : Prop := c.verbForm = some .Fin ∨ ∃ k ∈ c.coding, k.IsFinite
 
-instance : DecidablePred IsFinite := fun c =>
-  inferInstanceAs (Decidable (c.verbForm = some .Fin))
+instance : DecidablePred IsFinite := fun c ↦
+  inferInstanceAs (Decidable (_ ∨ ∃ k ∈ c.coding, _))
 
 end Complementizer
