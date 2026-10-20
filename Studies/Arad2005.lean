@@ -71,7 +71,7 @@ single out the natural pairs.
 
 namespace Arad2005
 
-open Morphology DistributedMorphology
+open Morphology Autosegmental DistributedMorphology
 
 variable {α β : Type*}
 
@@ -106,10 +106,10 @@ def Prefixes.map (f : α → β) (px : Prefixes α) : Prefixes β :=
   ⟨f px.n, f px.h, f px.i, f px.t, f px.m⟩
 
 /-- `b.template` is the CV template of the binyan `b`. -/
-def Binyan.template : Binyan → CVTemplate
+def Binyan.template : Binyan → Skeleton
   | .cvcvc => McCarthy1981.cvcvc
   | .nvccvc | .cvccvc | .hvccvc => McCarthy1981.cvccvc
-  | .hitcvccvc => ⟨[.C, .V, .C, .C, .V, .C, .C, .V, .C]⟩
+  | .hitcvccvc => [.C, .V, .C, .C, .V, .C, .C, .V, .C]
 
 /-- `b.prefix px` is the prefix of the binyan `b`. -/
 def Binyan.prefix (px : Prefixes α) : Binyan → List α
@@ -126,7 +126,7 @@ def Binyan.erasure : Binyan → Bool
 
 /-- `place pre t r` puts the prefix `pre` on the leftmost slots of `t`, with the root `r` not yet
 associated. -/
-def place (pre : List α) (t : CVTemplate) (r : ConsonantalRoot α) : TemplateMatch α where
+def place (pre : List α) (t : Skeleton) (r : ConsonantalRoot α) : TemplateMatch α where
   root := r
   affix := pre
   template := t
@@ -236,7 +236,7 @@ the first slot of a geminate, whose element also occupies the next slot. -/
 def spirantize (f : Bool → α → α) (m : TemplateMatch α) : List (ℕ × Association × α) :=
   let l := linked m
   l.zipIdx.map fun ((i, a, x), j) ↦
-    let postVocalic := 0 < i && m.template.slots[i - 1]? == some .V
+    let postVocalic := 0 < i && m.template[i - 1]? == some .V
     let geminate := match l[j + 1]? with
       | some (_, b, _) => sameElement a b
       | none => false
@@ -276,9 +276,9 @@ inductive Mishqal where
   deriving DecidableEq, Repr, Fintype
 
 /-- `q.template` is the CV template of the mišqal `q`. -/
-def Mishqal.template : Mishqal → CVTemplate
+def Mishqal.template : Mishqal → Skeleton
   | .miCCaC | .miCCoC | .maCCeC | .taCCiC => McCarthy1981.cvccvc
-  | .CCaC => ⟨[.C, .C, .V, .C]⟩
+  | .CCaC => [.C, .C, .V, .C]
   | .CaCiC | .CeCeC | .CaCeC | .CuCaC => McCarthy1981.cvcvc
 
 /-- `q.prefix px` is the prefix of the mišqal `q`. -/
@@ -308,7 +308,7 @@ def nounStem (px : Prefixes α) (v : Vowel → α) (q : Mishqal) (r : Consonanta
 
 /-! ### Relabeling -/
 
-theorem place_map (f : α → β) (pre : List α) (t : CVTemplate) (r : ConsonantalRoot α) :
+theorem place_map (f : α → β) (pre : List α) (t : Skeleton) (r : ConsonantalRoot α) :
     place (pre.map f) t (r.map f) = (place pre t r).map f := by
   simp [place, TemplateMatch.map, ConsonantalRoot.map]
 

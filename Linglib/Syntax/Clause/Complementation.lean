@@ -1,42 +1,54 @@
 module
 
+public import Linglib.Syntax.Case.Basic
 public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Complement codings
+# Complement clauses
 
-Noonan's cross-linguistic survey of complementation sorts complement clauses into six types by
-the part of speech of the predicate, the relation of the subject to the predicate, and the
-inflectional categories the clause carries (`Complement.Coding`). An argument frame records the
-coding of its clausal position (`ArgumentFrame.Position.clausal`), and a complementizer the coding
-of the clause it introduces (`Complementizer.coding`).
+Besides the sentence types it selects (`Clause.Selection`), a clausal argument position records
+three properties of its complement clause. Noonan's cross-linguistic survey of complementation
+sorts complement clauses into six complement types by the part of speech of the predicate, the
+relation of the subject to the predicate, and the inflectional categories the clause carries. The
+subject of a complement is obligatorily null, as under control, or overt. The size of a complement
+is the semantic sort it denotes, which fixes the structure it needs.
 
 ## Main definitions
 
-* `Complement.Coding`: the six complement types.
-* `Complement.Coding.IsFinite`: the coding is a clause whose verb can agree with its subject.
-* `Complement.Coding.IsSentenceLike`: the coding is sentence-like, its predicate related to its
-  arguments as in a main clause.
+* `Clause.ComplementType`: the six complement types.
+* `Clause.ComplementType.IsFinite`: the complement type is a clause whose verb can agree with its
+  subject.
+* `Clause.ComplementType.IsSentenceLike`: the complement type is sentence-like, its predicate
+  related to its arguments as in a main clause.
+* `Clause.EmbeddedSubject`: the subject requirement of a complement clause.
+* `Clause.Size`: the semantic size of a complement clause, ordered by containment.
 
 ## Implementation notes
 
 A complement type is reduced when it has fewer syntactic and inflectional possibilities than an
 indicative main clause. That is a fact about a language's complement types rather than about the
 six labels, since the subjunctive is typically reduced but need not be, so no predicate on
-`Coding` states it; the predicate that is a fact about the labels is `Coding.IsSentenceLike`.
+`ComplementType` states it; the predicate that is a fact about the labels is
+`ComplementType.IsSentenceLike`.
 
 ## References
 
 * [noonan-2007]
+* [bondarenko-2022]
+* [wurmbrand-lohninger-2023]
+* [wurmbrand-2024]
 -/
 
 @[expose] public section
 
-namespace Complement
+namespace Clause
+
+/-! ### Complement types -/
 
 /-- The six complement types of [noonan-2007]'s survey, in the order of its summary table. -/
-inductive Coding where
+inductive ComplementType where
   /-- A clause whose form is (nearly) that of a declarative main clause. -/
   | indicative
   /-- A sentence-like clause in a mood opposed to the indicative, whose inflectional range is
@@ -53,27 +65,50 @@ inductive Coding where
   | participle
   deriving DecidableEq, Repr, Fintype
 
-namespace Coding
+namespace ComplementType
 
-/-- The finite codings are the indicative, the subjunctive and the paratactic, whose verb can
-agree with its subject as an infinitive's cannot. -/
-def IsFinite : Coding → Prop
+/-- The finite complement types are the indicative, the subjunctive and the paratactic, whose verb
+can agree with its subject as an infinitive's cannot. -/
+def IsFinite : ComplementType → Prop
   | indicative | subjunctive | paratactic => True
   | infinitive | nominalized | participle => False
 
 instance : DecidablePred IsFinite := fun c ↦ by cases c <;> unfold IsFinite <;> infer_instance
 
-/-- A coding is sentence-like when its predicate stands in the relation to its subject and other
-arguments that it has in a main clause ([noonan-2007] §1.3.1), as in the indicative and the
-subjunctive. A paratactic clause is fully inflected but does not form a constituent with its
+/-- A complement type is sentence-like when its predicate stands in the relation to its subject
+and other arguments that it has in a main clause ([noonan-2007] §1.3.1), as in the indicative and
+the subjunctive. A paratactic clause is fully inflected but does not form a constituent with its
 subject. -/
-def IsSentenceLike : Coding → Prop
+def IsSentenceLike : ComplementType → Prop
   | indicative | subjunctive => True
   | paratactic | infinitive | nominalized | participle => False
 
 instance : DecidablePred IsSentenceLike := fun c ↦ by
   cases c <;> unfold IsSentenceLike <;> infer_instance
 
-end Coding
+end ComplementType
 
-end Complement
+/-! ### Subject and size -/
+
+/-- The subject of an embedded clause is obligatorily null, as in control complements, or
+overt, optionally with a fixed case. Genitive marking on the subject is [noonan-2007]'s criterion
+for the nominalized complement type, and the genitive subjects of Buryat nominalized clauses are
+a modern instance ([bondarenko-2022]). -/
+inductive EmbeddedSubject where
+  | obligatorilyNull
+  | overt (subjCase : Option Case)
+  deriving DecidableEq, Repr
+
+/-- The semantic sort of a complement clause, which fixes the minimal structure it needs in
+[wurmbrand-lohninger-2023]'s implicational complementation hierarchy. An event needs only the
+thematic domain, a situation adds the tense–mood–aspect domain, and a proposition adds the
+operator domain. Ordered by containment. -/
+inductive Size where
+  | event
+  | situation
+  | proposition
+  deriving DecidableEq, Repr, Fintype
+
+instance : LinearOrder Size := .lift' Size.ctorIdx (by decide)
+
+end Clause

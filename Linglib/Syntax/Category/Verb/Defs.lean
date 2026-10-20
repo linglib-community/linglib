@@ -284,7 +284,7 @@ def Verb.attitudeOn (v : Verb) (fr : ArgumentFrame) : Option _root_.Attitude :=
   ((v.reading? fr).bind (·.attitude)).orElse fun _ ↦ v.attitude
 
 /-- All [noonan-2007] codings across the verb's frames. -/
-def Verb.codings (v : Verb) : List Complement.Coding :=
+def Verb.codings (v : Verb) : List Clause.ComplementType :=
   v.valency.frames.flatMap ArgumentFrame.codings
 
 /-- Some frame of the verb selects the sentence type `t`. -/

@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Morphology.Morphotactics.CVTemplate
 public import Linglib.Phonology.Autosegmental.Floating
+public import Linglib.Phonology.Autosegmental.Skeleton
 public import Linglib.Phonology.StrictCV.Basic
 
 /-!
@@ -39,9 +39,8 @@ has associated melody or none, since a floating object is linked to no slot.
 namespace StrictCV
 
 open Autosegmental
-open Morphology (CVSlot)
 
-variable {T M : Type*} (u : Autosegmental.Form CVSlot T M)
+variable {T M : Type*} (u : Form Slot T M)
 
 /-- A skeleton is strict when it is a sequence of CV units. -/
 def IsStrict : Prop :=

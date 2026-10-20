@@ -178,7 +178,7 @@ theorem french_hope_eq_spanish_hope :
 /-! ### The fragments -/
 
 /-- The coding of a finite clause in a grammatical mood. -/
-def coding : Grammatical → Complement.Coding
+def coding : Grammatical → Clause.ComplementType
   | .indicative => .indicative
   | .subjunctive => .subjunctive
 

@@ -7,14 +7,14 @@ module
 
 public import Linglib.Data.Forms.Booij2019
 public import Linglib.Morphology.ConstructionMorphology.Schema
-public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Morphology.Morphotactics.TemplateMatch
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 
 /-!
 # Booij (2019): The role of schemas in Construction Morphology
 
-This file formalizes [booij-2019]'s templatic and second-order schemas as coindexed schemas
+This file formalizes Booij's templatic and second-order schemas as coindexed schemas
 read through subscriptings of template slots. A templatic schema is a description over root
 consonants and vowel constants, and a consonant that occupies two slots, the gemination of the
 Damascus Arabic occupation template `C₁aC₂C₂aaC₃` of (2), is a subscripting that is not
@@ -51,22 +51,22 @@ open Morphology ConstructionMorphology
 
 /-! ### The occupation template `C₁aC₂C₂aaC₃` -/
 
-/-- The parts of the occupation template (2): three root consonants and two vowel constants. -/
+/-- The parts of the occupation template (2), three root consonants and two vowel constants. -/
 inductive OccPart
   | c1 | c2 | c3 | a | aa
   deriving DecidableEq
 
-/-- The occupation schema (2): the vowels pinned, the root consonants open. -/
+/-- The occupation schema (2) pins the vowels and leaves the root consonants open. -/
 def occupation : Schema OccPart (Flat String) :=
   ⟨fun | .a => ↑"a" | .aa => ↑"aa" | _ => ⊥, {.c1, .c2, .c3}⟩
 
-/-- The six slots of `C₁aC₂C₂aaC₃` subscripted by parts: the second consonant occupies
+/-- The six slots of `C₁aC₂C₂aaC₃` subscripted by parts, the second consonant occupying
 two. -/
 def occupationSub : Fin 6 → OccPart := ![.c1, .a, .c2, .c2, .aa, .c3]
 
 /-- An item instantiates the occupation schema exactly when its vowels are the template's and
-the two slots of the second consonant are filled alike: gemination is a subscripting that is
-not injective. -/
+the two slots of the second consonant are filled alike, since gemination is a subscripting that
+is not injective. -/
 theorem occupation_instantiatesAt_iff {w : Fin 6 → Flat String} :
     occupation.InstantiatesAt occupationSub w ↔
       w 1 = ↑"a" ∧ w 4 = ↑"aa" ∧ w 2 = w 3 := by
@@ -99,10 +99,10 @@ theorem not_occupation_of_ne_medial :
 /-! ### The subscripting as autosegmental association -/
 
 /-- The template of (2) as a CV skeleton. -/
-def occupationTemplate : CVTemplate := ⟨[.C, .V, .C, .C, .V, .C]⟩
+def occupationTemplate : Autosegmental.Skeleton := [.C, .V, .C, .C, .V, .C]
 
-/-- *xabbaaz* as the association of the root /x b z/ and the vocalism /a aa/ to the template:
-the second root consonant is associated to two slots. -/
+/-- *xabbaaz* as the association of the root /x b z/ and the vocalism /a aa/ to the template,
+in which the second root consonant is associated to two slots. -/
 def xabbaazMatch : TemplateMatch String where
   root := ⟨["x", "b", "z"]⟩
   vocalism := ["a", "aa"]
@@ -119,7 +119,7 @@ def xabbaazAssoc (i : Fin 6) : Option (AssocSource × Nat) :=
 theorem xabbaazMatch_spellout : xabbaazMatch.spellout = Forms.xabbaaz.segments := by
   decide
 
-/-- The subscripting and the association agree: two slots carry the same part exactly when
+/-- The subscripting and the association agree, as two slots carry the same part exactly when
 they are associated to the same melody element. -/
 theorem occupationSub_eq_iff_assoc_eq (i j : Fin 6) :
     occupationSub i = occupationSub j ↔ xabbaazAssoc i = xabbaazAssoc j := by
@@ -127,17 +127,17 @@ theorem occupationSub_eq_iff_assoc_eq (i j : Fin 6) :
 
 /-! ### Javanese partial reduplication -/
 
-/-- The parts of the reduplication schema (13): the copied consonant, the schwa constant, and
-the residue. -/
+/-- The parts of the reduplication schema (13), which are the copied consonant, the schwa
+constant, and the residue. -/
 inductive RedPart
   | c1 | schwa | y
   deriving DecidableEq
 
-/-- The reduplication schema (13): the schwa pinned, the consonant and the residue open. -/
+/-- The reduplication schema (13) pins the schwa and leaves the consonant and residue open. -/
 def reduplication : Schema RedPart (Flat String) :=
   ⟨fun | .schwa => ↑"ə" | _ => ⊥, {.c1, .y}⟩
 
-/-- The reduplicant `C₁əC₁y`: the initial consonant occupies two slots. -/
+/-- The reduplicant `C₁əC₁y`, whose initial consonant occupies two slots. -/
 def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
 
 /-- The base `C₁y`. -/
@@ -175,13 +175,13 @@ theorem reduplication_verbs :
 
 /-! ### The Egyptian Arabic comparative -/
 
-/-- The parts of the comparative schema (16): three root consonants, the adjective's two open
-vowels, and the comparative's constant `a`. -/
+/-- The parts of the comparative schema (16), which are three root consonants, the adjective's
+two open vowels, and the comparative's constant `a`. -/
 inductive CmpPart
   | c1 | c2 | c3 | v1 | v2 | a
   deriving DecidableEq
 
-/-- The comparative schema (16): the comparative vowel pinned, all else open. -/
+/-- The comparative schema (16) pins the comparative vowel and leaves all else open. -/
 def comparative : Schema CmpPart (Flat String) :=
   ⟨fun | .a => ↑"a" | _ => ⊥, {.c1, .c2, .c3, .v1, .v2}⟩
 

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Phonology.Autosegmental.Skeleton
 public import Linglib.Phonology.Autosegmental.Melody
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.StrictCV.Skeleton
@@ -89,7 +89,6 @@ namespace LaoideKemp2026
 
 open Autosegmental Relation RuleInteraction
 open scoped Finset
-open Morphology (CVSlot)
 
 /-! ### Representations -/
 
@@ -120,7 +119,7 @@ theorem Autosegment.isSegment_iff {a : Autosegment} : a.IsSegment ↔ ∃ s, a =
   cases a <;> simp [Autosegment.IsSegment]
 
 /-- A liquid may govern an obstruent before it, as in the clusters *fr-* and *fl-* of (12) and
-*dr-* and *gl-* of §4.1: the governing onset hosts *r* or *l*, and the governed one an
+*dr-* and *gl-* of §4.1, where the governing onset hosts *r* or *l* and the governed one an
 obstruent. -/
 def MayGovern (governor governee : List Autosegment) : Prop :=
   (.seg .r ∈ governor ∨ .seg .l ∈ governor) ∧ ∃ s ∈ [Segment.b, .d, .f, .g, .t], .seg s ∈ governee
@@ -130,7 +129,7 @@ instance (governor governee : List Autosegment) : Decidable (MayGovern governor 
 
 /-- A form of the paper is a melodic tier of `Autosegment`s over a strict-CV skeleton, each object
 and slot sponsored by a morpheme in `M`. -/
-abbrev Form (M : Type*) := Autosegmental.Form CVSlot Autosegment M
+abbrev Form (M : Type*) := Autosegmental.Form Slot Autosegment M
 
 section Exponents
 
@@ -190,8 +189,8 @@ def domains : Finset (Fin (StrictCV.units u)) := StrictCV.clusters (.input u) Ma
 segmentally empty C-slot whose nucleus hosts a segment or is enclosed in a domain of
 infrasegmental government (§4.1). -/
 def IsDockingSite : Autosegment → Fin u.lower.length → Prop
-  | .L, i => u.lower[i].value.IsC ∧ HostsSegment c i
-  | .seg _, i => u.lower[i].value.IsC ∧ ¬ HostsSegment c i ∧
+  | .L, i => u.lower[i].value = .C ∧ HostsSegment c i
+  | .seg _, i => u.lower[i].value = .C ∧ ¬ HostsSegment c i ∧
       ∃ j, StrictCV.onset u j = i ∧ (HostsSegment c (StrictCV.nucleus u j) ∨
         StrictCV.Enclosed (StrictCV.nucleusOf c Autosegment.IsSegment (domains u) j)
           ((StrictCV.surface c Autosegment.IsSegment (domains u)).drop (j + 1)))
@@ -202,7 +201,7 @@ instance : ∀ a i, Decidable (IsDockingSite c a i)
 
 variable {c} in
 theorem IsDockingSite.isC {i : Fin u.lower.length} : ∀ {a}, IsDockingSite c a i →
-    u.lower[i].value.IsC
+    u.lower[i].value = .C
   | .L, h | .seg _, h => h.1
 
 /-- Object `k` can dock when it is floating and the slot immediately to its right is a docking
@@ -246,7 +245,7 @@ instance (a : Autosegment) : Decidable (Realizes c a) := inferInstanceAs (Decida
 /-- A candidate begins with an empty consonantal slot, the context in which the morphosyntactic
 analysis spells out the historic-tense particle as *d* ((23)). -/
 def BeginsWithEmptyC : Prop :=
-  ∃ i : Fin u.lower.length, i.val = 0 ∧ u.lower[i].value.IsC ∧ ¬ HostsSegment c i
+  ∃ i : Fin u.lower.length, i.val = 0 ∧ u.lower[i].value = .C ∧ ¬ HostsSegment c i
 
 instance : Decidable (BeginsWithEmptyC c) := inferInstanceAs (Decidable (∃ _, _ ∧ _ ∧ _))
 
@@ -348,7 +347,7 @@ section EmptyCV
 variable {M : Type*} {u : Form M} {c : Candidate u}
 
 /-- A CV unit whose slots host no segment and which no domain of infrasegmental government spans
-is no docking site for anything: `{L}` finds no consonant on its onset, and a segment finds its
+is no docking site for anything. `{L}` finds no consonant on its onset, and a segment finds its
 nucleus empty and not enclosed. -/
 theorem not_isDockingSite_onset {j : Fin (StrictCV.units u)}
     (hc : ¬ HostsSegment c (StrictCV.onset u j)) (hv : ¬ HostsSegment c (StrictCV.nucleus u j))
@@ -416,7 +415,7 @@ private theorem le_of_canDock (h : Blocked c) {k : Fin _} (hk : CanDock c k) :
       (h.2 _ (by simp only [StrictCV.nucleus]; omega)) (zero_notMem_domains hu) _ hs
   have hi1 : i.val ≠ 1 := fun h1 ↦ by
     obtain rfl : i = ⟨1, hlen⟩ := Fin.ext h1
-    exact hs.isC
+    nomatch hs.isC
   refine ⟨Nat.le_of_not_lt fun hk2 ↦ hi0 ?_, fun i' hi' ↦ ?_⟩
   · exact val_eq_zero_of_mem_nextSlot (leftIndices_eq_empty h hk2) hi
   · obtain rfl := Option.mem_unique hi hi'
@@ -467,7 +466,7 @@ theorem not_hostsSegment_of_emptyCV (hc : ReflTransGen Step (.input _) c) {i : F
 /-- Whatever the stem, a form that begins with an empty CV unit begins with an empty consonantal
 slot in every candidate derived, so under the morphosyntactic analysis it would take *d'*. -/
 theorem beginsWithEmptyC_of_emptyCV (hc : ReflTransGen Step (.input _) c) : BeginsWithEmptyC c :=
-  ⟨⟨0, by simp [emptyCV]⟩, rfl, trivial, not_hostsSegment_of_emptyCV hc (by simp)⟩
+  ⟨⟨0, by simp [emptyCV]⟩, rfl, rfl, not_hostsSegment_of_emptyCV hc (by simp)⟩
 
 end EmptyCV
 
@@ -493,7 +492,7 @@ inductive Morpheme
 def bog : Form Morpheme :=
   .melody .root [.seg .b, .seg .o, .seg .g] [.C, .V, .C, .V] {(0, 0), (1, 1), (2, 2)}
 
-/-- *ól* 'drink', vowel-initial: its first C-slot is empty (Figure 1b). -/
+/-- The vowel-initial *ól* 'drink', whose first C-slot is empty (Figure 1b). -/
 def ól : Form Morpheme := .melody .root [.seg .ó, .seg .l] [.C, .V, .C, .V] {(0, 1), (1, 2)}
 
 /-- *fág* 'leave', *f*-initial (Figure 1c). -/
@@ -608,7 +607,7 @@ theorem historic_pstImpers : ∀ s ∈ [bog, ól, fág],
     isFloating_of_emptyCV (mem_surfaces.1 hc).1 (by simp [bundle])⟩
 
 /-- After the conditional particle a present-tense impersonal is lenited, *má bhogtar*, and a
-past-tense one is not, *má bogadh*: the past-tense impersonal resists lenition from any source,
+past-tense one is not, *má bogadh*. The past-tense impersonal resists lenition from any source,
 not only that of historic tense ((26), §6.2). -/
 theorem conditional_impersonals : (∀ c ∈ surfaces (.input (má * bog)), Realizes c .L) ∧
     ∀ c ∈ surfaces (.input (má * (emptyCV Morpheme.pstImpers * bog))), ¬ Realizes c .L := by
@@ -629,8 +628,8 @@ theorem beginsWithEmptyC_iff_realizes_d : ∀ v ∈ [bog, ól, fág],
   decide
 
 /-- The morphosyntactic analysis predicts *d'* before the vowel-initial past-tense impersonal
-alone: such a verb resists lenition, and unlenited only a vowel-initial verb begins with an empty
-consonantal slot. (27) has *d'* before none of them (§6.2). With the empty CV unit instead,
+alone, since such a verb resists lenition, and unlenited only a vowel-initial verb begins with an
+empty consonantal slot. (27) has *d'* before none of them (§6.2). With the empty CV unit instead,
 every past-tense impersonal would take *d'* (`beginsWithEmptyC_of_emptyCV`). -/
 theorem beginsWithEmptyC_pstImpers : BeginsWithEmptyC (.input ól) ∧
     ¬ BeginsWithEmptyC (.input fág) ∧ ¬ BeginsWithEmptyC (.input bog) := by
@@ -657,9 +656,9 @@ theorem table2 : (∀ c ∈ surfaces (.input (ní * fás)), ¬ Realizes c (.seg 
 /-! ### Prothesis (§4.3) -/
 
 /-- Without `{L}`, a floating consonant links before a vowel-initial word but not before an
-*f*-initial one: *an t-athair* but *an fear*, not *an t-fear*. After the historic-tense marker an
-*f*-initial verb patterns with a vowel-initial one (`historic_fág`), since `{L}` deletes the *f*:
-radical *f* patterns with consonants and mutated *f* with vowels (fn. 10). -/
+*f*-initial one, giving *an t-athair* but *an fear*, not *an t-fear*. After the historic-tense
+marker an *f*-initial verb patterns with a vowel-initial one (`historic_fág`), since `{L}` deletes
+the *f*. Radical *f* patterns with consonants and mutated *f* with vowels (fn. 10). -/
 theorem prothesis :
     (∀ c ∈ surfaces (.input (prothetic Morpheme.art .t * athair)), Realizes c (.seg .t)) ∧
       ∀ c ∈ surfaces (.input (prothetic Morpheme.art .t * fear)), ¬ Realizes c (.seg .t) := by

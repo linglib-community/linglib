@@ -7,7 +7,7 @@ public import Linglib.Fragments.English.Verbs.Inventory
 /-!
 # Noonan (2007): Complementation
 
-Noonan's survey classifies complement clauses by their morphology (`Complement.Coding`) and
+Noonan's survey classifies complement clauses by their morphology (`Clause.ComplementType`) and
 complement-taking predicates (ctps) by the semantic classes that select among the codings. This
 file checks three of the chapter's generalizations against the English verb fragment and the
 chapter's examples.
