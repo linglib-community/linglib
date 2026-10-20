@@ -1,253 +1,423 @@
 module
 
+public import Linglib.Data.Examples.NapoliNespor1976
 public import Linglib.Discourse.SpeechAct
 public import Linglib.Fragments.Romance.Italian.PolarityItems
 public import Linglib.Semantics.Mood.Defs
 public import Linglib.Semantics.Polarity.Basic
-public import Linglib.Data.Examples.Judgment
 
 /-!
-# Napoli & Nespor (1976): Negatives in Comparatives
+# Napoli and Nespor (1976)
 
-This file formalizes [napoli-nespor-1976]'s account of the Italian *non* that appears in
-comparative clauses without reversing truth conditions, *Maria è più intelligente di quanto non
-sia Carlo* 'Maria is more intelligent than Carlo is'. Against [antinucci-puglielli-1971]'s
-pleonastic element and [seuren-1969]'s underlyingly negative *than*-clause, the paper takes this
-*non₂* to be real negation licensed by the discourse move: the speaker presupposes that the
-assertion contradicts a belief inferred from the interlocutor's prior discourse, the move is an
-assertion, the matrix clause is not negated, and the construction does not demand precise
-knowledge of the compared degrees (`Move.Licensed`). The acceptability paradigm of dialogues
-between Dario and Paolo, comparative constructions, and an indirect question records the facts
-of each move with the reported judgment, and `paradigm_licensed_iff` shows the four conditions
-reproduce every judgment. Six morphosyntactic diagnostics witness the underlying negation:
-subjunctive mood and non-specific indefinites in the *than*-clause, the complementizer *che*, the
-predicative clitic *lo*, *neanche*-conjunction, and the weak NPI *pur*. The NPI *affatto*, which
-requires precise knowledge of the listener's belief, is excluded from every *non₂*-comparative by
-the precision condition (`pur_admissible`, `affatto_blocked`).
+Italian comparatives admit a *non* that leaves their truth conditions alone, *Maria è più
+intelligente di quanto non sia Carlo* 'Maria is more intelligent than Carlo is'. Napoli and Nespor
+call it *non₂* and argue that it is a real negation. It is used when the speaker infers, without
+being told, that the comparison contradicts a belief someone holds, and it negates the complement
+of an abstract clause, roughly 'I expect that', that is never pronounced. The abstract clause
+selects the subjunctive, gives the complementizer *che* a place, keeps the compared predicate far
+enough from its antecedent to be the clitic *lo*, licenses negative polarity items and controls a
+gerund whose subject is the speaker; an optional rule deletes *non₂* and leaves the rest. A
+sentence is derived from the plain structure or from the abstract one, and its judgment is that of
+its best derivation in its context.
+
+## Main definitions
+
+* `NapoliNespor1976.Sentence`: what a row records of an example.
+* `NapoliNespor1976.Sentence.grade`: how each structure derives a sentence.
+* `NapoliNespor1976.Sentence.Felicitous`: what each structure demands of the context.
+* `NapoliNespor1976.Sentence.verdict`: the grade of the best derivation in a context.
+
+## Main statements
+
+* `NapoliNespor1976.rows_judgment`: the analysis allows the judgment of every row.
+* `NapoliNespor1976.rows_readings`: an indefinite in the embedded clause is non-specific exactly
+  when only the abstract structure derives the clause.
+* `NapoliNespor1976.Sentence.not_contradicts_of_negative`,
+  `NapoliNespor1976.Sentence.not_felicitous_abstract_of_demandsPrecision`: matrix negation and a
+  demand for precision exclude *non₂* on semantic grounds.
 
 ## Implementation notes
 
-The paper's own implementation, a Generative Semantics abstract higher clause hosting *non₂* and
-optionally deleted, is not formalized; only the licensing conditions and their surface
-diagnostics are. The paper's condition on precision splits into two facts of a move: whether the
-contradicted belief was inferred or stated explicitly, and whether the construction, an equality
-comparative or an explicit degree modifier, demands precise knowledge of the degrees.
+* The analysis allows a set of judgments rather than one, since an optional rule and a variety of
+  speakers the paper has not found grade the examples it prints with `(?)`, `?(?)` and `?*`. A row
+  records the first mark printed; the paper's `?*` and `*?` are recorded as `??`.
+* In (10) the paper reads the belief of a clausal comparative, *di quanto è Carlo*, as the
+  listener's, and its rows record the listener as the holder.
+* An indirect question raises its proposition without asserting it, so a negated matrix, *Non sono
+  sicura se* (89), does not make the speaker agree with the belief.
 
 ## References
 
 * [napoli-nespor-1976]
-* [antinucci-puglielli-1971]
 * [seuren-1969]
+* [antinucci-puglielli-1971]
 
 ## TODO
 
-The paradigm's moves are typed from the paper's descriptions of its dialogues; the
-dialogues themselves are not yet rows of `Data/Examples/NapoliNespor1976.json`.
+The reduced comparatives (83)–(85), the positions of gerunds (40)–(43), the indirect questions
+(88) and (90), and *pur* and *neanche* outside comparatives (46)–(51) are not rows.
 -/
 
 @[expose] public section
 
 namespace NapoliNespor1976
 
-open Italian.PolarityItems PolarityItem Mood
+open Discourse.SpeechAct (Force)
 
-/-! ### The licensing condition -/
+/-! ### What a row records -/
 
-/-- The speaker's relation to the belief the assertion contradicts. -/
-inductive PriorBelief where
-  /-- The interlocutor's prior discourse implies a contrary belief. -/
+/-- How the speaker knows the belief that the comparison bears on. -/
+inductive Evidence where
+  /-- The listener has revealed nothing (6). -/
+  | none
+  /-- The speaker infers the belief from what the listener said (7), (9). -/
   | inferred
-  /-- The interlocutor stated the contrary belief explicitly. -/
+  /-- The listener stated the belief (8), (30). -/
   | explicit
-  /-- No contrary belief is in play. -/
-  | absent
+  deriving DecidableEq, Repr, Fintype
+
+/-- Whose belief the comparison bears on. -/
+inductive Holder where
+  /-- The listener, now. -/
+  | addressee
+  /-- The listener at an earlier time, *di quanto tu credevi* (13). -/
+  | formerAddressee
+  /-- Someone else, *di quanto lui crede* (14). -/
+  | thirdParty
   deriving DecidableEq, Repr
 
-/-- The constructions hosting a *non₂* candidate. -/
+/-- The constructions of the rows. -/
 inductive Construction where
-  /-- *più … di quanto*. -/
-  | piu
-  /-- *meno … di quanto*. -/
-  | meno
-  /-- The equality comparative *tanto … quanto*. -/
+  /-- A comparative of inequality, *più* or *meno* … *di quanto*. -/
+  | inequality
+  /-- A comparative of equality, *tanto* … *quanto*. -/
   | equality
-  /-- A comparative with an explicit degree modifier, *molto più*, *due metri più*. -/
-  | explicitDegree
-  /-- An indirect question, *chissà se*. -/
+  /-- An indirect question (§4). -/
   | indirectQuestion
   deriving DecidableEq, Repr
 
-/-- The construction demands precise knowledge of the compared degrees. -/
-def Construction.Precise (c : Construction) : Prop := c = .equality ∨ c = .explicitDegree
+/-- The standard of a comparison is a clause, *di quanto è Carlo* (4), or a belief, *di quanto tu
+credi* (5). -/
+inductive Standard where
+  | clausal
+  | belief
+  deriving DecidableEq, Repr
 
-instance (c : Construction) : Decidable c.Precise := inferInstanceAs (Decidable (_ ∨ _))
+/-- A printed *non* in the embedded clause is either ordinary negation, *non₁* (16), or *non₂*
+(17). -/
+inductive Negation where
+  | none
+  | non₁
+  | non₂
+  deriving DecidableEq, Repr
 
-/-- A discourse move hosting a *non₂* candidate. -/
-structure Move where
-  priorBelief : PriorBelief
-  force : Discourse.SpeechAct.Force
+/-- The complementizer of the embedded clause. -/
+inductive Complementizer where
+  /-- *(di) quanto*, the comparative quantifier in complementizer position. -/
+  | quanto
+  | che
+  /-- *se* 'if', of an indirect question. -/
+  | se
+  deriving DecidableEq, Repr
+
+/-- The predicate of a comparative clause, when it is not deleted. -/
+inductive Predicate where
+  /-- A predicate adjective, repeated (75) or another one (82). -/
+  | adjective
+  /-- The clitic *lo* for the predicate adjective (79). -/
+  | lo
+  deriving DecidableEq, Repr
+
+/-- The words of a sentence the analysis is sensitive to. -/
+inductive Element where
+  /-- *pur con* 'even with' (48). -/
+  | pur
+  /-- *neanche* 'not … either' in a conjunct (52). -/
+  | neanche
+  /-- *affatto* 'at all' (footnote 13). -/
+  | affatto
+  /-- A degree modifier, *molto* 'much' (32) or *due metri* 'two meters' (33). -/
+  | degreeModifier
+  /-- *con assoluta certezza* 'with absolute certainty' (34). -/
+  | certainty
+  /-- A gerund in the embedded clause whose subject is the speaker, *rendendomi conto* (38). -/
+  | speakerGerund
+  deriving DecidableEq, Repr
+
+namespace Element
+
+/-- An element is a negative polarity item when its fragment entry has a licensor. -/
+def IsNPI : Element → Prop
+  | pur => Italian.PolarityItems.pur.IsNPI
+  | neanche => Italian.PolarityItems.neanche.IsNPI
+  | affatto => Italian.PolarityItems.affatto.IsNPI
+  | _ => False
+
+instance : DecidablePred IsNPI := fun e ↦ by cases e <;> unfold IsNPI <;> infer_instance
+
+/-- An element demands precise knowledge, of a degree (32), (33) or of the listener's belief (34),
+as *affatto* does (footnote 13). -/
+def DemandsPrecision : Element → Prop
+  | degreeModifier | certainty | affatto => True
+  | pur | neanche | speakerGerund => False
+
+instance : DecidablePred DemandsPrecision := fun e ↦ by
+  cases e <;> unfold DemandsPrecision <;> infer_instance
+
+theorem pur_isNPI : pur.IsNPI := by decide
+
+theorem neanche_isNPI : neanche.IsNPI := by decide
+
+end Element
+
+/-- A row records of an example the move its matrix makes, whose belief the comparison bears on,
+and the form of the embedded clause. -/
+structure Sentence where
+  force : Force
   matrix : Polarity
   construction : Construction
+  /-- The standard of a comparison; an indirect question has none. -/
+  standard : Option Standard
+  holder : Holder
+  negation : Negation
+  mood : Mood.Grammatical
+  complementizer : Complementizer
+  /-- The mood the matrix selects for a plain clause, the subjunctive under *non sono sicura se*
+  (89) and the indicative otherwise. -/
+  plainMood : Mood.Grammatical
+  predicate : Option Predicate
+  elements : List Element
   deriving DecidableEq, Repr
 
-/-- The licensing condition on *non₂*: the assertion contradicts a belief the speaker inferred
-from the interlocutor's discourse, the move is an assertion, the matrix is affirmative, and the
-construction does not demand precision. -/
-def Move.Licensed (m : Move) : Prop :=
-  m.priorBelief = .inferred ∧ m.force = .declarative ∧ m.matrix = .positive ∧
-    ¬ m.construction.Precise
+/-! ### Derivations -/
 
-instance (m : Move) : Decidable m.Licensed := inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
+/-- In the underlying structures (Figs. 1–4) the embedded clause stands alone, or it is the
+negated complement S₃ of an abstract clause S₂, 'I expect that'. -/
+inductive Structure where
+  | plain
+  | abstract
+  deriving DecidableEq, Repr, Fintype
 
-/-! ### The acceptability paradigm
+/-- A sentence is derived, from worst to best, not at all, felicitously only in another context,
+only for speakers whose abstract verb takes the indicative, whom the paper has not found (§3.22),
+by the optional rule deleting *non₂* (§3.22), or by the obligatory rules. -/
+inductive Grade where
+  | out
+  | contextual
+  | indicative
+  | deletion
+  | regular
+  deriving DecidableEq, Repr, Fintype
 
-Four dialogues between Dario and Paolo vary the speaker's epistemic state, comparative
-constructions isolate the remaining conditions, with *meno*-comparatives as the positive control,
-and an indirect question shows the condition is a property of the move rather than of comparative
-syntax. -/
+instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 
-/-- A row of the paradigm: the move and the reported acceptability of *non₂*. -/
-structure Row where
-  move : Move
-  judgment : Judgment
-  deriving DecidableEq, Repr
+/-- The judgments a grade allows. Speakers differ on the optional deletion, unmarked or `?` (60d),
+(63); the indicative after *non₂* is `?` or `??` (27), (60b); a sentence infelicitous in its
+context is `??` (6) or worse (31). -/
+def Grade.judgments : Grade → List Judgment
+  | .out => [.ungrammatical]
+  | .contextual => [.questionable, .ungrammatical]
+  | .indicative => [.marginal, .questionable]
+  | .deletion => [.acceptable, .marginal]
+  | .regular => [.acceptable]
 
-/-- An assertion of *Maria è più intelligente di quanto non sia Carlo* against a prior belief of
-the given status. -/
-def assertion (b : PriorBelief) : Move := ⟨b, .declarative, .positive, .piu⟩
+namespace Sentence
 
-/-- Dario gives no opinion of Maria or Carlo; Paolo asserts that Maria is more intelligent. -/
-def noOpinionContext : Row := ⟨assertion .absent, .unacceptable⟩
+variable (s : Sentence)
 
-/-- Dario implies Carlo would beat Maria at chess; Paolo asserts that Maria is more
-intelligent. -/
-def chessContext : Row := ⟨assertion .inferred, .acceptable⟩
+/-- The plain structure derives a clause in the mood its matrix selects, introduced by *quanto* or
+*se*, whose *non*, if any, is ordinary negation. With no abstract clause there is no second
+complementizer to leave *che* (§3.24), the predicate is too close to its antecedent to be the
+unstressed *lo* (§3.25), a polarity item has no negation to license it unless the clause is
+negated, and a gerund whose subject is the speaker has no clause with that subject to control it
+(§3.1). -/
+def plainGrade : Grade :=
+  if s.negation ≠ .non₂ ∧ s.mood = s.plainMood ∧ s.complementizer ≠ .che ∧
+      s.predicate ≠ some .lo ∧ (∀ e ∈ s.elements, e.IsNPI → s.negation = .non₁) ∧
+      .speakerGerund ∉ s.elements
+  then .regular else .out
 
-/-- Dario calls Maria stupid in so many words; Paolo disagrees. -/
-def explicitCriticismContext : Row := ⟨assertion .explicit, .unacceptable⟩
+/-- The abstract structure negates the clause and puts it in the subjunctive its verb selects;
+*non₂* surfaces unless the optional rule deletes it, and with the indicative for speakers whose
+abstract verb takes it (§3.22). *Che* is possible, but a predicate needs *quanto* in
+complementizer position, which *che* blocks (§3.25). -/
+def abstractGrade : Grade :=
+  if s.complementizer = .che ∧ s.predicate.isSome then .out
+  else match s.negation, s.mood with
+    | .non₂, .subjunctive => .regular
+    | .none, .subjunctive => .deletion
+    | .non₂, .indicative => .indicative
+    | _, _ => .out
 
-/-- Dario's complaint implies he expects Maria cannot help; Paolo asserts she is smart enough
-to ask. -/
-def complaintContext : Row := ⟨assertion .inferred, .acceptable⟩
+/-- The grade with which a structure derives the sentence. -/
+def grade : Structure → Grade
+  | .plain => s.plainGrade
+  | .abstract => s.abstractGrade
 
-/-- *È più intelligente di quanto non sia Carlo?*: the move is a question. -/
-def questionedComparative : Row :=
-  ⟨⟨.inferred, .interrogative, .positive, .piu⟩, .unacceptable⟩
+/-- The move contradicts the belief: an assertion of the comparison contradicts it, and a denial
+agrees with it (18); a question asks rather than contradicts, so the belief cannot be that of the
+listener it asks (10)–(14); an indirect question raises its proposition without asserting it
+(89). -/
+def Contradicts : Prop :=
+  if s.force = .interrogative then s.holder ≠ .addressee
+  else s.construction = .indirectQuestion ∨ s.matrix = .positive
 
-/-- *Maria non è più intelligente di quanto non sia Carlo*: the matrix is negated. -/
-def matrixNegatedComparative : Row :=
-  ⟨⟨.inferred, .declarative, .negative, .piu⟩, .unacceptable⟩
+instance : Decidable s.Contradicts := by unfold Contradicts; infer_instance
 
-/-- *Maria è tanto intelligente quanto è Carlo*: an equality comparative demands precise
-knowledge of the compared degrees. -/
-def equalityComparative : Row :=
-  ⟨⟨.inferred, .declarative, .positive, .equality⟩, .unacceptable⟩
+/-- The sentence demands precise knowledge, by being a comparative of equality (§2.3) or by one
+of its words. -/
+def DemandsPrecision : Prop :=
+  s.construction = .equality ∨ ∃ e ∈ s.elements, e.DemandsPrecision
 
-/-- *Molto più intelligente*, *due metri più alta*: an explicit degree modifier demands precise
-knowledge of the gap. -/
-def precisionComparative : Row :=
-  ⟨⟨.inferred, .declarative, .positive, .explicitDegree⟩, .unacceptable⟩
+instance : Decidable s.DemandsPrecision := by unfold DemandsPrecision; infer_instance
 
-/-- *Maria è meno intelligente di quanto tu non creda*: a *meno*-comparative admits *non₂* under
-the same conditions as *più*, while a negated equality comparative, semantically close to it,
-rejects *non₂*, so the equality restriction cannot reduce to equality linking two similar things
-(contra [seuren-1969] and [antinucci-puglielli-1971]). -/
-def menoComparative : Row :=
-  ⟨⟨.inferred, .declarative, .positive, .meno⟩, .acceptable⟩
+/-- The sentence asks the listener to confirm a comparison with the listener's present belief,
+which one does not ask of someone who does not hold it (12a). -/
+def AsksHolder : Prop :=
+  s.force = .interrogative ∧ s.holder = .addressee ∧ s.standard = some .belief
 
-/-- *Chissà se non vale la pena di comprarlo*: an indirect question whose negated proposition the
-speaker presupposes to be contrary to expectation. -/
-def chissaSeNon : Row :=
-  ⟨⟨.inferred, .declarative, .positive, .indirectQuestion⟩, .acceptable⟩
+instance : Decidable s.AsksHolder := by unfold AsksHolder; infer_instance
 
-/-- The paper's acceptability paradigm. -/
-def paradigm : List Row :=
-  [noOpinionContext, chessContext, explicitCriticismContext, complaintContext,
-    questionedComparative, matrixNegatedComparative, equalityComparative, precisionComparative,
-    menoComparative, chissaSeNon]
+/-- A structure is felicitous when the evidence is `e`: precision needs a belief the listener
+stated (30), (31), a question cannot ask its listener to confirm a comparison with that listener's
+present belief (12a), and the abstract clause presupposes a belief that the speaker has inferred
+and the move contradicts (§2). -/
+def Felicitous (σ : Structure) (e : Evidence) : Prop :=
+  (s.DemandsPrecision → e = .explicit) ∧ ¬ s.AsksHolder ∧
+    (σ = .abstract → e = .inferred ∧ s.Contradicts)
 
-/-- The four conditions reproduce the paper's judgment on every row, each condition failing on
-its own row. -/
-theorem paradigm_licensed_iff : ∀ r ∈ paradigm, r.move.Licensed ↔ r.judgment = .acceptable := by
+instance (σ : Structure) (e : Evidence) : Decidable (s.Felicitous σ e) := by
+  unfold Felicitous; infer_instance
+
+/-- A structure is felicitous in the context of a row, with the evidence it records or, for an
+example judged out of context, with some evidence. -/
+def FelicitousIn (σ : Structure) : Option Evidence → Prop
+  | some e => s.Felicitous σ e
+  | none => ∃ e, s.Felicitous σ e
+
+instance (σ : Structure) (c : Option Evidence) : Decidable (s.FelicitousIn σ c) := by
+  cases c <;> unfold FelicitousIn <;> infer_instance
+
+/-- In a context a structure has the grade of its derivation when it is felicitous there, and
+`contextual` when it is felicitous only elsewhere. -/
+def gradeIn (σ : Structure) (c : Option Evidence) : Grade :=
+  if s.FelicitousIn σ c then s.grade σ
+  else if s.grade σ ≠ .out ∧ ∃ e, s.Felicitous σ e then .contextual else .out
+
+/-- The grade of the best derivation in a context. -/
+def verdict (c : Option Evidence) : Grade := max (s.gradeIn .plain c) (s.gradeIn .abstract c)
+
+/-! ### The semantic conditions -/
+
+variable {s}
+
+/-- Denying the comparison agrees with the belief that *non₂* presupposes, so *non₂* does not
+follow a negated matrix (18), (20); not a surface constraint, since it does after the matrix of an
+indirect question (89). -/
+theorem not_contradicts_of_negative (hf : s.force = .declarative)
+    (hc : s.construction ≠ .indirectQuestion) (hm : s.matrix = .negative) : ¬ s.Contradicts := by
+  simp [Contradicts, hf, hc, hm]
+
+/-- A question contradicts the belief of anyone but the listener it asks (10)–(14). -/
+theorem contradicts_iff_of_interrogative (hf : s.force = .interrogative) :
+    s.Contradicts ↔ s.holder ≠ .addressee := by
+  simp [Contradicts, hf]
+
+/-- Precision needs a stated belief and *non₂* an inferred one, so no context makes the abstract
+structure felicitous in a sentence that demands precision: the comparative of equality excludes
+*non₂* through precision, not, as [seuren-1969] and [antinucci-puglielli-1971] have it, through
+linking like things, since a negated equality (25) excludes it too. -/
+theorem not_felicitous_abstract_of_demandsPrecision (h : s.DemandsPrecision) (e : Evidence) :
+    ¬ s.Felicitous .abstract e := fun ⟨hp, _, ha⟩ ↦ by
+  simpa [hp h] using (ha rfl).1
+
+/-- *Affatto* is out in every *non₂*-comparative, its polarity requirement met by the negation of
+the clause: it demands the precise knowledge of the listener's belief that *non₂* denies
+(footnote 13). -/
+theorem not_felicitous_abstract_of_affatto (h : .affatto ∈ s.elements) (e : Evidence) :
+    ¬ s.Felicitous .abstract e :=
+  not_felicitous_abstract_of_demandsPrecision (.inr ⟨_, h, trivial⟩) e
+
+/-! ### The syntactic diagnostics -/
+
+/-- *Che* introduces a comparative clause only under the abstract structure (§3.24). -/
+theorem plainGrade_eq_out_of_che (h : s.complementizer = .che) : s.plainGrade = .out := by
+  simp [plainGrade, h]
+
+/-- The clitic *lo* stands for the predicate only under the abstract structure (79). -/
+theorem plainGrade_eq_out_of_lo (h : s.predicate = some .lo) : s.plainGrade = .out := by
+  simp [plainGrade, h]
+
+/-- A predicate after *che* is out, since *che* blocks *quanto* (80b), (81), (82c). -/
+theorem abstractGrade_eq_out_of_che (h : s.complementizer = .che) (hp : s.predicate.isSome) :
+    s.abstractGrade = .out := by
+  simp [abstractGrade, h, hp]
+
+/-- *Pur* and *neanche* are polarity items in the fragment, so a plain comparative clause, which
+nothing negates, excludes them (48a), (52a). -/
+theorem plainGrade_eq_out_of_npi {e : Element} (he : e ∈ s.elements) (hn : e.IsNPI)
+    (hs : s.negation = .none) : s.plainGrade = .out := by
+  rw [plainGrade, ite_eq_right_iff]
+  rintro ⟨-, -, -, -, h, -⟩
+  exact absurd (h e he hn) (by simp [hs])
+
+end Sentence
+
+/-! ### The rows -/
+
+/-- The sentence a row records. -/
+def sentence? (d : Datum) : Option Sentence := do
+  let moods := [("indicative", Mood.Grammatical.indicative), ("subjunctive", .subjunctive)]
+  let force ← d.parse? "force"
+    [("declarative", Force.declarative), ("interrogative", .interrogative)]
+  let matrix ← d.parse? "matrix" [("positive", Polarity.positive), ("negative", .negative)]
+  let construction ← d.parse? "construction" [("piu", Construction.inequality),
+    ("meno", .inequality), ("tanto", .equality), ("indirectQuestion", .indirectQuestion)]
+  let holder ← d.parse? "holder" [("addressee", Holder.addressee),
+    ("formerAddressee", .formerAddressee), ("thirdParty", .thirdParty)]
+  let negation ← d.parse? "negation" [("none", Negation.none), ("non1", .non₁), ("non2", .non₂)]
+  let mood ← d.parse? "mood" moods
+  let complementizer ← d.parse? "complementizer"
+    [("quanto", Complementizer.quanto), ("che", .che), ("se", .se)]
+  let elements ← (d.features "element").mapM fun v ↦ List.lookup v
+    [("pur", Element.pur), ("neanche", .neanche), ("affatto", .affatto),
+      ("degreeModifier", .degreeModifier), ("certainty", .certainty),
+      ("speakerGerund", .speakerGerund)]
+  return { force, matrix, construction, holder, negation, mood, complementizer, elements
+           standard := d.parse? "standard" [("clausal", Standard.clausal), ("belief", .belief)]
+           plainMood := (d.parse? "plainMood" moods).getD .indicative
+           predicate := d.parse? "predicate" [("adjective", Predicate.adjective), ("lo", .lo)] }
+
+/-- The evidence a row records, for an example judged in a context. -/
+def evidence? (d : Datum) : Option Evidence :=
+  d.parse? "evidence" [("none", Evidence.none), ("inferred", .inferred), ("explicit", .explicit)]
+
+/-- The analysis allows the judgment of every row. -/
+theorem rows_judgment : ∀ d ∈ Examples.all,
+    ∃ s ∈ sentence? d, d.judgment ∈ (s.verdict (evidence? d)).judgments := by
   decide
 
-/-! ### Morphosyntactic diagnostics for underlying negation
-
-Two diagnostics are forced choices in the *than*-clause, mood and the specificity of indefinites;
-four are admissibility asymmetries, in which the marked alternant (the complementizer *che*, the
-predicative clitic *lo*, *neanche*-conjunction, the weak NPI *pur*) is possible only under
-licensed *non₂* while the default (*di quanto*, a repeated predicate, plain conjunction) remains
-available throughout. -/
-
-/-- Specificity of indefinites embedded in the *than*-clause. -/
-inductive SpecificityProfile where
-  /-- Both specific and non-specific readings are available. -/
-  | unrestricted
-  /-- Only the non-specific reading, under the scope of underlying negation. -/
-  | nonspecificOnly
+/-- The readings of an indefinite in the embedded clause. -/
+inductive Specificity where
+  | specific
+  | nonspecific
   deriving DecidableEq, Repr
 
-/-- The Italian comparative complementizers. -/
-inductive Complementizer where
-  /-- The default *than*-complementizer. -/
-  | diQuanto
-  /-- The alternant admissible only under *non₂*. -/
-  | che
-  deriving DecidableEq, Repr
+/-- The plain structure leaves an indefinite both readings and the negated clause of the abstract
+one only the non-specific reading, as in a negated sentence (44)–(45). -/
+def Structure.Allows : Structure → Specificity → Prop
+  | .plain, _ => True
+  | .abstract, r => r = .nonspecific
 
-/-- Whether the predicative clitic *lo* substitutes for a repeated predicate adjective in the
-*than*-clause. -/
-inductive Clitic where
-  | present
-  | absent
-  deriving DecidableEq, Repr
+instance (σ : Structure) : DecidablePred σ.Allows := fun r ↦ by
+  cases σ <;> unfold Structure.Allows <;> infer_instance
 
-/-- Mood of the *than*-clause: subjunctive exactly under licensed *non₂*, the paper's optional
-deletion of *non₂* deriving surface subjunctive without *non*; lexical mood control by *credere*
-and its kin is abstracted away. -/
-def predictedMood (m : Move) : Grammatical := if m.Licensed then .subjunctive else .indicative
-
-/-- Embedded indefinites are restricted to the non-specific reading under licensed *non₂*. -/
-def predictedSpecificity (m : Move) : SpecificityProfile :=
-  if m.Licensed then .nonspecificOnly else .unrestricted
-
-/-- *Di quanto* occurs with and without *non₂*; *che* only with it. -/
-def ComplementizerAdmissible (m : Move) : Complementizer → Prop
-  | .diQuanto => True
-  | .che => m.Licensed
-
-/-- A clitic-less comparative is always available; *lo* only under *non₂*, and optionally. -/
-def CliticAdmissible (m : Move) : Clitic → Prop
-  | .present => m.Licensed
-  | .absent => True
-
-/-- An item that needs its clause negated at some level, *neanche* in a conjunction or the NPI
-*pur*, is admissible in a comparative iff *non₂* is licensed there; the negation requirement is
-the item's Fragment entry. -/
-def NegationAdmissible (m : Move) (e : PolarityItem) : Prop :=
-  m.Licensed ∧ .negation ∈ e.licensingContexts
-
-/-- *Affatto* 'at all' needs its clause negated and requires precise knowledge of the listener's
-belief, which a belief only inferred from the listener's discourse does not give. -/
-def AffattoAdmissible (m : Move) : Prop :=
-  NegationAdmissible m affatto ∧ m.priorBelief ≠ .inferred
-
-/-- *Neanche*-conjunction is admissible in the chess dialogue. -/
-theorem neanche_admissible : NegationAdmissible chessContext.move neanche :=
-  ⟨by decide, by simp [neanche]⟩
-
-/-- *Pur* is admissible wherever *non₂* is licensed. -/
-theorem pur_admissible {m : Move} (h : m.Licensed) : NegationAdmissible m pur :=
-  ⟨h, by simp [pur]⟩
-
-/-- *Affatto* meets the negation requirement wherever *non₂* is licensed, like *pur*. -/
-theorem negationAdmissible_affatto {m : Move} (h : m.Licensed) :
-    NegationAdmissible m affatto :=
-  ⟨h, by simp [affatto]⟩
-
-/-- *Affatto* is inadmissible in every *non₂*-comparative: *non₂* requires inferred and imprecise
-knowledge of the listener's belief, *affatto* precise knowledge. -/
-theorem affatto_blocked (m : Move) : ¬ AffattoAdmissible m :=
-  fun ⟨⟨h, _⟩, h'⟩ ↦ h' h.1
+/-- A reading of the second indefinite is acceptable exactly when a structure deriving the
+sentence allows it (45), (62); the paper leaves open whether surface or underlying negation
+decides it. -/
+theorem rows_readings : ∀ d ∈ Examples.all, ∀ s ∈ sentence? d, ∀ x ∈ d.readings,
+    ∀ r ∈ [("specific", Specificity.specific), ("nonspecific", .nonspecific)].lookup x.1,
+      (x.2 = .acceptable ↔ ∃ σ : Structure, s.grade σ ≠ .out ∧ σ.Allows r) := by
+  decide
 
 end NapoliNespor1976
