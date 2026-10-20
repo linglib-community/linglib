@@ -94,10 +94,10 @@ def Predicted (v : Verb) (s : NominalSort) (c : Complementizer) : Prop :=
 instance (v : Verb) (s : NominalSort) (c : Complementizer) : Decidable (Predicted v s c) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The sample verbs with the sort of noun each verbalizes (§3.2: saying, belief, and knowledge
-verbs are content-denoting like *rumor*, emotive factives situation-denoting like *sadness*),
-keyed as in the example rows; *thimame* splits into its attitude and perception senses
-(fn. 16), and *simveni* 'happen' is a situation verb (fn. 14). -/
+/-- The sample verbs with the sort of noun each verbalizes (§3.2, where saying, belief, and
+knowledge verbs are content-denoting like *rumor*, emotive factives situation-denoting like
+*sadness*), keyed as in the example rows; *thimame* splits into its attitude and perception
+senses (fn. 16), and *simveni* 'happen' is a situation verb (fn. 14). -/
 def lexicon : List (String × Verb × NominalSort) :=
   [("leo", leo, .content), ("pistevo", pistevo, .content), ("ksero", ksero, .content),
     ("katalaveno", katalaveno, .content), ("sinidhitopio", sinidhitopio, .content),
@@ -117,7 +117,7 @@ predicted from the verb's sort and Vendler class — including *simveni*, which 
 fits (fn. 14). -/
 theorem rows_track_selection :
     ∀ r ∈ Examples.all, r.feature? "confound" = none →
-      ∀ e ∈ ((r.feature? "verb").bind fun name => lexicon.lookup name).toList,
+      ∀ e ∈ ((r.feature? "verb").bind fun name ↦ lexicon.lookup name).toList,
         ∀ c ∈ ((r.feature? "complementizer").bind Complementizer.ofString?).toList,
           (r.judgment = .acceptable ↔ Predicted e.1 e.2 c) := by
   decide +kernel
@@ -158,8 +158,8 @@ inductive ClausePosition
   | pComplement
   deriving DecidableEq
 
-/-- The nearest potential host from each position: the aspectual v from the complement
-position (before any movement to subject), T from Spec,vP, P after a preposition. -/
+/-- The nearest potential host of a position is the aspectual v for the complement position
+(before any movement to subject), T for Spec,vP, and P after a preposition. -/
 def ClausePosition.nearestHost : ClausePosition → NounHost
   | .internalArgument => .vLex
   | .derivedSubject => .vLex
@@ -169,7 +169,7 @@ def ClausePosition.nearestHost : ClausePosition → NounHost
 /-- A bare clause is licensed where its nearest host licenses incorporation. -/
 def licensedIn (pos : ClausePosition) : Prop := pos.nearestHost.licenses
 
-instance : DecidablePred licensedIn := fun pos =>
+instance : DecidablePred licensedIn := fun pos ↦
   inferInstanceAs (Decidable pos.nearestHost.licenses)
 
 def ClausePosition.ofString? : String → Option ClausePosition
@@ -195,8 +195,8 @@ def NominalSort.ofString? : String → Option NominalSort
   | "situation" => some .situation
   | _ => none
 
-/-- The sort diagnostics on nouns and nominalized verbs: truth predicates accept content and
-reject situations, occurrence predicates the reverse ((33)–(34), (36)–(37)). -/
+/-- On nouns and nominalized verbs, truth predicates accept content and reject situations, and
+occurrence predicates do the reverse ((33)–(34), (36)–(37)). -/
 theorem rows_sort_diagnostics :
     ∀ r ∈ Examples.all, ∀ s ∈ ((r.feature? "nounSort").bind NominalSort.ofString?).toList,
       (r.feature? "diagnostic" = some "truth-predicates" →
@@ -207,7 +207,7 @@ theorem rows_sort_diagnostics :
 
 /-- The situation-sorted complementizer is the lexically factive one. -/
 theorem situation_clause_factive :
-    ∀ c ∈ complementizers, clauseSort c = some .situation → c.factive = some true := by
+    ∀ c ∈ complementizers, clauseSort c = some .situation → c.factive = true := by
   decide
 
 /-- *oti* and *pu* are distinct lexical items here (content vs situation) as in

@@ -85,7 +85,7 @@ def profile (c : Complementizer) : Option Spec :=
 one factive one, the factive reading of an *oti*-clause being the verb's. -/
 theorem factive_iff_definite :
     ∀ c ∈ complementizers,
-      (c.factive = some true ↔ profile c = some (.outside .definite)) := by
+      (c.factive = true ↔ profile c = some (.outside .definite)) := by
   decide
 
 /-! ### The denotations -/
