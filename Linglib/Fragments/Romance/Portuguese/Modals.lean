@@ -17,7 +17,7 @@ reads, the matter of `Studies/Ferreira2023.lean`.
 
 ## Main definitions
 
-* `Portuguese.Modals.poder`, `Portuguese.Modals.dever`, `Portuguese.Modals.terQue`: the present
+* `Portuguese.Modals.pode`, `Portuguese.Modals.deve`, `Portuguese.Modals.temQue`: the present
   forms.
 * `Portuguese.Modals.podia`, `Portuguese.Modals.devia`, `Portuguese.Modals.tinhaQue`: the past
   imperfect forms.
@@ -32,45 +32,57 @@ reads, the matter of `Studies/Ferreira2023.lean`.
 namespace Portuguese.Modals
 
 open Modality
+open Morphology (Features)
+
+/-- The features of a present form of the third person singular. -/
+def present : Features :=
+  Features.of (person := some .third) (number := some .singular) (verbForm := some .Fin)
+    (tense := some .Pres) (mood := some .Ind)
+
+/-- The features of a past imperfect form of the first or the third person singular, which
+share the form. -/
+def imperfect : Features :=
+  Features.of (number := some .singular) (verbForm := some .Fin) (tense := some .Imp)
+    (mood := some .Ind)
 
 /-! ### Present -/
 
 /-- *pode* 'can, may', the present possibility modal. -/
-def poder : Auxiliary where
+def pode : ModalAuxiliary where
   form := "pode"
-  modality := {.possibility} ×ˢ Finset.univ
-  features := Morphology.Features.of (tense := some .Pres)
+  meaning := {.possibility} ×ˢ Finset.univ
+  features := present
 
 /-- *deve* 'ought, should', the present weak necessity modal. -/
-def dever : Auxiliary where
+def deve : ModalAuxiliary where
   form := "deve"
-  modality := {.weakNecessity} ×ˢ Finset.univ
-  features := Morphology.Features.of (tense := some .Pres)
+  meaning := {.weakNecessity} ×ˢ Finset.univ
+  features := present
 
 /-- *tem que* 'must, have to', the present strong necessity modal. -/
-def terQue : Auxiliary where
+def temQue : ModalAuxiliary where
   form := "tem que"
-  modality := {.necessity} ×ˢ Finset.univ
-  features := Morphology.Features.of (tense := some .Pres)
+  meaning := {.necessity} ×ˢ Finset.univ
+  features := present
 
 /-! ### Past imperfect -/
 
 /-- *podia* 'could, might', the past imperfect possibility modal. -/
-def podia : Auxiliary where
+def podia : ModalAuxiliary where
   form := "podia"
-  modality := {.possibility} ×ˢ Finset.univ
-  features := Morphology.Features.of (tense := some .Imp)
+  meaning := {.possibility} ×ˢ Finset.univ
+  features := imperfect
 
 /-- *devia* 'ought', the past imperfect weak necessity modal. -/
-def devia : Auxiliary where
+def devia : ModalAuxiliary where
   form := "devia"
-  modality := {.weakNecessity} ×ˢ Finset.univ
-  features := Morphology.Features.of (tense := some .Imp)
+  meaning := {.weakNecessity} ×ˢ Finset.univ
+  features := imperfect
 
 /-- *tinha que* 'had to', the past imperfect strong necessity modal. -/
-def tinhaQue : Auxiliary where
+def tinhaQue : ModalAuxiliary where
   form := "tinha que"
-  modality := {.necessity} ×ˢ Finset.univ
-  features := Morphology.Features.of (tense := some .Imp)
+  meaning := {.necessity} ×ˢ Finset.univ
+  features := imperfect
 
 end Portuguese.Modals

@@ -252,7 +252,7 @@ def ModalVerb.threshold (Θ : Thresholds) : ModalVerb → ℝ≥0∞
   | .must => Θ.must
 
 /-- The English auxiliary of each modal verb. -/
-def ModalVerb.aux : ModalVerb → Auxiliary
+def ModalVerb.aux : ModalVerb → ModalAuxiliary
   | .could => English.Auxiliaries.could
   | .might => English.Auxiliaries.might
   | .may => English.Auxiliaries.may
@@ -260,7 +260,7 @@ def ModalVerb.aux : ModalVerb → Auxiliary
   | .must => English.Auxiliaries.must
 
 /-- The epistemic forces of each modal verb, read off the fragment. -/
-def ModalVerb.forces (v : ModalVerb) : Finset ModalForce := v.aux.toModalItem.forcesOf .epistemic
+def ModalVerb.forces (v : ModalVerb) : Finset ModalForce := v.aux.forcesOf .epistemic
 
 theorem forces_might : ModalVerb.might.forces = {.possibility} := by decide
 

@@ -137,7 +137,7 @@ abbrev ForceFlavor.flavor : ForceFlavor → ModalFlavor := Prod.snd
 /-! ### Modal items -/
 
 /-- A modal item is the shared core of an expression carrying modal meaning, which
-`Auxiliary.toModalItem` projects onto and which a modal adverb's entry instantiates directly. -/
+`ModalAuxiliary` extends and which a modal adverb's entry instantiates directly. -/
 structure ModalItem where
   form : String
   /-- The force-flavor pairs the item can express, in an upward-entailing context, or, for an

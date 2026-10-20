@@ -8,28 +8,28 @@ public import Linglib.Data.Examples.CiardelliGuerrini2026
 /-!
 # Ciardelli and Guerrini (2026): Against wide scope free choice
 
-This file formalizes the reductionist thesis of [ciardelli-guerrini-2026]: the free-choice
+This file formalizes the reductionist thesis of Ciardelli and Guerrini (2026): the free-choice
 reading of *you may A or you may B* arises from the narrow-scope LF ◇(A ∨ B), the reading of
-the wide-scope ◇A ∨ ◇B being the ignorance one ([fusco-2019]). Possibility distributes over
+the wide-scope ◇A ∨ ◇B being the ignorance one (Fusco 2019). Possibility distributes over
 disjunction, so the two LFs coincide in truth conditions there, and the ambiguity shows where
 they differ: *you must A or you must B* has a reading as one disjunctive obligation □(A ∨ B),
 strictly weaker than □A ∨ □B, and *you may A and you may B* one as a conjunctive permission
 ◇(A ∧ B), strictly stronger than ◇A ∧ ◇B. The narrow LF arises by modal concord
-([zeijlstra-2007]): a modal auxiliary carries an uninterpretable modal feature, and one silent
+(Zeijlstra 2007): a modal auxiliary carries an uninterpretable modal feature, and one silent
 interpretable operator above the coordination checks both auxiliaries' features when they fall
 in one concord class. Non-auxiliary modals carry interpretable features and cannot be checked,
 which is why *it's ok for John to sing or it's ok for John to dance* has no free choice
-([meyer-sauerland-2017]), while *may* and *can* share their feature and mix
-([alonso-ovalle-2006]). Across negation concord needs dual forces ([grosz-2010],
-[anand-brasoveanu-2010]), negation flipping the force of the feature it scopes over, so *I need
-not cook and I need not clean* conveys a permission to do neither and not an obligation. The
+(Meyer and Sauerland 2017), while *may* and *can* share their feature and mix
+(Alonso-Ovalle 2006). Across negation concord needs dual forces (Grosz 2010, Anand and
+Brasoveanu 2010), negation flipping the force of the feature it scopes over, so *I need not cook
+and I need not clean* conveys a permission to do neither and not an obligation. The
 modal features come from the English auxiliary Fragment, and the paper's coordination and
 concord examples are rows.
 
 ## Implementation notes
 
 The argument against across-the-board movement from *everyone sang or everyone danced*
-([simons-2005]) has no movement substrate here, and the cases the paper leaves open, *it is
+(Simons 2005) has no movement substrate here, and the cases the paper leaves open, *it is
 possible that A or it is possible that B* and conjoined *be allowed*, are not rows.
 
 ## References
@@ -69,7 +69,7 @@ theorem exists_not_poss_union_subset_inter :
     ∃ A B : Set Bool,
       ¬ universalAccess.preimage A ∪ universalAccess.preimage B ⊆
         universalAccess.preimage A ∩ universalAccess.preimage B :=
-  ⟨Set.univ, ∅, λ h => by simpa using (@h true (by simp)).2⟩
+  ⟨Set.univ, ∅, fun h ↦ by simpa using (@h true (by simp)).2⟩
 
 /-- Must-or-must, (5): the narrow-scope disjunctive obligation follows from the wide-scope
 disjunction of obligations. -/
@@ -79,7 +79,7 @@ theorem nec_union_subset_nec_union : R.core A ∪ R.core B ⊆ R.core (A ∪ B) 
 theorem exists_not_nec_union_subset :
     ∃ A B : Set Bool,
       ¬ universalAccess.core (A ∪ B) ⊆ universalAccess.core A ∪ universalAccess.core B :=
-  ⟨{true}, {false}, λ h => by
+  ⟨{true}, {false}, fun h ↦ by
     simpa [Bool.forall_bool] using @h true (by simp)⟩
 
 /-- May-and-may, (7): the narrow-scope conjunctive permission entails the wide-scope
@@ -93,7 +93,7 @@ theorem exists_not_poss_inter_subset :
     ∃ A B : Set Bool,
       ¬ universalAccess.preimage A ∩ universalAccess.preimage B ⊆
         universalAccess.preimage (A ∩ B) :=
-  ⟨{true}, {false}, λ h => by simpa using @h true (by simp)⟩
+  ⟨{true}, {false}, fun h ↦ by simpa using @h true (by simp)⟩
 
 end Scope
 
@@ -120,7 +120,7 @@ def ModalFeature.Checks (checker checked : ModalFeature) : Prop :=
     (checker.force.IsUniversal ↔ checked.force.IsUniversal)
 
 instance : DecidableRel ModalFeature.Checks :=
-  λ _ _ => inferInstanceAs (Decidable (_ ∧ _ ∧ (_ ↔ _)))
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ (_ ↔ _)))
 
 /-- The feature of a negated constituent: negation flips the force of the feature it scopes
 over, so concord across negation checks the negated feature (§4.2, footnote 7, after
@@ -137,8 +137,8 @@ theorem ModalFeature.checks_negated_iff {checker checked : ModalFeature}
 
 /-- The features of a modal auxiliary of the Fragment: the forces of its meanings, uninterpretable,
 Zeijlstra's generalization that auxiliaries contribute no operator. -/
-def auxiliaryFeatures (a : Auxiliary) : Finset ModalFeature :=
-  a.toModalItem.forces.image (⟨·, .uninterpretable⟩)
+def auxiliaryFeatures (a : ModalAuxiliary) : Finset ModalFeature :=
+  a.forces.image (⟨·, .uninterpretable⟩)
 
 /-! ### Modal concord (§3) -/
 
@@ -149,7 +149,7 @@ def Concord (f₁ f₂ : ModalFeature) : Prop :=
   f₁.interp = .uninterpretable ∧ f₂.interp = .uninterpretable ∧
     (f₁.force.IsUniversal ↔ f₂.force.IsUniversal)
 
-instance : DecidableRel Concord := λ _ _ => inferInstanceAs (Decidable (_ ∧ _ ∧ (_ ↔ _)))
+instance : DecidableRel Concord := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ (_ ↔ _)))
 
 /-- The silent operator: an interpretable feature of the shared class checks both features. -/
 theorem exists_checks_of_concord {f₁ f₂ : ModalFeature} (h : Concord f₁ f₂) :

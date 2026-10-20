@@ -6,7 +6,7 @@ public import Linglib.Syntax.Category.Auxiliary.Basic
 /-!
 # German modal verbs
 
-This file defines the German modal verbs as auxiliaries cited by their infinitives: *dürfen*,
+This file defines the German modal verbs as auxiliaries, entered by their infinitives: *dürfen*,
 *können*, *mögen*, *müssen*, *sollen* and *wollen*, and the Konjunktiv II *sollte*. On Kratzer's
 analysis a modal has a fixed force and a flavor that the context supplies, so that its meanings
 are the products of its force with a set of flavors, and Steinert-Threlkeld, Imel and Guo give
@@ -37,49 +37,62 @@ not a sense of *dürfen*.
 
 namespace German.Modals
 
+open Morphology (Features)
+
+/-- The features of an infinitive, the form an entry cites. -/
+def infinitive : Features := Features.of (verbForm := some .Inf)
+
 /-- *dürfen* 'may, be allowed to' is a deontic possibility modal. -/
-def duerfen : Auxiliary where
+def duerfen : ModalAuxiliary where
   form := "dürfen"
-  modality := {.possibility} ×ˢ {.deontic}
+  features := infinitive
+  meaning := {.possibility} ×ˢ {.deontic}
 
 /-- *können* 'can' is a possibility modal of ability, of epistemic possibility and, colloquially,
 of permission. -/
-def koennen : Auxiliary where
+def koennen : ModalAuxiliary where
   form := "können"
-  modality := {.possibility} ×ˢ {.circumstantial, .epistemic, .deontic}
+  features := infinitive
+  meaning := {.possibility} ×ˢ {.circumstantial, .epistemic, .deontic}
 
 /-- *mögen* 'may' is an epistemic possibility modal. -/
-def moegen : Auxiliary where
+def moegen : ModalAuxiliary where
   form := "mögen"
-  modality := {.possibility} ×ˢ {.epistemic}
+  features := infinitive
+  meaning := {.possibility} ×ˢ {.epistemic}
 
 /-- *müssen* 'must, have to' is a necessity modal of obligation and of logical deduction. -/
-def muessen : Auxiliary where
+def muessen : ModalAuxiliary where
   form := "müssen"
-  modality := {.necessity} ×ˢ {.deontic, .epistemic}
+  features := infinitive
+  meaning := {.necessity} ×ˢ {.deontic, .epistemic}
 
 /-- *sollen* 'be supposed to' is a deontic necessity modal. -/
-def sollen : Auxiliary where
+def sollen : ModalAuxiliary where
   form := "sollen"
-  modality := {.necessity} ×ˢ {.deontic}
+  features := infinitive
+  meaning := {.necessity} ×ˢ {.deontic}
 
 /-- *wollen* 'want to' is a bouletic necessity modal. -/
-def wollen : Auxiliary where
+def wollen : ModalAuxiliary where
   form := "wollen"
-  modality := {.necessity} ×ˢ {.bouletic}
+  features := infinitive
+  meaning := {.necessity} ×ˢ {.bouletic}
 
 /-- *sollte* 'should, ought to', the Konjunktiv II of *sollen*, is a weak necessity modal of
 obligation and of logical probability. -/
-def sollte : Auxiliary where
+def sollte : ModalAuxiliary where
   form := "sollte"
-  modality := {.weakNecessity} ×ˢ {.deontic, .epistemic}
+  features := Features.of (number := some .singular) (verbForm := some .Fin)
+    (tense := some .Past) (mood := some .Sub)
+  meaning := {.weakNecessity} ×ˢ {.deontic, .epistemic}
 
 /-- The modal verbs. -/
-def allModals : List Auxiliary := [duerfen, koennen, moegen, muessen, sollen, wollen, sollte]
+def allModals : List ModalAuxiliary := [duerfen, koennen, moegen, muessen, sollen, wollen, sollte]
 
 /-- *sollte* has the flavors of *sollen* and the epistemic one besides. -/
 theorem sollen_flavors_ssubset_sollte :
-    sollen.toModalItem.flavors ⊂ sollte.toModalItem.flavors := by
+    sollen.flavors ⊂ sollte.flavors := by
   decide
 
 end German.Modals

@@ -8,10 +8,10 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Rubinstein (2014): On Necessity and Comparison
 
-This file formalizes [rubinstein-2014]'s account of weak necessity as comparison. Following
-[sloman-1970], the priorities of [kratzer-1981]'s ordering source are split by negotiability
+This file formalizes Rubinstein's account of weak necessity as comparison. Following
+Sloman (1970), the priorities of Kratzer's ordering source are split by negotiability
 ((48)–(49)): the priorities every participant is committed to are promoted to the modal base and,
-with the circumstances, delimit the favored worlds through [frank-1996]'s compatibility-restricted
+with the circumstances, delimit the favored worlds through Frank's compatibility-restricted
 union ((39)–(40)), while the negotiable priorities an opinionated assessor promotes remain an
 ordering source. Strong necessity is simple necessity over the favored worlds (41), weak
 necessity is human necessity over them under the negotiable ordering (42), and the ordering
@@ -19,7 +19,7 @@ source of a weak necessity presupposes negotiability (50). The tax-report dialog
 from *should* to *have to* as an ideal stops being negotiable ((46), (51)), and neg-raising
 follows from the choice between a negotiable ideal and its negation (§3.4.2). Weak necessity
 modals form a natural class with the evaluative comparatives *good*, *better*, *preferable* and
-*worthwhile*, diagnosed by the strength tests of §2.1 and by neg-raising after [horn-1978], and
+*worthwhile*, diagnosed by the strength tests of §2.1 and by neg-raising after Horn (1978), and
 Hebrew reaches weak necessity through the comparatives alone.
 
 ## Main definitions
@@ -35,7 +35,7 @@ Hebrew reaches weak necessity through the comparatives alone.
 * `favoredWorlds_eq_bestWorlds`: Frank's compatibility-restricted union is Kratzer's best worlds
   under the promoted priorities, a best world being one whose verified priorities form a maximal
   consistent set (`verified_mem_extensions`, `mem_bestWorlds_of_extension`), so the two
-  necessities are [von-fintel-iatridou-2008]'s strong and weak necessity with the split ordering
+  necessities are von Fintel and Iatridou's strong and weak necessity with the split ordering
   source (`strongNecessity_iff`, `weakNecessity_iff`); the analyses differ only in the
   negotiability presupposition.
 * `tax_shift`: the negotiable ideal makes *should* true and *have to* false, and its endorsement
@@ -52,7 +52,7 @@ Hebrew reaches weak necessity through the comparatives alone.
   negotiable when some participant is not committed to one of its members. The presupposition
   (50) is stated through the negotiability conjuncts of `tax_shift` rather than as a partial
   operator. Backgrounds are relative to worlds, not to the paper's events.
-* The neg-raising rows of [horn-1978] carry Horn's page numbers as their source labels. Narrog's
+* The neg-raising rows of Horn (1978) carry Horn's page numbers as their source labels. Narrog's
   survey (Table 1) and the tentative possibility semantics for *preferable* are not formalized.
 
 ## References
@@ -288,7 +288,7 @@ theorem tax_shift (w : Revenue) :
 
 /-- The English fragment assigns the modal verb weak necessity. -/
 def WeakInFragment (modal : String) : Prop :=
-  ∃ a ∈ English.Auxiliaries.modals, a.form = modal ∧ .weakNecessity ∈ a.toModalItem.forces
+  ∃ a ∈ English.Auxiliaries.modals, a.form = modal ∧ .weakNecessity ∈ a.forces
 
 instance : DecidablePred WeakInFragment := fun _ ↦
   inferInstanceAs (Decidable (∃ a ∈ English.Auxiliaries.modals, _ ∧ _ ∈ _))
