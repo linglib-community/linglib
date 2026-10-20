@@ -47,11 +47,12 @@ superfluous, is dropped by the later geometries formalized here (`Studies/Sagey1
   reaches a manner and a laryngeal feature is the root; `no_spreading_nasal_distributed` (the
   `[αnasal]` variant of (14)), `eq_root_of_continuant_of_voice` (Kikuyu, §5.1) and
   `supralaryngeal_subset_of_anterior_of_continuant` (palatalisation, §5.2) are instances.
-* `rule12_θ`, `rule12_esh`, `rule12_r` — the three rows of table (11): before /θ/, /ʃ/ and /r/
-  the stops /t d n/ take the trigger's place features and nothing else, becoming interdental,
-  postalveolar and retroflex; `rule12_n_p` and `rule12_s_θ` are the non-sites.
+* `naturalClass_rule12_target`, `rule12_θ`, `rule12_esh`, `rule12_r` — the targets of (12) are
+  /t d n/, and the three rows of table (11): before /θ/, /ʃ/ and /r/ they take the trigger's
+  place features and nothing else, becoming interdental, postalveolar and retroflex;
+  `rule12_n_p` and `rule12_s_θ` are the non-sites.
 * `rule14_eq_rule12`, `rule14Nasal_n_θ` — (14) agrees with (12) on table (11), while its
-  `[αnasal]` variant is a rule of the same form that applies.
+  `[αnasal]` variant is a rule of the same form that applies, making /n/ an oral dental.
 * `preaspiration` — spreading the vowel's supralaryngeal node onto the delinked first half
   of an aspirated geminate keeps the stop's laryngeal features ((7)), by the substrate's
   disjointness of sister classes.
@@ -209,11 +210,24 @@ theorem apply_feature (f : Feature) :
     (feature f).apply src tgt = Function.update tgt f (src f) :=
   Finset.piecewise_singleton _ _ _
 
+variable {σ} {f g : Feature} {b c : Node}
+
+/-- A spreading that carries two features hanging from distinct class nodes spreads a node
+dominating both. -/
+theorem exists_eq_node (hf : classNode? f = some b) (hg : classNode? g = some c) (hbc : b ≠ c)
+    (h₁ : f ∈ σ.features) (h₂ : g ∈ σ.features) : ∃ a, σ = .node a ∧ a ≤ b ∧ a ≤ c := by
+  cases σ with
+  | node a => exact ⟨a, rfl, le_of_mem_featureClass h₁ hf, le_of_mem_featureClass h₂ hg⟩
+  | feature f' =>
+    rw [features, Finset.mem_singleton] at h₁ h₂
+    subst h₁ h₂
+    exact absurd (Option.some.inj (hf.symm.trans hg)) hbc
+
 end Spreading
 
 /-! ### Single-node spreading ((5), §3, §5) -/
 
-variable (σ : Spreading) (src tgt : Segment)
+variable {σ : Spreading} {f g : Feature}
 
 /-- Place spreading carries `[anterior]` and `[distributed]` together and leaves `[nasal]`
 alone, so (12) is a single-node rule while the `[αnasal]` variant of (14) is not. -/
@@ -223,41 +237,22 @@ theorem anterior_distributed_subset_place :
 
 theorem nasal_notMem_place : Feature.nasal ∉ featureClass classNode? Node.place := by decide
 
-variable {σ} {f g : Feature}
-
 /-- A spreading that reaches a manner feature and a place feature carries the whole
 supralaryngeal class, the lowest node above both (§3). -/
 theorem supralaryngeal_subset_of_manner_of_place (hf : classNode? f = some .manner)
     (hg : classNode? g = some .place) (h₁ : f ∈ σ.features) (h₂ : g ∈ σ.features) :
     featureClass classNode? Node.supralaryngeal ⊆ σ.features := by
-  cases σ with
-  | node a =>
-    simp only [Spreading.features, mem_featureClass, hf, hg, Option.mem_def,
-      Option.some.injEq, exists_eq_left'] at h₁ h₂
-    exact antitone_featureClass (by revert a; decide)
-  | feature f' =>
-    simp only [Spreading.features, Finset.mem_singleton] at h₁ h₂
-    simp_all
-
-/-- Such a spreading is total supralaryngeal assimilation. -/
-theorem apply_eqOn_supralaryngeal_of_manner_of_place (hf : classNode? f = some .manner)
-    (hg : classNode? g = some .place) (h₁ : f ∈ σ.features) (h₂ : g ∈ σ.features) :
-    Set.EqOn (σ.apply src tgt) src ↑(featureClass classNode? Node.supralaryngeal) :=
-  (σ.apply_eqOn src tgt).mono
-    (Finset.coe_subset.2 (supralaryngeal_subset_of_manner_of_place hf hg h₁ h₂))
+  obtain ⟨a, rfl, ha, ha'⟩ := Spreading.exists_eq_node hf hg (by decide) h₁ h₂
+  clear h₁ h₂
+  exact antitone_featureClass (by revert a; decide)
 
 /-- A spreading that reaches a manner feature and a laryngeal feature is the root's. -/
 theorem eq_root_of_manner_of_laryngeal (hf : classNode? f = some .manner)
     (hg : classNode? g = some .laryngeal) (h₁ : f ∈ σ.features) (h₂ : g ∈ σ.features) :
     σ = .node .root := by
-  cases σ with
-  | node a =>
-    simp only [Spreading.features, mem_featureClass, hf, hg, Option.mem_def,
-      Option.some.injEq, exists_eq_left'] at h₁ h₂
-    exact congrArg _ (by revert a; decide)
-  | feature f' =>
-    simp only [Spreading.features, Finset.mem_singleton] at h₁ h₂
-    simp_all
+  obtain ⟨a, rfl, ha, ha'⟩ := Spreading.exists_eq_node hf hg (by decide) h₁ h₂
+  clear h₁ h₂
+  exact congrArg _ (by revert a; decide)
 
 /-- No spreading carries exactly `[nasal]` and `[distributed]`, the set the `[αnasal]` variant of
 (14) copies (§3). -/
@@ -284,8 +279,8 @@ theorem supralaryngeal_subset_of_anterior_of_continuant (h₁ : Feature.anterior
 
 /-! ### English coronal place assimilation ((10)–(14)) -/
 
-/-- In rule (12) as a local rewrite rule, a `[−continuant, +coronal, +anterior]` target, one
-of /t d n/, takes the place node of a following `[+consonantal, +coronal]` segment. -/
+/-- In rule (12) as a local rewrite rule, a `[−continuant, +coronal, +anterior]` target takes
+the place node of a following `[+consonantal, +coronal]` segment. -/
 def rule12 : Rule where
   target := Segment.ofSpecs [(.continuant, false), (.coronal, true), (.anterior, true)]
   effect := .copyRight (Spreading.node .place).features
@@ -306,21 +301,27 @@ def rule14Nasal : Rule := { rule14 with effect := .copyRight {Feature.nasal, Fea
 as the trigger of (12) in table (11). -/
 def r : Segment := (turnedR.setFeature .distributed false).setFeature .consonantal true
 
+/-- The targets of (12) among the English phonemes are the stops /t d n/. -/
+theorem naturalClass_rule12_target : rule12.target.naturalClass inventory = {t, d, n} := by
+  decide
+
 /-- Before /θ/, in *eighth*, *hundredth* and *tenth*, /t d n/ take `[+distributed]` and nothing
 else, becoming interdental. -/
-theorem rule12_θ : ∀ x ∈ [t, d, n], rule12.apply [x, θ] = [x.setFeature .distributed true, θ] := by
+theorem rule12_θ : ∀ x ∈ rule12.target.naturalClass inventory,
+    rule12.apply [x, θ] = [x.setFeature .distributed true, θ] := by
   decide
 
 /-- Before /ʃ/, as in *each*, *insure* and *hundred shoes*, /t d n/ take `[−anterior,
 +distributed]`, becoming postalveolar; /n/ stays a non-strident nasal, `[strident]` and
 `[nasal]` being manner features. -/
-theorem rule12_esh : ∀ x ∈ [t, d, n],
+theorem rule12_esh : ∀ x ∈ rule12.target.naturalClass inventory,
     rule12.apply [x, esh] = [(x.setFeature .anterior false).setFeature .distributed true, esh] := by
   decide
 
 /-- Before /r/, in *tree*, *dream* and *enrol*, /t d n/ take `[−anterior]`, becoming
 retroflex. -/
-theorem rule12_r : ∀ x ∈ [t, d, n], rule12.apply [x, r] = [x.setFeature .anterior false, r] := by
+theorem rule12_r : ∀ x ∈ rule12.target.naturalClass inventory,
+    rule12.apply [x, r] = [x.setFeature .anterior false, r] := by
   decide
 
 /-- A labial trigger is no site, and *impossible* falls to the separate nasal assimilation
@@ -332,12 +333,16 @@ theorem rule12_s_θ : rule12.apply [s, θ] = [s, θ] := by decide
 
 /-- On table (11), (14) is not distinguishable from (12). -/
 theorem rule14_eq_rule12 :
-    ∀ x ∈ [t, d, n], ∀ y ∈ [θ, esh, r], rule14.apply [x, y] = rule12.apply [x, y] := by
+    ∀ x ∈ rule12.target.naturalClass inventory, ∀ y ∈ [θ, esh, r],
+      rule14.apply [x, y] = rule12.apply [x, y] := by
   decide
 
-/-- The `[αnasal]` variant of (14) is a rule of the same form and applies, though no single
-spreading carries what it copies (`no_spreading_nasal_distributed`). -/
-theorem rule14Nasal_n_θ : rule14Nasal.apply [n, θ] ≠ [n, θ] := by decide
+/-- The `[αnasal]` variant of (14) is a rule of the same form and applies, making /n/ before /θ/
+an oral dental, though no single spreading carries what it copies
+(`no_spreading_nasal_distributed`). -/
+theorem rule14Nasal_n_θ :
+    rule14Nasal.apply [n, θ] = [(n.setFeature .nasal false).setFeature .distributed true, θ] := by
+  decide
 
 /-! ### Supralaryngeal spreading: Icelandic preaspiration ((6)–(7)) -/
 
