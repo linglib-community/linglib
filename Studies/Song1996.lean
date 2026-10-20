@@ -278,25 +278,49 @@ theorem clause_omitted_rows : (∀ fr ∈ Korean.ha.valency.frames, fr.HasClausa
       (e.judgment = .acceptable ↔ e.feature? "construction" = some "purposive") := by
   decide +kernel
 
-/-- The diathesis of `Korean.ha` in a long causative, the first in the PURP causative and the
-second in the complement causative. -/
-def haDiathesis? (e : Datum) : Option (Diathesis Korean.ha.valency.arity) :=
-  (e.parse? "construction" [("PURP causative", 0), ("complement causative", 1)]).bind
-    (Korean.ha.valency.diatheses[·]?)
+/-- The causative (6) and the purposive (7) meet the premises of `clause_omitted_rows`. -/
+example : Examples.ch4_6.feature? "clause" = some "omitted" ∧
+    Examples.ch4_6.feature? "construction" = some "PURP causative" ∧
+    Examples.ch4_7.feature? "clause" = some "omitted" ∧
+    Examples.ch4_7.feature? "construction" = some "purposive" := by
+  decide +kernel
+
+/-- The diathesis of `Korean.ha` that a long causative realizes, by Song's name for the
+construction. -/
+def haDiathesis? (e : Datum) : Option (Diathesis 3) :=
+  e.parse? "construction"
+    [("PURP causative", Korean.purpCausative), ("complement causative", Korean.complementCausative)]
 
 /-- The causee of a long causative is nominative exactly when no participant of *ha-* controls
 the clause of effect. In the PURP causative it is the dative or accusative object of *ha-*
 controlling the clause, in the complement causative the subject of the clause (§4.2 (3), (5),
 (8), (11); §4.6). -/
-theorem causee_rows : Korean.ha.valency.diatheses.map (·.controllerRole) = [some .P, none] ∧
+theorem causee_rows : Korean.ha.valency.diatheses = [Korean.purpCausative,
+      Korean.complementCausative] ∧ Korean.purpCausative.controllerRole = some .P ∧
     ∀ e ∈ Examples.all, ∀ d ∈ haDiathesis? e, ∀ c ∈ e.feature? "causee",
       e.judgment = .acceptable → (c = "NOM" ↔ d.controller = none) := by
+  decide +kernel
+
+/-- The PURP causative (3) and the complement causative (5) meet the premises of `causee_rows`,
+the one with a dative causee and the other with a nominative one. -/
+example : haDiathesis? Examples.ch4_3 = some Korean.purpCausative ∧
+    Examples.ch4_3.feature? "causee" = some "DAT" ∧
+    haDiathesis? Examples.ch4_5 = some Korean.complementCausative ∧
+    Examples.ch4_5.feature? "causee" = some "NOM" := by
   decide +kernel
 
 /-- The subject of a clause of purpose is nominative only (§4.2 (4), (9), (10)). -/
 theorem purposive_subject_rows : ∀ e ∈ Examples.all,
     e.feature? "construction" = some "purposive" → ∀ c ∈ e.feature? "subject",
       (e.judgment = .acceptable ↔ c = "NOM") := by
+  decide +kernel
+
+/-- The purposives (4) and (9) meet the premises of `purposive_subject_rows`, with a nominative
+and an accusative subject. -/
+example : Examples.ch4_4.feature? "construction" = some "purposive" ∧
+    Examples.ch4_4.feature? "subject" = some "NOM" ∧
+    Examples.ch4_9_acc.feature? "construction" = some "purposive" ∧
+    Examples.ch4_9_acc.feature? "subject" = some "ACC" := by
   decide +kernel
 
 /-! ### NP density control and the case hierarchy (chapter 6) -/

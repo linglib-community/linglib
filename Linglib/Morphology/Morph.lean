@@ -42,6 +42,8 @@ side of Haspelmath's form–content pairing, never zero and never discontinuous.
 * `Morph.flatMap_wordsAt`: the words at `.affix` nest in the words at `.clitic`.
 * `Morph.wordsAt_append_cons`: a host with morphs bound before and after it is
   one word.
+* `Morph.wordsAt_append_of_eq_singleton`, `Morph.wordsAt_append`: a word stays one word when
+  morphs bound after it follow, and two sequences unjoined at their junction keep their words.
 * `Morph.countP_le_one_of_mem_wordsAt`: every word has at most one morph that is
   not bound.
 * `Morph.surface_singleton`: a single morph surfaces as itself.
@@ -325,6 +327,30 @@ theorem wordsAt_append_cons {P S : List Morph} (h : Morph)
   | cons p P ih =>
     rw [List.cons_append, List.isChain_cons]
     exact ⟨fun _ _ ↦ decide_eq_true (.inl (hP p (by simp))), ih fun q hq ↦ hP q (by simp [hq])⟩
+
+/-- A word at `l` followed by morphs bound after or inside their hosts, none more loosely than
+`l`, is one word at `l`. -/
+theorem wordsAt_append_of_eq_singleton {ms S : List Morph} (h : wordsAt l ms = [ms])
+    (hS : ∀ s ∈ S, ∃ q ≠ .before, ∃ a ≤ l, s.kind = .bound q a) :
+    wordsAt l (ms ++ S) = [ms ++ S] := by
+  have hn : ms ≠ [] := by rintro rfl; simp at h
+  have hms : ms ∈ wordsAt l ms := h ▸ List.mem_singleton_self ms
+  refine List.splitBy_of_isChain (by simp [hn])
+    (List.isChain_append.2 ⟨List.isChain_of_mem_splitBy hms, ?_, fun _ _ y hy ↦
+      decide_eq_true (.inr (hS y (List.mem_of_mem_head? hy)))⟩)
+  clear h hn hms
+  induction S with
+  | nil => exact .nil
+  | cons s S ih =>
+    rw [List.isChain_cons]
+    exact ⟨fun y hy ↦ decide_eq_true (.inr (hS y (by simp [List.mem_of_mem_head? hy]))),
+      ih fun t ht ↦ hS t (by simp [ht])⟩
+
+/-- Two sequences of morphs whose junction joins no morphs at `l` have the words of each. -/
+theorem wordsAt_append {ms ns : List Morph}
+    (h : ∀ x ∈ ms.getLast?, ∀ y ∈ ns.head?, ¬ JoinsAt l x y) :
+    wordsAt l (ms ++ ns) = wordsAt l ms ++ wordsAt l ns :=
+  List.splitBy_append fun x hx y hy ↦ decide_eq_false (h x hx y hy)
 
 /-- After a morph not bound before its host, a joined run continues with morphs bound after or
 inside their hosts. -/
