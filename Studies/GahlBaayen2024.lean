@@ -6,7 +6,6 @@ public import Linglib.Processing.DiscriminativeLexicon.Training
 public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.LinearAlgebra.Matrix.Notation
-public import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-!
 # Gahl and Baayen (2024): Time and Thyme Again
@@ -23,13 +22,13 @@ examples are.
 
 * `semanticSupportForForm_endstate_time_lt_thyme`, `semanticSupportForFormFIL_thyme_lt_time`:
   practice reverses which homophone's form its meaning supports more.
-* `time_sub_thyme_notMem_ker`: the homophones *time* and *thyme* get distinct predicted forms.
+* `endstate_time_ne_thyme`: the homophones *time* and *thyme* get distinct predicted forms.
 * `not_existsUnique_isELTrained`: regression does not determine the word-to-word map.
 * `diag_W_mem_Icc`: the self-prediction shares of the toy words lie in `[0, 1]`.
 
 ## Implementation notes
 
-* The paper fits only production, so both toy lexicons have the zero comprehension map.
+* The paper fits only the production matrix `G`, so the toy lexicons are their mapping matrices.
 * The paper estimates the corpus-scale word-to-word map with the Rescorla–Wagner rule, which is
   not formalized; `W` is the pseudoinverse solution it uses for the toy corpus.
 
@@ -68,7 +67,7 @@ def triphone : Fin 6 → Augmented Phone :=
 
 /-- Each row of the form matrix `C` of (2) is the word's triphone indicator, the DLM's cue coding
 at width 3. -/
-def toyForms (i : Fin 3) : FormVec 6 := cueVector 3 triphone (word i)
+def toyForms (i : Fin 3) : FormVector 6 := cueVector 3 triphone (word i)
 
 /-- The DLM's cue coding reproduces the form matrix (2). -/
 theorem toyForms_eq :
@@ -101,7 +100,7 @@ def freq : FrequencyVector 3 := ![100, 10, 1]
 /-! The arithmetic of the toy lexicon is decided over `ℚ` and cast into `ℝ`. -/
 
 private def ratC : Matrix (Fin 3) (Fin 6) ℚ :=
-  Matrix.of fun i j => if triphone j ∈ cues 3 (word i) then 1 else 0
+  Matrix.of fun i j ↦ if triphone j ∈ cues 3 (word i) then 1 else 0
 
 private def ratQ : Matrix (Fin 3) (Fin 3) ℚ := diagonal ![100, 10, 1]
 
@@ -130,27 +129,16 @@ private def ratGFIL : Matrix (Fin 2) (Fin 6) ℚ := (16543 : ℚ)⁻¹ •
 
 /-! ### Endstate and frequency-informed learning
 
-The paper fits only the production side of the model. Mapping matrices act on row vectors,
-`ĉ = sG`, so a production map is `toLin' Gᵀ`. -/
+The paper fits only the production side of the model, a mapping matrix acting on row vectors,
+`ĉ = sG`. -/
 
 /-- The endstate mapping `G` of (4) is the closed form `(SᵀS)⁻¹SᵀC` of (A2). -/
 def endstateG : Matrix (Fin 2) (Fin 6) ℝ := (toy.Sᵀ * toy.S)⁻¹ * (toy.Sᵀ * toy.C)
-
-/-- The lexicon at the endstate of learning has the endstate mapping as its production map. -/
-def endstate : Linear ℝ (FormVec 6) (MeaningVec 2) where
-  comprehension := 0
-  production := Matrix.toLin' endstateGᵀ
 
 /-- The frequency-informed mapping is the closed form `(SᵀQS)⁻¹SᵀQC` of the normal equations
 of (A4) at the frequencies `freq`. -/
 def frequencyInformedG : Matrix (Fin 2) (Fin 6) ℝ :=
   (toy.Sᵀ * freq.Q * toy.S)⁻¹ * (toy.Sᵀ * freq.Q * toy.C)
-
-/-- The lexicon after frequency-informed learning has the frequency-informed mapping as its
-production map. -/
-def frequencyInformed : Linear ℝ (FormVec 6) (MeaningVec 2) where
-  comprehension := 0
-  production := Matrix.toLin' frequencyInformedGᵀ
 
 private theorem gramS_mul_inv : toy.Sᵀ * toy.S * ratGramInv.map (Rat.castHom ℝ) = 1 := by
   have h : semanticVectorsᵀ * semanticVectors * ratGramInv = 1 := by decide +kernel
@@ -173,66 +161,63 @@ private theorem frequencyInformedG_eq : frequencyInformedG = ratGFIL.map (Rat.ca
   rw [frequencyInformedG, inv_eq_right_inv gramSQ_mul_inv, toy_S, toy_C, freq_Q,
     ← transpose_map, ← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_mul, h]
 
-theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy := by
-  rw [Linear.IsELTrainedOn, Linear.IsTrainedOn, endstate, Linear.productionMatrix_mk]
-  exact isELTrained_closedForm toy
+theorem endstateG_isELTrained : IsELTrained toy endstateG :=
+  isELTrained_closedForm toy
     ((isUnit_iff_isUnit_det _).2 (isUnit_det_of_right_inverse gramS_mul_inv))
 
-theorem frequencyInformed_isTrainedOn : frequencyInformed.IsTrainedOn toy freq := by
-  rw [Linear.IsTrainedOn, frequencyInformed, Linear.productionMatrix_mk]
-  exact isTrained_closedForm toy freq
+theorem frequencyInformedG_isTrained : IsTrained toy freq frequencyInformedG :=
+  isTrained_closedForm toy freq
     ((isUnit_iff_isUnit_det _).2 (isUnit_det_of_right_inverse gramSQ_mul_inv))
 
 /-! ### Semantic support for form -/
 
 section
 
-variable {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d)) (data : TrainingExperience m n d)
+variable {m n d : ℕ} (G : Matrix (Fin d) (Fin n) ℝ) (data : TrainingExperience m n d)
 
 /-- The support matrix `T = ĈCᵀ` of (A5), with `Ĉ = SG`, tabulates the support each word's form
 (column) receives from each word's meaning (row). -/
-def supportMatrix : Matrix (Fin m) (Fin m) ℝ := data.S * D.productionMatrix * data.Cᵀ
+def supportMatrix : Matrix (Fin m) (Fin m) ℝ := data.S * G * data.Cᵀ
 
 theorem supportMatrix_apply (i k : Fin m) :
-    supportMatrix D data i k = D.semanticSupport (data.S i) (data.C k) := by
-  rw [supportMatrix, mul_apply, Linear.semanticSupport_apply,
-    ← Linear.mul_productionMatrix_apply]
+    supportMatrix G data i k = semanticSupport G (data.S i) (data.C k) := by
+  rw [supportMatrix, mul_apply, semanticSupport_apply, ← mul_apply_eq_vecMul]
   rfl
 
 /-- *Semantic support for form* is the diagonal of `T`, the support a word's form receives from
 its own meaning. -/
-def semanticSupportForForm : Fin m → ℝ := (supportMatrix D data).diag
+def semanticSupportForForm : Fin m → ℝ := (supportMatrix G data).diag
 
 end
 
-private theorem supportMatrix_endstate :
-    supportMatrix endstate toy = (semanticVectors * ratG * ratCᵀ).map (Rat.castHom ℝ) := by
-  rw [supportMatrix, endstate, Linear.productionMatrix_mk, endstateG_eq, toy_S, toy_C,
-    ← transpose_map, ← Matrix.map_mul, ← Matrix.map_mul]
+private theorem supportMatrix_endstateG :
+    supportMatrix endstateG toy = (semanticVectors * ratG * ratCᵀ).map (Rat.castHom ℝ) := by
+  rw [supportMatrix, endstateG_eq, toy_S, toy_C, ← transpose_map, ← Matrix.map_mul,
+    ← Matrix.map_mul]
 
-private theorem supportMatrix_frequencyInformed : supportMatrix frequencyInformed toy =
+private theorem supportMatrix_frequencyInformedG : supportMatrix frequencyInformedG toy =
     (semanticVectors * ratGFIL * ratCᵀ).map (Rat.castHom ℝ) := by
-  rw [supportMatrix, frequencyInformed, Linear.productionMatrix_mk, frequencyInformedG_eq, toy_S,
-    toy_C, ← transpose_map, ← Matrix.map_mul, ← Matrix.map_mul]
+  rw [supportMatrix, frequencyInformedG_eq, toy_S, toy_C, ← transpose_map, ← Matrix.map_mul,
+    ← Matrix.map_mul]
 
 /-- At the endstate *thyme*'s meaning supports its form more than *time*'s does, 4.623 against
 3.455 (Table 1). -/
 theorem semanticSupportForForm_endstate_time_lt_thyme :
-    semanticSupportForForm endstate toy time < semanticSupportForForm endstate toy thyme := by
+    semanticSupportForForm endstateG toy time < semanticSupportForForm endstateG toy thyme := by
   have h : (semanticVectors * ratG * ratCᵀ) time time <
       (semanticVectors * ratG * ratCᵀ) thyme thyme := by decide +kernel
-  simp only [semanticSupportForForm, diag_apply, supportMatrix_endstate, map_apply,
+  simp only [semanticSupportForForm, diag_apply, supportMatrix_endstateG, map_apply,
     Rat.coe_castHom, Rat.cast_lt]
   exact h
 
 /-- Under frequency-informed learning the paper reads support for form off the fitted values
 `√Q S G` of the `√Q`-scaled regression, paired with the words' own triphone vectors (A7). -/
 def semanticSupportForFormFIL (i : Fin 3) : ℝ :=
-  frequencyInformed.semanticSupport ((toy.sqrtScale freq).S i) (toy.C i)
+  semanticSupport frequencyInformedG ((toy.sqrtScale freq).S i) (toy.C i)
 
 theorem semanticSupportForFormFIL_eq_sqrt_mul (i : Fin 3) :
     semanticSupportForFormFIL i =
-      √(freq i) * semanticSupportForForm frequencyInformed toy i := by
+      √(freq i) * semanticSupportForForm frequencyInformedG toy i := by
   simp [semanticSupportForFormFIL, semanticSupportForForm, supportMatrix_apply]
 
 /-- Under practice *time* overtakes *thyme*, 39.805 against 6.225 (Table 1), reversing the
@@ -243,23 +228,16 @@ theorem semanticSupportForFormFIL_thyme_lt_time :
       10 * (semanticVectors * ratGFIL * ratCᵀ) time time := by decide +kernel
   have h100 : √100 = 10 := by rw [show (100 : ℝ) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   simp only [semanticSupportForFormFIL_eq_sqrt_mul, semanticSupportForForm, diag_apply,
-    supportMatrix_frequencyInformed, map_apply, Rat.coe_castHom]
+    supportMatrix_frequencyInformedG, map_apply, Rat.coe_castHom]
   simpa [freq, h100, thyme, Matrix.cons_val_two] using (Rat.cast_lt (K := ℝ)).2 h
 
-/-- *time* and *thyme* share a form row, but their meaning difference lies outside the kernel of
-the production map, so identical triphones receive distinct predicted forms (appendix A3,
-Fig. A2). -/
-theorem time_sub_thyme_notMem_ker :
-    toy.S time - toy.S thyme ∉ LinearMap.ker endstate.production := fun h => by
-  have hq : (semanticVectors time ᵥ* ratG) 0 ≠ (semanticVectors thyme ᵥ* ratG) 0 := by
+/-- *time* and *thyme* share a form row, but the endstate mapping predicts distinct forms for
+them, since their meanings differ outside the kernel of `G` (appendix A3, Fig. A2). -/
+theorem endstate_time_ne_thyme : (toy.S * endstateG) time ≠ (toy.S * endstateG) thyme := by
+  have h : (semanticVectors * ratG) time 0 ≠ (semanticVectors * ratG) thyme 0 := by
     decide +kernel
-  have key (i : Fin 3) :
-      endstate.production (toy.S i) 0 = ((semanticVectors i ᵥ* ratG) 0 : ℚ) := by
-    rw [Linear.production_eq_vecMul, endstate, Linear.productionMatrix_mk, endstateG_eq]
-    exact (RingHom.map_vecMul (Rat.castHom ℝ) ratG (semanticVectors i) 0).symm
-  have := congrFun (LinearMap.sub_mem_ker_iff.mp h) 0
-  rw [key, key] at this
-  exact hq (Rat.cast_injective this)
+  rw [endstateG_eq, toy_S, ← Matrix.map_mul]
+  exact fun h' ↦ h (Rat.cast_injective (congrFun h' 0))
 
 /-! ### Contextual independence
 
@@ -281,12 +259,12 @@ def vocabulary : Fin 9 → Word :=
   ![.my, .time, .is, .short, .good, .fragrant, .thyme, .lime, .bad]
 
 /-- The utterance-by-word matrix `U` multiple-hot encodes each utterance over the vocabulary. -/
-def U : Matrix (Fin 5) (Fin 9) ℝ := Matrix.of fun i => multiHot vocabulary (· ∈ utterance i)
+def U : Matrix (Fin 5) (Fin 9) ℝ := Matrix.of fun i ↦ multiHot vocabulary (· ∈ utterance i)
 
 /-! The arithmetic of the toy corpus is decided over `ℤ` and cast into `ℝ`. -/
 
 private def intU : Matrix (Fin 5) (Fin 9) ℤ :=
-  Matrix.of fun i j => if vocabulary j ∈ utterance i then 1 else 0
+  Matrix.of fun i j ↦ if vocabulary j ∈ utterance i then 1 else 0
 
 private theorem U_eq_map : U = intU.map (Int.castRingHom ℝ) := by
   ext i j; simp [U, intU, multiHot, apply_ite]
@@ -373,7 +351,7 @@ def cind (d : ℝ) : ℝ := Real.log (1 / d) ^ (1 / 4 : ℝ)
 
 /-- `Cind` reverses the order of the diagonal values on `(0, 1)`, so the more a word predicts
 itself the lower its `Cind`, which is the sign of its correlation with frequency in Fig. 2. -/
-theorem strictAntiOn_cind : StrictAntiOn cind (Set.Ioo 0 1) := fun a ha b hb hab => by
+theorem strictAntiOn_cind : StrictAntiOn cind (Set.Ioo 0 1) := fun a ha b hb hab ↦ by
   unfold cind
   refine Real.rpow_lt_rpow (Real.log_nonneg ?_)
     (Real.log_lt_log (one_div_pos.mpr hb.1) (one_div_lt_one_div_of_lt ha.1 hab)) (by norm_num)

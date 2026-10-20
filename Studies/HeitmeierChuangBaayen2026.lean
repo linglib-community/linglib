@@ -22,10 +22,10 @@ vector, "none of the irregular verbs was produced correctly" (§12.9).
 The file states why in word-and-paradigm terms. Over imputed semantics, a lexeme vector plus an
 inflectional-function vector, the form table of a linear map satisfies proportional analogy by
 construction (`Morphology.IsAnalogicallyRegular`). So a table violating analogy is the paradigm
-of no linear lexicon and forces positive training loss, and when the lexeme and function
-vectors are jointly independent a table is the paradigm of some linear lexicon exactly when it
+of no linear mapping and forces positive training loss, and when the lexeme and function
+vectors are jointly independent a table is the paradigm of some linear mapping exactly when it
 is analogically regular. Over word-specific embeddings, by contrast, any table is the paradigm
-of some linear lexicon as soon as the embeddings are linearly independent, which fills the
+of some linear mapping as soon as the embeddings are linearly independent, which fills the
 irregular-linear cell of Table 16.2. The English past tense at the book's letter-trigram coding
 (§12.9) is the irregular table, *walk, walked* against *go, went*, with the forms taken from
 the English fragment.
@@ -37,12 +37,12 @@ and frequency-informed learning are the matrices at which those updates cancel (
 ## Main results
 
 * `not_exists_paradigm_eq_of_not_regular`, `pos_weightedLoss_of_not_regular`: an irregular
-  table is the paradigm of no linear lexicon over imputed semantics, and training on it leaves
+  table is the paradigm of no linear mapping over imputed semantics, and training on it leaves
   positive loss.
 * `exists_paradigm_imputed_eq_iff`: over jointly independent lexeme and function vectors, a
-  table is the paradigm of some linear lexicon iff it is analogically regular.
+  table is the paradigm of some linear mapping iff it is analogically regular.
 * `exists_paradigm_eq_of_linearIndependent`: over linearly independent word-specific
-  embeddings, every table is the paradigm of some linear lexicon.
+  embeddings, every table is the paradigm of some linear mapping.
 * `pastTense_not_regular`: *walk, walked, go, went* violates proportional analogy.
 * `isTrained_iff_sum_update_sub_eq_zero`: a mapping matrix is trained iff the frequency-weighted
   Widrow–Hoff updates of the usage events cancel at it.
@@ -70,41 +70,43 @@ variable {d n : ℕ} {Lexeme Cell : Type*}
 
 /-! ### Imputed semantics -/
 
-variable (σ : Lexeme → MeaningVec d) (ε : Cell → MeaningVec d)
+variable (σ : Lexeme → MeaningVector d) (ε : Cell → MeaningVector d)
 
-/-- A table violating proportional analogy is the paradigm of no linear lexicon over imputed
+/-- A table violating proportional analogy is the paradigm of no linear mapping over imputed
 semantics, so irregular forms cannot be produced from constructed meanings (§12.9). -/
-theorem not_exists_paradigm_eq_of_not_regular {f : Lexeme → Cell → FormVec n}
+theorem not_exists_paradigm_eq_of_not_regular {f : Lexeme → Cell → FormVector n}
     (hf : ¬ IsAnalogicallyRegular f) :
-    ¬ ∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm (imputed σ ε) = f := by
-  rintro ⟨D, rfl⟩
-  exact hf (D.isAnalogicallyRegular_paradigm_imputed σ ε)
+    ¬ ∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G (imputed σ ε) = f := by
+  rintro ⟨G, rfl⟩
+  exact hf (isAnalogicallyRegular_paradigm_imputed G σ ε)
 
 /-! ### Interpolation -/
 
 /-- Over word-specific, linearly independent embeddings any form table is the paradigm of some
-linear lexicon, irregulars included, which is the irregular-linear cell of Table 16.2 and the
+linear mapping, irregulars included, which is the irregular-linear cell of Table 16.2 and the
 English past tense on empirical embeddings (§12.9). -/
-theorem exists_paradigm_eq_of_linearIndependent {s : Lexeme → Cell → MeaningVec d}
-    (hs : LinearIndependent ℝ (Function.uncurry s)) (f : Lexeme → Cell → FormVec n) :
-    ∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm s = f :=
-  let ⟨G, hG⟩ := hs.exists_linearMap_apply_eq (Function.uncurry f)
-  ⟨⟨0, G⟩, funext fun l ↦ funext fun c ↦ hG (l, c)⟩
+theorem exists_paradigm_eq_of_linearIndependent {s : Lexeme → Cell → MeaningVector d}
+    (hs : LinearIndependent ℝ (Function.uncurry s)) (f : Lexeme → Cell → FormVector n) :
+    ∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G s = f := by
+  obtain ⟨G, hG⟩ := hs.exists_linearMap_apply_eq (Function.uncurry f)
+  obtain ⟨G, rfl⟩ := toLinearMapRight'.surjective G
+  exact ⟨G, funext fun l ↦ funext fun c ↦ hG (l, c)⟩
 
 /-- When the lexeme and inflectional-function vectors are jointly linearly independent, a table
-is the paradigm of some linear lexicon over imputed semantics iff it is analogically regular,
+is the paradigm of some linear mapping over imputed semantics iff it is analogically regular,
 so for a regularized system linearity and regularity are the same constraint (§16.6). -/
 theorem exists_paradigm_imputed_eq_iff [Nonempty Lexeme] [Nonempty Cell]
-    (hind : LinearIndependent ℝ (Sum.elim σ ε)) (f : Lexeme → Cell → FormVec n) :
-    (∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm (imputed σ ε) = f) ↔
+    (hind : LinearIndependent ℝ (Sum.elim σ ε)) (f : Lexeme → Cell → FormVector n) :
+    (∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G (imputed σ ε) = f) ↔
       IsAnalogicallyRegular f := by
-  refine ⟨fun ⟨D, hD⟩ ↦ hD ▸ D.isAnalogicallyRegular_paradigm_imputed σ ε, fun hreg ↦ ?_⟩
+  refine ⟨fun ⟨G, hG⟩ ↦ hG ▸ isAnalogicallyRegular_paradigm_imputed G σ ε, fun hreg ↦ ?_⟩
   obtain ⟨a, b, hab⟩ := isAnalogicallyRegular_iff_exists_add.1 hreg
   obtain ⟨G, hG⟩ := hind.exists_linearMap_apply_eq (Sum.elim a b)
-  refine ⟨⟨0, G⟩, funext fun l ↦ funext fun c ↦ ?_⟩
-  have hσ : G (σ l) = a l := hG (Sum.inl l)
-  have hε : G (ε c) = b c := hG (Sum.inr c)
-  simp [hσ, hε, hab]
+  obtain ⟨G, rfl⟩ := toLinearMapRight'.surjective G
+  refine ⟨G, funext fun l ↦ funext fun c ↦ ?_⟩
+  have hσ : σ l ᵥ* G = a l := hG (Sum.inl l)
+  have hε : ε c ᵥ* G = b c := hG (Sum.inr c)
+  simp [add_vecMul, hσ, hε, hab]
 
 /-! ### Training on a paradigm -/
 
@@ -112,24 +114,23 @@ variable [Fintype Lexeme] [Fintype Cell]
 
 /-- A paradigm is a training experience whose semantic matrix holds the imputed meanings and
 whose form matrix holds the form table, one row per lexeme and cell. -/
-noncomputable def paradigmExperience (f : Lexeme → Cell → FormVec n) :
+noncomputable def paradigmExperience (f : Lexeme → Cell → FormVector n) :
     TrainingExperience (Fintype.card (Lexeme × Cell)) n d :=
   let e := (Fintype.equivFin (Lexeme × Cell)).symm
   ⟨of (Function.uncurry (imputed σ ε) ∘ e), of (Function.uncurry f ∘ e)⟩
 
 /-- Irregularity forces positive training loss, since no mapping matrix fits a suppletive
 paradigm exactly and so every trained matrix carries residual error. -/
-theorem pos_weightedLoss_of_not_regular {f : Lexeme → Cell → FormVec n}
+theorem pos_weightedLoss_of_not_regular {f : Lexeme → Cell → FormVector n}
     (hf : ¬ IsAnalogicallyRegular f) {q : FrequencyVector (Fintype.card (Lexeme × Cell))}
     (hq : ∀ i, 0 < q i) (G : Matrix (Fin d) (Fin n) ℝ) :
     0 < weightedLoss (paradigmExperience σ ε f) q G := by
   refine lt_of_le_of_ne (weightedLoss_nonneg _ _ _) (Ne.symm fun h0 ↦ ?_)
   have hint := (weightedLoss_eq_zero_iff _ _ _ hq).1 h0
   refine not_exists_paradigm_eq_of_not_regular σ ε hf
-    ⟨⟨0, toLin' Gᵀ⟩, funext fun l ↦ funext fun c ↦ funext fun j ↦ ?_⟩
-  have h := congrFun (congrFun hint ((Fintype.equivFin (Lexeme × Cell)) (l, c))) j
-  simpa [paradigmExperience, Linear.paradigm, toLin'_apply, mulVec_transpose, mul_apply,
-    vecMul, dotProduct] using h
+    ⟨G, funext fun l ↦ funext fun c ↦ funext fun j ↦ ?_⟩
+  simpa [paradigmExperience, mul_apply, vecMul, dotProduct] using
+    congrFun (congrFun hint ((Fintype.equivFin (Lexeme × Cell)) (l, c))) j
 
 /-! ### Incremental learning
 
@@ -150,7 +151,7 @@ theorem update_example :
   fin_cases i <;> fin_cases j <;> norm_num [update_apply, vecMul, dotProduct]
 
 /-- One step scales the prediction error for its own input by `1 - η * x ⬝ᵥ x`. -/
-theorem sub_vecMul_update_smul_one (x : MeaningVec d) (y : FormVec n) :
+theorem sub_vecMul_update_smul_one (x : MeaningVector d) (y : FormVector n) :
     y - x ᵥ* update (η • 1) 1 x y G = (1 - η * x ⬝ᵥ x) • (y - x ᵥ* G) := by
   rw [sub_vecMul_update]
   ext j
@@ -158,7 +159,7 @@ theorem sub_vecMul_update_smul_one (x : MeaningVec d) (y : FormVec n) :
 
 /-- "The next predicted outcome from the same input vector is closer to the target than the
 previous one" (§6.2) exactly when `η * x ⬝ᵥ x` lies strictly between `0` and `2`. -/
-theorem abs_sub_vecMul_update_lt_iff {x : MeaningVec d} {y : FormVec n} {j : Fin n}
+theorem abs_sub_vecMul_update_lt_iff {x : MeaningVector d} {y : FormVector n} {j : Fin n}
     (hj : y j ≠ (x ᵥ* G) j) :
     |y j - (x ᵥ* update (η • 1) 1 x y G) j| < |y j - (x ᵥ* G) j| ↔ |1 - η * x ⬝ᵥ x| < 1 := by
   have h := congrFun (sub_vecMul_update_smul_one G x y (η := η)) j
@@ -167,7 +168,7 @@ theorem abs_sub_vecMul_update_lt_iff {x : MeaningVec d} {y : FormVec n} {j : Fin
 
 /-- For such a learning rate, "by redoing this step again and again, the error [...] will get
 smaller and smaller" (§6.2), and the prediction converges to the target. -/
-theorem tendsto_vecMul_iterate_update_smul_one {x : MeaningVec d} (y : FormVec n)
+theorem tendsto_vecMul_iterate_update_smul_one {x : MeaningVector d} (y : FormVector n)
     (h : |1 - η * x ⬝ᵥ x| < 1) :
     Tendsto (fun k ↦ x ᵥ* (update (η • 1) 1 x y)^[k] G) atTop (𝓝 y) :=
   tendsto_vecMul_iterate_update y G fun _ ↦ by simpa using h
@@ -231,7 +232,7 @@ def trigram : Fin 13 → Augmented Char :=
 
 /-- The past-tense form table at the trigram coding takes each verb's form at each cell from
 the fragment. -/
-def pastTense (v c : Fin 2) : FormVec 13 :=
+def pastTense (v c : Fin 2) : FormVector 13 :=
   cueVector 3 trigram ((verb v).realize (cell c)).toList
 
 /-- Only *walked* carries the cue `ed#`. -/
@@ -240,7 +241,7 @@ private theorem mem_cues_iff (v c : Fin 2) :
   revert v c; decide +kernel
 
 /-- The English past tense violates proportional analogy, since *walked* adds the cue `ed#` to
-*walk* while *went* adds nothing to *go*. So no linear lexicon produces it from constructed
+*walk* while *went* adds nothing to *go*. So no linear mapping produces it from constructed
 meanings (`not_exists_paradigm_eq_of_not_regular`), while independent embeddings realise it
 (`exists_paradigm_eq_of_linearIndependent`), as in §12.9. -/
 theorem pastTense_not_regular : ¬ IsAnalogicallyRegular pastTense := fun h ↦ by

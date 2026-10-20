@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Processing.DiscriminativeLexicon.Training
+public import Mathlib.LinearAlgebra.Matrix.Rank
 
 /-!
 # Chuang, Bell, Tseng and Baayen (2026): Word-specific tonal realizations in Mandarin
@@ -23,10 +24,10 @@ tones.
 
 ## Main statements
 
-* `ChuangEtAl2026.comprehension_comp_production_ne_id`: no linear map takes the fifty-dimensional
-  contour space onto the 768-dimensional embedding space, so no comprehension map inverts
-  production.
-* `ChuangEtAl2026.production_centroid_eq_of_decodable`: a least-squares-trained production map
+* `ChuangEtAl2026.production_mul_comprehension_ne_one`: no linear map takes the
+  fifty-dimensional contour space onto the 768-dimensional embedding space, so no comprehension
+  matrix inverts production.
+* `ChuangEtAl2026.production_centroid_eq_of_decodable`: a least-squares-trained production matrix
   sends the centroid of a word type's embeddings to the average of its training contours
   whenever membership in the word type is a linear functional of the embeddings.
 * `ChuangEtAl2026.production_centroid_univ_eq`: the centroid of all tokens produces the
@@ -55,7 +56,7 @@ tones.
 
 namespace ChuangEtAl2026
 
-open DiscriminativeLexicon Finset
+open DiscriminativeLexicon Finset Matrix
 
 /-- The fifty f0 values sampled per token at equally spaced points of normalized time
 (§3.2). -/
@@ -66,59 +67,62 @@ abbrev CKIPGPT2HiddenDim : ℕ := 768
 
 /-- A pitch contour consists of the fifty samples, centered by the token's mean and scaled by its
 range (§3.2), so it is a shape rather than a pitch or an amplitude. -/
-abbrev PitchContour : Type := FormVec TaiwanMandarinPitchSampleCount
+abbrev PitchContour : Type := FormVector TaiwanMandarinPitchSampleCount
 
 /-- A contextualized embedding is the mean of the GPT-2 vectors of a token's two characters given
 the preceding context, the current utterance up to the token and the one before it (§3.1). -/
-abbrev ContextualEmbedding : Type := MeaningVec CKIPGPT2HiddenDim
+abbrev ContextualEmbedding : Type := MeaningVector CKIPGPT2HiddenDim
 
-/-- The paper's DLM consists of linear comprehension and production maps between pitch contours
-and contextualized embeddings (§3.3–3.4). -/
-abbrev TaiwanMandarinRFDLM : Type :=
-  Linear ℝ PitchContour ContextualEmbedding
+/-! ### Comprehension from fifty dimensions (§3.3)
 
-variable (D : TaiwanMandarinRFDLM)
+The comprehension matrix `F` predicts a `ContextualEmbedding` `cF` from a `PitchContour` `c`,
+and the production matrix `G` a contour `sG` from an embedding `s` (§3.3–3.4). -/
 
-/-! ### Comprehension from fifty dimensions (§3.3) -/
-
-/-- No linear map takes the fifty-dimensional contour space onto the 768-dimensional embedding
-space, the paper's ground for finding ResLDL's comprehension advantage over LDL unsurprising
-(§3.3.2, fn. 29). -/
-theorem comprehension_not_surjective : ¬ Function.Surjective D.comprehension := fun h ↦ by
+/-- No comprehension matrix takes the fifty-dimensional contour space onto the 768-dimensional
+embedding space, the paper's ground for finding ResLDL's comprehension advantage over LDL
+unsurprising (§3.3.2, fn. 29). -/
+theorem comprehension_not_surjective
+    (F : Matrix (Fin TaiwanMandarinPitchSampleCount) (Fin CKIPGPT2HiddenDim) ℝ) :
+    ¬ Function.Surjective F.vecMulLinear := fun h ↦ by
   simpa [CKIPGPT2HiddenDim, TaiwanMandarinPitchSampleCount] using
-    LinearMap.finrank_le_finrank_of_surjective (f := D.comprehension) h
+    LinearMap.finrank_le_finrank_of_surjective (f := F.vecMulLinear) h
 
 /-- Points of a cube projected onto a plane cannot be recovered from the projection, the picture
-of fn. 29, so no comprehension network inverts production. -/
-theorem comprehension_comp_production_ne_id :
-    D.comprehension ∘ₗ D.production ≠ LinearMap.id := fun h ↦
-  comprehension_not_surjective D <| Function.Surjective.of_comp (g := D.production) <| by
-    rw [← LinearMap.coe_comp, h]; exact Function.surjective_id
+of fn. 29, so no comprehension matrix inverts production: the meaning `sGF` comprehended from the
+contour produced for `s` is not `s` for every `s`. -/
+theorem production_mul_comprehension_ne_one
+    (G : Matrix (Fin CKIPGPT2HiddenDim) (Fin TaiwanMandarinPitchSampleCount) ℝ)
+    (F : Matrix (Fin TaiwanMandarinPitchSampleCount) (Fin CKIPGPT2HiddenDim) ℝ) :
+    G * F ≠ 1 := fun h ↦ by
+  have := (G.rank_mul_le_left F).trans G.rank_le_width
+  rw [h, rank_one] at this
+  simp [CKIPGPT2HiddenDim, TaiwanMandarinPitchSampleCount] at this
 
 /-! ### Word-centroid contours (§3.4) -/
 
-variable {D} {m : ℕ} {W : Type*} [DecidableEq W]
+variable {m : ℕ} {W : Type*} [DecidableEq W]
   {data : TrainingExperience m TaiwanMandarinPitchSampleCount CKIPGPT2HiddenDim}
+  {G : Matrix (Fin CKIPGPT2HiddenDim) (Fin TaiwanMandarinPitchSampleCount) ℝ}
 
 /-- A word type being the set of tokens carrying its corpus label (§1, §2.2), a
-least-squares-trained production map sends the centroid of its embeddings to the average of
+least-squares-trained production matrix sends the centroid of its embeddings to the average of
 its training contours whenever membership in it is a linear functional of the embeddings. The
 paper reports the match as remarkable similarity (Fig. 18), Fig. 14's distinct word-type regions
 being its evidence for the hypothesis. -/
-theorem production_centroid_eq_of_decodable (hD : D.IsELTrainedOn data) (word : Fin m → W)
+theorem production_centroid_eq_of_decodable (hG : IsELTrained data G) (word : Fin m → W)
     {w : W} (hw : ∃ i, word i = w) {ℓ : ContextualEmbedding →ₗ[ℝ] ℝ}
     (hℓ : ∀ i, ℓ (data.S i) = if word i = w then 1 else 0) :
-    D.production ((univ.filter (word · = w)).centroid ℝ data.S.row) =
+    (univ.filter (word · = w)).centroid ℝ data.S.row ᵥ* G =
       (univ.filter (word · = w)).centroid ℝ data.C.row :=
-  hD.production_centroid_eq_of_decodable (by simpa [filter_nonempty_iff] using hw)
+  hG.centroid_vecMul_eq_of_decodable (by simpa [filter_nonempty_iff] using hw)
     (by simpa using hℓ)
 
 /-- The centroid of all tokens' embeddings, which the paper reads as the meaning of the
 unmodulated rise–fall contour (§3.4.2, Fig. 1), produces the grand-mean training contour when
 some linear functional is constant on the training embeddings. -/
-theorem production_centroid_univ_eq [NeZero m] (hD : D.IsELTrainedOn data)
+theorem production_centroid_univ_eq [NeZero m] (hG : IsELTrained data G)
     {ℓ : ContextualEmbedding →ₗ[ℝ] ℝ} (hℓ : ∀ i, ℓ (data.S i) = 1) :
-    D.production (univ.centroid ℝ data.S.row) = univ.centroid ℝ data.C.row :=
-  hD.production_centroid_eq_of_decodable ⟨0, mem_univ 0⟩ (by simpa using hℓ)
+    univ.centroid ℝ data.S.row ᵥ* G = univ.centroid ℝ data.C.row :=
+  hG.centroid_vecMul_eq_of_decodable ⟨0, mem_univ 0⟩ (by simpa using hℓ)
 
 end ChuangEtAl2026
