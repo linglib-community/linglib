@@ -8,7 +8,7 @@ public import Linglib.Data.Forms.McCarthy1981
 /-!
 # McCarthy (1981): A Prosodic Theory of Nonconcatenative Morphology
 
-This file formalizes the analysis of the Classical Arabic verb in [mccarthy-1981]. A verb stem
+This file formalizes McCarthy's analysis of the Classical Arabic verb. A verb stem
 is a prosodic template of C- and V-slots with a consonantal root, a vowel melody and affixal
 material on separate autosegmental tiers, and the melodies are associated with the slots by the
 universal conventions of `Morphology.TemplateMatch.associate`. The language-particular
@@ -65,7 +65,7 @@ derivation never looks at the melodic elements themselves (`stem_map`).
 
 @[expose] public section
 
-open Morphology Arabic.ModernStandard
+open Morphology Autosegmental Arabic.ModernStandard
 
 namespace McCarthy1981
 
@@ -74,44 +74,44 @@ variable {α β : Type*}
 /-! ### Prosodic templates -/
 
 /-- CVCVC (13a). -/
-def cvcvc : CVTemplate := ⟨[.C, .V, .C, .V, .C]⟩
+def cvcvc : Skeleton := [.C, .V, .C, .V, .C]
 
 /-- CVCCVC (13b). -/
-def cvccvc : CVTemplate := ⟨[.C, .V, .C, .C, .V, .C]⟩
+def cvccvc : Skeleton := [.C, .V, .C, .C, .V, .C]
 
 /-- CVVCVC (13c). -/
-def cvvcvc : CVTemplate := ⟨[.C, .V, .V, .C, .V, .C]⟩
+def cvvcvc : Skeleton := [.C, .V, .V, .C, .V, .C]
 
 /-- CVCVCCVC (13d). -/
-def cvcvccvc : CVTemplate := ⟨[.C, .V, .C, .V, .C, .C, .V, .C]⟩
+def cvcvccvc : Skeleton := [.C, .V, .C, .V, .C, .C, .V, .C]
 
 /-- CVCVVCVC (13e). -/
-def cvcvvcvc : CVTemplate := ⟨[.C, .V, .C, .V, .V, .C, .V, .C]⟩
+def cvcvvcvc : Skeleton := [.C, .V, .C, .V, .V, .C, .V, .C]
 
 /-- CCVCVC (13f). -/
-def ccvcvc : CVTemplate := ⟨[.C, .C, .V, .C, .V, .C]⟩
+def ccvcvc : Skeleton := [.C, .C, .V, .C, .V, .C]
 
 /-- CCVCCVC (13g). -/
-def ccvccvc : CVTemplate := ⟨[.C, .C, .V, .C, .C, .V, .C]⟩
+def ccvccvc : Skeleton := [.C, .C, .V, .C, .C, .V, .C]
 
 /-- CCVVCVC (13h). -/
-def ccvvcvc : CVTemplate := ⟨[.C, .C, .V, .V, .C, .V, .C]⟩
+def ccvvcvc : Skeleton := [.C, .C, .V, .V, .C, .V, .C]
 
 /-- The canonical patterns of the triliteral perfective (13). -/
-def binyanTemplates : List CVTemplate :=
+def binyanTemplates : List Skeleton :=
   [cvcvc, cvccvc, cvvcvc, cvcvccvc, cvcvvcvc, ccvcvc, ccvccvc, ccvvcvc]
 
 /-- CVCVCVC, the one template of the schema with two light syllables. -/
-def cvcvcvc : CVTemplate := ⟨[.C, .V, .C, .V, .C, .V, .C]⟩
+def cvcvcvc : Skeleton := [.C, .V, .C, .V, .C, .V, .C]
 
 /-- The prosodic template schema (14a), `[({C, CV}) CV ([+seg]) CVC]`, as the nine templates its
 optional choices generate. -/
-def schema : List CVTemplate :=
-  ([[], [.C], [.C, .V]] : List (List CVSlot)).flatMap fun pre ↦
-    ([[], [.C], [.V]] : List (List CVSlot)).map fun s ↦ ⟨pre ++ [.C, .V] ++ s ++ [.C, .V, .C]⟩
+def schema : List Skeleton :=
+  ([[], [.C], [.C, .V]] : List (List Slot)).flatMap fun pre ↦
+    ([[], [.C], [.V]] : List (List Slot)).map fun s ↦ pre ++ [.C, .V] ++ s ++ [.C, .V, .C]
 
 /-- Rule (14b), `V → ∅ / [CVC _ CVC]`, elides the middle vowel of the whole template CVCVCVC. -/
-def elide (t : CVTemplate) : CVTemplate := if t = cvcvcvc then cvccvc else t
+def elide (t : Skeleton) : Skeleton := if t = cvcvcvc then cvccvc else t
 
 /-- The schema generates the templates (13) and CVCVCVC. -/
 theorem schema_eq : schema.toFinset = insert cvcvcvc binyanTemplates.toFinset := by decide
@@ -165,7 +165,7 @@ where the affix goes, whether Erasure (24) applies, and the tier that respreads 
 Erasure (30). -/
 structure Spec (α : Type*) where
   /-- The prosodic template. -/
-  template : CVTemplate
+  template : Skeleton
   /-- The affixal material. -/
   affix : List α := []
   /-- Where the affix goes. -/
@@ -176,7 +176,7 @@ structure Spec (α : Type*) where
   respread : AssocSource := .root
 
 /-- The specification of a binyan, with `plusSeg` the realization of the [+seg] slot of XI. -/
-def spec (ax : Affixes α) (plusSeg : CVSlot) : Binyan → Spec α
+def spec (ax : Affixes α) (plusSeg : Slot) : Binyan → Spec α
   | .I => { template := cvcvc }
   | .II => { template := cvccvc, erasure := true }
   | .III => { template := cvvcvc }
@@ -187,7 +187,7 @@ def spec (ax : Affixes α) (plusSeg : CVSlot) : Binyan → Spec α
   | .VIII => { template := ccvcvc, affix := [ax.t], placement := .flop }
   | .IX => { template := ccvcvc }
   | .X => { template := ccvccvc, affix := [ax.s, ax.t] }
-  | .XI => { template := ⟨[.C, .C, .V, plusSeg, .C, .V, .C]⟩ }
+  | .XI => { template := [.C, .C, .V, plusSeg, .C, .V, .C] }
   | .XII => { template := ccvccvc, affix := [ax.w], placement := .fixed [3], erasure := true }
   | .XIII =>
     { template := ccvccvc
@@ -212,7 +212,7 @@ def Spec.map (f : α → β) (sp : Spec α) : Spec β :=
 /-- The Eighth Binyan Flop (19) moves an affix line on the first of two adjacent C-slots to the
 second. -/
 def flop (m : TemplateMatch α) : TemplateMatch α :=
-  match m.template.slots with
+  match m.template with
   | .C :: .C :: _ => { m with associations := m.associations.map fun a ↦
       if a.source == .affix && a.slotIndex == 0 then { a with slotIndex := 1 } else a }
   | _ => m
@@ -238,7 +238,7 @@ def erasure (m : TemplateMatch α) : TemplateMatch α :=
 /-- The consonantism of a binyan, with the affixes placed, the root associated by the
 conventions, and, where Erasure applies, the conventions again with the binyan's respreading
 tier. -/
-def consonantism (ax : Affixes α) (plusSeg : CVSlot) (b : Binyan) (r : ConsonantalRoot α) :
+def consonantism (ax : Affixes α) (plusSeg : Slot) (b : Binyan) (r : ConsonantalRoot α) :
     TemplateMatch α :=
   let sp := spec ax plusSeg b
   let m := (placeAffixes sp r).associate .root
@@ -297,7 +297,7 @@ def melody (abl : Ablaut) : Category → Binyan → List Vowel
 /-- The prefix [CV] moves every line two slots right. -/
 def prefixCV (m : TemplateMatch α) : TemplateMatch α :=
   { m with
-    template := ⟨[.C, .V] ++ m.template.slots⟩
+    template := [.C, .V] ++ m.template
     associations := m.associations.map fun a ↦ { a with slotIndex := a.slotIndex + 2 } }
 
 /-- Rule (14b) on a match deletes the middle V-slot of CVCVCVC and moves the lines after it left. -/
@@ -338,7 +338,7 @@ section Map
 
 variable (f : α → β) (ax : Affixes α) (m : TemplateMatch α)
 
-theorem spec_map (plusSeg : CVSlot) (b : Binyan) :
+theorem spec_map (plusSeg : Slot) (b : Binyan) :
     spec (ax.map f) plusSeg b = (spec ax plusSeg b).map f := by
   cases b <;> rfl
 
@@ -359,7 +359,7 @@ theorem placeAffixes_map (sp : Spec α) (r : ConsonantalRoot α) :
 
 theorem erasure_map : erasure (m.map f) = (erasure m).map f := rfl
 
-theorem consonantism_map (plusSeg : CVSlot) (b : Binyan) (r : ConsonantalRoot α) :
+theorem consonantism_map (plusSeg : Slot) (b : Binyan) (r : ConsonantalRoot α) :
     consonantism (ax.map f) plusSeg b (r.map f) = (consonantism ax plusSeg b r).map f := by
   simp only [consonantism, spec_map, placeAffixes_map, TemplateMatch.associate_map,
     Spec.erasure_map, Spec.respread_map]
@@ -414,19 +414,19 @@ private def label (ax : Affixes α) (xs : List α) : ℕ → α
 
 variable (ax : Affixes α) (v w x y z : α)
 
-private theorem consonantism_eq_map {p : CVSlot} {b : Binyan} {xs : List α}
+private theorem consonantism_eq_map {p : Slot} {b : Binyan} {xs : List α}
     {r : ConsonantalRoot ℕ} (hr : r.map (label ax xs) = ⟨xs⟩) :
     consonantism ax p b ⟨xs⟩ = (consonantism numeralAffixes p b r).map (label ax xs) := by
   rw [← consonantism_map, hr]
   rfl
 
-private theorem spellout_eq {p : CVSlot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
+private theorem spellout_eq {p : Slot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
     (hr : r.map (label ax xs) = ⟨xs⟩) {out : List ℕ}
     (h : (consonantism numeralAffixes p b r).spellout = out) :
     (consonantism ax p b ⟨xs⟩).spellout = out.map (label ax xs) := by
   rw [consonantism_eq_map ax hr, TemplateMatch.spellout_map, h]
 
-private theorem linkCount_eq {p : CVSlot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
+private theorem linkCount_eq {p : Slot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
     (hr : r.map (label ax xs) = ⟨xs⟩) (s : AssocSource) (k : ℕ) :
     linkCount (consonantism ax p b ⟨xs⟩) s k =
       linkCount (consonantism numeralAffixes p b r) s k := by
@@ -447,8 +447,8 @@ theorem consonantism_XII_XIII :
   ⟨spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 104, 1, 2]) (by decide),
     spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 104, 104, 2]) (by decide)⟩
 
-/-- A biliteral root geminates its final radical and never its first: samam, never *sasam
-(33). In the second and fifth binyanim the effect of Erasure is undone (34). -/
+/-- A biliteral root geminates its final radical and never its first, giving samam, never
+*sasam (33). In the second and fifth binyanim the effect of Erasure is undone (34). -/
 theorem consonantism_biliteral :
     (consonantism ax .V .I ⟨[x, y]⟩).spellout = [x, y, y] ∧
       linkCount (consonantism ax .V .I ⟨[x, y]⟩) .root 0 = 1 ∧
@@ -562,8 +562,8 @@ theorem forms_uncovered :
       ∀ f ∈ Forms.all, ∀ x ∈ cell? f, ¬x.Covered → x.stem.spellout ≠ f.segments := by
   decide +kernel
 
-/-- Every stem of ktb and of dḥrj is well formed on each tier: no association lines cross and no
-slot has two lines from one tier. -/
+/-- Every stem of ktb and of dḥrj is well formed on each tier, in that no association lines
+cross and no slot has two lines from one tier. -/
 theorem orderedOn_stem :
     (∀ b c, ∀ s ∈ [AssocSource.root, .affix, .vocalism],
       (McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut c b
@@ -617,7 +617,7 @@ theorem isOCPClean_roots :
 /-- The structural description of Metathesis (37) holds when the C-slots `i` and `i + 2` on
 either side of a V-slot are linked to one melodic element, which has no line left of `i`. -/
 def MetathesisSite (m : TemplateMatch α) (i : ℕ) : Prop :=
-  m.template.slotAt (i + 1) = some .V ∧ ∃ a ∈ m.associations, a.slotIndex = i ∧
+  m.template[i + 1]? = some .V ∧ ∃ a ∈ m.associations, a.slotIndex = i ∧
     (∃ b ∈ m.associations, b.slotIndex = i + 2 ∧ b.source = a.source ∧
       b.melodyIndex = a.melodyIndex) ∧
     ∀ c ∈ m.associations, c.source = a.source → c.melodyIndex = a.melodyIndex → i ≤ c.slotIndex
@@ -634,7 +634,7 @@ theorem metathesisSite_iff (m : TemplateMatch α) (i : ℕ) :
   refine ⟨fun h ↦ List.mem_filter.2 ⟨List.mem_range.2 ?_, decide_eq_true h⟩,
     fun h ↦ of_decide_eq_true (List.mem_filter.1 h).2⟩
   have := h.1
-  simp only [CVTemplate.slotAt, List.getElem?_eq_some_iff] at this
+  simp only [List.getElem?_eq_some_iff] at this
   obtain ⟨hlt, -⟩ := this
   exact Nat.lt_of_succ_lt hlt
 
