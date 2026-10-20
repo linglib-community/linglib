@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
-public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Syntax.Minimalist.Probe.Run
 public import Linglib.Syntax.Minimalist.Agree.PersonSegment
 public import Studies.CoonKeine2021
 public import Studies.Haspelmath2021
@@ -70,62 +70,21 @@ structure Grammar where
   dynamic : Finset PersonSegment
   deriving DecidableEq, Fintype
 
-/-- The state of a probe during its walk over the goals records the interaction condition,
-whether the probe has been satisfied, and the positions of the goals it has interacted with. -/
-structure ProbeState where
-  int : Finset PersonSegment
-  satisfied : Bool
-  agreed : List ℕ
-  deriving DecidableEq
-
-/-- The initial state is [INT:φ], unsatisfied, with nothing agreed. -/
-def ProbeState.initial : ProbeState := ⟨{.pi}, false, []⟩
-
-/-- The probe a state denotes sees a goal when the goal bears every feature of the interaction
-condition. -/
-def ProbeState.probe (st : ProbeState) : Probe Person :=
-  .relativized fun p ↦ decide (st.int ⊆ spec p)
-
-/-- In one step of the walk a satisfied probe is inert, (8b); otherwise a visible goal is
-interacted with, its position recorded, the goal's dynamic features are copied into the
-interaction condition, and the probe is satisfied when the goal bears the satisfaction
-feature, (44) and (45). -/
-def step (g : Grammar) (st : ProbeState) (t : Person × ℕ) : ProbeState :=
-  if st.satisfied || !st.probe.sat t.1 then st
-  else
-    { int := st.int ∪ g.dynamic ∩ spec t.1
-      satisfied := g.satisfaction.any (· ∈ spec t.1)
-      agreed := st.agreed ++ [t.2] }
-
-/-- The run of a probe over a goal sequence in interaction order. -/
-def runProbe (g : Grammar) (goals : List Person) : ProbeState :=
-  goals.zipIdx.foldl (step g) .initial
-
-/-- Dynamic interaction only narrows the probe, since the interaction condition only grows along
-a run. -/
-theorem int_subset_step (g : Grammar) (st : ProbeState) (t : Person × ℕ) :
-    st.int ⊆ (step g st t).int := by
-  unfold step
-  split
-  · exact subset_rfl
-  · exact Finset.subset_union_left
-
-/-- The probe a later state denotes sees no more than an earlier one. -/
-theorem probe_sat_antitone (g : Grammar) (st : ProbeState) (t : Person × ℕ) (a : Person)
-    (h : (step g st t).probe.sat a = true) : st.probe.sat a = true := by
-  simp only [ProbeState.probe, Probe.relativized, decide_eq_true_eq] at h ⊢
-  exact (int_subset_step g st t).trans h
-
-/-- A satisfied probe is inert. -/
-theorem step_of_satisfied (g : Grammar) (st : ProbeState) (t : Person × ℕ)
-    (h : st.satisfied = true) : step g st t = st := by
-  simp [step, h]
+/-- The run of grammar `g`'s probe over goals paired with their positions. The state is the
+interaction condition, the features copied into it so far, starting from [φ]. A goal is visible
+when it bears them all; interacting with it copies its dynamic features into the condition, (44)
+and (45); and only a visible goal bearing the satisfaction feature satisfies the probe, (8b). -/
+def run (g : Grammar) (goals : List Person) :
+    Probe.Result (Person × ℕ) (Finset PersonSegment) :=
+  Probe.runWith (fun int t ↦ decide (int ⊆ spec t.1))
+    (fun int t ↦ decide (int ⊆ spec t.1) && g.satisfaction.any (· ∈ spec t.1))
+    (fun t int ↦ int ∪ g.dynamic ∩ spec t.1) (fun _ int ↦ int) {.pi} goals.zipIdx
 
 /-- A clitic combination ⟨IO, DO⟩ is licit when the probe, meeting the direct object first,
 interacts with both objects, section 3.1; the reverse PCC of section 6.2, where the probe meets
 the indirect object first, is licitness of the swapped pair. -/
 def Licit (g : Grammar) (s : Scenario Person) : Prop :=
-  (runProbe g [s.low, s.high]).agreed = [0, 1]
+  (run g [s.low, s.high]).goals.map (·.2) = [0, 1]
 
 instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
