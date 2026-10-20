@@ -257,7 +257,7 @@ theorem hope_varies :
 /-! ### Table 1 and the fragment entries -/
 
 /-- The finite moods among the complement types, as codings of a clausal argument position. -/
-def Complement.coding? : Complement → Option _root_.Complement.Coding
+def Complement.coding? : Complement → Option Clause.ComplementType
   | .indicative => some .indicative
   | .subjunctive => some .subjunctive
   | _ => none

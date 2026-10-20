@@ -64,7 +64,7 @@ structure Complementizer where
   /-- The exponent, in surface order. -/
   morphs : List Morph
   /-- [noonan-2007] coding of the clause this morpheme types. -/
-  coding : Option Complement.Coding := none
+  coding : Option Clause.ComplementType := none
   /-- The sentence types of the clauses this morpheme types. -/
   types : Clause.Selection := ⊥
   /-- Verb form derived on the host (UD). -/
