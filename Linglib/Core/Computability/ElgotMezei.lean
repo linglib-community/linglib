@@ -17,10 +17,10 @@ the left automaton is the first machine, and the right automaton carries the *ma
 a state of the first machine to the state the second reaches over the image of the
 suffix. We show that a right-subsequential function after a left-subsequential one is
 bimachine-computable as soon as the composite preserves the empty word — the composition
-half of [elgot-mezei-1965]'s decomposition theorem ([sakarovitch-2009], Cor. V.2.5) — and,
+half of Elgot and Mezei's decomposition theorem (Cor. V.2.5 in Sakarovitch's book) — and,
 by the reversal symmetry of bimachines, that so is a left-subsequential function after a
 right-subsequential one. The decomposition half, that every rational function factors this
-way ([sakarovitch-2009], Th. V.2.2), is not formalized here.
+way (Sakarovitch's Th. V.2.2), is not formalized here.
 
 ## Main definitions
 
@@ -47,6 +47,11 @@ at all.
   function after a left-subsequential one.
 * The letter-to-letter refinement: `Mealy` after `Mealy` gives a length-preserving
   bimachine (`IsLengthPreservingBimachineComputable`).
+
+## References
+
+* [elgot-mezei-1965]
+* [sakarovitch-2009]
 -/
 
 @[expose] public section
@@ -66,8 +71,8 @@ emitted. -/
 def rightComp : Bimachine (Bool × σ₁) (Bool × (σ₁ → σ₂)) α γ where
   lInit := (true, T₁.start)
   lStep l a := (false, T₁.step l.2 a)
-  rInit := (true, fun s => T₂.stateAfter T₂.start (T₁.finalOutput s).reverse)
-  rStep r a := (false, fun s => T₂.stateAfter (r.2 (T₁.step s a)) (T₁.output s a).reverse)
+  rInit := (true, fun s ↦ T₂.stateAfter T₂.start (T₁.finalOutput s).reverse)
+  rStep r a := (false, fun s ↦ T₂.stateAfter (r.2 (T₁.step s a)) (T₁.output s a).reverse)
   output l a r :=
     (if l.1 then T₂.runFrom (r.2 (T₁.step l.2 a)) (T₁.output l.2 a).reverse
       else T₂.emitted (r.2 (T₁.step l.2 a)) (T₁.output l.2 a).reverse).reverse

@@ -319,8 +319,8 @@ theorem isMealyComputable_of_stateSummary
     (hout : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (out (state u) x))
     (hlen : ∀ xs, (f xs).length = xs.length) :
     IsMealyComputable f := by
-  refine isMealyComputable_iff.mpr ⟨σ, inferInstance, ⟨state [], δ, out⟩, ?_⟩
   set T : Mealy σ α β := ⟨state [], δ, out⟩
+  suffices T.run = f from this ▸ T.isMealyComputable
   have hstate : ∀ ps : List α, T.stateAfter T.start ps = state ps := by
     intro ps
     induction ps using List.reverseRecOn with
@@ -492,9 +492,9 @@ theorem isLengthPreservingBimachineComputable_of_stateSummaries
     (hout : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (out (stateL u) x (stateR w)))
     (hlen : ∀ xs, (f xs).length = xs.length) :
     IsLengthPreservingBimachineComputable f := by
-  refine isLengthPreservingBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance,
-    ⟨stateL [], δL, stateR [], δR, fun l a r ↦ [out l a r]⟩, ⟨⟨out, fun _ _ _ ↦ rfl⟩⟩, ?_⟩
   set B : Bimachine L R α β := ⟨stateL [], δL, stateR [], δR, fun l a r ↦ [out l a r]⟩
+  suffices B.run = f from
+    this ▸ B.isLengthPreservingBimachineComputable ⟨⟨out, fun _ _ _ ↦ rfl⟩⟩
   have hL : ∀ ps : List α, B.lState ps = stateL ps := by
     intro ps
     induction ps using List.reverseRecOn with

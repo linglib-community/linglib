@@ -61,7 +61,6 @@ import Linglib.Core.Computability.Variety.Definite
 import Linglib.Core.Data.Fin.VecNotation
 import Linglib.Core.Data.Fintype.List
 import Linglib.Core.Data.Fintype.Sets
-import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.DropRight

@@ -426,17 +426,6 @@ variable [DecidableEq α]
 def IsNonInteractingBimachineComputable (f : List α → List α) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α α),
     B.run = f ∧ B.IsNonInteracting
-/-- `f` is computed by a non-interacting finite bimachine if and only if it is computed
-by one with state types in any universes. -/
-theorem isNonInteractingBimachineComputable_iff.{v, w} {f : List α → List α} :
-    IsNonInteractingBimachineComputable f
-      ↔ ∃ (L : Type v) (_ : Fintype L) (R : Type w) (_ : Fintype R)
-          (B : Bimachine L R α α), B.run = f ∧ B.IsNonInteracting :=
-  exists_fintype₂_congr
-    (fun eL eR ⟨B, hB, h⟩ ↦
-      ⟨.map eL eR B, (B.run_map eL eR).trans hB, h.map eL eR⟩)
-    (fun eL eR ⟨B, hB, h⟩ ↦
-      ⟨.map eL eR B, (B.run_map eL eR).trans hB, h.map eL eR⟩)
 
 /-- A non-interacting finite-state bimachine witnesses
 `IsNonInteractingBimachineComputable` for its `run`, whatever the universes of its
@@ -444,7 +433,8 @@ state types (`IsNonInteracting.map`). -/
 theorem Bimachine.isNonInteractingBimachineComputable {L R : Type*} [Fintype L]
     [Fintype R] (B : Bimachine L R α α) (h : B.IsNonInteracting) :
     IsNonInteractingBimachineComputable B.run :=
-  isNonInteractingBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance, B, rfl, h⟩
+  ⟨Shrink L, inferInstance, Shrink R, inferInstance, B.map (equivShrink.{0} L) (equivShrink.{0} R),
+    B.run_map _ _, h.map _ _⟩
 
 /-- A function computed by a non-interacting bimachine is in particular
 bimachine-computable. -/

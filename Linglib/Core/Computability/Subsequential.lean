@@ -13,7 +13,6 @@ public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Core.Computability.Mealy
 public import Linglib.Core.Computability.Edge
 public import Linglib.Core.Data.Fintype.List
-public import Linglib.Core.Data.Fintype.Transfer
 public import Linglib.Core.Data.List.DropRight
 
 /-!
@@ -181,19 +180,6 @@ def map (g : σ ≃ τ) (T : SubsequentialTransducer σ α β) : SubsequentialTr
 
 @[simp] theorem runRight_map (g : σ ≃ τ) : (map g T).runRight = T.runRight := by
   funext xs; simp [runRight]
-
-/-- `reindex g` is `map g` as an equivalence of machines. -/
-def reindex (g : σ ≃ τ) : SubsequentialTransducer σ α β ≃ SubsequentialTransducer τ α β where
-  toFun := map g
-  invFun := map g.symm
-  left_inv T := by simp
-  right_inv T := by simp
-
-@[simp] theorem coe_reindex (g : σ ≃ τ) :
-    ⇑(reindex (α := α) (β := β) g) = map g := rfl
-
-@[simp] theorem symm_reindex (g : σ ≃ τ) :
-    (reindex (α := α) (β := β) g).symm = reindex g.symm := rfl
 
 /-! ### Composition -/
 
@@ -412,36 +398,19 @@ def IsSubsequential (d : Edge) (f : List α → List β) : Prop :=
 @[simp] theorem isSubsequential_right_iff :
     IsSubsequential .right f ↔ IsRightSubsequential f := Iff.rfl
 
-/-- `IsLeftSubsequential` holds as soon as a transducer with states in any universe computes
-`f`. -/
-theorem isLeftSubsequential_iff.{v} :
-    IsLeftSubsequential f
-      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.run = f :=
-  exists_fintype_congr
-    (fun e ⟨T, hT⟩ ↦ ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
-    (fun e ⟨T, hT⟩ ↦ ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
-
-/-- `IsRightSubsequential` holds as soon as a transducer with states in any universe computes
-`f` right to left. -/
-theorem isRightSubsequential_iff.{v} :
+/-- `f` is right-subsequential exactly when a finite-state transducer computes it right to
+left. -/
+theorem isRightSubsequential_iff :
     IsRightSubsequential f
-      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f :=
-  isLeftSubsequential_iff.trans <| exists₃_congr fun _ _ T ↦ by
-    rw [T.runRight_eq_revConj_run, List.revConj_eq_iff]
+      ↔ ∃ (σ : Type) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f :=
+  exists₃_congr fun _ _ T ↦ by rw [T.runRight_eq_revConj_run, List.revConj_eq_iff]
 
 /-- Every finite-state transducer computes a left-subsequential function, whatever the
 universe of its state type. -/
 theorem SubsequentialTransducer.isLeftSubsequential {σ : Type*} [Fintype σ]
     (T : SubsequentialTransducer σ α β) :
     IsLeftSubsequential T.run :=
-  isLeftSubsequential_iff.mpr ⟨σ, inferInstance, T, rfl⟩
-
-/-- Every finite-state transducer computes a right-subsequential function via
-`runRight`. -/
-theorem SubsequentialTransducer.isRightSubsequential {σ : Type*} [Fintype σ]
-    (T : SubsequentialTransducer σ α β) :
-    IsRightSubsequential T.runRight :=
-  isRightSubsequential_iff.mpr ⟨σ, inferInstance, T, rfl⟩
+  ⟨Shrink σ, inferInstance, T.map (equivShrink.{0} σ), T.run_map _⟩
 
 /-! ### Reverse conjugation -/
 
@@ -461,6 +430,13 @@ theorem isLeftSubsequential_revConj_iff :
 @[simp] theorem isRightSubsequential_revConj_iff :
     IsRightSubsequential (List.revConj f) ↔ IsLeftSubsequential f :=
   ⟨fun h ↦ List.revConj_revConj f ▸ h.revConj, IsLeftSubsequential.revConj⟩
+
+/-- Every finite-state transducer computes a right-subsequential function via
+`runRight`. -/
+theorem SubsequentialTransducer.isRightSubsequential {σ : Type*} [Fintype σ]
+    (T : SubsequentialTransducer σ α β) :
+    IsRightSubsequential T.runRight :=
+  T.isLeftSubsequential.revConj
 
 /-! ### Mealy-computable functions -/
 
