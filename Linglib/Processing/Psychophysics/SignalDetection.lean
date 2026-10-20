@@ -25,10 +25,12 @@ law `ν` shifted by `δ / 2` on signal trials and by `-(δ / 2)` on noise trials
 being the distance between the two laws. The normal model takes `ν` standard normal, and Luce's
 Choice Theory takes it logistic (Macmillan and Creelman, ch. 4, p. 98). In every location experiment
 the hit rate of a criterion is the false-alarm rate of the criterion lower by `δ`
-(`hitRate_eq_falseAlarmRate_sub`). For a symmetric `ν`, such as both of these, the receiver
-operating characteristic on axes transformed by the quantile function of `ν` is therefore a line of
-unit slope, `δ` above the chance line. In the normal model the axes are z-scores: whatever the
-criterion `k`, the sensitivity is `d' = z(H) - z(F)` and `k = -(z(H) + z(F)) / 2`
+(`hitRate_eq_falseAlarmRate_sub`). For a `ν` without atoms that is symmetric about `0`, such as both
+of these, the two rates are the distribution function of `ν` at `δ / 2 - k` and at `-(δ / 2) - k`
+(`hitRate_locationExperiment_eq_cdf`, `falseAlarmRate_locationExperiment_eq_cdf`), so the receiver
+operating characteristic on axes transformed by the quantile function of `ν` is a line of unit
+slope, `δ` above the chance line. In the normal model the axes are z-scores: whatever the criterion
+`k`, the sensitivity is `d' = z(H) - z(F)` and `k = -(z(H) + z(F)) / 2`
 (`probit_hitRate_sub_probit_falseAlarmRate`, `probit_hitRate_add_probit_falseAlarmRate`). The
 likelihood ratio of signal to noise at an observation `x` is `exp (d' * x)`
 (`likelihoodRatio_gaussianReal`), and the two-alternative forced choice is the binary probit rule,
@@ -46,6 +48,9 @@ with proportion correct `Φ (d' / √2)` (`forcedChoice_one_gaussianReal`).
   over the signal observation, Green and Swets's eq. (2.13).
 * `SignalDetection.hitRate_eq_falseAlarmRate_sub`: in a location experiment the hit rate of `k` is
   the false-alarm rate of `k - δ`.
+* `SignalDetection.hitRate_locationExperiment_eq_cdf`,
+  `SignalDetection.falseAlarmRate_locationExperiment_eq_cdf`: for a noise law without atoms that
+  is symmetric about `0`, the rates are its distribution function at `δ / 2 - k` and `-(δ / 2) - k`.
 * `SignalDetection.falseAlarmRate_lt_hitRate`: at positive sensitivity the receiver operating
   characteristic lies above the chance line.
 * `SignalDetection.probit_hitRate_sub_probit_falseAlarmRate`: in the normal model
@@ -168,6 +173,25 @@ theorem hitRate_eq_falseAlarmRate_sub (k : ℝ) :
   rw [hitRate_locationExperiment, falseAlarmRate_locationExperiment]
   ring_nf
 
+section Symmetric
+
+variable [IsProbabilityMeasure ν] [NullSingletonClass ν] [ν.IsNegInvariant]
+
+/-- For a noise law without atoms that is symmetric about `0`, the hit rate of `k` is the
+distribution function of `ν` at `δ / 2 - k`. -/
+theorem hitRate_locationExperiment_eq_cdf (k : ℝ) :
+    hitRate (locationExperiment ν δ) k = cdf ν (δ / 2 - k) := by
+  rw [hitRate_locationExperiment, measureReal_Ioi_eq_cdf_neg ν (measure_singleton _), neg_sub]
+
+/-- For a noise law without atoms that is symmetric about `0`, the false-alarm rate of `k` is the
+distribution function of `ν` at `-(δ / 2) - k`. -/
+theorem falseAlarmRate_locationExperiment_eq_cdf (k : ℝ) :
+    falseAlarmRate (locationExperiment ν δ) k = cdf ν (-(δ / 2) - k) := by
+  rw [falseAlarmRate_locationExperiment, measureReal_Ioi_eq_cdf_neg ν (measure_singleton _),
+    neg_add', neg_sub_comm]
+
+end Symmetric
+
 /-- At zero sensitivity the hit rate is the false-alarm rate: the receiver operating
 characteristic is the chance line. -/
 theorem hitRate_locationExperiment_zero (k : ℝ) :
@@ -206,15 +230,12 @@ theorem locationExperiment_gaussianReal (b : Bool) :
   rw [locationExperiment_apply, gaussianReal_map_add_const, zero_add]
 
 theorem hitRate_gaussianReal :
-    hitRate (locationExperiment (gaussianReal 0 1) δ) k = normalCDF (δ / 2 - k) := by
-  rw [hitRate_locationExperiment, gaussianReal_real_Ioi 0 one_ne_zero]
-  simp
+    hitRate (locationExperiment (gaussianReal 0 1) δ) k = normalCDF (δ / 2 - k) :=
+  hitRate_locationExperiment_eq_cdf k
 
 theorem falseAlarmRate_gaussianReal :
-    falseAlarmRate (locationExperiment (gaussianReal 0 1) δ) k = normalCDF (-(δ / 2) - k) := by
-  rw [falseAlarmRate_locationExperiment, gaussianReal_real_Ioi 0 one_ne_zero]
-  simp only [NNReal.coe_one, Real.sqrt_one, div_one]
-  ring_nf
+    falseAlarmRate (locationExperiment (gaussianReal 0 1) δ) k = normalCDF (-(δ / 2) - k) :=
+  falseAlarmRate_locationExperiment_eq_cdf k
 
 /-- In the normal model the sensitivity is the difference of the z-scores of the rates, whatever
 the criterion: the receiver operating characteristic on z-score axes is the line
@@ -267,12 +288,11 @@ variable (δ k : ℝ)
 
 theorem hitRate_logisticMeasure :
     hitRate (locationExperiment logisticMeasure δ) k = Real.sigmoid (δ / 2 - k) := by
-  rw [hitRate_locationExperiment, logisticMeasure_real_Ioi, neg_sub]
+  rw [hitRate_locationExperiment_eq_cdf, cdf_logisticMeasure]
 
 theorem falseAlarmRate_logisticMeasure :
     falseAlarmRate (locationExperiment logisticMeasure δ) k = Real.sigmoid (-(δ / 2) - k) := by
-  rw [falseAlarmRate_locationExperiment, logisticMeasure_real_Ioi]
-  ring_nf
+  rw [falseAlarmRate_locationExperiment_eq_cdf, cdf_logisticMeasure]
 
 /-- In the logistic model the sensitivity is the difference of the log-odds of the rates, whatever
 the criterion: on log-odds axes the receiver operating characteristic is a line of unit slope, `δ`
