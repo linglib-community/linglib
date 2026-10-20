@@ -68,7 +68,7 @@ variable {α : Type*}
 which *Misalignment (2), (6b) bans. -/
 def Misaligned (m : TemplateMatch α) : Prop :=
   ∃ a ∈ m.associations,
-    a.source = .root ∧ m.root.IsNonfinal a.melodyIndex ∧ m.template.isFinalSlot a.slotIndex
+    a.source = .root ∧ m.root.IsNonfinal a.melodyIndex ∧ a.slotIndex + 1 = m.template.length
 
 instance (m : TemplateMatch α) : Decidable (Misaligned m) :=
   inferInstanceAs (Decidable (∃ a ∈ m.associations, _))
@@ -76,7 +76,7 @@ instance (m : TemplateMatch α) : Decidable (Misaligned m) :=
 theorem misaligned_append (m : TemplateMatch α) (l : List Association) :
     Misaligned { m with associations := m.associations ++ l } ↔
       Misaligned m ∨ ∃ a ∈ l, a.source = .root ∧ m.root.IsNonfinal a.melodyIndex ∧
-        m.template.isFinalSlot a.slotIndex := by
+        a.slotIndex + 1 = m.template.length := by
   simp only [Misaligned, List.mem_append, or_and_right, exists_or]
 
 /-- Lines from the affix tier never misalign the root, since the intruder "is not a radical" ((8),
@@ -125,7 +125,9 @@ inductive Category where
 lines, segmental material outside the skeleton, and the parameters of the squib's derivations. -/
 structure Pattern where
   /-- The skeleton. -/
-  template : CVTemplate
+  template : Skeleton
+  /-- The C-slots prespecified [+c]. -/
+  consonantal : List ℕ := []
   /-- The category of the base. -/
   category : Category
   /-- The vocalization and its association lines. -/
@@ -150,18 +152,19 @@ def lines (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
 
 /-- `m.Admits a` says that the slot's specification admits the segment. A [+c] slot hosts consonants
 only ((4), (7), (13)), and a plain C-slot anything but a vowel. -/
-def Admits (m : TemplateMatch String) (a : Association) : Prop :=
-  match m.template.slotAt a.slotIndex, m.segmentAt a with
-  | some .Cspec, some x => segClass x = .consonant
-  | some .C, some x => segClass x ≠ .vowel
+def Admits (p : Pattern) (m : TemplateMatch String) (a : Association) : Prop :=
+  match m.template[a.slotIndex]?, m.segmentAt a with
+  | some .C, some x =>
+    if a.slotIndex ∈ p.consonantal then segClass x = .consonant else segClass x ≠ .vowel
   | _, _ => True
 
-instance (m : TemplateMatch String) (a : Association) : Decidable (Admits m a) := by
+instance (p : Pattern) (m : TemplateMatch String) (a : Association) :
+    Decidable (Admits p m a) := by
   unfold Admits; split <;> infer_instance
 
 /-- The V-slots flanking slot `i`. -/
 def flankingV (m : TemplateMatch String) (i : Nat) : List Nat :=
-  [i - 1, i + 1].filter fun s ↦ m.template.slotAt s = some .V
+  [i - 1, i + 1].filter fun s ↦ m.template[s]? = some .V
 
 /-- The vocalization line at slot `s`. -/
 def vocAt (m : TemplateMatch String) (s : Nat) : Option Association :=
@@ -194,8 +197,8 @@ def join (p : Pattern) (m : TemplateMatch String) (a : Association) : TemplateMa
 elements as the pattern's language allows. -/
 def associate (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
   let m := lines p r
-  (m.associations.filter fun a ↦ ¬ Admits m a).foldl (join p)
-    { m with associations := m.associations.filter (Admits m ·) }
+  (m.associations.filter fun a ↦ ¬ Admits p m a).foldl (join p)
+    { m with associations := m.associations.filter (Admits p m ·) }
 
 /-! ### Intrusion -/
 
@@ -278,14 +281,14 @@ def realizeSlot (m : TemplateMatch String) (s : Nat) : Option String :=
 
 /-- `collapses x l` says that the V-slot realized `x` is followed by a vacant C-slot and a V-slot
 realized the same. -/
-def collapses (x : String) : List (CVSlot × Option String) → Bool
-  | (c, none) :: (.V, some y) :: _ => c.IsC && x == y
+def collapses (x : String) : List (Slot × Option String) → Bool
+  | (c, none) :: (.V, some y) :: _ => c == .C && x == y
   | _ => false
 
 /-- `collapse` lists the realized slots in order, V-slots around a vacant C-slot with the same
 realization surfacing once, since "the phonological length of these vowels is not translated to
 phonetic length" (13). The flag records that the vowel has already been realized. -/
-def collapse : Bool → List (CVSlot × Option String) → List String
+def collapse : Bool → List (Slot × Option String) → List String
   | _, [] => []
   | skip, (_, none) :: tl => collapse skip tl
   | true, (.V, some _) :: tl => collapse false tl
@@ -293,16 +296,16 @@ def collapse : Bool → List (CVSlot × Option String) → List String
 
 /-- Truncation (7a) deletes the final syllable, the final C-slot and the V-slot before it, when the
 pattern truncates and that slot is vacant. -/
-def truncate (p : Pattern) (m : TemplateMatch String) : CVTemplate :=
+def truncate (p : Pattern) (m : TemplateMatch String) : Skeleton :=
   match m.unfilledCSlots.max?, m.template.cSlots.max? with
   | some s, some s' =>
-    if p.truncates ∧ s = s' then ⟨m.template.slots.take (s - 1)⟩ else m.template
+    if p.truncates ∧ s = s' then m.template.take (s - 1) else m.template
   | _, _ => m.template
 
 /-- The surface segments of a match in a pattern are the realized slots, a filled prespecified
 geminate slot counting twice ({C C} in (7)), between the pattern's outer material. -/
 def realize (p : Pattern) (m : TemplateMatch String) : List String :=
-  p.pre ++ collapse false ((truncate p m).slots.zipIdx.flatMap fun (c, i) ↦
+  p.pre ++ collapse false ((truncate p m).zipIdx.flatMap fun (c, i) ↦
     let e := (c, realizeSlot m i)
     if p.geminate = some i ∧ e.2.isSome then [e, e] else [e]) ++ p.post
 
@@ -358,22 +361,22 @@ def hid : ConsonantalRoot String := ⟨["h", "i", "d"]⟩
 
 /-- The PST.3MSG template CaCaC[+c] ((3)–(4)), vocalization a,a. -/
 def hebrewPst : Pattern :=
-  { template := ⟨[.C, .V, .C, .V, .Cspec]⟩, category := .verb, vocalism := ["a"],
+  { template := [.C, .V, .C, .V, .C], consonantal := [4], category := .verb, vocalism := ["a"],
     vocLines := [⟨.vocalism, 0, 1⟩, ⟨.vocalism, 0, 3⟩] }
 
 /-- The action-noun template QTiLa (3). -/
 def hebrewQtila : Pattern :=
-  { template := ⟨[.C, .C, .V, .C, .V]⟩, category := .noun, vocalism := ["i", "a"],
+  { template := [.C, .C, .V, .C, .V], category := .noun, vocalism := ["i", "a"],
     vocLines := [⟨.vocalism, 0, 2⟩, ⟨.vocalism, 1, 4⟩] }
 
 /-- The passive-participle template QaTuL (3). -/
 def hebrewQatul : Pattern :=
-  { template := ⟨[.C, .V, .C, .V, .C]⟩, category := .adjective, vocalism := ["a", "u"],
+  { template := [.C, .V, .C, .V, .C], category := .adjective, vocalism := ["a", "u"],
     vocLines := [⟨.vocalism, 0, 1⟩, ⟨.vocalism, 1, 3⟩] }
 
 /-- The resultative nominal template taQTiL[+c] ((9)–(10)) has its fixed ta before the skeleton. -/
 def hebrewTaqtil : Pattern :=
-  { template := ⟨[.C, .C, .V, .Cspec]⟩, category := .noun, vocalism := ["i"],
+  { template := [.C, .C, .V, .C], consonantal := [3], category := .noun, vocalism := ["i"],
     vocLines := [⟨.vocalism, 0, 2⟩], pre := ["ta"] }
 
 /-- √klt fills CaCaC[+c] radical by radical, and the biradical √kl satisfies it by spreading its
@@ -416,19 +419,20 @@ theorem dmj_taqtil :
 slot [+c] and the person suffix -ä outside; a barred glide joins the consonant on its left, and an
 unsatisfied final syllable is truncated (7a). -/
 def amharicPfv : Pattern :=
-  { template := ⟨[.C, .V, .C, .V, .Cspec]⟩, category := .verb, vocalism := ["ä"],
+  { template := [.C, .V, .C, .V, .C], consonantal := [4], category := .verb, vocalism := ["ä"],
     vocLines := [⟨.vocalism, 0, 1⟩, ⟨.vocalism, 0, 3⟩], post := ["-ä"], geminate := some 2,
     joinsGlide := true, truncates := true }
 
 /-- The GRND stem CäCC[+c] with the subject suffix -o ((5), (8)). -/
 def amharicGrnd : Pattern :=
-  { template := ⟨[.C, .V, .C, .Cspec]⟩, category := .noun, vocalism := ["ä"],
+  { template := [.C, .V, .C, .C], consonantal := [3], category := .noun, vocalism := ["ä"],
     vocLines := [⟨.vocalism, 0, 1⟩], post := ["-o"], joinsGlide := true }
 
 /-- The INF has the prefix mä- and, in Strict CV terms (13), the skeleton CVC[+c]VC[+c] with ä on
 the second V-slot. -/
 def amharicInf : Pattern :=
-  { template := ⟨[.C, .V, .Cspec, .V, .Cspec]⟩, category := .noun, vocalism := ["ä"],
+  { template := [.C, .V, .C, .V, .C], consonantal := [2, 4], category := .noun,
+    vocalism := ["ä"],
     vocLines := [⟨.vocalism, 0, 3⟩], pre := ["mä"], joinsGlide := true }
 
 /-- In the PFV the barred j of √fdj joins d at the geminate slot and the final slot stays vacant,

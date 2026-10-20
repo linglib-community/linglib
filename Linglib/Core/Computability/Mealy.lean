@@ -6,16 +6,15 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Computability.DFA
-public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.List.Basic
 public import Mathlib.Logic.Equiv.Defs
-public import Linglib.Core.Data.Fintype.Transfer
+public import Mathlib.Data.Fintype.Shrink
 
 /-!
 # Mealy machines
 
-A Mealy machine [mealy-1955] is a deterministic transducer which reads its input left to
+A Mealy machine is a deterministic transducer which reads its input left to
 right and emits exactly one output symbol per input symbol, so the function it computes
 is length-preserving by construction. Output coordinate `i` of the run is the output
 at the state reached after the length-`i` input prefix (`Mealy.getElem?_run`),
@@ -45,26 +44,30 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 * `Mealy.getElem?_ofFlag_run`, `Mealy.getElem?_ofFlag_runRight`: each coordinate of a
   flag machine sees the flag over its strict prefix (its strict suffix, for the
   right-to-left pass)
-* `isMealyComputable_iff`: the universe-polymorphic characterization
+* `Mealy.isMealyComputable`: a finite-state machine computes a Mealy-computable function,
+  whatever the universe of its state type
 * `IsMealyComputable.comp`: closure under composition
 * `IsMealyComputable.isRegular_preimage`: Mealy-computable maps pull back regular
   languages
 
 ## Implementation notes
 
-The functions computed by Mealy machines are the *sequential functions* of algebraic
-automata theory [holcombe-1982]. `SubsequentialTransducer` generalizes to word-block
-outputs and a state-final output [mohri-1997]; `Mealy.toSubsequentialTransducer`
-exhibits a Mealy machine as the singleton-output, empty-flush case.
+The functions computed by Mealy machines are the *sequential functions* of Holcombe's
+algebraic automata theory. `SubsequentialTransducer` generalizes to word-block outputs and
+a state-final output, after Mohri; `Mealy.toSubsequentialTransducer` exhibits a Mealy
+machine as the singleton-output, empty-flush case.
+
+`IsMealyComputable` pins the state type at `Type`, as `Language.IsRegular` does;
+`Mealy.isMealyComputable` reaches it from any universe through `Shrink`.
 
 [UPSTREAM] candidate: `Mathlib.Computability.Mealy`.
 
 The Myhill–Nerode characterization of the Mealy-computable functions by their
-residuals is in `Core/Computability/MyhillNerode.lean`.
+residuals is in `Core/Computability/Residual.lean`.
 
 ## TODO
 
-* Mealy machine homomorphisms [holcombe-1982], with `map` at an equivalence as the
+* Mealy machine homomorphisms in Holcombe's sense, with `map` at an equivalence as the
   isomorphism case.
 * The right-scan mirror via reverse conjugation.
 * Moore machines (state-determined output) and the Mealy–Moore equivalence: same
@@ -73,6 +76,12 @@ residuals is in `Core/Computability/MyhillNerode.lean`.
   over `α × β` (the synchronous rational relations). Residuals of the map correspond
   to left quotients of the graph, so this would derive `isMealyComputable_iff_residual`
   from the language Myhill–Nerode theorem.
+
+## References
+
+* [mealy-1955]
+* [holcombe-1982]
+* [mohri-1997]
 -/
 
 @[expose] public section
@@ -92,7 +101,7 @@ structure Mealy (σ α β : Type*) where
   output : σ → α → β
 
 instance [Inhabited σ] [Inhabited β] : Inhabited (Mealy σ α β) :=
-  ⟨⟨default, fun _ _ => default, fun _ _ => default⟩⟩
+  ⟨⟨default, fun _ _ ↦ default, fun _ _ ↦ default⟩⟩
 
 namespace Mealy
 
@@ -277,18 +286,6 @@ def map (g : σ ≃ τ) (T : Mealy σ α β) : Mealy τ α β where
 @[simp] theorem run_map (g : σ ≃ τ) : (map g T).run = T.run := by
   funext xs; simp [run]
 
-/-- `reindex g` is `map g` as an equivalence of machines. -/
-def reindex (g : σ ≃ τ) : Mealy σ α β ≃ Mealy τ α β where
-  toFun := map g
-  invFun := map g.symm
-  left_inv T := by simp
-  right_inv T := by simp
-
-@[simp] theorem coe_reindex (g : σ ≃ τ) : ⇑(reindex (α := α) (β := β) g) = map g := rfl
-
-@[simp] theorem symm_reindex (g : σ ≃ τ) :
-    (reindex (α := α) (β := β) g).symm = reindex g.symm := rfl
-
 end Mealy
 
 /-! ### The Mealy-computable class -/
@@ -297,19 +294,11 @@ end Mealy
 def IsMealyComputable (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
 
-/-- `IsMealyComputable` holds as soon as a machine with states in any universe computes `f`. -/
-theorem isMealyComputable_iff.{v} {f : List α → List β} :
-    IsMealyComputable f
-      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : Mealy σ α β), T.run = f :=
-  exists_fintype_congr
-    (fun e ⟨T, hT⟩ => ⟨Mealy.map e T, (T.run_map e).trans hT⟩)
-    (fun e ⟨T, hT⟩ => ⟨Mealy.map e T, (T.run_map e).trans hT⟩)
-
 /-- Every finite-state `Mealy` computes a Mealy-computable function, whatever the
 universe of its state type. -/
 theorem Mealy.isMealyComputable {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
     IsMealyComputable T.run :=
-  isMealyComputable_iff.mpr ⟨σ, inferInstance, T, rfl⟩
+  ⟨Shrink σ, inferInstance, T.map (equivShrink.{0} σ), T.run_map _⟩
 
 /-- Mealy-computable functions are closed under composition (`Mealy.comp`). -/
 theorem IsMealyComputable.comp {γ : Type*} {g : List β → List γ} {f : List α → List β}

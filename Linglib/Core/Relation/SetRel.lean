@@ -60,6 +60,12 @@ instance [Fintype β] (R : SetRel α β) (t : Set β) (a : α) [∀ b, Decidable
     [DecidablePred (· ∈ t)] : Decidable (a ∈ R.preimage t) :=
   decidable_of_iff (∃ b ∈ t, a ~[R] b) mem_preimage.symm
 
+instance [Fintype β] (R : SetRel α β) (a : α) [∀ b, Decidable (a ~[R] b)] : Decidable (a ∈ R.dom) :=
+  decidable_of_iff (∃ b, a ~[R] b) mem_dom.symm
+
+instance [Fintype α] (R : SetRel α β) (b : β) [∀ a, Decidable (a ~[R] b)] : Decidable (b ∈ R.cod) :=
+  decidable_of_iff (∃ a, a ~[R] b) mem_cod.symm
+
 /-! ### Relations from set-valued functions -/
 
 /-- A set-valued function as a relation, relating `a` to every member of `f a`. -/

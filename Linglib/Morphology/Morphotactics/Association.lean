@@ -1,12 +1,17 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Morphology.Morphotactics.TemplateMatch
 
 /-!
 # The association conventions
 
 This file defines the universal conventions that associate the melodic elements of a tier with
-the slots of a template, as [mccarthy-1981] states them after [clements-ford-1979]. First, the
+the slots of a template, as McCarthy states them after Clements and Ford. First, the
 unassociated melodic elements associate one to one, from left to right, with the free slots.
 Second, a single unassociated melodic element that remains associates with every free slot.
 Third, a slot still free takes the melodic element on the nearest slot to its left. A slot with
@@ -37,40 +42,46 @@ namespace Morphology.TemplateMatch
 
 variable {α β : Type*} (m : TemplateMatch α) (s : AssocSource)
 
-/-- The slots that bear a tier's melody: the V-slots for the vocalism, the C-slots for the root
-and the affixes. -/
-def bearers : List Nat := if s = .vocalism then m.template.vSlots else m.template.cSlots
+/-- The slots that bear a tier's melody, which are the V-slots for the vocalism and the C-slots
+for the root and the affixes. -/
+def bearers : List ℕ := if s = .vocalism then m.template.vSlots else m.template.cSlots
 
-/-- Whether some line reaches a slot, from any tier. -/
-def IsFilled (i : Nat) : Bool := m.associations.any (·.slotIndex == i)
+/-- Slot `i` is filled when a line from any tier reaches it. -/
+def IsFilled (i : ℕ) : Prop := ∃ a ∈ m.associations, a.slotIndex = i
 
-/-- Whether some line leaves a melodic element of a tier. -/
-def IsAssociated (k : Nat) : Bool := m.associations.any fun a ↦ a.source == s && a.melodyIndex == k
+instance (i : ℕ) : Decidable (m.IsFilled i) :=
+  inferInstanceAs (Decidable (∃ a ∈ m.associations, _))
+
+/-- Element `k` of a tier is associated when a line leaves it. -/
+def IsAssociated (k : ℕ) : Prop := ∃ a ∈ m.associations, a.source = s ∧ a.melodyIndex = k
+
+instance (k : ℕ) : Decidable (m.IsAssociated s k) :=
+  inferInstanceAs (Decidable (∃ a ∈ m.associations, _))
 
 /-- The unassociated elements of a tier, left to right. -/
-def unassociated : List Nat := (List.range (m.melody s).length).filter (!m.IsAssociated s ·)
+def unassociated : List ℕ := (List.range (m.melody s).length).filter (¬ m.IsAssociated s ·)
 
-/-- The free slots that bear a tier's melody, left to right: a slot with a line from any tier is
+/-- The free slots that bear a tier's melody, left to right. A slot with a line from any tier is
 unavailable. -/
-def freeBearers : List Nat := (m.bearers s).filter (!m.IsFilled ·)
+def freeBearers : List ℕ := (m.bearers s).filter (¬ m.IsFilled ·)
 
 /-- The match with some lines added. -/
 def link (l : List Association) : TemplateMatch α :=
   { m with associations := m.associations ++ l }
 
 /-- The line of a tier on the nearest slot left of `i` that has one. -/
-def leftLine (i : Nat) : Option Association :=
+def leftLine (i : ℕ) : Option Association :=
   (m.associations.filter fun a ↦ a.source == s && a.slotIndex < i).foldl
     (fun acc a ↦ match acc with
       | some b => if b.slotIndex < a.slotIndex then some a else some b
       | none => some a) none
 
-/-- The first convention: the unassociated melodic elements associate one to one, from left to
+/-- The first convention associates the unassociated melodic elements one to one, from left to
 right, with the free slots. -/
 def associateOneToOne : TemplateMatch α :=
   m.link (((m.unassociated s).zip (m.freeBearers s)).map fun (k, i) ↦ ⟨s, k, i⟩)
 
-/-- The second convention: a single unassociated melodic element associates with every free
+/-- The second convention associates a single unassociated melodic element with every free
 slot. After the first convention no element is left with a free slot, so this changes only a
 match the first has not been applied to. -/
 def associateRemaining : TemplateMatch α :=
@@ -78,7 +89,7 @@ def associateRemaining : TemplateMatch α :=
   | [k] => m.link ((m.freeBearers s).map fun i ↦ ⟨s, k, i⟩)
   | _ => m
 
-/-- The third convention: a free slot takes the melodic element of the tier on the nearest slot
+/-- The third convention gives a free slot the melodic element of the tier on the nearest slot
 to its left. -/
 def spread : TemplateMatch α :=
   m.link ((m.freeBearers s).filterMap fun i ↦ (m.leftLine s i).map fun a ↦ ⟨s, a.melodyIndex, i⟩)

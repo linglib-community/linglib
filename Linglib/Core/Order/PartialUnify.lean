@@ -30,6 +30,8 @@ join.
   `PartialUnify.bot_unify`, `PartialUnify.unify_mono`: the unification laws.
 * `Compat`: the consistency relation, a common upper bound.
 * The Pi instance: pointwise unification over a `Fintype` index.
+* The `WithBot` instance: an adjoined `⊥` unifies with everything.
+* The instance on nonempty finite sets ordered by reverse inclusion: unification is intersection.
 
 ## Implementation notes
 
@@ -220,7 +222,87 @@ instance : PartialUnify ((t : F) → S t) where
 
 end Pi
 
+/-! ### Adjoining a bottom -/
+
+section WithBot
+
+/-- Unification on `WithBot α`, in which `⊥` unifies with everything and two elements of `α`
+unify as in `α`. -/
+protected def withBotUnify : WithBot α → WithBot α → WithTop (WithBot α)
+  | ⊥, y => y
+  | (a : α), ⊥ => (a : WithBot α)
+  | (a : α), (b : α) => (unify a b).map WithBot.some
+
+instance : PartialUnify (WithBot α) where
+  unify := PartialUnify.withBotUnify
+  isLUB_of_unify_eq_coe := by
+    intro x y z h
+    match x, y with
+    | ⊥, y =>
+      obtain rfl := WithTop.coe_inj.mp h
+      exact ⟨mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
+        fun u hu ↦ (mem_upperBounds_pair.mp hu).2⟩
+    | (a : α), ⊥ =>
+      obtain rfl := WithTop.coe_inj.mp h
+      exact ⟨mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩,
+        fun u hu ↦ (mem_upperBounds_pair.mp hu).1⟩
+    | (a : α), (b : α) =>
+      simp only [PartialUnify.withBotUnify, WithTop.map_eq_some_iff] at h
+      obtain ⟨c, hc, rfl⟩ := h
+      have hl := isLUB_of_unify_eq_coe hc
+      obtain ⟨hac, hbc⟩ := mem_upperBounds_pair.mp hl.1
+      refine ⟨mem_upperBounds_pair.mpr
+        ⟨WithBot.coe_le_coe.mpr hac, WithBot.coe_le_coe.mpr hbc⟩, fun u hu ↦ ?_⟩
+      obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
+      obtain ⟨u', rfl, hau'⟩ := WithBot.coe_le_iff.mp hau
+      exact WithBot.coe_le_coe.mpr (hl.2 (mem_upperBounds_pair.mpr
+        ⟨hau', WithBot.coe_le_coe.mp hbu⟩))
+  unify_ne_top_of_bddAbove := by
+    intro x y ⟨u, hu⟩
+    obtain ⟨hxu, hyu⟩ := mem_upperBounds_pair.mp hu
+    match x, y with
+    | ⊥, _ => exact WithTop.coe_ne_top
+    | (a : α), ⊥ => exact WithTop.coe_ne_top
+    | (a : α), (b : α) =>
+      obtain ⟨u', rfl, hau'⟩ := WithBot.coe_le_iff.mp hxu
+      obtain ⟨c, hc⟩ := WithTop.ne_top_iff_exists.mp (unify_ne_top_of_bddAbove
+        ⟨u', mem_upperBounds_pair.mpr ⟨hau', WithBot.coe_le_coe.mp hyu⟩⟩)
+      simp [PartialUnify.withBotUnify, ← hc]
+
+end WithBot
+
 end PartialUnify
+
+/-! ### Nonempty finite sets under reverse inclusion -/
+
+namespace Finset
+
+variable {α : Type*} [DecidableEq α]
+
+/-- Nonempty finite sets ordered by reverse inclusion, the smaller set the more specific, unify to
+their intersection when it is nonempty. -/
+instance : PartialUnify {s : Finset α // s.Nonempty}ᵒᵈ where
+  unify a b :=
+    if h : ((OrderDual.ofDual a).1 ∩ (OrderDual.ofDual b).1).Nonempty then
+      ((OrderDual.toDual ⟨_, h⟩ : {s : Finset α // s.Nonempty}ᵒᵈ) : WithTop _)
+    else ⊤
+  isLUB_of_unify_eq_coe := by
+    intro a b c h
+    split at h
+    · next hne =>
+      obtain rfl := WithTop.coe_inj.mp h
+      refine ⟨mem_upperBounds_pair.mpr ⟨inter_subset_left, inter_subset_right⟩, fun u hu ↦ ?_⟩
+      obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
+      exact subset_inter hau hbu
+    · exact absurd h WithTop.top_ne_coe
+  unify_ne_top_of_bddAbove := by
+    intro a b ⟨u, hu⟩
+    obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
+    have hne : ((OrderDual.ofDual a).1 ∩ (OrderDual.ofDual b).1).Nonempty :=
+      (OrderDual.ofDual u).2.mono (subset_inter hau hbu)
+    simp [hne]
+
+end Finset
 
 /-! ### Compatibility
 

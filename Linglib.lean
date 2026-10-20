@@ -61,7 +61,6 @@ import Linglib.Core.Computability.Variety.Definite
 import Linglib.Core.Data.Fin.VecNotation
 import Linglib.Core.Data.Fintype.List
 import Linglib.Core.Data.Fintype.Sets
-import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.DropRight
@@ -672,7 +671,6 @@ import Linglib.Morphology.Exponence.Decomposition
 import Linglib.Morphology.Exponence.Elsewhere
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Morph
-import Linglib.Morphology.Morphotactics.CVTemplate
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Morphology.Morphotactics.Template
 import Linglib.Morphology.Nanosyntax.TreeSpellout

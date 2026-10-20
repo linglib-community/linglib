@@ -9,36 +9,28 @@ public import Linglib.Data.UD.Features
 /-!
 # Clause chaining
 
-A clause chain is a sequence of medial clauses, dependent and morphologically reduced, closed
-by one final clause that supplies tense, mood and often agreement for the whole chain; it is
-the prototypical cosubordinate combination of clauses, dependent but not embedded
-([foley-r-d-van-valin-1984]; [longacre-2007]). This file provides the vocabulary in which a
-language's inventory of medial forms is described and the notions a typology of chaining reads
-off it ([sarvasy-aikhenvald-2025]; [de-vries-2025]). A fragment's carrier of medial forms is
-an instance of `MedialForm`, which records for each form the switch-reference value it marks,
-the interclausal relations it encodes and whether it indexes the subject of its clause; the
-switch-reference and agreement properties of the language are definitions over the instance.
-How far medial verbs retain an inflectional category is a `CategoryRetention`, and a language's
-profile over the five categories is a point of the product order `MedialMorphProfile`, whose
-top is the profile of a finite verb.
+A clause chain is a sequence of medial clauses, dependent and morphologically reduced, closed by
+one final clause that supplies tense, mood and often agreement for the whole chain. Foley and Van
+Valin and Longacre take it as the prototypical cosubordinate combination of clauses, dependent but
+not embedded. A language's medial forms are an instance of `MedialForm`, which records for each
+form the switch-reference value it marks, the interclausal relations it encodes and whether it
+indexes the subject of its clause, and the typology of chaining of Sarvasy and Aikhenvald and of
+de Vries reads the language's properties off the instance. How far medial verbs retain an
+inflectional category is a `CategoryRetention`, and a profile over the five categories is a
+`MedialMorphProfile`, ordered pointwise with the profile of a finite verb at the top.
 
 ## Main definitions
 
-* `CategoryRetention` — the scale `absent < restricted < full` on which a medial verb retains
-  a category, a bounded linear order; `CategoryRetention.ofPred` reads a category's retention
-  off which of a language's medial forms admit it, fully when all do, restrictedly when some
-  do, not at all when none does
-* `InflectionalCategory`, `MedialMorphProfile` — the five categories and a profile over them,
-  ordered pointwise; `MedialMorphProfile.udVerbForm` is the finite verb form at the top of the
-  order and the converb everywhere else
-* `SwitchReference`, `InterclauseRelation`, `BridgingType` — the same-subject or
-  different-subject value a form marks, the relations a form can encode, of which
-  `InterclauseRelation.Temporal` are the two temporal ones, and the two bridging
-  constructions across chains
-* `MedialForm` — the class of a language's medial forms, with `MedialForm.HasSR`,
+* `CategoryRetention`: the bounded linear order `absent < restricted < full` on which a medial
+  verb retains a category, and `CategoryRetention.ofPred`, the retention a language's medial
+  forms give a category.
+* `InflectionalCategory`, `MedialMorphProfile`: the five categories and the profiles over them,
+  with `MedialMorphProfile.udVerbForm`, finite at the top and a converb elsewhere.
+* `SwitchReference`, `InterclauseRelation`, `BridgingType`: the switch-reference values, the
+  relations a medial form can encode, and the two bridging constructions across chains.
+* `MedialForm`: the class of a language's medial forms, with `MedialForm.HasSR`,
   `MedialForm.SRObligatory` and `MedialForm.SSUnmarked` for its switch-reference system,
-  `MedialForm.agreement` for the retention of subject agreement and
-  `MedialForm.relationsMarked` for the relations some form encodes
+  `MedialForm.agreement` and `MedialForm.relationsMarked`.
 
 ## References
 
@@ -69,14 +61,8 @@ inductive CategoryRetention where
 
 namespace CategoryRetention
 
-/-- Position on the retention scale. -/
-def rank : CategoryRetention → ℕ
-  | absent => 0
-  | restricted => 1
-  | full => 2
-
 /-- The retention scale `absent < restricted < full`. -/
-instance : LinearOrder CategoryRetention := .lift' rank (by decide)
+instance : LinearOrder CategoryRetention := .lift' CategoryRetention.ctorIdx (by decide)
 
 instance : BoundedOrder CategoryRetention where
   top := full
@@ -174,14 +160,15 @@ def InterclauseRelation.Temporal (r : InterclauseRelation) : Prop :=
   r = .sequential ∨ r = .simultaneous
 
 instance : DecidablePred InterclauseRelation.Temporal :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The bridging constructions spanning chain boundaries in oral narrative. -/
 inductive BridgingType where
-  /-- Recapitulative (tail-head) linkage: the first medial clause of a new chain repeats the
-  final clause of the preceding one. -/
+  /-- Recapitulative (tail-head) linkage, in which the first medial clause of a new chain repeats
+  the final clause of the preceding one. -/
   | recapitulative
-  /-- Summary linkage: a generic verb such as 'do' or 'be' summarizes the preceding chain. -/
+  /-- Summary linkage, in which a generic verb such as 'do' or 'be' summarizes the preceding
+  chain. -/
   | summary
   deriving DecidableEq, Repr, Fintype
 
