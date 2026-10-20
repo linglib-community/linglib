@@ -15,7 +15,6 @@ public import Linglib.Core.Computability.Edge
 public import Linglib.Core.Data.Fintype.List
 public import Linglib.Core.Data.Fintype.Transfer
 public import Linglib.Core.Data.List.DropRight
-public import Linglib.Core.Data.List.DependsOn
 
 /-!
 # Subsequential functions and finite-state transducers
@@ -613,22 +612,18 @@ theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential 
     List.getElem?_eq_getElem (by omega)]
   simp [List.rdrop]
 
-/-- A length-preserving left-subsequential function is oblivious to input beyond a fixed
-margin of each output coordinate, since the delay bound of `exists_getElem?_append_eq` caps how
-far to the right an output coordinate can look. -/
-theorem IsLeftSubsequential.exists_dependsOn_Iic
+/-- A length-preserving left-subsequential function reads output coordinate `i` off the input
+prefix through `i + N`, for a fixed margin `N`: the delay bound of `exists_getElem?_append_eq`
+caps how far to the right an output coordinate can look. -/
+theorem IsLeftSubsequential.exists_getElem?_take_eq
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
-    ∃ N, ∀ i n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?)
-      (Fin.val ⁻¹' Set.Iic (i + N)) := by
+    ∃ N, ∀ i w, (f (w.take (i + N + 1)))[i]? = (f w)[i]? := by
   obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
-  refine ⟨N, fun i ↦ (List.forall_dependsOn_ofFn_iff fun u ↦ (f u)[i]?).mpr fun u v _ hag ↦ ?_⟩
-  show (f u)[i]? = (f v)[i]?
-  have key : ∀ w : List α, (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w ↦ by
-    rcases lt_or_ge w.length (i + N + 1) with h | h
-    · rw [List.take_of_length_le h.le]
-    · conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
-      exact hN _ _ i (by rw [hlen, List.length_take]; omega)
-  rw [← key u, ← key v, hag.take_eq (by omega)]
+  refine ⟨N, fun i w ↦ ?_⟩
+  rcases lt_or_ge w.length (i + N + 1) with h | h
+  · rw [List.take_of_length_le h.le]
+  · conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
+    exact hN _ _ i (by rw [hlen, List.length_take]; omega)
 
 /-- Coordinates of `f u` at least `N` positions from its start are stable under extending the
 input on the left, for a length-preserving right-subsequential `f`. -/
@@ -647,25 +642,18 @@ theorem IsRightSubsequential.exists_getElem?_append_eq (hlen : ∀ w, (f w).leng
   · rw [List.getElem?_eq_none (by rw [hlen]; omega),
       List.getElem?_eq_none (by rw [hlen, List.length_append]; omega)]
 
-/-- A length-preserving right-subsequential function is oblivious to input beyond a fixed
-margin to the left of each output coordinate. -/
-theorem IsRightSubsequential.exists_dependsOn_Ici
+/-- A length-preserving right-subsequential function reads output coordinate `i` off the input
+suffix from `i - N`, for a fixed margin `N`, where it sits at coordinate `N`. -/
+theorem IsRightSubsequential.exists_getElem?_drop_eq
     (hlen : ∀ w, (f w).length = w.length) (hf : IsRightSubsequential f) :
-    ∃ N, ∀ i n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?)
-      (Fin.val ⁻¹' Set.Ici (i - N)) := by
+    ∃ N, ∀ i w, N ≤ i → (f (w.drop (i - N)))[N]? = (f w)[i]? := by
   obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq hlen
-  refine ⟨N, fun i ↦ (List.forall_dependsOn_ofFn_iff fun u ↦ (f u)[i]?).mpr
-    fun u v _ hag ↦ ?_⟩
-  show (f u)[i]? = (f v)[i]?
-  rcases lt_or_ge i N with hiN | hiN
-  · rw [List.ext_getElem? fun k ↦ hag (Set.mem_Ici.mpr (by omega))]
-  have key : ∀ w : List α, (f (w.drop (i - N)))[N]? = (f w)[i]? := fun w ↦ by
-    rcases le_or_gt (i - N) w.length with h | h
-    · rw [hN (w.drop (i - N)) (w.take (i - N)) N le_rfl, List.take_append_drop,
-        List.length_take, Nat.min_eq_left h, Nat.sub_add_cancel hiN]
-    · rw [List.drop_of_length_le h.le, List.getElem?_eq_none (by simp [hlen]),
-        List.getElem?_eq_none (by rw [hlen]; omega)]
-  rw [← key u, ← key v, hag.drop_eq le_rfl]
+  refine ⟨N, fun i w hiN ↦ ?_⟩
+  rcases le_or_gt (i - N) w.length with h | h
+  · rw [hN (w.drop (i - N)) (w.take (i - N)) N le_rfl, List.take_append_drop,
+      List.length_take, Nat.min_eq_left h, Nat.sub_add_cancel hiN]
+  · rw [List.drop_of_length_le h.le, List.getElem?_eq_none (by simp [hlen]),
+      List.getElem?_eq_none (by rw [hlen]; omega)]
 
 /-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
 disagree more than `N` positions before the end of `f u` — the contrapositive of

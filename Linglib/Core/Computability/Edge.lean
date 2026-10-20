@@ -8,7 +8,6 @@ module
 public import Mathlib.Computability.Language
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Set.Finite.List
-public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Order.Nat
 public import Linglib.Core.Data.List.DropRight
 
@@ -17,14 +16,14 @@ public import Linglib.Core.Data.List.DropRight
 
 An `Edge` is an end of a word, `left` for its beginning and `right` for its end. The same two
 values name a scan by the end it starts from, and a side of a position by the end it faces. This
-file gives the length-`k` part of a word at an edge, the positions within a distance of a target
-on one side, and the reverse conjugation that exchanges the two edges on string functions.
+file gives the length-`k` part of a word at an edge, the part within a distance of a target on
+one side, and the reverse conjugation that exchanges the two edges on string functions.
 
 ## Main definitions
 
 * `Edge`, `Edge.swap`: the left or right end of a word, and the other one.
 * `Edge.takeAt`: the length-`k` prefix or suffix of a word.
-* `Edge.window`: the positions not far from a target on one side.
+* `Edge.window`: the part of a word not far from a target on one side.
 * `List.revConj`: conjugation of a string function by reversal.
 -/
 
@@ -146,14 +145,16 @@ lemma finite_range_takeAt [Finite α] : (Set.range (e.takeAt (α := α) k)).Fini
 
 /-! ### Windows -/
 
-/-- The input positions not `d`-far from the target `i` on the side of an edge. -/
-def window : Edge → ℕ → ℕ → Set ℕ
-  | .left, i, d => Set.Ici (i - d)
-  | .right, i, d => Set.Iic (i + d)
+/-- The part of a word not `d`-far from the target `i` on the side of an edge: its suffix from
+`i - d` on the left, its prefix through `i + d` on the right. -/
+def window : Edge → ℕ → ℕ → List α → List α
+  | .left, i, d => List.drop (i - d)
+  | .right, i, d => List.take (i + d + 1)
 
-@[simp, grind =] theorem window_left {i d : ℕ} : Edge.left.window i d = Set.Ici (i - d) := rfl
+@[simp, grind =] theorem window_left {i d : ℕ} : Edge.left.window i d xs = xs.drop (i - d) := rfl
 
-@[simp, grind =] theorem window_right {i d : ℕ} : Edge.right.window i d = Set.Iic (i + d) := rfl
+@[simp, grind =] theorem window_right {i d : ℕ} :
+    Edge.right.window i d xs = xs.take (i + d + 1) := rfl
 
 end Edge
 
