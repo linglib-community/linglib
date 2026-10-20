@@ -18,7 +18,6 @@ subject the participant the transitive has as its object.
   diathesis and the subject of an intransitive one that leaves out the transitive's subject.
 * `Verb.IsUnaccusative`: the verb's voice introduces no external argument, or the verb takes
   part in the causative alternation.
-* `ArgumentStructure.PredictsUnaccusative`: the prediction from an entailment profile.
 
 ## Implementation notes
 
@@ -32,8 +31,6 @@ subject the participant the transitive has as its object.
 * [burzio-1986]
 * [kratzer-1996]
 * [levin-hovav-1995]
-* [davis-koenig-2000]
-* [dowty-1991]
 -/
 
 @[expose] public section
@@ -63,16 +60,3 @@ def Verb.IsUnaccusative (v : Verb) : Prop :=
 
 instance : DecidablePred Verb.IsUnaccusative := fun v ↦ by
   unfold Verb.IsUnaccusative; split <;> infer_instance
-
-namespace ArgumentStructure
-
-/-- A profile predicts unaccusativity when it lacks the priority Proto-Agent entailments, volition
-and causation ([davis-koenig-2000]), and bears at least one Proto-Patient entailment
-([dowty-1991] Table 1). Unlike flat counting, this classifies *arrive* as unaccusative. -/
-def PredictsUnaccusative (p : EntailmentProfile) : Prop :=
-  .volition ∉ p ∧ .causation ∉ p ∧ p.protoPatient.Nonempty
-
-instance : DecidablePred PredictsUnaccusative := fun _ ↦
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
-
-end ArgumentStructure
