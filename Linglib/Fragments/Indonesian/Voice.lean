@@ -17,9 +17,10 @@ obligatory and pronominal, *aku* and *kamu* appearing as the bound *ku-* and *ka
 its agent is third person, *dia*, *mereka* or a noun, so that the third-person pronouns alone
 take both patient-subject voices. The middle *ber-* selects no pivot and is the matter of
 `Verbs.lean` and `Studies/BeaversUdayana2022.lean`. Sneddon, Cole, Hermon and Yanti, and
-Erlewine, Levin and van Urk describe the three voices, and Creissels reads *di-* two ways: as
-a patient voice whose bare postverbal agent remains a core term, which makes the system a
-binary symmetrical one, or as a passive whose agent is demoted to the *oleh*-phrase.
+Erlewine, Levin and van Urk describe the three voices, which Erlewine, Levin and van Urk take as
+a subject and an object voice beside a passive. Creissels finds *di-* ambiguous between a patient voice, whose bare postverbal
+agent remains a core term and which then forms a binary symmetrical system with *meN-*, and a
+passive whose agent is demoted to the *oleh*-phrase, *meN-* then marking transitivity.
 
 ## Main definitions
 
@@ -31,8 +32,10 @@ binary symmetrical one, or as a passive whose agent is demoted to the *oleh*-phr
 
 ## Main results
 
-* `Indonesian.symmetrical_iff` — the system is symmetrical exactly under the patient-voice
-  reading of *di-*
+* `Indonesian.isSymmetrical_voices`, `not_isMultiple_voices` — the subject and object voices
+  form a binary symmetrical system on either reading of *di-*
+* `Indonesian.isSymmetrical_pair_iff` — *meN-* and *di-* form one exactly under the
+  patient-voice reading
 * `Indonesian.objectVoiceAgents_inter_diAgents` — the third-person pronouns alone take
   both patient-subject voices
 * `Indonesian.objectVoiceAgents_union_diAgents` — every agent has a patient-subject voice
@@ -49,36 +52,48 @@ binary symmetrical one, or as a passive whose agent is demoted to the *oleh*-phr
 
 namespace Indonesian
 
-/-- The subject voice *meN-*: the agent is the pivot. -/
+/-- In the subject voice *meN-* the agent is the pivot. -/
 def subjectVoice : Voice := Voice.agentVoice.marked [.pref "meN"]
 
-/-- The object voice, the bare verb: the patient is the pivot, the agent a preverbal
+/-- In the object voice, the bare verb, the patient is the pivot and the agent a preverbal
 pronoun. -/
 def objectVoice : Voice := Voice.patientVoice
 
-/-- The two readings of *di-* ([creissels-2024]): a patient voice whose bare postverbal
-agent remains a core term, or a passive whose agent is demoted to the *oleh*-phrase. -/
+/-- *di-* reads as a patient voice whose bare postverbal agent remains a core term, or as a
+passive whose agent is demoted to the *oleh*-phrase ([creissels-2024]). -/
 inductive DiReading where
   | patientVoice
   | passive
   deriving DecidableEq, Repr, Fintype
 
-/-- The *di-* voice under a reading: the patient voice or the passive, marked by *di-*. -/
+/-- Under a reading, the *di-* voice is the patient voice or the passive marked by *di-*. -/
 def di : DiReading → Voice
   | .patientVoice => Voice.patientVoice.marked [.pref "di"]
   | .passive => Voice.passive.marked [.pref "di"]
 
 /-- The three voices under a reading of *di-*. -/
-def voices (r : DiReading) : Finset Voice := {subjectVoice, objectVoice, di r}
+def voices (r : DiReading) : Voice.System := {subjectVoice, objectVoice, di r}
 
-/-- Read as a patient voice, *di-* makes Indonesian a binary symmetrical system; read as a
-passive it does not ([creissels-2024]). -/
-theorem symmetrical_iff (r : DiReading) : Voice.Symmetrical (voices r) ↔ r = .patientVoice := by
+/-- *meN-* and *di-* form a binary symmetrical system exactly when *di-* is read as a patient
+voice ([creissels-2024]). -/
+theorem isSymmetrical_pair_iff (r : DiReading) :
+    ({subjectVoice, di r} : Voice.System).IsSymmetrical ↔ r = .patientVoice := by
+  cases r <;> decide
+
+/-- The subject and object voices select the agent and the patient whatever *di-* is, so
+Indonesian has a symmetrical system on either reading ([erlewine-levin-van-urk-2017]). -/
+theorem isSymmetrical_voices (r : DiReading) : (voices r).IsSymmetrical :=
+  Voice.System.IsSymmetrical.mono (S := {subjectVoice, objectVoice}) (by decide) <|
+    Finset.insert_subset_insert _ <| Finset.singleton_subset_iff.2 <| Finset.mem_insert_self _ _
+
+/-- No voice selects an oblique, an applicative making it an object first
+([erlewine-levin-van-urk-2017]), so the system is binary. -/
+theorem not_isMultiple_voices (r : DiReading) : ¬ (voices r).IsMultiple := by
   cases r <;> decide
 
 /-! ### The agent of the patient-subject voices -/
 
-/-- The form of the agent of a transitive clause: a pronoun of a person, a noun, or none. -/
+/-- The agent of a transitive clause is a pronoun of a person, a noun, or absent. -/
 inductive Agent where
   | pronoun (person : Person)
   | noun
@@ -93,10 +108,10 @@ def Agent.IsPronoun : Agent → Prop
 instance : DecidablePred Agent.IsPronoun := fun a ↦ by
   cases a <;> unfold Agent.IsPronoun <;> infer_instance
 
-/-- The agents the object voice takes: a pronoun of any person, obligatorily. -/
+/-- The object voice takes a pronoun of any person as its agent, obligatorily. -/
 def objectVoiceAgents : Finset Agent := Finset.univ.filter Agent.IsPronoun
 
-/-- The agents the *di-* voice takes: a third-person pronoun, a noun, or none. -/
+/-- The *di-* voice takes a third-person pronoun, a noun, or no agent. -/
 def diAgents : Finset Agent := {.pronoun .third, .noun, .absent}
 
 /-- The third-person pronouns *dia* and *mereka* alone take both patient-subject voices
