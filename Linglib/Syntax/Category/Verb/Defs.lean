@@ -30,7 +30,7 @@ grouped into the facets `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition
 A verb's valency is its participants and their diatheses, each with the participant that
 controls its clausal complement, and a frame-conditioned attitude or opacity lives on a
 `Verb.Reading` row. The classifications of an entry, factive,
-implicative, trigger and so on, are read off these fields in `Syntax/Category/Verb/Basic.lean`.
+implicative, trigger and so on, are read off these fields by the theories that make them.
 
 ## Implementation notes
 
@@ -260,16 +260,11 @@ def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
 /-! ### ArgumentFrame accessors
 
 Readers over the frames of `Verb.valency` and over `Verb.readings`: whether some diathesis has a
-controller, and the entailment profiles of the basic diathesis's subject and object. -/
+controller, and the entailment profile the entry records for the basic diathesis's subject. -/
 
 /-- The entailment profile the entry records for the subject of its basic diathesis. -/
 def Verb.subjectEntailments (v : Verb) : Option EntailmentProfile :=
   v.valency.basic?.bind (v.valency.profileAt · .external)
-
-/-- The entailment profile the entry records for the participant in the object slot of its basic
-diathesis, its last core complement. -/
-def Verb.objectEntailments (v : Verb) : Option EntailmentProfile :=
-  v.valency.basic?.bind fun d ↦ d.objectSlot?.bind (v.valency.profileAt d)
 
 /-- The reading keyed to frame `fr` is the first whose frame `fr` refines. -/
 def Verb.reading? (v : Verb) (fr : ArgumentFrame) : Option Verb.Reading :=

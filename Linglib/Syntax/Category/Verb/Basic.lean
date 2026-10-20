@@ -1,25 +1,31 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Defs
-public import Linglib.Semantics.Root.Defs
 public import Linglib.Syntax.Category.Adposition.Spatial
 
-/-! # Verb entry — lookup and root
+/-! # Verb entry readers
 
-The entry-level readers of a verb: lookup by citation form and sense, the root's content, and
-the argument profiles with their Levin-class fallback, and the predicate a verb forms with a
-path phrase (`Verb.withPath`). The semantic classifications of an
-entry live with their theories, each under the `Verb` namespace: factivity and trigger status
-in `Semantics/Presupposition/Verb.lean` and unaccusativity in
-`Semantics/ArgumentStructure/Unaccusativity.lean`. The attitude classification is the entry's
-`attitude` field itself.
+The readers of a verb entry beyond its fields: the entailment profile of a participant, the
+entry's own or else the one its Levin classes agree on, lookup by citation form and sense, and
+the predicate a verb forms with a path phrase. The semantic classifications of an entry live
+with their theories, each under the `Verb` namespace: factivity and trigger status in
+`Semantics/Presupposition/Verb.lean` and unaccusativity in
+`Semantics/ArgumentStructure/Unaccusativity.lean`.
+
+## Main definitions
+
+* `Verb.participantProfile?`: the entailment profile of a participant.
+* `Verb.slotProfile?`: the entailment profile of the participant in a slot of the basic
+  diathesis.
+* `Verb.find?`: the entry with a citation form and sense.
+* `Verb.withPath`: the predicate a verb forms with a path phrase.
 
 ## References
 
-* [spalek-mcnally-2026]
 * [levin-1993]
 * [dowty-1991]
 * [levin-hovav-1995]
+* [sorace-2000]
 * [zwarts-2005]
 -/
 
@@ -29,28 +35,19 @@ open ArgumentStructure
 
 namespace Verb
 
-/-- The subject's entailment profile, the entry's own or else the one its Levin classes agree
-on ([levin-1993], [dowty-1991]). -/
-def subjectProfile? (v : Verb) : Option EntailmentProfile :=
-  v.subjectEntailments <|> LevinClass.commonProfile LevinClass.subjectProfile v.levinClasses
-
-/-- The object's entailment profile, the entry's own or else the one its Levin classes agree
-on. -/
-def objectProfile? (v : Verb) : Option EntailmentProfile :=
-  v.objectEntailments <|> LevinClass.commonProfile LevinClass.objectProfile v.levinClasses
-
-/-- The entailment profile of a participant, the entry's own or else the one its Levin classes
-agree on for the participant's position in the basic diathesis, subject or object. -/
+/-- The entailment profile of a participant, the entry's own or else the one the verb's Levin
+classes agree on for the participant's slot in the basic diathesis, subject or object
+([levin-1993], [dowty-1991]). -/
 def participantProfile? (v : Verb) (i : Fin v.valency.arity) : Option EntailmentProfile :=
-  v.valency.profiles.get i <|> v.valency.basic?.bind fun d ↦
-    if d.links.get i = some .external then
-      LevinClass.commonProfile LevinClass.subjectProfile v.levinClasses
-    else if (d.links.get i).isSome ∧ d.links.get i = d.objectSlot? then
+  v.valency.profiles.get i <|> v.valency.basic?.bind fun d ↦ (d.links.get i).bind fun s ↦
+    if s = .external then LevinClass.commonProfile LevinClass.subjectProfile v.levinClasses
+    else if d.objectSlot? = some s then
       LevinClass.commonProfile LevinClass.objectProfile v.levinClasses
     else none
 
-/-- The verb's within-class root content ([spalek-mcnally-2026]). -/
-def rootContent (v : Verb) : Semantics.Root.Content := v.root.content
+/-- The entailment profile of the participant in slot `s` of the basic diathesis. -/
+def slotProfile? (v : Verb) (s : ArgumentFrame.Slot) : Option EntailmentProfile :=
+  v.valency.basic?.bind fun d ↦ (d.participantAt s).bind v.participantProfile?
 
 /-- The entry with the given citation form and sense, if the list has one. -/
 def find? (verbs : List Verb) (form : String) (tag : SenseTag := .default) : Option Verb :=
@@ -58,21 +55,21 @@ def find? (verbs : List Verb) (form : String) (tag : SenseTag := .default) : Opt
 
 /-! ### Path phrases -/
 
-section withPath
-
-variable {v : Verb} {p : Adposition.SpatialReading}
-
 /-- The predicate a verb forms with a path phrase of reading `p`. A directional phrase that the
 verb selects as a complement gives the theme's path its direction, the directed motion use of a
 verb of manner of motion ([levin-hovav-1995] p. 185), and a bounded one an endpoint, which makes
 the predicate telic ([zwarts-2005]). A locative phrase, and a phrase the verb does not select, an
 adjunct, leave the verb as it is: *correre* 'run' has a directed motion use in Italian but
-*nuotare* 'swim' has none. -/
+*nuotare* 'swim' has none ([sorace-2000] §4.3). -/
 def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
   if p.direction = .place ∨ ¬ v.TakesSpatial then v else
     { v with
       direction := some p.direction
       vendlerClass := if p.IsBounded then v.vendlerClass.map (·.telicize) else v.vendlerClass }
+
+section withPath
+
+variable {v : Verb} {p : Adposition.SpatialReading}
 
 @[simp] theorem withPath_of_direction_eq_place (h : p.direction = .place) : v.withPath p = v := by
   simp [withPath, h]
