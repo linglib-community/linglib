@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Computability.ShuffleIdeal
-public import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
+public import Linglib.Core.Computability.ContextFreeGrammar.Regular
 public import Linglib.Core.Computability.ContextFreeGrammar.Map
 public import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 public import Linglib.Fragments.German.Zurich.Verbs

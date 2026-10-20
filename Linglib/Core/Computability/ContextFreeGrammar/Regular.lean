@@ -6,18 +6,24 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar
+public import Mathlib.Computability.DFA
+public import Mathlib.Data.Fintype.Prod
 
 /-!
-# Context-free languages are closed under intersection with regular languages
+# Context-free and regular languages
 
-The intersection of a context-free language with a regular language is context-free. The grammar
-`G.inter M` is the triple construction: its nonterminals are the nonterminals of `G` annotated
-with an entry and an exit state of the automaton `M`, and a rule of `G` yields one rule for every
-way of threading the states of `M` through its right-hand side. A fresh start symbol rewrites to
-the start nonterminal of `G` between the start state and each accepting state of `M`.
+Over a finite alphabet, every regular language is context-free: the right-linear grammar
+`M.toContextFreeGrammar` of a finite automaton `M` generates the language of `M`. The intersection
+of a context-free language with a regular language is context-free. The grammar `G.inter M` is the
+triple construction: its nonterminals are the nonterminals of `G` annotated with an entry and an
+exit state of `M`, and a rule of `G` yields one rule for every way of threading the states of `M`
+through its right-hand side. A fresh start symbol rewrites to the start nonterminal of `G` between
+the start state and each accepting state of `M`.
 
 ## Main definitions
 
+* `DFA.toContextFreeGrammar`: the right-linear grammar of a finite automaton over a finite
+  alphabet.
 * `ContextFreeGrammar.Annotates`: `Annotates M p l out q` says that the sentential form `l` is
   `out` with its nonterminals annotated so that the states of `M` thread from `p` to `q`.
 * `ContextFreeGrammar.inter`: the grammar of the intersection of a grammar with a finite
@@ -25,8 +31,20 @@ the start nonterminal of `G` between the start state and each accepting state of
 
 ## Main results
 
+* `DFA.language_toContextFreeGrammar`: the right-linear grammar of `M` generates the language of
+  `M`, so over a finite alphabet regular languages are context-free
+  (`Language.IsRegular.isContextFree`).
 * `ContextFreeGrammar.language_inter`: `G.inter M` generates the intersection.
 * `Language.IsContextFree.inf_isRegular`: closure under intersection with a regular language.
+
+## Implementation notes
+
+The right-linear grammar of `M` has a nonterminal for each state, a rule `q → a q'` for each
+transition from `q` to `q'` on the letter `a`, and a rule `q → ε` for each accepting state `q`;
+its sentential forms are a word `w` followed by the state `M.eval w`, or an accepted word. The
+alphabet must be finite, because a grammar has finitely many rules and so uses finitely many
+letters: over an infinite alphabet the language of all words is regular, by a one-state
+automaton, but not context-free.
 
 ## References
 
@@ -35,6 +53,81 @@ the start nonterminal of `G` between the start state and each accepting state of
 -/
 
 @[expose] public section
+
+namespace DFA
+
+open List Symbol
+
+variable {α : Type*} {σ : Type} [Fintype α] [Fintype σ] (M : DFA α σ)
+  [DecidablePred (· ∈ M.accept)]
+
+/-- The right-linear grammar of `M` has a nonterminal for each state, a rule `q → a (M.step q a)`
+for each state `q` and letter `a`, and a rule `q → ε` for each accepting state `q`. -/
+def toContextFreeGrammar : ContextFreeGrammar α where
+  NT := σ
+  initial := M.start
+  rules :=
+    (Finset.univ.map ⟨fun x : σ × α ↦ ⟨x.1, [terminal x.2, nonterminal (M.step x.1 x.2)]⟩,
+      fun x y h ↦ by simp_all [Prod.ext_iff]⟩).disjUnion
+    ((Finset.univ.filter (· ∈ M.accept)).map ⟨fun q ↦ ⟨q, []⟩, fun p q h ↦ by simpa using h⟩)
+    (by simp only [Finset.disjoint_left, Finset.mem_map]; rintro _ ⟨_, -, rfl⟩ ⟨_, -, h⟩; simp at h)
+
+variable {M}
+
+theorem mem_rules_toContextFreeGrammar {r : ContextFreeRule α σ} :
+    r ∈ M.toContextFreeGrammar.rules ↔
+      (∃ a, r.output = [terminal a, nonterminal (M.step r.input a)]) ∨
+        (r.input ∈ M.accept ∧ r.output = []) := by
+  obtain ⟨q, o⟩ := r
+  unfold toContextFreeGrammar
+  simp [eq_comm]
+
+/-- The grammar of `M` derives every word followed by the state `M` reaches on it. -/
+theorem derives_toContextFreeGrammar (w : List α) :
+    M.toContextFreeGrammar.Derives [nonterminal M.start]
+      (w.map terminal ++ [nonterminal (M.eval w)]) := by
+  induction w using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton w a ih =>
+    refine ih.trans_produces (ContextFreeGrammar.produces_map_terminal_append_singleton_iff.2
+      ⟨⟨M.eval w, [terminal a, nonterminal (M.step (M.eval w) a)]⟩,
+        mem_rules_toContextFreeGrammar.2 (.inl ⟨a, rfl⟩), rfl, ?_⟩)
+    simp [eval_append_singleton]
+
+/-- The sentential forms of the grammar of `M` are a word followed by the state `M` reaches on it,
+and the words `M` accepts. -/
+theorem derives_toContextFreeGrammar_iff {v : List (Symbol α σ)} :
+    M.toContextFreeGrammar.Derives [nonterminal M.start] v ↔ ∃ w,
+      v = w.map terminal ++ [nonterminal (M.eval w)] ∨
+        (v = w.map terminal ∧ M.eval w ∈ M.accept) := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · induction h with
+    | refl => exact ⟨[], .inl rfl⟩
+    | tail _ hstep ih =>
+      obtain ⟨w, rfl | ⟨rfl, -⟩⟩ := ih
+      · obtain ⟨r, hr, hq, rfl⟩ :=
+          ContextFreeGrammar.produces_map_terminal_append_singleton_iff.1 hstep
+        obtain ⟨a, ho⟩ | ⟨hacc, ho⟩ := mem_rules_toContextFreeGrammar.1 hr
+        · exact ⟨w ++ [a], .inl (by simp [ho, hq, eval_append_singleton])⟩
+        · exact ⟨w, .inr ⟨by simp [ho], hq ▸ hacc⟩⟩
+      · exact (ContextFreeGrammar.not_produces_map_terminal hstep).elim
+  · rintro ⟨w, rfl | ⟨rfl, hacc⟩⟩
+    · exact derives_toContextFreeGrammar w
+    · exact (derives_toContextFreeGrammar w).trans_produces
+        (ContextFreeGrammar.produces_map_terminal_append_singleton_iff.2
+          ⟨⟨M.eval w, []⟩, mem_rules_toContextFreeGrammar.2 (.inr ⟨hacc, rfl⟩), rfl, by simp⟩)
+
+/-- The grammar of `M` generates the language of `M`. -/
+theorem language_toContextFreeGrammar : M.toContextFreeGrammar.language = M.accepts := by
+  ext w
+  change M.toContextFreeGrammar.Derives [nonterminal M.start] _ ↔ _
+  rw [derives_toContextFreeGrammar_iff, mem_accepts]
+  refine ⟨fun ⟨u, h⟩ ↦ ?_, fun h ↦ ⟨w, .inr ⟨rfl, h⟩⟩⟩
+  rcases h with h | ⟨h, hacc⟩
+  · simpa using congr(nonterminal (M.eval u) ∈ $h)
+  · rwa [map_injective_iff.2 (fun _ _ ↦ terminal.inj) h]
+
+end DFA
 
 namespace ContextFreeGrammar
 
@@ -286,9 +379,23 @@ theorem language_inter (G : ContextFreeGrammar T) (M : DFA T σ) :
 
 end ContextFreeGrammar
 
+namespace Language
+
+variable {α : Type*}
+
+/-- Over a finite alphabet, every regular language is context-free. -/
+theorem IsRegular.isContextFree [Finite α] {L : Language α} (h : L.IsRegular) :
+    L.IsContextFree := by
+  classical
+  have := Fintype.ofFinite α
+  obtain ⟨σ, _, M, rfl⟩ := h
+  exact ⟨M.toContextFreeGrammar, DFA.language_toContextFreeGrammar⟩
+
 /-- Context-free languages are closed under intersection with regular languages. -/
-theorem Language.IsContextFree.inf_isRegular {α : Type*} {L R : Language α}
+theorem IsContextFree.inf_isRegular {L R : Language α}
     (hL : L.IsContextFree) (hR : R.IsRegular) : (L ⊓ R).IsContextFree := by
   obtain ⟨G, rfl⟩ := hL
   obtain ⟨σ, _, M, rfl⟩ := hR
   exact ⟨G.inter M, G.language_inter M⟩
+
+end Language

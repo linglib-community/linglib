@@ -38,7 +38,6 @@ import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Combinatorics.SetFamily.FourFunctions
 import Linglib.Core.Computability.Bimachine
-import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 import Linglib.Core.Computability.ContextFreeGrammar.Map
 import Linglib.Core.Computability.ContextFreeGrammar.Pumping
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
