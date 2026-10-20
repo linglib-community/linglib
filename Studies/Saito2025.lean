@@ -15,7 +15,7 @@ model with one fewer degree of freedom. The model is the substrate's production 
 the paper's word2vec meaning vectors to its triphone form vectors, and when the suffix triphone
 is linearly decodable from meanings, training alone gives inflected words strictly greater
 suffix support than non-inflected ones, the direction of the paper's contrast
-(`production_suffix_lt`). The
+(`semSupSuffix_lt`). The
 result bears on production models with a morpheme layer such as WEAVER++
 ([levelt-roelofs-meyer-1999], [roelofs-1997]), since the apparent morphological-boundary
 effect is carried by inflectional semantics.
@@ -57,7 +57,7 @@ exactly in `SemSupSuffix`, the entry `Ĉ i s` of (4). So a word carrying the suf
 strictly greater suffix support than one lacking it, which is the direction of the paper's
 contrast between inflected and non-inflected words, obtained from the linear architecture
 alone. -/
-theorem production_suffix_lt {m : ℕ}
+theorem semSupSuffix_lt {m : ℕ}
     {data : TrainingExperience m TriphoneCount Word2VecGermanDim} {q : FrequencyVector m}
     {G : Matrix (Fin Word2VecGermanDim) (Fin TriphoneCount) ℝ} (hG : IsTrained data q G)
     (hq : ∀ i, 0 < q i) {s : Fin TriphoneCount} {w : MeaningVector Word2VecGermanDim →ₗ[ℝ] ℝ}

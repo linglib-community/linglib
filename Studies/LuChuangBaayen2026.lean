@@ -66,14 +66,6 @@ open DiscriminativeLexicon ChuangEtAl2026 Finset Matrix
 token (§4.1). -/
 abbrev PitchSampleCount : ℕ := 100
 
-/-- Right multiplication by a matrix commutes with centroids, as linear maps do. Stated over an
-abstract index type, since unifying `x ᵥ* G` with `G.vecMulLinear x` at `Fin 768` unfolds the
-sum and exhausts the recursion limit. -/
-private theorem centroid_vecMul {ι m n : Type*} [Fintype m] {T : Finset ι} (hT : T.Nonempty)
-    (p : ι → m → ℝ) (G : Matrix m n ℝ) :
-    T.centroid ℝ p ᵥ* G = T.centroid ℝ fun τ ↦ p τ ᵥ* G :=
-  G.vecMulLinear.map_centroid hT p
-
 /-- The centroid of a tone pattern averages the centroids of its word types `T`, each the mean
 over the tokens of the type (§4.4). The production matrix `G` maps the 768-dimensional CKIP GPT-2
 contextualized embeddings of [chuang-bell-tseng-baayen-2026] to 100-sample pitch vectors

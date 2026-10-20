@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Fragments.English.Verbs.Basic
 public import Linglib.Syntax.Category.Verb.Tense
 
@@ -20,16 +21,17 @@ is not among the tense forms.
 ## Main declarations
 
 * `English.Tense.TenseVerb`: a lexical verb or one of the tense auxiliaries *have* and *be*.
-* `English.Tense.periphrasis`, `English.Verbs.Verb.tenseForm`: the means by which English builds its tense
-  forms, and the words of a tense form of a verb, finite verb first.
+* `English.Tense.periphrasis`, `English.Verbs.Verb.tenseForm`: the means by which English builds
+  its tense forms, and the words of a tense form of a verb, finite verb first.
 * `English.Tense.tenseForms`: the eight tense forms; `Verb.tenseForm_isSome_iff` shows that they are
   exactly the forms that English realizes.
 
 ## Implementation notes
 
-`Verb.tenseForm` gives the third person singular. The fixed order of the auxiliaries is not
-stipulated on forms: it follows from which auxiliary may govern which verb, *have* governing a
-lexical verb or *be*, and *be* governing a lexical verb only.
+`Verb.tenseForm` gives the third person singular, the finite *have* and *be* being the entries of
+`English.Auxiliaries`. The fixed order of the auxiliaries is not stipulated on forms: it follows
+from which auxiliary may govern which verb, *have* governing a lexical verb or *be*, and *be*
+governing a lexical verb only.
 
 ## References
 
@@ -56,10 +58,10 @@ def periphrasis : Tense.Periphrasis TenseVerb where
   finite
     | .lexical v, .present => some (v.realize .thirdSg)
     | .lexical v, .past => some (v.realize .past)
-    | .have, .present => some "has"
-    | .have, .past => some "had"
-    | .be, .present => some "is"
-    | .be, .past => some "was"
+    | .have, .present => some Auxiliaries.has.form
+    | .have, .past => some Auxiliaries.had.form
+    | .be, .present => some Auxiliaries.is_.form
+    | .be, .past => some Auxiliaries.was.form
     | _, .future => none
   nonfinite
     | .lexical v, .pastParticiple => some (v.realize .pastParticiple)

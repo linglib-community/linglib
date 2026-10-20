@@ -11,10 +11,10 @@ public import Mathlib.Tactic.DeriveFintype
 
 This file defines the vocabulary of modal typology. A modal force is a quantificational
 strength, necessity, weak necessity or possibility, ordered by strength; a modal flavor is a
-source of modality, epistemic, deontic, bouletic or circumstantial ([kratzer-1981]); and a
-modal item pairs a form with the force-flavor pairs it can express, the representation of a
-modal's meaning in [imel-guo-steinert-threlkeld-2026]. The temporal perspective and orientation
-of [condoravdi-2002] locate a modal claim in time.
+source of modality, epistemic, deontic, bouletic or circumstantial, after Kratzer; and a modal
+item pairs a form with the force-flavor pairs it can express, the representation of a modal's
+meaning in Imel, Guo and Steinert-Threlkeld's analysis of modal typology. Condoravdi's temporal
+perspective and orientation locate a modal claim in time.
 
 ## Main definitions
 
@@ -140,7 +140,9 @@ abbrev ForceFlavor.flavor : ForceFlavor → ModalFlavor := Prod.snd
 `Auxiliary.toModalItem` projects onto and which a modal adverb's entry instantiates directly. -/
 structure ModalItem where
   form : String
-  /-- The force-flavor pairs the item can express, in an upward-entailing context. -/
+  /-- The force-flavor pairs the item can express, in an upward-entailing context, or, for an
+  item confined to non-affirmative contexts, as English auxiliary *need* and *dare* are, in the
+  contexts that admit it. -/
   meaning : Finset ForceFlavor
   register : SocialMeaning.Register := .neutral
   deriving DecidableEq

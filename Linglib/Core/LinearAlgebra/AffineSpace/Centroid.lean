@@ -1,13 +1,26 @@
 module
 
 public import Mathlib.LinearAlgebra.AffineSpace.Centroid
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-!
 # Centroids under affine and linear maps
 
 `[UPSTREAM]` Affine maps commute with the centroids of nonempty finite families of points, the
 centroid case of `Finset.map_affineCombination`; so do linear maps, a module being an affine space
-over itself.
+over itself, and right multiplication by a matrix.
+
+## Main results
+
+* `Finset.map_centroid_of_nonempty`: affine maps commute with centroids of nonempty sets.
+* `LinearMap.map_centroid`: so do linear maps.
+* `Matrix.centroid_vecMul`: so does right multiplication by a matrix.
+
+## Implementation notes
+
+`Matrix.centroid_vecMul` is `LinearMap.map_centroid` for `Matrix.vecMulLinear`, stated over an
+abstract index type: at a concrete `Fin n`, unifying `x ᵥ* M` with `M.vecMulLinear x` unfolds the
+sums of `vecMul` and exhausts the recursion limit.
 -/
 
 @[expose] public section
@@ -37,3 +50,11 @@ theorem LinearMap.map_centroid {k V V₂ ι : Type*} [DivisionRing k] [CharZero 
     [Module k V] [AddCommGroup V₂] [Module k V₂] (f : V →ₗ[k] V₂) {s : Finset ι} (h : s.Nonempty)
     (p : ι → V) : f (s.centroid k p) = s.centroid k (f ∘ p) :=
   s.map_centroid_of_nonempty p f.toAffineMap h
+
+open Matrix in
+/-- In the characteristic zero case, right multiplication by a matrix commutes with centroids of
+nonempty sets. -/
+theorem Matrix.centroid_vecMul {k m n ι : Type*} [Field k] [CharZero k] [Fintype m]
+    {s : Finset ι} (h : s.Nonempty) (p : ι → m → k) (M : Matrix m n k) :
+    s.centroid k p ᵥ* M = s.centroid k fun i ↦ p i ᵥ* M :=
+  M.vecMulLinear.map_centroid h p

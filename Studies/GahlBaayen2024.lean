@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.LinearAlgebra.Matrix.StarProjection
 public import Linglib.Processing.DiscriminativeLexicon.Coding
+public import Linglib.Processing.DiscriminativeLexicon.Measures
 public import Linglib.Processing.DiscriminativeLexicon.Training
 public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -22,7 +23,8 @@ examples are.
 
 * `semanticSupportForForm_endstate_time_lt_thyme`, `semanticSupportForFormFIL_thyme_lt_time`:
   practice reverses which homophone's form its meaning supports more.
-* `endstate_time_ne_thyme`: the homophones *time* and *thyme* get distinct predicted forms.
+* `endstate_separates_homophones`: *time* and *thyme* share a form row but get distinct
+  predicted forms.
 * `not_existsUnique_isELTrained`: regression does not determine the word-to-word map.
 * `diag_W_mem_Icc`: the self-prediction shares of the toy words lie in `[0, 1]`.
 
@@ -233,9 +235,11 @@ theorem semanticSupportForFormFIL_thyme_lt_time :
 
 /-- *time* and *thyme* share a form row, but the endstate mapping predicts distinct forms for
 them, since their meanings differ outside the kernel of `G` (appendix A3, Fig. A2). -/
-theorem endstate_time_ne_thyme : (toy.S * endstateG) time ≠ (toy.S * endstateG) thyme := by
+theorem endstate_separates_homophones :
+    toy.C time = toy.C thyme ∧ (toy.S * endstateG) time ≠ (toy.S * endstateG) thyme := by
   have h : (semanticVectors * ratG) time 0 ≠ (semanticVectors * ratG) thyme 0 := by
     decide +kernel
+  refine ⟨rfl, ?_⟩
   rw [endstateG_eq, toy_S, ← Matrix.map_mul]
   exact fun h' ↦ h (Rat.cast_injective (congrFun h' 0))
 
