@@ -12,12 +12,12 @@ of students'; and an expressive noun heads a qualitative binominal, in which it 
 referent of the second noun, *una mierda de departamento* 'a shit of an apartment'. Group and
 quantity nouns also have a descriptive reading in which they head the phrase, as *una pila de
 libros* is 'a pile of books' beside 'a lot of books'. *Bocha* and *pila* are the Rioplatense
-quantity nouns ([saab-2026]).
+quantity nouns. The classification is Saab's.
 
 ## Main definitions
 
-* `Spanish.Binominals.BinominalType` — the three types
-* `Spanish.Binominals.BinominalNoun` — a noun with the type of binominal it heads
+* `Spanish.Binominals.BinominalType`: the three types.
+* `Spanish.Binominals.BinominalNoun`: a noun with its gender and the type of binominal it heads.
 
 ## References
 
@@ -27,8 +27,6 @@ quantity nouns ([saab-2026]).
 @[expose] public section
 
 namespace Spanish.Binominals
-
-open Spanish.Gender (Value)
 
 /-- The types of binominal, by the class of the first noun. -/
 inductive BinominalType where
@@ -41,29 +39,38 @@ inductive BinominalType where
   deriving DecidableEq, Repr
 
 /-- A noun with its gender and the type of binominal it heads. -/
-structure BinominalNoun extends Spanish.Gender.Noun where
+structure BinominalNoun extends GenderedNoun Spanish.Gender.Value where
+  /-- The type of binominal the noun heads. -/
   binominalType : BinominalType
+  deriving DecidableEq, Repr
 
 /-- *grupo* 'group'. -/
-def grupo : BinominalNoun := ⟨⟨⟨"grupo", "group"⟩, .masc, none⟩, .pseudoPartitive⟩
+def grupo : BinominalNoun :=
+  { form := "grupo", gloss := "group", gender := .masc, binominalType := .pseudoPartitive }
 
 /-- *parte* 'part'. -/
-def parte : BinominalNoun := ⟨⟨⟨"parte", "part"⟩, .fem, none⟩, .pseudoPartitive⟩
+def parte : BinominalNoun :=
+  { form := "parte", gloss := "part", gender := .fem, binominalType := .pseudoPartitive }
 
 /-- *mayoría* 'most'. -/
-def mayoría : BinominalNoun := ⟨⟨⟨"mayoría", "most"⟩, .fem, none⟩, .pseudoPartitive⟩
+def mayoría : BinominalNoun :=
+  { form := "mayoría", gloss := "most", gender := .fem, binominalType := .pseudoPartitive }
 
 /-- *montón* 'lot'. -/
-def montón : BinominalNoun := ⟨⟨⟨"montón", "lot"⟩, .masc, none⟩, .quantificational⟩
+def montón : BinominalNoun :=
+  { form := "montón", gloss := "lot", gender := .masc, binominalType := .quantificational }
 
 /-- *pila* 'pile', Rioplatense. -/
-def pila : BinominalNoun := ⟨⟨⟨"pila", "pile"⟩, .fem, none⟩, .quantificational⟩
+def pila : BinominalNoun :=
+  { form := "pila", gloss := "pile", gender := .fem, binominalType := .quantificational }
 
 /-- *bocha* 'ball', Rioplatense. -/
-def bocha : BinominalNoun := ⟨⟨⟨"bocha", "ball"⟩, .fem, none⟩, .quantificational⟩
+def bocha : BinominalNoun :=
+  { form := "bocha", gloss := "ball", gender := .fem, binominalType := .quantificational }
 
 /-- *mierda* 'shit'. -/
-def mierda : BinominalNoun := ⟨⟨⟨"mierda", "shit"⟩, .fem, none⟩, .qualitative⟩
+def mierda : BinominalNoun :=
+  { form := "mierda", gloss := "shit", gender := .fem, binominalType := .qualitative }
 
 /-- The binominal nouns. -/
 def allNouns : List BinominalNoun := [grupo, parte, mayoría, montón, pila, bocha, mierda]
