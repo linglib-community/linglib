@@ -450,7 +450,6 @@ import Linglib.Fragments.Icelandic.Reciprocals
 import Linglib.Fragments.Icelandic.TemporalConnectives
 import Linglib.Fragments.Icelandic.Verbs
 import Linglib.Fragments.Indonesian.Complementation
-import Linglib.Fragments.Indonesian.TAM
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.Japanese.Case

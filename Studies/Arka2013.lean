@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Fragments.Indonesian.TAM
+public import Linglib.Fragments.Indonesian.Aspect
 public import Linglib.Fragments.Indonesian.Complementation
 public import Linglib.Semantics.Tense.Reichenbach
 public import Linglib.Data.Examples.Arka2013
@@ -31,9 +31,10 @@ structures are equational.
 
 * `Annotation`: the paper's E/R/S annotations, with `Annotation.frame` the Reichenbach
   frame they describe.
-* `Aux`, `Aux.frame`: the auxiliaries the paper analyses and the frame relation each
-  expresses; `englishPresentPerfect` the English contrast.
-* `projectsI`: a clause projects I exactly when its complement coding is not reduced; the
+* `auxiliaries`, `frame`: the auxiliaries of I among the fragment's aspect markers, and the frame
+  relation the paper reads off the viewpoint of each; `englishPresentPerfect` the English
+  contrast.
+* `ProjectsI`: a clause projects I exactly when its complement coding is not reduced; the
   selecting verbs and subordinators are fragment entries.
 
 ## References
@@ -41,7 +42,7 @@ structures are equational.
 * [arka-2013]
 * [klein-1992] — the present perfect puzzle
 * [kibort-2009] — languages grammaticalise different E, R, S configurations
-* [sneddon-1996] — the marker inventory in the fragment
+* [sneddon-1996] — the aspect markers of the fragment
 -/
 
 @[expose] public section
@@ -50,7 +51,7 @@ namespace Arka2013
 
 open Semantics
 
-open Tense Indonesian
+open Tense Indonesian Indonesian.Aspect
 
 /-! ### Tense theory and the status of Indonesian TAM (§2) -/
 
@@ -62,7 +63,8 @@ structure Annotation where
   s : ℕ
   deriving DecidableEq, Repr
 
-/-- Read an annotation: `<` opens a later group, `-` and `,` keep the current one. -/
+/-- An annotation is read left to right, `<` opening a later group and `-` and `,` keeping the
+current one. -/
 def Annotation.parse? (str : String) : Option Annotation :=
   let step : Option (Annotation × ℕ) → Char → Option (Annotation × ℕ)
     | some (a, g), 'E' => some ({ a with e := g }, g)
@@ -78,55 +80,43 @@ def Annotation.parse? (str : String) : Option Annotation :=
 /-- The frame an annotation describes, with the perspective at speech time. -/
 def Annotation.frame (a : Annotation) : ReichenbachFrame ℤ := .root a.s a.r a.e
 
-/-- The auxiliaries the paper assigns a frame relation: *akan* future, *sedang* progressive,
-*sudah/telah* perfect. -/
-inductive Aux
-  | akan
-  | sedang
-  | sudah
-  deriving DecidableEq, Repr, Fintype
+/-- The TAM auxiliaries among the fragment's aspect markers, *sudah/telah* 'PERF', *sedang* 'PROG'
+and *akan* 'FUT', which occupy I (16). The paper's fifth auxiliary, the volitive *mau* 'want', is
+not an aspect marker. -/
+def auxiliaries : List Aspect.Marker := [sudah, telah, sedang, akan]
 
-/-- The auxiliary a fragment marker realises, by its meaning. -/
-def Aux.ofMarker (m : TemporalMarker) : Option Aux :=
-  match m.meaning with
-  | .future => some .akan
-  | .inProgress => some .sedang
-  | .occurred => some .sudah
-  | _ => none
+/-- The auxiliary written as a form. -/
+def auxiliary? (s : String) : Option Aspect.Marker :=
+  auxiliaries.find? (·.morphs = [.free s])
 
-/-- The auxiliary written as a form, through the fragment's inventory. -/
-def Aux.ofForm (s : String) : Option Aux :=
-  (temporalMarkers.find? (·.form = s)).bind Aux.ofMarker
+/-- `frame v f` is the frame relation the paper reads off the viewpoint `v`, which is E < R with
+R free for the perfect (5), E = R for the progressive (18), and S < E-R for the prospective *akan*,
+read as a future tense (10). No auxiliary marks another viewpoint. -/
+def frame {T : Type*} [LinearOrder T] : Aspect.ViewpointType → ReichenbachFrame T → Prop
+  | .perfect, f => f.eventPosition = .lt
+  | .imperfective, f => f.eventPosition = .eq
+  | .prospective, f => f.referencePosition = .gt ∧ f.eventPosition = .eq
+  | _, _ => False
 
-/-- The frame relation each auxiliary expresses: *akan* S < E-R, *sedang* E = R, *sudah* E < R
-with R free. -/
-def Aux.frame {T : Type*} [LinearOrder T] : Aux → ReichenbachFrame T → Prop
-  | .akan, f => f.referencePosition = .gt ∧ f.eventPosition = .eq
-  | .sedang, f => f.eventPosition = .eq
-  | .sudah, f => f.eventPosition = .lt
+instance {T : Type*} [LinearOrder T] (v : Aspect.ViewpointType) (f : ReichenbachFrame T) :
+    Decidable (frame v f) := by
+  cases v <;> dsimp only [frame] <;> infer_instance
 
-instance {T : Type*} [LinearOrder T] (a : Aux) (f : ReichenbachFrame T) :
-    Decidable (a.frame f) := by
-  cases a <;> dsimp only [Aux.frame] <;> infer_instance
-
-/-- *telah* and *sudah* realise the same auxiliary. -/
-theorem telah_sudah : Aux.ofMarker telah = Aux.ofMarker sudah := rfl
-
-/-- Every annotated sentence with an auxiliary satisfies the auxiliary's frame relation. -/
+/-- Every annotated sentence with an auxiliary satisfies the frame relation of its viewpoint. -/
 theorem rows_annotations :
-    ∀ r ∈ Examples.all, ∀ a ∈ (r.feature? "aux" >>= Aux.ofForm).toList,
-      ∀ ann ∈ (r.feature? "frame" >>= Annotation.parse?).toList, a.frame ann.frame := by
+    ∀ r ∈ Examples.all, ∀ m ∈ (r.feature? "aux" >>= auxiliary?).toList,
+      ∀ ann ∈ (r.feature? "frame" >>= Annotation.parse?).toList, frame m.viewpoint ann.frame := by
   decide +kernel
 
-/-- The annotations of the *sudah* sentences (5). -/
+/-- The annotations of the sentences with a perfect auxiliary, the *sudah* sentences of (5). -/
 def sudahAnnotations : List Annotation :=
   Examples.all.filterMap fun r => do
-    let a ← r.feature? "aux" >>= Aux.ofForm
-    guard (a = .sudah)
+    let m ← r.feature? "aux" >>= auxiliary?
+    guard (m.viewpoint = .perfect)
     r.feature? "frame" >>= Annotation.parse?
 
-/-- R is free under *sudah*: it sits at speech time in one annotation and before it in
-another, the event preceding it in both. -/
+/-- R is free under *sudah*, at speech time in one annotation and before it in another, with the
+event before R in both. -/
 theorem sudah_reference_free :
     (∃ a ∈ sudahAnnotations, a.r = a.s) ∧ (∃ a ∈ sudahAnnotations, a.r < a.s) ∧
       ∀ a ∈ sudahAnnotations, a.e < a.r := by
@@ -141,19 +131,19 @@ instance {T : Type*} [LinearOrder T] (f : ReichenbachFrame T) :
     Decidable (englishPresentPerfect f) := by
   unfold englishPresentPerfect; infer_instance
 
-/-- Klein's puzzle and its Indonesian dissolution: with a past reference time the English
-present perfect is contradictory, while *sudah* under the same reference time is satisfiable —
-(5b) *Dia sudah pergi kemarin*. -/
+/-- With a past reference time the English present perfect is contradictory, Klein's puzzle,
+while *sudah* under the same reference time is satisfiable, as in (5b) *Dia sudah pergi
+kemarin*. -/
 theorem klein_puzzle_dissolved :
     (∀ f : ReichenbachFrame ℤ, englishPresentPerfect f → f.referencePosition ≠ .lt) ∧
-      ∃ f : ReichenbachFrame ℤ, Aux.sudah.frame f ∧ f.referencePosition = .lt :=
+      ∃ f : ReichenbachFrame ℤ, frame sudah.viewpoint f ∧ f.referencePosition = .lt :=
   ⟨fun _ h ↦ h.2 ▸ by decide, ⟨.root 2 1 0, by decide⟩⟩
 
 /-- The English present perfect strictly strengthens *sudah*. -/
 theorem english_pp_strictly_stronger {T : Type*} [LinearOrder T] :
-    (∀ f : ReichenbachFrame T, englishPresentPerfect f → Aux.sudah.frame f) ∧
-      ∃ f : ReichenbachFrame ℤ, Aux.sudah.frame f ∧ ¬ englishPresentPerfect f :=
-  ⟨fun _ h => h.1, ⟨.root 2 1 0, by decide⟩⟩
+    (∀ f : ReichenbachFrame T, englishPresentPerfect f → frame sudah.viewpoint f) ∧
+      ∃ f : ReichenbachFrame ℤ, frame sudah.viewpoint f ∧ ¬ englishPresentPerfect f :=
+  ⟨fun _ h ↦ h.1, ⟨.root 2 1 0, by decide⟩⟩
 
 /-! ### Finiteness (§3) -/
 
@@ -175,7 +165,9 @@ def subordinator : String → Option Complementizer
 /-- A clause projects I — the position of the TAM auxiliaries (16) — exactly when its coding is
 not reduced: a full clause anchors its own temporal axis, a reduced complement is a bare VP
 (17). -/
-def projectsI (c : Complement.Coding) : Bool := !c.isReduced
+def ProjectsI (c : Complement.Coding) : Prop := c.isReduced = false
+
+instance : DecidablePred ProjectsI := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The coding of the clause a verb's basic frame selects. -/
 def complementCoding (v : Verb) : Option Complement.Coding :=
@@ -186,9 +178,9 @@ takes projects I; root clauses do, and a nominal predicate projects no verbal st
 theorem rows_finiteness :
     ∀ r ∈ Examples.all,
       (∀ v ∈ (r.feature? "matrix" >>= matrixVerb).toList, ∀ c ∈ (complementCoding v).toList,
-        (projectsI c = true ↔ r.feature? "withAux" = some "acceptable")) ∧
+        (ProjectsI c ↔ r.feature? "withAux" = some "acceptable")) ∧
       (∀ s ∈ (r.feature? "subordinator" >>= subordinator).toList, ∀ c ∈ s.coding.toList,
-        (projectsI c = true ↔ r.feature? "withAux" = some "acceptable")) ∧
+        (ProjectsI c ↔ r.feature? "withAux" = some "acceptable")) ∧
       (r.feature? "clause" = some "root" → r.feature? "withAux" = some "acceptable") ∧
       (r.feature? "predicate" = some "nominal" →
         ∀ j ∈ (r.feature? "withAux").toList, j ≠ "acceptable") := by
