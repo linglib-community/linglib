@@ -1,10 +1,5 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.RoleList
-public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Selection
-public import Linglib.Semantics.Events.Path
-public import Linglib.Semantics.Aspect.Defs
-public import Mathlib.Data.Finset.Fold
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -14,8 +9,7 @@ public import Mathlib.Tactic.DeriveFintype
 Alternations*, one constructor for each class page with a member list, with the section number the
 book prints for it. The classes' property tables are in `Properties.lean`, their titles and member
 lists in `Members.lean` and their root entailments in `RootEntailment.lean`; the `levinClasses`
-field of a `Verb` entry carries the classes listing it. A class may also carry a default
-argument-structure template, from which a verb entry's argument profiles are derived.
+field of a `Verb` entry carries the classes listing it.
 
 ## Implementation notes
 
@@ -27,8 +21,6 @@ all 191 classes in `ofNumberString?_numberString`.
 ## References
 
 * [levin-1993]
-* [dowty-1991]
-* [levin-rappaport-hovav-2005]
 -/
 
 @[expose] public section
@@ -489,173 +481,5 @@ set_option maxRecDepth 8000 in
   decide +kernel
 
 end LevinClass
-
-/-! ### Templates
-
-Each class realizes an argument-structure template, a `RoleList`, from which `Verb.Basic` derives
-a verb entry's default argument profiles; classes whose template has not been determined map to
-`none`. -/
-
-/-- The argument-structure template a class realizes, `none` where it has not been
-determined. -/
-def LevinClass.roleList : LevinClass → Option RoleList
-  -- § 18: Contact by Impact — manner verbs, no CoS entailment
-  | .hit | .swat | .spank      => some mannerContact
-  -- § 20: Contact: Touch — like hit but lighter force
-  | .touch                    => some mannerContact
-  -- § 21: Cutting — manner + result (CoS entailed)
-  | .cut | .carve             => some resultChange
-  -- § 44: Destroy
-  | .destroy                  => some resultChange
-  -- § 42: Killing
-  | .murder | .poison         => some resultChange
-  -- § 45: Change of State (causative/inchoative alternation)
-  | .break_ | .bend | .cooking
-  | .otherChangeOfState | .entitySpecificChangeOfState
-  | .calibratableChangeOfState          => some resultChange
-  -- § 26: Creation and Transformation
-  | .build | .create | .knead => some creation
-  | .grow                     => some creation
-  -- § 25: Image Creation
-  | .imageImpression | .scribble | .illustrate | .transcribe            => some creation
-  -- § 39: Ingesting
-  | .eat | .devour            => some consumption
-  -- § 51.3: Manner of Motion
-  | .roll                     => some nonagentiveMotion
-  | .run                      => some selfMotion
-  -- § 51.6: Chase
-  | .chase                    => some selfMotion
-  -- § 51.1: Inherently Directed Motion
-  | .inherentlyDirectedMotion => some directedMotion
-  -- § 30: Perception
-  | .see | .sight             => some perception
-  -- § 31.1: Amuse-class psych verbs (stimulus subject)
-  | .amuse                    => some psychCausal
-  -- § 31.2: Admire-class psych verbs (experiencer subject)
-  | .admire                   => some psychState
-  -- § 32.1: Want verbs (desire states)
-  | .want | .long              => some desire
-  -- § 13.1 / § 13.5: Change of possession (give / obtain)
-  | .give | .get | .obtain        => some possessionTransfer
-  -- § 10.4: Wipe verbs (manner-subclass default; instrument-sense
-  -- entries override with `wipeInstrument` per verb)
-  | .wipeManner | .wipeInstrument                     => some ArgumentStructure.wipeManner
-  -- § 48.2: Disappearance
-  | .disappearance            => some ArgumentStructure.disappearance
-  -- Not yet classified
-  | _                         => none
-
-/-! ### Profiles -/
-
-/-- The entailment profile of the subject in a class's template. -/
-def LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
-  c.roleList.map (·.subjectProfile)
-
-/-- The entailment profile of the object in a class's template, if it has one. -/
-def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
-  c.roleList.bind (·.objectProfile)
-
-namespace LevinClass
-
-/-- Two votes on a profile combine by agreement, where `none` abstains and `some none` records a
-disagreement. -/
-def combineVotes :
-    Option (Option EntailmentProfile) → Option (Option EntailmentProfile) →
-      Option (Option EntailmentProfile)
-  | none, b => b
-  | a, none => a
-  | some x, some y => if x = y then some x else some none
-
-instance : Std.Commutative combineVotes :=
-  ⟨fun a b ↦ by
-    rcases a with _ | a <;> rcases b with _ | b <;> simp [combineVotes]; split_ifs <;> simp_all⟩
-
-instance : Std.Associative combineVotes :=
-  ⟨fun a b c ↦ by
-    rcases a with _ | a <;> rcases b with _ | b <;> rcases c with _ | c <;> simp [combineVotes] <;>
-      split_ifs <;> simp_all⟩
-
-/-- The profile the classes assigning one agree on, `none` when none does or they disagree. -/
-def commonProfile (f : LevinClass → Option EntailmentProfile) (s : Finset LevinClass) :
-    Option EntailmentProfile :=
-  (s.fold combineVotes none fun c ↦ (f c).map some).join
-
-section commonProfile
-
-variable (f : LevinClass → Option EntailmentProfile)
-
-@[simp] theorem commonProfile_empty : commonProfile f ∅ = none :=
-  rfl
-
-@[simp] theorem commonProfile_singleton (c : LevinClass) : commonProfile f {c} = f c := by
-  cases h : f c <;> simp [commonProfile, combineVotes, h]
-
-private theorem fold_combineVotes (s : Finset LevinClass) :
-    (s.fold combineVotes none (fun c ↦ (f c).map some) = none ↔ ∀ c ∈ s, f c = none) ∧
-      ∀ p, (s.fold combineVotes none (fun c ↦ (f c).map some) = some (some p) ↔
-        (∃ c ∈ s, f c = some p) ∧ ∀ c ∈ s, ∀ q ∈ f c, q = p) := by
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert c s hc ih =>
-    obtain ⟨ih₁, ih₂⟩ := ih
-    rw [Finset.fold_insert hc]
-    rcases hf : f c with _ | q
-    · simp [combineVotes, hf, ih₁, ih₂]
-    rcases hv : s.fold combineVotes none (fun c ↦ (f c).map some) with _ | _ | r
-    · have hs := ih₁.mp hv
-      refine ⟨by simp [combineVotes]; intro h; simp [h] at hf, fun p ↦ ?_⟩
-      simp only [combineVotes, Option.map_some, Option.some.injEq, Finset.exists_mem_insert,
-        Finset.forall_mem_insert, hf]
-      constructor
-      · rintro rfl; exact ⟨.inl rfl, by simp, fun c' hc' q' hq' ↦ by simp [hs c' hc'] at hq'⟩
-      · rintro ⟨-, h, -⟩; simpa using h
-    · refine ⟨by simp [combineVotes]; intro h; simp [h] at hf,
-        fun p ↦ ⟨by simp [combineVotes], ?_⟩⟩
-      simp only [Finset.exists_mem_insert, Finset.forall_mem_insert, hf]
-      rintro ⟨-, hqp, hall⟩
-      obtain rfl : q = p := hqp q rfl
-      obtain ⟨c', hc', hfc'⟩ : ∃ c' ∈ s, f c' ≠ none := by
-        by_contra h
-        simp only [not_exists, not_and, not_not] at h
-        simp [ih₁.mpr h] at hv
-      obtain ⟨q', hq'⟩ := Option.ne_none_iff_exists'.mp hfc'
-      have := (ih₂ q).mpr ⟨⟨c', hc', by rw [hq', hall c' hc' q' hq']⟩, hall⟩
-      simp [hv] at this
-    · obtain ⟨⟨c', hc', hc'r⟩, hall⟩ := (ih₂ r).mp hv
-      refine ⟨by simp only [Option.map_some, combineVotes]; split_ifs <;> simp <;> intro h <;>
-        simp [h] at hf, fun p ↦ ?_⟩
-      simp only [Option.map_some, combineVotes, Finset.exists_mem_insert,
-        Finset.forall_mem_insert, hf]
-      split_ifs with hqr
-      · obtain rfl : q = r := by simpa using hqr
-        simp only [Option.some.injEq]
-        constructor
-        · rintro rfl; exact ⟨.inl rfl, by simp, hall⟩
-        · rintro ⟨-, h, -⟩; simpa using h
-      · simp only [Option.some.injEq, reduceCtorEq, false_iff, not_and, not_forall]
-        intro _ hq
-        exact ⟨c', hc', r, hc'r, fun hr ↦ hqr (by simp [hr, hq q rfl])⟩
-
-/-- The classes agree on `p` exactly when one of them assigns `p` and none assigns another
-profile. -/
-theorem commonProfile_eq_some_iff {s : Finset LevinClass} {p : EntailmentProfile} :
-    commonProfile f s = some p ↔ (∃ c ∈ s, f c = some p) ∧ ∀ c ∈ s, ∀ q ∈ f c, q = p := by
-  rw [commonProfile, Option.join_eq_some_iff]
-  exact (fold_combineVotes f s).2 p
-
-end commonProfile
-
-end LevinClass
-
-/-- In no class's template does the object outrank the subject under [dowty-1991]'s Argument
-    Selection Principle, as [levin-rappaport-hovav-2005] present it. Where dominance is strict
-    the principle derives the stored linking; at the psych doublets *like* and *please*
-    (`Dowty1991.psychStative_alternation`) neither argument outranks the other, and the linking is
-    a lexical choice the template underdetermines. -/
-theorem roleList_not_asp_reversed {c : LevinClass} {r : RoleList}
-    {o : EntailmentProfile} (hr : c.roleList = some r)
-    (ho : r.objectProfile = some o) :
-    ¬ OutranksForSubject o r.subjectProfile := by
-  cases c <;> cases hr <;> cases ho <;> decide
 
 end ArgumentStructure

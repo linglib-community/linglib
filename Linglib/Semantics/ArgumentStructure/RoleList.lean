@@ -8,9 +8,8 @@ public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 This file defines role lists, the argument-structure generalizations that whole verb classes
 share. A role list gives the entailment profile of a subject and of an optional object, in
 realization order, and the named templates are the consensus role lists of verb classes such as
-manner contact, change of state, creation, consumption and the psych verbs. The map from Levin's
-verb classes onto the templates lives with the classes, and individual verbs can override a
-template with their own entailments.
+manner contact, perception, motion and the psych verbs. A verb entry takes its participants'
+profiles from these templates or records its own.
 
 ## Main definitions
 
@@ -33,9 +32,7 @@ template with their own entailments.
 namespace ArgumentStructure
 
 /-- A verb class's role list gives the entailment profile of its subject and then of its object,
-`none` for an intransitive. The stored order records the class's attested linking. Dowty's argument
-selection principle derives it wherever one profile dominates the other, and it is a lexical choice
-exactly at the ties behind the psych doublets (`roleList_not_asp_reversed`). -/
+`none` for an intransitive. -/
 structure RoleList where
   subjectProfile : EntailmentProfile
   objectProfile : Option EntailmentProfile := none
@@ -58,7 +55,7 @@ def activitySubjectProfile : EntailmentProfile :=
 /-- The achievement template's subject, which moves, exists independently and undergoes a change of
 state. The movement entailment fits directed-motion achievements (*arrive*) but overgeneralizes to
 non-motion achievements (*recognize*, *notice*), whose subjects are sentient rather than moving;
-those pattern with the psych-state templates in `LevinClass.subjectProfile`. -/
+those pattern with the psych-state templates. -/
 def achievementSubjectProfile : EntailmentProfile :=
   {.movement, .independentExistence, .changeOfState}
 
@@ -110,34 +107,10 @@ def mannerContact : RoleList where
   subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some contactObject
 
-/-- In result change a full agent causes the object to change state, as result verbs entail
-([beavers-koontz-garboden-2020]). -/
-def resultChange : RoleList where
-  subjectProfile := accomplishmentSubjectProfile
-  objectProfile  := some accomplishmentObjectProfile
-
-/-- In creation a full agent brings the object into existence, an incremental theme whose extent
-measures the event. -/
-def creation : RoleList where
-  subjectProfile := accomplishmentSubjectProfile
-  objectProfile  := some creationObject
-
-/-- In consumption an agent consumes or destroys an incremental theme, as with the eat verbs
-(Levin 39.1, *eat, drink*) and the devour verbs (39.4, *devour, consume, ingest*). It is creation
-without dependent existence. -/
-def consumption : RoleList where
-  subjectProfile := accomplishmentSubjectProfile
-  objectProfile  := some consumptionObject
-
 /-- In self-propelled motion the subject moves but causes no change in another participant, and
 there is no object. -/
 def selfMotion : RoleList where
   subjectProfile := activitySubjectProfile
-
-/-- In nonagentive motion the subject moves without volition, as the ball does in *the ball
-rolled*, a change of position in the causative/inchoative alternation ([levin-1993] §1.1.2.1). -/
-def nonagentiveMotion : RoleList where
-  subjectProfile := {.movement, .independentExistence}
 
 /-- In perception the subject is a sentient, independently existing experiencer, neither volitional
 nor causal. -/
@@ -188,17 +161,10 @@ def wipeManner : RoleList where
 /-- The instrument subclass of the wipe verbs (Levin 10.4.2, *brush, comb, mop, vacuum*)
 lexicalizes an instrument, which forces an obligatory volitional agent as subject;
 [rappaport-hovav-levin-1998]'s canonical realization rule pairs instrument constants such as
-*brush, hammer, saw, shovel* with the activity template. The subclass is not in the class map, so
-`LevinClass.roleList .wipe` gives the manner subclass and verbs with the instrument sense override
-it. -/
+*brush, hammer, saw, shovel* with the activity template. -/
 def wipeInstrument : RoleList where
   subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some contactObject
-
-/-- An unaccusative change of state, the inchoative, has no external argument, and its subject
-changes state and is causally affected without any agentive entailment. -/
-def unaccusativeCoS : RoleList where
-  subjectProfile := accomplishmentObjectProfile
 
 /-- In unaccusative directed motion the subject moves and changes location. -/
 def directedMotion : RoleList where

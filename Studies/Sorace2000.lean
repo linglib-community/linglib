@@ -83,9 +83,9 @@ the entries placed by `ofVerb`, each grammar cuts the hierarchy exactly where th
 
 ## TODO
 
-* The entries of *tossire* 'cough' and *squillare* 'ring' record no subject entailments, and
-  `LevinClass.subjectProfile` gives none for Levin's classes of these verbs, so `ofVerb` places
-  neither. A profile without volition would put (46) and (47) among the uncontrolled processes.
+* The entries of *tossire* 'cough' and *squillare* 'ring' record no subject entailments, so
+  `ofVerb` places neither. A profile without volition would put (46) and (47) among the
+  uncontrolled processes.
 
 ## References
 
@@ -109,7 +109,7 @@ inductive Language
   | italian | french | dutch | german
   deriving DecidableEq, Repr, Fintype
 
-/-- A phrase that changes the telicity of the predicate: a directional or bounding phrase makes it
+/-- A phrase that changes the telicity of the predicate. A directional or bounding phrase makes it
 telic, a durative adverbial atelic. -/
 inductive PredicateShift
   | telicized | detelicized
@@ -120,7 +120,7 @@ inductive SubjectShift
   | agentive | nonagentive
   deriving DecidableEq, Repr
 
-/-- An example sentence: its language, its verb and the verb's type, the departures from the
+/-- An example sentence, with its language, its verb and the verb's type, the departures from the
 default of the type, and the judgment of the sentence with each auxiliary the paper prints. -/
 structure Row where
   language : Language
@@ -166,21 +166,21 @@ instance (r : Row) (a b : PerfectAuxiliary) : Decidable (r.Prefers a b) :=
 
 /-! ### The core -/
 
-/-- §3.1, (1), (4), (5), (30a): a verb of change of location takes *be* and rejects *have* in all
-four languages, with an atelic predicate (4) and with an agentive or a nonagentive subject (5). -/
+/-- A verb of change of location takes *be* and rejects *have* in all four languages, with an
+atelic predicate (4) and with an agentive or a nonagentive subject (5) (§3.1, (1), (30a)). -/
 theorem changeOfLocation_selects_be : ∀ r ∈ rows, r.position = .changeOfLocation →
     (∀ j ∈ r.judgment .be, j = .acceptable) ∧ ∀ j ∈ r.judgment .have, j = .ungrammatical := by
   decide
 
-/-- §4.1, (33)–(36): a verb of controlled nonmotional process takes *have* in all four languages,
-also when an adverbial bounds the event (35); *be* is at best marginal, with a nonagentive
-subject ((34), (36b)). -/
+/-- A verb of controlled nonmotional process takes *have* in all four languages, also when an
+adverbial bounds the event (35); *be* is at best marginal, with a nonagentive subject ((34), (36b))
+(§4.1, (33)–(36)). -/
 theorem nonmotionalProcess_selects_have : ∀ r ∈ rows, r.position = .nonmotionalProcess →
     (∀ j ∈ r.judgment .have, j = .acceptable) ∧ ∀ j ∈ r.judgment .be, j ≤ .marginal := by
   decide
 
-/-- §§2, 6: some verb of a type takes both auxiliaries acceptably exactly when the type is not at
-either end of the hierarchy. -/
+/-- Some verb of a type takes both auxiliaries acceptably exactly when the type is not at either
+end of the hierarchy (§§2, 6). -/
 theorem free_alternation_iff (t : AuxiliarySelectionHierarchy) :
     (∃ r ∈ rows, r.position = t ∧ r.judgment .be = some .acceptable ∧
       r.judgment .have = some .acceptable) ↔ t ≠ ⊥ ∧ t ≠ ⊤ := by
@@ -196,8 +196,8 @@ variable {l : Language} {k : AuxiliarySelectionHierarchy}
 def baseRows (l : Language) : List Row :=
   rows.filter fun r ↦ r.language = l ∧ r.predicate = none ∧ r.subject = none
 
-/-- A cutoff point for a language at type `k` (§6): each of its sentences that prefers *be* has a
-verb of type at most `k`, and each that prefers *have* a verb of type at least `k`. Verbs of type
+/-- A language has a cutoff point at type `k` (§6) when each of its sentences that prefers *be* has
+a verb of type at most `k`, and each that prefers *have* a verb of type at least `k`. Verbs of type
 `k` itself may go either way, as when a language divides a type more finely. -/
 def Cutoff (l : Language) (k : AuxiliarySelectionHierarchy) : Prop :=
   ∀ r ∈ baseRows l, (r.Prefers .be .have → r.position ≤ k) ∧ (r.Prefers .have .be → k ≤ r.position)
@@ -211,28 +211,28 @@ theorem Cutoff.le_of_prefers (h : Cutoff l k) {r s : Row} (hr : r ∈ baseRows l
     r.position ≤ s.position :=
   ((h r hr).1 hbe).trans ((h s hs).2 hhave)
 
-/-- (7), (15), (20) against (37), (41), (44)–(47), (50): Italian cuts at the seam of the
-hierarchy, after the last of the states or before the first of the processes. -/
+/-- Italian cuts at the seam of the hierarchy, after the last of the states or before the first of
+the processes ((7), (15), (20) against (37), (41), (44)–(47), (50)). -/
 theorem italian_cutoff : Cutoff .italian k ↔ k = .existenceOfState ∨ k = .uncontrolledProcess := by
   revert k; decide
 
-/-- (12), (16), (19a), (22), (37c), (42a): French cuts within the continuation of a state, where
-*rester* 'remain' takes *être* (19a) and *survivre* 'survive' *avoir* (16). -/
+/-- French cuts within the continuation of a state, where *rester* 'remain' takes *être* (19a) and
+*survivre* 'survive' *avoir* (16) ((12), (22), (37c), (42a)). -/
 theorem french_cutoff : Cutoff .french k ↔ k = .continuationOfState := by
   revert k; decide
 
-/-- (10a), (18b), (19b), (37b), (39a): Dutch also cuts within the continuation of a state, where
-*blijven* 'remain' takes *zijn* (19b) and *duren* 'last' *hebben* (18b). -/
+/-- Dutch also cuts within the continuation of a state, where *blijven* 'remain' takes *zijn* (19b)
+and *duren* 'last' *hebben* (18b) ((10a), (37b), (39a)). -/
 theorem dutch_cutoff : Cutoff .dutch k ↔ k = .continuationOfState := by
   revert k; decide
 
-/-- §6: "The cutoff point cannot be identical in all languages." -/
+/-- "The cutoff point cannot be identical in all languages" (§6). -/
 theorem cutoff_varies : Cutoff .italian k → ¬ Cutoff .french k := by
   rw [italian_cutoff, french_cutoff]
   rintro (rfl | rfl) <;> decide
 
-/-- (17a), (38): a German verb of motion that prefers *sein* sits below a verb of continuation of
-a state that prefers *haben*. -/
+/-- A German verb of motion that prefers *sein* sits below a verb of continuation of a state that
+prefers *haben* ((17a), (38)). -/
 theorem german_crossing : ∃ r ∈ baseRows .german, ∃ s ∈ baseRows .german,
     r.Prefers .be .have ∧ s.Prefers .have .be ∧ s.position < r.position := by
   decide
@@ -246,17 +246,17 @@ end Cutoff
 
 /-! ### Directional phrases -/
 
-/-- §4.3, (39)–(42): a directional phrase makes Dutch and German verbs of motion prefer *be*
-((39b), (40b)), where without one they prefer *have* ((39a), (40a)); in French the auxiliary
-stays *avoir* (42b). -/
+/-- A directional phrase makes Dutch and German verbs of motion prefer *be* ((39b), (40b)), where
+without one they prefer *have* ((39a), (40a)); in French the auxiliary stays *avoir* (42b)
+(§4.3). -/
 theorem directional_motionalProcess : ∀ r ∈ rows, r.position = .motionalProcess →
     r.predicate = some .telicized →
     (r.language = .dutch ∨ r.language = .german → r.Prefers .be .have) ∧
       (r.language = .french → r.Prefers .have .be) := by
   decide
 
-/-- §4.3, (41b), (41d): in Italian a directional phrase moves *correre* 'run' to *essere* but leaves
-*nuotare* 'swim' with *avere*. -/
+/-- In Italian a directional phrase moves *correre* 'run' to *essere* but leaves *nuotare* 'swim'
+with *avere* (§4.3, (41b), (41d)). -/
 theorem italian_directional_split :
     (∃ r ∈ rows, r.language = .italian ∧ r.position = .motionalProcess ∧
       r.predicate = some .telicized ∧ r.Prefers .be .have) ∧
@@ -305,15 +305,15 @@ theorem entry_aux_of_prefers (l : Language) :
     ∀ r ∈ baseRows l, ∀ e ∈ r.entry?, ∀ a b, r.Prefers a b → e.2 = a := by
   revert l; decide
 
-/-- §6: with its monadic entries placed by `ofVerb`, each language's grammar cuts the hierarchy
-exactly where the paper's judgments do: Italian at the seam, French and Dutch at the continuation
-of a state, and German nowhere, since *liegen* 'lie', a state, takes *haben* and *rennen* 'run',
+/-- With its monadic entries placed by `ofVerb`, each language's grammar cuts the hierarchy exactly
+where the paper's judgments do (§6), Italian at the seam, French and Dutch at the continuation of
+a state, and German nowhere, since *liegen* 'lie', a state, takes *haben* and *rennen* 'run',
 a motional process, *sein*. -/
 theorem entries_cut_iff_cutoff (l : Language) (k : AuxiliarySelectionHierarchy) :
     (∀ e ∈ l.entries, ∀ t ∈ ofVerb e.1, e.2 = .be ↔ t ≤ k) ↔ Cutoff l k := by
   revert l k; decide
 
-/-- The Italian rule is the cut at the seam for every verb: on a frame without a direct object, a
+/-- The Italian rule is the cut at the seam for every verb. On a frame without a direct object, a
 verb takes *essere* exactly when `ofVerb` places it among the transitions and states. -/
 theorem italian_perfect_eq_be_iff {v : Italian.Verb} {fr : ArgumentFrame}
     (hfr : ¬ fr.HasNominal) {t : AuxiliarySelectionHierarchy}
