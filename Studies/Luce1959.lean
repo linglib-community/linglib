@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Processing.Psychophysics.SignalDetection
-public import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Probability.Kernel.WithDensity

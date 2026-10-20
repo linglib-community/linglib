@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Pragmatics.RSA.QUD
 
 /-!
@@ -79,8 +79,8 @@ inductive QUD
 instance : MeasurableSpace QUD := ⊤
 instance : DiscreteMeasurableSpace QUD := ⟨fun _ ↦ trivial⟩
 
-/-- The answer to a question at a world: yes or no to a polar question, the world itself to
-*what is the case*. -/
+/-- A polar question is answered at a world by yes or no, and *what is the case* by the world
+itself. -/
 def QUD.answer : QUD → World → Bool ⊕ World
   | .isSome, w => .inl (decide (w ≠ .none))
   | .isAll, w => .inl (decide (w = .all))

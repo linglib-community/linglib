@@ -6,29 +6,24 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.InformationTheory.Entropy
-public import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Processing.Surprisal.LossyContext
 
 /-!
 # Futrell, Gibson and Levy (2020): Lossy-Context Surprisal
 
-This file formalizes [futrell-gibson-levy-2020]'s lossy-context surprisal, on which the
-difficulty of a word is its expected surprisal under a lossy memory representation of its
-context, carried by `LossyContext.MemoryProcess`. The comprehender of section 3.3
-predicts the next word from its memory representation by Bayesian inversion of the memory
-kernel (`bayes`), and averaged over contexts its difficulty is the conditional entropy of the
-word given the representation, which exceeds the difficulty of surprisal theory, the lossless
-comprehender who sees the context, by exactly the predictive information memory loses
-(`averageDifficulty_bayes_sub_lossless`); the data processing inequality makes the loss
-nonnegative.
+Futrell, Gibson and Levy take the difficulty of a word to be its expected surprisal under a lossy
+memory representation of its context (`LossyContext.MemoryProcess`). Their comprehender of
+section 3.3 predicts the next word by Bayesian inversion of the memory kernel (`bayes`). Averaged
+over contexts, its difficulty is the conditional entropy of the word given the representation,
+and it exceeds the difficulty of the lossless comprehender of surprisal theory by exactly the
+predictive information memory loses (`averageDifficulty_bayes_sub_lossless`).
 
-Information locality (section 5) is proved in the single-dependency configuration, where the
-paper's first-order approximation is exact: under erasure noise (`erasure`), which keeps the
-context word with probability `1 - e`, difficulty is the unigram surprisal less the surviving
-fraction of the pointwise mutual information, so with progressive noise, a more distant word
-erased more often, difficulty grows with distance when the words are positively associated and
-shrinks when they are negatively associated (`locality`, `antilocality`). No erasure is the
-lossless case and certain erasure recovers the unigram prior.
+Information locality (section 5) is proved for a single dependency under erasure noise
+(`erasure`), where the paper's first-order approximation is exact. Difficulty is then the unigram
+surprisal less the surviving fraction of the pointwise mutual information, so it grows with
+distance when the words are positively associated and shrinks when they are negatively
+associated (`locality`, `antilocality`).
 
 ## Implementation notes
 
@@ -106,7 +101,7 @@ theorem averageDifficulty_of_lossless {mp : MemoryProcess C R W} (h : mp.IsLossl
     MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless h, smul_eq_mul, ← Set.prod_eq,
     Set.singleton_prod_singleton, joint_real_singleton, Finset.mul_sum]
   conv_lhs => rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl λ w _ => Finset.sum_congr rfl λ c _ => ?_
+  refine Finset.sum_congr rfl fun w _ ↦ Finset.sum_congr rfl fun c _ ↦ ?_
   obtain hc | hc := eq_or_ne (π.real {c}) 0
   · simp [hc]
   · rw [hcond c w hc, surprisal]
@@ -114,11 +109,11 @@ theorem averageDifficulty_of_lossless {mp : MemoryProcess C R W} (h : mp.IsLossl
 
 variable [Fintype R]
 
-/-- The Bayes-optimal comprehender: the memory kernel with the posterior predictive of the next
-word given the representation. -/
+/-- The Bayes-optimal comprehender pairs the memory kernel with the posterior predictive of the
+next word given the representation. -/
 noncomputable def bayes : MemoryProcess C R W where
   encode := mem
-  predict := Kernel.ofFunOfCountable λ r => ((memJoint L π mem)[|Prod.snd ⁻¹' {r}]).map Prod.fst
+  predict := Kernel.ofFunOfCountable fun r ↦ ((memJoint L π mem)[|Prod.snd ⁻¹' {r}]).map Prod.fst
 
 /-- The average difficulty of the Bayes-optimal comprehender is the conditional entropy of the
 next word given the memory representation. -/
@@ -129,14 +124,14 @@ theorem averageDifficulty_bayes :
     ← Set.prod_eq, Set.singleton_prod_singleton, memJoint_real_singleton, smul_eq_mul,
     Finset.mul_sum, Finset.sum_mul]
   conv_lhs => rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl λ w _ => ?_
+  refine Finset.sum_congr rfl fun w _ ↦ ?_
   conv_lhs => rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl λ r _ => Finset.sum_congr rfl λ c _ => ?_
+  refine Finset.sum_congr rfl fun r _ ↦ Finset.sum_congr rfl fun c _ ↦ ?_
   simp only [MemoryProcess.perStateSurprisal, surprisal, Kernel.ofFunOfCountable,
     Kernel.coe_mk, map_measureReal_apply measurable_fst (.singleton _)]
   ring
 
-/-- The average form of information locality: the Bayes-optimal comprehender's average
+/-- In the average form of information locality, the Bayes-optimal comprehender's average
 difficulty exceeds surprisal theory's by exactly the predictive information memory loses. -/
 theorem averageDifficulty_bayes_sub_lossless {mp : MemoryProcess C R W}
     (h : mp.IsLosslessFor L) : (bayes L π mem).averageDifficulty L π - mp.averageDifficulty L π
@@ -174,17 +169,17 @@ theorem surprisal_eq_sub_pmi {y w : W} (h0 : (L ∘ₘ π).real {w} ≠ 0) (hy :
 
 variable [MeasurableSingletonClass W] [Countable W]
 
-/-- The erasure-noise memory process: the context word is erased with probability `e`, and the
+/-- The erasure-noise memory process erases the context word with probability `e`, and its
 predictor reads a retained word through the language model and an erased one as the unigram
 distribution. -/
 noncomputable def erasure (e : I) : MemoryProcess W (W ⊕ Unit) W where
-  encode := Kernel.ofFunOfCountable λ y => Ber(Sum.inr (), Sum.inl y, e)
-  predict := Kernel.ofFunOfCountable (Sum.elim (⇑L) λ _ => L ∘ₘ π)
+  encode := Kernel.ofFunOfCountable fun y ↦ Ber(Sum.inr (), Sum.inl y, e)
+  predict := Kernel.ofFunOfCountable (Sum.elim (⇑L) fun _ ↦ L ∘ₘ π)
 
 variable {e e' : I} {y w : W}
 
-/-- The exact single-dependency form of information locality: under erasure noise, difficulty
-is the unigram surprisal less the surviving fraction of the pointwise mutual information. -/
+/-- Under erasure noise, difficulty is the unigram surprisal less the surviving fraction of the
+pointwise mutual information, the exact single-dependency form of information locality. -/
 theorem expectedSurprisal_erasure (h0 : (L ∘ₘ π).real {w} ≠ 0) (hy : (L y).real {w} ≠ 0) :
     (erasure L π e).expectedSurprisal y w
       = surprisal (L ∘ₘ π) w - (1 - (e : ℝ)) * pmi L π y w := by
@@ -201,8 +196,8 @@ theorem expectedSurprisal_erasure_sub_surprisal (h0 : (L ∘ₘ π).real {w} ≠
   rw [expectedSurprisal_erasure L π h0 hy, surprisal_eq_sub_pmi L π h0 hy]
   ring
 
-/-- Information locality: under progressive noise, a more distant context word having a larger
-erasure rate, difficulty increases with distance when the words are positively associated. -/
+/-- Under progressive noise, where a more distant context word has a larger erasure rate,
+difficulty increases with distance when the words are positively associated. -/
 theorem locality (h : e ≤ e') (hpmi : 0 ≤ pmi L π y w) (h0 : (L ∘ₘ π).real {w} ≠ 0)
     (hy : (L y).real {w} ≠ 0) :
     (erasure L π e).expectedSurprisal y w ≤ (erasure L π e').expectedSurprisal y w := by
@@ -210,8 +205,8 @@ theorem locality (h : e ≤ e') (hpmi : 0 ≤ pmi L π y w) (h0 : (L ∘ₘ π).
   have : (e : ℝ) ≤ e' := h
   nlinarith
 
-/-- Anti-locality: when the words are negatively associated, losing the context word lowers
-difficulty, so difficulty decreases with distance. -/
+/-- When the words are negatively associated, losing the context word lowers difficulty, so
+difficulty decreases with distance. -/
 theorem antilocality (h : e ≤ e') (hpmi : pmi L π y w ≤ 0) (h0 : (L ∘ₘ π).real {w} ≠ 0)
     (hy : (L y).real {w} ≠ 0) :
     (erasure L π e').expectedSurprisal y w ≤ (erasure L π e).expectedSurprisal y w := by
@@ -222,14 +217,14 @@ theorem antilocality (h : e ≤ e') (hpmi : pmi L π y w ≤ 0) (h0 : (L ∘ₘ 
 /-- No erasure is the lossless comprehender who sees the context word. -/
 theorem erasure_zero_isLosslessFor : (erasure L π 0).IsLosslessFor L :=
   ⟨Sum.inl, measurable_inl,
-    Kernel.ext λ _ => (bernoulliMeasure_zero _ _).trans (Kernel.deterministic_apply _ _).symm,
-    Kernel.ext λ _ => rfl⟩
+    Kernel.ext fun _ ↦ (bernoulliMeasure_zero _ _).trans (Kernel.deterministic_apply _ _).symm,
+    Kernel.ext fun _ ↦ rfl⟩
 
 /-- No erasure recovers surprisal. -/
 theorem erasure_zero : (erasure L π 0).expectedSurprisal y w = surprisal (L y) w :=
   MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless (erasure_zero_isLosslessFor L π) y w
 
-/-- Certain erasure recovers the unigram prior: regression to prior expectations. -/
+/-- Certain erasure recovers the unigram prior, a regression to prior expectations. -/
 theorem erasure_one : (erasure L π 1).expectedSurprisal y w = surprisal (L ∘ₘ π) w :=
   MemoryProcess.expectedSurprisal_of_dirac (mp := erasure L π 1) (c := y)
     (bernoulliMeasure_one _ _) w
