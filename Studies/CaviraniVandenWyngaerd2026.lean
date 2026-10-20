@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Segmental.ElementTheory
-public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Phonology.Autosegmental.Skeleton
 public import Linglib.Phonology.StrictCV.Basic
 public import Linglib.Fragments.Slavic.Czech.Phonology
 public import Linglib.Data.Forms.CaviraniVandenWyngaerd2026
@@ -71,7 +71,7 @@ The reflexes of /ɦ/ pattern as those of /k/ do, small against medium and big.
 namespace CaviraniVandenWyngaerd2026
 
 open ElementTheory Data.Forms
-open Morphology (CVSlot)
+open Autosegmental (CVSlot)
 
 /-! ### The plain consonants -/
 
@@ -401,7 +401,7 @@ theorem interpret_š :
       ∀ c ∈ [x ⊔ PAL₁, x ⊔ PAL₃, s ⊔ PAL₃], interpret (.C, c) = some Czech.Phonology.š := by
   decide +kernel
 
-/-- The medium pattern goes with the big one on a velar and with the small one on a coronal:
+/-- The medium pattern goes with the big one on a velar and with the small one on a coronal.
 /k/ gives [ts], [tʃ], [tʃ] and /t/ gives [c], [c], [ts], though the three structures differ on
 each. -/
 theorem interpret_medium :

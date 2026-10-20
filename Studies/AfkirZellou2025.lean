@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Tarifit.ConsonantalRoots
-public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Morphology.Morphotactics.TemplateMatch
 public import Linglib.Data.Examples.AfkirZellou2025
 import all Init.Data.String.Defs  -- for unfolding `String.join`
 
@@ -53,7 +53,7 @@ open Tarifit Morphology Phonology
 /-! ### The simple imperative -/
 
 /-- The prosodic template CCəC of the simple imperative. -/
-def imperativeTemplate : CVTemplate := ⟨[.C, .C, .V, .C]⟩
+def imperativeTemplate : Autosegmental.Skeleton := [.C, .C, .V, .C]
 
 /-- In the simple imperative the consonants of a root fill the C-slots in order and the schwa
 the V-slot. -/
