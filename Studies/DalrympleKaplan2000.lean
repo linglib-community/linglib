@@ -196,12 +196,12 @@ theorem polish_coordination :
 
 open English
 open English.Verbs hiding Verb
-/-- The cells *set* realizes are the base with its present plural, the past and the past
+/-- The cells *set* realizes are the base with its plain present, the past and the past
 participle; the paper's VFORM value lists the two nonfinite ones, the past being a TENSE
 value ((50)). -/
 theorem set_cells :
     formCells set_.realize "set" =
-      {English.Verbs.Verb.Cell.base, .presentPlural, .past, .pastParticiple} := by
+      {English.Verbs.Verb.Cell.base, .plainPresent, .past, .pastParticiple} := by
   decide
 
 open English

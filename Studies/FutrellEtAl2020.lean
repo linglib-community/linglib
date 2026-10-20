@@ -5,7 +5,6 @@ public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.English.Adpositions
-public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.DependencyGrammar.Reordering
 public import Mathlib.Data.Fin.VecNotation
@@ -13,7 +12,7 @@ public import Mathlib.Data.Fin.VecNotation
 /-!
 # Futrell, Levy and Gibson (2020): Dependency Locality as an Explanatory Principle for Word Order
 
-This file formalizes the worked examples of [futrell-levy-gibson-2020]'s case for dependency
+This file formalizes the worked examples of Futrell, Levy and Gibson's case for dependency
 length minimization as a source of word-order universals: the dependency trees of its sections
 2.3 and 2.4, with every total dependency length checked against the printed figure.
 Displacement makes trees nonprojective, but only mildly, at gap degree one, in extraposition and
@@ -21,7 +20,7 @@ Displacement makes trees nonprojective, but only mildly, at gap degree one, in e
 head-initial head, and its mirror image, long-before-short, before a head-final one ((7) and
 (8)); a chain of single dependents is shortest with consistent head direction (9), while a head
 with several short dependents does better splitting them across itself (10), the exceptions to
-harmony that [gildea-temperley-2010] derived. Heavy NP shift is the flagship case (11): keeping
+harmony that Gildea and Temperley derived. Heavy NP shift is the flagship case (11): keeping
 the object before the particle costs one unit for a light object and five for a heavy one. The
 random-order baseline of the corpus studies is illustrated by (13), the attested order against a
 reordering of the same tree. The corpus results of sections 4 and 5, the Monte Carlo comparisons
@@ -49,7 +48,7 @@ namespace FutrellEtAl2020
 open DependencyGrammar
 open Morphology (Word)
 open English.Nouns English English.Pronouns English.Determiners English.Verbs
-  English.Adpositions English.Auxiliaries
+  English.Adpositions
 
 -- `this` is a Lean keyword, so the demonstrative needs a qualified alias.
 abbrev this_ := English.Determiners.this.toWord
@@ -79,7 +78,7 @@ def extraposition : Graph 8 :=
 def whMovement : Graph 8 :=
   .ofArcs
     [i.toWord, know.toWord .base, what.toWord, he.toWord, think.toWord .thirdSg,
-     you.toWord, did.toWord, Word.mk' "yesterday" .ADV]
+     you.toWord, do_.toWord .past, Word.mk' "yesterday" .ADV]
     1
     [(1, 0, .nsubj), (1, 4, .ccomp), (4, 3, .nsubj), (4, 6, .ccomp),
      (6, 5, .nsubj), (6, 2, .obj), (6, 7, .advmod)]

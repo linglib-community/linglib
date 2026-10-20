@@ -8,7 +8,7 @@ public import Mathlib.Data.Fin.Basic
 /-!
 # Zwicky and Pullum (1983): Cliticization vs. Inflection: English n't
 
-This file formalizes [zwicky-pullum-1983]'s six criteria for telling clitics from
+This file formalizes Zwicky and Pullum's six criteria for telling clitics from
 inflectional affixes and their application to the English contracted negator *-n't*. Clitics
 show a low degree of selection with respect to their hosts, no arbitrary gaps, no
 morphophonological or semantic idiosyncrasies, are not affected by syntactic rules, and can
@@ -58,7 +58,7 @@ inductive SelectionDegree
 /-- Affixes are more selective than clitics. -/
 def SelectionDegree.IsHighSelection (s : SelectionDegree) : Prop := s ≠ .low
 
-instance : DecidablePred SelectionDegree.IsHighSelection := λ s =>
+instance : DecidablePred SelectionDegree.IsHighSelection := fun s ↦
   inferInstanceAs (Decidable (s ≠ .low))
 
 /-- The status of a bound form on the word, clitic, affix cline. -/
@@ -78,12 +78,12 @@ inductive MorphStatus
 /-- An inflectional or derivational affix. -/
 def MorphStatus.IsAffix (s : MorphStatus) : Prop := s = .inflAffix ∨ s = .derivAffix
 
-instance : DecidablePred MorphStatus.IsAffix := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred MorphStatus.IsAffix := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A simple or special clitic. -/
 def MorphStatus.IsClitic (s : MorphStatus) : Prop := s = .simpleClitic ∨ s = .specialClitic
 
-instance : DecidablePred MorphStatus.IsClitic := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred MorphStatus.IsClitic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A morpheme's answers to the six criteria. -/
 structure CliticAffixProfile where
@@ -244,12 +244,12 @@ private def kripkeR : SetRel (Fin 4) (Fin 4) :=
     | 3 => {3}
 
 /-- A proposition true at the first two worlds and false at the others. -/
-private def witnessP : Fin 4 → Prop := λ w =>
+private def witnessP : Fin 4 → Prop := fun w ↦
   match w with
   | 0 | 1 => True
   | 2 | 3 => False
 
-private instance : DecidablePred witnessP := λ w => by
+private instance : DecidablePred witnessP := fun w ↦ by
   unfold witnessP
   match w with
   | 0 | 1 | 2 | 3 => infer_instance
@@ -259,7 +259,7 @@ the actual world. -/
 theorem neg_over_poss_ne_poss_over_neg :
     ∃ R : SetRel (Fin 4) (Fin 4),
       ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ Diamond R p w ↔ Diamond R (fun w' ↦ ¬ p w') w := by
-  refine ⟨kripkeR, λ h => ?_⟩
+  refine ⟨kripkeR, fun h ↦ ?_⟩
   have := h witnessP 0
   simp [Diamond, kripkeR, witnessP] at this
 
@@ -268,7 +268,7 @@ actual world, yet not necessarily false either. -/
 theorem neg_over_nec_ne_nec_over_neg :
     ∃ R : SetRel (Fin 4) (Fin 4),
       ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ Box R p w ↔ Box R (fun w' ↦ ¬ p w') w := by
-  refine ⟨kripkeR, λ h => ?_⟩
+  refine ⟨kripkeR, fun h ↦ ?_⟩
   have := h witnessP 0
   simp [Box, kripkeR, witnessP] at this
 
