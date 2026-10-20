@@ -137,7 +137,7 @@ theorem ModalFeature.checks_negated_iff {checker checked : ModalFeature}
 
 /-- The features of a modal auxiliary of the Fragment: the forces of its meanings, uninterpretable,
 Zeijlstra's generalization that auxiliaries contribute no operator. -/
-def auxiliaryFeatures (a : Auxiliary) : Finset ModalFeature :=
+def auxiliaryFeatures (a : ModalAuxiliary) : Finset ModalFeature :=
   a.forces.image (⟨·, .uninterpretable⟩)
 
 /-! ### Modal concord (§3) -/

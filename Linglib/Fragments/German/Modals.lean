@@ -43,52 +43,52 @@ open Morphology (Features)
 def infinitive : Features := Features.of (verbForm := some .Inf)
 
 /-- *dürfen* 'may, be allowed to' is a deontic possibility modal. -/
-def duerfen : Auxiliary where
+def duerfen : ModalAuxiliary where
   form := "dürfen"
   features := infinitive
   meaning := {.possibility} ×ˢ {.deontic}
 
 /-- *können* 'can' is a possibility modal of ability, of epistemic possibility and, colloquially,
 of permission. -/
-def koennen : Auxiliary where
+def koennen : ModalAuxiliary where
   form := "können"
   features := infinitive
   meaning := {.possibility} ×ˢ {.circumstantial, .epistemic, .deontic}
 
 /-- *mögen* 'may' is an epistemic possibility modal. -/
-def moegen : Auxiliary where
+def moegen : ModalAuxiliary where
   form := "mögen"
   features := infinitive
   meaning := {.possibility} ×ˢ {.epistemic}
 
 /-- *müssen* 'must, have to' is a necessity modal of obligation and of logical deduction. -/
-def muessen : Auxiliary where
+def muessen : ModalAuxiliary where
   form := "müssen"
   features := infinitive
   meaning := {.necessity} ×ˢ {.deontic, .epistemic}
 
 /-- *sollen* 'be supposed to' is a deontic necessity modal. -/
-def sollen : Auxiliary where
+def sollen : ModalAuxiliary where
   form := "sollen"
   features := infinitive
   meaning := {.necessity} ×ˢ {.deontic}
 
 /-- *wollen* 'want to' is a bouletic necessity modal. -/
-def wollen : Auxiliary where
+def wollen : ModalAuxiliary where
   form := "wollen"
   features := infinitive
   meaning := {.necessity} ×ˢ {.bouletic}
 
 /-- *sollte* 'should, ought to', the Konjunktiv II of *sollen*, is a weak necessity modal of
 obligation and of logical probability. -/
-def sollte : Auxiliary where
+def sollte : ModalAuxiliary where
   form := "sollte"
   features := Features.of (number := some .singular) (verbForm := some .Fin)
     (tense := some .Past) (mood := some .Sub)
   meaning := {.weakNecessity} ×ˢ {.deontic, .epistemic}
 
 /-- The modal verbs. -/
-def allModals : List Auxiliary := [duerfen, koennen, moegen, muessen, sollen, wollen, sollte]
+def allModals : List ModalAuxiliary := [duerfen, koennen, moegen, muessen, sollen, wollen, sollte]
 
 /-- *sollte* has the flavors of *sollen* and the epistemic one besides. -/
 theorem sollen_flavors_ssubset_sollte :

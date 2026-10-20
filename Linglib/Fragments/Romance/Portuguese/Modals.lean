@@ -48,19 +48,19 @@ def imperfect : Features :=
 /-! ### Present -/
 
 /-- *pode* 'can, may', the present possibility modal. -/
-def pode : Auxiliary where
+def pode : ModalAuxiliary where
   form := "pode"
   meaning := {.possibility} ×ˢ Finset.univ
   features := present
 
 /-- *deve* 'ought, should', the present weak necessity modal. -/
-def deve : Auxiliary where
+def deve : ModalAuxiliary where
   form := "deve"
   meaning := {.weakNecessity} ×ˢ Finset.univ
   features := present
 
 /-- *tem que* 'must, have to', the present strong necessity modal. -/
-def temQue : Auxiliary where
+def temQue : ModalAuxiliary where
   form := "tem que"
   meaning := {.necessity} ×ˢ Finset.univ
   features := present
@@ -68,19 +68,19 @@ def temQue : Auxiliary where
 /-! ### Past imperfect -/
 
 /-- *podia* 'could, might', the past imperfect possibility modal. -/
-def podia : Auxiliary where
+def podia : ModalAuxiliary where
   form := "podia"
   meaning := {.possibility} ×ˢ Finset.univ
   features := imperfect
 
 /-- *devia* 'ought', the past imperfect weak necessity modal. -/
-def devia : Auxiliary where
+def devia : ModalAuxiliary where
   form := "devia"
   meaning := {.weakNecessity} ×ˢ Finset.univ
   features := imperfect
 
 /-- *tinha que* 'had to', the past imperfect strong necessity modal. -/
-def tinhaQue : Auxiliary where
+def tinhaQue : ModalAuxiliary where
   form := "tinha que"
   meaning := {.necessity} ×ˢ Finset.univ
   features := imperfect

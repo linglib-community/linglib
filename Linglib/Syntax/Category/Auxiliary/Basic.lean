@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Word.Basic
+public import Linglib.Pragmatics.SocialMeaning.Register
 public import Linglib.Semantics.Modality.Basic
 
 /-!
@@ -17,14 +18,15 @@ negative polarity or voice, and forms a single clause with a lexical verb. No la
 independent criterion separates it from a lexical verb, so the class is drawn language by
 language, English's by the constructions of negation, inversion, code and emphasis.
 
-This file provides the entry of a member of such a class: a word form in the cells it is entered
-for, with the features those cells share, and a modal item, the force–flavor pairs it expresses,
-none for an auxiliary without modality, and its register. Per-language fragments supply the
-entries.
+This file provides the entry of a member of such a class, a word form in the cells it is entered
+for with the features those cells share and its register, and the entry of a modal auxiliary,
+an auxiliary that is also a modal item, expressing force–flavor pairs. Per-language fragments
+supply the entries.
 
 ## Main declarations
 
 * `Auxiliary`: the entry.
+* `ModalAuxiliary`: the entry of an auxiliary that is a modal item.
 * `Auxiliary.toWord`: the `AUX` word it spells out.
 
 ## Implementation notes
@@ -46,12 +48,20 @@ open Morphology (Word Features)
 open Modality (ModalItem)
 
 /-- An auxiliary: a word form in the cells it is entered for, with the features those cells
-share, and the modal item it is. -/
-structure Auxiliary extends ModalItem where
+share, at a register. -/
+structure Auxiliary where
+  form : String
   /-- The features the cells of the entry share. -/
   features : Features := ⊥
-  meaning := ∅
+  register : SocialMeaning.Register := .neutral
   deriving DecidableEq
+
+/-- A modal auxiliary: an auxiliary that is a modal item, with the force–flavor pairs it
+expresses. -/
+structure ModalAuxiliary extends Auxiliary, ModalItem
+  deriving DecidableEq
+
+instance : Coe ModalAuxiliary Auxiliary := ⟨ModalAuxiliary.toAuxiliary⟩
 
 namespace Auxiliary
 
