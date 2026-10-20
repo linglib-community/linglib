@@ -1,17 +1,15 @@
 module
 
-public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
-# Korean complementizers and clause-embedding verbs
+# Korean complementizers
 
 Korean embeds a clause in three ways: a bare clause in the declarative ending *-ta* followed
 by the connective *-ko*; a *-ta*-clause under the adnominal ending *-nun* and the light noun
 *kes* 'thing'; and a bare adnominal clause under *kes*. The three endings are complementizer
-entries, *kes* a word, and the matrix verbs of Bondarenko's Korean data verb entries; her
-assignment of *-ta* to the Cont head and of *-nun* and *-ko* to allomorphs of Comp is the
-matter of `Studies/Bondarenko2022.lean`.
+entries and *kes* a word. Bondarenko's assignment of *-ta* to the Cont head and of *-nun* and
+*-ko* to allomorphs of Comp is the matter of `Studies/Bondarenko2022.lean`.
 
 ## References
 
@@ -52,43 +50,5 @@ def complementizers : List Complementizer := [ta, nun, ko]
 
 /-- *kes* 'thing', the light noun under adnominal clauses. -/
 def kes : Morphology.Word := { form := "kes", cat := .NOUN }
-
-/-! ### Matrix verbs -/
-
-/-- *yukamsulewehay-ta* 'regret', a stative negative preference. -/
-def yukamsulewehayta : Verb where
-  morphs := [.root "yukamsulewehay", .suff "ta"]
-  valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.preferential .negative true)
-  vendlerClass := some .state
-
-/-- *mit-ta* 'believe', a stative non-veridical doxastic. -/
-def mitta : Verb where
-  morphs := [.root "mit", .suff "ta"]
-  valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .nonVeridical)
-  vendlerClass := some .state
-  opaqueContext := true
-
-/-- *sayngkakha-ta* 'think', a non-veridical doxastic activity. -/
-def sayngkakhata : Verb where
-  morphs := [.root "sayngkakha", .suff "ta"]
-  valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .nonVeridical)
-  vendlerClass := some .activity
-  opaqueContext := true
-
-/-- *haysekha-ta* 'interpret'. -/
-def haysekhata : Verb where
-  morphs := [.root "haysekha", .suff "ta"]
-  valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
-  opaqueContext := true
-
-/-- *selmyengha-ta* 'explain', which takes its clause as a theme argument. -/
-def selmyenghata : Verb where
-  morphs := [.root "selmyengha", .suff "ta"]
-  valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .accomplishment
 
 end Korean.Complementizers

@@ -425,5 +425,855 @@
   ],
   "comment": "A COMPACT causative in p- that is fully nonimplicative; Song's source is Svantesson (1983: 106), and the translation's 'tried' is added because the literal one is ungrammatical in English (p. 68, note 21; repeated as (35.a), p. 103).",
   "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_1a",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (1.a)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka ka-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "ka-əss-ta",
+    "go-PST-IND"
+   ]
+  ],
+  "translation": "Keeho went.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "basic"
+   ]
+  ],
+  "comment": "The basic sentence of the lexical causative (1.b) (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_1b",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (1.b)"
+  },
+  "language": "kore1280",
+  "primaryText": "əməni-ka kiho-lɨl ponɛ-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "əməni-ka",
+    "mother-NOM"
+   ],
+   [
+    "kiho-lɨl",
+    "Keeho-ACC"
+   ],
+   [
+    "ponɛ-əss-ta",
+    "send-PST-IND"
+   ]
+  ],
+  "translation": "The mother sent Keeho.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "lexical causative"
+   ],
+   [
+    "clauses",
+    "one"
+   ],
+   [
+    "vcause",
+    "fused"
+   ]
+  ],
+  "comment": "The lexical causative, suppletive: ponɛ- shares no form with ka- of (1.a), and Korean has few such verbs (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_2a",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (2.a)"
+  },
+  "language": "kore1280",
+  "primaryText": "cini-ka wus-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "cini-ka",
+    "Jinee-NOM"
+   ],
+   [
+    "wus-əss-ta",
+    "smile-PST-IND"
+   ]
+  ],
+  "translation": "Jinee laughed.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "basic"
+   ]
+  ],
+  "comment": "The basic sentence of the morphological causative (2.b) (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_2b",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (2.b)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-lɨl wus-I-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-lɨl",
+    "Jinee-ACC"
+   ],
+   [
+    "wus-I-əss-ta",
+    "smile-CS-PST-IND"
+   ]
+  ],
+  "translation": "Keeho caused Jinee to smile.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "morphological causative"
+   ],
+   [
+    "clauses",
+    "one"
+   ],
+   [
+    "vcause",
+    "bound"
+   ],
+   [
+    "causee",
+    "ACC"
+   ]
+  ],
+  "comment": "The morphological causative in the suffix -I-, realized as -i-, -hi-, -li-, -ki-, -ku-, -cu- or -wu- and confined to a handful of verbs (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_3",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (3)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-eke kwail cɨp-ɨl masi-ke ha-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-eke",
+    "Jinee-DAT"
+   ],
+   [
+    "kwail",
+    "fruit"
+   ],
+   [
+    "cɨp-ɨl",
+    "juice-ACC"
+   ],
+   [
+    "masi-ke",
+    "drink-PURP"
+   ],
+   [
+    "ha-əss-ta",
+    "do-PST-IND"
+   ]
+  ],
+  "translation": "Keeho caused Jinee to drink the fruit juice.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "PURP causative"
+   ],
+   [
+    "clauses",
+    "two"
+   ],
+   [
+    "link",
+    "PURP"
+   ],
+   [
+    "order",
+    "effect-cause"
+   ],
+   [
+    "causee",
+    "DAT"
+   ]
+  ],
+  "comment": "The PURP causative, extremely productive: the higher verb ha- and an embedded clause in -ke; masi- has no morphological causative (§4.2, note 1).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_4",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (4)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-ka pathi-e o-ke kɨnyə-ɨi cip-e cənhwa-lɨl kəl-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-ka",
+    "Jinee-NOM"
+   ],
+   [
+    "pathi-e",
+    "party-LOC"
+   ],
+   [
+    "o-ke",
+    "come-PURP"
+   ],
+   [
+    "kɨnyə-ɨi",
+    "she-GEN"
+   ],
+   [
+    "cip-e",
+    "home-LOC"
+   ],
+   [
+    "cənhwa-lɨl",
+    "phone-ACC"
+   ],
+   [
+    "kəl-əss-ta",
+    "dial-PST-IND"
+   ]
+  ],
+  "translation": "Keeho called Jinee at home so that she could come to the party.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "purposive"
+   ],
+   [
+    "subject",
+    "NOM"
+   ]
+  ],
+  "comment": "The purposive construction, whose clause of purpose in -ke is an adjunct (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_5",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (5)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-ka kwail cɨp-ɨl masi-ke ha-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-ka",
+    "Jinee-NOM"
+   ],
+   [
+    "kwail",
+    "fruit"
+   ],
+   [
+    "cɨp-ɨl",
+    "juice-ACC"
+   ],
+   [
+    "masi-ke",
+    "drink-PURP"
+   ],
+   [
+    "ha-əss-ta",
+    "do-PST-IND"
+   ]
+  ],
+  "translation": "Keeho caused Jinee to drink the fruit juice.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [
+   {
+    "form": "kiho-ka cini-ka kwail cɨp-ɨl masi-ke-lɨl ha-əss-ta",
+    "judgment": "acceptable"
+   }
+  ],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "complement causative"
+   ],
+   [
+    "clauses",
+    "two"
+   ],
+   [
+    "link",
+    "PURP"
+   ],
+   [
+    "order",
+    "effect-cause"
+   ],
+   [
+    "causee",
+    "NOM"
+   ]
+  ],
+  "comment": "The complement causative, less preferable to (3): the causee is the nominative subject of the clause, which may take the accusative -lɨl as an argument of ha- (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_6",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (6)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka ha-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "ha-əss-ta",
+    "do-PST-IND"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "PURP causative"
+   ],
+   [
+    "clause",
+    "omitted"
+   ]
+  ],
+  "comment": "(3) with the embedded clause omitted; it can only answer a question about the identity of the subject (§4.2, note 2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_7",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (7)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka kɨnyə-ɨi cip-e cənhwa-lɨl kəl-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "kɨnyə-ɨi",
+    "she-GEN"
+   ],
+   [
+    "cip-e",
+    "home-LOC"
+   ],
+   [
+    "cənhwa-lɨl",
+    "phone-ACC"
+   ],
+   [
+    "kəl-əss-ta",
+    "dial-PST-IND"
+   ]
+  ],
+  "translation": "Keeho called her at home.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "purposive"
+   ],
+   [
+    "clause",
+    "omitted"
+   ]
+  ],
+  "comment": "(4) with the clause of purpose omitted (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_8",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (8)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-lɨl kwail cɨp-ɨl masi-ke ha-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-lɨl",
+    "Jinee-ACC"
+   ],
+   [
+    "kwail",
+    "fruit"
+   ],
+   [
+    "cɨp-ɨl",
+    "juice-ACC"
+   ],
+   [
+    "masi-ke",
+    "drink-PURP"
+   ],
+   [
+    "ha-əss-ta",
+    "do-PST-IND"
+   ]
+  ],
+  "translation": "Keeho caused Jinee to drink the fruit juice.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "PURP causative"
+   ],
+   [
+    "clauses",
+    "two"
+   ],
+   [
+    "link",
+    "PURP"
+   ],
+   [
+    "order",
+    "effect-cause"
+   ],
+   [
+    "causee",
+    "ACC"
+   ]
+  ],
+  "comment": "(3) with the causee in the accusative (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_9_acc",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (9)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-lɨl pathi-e o-ke kɨnyə-ɨi cip-e cənhwa-lɨl kəl-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-lɨl",
+    "Jinee-ACC"
+   ],
+   [
+    "pathi-e",
+    "party-LOC"
+   ],
+   [
+    "o-ke",
+    "come-PURP"
+   ],
+   [
+    "kɨnyə-ɨi",
+    "she-GEN"
+   ],
+   [
+    "cip-e",
+    "home-LOC"
+   ],
+   [
+    "cənhwa-lɨl",
+    "phone-ACC"
+   ],
+   [
+    "kəl-əss-ta",
+    "dial-PST-IND"
+   ]
+  ],
+  "translation": "Keeho called Jinee at home so that she could come to the party.",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "purposive"
+   ],
+   [
+    "subject",
+    "ACC"
+   ]
+  ],
+  "comment": "The accusative alternant of (9): the subject of the clause of purpose of (4) must be nominative (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_9_dat",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (9)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-eke pathi-e o-ke kɨnyə-ɨi cip-e cənhwa-lɨl kəl-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-eke",
+    "Jinee-DAT"
+   ],
+   [
+    "pathi-e",
+    "party-LOC"
+   ],
+   [
+    "o-ke",
+    "come-PURP"
+   ],
+   [
+    "kɨnyə-ɨi",
+    "she-GEN"
+   ],
+   [
+    "cip-e",
+    "home-LOC"
+   ],
+   [
+    "cənhwa-lɨl",
+    "phone-ACC"
+   ],
+   [
+    "kəl-əss-ta",
+    "dial-PST-IND"
+   ]
+  ],
+  "translation": "Keeho called Jinee at home so that she could come to the party.",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "purposive"
+   ],
+   [
+    "subject",
+    "DAT"
+   ]
+  ],
+  "comment": "The dative alternant of (9) (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_10",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (10)"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-ka kwail cɨp-ɨl masi-ke kəcismal-ɨl ha-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-ka",
+    "Jinee-NOM"
+   ],
+   [
+    "kwail",
+    "fruit"
+   ],
+   [
+    "cɨp-ɨl",
+    "juice-ACC"
+   ],
+   [
+    "masi-ke",
+    "drink-PURP"
+   ],
+   [
+    "kəcismal-ɨl",
+    "lie-ACC"
+   ],
+   [
+    "ha-əss-ta",
+    "do-PST-IND"
+   ]
+  ],
+  "translation": "Keeho told a lie so that Jinee would drink the fruit juice.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "purposive"
+   ],
+   [
+    "subject",
+    "NOM"
+   ]
+  ],
+  "comment": "With an NP before ha- and the causee nominative, (5) is no longer causative but purposive (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_11_acc",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (11)"
+  },
+  "language": "kore1280",
+  "primaryText": "kɨ-ka na-lɨl kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka ani mək-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kɨ-ka",
+    "he-NOM"
+   ],
+   [
+    "na-lɨl",
+    "I-ACC"
+   ],
+   [
+    "kimchi-lɨl",
+    "pickle-ACC"
+   ],
+   [
+    "mək-ke",
+    "eat-PURP"
+   ],
+   [
+    "ha-əss-ɨna",
+    "do-PST-but"
+   ],
+   [
+    "nɛ-ka",
+    "I-NOM"
+   ],
+   [
+    "ani",
+    "NEG"
+   ],
+   [
+    "mək-əss-ta",
+    "eat-PST-IND"
+   ]
+  ],
+  "translation": "He told me to eat pickled cabbage, but I did not eat it.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [
+   {
+    "form": "kɨ-ka na-lɨl kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka kimchi-lɨl ani mək-əss-ta",
+    "judgment": "acceptable"
+   }
+  ],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "PURP causative"
+   ],
+   [
+    "clauses",
+    "two"
+   ],
+   [
+    "link",
+    "PURP"
+   ],
+   [
+    "order",
+    "effect-cause"
+   ],
+   [
+    "effect",
+    "negated"
+   ],
+   [
+    "causee",
+    "ACC"
+   ]
+  ],
+  "comment": "The accusative alternant of (11): the PURP causative is not fully implicative, its effect deniable (§4.2).",
+  "verified": "page-image"
+ },
+ {
+  "id": "song1996_ch4_11_dat",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "ch. 4 (11)"
+  },
+  "language": "kore1280",
+  "primaryText": "kɨ-ka na-eke kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka ani mək-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kɨ-ka",
+    "he-NOM"
+   ],
+   [
+    "na-eke",
+    "I-DAT"
+   ],
+   [
+    "kimchi-lɨl",
+    "pickle-ACC"
+   ],
+   [
+    "mək-ke",
+    "eat-PURP"
+   ],
+   [
+    "ha-əss-ɨna",
+    "do-PST-but"
+   ],
+   [
+    "nɛ-ka",
+    "I-NOM"
+   ],
+   [
+    "ani",
+    "NEG"
+   ],
+   [
+    "mək-əss-ta",
+    "eat-PST-IND"
+   ]
+  ],
+  "translation": "He told me to eat pickled cabbage, but I did not eat it.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [
+   {
+    "form": "kɨ-ka na-eke kimchi-lɨl mək-ke ha-əss-ɨna nɛ-ka kimchi-lɨl ani mək-əss-ta",
+    "judgment": "acceptable"
+   }
+  ],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "construction",
+    "PURP causative"
+   ],
+   [
+    "clauses",
+    "two"
+   ],
+   [
+    "link",
+    "PURP"
+   ],
+   [
+    "order",
+    "effect-cause"
+   ],
+   [
+    "effect",
+    "negated"
+   ],
+   [
+    "causee",
+    "DAT"
+   ]
+  ],
+  "comment": "The dative alternant of (11): the PURP causative is not fully implicative, its effect deniable (§4.2).",
+  "verified": "page-image"
  }
 ]
