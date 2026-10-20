@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Processing.DiscriminativeLexicon.Training
-public import Mathlib.LinearAlgebra.Matrix.Rank
 
 /-!
 # Chuang, Bell, Tseng and Baayen (2026): Word-specific tonal realizations in Mandarin
@@ -93,10 +92,8 @@ contour produced for `s` is not `s` for every `s`. -/
 theorem production_mul_comprehension_ne_one
     (G : Matrix (Fin CKIPGPT2HiddenDim) (Fin TaiwanMandarinPitchSampleCount) ℝ)
     (F : Matrix (Fin TaiwanMandarinPitchSampleCount) (Fin CKIPGPT2HiddenDim) ℝ) :
-    G * F ≠ 1 := fun h ↦ by
-  have := (G.rank_mul_le_left F).trans G.rank_le_width
-  rw [h, rank_one] at this
-  simp [CKIPGPT2HiddenDim, TaiwanMandarinPitchSampleCount] at this
+    G * F ≠ 1 := fun h ↦
+  comprehension_not_surjective F fun s ↦ ⟨s ᵥ* G, by simp [vecMul_vecMul, h]⟩
 
 /-! ### Word-centroid contours (§3.4) -/
 

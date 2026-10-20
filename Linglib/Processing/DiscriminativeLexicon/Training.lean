@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Analysis.LeastSquares
-public import Linglib.Processing.DiscriminativeLexicon.Measures
+public import Linglib.Processing.DiscriminativeLexicon.Defs
 public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.PiL2
@@ -391,21 +391,7 @@ theorem IsTrained.mul_apply_eq_of_decodable (hq : ∀ i, 0 < q i) (hG : IsTraine
     mulVec_diagonal, ← col_mul_eq_mulVec_col, col_apply, col_apply] at h
   exact mul_left_cancel₀ (Real.sqrt_pos.2 (NNReal.coe_pos.2 (hq i))).ne' h
 
-/-! ### Semantic support and centres of mass -/
-
-/-- *Semantic support for form* ([gahl-baayen-2024] appendix) at a form vector equals the
-observed form's own support whenever each coordinate the form vector touches is linearly
-decodable from the meanings. -/
-theorem IsTrained.semanticSupport_eq_of_decodable (hG : IsTrained data q G) (hq : ∀ i, 0 < q i)
-    {c : FormVector n}
-    (hw : ∀ j, c j ≠ 0 → ∃ w : MeaningVector d →ₗ[ℝ] ℝ, ∀ i, w (data.S i) = data.C i j)
-    (i : Fin m) : semanticSupport G (data.S i) c = data.C i ⬝ᵥ c := by
-  simp only [semanticSupport_apply, dotProduct]
-  refine Finset.sum_congr rfl fun j _ ↦ ?_
-  by_cases hc : c j = 0
-  · simp [hc]
-  · obtain ⟨w, hwj⟩ := hw j hc
-    rw [← mul_apply_eq_vecMul, hG.mul_apply_eq_of_decodable hq hwj i]
+/-! ### Centres of mass -/
 
 /-- Whenever membership in a set `P` of usage events is a linear functional of the meanings, a
 mapping matrix trained under `q` sends the `q`-weighted centre of mass of `P`'s meanings to the
