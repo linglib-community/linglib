@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Semantics.Mood.Defs
 public import Linglib.Semantics.Mood.State
 
 /-!
@@ -26,6 +27,7 @@ indicative when it means 'ask' and the subjunctive when it means 'wonder'.
 
 ## Main definitions
 
+* `Mood.Grammatical.target`: the component a grammatical mood relates to.
 * `Mood.Grammatical.interp`: a grammatical mood interpreted as the force of its component.
 
 ## Main statements
@@ -48,22 +50,20 @@ indicative when it means 'ask' and the subjunctive when it means 'wonder'.
 namespace Mood
 
 open DynamicSemantics
-open HasTarget (target)
 
 variable {W : Type*}
 
-/-- The indicative targets the informational component and the subjunctive the preferential
-one. -/
-instance : HasTarget Grammatical where
-  target
-    | .indicative  => .informational
-    | .subjunctive => .preferential
-
 namespace Grammatical
 
-@[simp] theorem target_indicative : target indicative = .informational := rfl
+/-- The indicative targets the informational component and the subjunctive the preferential
+one. -/
+def target : Grammatical → Component
+  | .indicative  => .informational
+  | .subjunctive => .preferential
 
-@[simp] theorem target_subjunctive : target subjunctive = .preferential := rfl
+@[simp] theorem target_indicative : indicative.target = .informational := rfl
+
+@[simp] theorem target_subjunctive : subjunctive.target = .preferential := rfl
 
 /-- The indicative is simple necessity over the context set and the subjunctive is local
 necessity under the ordering. -/
@@ -81,7 +81,7 @@ def interp : Grammatical → State W → (W → Prop) → Prop
 necessity modal of the component it targets. -/
 theorem interp_iff_boxOn {c : State W} {b : W} (hb : b ∈ c.info)
     (hleast : ∀ v ∈ c.info, c.order.le b v) (m : Grammatical) (p : W → Prop) :
-    m.interp c p ↔ (target m).boxOn c p := by
+    m.interp c p ↔ m.target.boxOn c p := by
   cases m
   · exact Iff.rfl
   · exact ExpState.localNecessity_iff_boxLe hb hleast p
@@ -99,9 +99,7 @@ theorem indicative_ne_subjunctive :
 
 /-- Targeting is injective. Portner states his principles from the modal to the form; the
 injectivity here reflects only that two moods go to two components. -/
-theorem target_injective : Function.Injective (target : Grammatical → Component) := by
-  intro a b h
-  cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
+theorem target_injective : Function.Injective target := by decide
 
 end Grammatical
 

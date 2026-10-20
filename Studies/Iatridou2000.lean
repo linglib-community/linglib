@@ -49,10 +49,10 @@ open Reference
 
 variable {X : Type*}
 
-/-- (49): the topic excludes the speaker's, as sets of times or of worlds. -/
+/-- The topic excludes the speaker's, as sets of times or of worlds, (49). -/
 def Excludes (topic speaker : Set X) : Prop := Disjoint topic speaker
 
-/-- Footnote 19: temporal past is exclusion augmented by *before*. -/
+/-- Temporal past is exclusion augmented by *before* (footnote 19). -/
 def TemporalPast [Preorder X] (topic speaker : Set X) : Prop :=
   ∀ t ∈ topic, ∀ u ∈ speaker, t < u
 
@@ -60,8 +60,8 @@ theorem excludes_of_temporalPast [Preorder X] {topic speaker : Set X}
     (h : TemporalPast topic speaker) : Excludes topic speaker :=
   Set.disjoint_left.2 fun t ht hu ↦ lt_irrefl t (h t ht t hu)
 
-/-- What the feature contributes to an assertion: the situation, the p-worlds or the
-situation time, holds throughout a topic that excludes the speaker's. -/
+/-- The claim the feature contributes to an assertion is that the situation, the p-worlds or
+the situation time, holds throughout a topic that excludes the speaker's. -/
 structure Claim (X : Type*) where
   topic : Set X
   speaker : Set X
@@ -69,9 +69,9 @@ structure Claim (X : Type*) where
   topic_subset : topic ⊆ situation
   excludes : Excludes topic speaker
 
-/-- (58)–(59): the claim leaves open whether the situation includes the speaker's worlds or
-times, so the counterfactual inference is an implicature and *in fact, he still is* is
-consistent. -/
+/-- The claim leaves open whether the situation includes the speaker's worlds or times, so the
+counterfactual inference is an implicature and *in fact, he still is* is consistent,
+(58)–(59). -/
 theorem Claim.consistent_with_inclusion :
     ∃ c : Claim Bool, c.speaker ⊆ c.situation ∧ c.topic.Nonempty ∧ c.speaker.Nonempty :=
   ⟨⟨{true}, {false}, Set.univ, Set.subset_univ _, by simp [Excludes]⟩,
@@ -92,21 +92,21 @@ theorem exclF_iff_excludes {W E P T : Type*} (tower : ContextTower (Context W E 
 
 /-! ### The three counterfactuals -/
 
-/-- The counterfactual conditionals of the paper: future less vivid, present counterfactual
-and past counterfactual. -/
+/-- The counterfactual conditionals of the paper are the future less vivid, the present
+counterfactual and the past counterfactual. -/
 inductive CounterfactualType where
   | flv
   | presCF
   | pastCF
   deriving DecidableEq, Repr
 
-/-- The dimensions the exclusion features of a counterfactual range over: one over worlds,
-and for the past counterfactual the pluperfect's second layer over times. -/
+/-- A counterfactual has one exclusion feature over worlds, and the past counterfactual a
+second, the pluperfect's second layer, over times. -/
 def CounterfactualType.dimensions : CounterfactualType → Finset ExclDimension
   | .flv | .presCF => {.modal}
   | .pastCF => {.modal, .temporal}
 
-/-- The Aktionsart of the antecedent's predicate: telic, activity (footnote 24),
+/-- The Aktionsart of the antecedent's predicate is telic, activity (footnote 24),
 individual-level stative or stage-level stative. -/
 inductive Aktionsart where
   | telic
@@ -121,8 +121,8 @@ inductive Evaluation where
   | now
   deriving DecidableEq, Repr
 
-/-- Table 2: the earliest evaluation of a present-tense antecedent by the predicate's
-Aktionsart, (65)–(67). -/
+/-- The earliest evaluation of a present-tense antecedent by the predicate's Aktionsart,
+Table 2 and (65)–(67). -/
 def Aktionsart.evaluation : Aktionsart → Finset Evaluation
   | .telic | .activity => {.future}
   | .ilStative => {.now}
@@ -134,30 +134,30 @@ def Evaluation.reading : Evaluation → CounterfactualType
   | .future => .flv
   | .now => .presCF
 
-/-- Table 1, derived from Table 2: the readings of a conditional with one exclusion feature
-on a predicate of the given Aktionsart. -/
+/-- The readings of a conditional with one exclusion feature on a predicate of the given
+Aktionsart, Table 1 derived from Table 2. -/
 def readings (a : Aktionsart) : Finset CounterfactualType := a.evaluation.image Evaluation.reading
 
 theorem readings_telic : readings .telic = {.flv} := by decide
 
 theorem readings_ilStative : readings .ilStative = {.presCF} := by decide
 
-/-- (64): a stage-level stative yields either reading. -/
+/-- A stage-level stative yields either reading, (64). -/
 theorem readings_slStative : readings .slStative = {.flv, .presCF} := by decide
 
 /-- A single feature never yields the past counterfactual. -/
 theorem pastCF_notMem_readings (a : Aktionsart) : .pastCF ∉ readings a := by
   cases a <;> decide
 
-/-- The one-feature conditionals: a world shift alone excludes on worlds and, keeping the
+/-- In a one-feature conditional a world shift alone excludes on worlds and, keeping the
 time, not on times. -/
 theorem one_feature {W E P T : Type*} (c : Context W E P T) {w' : W} (hw : w' ≠ c.world) :
     ExclF .modal ((ContextTower.root c).push (worldShift w')) ∧
       ¬ ExclF .temporal ((ContextTower.root c).push (worldShift w')) :=
   ⟨worldShift_produces_modal_exclF c w' hw, fun h ↦ h rfl⟩
 
-/-- The pluperfect's two layers: a world shift and a temporal shift exclude on both
-dimensions, the past counterfactual. -/
+/-- The pluperfect's two layers, a world shift and a temporal shift, exclude on both
+dimensions, giving the past counterfactual. -/
 theorem two_features {W E P T : Type*} (c : Context W E P T) {w' : W} {t' : T}
     (hw : w' ≠ c.world) (ht : t' ≠ c.time) :
     ExclF .modal (((ContextTower.root c).push (worldShift w')).push (temporalShift t')) ∧
@@ -166,8 +166,8 @@ theorem two_features {W E P T : Type*} (c : Context W E P T) {w' : W} {t' : T}
 
 /-! ### Aspect and mood -/
 
-/-- The grammatical aspect a language requires in its counterfactuals (Section 5): the
-imperfective, none, or either. -/
+/-- A language requires the imperfective in its counterfactuals, no aspect, or either aspect
+(Section 5). -/
 inductive CFAspect where
   | imperfective
   | none
@@ -200,24 +200,24 @@ inductive SubjunctiveParadigm where
   | none
   deriving DecidableEq, Repr
 
-/-- The form of a counterfactual antecedent: the feature on the subjunctive when a past
-subjunctive exists, else on the indicative; a nonpast subjunctive never expresses the feature,
-so it loses to the past indicative, the French choice of (99). -/
-def antecedentForm : SubjunctiveParadigm → Mood.SubjunctiveType ⊕ Unit
-  | .past => Sum.inl .counterfactual
-  | .nonpastOnly | .none => Sum.inr ()
+/-- A counterfactual antecedent is subjunctive when a past subjunctive exists and indicative
+otherwise; a nonpast subjunctive never expresses the feature, so it loses to the past
+indicative, the French choice of (99). -/
+def antecedentForm : SubjunctiveParadigm → Mood.Grammatical
+  | .past => .subjunctive
+  | .nonpastOnly | .none => .indicative
 
-/-- Section 6.1: a counterfactual carries the subjunctive only in a language with a past
-subjunctive paradigm. -/
-theorem subjunctive_of_antecedentForm {p : SubjunctiveParadigm} {s : Mood.SubjunctiveType}
-    (h : antecedentForm p = Sum.inl s) : p = .past := by
-  cases p <;> simp_all [antecedentForm]
+/-- A counterfactual carries the subjunctive only in a language with a past subjunctive
+paradigm (Section 6.1). -/
+theorem antecedentForm_eq_subjunctive_iff {p : SubjunctiveParadigm} :
+    antecedentForm p = .subjunctive ↔ p = .past := by
+  cases p <;> simp [antecedentForm]
 
 /-- French has only a nonpast subjunctive, so its counterfactual antecedents carry the past
 indicative, (99). -/
-theorem antecedent_french : antecedentForm .nonpastOnly = Sum.inr () := rfl
+theorem antecedent_french : antecedentForm .nonpastOnly = .indicative := rfl
 
 /-- German and Italian have a past subjunctive and use it. -/
-theorem antecedent_german : antecedentForm .past = Sum.inl .counterfactual := rfl
+theorem antecedent_german : antecedentForm .past = .subjunctive := rfl
 
 end Iatridou2000

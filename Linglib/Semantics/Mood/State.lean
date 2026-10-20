@@ -6,10 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Discourse.QUD.Issue
-public import Linglib.Semantics.Mood.Defs
 public import Linglib.Semantics.Dynamic.Expectation
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Questions.Partition.Inquisitive
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The mood state
@@ -28,6 +28,8 @@ of what the open question settles within the context set.
 ## Main definitions
 
 * `Mood.State`: an expectation state together with an inquiry partition.
+* `Mood.Component`, `Mood.Component.boxOn`: the coordinates of a mood state and their modals,
+  by which Portner classifies the mood-bearing categories.
 * `Mood.State.inquire`: the update that refines the inquiry with a question.
 * `Mood.State.boxAns`: answerhood, constancy on the inquiry cells within the context set.
 * `Mood.stateAt`: the expectation state that a Kratzer pair induces at a world.
@@ -44,12 +46,15 @@ of what the open question settles within the context set.
 ## Implementation notes
 
 * The `?`-update and `boxAns` are additions of this library; Portner leaves interrogatives open.
+  Mari and Portner's discourse context likewise keeps the question under discussion as a component
+  of its own beside the common ground.
 * The inquiry is a partition. Questions that are not partitions, such as mention-some questions,
   live in `Question W`, into which `Question.fromSetoid` embeds the partitions.
 
 ## References
 
 * [portner-2018]
+* [mari-portner-2021]
 * [veltman-1996]
 * [roberts-1996]
 * [roberts-2012]
@@ -277,7 +282,19 @@ theorem boxAns_not_reducible_to_boxCs :
 
 end State
 
-/-! ### The modal of a component -/
+/-! ### Components -/
+
+/-- A coordinate of the mood state. Portner classifies a mood-bearing category by the coordinate
+that the context selecting it quantifies over: the indicative and the declarative relate to the
+context set, the subjunctive and the imperative to the ordering. -/
+inductive Component where
+  /-- The context set, `State.info`. -/
+  | informational
+  /-- The ordering, `State.order`. -/
+  | preferential
+  /-- The inquiry, `State.inquiry`. -/
+  | inquisitive
+  deriving DecidableEq, Repr, Fintype
 
 variable {W : Type*}
 

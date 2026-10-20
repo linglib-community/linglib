@@ -4,7 +4,6 @@ public import Linglib.Syntax.Clause.Basic
 public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Category.Adposition.Basic
-public import Linglib.Semantics.Mood.Defs
 public import Linglib.Core.Order.Flat
 public import Linglib.Core.Data.List.Forall2
 

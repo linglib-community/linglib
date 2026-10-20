@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Attitudes.Preference.Structure
 public import Linglib.Semantics.Conditionals.Restrictor
+public import Linglib.Semantics.Mood.Defs
 public import Linglib.Data.Examples.CondoravdiLauer2016
 public import Studies.VonFintelIatridou2005
 public import Mathlib.Tactic.FinCases
@@ -804,21 +805,16 @@ theorem incompatible_rows : ∀ row ∈ Examples.all,
     ∃ r ∈ WantReading.ofRow row, (row.JudgedFelicitous ↔ r = .mere) := by
   decide
 
-/-- The mood of a conditional whose antecedent the speaker has just excluded. -/
-inductive Mood
-  | indicative | subjunctive
-  deriving DecidableEq
-
-/-- The mood a row records. -/
-def Mood.ofRow (row : Datum) : Option Mood := do
+/-- The mood a row records for a conditional whose antecedent the speaker has just excluded. -/
+def moodOfRow (row : Datum) : Option Mood.Grammatical := do
   guard (row.feature? "construction" = some "mood")
-  row.parse? "mood" [("indicative", Mood.indicative), ("subjunctive", .subjunctive)]
+  row.parse? "mood" [("indicative", Mood.Grammatical.indicative), ("subjunctive", .subjunctive)]
 
 /-- In (91) and (98), when the speaker knows the agent lacks the hypothesized preference, the
 antecedent is epistemically impossible, the conditional vacuously true, `vacuous_conditional`,
 and the constraint on indicatives applies, for conditionals and purpose constructions alike. -/
 theorem mood_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "mood" →
-    ∃ m ∈ Mood.ofRow row, (row.judgment = .acceptable ↔ m = .subjunctive) := by
+    ∃ m ∈ moodOfRow row, (row.judgment = .acceptable ↔ m = .subjunctive) := by
   decide
 
 /-- The implication a purpose row records. -/
