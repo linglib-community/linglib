@@ -106,6 +106,15 @@ variable (l : L) (x : α) (xs : List α)
 @[simp] theorem rState_nil : B.rState [] = B.rInit := rfl
 @[simp] theorem rState_cons : B.rState (x :: xs) = B.rStep (B.rState xs) x := rfl
 
+/-- Scanning past a prefix reseeds the left state. -/
+theorem lState_append (ys : List α) : B.lState (xs ++ ys) = B.lStateAfter (B.lState xs) ys :=
+  List.foldl_append
+
+/-- A pending suffix reseeds the right state. -/
+theorem rState_append (ys : List α) :
+    B.rState (xs ++ ys) = rState {B with rInit := B.rState ys} xs :=
+  List.foldr_append
+
 @[simp] theorem runFrom_nil : B.runFrom l [] = [] := rfl
 @[simp] theorem runFrom_cons :
     B.runFrom l (x :: xs) = B.output l x (B.rState xs) ++ B.runFrom (B.lStep l x) xs := rfl

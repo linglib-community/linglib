@@ -166,7 +166,7 @@ private theorem length_codes (js : List ℕ) : (codes js).length = (blocks js).l
   | cons j js ih => simp [codes, blocks, length_code, ih]; omega
 
 private theorem markLeft_replicate (s : MarkState) (hs : s = .q0 ∨ s = .q3) (k : ℕ) :
-    markLeft.stateAfter s (replicate k .O) = s ∧
+    markLeft.evalFrom s (replicate k .O) = s ∧
       markLeft.emitted s (replicate k .O) = replicate k .O := by
   induction k with
   | zero => simp
@@ -221,9 +221,9 @@ private def held : ResolveState → ℕ
 private def Boundary (s : ResolveState) : Prop := s = .q0 ∨ s = .q1 ∨ s = .q3
 
 private theorem resolveRight_replicate (k : ℕ) :
-    (resolveRight.stateAfter .q0 (replicate k .O) = .q0 ∧
+    (resolveRight.evalFrom .q0 (replicate k .O) = .q0 ∧
       resolveRight.emitted .q0 (replicate k .O) = replicate k .O) ∧
-    (resolveRight.stateAfter .q3 (replicate k .O) = .q3 ∧
+    (resolveRight.evalFrom .q3 (replicate k .O) = .q3 ∧
       resolveRight.emitted .q3 (replicate k .O) = replicate k .H) ∧
     resolveRight.runFrom .q4 (replicate k .O) = replicate k .O := by
   induction k with
@@ -231,32 +231,32 @@ private theorem resolveRight_replicate (k : ℕ) :
   | succ k ih => simp [replicate_succ, ih.1.1, ih.1.2, ih.2.1.1, ih.2.1.2, ih.2.2]
 
 private theorem resolveRight_code {s : ResolveState} (hs : Boundary s) (j : ℕ) :
-    Boundary (resolveRight.stateAfter s (code j).reverse) ∧
+    Boundary (resolveRight.evalFrom s (code j).reverse) ∧
       ∃ n, resolveRight.emitted s (code j).reverse = replicate n .H ∧
-        n + held (resolveRight.stateAfter s (code j).reverse) = j + 1 + held s := by
+        n + held (resolveRight.evalFrom s (code j).reverse) = j + 1 + held s := by
   rcases j with _ | _ | j
   · rcases hs with rfl | rfl | rfl <;> simp [code, Boundary, held]
   · rcases hs with rfl | rfl | rfl <;> simp [code, Boundary, held]
   · have hr : (code (j + 2)).reverse = [.H, .O, .H] ++ replicate j .O := by simp [code]
-    rw [hr, Mealy.stateAfter_append, SubsequentialTransducer.emitted_append]
+    rw [hr, Mealy.evalFrom_append, SubsequentialTransducer.emitted_append]
     have h := (resolveRight_replicate j).2.1
     rcases hs with rfl | rfl | rfl <;> simp [Boundary, held, h.1, h.2, ← replicate_succ]
 
 private theorem resolveRight_codes {s : ResolveState} (hs : Boundary s) (js : List ℕ) :
-    Boundary (resolveRight.stateAfter s (codes js).reverse) ∧
+    Boundary (resolveRight.evalFrom s (codes js).reverse) ∧
       ∃ n, resolveRight.emitted s (codes js).reverse = replicate n .H ∧
-        n + held (resolveRight.stateAfter s (codes js).reverse) = (codes js).length + held s := by
+        n + held (resolveRight.evalFrom s (codes js).reverse) = (codes js).length + held s := by
   induction js generalizing s with
   | nil => exact ⟨hs, 0, rfl, by simp [codes]⟩
   | cons j js ih =>
     obtain ⟨hg, n, hn, hc⟩ := ih hs
     obtain ⟨hg', m, hm, hc'⟩ := resolveRight_code hg j
-    simp only [codes, reverse_append, Mealy.stateAfter_append,
+    simp only [codes, reverse_append, Mealy.evalFrom_append,
       SubsequentialTransducer.emitted_append, hn, hm, length_append, length_code]
     exact ⟨hg', n + m, by rw [replicate_add], by omega⟩
 
 private theorem resolveRight_head {s : ResolveState} (hs : Boundary s) :
-    resolveRight.stateAfter s [.H] = .q1 ∧ resolveRight.emitted s [.H] = replicate (held s) .H := by
+    resolveRight.evalFrom s [.H] = .q1 ∧ resolveRight.emitted s [.H] = replicate (held s) .H := by
   rcases hs with rfl | rfl | rfl <;> simp [held]
 
 private theorem resolveRight_prefix (a : ℕ) :
@@ -282,9 +282,9 @@ private theorem resolve_mark (a : ℕ) (js : List ℕ) (t : ℕ) :
   obtain ⟨hg, n, hn, hc⟩ := resolveRight_codes (s := .q0) (.inl rfl) js
   obtain ⟨h1, h2⟩ := resolveRight_head hg
   rw [hrev, SubsequentialTransducer.runFrom_append, SubsequentialTransducer.emitted_append,
-    Mealy.stateAfter_append, resolveRight_start, (resolveRight_replicate t).1.1,
+    Mealy.evalFrom_append, resolveRight_start, (resolveRight_replicate t).1.1,
     (resolveRight_replicate t).1.2, SubsequentialTransducer.emitted_append, hn,
-    Mealy.stateAfter_append, h1, h2]
+    Mealy.evalFrom_append, h1, h2]
   simp only [reverse_append, resolveRight_prefix, reverse_replicate, append_assoc,
     ← replicate_add]
   rw [← length_codes]
