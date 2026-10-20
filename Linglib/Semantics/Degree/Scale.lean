@@ -114,16 +114,17 @@ abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
 /-! ### Bridges to the physical quantity algebra -/
 
 /-- The physical dimension a scalar dimension is measured in, if any. Spatial scales are
-    measured in distance, weight in mass, age in time, temperature in temperature and quantity in
-    cardinality, and *fast* lexicalizes the quotient of distance by time as a primitive scale.
-    Evaluative, psychological and state scales, which reject ratio measure phrases, have none. -/
+    measured in length, weight in mass, age in time and temperature in thermodynamic temperature;
+    quantity counts, so it has dimension `1`; and *fast* lexicalizes speed, the quotient of length
+    by time, as a primitive scale. Evaluative, psychological and state scales, which reject ratio
+    measure phrases, have none. -/
 def ScalarDimension.dimension? : ScalarDimension → Option Degree.QuantityDimension
-  | .height | .width | .length | .depth | .thickness => some (.of .distance)
+  | .height | .width | .length | .depth | .thickness => some (.of .length)
   | .weight => some (.of .mass)
   | .age => some (.of .time)
-  | .temperature => some (.of .temperature)
-  | .quantity => some (.of .cardinality)
-  | .speed => some (.of .distance / .of .time)
+  | .temperature => some (.of .thermodynamicTemperature)
+  | .quantity => some 1
+  | .speed => some .speed
   | _ => none
 
 /-! ### Degrees -/

@@ -47,7 +47,8 @@ open Degree Quantity English.MeasurePhrases BaleSchwarz2022
 
 noncomputable section
 
-variable {E : Type*} {w : World E} {D D₁ D₂ : Dimension} {x y : E} {n : ℝ} {u r : MeasureTerm}
+variable {E : Type*} {w : World E} {D D₁ D₂ : QuantityDimension} {x y : E} {n : ℝ}
+  {u r : MeasureTerm}
 
 /-! ### Multiplication only -/
 
@@ -83,12 +84,12 @@ def mathSpeak (n : ℝ) (u r : MeasureTerm) : Quantity ℝ := divisionMP n u r
 
 /-- `ratio w D₁ D₂` is the measure `μ_{D₁} / μ_{D₂}` of a quotient dimension, such as density or
 speed. -/
-def ratio (w : World E) (D₁ D₂ : Dimension) (x : E) : Quantity ℝ :=
+def ratio (w : World E) (D₁ D₂ : QuantityDimension) (x : E) : Quantity ℝ :=
   w.quantity D₁ x / w.quantity D₂ x
 
-@[simp] theorem ratio_snd : (ratio w D₁ D₂ x).2 = .of D₁ / .of D₂ := by simp [ratio]
+@[simp] theorem ratio_snd : (ratio w D₁ D₂ x).2 = D₁ / D₂ := by simp [ratio]
 
-theorem density_eq_ratio : density w x = ratio w .mass .volume x := rfl
+theorem density_eq_ratio : density w x = ratio w (.of .mass) .volume x := rfl
 
 /-- A predicate of a quotient dimension accepts the verbalized quotient ((2), (6), (25)):
 `μ_{D₁}(x) / μ_{D₂}(x) = n u / r`. -/
@@ -96,14 +97,17 @@ theorem ratio_eq_mathSpeak_iff (hu : u.dimension = D₁) (hr : r.dimension = D�
     ratio w D₁ D₂ x = mathSpeak n u r ↔ w D₁ x / w D₂ x = n * u.magnitude / r.magnitude := by
   simp [ratio, mathSpeak, divisionMP, divisionPer, Prod.ext_iff, hu, hr]
 
-/-- It never accepts a composed *per*-phrase ((27), (28)): fronting forces composition, and a
-quantity of the head unit's dimension is no quotient. -/
-theorem ratio_ne_anaphoricMP (hu : u.dimension = D₁) : ratio w D₁ D₂ x ≠ anaphoricMP w n u r y :=
-  fun h ↦ by simpa [hu] using congrArg Prod.snd h
+/-- It never accepts a composed *per*-phrase ((27), (28)), since fronting forces composition and
+a quantity of the head unit's dimension is not a quotient of that dimension by another. -/
+theorem ratio_ne_anaphoricMP (hu : u.dimension = D₁) (hD₂ : D₂ ≠ 1) :
+    ratio w D₁ D₂ x ≠ anaphoricMP w n u r y :=
+  fun h ↦ hD₂ <| by simpa [hu] using congrArg Prod.snd h
 
-/-- A predicate of a simplex dimension never accepts the verbalized quotient ((26)). -/
-theorem not_much_mathSpeak : ¬ much (w.quantity D) (mathSpeak n u r) x :=
-  not_much_divisionMP
+/-- A predicate of a simplex dimension never accepts the verbalized quotient of a unit of its
+dimension ((26)). -/
+theorem not_much_mathSpeak (hu : u.dimension = D) (hr : r.dimension ≠ 1) :
+    ¬ much (w.quantity D) (mathSpeak n u r) x :=
+  not_much_divisionMP hu hr
 
 /-! ### The paper's examples -/
 
@@ -111,10 +115,10 @@ theorem not_much_mathSpeak : ¬ much (w.quantity D) (mathSpeak n u r) x :=
 /-- The dimension a predicate measures in. -/
 def predicateDimension? : String → Option QuantityDimension
   | "weight" => some (.of .mass)
-  | "distance" => some (.of .distance)
-  | "density" => some (.of .mass / .of .volume)
-  | "speed" => some (.of .distance / .of .time)
-  | "pressure" => some (.of .force / .of .area)
+  | "distance" => some (.of .length)
+  | "density" => some .density
+  | "speed" => some .speed
+  | "pressure" => some .pressure
   | _ => none
 
 /-- The measure term with symbol `s`. -/
@@ -130,7 +134,7 @@ def units? (e : Datum) : Option (MeasureTerm × MeasureTerm) :=
     | _ => none
   | none => do pure (← measureTerm? (← e.feature? "unit"), ← measureTerm? (← e.feature? "per_unit"))
 
-/-- Whether a row's *per*-phrase is composed: a fronted *per*-PP has been, a verbalization of
+/-- Whether a row's *per*-phrase is composed. A fronted *per*-PP has been, a verbalization of
 notation has not, and otherwise the paper's classification decides. -/
 def composed? (e : Datum) : Option Bool :=
   if e.feature? "diagnostic" = some "sub-extraction" then some true
@@ -145,7 +149,7 @@ def dimensions? (e : Datum) : Option (QuantityDimension × QuantityDimension) :=
   let p ← predicateDimension? (← e.feature? "predicate_dimension")
   let (u, r) ← units? e
   let c ← composed? e
-  pure (p, if c then .of u.dimension else .of u.dimension / .of r.dimension)
+  pure (p, if c then u.dimension else u.dimension / r.dimension)
 
 /-- The *per*-phrase's dimension matches the predicate's exactly in the felicitous rows. -/
 theorem rows_dimension : ∀ e ∈ Examples.all, ∀ p ∈ dimensions? e,
