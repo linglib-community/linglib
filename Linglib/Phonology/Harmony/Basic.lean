@@ -132,7 +132,7 @@ structure Pattern (α : Type u) (V : Type v) where
   value         : α → Option V
   /-- Participation is stored independently of the valuation, since neutral vowels'
       transparent-vs-opaque behavior is not predictable (§1.3.2). A segment without a value
-      does not participate: `value s = none → participation s ≠ .participating`. -/
+      does not participate, so `value s = none → participation s ≠ .participating`. -/
   participation : α → Participation
   direction     : Direction := .bidirectional
   domain        : Domain := .word
@@ -223,7 +223,7 @@ strictly local grammars lack and the blocking strictly piecewise grammars lack
 `McMullin2016.blockingLang_not_isStrictlyPiecewise`). -/
 theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
     p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).language := by
-  simp only [mem_ofForbiddenPairs_language_iff_filter_isChain, Pattern.Harmonic, Pattern.tier,
+  simp only [mem_ofForbiddenPairs_language_iff, Pattern.Harmonic, Pattern.tier,
     not_not]
 
 /-- The tier value of a segment is its harmonic value on the tier and nothing off it. -/
@@ -238,7 +238,7 @@ theorem Pattern.harmonic_iff_map_project_mem [DecidableEq V] (p : Pattern α V)
     (w : List α) :
     p.Harmonic w ↔ w.map p.project ∈ (ofForbiddenPairs (· ≠ ·) (·.isSome)).language := by
   have hproj : ∀ s, p.OnTier s → p.project s = p.value s := fun s hs ↦ ite_eq_left hs
-  rw [harmonic_iff_mem_tsl, mem_ofForbiddenPairs_language_map_iff]
+  rw [harmonic_iff_mem_tsl, map_mem_ofForbiddenPairs_language_iff]
   refine Eq.to_iff (congrArg (w ∈ ·) (ofForbiddenPairs_language_congr (fun s ↦ ?_)
     fun s t hs ht ↦ ?_))
   · by_cases hs : p.OnTier s

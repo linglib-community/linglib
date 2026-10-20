@@ -35,6 +35,7 @@ tree models of section 2.
 namespace ChandleeEtAl2019
 
 open FirstOrder.Language Subregular Subregular.WordModel Phonology Hansson2010 List
+open Subregular.TierStrictlyLocalGrammar (mem_ofForbiddenPairs_language_iff_forall_sublist_pair)
 
 /-- The signature of feature-labelled models of segment words. -/
 abbrev featureLanguage : FirstOrder.Language := wordLanguage (Phonology.Feature × Bool)

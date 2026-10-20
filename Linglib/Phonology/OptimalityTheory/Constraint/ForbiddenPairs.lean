@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
-public import Linglib.Phonology.Subregular.ForbiddenPairs
 public import Linglib.Phonology.OCP
 
 /-!
@@ -18,25 +17,20 @@ and its identity and non-identity instances, the OCP of Goldsmith and McCarthy a
 constraint on candidates of another type, or on a tier, is not a separate constructor but the
 `Constraint.comap` of a string constraint along the candidate's string or along erasure of the
 off-tier symbols. Pulled back along the output form of a correspondence candidate, a string
-constraint is a markedness constraint (`Correspondence.isMarkedness_iff_exists_comap`).
-
-On a tier, the zero set of `Constraint.forbidPairs R` is the tier-based strictly 2-local language
-of `TierStrictlyLocalGrammar.ofForbiddenPairs R p` (Heinz, Rawal and Tanner). A string satisfies
-the OCP exactly when it is `OCP.IsClean`.
+constraint is a markedness constraint (`Correspondence.isMarkedness_iff_exists_comap`). A string
+satisfies the OCP exactly when it is `OCP.IsClean`.
 
 ## Main definitions
 
 * `Constraint.forbidPairs`, `Constraint.ocp`, `Constraint.agree`: the forbidden-pair constraints
   on strings.
-* `Constraint.zeroSet`: the zero-violation language of a constraint on strings.
 
 ## Main results
 
+* `Constraint.forbidPairs_eq_zero_iff`: a string satisfies `forbidPairs R` iff no two adjacent
+  elements are `R`-related.
 * `Constraint.ocp_eq_zero_iff`, `Constraint.agree_eq_zero_iff`: the strings that satisfy the OCP
   and AGREE.
-* `Constraint.zeroSet_comap`: pulling a constraint back pulls its zero set back.
-* `Constraint.zeroSet_comap_filter_forbidPairs`: on a tier, the zero set of the forbidden-pair
-  constraint is the TSL₂ language of `ofForbiddenPairs`.
 
 ## Implementation notes
 
@@ -48,8 +42,6 @@ to the values of the feature `F`.
 
 * [J. A. Goldsmith, *Autosegmental Phonology* (1976)][goldsmith-1976]
 * [J. J. McCarthy, *OCP Effects: Gemination and Antigemination* (1986)][mccarthy-1986]
-* [J. Heinz, C. Rawal and H. G. Tanner, *Tier-based Strictly Local Constraints for Phonology*
-  (2011)][heinz-rawal-tanner-2011]
 * [I. Berent, *Three arguments for abstraction in phonology* (2026)][berent-2026]
 -/
 
@@ -57,14 +49,13 @@ to the values of the feature `F`.
 
 namespace OptimalityTheory
 
-open Subregular (countAdjacent)
-
-variable {α β : Type*}
+variable {α : Type*}
 
 /-- The forbidden-pair constraint on strings, with one violation for each adjacent pair `(a, b)`
 satisfying `R a b`. -/
-def Constraint.forbidPairs (R : α → α → Prop) [DecidableRel R] : Constraint (List α) :=
-  countAdjacent R
+def Constraint.forbidPairs (R : α → α → Prop) [DecidableRel R] : Constraint (List α)
+  | [] | [_] => 0
+  | a :: b :: w => (if R a b then 1 else 0) + Constraint.forbidPairs R (b :: w)
 
 /-- The OCP ([goldsmith-1976], [mccarthy-1986]), the forbidden-pair constraint against adjacent
 identical elements, polymorphic over the feature type ([berent-2026]). -/
@@ -74,25 +65,32 @@ def Constraint.ocp [DecidableEq α] : Constraint (List α) := Constraint.forbidP
 `Constraint.ocp`. -/
 def Constraint.agree [DecidableEq α] : Constraint (List α) := Constraint.forbidPairs (· ≠ ·)
 
-/-- The language of strings that satisfy `c`, with zero violations. It lets the `eval = 0`
-predicate compose with `Language.IsRegular` and the subregular classes (`IsTierStrictlyLocal`,
-`IsBTC`). -/
-def Constraint.zeroSet (c : Constraint (List α)) : Language α :=
-  { w | c w = 0 }
-
 namespace Constraint
 
-theorem mem_zeroSet (c : Constraint (List α)) (w : List α) : w ∈ c.zeroSet ↔ c w = 0 := Iff.rfl
+section forbidPairs
 
-/-- Pulling a constraint back along a string map pulls its zero set back. -/
-@[simp] theorem zeroSet_comap (f : List α → List β) (c : Constraint (List β)) :
-    (c.comap f).zeroSet = f ⁻¹' c.zeroSet := rfl
+variable (R : α → α → Prop) [DecidableRel R]
+
+@[simp] theorem forbidPairs_nil : forbidPairs R [] = 0 := rfl
+
+@[simp] theorem forbidPairs_singleton (a : α) : forbidPairs R [a] = 0 := rfl
+
+@[simp] theorem forbidPairs_cons_cons (a b : α) (w : List α) :
+    forbidPairs R (a :: b :: w) = (if R a b then 1 else 0) + forbidPairs R (b :: w) := rfl
 
 /-- A string satisfies the forbidden-pair constraint iff no two adjacent elements are
 `R`-related. -/
-theorem forbidPairs_eq_zero_iff (R : α → α → Prop) [DecidableRel R] (w : List α) :
-    forbidPairs R w = 0 ↔ w.IsChain (fun a b ↦ ¬ R a b) :=
-  Subregular.countAdjacent_eq_zero_iff_isChain R w
+theorem forbidPairs_eq_zero_iff (w : List α) :
+    forbidPairs R w = 0 ↔ w.IsChain (fun a b ↦ ¬ R a b) := by
+  induction w with
+  | nil => simp
+  | cons a rest ih => cases rest with
+    | nil => simp
+    | cons b rest' =>
+      rw [List.isChain_cons_cons, ← ih]
+      by_cases hab : R a b <;> simp [hab]
+
+end forbidPairs
 
 section DecidableEq
 
@@ -114,21 +112,7 @@ equal. -/
 theorem agree_eq_zero_iff {w : List α} : agree w = 0 ↔ w.IsChain (· = ·) :=
   (forbidPairs_eq_zero_iff (· ≠ ·) w).trans (by simp only [ne_eq, not_not])
 
-/-- The OCP is invariant under an injective relabelling of the elements. -/
-theorem ocp_map [DecidableEq β] {f : α → β} (hf : Function.Injective f) (w : List α) :
-    ocp (w.map f) = ocp w :=
-  Subregular.countAdjacent_map (· = ·) (S := (· = ·)) (fun _ _ ↦ hf.eq_iff) w
-
 end DecidableEq
-
-/-- On the tier `p`, the zero set of the forbidden-pair constraint is the language of the TSL₂
-grammar `TierStrictlyLocalGrammar.ofForbiddenPairs R p`. -/
-theorem zeroSet_comap_filter_forbidPairs (R : α → α → Prop) [DecidableRel R]
-    (p : α → Prop) [DecidablePred p] :
-    ((forbidPairs R).comap fun w ↦ w.filter (p ·)).zeroSet =
-      (Subregular.TierStrictlyLocalGrammar.ofForbiddenPairs R p).language :=
-  Set.ext fun w ↦ (forbidPairs_eq_zero_iff R _).trans
-    (Subregular.mem_ofForbiddenPairs_language_iff_filter_isChain R p w).symm
 
 end Constraint
 
