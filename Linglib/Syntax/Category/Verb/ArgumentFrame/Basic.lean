@@ -441,6 +441,10 @@ def spatialPP : ArgumentFrame := ⟨some .nominal, [.adpositional (some .spatial
 def np_pp (p : Option Adposition := none) : ArgumentFrame :=
   ⟨some .nominal, [.nominal, .adpositional (p.bind Adposition.kind?) p]⟩
 
+/-- The NP + spatial PP frame has a nominal and a spatial adpositional complement, whatever its
+    adposition, as the destination of a verb of putting or the path of an induced action. -/
+def np_spatialPP : ArgumentFrame := ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩
+
 /-- Finite declarative clause. -/
 def finiteClause : ArgumentFrame :=
   ⟨some .nominal, [.clausal (coding := some .indicative) (types := .only .declarative)]⟩

@@ -11,24 +11,24 @@ public import Mathlib.Tactic.DeriveFintype
 # The verb classes of Levin 1993
 
 `LevinClass` enumerates the verb classes of Part II of Levin's *English Verb Classes and
-Alternations*, one constructor for each class page with a member list, with the section number and
-title the book prints for it. The classes' property tables are in `Properties.lean`, their member
+Alternations*, one constructor for each class page with a member list, with the section number the
+book prints for it. The classes' property tables are in `Properties.lean`, their titles and member
 lists in `Members.lean` and their root entailments in `RootEntailment.lean`; the `levinClasses`
 field of a `Verb` entry carries the classes listing it. A class may also carry a default
 argument-structure template, from which a verb entry's argument profiles are derived.
 
 ## Implementation notes
 
-The section numbers and titles were checked against the book's section headings. The
-`maxRecDepth` setting on the inductive serves `deriving Fintype`, whose handler for enumerations
-checks its list of the 191 constructors by `rfl`.
+The section numbers were checked against the book's section headings, and `number_entry` checks
+them against the generated class data. The `maxRecDepth` settings serve `deriving Fintype`, whose
+handler for enumerations checks its list of the 191 constructors by `rfl`, and the decision over
+all 191 classes in `ofNumberString?_numberString`.
 
 ## References
 
-* [B. Levin, *English verb classes and alternations: a preliminary investigation*
-  (1993)][levin-1993]
-* [D. Dowty, *Thematic proto-roles and argument selection* (1991)][dowty-1991]
-* [B. Levin, M. Rappaport Hovav, *Argument realization* (2005)][levin-rappaport-hovav-2005]
+* [levin-1993]
+* [dowty-1991]
+* [levin-rappaport-hovav-2005]
 -/
 
 @[expose] public section
@@ -482,199 +482,11 @@ def numberString : LevinClass → String
 def ofNumberString? (s : String) : Option LevinClass :=
   LevinClass.enumList.find? (·.numberString = s)
 
-/-- Levin's title of the class. -/
-def name : LevinClass → String
-  | .put => "Put Verbs"
-  | .putInSpatialConfiguration => "Verbs of Putting in a Spatial Configuration"
-  | .funnel => "Funnel Verbs"
-  | .putDirection => "Verbs of Putting with a Specified Direction"
-  | .pour => "Pour Verbs"
-  | .coil => "Coil Verbs"
-  | .sprayLoad => "Spray/Load Verbs"
-  | .fill => "Fill Verbs"
-  | .butter => "Butter Verbs"
-  | .pocket => "Pocket Verbs"
-  | .remove => "Remove Verbs"
-  | .banish => "Banish Verbs"
-  | .clear => "Clear Verbs"
-  | .wipeManner => "Manner Subclass"
-  | .wipeInstrument => "Instrument Subclass"
-  | .steal => "Verbs of Possessional Deprivation: Steal Verbs"
-  | .cheat => "Verbs of Possessional Deprivation: Cheat Verbs"
-  | .pit => "Pit Verbs"
-  | .debone => "Debone Verbs"
-  | .mine => "Mine Verbs"
-  | .send => "Send Verbs"
-  | .slide => "Slide Verbs"
-  | .bringTake => "Bring and Take"
-  | .carry => "Carry Verbs"
-  | .drive => "Drive Verbs"
-  | .pushPull => "Verbs of Exerting Force: Push/Pull Verbs"
-  | .give => "Give Verbs"
-  | .contribute => "Contribute Verbs"
-  | .futureHaving => "Verbs of Future Having"
-  | .fulfilling => "Verbs of Fulfilling"
-  | .equip => "Equip Verbs"
-  | .get => "Get Verbs"
-  | .obtain => "Obtain Verbs"
-  | .exchange => "Verbs of Exchange"
-  | .berry => "Berry Verbs"
-  | .learn => "Learn Verbs"
-  | .hold => "Hold Verbs"
-  | .keep => "Keep Verbs"
-  | .conceal => "Verbs of Concealment"
-  | .throw => "Throw Verbs"
-  | .pelt => "Pelt Verbs"
-  | .hit => "Hit Verbs"
-  | .swat => "Swat Verbs"
-  | .spank => "Spank Verbs"
-  | .nonAgentiveImpact => "Non-Agentive Verbs of Impact by Contact"
-  | .poke => "Poke Verbs"
-  | .touch => "Verbs of Contact: Touch Verbs"
-  | .cut => "Cut Verbs"
-  | .carve => "Carve Verbs"
-  | .mix => "Mix Verbs"
-  | .amalgamate => "Amalgamate Verbs"
-  | .shake => "Shake Verbs"
-  | .tape => "Tape Verbs"
-  | .cling => "Cling Verbs"
-  | .separate => "Separate Verbs"
-  | .split => "Split Verbs"
-  | .disassemble => "Disassemble Verbs"
-  | .differ => "Differ Verbs"
-  | .color => "Verbs of Coloring"
-  | .imageImpression => "Verbs of Image Impression"
-  | .scribble => "Scribble Verbs"
-  | .illustrate => "Illustrate Verbs"
-  | .transcribe => "Transcribe Verbs"
-  | .build => "Build Verbs"
-  | .grow => "Grow Verbs"
-  | .prepare => "Verbs of Preparing"
-  | .create => "Create Verbs"
-  | .knead => "Knead Verbs"
-  | .turn => "Turn Verbs"
-  | .performance => "Performance Verbs"
-  | .engender => "Engender Verbs"
-  | .calve => "Calve Verbs"
-  | .appoint => "Appoint Verbs"
-  | .characterize => "Characterize Verbs"
-  | .dub => "Dub Verbs"
-  | .declare => "Declare Verbs"
-  | .conjecture => "Conjecture Verbs"
-  | .masquerade => "Masquerade Verbs"
-  | .orphan => "Orphan Verbs"
-  | .captain => "Captain Verbs"
-  | .see => "See Verbs"
-  | .sight => "Sight Verbs"
-  | .peer => "Peer Verbs"
-  | .stimulusSubjectPerception => "Stimulus Subject Perception Verbs"
-  | .amuse => "Amuse Verbs"
-  | .admire => "Admire Verbs"
-  | .marvel => "Marvel Verbs"
-  | .appeal => "Appeal Verbs"
-  | .want => "Want Verbs"
-  | .long => "Long Verbs"
-  | .judgment => "Judgment Verbs"
-  | .assessment => "Verbs of Assessment"
-  | .hunt => "Hunt Verbs"
-  | .search => "Search Verbs"
-  | .stalk => "Stalk Verbs"
-  | .investigate => "Investigate Verbs"
-  | .rummage => "Rummage Verbs"
-  | .ferret => "Ferret Verbs"
-  | .correspond => "Correspond Verbs"
-  | .marry => "Marry Verbs"
-  | .meet => "Meet Verbs"
-  | .transferOfMessage => "Verbs of Transfer of a Message"
-  | .tell => "Tell"
-  | .mannerOfSpeaking => "Verbs of Manner of Speaking"
-  | .instrumentOfCommunication => "Verbs of Instrument of Communication"
-  | .talk => "Talk Verbs"
-  | .chitchat => "Chitchat Verbs"
-  | .say => "Say Verbs"
-  | .complain => "Complain Verbs"
-  | .advise => "Advise Verbs"
-  | .animalSound => "Verbs of Sounds Made by Animals"
-  | .eat => "Eat Verbs"
-  | .chew => "Chew Verbs"
-  | .gobble => "Gobble Verbs"
-  | .devour => "Devour Verbs"
-  | .dine => "Dine Verbs"
-  | .gorge => "Gorge Verbs"
-  | .feed => "Verbs of Feeding"
-  | .hiccup => "Hiccup Verbs"
-  | .breathe => "Breathe Verbs"
-  | .exhale => "Exhale Verbs"
-  | .nonverbalExpression => "Verbs of Nonverbal Expression"
-  | .wink => "Wink Verbs"
-  | .crane => "Crane Verbs"
-  | .curtsey => "Curtsey Verbs"
-  | .snooze => "Snooze Verbs"
-  | .flinch => "Flinch Verbs"
-  | .bodyInternalStateOfExistence => "Verbs of Body-Internal States of Existence"
-  | .suffocate => "Suffocate Verbs"
-  | .pain => "Pain Verbs"
-  | .tingle => "Tingle Verbs"
-  | .hurt => "Hurt Verbs"
-  | .changeOfBodilyState => "Verbs of Change of Bodily State"
-  | .dress => "Dress Verbs"
-  | .groom => "Groom Verbs"
-  | .floss => "Floss Verbs"
-  | .braid => "Braid Verbs"
-  | .simpleDressing => "Simple Verbs of Dressing"
-  | .dressingWell => "Verbs of Dressing Well"
-  | .beingDressed => "Verbs of Being Dressed"
-  | .murder => "Murder Verbs"
-  | .poison => "Poison Verbs"
-  | .lightEmission => "Verbs of Light Emission"
-  | .soundEmission => "Verbs of Sound Emission"
-  | .smellEmission => "Verbs of Smell Emission"
-  | .substanceEmission => "Verbs of Substance Emission"
-  | .destroy => "Destroy Verbs"
-  | .break_ => "Break Verbs"
-  | .bend => "Bend Verbs"
-  | .cooking => "Cooking Verbs"
-  | .otherChangeOfState => "Other Alternating Verbs of Change of State"
-  | .entitySpecificChangeOfState => "Verbs of Entity-Specific Change of State"
-  | .calibratableChangeOfState => "Verbs of Calibratable Changes of State"
-  | .lodge => "Lodge Verbs"
-  | .exist => "Exist Verbs"
-  | .entitySpecificModeOfBeing => "Verbs of Entity-Specific Modes of Being"
-  | .modeOfBeingInvolvingMotion => "Verbs of Modes of Being Involving Motion"
-  | .soundExistence => "Verbs of Sound Existence"
-  | .swarm => "Swarm Verbs"
-  | .herd => "Herd Verbs"
-  | .bulge => "Bulge Verbs"
-  | .spatialConfiguration => "Verbs of Spatial Configuration"
-  | .meander => "Meander Verbs"
-  | .contiguousLocation => "Verbs of Contiguous Location"
-  | .appear => "Appear Verbs"
-  | .reflexiveAppearance => "Reflexive Verbs of Appearance"
-  | .disappearance => "Verbs of Disappearance"
-  | .occurrence => "Verbs of Occurrence"
-  | .bodyInternalMotion => "Verbs of Body-Internal Motion"
-  | .assumePosition => "Verbs of Assuming a Position"
-  | .inherentlyDirectedMotion => "Verbs of Inherently Directed Motion"
-  | .leave => "Leave Verbs"
-  | .roll => "Roll Verbs"
-  | .run => "Run Verbs"
-  | .vehicleName => "Verbs That Are Vehicle Names"
-  | .nonVehicleName => "Verbs That Are Not Vehicle Names"
-  | .waltz => "Waltz Verbs"
-  | .chase => "Chase Verbs"
-  | .accompany => "Accompany Verbs"
-  | .avoid => "Avoid Verbs"
-  | .linger => "Verbs of Lingering"
-  | .rush => "Verbs of Rushing"
-  | .register => "Register Verbs"
-  | .cost => "Cost Verbs"
-  | .fit => "Fit Verbs"
-  | .price => "Price Verbs"
-  | .bill => "Bill Verbs"
-  | .begin => "Begin Verbs"
-  | .complete => "Complete Verbs"
-  | .weekend => "Weekend Verbs"
-  | .weather => "Weather Verbs"
+set_option maxRecDepth 8000 in
+@[simp] theorem ofNumberString?_numberString (c : LevinClass) :
+    ofNumberString? c.numberString = some c := by
+  revert c
+  decide +kernel
 
 end LevinClass
 
@@ -743,32 +555,97 @@ def LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
 def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
   c.roleList.bind (·.objectProfile)
 
+namespace LevinClass
+
 /-- Two votes on a profile combine by agreement, where `none` abstains and `some none` records a
 disagreement. -/
-def agree :
+def combineVotes :
     Option (Option EntailmentProfile) → Option (Option EntailmentProfile) →
       Option (Option EntailmentProfile)
   | none, b => b
   | a, none => a
   | some x, some y => if x = y then some x else some none
 
-instance : Std.Commutative agree :=
+instance : Std.Commutative combineVotes :=
   ⟨fun a b ↦ by
-    rcases a with _ | a <;> rcases b with _ | b <;> simp [agree]; split_ifs <;> simp_all⟩
+    rcases a with _ | a <;> rcases b with _ | b <;> simp [combineVotes]; split_ifs <;> simp_all⟩
 
-instance : Std.Associative agree :=
+instance : Std.Associative combineVotes :=
   ⟨fun a b c ↦ by
-    rcases a with _ | a <;> rcases b with _ | b <;> rcases c with _ | c <;> simp [agree] <;>
+    rcases a with _ | a <;> rcases b with _ | b <;> rcases c with _ | c <;> simp [combineVotes] <;>
       split_ifs <;> simp_all⟩
 
 /-- The profile the classes assigning one agree on, `none` when none does or they disagree. -/
-def LevinClass.commonProfile (f : LevinClass → Option EntailmentProfile)
-    (s : Finset LevinClass) : Option EntailmentProfile :=
-  (s.fold agree none fun c ↦ (f c).map some).bind id
+def commonProfile (f : LevinClass → Option EntailmentProfile) (s : Finset LevinClass) :
+    Option EntailmentProfile :=
+  (s.fold combineVotes none fun c ↦ (f c).map some).join
 
-@[simp] theorem LevinClass.commonProfile_empty (f : LevinClass → Option EntailmentProfile) :
-    LevinClass.commonProfile f ∅ = none :=
+section commonProfile
+
+variable (f : LevinClass → Option EntailmentProfile)
+
+@[simp] theorem commonProfile_empty : commonProfile f ∅ = none :=
   rfl
+
+@[simp] theorem commonProfile_singleton (c : LevinClass) : commonProfile f {c} = f c := by
+  cases h : f c <;> simp [commonProfile, combineVotes, h]
+
+private theorem fold_combineVotes (s : Finset LevinClass) :
+    (s.fold combineVotes none (fun c ↦ (f c).map some) = none ↔ ∀ c ∈ s, f c = none) ∧
+      ∀ p, (s.fold combineVotes none (fun c ↦ (f c).map some) = some (some p) ↔
+        (∃ c ∈ s, f c = some p) ∧ ∀ c ∈ s, ∀ q ∈ f c, q = p) := by
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert c s hc ih =>
+    obtain ⟨ih₁, ih₂⟩ := ih
+    rw [Finset.fold_insert hc]
+    rcases hf : f c with _ | q
+    · simp [combineVotes, hf, ih₁, ih₂]
+    rcases hv : s.fold combineVotes none (fun c ↦ (f c).map some) with _ | _ | r
+    · have hs := ih₁.mp hv
+      refine ⟨by simp [combineVotes]; intro h; simp [h] at hf, fun p ↦ ?_⟩
+      simp only [combineVotes, Option.map_some, Option.some.injEq, Finset.exists_mem_insert,
+        Finset.forall_mem_insert, hf]
+      constructor
+      · rintro rfl; exact ⟨.inl rfl, by simp, fun c' hc' q' hq' ↦ by simp [hs c' hc'] at hq'⟩
+      · rintro ⟨-, h, -⟩; simpa using h
+    · refine ⟨by simp [combineVotes]; intro h; simp [h] at hf,
+        fun p ↦ ⟨by simp [combineVotes], ?_⟩⟩
+      simp only [Finset.exists_mem_insert, Finset.forall_mem_insert, hf]
+      rintro ⟨-, hqp, hall⟩
+      obtain rfl : q = p := hqp q rfl
+      obtain ⟨c', hc', hfc'⟩ : ∃ c' ∈ s, f c' ≠ none := by
+        by_contra h
+        simp only [not_exists, not_and, not_not] at h
+        simp [ih₁.mpr h] at hv
+      obtain ⟨q', hq'⟩ := Option.ne_none_iff_exists'.mp hfc'
+      have := (ih₂ q).mpr ⟨⟨c', hc', by rw [hq', hall c' hc' q' hq']⟩, hall⟩
+      simp [hv] at this
+    · obtain ⟨⟨c', hc', hc'r⟩, hall⟩ := (ih₂ r).mp hv
+      refine ⟨by simp only [Option.map_some, combineVotes]; split_ifs <;> simp <;> intro h <;>
+        simp [h] at hf, fun p ↦ ?_⟩
+      simp only [Option.map_some, combineVotes, Finset.exists_mem_insert,
+        Finset.forall_mem_insert, hf]
+      split_ifs with hqr
+      · obtain rfl : q = r := by simpa using hqr
+        simp only [Option.some.injEq]
+        constructor
+        · rintro rfl; exact ⟨.inl rfl, by simp, hall⟩
+        · rintro ⟨-, h, -⟩; simpa using h
+      · simp only [Option.some.injEq, reduceCtorEq, false_iff, not_and, not_forall]
+        intro _ hq
+        exact ⟨c', hc', r, hc'r, fun hr ↦ hqr (by simp [hr, hq q rfl])⟩
+
+/-- The classes agree on `p` exactly when one of them assigns `p` and none assigns another
+profile. -/
+theorem commonProfile_eq_some_iff {s : Finset LevinClass} {p : EntailmentProfile} :
+    commonProfile f s = some p ↔ (∃ c ∈ s, f c = some p) ∧ ∀ c ∈ s, ∀ q ∈ f c, q = p := by
+  rw [commonProfile, Option.join_eq_some_iff]
+  exact (fold_combineVotes f s).2 p
+
+end commonProfile
+
+end LevinClass
 
 /-- In no class's template does the object outrank the subject under [dowty-1991]'s Argument
     Selection Principle, as [levin-rappaport-hovav-2005] present it. Where dominance is strict

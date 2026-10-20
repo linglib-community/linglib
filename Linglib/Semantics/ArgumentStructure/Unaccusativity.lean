@@ -14,11 +14,10 @@ subject the participant the transitive has as its object.
 
 ## Main definitions
 
-* `Verb.Valency.HasCausativeAlternation`: some participant is the object of a transitive
+* `Verb.Valency.HasCausativeAlternation`: some participant is the object of a plain transitive
   diathesis and the subject of an intransitive one that leaves out the transitive's subject.
 * `Verb.IsUnaccusative`: the verb's voice introduces no external argument, or the verb takes
   part in the causative alternation.
-* `ArgumentStructure.PredictsUnaccusative`: the prediction from an entailment profile.
 
 ## Implementation notes
 
@@ -26,14 +25,16 @@ subject the participant the transitive has as its object.
   is not unaccusative, and French *rougir* 'redden' alternates and takes *avoir*. A grammar
   that relates the two states its rule against the auxiliaries an entry records
   (`Verb.perfectAuxiliaries`).
+* The test does not separate the causative alternation from the causative pairs of verbs of
+  emission, *The postman buzzed the doorbell* beside *The doorbell buzzed*, which Levin and
+  Rappaport Hovav take to pair two unrelated meanings (§3.2.5).
 
 ## References
 
 * [burzio-1986]
 * [kratzer-1996]
+* [levin-1993]
 * [levin-hovav-1995]
-* [davis-koenig-2000]
-* [dowty-1991]
 -/
 
 @[expose] public section
@@ -42,15 +43,18 @@ namespace Verb.Valency
 
 variable (V : Valency)
 
-/-- A valency has the causative alternation when some participant is the P of a diathesis and the
-S of another that leaves out the first one's A, as the thing broken is the object of transitive
-*break* and the subject of intransitive *break*. -/
+/-- A valency has the causative alternation when some participant is the P of a plain transitive
+diathesis and the S of another that leaves out the first one's A, as the thing broken is the object
+of transitive *break* and the subject of intransitive *break*. A causative that needs a directional
+phrase, *We ran the mouse through the maze* but not *We ran the mouse*, is not the causative
+alternation ([levin-1993] p. 31, [levin-hovav-1995] p. 111). -/
 def HasCausativeAlternation : Prop :=
-  ∃ c ∈ V.diatheses, ∃ d ∈ V.diatheses, ∃ i, c.participantRole i = some .P ∧
-    d.participantRole i = some .S ∧ ∀ j, c.participantRole j = some .A → d.links.get j = none
+  ∃ c ∈ V.diatheses, c.toArgumentFrame = .np ∧ ∃ d ∈ V.diatheses, ∃ i,
+    c.participantRole i = some .P ∧ d.participantRole i = some .S ∧
+      ∀ j, c.participantRole j = some .A → d.links.get j = none
 
 instance : Decidable V.HasCausativeAlternation :=
-  inferInstanceAs (Decidable (∃ c ∈ _, ∃ d ∈ _, ∃ _, _))
+  inferInstanceAs (Decidable (∃ c ∈ _, _ ∧ ∃ d ∈ _, ∃ _, _))
 
 end Verb.Valency
 
@@ -63,16 +67,3 @@ def Verb.IsUnaccusative (v : Verb) : Prop :=
 
 instance : DecidablePred Verb.IsUnaccusative := fun v ↦ by
   unfold Verb.IsUnaccusative; split <;> infer_instance
-
-namespace ArgumentStructure
-
-/-- A profile predicts unaccusativity when it lacks the priority Proto-Agent entailments, volition
-and causation ([davis-koenig-2000]), and bears at least one Proto-Patient entailment
-([dowty-1991] Table 1). Unlike flat counting, this classifies *arrive* as unaccusative. -/
-def PredictsUnaccusative (p : EntailmentProfile) : Prop :=
-  .volition ∉ p ∧ .causation ∉ p ∧ p.protoPatient.Nonempty
-
-instance : DecidablePred PredictsUnaccusative := fun _ ↦
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
-
-end ArgumentStructure

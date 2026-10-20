@@ -114,14 +114,15 @@ def sneeze : Verb where
   passivizable := false
   levinClasses := {LevinClass.hiccup, .nonverbalExpression}
 
-/-- "run" — intransitive, no presupposition -/
+/-- *run*, an agentive verb of manner of motion, whose causative takes a directional phrase, *We
+ran the mouse through the maze* but not *We ran the mouse* ([levin-hovav-1995] p. 111). -/
 def run : Verb where
   morphs := [.root "run"]
   past := "ran"
   pastPart := "run"
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
-     (ArgumentFrame.np, [1, 0]),
+     (ArgumentFrame.np_spatialPP, [1, 0, 2]),
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
   passivizable := false
@@ -151,12 +152,13 @@ def arrive : Verb where
   direction := some .goal
   levinClasses := {LevinClass.inherentlyDirectedMotion}
 
-/-- "come" — Levin 51.1 inherently directed motion, like `arrive`. -/
+/-- *come*, an unaccusative verb of inherently directed motion like *arrive* (51.1). -/
 def come : Verb where
   morphs := [.root "come"]
   past := "came"
   pastPart := "come"
   valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
   passivizable := false
   vendlerClass := some .achievement
   direction := some .goal
@@ -435,7 +437,7 @@ def sweep : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 2, 1]),
+     (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
     [some wipeManner.subjectProfile, none, none]
   vendlerClass := some .activity
@@ -455,7 +457,7 @@ def sweep_instr : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 2, 1]),
+     (ArgumentFrame.np_spatialPP, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
     [some wipeInstrument.subjectProfile, none, none]
   vendlerClass := some .activity

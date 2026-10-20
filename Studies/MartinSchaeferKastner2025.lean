@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Linglib.Fragments.Romance.French.Verbs
 public import Linglib.Semantics.Reference.Animacy
 
@@ -40,6 +40,8 @@ experiments' rating means are described in the paper and not represented.
 * [martin-schaefer-kastner-2025]
 * [schaefer-2008]
 * [koontz-garboden-2009]
+* [davis-koenig-2000]
+* [dowty-1991]
 -/
 
 @[expose] public section
@@ -185,6 +187,15 @@ theorem opposite_preferences_falsify_uniform_semantics (g : ResponsibilityGoal) 
   cases g <;> decide
 
 /-! ### Unaccusativity -/
+
+/-- A profile predicts unaccusativity when it lacks the priority Proto-Agent entailments, volition
+and causation ([davis-koenig-2000]), and bears at least one Proto-Patient entailment
+([dowty-1991] (28), p. 572). -/
+def PredictsUnaccusative (p : EntailmentProfile) : Prop :=
+  .volition ∉ p ∧ .causation ∉ p ∧ p.protoPatient.Nonempty
+
+instance : DecidablePred PredictsUnaccusative := fun _ ↦
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- The entailments of the anticausatives' sole argument predict unaccusativity, since they
 impose no volition and no causation and include a patient entailment. -/

@@ -19,15 +19,13 @@ template with their own entailments.
 
 ## References
 
-* [D. Dowty, *Thematic Proto-Roles and Argument Selection* (1991)][dowty-1991]
-* [B. Levin, *English Verb Classes and Alternations: A Preliminary Investigation*
-  (1993)][levin-1993]
-* [B. Levin and M. Rappaport Hovav, *Argument Realization* (2005)][levin-rappaport-hovav-2005]
-* [M. Rappaport Hovav and B. Levin, *Building Verb Meanings* (1998)][rappaport-hovav-levin-1998]
-* [J. Beavers and A. Koontz-Garboden, *The Roots of Verbal Meaning*
-  (2020)][beavers-koontz-garboden-2020]
-* [J. Beavers, *On Affectedness* (2011)][beavers-2011]
-* [A. Belletti and L. Rizzi, *Psych-Verbs and θ-Theory* (1988)][belletti-rizzi-1988]
+* [dowty-1991]
+* [levin-1993]
+* [levin-rappaport-hovav-2005]
+* [rappaport-hovav-levin-1998]
+* [beavers-koontz-garboden-2020]
+* [beavers-2011]
+* [belletti-rizzi-1988]
 -/
 
 @[expose] public section

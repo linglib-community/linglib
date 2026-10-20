@@ -252,7 +252,7 @@ def spread : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 2]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 1, 2]),
+     (ArgumentFrame.np_spatialPP, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.appear, .entitySpecificModeOfBeing, .sprayLoad}

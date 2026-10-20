@@ -2,6 +2,8 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Data.Examples.LevinRappaportHovav1995
+public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
 
@@ -34,6 +36,10 @@ monadic verb is unaccusative when its sole argument is a direct internal argumen
 * `diagnostics_agree`: the diagnostics of chapter 4 sort the book's examples as the linking does.
 * `locativeInversion_not_diagnostic`: the examples of §6.2.2 show that locative inversion does
   not.
+* `isUnaccusative_agrees`: the English fragment's `Verb.IsUnaccusative` classifies the examples'
+  verbs as the linking does.
+* `causativePairs_diverge`: it does not on the verbs of emission with a causative pair, which the
+  book does not count as the causative alternation (§3.2.5).
 
 ## Implementation notes
 
@@ -309,5 +315,37 @@ theorem locativeInversion_not_diagnostic :
       Examples.ex6_22a.judgment = .acceptable ∧
       ∀ s ∈ construals Examples.ex6_22a, ¬ Unaccusative s := by
   decide
+
+/-! ### The English fragment -/
+
+/-- The English entry of a row's verb, in its default sense. -/
+def entryOf (ex : Datum) : Option Verb :=
+  (ex.feature? "verb").bind (Verb.find? (English.Verbs.verbs.map (·.toVerb)))
+
+/-- The rows on *break*, *burn*, *freeze*, *arrive*, *run*, *swim* and *appear* have entries, so
+`isUnaccusative_agrees` is not vacuous. -/
+theorem entryOf_isSome :
+    ∀ ex ∈ [Examples.ex4_25a, Examples.ex4_25b, Examples.ex4_25c, Examples.ex4_31a,
+      Examples.ex4_50a, Examples.ex4_50b, Examples.ex6_1],
+      (entryOf ex).isSome := by
+  decide
+
+/-- Where a row's class gives one verdict, the English fragment's entry for its verb is
+unaccusative exactly as the linking rules say: *break*, *burn*, *freeze*, *arrive* and *appear*
+are, *run* and *swim* are not. -/
+theorem isUnaccusative_agrees :
+    ∀ ex ∈ Examples.all, ∀ v ∈ entryOf ex, ∀ c ∈ classOf ex,
+      ((∀ s ∈ components c, Unaccusative s) → v.IsUnaccusative) ∧
+        ((∀ s ∈ components c, ¬ Unaccusative s) → ¬ v.IsUnaccusative) := by
+  decide +kernel
+
+/-- A causative pair is not the causative alternation (§3.2.5). The fragment's *buzz*, *flash*
+and *bleed* have a transitive use whose object is their intransitive subject, (82), (92) and (86),
+so `Verb.IsUnaccusative` counts them unaccusative, while as verbs of emission they are
+unergative. -/
+theorem causativePairs_diverge :
+    ∀ v ∈ [English.Verbs.buzz, English.Verbs.flash, English.Verbs.bleed], v.IsUnaccusative ∧
+      ∀ c ∈ v.levinClasses, ∀ s ∈ components c, ¬ Unaccusative s := by
+  decide +kernel
 
 end LevinRappaportHovav1995
