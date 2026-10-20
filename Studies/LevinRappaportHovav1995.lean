@@ -2,31 +2,50 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Data.Examples.LevinRappaportHovav1995
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Levin and Rappaport Hovav (1995): Unaccusativity
 
-This file formalizes the linking rules of [levin-hovav-1995] and the classification of
-[levin-1993]'s intransitive verb classes they yield. The Immediate Cause Linking Rule (1), the
-Directed Change Linking Rule (24), the Existence Linking Rule (47) and the Default Linking Rule
-(49) of chapter 4 assign an argument to the external or the direct internal argument position
-from what the verb's meaning says of it (`Characterization`), the Directed Change and Existence
-rules taking precedence over the Immediate Cause rule and that over the Default rule (§4.2,
-`link`); a monadic verb is unaccusative when its sole argument is a direct internal argument.
-Appendix A assigns Levin's classes to the book's semantic classes (`characterizations`), whence
-chapter 4's verdicts: verbs of emission are unergative, verbs of change of state, of inherently
-directed motion and of existence and appearance unaccusative whatever their agentivity, the
-run verbs unergative and the roll verbs unaccusative when nonagentive. The book's diagnostics
-in `Data/Examples/LevinRappaportHovav1995.json` sort the verbs the same way
-(`diagnostics_agree`).
+The linking rules of chapter 4 read three components of meaning off an argument: whether it is
+the immediate cause of the eventuality, whether it undergoes a directed change, and whether its
+existence is asserted or denied. The Immediate Cause Linking Rule (1) makes the immediate cause
+the external argument, the Directed Change (24) and Existence (47) Linking Rules make the other
+two direct internal arguments, and the Default Linking Rule (49) does the same for an argument
+no other rule reaches. Where several rules apply, the one of highest precedence decides, and a
+monadic verb is unaccusative when its sole argument is a direct internal argument.
+
+## Main definitions
+
+* `Ranking.position`: the position the rules assign an argument under a precedence order.
+* `ranking`: the order of §4.2.4, the Directed Change and Existence rules over the Immediate
+  Cause rule.
+* `Unaccusative`: the verb's sole argument is a direct internal argument.
+* `components`: the component sets of the classes in Appendix A, one per construal.
+
+## Main results
+
+* `position_eq_ranking_iff`: the argument of §4.2. The unergative internally caused verbs and
+  the unaccusative verbs that fall under two rules fix the position of every argument.
+* `mem_of_position_eq_ranking`: each of the three rules is needed.
+* `unaccusative_iff`: a verb is unergative exactly when its argument is the immediate cause and
+  nothing more.
+* `diagnostics_agree`: the diagnostics of chapter 4 sort the book's examples as the linking does.
+* `locativeInversion_not_diagnostic`: the examples of §6.2.2 show that locative inversion does
+  not.
 
 ## Implementation notes
 
+* A ranking lists the rules keyed to a component, highest precedence first, and the Default rule
+  follows them all. The book leaves the order of the Directed Change and Existence rules open
+  and raises the possibility that languages rank the rules differently (§4.2.4); `position_swap`
+  shows that the open order is immaterial.
 * A class the book discusses under several construals, such as the verbs of spatial
-  configuration in their simple, maintain and assume position senses, lists one
-  characterization per construal, and a data row records whether its verb is used agentively.
-* The relative order of the Directed Change and Existence rules, which the book leaves open
-  (§4.2.4), does not affect the position either assigns.
+  configuration in their simple, maintain and assume position senses, lists one component set
+  per construal. A data row records its verb's agentivity where the construals differ by it.
+* The rules link every argument of a verb, the cause and the patient of transitive *break*
+  alike (§4.1.2); the study classifies monadic verbs only.
 
 ## References
 
@@ -40,208 +59,255 @@ namespace LevinRappaportHovav1995
 
 open ArgumentStructure
 
-/-- What a verb's meaning says of an argument, as the linking rules read it: whether it is the
-immediate cause of the eventuality, so that the verb is internally caused (§3.2.1), whether it
-undergoes a directed change (§4.1.2), and whether its existence is asserted or denied
+/-- The components of a verb's meaning that the linking rules read off an argument (§4.2.4). An
+argument may be the immediate cause of the eventuality, which makes the verb internally caused
+(§3.2.1), undergo a directed change (§4.1.2), and have its existence asserted or denied
 (§4.1.3). -/
-structure Characterization where
-  immediateCause : Bool
-  directedChange : Bool
-  existence : Bool
-  deriving DecidableEq, Repr
+inductive Component
+  | immediateCause | directedChange | existence
+  deriving DecidableEq, Fintype, Repr
 
 /-- The argument-structure positions the rules assign. -/
 inductive Position
   | external | directInternal
   deriving DecidableEq, Repr
 
-/-- The four linking rules of chapter 4. -/
-inductive LinkingRule
-  /-- (1): the argument denoting the immediate cause is the external argument. -/
-  | immediateCause
-  /-- (24): the argument undergoing the directed change is the direct internal argument. -/
-  | directedChange
-  /-- (47): the argument whose existence is asserted or denied is the direct internal
-  argument. -/
-  | existence
-  /-- (49): an argument under the scope of no other rule is the direct internal argument. -/
-  | default
-  deriving DecidableEq, Repr
-
-namespace LinkingRule
-
-/-- The rule's scope. -/
-def Applies : LinkingRule → Characterization → Prop
-  | .immediateCause, c => c.immediateCause = true
-  | .directedChange, c => c.directedChange = true
-  | .existence, c => c.existence = true
-  | .default, c => c.immediateCause = false ∧ c.directedChange = false ∧ c.existence = false
-
-instance (r : LinkingRule) (c : Characterization) : Decidable (r.Applies c) := by
-  cases r <;> unfold Applies <;> infer_instance
-
-/-- The position the rule assigns. -/
-def position : LinkingRule → Position
+/-- The position assigned by the linking rule keyed to the component. The Immediate Cause Linking
+Rule (1) makes the immediate cause the external argument, and the Directed Change Linking Rule
+(24) and the Existence Linking Rule (47) make their arguments direct internal arguments. -/
+def Component.position : Component → Position
   | .immediateCause => .external
-  | _ => .directInternal
+  | .directedChange | .existence => .directInternal
 
-/-- Precedence (§4.2.4), lower first: the Directed Change and Existence rules over the
-Immediate Cause rule over the Default rule. -/
-def rank : LinkingRule → ℕ
-  | .directedChange | .existence => 0
-  | .immediateCause => 1
-  | .default => 2
+/-- A precedence order on the linking rules keyed to a component, highest first. -/
+abbrev Ranking := List Component
 
-end LinkingRule
+namespace Ranking
 
-/-- The rule that links the argument: the applicable rule of highest precedence. -/
-def link (c : Characterization) : LinkingRule :=
-  if c.directedChange then .directedChange else if c.existence then .existence
-  else if c.immediateCause then .immediateCause else .default
+variable (r : Ranking) (s : Finset Component)
 
-theorem link_applies (c : Characterization) : (link c).Applies c := by
-  rcases c with ⟨_ | _, _ | _, _ | _⟩ <;> decide
+/-- The applicable rule of highest precedence for an argument with the components `s`, `none`
+when only the Default Linking Rule (49) applies. -/
+def rule : Option Component := r.find? (· ∈ s)
 
-theorem link_rank_le (c : Characterization) (r : LinkingRule) (h : r.Applies c) :
-    (link c).rank ≤ r.rank := by
-  rcases c with ⟨_ | _, _ | _, _ | _⟩ <;> cases r <;> revert h <;> decide
+/-- The position of an argument with the components `s`, the direct internal position by the
+Default Linking Rule (49) when no other rule applies. -/
+def position : Position := (r.rule s).elim .directInternal Component.position
 
-/-- The verb is unaccusative: its sole argument is a direct internal argument. -/
-def Unaccusative (c : Characterization) : Prop := (link c).position = .directInternal
+theorem position_eq_external_iff :
+    r.position s = .external ↔ r.rule s = some .immediateCause := by
+  unfold position
+  rcases r.rule s with _ | ⟨_ | _ | _⟩ <;> simp [Component.position]
 
-/-- The verb is unergative: its sole argument is the external argument. -/
-def Unergative (c : Characterization) : Prop := (link c).position = .external
+theorem position_eq_directInternal_iff :
+    r.position s = .directInternal ↔ r.rule s ≠ some .immediateCause := by
+  rw [ne_eq, ← position_eq_external_iff]
+  cases r.position s <;> simp
 
-instance (c : Characterization) : Decidable (Unaccusative c) := inferInstanceAs (Decidable (_ = _))
-instance (c : Characterization) : Decidable (Unergative c) := inferInstanceAs (Decidable (_ = _))
+variable {r s}
 
-/-- Unaccusativity in one line: the argument undergoes a directed change, has its existence at
-issue, or is not the immediate cause. -/
-theorem unaccusative_iff (c : Characterization) : Unaccusative c ↔
-    c.directedChange = true ∨ c.existence = true ∨ c.immediateCause = false := by
-  rcases c with ⟨_ | _, _ | _, _ | _⟩ <;> decide
+theorem rule_eq_some_of_subset {t : Finset Component} {c : Component} (hst : s ⊆ t)
+    (h : r.rule t = some c) (hc : c ∈ s) : r.rule s = some c := by
+  obtain ⟨-, as, bs, rfl, has⟩ := List.find?_eq_some_iff_append.mp h
+  refine List.find?_eq_some_iff_append.mpr ⟨by simpa using hc, as, bs, rfl, fun a ha ↦ ?_⟩
+  simpa using fun h ↦ (by simpa using has a ha : a ∉ t) (hst h)
 
-/-! ### The verdicts of chapter 4 -/
+end Ranking
 
-/-- An internally caused verb whose argument neither undergoes a directed change nor has its
-existence at issue is unergative (§4.1.1): the agentive monadic verbs, verbs such as *cough*
-and *tremble*, the verbs of emission (§4.1.1.1) and the verbs of spatial configuration in their
-maintain position sense (§4.1.1.2). -/
-theorem internallyCaused_unergative : Unergative ⟨true, false, false⟩ := by decide
+/-- The precedence of §4.2.4, with the Directed Change and Existence Linking Rules over the
+Immediate Cause Linking Rule. The book infers it from verbs that fall under two rules
+(§4.2.1–§4.2.4). -/
+def ranking : Ranking := [.directedChange, .existence, .immediateCause]
 
-/-- A verb of directed change is unaccusative whatever its causation: the externally caused
-verbs of change of state (§4.1.2), the internally caused ones (§4.2.1), the verbs of inherently
-directed motion (§4.2.2) and the assume position sense (§4.2.3). -/
-theorem directedChange_unaccusative (ic ex : Bool) : Unaccusative ⟨ic, true, ex⟩ := by
-  cases ic <;> cases ex <;> decide
+theorem ranking_position_eq_external_iff {s : Finset Component} :
+    ranking.position s = .external ↔ s = {.immediateCause} := by
+  decide +revert
+
+/-- The order of the Directed Change and Existence rules, which the book leaves open (§4.2.4),
+does not affect the position of any argument. -/
+theorem position_swap :
+    Ranking.position [.existence, .directedChange, .immediateCause] = ranking.position := by
+  funext s
+  revert s
+  decide
+
+/-- A ranking assigns every argument the position the book's ranking does exactly when it makes
+an internally caused verb unergative (§4.1.1) and an internally caused verb of directed change
+(§4.2.1–§4.2.3) or of existence (§4.2.4) unaccusative. This is the argument of §4.2. -/
+theorem position_eq_ranking_iff (r : Ranking) : r.position = ranking.position ↔
+    r.position {.immediateCause} = .external ∧
+      r.position {.immediateCause, .directedChange} = .directInternal ∧
+      r.position {.immediateCause, .existence} = .directInternal := by
+  refine ⟨fun h ↦ by simp only [h]; decide, fun ⟨h₁, h₂, h₃⟩ ↦ funext fun s ↦ ?_⟩
+  have key : r.position s = .external ↔ ranking.position s = .external := by
+    rw [ranking_position_eq_external_iff]
+    refine ⟨fun h ↦ ?_, fun h ↦ h ▸ h₁⟩
+    rw [Ranking.position_eq_external_iff] at h
+    rw [Ranking.position_eq_directInternal_iff] at h₂ h₃
+    have hic : Component.immediateCause ∈ s := by simpa using List.find?_some h
+    refine Finset.eq_singleton_iff_unique_mem.mpr ⟨hic, fun c hc ↦ ?_⟩
+    have := Ranking.rule_eq_some_of_subset (t := s) (s := {.immediateCause, c})
+      (by simp [Finset.insert_subset_iff, hic, hc]) h (by simp)
+    cases c <;> first | rfl | contradiction
+  revert key
+  cases r.position s <;> cases ranking.position s <;> simp
+
+/-- Each rule is needed (§4.2). A ranking that assigns every argument the position the book's
+ranking does contains all three rules, since the Default rule could not take precedence over the
+Immediate Cause rule. -/
+theorem mem_of_position_eq_ranking {r : Ranking} (h : r.position = ranking.position)
+    (c : Component) : c ∈ r := by
+  obtain ⟨h₁, h₂, h₃⟩ := (position_eq_ranking_iff r).mp h
+  rw [Ranking.position_eq_external_iff] at h₁
+  rw [Ranking.position_eq_directInternal_iff] at h₂ h₃
+  have hic : Component.immediateCause ∈ r := List.mem_of_find?_eq_some h₁
+  have key {c : Component} (hc : r.rule {.immediateCause, c} ≠ some .immediateCause) :
+      c ∈ r := by
+    obtain ⟨d, hd⟩ := Option.isSome_iff_exists.mp
+      (List.find?_isSome.mpr ⟨_, hic, by simp⟩ : (r.rule {.immediateCause, c}).isSome)
+    obtain rfl | rfl : d = .immediateCause ∨ d = c := by simpa using List.find?_some hd
+    · exact absurd hd hc
+    · exact List.mem_of_find?_eq_some hd
+  cases c
+  exacts [hic, key h₂, key h₃]
+
+/-- A monadic verb is unaccusative when its sole argument is a direct internal argument. -/
+def Unaccusative (s : Finset Component) : Prop := ranking.position s = .directInternal
+
+instance : DecidablePred Unaccusative := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
+/-- A verb is unergative exactly when its argument is the immediate cause and neither undergoes
+a directed change nor has its existence at issue. -/
+theorem unaccusative_iff {s : Finset Component} : Unaccusative s ↔ s ≠ {.immediateCause} := by
+  rw [Unaccusative, ne_eq, ← ranking_position_eq_external_iff]
+  cases ranking.position s <;> simp
+
+/-- A verb of directed change is unaccusative whatever its causation. This covers the externally
+caused verbs of change of state (§4.1.2), the internally caused ones (§4.2.1), the verbs of
+inherently directed motion (§4.2.2) and the assume position sense (§4.2.3). -/
+theorem unaccusative_of_directedChange_mem {s : Finset Component}
+    (h : .directedChange ∈ s) : Unaccusative s :=
+  unaccusative_iff.mpr (by rintro rfl; simp at h)
 
 /-- A verb whose argument's existence is at issue is unaccusative whatever its causation
-(§4.1.3, §4.2.4): verbs of existence, appearance and disappearance. -/
-theorem existence_unaccusative (ic dc : Bool) : Unaccusative ⟨ic, dc, true⟩ := by
-  cases ic <;> cases dc <;> decide
+(§4.1.3, §4.2.4). -/
+theorem unaccusative_of_existence_mem {s : Finset Component} (h : .existence ∈ s) :
+    Unaccusative s :=
+  unaccusative_iff.mpr (by rintro rfl; simp at h)
 
-/-- The roll verbs used nonagentively fall under the Default rule alone and are unaccusative
-(§4.1.4). -/
-theorem default_unaccusative : Unaccusative ⟨false, false, false⟩ := by decide
+/-! ### Appendix A: Levin's classes -/
 
-/-! ### Appendix A: the classes of Levin 1993 -/
-
-/-- Appendix A's assignment of [levin-1993]'s intransitive classes to the book's semantic
-classes, one characterization per construal the book discusses: the verbs of emission are
-internally caused (§4.1.1.1); the verbs of inherently directed motion undergo a directed
-change, agentively or not (§4.2.2); the roll verbs are externally caused with no directed
-change, and internally caused when agentive (§4.1.4, §4.2.2); the run verbs are internally
-caused (§4.1.4); the verbs of existence, appearance, occurrence and disappearance have their
-argument's existence at issue, agentively or not (§4.1.3, §4.2.4); the verbs of spatial
-configuration assert existence in their simple position sense, are internally caused in their
-maintain position sense and add a directed change in their assume position sense (§4.1.1.2,
-§4.2.3); the verbs of change of state undergo a directed change, externally caused for the
-break, bend, cooking and other alternating verbs and internally caused for the entity-specific
-ones (§4.1.2, §4.2.1). -/
-def characterizations : LevinClass → List Characterization
-  | .lightEmission | .soundEmission | .smellEmission | .substanceEmission => [⟨true, false, false⟩]
-  | .inherentlyDirectedMotion => [⟨true, true, false⟩, ⟨false, true, false⟩]
-  | .roll => [⟨false, false, false⟩, ⟨true, false, false⟩]
-  | .run => [⟨true, false, false⟩]
-  | .exist | .appear | .occurrence | .disappearance => [⟨true, false, true⟩, ⟨false, false, true⟩]
-  | .spatialConfiguration => [⟨false, false, true⟩, ⟨true, false, false⟩, ⟨true, true, false⟩]
-  | .break_ | .bend | .cooking | .otherChangeOfState => [⟨false, true, false⟩]
-  | .entitySpecificChangeOfState => [⟨true, true, false⟩]
+/-- Appendix A's assignment of Levin's intransitive classes to the book's semantic classes, one
+component set per construal the book discusses. The verbs of emission are internally caused
+(§4.1.1.1); the verbs of inherently directed motion undergo a directed change, agentively or not
+(§4.2.2); the roll verbs are externally caused with no directed change, and internally caused
+when agentive (§4.1.4, §4.2.2); the run verbs are internally caused (§4.1.4); the verbs of
+existence have their argument's existence at issue, agentively or not (§4.2.4), and so do the
+verbs of appearance, occurrence and disappearance (§4.1.3); the verbs of spatial configuration
+assert existence in their simple position sense, are internally caused in their maintain
+position sense and add a directed change in their assume position sense (§4.1.1.2, §4.2.3); the
+verbs of change of state undergo a directed change, externally caused for the break, bend,
+cooking and other alternating verbs and internally caused for the entity-specific ones (§4.1.2,
+§4.2.1). -/
+def components : LevinClass → List (Finset Component)
+  | .lightEmission | .soundEmission | .smellEmission | .substanceEmission => [{.immediateCause}]
+  | .inherentlyDirectedMotion => [{.immediateCause, .directedChange}, {.directedChange}]
+  | .roll => [∅, {.immediateCause}]
+  | .run => [{.immediateCause}]
+  | .exist => [{.immediateCause, .existence}, {.existence}]
+  | .appear | .occurrence | .disappearance => [{.existence}]
+  | .spatialConfiguration =>
+    [{.existence}, {.immediateCause}, {.immediateCause, .directedChange}]
+  | .break_ | .bend | .cooking | .otherChangeOfState => [{.directedChange}]
+  | .entitySpecificChangeOfState => [{.immediateCause, .directedChange}]
   | _ => []
 
 /-- Verbs of emission are unergative (§4.1.1.1). -/
-theorem emission_unergative :
+theorem emission_not_unaccusative :
     ∀ c ∈ [LevinClass.lightEmission, .soundEmission, .smellEmission, .substanceEmission],
-      ∀ ch ∈ characterizations c, Unergative ch := by
+      ∀ s ∈ components c, ¬ Unaccusative s := by
   decide +kernel
 
 /-- Verbs of change of state are unaccusative, externally or internally caused (§4.1.2,
 §4.2.1). -/
 theorem changeOfState_unaccusative :
     ∀ c ∈ [LevinClass.break_, .bend, .cooking, .otherChangeOfState,
-      .entitySpecificChangeOfState], ∀ ch ∈ characterizations c, Unaccusative ch := by
+      .entitySpecificChangeOfState], ∀ s ∈ components c, Unaccusative s := by
   decide +kernel
 
 /-- Verbs of inherently directed motion are unaccusative whether used agentively or not
 (§4.2.2). -/
 theorem directedMotion_unaccusative :
-    ∀ ch ∈ characterizations .inherentlyDirectedMotion, Unaccusative ch := by
+    ∀ s ∈ components .inherentlyDirectedMotion, Unaccusative s := by
   decide
 
-/-- Verbs of existence, appearance, occurrence and disappearance are unaccusative whether
-used agentively or not (§4.1.3, §4.2.4). -/
+/-- Verbs of existence, appearance, occurrence and disappearance are unaccusative (§4.1.3), the
+verbs of existence whether used agentively or not (§4.2.4). -/
 theorem existence_classes_unaccusative :
     ∀ c ∈ [LevinClass.exist, .appear, .occurrence, .disappearance],
-      ∀ ch ∈ characterizations c, Unaccusative ch := by
+      ∀ s ∈ components c, Unaccusative s := by
   decide +kernel
 
 /-- The run verbs are unergative (§4.1.4). -/
-theorem run_unergative : ∀ ch ∈ characterizations .run, Unergative ch := by decide
+theorem run_not_unaccusative : ∀ s ∈ components .run, ¬ Unaccusative s := by decide
 
-/-- The roll verbs are unaccusative when nonagentive and unergative when agentive (§4.1.4,
-§4.2.2). -/
+/-- The roll verbs are unaccusative when nonagentive, by the Default Linking Rule, and unergative
+when agentive (§4.1.4, §4.2.2). -/
 theorem roll_variable :
-    (∃ ch ∈ characterizations .roll, ch.immediateCause = false ∧ Unaccusative ch) ∧
-      ∃ ch ∈ characterizations .roll, ch.immediateCause = true ∧ Unergative ch := by
+    (∃ s ∈ components .roll, .immediateCause ∉ s ∧ Unaccusative s) ∧
+      ∃ s ∈ components .roll, .immediateCause ∈ s ∧ ¬ Unaccusative s := by
   decide
 
 /-- Verbs of spatial configuration are unaccusative in their simple and assume position senses
 and unergative in their maintain position sense (§4.1.1.2, §4.2.3). -/
 theorem spatialConfiguration_variable :
-    (∃ ch ∈ characterizations .spatialConfiguration, ch.existence = true ∧ Unaccusative ch) ∧
-      (∃ ch ∈ characterizations .spatialConfiguration, ch.directedChange = true ∧
-        Unaccusative ch) ∧
-      ∃ ch ∈ characterizations .spatialConfiguration, ch.immediateCause = true ∧
-        ch.directedChange = false ∧ Unergative ch := by
+    (∃ s ∈ components .spatialConfiguration, .existence ∈ s ∧ Unaccusative s) ∧
+      (∃ s ∈ components .spatialConfiguration, .directedChange ∈ s ∧ Unaccusative s) ∧
+      ∃ s ∈ components .spatialConfiguration, .immediateCause ∈ s ∧ ¬ Unaccusative s := by
   decide
 
 /-! ### The diagnostics -/
 
-/-- The unaccusative diagnostics the data rows apply, by what acceptability indicates: the
-unergative resultative pattern, the X's way construction and a cognate object indicate an
-unergative verb, the unaccusative resultative pattern an unaccusative one (§4.1.1, §4.1.2,
-§4.1.4). Locative inversion and there-insertion rows are data, not diagnostics: chapter 6
-finds unergative verbs in locative inversion too. -/
-def diagnosticOf (ex : Datum) : Option Bool :=
-  ex.parse? "diagnostic" [("resultativeUnergativePattern", true), ("wayConstruction", true),
-    ("cognateObject", true), ("resultativeUnaccusativePattern", false)]
+/-- The position of a verb's sole argument that an acceptable instance of a row's diagnostic
+indicates. The unergative resultative pattern, the X's way construction and a cognate object
+indicate an external argument, the unaccusative resultative pattern a direct internal one
+(§4.1.1, §4.1.2, §4.1.4). Locative inversion and there-insertion are no diagnostics here, since
+chapter 6 finds unergative verbs in locative inversion too. -/
+def diagnosticOf (ex : Datum) : Option Position :=
+  ex.parse? "diagnostic" [("resultativeUnergativePattern", .external),
+    ("wayConstruction", .external), ("cognateObject", .external),
+    ("resultativeUnaccusativePattern", .directInternal)]
 
-/-- The class of a row's verb, by the book's section number. -/
+/-- The class of a row's verb, by Levin's section number. -/
 def classOf (ex : Datum) : Option LevinClass :=
   (ex.feature? "class").bind LevinClass.ofNumberString?
 
-/-- The construal of a row's verb: its characterization in the class with the row's
-agentivity. -/
-def construalOf (ex : Datum) : List Characterization :=
+/-- The construals of a row's verb are those of its class, narrowed by the row's agentivity where
+it records one. An agentive argument is the immediate cause (§4.1.1); the rows record agentivity
+only for verbs of motion and of spatial configuration, whose nonagentive construals lack an
+immediate cause (§4.1.1.2, §4.1.4). -/
+def construals (ex : Datum) : List (Finset Component) :=
   match classOf ex, ex.parse? "agentive" [("yes", true), ("no", false)] with
-  | some c, some a => (characterizations c).filter (·.immediateCause = a)
-  | _, _ => []
+  | some c, some a => (components c).filter fun s ↦ decide (.immediateCause ∈ s) == a
+  | some c, none => components c
+  | none, _ => []
 
-/-- Every diagnostic row is acceptable exactly when the verb's construal has the status the
-diagnostic indicates. -/
+/-- Every row has a construal, so no row drops out of `diagnostics_agree`. -/
+theorem construals_ne_nil : ∀ ex ∈ Examples.all, construals ex ≠ [] := by decide
+
+/-- Every diagnostic row is acceptable exactly when the linking puts the verb's argument in the
+position the diagnostic indicates. -/
 theorem diagnostics_agree :
-    ∀ ex ∈ Examples.all, ∀ unerg ∈ diagnosticOf ex, ∀ ch ∈ construalOf ex,
-      (ex.judgment = .acceptable ↔ if unerg then Unergative ch else Unaccusative ch) := by
+    ∀ ex ∈ Examples.all, ∀ p ∈ diagnosticOf ex, ∀ s ∈ construals ex,
+      (ex.judgment = .acceptable ↔ ranking.position s = p) := by
+  decide
+
+/-- Locative inversion is no unaccusative diagnostic (§6.2.2). An unaccusative verb of change of
+state is out of it, (18a), and an unergative verb of sound emission in it, (22a). -/
+theorem locativeInversion_not_diagnostic :
+    (Examples.ex6_18a.judgment ≠ .acceptable ∧ ∀ s ∈ construals Examples.ex6_18a, Unaccusative s) ∧
+      Examples.ex6_22a.judgment = .acceptable ∧
+      ∀ s ∈ construals Examples.ex6_22a, ¬ Unaccusative s := by
   decide
 
 end LevinRappaportHovav1995

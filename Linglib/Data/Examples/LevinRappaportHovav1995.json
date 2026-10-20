@@ -1,12 +1,9 @@
 [
   {
-    "id": "levinrappaporthovav1995_ex6_1",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(1) of chapter 6"
-    },
+    "id": "levinrappaporthovav1995_ex4_8",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(8) of chapter 4"},
     "language": "stan1293",
-    "primaryText": "In the distance appeared the towers and spires of a town which greatly resembled Oxford.",
+    "primaryText": "The beacons flared the news through the land.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -15,30 +12,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "locativeInversion"
-      ],
-      [
-        "verb",
-        "appear"
-      ],
-      [
-        "class",
-        "48.1.1"
-      ]
+      ["diagnostic", "resultativeUnergativePattern"],
+      ["verb", "flare"],
+      ["class", "43.1"]
     ],
-    "comment": "A corpus locative inversion, from Bromfield, The Farm, with a verb of appearance.",
+    "comment": "A verb of light emission in the unergative resultative pattern, cited from Lindkvist 1976.",
     "verified": "page-image"
   },
   {
-    "id": "levinrappaporthovav1995_ex6_4a",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(4a) of chapter 6"
-    },
+    "id": "levinrappaporthovav1995_ex4_9a",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(9a) of chapter 4"},
     "language": "stan1293",
-    "primaryText": "In the distance there appeared the towers and spires of a town which greatly resembled Oxford.",
+    "primaryText": "The phone rang me out of a dreamless oblivion at seven-fifteen.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -47,28 +32,176 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "thereInsertion"
-      ],
-      [
-        "verb",
-        "appear"
-      ],
-      [
-        "class",
-        "48.1.1"
-      ]
+      ["diagnostic", "resultativeUnergativePattern"],
+      ["verb", "ring"],
+      ["class", "43.2"]
     ],
-    "comment": "The there-insertion counterpart of (1).",
+    "comment": "A verb of sound emission in the unergative resultative pattern, a corpus example.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_9c",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(9c) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "Then he watched as it gurgled its way into a whiskey tumbler.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "wayConstruction"],
+      ["verb", "gurgle"],
+      ["class", "43.2"]
+    ],
+    "comment": "A verb of sound emission in the X's way construction with an inanimate subject, a corpus example.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_10a",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(10a) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The skunk stank us out of house and home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultativeUnergativePattern"],
+      ["verb", "stink"],
+      ["class", "43.3"]
+    ],
+    "comment": "A verb of smell emission in the unergative resultative pattern.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_10b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(10b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "He stank his smelly way home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "wayConstruction"],
+      ["verb", "stink"],
+      ["class", "43.3"]
+    ],
+    "comment": "A verb of smell emission in the X's way construction.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_25a",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(25a) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The bag broke open.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultativeUnaccusativePattern"],
+      ["verb", "break"],
+      ["class", "45.1"]
+    ],
+    "comment": "A verb of change of state with a resultative phrase predicated of its subject.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_25b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(25b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The toast burned black.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultativeUnaccusativePattern"],
+      ["verb", "burn"],
+      ["class", "45.4"]
+    ],
+    "comment": "A verb of change of state with a resultative phrase predicated of its subject.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_25c",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(25c) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The ice froze solid.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultativeUnaccusativePattern"],
+      ["verb", "freeze"],
+      ["class", "45.4"]
+    ],
+    "comment": "A verb of change of state with a resultative phrase predicated of its subject.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_28a",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(28a) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The mirror broke a jagged break.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "cognateObject"],
+      ["verb", "break"],
+      ["class", "45.1"]
+    ],
+    "comment": "A verb of change of state rejects a cognate object.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_28b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(28b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The toast burned its crust black.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultativeUnergativePattern"],
+      ["verb", "burn"],
+      ["class", "45.4"]
+    ],
+    "comment": "A verb of change of state rejects a nonsubcategorized object with a resultative phrase.",
     "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_31a",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(31a) of chapter 4"
-    },
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(31a) of chapter 4"},
     "language": "stan1293",
     "primaryText": "She arrived a glamorous arrival.",
     "discourseSegments": [],
@@ -79,32 +212,80 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "cognateObject"
-      ],
-      [
-        "verb",
-        "arrive"
-      ],
-      [
-        "class",
-        "51.1"
-      ],
-      [
-        "agentive",
-        "yes"
-      ]
+      ["diagnostic", "cognateObject"],
+      ["verb", "arrive"],
+      ["class", "51.1"],
+      ["agentive", "yes"]
     ],
     "comment": "A verb of inherently directed motion rejects a cognate object, consistent with an unaccusative classification.",
     "verified": "page-image"
   },
   {
+    "id": "levinrappaporthovav1995_ex4_31b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(31b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The apples fell a smooth fall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "cognateObject"],
+      ["verb", "fall"],
+      ["class", "51.1"],
+      ["agentive", "no"]
+    ],
+    "comment": "A verb of inherently directed motion rejects a cognate object.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_32a",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(32a) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The oil rose its way to the top.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "wayConstruction"],
+      ["verb", "rise"],
+      ["class", "51.1"],
+      ["agentive", "no"]
+    ],
+    "comment": "A verb of inherently directed motion rejects the X's way construction.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_32b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(32b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The apples fell their way into the crates.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "wayConstruction"],
+      ["verb", "fall"],
+      ["class", "51.1"],
+      ["agentive", "no"]
+    ],
+    "comment": "A verb of inherently directed motion rejects the X's way construction; the book notes that the inanimate subject is not the cause, since emission verbs take such subjects in it.",
+    "verified": "page-image"
+  },
+  {
     "id": "levinrappaporthovav1995_ex4_32c",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(32c) of chapter 4"
-    },
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(32c) of chapter 4"},
     "language": "stan1293",
     "primaryText": "She arrived her way to the front of the line.",
     "discourseSegments": [],
@@ -115,32 +296,59 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "wayConstruction"
-      ],
-      [
-        "verb",
-        "arrive"
-      ],
-      [
-        "class",
-        "51.1"
-      ],
-      [
-        "agentive",
-        "yes"
-      ]
+      ["diagnostic", "wayConstruction"],
+      ["verb", "arrive"],
+      ["class", "51.1"],
+      ["agentive", "yes"]
     ],
     "comment": "A verb of inherently directed motion rejects the X's way construction.",
     "verified": "page-image"
   },
   {
+    "id": "levinrappaporthovav1995_ex4_45a",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(45a) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The statue stood a heroic stance in the middle of the common.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "cognateObject"],
+      ["verb", "stand"],
+      ["class", "47.6"],
+      ["agentive", "no"]
+    ],
+    "comment": "A verb of spatial configuration in its simple position sense rejects a cognate object.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_45b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(45b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The city sprawled an extensive sprawl around the bay.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "cognateObject"],
+      ["verb", "sprawl"],
+      ["class", "47.6"],
+      ["agentive", "no"]
+    ],
+    "comment": "A verb of spatial configuration in its simple position sense rejects a cognate object.",
+    "verified": "page-image"
+  },
+  {
     "id": "levinrappaporthovav1995_ex4_50a",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(50a) of chapter 4"
-    },
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(50a) of chapter 4"},
     "language": "stan1293",
     "primaryText": "The jogger ran his soles thin.",
     "discourseSegments": [],
@@ -151,32 +359,38 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "resultativeUnergativePattern"
-      ],
-      [
-        "verb",
-        "run"
-      ],
-      [
-        "class",
-        "51.3.2"
-      ],
-      [
-        "agentive",
-        "yes"
-      ]
+      ["diagnostic", "resultativeUnergativePattern"],
+      ["verb", "run"],
+      ["class", "51.3.2"],
+      ["agentive", "yes"]
     ],
     "comment": "A run verb in the unergative resultative pattern, the result phrase predicated of a nonsubcategorized object.",
     "verified": "page-image"
   },
   {
+    "id": "levinrappaporthovav1995_ex4_50b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(50b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "Don't expect to swim yourself sober!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultativeUnergativePattern"],
+      ["verb", "swim"],
+      ["class", "51.3.2"],
+      ["agentive", "yes"]
+    ],
+    "comment": "A run verb in the unergative resultative pattern.",
+    "verified": "page-image"
+  },
+  {
     "id": "levinrappaporthovav1995_ex4_51a",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(51a) of chapter 4"
-    },
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(51a) of chapter 4"},
     "language": "stan1293",
     "primaryText": "The jogger ran sore.",
     "discourseSegments": [],
@@ -187,32 +401,38 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "resultativeUnaccusativePattern"
-      ],
-      [
-        "verb",
-        "run"
-      ],
-      [
-        "class",
-        "51.3.2"
-      ],
-      [
-        "agentive",
-        "yes"
-      ]
+      ["diagnostic", "resultativeUnaccusativePattern"],
+      ["verb", "run"],
+      ["class", "51.3.2"],
+      ["agentive", "yes"]
     ],
     "comment": "A run verb rejects the unaccusative resultative pattern.",
     "verified": "page-image"
   },
   {
+    "id": "levinrappaporthovav1995_ex4_51b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(51b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "Don't expect to swim sober!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultativeUnaccusativePattern"],
+      ["verb", "swim"],
+      ["class", "51.3.2"],
+      ["agentive", "yes"]
+    ],
+    "comment": "A run verb rejects a resultative phrase predicated of its subject.",
+    "verified": "page-image"
+  },
+  {
     "id": "levinrappaporthovav1995_ex4_52a",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(52a) of chapter 4"
-    },
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(52a) of chapter 4"},
     "language": "stan1293",
     "primaryText": "The door rolled open.",
     "discourseSegments": [],
@@ -223,32 +443,38 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "resultativeUnaccusativePattern"
-      ],
-      [
-        "verb",
-        "roll"
-      ],
-      [
-        "class",
-        "51.3.1"
-      ],
-      [
-        "agentive",
-        "no"
-      ]
+      ["diagnostic", "resultativeUnaccusativePattern"],
+      ["verb", "roll"],
+      ["class", "51.3.1"],
+      ["agentive", "no"]
     ],
     "comment": "A roll verb in the unaccusative resultative pattern, the result phrase predicated of the subject.",
     "verified": "page-image"
   },
   {
+    "id": "levinrappaporthovav1995_ex4_52b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(52b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The shutter swung shut.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultativeUnaccusativePattern"],
+      ["verb", "swing"],
+      ["class", "51.3.1"],
+      ["agentive", "no"]
+    ],
+    "comment": "A roll verb with a resultative phrase predicated of its subject.",
+    "verified": "page-image"
+  },
+  {
     "id": "levinrappaporthovav1995_ex4_53a",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(53a) of chapter 4"
-    },
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(53a) of chapter 4"},
     "language": "stan1293",
     "primaryText": "The door rolled itself open.",
     "discourseSegments": [],
@@ -259,32 +485,38 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "resultativeUnergativePattern"
-      ],
-      [
-        "verb",
-        "roll"
-      ],
-      [
-        "class",
-        "51.3.1"
-      ],
-      [
-        "agentive",
-        "no"
-      ]
+      ["diagnostic", "resultativeUnergativePattern"],
+      ["verb", "roll"],
+      ["class", "51.3.1"],
+      ["agentive", "no"]
     ],
     "comment": "A roll verb rejects the unergative resultative pattern with a fake reflexive.",
     "verified": "page-image"
   },
   {
+    "id": "levinrappaporthovav1995_ex4_53b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(53b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The shutter swung itself shut.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultativeUnergativePattern"],
+      ["verb", "swing"],
+      ["class", "51.3.1"],
+      ["agentive", "no"]
+    ],
+    "comment": "A roll verb rejects the unergative resultative pattern.",
+    "verified": "page-image"
+  },
+  {
     "id": "levinrappaporthovav1995_ex4_54a",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(54a) of chapter 4"
-    },
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(54a) of chapter 4"},
     "language": "stan1293",
     "primaryText": "The jogger ran his way to better health.",
     "discourseSegments": [],
@@ -295,32 +527,38 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "wayConstruction"
-      ],
-      [
-        "verb",
-        "run"
-      ],
-      [
-        "class",
-        "51.3.2"
-      ],
-      [
-        "agentive",
-        "yes"
-      ]
+      ["diagnostic", "wayConstruction"],
+      ["verb", "run"],
+      ["class", "51.3.2"],
+      ["agentive", "yes"]
+    ],
+    "comment": "A run verb in the X's way construction.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_54b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(54b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "Swim your way to a new you!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "wayConstruction"],
+      ["verb", "swim"],
+      ["class", "51.3.2"],
+      ["agentive", "yes"]
     ],
     "comment": "A run verb in the X's way construction.",
     "verified": "page-image"
   },
   {
     "id": "levinrappaporthovav1995_ex4_55a",
-    "source": {
-      "bibkey": "levin-hovav-1995",
-      "paperLabel": "(55a) of chapter 4"
-    },
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(55a) of chapter 4"},
     "language": "stan1293",
     "primaryText": "The pebbles rolled their way into the stream.",
     "discourseSegments": [],
@@ -331,24 +569,113 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "wayConstruction"
-      ],
-      [
-        "verb",
-        "roll"
-      ],
-      [
-        "class",
-        "51.3.1"
-      ],
-      [
-        "agentive",
-        "no"
-      ]
+      ["diagnostic", "wayConstruction"],
+      ["verb", "roll"],
+      ["class", "51.3.1"],
+      ["agentive", "no"]
     ],
     "comment": "A roll verb rejects the X's way construction.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_55b",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(55b) of chapter 4"},
+    "language": "stan1293",
+    "primaryText": "The ball bounced its way into the street.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "wayConstruction"],
+      ["verb", "bounce"],
+      ["class", "51.3.1"],
+      ["agentive", "no"]
+    ],
+    "comment": "A roll verb rejects the X's way construction.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex6_1",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(1) of chapter 6"},
+    "language": "stan1293",
+    "primaryText": "In the distance appeared the towers and spires of a town which greatly resembled Oxford.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "locativeInversion"],
+      ["verb", "appear"],
+      ["class", "48.1.1"]
+    ],
+    "comment": "A corpus locative inversion, from Bromfield, The Farm, with a verb of appearance.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex6_4a",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(4a) of chapter 6"},
+    "language": "stan1293",
+    "primaryText": "In the distance there appeared the towers and spires of a town which greatly resembled Oxford.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "thereInsertion"],
+      ["verb", "appear"],
+      ["class", "48.1.1"]
+    ],
+    "comment": "The there-insertion counterpart of (1).",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex6_18a",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(18a) of chapter 6"},
+    "language": "stan1293",
+    "primaryText": "On the top floor of the skyscraper broke many windows.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "locativeInversion"],
+      ["verb", "break"],
+      ["class", "45.1"]
+    ],
+    "comment": "An unaccusative verb of change of state is not found in locative inversion.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levinrappaporthovav1995_ex6_22a",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(22a) of chapter 6"},
+    "language": "stan1293",
+    "primaryText": "In the hall ticked the long-case clock that had been a wedding present from her parents.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "locativeInversion"],
+      ["verb", "tick"],
+      ["class", "43.2"]
+    ],
+    "comment": "A verb of sound emission in locative inversion with a locative PP, a corpus example from Lively, Perfect Happiness.",
     "verified": "page-image"
   }
 ]
