@@ -764,7 +764,6 @@ import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Processing.DiscriminativeLexicon.Coding
 import Linglib.Processing.DiscriminativeLexicon.Defs
 import Linglib.Processing.DiscriminativeLexicon.Measures
-import Linglib.Processing.DiscriminativeLexicon.Normed
 import Linglib.Processing.DiscriminativeLexicon.Realization
 import Linglib.Processing.DiscriminativeLexicon.Training
 import Linglib.Processing.Psychophysics.SignalDetection

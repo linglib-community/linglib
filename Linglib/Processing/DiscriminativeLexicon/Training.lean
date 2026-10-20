@@ -28,13 +28,15 @@ separates over form coordinates, so each column of `G` is a vector least-squares
 Baayen's appendix and their closed form `(SᵀQS)⁻¹SᵀQC`, the existence of trained matrices, the
 uniqueness of the fitted values `SG` and hence of the predicted forms at experienced meanings,
 the solution coset, and Heitmeier's identification of frequency-informed learning under `q` with
-endstate learning on the `√Q`-premultiplied experience.
+endstate learning on the `√Q`-premultiplied experience. Comprehension is the same regression
+with the two matrices exchanged, `CF = S`, so every result applies to it on the experience
+`⟨C, S⟩`.
 
 The normal equations make the weighted residuals orthogonal to every linear functional of the
-meanings. A trained lexicon therefore reproduces the observed forms on average over any set of
-usage events whose membership is such a functional: it sends the frequency-weighted centre of
-mass of the set's meanings to that of its forms, and under endstate learning centroid to
-centroid. Chuang, Bell, Tseng and Baayen and Lu, Chuang and Baayen observe this as the similarity
+meanings. A trained production matrix therefore reproduces the observed forms on average over
+any set of usage events whose membership is such a functional: it sends the frequency-weighted
+centre of mass of the set's meanings to that of its forms, and under endstate learning centroid
+to centroid. Chuang, Bell, Tseng and Baayen and Lu, Chuang and Baayen observe this as the similarity
 between the contours predicted from centroid embeddings and the average observed contours of
 word types and tone patterns.
 
@@ -44,7 +46,6 @@ word types and tone patterns.
 * `FrequencyVector`, `weightedLoss`: the weights of the usage events and the loss they weight.
 * `IsTrained`, `IsELTrained`: a mapping matrix minimises the weighted loss, under given or
   uniform weights.
-* `Linear.IsTrainedOn`: a lexicon's production matrix is trained on an experience.
 
 ## Main results
 
@@ -53,9 +54,9 @@ word types and tone patterns.
 * `IsTrained.mul_eq`, `existsUnique_isTrained_iff`: fitted values are unique, and the trained
   matrix is unique exactly when the experienced meanings span the meaning space.
 * `isELTrained_sqrtScale_iff`: FIL under `q` is EL on `TrainingExperience.sqrtScale`.
-* `Linear.IsTrainedOn.production_centerMass_eq_of_decodable`,
-  `Linear.IsELTrainedOn.production_centroid_eq_of_decodable`: a trained lexicon sends the centre
-  of mass of a linearly decodable set of meanings to the centre of mass of its forms.
+* `IsTrained.centerMass_vecMul_eq_of_decodable`, `IsELTrained.centroid_vecMul_eq_of_decodable`:
+  a trained mapping matrix sends the centre of mass of a linearly decodable set of meanings to the
+  centre of mass of its forms.
 
 ## References
 
@@ -286,7 +287,7 @@ variable {data q G}
 
 /-- In vector form the normal equations say that the `q`-weighted residual rows, weighted further
 by any linear functional of the meanings, sum to zero. -/
-theorem IsTrained.sum_smul_sub_eq_zero (hG : IsTrained data q G) (w : MeaningVec d →ₗ[ℝ] ℝ) :
+theorem IsTrained.sum_smul_sub_eq_zero (hG : IsTrained data q G) (w : MeaningVector d →ₗ[ℝ] ℝ) :
     ∑ i, (q i * w (data.S i)) • ((data.S * G) i - data.C i) = 0 := by
   obtain ⟨v, rfl⟩ := (dotProductEquiv ℝ (Fin d)).surjective w
   have h : v ᵥ* (data.Sᵀ * q.Q * (data.S * G - data.C)) = 0 := by
@@ -300,7 +301,7 @@ theorem IsTrained.sum_smul_sub_eq_zero (hG : IsTrained data q G) (w : MeaningVec
 /-- Whenever membership in a set `P` of usage events is a linear functional of the meanings, the
 `q`-weighted sums of the fitted and of the observed forms over `P` agree. -/
 theorem IsTrained.sum_smul_mul_eq_of_decodable (hG : IsTrained data q G) {P : Finset (Fin m)}
-    {w : MeaningVec d →ₗ[ℝ] ℝ} (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
+    {w : MeaningVector d →ₗ[ℝ] ℝ} (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
     ∑ i ∈ P, (q i : ℝ) • (data.S * G) i = ∑ i ∈ P, (q i : ℝ) • data.C i := by
   simpa only [hw, mul_ite, mul_one, mul_zero, ite_smul, zero_smul, Finset.sum_ite_mem,
     Finset.univ_inter, smul_sub, Finset.sum_sub_distrib, sub_eq_zero] using
@@ -321,7 +322,7 @@ theorem IsTrained.mul_eq (hq : ∀ i, 0 < q i) {G' : Matrix (Fin d) (Fin n) ℝ}
 
 /-- Trained matrices agree at every meaning in the span of the experienced ones. -/
 theorem IsTrained.vecMul_eq_of_mem_span (hq : ∀ i, 0 < q i) {G' : Matrix (Fin d) (Fin n) ℝ}
-    (hG : IsTrained data q G) (hG' : IsTrained data q G') {s : MeaningVec d}
+    (hG : IsTrained data q G) (hG' : IsTrained data q G') {s : MeaningVector d}
     (hs : s ∈ Submodule.span ℝ (Set.range data.S.row)) : s ᵥ* G = s ᵥ* G' := by
   have hker : Submodule.span ℝ (Set.range data.S.row) ≤ LinearMap.ker (toLin' (G - G')ᵀ) :=
     Submodule.span_le.mpr <| Set.range_subset_iff.mpr fun i ↦ by
@@ -341,17 +342,17 @@ theorem IsTrained.add_of_mul_eq_zero (hG : IsTrained data q G) {H : Matrix (Fin 
 
 /-- Off the span of experienced meanings training is underdetermined, since any trained matrix
 can be modified into another with a different prediction at an unexperienced meaning. -/
-theorem IsTrained.exists_vecMul_ne [NeZero n] (hG : IsTrained data q G) {s : MeaningVec d}
+theorem IsTrained.exists_vecMul_ne [NeZero n] (hG : IsTrained data q G) {s : MeaningVector d}
     (hs : s ∉ Submodule.span ℝ (Set.range data.S.row)) :
     ∃ G' : Matrix (Fin d) (Fin n) ℝ, IsTrained data q G' ∧ s ᵥ* G ≠ s ᵥ* G' := by
   obtain ⟨φ, hφ, hφs⟩ :
       ∃ φ ∈ (Submodule.span ℝ (Set.range data.S.row)).dualAnnihilator, φ s ≠ 0 := by
     simpa using mt (Subspace.forall_mem_dualAnnihilator_apply_eq_zero_iff _ s).mp hs
   obtain ⟨v, rfl⟩ := (dotProductEquiv ℝ (Fin d)).surjective φ
-  have hvec (x : MeaningVec d) : x ᵥ* vecMulVec v (Pi.single 0 1 : FormVec n) =
+  have hvec (x : MeaningVector d) : x ᵥ* vecMulVec v (Pi.single 0 1 : FormVector n) =
       dotProductEquiv ℝ (Fin d) v x • Pi.single 0 1 := by
     rw [vecMul_vecMulVec, dotProductEquiv_apply_apply, dotProduct_comm]
-  have hSH : data.S * vecMulVec v (Pi.single 0 1 : FormVec n) = 0 := ext_row fun i ↦ by
+  have hSH : data.S * vecMulVec v (Pi.single 0 1 : FormVector n) = 0 := ext_row fun i ↦ by
     rw [row_mul_eq_vecMul_row, hvec,
       (Submodule.mem_dualAnnihilator _).1 hφ _ (Submodule.subset_span ⟨i, rfl⟩), zero_smul]; rfl
   exact ⟨G + vecMulVec v (Pi.single 0 1), hG.add_of_mul_eq_zero hSH,
@@ -374,7 +375,7 @@ theorem existsUnique_isTrained_iff [NeZero n] (hq : ∀ i, 0 < q i) :
 /-- If some linear functional of the meanings reproduces column `j₀` of the observed forms
 exactly, so does every trained matrix under positive weights, on every training event. -/
 theorem IsTrained.mul_apply_eq_of_decodable (hq : ∀ i, 0 < q i) (hG : IsTrained data q G)
-    {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ} (hw : ∀ i, w (data.S i) = data.C i j₀) (i : Fin m) :
+    {j₀ : Fin n} {w : MeaningVector d →ₗ[ℝ] ℝ} (hw : ∀ i, w (data.S i) = data.C i j₀) (i : Fin m) :
     (data.S * G) i j₀ = data.C i j₀ := by
   obtain ⟨v, rfl⟩ := (dotProductEquiv ℝ (Fin d)).surjective w
   have hSv : data.S *ᵥ v = data.C.col j₀ := funext fun i' ↦ by
@@ -390,90 +391,45 @@ theorem IsTrained.mul_apply_eq_of_decodable (hq : ∀ i, 0 < q i) (hG : IsTraine
     mulVec_diagonal, ← col_mul_eq_mulVec_col, col_apply, col_apply] at h
   exact mul_left_cancel₀ (Real.sqrt_pos.2 (NNReal.coe_pos.2 (hq i))).ne' h
 
-/-! ### Trained lexicons -/
-
-namespace Linear
-
-variable (D : Linear ℝ (FormVec n) (MeaningVec d)) (data) (q)
-
-/-- Row `i` of the fitted forms is the production map at the `i`-th experienced meaning. -/
-theorem mul_productionMatrix_apply (i : Fin m) :
-    (data.S * D.productionMatrix) i = D.production (data.S i) :=
-  (D.production_eq_vecMul _).symm
-
-/-- `D` is **trained on** `data` under weights `q` if its production matrix is. Only the
-production side is constrained, as in the papers' production models. -/
-def IsTrainedOn : Prop := IsTrained data q D.productionMatrix
-
-/-- A DLM is **EL-trained** on `data` iff its production matrix is trained under uniform weights. -/
-abbrev IsELTrainedOn : Prop := D.IsTrainedOn data 1
-
-variable {D data q}
-
-/-- Two lexicons trained on the same experience and weights predict the same form at every
-experienced meaning, so the predicted forms, and with them the semantic support measures, are a
-property of the training experience rather than of the particular trained matrix. -/
-theorem IsTrainedOn.production_eq {D' : Linear ℝ (FormVec n) (MeaningVec d)}
-    (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q) (hq : ∀ i, 0 < q i) (i : Fin m) :
-    D.production (data.S i) = D'.production (data.S i) := by
-  rw [← mul_productionMatrix_apply, ← mul_productionMatrix_apply, IsTrained.mul_eq hq hD hD']
-
-/-- The predicted form is well-defined at novel meanings in the span of experienced ones. -/
-theorem IsTrainedOn.production_eq_of_mem_span {D' : Linear ℝ (FormVec n) (MeaningVec d)}
-    (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
-    {s : MeaningVec d} (hs : s ∈ Submodule.span ℝ (Set.range data.S.row)) :
-    D.production s = D'.production s := by
-  rw [production_eq_vecMul, production_eq_vecMul, IsTrained.vecMul_eq_of_mem_span hq hD hD' hs]
-
-/-- A trained lexicon's prediction at a linearly decodable form coordinate, the per-cue semantic
-support of [saito-tomaschek-baayen-2025], is the observed form value on every training event. -/
-theorem IsTrainedOn.production_apply_eq_of_decodable (hD : D.IsTrainedOn data q)
-    (hq : ∀ i, 0 < q i) {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
-    (hw : ∀ i, w (data.S i) = data.C i j₀) (i : Fin m) :
-    D.production (data.S i) j₀ = data.C i j₀ := by
-  rw [← mul_productionMatrix_apply]
-  exact IsTrained.mul_apply_eq_of_decodable hq hD hw i
+/-! ### Semantic support and centres of mass -/
 
 /-- *Semantic support for form* ([gahl-baayen-2024] appendix) at a form vector equals the
 observed form's own support whenever each coordinate the form vector touches is linearly
 decodable from the meanings. -/
-theorem IsTrainedOn.semanticSupport_eq_of_decodable (hD : D.IsTrainedOn data q)
-    (hq : ∀ i, 0 < q i) {c : FormVec n}
-    (hw : ∀ j, c j ≠ 0 → ∃ w : MeaningVec d →ₗ[ℝ] ℝ, ∀ i, w (data.S i) = data.C i j)
-    (i : Fin m) : D.semanticSupport (data.S i) c = data.C i ⬝ᵥ c := by
+theorem IsTrained.semanticSupport_eq_of_decodable (hG : IsTrained data q G) (hq : ∀ i, 0 < q i)
+    {c : FormVector n}
+    (hw : ∀ j, c j ≠ 0 → ∃ w : MeaningVector d →ₗ[ℝ] ℝ, ∀ i, w (data.S i) = data.C i j)
+    (i : Fin m) : semanticSupport G (data.S i) c = data.C i ⬝ᵥ c := by
   simp only [semanticSupport_apply, dotProduct]
   refine Finset.sum_congr rfl fun j _ ↦ ?_
   by_cases hc : c j = 0
   · simp [hc]
   · obtain ⟨w, hwj⟩ := hw j hc
-    rw [hD.production_apply_eq_of_decodable hq hwj i]
-
-/-! ### Centres of mass -/
+    rw [← mul_apply_eq_vecMul, hG.mul_apply_eq_of_decodable hq hwj i]
 
 /-- Whenever membership in a set `P` of usage events is a linear functional of the meanings, a
-lexicon trained under `q` sends the `q`-weighted centre of mass of `P`'s meanings to the
+mapping matrix trained under `q` sends the `q`-weighted centre of mass of `P`'s meanings to the
 `q`-weighted centre of mass of `P`'s observed forms. -/
-theorem IsTrainedOn.production_centerMass_eq_of_decodable (hD : D.IsTrainedOn data q)
-    {P : Finset (Fin m)} {w : MeaningVec d →ₗ[ℝ] ℝ}
+theorem IsTrained.centerMass_vecMul_eq_of_decodable (hG : IsTrained data q G)
+    {P : Finset (Fin m)} {w : MeaningVector d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
-    D.production (P.centerMass (fun i ↦ (q i : ℝ)) data.S.row) =
+    P.centerMass (fun i ↦ (q i : ℝ)) data.S.row ᵥ* G =
       P.centerMass (fun i ↦ (q i : ℝ)) data.C.row := by
-  have h := IsTrained.sum_smul_mul_eq_of_decodable hD hw
-  simp only [mul_productionMatrix_apply] at h
-  simp only [Finset.centerMass, map_smul, map_sum, row_apply', h]
+  have h := hG.sum_smul_mul_eq_of_decodable hw
+  rw [← vecMulLinear_apply]
+  simp only [Finset.centerMass, map_smul, map_sum]
+  simp only [vecMulLinear_apply, row_apply', ← mul_apply_eq_vecMul, h]
 
-/-- Under endstate learning the centre of mass is the centroid, so an EL-trained lexicon sends
-the centroid of the meanings of a nonempty linearly decodable set of usage events to the centroid
-of its observed forms, the similarity that [chuang-bell-tseng-baayen-2026] §3.4 and
+/-- Under endstate learning the centre of mass is the centroid, so an EL-trained mapping matrix
+sends the centroid of the meanings of a nonempty linearly decodable set of usage events to the
+centroid of its observed forms, the similarity that [chuang-bell-tseng-baayen-2026] §3.4 and
 [lu-chuang-baayen-2026] §4.4 report. -/
-theorem IsELTrainedOn.production_centroid_eq_of_decodable (hD : D.IsELTrainedOn data)
-    {P : Finset (Fin m)} (hP : P.Nonempty) {w : MeaningVec d →ₗ[ℝ] ℝ}
+theorem IsELTrained.centroid_vecMul_eq_of_decodable (hG : IsELTrained data G)
+    {P : Finset (Fin m)} (hP : P.Nonempty) {w : MeaningVector d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
-    D.production (P.centroid ℝ data.S.row) = P.centroid ℝ data.C.row := by
+    P.centroid ℝ data.S.row ᵥ* G = P.centroid ℝ data.C.row := by
   simpa [P.centroid_eq_centerMass hP, Finset.centerMass, ← Finset.smul_sum, hP.card_ne_zero] using
-    hD.production_centerMass_eq_of_decodable hw
-
-end Linear
+    hG.centerMass_vecMul_eq_of_decodable hw
 
 end
 

@@ -51,12 +51,12 @@ def cues (k : ℕ) (w : List Sym) : List (Augmented Sym) := (boundary 2 w).kFact
 /-- The multiple-hot row over an inventory `inv` marks with `1` the units satisfying `p`. -/
 def multiHot {N : ℕ} {α : Type*} (inv : Fin N → α) (p : α → Prop) [DecidablePred p] :
     Fin N → ℝ :=
-  fun j => if p (inv j) then 1 else 0
+  fun j ↦ if p (inv j) then 1 else 0
 
 /-- The row of the form matrix `C` for the form `w` is the indicator of its cues over the cue
 inventory. -/
 def cueVector [DecidableEq Sym] (k : ℕ) {N : ℕ} (inv : Fin N → Augmented Sym) (w : List Sym) :
-    FormVec N :=
+    FormVector N :=
   multiHot inv (· ∈ cues k w)
 
 /-! ### Meaning side -/

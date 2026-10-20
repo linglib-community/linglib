@@ -60,36 +60,38 @@ being told the patterns. Xu's laboratory contours match the predicted ones for s
 
 namespace LuChuangBaayen2026
 
-open DiscriminativeLexicon ChuangEtAl2026 Finset
+open DiscriminativeLexicon ChuangEtAl2026 Finset Matrix
 
 /-- The paper samples 100 f0 values per token in normalized time, centered and scaled per
 token (§4.1). -/
 abbrev PitchSampleCount : ℕ := 100
 
-/-- A pitch contour at the paper's resolution. -/
-abbrev PitchVector : Type := FormVec PitchSampleCount
-
-/-- The paper's DLM maps the 768-dimensional CKIP GPT-2 contextualized embeddings of
-[chuang-bell-tseng-baayen-2026] to 100-sample pitch vectors (§4.2). -/
-abbrev TaiwanMandarinDLM : Type := Linear ℝ PitchVector ContextualEmbedding
+/-- Right multiplication by a matrix commutes with centroids, as linear maps do. Stated over an
+abstract index type, since unifying `x ᵥ* G` with `G.vecMulLinear x` at `Fin 768` unfolds the
+sum and exhausts the recursion limit. -/
+private theorem centroid_vecMul {ι m n : Type*} [Fintype m] {T : Finset ι} (hT : T.Nonempty)
+    (p : ι → m → ℝ) (G : Matrix m n ℝ) :
+    T.centroid ℝ p ᵥ* G = T.centroid ℝ fun τ ↦ p τ ᵥ* G :=
+  G.vecMulLinear.map_centroid hT p
 
 /-- The centroid of a tone pattern averages the centroids of its word types `T`, each the mean
-over the tokens of the type (§4.4). If every word type of the pattern has a training token and is
-linearly decodable from the embeddings, a least-squares-trained production map sends the
-pattern's centroid embedding to the same average of its word types' mean target contours
-(Fig. 9). -/
+over the tokens of the type (§4.4). The production matrix `G` maps the 768-dimensional CKIP GPT-2
+contextualized embeddings of [chuang-bell-tseng-baayen-2026] to 100-sample pitch vectors
+(§4.2). If every word type of the pattern has a training token and is linearly decodable from
+the embeddings, a least-squares-trained `G` sends the pattern's centroid embedding to the same
+average of its word types' mean target contours (Fig. 9). -/
 theorem production_centroid_centroid_eq_of_decodable {m : ℕ} {W : Type*} [DecidableEq W]
-    {D : TaiwanMandarinDLM} {data : TrainingExperience m PitchSampleCount CKIPGPT2HiddenDim}
-    (hD : D.IsELTrainedOn data) (word : Fin m → W) {T : Finset W} (hT : T.Nonempty)
-    (hne : ∀ τ ∈ T, ∃ i, word i = τ)
+    {data : TrainingExperience m PitchSampleCount CKIPGPT2HiddenDim}
+    {G : Matrix (Fin CKIPGPT2HiddenDim) (Fin PitchSampleCount) ℝ} (hG : IsELTrained data G)
+    (word : Fin m → W) {T : Finset W} (hT : T.Nonempty) (hne : ∀ τ ∈ T, ∃ i, word i = τ)
     (hdec : ∀ τ ∈ T, ∃ ℓ : ContextualEmbedding →ₗ[ℝ] ℝ,
       ∀ i, ℓ (data.S i) = if word i = τ then 1 else 0) :
-    D.production (T.centroid ℝ fun τ ↦ (univ.filter (word · = τ)).centroid ℝ data.S.row) =
+    (T.centroid ℝ fun τ ↦ (univ.filter (word · = τ)).centroid ℝ data.S.row) ᵥ* G =
       T.centroid ℝ fun τ ↦ (univ.filter (word · = τ)).centroid ℝ data.C.row := by
-  rw [D.production.map_centroid hT, centroid_def, centroid_def]
+  rw [centroid_vecMul hT, centroid_def, centroid_def]
   refine affineCombination_congr _ (fun _ _ ↦ rfl) fun τ hτ ↦ ?_
   obtain ⟨ℓ, hℓ⟩ := hdec τ hτ
-  exact hD.production_centroid_eq_of_decodable (by simpa [filter_nonempty_iff] using hne τ hτ)
+  exact hG.centroid_vecMul_eq_of_decodable (by simpa [filter_nonempty_iff] using hne τ hτ)
     (by simpa using hℓ)
 
 end LuChuangBaayen2026
