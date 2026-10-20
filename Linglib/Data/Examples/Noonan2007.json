@@ -1,0 +1,86 @@
+[
+  {
+    "id": "noonan2007_214b",
+    "source": {"bibkey": "noonan-2007", "paperLabel": "(214b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I don't think that Floyd hit Roscoe",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Negated matrix, against (214a) I think that Floyd didn't hit Roscoe.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "lowerNeg", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "think"]
+    ],
+    "comment": "p. 101: the (b) sentences of (214)-(216) have a raised negative, read as their (a) sentences; footnote 21 notes (214b) is also ambiguous with true negation of the ctp.",
+    "verified": "page-image"
+  },
+  {
+    "id": "noonan2007_215b",
+    "source": {"bibkey": "noonan-2007", "paperLabel": "(215b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Zeke doesn't believe that Martians live in caves",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Negated matrix, against (215a) Zeke believes that Martians don't live in caves.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "lowerNeg", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "believe"]
+    ],
+    "comment": "p. 101: a raised negative, read as (215a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "noonan2007_216b",
+    "source": {"bibkey": "noonan-2007", "paperLabel": "(216b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Hugh doesn't want Mary Ann to win",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Negated matrix, against (216a) Hugh wants Mary Ann not to win.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "lowerNeg", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "want"]
+    ],
+    "comment": "p. 101: a raised negative, read as (216a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "noonan2007_218",
+    "source": {"bibkey": "noonan-2007", "paperLabel": "(218)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I don't regret that Floyd hit Roscoe",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Negated matrix, against (217) I regret that Floyd didn't hit Roscoe.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "lowerNeg", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "regret"]
+    ],
+    "comment": "p. 101: with regret the negative in the complement gives a different meaning, so (218) does not mean (217).",
+    "verified": "page-image"
+  }
+]

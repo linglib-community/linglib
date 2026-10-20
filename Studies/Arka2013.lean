@@ -163,11 +163,10 @@ def subordinator : String → Option Complementizer
   | _ => none
 
 /-- A clause projects I — the position of the TAM auxiliaries (16) — exactly when its coding is
-not reduced: a full clause anchors its own temporal axis, a reduced complement is a bare VP
-(17). -/
-def ProjectsI (c : Complement.Coding) : Prop := c.isReduced = false
+finite: a full clause anchors its own temporal axis, a reduced complement is a bare VP (17). -/
+def ProjectsI (c : Complement.Coding) : Prop := c.IsFinite
 
-instance : DecidablePred ProjectsI := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred ProjectsI := fun c ↦ inferInstanceAs (Decidable c.IsFinite)
 
 /-- The coding of the clause a verb's basic frame selects. -/
 def complementCoding (v : Verb) : Option Complement.Coding :=

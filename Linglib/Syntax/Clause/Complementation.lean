@@ -1,25 +1,30 @@
 module
 
-public import Mathlib.Order.Basic
-public import Mathlib.Data.Nat.Basic
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Complementation
+# Complement codings
 
-Noonan's cross-linguistic typology of complementation: the six morphological codings of a
-complement clause (`Complement.Coding`, in the row order of his summary table), and twelve of his
-fourteen classes of complement-taking predicate (`Complement.PredicateClass`) with their default
-reality status. The argument frames that select complements are in
-`Syntax/Category/Verb/ArgumentFrame/Basic.lean`, and control, the participant a diathesis
-identifies with the subject of its clausal complement, is `Diathesis.controller`.
-`Data/Complementation/Schema.lean` types its rows with these enums, the one deliberate
-theory-layer import in `Data/`.
+Noonan's cross-linguistic survey of complementation sorts complement clauses into six types by
+the part of speech of the predicate, the relation of the subject to the predicate, and the
+inflectional categories the clause carries (`Complement.Coding`). An argument frame records the
+coding of its clausal position (`ArgumentFrame.Position.clausal`), and a complementizer the coding
+of the clause it introduces (`Complementizer.coding`).
 
 ## Main definitions
 
-* `Complement.Coding`, `Complement.Coding.rank`: the complement codings and their table order.
-* `Complement.PredicateClass`, `RealityStatus`, `Complement.PredicateClass.realityStatus`: the
-  predicate classes and their realis or irrealis defaults.
+* `Complement.Coding`: the six complement types.
+* `Complement.Coding.IsFinite`: the coding is a clause whose verb can agree with its subject.
+* `Complement.Coding.IsSLike`: the coding is sentence-like, its predicate related to its
+  arguments as in a main clause.
+
+## Implementation notes
+
+A complement type is reduced when it has fewer syntactic and inflectional possibilities than an
+indicative main clause. That is a fact about a language's complement types rather than about the
+six labels, since the subjunctive is typically reduced but need not be, so no predicate on
+`Coding` states it; the predicate that is a fact about the labels is `Coding.IsSLike`.
 
 ## References
 
@@ -28,109 +33,46 @@ theory-layer import in `Data/`.
 
 @[expose] public section
 
-/-! ### Noonan complement typology -/
-
 namespace Complement
 
-/-- The six major complement types of [noonan-2007]'s survey, classified
-    by the morphological coding of the complement clause (part of speech
-    of its predicate, subject relation, inflectional range). -/
+/-- The six complement types of [noonan-2007]'s survey, in the order of its summary table. -/
 inductive Coding where
-  | indicative     -- Finite clause with indicative mood marking
-  | subjunctive    -- Finite clause with subjunctive/irrealis marking
-  | paratactic     -- Juxtaposed fully-inflected clause, no subordinator
-  | infinitive     -- Non-finite with "to" or equivalent
-  | nominalized    -- Gerund / action nominal
-  | participle     -- Participial complement
-  deriving DecidableEq, Repr
+  /-- A clause whose form is (nearly) that of a declarative main clause. -/
+  | indicative
+  /-- A sentence-like clause in a mood opposed to the indicative, whose inflectional range is
+  typically reduced. -/
+  | subjunctive
+  /-- A fully inflected clause juxtaposed to the matrix as a separate assertion, neither
+  subordinate nor introduced by a complementizer. -/
+  | paratactic
+  /-- A clause whose verb does not form a constituent with its subject or agree with it. -/
+  | infinitive
+  /-- A clause whose predicate is a noun, its subject related to it as a genitive. -/
+  | nominalized
+  /-- A clause whose predicate is an adjective or adverb modifying its subject. -/
+  | participle
+  deriving DecidableEq, Repr, Fintype
 
-/-- The coding is finite: an indicative, subjunctive or paratactic clause. -/
-def Coding.IsFinite : Coding → Prop
-  | .indicative | .subjunctive | .paratactic => True
-  | .infinitive | .nominalized | .participle => False
+namespace Coding
 
-instance : DecidablePred Coding.IsFinite := fun c ↦ by
-  cases c <;> unfold Coding.IsFinite <;> infer_instance
+/-- The finite codings are the indicative, the subjunctive and the paratactic, whose verb can
+agree with its subject as an infinitive's cannot. -/
+def IsFinite : Coding → Prop
+  | indicative | subjunctive | paratactic => True
+  | infinitive | nominalized | participle => False
 
-/-- Is this coding non-finite (infinitive, nominalized, participial)? -/
-def Coding.isReduced : Coding → Bool
-  | .infinitive  => true
-  | .nominalized => true
-  | .participle  => true
-  | _            => false
+instance : DecidablePred IsFinite := fun c ↦ by cases c <;> unfold IsFinite <;> infer_instance
 
-/-- Position in [noonan-2007]'s summary-table row order (indicative
-    first, participle last). A presentation order, not an inflectional
-    finiteness scale: paratactic complements carry the same inflectional
-    range as indicatives. -/
-def Coding.rank : Coding → Nat
-  | .indicative  => 0
-  | .subjunctive => 1
-  | .paratactic  => 2
-  | .infinitive  => 3
-  | .nominalized => 4
-  | .participle  => 5
+/-- A coding is sentence-like when its predicate stands in the relation to its subject and other
+arguments that it has in a main clause ([noonan-2007] §1.3.1), as in the indicative and the
+subjunctive. A paratactic clause is fully inflected but does not form a constituent with its
+subject. -/
+def IsSLike : Coding → Prop
+  | indicative | subjunctive => True
+  | paratactic | infinitive | nominalized | participle => False
 
-/-- The summary-table row order as a linear order. -/
-instance : LinearOrder Coding :=
-  .lift' Coding.rank fun a b => by
-    cases a <;> cases b <;> simp [Coding.rank]
+instance : DecidablePred IsSLike := fun c ↦ by cases c <;> unfold IsSLike <;> infer_instance
+
+end Coding
 
 end Complement
-
-/-- Twelve of [noonan-2007]'s fourteen classes of complement-taking predicate (§3.2;
-    predicates of fearing §3.2.6 and conjunctive predicates §3.2.14 are omitted), in
-    the chapter's presentation order with perception hoisted next to the
-    epistemic classes:
-    - Utterance/propAttitude/pretence: report/judge propositional content
-    - Commentative/knowledge: evaluate/know propositional content
-    - Perception: direct experience
-    - Desiderative/manipulative/modal: irrealis orientation
-    - Achievement/phasal: aspectual
-    - Negative: negation as the predicate -/
-inductive Complement.PredicateClass where
-  | utterance       -- say, tell, report
-  | propAttitude    -- believe, think, suppose
-  | pretence        -- pretend, act as if
-  | commentative    -- regret, be sorry
-  | knowledge       -- know, realize, discover
-  | perception      -- see, hear, feel
-  | desiderative    -- want, wish, hope
-  | manipulative    -- make, cause, persuade, order
-  | modal           -- can, must, should
-  | achievement     -- positive: manage, dare; negative: try, forget to, avoid (§3.2.10)
-  | phasal          -- start, stop, continue
-  /-- A CTP whose sole semantic content is sentential negation
-      ([noonan-2007] §3.2.13). Typologically rare; canonical examples
-      are Fijian *sega* and Shuswap negative predicates. English `avoid`,
-      `refrain`, `prevent` are NOT in this class — they are *negative
-      achievement* predicates (§3.2.10). -/
-  | negative
-  deriving DecidableEq, Repr, BEq
-
-/-- The fundamental realis/irrealis split that predicts complement type
-    selection. Realis CTPs tend toward indicative; irrealis toward
-    subjunctive/infinitive ([noonan-2007] §3.1.1). -/
-inductive RealityStatus where
-  | realis    -- CTP asserts or presupposes complement truth
-  | irrealis  -- CTP does not commit to complement truth
-  deriving DecidableEq, Repr
-
-/-- Default reality status of each predicate class, extending [noonan-2007]'s
-    realis/irrealis mood distinction (§3.1.1) from complement roles to
-    predicate classes. The phasal and perception assignments are extensions:
-    Noonan assigns their complements determined time reference, not a
-    mood value. -/
-def Complement.PredicateClass.realityStatus : Complement.PredicateClass → RealityStatus
-  | .utterance    => .realis
-  | .propAttitude => .realis
-  | .pretence     => .irrealis
-  | .commentative => .realis
-  | .knowledge    => .realis
-  | .perception   => .realis
-  | .desiderative => .irrealis
-  | .manipulative => .irrealis
-  | .modal        => .irrealis
-  | .achievement  => .irrealis
-  | .phasal       => .realis
-  | .negative     => .irrealis

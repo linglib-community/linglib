@@ -156,8 +156,6 @@ import Linglib.Core.Probability.UniformOn
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.RingTheory.Bialgebra.Primitive
-import Linglib.Data.Complementation.Noonan2007
-import Linglib.Data.Complementation.Schema
 import Linglib.Data.Examples.Abusch1997
 import Linglib.Data.Examples.AghaJeretic2022
 import Linglib.Data.Examples.AhnZhu2025
