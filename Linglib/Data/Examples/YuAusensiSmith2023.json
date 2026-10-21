@@ -1,5 +1,113 @@
 [
   {
+    "id": "yuausensismith2023_16a",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(16a)"},
+    "language": "stan1293",
+    "primaryText": "The toddler broke his hands bloody.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"],
+      ["judgedBy", "Rappaport Hovav and Levin"]
+    ],
+    "comment": "Repeated as (38). The paper reproduces the star from its source and puts the deviance down to direct causation and world knowledge (§3.3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_16b",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(16b)"},
+    "language": "stan1293",
+    "primaryText": "The clumsy child broke the beauty out of the vase.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"],
+      ["judgedBy", "Rappaport Hovav and Levin"]
+    ],
+    "comment": "The paper reproduces the star from its source and puts the deviance down to direct causation and world knowledge (§3.3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_17a",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(17a)"},
+    "language": "stan1293",
+    "primaryText": "Kelly broke the dishes valueless.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"],
+      ["judgedBy", "Rappaport Hovav and Levin"]
+    ],
+    "comment": "The paper reproduces the star from its source and puts the deviance down to direct causation and world knowledge (§3.3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_17b",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(17b)"},
+    "language": "stan1293",
+    "primaryText": "Bill broke the vase worthless.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"],
+      ["judgedBy", "Jackendoff"]
+    ],
+    "comment": "The paper reproduces the star from its source and puts the deviance down to direct causation and world knowledge (§3.3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_18a",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(18a)"},
+    "language": "stan1293",
+    "primaryText": "The rocket burned into the hotel.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"],
+      ["judgedBy", "Jackendoff"]
+    ],
+    "comment": "A spatial resultative. The paper reproduces the star from its source and puts the deviance down to direct causation and world knowledge (§3.3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_18b",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(18b)"},
+    "language": "stan1293",
+    "primaryText": "The water froze out of the bottle.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"],
+      ["judgedBy", "Jackendoff"]
+    ],
+    "comment": "A spatial resultative. The paper reproduces the star from its source and puts the deviance down to direct causation and world knowledge (§3.3).",
+    "verified": "page-image"
+  },
+  {
     "id": "yuausensismith2023_23",
     "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(23)"},
     "language": "stan1293",
@@ -36,6 +144,44 @@
       ["root class", "property concept"]
     ],
     "comment": "One sharpening suffices. The paper attributes the example to Beavers and Koontz-Garboden 2020.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_24b",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(24b)"},
+    "language": "stan1293",
+    "primaryText": "The producer lengthened the film again.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A film producer makes a 4 hour long film, which is significantly longer than the norm. She is pressured to reduce its length, so cuts it to be two hours. But then the director and actors protest, so she restores it to 4 hours.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "restitutive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "again"],
+      ["root class", "property concept"]
+    ],
+    "comment": "One lengthening suffices. The paper attributes the example to Beavers and Koontz-Garboden 2020.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_24c",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(24c)"},
+    "language": "stan1293",
+    "primaryText": "Kim enlarged the photograph again.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Kim takes a photo that is too large to use as a Facebook profile photo. She shrinks it to a more appropriate size, but thinks it does not look good. So she restores it to its original size and puts it on her personal website instead.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "restitutive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "again"],
+      ["root class", "property concept"]
+    ],
+    "comment": "One enlarging suffices. The paper attributes the example to Beavers and Koontz-Garboden 2020.",
     "verified": "page-image"
   },
   {
@@ -179,6 +325,25 @@
     "verified": "page-image"
   },
   {
+    "id": "yuausensismith2023_fn11i",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "fn. 11 (i)"},
+    "language": "stan1293",
+    "primaryText": "Jill thawed the meat for 1 minute.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Jill is an astronaut in a space station currently in outer space and had a piece of frozen meat she wanted to eat. She left it out to thaw but because things freeze so quickly in outer space, it only managed to stay thawed for 1 minute before it refroze.",
+    "judgment": "unacceptable",
+    "readings": [
+      {"name": "internal", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "for-phrase"],
+      ["root class", "change of state"]
+    ],
+    "comment": "An anonymous reviewer accepts the internal reading in this context; the authors do not.",
+    "verified": "page-image"
+  },
+  {
     "id": "yuausensismith2023_30",
     "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(30)"},
     "language": "stan1293",
@@ -230,6 +395,91 @@
     "verified": "page-image"
   },
   {
+    "id": "yuausensismith2023_31c",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(31c)"},
+    "language": "stan1293",
+    "primaryText": "We cooled the people out of the room with the air-conditioner on too high.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "property concept"]
+    ],
+    "comment": "Cannot mean that we caused the people to be out of the room by cooling (the room). The paper attributes the example to Rappaport Hovav 2008.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_31d",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(31d)"},
+    "language": "stan1293",
+    "primaryText": "Kim dimmed her eyes sore.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "property concept"]
+    ],
+    "comment": "Cannot mean that Kim caused her eyes to become sore by dimming (the lights). The paper attributes the example to Beavers and Koontz-Garboden 2012.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_31e",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(31e)"},
+    "language": "stan1293",
+    "primaryText": "I thinned the soup tasteless.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "property concept"]
+    ],
+    "comment": "Cannot mean that I caused the soup to become tasteless by thinning (the soup). The paper attributes the example to Rappaport Hovav 2014.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_31f",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(31f)"},
+    "language": "stan1293",
+    "primaryText": "My kid cleared his bedroom empty.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "property concept"]
+    ],
+    "comment": "Cannot mean that my kid caused his bedroom to become empty by clearing (his room). Based on Kennedy 2012.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_35a",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(35a)"},
+    "language": "stan1293",
+    "primaryText": "With a few slices of her claws, she tore him free.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"]
+    ],
+    "comment": "Corpus example with an unselected object: him does not come to be torn, though something is entailed to be torn (36).",
+    "verified": "page-image"
+  },
+  {
     "id": "yuausensismith2023_35b",
     "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(35b)"},
     "language": "stan1293",
@@ -261,6 +511,93 @@
       ["root class", "change of state"]
     ],
     "comment": "Web example with an unselected object.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_36",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(36)"},
+    "language": "stan1293",
+    "primaryText": "With a few slices of her claws, she tore him free... but nothing actually got torn.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "entailment denial"],
+      ["root class", "change of state"]
+    ],
+    "comment": "The continuation denies that anything came to be torn.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_37a",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(37a)"},
+    "language": "stan1293",
+    "primaryText": "The hammer-head broke off but nothing broke.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "entailment denial"],
+      ["root class", "change of state"],
+      ["judgedBy", "Rappaport Hovav"]
+    ],
+    "comment": "The continuation denies that anything broke.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_37b",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(37b)"},
+    "language": "stan1293",
+    "primaryText": "The squash split open but there was no split in it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "entailment denial"],
+      ["root class", "change of state"],
+      ["judgedBy", "Rappaport Hovav"]
+    ],
+    "comment": "The continuation denies that anything split.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_44",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(44)"},
+    "language": "stan1293",
+    "primaryText": "John broke his hands bloody.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John broke his hands. It was such a severe fracture that the sharp edges of the broken bones in his hand pierced through his flesh when they broke and he bled profusely.",
+    "judgment": "questionable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"]
+    ],
+    "comment": "A part-whole construal: the broken bones pierce the flesh, so the breaking causes the bleeding only through an intermediate event, against direct causation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "yuausensismith2023_45",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(45)"},
+    "language": "stan1293",
+    "primaryText": "John opened the door into the garden.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "There was a door leading to the garden. The hinges were really loose and the door was on the verge of falling off them. John wanted to go out to his garden to tend to his plants. He opened the door with too much force, however, and the door broke off its hinges and fell onto his garden lawn.",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "property concept"]
+    ],
+    "comment": "The context does not improve it. Grammatical if the PP is inside the DP headed by door (fn. 18).",
     "verified": "page-image"
   }
 ]

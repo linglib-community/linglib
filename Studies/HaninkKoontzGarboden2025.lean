@@ -198,9 +198,9 @@ variable {Event : Type*} (M : ArgumentStructure.EventStructure.Interpretation E 
 /-- A resultative bipartite verb, the causative head over the initial's manner and the
 change-of-state head over the final's root, entails the result state of its theme, the bare
 predication of the final's root. -/
-theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event → Prop} {x y : E}
-    {v : Event} (h : M.vCause (fun e ↦ manner e ∧ M.vBecome P x e) y v) : ∃ s, P x s :=
-  let ⟨_, _, _, _, s, _, hs⟩ := h
+theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event → Prop} {x : E} {v : Event}
+    (h : M.vCause (fun e ↦ manner e ∧ M.vBecome P x e) v) : ∃ s, P x s :=
+  let ⟨_, _, _, s, _, hs⟩ := h
   ⟨s, hs⟩
 
 /-! ### The stems of the appendix -/

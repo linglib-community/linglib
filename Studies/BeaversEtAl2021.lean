@@ -15,12 +15,14 @@ on which change is introduced by the verbal template and never by a root.
 
 A root entails change exactly when its stative cannot be conjoined with a denial of change
 (`entailsChange_iff_forall_not_deniesChange`), and with such a root restitutive *again*
-presupposes an earlier change. The morphology follows
-from a default realization rule: a verb is unmarked iff its root entails change, and a stative
-is unmarked iff its complement does not, and in a model that respects a root's signature the
-rule agrees with the semantics (`entailsChange_of_verbRealization_eq_unmarked`). A language that
-spells out the unmarked form only when it spells out the marked one belongs to one of the three
-attested types (`Exponence.trichotomy`).
+presupposes an earlier change. A root passes either diagnostic in some model that respects its
+signature exactly when it does not entail change (`passes_iff`), and the examples agree outside
+the expected lexical variation (`rows`). The morphology follows from a default realization rule:
+a verb is unmarked iff its root entails change, and a stative is unmarked iff its complement does
+not, and in a model that respects a root's signature the rule agrees with the semantics
+(`entailsChange_of_verbRealization_eq_unmarked`). A language that spells out the unmarked form
+only when it spells out the marked one belongs to one of the three attested types
+(`Exponence.trichotomy`).
 
 ## Implementation notes
 
@@ -262,20 +264,81 @@ theorem oromo_long :
 
 /-! ### The judgments -/
 
-/-- A stative survives the denial of change in the examples exactly when its root is a
-property-concept root, setting aside (13), acceptable only to the speakers for whom *broken* has
-drifted to a 'not functioning' sense. -/
-theorem changeDenial_acceptable_iff :
-    ∀ e ∈ Examples.all, e.feature? "diagnostic" = some "change denial" →
-      e.feature? "judgedBy" ≠ some "some speakers" →
-      (e.judgment = .acceptable ↔ e.feature? "root class" = some "property concept") := by
-  decide
+/-- The two diagnostics of a root's change entailment. -/
+inductive Diagnostic
+  /-- The stative survives a denial that a change gave rise to its state. -/
+  | changeDenial
+  /-- *Again* at the state presupposes an earlier state, and no earlier change. -/
+  | restitutive
+  deriving DecidableEq
 
-/-- Outside Kakataibo no result root is accepted with restitutive *again*. -/
-theorem restitutive_unacceptable_of_result :
-    ∀ e ∈ Examples.all, e.feature? "diagnostic" = some "restitutive again" →
-      e.language ≠ "cash1251" → e.feature? "root class" = some "result" →
-      e.judgment = .unacceptable := by
-  decide
+section Diagnostics
+
+open ModalLogic
+
+universe u
+
+variable {Entity : Type*} {State Event : Type u}
+
+/-- The state description `P` of a root, applied to `x`, passes the diagnostic, with `R`
+relating a state to the earlier ones. -/
+def Diagnostic.Passes (M : ArgumentStructure.EventStructure.Interpretation Entity State Event)
+    (R : SetRel State State) (P : Entity → State → Prop) (x : Entity) : Diagnostic → Prop
+  | .changeDenial => ∃ s, DeniesChange M P x s
+  | .restitutive => ∃ s, BeaversKoontzGarboden2020.againAt M .state R P x x s ≠ 0 ∧
+      ¬ ◇[R] (fun s' ↦ ∃ e, M.become s' e) s
+
+end Diagnostics
+
+/-- A root of signature `ks` passes the diagnostic when its state description passes it in some
+model that respects the signature. -/
+def Passes (ks : Root.Kinds) (g : Diagnostic) : Prop :=
+  ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation Unit State Event)
+    (P : Unit → State → Prop) (R : SetRel State State), M.Respects P ⊤ ks ∧ g.Passes M R P ()
+
+/-- A root without a manner passes either diagnostic exactly when it does not entail change. -/
+theorem passes_iff {ks : Root.Kinds} (hm : Root.Kind.manner ∉ ks) (g : Diagnostic) :
+    Passes ks g ↔ Root.Kind.result ∉ Root.Kinds.close ks := by
+  refine ⟨fun ⟨_, _, M, P, R, hR, hg⟩ hr ↦ ?_, fun hr ↦ ⟨Bool, Unit, forged, sharp,
+    {p | p.2 < p.1}, fun k hk ↦ ?_, ?_⟩⟩
+  · have hc := hR.entailsChange hr
+    cases g with
+    | changeDenial =>
+      obtain ⟨s, hs⟩ := hg
+      exact (entailsChange_iff_forall_not_deniesChange M).1 hc () s hs
+    | restitutive =>
+      obtain ⟨s, ha, hn⟩ := hg
+      exact hn (BeaversKoontzGarboden2020.exists_become_of_againAt_state_ne_zero hc ha)
+  · cases k with
+    | state => trivial
+    | manner => exact absurd hk hm
+    | result => exact absurd (Root.Kinds.mem_close.2 ⟨_, hk, le_rfl⟩) hr
+    | cause => exact absurd (Root.Kinds.mem_close.2 ⟨_, hk, .result_cause⟩) hr
+  · cases g with
+    | changeDenial => exact ⟨false, forged_deniesChange⟩
+    | restitutive => exact ⟨true, forged_restitutive⟩
+
+/-- The signature of a row's root, the least of its class. -/
+def kinds? (d : Datum) : Option Root.Kinds :=
+  d.parse? "root class"
+    [("property concept", Root.Kinds.propertyConcept), ("result", Root.Kinds.pureResult)]
+
+/-- The diagnostic a row tests. -/
+def diagnostic? (d : Datum) : Option Diagnostic :=
+  d.parse? "diagnostic" [("change denial", .changeDenial), ("restitutive again", .restitutive)]
+
+/-- A row is accepted exactly when its root passes its diagnostic, setting aside the expected
+variation: (13), acceptable to the speakers for whom *broken* has drifted to a 'not functioning'
+sense, and Kakataibo, whose result root in (26) means 'not alive'. -/
+theorem rows : ∀ d ∈ Examples.all, ∀ ks ∈ kinds? d, ∀ g ∈ diagnostic? d,
+    (d.judgment = .acceptable ↔ Passes ks g) ∨ d.feature? "judgedBy" = some "some speakers" ∨
+      d.language = "cash1251" := by
+  have h : ∀ d ∈ Examples.all, ∀ ks ∈ kinds? d, ∀ g ∈ diagnostic? d, Root.Kind.manner ∉ ks ∧
+      ((d.judgment = .acceptable ↔ Root.Kind.result ∉ Root.Kinds.close ks) ∨
+        d.feature? "judgedBy" = some "some speakers" ∨ d.language = "cash1251") := by
+    decide
+  intro d hd ks hks g hg
+  obtain ⟨hm, h⟩ := h d hd ks hks g hg
+  rwa [passes_iff hm]
 
 end BeaversEtAl2021
