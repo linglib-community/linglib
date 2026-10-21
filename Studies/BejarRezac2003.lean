@@ -153,10 +153,10 @@ def Head.derive (F : Head) (ns : List Nominal) : List Nominal :=
 
 /-- The Person Licensing Condition holds of a domain when every nominal with an interpretable
 1st/2nd person feature has had it licensed (§3). -/
-def PLC (ns : List Nominal) : Prop := ∀ n ∈ ns, n.cell.IsParticipant → n.licensed = true
+def PLC (ns : List Nominal) : Prop := ∀ n ∈ ns, n.cell.IsSAP → n.licensed = true
 
 instance : DecidablePred PLC := fun ns ↦
-  inferInstanceAs (Decidable (∀ n ∈ ns, n.cell.IsParticipant → n.licensed = true))
+  inferInstanceAs (Decidable (∀ n ∈ ns, n.cell.IsSAP → n.licensed = true))
 
 /-- The applicative preposition assigns dative to its complement (§4). -/
 def applicative : Head := { case := .dat }
@@ -190,7 +190,7 @@ theorem v_derive_doc (cd ca : Bundle) :
 /-- The double object construction obeys the condition iff its theme is 3rd person, whatever the
 dative ((1), (7)). -/
 theorem doc_plc_iff (cd ca : Bundle) :
-    PLC (v.derive [dat cd, caseless ca]) ↔ ¬ ca.IsParticipant := by
+    PLC (v.derive [dat cd, caseless ca]) ↔ ¬ ca.IsSAP := by
   rw [v_derive_doc]
   simp [PLC]
 
@@ -240,7 +240,7 @@ nominative's φ-features end up above the dative, because the dative cannot sati
 theorem dnc_plc_iff (can : Nominal → Bool) (hcan : ∀ c, can (caseless c) = true) (x0 : Bool)
     (cd cn : Bundle) :
     PLC (({ case := .nom, epp := some can, agrX0 := x0 } : Head).derive [dat cd, caseless cn]) ↔
-      (can (dat cd) = true ∧ x0 = false → ¬ cn.IsParticipant) := by
+      (can (dat cd) = true ∧ x0 = false → ¬ cn.IsSAP) := by
   cases h : can (dat cd) <;> cases x0 <;>
     simp [Head.derive, raise, piAgree, numAgree, agreeWith, Probe.search, Probe.relativized, h,
       hcan, PLC]

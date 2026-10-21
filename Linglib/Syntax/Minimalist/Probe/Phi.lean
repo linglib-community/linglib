@@ -2,7 +2,6 @@ module
 
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Syntax.Agreement.Paradigm
-public import Linglib.Syntax.Minimalist.Agree.PersonSegment
 public import Linglib.Syntax.Case.Basic
 
 /-!
@@ -15,7 +14,6 @@ valued Case.
 
 ## Main definitions
 
-* `Agreement.Bundle.IsParticipant`: a cell bears the [participant] segment.
 * `Minimalist.Probe.Target`, `Agreement.Bundle.visibleTo`: the features a relativized probe
   seeks, and the cells that bear them.
 * `Minimalist.Probe.Target.toProbe`: a target's denotation as a `Probe` over φ-cells.
@@ -24,20 +22,12 @@ valued Case.
 ## References
 
 * [preminger-2014]
-* [harley-ritter-2002]
 * [chomsky-2000]
 -/
 
 @[expose] public section
 
 namespace Minimalist
-
-/-- A cell bears the [participant] segment, by the person geometry of [harley-ritter-2002]. -/
-def _root_.Agreement.Bundle.IsParticipant (c : Agreement.Bundle) : Prop :=
-  PersonSegment.participant ∈ PersonSegment.spec c.person
-
-instance : DecidablePred Agreement.Bundle.IsParticipant :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
 /-- The feature a relativized φ-probe seeks. -/
 inductive Probe.Target where
@@ -50,7 +40,7 @@ inductive Probe.Target where
 /-- A φ-cell is visible to a relativized probe when it bears the feature the probe seeks; the
 probe skips the cells that lack it. -/
 def _root_.Agreement.Bundle.visibleTo (c : Agreement.Bundle) : Probe.Target → Bool
-  | .participant => decide c.IsParticipant
+  | .participant => decide c.IsSAP
   | .plural => decide c.IsPlural
 
 /-- A `Probe.Target` denotes the probe over φ-cells relativized to the feature it seeks, π⁰ being

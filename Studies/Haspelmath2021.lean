@@ -45,7 +45,7 @@ with the anti-efficient language of §11.3 that the universals exclude.
   Greek's rules on the ternary person scale are antitone and still violate Universal 5
   (`yukaghirP_greekT_ternary_antitone`, `yukaghirP_ternary_violates`,
   `greekT_ternary_violates`). The ternary scales appear only where the paper's rule refers to
-  them: `PersonRank` for Kashmiri, `Animacy` for Sardinian, Spanish, Fore and Awtuw,
+  them: `Person.prominence` for Kashmiri, `Animacy` for Sardinian, Spanish, Fore and Awtuw,
   `Nominality` for Baule.
 * Universal 1's qualification to asymmetric coding is dropped: with coding lengths as the
   coding, a symmetric split has equal lengths and satisfies the universal vacuously, as
@@ -100,37 +100,6 @@ without its optional specific-indefinite level is `Definiteness`, with Eastern
 Khanty's specific P (37) read at the definite end; the givenness scale is `BinaryGivenness`;
 and the focus scale of (8b), background above focus, is the dual of focus marking,
 `Focus.Markᵒᵈ`, its more prominent end the unfocused one. -/
-
-/-- The ternary person scale of (47a) ranks first above second above third, as `Person.prominence`
-does through `ofPerson`; `Person.Class` is its coarsening at the locuphoric cut. -/
-inductive PersonRank where
-  | third
-  | second
-  | first
-  deriving DecidableEq, Fintype, Repr
-
-namespace PersonRank
-
-/-- Rank on the ternary person scale. -/
-def rank : PersonRank → ℕ
-  | .third => 0
-  | .second => 1
-  | .first => 2
-
-instance : LinearOrder PersonRank := LinearOrder.lift' rank (by decide)
-
-/-- A person's rank is read off its prominence, so the clusivity-marked firsts rank first. -/
-def ofPerson (p : Person) : PersonRank :=
-  match p.prominence with
-  | ⊥ => .third
-  | some .participant => .second
-  | some .author => .first
-
-theorem ofPerson_le_ofPerson {p q : Person} :
-    ofPerson p ≤ ofPerson q ↔ p.prominence ≤ q.prominence := by
-  revert p q; decide
-
-end PersonRank
 
 /-- The nominality scale of (8a) ranks person forms, independent or index, above full nominals;
 the ternary scale of (49a) is `Nominality`. -/
@@ -599,8 +568,8 @@ theorem yukaghir_monadic_yurok_dyadic :
 /-- Kolyma Yukaghir's and Greek's rules on the ternary person scale are antitone in the order of
 scenarios, as the binary rules are. -/
 theorem yukaghirP_greekT_ternary_antitone :
-    Antitone (below PersonRank.second ∘ Scenario.high) ∧
-      Antitone (atLeast PersonRank.second ∘ Scenario.low) :=
+    Antitone (below (Person.prominence .second) ∘ Scenario.high) ∧
+      Antitone (atLeast (Person.prominence .second) ∘ Scenario.low) :=
   ⟨(below_antitone _).comp_monotone Scenario.high_mono,
     (atLeast_monotone _).comp_antitone Scenario.low_anti⟩
 
@@ -608,23 +577,25 @@ theorem yukaghirP_greekT_ternary_antitone :
 person, violates Universal 5, as every non-constant monadic split on a ternary scale does
 (`ScenarioUniversal.comp_high_le`). -/
 theorem yukaghirP_ternary_violates :
-    ¬ ScenarioUniversal (below PersonRank.second ∘ Scenario.high) :=
+    ¬ ScenarioUniversal (below (Person.prominence .second) ∘ Scenario.high) :=
   fun h ↦ absurd
-    (h.comp_high_le (by decide : PersonRank.third < PersonRank.second)
-      (by decide : PersonRank.second < PersonRank.first) .third .first) (by decide)
+    (h.comp_high_le (by decide : Person.prominence .third < Person.prominence .second)
+      (by decide : Person.prominence .second < Person.prominence .first)
+      (Person.prominence .third) (Person.prominence .first)) (by decide)
 
 /-- Modern Greek's rule on the ternary person scale (47a) violates Universal 5 likewise, since the
 downstream `1 > 2` is coded longer than the balanced `3 > 3`. -/
 theorem greekT_ternary_violates :
-    ¬ ScenarioUniversal (atLeast PersonRank.second ∘ Scenario.low) :=
+    ¬ ScenarioUniversal (atLeast (Person.prominence .second) ∘ Scenario.low) :=
   fun h ↦ absurd
-    (h.comp_low_le (by decide : PersonRank.third < PersonRank.second)
-      (by decide : PersonRank.second < PersonRank.first) .first .third) (by decide)
+    (h.comp_low_le (by decide : Person.prominence .third < Person.prominence .second)
+      (by decide : Person.prominence .second < Person.prominence .first)
+      (Person.prominence .first) (Person.prominence .third)) (by decide)
 
 /-! ### Relative scenario splits (§8) -/
 
-/-- Kashmiri puts P in the dative unless A outranks P on the ternary person scale, as in (47). -/
-def kashmiriP : Scenario PersonRank → ℕ := below .downstream ∘ Scenario.kind
+/-- Kashmiri puts P in the dative unless A outranks P on the person hierarchy, as in (47). -/
+def kashmiriP : Scenario (WithBot Person.Feature) → ℕ := below .downstream ∘ Scenario.kind
 
 /-- Fore flags A with the ergative only when P outranks A in animacy (§8). -/
 def foreA : Scenario Animacy → ℕ := below .balanced ∘ Scenario.kind
@@ -636,10 +607,17 @@ def awtuwP : Scenario Animacy → ℕ := below .downstream ∘ Scenario.kind
 (49). -/
 def bauleT : Scenario Nominality → ℕ := below .downstream ∘ Scenario.kind
 
-/-- Kashmiri's full probe ranks a person by the segments it bears, one more than its rank on the
-ternary person scale. -/
-theorem kashmiri_rank :
-    BejarRezac2009.kashmiri.rank = (fun r : PersonRank ↦ r.rank + 1) ∘ PersonRank.ofPerson := by
+/-- The person features up to a prominence, one for each step of the hierarchy. -/
+private def featuresUpTo (r : WithBot Person.Feature) : ℕ :=
+  (Finset.univ.filter fun f : Person.Feature ↦ (f : WithBot Person.Feature) ≤ r).card
+
+/-- Kashmiri's full probe ranks a person by the segments it bears, one more than its person
+features. -/
+theorem kashmiri_rank (p : Person) : BejarRezac2009.kashmiri.rank p = p.toFeatures.card + 1 := by
+  cases p <;> decide
+
+private theorem kashmiri_rank_eq :
+    BejarRezac2009.kashmiri.rank = (featuresUpTo · + 1) ∘ Person.prominence := by
   funext p; cases p <;> decide
 
 open Minimalist.CyclicAgree in
@@ -648,14 +626,14 @@ makes inverse, where their Table 11 puts the internal argument in R-Case, so the
 the failed licensing of the external argument pick out the same scenarios, those that are not
 downstream on the person scale, by which the full probe ranks persons. -/
 theorem kashmiriP_iff_isInverse (s : Scenario Person) :
-    kashmiriP (s.map PersonRank.ofPerson) = 1 ↔ BejarRezac2009.kashmiri.IsInverse s := by
-  have hm : StrictMono fun r : PersonRank ↦ r.rank + 1 := fun _ _ h ↦ Nat.succ_lt_succ h
-  have hs : s.map ((fun r : PersonRank ↦ r.rank + 1) ∘ PersonRank.ofPerson) =
-      (s.map PersonRank.ofPerson).map fun r ↦ r.rank + 1 := rfl
+    kashmiriP (s.map Person.prominence) = 1 ↔ BejarRezac2009.kashmiri.IsInverse s := by
+  have hm : StrictMono (featuresUpTo · + 1) := by decide
+  have hs : s.map ((featuresUpTo · + 1) ∘ Person.prominence) =
+      (s.map Person.prominence).map (featuresUpTo · + 1) := rfl
   rw [AgreementSystem.IsInverse, AgreementSystem.isDirect_iff_kind_eq_downstream _ _
-    PersonGeometry.standard_isChain, kashmiri_rank, hs, Scenario.kind_map hm]
+    PersonGeometry.standard_isChain, kashmiri_rank_eq, hs, Scenario.kind_map hm]
   simp only [kashmiriP, Function.comp_apply]
-  generalize (s.map PersonRank.ofPerson).kind = k
+  generalize (s.map Person.prominence).kind = k
   revert k; decide
 
 /-- The relative scenario splits are relative and obey Universal 10 (§8). -/
@@ -818,8 +796,10 @@ def Person.Class.table : List (String × Person.Class) :=
   [("locuphoric", .participant), ("aliophoric", .nonParticipant),
     ("1", .participant), ("2", .participant), ("3", .nonParticipant)]
 
-/-- The person tags of the rows, as the ternary scale. -/
-def PersonRank.table : List (String × PersonRank) := [("1", .first), ("2", .second), ("3", .third)]
+/-- The person tags of the rows, as the person hierarchy. -/
+def prominenceTable : List (String × WithBot Person.Feature) :=
+  [("1", Person.prominence .first), ("2", Person.prominence .second),
+    ("3", Person.prominence .third)]
 
 /-- The nominality tags of the rows. -/
 def BinaryNominality.table : List (String × BinaryNominality) :=
@@ -897,7 +877,7 @@ theorem rows_scenario :
         (scenario? BinaryNominality.table) americanEnglishR ∧
       Reproduces (rows "mode1248" "T" "person") (scenario? Person.Class.table) greekT ∧
       Reproduces (rows "icel1247" "R" "animacy") (scenario? BinaryAnimacy.table) icelandicR ∧
-      Reproduces (rows "kash1277" "P" "person") (scenario? PersonRank.table) kashmiriP ∧
+      Reproduces (rows "kash1277" "P" "person") (scenario? prominenceTable) kashmiriP ∧
       Reproduces (rows "baou1238" "T" "nominal type") (scenario? Nominality.table) bauleT ∧
       Reproduces (rows "iton1250" "verb" "person") (scenario? Person.Class.table) itonamaV := by
   decide

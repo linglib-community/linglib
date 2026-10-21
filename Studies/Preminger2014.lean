@@ -90,25 +90,25 @@ def afMarker (subj obj : Bundle) : Option (List Morphology.Morph) :=
   if Plc subj obj then some (((afTarget subj obj).map exponent).getD []) else none
 
 /-- The person restriction (25) allows at most one core argument to bear [participant]. -/
-def PersonRestriction (subj obj : Bundle) : Prop := ¬ (subj.IsParticipant ∧ obj.IsParticipant)
+def PersonRestriction (subj obj : Bundle) : Prop := ¬ (subj.IsSAP ∧ obj.IsSAP)
 
 instance : DecidableRel PersonRestriction := fun s o ↦
-  inferInstanceAs (Decidable ¬ (s.IsParticipant ∧ o.IsParticipant))
+  inferInstanceAs (Decidable ¬ (s.IsSAP ∧ o.IsSAP))
 
 /-! ### Relativized probing (§4.2, §4.4) -/
 
 /-- Under skipping the slot reflects a participant if either argument is one, the subject first,
 otherwise a plural argument, and otherwise nothing (66), (73). -/
 theorem afTarget_eq (s o : Bundle) :
-    afTarget s o = if s.IsParticipant then some s else if o.IsParticipant then some o
+    afTarget s o = if s.IsSAP then some s else if o.IsSAP then some o
       else if s.IsPlural then some s else if o.IsPlural then some o else none := by
-  by_cases h1 : s.IsParticipant <;> by_cases h2 : o.IsParticipant <;>
+  by_cases h1 : s.IsSAP <;> by_cases h2 : o.IsSAP <;>
     by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
     simp [afTarget, piProbe, numProbe, Probe.Target.toProbe, Bundle.visibleTo, Probe.cascade,
       Probe.search, Probe.relativized, List.find?_cons, h1, h2, h3, h4]
 
 /-- The rank of a cell on the hierarchy (23) puts [participant] above [plural] above the rest. -/
-def rank (c : Bundle) : ℕ := if c.IsParticipant then 2 else if c.IsPlural then 1 else 0
+def rank (c : Bundle) : ℕ := if c.IsSAP then 2 else if c.IsPlural then 1 else 0
 
 /-- The probes derive the hierarchy, since the slot reflects the higher-ranked argument, the
 subject at a tie, and nothing when both rank lowest. -/
@@ -116,7 +116,7 @@ theorem afTarget_eq_rank (s o : Bundle) :
     afTarget s o = if rank s = 0 ∧ rank o = 0 then none
       else if rank o ≤ rank s then some s else some o := by
   rw [afTarget_eq]
-  by_cases h1 : s.IsParticipant <;> by_cases h2 : o.IsParticipant <;>
+  by_cases h1 : s.IsSAP <;> by_cases h2 : o.IsSAP <;>
     by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
     simp [rank, h1, h2, h3, h4]
 
@@ -146,7 +146,7 @@ arguments (76), since a single person probe licenses at most one [participant] f
 theorem personRestriction_iff_plc (s o : Bundle) : PersonRestriction s o ↔ Plc s o := by
   unfold PersonRestriction Plc piProbe Probe.Target.toProbe
   rw [Probe.relativized_allLicensed_iff]
-  by_cases hs : s.IsParticipant <;> by_cases ho : o.IsParticipant <;>
+  by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;>
     simp [Bundle.visibleTo, hs, ho]
 
 /-- The marker is undefined exactly when the person restriction is violated; two plural
@@ -158,13 +158,13 @@ theorem afMarker_eq_none_iff (s o : Bundle) : afMarker s o = none ↔ ¬ PersonR
 /-- The clitic is featurally coarse (68), (69). With one participant argument, the marker is
 that argument's whole exponent, its number included, whether it is the subject or the object
 and whatever the other argument's number. -/
-theorem participant_marker (s o : Bundle) (h : ¬ (s.IsParticipant ∧ o.IsParticipant)) :
-    (s.IsParticipant → afMarker s o = some (exponent s)) ∧
-      (o.IsParticipant → afMarker s o = some (exponent o)) := by
+theorem participant_marker (s o : Bundle) (h : ¬ (s.IsSAP ∧ o.IsSAP)) :
+    (s.IsSAP → afMarker s o = some (exponent s)) ∧
+      (o.IsSAP → afMarker s o = some (exponent o)) := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 h
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
   refine ⟨fun hs ↦ by simp [hs], fun ho ↦ ?_⟩
-  have hs : ¬ s.IsParticipant := fun hs ↦ h ⟨hs, ho⟩
+  have hs : ¬ s.IsSAP := fun hs ↦ h ⟨hs, ho⟩
   simp [hs, ho]
 
 /-! ### Obligatory operations (chapter 5) -/
@@ -180,7 +180,7 @@ theorem afTarget_eq_none_iff (s o : Bundle) :
 
 /-- Failed Agree is tolerated (112), (113). With no participant and no plural argument, both
 probes end unvalued, the derivation converges, and the slot carries the null exponent. -/
-theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant)
+theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP)
     (hsp : ¬ s.IsPlural) (hop : ¬ o.IsPlural) :
     afTarget s o = none ∧ afMarker s o = some [] := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 fun h ↦ hs h.1
@@ -189,7 +189,7 @@ theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬
 
 /-- There is no gratuitous nonagreement (114). With no participant argument, a plural argument
 must be agreed with, and the slot carries its exponent, the subject's first. -/
-theorem plural_marker (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant) :
+theorem plural_marker (s o : Bundle) (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP) :
     (s.IsPlural → afMarker s o = some (exponent s)) ∧
       (¬ s.IsPlural → o.IsPlural → afMarker s o = some (exponent o)) := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 fun h ↦ hs h.1

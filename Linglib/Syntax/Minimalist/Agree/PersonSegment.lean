@@ -27,6 +27,9 @@ default.
 ## Main results
 
 * `Minimalist.PersonSegment.spec_isLowerSet`: a person bears whatever its segments depend on.
+* `Minimalist.PersonSegment.participant_mem_spec_iff`,
+  `Minimalist.PersonSegment.speaker_mem_spec_iff`: the segments [participant] and [speaker] are
+  `Person.IsSAP` and `Person.IncludesSpeaker`.
 
 ## Implementation notes
 
@@ -92,6 +95,15 @@ theorem mem_spec {s : PersonSegment} {p : Person} : s ∈ spec p ↔ s.toNode �
 /-- A person bears whatever its segments depend on. -/
 theorem spec_isLowerSet (p : Person) : IsLowerSet (↑(spec p) : Set PersonSegment) :=
   fun _ _ h ha ↦ mem_spec.2 (personFeatures_isLowerSet p h (mem_spec.1 ha))
+
+/-- A person bears [participant] iff it includes a speech-act participant. -/
+theorem participant_mem_spec_iff {p : Person} : participant ∈ spec p ↔ p.IsSAP := by
+  revert p; decide
+
+/-- A person bears [speaker] iff it includes the speaker, a bare [participant] receiving [speaker]
+by default. -/
+theorem speaker_mem_spec_iff {p : Person} : speaker ∈ spec p ↔ p.IncludesSpeaker := by
+  revert p; decide
 
 end PersonSegment
 
