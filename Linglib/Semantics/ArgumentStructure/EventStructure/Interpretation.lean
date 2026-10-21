@@ -14,9 +14,10 @@ themselves are operators on predicates. `vBecome` turns a state predicate into t
 the events that give rise to such a state, and `vCause` turns an event predicate into the
 predicate of the events that cause such an event.
 
-A state predicate may itself entail a change, a cause of the change, or a manner of the causing
-event. These are the meaning postulates that Beavers and Koontz-Garboden attach to the state
-predicate of a root, one for each kind of entailment. The postulates of a kind signature form a
+A state predicate may itself entail a change or a cause of the change, and a manner predicate
+describes actions. These are the meaning postulates that Beavers and Koontz-Garboden attach to
+a root, one for each kind of entailment, with one more for a root that carries both a manner and
+a cause, whose manner is that of the causing event. The postulates of a kind signature form a
 theory, and an interpretation `Respects` the signature for a predicate when it is a model of
 that theory. An entailment is then a statement about every interpretation, and a failure of
 entailment is witnessed by one.
@@ -25,8 +26,9 @@ entailment is witnessed by one.
 
 * `EventStructure.Interpretation`: the relations `become`, `cause` and `effector`.
 * `Interpretation.vBecome`, `Interpretation.vCause`: the two heads.
-* `Interpretation.EntailsChange`, `EntailsCause`, `EntailsManner`: the postulates on a state
-  predicate.
+* `Interpretation.EntailsChange`, `EntailsCause`: the postulates on a state predicate.
+* `Interpretation.EntailsManner`, `EntailsMannerOfCause`: a manner describes actions, and is the
+  manner of the cause of a change.
 * `Interpretation.Respects`: the interpretation is a model of the postulates of a signature.
 
 ## Main results
@@ -41,15 +43,6 @@ entailment is witnessed by one.
 The sorts are type parameters, so a relation cannot be applied to an argument of the wrong sort.
 mathlib's first-order structures are single-sorted; a view of an interpretation as such a
 structure, with the postulates as sentences, is not yet defined.
-
-## TODO
-
-The manner postulate is a condition on the state predicate and entails change
-(`EntailsManner.entailsChange`), the manner of Beavers and Koontz-Garboden's √drown, which
-restricts the cause of a change. For the pure manner signature of √jog it then requires every
-state of the predicate to arise from a change, while the order on kinds keeps manner apart from
-result, and the book's feature (11b) is that the root describes an action, a condition on the
-event predicate `Q`. The two manners want separate postulates.
 
 ## References
 
@@ -116,9 +109,13 @@ def EntailsChange : Prop := ∀ x s, P x s → ∃ e, M.become s e
 change that some event causes. -/
 def EntailsCause : Prop := ∀ x s, P x s → ∃ e v, M.become s e ∧ M.cause v e
 
-/-- The state predicate `P` entails the manner `Q` when every state of which it holds arises
-from a change whose every cause is a `Q`-event. -/
-def EntailsManner : Prop := ∀ x s, P x s → ∃ e, M.become s e ∧ ∀ v, M.cause v e → Q v
+/-- The manner `Q` describes actions, the book's feature (11b): every eventuality of the manner
+has an effector. -/
+def EntailsManner : Prop := ∀ v, Q v → ∃ y, M.effector y v
+
+/-- The manner `Q` is the manner of the cause of a change of state, as with √drown and √hand, when
+every state of which `P` holds arises from a change whose every cause is a `Q`-event. -/
+def EntailsMannerOfCause : Prop := ∀ x s, P x s → ∃ e, M.become s e ∧ ∀ v, M.cause v e → Q v
 
 /-- The meaning postulate of a kind of root entailment for the state predicate `P`, with `Q` the
 manner. A state imposes nothing beyond the predicate itself. -/
@@ -126,18 +123,21 @@ def Entails : Root.Kind → Prop
   | .state => True
   | .result => M.EntailsChange P
   | .cause => M.EntailsCause P
-  | .manner => M.EntailsManner P Q
+  | .manner => M.EntailsManner Q
 
 /-- The interpretation respects the kind signature `ks` for `P` and `Q` when it is a model of the
-postulates of its kinds. -/
-def Respects (ks : Root.Kinds) : Prop := ∀ k ∈ ks, M.Entails P Q k
+postulates of its kinds, and of the manner of the cause where `ks` has both. -/
+def Respects (ks : Root.Kinds) : Prop :=
+  (∀ k ∈ ks, M.Entails P Q k) ∧
+    (Root.Kind.manner ∈ ks → Root.Kind.cause ∈ ks → M.EntailsMannerOfCause P Q)
 
 variable {M P Q}
 
 theorem EntailsCause.entailsChange (h : M.EntailsCause P) : M.EntailsChange P :=
   fun x s hs ↦ let ⟨e, _, hb, _⟩ := h x s hs; ⟨e, hb⟩
 
-theorem EntailsManner.entailsChange (h : M.EntailsManner P Q) : M.EntailsChange P :=
+theorem EntailsMannerOfCause.entailsChange (h : M.EntailsMannerOfCause P Q) :
+    M.EntailsChange P :=
   fun x s hs ↦ let ⟨e, hb, _⟩ := h x s hs; ⟨e, hb⟩
 
 /-- The postulates are downward closed along the collocational order on kinds, since a cause
@@ -154,24 +154,27 @@ variable (M P Q) in
 theorem isLowerSet_setOf_entails : IsLowerSet {k | M.Entails P Q k} :=
   fun _ _ hkj h ↦ Entails.anti hkj h
 
-theorem respects_iff_subset : M.Respects P Q ks ↔ (ks : Set Root.Kind) ⊆ {k | M.Entails P Q k} :=
+theorem respects_iff_subset : M.Respects P Q ks ↔ (ks : Set Root.Kind) ⊆ {k | M.Entails P Q k} ∧
+    (Root.Kind.manner ∈ ks → Root.Kind.cause ∈ ks → M.EntailsMannerOfCause P Q) :=
   Iff.rfl
 
 theorem Respects.mono {ks' : Root.Kinds} (hks : ks ⊆ ks') (h : M.Respects P Q ks') :
     M.Respects P Q ks :=
-  fun k hk ↦ h k (hks hk)
+  ⟨fun k hk ↦ h.1 k (hks hk), fun hm hc ↦ h.2 (hks hm) (hks hc)⟩
 
 /-- A signature is respected iff its collocational closure is, since the respected kinds form
-a lower set. -/
+a lower set and the closure adds no manner or cause. -/
 @[simp] theorem respects_close : M.Respects P Q (Root.Kinds.close ks) ↔ M.Respects P Q ks := by
-  simp only [respects_iff_subset, Root.Kinds.coe_close]
-  exact lowerClosure_le (t := ⟨_, isLowerSet_setOf_entails M P Q⟩)
+  simp only [respects_iff_subset, Root.Kinds.coe_close,
+    Root.Kinds.mem_close_iff_of_isMax Root.Kind.isMax_manner,
+    Root.Kinds.mem_close_iff_of_isMax Root.Kind.isMax_cause]
+  exact and_congr_left' (lowerClosure_le (t := ⟨_, isLowerSet_setOf_entails M P Q⟩))
 
 /-- An interpretation that respects a signature whose closure has a result satisfies the
 postulate of change. -/
 theorem Respects.entailsChange (h : M.Respects P Q ks)
     (hr : Root.Kind.result ∈ Root.Kinds.close ks) : M.EntailsChange P :=
-  respects_close.2 h _ hr
+  (respects_close.2 h).1 _ hr
 
 end Postulates
 
