@@ -12,82 +12,36 @@ public import Linglib.Semantics.Tense.Quantificational
 public import Linglib.Logic.Modal.Basic
 
 /-!
-# Cariani (2021): *The Modal Future*, chapters 1, 3, 5 to 8 and 11
+# Cariani (2021): *The Modal Future*
 
-Cariani opens with the symmetric paradigm, on which *will* and *was* are mirror-image tense
-operators, Prior's quantifiers over later and earlier times, and argues in chapter 3 that *will*
-is instead a modal: its rule intervenes on the world of evaluation, it has present-directed uses
-that a future tense cannot have, and it is modally subordinated where the past is not. He then
-develops the selection semantics of Cariani and Santorio, on which *will* selects a
-world from its modal domain, from the perspective of the world of evaluation, and evaluates its
-prejacent there. A modal of this kind is necessity along the graph of a function, so it commutes
-with negation and validates excluded middle, while the hybrid semantics of chapter 5, which adds
-existential quantification over later times, keeps excluded middle and loses non-contradiction.
-Chapter 6 replaces the fixed domain with a modal base, the historical partition, which repairs
-*will* under epistemic possibility and makes *will* the identity on contents over a realistic
-base. *Will B* and historical *might not B* are then consistent at a world but accepted together
-by no information state that respects the partition. Chapter 7 states *will* in Condoravdi's
-terms, selecting a world and extending the interval forward, and chapter 8 lets *if* restrict
-the modal base, which gives will-conditionals Stalnaker's truth conditions and import–export.
-Chapter 11 keeps contexts classical and locates the open future in indeterminacy over which
-context an utterance has, and rejects the convergent thin red line of Belnap and Green.
+This file formalizes chapters 1, 3, 5 to 8 and 11 of [cariani-2021]: the symmetric paradigm, on
+which *will* is Prior's future tense, against the selection semantics of Cariani and Santorio,
+on which *will* is a modal that selects a world from its modal base.
 
 ## Main results
 
-* `linearWill_linearWill`, `forall_imp_linearWill_linearWas_iff`,
-  `forall_imp_linearWas_linearWill_iff`, `kt_fb`, `kt_bf`: the symmetric paradigm's validity
-  (1a), the correspondence of (1c) and (1d) with time lacking a last and a first moment, and the
-  axioms FB and BF of `K_t`, from the substrate's quantificational tenses.
-* `not_displacesWorlds_linearWill`, `displacesWorlds_hybrid_iff`, `hybrid_iff_linearWill`: §3.1's
-  criterion classifies symmetric *will* as no modal and hybrid *will* as one exactly when
-  selection moves, and centering collapses hybrid *will* to symmetric *will*.
-* `not_linearWill_now`, `pres_woll_frame_stative_iff`, `pres_woll_frame_eventive_iff`,
-  `pres_woll_or_neg`: symmetric *will* has no present-directed use, while selectional *will* with
-  *by now* holds of a state overlapping the present, (10), of an event only if it is
-  instantaneous, (11) and (12), and keeps excluded middle, (5).
-* `forall_hybrid_or_not_iff`, `forall_not_hybrid_and_not_iff`: the hybrid semantics validates
-  excluded middle where a later time exists and non-contradiction only where at most one does.
-* `hybrid_tacos`: the tacos model, where *I will have tacos* and *I will not have tacos* are
-  both true.
-* `not_diamond_will_fixed`, `diamond_will_historical`: the Oedipus bug of Figure 6.1 and its
-  repair by the modal base of Figure 6.4.
-* `not_accepts_will_and_might_not`: Fact 6.4, no eligible state accepts a historical
-  future-might contradiction, which `fmc_point_consistent` shows consistent at a world.
-* `not_will_and_might_not_will`, `not_not_will_and_might_will`, `fork_not_will_and_might_will`:
-  Kissine's inconsistencies over transitive and Euclidean bases, and the fork model.
-* `pres_woll_neg_iff`, `not_pres_WOLL_and_neg`: selectional WOLL commutes with negation and
-  Condoravdi's universal WOLL does not.
-* `pres_woll_iff_of_mem`, `pres_woll_of_pres_WOLL`: over a realistic base selectional WOLL is the
-  prejacent at the world itself, which Condoravdi's WOLL entails.
-* `willIf_willIf`, `willIf_univ_eq_selectionConditional`: import–export for will-conditionals,
-  and over the universal base they are Stalnaker's conditional.
-* `not_accepts_willIf_and_mightIf_not`: Fact 8.3, the conditional future-might contradiction.
-* `indeterminate_sat`: the lifting argument, Fact 11.1, which needs only the K logic of `D`.
-* `not_exists_convergent_centered_trl`: convergence and centering of a thin red line are
-  inconsistent on a branching moment (Figure 11.4).
+* `forall_imp_linearWill_linearWas_iff`, `kt_fb`, `kt_bf`: the symmetric paradigm (ch. 1).
+* `displacesWorlds_hybrid_iff`, `hybrid_iff_linearWill`: *will* as a modal (§3.1, §7.2).
+* `pres_woll_frame_stative_iff`, `pres_woll_frame_eventive_iff`: present-directed *will* (§7.7).
+* `forall_hybrid_or_not_iff`, `forall_not_hybrid_and_not_iff`: the hybrid semantics (ch. 5).
+* `not_accepts_will_and_might_not`, `not_will_and_might_not_will`: future-might contradictions
+  and Kissine's argument (ch. 6).
+* `pres_woll_neg_iff`, `not_pres_WOLL_and_neg`: selectional and universal WOLL (ch. 7).
+* `willIf_willIf`, `willIf_univ_eq_selectionConditional`: will-conditionals (ch. 8).
+* `indeterminate_sat`, `not_exists_convergent_centered_trl`: the open future (ch. 11).
 
 ## Implementation notes
 
-* A modal base is an accessibility relation, and *will* along it is
-  `SelectionFunction.modal`, whose generalized transparency, Fact 6.1, is
-  `SelectionFunction.modal_eq_id`. The fixed domain `H` of chapter 5 is the constant relation to
-  `H`, which is Cariani and Santorio's `will`.
-* An information state is a set of worlds, accepting the propositions that include it.
-* Cariani's `ext(I)`, the interval `I` extended to the future, is the forward interval from the
-  start of `I`, and the modal base is indexed by that start, as in `Condoravdi2002`.
-* *Will* is PRES + WOLL (§3.2, p. 44; §7.6, p. 122), which is how the forms are built here; the
-  symmetric operators of chapter 1 are the substrate's quantificational tenses,
-  `◇[Tense.toSetRel ⟦Tense.future⟧]` and its past.
-* *By now* is Condoravdi's frame adverbial at the present, `frame (Interval.pure ↑now)`.
+* *Will* along a modal base is `SelectionFunction.modal`; an information state is a set of
+  worlds.
+* The symmetric operators are the substrate's quantificational tenses. *Will* is PRES + WOLL as
+  in `Condoravdi2002`, whose `frame` at the present is *by now*.
 
 ## TODO
 
-* The text says *by now* must "scope over *will*, otherwise *will* will re-extend the interval"
-  (p. 129), but with its entries the stated truth conditions of (10) and (11) come from *by now*
-  under WOLL, `woll (frame _ _)`; outermost it is idle at the present (`pres_frame_now_iff`).
-* The arguments from modal subordination and acquaintance inferences (§3.4, §3.5), which concern
-  discourse and evidentiality.
-* The counterhistorical restriction of §8.6 and the identity collapse of §8.8 (Fact 8.4).
+* The text puts *by now* over *will* (p. 129), but its truth conditions for (10) and (11) need
+  *by now* under WOLL (`pres_frame_now_iff`).
+* Modal subordination and acquaintance inferences (§3.4, §3.5); §8.6 and §8.8.
 
 ## References
 
@@ -109,13 +63,8 @@ open scoped SetRel
 
 /-! ### The symmetric paradigm
 
-Chapter 1 sets out the symmetric paradigm, on which *was* and *will* say that the radical held at
-some earlier and at some later time, mirror images of each other (p. 8). They are the
-quantificational past and future of the tense cells, Prior's operators, so the paradigm's
-validities are the laws of the cells: a future of a future is a future, (1a), while (1c) and (1d)
-fail exactly where time has a last and a first moment (p. 9), and hold given a future or a past,
-(2). Prior's logic `K_t` adds to the normal logics of the two duals the axioms FB and BF (p. 17),
-the units of the adjunctions between sometime in the one direction and always in the other. -/
+*Was* and *will* as Prior's quantifiers over earlier and later times (p. 8), the substrate's
+quantificational tenses. -/
 
 section Symmetric
 
@@ -244,10 +193,7 @@ end Hybrid
 
 /-! ### What makes *will* a modal
 
-§3.1 counts an expression a modal when its semantic rule intervenes on the world coordinate of
-evaluation, a sufficient condition (p. 43). Symmetric *will* shifts only the time, so it is not
-a modal; hybrid *will* intervenes on the world exactly when selection moves off it, and where
-centering idles selection it is symmetric *will* (p. 117). -/
+An expression is a modal when its rule intervenes on the world of evaluation (§3.1, p. 43). -/
 
 section Modal
 
