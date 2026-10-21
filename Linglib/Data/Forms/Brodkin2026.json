@@ -1,0 +1,230 @@
+{
+  "description": "The seven heads of Brodkin (2026) that take a monosyllabic allomorph inside a phonological phrase and a longer one at its right edge, table (44), each pair related as top-down suppletion; the forms of 'who' are the surface forms of (42), table (44) listing the underlying /nai/ and /innai/.",
+  "ParameterTable": [
+    {
+      "ID": "this_in_hand",
+      "Name": "this (in hand)",
+      "Description": ""
+    },
+    {
+      "ID": "this",
+      "Name": "this",
+      "Description": ""
+    },
+    {
+      "ID": "that",
+      "Name": "that",
+      "Description": ""
+    },
+    {
+      "ID": "neg",
+      "Name": "NEG",
+      "Description": ""
+    },
+    {
+      "ID": "what",
+      "Name": "what",
+      "Description": ""
+    },
+    {
+      "ID": "which",
+      "Name": "which",
+      "Description": ""
+    },
+    {
+      "ID": "who",
+      "Name": "who",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "this_in_hand",
+      "Language_ID": "mand1442",
+      "Parameter_ID": "this_in_hand"
+    },
+    {
+      "ID": "this",
+      "Language_ID": "mand1442",
+      "Parameter_ID": "this"
+    },
+    {
+      "ID": "that",
+      "Language_ID": "mand1442",
+      "Parameter_ID": "that"
+    },
+    {
+      "ID": "neg",
+      "Language_ID": "mand1442",
+      "Parameter_ID": "neg"
+    },
+    {
+      "ID": "what",
+      "Language_ID": "mand1442",
+      "Parameter_ID": "what"
+    },
+    {
+      "ID": "which",
+      "Language_ID": "mand1442",
+      "Parameter_ID": "which"
+    },
+    {
+      "ID": "who",
+      "Language_ID": "mand1442",
+      "Parameter_ID": "who"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "brodkin2026_this_in_hand_short",
+      "Lexeme_ID": "this_in_hand",
+      "Form": "ndi",
+      "Segments": ["n", "d", "i"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_this_in_hand_long",
+      "Lexeme_ID": "this_in_hand",
+      "Form": "indi",
+      "Segments": ["i", "n", "d", "i"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_this_short",
+      "Lexeme_ID": "this",
+      "Form": "de",
+      "Segments": ["d", "e"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_this_long",
+      "Lexeme_ID": "this",
+      "Form": "diʔe",
+      "Segments": ["d", "i", "ʔ", "e"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_that_short",
+      "Lexeme_ID": "that",
+      "Form": "do",
+      "Segments": ["d", "o"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_that_long",
+      "Lexeme_ID": "that",
+      "Form": "diʔo",
+      "Segments": ["d", "i", "ʔ", "o"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_neg_short",
+      "Lexeme_ID": "neg",
+      "Form": "ndaŋ",
+      "Segments": ["n", "d", "a", "ŋ"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_neg_long",
+      "Lexeme_ID": "neg",
+      "Form": "andiaŋ",
+      "Segments": ["a", "n", "d", "i", "a", "ŋ"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_what_short",
+      "Lexeme_ID": "what",
+      "Form": "a",
+      "Segments": ["a"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_what_long",
+      "Lexeme_ID": "what",
+      "Form": "apa",
+      "Segments": ["a", "p", "a"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_which_short",
+      "Lexeme_ID": "which",
+      "Form": "na",
+      "Segments": ["n", "a"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_which_long",
+      "Lexeme_ID": "which",
+      "Form": "inna",
+      "Segments": ["i", "n", "n", "a"],
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_who_short",
+      "Lexeme_ID": "who",
+      "Form": "ne",
+      "Segments": ["n", "e"],
+      "Comment": "(44) lists the underlying form, /nai/; (42a) prints the surface form.",
+      "Source": ["brodkin-2026[(42a)]"]
+    },
+    {
+      "ID": "brodkin2026_who_long",
+      "Lexeme_ID": "who",
+      "Form": "inne",
+      "Segments": ["i", "n", "n", "e"],
+      "Comment": "(44) lists the underlying form, /innai/; (42b) prints the surface form.",
+      "Source": ["brodkin-2026[(42b)]"]
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "brodkin2026_this_in_hand",
+      "Form_ID": "brodkin2026_this_in_hand_short",
+      "Target_ID": "brodkin2026_this_in_hand_long",
+      "Relation": "top-down suppletion",
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_this",
+      "Form_ID": "brodkin2026_this_short",
+      "Target_ID": "brodkin2026_this_long",
+      "Relation": "top-down suppletion",
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_that",
+      "Form_ID": "brodkin2026_that_short",
+      "Target_ID": "brodkin2026_that_long",
+      "Relation": "top-down suppletion",
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_neg",
+      "Form_ID": "brodkin2026_neg_short",
+      "Target_ID": "brodkin2026_neg_long",
+      "Relation": "top-down suppletion",
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_what",
+      "Form_ID": "brodkin2026_what_short",
+      "Target_ID": "brodkin2026_what_long",
+      "Relation": "top-down suppletion",
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_which",
+      "Form_ID": "brodkin2026_which_short",
+      "Target_ID": "brodkin2026_which_long",
+      "Relation": "top-down suppletion",
+      "Source": ["brodkin-2026[(44)]"]
+    },
+    {
+      "ID": "brodkin2026_who",
+      "Form_ID": "brodkin2026_who_short",
+      "Target_ID": "brodkin2026_who_long",
+      "Relation": "top-down suppletion",
+      "Source": ["brodkin-2026[(44)]"]
+    }
+  ]
+}

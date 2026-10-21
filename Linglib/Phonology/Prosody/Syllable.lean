@@ -258,6 +258,12 @@ def weight? : Constituent → Option Syllable.Weight
 def level : Constituent → Level
   | .syl .. => .syl | .ft _ => .ft | .om _ => .om | .ph _ => .ph | .iota => .iota
 
+@[simp] theorem level_syl (w : Syllable.Weight) (h : Bool) : (syl w h).level = .syl := rfl
+@[simp] theorem level_ft (h : Bool) : (ft h).level = .ft := rfl
+@[simp] theorem level_om (h : Bool) : (om h).level = .om := rfl
+@[simp] theorem level_ph (h : Bool) : (ph h).level = .ph := rfl
+@[simp] theorem level_iota : iota.level = .iota := rfl
+
 /-- Under **Layeredness** ([selkirk-1996]) a node dominates only nodes of its own level or below:
     σ is the terminal, a foot a non-empty string of σs (foot recursion, contested, is excluded
     with it), and ω, φ and ι dominate anything at or below their level. Recursion at ω, φ and ι

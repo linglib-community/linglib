@@ -36,6 +36,8 @@ pattern across nested neighborhoods.
   when its site contains the other's.
 * `DistributedMorphology.winner?_isElsewhereWinner`: the winner is an Elsewhere winner of the
   shared core.
+* `DistributedMorphology.winner?_eq_head?_applicable`: over a vocabulary listed by non-increasing
+  specificity, the winner is the first applicable item.
 * `DistributedMorphology.winner?_retreat`: deleting features from the neighborhood can only make
   the winner less specific, retreat to the general case.
 * `DistributedMorphology.isContiguous_subsetPrinciple`: an antihomophonous vocabulary realizes
@@ -223,6 +225,12 @@ theorem subsetPrinciple_winner_mem (h : subsetPrinciple items n = some e) :
 
 theorem winner?_isSome_iff : (winner? items n).isSome ↔ ∃ i ∈ items, Applies i n :=
   RuleSet.selectBy_isSome_iff
+
+/-- On a vocabulary listed by non-increasing specificity, the winner is the first applicable
+item. -/
+theorem winner?_eq_head?_applicable (h : items.Pairwise fun i j ↦ j.specificity ≤ i.specificity) :
+    winner? items n = (items.applicable n).head? :=
+  RuleSet.selectBy_eq_head?_applicable h
 
 /-- The winner is an Elsewhere winner of the shared core, with no faithfulness hypothesis, since
 `VocabularyItem.specificity` is strictly antitone outright. -/

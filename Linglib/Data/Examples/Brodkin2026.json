@@ -1,0 +1,549 @@
+[
+  {
+    "id": "brodkin2026_33a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(33a)"},
+    "language": "mand1442",
+    "primaryText": "méloᴴ uwéŋanᴴ ndi wúkuᴴ éᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["meloʔ", "want"], ["o", "2ABS"], ["u-beŋaŋ", "1ERG-give"], ["ndi", "this"],
+      ["buku", "book"], ["e", "here"]
+    ],
+    "translation": "I want to give you this book here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "this_in_hand"],
+      ["allomorph", "short"],
+      ["position", "medial"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_33b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(33b)"},
+    "language": "mand1442",
+    "primaryText": "méloᴴ uwéŋaᴴ ĩ́ndiᴴ éᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["meloʔ", "want"], ["o", "2ABS"], ["u-beŋaŋ", "1ERG-give"], ["ndi", "this"], ["e", "here"]
+    ],
+    "translation": "I want to give this (thing) here to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "this_in_hand"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "footed"]
+    ],
+    "comment": "The elided NP after the demonstrative is omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_36a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(36a)"},
+    "language": "mand1442",
+    "primaryText": "do anʤóroᴴ ndaŋ ŋúra wéɣaᴴ óᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["do", "that"], ["anʤoro", "coconut"], ["ndaŋ", "not"], ["ŋura", "unripe"], ["bega", "too"],
+      ["o", "there"]
+    ],
+    "translation": "That coconut there is not too unripe.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "neg"],
+      ["allomorph", "short"],
+      ["position", "medial"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_36b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(36b)"},
+    "language": "mand1442",
+    "primaryText": "tapi ɹo anʤóroᴴ andíaŋᴴ óᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tapi", "but"], ["do", "that"], ["anʤoro", "coconut"], ["ndaŋ", "not"], ["o", "there"]
+    ],
+    "translation": "… but that coconut there is not too unripe.",
+    "context": "De anjoro ngura bega e, … 'This coconut is too unripe, …'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "neg"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "footed"]
+    ],
+    "comment": "The source strikes through the elided predicate ŋura bega 'unripe too', omitted here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_40a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(40a)"},
+    "language": "mand1442",
+    "primaryText": "á ɹúaᴴ píllóaᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a", "what"], ["dua", "still"], ["piŋ-loa", "ANTIP-sound"]
+    ],
+    "translation": "What's still ringing?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "what"],
+      ["allomorph", "short"],
+      ["position", "medial"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_40b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(40b)"},
+    "language": "mand1442",
+    "primaryText": "ápaᴴ píllóaᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a", "what"], ["piŋ-loa", "ANTIP-sound"]
+    ],
+    "translation": "What's ringing?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "what"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "footed"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The clause has two prosodic words, within the three-word limit on a maximal φ (85).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_41a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(41a)"},
+    "language": "mand1442",
+    "primaryText": "ná násamᴴ mweŋéiᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na", "which"], ["nasaŋ", "every"], ["mu-eŋei", "2ERG-be.in"]
+    ],
+    "translation": "Which place are you guys all in?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "which"],
+      ["allomorph", "short"],
+      ["position", "medial"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_41b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(41b)"},
+    "language": "mand1442",
+    "primaryText": "ínnaᴴ wémmeᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na", "which"], ["bemme", "fall"]
+    ],
+    "translation": "Which one fell?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "which"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "footed"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The clause has two prosodic words, within the three-word limit on a maximal φ (85).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_42a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(42a)"},
+    "language": "mand1442",
+    "primaryText": "né násamᴴ mwítaᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nai", "who"], ["nasaŋ", "every"], ["mu-ita", "2ERG-see"]
+    ],
+    "translation": "Who did every one of you guys see?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "who"],
+      ["allomorph", "short"],
+      ["position", "medial"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_42b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(42b)"},
+    "language": "mand1442",
+    "primaryText": "ínneᴴ lámbaᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nai", "who"], ["lamba", "go"]
+    ],
+    "translation": "Who left?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "who"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "footed"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The clause has two prosodic words, within the three-word limit on a maximal φ (85).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_56a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(56a)"},
+    "language": "mand1442",
+    "primaryText": "máã́paᴴ o míeʔᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["maŋ-apa", "VERBALIZER-what"], ["o", "2ABS"], ["mieʔ", "2PL"]
+    ],
+    "translation": "What are you guys doing?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "what"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["affix", "verbalizer"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_56b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(56b)"},
+    "language": "mand1442",
+    "primaryText": "máã́pa násaŋᴴ o míeʔᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["maŋ-apa", "VERBALIZER-what"], ["nasaŋ", "every"], ["o", "2ABS"], ["mieʔ", "2PL"]
+    ],
+    "translation": "What are all of you guys doing?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "what"],
+      ["allomorph", "long"],
+      ["position", "medial"],
+      ["affix", "verbalizer"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_76a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(76a)"},
+    "language": "mand1442",
+    "primaryText": "ápaᴴ máppakéʔdeʔᴴ i?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a", "what"], ["maŋ-pakeʔdeʔ", "AF-awaken"], ["i", "3ACC"]
+    ],
+    "translation": "What woke him up?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "what"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "footed"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The clause has two prosodic words, within the three-word limit on a maximal φ (85).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_76b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(76b)"},
+    "language": "mand1442",
+    "primaryText": "á naᴴmáppakéʔdeʔᴴ i?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a", "what"], ["na-maŋ-pakeʔdeʔ", "FUT-AF-awaken"], ["i", "3ACC"]
+    ],
+    "translation": "What will wake him up?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "what"],
+      ["allomorph", "short"],
+      ["position", "final"],
+      ["next", "unfooted"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The clause has two prosodic words, within the three-word limit on a maximal φ (85), so na- shares the maximal φ of the wh-word.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_77a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(77a)"},
+    "language": "mand1442",
+    "primaryText": "ínnaᴴ kéttʃuʔᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na", "which"], ["kettʃuʔ", "small"]
+    ],
+    "translation": "Which one is smaller?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "which"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "footed"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The clause has two prosodic words, within the three-word limit on a maximal φ (85).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_77b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(77b)"},
+    "language": "mand1442",
+    "primaryText": "ná kaᴴrámboᴴ?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na", "which"], ["karambo", "far"]
+    ],
+    "translation": "Which one is farther away?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "which"],
+      ["allomorph", "short"],
+      ["position", "final"],
+      ["next", "unfooted"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The clause has two prosodic words, within the three-word limit on a maximal φ (85), so karambo shares the maximal φ of the wh-word.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_78a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(78a)"},
+    "language": "mand1442",
+    "primaryText": "nalattʃáriᴴ i índiᴴ ɣúruᴴ éᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-lattʃari", "3ERG-throw.at"], ["i", "3ABS"], ["ndi", "this"], ["guru", "teacher"],
+      ["e", "here"]
+    ],
+    "translation": "She threw this (thing) here at the teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "this_in_hand"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "footed"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The elided NP after the demonstrative is omitted. V, O and D are three prosodic words, one maximal φ under the three-word limit (85), as the paper brackets the same configuration in (92).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_78b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(78b)"},
+    "language": "mand1442",
+    "primaryText": "nalattʃáriᴴ i ndí ɣuᴴrúnnaᴴ éᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-lattʃari", "3ERG-throw.at"], ["i", "3ABS"], ["ndi", "this"],
+      ["guru-na", "teacher-3GEN"], ["e", "here"]
+    ],
+    "translation": "She threw this (thing) here at her teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "this_in_hand"],
+      ["allomorph", "short"],
+      ["position", "final"],
+      ["next", "unfooted"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The elided NP after the demonstrative is omitted. V, O and D are three prosodic words, one maximal φ under the three-word limit (85), as the paper brackets the same configuration in (92).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_83b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(83b)"},
+    "language": "mand1442",
+    "primaryText": "néteᴴ i ɹó jaᴴrámmiŋᴴ óᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-itai", "3ERG-look.for"], ["i", "3ABS"], ["do", "that"], ["ʤarammiŋ", "mirror"],
+      ["o", "there"]
+    ],
+    "translation": "That (thing) there is looking for the mirror.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "that"],
+      ["allomorph", "short"],
+      ["position", "final"],
+      ["next", "unfooted"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The elided NP after the demonstrative is omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_84",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(84)"},
+    "language": "mand1442",
+    "primaryText": "nálliᴴ i ɹíʔoᴴ dirwambóŋiᴴ óᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-alli", "3ERG-buy"], ["i", "3ABS"], ["do", "that"], ["diruamboŋi", "a.while.ago"],
+      ["o", "there"]
+    ],
+    "translation": "She bought that (thing) there a while ago.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "that"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "unfooted"],
+      ["maxPhi", "different"]
+    ],
+    "comment": "The elided NP after the demonstrative is omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_86a",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(86a)"},
+    "language": "mand1442",
+    "primaryText": "natínroᴴ i ɹo ɣuᴴrúnaᴴ óᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-tinro", "3ERG-chase"], ["i", "3ABS"], ["do", "that"], ["guru-na", "teacher-3GEN"],
+      ["o", "there"]
+    ],
+    "translation": "That (thing) there is chasing his teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "that"],
+      ["allomorph", "short"],
+      ["position", "final"],
+      ["next", "unfooted"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The elided NP after the demonstrative is omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_86b",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(86b)"},
+    "language": "mand1442",
+    "primaryText": "natínroᴴ i ɹíʔoᴴ gurúnaᴴ ikátʃoʔ óᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-tinro", "3ERG-chase"], ["i", "3ABS"], ["do", "that"], ["guru-na", "teacher-3GEN"],
+      ["ikatʃoʔ", "NAME"], ["o", "there"]
+    ],
+    "translation": "That (thing) there is chasing Kacho's teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "that"],
+      ["allomorph", "long"],
+      ["position", "final"],
+      ["next", "unfooted"],
+      ["maxPhi", "different"]
+    ],
+    "comment": "The elided NP after the demonstrative is omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brodkin2026_92",
+    "source": {"bibkey": "brodkin-2026", "paperLabel": "(92)"},
+    "language": "mand1442",
+    "primaryText": "ukiriŋaᴴ ĩ ɹó ɣuᴴrúʔuᴴ óᴴ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["u-kiriŋ-aŋ", "1ERG-send-APPL"], ["i", "3ABS"], ["do", "that"], ["guru-u", "teacher-1GEN"],
+      ["o", "there"]
+    ],
+    "translation": "I sent that (thing) there to my teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["head", "that"],
+      ["allomorph", "short"],
+      ["position", "final"],
+      ["next", "unfooted"],
+      ["maxPhi", "same"]
+    ],
+    "comment": "The elided NP after the demonstrative is omitted.",
+    "verified": "page-image"
+  }
+]
