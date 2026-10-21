@@ -52,10 +52,10 @@ every interacting goal satisfies the probe; and Multiple Agree is the case of an
 
 ## Implementation notes
 
-Movement, the M subfeatures of lines 5–6 and 9–10 of (30), is not modelled. Line 13 installs the
-closure of one feature marked for dynamic interaction; when a goal bears several,
-`Spec.dynamicUpdate` installs the features all of them dominate, which on a chain of features is the
-closure of the most specific one.
+Movement, the M subfeatures of lines 5–6 and 9–10 of (30), is not modelled; `Spec.attract` gives
+movement a search of its own instead. Line 13 installs the closure of one feature marked for
+dynamic interaction; when a goal bears several, `Spec.dynamicUpdate` installs the features all of
+them dominate, which on a chain of features is the closure of the most specific one.
 
 ## References
 
@@ -189,11 +189,11 @@ theorem agree_state_eq_of_forall_not_int (h : ∀ a ∈ goals, ¬ p.int a) :
   · rfl
   · exact fun a ha hi ↦ h a (mem_of_mem_inspected ha) hi
 
-/-- When every interacting goal satisfies the probe, the only goal flagged as interacting is the
+/-- When every interacting goal satisfies the probe, the only inspected goal that interacts is the
 goal of the probe. -/
-theorem agree_interacted_eq_goal (h : ∀ a, p.int a → p.sat a) :
-    (p.agree copy s goals).interacted = (p.goal goals).toList := by
-  rw [agree_interacted, inspected, List.filter_append, List.filter_eq_nil_iff.mpr, List.nil_append]
+theorem inspected_filter_int_eq_goal (h : ∀ a, p.int a → p.sat a) :
+    (p.inspected goals).filter p.int = (p.goal goals).toList := by
+  rw [inspected, List.filter_append, List.filter_eq_nil_iff.mpr, List.nil_append]
   · cases hs : p.search goals with
     | none => simp [goal, hs]
     | some a =>
@@ -202,6 +202,12 @@ theorem agree_interacted_eq_goal (h : ∀ a, p.int a → p.sat a) :
       cases p.int a <;> rfl
   · intro a ha hi
     exact absurd (h a hi) (by simpa using List.mem_takeWhile_imp ha)
+
+/-- When every interacting goal satisfies the probe, the only goal flagged as interacting is the
+goal of the probe. -/
+theorem agree_interacted_eq_goal (h : ∀ a, p.int a → p.sat a) :
+    (p.agree copy s goals).interacted = (p.goal goals).toList := by
+  rw [agree_interacted, inspected_filter_int_eq_goal h]
 
 /-- A relativized probe flags the goal it finds. -/
 theorem relativized_agree_interacted (f : α → Bool) :
@@ -219,6 +225,7 @@ theorem insatiable_agree_interacted (f : α → Bool) :
 
 /-- A probe specification over a feature type, the features the probe interacts with and the
 features that satisfy it, `[INT:int, SAT:sat]` in [deal-2025a]'s notation. -/
+@[ext]
 structure Spec (F : Type*) where
   /-- The features the probe copies. -/
   int : Finset F
@@ -226,6 +233,38 @@ structure Spec (F : Type*) where
   sat : Finset F
 
 namespace Spec
+
+/-- Specifications are ordered by inclusion of both feature sets. -/
+instance : PartialOrder (Spec F) :=
+  PartialOrder.lift (fun sp ↦ (sp.int, sp.sat)) fun _ _ h ↦ Spec.ext_iff.2 (Prod.ext_iff.1 h)
+
+theorem le_def {sp sp' : Spec F} : sp ≤ sp' ↔ sp.int ⊆ sp'.int ∧ sp.sat ⊆ sp'.sat := Iff.rfl
+
+/-- The specification with no features, a head without that probe. -/
+instance : OrderBot (Spec F) where
+  bot := ⟨∅, ∅⟩
+  bot_le _ := ⟨Finset.empty_subset _, Finset.empty_subset _⟩
+
+@[simp] theorem bot_int : (⊥ : Spec F).int = ∅ := rfl
+@[simp] theorem bot_sat : (⊥ : Spec F).sat = ∅ := rfl
+
+/-- The join of two specifications interacts with and is satisfied by the features of either, a
+disjunctive probe. -/
+instance [DecidableEq F] : Lattice (Spec F) :=
+  { (inferInstance : PartialOrder (Spec F)) with
+    sup := fun sp sp' ↦ ⟨sp.int ∪ sp'.int, sp.sat ∪ sp'.sat⟩
+    le_sup_left := fun _ _ ↦ ⟨Finset.subset_union_left, Finset.subset_union_left⟩
+    le_sup_right := fun _ _ ↦ ⟨Finset.subset_union_right, Finset.subset_union_right⟩
+    sup_le := fun _ _ _ h h' ↦ ⟨Finset.union_subset h.1 h'.1, Finset.union_subset h.2 h'.2⟩
+    inf := fun sp sp' ↦ ⟨sp.int ∩ sp'.int, sp.sat ∩ sp'.sat⟩
+    inf_le_left := fun _ _ ↦ ⟨Finset.inter_subset_left, Finset.inter_subset_left⟩
+    inf_le_right := fun _ _ ↦ ⟨Finset.inter_subset_right, Finset.inter_subset_right⟩
+    le_inf := fun _ _ _ h h' ↦ ⟨Finset.subset_inter h.1 h'.1, Finset.subset_inter h.2 h'.2⟩ }
+
+@[simp] theorem sup_int [DecidableEq F] (sp sp' : Spec F) : (sp ⊔ sp').int = sp.int ∪ sp'.int :=
+  rfl
+@[simp] theorem sup_sat [DecidableEq F] (sp sp' : Spec F) : (sp ⊔ sp').sat = sp.sat ∪ sp'.sat :=
+  rfl
 
 /-- The state of Agree for a specification, the features copied so far and the current
 interaction condition. -/
@@ -237,17 +276,24 @@ structure State (F : Type*) where
 
 variable [DecidableEq F] (sp : Spec F) (feats : α → Finset F)
 
+/-- The interaction features a goal bears, which Agree copies from it. -/
+def intFeatures (a : α) : Finset F := feats a ∩ sp.int
+
+/-- The satisfaction features a goal bears. -/
+def satFeatures (a : α) : Finset F := feats a ∩ sp.sat
+
 /-- The probe a specification denotes over goals exposing feature sets, interacting with a goal
 iff it bears a feature of the interaction specification and satisfied iff it bears one of the
 satisfaction specification. -/
 def toProbe : Probe α :=
-  ⟨fun a ↦ decide (feats a ∩ sp.int).Nonempty, fun a ↦ decide (feats a ∩ sp.sat).Nonempty⟩
+  ⟨fun a ↦ decide (sp.intFeatures feats a).Nonempty,
+    fun a ↦ decide (sp.satFeatures feats a).Nonempty⟩
 
 @[simp] theorem toProbe_int (a : α) :
-    (sp.toProbe feats).int a = decide (feats a ∩ sp.int).Nonempty := rfl
+    (sp.toProbe feats).int a = decide (sp.intFeatures feats a).Nonempty := rfl
 
 @[simp] theorem toProbe_sat (a : α) :
-    (sp.toProbe feats).sat a = decide (feats a ∩ sp.sat).Nonempty := rfl
+    (sp.toProbe feats).sat a = decide (sp.satFeatures feats a).Nonempty := rfl
 
 section Dynamic
 
@@ -289,7 +335,7 @@ theorem dynamicUpdate_subset_Ici {a : α} {x : F} (hx : x ∈ feats a ∩ dyn) (
 interaction-specified features of each interacting goal. -/
 theorem agree_empty (goals : List α) :
     sp.agree feats ∅ goals =
-      let r := (sp.toProbe feats).agree (fun a c ↦ c ∪ (feats a ∩ sp.int)) ∅ goals
+      let r := (sp.toProbe feats).agree (fun a c ↦ c ∪ sp.intFeatures feats a) ∅ goals
       ⟨⟨r.state, sp.int⟩, r.interacted, r.satisfier⟩ := by
   simp only [agree, dynamicUpdate_empty]
   generalize (∅ : Finset F) = c
@@ -297,7 +343,7 @@ theorem agree_empty (goals : List α) :
   | nil => rfl
   | cons a as ih =>
     rw [Dynamic.agree_cons, Probe.agree_cons]
-    dsimp only [toProbe] at ih ⊢
+    dsimp only [toProbe, intFeatures, satFeatures] at ih ⊢
     split_ifs <;> dsimp only <;> rw [ih]
 
 end Dynamic
