@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Evidential.Defs
+public import Linglib.Semantics.Tense.Evidential
 
 /-!
 # Korean evidentiality
@@ -10,15 +10,17 @@ perceptual, quotative and reported, and inferential. The members of a subclass a
 alternatives, while the subclasses fill distinct slots of the predicate, in the order
 inferential, perceptual, reported, and can co-occur, so the terms form no single paradigm. The
 perceptual *-te* and *-ney* cover the same sources, the senses and inference from concrete
-evidence, and differ in when the evidence was perceived, before speech or at it. The conjecture
-*-keyss*, the suppositive *-ci*, the prediction *-ul-kes-i* and the presumption *-ulkel*, which
-some count as evidentials, are taken as modal, and the inventory records none of them.
+evidence, and differ in when the evidence was perceived, before speech or at it, which they
+carry as the cell of the acquisition relative to speech. The conjecture *-keyss*, the
+suppositive *-ci*, the prediction *-ul-kes-i* and the presumption *-ulkel*, which some count as
+evidentials, are taken as modal, and the inventory records none of them.
 
 Aikhenvald took the retrospective *-te*, which validates past perception, observation or
 experience, as not a primarily evidential form, and the constructions for talking about other
 people's feelings as evidentiality strategies. WALS codes the language as having indirect
-evidentials only; no term of the inventory covers the senses alone. Lee's analysis of *-te* and
-*-ney* as evidentials fixing when the evidence was acquired is in `Studies/Cumming2026.lean`.
+evidentials only; no term of the inventory covers the senses alone. Cumming's tense-evidential
+paradigm, after Lee, composes the acquisition cells of *-te* and *-ney* with tense in
+`Studies/Cumming2026.lean`.
 
 ## Implementation notes
 
@@ -31,6 +33,7 @@ Forms are in the Yale romanization. A form is cited by one of its variants: *-ta
 * [aikhenvald-2004], §4.6
 * [de-haan-2013]
 * [lee-2011]
+* [lee-2013]
 * [cumming-2026]
 -/
 
@@ -38,26 +41,31 @@ Forms are in the Yale romanization. A form is cited by one of its variants: *-ta
 
 namespace Korean.Evidentiality
 
-open Evidential
+open Evidential Semantics Tense
 
 /-! ### Perceptual evidentials -/
 
 /-- The pre-final suffix *-te*, the retrospective: firsthand information acquired before the
 time of speech, by seeing, by feeling, or by inference from concrete evidence. -/
-def te : Evidential := { morphs := [.suff "te"], covers := {.visual, .sensory, .inference} }
+def te : Evidential.Timed :=
+  { morphs := [.suff "te"], covers := {.visual, .sensory, .inference},
+    acquisitionToSpeech := ⟦past⟧ }
 
 /-- The sentence ender *-ney* in its evidential use: perception at the time of speech, through
 observation, experience or inference. Without the politeness particle *-yo* it can also be the
 familiar-level declarative, which marks no source. -/
-def ney : Evidential := { morphs := [.suff "ney"], covers := {.visual, .sensory, .inference} }
+def ney : Evidential.Timed :=
+  { morphs := [.suff "ney"], covers := {.visual, .sensory, .inference},
+    acquisitionToSpeech := ⟦present⟧ }
 
 /-- The ender *-te-la-ko*, the declarative *-te-la* followed by the quotative particle *ko*,
 fossilized as a retrospective that casts the perception as the speaker's own casual report. -/
-def teLako : Evidential :=
-  { morphs := [.suff "te", .suff "la", .suff "ko"], covers := {.visual, .sensory, .inference} }
+def teLako : Evidential.Timed :=
+  { morphs := [.suff "te", .suff "la", .suff "ko"], covers := {.visual, .sensory, .inference},
+    acquisitionToSpeech := ⟦past⟧ }
 
 /-- The perceptual evidentials. -/
-def perceptual : List Evidential := [te, ney, teLako]
+def perceptual : List Evidential := [te.toEvidential, ney.toEvidential, teLako.toEvidential]
 
 /-! ### Quotative and reported evidentials -/
 

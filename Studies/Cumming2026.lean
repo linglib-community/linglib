@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Korean.Evidentiality
 public import Linglib.Semantics.Tense.Evidential
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Data.Examples.Cumming2026
@@ -60,97 +61,64 @@ namespace Cumming2026
 
 open Semantics
 
-open Tense
+open Tense Tense.EvidentialFrame
 
 variable {T : Type*} [LinearOrder T]
 
-/-! ### Paradigm cells -/
+/-! ### Paradigm cells
 
-/-- A cell of a tense-evidential paradigm constrains the evidential perspective, the relation
-of the event to the acquisition of the evidence, the relation of the acquisition to speech,
-and the utterance perspective, the relation of the event to speech, each by a cell of the
-tense partition, `⊤` where the paradigm leaves the relation open. -/
-structure Cell where
-  /-- The constraint on the evidential perspective. -/
-  ep : Finset Ordering := ⊤
-  /-- The constraint on the relation of the acquisition of the evidence to speech. -/
-  acquisition : Finset Ordering := ⊤
-  /-- The constraint on the utterance perspective. -/
-  up : Finset Ordering := ⊤
-  deriving DecidableEq
-
-namespace Cell
-
-/-- A cell holds at a frame when its three constraints do. -/
-def Holds (c : Cell) (f : EvidentialFrame T) : Prop :=
-  compare f.eventTime f.acquisitionTime ∈ c.ep ∧
-    compare f.acquisitionTime f.speechTime ∈ c.acquisition ∧
-    compare f.eventTime f.speechTime ∈ c.up
-
-instance (c : Cell) (f : EvidentialFrame T) : Decidable (c.Holds f) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
-
-/-- The utterance perspective that a cell's evidential perspective and its relation of the
-acquisition to speech compose to (§3). -/
-def derivedUp (c : Cell) : Finset Ordering := comp c.ep c.acquisition
-
-/-- At a frame where a cell holds, the event stands to speech in the composition of the
-cell's evidential perspective with its relation of the acquisition to speech. -/
-theorem compare_mem_derivedUp {c : Cell} {f : EvidentialFrame T} (h : c.Holds f) :
-    compare f.eventTime f.speechTime ∈ c.derivedUp :=
-  compare_mem_comp h.1 h.2.1
-
-/-- A cell whose evidential perspective lies within the nonfuture requires downstream
-evidence, the constraint (10). -/
-theorem downstream_of_holds {c : Cell} (hc : c.ep ≤ ⟦future⟧ᶜ) {f : EvidentialFrame T}
-    (h : c.Holds f) : f.Downstream :=
-  f.downstream_iff.2 (hc h.1)
+A cell of a tense-evidential paradigm is a constraint on the evidential frame
+(`Tense.EvidentialFrame.Constraint`): it restricts the evidential perspective, the relation of
+the event to the acquisition of the evidence, the relation of the acquisition to speech, and
+the utterance perspective, the relation of the event to speech, `⊤` where the paradigm leaves a
+relation open. -/
 
 open Classical in
 /-- The meaning of a cell at a frame presupposes the constraints and asserts the content, so the
 constraint is not part of what is asserted. -/
-noncomputable def meaning {W : Type*} (c : Cell) (f : EvidentialFrame T) (φ : W → Prop) :
+noncomputable def meaning {W : Type*} (c : Constraint) (f : EvidentialFrame T) (φ : W → Prop) :
     W → SignType :=
   {_w | c.Holds f}.indicator fun w ↦ SignType.ofProp (φ w)
 
-end Cell
-
 /-- An evidential fixes the relation of the acquisition of the evidence to speech and turns
 the tense it combines with into a constraint on the evidential perspective (§3). -/
-def evidential (acquisition tense : Finset Ordering) : Cell := { ep := tense, acquisition }
+def evidential (acquisition tense : Finset Ordering) : Constraint :=
+  { eventToAcquisition := tense, acquisitionToSpeech := acquisition }
 
 /-- A tense that is the join of two tenses holds under an evidential exactly when one of
 them does. -/
 theorem holds_evidential_sup {a t t' : Finset Ordering} {f : EvidentialFrame T} :
-    (evidential a (t ⊔ t')).Holds f ↔ (evidential a t).Holds f ∨ (evidential a t').Holds f := by
-  simp only [Cell.Holds, evidential, Finset.sup_eq_union, Finset.mem_union, Finset.top_eq_univ,
-    Finset.mem_univ, and_true, or_and_right]
+    (evidential a (t ⊔ t')).Holds f ↔ (evidential a t).Holds f ∨ (evidential a t').Holds f :=
+  Constraint.holds_eventToAcquisition_sup (c := evidential a t)
 
 /-! ### The paradigms (§2 to §4) -/
 
-/-- Korean *-te*, sensory evidence acquired in the past of speech ((13), (18)). -/
-def te : Finset Ordering → Cell := evidential ⟦past⟧
+/-- Korean *-te*, sensory evidence acquired in the past of speech ((13), (18)), the acquisition
+cell of the lexical *-te*. -/
+def te : Finset Ordering → Constraint := evidential Korean.Evidentiality.te.acquisitionToSpeech
 
-/-- Korean *-ney*, sensory evidence acquired at speech ((14), (19)). -/
-def ney : Finset Ordering → Cell := evidential ⟦present⟧
+/-- Korean *-ney*, sensory evidence acquired at speech ((14), (19)), the acquisition cell of the
+lexical *-ney*. -/
+def ney : Finset Ordering → Constraint := evidential Korean.Evidentiality.ney.acquisitionToSpeech
 
 /-- Bulgarian *-l*, indirect evidence acquired by the time of speech ((15) to (17)). -/
-def l : Finset Ordering → Cell := evidential ⟦future⟧ᶜ
+def l : Finset Ordering → Constraint := evidential ⟦future⟧ᶜ
 
 /-- The English simple past requires downstream evidence for a past event ((20)). -/
-def simplePast : Cell := { ep := ⟦future⟧ᶜ, up := ⟦past⟧ }
+def simplePast : Constraint := { eventToAcquisition := ⟦future⟧ᶜ, eventToSpeech := ⟦past⟧ }
 
 /-- The English present progressive requires downstream evidence for a present event ((20)). -/
-def presentProgressive : Cell := { ep := ⟦future⟧ᶜ, up := ⟦present⟧ }
+def presentProgressive : Constraint :=
+  { eventToAcquisition := ⟦future⟧ᶜ, eventToSpeech := ⟦present⟧ }
 
 /-- The English future *will* places no evidential constraint on a future event ((20)). -/
-def will : Cell := { up := ⟦future⟧ }
+def will : Constraint := { eventToSpeech := ⟦future⟧ }
 
 /-- The past-directed *will have* requires prospective evidence for a past event ((22)). -/
-def willHave : Cell := { ep := ⟦future⟧, up := ⟦past⟧ }
+def willHave : Constraint := { eventToAcquisition := ⟦future⟧, eventToSpeech := ⟦past⟧ }
 
 /-- The present-directed *will now* requires prospective evidence for a present event ((22)). -/
-def willNow : Cell := { ep := ⟦future⟧, up := ⟦present⟧ }
+def willNow : Constraint := { eventToAcquisition := ⟦future⟧, eventToSpeech := ⟦present⟧ }
 
 /-! ### The utterance perspective derived (§3)
 
@@ -159,31 +127,29 @@ relation of the acquisition to speech, and the utterance-perspective columns of 
 and (19) are compositions; under *-l* the same holds of table (17), whose nonfuture cell is
 the join of Koev's null past and null present. -/
 
-theorem te_past_derivedUp : (te ⟦past⟧).derivedUp = ⟦past⟧ := comp_past_past
+theorem te_past_derived : (te ⟦past⟧).derived = ⟦past⟧ := comp_past_past
 
-theorem te_present_derivedUp : (te ⟦present⟧).derivedUp = ⟦past⟧ := comp_present_left _
+theorem te_present_derived : (te ⟦present⟧).derived = ⟦past⟧ := comp_present_left _
 
 /-- Prospective evidence acquired in the past of speech leaves the utterance perspective open, so
 the future under *-te* is compatible with a past, present or future event. -/
-theorem te_future_derivedUp : (te ⟦future⟧).derivedUp = ⊤ := comp_future_past
+theorem te_future_derived : (te ⟦future⟧).derived = ⊤ := comp_future_past
 
-theorem ney_past_derivedUp : (ney ⟦past⟧).derivedUp = ⟦past⟧ := comp_present_right _
+theorem ney_past_derived : (ney ⟦past⟧).derived = ⟦past⟧ := comp_present_right _
 
-theorem ney_present_derivedUp : (ney ⟦present⟧).derivedUp = ⟦present⟧ := comp_present_right _
+theorem ney_present_derived : (ney ⟦present⟧).derived = ⟦present⟧ := comp_present_right _
 
 /-- Present evidence that is prospective is for a future event, since S = A and A < T give
 S < T. -/
-theorem ney_future_derivedUp : (ney ⟦future⟧).derivedUp = ⟦future⟧ := comp_present_right _
+theorem ney_future_derived : (ney ⟦future⟧).derived = ⟦future⟧ := comp_present_right _
 
 /-- Downstream evidence acquired by the time of speech is for a nonfuture event ((17)). -/
-theorem l_nonfuture_derivedUp : (l ⟦future⟧ᶜ).derivedUp = ⟦future⟧ᶜ := by
-  show comp ⟦future⟧ᶜ ⟦future⟧ᶜ = ⟦future⟧ᶜ
-  rw [← past_sup_present, comp_sup_left, comp_sup_right, comp_sup_right]
-  simp
+theorem l_nonfuture_derived : (l ⟦future⟧ᶜ).derived = ⟦future⟧ᶜ :=
+  comp_compl_future_compl_future
 
 /-- Prospective evidence acquired by the time of speech leaves the utterance perspective open, so
 the future under *-l* describes yesterday's forecast rain ((16)). -/
-theorem l_future_derivedUp : (l ⟦future⟧).derivedUp = ⊤ := by
+theorem l_future_derived : (l ⟦future⟧).derived = ⊤ := by
   show comp ⟦future⟧ ⟦future⟧ᶜ = ⊤
   rw [← past_sup_present, comp_sup_right]
   simp
@@ -197,25 +163,25 @@ theorem holds_l_nonfuture_iff {f : EvidentialFrame T} :
 
 /-! ### Downstream evidence, obviation and the true future (§5, §7) -/
 
-/-- Across the three languages, the nonfuture tenses restrict the evidence to the
-non-prospective. -/
-theorem nonfuture_ep_le :
+/-- Across the three languages, the nonfuture tenses require downstream evidence, the
+constraint (10). -/
+theorem nonfuture_downstream {f : EvidentialFrame T} :
     ∀ c ∈ [simplePast, presentProgressive, te ⟦past⟧, te ⟦present⟧, ney ⟦past⟧, ney ⟦present⟧,
-      l ⟦future⟧ᶜ], c.ep ≤ ⟦future⟧ᶜ := by
-  decide
+      l ⟦future⟧ᶜ], c.Holds f → f.Downstream := fun c hc ↦
+  Constraint.downstream_of_holds (by revert c; decide)
 
 /-- The prospective cells of Korean, Bulgarian and the English *will* forms are neither
 restricted to downstream evidence nor unrestricted, the two options Cariani's obviation
 provides (§5). -/
 theorem prospective_beyond_obviation :
     ∀ c ∈ [te ⟦future⟧, ney ⟦future⟧, l ⟦future⟧, willHave, willNow],
-      c.ep ≠ ⟦future⟧ᶜ ∧ c.ep ≠ ⊤ := by
+      c.eventToAcquisition ≠ ⟦future⟧ᶜ ∧ c.eventToAcquisition ≠ ⊤ := by
   decide
 
 /-- No true future is restricted to downstream evidence, since at a frame where such a cell
 held the speaker would speak before acquiring the evidence (§7). -/
 theorem speechTime_lt_acquisitionTime {f : EvidentialFrame T}
-    (h : (⟨⟦future⟧ᶜ, ⊤, ⟦future⟧⟩ : Cell).Holds f) : f.speechTime < f.acquisitionTime :=
+    (h : (⟨⟦future⟧ᶜ, ⊤, ⟦future⟧⟩ : Constraint).Holds f) : f.speechTime < f.acquisitionTime :=
   lt_of_lt_of_le ((compare_mem_future _ _).1 h.2.2) ((compare_mem_compl_future _ _).1 h.1)
 
 /-- The past-directed *will have* and the simple past assert the same proposition and differ
@@ -223,14 +189,14 @@ in what they presuppose, so *will have* is no necessity modal ((23)). At frames 
 respective constraints the two are the same proposition. -/
 theorem willHave_meaning_eq_simplePast_meaning {W : Type*} {f f' : EvidentialFrame T}
     (φ : W → Prop) (h : willHave.Holds f) (h' : simplePast.Holds f') :
-    willHave.meaning f φ = simplePast.meaning f' φ := by
+    meaning willHave f φ = meaning simplePast f' φ := by
   funext w
-  simp [Cell.meaning, h, h']
+  simp [meaning, h, h']
 
 /-! ### The felicity judgments -/
 
 /-- The cell a row's `form` feature names. -/
-def cell? (e : Datum) : Option Cell :=
+def cell? (e : Datum) : Option Constraint :=
   e.parse? "form"
     [("simple past", simplePast), ("present progressive", presentProgressive),
       ("future (will)", will), ("will have V-ed", willHave), ("will now be V-ing", willNow),
