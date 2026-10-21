@@ -251,14 +251,14 @@ theorem spelled_stems : ∀ v ∈ verbs, ofString? v.form = some (v.inflect []) 
 
 /-- *çocuk-lar-ın-a* 'to your children' has the order number, possession, case (§8.1 (1)). -/
 theorem nominal :
-    Nominal.Licensed
+    Nominal.template.Licensed (E := Nominal.Exponent)
       [⟨_, .plural⟩, ⟨_, .possessive (.personNumber .second .singular)⟩, ⟨_, .dative⟩] := by
   decide
 
 /-- *Döğ-üş-tür-t-ül-me-yebil-iyor-muş-sunuz-dur* fills every slot of the finite verb, the
 voice slot with four stacked suffixes (§8.2 (7)). -/
 theorem finite_verb :
-    Verb.Licensed
+    Verb.template.Licensed (E := Verb.Exponent)
       [⟨_, .reciprocal⟩, ⟨_, .causative⟩, ⟨_, .causative⟩, ⟨_, .passive⟩, ⟨_, .negative⟩,
         ⟨_, .abil⟩, ⟨_, .iyor⟩, ⟨_, .evidentialCopula⟩,
         ⟨_, .person .two (.personNumber .second .plural)⟩,
@@ -268,24 +268,26 @@ theorem finite_verb :
 /-- *Bitir-e-me-miş-tir*, *Oku-yabil-ecek-miş* and *git-ti-ydi-n* fill positions 1-3-5, 2-3-4,
 and 3-4 with a group-1 person marker (§8.2.3 (11), (12), §8.2.3.3). -/
 theorem tam_positions :
-    Verb.Licensed [⟨_, .possibility⟩, ⟨_, .negative⟩, ⟨_, .miş⟩, ⟨_, .dir⟩] ∧
-    Verb.Licensed [⟨_, .abil⟩, ⟨_, .acak⟩, ⟨_, .evidentialCopula⟩] ∧
-    Verb.Licensed
+    Verb.template.Licensed (E := Verb.Exponent)
+      [⟨_, .possibility⟩, ⟨_, .negative⟩, ⟨_, .miş⟩, ⟨_, .dir⟩] ∧
+    Verb.template.Licensed (E := Verb.Exponent)
+      [⟨_, .abil⟩, ⟨_, .acak⟩, ⟨_, .evidentialCopula⟩] ∧
+    Verb.template.Licensed (E := Verb.Exponent)
       [⟨_, .di⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.personNumber .second .singular)⟩] := by
   decide
 
 /-- The negative follows voice and precedes the tense/aspect/modality marker (§8.2.2), and
 the copular markers follow that marker (§8.2.3), so the reversed orders are unlicensed. -/
 theorem reversed_orders :
-    ¬ Verb.Licensed [⟨_, .negative⟩, ⟨_, .causative⟩] ∧
-    ¬ Verb.Licensed [⟨_, .di⟩, ⟨_, .negative⟩] ∧
-    ¬ Verb.Licensed [⟨_, .pastCopula⟩, ⟨_, .di⟩] := by
+    ¬ Verb.template.Licensed (E := Verb.Exponent) [⟨_, .negative⟩, ⟨_, .causative⟩] ∧
+    ¬ Verb.template.Licensed (E := Verb.Exponent) [⟨_, .di⟩, ⟨_, .negative⟩] ∧
+    ¬ Verb.template.Licensed (E := Verb.Exponent) [⟨_, .pastCopula⟩, ⟨_, .di⟩] := by
   decide
 
 /-- Markers of position 3 cannot co-occur, since the template does not repeat the position
 (§8.2.3 (i)). -/
 theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
-    ¬ Verb.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
-  show [Verb.Slot.tam, .tam] ∉ Verb.template.matches' by decide
+    ¬ Verb.template.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
+  show [Verb.Slot.tam, .tam] ∉ Verb.template.language by decide
 
 end GokselKerslake2005

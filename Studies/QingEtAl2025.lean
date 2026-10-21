@@ -279,7 +279,7 @@ phonology derives its surface form, *korkmuyor* and *umuyordum* among them. -/
 theorem turkish_forms :
     ∀ r ∈ Examples.all, r.language = "nucl1301" →
       ∃ v ∈ (r.feature? "predicate").bind turkishVerb?, ∃ sfx ∈ turkishInflections,
-        Turkish.Verb.Licensed (v.suffixes sfx) ∧
+        Turkish.Verb.template.Licensed (v.suffixes sfx) ∧
           ∃ t ∈ r.glossedTokens, Turkish.Phonology.ofSegmented? t.1 = some (v.inflect sfx) := by
   decide +kernel
 

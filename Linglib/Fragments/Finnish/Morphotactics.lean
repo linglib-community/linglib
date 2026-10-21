@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Computability.RegularExpressions
+public import Linglib.Morphology.Morphotactics.AffixTemplate
 public import Linglib.Fragments.Finnish.Declension
 public import Linglib.Fragments.Finnish.Infinitives
 public import Linglib.Fragments.Finnish.Possession
@@ -118,11 +118,11 @@ inductive Exponent : Slot → Type where
   | clitic (c : Clitic) : Exponent .clitic
   deriving DecidableEq
 
-open RegularExpression in
 /-- The endings come in the order function, number, case and possessive, each of which a word may
 lack, and are followed by any number of clitics (§3.1, §3.3). -/
-def template : RegularExpression Slot :=
-  sublists [.function, .number, .case, .possession] * (char .clitic).star
+def template : Morphology.AffixTemplate Slot where
+  suffixSlots := [.function, .number, .case, .possession, .clitic]
+  stacking := {.clitic}
 
 variable {σ : Slot}
 
@@ -162,7 +162,7 @@ instance (es : List (Σ σ, Exponent σ)) : Decidable (HasPossessive es) :=
 determined twice, a comitative is followed by a possessive ending, and an infinitive is in one
 of its cases, its translative with a possessive ending. -/
 def WellFormed (es : List (Σ σ, Exponent σ)) : Prop :=
-  es.map Sigma.fst ∈ template.matches' ∧ (es.flatMap (·.2.fills)).Nodup ∧
+  template.Licensed es ∧ (es.flatMap (·.2.fills)).Nodup ∧
     (caseOf es = .com → HasPossessive es) ∧
     ∀ i ∈ es.findSome? (·.2.infinitive?),
       caseOf es ∈ i.cases ∧ (i = .a ∧ caseOf es = .transl → HasPossessive es)

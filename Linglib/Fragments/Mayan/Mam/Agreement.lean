@@ -70,7 +70,7 @@ def defaultSetB : List Morphology.Morph := [.procl "tz'"]
 
 /-- The position classes of the verbal complex, the aspect marker, Set B and Set A before the
 stem and no status suffix. -/
-def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .setA], []⟩
+def template : Morphology.AffixTemplate Mayan.VerbSlot := { prefixSlots := [.aspect, .setB, .setA] }
 
 /-- Case is tripartite in every aspect, ergative on the transitive subject, accusative on the
 object and absolutive on the intransitive subject. -/

@@ -4,7 +4,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Case.Alignment
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Morphology.Morph
-public import Linglib.Morphology.Morphotactics.Template
+public import Linglib.Morphology.Morphotactics.AffixTemplate
 public import Linglib.Data.UD.Features
 
 /-!
@@ -98,6 +98,6 @@ def absPosition (t : Morphology.AffixTemplate VerbSlot) : ABSPosition :=
 
 theorem absPosition_eq_high_iff (t : Morphology.AffixTemplate VerbSlot) :
     absPosition t = .high ↔ .setB ∈ t.prefixSlots := by
-  unfold absPosition; split <;> simp_all
+  simp [absPosition]
 
 end Mayan

@@ -15,8 +15,8 @@ in more languages, to sit closer to the stem, and to fuse with it more tightly. 
 does not predict which categories are most often inflectional: generality works against the most
 relevant, so inflection is likeliest in the middle of the scale.
 
-`RelevanceHierarchy` is a comparative concept, not a universal slot inventory: languages own their
-slot types (`AffixTemplate Slot`, `Mayan.VerbSlot`, `Japanese.Verb.Slot`), and a relevance claim
+`RelevanceHierarchy` is a comparative concept, not a universal slot inventory: languages own the
+slot types of their `AffixTemplate`s (`Mayan.VerbSlot`, `Japanese.Verb.Slot`), and a relevance claim
 pulls the order back along a partial map from slots to categories supplied by the study that
 draws the comparison. A slot sequence read stem-outward respects the hierarchy when it is
 `List.SortedLE`.

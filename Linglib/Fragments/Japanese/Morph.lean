@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Computability.RegularExpressions
+public import Linglib.Morphology.Morphotactics.AffixTemplate
 public import Linglib.Fragments.Japanese.Negation
 public import Linglib.Fragments.Japanese.Voice
 
@@ -12,31 +12,23 @@ the verbalizer *-su* (*suru*) of Sino-Japanese verbal nouns, the causative *-(s)
 passive and the potential in *-(r)are*, the polite *-mas*, the desiderative *-ta(i)*, the
 negative *-(a)na* and the inflection that closes the word, non-past *-(r)u*, past *-ta*,
 hortative *-(y)oo* or gerund *-te*. A verb form takes at most one suffix of each position, and
-the positions appear in this order, so the template is the regular expression of the sublists
-of the slot list and a string of suffixes is licensed when its slots match it. The final
-position is [narrog-2010b]'s class of inflections: no inflection follows another, so the tense,
-mood and nonfinite endings share one slot.
+the positions appear in this order. The final position is Narrog's class of inflections: no
+inflection follows another, so the tense, mood and nonfinite endings share one slot.
 
-The suffixes and their positions are those [hahn-degen-futrell-2021] extract from the Universal
-Dependencies segmentation and document from [kaiser-ichikawa-kobayashi-yamamoto-2013]. The
+The suffixes and their positions are those Hahn, Degen and Futrell extract from the Universal
+Dependencies segmentation and document from the grammar of Kaiser and colleagues. The
 polite suffix precedes the desiderative there on the strength of corpus forms such as
 *mi-mashi-tai* 'I want to see'; the two rarely share a word, since the desiderative inflects as
-an adjective and takes the polite copula instead. [narrog-2010b] finds the causative on either
+an adjective and takes the polite copula instead. Narrog finds the causative on either
 side of the desiderative and counts the potential as modality rather than voice, so the fixed
 order is an idealization of the verbal complex, not a description of it.
 
 ## Main definitions
 
 * `Japanese.Verb.Slot`, `Japanese.Verb.Exponent`: the suffix positions and the suffixes of each.
-* `Japanese.Verb.slots`, `Japanese.Verb.template`: the positions in order and the regular
-  expression over them, and `Japanese.Verb.Licensed`, the suffix strings it admits.
+* `Japanese.Verb.template`: the suffix positions in order.
 * `Japanese.Verb.Exponent.morphs`: the morphs of a suffix, the passive's those of
   `Japanese.directPassive` and the negative's those of `Japanese.Negation.na`.
-
-## Main results
-
-* `Japanese.Verb.licensed_iff`: a string of suffixes is licensed exactly when its slots are a
-  sublist of `slots`.
 
 ## Implementation notes
 
@@ -122,21 +114,9 @@ def Exponent.morphs : Exponent σ → List Morph
   | .yoo => [.suff "(y)oo"]
   | .te => [.suff "te"]
 
-/-- The positions in their order from the stem outward. -/
-def slots : List Slot :=
-  [.derivation, .valence, .voice, .politeness, .desiderative, .negation, .inflection]
-
-/-- The template: each position at most once, in the order of `slots`. -/
-def template : RegularExpression Slot := .sublists slots
-
-/-- A string of suffixes is licensed when its slots match the template. -/
-def Licensed (w : List (Σ σ, Exponent σ)) : Prop := w.map Sigma.fst ∈ template.matches'
-
-instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
-
-open List in
-/-- A string of suffixes is licensed exactly when its slots are a sublist of `slots`. -/
-theorem licensed_iff {w : List (Σ σ, Exponent σ)} : Licensed w ↔ w.map Sigma.fst <+ slots :=
-  RegularExpression.mem_matches'_sublists
+/-- The suffix positions in their order from the stem outward. -/
+def template : Morphology.AffixTemplate Slot where
+  suffixSlots :=
+    [.derivation, .valence, .voice, .politeness, .desiderative, .negation, .inflection]
 
 end Japanese.Verb

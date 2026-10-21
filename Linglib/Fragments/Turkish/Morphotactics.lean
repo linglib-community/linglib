@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Turkish.Case
-public import Linglib.Core.Computability.RegularExpressions
+public import Linglib.Morphology.Morphotactics.AffixTemplate
 public import Linglib.Phonology.Hiatus
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Fragments.Turkish.Phonology
@@ -24,9 +24,8 @@ of position 3. The voice slot alone admits a sequence of suffixes, as the four o
 the order number, possession, case (§8.1).
 
 The finite verb and the nominal each have a slot inventory, the exponents of each slot, and a
-template, a regular expression over the slots in which every position may be skipped and the
-voice position repeated. The suffixes of a word are licensed when the list of their slots
-matches the template. The person markers (§8.4) and the possessives (§8.1.2) are
+template of suffix positions, each of which a word may skip, the voice position of the verb
+stacking. The person markers (§8.4) and the possessives (§8.1.2) are
 `Agreement.Paradigm`s.
 
 Vowels do not occur next to each other in Turkish, and the grammar brackets in a suffix's
@@ -38,7 +37,7 @@ exactly when it differs from the last segment of the stem in being a vowel.
 ## Main definitions
 
 * `Turkish.Verb.Slot`, `Turkish.Verb.Exponent`, `Turkish.Verb.template`: the slots, exponents
-  and template of the finite verb, and `Turkish.Verb.Licensed` the suffix strings it admits.
+  and template of the finite verb.
 * `Turkish.Nominal.Slot`, `Turkish.Nominal.Exponent`, `Turkish.Nominal.template`: the same for
   the nominal.
 * `Turkish.Suffix`, `Suffix.attach`: a suffix in citation form, with its bracketed initial
@@ -315,17 +314,12 @@ def Exponent.form : Exponent σ → Suffix
   | .person g c => (g.paradigm.realize c).getD ⟨none, []⟩
   | .dir => ⟨none, [D, I, r]⟩
 
-open RegularExpression in
 /-- The template of the finite verb lists its slots in the order of §8.2, each of which a verb
 may skip, the voice slot taking any number of suffixes. -/
-def template : RegularExpression Slot :=
-  (char .voice).star *
-    sublists [.possibility, .negation, .auxiliary, .tam, .copula, .person, .generalizing]
-
-/-- A string of suffixes is licensed when its slots match the template. -/
-def Licensed (w : List (Σ σ, Exponent σ)) : Prop := w.map Sigma.fst ∈ template.matches'
-
-instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+def template : Morphology.AffixTemplate Slot where
+  suffixSlots :=
+    [.voice, .possibility, .negation, .auxiliary, .tam, .copula, .person, .generalizing]
+  stacking := {.voice}
 
 end Verb
 
@@ -354,7 +348,7 @@ def possessives : Agreement.Paradigm Suffix :=
 inductive Exponent : Slot → Type where
   /-- -lAr (§8.1.1). -/
   | plural : Exponent .number
-  /-- A possessive suffix: a cell of `possessives` (§8.1.2). -/
+  /-- A possessive suffix, a cell of `possessives` (§8.1.2). -/
   | possessive (cell : Agreement.Bundle) : Exponent .possession
   /-- -(y)I. -/
   | accusative : Exponent .case
@@ -400,12 +394,7 @@ def forms : List (Σ σ, Exponent σ) → List Suffix
 
 /-- The template of the nominal lists the slots number, possession and case, in that order,
 each of which a nominal may skip (§8.1). -/
-def template : RegularExpression Slot := .sublists [.number, .possession, .case]
-
-/-- A string of suffixes is licensed when its slots match the template. -/
-def Licensed (w : List (Σ σ, Exponent σ)) : Prop := w.map Sigma.fst ∈ template.matches'
-
-instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+def template : Morphology.AffixTemplate Slot := { suffixSlots := [.number, .possession, .case] }
 
 /-- The case a case exponent realizes. -/
 def Exponent.toCase : Exponent .case → Case

@@ -48,7 +48,8 @@ open Mayan (ExponentTable)
 
 /-- The position classes of the Yucatec verbal complex, the aspect marker and Set A before the
 stem and the status suffix and then Set B after it. -/
-def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setA], [.status, .setB]⟩
+def template : Morphology.AffixTemplate Mayan.VerbSlot :=
+  { prefixSlots := [.aspect, .setA], suffixSlots := [.status, .setB] }
 
 /-- Yucatec is ergative in the completive, the perfective, and puts Set A on every subject in
 the incompletive aspects. -/
