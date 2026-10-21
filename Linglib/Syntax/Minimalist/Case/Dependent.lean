@@ -31,8 +31,8 @@ probes present with the domain each agrees into.
 ## Main results
 
 * `agreeValue_getElem?`: Agree values at most one NP, an unvalued one in its domain.
-* `agreeValue_eq_self_iff`: Agree values nothing iff the probe seeking an unvalued NP in its
-  domain finds no goal.
+* `agreeValue_eq_self_iff`, `agreeValue_eq_map`: Agree values nothing iff the probe seeking an
+  unvalued NP in its domain finds no goal, and otherwise values the goal it finds.
 * `extends_agreeValue`, `Case.Valuation.ValuedLE.agreeValue`: Agree extends the valuation by its
   value, and preserves which of two derivations values more nominals.
 * `CaseAssigners.extends_assign`: assignment extends the lexical valuation by what the assigners
@@ -100,6 +100,26 @@ theorem agreeValue_eq_self_iff : agreeValue P v s = s ↔
   | nil => simp [Probe.search]
   | cons p s ih =>
     obtain ⟨x, _ | a⟩ := p <;> cases hx : P x <;> simp_all [Probe.search]
+
+/-- Agree values the NP that the probe seeking an unvalued NP in its domain finds, its goal
+(`Probe.search_eq_some_iff_finds`), and leaves the others as they are. -/
+theorem agreeValue_eq_map [DecidableEq α] [DecidableEq β] (hs : s.Nodup) :
+    agreeValue P v s = s.map fun p ↦
+      if (Probe.relativized fun q : α × Option β ↦ q.2.isNone && P q.1).search s = some p then
+        (p.1, some v) else p := by
+  induction s with
+  | nil => rfl
+  | cons q s ih =>
+    obtain ⟨hq, hs⟩ := List.nodup_cons.mp hs
+    by_cases h : q.2.isNone && P q.1
+    · rw [agreeValue_cons, ite_eq_left h, Probe.search, List.find?_cons_of_pos (by simpa using h),
+        List.map_cons, ite_eq_left rfl]
+      congr 1
+      refine ((List.map_congr_left fun r hr ↦ ?_).trans (List.map_id' s)).symm
+      rw [ite_eq_right (by rintro ⟨⟩; exact hq hr)]
+    · rw [agreeValue_cons, ite_eq_right h, Probe.search,
+        List.find?_cons_of_neg (by simpa using h), List.map_cons, ← Probe.search, ih hs,
+        ite_eq_right fun he ↦ hq (Probe.mem_of_search_eq_some he)]
 
 /-- Agree leaves every NP as it was except at most one, an unvalued NP in its domain, which it
     values. -/

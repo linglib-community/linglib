@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Syntax.Command
 public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Mathlib.Order.Minimal
 
@@ -31,6 +32,9 @@ than and agrees with those of them that interact. Keyed by position, these are `
   with what it finds.
 * `Minimalist.Probe.search_eq_some_iff_finds`, `Minimalist.Probe.mem_inspected_iff_inspects`: the
   list search, keyed by position.
+* `Minimalist.Probe.finds_ancestors_iff`, `Minimalist.Probe.not_finds_ancestors_of_lt`: keyed by
+  the generators above a node, finding is the Minimal Link Condition among goals none of which
+  dominates another, and a goal inside a satisfier is not found.
 
 ## References
 
@@ -108,6 +112,31 @@ theorem inspects_insatiable_iff {f : α → Bool} : (insatiable f).Inspects s ke
 theorem agreesWith_insatiable_iff {f : α → Bool} :
     (insatiable f).AgreesWith s key a ↔ a ∈ s ∧ f a := by
   simp [AgreesWith, inspects_insatiable_iff]
+
+/-! ### Closeness in phrase structure -/
+
+section Closeness
+
+open PhraseStructure
+open scoped SetRel
+
+variable {α : Type*} [PartialOrder α] {P : Set α} {p : Probe α} {s : Set α} {a b x : α}
+
+/-- Among goals none of which dominates another, a probe finds the satisfiers that no satisfier
+asymmetrically commands, the Minimal Link Condition. -/
+theorem finds_ancestors_iff (hs : IsAntichain (· ≤ ·) s) :
+    p.Finds s (ancestors P) a ↔ (a ∈ s ∧ p.sat a) ∧
+      ∀ ⦃b⦄, b ∈ s → p.sat b → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) :=
+  (minimalFor_ancestors_iff (S := {b | b ∈ s ∧ p.sat b}) (hs.subset fun _ h ↦ h.1)).trans
+    (and_congr_right fun _ ↦ ⟨fun h _ hb hsb ↦ h ⟨hb, hsb⟩, fun h _ hb ↦ h hb.1 hb.2⟩)
+
+/-- A probe does not find a goal that a satisfier dominates through a generator: the container is
+found before what it contains, as the A-over-A principle requires. -/
+theorem not_finds_ancestors_of_lt (hb : b ∈ s) (hsb : p.sat b) (hbx : b ≤ x) (hxa : x < a)
+    (hx : x ∈ P) : ¬ p.Finds s (ancestors P) a := fun h ↦
+  h.inspects.2 hb hsb (ancestors_ssubset_ancestors_of_le_of_lt hbx hxa hx)
+
+end Closeness
 
 /-! ### The list search, keyed by position -/
 

@@ -115,6 +115,25 @@ theorem agreeWith_eq (f : Nominal → Nominal) (ns : List Nominal) :
       List.head?_cons, Option.filter_some, Probe.ofInt_int, List.tail_cons]
     cases n.isActive <;> simp
 
+/-- `agreeWith f` applies `f` to the goal `phiProbe` Agrees with and leaves the other nominals as
+they are. -/
+theorem agreeWith_eq_map (f : Nominal → Nominal) {ns : List Nominal} (hns : ns.Nodup) :
+    agreeWith f ns = ns.map fun n ↦ if phiProbe.goal ns = some n then f n else n := by
+  cases ns with
+  | nil => rfl
+  | cons n ns =>
+    obtain ⟨hn, -⟩ := List.nodup_cons.mp hns
+    rw [agreeWith_eq, List.map_cons]
+    cases hg : phiProbe.goal (n :: ns) with
+    | none => simp
+    | some m =>
+      have hm : n = m := by
+        simpa [Probe.goal, phiProbe] using (Probe.goal_eq_some_iff.mp hg).1
+      subst hm
+      simp only [ite_true, List.tail_cons, List.cons.injEq, true_and]
+      refine ((List.map_congr_left fun r hr ↦ ?_).trans (List.map_id' ns)).symm
+      exact ite_eq_right fun he ↦ hn (by rwa [Option.some.inj he])
+
 /-- Agree for person licenses its goal's person feature. -/
 def piAgree : List Nominal → List Nominal := agreeWith fun n ↦ { n with licensed := true }
 
