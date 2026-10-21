@@ -1,31 +1,45 @@
 module
 
-public import Linglib.Morphology.Morph
+public import Linglib.Fragments.Dargwa.Locatives
 
 /-!
 # Tanti Dargwa verbs
 
-This file defines the light verbs and complex verbs of Tanti Dargwa as Sumbatova describes
-them. A Dargwa verb is simplex, a bare root with at most a gender prefix, a preverb verb, or a
-complex verb, a lexical stem followed by a light verb with any preverbs between them. The
-lexical stems are noun, adjective, numeral, verb or ideophone stems, some of them found only in
-the complex verb, and a few light verbs likewise occur only there. The valency alternations of
-the verb are in `Voice.lean`.
+A Tanti Dargwa verb is simplex (a root with at most a gender prefix), a preverb verb, or complex
+(a lexical stem followed by a light verb, with any preverbs between them). Roots, some preverbs and
+some lexical stems agree in gender by a prefix, so each is given as its morphs under each gender
+marker, and the marker of the agreement controller fills every gender slot of a verb. The preverbs
+share the orientation markers and directions of the locative forms.
 
 ## Main definitions
 
-* `Dargwa.LightVerb`, `Dargwa.lightVerbs`: the light verbs, each with the meaning of the
-  homophonous simplex verb where it has one
-* `Dargwa.ComplexVerb`: a lexical stem, cited as its root, with its word class, preverbs and
-  light verb
+* `Dargwa.Localization.preverb?`, `Dargwa.Direction.preverb`: the preverbs of a localization with
+  an orientation, and of a direction
+* `Dargwa.localizationPreverbs`, `Dargwa.directionPreverbs`: the two groups of preverbs
+* `Dargwa.lightVerbs`, `Dargwa.boundLightVerbs`: the light verbs, and those found only in complex
+  verbs
+* `Dargwa.ComplexVerb`, `Dargwa.ComplexVerb.morphs`: a complex verb and its morphs
+
+## Main results
+
+* `Dargwa.Localization.preverb?_super`: *če-*, *če-b-* and *če-r-* are *super* with the lative,
+  essive and elative markers
+* `Dargwa.morphs_startCrying`: the stem and the light verb of *w-isːe-w-ig-* take the same marker
 
 ## Implementation notes
 
-* A light verb is cited by its stem without the gender prefix, `agrees` recording the roots
-  whose shape begins with the agreement slot. Sumbatova lists *aq-* both as 'hang' and among
-  the light verbs found only in complex verbs; both entries are kept.
-* The Muira Dargwa complex predicates of Kalyakin's study, with the position he assigns
-  their roots, are in `Studies/Kalyakin2026.lean`.
+* Sumbatova gives the orientations of the first group as the lative, essive and elative, and
+  glosses *če-tːi-* and *gu-tːi-* 'above (motion)' and 'below (motion)'; they are *super* and
+  *sub* with the translative marker. *tːura-* 'outside', *ča-* 'upward' and *ča-r-* 'from the
+  top' are cited whole.
+* Sumbatova lists *aq-* both as 'hang' and among the light verbs found only in complex verbs, so
+  `hang` is in both inventories.
+* Her list of light verbs omits *b-ut'-* 'cut', the light verb of *č'u-b-ut'-* 'divide by two'.
+
+## TODO
+
+* As a rule a verb has at most two preverbs, one of the first group followed by one of the
+  second, a two-position `Morphology.AffixTemplate`.
 
 ## References
 
@@ -38,101 +52,145 @@ namespace Dargwa
 
 open Morphology
 
+/-! ### Preverbs -/
+
+/-- The prefix of a localization in a preverb of the first group: *če-* 'on' for *super*, *gu-*
+'under' for *sub*, *sa-* 'in front of' for *ante*, and none for the others. -/
+def Localization.prefix? : Localization → Option Morph
+  | .super => some (.pref "če")
+  | .sub => some (.pref "gu")
+  | .ante => some (.pref "sa")
+  | _ => none
+
+/-- The preverb of the first group with the localization `l` and the orientation `o`, the prefix
+of `l` followed by the marker of `o`, and none for a localization without a prefix. -/
+def Localization.preverb? (l : Localization) (o : Orientation) :
+    Option (Gender.Marker → List Morph) :=
+  l.prefix?.map fun p g ↦ p :: ((o.marker? g).map Morph.pref).toList
+
+/-- *tːura-* 'outside', a lative. -/
+def outside : Gender.Marker → List Morph := fun _ ↦ [.pref "tːura"]
+
+/-- *ča-* 'upward', from *če-* 'on' and *ha-* 'upward'. -/
+def onUpward : Gender.Marker → List Morph := fun _ ↦ [.pref "ča"]
+
+/-- *ča-r-* 'from the top'. -/
+def fromTop : Gender.Marker → List Morph := fun _ ↦ [.pref "ča", .pref "r"]
+
+/-- The preverbs of the first group, which express a localization and an orientation: the
+lative, essive and elative of each localization with a prefix, *če-tːi-* 'above (motion)' and
+*gu-tːi-* 'below (motion)', and those cited whole. -/
+def localizationPreverbs : Finset (Gender.Marker → List Morph) :=
+  ((Finset.univ ×ˢ {.lative, .essive, .elative} ∪ {(.super, .translative), (.sub, .translative)} :
+      Finset (Localization × Orientation)).biUnion fun (l, o) ↦ (l.preverb? o).toFinset) ∪
+    {outside, onUpward, fromTop}
+
+/-- The preverb of a direction: *ha-* 'upward', *ka-* 'downward', *sa-* 'hither (to the
+speaker)' and *b-it-* 'thither'. -/
+def Direction.preverb : Direction → Gender.Marker → List Morph
+  | .up, _ => [.pref "ha"]
+  | .down, _ => [.pref "ka"]
+  | .hither, _ => [.pref "sa"]
+  | .thither, g => [.pref g.form, .pref "it"]
+
+/-- *le-* 'hither (to the addressee)', a direction the locative forms lack. -/
+def toAddressee : Gender.Marker → List Morph := fun _ ↦ [.pref "le"]
+
+/-- The preverbs of the second group, which express a direction. -/
+def directionPreverbs : Finset (Gender.Marker → List Morph) :=
+  insert toAddressee (Finset.univ.image Direction.preverb)
+
+/-- *če-*, *če-b-* and *če-r-* are *super* with the lative, essive and elative markers. -/
+theorem Localization.preverb?_super :
+    Localization.super.preverb? .lative = some (fun _ ↦ [.pref "če"]) ∧
+      Localization.super.preverb? .essive = some (fun g ↦ [.pref "če", .pref g.form]) ∧
+      Localization.super.preverb? .elative = some (fun _ ↦ [.pref "če", .pref "r"]) :=
+  ⟨rfl, rfl, rfl⟩
+
 /-! ### Light verbs -/
 
-/-- A light verb is the verbal component of a complex verb. -/
-structure LightVerb where
-  /-- The stem, without the gender prefix. -/
-  stem : String
-  /-- Whether the root begins with the gender agreement slot. -/
-  agrees : Bool
-  /-- The meaning of the homophonous simplex verb, `none` for a light verb found only in
-  complex verbs. -/
-  heavy : Option String
-  deriving DecidableEq, Repr
-
 /-- *b-arq'-* 'do, make', the most common light verb. -/
-def make : LightVerb := ⟨"arq'", true, some "do, make"⟩
+def make : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "arq'"]
 
 /-- *b-iχ-* 'become'. -/
-def become : LightVerb := ⟨"iχ", true, some "become"⟩
+def become : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "iχ"]
 
 /-- *w-ik'-* 'speak'. -/
-def speak : LightVerb := ⟨"ik'", true, some "speak"⟩
+def speak : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "ik'"]
 
 /-- *b-at-* 'leave'. -/
-def leave : LightVerb := ⟨"at", true, some "leave"⟩
+def leave : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "at"]
 
 /-- *b-ič-* 'fall'. -/
-def fall : LightVerb := ⟨"ič", true, some "fall"⟩
+def fall : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "ič"]
 
 /-- *b-aˁq-* 'hit'. -/
-def hit : LightVerb := ⟨"aˁq", true, some "hit"⟩
+def hit : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "aˁq"]
 
 /-- *b-icː-* 'stand up'. -/
-def standUp : LightVerb := ⟨"icː", true, some "stand up"⟩
+def standUp : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "icː"]
 
 /-- *b-ig-* 'sit down'. -/
-def sitDown : LightVerb := ⟨"ig", true, some "sit down"⟩
+def sitDown : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "ig"]
 
 /-- *aq-* 'hang'. -/
-def hang : LightVerb := ⟨"aq", false, some "hang"⟩
+def hang : Gender.Marker → List Morph := fun _ ↦ [.root "aq"]
 
 /-- *aʁ-* 'reach'. -/
-def reach : LightVerb := ⟨"aʁ", false, some "reach"⟩
+def reach : Gender.Marker → List Morph := fun _ ↦ [.root "aʁ"]
 
 /-- *b-ač'-* 'come'. -/
-def come : LightVerb := ⟨"ač'", true, some "come"⟩
+def come : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "ač'"]
 
-/-- *le-b-q'-* 'come (here)'. -/
-def comeHere : LightVerb := ⟨"le-q'", true, some "come (here)"⟩
+/-- *le-b-q'-* 'come (here)', whose gender prefix follows the preverb *le-*. -/
+def comeHere : Gender.Marker → List Morph := fun g ↦ toAddressee g ++ [.pref g.form, .root "q'"]
 
 /-- *b-arʁ-* 'collect'. -/
-def collect : LightVerb := ⟨"arʁ", true, some "collect"⟩
+def collect : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "arʁ"]
 
 /-- *b-ixː-* 'put'. -/
-def put : LightVerb := ⟨"ixː", true, some "put"⟩
+def put : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "ixː"]
 
 /-- *it-* 'beat'. -/
-def beat : LightVerb := ⟨"it", false, some "beat"⟩
+def beat : Gender.Marker → List Morph := fun _ ↦ [.root "it"]
 
 /-- *ag-* 'go away'. -/
-def goAway : LightVerb := ⟨"ag", false, some "go away"⟩
+def goAway : Gender.Marker → List Morph := fun _ ↦ [.root "ag"]
 
 /-- *ʔ-* 'say'. -/
-def say : LightVerb := ⟨"ʔ", false, some "say"⟩
+def say : Gender.Marker → List Morph := fun _ ↦ [.root "ʔ"]
 
 /-- *b-erk'-* 'drive'. -/
-def drive : LightVerb := ⟨"erk'", true, some "drive"⟩
+def drive : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "erk'"]
 
 /-- *arg-* 'sift'. -/
-def sift : LightVerb := ⟨"arg", false, some "sift"⟩
+def sift : Gender.Marker → List Morph := fun _ ↦ [.root "arg"]
 
 /-- *b-ertː-* 'tear'. -/
-def tear : LightVerb := ⟨"ertː", true, some "tear"⟩
+def tear : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "ertː"]
 
 /-- *b-aˁʜ-* 'struggle'. -/
-def struggle : LightVerb := ⟨"aˁʜ", true, some "struggle"⟩
+def struggle : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "aˁʜ"]
 
-/-- *b-ut'-* 'cut', the light verb of *č'u-b-ut'-* 'divide by two'. -/
-def cut : LightVerb := ⟨"ut'", true, some "cut"⟩
+/-- *b-ut'-* 'cut'. -/
+def cut : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "ut'"]
 
 /-- *b-uq-*, found only in complex verbs. -/
-def uq : LightVerb := ⟨"uq", true, none⟩
-
-/-- *aq-*, found only in complex verbs. -/
-def aq : LightVerb := ⟨"aq", false, none⟩
+def uq : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "uq"]
 
 /-- *b-ikː-*, found only in complex verbs. -/
-def ikk : LightVerb := ⟨"ikː", true, none⟩
+def ikk : Gender.Marker → List Morph := fun g ↦ [.pref g.form, .root "ikː"]
 
 /-- *art-*, found only in complex verbs. -/
-def art : LightVerb := ⟨"art", false, none⟩
+def art : Gender.Marker → List Morph := fun _ ↦ [.root "art"]
 
 /-- The light verbs Sumbatova lists. -/
-def lightVerbs : Finset LightVerb :=
-  {make, become, speak, leave, fall, hit, standUp, sitDown, hang, reach, come, comeHere,
-    collect, put, beat, goAway, say, drive, sift, tear, struggle, cut, uq, aq, ikk, art}
+def lightVerbs : Finset (Gender.Marker → List Morph) :=
+  {make, become, speak, leave, fall, hit, standUp, sitDown, hang, reach, come, comeHere, collect,
+    put, beat, goAway, say, drive, sift, tear, struggle}
+
+/-- The light verbs Sumbatova lists as found only in complex verbs. -/
+def boundLightVerbs : Finset (Gender.Marker → List Morph) := {uq, hang, ikk, art}
 
 /-! ### Complex verbs -/
 
@@ -145,53 +203,61 @@ inductive StemClass where
   | ideophone
   deriving DecidableEq, Repr, Fintype
 
-/-- A complex verb is a lexical stem, cited as the root it contributes, followed by a light
-verb, with any preverbs between them. -/
+/-- A complex verb is a lexical stem followed by a light verb, with any preverbs between them. -/
 structure ComplexVerb where
   /-- The lexical stem, which carries the core meaning of the complex. -/
-  stem : Morph
+  stem : Gender.Marker → List Morph
   /-- The word class of the stem, `none` for a stem restricted to the complex verb. -/
   category : Option StemClass
   /-- The preverbs between the stem and the light verb. -/
-  preverbs : List Morph := []
+  preverbs : Gender.Marker → List Morph := fun _ ↦ []
   /-- The light verb. -/
-  lightVerb : LightVerb
+  lightVerb : Gender.Marker → List Morph
   /-- The meaning of the complex verb. -/
   gloss : String
-  deriving DecidableEq, Repr
+
+/-- The morphs of a complex verb whose agreement controller takes the marker `g`. -/
+def ComplexVerb.morphs (c : ComplexVerb) (g : Gender.Marker) : List Morph :=
+  c.stem g ++ c.preverbs g ++ c.lightVerb g
 
 /-- *taman-b-arq'-* 'finish' (transitive), from *taman* 'end'. -/
 def finish : ComplexVerb :=
-  { stem := .root "taman", category := some .noun, lightVerb := make, gloss := "finish" }
+  { stem := fun _ ↦ [.root "taman"], category := some .noun, lightVerb := make,
+    gloss := "finish" }
 
 /-- *ʜaˁdur-d-arq'-* 'prepare', from *ʜaˁdur-* 'ready'. -/
 def prepare : ComplexVerb :=
-  { stem := .root "ʜaˁdur", category := some .adjective, lightVerb := make,
+  { stem := fun _ ↦ [.root "ʜaˁdur"], category := some .adjective, lightVerb := make,
     gloss := "prepare" }
 
 /-- *č'u-b-ut'-* 'divide by two', from *č'u* 'two'. -/
 def divideByTwo : ComplexVerb :=
-  { stem := .root "č'u", category := some .numeral, lightVerb := cut,
+  { stem := fun _ ↦ [.root "č'u"], category := some .numeral, lightVerb := cut,
     gloss := "divide by two" }
 
 /-- *qeʜ-w-ik'-* 'cough' (imperfective), from the ideophone *qeʜ-*. -/
 def cough : ComplexVerb :=
-  { stem := .root "qeʜ", category := some .ideophone, lightVerb := speak,
+  { stem := fun _ ↦ [.root "qeʜ"], category := some .ideophone, lightVerb := speak,
     gloss := "cough" }
 
 /-- *w-isːe-w-ig-* 'start crying', from *w-isː-* 'cry' (imperfective). -/
 def startCrying : ComplexVerb :=
-  { stem := .root "isːe", category := some .verb, lightVerb := sitDown,
+  { stem := fun g ↦ [.pref g.form, .root "isːe"], category := some .verb, lightVerb := sitDown,
     gloss := "start crying" }
 
 /-- *tːurχ-b-arq'-* 'spin', from a stem found nowhere else. -/
 def spin : ComplexVerb :=
-  { stem := .root "tːurχ", category := none, lightVerb := make, gloss := "spin" }
+  { stem := fun _ ↦ [.root "tːurχ"], category := none, lightVerb := make, gloss := "spin" }
 
-/-- *t'aš-ka-b-icː-* 'stop', from a stem found nowhere else, with the preverb *ka-*
-'downward' between it and the light verb. -/
+/-- *t'aš-ka-b-icː-* 'stop', from a stem found nowhere else, with the preverb *ka-* 'downward'
+between it and the light verb. -/
 def stop : ComplexVerb :=
-  { stem := .root "t'aš", category := none, preverbs := [.pref "ka"],
+  { stem := fun _ ↦ [.root "t'aš"], category := none, preverbs := Direction.down.preverb,
     lightVerb := standUp, gloss := "stop" }
+
+/-- In *w-isːe-w-ig-* 'start crying' the stem and the light verb each take the marker of the
+agreement controller. -/
+theorem morphs_startCrying (g : Gender.Marker) :
+    startCrying.morphs g = [.pref g.form, .root "isːe", .pref g.form, .root "ig"] := rfl
 
 end Dargwa

@@ -23,6 +23,7 @@ the standard of comparison.
 
 * `Dargwa.Localization`, `Dargwa.Orientation`, `Dargwa.Direction`: the three categories with
   their suffixes, and `Localization.region` and `Orientation.pathDir` their comparative labels
+* `Dargwa.Orientation.marker?`: the marker of an orientation, apart from the side it attaches on
 * `Dargwa.LocativeForm`: a form, with `LocativeForm.morphs` its suffixes and
   `LocativeForm.IsSpatial` the combinatorics of the spatial paradigm
 * `Dargwa.comparisonStandard`: the super-elative of the standard of comparison
@@ -118,12 +119,16 @@ inductive Orientation where
   | translative
   deriving DecidableEq, Repr, Fintype
 
+/-- The marker of an orientation, the gender marker `g` for the essive and none for the lative. -/
+def Orientation.marker? : Orientation → Gender.Marker → Option String
+  | .lative, _ => none
+  | .elative, _ => some "r"
+  | .essive, g => some g.form
+  | .translative, _ => some "tːi"
+
 /-- The orientation suffixes, with the gender marker `g` the essive takes. -/
-def Orientation.morphs : Orientation → Gender.Marker → List Morph
-  | .lative, _ => []
-  | .elative, _ => [.suff "r"]
-  | .essive, g => [.suff g.form]
-  | .translative, _ => [.suff "tːi"]
+def Orientation.morphs (o : Orientation) (g : Gender.Marker) : List Morph :=
+  ((o.marker? g).map Morph.suff).toList
 
 /-- The path head of the comparative decomposition an orientation expresses. -/
 def Orientation.pathDir : Orientation → Spatial.Path.Direction
