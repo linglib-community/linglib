@@ -8,12 +8,17 @@ module
 public import Studies.CarianiSantorio2018
 public import Studies.Condoravdi2002
 public import Linglib.Semantics.Modality.BranchingTime
+public import Linglib.Semantics.Tense.Quantificational
 public import Linglib.Logic.Modal.Basic
 
 /-!
-# Cariani (2021): *The Modal Future*, chapters 5 to 8 and 11
+# Cariani (2021): *The Modal Future*, chapters 1, 3, 5 to 8 and 11
 
-Cariani develops the selection semantics of Cariani and Santorio, on which *will* selects a
+Cariani opens with the symmetric paradigm, on which *will* and *was* are mirror-image tense
+operators, Prior's quantifiers over later and earlier times, and argues in chapter 3 that *will*
+is instead a modal: its rule intervenes on the world of evaluation, it has present-directed uses
+that a future tense cannot have, and it is modally subordinated where the past is not. He then
+develops the selection semantics of Cariani and Santorio, on which *will* selects a
 world from its modal domain, from the perspective of the world of evaluation, and evaluates its
 prejacent there. A modal of this kind is necessity along the graph of a function, so it commutes
 with negation and validates excluded middle, while the hybrid semantics of chapter 5, which adds
@@ -29,6 +34,17 @@ context an utterance has, and rejects the convergent thin red line of Belnap and
 
 ## Main results
 
+* `linearWill_linearWill`, `forall_imp_linearWill_linearWas_iff`,
+  `forall_imp_linearWas_linearWill_iff`, `kt_fb`, `kt_bf`: the symmetric paradigm's validity
+  (1a), the correspondence of (1c) and (1d) with time lacking a last and a first moment, and the
+  axioms FB and BF of `K_t`, from the substrate's quantificational tenses.
+* `not_displacesWorlds_linearWill`, `displacesWorlds_hybrid_iff`, `hybrid_iff_linearWill`: §3.1's
+  criterion classifies symmetric *will* as no modal and hybrid *will* as one exactly when
+  selection moves, and centering collapses hybrid *will* to symmetric *will*.
+* `not_linearWill_now`, `pres_woll_frame_stative_iff`, `pres_woll_frame_eventive_iff`,
+  `pres_woll_or_neg`: symmetric *will* has no present-directed use, while selectional *will* with
+  *by now* holds of a state overlapping the present, (10), of an event only if it is
+  instantaneous, (11) and (12), and keeps excluded middle, (5).
 * `forall_hybrid_or_not_iff`, `forall_not_hybrid_and_not_iff`: the hybrid semantics validates
   excluded middle where a later time exists and non-contradiction only where at most one does.
 * `hybrid_tacos`: the tacos model, where *I will have tacos* and *I will not have tacos* are
@@ -59,14 +75,25 @@ context an utterance has, and rejects the convergent thin red line of Belnap and
 * An information state is a set of worlds, accepting the propositions that include it.
 * Cariani's `ext(I)`, the interval `I` extended to the future, is the forward interval from the
   start of `I`, and the modal base is indexed by that start, as in `Condoravdi2002`.
+* *Will* is PRES + WOLL (§3.2, p. 44; §7.6, p. 122), which is how the forms are built here; the
+  symmetric operators of chapter 1 are the substrate's quantificational tenses,
+  `◇[Tense.toSetRel ⟦Tense.future⟧]` and its past.
+* *By now* is Condoravdi's frame adverbial at the present, `frame (Interval.pure ↑now)`.
 
 ## TODO
 
+* The text says *by now* must "scope over *will*, otherwise *will* will re-extend the interval"
+  (p. 129), but with its entries the stated truth conditions of (10) and (11) come from *by now*
+  under WOLL, `woll (frame _ _)`; outermost it is idle at the present (`pres_frame_now_iff`).
+* The arguments from modal subordination and acquaintance inferences (§3.4, §3.5), which concern
+  discourse and evidentiality.
 * The counterhistorical restriction of §8.6 and the identity collapse of §8.8 (Fact 8.4).
 
 ## References
 
 * [cariani-2021]
+* [prior-1967]
+* [huddleston-pullum-2002]
 * [cariani-santorio-2018]
 * [kissine-2008]
 * [condoravdi-2002]
@@ -79,6 +106,91 @@ namespace Cariani2021
 
 open Conditional ModalLogic SelectionFunction
 open scoped SetRel
+
+/-! ### The symmetric paradigm
+
+Chapter 1 sets out the symmetric paradigm, on which *was* and *will* say that the radical held at
+some earlier and at some later time, mirror images of each other (p. 8). They are the
+quantificational past and future of the tense cells, Prior's operators, so the paradigm's
+validities are the laws of the cells: a future of a future is a future, (1a), while (1c) and (1d)
+fail exactly where time has a last and a first moment (p. 9), and hold given a future or a past,
+(2). Prior's logic `K_t` adds to the normal logics of the two duals the axioms FB and BF (p. 17),
+the units of the adjunctions between sometime in the one direction and always in the other. -/
+
+section Symmetric
+
+open Semantics
+
+/-- Linear symmetric *was* (p. 8): `A` held at some earlier time. -/
+def linearWas {T : Type*} [LinearOrder T] (A : T → Prop) : T → Prop :=
+  ◇[Tense.toSetRel ⟦Tense.past⟧] A
+
+/-- Linear symmetric *will* (p. 8): `A` holds at some later time. -/
+def linearWill {T : Type*} [LinearOrder T] (A : T → Prop) : T → Prop :=
+  ◇[Tense.toSetRel ⟦Tense.future⟧] A
+
+variable {T : Type*} [LinearOrder T] {A : T → Prop} {t : T}
+
+@[simp] theorem linearWas_iff : linearWas A t ↔ ∃ u < t, A u := Tense.diamond_toSetRel_past
+
+@[simp] theorem linearWill_iff : linearWill A t ↔ ∃ u > t, A u := Tense.diamond_toSetRel_future
+
+/-- *Will* and *was* are mirror images: *will* is *was* on the reversed time line (p. 10). -/
+theorem linearWill_iff_linearWas_toDual :
+    linearWill A t ↔ linearWas (T := Tᵒᵈ) (A ∘ OrderDual.ofDual) (OrderDual.toDual t) := by
+  simp only [linearWill_iff, linearWas_iff]
+  exact ⟨fun ⟨u, hu, h⟩ ↦ ⟨OrderDual.toDual u, hu, h⟩, fun ⟨u, hu, h⟩ ↦ ⟨u.ofDual, hu, h⟩⟩
+
+/-- (1a) is valid: a future of a future is a future, by the composition of the future cell with
+itself. -/
+theorem linearWill_linearWill (h : linearWill (linearWill A) t) : linearWill A t := by
+  have := Tense.diamond_diamond_toSetRel h
+  rwa [Tense.comp_future_future] at this
+
+/-- (1b) is invalid: what is true now need not be true at a later time. -/
+theorem not_forall_imp_linearWill : ¬ ∀ (A : ℤ → Prop) (t : ℤ), A t → linearWill A t :=
+  fun h ↦ let ⟨_, hu, hA⟩ := linearWill_iff.1 (h (· = 0) 0 rfl); lt_irrefl (0 : ℤ) (hA ▸ hu)
+
+/-- (1c) is valid on a time line exactly when it has no last moment (p. 9). -/
+theorem forall_imp_linearWill_linearWas_iff :
+    (∀ (A : T → Prop) (t : T), A t → linearWill (linearWas A) t) ↔ NoMaxOrder T := by
+  refine ⟨fun h ↦ ⟨fun t ↦ ?_⟩, fun _ A t hA ↦ ?_⟩
+  · obtain ⟨u, hu, -⟩ := linearWill_iff.1 (h (· = t) t rfl)
+    exact ⟨u, hu⟩
+  · obtain ⟨u, hu⟩ := exists_gt t
+    exact linearWill_iff.2 ⟨u, hu, linearWas_iff.2 ⟨t, hu, hA⟩⟩
+
+/-- (1d) is valid on a time line exactly when it has no first moment (p. 9). -/
+theorem forall_imp_linearWas_linearWill_iff :
+    (∀ (A : T → Prop) (t : T), A t → linearWas (linearWill A) t) ↔ NoMinOrder T := by
+  refine ⟨fun h ↦ ⟨fun t ↦ ?_⟩, fun _ A t hA ↦ ?_⟩
+  · obtain ⟨u, hu, -⟩ := linearWas_iff.1 (h (· = t) t rfl)
+    exact ⟨u, hu⟩
+  · obtain ⟨u, hu⟩ := exists_lt t
+    exact linearWas_iff.2 ⟨u, hu, linearWill_iff.2 ⟨t, hu, hA⟩⟩
+
+/-- (2a): given a future, what is true will have been true (p. 10). -/
+theorem linearWill_linearWas (hA : A t) (h : linearWill (fun _ ↦ True) t) :
+    linearWill (linearWas A) t :=
+  let ⟨u, hu, _⟩ := linearWill_iff.1 h
+  linearWill_iff.2 ⟨u, hu, linearWas_iff.2 ⟨t, hu, hA⟩⟩
+
+/-- (2b): given a past, what is true was going to be true (p. 10). -/
+theorem linearWas_linearWill (hA : A t) (h : linearWas (fun _ ↦ True) t) :
+    linearWas (linearWill A) t :=
+  let ⟨u, hu, _⟩ := linearWas_iff.1 h
+  linearWas_iff.2 ⟨u, hu, linearWill_iff.2 ⟨t, hu, hA⟩⟩
+
+/-- `K_t`'s FB, *A ⊃ always in the future, was A* (p. 17), is the unit of the adjunction of
+sometime in the past to always in the future. -/
+theorem kt_fb : A ≤ □[Tense.toSetRel ⟦Tense.future⟧] (linearWas A) :=
+  Tense.diamond_past_box_future_gc.le_u_l A
+
+/-- `K_t`'s BF, *A ⊃ always in the past, will A* (p. 17). -/
+theorem kt_bf : A ≤ □[Tense.toSetRel ⟦Tense.past⟧] (linearWill A) :=
+  Tense.diamond_future_box_past_gc.le_u_l A
+
+end Symmetric
 
 /-! ### The hybrid semantics
 
@@ -129,6 +241,65 @@ theorem hybrid_tacos (s : SelectionFunction Unit) :
   ⟨⟨((), 1), ⟨rfl, Nat.one_pos⟩, rfl⟩, ⟨((), 2), ⟨rfl, Nat.two_pos⟩, by decide⟩⟩
 
 end Hybrid
+
+/-! ### What makes *will* a modal
+
+§3.1 counts an expression a modal when its semantic rule intervenes on the world coordinate of
+evaluation, a sufficient condition (p. 43). Symmetric *will* shifts only the time, so it is not
+a modal; hybrid *will* intervenes on the world exactly when selection moves off it, and where
+centering idles selection it is symmetric *will* (p. 117). -/
+
+section Modal
+
+variable {W T : Type*} [LinearOrder T] {s : SelectionFunction W} {H : Set W}
+
+/-- An operator on propositions over world-time indices displaces worlds when it tells apart two
+propositions that agree at the world of evaluation. -/
+def DisplacesWorlds (O : (W × T → Prop) → W × T → Prop) : Prop :=
+  ∃ (A B : W × T → Prop) (i : W × T), (∀ u, A (i.1, u) ↔ B (i.1, u)) ∧ O A i ∧ ¬ O B i
+
+/-- Symmetric *will* does not displace worlds. -/
+theorem not_displacesWorlds_linearWill :
+    ¬ DisplacesWorlds fun (A : W × T → Prop) i ↦ linearWill (fun u ↦ A (i.1, u)) i.2 := by
+  rintro ⟨A, B, i, hAB, hA, hB⟩
+  obtain ⟨u, hu, h⟩ := linearWill_iff.1 hA
+  exact hB (linearWill_iff.2 ⟨u, hu, (hAB u).1 h⟩)
+
+/-- Hybrid *will* displaces worlds exactly when, somewhere with a later time, selection moves off
+the world of evaluation. -/
+theorem displacesWorlds_hybrid_iff :
+    DisplacesWorlds (T := T) (hybrid s H) ↔ ∃ (w : W) (t u : T), t < u ∧ s.sel w H ≠ w := by
+  constructor
+  · rintro ⟨A, B, ⟨w, t⟩, hAB, ⟨j, ⟨hj, ht⟩, hA⟩, hB⟩
+    refine ⟨w, t, j.2, ht, fun hsel ↦ hB ⟨j, ⟨hj, ht⟩, ?_⟩⟩
+    obtain ⟨jw, ju⟩ := j
+    simp only at hj
+    subst hj
+    rw [hsel] at hA ⊢
+    exact (hAB ju).1 hA
+  · rintro ⟨w, t, u, hu, hne⟩
+    exact ⟨fun j ↦ j.1 ≠ w, fun _ ↦ False, (w, t), fun _ ↦ by simp,
+      ⟨(s.sel w H, u), ⟨rfl, hu⟩, hne⟩, fun ⟨_, _, h⟩ ↦ h⟩
+
+/-- Where the world of evaluation lies in the domain, centering idles selection and hybrid *will*
+is symmetric *will* (p. 117). -/
+theorem hybrid_iff_linearWill {A : W × T → Prop} {w : W} {t : T} (hw : w ∈ H) :
+    hybrid s H A (w, t) ↔ linearWill (fun u ↦ A (w, u)) t := by
+  rw [linearWill_iff]
+  constructor
+  · rintro ⟨⟨jw, ju⟩, ⟨hj, ht⟩, hA⟩
+    simp only [s.centering w H hw] at hj
+    exact ⟨ju, ht, hj ▸ hA⟩
+  · rintro ⟨u, hu, hA⟩
+    exact ⟨(w, u), ⟨(s.centering w H hw).symm, hu⟩, hA⟩
+
+/-- Symmetric *will* has no present-directed use: a prejacent restricted to the present holds at
+no later time, where *The laundry will be done by now* is true (p. 46). -/
+theorem not_linearWill_now {A : T → Prop} {now : T} :
+    ¬ linearWill (fun u ↦ u = now ∧ A u) now :=
+  fun h ↦ let ⟨_, hu, hnow, _⟩ := linearWill_iff.1 h; lt_irrefl now (hnow ▸ hu)
+
+end Modal
 
 /-! ### The Oedipus model
 
@@ -276,7 +447,8 @@ is designed to avoid (p. 128). -/
 section Condoravdi
 
 open Aspect
-open Condoravdi2002 (PRES WOLL)
+open Condoravdi2002 (PRES WOLL frame)
+open Event (τ)
 
 variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E T] (s : SelectionFunction W)
   (MB : W → T → Set W) (Q : SortedProperty W E T) {w : W} {now : T}
@@ -325,6 +497,45 @@ theorem pres_woll_iff_of_mem (h : w ∈ MB w now) :
 theorem pres_woll_of_pres_WOLL (h : w ∈ MB w now) (hW : PRES now (WOLL MB Q) w) :
     PRES now (woll s MB Q) w :=
   (pres_woll_iff_of_mem h).2 (Condoravdi2002.pres_woll_iff.1 hW w h)
+
+/-- Present-directed *will* keeps excluded middle: *Either the laundry will be done by now or it
+won't be* is a tautology (§5.7, (5), p. 87), where Condoravdi's universal WOLL, like *must* in (6),
+loses it over a base whose worlds disagree (`not_pres_WOLL_and_neg`). -/
+theorem pres_woll_or_neg : PRES now (woll s MB Q) w ∨ PRES now (woll s MB (neg Q)) w := by
+  rw [pres_woll_neg_iff]
+  exact em _
+
+/-- *By now* outermost is idle at the present: it restricts the interval to the present, which
+the present tense has already fixed, so WOLL below it re-extends the interval forward (p. 129). -/
+theorem pres_frame_now_iff (X : SortedProperty W E T) :
+    PRES now (frame (Interval.pure ↑now) X) w ↔ PRES now X w := by
+  simp only [PRES, frame, At, inf_idem]
+
+/-- *By now* under WOLL restricts the forward interval to the present, so present-directed *will*
+with a stative prejacent, *The laundry will be done by now*, (10), holds when a state of the
+selected world overlaps the present (p. 129). -/
+theorem pres_woll_frame_stative_iff {P : W → E → Prop} :
+    PRES now (woll s MB (frame (Interval.pure ↑now) (.stative P))) w ↔
+      ∃ e, P (s.sel w (MB w now)) e ∧ now ∈ τ e := by
+  rw [pres_woll_iff]
+  change At (Interval.Ici (↑now : WithTop T) ⊓ Interval.pure ↑now) _ (.stative P) ↔ _
+  rw [inf_eq_right.2 (Interval.pure_le_Ici.2 le_rfl)]
+  simp only [At, Interval.not_disjoint_iff, Interval.mem_pure]
+  refine exists_congr fun e ↦ and_congr_right fun _ ↦ ?_
+  simp [NonemptyInterval.mem_def]
+
+/-- With an eventive prejacent, (11), the event has to fit the present, so only an instantaneous
+event can make present-directed *will* true, as in *They will win the match ... NOW!*, (12)
+(p. 129). -/
+theorem pres_woll_frame_eventive_iff {P : W → E → Prop} :
+    PRES now (woll s MB (frame (Interval.pure ↑now) (.eventive P))) w ↔
+      ∃ e, P (s.sel w (MB w now)) e ∧ τ e = NonemptyInterval.pure now := by
+  rw [pres_woll_iff]
+  change At (Interval.Ici (↑now : WithTop T) ⊓ Interval.pure ↑now) _ (.eventive P) ↔ _
+  rw [inf_eq_right.2 (Interval.pure_le_Ici.2 le_rfl)]
+  simp only [At, Interval.coe_le_iff, Interval.mem_pure]
+  refine exists_congr fun e ↦ and_congr_right fun _ ↦ ?_
+  simp [NonemptyInterval.ext_iff, Prod.ext_iff, NonemptyInterval.withTop]
 
 end Condoravdi
 
