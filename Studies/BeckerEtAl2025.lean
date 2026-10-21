@@ -13,7 +13,7 @@ Becker, Franchetto, Kuikuro, Kuikuro and Petrović analyze Kuikuro prosody with 
 optimality-theoretic grammars. Words are footed into iambs from left to right with a final
 trochee under *V:]φ ≫ Max-μ ≫ Parse-σ ≫ Iamb, and the last foot heads the word. The High tone of
 a phrase is realized in a domain chosen by Align-L(Δφ,H), NonFin(H) and Culminativity-H over
-Align-R(H), and `tone_optimal` derives the paper's generalization from these
+Align-R(H), and `toneTableau_optimal` derives the paper's generalization from these
 constraints: the domain runs from the primary stress up to the next foot head, so the High
 target can fall up to three syllables after the stress it marks.
 
@@ -134,6 +134,9 @@ section ToneDomain
 
 variable (t : Tree)
 
+/-- The number of syllables. -/
+abbrev syllableCount : ℕ := (Tree.columns t).length
+
 /-- The mora count of the `i`th syllable. -/
 def moras (i : ℕ) : ℕ := ((Tree.terminals t)[i]?.bind (·.value.weight?)).getD 0
 
@@ -147,16 +150,27 @@ instance : DecidablePred (Stressed t) := fun _ ↦ inferInstanceAs (Decidable (2
     terminal. -/
 def head : ℕ := (Tree.project t).findIdx (·.onSpine)
 
+/-- A phrase is metrical, in the sense the tone constraints presuppose (p. 2372), when every
+    syllable bears a mora and the primary stress heads a foot and precedes the phrase-final
+    syllable. -/
+structure IsMetricalPhrase : Prop where
+  moras_pos : ∀ i < syllableCount t, 0 < moras t i
+  stressed_head : Stressed t (head t)
+  head_lt : head t + 1 < syllableCount t
+
+instance : Decidable (IsMetricalPhrase t) :=
+  decidable_of_iff (_ ∧ _ ∧ _) ⟨fun ⟨h₁, h₂, h₃⟩ ↦ ⟨h₁, h₂, h₃⟩, fun ⟨h₁, h₂, h₃⟩ ↦ ⟨h₁, h₂, h₃⟩⟩
+
 /-- The tone-domain candidates are the nonempty intervals of syllable positions. -/
 def domains : Finset (NonemptyInterval ℕ) :=
-  (Finset.range (Tree.columns t).length ×ˢ Finset.range (Tree.columns t).length).filterMap
+  (Finset.range (syllableCount t) ×ˢ Finset.range (syllableCount t)).filterMap
     (fun x ↦ if h : x.1 ≤ x.2 then some ⟨x, h⟩ else none) fun x y d hx hy ↦ by
       by_cases hx' : x.1 ≤ x.2 <;> by_cases hy' : y.1 ≤ y.2 <;> simp_all
       exact congrArg NonemptyInterval.toProd (hx.trans hy.symm)
 
 variable {t} in
 theorem mem_domains {d : NonemptyInterval ℕ} :
-    d ∈ domains t ↔ d.snd < (Tree.columns t).length := by
+    d ∈ domains t ↔ d.snd < syllableCount t := by
   simp only [domains, Finset.mem_filterMap, Finset.mem_product, Finset.mem_range]
   constructor
   · rintro ⟨x, ⟨-, hx⟩, h⟩
@@ -173,7 +187,7 @@ def alignL : Constraint (NonemptyInterval ℕ) := fun d ↦
 
 /-- NonFin(H), (6), marks a domain containing the phrase-final syllable. -/
 def nonFin : Constraint (NonemptyInterval ℕ) :=
-  Constraint.binary fun d ↦ (Tree.columns t).length ≤ d.snd + 1
+  Constraint.binary fun d ↦ syllableCount t ≤ d.snd + 1
 
 /-- Culminativity-H, (7), marks a domain containing more than one foot head. -/
 def culm : Constraint (NonemptyInterval ℕ) :=
@@ -181,7 +195,7 @@ def culm : Constraint (NonemptyInterval ℕ) :=
 
 /-- Align-R(H), (5), counts the moras after the right edge of the domain. -/
 def alignR : Constraint (NonemptyInterval ℕ) := fun d ↦
-  ∑ i ∈ Finset.Ioo d.snd (Tree.columns t).length, moras t i
+  ∑ i ∈ Finset.Ioo d.snd (syllableCount t), moras t i
 
 /-- The labels of the tone-domain constraints. -/
 inductive ToneConstraint
@@ -198,32 +212,29 @@ def tone : ConstraintSet (NonemptyInterval ℕ) ToneConstraint
 /-- The column order of Tables 7 and 14. -/
 def toneRanking : Ranking ToneConstraint 4 := Ranking.ofList [.alignL, .nonFin, .culm, .alignR]
 
-theorem toneRanking_dominates_alignR :
-    ∀ c ≠ ToneConstraint.alignR, toneRanking.Dominates c .alignR := by
-  decide
-
-/-- The tone-domain tableau of Tables 7 and 14. -/
-def toneTableau : Tableau (NonemptyInterval ℕ) 4 := .ofRanking (tone t) toneRanking (domains t)
+/-- The tone-domain tableau of a phrase under a ranking of (4)–(7). -/
+def toneTableau (r : Ranking ToneConstraint 4) : Tableau (NonemptyInterval ℕ) 4 :=
+  .ofRanking (tone t) r (domains t)
 
 /-- The extent of the predicted domain is the number of syllables it takes in after the phrase
     head, the most it can take without a foot head or the phrase-final syllable. -/
 def extent : ℕ :=
   Nat.findGreatest (fun k ↦ ∀ i ∈ Finset.Ioc (head t) (head t + k), ¬ Stressed t i)
-    ((Tree.columns t).length - head t - 2)
+    (syllableCount t - head t - 2)
 
 /-- The predicted domain runs from the phrase head over `extent t` further syllables. -/
 def toneDomain : NonemptyInterval ℕ := ⟨(head t, head t + extent t), Nat.le_add_right _ _⟩
 
-variable {t} {d d' : NonemptyInterval ℕ}
+variable {t} {r : Ranking ToneConstraint 4} {d d' : NonemptyInterval ℕ}
 
-theorem alignL_eq_zero_iff (hμ : ∀ i < (Tree.columns t).length, 0 < moras t i)
+theorem alignL_eq_zero_iff (hμ : ∀ i < syllableCount t, 0 < moras t i)
     (hd : d ∈ domains t) : alignL t d = 0 ↔ d.fst = head t := by
   refine ⟨fun h ↦ by_contra fun hne ↦ ?_, fun h ↦ by simp [alignL, h]⟩
   have := d.fst_le_snd.trans_lt (mem_domains.1 hd)
   exact (Finset.sum_pos' (fun _ _ ↦ Nat.zero_le _)
     ⟨min d.fst (head t), Finset.mem_Ico.2 ⟨le_rfl, by omega⟩, hμ _ (by omega)⟩).ne' h
 
-theorem nonFin_eq_zero_iff : nonFin t d = 0 ↔ d.snd + 1 < (Tree.columns t).length := by
+theorem nonFin_eq_zero_iff : nonFin t d = 0 ↔ d.snd + 1 < syllableCount t := by
   simp [nonFin]
 
 theorem culm_eq_zero_iff (hp : Stressed t (head t)) (hl : d.fst = head t) :
@@ -237,24 +248,21 @@ theorem culm_eq_zero_iff (hp : Stressed t (head t)) (hl : d.fst = head t) :
     have hb' : b = head t := by_contra fun h' ↦ h b ⟨by omega, hb.1.2⟩ hb.2
     rw [ha', hb']
 
-theorem alignR_lt_alignR (hμ : ∀ i < (Tree.columns t).length, 0 < moras t i)
-    (h : d.snd < d'.snd) (h' : d'.snd < (Tree.columns t).length) : alignR t d' < alignR t d :=
+theorem alignR_lt_alignR (hμ : ∀ i < syllableCount t, 0 < moras t i)
+    (h : d.snd < d'.snd) (h' : d'.snd < syllableCount t) : alignR t d' < alignR t d :=
   Finset.sum_lt_sum_of_subset (Finset.Ioo_subset_Ioo_left h.le) (Finset.mem_Ioo.2 ⟨h, h'⟩)
     (by simp) (hμ _ h') fun _ _ _ ↦ Nat.zero_le _
 
-/-- If every syllable has a mora and the phrase head is a non-final foot head, then under any
-    ranking that puts Align-R(H) lowest the optimal tone domain is `toneDomain t`, the widest
-    domain that starts at the phrase head and contains neither a second foot head nor the
-    phrase-final syllable (§4.5). -/
-theorem tone_optimal {r : Ranking ToneConstraint 4}
-    (hr : ∀ c ≠ ToneConstraint.alignR, r.Dominates c .alignR)
-    (hμ : ∀ i < (Tree.columns t).length, 0 < moras t i) (hp : Stressed t (head t))
-    (hn : head t + 1 < (Tree.columns t).length) :
-    (Tableau.ofRanking (tone t) r (domains t)).optimal = {toneDomain t} := by
+/-- Under any ranking that puts Align-R(H) last, the optimal tone domain of a metrical phrase is
+    `toneDomain t`, the widest domain that starts at the phrase head and contains neither a
+    second foot head nor the phrase-final syllable (§4.5). -/
+theorem toneTableau_optimal (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .alignR) :
+    (toneTableau t r).optimal = {toneDomain t} := by
+  obtain ⟨hμ, hp, hn⟩ := ht
   have hext : ∀ i ∈ Finset.Ioc (head t) (head t + extent t), ¬ Stressed t i :=
     Nat.findGreatest_spec (P := fun k ↦ ∀ i ∈ Finset.Ioc (head t) (head t + k), ¬ Stressed t i)
       (Nat.zero_le _) (by simp)
-  have hle : extent t ≤ (Tree.columns t).length - head t - 2 := Nat.findGreatest_le _
+  have hle : extent t ≤ syllableCount t - head t - 2 := Nat.findGreatest_le _
   -- a domain satisfies Align-L(Δφ,H), NonFin(H) and Culminativity-H iff it lies in `toneDomain t`
   have hfeas : ∀ d ∈ domains t, (∀ c ≠ ToneConstraint.alignR, tone t c d = 0) ↔
       d.fst = head t ∧ d.snd ≤ head t + extent t := by
@@ -276,7 +284,7 @@ theorem tone_optimal {r : Ranking ToneConstraint 4}
   have hm : toneDomain t ∈ domains t :=
     mem_domains.2 (by simp only [toneDomain]; omega)
   have hmf := (hfeas _ hm).2 ⟨rfl, le_rfl⟩
-  rw [Tableau.ofRanking_optimal_eq_argmin_filter hr ⟨_, hm, hmf⟩]
+  rw [toneTableau, Tableau.ofRanking_optimal_eq_argmin_filter ⟨_, hm, hr ▸ hmf⟩, hr]
   refine StrictAntiOn.argmin_eq_singleton (fun d hd d' hd' hlt ↦ ?_)
     ⟨Finset.mem_filter.2 ⟨hm, hmf⟩, fun d hd ↦ ?_⟩
   · rw [Finset.coe_filter] at hd hd'
@@ -288,23 +296,17 @@ theorem tone_optimal {r : Ranking ToneConstraint 4}
     obtain ⟨hl, hsnd⟩ := (hfeas d hd.1).1 hd.2
     exact NonemptyInterval.le_def.2 ⟨hl.ge, hsnd⟩
 
-/-- The optimal tone domain of a phrase under the column order of Tables 7 and 14. -/
-theorem toneTableau_optimal (hμ : ∀ i < (Tree.columns t).length, 0 < moras t i)
-    (hp : Stressed t (head t)) (hn : head t + 1 < (Tree.columns t).length) :
-    (toneTableau t).optimal = {toneDomain t} :=
-  tone_optimal toneRanking_dominates_alignR hμ hp hn
-
 end ToneDomain
 
 /-- In isolation the domain cannot expand past the primary stress (Table 7), the next syllable
     being phrase-final, so the High target is the primary stress itself. -/
 theorem tone_in_isolation :
-    (toneTableau fell).optimal = {⟨(3, 3), le_rfl⟩} ∧
-      (toneTableau weFell).optimal = {⟨(4, 4), le_rfl⟩} ∧
-      (toneTableau annatto).optimal = {⟨(1, 1), le_rfl⟩} :=
-  ⟨by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide,
-    by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide,
-    by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide⟩
+    (toneTableau fell toneRanking).optimal = {⟨(3, 3), le_rfl⟩} ∧
+      (toneTableau weFell toneRanking).optimal = {⟨(4, 4), le_rfl⟩} ∧
+      (toneTableau annatto toneRanking).optimal = {⟨(1, 1), le_rfl⟩} :=
+  ⟨by rw [toneTableau_optimal (by decide) rfl]; decide,
+    by rw [toneTableau_optimal (by decide) rfl]; decide,
+    by rw [toneTableau_optimal (by decide) rfl]; decide⟩
 
 /-! ### Phrases -/
 
@@ -321,14 +323,14 @@ def friendHasBeenInjured : Tree :=
 /-- The head of a trochee blocks the domain (Fig. 9), so the High target stays on the primary
     stress *tɔ́ː*. -/
 theorem tone_blocked_by_trochee_head :
-    (toneTableau friendInjured).optimal = {⟨(1, 1), le_rfl⟩} :=
-  by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide
+    (toneTableau friendInjured toneRanking).optimal = {⟨(1, 1), le_rfl⟩} :=
+  by rw [toneTableau_optimal (by decide) rfl]; decide
 
 /-- The same short *hɛ* joins the domain as the dependent of an iamb (Fig. 10). That it blocks
     only as the head of a trochee is the paper's third argument for trochaic reversal (§1). -/
 theorem tone_crosses_iamb_dependent :
-    (toneTableau friendHasBeenInjured).optimal = {⟨(1, 2), by decide⟩} :=
-  by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide
+    (toneTableau friendHasBeenInjured toneRanking).optimal = {⟨(1, 2), by decide⟩} :=
+  by rw [toneTableau_optimal (by decide) rfl]; decide
 
 /-- *[(itɔː)tɔ (tápɨː)ɾɨ]* 'the man has been heard' (Table 12), an instance of Table 14's
     `/σσσ # σσσ/`. -/
@@ -338,8 +340,8 @@ def manHasBeenHeard : Tree :=
 
 /-- The domain left-aligns to *tɔː* and takes in the unstressed *tɔ* and *tá* (Table 14),
     stopping before the iamb head *pɨː*. -/
-theorem table14 : (toneTableau manHasBeenHeard).optimal = {⟨(1, 3), by decide⟩} :=
-  by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide
+theorem table14 : (toneTableau manHasBeenHeard toneRanking).optimal = {⟨(1, 3), by decide⟩} :=
+  by rw [toneTableau_optimal (by decide) rfl]; decide
 
 /-- *[(umɨː)ŋi ⟨a⟩(lámaː)(kilɨ)]* 'the annatto fell' (Fig. 3), in which the noun heads the phrase
     and the verb's initial vowel is unparsed (§4.3), leaving an iamb and a final trochee. -/
@@ -351,10 +353,10 @@ def annattoFell : Tree :=
     *lá* and stops before the foot head *maː*, so the High target is an unstressed syllable three
     syllables after the stress it marks (§1, §7). -/
 theorem stress_tone_incoherence :
-    head annattoFell = 1 ∧ (toneTableau annattoFell).optimal = {⟨(1, 4), by decide⟩} ∧
+    head annattoFell = 1 ∧ (toneTableau annattoFell toneRanking).optimal = {⟨(1, 4), by decide⟩} ∧
       ¬ Stressed annattoFell 4 ∧ Stressed annattoFell 5 :=
   ⟨by decide,
-    by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide,
+    by rw [toneTableau_optimal (by decide) rfl]; decide,
     by decide, by decide⟩
 
 end BeckerEtAl2025
