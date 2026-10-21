@@ -6,11 +6,9 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.FreeMonoid.FreeSemigroup
 import Linglib.Core.Algebra.Group.Aperiodic
-import Linglib.Core.Algebra.Group.End
 import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Algebra.Group.Pseudovariety
 import Linglib.Core.Algebra.Group.Subquotient
-import Linglib.Core.Algebra.Opposites
 import Linglib.Core.Algebra.Order.Interval.Set.Instances
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization

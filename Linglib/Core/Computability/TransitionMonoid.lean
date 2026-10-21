@@ -7,10 +7,10 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.Group.End
-public import Linglib.Core.Algebra.Opposites
 public import Mathlib.Algebra.FreeMonoid.Basic
+public import Mathlib.Algebra.Group.End
 public import Mathlib.Algebra.Group.Submonoid.Operations
+public import Mathlib.Basic.Finite.Prod
 public import Mathlib.Computability.DFA
 
 /-!
@@ -24,6 +24,10 @@ algebraic invariant of an automaton. It is finite when the automaton is.
 
 - `DFA.transitionHom`: the monoid homomorphism sending a word to the transformation it induces
 - `DFA.transitionMonoid`: the transition monoid, the range of `DFA.transitionHom`
+
+## Main results
+
+- `DFA.instFiniteTransitionMonoid`: the transition monoid of a finite-state DFA is finite
 
 ## Implementation notes
 
@@ -63,5 +67,8 @@ theorem transitionHom_eq_iff {u v : FreeMonoid α} : M.transitionHom u = M.trans
 
 /-- `M.transitionMonoid` is the monoid of transformations of the states of `M` induced by words. -/
 def transitionMonoid : Submonoid (Function.End σ)ᵐᵒᵖ := MonoidHom.mrange M.transitionHom
+
+instance instFiniteTransitionMonoid [Finite σ] : Finite M.transitionMonoid :=
+  .of_injective (β := σ → σ) (·.1.unop) fun _ _ h ↦ Subtype.ext (MulOpposite.unop_injective h)
 
 end DFA
