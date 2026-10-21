@@ -210,6 +210,18 @@ def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Pro
     (g : Assignment T) (w : W) : Prop :=
   (tense C n).presup g w ∧ .pure (g n) ∈ a.denote P w
 
+/-- A tense with an aspect is a chain of times from the utterance time, the time of index `0`:
+the reference time stands to it as the tense's cell says, and the time of some event of the
+property to the reference time as the aspect's cell says. -/
+theorem denote_iff_holdsAlong (C : Finset Ordering) (a : AspectHead) (n : ℕ)
+    (P : W → E → Prop) (g : Assignment T) (w : W) :
+    denote C a n P g w ↔ ∃ e : E, P w e ∧
+      Allen.HoldsAlong [Allen.pure C, Allen.inv a.cell] (.pure (g 0)) [.pure (g n), τ e] := by
+  simp only [Allen.HoldsAlong, Allen.toSetRel_inv, SetRel.mem_inv, and_true, ← a.rel_iff,
+    Allen.mem_toSetRel, Allen.relation_mem_pure]
+  simp [denote, AspectHead.denote, ofRel, NonemptyInterval.IsPoint]
+  exact ⟨fun ⟨hC, e, he, hP⟩ ↦ ⟨e, hP, hC, he⟩, fun ⟨e, hP, hC, he⟩ ↦ ⟨hC, e, he, hP⟩⟩
+
 /-- Out of the blue a tense with an aspect is true iff the tense admits coincidence with the
 utterance time and the aspect holds there. -/
 theorem denote_outOfTheBlue_iff (C : Finset Ordering) (a : AspectHead) (n : ℕ)
