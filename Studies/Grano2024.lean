@@ -68,6 +68,7 @@ non-control complements under 'intend' altogether are recorded as rows without a
 namespace Grano2024
 
 open Mood Event
+open scoped SetRel
 
 /-! ### The pool -/
 
@@ -366,7 +367,7 @@ structure IntentionFrame (E W T Ev : Type*) where
   intention : Ev → W → Prop
   holder : E → Ev → W → Prop
   content : Ev → Set (W × T × E)
-  causeStar : Ev → Ev → W → Prop
+  causeStar : W → SetRel Ev Ev
 
 namespace IntentionFrame
 
@@ -403,7 +404,7 @@ theorem Report.report₃ (h : F.Report x P w) : F.Report₃ x (fun y t ↦ closu
 /-- When every state causes every eventuality, (79) says no more than (78) of the closed
 complement. Otherwise its prejacent is not a function of the closed complement
 (`Event.causedClosure_factorsThrough_iff`). -/
-theorem report_iff_report₃ (h : ∀ s e w, F.causeStar s e w) :
+theorem report_iff_report₃ (h : ∀ s e w, s ~[F.causeStar w] e) :
     F.Report x P w ↔ F.Report₃ x (fun y t ↦ closure (P y t)) w :=
   ⟨Report.report₃, fun ⟨s, hs, hx, hc⟩ ↦
     ⟨s, hs, hx, fun c hcs ↦ let ⟨t, ht, e, hP⟩ := hc c hcs; ⟨e, h s e c.1, t, ht, hP⟩⟩⟩
@@ -413,7 +414,7 @@ end IntentionFrame
 /-- The subjunctive of (134), for a theory that moves the modal quantification from 'intend' into
 the mood head: simple necessity over the content worlds of the attitude state, with the causally
 self-referential prejacent. -/
-def sbjvCausal {W Ev : Type*} (content : Ev → W → Prop) (causeStar : Ev → Ev → W → Prop)
+def sbjvCausal {W Ev : Type*} (content : Ev → W → Prop) (causeStar : W → SetRel Ev Ev)
     (P : W → Ev → Prop) (s : Ev) : Prop :=
   ∀ w, content s w → causedClosure causeStar s P w
 

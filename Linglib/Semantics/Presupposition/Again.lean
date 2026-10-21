@@ -51,6 +51,8 @@ variable {i : ι}
 
 @[simp] theorem again_eq_zero_iff : again R P i = 0 ↔ ¬ ◇[R] P i := by simp [again]
 
+theorem again_ne_zero_iff : again R P i ≠ 0 ↔ ◇[R] P i := again_eq_zero_iff.not_left
+
 @[simp] theorem again_eq_one_iff : again R P i = 1 ↔ ◇[R] P i ∧ P i := by simp [again]
 
 end Presupposition
