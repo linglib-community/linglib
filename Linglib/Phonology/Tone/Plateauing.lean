@@ -448,9 +448,9 @@ theorem HOH_sublist_iff : [TBU.H, .O, .H].Sublist w ↔ ∃ i, utp.Surfaces w i 
 /-- The outputs of plateauing are the words without an `H O H` subsequence. -/
 theorem utp.mem_range_map_iff : w ∈ Set.range utp.map ↔ w ∉ Language.shuffleIdeal [.H, .O, .H] := by
   rw [utp.range_map, Function.mem_fixedPoints, Function.IsFixedPt, utp.map_eq_self_iff,
-    Language.shuffleIdeal, Set.mem_ofPred_eq, HOH_sublist_iff]
+    Language.mem_shuffleIdeal, HOH_sublist_iff]
   push Not
-  refine forall_congr' fun i => ⟨fun h hs => by simp [h hs], fun h hs => ?_⟩
+  refine forall_congr' fun i ↦ ⟨fun h hs ↦ by simp [h hs], fun h hs ↦ ?_⟩
   have := utp.lt_length hs
   cases ha : w[i]? with
   | none => simp_all

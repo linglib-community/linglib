@@ -129,7 +129,7 @@ languages are subsequence-closed, so a legal word whose blocker-deletion is ille
 rules out every SP grammar at once. -/
 theorem blockingLang_not_isStrictlyPiecewise (k : ℕ) :
     ¬ blockingLang.IsStrictlyPiecewise k :=
-  fun h ↦ unblocked_not_mem (h.mem_of_sublist (by decide) blocked_mem)
+  fun h ↦ unblocked_not_mem (h.isSublistClosed (by decide) blocked_mem)
 
 /-- **The tier buys expressive power** ([mcmullin-2016]). Some TSL_2 language is
 strictly piecewise at no width. With `navajoSibilantHarmony_lang_isSP2` — where the two

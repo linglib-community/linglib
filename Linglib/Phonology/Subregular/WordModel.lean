@@ -852,7 +852,7 @@ theorem isStrictlyPiecewise_iff_wordModel :
     rw [← hL]
     intro s hs hsw
     obtain ⟨v, hv, hsv⟩ := Set.mem_iUnion₂.1 (hw ((WordModel.diagram_occurs_iff hs).2 hsw))
-    exact hL.mem_of_sublist ((WordModel.diagram_occurs_iff hs).1 hsv) hv
+    exact hL.isSublistClosed ((WordModel.diagram_occurs_iff hs).1 hsv) hv
   · intro hS
     refine le_antisymm (fun w hw ↦ hS w fun f hf ↦ ?_) fun w hw s _ hs ↦ ?_
     · obtain ⟨s, hsw, hs, hfs⟩ := WordModel.exists_sublist_of_occurs hf

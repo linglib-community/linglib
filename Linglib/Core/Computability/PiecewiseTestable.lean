@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Set.Finite.List
+public import Linglib.Core.Computability.ShuffleIdeal
 public import Linglib.Core.Computability.StarFree
 
 /-!
@@ -25,6 +26,8 @@ subsequences of length at most `k`. These are the piecewise testable events of S
   same ones after concatenation.
 * `subseqSet_flatten_replicate_succ`: `k + 1` copies of a word have the same subsequences of
   length at most `k` as `k` copies.
+* `Language.isPiecewiseTestable_shuffleIdeal`: the shuffle ideal of a word of length at most `k`
+  is piecewise `k`-testable.
 * `Language.IsPiecewiseTestable.isStarFree`: over a finite alphabet, piecewise testable languages
   are star-free.
 
@@ -114,6 +117,16 @@ theorem IsPiecewiseTestable.inter (hL : L.IsPiecewiseTestable k)
 theorem IsPiecewiseTestable.union (hL : L.IsPiecewiseTestable k)
     (hM : M.IsPiecewiseTestable k) : (L ⊔ M).IsPiecewiseTestable k :=
   fun _ _ e ↦ congrArg₂ Or (hL e) (hM e)
+
+/-- Containing a pattern that fits in the window is piecewise testable. -/
+theorem isPiecewiseTestable_shuffleIdeal {p : List α} (hp : p.length ≤ k) :
+    (shuffleIdeal p).IsPiecewiseTestable k :=
+  fun _ _ e ↦ propext (subseqSet_eq_iff e hp)
+
+/-- Avoiding a pattern that fits in the window is piecewise testable. -/
+theorem isPiecewiseTestable_compl_shuffleIdeal {p : List α} (hp : p.length ≤ k) :
+    (shuffleIdeal p)ᶜ.IsPiecewiseTestable k :=
+  (isPiecewiseTestable_shuffleIdeal hp).compl
 
 /-- Over a finite alphabet piecewise testable languages are star-free. -/
 theorem IsPiecewiseTestable.isStarFree [Finite α] (h : L.IsPiecewiseTestable k) : L.IsStarFree :=

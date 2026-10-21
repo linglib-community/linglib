@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.ShuffleIdeal
 public import Linglib.Core.Computability.PiecewiseTestable
 
 /-!
@@ -22,23 +21,21 @@ it is sublist-closed.
 ## Main definitions
 
 * `StrictlyPiecewiseGrammar α`: a set of permitted subsequences; the width `k` is supplied to
-  `language`,
-  not baked into the carrier.
+  `language`, not baked into the carrier.
 * `StrictlyPiecewiseGrammar.language k`: the `Language α` it generates: every subsequence of `w`
-  of length
-  at most `k` must be permitted.
+  of length at most `k` must be permitted.
 * `Language.IsStrictlyPiecewise L k`: `L` is a fixed point of the width-`k` test with itself
   as grammar; `isStrictlyPiecewise_iff` recovers the ∃-grammar form.
 
 ## Main results
 
-* `Language.IsStrictlyPiecewise.mem_of_sublist`: SP languages are subsequence-closed.
+* `Language.IsStrictlyPiecewise.isSublistClosed`: SP languages are sublist-closed.
 * `Language.IsStrictlyPiecewise.preimage_map`: SP languages are closed under inverse images of
   letter-to-letter maps.
 * `Language.IsStrictlyPiecewise.mono`: `SP_k ⊆ SP_k'` for `k ≤ k'`.
 * `Language.IsStrictlyPiecewise.toIsPiecewiseTestable`: `SP_k ⊆ PT_k`.
 * `Language.IsStrictlyPiecewise.isStarFree`: `SP_k ⊆ SF` over a finite alphabet.
-* `Language.isStrictlyPiecewise_avoid`: shuffle-ideal complements are SP.
+* `Language.isStrictlyPiecewise_compl_shuffleIdeal`: shuffle-ideal complements are SP.
 * `Language.exists_isStrictlyPiecewise_iff_isSublistClosed`: SP at some width is exactly
   sublist-closure.
 
@@ -76,11 +73,11 @@ def language (k : ℕ) (G : StrictlyPiecewiseGrammar α) : Language α :=
     w ∈ G.language k ↔ ∀ s, s.length ≤ k → s <+ w → s ∈ G :=
   Iff.rfl
 
-/-- SP languages are **subsequence-closed**, since deleting symbols cannot create a subsequence
+/-- SP languages are **sublist-closed**, since deleting symbols cannot create a subsequence
 that was not already there. -/
-theorem mem_language_of_sublist {k : ℕ} {G : StrictlyPiecewiseGrammar α} {v w : List α}
-    (hvw : v <+ w) (hw : w ∈ G.language k) : v ∈ G.language k :=
-  fun s hlen hs ↦ hw s hlen (hs.trans hvw)
+theorem isSublistClosed_language (k : ℕ) (G : StrictlyPiecewiseGrammar α) :
+    (G.language k).IsSublistClosed :=
+  fun _ _ hvw hw s hlen hs ↦ hw s hlen (hs.trans hvw)
 
 /-- Conjoining grammars conjoins their languages. -/
 theorem language_inter (k : ℕ) (G₁ G₂ : StrictlyPiecewiseGrammar α) :
@@ -119,8 +116,6 @@ namespace Language
 
 variable {α : Type*} {L : Language α} {k : ℕ}
 
-open List
-
 /-- A language `L` is **strictly `k`-piecewise** when the width-`k` subsequence test with
 `L` itself as the permitted set recovers `L` — the canonical-grammar fixed point;
 `isStrictlyPiecewise_iff` recovers the ∃-grammar form. -/
@@ -134,7 +129,7 @@ theorem isStrictlyPiecewise_iff :
   rintro ⟨G, rfl⟩
   show StrictlyPiecewiseGrammar.language k _ = _
   exact le_antisymm (fun w hw s hlen hs ↦ hw s hlen hs s hlen (Sublist.refl s))
-    fun w hw s hlen hs ↦ StrictlyPiecewiseGrammar.mem_language_of_sublist hs hw
+    fun w hw s hlen hs ↦ G.isSublistClosed_language k hs hw
 
 /-- Strictly piecewise languages are closed under inverse images of letter-to-letter maps. -/
 theorem IsStrictlyPiecewise.preimage_map {β : Type*} (h : L.IsStrictlyPiecewise k) (f : β → α) :
@@ -142,20 +137,18 @@ theorem IsStrictlyPiecewise.preimage_map {β : Type*} (h : L.IsStrictlyPiecewise
   obtain ⟨G, rfl⟩ := isStrictlyPiecewise_iff.1 h
   exact isStrictlyPiecewise_iff.2 ⟨_, StrictlyPiecewiseGrammar.language_preimage_map k G f⟩
 
-/-- SP languages are subsequence-closed. -/
-theorem IsStrictlyPiecewise.mem_of_sublist (h : L.IsStrictlyPiecewise k) {v w : List α}
-    (hvw : v <+ w) (hw : w ∈ L) : v ∈ L := by
-  rw [← h] at hw ⊢
-  exact StrictlyPiecewiseGrammar.mem_language_of_sublist hvw hw
+/-- SP languages are sublist-closed. -/
+theorem IsStrictlyPiecewise.isSublistClosed (h : L.IsStrictlyPiecewise k) : L.IsSublistClosed :=
+  h ▸ StrictlyPiecewiseGrammar.isSublistClosed_language k L
 
 /-- A nonempty SP language contains the empty word. -/
 theorem IsStrictlyPiecewise.nil_mem (h : L.IsStrictlyPiecewise k) {w : List α}
     (hw : w ∈ L) : [] ∈ L :=
-  h.mem_of_sublist (List.nil_sublist w) hw
+  h.isSublistClosed (nil_sublist w) hw
 
 /-- The complement of a shuffle ideal is strictly `k`-piecewise as soon as the forbidden pattern
 fits in the window. -/
-theorem isStrictlyPiecewise_avoid {p : List α} (hp : p.length ≤ k) :
+theorem isStrictlyPiecewise_compl_shuffleIdeal {p : List α} (hp : p.length ≤ k) :
     (shuffleIdeal p)ᶜ.IsStrictlyPiecewise k :=
   le_antisymm (fun _ hw hpw ↦ hw p hp hpw (Sublist.refl p))
     fun _ hw _ _ hs hps ↦ hw (hps.trans hs)
@@ -163,7 +156,7 @@ theorem isStrictlyPiecewise_avoid {p : List α} (hp : p.length ≤ k) :
 /-- Widening the window loses nothing, `SP_k ⊆ SP_(k+1)`. -/
 theorem IsStrictlyPiecewise.succ (h : L.IsStrictlyPiecewise k) :
     L.IsStrictlyPiecewise (k + 1) := by
-  refine le_antisymm (fun w hw ↦ ?_) fun w hw s _ hs ↦ h.mem_of_sublist hs hw
+  refine le_antisymm (fun w hw ↦ ?_) fun w hw s _ hs ↦ h.isSublistClosed hs hw
   rw [← h]
   exact fun s hlen hs ↦ hw s (hlen.trans (Nat.le_succ k)) hs
 
@@ -187,23 +180,13 @@ theorem IsStrictlyPiecewise.toIsPiecewiseTestable (h : L.IsStrictlyPiecewise k) 
 theorem IsStrictlyPiecewise.isStarFree [Finite α] (h : L.IsStrictlyPiecewise k) : L.IsStarFree :=
   h.toIsPiecewiseTestable.isStarFree
 
-/-- Avoiding one pattern that fits in the window is piecewise testable. -/
-theorem isPiecewiseTestable_compl_shuffleIdeal {p : List α} (hp : p.length ≤ k) :
-    (shuffleIdeal p)ᶜ.IsPiecewiseTestable k :=
-  (isStrictlyPiecewise_avoid hp).toIsPiecewiseTestable
-
-/-- Containing one pattern that fits in the window is piecewise testable. -/
-theorem isPiecewiseTestable_shuffleIdeal {p : List α} (hp : p.length ≤ k) :
-    (shuffleIdeal p).IsPiecewiseTestable k :=
-  compl_compl (shuffleIdeal p) ▸ (isPiecewiseTestable_compl_shuffleIdeal hp).compl
-
 /-- A language is strictly piecewise at some width iff it is sublist-closed
 [rogers-heinz-et-al-2010]. Backwards, `L` is its own grammar at the width bounding the
 finite forbidden basis, so that any word outside `L` is already refuted by a basis word it
 contains. -/
 theorem exists_isStrictlyPiecewise_iff_isSublistClosed [Finite α] :
     (∃ k, L.IsStrictlyPiecewise k) ↔ L.IsSublistClosed := by
-  refine ⟨fun ⟨_, hk⟩ _ _ hvw hw ↦ hk.mem_of_sublist hvw hw, fun hL ↦ ?_⟩
+  refine ⟨fun ⟨_, hk⟩ ↦ hk.isSublistClosed, fun hL ↦ ?_⟩
   obtain ⟨F, hF⟩ := hL.exists_finset_compl_eq_biSup_shuffleIdeal
   have hFmem : ∀ w, w ∈ Lᶜ ↔ ∃ m ∈ F, m <+ w := fun w ↦ by
     rw [show Lᶜ = _ from hF]; simp [Language.mem_iSup]
