@@ -5,31 +5,33 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Order.Flat.Finset
+public import Linglib.Fragments.Ga.Case
+public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Gã personal pronouns
 
-The pronoun paradigm of [allotey-2021]'s Table 3 (Gã, ISO 639-3 `gaa`; Kwa,
-Ghana) as `PersonalPronoun` entries. Each person–number cell has one form that
-serves the subjective (nominative) and possessive (genitive) columns, and only
-the second and third person singular add a dedicated objective (accusative)
-form, *bo* and *lɛ*; the other cells use the one form in every column. Gã has
-no clusivity and no gender.
+The pronoun paradigm of [allotey-2021]'s Table 3 (Gã, ISO 639-3 `gaa`; Kwa, Ghana), a table of
+forms by person and number and by case, and the `PersonalPronoun` entries it yields. Gã has no
+clusivity and no gender.
 
 ## Implementation notes
 
-The case-neutral form of a cell is entered with `case_ := none` and the
-dedicated objective form with `case_ := some .acc`, so a cell's paradigm
-(`paradigm`) has two forms exactly where Table 3 has a distinct objective
-column. Not recorded: the clipped past-tense 1SG variant *ĩ* and the impersonal
-subject *a*, which has neither objective nor possessive form. The paper does
-not classify the subject pronouns by structural deficiency: [campbell-2017]
-writes them as clitics prefixed to the verb, which the paper rejects on the
-strength of the negation that intervenes between the embedded subject and its
-verb, so `strength` stays `none`. Lean does not accept `ɛ` or `ŋ` in plain
-identifiers, so names use Latin letters (`le`, `wo`, `nye`, `ame`) and the
-orthography lives in `form`.
+* A cell is a row and a case, and holds a finset of forms: the first person singular subjective
+  has two, *mi* and the past-tense *ĩ*, and the impersonal *a* has neither objective nor
+  possessive form. Table 3 also gives the third person singular objective as null, the form of an
+  inanimate object (§4.2); the table records forms only.
+* The entry of a form takes each feature from the cells it fills (`Flat.finsetInf`). *o* fills the
+  second person singular subjective and possessive, so it has no case and admits the objective
+  too: no flat case admits two cases and not a third, and the exact value is
+  `Morphology.formCellsOf table f`.
+* The paper does not classify the subject pronouns by structural deficiency: [campbell-2017]
+  writes them as clitics prefixed to the verb, which the paper rejects on the strength of the
+  negation that intervenes between the embedded subject and its verb, so `strength` stays `none`.
+* Lean does not accept `ɛ` or `ŋ` in plain identifiers, so names use Latin letters (`le`, `wo`,
+  `nye`, `ame`) and the orthography lives in `form`.
 
 ## References
 
@@ -41,45 +43,75 @@ orthography lives in `form`.
 
 namespace Ga.Pronouns
 
-/-- *mi* — first person singular, the one form of all three columns. -/
-def mi : PersonalPronoun := { form := "mi", person := some .first, number := some .singular }
+open Morphology
+
+/-- The rows of Table 3: a person and number each, and the third person impersonal. -/
+inductive Row where
+  | sg1 | sg2 | sg3 | imp | pl1 | pl2 | pl3
+  deriving DecidableEq, Fintype, Repr
+
+/-- The person of a row. -/
+def Row.person : Row → Person
+  | .sg1 | .pl1 => .first
+  | .sg2 | .pl2 => .second
+  | .sg3 | .imp | .pl3 => .third
+
+/-- The number of a row, none for the impersonal. -/
+def Row.number : Row → Option Number
+  | .sg1 | .sg2 | .sg3 => some .singular
+  | .imp => none
+  | .pl1 | .pl2 | .pl3 => some .plural
+
+/-- Table 3 ([allotey-2021] p. 25), the forms of each cell. *ĩ* is the first person singular
+subject in the past tense (p. 27, (74)). -/
+def table : Row × Case → Finset String
+  | (.sg1, .subjective) => {"mi", "ĩ"}
+  | (.sg1, _) => {"mi"}
+  | (.sg2, .objective) => {"bo"}
+  | (.sg2, _) => {"o"}
+  | (.sg3, .objective) => {"lɛ"}
+  | (.sg3, _) => {"e"}
+  | (.imp, .subjective) => {"a"}
+  | (.imp, _) => ∅
+  | (.pl1, _) => {"wɔ"}
+  | (.pl2, _) => {"nyɛ"}
+  | (.pl3, _) => {"amɛ"}
+
+/-- The pronoun `f`: each of its features is the flat value of the cells it fills. -/
+def entry (f : String) : PersonalPronoun :=
+  { form := f,
+    person := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.1.person : Flat Person),
+    number := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.1.number : Flat Number),
+    case_ := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.2.label : Flat _root_.Case) }
+
+/-- The personal pronoun inventory: the entry of every form of the table. -/
+def pronouns : Finset PersonalPronoun := (Finset.univ.biUnion table).image entry
+
+/-- *mi* — first person singular, the form of all three cases. -/
+def mi : PersonalPronoun := entry "mi"
 
 /-- *o* — second person singular subjective and possessive. -/
-def o : PersonalPronoun := { form := "o", person := some .second, number := some .singular }
+def o : PersonalPronoun := entry "o"
 
 /-- *bo* — second person singular objective. -/
-def bo : PersonalPronoun :=
-  { form := "bo", person := some .second, number := some .singular, case_ := some .acc }
+def bo : PersonalPronoun := entry "bo"
 
 /-- *e* — third person singular subjective and possessive. -/
-def e : PersonalPronoun := { form := "e", person := some .third, number := some .singular }
+def e : PersonalPronoun := entry "e"
 
 /-- *lɛ* — third person singular objective. -/
-def le : PersonalPronoun :=
-  { form := "lɛ", person := some .third, number := some .singular, case_ := some .acc }
+def le : PersonalPronoun := entry "lɛ"
 
-/-- *wɔ* — first person plural, the one form of all three columns. -/
-def wo : PersonalPronoun := { form := "wɔ", person := some .first, number := some .plural }
+/-- *wɔ* — first person plural, the form of all three cases. -/
+def wo : PersonalPronoun := entry "wɔ"
 
-/-- *nyɛ* — second person plural, the one form of all three columns. -/
-def nye : PersonalPronoun := { form := "nyɛ", person := some .second, number := some .plural }
+/-- *nyɛ* — second person plural, the form of all three cases. -/
+def nye : PersonalPronoun := entry "nyɛ"
 
-/-- *amɛ* — third person plural, the one form of all three columns. -/
-def ame : PersonalPronoun := { form := "amɛ", person := some .third, number := some .plural }
-
-/-- The personal pronoun inventory of Table 3. -/
-def pronouns : Finset PersonalPronoun := {mi, o, bo, e, le, wo, nye, ame}
+/-- *amɛ* — third person plural, the form of all three cases. -/
+def ame : PersonalPronoun := entry "amɛ"
 
 /-- The forms of each referential category. -/
 def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm pronouns
-
-/-- The subject forms of a person–number cell: those of its case-neutral
-    entries, one per cell of Table 3. In the paper's control examples the
-    embedded subject of a controlled `ni`-clause is one of these, never
-    silent; merged with the irrealis high tone the 1SG form surfaces as the
-    portmanteau *má*. -/
-def subjectForms (p : Person) (n : Number) : Finset String :=
-  (pronouns.filter fun q ↦ q.person = some p ∧ q.number = some n ∧ q.case_ = none).image
-    (·.form)
 
 end Ga.Pronouns

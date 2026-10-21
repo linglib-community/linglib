@@ -20,24 +20,24 @@ instrumental and the locative.
 namespace Polish.Pronouns
 
 /-- *kto* 'who' by case ([rothstein-1993] p. 704). -/
-def kto : Case → Option String
-  | .nom => some "kto"
-  | .gen => some "kogo"
-  | .dat => some "komu"
-  | .acc => some "kogo"
-  | .inst => some "kim"
-  | .loc => some "kim"
-  | .voc => none
+def kto : Case → Finset String
+  | .nom => {"kto"}
+  | .gen => {"kogo"}
+  | .dat => {"komu"}
+  | .acc => {"kogo"}
+  | .inst => {"kim"}
+  | .loc => {"kim"}
+  | .voc => ∅
 
 /-- *co* 'what' by case ([rothstein-1993] p. 704). -/
-def co : Case → Option String
-  | .nom => some "co"
-  | .gen => some "czego"
-  | .dat => some "czemu"
-  | .acc => some "co"
-  | .inst => some "czym"
-  | .loc => some "czym"
-  | .voc => none
+def co : Case → Finset String
+  | .nom => {"co"}
+  | .gen => {"czego"}
+  | .dat => {"czemu"}
+  | .acc => {"co"}
+  | .inst => {"czym"}
+  | .loc => {"czym"}
+  | .voc => ∅
 
 /-- The accusative of *kto* is its genitive: "for animate nouns it is identical to the genitive"
 ([rothstein-1993] p. 698). -/

@@ -122,15 +122,15 @@ open German.Pronouns in
 /-- The case values of the German relative pronouns are the cells their forms realize, *wer*
 the nominative, *wem* the dative, *was* the nominative and the accusative ((26), (32)). -/
 theorem german_cases :
-    formCells wer (some "wer") = {German.Case.nom} ∧ formCells wer (some "wem") = {.dat} ∧
-      formCells was (some "was") = {.nom, .acc} := by
+    formCellsOf wer "wer" = {German.Case.nom} ∧ formCellsOf wer "wem" = {.dat} ∧
+      formCellsOf was "was" = {.nom, .acc} := by
   decide
 
 open German.Pronouns in
 /-- In the set order the two requirements do have a join, and it is the value of *was*, the
 minimal model of `ACC ∈ v` and `NOM ∈ v` ((28)–(31), (36)). -/
 theorem was_isLeast :
-    IsLeast {v | German.Case.acc ∈ v ∧ German.Case.nom ∈ v} (formCells was (some "was")) := by
+    IsLeast {v | German.Case.acc ∈ v ∧ German.Case.nom ∈ v} (formCellsOf was "was") := by
   rw [german_cases.2.2]
   exact ⟨by simp, fun v ⟨ha, hn⟩ ↦ by simp [Finset.insert_subset_iff, ha, hn]⟩
 
@@ -139,9 +139,9 @@ open German.Pronouns in
 extends to both cases of *was* is no case at all (22), and it admits the dative and the genitive
 contexts that *was* cannot appear in (§3.2). -/
 theorem underspecification_overgenerates :
-    (∀ x : Flat German.Case, formCells was (some "was") ⊆ x.extensions ↔ x = ⊥) ∧
-      German.Case.dat ∈ (⊥ : Flat German.Case).extensions \ formCells was (some "was") ∧
-      German.Case.gen ∈ (⊥ : Flat German.Case).extensions \ formCells was (some "was") := by
+    (∀ x : Flat German.Case, formCellsOf was "was" ⊆ x.extensions ↔ x = ⊥) ∧
+      German.Case.dat ∈ (⊥ : Flat German.Case).extensions \ formCellsOf was "was" ∧
+      German.Case.gen ∈ (⊥ : Flat German.Case).extensions \ formCellsOf was "was" := by
   rw [german_cases.2.2]
   exact ⟨fun _ ↦ Flat.subset_extensions_iff_eq_bot ⟨.nom, by simp, .acc, by simp, by decide⟩,
     by decide, by decide⟩
@@ -151,19 +151,19 @@ open German.Pronouns in
 ((28), (30)), and *wem* meets *vertraust* but not *muss* ((32), (33)). -/
 theorem free_relatives :
     AcceptableIff Examples.ex_17
-        (German.Case.acc ∈ formCells was (some "was") ∧
-          German.Case.nom ∈ formCells was (some "was")) ∧
+        (German.Case.acc ∈ formCellsOf was "was" ∧
+          German.Case.nom ∈ formCellsOf was "was") ∧
       AcceptableIff Examples.ex_32
-        (German.Case.dat ∈ formCells wer (some "wem") ∧
-          German.Case.nom ∈ formCells wer (some "wem")) := by
+        (German.Case.dat ∈ formCellsOf wer "wem" ∧
+          German.Case.nom ∈ formCellsOf wer "wem") := by
   decide
 
 open Polish.Pronouns in
 /-- The case value of *kogo* is the accusative and the genitive of *kto*, and that of *co* the
 nominative and the accusative ((40), (41), (46)). -/
 theorem polish_cases :
-    formCells kto (some "kogo") = {Polish.Case.acc, .gen} ∧
-      formCells co (some "co") = {Polish.Case.nom, .acc} := by
+    formCellsOf kto "kogo" = {Polish.Case.acc, .gen} ∧
+      formCellsOf co "co" = {Polish.Case.nom, .acc} := by
   decide
 
 open Polish.Pronouns in
@@ -171,11 +171,11 @@ open Polish.Pronouns in
 conjuncts ((40), (46)), and *co* does not ((41)). -/
 theorem polish_coordination :
     AcceptableIff Examples.ex_40
-        (Polish.Case.acc ∈ formCells kto (some "kogo") ∧
-          Polish.Case.gen ∈ formCells kto (some "kogo")) ∧
+        (Polish.Case.acc ∈ formCellsOf kto "kogo" ∧
+          Polish.Case.gen ∈ formCellsOf kto "kogo") ∧
       AcceptableIff Examples.ex_41
-        (Polish.Case.acc ∈ formCells co (some "co") ∧
-          Polish.Case.gen ∈ formCells co (some "co")) := by
+        (Polish.Case.acc ∈ formCellsOf co "co" ∧
+          Polish.Case.gen ∈ formCellsOf co "co") := by
   decide
 
 open English

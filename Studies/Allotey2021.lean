@@ -69,32 +69,38 @@ comparison with Landau's scale of finiteness is stated for those two.
 
 namespace Allotey2021
 
-open Binding.MinimalPronoun Control Ga Ga.Pronouns
+open Binding.MinimalPronoun Control Ga Ga.Pronouns Morphology
 
 /-! ### Pronouns (Table 3) -/
 
-/-- Only second and third person singular have a dedicated objective form. -/
-theorem objective_form_iff (p : Person) (n : Number) :
-    (∃ q ∈ pronouns, q.person = some p ∧ q.number = some n ∧ q.case_ = some .acc) ↔
-      n = .singular ∧ (p = .second ∨ p = .third) := by
-  cases p <;> cases n <;> decide
+/-- "Except for the second- and third-person nominative-accusative pronominals, the other
+pronominals take an identical phonetic form in nominative, accusative and genitive case"
+(p. 25), the impersonal *a* being "used only in subject position". -/
+theorem exists_syncretic_form_iff (r : Row) :
+    (∃ f ∈ table (r, .subjective), ∀ k, f ∈ table (r, k)) ↔ r ≠ .sg2 ∧ r ≠ .sg3 ∧ r ≠ .imp := by
+  cases r <;> decide
 
-/-- The paradigm distinguishes case in the second and third person singular
-    alone: every other referential category has one form for all three
-    columns of Table 3. -/
-theorem card_paradigm (c : Person.Category) :
-    (paradigm c).card = if c = .addressee ∨ c = .other then 2 else 1 := by
-  cases c <;> decide +kernel
+/-- Only the second and third person singular have a form of the objective alone, *bo* and
+*lɛ*. -/
+theorem objective_form_iff (r : Row) :
+    (∃ f ∈ table (r, .objective), formCellsOf table f = {(r, .objective)}) ↔
+      r = .sg2 ∨ r = .sg3 := by
+  cases r <;> decide
+
+/-- "The possessive form of pronominals also have an identical phonetic form to the nominative
+case pronominals" (p. 25). -/
+theorem possessive_subset_subjective (r : Row) :
+    table (r, .possessive) ⊆ table (r, .subjective) := by
+  cases r <;> decide
 
 /-- Every referential category has a form: the one form of first person
     plural *wɔ* covers clusivity and the number of others alike. -/
 theorem paradigm_nonempty (c : Person.Category) : (paradigm c).Nonempty := by
   cases c <;> decide +kernel
 
-/-- Each cell of Table 3 has one subject form. -/
-theorem card_subjectForms :
-    ∀ q ∈ pronouns, ∀ p ∈ q.person, ∀ n ∈ q.number, (subjectForms p n).card = 1 := by
-  decide +kernel
+/-- Every row has a subjective form, the form a controlled subject takes. -/
+theorem subjective_nonempty (r : Row) : (table (r, .subjective)).Nonempty := by
+  cases r <;> decide
 
 /-! ### Subject pronouns are not agreement (§4.4, §6.1) -/
 
@@ -302,9 +308,8 @@ theorem deSe_witness :
 
 /-- The controlled form φ-covaries with its controller (exx 37–39), unlike
     [satik-2019]'s form-invariant Ewe *yè*. -/
-theorem controlled_form_covaries :
-    subjectForms .second .singular ≠ subjectForms .second .plural := by
-  decide +kernel
+theorem controlled_form_covaries : table (.sg2, .subjective) ≠ table (.pl2, .subjective) := by
+  decide
 
 /-- The diagnostics the rows attest for a clause type. -/
 def attested (c : EmbeddedClauseType) : Set Diagnostic :=

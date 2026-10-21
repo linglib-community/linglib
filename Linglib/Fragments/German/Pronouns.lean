@@ -33,7 +33,7 @@ no dative.
   `German.Pronouns.sie_formal_referential` — *Sie* is the pronoun of the polite grade, which does
   not distinguish one addressee from several, and it denotes what the two familiar forms denote
   together
-* `German.Pronouns.wer_isSome`, `German.Pronouns.was_isSome_iff` — *wer* has a form in every
+* `German.Pronouns.wer_nonempty`, `German.Pronouns.was_nonempty_iff` — *wer* has a form in every
   case, *was* in every case but the dative
 
 ## References
@@ -144,28 +144,28 @@ def einander : ReciprocalPronoun := { form := "einander" }
 /-! ### Interrogative pronouns
 
 The animate *wer* declines for the four German cases; the inanimate *was* has one form for the
-nominative and the accusative and no dative. Each paradigm is a partial map from case to form, so
-`Morphology.formCells` reads the cases a form realizes straight off it. -/
+nominative and the accusative and no dative. Each paradigm gives each case its finset of forms, so
+`Morphology.formCellsOf` reads the cases a form realizes straight off it. -/
 
 /-- The paradigm of *wer* 'who'. -/
-def wer : Case → Option String
-  | .nom => some "wer"
-  | .acc => some "wen"
-  | .dat => some "wem"
-  | .gen => some "wessen"
+def wer : Case → Finset String
+  | .nom => {"wer"}
+  | .acc => {"wen"}
+  | .dat => {"wem"}
+  | .gen => {"wessen"}
 
 /-- The paradigm of *was* 'what'. -/
-def was : Case → Option String
-  | .nom | .acc => some "was"
-  | .gen => some "wessen"
-  | .dat => none
+def was : Case → Finset String
+  | .nom | .acc => {"was"}
+  | .gen => {"wessen"}
+  | .dat => ∅
 
 /-- *wer* has a form for every case. -/
-theorem wer_isSome (c : Case) : (wer c).isSome := by
+theorem wer_nonempty (c : Case) : (wer c).Nonempty := by
   cases c <;> decide
 
 /-- *was* has a form for every case but the dative. -/
-theorem was_isSome_iff (c : Case) : (was c).isSome ↔ c ≠ .dat := by
+theorem was_nonempty_iff (c : Case) : (was c).Nonempty ↔ c ≠ .dat := by
   cases c <;> decide
 
 end Pronouns
