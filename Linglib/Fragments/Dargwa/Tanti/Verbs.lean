@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Dargwa.Locatives
+public import Linglib.Fragments.Dargwa.Tanti.Locatives
 
 /-!
 # Tanti Dargwa verbs
@@ -13,18 +13,19 @@ share the orientation markers and directions of the locative forms.
 
 ## Main definitions
 
-* `Dargwa.Localization.preverb?`, `Dargwa.Direction.preverb`: the preverbs of a localization with
-  an orientation, and of a direction
-* `Dargwa.localizationPreverbs`, `Dargwa.directionPreverbs`: the two groups of preverbs
-* `Dargwa.lightVerbs`, `Dargwa.boundLightVerbs`: the light verbs, and those found only in complex
-  verbs
-* `Dargwa.ComplexVerb`, `Dargwa.ComplexVerb.morphs`: a complex verb and its morphs
+* `Dargwa.Tanti.Localization.preverb?`, `Dargwa.Tanti.Direction.preverb`: the preverbs of a
+  localization with an orientation, and of a direction
+* `Dargwa.Tanti.localizationPreverbs`, `Dargwa.Tanti.directionPreverbs`: the two groups of preverbs
+* `Dargwa.Tanti.lightVerbs`, `Dargwa.Tanti.boundLightVerbs`: the light verbs, and those found only
+  in complex verbs
+* `Dargwa.Tanti.ComplexVerb`, `Dargwa.Tanti.ComplexVerb.morphs`: a complex verb and its morphs
 
 ## Main results
 
-* `Dargwa.Localization.preverb?_super`: *če-*, *če-b-* and *če-r-* are *super* with the lative,
-  essive and elative markers
-* `Dargwa.morphs_startCrying`: the stem and the light verb of *w-isːe-w-ig-* take the same marker
+* `Dargwa.Tanti.Localization.preverb?_super`: *če-*, *če-b-* and *če-r-* are *super* with the
+  lative, essive and elative markers
+* `Dargwa.Tanti.morphs_startCrying`: the stem and the light verb of *w-isːe-w-ig-* take the same
+  marker
 
 ## Implementation notes
 
@@ -48,7 +49,7 @@ share the orientation markers and directions of the locative forms.
 
 @[expose] public section
 
-namespace Dargwa
+namespace Dargwa.Tanti
 
 open Morphology
 
@@ -260,4 +261,4 @@ agreement controller. -/
 theorem morphs_startCrying (g : Gender.Marker) :
     startCrying.morphs g = [.pref g.form, .root "isːe", .pref g.form, .root "ig"] := rfl
 
-end Dargwa
+end Dargwa.Tanti

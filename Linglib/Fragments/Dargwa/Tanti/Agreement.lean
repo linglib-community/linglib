@@ -28,21 +28,22 @@ and *-u* otherwise, so it marks exactly the clauses in which the verb agrees wit
 
 ## Main declarations
 
-* `Dargwa.Gender.Value`: the three controller genders, with the singular and plural markers
+* `Dargwa.Tanti.Gender.Value`: the three controller genders, with the singular and plural markers
   `Value.sgMarker` and `Value.plMarker`.
-* `Dargwa.PersonSet`: the clitic, irrealis and optative sets of person markers.
-* `Dargwa.personController`, `Dargwa.thematic`: the person agreement controller and the
+* `Dargwa.Tanti.PersonSet`: the clitic, irrealis and optative sets of person markers.
+* `Dargwa.Tanti.personController`, `Dargwa.Tanti.thematic`: the person agreement controller and the
   thematic suffix of a transitive clause.
 
 ## Main results
 
-* `Dargwa.Gender.Value.sgMarker_injective`, `Dargwa.Gender.Value.plMarker_masc_eq_fem`: the
-  singular markers distinguish the three genders; the plural ones do not.
-* `Dargwa.PersonSet.realize_eq_nil_iff`: in every set, a cell is unmarked exactly when it is not
-  a speech-act participant's.
-* `Dargwa.isDargic_clitic`, `Dargwa.isDargic_optative`, `Dargwa.not_isDargic_irrealis`: the
-  clitic and optative sets have the Dargic configuration, the irrealis set does not.
-* `Dargwa.thematic_eq_i_iff`: the thematic suffix is *-i* exactly when A controls person
+* `Dargwa.Tanti.Gender.Value.sgMarker_injective`, `Dargwa.Tanti.Gender.Value.plMarker_masc_eq_fem`:
+  the singular markers distinguish the three genders; the plural ones do not.
+* `Dargwa.Tanti.PersonSet.realize_eq_nil_iff`: in every set, a cell is unmarked exactly when it is
+  not a speech-act participant's.
+* `Dargwa.Tanti.isDargic_clitic`, `Dargwa.Tanti.isDargic_optative`,
+  `Dargwa.Tanti.not_isDargic_irrealis`: the clitic and optative sets have the Dargic configuration,
+  the irrealis set does not.
+* `Dargwa.Tanti.thematic_eq_i_iff`: the thematic suffix is *-i* exactly when A controls person
   agreement.
 
 ## Implementation notes
@@ -63,7 +64,7 @@ and *-u* otherwise, so it marks exactly the clauses in which the verb agrees wit
 
 @[expose] public section
 
-namespace Dargwa
+namespace Dargwa.Tanti
 
 open Agreement Clause Morphology
 
@@ -229,4 +230,4 @@ theorem transitiveClitic_caught :
     transitiveClitic (.third, .singular) (.second, .singular) = some [.encl "de"] := by
   decide
 
-end Dargwa
+end Dargwa.Tanti

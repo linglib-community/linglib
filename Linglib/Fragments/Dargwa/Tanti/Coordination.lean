@@ -13,8 +13,8 @@ word *ja* before each alternative, which with negation gives 'neither … nor', 
 
 ## Main definitions
 
-* `Dargwa.Coordination.ra`, `Dargwa.Coordination.ja`, `Dargwa.Coordination.nu`: the additive
-  enclitic that conjoins, the disjunctive coordinator and the contrastive enclitic.
+* `Dargwa.Tanti.Coordination.ra`, `Dargwa.Tanti.Coordination.ja`, `Dargwa.Tanti.Coordination.nu`:
+  the additive enclitic that conjoins, the disjunctive coordinator and the contrastive enclitic.
 
 ## References
 
@@ -23,10 +23,10 @@ word *ja* before each alternative, which with negation gives 'neither … nor', 
 
 @[expose] public section
 
-namespace Dargwa.Coordination
+namespace Dargwa.Tanti.Coordination
 
 /-- *=ra* 'and', enclitic on each coordinand, also the additive particle
-`Dargwa.FocusParticles.ra`. -/
+`Dargwa.Tanti.FocusParticles.ra`. -/
 def ra : Coordinator :=
   { morph := .encl "ra", gloss := "and", role := .conjunctive }
 
@@ -38,4 +38,4 @@ def ja : Coordinator :=
 def nu : Coordinator :=
   { morph := .encl "nu", gloss := "but; because", role := .adversative }
 
-end Dargwa.Coordination
+end Dargwa.Tanti.Coordination

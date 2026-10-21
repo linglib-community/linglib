@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Option
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Fragments.Arabic.ModernStandard.Case
-public import Linglib.Fragments.Dargwa.Case
+public import Linglib.Fragments.Dargwa.Tanti.Case
 public import Linglib.Fragments.Finnish.Case
 public import Linglib.Fragments.German.Basel.Case
 public import Linglib.Fragments.German.Case
@@ -302,7 +302,7 @@ theorem gaps_hungarian : gaps (Finset.univ.image Hungarian.Case.label) = {.gen} 
 
 /-- The grammatical cases of Dargwa skip the locative and the ablative, which belong to its
 separate series of local cases. -/
-theorem gaps_dargwa : gaps (Finset.univ.image Dargwa.Case.label) = {.loc, .ablInst} := by
+theorem gaps_dargwa : gaps (Finset.univ.image Dargwa.Tanti.Case.label) = {.loc, .ablInst} := by
   decide
 
 /-- Mongolian has no locative, which postpositions express. -/

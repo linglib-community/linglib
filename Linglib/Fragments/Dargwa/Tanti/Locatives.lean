@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Syntax.Case.Spatial
-public import Linglib.Fragments.Dargwa.Case
-public import Linglib.Fragments.Dargwa.Agreement
+public import Linglib.Fragments.Dargwa.Tanti.Case
+public import Linglib.Fragments.Dargwa.Tanti.Agreement
 
 /-!
 # Tanti Dargwa locative forms
@@ -21,18 +21,20 @@ the standard of comparison.
 
 ## Main definitions
 
-* `Dargwa.Localization`, `Dargwa.Orientation`, `Dargwa.Direction`: the three categories with
-  their suffixes, and `Localization.region` and `Orientation.pathDir` their comparative labels
-* `Dargwa.Orientation.marker?`: the marker of an orientation, apart from the side it attaches on
-* `Dargwa.LocativeForm`: a form, with `LocativeForm.morphs` its suffixes and
+* `Dargwa.Tanti.Localization`, `Dargwa.Tanti.Orientation`, `Dargwa.Tanti.Direction`: the three
+  categories with their suffixes, and `Localization.region` and `Orientation.pathDir` their
+  comparative labels
+* `Dargwa.Tanti.Orientation.marker?`: the marker of an orientation, apart from the side it attaches
+  on
+* `Dargwa.Tanti.LocativeForm`: a form, with `LocativeForm.morphs` its suffixes and
   `LocativeForm.IsSpatial` the combinatorics of the spatial paradigm
-* `Dargwa.comparisonStandard`: the super-elative of the standard of comparison
+* `Dargwa.Tanti.comparisonStandard`: the super-elative of the standard of comparison
 
 ## Main results
 
-* `Dargwa.LocativeForm.not_isSpatial_elative_none`: no directionless elative is spatial
-* `Dargwa.LocativeForm.isSpatial_post_iff`: *post* takes the translative alone
-* `Dargwa.LocativeForm.exists_isSpatial_iff`: the region-by-path grid is filled except for
+* `Dargwa.Tanti.LocativeForm.not_isSpatial_elative_none`: no directionless elative is spatial
+* `Dargwa.Tanti.LocativeForm.isSpatial_post_iff`: *post* takes the translative alone
+* `Dargwa.Tanti.LocativeForm.exists_isSpatial_iff`: the region-by-path grid is filled except for
   the route outside the exterior
 
 ## Implementation notes
@@ -53,7 +55,7 @@ the standard of comparison.
 
 @[expose] public section
 
-namespace Dargwa
+namespace Dargwa.Tanti
 
 open Morphology
 
@@ -261,4 +263,4 @@ def comparisonStandard : LocativeForm := ⟨.super, .elative, none⟩
 theorem not_isSpatial_comparisonStandard : ¬ comparisonStandard.IsSpatial :=
   LocativeForm.not_isSpatial_elative_none _
 
-end Dargwa
+end Dargwa.Tanti
