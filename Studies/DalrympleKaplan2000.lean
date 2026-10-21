@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Data.Examples.DalrympleKaplan2000
 public import Linglib.Syntax.Agreement.Resolution
 public import Linglib.Syntax.Person.System
@@ -117,35 +118,6 @@ theorem requirements_not_compatible :
       (Morphology.Features.of (case_ := some .nom)) := by
   decide
 
-section Indeterminacy
-
-variable {C : Type*} [Fintype C]
-
-/-- A flat slot as a set value, a determinate commitment its singleton and no commitment, the
-underspecification of (22), the universal set; subsumption becomes reverse inclusion, so
-the flat order is the determinate fragment of the set order. -/
-def toIndet : Flat C → Finset C
-  | ⊥ => Finset.univ
-  | (x : C) => {x}
-
-private theorem univ_ne_singleton [Nontrivial C] (y : C) : (Finset.univ : Finset C) ≠ {y} := by
-  intro h
-  obtain ⟨z, hz⟩ := exists_ne y
-  exact hz (Finset.mem_singleton.1 (h ▸ Finset.mem_univ z))
-
-theorem le_iff_toIndet_superset [Nontrivial C] (a b : Flat C) :
-    a ≤ b ↔ toIndet b ⊆ toIndet a := by
-  cases a with
-  | bot => exact iff_of_true bot_le (Finset.subset_univ _)
-  | coe x =>
-    cases b with
-    | bot =>
-      refine iff_of_false (Flat.not_coe_le_bot x) fun h ↦ ?_
-      exact univ_ne_singleton x (Finset.Subset.antisymm h (Finset.subset_univ _))
-    | coe z => simp [toIndet, eq_comm]
-
-end Indeterminacy
-
 open German.Pronouns in
 /-- The case values of the German relative pronouns are the cells their forms realize, *wer*
 the nominative, *wem* the dative, *was* the nominative and the accusative ((26), (32)). -/
@@ -163,12 +135,16 @@ theorem was_isLeast :
   exact ⟨by simp, fun v ⟨ha, hn⟩ ↦ by simp [Finset.insert_subset_iff, ha, hn]⟩
 
 open German.Pronouns in
-/-- Underspecification overgenerates where the set value does not, *was* admitting no dative or
-genitive context and the universal set admitting every one (§3.2). -/
+/-- Underspecification overgenerates where the set value does not: the one flat value that
+extends to both cases of *was* is no case at all (22), and it admits the dative and the genitive
+contexts that *was* cannot appear in (§3.2). -/
 theorem underspecification_overgenerates :
-    German.Case.dat ∈ toIndet ⊥ ∧ German.Case.dat ∉ formCells was (some "was") ∧
-      German.Case.gen ∉ formCells was (some "was") := by
-  decide
+    (∀ x : Flat German.Case, formCells was (some "was") ⊆ x.extensions ↔ x = ⊥) ∧
+      German.Case.dat ∈ (⊥ : Flat German.Case).extensions \ formCells was (some "was") ∧
+      German.Case.gen ∈ (⊥ : Flat German.Case).extensions \ formCells was (some "was") := by
+  rw [german_cases.2.2]
+  exact ⟨fun _ ↦ Flat.subset_extensions_iff_eq_bot ⟨.nom, by simp, .acc, by simp, by decide⟩,
+    by decide, by decide⟩
 
 open German.Pronouns in
 /-- *was* meets the accusative requirement of *gegessen* and the nominative one of *übrig war*
