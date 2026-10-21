@@ -47,9 +47,10 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 ## Implementation notes
 
 * The input is the syntax of the head and the next word: the phrases over the two words, each
-  anchored at its head's stressed syllable, the extended projection of a noun or predicate at the
-  noun or predicate, and whether the next word is a second-position element. MAX-XP is
-  `Prosody.syntaxProsodyMax`, the existential correspondence of [ito-mester-2019] as their tableaux
+  anchored at its head's stressed syllable, the extended projection of a noun or predicate one
+  phrase anchored at the noun or predicate, and whether the next word is a second-position
+  element. MAX-XP is
+  `Prosody.syntaxProsodyMax`, the existential correspondence of Itô and Mester as their tableaux
   count it, which Brodkin adopts for (23a).
 * The maximal φ is the paper's domain stipulation on Syllable Lifting (§4.3), stated in GEN; an
   example records it where the paper brackets it or the clause has at most three words (85). The
@@ -167,8 +168,8 @@ demonstrative or negator ((33b), (36b)). -/
 def adjunct : Constituency := ⟨[((0, 2), 0), ((1, 2), 1)], false⟩
 
 /-- The next word heads the head's phrase, a noun or predicate whose extended projection the head
-belongs to ((33a), (36a)). -/
-def complement : Constituency := ⟨[((0, 2), 1), ((1, 2), 1)], false⟩
+belongs to ((33a), (36a)), one phrase as [ito-mester-2019] count an extended projection. -/
+def complement : Constituency := ⟨[((0, 2), 1)], false⟩
 
 /-- The next word is a second-position element hosted by the head's phrase ((40a)–(42a)). -/
 def host : Constituency := ⟨[((0, 1), 0)], true⟩
@@ -297,8 +298,9 @@ def candidates : Finset Candidate :=
     ((if x.sameMax then [.joined, .separate, .lifted] else [.joined, .separate]).map
       (⟨i, ·⟩))).toFinset
 
-/-- MAX-XP (23a), evaluated as [ito-mester-2019] evaluate it: one violation for each phrase with no
-φ of its own, a φ containing the phrase's head and no head from outside the phrase. -/
+/-- MAX-XP (23a), evaluated as [ito-mester-2019] evaluate it: one violation for each phrase left
+without a φ of its own, a φ containing the phrase's head and no head from outside the phrase, and
+answering to one phrase only. -/
 def maxXP : Constraint Candidate := fun c ↦
   syntaxProsodyMax (x.phrases (syllables c.item.exponent)) .ph (c.tree x)
 
@@ -439,55 +441,44 @@ theorem priority_eq_zero_iff (hi : (v.applicable x.neighborhood).head? = some i)
   obtain ⟨l, hl⟩ := List.head?_eq_some_iff.1 hi
   by_cases h : i = c.item <;> simp [priority, hl, h, eq_comm]
 
+section Configurations
+
+attribute [local simp] maxXP subcat positionalMinimality Candidate.tree syntaxProsodyMax
+  Constraint.align Constraint.deficiency List.matchingNumber Input.phrases Input.parse
+  Input.parse.pair Input.cut Input.stress Input.next spans_penultimate_ph
+  spans_penultimate_isTrochee spans_penultimate_isMinimalPhi IsTrochee IsConstituent
+  Foot.childHeadFlags RoseTree.licensed_node_iff Constituent.Licenses IsMinimalPhi Corresponds
+  Set.mem_Ico Finset.filter_insert Finset.filter_singleton Finset.sup_insert Finset.sup_singleton
+
 private theorem eq_zero_sisters {a : ℕ} (n : Neighborhood (Finset Feature)) (fo sm : Bool)
     (ha : syllables i.exponent = a + 2) :
     let x : Input := ⟨n, .sisters, fo, sm⟩
     maxXP x ⟨i, .separate⟩ = 0 ∧ subcat x ⟨i, .separate⟩ = 0 ∧
       positionalMinimality x ⟨i, .separate⟩ = 0 := by
-  cases fo <;> cases sm <;>
-    simp [maxXP, subcat, positionalMinimality, Candidate.tree, ha, syntaxProsodyMax,
-      Constraint.align, Input.phrases, Input.parse, Input.parse.pair, Input.cut, Input.stress,
-      Input.next, Constituency.sisters, spans_penultimate_ph, spans_penultimate_isTrochee,
-      spans_penultimate_isMinimalPhi, IsTrochee, IsConstituent, Foot.childHeadFlags,
-      RoseTree.licensed_node_iff, Constituent.Licenses, IsMinimalPhi]
+  cases fo <;> cases sm <;> simp +arith [ha, Constituency.sisters]
 
 private theorem eq_zero_adjunct {a : ℕ} (n : Neighborhood (Finset Feature)) (fo sm : Bool)
     (ha : syllables i.exponent = a + 2) :
     let x : Input := ⟨n, .adjunct, fo, sm⟩
     maxXP x ⟨i, .separate⟩ = 0 ∧ subcat x ⟨i, .separate⟩ = 0 ∧
       positionalMinimality x ⟨i, .separate⟩ = 0 := by
-  cases fo <;> cases sm <;>
-    simp [maxXP, subcat, positionalMinimality, Candidate.tree, ha, syntaxProsodyMax,
-      Constraint.align, Input.phrases, Input.parse, Input.parse.pair, Input.cut, Input.stress,
-      Input.next, Constituency.adjunct, spans_penultimate_ph, spans_penultimate_isTrochee,
-      spans_penultimate_isMinimalPhi, IsTrochee, IsConstituent, Foot.childHeadFlags,
-      RoseTree.licensed_node_iff, Constituent.Licenses, IsMinimalPhi] <;>
-    omega
+  cases fo <;> cases sm <;> simp +arith [ha, Constituency.adjunct]
 
 private theorem eq_zero_complement {a : ℕ} (n : Neighborhood (Finset Feature)) (fo sm : Bool)
     (ha : syllables i.exponent = a + 2) :
     let x : Input := ⟨n, .complement, fo, sm⟩
     maxXP x ⟨i, .joined⟩ = 0 ∧ subcat x ⟨i, .joined⟩ = 0 ∧
       positionalMinimality x ⟨i, .joined⟩ = 0 := by
-  cases fo <;> cases sm <;>
-    simp [maxXP, subcat, positionalMinimality, Candidate.tree, ha, syntaxProsodyMax,
-      Constraint.align, Input.phrases, Input.parse, Input.parse.pair, Input.cut, Input.stress,
-      Input.next, Constituency.complement, spans_penultimate_ph, spans_penultimate_isTrochee,
-      spans_penultimate_isMinimalPhi, IsTrochee, IsConstituent, Foot.childHeadFlags,
-      RoseTree.licensed_node_iff, Constituent.Licenses, IsMinimalPhi]
+  cases fo <;> cases sm <;> simp +arith [ha, Constituency.complement]
 
 private theorem eq_zero_host {a : ℕ} (n : Neighborhood (Finset Feature)) (fo sm : Bool)
     (ha : syllables i.exponent = a + 2) :
     let x : Input := ⟨n, .host, fo, sm⟩
     maxXP x ⟨i, .joined⟩ = 0 ∧ subcat x ⟨i, .joined⟩ = 0 ∧
       positionalMinimality x ⟨i, .joined⟩ = 0 := by
-  cases fo <;> cases sm <;>
-    simp [maxXP, subcat, positionalMinimality, Candidate.tree, ha, syntaxProsodyMax,
-      Constraint.align, Input.phrases, Input.parse, Input.parse.pair, Input.cut, Input.stress,
-      Input.next, Constituency.host, spans_penultimate_ph, spans_penultimate_isTrochee,
-      spans_penultimate_isMinimalPhi, IsTrochee, IsConstituent, Foot.childHeadFlags,
-      RoseTree.licensed_node_iff, Constituent.Licenses, IsMinimalPhi] <;>
-    omega
+  cases fo <;> cases sm <;> simp +arith [ha, Constituency.host]
+
+end Configurations
 
 /-- In each of the paper's configurations, a head of at least two syllables has a phrasing that
 satisfies MAX-XP, SUBCAT and Positional Minimality: separate φs where the next word heads a phrase

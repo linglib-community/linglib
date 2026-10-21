@@ -46,6 +46,8 @@ Theory's strict domination, while Harmonic Grammar weights the same vector witho
   under some ranking iff the competitor does not harmonically bound it.
 * `Tableau.ofRanking_zero_mem_optimal` / `Tableau.ofRanking_eq_zero_of_mem_optimal` — a candidate
   with no violations wins under every ranking, and then every winner has no violations.
+* `Tableau.ofRanking_mem_optimal_of_forall_le` — optimality transfers under every ranking to a
+  candidate of another tableau bounded constraint by constraint.
 * `Tableau.ofRanking_optimal_eq_argmin_filter` — when the constraints above the last can be
   satisfied together, the winners satisfy them all and do best on the last.
 * `Tableau.constraints_zero_le_of_mem_optimal` — a winner does at least as well as every
@@ -231,6 +233,20 @@ theorem ofRanking_eq_zero_of_mem_optimal (hc : c ∈ (ofRanking con r candidates
     (hd : d ∈ candidates) (h0 : ∀ i, con i d = 0) (i : ι) : con i c = 0 := by
   have h := profile_eq_zero_of_mem_optimal hc hd (funext fun p ↦ h0 (r p))
   simpa using show con (r (r.symm i)) c = 0 from congrFun h (r.symm i)
+
+/-- **Optimality transfers along constraint-wise bounds.** Under any ranking, a candidate of a
+second tableau violating each constraint no more than a winner of the first is a winner, where each
+candidate of the second violates each constraint at least as much as some candidate of the first. -/
+theorem ofRanking_mem_optimal_of_forall_le {C' : Type*} {con' : ConstraintSet C' ι}
+    {candidates' : Finset C'} {d : C'} (hc : c ∈ (ofRanking con r candidates).optimal)
+    (hd : d ∈ candidates') (hdc : ∀ i, con' i d ≤ con i c)
+    (h : ∀ d' ∈ candidates', ∃ c' ∈ candidates, ∀ i, con i c' ≤ con' i d') :
+    d ∈ (ofRanking con' r candidates').optimal := by
+  have hm := (Pi.toLex_comp_strictMono r (β := ℕ)).monotone
+  refine mem_optimal_iff.2 ⟨hd, fun d' hd' ↦ ?_⟩
+  obtain ⟨c', hc', hle⟩ := h d' hd'
+  exact (hm (show (con' · d) ≤ (con · c) from hdc)).trans
+    ((le_of_mem_optimal hc hc').trans (hm (show (con · c') ≤ (con' · d') from hle)))
 
 /-- If some candidate violates none of the constraints a ranking puts above its last, the winners
 are the candidates violating none of them that do best on the last. -/
