@@ -7,59 +7,37 @@ public import Mathlib.Basic.ENNReal.BigOperators
 /-!
 # Dirichlet priors on probabilistic context-free grammars
 
-A Dirichlet PCFG over `G` puts a Dirichlet prior on the rule distribution at each nonterminal,
-given by a positive pseudo-count for every rule. Integrating the rule weights out, the rules
-applied at a nonterminal across a corpus are draws from a Pólya urn over the rules with that
-left-hand side, weighted by their pseudo-counts, and each notion here is read off those urns:
-
-* the probability of a corpus is the product over the nonterminals of the urn probability of the
-  corpus rule counts there;
-* the posterior given a corpus raises each pseudo-count by the corpus count of its rule, and the
-  probability of a corpus `D₁ + D₂` is the probability of `D₁` times the probability of `D₂`
-  under the posterior given `D₁`, so derivation trees are exchangeable but not independent as
-  they are under a PCFG (`PCFG.corpusProb_add`);
-* the posterior predictive probability of a rule, the posterior mean of its weight, is the
-  prediction rule of the urn at its left-hand side, and these probabilities form a PCFG.
+A Dirichlet PCFG puts a Dirichlet prior on the rule distribution at each nonterminal. With the
+rule weights integrated out, the rules applied at a nonterminal are draws from a Pólya urn over
+its rules, weighted by their pseudo-counts.
 
 ## Main definitions
 
 * `DirichletPCFG G`: positive pseudo-counts on the rules of `G`.
-* `DirichletPCFG.urn`: the urn weights at a nonterminal, the pseudo-counts of its rules.
-* `DirichletPCFG.countsProb`, `DirichletPCFG.lhsCounts`, `DirichletPCFG.corpusProb`: the
-  probability of rule counts, the corpus rule counts at a nonterminal, and the probability of a
+* `DirichletPCFG.countsProb`, `DirichletPCFG.corpusProb`: the probability of rule counts and of a
   corpus.
 * `DirichletPCFG.posterior`: the conjugate update by a corpus.
-* `DirichletPCFG.predictive`, `DirichletPCFG.predictivePCFG`: the posterior predictive
-  probabilities of the rules at a nonterminal, and the PCFG they form.
+* `DirichletPCFG.predictive`, `DirichletPCFG.predictivePCFG`: the posterior predictive rule
+  distribution.
 
 ## Main results
 
-* `DirichletPCFG.corpusProb_add`: the probability of `D₁ + D₂` is the probability of `D₁` times
-  the probability of `D₂` under the posterior given `D₁`. Dividing out, the probability of a tree
-  given the rest of the corpus is its probability under the posterior given the rest, the
-  conditional of the collapsed sampler of [johnson-griffiths-goldwater-2007].
-* `DirichletPCFG.predictive_lt_predictive_iff`: at a nonterminal the predictive probabilities
-  order rules by posterior pseudo-count.
-* `DirichletPCFG.predictivePCFG_posterior`: predicting from `D₂` under the posterior given `D₁`
-  is predicting from `D₁ + D₂`.
-* `DirichletPCFG.derivProb_predictivePCFG`: on a tree that expands each nonterminal at most once,
-  the predictive PCFG gives the tree its probability under the posterior.
+* `DirichletPCFG.corpusProb_add`: the probability of `D₁ + D₂` is that of `D₁` times that of `D₂`
+  under the posterior given `D₁`.
+* `DirichletPCFG.predictivePCFG_posterior`: predicting from `D₂` under the posterior given `D₁` is
+  predicting from `D₁ + D₂`.
+* `DirichletPCFG.derivProb_predictivePCFG`: on a tree with at most one node per nonterminal, the
+  predictive PCFG gives the tree its posterior probability.
 
 ## Implementation notes
 
-The pseudo-counts are a function on all rules, positive on the rules of the grammar, so that the
-posterior is a pointwise sum; `urn` restricts them to the rules with a given left-hand side.
-`corpusProb` is the closed form of [johnson-griffiths-goldwater-2007]'s Equation 3, a product of
-ratios of Dirichlet normalising constants, written in rising factorials by `polyaUrnProb`.
-`predictivePCFG D` is the proposal grammar of their Hastings sampler, the posterior mean of the
-rule weights given `D`. With every pseudo-count `1` the Dirichlet prior is uniform on the simplex,
-so the posterior mode is the PCFG that maximizes the likelihood of the corpus, its
-relative-frequency estimate `PCFG.relFreq` (`PCFG.corpusProb_le_corpusProb_relFreq`).
+`corpusProb` is Equation 3 of [johnson-griffiths-goldwater-2007], and `predictivePCFG` is the
+proposal grammar of their Hastings sampler. With unit pseudo-counts the posterior mode is
+`PCFG.relFreq`.
 
 ## TODO
 
-The law of a corpus as a measure, the PCFG derivation measure mixed over the Dirichlet prior, is
-not constructed; `corpusProb` is its value on a sequence of trees.
+* The law of a corpus as a measure, the PCFG derivation measure mixed over the prior.
 
 ## References
 

@@ -10,67 +10,36 @@ public import Linglib.Morphology.Exponence.Select
 /-!
 # O'Donnell (2015): Productivity and Reuse in Language
 
-[odonnell-2015] treats productivity as an inference about which computations to store and which
-to recompute, and compares five models of English morphology: the full-parsing
-Dirichlet-multinomial PCFG (DMPCFG), the full-listing maximum a posteriori adaptor grammar (MAG),
-two data-oriented parsing estimators, and the inference-based fragment grammar (FG). In Chapter 7
-only the FG places the productive nominalizer *-ness*:Adj>N among the five most productive
-suffixes, while the other four models rank the unproductive *-ion*:V>N first or second (Figure
-7.3). The book's explanation (p. 268) is that the DMPCFG infers productivity from the token
-frequency of a suffix and the MAG from its type frequency, and *-ion* is the more frequent by both
-counts, while Baayen's hapax-based measures, with which the FG correlates (Table 7.1), separate
-the two suffixes the right way.
-
-This file states the book's models and derives that explanation from its counts for the two
-suffixes (`spectrum`, pp. 267–268), over a grammar with a rule for each.
+In Chapter 7 of [odonnell-2015], the Dirichlet-multinomial PCFG (DMPCFG) and the maximum a
+posteriori adaptor grammar (MAG) rank the unproductive *-ion* above the productive *-ness*, which
+the book attributes to their estimating rules from token and type frequency (p. 268). This file
+derives both rankings from the book's counts (`spectrum`, pp. 267–268), and Baayen's hapax-based
+`P`, which ranks the two suffixes the other way.
 
 ## Main definitions
 
-* `suffixGrammar ι`: nouns in *-ness* and *-ion* and verbs in *-ate*, over a lexicon of stems `ι`.
-* `dmpcfg`: the DMPCFG over the suffix grammar with the book's unit pseudo-counts (§3.1.4,
-  §3.5.5).
-* `AdaptorGrammar.prob`, `FragmentGrammar.prob`: the probabilities the book gives an analysis in
-  terms of its counts (§3.1.7, §3.1.8).
-* `FullListing.counts`, `FullListing.seating`: the MAG's analysis of a corpus, one table for each
-  distinct derivation (§2.4.2, §3.3).
-* `tokens`, `wordTypes`, `hapaxes`, `baayenP`: a nominalizer's counts in a corpus, and Baayen's
-  category-conditioned degree of productivity, hapaxes over tokens (Equation 6.9).
-* `Realizes D`: the corpus `D` has the book's counts for the two nominalizers.
+* `suffixGrammar ι`: nominalizations in *-ness* and *-ion* over a lexicon of stems `ι`.
+* `AdaptorGrammar.prob`, `FragmentGrammar.prob`: the probability of an analysis from its counts.
+* `FullListing.counts`, `FullListing.seating`: the MAG's analysis of a corpus.
+* `Realizes D`: the corpus `D` has the book's counts.
 
 ## Main results
 
-* `FullListing.card_seating`: the full-listing analysis has as many tables at each nonterminal as
-  rule uses there, as `AdaptorGrammar.prob` requires.
-* `FullListing.counts_eq_card_filter_toFinset`: at a nonterminal on no right-hand side, such as
-  `N` in the suffix grammar, the full-listing counts are type counts.
-* `Realizes.dmpcfg_ness_lt_ion`: with unit pseudo-counts the DMPCFG's maximum a posteriori grammar
-  is the relative-frequency PCFG of the treebank (§3.3), the PCFG of greatest likelihood
-  (`PCFG.corpusProb_le_corpusProb_relFreq`), and on the book's token counts it gives *-ion* the
-  greater weight.
-* `Realizes.mag_ness_lt_ion`: the MAG's base grammar is the relative-frequency PCFG of its
-  full-listing counts, and on the book's type counts it also gives *-ion* the greater weight.
-* `Realizes.baayenP_ion_lt_ness`: Baayen's `P` ranks *-ness* above *-ion*.
-* `exists_realizes`: a corpus of derivations over `1117` stems realizes all of the book's counts,
-  so these theorems are about corpora that exist.
-* `isElsewhereWinner_of_forall_uniformOn_le`: the probabilistic Elsewhere Condition of §5.5.3, for
-  rules generating their domains uniformly.
+* `Realizes.dmpcfg_ness_lt_ion`, `Realizes.mag_ness_lt_ion`, `Realizes.baayenP_ion_lt_ness`: the
+  three rankings.
+* `exists_realizes`: some corpus has the book's counts.
+* `FullListing.counts_eq_card_filter_toFinset`: at a nonterminal on no right-hand side the
+  full-listing counts are type counts.
+* `isElsewhereWinner_of_forall_uniformOn_le`: the probabilistic Elsewhere Condition (§5.5.3).
 
 ## Implementation notes
 
-The book measures a suffix's productivity by the probability of the suffix on a novel stem of
-fixed probability (p. 261 and its footnote 4), so the comparison of two nominalizers is the
-comparison of their rules at `N`. The book's grammar lists a rule for each stem and has a start
-symbol above the word categories (Figure 7.1); the suffix grammar has a stem of each category for
-each element of `ι` and starts at `N`, which is on no right-hand side, so the MAG's tables at `N`
-are the corpus's word types. The seating `Y` is the book's count vector of table sizes, whose
-Pitman–Yor probability is that of any set partition with those block sizes
-(`AdaptorGrammar.pitmanYor_real_singleton_eq_pypFactor`).
+The book measures a suffix's productivity by its probability on a novel stem of fixed probability
+(p. 261, footnote 4), so two nominalizers are compared by their rule weights at `N`.
 
 ## TODO
 
-* The FG's MAP grammar, found by stochastic search (§3.2), and its ranking in Figure 7.3; the
-  correlations of Table 7.1.
-* The two data-oriented parsing estimators (Equations 3.10 and 3.11).
+* The FG's MAP grammar (§3.2), Figure 7.3 and Table 7.1; the data-oriented parsing estimators.
 
 ## References
 
@@ -148,7 +117,7 @@ variable (ι) [Fintype ι] [DecidableEq ι]
 
 /-- The suffix grammar over a lexicon of stems `ι`: nouns in *-ness* from adjectives and in
 *-ion* from verbs, verbs in *-ate* from bound stems, and a stem of each category for each element
-of `ι`. -/
+of `ι`. Unlike the book's grammar (Figure 7.1) it has no start symbol above `N`. -/
 def suffixGrammar : ContextFreeGrammar (Sym ι) where
   NT := SuffixNT
   initial := .N
