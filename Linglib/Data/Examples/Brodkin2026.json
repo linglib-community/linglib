@@ -17,7 +17,7 @@
     "paperFeatures": [
       ["head", "this_in_hand"],
       ["allomorph", "short"],
-      ["position", "medial"]
+      ["syntax", "complement"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -39,7 +39,7 @@
     "paperFeatures": [
       ["head", "this_in_hand"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "adjunct"],
       ["next", "footed"]
     ],
     "comment": "The elided NP after the demonstrative is omitted.",
@@ -63,7 +63,7 @@
     "paperFeatures": [
       ["head", "neg"],
       ["allomorph", "short"],
-      ["position", "medial"]
+      ["syntax", "complement"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -85,7 +85,7 @@
     "paperFeatures": [
       ["head", "neg"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "adjunct"],
       ["next", "footed"]
     ],
     "comment": "The source strikes through the elided predicate ŋura bega 'unripe too', omitted here.",
@@ -108,7 +108,7 @@
     "paperFeatures": [
       ["head", "what"],
       ["allomorph", "short"],
-      ["position", "medial"]
+      ["syntax", "host"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -130,7 +130,7 @@
     "paperFeatures": [
       ["head", "what"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "footed"],
       ["maxPhi", "same"]
     ],
@@ -154,7 +154,7 @@
     "paperFeatures": [
       ["head", "which"],
       ["allomorph", "short"],
-      ["position", "medial"]
+      ["syntax", "host"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -176,7 +176,7 @@
     "paperFeatures": [
       ["head", "which"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "footed"],
       ["maxPhi", "same"]
     ],
@@ -200,7 +200,7 @@
     "paperFeatures": [
       ["head", "who"],
       ["allomorph", "short"],
-      ["position", "medial"]
+      ["syntax", "host"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -222,7 +222,7 @@
     "paperFeatures": [
       ["head", "who"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "footed"],
       ["maxPhi", "same"]
     ],
@@ -246,7 +246,7 @@
     "paperFeatures": [
       ["head", "what"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["affix", "verbalizer"]
     ],
     "comment": "",
@@ -269,7 +269,7 @@
     "paperFeatures": [
       ["head", "what"],
       ["allomorph", "long"],
-      ["position", "medial"],
+      ["syntax", "host"],
       ["affix", "verbalizer"]
     ],
     "comment": "",
@@ -292,7 +292,7 @@
     "paperFeatures": [
       ["head", "what"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "footed"],
       ["maxPhi", "same"]
     ],
@@ -316,7 +316,7 @@
     "paperFeatures": [
       ["head", "what"],
       ["allomorph", "short"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "unfooted"],
       ["maxPhi", "same"]
     ],
@@ -340,7 +340,7 @@
     "paperFeatures": [
       ["head", "which"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "footed"],
       ["maxPhi", "same"]
     ],
@@ -364,7 +364,7 @@
     "paperFeatures": [
       ["head", "which"],
       ["allomorph", "short"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "unfooted"],
       ["maxPhi", "same"]
     ],
@@ -389,7 +389,7 @@
     "paperFeatures": [
       ["head", "this_in_hand"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "footed"],
       ["maxPhi", "same"]
     ],
@@ -414,7 +414,7 @@
     "paperFeatures": [
       ["head", "this_in_hand"],
       ["allomorph", "short"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "unfooted"],
       ["maxPhi", "same"]
     ],
@@ -439,7 +439,7 @@
     "paperFeatures": [
       ["head", "that"],
       ["allomorph", "short"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "unfooted"],
       ["maxPhi", "same"]
     ],
@@ -464,7 +464,7 @@
     "paperFeatures": [
       ["head", "that"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "unfooted"],
       ["maxPhi", "different"]
     ],
@@ -489,7 +489,7 @@
     "paperFeatures": [
       ["head", "that"],
       ["allomorph", "short"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "unfooted"],
       ["maxPhi", "same"]
     ],
@@ -514,7 +514,7 @@
     "paperFeatures": [
       ["head", "that"],
       ["allomorph", "long"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "unfooted"],
       ["maxPhi", "different"]
     ],
@@ -539,7 +539,7 @@
     "paperFeatures": [
       ["head", "that"],
       ["allomorph", "short"],
-      ["position", "final"],
+      ["syntax", "sisters"],
       ["next", "unfooted"],
       ["maxPhi", "same"]
     ],
