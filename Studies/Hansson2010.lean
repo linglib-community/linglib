@@ -366,30 +366,21 @@ theorem harmonic_iff_mem_language (w : List Segment) :
     pattern_project, language_eq_preimage]
   rfl
 
-/-- The class of the leftmost sibilant of a word. -/
-def first (w : List Segment) : Option Bool := (sibilants w).head?.bind sibilantClass
-
-/-- The substrate's progressive harmony over the Navajo system gives every sibilant the class
-of the leftmost one. -/
-theorem scan_eq (w : List Segment) :
-    navajo.searchCopy.scan w = w.map (harmonize (first w)) := by
-  rw [navajo.scan_eq_map saturated preservesTier rfl, pattern_tier]
-  refine List.map_congr_left fun x _ ↦ ?_
-  have hfirst : (sibilants w).head?.bind navajo.pattern.value = first w := by
-    rcases hh : (sibilants w).head? with _ | y
-    · simp [first, hh]
-    · simp [first, hh, navajo, System.mk',
-        sibilantClass_of_onTier (onTier_of_mem_sibilants (List.mem_of_mem_head? hh))]
-  rw [hfirst, harmonize]
-  simp only [pattern_onTier_iff]
-  rfl
-
 /-- Anticipatory harmony is the search-and-copy run of the system in its direction. -/
 theorem anticipatory_eq_apply (w : List Segment) :
     anticipatory w = navajo.searchCopy.apply w := by
-  rw [navajo.searchCopy.apply_eq_revConj_scan rfl, List.revConj, scan_eq, List.map_reverse,
-    List.reverse_reverse, anticipatory]
-  congr 1
-  simp [first, trigger, sibilants, List.filter_reverse, List.head?_reverse]
+  rw [navajo.apply_eq_map saturated preservesTier rfl, anticipatory]
+  refine List.map_congr_left fun x _ ↦ ?_
+  have htrigger : (navajo.pattern.tier (navajo.pattern.direction.scanEdge.orient w)).head?.bind
+      navajo.pattern.value = trigger w := by
+    rw [show navajo.pattern.direction.scanEdge = .right from rfl, Edge.orient_right,
+      navajo.pattern.tier_reverse, pattern_tier, List.head?_reverse]
+    rcases hl : (sibilants w).getLast? with _ | y
+    · simp [trigger, hl]
+    · simp [trigger, hl, navajo, System.mk',
+        sibilantClass_of_onTier (onTier_of_mem_sibilants (List.mem_of_getLast? hl))]
+  rw [htrigger, harmonize]
+  simp only [pattern_onTier_iff]
+  rfl
 
 end Hansson2010

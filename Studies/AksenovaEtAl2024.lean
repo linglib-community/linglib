@@ -91,10 +91,10 @@ end Tier
 
 /-! ### Two harmonies on one tier -/
 
-/-- On a two-symbol word a pattern is harmonic unless both symbols are on its tier and
-incompatible. -/
+/-- On a two-symbol word a pattern is harmonic unless both symbols are on its tier and form an
+illicit bigram. -/
 private theorem harmonic_pair {α W : Type*} (p : Pattern α W) (x y : α) :
-    p.Harmonic [x, y] ↔ (p.OnTier x → p.OnTier y → p.Compatible x y) := by
+    p.Harmonic [x, y] ↔ (p.OnTier x → p.OnTier y → p.Licit x y) := by
   by_cases hx : p.OnTier x <;> by_cases hy : p.OnTier y <;>
     simp [Pattern.Harmonic, Pattern.tier, hx, hy]
 
@@ -103,7 +103,7 @@ for both form the language of one TSL₂ grammar, which bans what either harmony
 theorem harmonic_and_iff_mem_tsl {α W W' : Type*} (p : Pattern α W) (q : Pattern α W')
     (h : ∀ s, p.OnTier s ↔ q.OnTier s) (w : List α) :
     p.Harmonic w ∧ q.Harmonic w ↔ w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs
-      (fun a b ↦ ¬ p.Compatible a b ∨ ¬ q.Compatible a b) p.OnTier).language := by
+      (fun a b ↦ ¬ p.Licit a b ∨ ¬ q.Licit a b) p.OnTier).language := by
   rw [Pattern.harmonic_iff_mem_tsl, Pattern.harmonic_iff_mem_tsl,
     mem_ofForbiddenPairs_or_language_iff,
     ofForbiddenPairs_language_congr (p := q.OnTier) (p' := p.OnTier) (fun s ↦ (h s).symm)
@@ -327,8 +327,9 @@ def yakutFront : Pattern (Option TurkicV) Bool :=
   { value := Option.map TurkicV.front, participation := allParticipate }
 
 /-- **Yakut's rounding is no segment-level pattern beside its fronting harmony**, whatever its
-values, tier, blockers, and icy targets. The tier bigram `u a` is licit and `a u` is not, so `a`
-would have to be opaque or `u` an icy target, and either would license `*oa` or `*uo`. -/
+values, tier, blockers, icy targets, and direction. The tier bigram `u a` is licit and `a u` is
+not, so read left to right `a` would have to be opaque or `u` an icy target, and either would
+license `*oa` or `*uo`; read right to left the two roles swap. -/
 theorem yakut_rounding_not_pattern {W : Type*} (q : Pattern (Option TurkicV) W) :
     yakut.language ≠ {w | yakutFront.Harmonic w ∧ q.Harmonic w} := fun h ↦ by
   have hmem : ∀ w, w ∈ yakut.language ↔ yakutFront.Harmonic w ∧ q.Harmonic w := fun w ↦ by
@@ -340,12 +341,17 @@ theorem yakut_rounding_not_pattern {W : Type*} (q : Pattern (Option TurkicV) W) 
     (by decide : [some .u, some .o] ∉ yakut.language) ((hmem _).2 ⟨by decide, hq⟩)
   have hoa : ¬ q.Harmonic [some .o, some .a] := fun hq ↦
     (by decide : [some .o, some .a] ∉ yakut.language) ((hmem _).2 ⟨by decide, hq⟩)
-  simp only [harmonic_pair, Pattern.Compatible, not_imp, not_or] at hua hau huo hoa
-  obtain ⟨ha, hu, -, -, hne⟩ := hau
-  obtain ⟨-, -, hu', -⟩ := huo
-  obtain ⟨-, -, -, ha', -⟩ := hoa
-  rcases hua hu ha with h | h | h
-  exacts [hu' h, ha' h, hne h.symm]
+  simp only [harmonic_pair, not_imp] at hua hau huo hoa
+  obtain ⟨ha, hu, hau⟩ := hau
+  obtain ⟨-, -, huo⟩ := huo
+  obtain ⟨-, -, hoa⟩ := hoa
+  have hua := hua hu ha
+  rcases hq : q.direction.scanEdge with _ | _ <;>
+    simp only [Pattern.Licit, hq, Pattern.Compatible, not_or] at hua hau huo hoa
+  · rcases hua with h | h | h
+    exacts [huo.1 h, hoa.2.1 h, hau.2.2 h.symm]
+  · rcases hua with h | h | h
+    exacts [hoa.1 h, huo.2.1 h, hau.2.2 h.symm]
 
 /-! ### Kikongo ((16), (18), Tables 34.6–34.7): two disjoint tiers -/
 
