@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Logic.Modal.Defs
 public import Mathlib.Logic.Function.Basic
-public import Mathlib.Tactic.TypeStar
 
 /-!
 # Closure of the eventuality argument
@@ -35,10 +35,10 @@ proposition.
 
 ## Implementation notes
 
-Causation is a relation `cause s e w` between two eventualities and a world, as both papers write
-it. For a fixed world `causedClosure` is the preimage of the complement's eventualities under the
-causal relation, mathlib's `SetRel.preimage`; the relation is kept as a function because it is
-only ever applied, and the lemmas follow the names of the `SetRel.preimage` API.
+Causation is a relation between two eventualities at each world, the papers' `cause s e w`. For a
+fixed world `causedClosure` is possibility along the causal relation of that world, as the
+causative head `ArgumentStructure.EventStructure.Interpretation.vCause` is possibility along
+`cause`.
 
 ## References
 
@@ -52,24 +52,27 @@ only ever applied, and the lemmas follow the names of the `SetRel.preimage` API.
 
 namespace Event
 
-variable {Ev W : Type*} {cause cause' : Ev → Ev → W → Prop} {s : Ev} {P Q : W → Ev → Prop} {w : W}
+open ModalLogic
+open scoped SetRel
+
+variable {Ev W : Type*} {cause cause' : W → SetRel Ev Ev} {s : Ev} {P Q : W → Ev → Prop} {w : W}
 
 /-- Existential closure of a clause's eventuality argument, yielding a proposition. -/
 def closure (P : W → Ev → Prop) (w : W) : Prop := ∃ e, P w e
 
-/-- Closure of a clause's eventuality argument over the eventualities that the state `s` causes:
+/-- Closure of a clause's eventuality argument over the eventualities that the state `s` causes,
 the causally self-referential prejacent of an intention ([searle-1983]). -/
-def causedClosure (cause : Ev → Ev → W → Prop) (s : Ev) (P : W → Ev → Prop) (w : W) : Prop :=
-  ∃ e, cause s e w ∧ P w e
+def causedClosure (cause : W → SetRel Ev Ev) (s : Ev) (P : W → Ev → Prop) (w : W) : Prop :=
+  ◇[cause w] (P w) s
 
 theorem closure_mono (h : ∀ e, P w e → Q w e) : closure P w → closure Q w :=
   Exists.imp h
 
-theorem causedClosure_mono (h : ∀ e, cause s e w → P w e → Q w e) :
+theorem causedClosure_mono (h : ∀ e, s ~[cause w] e → P w e → Q w e) :
     causedClosure cause s P w → causedClosure cause s Q w :=
   Exists.imp fun e he ↦ ⟨he.1, h e he.1 he.2⟩
 
-theorem causedClosure_mono_left (h : ∀ e, cause s e w → cause' s e w) :
+theorem causedClosure_mono_left (h : ∀ e, s ~[cause w] e → s ~[cause' w] e) :
     causedClosure cause s P w → causedClosure cause' s P w :=
   Exists.imp fun e he ↦ ⟨h e he.1, he.2⟩
 
@@ -78,12 +81,13 @@ theorem causedClosure.closure (h : causedClosure cause s P w) : closure P w :=
   h.imp fun _ he ↦ he.2
 
 /-- A state that causes every eventuality adds nothing to plain closure. -/
-theorem causedClosure_iff_of_forall (h : ∀ e, cause s e w) :
+theorem causedClosure_iff_of_forall (h : ∀ e, s ~[cause w] e) :
     causedClosure cause s P w ↔ closure P w :=
   exists_congr fun e ↦ and_iff_right (h e)
 
 /-- A state that causes nothing has an unsatisfiable prejacent. -/
-theorem not_causedClosure_of_forall_not (h : ∀ e, ¬ cause s e w) : ¬ causedClosure cause s P w :=
+theorem not_causedClosure_of_forall_not (h : ∀ e, ¬ s ~[cause w] e) :
+    ¬ causedClosure cause s P w :=
   fun ⟨e, he, _⟩ ↦ h e he
 
 /-- Causal self-reference needs the open eventuality argument. The prejacent is a function of the
@@ -91,7 +95,7 @@ closed proposition exactly when causation by the state is trivial at every world
 state to every eventuality or to none. -/
 theorem causedClosure_factorsThrough_iff :
     (causedClosure cause s).FactorsThrough closure ↔
-      ∀ w, (∀ e, cause s e w) ∨ ∀ e, ¬ cause s e w := by
+      ∀ w, (∀ e, s ~[cause w] e) ∨ ∀ e, ¬ s ~[cause w] e := by
   refine ⟨fun h w ↦ ?_, fun h P Q hPQ ↦ funext fun w ↦ propext ?_⟩
   · by_contra hw
     obtain ⟨⟨e₂, h₂⟩, e₁, h₁⟩ := not_or.1 hw |>.imp not_forall.1 not_forall.1

@@ -157,7 +157,7 @@ variable {Entity Ev : Type*} {M : Model Entity Ev} {R : SetRel Ev Ev} {P : Ev �
 /-- *Again* on a predicate of events presupposes an earlier event. -/
 theorem diamond_compl_of_again_ne_zero (hP : P ≤ M.IsStateᶜ) (h : again R P v ≠ 0) :
     ◇[R] M.IsStateᶜ v :=
-  diamond_mono R hP v (again_eq_zero_iff.not_left.1 h)
+  diamond_mono R hP v (again_ne_zero_iff.1 h)
 
 variable (B : Entity → Ev → Prop) (x : Entity)
 
@@ -175,8 +175,8 @@ theorem again_changeOfState :
 earlier state that a change gave rise to, so *again* does not tell the analyses apart (p. 1616). -/
 theorem again_beaversKoontzGarboden
     (h : again R (Analysis.beaversKoontzGarboden.denote M .changeOfState B x) v ≠ 0) :
-    ◇[R] (fun w ↦ ∃ e, M.become w e) v :=
-  diamond_mono R (fun _ hw ↦ hw.1.2) v (again_eq_zero_iff.not_left.1 h)
+    ◇[R] (◇[M.become] ⊤) v :=
+  diamond_mono R (fun _ hw ↦ hw.1.2) v (again_ne_zero_iff.1 h)
 
 end Again
 
@@ -205,7 +205,7 @@ variable {Entity Ev : Type*} (M : Model Entity Ev) (L : Ev → Prop) (ρ : Entit
 gave rise to, the causative verb phrase over it holds of an event, the root holds of a state, or
 the root conjoined with a causative verb phrase over the result phrase `L` holds of an event. -/
 def Reading.Realized : Reading → Prop
-  | .restitutive => ∃ w, ρ x w ∧ M.IsState w ∧ ∀ e, ¬ M.become w e
+  | .restitutive => ∃ w, ρ x w ∧ M.IsState w ∧ ¬ ◇[M.become] ⊤ w
   | .repetitive | .durative => ∃ v, M.causative (ρ x) v
   | .internal => ∃ w, (ρ x ⊓ M.IsState) w
   | .modifier => ∃ v, eventIdentification ρ (M.causative L) x v
@@ -216,9 +216,9 @@ theorem not_realized_restitutive_of_le_compl (h : ρ x ≤ M.IsStateᶜ) :
     ¬ Reading.restitutive.Realized M L ρ x :=
   fun ⟨w, hw, hs, _⟩ ↦ h w hw hs
 
-theorem not_realized_restitutive_of_become (h : ∀ w, ρ x w → ∃ e, M.become w e) :
+theorem not_realized_restitutive_of_become (h : ρ x ≤ ◇[M.become] ⊤) :
     ¬ Reading.restitutive.Realized M L ρ x :=
-  fun ⟨w, hw, _, hb⟩ ↦ let ⟨e, he⟩ := h w hw; hb e he
+  fun ⟨w, hw, _, hb⟩ ↦ hb (h w hw)
 
 theorem not_realized_internal (h : ρ x ≤ M.IsStateᶜ) : ¬ Reading.internal.Realized M L ρ x :=
   fun ⟨w, hw, hs⟩ ↦ h w hw hs
@@ -259,8 +259,8 @@ inductive Scene
 
 /-- The causing event causes the change and its state, and the change causes its state. -/
 def scene : Model Unit Scene where
-  become s e := s = .result ∧ e = .change
-  cause e v := e = .causing ∧ (v = .change ∨ v = .result) ∨ e = .change ∧ v = .result
+  become := {p | p.1 = .result ∧ p.2 = .change}
+  cause := {p | p.1 = .causing ∧ (p.2 = .change ∨ p.2 = .result) ∨ p.1 = .change ∧ p.2 = .result}
   effector _ e := e = .causing
   IsState v := v = .result ∨ v = .prior
 
@@ -284,14 +284,15 @@ theorem available_restitutive_iff : Available a c .restitutive ↔ c = .property
           (Analysis.denote_le_compl (by decide) B ()))
       · exact absurd h (not_realized_restitutive_of_become fun _ hw ↦ hw.1.2)
   · subst hc
-    exact ⟨.prior, by cases a <;> simp [Analysis.denote, scene]⟩
+    exact ⟨.prior, by cases a <;> simp [Analysis.denote, diamond_iff, scene]⟩
 
 /-- The internal reading needs a root that describes states. -/
 theorem available_internal_iff : Available a c .internal ↔ a.DescribesStates c := by
   refine ⟨fun ⟨_, M, B, L, h⟩ ↦ by_contra fun hd ↦
     not_realized_internal (Analysis.denote_le_compl hd B ()) h, fun h ↦ available_of ⟨.result, ?_⟩⟩
   cases a <;> cases c <;>
-    simp_all [Analysis.DescribesStates, Analysis.denote, BeaversEtAl2021.resultStative, scene]
+    simp_all [Analysis.DescribesStates, Analysis.denote, BeaversEtAl2021.resultStative, diamond_iff,
+      scene]
 
 /-- The modifier needs a root that describes events. -/
 theorem available_modifier_iff : Available a c .modifier ↔ ¬ a.DescribesStates c := by
@@ -309,7 +310,7 @@ theorem available_durative : Available a c .durative := by
   · exact ⟨.result, .inl ⟨rfl, .inr rfl⟩, by cases a <;> simp [Analysis.denote, scene]⟩
   · cases a
     · exact ⟨.change, .inl ⟨rfl, .inl rfl⟩, ⟨.result, ⟨rfl, rfl⟩, .inl rfl⟩, by simp [scene]⟩
-    · exact ⟨.result, .inl ⟨rfl, .inr rfl⟩, ⟨.inl rfl, .change, rfl, rfl⟩, .inl rfl⟩
+    · exact ⟨.result, .inl ⟨rfl, .inr rfl⟩, ⟨.inl rfl, .change, ⟨rfl, rfl⟩, trivial⟩, .inl rfl⟩
 
 /-- Availability is the prediction of the sort of the root. -/
 theorem available_iff : ∀ r, Available a c r ↔ a.Predicts c r
@@ -367,8 +368,8 @@ inductive Eventuality
 /-- The breaking gives rise to the broken state and causes the loose one, and the monks are its
 effector. -/
 def model : Model Participant Eventuality where
-  become s e := s = .broken ∧ e = .breaking
-  cause e s := e = .breaking ∧ s = .loose
+  become := {p | p.1 = .broken ∧ p.2 = .breaking}
+  cause := {p | p.1 = .breaking ∧ p.2 = .loose}
   effector x e := x = .monks ∧ e = .breaking
   IsState v := v ≠ .breaking
 
@@ -399,7 +400,7 @@ theorem sentence :
     ⟨⟨.loose, ⟨rfl, rfl⟩, .inr ⟨rfl, rfl⟩, rfl⟩, ?_⟩⟩, fun x ↦ ?_⟩
   · simp [model]
   · simp [model]
-  · cases x <;> simp [Analysis.denote, Interpretation.vBecome, model, broken, holder]
+  · cases x <;> simp [Analysis.denote, Interpretation.vBecome_iff, model, broken, holder]
 
 end Monks
 

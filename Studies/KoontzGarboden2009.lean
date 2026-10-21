@@ -63,6 +63,7 @@ typological argument left in prose.
 namespace KoontzGarboden2009
 
 open ArgumentStructure ArgumentStructure.EventStructure Spanish.Verbs
+open scoped SetRel
 
 /-- The reflexivization operator restricts a two-place relation to its diagonal. It is the
 denotation of the reflexive clitic *se*. -/
@@ -78,13 +79,14 @@ variable {Entity State E : Type*}
 to be in the root's state, caused by an event whose participant `y` bears the causer relation `θ`,
 the underspecified `M.effector` for *romper* and an agent relation for *asesinar*. -/
 def causative (y x : Entity) (e : E) : Prop :=
-  ∃ w, θ y w ∧ M.cause w e ∧ M.vBecome P x e
+  ∃ w, θ y w ∧ w ~[M.cause] e ∧ M.vBecome P x e
 
 /-- Over the underspecified causer, `causative` and an event of `y` under the head `vCause` over
 `vBecome` have the same existential closure; they differ only in which event is the verb's
 argument. -/
 theorem exists_causative_iff (y x : Entity) :
-    (∃ e, causative M M.effector P y x e) ↔ ∃ w, M.effector y w ∧ M.vCause (M.vBecome P x) w :=
+    (∃ e, causative M M.effector P y x e) ↔
+      ∃ w, M.effector y w ∧ M.vCause (M.vBecome P x) w :=
   ⟨fun ⟨e, w, hθ, hc, hi⟩ ↦ ⟨w, hθ, e, hc, hi⟩, fun ⟨w, hθ, e, hc, hi⟩ ↦ ⟨e, w, hθ, hc, hi⟩⟩
 
 /-- Anticausativization is reflexivization. The derived inchoative is the causative on its
@@ -92,19 +94,19 @@ diagonal, so the undergoer is also the participant in the causing event. -/
 def anticausative : Entity → E → Prop := reflexivize (causative M θ P)
 
 theorem anticausative_iff (x : Entity) (e : E) :
-    anticausative M θ P x e ↔ ∃ w, θ x w ∧ M.cause w e ∧ M.vBecome P x e := Iff.rfl
+    anticausative M θ P x e ↔ ∃ w, θ x w ∧ w ~[M.cause] e ∧ M.vBecome P x e := Iff.rfl
 
 /-- A reflexivized verb has the anticausative reading when it has an instance whose single
 argument is not an agent of the event causing its change, as in *el vaso se rompió* 'the cup
 broke'. -/
 def AnticausativeReading (P : Entity → E → Prop) : Prop :=
-  ∃ x e, P x e ∧ ∀ w, M.cause w e → ¬ agent x w
+  ∃ x e, P x e ∧ ∀ w, w ~[M.cause] e → ¬ agent x w
 
 /-- *Por sí solo* 'by itself' ((54)) is licensed on a predicate that entails a causing subevent
 with the subject as its effector; the modifier then adds that the subject is its sole
 effector (§3.4, §4.1). -/
 def LicensesBySelf (P : Entity → E → Prop) : Prop :=
-  ∀ x e, P x e → ∃ w, M.cause w e ∧ M.effector x w
+  ∀ x e, P x e → ∃ w, w ~[M.cause] e ∧ M.effector x w
 
 /-- In the passive of a causative verb the causer is existentially closed rather than
 identified with the subject. -/
@@ -120,7 +122,7 @@ theorem causative_self_of_anticausative {x : Entity} {e : E}
 /-- A derived inchoative retains a causing subevent whose causer is its subject, so CAUSE
 survives reflexivization. -/
 theorem exists_cause_of_anticausative {x : Entity} {e : E}
-    (h : anticausative M θ P x e) : ∃ w, θ x w ∧ M.cause w e :=
+    (h : anticausative M θ P x e) : ∃ w, θ x w ∧ w ~[M.cause] e :=
   let ⟨w, hθ, hc, _⟩ := h; ⟨w, hθ, hc⟩
 
 /-- Only verbs with a thematically underspecified causer anticausativize, since an
@@ -157,8 +159,8 @@ inductive Participant
 causing event, and every event gives rise to the glass's broken state. -/
 def breaking (eff : Participant → Prop) :
     ArgumentStructure.EventStructure.Interpretation Participant Unit Unit where
-  become _ _ := True
-  cause _ _ := True
+  become := ⊤
+  cause := ⊤
   effector y _ := eff y
 
 /-- The broken state holds of the glass. -/

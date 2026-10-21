@@ -3,20 +3,18 @@ module
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Aristotelian.Square
 public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.Order.Lattice
 
 /-!
 # Modal logic over accessibility relations
 
-This file proves the order theory of `□` and `◇`: the Galois connection `◇[R] ⊣ □[R.inv]`
-and the normality laws it yields, antitonicity in the relation (conversational backgrounds
+This file proves the order theory of `□` and `◇` beyond their Galois connection
+(`diamond_box_gc`): antitonicity in the relation (conversational backgrounds
 strengthen necessity by shrinking accessibility), necessity along the transitive closure as the
 infinite conjunction of iterated necessity, and the modal square of opposition. It also defines
 the bundled frame classes `IsS5Frame`, `IsKD45Frame`, `IsK45Frame`, `IsKTBFrame`, and the
 indicial operators, with Montague's S5 `□`/`◇` as the universal-accessibility case
-`R = .univ`. On propositions as sets the same laws are mathlib's `SetRel.core_mono`,
-`SetRel.core_inter`, `SetRel.core_univ`, `SetRel.preimage_union`, `SetRel.image_core_gc` and
+`R = .univ`. On propositions as sets necessity along the transitive closure is mathlib's
 `SetRel.core_transGen`.
 
 ## References
@@ -61,35 +59,7 @@ theorem modalSquare_relations (R : SetRel W W) [IsSerial R] (p : W → Prop) :
     Aristotelian.SquareRelations (modalSquare R p) :=
   .of_disjoint (compl_box_compl R p).symm rfl box_disjoint_compl
 
-/-! ### The Galois connection and normality -/
-
 variable (R) {q : W → Prop}
-
-/-- `◇` along `R` is left adjoint to `□` along the converse relation, the characteristic
-adjunction of relational modality. -/
-theorem diamond_box_gc : GaloisConnection ◇[R] □[R.inv] :=
-  fun _ _ ↦ ⟨fun h v hp w hwv ↦ h w ⟨v, hwv, hp⟩, fun h w ⟨v, hwv, hp⟩ ↦ h v hp w hwv⟩
-
-theorem box_mono : Monotone □[R] := by
-  simpa using (diamond_box_gc R.inv).monotone_u
-
-theorem diamond_mono : Monotone ◇[R] :=
-  (diamond_box_gc R).monotone_l
-
-theorem box_inf : □[R] (p ⊓ q) = □[R] p ⊓ □[R] q := by
-  simpa using (diamond_box_gc R.inv).u_inf
-
-theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
-  (diamond_box_gc R).l_sup
-
-/-- Necessitation: `□⊤ = ⊤`. -/
-theorem box_top : □[R] ⊤ = ⊤ := by
-  simpa using (diamond_box_gc R.inv).u_top
-
-/-- **Conversion** (Prior's tense axiom `A ⊃ G P A`), the unit of the adjunction: over any
-relation, `p ≤ □_{R⁻¹} ◇_R p`. -/
-theorem le_box_inv_diamond (p : W → Prop) : p ≤ □[R.inv] (◇[R] p) :=
-  (diamond_box_gc R).le_u_l p
 
 /-! ### Accessibility restriction -/
 

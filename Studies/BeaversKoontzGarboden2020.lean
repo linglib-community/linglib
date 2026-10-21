@@ -61,6 +61,7 @@ Classes and Alternations* (`rootHypothesis_matches_profile`).
 namespace BeaversKoontzGarboden2020
 
 open Semantics Semantics.Root.Kinds
+open scoped SetRel ModalLogic
 
 /-! ### The two theses, at signature level -/
 
@@ -169,22 +170,20 @@ readings. -/
 theorem exists_denote_of_againAt_ne_zero {t : Template σ} {u : Template τ} (hu : u.IsSubterm t)
     {R : SetRel (σ.Carrier State Event) (σ.Carrier State Event)} {w : σ.Carrier State Event}
     (h : againAt M t R P y x w ≠ 0) : ∃ w', w ~[R] w' ∧ ∃ y' v, u.denote M P ⊤ y' x v :=
-  diamond_mono R (fun _ ↦ exists_denote_of_isSubterm hu) w (again_eq_zero_iff.not_left.1 h)
+  diamond_mono R (fun _ ↦ exists_denote_of_isSubterm hu) w (again_ne_zero_iff.1 h)
 
-/-- End to end, the repetitive reading over the causation presupposes an earlier causing
-eventuality and a change to the root's state. -/
-theorem exists_become_of_againAt_causative_ne_zero {R : SetRel Event Event} {w : Event}
-    (h : againAt M causative R P y x w ≠ 0) :
-    ∃ w', w ~[R] w' ∧ ∃ e s, M.become s e ∧ P x s :=
-  let ⟨w', hw, _, e, s, hb, hs⟩ := exists_denote_of_againAt_ne_zero (.caused (.refl _)) h
-  ⟨w', hw, e, s, hb, hs⟩
+/-- End to end, the repetitive reading over the causation presupposes an earlier eventuality
+that caused a change to the root's state. -/
+theorem diamond_vCause_of_againAt_causative_ne_zero {R : SetRel Event Event} {w : Event}
+    (h : againAt M causative R P y x w ≠ 0) : ◇[R] (M.vCause (M.vBecome P x)) w :=
+  diamond_mono R (fun _ h ↦ h.2) w (again_ne_zero_iff.1 h)
 
 /-- For a state predicate that entails change, even the restitutive attachment of *again*
 presupposes a change, so result roots never admit a truly restitutive reading. -/
-theorem exists_become_of_againAt_state_ne_zero {R : SetRel State State} {s : State}
+theorem diamond_become_of_againAt_state_ne_zero {R : SetRel State State} {s : State}
     (hres : M.EntailsChange P) (h : againAt M .state R P y x s ≠ 0) :
-    ∃ s', s ~[R] s' ∧ ∃ e, M.become s' e :=
-  diamond_mono R (hres x) s (again_eq_zero_iff.not_left.1 h)
+    ◇[R] (◇[M.become] ⊤) s :=
+  diamond_mono R (hres x) s (again_ne_zero_iff.1 h)
 
 end Again
 
@@ -327,50 +326,47 @@ variable {Entity State Event : Type*} {M : EventStructure.Interpretation Entity 
 /-- In a model that respects the signature of √crack, a cracked state arises from a change
 that some event causes. -/
 theorem crack_entails_cause (h : M.Respects P Q crack.kinds) (hs : P x s) :
-    ∃ e v, M.become s e ∧ M.cause v e :=
-  h.1 .cause (by decide) x s hs
+    ◇[M.become] (◇[M.cause.inv] ⊤) s :=
+  h .cause (by decide) x s hs
 
 /-- In a model that respects the signature of √drown, a drowned state arises from a change
 whose every cause is an event of the root's manner. -/
 theorem drown_entails_manner (h : M.Respects P Q drown.kinds) (hs : P x s) :
-    ∃ e, M.become s e ∧ ∀ v, M.cause v e → Q v :=
-  h.2 (by decide) (by decide) x s hs
+    ◇[M.become] (□[M.cause.inv] Q) s :=
+  h .mannerOfCause (by decide) x s hs
 
 end Model
 
 /-- A model without changes. -/
 def unchanging : ArgumentStructure.EventStructure.Interpretation Unit Unit Unit where
-  become _ _ := False
-  cause _ _ := False
-  effector _ _ := False
+  become := ⊥
+  cause := ⊥
+  effector := ⊥
 
 /-- A model in which every state arises from a caused change. -/
 def changing : ArgumentStructure.EventStructure.Interpretation Unit Unit Unit where
-  become _ _ := True
-  cause _ _ := True
-  effector _ _ := True
+  become := ⊤
+  cause := ⊤
+  effector := ⊤
 
 /-- The signature of √flat does not entail change, since the model without changes respects it
 for a state predicate that holds. -/
 theorem flat_not_entailsChange :
     unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) flat.kinds ∧
       ¬ unchanging.EntailsChange (fun _ _ ↦ True) :=
-  ⟨⟨fun k hk ↦ by
-      obtain rfl : k = .state := by revert k; decide
-      trivial, fun hm ↦ absurd hm (by decide)⟩,
-    fun h ↦ let ⟨_, he⟩ := h () () trivial; he⟩
+  ⟨fun p hp ↦ absurd hp (by cases p <;> decide), fun h ↦ let ⟨_, he, _⟩ := h () () trivial; he⟩
 
 /-- The signature of √crack is respected for a state predicate that holds, in the model where
 every state arises from a caused change, and is not respected in the model without changes. -/
 theorem crack_respects :
     changing.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds ∧
       ¬ unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds :=
-  ⟨⟨fun k hk ↦ by
-      have : k = .result ∨ k = .cause := by revert k; decide
-      rcases this with rfl | rfl
-      · exact fun _ _ _ ↦ ⟨(), trivial⟩
-      · exact fun _ _ _ ↦ ⟨(), (), trivial, trivial⟩, fun hm ↦ absurd hm (by decide)⟩,
-    fun h ↦ let ⟨_, _, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
+  ⟨fun p hp ↦ by
+      cases p
+      · exact fun _ _ _ ↦ ⟨(), trivial, trivial⟩
+      · exact fun _ _ _ ↦ ⟨(), trivial, (), trivial, trivial⟩
+      all_goals exact absurd hp (by decide),
+    fun h ↦ let ⟨_, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
 
 /-! ### The root hypothesis against Levin's class profiles -/
 

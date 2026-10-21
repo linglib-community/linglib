@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Relation.SetRel
+public import Mathlib.Order.GaloisConnection.Basic
 
 /-!
 # Modal operators and frame conditions
@@ -14,10 +15,13 @@ propositions stated as sets use the mathlib operators directly. Of the frame con
 correspondence theory, reflexivity, symmetry and transitivity are mathlib's `SetRel.IsRefl`,
 `SetRel.IsSymm` and `SetRel.IsTrans`; this file adds seriality and the Euclidean property and
 proves the axioms K, T, D, B, 4, 5 and Alt₁ over their frames, each axiom defining its frame
-condition. Along a composite relation necessity nests in necessity (`box_comp`). Negation Swap,
-`□¬p ↔ ¬□p` for every `p`, defines functionality (`box_not_iff_not_box_at_iff`): a modal that
-commutes with negation is necessity along the graph of a function, which is precomposition
-(`box_compl_eq_iff`, `box_graph`).
+condition. Possibility along a relation is left adjoint to necessity along its converse
+(`diamond_box_gc`), which gives monotonicity and the normality laws for a relation between any
+two types, on sets mathlib's `SetRel.image_core_gc`, `SetRel.core_mono`, `SetRel.core_inter`,
+`SetRel.core_univ` and `SetRel.preimage_union`. Along a composite relation necessity nests in
+necessity (`box_comp`). Negation Swap, `□¬p ↔ ¬□p` for every `p`, defines functionality
+(`box_not_iff_not_box_at_iff`): a modal that commutes with negation is necessity along the graph
+of a function, which is precomposition (`box_compl_eq_iff`, `box_graph`).
 
 ## Main definitions
 
@@ -53,6 +57,10 @@ def Diamond : Prop := ∃ v, w ~[R] v ∧ p v
 
 variable {R p w}
 
+theorem box_iff : □[R] p w ↔ ∀ v, w ~[R] v → p v := .rfl
+
+theorem diamond_iff : ◇[R] p w ↔ ∃ v, w ~[R] v ∧ p v := .rfl
+
 /-- Necessity on predicates is the mathlib core on sets. -/
 theorem box_iff_mem_core : □[R] p w ↔ w ∈ R.core {v | p v} := .rfl
 
@@ -84,6 +92,40 @@ theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] 
   forall_congr' fun v ↦ imp_congr_left (h v)
 
 end Operators
+
+/-! ### The Galois connection and normality -/
+
+section Galois
+
+variable {W W' : Type*} (R : SetRel W' W) {p q : W → Prop}
+
+/-- `◇` along `R` is left adjoint to `□` along the converse relation, the characteristic
+adjunction of relational modality. -/
+theorem diamond_box_gc : GaloisConnection ◇[R] □[R.inv] :=
+  fun _ _ ↦ ⟨fun h v hp w hwv ↦ h w ⟨v, hwv, hp⟩, fun h w ⟨v, hwv, hp⟩ ↦ h v hp w hwv⟩
+
+theorem box_mono : Monotone □[R] := by
+  simpa using (diamond_box_gc R.inv).monotone_u
+
+theorem diamond_mono : Monotone ◇[R] :=
+  (diamond_box_gc R).monotone_l
+
+theorem box_inf : □[R] (p ⊓ q) = □[R] p ⊓ □[R] q := by
+  simpa using (diamond_box_gc R.inv).u_inf
+
+theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
+  (diamond_box_gc R).l_sup
+
+/-- Necessitation: `□⊤ = ⊤`. -/
+theorem box_top : □[R] ⊤ = ⊤ := by
+  simpa using (diamond_box_gc R.inv).u_top
+
+/-- **Conversion** (Prior's tense axiom `A ⊃ G P A`), the unit of the adjunction: over any
+relation, `p ≤ □_{R⁻¹} ◇_R p`. -/
+theorem le_box_inv_diamond (p : W → Prop) : p ≤ □[R.inv] (◇[R] p) :=
+  (diamond_box_gc R).le_u_l p
+
+end Galois
 
 variable {W : Type*} (R : SetRel W W)
 

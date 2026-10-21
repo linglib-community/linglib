@@ -46,7 +46,7 @@ only when it spells out the marked one belongs to one of the three attested type
 namespace BeaversEtAl2021
 
 open Semantics Presupposition
-open scoped SetRel
+open scoped SetRel ModalLogic
 
 /-! ### State predicates that entail change -/
 
@@ -62,12 +62,12 @@ variable {Entity : Type*} {State Event : Type u}
 
 /-- The deverbal stative of `P` holds of the states of which `P` holds and that a change gave
 rise to. -/
-def resultStative (P : Entity → State → Prop) (x : Entity) (s : State) : Prop :=
-  P x s ∧ ∃ e, M.become s e
+def resultStative (P : Entity → State → Prop) (x : Entity) : State → Prop :=
+  P x ⊓ ◇[M.become] ⊤
 
 /-- The stative description `P` holds of `x` in the state `s`, and no change gave rise to `s`. -/
-def DeniesChange (P : Entity → State → Prop) (x : Entity) (s : State) : Prop :=
-  P x s ∧ ¬ ∃ e, M.become s e
+def DeniesChange (P : Entity → State → Prop) (x : Entity) : State → Prop :=
+  P x ⊓ (◇[M.become] ⊤)ᶜ
 
 /-- A deverbal stative never survives the denial of change, whatever its root. -/
 theorem not_deniesChange_resultStative : ¬ DeniesChange M (resultStative M P) x s :=
@@ -76,17 +76,17 @@ theorem not_deniesChange_resultStative : ¬ DeniesChange M (resultStative M P) x
 /-- A state predicate entails change iff it never survives the denial of change. -/
 theorem entailsChange_iff_forall_not_deniesChange :
     M.EntailsChange P ↔ ∀ x s, ¬ DeniesChange M P x s :=
-  forall₂_congr fun _ _ ↦ by simp [DeniesChange]
+  forall₂_congr fun _ _ ↦ not_and_not_right.symm
 
 /-- For a state predicate that entails change the basic and the deverbal stative coincide. -/
 theorem resultStative_iff (h : M.EntailsChange P) : resultStative M P x s ↔ P x s :=
   and_iff_left_of_imp (h x s)
 
 /-- *Again* attached to `vbecome` presupposes an earlier change with every root. -/
-theorem exists_become_of_againAt_achievement_ne_zero {e : Event}
-    (hp : againAt M .achievement R P y x e ≠ 0) :
-    ∃ e', e ~[R] e' ∧ ∃ s, M.become s e' :=
-  let ⟨e', hlt, s, hb, _⟩ := again_eq_zero_iff.not_left.1 hp; ⟨e', hlt, s, hb⟩
+theorem diamond_become_of_againAt_achievement_ne_zero {e : Event}
+    (hp : againAt M .achievement R P y x e ≠ 0) : ◇[R] (◇[M.become.inv] ⊤) e :=
+  ModalLogic.diamond_mono R (fun w ↦ ModalLogic.diamond_mono _ le_top w) e
+    (again_ne_zero_iff.1 hp)
 
 end Model
 
@@ -95,16 +95,16 @@ end Model
 /-- A knife forged sharp is sharp in its first state `false`, and in its later state `true`,
 which a sharpening gave rise to. -/
 def forged : ArgumentStructure.EventStructure.Interpretation Unit Bool Unit where
-  become s _ := s = true
-  cause _ _ := False
-  effector _ _ := False
+  become := {p | p.1 = true}
+  cause := ⊥
+  effector := ⊥
 
 /-- The knife is sharp in both of its states. -/
 def sharp (_ : Unit) (_ : Bool) : Prop := True
 
 /-- The forged state of the knife survives the denial of change. -/
 theorem forged_deniesChange : DeniesChange forged sharp () false :=
-  ⟨trivial, fun ⟨_, h⟩ ↦ Bool.false_ne_true h⟩
+  ⟨trivial, fun ⟨_, h, _⟩ ↦ Bool.false_ne_true h⟩
 
 /-- Being sharp does not entail change. -/
 theorem not_entailsChange_sharp : ¬ forged.EntailsChange sharp :=
@@ -114,9 +114,9 @@ theorem not_entailsChange_sharp : ¬ forged.EntailsChange sharp :=
 rise to an earlier one. -/
 theorem forged_restitutive :
     BeaversKoontzGarboden2020.againAt forged .state {p | p.2 < p.1} sharp () () true ≠ 0 ∧
-      ¬ ∃ s', s' < true ∧ ∃ e, forged.become s' e :=
-  ⟨again_eq_zero_iff.not_left.2 ⟨false, Bool.false_lt_true, trivial⟩,
-    fun ⟨_, hlt, _, h⟩ ↦ absurd (h ▸ hlt) (lt_irrefl _)⟩
+      ¬ ◇[{p | p.2 < p.1}] (◇[forged.become] ⊤) true :=
+  ⟨again_ne_zero_iff.2 ⟨false, Bool.false_lt_true, trivial⟩,
+    fun ⟨_, hlt, _, h, _⟩ ↦ by cases (h : _ = true); exact lt_irrefl true hlt⟩
 
 /-! ### Default realization -/
 
@@ -286,7 +286,7 @@ def Diagnostic.Passes (M : ArgumentStructure.EventStructure.Interpretation Entit
     (R : SetRel State State) (P : Entity → State → Prop) (x : Entity) : Diagnostic → Prop
   | .changeDenial => ∃ s, DeniesChange M P x s
   | .restitutive => ∃ s, BeaversKoontzGarboden2020.againAt M .state R P x x s ≠ 0 ∧
-      ¬ ◇[R] (fun s' ↦ ∃ e, M.become s' e) s
+      ¬ ◇[R] (◇[M.become] ⊤) s
 
 end Diagnostics
 
@@ -301,7 +301,7 @@ def Passes (ks : Root.Kinds) (g : Diagnostic) : Prop :=
 theorem passes_iff {ks : Root.Kinds} (g : Diagnostic) :
     Passes ks g ↔ Root.Kind.result ∉ Root.Kinds.close ks := by
   refine ⟨fun ⟨_, _, M, P, Q, R, hR, hg⟩ hr ↦ ?_, fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥,
-    {p | p.2 < p.1}, ⟨fun k hk ↦ ?_, fun _ hc ↦ ?_⟩, ?_⟩⟩
+    {p | p.2 < p.1}, fun p hp ↦ ?_, ?_⟩⟩
   · have hc := hR.entailsChange hr
     cases g with
     | changeDenial =>
@@ -309,13 +309,15 @@ theorem passes_iff {ks : Root.Kinds} (g : Diagnostic) :
       exact (entailsChange_iff_forall_not_deniesChange M).1 hc () s hs
     | restitutive =>
       obtain ⟨s, ha, hn⟩ := hg
-      exact hn (BeaversKoontzGarboden2020.exists_become_of_againAt_state_ne_zero hc ha)
-  · cases k with
-    | state => trivial
+      exact hn (BeaversKoontzGarboden2020.diamond_become_of_againAt_state_ne_zero hc ha)
+  · have hcause : Root.Kind.cause ∉ ks :=
+      fun hk ↦ hr (Root.Kinds.mem_close.2 ⟨_, hk, .result_cause⟩)
+    cases p with
+    | change =>
+      exact absurd (Root.Kinds.mem_close.2 ⟨_, Finset.singleton_subset_iff.1 hp, le_rfl⟩) hr
+    | cause => exact absurd (Finset.singleton_subset_iff.1 hp) hcause
     | manner => exact fun _ h ↦ h.elim
-    | result => exact absurd (Root.Kinds.mem_close.2 ⟨_, hk, le_rfl⟩) hr
-    | cause => exact absurd (Root.Kinds.mem_close.2 ⟨_, hk, .result_cause⟩) hr
-  · exact absurd (Root.Kinds.mem_close.2 ⟨_, hc, .result_cause⟩) hr
+    | mannerOfCause => exact absurd (Finset.insert_subset_iff.1 hp).2 (by simpa using hcause)
   · cases g with
     | changeDenial => exact ⟨false, forged_deniesChange⟩
     | restitutive => exact ⟨true, forged_restitutive⟩

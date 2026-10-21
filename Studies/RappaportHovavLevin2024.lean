@@ -61,6 +61,7 @@ are omitted.
 namespace RappaportHovavLevin2024
 
 open ArgumentStructure
+open scoped SetRel
 
 /-! ### Participants and senses -/
 
@@ -420,7 +421,7 @@ theorem not_isSubterm_state : ¬ state.IsSubterm causativeEventStructure :=
 with nothing giving rise to a state. -/
 theorem not_forall_exists_become :
     ¬ ∀ (M : Interpretation Unit Unit Unit) P Q y x v,
-      causativeEventStructure.denote M P Q y x v → ∃ s e, M.become s e :=
+      causativeEventStructure.denote M P Q y x v → ∃ s e, s ~[M.become] e :=
   fun h ↦ absurd (hasResultState_iff.2 h) (by decide)
 
 end EventStructure
