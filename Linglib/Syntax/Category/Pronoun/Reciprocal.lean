@@ -31,11 +31,14 @@ markers.
 
 /-- A reciprocal pronoun is a `Pronoun` that is the nominal exponent of reciprocity, with the
 strategy it realizes. -/
+@[ext]
 structure ReciprocalPronoun extends Pronoun where
   /-- The nominal strategy, a dedicated pronoun (*egymás*, *otagai*) or a two-part quantifier
   noun phrase (*each other*). -/
   strategy : Reciprocal.Strategy := .recipPronoun
-  deriving DecidableEq
+
+instance : DecidableEq ReciprocalPronoun :=
+  fun _ _ ↦ decidable_of_iff _ ReciprocalPronoun.ext_iff.symm
 
 /-- The marker entry of a reciprocal pronoun. -/
 def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=

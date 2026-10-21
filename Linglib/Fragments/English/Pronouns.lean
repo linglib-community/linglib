@@ -53,67 +53,70 @@ namespace English.Pronouns
 
 /-- The first person singular nominative *I*. -/
 def i : PersonalPronoun :=
-  { form := "I", person := some .first, number := some .singular, case_ := some .nom }
+  { form := "I", person := some .first, number := some .singular, cases := {.nom} }
 
 /-- The first person singular accusative *me*. -/
 def me : PersonalPronoun :=
-  { form := "me", person := some .first, number := some .singular, case_ := some .acc }
+  { form := "me", person := some .first, number := some .singular, cases := {.acc} }
 
 /-- The first person plural nominative *we*. -/
 def we : PersonalPronoun :=
-  { form := "we", person := some .first, number := some .plural, case_ := some .nom }
+  { form := "we", person := some .first, number := some .plural, cases := {.nom} }
 
 /-- The first person plural accusative *us*. -/
 def us : PersonalPronoun :=
-  { form := "us", person := some .first, number := some .plural, case_ := some .acc }
+  { form := "us", person := some .first, number := some .plural, cases := {.acc} }
 
 /-- The second person singular *you*, one form for both cases. -/
-def you : PersonalPronoun := { form := "you", person := some .second, number := some .singular }
+def you : PersonalPronoun :=
+  { form := "you", person := some .second, number := some .singular, cases := {.nom, .acc} }
 
 /-- The second person plural *you*, one form for both cases. -/
-def you_pl : PersonalPronoun := { form := "you", person := some .second, number := some .plural }
+def you_pl : PersonalPronoun :=
+  { form := "you", person := some .second, number := some .plural, cases := {.nom, .acc} }
 
 /-- The third person singular masculine nominative *he*. -/
 def he : PersonalPronoun :=
-  { form := "he", person := some .third, number := some .singular, case_ := some .nom,
+  { form := "he", person := some .third, number := some .singular, cases := {.nom},
     gender := some .masculine }
 
 /-- The third person singular masculine accusative *him*. -/
 def him : PersonalPronoun :=
-  { form := "him", person := some .third, number := some .singular, case_ := some .acc,
+  { form := "him", person := some .third, number := some .singular, cases := {.acc},
     gender := some .masculine }
 
 /-- The third person singular feminine nominative *she*. -/
 def she : PersonalPronoun :=
-  { form := "she", person := some .third, number := some .singular, case_ := some .nom,
+  { form := "she", person := some .third, number := some .singular, cases := {.nom},
     gender := some .feminine }
 
 /-- The third person singular feminine accusative *her*. -/
 def her : PersonalPronoun :=
-  { form := "her", person := some .third, number := some .singular, case_ := some .acc,
+  { form := "her", person := some .third, number := some .singular, cases := {.acc},
     gender := some .feminine }
 
 /-- The third person singular neuter *it*, one form for both cases. -/
 def it : PersonalPronoun :=
-  { form := "it", person := some .third, number := some .singular, gender := some .neuter }
+  { form := "it", person := some .third, number := some .singular, cases := {.nom, .acc},
+    gender := some .neuter }
 
 /-- The third person plural nominative *they*. -/
 def they : PersonalPronoun :=
-  { form := "they", person := some .third, number := some .plural, case_ := some .nom }
+  { form := "they", person := some .third, number := some .plural, cases := {.nom} }
 
 /-- The third person plural accusative *them*. -/
 def them : PersonalPronoun :=
-  { form := "them", person := some .third, number := some .plural, case_ := some .acc }
+  { form := "them", person := some .third, number := some .plural, cases := {.acc} }
 
 /-- Singular *they* in the nominative, for a referent of unknown or unspecified gender and for
 a person whose pronoun it is ([balhorn-2004], [arnold-2026]). It bears no gender feature
 ([konnelly-cowper-2020]). -/
 def they_sg : PersonalPronoun :=
-  { form := "they", person := some .third, number := some .singular, case_ := some .nom }
+  { form := "they", person := some .third, number := some .singular, cases := {.nom} }
 
 /-- Singular *they* in the accusative. -/
 def them_sg : PersonalPronoun :=
-  { form := "them", person := some .third, number := some .singular, case_ := some .acc }
+  { form := "them", person := some .third, number := some .singular, cases := {.acc} }
 
 /-- The personal pronoun inventory. -/
 def pronouns : Finset PersonalPronoun :=
@@ -199,7 +202,7 @@ def reciprocals : Finset ReciprocalPronoun := {eachOther, oneAnother}
 def who : InterrogativePronoun := { form := "who", ontology := .person }
 
 /-- The accusative *whom* of *who*. -/
-def whom : InterrogativePronoun := { form := "whom", case_ := some .acc, ontology := .person }
+def whom : InterrogativePronoun := { form := "whom", cases := {.acc}, ontology := .person }
 
 /-- The interrogative *what*, for things. -/
 def what : InterrogativePronoun := { form := "what", ontology := .thing }

@@ -45,12 +45,12 @@ namespace Pronouns
 
 /-- The first person singular *ik*. -/
 def ik : PersonalPronoun :=
-  { form := "ik", person := some .first, number := some .singular, case_ := some .nom,
+  { form := "ik", person := some .first, number := some .singular, cases := {.nom},
     strength := some .strong }
 
 /-- The familiar second person singular *jij*. -/
 def jij : PersonalPronoun :=
-  { form := "jij", person := some .second, number := some .singular, case_ := some .nom,
+  { form := "jij", person := some .second, number := some .singular, cases := {.nom},
     strength := some .strong }
 
 /-- The polite second person *u*, for one or several addressees, with singular agreement. -/
@@ -60,12 +60,12 @@ def u : PersonalPronoun :=
 
 /-- The third person singular masculine *hij*. -/
 def hij : PersonalPronoun :=
-  { form := "hij", person := some .third, number := some .singular, case_ := some .nom,
+  { form := "hij", person := some .third, number := some .singular, cases := {.nom},
     gender := some .masculine, strength := some .strong }
 
 /-- The third person singular feminine *zij*. -/
 def zij_sg : PersonalPronoun :=
-  { form := "zij", person := some .third, number := some .singular, case_ := some .nom,
+  { form := "zij", person := some .third, number := some .singular, cases := {.nom},
     gender := some .feminine, strength := some .strong }
 
 /-- The third person singular neuter *het*. -/
@@ -75,7 +75,7 @@ def het : PersonalPronoun :=
 
 /-- The first person plural *wij*. -/
 def wij : PersonalPronoun :=
-  { form := "wij", person := some .first, number := some .plural, case_ := some .nom,
+  { form := "wij", person := some .first, number := some .plural, cases := {.nom},
     strength := some .strong }
 
 /-- The familiar second person plural *jullie*. -/
@@ -84,7 +84,7 @@ def jullie : PersonalPronoun :=
 
 /-- The third person plural *zij*. -/
 def zij_pl : PersonalPronoun :=
-  { form := "zij", person := some .third, number := some .plural, case_ := some .nom,
+  { form := "zij", person := some .third, number := some .plural, cases := {.nom},
     strength := some .strong }
 
 /-- The pronoun for a single addressee at each grade. -/

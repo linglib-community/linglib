@@ -119,10 +119,10 @@ theorem items_eq :
 /-- The exponent of a feature bundle under the Subset Principle. -/
 def spellout (b : Finset Feature) : Option String := subsetPrinciple items b
 
-/-- Each English third-person pronoun outside the accusative spells out its own features,
-singular *they* by the Elsewhere item. -/
+/-- Each English third-person nominative pronoun spells out its own features, singular *they* by
+the Elsewhere item. -/
 theorem spellout_pronounFeatures :
-    ∀ p ∈ English.Pronouns.pronouns, p.person = some .third → p.case_ ≠ some .acc →
+    ∀ p ∈ English.Pronouns.pronouns, p.person = some .third → .nom ∈ p.cases →
       spellout (pronounFeatures p) = some p.form := by
   decide
 

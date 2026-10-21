@@ -142,7 +142,7 @@ and a third-person dative an empathy locus, while a third-person accusative, whi
 feature (41), realizes none unless it is read de se. -/
 def center (c : PersonalPronoun) : Option LogophoricCenter :=
   if ∃ p ∈ c.person, p.IsSAP then some .discourseParticipant
-  else if c.case_ = some .dat then some .empathyLocus else none
+  else if .dat ∈ c.cases then some .empathyLocus else none
 
 /-- A Spanish dative and accusative clitic are licit together exactly when the accusative is third
 person, the strong Person Case Constraint (51a). A third-person accusative not read de se, as in

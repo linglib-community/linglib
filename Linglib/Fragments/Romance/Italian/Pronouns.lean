@@ -116,42 +116,42 @@ def pronouns : Finset PersonalPronoun :=
 
 /-- *mi*, first person singular accusative. -/
 def mi_acc : PersonalPronoun :=
-  { form := "mi", person := some .first, number := some .singular, case_ := some .acc,
+  { form := "mi", person := some .first, number := some .singular, cases := {.acc},
     strength := some .clitic }
 
 /-- *ti*, second person singular accusative. -/
 def ti_acc : PersonalPronoun :=
-  { form := "ti", person := some .second, number := some .singular, case_ := some .acc,
+  { form := "ti", person := some .second, number := some .singular, cases := {.acc},
     strength := some .clitic }
 
 /-- *lo*, third person singular masculine accusative. -/
 def lo : PersonalPronoun :=
-  { form := "lo", person := some .third, number := some .singular, case_ := some .acc,
+  { form := "lo", person := some .third, number := some .singular, cases := {.acc},
     gender := some .masculine, strength := some .clitic }
 
 /-- *la*, third person singular feminine accusative. -/
 def la : PersonalPronoun :=
-  { form := "la", person := some .third, number := some .singular, case_ := some .acc,
+  { form := "la", person := some .third, number := some .singular, cases := {.acc},
     gender := some .feminine, strength := some .clitic }
 
 /-- *ci*, first person plural accusative. -/
 def ci_acc : PersonalPronoun :=
-  { form := "ci", person := some .first, number := some .plural, case_ := some .acc,
+  { form := "ci", person := some .first, number := some .plural, cases := {.acc},
     strength := some .clitic }
 
 /-- *vi*, second person plural accusative. -/
 def vi_acc : PersonalPronoun :=
-  { form := "vi", person := some .second, number := some .plural, case_ := some .acc,
+  { form := "vi", person := some .second, number := some .plural, cases := {.acc},
     strength := some .clitic }
 
 /-- *li*, third person plural masculine accusative. -/
 def li : PersonalPronoun :=
-  { form := "li", person := some .third, number := some .plural, case_ := some .acc,
+  { form := "li", person := some .third, number := some .plural, cases := {.acc},
     gender := some .masculine, strength := some .clitic }
 
 /-- *le*, third person plural feminine accusative. -/
 def le_acc : PersonalPronoun :=
-  { form := "le", person := some .third, number := some .plural, case_ := some .acc,
+  { form := "le", person := some .third, number := some .plural, cases := {.acc},
     gender := some .feminine, strength := some .clitic }
 
 /-- The accusative series. -/
@@ -162,37 +162,37 @@ def accusative : Finset PersonalPronoun :=
 
 /-- *mi*, first person singular dative. -/
 def mi_dat : PersonalPronoun :=
-  { form := "mi", person := some .first, number := some .singular, case_ := some .dat,
+  { form := "mi", person := some .first, number := some .singular, cases := {.dat},
     strength := some .clitic }
 
 /-- *ti*, second person singular dative. -/
 def ti_dat : PersonalPronoun :=
-  { form := "ti", person := some .second, number := some .singular, case_ := some .dat,
+  { form := "ti", person := some .second, number := some .singular, cases := {.dat},
     strength := some .clitic }
 
 /-- *gli*, third person singular masculine dative. -/
 def gli : PersonalPronoun :=
-  { form := "gli", person := some .third, number := some .singular, case_ := some .dat,
+  { form := "gli", person := some .third, number := some .singular, cases := {.dat},
     gender := some .masculine, strength := some .clitic }
 
 /-- *le*, third person singular feminine dative. -/
 def le_dat : PersonalPronoun :=
-  { form := "le", person := some .third, number := some .singular, case_ := some .dat,
+  { form := "le", person := some .third, number := some .singular, cases := {.dat},
     gender := some .feminine, strength := some .clitic }
 
 /-- *ci*, first person plural dative. -/
 def ci_dat : PersonalPronoun :=
-  { form := "ci", person := some .first, number := some .plural, case_ := some .dat,
+  { form := "ci", person := some .first, number := some .plural, cases := {.dat},
     strength := some .clitic }
 
 /-- *vi*, second person plural dative. -/
 def vi_dat : PersonalPronoun :=
-  { form := "vi", person := some .second, number := some .plural, case_ := some .dat,
+  { form := "vi", person := some .second, number := some .plural, cases := {.dat},
     strength := some .clitic }
 
 /-- *loro*, third person plural dative, a weak pronoun that follows the verb. -/
 def loro_dat : PersonalPronoun :=
-  { form := "loro", person := some .third, number := some .plural, case_ := some .dat,
+  { form := "loro", person := some .third, number := some .plural, cases := {.dat},
     strength := some .weak }
 
 /-- The dative series. -/

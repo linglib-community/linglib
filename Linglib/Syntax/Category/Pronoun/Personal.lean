@@ -47,6 +47,7 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 
 /-- A personal pronoun is a `Pronoun` with its register and the referential categories it
 denotes. -/
+@[ext]
 structure PersonalPronoun extends Pronoun where
   /-- The register. Japanese *boku* is an informal first person, and Korean *geu* a third person
   of written narrative. -/
@@ -55,7 +56,8 @@ structure PersonalPronoun extends Pronoun where
   and number realize. Italian *Lei* denotes `{addressee}` and German *Sie*
   `{addressee, addresseeOthers}` ([adamson-zompi-2025]). -/
   referential : Finset Person.Category := toPronoun.categories
-  deriving DecidableEq
+
+instance : DecidableEq PersonalPronoun := fun _ _ ↦ decidable_of_iff _ PersonalPronoun.ext_iff.symm
 
 namespace PersonalPronoun
 

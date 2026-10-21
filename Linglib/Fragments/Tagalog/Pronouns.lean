@@ -85,7 +85,7 @@ def sa : Category → String
 
 /-- The pronoun of a category in a case series, with the series' comparative value. -/
 def entry (c : Category) (k : Case) (form : String) : PersonalPronoun :=
-  { form, person := some c.person, number := some (number c), case_ := some k.label }
+  { form, person := some c.person, number := some (number c), cases := {k.label} }
 
 /-- The pronoun inventory: the three series over the eight categories. -/
 def pronouns : Finset PersonalPronoun :=
@@ -105,7 +105,7 @@ theorem entry_wellFormed (c : Category) (k : Case) (f : String) : (entry c k f).
 /-- The inventory's paradigm in a case series is the series: the subject forms are the *ang*
 forms. -/
 theorem paradigm_nom (c : Category) :
-    PersonalPronoun.paradigm (pronouns.filter (·.case_ = some .nom)) c = {ang c} := by
+    PersonalPronoun.paradigm (pronouns.filter (.nom ∈ ·.cases)) c = {ang c} := by
   cases c <;> decide +kernel
 
 /-- No two categories share an *ang* form. -/

@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Option.NAry
 public import Mathlib.Order.Nat
+public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
 public import Linglib.Morphology.Word.Agree
@@ -25,8 +26,9 @@ arguments.
 
 * `Pronoun.Strength`: the clitic, weak and strong classes of Cardinaletti and Starke, a
   bounded linear order by structural deficiency.
-* `Pronoun`: the form, person, number, case and gender of a pronoun, with its script form
+* `Pronoun`: the form, person, number, cases and gender of a pronoun, with its script form
   and the strength class of its series.
+* `Pronoun.case`: the flat case of a pronoun, the meet of the cases it fills.
 * `Pronoun.categories`: the referential categories of Cysouw that the person and number
   realize.
 * `Pronoun.WellFormed`: clusivity is not borne by a singular.
@@ -94,6 +96,7 @@ end Pronoun.Strength
 /-! ### The pronoun -/
 
 /-- A pronoun is a surface form with agreement features, the core every pronoun kind shares. -/
+@[ext]
 structure Pronoun where
   /-- The surface form, romanized or orthographic. -/
   form : String
@@ -102,8 +105,9 @@ structure Pronoun where
   person : Option Person := none
   /-- The grammatical number. -/
   number : Option Number := none
-  /-- The grammatical case. -/
-  case_ : Option Case := none
+  /-- The cases the form fills: one for most forms, several for a syncretic one such as English
+  *you*, none where they are unrecorded. -/
+  cases : Finset Case := ∅
   /-- The grammatical gender, `none` where the form marks none. -/
   gender : Option Gender := none
   /-- The form in its native script. -/
@@ -111,11 +115,16 @@ structure Pronoun where
   /-- The strength class of the series the form belongs to, `none` where it is unrecorded or
   the series has no stable class ([jung-migdalski-2022]). -/
   strength : Option Pronoun.Strength := none
-  deriving DecidableEq, Repr
+
+instance : DecidableEq Pronoun := fun _ _ ↦ decidable_of_iff _ Pronoun.ext_iff.symm
 
 namespace Pronoun
 
 variable (p : Pronoun)
+
+/-- The flat case of a pronoun: the meet of the cases it fills, `⊥` for a syncretic form and for
+one whose cases are unrecorded. -/
+def case : Flat Case := Flat.finsetInf p.cases (↑)
 
 /-- The referential categories of [cysouw-2003] that the person and number realize: none when
 either is unspecified, several for a syncretism such as clusivity-unmarked English *we*. -/
@@ -127,7 +136,7 @@ def phi : Agreement.Bundle
   | .person => p.person
   | .number => p.number
   | .gender => p.gender
-  | .case => p.case_
+  | .case => p.case
   | .definiteness => ⊥
 
 instance : HasPhi Pronoun := ⟨phi⟩
@@ -148,7 +157,7 @@ def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none
     Morphology.Word :=
   { form := p.form, cat := .PRON,
     features := .of (person := p.person) (number := p.number) (gender := p.gender)
-      (case_ := p.case_) (reflex := reflex) (pronType := pronType) }
+      (case_ := p.case) (reflex := reflex) (pronType := pronType) }
 
 /-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type and reflexive
 marking. -/
