@@ -1,0 +1,348 @@
+[
+  {
+    "id": "chengcheng2026_44a",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(44a)"},
+    "language": "mand1415",
+    "primaryText": "Tā yǐjīng dǎ le diànhuà.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tā", "3SG"], ["yǐjīng", "already"], ["dǎ", "hit"], ["le", "PFV"], ["diànhuà", "telephone"]
+    ],
+    "translation": "He made the telephone call.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "aspect"],
+      ["combination", "N"],
+      ["separated", "yes"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_44b",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(44b)"},
+    "language": "mand1415",
+    "primaryText": "Tā yǐjīng dǎ le sǎo jiàoshì.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tā", "3SG"], ["yǐjīng", "already"], ["dǎ", "hit"], ["le", "PFV"], ["sǎo", "sweep"],
+      ["jiàoshì", "classroom"]
+    ],
+    "translation": "He cleaned the classroom.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "aspect"],
+      ["combination", "R"],
+      ["separated", "yes"]
+    ],
+    "comment": "Printed as an intended translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_44c",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(44c)"},
+    "language": "mand1415",
+    "primaryText": "Tā yǐjīng dǎ-sǎo le jiàoshì.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tā", "3SG"], ["yǐjīng", "already"], ["dǎ-sǎo", "hit-sweep"], ["le", "PFV"],
+      ["jiàoshì", "classroom"]
+    ],
+    "translation": "He cleaned the classroom.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "aspect"],
+      ["combination", "R"],
+      ["separated", "no"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_46a",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(46a)"},
+    "language": "mand1415",
+    "primaryText": "Diànhuà tā dǎ shì dǎ le, dànshì méi zhǎodào rén.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Diànhuà", "telephone"], ["tā", "3SG"], ["dǎ", "hit"], ["shì", "COP"], ["dǎ", "hit"],
+      ["le", "PFV"], ["dànshì", "but"], ["méi", "NEG"], ["zhǎodào", "find"], ["rén", "people"]
+    ],
+    "translation": "He did make a phone call, but he didn't find anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "cleft"],
+      ["combination", "N"],
+      ["separated", "yes"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_46b",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(46b)"},
+    "language": "mand1415",
+    "primaryText": "Jiàoshì tā dǎ shì dǎ-sǎo le, dànshì méi dǎ-sǎo hǎo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jiàoshì", "classroom"], ["tā", "3SG"], ["dǎ", "hit"], ["shì", "COP"],
+      ["dǎ-sǎo", "hit-sweep"], ["le", "PFV"], ["dànshì", "but"], ["méi", "NEG"],
+      ["dǎ-sǎo", "hit-sweep"], ["hǎo", "good"]
+    ],
+    "translation": "He did clean the classroom, but he hasn't finished it yet.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "cleft"],
+      ["combination", "R"],
+      ["separated", "yes"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_46c",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(46c)"},
+    "language": "mand1415",
+    "primaryText": "Jiàoshì tā dǎ-sǎo shì dǎ-sǎo le, dànshì méi dǎ-sǎo hǎo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jiàoshì", "classroom"], ["tā", "3SG"], ["dǎ-sǎo", "hit-sweep"], ["shì", "COP"],
+      ["dǎ-sǎo", "hit-sweep"], ["le", "PFV"], ["dànshì", "but"], ["méi", "NEG"],
+      ["dǎ-sǎo", "hit-sweep"], ["hǎo", "good"]
+    ],
+    "translation": "He did clean the classroom, but he hasn't finished it yet.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "cleft"],
+      ["combination", "R"],
+      ["separated", "no"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_48a",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(48a)"},
+    "language": "mand1415",
+    "primaryText": "Tā dǎ diànhuà le ma? Dǎ le.",
+    "discourseSegments": [
+      "Tā dǎ diànhuà le ma?",
+      "Dǎ le."
+    ],
+    "glossedTokens": [
+      ["Tā", "3SG"], ["dǎ", "hit"], ["diànhuà", "telephone"], ["le", "PFV"], ["ma", "Q"],
+      ["Dǎ", "hit"], ["le", "PFV"]
+    ],
+    "translation": "Did he make the phone call? Yes, he did.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "fragment"],
+      ["combination", "N"],
+      ["separated", "yes"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_48b_da",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(48b)"},
+    "language": "mand1415",
+    "primaryText": "Tā dǎ-sǎo jiàoshì le ma? Dǎ le.",
+    "discourseSegments": [
+      "Tā dǎ-sǎo jiàoshì le ma?",
+      "Dǎ le."
+    ],
+    "glossedTokens": [
+      ["Tā", "3SG"], ["dǎ-sǎo", "hit-sweep"], ["jiàoshì", "classroom"], ["le", "PFV"], ["ma", "Q"],
+      ["Dǎ", "hit"], ["le", "PFV"]
+    ],
+    "translation": "Did he clean the classroom? Yes, he did.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "fragment"],
+      ["combination", "R"],
+      ["separated", "yes"]
+    ],
+    "comment": "Printed as an intended translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_48b_dasao",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(48b)"},
+    "language": "mand1415",
+    "primaryText": "Tā dǎ-sǎo jiàoshì le ma? Dǎ-sǎo le.",
+    "discourseSegments": [
+      "Tā dǎ-sǎo jiàoshì le ma?",
+      "Dǎ-sǎo le."
+    ],
+    "glossedTokens": [
+      ["Tā", "3SG"], ["dǎ-sǎo", "hit-sweep"], ["jiàoshì", "classroom"], ["le", "PFV"], ["ma", "Q"],
+      ["Dǎ-sǎo", "hit-sweep"], ["le", "PFV"]
+    ],
+    "translation": "Did he clean the classroom? Yes, he did.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "fragment"],
+      ["combination", "R"],
+      ["separated", "no"]
+    ],
+    "comment": "Printed as an intended translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_49a",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(49a)"},
+    "language": "mand1415",
+    "primaryText": "Tā gěi māma dǎ le diànhuà, wǒ yě dǎ le.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tā", "3SG"], ["gěi", "APPL"], ["māma", "mother"], ["dǎ", "hit"], ["le", "PFV"],
+      ["diànhuà", "telephone"], ["wǒ", "1SG"], ["yě", "also"], ["dǎ", "hit"], ["le", "PFV"]
+    ],
+    "translation": "He made a phone call to his mom, and so did I.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "ellipsis"],
+      ["combination", "N"],
+      ["separated", "yes"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_49b_da",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(49b)"},
+    "language": "mand1415",
+    "primaryText": "Tā dǎ-sǎo le tā de fángjiān, wǒ yě dǎ le.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tā", "3SG"], ["dǎ-sǎo", "hit-sweep"], ["le", "PFV"], ["tā", "3SG"], ["de", "POSS"],
+      ["fángjiān", "room"], ["wǒ", "1SG"], ["yě", "also"], ["dǎ", "hit"], ["le", "PFV"]
+    ],
+    "translation": "He cleaned up his room, and so did I.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "ellipsis"],
+      ["combination", "R"],
+      ["separated", "yes"]
+    ],
+    "comment": "Printed as an intended translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_49b_dasao",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(49b)"},
+    "language": "mand1415",
+    "primaryText": "Tā dǎ-sǎo le tā de fángjiān, wǒ yě dǎ-sǎo le.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tā", "3SG"], ["dǎ-sǎo", "hit-sweep"], ["le", "PFV"], ["tā", "3SG"], ["de", "POSS"],
+      ["fángjiān", "room"], ["wǒ", "1SG"], ["yě", "also"], ["dǎ-sǎo", "hit-sweep"], ["le", "PFV"]
+    ],
+    "translation": "He cleaned up his room, and so did I.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.1"],
+      ["test", "ellipsis"],
+      ["combination", "R"],
+      ["separated", "no"]
+    ],
+    "comment": "Printed as an intended translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_30a",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(30a)"},
+    "language": "mand1415",
+    "primaryText": "Zhāngsān bǎ fángjiān gěi dǎ-sǎo gānjìng le.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Zhāngsān", "Zhangsan"], ["bǎ", "BA"], ["fángjiān", "room"], ["gěi", "GIVE"],
+      ["dǎ-sǎo", "hit-sweep"], ["gānjìng", "clean"], ["le", "PFV"]
+    ],
+    "translation": "Zhangsan cleaned up the room.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.1"],
+      ["exponent", "bǎ"],
+      ["exponent", "gěi"],
+      ["exponent", "dǎ"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "chengcheng2026_30b",
+    "source": {"bibkey": "cheng-cheng-2026", "paperLabel": "(30b)"},
+    "language": "mand1415",
+    "primaryText": "Nǐ bǎ diànhuà gěi dǎ le ba!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nǐ", "you"], ["bǎ", "BA"], ["diànhuà", "telephone"], ["gěi", "GIVE"], ["dǎ", "hit"],
+      ["le", "PFV"], ["ba", "SFP"]
+    ],
+    "translation": "You'd better make the phone call.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.1"],
+      ["exponent", "bǎ"],
+      ["exponent", "gěi"],
+      ["exponent", "dǎ"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

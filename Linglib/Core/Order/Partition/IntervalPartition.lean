@@ -22,6 +22,8 @@ contiguous map on it, and the partition is determined by the part each element l
 * `IntervalPartition.mem_of_le_of_le`: a part is a run of the support.
 * `IntervalPartition.isContiguous_part`: the parts are the fibres of a contiguous map.
 * `IntervalPartition.ext_part`: a partition is determined by the parts of its elements.
+* `IntervalPartition.eq_discrete_iff_injOn`: a partition is discrete exactly when distinct
+  elements lie in distinct parts.
 -/
 
 @[expose] public section
@@ -114,6 +116,10 @@ alias ⟨_, mem_part⟩ := mem_part_self
   ⟨fun h hx ↦ by simpa [h] using P.mem_part hx, fun hx ↦ by
     ext y; simpa [mem_part_iff_exists] using fun A hA _ hxA ↦ hx (P.mem_support.2 ⟨A, hA, hxA⟩)⟩
 
+@[simp] theorem part_subset_support (x : α) : P.part x ⊆ P.support := fun _ hy ↦ by
+  obtain ⟨A, hA, hyA, -⟩ := P.mem_part_iff_exists.1 hy
+  exact P.mem_support.2 ⟨A, hA, hyA⟩
+
 /-- The parts are the fibres of a contiguous map on the support. -/
 theorem isContiguous_part : IsContiguous fun x : P.support ↦ P.part x := by
   intro x y z hxy hyz (hxz : P.part x = P.part z)
@@ -160,5 +166,17 @@ def indiscrete (s : Finset α) (hs : s.Nonempty) : IntervalPartition α :=
 
 @[simp] theorem part_indiscrete (hs : s.Nonempty) (hx : x ∈ s) : (indiscrete s hs).part x = s :=
   part_eq_of_mem _ (List.mem_singleton_self s) hx
+
+/-- A partition is discrete exactly when distinct elements of its support lie in distinct
+parts. -/
+theorem eq_discrete_iff_injOn : P = discrete P.support ↔ Set.InjOn P.part P.support := by
+  refine ⟨fun h x hx y hy hxy ↦ ?_, fun h ↦ ext_part _ fun x ↦ ?_⟩
+  · rw [h, support_discrete] at *
+    exact Finset.singleton_injective (by simpa [part_discrete hx, part_discrete hy] using hxy)
+  by_cases hx : x ∈ P.support
+  · rw [part_discrete hx]
+    refine Finset.eq_singleton_iff_unique_mem.2 ⟨P.mem_part hx, fun y hy ↦ ?_⟩
+    exact h (P.part_subset_support x hy) hx (P.part_eq_of_mem (P.part_mem.2 hx) hy)
+  · rw [P.part_eq_empty.2 hx, (discrete P.support).part_eq_empty.2 (by simpa using hx)]
 
 end IntervalPartition
