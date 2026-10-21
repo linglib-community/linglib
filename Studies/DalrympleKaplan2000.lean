@@ -183,6 +183,14 @@ theorem free_relatives :
   decide
 
 open Polish.Pronouns in
+/-- The case value of *kogo* is the accusative and the genitive of *kto*, and that of *co* the
+nominative and the accusative ((40), (41), (46)). -/
+theorem polish_cases :
+    formCells kto (some "kogo") = {Polish.Case.acc, .gen} ∧
+      formCells co (some "co") = {Polish.Case.nom, .acc} := by
+  decide
+
+open Polish.Pronouns in
 /-- Fronted *kogo* meets the accusative of *lubi* and the genitive of *nienawidzi* in both
 conjuncts ((40), (46)), and *co* does not ((41)). -/
 theorem polish_coordination :
