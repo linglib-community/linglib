@@ -11,7 +11,7 @@ public import Mathlib.Order.Interval.Set.OrdConnected
 `[UPSTREAM]` candidate for `Mathlib/Order/Interval/Set/OrdConnected.lean` and
 `Mathlib/Order/Interval/Finset/Basic.lean`. A map is contiguous when its fibres are
 order-connected, so that no value recurs across a distinct intervening value; over a linear order
-these are exactly the maps with the kernel of a monotone map to `ℕ`. This is the shape of a
+with finite lower intervals these are exactly the maps with the kernel of a monotone map to `ℕ`. This is the shape of a
 contiguous segment of a hierarchy wherever a linguistic scale is linearly ordered and a strategy
 covers a run of it.
 
@@ -22,9 +22,9 @@ covers a run of it.
 ## Main statements
 
 * `isContiguous_iff_ordConnected_preimage`: contiguity is order-connectedness of every fibre.
-* `Monotone.isContiguous`, `Antitone.isContiguous`: monotone and antitone maps are contiguous.
-* `isContiguous_iff_exists_monotone`: over a linear order, a map is contiguous exactly when some
-  monotone map to `ℕ` has its kernel.
+* `Monotone.isContiguous`: a monotone map is contiguous.
+* `isContiguous_iff_exists_monotone`: over a linear order with finite lower intervals, a map is
+  contiguous exactly when some monotone map to `ℕ` has its kernel.
 * `Finset.eq_Icc_top_of_ordConnected_coe`: with the top element in the set, the interval
   reaches it.
 * `Set.OrdConnected.isUpperSet_of_top_mem`: an order-connected set containing the top element
@@ -90,11 +90,6 @@ theorem Monotone.isContiguous [PartialOrder F] {f : ι → F} (hf : Monotone f) 
     IsContiguous f :=
   fun _ _ _ hij hjk he ↦ le_antisymm (hf hij) ((hf hjk).trans_eq he.symm)
 
-/-- An antitone map into a partial order is contiguous. -/
-theorem Antitone.isContiguous [PartialOrder F] {f : ι → F} (hf : Antitone f) :
-    IsContiguous f :=
-  fun _ _ _ hij hjk he ↦ le_antisymm (he.trans_le (hf hjk)) (hf hij)
-
 /-- Postcomposition with an injective map preserves and reflects contiguity. -/
 theorem isContiguous_comp_iff {G : Type*} {h : F → G} (hh : Function.Injective h) {p : ι → F} :
     IsContiguous (h ∘ p) ↔ IsContiguous p :=
@@ -105,12 +100,6 @@ theorem isContiguous_comp_iff {G : Type*} {h : F → G} (hh : Function.Injective
 theorem IsContiguous.comp_monotone {κ : Type*} [Preorder κ] {p : ι → F} (hp : IsContiguous p)
     {f : κ → ι} (hf : Monotone f) : IsContiguous (p ∘ f) :=
   fun _ _ _ hij hjk heq ↦ hp (hf hij) (hf hjk) heq
-
-/-- A monotone map followed by a map injective on its range is contiguous. -/
-theorem isContiguous_comp_left {β : Type*} [PartialOrder β] {g : ι → β} (hg : Monotone g)
-    {h : β → F} (hh : Set.InjOn h (Set.range g)) : IsContiguous (h ∘ g) :=
-  fun i _ k hij hjk heq ↦
-    congrArg h (hg.isContiguous hij hjk (hh (Set.mem_range_self i) (Set.mem_range_self k) heq))
 
 end Preorder
 
@@ -148,8 +137,8 @@ private theorem eq_of_score_eq [DecidableEq F] (hp : IsContiguous p) (hij : i �
   rw [Finset.mem_Iic] at hl
   exact (hp hl hij hpl).symm.trans hpl
 
-/-- Over a linear order a map is contiguous exactly when some monotone map to `ℕ` has its
-kernel. Forward, the number of distinct values up to a point is such a map; backward, the
+/-- Over a linear order with finite lower intervals a map is contiguous exactly when some
+monotone map to `ℕ` has its kernel. Forward, the number of distinct values up to a point is such a map; backward, the
 kernel of a monotone map has order-connected classes. -/
 theorem isContiguous_iff_exists_monotone (p : ι → F) :
     IsContiguous p ↔ ∃ g : ι → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j := by
