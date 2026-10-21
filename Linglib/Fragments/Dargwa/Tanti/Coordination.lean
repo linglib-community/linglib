@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Coordinator
+public import Linglib.Fragments.Dargwa.Tanti.FocusParticles
 
 /-!
 # Tanti Dargwa coordinators
@@ -16,6 +17,10 @@ word *ja* before each alternative, which with negation gives 'neither … nor', 
 * `Dargwa.Tanti.Coordination.ra`, `Dargwa.Tanti.Coordination.ja`, `Dargwa.Tanti.Coordination.nu`:
   the additive enclitic that conjoins, the disjunctive coordinator and the contrastive enclitic.
 
+## Main results
+
+* `Dargwa.Tanti.Coordination.isAlsoAdditive_ra`: the coordinator *=ra* is the additive particle.
+
 ## References
 
 * [sumbatova-2021]
@@ -25,8 +30,7 @@ word *ja* before each alternative, which with negation gives 'neither … nor', 
 
 namespace Dargwa.Tanti.Coordination
 
-/-- *=ra* 'and', enclitic on each coordinand, also the additive particle
-`Dargwa.Tanti.FocusParticles.ra`. -/
+/-- *=ra* 'and', enclitic on each coordinand. -/
 def ra : Coordinator :=
   { morph := .encl "ra", gloss := "and", role := .conjunctive }
 
@@ -37,5 +41,8 @@ def ja : Coordinator :=
 /-- *=nu* 'but; because', enclitic. -/
 def nu : Coordinator :=
   { morph := .encl "nu", gloss := "but; because", role := .adversative }
+
+/-- The coordinator *=ra* is the additive particle *=ra*. -/
+theorem isAlsoAdditive_ra : ra.IsAlsoAdditive FocusParticles.ra := rfl
 
 end Dargwa.Tanti.Coordination

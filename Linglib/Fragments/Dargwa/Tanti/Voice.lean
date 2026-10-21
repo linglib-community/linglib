@@ -16,8 +16,8 @@ tells the two apart by its thematic suffix.
 
 ## Main definitions
 
-* `Dargwa.Tanti.antipassive`, `Dargwa.Tanti.anticausative`, `Dargwa.Tanti.causativeOfIntransitive`,
-  `Dargwa.Tanti.causativeOfTransitive`, `Dargwa.Tanti.alternations`: the valency alternations
+* `Dargwa.Tanti.causativeOfIntransitive`, `Dargwa.Tanti.causativeOfTransitive`,
+  `Dargwa.Tanti.alternations`: the causatives, and the valency alternations
 * `Dargwa.Tanti.causeeForm`: the inter-elative of the causee of a transitive base
 
 ## Main results
@@ -36,6 +36,11 @@ tells the two apart by its thematic suffix.
 * The demoted causee and the antipassive patient are adpositional positions of the derived
   frame, the frame vocabulary's oblique; the case each takes is stated with the voice.
 
+## TODO
+
+* That the antipassive is confined to imperfective forms needs an aspectual restriction `Voice`
+  does not have; that its demoted P is an ergative controlling no agreement is not stated.
+
 ## References
 
 * [N. Sumbatova, *Dargwa* (2021)][sumbatova-2021]
@@ -47,14 +52,6 @@ tells the two apart by its thematic suffix.
 namespace Dargwa.Tanti
 
 open ArgumentFrame.Slot Morphology
-
-/-- The antipassive is uncoded and confined to imperfective forms. The A is absolutive and the
-P is demoted to an ergative that controls no agreement; affective verbs have none. -/
-def antipassive : Voice := .antipassive
-
-/-- P-lability is the uncoded anticausative of a transitive form, mostly of verbs of
-situations that occur with or without an agent, whose patient is then the S. -/
-def anticausative : Voice := .anticausative
 
 /-- The causative *-aq* of an intransitive verb. The causer is the ergative A and the causee,
 the initial S, the absolutive P. -/
@@ -70,9 +67,10 @@ def causativeOfTransitive : Voice :=
 marker. -/
 def causeeForm : LocativeForm := ⟨.inter, .elative, none⟩
 
-/-- The valency alternations of Tanti. -/
+/-- The valency alternations of Tanti: the uncoded antipassive, the uncoded anticausative of a
+P-labile verb, and the two causatives. -/
 def alternations : Finset Voice :=
-  {antipassive, anticausative, causativeOfIntransitive, causativeOfTransitive}
+  {.antipassive, .anticausative, causativeOfIntransitive, causativeOfTransitive}
 
 /-- The causative is the only alternation coded on the verb. -/
 theorem isCoded_iff {v : Voice} (hv : v ∈ alternations) :

@@ -142,7 +142,7 @@ inductive PersonSet where
   deriving DecidableEq, Repr, Fintype
 
 /-- Each set is a paradigm over the person–number cells. The irrealis first person plural
-*-ʜaˁ* reduces to *-ʜe*, the second person *-t:* to *-t*, and the optative second person plural
+*-ʜaˁ* reduces to *-ʜe*, the second person *-tː* to *-t*, and the optative second person plural
 *-a* also appears as *-a-ja*. -/
 def PersonSet.paradigm : PersonSet → Paradigm (List Morph)
   | .clitic =>
@@ -151,9 +151,9 @@ def PersonSet.paradigm : PersonSet → Paradigm (List Morph)
      (.personNumber .third .singular, []), (.personNumber .first .plural, [.encl "da"]),
      (.personNumber .second .plural, [.encl "da"]), (.personNumber .third .plural, [])]
   | .irrealis =>
-    [(.personNumber .first .singular, [.suff "d"]), (.personNumber .second .singular, [.suff "t:"]),
+    [(.personNumber .first .singular, [.suff "d"]), (.personNumber .second .singular, [.suff "tː"]),
      (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "ʜaˁ"]),
-     (.personNumber .second .plural, [.suff "t:", .suff "a"]), (.personNumber .third .plural, [])]
+     (.personNumber .second .plural, [.suff "tː", .suff "a"]), (.personNumber .third .plural, [])]
   | .optative =>
     [(.personNumber .first .singular, [.suff "a"]), (.personNumber .second .singular, [.suff "e"]),
      (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "a"]),
@@ -179,8 +179,8 @@ def IsDargic (p : Paradigm (List Morph)) : Prop :=
     (p.realize c = p.realize c' ↔
       (c = .personNumber .second .singular ↔ c' = .personNumber .second .singular))
 
-instance (p : Paradigm (List Morph)) : Decidable (IsDargic p) := by
-  unfold IsDargic; infer_instance
+instance (p : Paradigm (List Morph)) : Decidable (IsDargic p) :=
+  inferInstanceAs (Decidable (∀ c ∈ Bundle.personNumberCells, ∀ c' ∈ Bundle.personNumberCells, _))
 
 theorem isDargic_clitic : IsDargic PersonSet.clitic.paradigm := by decide
 
