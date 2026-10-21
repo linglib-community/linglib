@@ -424,6 +424,9 @@ instance instDecidableRealize [DecidableEq α] (w : List α) (n : ℕ) :
   | .conj φ ψ => @instDecidableAnd _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
   | .disj φ ψ => @instDecidableOr _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
 
+@[simp] theorem realize_neg {w : List α} {n : ℕ} {φ : WindowFormula α} :
+    φ.neg.Realize w n ↔ ¬ φ.Realize w n := Iff.rfl
+
 @[simp] theorem realize_conj {w : List α} {n : ℕ} {φ ψ : WindowFormula α} :
     (φ.conj ψ).Realize w n ↔ φ.Realize w n ∧ ψ.Realize w n := Iff.rfl
 
