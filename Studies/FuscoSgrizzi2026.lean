@@ -74,13 +74,13 @@ worlds, the best worlds of a circumstantial base under an inertial ordering ([do
 [kratzer-2013]), with the eventuality argument of its complement closed over what the state
 causes. -/
 def aP (circumstances : V → Background W) (inertia : V → Background W)
-    (causeStar : V → V → W → Prop) (P : W → V → Prop) (s : V) (w : W) : Prop :=
+    (causeStar : W → SetRel V V) (P : W → V → Prop) (s : V) (w : W) : Prop :=
   necessity (circumstances s) (inertia s) (causedClosure causeStar s P) w
 
 /-- The head *a* is the causal subjunctive of [grano-2024]'s (134) with an inertial ordering
 added: with no ordering it is simple necessity of the same prejacent over the circumstantially
 accessible worlds. -/
-theorem aP_bot (circumstances : V → Background W) (causeStar : V → V → W → Prop)
+theorem aP_bot (circumstances : V → Background W) (causeStar : W → SetRel V V)
     (P : W → V → Prop) (s : V) (w : W) :
     aP circumstances (fun _ ↦ ⊥) causeStar P s w ↔
       Grano2024.sbjvCausal (fun s w' ↦ w ~[(circumstances s).accessible] w') causeStar P s :=
@@ -108,7 +108,7 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
 
 variable (F : Frame I V W) (content circumstances : V → Background W)
   (inertia : V → Background W)
-  (causeStar : V → V → W → Prop) (P : W → V → Prop) (x y : I) (e : V) (w : W)
+  (causeStar : W → SetRel V V) (P : W → V → Prop) (x y : I) (e : V) (w : W)
 
 /-- The belief report is *convincere* with the *di*-complement, whose closure head (23b) turns the
 bare infinitive into a proposition held at the state's content worlds. -/
@@ -130,7 +130,7 @@ theorem intention_causal (h : intentionReport F circumstances inertia causeStar 
 intention report lies after the attitude state in every inertia world, which excludes a
 past-oriented complement, as in (5b). -/
 theorem intention_future {T : Type*} [Preorder T] (τ : V → T)
-    (hτ : ∀ s e' w', causeStar s e' w' → τ s < τ e')
+    (hτ : ∀ s e' w', s ~[causeStar w'] e' → τ s < τ e')
     (h : intentionReport F circumstances inertia causeStar P x y e w) :
     ∃ s, F.cause e s ∧
       ∀ w', w ~[bestAccessible (circumstances s) (inertia s)] w' → ∃ e', τ s < τ e' ∧ P w' e' :=

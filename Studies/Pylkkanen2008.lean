@@ -70,6 +70,7 @@ namespace Pylkkanen2008
 
 
 open ArgumentStructure Minimalist Examples Montague PhraseStructure.Tree
+open scoped SetRel
 
 variable {Entity E : Type*}
 
@@ -208,7 +209,7 @@ causer head relates John to the melting itself, the reading (15b). -/
 theorem melted_readings (M : EventStructure.Interpretation Entity E E)
     (agent causer : Entity → E → Prop) (melt : E → Prop) (john : Entity) (e : E) :
     (eventIdentification agent (M.vCause melt) john e ↔
-        agent john e ∧ ∃ e', M.cause e e' ∧ melt e') ∧
+        agent john e ∧ ∃ e', e ~[M.cause] e' ∧ melt e') ∧
       (eventIdentification causer melt john e ↔ causer john e ∧ melt e) :=
   ⟨Iff.rfl, Iff.rfl⟩
 

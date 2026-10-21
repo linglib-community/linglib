@@ -57,6 +57,7 @@ namespace Krejci2012
 open Event (τ)
 
 open KoontzGarboden2009 ArgumentStructure
+open scoped SetRel
 
 /-! ### Antireflexivization -/
 
@@ -77,12 +78,12 @@ abbrev eat : Entity → E → Prop := reflexivize (feed M manip S)
 /-- The periphrastic causative *make eat* adds a further causing event, with its own effector,
 of an eating. -/
 def makeEat (z x : Entity) (e : E) : Prop :=
-  ∃ w, M.effector z w ∧ M.cause w e ∧ eat M manip S x e
+  ∃ w, M.effector z w ∧ w ~[M.cause] e ∧ eat M manip S x e
 
 /-- Causativization by causer addition ((94)) is the analysis the report rejects, on which the
 simple form is an activity `ingest` with no causing subevent and the causative adds a causer. -/
 def causerAddition (ingest : Entity → E → Prop) (y x : Entity) (e : E) : Prop :=
-  ∃ w, M.effector y w ∧ M.cause w e ∧ ingest x e
+  ∃ w, M.effector y w ∧ w ~[M.cause] e ∧ ingest x e
 
 /-- `earlier` relates an event to the events whose run time is before its own. -/
 def earlier : SetRel E E := {(e, e') | (τ e').IsBefore (τ e)}
@@ -106,11 +107,11 @@ variable {M manip S} {x y z : Entity} {e : E}
 theorem eat_eq_anticausative : eat M manip S = anticausative M manip S := rfl
 
 /-- The eater manipulates food ((39a)). -/
-theorem exists_manip_of_eat (h : eat M manip S x e) : ∃ w, manip x w ∧ M.cause w e :=
+theorem exists_manip_of_eat (h : eat M manip S x e) : ∃ w, manip x w ∧ w ~[M.cause] e :=
   exists_cause_of_anticausative h
 
 /-- The feeder manipulates food ((45)). -/
-theorem exists_manip_of_feed (h : feed M manip S y x e) : ∃ w, manip y w ∧ M.cause w e :=
+theorem exists_manip_of_feed (h : feed M manip S y x e) : ∃ w, manip y w ∧ w ~[M.cause] e :=
   let ⟨w, h₁, h₂, _⟩ := h; ⟨w, h₁, h₂⟩
 
 /-- Whoever is fed comes to potential digestion ((44c)). -/
@@ -119,7 +120,7 @@ theorem inchoative_of_feed (h : feed M manip S y x e) : M.vBecome S x e :=
 
 /-- Whoever is made to eat manipulates food ((47a)). -/
 theorem exists_manip_of_makeEat (h : makeEat M manip S z x e) :
-    ∃ w, manip x w ∧ M.cause w e :=
+    ∃ w, manip x w ∧ w ~[M.cause] e :=
   let ⟨_, _, _, h⟩ := h; exists_manip_of_eat h
 
 /-- Under causer addition the causative entails the simple form, so denying the one while
@@ -166,8 +167,8 @@ state at its end. -/
 def eating (causing : NonemptyInterval ℤ → NonemptyInterval ℤ → Prop)
     (eff : Participant → NonemptyInterval ℤ → Prop) :
     ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) where
-  become s e := (∃ w, causing w e) ∧ s = (τ e).toProd.2
-  cause := causing
+  become := {p | (∃ w, causing w p.2) ∧ p.1 = (τ p.2).toProd.2}
+  cause := {p | causing p.1 p.2}
   effector := eff
 
 /-- Mary manipulates the food. -/

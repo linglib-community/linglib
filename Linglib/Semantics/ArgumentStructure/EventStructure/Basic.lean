@@ -65,6 +65,7 @@ share a universe, so that the type of a denotation can depend on the sort.
 namespace ArgumentStructure.EventStructure
 
 open Semantics
+open scoped SetRel
 
 universe u
 
@@ -206,7 +207,7 @@ theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.I
 
 /-- A template with `BECOME` describes only eventualities that involve a change. -/
 theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
-    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ s e, M.become s e := by
+    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ s e, s ~[M.become] e := by
   induction t generalizing y x with
   | state | act | effector => simp [HasResultState, kinds] at ht
   | become _ _ => obtain ⟨s, hb, _⟩ := h; exact ⟨s, _, hb⟩
@@ -218,7 +219,7 @@ theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
 
 /-- A template with `CAUSE` describes only eventualities that involve a causal relation. -/
 theorem exists_cause_of_denote {t : Template σ} (ht : t.HasCause)
-    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ v e, M.cause v e := by
+    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ v e, v ~[M.cause] e := by
   induction t generalizing y x with
   | state | act | effector => simp [HasCause, kinds] at ht
   | become t ih =>
@@ -239,17 +240,17 @@ variable {Entity : Type*} {State Event : Type u}
 and nothing gives rise to a state. -/
 private def noChange (Entity : Type*) (State Event : Type u) :
     Interpretation Entity State Event where
-  become _ _ := False
-  cause _ _ := True
-  effector _ _ := True
+  become := ⊥
+  cause := ⊤
+  effector := ⊤
 
 /-- The interpretation in which every eventuality has every effector and gives rise to every
 state, and nothing causes anything. -/
 private def noCause (Entity : Type*) (State Event : Type u) :
     Interpretation Entity State Event where
-  become _ _ := True
-  cause _ _ := False
-  effector _ _ := True
+  become := ⊤
+  cause := ⊥
+  effector := ⊤
 
 private theorem denote_noChange [Nonempty Event] {t : Template σ} (ht : ¬ t.HasResultState)
     (y x : Entity) (v : σ.Carrier State Event) :
@@ -280,7 +281,7 @@ variable [Nonempty Entity] [Nonempty State] [Nonempty Event] {t : Template σ}
 change. -/
 theorem hasResultState_iff :
     t.HasResultState ↔ ∀ (M : Interpretation Entity State Event) P Q y x
-      (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ s e, M.become s e := by
+      (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ s e, s ~[M.become] e := by
   refine ⟨fun ht _ _ _ _ _ _ ↦ exists_become_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
   obtain ⟨_, _, hb⟩ := h _ _ _ (Classical.arbitrary _) (Classical.arbitrary _)
     (Classical.arbitrary _) (denote_noChange ht _ _ _)
@@ -290,7 +291,7 @@ theorem hasResultState_iff :
 causal relation. -/
 theorem hasCause_iff :
     t.HasCause ↔ ∀ (M : Interpretation Entity State Event) P Q y x
-      (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ v e, M.cause v e := by
+      (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ v e, v ~[M.cause] e := by
   refine ⟨fun ht _ _ _ _ _ _ ↦ exists_cause_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
   obtain ⟨_, _, hc⟩ := h _ _ _ (Classical.arbitrary _) (Classical.arbitrary _)
     (Classical.arbitrary _) (denote_noCause ht _ _ _)
