@@ -1,0 +1,959 @@
+[
+  {
+    "id": "stassen2000_ex9",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(9)"},
+    "language": "awtu1239",
+    "primaryText": "Yowmən Yawur du-k-puy-ey",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Yowmen and Yawur are hitting (someone).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Feldman 1986: 110.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex10",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(10)"},
+    "language": "kumb1268",
+    "primaryText": "ŋari ni:gaṙ njammi jara:ŋ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man and woman went together.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Smythe 1948: 96.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex11",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(11)"},
+    "language": "mara1386",
+    "primaryText": "mereni kalani ŋeni kili-nya awa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "My brother and uncle ate the meat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Tryon 1970: 83.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex12",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(12)"},
+    "language": "moha1256",
+    "primaryText": "intay nakut-nʸ-č ʔahu:t-k idu:-m",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "His mother and father are good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Munro 1976: 162; the glottal stop is printed as ?.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex13",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(13)"},
+    "language": "clas1250",
+    "primaryText": "ōcenquīz in īxquich in tēlpōchtli in ichpōchtli",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "All the youths and the maidens gathered together.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Andrews 1975: 367; in is glossed ART.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex14",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(14)"},
+    "language": "onaa1245",
+    "primaryText": "Kačerán, Kormsčen viek-án",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kačerán and Kormsčen chased one another.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Tonelli 1926: 72.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex15",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(15)"},
+    "language": "manc1252",
+    "primaryText": "muduri tasha daham-bi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The dragon and the tiger follow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Adam 1873: 66.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex16a",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(16a)"},
+    "language": "halh1238",
+    "primaryText": "ger baishin",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "tents and buildings",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Street 1963: 180.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex16b",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(16b)"},
+    "language": "halh1238",
+    "primaryText": "Ceren bolon Bat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ceren and Batu",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Street 1963: 180.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex17a",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(17a)"},
+    "language": "mand1415",
+    "primaryText": "zjé yué",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "sun and moon",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Mullie 1947: 232.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex17b",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(17b)"},
+    "language": "mand1415",
+    "primaryText": "Lù Wényì gēn wǒ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Lu Wenyi and I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Li & Thompson 1981: 657; gēn is glossed 'and/with'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex18a",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(18a)"},
+    "language": "mezq1235",
+    "primaryText": "rá dăda rá nǫnǫ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "his father and his mother",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Hess 1968: 72.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex18b",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(18b)"},
+    "language": "mezq1235",
+    "primaryText": "nú ra ʔánxe nĕ rá ku",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Angela and her brother",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Hess 1968: 72; the glottal stop is printed as ?.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex19a",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(19a)"},
+    "language": "khas1269",
+    "primaryText": "ka yap ka ʔim",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "life and death",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"]
+    ],
+    "comment": "Rabel 1961: 128; ka is glossed ART; the glottal stop is printed as ?.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex19b",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(19b)"},
+    "language": "khas1269",
+    "primaryText": "u wadár bad u khun",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the councillor and his son",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Roberts 1891: 142.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex20a",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(20a)"},
+    "language": "west2369",
+    "primaryText": "mardhâ, zanhâ, bacehâ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "men, women, and children",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "asyndetic"],
+      ["coordinands", "3"]
+    ],
+    "comment": "Lazard 1957: 200.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex20b",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(20b)"},
+    "language": "west2369",
+    "primaryText": "dâneşjuyân va kârgarân",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "students and workers",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Lazard 1957: 200.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex21",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(21)"},
+    "language": "basq1248",
+    "primaryText": "Ander eta Mikel",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ander and Mikel",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Saltarelli 1988: 100.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex22",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(22)"},
+    "language": "finn1318",
+    "primaryText": "Pentti ja Pirkko",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Pentti and Pirkko",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Karlsson 1984: 235.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex23",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(23)"},
+    "language": "egyp1253",
+    "primaryText": "ʕagala wi ʕarabijja",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a bicyle and a car",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Cairene Arabic; Gary & Gamal-Eldin 1982: 37; the translation's 'bicyle' is as printed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex24",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(24)"},
+    "language": "sout2832",
+    "primaryText": "akɔɔn ku miir",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the elephant and the giraffe",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Nebel 1948: 110, a grammar of the Rek-Malual dialect, Glottolog's Rek and Malual of Southwestern Dinka.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex25",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(25)"},
+    "language": "mang1394",
+    "primaryText": "n-ókondó bu n-ɔsúmba",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the leopard and the rat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Larochette 1958: 33; n- is glossed ART.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex26",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(26)"},
+    "language": "halh1238",
+    "primaryText": "qaγan kiged qatun",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the Khan and the queen",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Written Mongolian, Poppe 1954: 122; Glottolog has no languoid for the written language and files Poppe's grammar under Halh Mongolian.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex27",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(27)"},
+    "language": "nucl1301",
+    "primaryText": "Hasan (ve) Ali ve Zeynep dün sinema-ya gittiler",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Hasan (and) Ali and Zeynep went to the movies yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"],
+      ["coordinands", "3"]
+    ],
+    "comment": "Kornfilt 1997: 115.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex28",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(28)"},
+    "language": "viet1252",
+    "primaryText": "người giàu cùng người nghèo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "rich people and poor people",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Văn Chình 1970: 146; the print sets the horns of ư and ơ apart.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex29",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(29)"},
+    "language": "cebu1242",
+    "primaryText": "bir ug tubig",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "beer and water",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Wolff 1967: 164.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex30",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(30)"},
+    "language": "term1237",
+    "primaryText": "boutua-la ma nekahade-la",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "syrup pots and rice baskets",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Rottinese, Jonker 1915: 662; WALS's Roti is Termanu.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex31",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(31)"},
+    "language": "kate1253",
+    "primaryText": "nânâ â kise",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "taro and yams",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Pilhofer 1933: 130.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex32",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(32)"},
+    "language": "dier1241",
+    "primaryText": "kanku ya mankada-li wima waŋka-yi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The boys and girls are singing a song.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Austin 1981: 231.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex33",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(33)"},
+    "language": "kali1308",
+    "primaryText": "in-lə´éu u i-sḳúi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "my father and my mother",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Vogt 1940: 171.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex34",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(34)"},
+    "language": "nava1243",
+    "primaryText": "Gâ·gi ’índa Tąji·",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Crow and Turkey",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "Reichard 1951: 323.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex35",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(35)"},
+    "language": "misk1235",
+    "primaryText": "tasba wihki pauta",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "earth and fire",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "CIDCA 1985: 196; the paper labels Miskito Oto-Manguean.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex36",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(36)"},
+    "language": "mapu1245",
+    "primaryText": "Antonio ka Toribio",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Antonio and Toribio",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "medial"]
+    ],
+    "comment": "de Augusta 1903: 231.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex37",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(37)"},
+    "language": "abkh1244",
+    "primaryText": "s-ànə-y s-àbə-y",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "my mother and my father",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Hewitt 1979: 65.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex38",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(38)"},
+    "language": "arch1244",
+    "primaryText": "o:s l°onol-u o:s lo-vu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a wife and a daughter",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Dirr 1928: 266.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex39",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(39)"},
+    "language": "amha1245",
+    "primaryText": "qäč̣č̣ən-em gošš-əm",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "giraffes and buffaloes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Hartmann 1980: 355.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex40",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(40)"},
+    "language": "alam1246",
+    "primaryText": "yën-r-i yën-t-e",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a boy and a girl",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Bruce 1984: 128; -i and -e are both glossed 'and'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex41",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(41)"},
+    "language": "dyir1250",
+    "primaryText": "bayi yuɽi-gara bayi bargan-gara",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a kangaroo and a wallaby",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Dixon 1972: 230.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex42",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(42)"},
+    "language": "tami1289",
+    "primaryText": "akkaa-vum taŋkacci-yum",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "elder sister and younger sister",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Asher 1982: 69.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex43",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(43)"},
+    "language": "sinh1246",
+    "primaryText": "noona-y daruo-y",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the wife and children",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Gair 1970: 42.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex44",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(44)"},
+    "language": "ainu1240",
+    "primaryText": "okkay ka menoko ka",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "men and women",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Refsing 1986: 163.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex45",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(45)"},
+    "language": "kore1280",
+    "primaryText": "na hago ne hago kagesso",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You and I will go.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Ramstedt 1939: 156.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex46",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(46)"},
+    "language": "nucl1310",
+    "primaryText": "hsi-yò hsañ-yò",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "oil and rice",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Okell 1966: 191.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex47a",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(47a)"},
+    "language": "beja1238",
+    "primaryText": "aní-wå barū́k-wå",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you and I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Reinisch 1893: 195.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex47b",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(47b)"},
+    "language": "beja1238",
+    "primaryText": "mēk-wå lága",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a donkey and a calf",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b"]
+    ],
+    "comment": "Reinisch 1893: 195.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex48",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(48)"},
+    "language": "oldp1255",
+    "primaryText": "Pārsam-čā Mādam-čā",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Persia and Media",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Meillet & Benveniste 1931: 224; listed with the first-NP subtype beside Modern Persian (49).",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex49",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(49)"},
+    "language": "west2369",
+    "primaryText": "mardhâ-o zanhâ-o bacehâ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "men, women, and children",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b"],
+      ["coordinands", "3"]
+    ],
+    "comment": "Lazard 1957: 200.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex50a",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(50a)"},
+    "language": "ainu1240",
+    "primaryText": "hapo ka mici ka",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "mother and father",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Refsing 1986: 163.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex50b",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(50b)"},
+    "language": "ainu1240",
+    "primaryText": "urki ka taiki",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "fleas and lice",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b"]
+    ],
+    "comment": "Refsing 1986: 162.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex51",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(51)"},
+    "language": "lati1261",
+    "primaryText": "senatus populus-que",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the senate and the people",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a_b'co"]
+    ],
+    "comment": "Jan Brouwers, personal communication.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex52",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(52)"},
+    "language": "pitj1243",
+    "primaryText": "Henry-ku mama ngunytju puṟu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Henry's father and mother",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a_b'co"]
+    ],
+    "comment": "Glass & Hackett 1970: 66; the gloss line reads 'mother father and'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex53a",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(53a)"},
+    "language": "teda1241",
+    "primaryText": "túrku ye mɔlɔfúr ye",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the jackal and the hyena",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a'co_b'co"]
+    ],
+    "comment": "Lukas 1953: 166, the Tubu of the central Sahara; Glottolog's Tebu is the family of Tedaga and Dazaga, and the lect is not checked.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stassen2000_ex53b",
+    "source": {"bibkey": "stassen-2000", "paperLabel": "(53b)"},
+    "language": "teda1241",
+    "primaryText": "wúdɛn arkɔ́ ye",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the antilope and the goat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "a_b'co"]
+    ],
+    "comment": "Lukas 1953: 166; glossed 'gazelle goat and'; the lect is not checked.",
+    "verified": "page-image"
+  }
+]

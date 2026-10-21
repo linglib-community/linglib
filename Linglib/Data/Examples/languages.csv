@@ -1,10 +1,12 @@
 ID,Name,Glottocode,ISO639P3code,Level,Macroarea,Latitude,Longitude
+abkh1244,Abkhaz,abkh1244,abk,language,Eurasia,43.056218,41.159115
 achi1257,Acehnese,achi1257,ace,language,Eurasia;Papunesia,3.90757,96.6032
 adyg1241,West Circassian,adyg1241,ady,language,Eurasia,44.0,39.33
 afar1241,Afar,afar1241,aar,language,Africa,12.2281,41.8083
 afri1274,Afrikaans,afri1274,afr,language,Africa,-31.63272,20.46356
 ainu1240,Hokkaido Ainu,ainu1240,ain,language,Eurasia,43.633654,142.46167
 akan1250,Akan,akan1250,aka,language,Africa,6.34756,-1.33254
+alam1246,Alamblak,alam1246,amp,language,Papunesia,-4.66307,143.316
 alba1267,Albanian,alba1267,sqi,family,Eurasia,40.99952028050002,20.791828239250023
 amel1241,Amele,amel1241,aey,language,Papunesia,-5.29126,145.687
 amer1248,American Sign Language,amer1248,ase,language,Africa;North America,33.8117,-81.6121
@@ -19,6 +21,7 @@ aton1241,Atong (India),aton1241,aot,language,Eurasia,25.346508,90.658722
 avar1256,Avar,avar1256,ava,language,Eurasia,41.7047,46.558
 awap1236,Awa (Papua New Guinea),awap1236,awb,language,Papunesia,-6.65534,145.714
 awin1248,Awing,awin1248,azo,language,Africa,5.88362,10.264
+awtu1239,Awtuw,awtu1239,kmn,language,Papunesia,-3.53129,141.928
 bagi1246,Bagirmi,bagi1246,bmi,language,Africa,11.52392,14.769495
 bais1246,Baiso,bais1246,bsw,language,Africa,6.44892,37.7681
 bali1278,Balinese,bali1278,ban,language,Papunesia,-8.35714,115.075
@@ -28,6 +31,7 @@ baou1238,Baoulé,baou1238,bci,language,Africa,5.42509,-4.76565
 bard1255,Bardi,bard1255,bcj,language,Australia,-16.6274,122.906
 basq1248,Basque,basq1248,eus,language,Eurasia,43.2787,-1.31622
 bata1289,Batak Toba,bata1289,bbc,language,Papunesia,2.35498,99.1761
+beja1238,Beja,beja1238,bej,language,Africa,17.2436,36.6666
 bela1254,Belarusian,bela1254,bel,language,Eurasia,53.2307,25.6038
 bemb1257,Bemba (Zambia),bemb1257,bem,language,Africa,-10.6122,29.2993
 beri1254,Berik,beri1254,bkl,language,Papunesia,-2.26904,138.866
@@ -42,6 +46,7 @@ cadd1256,Caddo,cadd1256,cad,language,North America,33.33,-93.5
 cant1236,Cantonese,cant1236,,dialect,Eurasia,23.0118,113.2021
 cash1251,Cashibo-Cacataibo,cash1251,cbr,language,South America,-8.70232,-75.4206
 cata1290,Català Occidental,cata1290,,dialect,Eurasia,41.453,1.569
+cebu1242,Cebuano,cebu1242,ceb,language,Papunesia,8.38799,124.367
 cent2050,Central Kanuri,cent2050,knc,language,Africa,11.8,13.13
 cent2117,Central Asmat,cent2117,cns,language,Papunesia,-5.80391,138.471
 cent2127,Central Alaskan Yupik,cent2127,esu,language,North America,60.3062,-161.486
@@ -70,6 +75,7 @@ daga1275,Daga,daga1275,dgz,language,Papunesia,-9.9747,149.263
 dani1285,Danish,dani1285,dan,language,Eurasia,54.8655,9.36284
 darg1241,North-Central Dargwa,darg1241,dar,language,Eurasia,42.4257,47.4388
 darm1243,Darma,darm1243,drd,language,Eurasia,29.8629,80.5439
+dier1241,Dieri,dier1241,dif,language,Australia,-28.1667,138.0
 diml1238,Dimli,diml1238,diq,language,Eurasia,38.6147,39.6388
 dong1288,Dongola,dong1288,dgl,dialect,Africa,18.25,30.75
 doya1240,Doyayo,doya1240,dow,language,Africa,8.68604,13.0768
@@ -137,14 +143,17 @@ jauj1238,Jauja Wanca Quechua,jauj1238,qxw,language,South America,-11.6747,-75.27
 java1254,Javanese,java1254,jav,language,Papunesia,-7.001,109.287
 kagu1239,Kagulu,kagu1239,kki,language,Africa,-6.38204,37.0534
 kala1399,Kalaallisut,kala1399,kal,language,North America,69.3761,-52.864
+kali1308,Kalispel-Pend d'Oreille,kali1308,fla,language,North America,47.5825,-114.19
 kalk1246,Kalkatungu,kalk1246,ktg,language,Australia,-21.0,139.5
 kami1256,Kami (Tanzania),kami1256,kcu,language,Africa,-6.71075,37.98
 kaqc1270,Kaqchikel,kaqc1270,cak,language,North America,14.4662,-90.9881
 kash1274,Kashubian,kash1274,csb,language,Eurasia,54.2996,18.6163
 kash1277,Kashmiri,kash1277,kas,language,Eurasia,34.166825,74.330455
 kash1280,Kashaya,kash1280,kju,language,North America,38.5424,-123.08
+kate1253,Kâte,kate1253,kmg,language,Papunesia,-6.4795,147.757
 kekc1242,Q'eqchi',kekc1242,kek,language,North America,15.3788,-89.2452
 khar1287,Kharia,khar1287,khr,language,Eurasia,22.3571,84.3922
+khas1269,Khasi,khas1269,kha,language,Eurasia,24.977,91.9998
 khmu1256,Khmu,khmu1256,kjg,language,Eurasia,20.2463,101.671
 kich1262,K'iche',kich1262,quc,language,North America,14.5278,-91.1696
 kiku1240,Kikuyu,kiku1240,kik,language,Africa,-0.29005,36.719
@@ -160,6 +169,7 @@ kore1280,Korean,kore1280,kor,language,Eurasia,37.54,126.98
 kory1246,Koryak,kory1246,kpy,language,Eurasia,63.8977,166.695
 koyr1240,Koyra Chiini Songhay,koyr1240,khq,language,Africa,16.192,-3.73962
 kuma1280,Kuman,kuma1280,kue,language,Papunesia,-5.90586,144.977
+kumb1268,Kumbainggar,kumb1268,kgs,language,Australia,-29.8189,152.913
 kuna1268,Kunama,kuna1268,kun,language,Africa,14.5879,37.5292
 kuni1267,Kunimaipa,kuni1267,kup,language,Papunesia,-8.09371,146.908
 kute1249,Kutenai,kute1249,kut,language,North America,48.7892,-115.065
@@ -190,23 +200,30 @@ maka1311,Makasar,maka1311,mak,language,Papunesia,-5.65551,119.838
 mako1251,Makonde,mako1251,kde,language,Africa,-10.9906,39.5133
 malt1254,Maltese,malt1254,mlt,language,Eurasia,35.8884,14.4508
 mamm1241,Mam,mamm1241,mam,language,North America,14.8034,-91.7231
+manc1252,Manchu,manc1252,mnc,language,Eurasia,47.31225,126.55713
 mand1415,Mandarin Chinese,mand1415,cmn,language,Eurasia,40.0209,116.228
 mand1436,Mandinka,mand1436,mnk,language,Africa,12.8165233333,-15.6539466667
 mand1442,Mandar,mand1442,mdr,language,Papunesia,-3.34717,119.068
 mand1446,Mandan,mand1446,mhq,language,North America,46.83,-101.0
 mang1381,Mangarrayi,mang1381,mpc,language,Australia,-14.8,133.5
+mang1394,Mangbetu,mang1394,mdj,language,Africa,2.5511,27.0712
 maor1246,Maori,maor1246,mri,language,Papunesia,-38.2881,176.541
+mapu1245,Mapudungun,mapu1245,arn,language,South America,-38.7392,-71.277
 mara1378,Marathi,mara1378,mar,language,Eurasia,17.9344,76.6665
+mara1386,Maranunggu,mara1386,zmr,language,Australia,-13.6754,130.12
 mara1404,Maranao,mara1404,mrw,language,Papunesia,7.79414,124.175
 mari1440,Maricopa,mari1440,mrc,language,North America,33.5123,-111.749
 mart1255,Martuthunira,mart1255,vma,language,Australia,-20.9294,116.607
 maxa1247,Maxakalí,maxa1247,mbl,language,South America,-16.9402,-40.7891
 mbaa1245,Mba,mbaa1245,mfc,language,Africa,1.06885,25.143
 mele1250,Mele-Fila,mele1250,mxe,language,Papunesia,-17.6841,168.275
+mezq1235,Mezquital Otomi,mezq1235,ote,language,North America,20.2274,-99.5564
 midd1317,Middle English,midd1317,enm,language,Eurasia,51.65,-1.11
 midd1321,Middle Dutch,midd1321,dum,language,Eurasia,51.656,5.34
+misk1235,Mískito,misk1235,miq,language,North America,15.1576,-84.2942
 miya1266,Miya,miya1266,mkf,language,Africa,10.9234,9.71505
 mode1248,Modern Greek,mode1248,ell,language,Eurasia,38.36,23.13
+moha1256,Mohave,moha1256,mov,language,North America,34.8866,-114.599
 moha1258,Mohawk,moha1258,moh,language,North America,43.72,-74.66836
 moks1248,Moksha,moks1248,mdf,language,Eurasia,54.1855,42.6728
 mori1278,Morisyen,mori1278,mfe,language,Africa,-20.2613,57.5517
@@ -254,8 +271,10 @@ ojib1241,Ojibwa,ojib1241,,family,North America,47.982994444444444,-85.8543277777
 okan1243,Okanagan,okan1243,oka,language,North America,49.2745,-119.294
 olde1238,Old English (ca. 450-1100),olde1238,ang,language,Eurasia,51.06,-1.31
 oldf1239,Old French (842-ca. 1400),oldf1239,fro,language,Eurasia,48.8,1.11
+oldp1255,Old Persian,oldp1255,ope,language,,,
 oldr1238,Old Russian,oldr1238,orv,language,Eurasia,54.813,31.827
 omie1241,Ömie,omie1241,aom,language,Papunesia,-9.03136,148.107
+onaa1245,Selk'nam,onaa1245,ona,language,South America,-54.0,-68.5
 orok1269,Orokaiva,orok1269,okv,language,Papunesia,-8.79019,148.09
 osse1243,Modern Ossetic,osse1243,,family,Eurasia,42.98,44.61
 otta1242,Ottawa,otta1242,otw,language,North America,44.5988,-83.226
@@ -264,6 +283,7 @@ para1311,Paraguayan Guaraní,para1311,gug,language,South America,-25.60551,-57.0
 pare1266,Gorum-Parenga,pare1266,pcj,language,Eurasia,19.075,83.9723
 pipi1250,Pipil,pipi1250,ppl,language,North America,13.8931,-89.443
 pira1253,Pirahã,pira1253,myp,language,South America,-6.77713,-61.8167
+pitj1243,Pitjantjatjara,pitj1243,pjt,language,Australia,-26.9704,131.357
 plat1254,Plateau Malagasy,plat1254,plt,language,Africa,-19.5907,47.1211
 pohn1238,Pohnpeian,pohn1238,pon,language,Papunesia,6.87212,158.223
 poli1260,Polish,poli1260,pol,language,Eurasia,51.8439,18.6255
@@ -312,6 +332,7 @@ sout1528,Serbian-Croatian-Bosnian,sout1528,hbs,language,Eurasia,44.15,18.81
 sout2750,Southern Yukaghir,sout2750,yux,language,Eurasia,64.218,154.375
 sout2807,Southern Sotho,sout2807,sot,language,Africa,-28.78,27.89
 sout2830,Southern Nilotic,sout2830,,family,Africa,-1.8250255000000002,35.38231291666666
+sout2832,Southwestern Dinka,sout2832,dik,language,Africa,8.81115,28.0613
 sout2940,South Muyu,sout2940,kts,language,Papunesia,-6.01385,140.815
 sout2976,Southeastern Tepehuan,sout2976,stp,language,North America,23.1584,-103.983
 stan1288,Spanish,stan1288,spa,language,Eurasia,40.4414,-1.11788
@@ -334,10 +355,12 @@ tani1257,Tanimuca-Retuarã,tani1257,tnc,language,South America,-0.59023,-70.3853
 tari1256,Tariana,tari1256,tae,language,South America,0.440205,-68.9042
 tari1263,Tarifiyt-Beni-Iznasen-Eastern Middle Atlas Berber,tari1263,rif,language,Africa,34.916974,-3.430616
 tauy1241,Tauya,tauy1241,tya,language,Papunesia,-5.74255,145.366
+teda1241,Tedaga,teda1241,tuq,language,Africa,18.0426,14.7717
 teiw1235,Teiwa,teiw1235,twe,language,Papunesia,-8.37662,124.174
 telk1238,Christian Telkepe,telk1238,,dialect,Eurasia,37.0972,43.5027
 telu1262,Telugu,telu1262,tel,language,Eurasia,16.4529,78.7024
 teop1238,Teop,teop1238,tio,language,Papunesia,-5.67474,154.971
+term1237,Termanu,term1237,twu,language,Papunesia,-10.7326,123.169
 tetu1245,Tetum,tetu1245,tet,language,Papunesia,-9.11217,125.528
 tibe1272,Tibetan,tibe1272,bod,language,Eurasia,28.3681,90.1872
 tigr1270,Tigre,tigr1270,tig,language,Africa,17.3494,38.2233
@@ -363,6 +386,7 @@ urdu1245,Urdu,urdu1245,urd,language,Eurasia,25.0,67.0
 usar1243,Usarufa,usar1243,usa,language,Papunesia,-6.38898,145.633
 vani1248,Vanimo,vani1248,vam,language,Papunesia,-2.68501,141.258
 vend1245,Venda,vend1245,ven,language,Africa,-22.188,29.9523
+viet1252,Vietnamese,viet1252,vie,language,Eurasia,20.681188,105.774071
 vlaa1240,Western Flemish,vlaa1240,vls,language,Eurasia,51.0754,3.11345
 waiw1244,Waiwai,waiw1244,waw,language,South America,1.50881,-59.1417
 wand1278,Wandala,wand1278,mfi,language,Africa,11.3169,13.8996
