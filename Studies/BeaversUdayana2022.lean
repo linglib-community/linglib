@@ -18,7 +18,7 @@ each voice form entails and from the weak implicit argument of *di-*.
 
 ## Main definitions
 
-* `LightVerb.Converges`: the Case and EPP conditions on a clause (§3.2).
+* `Converges`: the Case and EPP conditions on a clause whose light verb is a Voice head (§3.2).
 * `ber`, `incorporate`, `Reading.resolve`, `MiddleType.denote`: the semantics of the middles.
 * `Form`, `Form.EntailsExternalCauser`, `Form.EntailsAgentSubject`, `Form.Passes`: the voice
   forms, what they entail, and the diagnostics they pass.
@@ -26,15 +26,16 @@ each voice form entails and from the weak implicit argument of *di-*.
 
 ## Main results
 
-* `LightVerb.ber_converges_iff`: *ber-* projects an external argument exactly when the object
-  incorporates.
+* `converges_ber_iff`: *ber-* projects its agent exactly when the object incorporates.
 * `Form.entailsExternalCauser_iff`, `Form.entailsAgentSubject_iff`: the forms with an external
   causer and the forms whose subject is the agent.
 * `passes_sendirinya_and_not_rationale_iff`: the anticausative alone passes *dengan sendiri=nya*
   and fails the rationale clause.
-* `judgments`: a sentence is acceptable exactly when its word passes its diagnostic.
+* `judgments`: a sentence is acceptable exactly when a form its word denotes passes its
+  diagnostic.
 * `denote_anticausative_iff_resolve`: *ter-* is Beavers and Zubair's existential resolution.
-* `compat_berParams_iff`: *ber-* is compatible exactly with the thematic Voice heads.
+* `compat_berParams_iff`, `berNonActive_params`: *ber-* is compatible exactly with the thematic
+  Voice heads, and its non-active head, unlike the passive, has no implicit agent.
 
 ## Implementation notes
 
@@ -54,45 +55,10 @@ namespace BeaversUdayana2022
 
 open Minimalist.Voice (Params Head agentive passive)
 
-/-! ### Argument realization (§3.2) -/
+/-! ### Argument realization (§3.2)
 
-/-- What a light verb puts in its specifier (35). -/
-inductive Specifier where
-  /-- A DP, as *meN-* does. -/
-  | dp
-  /-- A DP or nothing, as *ber-* does. -/
-  | optional
-  /-- The weak implicit argument `e[-D]` of *di-*, which needs no Case. -/
-  | weakImplicit
-  deriving DecidableEq, Repr
-
-/-- Whether a specifier holds a DP. -/
-def Specifier.Allows : Specifier → Bool → Prop
-  | .dp, d => d = true
-  | .optional, _ => True
-  | .weakImplicit, d => d = false
-
-instance : ∀ s d, Decidable (Specifier.Allows s d)
-  | .dp, _ | .optional, _ | .weakImplicit, _ => by unfold Specifier.Allows; infer_instance
-
-/-- A voice prefix as a light verb, with its specifier and whether it checks accusative (35). -/
-structure LightVerb where
-  spec : Specifier
-  checksAcc : Bool
-  deriving DecidableEq, Repr
-
-namespace LightVerb
-
-/-- The light verb of *meN-*. -/
-def meN : LightVerb := ⟨.dp, true⟩
-
-/-- The light verb of *di-*. -/
-def di : LightVerb := ⟨.weakImplicit, false⟩
-
-/-- The light verb of *ber-*, and of its allomorph *ter-*. -/
-def ber : LightVerb := ⟨.optional, false⟩
-
-end LightVerb
+The voice prefixes are light verbs that license the arguments of the verb. Each is the clause's
+only light verb, so a head checks accusative exactly when it `ChecksCase`. -/
 
 /-- How the object of the base verb is realized, as a DP or as an incorporated NP (33). -/
 inductive ObjectRealization where
@@ -100,40 +66,40 @@ inductive ObjectRealization where
   | incorporated
   deriving DecidableEq, Repr, Fintype
 
-/-- A DP object that the light verb checks no accusative on needs nominative. -/
-def ObjectRealization.NeedsNominative (v : LightVerb) (o : ObjectRealization) : Prop :=
-  o = .dp ∧ v.checksAcc = false
+/-- *meN-*, which projects its agent and checks accusative (35a). -/
+def meN : Head := { agentive with checksCase := true }
 
-instance (v : LightVerb) : DecidablePred (ObjectRealization.NeedsNominative v) :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+/-- *ber-* with its agent projected (38a): thematic active, with no accusative. -/
+def berActive : Head := agentive
 
-/-- A clause converges when the specifier allows `d`, whether it holds a DP, and exactly one of
-that DP and the object needs nominative: every DP needs Case, and T checks nominative on the one
-DP that raises to satisfy the EPP. That DP is the subject. -/
-def LightVerb.Converges (v : LightVerb) (o : ObjectRealization) (d : Bool) : Prop :=
-  v.spec.Allows d ∧ Xor (d = true) (o.NeedsNominative v)
+/-- *ber-* without it (38b): thematic with no specifier, its agent saturated by the free
+variable of the semantics rather than implicit. -/
+def berNonActive : Head := { thematic := some .agent, hasD := false }
 
-instance (v : LightVerb) (o : ObjectRealization) (d : Bool) : Decidable (v.Converges o d) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+/-- The heads that *ber-* spells out. -/
+def berHeads : Finset Head := {berActive, berNonActive}
 
-namespace LightVerb
+/-- A clause converges when exactly one DP needs nominative: every DP needs Case, and T checks
+nominative on the one that raises to satisfy the EPP. The external argument needs it if the head
+projects it, and a DP object if the head checks no accusative. -/
+def Converges (v : Head) (o : ObjectRealization) : Prop := Xor v.HasD (o = .dp ∧ ¬ v.ChecksCase)
 
-/-- *meN-* projects its external argument, and its object stays in situ (37a). -/
-theorem meN_converges_iff (o : ObjectRealization) (d : Bool) : meN.Converges o d ↔ d = true := by
-  cases o <;> cases d <;> decide
+instance (v : Head) (o : ObjectRealization) : Decidable (Converges v o) :=
+  inferInstanceAs (Decidable (Xor _ _))
 
-/-- *di-* needs a DP object, which raises to subject (37b). -/
-theorem di_converges_iff (o : ObjectRealization) (d : Bool) :
-    di.Converges o d ↔ o = .dp ∧ d = false := by
-  cases o <;> cases d <;> decide
+/-- *meN-* projects its agent whatever its object, which stays in situ (37a). -/
+theorem converges_meN (o : ObjectRealization) : Converges meN o := by decide +revert
 
-/-- *ber-* projects an external argument exactly when the object incorporates: an incorporated
-noun leaves the EPP to a subject DP, and a DP object raises for Case (38). -/
-theorem ber_converges_iff (o : ObjectRealization) (d : Bool) :
-    ber.Converges o d ↔ (d = true ↔ o = .incorporated) := by
-  cases o <;> cases d <;> decide
+/-- *di-*, with its implicit agent, needs a DP object, which raises to subject (37b). -/
+theorem converges_passive_iff (o : ObjectRealization) : Converges passive o ↔ o = .dp := by
+  decide +revert
 
-end LightVerb
+/-- *ber-* projects its agent exactly when the object incorporates: an incorporated noun leaves
+the EPP to a subject DP, and a DP object raises for Case (38). -/
+theorem converges_ber_iff {v : Head} (hv : v ∈ berHeads) (o : ObjectRealization) :
+    Converges v o ↔ (v.HasD ↔ o = .incorporated) := by
+  simp only [berHeads, Finset.mem_insert, Finset.mem_singleton] at hv
+  rcases hv with rfl | rfl <;> decide +revert
 
 /-! ### The middles (§3.3–§3.5)
 
@@ -146,14 +112,20 @@ variable {E : Type*}
 /-- *ber-* saturates the first open argument of its VP with the free variable `z` (43). -/
 def ber {α : Sort*} (z : E) (vp : E → α) : α := vp z
 
+@[simp] theorem ber_apply {α : Sort*} (z : E) (vp : E → α) : ber z vp = vp z := rfl
+
 /-- An incorporating verb predicates the noun of its patient and keeps the patient as an
 argument (49). -/
 def incorporate (V : E → E → Prop) (P : E → Prop) : E → E → Prop := fun x y ↦ V x y ∧ P x
 
+@[simp] theorem incorporate_apply (V : E → E → Prop) (P : E → Prop) (x y : E) :
+    incorporate V P x y ↔ V x y ∧ P x :=
+  Iff.rfl
+
 /-- The VP of a middle with subject `s` before *ber-* applies, as a function of its first open
 argument. The verb combines first with the trace of a DP object, leaving the agent open, and an
 incorporated noun leaves the patient open. -/
-def vp (V : E → E → Prop) (P : E → Prop) (s : E) : ObjectRealization → E → Prop
+@[simp] def vp (V : E → E → Prop) (P : E → Prop) (s : E) : ObjectRealization → E → Prop
   | .dp => V s
   | .incorporated => fun x ↦ incorporate V P x s
 
@@ -205,6 +177,17 @@ structure MiddleType where
 variable resolved by the reading. -/
 def MiddleType.denote (m : MiddleType) (V : E → E → Prop) (P : E → Prop) (s : E) : Prop :=
   m.reading.resolve s fun z ↦ ber z (vp V P s m.object)
+
+@[simp] theorem MiddleType.denote_mk (o : ObjectRealization) (r : Reading) (V : E → E → Prop)
+    (P : E → Prop) (s : E) : MiddleType.denote ⟨o, r⟩ V P s ↔ r.resolve s (vp V P s o) :=
+  Iff.rfl
+
+/-- The head of a middle, the one of `berHeads` that converges with its object
+(`converges_ber_iff`). -/
+def MiddleType.head (m : MiddleType) : Head :=
+  match m.object with
+  | .dp => berNonActive
+  | .incorporated => berActive
 
 /-- The dispositional or passive middle, as in *Mobil itu berjual dengan mudah* 'The car sells
 easily'. -/
@@ -304,15 +287,15 @@ inductive Form where
 
 namespace Form
 
-/-- The light verb of a form. -/
-def lightVerb : Form → LightVerb
-  | .meN => .meN
-  | .di => .di
-  | .middle _ => .ber
+/-- The head of a form: *di-* is `passive`, with no specifier and an implicit agent (35c). -/
+def head : Form → Head
+  | .meN => BeaversUdayana2022.meN
+  | .di => passive
+  | .middle m => m.head
 
 /-- The truth conditions of a form with object `o` and subject `s`: *meN-* is the identity
 (39a), and *di-* binds an agent other than the subject (39b). -/
-def denote {E : Type*} (V : E → E → Prop) (P : E → Prop) (o s : E) : Form → Prop
+@[simp] def denote {E : Type*} (V : E → E → Prop) (P : E → Prop) (o s : E) : Form → Prop
   | .meN => V o s
   | .di => ∃ y, y ≠ s ∧ V s y
   | .middle m => m.denote V P s
@@ -332,10 +315,8 @@ theorem entailsExternalCauser_iff (f : Form) :
   refine ⟨fun hf ↦ ?_, ?_⟩
   · -- the model where the subject alone acts
     have := hf Bool (fun _ y ↦ y = true) (fun _ ↦ True) true true
-    rcases f with _ | _ | ⟨_ | _, _ | _ | _⟩ <;> simp_all [denote, MiddleType.denote, vp, ber,
-      incorporate, dispositional]
-  · rintro (rfl | rfl) _ _ _ _ _ h <;> simpa [denote, MiddleType.denote, dispositional, vp, ber]
-      using h
+    rcases f with _ | _ | ⟨_ | _, _ | _ | _⟩ <;> simp_all [dispositional]
+  · rintro (rfl | rfl) _ _ _ _ _ h <;> simpa [dispositional] using h
 
 /-- The subject is the agent in the active and in the middles that keep the agent in place, with
 an incorporated object or the coreferent reading. -/
@@ -345,10 +326,8 @@ theorem entailsAgentSubject_iff (f : Form) :
   refine ⟨fun hf ↦ ?_, ?_⟩
   · -- the model where something other than the subject acts on it
     have := hf Bool (fun x y ↦ x = true ∧ y = false) (fun _ ↦ True) true true
-    rcases f with _ | _ | ⟨_ | _, _ | _ | _⟩ <;> simp_all [denote, MiddleType.denote, vp, ber,
-      incorporate]
-  · rintro (rfl | ⟨⟨_ | _, _ | _ | _⟩, rfl, hm⟩) _ _ _ _ _ h <;>
-      simp_all [denote, MiddleType.denote, vp, ber, incorporate] <;> grind
+    rcases f with _ | _ | ⟨_ | _, _ | _ | _⟩ <;> simp_all
+  · rintro (rfl | ⟨⟨_ | _, _ | _ | _⟩, rfl, hm⟩) _ _ _ _ _ h <;> simp_all <;> grind
 
 instance : DecidablePred EntailsExternalCauser :=
   fun f ↦ decidable_of_iff _ (entailsExternalCauser_iff f).symm
@@ -360,10 +339,10 @@ end Form
 
 /-- The diagnostics of §2 and §5. -/
 inductive Diagnostic where
-  /-- An *oleh* 'by' phrase, which realizes the weak implicit argument of the light verb. -/
+  /-- An *oleh* 'by' phrase, which realizes the weak implicit argument of the head. -/
   | oleh
   /-- A rationale clause, whose null subject an agentive subject or the weak implicit argument
-  of the light verb controls; *ber-*'s free variable, in the semantics alone, controls nothing. -/
+  of the head controls; *ber-*'s free variable, in the semantics alone, controls nothing. -/
   | rationale
   /-- *dengan sendiri=nya* 'by itself', which says that nothing acted on the subject before it
   did. -/
@@ -375,8 +354,8 @@ inductive Diagnostic where
 /-- A form passes a diagnostic. *dengan sendiri=nya* and the denial of a causer both contradict
 an entailed external causer. -/
 def Form.Passes (f : Form) : Diagnostic → Prop
-  | .oleh => f.lightVerb.spec = .weakImplicit
-  | .rationale => f.EntailsAgentSubject ∨ f.lightVerb.spec = .weakImplicit
+  | .oleh => f.head.ExternalImplicit
+  | .rationale => f.EntailsAgentSubject ∨ f.head.ExternalImplicit
   | .sendirinya | .causerDenial => ¬ f.EntailsExternalCauser
 
 instance : ∀ f d, Decidable (Form.Passes f d)
@@ -435,6 +414,9 @@ def middles : RootClass → Allomorph → Finset MiddleType
   | .causerUnspecified, .ter => {reflexive, anticausative}
   | .naturallyReflexive, .ter | .obviative, .ter => ∅
 
+/-- The forms that a plain middle of a root of the class denotes in an allomorph. -/
+def forms (c : RootClass) (a : Allomorph) : Finset Form := (c.middles a).image .middle
+
 /-- Every form of the paper's roots in the fragment has a reading. -/
 theorem middles_nonempty (c : RootClass) (a : Allomorph) :
     ∀ v ∈ c.roots, (a.form? v).isSome → (c.middles a).Nonempty := by
@@ -442,54 +424,32 @@ theorem middles_nonempty (c : RootClass) (a : Allomorph) :
 
 end RootClass
 
-/-- An obviative root gets its reflexive reading from incorporated *diri* 'self', as in
-*berjual diri* (26b), the marked form that blocks the reading for the plain *ber-* form. -/
-theorem jual_incorporatesDiri : Indonesian.jual.IncorporatesDiri := by decide
-
 /-! ### The judgments -/
 
-/-- A word: the active or the passive of a root, or a plain middle of a root of a class in one
-of the allomorphs. -/
-inductive Word where
-  | meN
-  | di
-  | middle (a : Allomorph) (c : RootClass)
-  deriving DecidableEq, Repr
-
-/-- The forms a word denotes, a plain middle each middle its allomorph spells. -/
-def Word.forms : Word → Finset Form
-  | .meN => {.meN}
-  | .di => {.di}
-  | .middle a c => (c.middles a).image .middle
-
-/-- A word passes a diagnostic when one of the forms it denotes does. -/
-def Word.Passes (w : Word) (d : Diagnostic) : Prop := ∃ f ∈ w.forms, f.Passes d
-
-instance (w : Word) (d : Diagnostic) : Decidable (w.Passes d) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- A judgment of the paper on a word in a diagnostic. -/
+/-- A judgment of the paper on a word in a diagnostic, with the forms the word denotes. -/
 structure Test where
   datum : Datum
-  word : Word
+  forms : Finset Form
   diagnostic : Diagnostic
 
-open Examples in
+open Examples RootClass in
 /-- The paper's judgments on the diagnostics: *dijual* with *oleh* (11); *berjual* with the
 denial of a causer, *dengan sendiri=nya* and a rationale clause (9a), (10c), (13); *berdandan*
 with *dengan sendiri=nya* (17b); and *terpecah* and *berpecah* with the denial of a causer (67a),
 (74). -/
 def tests : List Test :=
-  [⟨bu2022_11, .di, .oleh⟩,
-   ⟨bu2022_9a, .middle .ber .obviative, .causerDenial⟩,
-   ⟨bu2022_10c, .middle .ber .obviative, .sendirinya⟩,
-   ⟨bu2022_13, .middle .ber .obviative, .rationale⟩,
-   ⟨bu2022_17b, .middle .ber .naturallyReflexive, .sendirinya⟩,
-   ⟨bu2022_67a, .middle .ter .causerUnspecified, .causerDenial⟩,
-   ⟨bu2022_74, .middle .ber .causerUnspecified, .causerDenial⟩]
+  [⟨bu2022_11, {.di}, .oleh⟩,
+   ⟨bu2022_9a, obviative.forms .ber, .causerDenial⟩,
+   ⟨bu2022_10c, obviative.forms .ber, .sendirinya⟩,
+   ⟨bu2022_13, obviative.forms .ber, .rationale⟩,
+   ⟨bu2022_17b, naturallyReflexive.forms .ber, .sendirinya⟩,
+   ⟨bu2022_67a, causerUnspecified.forms .ter, .causerDenial⟩,
+   ⟨bu2022_74, causerUnspecified.forms .ber, .causerDenial⟩]
 
-/-- A sentence is acceptable exactly when its word passes its diagnostic. -/
-theorem judgments : ∀ t ∈ tests, t.datum.judgment = .acceptable ↔ t.word.Passes t.diagnostic := by
+/-- A sentence is acceptable exactly when one of the forms its word denotes passes its
+diagnostic. -/
+theorem judgments :
+    ∀ t ∈ tests, t.datum.judgment = .acceptable ↔ ∃ f ∈ t.forms, f.Passes t.diagnostic := by
   decide
 
 /-! ### A model
@@ -499,15 +459,13 @@ Tono sold the car, and Ali dressed himself. -/
 /-- The individuals of the model. -/
 inductive Entity where
   | tono | ali | car
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 open Entity in
 /-- The selling and dressing events of the model, as one relation of patient and agent. -/
 def acted : Entity → Entity → Prop
   | car, tono | ali, ali => True
   | _, _ => False
-
-instance : Fintype Entity := ⟨{.tono, .ali, .car}, fun x ↦ by cases x <;> decide⟩
 
 instance : DecidableRel acted := fun x y ↦ by
   cases x <;> cases y <;> unfold acted <;> infer_instance
@@ -534,23 +492,12 @@ theorem denote_relationalNoun {E : Type*} (π : E → E → Prop) (N : E → Pro
 
 /-! ### The voice typology of Alexiadou, Anagnostopoulou and Schäfer (§7.3)
 
-*meN-* corresponds to their thematic active Voice and *di-* to their English passive, which sits
-above it. *ber-* entails an agent in every middle but projects it only with an incorporated
-object, so its middles realize two of their cells. -/
+Beavers and Udayana align *meN-* with thematic active Voice and *di-* with the English passive.
+The heads of *ber-* realize thematic active and thematic non-active Voice. -/
 
-/-- The cell of a middle: thematic, as *ber-* saturates the agent rather than removing it, and
-with a specifier exactly when the object incorporates (`LightVerb.ber_converges_iff`). -/
-def MiddleType.params (m : MiddleType) : Params := (decide (m.object = .incorporated), true)
-
-/-- A middle realizes thematic active Voice with an incorporated object and thematic non-active
-Voice otherwise. -/
-theorem MiddleType.params_eq (m : MiddleType) :
-    m.params = if m.object = .incorporated then agentive.params else passive.params := by
-  obtain ⟨_ | _, _⟩ := m <;> rfl
-
-/-- *ber-* as one Voice head underspecified for what its middles differ on: the meet of their
+/-- *ber-* as one Voice head underspecified for what its heads differ on: the meet of their
 cells. -/
-def berParams : Params := Finset.univ.inf' ⟨dispositional, Finset.mem_univ _⟩ MiddleType.params
+def berParams : Params := berHeads.inf' ⟨berActive, by simp [berHeads]⟩ Head.params
 
 /-- *ber-* is thematic and leaves open whether it projects a specifier. -/
 theorem berParams_eq : berParams = (⊥, (true : Flat Bool)) := by decide
@@ -558,5 +505,13 @@ theorem berParams_eq : berParams = (⊥, (true : Flat Bool)) := by decide
 /-- *ber-* is compatible with the thematic Voice heads alone. -/
 theorem compat_berParams_iff (v : Head) : Compat berParams v.params ↔ v.IsThematic := by
   simp [berParams_eq, Head.params, Head.IsThematic, compat_prod_iff, bot_compat]
+
+/-- The non-active head of *ber-* has the cell of the passive, but its agent is not implicit, so
+that unlike the passive it departs from the grid: the participant that a dispositional middle
+entails is not of the sort that the passive's is (§2.1). -/
+theorem berNonActive_params :
+    berNonActive.params = passive.params ∧ ¬ berNonActive.ExternalImplicit ∧
+      ¬ berNonActive.DCoherent ∧ passive.ExternalImplicit ∧ passive.DCoherent := by
+  decide
 
 end BeaversUdayana2022
