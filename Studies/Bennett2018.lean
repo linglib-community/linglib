@@ -2,8 +2,7 @@ module
 
 public import Linglib.Phonology.Prosody.Word
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
-public import Linglib.Core.Data.RoseTree.Span
+public import Linglib.Phonology.Prosody.Match
 
 /-!
 # Bennett 2018: recursive prosodic words in Kaqchikel
@@ -25,9 +24,9 @@ above the constraint that every prosodic word correspond to a morphological word
 * `flat`, `nested`: the two parses of a prefix sequence over a stem.
 * `omegaInitial`, `OmegaSeparates`: the structural side of the two diagnostics — the
   ω-initial leaves, and whether an ω boundary separates two leaves.
-* `matchWord`, `matchOmega`, `subCat`: `Match (X⁰, ω)` and `Match (ω, X⁰)`, Generalized
-  Alignment of the morphological word's span and the ω spans, and the subcategorization frame,
-  aligned with each prefix's index in the frontier.
+* `word`, `subCat`: the span of the morphological word, which `Match (X⁰, ω)` and
+  `Match (ω, X⁰)` read as `Prosody.syntaxProsodyMatch` and `Prosody.prosodySyntaxMatch`, and the
+  subcategorization frame, aligned with each prefix's index in the frontier.
 
 ## Main results
 
@@ -119,14 +118,9 @@ example : OmegaSeparates pref stem (nested [pref] stem) := by decide
 
 /-! ### Constraints and the ranking -/
 
-/-- `Match (X⁰, ω)` (13): the prefixes and the stem form one morphological word, spanning the
-whole frontier, which matches no ω unless one ω spans it. Undominated in Kaqchikel. -/
-def matchWord : Constraint Tree :=
-  (Constraint.align Eq).comap fun t ↦ ([(0, t.numLeaves)], t.spans (·.value.level = .om))
-
-/-- `Match (ω, X⁰)`: one violation for each ω not spanning the morphological word. -/
-def matchOmega : Constraint Tree :=
-  (Constraint.align Eq).comap fun t ↦ (t.spans (·.value.level = .om), [(0, t.numLeaves)])
+/-- The prefix and the stem form one morphological word over the two syllables, whose span
+Match (X⁰, ω) (13), undominated in Kaqchikel, and Match (ω, X⁰) read. -/
+abbrev word : List (ℕ × ℕ) := [(0, 2)]
 
 /-- The subcategorization frame `[ω p [ω ]]` (30): an ω whose daughters are a syllable and an ω. -/
 def IsFrame (t : Tree) : Prop :=
@@ -143,7 +137,8 @@ def subCat (prefs : List ℕ) : Constraint Tree :=
 `Match (X⁰, ω)` undominated, the recursive parse is the unique optimum. -/
 theorem high_prefix_recursive :
     (Tableau.ofList {nested [pref] stem, flat [pref] stem, phrasal}
-      [matchWord, subCat [0], matchOmega]).optimal = {nested [pref] stem} := by
+      [syntaxProsodyMatch word .om, subCat [0], prosodySyntaxMatch .om word]).optimal =
+        {nested [pref] stem} := by
   decide
 
 -- Stacked high prefixes each realise their frame only in the recursive parse.
@@ -154,7 +149,8 @@ example : subCat [0, 1] (flat [pref, pref] stem) = 2 := by decide
 out the extra ω. -/
 theorem low_prefix_flat :
     (Tableau.ofList {nested [pref] stem, flat [pref] stem, phrasal}
-      [matchWord, matchOmega]).optimal = {flat [pref] stem} := by
+      [syntaxProsodyMatch word .om, prosodySyntaxMatch .om word]).optimal =
+        {flat [pref] stem} := by
   decide
 
 -- The recursive optimum is a well-formed prosodic word: ω over ω is admitted by

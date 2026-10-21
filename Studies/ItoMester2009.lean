@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Word
+public import Linglib.Phonology.Prosody.Match
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -21,7 +22,8 @@ evidence of Section 3 supports for English and German, selects the recursive wor
 
 * Candidates are `Prosody.Tree`s and constraints `Constraint Tree` values: No-Recursion is the
   substrate's `Prosody.noRec` and Parse-into-ω its `Prosody.parseInto`; FtBin at the word level
-  and Lex-to-ω are defined here, the latter for the fixed lexical word `lexω`.
+  is defined here, and Lex-to-ω(L) is the substrate's Align-L of the lexical word's span to the
+  ω spans.
 * The tableau engine is `OptimalityTheory.Tableau.ofList`; the winning recursive structure
   is a legal prosodic word of the substrate, No-Recursion being violable.
 
@@ -29,7 +31,7 @@ evidence of Section 3 supports for English and German, selects the recursive wor
 
 * [ito-mester-2009]
 * [selkirk-1996]
-* [mccarthy-prince-1993]
+* [mccarthy-prince-1993b]
 -/
 
 @[expose] public section
@@ -42,7 +44,7 @@ open Prosody OptimalityTheory
 
 /-- FtBin at the word level assigns a violation to each ω-node whose mora count is below a foot,
 such as a subminimal function word parsed as its own ω. -/
-def subminimalOmega : Constraint Tree := λ t => go t where
+def subminimalOmega : Constraint Tree := fun t ↦ go t where
   go : Tree → Nat
     | .node a cs =>
         (if a.level = .om ∧ moraCount (.node a cs) < 2 then 1 else 0)
@@ -50,14 +52,6 @@ def subminimalOmega : Constraint Tree := λ t => go t where
   goList : List Tree → Nat
     | []      => 0
     | t :: ts => go t + goList ts
-
-/-- Whether the lexical word `lex` is realised as its own ω-node somewhere in the tree. -/
-def lexHasOmega (lex : Tree) : Tree → Bool := λ t => go t where
-  go : Tree → Bool
-    | .node a cs => (decide (a.level = .om) && decide ((.node a cs : Tree) = lex)) || goList cs
-  goList : List Tree → Bool
-    | []      => false
-    | t :: ts => go t || goList ts
 
 /-! ### The four sites of (25) -/
 
@@ -79,9 +73,12 @@ def omegaAdjoined : Tree := .om [fncσ, lexω]
 /-- `[φ fnc [ω lex]]` is the φ-attached site, (25d) and (20d). -/
 def phiAttached : Tree := .ph [fncσ, lexω]
 
-/-- Lex-to-ω, (12), after the alignment constraint of [mccarthy-prince-1993], assigns a
-violation when the lexical word is not a ω of its own. -/
-def lexToOmega : Constraint Tree := λ t => if lexHasOmega lexω t then 0 else 1
+/-- The lexical word is the second syllable of each site. -/
+abbrev lex : List (ℕ × ℕ) := [(1, 2)]
+
+/-- Lex-to-ω(L), (12a), the Align(Lex, Left, ω, Left) of [mccarthy-prince-1993b]: a violation when
+no prosodic word begins where the lexical word does, as in the amalgamated site (20b). -/
+def lexToOmega : Constraint Tree := Constraint.alignLeft.comap fun t ↦ (lex, levelSpans .om t)
 
 /-- The candidate set. -/
 def candidates : Finset Tree := {fullOmega, amalgamated, omegaAdjoined, phiAttached}
