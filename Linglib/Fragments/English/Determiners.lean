@@ -127,7 +127,7 @@ not a generalized quantifier. -/
 /-- *The* is the definite article, syncretic over both strengths of [schwarz-2009]. -/
 def the : Article :=
   { form := "the", definiteness := .definite, exponent := .dedicatedMorpheme
-  , uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
+  , uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
 /-- *A* is the singular indefinite article. -/
 def a : Article :=

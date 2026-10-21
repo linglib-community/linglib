@@ -150,7 +150,7 @@ def contracted : Article :=
 back to an antecedent. -/
 def nonContracted : Article :=
   { form := definite (.sg .masc) .dat, definiteness := .definite, exponent := .dedicatedMorpheme,
-    uses := {.anaphoric, .donkey} }
+    uses := {.anaphoric} }
 
 /-- The inventory lists the two definite articles, the contracted and the non-contracted form; the
 indefinite article; the demonstrative *dieser*, which no longer contrasts with *jener* and is

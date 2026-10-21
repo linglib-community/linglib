@@ -39,7 +39,7 @@ plurals. -/
 /-- The definite article with the given form. -/
 def definite (form : String) : Article :=
   { form, definiteness := .definite, exponent := .dedicatedMorpheme
-    uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
+    uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
 /-- The indefinite article with the given form. -/
 def indefinite (form : String) : Article :=
@@ -67,7 +67,7 @@ def allArticles : List Article :=
 
 /-! ## Quantificational determiners -/
 
-/-- The quantificational determiners: *ogni* 'every', *qualche* 'some', *nessuno* 'no', *tutti*
+/-- The quantificational determiners are *ogni* 'every', *qualche* 'some', *nessuno* 'no', *tutti*
 'all', *alcuni* 'some', *molti* 'many' and *pochi* 'few'. -/
 inductive QuantityWord where
   | ogni | qualche | nessuno | tutti | alcuni | molti | pochi
@@ -95,8 +95,7 @@ def feminine : QuantityWord → String
   | .molti => "molte"
   | .pochi => "poche"
 
-/-- The grammatical number a word selects: the singular for *ogni*, *qualche* and *nessuno*,
-the plural for the rest. -/
+/-- *Ogni*, *qualche* and *nessuno* select the singular, and the rest the plural. -/
 def numberRestriction : QuantityWord → Option Number
   | .ogni | .qualche | .nessuno => some .singular
   | .tutti | .alcuni | .molti | .pochi => some .plural

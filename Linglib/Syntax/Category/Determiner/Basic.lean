@@ -15,9 +15,9 @@ language. The base `Determiner` carries only a surface form, and the four specia
 it. An inventory is
 a list of `Determiner.Entry` occurrences, and the typologies of definiteness marking are
 derived from it rather than declared. An entry marks an article strength when one of the
-definite uses it obligatorily expones calls for that strength, and a language's [moroney-2021]
-cell and [schwarz-2009] article system are theorems about its inventory, discharged by
-`decide`.
+definite uses it obligatorily expones calls for that strength, and a language's marking type,
+after Jenks and Moroney, and its article system, after Patel-Grosz and Grosz, are theorems about
+its inventory, discharged by `decide`.
 
 ## Main declarations
 
@@ -44,14 +44,15 @@ rather than an `abbrev` so that its operations resolve by dot notation; its memb
 list's, and facts about one-entry inventories go through `Inventory.marks_singleton`.
 `Realizes` is
 inventory data and neither licensing nor felicity. A kind can be expressed without a determiner
-realizing it, as Shan anaphoric definites are by bare nouns ([moroney-2021]), and which form a
-context selects is pragmatics ([jenks-2018]).
+realizing it, as Shan anaphoric definites are by bare nouns (Moroney), and which form a context
+selects is pragmatics (Jenks).
 
 ## References
 
 * [schwarz-2009]
-* [moroney-2021]
 * [jenks-2018]
+* [moroney-2021]
+* [patel-grosz-grosz-2017]
 -/
 
 @[expose] public section
@@ -210,18 +211,27 @@ instance : Decidable ds.IsSyncretic := by unfold IsSyncretic; infer_instance
 
 /-! ### The marking typology
 
-A language's [moroney-2021] cell is a theorem about its inventory, and each cell is
-characterized by its `markingStrategy_eq_*_iff` lemma. If uniqueness and familiarity are both
-marked by one form, or uniqueness alone is marked, the cell is `.generallyMarked`; if they are
-marked by distinct forms, it is `.bipartite`; if familiarity alone is marked, for instance by a
-demonstrative, it is `.markedAnaphoric`; and if neither is marked, it is `.unmarked`. -/
+A language's [jenks-2018] type, or [moroney-2021]'s unmarked type, is a theorem about its
+inventory, and each type is characterized by its `markingStrategy_eq_*_iff` lemma. An inventory
+with a form that marks both strengths is generally marked; otherwise the type is fixed by which
+strengths it marks, both by distinct forms, familiarity alone, uniqueness alone, or neither. -/
 
-/-- The [moroney-2021] definiteness-marking cell derived from an inventory. -/
+section
+
+variable {ds}
+
+/-- A syncretic inventory marks both strengths. -/
+theorem IsSyncretic.marks (h : ds.IsSyncretic) (p : Description.Strength) : ds.Marks p :=
+  let ⟨e, he, hu, hf⟩ := h
+  ⟨e, he, by cases p; exacts [hu, hf]⟩
+
+end
+
+/-- The definiteness-marking type derived from an inventory. -/
 def markingStrategy : MarkingStrategy :=
-  if ds.Marks .uniqueness then
-    if ds.Marks .familiarity then
-      if ds.IsSyncretic then .generallyMarked else .bipartite
-    else .generallyMarked
+  if ds.IsSyncretic then .generallyMarked
+  else if ds.Marks .uniqueness then
+    if ds.Marks .familiarity then .bipartite else .markedUnique
   else if ds.Marks .familiarity then .markedAnaphoric else .unmarked
 
 section
@@ -229,8 +239,7 @@ section
 variable {ds}
 
 theorem markingStrategy_eq_generallyMarked_iff :
-    ds.markingStrategy = .generallyMarked ↔
-      ds.Marks .uniqueness ∧ (ds.IsSyncretic ∨ ¬ds.Marks .familiarity) := by
+    ds.markingStrategy = .generallyMarked ↔ ds.IsSyncretic := by
   unfold markingStrategy; split_ifs <;> simp_all
 
 theorem markingStrategy_eq_bipartite_iff :
@@ -238,18 +247,22 @@ theorem markingStrategy_eq_bipartite_iff :
       ds.Marks .uniqueness ∧ ds.Marks .familiarity ∧ ¬ds.IsSyncretic := by
   unfold markingStrategy; split_ifs <;> simp_all
 
+theorem markingStrategy_eq_markedUnique_iff :
+    ds.markingStrategy = .markedUnique ↔ ds.Marks .uniqueness ∧ ¬ds.Marks .familiarity := by
+  unfold markingStrategy; split_ifs <;> simp_all [IsSyncretic.marks]
+
 theorem markingStrategy_eq_markedAnaphoric_iff :
     ds.markingStrategy = .markedAnaphoric ↔ ¬ds.Marks .uniqueness ∧ ds.Marks .familiarity := by
-  unfold markingStrategy; split_ifs <;> simp_all
+  unfold markingStrategy; split_ifs <;> simp_all [IsSyncretic.marks]
 
 theorem markingStrategy_eq_unmarked_iff :
     ds.markingStrategy = .unmarked ↔ ¬ds.Marks .uniqueness ∧ ¬ds.Marks .familiarity := by
-  unfold markingStrategy; split_ifs <;> simp_all
+  unfold markingStrategy; split_ifs <;> simp_all [IsSyncretic.marks]
 
 end
 
-/-- The [schwarz-2009] article system of an inventory is the coarsening
-`MarkingStrategy.articleType` of its marking cell. -/
+/-- The article system of an inventory ([patel-grosz-grosz-2017]) is the coarsening
+`MarkingStrategy.articleType` of its marking type. -/
 def articleType : ArticleType := ds.markingStrategy.articleType
 
 /-! ### Realization -/
@@ -257,7 +270,7 @@ def articleType : ArticleType := ds.markingStrategy.articleType
 /-- An inventory realizes a kind of nominal description when it carries a form for it. A bare
 nominal needs no determiner, a unique or anaphoric definite needs an entry marking its
 strength, and an indefinite, demonstrative or possessive needs an entry of that kind. -/
-def Realizes : Description.Kind → Prop
+def Realizes : NominalKind → Prop
   | .bare => True
   | .indefinite => ∃ e ∈ ds, e.kind = .article .indefinite
   | .unique => ds.Marks .uniqueness

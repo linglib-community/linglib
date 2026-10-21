@@ -178,7 +178,7 @@ def zhe : DemonstrativeDeterminer := { form := "zhè", deixis := Person.first.pa
 /-- *nà* 那 'that', the distal demonstrative and the obligatory exponent of anaphoric definites,
 donkey anaphora included ([jenks-2018]). -/
 def na : DemonstrativeDeterminer :=
-  { form := "nà", deixis := Person.first.participantSetsᶜ, uses := {.anaphoric, .donkey} }
+  { form := "nà", deixis := Person.first.participantSetsᶜ, uses := {.anaphoric} }
 
 /-- *de* 的, the marker of possession and of nominal modification. -/
 def de : PossessiveDeterminer := { form := "de" }

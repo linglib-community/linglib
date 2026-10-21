@@ -14,7 +14,7 @@ public import Linglib.Fragments.Hausa.Determiners
 # Schwarz (2013): Two Kinds of Definites Cross-linguistically
 
 This file formalizes the survey's typology of definite articles. Beyond the German and Fering
-baseline of [schwarz-2009], where a weak article marks situational uniqueness and a strong one
+baseline of Schwarz's dissertation, where a weak article marks situational uniqueness and a strong one
 anaphoricity, the survey finds languages whose only overt definite article is anaphoric, with weak
 definites as bare nominals (Akan *nó*, Mauritian Creole *la*), languages with two overt articles
 (Lakhota *kiŋ* and *k'uŋ*, Hausa *-n* and *ɗîn*), and Haitian Creole *la*, a single article
@@ -28,8 +28,8 @@ under which the derived cell flips from bipartite to generally marked (`anaphori
 ## Implementation notes
 
 The survey's remark that both German and Fering articles and the creole *la* allow covarying uses
-(§5.2) is not formalized: the fragments' `.donkey` uses record only the strong articles' covarying
-uses, and the survey reports no data on the remaining languages.
+(§5.2) is not a property of the inventories: both articles covary, by the mechanisms of the
+substrate's two descriptions.
 
 ## References
 

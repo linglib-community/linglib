@@ -410,7 +410,7 @@ def article? (d : Datum) : Option Description.Strength :=
 
 /-- The use of a row in Hawkins's classification. -/
 def use? (d : Datum) : Option Description.Use :=
-  d.parse? "use" [("anaphoric", .anaphoric), ("donkey", .donkey),
+  d.parse? "use" [("anaphoric", .anaphoric),
     ("immediateSituation", .immediateSituation), ("largerSituation", .largerSituation),
     ("partWholeBridging", .bridging .partWhole), ("producerBridging", .bridging .relational)]
 

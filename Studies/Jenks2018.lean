@@ -6,6 +6,8 @@ public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.Mandarin.Determiners
 public import Linglib.Fragments.Cantonese.Determiners
 public import Linglib.Fragments.German.Determiners
+public import Linglib.Fragments.Lakhota.Determiners
+public import Linglib.Fragments.Akan.Determiners
 
 /-!
 # Jenks (2018): Articulated Definiteness without Articles
@@ -25,12 +27,14 @@ continuing topic (Section 5.3).
 * `rows_agree`: the data (10) to (20), (49) and (51) to (56) agree with the prediction.
 * `demonstrative_rigid`, `bare_covaries`: a demonstrative cannot covary through the situation
   pronoun and a bare noun can (Section 4.3).
-* `table2`: Table 2's cells as the fragments derive them.
+* `table2`, `markedUnique_not_mem_attested`: Table 2's cells as the fragments derive them, and its
+  gap, the marked-unique type.
 
 ## Implementation notes
 
-* The environments are the paper's six, the `Description.Use`s, mapped to Schwarz's presupposition
-  types by `Description.Use.strength`. The marked form is the language's obligatory exponent of the
+* The environments are the paper's six, read as `Description.Use`s, the donkey environment being an
+  anaphoric use under quantification, and mapped to Schwarz's presupposition types by
+  `Description.Use.strength`. The marked form is the language's obligatory exponent of the
   environment's presupposition, the demonstrative in Mandarin and [Clf-N] in Cantonese, so
   Cantonese's restricted demonstrative (57) is not modelled.
 * Jenks types the index of ι^x as a property (Section 4.4); `Description.anaphoric` carries an
@@ -123,7 +127,7 @@ def envOf : String → Option Description.Use
   | "partWholeBridging" => some (.bridging .partWhole)
   | "producerBridging" => some (.bridging .relational)
   | "anaphoric" => some .anaphoric
-  | "donkey" => some .donkey
+  | "donkey" => some .anaphoric
   | _ => none
 
 def topicOf : String → Option Topic
@@ -186,9 +190,20 @@ theorem bare_covaries {W : Type} (g : Assignment W) (s : W) :
 
 /-! ### The typology (Table 2) -/
 
-/-- Table 2 attests the bipartite cell (German, Lakhota), the marked anaphoric one (Mandarin, Akan,
-Wu) and the generally marked one (Cantonese, English), leaving the marked-unique cell empty. -/
-def attested : List MarkingStrategy := [.bipartite, .markedAnaphoric, .generallyMarked]
+/-- Table 2's languages with a fragment are German and Lakhota, Mandarin and Akan, and Cantonese
+and English. -/
+def table2Inventories : List Inventory :=
+  [German.Determiners.inventory, Lakhota.Determiners.inventory, Mandarin.Determiners.inventory,
+    Akan.Determiners.inventory, Cantonese.Determiners.inventory, English.Determiners.inventory]
+
+/-- The marking types that Table 2's languages attest. -/
+def attested : List MarkingStrategy := table2Inventories.map Inventory.markingStrategy
+
+/-- None of Table 2's languages is marked unique, the gap of the typology. -/
+theorem markedUnique_not_mem_attested : MarkingStrategy.markedUnique ∉ attested := by
+  simp [attested, table2Inventories, German.Determiners.marking, Lakhota.Determiners.marking,
+    Mandarin.Determiners.marking, Akan.Determiners.marking, Cantonese.Determiners.marking,
+    English.Determiners.marking]
 
 /-- The fragments derive Table 2's columns, German being bipartite, Mandarin marked anaphoric, and
 Cantonese and English generally marked. -/

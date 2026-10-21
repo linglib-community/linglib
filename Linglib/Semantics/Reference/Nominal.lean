@@ -17,10 +17,6 @@ restricts the resolved one to where the intrinsic presupposition holds (`Nominal
 which is where a pronoun's φ-features project. A character is the total nominal with no
 presupposition (`Character.toNominal`), and it is directly referential exactly when that
 nominal's selector is rigid at every context (`Character.isDirectlyReferential_iff`).
-`Nominal Ctx W` is the presupposition-projecting partiality monad, lawful
-(`instLawfulMonad`): `bind` threads the partial referent and projects the continuation's
-presupposition through definedness of the head, so a re-selection such as possessive-of
-composes as a Kleisli arrow while the head's presupposition rides along.
 
 ## Implementation notes
 
@@ -99,59 +95,10 @@ variable {nd : Nominal Ctx W E} {scope : E → W → Prop} {c : Ctx} {w : W}
 
 end Values
 
-/-! ### Monad structure
-
-`Nominal Ctx W` is the presupposition-projecting partiality monad: `bind`
-threads the partial referent (`Option.bind`) and accumulates presuppositions,
-projecting the continuation's presupposition through definedness of the head
-(`Option.elim`). This is what lets a re-selection (e.g. possessive-of) compose
-as a Kleisli arrow while a head's intrinsic presupposition (φ-features, deixis)
-rides along. -/
-
-instance : Monad (Nominal Ctx W) where
-  pure a := { presup := fun _ _ => True, selector := fun _ _ => some a }
-  bind nd k :=
-    { presup := fun c w =>
-        nd.presup c w ∧ (nd.selector c w).elim True (fun e => (k e).presup c w)
-      selector := fun c w => (nd.selector c w).bind (fun e => (k e).selector c w) }
-
 /-- A `Nominal` is determined by its presupposition and its selector. -/
 @[ext] theorem ext {nd₁ nd₂ : Nominal Ctx W E}
     (hp : nd₁.presup = nd₂.presup) (hs : nd₁.selector = nd₂.selector) : nd₁ = nd₂ := by
   cases nd₁; cases nd₂; cases hp; cases hs; rfl
-
-universe u
-variable {α β γ : Type u}
-
-@[simp] theorem pure_selector (a : α) (c : Ctx) (w : W) :
-    (pure a : Nominal Ctx W α).selector c w = some a := rfl
-
-@[simp] theorem pure_presup (a : α) (c : Ctx) (w : W) :
-    (pure a : Nominal Ctx W α).presup c w = True := rfl
-
-@[simp] theorem bind_selector (nd : Nominal Ctx W α)
-    (k : α → Nominal Ctx W β) (c : Ctx) (w : W) :
-    (nd >>= k).selector c w = (nd.selector c w).bind (fun e => (k e).selector c w) := rfl
-
-@[simp] theorem bind_presup (nd : Nominal Ctx W α)
-    (k : α → Nominal Ctx W β) (c : Ctx) (w : W) :
-    (nd >>= k).presup c w =
-      (nd.presup c w ∧ (nd.selector c w).elim True (fun e => (k e).presup c w)) := rfl
-
-private theorem bind_pure' (nd : Nominal Ctx W α) : nd >>= pure = nd := by
-  ext c w <;>
-    simp only [bind_presup, bind_selector, pure_presup, pure_selector] <;>
-    cases nd.selector c w <;> simp
-
-/-- In the monad laws left identity feeds a pure referent to its continuation, right identity
-re-selects by `pure`, and associativity is what makes possessive nesting
-(*John's mother's friend*) free. -/
-instance : LawfulMonad (Nominal Ctx W) := LawfulMonad.mk' (Nominal Ctx W)
-  (id_map := fun nd ↦ bind_pure' nd)
-  (pure_bind := fun a k ↦ by ext c w <;> simp)
-  (bind_assoc := fun nd k h ↦ by
-    ext c w <;> simp only [bind_presup, bind_selector] <;> cases nd.selector c w <;>
-      simp [and_assoc])
 
 end Nominal
 

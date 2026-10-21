@@ -9,8 +9,8 @@ Cantonese (Sinitic, ISO `yue`) marks definiteness with the bare classifier
 phrase [Clf-N], which serves unique and anaphoric environments alike, and
 marks indefiniteness with the numeral-classifier phrase [jat-Clf-N];
 demonstratives form a separate paradigm. The [Clf-N]-as-definite observation
-is due to [cheng-sybesma-1999]; [jenks-2018] §6 analyzes [Clf-N] as an
-ambiguous definite parallel to English *the*.
+is due to Cheng and Sybesma; Jenks (§6) analyzes [Clf-N] as an ambiguous
+definite parallel to English *the*.
 
 ## References
 
@@ -26,7 +26,7 @@ namespace Cantonese.Determiners
     [jat-Clf-N] indefinite, and the demonstrative paradigm (*nei*). -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "Clf-N", definiteness := .definite, exponent := .classifierPhrase,
-               uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} },
+               uses := {.immediateSituation, .largerSituation, .anaphoric} },
     .article { form := "jat-Clf-N", definiteness := .indefinite, exponent := .numeralClassifier },
     .demonstrative { form := "nei", deixis := Person.first.participantSets } ]
 

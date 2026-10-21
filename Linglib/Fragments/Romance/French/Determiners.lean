@@ -29,7 +29,7 @@ namespace French.Determiners
 
 /-! ## Quantificational determiners -/
 
-/-- The quantificational determiners: *tous*, *chaque*, *aucun*, *les deux*, *quelques* and the
+/-- The quantificational determiners are *tous*, *chaque*, *aucun*, *les deux*, *quelques* and the
 adverb *toujours*. -/
 inductive QuantityWord where
   | tous | chaque | aucun | les_deux | quelques | toujours
@@ -46,8 +46,8 @@ def form : QuantityWord → String
   | .quelques => "quelques"
   | .toujours => "toujours"
 
-/-- The grammatical number a word selects: *tous*, *quelques* and *toujours* the plural,
-*chaque* and *aucun* the singular, and *les deux* the dual, the core concept it realizes. -/
+/-- *Tous*, *quelques* and *toujours* select the plural, *chaque* and *aucun* the singular, and
+*les deux* the dual, the core concept it realizes. -/
 def numberRestriction : QuantityWord → Option Number
   | .tous | .quelques | .toujours => some .plural
   | .chaque | .aucun => some .singular
@@ -95,7 +95,7 @@ def les : Article :=
   { form := "les"
   , definiteness := .definite
   , exponent := .dedicatedMorpheme
-  , uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
+  , uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
 /-- All French quantifier entries. -/
 def allQuantifiers : List Quantifier := QuantityWord.toList.map QuantityWord.toQuantifier

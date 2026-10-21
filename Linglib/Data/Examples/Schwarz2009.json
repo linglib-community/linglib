@@ -261,9 +261,10 @@
     "readings": [],
     "paperFeatures": [
       ["article", "weak"],
-      ["use", "donkey"],
+      ["use", "anaphoric"],
       ["unique", "no"],
-      ["antecedent", "yes"]
+      ["antecedent", "yes"],
+      ["covarying", "yes"]
     ],
     "comment": "The situations quantified over contain more than one man (p. 242), where the example is repeated without 'from the man' in the translation.",
     "verified": "page-image"
@@ -289,9 +290,10 @@
     "readings": [],
     "paperFeatures": [
       ["article", "strong"],
-      ["use", "donkey"],
+      ["use", "anaphoric"],
       ["unique", "no"],
-      ["antecedent", "yes"]
+      ["antecedent", "yes"],
+      ["covarying", "yes"]
     ],
     "comment": "The situations quantified over contain more than one man (p. 242), where the example is repeated without 'from the man' in the translation.",
     "verified": "page-image"
@@ -511,7 +513,8 @@
     "paperFeatures": [
       ["article", "weak"],
       ["unique", "yes"],
-      ["antecedent", "no"]
+      ["antecedent", "no"],
+      ["covarying", "yes"]
     ],
     "comment": "A covarying use of the weak article: for each round, the winner of that round (p. 43).",
     "verified": "page-image"
@@ -643,7 +646,8 @@
       ["article", "weak"],
       ["use", "producerBridging"],
       ["relation", "nonPart"],
-      ["antecedent", "relatum"]
+      ["antecedent", "relatum"],
+      ["covarying", "yes"]
     ],
     "comment": "Both variants are judged where the example is repeated (p. 233); p. 63 prints the strong one only. Authors are not part of their books (p. 233).",
     "verified": "page-image"
@@ -669,7 +673,8 @@
       ["article", "strong"],
       ["use", "producerBridging"],
       ["relation", "nonPart"],
-      ["antecedent", "relatum"]
+      ["antecedent", "relatum"],
+      ["covarying", "yes"]
     ],
     "comment": "Both variants are judged where the example is repeated (p. 233); p. 63 prints the strong one only. Authors are not part of their books (p. 233).",
     "verified": "page-image"
@@ -695,7 +700,8 @@
       ["article", "weak"],
       ["use", "partWholeBridging"],
       ["relation", "part"],
-      ["antecedent", "relatum"]
+      ["antecedent", "relatum"],
+      ["covarying", "yes"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -721,7 +727,8 @@
       ["article", "weak"],
       ["use", "largerSituation"],
       ["relation", "part"],
-      ["antecedent", "other"]
+      ["antecedent", "other"],
+      ["covarying", "yes"]
     ],
     "comment": "The mayor is part of the town, of which the train station is a part (p. 224); the strong article's index is bound by the train station, which has no mayor (p. 282).",
     "verified": "page-image"
@@ -747,7 +754,8 @@
       ["article", "strong"],
       ["use", "largerSituation"],
       ["relation", "part"],
-      ["antecedent", "other"]
+      ["antecedent", "other"],
+      ["covarying", "yes"]
     ],
     "comment": "The mayor is part of the town, of which the train station is a part (p. 224); the strong article's index is bound by the train station, which has no mayor (p. 282).",
     "verified": "page-image"
