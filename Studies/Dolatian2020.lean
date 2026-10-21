@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Phonology.Subregular.Transduction
@@ -22,9 +27,9 @@ maximization resyllabifies the stem-final consonant and misaligns the Prosodic S
 suffix and triggers a cophonology of its own, which reduces high vowels in Eastern but not in
 Western Armenian and reduces the diphthong *uj* in neither, (76) and (78). The plural
 allomorphy of (66), *-er* after monosyllables and *-ner* after polysyllables, thereby decides
-whether a plural reduces its base. Reduction itself is a quantifier-free logical transduction
-in the sense of [chandlee-2014], §6.6.1: given the destressing diacritic, deletion and schwa
-are read off two segments on either side of the target.
+whether a plural reduces its base. Reduction itself is a quantifier-free logical transduction,
+§6.6.1, and so local in the sense of [chandlee-2014]: given the destressing diacritic,
+deletion and schwa are read off two segments on either side of the target.
 
 ## Implementation notes
 
@@ -85,9 +90,9 @@ def Seg.Nucleus : Seg → Prop
   | .c => False
   | _ => True
 
-instance : DecidablePred Seg.Full := λ s => by cases s <;> unfold Seg.Full <;> infer_instance
+instance : DecidablePred Seg.Full := fun s ↦ by cases s <;> unfold Seg.Full <;> infer_instance
 
-instance : DecidablePred Seg.Nucleus := λ s => by
+instance : DecidablePred Seg.Nucleus := fun s ↦ by
   cases s <;> unfold Seg.Nucleus <;> infer_instance
 
 /-- The position of the stressed vowel, the rightmost full vowel, (1). -/
@@ -113,7 +118,7 @@ vowel, marked `true`, becomes schwa unless deletion is licensed, in which case i
 clause and is deleted; every other segment is faithful. -/
 def dhr : Transduction (Seg × Bool) Seg where
   copies := 1
-  clause _ :=
+  clauses _ :=
     [(.conj (.label (.h, true) x) deletable.neg, .schwa),
       (.label (.c, false) x, .c), (.label (.h, false) x, .h), (.label (.v, false) x, .v),
       (.label (.uj, false) x, .uj), (.label (.schwa, false) x, .schwa),
@@ -121,7 +126,7 @@ def dhr : Transduction (Seg × Bool) Seg where
       (.label (.schwa, true) x, .schwa)]
 
 /-- The string with the destressed position marked. -/
-def mark (w : List Seg) (p : ℕ) : List (Seg × Bool) := w.mapIdx λ n s => (s, decide (n = p))
+def mark (w : List Seg) (p : ℕ) : List (Seg × Bool) := w.mapIdx fun n s ↦ (s, decide (n = p))
 
 /-! ### Cophonologies, (76) -/
 

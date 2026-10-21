@@ -725,7 +725,6 @@ import Linglib.Phonology.Subregular.Dependence
 import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.ISL
 import Linglib.Phonology.Subregular.LocalRewrite
-import Linglib.Phonology.Subregular.LocalityBridge
 import Linglib.Phonology.Subregular.Multitier
 import Linglib.Phonology.Subregular.OSL
 import Linglib.Phonology.Subregular.StrictlyLocal

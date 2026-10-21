@@ -6,208 +6,335 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.Docking
+public import Linglib.Phonology.Subregular.ISL
+public import Mathlib.Algebra.Order.BigOperators.Group.List
+public import Mathlib.Data.List.Find
 
 /-!
 # Quantifier-free logical transductions
 
-A quantifier-free **logical transduction** maps strings to strings by a **copy set** and, per
-copy, an ordered list of guarded output clauses, where each guard is a `Subregular.WindowFormula`
-at the input position. A copy set of size `k` lets the output be larger than the input
-(insertion); guards that match nothing delete; relabelling copies rewrite a symbol in place.
+A **logical transduction** defines an output string inside its input: a fixed number of copies
+of each input position, and for each copy formulas over the input saying which output symbol, if
+any, the copy carries. It is **quantifier-free** when those formulas are, and a quantifier-free
+formula at a position is a `Subregular.WindowFormula`, reading a bounded window through
+successor and predecessor steps. A second copy inserts, a copy none of whose formulas hold
+deletes, and a formula emitting another symbol rewrites in place. [chandlee-jardine-2019] report
+that the quantifier-free string transductions are exactly the input strictly local functions.
+This file proves the one-sided case: over a finite alphabet, the transductions whose guards read
+only backward compute exactly the left input strictly local functions.
 
-We formalize the **order-preserving** fragment: the output is read off in the order
-`(input position, copy index)`, so the output successor is induced rather than given by an
-explicit successor formula. This is exactly the fragment relevant to strict locality —
-relabelling, deletion, and insertion. Non-order-preserving maps (reordering via an explicit
-output successor) are the non-local extension and are deliberately out of scope here.
-
-Composition of transductions (`applyComp`) models an iterated derivation: each step is a local
-transduction, though the composite is not in general itself quantifier-free.
+The transductions here are **order-preserving** in the sense of [dolatian-2020] (§7.4.2): the
+output is read off in the order (input position, copy), so the output successor is induced
+rather than defined by formulas of its own. Transductions that define it, such as
+[dolatian-2020]'s iconic reduplication, are not represented.
 
 ## Main definitions
 
-* `Subregular.Transduction`: copy count + per-copy guarded output clauses.
-* `Transduction.apply`: run a transduction, producing the output string (computable).
-* `Transduction.applyComp`: composition of two transductions (one cyclic derivation step on top
-  of another).
-* `Transduction.LeftLocal`: every guard backward-bounded by `r`.
+* `Subregular.Transduction`: a copy count and, per copy, a decision list of guarded clauses.
+* `Transduction.apply`: the output string, computably.
+* `Transduction.LeftLocal r`: every guard reads at most `r` positions back and none forward.
+* `Transduction.toISLRule`: the ISL rule that runs a transduction on each window.
+* `ISLRule.toTransduction`: the left-local transduction with a clause for each window and
+  symbol, guarded by `WindowFormula.window`.
 * `Transduction.relabel`: the one-copy relabelling transduction of a quantifier-free docking
-  process (`Subregular.Docking.ofQF`) over a finite alphabet.
+  process over a finite alphabet.
 
 ## Main results
 
-* `Transduction.emitAt_eq_of_agree`: a left-local transduction emits the same block at positions
-  whose bounded left contexts agree.
+* `Transduction.LeftLocal.emitAt_congr`: a left-local transduction emits the same block at
+  positions whose bounded left contexts agree.
+* `Transduction.LeftLocal.isLeftInputStrictlyLocal`: a transduction left-local with radius `r` is
+  `(r + 1)`-left input strictly local.
+* `ISLRule.apply_toTransduction`: on words over the alphabet, the transduction of an ISL rule
+  computes it.
+* `isLeftInputStrictlyLocal_iff_exists_leftLocal`: over a finite alphabet, the
+  `(r + 1)`-left input strictly local functions are those of the transductions left-local with
+  radius `r`.
 * `Transduction.apply_relabel`: on words over the alphabet, the relabelling transduction of a
   quantifier-free docking process computes its map.
 
 ## Implementation notes
 
-A clause is a quantifier-free guard paired with an output symbol; per copy, the first clause
-whose guard holds at the input position fires, and a copy with no firing clause is absent.
-`apply` is a `flatMap` over input positions then copies, so it reduces under `decide`.
+The clauses of a copy form a decision list: the first clause whose guard holds fires, and a copy
+with no firing clause is absent. The literature's formula for an output symbol `b` on a copy is
+the disjunction, over the copy's clauses emitting `b`, of the clause's guard with the negations
+of the guards before it; the decision list keeps the output functional by construction and
+lets `apply` reduce under `decide`.
+
+The characterization is one-sided because `ISLRule` carries no final output, so a rule scanning
+left to right cannot wait for the input after a position; guards that read forward fall outside
+it. `ISLRule.toTransduction` is not economical, with a clause for every window and symbol and as
+many copies as all its blocks have symbols together; the characterization needs only that it
+exists.
 
 ## References
 
 * [chandlee-2014]
 * [chandlee-jardine-2019]
+* [dolatian-2020]
 -/
 
 @[expose] public section
 
 namespace Subregular
 
-variable {α β γ : Type*}
-
-/-- A per-copy output clause pairs a quantifier-free guard at the input position with the output
-symbol emitted when it is the first matching clause. -/
-abbrev Clause (α β : Type*) := WindowFormula α × β
+variable {α β : Type*}
 
 /-- A quantifier-free order-preserving logical transduction has `copies` output copies of each
-input position, and for each copy an ordered list of guarded output clauses. -/
+input position and, for each copy, a decision list of clauses: a quantifier-free guard at the
+input position, paired with the symbol the copy carries when that clause is the first to hold. -/
 structure Transduction (α β : Type*) where
+  /-- The number of output copies of each input position. -/
   copies : ℕ
-  clause : Fin copies → List (Clause α β)
+  /-- The guarded clauses of each copy, in order of precedence. -/
+  clauses : Fin copies → List (WindowFormula α × β)
 
 namespace Transduction
+
+variable (T : Transduction α β)
+
+/-- A transduction is **left-local** with radius `r` if every guard is backward-bounded by `r`,
+reading only its position and the `r` positions before it. -/
+def LeftLocal (r : ℕ) : Prop :=
+  ∀ c, ∀ cl ∈ T.clauses c, cl.1.BackBounded r
+
+instance (r : ℕ) : Decidable (T.LeftLocal r) :=
+  inferInstanceAs (Decidable (∀ c, ∀ cl ∈ T.clauses c, cl.1.BackBounded r))
+
 variable [DecidableEq α]
 
-/-- The output symbols emitted at input position `n` (one per copy whose guard fires, in copy
-order). -/
-def emitAt (T : Transduction α β) (w : List α) (n : ℕ) : List β :=
-  (List.finRange T.copies).filterMap fun c =>
-    (T.clause c).findSome? fun cl => if cl.1.Realize w n then some cl.2 else none
+/-- The block emitted at input position `n`: for each copy in order, the symbol of the first
+clause whose guard holds at `n`, if any. -/
+def emitAt (w : List α) (n : ℕ) : List β :=
+  (List.finRange T.copies).filterMap fun c ↦
+    ((T.clauses c).find? fun cl ↦ cl.1.Realize w n).map Prod.snd
 
-/-- Running the transduction emits, left to right, the licensed copies of every input position. -/
-def apply (T : Transduction α β) (w : List α) : List β :=
+/-- The output string: the blocks emitted at the input positions, left to right. -/
+def apply (w : List α) : List β :=
   (List.range w.length).flatMap (T.emitAt w)
 
-@[simp] theorem apply_nil (T : Transduction α β) : T.apply [] = [] := rfl
+@[simp] theorem apply_nil : T.apply [] = [] := rfl
 
-/-- Composition of transductions — one cyclic derivation step after another; the composite is
-not in general itself quantifier-free. -/
-def applyComp (T₂ : Transduction β γ) (T₁ : Transduction α β) [DecidableEq β]
-    (w : List α) : List γ :=
-  T₂.apply (T₁.apply w)
+/-- The `(r + 1)`-ISL rule that emits, for a symbol after a window of `r` symbols, the block the
+transduction emits at the end of the window followed by the symbol. -/
+def toISLRule (r : ℕ) : ISLRule (r + 1) α β where
+  windowOutput window x := T.emitAt (window ++ [x]) window.length
 
-/-! ### Left-local transductions -/
+/-! ### Left-local transductions are input strictly local -/
 
-/-- A transduction is **left-local** with radius `r` if every clause guard is backward-bounded by
-`r`: the output at a position is determined by that position and the `r` symbols before it. -/
-def LeftLocal (r : ℕ) (T : Transduction α β) : Prop :=
-  ∀ c, ∀ cl ∈ T.clause c, cl.1.BackBounded r
+namespace LeftLocal
 
-/-- `List.findSome?` agrees on two functions that agree on the list's members. -/
-private theorem findSome?_congr {γ δ : Type*} {f g : γ → Option δ} :
-    ∀ {l : List γ}, (∀ x ∈ l, f x = g x) → l.findSome? f = l.findSome? g := by
-  intro l
-  induction l with
-  | nil => intro _; rfl
-  | cons a as ih =>
-    intro h
-    rw [List.findSome?_cons, List.findSome?_cons, h a List.mem_cons_self]
-    cases g a with
-    | none => exact ih (fun x hx => h x (List.mem_cons_of_mem a hx))
-    | some b => rfl
+variable {T} {r : ℕ} (hT : T.LeftLocal r)
+include hT
 
 /-- A left-local transduction emits the same block at positions whose bounded left contexts
-agree: every clause guard is backward-bounded, so its firing is determined by that context. -/
-theorem emitAt_eq_of_agree {r : ℕ} {T : Transduction α β}
-    (hT : T.LeftLocal r) {w w' : List α} {n n' : ℕ}
-    (hn : n < w.length) (hn' : n' < w'.length)
-    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
-    (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
-    T.emitAt w n = T.emitAt w' n' := by
-  unfold Transduction.emitAt
-  apply List.filterMap_congr
-  intro c _
-  apply findSome?_congr
-  intro cl hcl
-  have hb := hT c cl hcl
-  have hc := WindowFormula.BackBounded.realize_congr hn hn' hlbl hedge hb
-  by_cases h : cl.1.Realize w n
-  · rw [ite_eq_left h, ite_eq_left (hc.mp h)]
-  · rw [ite_eq_right h, ite_eq_right (fun hh => h (hc.mpr hh))]
+agree. -/
+theorem emitAt_congr {w w' : List α} {n n' : ℕ} (hn : n < w.length) (hn' : n' < w'.length)
+    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?) (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
+    T.emitAt w n = T.emitAt w' n' :=
+  List.filterMap_congr fun c _ ↦ congrArg _ <| List.find?_congr fun cl hcl ↦
+    decide_eq_decide.2 <| WindowFormula.BackBounded.realize_congr hn hn' hlbl hedge (hT c cl hcl)
+
+/-- Extending the input leaves a left-local transduction's blocks at the old positions. -/
+theorem emitAt_append {u : List α} (v : List α) {p : ℕ} (hp : p < u.length) :
+    T.emitAt (u ++ v) p = T.emitAt u p :=
+  hT.emitAt_congr (by simp; omega) hp (fun _ _ ↦ List.getElem?_append_left (by omega))
+    fun _ _ ↦ Iff.rfl
+
+/-- The block a left-local transduction emits at position `p` is the block it emits at the end
+of the `r + 1` input symbols ending at `p`. -/
+theorem emitAt_eq_emitAt_rtake {w : List α} {p : ℕ} (hp : p < w.length) :
+    T.emitAt w p = T.emitAt ((w.take (p + 1)).rtake (r + 1)) (min r p) := by
+  have hlen : (w.take (p + 1)).length = p + 1 := by simp; omega
+  refine hT.emitAt_congr hp (by simp [hlen]) (fun j hj ↦ ?_) fun _ _ ↦ by omega
+  rw [List.getElem?_rtake, hlen, List.getElem?_take, ite_eq_left (by omega)]
+  congr 1
+  omega
+
+/-- Appending a symbol to the input of a left-local transduction appends the block at its
+end. -/
+theorem apply_append_singleton (u : List α) (x : α) :
+    T.apply (u ++ [x]) = T.apply u ++ T.emitAt (u ++ [x]) u.length := by
+  rw [apply, List.length_append, List.length_singleton, List.range_succ, List.flatMap_append,
+    List.flatMap_singleton, apply, List.flatMap_congr fun p hp ↦
+      hT.emitAt_append [x] (List.mem_range.1 hp)]
+
+/-- The ISL rule of a left-local transduction computes it. -/
+theorem toISLRule_apply : (T.toISLRule r).apply = T.apply := by
+  funext w
+  induction w using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton u x ih =>
+    rw [ISLRule.apply_append_singleton, ih, hT.apply_append_singleton,
+      hT.emitAt_eq_emitAt_rtake (by simp), List.take_of_length_le (by simp),
+      List.rtake_concat_succ, Nat.add_sub_cancel, ← List.length_rtake]
+    rfl
+
+/-- A transduction left-local with radius `r` is `(r + 1)`-left input strictly local. -/
+theorem isLeftInputStrictlyLocal : IsLeftInputStrictlyLocal (r + 1) T.apply :=
+  ⟨T.toISLRule r, hT.toISLRule_apply⟩
+
+end LeftLocal
 
 end Transduction
 
-/-! ### Relabelling transductions -/
+/-! ### Input strictly local functions are left-local transductions -/
 
-theorem WindowFormula.realize_label_var_iff [DecidableEq α] {w : List α} {n : ℕ} {a : α} :
-    (WindowFormula.label a .var).Realize w n ↔ w[n]? = some a := by
-  simp only [WindowFormula.Realize, Walk.eval]
-  split_ifs with h
-  · simp
-  · have : w[n]? = none := List.getElem?_eq_none (Nat.le_of_not_lt h)
-    simp [this]
+namespace ISLRule
+
+/-- The words over `alphabet` of length at most `r`, the windows a `(r + 1)`-ISL rule reads. -/
+def windows (alphabet : List α) : ℕ → List (List α)
+  | 0 => [[]]
+  | r + 1 => [] :: (windows alphabet r).flatMap fun u ↦ alphabet.map (· :: u)
+
+theorem mem_windows {alphabet u : List α} {r : ℕ} :
+    u ∈ windows alphabet r ↔ u.length ≤ r ∧ ∀ a ∈ u, a ∈ alphabet := by
+  induction r generalizing u with
+  | zero =>
+    simp only [windows, List.mem_singleton, Nat.le_zero, List.length_eq_zero_iff]
+    exact ⟨fun h ↦ ⟨h, by simp [h]⟩, And.left⟩
+  | succ r ih =>
+    cases u with
+    | nil => simp [windows]
+    | cons a u => simp [windows, ih, and_comm, and_left_comm]
+
+variable {r : ℕ} (ρ : ISLRule (r + 1) α β) (alphabet : List α)
+
+/-- The transduction of a `(r + 1)`-ISL rule over the symbols `alphabet`: copy `c` carries, under
+the guard that the position carries `a` after the window `u`, the `c`-th symbol of the block the
+rule emits there. There are copies enough for every block. -/
+def toTransduction : Transduction α β where
+  copies := ((windows alphabet r).flatMap fun u ↦
+    alphabet.map fun a ↦ (ρ.windowOutput u a).length).sum
+  clauses c := (windows alphabet r).flatMap fun u ↦ alphabet.filterMap fun a ↦
+    (ρ.windowOutput u a)[c.val]?.map ((WindowFormula.label a .var).conj (.window r u), ·)
+
+theorem leftLocal_toTransduction : (ρ.toTransduction alphabet).LeftLocal r := by
+  intro c cl hcl
+  simp only [toTransduction, List.mem_flatMap, List.mem_filterMap, Option.map_eq_some_iff] at hcl
+  obtain ⟨u, hu, a, -, b, -, rfl⟩ := hcl
+  exact ⟨⟨Nat.zero_le r, le_rfl⟩, WindowFormula.window_backBounded
+    (mem_windows.1 hu).1⟩
+
+variable [DecidableEq α]
+
+private theorem filterMap_finRange_getElem? {γ : Type*} :
+    ∀ {l : List γ} {N : ℕ}, l.length ≤ N → (List.finRange N).filterMap (fun c ↦ l[c.val]?) = l
+  | [], _, _ => by simp
+  | b :: l, N + 1, h => by
+    simp [List.finRange_succ, List.filterMap_map,
+      filterMap_finRange_getElem? (l := l) (N := N) (by simpa using h)]
+
+/-- At an in-range position of a word over the alphabet, the transduction of an ISL rule emits the
+block the rule emits after the window there. -/
+theorem emitAt_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) {p : ℕ}
+    (hp : p < w.length) :
+    (ρ.toTransduction alphabet).emitAt w p = ρ.windowOutput ((w.take p).rtake r) w[p] := by
+  have hwin : (w.take p).rtake r ∈ windows alphabet r :=
+    mem_windows.2 ⟨List.length_rtake_le r _, fun a ha ↦
+      hw a (List.mem_of_mem_take ((List.rtake_suffix r _).subset ha))⟩
+  have hguard {u : List α} (hu : u ∈ windows alphabet r) (a : α) :
+      ((WindowFormula.label a .var).conj (.window r u)).Realize w p ↔
+        w[p] = a ∧ (w.take p).rtake r = u := by
+    rw [WindowFormula.realize_conj, WindowFormula.realize_label_var,
+      WindowFormula.realize_window hp (mem_windows.1 hu).1, List.getElem?_eq_getElem hp,
+      Option.some.injEq]
+  have hcopy (c : Fin (ρ.toTransduction alphabet).copies) :
+      (((ρ.toTransduction alphabet).clauses c).find? fun cl ↦ cl.1.Realize w p).map Prod.snd =
+        (ρ.windowOutput ((w.take p).rtake r) w[p])[c.val]? := by
+    have hmem {cl} : cl ∈ (ρ.toTransduction alphabet).clauses c ↔ ∃ u ∈ windows alphabet r,
+        ∃ a ∈ alphabet, ∃ b, (ρ.windowOutput u a)[c.val]? = some b ∧
+          ((WindowFormula.label a .var).conj (.window r u), b) = cl := by
+      simp [toTransduction]
+    have hfound {cl} (hcl : ((ρ.toTransduction alphabet).clauses c).find?
+        (fun cl ↦ cl.1.Realize w p) = some cl) :
+        (ρ.windowOutput ((w.take p).rtake r) w[p])[c.val]? = some cl.2 := by
+      obtain ⟨u, hu, a, -, b, hb, rfl⟩ := hmem.1 (List.mem_of_find?_eq_some hcl)
+      obtain ⟨rfl, rfl⟩ := (hguard hu a).1 (by simpa using List.find?_some hcl)
+      exact hb
+    refine Option.ext fun b ↦ ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+    · obtain ⟨cl, hcl, rfl⟩ := Option.map_eq_some_iff.1 h
+      exact hfound hcl
+    · obtain ⟨cl, hcl⟩ := Option.isSome_iff_exists.1 <|
+        (List.find?_isSome (p := fun cl : WindowFormula α × β ↦ decide (cl.1.Realize w p))).2
+          ⟨_, hmem.2 ⟨_, hwin, w[p], hw _ (List.getElem_mem hp), b, h, rfl⟩,
+            decide_eq_true ((hguard hwin w[p]).2 ⟨rfl, rfl⟩)⟩
+      rw [hcl]
+      exact (hfound hcl).symm.trans h
+  rw [Transduction.emitAt, List.filterMap_congr fun c _ ↦ hcopy c]
+  refine filterMap_finRange_getElem? (List.le_sum_of_mem ?_)
+  simp only [List.mem_flatMap, List.mem_map]
+  exact ⟨_, hwin, w[p], hw _ (List.getElem_mem hp), rfl⟩
+
+/-- Over the alphabet, the transduction of an ISL rule computes the rule. -/
+theorem apply_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) :
+    (ρ.toTransduction alphabet).apply w = ρ.apply w := by
+  induction w using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton u x ih =>
+    rw [(ρ.leftLocal_toTransduction alphabet).apply_append_singleton,
+      ih fun a ha ↦ hw a (List.mem_append_left _ ha),
+      ρ.emitAt_toTransduction alphabet hw (by simp), ISLRule.apply_append_singleton]
+    simp
+
+end ISLRule
+
+/-- Over a finite alphabet, the `(r + 1)`-left input strictly local functions are exactly the
+functions of the transductions left-local with radius `r`. -/
+theorem isLeftInputStrictlyLocal_iff_exists_leftLocal [DecidableEq α] [Fintype α] {r : ℕ}
+    {f : List α → List β} :
+    IsLeftInputStrictlyLocal (r + 1) f ↔ ∃ T : Transduction α β, T.LeftLocal r ∧ T.apply = f := by
+  refine ⟨fun ⟨ρ, hρ⟩ ↦ ⟨ρ.toTransduction Finset.univ.toList, ρ.leftLocal_toTransduction _,
+    funext fun w ↦ ?_⟩, fun ⟨T, hT, hf⟩ ↦ hf ▸ hT.isLeftInputStrictlyLocal⟩
+  rw [ρ.apply_toTransduction _ fun a _ ↦ Finset.mem_toList.2 (Finset.mem_univ a), hρ]
 
 namespace Transduction
 
 variable [DecidableEq α]
 
-/-- The one-copy relabelling transduction of a quantifier-free docking process over the
-symbols `alphabet` has, for each symbol, a clause docking it under the guard and then a faithful
-clause. -/
-def relabel (φ : WindowFormula α) (dock : α → α) (alphabet : List α) :
-    Transduction α α where
+/-! ### Relabelling transductions -/
+
+/-- The one-copy relabelling transduction of the quantifier-free docking process with guard `φ`
+over the symbols `alphabet`: for each symbol, a clause docking it under the guard, then a
+faithful clause. -/
+def relabel (φ : WindowFormula α) (dock : α → α) (alphabet : List α) : Transduction α α where
   copies := 1
-  clause _ :=
-    (alphabet.map fun a => (φ.conj (.label a .var), dock a)) ++
-      alphabet.map fun a => (.label a .var, a)
+  clauses _ :=
+    (alphabet.map fun a ↦ (φ.conj (.label a .var), dock a)) ++
+      alphabet.map fun a ↦ (.label a .var, a)
 
-private theorem findSome?_eq_of_mem {β : Type*} {a : α} {v : α → β} :
-    ∀ {l : List α}, a ∈ l →
-      l.findSome? (fun b => if a = b then some (v b) else none) = some (v a)
-  | b :: l, h => by
-    rw [List.findSome?_cons]
-    by_cases hb : a = b
-    · subst hb; simp
-    · simp only [hb, ↓reduceIte]
-      exact findSome?_eq_of_mem (List.mem_of_ne_of_mem hb h)
-
-omit [DecidableEq α] in
-private theorem findSome?_none (l : List α) {β : Type*} :
-    l.findSome? (fun _ => (none : Option β)) = none :=
-  List.findSome?_eq_none_iff.2 fun _ _ => rfl
-
-omit [DecidableEq α] in
-private theorem flatMap_range_toList_eq_mapIdx {β : Type*} (f : ℕ → α → β) :
-    ∀ w : List α, (List.range w.length).flatMap (fun n => (w[n]?.map (f n)).toList) = w.mapIdx f
+private theorem flatMap_range_toList_eq_mapIdx {γ δ : Type*} (f : ℕ → γ → δ) :
+    ∀ w : List γ, (List.range w.length).flatMap (fun n ↦ (w[n]?.map (f n)).toList) = w.mapIdx f
   | [] => rfl
   | a :: l => by
     rw [List.length_cons, List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map,
-      List.mapIdx_cons, ← flatMap_range_toList_eq_mapIdx (fun i => f (i + 1)) l]
+      List.mapIdx_cons, ← flatMap_range_toList_eq_mapIdx (fun i ↦ f (i + 1)) l]
     simp
 
 /-- On a word over the alphabet, the relabelling transduction computes the docking map. -/
 theorem apply_relabel {φ : WindowFormula α} {dock : α → α} {alphabet : List α} {w : List α}
     (hw : ∀ a ∈ w, a ∈ alphabet) :
     (relabel φ dock alphabet).apply w = (Docking.ofQF φ dock).map w := by
-  have hemit : (relabel φ dock alphabet).emitAt w = fun n =>
-      (w[n]?.map fun a => if n < w.length ∧ φ.Realize w n then dock a else a).toList := by
-    funext n
-    simp only [emitAt, relabel, List.finRange_succ, List.finRange_zero, List.map_nil,
-      List.filterMap_cons, List.filterMap_nil, List.findSome?_append, List.findSome?_map,
-      Function.comp_def, WindowFormula.Realize]
+  have hemit (n : ℕ) : (relabel φ dock alphabet).emitAt w n =
+      (w[n]?.map fun a ↦ if n < w.length ∧ φ.Realize w n then dock a else a).toList := by
     by_cases hn : n < w.length
-    · have hmem : w[n] ∈ alphabet := hw _ (List.getElem_mem hn)
-      have hvar : ((Walk.eval w n Walk.var).bind fun x => w[x]?) = some w[n] := by
-        simp [Walk.eval, hn]
-      simp only [hvar, Option.some.injEq, List.getElem?_eq_getElem hn]
-      by_cases hφ : φ.Realize w n
-      · simp only [hφ, true_and]
-        rw [findSome?_eq_of_mem hmem, Option.some_or]
-        simp [hn]
-      · simp only [hφ, false_and, ite_false, findSome?_none, Option.none_or]
-        rw [findSome?_eq_of_mem hmem]
-        simp [hn]
-    · simp [Walk.eval, hn, findSome?_none]
-  rw [apply, hemit, flatMap_range_toList_eq_mapIdx]
+    · have hfind : alphabet.find? (fun b ↦ decide (w[n] = b)) = some w[n] := by
+        obtain ⟨b, hb⟩ := Option.isSome_iff_exists.1 <| (List.find?_isSome
+          (p := fun b ↦ decide (w[n] = b))).2 ⟨w[n], hw _ (List.getElem_mem hn), by simp⟩
+        obtain rfl : w[n] = b := by simpa using List.find?_some hb
+        exact hb
+      have hnone : alphabet.find? (fun _ ↦ false) = none := List.find?_eq_none.2 (by simp)
+      by_cases hφ : φ.Realize w n <;>
+        simp [emitAt, relabel, List.finRange_succ, List.find?_append, List.find?_map, hφ, hn,
+          hfind, hnone]
+    · simp [emitAt, relabel, List.finRange_succ, List.find?_append, List.find?_map,
+        List.getElem?_eq_none (Nat.le_of_not_lt hn)]
+  rw [apply, funext hemit, flatMap_range_toList_eq_mapIdx]
   rfl
 
 end Transduction
 
-/-! ### Worked examples: feature change, deletion, epenthesis, and a cycle -/
+/-! ### Worked examples: feature change, deletion, epenthesis, and a left-local rule -/
 
 section Example
 
@@ -215,45 +342,55 @@ private inductive Sym | a | b | c
   deriving DecidableEq
 
 private def x : Walk := .var
-private def isA (t : Walk) : WindowFormula Sym := .label .a t
-/-- Any non-`a` symbol of the demo alphabet. -/
-private def nonA (t : Walk) : WindowFormula Sym := .disj (.label .b t) (.label .c t)
+
 /-- The position is flanked by `a`s. -/
-private def flankedA : WindowFormula Sym := .conj (isA x.pred) (isA x.succ)
+private def flankedA : WindowFormula Sym := .conj (.label .a x.pred) (.label .a x.succ)
 
 /-- This relabelling rewrites `b` as `c` between `a`s. The `b → c` clause precedes the faithful
 `b → b` clause, so it wins in that context. -/
 private def relabelBC : Transduction Sym Sym where
   copies := 1
-  clause _ := [(flankedA.conj (.label .b x), .c), (.label .b x, .b),
-               (.label .a x, .a), (.label .c x, .c)]
+  clauses _ := [(flankedA.conj (.label .b x), .c), (.label .b x, .b), (.label .a x, .a),
+    (.label .c x, .c)]
 
 example : relabelBC.apply [Sym.a, .b, .a] = [Sym.a, .c, .a] := by decide
 
-/-- This deletion drops `b` between `a`s. A `b` is emitted only when *not* flanked, so a flanked
-`b` matches no clause. -/
+/-- This deletion drops `b` between `a`s: a `b` matches a clause only when it is not flanked. -/
 private def deleteFlanked : Transduction Sym Sym where
   copies := 1
-  clause _ := [(.label .a x, .a), (.label .c x, .c),
-               (WindowFormula.conj (.label .b x) flankedA.neg, .b)]
+  clauses _ := [(.label .a x, .a), (.label .c x, .c),
+    ((WindowFormula.label .b x).conj flankedA.neg, .b)]
 
 example : deleteFlanked.apply [Sym.a, .b, .a] = [Sym.a, .a] := by decide
 
-/-- This insertion adds `a` after a final non-`a` symbol. Copy 0 is faithful and copy 1 emits `a`
-only after a final non-`a`, a copy with no firing clause being absent. -/
+/-- This insertion adds `a` after a final non-`a` symbol: copy 0 is faithful, and copy 1 carries
+`a` only after a final `b` or `c`. -/
 private def insertA : Transduction Sym Sym where
   copies := 2
-  clause k :=
-    if k = 0 then
-      [(.label .a x, .a), (.label .b x, .b), (.label .c x, .c)]
-    else
-      [(nonA x |>.conj (WindowFormula.final x), .a)]
+  clauses k :=
+    if k = 0 then [(.label .a x, .a), (.label .b x, .b), (.label .c x, .c)]
+    else [(.conj (.disj (.label .b x) (.label .c x)) (.final x), .a)]
 
 example : insertA.apply [Sym.a, .b] = [Sym.a, .b, .a] := by decide
 
-/-- This composite relabels and then inserts. On `abab` the first `b`, between `a`s, becomes `c`,
-the final `b` does not, and then the final non-`a` triggers insertion. -/
-example : insertA.applyComp relabelBC [Sym.a, .b, .a, .b] = [Sym.a, .c, .a, .b, .a] := by
+/-- Relabelling then inserting: on `abab` the first `b`, between `a`s, becomes `c`, the final
+`b` does not, and the final non-`a` triggers insertion. -/
+example : insertA.apply (relabelBC.apply [Sym.a, .b, .a, .b]) = [Sym.a, .c, .a, .b, .a] := by
+  decide
+
+/-- This relabelling rewrites `b` as `c` after an `a`. Its guards read one position back and none
+forward, so it is left-local with radius 1. -/
+private def afterA : Transduction Sym Sym where
+  copies := 1
+  clauses _ := [(.conj (.label .a x.pred) (.label .b x), .c), (.label .b x, .b),
+    (.label .c x, .c), (.label .a x, .a)]
+
+example : afterA.LeftLocal 1 := by decide
+
+-- Its 2-ISL rule computes the same function, and so does the transduction of that rule.
+example : (afterA.toISLRule 1).apply [Sym.a, .b, .a, .b] = [Sym.a, .c, .a, .c] := by decide
+example : ((afterA.toISLRule 1).toTransduction [.a, .b, .c]).apply [Sym.a, .b, .a, .b] =
+    [Sym.a, .c, .a, .c] := by
   decide
 
 end Example

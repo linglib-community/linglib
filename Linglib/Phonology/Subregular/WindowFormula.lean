@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.List.Basic
+public import Linglib.Core.Data.List.DropRight
 
 /-!
 # Quantifier-free position tests
@@ -29,6 +30,8 @@ schemes (`BMRS.lean`).
   `WindowFormula.Realize` is decidable satisfaction; `initial`/`final` are the derived edge tests.
 * `WindowFormula.Bounded l r`: every walk reaches at most `l` back and `r` forward;
   `WindowFormula.BackBounded r` is `Bounded r 0`.
+* `Walk.back j`, `WindowFormula.window r u`: the walk `j` steps back, and the test that the last
+  `r` symbols before the position spell `u`.
 
 ## Main results
 
@@ -37,6 +40,8 @@ schemes (`BMRS.lean`).
   have the same edges.
 * `Bounded.realize_congr`: a bounded formula cannot distinguish positions whose windows agree;
   `BackBounded.realize_congr` is the left-window case.
+* `realize_window`: `window r u` holds exactly where the last `r` symbols before the position
+  spell `u`.
 
 ## Implementation notes
 
@@ -261,6 +266,28 @@ theorem eval_backward (hn : n < w.length) :
       · rw [pred?_of_pos (by omega) (by omega), ite_eq_left (by omega), Nat.sub_sub]
     · rw [ite_eq_right h, Option.bind_none, ite_eq_right (by omega)]
 
+/-- The walk `j` predecessor steps back from the position. -/
+def back : ℕ → Walk
+  | 0 => .var
+  | j + 1 => (back j).pred
+
+@[simp] theorem pdepth_back : ∀ j, (back j).pdepth = j
+  | 0 => rfl
+  | j + 1 => congrArg (· + 1) (pdepth_back j)
+
+@[simp] theorem sdepth_back : ∀ j, (back j).sdepth = 0
+  | 0 => rfl
+  | j + 1 => sdepth_back j
+
+theorem backward_back : ∀ j, (back j).Backward
+  | 0 => trivial
+  | j + 1 => backward_back j
+
+/-- From an in-range position `n`, the walk `j` steps back reads position `n - j`, defined iff
+`j ≤ n`. -/
+theorem eval_back (hn : n < w.length) (j : ℕ) :
+    (back j).eval w n = if j ≤ n then some (n - j) else none := by
+  simpa using eval_backward hn (backward_back j)
 
 /-! ### Bounded windows -/
 
@@ -397,6 +424,17 @@ instance instDecidableRealize [DecidableEq α] (w : List α) (n : ℕ) :
   | .conj φ ψ => @instDecidableAnd _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
   | .disj φ ψ => @instDecidableOr _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
 
+@[simp] theorem realize_conj {w : List α} {n : ℕ} {φ ψ : WindowFormula α} :
+    (φ.conj ψ).Realize w n ↔ φ.Realize w n ∧ ψ.Realize w n := Iff.rfl
+
+/-- A label test at the position itself reads the symbol there. -/
+@[simp] theorem realize_label_var {w : List α} {n : ℕ} {a : α} :
+    (label a .var).Realize w n ↔ w[n]? = some a := by
+  simp only [Realize, Walk.eval]
+  split_ifs with h
+  · simp
+  · simp [List.getElem?_eq_none (Nat.le_of_not_lt h)]
+
 /-- `t` reads an initial position, one in the domain with no predecessor. -/
 def initial (t : Walk) : WindowFormula α := .conj (.defined t) (.neg (.defined t.pred))
 
@@ -479,6 +517,65 @@ theorem BackBounded.realize_congr {r : ℕ} {w w' : List α} {n n' : ℕ}
     obtain rfl : j = 0 := Nat.le_zero.mp hj
     exact ⟨iff_of_true (by simpa using hn) (by simpa using hn'),
       by simpa using hlbl 0 (Nat.zero_le _)⟩
+
+/-! ### Window tests -/
+
+/-- `readBack v j` holds at a position when the positions `j + 1`, `j + 2`, … back carry `v`,
+nearest first. -/
+def readBack : List α → ℕ → WindowFormula α
+  | [], _ => tru
+  | b :: v, j => (label b (Walk.back (j + 1))).conj (readBack v (j + 1))
+
+/-- `window r u` holds at a position when the last `r` symbols before it, or all of them if there
+are fewer than `r`, spell `u`. -/
+def window (r : ℕ) (u : List α) : WindowFormula α :=
+  (readBack u.reverse 0).conj
+    (if u.length < r then (defined (Walk.back (u.length + 1))).neg else tru)
+
+theorem realize_readBack {w : List α} {n : ℕ} (hn : n < w.length) :
+    ∀ {v : List α} {j : ℕ}, j ≤ n →
+      ((readBack v j).Realize w n ↔ v <+: (w.take (n - j)).reverse)
+  | [], _, _ => by simp [readBack, Realize]
+  | b :: v, j, hj => by
+    rcases Nat.lt_or_ge j n with h | h
+    · have htake : w.take (n - j) = w.take (n - (j + 1)) ++ [w[n - (j + 1)]] := by
+        rw [show n - j = n - (j + 1) + 1 by omega, List.take_add_one,
+          List.getElem?_eq_getElem (by omega)]
+        rfl
+      rw [readBack, realize_conj, realize_readBack hn (by omega), htake, List.reverse_append,
+        List.reverse_singleton, List.singleton_append, List.cons_prefix_cons]
+      refine and_congr_left' ?_
+      simp [Realize, Walk.eval_back hn, show j + 1 ≤ n by omega,
+        List.getElem?_eq_getElem (show n - (j + 1) < w.length by omega), eq_comm]
+    · obtain rfl : j = n := by omega
+      simp [readBack, Realize, Walk.eval_back hn, Nat.not_succ_le_self]
+
+theorem bounded_readBack {l : ℕ} :
+    ∀ {v : List α} {j : ℕ}, j + v.length ≤ l → (readBack v j).Bounded l 0
+  | [], _, _ => trivial
+  | _ :: _, _, h => ⟨⟨by simp at h ⊢; omega, by simp⟩, bounded_readBack (by simp at h; omega)⟩
+
+/-- At an in-range position, `window r u` holds exactly when the last `r` symbols before the
+position spell `u`. -/
+theorem realize_window {w u : List α} {n r : ℕ} (hn : n < w.length) (hu : u.length ≤ r) :
+    (window r u).Realize w n ↔ (w.take n).rtake r = u := by
+  rw [List.rtake_eq_iff, window, realize_conj, realize_readBack hn (Nat.zero_le n), Nat.sub_zero,
+    List.reverse_prefix]
+  refine and_congr_right fun hs ↦ ?_
+  have := hs.length_le
+  simp only [List.length_take, Nat.min_eq_left (Nat.le_of_lt hn)] at this ⊢
+  split_ifs with h
+  · simp [Realize, Walk.eval_back hn]
+    omega
+  · simp only [Realize, true_iff]
+    omega
+
+theorem window_backBounded {u : List α} {r : ℕ} (hu : u.length ≤ r) :
+    (window r u).BackBounded r :=
+  ⟨bounded_readBack (by simpa using hu), by
+    split_ifs with h
+    · exact ⟨by simp; omega, by simp⟩
+    · trivial⟩
 
 end WindowFormula
 
