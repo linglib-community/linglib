@@ -16,8 +16,9 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.ZeroOne
 A Dirac measure is a zero-one measure, and a probability measure almost surely equal to a point
 is the Dirac measure at it. On a finite type with measurable singletons, `∑ b, w b • dirac b`
 gives a set the total weight of its points; `Measure.ofWeights w` names it. With nonnegative real
-weights its real values are sums of those weights, and it is a probability measure when they sum
-to one. `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/Dirac.lean`.
+weights, `Measure.ofRealWeights w`, its real values are sums of those weights, and it is a
+probability measure when they sum to one. `[UPSTREAM]` candidate for
+`Mathlib/MeasureTheory/Measure/Dirac.lean`.
 -/
 
 @[expose] public section
@@ -102,5 +103,27 @@ theorem isFiniteMeasure_ofWeights {w : β → ℝ≥0∞} (hw : ∀ b, w b ≠ �
 
 instance (w : β → ℕ) : IsFiniteMeasure (ofWeights fun b ↦ (w b : ℝ≥0∞)) :=
   isFiniteMeasure_ofWeights fun _ ↦ ENNReal.natCast_ne_top _
+
+/-- On reals the weight measure gives a point its weight. -/
+theorem ofWeights_real_singleton (w : β → ℝ≥0∞) (b : β) :
+    (ofWeights w).real {b} = (w b).toReal := by
+  rw [measureReal_def, ofWeights_apply_singleton]
+
+omit [MeasurableSingletonClass β] in
+/-- The measure on a finite type giving each point its real weight, truncated at zero. -/
+noncomputable def ofRealWeights (w : β → ℝ) : Measure β := ofWeights fun b ↦ ENNReal.ofReal (w b)
+
+instance (w : β → ℝ) : IsFiniteMeasure (ofRealWeights w) :=
+  isFiniteMeasure_ofWeights fun _ ↦ ENNReal.ofReal_ne_top
+
+/-- With nonnegative weights the real weight measure gives a point its weight. -/
+theorem ofRealWeights_real_singleton {w : β → ℝ} (hw : ∀ b, 0 ≤ w b) (b : β) :
+    (ofRealWeights w).real {b} = w b := by
+  rw [ofRealWeights, ofWeights_real_singleton, ENNReal.toReal_ofReal (hw b)]
+
+/-- Nonnegative real weights summing to one give a probability measure. -/
+theorem isProbabilityMeasure_ofRealWeights {w : β → ℝ} (hw : ∀ b, 0 ≤ w b) (h : ∑ b, w b = 1) :
+    IsProbabilityMeasure (ofRealWeights w) :=
+  isProbabilityMeasure_sum_ofReal_smul_dirac hw h
 
 end MeasureTheory.Measure

@@ -92,7 +92,7 @@ instance : IsFiniteMeasure salience :=
 
 theorem salience_real_singleton (t : Object) :
     salience.real {t} = (listenerChoice .salience t).count := by
-  rw [measureReal_def, salience, Measure.ofWeights_apply_singleton, ENNReal.toReal_natCast]
+  rw [salience, Measure.ofWeights_real_singleton, ENNReal.toReal_natCast]
 
 theorem salience_real_finset (s : Finset Object) :
     salience.real ↑s = ∑ t ∈ s, ((listenerChoice .salience t).count : ℝ) := by
