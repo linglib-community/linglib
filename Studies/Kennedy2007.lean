@@ -11,7 +11,8 @@ with a contextual standard, from absolute ones, whose standard is an endpoint of
 minimum (*wet*, *bent*) or the maximum (*full*, *dry*). The positive form is
 `⟦pos⟧ = λg λx. g(x) ≥ s(g)` (27), with the standard `s` fixed by the scale rather than by a
 comparison class, and Interpretive Economy (66) derives it from the scale structure. This file
-states the three positive forms and checks the diagnostics of Section 3.2 that separate them.
+checks the diagnostics of Section 3.2 that separate the three positive forms,
+`Degree.RelativePos`, `Degree.MinStandardPos` and `Degree.MaxStandardPos`.
 
 ## Main results
 
@@ -40,18 +41,6 @@ namespace Kennedy2007
 open Degree
 
 variable {Entity D : Type*} [LinearOrder D]
-
-/-! ### The positive form (§2.3, §3.1) -/
-
-/-- A minimum-standard adjective (*wet*) holds of `x` when its degree is above the scale
-minimum. -/
-def MinStandardPos [OrderBot D] (μ : Entity → D) (x : Entity) : Prop := ⊥ < μ x
-
-/-- A maximum-standard adjective (*dry*) holds of `x` when its degree is the scale maximum. -/
-def MaxStandardPos [OrderTop D] (μ : Entity → D) (x : Entity) : Prop := μ x = ⊤
-
-/-- A relative adjective (*long*) holds of `x` when its degree exceeds a contextual threshold. -/
-def RelativePos (μ : Entity → D) (θ : D) (x : Entity) : Prop := θ < μ x
 
 /-! ### Definite descriptions (§3.2, (53)–(54)) -/
 
@@ -113,25 +102,9 @@ theorem relativePos_undetermined_of_comparative (μ : Entity → D) {a b : Entit
 
 /-! ### Degree modifiers (§3.2, (61)) -/
 
-/-- A degree modifier is a maximizer (*completely*, *fully*) or a minimizer (*slightly*,
-*partially*). -/
-inductive DegreeModifier
-  | maximizer
-  | minimizer
-  deriving DecidableEq
-
-/-- A modifier is licensed on a scale that has the endpoint it picks out. -/
-def Licenses : DegreeModifier → Boundedness → Prop
-  | .maximizer, b => b.HasMax
-  | .minimizer, b => b.HasMin
-
-instance : ∀ (m : DegreeModifier) (b : Boundedness), Decidable (Licenses m b)
-  | .maximizer, b => inferInstanceAs (Decidable b.HasMax)
-  | .minimizer, b => inferInstanceAs (Decidable b.HasMin)
-
 /-- The A_pos row of table (61) says whether a maximizer or minimizer is acceptable with the
 positive member of an antonym pair, by the pair's scale type. -/
-def table61Pos : Boundedness → DegreeModifier → Bool
+def table61Pos : Boundedness → EndpointModifier → Bool
   | .open_, _ => false
   | .lowerClosed, .maximizer => false
   | .lowerClosed, .minimizer => true
@@ -140,7 +113,7 @@ def table61Pos : Boundedness → DegreeModifier → Bool
   | .closed, _ => true
 
 /-- The A_neg row of table (61) says the same for the negative member. -/
-def table61Neg : Boundedness → DegreeModifier → Bool
+def table61Neg : Boundedness → EndpointModifier → Bool
   | .open_, _ => false
   | .lowerClosed, .maximizer => true
   | .lowerClosed, .minimizer => false
@@ -149,12 +122,12 @@ def table61Neg : Boundedness → DegreeModifier → Bool
   | .closed, _ => true
 
 /-- `table61` is table (61) as printed, indexed by the member of the pair. -/
-def table61 (p : Polarity) (b : Boundedness) (m : DegreeModifier) : Bool :=
+def table61 (p : Polarity) (b : Boundedness) (m : EndpointModifier) : Bool :=
   if p = .positive then table61Pos b m else table61Neg b m
 
 /-- Every cell of (61) is the endpoint structure of the adjective's own scale. -/
-theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : DegreeModifier) :
-    table61 p b m = true ↔ Licenses m (p • b) := by
+theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : EndpointModifier) :
+    table61 p b m = true ↔ (p • b).Licenses m := by
   cases p <;> cases b <;> cases m <;> decide
 
 open English.Adjectives in
@@ -162,12 +135,12 @@ open English.Adjectives in
 *??completely wet*, *completely dry* but *??slightly dry*, *slightly bent* but *??fully bent*,
 *fully straight*, and nothing on the open height scale. -/
 theorem fragment_pairs_table61 :
-    Licenses .maximizer full.boundedness ∧ Licenses .maximizer empty.boundedness ∧
-    Licenses .minimizer wet.boundedness ∧ ¬ Licenses .maximizer wet.boundedness ∧
-    Licenses .maximizer dry.boundedness ∧ ¬ Licenses .minimizer dry.boundedness ∧
-    Licenses .minimizer bent.boundedness ∧ ¬ Licenses .maximizer bent.boundedness ∧
-    Licenses .maximizer straight.boundedness ∧
-    ¬ Licenses .maximizer tall.boundedness ∧ ¬ Licenses .minimizer short.boundedness := by
+    full.boundedness.Licenses .maximizer ∧ empty.boundedness.Licenses .maximizer ∧
+    wet.boundedness.Licenses .minimizer ∧ ¬ wet.boundedness.Licenses .maximizer ∧
+    dry.boundedness.Licenses .maximizer ∧ ¬ dry.boundedness.Licenses .minimizer ∧
+    bent.boundedness.Licenses .minimizer ∧ ¬ bent.boundedness.Licenses .maximizer ∧
+    straight.boundedness.Licenses .maximizer ∧
+    ¬ tall.boundedness.Licenses .maximizer ∧ ¬ short.boundedness.Licenses .minimizer := by
   decide
 
 /-! ### Interpretive Economy (§4.2–§4.3) -/

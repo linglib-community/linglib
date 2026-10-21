@@ -69,9 +69,6 @@ def Acceptable : Prop := ∃ s, IsNecessityStandard Acc pursued μ x w s ∧ Pos
 object. -/
 def Unacceptable : Prop := ∀ w' ∈ Acc w, ¬ pursued x w'
 
-/-- The positive form of a minimum-standard adjective: any degree above the scale minimum. -/
-def PosMin [OrderBot D] : Prop := ⊥ < μ x w
-
 /-- The middling reading: decent, at the standard `s`, and not good, at the standard `t`. -/
 def Middling (t : D) : Prop := Pos μ x w s ∧ ¬ Pos μ x w t
 
@@ -133,7 +130,8 @@ theorem good_gap (tp : Degree.ThresholdPair D) (h : tp.neg ≤ tp.pos) : tp.gap.
 /-! ### Against the minimum-standard analysis -/
 
 /-- Under a minimum standard the comparative entails the positive form. -/
-theorem comparative_entails_posMin [OrderBot D] {y : E} (h : μ y w < μ x w) : PosMin μ x w :=
+theorem comparative_entails_minStandardPos [OrderBot D] {y : E} (h : μ y w < μ x w) :
+    Degree.MinStandardPos (μ · w) x :=
   bot_le.trans_lt h
 
 /-- Under a necessity standard it does not ((51b)): an object can outvalue another and fall
