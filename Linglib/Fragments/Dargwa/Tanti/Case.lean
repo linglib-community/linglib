@@ -17,16 +17,16 @@ alignment is ergative without a split, A ergative and S and P absolutive.
 
 ## Main definitions
 
-* `Dargwa.Case`, `Dargwa.Case.label`: the six cases, and the comparative value each is named for
-* `Dargwa.obliqueStem`: the oblique stem suffix *-li*
-* `Dargwa.Case.exponent`: the suffixes of a case after the direct stem
-* `Dargwa.marking`: the ergative marking of the core arguments
+* `Dargwa.Tanti.Case`, `Dargwa.Tanti.Case.label`: the six cases, and the comparative value each is named for
+* `Dargwa.Tanti.obliqueStem`: the oblique stem suffix *-li*
+* `Dargwa.Tanti.Case.exponent`: the suffixes of a case after the direct stem
+* `Dargwa.Tanti.marking`: the ergative marking of the core arguments
 
 ## Main results
 
-* `Dargwa.Case.builtOnOblique_iff`: the ergative, dative and comitative are the cases built
+* `Dargwa.Tanti.Case.builtOnOblique_iff`: the ergative, dative and comitative are the cases built
   on the oblique stem
-* `Dargwa.label_comp_marking`: the marking is the ergative alignment
+* `Dargwa.Tanti.label_comp_marking`: the marking is the ergative alignment
 
 ## Implementation notes
 
@@ -42,7 +42,7 @@ alignment is ergative without a split, A ergative and S and P absolutive.
 
 @[expose] public section
 
-namespace Dargwa
+namespace Dargwa.Tanti
 
 open Morphology
 
@@ -110,4 +110,4 @@ def marking : ArgumentRole → Case
 theorem label_comp_marking : Case.label ∘ marking = Alignment.ergative := by
   funext r; cases r <;> rfl
 
-end Dargwa
+end Dargwa.Tanti

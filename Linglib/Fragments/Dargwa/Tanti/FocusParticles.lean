@@ -6,11 +6,11 @@ public import Linglib.Syntax.Category.Particle.Additive
 # Tanti Dargwa focus particles
 
 The additive particle is the enclitic *=ra* 'also, too', which repeated after each conjunct is the
-coordinator `Dargwa.Coordination.ra` 'and', as Sumbatova describes it.
+coordinator `Dargwa.Tanti.Coordination.ra` 'and', as Sumbatova describes it.
 
 ## Main definitions
 
-* `Dargwa.FocusParticles.ra`: the additive particle.
+* `Dargwa.Tanti.FocusParticles.ra`: the additive particle.
 
 ## References
 
@@ -19,9 +19,9 @@ coordinator `Dargwa.Coordination.ra` 'and', as Sumbatova describes it.
 
 @[expose] public section
 
-namespace Dargwa.FocusParticles
+namespace Dargwa.Tanti.FocusParticles
 
 /-- *=ra* 'also, too', enclitic on the phrase it adds. -/
 def ra : AdditiveParticle := { morph := .encl "ra", gloss := "also, too" }
 
-end Dargwa.FocusParticles
+end Dargwa.Tanti.FocusParticles

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Fragments.Dargwa.Locatives
+public import Linglib.Fragments.Dargwa.Tanti.Locatives
 
 /-!
 # Tanti Dargwa voice
@@ -16,19 +16,19 @@ tells the two apart by its thematic suffix.
 
 ## Main definitions
 
-* `Dargwa.antipassive`, `Dargwa.anticausative`, `Dargwa.causativeOfIntransitive`,
-  `Dargwa.causativeOfTransitive`, `Dargwa.alternations`: the valency alternations
-* `Dargwa.causeeForm`: the inter-elative of the causee of a transitive base
+* `Dargwa.Tanti.antipassive`, `Dargwa.Tanti.anticausative`, `Dargwa.Tanti.causativeOfIntransitive`,
+  `Dargwa.Tanti.causativeOfTransitive`, `Dargwa.Tanti.alternations`: the valency alternations
+* `Dargwa.Tanti.causeeForm`: the inter-elative of the causee of a transitive base
 
 ## Main results
 
-* `Dargwa.isCoded_iff`: the two causatives are the alternations coded on the verb
-* `Dargwa.causativeOfIntransitive_fateOfRole_S`, `Dargwa.causativeOfTransitive_valency`: the
+* `Dargwa.Tanti.isCoded_iff`: the two causatives are the alternations coded on the verb
+* `Dargwa.Tanti.causativeOfIntransitive_fateOfRole_S`, `Dargwa.Tanti.causativeOfTransitive_valency`: the
   causee of an intransitive base stays a core term; that of a transitive base is demoted as
   the causer is introduced, so the valency is unchanged
-* `Dargwa.not_isSpatial_causeeForm`, `Dargwa.causeeForm_morphs`: the causee form is the
+* `Dargwa.Tanti.not_isSpatial_causeeForm`, `Dargwa.Tanti.causeeForm_morphs`: the causee form is the
   directionless elative no spatial form is, *-cːe-r* after the oblique stem
-* `Dargwa.labile_future_thematic`: the future forms of a P-labile verb differ in their
+* `Dargwa.Tanti.labile_future_thematic`: the future forms of a P-labile verb differ in their
   thematic suffix
 
 ## Implementation notes
@@ -44,7 +44,7 @@ tells the two apart by its thematic suffix.
 
 @[expose] public section
 
-namespace Dargwa
+namespace Dargwa.Tanti
 
 open ArgumentFrame.Slot Morphology
 
@@ -107,4 +107,4 @@ theorem labile_future_thematic :
     thematic ⟨.third, .third⟩ = .suff "u" ∧ .suff "ar" ∈ intransitiveThematic .third := by
   decide
 
-end Dargwa
+end Dargwa.Tanti
