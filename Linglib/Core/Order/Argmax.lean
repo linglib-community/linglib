@@ -26,6 +26,8 @@ Option α`; the set-valued form is the natural companion of `Finset.max'` and
 
 * `mem_argmax` — membership characterization (simp normal form).
 * `argmax_eq_singleton_iff` — a sole maximizer strictly beats every other element.
+* `StrictAntiOn.argmin_eq_singleton` — a strictly antitone score is minimized at the greatest
+  element.
 * `argmax_nonempty` — nonempty on nonempty input, in a total preorder.
 * `argmax_comp_strictMono` — invariance under strictly monotone rescaling.
 
@@ -104,6 +106,11 @@ theorem argmax_eq_singleton_iff : s.argmax f = {a} ↔ a ∈ s ∧ ∀ b ∈ s, 
     refine ⟨fun ⟨hb, hmax⟩ ↦ by_contra fun hba ↦ (h b hb hba).not_ge (hmax a ha), ?_⟩
     rintro rfl
     exact ⟨ha, fun c hc ↦ (eq_or_ne c b).elim (fun h ↦ h ▸ le_rfl) fun hcb ↦ (h c hc hcb).le⟩
+
+/-- A score strictly antitone on `s` is minimized exactly at the greatest element of `s`. -/
+theorem _root_.StrictAntiOn.argmin_eq_singleton [PartialOrder α] (hf : StrictAntiOn f s)
+    (ha : IsGreatest (s : Set α) a) : s.argmin f = {a} :=
+  argmin_eq_singleton_iff.2 ⟨ha.1, fun _ hb hba ↦ hf hb ha.1 ((ha.2 hb).lt_of_ne hba)⟩
 
 section Total
 

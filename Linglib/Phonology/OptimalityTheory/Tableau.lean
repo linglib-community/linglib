@@ -46,6 +46,8 @@ Theory's strict domination, while Harmonic Grammar weights the same vector witho
   under some ranking iff the competitor does not harmonically bound it.
 * `Tableau.ofRanking_zero_mem_optimal` / `Tableau.ofRanking_eq_zero_of_mem_optimal` — a candidate
   with no violations wins under every ranking, and then every winner has no violations.
+* `Tableau.ofRanking_optimal_eq_argmin_filter` — when every other constraint dominates `j` and
+  can be satisfied together, the winners satisfy them all and minimize `j`.
 * `Tableau.constraints_zero_le_of_mem_optimal` — a winner does at least as well as every
   candidate on the top constraint.
 * `Tableau.optimal_tail` / `Tableau.optimal_ofList_cons` — EVAL filters the candidates constraint
@@ -229,6 +231,37 @@ theorem ofRanking_eq_zero_of_mem_optimal (hc : c ∈ (ofRanking con r candidates
     (hd : d ∈ candidates) (h0 : ∀ i, con i d = 0) (i : ι) : con i c = 0 := by
   have h := profile_eq_zero_of_mem_optimal hc hd (funext fun p ↦ h0 (r p))
   simpa using show con (r (r.symm i)) c = 0 from congrFun h (r.symm i)
+
+/-- If a constraint `j` is dominated by every other constraint and some candidate violates none
+of the others, the winners are the candidates violating none of the others that do best on
+`j`. -/
+theorem ofRanking_optimal_eq_argmin_filter [Fintype ι] [DecidableEq ι] {j : ι}
+    (hr : ∀ i ≠ j, r.Dominates i j) (h : ∃ c ∈ candidates, ∀ i ≠ j, con i c = 0) :
+    (ofRanking con r candidates).optimal =
+      (candidates.filter fun c ↦ ∀ i ≠ j, con i c = 0).argmin (con j) := by
+  obtain ⟨m, hm, hm0⟩ := h
+  ext c
+  simp only [mem_optimal_iff, ofRanking_candidates, ← not_lt,
+    ofRanking_profile_lt_iff_exists_dominates, Finset.mem_argmin, Finset.mem_filter, and_imp]
+  constructor
+  · rintro ⟨hc, hopt⟩
+    have hc0 : ∀ i ≠ j, con i c = 0 := fun i hi ↦ by
+      by_contra hne
+      refine hopt m hm ⟨i, by rw [hm0 i hi]; omega, fun k hk ↦ ?_⟩
+      obtain rfl : k = j := by_contra fun hkj ↦ by simp [hm0 k hkj] at hk
+      exact hr i hi
+    refine ⟨⟨hc, hc0⟩, fun d hd hd0 hlt ↦ hopt d hd ⟨j, hlt, fun k hk ↦ ?_⟩⟩
+    obtain rfl | hkj := eq_or_ne k j
+    · exact absurd hk hlt.not_gt
+    · simp [hd0 k hkj] at hk
+  · rintro ⟨⟨hc, hc0⟩, hmin⟩
+    refine ⟨hc, fun d hd ⟨i, hi, hdom⟩ ↦ ?_⟩
+    obtain rfl : i = j := by_contra fun hij ↦ by simp [hc0 i hij] at hi
+    by_cases hd0 : ∀ k ≠ i, con k d = 0
+    · exact hmin d hd hd0 hi
+    · push Not at hd0
+      obtain ⟨k, hk, hpos⟩ := hd0
+      exact asymm (hdom k (by rw [hc0 k hk]; omega)) (hr k hk)
 
 section Bounding
 

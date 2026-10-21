@@ -13,7 +13,7 @@ Becker, Franchetto, Kuikuro, Kuikuro and Petrović analyze Kuikuro prosody with 
 optimality-theoretic grammars. Words are footed into iambs from left to right with a final
 trochee under *V:]φ ≫ Max-μ ≫ Parse-σ ≫ Iamb, and the last foot heads the word. The High tone of
 a phrase is realized in a domain chosen by Align-L(Δφ,H), NonFin(H) and Culminativity-H over
-Align-R(H), and `tone_optimal_eq_singleton_iff` derives the paper's generalization from these
+Align-R(H), and `tone_optimal` derives the paper's generalization from these
 constraints: the domain runs from the primary stress up to the next foot head, so the High
 target can fall up to three syllables after the stress it marks.
 
@@ -205,132 +205,94 @@ theorem toneRanking_dominates_alignR :
 /-- The tone-domain tableau of Tables 7 and 14. -/
 def toneTableau : Tableau (NonemptyInterval ℕ) 4 := .ofRanking (tone t) toneRanking (domains t)
 
-variable {t}
+/-- The extent of the predicted domain is the number of syllables it takes in after the phrase
+    head, the most it can take without a foot head or the phrase-final syllable. -/
+def extent : ℕ :=
+  Nat.findGreatest (fun k ↦ ∀ i ∈ Finset.Ioc (head t) (head t + k), ¬ Stressed t i)
+    ((Tree.columns t).length - head t - 2)
+
+/-- The predicted domain runs from the phrase head over `extent t` further syllables. -/
+def toneDomain : NonemptyInterval ℕ := ⟨(head t, head t + extent t), Nat.le_add_right _ _⟩
+
+variable {t} {d d' : NonemptyInterval ℕ}
+
+theorem alignL_eq_zero_iff (hμ : ∀ i < (Tree.columns t).length, 0 < moras t i)
+    (hd : d ∈ domains t) : alignL t d = 0 ↔ d.fst = head t := by
+  refine ⟨fun h ↦ by_contra fun hne ↦ ?_, fun h ↦ by simp [alignL, h]⟩
+  have := d.fst_le_snd.trans_lt (mem_domains.1 hd)
+  exact (Finset.sum_pos' (fun _ _ ↦ Nat.zero_le _)
+    ⟨min d.fst (head t), Finset.mem_Ico.2 ⟨le_rfl, by omega⟩, hμ _ (by omega)⟩).ne' h
+
+theorem nonFin_eq_zero_iff : nonFin t d = 0 ↔ d.snd + 1 < (Tree.columns t).length := by
+  simp [nonFin]
+
+theorem culm_eq_zero_iff (hp : Stressed t (head t)) (hl : d.fst = head t) :
+    culm t d = 0 ↔ ∀ i ∈ Finset.Ioc (head t) d.snd, ¬ Stressed t i := by
+  rw [culm, Constraint.binary_eq_zero_iff, not_lt, Finset.card_le_one]
+  simp only [Finset.mem_filter, Finset.mem_Icc, Finset.mem_Ioc, hl]
+  refine ⟨fun h i hi hs ↦ ?_, fun h a ha b hb ↦ ?_⟩
+  · have := h i ⟨⟨hi.1.le, hi.2⟩, hs⟩ (head t) ⟨⟨le_rfl, hl ▸ d.fst_le_snd⟩, hp⟩
+    omega
+  · have ha' : a = head t := by_contra fun h' ↦ h a ⟨by omega, ha.1.2⟩ ha.2
+    have hb' : b = head t := by_contra fun h' ↦ h b ⟨by omega, hb.1.2⟩ hb.2
+    rw [ha', hb']
+
+theorem alignR_lt_alignR (hμ : ∀ i < (Tree.columns t).length, 0 < moras t i)
+    (h : d.snd < d'.snd) (h' : d'.snd < (Tree.columns t).length) : alignR t d' < alignR t d :=
+  Finset.sum_lt_sum_of_subset (Finset.Ioo_subset_Ioo_left h.le) (Finset.mem_Ioo.2 ⟨h, h'⟩)
+    (by simp) (hμ _ h') fun _ _ _ ↦ Nat.zero_le _
 
 /-- If every syllable has a mora and the phrase head is a non-final foot head, then under any
-    ranking that puts Align-R(H) lowest the unique optimal tone domain starts at the phrase head
-    and extends up to, but not including, the next foot head or the phrase-final syllable
-    (§4.5). -/
-theorem tone_optimal_eq_singleton_iff {r : Ranking ToneConstraint 4}
+    ranking that puts Align-R(H) lowest the optimal tone domain is `toneDomain t`, the widest
+    domain that starts at the phrase head and contains neither a second foot head nor the
+    phrase-final syllable (§4.5). -/
+theorem tone_optimal {r : Ranking ToneConstraint 4}
     (hr : ∀ c ≠ ToneConstraint.alignR, r.Dominates c .alignR)
     (hμ : ∀ i < (Tree.columns t).length, 0 < moras t i) (hp : Stressed t (head t))
-    (hn : head t + 1 < (Tree.columns t).length) {d : NonemptyInterval ℕ} :
-    (Tableau.ofRanking (tone t) r (domains t)).optimal = {d} ↔
-      d.fst = head t ∧ d.snd + 1 < (Tree.columns t).length ∧
-        (∀ i ∈ Finset.Ioc (head t) d.snd, ¬ Stressed t i) ∧
-        (d.snd + 2 = (Tree.columns t).length ∨ Stressed t (d.snd + 1)) := by
-  set n := (Tree.columns t).length
-  set p := head t with hp_eq
-  have hex : ∃ k, p + k + 2 = n ∨ Stressed t (p + k + 1) := ⟨n - p - 2, .inl (by omega)⟩
-  set k := Nat.find hex
-  have hk : p + k + 2 = n ∨ Stressed t (p + k + 1) := Nat.find_spec hex
-  have hkn : p + k + 2 ≤ n := by
-    by_contra h
-    exact Nat.find_min hex (show n - p - 2 < k by omega) (.inl (by omega))
-  have hfree : ∀ i ∈ Finset.Ioc p (p + k), ¬ Stressed t i := fun i hi hs ↦ by
-    rw [Finset.mem_Ioc] at hi
-    exact Nat.find_min hex (show i - p - 1 < k by omega) (.inr (by convert hs using 2; omega))
-  -- the blocker characterizes the winner's right edge
-  have hchar : ∀ e, p ≤ e → (e + 1 < n ∧ (∀ i ∈ Finset.Ioc p e, ¬ Stressed t i) ∧
-      (e + 2 = n ∨ Stressed t (e + 1)) ↔ e = p + k) := by
-    intro e hpe
+    (hn : head t + 1 < (Tree.columns t).length) :
+    (Tableau.ofRanking (tone t) r (domains t)).optimal = {toneDomain t} := by
+  have hext : ∀ i ∈ Finset.Ioc (head t) (head t + extent t), ¬ Stressed t i :=
+    Nat.findGreatest_spec (P := fun k ↦ ∀ i ∈ Finset.Ioc (head t) (head t + k), ¬ Stressed t i)
+      (Nat.zero_le _) (by simp)
+  have hle : extent t ≤ (Tree.columns t).length - head t - 2 := Nat.findGreatest_le _
+  -- a domain satisfies Align-L(Δφ,H), NonFin(H) and Culminativity-H iff it lies in `toneDomain t`
+  have hfeas : ∀ d ∈ domains t, (∀ c ≠ ToneConstraint.alignR, tone t c d = 0) ↔
+      d.fst = head t ∧ d.snd ≤ head t + extent t := by
+    intro d hd
+    have hpd := d.fst_le_snd
     constructor
-    · rintro ⟨he, hfr, hb⟩
-      have : k = e - p := (Nat.find_eq_iff hex).2 ⟨by rwa [Nat.add_sub_cancel' hpe],
-        fun j hj ↦ by
-          rintro (h | h)
-          · omega
-          · exact hfr (p + j + 1) (Finset.mem_Ioc.2 ⟨by omega, by omega⟩) h⟩
-      omega
-    · rintro rfl
-      exact ⟨by omega, hfree, hk⟩
-  let m : NonemptyInterval ℕ := ⟨(p, p + k), by simp⟩
-  have hm : m ∈ domains t := mem_domains.2 (by simp [m]; omega)
-  have hpos : ∀ s : Finset ℕ, (∀ i ∈ s, i < n) → s.Nonempty → 0 < ∑ i ∈ s, moras t i :=
-    fun s hs ⟨i, hi⟩ ↦ Finset.sum_pos' (fun _ _ ↦ Nat.zero_le _) ⟨i, hi, hμ i (hs i hi)⟩
-  -- the winner violates none of Align-L(Δφ,H), NonFin(H) and Culminativity-H
-  have hm0 : ∀ c ≠ ToneConstraint.alignR, tone t c m = 0 := by
-    rintro (_ | _ | _ | _) hc
-    · simp [tone, alignL, m, ← hp_eq]
-    · simp [tone, nonFin, Constraint.binary, m]; omega
-    · simp only [tone, culm, Constraint.binary, m, ite_eq_right_iff, one_ne_zero, imp_false,
-        not_lt]
-      refine Finset.card_le_one.2 fun a ha b hb ↦ ?_
-      simp only [Finset.mem_filter, Finset.mem_Icc] at ha hb
-      have ha' : a = p := by
-        by_contra h; exact hfree a (Finset.mem_Ioc.2 ⟨by omega, ha.1.2⟩) ha.2
-      have hb' : b = p := by
-        by_contra h; exact hfree b (Finset.mem_Ioc.2 ⟨by omega, hb.1.2⟩) hb.2
-      rw [ha', hb']
-    · exact absurd rfl hc
-  -- a competitor can beat the winner only on Align-R(H)
-  have hlose : ∀ d j, tone t j d < tone t j m → j = .alignR := fun d j hj ↦ by
-    by_contra h
-    exact absurd hj (by rw [hm0 j h]; exact Nat.not_lt_zero _)
-  have hwin : (Tableau.ofRanking (tone t) r (domains t)).optimal = {m} := by
-    rw [Tableau.ofRanking_optimal_eq_singleton_iff]
-    refine ⟨hm, fun d hd hne ↦ ?_⟩
-    have hdn := mem_domains.1 hd
-    have hbeat : ∀ c ≠ ToneConstraint.alignR, 0 < tone t c d →
-        ∃ i, tone t i m < tone t i d ∧ ∀ j, tone t j d < tone t j m → r.Dominates i j :=
-      fun c hc h ↦ ⟨c, by rwa [hm0 c hc], fun j hj ↦ hlose d j hj ▸ hr c hc⟩
-    by_cases hL : 0 < tone t .alignL d
-    · exact hbeat _ (by decide) hL
-    have hl : d.fst = p := by
-      by_contra hne'
-      refine hL (hpos _ (fun i hi ↦ ?_) (Finset.nonempty_Ico.2 ?_))
-      · have := d.fst_le_snd; simp only [Finset.mem_Ico] at hi; omega
-      · omega
-    by_cases hF : 0 < tone t .nonFin d
-    · exact hbeat _ (by decide) hF
-    have hdF : d.snd + 1 < n := by
-      simp only [tone, nonFin, Constraint.binary] at hF; split_ifs at hF with h
-      · simp at hF
-      · omega
-    by_cases hC : 0 < tone t .culm d
-    · exact hbeat _ (by decide) hC
-    have hdC : ∀ i ∈ Finset.Ioc p d.snd, ¬ Stressed t i := fun i hi hs ↦ by
-      have h2 : 1 < ((Finset.Icc d.fst d.snd).filter (Stressed t)).card := by
-        refine Finset.one_lt_card.2 ⟨p, ?_, i, ?_, ?_⟩
-        · simp only [Finset.mem_filter, Finset.mem_Icc]
-          exact ⟨⟨hl.le, hl ▸ d.fst_le_snd⟩, hp⟩
-        · rw [Finset.mem_Ioc] at hi
-          simp only [Finset.mem_filter, Finset.mem_Icc]; exact ⟨⟨by omega, hi.2⟩, hs⟩
-        · rw [Finset.mem_Ioc] at hi; omega
-      exact hC (by simp [tone, culm, Constraint.binary, h2])
-    have hle : d.snd ≤ p + k := by
-      by_contra h
-      rcases hk with hk | hk
-      · omega
-      · exact hdC _ (Finset.mem_Ioc.2 ⟨by omega, by omega⟩) hk
-    have hlt : d.snd < p + k := by
-      refine lt_of_le_of_ne hle fun h ↦ hne ?_
-      exact NonemptyInterval.ext (Prod.ext hl h)
-    have hR : tone t .alignR m < tone t .alignR d :=
-      Finset.sum_lt_sum_of_subset (Finset.Ioo_subset_Ioo_left hlt.le)
-        (Finset.mem_Ioo.2 ⟨hlt, by omega⟩) (by simp) (hμ _ (by omega)) fun _ _ _ ↦ Nat.zero_le _
-    refine ⟨.alignR, hR, fun j hj ↦ ?_⟩
-    obtain rfl := hlose d j hj
-    exact absurd hj hR.not_gt
-  rw [hwin, Finset.singleton_inj, eq_comm]
-  constructor
-  · rintro rfl
-    obtain ⟨h1, h2, h3⟩ := (hchar (p + k) (Nat.le_add_right _ _)).2 rfl
-    exact ⟨rfl, h1, h2, h3⟩
-  · rintro ⟨hl, he, hfr, hb⟩
-    have hpe : p ≤ d.snd := hl ▸ d.fst_le_snd
-    exact NonemptyInterval.ext (Prod.ext hl ((hchar _ hpe).1 ⟨he, hfr, hb⟩))
+    · intro h
+      have hl := (alignL_eq_zero_iff hμ hd).1 (h .alignL (by decide))
+      have hF := nonFin_eq_zero_iff.1 (h .nonFin (by decide))
+      have hC := (culm_eq_zero_iff hp hl).1 (h .culm (by decide))
+      have : d.snd - head t ≤ extent t :=
+        Nat.le_findGreatest (by omega) (by rwa [Nat.add_sub_cancel' (hl ▸ hpd)])
+      exact ⟨hl, by omega⟩
+    · rintro ⟨hl, hsnd⟩ (_ | _ | _ | _) hc
+      · exact (alignL_eq_zero_iff hμ hd).2 hl
+      · exact nonFin_eq_zero_iff.2 (by omega)
+      · exact (culm_eq_zero_iff hp hl).2 fun i hi ↦ hext i (Finset.Ioc_subset_Ioc_right hsnd hi)
+      · exact absurd rfl hc
+  have hm : toneDomain t ∈ domains t :=
+    mem_domains.2 (by simp only [toneDomain]; omega)
+  have hmf := (hfeas _ hm).2 ⟨rfl, le_rfl⟩
+  rw [Tableau.ofRanking_optimal_eq_argmin_filter hr ⟨_, hm, hmf⟩]
+  refine StrictAntiOn.argmin_eq_singleton (fun d hd d' hd' hlt ↦ ?_)
+    ⟨Finset.mem_filter.2 ⟨hm, hmf⟩, fun d hd ↦ ?_⟩
+  · rw [Finset.coe_filter] at hd hd'
+    have hl := ((hfeas d hd.1).1 hd.2).1
+    have hl' := ((hfeas d' hd'.1).1 hd'.2).1
+    refine alignR_lt_alignR hμ (lt_of_le_of_ne (NonemptyInterval.le_def.1 hlt.le).2 fun h ↦
+      hlt.ne (NonemptyInterval.ext (Prod.ext (hl.trans hl'.symm) h))) (mem_domains.1 hd'.1)
+  · rw [Finset.coe_filter] at hd
+    obtain ⟨hl, hsnd⟩ := (hfeas d hd.1).1 hd.2
+    exact NonemptyInterval.le_def.2 ⟨hl.ge, hsnd⟩
 
-/-- The optimal tone domain of a phrase whose phrase head is a non-final foot head, under the
-    paper's column order. -/
-theorem toneTableau_optimal_eq_singleton_iff
-    (hμ : ∀ i < (Tree.columns t).length, 0 < moras t i) (hp : Stressed t (head t))
-    (hn : head t + 1 < (Tree.columns t).length) {d : NonemptyInterval ℕ} :
-    (toneTableau t).optimal = {d} ↔
-      d.fst = head t ∧ d.snd + 1 < (Tree.columns t).length ∧
-        (∀ i ∈ Finset.Ioc (head t) d.snd, ¬ Stressed t i) ∧
-        (d.snd + 2 = (Tree.columns t).length ∨ Stressed t (d.snd + 1)) :=
-  tone_optimal_eq_singleton_iff toneRanking_dominates_alignR hμ hp hn
+/-- The optimal tone domain of a phrase under the column order of Tables 7 and 14. -/
+theorem toneTableau_optimal (hμ : ∀ i < (Tree.columns t).length, 0 < moras t i)
+    (hp : Stressed t (head t)) (hn : head t + 1 < (Tree.columns t).length) :
+    (toneTableau t).optimal = {toneDomain t} :=
+  tone_optimal toneRanking_dominates_alignR hμ hp hn
 
 end ToneDomain
 
@@ -340,9 +302,9 @@ theorem tone_in_isolation :
     (toneTableau fell).optimal = {⟨(3, 3), le_rfl⟩} ∧
       (toneTableau weFell).optimal = {⟨(4, 4), le_rfl⟩} ∧
       (toneTableau annatto).optimal = {⟨(1, 1), le_rfl⟩} :=
-  ⟨(toneTableau_optimal_eq_singleton_iff (by decide) (by decide) (by decide)).2 (by decide),
-    (toneTableau_optimal_eq_singleton_iff (by decide) (by decide) (by decide)).2 (by decide),
-    (toneTableau_optimal_eq_singleton_iff (by decide) (by decide) (by decide)).2 (by decide)⟩
+  ⟨by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide,
+    by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide,
+    by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide⟩
 
 /-! ### Phrases -/
 
@@ -360,13 +322,13 @@ def friendHasBeenInjured : Tree :=
     stress *tɔ́ː*. -/
 theorem tone_blocked_by_trochee_head :
     (toneTableau friendInjured).optimal = {⟨(1, 1), le_rfl⟩} :=
-  (toneTableau_optimal_eq_singleton_iff (by decide) (by decide) (by decide)).2 (by decide)
+  by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide
 
 /-- The same short *hɛ* joins the domain as the dependent of an iamb (Fig. 10). That it blocks
     only as the head of a trochee is the paper's third argument for trochaic reversal (§1). -/
 theorem tone_crosses_iamb_dependent :
     (toneTableau friendHasBeenInjured).optimal = {⟨(1, 2), by decide⟩} :=
-  (toneTableau_optimal_eq_singleton_iff (by decide) (by decide) (by decide)).2 (by decide)
+  by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide
 
 /-- *[(itɔː)tɔ (tápɨː)ɾɨ]* 'the man has been heard' (Table 12), an instance of Table 14's
     `/σσσ # σσσ/`. -/
@@ -377,7 +339,7 @@ def manHasBeenHeard : Tree :=
 /-- The domain left-aligns to *tɔː* and takes in the unstressed *tɔ* and *tá* (Table 14),
     stopping before the iamb head *pɨː*. -/
 theorem table14 : (toneTableau manHasBeenHeard).optimal = {⟨(1, 3), by decide⟩} :=
-  (toneTableau_optimal_eq_singleton_iff (by decide) (by decide) (by decide)).2 (by decide)
+  by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide
 
 /-- *[(umɨː)ŋi ⟨a⟩(lámaː)(kilɨ)]* 'the annatto fell' (Fig. 3), in which the noun heads the phrase
     and the verb's initial vowel is unparsed (§4.3), leaving an iamb and a final trochee. -/
@@ -392,7 +354,7 @@ theorem stress_tone_incoherence :
     head annattoFell = 1 ∧ (toneTableau annattoFell).optimal = {⟨(1, 4), by decide⟩} ∧
       ¬ Stressed annattoFell 4 ∧ Stressed annattoFell 5 :=
   ⟨by decide,
-    (toneTableau_optimal_eq_singleton_iff (by decide) (by decide) (by decide)).2 (by decide),
+    by rw [toneTableau_optimal (by decide) (by decide) (by decide)]; decide,
     by decide, by decide⟩
 
 end BeckerEtAl2025
