@@ -14,8 +14,7 @@ public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Logic.Natural.Basic
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
-public import Linglib.Semantics.Degree.Scale
-public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Semantics.Degree.Gradability
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Semantics.Root.Defs
 public import Linglib.Morphology.Morph
@@ -154,6 +153,8 @@ structure Aspect where
   /-- The pole of the dimension the verb measures towards, negative for *dry*, a decrease in
       wetness, and for *doubt*, the antonym of *believe*. -/
   scalePolarity : Polarity := .positive
+  /-- The positive standard the verb's lexicon fixes, `none` taking its scale's default. -/
+  lexicalStandard : Option Degree.PositiveStandard := none
   /-- The direction of the path along which a verb of motion displaces its theme, relative to
       the ground ([pantcheva-2011]). It is `.goal` for *arrive* and *come*, `.source` for
       *leave*, and `.place` for a verb of manner of motion, which displaces its theme without a
@@ -253,15 +254,17 @@ structure Verb extends Verb.ArgStructure, Verb.Aspect, Verb.Presupposition, Verb
 /-- The citation form of a verb is the surface form of its morphs, in boundary notation. -/
 def Verb.form (v : Verb) : String := Morph.surface v.morphs
 
-/-- The scale of a gradable verb is its dimension's, dualized for a verb towards the negative
-pole, as the scale of a negative adjective is. -/
-def Verb.boundedness (v : Verb) : Option Degree.Boundedness :=
-  v.scaleDimension.map (v.scalePolarity • ·.boundedness)
+/-- The degree semantics of a verb, `none` for a verb without a scale. -/
+def Verb.gradability? (v : Verb) : Option Degree.Gradability :=
+  v.scaleDimension.map fun d ↦ ⟨d, v.scalePolarity, v.lexicalStandard⟩
 
-/-- The positive standard of a gradable verb is the one Interpretive Economy prefers on its
-scale. -/
+/-- The scale of a gradable verb. -/
+def Verb.boundedness (v : Verb) : Option Degree.Boundedness :=
+  v.gradability?.map (·.boundedness)
+
+/-- The positive standard of a gradable verb. -/
 def Verb.standard (v : Verb) : Option Degree.PositiveStandard :=
-  v.boundedness.map (·.defaultStandard)
+  v.gradability?.map (·.standard)
 
 /-- The scale along which a degree achievement measures change is the scale of a verb that is not
 a state, since a state measures no change. -/

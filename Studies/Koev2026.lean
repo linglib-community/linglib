@@ -22,15 +22,16 @@ against the fragment's *believe* and *doubt*.
 
 * `fitsModifierRows_iff`: the modifier judgments fit the upper closed scale and no other.
 * `fitsModifierRowsPos_iff`: read off the positive form, they fix the maximum standard.
-* `confident_fitsModifierRows`: read off the scale, they leave the weak semantics open.
+* `weakBelieve_fitsModifierRows`: read off the scale, they leave the weak semantics open.
+* `gradability_weakBelieve`: the weak semantics gives *believe* the degree semantics of *confident*.
 * `furtherEvidence_iff`: the rows of §3 make *believe* and *doubt* complementary.
 * `holdsAt_hintikka_iff`: maximal credence is Hintikka's *believe* over the credence's support.
 
 ## Implementation notes
 
-Rows name predicates by form, looked up among the fragment's adjectives and its *believe* and
-*doubt*. Credences are degrees of a linear order with a top, and probability measures over a
-countable discrete space for the comparison with Hintikka.
+Rows name predicates by form, looked up as a `Degree.Gradability` among the fragment's adjectives
+and its *believe* and *doubt*. Credences are degrees of a linear order with a top, and probability
+measures over a countable discrete space for the comparison with Hintikka.
 
 ## TODO
 
@@ -62,15 +63,15 @@ open Degree
 /-- The verbs of the paper. -/
 def verbs : List Verb := [English.Verbs.believe.toVerb, English.Verbs.doubt.toVerb]
 
-/-- The scale of the predicate a row names. -/
-def scaleOf (form : String) : Option Boundedness :=
-  (English.Adjectives.lookup form).map (·.boundedness) <|>
-    (verbs.find? (·.form == form)).bind (·.boundedness)
+/-- The degree semantics of the predicate a row names, among the fragment's adjectives and the
+verbs `vs`. -/
+def gradabilityIn (vs : List Verb) (form : String) : Option Gradability :=
+  (English.Adjectives.lookup form).bind (·.gradability?) <|>
+    (vs.find? (·.form == form)).bind (·.gradability?)
 
 /-- The positive standard of the predicate a row names. -/
 def standardOf (form : String) : Option PositiveStandard :=
-  (English.Adjectives.lookup form).map (·.standard) <|>
-    (verbs.find? (·.form == form)).bind (·.standard)
+  (gradabilityIn verbs form).map (·.standard)
 
 /-- The endpoint modifier a row's `modifier` feature names. -/
 def modifierOf : String → Option EndpointModifier
@@ -83,7 +84,7 @@ def modifierOf : String → Option EndpointModifier
 /-- *Believe* is gradable: the predicate of every degree construction in (7)–(10) has a scale. -/
 theorem degreeConstruction_rows :
     ∀ row ∈ Examples.all, row.feature? "degreeConstruction" ≠ none →
-      ∀ f ∈ row.feature? "predicate", scaleOf f ≠ none := by
+      ∀ f ∈ row.feature? "predicate", gradabilityIn verbs f ≠ none := by
   decide
 
 /-- A scale fits the modifier judgments of *believe* when each modifier row is acceptable exactly
@@ -130,13 +131,21 @@ theorem fitsModifierRowsPos_iff {s : PositiveStandard} :
     FitsModifierRowsPos s ↔ s = .maxEndpoint := by
   cases s <;> decide
 
-/-- Read off the scale, the judgments leave open the weak semantics of
-[hawthorne-rothschild-spectre-2016], a contextual standard on the same scale, which only
-Interpretive Economy excludes. The fragment's *confident* has that profile: its scale fits the
-judgments, and Interpretive Economy does not admit its standard. -/
-theorem confident_fitsModifierRows :
-    FitsModifierRows English.Adjectives.confident.boundedness ∧
-      ¬ English.Adjectives.confident.boundedness.Admits English.Adjectives.confident.standard := by
+/-- The weak semantics of [hawthorne-rothschild-spectre-2016] is *believe* with a contextual
+standard fixed in its lexicon. -/
+def weakBelieve : Verb := { English.Verbs.believe.toVerb with lexicalStandard := some .contextual }
+
+/-- The weak semantics gives *believe* the degree semantics of the fragment's *confident*
+([cariani-santorio-wellwood-2024]). -/
+theorem gradability_weakBelieve :
+    weakBelieve.gradability? = English.Adjectives.confident.gradability? := by
+  decide
+
+/-- Read off the scale, the judgments leave the weak semantics open: its scale fits them, and
+only Interpretive Economy, which does not admit its standard, excludes it. -/
+theorem weakBelieve_fitsModifierRows :
+    ∃ γ ∈ weakBelieve.gradability?,
+      FitsModifierRows γ.boundedness ∧ ¬ γ.boundedness.Admits γ.standard := by
   decide
 
 /-! ### Further evidence (§3) -/
@@ -179,12 +188,13 @@ theorem rows_standardOf :
     ComparisonClassRows standardOf ∧ EntailmentRows standardOf ∧ DoubleDenialRows standardOf := by
   decide
 
-/-- The fragment's standards, with *believe* at `s` and *doubt* at `t`. -/
+/-- The fragment's standards, with *believe* and *doubt* fixing `s` and `t` in their lexicon. -/
 def standardWith (s t : PositiveStandard) (form : String) : Option PositiveStandard :=
-  if form == "believe" then some s else if form == "doubt" then some t else standardOf form
+  (gradabilityIn [{ English.Verbs.believe.toVerb with lexicalStandard := some s },
+    { English.Verbs.doubt.toVerb with lexicalStandard := some t }] form).map (·.standard)
 
-/-- The rows of §3 hold of *believe* at `s` and *doubt* at `t` exactly when the two standards are
-complementary endpoints, so they exclude the contextual standard of
+/-- The rows of §3 hold of *believe* and *doubt* with lexical standards `s` and `t` exactly when
+the two are complementary endpoints, so they exclude the contextual standard of
 [hawthorne-rothschild-spectre-2016] without Interpretive Economy. -/
 theorem furtherEvidence_iff {s t : PositiveStandard} :
     ComparisonClassRows (standardWith s t) ∧ EntailmentRows (standardWith s t) ∧

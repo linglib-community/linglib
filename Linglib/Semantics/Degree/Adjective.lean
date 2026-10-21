@@ -1,8 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Boundedness
-public import Linglib.Semantics.Degree.Scale
-public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Semantics.Degree.Gradability
 public import Linglib.Syntax.Category.Adjective.Basic
 
 /-!
@@ -10,9 +8,9 @@ public import Linglib.Syntax.Category.Adjective.Basic
 
 This file defines `Degree.GradableAdjective`, a syntactic adjective together with its degree
 semantics. The scale an adjective measures on, its positive standard and its Kennedy class are
-derived from its dimension, its polarity and any lexically fixed standard, so that *wet* and *dry*
-share one scale and differ only in pole. The file also defines antonym pairs and the ways a
-multidimensional adjective binds its dimensions.
+read off its `Degree.Gradability`, its dimension, polarity and any lexically fixed standard, so
+that *wet* and *dry* share one scale and differ only in pole. The file also defines antonym pairs
+and the ways a multidimensional adjective binds its dimensions.
 
 An antonym pair is contradictory when its poles take complementary standards, the minimum and the
 maximum of one scale, as Kennedy and McNally explain for *open* and *closed*. A pair of extreme
@@ -108,20 +106,26 @@ structure GradableAdjective extends Adjective where
 
 namespace GradableAdjective
 
-/-- The scale an adjective measures on is its dimension's, dualized for the negative member of
-an antonym pair, and open for a non-gradable adjective, which has none. -/
-def boundedness (g : GradableAdjective) : Boundedness :=
-  (g.dimension.map fun d ↦ g.polarity • d.boundedness).getD .open_
+/-- The degree semantics of an adjective, `none` for a non-gradable one. -/
+def gradability? (g : GradableAdjective) : Option Gradability :=
+  g.dimension.map fun d ↦ ⟨d, g.polarity, g.lexicalStandard⟩
 
-/-- The positive standard of an adjective is its lexically fixed one if any, and otherwise its
-scale's default. -/
+/-- The scale an adjective measures on, open for a non-gradable adjective, which has none. -/
+def boundedness (g : GradableAdjective) : Boundedness :=
+  (g.gradability?.map (·.boundedness)).getD .open_
+
+/-- The positive standard of an adjective, contextual for a non-gradable one. -/
 def standard (g : GradableAdjective) : PositiveStandard :=
-  g.lexicalStandard.getD g.boundedness.defaultStandard
+  (g.gradability?.map (·.standard)).getD .contextual
 
 /-- Without a lexically fixed standard, the standard is one the scale admits. -/
 theorem admits_standard (g : GradableAdjective) (h : g.lexicalStandard = none) :
     g.boundedness.Admits g.standard := by
-  simp [standard, h, Boundedness.admits_defaultStandard]
+  cases hd : g.dimension with
+  | none => simp [boundedness, standard, gradability?, hd]
+  | some d =>
+    simpa [boundedness, standard, gradability?, hd] using
+      Gradability.admits_standard (g := ⟨d, g.polarity, g.lexicalStandard⟩) h
 
 /-- Kennedy's class of an adjective is read off its standard, and is non-gradable exactly when
     the adjective has no dimension ([kennedy-2007], [kennedy-mcnally-2005]). -/
@@ -220,9 +224,9 @@ totally closed one gives both the maximum, as for *full* and *empty*. -/
 theorem complementaryStandards_iff_of_lexicalStandard_none (p : AntonymPair)
     (hp : p.posLexicalStandard = none) (hn : p.negLexicalStandard = none) :
     p.ComplementaryStandards ↔
-      p.dimension.boundedness = .lowerClosed ∨ p.dimension.boundedness = .upperClosed := by
-  simpa [ComplementaryStandards, GradableAdjective.standard, GradableAdjective.boundedness, pos,
-    neg, hp, hn] using Boundedness.complementary_defaultStandard_dual_iff
+      p.dimension.boundedness = .lowerClosed ∨ p.dimension.boundedness = .upperClosed :=
+  Gradability.complementary_standard_iff (g := ⟨p.dimension, .positive, p.posLexicalStandard⟩)
+    (h := ⟨p.dimension, .negative, p.negLexicalStandard⟩) rfl rfl rfl hp hn
 
 end AntonymPair
 
