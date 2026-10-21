@@ -130,9 +130,7 @@ def trace (g : SearchCopy α) :
 
 /-- The trace of `g` over a pair of forms, in the direction of `g`. -/
 def applications (g : SearchCopy α) (p : List α × List α) : List (Option α × α × α) :=
-  match g.direction with
-  | .left => trace g p.1 p.2 none none
-  | .right => trace g p.1.reverse p.2.reverse none none
+  trace g (g.direction.orient p.1) (g.direction.orient p.2) none none
 
 namespace Problem
 
@@ -150,7 +148,7 @@ def precedingContexts (T : List α) : List α → Option α → List α
 tier-adjacent to a target on that side in some underlying form. -/
 def contexts (T : List α) (d : Edge) : List α :=
   (P.vocabulary.flatMap fun p ↦
-    P.precedingContexts T (match d with | .left => p.1 | .right => p.1.reverse) none).dedup
+    P.precedingContexts T (d.orient p.1) none).dedup
 
 /-- The candidate rule over the tier `T` with the contexts `C`. -/
 def candidate (T C : List α) (rel : SearchCopy.Relation) (d : Edge)

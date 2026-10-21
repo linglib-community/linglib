@@ -20,9 +20,9 @@ pattern's tier as the visible segments, the targets on it as the needy segments,
 participating segments as the sources and its direction as the direction of search; the
 rival accounts, Goldsmith's autosegmental spreading, Rose and Walker's Agreement by
 Correspondence and OT alignment, are not derived here. Under that reading a harmonic word is a
-fixed point of the run (`System.scan_eq_self_of_harmonic`), and on a saturated system the fixed
-points are exactly the harmonic words (`System.harmonic_iff_scan_eq_self`), the TSL₂ language of
-`Pattern.harmonic_iff_mem_tsl`.
+fixed point of the run in the pattern's direction (`System.apply_eq_self_of_harmonic`), and on a
+saturated system the fixed points are exactly the harmonic words
+(`System.harmonic_iff_apply_eq_self`), the TSL₂ language of `Pattern.harmonic_iff_mem_tsl`.
 
 ## Main definitions
 
@@ -33,11 +33,11 @@ points are exactly the harmonic words (`System.harmonic_iff_scan_eq_self`), the 
 
 ## Main results
 
-* `System.scan_eq_self_of_harmonic`, `System.harmonic_iff_scan_eq_self`,
-  `System.harmonic_scan`: the run's fixed points and image against the pattern's surface
+* `System.apply_eq_self_of_harmonic`, `System.harmonic_iff_apply_eq_self`,
+  `System.harmonic_apply`: the run's fixed points and image against the pattern's surface
   harmonicity.
-* `System.scan_eq_map`: on a saturated system the run writes the first visible segment's
-  value into every visible segment.
+* `System.apply_eq_map`: on a saturated system the run writes the value of the first visible
+  segment in the direction of spreading into every visible segment.
 
 ## Implementation notes
 
@@ -50,8 +50,9 @@ blockers that are not targets. Every participating segment donates whether or no
 target, as Nevins requires, and a transparent target does not undergo, since Rose and Walker's
 transparent segments neither undergo nor block. An icy target is a target that is not a
 source, which the reading expresses because participation is stored on the segment; on bare
-segments Burness, McMullin and Nevins show that search and copy cannot. A bidirectional pattern is
-run left to right; the outward-from-root pass is not modelled. A single tier is not always
+segments Burness, McMullin and Nevins show that search and copy cannot. A leftward pattern is
+run and read right to left, a bidirectional one left to right; the outward-from-root pass is
+not modelled. A single tier is not always
 enough: Uyghur backness harmony is not TSL, as Mayer and Major show.
 
 ## References
@@ -70,11 +71,6 @@ enough: Uyghur backness harmony is not TSL, as Mayer and Major show.
 @[expose] public section
 
 namespace Phonology.Harmony
-
-/-- The edge a pattern's scan starts from, bidirectional patterns being run from the left. -/
-def Direction.scanEdge : Direction → Edge
-  | .rightward | .bidirectional => .left
-  | .leftward => .right
 
 /-! ### Systems -/
 
@@ -221,10 +217,12 @@ private theorem runFrom_eq_self (hd : sys.default = none)
 
 /-- A harmonic word is a fixed point of the run, provided there is no default and blockers
 do not undergo. -/
-theorem scan_eq_self_of_harmonic (hd : sys.default = none)
+theorem apply_eq_self_of_harmonic (hd : sys.default = none)
     (hb : ∀ s, sys.pattern.participation s = .opaque → ¬ sys.IsTarget s) {w : List α}
-    (h : sys.pattern.Harmonic w) : sys.searchCopy.scan w = w :=
-  sys.runFrom_eq_self hd hb w none h
+    (h : sys.pattern.Harmonic w) : sys.searchCopy.apply w = w := by
+  rw [sys.pattern.harmonic_iff_isChain_orient] at h
+  rw [SearchCopy.apply_eq_self_iff, searchCopy_direction]
+  exact sys.runFrom_eq_self hd hb _ none h
 
 /-- A system is saturated when every visible segment is a participating target with a value;
 on such a system the run decides the surface language. -/
@@ -262,11 +260,13 @@ private theorem harmonic_of_runFrom_eq_self (hs : sys.Saturated) :
 
 /-- On a saturated system without a default the harmonic words are exactly the fixed points
 of the run. -/
-theorem harmonic_iff_scan_eq_self (hs : sys.Saturated) (hd : sys.default = none)
+theorem harmonic_iff_apply_eq_self (hs : sys.Saturated) (hd : sys.default = none)
     (hb : ∀ s, sys.pattern.participation s = .opaque → ¬ sys.IsTarget s) (w : List α) :
-    sys.pattern.Harmonic w ↔ sys.searchCopy.scan w = w :=
-  ⟨sys.scan_eq_self_of_harmonic hd hb,
-    sys.harmonic_of_runFrom_eq_self hs w none (fun _ h ↦ by cases h)⟩
+    sys.pattern.Harmonic w ↔ sys.searchCopy.apply w = w :=
+  ⟨sys.apply_eq_self_of_harmonic hd hb, fun h ↦ by
+    rw [SearchCopy.apply_eq_self_iff, searchCopy_direction] at h
+    rw [sys.pattern.harmonic_iff_isChain_orient]
+    exact sys.harmonic_of_runFrom_eq_self hs _ none (fun _ h ↦ by cases h) h⟩
 
 private theorem runFrom_some_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.PreservesTier)
     (v : Bool) : ∀ (w : List α) (a : α), sys.pattern.OnTier a → sys.pattern.value a = some v →
@@ -285,9 +285,7 @@ private theorem runFrom_some_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.Pr
     · rw [sys.searchCopy.toMealy_runFrom_cons_of_not_tier hx, ite_eq_right hx,
         sys.emit_of_not_onTier hx, runFrom_some_eq_map hs hw v xs a ha hv]
 
-/-- On a saturated system without a default whose writes stay visible, the run writes the
-first visible segment's value into every visible segment. -/
-theorem scan_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.PreservesTier)
+private theorem scan_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.PreservesTier)
     (hd : sys.default = none) (w : List α) : sys.searchCopy.scan w = w.map fun s ↦
       if sys.pattern.OnTier s then
         ((sys.pattern.tier w).head?.bind sys.pattern.value).elim s (sys.write · s)
@@ -334,10 +332,24 @@ private theorem runFrom_harmonic (hs : sys.Saturated) (hw : sys.searchCopy.Prese
         sys.pattern.tier_cons_of_not_onTier hx]
       exact runFrom_harmonic hs hw xs a? ha
 
+/-- On a saturated system without a default whose writes stay visible, the run writes the
+value of the first visible segment in the direction of spreading into every visible
+segment. -/
+theorem apply_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.PreservesTier)
+    (hd : sys.default = none) (w : List α) : sys.searchCopy.apply w = w.map fun s ↦
+      if sys.pattern.OnTier s then
+        ((sys.pattern.tier (sys.pattern.direction.scanEdge.orient w)).head?.bind
+          sys.pattern.value).elim s (sys.write · s)
+      else s := by
+  rw [SearchCopy.apply, searchCopy_direction, sys.scan_eq_map hs hw hd, ← Edge.map_orient,
+    Edge.orient_orient]
+
 /-- On a saturated system whose writes stay visible, the run's output is harmonic. -/
-theorem harmonic_scan (hs : sys.Saturated) (hw : sys.searchCopy.PreservesTier) (w : List α) :
-    sys.pattern.Harmonic (sys.searchCopy.scan w) :=
-  sys.runFrom_harmonic hs hw w none (fun _ h ↦ by cases h)
+theorem harmonic_apply (hs : sys.Saturated) (hw : sys.searchCopy.PreservesTier) (w : List α) :
+    sys.pattern.Harmonic (sys.searchCopy.apply w) := by
+  rw [sys.pattern.harmonic_iff_isChain_orient, SearchCopy.apply, searchCopy_direction,
+    Edge.orient_orient]
+  exact sys.runFrom_harmonic hs hw _ none (fun _ h ↦ by cases h)
 
 end System
 

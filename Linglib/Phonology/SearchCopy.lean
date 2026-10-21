@@ -235,26 +235,24 @@ def scan : List α → List α := r.toMealy.run
 
 theorem scan_eq_runFrom (w : List α) : r.scan w = r.toMealy.runFrom none w := rfl
 
-/-- The run in the rule's direction. -/
-def apply : List α → List α :=
-  match r.direction with
-  | .left => r.toMealy.run
-  | .right => r.toMealy.runRight
+/-- The run in the rule's direction, the left-to-right run on the word as the scan from that
+edge reads it. -/
+def apply (w : List α) : List α := r.direction.orient (r.scan (r.direction.orient w))
 
 theorem apply_eq_scan (h : r.direction = .left) : r.apply = r.scan := by
-  simp only [apply, h]
-  rfl
+  funext w; simp [apply, h]
 
 theorem apply_eq_revConj_scan (h : r.direction = .right) : r.apply = List.revConj r.scan := by
-  simp only [apply, h]
-  rfl
+  funext w; simp [apply, h, List.revConj]
+
+theorem apply_eq_self_iff (w : List α) :
+    r.apply w = w ↔ r.scan (r.direction.orient w) = r.direction.orient w := by
+  refine ⟨fun h ↦ ?_, fun h ↦ by rw [apply, h, Edge.orient_orient]⟩
+  simpa [apply] using congrArg r.direction.orient h
 
 /-- The closest visible segment of a string for a target that follows it in the rule's
 direction. -/
-def sourceAfter (w : List α) : Option α :=
-  match r.direction with
-  | .left => r.toMealy.eval w
-  | .right => r.toMealy.eval w.reverse
+def sourceAfter (w : List α) : Option α := r.toMealy.eval (r.direction.orient w)
 
 /-- The value a string offers to a target that follows it in the rule's direction. -/
 def sourceValue (w : List α) : Option Bool := (r.sourceAfter w).bind r.value
@@ -265,7 +263,7 @@ def sourceValue (w : List α) : Option Bool := (r.sourceAfter w).bind r.value
   r.toMealy.length_run w
 
 @[simp] theorem length_apply (w : List α) : (r.apply w).length = w.length := by
-  unfold apply; cases r.direction <;> simp
+  simp [apply]
 
 theorem scan_isMealyComputable [Fintype α] : IsMealyComputable r.scan :=
   r.toMealy.isMealyComputable
@@ -273,10 +271,9 @@ theorem scan_isMealyComputable [Fintype α] : IsMealyComputable r.scan :=
 /-- The rule's string function is subsequential in the rule's direction over a finite
 alphabet. -/
 theorem apply_isSubsequential [Fintype α] : IsSubsequential r.direction r.apply := by
-  unfold apply
-  cases r.direction
-  · exact r.toMealy.isLeftSubsequential
-  · exact r.toMealy.isRightSubsequential
+  cases h : r.direction
+  · exact r.apply_eq_scan h ▸ r.toMealy.isLeftSubsequential
+  · exact r.apply_eq_revConj_scan h ▸ r.toMealy.isRightSubsequential
 
 /-! ### The run as a tier-based OSL rule -/
 

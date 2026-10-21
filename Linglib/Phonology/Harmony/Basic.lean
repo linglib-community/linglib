@@ -25,8 +25,8 @@ forbidden-pairs machinery.
 * `Participation`, `Direction`, `ControlType`, `Domain`, `HarmonyType`: the
   typological enums.
 * `Pattern`: valuation, participation, descriptors; `Pattern.Harmonic` is the
-  surface semantics — tier-adjacent compatibility with blocker imposition and
-  icy absorption.
+  surface semantics — tier-adjacent compatibility in the direction of spreading,
+  with blocker imposition and icy absorption.
 * `Pattern.project`: the tier value of a segment, nothing off the tier.
 
 ## Main results
@@ -73,6 +73,11 @@ inductive Direction where
   /-- The prototype, outward from the root with no stipulated direction. -/
   | bidirectional
   deriving DecidableEq, Repr
+
+/-- The edge a pattern's scan starts from, bidirectional patterns being run from the left. -/
+def Direction.scanEdge : Direction → Edge
+  | .rightward | .bidirectional => .left
+  | .leftward => .right
 
 /-- Who determines the harmonic value ([ritter-vanderhulst-2024-themes] §1.2.4). -/
 inductive ControlType (V : Type u) where
@@ -155,6 +160,10 @@ def Pattern.tier (p : Pattern α V) (w : List α) : List α :=
 
 @[simp] theorem Pattern.tier_nil (p : Pattern α V) : p.tier [] = [] := rfl
 
+theorem Pattern.tier_reverse (p : Pattern α V) (w : List α) :
+    p.tier w.reverse = (p.tier w).reverse :=
+  List.filter_reverse ..
+
 theorem Pattern.tier_cons_of_onTier (p : Pattern α V) {x : α} (h : p.OnTier x) (w : List α) :
     p.tier (x :: w) = x :: p.tier w :=
   List.filter_cons_of_pos (decide_eq_true h)
@@ -163,9 +172,10 @@ theorem Pattern.tier_cons_of_not_onTier (p : Pattern α V) {x : α} (h : ¬ p.On
     (w : List α) : p.tier (x :: w) = p.tier w :=
   List.filter_cons_of_neg (decide_eq_true_iff.not.mpr h)
 
-/-- Adjacent compatibility, read left to right. An opaque right member is exempt, since
-    blockers do not undergo, and so is an icy left member, which does not pass its value on;
-    otherwise the values agree. The relation is deliberately asymmetric. -/
+/-- Adjacent compatibility of `b` after `a` in the direction of spreading. An opaque later
+    member is exempt, since blockers do not undergo, and so is an icy earlier member, which does
+    not pass its value on; otherwise the values agree. The relation is deliberately
+    asymmetric. -/
 def Pattern.Compatible (p : Pattern α V) (a b : α) : Prop :=
   p.participation a = .icyTarget ∨ p.participation b = .opaque ∨
     p.value a = p.value b
@@ -173,13 +183,48 @@ def Pattern.Compatible (p : Pattern α V) (a b : α) : Prop :=
 instance [DecidableEq V] (p : Pattern α V) : DecidableRel p.Compatible :=
   fun a b => by unfold Pattern.Compatible; infer_instance
 
-/-- A word is surface-harmonic when its tier is a chain of compatible segments. -/
+/-- The tier bigram `a b`, in word order, is licit: its members are compatible read in the
+    direction of spreading, right to left for a leftward pattern. -/
+def Pattern.Licit (p : Pattern α V) (a b : α) : Prop :=
+  match p.direction.scanEdge with
+  | .left => p.Compatible a b
+  | .right => p.Compatible b a
+
+instance [DecidableEq V] (p : Pattern α V) : DecidableRel p.Licit :=
+  fun a b => by unfold Pattern.Licit; split <;> infer_instance
+
+theorem Pattern.licit_eq_compatible {p : Pattern α V} (h : p.direction.scanEdge = .left) :
+    p.Licit = p.Compatible := by
+  funext a b; simp [Pattern.Licit, h]
+
+theorem Pattern.licit_eq_flip_compatible {p : Pattern α V} (h : p.direction.scanEdge = .right) :
+    p.Licit = flip p.Compatible := by
+  funext a b; simp [Pattern.Licit, h, flip]
+
+/-- Two participating segments form a licit bigram when they agree in value. -/
+theorem Pattern.licit_iff_of_participating (p : Pattern α V) {a b : α}
+    (ha : p.participation a = .participating) (hb : p.participation b = .participating) :
+    p.Licit a b ↔ p.value a = p.value b := by
+  unfold Pattern.Licit Pattern.Compatible
+  split <;> simp [ha, hb, eq_comm]
+
+/-- A word is surface-harmonic when its tier is a chain of licit bigrams. -/
 def Pattern.Harmonic (p : Pattern α V) (w : List α) : Prop :=
-  (p.tier w).IsChain p.Compatible
+  (p.tier w).IsChain p.Licit
 
 instance [DecidableEq V] (p : Pattern α V) (w : List α) :
     Decidable (p.Harmonic w) := by
   unfold Pattern.Harmonic; infer_instance
+
+/-- A word is harmonic when its tier, read in the direction of spreading, is a chain of
+compatible segments. -/
+theorem Pattern.harmonic_iff_isChain_orient (p : Pattern α V) (w : List α) :
+    p.Harmonic w ↔ (p.tier (p.direction.scanEdge.orient w)).IsChain p.Compatible := by
+  rcases h : p.direction.scanEdge with _ | _
+  · rw [Pattern.Harmonic, Pattern.licit_eq_compatible h, Edge.orient_left]
+  · rw [Pattern.Harmonic, Pattern.licit_eq_flip_compatible h, Edge.orient_right,
+      p.tier_reverse, List.isChain_reverse]
+    rfl
 
 /-- Transparency interrupts harmlessly ([ritter-vanderhulst-2024-themes] §1.3.2). -/
 theorem Pattern.harmonic_insert_transparent {p : Pattern α V} {t : α}
@@ -201,7 +246,7 @@ theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
   unfold Pattern.Harmonic Pattern.AgreeOn
   rw [← List.isChain_iff_pairwise]
   suffices key : ∀ l : List α, (∀ s ∈ l, p.participation s = .participating) →
-      (l.IsChain p.Compatible ↔ l.IsChain fun a b => p.value a = p.value b) from
+      (l.IsChain p.Licit ↔ l.IsChain fun a b => p.value a = p.value b) from
     key _ hmem
   intro l hl
   induction l with
@@ -212,8 +257,7 @@ theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
     | cons b l =>
       have ha := hl a (by simp)
       have hb := hl b (by simp)
-      simp only [List.isChain_cons_cons, Pattern.Compatible, ha, hb,
-        reduceCtorEq, false_or,
+      simp only [List.isChain_cons_cons, p.licit_iff_of_participating ha hb,
         ih fun s hs => hl s (List.mem_cons_of_mem a hs)]
 
 open Subregular TierStrictlyLocalGrammar in
@@ -222,7 +266,7 @@ strictly local grammars lack and the blocking strictly piecewise grammars lack
 ([aksenova-rawski-graf-heinz-2024]; for the latter,
 `McMullin2016.blockingLang_not_isStrictlyPiecewise`). -/
 theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
-    p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).language := by
+    p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Licit · ·) p.OnTier).language := by
   simp only [mem_ofForbiddenPairs_language_iff, Pattern.Harmonic, Pattern.tier,
     not_not]
 
@@ -244,6 +288,6 @@ theorem Pattern.harmonic_iff_map_project_mem [DecidableEq V] (p : Pattern α V)
   · by_cases hs : p.OnTier s
     · simp [hproj s hs, (hp s hs).2, hs]
     · simp [Pattern.project, hs]
-  · simp [Pattern.Compatible, (hp s hs).1, (hp t ht).1, hproj s hs, hproj t ht]
+  · simp [p.licit_iff_of_participating (hp s hs).1 (hp t ht).1, hproj s hs, hproj t ht]
 
 end Phonology.Harmony

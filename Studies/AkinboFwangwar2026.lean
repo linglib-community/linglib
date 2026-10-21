@@ -190,8 +190,7 @@ edge `e` of a root. One violation for each syllable between a root's edge and th
 syllable bearing `t`, on the root where they are fewest, and one for every syllable when no root
 bears `t`. -/
 def anchor (e : Edge) (t : TRN) : Constraint (Candidate u) := fun c ↦
-  let fromEdge (l : List (Fin u.lower.length)) := match e with | .left => l | .right => l.reverse
-  let distance (h : Morpheme) := (fromEdge (u.lowerOfMorpheme h)).findIdx? (BearsTone c t ·)
+  let distance (h : Morpheme) := (e.orient (u.lowerOfMorpheme h)).findIdx? (BearsTone c t ·)
   ((roots u).filterMap distance).min?.getD u.lower.length
 
 /-- The constraint set, MAX-Tone counting the deleted tones. -/

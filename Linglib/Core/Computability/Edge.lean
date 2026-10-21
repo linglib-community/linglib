@@ -16,12 +16,14 @@ public import Linglib.Core.Data.List.DropRight
 
 An `Edge` is an end of a word, `left` for its beginning and `right` for its end. The same two
 values name a scan by the end it starts from, and a side of a position by the end it faces. This
-file gives the length-`k` part of a word at an edge, the part within a distance of a target on
-one side, and the reverse conjugation that exchanges the two edges on string functions.
+file gives a word as the scan from an edge reads it, the length-`k` part of a word at an edge,
+the part within a distance of a target on one side, and the reverse conjugation that exchanges
+the two edges on string functions.
 
 ## Main definitions
 
 * `Edge`, `Edge.swap`: the left or right end of a word, and the other one.
+* `Edge.orient`: a word as the scan from an edge reads it.
 * `Edge.takeAt`: the length-`k` prefix or suffix of a word.
 * `Edge.window`: the part of a word not far from a target on one side.
 * `List.revConj`: conjugation of a string function by reversal.
@@ -52,6 +54,41 @@ def swap : Edge → Edge
 @[simp] theorem swap_swap (e : Edge) : e.swap.swap = e := by cases e <;> rfl
 
 theorem swap_involutive : Function.Involutive swap := swap_swap
+
+/-! ### Reading from an edge -/
+
+/-- A word as the scan from an edge reads it, unchanged from the left and reversed from the
+right. -/
+def orient : Edge → List α → List α
+  | left, xs => xs
+  | right, xs => xs.reverse
+
+@[simp] theorem orient_left (xs : List α) : left.orient xs = xs := rfl
+
+@[simp] theorem orient_right (xs : List α) : right.orient xs = xs.reverse := rfl
+
+@[simp] theorem orient_orient (e : Edge) (xs : List α) : e.orient (e.orient xs) = xs := by
+  cases e <;> simp
+
+theorem orient_involutive (e : Edge) : Function.Involutive (e.orient (α := α)) :=
+  e.orient_orient
+
+theorem orient_injective (e : Edge) : Function.Injective (e.orient (α := α)) :=
+  e.orient_involutive.injective
+
+@[simp] theorem orient_inj {e : Edge} {xs ys : List α} : e.orient xs = e.orient ys ↔ xs = ys :=
+  e.orient_injective.eq_iff
+
+@[simp] theorem length_orient (e : Edge) (xs : List α) : (e.orient xs).length = xs.length := by
+  cases e <;> simp
+
+theorem map_orient {β : Type*} (e : Edge) (f : α → β) (xs : List α) :
+    (e.orient xs).map f = e.orient (xs.map f) := by
+  cases e <;> simp
+
+theorem filter_orient (e : Edge) (p : α → Bool) (xs : List α) :
+    (e.orient xs).filter p = e.orient (xs.filter p) := by
+  cases e <;> simp [List.filter_reverse]
 
 /-! ### Edge substrings -/
 

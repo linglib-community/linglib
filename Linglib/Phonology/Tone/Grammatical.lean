@@ -108,9 +108,7 @@ def realizeLeft : ℕ → List TRN → List TRN
 /-- The tune realised over `n` units puts one tone on each unit from the anchored edge, the last
 tone reached spreading over the remainder. -/
 def realize (u : Tune) (n : ℕ) : List TRN :=
-  match u.anchor with
-  | .left => realizeLeft n u.melody
-  | .right => (realizeLeft n u.melody.reverse).reverse
+  u.anchor.orient (realizeLeft n (u.anchor.orient u.melody))
 
 @[simp] theorem length_realizeLeft (n : ℕ) (m : List TRN) : (realizeLeft n m).length = n := by
   induction n generalizing m with
