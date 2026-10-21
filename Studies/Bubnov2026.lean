@@ -148,7 +148,7 @@ requirement is convex (`IndefiniteType.ordConnected_requires`). -/
 theorem ordConnected_coverage (hℓ : Monotone ℓ ∨ Antitone ℓ) (hL : L.Antihomophonous) :
     (coverage ℓ L φ : Set SpecificityFunction).OrdConnected := by
   have h :=
-    (Morphology.isContiguous_iff_ordConnected_preimage _).1 (isContiguous_spellout hL) (some φ)
+    (isContiguous_iff_ordConnected_preimage _).1 (isContiguous_spellout hL) (some φ)
   have he : (coverage ℓ L φ : Set SpecificityFunction) = ℓ ⁻¹' (spellout L ⁻¹' {some φ}) := by
     ext; simp
   exact he ▸ hℓ.elim h.preimage_mono h.preimage_anti

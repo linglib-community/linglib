@@ -14,7 +14,7 @@ is a scoped instance (`open scoped Case.Caha`), since a theoretical order is an 
 and not an order on the inventory. McFadden's nonnominative cases, those containing the
 accusative, are the natural class whose shared feature conditions the stem allomorphy that sets
 the nominative apart, and the *ABA syncretism law over the order is the framework-neutral
-`Morphology.IsContiguous`.
+`IsContiguous`.
 
 The directional containment of spatial cases, Place ⊂ Goal ⊂ Source ⊂ Route, is
 `Spatial.Path.Direction`, and the decomposition of spatial cases into localization and direction

@@ -17,6 +17,11 @@ Superset-spellability, so the effective theory and the two insertion mechanisms 
 constraint. A Person Case Constraint is a monotone map from the reduced dual person hierarchy
 (27) to the truth values.
 
+## Main definitions
+
+* `FeasiblyMonotone`: definition (6), some monotone score identifies the cells the map
+  identifies.
+
 ## Main results
 
 * `isContiguous_tfae`: the four characterizations coincide over a linear hierarchy.
@@ -68,6 +73,19 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 namespace Graf2019
 
 open Morphology Morphology.Exponence Morphology.Containment
+
+/-! ### Feasible monotonicity -/
+
+/-- A map is **feasibly monotone**, definition (6), when some monotone score identifies exactly
+the cells it identifies. Over finitely many cells this is monotonicity with respect to some linear
+order on the forms, since forms are bins and only the kernel matters. -/
+def FeasiblyMonotone {ι F : Type*} [Preorder ι] (p : ι → F) : Prop :=
+  ∃ g : ι → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j
+
+/-- Over linearly ordered cells a map is contiguous iff it is feasibly monotone. -/
+theorem isContiguous_iff_feasiblyMonotone {ι F : Type*} [LinearOrder ι]
+    [LocallyFiniteOrderBot ι] (p : ι → F) : IsContiguous p ↔ FeasiblyMonotone p :=
+  isContiguous_iff_exists_monotone p
 
 /-! ### Four characterizations coincide over a linear hierarchy -/
 
