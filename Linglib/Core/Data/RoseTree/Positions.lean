@@ -14,7 +14,8 @@ and strict dominance is well founded, so `Positions t` is a rooted tree in the s
 (`Positions.covBy_iff`), so the daughters of a position are its valid daughters, and the subtree
 at a position (`Positions.subtree`) has the subtrees at its covers as daughters
 (`Positions.mem_children_subtree`) and the subtrees at the positions below it as subtrees
-(`Positions.isSubtree_subtree`).
+(`Positions.isSubtree_subtree`). A tree has finitely many positions, and the maximal ones are the
+leaves (`Positions.isMax_iff`).
 
 The positions whose subtree satisfies a predicate form `RoseTree.positionsWhere P t`, decidable
 when the predicate is, which picks out the positions of a label, of a branching node, or of any
@@ -42,6 +43,12 @@ variable {α : Type*}
 /-- The valid positions of `t`, as a subtype of `TreePath`, form a rooted tree under the prefix
 order. -/
 abbrev Positions (t : RoseTree α) : Type := {p : TreePath // p ∈ t.validPaths}
+
+/-- A tree has finitely many positions, those listed by `vertices`. -/
+instance (t : RoseTree α) : Fintype t.Positions :=
+  Fintype.subtype (t.vertices.map TreePath.mk).toFinset fun p ↦ by
+    simp only [List.mem_toFinset, List.mem_map, mem_vertices]
+    exact ⟨fun ⟨_, h, e⟩ ↦ e ▸ h, fun h ↦ ⟨_, h, rfl⟩⟩
 
 namespace Positions
 
@@ -133,6 +140,20 @@ theorem mem_children_subtree : c ∈ p.subtree.children ↔ ∃ q, p ⋖ q ∧ q
     have := q.subtreeAt_eq
     rw [hi, subtreeAt_append, subtreeAt_eq, Option.bind_some] at this
     exact List.mem_of_getElem? (by simpa using this)
+
+/-- A position is maximal exactly when its subtree is a leaf. -/
+theorem isMax_iff : IsMax p ↔ p.subtree.children = [] := by
+  refine ⟨fun h ↦ List.eq_nil_iff_forall_not_mem.2 fun c hc ↦ ?_, fun h q hpq ↦ ?_⟩
+  · obtain ⟨q, hq, -⟩ := mem_children_subtree.1 hc
+    exact hq.lt.not_ge (h hq.le)
+  · obtain ⟨s, hs⟩ := TreePath.le_def.1 hpq
+    rcases s with _ | ⟨i, s⟩
+    · exact (Subtype.ext (TreePath.ext (by simpa using hs.symm)) : q = p).le
+    · obtain ⟨u, hu, hi⟩ := mem_validPaths_append_singleton_iff.1
+        (validPaths_prefix_closed q.2 (TreePath.le_def.2 ⟨s, by simp [← hs]⟩) :
+          (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.validPaths)
+      obtain rfl := Option.some.inj (p.subtreeAt_eq.symm.trans hu)
+      simp [h] at hi
 
 end Positions
 

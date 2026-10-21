@@ -4,7 +4,9 @@ public import Mathlib.Basic.Rel
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Concept
 public import Mathlib.Order.Cover
+public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Core.Data.RoseTree.Positions
+public import Linglib.Core.Relation.SetRel
 
 /-!
 # Command relations
@@ -20,6 +22,10 @@ polarity API: a union of generators gives the intersection of the relations by
 generates are the `Order.IsIntent` sets. In the commanded node it is a set of upper
 bounds, and on a tree it is the cone of one node, the lowest generator above the commander.
 
+A relation between nodes induces one between the nodes they dominate, its dominance image, the
+upper closure of the relation in the product order. Kayne's linear correspondence reads the
+dominance image of asymmetric c-command as precedence among terminals.
+
 ## Main definitions
 
 * `PhraseStructure.commandRelation`: the command relation a set of nodes generates.
@@ -28,6 +34,7 @@ bounds, and on a tree it is the cone of one node, the lowest generator above the
   Barker and Pullum's c-command, the command relation they generate.
 * `RoseTree.CCommands`: Reinhart's c-command, between positions neither of which dominates the
   other, and `RoseTree.cCommandDomain`, the positions a position c-commands.
+* `PhraseStructure.dominanceImage`: the relation a relation induces on the nodes below.
 
 ## Main statements
 
@@ -41,6 +48,8 @@ bounds, and on a tree it is the cone of one node, the lowest generator above the
   `PhraseStructure.eq_commandRelation_of_forall_covBy` the command relation is the only relation
   obeying these two rules in which the root commands every node.
 * `RoseTree.cCommands_iff_parent_lt`: c-command is sisterhood plus dominance.
+* `PhraseStructure.not_mem_dominanceImage_asymmetrize_of_covBy`: siblings are not related by
+  the dominance image of the asymmetric part of a relation between disconnected nodes.
 
 ## Implementation notes
 
@@ -54,6 +63,7 @@ bounds, and on a tree it is the cone of one node, the lowest generator above the
 ## References
 
 * [barker-pullum-1990]
+* [kayne-1994]
 * [reinhart-1976]
 -/
 
@@ -171,6 +181,66 @@ theorem mem_mateRelation :
     a ~[mateRelation P] b ↔ a ~[commandRelation P] b ∧ b ~[commandRelation P] a := Iff.rfl
 
 end Mates
+
+/-! ### Dominance images
+
+A relation between nodes induces one between the nodes they dominate, relating `a` to `b` when a
+node dominating `a` is related to a node dominating `b`. Since dominance is `≤`, this is the upper
+closure of the relation in the product order, and it is transported by order isomorphisms. On a
+tree, siblings are never related by the image of the asymmetric part of a relation between
+disconnected nodes under which they relate both ways. -/
+
+section DominanceImage
+
+variable [Preorder α] {A : SetRel α α} {a b : α}
+
+/-- The dominance image of a relation, relating the nodes dominated by related nodes. -/
+abbrev dominanceImage (A : SetRel α α) : SetRel α α := upperClosure A
+
+theorem mem_dominanceImage : a ~[dominanceImage A] b ↔ ∃ x ≤ a, ∃ y ≤ b, x ~[A] y := by
+  simp only [SetLike.mem_coe, mem_upperClosure, Prod.exists, Prod.mk_le_mk]
+  exact ⟨fun ⟨x, y, h, hx, hy⟩ ↦ ⟨x, hx, y, hy, h⟩, fun ⟨x, hx, y, hy, h⟩ ↦ ⟨x, y, h, hx, hy⟩⟩
+
+/-- The dominance image is the composite of the relation with dominance on either side. -/
+theorem dominanceImage_eq_comp (A : SetRel α α) :
+    dominanceImage A = {p : α × α | p.2 ≤ p.1} ○ A ○ {p : α × α | p.1 ≤ p.2} := by
+  ext ⟨a, b⟩
+  rw [mem_dominanceImage]
+  exact ⟨fun ⟨x, hx, y, hy, h⟩ ↦ ⟨y, ⟨x, hx, h⟩, hy⟩, fun ⟨y, ⟨x, hx, h⟩, hy⟩ ↦ ⟨x, hx, y, hy, h⟩⟩
+
+/-- An order isomorphism carries the dominance image of a relation to that of its image. -/
+theorem mem_dominanceImage_image {β : Type*} [Preorder β] (e : α ≃o β) :
+    e a ~[dominanceImage (Prod.map e e '' A)] e b ↔ a ~[dominanceImage A] b := by
+  simp only [mem_dominanceImage]
+  constructor
+  · rintro ⟨x, hx, y, hy, ⟨x', y'⟩, h, he⟩
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
+    exact ⟨x', e.le_iff_le.1 hx, y', e.le_iff_le.1 hy, h⟩
+  · rintro ⟨x, hx, y, hy, h⟩
+    exact ⟨e x, e.le_iff_le.2 hx, e y, e.le_iff_le.2 hy, (x, y), h, rfl⟩
+
+end DominanceImage
+
+section DominanceImageTree
+
+variable [PartialOrder α] [IsLeftLinear α] {R : SetRel α α} {a b m : α}
+
+/-- Two daughters of one node are not related by the dominance image of the asymmetric part of a
+relation between disconnected nodes that relates them both ways. -/
+theorem not_mem_dominanceImage_asymmetrize_of_covBy
+    (hR : ∀ ⦃x y⦄, x ~[R] y → ¬ x ≤ y ∧ ¬ y ≤ x) (hab : a ~[R] b → b ~[R] a)
+    (ha : m ⋖ a) (hb : m ⋖ b) : ¬ a ~[dominanceImage R.asymmetrize] b := by
+  rw [mem_dominanceImage]
+  rintro ⟨x, hxa, y, hyb, hxy, hyx⟩
+  obtain ⟨hn₁, hn₂⟩ := hR hxy
+  rcases hxa.eq_or_lt with rfl | hx <;> rcases hyb.eq_or_lt with rfl | hy
+  · exact hyx (hab hxy)
+  · exact hn₂ ((IsLeftLinear.le_of_lt_of_covBy hb hy).trans ha.le)
+  · exact hn₁ ((IsLeftLinear.le_of_lt_of_covBy ha hx).trans hb.le)
+  · exact (IsLeftLinear.comparable_of_le_common (IsLeftLinear.le_of_lt_of_covBy ha hx)
+      (IsLeftLinear.le_of_lt_of_covBy hb hy)).elim hn₁ hn₂
+
+end DominanceImageTree
 
 /-! ### Command relations on the positions of a tree
 

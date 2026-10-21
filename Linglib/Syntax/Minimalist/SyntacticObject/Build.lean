@@ -186,7 +186,7 @@ def token? (s : SyntacticObject) : Option LexicalItem.Token :=
 def isLeafOf (c : Cat) (s : SyntacticObject) : Prop :=
   s.token?.map (·.item.cat) = some c
 
-instance (c : Cat) : DecidablePred (isLeafOf c) := λ _ => inferInstanceAs (Decidable (_ = _))
+instance (c : Cat) : DecidablePred (isLeafOf c) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 @[simp] theorem isLeafOf_leaf (c : Cat) (tok : LexicalItem.Token) :
     isLeafOf c (SyntacticObject.leaf tok) ↔ tok.item.cat = c := by
@@ -197,7 +197,7 @@ instance (c : Cat) : DecidablePred (isLeafOf c) := λ _ => inferInstanceAs (Deci
 theorem traceOf_ne_trace (tok : LexicalItem.Token) : traceOf tok ≠ trace := by
   intro h
   have h' : (Sum.inr (some tok) : Vertex) = Sum.inr none :=
-    congrArg (fun s : SyntacticObject => UnorderedTree.value s.val) h
+    congrArg (fun s : SyntacticObject ↦ UnorderedTree.value s.val) h
   simp at h'
 
 @[simp] theorem token?_merge (l r : SyntacticObject) : (merge l r).token? = none := by
@@ -212,7 +212,7 @@ instance (s : SyntacticObject) : Decidable (isTrace s) := inferInstanceAs (Decid
 @[simp] theorem isTrace_traceOf (tok : LexicalItem.Token) : isTrace (traceOf tok) := ⟨rfl, rfl⟩
 
 @[simp] theorem not_isTrace_leaf (tok : LexicalItem.Token) :
-    ¬ isTrace (SyntacticObject.leaf tok) := fun h =>
+    ¬ isTrace (SyntacticObject.leaf tok) := fun h ↦
   Bool.false_ne_true h.1
 
 @[simp] theorem isTrace_trace : isTrace trace := ⟨rfl, rfl⟩
@@ -223,7 +223,7 @@ def leafCount (s : SyntacticObject) : Nat := UnorderedTree.numLeaves s.val
 /-- An object is a lexical or trace leaf exactly when its leaf count is one. -/
 def IsLeaf (s : SyntacticObject) : Prop := s.leafCount = 1
 
-instance : DecidablePred IsLeaf := fun _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred IsLeaf := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 @[simp] theorem isLeaf_leaf (tok : LexicalItem.Token) : IsLeaf (SyntacticObject.leaf tok) := rfl
 @[simp] theorem isLeaf_trace : IsLeaf trace := rfl

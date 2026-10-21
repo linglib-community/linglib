@@ -34,7 +34,7 @@ links are in `SyntacticObject/Locality.lean`.
 * `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
 * `projectionAt`: the phrase a copy stands for, its maximal projection along head daughters
-  (`headIndex?`, `PhraseStructure.maximalProjectionAt`).
+  (`PlanarSyntacticObject.headIndexAt`, `PhraseStructure.maximalProjectionAt`).
 * `HasAntecedent`, `orphanTraces`: whether a pronounced copy c-commands a deleted one, and the
   deleted copies without antecedents, seen from their own conjunct copies.
 * `IsLink`, `links`, `chainTop`: the links of a chain and its scope position.
@@ -130,7 +130,7 @@ instance : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
 /-- The maximal projection of the copy at `p` is the highest position reached from `p` by
 climbing while the position is the head daughter of its mother. -/
 def projectionAt (p : TreePath) : TreePath :=
-  maximalProjectionAt (fun q ↦ (subtreeAt t.val q.toList).bind headIndex?) p
+  maximalProjectionAt t.headIndexAt p
 
 theorem projectionAt_le (p : TreePath) : projectionAt t p ≤ p := maximalProjectionAt_le _ p
 
