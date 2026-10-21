@@ -11,7 +11,7 @@
     "paperFeatures": [
       ["modifier", "theHell"],
       ["strategy", "inSitu"],
-      ["interveners", "1"]
+      ["question", "multiple"]
     ],
     "comment": "English multiple question with the-hell on the in-situ wh-phrase; the fronted who stands between the question operator and the modifier.",
     "verified": "page-image"
@@ -28,7 +28,7 @@
     "paperFeatures": [
       ["modifier", "theHell"],
       ["strategy", "full"],
-      ["interveners", "0"]
+      ["question", "multiple"]
     ],
     "comment": "The-hell on the fronted wh-phrase of an English multiple question.",
     "verified": "page-image"
@@ -61,8 +61,7 @@
     "paperFeatures": [
       ["condition", "WhHell-Long"],
       ["modifier", "theHell"],
-      ["strategy", "full"],
-      ["interveners", "0"]
+      ["strategy", "full"]
     ],
     "comment": "Attested in Singlish before the experiment; also (3a) and (6b).",
     "verified": "page-image"
@@ -95,8 +94,7 @@
     "paperFeatures": [
       ["condition", "WhHell-Situ"],
       ["modifier", "theHell"],
-      ["strategy", "inSitu"],
-      ["interveners", "0"]
+      ["strategy", "inSitu"]
     ],
     "comment": "The in-situ comparison shows a superadditive interaction of WhType and Strategy; also (3c), printed with * on pp. 19 and 23 (the design list (4) prints no marks).",
     "verified": "page-image"
@@ -129,8 +127,7 @@
     "paperFeatures": [
       ["condition", "WhHell-Partial"],
       ["modifier", "theHell"],
-      ["strategy", "partial"],
-      ["interveners", "0"]
+      ["strategy", "partial"]
     ],
     "comment": "The costs of the-hell and of partial movement are additive: no interaction of WhType and Strategy; also (3b).",
     "verified": "page-image"
@@ -230,7 +227,7 @@
   },
   {
     "id": "chanshen2026_ex19",
-    "source": {"bibkey": "chou-2012", "paperLabel": ""},
+    "source": {"bibkey": "chou-2012", "paperLabel": "(31)"},
     "reportedIn": {"bibkey": "chan-shen-2026", "paperLabel": "(19)"},
     "language": "mand1415",
     "primaryText": "Ni renwei Lisi daodi xihuan shenme?",
@@ -243,10 +240,9 @@
     "judgment": "acceptable",
     "paperFeatures": [
       ["modifier", "daodi"],
-      ["strategy", "inSitu"],
-      ["interveners", "0"]
+      ["strategy", "inSitu"]
     ],
-    "comment": "Daodi and the in-situ wh-phrase it modifies are discontinuous. Printed with '(Chou, 2012)'; Chou's own example number is unchecked (no PDF).",
+    "comment": "Daodi and the in-situ wh-phrase it modifies are discontinuous. Printed with '(Chou, 2012)'; Chou's (31), p. 14.",
     "verified": "page-image"
   },
   {
@@ -277,8 +273,7 @@
     "paperFeatures": [
       ["modifier", "theHell"],
       ["strategy", "inSitu"],
-      ["role", "subject"],
-      ["interveners", "0"]
+      ["role", "subject"]
     ],
     "comment": "No wh-phrase could intervene between the question operator and a subject; judgments from seven speakers.",
     "verified": "page-image"
@@ -295,7 +290,7 @@
     "paperFeatures": [
       ["modifier", "theHell"],
       ["strategy", "full"],
-      ["interveners", "0"]
+      ["question", "multiple"]
     ],
     "comment": "The-hell on the fronted wh-phrase, in the immediate scope of the question operator.",
     "verified": "page-image"
@@ -313,7 +308,7 @@
     "paperFeatures": [
       ["modifier", "theHell"],
       ["strategy", "inSitu"],
-      ["interveners", "1"]
+      ["question", "multiple"]
     ],
     "comment": "The fronted who intervenes between the question operator and the-hell.",
     "verified": "page-image"

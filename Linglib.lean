@@ -496,7 +496,6 @@ import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.PolarityItems
 import Linglib.Fragments.Mandarin.QuestionParticles
-import Linglib.Fragments.Mandarin.Questions
 import Linglib.Fragments.Mandarin.Reciprocals
 import Linglib.Fragments.Mandarin.Relativization
 import Linglib.Fragments.Mandarin.Resultatives
@@ -1062,7 +1061,6 @@ import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 import Linglib.Data.Examples.AlonsoOvalleRoyer2024
-import Linglib.Syntax.Category.WhModifier
 import Linglib.Data.Examples.Alsop2024
 import Linglib.Data.Examples.AnandHacquard2013
 import Linglib.Data.Examples.AnandHardtMcCloskey2021

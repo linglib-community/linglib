@@ -26,7 +26,7 @@ def ex1a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("interveners", "1")] }
+    paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("question", "multiple")] }
 
 def ex1b : Datum :=
   { id := "chanshen2026_ex1b"
@@ -39,7 +39,7 @@ def ex1b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("interveners", "0")] }
+    paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("question", "multiple")] }
 
 def ex4a : Datum :=
   { id := "chanshen2026_ex4a"
@@ -65,7 +65,7 @@ def ex4b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("condition", "WhHell-Long"), ("modifier", "theHell"), ("strategy", "full"), ("interveners", "0")] }
+    paperFeatures := [("condition", "WhHell-Long"), ("modifier", "theHell"), ("strategy", "full")] }
 
 def ex4c : Datum :=
   { id := "chanshen2026_ex4c"
@@ -91,7 +91,7 @@ def ex4d : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("condition", "WhHell-Situ"), ("modifier", "theHell"), ("strategy", "inSitu"), ("interveners", "0")] }
+    paperFeatures := [("condition", "WhHell-Situ"), ("modifier", "theHell"), ("strategy", "inSitu")] }
 
 def ex6c : Datum :=
   { id := "chanshen2026_ex6c"
@@ -117,7 +117,7 @@ def ex6d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("condition", "WhHell-Partial"), ("modifier", "theHell"), ("strategy", "partial"), ("interveners", "0")] }
+    paperFeatures := [("condition", "WhHell-Partial"), ("modifier", "theHell"), ("strategy", "partial")] }
 
 def ex11a : Datum :=
   { id := "chanshen2026_ex11a"
@@ -186,7 +186,7 @@ def ex17b : Datum :=
 
 def ex19 : Datum :=
   { id := "chanshen2026_ex19"
-    source := ⟨"chou-2012", ""⟩
+    source := ⟨"chou-2012", "(31)"⟩
     reportedIn := some ⟨"chan-shen-2026", "(19)"⟩
     language := "mand1415"
     primaryText := "Ni renwei Lisi daodi xihuan shenme?"
@@ -195,7 +195,7 @@ def ex19 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("modifier", "daodi"), ("strategy", "inSitu"), ("interveners", "0")] }
+    paperFeatures := [("modifier", "daodi"), ("strategy", "inSitu")] }
 
 def ex22a : Datum :=
   { id := "chanshen2026_ex22a"
@@ -221,7 +221,7 @@ def ex22b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("role", "subject"), ("interveners", "0")] }
+    paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("role", "subject")] }
 
 def ex25a : Datum :=
   { id := "chanshen2026_ex25a"
@@ -234,7 +234,7 @@ def ex25a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("interveners", "0")] }
+    paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("question", "multiple")] }
 
 def ex26a : Datum :=
   { id := "chanshen2026_ex26a"
@@ -247,7 +247,7 @@ def ex26a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("interveners", "1")] }
+    paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("question", "multiple")] }
 
 def all : List Datum := [ex1a, ex1b, ex4a, ex4b, ex4c, ex4d, ex6c, ex6d, ex11a, ex11b, ex15, ex17a, ex17b, ex19, ex22a, ex22b, ex25a, ex26a]
 
