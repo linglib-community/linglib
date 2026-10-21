@@ -1,11 +1,18 @@
 module
 
+public import Linglib.Data.Examples.Stassen2000
 public import Linglib.Fragments.English.Adpositions
 public import Linglib.Fragments.English.Coordination
+public import Linglib.Fragments.Farsi.Adpositions
+public import Linglib.Fragments.Farsi.Coordination
+public import Linglib.Fragments.Finnish.Coordination
 public import Linglib.Fragments.Hausa.Adpositions
 public import Linglib.Fragments.Hausa.Coordination
 public import Linglib.Fragments.Japanese.Adpositions
 public import Linglib.Fragments.Japanese.Coordination
+public import Linglib.Fragments.Korean.Coordination
+public import Linglib.Fragments.Latin.Coordination
+public import Linglib.Fragments.Turkish.Coordination
 public import Linglib.Fragments.Yakut.Case
 public import Linglib.Fragments.Yakut.Coordination
 public import Linglib.Syntax.WordOrder
@@ -14,63 +21,44 @@ public import Mathlib.Data.Finset.Grade
 /-!
 # Stassen (2000): AND-languages and WITH-languages
 
-This file formalizes [stassen-2000]'s typology of noun phrase conjunction, the encoding of a
-single event predicated simultaneously of two participants conceived of as separate
-individuals, over a sample of 260 languages. The domain is encoded by a coordinate strategy or
-a comitative strategy, which contrast in four features: whether the two NPs have the same
-structural rank, form a constituent, govern dual or plural agreement, and are linked by an
-item distinct from the comitative marker (`Feature`). An encoding is the set of coordinate
-features it has, so the encodings form the Boolean lattice `Finset Feature`: the comitative
-strategy is `⊥`, the coordinate strategy `⊤`, and the in-between cases the paper allows for lie
-between the two focal positions.
+This file formalizes Stassen's typology of noun phrase conjunction. Its examples of the
+coordinate strategy show where the coordinators of a construction stand, and the coordinate and
+the comitative strategy contrast in four features whose sets form the Boolean lattice
+`Finset Feature`. A language is an AND-language when one of its encodings has every feature
+relevant to it, and a WITH-language otherwise. Pattern schemes place the subject and the
+comitative phrase by the basic word order.
 
-Nearly every language has the comitative strategy. An AND-language also has an encoding with
-every coordinate feature relevant to it, and a WITH-language is one that is not an AND-language
-(`Language.IsAnd`). Plural agreement is relevant only where verbs agree with their subject
-(`Language.relevant`), since the paper's AND-languages include languages without verb agreement
-and its pattern schemes distinguish languages with and without it; where verbs agree, an
-AND-language is one with the coordinate strategy itself (`Language.isAnd_iff_top_mem`).
+## Main results
 
-AND-languages are diachronically stable and pure WITH-languages rare: WITH-languages
-grammaticalize the comitative strategy, moving up the lattice while the linker stays lexically
-identical to the comitative marker. The resulting hybrids leave the language a WITH-language
-however far they go (`Language.not_isAnd_of_forall_notMem`). The most advanced hybrid has every
-relevant feature but the linker and is covered by the coordinate strategy
-(`Language.erase_distinctMarker_covBy`); it is the one hybrid that differentiating the linker
-turns into a coordinate strategy (`Language.relevant_le_insert_iff`), the mixed WITH-language the
-paper would call an AND-language but for the lexical identity of the markers.
-
-The lexical identity is checked on the Fragments, where a coordinator is also comitative when its
-form is a form of a comitative marker of its language, an adposition or a case
-(`Coordinator.IsAlsoComitative`): English *and* is not *with*, while Hausa *dà*, Japanese *to* and
-the Yakut comitative suffix are both 'and' and 'with' (`hausa_da_isAlsoComitative`,
-`japanese_to_isAlsoComitative`, `yakut_lin_isAlsoComitative`).
-
-The starting point of the drift is the language's pattern scheme, its basic word order with the
-comitative phrase in adverbial position (`scheme`). The subject and the comitative phrase are
-contiguous exactly when the verb is not medial (`adjacent_scheme_iff`). The constituent that
-grammaticalization creates therefore presupposes, in an SVO language, a shift of the comitative
-phrase across the verb (`shift`, `adjacent_shift`), which yields the SOV scheme
-(`shift_scheme_svo`), whereas verb-final and verb-initial schemes are contiguous already.
+* `coAB_not_mem_patterns`, `postpositive_of_not_medial`: no example preposes a lone
+  coordinator on the first noun phrase, and the overt strategies other than a medial connective
+  postpose their coordinators (§3).
+* `attestations_side`: the Fragment coordinators of the examples stand where their morphs attach.
+* `Language.isAnd_iff_top_mem`, `Language.not_isAnd_of_forall_notMem`: AND- and WITH-languages.
+* `Language.relevant_le_insert_iff`: differentiating the linker of a hybrid gives every relevant
+  feature exactly when the hybrid is the most advanced one.
+* `english_and_not_isAlsoComitative`, `persian_not_isAlsoComitative`,
+  `hausa_da_isAlsoComitative`, `japanese_to_isAlsoComitative`, `yakut_lin_isAlsoComitative`:
+  whether the linker is the comitative marker.
+* `adjacent_scheme_iff`, `shift_scheme_svo`: contiguity in the pattern schemes and the shift.
 
 ## Implementation notes
 
-The paper's schemes (107), (123) and (124) put the comitative phrase where the object stands in
-SVO, SOV and VSO order, so `scheme` places it there for every basic order and contiguity is
-derived from the order. As in the paper, schemes have intransitive predicates.
-
-The correlational tendencies, that cased and tensed languages tend to AND-status and
-WITH-languages to be non-cased and non-tensed, with the AND-cased and WITH-non-cased
-combinations the frequent ones, are stated by the paper qualitatively, without a
-cross-tabulation, and the areal distribution is descriptive; neither is formalized. The sample
-is summarized only as containing roughly twice as many AND-languages as WITH-languages.
+* The examples are those of §3, (9)–(53), in `Data/Examples/Stassen2000.json`. A medial
+  connective, which the paper leaves in construction with either noun phrase, admits both
+  patterns.
+* Plural agreement is relevant only where verbs agree with their subject (`Language.relevant`),
+  since the paper's AND-languages include languages without verb agreement.
+* The schemes (107), (123) and (124) put the comitative phrase where the object stands.
+* The correlations of cased and tensed languages with AND-status are stated by the paper without
+  a cross-tabulation and are not formalized.
 
 ## TODO
 
-The paper argues that verb-final and verb-initial WITH-languages without agreement, (123a) and
-(124a), can mark the new constituent neither by position nor by agreement, so that they tend to
-stay pure WITH-languages, and that some verb-final ones double the comitative marker instead,
-(125). Stating this needs the formal means by which each feature is marked.
+* The word-order correlations (54) for the coordinate strategy, and the claim that a language
+  postposing a lone coordinator typically also has polysyndeton (p. 14).
+* Verb-final and verb-initial WITH-languages without agreement, (123a) and (124a), which can mark
+  the new constituent neither by position nor by agreement, and the doubled comitative of (125).
 
 ## References
 
@@ -82,6 +70,60 @@ stay pure WITH-languages, and that some verb-final ones double the comitative ma
 namespace Stassen2000
 
 open WordOrder
+
+/-! ### The coordinate strategy, §3 -/
+
+open Morphology (Morph)
+open Coordinator (Pattern)
+
+/-- A medial connective, a single linking morpheme between the two noun phrases, is in
+construction with the second, A co-B, or with the first, A-co B, as each language decides
+(p. 10). -/
+def medial : Finset Pattern := {(none, some .before), (some .after, none)}
+
+/-- The patterns the examples' labels admit, A-co B written `a'co_b` as Haspelmath writes it. -/
+def patternLabels : List (String × Finset Pattern) :=
+  [("asyndetic", {(none, none)}), ("medial", medial), ("a'co_b'co", {(some .after, some .after)}),
+    ("a'co_b", {(some .after, none)}), ("a_b'co", {(none, some .after)})]
+
+/-- The patterns an example admits. -/
+def patterns (d : Datum) : Finset Pattern := (d.parse? "pattern" patternLabels).getD ∅
+
+theorem patterns_nonempty : ∀ d ∈ Examples.all, (patterns d).Nonempty := by decide
+
+/-- Monosyndetic preposing on the first noun phrase, the scheme AND-NP NP, is attested in no
+example, as in none of the sample (p. 15). -/
+theorem coAB_not_mem_patterns : ∀ d ∈ Examples.all, (some .before, none) ∉ patterns d := by
+  decide
+
+/-- The overt strategies other than medial monosyndeton postpose or suffix their connectives
+(p. 12): in an example without a medial connective, no coordinator precedes its noun phrase. -/
+theorem postpositive_of_not_medial : ∀ d ∈ Examples.all, patterns d ≠ medial →
+    ∀ p ∈ patterns d, p.1 ≠ some .before ∧ p.2 ≠ some .before := by
+  decide
+
+/-- An example whose coordinator has a Fragment entry. -/
+structure Attestation where
+  datum : Datum
+  coordinator : Coordinator
+
+open Examples in
+/-- The examples whose coordinators have Fragment entries: Persian *va*, Mahootian's *væ*, and
+*-o*, Finnish *ja*, Turkish *ve*, Korean *-hago* and Latin *-que*. -/
+def attestations : List Attestation :=
+  [⟨ex20b, Farsi.Coordination.va⟩, ⟨ex22, Finnish.Coordination.ja⟩,
+    ⟨ex27, Turkish.Coordination.ve⟩, ⟨ex45, Korean.Coordination.hago⟩,
+    ⟨ex49, Farsi.Coordination.o⟩, ⟨ex51, Latin.Coordination.que⟩]
+
+theorem attestations_conjunctive :
+    ∀ a ∈ attestations, a.coordinator.role = .conjunctive := by
+  decide
+
+/-- A Fragment coordinator bound on a side of its host stands on that side of every noun phrase
+the example marks: the enclitics *-hago*, *-o* and *-que* follow theirs. -/
+theorem attestations_side : ∀ a ∈ attestations, ∀ p ∈ patterns a.datum,
+    ∀ s ∈ a.coordinator.morph.kind.side?, ∀ t ∈ [p.1, p.2], t ≠ none → t = some s := by
+  decide
 
 /-! ### Encodings -/
 
@@ -168,6 +210,12 @@ distinct from its comitative *with*. -/
 theorem english_and_not_isAlsoComitative :
     ¬ English.Coordination.and_.IsAlsoComitative English.Adpositions.with_.morphs
       English.Adpositions.with_.functions := by
+  decide
+
+/-- Persian links its noun phrases by *væ* and *-o*, both distinct from its comitative
+preposition *ba* 'with'. -/
+theorem persian_not_isAlsoComitative : ∀ c ∈ [Farsi.Coordination.va, Farsi.Coordination.o],
+    ¬ c.IsAlsoComitative Farsi.Adpositions.ba.morphs Farsi.Adpositions.ba.functions := by
   decide
 
 /-- Hausa *dà* 'and' is the comitative preposition *dà* 'with', (109). -/

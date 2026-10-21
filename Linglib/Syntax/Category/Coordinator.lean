@@ -19,6 +19,7 @@ operation on the set of coordinands that its semantic type fixes, is `Coordinato
 
 * `Coordinator.Role`: the semantic type of a coordinator.
 * `Coordinator`: the morph, gloss and semantic type of a coordinator.
+* `Coordinator.Pattern`: the sides on which the coordinators of a binary coordination stand.
 * `Coordinator.Correlative`: a pair of correlative coordinators with the single coordinator
   of the plain construction.
 * `Coordinator.IsAlsoComitative`: the coordinator's form is a form of a comitative marker, 'and'
@@ -73,6 +74,12 @@ structure Coordinator where
   role : Coordinator.Role
   deriving DecidableEq, Repr
 
+/-- The pattern of a binary coordination gives each coordinand the side its coordinator stands
+on, `none` when it is bare, so that A co-B is `(none, some .before)` and A-co B-co is
+`(some .after, some .after)`: the number of coordinators and their positions, the two parameters
+by which [stassen-2000] and [haspelmath-2007] classify coordinate constructions. -/
+abbrev Coordinator.Pattern := Option Morphology.Morph.Side × Option Morphology.Morph.Side
+
 /-- An emphatic coordination with correlative coordinators, English *both … and*, records the
 coordinators of the two coordinands and the single coordinator of the plain construction. -/
 structure Coordinator.Correlative where
@@ -110,5 +117,17 @@ def IsAlsoAdditive (a : AdditiveParticle) : Prop := c.morph = a.morph
 
 instance (a : AdditiveParticle) : Decidable (c.IsAlsoAdditive a) :=
   inferInstanceAs (Decidable (_ = _))
+
+/-! ### Patterns -/
+
+namespace Pattern
+
+variable (p : Pattern)
+
+/-- The syndesis of a pattern is its number of coordinators, none in asyndetic, one in
+monosyndetic and two in bisyndetic coordination. -/
+def syndesis : ℕ := [p.1, p.2].countP Option.isSome
+
+end Pattern
 
 end Coordinator

@@ -5,23 +5,24 @@ public import Linglib.Syntax.Category.Particle.Additive
 /-!
 # Persian focus particles
 
-The additive particle *ham* 'also, too', repeated with each of two conjuncts, is the coordinator
-`Farsi.Coordination.ham` 'both … and'.
+The additive particle of Persian is the clitic *-hæm*, *-æm* 'also, too', as in *mæn-æm mi-ya-m*
+'I'll come too'. Forms are in Mahootian's transcription.
 
 ## Main definitions
 
 * `Farsi.FocusParticles.ham`: the additive particle.
 
-## TODO
+## References
 
-The entry has not been checked against a grammar of Persian.
+* [mahootian-1997]
 -/
 
 @[expose] public section
 
 namespace Farsi.FocusParticles
 
-/-- *ham* 'also, too'. -/
-def ham : AdditiveParticle := { morph := .free "ham", gloss := "also, too" }
+/-- *-hæm*, also *-æm*, 'also, too', one of the two non-pronominal clitics with the connective
+*-o* 'and', [mahootian-1997] p. 271, (543). -/
+def ham : AdditiveParticle := { morph := .encl "hæm", gloss := "also, too" }
 
 end Farsi.FocusParticles
