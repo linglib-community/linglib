@@ -80,11 +80,7 @@ def vowel (back high : Bool) : Segment :=
 
 /-! ### Contexts and candidates -/
 
-/-- The stem-final consonant before the verbalizer is plain or palatal. -/
-inductive StemFinal where
-  | plain
-  | palatal
-  deriving DecidableEq, Fintype, Repr
+deriving instance Fintype for Forms.Root
 
 /-- The theme after the verbalizer is /-a-/ or /-je-/. -/
 inductive Theme where
@@ -92,8 +88,9 @@ inductive Theme where
   | je
   deriving DecidableEq, Fintype, Repr
 
-/-- A plain consonant has no backness, and a palatal is [−back]. -/
-def StemFinal.segment : StemFinal → Segment
+/-- The stem-final consonant before the verbalizer, plain or palatal by the root: a plain
+consonant has no backness, and a palatal is [−back]. -/
+def Forms.Root.segment : Forms.Root → Segment
   | .plain => Segment.ofSpecs [(.syllabic, false), (.consonantal, true), (.high, false)]
   | .palatal =>
     Segment.ofSpecs [(.syllabic, false), (.consonantal, true), (.high, true), (.back, false)]
@@ -106,7 +103,7 @@ def Theme.segment : Theme → Segment
 
 /-- A context is the stem-final consonant before the verbalizer and the theme after it. -/
 structure Context where
-  stemFinal : StemFinal
+  stemFinal : Forms.Root
   theme : Theme
   deriving DecidableEq, Fintype, Repr
 
@@ -216,13 +213,13 @@ def paperConstraints : List (Constraint Candidate) :=
 
 /-- Over the paper's constraints [uv] does at least as well as [ov] on every constraint and
 better on DEP[−high], before /-a-/. -/
-theorem uv_le_ov (s : StemFinal) :
+theorem uv_le_ov (s : Forms.Root) :
     (∀ con ∈ paperConstraints ⟨s, .a⟩, con (.fill true true) ≤ con (.fill true false)) ∧
       depNonhigh ⟨s, .a⟩ (.fill true true) < depNonhigh ⟨s, .a⟩ (.fill true false) := by
   revert s; decide
 
 /-- No ranking of the paper's constraints gives [ov], since [uv] harmonically bounds it. -/
-theorem uv_bounds_ov (s : StemFinal) {rk : List (Constraint Candidate)}
+theorem uv_bounds_ov (s : Forms.Root) {rk : List (Constraint Candidate)}
     (hrk : rk.Perm (paperConstraints ⟨s, .a⟩)) :
     Candidate.fill true false ∉
       (Tableau.ofList (candidates ⟨s, .a⟩) rk).optimal := by
@@ -273,9 +270,7 @@ def context? (a : Forms.Analysis) : Option Context := do
     | some 'a' => some Theme.a
     | some 'j' => some .je
     | _ => none
-  match a.root with
-  | .plain => pure ⟨.plain, t⟩
-  | .palatal => pure ⟨.palatal, t⟩
+  pure ⟨a.root, t⟩
 
 /-- The verbalizer a form is written with. Belarusian writes the reduced vowel of [ov] as
 *a*, and the paper takes it to be /o/. -/

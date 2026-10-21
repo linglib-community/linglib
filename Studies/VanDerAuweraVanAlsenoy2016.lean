@@ -4,6 +4,7 @@ public import Linglib.Data.WALS.Features.F115A
 public import Linglib.Data.Examples.VanDerAuweraVanAlsenoy2016
 public import Mathlib.Order.Basic
 public import Mathlib.Data.Fintype.Prod
+public import Linglib.Syntax.Clause.Basic
 
 /-!
 # van der Auwera and Van Alsenoy (2016): On the Typology of Negative Concord
@@ -20,7 +21,7 @@ well as concord, `toWALS`, `toWALS_eq_predicateNegationAlsoPresent_iff`. The sec
 strict concord is far more frequent than non-strict, and that non-strict concord is not one
 pattern but many. A concord system records, for a negative indefinite before and after the finite
 verb, whether the clausal negator is absent, optional or obligatory, or the position unavailable,
-`Marking` and `System`, the paper's formulas (19), (26), (28), (30), (32), (36), (38), (39): strict
+`System`, the paper's formulas (19), (26), (28), (30), (32), (36), (38), (39): strict
 concord is obligatory marking in both positions, `IsStrict`, and non-strict concord is concord
 that is not strict, `IsNonStrict`. [jespersen-1917]'s Negative Early principle, that the clausal
 negator appears first where the negative indefinite comes late, orders the two positions,
@@ -32,7 +33,7 @@ subtype, the other way along the scale, `informalCatalan_lt_formalCatalan`.
 
 ## Implementation notes
 
-The strictness scale orders the markings absent, optional, obligatory, and a system is a pair of
+The strictness scale orders the markings excluded, optional, obligatory, and a system is a pair of
 optional markings, the asterisk of the paper's formulas being `none`; Georgian's immediate
 precedence, (36), Welsh's compound verbs, (43), and Yiddish's emphatic omission, (45), are
 recorded as rows, since they parametrize concord by something other than the position relative
@@ -103,38 +104,24 @@ theorem toWALS_eq_predicateNegationAlsoPresent_iff (s : Strategy) :
 
 /-! ### Strict and non-strict negative concord -/
 
-/-- Whether the clausal negator accompanies a negative indefinite in a position: absent, the
-formula V, optional, (N) V, or obligatory, N V; the strictness scale. -/
-inductive Marking where
-  | absent
-  | optional
-  | obligatory
-  deriving DecidableEq, Repr, Fintype
-
-/-- The position of a marking on the strictness scale. -/
-def Marking.rank : Marking → Fin 3
-  | .absent => 0
-  | .optional => 1
-  | .obligatory => 2
-
-instance : LinearOrder Marking := LinearOrder.lift' Marking.rank (by decide)
-
-/-- A negative concord system: the marking of a preverbal and of a postverbal negative
-indefinite, `none` when the position is unavailable, the asterisk of the formulas. -/
+/-- A negative concord system: whether the clausal negator accompanies a preverbal and a
+postverbal negative indefinite, excluded (the formula V), optional ((N) V) or obligatory (N V),
+ordered as the strictness scale, and `none` when the position is unavailable, the asterisk of the
+formulas. -/
 structure System where
-  preverbal : Option Marking
-  postverbal : Option Marking
+  preverbal : Option Clause.Occurrence
+  postverbal : Option Clause.Occurrence
   deriving DecidableEq, Repr
 
 /-- A pattern with both positions available, the systems of Tables 6 and 9. -/
-abbrev Pattern := Marking × Marking
+abbrev Pattern := Clause.Occurrence × Clause.Occurrence
 
 /-- The system of a pattern. -/
 def Pattern.toSystem (p : Pattern) : System := ⟨some p.1, some p.2⟩
 
 /-- Concord is available in some construction. -/
 def System.HasConcord (s : System) : Prop :=
-  (∃ m, s.preverbal = some m ∧ m ≠ .absent) ∨ (∃ m, s.postverbal = some m ∧ m ≠ .absent)
+  (∃ m, s.preverbal = some m ∧ m ≠ .excluded) ∨ (∃ m, s.postverbal = some m ∧ m ≠ .excluded)
 
 /-- Strict negative concord: the clausal negator is obligatory whatever the position of the
 negative indefinite, (14). -/
@@ -159,10 +146,10 @@ instance : DecidablePred Pattern.NegativeEarly := λ p => inferInstanceAs (Decid
 
 /-- (19): the Spanish subtype, no negator with a preverbal negative indefinite and an obligatory
 one with a postverbal one. -/
-def spanish : Pattern := (.absent, .obligatory)
+def spanish : Pattern := (.excluded, .obligatory)
 
 /-- (30): Belgian Brabantic Dutch, an optional negator with a postverbal negative indefinite. -/
-def brabanticDutch : Pattern := (.absent, .optional)
+def brabanticDutch : Pattern := (.excluded, .optional)
 
 /-- (32): French and African American English, the negator optional in both positions. -/
 def french : Pattern := (.optional, .optional)
@@ -183,7 +170,7 @@ theorem nonStrict_negativeEarly_iff (p : Pattern) :
 /-- Table 6: the diachrony from Latin, with negative indefinites alone, through older Romance,
 Spanish and older Slavic to modern Slavic and Romanian, with strict concord. -/
 def stages : List Pattern :=
-  [(.absent, .absent), (.absent, .optional), spanish, olderSlavic, (.obligatory, .obligatory)]
+  [(.excluded, .excluded), (.excluded, .optional), spanish, olderSlavic, (.obligatory, .obligatory)]
 
 /-- The diachrony ascends the strictness scale in both positions. -/
 theorem stages_isChain : stages.IsChain (· ≤ ·) := by decide

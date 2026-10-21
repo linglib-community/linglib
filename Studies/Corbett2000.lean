@@ -10,6 +10,7 @@ public import Linglib.Syntax.Number.Resolve
 public import Linglib.Fragments.Bayso.Number
 public import Linglib.Fragments.Teop.Nouns
 public import Studies.Corbett1991
+public import Linglib.Syntax.Clause.Basic
 public import Linglib.Data.Examples.Corbett2000
 
 /-!
@@ -251,32 +252,6 @@ def ilocano : Number.System := { values := {.minimal, .augmented} }
 
 /-! ### The Animacy Hierarchy (chapters 3 and 4) -/
 
-/-- A number value is distinguished at a position of the hierarchy obligatorily, optionally,
-or not at all, ordered by the likelihood of number being distinguished. -/
-inductive Marking where
-  | excluded
-  | optional
-  | obligatory
-  deriving DecidableEq, Repr, Fintype
-
-namespace Marking
-
-/-- The position of a marking in the order of likelihood. -/
-def toNat : Marking → ℕ
-  | .excluded => 0
-  | .optional => 1
-  | .obligatory => 2
-
-theorem toNat_injective : Function.Injective toNat := by decide
-
-instance : LinearOrder Marking := LinearOrder.lift' toNat toNat_injective
-
-instance : OrderBot Marking where
-  bot := .excluded
-  bot_le m := by cases m <;> decide
-
-end Marking
-
 /-- The Animacy Hierarchy of Figure 3.1, speaker > addressee > third person > kin >
 human > animate > inanimate, with the animate position split into higher and lower animates
 where Miya splits it (Table 3.6). -/
@@ -304,8 +279,10 @@ def AnimacyHierarchy.rank : AnimacyHierarchy → ℕ
 
 instance : LinearOrder AnimacyHierarchy := LinearOrder.lift' AnimacyHierarchy.rank (by decide)
 
-/-- The range of a number value gives its marking at each position of the hierarchy. -/
-abbrev Range := AnimacyHierarchy → Marking
+/-- The range of a number value says whether it is distinguished at each position of the
+hierarchy obligatorily, optionally or not at all, ordered by the likelihood of number being
+distinguished. -/
+abbrev Range := AnimacyHierarchy → Clause.Occurrence
 
 namespace Range
 
@@ -551,15 +528,8 @@ theorem teop_inverse :
 
 namespace Rembarrnga
 
-/-- The persons of the pronoun, the inclusive counted as one. -/
-inductive Person where
-  | first
-  | firstInclusive
-  | second
-  | third
-  deriving DecidableEq, Repr, Fintype
-
-/-- The logical minimum of referents is two for the inclusive and one otherwise. -/
+/-- The logical minimum of referents is two for the inclusive and one otherwise. Beside the
+inclusive, the first person of Rembarrnga is the exclusive. -/
 def minimum : Person → ℕ
   | .firstInclusive => 2
   | _ => 1
@@ -575,7 +545,8 @@ def relative (p : Person) (n : ℕ) : Number :=
 /-- *-bbarrah* marks one more than the minimum, three referents for the inclusive and two for
 the other persons, which the traditional labels split between trial and dual. -/
 theorem unitAugmented_one_more :
-    relative .firstInclusive 3 = relative .first 2 ∧ Number.fromCard 3 ≠ Number.fromCard 2 := by
+    relative .firstInclusive 3 = relative .firstExclusive 2 ∧
+      Number.fromCard 3 ≠ Number.fromCard 2 := by
   decide
 
 end Rembarrnga
@@ -864,7 +835,7 @@ def rankNames : List (String × AnimacyHierarchy) :=
     ("lowerAnimate", .lowerAnimate), ("inanimate", .inanimate)]
 
 /-- The markings by name. -/
-def markingNames : List (String × Marking) :=
+def markingNames : List (String × Clause.Occurrence) :=
   [("obligatory", .obligatory), ("optional", .optional), ("excluded", .excluded)]
 
 /-- In Miya, (24) to (28), marking and agreement at each position are Table 3.6's. -/

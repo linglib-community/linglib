@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
 public import Linglib.Syntax.Minimalist.Clause.Size
+public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Fragments.Mandarin.Adverbs
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Fragments.Cantonese.Aspect
@@ -401,23 +402,19 @@ theorem faan_lowering :
 
 /-! ### The implicational complementation hierarchy -/
 
-/-- The semantic complement classes of the hierarchy, event, situation and proposition, and
-the minimal size each maps to. -/
-inductive ComplementClass where
-  | event
-  | situation
-  | proposition
-  deriving DecidableEq, Repr
-
-/-- The minimal sizes of the three classes are vP, TP and CP. -/
-def ComplementClass.size : ComplementClass → ComplementSize
+/-- The minimal size of each semantic class of the hierarchy: vP for an event, TP for a
+situation and CP for a proposition. -/
+def minimalSize : Clause.Size → ComplementSize
   | .event => .vP
   | .situation => .tP
   | .proposition => .cP
 
+/-- A larger class needs a larger complement. -/
+theorem monotone_minimalSize : Monotone minimalSize := by decide
+
 /-- A dependency transparent for a class is transparent for every more integrated class. -/
-theorem ComplementClass.exceptionalScope_of_le {f : AspProjection} {c c' : ComplementClass}
-    (h : c.size ≤ c'.size) (hs : ExceptionalScope f c'.size) : ExceptionalScope f c.size :=
-  antitone_exceptionalScope f h hs
+theorem exceptionalScope_of_le {f : AspProjection} {c c' : Clause.Size} (h : c ≤ c')
+    (hs : ExceptionalScope f (minimalSize c')) : ExceptionalScope f (minimalSize c) :=
+  antitone_exceptionalScope f (monotone_minimalSize h) hs
 
 end LiuYip2026
