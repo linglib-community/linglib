@@ -263,12 +263,12 @@ def caseSuffix : ParadigmCell → Option Following
 /-- The weak paradigm (8) violates *ABA on the containment hierarchy, since the nominative
 form resurfaces in the genitive, which contains [ACC] ([caha-2009]). -/
 theorem weak_violates_aba :
-    ¬ Morphology.IsContiguous fun c : ParadigmCell ↦ weakN (caseSuffix c) := by
+    ¬ IsContiguous fun c : ParadigmCell ↦ weakN (caseSuffix c) := by
   decide
 
 /-- The strong paradigm of *illu* (1) is contiguous on the containment hierarchy. -/
 theorem strong_contiguous :
-    Morphology.IsContiguous fun c : ParadigmCell ↦ strongN .house c.label := by
+    IsContiguous fun c : ParadigmCell ↦ strongN .house c.label := by
   decide
 
 /-! ### The singular suffix (§4.2) -/

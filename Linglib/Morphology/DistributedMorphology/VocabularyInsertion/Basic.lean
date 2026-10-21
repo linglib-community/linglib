@@ -232,6 +232,16 @@ theorem winner?_eq_head?_applicable (h : items.Pairwise fun i j ↦ j.specificit
     winner? items n = (items.applicable n).head? :=
   RuleSet.selectBy_eq_head?_applicable h
 
+theorem subsetPrinciple_eq_map_winner? :
+    subsetPrinciple items n = (winner? items n).map (·.exponent) := rfl
+
+/-- On a vocabulary listed by non-increasing specificity, the exponent is that of the first
+applicable item. -/
+theorem subsetPrinciple_eq_head?_applicable
+    (h : items.Pairwise fun i j ↦ j.specificity ≤ i.specificity) :
+    subsetPrinciple items n = ((items.applicable n).head?).map (·.exponent) := by
+  rw [subsetPrinciple_eq_map_winner?, winner?_eq_head?_applicable h]
+
 /-- The winner is an Elsewhere winner of the shared core, with no faithfulness hypothesis, since
 `VocabularyItem.specificity` is strictly antitone outright. -/
 theorem winner?_isElsewhereWinner (h : winner? items n = some i) : items.IsElsewhereWinner n i :=
@@ -260,7 +270,7 @@ theorem winner?_retreat (hsub : n' ⊆ n) (h' : winner? items n' = some i') :
 an exponent inserted at two nested neighborhoods is inserted at every neighborhood between
 them. -/
 theorem isContiguous_subsetPrinciple (hv : items.Antihomophonous) :
-    Morphology.IsContiguous (subsetPrinciple items) :=
+    IsContiguous (subsetPrinciple items) :=
   RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hn hs ↦ VocabularyItem.applies_mono hs hn
 
 end SubsetPrinciple
