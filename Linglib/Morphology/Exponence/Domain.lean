@@ -66,6 +66,10 @@ theorem le_iff : r ≤ s ↔ r.dom ⊆ s.dom := Finset.coe_subset
 
 theorem lt_iff : r < s ↔ r.dom ⊂ s.dom := Finset.coe_ssubset
 
+/-- A strictly more specific rule has a strictly smaller domain. -/
+theorem strictMono_card_dom : StrictMono fun r : DomainRule Ctx E ↦ r.dom.card :=
+  fun _ _ h ↦ Finset.card_lt_card (lt_iff.mp h)
+
 /-- A domain rule's applicability factors through `A` exactly when its domain is a union of
 fibers of `A`. -/
 theorem factorsThrough_applies_iff {V : Type*} {A : Ctx → V} :

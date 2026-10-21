@@ -25,8 +25,9 @@ left-hand side, weighted by their pseudo-counts, and each notion here is read of
 
 * `DirichletPCFG G`: positive pseudo-counts on the rules of `G`.
 * `DirichletPCFG.urn`: the urn weights at a nonterminal, the pseudo-counts of its rules.
-* `DirichletPCFG.lhsCounts`, `DirichletPCFG.lhsFactor`, `DirichletPCFG.corpusProb`: the corpus
-  rule counts at a nonterminal, their urn probability, and the probability of a corpus.
+* `DirichletPCFG.countsProb`, `DirichletPCFG.lhsCounts`, `DirichletPCFG.corpusProb`: the
+  probability of rule counts, the corpus rule counts at a nonterminal, and the probability of a
+  corpus.
 * `DirichletPCFG.posterior`: the conjugate update by a corpus.
 * `DirichletPCFG.predictive`, `DirichletPCFG.predictivePCFG`: the posterior predictive
   probabilities of the rules at a nonterminal, and the PCFG they form.
@@ -51,7 +52,9 @@ posterior is a pointwise sum; `urn` restricts them to the rules with a given lef
 `corpusProb` is the closed form of [johnson-griffiths-goldwater-2007]'s Equation 3, a product of
 ratios of Dirichlet normalising constants, written in rising factorials by `polyaUrnProb`.
 `predictivePCFG D` is the proposal grammar of their Hastings sampler, the posterior mean of the
-rule weights given `D`.
+rule weights given `D`. With every pseudo-count `1` the Dirichlet prior is uniform on the simplex,
+so the posterior mode is the PCFG that maximizes the likelihood of the corpus, its
+relative-frequency estimate `PCFG.relFreq` (`PCFG.corpusProb_le_corpusProb_relFreq`).
 
 ## TODO
 
@@ -88,6 +91,20 @@ def urn (a : G.NT) (r : G.RulesWithLHS a) : ℝ :=
 theorem urn_pos (a : G.NT) (r : G.RulesWithLHS a) : 0 < M.urn a r :=
   M.pseudo_pos r (mem_filter.mp r.2).1
 
+/-- The probability of the rule counts `x` with the rule weights integrated out: the product over
+the nonterminals the grammar expands of the urn probability of the counts there. -/
+noncomputable def countsProb (x : ContextFreeRule T G.NT → ℕ) : ℝ :=
+  ∏ a ∈ G.rules.image (·.input), polyaUrnProb (M.urn a) fun r ↦ x r
+
+theorem countsProb_pos (x : ContextFreeRule T G.NT → ℕ) : 0 < M.countsProb x :=
+  prod_pos fun a ha ↦
+    have := ContextFreeGrammar.nonempty_rulesWithLHS_iff.mpr ha
+    polyaUrnProb_pos (M.urn_pos a) _
+
+@[simp]
+theorem countsProb_zero : M.countsProb 0 = 1 :=
+  prod_eq_one fun a _ ↦ polyaUrnProb_zero (M.urn a)
+
 variable [DecidableEq T]
 
 /-- The corpus counts of the rules with left-hand side `a`. -/
@@ -104,30 +121,21 @@ theorem lhsCounts_add (a : G.NT) (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT)
   funext r
   simp [lhsCounts, corpusRuleCount_add]
 
-/-- The probability of the corpus rule counts at `a` under the urn at `a`. -/
-noncomputable def lhsFactor (a : G.NT) (D : Multiset (RoseTree (Symbol T G.NT))) : ℝ :=
-  polyaUrnProb (M.urn a) (lhsCounts a D)
-
-/-- The probability of a corpus with the rule weights integrated out: the product over the
-nonterminals the grammar expands of the urn probability of the corpus rule counts there. -/
+/-- The probability of a corpus with the rule weights integrated out: the probability of its rule
+counts. -/
 noncomputable def corpusProb (D : Multiset (RoseTree (Symbol T G.NT))) : ℝ :=
-  ∏ a ∈ G.rules.image (·.input), M.lhsFactor a D
+  M.countsProb fun r ↦ corpusRuleCount r D
 
-theorem lhsFactor_pos {a : G.NT} (ha : a ∈ G.rules.image (·.input))
-    (D : Multiset (RoseTree (Symbol T G.NT))) : 0 < M.lhsFactor a D :=
-  have := ContextFreeGrammar.nonempty_rulesWithLHS_iff.mpr ha
-  polyaUrnProb_pos (M.urn_pos a) _
+theorem corpusProb_eq (D : Multiset (RoseTree (Symbol T G.NT))) :
+    M.corpusProb D = ∏ a ∈ G.rules.image (·.input), polyaUrnProb (M.urn a) (lhsCounts a D) :=
+  rfl
 
 theorem corpusProb_pos (D : Multiset (RoseTree (Symbol T G.NT))) : 0 < M.corpusProb D :=
-  prod_pos fun _ ha ↦ M.lhsFactor_pos ha D
-
-@[simp]
-theorem lhsFactor_zero (a : G.NT) : M.lhsFactor a 0 = 1 := by
-  simp [lhsFactor]
+  M.countsProb_pos _
 
 @[simp]
 theorem corpusProb_zero : M.corpusProb 0 = 1 := by
-  simp [corpusProb]
+  simp [corpusProb_eq]
 
 /-! ### Conjugate update -/
 
@@ -151,15 +159,11 @@ theorem posterior_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) :
   ext r
   simp [posterior, corpusRuleCount_add, add_assoc]
 
-theorem lhsFactor_add (a : G.NT) (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) :
-    M.lhsFactor a (D₁ + D₂) = M.lhsFactor a D₁ * (M.posterior D₁).lhsFactor a D₂ := by
-  rw [lhsFactor, lhsCounts_add, polyaUrnProb_add, lhsFactor, lhsFactor, urn_posterior]
-
 /-- **Chain rule.** The probability of the corpus `D₁ + D₂` is the probability of `D₁` times the
 probability of `D₂` under the posterior given `D₁`. -/
 theorem corpusProb_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) :
     M.corpusProb (D₁ + D₂) = M.corpusProb D₁ * (M.posterior D₁).corpusProb D₂ := by
-  simp only [corpusProb, lhsFactor_add, prod_mul_distrib]
+  simp only [corpusProb_eq, lhsCounts_add, polyaUrnProb_add, urn_posterior, prod_mul_distrib]
 
 /-! ### Posterior predictive rule distribution -/
 
@@ -232,18 +236,24 @@ with the posterior given `D`, so there the proposal grammar of the Hastings samp
 twice generally separates them: the first expansion reinforces the urn at that nonterminal, and
 the predictive PCFG does not see it. -/
 theorem derivProb_predictivePCFG {t : RoseTree (Symbol T G.NT)} (ht : t.Licensed G.Licenses)
-    (hone : ∀ a, ∑ r : G.RulesWithLHS a, ruleCount r t ≤ 1)
+    (hone : ∀ a, t.values.count (.nonterminal a) ≤ 1)
     (D : Multiset (RoseTree (Symbol T G.NT))) :
     (M.predictivePCFG D).derivProb t = .ofReal ((M.posterior D).corpusProb {t}) := by
-  rw [PCFG.derivProb_eq_prod_pow_ruleCount _ ht, corpusProb,
+  rw [PCFG.derivProb_eq_prod_pow_ruleCount _ ht, corpusProb_eq,
     ← prod_fiberwise_of_maps_to (t := G.rules.image (·.input)) (g := (·.input))
       fun r hr ↦ mem_image_of_mem _ hr,
-    ENNReal.ofReal_prod_of_nonneg fun a ha ↦ ((M.posterior D).lhsFactor_pos ha _).le]
+    ENNReal.ofReal_prod_of_nonneg fun a ha ↦
+      have := ContextFreeGrammar.nonempty_rulesWithLHS_iff.mpr ha
+      (polyaUrnProb_pos ((M.posterior D).urn_pos a) _).le]
   refine prod_congr rfl fun a _ ↦ ?_
   have hpred : polyaUrnPredictive ((M.posterior D).urn a) 0 = M.predictive a D := by
     simpa [predictive] using M.predictive_posterior a D 0
-  have hcount : ∑ r, lhsCounts a {t} r ≤ 1 := by simpa [lhsCounts] using hone a
-  rw [lhsFactor, polyaUrnProb_eq_prod_pow_of_sum_le_one _ hcount, hpred,
+  have hcount : ∑ r, lhsCounts a {t} r ≤ 1 :=
+    calc ∑ r, lhsCounts a {t} r = ∑ r ∈ G.rules.filter (·.input = a), ruleCount r t := by
+          simp only [lhsCounts, corpusRuleCount_singleton]
+          exact Finset.sum_coe_sort _ (ruleCount · t)
+      _ ≤ 1 := (ht.sum_ruleCount_eq_count_values a).trans_le (hone a)
+  rw [polyaUrnProb_eq_prod_pow_of_sum_le_one _ hcount, hpred,
     ENNReal.ofReal_prod_of_nonneg fun r _ ↦ pow_nonneg (M.predictive_pos a D r).le _]
   refine (prod_coe_sort _ _).symm.trans (Fintype.prod_congr _ _ fun r ↦ ?_)
   rw [predictivePCFG_weight, ENNReal.ofReal_pow (M.predictive_pos a D r).le]

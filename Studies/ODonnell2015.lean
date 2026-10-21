@@ -2,32 +2,75 @@ module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
 public import Linglib.Core.Probability.Distributions.PitmanYor
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Data.Experiments.ODonnell2015
 public import Linglib.Morphology.Exponence.Domain
 public import Linglib.Morphology.Exponence.Select
 
 /-!
 # O'Donnell (2015): Productivity and Reuse in Language
 
-This file formalizes the central empirical contrast of the seventh chapter of
-[odonnell-2015] on English derivational morphology: the nominalizer *-ness* is productive
-while *-ion* and the verb-forming *-ate* are not, and of the competing models only the
-fragment grammar recovers this, the Dirichlet-multinomial probabilistic context-free
-grammar ranking the token-frequent *-ion* first. The three suffixes carry a productivity
-ordering (`Suffix.productivityIndex`, `moreProductiveThan`) grounded in the hapax-based
-statistics of Baayen that the book correlates with its models (`ness_hapax_richer`,
-`ness_higher_type_token_ratio`, `ion_token_frequency_dominates`), the book's adaptor and
-fragment grammars are built over the Dirichlet PCFG of `DirichletPCFG` (`AdaptorGrammar`,
-`FragmentGrammar`), the suffixes are rules of a toy grammar (`suffixGrammar`), and a Dirichlet
-prior whose pseudo-counts track the empirical productivity is exhibited (`suffixPrior`,
-`suffixPrior_pseudo_respects_productivity`).
+[odonnell-2015] treats productivity as an inference about which computations to store and which
+to recompute, and compares five models of English morphology: the full-parsing
+Dirichlet-multinomial PCFG (DMPCFG), the full-listing maximum a posteriori adaptor grammar (MAG),
+two data-oriented parsing estimators, and the inference-based fragment grammar (FG). In Chapter 7
+only the FG places the productive nominalizer *-ness*:Adj>N among the five most productive
+suffixes, while the other four models rank the unproductive *-ion*:V>N first or second (Figure
+7.3). The book's explanation (p. 268) is that the DMPCFG infers productivity from the token
+frequency of a suffix and the MAG from its type frequency, and *-ion* is the more frequent by both
+counts, while Baayen's hapax-based measures, with which the FG correlates (Table 7.1), separate
+the two suffixes the right way.
+
+This file states the book's models and derives that explanation from its counts for the two
+suffixes (`spectrum`, pp. 267–268), over a grammar with a rule for each.
+
+## Main definitions
+
+* `suffixGrammar ι`: nouns in *-ness* and *-ion* and verbs in *-ate*, over a lexicon of stems `ι`.
+* `dmpcfg`: the DMPCFG over the suffix grammar with the book's unit pseudo-counts (§3.1.4,
+  §3.5.5).
+* `AdaptorGrammar.prob`, `FragmentGrammar.prob`: the probabilities the book gives an analysis in
+  terms of its counts (§3.1.7, §3.1.8).
+* `FullListing.counts`, `FullListing.seating`: the MAG's analysis of a corpus, one table for each
+  distinct derivation (§2.4.2, §3.3).
+* `tokens`, `wordTypes`, `hapaxes`, `baayenP`: a nominalizer's counts in a corpus, and Baayen's
+  category-conditioned degree of productivity, hapaxes over tokens (Equation 6.9).
+* `Realizes D`: the corpus `D` has the book's counts for the two nominalizers.
+
+## Main results
+
+* `FullListing.card_seating`: the full-listing analysis has as many tables at each nonterminal as
+  rule uses there, as `AdaptorGrammar.prob` requires.
+* `FullListing.counts_eq_card_filter_toFinset`: at a nonterminal on no right-hand side, such as
+  `N` in the suffix grammar, the full-listing counts are type counts.
+* `Realizes.dmpcfg_ness_lt_ion`: with unit pseudo-counts the DMPCFG's maximum a posteriori grammar
+  is the relative-frequency PCFG of the treebank (§3.3), the PCFG of greatest likelihood
+  (`PCFG.corpusProb_le_corpusProb_relFreq`), and on the book's token counts it gives *-ion* the
+  greater weight.
+* `Realizes.mag_ness_lt_ion`: the MAG's base grammar is the relative-frequency PCFG of its
+  full-listing counts, and on the book's type counts it also gives *-ion* the greater weight.
+* `Realizes.baayenP_ion_lt_ness`: Baayen's `P` ranks *-ness* above *-ion*.
+* `exists_realizes`: a corpus of derivations over `1117` stems realizes all of the book's counts,
+  so these theorems are about corpora that exist.
+* `isElsewhereWinner_of_forall_uniformOn_le`: the probabilistic Elsewhere Condition of §5.5.3, for
+  rules generating their domains uniformly.
 
 ## Implementation notes
 
-The *-ate* rule produces verbs from bound stems, so the three suffixes are grouped by the
-book's contrast rather than by output category; the ordering of *-ion* above *-ate* is a
-tie-break between two unproductive suffixes, not part of the book's claim. The
-pseudo-counts are stipulated to track productivity, not learned from a corpus, which is the
-book's point against the token-frequency model.
+The book measures a suffix's productivity by the probability of the suffix on a novel stem of
+fixed probability (p. 261 and its footnote 4), so the comparison of two nominalizers is the
+comparison of their rules at `N`. The book's grammar lists a rule for each stem and has a start
+symbol above the word categories (Figure 7.1); the suffix grammar has a stem of each category for
+each element of `ι` and starts at `N`, which is on no right-hand side, so the MAG's tables at `N`
+are the corpus's word types. The seating `Y` is the book's count vector of table sizes, whose
+Pitman–Yor probability is that of any set partition with those block sizes
+(`AdaptorGrammar.pitmanYor_real_singleton_eq_pypFactor`).
+
+## TODO
+
+* The FG's MAP grammar, found by stochastic search (§3.2), and its ranking in Figure 7.3; the
+  correlations of Table 7.1.
+* The two data-oriented parsing estimators (Equations 3.10 and 3.11).
 
 ## References
 
@@ -42,121 +85,185 @@ namespace ODonnell2015
 
 open ProbabilityTheory
 
-/-! ## The three suffixes
+/-! ## The suffix grammar -/
 
-[odonnell-2015] Chapter 7's central productivity contrast (pp. 261–263).
-The terms "productive" and "unproductive" are pre-theoretic descriptions
-consistent with the literature the book reviews; the data below commits
-to nothing about *why* one suffix is productive and another is not. -/
-
-/-- The three English derivational suffixes of the Chapter 7 contrast.
-
-- *-ness* (Adj>N): "perhaps the most commonly-discussed productive
-  suffix in English" (p. 261); *pine-scented* → *pine-scentedness*.
-- *-ion* (V>N): high type and token frequency but unproductive on novel
-  verbs — the competing models' "obviously absurd prediction" is that it
-  attaches to arbitrary verbs, producing \**meetion* "a MEETING event"
-  (pp. 261–262).
-- *-ate* (BND>V): a verb-forming suffix "restricted, by its categorial
-  definition, from attaching to anything besides bound stems" (p. 263),
-  e.g. *segregate* from bound *segregat-*. -/
-inductive Suffix where
+/-- The terminals of the suffix grammar over a lexicon of stems `ι`: adjective, verb and bound
+stems, and the suffixes *-ness*, *-ion* and *-ate*. -/
+inductive Sym (ι : Type) where
+  | adj (i : ι)
+  | v (i : ι)
+  | bnd (i : ι)
   | ness
   | ion
   | ate
   deriving DecidableEq, Repr
 
-/-- A pre-theoretic *productivity index* for the three suffixes — higher
-is more productive. Coding `ness > ion > ate` reproduces the ordering
-implied by [odonnell-2015] Chapter 7 (Fig 7.3 and the §7.3.1.1
-discussion). The `ion > ate` direction is a tie-break: both are
-unproductive on novel forms, but `ate` is structurally more restricted
-(bound stems only), so we rank it strictly lower. -/
-def Suffix.productivityIndex : Suffix → Nat
-  | .ness => 2
-  | .ion  => 1
-  | .ate  => 0
-
-/-- The pre-theoretic strict ordering on the three suffixes by
-productivity. Any theory of productivity that purports to account for
-the [odonnell-2015] Chapter 7 data must reproduce this ordering;
-failure to do so falsifies the theory against the data (this is exactly
-the discriminator deployed against the Dirichlet PCFG, MAG, DOP1 and ENDOP in
-Fig 7.3, all of which place *-ion* in their top 5). -/
-def moreProductiveThan (a b : Suffix) : Prop :=
-  a.productivityIndex > b.productivityIndex
-
-instance : DecidableRel moreProductiveThan := fun a b ↦
-  inferInstanceAs (Decidable (a.productivityIndex > b.productivityIndex))
-
-/-! ## Frequency-spectrum statistics (Fig 7.4, pp. 267–268)
-
-The book's distributional evidence: *-ness* has the "large number of
-rare events" (LNRE) shape characteristic of a productive process — a
-spectrum "sharply peaked at low-frequency forms"; *-ion*'s spectrum has
-few hapaxes and spreads its mass through higher frequency ranges
-(cf. §1.2.6 and Fig 1.1 on unproductive *-ity*/*-th*). Fig 7.4 reports
-spectra for *-ness* and *-ion* only; the book gives no spectrum for
-*-ate*, whose unproductivity is categorial (bound stems only). -/
-
-/-- Corpus statistics for a suffix in the Chapter 7 training corpus
-(CELEX-derived): word types, word tokens, hapax legomena. -/
-structure SpectrumStats where
-  wordTypes  : Nat
-  wordTokens : Nat
-  hapaxes    : Nat
+/-- The nonterminals of the suffix grammar: nouns, adjectives, verbs, and bound stems, the bases
+of *-ate* (*segregat-*). -/
+inductive SuffixNT where
+  | N
+  | Adj
+  | V
+  | BND
   deriving DecidableEq, Repr
 
-/-- *-ness* has 1024 word types, 15,568 tokens and 350 hapaxes
-([odonnell-2015] pp. 267–268). Its spectrum is LNRE-shaped, hapax-rich and
-peaked at frequency 1 (Fig 7.4, left). -/
-def nessStats : SpectrumStats := ⟨1024, 15568, 350⟩
+section Grammar
 
-/-- *-ion* has 1117 word types, 162,573 tokens and 83 hapaxes
-([odonnell-2015] pp. 267–268). Its spectrum is not LNRE-shaped, being hapax-poor with its
-mass spread toward higher frequencies (Fig 7.4, right). -/
-def ionStats : SpectrumStats := ⟨1117, 162573, 83⟩
+variable {ι : Type}
 
-/-- *-ness* is hapax-richer than *-ion* (350/1024 vs 83/1117) — the
-distributional fingerprint of productivity that Baayen's hapax-based
-estimators measure and that the FG model exploits (p. 268). Stated by
-cross-multiplication to stay in `Nat`. -/
-theorem ness_hapax_richer :
-    nessStats.hapaxes * ionStats.wordTypes >
-      ionStats.hapaxes * nessStats.wordTypes := by decide
+/-- `N → Adj -ness`, the book's rule for *-ness*:Adj>N (p. 255). -/
+def rNess : ContextFreeRule (Sym ι) SuffixNT :=
+  ⟨.N, [.nonterminal .Adj, .terminal .ness]⟩
 
-/-- *-ness* has the higher type–token ratio (1024/15,568 vs
-1117/162,573): *-ion*'s distribution is dominated by reuse of
-high-frequency existing words, not novel coinage. -/
-theorem ness_higher_type_token_ratio :
-    nessStats.wordTypes * ionStats.wordTokens >
-      ionStats.wordTypes * nessStats.wordTokens := by decide
+/-- `N → V -ion`, the rule for *-ion*:V>N. -/
+def rIon : ContextFreeRule (Sym ι) SuffixNT :=
+  ⟨.N, [.nonterminal .V, .terminal .ion]⟩
 
-/-- *-ion* has more than an order of magnitude more tokens than
-*-ness* — the token-frequency gap that misleads the Dirichlet PCFG, which "bases
-productivity inferences purely on the token frequency of suffixes"
-(p. 268). -/
-theorem ion_token_frequency_dominates :
-    ionStats.wordTokens > 10 * nessStats.wordTokens := by decide
+/-- `V → BND -ate`, the rule for *-ate*:BND>V, which attaches only to bound stems (p. 263). -/
+def rAte : ContextFreeRule (Sym ι) SuffixNT :=
+  ⟨.V, [.nonterminal .BND, .terminal .ate]⟩
+
+/-- `Adj → adj i`, a stem of the lexicon, as `Adj → tall` in the book's grammar (Figure 7.1). -/
+def rAdj (i : ι) : ContextFreeRule (Sym ι) SuffixNT :=
+  ⟨.Adj, [.terminal (.adj i)]⟩
+
+/-- `V → v i`. -/
+def rV (i : ι) : ContextFreeRule (Sym ι) SuffixNT :=
+  ⟨.V, [.terminal (.v i)]⟩
+
+/-- `BND → bnd i`. -/
+def rBnd (i : ι) : ContextFreeRule (Sym ι) SuffixNT :=
+  ⟨.BND, [.terminal (.bnd i)]⟩
+
+/-- The rule of the suffix grammar attaching a nominalizer. -/
+def Suffix.rule : Suffix → ContextFreeRule (Sym ι) SuffixNT
+  | .ness => rNess
+  | .ion => rIon
+
+theorem Suffix.rule_injective : Function.Injective (Suffix.rule (ι := ι)) := by
+  intro s s' h
+  cases s <;> cases s' <;> simp_all [Suffix.rule, rNess, rIon]
+
+variable (ι) [Fintype ι] [DecidableEq ι]
+
+/-- The suffix grammar over a lexicon of stems `ι`: nouns in *-ness* from adjectives and in
+*-ion* from verbs, verbs in *-ate* from bound stems, and a stem of each category for each element
+of `ι`. -/
+def suffixGrammar : ContextFreeGrammar (Sym ι) where
+  NT := SuffixNT
+  initial := .N
+  rules := {rNess, rIon, rAte} ∪ Finset.univ.image rAdj ∪ Finset.univ.image rV ∪
+    Finset.univ.image rBnd
+
+/-- `DecidableEq` for the grammar's `NT` projection, which `ContextFreeGrammar.RulesWithLHS`
+needs. Not synthesised automatically because `(suffixGrammar ι).NT` is a structure projection that
+the typeclass solver does not reduce to `SuffixNT`. -/
+instance : DecidableEq (suffixGrammar ι).NT :=
+  inferInstanceAs (DecidableEq SuffixNT)
+
+variable {ι}
+
+theorem mem_rules {r : ContextFreeRule (Sym ι) (suffixGrammar ι).NT} :
+    r ∈ (suffixGrammar ι).rules ↔ r = rNess ∨ r = rIon ∨ r = rAte ∨ (∃ i, r = rAdj i) ∨
+      (∃ i, r = rV i) ∨ ∃ i, r = rBnd i := by
+  simp only [suffixGrammar, Finset.mem_union, Finset.mem_insert, Finset.mem_singleton,
+    Finset.mem_image, Finset.mem_univ, true_and, eq_comm (b := r)]
+  tauto
+
+/-- `N` is on no right-hand side of the suffix grammar. -/
+theorem nonterminal_N_not_mem_output :
+    ∀ r ∈ (suffixGrammar ι).rules, Symbol.nonterminal SuffixNT.N ∉ r.output := by
+  intro r hr
+  rcases mem_rules.mp hr with rfl | rfl | rfl | ⟨i, rfl⟩ | ⟨i, rfl⟩ | ⟨i, rfl⟩ <;>
+    simp [rNess, rIon, rAte, rAdj, rV, rBnd]
+
+theorem Suffix.rule_mem (s : Suffix) :
+    s.rule ∈ (suffixGrammar ι).rules.filter (·.input = SuffixNT.N) := by
+  cases s
+  · exact Finset.mem_filter.mpr ⟨mem_rules.mpr (.inl rfl), rfl⟩
+  · exact Finset.mem_filter.mpr ⟨mem_rules.mpr (.inr (.inl rfl)), rfl⟩
+
+
+/-- The word a nominalizer forms on stem `i`: `N → Adj -ness` over `Adj → adj i`, or
+`N → V -ion` over `V → v i`. -/
+def Suffix.word : Suffix → ι → RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT)
+  | .ness, i => .node (.nonterminal SuffixNT.N)
+      [.node (.nonterminal SuffixNT.Adj) [.leaf (.terminal (.adj i))], .leaf (.terminal .ness)]
+  | .ion, i => .node (.nonterminal SuffixNT.N)
+      [.node (.nonterminal SuffixNT.V) [.leaf (.terminal (.v i))], .leaf (.terminal .ion)]
+
+theorem Suffix.word_injective : Function.Injective fun p : Suffix × ι ↦ p.1.word p.2 := by
+  rintro ⟨s, i⟩ ⟨s', i'⟩ h
+  cases s <;> cases s' <;> simp_all [Suffix.word]
+
+theorem Suffix.licensed_word (s : Suffix) (i : ι) :
+    (s.word i).Licensed (suffixGrammar ι).Licenses := by
+  have hleaf (c : RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT)) (x : Sym ι)
+      (hc : c ∈ [RoseTree.leaf (.terminal x)]) : c.Licensed (suffixGrammar ι).Licenses :=
+    List.mem_singleton.mp hc ▸ .terminal _
+  cases s
+  · refine .nonterminal _ _ (mem_rules.mpr (.inl rfl)) ?_
+    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
+    exact ⟨.nonterminal _ _ (mem_rules.mpr (.inr (.inr (.inr (.inl ⟨i, rfl⟩))))) (hleaf · _),
+      .terminal _⟩
+  · refine .nonterminal _ _ (mem_rules.mpr (.inr (.inl rfl))) ?_
+    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
+    exact ⟨.nonterminal _ _ (mem_rules.mpr (.inr (.inr (.inr (.inr (.inl ⟨i, rfl⟩))))))
+      (hleaf · _), .terminal _⟩
+
+/-- The word of `s` has the rule of `s` at its root. -/
+theorem Suffix.ruleAt?_word (s : Suffix) (i : ι) :
+    RoseTree.ruleAt? (s.word i) [] = some s.rule := by
+  cases s <;> rfl
+
+theorem Suffix.ruleCount_word (s s' : Suffix) (i : ι) :
+    RoseTree.ruleCount (N := (suffixGrammar ι).NT) s'.rule (s.word i) =
+      if s = s' then 1 else 0 := by
+  cases s <;> cases s' <;>
+    simp [RoseTree.ruleCount, Suffix.word, Suffix.rule, rNess, rIon]
+
+end Grammar
+
+/-! ## The DMPCFG (§3.1.3, §3.1.4) -/
+
+variable {ι : Type} [Fintype ι] [DecidableEq ι]
+
+variable (ι) in
+/-- A corpus of derivations of the suffix grammar. -/
+abbrev Corpus : Type :=
+  Multiset (RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT))
+
+/-- The book's DMPCFG over the suffix grammar, with pseudo-count `1` for every rule (§3.5.5). -/
+def dmpcfg : DirichletPCFG (suffixGrammar ι) :=
+  ⟨fun _ ↦ 1, fun _ _ ↦ one_pos⟩
+
+/-- Under the DMPCFG's Pólya-urn representation, the probability that the word after a corpus `D`
+is the word of a nominalizer is its probability under the predictive PCFG given `D`, since the
+word has at most one node of each category. -/
+theorem dmpcfg_derivProb_word (s : Suffix) (i : ι) (D : Corpus ι) :
+    (dmpcfg.predictivePCFG D).derivProb (s.word i) =
+      .ofReal ((dmpcfg.posterior D).corpusProb {s.word i}) :=
+  dmpcfg.derivProb_predictivePCFG (s.licensed_word i)
+    (fun a ↦ by cases s <;> cases a <;> simp [Suffix.word]) D
 
 /-! ## Adaptor and fragment grammars (§3.1.7, §3.1.8)
 
-An adaptor grammar in the book's maximum-a-posteriori variant is a Dirichlet PCFG with a
-Pitman–Yor process at each nonterminal memoising the subtrees computed there. The corpus
-probability is stated given the latent table assignment `Y`, per nonterminal a set partition of
-the uses of that nonterminal by the table they sat at, since marginalising over `Y` is the
-inference problem of §3.2. A table assignment at a nonterminal is a set partition of
-`Fin n`, a `Finpartition`, and its Pitman–Yor factor is its probability under the
-seating plan, `pitmanYor`, which depends only on the block sizes ([pitman-2006]). -/
+An adaptor grammar adds to a Dirichlet PCFG a Pitman–Yor restaurant at each nonterminal, whose
+tables store derivations computed there. The book gives the probability of an analysis of a
+corpus through its counts: `X`, the uses of each rule in building the trees stored at the tables,
+one use per table, and `Y`, at each nonterminal the sizes of its tables, the numbers of uses of
+the nonterminal that sat at each. A fragment grammar stores partial derivations: at each
+nonterminal on the right-hand side of a rule it decides, by a beta-binomial urn, whether a stored
+fragment continues there, and these decisions are its third kind of count, `Z`. The book's
+hyperparameters are `π = 1`, `a = 0.5`, `b = 100` and `ψ = 50` (§3.5.5). -/
 
-/-- The book's adaptor grammar over `G` is a Dirichlet PCFG with a Pitman–Yor process
-memoising the subtrees rooted at each nonterminal. -/
+/-- The book's adaptor grammar over `G`: a Dirichlet PCFG with a Pitman–Yor process memoizing
+the derivations rooted at each nonterminal. -/
 @[ext]
-structure AdaptorGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
-    [DecidableEq G.NT] extends DirichletPCFG G where
-  /-- The discount of the Pitman–Yor process memoising expansions of each nonterminal. -/
+structure AdaptorGrammar {T : Type} (G : ContextFreeGrammar T) extends DirichletPCFG G where
+  /-- The discount of the Pitman–Yor process at each nonterminal. -/
   discount : G.NT → ℝ
-  /-- The concentration of the Pitman–Yor process memoising expansions of each nonterminal. -/
+  /-- The concentration of the Pitman–Yor process at each nonterminal. -/
   concentration : G.NT → ℝ
   /-- The discount is nonnegative. -/
   discount_nonneg : ∀ a, 0 ≤ discount a
@@ -168,470 +275,367 @@ structure AdaptorGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
 
 namespace AdaptorGrammar
 
-variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
+variable {T : Type} {G : ContextFreeGrammar T} (M : AdaptorGrammar G)
 
-/-- The latent table assignment `Y` gives, for each nonterminal, a set partition of its uses in
-the corpus by the table they sat at. Consistency with the corpus is the caller's hypothesis. -/
-abbrev TableAssignment (G : ContextFreeGrammar T) : Type :=
-  G.NT → Σ n, Finpartition (Finset.univ : Finset (Fin n))
+/-- The Pitman–Yor probability of a seating at `a` whose tables have sizes `y`, the book's
+Equation 3.14, the exchangeable partition probability function of [pitman-2006]. -/
+noncomputable def pypFactor (a : G.NT) (y : Multiset ℕ) : ℝ :=
+  pitmanYorEPPF (M.discount a) (M.concentration a) y
 
-variable (M : AdaptorGrammar G)
-
-/-- The Pitman–Yor probability of the table assignment at nonterminal `a`. -/
-noncomputable def pypFactor (a : G.NT) (Y : TableAssignment G) : ℝ :=
-  (pitmanYor (M.discount a) (M.concentration a) (Y a).1).real {(Y a).2}
-
-/-- The Pitman–Yor factor is the EPPF of the table sizes ([pitman-2006] Theorem 3.2). -/
-theorem pypFactor_eq (a : G.NT) (Y : TableAssignment G) :
-    M.pypFactor a Y = pitmanYorEPPF (M.discount a) (M.concentration a) (Y a).2.partSizes :=
+/-- The Pitman–Yor factor of some table sizes is the probability under the seating plan of any set
+partition with those block sizes ([pitman-2006] Theorem 3.2). -/
+theorem pitmanYor_real_singleton_eq_pypFactor (a : G.NT) {n : ℕ}
+    (P : Finpartition (Finset.univ : Finset (Fin n))) :
+    (pitmanYor (M.discount a) (M.concentration a) n).real {P} = M.pypFactor a P.partSizes :=
   pitmanYor_real_singleton (M.discount_nonneg a) (M.discount_le_one a)
-    (M.neg_discount_lt_concentration a) _
+    (M.neg_discount_lt_concentration a) P
 
-/-- The corpus probability given a table assignment is the product, over the nonterminals the
-grammar expands, of the Dirichlet PCFG factor and the Pitman–Yor factor. -/
-noncomputable def corpusProbGivenTables (D : Multiset (RoseTree (Symbol T G.NT)))
-    (Y : TableAssignment G) : ℝ :=
-  ∏ a ∈ G.rules.image (·.input), M.toDirichletPCFG.lhsFactor a D * M.pypFactor a Y
-
-theorem corpusProbGivenTables_nonneg (D : Multiset (RoseTree (Symbol T G.NT)))
-    (Y : TableAssignment G) : 0 ≤ M.corpusProbGivenTables D Y :=
-  Finset.prod_nonneg fun _ ha ↦ mul_nonneg (M.toDirichletPCFG.lhsFactor_pos ha D).le
-    MeasureTheory.measureReal_nonneg
-
-/-- The table assignment with no customers at any nonterminal. -/
-def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
-  fun _ ↦ ⟨0, ⊥⟩
+theorem pypFactor_nonneg (a : G.NT) (y : Multiset ℕ) : 0 ≤ M.pypFactor a y :=
+  pitmanYorEPPF_nonneg (M.discount_nonneg a) (M.discount_le_one a)
+    (M.neg_discount_lt_concentration a) y
 
 @[simp]
-theorem pypFactor_emptyTables (a : G.NT) : M.pypFactor a (emptyTables G) = 1 := by
-  rw [pypFactor_eq]
-  simp [emptyTables, Finpartition.partSizes, pitmanYorEPPF]
+theorem pypFactor_zero (a : G.NT) : M.pypFactor a 0 = 1 := by
+  simp [pypFactor, pitmanYorEPPF]
+
+variable [DecidableEq G.NT]
+
+/-- The probability of an analysis with rule counts `X` and table sizes `Y` (§3.1.7): the
+Dirichlet-multinomial probability of the rule uses that built the stored trees, times the
+Pitman–Yor probability of the seating at each nonterminal. The counts and the seating agree when
+each nonterminal has as many tables as rule uses, as in the full-listing analysis
+(`FullListing.card_seating`). -/
+noncomputable def prob (X : ContextFreeRule T G.NT → ℕ) (Y : G.NT → Multiset ℕ) : ℝ :=
+  M.countsProb X * ∏ a ∈ G.rules.image (·.input), M.pypFactor a (Y a)
+
+theorem prob_nonneg (X : ContextFreeRule T G.NT → ℕ) (Y : G.NT → Multiset ℕ) : 0 ≤ M.prob X Y :=
+  mul_nonneg (M.countsProb_pos X).le (Finset.prod_nonneg fun a _ ↦ M.pypFactor_nonneg a _)
 
 @[simp]
-theorem corpusProbGivenTables_empty : M.corpusProbGivenTables 0 (emptyTables G) = 1 :=
-  Finset.prod_eq_one fun _ _ ↦ by simp
-
-/-- The conjugate update of the Dirichlet component by a corpus; the Pitman–Yor
-hyperparameters are unchanged. -/
-noncomputable def posterior (D : Multiset (RoseTree (Symbol T G.NT))) : AdaptorGrammar G :=
-  { M with toDirichletPCFG := M.toDirichletPCFG.posterior D }
-
-@[simp]
-theorem posterior_zero : M.posterior 0 = M := by
-  ext1 <;> simp [posterior]
-
-theorem posterior_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) :
-    M.posterior (D₁ + D₂) = (M.posterior D₁).posterior D₂ := by
-  ext1 <;> simp [posterior, DirichletPCFG.posterior_add]
+theorem prob_zero : M.prob 0 0 = 1 := by
+  simp [prob]
 
 end AdaptorGrammar
 
-/-! Expanding a rule `r`, a fragment grammar decides at each right-hand-side nonterminal `B`
-whether to expand `B` productively or to halt and leave `B` an open slot of the fragment being
-stored. The decision is a biased coin whose weight has a beta prior with pseudo-counts
-`ψ_{r,B}`; integrating the weight out turns the decisions at that slot into a two-colour Pólya
-urn, which is the representation the book computes with. The halt count `Z` is latent like
-`Y`; the book writes the halt count at a slot of `r` as `x_r - z_{r,B}`, so a `Z` consistent with
-the corpus has `Z r i .recurse + Z r i .halt` equal to the corpus count of `r`. -/
-
-/-- The outcome of the lazy coin at a nonterminal slot is `recurse`, which expands the slot
-productively, or `halt`, which leaves it open in the stored fragment. -/
+/-- The decision at a nonterminal slot of a rule: `recurse` continues the stored fragment there,
+`halt` leaves the slot open. -/
 inductive FragmentGrammar.Decision
   | recurse
   | halt
   deriving DecidableEq, Fintype, Inhabited
 
-/-- A fragment grammar over `G` is an adaptor grammar with, at each nonterminal position of
-each rule, a Pólya urn over `recurse`/`halt` decisions whose pseudo-counts are the beta parameters
-`ψ_{r,B}`. -/
+/-- The book's fragment grammar over `G`: an adaptor grammar with, at each nonterminal slot of
+each rule, a Pólya urn over the decisions there, whose pseudo-counts are the beta parameters
+`ψ`. -/
 @[ext]
-structure FragmentGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
-    [DecidableEq G.NT] extends AdaptorGrammar G where
-  /-- The pseudo-counts of the urn over `recurse`/`halt` decisions at nonterminal position `i` of
-  rule `r`. -/
-  halt : (r : ContextFreeRule T G.NT) → r.NonterminalPos → FragmentGrammar.Decision → ℝ
+structure FragmentGrammar {T : Type} (G : ContextFreeGrammar T) extends AdaptorGrammar G where
+  /-- The pseudo-counts of the urn over the decisions at nonterminal slot `i` of rule `r`. -/
+  slot : (r : ContextFreeRule T G.NT) → r.NonterminalPos → FragmentGrammar.Decision → ℝ
   /-- The pseudo-counts are positive. -/
-  halt_pos : ∀ r i d, 0 < halt r i d
+  slot_pos : ∀ r i d, 0 < slot r i d
 
 namespace FragmentGrammar
 
-variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
+variable {T : Type} {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
-/-- The latent variable `Z` counts, at each nonterminal position of each rule, the `recurse`
-and the `halt` decisions taken there across the corpus. -/
-abbrev HaltCounts (G : ContextFreeGrammar T) : Type :=
+/-- The decision counts `Z`: at each nonterminal slot of each rule, how often each decision was
+taken. -/
+abbrev SlotCounts (G : ContextFreeGrammar T) : Type :=
   (r : ContextFreeRule T G.NT) → r.NonterminalPos → Decision → ℕ
 
 variable (M : FragmentGrammar G)
 
-/-- The corpus probability given a table assignment `Y` and halt counts `Z` is the
-adaptor-grammar factor times, at each nonterminal slot, the urn likelihood of the decisions
-taken there. -/
-noncomputable def corpusProbGivenStorage (D : Multiset (RoseTree (Symbol T G.NT)))
-    (Y : AdaptorGrammar.TableAssignment G) (Z : HaltCounts G) : ℝ :=
-  M.corpusProbGivenTables D Y * ∏ r ∈ G.rules, ∏ i, polyaUrnProb (M.halt r i) (Z r i)
+/-- The probability of an analysis with counts `X`, `Y` and `Z` (§3.1.8): the adaptor-grammar
+probability of `X` and `Y`, times, at each nonterminal slot of each rule, the urn probability of
+the decisions taken there. The decisions at the slots of a rule agree with `X` when they number
+the rule's uses in `X`, which is the caller's hypothesis. -/
+noncomputable def prob (X : ContextFreeRule T G.NT → ℕ) (Y : G.NT → Multiset ℕ)
+    (Z : SlotCounts G) : ℝ :=
+  M.toAdaptorGrammar.prob X Y * ∏ r ∈ G.rules, ∏ i, polyaUrnProb (M.slot r i) (Z r i)
 
-theorem corpusProbGivenStorage_nonneg (D : Multiset (RoseTree (Symbol T G.NT)))
-    (Y : AdaptorGrammar.TableAssignment G) (Z : HaltCounts G) :
-    0 ≤ M.corpusProbGivenStorage D Y Z :=
-  mul_nonneg (M.corpusProbGivenTables_nonneg D Y) <| Finset.prod_nonneg fun r _ ↦
-    Finset.prod_nonneg fun i _ ↦ (polyaUrnProb_pos (M.halt_pos r i) _).le
-
-@[simp]
-theorem corpusProbGivenStorage_empty :
-    M.corpusProbGivenStorage 0 (AdaptorGrammar.emptyTables G) 0 = 1 := by
-  simp only [corpusProbGivenStorage, AdaptorGrammar.corpusProbGivenTables_empty, one_mul]
-  exact Finset.prod_eq_one fun r _ ↦ Finset.prod_eq_one fun i _ ↦ polyaUrnProb_zero (M.halt r i)
-
-/-- In the conjugate update by a corpus `D` and its halt counts `Z`, the adaptor-grammar
-component absorbs the rule counts of `D`, and the urn at each slot absorbs the decisions taken
-there. -/
-noncomputable def posterior (D : Multiset (RoseTree (Symbol T G.NT))) (Z : HaltCounts G) :
-    FragmentGrammar G where
-  toAdaptorGrammar := M.toAdaptorGrammar.posterior D
-  halt r i d := M.halt r i d + Z r i d
-  halt_pos r i d := add_pos_of_pos_of_nonneg (M.halt_pos r i d) (Nat.cast_nonneg _)
+theorem prob_nonneg (X : ContextFreeRule T G.NT → ℕ) (Y : G.NT → Multiset ℕ) (Z : SlotCounts G) :
+    0 ≤ M.prob X Y Z :=
+  mul_nonneg (M.toAdaptorGrammar.prob_nonneg X Y) <| Finset.prod_nonneg fun r _ ↦
+    Finset.prod_nonneg fun i _ ↦ (polyaUrnProb_pos (M.slot_pos r i) _).le
 
 @[simp]
-theorem posterior_zero : M.posterior 0 0 = M := by
-  ext1 <;> simp [posterior]
-
-theorem posterior_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) (Z₁ Z₂ : HaltCounts G) :
-    M.posterior (D₁ + D₂) (Z₁ + Z₂) = (M.posterior D₁ Z₁).posterior D₂ Z₂ := by
-  ext1 <;> simp [posterior, AdaptorGrammar.posterior_add, add_assoc]
+theorem prob_zero : M.prob 0 0 0 = 1 := by
+  simp only [prob, AdaptorGrammar.prob_zero, one_mul]
+  exact Finset.prod_eq_one fun r _ ↦ Finset.prod_eq_one fun i _ ↦ polyaUrnProb_zero (M.slot r i)
 
 end FragmentGrammar
 
-/-! ## Toy CFG -/
+/-! ### The full-listing analysis
 
-/-- The six terminal symbols of the toy derivational grammar:
-    sentinels `adj`/`v`/`bnd` for adjective, verb and bound-stem
-    bases, plus the three derivational suffixes `-ness`, `-ion`,
-    `-ate`. -/
-inductive Sym where
-  | adj
-  | v
-  | bnd
-  | ness
-  | ion
-  | ate
-  deriving DecidableEq, Repr
+The MAG stores each computation in its entirety the first time it is computed (§2.4.2), and its
+maximum a posteriori analysis of a corpus of derivations stores each distinct derivation once
+(§3.3, and p. 77, footnote 24): its tables at a nonterminal are the distinct subtrees of the
+corpus rooted there. A word of the corpus sits at the table of its derivation, and the children of
+a stored derivation, computed when it was stored, sit at the tables of their own derivations. -/
 
-/-- The four nonterminals of the toy derivational grammar.
-    `BND` represents a bound stem — the selectional restriction
-    of `-ate` (cf. *segregat-*, *demonstrat-*). -/
-inductive SuffixNT where
-  | N
-  | A
-  | V
-  | BND
-  deriving DecidableEq, Repr
+namespace FullListing
 
-/-- Rule N → A · ness. -/
-def rNess : ContextFreeRule Sym SuffixNT :=
-  ⟨SuffixNT.N, [.nonterminal SuffixNT.A, .terminal Sym.ness]⟩
+variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
+  (D : Multiset (RoseTree (Symbol T G.NT)))
 
-/-- Rule N → V · ion. -/
-def rIon : ContextFreeRule Sym SuffixNT :=
-  ⟨SuffixNT.N, [.nonterminal SuffixNT.V, .terminal Sym.ion]⟩
+/-- The distinct subtrees of the words of the corpus. -/
+def subtrees : Finset (RoseTree (Symbol T G.NT)) :=
+  D.toFinset.biUnion fun t ↦ t.subtrees.toFinset
 
-/-- Rule V → BND · ate. Reflects [odonnell-2015]'s `-ate:BND>V`
-    classification (p. 261): `-ate` is a verb-forming suffix that
-    selects bound stems, not a noun-forming suffix. -/
-def rAte : ContextFreeRule Sym SuffixNT :=
-  ⟨SuffixNT.V, [.nonterminal SuffixNT.BND, .terminal Sym.ate]⟩
+/-- The rule counts `X` of the full-listing analysis: how many stored derivations have each rule
+at the root, each table having used the rule at its root once. -/
+def counts (r : ContextFreeRule T G.NT) : ℕ :=
+  ((subtrees D).filter (RoseTree.ruleAt? (g := G) · [] = some r)).card
 
-/-- Rule A → adj. -/
-def rAdj : ContextFreeRule Sym SuffixNT :=
-  ⟨SuffixNT.A, [.terminal Sym.adj]⟩
+/-- The customers at the table of a stored derivation `s`: the words of the corpus that are `s`,
+and the occurrences of `s` among the children of the stored derivations. -/
+def customers (s : RoseTree (Symbol T G.NT)) : ℕ :=
+  D.count s + ∑ u ∈ subtrees D, u.children.count s
 
-/-- Rule V → v. -/
-def rV : ContextFreeRule Sym SuffixNT :=
-  ⟨SuffixNT.V, [.terminal Sym.v]⟩
+/-- The table sizes `Y` of the full-listing analysis at `a`: the numbers of customers at the
+tables of the stored derivations rooted at `a`. -/
+def seating (a : G.NT) : Multiset ℕ :=
+  ((subtrees D).filter (·.value = .nonterminal a)).val.map (customers D)
 
-/-- Rule BND → bnd. -/
-def rBnd : ContextFreeRule Sym SuffixNT :=
-  ⟨SuffixNT.BND, [.terminal Sym.bnd]⟩
+/-- **The full-listing analysis is consistent**: a corpus of licensed derivations has as many
+tables at each nonterminal as uses of its rules there. -/
+theorem card_seating (hD : ∀ t ∈ D, t.Licensed G.Licenses) (a : G.NT) :
+    Multiset.card (seating D a) = ∑ r ∈ G.rules.filter (·.input = a), counts D r := by
+  rw [seating, Multiset.card_map, ← Finset.card_def,
+    Finset.card_eq_sum_card_fiberwise (t := G.rules.filter (·.input = a))
+      (f := fun s ↦ (⟨a, s.children.map RoseTree.value⟩ : ContextFreeRule T G.NT)) fun s hs ↦ ?_]
+  · refine Finset.sum_congr rfl fun r hr ↦ congrArg Finset.card (Finset.ext fun s ↦ ?_)
+    obtain ⟨A, w⟩ := r
+    obtain ⟨-, rfl⟩ := Finset.mem_filter.mp hr
+    simp [Finset.mem_filter, RoseTree.ruleAt?_nil_eq_some_iff, and_assoc]
+  · obtain ⟨hsub, hv⟩ := Finset.mem_filter.mp hs
+    obtain ⟨t, ht, hst⟩ : ∃ t ∈ D, RoseTree.IsSubtree s t := by
+      simpa [subtrees, RoseTree.mem_subtrees] using hsub
+    have hlic := hD t ht s hst
+    rw [hv] at hlic
+    exact Finset.mem_filter.mpr ⟨hlic, rfl⟩
 
-/-- The toy CFG has nominalisation via `-ness` (from adjective) or
-    `-ion` (from verb), and verb formation via `-ate` (from bound stem). -/
-def suffixGrammar : ContextFreeGrammar Sym where
-  NT := SuffixNT
-  initial := SuffixNT.N
-  rules := {rNess, rIon, rAte, rAdj, rV, rBnd}
+/-- **At a nonterminal on no right-hand side the full-listing counts are type counts.** If no rule
+has `r`'s left-hand side among its children, the derivations stored with `r` at the root are the
+word types of the corpus formed with `r`. -/
+theorem counts_eq_card_filter_toFinset (hD : ∀ t ∈ D, t.Licensed G.Licenses)
+    {r : ContextFreeRule T G.NT} (hr : ∀ r' ∈ G.rules, .nonterminal r.input ∉ r'.output) :
+    counts D r = (D.toFinset.filter (RoseTree.ruleAt? (g := G) · [] = some r)).card := by
+  refine congrArg Finset.card (Finset.ext fun s ↦ ?_)
+  simp only [subtrees, Finset.mem_filter, Finset.mem_biUnion, Multiset.mem_toFinset,
+    List.mem_toFinset, RoseTree.mem_subtrees]
+  refine ⟨fun ⟨⟨t, ht, hst⟩, hs⟩ ↦ ⟨?_, hs⟩, fun ⟨hs, hrs⟩ ↦ ⟨⟨s, hs, .refl s⟩, hrs⟩⟩
+  by_contra hsD
+  obtain ⟨r', hr', hmem⟩ :=
+    (hD t ht).exists_mem_output_of_isSubtree hst fun h ↦ hsD (h ▸ ht)
+  exact hr r' hr' ((RoseTree.ruleAt?_nil_eq_some_iff.mp hs).1 ▸ hmem)
 
-/-- `DecidableEq` for the grammar's `NT` projection, which `ContextFreeGrammar.RulesWithLHS`
-    needs. Not synthesised automatically because `suffixGrammar.NT` is a structure projection
-    that the typeclass solver does not reduce to `SuffixNT`. -/
-instance : DecidableEq suffixGrammar.NT :=
-  inferInstanceAs (DecidableEq SuffixNT)
+end FullListing
 
-/-- The `-ness` nominalisation among the rules expanding `N`. -/
-def nessRule : suffixGrammar.RulesWithLHS SuffixNT.N := ⟨rNess, by decide⟩
+/-! ## Token frequency, type frequency and hapaxes (§7.3.1) -/
 
-/-- The `-ion` nominalisation among the rules expanding `N`. -/
-def ionRule : suffixGrammar.RulesWithLHS SuffixNT.N := ⟨rIon, by decide⟩
+section Counts
 
-/-! ## The Dirichlet prior over the toy grammar -/
+/-- The tokens of a nominalizer in a corpus: the uses of its rule. -/
+def tokens (D : Corpus ι) (s : Suffix) : ℕ :=
+  RoseTree.corpusRuleCount (N := (suffixGrammar ι).NT) s.rule D
 
-/-- Bridge from `Suffix` to the rules of this grammar. -/
-def suffixToRule : Suffix → ContextFreeRule Sym SuffixNT
-  | .ness => rNess
-  | .ion  => rIon
-  | .ate  => rAte
+/-- The word types of a nominalizer in a corpus: the distinct words formed with its rule. -/
+def wordTypes (D : Corpus ι) (s : Suffix) :
+    Finset (RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT)) :=
+  D.toFinset.filter (RoseTree.ruleAt? · [] = some s.rule)
 
-/-- Per-rule pseudo-count for the toy grammar. The three
-    productivity-bearing rules get `productivityIndex + 1` (so
-    `ness ↦ 3`, `ion ↦ 2`, `ate ↦ 1`), inheriting both the strict
-    ordering and any future revision of `Suffix.productivityIndex`.
-    The three structural selectional rules get a neutral `1`. -/
-def pseudoVal (r : ContextFreeRule Sym SuffixNT) : ℝ :=
-  if r = rNess then ((Suffix.ness.productivityIndex : ℕ) : ℝ) + 1
-  else if r = rIon then ((Suffix.ion.productivityIndex : ℕ) : ℝ) + 1
-  else if r = rAte then ((Suffix.ate.productivityIndex : ℕ) : ℝ) + 1
-  else if r = rAdj then 1
-  else if r = rV then 1
-  else if r = rBnd then 1
-  else 1
+/-- The hapax legomena of a nominalizer in a corpus: its word types occurring once. -/
+def hapaxes (D : Corpus ι) (s : Suffix) : ℕ :=
+  ((wordTypes D s).filter (D.count · = 1)).card
 
-/-- The Dirichlet prior over `suffixGrammar` whose pseudo-counts derive from
-    `Suffix.productivityIndex`, so revising the ranking changes the prior in
-    lockstep. -/
-def suffixPrior : DirichletPCFG suffixGrammar where
-  pseudo := pseudoVal
-  pseudo_pos r _ := by
-    unfold pseudoVal
-    split_ifs <;> positivity
+/-- Baayen's category-conditioned degree of productivity `P` of a nominalizer: its hapaxes over
+its tokens (Equation 6.9). -/
+noncomputable def baayenP (D : Corpus ι) (s : Suffix) : ℝ :=
+  hapaxes D s / tokens D s
 
-/-- Parametric pseudo-count formula for productivity-bearing rules:
-    `pseudoVal (suffixToRule s) = productivityIndex s + 1`. -/
-private lemma pseudoVal_suffixToRule (s : Suffix) :
-    pseudoVal (suffixToRule s) = ((s.productivityIndex : ℕ) : ℝ) + 1 := by
-  cases s <;> rfl
+/-- A corpus realizes the book's counts when each nominalizer has the tokens, word types and
+hapaxes of pp. 267–268. -/
+structure Realizes (D : Corpus ι) : Prop where
+  tokens_eq : ∀ s, tokens D s = (spectrum s).wordTokens
+  card_wordTypes_eq : ∀ s, (wordTypes D s).card = (spectrum s).wordTypes
+  hapaxes_eq : ∀ s, hapaxes D s = (spectrum s).hapaxes
 
-private lemma pseudoVal_rNess : pseudoVal rNess = 3 := by
-  show pseudoVal (suffixToRule .ness) = 3
-  rw [pseudoVal_suffixToRule]; norm_num [Suffix.productivityIndex]
+namespace Realizes
 
-private lemma pseudoVal_rIon : pseudoVal rIon = 2 := by
-  show pseudoVal (suffixToRule .ion) = 2
-  rw [pseudoVal_suffixToRule]; norm_num [Suffix.productivityIndex]
+variable {D : Corpus ι}
 
-/-! ## Theorems -/
+/-- **The DMPCFG ranks *-ion* above *-ness*.** With the book's unit pseudo-counts (§3.5.5) the
+Dirichlet prior is uniform on the simplex, so the DMPCFG's maximum a posteriori grammar is the
+PCFG of greatest likelihood, the relative-frequency PCFG of the treebank, whose weights are
+proportional to rule token counts (§3.3, p. 74). On a corpus with the book's counts it gives
+*-ion* the greater weight. -/
+theorem dmpcfg_ness_lt_ion (h : Realizes D) :
+    (PCFG.relFreq D).weight Suffix.ness.rule < (PCFG.relFreq D).weight Suffix.ion.rule := by
+  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff (r := ⟨_, Suffix.ness.rule_mem⟩)
+    (r' := ⟨_, Suffix.ion.rule_mem⟩)).mpr ?_
+  change tokens D .ness < tokens D .ion
+  rw [h.tokens_eq, h.tokens_eq]
+  decide
 
-/-- A stronger productivity ranking (`moreProductiveThan`) implies a larger pseudo-count for
-    the corresponding rule, so a revision of `Suffix.productivityIndex` that contradicts the
-    rule-level encoding breaks here. -/
-theorem suffixPrior_pseudo_respects_productivity
-    {a b : Suffix} (h : moreProductiveThan a b) :
-    suffixPrior.pseudo (suffixToRule a) > suffixPrior.pseudo (suffixToRule b) := by
-  show pseudoVal (suffixToRule a) > pseudoVal (suffixToRule b)
-  rw [pseudoVal_suffixToRule, pseudoVal_suffixToRule]
-  have : (a.productivityIndex : ℝ) > (b.productivityIndex : ℝ) := by exact_mod_cast h
-  linarith
+/-- **The MAG ranks *-ion* above *-ness*.** With unit pseudo-counts the MAG's base grammar is the
+relative-frequency PCFG of the rule counts of its full-listing analysis (§3.3, p. 75), and since
+`N` is on no right-hand side these counts at `N` are type counts. On a corpus of licensed
+derivations with the book's counts *-ion* has the greater weight. -/
+theorem mag_ness_lt_ion (hD : ∀ t ∈ D, t.Licensed (suffixGrammar ι).Licenses)
+    (h : Realizes D) :
+    (PCFG.ofCounts (FullListing.counts D)).weight Suffix.ness.rule <
+      (PCFG.ofCounts (FullListing.counts D)).weight Suffix.ion.rule := by
+  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff (r := ⟨_, Suffix.ness.rule_mem⟩)
+    (r' := ⟨_, Suffix.ion.rule_mem⟩)).mpr ?_
+  rw [FullListing.counts_eq_card_filter_toFinset D hD nonterminal_N_not_mem_output,
+    FullListing.counts_eq_card_filter_toFinset D hD nonterminal_N_not_mem_output]
+  change (wordTypes D .ness).card < (wordTypes D .ion).card
+  rw [h.card_wordTypes_eq, h.card_wordTypes_eq]
+  decide
 
-/-- The failure mode of the Dirichlet PCFG the book documents in Chapter 7 (p. 268, with the
-    CELEX evidence of Fig 7.4 on p. 267): its posterior predictive tracks pseudo-count plus
-    corpus count, so any corpus in which `rIon` derivations exceed `rNess` derivations by more
-    than the pseudo-count gap of `1` ranks `rIon` above `rNess`, against
-    `moreProductiveThan ness ion`. The CELEX token gap is an order of magnitude larger than the
-    hypothesis requires. -/
-theorem suffixPrior_predictive_lt_of_count_gap (D : Multiset (RoseTree (Symbol Sym SuffixNT)))
-    (h : RoseTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
-         RoseTree.corpusRuleCount (N := SuffixNT) rIon D) :
-    suffixPrior.predictive SuffixNT.N D nessRule < suffixPrior.predictive SuffixNT.N D ionRule := by
-  refine suffixPrior.predictive_lt_predictive_iff.2 ?_
-  show pseudoVal rNess + (RoseTree.corpusRuleCount rNess D : ℝ) <
-    pseudoVal rIon + RoseTree.corpusRuleCount rIon D
-  rw [pseudoVal_rNess, pseudoVal_rIon]
-  have : (RoseTree.corpusRuleCount rNess D : ℝ) + 1 < RoseTree.corpusRuleCount rIon D := by
-    exact_mod_cast h
-  linarith
+/-- **Baayen's `P` ranks *-ness* above *-ion*.** -/
+theorem baayenP_ion_lt_ness (h : Realizes D) : baayenP D .ion < baayenP D .ness := by
+  simp only [baayenP, h.hapaxes_eq, h.tokens_eq]
+  norm_num [spectrum]
 
-/-- With no data the Dirichlet PCFG orders the nominalising rules correctly, since the prior
-    predictive is the normalised pseudo-count and `pseudoVal rNess > pseudoVal rIon`. The
-    model's failure is data-driven, not prior-driven. -/
-theorem suffixPrior_predictive_prior_lt :
-    suffixPrior.predictive SuffixNT.N 0 ionRule < suffixPrior.predictive SuffixNT.N 0 nessRule := by
-  refine suffixPrior.predictive_lt_predictive_iff.2 ?_
-  show pseudoVal rIon + _ < pseudoVal rNess + _
-  rw [pseudoVal_rIon, pseudoVal_rNess, RoseTree.corpusRuleCount_zero,
-    RoseTree.corpusRuleCount_zero]
-  norm_num
+end Realizes
 
-/-- The same prior comparison as a fact about the predictive PCFG, the point estimate the
-    Dirichlet prior induces. -/
-theorem suffixPrior_predictivePCFG_prior_lt :
-    (suffixPrior.predictivePCFG 0).weight ionRule <
-      (suffixPrior.predictivePCFG 0).weight nessRule := by
-  rw [suffixPrior.predictivePCFG_weight, suffixPrior.predictivePCFG_weight,
-    ENNReal.ofReal_lt_ofReal_iff (suffixPrior.predictive_pos _ 0 _)]
-  exact suffixPrior_predictive_prior_lt
+end Counts
 
-/-- The Chapter 7 critique of the Dirichlet PCFG in one theorem is that it is right without
-    data and wrong once `-ion` tokens dominate. The fix the book proposes, the fragment
-    grammar, gives a posterior that does not collapse productivity into raw frequency. -/
-theorem suffixPrior_prior_and_posterior_disagree (D : Multiset (RoseTree (Symbol Sym SuffixNT)))
-    (h : RoseTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
-         RoseTree.corpusRuleCount (N := SuffixNT) rIon D) :
-    suffixPrior.predictive SuffixNT.N 0 ionRule < suffixPrior.predictive SuffixNT.N 0 nessRule ∧
-      suffixPrior.predictive SuffixNT.N D nessRule < suffixPrior.predictive SuffixNT.N D ionRule :=
-  ⟨suffixPrior_predictive_prior_lt, suffixPrior_predictive_lt_of_count_gap D h⟩
+/-! ### A corpus with the book's counts -/
 
-/-- The derivation of an *-ness* noun from an adjective base: `N → A ness`, then `A → adj`. -/
-def nessTree : RoseTree (Symbol Sym suffixGrammar.NT) :=
-  .node (.nonterminal SuffixNT.N)
-    [.node (.nonterminal SuffixNT.A) [.leaf (.terminal Sym.adj)], .leaf (.terminal Sym.ness)]
+section Witness
 
-theorem nessTree_licensed : nessTree.Licensed suffixGrammar.Licenses := by
-  refine .nonterminal _ _ (by decide) ?_
-  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-  exact ⟨.nonterminal _ _ (by decide) fun c hc ↦ List.mem_singleton.mp hc ▸ .terminal _,
-    .terminal _⟩
+/-- The corpus in which the word of `s` on stem `i` occurs `m s i` times. -/
+def corpus (m : Suffix → ι → ℕ) : Corpus ι :=
+  ∑ s, ∑ i, m s i • {s.word i}
 
-/-- The toy grammar expands each nonterminal at most once in the *-ness* derivation, so the
-predictive PCFG given a corpus is the Dirichlet PCFG's exact posterior probability of that
-derivation coming next. -/
-theorem suffixPrior_derivProb_nessTree (D : Multiset (RoseTree (Symbol Sym suffixGrammar.NT))) :
-    (suffixPrior.predictivePCFG D).derivProb nessTree =
-      .ofReal ((suffixPrior.posterior D).corpusProb {nessTree}) :=
-  suffixPrior.derivProb_predictivePCFG nessTree_licensed (fun a ↦ by cases a <;> decide) D
+theorem mem_corpus {m : Suffix → ι → ℕ} {t : RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT)} :
+    t ∈ corpus m ↔ ∃ s i, m s i ≠ 0 ∧ s.word i = t := by
+  simp [corpus, Multiset.mem_sum, Multiset.mem_nsmul, eq_comm]
 
-/-! ### The Probabilistic Elsewhere Condition (§5.5.3)
+theorem licensed_of_mem_corpus {m : Suffix → ι → ℕ}
+    {t : RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT)} (ht : t ∈ corpus m) :
+    t.Licensed (suffixGrammar ι).Licenses := by
+  obtain ⟨s, i, -, rfl⟩ := mem_corpus.mp ht
+  exact s.licensed_word i
 
-[odonnell-2015] §5.5.3 (pp. 189–191) derives the Elsewhere Condition —
-"also known as Pāṇini's principle, pre-emption, the subset principle,
-or the blocking principle" — from probabilistic inference alone: rules
-define distributions over the forms they generate, so a rule whose
-support properly includes another's "must assign lower probability to
-each of those forms, on average" (conservation of belief), and
-conditioning preserves the preference. The book quotes
-[kiparsky-1973]'s formulation — prefer `r₂` when
-`Inputs(r₂) ⊂ Inputs(r₁)` — which is `Morphology.Exponence.Rule`'s
-specificity order (applicability-set inclusion, `Exponence.toPreorder`).
+theorem count_corpus (m : Suffix → ι → ℕ) (s : Suffix) (i : ι) :
+    (corpus m).count (s.word i) = m s i := by
+  have key (s' : Suffix) (i' : ι) : (m s' i' • {s'.word i'} : Corpus ι).count (s.word i) =
+      if (s', i') = (s, i) then m s' i' else 0 := by
+    rw [Multiset.count_nsmul, Multiset.count_singleton]
+    by_cases h : (s', i') = (s, i)
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+      simp
+    · rw [ite_eq_right (fun h' ↦ h (Suffix.word_injective
+        (show (fun p : Suffix × ι ↦ p.1.word p.2) (s', i') = _ from h'.symm))), ite_eq_right h,
+        mul_zero]
+  simp only [corpus, Multiset.count_sum', key]
+  rw [← Fintype.sum_prod_type' fun s' i' ↦ if (s', i') = (s, i) then m s' i' else 0]
+  simp
 
-Formalized over `Exponence.DomainRule`, a rule's support being its
-domain, in the uniform-generation case, where the preference is
-pointwise rather than on average: nested supports give the narrower
-rule a strictly higher generation probability at every shared form
-(`genProb_lt_of_ssubset`), and a likelihood-maximal rule among a
-vocabulary's generators is an Elsewhere winner
-(`maxGenProb_isElsewhereWinner`) — no nesting or comparability
-assumption needed, because card-minimality forces `⊆`-minimality. Since
-higher probability is smaller support (`genProb_le_iff_card_le`), this is
-the size principle as a specificity score in the shared core:
-`selectByCard_isElsewhereWinner` runs `Exponence.RuleSet.selectBy` on the
-dualized support cardinality, discharging the core's conditional
-soundness law via `Finset.eq_of_subset_of_card_le`. -/
+theorem tokens_corpus (m : Suffix → ι → ℕ) (s : Suffix) : tokens (corpus m) s = ∑ i, m s i := by
+  let hom : Corpus ι →+ ℕ :=
+    ⟨⟨RoseTree.corpusRuleCount (N := (suffixGrammar ι).NT) s.rule,
+      RoseTree.corpusRuleCount_zero _⟩,
+      RoseTree.corpusRuleCount_add _⟩
+  change hom (corpus m) = _
+  simp only [corpus, map_sum, map_nsmul]
+  simp [hom, Suffix.ruleCount_word, Finset.sum_ite_eq']
+
+theorem wordTypes_corpus (m : Suffix → ι → ℕ) (s : Suffix) :
+    wordTypes (corpus m) s = (Finset.univ.filter (m s · ≠ 0)).image s.word := by
+  ext t
+  simp only [wordTypes, Finset.mem_filter, Multiset.mem_toFinset, mem_corpus, Finset.mem_image,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨⟨s', i, hm, rfl⟩, hr⟩
+    obtain rfl := Suffix.rule_injective (Option.some.inj ((s'.ruleAt?_word i).symm.trans hr))
+    exact ⟨i, hm, rfl⟩
+  · rintro ⟨i, hm, rfl⟩
+    exact ⟨⟨s, i, hm, rfl⟩, s.ruleAt?_word i⟩
+
+theorem card_wordTypes_corpus (m : Suffix → ι → ℕ) (s : Suffix) :
+    (wordTypes (corpus m) s).card = (Finset.univ.filter (m s · ≠ 0)).card := by
+  rw [wordTypes_corpus, Finset.card_image_of_injective _
+    fun i i' h ↦ (Prod.mk.inj (Suffix.word_injective (a₁ := (s, i)) (a₂ := (s, i')) h)).2]
+
+theorem hapaxes_corpus (m : Suffix → ι → ℕ) (s : Suffix) :
+    hapaxes (corpus m) s = (Finset.univ.filter (m s · = 1)).card := by
+  rw [hapaxes, wordTypes_corpus, Finset.filter_image, Finset.card_image_of_injective _
+    fun i i' h ↦ (Prod.mk.inj (Suffix.word_injective (a₁ := (s, i)) (a₂ := (s, i')) h)).2]
+  congr 1
+  ext i
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, count_corpus]
+  omega
+
+/-- Multiplicities realizing the book's counts over `1117` stems: the first `hapaxes` stems once,
+the others up to the last word type twice, and the remaining tokens on the last word type. -/
+def bookMult (s : Suffix) (i : Fin 1117) : ℕ :=
+  if (i : ℕ) < (spectrum s).hapaxes then 1
+  else if (i : ℕ) + 1 < (spectrum s).wordTypes then 2
+  else if (i : ℕ) + 1 = (spectrum s).wordTypes then
+    (spectrum s).wordTokens - (spectrum s).hapaxes -
+      2 * ((spectrum s).wordTypes - 1 - (spectrum s).hapaxes)
+  else 0
+
+/-- **The book's counts are realized** by a corpus of licensed derivations of the suffix grammar,
+so the theorems on `Realizes` apply. -/
+theorem exists_realizes : ∃ D : Corpus (Fin 1117),
+    (∀ t ∈ D, t.Licensed (suffixGrammar (Fin 1117)).Licenses) ∧ Realizes D :=
+  ⟨corpus bookMult, fun _ ↦ licensed_of_mem_corpus,
+    ⟨fun s ↦ by rw [tokens_corpus]; cases s <;> decide +kernel,
+      fun s ↦ by rw [card_wordTypes_corpus]; cases s <;> decide +kernel,
+      fun s ↦ by rw [hapaxes_corpus]; cases s <;> decide +kernel⟩⟩
+
+end Witness
+
+/-! ## The probabilistic Elsewhere Condition (§5.5.3)
+
+[odonnell-2015] §5.5.3 derives the Elsewhere Condition from probabilistic inference alone. Rules
+define distributions over the forms they generate, so a rule whose support properly includes
+another's must assign lower probability to each of those forms, on average, and conditioning on a
+form preserves the preference. The book quotes [kiparsky-1973]'s formulation, preferring `r₂` when
+`Inputs(r₂) ⊂ Inputs(r₁)`, which is `Morphology.Exponence.Rule`'s specificity order.
+
+A rule's support is the domain of an `Exponence.DomainRule`, and when each rule generates its
+domain uniformly the preference holds at every shared form, not only on average: a properly
+narrower domain gives each of its forms more probability
+(`MeasureTheory.uniformOn_finset_real_singleton_lt_of_ssubset`). A rule maximizing the
+probability of a form among the rules generating it is then an Elsewhere winner, since higher
+probability is a smaller domain and a smaller domain contained in another is equal to it. -/
 
 section ProbabilisticElsewhere
 
-open Morphology Morphology.Exponence
+open Morphology Morphology.Exponence MeasureTheory
 
 variable {Ctx F : Type*} [DecidableEq Ctx]
 
-/-- Uniform generation probability over a finite support — the uniform
-case of [odonnell-2015] §5.5.3's rules-as-distributions. -/
-def genProb (s : Finset Ctx) (c : Ctx) : ℚ :=
-  if c ∈ s then (s.card : ℚ)⁻¹ else 0
-
-/-- By the pointwise probabilistic Elsewhere Condition, at every shared
-form a properly narrower rule assigns strictly higher probability. -/
-theorem genProb_lt_of_ssubset {s₁ s₂ : Finset Ctx} (h : s₂ ⊂ s₁)
-    {c : Ctx} (hc : c ∈ s₂) : genProb s₁ c < genProb s₂ c := by
-  have hc₁ : c ∈ s₁ := h.1 hc
-  have h₂ : (0 : ℚ) < s₂.card := by
-    exact_mod_cast Finset.card_pos.mpr ⟨c, hc⟩
-  have hlt : (s₂.card : ℚ) < s₁.card := by
-    exact_mod_cast Finset.card_lt_card h
-  simp only [genProb, ite_eq_left hc, ite_eq_left hc₁]
-  gcongr
-
-/-- Uniform generation probability ranks supports by cardinality at a
-shared form: a rule assigns at least as much probability iff its support
-is no larger. The monotone bridge from maximum-likelihood selection to
-the support-cardinality specificity score — maximizing probability *is*
-minimizing support cardinality. -/
-theorem genProb_le_iff_card_le {s₁ s₂ : Finset Ctx} {c : Ctx}
-    (h₁ : c ∈ s₁) (h₂ : c ∈ s₂) :
-    genProb s₁ c ≤ genProb s₂ c ↔ s₂.card ≤ s₁.card := by
-  have hs₁ : (0 : ℚ) < s₁.card := by exact_mod_cast Finset.card_pos.mpr ⟨c, h₁⟩
-  have hs₂ : (0 : ℚ) < s₂.card := by exact_mod_cast Finset.card_pos.mpr ⟨c, h₂⟩
-  simp only [genProb, ite_eq_left h₁, ite_eq_left h₂]
-  rw [inv_le_inv₀ hs₁ hs₂]
-  exact_mod_cast Iff.rfl
-
-omit [DecidableEq Ctx] in
-/-- Dualized support cardinality is strictly antitone in specificity, since a
-strictly broader finitely supported rule has strictly larger support
-(card `≤` does not imply support `⊆`, so the score is not an order
-embedding — strict antitonicity is exactly what the `Finset`-support
-engine retains). -/
-private theorem finRule_card_strictAnti :
-    StrictAnti (fun r : DomainRule Ctx F ↦ OrderDual.toDual r.dom.card) := by
-  intro s r hlt
-  have hsub : s.dom ⊆ r.dom := fun x hx ↦ hlt.le hx
-  have hns : ¬ r.dom ⊆ s.dom := fun hsub' ↦ not_le_of_gt hlt fun x hx ↦ hsub' hx
-  exact OrderDual.toDual_lt_toDual.mpr
-    (Finset.card_lt_card (lt_of_le_not_ge hsub hns))
-
-/-- **The size principle as a specificity score** ([odonnell-2015]
-§5.5.3): selecting the finitely supported rule of least support
-cardinality — dualized so smaller supports win the `argmax` — through
-the shared core's `Exponence.RuleSet.selectBy` yields an Elsewhere winner.
-Minimizing support cardinality *is* maximizing uniform generation
-probability (`genProb_le_iff_card_le`), so this is Elsewhere selection as
-maximum-likelihood inference, on record as a score. -/
+/-- **The size principle as a specificity score.** Selecting the applicable rule of least domain
+size, through `Exponence.RuleSet.selectBy` on the size reversed by `OrderDual`, yields an
+Elsewhere winner. -/
 theorem selectByCard_isElsewhereWinner {v : RuleSet (DomainRule Ctx F)} {c : Ctx}
-    {r : DomainRule Ctx F}
-    (h : v.selectBy (fun s ↦ OrderDual.toDual s.dom.card) c = some r) :
+    {r : DomainRule Ctx F} (h : v.selectBy (fun s ↦ OrderDual.toDual s.dom.card) c = some r) :
     v.IsElsewhereWinner c r :=
-  RuleSet.selectBy_isElsewhereWinner (finRule_card_strictAnti.strictAntiOn _) h
+  RuleSet.selectBy_isElsewhereWinner (DomainRule.strictMono_card_dom.dual_right.strictAntiOn _) h
 
-/-- **Elsewhere selection is maximum-likelihood inference**
-([odonnell-2015] §5.5.3): a rule maximizing uniform generation
-probability at `c` among a vocabulary's generators is an Elsewhere
-winner of the corresponding vocabulary. Maximizing probability is
-minimizing support cardinality (`genProb_le_iff_card_le`), whence
-card-minimality forces `⊆`-minimality — the same reasoning
-`selectByCard_isElsewhereWinner` routes through the core's score. -/
-theorem maxGenProb_isElsewhereWinner {v : RuleSet (DomainRule Ctx F)} {c : Ctx}
+variable [MeasurableSpace Ctx] [MeasurableSingletonClass Ctx]
+
+/-- **Elsewhere selection is maximum-likelihood inference.** A rule that gives a form at least the
+probability any other rule generating it does, each rule generating its domain uniformly, is an
+Elsewhere winner at that form. -/
+theorem isElsewhereWinner_of_forall_uniformOn_le {v : RuleSet (DomainRule Ctx F)} {c : Ctx}
     {r : DomainRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.dom)
-    (hmax : ∀ s ∈ v, c ∈ s.dom → genProb s.dom c ≤ genProb r.dom c) :
+    (hmax : ∀ s ∈ v, c ∈ s.dom →
+      (uniformOn (s.dom : Set Ctx)).real {c} ≤ (uniformOn (r.dom : Set Ctx)).real {c}) :
     v.IsElsewhereWinner c r := by
-  refine ⟨⟨hrv, hrc⟩, ?_⟩
-  rintro s ⟨hsv, htc⟩ hle
-  have htc' : c ∈ s.dom := htc
-  have hsub : s.dom ⊆ r.dom := fun x hx ↦ hle hx
-  have hcard : r.dom.card ≤ s.dom.card :=
-    (genProb_le_iff_card_le htc' hrc).mp (hmax s hsv htc')
-  have heq : s.dom = r.dom := Finset.eq_of_subset_of_card_le hsub hcard
-  exact fun x hx ↦ show x ∈ s.dom from heq ▸ hx
+  refine ⟨⟨hrv, hrc⟩, fun s ⟨hsv, hsc⟩ hle ↦ ?_⟩
+  have hsc : c ∈ s.dom := hsc
+  exact DomainRule.le_iff.mpr (Finset.eq_of_subset_of_card_le (DomainRule.le_iff.mp hle)
+    ((uniformOn_finset_real_singleton_le_iff hsc hrc).mp (hmax s hsv hsc))).symm.subset
 
 end ProbabilisticElsewhere
 
 end ODonnell2015
-
-/-
-TODO(theorem) — bridge claims for future study files. Each is
-followed by the substrate gap that currently blocks stating it
-as a Lean theorem.
-
-- `fg_predicts_ness_in_top_5` — [odonnell-2015] Fig 7.3 central
-  claim. Needs a "top-K productivity ranking" primitive over
-  `FragmentGrammar` posteriors (substrate has `corpusProbGivenStorage`
-  but no MAP-extraction lemma).
-- `fg_baayen_correlation` — [odonnell-2015] Table 7.1. Needs a
-  Baayen P-measure (hapax/N) substrate; `grep hapax Theories/`
-  returns no matches.
-- `fg_consistent_with_hay_relative_frequency` — [odonnell-2015]
-  §7.3.2 (p. 269). Needs a relative-frequency comparator primitive
-  (Hay 2001 / Hay & Baayen 2002).
-- `ability_paradox_discriminates_fg_from_mag` — [odonnell-2015]
-  Ch 8. "MAG" is `AdaptorGrammar` above; needs a richer toy grammar
-  with `-able`/`-ity` rules and a stored `-ability` fragment.
-- `cross_study_albright_hayes` — productivity index alignment. Needs
-  a `suffixToAHRule` shim into `Studies/AlbrightHayes2003.lean`'s
-  `StochasticRule` substrate, then a `pseudo`-vs-`rawConfidence`
-  comparison theorem.
--/
