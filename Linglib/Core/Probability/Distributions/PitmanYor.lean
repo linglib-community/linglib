@@ -297,6 +297,15 @@ theorem pitmanYorEPPF_zero_left {s : Multiset ℕ} (hθ : θ ≠ 0) (hs : s.sum 
     CharP.cast_eq_zero, pow_succ]
   field_simp
 
+/-- At `α = 1` every customer sits at a table of their own: the partition into singletons has
+probability `1`. -/
+theorem pitmanYorEPPF_one_replicate_one (hθ : -1 < θ) (k : ℕ) :
+    pitmanYorEPPF 1 θ (Multiset.replicate k 1) = 1 := by
+  simp only [pitmanYorEPPF, Multiset.card_replicate, Multiset.sum_replicate, smul_eq_mul, mul_one,
+    Multiset.map_replicate, Ico_self, prod_empty, Multiset.prod_replicate, one_pow]
+  refine div_self (prod_ne_zero_iff.mpr fun i hi ↦ ?_)
+  have : (1 : ℝ) ≤ i := by exact_mod_cast (mem_Ico.mp hi).1
+  linarith
 
 /-! ### The Chinese restaurant -/
 
@@ -347,7 +356,6 @@ theorem pitmanYorEPPF_nonneg (s : Multiset ℕ) : 0 ≤ pitmanYorEPPF α θ s :=
     linarith
   · have : (1 : ℝ) ≤ i := by exact_mod_cast (mem_Ico.mp hi).1
     linarith
-
 
 theorem isMarkovKernel_crpRule : ∀ n, IsMarkovKernel (crpRule α θ n)
   | 0 => by rw [crpRule]; infer_instance

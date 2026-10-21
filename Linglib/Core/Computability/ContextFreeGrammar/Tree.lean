@@ -28,8 +28,8 @@ at its leaves, left to right.
 
 * `RoseTree.yield`: the terminal frontier.
 * `ContextFreeGrammar.Licenses g`: the local trees the grammar `g` licenses.
-* `RoseTree.ruleCount`, `RoseTree.corpusRuleCount`: the number of applications of a rule in a
-  tree and in a corpus of trees.
+* `RoseTree.ruleCount`, `RoseTree.ruleCounts`: the number of applications of a rule in a tree,
+  and the rule counts of a multiset of trees.
 * `RoseTree.ruleAt?`: the rule applied at a Gorn address.
 
 ## Main results
@@ -46,7 +46,6 @@ at its leaves, left to right.
 @[expose] public section
 
 namespace RoseTree
-
 
 variable {T N : Type*}
 
@@ -175,21 +174,24 @@ theorem ruleCount_node_terminal (r : ContextFreeRule T N) (a : T)
     Function.comp_def, beq_iff_eq, Prod.mk.injEq, reduceCtorEq, false_and, ite_false, add_zero]
   rfl
 
-/-- The number of applications of the rule `r` in a corpus of trees. -/
-def corpusRuleCount (r : ContextFreeRule T N) (D : Multiset (RoseTree (Symbol T N))) : ℕ :=
-  (D.map (ruleCount r)).sum
+/-- The rule counts of a multiset of trees record how often each rule is applied across its
+trees. -/
+def ruleCounts : Multiset (RoseTree (Symbol T N)) →+ ContextFreeRule T N → ℕ where
+  toFun D r := (D.map (ruleCount r)).sum
+  map_zero' := by
+    funext r
+    simp
+  map_add' D₁ D₂ := by
+    funext r
+    simp
 
-@[simp] theorem corpusRuleCount_zero (r : ContextFreeRule T N) :
-    corpusRuleCount r (0 : Multiset (RoseTree (Symbol T N))) = 0 := by
-  simp [corpusRuleCount]
+theorem ruleCounts_apply (D : Multiset (RoseTree (Symbol T N))) (r : ContextFreeRule T N) :
+    ruleCounts D r = (D.map (ruleCount r)).sum :=
+  rfl
 
-@[simp] theorem corpusRuleCount_singleton (r : ContextFreeRule T N) (t : RoseTree (Symbol T N)) :
-    corpusRuleCount r {t} = ruleCount r t := by
-  simp [corpusRuleCount]
-
-theorem corpusRuleCount_add (r : ContextFreeRule T N) (D₁ D₂ : Multiset (RoseTree (Symbol T N))) :
-    corpusRuleCount r (D₁ + D₂) = corpusRuleCount r D₁ + corpusRuleCount r D₂ := by
-  simp [corpusRuleCount]
+@[simp] theorem ruleCounts_singleton (t : RoseTree (Symbol T N)) (r : ContextFreeRule T N) :
+    ruleCounts {t} r = ruleCount r t := by
+  simp [ruleCounts_apply]
 
 end RuleCount
 
@@ -199,7 +201,7 @@ end RuleCount
 and `none` off the tree or at a terminal. -/
 def ruleAt? {g : ContextFreeGrammar T} (t : RoseTree (Symbol T g.NT)) (p : List ℕ) :
     Option (ContextFreeRule T g.NT) :=
-  (subtreeAt t p).bind fun s => match s.value with
+  (subtreeAt t p).bind fun s ↦ match s.value with
     | .nonterminal A => some ⟨A, s.children.map value⟩
     | .terminal _ => none
 
@@ -289,8 +291,8 @@ theorem Licensed.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol 
       subtreeAt t (p.take i) = some (node (.nonterminal A) csᵢ) ∧
       subtreeAt t (p.take j) = some (node (.nonterminal A) csⱼ) := by
   classical
-  let f : ℕ → ContextFreeRule T g.NT := fun k => (ruleAt? t (p.take k)).getD ⟨g.initial, []⟩
-  have hf : ∀ k ∈ Finset.range (p.length + 1), f k ∈ g.rules := fun k hk => by
+  let f : ℕ → ContextFreeRule T g.NT := fun k ↦ (ruleAt? t (p.take k)).getD ⟨g.initial, []⟩
+  have hf : ∀ k ∈ Finset.range (p.length + 1), f k ∈ g.rules := fun k hk ↦ by
     obtain ⟨A, cs, hA⟩ :=
       ht.exists_subtreeAt_take hs hh (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))
     simp only [f, ruleAt?_eq_some hA, Option.getD_some]
@@ -317,11 +319,11 @@ theorem Licensed.exists_min_numNodes {g : ContextFreeGrammar T} {t : RoseTree (S
       t'.value = t.value ∧ ∀ t'' : RoseTree (Symbol T g.NT), t''.Licensed g.Licenses →
         t''.yield = t.yield → t''.value = t.value → t'.numNodes ≤ t''.numNodes := by
   classical
-  let P : ℕ → Prop := fun n => ∃ t' : RoseTree (Symbol T g.NT),
+  let P : ℕ → Prop := fun n ↦ ∃ t' : RoseTree (Symbol T g.NT),
     t'.Licensed g.Licenses ∧ t'.yield = t.yield ∧ t'.value = t.value ∧ t'.numNodes = n
   have hP : ∃ n, P n := ⟨t.numNodes, t, ht, rfl, rfl, rfl⟩
   obtain ⟨t', h₁, h₂, h₃, h₄⟩ := Nat.find_spec hP
-  exact ⟨t', h₁, h₂, h₃, fun t'' hv hy hr => h₄ ▸ Nat.find_le ⟨t'', hv, hy, hr, rfl⟩⟩
+  exact ⟨t', h₁, h₂, h₃, fun t'' hv hy hr ↦ h₄ ▸ Nat.find_le ⟨t'', hv, hy, hr, rfl⟩⟩
 
 end RoseTree
 
@@ -339,7 +341,7 @@ private theorem derives_flatten_yield {cs : List (RoseTree (Symbol T g.NT))}
   | cons c cs ih =>
     rw [List.map_cons, List.map_cons, List.flatten_cons, List.map_append, ← List.singleton_append]
     exact ((h c (List.mem_cons_self ..)).append_right _).trans
-      ((ih fun d hd => h d (List.mem_cons_of_mem _ hd)).append_left _)
+      ((ih fun d hd ↦ h d (List.mem_cons_of_mem _ hd)).append_left _)
 
 /-- **Soundness.** A licensed tree derives its yield from its root symbol. -/
 theorem _root_.RoseTree.Licensed.derives {t : RoseTree (Symbol T g.NT)}
@@ -360,7 +362,7 @@ private theorem exists_forest {sf : List (Symbol T g.NT)} {w : List T}
       (∀ t ∈ ts, t.Licensed g.Licenses) ∧ (ts.map RoseTree.yield).flatten = w := by
   induction h using Relation.ReflTransGen.head_induction_on with
   | refl =>
-    refine ⟨w.map fun a => RoseTree.leaf (.terminal a), ?_, ?_, ?_⟩
+    refine ⟨w.map fun a ↦ RoseTree.leaf (.terminal a), ?_, ?_, ?_⟩
     · simp [Function.comp_def, RoseTree.leaf]
     · rintro t ht
       obtain ⟨a, -, rfl⟩ := List.mem_map.mp ht
@@ -387,7 +389,7 @@ private theorem exists_forest {sf : List (Symbol T g.NT)} {w : List T}
       simp only [List.mem_append, List.mem_singleton] at ht
       rcases ht with (ht | rfl) | ht
       · exact hvalid t (List.mem_of_mem_take ht)
-      · refine .nonterminal r.input _ ?_ fun c hc =>
+      · refine .nonterminal r.input _ ?_ fun c hc ↦
           hvalid c (List.mem_of_mem_drop (List.mem_of_mem_take hc))
         rw [List.map_take, List.map_drop, hroot]; simpa using hr
       · exact hvalid t (List.mem_of_mem_drop ht)

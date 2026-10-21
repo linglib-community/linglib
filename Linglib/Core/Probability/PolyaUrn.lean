@@ -78,7 +78,7 @@ section CountVec
 
 variable [DecidableEq α] {n : ℕ}
 
-/-- The count vector of a sequence: how often each colour occurs in it. -/
+/-- The count vector of a sequence records how often each colour occurs in it. -/
 def countVec (s : Fin n → α) (c : α) : ℕ :=
   #{i | s i = c}
 

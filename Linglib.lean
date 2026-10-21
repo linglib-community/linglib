@@ -39,7 +39,6 @@ import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.ContextFreeGrammar.Map
 import Linglib.Core.Computability.ContextFreeGrammar.Pumping
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
-import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Computability.Definite
 import Linglib.Core.Computability.ElgotMezei
 import Linglib.Core.Computability.Mealy
