@@ -35,6 +35,7 @@ as arguments, and `Context` supplies them.
 namespace Kaplan
 
 /-- A context of utterance has an agent, an addressee, a world, a time and a position. -/
+@[ext]
 structure Context (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The agent (speaker) of the context -/
   agent : E

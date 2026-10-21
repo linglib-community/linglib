@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Reference.Kaplan
 public import Linglib.Data.Examples.AnandNevins2004
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Anand and Nevins (2004): shifty operators in changing contexts
@@ -15,16 +14,16 @@ operator that overwrites coordinates of the context with those of the index (2).
 
 ## Main definitions
 
-* `overwrite S c i`: the context `c` with the coordinates in `S` taken from `i`.
-* `op S`: the operator overwriting `S`, Zazaki's `opAll` (25) and Slave's `opAuth` (29).
+* `opAll` (25), `opAuth` (29): Zazaki's and Slave's operators, as the coordinates their
+  `Kaplan.shiftyOp` overwrites.
 * `say`: an attitude verb (23b), quantifying over indices of the context type.
 * `readings e χ c j`: the values of `χ` under a verb with operator options `e` (39).
 * `Bound`: the binding account (19) with the constraint (22), on the context tower.
 
 ## Main results
 
-* `op_opAll_iff_holdsAt`: `OP∀` is Stalnaker's diagonal (fn. 7).
-* `isMonster_op_of_agent_mem`, `not_isMonster_say`: the operators are monsters, the verbs not.
+* `shiftyOp_opAll_iff_holdsAt`: `OP∀` is Stalnaker's diagonal (fn. 7).
+* `isMonster_shiftyOp_of_agent_mem`, `not_isMonster_say`: the operators are monsters, the verbs not.
 * `readings_vano_prod`, `rows_mixed`: Shift-Together (16).
 * `depth₂_ne_zero`: after a shift in the intermediate report the lowest clause cannot read the
   utterance context (32), which the binding account allows (`bound_origin`).
@@ -33,7 +32,7 @@ operator that overwrites coordinates of the context with those of the index (2).
 ## Implementation notes
 
 Meanings are `Kaplan.Character`s whose index is a `Kaplan.Context`, and an operator is the set of
-coordinates it overwrites, so `overwrite S` is a coordinatewise `Finset.piecewise`. On pp. 25
+coordinates it overwrites (`Kaplan.Context.overwrite`). On pp. 25
 and 28 the paper cites "(25)" for the restriction on shifting and for the clausemate-binding
 condition, which are its (16) and (22).
 
@@ -54,52 +53,13 @@ Shift-Together from Amharic (46) and English (47)–(50), are rows without theor
 
 namespace AnandNevins2004
 
-open Kaplan (Character Context IsMonster shiftBy isMonster_shiftBy_iff)
+open Kaplan (Character Context IsMonster shiftyOp isMonster_shiftBy_iff)
+open Kaplan.Context (Coord overwrite)
 open ContextTower (AccessPattern)
 
 variable {W E P T α β : Type*}
 
-/-! ### Overwriting coordinates of the context -/
-
-/-- The coordinates of a context (29): its author, addressee, location, time and world. -/
-inductive Coord
-  | agent
-  | addressee
-  | position
-  | time
-  | world
-  deriving DecidableEq, Fintype
-
-/-- The context `c` with the coordinates in `S` overwritten by those of `i`. -/
-@[simps]
-def overwrite (S : Finset Coord) (c i : Context W E P T) : Context W E P T where
-  agent := if .agent ∈ S then i.agent else c.agent
-  addressee := if .addressee ∈ S then i.addressee else c.addressee
-  world := if .world ∈ S then i.world else c.world
-  time := if .time ∈ S then i.time else c.time
-  position := if .position ∈ S then i.position else c.position
-
-section overwrite
-
-variable (c i : Context W E P T)
-
-@[simp] theorem overwrite_empty : overwrite ∅ c i = c := by simp [overwrite]
-
-@[simp] theorem overwrite_univ : overwrite .univ c i = i := by simp [overwrite]
-
-end overwrite
-
 /-! ### Operators and attitude verbs -/
-
-/-- The context-shifting operator that overwrites the coordinates `S` of the context with those of
-the index (2): `⟦OP α⟧^{c,i} = ⟦α⟧^{overwrite S c i, i}`. -/
-def op (S : Finset Coord) :
-    Character (Context W E P T) (Context W E P T) α →
-      Character (Context W E P T) (Context W E P T) α :=
-  shiftBy (overwrite S)
-
-@[simp] theorem op_apply (S : Finset Coord) (χ : Character (Context W E P T) (Context W E P T) α)
-    (c i : Context W E P T) : op S χ c i = χ (overwrite S c i) i := rfl
 
 /-- Zazaki's `OP∀` overwrites every coordinate (25). -/
 abbrev opAll : Finset Coord := .univ
@@ -118,20 +78,20 @@ variable (acc : E → Context W E P T → Set (Context W E P T)) (x : E)
 
 /-- `OP∀` is Stalnaker's diagonal operator (fn. 7): a sentence under it holds at a context and an
 index iff its character holds at the index taken as its own context. -/
-theorem op_opAll_iff_holdsAt (χ : Character (Context W E P T) (Context W E P T) Prop)
-    (c i : Context W E P T) : op opAll χ c i ↔ χ.HoldsAt id i := by
+theorem shiftyOp_opAll_iff_holdsAt (χ : Character (Context W E P T) (Context W E P T) Prop)
+    (c i : Context W E P T) : shiftyOp opAll χ c i ↔ χ.HoldsAt id i := by
   simp [Character.HoldsAt]
 
 /-- (26)–(28): with `OP∀` as sister, *say* evaluates its complement at the reported contexts
 alone, so every indexical in it shifts. -/
-theorem say_op_opAll (χ : Character (Context W E P T) (Context W E P T) Prop)
-    (c i : Context W E P T) : say acc x (op opAll χ) c i ↔ ∀ j ∈ acc x i, χ j j := by
+theorem say_shiftyOp_opAll (χ : Character (Context W E P T) (Context W E P T) Prop)
+    (c i : Context W E P T) : say acc x (shiftyOp opAll χ) c i ↔ ∀ j ∈ acc x i, χ j j := by
   simp [say]
 
 /-- Within the scope of `OP∀` the utterance context is lost (§3.4): the operator's output does
 not depend on it. -/
-theorem op_opAll_eq (χ : Character (Context W E P T) (Context W E P T) α)
-    (c c' : Context W E P T) : op opAll χ c = op opAll χ c' := by
+theorem shiftyOp_opAll_eq (χ : Character (Context W E P T) (Context W E P T) α)
+    (c c' : Context W E P T) : shiftyOp opAll χ c = shiftyOp opAll χ c' := by
   ext; simp
 
 /-- An attitude verb leaves the context untouched, so it is no monster (§3.1): indexical shift
@@ -140,15 +100,15 @@ theorem not_isMonster_say : ¬ IsMonster (say acc x) :=
   fun h ↦ h ⟨fun _ f i ↦ ∀ j ∈ acc x i, f j, fun _ _ ↦ rfl⟩
 
 /-- Without an operator the context stays put. -/
-theorem not_isMonster_op_empty :
-    ¬ IsMonster (op ∅ : Character (Context W E P T) (Context W E P T) α → _) :=
+theorem not_isMonster_shiftyOp_empty :
+    ¬ IsMonster (shiftyOp ∅ : Character (Context W E P T) (Context W E P T) α → _) :=
   fun h ↦ h ⟨fun _ f ↦ f, fun _ _ ↦ by ext; simp⟩
 
 /-- An operator overwriting the author, as `OP∀` and `OP_AUTH` do, is a monster once there are
 two individuals. -/
-theorem isMonster_op_of_agent_mem [Nontrivial α] [Nontrivial E] [Nonempty W] [Nonempty P]
+theorem isMonster_shiftyOp_of_agent_mem [Nontrivial α] [Nontrivial E] [Nonempty W] [Nonempty P]
     [Nonempty T] {S : Finset Coord} (hS : .agent ∈ S) :
-    IsMonster (op S : Character (Context W E P T) (Context W E P T) α → _) := by
+    IsMonster (shiftyOp S : Character (Context W E P T) (Context W E P T) α → _) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   obtain ⟨w⟩ := ‹Nonempty W›; obtain ⟨p⟩ := ‹Nonempty P›; obtain ⟨t⟩ := ‹Nonempty T›
   refine (isMonster_shiftBy_iff _).2 ⟨⟨a, a, w, t, p⟩, ⟨b, a, w, t, p⟩, fun h ↦ hab ?_⟩
@@ -167,7 +127,7 @@ attitude holder's counterpart, so they are read de se. -/
 def proSubj : Character (Context W E P T) (Context W E P T) E := fun _ i ↦ i.agent
 
 /-- A first person under `OP∀` is subject PRO: shifted, it is read de se (§5.1). -/
-theorem op_opAll_I : op opAll (I : Character (Context W E P T) _ E) = proSubj := by
+theorem shiftyOp_opAll_I : shiftyOp opAll (I : Character (Context W E P T) _ E) = proSubj := by
   ext; simp [I, proSubj]
 
 /-! ### Lexical entries and readings -/
@@ -191,7 +151,7 @@ def slaveSay : Finset (Finset Coord) := {opAuth}
 index `j`. -/
 def readings (e : Finset (Finset Coord)) (χ : Character (Context W E P T) (Context W E P T) α)
     (c j : Context W E P T) : Set α :=
-  (fun S ↦ op S χ c j) '' e
+  (fun S ↦ shiftyOp S χ c j) '' e
 
 variable (c j : Context W E P T)
 
@@ -230,9 +190,9 @@ variable (j₁ j₂ : Context W E P T) (S₁ S₂ : Finset Coord)
 /-- Two stacked reports evaluate the lowest complement at the utterance context overwritten by the
 intermediate operator from the intermediate reported context, then by the lowest operator from the
 lowest one (31). -/
-theorem say_op_say_op (acc' : E → Context W E P T → Set (Context W E P T)) (y : E)
+theorem say_shiftyOp_say_shiftyOp (acc' : E → Context W E P T → Set (Context W E P T)) (y : E)
     (χ : Character (Context W E P T) (Context W E P T) Prop) (i : Context W E P T) :
-    say acc x (op S₁ (say acc' y (op S₂ χ))) c i ↔
+    say acc x (shiftyOp S₁ (say acc' y (shiftyOp S₂ χ))) c i ↔
       ∀ j₁ ∈ acc x i, ∀ j₂ ∈ acc' y j₁, χ (overwrite S₂ (overwrite S₁ c j₁) j₂) j₂ := by
   simp [say]
 
