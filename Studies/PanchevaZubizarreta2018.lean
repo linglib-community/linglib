@@ -219,22 +219,25 @@ theorem italian_weak_tidat_lacl :
   decide
 
 /-- Spanish *te me* (23), second-person dative over first-person accusative, is licit in the
-weak variety. -/
+weak variety: *te* can be the dative and *me* the accusative. -/
 theorem spanish_weak_tedat_meacc :
-    ∃ io ∈ Spanish.Clitics.te_dat.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
-      IsLicit weakGrammar ⟨io, do_⟩ := by
+    .dat ∈ Spanish.Clitics.te.cases ∧ .acc ∈ Spanish.Clitics.me.cases ∧
+      ∃ io ∈ Spanish.Clitics.te.person, ∃ do_ ∈ Spanish.Clitics.me.person,
+        IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- Spanish *me te*, first-person dative over second-person accusative, is licit as well. -/
 theorem spanish_weak_medat_teacc :
-    ∃ io ∈ Spanish.Clitics.me_dat.person, ∃ do_ ∈ Spanish.Clitics.te_acc.person,
-      IsLicit weakGrammar ⟨io, do_⟩ := by
+    .dat ∈ Spanish.Clitics.me.cases ∧ .acc ∈ Spanish.Clitics.te.cases ∧
+      ∃ io ∈ Spanish.Clitics.me.person, ∃ do_ ∈ Spanish.Clitics.te.person,
+        IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- Spanish *me le* (24), third-person dative over first-person accusative, is banned. -/
 theorem spanish_weak_ledat_meacc_banned :
-    ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
-      ¬ IsLicit weakGrammar ⟨io, do_⟩ := by
+    .dat ∈ Spanish.Clitics.le.cases ∧ .acc ∈ Spanish.Clitics.me.cases ∧
+      ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person,
+        ¬ IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- In French (16), a strong-PCC language, a third-person dative with a first-person accusative
