@@ -107,11 +107,11 @@ variable (w : List Segment)
   simp [infinitiveStem]
 
 @[simp] theorem infinitiveStem_tarvita : tarvita.infinitiveStem (w ++ [s, e]) = w := by
-  simp [infinitiveStem, List.dropLast_append_cons]
+  simp [infinitiveStem]
 
 @[simp] theorem infinitiveStem_lämmetä :
     lämmetä.infinitiveStem (w ++ [n, e]) = derive consonantGradation (w ++ [t]) := by
-  simp [infinitiveStem, List.dropLast_append_cons]
+  simp [infinitiveStem]
 
 end Conjugation
 
