@@ -5,6 +5,7 @@ public import Mathlib.Order.Nat
 public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
+public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Morphology.Word.Agree
 public import Linglib.Syntax.Agreement.Phi
 public import Linglib.Syntax.Binding.Basic
@@ -29,6 +30,7 @@ arguments.
 * `Pronoun`: the form, person, number, cases and gender of a pronoun, with its script form
   and the strength class of its series.
 * `Pronoun.case`: the flat case of a pronoun, the meet of the cases it fills.
+* `Pronoun.ofCells`, `Pronoun.ofTable`: the pronoun of a form in a table of cells.
 * `Pronoun.categories`: the referential categories of Cysouw that the person and number
   realize.
 * `Pronoun.WellFormed`: clusivity is not borne by a singular.
@@ -148,6 +150,33 @@ def WellFormed : Prop :=
 
 instance : Decidable p.WellFormed :=
   inferInstanceAs (Decidable (∀ per ∈ p.person, _ → _))
+
+/-! ### The pronouns of a table -/
+
+section Table
+
+variable {C : Type*} (person : C → Person) (number : C → Option Number)
+  (gender : C → Option Gender) (case : C → Option Case)
+
+/-- The categories of the cells `s`, those each cell's person and number realize. -/
+def cellCategories (s : Finset C) : Finset Person.Category :=
+  s.biUnion fun c ↦ ((number c).map (Person.Category.ofPersonNumber (person c))).getD ∅
+
+/-- The pronoun `f` filling the cells `s`, where a cell has a person and may have a number, a
+gender and a case: the cases of the cells, the flat value of their person and gender, and the
+number their categories share, `general` for cells of both numbers. -/
+def ofCells (s : Finset C) (f : String) : Pronoun :=
+  { form := f,
+    person := Flat.finsetInf s fun c ↦ (person c : Flat Person),
+    number := Person.Category.sharedNumber (cellCategories person number s),
+    cases := s.biUnion fun c ↦ (case c).toFinset,
+    gender := Flat.finsetInf s fun c ↦ (gender c : Flat Gender) }
+
+/-- The pronoun `f` of a table, filling every cell the table gives it. -/
+def ofTable [Fintype C] (table : C → Finset String) (f : String) : Pronoun :=
+  ofCells person number gender case (Morphology.formCellsOf table f) f
+
+end Table
 
 /-! ### The pronoun as a token -/
 
