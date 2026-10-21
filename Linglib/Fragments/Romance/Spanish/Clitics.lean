@@ -1,7 +1,5 @@
 module
 
-public import Linglib.Core.Order.Flat.Finset
-public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Category.Pronoun.Reflexive
 
@@ -45,8 +43,6 @@ is unspecified and its referential categories are those of both numbers.
 @[expose] public section
 
 namespace Spanish.Clitics
-
-open Morphology
 
 /-! ### The object clitics -/
 
@@ -102,14 +98,8 @@ def table : Row × Case → Finset String
 /-- The clitic `f`, with the cases and referential categories of the cells it fills and their flat
 person, number and gender. -/
 def entry (f : String) : PersonalPronoun :=
-  { form := f,
-    person := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.1.person : Flat Person),
-    number := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.1.number : Flat Number),
-    cases := (formCellsOf table f).image (·.2.label),
-    gender := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.1.gender : Flat Gender),
-    strength := some .clitic,
-    referential := (formCellsOf table f).biUnion fun c ↦
-      Person.Category.ofPersonNumber c.1.person c.1.number }
+  { PersonalPronoun.ofTable (·.1.person) (some ·.1.number) (·.1.gender) (·.2.label) table f with
+    strength := some .clitic }
 
 /-- The clitics of a case. -/
 def series (k : Case) : Finset PersonalPronoun :=

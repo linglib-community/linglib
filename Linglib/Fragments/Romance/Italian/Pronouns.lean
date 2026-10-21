@@ -12,25 +12,36 @@ third person singular, and the archaic polite plural *Loro*.
 
 The atonic first and second persons have one form each for direct object, indirect object and
 reflexive use: *mi*, *ti*, *ci* and *vi*. Only the third person tells the three apart: accusative
-*lo*, *la*, *li* and *le*, dative *gli* and *le*, and reflexive *si*, which marks neither gender
-nor number. The atonic forms are clitics except the third-person plural dative *loro*, which
-Cardinaletti and Starke class as weak: it is deficient, but it follows the verb, never enters a
-cluster and bears word stress.
+*lo*, *la*, *li* and *le*, dative *gli* and *le* in the singular and *loro* or *gli* in the plural,
+and reflexive *si*, which marks neither gender nor number. The atonic forms are clitics except the
+third-person plural dative *loro*, which Cardinaletti and Starke class as weak: it is deficient,
+but it follows the verb, never enters a cluster and bears word stress.
 
 ## Main declarations
 
 * `Italian.Pronouns.pronouns` — the tonic series
+* `Italian.Pronouns.atonic` — the atonic object pronouns by person, number, gender and case
 * `Italian.Pronouns.accusative`, `Italian.Pronouns.dative`, `Italian.Pronouns.reflexive` — the
   atonic series
-* `Italian.Pronouns.paradigm_accusative_eq_paradigm_dative_iff`,
+* `Italian.Pronouns.atonic_acc_eq_atonic_dat_iff`,
   `Italian.Pronouns.paradigm_dative_eq_paradigm_reflexive_iff` — the atonic series are syncretic
   exactly outside the third person
 * `Italian.Pronouns.strength_eq_weak_iff` — dative *loro* is the one atonic form that is not a
   clitic
 
+## Implementation notes
+
+An atonic pronoun is a form with the cells it fills, so *mi* is one clitic with the accusative and
+the dative of the first person singular, as Table 6.A gives it. A form whose cells are not all the
+combinations of their categories and cases is split: *le* is a singular dative and a plural
+accusative, and two entries (`formCellsOf_atonic_le`). The variants *me*, *te*, *glie*, *ce* and
+*ve* that clitics take before another clitic (§6.2) are not recorded.
+
 ## References
 
 * [L. J. Adamson and S. Zompì, *Polite Pronouns and the PCC* (2025)][adamson-zompi-2025]
+* [M. Maiden and C. Robustelli, *A Reference Grammar of Modern Italian*
+  (2007)][maiden-robustelli-2007]
 * [A. Cardinaletti and M. Starke, *The Typology of Structural Deficiency: A Case Study of the
   Three Classes of Pronouns* (1999)][cardinaletti-starke-1999]
 -/
@@ -112,92 +123,117 @@ def addresseePl : Grade → PersonalPronoun
 def pronouns : Finset PersonalPronoun :=
   {io, tu, lei_formal, lui, lei, noi, voi, loro_formal, loro}
 
-/-! ### The accusative series -/
+/-! ### The atonic series -/
 
-/-- *mi*, first person singular accusative. -/
-def mi_acc : PersonalPronoun :=
-  { form := "mi", person := some .first, number := some .singular, cases := {.acc},
+/-- The rows of the atonic pronouns: a person and number each, and in the third person a gender. -/
+inductive Row where
+  | sg1 | sg2 | sg3m | sg3f | pl1 | pl2 | pl3m | pl3f
+  deriving DecidableEq, Fintype, Repr
+
+/-- The person of a row. -/
+def Row.person : Row → Person
+  | .sg1 | .pl1 => .first
+  | .sg2 | .pl2 => .second
+  | .sg3m | .sg3f | .pl3m | .pl3f => .third
+
+/-- The number of a row. -/
+def Row.number : Row → Number
+  | .sg1 | .sg2 | .sg3m | .sg3f => .singular
+  | .pl1 | .pl2 | .pl3m | .pl3f => .plural
+
+/-- The gender of a row, marked in the third person alone. -/
+def Row.gender : Row → Option Gender
+  | .sg3m | .pl3m => some .masculine
+  | .sg3f | .pl3f => some .feminine
+  | _ => none
+
+/-- The cases of the atonic pronouns. -/
+inductive Case where
+  /-- The accusative, the direct object. -/
+  | acc
+  /-- The dative, the indirect object. -/
+  | dat
+  deriving DecidableEq, Fintype, Repr
+
+/-- The comparative value of a case. -/
+def Case.label : Case → _root_.Case
+  | acc => .acc
+  | dat => .dat
+
+/-- The atonic pronouns of each cell ([maiden-robustelli-2007] Tables 6.A and 6.B, pp. 95–96).
+The third person plural dative is formal *loro* or everyday *gli* (§6.7, p. 102). -/
+def atonic : Row × Case → Finset String
+  | (.sg1, _) => {"mi"}
+  | (.sg2, _) => {"ti"}
+  | (.sg3m, .acc) => {"lo"}
+  | (.sg3f, .acc) => {"la"}
+  | (.sg3m, .dat) => {"gli"}
+  | (.sg3f, .dat) => {"le"}
+  | (.pl1, _) => {"ci"}
+  | (.pl2, _) => {"vi"}
+  | (.pl3m, .acc) => {"li"}
+  | (.pl3f, .acc) => {"le"}
+  | (.pl3m, .dat) | (.pl3f, .dat) => {"loro", "gli"}
+
+/-- The clitic `f` filling the cells `s`. -/
+def cliticOf (s : Finset (Row × Case)) (f : String) : PersonalPronoun :=
+  { PersonalPronoun.ofCells (·.1.person) (some ·.1.number) (·.1.gender) (·.2.label) s f with
     strength := some .clitic }
 
-/-- *ti*, second person singular accusative. -/
-def ti_acc : PersonalPronoun :=
-  { form := "ti", person := some .second, number := some .singular, cases := {.acc},
-    strength := some .clitic }
+/-- The clitic `f`, filling every cell the table gives it. -/
+def clitic (f : String) : PersonalPronoun := cliticOf (Morphology.formCellsOf atonic f) f
+
+/-- *mi*, first person singular. -/
+def mi : PersonalPronoun := clitic "mi"
+
+/-- *ti*, second person singular. -/
+def ti : PersonalPronoun := clitic "ti"
+
+/-- *ci*, first person plural. -/
+def ci : PersonalPronoun := clitic "ci"
+
+/-- *vi*, second person plural. -/
+def vi : PersonalPronoun := clitic "vi"
 
 /-- *lo*, third person singular masculine accusative. -/
-def lo : PersonalPronoun :=
-  { form := "lo", person := some .third, number := some .singular, cases := {.acc},
-    gender := some .masculine, strength := some .clitic }
+def lo : PersonalPronoun := clitic "lo"
 
 /-- *la*, third person singular feminine accusative. -/
-def la : PersonalPronoun :=
-  { form := "la", person := some .third, number := some .singular, cases := {.acc},
-    gender := some .feminine, strength := some .clitic }
-
-/-- *ci*, first person plural accusative. -/
-def ci_acc : PersonalPronoun :=
-  { form := "ci", person := some .first, number := some .plural, cases := {.acc},
-    strength := some .clitic }
-
-/-- *vi*, second person plural accusative. -/
-def vi_acc : PersonalPronoun :=
-  { form := "vi", person := some .second, number := some .plural, cases := {.acc},
-    strength := some .clitic }
+def la : PersonalPronoun := clitic "la"
 
 /-- *li*, third person plural masculine accusative. -/
-def li : PersonalPronoun :=
-  { form := "li", person := some .third, number := some .plural, cases := {.acc},
-    gender := some .masculine, strength := some .clitic }
+def li : PersonalPronoun := clitic "li"
 
-/-- *le*, third person plural feminine accusative. -/
-def le_acc : PersonalPronoun :=
-  { form := "le", person := some .third, number := some .plural, cases := {.acc},
-    gender := some .feminine, strength := some .clitic }
-
-/-- The accusative series. -/
-def accusative : Finset PersonalPronoun :=
-  {mi_acc, ti_acc, lo, la, ci_acc, vi_acc, li, le_acc}
-
-/-! ### The dative series -/
-
-/-- *mi*, first person singular dative. -/
-def mi_dat : PersonalPronoun :=
-  { form := "mi", person := some .first, number := some .singular, cases := {.dat},
-    strength := some .clitic }
-
-/-- *ti*, second person singular dative. -/
-def ti_dat : PersonalPronoun :=
-  { form := "ti", person := some .second, number := some .singular, cases := {.dat},
-    strength := some .clitic }
-
-/-- *gli*, third person singular masculine dative. -/
-def gli : PersonalPronoun :=
-  { form := "gli", person := some .third, number := some .singular, cases := {.dat},
-    gender := some .masculine, strength := some .clitic }
+/-- *gli*, third person singular masculine dative and third person plural dative. -/
+def gli : PersonalPronoun := clitic "gli"
 
 /-- *le*, third person singular feminine dative. -/
-def le_dat : PersonalPronoun :=
-  { form := "le", person := some .third, number := some .singular, cases := {.dat},
-    gender := some .feminine, strength := some .clitic }
+def le_dat : PersonalPronoun := cliticOf {(.sg3f, .dat)} "le"
 
-/-- *ci*, first person plural dative. -/
-def ci_dat : PersonalPronoun :=
-  { form := "ci", person := some .first, number := some .plural, cases := {.dat},
-    strength := some .clitic }
-
-/-- *vi*, second person plural dative. -/
-def vi_dat : PersonalPronoun :=
-  { form := "vi", person := some .second, number := some .plural, cases := {.dat},
-    strength := some .clitic }
+/-- *le*, third person plural feminine accusative. -/
+def le_acc : PersonalPronoun := cliticOf {(.pl3f, .acc)} "le"
 
 /-- *loro*, third person plural dative, a weak pronoun that follows the verb. -/
-def loro_dat : PersonalPronoun :=
-  { form := "loro", person := some .third, number := some .plural, cases := {.dat},
-    strength := some .weak }
+def loro_dat : PersonalPronoun := { clitic "loro" with strength := some .weak }
+
+/-- The accusative series. -/
+def accusative : Finset PersonalPronoun := {mi, ti, lo, la, ci, vi, li, le_acc}
 
 /-- The dative series. -/
-def dative : Finset PersonalPronoun :=
-  {mi_dat, ti_dat, gli, le_dat, ci_dat, vi_dat, loro_dat}
+def dative : Finset PersonalPronoun := {mi, ti, gli, le_dat, ci, vi, loro_dat}
+
+/-- *le* fills the third person singular feminine dative and the third person plural feminine
+accusative, cells that differ in number and in case, so it is two entries: one entry with both
+cases and both numbers would also claim the singular accusative and the plural dative. -/
+theorem formCellsOf_atonic_le :
+    Morphology.formCellsOf atonic "le" = {(.sg3f, .dat), (.pl3f, .acc)} := by
+  decide
+
+/-- The series give each case the forms of its column of the table. -/
+theorem forms_accusative_dative :
+    accusative.image (·.form) = Finset.univ.biUnion (fun r ↦ atonic (r, .acc)) ∧
+      dative.image (·.form) = Finset.univ.biUnion (fun r ↦ atonic (r, .dat)) := by
+  decide
 
 /-! ### The reflexive series -/
 
@@ -226,11 +262,11 @@ def reflexive : Finset ReflexivePronoun := {mi_refl, ti_refl, si, ci_refl, vi_re
 
 /-! ### Syncretism and strength -/
 
-/-- The accusative and the dative have the same forms exactly outside the third person. -/
-theorem paradigm_accusative_eq_paradigm_dative_iff (c : Person.Category) :
-    PersonalPronoun.paradigm accusative c = PersonalPronoun.paradigm dative c ↔
-      c.person ≠ .third := by
-  cases c <;> decide +kernel
+/-- The accusative and the dative of a row are the same exactly outside the third person
+(Tables 6.A and 6.B). -/
+theorem atonic_acc_eq_atonic_dat_iff (r : Row) :
+    atonic (r, .acc) = atonic (r, .dat) ↔ r.person ≠ .third := by
+  cases r <;> decide
 
 /-- The dative and the reflexive have the same forms exactly outside the third person. -/
 theorem paradigm_dative_eq_paradigm_reflexive_iff (c : Person.Category) :

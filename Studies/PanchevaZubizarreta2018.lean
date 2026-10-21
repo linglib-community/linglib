@@ -208,14 +208,16 @@ theorem family_logophoric_assignments :
 /-- Italian dative *gli* is third person and accusative *ti* second, so the weak PCC bans the
 pair. -/
 theorem italian_weak_glidat_tiacc :
-    ∃ io ∈ Italian.Pronouns.gli.person, ∃ do_ ∈ Italian.Pronouns.ti_acc.person,
-      ¬ IsLicit weakGrammar ⟨io, do_⟩ := by
+    .dat ∈ Italian.Pronouns.gli.cases ∧ .acc ∈ Italian.Pronouns.ti.cases ∧
+      ∃ io ∈ Italian.Pronouns.gli.person, ∃ do_ ∈ Italian.Pronouns.ti.person,
+        ¬ IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- Italian *ti la*, second-person dative over third-person accusative, is licit. -/
 theorem italian_weak_tidat_lacl :
-    ∃ io ∈ Italian.Pronouns.ti_dat.person, ∃ do_ ∈ Italian.Pronouns.la.person,
-      IsLicit weakGrammar ⟨io, do_⟩ := by
+    .dat ∈ Italian.Pronouns.ti.cases ∧ .acc ∈ Italian.Pronouns.la.cases ∧
+      ∃ io ∈ Italian.Pronouns.ti.person, ∃ do_ ∈ Italian.Pronouns.la.person,
+        IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- Spanish *te me* (23), second-person dative over first-person accusative, is licit in the

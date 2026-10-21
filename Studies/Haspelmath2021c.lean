@@ -184,7 +184,7 @@ theorem russian_li_not_affix :
 /-! ### Italian (19) -/
 
 /-- The Italian first singular dative *mi*, before the verb. -/
-def mi : Morph := .procl Italian.Pronouns.mi_dat.form
+def mi : Morph := .procl Italian.Pronouns.mi.form
 /-- The Italian first singular dative *-mmi*, after an imperative. -/
 def mmi : Morph := .encl "mmi"
 /-- The Italian action root *da* 'give'. -/
@@ -198,7 +198,7 @@ def italian : Inventory Morph where
 /-- In (19), the object person forms always occur on verb roots, on either side, so they are
 affixes, although the Italian fragment records *mi* as a clitic. -/
 theorem italian_object_affixes :
-    Italian.Pronouns.mi_dat.strength = some .clitic ∧
+    Italian.Pronouns.mi.strength = some .clitic ∧
       italian.IsAffix italian.IsContentful mi ∧
       italian.IsAffix italian.IsContentful mmi := by
   decide
