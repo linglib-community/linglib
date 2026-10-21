@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Interval.Basic
+public import Linglib.Semantics.Tense.Allen
 public import Linglib.Semantics.Tense.Defs
 
 /-!
@@ -116,6 +117,12 @@ def toSetRel (C : Finset Ordering) : SetRel (NonemptyInterval T) (NonemptyInterv
 @[simp] theorem mem_toSetRel : π ~[toSetRel C] r ↔ Presup C π r := .rfl
 
 instance : Decidable (π ~[toSetRel C] r) := inferInstanceAs (Decidable (Presup C π r))
+
+/-- The relation of a cell on intervals is the converse of the Allen relation of its positions. -/
+theorem toSetRel_eq_inv (C : Finset Ordering) :
+    (toSetRel C : SetRel (NonemptyInterval T) _) = (Allen.toSetRel (Allen.ofPosition C)).inv := by
+  ext ⟨π, r⟩
+  simp [Presup]
 
 /-- On point intervals the relation of a cell is its relation on points. -/
 theorem pure_mem_toSetRel {p t : T} :
