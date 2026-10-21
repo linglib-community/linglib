@@ -60,8 +60,8 @@ variable [DiscreteMeasurableSpace A] (R : A → W → ℝ) (π : Kernel U A) {u 
 by the rest. -/
 theorem actionUtility_of_pair [IsMarkovKernel π] (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     actionUtility π R u w = (π u).real {a} * R a w + (1 - (π u).real {a}) * R a' w := by
-  rw [actionUtility, Fintype.sum_eq_add a a' haa' (fun c hc => absurd (hall c) (not_or.mpr hc)),
-    ← measureReal_singleton_add_singleton_of_pair (π u) haa' (fun c _ => hall c)]
+  rw [actionUtility, Fintype.sum_eq_add a a' haa' (fun c hc ↦ absurd (hall c) (not_or.mpr hc)),
+    ← measureReal_singleton_add_singleton_of_pair (π u) haa' (fun c _ ↦ hall c)]
   ring
 
 end ActionUtility
@@ -98,8 +98,8 @@ variable (β : ℝ) (L : Kernel U W) (R : A → W → ℝ)
 instance : IsFiniteKernel (policy β L R) := inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
 instance [Nonempty A] : IsMarkovKernel (policy β L R) :=
-  Kernel.isMarkovKernel_softmax (fun _ => ⟨Classical.arbitrary A, EReal.coe_ne_bot _⟩)
-    (fun _ _ => EReal.coe_ne_top _)
+  Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary A, EReal.coe_ne_bot _⟩)
+    (fun _ _ ↦ EReal.coe_ne_top _)
 
 variable {β} {u : U} {a a' : A} {w : W}
 
@@ -108,7 +108,7 @@ theorem policy_real_lt_iff (hβ : 0 < β) :
     (policy β L R u).real {a} < (policy β L R u).real {a'} ↔
       expectedReward L R u a < expectedReward L R u a' := by
   rw [policy, Kernel.softmax_real_singleton_lt_iff (score := policyScore β L R) (w := u)
-    (fun _ => EReal.coe_ne_top _) ⟨a, EReal.coe_ne_bot _⟩, policyScore, policyScore,
+    (fun _ ↦ EReal.coe_ne_top _) ⟨a, EReal.coe_ne_bot _⟩, policyScore, policyScore,
     EReal.coe_lt_coe_iff]
   exact mul_lt_mul_iff_right₀ hβ
 
@@ -122,12 +122,8 @@ theorem policy_single_real_lt_iff [DecidableEq W] [DiscreteMeasurableSpace W] (h
 
 /-- The policy's share of an action is the real softmax of the scaled expected rewards. -/
 theorem policy_real_singleton :
-    (policy β L R u).real {a} = Real.softmax (fun a => β * expectedReward L R u a) a := by
-  rw [policy, Kernel.softmax,
-    Kernel.ofWeights_real_singleton (fun u a => EReal.exp (policyScore β L R u a)) u
-      (fun b => by rw [ne_eq, EReal.exp_eq_top_iff, policyScore]; exact EReal.coe_ne_top _),
-    Real.softmax_def]
-  simp only [policyScore, EReal.exp_coe, ENNReal.toReal_ofReal (Real.exp_pos _).le]
+    (policy β L R u).real {a} = Real.softmax (fun a ↦ β * expectedReward L R u a) a :=
+  Kernel.softmax_coe_real_singleton (fun u a ↦ β * expectedReward L R u a) u a
 
 /-- With two actions, the policy's share of one is the logistic function of the scaled
 difference in expected reward. -/
@@ -135,7 +131,7 @@ theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     (policy β L R u).real {a} =
       Real.sigmoid (β * (expectedReward L R u a - expectedReward L R u a')) := by
   rw [policy, Kernel.softmax_real_singleton_of_pair (score := policyScore β L R) (w := u) haa'
-    (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (fun _ => EReal.coe_ne_top _) (fun c _ => hall c),
+    (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (fun _ ↦ EReal.coe_ne_top _) (fun c _ ↦ hall c),
     policyScore, policyScore, EReal.toReal_coe, EReal.toReal_coe]
   ring_nf
 

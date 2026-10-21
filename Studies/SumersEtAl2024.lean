@@ -125,7 +125,7 @@ variable {W U A : Type*} [Fintype W] [DecidableEq W] [MeasurableSpace W]
 /-- The speaker (1) is the softmax of combined utility at rationality `βS`. -/
 noncomputable def speaker (βS lam : ℝ) (cost : U → ℝ) (sem : U → Finset W)
     (π : Kernel U A) (R : A → W → ℝ) : Kernel W U :=
-  Kernel.softmax fun w u => ((βS * combinedUtility lam cost sem π R u w : ℝ) : EReal)
+  Kernel.softmax fun w u ↦ ((βS * combinedUtility lam cost sem π R u w : ℝ) : EReal)
 
 variable (lam : ℝ) (cost : U → ℝ) (sem : U → Finset W) (π : Kernel U A)
   (R : A → W → ℝ) {βS : ℝ} {u u' : U} {w : W}
@@ -134,29 +134,29 @@ instance : IsFiniteKernel (speaker βS lam cost sem π R) :=
   inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
 instance [Nonempty U] : IsMarkovKernel (speaker βS lam cost sem π R) :=
-  Kernel.isMarkovKernel_softmax (fun _ => ⟨Classical.arbitrary U, EReal.coe_ne_bot _⟩)
-    (fun _ _ => EReal.coe_ne_top _)
+  Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary U, EReal.coe_ne_bot _⟩)
+    (fun _ _ ↦ EReal.coe_ne_top _)
 
 /-- Row preference of the speaker is comparison of combined utility. -/
 theorem speaker_real_lt_iff (hβ : 0 < βS) :
     (speaker βS lam cost sem π R w).real {u} < (speaker βS lam cost sem π R w).real {u'} ↔
       combinedUtility lam cost sem π R u w < combinedUtility lam cost sem π R u' w := by
-  rw [speaker, Kernel.softmax_real_singleton_lt_iff (w := w) (fun _ => EReal.coe_ne_top _)
+  rw [speaker, Kernel.softmax_real_singleton_lt_iff (w := w) (fun _ ↦ EReal.coe_ne_top _)
     ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
   exact mul_lt_mul_iff_right₀ hβ
 
 /-- The purely truthful speaker is insensitive to the decision problem, since at equal costs it
 puts the same mass on any two true utterances. -/
 theorem speaker_zero_eq_of_mem (c : ℝ) (hu : w ∈ sem u) (hu' : w ∈ sem u') :
-    speaker βS 0 (fun _ => c) sem π R w {u} = speaker βS 0 (fun _ => c) sem π R w {u'} := by
+    speaker βS 0 (fun _ ↦ c) sem π R w {u} = speaker βS 0 (fun _ ↦ c) sem π R w {u'} := by
   simp only [speaker, Kernel.softmax_apply_singleton, combinedUtility_zero, truthfulness, hu, hu',
     ite_true]
 
 /-- The purely relevant speaker prefers the utterance that earns the listener more, true or
 not. -/
 theorem speaker_one_real_lt_iff (hβ : 0 < βS) (c : ℝ) :
-    (speaker βS 1 (fun _ => c) sem π R w).real {u} <
-        (speaker βS 1 (fun _ => c) sem π R w).real {u'} ↔
+    (speaker βS 1 (fun _ ↦ c) sem π R w).real {u} <
+        (speaker βS 1 (fun _ ↦ c) sem π R w).real {u'} ↔
       actionUtility π R u w < actionUtility π R u' w := by
   rw [speaker_real_lt_iff _ _ _ _ _ hβ, combinedUtility_one, combinedUtility_one]
   exact add_lt_add_iff_right c
@@ -173,7 +173,7 @@ variable {W U : Type*} [Fintype W] [DecidableEq W] [MeasurableSpace W]
 /-- In the decision problem of a cell the first action earns `r` in the cell and `s` outside it,
 and the second the reverse. -/
 def cellReward (r s : ℝ) (c : Finset W) : Fin 2 → W → ℝ :=
-  fun a w => if (w ∈ c ↔ a = 0) then r else s
+  fun a w ↦ if (w ∈ c ↔ a = 0) then r else s
 
 /-- The listener's posterior mass on the cell (A3). -/
 noncomputable def cellMass (L : Kernel U W) (c : Finset W) (u : U) : ℝ :=
@@ -190,7 +190,7 @@ variable (L : Kernel U W) [IsMarkovKernel L] {r s : ℝ} (c : Finset W) {u u' : 
 theorem expectedReward_cellReward (u : U) :
     expectedReward L (cellReward r s c) u 0 = s + (r - s) * cellMass L c u ∧
       expectedReward L (cellReward r s c) u 1 = r + (s - r) * cellMass L c u := by
-  have htot := sum_filter_add_sum_filter_not univ (· ∈ c) fun w => (L u).real {w}
+  have htot := sum_filter_add_sum_filter_not univ (· ∈ c) fun w ↦ (L u).real {w}
   have h1 : ∑ w, (L u).real {w} = 1 := sum_measureReal_singleton_eq_one (L u)
   rw [filter_mem_eq_inter, univ_inter, h1] at htot
   have hB : ∑ w with w ∉ c, (L u).real {w} = 1 - cellMass L c u := by
@@ -209,9 +209,9 @@ theorem actionUtility_cellReward (hw : w ∈ c) :
       s + (r - s) * Real.sigmoid (β * (r - s) * (2 * cellMass L c u - 1)) := by
   obtain ⟨h0, h1⟩ := expectedReward_cellReward L c (r := r) (s := s) u
   rw [actionUtility_of_pair (cellReward r s c) (policy β L (cellReward r s c)) (a := 0) (a' := 1)
-      (by decide) (fun a => by fin_cases a <;> simp),
+      (by decide) (fun a ↦ by fin_cases a <;> simp),
     policy_real_of_pair L (cellReward r s c) (a := 0) (a' := 1) (by decide)
-      (fun a => by fin_cases a <;> simp), h0, h1]
+      (fun a ↦ by fin_cases a <;> simp), h0, h1]
   simp only [cellReward, hw, Fin.isValue, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, iff_false,
     not_true_eq_false, ite_true, ite_false]
   ring_nf
@@ -266,12 +266,12 @@ theorem sum_ite_div_sum_ite (p : V → Prop) [DecidablePred p] (hp : ∃ x, p x)
       ∏ i, ∑ x, (if i = f then (if p x then 1 else 0) else 1) * (if i = k then g x else 1) := by
     intro g
     rw [prod_univ_sum, Fintype.piFinset_univ]
-    refine sum_congr rfl fun w _ => ?_
+    refine sum_congr rfl fun w _ ↦ ?_
     rw [prod_mul_distrib, prod_ite_eq', prod_ite_eq', ite_eq_left (mem_univ _),
       ite_eq_left (mem_univ _), boole_mul]
   have key₁ : (∑ w : K → V, if p (w f) then (1 : ℝ) else 0) =
       ∏ i, ∑ x, (if i = f then (if p x then 1 else 0) else 1) * (if i = k then (1 : ℝ) else 1) :=
-    key fun _ => 1
+    key fun _ ↦ 1
   obtain ⟨x₀, hx₀⟩ := hp
   have hcard : ((univ.filter p).card : ℝ) ≠ 0 := by
     exact_mod_cast (card_pos.2 ⟨x₀, mem_filter.2 ⟨mem_univ _, hx₀⟩⟩).ne'
@@ -283,7 +283,7 @@ theorem sum_ite_div_sum_ite (p : V → Prop) [DecidablePred p] (hp : ∃ x, p x)
       / (∑ x, (if i = f then (if p x then 1 else 0) else 1) * (if i = k then (1 : ℝ) else 1))) =
       ∏ i, if i = k then (if k = f then (∑ x with p x, g x) / (univ.filter p).card
         else (∑ x, g x) / Fintype.card V) else 1 from
-    prod_congr rfl fun i _ => by
+    prod_congr rfl fun i _ ↦ by
       by_cases hif : i = f
       · subst hif
         by_cases hik : i = k
@@ -298,7 +298,7 @@ variable [DecidableEq V]
 
 /-- The utterance naming a feature and a value is true at the worlds where the feature has that
 value. -/
-def sem (u : K × V) : Finset (K → V) := univ.filter fun w => w u.1 = u.2
+def sem (u : K × V) : Finset (K → V) := univ.filter fun w ↦ w u.1 = u.2
 
 /-- Truth does not depend on the decision context, since the meaning mentions no actions. -/
 theorem mem_sem_iff (u : K × V) (w : K → V) : w ∈ sem u ↔ w u.1 = u.2 := by simp [sem]
@@ -310,7 +310,7 @@ variable [MeasurableSpace (K → V)] [DiscreteMeasurableSpace (K → V)] [Fintyp
 uniform prior expects from an action the conditional mean of the named feature and the prior
 mean of every other feature it carries. -/
 theorem expectedReward_listener_filter {S : U → Finset (K → V)} {u : U} (p : V → Prop)
-    [DecidablePred p] (hp : ∃ x, p x) (f : K) (hS : S u = univ.filter fun w => p (w f))
+    [DecidablePred p] (hp : ∃ x, p x) (f : K) (hS : S u = univ.filter fun w ↦ p (w f))
     (val : V → ℝ) (feat : A → Finset K) (a : A) :
     expectedReward (RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (S u : Set (K → V))))
         (reward val feat) u a =
@@ -320,9 +320,9 @@ theorem expectedReward_listener_filter {S : U → Finset (K → V)} {u : U} (p :
     true_and,
     reward, mul_sum]
   rw [sum_comm]
-  refine sum_congr rfl fun k _ => ?_
+  refine sum_congr rfl fun k _ ↦ ?_
   rw [← sum_ite_div_sum_ite p hp f k val, sum_div]
-  refine sum_congr rfl fun w _ => ?_
+  refine sum_congr rfl fun w _ ↦ ?_
   rw [card_filter]
   push_cast
   split_ifs <;> simp [div_eq_inv_mul]
@@ -383,10 +383,10 @@ theorem expectedReward_listener :
   simp [filter_eq']
 
 theorem expectedReward_prior : expectedReward prior (reward val fs) u a = 0 := by
-  rw [expectedReward_listener_filter (S := fun _ => univ) (u := u) (fun _ => True)
-    ⟨u.2, trivial⟩ u.1 (filter_true_of_mem fun _ _ => trivial).symm, sum_val]
+  rw [expectedReward_listener_filter (S := fun _ ↦ univ) (u := u) (fun _ ↦ True)
+    ⟨u.2, trivial⟩ u.1 (filter_true_of_mem fun _ _ ↦ trivial).symm, sum_val]
   simp
-  exact fun _ => sum_val
+  exact fun _ ↦ sum_val
 
 /-- Two utterances after which every action's expected reward agrees up to a shift are
 equally useful in the context. -/
@@ -394,7 +394,7 @@ theorem actionUtility_eq_prior_of_expectedReward {c : ℝ}
     (h : ∀ a, expectedReward listener (reward val fs) u a = c) :
     actionUtility (policy β listener (reward val fs)) (reward val fs) u world =
       actionUtility (policy β prior (reward val fs)) (reward val fs) u world :=
-  actionUtility_policy_eq_of_expectedReward_eq_add listener (reward val fs) fun a => by
+  actionUtility_policy_eq_of_expectedReward_eq_add listener (reward val fs) fun a ↦ by
     rw [h a, expectedReward_prior, zero_add]
 
 /-- The three mushrooms of Figure 6B earn `1`, `0` and `-3` at the world. -/
@@ -409,7 +409,7 @@ theorem actionUtility_prior :
   obtain ⟨h0, h1, h2⟩ := reward_world
   simp only [actionUtility, policy_real_singleton, expectedReward_prior, mul_zero,
     Fin.sum_univ_three, h0, h1, h2]
-  rw [show (fun _ : Fin 3 => (0 : ℝ)) = 0 from rfl, Real.softmax_zero]
+  rw [show (fun _ : Fin 3 ↦ (0 : ℝ)) = 0 from rfl, Real.softmax_zero]
   norm_num
 
 /-- Naming the value of green, absent from the context, is true and irrelevant. -/
@@ -417,7 +417,7 @@ theorem green_two_true_irrelevant :
     world ∈ sem (.green, 4) ∧
       actionUtility (policy β listener (reward val feat)) (reward val feat) (.green, 4) world =
         actionUtility (policy β prior (reward val feat)) (reward val feat) (.green, 4) world :=
-  ⟨by simp [sem, world], actionUtility_eq_prior_of_expectedReward feat _ (c := 0) fun a => by
+  ⟨by simp [sem, world], actionUtility_eq_prior_of_expectedReward feat _ (c := 0) fun a ↦ by
     fin_cases a <;> simp [expectedReward_listener, feat]⟩
 
 /-- Naming the zero value of red, present in the context, is true and irrelevant, since a zero
@@ -426,7 +426,7 @@ theorem red_zero_true_irrelevant :
     world ∈ sem (.red, 2) ∧
       actionUtility (policy β listener (reward val feat)) (reward val feat) (.red, 2) world =
         actionUtility (policy β prior (reward val feat)) (reward val feat) (.red, 2) world :=
-  ⟨by simp [sem, world], actionUtility_eq_prior_of_expectedReward feat _ (c := 0) fun a => by
+  ⟨by simp [sem, world], actionUtility_eq_prior_of_expectedReward feat _ (c := 0) fun a ↦ by
     fin_cases a <;> simp [expectedReward_listener, feat, val]⟩
 
 /-- Naming a value of spots makes the listener expect that value from the spotted mushroom and
@@ -441,7 +441,7 @@ theorem actionUtility_spots (v : Value) :
     actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, v) world =
       (Real.exp (β * val v) - 3) / (Real.exp (β * val v) + 2) := by
   obtain ⟨h0, h1, h2⟩ := reward_world
-  simp only [actionUtility, policy_real_singleton, expectedReward_spots, Real.softmax_def,
+  simp only [actionUtility, policy_real_singleton, expectedReward_spots, Real.softmax_apply,
     Fin.sum_univ_three, h0, h1, h2]
   simp only [Fin.isValue, ite_true, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, ite_false,
     Fin.reduceEq, mul_zero, Real.exp_zero]
@@ -485,9 +485,9 @@ theorem exaggeration_relevant (hβ : 0 < β) :
 /-- The combined speaker prefers the truth to the exaggeration exactly when the relevance
 gained by exaggerating, weighted by `lam`, is worth less than the truthfulness lost. -/
 theorem prefers_truth_iff (hβS : 0 < βS) (lam c : ℝ) :
-    (speaker βS lam (fun _ => c) sem (policy β listener (reward val feat)) (reward val feat)
+    (speaker βS lam (fun _ ↦ c) sem (policy β listener (reward val feat)) (reward val feat)
         world).real {(.spots, 4)} <
-      (speaker βS lam (fun _ => c) sem (policy β listener (reward val feat)) (reward val feat)
+      (speaker βS lam (fun _ ↦ c) sem (policy β listener (reward val feat)) (reward val feat)
         world).real {(.spots, 3)} ↔
       lam * (actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, 4) world
         - actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, 3) world)
@@ -504,7 +504,7 @@ theorem spots_irrelevant_allSpotted (v : Value) :
         (.spots, v) world =
       actionUtility (policy β prior (reward val featSpotted)) (reward val featSpotted)
         (.spots, v) world :=
-  actionUtility_eq_prior_of_expectedReward featSpotted _ (c := val v) fun a => by
+  actionUtility_eq_prior_of_expectedReward featSpotted _ (c := val v) fun a ↦ by
     fin_cases a <;> simp [expectedReward_listener, featSpotted]
 
 /-- In the same context naming the value of green is relevant, since green is now the deciding
@@ -522,7 +522,7 @@ theorem green_relevant_allSpotted (hβ : 0 < β) :
     intro a; fin_cases a <;> simp [expectedReward_listener, featSpotted, val]; norm_num
   obtain ⟨h0, h1, h2⟩ := hR
   simp only [actionUtility, policy_real_singleton, expectedReward_prior, hE, mul_zero,
-    Fin.sum_univ_three, h0, h1, h2, Real.softmax_def]
+    Fin.sum_univ_three, h0, h1, h2, Real.softmax_apply]
   simp only [Fin.isValue, ite_true, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, ite_false,
     Fin.reduceEq, mul_zero, Real.exp_zero]
   have he : 1 < Real.exp (β * 2) := Real.one_lt_exp_iff.2 (by positivity)

@@ -104,7 +104,7 @@ theorem softmax_real_singleton_lt_iff {w : α} (htop : ∀ u, score w u ≠ ⊤)
 theorem softmax_coe_real_singleton (f : α → β → ℝ) (w : α) (u : β) :
     (softmax (fun w u ↦ (f w u : EReal)) w).real {u} = Real.softmax (f w) u := by
   rw [softmax, ofWeights_real_singleton _ w fun u ↦ mt EReal.exp_eq_top_iff.mp (EReal.coe_ne_top _),
-    Real.softmax_def]
+    Real.softmax_apply]
   simp only [EReal.exp_coe, ENNReal.toReal_ofReal (Real.exp_pos _).le]
 
 /-- A real-valued score excludes no point, so row preference is comparison of reals. -/

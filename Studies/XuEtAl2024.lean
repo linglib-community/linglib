@@ -1,8 +1,7 @@
 module
 
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.Kernel.Softmax
 public import Linglib.Pragmatics.Efficiency
 public import Linglib.Data.Examples.XuEtAl2024
 
@@ -60,24 +59,21 @@ section Listener
 variable {C W Q : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSingletonClass C]
   [Countable W] [MeasurableSpace W] [MeasurableSingletonClass W]
 
-/-- The similarity choice listener: on hearing a form, a distribution over concepts whose weight
-falls off exponentially, at rate `γ`, with the concept's distance from the form's prototype. -/
+/-- On hearing a form, the similarity choice listener weighs each concept by an exponential that
+falls off, at rate `γ`, with the concept's distance from the form's prototype. -/
 noncomputable def listener (γ : ℝ) (d : C → Q → ℝ) (q : W → Q) : Kernel W C :=
-  Kernel.ofWeights fun w c ↦ ENNReal.ofReal (Real.exp (-γ * d c (q w)))
+  Kernel.softmax fun w c ↦ ((-γ * d c (q w) : ℝ) : EReal)
 
 variable (γ : ℝ) (d : C → Q → ℝ) (q : W → Q)
 
 instance [Nonempty C] : IsMarkovKernel (listener γ d q) :=
-  Kernel.isMarkovKernel_ofWeights
-    (fun _ ↦ ⟨Classical.arbitrary C, (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne'⟩)
-    fun _ _ ↦ ENNReal.ofReal_ne_top
+  Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary C, EReal.coe_ne_bot _⟩)
+    fun _ _ ↦ EReal.coe_ne_top _
 
 /-- The listener's probability of a concept is the softmax of the negative scaled distances. -/
 theorem real_listener (w : W) (c : C) :
-    (listener γ d q w).real {c} = Real.softmax (fun c ↦ -γ * d c (q w)) c := by
-  rw [listener, Kernel.ofWeights_real_singleton _ _ fun _ ↦ ENNReal.ofReal_ne_top,
-    Real.softmax_def]
-  simp only [ENNReal.toReal_ofReal (Real.exp_pos _).le]
+    (listener γ d q w).real {c} = Real.softmax (fun c ↦ -γ * d c (q w)) c :=
+  Kernel.softmax_coe_real_singleton _ w c
 
 /-- Under a form, a concept closer to the prototype is less surprising to the listener, so it
 incurs less information loss. -/
@@ -90,7 +86,7 @@ theorem surprisal_listener_le [Nonempty C] (hγ : 0 ≤ γ) {w : W} {c c' : C}
 /-- With no sensitivity the listener is uniform. -/
 theorem real_listener_zero (w : W) (c : C) :
     (listener 0 d q w).real {c} = 1 / Fintype.card C := by
-  simp [real_listener, Real.softmax_def]
+  simp [real_listener, Real.softmax_apply]
 
 end Listener
 
