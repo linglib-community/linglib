@@ -1,20 +1,19 @@
 module
 
 public import Linglib.Semantics.Questions.Bias
-public import Linglib.Syntax.PolarInterrogative
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Fragments.German.PolarityItems
 
 /-!
 # Büring and Gunlogson 2000: aren't positive and negative polar questions the same?
 
-This file formalizes the felicity conditions of [buring-gunlogson-2000]. Standard question
+This file formalizes Büring and Gunlogson's felicity conditions. Standard question
 semantics gives *Is she left-handed?*, *Isn't she left-handed?* and *Is she right-handed?* one and
 the same denotation, yet the three types are felicitous in different contexts: a positive question
 is barred by compelling contextual evidence against its proposition, an inner-negation question
 requires such evidence, and an outer-negation question is barred by evidence for it. The paper's
 appendix derives all three from one proto-condition applied to the question's proposition, to its
-negation, or negated in turn, and the morphosyntactic probes of [ladd-1981] — *kein* vs *nicht
+negation, or negated in turn, and Ladd's morphosyntactic probes — *kein* vs *nicht
 ein*, *no* vs *not some*, and the polarity items they admit — classify a question independently of
 those judgements.
 
@@ -158,15 +157,15 @@ theorem outer_is_interrogative_only (d : Determiner) :
     d.polarity = .positive ↔ ¬ d.declarativeOK := by
   cases d <;> decide
 
-/-- A polar question as its two probes: a negative determiner and, optionally, a polarity item,
+/-- A polar question as its two probes, a negative determiner and, optionally, a polarity item,
 English *either* or *too* or German *brauchen*. -/
 structure Question where
   determiner : Determiner
   item : Option PolarityItem
 
-/-- The probes agree on where the negation sits: a negative polarity item must sit under it, so it
-requires the inner construal, and a positive polarity item must escape it, so it requires the outer
-one. -/
+/-- The probes agree on where the negation sits, since a negative polarity item must sit under it,
+so it requires the inner construal, and a positive polarity item must escape it, so it requires
+the outer one. -/
 def Question.WellFormed (q : Question) : Prop :=
   ∀ e ∈ q.item,
     (e.IsNPI → q.determiner.polarity = .negative) ∧ (e.IsPPI → q.determiner.polarity = .positive)
@@ -177,19 +176,19 @@ instance : ∀ q : Question, Decidable q.WellFormed
     decidable_of_iff ((e.IsNPI → d.polarity = .negative) ∧ (e.IsPPI → d.polarity = .positive))
       (by simp [Question.WellFormed])
 
-/-- *Is there no vegetarian restaurant either/\*too?* (14a): the inner-negation determiner takes
+/-- In *Is there no vegetarian restaurant either/\*too?* (14a) the inner-negation determiner takes
 the negative polarity item and refuses the positive one. -/
 theorem no_takes_either_not_too :
     (Question.mk .no (some either)).WellFormed ∧
       ¬ (Question.mk .no (some too)).WellFormed := by decide
 
-/-- *Isn't there some vegetarian restaurant \*either/too?* (14b): the outer-negation determiner
+/-- In *Isn't there some vegetarian restaurant \*either/too?* (14b) the outer-negation determiner
 takes the positive polarity item and refuses the negative one. -/
 theorem notSome_takes_too_not_either :
     (Question.mk .notSome (some too)).WellFormed ∧
       ¬ (Question.mk .notSome (some either)).WellFormed := by decide
 
-/-- *Brauchst du keine/\*nicht eine Entschuldigung mitzubringen?* (16): the German NPI likewise
+/-- In *Brauchst du keine/\*nicht eine Entschuldigung mitzubringen?* (16) the German NPI likewise
 goes with the amalgamated determiner only. -/
 theorem brauchen_takes_kein_not_nichtEin :
     (Question.mk .kein (some brauchen)).WellFormed ∧

@@ -6,7 +6,7 @@ public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Semantics.Questions.Bias
-public import Linglib.Syntax.PolarInterrogative
+public import Linglib.Syntax.Negation
 public import Mathlib.Order.Interval.Set.Defs
 
 /-!
@@ -34,11 +34,11 @@ implicates, `bias_of_form`.
 
 The common ground at a world is a filter of propositions, so acceptance is closed under entailment
 and conjunction where the paper speaks of a set of propositions. VERUM is not a named operator of
-its own: other analyses built on it, [repp-2013]'s FALSUM among them, are necessities along the same
+its own: other analyses built on it, Repp's FALSUM among them, are necessities along the same
 relation of the common ground's acceptance of a proposition or its failure to. Speaker belief is the
 epistemic proposition of the states settling a proposition, `Set.Iic`. A question's form is the
-position of its negation, `Option NegationPosition`, what matters being its position relative to the
-rest of the clause, preposed or not; a bias is the sign of the proposition the speaker's belief
+position of its negation, `Option Negation.Position`, what matters being its position relative to
+the rest of the clause, preposed or not; a bias is the sign of the proposition the speaker's belief
 supports. The Principle of Economy that makes VERUM questions biased is stated in the paper in prose
 and is not formalized.
 
@@ -66,7 +66,7 @@ variable {W : Type*} (epi conv : SetRel W W) (cg : W → Filter W) (p : Set W)
 
 /-! ### The four VERUM questions -/
 
-/-- The yes/no questions containing VERUM: the positive reading of preposed negation, with
+/-- The yes/no questions containing VERUM, namely the positive reading of preposed negation, with
 negation over VERUM (73), the negative reading, with VERUM over negation (68), the
 *really*-question (111), and focused *NOT* (118). -/
 inductive Form
@@ -76,13 +76,13 @@ inductive Form
   | notFocus
   deriving DecidableEq, Fintype
 
-/-- The proposition under VERUM: the proposition for the positive reading and *really*, its
+/-- The proposition under VERUM is the proposition for the positive reading and *really*, and its
 negation for the negative reading and focused *NOT*. -/
 def prejacent : Form → Set W
   | .pi | .really => p
   | .ni | .notFocus => pᶜ
 
-/-- Whether the form pronounces the doubt cell, the complement of VERUM: only the positive
+/-- Whether the form pronounces the doubt cell, the complement of VERUM, as only the positive
 reading, where negation scopes over VERUM, does. -/
 def Form.Doubt : Form → Prop
   | .pi => True
@@ -90,12 +90,12 @@ def Form.Doubt : Form → Prop
 
 instance : DecidablePred Form.Doubt := λ f => by cases f <;> unfold Form.Doubt <;> infer_instance
 
-/-- The cell a form pronounces: VERUM of the prejacent, or its complement. -/
+/-- The cell a form pronounces, VERUM of the prejacent or its complement. -/
 def pronounced (f : Form) : Set W :=
   if f.Doubt then {w | □[epi ○ conv] (prejacent p f ∈ cg ·) w}ᶜ
   else {w | □[epi ○ conv] (prejacent p f ∈ cg ·) w}
 
-/-- The question denoted: the polar question over the pronounced cell. -/
+/-- The question a form denotes is the polar question over the pronounced cell. -/
 def denotation (f : Form) : Question W := polar (pronounced epi conv cg p f)
 
 /-- Every VERUM question denotes the partition on certainty about its prejacent (48), (69),
@@ -118,13 +118,13 @@ which the addressee can only supply if the prejacent is the addressee's proposit
 negation the speaker's belief; a question pronouncing uncertainty asks for doubts, so the
 prejacent is the speaker's belief. -/
 
-/-- The speaker's original belief implicated by a form: the epistemic proposition of the
+/-- The speaker's original belief implicated by a form is the epistemic proposition of the
 states settling the prejacent's negation, or the prejacent itself for the doubt cell. -/
 def speakerBelief (f : Form) : Set (Set W) :=
   if f.Doubt then Iic (prejacent p f) else Iic (prejacent p f)ᶜ
 
-/-- The bias each form implicates: belief in the proposition for the preposed-negation
-readings (81), (82) and focused *NOT* (117), belief in its negation for *really* (110). -/
+/-- The bias each form implicates is belief in the proposition for the preposed-negation
+readings (81), (82) and focused *NOT* (117), and belief in its negation for *really* (110). -/
 def Form.implicature : Form → Polarity
   | .pi | .ni | .notFocus => .positive
   | .really => .negative
@@ -159,10 +159,10 @@ instance (e : PolarityItem) (f : Form) : Decidable (Licensed e f) := by
 
 /-! ### The paper's examples -/
 
-/-- An example: the position of its negation, if any, its reported bias, its VERUM
+/-- An example, with the position of its negation, if any, its reported bias, its VERUM
 form and its polarity item, each when the paper gives one, and its judgment. -/
 structure Row where
-  negation : Option (Option NegationPosition)
+  negation : Option (Option Negation.Position)
   bias : Option SignType
   form : Option Form
   item : Option PolarityItem
@@ -171,7 +171,7 @@ structure Row where
 /-- A datum read into its row. -/
 def Row.ofDatum (e : Datum) : Row where
   negation := e.parse? "negation"
-    [("preposed", some NegationPosition.preposed), ("nonPreposed", some .nonPreposed),
+    [("preposed", some Negation.Position.preposed), ("nonPreposed", some .nonPreposed),
       ("none", none)]
   bias := e.parse? "bias" [("positive", (1 : SignType)), ("negative", -1), ("none", 0)]
   form := e.parse? "form" [("pi", Form.pi), ("ni", .ni), ("really", .really),
