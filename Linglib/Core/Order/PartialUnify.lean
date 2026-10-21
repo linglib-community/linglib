@@ -339,6 +339,11 @@ theorem compat_pi_iff {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g
     Compat f g ↔ ∀ t, Compat (f t) (g t) := by
   simp only [Compat, bddAbove_pi, Set.image_pair]
 
+/-- Compatibility on a product is componentwise. -/
+theorem compat_prod_iff {β : Type*} [Preorder α] [Preorder β] {a b : α × β} :
+    Compat a b ↔ Compat a.1 b.1 ∧ Compat a.2 b.2 := by
+  simp only [Compat, bddAbove_prod, Set.image_pair]
+
 /-- Compatibility of functions is pointwise. -/
 theorem Compat.apply {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g : ∀ t, S t}
     (h : Compat f g) (t : F) : Compat (f t) (g t) :=

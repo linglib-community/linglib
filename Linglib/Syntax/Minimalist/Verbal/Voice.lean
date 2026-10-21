@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Feature.Basic
+public import Linglib.Core.Order.Flat
 
 /-!
 # Voice heads
@@ -17,8 +18,8 @@ the external one, reflexively or reciprocally, or demote it to an oblique, the a
 check the accusative Case that v otherwise checks; and may carry Agree features.
 
 Every property consumers read is derived from the cell: `Head.IsThematic`, `Head.AssignsTheta`,
-`Head.ExternalImplicit`, `Head.IsPhasal`, and the underspecified cell `Head.params` that
-Beavers and Udayana's Indonesian *ber-* leaves open.
+`Head.ExternalImplicit`, `Head.IsPhasal`, and `Head.params`, the cell as a pair of `Flat Bool`
+coordinates that a morpheme spelling out several heads may leave open.
 
 ## Main definitions
 
@@ -28,8 +29,7 @@ Beavers and Udayana's Indonesian *ber-* leaves open.
   `Head.ChecksCase`, `Head.DCoherent`: the predicate API.
 * `agentive`, `causer`, `experiencer`, `anticausative`, `middle`, `passive`, `impersonal`,
   `reflexive`, `reciprocal`, `antipassive`: the named cells.
-* `Params`, `Head.params`, `Params.Compatible`: the ±D/±λx cell with either coordinate left
-  open.
+* `Params`, `Head.params`: the ±D/±λx cell with either coordinate left open.
 
 ## Main results
 
@@ -38,7 +38,6 @@ Beavers and Udayana's Indonesian *ber-* leaves open.
 * `canonical_dCoherent`: every named cell realizes its variable in its specifier exactly when it
   has one.
 * `antipassive_not_phasal`: the antipassive is thematic and active yet not a phase.
-* `Params.Compatible.refl`, `underspecified_compatible_with_all`.
 
 ## Implementation notes
 
@@ -53,7 +52,7 @@ Beavers and Udayana's Indonesian *ber-* leaves open.
 
 ## References
 
-* [alexiadou-schaefer-2015]
+* [alexiadou-anagnostopoulou-schaefer-2015]
 * [beavers-udayana-2022]
 * [chomsky-2001]
 * [collins-2005]
@@ -74,7 +73,7 @@ namespace Minimalist.Voice
 /-! ### The cell -/
 
 /-- The instruction a thematic Voice head gives for interpreting its external-argument
-variable ([alexiadou-schaefer-2015]). -/
+variable ([alexiadou-anagnostopoulou-schaefer-2015]). -/
 inductive Instruction where
   | agent
   | causer
@@ -135,7 +134,7 @@ unless it is the antipassive, which detransitivizes. -/
 def IsPhasal : Prop := v.AssignsTheta ∧ v.HasD ∧ v.operation ≠ some .antipassive
 
 /-- A thematic head's variable is implicit exactly when the head projects no specifier, as in
-[alexiadou-schaefer-2015]'s grid; a head may diverge, and stating the divergence
+[alexiadou-anagnostopoulou-schaefer-2015]'s grid; a head may diverge, and stating the divergence
 makes it explicit. -/
 def DCoherent : Prop := v.IsThematic → v.implicit = !v.hasD
 
@@ -155,32 +154,15 @@ end Head
 
 /-! ### The underspecified cell -/
 
-/-- The ±D/±λx cell with either coordinate left open ([alexiadou-schaefer-2015],
-[schaefer-2017]): `none` is underspecified, as Indonesian *ber-* is on both
-([beavers-udayana-2022]). -/
-structure Params where
-  /-- Does the head project a specifier? -/
-  hasD : Option Bool
-  /-- Does the head introduce an external-argument variable? -/
-  thematic : Option Bool
-  deriving DecidableEq, Repr
+/-- The ±D/±λx cell, whether a head projects a specifier and whether it is thematic, with either
+coordinate left open for a morpheme that spells out several heads
+([alexiadou-anagnostopoulou-schaefer-2015], [beavers-udayana-2022]). A coordinate is a
+`Flat Bool`, `⊥` when open, so cells are ordered by subsumption and are compatible (`Compat`)
+when they agree wherever both are specified. -/
+abbrev Params := Flat Bool × Flat Bool
 
 /-- The cell of a head, fully specified. -/
-def Head.params (v : Head) : Params := ⟨some v.hasD, some v.thematic.isSome⟩
-
-/-- Two cells are compatible when they agree on every coordinate both specify. -/
-def Params.Compatible (p q : Params) : Prop :=
-  (∀ s ∈ p.hasD, ∀ t ∈ q.hasD, s = t) ∧ ∀ s ∈ p.thematic, ∀ t ∈ q.thematic, s = t
-
-instance : DecidableRel Params.Compatible := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-theorem Params.Compatible.refl (p : Params) : p.Compatible p :=
-  ⟨fun _ hs _ ht ↦ Option.mem_unique hs ht, fun _ hs _ ht ↦ Option.mem_unique hs ht⟩
-
-/-- A cell open on both coordinates is compatible with every head. -/
-theorem underspecified_compatible_with_all (v : Head) :
-    Params.Compatible ⟨none, none⟩ v.params :=
-  ⟨fun _ h ↦ by simp at h, fun _ h ↦ by simp at h⟩
+def Head.params (v : Head) : Params := (v.hasD, v.thematic.isSome)
 
 /-! ### The named cells -/
 
