@@ -100,12 +100,6 @@ def ber? (v : Verb) : Option (List Segment) :=
 def ter? (v : Verb) : Option (List Segment) :=
   v.terClass.map fun _ ↦ [t, e, r] ++ v.rootSegments
 
-/-- The *ber-* form of the verb can incorporate *diri* 'self', which gives it a reflexive
-reading. -/
-def IncorporatesDiri (v : Verb) : Prop := "diri" ∈ v.incorporatedNPs
-
-instance : DecidablePred IncorporatesDiri := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
-
 end Verb
 
 /-! ### Roots with a middle in *ber-* -/
