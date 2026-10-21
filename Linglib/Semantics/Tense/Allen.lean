@@ -14,59 +14,30 @@ public import Mathlib.Tactic.FinCases
 /-!
 # Allen's interval relations
 
-This file defines the relations between closed intervals of a linear order that [allen-1983]
-takes as the atoms of temporal reasoning, extended to intervals that are points. One interval
-stands to another as their endpoints compare: each endpoint of the first with each endpoint of
-the second, and the endpoints of each with each other, which tells a point from a proper interval
-(`Allen.Relation`, `Allen.relation`). Twenty-six such relations are realizable (`Allen.card_atoms`):
-Allen's thirteen between proper intervals, five between a point and a proper interval, five
-between a proper interval and a point, and three between points.
-
-A cell is a set of relations, the disjunction a temporal expression imposes, and `Allen.toSetRel`
-reads it as a relation between intervals. Cells have converses and composites (`Allen.inv`,
-`Allen.comp`), the composite read off configurations of endpoints, and on dense time without
-endpoints the composite of two cells relates exactly the intervals that the composite of their
-relations does (`Allen.toSetRel_comp`). That a relation records which intervals are points is what
-makes the composite exact: a point and a proper interval can stand alike to one interval and
-unlike to another.
-
-The cells of the tense and aspect literature are named here, each read as one of the relations of
-`Core/Order/Interval/Basic.lean`: precedence, precedence or abutment, the subinterval order and its
-strict part, overlap, and the first interval's starting within the second. The position of one
-interval relative to another is a function of their relation (`Allen.position_relation`), so a
-cell of positions, as the comparison cells of the tenses are read on intervals, is a cell
-(`Allen.ofPosition`). The comparison cells of the tenses are also the cells of point intervals
-(`Allen.pure`), and their composition is Allen composition there (`Allen.comp_pure`).
-
-A clause locates its event by a chain of times, each related to the one before it by a head, a
-tense relating its reference time to the utterance time and an aspect the event time to the
-reference time (`Allen.HoldsAlong`). The last time of a chain stands to the first in the composite
-of its cells (`Allen.compAlong`), and on dense time without endpoints any two times that stand so
-are the ends of a realization of the chain (`Allen.mem_compAlong_iff`).
+This file defines the relations between closed intervals of a linear order [allen-1983], extended
+to point intervals: how the endpoints of two intervals compare, sets of such relations (cells),
+their converses and composites, and chains of cells.
 
 ## Main definitions
 
-* `Allen.Relation`, `Allen.relation`: how one interval stands to another.
-* `Allen.atoms`: the realizable relations.
-* `Allen.toSetRel`: a cell as a relation between intervals.
-* `Allen.inv`, `Allen.comp`: the converse and the composite of cells.
+* `Allen.Relation`, `Allen.relation`, `Allen.atoms`: the relations and the realizable ones.
+* `Allen.toSetRel`, `Allen.inv`, `Allen.comp`: a cell as a relation, its converse and composite.
 * `Allen.precedes`, `Allen.isBefore`, `Allen.le`, `Allen.lt`, `Allen.overlaps`,
-  `Allen.startsWithin`, `Allen.ofPosition`, `Allen.eq`, `Allen.pure`: the named cells.
-* `Allen.HoldsAlong`, `Allen.compAlong`: a chain of times along cells, and its composite.
+  `Allen.startsWithin`, `Allen.eq`, `Allen.pure`, `Allen.ofPosition`: named cells.
+* `Allen.HoldsAlong`, `Allen.compAlong`: chains of cells and their composites.
+* `NonemptyInterval.position`: the position of two intervals.
 
 ## Main results
 
 * `Allen.card_atoms`: twenty-six relations are realizable.
-* `Allen.toSetRel_inv`: the converse of a cell's relation is the relation of its converse.
-* `Allen.toSetRel_comp_subset`, `Allen.toSetRel_comp`: the composite of two cells' relations lies
-  in the relation of their composite, and is it on dense time without endpoints.
-* `NonemptyInterval.position`, `Allen.position_relation`: the position of two intervals, read off
-  their relation.
+* `Allen.toSetRel_comp`: composition is exact on dense time without endpoints.
 * `Allen.comp_pure`: on points, Allen composition is the composition of comparison cells.
-* `Allen.HoldsAlong.mem_compAlong`, `Allen.mem_compAlong_iff`: the ends of a chain stand in its
-  composite, and on dense time without endpoints exactly they do.
-* `Allen.relation_mem_precedes` and its siblings: the named cells relate the intervals that the
-  relations of `Core/Order/Interval/Basic.lean` do.
+* `Allen.mem_compAlong_iff`: on dense time, the composite of a chain is exactly realized.
+
+## Implementation notes
+
+A relation records whether each interval is a point; with the four cross comparisons alone
+composition is not exact.
 
 ## References
 
@@ -390,9 +361,7 @@ end LinearOrder
 
 /-! ### Points
 
-A comparison cell, a `Finset Ordering` of the tenses, relates points; on point intervals it is
-the cell `pure C`, and the composite of two such cells is the cell of their composite as
-comparison cells. -/
+The comparison cells of the tenses are the cells of point intervals. -/
 
 /-- The two intervals are the same. -/
 def eq : Finset Relation := atoms.filter fun r ↦ r.fstFst = .eq ∧ r.sndSnd = .eq
@@ -447,10 +416,7 @@ theorem comp_pure (R S : Finset Ordering) : comp (pure R) (pure S) = pure (Tense
 
 /-! ### Chains
 
-A clause locates its event by a chain of times, each related to the one before it by a head: a
-tense relates its reference time to the utterance time, an aspect the event time to the reference
-time. A chain of cells relates its last time to its first by their composite, exactly so on dense
-time without endpoints. -/
+A clause's times form a chain, each related to the one before it by a head's cell. -/
 
 section LinearOrder
 
