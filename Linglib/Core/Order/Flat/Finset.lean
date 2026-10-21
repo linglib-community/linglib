@@ -17,6 +17,7 @@ extending to all of them, its meet, which is `⊥` once the finset has two value
 * `Flat.le_inf'_iff_subset_extensions`: the meet of a finset of values is the greatest flat value
   extending to all of them.
 * `Flat.subset_extensions_iff_eq_bot`: only `⊥` extends to two distinct values.
+* `Flat.finsetInf`: the meet of a finset-indexed family of flat values.
 -/
 
 @[expose] public section
@@ -25,13 +26,20 @@ namespace Flat
 
 open Finset
 
-variable {α : Type*} [DecidableEq α] {x : Flat α} {s : Finset α} {a : α}
+variable {α ι : Type*} [DecidableEq α] {x : Flat α} {s : Finset α} {a : α}
 
 /-- Two distinct values have no common flat value but `⊥`. -/
 theorem inf'_coe_eq_bot (hs : s.Nontrivial) : s.inf' hs.nonempty (↑) = (⊥ : Flat α) := by
   obtain ⟨a, ha, b, hb, hab⟩ := hs
   refine le_bot_iff.1 (le_of_le_of_eq (le_inf (inf'_le _ ha) (inf'_le _ hb)) ?_)
   simpa [inf_def, eq_comm] using hab
+
+/-- The meet of the flat values `v i` over a finset `s` of indices, `⊥` on the empty finset. -/
+def finsetInf (s : Finset ι) (v : ι → Flat α) : Flat α :=
+  if h : s.Nonempty then s.inf' h v else ⊥
+
+@[simp] theorem finsetInf_singleton (i : ι) (v : ι → Flat α) : finsetInf {i} v = v i := by
+  simp [finsetInf]
 
 variable [Fintype α]
 

@@ -45,6 +45,7 @@ jargon, and "metasyncretism" does not appear in the book.
 
 * `Morphology.syncretismClass` — the class (fiber) of a given cell
 * `Morphology.formCells` — the cells a form realizes, the `Finset` face of the class
+* `Morphology.formCellsOf` — the cells a table with defective or overabundant cells gives a form
 * `Morphology.IsMorphome` — a nontrivial syncretism class failing `Natural`
 * `Morphology.IsValueConjunction` — the cells agreeing with a witness on a set of features,
   [herce-2023]'s natural class
@@ -71,6 +72,16 @@ def formCells [Fintype Cell] [DecidableEq F] (p : Cell → F) (f : F) : Finset C
 @[simp] theorem mem_formCells [Fintype Cell] [DecidableEq F] {p : Cell → F} {f : F} {c : Cell} :
     c ∈ formCells p f ↔ p c = f := by
   simp [formCells]
+
+/-- The cells a table `p` gives the form `f`, where a cell may have no form or several: the
+`Finset` face of a defective or overabundant paradigm, and of a segmented realization at one of
+its exponents. -/
+def formCellsOf [Fintype Cell] [DecidableEq F] (p : Cell → Finset F) (f : F) : Finset Cell :=
+  Finset.univ.filter (f ∈ p ·)
+
+@[simp] theorem mem_formCellsOf [Fintype Cell] [DecidableEq F] {p : Cell → Finset F} {f : F}
+    {c : Cell} : c ∈ formCellsOf p f ↔ f ∈ p c := by
+  simp [formCellsOf]
 
 theorem coe_formCells [Fintype Cell] [DecidableEq F] (p : Cell → F) (a : Cell) :
     (formCells p (p a) : Set Cell) = syncretismClass p a := by
@@ -124,29 +135,5 @@ theorem isValueConjunction_coe_iff [Fintype Cell] [DecidableEq Cell] (feats : ι
       ∃ (S : Finset ι) (c₀ : Cell), Finset.univ.filter (fun c ↦ ∀ i ∈ S, feats i c c₀) = X := by
   simp only [IsValueConjunction, ← Finset.coe_inj, Finset.coe_filter, Finset.mem_univ, true_and,
     eq_comm]
-
-/-! ### Shared exponents in segmented realizations
-
-Whole-form kernels cannot see a *piece* shared across cells whose full
-forms differ (a suffix shared by two segmented stems, like Chuj -aj
-inside *-chaj* and *-waj*).
-For a realization map valued in exponent sequences, `exponentCells`
-tracks a piece's distribution; whether that distribution is a natural
-class is then the same question `IsMorphome` asks of whole-form
-classes. -/
-
-variable {E : Type*}
-
-/-- The cells whose segmented realization contains the exponent `e` —
-the piece-level analogue of `syncretismClass`. -/
-def exponentCells (p : Cell → List E) (e : E) : Set Cell := {c | e ∈ p c}
-
-@[simp] theorem mem_exponentCells {p : Cell → List E} {e : E} {c : Cell} :
-    c ∈ exponentCells p e ↔ e ∈ p c := Iff.rfl
-
-/-- Wholly syncretic cells agree on every shared exponent. -/
-theorem exponentCells_congr (p : Cell → List E) (e : E) {c₁ c₂ : Cell}
-    (h : p c₁ = p c₂) : c₁ ∈ exponentCells p e ↔ c₂ ∈ exponentCells p e := by
-  simp [h]
 
 end Morphology
