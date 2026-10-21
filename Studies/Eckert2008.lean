@@ -185,6 +185,9 @@ inductive INGVariant
   | apical
   deriving DecidableEq, Fintype
 
+theorem INGVariant.eq_velar_or_eq_apical (u : INGVariant) : u = .velar ∨ u = .apical := by
+  cases u <;> simp
+
 /-- The potential meanings of Figure 3, the velar variant heard as educated, formal, effortful
 and articulate or pretentious, the apical as uneducated, relaxed, easygoing or lazy, and
 inarticulate or unpretentious. -/

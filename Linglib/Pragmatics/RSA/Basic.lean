@@ -1138,6 +1138,31 @@ theorem speaker_listener_truthful_dirac_real_singleton_lt_iff [DiscreteMeasurabl
     listener_truthful_apply_singleton μ sem hu', key hμ (measure_ne_top _ _),
     ENNReal.inv_lt_inv]
 
+/-- With Boolean meanings and no cost, a state exactly two utterances fit produces one in the
+`α`-th power of the other's extension mass over the sum of both, the more often the smaller its
+own extension. -/
+theorem speaker_listener_truthful_dirac_zero_real_singleton_of_pair [DiscreteMeasurableSpace W]
+    (hα : 0 < α) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
+    {u u' : U} (huu' : u ≠ u') (hu : w ∈ sem u) (hu' : w ∈ sem u')
+    (hsupp : ∀ v, w ∈ sem v → v = u ∨ v = u') :
+    (speaker α 0 (listener μ (truthful sem)) Measure.dirac w).real {u} =
+      μ.real (sem u') ^ α / (μ.real (sem u) ^ α + μ.real (sem u') ^ α) := by
+  have hx : 0 < μ.real {w} := ENNReal.toReal_pos hμ (measure_ne_top _ _)
+  have hpos {v : U} (hv : w ∈ sem v) : 0 < μ.real (sem v) :=
+    hx.trans_le (measureReal_mono (Set.singleton_subset_iff.2 hv))
+  have hterm {v : U} (hv : w ∈ sem v) : (listener μ (truthful sem) v {w} ^ α).toReal =
+      μ.real {w} ^ α / μ.real (sem v) ^ α := by
+    rw [← ENNReal.toReal_rpow, ← measureReal_def, listener_truthful_real_singleton μ sem hv,
+      Real.div_rpow hx.le (hpos hv).le]
+  rw [speaker_dirac_zero_real_singleton hα.le, Finset.sum_eq_add u u' huu' (fun v _ hv ↦ ?_)
+      (by simp) (by simp), hterm hu, hterm hu']
+  · have := hpos hu
+    have := hpos hu'
+    field_simp
+    ring
+  · rw [listener_truthful_apply_singleton_of_notMem μ sem fun h ↦ (hsupp v h).elim hv.1 hv.2,
+      ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero]
+
 end Dirac
 
 /-! #### The heard form

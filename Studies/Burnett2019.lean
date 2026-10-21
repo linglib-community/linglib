@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Core.Probability.Kernel.Composition.Lemmas
+public import Linglib.Data.Experiments.Burnett2019
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Studies.Eckert2008
@@ -8,33 +10,40 @@ public import Studies.Labov2012
 /-!
 # Burnett (2019): Signalling games, sociolinguistic variation and the construction of style
 
-This file formalizes Burnett's social meaning games. A speaker choosing between *-ing* and *-in'*
-conveys something about the persona they are constructing, and the paper takes that inference to be
-the equilibrium of a signalling game between a rational speaker and listener: each variant is
-compatible with the personae sharing a property with its indexical field, the listener infers a
-persona from the variant against a prior, and the speaker chooses the variant that best conveys the
-persona they are after. Two kinds of variation come out of the one model. A speaker holding a
-persona fixed changes variants as the context changes the listener's prior, style shifting, here
-Labov's Obama, who prefers *-in'* at a barbecue and *-ing* with the journalists and avoids *-in'*
-at the convention, where he constructs a persona it cannot convey, so that the model orders
-Labov's three occasions as his observed rates do (`apicalRate_lt_iff`); and a listener
-holding the variant fixed infers different personae from different speakers, so that a strongly
-stereotyped speaker such as the paper's Bush conveys nothing by the choice.
+A social meaning game reads the social meaning of a sociolinguistic variable off a signalling
+game over personae, the maximal consistent sets of social properties. The literal listener
+conditions a prior over personae on those a variant's properties meet, the speaker chooses a
+variant by the softmax of its informativity about the persona she constructs, and the naive
+listener inverts the speaker against the prior. When the two variants index complementary
+personae, as those of (ING) and /t/ release do, each rules out exactly the persona its rival
+indexes, and the paper's predictions come out in closed form from the prior mass of those two.
 
-The property space is the example's two dimensions, competence and warmth, and the four
-personae of example (6) are its maximal consistent sets (`personae_eq`). The meaning of a
-variant is the lift of its indexical field to persona compatibility, and every prediction is an
-instance of the game's speaker preferring the more informative variant (`prefers_iff`).
+## Main results
+
+* `S1_eq`: of two variants indexing complementary personae, every persona both convey is
+  produced alike.
+* `half_lt_share_iff`: such a persona prefers the variant that rules out the likelier persona.
+* `S1_real_singleton_of_ne`: it produces a variant in proportion to the `α`-th power of the
+  rival's extension, which gives the barbecue's 69% and the journalists' 31% (`casual_apical`,
+  `careful_apical`).
+* `L1_real_singleton_of_ne`, `L1_real_singleton_left`: when the excluded personae are equally
+  likely, a variant doubles the persona only it conveys and leaves every other at its prior,
+  which gives Rice's Table 12 and Bush's bulletproofing (`bush_bulletproof`).
+* `classRate_lt_classRate_iff`: the value functions of Table 8 order the classes as Labov's
+  rates of Table 7, at every rationality.
+* `apicalRate_lt_iff`: the model orders Labov's three recordings of Obama as his rates do.
 
 ## Implementation notes
 
-The contexts are priors over personae given as integer weights, read off the paper's tables as
-the text describes them, more mass on the aloof personae at the barbecue and on the incompetent
-ones with the journalists. The speaker is the softmax of the literal listener at the paper's
-rationality 6 with no costs, and the pragmatic listener the Bayesian posterior against the
-same prior; no normaliser is evaluated, preferences being compared with the pipeline's lemmas,
-which cancel them. The persona selection of Section 4.3, a softmax over the speaker's values of
-the personae and the marginal rate of a variant, is not represented.
+Priors are integer weights read off the paper's tables, the listener normalizing them, and the
+speaker's rationality is a parameter, `6` where the paper computes a number. Persona selection
+is the sequential rule (15). Table 9 prints 33, 50 and 66 for the classes, which is what the
+joint rule (16) gives at rationality 6; the sequential rule gives about 25, 50 and 75 there, in
+the same order.
+
+## TODO
+
+* The joint selection rule (16) and the uncovering listener (20).
 
 ## References
 
@@ -49,12 +58,265 @@ the personae and the marginal rate of a variant, is not represented.
 
 namespace Burnett2019
 
-open MeasureTheory ProbabilityTheory RSA
+open MeasureTheory ProbabilityTheory RSA SocialMeaning
 open scoped ENNReal
-open SocialMeaning
 open Eckert2008 (INGVariant)
 
-/-! ### Personae and variants -/
+/-! ### Social meaning games -/
+
+section Game
+
+variable {V P : Type*} [Fintype P] [DecidableEq P] {G : SimpleGraph P} [DecidableRel G.Adj]
+  (F : GroundedField V G)
+
+/-- A speaker selects a persona by the softmax of her values at rationality `α'` (14). -/
+noncomputable def select (α' : ℝ) (value : Persona G → ℝ) : Measure (Persona G) :=
+  Measure.ofWeights fun π ↦ ENNReal.ofReal (Real.softmax (fun π ↦ α' * value π) π)
+
+instance (α' : ℝ) (value : Persona G → ℝ) : IsFiniteMeasure (select α' value) :=
+  Measure.isFiniteMeasure_ofWeights fun _ ↦ ENNReal.ofReal_ne_top
+
+variable [Nonempty (Persona G)]
+
+@[simp] theorem select_real_singleton (α' : ℝ) (value : Persona G → ℝ) (π : Persona G) :
+    (select α' value).real {π} = Real.softmax (fun π ↦ α' * value π) π := by
+  rw [measureReal_def, select, Measure.ofWeights_apply_singleton,
+    ENNReal.toReal_ofReal (Real.softmax_nonneg _ _)]
+
+@[simp] theorem select_real_univ (α' : ℝ) (value : Persona G → ℝ) :
+    (select α' value).real Set.univ = 1 := by
+  rw [← Finset.coe_univ, ← sum_measureReal_singleton]
+  simp only [select_real_singleton, Real.sum_softmax]
+
+variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V]
+
+/-- The literal listener conditions the prior on the variant's Eckert–Montague field (11). -/
+noncomputable abbrev L0 (prior : Measure (Persona G)) : Kernel V (Persona G) :=
+  listener prior (truthful fun v ↦ ↑(F.personae v))
+
+/-- The speaker is the softmax of the literal listener's informativity at rationality `α`, the
+variants costing nothing (12), (13). -/
+noncomputable abbrev S1 (α : ℝ) (prior : Measure (Persona G)) : Kernel (Persona G) V :=
+  speaker α 0 (L0 F prior) Measure.dirac
+
+/-- The naive listener inverts the speaker against the prior (18). -/
+noncomputable abbrev L1 (α : ℝ) (prior : Measure (Persona G)) : Kernel V (Persona G) :=
+  listener prior (S1 F α prior)
+
+end Game
+
+/-! ### Binary variables -/
+
+section Binary
+
+variable {V P : Type*} [Fintype P] [DecidableEq P] {G : SimpleGraph P} [DecidableRel G.Adj]
+  {F : GroundedField V G} {v w : V} (h : F.Complementary v w)
+include h
+
+section Exclusion
+
+variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] {prior : Measure (Persona G)}
+  {α : ℝ} (hα : 0 < α)
+include hα
+
+/-- The persona only the second variant conveys never produces the first. -/
+theorem S1_right_real_singleton : (S1 F α prior h.right).real {v} = 0 :=
+  speaker_listener_truthful_dirac_real_singleton_eq_zero hα 0 prior _
+    (Finset.mem_coe.not.2 h.right_notMem_personae)
+
+/-- Hearing the first variant rules out the persona it excludes. -/
+theorem L1_real_singleton_right : (L1 F α prior v).real {h.right} = 0 := by
+  rw [measureReal_def, listener_speaker_listener_truthful_apply_singleton_of_notMem hα 0 prior
+    (fun u ↦ ↑(F.personae u)) (w := h.right)
+    (Finset.mem_coe.not.2 h.right_notMem_personae), ENNReal.toReal_zero]
+
+end Exclusion
+
+variable {prior : Measure (Persona G)} [IsFiniteMeasure prior] {α : ℝ}
+
+theorem measureReal_personae :
+    prior.real ↑(F.personae v) = prior.real Set.univ - prior.real {h.right} := by
+  rw [h.personae_eq_compl, Finset.coe_compl, Finset.coe_singleton,
+    measureReal_compl (measurableSet_singleton _)]
+
+/-- The share of the first variant among the personae both variants convey, the `α`-th power of
+the second's extension over the sum of the powers of both. -/
+noncomputable def share (prior : Measure (Persona G)) (α : ℝ) : ℝ :=
+  (prior.real Set.univ - prior.real {h.left}) ^ α /
+    ((prior.real Set.univ - prior.real {h.right}) ^ α +
+      (prior.real Set.univ - prior.real {h.left}) ^ α)
+
+/-- When the two personae the variants index are equally likely, either variant's share of the
+personae both convey is one half, at every rationality. -/
+theorem share_eq_half [Nonempty P] (hp : prior {h.left} ≠ 0)
+    (hpr : prior {h.left} = prior {h.right}) : share h prior α = 1 / 2 := by
+  have hlr : prior.real {h.left} = prior.real {h.right} := by simp only [measureReal_def, hpr]
+  have hpos : 0 < prior.real Set.univ - prior.real {h.right} := by
+    rw [← measureReal_personae h]
+    exact (ENNReal.toReal_pos hp (measure_ne_top _ _)).trans_le
+      (measureReal_mono (Set.singleton_subset_iff.2 (Finset.mem_coe.2 h.left_mem_personae)))
+  have := Real.rpow_pos_of_pos hpos α
+  rw [share, hlr]
+  field_simp
+  ring
+
+/-- A persona both variants convey prefers the first exactly when the persona it rules out is the
+likelier, the more informative variant being the one that rules out more. -/
+theorem half_lt_share_iff [Nonempty P] (hα : 0 < α) (hl : prior {h.left} ≠ 0)
+    (hr : prior {h.right} ≠ 0) :
+    1 / 2 < share h prior α ↔ prior.real {h.left} < prior.real {h.right} := by
+  have hA : 0 < prior.real Set.univ - prior.real {h.left} := by
+    have := measureReal_personae h.symm (prior := prior)
+    rw [h.symm_right] at this
+    rw [← this]
+    exact (ENNReal.toReal_pos hr (measure_ne_top _ _)).trans_le
+      (measureReal_mono (Set.singleton_subset_iff.2 (Finset.mem_coe.2 h.symm.left_mem_personae)))
+  have hB : 0 < prior.real Set.univ - prior.real {h.right} := by
+    rw [← measureReal_personae h]
+    exact (ENNReal.toReal_pos hl (measure_ne_top _ _)).trans_le
+      (measureReal_mono (Set.singleton_subset_iff.2 (Finset.mem_coe.2 h.left_mem_personae)))
+  have := Real.rpow_pos_of_pos hA α
+  have := Real.rpow_pos_of_pos hB α
+  have key := Real.rpow_lt_rpow_iff hB.le hA.le hα
+  rw [share, lt_div_iff₀ (by positivity)]
+  constructor
+  · intro h₁
+    linarith [key.1 (by linarith)]
+  · intro h₁
+    linarith [key.2 (by linarith)]
+
+variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] (hvw : ∀ u, u = v ∨ u = w)
+  (hα : 0 < α)
+include hvw hα
+
+/-- Every persona both variants convey is produced alike, so speakers constructing different
+personae shift between the variants together. -/
+theorem S1_eq {p p' : Persona G} (hp : prior {p} ≠ 0) (hp' : prior {p'} ≠ 0)
+    (hl : p ≠ h.left) (hr : p ≠ h.right) (hl' : p' ≠ h.left) (hr' : p' ≠ h.right) :
+    S1 F α prior p' = S1 F α prior p :=
+  speaker_listener_truthful_dirac_congr hα 0 prior _ hp hp' fun u ↦ by
+    simp only [Finset.mem_coe, h.mem_personae_of_ne hl hr (hvw u),
+      h.mem_personae_of_ne hl' hr' (hvw u)]
+
+/-- A persona both variants convey produces the first in its share, the `α`-th power of the
+second's extension over the sum of both, each extension being everything but the persona its
+rival indexes. -/
+theorem S1_real_singleton_of_ne (hne : v ≠ w) {p : Persona G} (hp : prior {p} ≠ 0)
+    (hl : p ≠ h.left) (hr : p ≠ h.right) : (S1 F α prior p).real {v} = share h prior α := by
+  rw [speaker_listener_truthful_dirac_zero_real_singleton_of_pair hα prior _ hp hne
+    (h.mem_personae_of_ne hl hr (.inl rfl)) (h.mem_personae_of_ne hl hr (.inr rfl))
+    fun u _ ↦ hvw u, measureReal_personae h, measureReal_personae h.symm, h.symm_right,
+    share]
+
+/-- The persona only the first variant conveys produces it with certainty. -/
+theorem S1_left_real_singleton [Nonempty P] (hp : prior {h.left} ≠ 0) :
+    (S1 F α prior h.left).real {v} = 1 := by
+  rw [measureReal_def, speaker_listener_truthful_dirac_eq_one (u := v) hα 0 prior
+    (fun u ↦ ↑(F.personae u)) hp (Finset.mem_coe.2 h.left_mem_personae) fun u hu ↦ ?_,
+    ENNReal.toReal_one]
+  obtain rfl := (hvw u).resolve_left hu
+  exact Finset.mem_coe.not.2 h.symm.right_notMem_personae
+
+variable [Nonempty P] (hne : v ≠ w) (hprior : ∀ p, prior {p} ≠ 0)
+include hne hprior
+
+/-- Mixed over a measure on personae, the speaker produces the first variant with the mass of
+the persona only it conveys and its share of the personae both convey. -/
+theorem comp_real_singleton (ρ : Measure (Persona G)) [IsFiniteMeasure ρ] :
+    (S1 F α prior ∘ₘ ρ).real {v} = ρ.real {h.left} +
+      share h prior α * (ρ.real Set.univ - ρ.real {h.left} - ρ.real {h.right}) := by
+  have hrow (p : Persona G) : ρ.real {p} * (S1 F α prior p).real {v} =
+      ρ.real {p} * share h prior α + (if p = h.left then ρ.real {p} * (1 - share h prior α)
+        else 0) - (if p = h.right then ρ.real {p} * share h prior α else 0) := by
+    by_cases hl : p = h.left
+    · subst hl
+      rw [S1_left_real_singleton h hvw hα (hprior _), ite_eq_left rfl, ite_eq_right h.left_ne_right]
+      ring
+    by_cases hr : p = h.right
+    · subst hr
+      rw [S1_right_real_singleton h hα, ite_eq_right hl, ite_eq_left rfl]
+      ring
+    rw [S1_real_singleton_of_ne h hvw hα hne (hprior p) hl hr, ite_eq_right hl, ite_eq_right hr]
+    ring
+  rw [Measure.comp_real_singleton, Finset.sum_congr rfl fun p _ ↦ hrow p, Finset.sum_sub_distrib,
+    Finset.sum_add_distrib, ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ,
+    Finset.sum_ite_eq', Finset.sum_ite_eq', ite_eq_left (Finset.mem_univ _),
+    ite_eq_left (Finset.mem_univ _)]
+  ring
+
+/-- By Bayes' rule the first variant's marginal times the naive listener's posterior is the prior
+times the speaker's row. -/
+theorem mul_L1_real_singleton (p : Persona G) :
+    (prior.real {h.left} + share h prior α *
+        (prior.real Set.univ - prior.real {h.left} - prior.real {h.right})) *
+      (L1 F α prior v).real {p} = prior.real {p} * (S1 F α prior p).real {v} := by
+  rw [← comp_real_singleton h hvw hα hne hprior]
+  exact comp_real_mul_listener_real _ _ v p
+
+variable (hpr : prior {h.left} = prior {h.right})
+include hpr
+
+private theorem mul_L1_real_singleton_of_eq (p : Persona G) :
+    prior.real Set.univ / 2 * (L1 F α prior v).real {p} =
+      prior.real {p} * (S1 F α prior p).real {v} := by
+  have hlr : prior.real {h.left} = prior.real {h.right} := by simp only [measureReal_def, hpr]
+  rw [← mul_L1_real_singleton h hvw hα hne hprior, share_eq_half h (hprior _) hpr, hlr]
+  ring
+
+/-- When the two personae the variants index are equally likely, hearing the first variant leaves
+every persona both convey at its prior, so a listener already sure of such a persona stays
+sure whatever the speaker says. -/
+theorem L1_real_singleton_of_ne {p : Persona G} (hl : p ≠ h.left) (hr : p ≠ h.right) :
+    (L1 F α prior v).real {p} = prior.real {p} / prior.real Set.univ := by
+  have key := mul_L1_real_singleton_of_eq h hvw hα hne hprior hpr p
+  rw [S1_real_singleton_of_ne h hvw hα hne (hprior p) hl hr, share_eq_half h (hprior _) hpr] at key
+  have : 0 < prior.real Set.univ := (ENNReal.toReal_pos (hprior h.left)
+    (measure_ne_top _ _)).trans_le (measureReal_mono (Set.subset_univ _))
+  field_simp at key ⊢
+  linarith
+
+/-- When the two personae the variants index are equally likely, hearing the first variant
+doubles the probability of the persona only it conveys. -/
+theorem L1_real_singleton_left :
+    (L1 F α prior v).real {h.left} = 2 * prior.real {h.left} / prior.real Set.univ := by
+  have key := mul_L1_real_singleton_of_eq h hvw hα hne hprior hpr h.left
+  rw [S1_left_real_singleton h hvw hα (hprior _)] at key
+  have : 0 < prior.real Set.univ := (ENNReal.toReal_pos (hprior h.left)
+    (measure_ne_top _ _)).trans_le (measureReal_mono (Set.subset_univ _))
+  field_simp at key ⊢
+  linarith
+
+end Binary
+
+/-! ### Priors as weights -/
+
+section Weights
+
+variable {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β] (w : β → ℕ)
+
+private theorem ofWeights_real_singleton (b : β) :
+    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)).real {b} = w b := by
+  rw [measureReal_def, Measure.ofWeights_apply_singleton, ENNReal.toReal_natCast]
+
+private theorem ofWeights_real_univ :
+    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)).real Set.univ = ((∑ b, w b : ℕ) : ℝ) := by
+  rw [measureReal_def, ← Finset.coe_univ, Measure.ofWeights_apply_finset, ← Nat.cast_sum,
+    ENNReal.toReal_natCast]
+
+private theorem ofWeights_ne_zero {w : β → ℕ} (hw : ∀ b, w b ≠ 0) (b : β) :
+    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)) {b} ≠ 0 :=
+  Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw b))
+
+private theorem rpow_six (x : ℝ) : x ^ (6 : ℝ) = x ^ 6 := by
+  exact_mod_cast Real.rpow_natCast x 6
+
+end Weights
+
+/-! ### (ING)
+
+The universe of example (5) has two dimensions, competence and warmth, its personae (6) are the
+four maximal consistent sets, and the Eckert fields (10) of *-ing* and *-in'* are the stern
+leader and the doofus, so each variant meets every persona but the other's (Table 1). -/
 
 /-- The social properties of example (5), two poles of competence and two of warmth. -/
 inductive PersonaTrait where
@@ -65,7 +327,7 @@ inductive PersonaTrait where
   deriving DecidableEq
 
 instance : Fintype PersonaTrait :=
-  ⟨{.competent, .incompetent, .friendly, .aloof}, fun x => by cases x <;> simp⟩
+  ⟨{.competent, .incompetent, .friendly, .aloof}, fun x ↦ by cases x <;> simp⟩
 
 /-- The dimension a trait is a pole of. -/
 def PersonaTrait.dimension : PersonaTrait → Dimension
@@ -94,185 +356,99 @@ theorem personae_eq : (Finset.univ : Finset Persona) = {coolGuy, sternLeader, do
 
 instance : Nonempty Persona := ⟨coolGuy⟩
 
-/-- The indexical fields of example (10) have *-ing* index competence and aloofness and *-in'*
-incompetence and friendliness. -/
-def ingEckertField : INGVariant → Finset PersonaTrait
-  | .velar => {.competent, .aloof}
-  | .apical => {.incompetent, .friendly}
+instance : Nonempty PersonaTrait := ⟨.competent⟩
 
-/-- The grounded field of (ING), both fields being consistent. -/
+/-- The Eckert fields of example (10), *-ing* indexing competence and aloofness and *-in'*
+incompetence and friendliness. -/
 def ingField : GroundedField INGVariant (dimensionalIncompatibility PersonaTrait.dimension) where
-  indexes := ingEckertField
+  indexes
+    | .velar => {.competent, .aloof}
+    | .apical => {.incompetent, .friendly}
   isIndepSet := by intro v; cases v <;> decide
 
 instance : MeasurableSpace INGVariant := ⊤
 instance : MeasurableSingletonClass INGVariant :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
-instance : Nonempty INGVariant := ⟨.velar⟩
 
-/-! ### The model
+private theorem apical_or_velar (u : INGVariant) : u = .apical ∨ u = .velar :=
+  u.eq_velar_or_eq_apical.symm
 
-The literal listener conditions the persona prior on the personae the variant meets, the
-speaker is its softmax at the paper's rationality 6 with no costs, and the pragmatic listener
-inverts the speaker against the same prior. -/
+/-- The variants of (ING) index complementary personae, the stern leader and the doofus. -/
+theorem ing : ingField.Complementary .velar .apical where
+  left_mem := by decide +kernel
+  right_mem := by decide +kernel
+  indexes_eq_compl := by decide +kernel
 
-/-- The literal listener conditions the prior on the variant's Eckert–Montague field. -/
-noncomputable abbrev L0 (prior : Measure Persona) : Kernel INGVariant Persona :=
-  listener prior (truthful fun v ↦ ↑(ingField.personae v))
+@[simp] theorem ing_left : ing.left = sternLeader := rfl
 
-/-- The speaker, the softmax of the literal listener at rationality 6 (p. 435), without costs. -/
-noncomputable abbrev S1 (prior : Measure Persona) : Kernel Persona INGVariant :=
-  speaker 6 (fun _ => 0) (L0 prior) Measure.dirac
+@[simp] theorem ing_right : ing.right = doofus := rfl
 
-/-- The pragmatic listener inverts the speaker against the prior. -/
-noncomputable abbrev L1 (prior : Measure Persona) : Kernel INGVariant Persona :=
-  listener prior (S1 prior)
+@[simp] theorem ing_symm_left : ing.symm.left = doofus := rfl
 
-/-! ### The extensions differ in one persona each
+@[simp] theorem ing_symm_right : ing.symm.right = sternLeader := rfl
 
-*-ing* meets every persona but the doofus and *-in'* every persona but the stern leader, so the
-two extensions share the cool guy and the asshole and differ exactly in those two. That is the
-whole of what the speaker's choice turns on. -/
+/-- *-ing* meets every persona but the doofus (Table 1). -/
+theorem personae_velar : ingField.personae .velar = {doofus}ᶜ := ing.personae_eq_compl
 
-theorem personae_velar : ingField.personae .velar = {coolGuy, sternLeader, asshole} := by
-  decide +kernel
+/-- *-in'* meets every persona but the stern leader (Table 1). -/
+theorem personae_apical : ingField.personae .apical = {sternLeader}ᶜ := ing.symm.personae_eq_compl
 
-theorem personae_apical : ingField.personae .apical = {coolGuy, doofus, asshole} := by
-  decide +kernel
+/-! #### Style shifting
 
-/-- The persona each variant rules out, the doofus for *-ing* and the stern leader for *-in'*. -/
-def excluded : INGVariant → Persona
-  | .velar => doofus
-  | .apical => sternLeader
+At the barbecue the listener takes Obama to be aloof (Table 2) and with the journalists
+incompetent (Table 5). The cool guy says *-in'* with probability `8 ^ 6 / (7 ^ 6 + 8 ^ 6)`, about
+69%, at the first and `7 ^ 6 / (7 ^ 6 + 8 ^ 6)`, about 31%, at the second, and the asshole says
+it exactly as often: style shifting changes the prior, not the speaker. -/
 
-private theorem measure_personae_velar (prior : Measure Persona) :
-    prior ↑(ingField.personae .velar)
-      = prior {coolGuy} + prior {asshole} + prior {sternLeader} := by
-  rw [← sum_measure_singleton,
-    show ingField.personae .velar = {coolGuy, asshole, sternLeader} by decide +kernel,
-    Finset.sum_insert (by decide +kernel), Finset.sum_insert (by decide +kernel),
-    Finset.sum_singleton, ← add_assoc]
-
-private theorem measure_personae_apical (prior : Measure Persona) :
-    prior ↑(ingField.personae .apical) = prior {coolGuy} + prior {asshole} + prior {doofus} := by
-  rw [← sum_measure_singleton,
-    show ingField.personae .apical = {coolGuy, asshole, doofus} by decide +kernel,
-    Finset.sum_insert (by decide +kernel), Finset.sum_insert (by decide +kernel),
-    Finset.sum_singleton, ← add_assoc]
-
-/-- The extensions share the cool guy and the asshole, so one outweighs the other exactly when
-the persona it keeps, the other's excluded one, outweighs the persona it rules out. -/
-theorem measure_personae_lt_iff (prior : Measure Persona) [IsFiniteMeasure prior]
-    {v₁ v₂ : INGVariant} (h : v₁ ≠ v₂) :
-    prior ↑(ingField.personae v₂) < prior ↑(ingField.personae v₁)
-      ↔ prior {excluded v₁} < prior {excluded v₂} := by
-  have hfin : prior {coolGuy} + prior {asshole} ≠ ⊤ :=
-    ENNReal.add_ne_top.mpr ⟨measure_ne_top _ _, measure_ne_top _ _⟩
-  cases v₁ <;> cases v₂
-  · exact absurd rfl h
-  · rw [measure_personae_apical, measure_personae_velar]
-    exact ENNReal.add_lt_add_iff_left hfin
-  · rw [measure_personae_velar, measure_personae_apical]
-    exact ENNReal.add_lt_add_iff_left hfin
-  · exact absurd rfl h
-
-/-- For a persona either variant can convey, the speaker prefers the variant that rules out
-more prior mass, the more informative one. Since the two variants differ only in ruling out the
-doofus and the stern leader, the choice is settled by which of those two the context finds
-likelier. -/
-theorem prefers_iff (prior : Measure Persona) [IsFiniteMeasure prior] {p : Persona}
-    {v₁ v₂ : INGVariant} (hne : v₁ ≠ v₂) (h₁ : p ∈ ingField.personae v₁)
-    (h₂ : p ∈ ingField.personae v₂) (h0 : prior {p} ≠ 0) :
-    (S1 prior p).real {v₁} < (S1 prior p).real {v₂}
-      ↔ prior {excluded v₁} < prior {excluded v₂} := by
-  rw [speaker_listener_truthful_dirac_real_singleton_lt_iff (by norm_num) 0 prior
-    (fun v ↦ (ingField.personae v : Set Persona)) h0 (Finset.mem_coe.2 h₁) (Finset.mem_coe.2 h₂),
-    measure_personae_lt_iff prior hne]
-
-/-! ### The contexts
-
-A context is a prior over personae, given as integer weights read off the paper's tables as
-the text describes them. -/
-
-/-- At the barbecue the voters take Obama to be aloof (Table 2), so the aloof personae carry
-more mass. -/
+/-- At the barbecue the aloof personae carry more mass (Table 2). -/
 def casualWeight (π : Persona) : ℕ := if .aloof ∈ π.1 then 3 else 2
 
-/-- With the journalists he is taken to be incompetent (Table 5). -/
+/-- With the journalists the incompetent personae carry more mass (Table 5). -/
 def carefulWeight (π : Persona) : ℕ := if .incompetent ∈ π.1 then 3 else 2
 
-/-- Rice is unfamiliar, so the listener's beliefs are uniform (Table 10). -/
-def riceWeight : Persona → ℕ := fun _ => 1
+/-- The barbecue's prior. -/
+noncomputable abbrev casual : Measure Persona := Measure.ofWeights (casualWeight ·)
 
-/-- Pelosi is taken to be inarticulate (Table 13). -/
-def pelosiWeight (π : Persona) : ℕ := if .incompetent ∈ π.1 then 9 else 1
+/-- The journalists' prior. -/
+noncomputable abbrev careful : Measure Persona := Measure.ofWeights (carefulWeight ·)
 
-/-- Bush is taken to be inarticulate and aloof, almost to certainty (Table 15). -/
-def bushWeight (π : Persona) : ℕ := if .incompetent ∈ π.1 ∧ .aloof ∈ π.1 then 97 else 1
+private theorem casual_ne_zero : ∀ π, casual {π} ≠ 0 :=
+  ofWeights_ne_zero fun π ↦ by unfold casualWeight; split_ifs <;> decide
 
-/-! ### Variant choice
+private theorem careful_ne_zero : ∀ π, careful {π} ≠ 0 :=
+  ofWeights_ne_zero fun π ↦ by unfold carefulWeight; split_ifs <;> decide
 
-Every prediction about the speaker is an instance of `prefers_iff`. -/
+/-- At the barbecue the cool guy says *-in'* with probability `8 ^ 6 / (7 ^ 6 + 8 ^ 6)`, about
+69% (p. 435). -/
+theorem casual_apical :
+    (S1 ingField 6 casual coolGuy).real {.apical} = 8 ^ 6 / (7 ^ 6 + 8 ^ 6) := by
+  rw [S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (by decide)
+    (casual_ne_zero _) (by decide) (by decide), share, ing_symm_left,
+    ing_symm_right, ofWeights_real_univ, ofWeights_real_singleton, ofWeights_real_singleton,
+    show ∑ π, casualWeight π = 10 by decide +kernel,
+    show casualWeight doofus = 2 by decide +kernel,
+    show casualWeight sternLeader = 3 by decide +kernel, rpow_six, rpow_six]
+  norm_num
 
-/-- At the barbecue the stern leader outweighs the doofus, so *-in'*, which rules the stern
-leader out, is the more informative variant, and a persona either variant can convey is conveyed
-by it. That is Obama's cool guy, predicted to use *-in'* about 69% of the time (p. 435). -/
-theorem casual_coolGuy_prefers_apical :
-    (S1 (Measure.ofWeights (casualWeight ·)) coolGuy).real {.velar}
-      < (S1 (Measure.ofWeights (casualWeight ·)) coolGuy).real {.apical} :=
-  (prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-    (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))).mpr (by
-      simp only [excluded, Measure.ofWeights_apply_singleton]
-      exact_mod_cast (by decide +kernel : casualWeight doofus < casualWeight sternLeader))
+/-- With the journalists the cool guy says *-in'* with probability `7 ^ 6 / (7 ^ 6 + 8 ^ 6)`,
+about 31% (p. 436). -/
+theorem careful_apical :
+    (S1 ingField 6 careful coolGuy).real {.apical} = 7 ^ 6 / (7 ^ 6 + 8 ^ 6) := by
+  rw [S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (by decide)
+    (careful_ne_zero _) (by decide) (by decide), share, ing_symm_left,
+    ing_symm_right, ofWeights_real_univ, ofWeights_real_singleton, ofWeights_real_singleton,
+    show ∑ π, carefulWeight π = 10 by decide +kernel,
+    show carefulWeight doofus = 3 by decide +kernel,
+    show carefulWeight sternLeader = 2 by decide +kernel, rpow_six, rpow_six]
+  norm_num
 
-/-- The asshole, also conveyable either way, goes the same way at the barbecue. -/
-theorem casual_asshole_prefers_apical :
-    (S1 (Measure.ofWeights (casualWeight ·)) asshole).real {.velar}
-      < (S1 (Measure.ofWeights (casualWeight ·)) asshole).real {.apical} :=
-  (prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-    (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))).mpr (by
-      simp only [excluded, Measure.ofWeights_apply_singleton]
-      exact_mod_cast (by decide +kernel : casualWeight doofus < casualWeight sternLeader))
+/-- The asshole, whom both variants convey too, is produced exactly as the cool guy is. -/
+theorem S1_asshole {prior : Measure Persona} [IsFiniteMeasure prior] {α : ℝ} (hα : 0 < α)
+    (hprior : ∀ π, prior {π} ≠ 0) : S1 ingField α prior asshole = S1 ingField α prior coolGuy :=
+  S1_eq ing INGVariant.eq_velar_or_eq_apical hα (hprior _) (hprior _) (by decide) (by decide)
+    (by decide) (by decide)
 
-/-- Style shifting arises because with the journalists the doofus outweighs the stern leader
-instead, so *-ing* is now the more informative variant and the same cool guy prefers it.
-Neither the speaker nor the meaning has changed, only the context's prior, and with it which
-variant rules more out. -/
-theorem careful_coolGuy_prefers_velar :
-    (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.apical}
-      < (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.velar} :=
-  (prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-    (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))).mpr (by
-      simp only [excluded, Measure.ofWeights_apply_singleton]
-      exact_mod_cast (by decide +kernel : carefulWeight sternLeader < carefulWeight doofus))
-
-/-- Bulletproofing arises because Bush's listeners are almost certain he is inarticulate and
-aloof, and the two personae the variants distinguish carry the same small weight, so neither
-variant rules out more than the other, the speaker is indifferent, and variant choice conveys
-nothing at all (pp. 444–445). -/
-theorem bush_indifferent :
-    ¬ (S1 (Measure.ofWeights (bushWeight ·)) asshole).real {.velar}
-        < (S1 (Measure.ofWeights (bushWeight ·)) asshole).real {.apical} ∧
-      ¬ (S1 (Measure.ofWeights (bushWeight ·)) asshole).real {.apical}
-        < (S1 (Measure.ofWeights (bushWeight ·)) asshole).real {.velar} := by
-  constructor <;>
-    · rw [prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-        (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))]
-      simp only [excluded, Measure.ofWeights_apply_singleton]
-      exact_mod_cast (by decide +kernel : ¬ bushWeight _ < bushWeight _)
-
-/-- The same holds of Rice, whose listeners have no prior beliefs to speak of. -/
-theorem rice_indifferent :
-    ¬ (S1 (Measure.ofWeights (riceWeight ·)) coolGuy).real {.velar}
-        < (S1 (Measure.ofWeights (riceWeight ·)) coolGuy).real {.apical} ∧
-      ¬ (S1 (Measure.ofWeights (riceWeight ·)) coolGuy).real {.apical}
-        < (S1 (Measure.ofWeights (riceWeight ·)) coolGuy).real {.velar} := by
-  constructor <;>
-    · rw [prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-        (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))]
-      simp [excluded, riceWeight]
-
-/-! ### Labov's occasions
+/-! #### Labov's occasions
 
 On each of the three occasions Labov recorded, Obama constructs a persona against his
 listeners' prior (pp. 435–436): the cool guy at the barbecue and with the journalists, and the
@@ -286,55 +462,22 @@ def occasionPersona : Labov2012.Style → Persona
 
 /-- The prior of each of Labov's styles, the convention's left open. -/
 noncomputable def occasionPrior (formal : Measure Persona) : Labov2012.Style → Measure Persona
-  | .casual => Measure.ofWeights (casualWeight ·)
-  | .careful => Measure.ofWeights (carefulWeight ·)
+  | .casual => casual
+  | .careful => careful
   | .formal => formal
 
 /-- The model's rate of *-in'* in each of Labov's styles. -/
 noncomputable def apicalRate (formal : Measure Persona) (s : Labov2012.Style) : ℝ :=
-  (S1 (occasionPrior formal s) (occasionPersona s)).real {.apical}
+  (S1 ingField 6 (occasionPrior formal s) (occasionPersona s)).real {.apical}
 
-/-- A persona of positive prior that some variant conveys divides its production between the
-two variants. -/
-private theorem S1_real_apical (prior : Measure Persona) [IsFiniteMeasure prior] {p : Persona}
-    {v : INGVariant} (hp : prior {p} ≠ 0) (hv : p ∈ ingField.personae v) :
-    (S1 prior p).real {.apical} = 1 - (S1 prior p).real {.velar} := by
-  have := isProbabilityMeasure_speaker_dirac (by norm_num : (0 : ℝ) ≤ 6) (fun _ ↦ 0) (L0 prior)
-    ⟨v, (listener_truthful_apply_singleton_ne_zero_iff prior _ v p).2 ⟨hv, hp⟩⟩
-  rw [← probReal_compl_eq_one_sub (measurableSet_singleton _)]
-  congr 1
-  ext u
-  cases u <;> simp
-
-/-- The rate of *-in'* falls strictly with the formality of the style. It is above one half at
-the barbecue, where the cool guy prefers it, below one half but positive with the journalists,
-and nil at the convention. -/
+/-- The rate of *-in'* falls strictly with the formality of the style, from about 69% at the
+barbecue through about 31% with the journalists to nothing at the convention. -/
 theorem apicalRate_strictAnti (formal : Measure Persona) : StrictAnti (apicalRate formal) := by
-  have hcasual : 1 / 2 < apicalRate formal .casual := by
-    have := S1_real_apical (Measure.ofWeights (casualWeight ·)) (v := .velar)
-      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))
-      (by decide +kernel : coolGuy ∈ _)
-    have := casual_coolGuy_prefers_apical
-    simp only [apicalRate, occasionPrior, occasionPersona]
-    linarith
-  have hcareful : apicalRate formal .careful < 1 / 2 := by
-    have := S1_real_apical (Measure.ofWeights (carefulWeight ·)) (v := .velar)
-      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))
-      (by decide +kernel : coolGuy ∈ _)
-    have := careful_coolGuy_prefers_velar
-    simp only [apicalRate, occasionPrior, occasionPersona]
-    linarith
-  have hpos : 0 < apicalRate formal .careful :=
-    show 0 < (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.apical} from
-    ENNReal.toReal_pos ((speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff
-      (by norm_num) _ _ _ _ _).2 ⟨Finset.mem_coe.2 (by decide +kernel),
-        Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel))⟩)
-      (measure_ne_top _ _)
-  have hformal : apicalRate formal .formal = 0 :=
-    speaker_listener_truthful_dirac_real_singleton_eq_zero (by norm_num) _ _ _
-      (Finset.mem_coe.not.2 (by decide +kernel))
+  have hcasual : apicalRate formal .casual = 8 ^ 6 / (7 ^ 6 + 8 ^ 6) := casual_apical
+  have hcareful : apicalRate formal .careful = 7 ^ 6 / (7 ^ 6 + 8 ^ 6) := careful_apical
+  have hformal : apicalRate formal .formal = 0 := S1_right_real_singleton ing.symm (by norm_num)
   intro s t h
-  cases s <;> cases t <;> first | exact absurd h (by decide) | linarith
+  cases s <;> cases t <;> first | exact absurd h (by decide) | (simp only [*]; norm_num)
 
 /-- The model orders Labov's styles as Obama's observed rates of *-in'* do, whatever the prior
 at the convention. -/
@@ -343,47 +486,357 @@ theorem apicalRate_lt_iff (formal : Measure Persona) {s t : Labov2012.Style} :
       ↔ (Labov2012.ingByStyle s).percent < (Labov2012.ingByStyle t).percent :=
   (apicalRate_strictAnti formal).lt_iff_gt.trans Labov2012.ingByStyle_strictAnti.lt_iff_gt.symm
 
-/-! ### Interpretation
+/-! #### Persona selection
 
-What the listener does with a variant is the posterior over personae. A persona only one
-variant can convey produces it with certainty, while a persona either can convey splits its
-production between them, so the exclusive persona wins the posterior whenever the prior does
-not favour the other. That is the shape of the paper's interpretation results: a released /t/
-points at the stern leader, a flapped one at the doofus. -/
+Obama's values at the barbecue (Table 6) count the properties of competence and friendliness a
+persona has. Selected by them, the personae only one variant conveys are equally likely, so
+selection only dilutes the cool guy's preference and *-in'* stays the likelier variant (p. 438). -/
 
-/-- The stern leader can only be conveyed by *-ing* and the doofus only by *-in'*, so each is
-produced with certainty by the persona it is exclusive to. -/
-theorem sternLeader_certain {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) :
-    S1 (Measure.ofWeights (w ·)) sternLeader {.velar} = 1 ∧
-      S1 (Measure.ofWeights (w ·)) doofus {.apical} = 1 :=
-  ⟨speaker_listener_truthful_dirac_eq_one (by norm_num) _ _ _
-      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
-      (Finset.mem_coe.2 (by decide +kernel)) fun v hv ↦ Finset.mem_coe.not.2 (by
-        revert v; decide +kernel),
-    speaker_listener_truthful_dirac_eq_one (by norm_num) _ _ _
-      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
-      (Finset.mem_coe.2 (by decide +kernel)) fun v hv ↦ Finset.mem_coe.not.2 (by
-        revert v; decide +kernel)⟩
+/-- Obama's values at the barbecue (Table 6) count how many of competence and friendliness a
+persona has. -/
+def obamaValue (π : Persona) : ℝ := (π.1 ∩ {.competent, .friendly}).card
 
-/-- A variant gives no posterior mass to a persona it cannot convey, so hearing *-ing* rules
-out the doofus and hearing *-in'* rules out the stern leader, whatever the listener believed
-beforehand. -/
-theorem L1_eq_zero_of_excluded (prior : Measure Persona) (v : INGVariant) :
-    L1 prior v {excluded v} = 0 := by
-  cases v <;>
-    exact listener_speaker_listener_truthful_apply_singleton_of_notMem (by norm_num) _ _ _
-      (Finset.mem_coe.not.2 (by decide +kernel))
+/-- With persona selection *-in'* remains the more likely variant at the barbecue (p. 438). -/
+theorem obama_apical : 1 / 2 < (S1 ingField 6 casual ∘ₘ select 6 obamaValue).real {.apical} := by
+  have hs : share ing.symm casual 6 = 8 ^ 6 / (7 ^ 6 + 8 ^ 6) := by
+    rw [← S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (by decide)
+      (casual_ne_zero coolGuy) (by decide) (by decide)]
+    exact casual_apical
+  have hsum := select_real_univ 6 obamaValue
+  rw [← Finset.coe_univ, ← sum_measureReal_singleton, personae_eq,
+    Finset.sum_insert (by decide +kernel), Finset.sum_insert (by decide +kernel),
+    Finset.sum_insert (by decide +kernel), Finset.sum_singleton] at hsum
+  have heq : (select 6 obamaValue).real {doofus} = (select 6 obamaValue).real {sternLeader} := by
+    simp only [select_real_singleton, Real.softmax_def,
+      show obamaValue doofus = obamaValue sternLeader by
+        unfold obamaValue; exact congrArg Nat.cast (by decide +kernel)]
+  have hpos : 0 < (select 6 obamaValue).real {coolGuy} := by
+    rw [select_real_singleton]
+    exact Real.softmax_pos _ _
+  have hnn : 0 ≤ (select 6 obamaValue).real {asshole} := measureReal_nonneg
+  rw [comp_real_singleton ing.symm apical_or_velar (by norm_num) (by decide) casual_ne_zero,
+    ing_symm_left, ing_symm_right, hs, select_real_univ]
+  linarith
 
-/-- With no prior beliefs the literal listener spreads its mass evenly over the three personae
-the variant can convey, the game-theoretic literal listener of Definition 4.1. -/
-theorem L0_uniform_apply {v : INGVariant} {p : Persona} (hp : p ∈ ingField.personae v) :
-    L0 (Measure.ofWeights (riceWeight ·)) v {p} = 3⁻¹ := by
-  have hcard : (ingField.personae v).card = 3 := by cases v <;> decide +kernel
-  rw [listener_truthful_apply_singleton _ (fun v ↦ (ingField.personae v : Set Persona))
-      (Finset.mem_coe.2 hp),
-    Measure.ofWeights_apply_singleton, ← sum_measure_singleton]
-  simp only [Measure.ofWeights_apply_singleton, riceWeight, Nat.cast_one, Finset.sum_const,
-    nsmul_eq_mul, mul_one, hcard]
+/-! #### Stratification
+
+Interviewed by a stranger, a speaker faces a listener with no strong beliefs about her, a
+uniform prior (p. 439), so the two excluded personae are equally likely and every persona both
+variants convey says *-in'* half the time. A class's rate of *-in'* is then one half plus half
+the difference between how often it selects the doofus and the stern leader, and the value
+functions of Table 8 order the classes as Labov's rates do (Table 7), whatever the
+rationalities. -/
+
+/-- The uniform prior of the sociolinguistic interview (p. 439). -/
+noncomputable abbrev uniform : Measure Persona := Measure.ofWeights fun _ ↦ ((1 : ℕ) : ℝ≥0∞)
+
+private theorem uniform_ne_zero : ∀ π, uniform {π} ≠ 0 :=
+  ofWeights_ne_zero fun _ ↦ one_ne_zero
+
+/-- Social classes are ordered from the highest, `upperMiddle < lowerMiddle < working < lower`. -/
+instance : LinearOrder SocialClass := LinearOrder.lift' SocialClass.ctorIdx (by decide)
+
+/-- Labov's rate of *-in'* rises as the class falls (Table 7). -/
+theorem ingByClass_strictMono : StrictMono fun c ↦ (ingByClass c).percent := by decide
+
+/-- The classes Table 8 gives values for, every class of Table 7 but the lower class. -/
+abbrev ValuedClass := {c : SocialClass // c ≠ .lower}
+
+/-- The value functions of Table 8, by which the working class prefers friendly personae, the
+upper middle class competent ones, and the lower middle class neither. -/
+def classValue : ValuedClass → Persona → ℝ
+  | ⟨.working, _⟩, π => if .friendly ∈ π.1 then 2 else 1
+  | ⟨.lowerMiddle, _⟩, _ => 1
+  | ⟨.upperMiddle, _⟩, π => if .competent ∈ π.1 then 2 else 1
+  | ⟨.lower, h⟩, _ => absurd rfl h
+
+/-- A class's rate of *-in'*, its speaker selecting personae by its values at rationality `α'`
+and choosing variants at rationality `α` against the uniform prior (15). -/
+noncomputable def classRate (α α' : ℝ) (c : ValuedClass) : ℝ :=
+  (S1 ingField α uniform ∘ₘ select α' (classValue c)).real {.apical}
+
+/-- A class's rate of *-in'* is one half plus half the difference between how often it selects
+the doofus and the stern leader. -/
+theorem classRate_eq {α : ℝ} (hα : 0 < α) (α' : ℝ) (c : ValuedClass) :
+    classRate α α' c = 1 / 2 + ((select α' (classValue c)).real {doofus} -
+      (select α' (classValue c)).real {sternLeader}) / 2 := by
+  rw [classRate, comp_real_singleton ing.symm apical_or_velar hα (by decide) uniform_ne_zero,
+    ing_symm_left, ing_symm_right, share_eq_half ing.symm (uniform_ne_zero _)
+      (by simp [Measure.ofWeights_apply_singleton]), select_real_univ]
+  ring
+
+private theorem strictMono_of_lt_half_eq_half_lt {f : ValuedClass → ℝ}
+    (h₁ : f ⟨.upperMiddle, by decide⟩ < 1 / 2) (h₂ : f ⟨.lowerMiddle, by decide⟩ = 1 / 2)
+    (h₃ : 1 / 2 < f ⟨.working, by decide⟩) : StrictMono f := by
+  rintro ⟨c, hc⟩ ⟨c', hc'⟩ h
+  cases c <;> cases c' <;> first | contradiction | linarith
+
+/-- The class value functions order the classes as Labov's rates do, for every pair of
+rationalities. -/
+theorem classRate_strictMono {α α' : ℝ} (hα : 0 < α) (hα' : 0 < α') :
+    StrictMono (classRate α α') := by
+  have hsel (c : ValuedClass) (π π' : Persona) : (select α' (classValue c)).real {π} <
+      (select α' (classValue c)).real {π'} ↔ classValue c π < classValue c π' := by
+    rw [select_real_singleton, select_real_singleton, Real.softmax_lt_softmax_iff,
+      mul_lt_mul_iff_right₀ hα']
+  have hwc := (hsel ⟨.working, by decide⟩ sternLeader doofus).2
+    (by simp [classValue, sternLeader, doofus])
+  have humc := (hsel ⟨.upperMiddle, by decide⟩ doofus sternLeader).2
+    (by simp [classValue, sternLeader, doofus])
+  have hlmc : (select α' (classValue ⟨.lowerMiddle, by decide⟩)).real {doofus} =
+      (select α' (classValue ⟨.lowerMiddle, by decide⟩)).real {sternLeader} := by
+    simp only [select_real_singleton, Real.softmax_def, classValue]
+  refine strictMono_of_lt_half_eq_half_lt ?_ ?_ ?_ <;> rw [classRate_eq hα] <;> linarith
+
+/-- The model orders the classes as Labov's rates of *-in'* do (Tables 7 and 9). -/
+theorem classRate_lt_classRate_iff {α α' : ℝ} (hα : 0 < α) (hα' : 0 < α') {c c' : ValuedClass} :
+    classRate α α' c < classRate α α' c' ↔ (ingByClass c).percent < (ingByClass c').percent := by
+  have : StrictMono fun c : ValuedClass ↦ (ingByClass c).percent :=
+    ingByClass_strictMono.comp (Subtype.strictMono_coe _)
+  exact (classRate_strictMono hα hα').lt_iff_lt.trans this.lt_iff_lt.symm
+
+/-! ### /t/ release
+
+The /t/ game replaces competence with articulateness (19): released /t/ indexes articulateness
+and aloofness, the flap inarticulateness and friendliness. Its listeners' beliefs about Rice are
+uniform, about Pelosi that she is inarticulate, and about Bush that he is almost surely
+inarticulate and aloof (Tables 10, 13, 15). -/
+
+namespace Release
+
+/-- The social properties of the /t/ game, two poles of articulateness and two of warmth. -/
+inductive Trait where
+  | articulate
+  | inarticulate
+  | friendly
+  | aloof
+  deriving DecidableEq
+
+instance : Fintype Trait :=
+  ⟨{.articulate, .inarticulate, .friendly, .aloof}, fun x ↦ by cases x <;> simp⟩
+
+instance : Nonempty Trait := ⟨.articulate⟩
+
+/-- The dimension a trait is a pole of. -/
+def Trait.dimension : Trait → Dimension
+  | .articulate | .inarticulate => .competence
+  | .friendly | .aloof => .warmth
+
+/-- A persona of the /t/ game. -/
+abbrev Persona := SocialMeaning.Persona (dimensionalIncompatibility Trait.dimension)
+
+/-- The articulate aloof persona, the one released /t/ indexes. -/
+def articulateAloof : Persona := ⟨{.articulate, .aloof}, by decide +kernel⟩
+
+/-- The articulate friendly persona. -/
+def articulateFriendly : Persona := ⟨{.articulate, .friendly}, by decide +kernel⟩
+
+/-- The inarticulate aloof persona. -/
+def inarticulateAloof : Persona := ⟨{.inarticulate, .aloof}, by decide +kernel⟩
+
+/-- The inarticulate friendly persona, the one the flap indexes. -/
+def inarticulateFriendly : Persona := ⟨{.inarticulate, .friendly}, by decide +kernel⟩
+
+theorem personae_eq : (Finset.univ : Finset Persona) =
+    {articulateAloof, articulateFriendly, inarticulateAloof, inarticulateFriendly} := by
+  decide +kernel
+
+instance : Nonempty Persona := ⟨articulateAloof⟩
+
+/-- Released and flapped /t/. -/
+inductive Variant where
+  | released
+  | flapped
+  deriving DecidableEq, Fintype
+
+instance : MeasurableSpace Variant := ⊤
+instance : MeasurableSingletonClass Variant :=
+  DiscreteMeasurableSpace.toMeasurableSingletonClass
+
+theorem Variant.eq_released_or_eq_flapped (u : Variant) : u = .released ∨ u = .flapped := by
+  cases u <;> simp
+
+private theorem released_or_flapped (u : Variant) : u = .released ∨ u = .flapped :=
+  u.eq_released_or_eq_flapped
+
+private theorem flapped_or_released (u : Variant) : u = .flapped ∨ u = .released :=
+  u.eq_released_or_eq_flapped.symm
+
+/-- The Eckert fields of (19). -/
+def field : GroundedField Variant (dimensionalIncompatibility Trait.dimension) where
+  indexes
+    | .released => {.articulate, .aloof}
+    | .flapped => {.inarticulate, .friendly}
+  isIndepSet := by intro v; cases v <;> decide
+
+/-- The variants of /t/ index complementary personae. -/
+theorem release : field.Complementary .released .flapped where
+  left_mem := by decide +kernel
+  right_mem := by decide +kernel
+  indexes_eq_compl := by decide +kernel
+
+@[simp] theorem release_left : release.left = articulateAloof := rfl
+@[simp] theorem release_right : release.right = inarticulateFriendly := rfl
+@[simp] theorem release_symm_left : release.symm.left = inarticulateFriendly := rfl
+@[simp] theorem release_symm_right : release.symm.right = articulateAloof := rfl
+
+variable {α : ℝ}
+
+/-! #### Rice -/
+
+/-- Rice is unfamiliar, so the listener's beliefs about her are uniform (Table 10). -/
+noncomputable abbrev rice : Measure Persona := Measure.ofWeights fun _ ↦ ((1 : ℕ) : ℝ≥0∞)
+
+private theorem rice_ne_zero : ∀ π, rice {π} ≠ 0 :=
+  ofWeights_ne_zero fun _ ↦ one_ne_zero
+
+private theorem rice_eq : rice {articulateAloof} = rice {inarticulateFriendly} := by
+  simp [Measure.ofWeights_apply_singleton]
+
+private theorem rice_real (π : Persona) : rice.real {π} / rice.real Set.univ = 1 / 4 := by
+  rw [ofWeights_real_singleton, ofWeights_real_univ, show ∑ _ : Persona, 1 = 4 by decide +kernel]
   norm_num
+
+/-- At every rationality Rice's speaker releases /t/ half the time for a persona both variants
+convey (Table 11). -/
+theorem rice_S1 (hα : 0 < α) {p : Persona} (hl : p ≠ articulateAloof)
+    (hr : p ≠ inarticulateFriendly) : (S1 field α rice p).real {.released} = 1 / 2 := by
+  rw [S1_real_singleton_of_ne release released_or_flapped hα (by decide) (rice_ne_zero p) hl hr,
+    share_eq_half release (rice_ne_zero _) rice_eq]
+
+/-- After released /t/ the listener doubles her belief in the articulate aloof persona, rules out
+the inarticulate friendly one, and leaves the others at their prior (Table 12). -/
+theorem rice_released (hα : 0 < α) :
+    (L1 field α rice .released).real {articulateAloof} = 1 / 2 ∧
+      (L1 field α rice .released).real {articulateFriendly} = 1 / 4 ∧
+      (L1 field α rice .released).real {inarticulateAloof} = 1 / 4 ∧
+      (L1 field α rice .released).real {inarticulateFriendly} = 0 := by
+  have hl := L1_real_singleton_left release released_or_flapped hα (by decide) rice_ne_zero
+    rice_eq
+  have hn (p : Persona) (hl : p ≠ articulateAloof) (hr : p ≠ inarticulateFriendly) :=
+    L1_real_singleton_of_ne release released_or_flapped hα (by decide) rice_ne_zero rice_eq
+      hl hr
+  refine ⟨?_, ?_, ?_, L1_real_singleton_right release hα⟩
+  · rw [release_left] at hl
+    rw [hl, mul_div_assoc, rice_real]
+    norm_num
+  · rw [hn _ (by decide) (by decide), rice_real]
+  · rw [hn _ (by decide) (by decide), rice_real]
+
+/-- The flap mirrors released /t/ (Table 12). -/
+theorem rice_flapped (hα : 0 < α) :
+    (L1 field α rice .flapped).real {articulateAloof} = 0 ∧
+      (L1 field α rice .flapped).real {articulateFriendly} = 1 / 4 ∧
+      (L1 field α rice .flapped).real {inarticulateAloof} = 1 / 4 ∧
+      (L1 field α rice .flapped).real {inarticulateFriendly} = 1 / 2 := by
+  have hl := L1_real_singleton_left release.symm flapped_or_released hα (by decide) rice_ne_zero
+    rice_eq.symm
+  have hn (p : Persona) (hl : p ≠ inarticulateFriendly) (hr : p ≠ articulateAloof) :=
+    L1_real_singleton_of_ne release.symm flapped_or_released hα (by decide) rice_ne_zero
+      rice_eq.symm hl hr
+  refine ⟨L1_real_singleton_right release.symm hα, ?_, ?_, ?_⟩
+  · rw [hn _ (by decide) (by decide), rice_real]
+  · rw [hn _ (by decide) (by decide), rice_real]
+  · rw [release_symm_left] at hl
+    rw [hl, mul_div_assoc, rice_real]
+    norm_num
+
+/-- After released /t/ the listener is 75% sure Rice is articulate, after a flap 25% (p. 442). -/
+theorem rice_articulate (hα : 0 < α) :
+    (L1 field α rice .released).real {articulateAloof} +
+        (L1 field α rice .released).real {articulateFriendly} = 3 / 4 ∧
+      (L1 field α rice .flapped).real {articulateAloof} +
+        (L1 field α rice .flapped).real {articulateFriendly} = 1 / 4 := by
+  obtain ⟨h₁, h₂, -⟩ := rice_released hα
+  obtain ⟨h₃, h₄, -⟩ := rice_flapped hα
+  constructor <;> norm_num [*]
+
+/-! #### Pelosi -/
+
+/-- The listener takes Pelosi to be inarticulate (Table 13). -/
+def pelosiWeight (π : Persona) : ℕ := if .inarticulate ∈ π.1 then 9 else 1
+
+/-- The listener's beliefs about Pelosi. -/
+noncomputable abbrev pelosi : Measure Persona := Measure.ofWeights (pelosiWeight ·)
+
+private theorem pelosi_ne_zero : ∀ π, pelosi {π} ≠ 0 :=
+  ofWeights_ne_zero fun π ↦ by unfold pelosiWeight; split_ifs <;> decide
+
+private theorem pelosi_univ : pelosi.real Set.univ = 20 := by
+  rw [ofWeights_real_univ, show ∑ π, pelosiWeight π = 20 by decide +kernel]
+  norm_num
+
+private theorem pelosi_aa : pelosi.real {articulateAloof} = 1 := by
+  rw [ofWeights_real_singleton, show pelosiWeight articulateAloof = 1 by decide +kernel]
+  norm_num
+
+private theorem pelosi_ia : pelosi.real {inarticulateAloof} = 9 := by
+  rw [ofWeights_real_singleton, show pelosiWeight inarticulateAloof = 9 by decide +kernel]
+  norm_num
+
+private theorem pelosi_if : pelosi.real {inarticulateFriendly} = 9 := by
+  rw [ofWeights_real_singleton, show pelosiWeight inarticulateFriendly = 9 by decide +kernel]
+  norm_num
+
+/-- At rationality 6 Pelosi's speaker releases /t/ for a persona both variants convey with
+probability `19 ^ 6 / (11 ^ 6 + 19 ^ 6)`, released /t/ ruling out the likelier persona. -/
+theorem pelosi_share : share release pelosi 6 = 19 ^ 6 / (11 ^ 6 + 19 ^ 6) := by
+  rw [share, release_left, release_right, pelosi_univ, pelosi_aa, pelosi_if,
+    rpow_six, rpow_six]
+  norm_num
+
+theorem pelosi_symm_share : share release.symm pelosi 6 = 11 ^ 6 / (19 ^ 6 + 11 ^ 6) := by
+  rw [share, release_symm_left, release_symm_right, pelosi_univ, pelosi_aa,
+    pelosi_if, rpow_six, rpow_six]
+  norm_num
+
+/-- Released /t/ leaves the listener more than 80% sure that Pelosi is inarticulate and aloof and
+the flap more than 95% sure that she is inarticulate and friendly, so that both variants make
+her inarticulate and only her friendliness differs (Table 14, p. 443). -/
+theorem pelosi_L1 : 4 / 5 < (L1 field 6 pelosi .released).real {inarticulateAloof} ∧
+    19 / 20 < (L1 field 6 pelosi .flapped).real {inarticulateFriendly} := by
+  have h₁ := mul_L1_real_singleton release released_or_flapped (by norm_num : (0 : ℝ) < 6)
+    (by decide) pelosi_ne_zero inarticulateAloof
+  rw [S1_real_singleton_of_ne release released_or_flapped (by norm_num) (by decide)
+      (pelosi_ne_zero _) (by decide) (by decide), pelosi_share, release_left, release_right,
+    pelosi_univ, pelosi_aa, pelosi_ia, pelosi_if] at h₁
+  have h₂ := mul_L1_real_singleton release.symm flapped_or_released (by norm_num : (0 : ℝ) < 6)
+    (by decide) pelosi_ne_zero release.symm.left
+  rw [S1_left_real_singleton release.symm flapped_or_released (by norm_num) (pelosi_ne_zero _),
+    pelosi_symm_share, release_symm_left, release_symm_right, pelosi_univ, pelosi_aa,
+    pelosi_if] at h₂
+  constructor <;> norm_num at h₁ h₂ ⊢ <;> linarith
+
+/-! #### Bush -/
+
+/-- The listener is almost sure Bush is inarticulate and aloof (Table 15). -/
+def bushWeight (π : Persona) : ℕ := if π = inarticulateAloof then 97 else 1
+
+/-- The listener's beliefs about Bush. -/
+noncomputable abbrev bush : Measure Persona := Measure.ofWeights (bushWeight ·)
+
+private theorem bush_ne_zero : ∀ π, bush {π} ≠ 0 :=
+  ofWeights_ne_zero fun π ↦ by unfold bushWeight; split_ifs <;> decide
+
+private theorem bush_eq : bush {articulateAloof} = bush {inarticulateFriendly} := by
+  simp only [Measure.ofWeights_apply_singleton, bushWeight]
+  rfl
+
+/-- Whatever the rationality and whichever variant he uses, the listener remains 97% sure that
+Bush is inarticulate and aloof, the bulletproofing of Table 16 (p. 444). -/
+theorem bush_bulletproof (hα : 0 < α) (u : Variant) :
+    (L1 field α bush u).real {inarticulateAloof} = 97 / 100 := by
+  have hreal : bush.real {inarticulateAloof} / bush.real Set.univ = 97 / 100 := by
+    rw [ofWeights_real_singleton, ofWeights_real_univ,
+      show ∑ π, bushWeight π = 100 by decide +kernel,
+      show bushWeight inarticulateAloof = 97 by decide +kernel]
+    norm_num
+  rcases u.eq_released_or_eq_flapped with rfl | rfl
+  · rw [L1_real_singleton_of_ne release released_or_flapped hα (by decide) bush_ne_zero
+      bush_eq (by decide) (by decide), hreal]
+  · rw [L1_real_singleton_of_ne release.symm flapped_or_released hα (by decide) bush_ne_zero
+      bush_eq.symm (by decide) (by decide), hreal]
+
+end Release
 
 end Burnett2019
