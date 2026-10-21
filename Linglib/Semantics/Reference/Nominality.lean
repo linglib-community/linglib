@@ -21,8 +21,6 @@ hierarchy.
 
 @[expose] public section
 
-namespace Reference
-
 /-- The nominality of a nominal ranks a personal pronoun above a proper name above a common
 noun. -/
 inductive Nominality where
@@ -44,4 +42,3 @@ instance : LinearOrder Nominality := LinearOrder.lift' rank (by decide)
 
 end Nominality
 
-end Reference

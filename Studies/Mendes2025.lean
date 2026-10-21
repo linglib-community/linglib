@@ -44,7 +44,7 @@ namespace Mendes2025
 
 open Semantics
 
-open Reference HistoricalAlternatives DynamicSemantics Update SetRel
+open HistoricalAlternatives DynamicSemantics Update SetRel Kaplan
 open RegisterStructure
 
 variable {W T : Type*}

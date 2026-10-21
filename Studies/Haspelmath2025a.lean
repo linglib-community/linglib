@@ -66,8 +66,6 @@ defined by form.
 
 namespace Haspelmath2025a
 
-open Reference (Definiteness)
-
 /-! ### The eight constructions -/
 
 /-- The two domains of a locopossessional clause. -/

@@ -34,7 +34,7 @@ same definite under the partition of a preorder into its degrees.
   (p. 616: the members of a partition "are always objects, not kinds").
 * (28b) as printed binds `y_k` in the antecedent and uses it in the consequent; it is read with
   `y_k` bound outside the implication. (33) prints `Π(x_y)` for `Π(x_k)`.
-* The ι of (31) and (36) is `Reference.iota`, undefined when no cell or several qualify.
+* The ι of (31) and (36) is `iota`, undefined when no cell or several qualify.
 * Dogs come in every combination of breed and role and lions in every combination of subspecies
   and diet, so there are people-eating lions of both subspecies. The restrictor *lions that eat
   people* is read as footnote 11's *lions that eat only people*, a value of the diet.
@@ -54,8 +54,6 @@ same definite under the partition of a preorder into its degrees.
 @[expose] public section
 
 namespace Mendia2020
-
-open Reference
 
 variable {E : Type*}
 

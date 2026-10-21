@@ -40,7 +40,7 @@ def Value.toLabel : Value → Gender
 and their animacy. -/
 structure Noun extends GenderedNoun Value where
   /-- The animacy of the noun's referents. -/
-  animacy : Reference.Animacy
+  animacy : Animacy
   deriving DecidableEq, Repr
 
 def barbat : Noun := ⟨⟨⟨"bărbat", "man"⟩, .masc, some .masculine⟩, .human⟩

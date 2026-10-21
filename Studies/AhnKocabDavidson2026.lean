@@ -44,7 +44,6 @@ disambiguate, is not yet stated. The stimuli of Appendix A1 are printed unmarked
 namespace AhnKocabDavidson2026
 
 open ConventionalImplicature (TwoDim)
-open Reference
 
 variable {E L W : Type*}
 

@@ -23,7 +23,7 @@ largest member.
 
 ## Main definitions
 
-* `Reference.iota`: the unique satisfier of a predicate, or `none`.
+* `iota`: the unique satisfier of a predicate, or `none`.
 
 ## Main results
 
@@ -68,8 +68,6 @@ theorem existsUnique_iff_nonempty_subsingleton :
     (∃! x, p x) ↔ {x | p x}.Nonempty ∧ {x | p x}.Subsingleton :=
   (exists_congr fun _ ↦ Set.eq_singleton_iff_unique_mem.symm).trans
     Set.exists_eq_singleton_iff_nonempty_subsingleton
-
-namespace Reference
 
 variable {E : Type*} (P : E → Prop) {e : E}
 
@@ -127,11 +125,11 @@ variable {P}
 
 theorem _root_.Set.Subsingleton.iota_eq_some_iff (h : {x | P x}.Subsingleton) :
     iota P = some e ↔ P e :=
-  (Reference.iota_eq_some_iff P).trans ⟨And.left, fun he ↦ ⟨he, fun _ hx ↦ h hx he⟩⟩
+  (_root_.iota_eq_some_iff P).trans ⟨And.left, fun he ↦ ⟨he, fun _ hx ↦ h hx he⟩⟩
 
 theorem _root_.Set.Subsingleton.iota_isSome_iff (h : {x | P x}.Subsingleton) :
     (iota P).isSome ↔ ∃ x, P x :=
-  (Reference.iota_isSome_iff P).trans
+  (_root_.iota_isSome_iff P).trans
     ⟨ExistsUnique.exists, fun ⟨x, hx⟩ ↦ ⟨x, hx, fun _ hy ↦ h hy hx⟩⟩
 
 end Subsingleton
@@ -197,4 +195,3 @@ theorem _root_.DirectedOn.iota_isGreatest_isSome (hs : DirectedOn (· ≤ ·) X)
 
 end Order
 
-end Reference

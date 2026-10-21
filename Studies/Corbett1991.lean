@@ -274,13 +274,13 @@ namespace Swahili
 open _root_.Swahili
 
 /-- The semantic rules read evaluative derivation and animacy. -/
-def sem (n : Swahili.Noun) : Option Evaluative × Reference.Animacy := (n.evaluative, n.animacy)
+def sem (n : Swahili.Noun) : Option Evaluative × Animacy := (n.evaluative, n.animacy)
 
 /-- The rules of §3.1.2 send augmentatives to 5/6, diminutives to 7/8 and remaining animates
 to 1/2, then each morphological class to its own gender, over the fragment's five genders (the
 book's 11/10 and 15 are not among them). The formal rule is total, so the residue gender is
 never reached. -/
-def system : Gender.AssignmentSystem (Option Evaluative × Reference.Animacy) _root_.Swahili.Gender
+def system : Gender.AssignmentSystem (Option Evaluative × Animacy) _root_.Swahili.Gender
     _root_.Swahili.Gender where
   semantic
     | (some .augmentative, _) => some .genderC
@@ -879,7 +879,7 @@ namespace Latin
 open _root_.Latin.Gender
 
 /-- A conjunct is described by its gender and the animacy of its referent. -/
-abbrev Conjunct := Value × Reference.Animacy
+abbrev Conjunct := Value × Animacy
 
 /-- §9.5 has two syntactic rules for homogeneous genders, a semantic rule for humans, and the
 neuter otherwise. -/

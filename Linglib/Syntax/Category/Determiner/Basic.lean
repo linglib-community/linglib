@@ -57,7 +57,7 @@ selects is pragmatics (Jenks).
 
 @[expose] public section
 
-open Reference
+open Definiteness (MarkingStrategy ArticleType)
 
 /-- A determiner is a D head with a surface form, a representative morpheme or a construction
 label. The specializations extend it. -/
@@ -99,7 +99,7 @@ structure Article extends Determiner where
   /-- The exponent of the article. -/
   exponent : Determiner.Exponent
   /-- The definite uses the article obligatorily expones. -/
-  uses : Finset Description.Use := ∅
+  uses : Finset DefiniteDescription.Use := ∅
   deriving DecidableEq
 
 /-- A demonstrative determiner carries its deictic content, the participant sets of the referents
@@ -110,7 +110,7 @@ structure DemonstrativeDeterminer extends Determiner where
   /-- The participant sets of the referents in whose vicinity the form locates its referent. -/
   deixis : Finset (Finset Discourse.Role)
   /-- The definite uses the demonstrative obligatorily expones. -/
-  uses : Finset Description.Use := ∅
+  uses : Finset DefiniteDescription.Use := ∅
   deriving DecidableEq
 
 /-- A quantificational determiner records only what its generalized-quantifier denotation
@@ -160,7 +160,7 @@ def kind : Entry → Kind
 
 /-- The definite uses an entry obligatorily expones are an article's `uses` and a
 demonstrative's `uses`; a quantifier or possessive expones none. -/
-def uses : Entry → Finset Description.Use
+def uses : Entry → Finset DefiniteDescription.Use
   | .article a => a.uses
   | .demonstrative d => d.uses
   | .quantifier _ | .possessive _ => ∅
@@ -168,9 +168,10 @@ def uses : Entry → Finset Description.Use
 variable (e : Entry)
 
 /-- An entry marks an article strength when some definite use it expones calls for it. -/
-def Marks (p : Description.Strength) : Prop := ∃ u ∈ e.uses, u.strength = p
+def Marks (p : DefiniteDescription.Strength) : Prop := ∃ u ∈ e.uses, u.strength = p
 
-instance (p : Description.Strength) : Decidable (e.Marks p) := by unfold Marks; infer_instance
+instance (p : DefiniteDescription.Strength) : Decidable (e.Marks p) := by
+  unfold Marks; infer_instance
 
 /-- An entry is syncretic when it marks both strengths, as English *the* does. -/
 def IsSyncretic : Prop := e.Marks .uniqueness ∧ e.Marks .familiarity
@@ -195,12 +196,13 @@ instance (ds : Inventory) (p : Entry → Prop) [DecidablePred p] : Decidable (�
 variable (ds : Inventory)
 
 /-- An inventory marks an article strength when some entry marks it. -/
-def Marks (p : Description.Strength) : Prop := ∃ e ∈ ds, e.Marks p
+def Marks (p : DefiniteDescription.Strength) : Prop := ∃ e ∈ ds, e.Marks p
 
-instance (p : Description.Strength) : Decidable (ds.Marks p) := by unfold Marks; infer_instance
+instance (p : DefiniteDescription.Strength) : Decidable (ds.Marks p) := by
+  unfold Marks; infer_instance
 
 /-- A one-entry inventory marks a strength iff the entry marks it. -/
-theorem marks_singleton (e : Entry) (p : Description.Strength) : Marks [e] p ↔ e.Marks p :=
+theorem marks_singleton (e : Entry) (p : DefiniteDescription.Strength) : Marks [e] p ↔ e.Marks p :=
   ⟨fun ⟨_, he, h⟩ ↦ List.mem_singleton.mp he ▸ h, fun h ↦ ⟨e, List.mem_singleton_self e, h⟩⟩
 
 /-- An inventory is syncretic when a single entry marks both strengths, which separates the
@@ -221,7 +223,7 @@ section
 variable {ds}
 
 /-- A syncretic inventory marks both strengths. -/
-theorem IsSyncretic.marks (h : ds.IsSyncretic) (p : Description.Strength) : ds.Marks p :=
+theorem IsSyncretic.marks (h : ds.IsSyncretic) (p : DefiniteDescription.Strength) : ds.Marks p :=
   let ⟨e, he, hu, hf⟩ := h
   ⟨e, he, by cases p; exacts [hu, hf]⟩
 
@@ -281,7 +283,7 @@ def Realizes : NominalKind → Prop
 instance : DecidablePred ds.Realizes := fun k ↦ by cases k <;> unfold Realizes <;> infer_instance
 
 /-- An inventory realizes the kind of an article strength iff it marks that strength. -/
-theorem realizes_toKind (p : Description.Strength) : ds.Realizes p.toKind ↔ ds.Marks p := by
+theorem realizes_toKind (p : DefiniteDescription.Strength) : ds.Realizes p.toKind ↔ ds.Marks p := by
   cases p <;> exact Iff.rfl
 
 end Inventory
@@ -292,10 +294,10 @@ end Determiner
 
 /-- The strengths an article admits are those its uses call for. A syncretic article such as
 English *the* admits both, and a weak or strong article admits one. -/
-def Article.strengths (a : Article) : Finset Description.Strength :=
-  a.uses.image Description.Use.strength
+def Article.strengths (a : Article) : Finset DefiniteDescription.Strength :=
+  a.uses.image DefiniteDescription.Use.strength
 
 /-- An article admits a strength iff, as an entry, it marks that strength. -/
-theorem Article.mem_strengths_iff_marks (a : Article) (p : Description.Strength) :
+theorem Article.mem_strengths_iff_marks (a : Article) (p : DefiniteDescription.Strength) :
     p ∈ a.strengths ↔ (Determiner.Entry.article a).Marks p :=
   Finset.mem_image

@@ -39,9 +39,7 @@ pattern is (`AccessPattern.stable_origin`).
 
 @[expose] public section
 
-namespace Reference
-
-/-- A context tower: an origin with a stack of shifts, from outermost to innermost. -/
+/-- A context tower is an origin with a stack of shifts, from outermost to innermost. -/
 structure ContextTower (C : Type*) where
   /-- The root context, the speech-act context. -/
   origin : C
@@ -52,14 +50,14 @@ namespace ContextTower
 
 variable {C : Type*} (t : ContextTower C) (σ : Function.End C) (c : C) {k : ℕ}
 
-/-- The embedding depth: the number of shifts. -/
+/-- The embedding depth is the number of shifts. -/
 def depth : ℕ := t.shifts.length
 
-/-- The context at depth `k`: the first `k` shifts acting on the origin, saturating at the
+/-- The context at depth `k` is the first `k` shifts acting on the origin, saturating at the
 innermost context. -/
 def contextAt (k : ℕ) : C := (t.shifts.take k).reverse.prod • t.origin
 
-/-- The innermost context: every shift acting on the origin. -/
+/-- The innermost context is every shift acting on the origin. -/
 def innermost : C := t.shifts.reverse.prod • t.origin
 
 /-- The trivial tower over a context. -/
@@ -101,8 +99,9 @@ theorem push_contextAt_of_lt (hk : t.depth < k) : (t.push σ).contextAt k = σ �
 
 end ContextTower
 
-/-- Which depth of a tower an expression reads: the origin, the innermost context, or a fixed
-depth. -/
+namespace ContextTower
+
+/-- An expression reads a tower at the origin, at the innermost context, or at a fixed depth. -/
 inductive DepthSpec where
   | origin
   | local
@@ -124,8 +123,8 @@ def resolve (d : DepthSpec) (towerDepth : ℕ) : ℕ :=
 
 end DepthSpec
 
-/-- An access pattern: a depth specification and a projection, what a context-dependent
-expression reads. English *I* is `origin Context.agent`; Amharic *I* is
+/-- An access pattern, what a context-dependent expression reads, is a depth specification and a
+projection. English *I* is `origin Context.agent`; Amharic *I* is
 `innermost Context.agent`. -/
 structure AccessPattern (C : Type*) (R : Type*) where
   /-- Which depth to read from. -/
@@ -164,7 +163,7 @@ end map
 /-- Read the coordinate `f` of the speech-act context: a Kaplanian pure indexical. -/
 def origin : AccessPattern C R := ⟨.origin, f⟩
 
-/-- Read the coordinate `f` of the innermost context: a shifted indexical. -/
+/-- A shifted indexical reads the coordinate `f` of the innermost context. -/
 def innermost : AccessPattern C R := ⟨.local, f⟩
 
 @[simp] theorem origin_resolve : (origin f).resolve t = f t.origin := by simp [origin, resolve]
@@ -177,7 +176,7 @@ resolution unchanged. Kaplan-compliance is stability under every shift and monst
 instability of some pattern (`Reference/Kaplan.lean`). -/
 def Stable : Prop := ∀ t, ap.resolve (t.push σ) = ap.resolve t
 
-/-- Origin access is invariant under push: Kaplan's thesis for expressions reading the
+/-- Origin access is invariant under push, which is Kaplan's thesis for expressions reading the
 speech-act context. -/
 theorem origin_stable (ap : AccessPattern C R) (hd : ap.depth = .origin) (t : ContextTower C)
     (σ : Function.End C) : ap.resolve (t.push σ) = ap.resolve t := by
@@ -186,7 +185,7 @@ theorem origin_stable (ap : AccessPattern C R) (hd : ap.depth = .origin) (t : Co
 
 theorem stable_of_depth_origin (ap : AccessPattern C R) (hd : ap.depth = .origin)
     (σ : Function.End C) : ap.Stable σ :=
-  λ t => ap.origin_stable hd t σ
+  fun t ↦ ap.origin_stable hd t σ
 
 theorem stable_origin : (origin f).Stable σ := stable_of_depth_origin _ rfl σ
 
@@ -198,4 +197,4 @@ theorem local_updates (ap : AccessPattern C R) (hd : ap.depth = .local) (t : Con
 
 end AccessPattern
 
-end Reference
+end ContextTower

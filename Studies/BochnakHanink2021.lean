@@ -48,7 +48,7 @@ carry different contents (`stack_eq`).
 
 namespace BochnakHanink2021
 
-open Washo Minimalist Semantics Reference
+open Washo Minimalist Semantics
 
 /-! ### Selection -/
 
@@ -88,7 +88,7 @@ variable {E W : Type} (cont : E → W → Prop) (p q : W → Prop) (d : ℕ) (g 
 def fprop : E → Prop := fun x ↦ cont x = p
 
 /-- The nominalized complement with index `d`, the familiar DP over FPROP (77). -/
-def complement : Description E W := .anaphoric (fun _ _ x ↦ fprop cont p x) d
+def complement : DefiniteDescription E W := .anaphoric (fun _ _ x ↦ fprop cont p x) d
 
 /-- The complement denotes the familiar individual whose content is the embedded proposition
 (78). -/
@@ -97,7 +97,7 @@ theorem denote_complement :
 
 /-- The complement is defined iff its antecedent has the embedded content (§5.3). -/
 theorem denote_complement_isSome_iff : (⟦complement cont p d⟧ g s).isSome ↔ cont (g d) = p :=
-  Description.denote_anaphoric_isSome_iff _ _ _ _
+  DefiniteDescription.denote_anaphoric_isSome_iff _ _ _ _
 
 /-- The complement can be defined at a situation where its content is false: familiarity is
 not factivity (§5.3.1), the warrant for (86)–(87) in §5.3.2. -/

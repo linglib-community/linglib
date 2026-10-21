@@ -56,7 +56,7 @@ variable {W E P T : Type*}
 
 /-- A context of utterance together with its authority, the person who vouches for what is said
 in it. -/
-structure Context (W E P T : Type*) extends Reference.Context W E P T where
+structure Context (W E P T : Type*) extends Kaplan.Context W E P T where
   /-- The epistemic authority of the context. -/
   authority : E
 
@@ -249,7 +249,7 @@ def subject? (r : Datum) : Option (Term W E P T) :=
 
 /-- The context of an example has the speaker as its authority if the example is a statement
 and the addressee if it is a question. -/
-def context? (r : Datum) (c₀ : Reference.Context W E P T) :
+def context? (r : Datum) (c₀ : Kaplan.Context W E P T) :
     Option (Context W E P T) :=
   match r.feature? "clause" with
   | some "declarative" => some ⟨c₀, c₀.agent⟩
@@ -258,7 +258,7 @@ def context? (r : Datum) (c₀ : Reference.Context W E P T) :
 
 /-- Among the paper's examples with an egophoric verb, the acceptable ones are exactly those
 whose subject is the authority. -/
-theorem ego_acceptable_iff (c₀ : Reference.Context W E P T) (hne : c₀.agent ≠ c₀.addressee) :
+theorem ego_acceptable_iff (c₀ : Kaplan.Context W E P T) (hne : c₀.agent ≠ c₀.addressee) :
     ∀ r ∈ Examples.all, r.feature? "marking" = some "ego" →
       ∃ t ∈ subject? r, ∃ c ∈ context? r c₀,
         (r.judgment = .acceptable ↔ t c c.authority = c.authority) := by
@@ -333,10 +333,10 @@ def authorityShift (x : E) : Function.End (Context W E P T) := fun c ↦ { c wit
 /-- The shift changes the context, so evaluating a character at the shifted context is a monster
 in Kaplan's sense. -/
 theorem isMonster_authorityShift [Nonempty W] (h : c.authority ≠ x) :
-    Reference.IsMonster (Reference.shift (authorityShift (W := W) (P := P) (T := T) x) :
-      Reference.Character (Context W E P T) W Prop → _) :=
-  (Reference.isMonster_shift_iff _).2 <|
-    (Reference.ne_one_iff_exists_smul_ne _).2 ⟨c, fun e ↦ h (congrArg Context.authority e).symm⟩
+    Kaplan.IsMonster (Kaplan.shift (authorityShift (W := W) (P := P) (T := T) x) :
+      Kaplan.Character (Context W E P T) W Prop → _) :=
+  (Kaplan.isMonster_shift_iff _).2 <|
+    (Kaplan.ne_one_iff_exists_smul_ne _).2 ⟨c, fun e ↦ h (congrArg Context.authority e).symm⟩
 
 /-- On the authority-indexical account a shifted report about a named individual is true exactly
 when the individual is the reported speaker and the plain report is true. -/

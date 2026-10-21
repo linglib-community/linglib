@@ -23,7 +23,7 @@ mass and a numeral needs a classifier. A language's determiners decide which cov
 it blocks, and with the parameter which bare nominals it admits as arguments. A bare plural
 denotes its kind, whose instances meet the existential of derived kind predication in an
 episodic sentence and the generic operator in a generic one. A kind sends each situation to a
-partial individual, ∩ takes the largest member of a property's extension (`Reference.iota` of
+partial individual, ∩ takes the largest member of a property's extension (`iota` of
 `IsGreatest`) where the result is a kind, and ∪ takes the parts of a kind's value (`Set.Iic`).
 
 ## Main definitions
@@ -118,7 +118,7 @@ concept passes the condition (pp. 351 and 357). -/
 
 section KindFormation
 
-open Reference Mereology
+open Mereology
 
 variable {S E : Type*} {K : Set (S → Option E)} {P : S → Set E}
 
@@ -177,7 +177,7 @@ theorem english_licensesBare_iff (down : Prop) :
     (nominalMapping .english).LicensesBare (determiners .english) down ↔ down :=
   NominalMapping.argAndPred_licensesBare_iff (by decide) (by decide)
 
-open Reference Mereology in
+open Mereology in
 /-- English admits no bare singular count noun, (24b), since ∩ is undefined for it. -/
 theorem english_not_licensesBare_singular {S E : Type*} [PartialOrder E]
     {K : Set (S → Option E)} {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
@@ -190,7 +190,7 @@ theorem english_not_licensesBare_singular {S E : Type*} [PartialOrder E]
 
 section Generic
 
-open Reference Genericity
+open Genericity
 
 variable {S E : Type*} [PartialOrder E]
 

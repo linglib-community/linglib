@@ -50,7 +50,7 @@ def Value.plSubjPrefix : Value → SubjPrefix
 referents. -/
 structure Noun extends GenderedNoun Value where
   /-- The animacy of the noun's referents. -/
-  animacy : Reference.Animacy
+  animacy : Animacy
   deriving DecidableEq, Repr
 
 /-- *a-mphaka* 'cats': gender 1/2 without denoting humans. -/

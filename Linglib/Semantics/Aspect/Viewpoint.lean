@@ -162,7 +162,7 @@ theorem isUpperSet_prfv (P : W → E → Prop) (w : W) : IsUpperSet (PRFV P w) :
 
 /-- The perfect, (22b), holds at the world-time points whose time is the right boundary, (22a),
 of some perfect time span belonging to the interval property. -/
-def PERF (p : W → Set (NonemptyInterval T)) : Set (Reference.Index W T) :=
+def PERF (p : W → Set (NonemptyInterval T)) : Set (Kaplan.Index W T) :=
   {s | ∃ pts ∈ p s.world, pts.snd = s.time}
 
 variable {p q : W → Set (NonemptyInterval T)}
@@ -174,7 +174,7 @@ theorem perf_mono (h : ∀ w, p w ⊆ q w) : PERF p ⊆ PERF q :=
 
 /-- `atPoint p` holds at the world-time points whose degenerate interval belongs to `p`, as the
 non-perfect forms are evaluated. -/
-def atPoint (p : W → Set (NonemptyInterval T)) : Set (Reference.Index W T) :=
+def atPoint (p : W → Set (NonemptyInterval T)) : Set (Kaplan.Index W T) :=
   {s | NonemptyInterval.pure s.time ∈ p s.world}
 
 /-- `perfect p` holds at a reference interval that is a final subinterval of some perfect time

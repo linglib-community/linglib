@@ -11,7 +11,7 @@ This file formalizes the reading of the maxim of Quantity for referring expressi
 [engelhardt-etal-2006]. A description of an object in a display under-describes when it does
 not identify the object and over-describes when its modifier is not needed to identify it, and
 the instructions of the paper's experiments are classified this way over its one-referent and
-two-referent displays. Identification is `Reference.Distinguishes` against every other object
+two-referent displays. Identification is `Distinguishes` against every other object
 of the display.
 
 ## Implementation notes
@@ -93,7 +93,7 @@ instance (D : Display) (t : Fin 5) (d : Description) (i : Fin 5) : Decidable (ex
 /-- The description lets the addressee identify the intended referent `r` against every other
 object of the display. -/
 abbrev Identifies (D : Display) (t r : Fin 5) (d : Description) : Prop :=
-  Reference.Distinguishes (extension D t) (Finset.univ.erase r) r d
+  Distinguishes (extension D t) (Finset.univ.erase r) r d
 
 /-- The description identifies `r` with a modifier its bare noun does not need. -/
 def OverDescribes (D : Display) (t r : Fin 5) (d : Description) : Prop :=

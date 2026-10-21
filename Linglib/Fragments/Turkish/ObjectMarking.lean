@@ -38,8 +38,6 @@ definiteness cut at the specific indefinites, with no animacy dimension.
 
 namespace Turkish.ObjectMarking
 
-open Reference (DefinitenessDegree)
-
 /-- The accusative marks a direct object that is definite or a specific indefinite, whatever its
 animacy. -/
 def accusative : Set DefinitenessDegree := Set.Ici .specific

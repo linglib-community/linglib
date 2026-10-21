@@ -92,7 +92,6 @@ correlation through the substrate's monotonicity, and `bias_rows`, `coordination
 namespace Comrie1989
 
 open Causation.Morphological
-open Reference (Animacy DefinitenessDegree)
 
 /-! ### The discriminatory function of case (§6.1) -/
 

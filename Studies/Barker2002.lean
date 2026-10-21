@@ -38,7 +38,7 @@ that the quantifiers of a constituent are contiguous in the scope order of the s
 
 The paper calls the four scopings of *someone saw a friend of everyone* logically distinct. The
 restrictor of *a* contains the variable that *everyone* binds, so by
-`Reference.ChoiceFunction.exists_forall_apply_iff` the two scopings that differ in the order of
+`ChoiceFunction.exists_forall_apply_iff` the two scopings that differ in the order of
 *a* and *everyone* are equivalent (`a_everyone_iff_everyone_a`), and the grammar gives the
 sentence two truth conditions. A wide-scope *a friend* common to everyone is not among them.
 
@@ -216,7 +216,7 @@ end Deriv
 
 /-! ### The grammar -/
 
-open Deriv Reference
+open Deriv
 
 /-- S → NP VP, `VP(NP)`. -/
 def S (p : Priority) (np : Deriv ι E) (vp : Deriv ι (E → Prop)) : Deriv ι Prop :=

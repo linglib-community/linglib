@@ -43,8 +43,6 @@ belief de re through identity.
 
 namespace Acquaintance
 
-open Reference
-
 variable {α C : Type*} {R : α → C → Prop} {k : C → Option α} {c : C → α} {P : α → Set C}
   {A : Set C} {p : C} {y : α}
 

@@ -40,7 +40,7 @@ local readings, is not defined.
 
 namespace Schlenker2003
 
-open Reference ModalLogic
+open ModalLogic Kaplan ContextTower
 open scoped SetRel
 
 variable {W E P T : Type*}

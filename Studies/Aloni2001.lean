@@ -65,7 +65,7 @@ property in every belief world.
 
 namespace Aloni2001
 
-open Set Reference Acquaintance
+open Set Acquaintance
 
 variable {W D : Type*} {C : Set (W → D)} {c c' : W → D}
 

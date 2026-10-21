@@ -26,7 +26,7 @@ of a referent, and a tripartition value denotes the referents in its domain and 
 ## Main definitions
 
 * `Person.dom`, `Number.dom`, `Gender.dom`: the domain of an optional value.
-* `Reference.Context.participants`: the discourse roles whose holders are part of a referent.
+* `Kaplan.Context.participants`: the discourse roles whose holders are part of a referent.
 
 ## Main results
 
@@ -65,7 +65,7 @@ open Mereology
 
 namespace Person
 
-variable {W E P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) (x : E)
+variable {W E P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) (x : E)
 
 /-- At a context of utterance, [author] is defined of the referents including the agent and
 [participant] of those including the agent or the addressee. -/
@@ -107,7 +107,7 @@ theorem dom_firstInclusive_subset_dom_first :
 
 end Person
 
-namespace Reference.Context
+namespace Kaplan.Context
 
 variable {W E P T : Type*} [PartialOrder E] (c : Context W E P T) (x : E)
 
@@ -124,11 +124,11 @@ noncomputable def participants : Finset Discourse.Role :=
     .addressee ∈ c.participants x ↔ c.addressee ≤ x := by
   simp [participants]
 
-end Reference.Context
+end Kaplan.Context
 
 namespace Person
 
-variable {W E P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) (x : E)
+variable {W E P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) (x : E)
 
 /-- A person feature's domain holds the referents whose participants bear the feature. -/
 theorem mem_dom_feature_iff (f : Feature) : x ∈ Feature.dom c f ↔ Bears (c.participants x) f := by
@@ -138,8 +138,8 @@ theorem mem_dom_feature_iff (f : Feature) : x ∈ Feature.dom c f ↔ Bears (c.p
 theorem participants_mem_participantSets_first :
     c.participants x ∈ Person.first.participantSets ↔ x ∈ dom c (some .first) := by
   simp only [mem_dom_first, participantSets, Finset.mem_insert, Finset.mem_singleton,
-    Finset.ext_iff, Discourse.Role.forall_role, Reference.Context.speaker_mem_participants,
-    Reference.Context.addressee_mem_participants]
+    Finset.ext_iff, Discourse.Role.forall_role, Kaplan.Context.speaker_mem_participants,
+    Kaplan.Context.addressee_mem_participants]
   simp; tauto
 
 /-- The second person denotes the referents in its domain and not in the first person's. -/
@@ -147,8 +147,8 @@ theorem participants_mem_participantSets_second :
     c.participants x ∈ Person.second.participantSets ↔
       x ∈ dom c (some .second) ∧ x ∉ dom c (some .first) := by
   simp only [mem_dom_second, mem_dom_first, participantSets, Finset.mem_singleton,
-    Finset.ext_iff, Discourse.Role.forall_role, Reference.Context.speaker_mem_participants,
-    Reference.Context.addressee_mem_participants]
+    Finset.ext_iff, Discourse.Role.forall_role, Kaplan.Context.speaker_mem_participants,
+    Kaplan.Context.addressee_mem_participants]
   simp; tauto
 
 /-- The third person denotes the referents outside the second person's domain, which contains
@@ -156,8 +156,8 @@ the first person's. -/
 theorem participants_mem_participantSets_third :
     c.participants x ∈ Person.third.participantSets ↔ x ∉ dom c (some .second) := by
   simp only [mem_dom_second, participantSets, Finset.mem_singleton, Finset.ext_iff,
-    Discourse.Role.forall_role, Reference.Context.speaker_mem_participants,
-    Reference.Context.addressee_mem_participants]
+    Discourse.Role.forall_role, Kaplan.Context.speaker_mem_participants,
+    Kaplan.Context.addressee_mem_participants]
   simp
 
 end Person

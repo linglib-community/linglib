@@ -108,11 +108,11 @@ end Display
 
 /-- An interpretation anticipates the noun when the definite description already refers under
 it, and to the target. -/
-def Anticipates (S : Finset Object) : Prop := Reference.iota (· ∈ S) = some .target
+def Anticipates (S : Finset Object) : Prop := iota (· ∈ S) = some .target
 
 /-- An interpretation anticipates the noun exactly when it is the target alone. -/
 theorem anticipates_iff {S : Finset Object} : Anticipates S ↔ S = {.target} := by
-  rw [Anticipates, Reference.iota_eq_some_iff, Finset.eq_singleton_iff_unique_mem]
+  rw [Anticipates, iota_eq_some_iff, Finset.eq_singleton_iff_unique_mem]
 
 instance (S : Finset Object) : Decidable (Anticipates S) := decidable_of_iff _ anticipates_iff.symm
 

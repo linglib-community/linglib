@@ -86,7 +86,7 @@ their strong reading and a repeated description no sloppy reading.
 
 namespace Elbourne2013
 
-open Reference Presupposition
+open Presupposition
 
 /-! ### Quantification over minimal situations (§2.3.3) -/
 

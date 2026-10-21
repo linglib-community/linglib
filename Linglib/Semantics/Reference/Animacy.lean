@@ -21,8 +21,6 @@ differential object marking.
 
 @[expose] public section
 
-namespace Reference
-
 /-- The animacy of a referent ranks the human above the non-human animate above the inanimate,
 as on Aissen's animacy scale and Corbett's animacy hierarchy proper. -/
 inductive Animacy where
@@ -47,4 +45,3 @@ def all : List Animacy := [.human, .animate, .inanimate]
 
 end Animacy
 
-end Reference

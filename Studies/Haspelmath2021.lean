@@ -88,7 +88,7 @@ with the anti-efficient language of §11.3 that the universals exclude.
 
 namespace Haspelmath2021
 
-open Discourse Reference
+open Discourse
 open Focus (Mark)
 open OrderDual (toDual)
 
@@ -96,11 +96,10 @@ open OrderDual (toDual)
 
 Each scale is a linear order whose greater element is the more prominent. The person scale
 of (8a), locuphoric above aliophoric, is `Person.Class`; the definiteness scale of (8b)
-without its optional specific-indefinite level is `Reference.Definiteness`, with Eastern
+without its optional specific-indefinite level is `Definiteness`, with Eastern
 Khanty's specific P (37) read at the definite end; the givenness scale is `BinaryGivenness`;
 and the focus scale of (8b), background above focus, is the dual of focus marking,
 `Focus.Markᵒᵈ`, its more prominent end the unfocused one. -/
-
 
 /-- The ternary person scale of (47a) ranks first above second above third, as `Person.prominence`
 does through `ofPerson`; `Person.Class` is its coarsening at the locuphoric cut. -/
@@ -134,7 +133,7 @@ theorem ofPerson_le_ofPerson {p q : Person} :
 end PersonRank
 
 /-- The nominality scale of (8a) ranks person forms, independent or index, above full nominals;
-the ternary scale of (49a) is `Reference.Nominality`. -/
+the ternary scale of (49a) is `Nominality`. -/
 inductive BinaryNominality where
   | fullNominal
   | personForm
@@ -760,7 +759,6 @@ acceptable exactly when it is the coding the system requires, or, for a splittin
 alternation, when the construction shown is available in the row's scenario. -/
 
 section Examples
-
 
 variable {α : Type*}
 

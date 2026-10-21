@@ -17,7 +17,7 @@ reading on which the indefinite scopes below the binder.
 
 ## Main definitions
 
-* `Reference.ChoiceFunction`: the choice functions over a domain, as functions from properties to
+* `ChoiceFunction`: the choice functions over a domain, as functions from properties to
   individuals.
 
 ## Main results
@@ -44,8 +44,6 @@ reading on which the indefinite scopes below the binder.
 -/
 
 @[expose] public section
-
-namespace Reference
 
 /-- A choice function sends every nonempty property to one of its members. -/
 structure ChoiceFunction (E : Type*) where
@@ -180,4 +178,3 @@ theorem exists_pi_apply_iff {N : S → E → Prop} (hN : ∀ s, ∃ x, N s x) (V
 
 end ChoiceFunction
 
-end Reference

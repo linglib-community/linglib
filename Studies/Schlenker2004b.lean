@@ -55,7 +55,7 @@ the actual one.
 
 namespace Schlenker2004b
 
-open Reference Tense
+open Tense Kaplan
 
 variable {W E P T : Type*}
 

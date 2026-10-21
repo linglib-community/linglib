@@ -122,7 +122,7 @@ end Number
 
 section Person
 
-variable {W P T : Type*} [PartialOrder E] (c : Reference.Context W E P T)
+variable {W P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T)
 
 /-- The three person features that can head a φP are each other's alternatives, (44). -/
 def personAlts : Option Person → Set (Option Person) :=
@@ -278,7 +278,7 @@ theorem czech_gender :
 
 /-- Polite address recruits the semantically unmarked values, plural and third person, whose
 vacuous presuppositions hold of any addressee (German *Sie*). -/
-theorem politeness_unmarked {W P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) :
+theorem politeness_unmarked {W P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) :
     Number.dom (E := E) (some .plural) = Set.univ ∧ Person.dom c (some .third) = Set.univ :=
   ⟨rfl, rfl⟩
 

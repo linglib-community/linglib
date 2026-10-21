@@ -419,20 +419,20 @@ theorem english_demonstratives_author_bipartition :
 /-- The referents whose vicinity *this* picks out are the first person's referents ((16),
 p. 180), so the author feature that defines *I* and *we* defines the speaker's space. -/
 theorem preimage_participants_this {W E P T : Type*} [PartialOrder E]
-    (c : Reference.Context W E P T) :
+    (c : Kaplan.Context W E P T) :
     c.participants ⁻¹' English.Determiners.this.deixis = Person.dom c (some .first) :=
   Set.ext fun _ ↦ Person.participants_mem_participantSets_first c _
 
 namespace SpatialModel
 
-open Reference Semantics
+open Semantics
 open scoped SetRel
 
 /-! A finite model of (16): the referents are the sets of two individuals under part-of, the
 speaker is `{0}` and the addressee `{1}`, and every referent is in every vicinity. -/
 
 /-- The context of utterance has speaker `{0}` and addressee `{1}`. -/
-def ctx : Reference.Context Unit (Finset (Fin 2)) Unit Unit := ⟨{0}, {1}, (), (), ()⟩
+def ctx : Kaplan.Context Unit (Finset (Fin 2)) Unit Unit := ⟨{0}, {1}, (), (), ()⟩
 
 /-- Every referent is in every vicinity. -/
 def near : SetRel (Finset (Fin 2)) (Finset (Fin 2)) := Set.univ

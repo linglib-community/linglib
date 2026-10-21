@@ -32,7 +32,7 @@ left to the first dynamic consumer that needs it.
 
 @[expose] public section
 
-namespace Reference
+namespace Semantics
 
 open Presupposition
 
@@ -102,9 +102,13 @@ end Values
 
 end Nominal
 
+end Semantics
+
 /-! ### Characters as nominals -/
 
-namespace Character
+namespace Kaplan.Character
+
+open Semantics
 
 variable {C W E : Type*}
 
@@ -128,6 +132,4 @@ theorem isDirectlyReferential_iff (χ : Character C W E) :
   forall_congr' fun _ ↦
     ⟨fun h ↦ h.map some, fun h ↦ h.of_comp_injective (Option.some_injective E)⟩
 
-end Character
-
-end Reference
+end Kaplan.Character

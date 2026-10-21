@@ -73,7 +73,7 @@ namespace VonStechow2009
 
 open Semantics Tense Aspect ModalLogic
 open scoped SetRel
-open Reference (Index)
+open Kaplan (Index)
 
 variable {T : Type*} [LinearOrder T] {s : T} {P : T → Prop}
 
@@ -427,7 +427,7 @@ theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
         {i : Index W T | i.time < s ∧ arrive i.time} alt w ↔
       ∃ t₁, (t₁ < s ∧ leave t₁) ∧ ∃ m, IsLeast {t₂ | t₂ < s ∧ arrive t₂} m ∧ t₁ < m := by
   rw [BeaverCondoravdi2003.before, BeaverCondoravdi2003.connective_iff_uniform_of_eq_singleton h]
-  simp only [BeaverCondoravdi2003.uniform, Set.mem_ofPred_eq, Reference.Index.time_mk]
+  simp only [BeaverCondoravdi2003.uniform, Set.mem_ofPred_eq, Kaplan.Index.time_mk]
 
 /-- With *will* in the adjunct of *John will enter the room before Mary will leave* (84e), the
 times after the speech time before some leaving have no earliest member in dense time, so

@@ -49,7 +49,6 @@ experiments' rating means are described in the paper and not represented.
 namespace MartinSchaeferKastner2025
 
 open Minimalist.Voice ArgumentStructure French.Verbs
-open Reference (Animacy)
 
 /-! ### The classes -/
 
@@ -77,7 +76,6 @@ inductive ControlLevel where
   | limitedControl
   | inControl
   deriving DecidableEq
-
 
 /-- Whether the speaker means to present the entity as responsible for the change. -/
 inductive ResponsibilityGoal where

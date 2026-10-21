@@ -16,7 +16,7 @@ pivot least.
 
 ## Main definitions
 
-* `Reference.LogophoricRole`: the three roles, a bounded linear order.
+* `LogophoricRole`: the three roles, a bounded linear order.
 
 ## Implementation notes
 
@@ -29,8 +29,6 @@ pivot least.
 -/
 
 @[expose] public section
-
-namespace Reference
 
 /-- The discourse roles of [sells-1987], ordered by his hierarchy with the pivot least. -/
 inductive LogophoricRole where
@@ -63,4 +61,3 @@ instance : BoundedOrder LogophoricRole where
 
 end LogophoricRole
 
-end Reference

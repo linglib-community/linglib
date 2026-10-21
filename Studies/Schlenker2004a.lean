@@ -57,7 +57,7 @@ context improper (`not_proper_of_defined_lamPres`).
 
 namespace Schlenker2004a
 
-open Reference
+open Kaplan
 open scoped Assignment
 
 /-! ### Terms -/

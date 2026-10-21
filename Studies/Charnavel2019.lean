@@ -59,7 +59,7 @@ A and C with nothing exempt.
 
 namespace Charnavel2019
 
-open Core.Order PhraseStructure PhraseStructure.Tree Binding Reference
+open Core.Order PhraseStructure PhraseStructure.Tree Binding
 open scoped Function
 
 /-! ### Perspective centers -/

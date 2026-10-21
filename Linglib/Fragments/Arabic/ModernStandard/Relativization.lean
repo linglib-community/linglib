@@ -58,8 +58,6 @@ Modern Standard Arabic.
 
 namespace Arabic.ModernStandard
 
-open Reference (Definiteness)
-
 /-! ### The definite relative pronoun -/
 
 /-- The definite relative pronoun, by the number and gender of its antecedent and by case

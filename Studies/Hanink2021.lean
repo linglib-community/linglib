@@ -69,7 +69,8 @@ sets containing the speaker and the others.
 
 namespace Hanink2021
 
-open Semantics Montague Reference DistributedMorphology Morphology.Exponence
+open Semantics Montague DistributedMorphology Morphology.Exponence
+open DefiniteDescription (Restrictor)
 open scoped Assignment
 
 variable {E W : Type}
@@ -88,12 +89,12 @@ abbrev idxBind (n : ℕ) (φ : Assignment E → Prop) : Assignment E → E → P
 (97) and (106)), is the substrate's anaphoric description, which denotes the antecedent if it
 satisfies the restriction. -/
 theorem denote_anaphoric_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
-    ⟦Description.anaphoric R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) := rfl
+    ⟦DefiniteDescription.anaphoric R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) := rfl
 
 /-- The demonstrative D heads *hádi* and *wídi* of (34b) and (34c) add a deictic presupposition
 and otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
 theorem denote_demonstrative_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
-    ⟦Description.demonstrative R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) :=
+    ⟦DefiniteDescription.demonstrative R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) :=
   rfl
 
 /-! ### Internally headed relatives, section 4 -/

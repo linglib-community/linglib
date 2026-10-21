@@ -99,7 +99,7 @@ inductive Nominal
   | secondPerson
   | thirdPerson
   | properName
-  | common (a : Reference.Animacy)
+  | common (a : Animacy)
   deriving DecidableEq, Repr
 
 instance : Fintype Nominal where
@@ -119,7 +119,7 @@ instance : LinearOrder Nominal := LinearOrder.lift' Nominal.rank (by decide)
 
 /-- The pronoun positions of the Nominal Hierarchy are pronouns, the proper-name position names,
 and the rest common nouns. -/
-def Nominal.nominality : Nominal → Reference.Nominality
+def Nominal.nominality : Nominal → Nominality
   | .firstPerson | .secondPerson | .thirdPerson => .pronoun
   | .properName => .properName
   | .common _ => .commonNoun

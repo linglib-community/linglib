@@ -37,7 +37,7 @@ confine to cumulative properties.
   paper's requirement that the trace of a bare noun phrase be untyped.
 * Count nouns that count atoms (`ofAtoms`) witness the measure laws and yield the
   quantization of numeral phrases and the cumulativity of the semantic plural.
-* The down operator at a world is `Reference.iota` of `IsGreatest`, the largest member of the
+* The down operator at a world is `iota` of `IsGreatest`, the largest member of the
   extension.
 * The topic condition on kind reference, the choice-function reading of *some*, and the
   singular definite generics of the paper's last section are not formalized.
@@ -54,7 +54,7 @@ confine to cumulative properties.
 
 namespace Krifka2003
 
-open Reference Mereology
+open Mereology
 
 variable {World Atom : Type*}
 

@@ -73,7 +73,7 @@ The determiner view (Section 2) and the Dutch *hoeven* data (26)–(28) are not 
 @[expose] public section
 namespace BylininaNouwen2020
 
-open BylininaNouwen2018 Reference Degree Exhaustification Quantifier Quantifier.GQ
+open BylininaNouwen2018 Degree Exhaustification Quantifier Quantifier.GQ
   Quantifier.NP Set
 
 variable {α : Type*}

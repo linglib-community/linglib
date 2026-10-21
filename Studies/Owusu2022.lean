@@ -71,7 +71,7 @@ top, after Matthewson, derives no narrow reading of a conditional; and that the 
 
 namespace Owusu2022
 
-open Reference Quantifier
+open Quantifier
 
 variable {S E ι : Type*}
 

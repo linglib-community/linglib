@@ -35,13 +35,13 @@ character (`Character.const`), rigid also as a function of the context in the se
 
 @[expose] public section
 
-namespace Reference
+namespace Kaplan
 
-/-- Content: an intension from worlds to extensions, what an expression says at a context. -/
+/-- A content is an intension from worlds to extensions, what an expression says at a context. -/
 abbrev Content (W E : Type*) := W → E
 
-/-- A Kaplanian character: the linguistic meaning of an expression, assigning a content to
-each context. -/
+/-- A Kaplanian character is the linguistic meaning of an expression, assigning a content to each
+context. -/
 abbrev Character (C W E : Type*) := C → Content W E
 
 namespace Character
@@ -51,11 +51,11 @@ variable {C W E : Type*}
 /-- A character is directly referential when its content at every context is rigid. -/
 def IsDirectlyReferential (χ : Character C W E) : Prop := ∀ c, IsRigid (χ c)
 
-/-- Kaplan's rigidifier: the character that at context `c` rigidly designates `f c`. -/
-def dthat (f : C → E) : Character C W E := λ c _ => f c
+/-- Kaplan's rigidifier is the character that at context `c` rigidly designates `f c`. -/
+def dthat (f : C → E) : Character C W E := fun c _ ↦ f c
 
-/-- The constant character at `e`: the character of a proper name for `e`. -/
-def const (e : E) : Character C W E := λ _ _ => e
+/-- The constant character at `e` is the character of a proper name for `e`. -/
+def const (e : E) : Character C W E := fun _ _ ↦ e
 
 @[simp] theorem dthat_apply (f : C → E) (c : C) (w : W) :
     (dthat f : Character C W E) c w = f c :=
@@ -65,7 +65,7 @@ def const (e : E) : Character C W E := λ _ _ => e
 
 theorem dthat_isDirectlyReferential (f : C → E) :
     (dthat f : Character C W E).IsDirectlyReferential :=
-  λ c => isRigid_const (f c)
+  fun c ↦ isRigid_const (f c)
 
 theorem const_isDirectlyReferential (e : E) :
     (const e : Character C W E).IsDirectlyReferential :=
@@ -74,8 +74,8 @@ theorem const_isDirectlyReferential (e : E) :
 /-- Rigidifying at a context differs from the description whenever the description varies. -/
 theorem dthat_ne {f : W → E} {w₀ w₁ : W} (h : f w₁ ≠ f w₀) :
     (dthat f : Character W W E) w₀ ≠ f :=
-  λ e => h (congrFun e w₁).symm
+  fun e ↦ h (congrFun e w₁).symm
 
 end Character
 
-end Reference
+end Kaplan

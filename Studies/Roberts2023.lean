@@ -79,7 +79,7 @@ rather than built into the domain of `realizes`.
 
 namespace Roberts2023
 
-open Reference HistoricalAlternatives Modality Quantifier Filter
+open HistoricalAlternatives Modality Quantifier Filter Kaplan
 
 variable {W T E : Type*}
 

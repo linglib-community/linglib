@@ -81,7 +81,7 @@ instance [DecidableEq V] (kb : KB E A V) (L : Description A V) (x : E) :
 distinguishes it from `C`, so that every pair holds of `r` and every distractor fails some
 pair. -/
 def Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
-  extension kb L r ∧ Reference.Distinguishes (extension kb) C r L
+  extension kb L r ∧ Distinguishes (extension kb) C r L
 
 instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) :
     Decidable (Distinguishing kb r C L) := by
@@ -90,7 +90,7 @@ instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description
 theorem distinguishing_iff {kb : KB E A V} {r : E} {C : Finset E} {L : Description A V} :
     Distinguishing kb r C L ↔
       (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p := by
-  simp only [Distinguishing, Reference.Distinguishes, Prop.lt_iff, extension]
+  simp only [Distinguishing, Distinguishes, Prop.lt_iff, extension]
   refine and_congr_right fun h ↦ forall₂_congr fun c _ ↦ ?_
   rw [and_iff_left h]
   push Not

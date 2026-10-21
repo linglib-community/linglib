@@ -47,7 +47,7 @@ with intersection on upward-entailing conjuncts and overgenerates on the others.
 A plurality is a `Set E` and a property of pluralities a `Set (Set E)`, as in the paper. The
 determiner *a* is `Quantifier.GQ.some`, the Montague lift is `Quantifier.NP.individual`, *and* and
 *or* are what the English coordinators denote, `Coordinator.denote`, and Choice Closure quantifies
-over `Reference.ChoiceFunction`, whose totality turns the definedness condition `N ≠ ∅` of Choice
+over `ChoiceFunction`, whose totality turns the definedness condition `N ≠ ∅` of Choice
 Raising into a hypothesis. The counterexamples to the set product read Heycock and Zamparelli's sets
 of singletons as the individuals they contain, and (76) applies the numeral at the type of the sets
 it counts. The paper's (99a) writes `MIN(ER(cat)) or MIN(ER(dog))` for the `MIN(ER(cat) or ER(dog))`
@@ -72,7 +72,7 @@ not formalized.
 
 namespace Champollion2016
 
-open Quantifier Quantifier.NP Reference Set SetFamily English.Coordination
+open Quantifier Quantifier.NP Set SetFamily English.Coordination
 
 private theorem and_denote {α : Type*} [CompleteBooleanAlgebra α] (s : Set α) :
     and_.denote s = sInf s :=

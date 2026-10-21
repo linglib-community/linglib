@@ -54,8 +54,6 @@ holds its role, so the protagonist can antecede it exactly where that role is in
 
 namespace Sells1987
 
-open Reference
-
 /-! ### Discourse environments -/
 
 /-- The discourse environments of the paper's first table. -/

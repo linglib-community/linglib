@@ -31,7 +31,7 @@ The φ-domain reads the entry's referential person and number
 (`PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber`), not its agreement
 features, so a polite pronoun that agrees as third plural presupposes its addressee
 (`PersonalPronoun.phiDom_congr`). The speaker and the addressee are the agent and the addressee
-of the context of utterance (`Reference.Context`), and the female and the inanimate referents
+of the context of utterance (`Kaplan.Context`), and the female and the inanimate referents
 are the gender of referents the entity domain comes equipped with (`Gendered`).
 
 ## References
@@ -42,7 +42,7 @@ are the gender of referents the entity domain comes equipped with (`Gendered`).
 
 @[expose] public section
 
-open Reference
+open Kaplan Semantics
 
 namespace PersonalPronoun
 

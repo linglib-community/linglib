@@ -62,7 +62,7 @@ Example numbers follow the journal article; the examples are typed in
 
 namespace BeckOdaSugisaki2004
 
-open Degree Reference Quantifier Quantifier.GQ Quantifier.NP
+open Degree Quantifier Quantifier.GQ Quantifier.NP
 
 variable {Entity D : Type*} [LinearOrder D]
 

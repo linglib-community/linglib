@@ -47,7 +47,7 @@ own a dog*, the kind pronoun *them* is therefore interpretable and a partitive i
   counts (`ClassifiedNoun.IsCount`).
 * Individuals form any join semilattice, as in the paper (§3); the models are Link's nonempty
   sets of atoms, `Mereology.Individual`. A kind is a function from worlds to partial
-  individuals, and σ is `Reference.iota` of `IsGreatest`, as in (13a). The sufficient condition
+  individuals, and σ is `iota` of `IsGreatest`, as in (13a). The sufficient condition
   for σ is stated for finite extensions (`it_isSome_of_supClosed`), where the paper has closure
   under arbitrary sums.
 
@@ -69,7 +69,7 @@ own a dog*, the kind pronoun *them* is therefore interpretable and a partitive i
 
 namespace Krifka2026
 
-open Reference Mereology
+open Mereology
 open DynamicSemantics (Update Condition)
 open DynamicSemantics.Update (test neg)
 open SetRel

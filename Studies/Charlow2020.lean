@@ -459,7 +459,7 @@ submitted every paper she wrote, given that every candidate wrote a paper and no
 same ones. -/
 theorem cf_reading_iff [Nonempty E] (hwrote : ∀ x ∈ cand, ∃ y ∈ paper, wrote y x)
     (hinj : Set.InjOn (fun x y ↦ y ∈ paper ∧ wrote y x) cand) :
-    (∃ f : Reference.ChoiceFunction E,
+    (∃ f : ChoiceFunction E,
         ¬ ∃ x ∈ cand, subm (f fun y ↦ y ∈ paper ∧ wrote y x) x) ↔
       ¬ ∃ x ∈ cand, ∀ y ∈ paper, wrote y x → subm y x := by
   simpa [and_imp] using Charlow2014.cf_no_candidate_iff (· ∈ cand)
@@ -470,7 +470,7 @@ theorem cf_reading_iff [Nonempty E] (hwrote : ∀ x ∈ cand, ∃ y ∈ paper, w
 fails when the one candidate wrote two papers and submitted one. -/
 theorem cf_reading_not_imp_bound :
     ¬ ∀ (cand paper : Set (Fin 3)) (wrote subm : Fin 3 → Fin 3 → Prop) (g : Assignment (Fin 3)),
-    (∃ f : Reference.ChoiceFunction (Fin 3),
+    (∃ f : ChoiceFunction (Fin 3),
         ¬ ∃ x ∈ cand, subm (f fun y ↦ y ∈ paper ∧ wrote y x) x) →
       sSup (det GQ.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y))
         g) := by
@@ -521,7 +521,7 @@ section AlternativeSemantics
 choice function flattens the alternatives of `m` at each value of the index. -/
 def abstractChoice (n : ℕ) (m : ReaderT (Assignment E) Set Prop) :
     ReaderT (Assignment E) Set (E → Prop) :=
-  fun g ↦ Set.range fun f : Reference.ChoiceFunction Prop ↦ fun x ↦ f (· ∈ m (g[n ↦ x]))
+  fun g ↦ Set.range fun f : ChoiceFunction Prop ↦ fun x ↦ f (· ∈ m (g[n ↦ x]))
 
 /-- Composed point-wise with the abstraction (74), `nobody [λ₀ t₀ met a phonologist]` has a true
 alternative exactly when nobody met every phonologist (77). -/
@@ -538,10 +538,10 @@ theorem nobody_met_iff (human phon : Set E) (met : E → E → Prop) (hphon : ph
     exact h ⟨x, hx, show f _ from hq ▸ hall y hy⟩
   · intro h
     push Not at h
-    obtain ⟨f, hf⟩ := (Reference.ChoiceFunction.exists_forall_apply_iff (ι := human)
+    obtain ⟨f, hf⟩ := (ChoiceFunction.exists_forall_apply_iff (ι := human)
       (fun x q ↦ ∃ y ∈ phon, met y x.1 = q) Not).2 fun x ↦ by
         obtain ⟨y, hy, hn⟩ := h x x.2
-        obtain ⟨f, hf⟩ := Reference.ChoiceFunction.exists_apply_eq
+        obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq
           (N := fun q ↦ ∃ y ∈ phon, met y x.1 = q) ⟨y, hy, rfl⟩
         exact ⟨f, hf ▸ hn⟩
     exact ⟨_, ⟨_, ⟨f, rfl⟩, rfl⟩, fun ⟨x, hx, hfx⟩ ↦ hf ⟨x, hx⟩ hfx⟩

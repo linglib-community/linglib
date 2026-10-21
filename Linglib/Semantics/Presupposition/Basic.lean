@@ -78,7 +78,7 @@ theorem strawsonEntails_not_trans :
 /-- The definite-description combinator, for a partial selector `referent` returning the referent
 at each world (or `none` where none is determined) and a `scope` asserted of it, is the scope's
 value at the referent where one is selected and undefined elsewhere. Every definite denotation
-instantiates the selector, with the Russellian iota `Reference.iota` over a restrictor, over the
+instantiates the selector, with the Russellian iota `iota` over a restrictor, over the
 restrictor conjoined with identity to an antecedent, or with Donnellan's attributive use. -/
 noncomputable def presupOfReferent {E : Type*} (referent : W → Option E) (scope : E → W → Prop) :
     W → SignType :=
