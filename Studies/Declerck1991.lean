@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Interval.Basic
+public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Syntax.Category.Verb.Tense
 public import Studies.Reichenbach1947
 
@@ -29,7 +30,8 @@ after t₀, where [reichenbach-1947]'s ordering of points counts three tenses.
 
 ## Main definitions
 
-* `Declerck1991.Link`, `Declerck1991.Link.Holds`: the relations a chain is made of.
+* `Declerck1991.Link`, `Declerck1991.Link.Holds`, `Declerck1991.Link.cell`: the relations a chain
+  is made of, and their cells of Allen relations.
 * `Declerck1991.chain`: the chain of a tense form, read off its make-up.
 * `Declerck1991.tenses`: the eight tenses.
 * `Declerck1991.sector`, `Declerck1991.IsAbsolute`: the absolute sector a tense sets out in, and
@@ -122,6 +124,22 @@ instance instDecidableHoldsAlong [DecidableLE T] :
   | l :: ls, y, x :: xs =>
     have := instDecidableHoldsAlong ls x xs
     inferInstanceAs (Decidable (l.Holds x y ∧ HoldsAlong ls x xs))
+
+/-- The cell of a link, the later TO first. -/
+def cell : Link → Finset Allen.Relation
+  | .past => Allen.precedes
+  | .anterior => Allen.isBefore
+  | .posterior => Allen.inv Allen.isBefore
+  | .around => Allen.inv Allen.le
+
+theorem holds_iff {T : Type*} [LinearOrder T] (l : Link) (x y : NonemptyInterval T) :
+    l.Holds x y ↔ (x, y) ∈ Allen.toSetRel l.cell := by
+  cases l <;> simp [Holds, cell]
+
+/-- Anteriority is the relation of the perfect viewpoint read from the situation's side: the
+situation-TO lies wholly before the TO before it or up to it. -/
+theorem anterior_cell : anterior.cell = Allen.inv Aspect.ViewpointType.perfect.cell := by
+  simp [cell, Aspect.ViewpointType.cell]
 
 /-- The link an inflection contributes: the preterit's, and posteriority for an inflectional
 future such as the French one (p. 9); the present contributes none. -/

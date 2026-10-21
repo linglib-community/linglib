@@ -24,6 +24,8 @@ English simple past and the German *Perfekt* and never to the *Präteritum*.
 ## Main results
 
 * `AspectHead.isAnterior_iff`: only the perfect is anterior.
+* `cell_viewpointType`: against the library's viewpoints, the perfect is strictly stronger, the
+  imperfective strictly weaker, and the perfectives coincide.
 * `describesPastOutOfTheBlue_iff`: describing a past event out of the blue is spelling out the
   present perfect.
 * `rows_outOfTheBlue`: the out-of-the-blue judgments of the paper's examples.
@@ -142,6 +144,26 @@ def AspectHead.rel : AspectHead → NonemptyInterval T → NonemptyInterval T �
   | .perfective, r, s => s ≤ r
   | .perfect, r, s => s.Precedes r
 
+/-- The cell of an aspect's relation, the reference time first: the reference time within the
+event time, the event time within the reference time, and the event time wholly before it. -/
+def AspectHead.cell : AspectHead → Finset Allen.Relation
+  | .imperfective => Allen.le
+  | .perfective => Allen.inv Allen.le
+  | .perfect => Allen.inv Allen.precedes
+
+theorem AspectHead.rel_iff (a : AspectHead) (r s : NonemptyInterval T) :
+    a.rel r s ↔ (r, s) ∈ Allen.toSetRel a.cell := by
+  cases a <;> simp [AspectHead.rel, AspectHead.cell]
+
+/-- Against the library's viewpoints, the perfect is strictly stronger, excluding an event that
+ends exactly when the reference time begins; the imperfective is strictly weaker, admitting a
+reference time that is the whole event time; and the perfectives coincide. -/
+theorem cell_viewpointType :
+    AspectHead.perfect.cell ⊂ ViewpointType.perfect.cell ∧
+      ViewpointType.imperfective.cell ⊂ AspectHead.imperfective.cell ∧
+      AspectHead.perfective.cell = ViewpointType.perfective.cell := by
+  decide +kernel
+
 /-- An aspect maps a property of events to the property of times that stand in the aspect's
 relation to the time of some such event. -/
 def AspectHead.denote (a : AspectHead) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
@@ -156,7 +178,8 @@ theorem denote_perfective (P : W → E → Prop) : AspectHead.perfective.denote 
 event that ends exactly when the reference time begins. -/
 theorem perfect_viewpointType {P : W → E → Prop} {w : W} {r : NonemptyInterval T} :
     r ∈ AspectHead.perfect.denote P w → r ∈ ViewpointType.perfect.denote P w :=
-  fun h ↦ ofRel_mono (fun _ _ h ↦ le_of_lt h) P w h
+  fun h ↦ ofRel_mono (fun r s h ↦ (ViewpointType.perfect.ttTSitRelation_iff r s).2 <|
+    Allen.toSetRel_mono cell_viewpointType.1.subset ((AspectHead.perfect.rel_iff r s).1 h)) P w h
 
 variable (T) in
 /-- An anterior aspect places the event time before the reference time. -/

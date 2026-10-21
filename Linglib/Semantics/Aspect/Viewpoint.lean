@@ -5,6 +5,7 @@ public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Reference.Context.Index
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Events.Basic
+public import Linglib.Semantics.Tense.Allen
 
 /-!
 # Viewpoint aspect
@@ -21,6 +22,8 @@ some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
 
 ## Main definitions
 
+* `Aspect.ViewpointType.cell`: the cell of Allen relations a viewpoint imposes between the topic
+  time and the situation time.
 * `Aspect.ofRel`: the operator of a relation between reference time and run time.
 * `Aspect.IMPF`: the imperfective.
 * `Aspect.PRFV`: the perfective.
@@ -86,6 +89,20 @@ def ViewpointType.ttTSitRelation {T : Type*} [LinearOrder T]
 instance {T : Type*} [LinearOrder T] (v : ViewpointType) (tt tsit : NonemptyInterval T) :
     Decidable (v.ttTSitRelation tt tsit) := by
   cases v <;> unfold ViewpointType.ttTSitRelation <;> infer_instance
+
+/-- The cell of the viewpoint's relation, the topic time first: within the situation, around it,
+after it or from its end, before it or up to its start, and around its start. -/
+def ViewpointType.cell : ViewpointType → Finset Allen.Relation
+  | .imperfective => Allen.lt
+  | .perfective => Allen.inv Allen.le
+  | .perfect => Allen.inv Allen.isBefore
+  | .prospective => Allen.isBefore
+  | .neutral => Allen.inv Allen.startsWithin
+
+theorem ViewpointType.ttTSitRelation_iff {T : Type*} [LinearOrder T] (v : ViewpointType)
+    (tt tsit : NonemptyInterval T) :
+    v.ttTSitRelation tt tsit ↔ (tt, tsit) ∈ Allen.toSetRel v.cell := by
+  cases v <;> simp [ttTSitRelation, cell]
 
 /-! ### Operators -/
 
