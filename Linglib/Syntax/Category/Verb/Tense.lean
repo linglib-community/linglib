@@ -35,6 +35,11 @@ each is a matter of analysis left to studies.
 * `Tense.Form.IsPerfect`: the form is the perfect of some form.
 * `Tense.Periphrasis`, `Tense.Periphrasis.realize`: a language's means of building tense forms
   over its verbs, and the words of a form of a verb.
+
+## References
+
+* [huddleston-pullum-2002]
+* [durrell-2011]
 -/
 
 @[expose] public section
@@ -86,11 +91,8 @@ def progressive : Form → Form := under .presentParticiple
 @[simp] theorem under_nonfinite (n : Nonfinite) (f : Form) :
     (f.under n).nonfinite = n :: f.nonfinite := rfl
 
-theorem under_injective (n : Nonfinite) : Function.Injective (under n) := fun f g h ↦ by
-  have h₁ := congrArg Form.finite h
-  have h₂ := congrArg Form.nonfinite h
-  simp only [under_finite, under_nonfinite, List.cons.injEq, true_and] at h₁ h₂
-  exact Form.ext h₁ h₂
+theorem under_injective (n : Nonfinite) : Function.Injective (under n) := fun _ _ h ↦
+  Form.ext (congrArg finite h :) (List.cons_injective (congrArg nonfinite h :))
 
 @[simp] theorem perfect_inj {f g : Form} : f.perfect = g.perfect ↔ f = g :=
   (under_injective _).eq_iff
@@ -138,8 +140,9 @@ end Form
 
 /-- A periphrasis is the means by which a language builds tense forms over its verbs `V`. It
 gives the finite form of a verb in each tense, its nonfinite forms, and the auxiliary under
-which a verb stands when it is in a given nonfinite form. Each is partial, since a language may lack an inflection, as German
-lacks a future inflection, or a construction, as German lacks a progressive. -/
+which a verb stands when it is in a given nonfinite form. Each is partial, since a language may
+lack an inflection, as German lacks a future inflection, or a construction, as German lacks a
+progressive. -/
 structure Periphrasis (V : Type*) where
   /-- The finite form of a verb in a tense. -/
   finite : V → Tense → Option String

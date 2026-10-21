@@ -17,14 +17,16 @@ prefix such as *be-*, *ver-* or *ent-*: *gratuliert*, *bezahlt*.
 
 A separable verb conjugates like the simple verb it is formed from. Its particle stands at the end
 of a main clause, *ruft … an*, and is joined to the non-finite forms, with the *ge-* of the simple
-verb and the *zu* of the infinitive after it: *angerufen*, *anzurufen*. The present tense has the
+verb and the *zu* of the infinitive after it: *angerufen*, *anzurufen*. The present participle is
+the infinitive with *-d*, *kaufend* and *ankommend*, in all but the irregular verbs. The present
+tense has the
 endings *-e*, *-st*, *-t*, *-en*, *-t* and *-en* in weak and strong verbs alike. The rules and the
 examples are Durrell's.
 
 ## Main definitions
 
 * `German.Conjugation.Stem`: the infinitive, third person singular present and past, and past
-  participle of a verb.
+  and present participles of a verb.
 * `German.Conjugation.weak`, `German.Conjugation.strong`: the stem of a weak verb from its
   infinitive, and of a strong verb from its principal parts.
 * `German.Conjugation.Stem.inseparable`, `German.Conjugation.Stem.separable`: the stem of a verb
@@ -75,8 +77,9 @@ def IsIer (r : String) : Prop := ['i', 'e', 'r'] <:+ r.toList
 
 instance (r : String) : Decidable (IsIer r) := inferInstanceAs (Decidable (_ <:+ _))
 
-/-- The stem of a verb is its infinitive, its third person singular present and past, and its past
-participle without a leading *ge-*, with whether the participle takes one. -/
+/-- The stem of a verb is its infinitive, its third person singular present and past, its past
+participle without a leading *ge-*, with whether the participle takes one, and its present
+participle. -/
 structure Stem where
   /-- The infinitive. -/
   infinitive : String
@@ -89,6 +92,9 @@ structure Stem where
   /-- The past participle takes a leading *ge-*, as that of a simple verb stressed on its first
   syllable does. -/
   prefixGe : Bool := true
+  /-- The present participle, the infinitive with *-d* unless the verb is irregular there, as
+  *kaufend*, *wandernd* and *singend*. -/
+  presentParticiple : String := infinitive ++ "d"
   deriving DecidableEq, Repr
 
 /-- `s.pastParticiple` is the past participle. -/
@@ -150,15 +156,18 @@ example :
     (weak "kaufen").past = "kaufte" ∧ (weak "kaufen").pastParticiple = "gekauft" ∧
       (weak "arbeiten").present = "arbeitet" ∧ (weak "arbeiten").past = "arbeitete" ∧
       (weak "atmen").pastParticiple = "geatmet" ∧ (weak "lernen").present = "lernt" ∧
-      (weak "gratulieren").pastParticiple = "gratuliert" := by
+      (weak "gratulieren").pastParticiple = "gratuliert" ∧
+      (weak "kaufen").presentParticiple = "kaufend" ∧
+      (weak "wandern").presentParticiple = "wandernd" := by
   decide
 
-/-- The separable *ankommen* 'arrive' conjugates like *kommen*: *kommt an*, *angekommen*,
-*anzukommen*; *einstudieren* 'rehearse' keeps the missing *ge-* of *studieren*; the inseparable
-*verstehen* 'understand' has no *ge-*. -/
+/-- The separable *ankommen* 'arrive' conjugates like *kommen*: *kommt an*, *ankommend*,
+*angekommen*, *anzukommen*; *einstudieren* 'rehearse' keeps the missing *ge-* of *studieren*; the
+inseparable *verstehen* 'understand' has no *ge-*. -/
 example :
     let kommen := strong "kommen" "kommt" "kam" "gekommen"
     (kommen.separable "an").present = "kommt an" ∧
+      (kommen.separable "an").presentParticiple = "ankommend" ∧
       (kommen.separable "an").pastParticiple = "angekommen" ∧
       kommen.separableZuInfinitive "an" = "anzukommen" ∧
       ((weak "studieren").separable "ein").pastParticiple = "einstudiert" ∧
