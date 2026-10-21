@@ -4,6 +4,7 @@ public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 /-!
@@ -19,8 +20,9 @@ both ranks the points and says which of them are available.
 
 ## Main results
 
-* `ProbabilityTheory.Kernel.softmax_coe_real_singleton`: a real score gives each row
-  `Real.softmax` of the score.
+* `ProbabilityTheory.Kernel.softmax_coe_eq_count_tilted`,
+  `ProbabilityTheory.Kernel.softmax_coe_real_singleton`: a real score gives each row the counting
+  measure tilted by the score, whose atoms are `Real.softmax` of the score.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_lt_iff`: row preference is score comparison.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_of_pair`: with two available points the share
   of one is the logistic function of the score difference.
@@ -100,20 +102,6 @@ theorem softmax_real_singleton_lt_iff {w : α} (htop : ∀ u, score w u ≠ ⊤)
       (ENNReal.sum_ne_top.mpr fun u _ ↦ mt EReal.exp_eq_top_iff.mp (htop u)),
     EReal.exp_lt_exp_iff]
 
-/-- A real-valued score gives each row the softmax of the score. -/
-theorem softmax_coe_real_singleton (f : α → β → ℝ) (w : α) (u : β) :
-    (softmax (fun w u ↦ (f w u : EReal)) w).real {u} = Real.softmax (f w) u := by
-  rw [softmax, ofWeights_real_singleton _ w fun u ↦ mt EReal.exp_eq_top_iff.mp (EReal.coe_ne_top _),
-    Real.softmax_apply]
-  simp only [EReal.exp_coe, ENNReal.toReal_ofReal (Real.exp_pos _).le]
-
-/-- A real-valued score excludes no point, so row preference is comparison of reals. -/
-theorem softmax_coe_real_singleton_lt_iff (f : α → β → ℝ) (w : α) {u u' : β} :
-    (softmax (fun w u ↦ (f w u : EReal)) w).real {u} <
-        (softmax (fun w u ↦ (f w u : EReal)) w).real {u'} ↔ f w u < f w u' := by
-  have : Nonempty β := ⟨u⟩
-  rw [softmax_coe_real_singleton, softmax_coe_real_singleton, Real.softmax_lt_softmax_iff]
-
 /-- When exactly two points of a row have score above `⊥`, the share of one is the logistic
 function of the score difference. -/
 theorem softmax_real_singleton_of_pair {w : α} {u u' : β} (huu' : u ≠ u')
@@ -145,36 +133,53 @@ the score. -/
 theorem softmax_eq_tilted (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w u ≠ ⊥) :
     softmax score w =
       (uniformOn {u | score w u ≠ ⊥}).tilted fun u ↦ (score w u).toReal := by
-  classical
   set S : Set β := {u | score w u ≠ ⊥}
   have := isProbabilityMeasure_uniformOn S.toFinite h0
-  set c : ℝ := ((Measure.count S)⁻¹).toReal
-  have hc : c ≠ 0 := ENNReal.toReal_ne_zero.2
-    ⟨ENNReal.inv_ne_zero.2 (Measure.count_apply_lt_top.2 S.toFinite).ne,
-      ENNReal.inv_ne_top.2 (Measure.count_ne_zero_iff.2 h0)⟩
-  have hν (b : β) : (uniformOn S).real {b} = S.indicator (fun _ ↦ c) b := by
-    rw [measureReal_def, uniformOn, cond_apply S.toFinite.measurableSet]
-    by_cases hb : b ∈ S
-    · rw [Set.inter_eq_right.2 (Set.singleton_subset_iff.2 hb), Measure.count_singleton, mul_one,
-        Set.indicator_of_mem hb]
-    · rw [Set.inter_singleton_eq_empty.2 hb, measure_empty, mul_zero, ENNReal.toReal_zero,
-        Set.indicator_of_notMem hb]
-  have he (b : β) : (EReal.exp (score w b)).toReal =
-      S.indicator (fun b ↦ Real.exp (score w b).toReal) b := by
-    by_cases hb : score w b = ⊥
-    · rw [hb, EReal.exp_bot, ENNReal.toReal_zero, Set.indicator_of_notMem (by simpa [S] using hb)]
-    · rw [Set.indicator_of_mem hb, ← EReal.coe_toReal (htop b) hb, EReal.exp_coe,
+  have hw (u : β) : EReal.exp (score w u) ≠ ⊤ := mt EReal.exp_eq_top_iff.mp (htop u)
+  have : IsProbabilityMeasure (softmax score w) :=
+    isProbabilityMeasure_ofWeights (h0.imp fun _ hu ↦ mt EReal.exp_eq_zero_iff.mp hu) hw
+  have he (u : β) : (EReal.exp (score w u)).toReal =
+      S.indicator (fun u ↦ Real.exp (score w u).toReal) u := by
+    by_cases hu : score w u = ⊥
+    · rw [hu, EReal.exp_bot, ENNReal.toReal_zero, Set.indicator_of_notMem (by simpa [S] using hu)]
+    · rw [Set.indicator_of_mem hu, ← EReal.coe_toReal (htop u) hu, EReal.exp_coe,
         ENNReal.toReal_ofReal (Real.exp_pos _).le, EReal.toReal_coe]
-  have key (b : β) : S.indicator (fun _ ↦ c) b * Real.exp (score w b).toReal =
-      c * S.indicator (fun b ↦ Real.exp (score w b).toReal) b := by
-    by_cases hb : b ∈ S <;> simp [hb]
-  refine Measure.ext_iff_singleton.2 fun a ↦ ?_
-  rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
-    ← measureReal_def, softmax,
-    ofWeights_real_singleton (fun w u ↦ EReal.exp (score w u)) w
-      (fun u ↦ mt EReal.exp_eq_top_iff.mp (htop u)),
-    tilted_real_singleton]
-  simp_rw [he, hν, key, ← Finset.mul_sum, mul_div_mul_left _ _ hc]
+  have hn : (0 : ℝ) < S.ncard := Nat.cast_pos.2 ((Set.ncard_pos S.toFinite).2 h0)
+  have hZ : 0 < ∑ u, (EReal.exp (score w u)).toReal := by
+    obtain ⟨u, hu⟩ := h0
+    refine (Finset.sum_pos_iff_of_nonneg fun _ _ ↦ ENNReal.toReal_nonneg).2 ⟨u, by simp, ?_⟩
+    rw [he, Set.indicator_of_mem hu]
+    exact Real.exp_pos _
+  refine (eq_tilted_iff _ _ _).2 ⟨(∑ u, (EReal.exp (score w u)).toReal) / S.ncard,
+    by positivity, fun u ↦ ?_⟩
+  rw [softmax, ofWeights_real_singleton _ w hw, uniformOn_real_apply_of_finite S.toFinite, he]
+  by_cases hu : u ∈ S
+  · rw [Set.indicator_of_mem hu, Set.inter_singleton_of_mem hu, Set.ncard_singleton,
+      Nat.cast_one]
+    field_simp
+  · rw [Set.indicator_of_notMem hu, Set.inter_singleton_eq_empty.2 hu]
+    simp
+
+/-- A real-valued score gives each row the counting measure tilted by the score. -/
+theorem softmax_coe_eq_count_tilted [Nonempty β] (f : α → β → ℝ) (w : α) :
+    softmax (fun w u ↦ (f w u : EReal)) w = Measure.count.tilted (f w) := by
+  rw [softmax_eq_tilted (score := fun w u ↦ (f w u : EReal)) (w := w)
+    (fun _ ↦ EReal.coe_ne_top _) ⟨Classical.arbitrary β, EReal.coe_ne_bot _⟩]
+  simp only [ne_eq, EReal.coe_ne_bot, not_false_eq_true, Set.ofPred_true, EReal.toReal_coe]
+  exact uniformOn_univ_tilted
+
+/-- A real-valued score gives each row the softmax of the score. -/
+theorem softmax_coe_real_singleton (f : α → β → ℝ) (w : α) (u : β) :
+    (softmax (fun w u ↦ (f w u : EReal)) w).real {u} = Real.softmax (f w) u := by
+  have : Nonempty β := ⟨u⟩
+  rw [softmax_coe_eq_count_tilted, count_tilted_real_singleton]
+
+/-- A real-valued score excludes no point, so row preference is comparison of reals. -/
+theorem softmax_coe_real_singleton_lt_iff (f : α → β → ℝ) (w : α) {u u' : β} :
+    (softmax (fun w u ↦ (f w u : EReal)) w).real {u} <
+        (softmax (fun w u ↦ (f w u : EReal)) w).real {u'} ↔ f w u < f w u' := by
+  have : Nonempty β := ⟨u⟩
+  rw [softmax_coe_real_singleton, softmax_coe_real_singleton, Real.softmax_lt_softmax_iff]
 
 /-- A row of the softmax kernel attains the log partition function as its free energy relative to
 the uniform measure on the points of score above `⊥`. -/

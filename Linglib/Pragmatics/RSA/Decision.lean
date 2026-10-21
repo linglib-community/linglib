@@ -103,14 +103,17 @@ instance [Nonempty A] : IsMarkovKernel (policy β L R) :=
 
 variable {β} {u : U} {a a' : A} {w : W}
 
+/-- The policy's share of an action is the real softmax of the scaled expected rewards. -/
+theorem policy_real_singleton :
+    (policy β L R u).real {a} = Real.softmax (fun a ↦ β * expectedReward L R u a) a :=
+  Kernel.softmax_coe_real_singleton (fun u a ↦ β * expectedReward L R u a) u a
+
 /-- Row preference of the policy is comparison of expected reward. -/
 theorem policy_real_lt_iff (hβ : 0 < β) :
     (policy β L R u).real {a} < (policy β L R u).real {a'} ↔
-      expectedReward L R u a < expectedReward L R u a' := by
-  rw [policy, Kernel.softmax_real_singleton_lt_iff (score := policyScore β L R) (w := u)
-    (fun _ ↦ EReal.coe_ne_top _) ⟨a, EReal.coe_ne_bot _⟩, policyScore, policyScore,
-    EReal.coe_lt_coe_iff]
-  exact mul_lt_mul_iff_right₀ hβ
+      expectedReward L R u a < expectedReward L R u a' :=
+  (Kernel.softmax_coe_real_singleton_lt_iff (fun u a ↦ β * expectedReward L R u a) u).trans
+    (mul_lt_mul_iff_right₀ hβ)
 
 /-- A listener rewarded for guessing the state prefers the states the belief finds more
 probable. -/
@@ -119,11 +122,6 @@ theorem policy_single_real_lt_iff [DecidableEq W] [DiscreteMeasurableSpace W] (h
     (policy β L (fun a ↦ Pi.single a 1) u).real {w} <
         (policy β L (fun a ↦ Pi.single a 1) u).real {w'} ↔ (L u).real {w} < (L u).real {w'} := by
   rw [policy_real_lt_iff _ _ hβ, expectedReward_single, expectedReward_single]
-
-/-- The policy's share of an action is the real softmax of the scaled expected rewards. -/
-theorem policy_real_singleton :
-    (policy β L R u).real {a} = Real.softmax (fun a ↦ β * expectedReward L R u a) a :=
-  Kernel.softmax_coe_real_singleton (fun u a ↦ β * expectedReward L R u a) u a
 
 /-- With two actions, the policy's share of one is the logistic function of the scaled
 difference in expected reward. -/
