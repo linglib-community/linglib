@@ -189,7 +189,7 @@ def forXPrediction (c : VendlerClass) : DiagnosticResult :=
 def inXPrediction (c : VendlerClass) : DiagnosticResult :=
   if c.telicity = .telic then .accept else .reject
 
-/-- The progressive test. -/
+/-- The English progressive test. -/
 def progressivePrediction (c : VendlerClass) : DiagnosticResult :=
   match c.dynamicity, c.duration, c.telicity with
   | .stative, _, _ => .reject

@@ -35,7 +35,7 @@ inductive Cat where
   | D     -- determiner
   | T     -- tense
   | C     -- complementizer
-  | v     -- light verb
+  | v     -- little v: the verbal categorizer, or the light verb above the root
   | n     -- nominal categorizer / gender (little-n, [marantz-2001]; Distributed Morphology)
   | a     -- adjectival categorizer (little-a, [panagiotidis-2015]; DegP complement)
   | Place -- locational head ([dendikken-2010]; PlaceP, F1 in adpositional EP)

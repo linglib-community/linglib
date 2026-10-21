@@ -50,7 +50,7 @@ conditions on the neighboring terminals, not on features of its own head.
 engine; `readingFromAllosemes` is a different object — the composition of
 two already-selected allosemes.
 Existing infrastructure this module retroactively classifies as
-allosemy: `Minimalist.Voice.Flavor` (Voice) and the conditioning of v by
+allosemy: the cells of `Minimalist.Voice.Head` (Voice) and the conditioning of v by
 whether its root entails change.
 
 ## References
