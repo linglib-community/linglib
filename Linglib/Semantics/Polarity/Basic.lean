@@ -18,7 +18,8 @@ two, a negation cancelling a negation; they are the units of `ℤ` (`Polarity.un
 notion of polarity in the library is an action of this one group:
 
 * the polarity of a sentence acts on propositions, the negative polarity by complement
-  (`negative • p = pᶜ`), and the orbit of a proposition, the proposition and its negation, is
+  (`negative • p = pᶜ`), the meaning of sentential negation, whose forms are in
+  `Syntax/Negation`, and the orbit of a proposition, the proposition and its negation, is
   the set of its polarity alternatives (`orbit_eq_pair_compl`): the focus value of a focused
   polarity and the answers of the polar question. Once there is a world the action is free,
   no proposition being its own negation;

@@ -6,7 +6,7 @@ public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Semantics.Questions.Bias
-public import Linglib.Syntax.PolarInterrogative.Basic
+public import Linglib.Syntax.Negation
 public import Mathlib.Order.Interval.Set.Defs
 
 /-!
@@ -37,8 +37,8 @@ and conjunction where the paper speaks of a set of propositions. VERUM is not a 
 its own: other analyses built on it, Repp's FALSUM among them, are necessities along the same
 relation of the common ground's acceptance of a proposition or its failure to. Speaker belief is the
 epistemic proposition of the states settling a proposition, `Set.Iic`. A question's form is the
-position of its negation, `Option NegationPosition`, what matters being its position relative to the
-rest of the clause, preposed or not; a bias is the sign of the proposition the speaker's belief
+position of its negation, `Option Negation.Position`, what matters being its position relative to
+the rest of the clause, preposed or not; a bias is the sign of the proposition the speaker's belief
 supports. The Principle of Economy that makes VERUM questions biased is stated in the paper in prose
 and is not formalized.
 
@@ -58,7 +58,6 @@ namespace RomeroHan2004
 
 open scoped ModalLogic
 open Question (polar polar_compl)
-open PolarInterrogative (NegationPosition)
 open Set (Iic)
 
 open scoped SetRel
@@ -163,7 +162,7 @@ instance (e : PolarityItem) (f : Form) : Decidable (Licensed e f) := by
 /-- An example, with the position of its negation, if any, its reported bias, its VERUM
 form and its polarity item, each when the paper gives one, and its judgment. -/
 structure Row where
-  negation : Option (Option NegationPosition)
+  negation : Option (Option Negation.Position)
   bias : Option SignType
   form : Option Form
   item : Option PolarityItem
@@ -172,7 +171,7 @@ structure Row where
 /-- A datum read into its row. -/
 def Row.ofDatum (e : Datum) : Row where
   negation := e.parse? "negation"
-    [("preposed", some NegationPosition.preposed), ("nonPreposed", some .nonPreposed),
+    [("preposed", some Negation.Position.preposed), ("nonPreposed", some .nonPreposed),
       ("none", none)]
   bias := e.parse? "bias" [("positive", (1 : SignType)), ("negative", -1), ("none", 0)]
   form := e.parse? "form" [("pi", Form.pi), ("ni", .ni), ("really", .really),

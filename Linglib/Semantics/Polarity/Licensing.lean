@@ -33,10 +33,10 @@ each fragment checks the theory against the contexts its entries are attested an
   item, is licensed exactly by the licensers carrying that strength, so an item needing
   anti-morphic strength is licensed by clausal negation and by no other named context.
 * `LicensingContext.antiLicenses_negation`: clausal negation blocks every positive polarity item,
-  [vanderwouden-1997]'s (169).
+  van der Wouden's (169).
 * `Licenser.antiLicenses_iff_licenses`: a classical licenser blocks the positive polarity items of
   a class exactly where it licenses the negative polarity items of that class, the mirror image of
-  [vanderwouden-1997]'s (181).
+  van der Wouden's (181).
 
 ## References
 
@@ -86,19 +86,19 @@ theorem admits_iff_not_antiLicenses (hn : ¬ e.IsNPI) (hf : ¬ e.IsFCI) :
 
 /-! ### The profiles of the licensers -/
 
-private theorem licenses_of_carries_iff {s₀ : DEStrength}
+private theorem licenses_of_carries_iff {s₀ : Negation.Strength}
     (hfc : ¬ L.LicensesFreeChoice) (hrel : ¬ L.LicensesByRelevance)
     (h : ∀ s, L.Carries s ↔ s ≤ s₀) : L.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ s₀ := by
   simp only [Licenses, h, hfc, hrel, false_and, or_false]
 
-private theorem licenses_classical {F : OperatorFamily} {s₀ : DEStrength}
+private theorem licenses_classical {F : OperatorFamily} {s₀ : Negation.Strength}
     (hc : L = .classical F) (hn : ¬ L.IsStrawsonUE)
     (h : ∀ s, L.Holds s.toSignature ↔ s ≤ s₀) :
     L.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ s₀ := by
   refine licenses_of_carries_iff (by rw [hc]; exact id) (by rw [hc]; exact id) fun s ↦ ?_
   rw [← h, hc, carries_classical_iff, and_iff_left (hc ▸ hn)]
 
-private theorem le_weak_iff {s : DEStrength} : s ≤ .weak ↔ s = .weak := by
+private theorem le_weak_iff {s : Negation.Strength} : s ≤ .weak ↔ s = .weak := by
   cases s <;> decide
 
 /-- A licenser that is non-trivially downward entailing modulo presupposition, and not outright
@@ -111,7 +111,7 @@ private theorem licenses_weak (hfc : ¬ L.LicensesFreeChoice)
     (carries_iff_eq_weak hde hn hx).trans le_weak_iff.symm]
   simp only [le_weak_iff, exists_eq_right, Option.mem_def]
 
-private theorem antiLicenses_classical {s₀ : DEStrength}
+private theorem antiLicenses_classical {s₀ : Negation.Strength}
     (h : ∀ s, L.Holds s.toSignature ↔ s ≤ s₀) :
     L.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ s₀ := by
   simp only [AntiLicenses, h]
@@ -140,7 +140,7 @@ instance [DecidablePred L.Licenses] [DecidablePred L.AntiLicenses] : DecidablePr
 
 /-- An item needing a strength above weak, and not a free choice item, is licensed exactly by the
 contexts whose licenser carries that strength. -/
-theorem licenses_iff_carries {r : DEStrength} (he : e.licensor = some r) (hr : r ≠ .weak)
+theorem licenses_iff_carries {r : Negation.Strength} (he : e.licensor = some r) (hr : r ≠ .weak)
     (hf : ¬ e.IsFCI) : L.Licenses e ↔ L.Carries r := by
   refine ⟨?_, fun h ↦ .inl ⟨r, he, h⟩⟩
   rintro (⟨s, hs, hc⟩ | ⟨_, hfc⟩ | ⟨_, hw⟩)
@@ -164,8 +164,8 @@ theorem antiLicenses_iff_licenses {e' : PolarityItem} {F : OperatorFamily}
 
 /-- A context licensing an item licenses every item with a weaker licensor that is a free choice
 item if the first is. -/
-theorem Licenses.of_licensor_le {e' : PolarityItem} {r r' : DEStrength} (he : e.licensor = some r)
-    (he' : e'.licensor = some r') (hr : r' ≤ r) (hf : e.IsFCI → e'.IsFCI) (hl : L.Licenses e) :
+theorem Licenses.of_licensor_le {e' : PolarityItem} {r r' : Negation.Strength}
+    (he : e.licensor = some r) (he' : e'.licensor = some r') (hr : r' ≤ r) (hf : e.IsFCI → e'.IsFCI) (hl : L.Licenses e) :
     L.Licenses e' := by
   rcases hl with ⟨s, hs, hc⟩ | ⟨hc, hfc⟩ | ⟨hc, hw⟩
   · rw [he, Option.mem_def, Option.some_inj] at hs
@@ -184,7 +184,7 @@ open NaturalLogic Licenser
 
 variable {e : PolarityItem}
 
-private theorem le_antiMorphic (s : DEStrength) : s ≤ .antiMorphic := by cases s <;> decide
+private theorem le_antiMorphic (s : Negation.Strength) : s ≤ .antiMorphic := by cases s <;> decide
 
 @[simp] theorem licenses_negation : negation.licenser.Licenses e ↔ e.IsNPI := by
   rw [licenses_classical (L := negation.licenser) (s₀ := .antiMorphic) rfl

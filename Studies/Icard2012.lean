@@ -18,7 +18,7 @@ that involves a giant squid is dangerous* entails *Not every job that involves a
 safe*, is derived from the paper's assumption set by three substitutions and two compositions
 (`derives_squid`), and Section 4's correspondence between the signatures and Zwarts's three classes
 of negative polarity items is `Licenses`, read off the substrate's strength map
-`Signature.toDEStrength`.
+`Signature.negationStrength`.
 
 ## Implementation notes
 
@@ -64,7 +64,7 @@ example : project .negation .addMult = .negation := rfl
 example : project .alternation .mult = .alternation := rfl
 example : project .negation .mono = .independent := rfl
 
-/-- The printed remark that `•` projects every relation to `#` overshoots at `≡`: every
+/-- The printed remark that `•` projects every relation to `#` overshoots at `≡`, since every
 function preserves equality. -/
 example : project .equiv .all = .equiv := rfl
 
@@ -74,7 +74,7 @@ example : negationSignature * negationSignature = .addMult := rfl
 
 /-! ### The typed language (Sections 2.1 and 2.3) -/
 
-/-- The basic types: predicates, intransitive verbs and truth values. -/
+/-- The basic types are predicates, intransitive verbs and truth values. -/
 inductive Base
   | p
   | v
@@ -87,31 +87,31 @@ inductive Ty
   | arrow : Ty → Ty → Ty
   deriving DecidableEq
 
-/-- A lexicon: the constants' types and the projectivity markings of their arrows, outermost
-first (Definition 2.1). -/
+/-- A lexicon gives the constants' types and the projectivity markings of their arrows,
+outermost first (Definition 2.1). -/
 structure Lexicon (κ : Type*) where
   ty : κ → Ty
   marks : κ → List Signature
 
 variable {κ : Type*}
 
-/-- Terms of the language (Definition 2.8): constants and applications. -/
+/-- The terms of the language (Definition 2.8) are constants and applications. -/
 inductive Term (L : Lexicon κ) : Ty → Type _
   | const (c : κ) : Term L (L.ty c)
   | app {σ τ : Ty} : Term L (.arrow σ τ) → Term L σ → Term L τ
 
 variable {L : Lexicon κ}
 
-/-- The markings a term still carries: applying a term consumes its outermost marking. -/
+/-- The markings a term still carries, applying a term consuming its outermost marking. -/
 def Term.marks : ∀ {τ}, Term L τ → List Signature
   | _, .const c => L.marks c
   | _, .app s _ => s.marks.tail
 
-/-- The topmost projectivity of a term (Section 2.4): its outermost marking, `•` when it
+/-- The topmost projectivity of a term (Section 2.4) is its outermost marking, `•` when it
 has none. -/
 def Term.top {τ : Ty} (t : Term L τ) : Signature := t.marks.headD .all
 
-/-- A context (Section 2.4): a term with one hole of type `σ`, in function or argument
+/-- A context (Section 2.4) is a term with one hole of type `σ`, in function or argument
 position. -/
 inductive Ctx (L : Lexicon κ) (σ : Ty) : Ty → Type _
   | hole : Ctx L σ σ
@@ -126,7 +126,7 @@ def Ctx.fill : ∀ {τ}, Ctx L σ τ → Term L σ → Term L τ
   | _, .appL c u, s => .app (c.fill s) u
   | _, .appR f c, s => .app f (c.fill s)
 
-/-- The projectivity of a context (Definition 2.9): the identity marking at the hole, the
+/-- The projectivity of a context (Definition 2.9) is the identity marking at the hole, the
 context's own projectivity into the function position, and the function's topmost
 projectivity composed with the argument's into the argument position. -/
 def Ctx.pro : ∀ {τ}, Ctx L σ τ → Signature
@@ -151,7 +151,7 @@ section Dom
 
 variable {B : Base → Type u} [∀ b, BooleanAlgebra (B b)]
 
-/-- The Boolean algebra of a domain: that of the basic type, or the pointwise one on
+/-- The Boolean algebra of a domain is that of the basic type, or the pointwise one on
 functions. -/
 @[reducible] def Dom.booleanAlgebra : ∀ τ, BooleanAlgebra (Dom B τ)
   | .base b => inferInstanceAs (BooleanAlgebra (B b))
@@ -168,8 +168,8 @@ def Mem : List Signature → ∀ τ, Dom B τ → Prop
 
 end Dom
 
-/-- A model of the language: domains for the basic types and a denotation for each constant
-of its markings. -/
+/-- A model of the language gives domains for the basic types and a denotation for each
+constant of its markings. -/
 structure Model (L : Lexicon κ) where
   B : Base → Type u
   [ba : ∀ b, BooleanAlgebra (B b)]
@@ -210,7 +210,7 @@ theorem mem_eval : ∀ {τ} (t : Term L τ), Mem t.marks τ (eval M t)
     · rw [hm] at h
       exact h.2 (eval M u)
 
-/-- Soundness of projectivity marking (Proposition 2.10): a context denotes a function of its
+/-- Projectivity marking is sound (Proposition 2.10), a context denoting a function of its
 projectivity. -/
 theorem soundFor_ctxFun : ∀ {τ} (c : Ctx L σ τ), c.pro.SoundFor (ctxFun M c)
   | _, .hole => soundFor_addMult_id
@@ -230,9 +230,9 @@ end Model
 
 /-! ### The calculus 𝒞 (Section 3.1) -/
 
-/-- The projectivity calculus 𝒞: Reflexivity, the four Symmetry rules, Absurdity, Composition
-along the join, and Substitution through a context with the projection of the relation,
-deriving relational statements between terms of a type from an assumption set. -/
+/-- The projectivity calculus 𝒞 derives relational statements between terms of a type from an
+assumption set by Reflexivity, the four Symmetry rules, Absurdity, Composition along the join,
+and Substitution through a context with the projection of the relation. -/
 inductive Derives (Γ : ∀ {τ}, Term L τ → Relation → Term L τ → Prop) :
     ∀ {τ}, Term L τ → Relation → Term L τ → Prop
   | ax {τ} {t t' : Term L τ} {R} : Γ t R t' → Derives Γ t R t'
@@ -249,7 +249,7 @@ inductive Derives (Γ : ∀ {τ}, Term L τ → Relation → Term L τ → Prop)
   | subst {σ τ} {s s' : Term L σ} {R} (c : Ctx L σ τ) :
       Derives Γ s R s' → Derives Γ (c.fill s) (project R c.pro) (c.fill s')
 
-/-- Soundness of 𝒞 (Theorem 3.1): a derivable statement holds in every model of the
+/-- 𝒞 is sound (Theorem 3.1), a derivable statement holding in every model of the
 assumptions in which no term denotes `⊥`; Composition is Lemma 1.6, Substitution
 Corollary 2.12, and Absurdity needs the nonvacuity. -/
 theorem Derives.sound (M : Model L) {Γ : ∀ {τ}, Term L τ → Relation → Term L τ → Prop}
@@ -275,7 +275,7 @@ inductive Const
   | is | involves | that
   deriving DecidableEq
 
-/-- The fragment's lexicon: *every* is anti-additive then multiplicative, *some* additive
+/-- In the fragment's lexicon *every* is anti-additive then multiplicative, *some* additive
 twice, *no* anti-additive twice, *not every* additive then anti-multiplicative, and the
 adjectives, copula, verb and relativizer morphisms. -/
 def lexicon : Lexicon Const where
@@ -306,8 +306,8 @@ inductive Assumption : ∀ {τ}, Term lexicon τ → Relation → Term lexicon �
   | safeAltDangerous : Assumption (k .safe) .alternation (k .dangerous)
   | squidLeCephalopod : Assumption (k .giantSquid) .forward (k .cephalopod)
 
-/-- *no* ⊑ *not every* needs no extra postulate: Composition on *no* | *every* and
-*every* ^ *not every*, with `| ⋈ ^ = ⊑`. -/
+/-- *no* ⊑ *not every* needs no extra postulate, following by Composition on *no* | *every*
+and *every* ^ *not every*, with `| ⋈ ^ = ⊑`. -/
 theorem derives_no_forward_notEvery : Derives Assumption (k .no) .forward (k .notEvery) :=
   .comp (.ax Assumption.noAltEvery) (.ax Assumption.everyNegNotEvery)
 
@@ -326,18 +326,18 @@ def v₀ : Term lexicon (.base .t) := sentence (k .every) (k .cephalopod) (k .sa
 /-- *Not every job that involves a cephalopod is safe*. -/
 def t₀' : Term lexicon (.base .t) := sentence (k .notEvery) (k .cephalopod) (k .safe)
 
-/-- The context of the adjective: its projectivity is `top(every(job…)) ∘ top(is) = ⊞`. -/
+/-- The context of the adjective, whose projectivity is `top(every(job…)) ∘ top(is) = ⊞`. -/
 def adjectiveCtx : Ctx lexicon (.arrow (.base .p) (.base .p)) (.base .t) :=
   .appR (.app (k .every) (.app (.app (k .that) (.app (k .involves) (.app (k .some)
     (k .giantSquid)))) (k .job))) (.appR (k .is) .hole)
 
-/-- The context of the noun under *a*, with the adjective already *safe*: its projectivity
+/-- The context of the noun under *a*, with the adjective already *safe*, whose projectivity
 is `top(every) ∘ top(that) ∘ top(involves) ∘ top(a) = ◇`. -/
 def nounCtx : Ctx lexicon (.base .p) (.base .t) :=
   .appL (.appR (k .every) (.appL (.appR (k .that) (.appR (k .involves)
     (.appR (k .some) .hole))) (k .job))) (.app (k .is) (k .safe))
 
-/-- The context of the determiner, under no function: projectivity `⊕⊞`. -/
+/-- The context of the determiner, under no function, of projectivity `⊕⊞`. -/
 def determinerCtx : Ctx lexicon (lexicon.ty .every) (.base .t) :=
   .appL (.appL .hole (.app (.app (k .that) (.app (k .involves) (.app (k .some)
     (k .cephalopod)))) (k .job))) (.app (k .is) (k .safe))
@@ -346,7 +346,7 @@ example : adjectiveCtx.pro = .mult := rfl
 example : nounCtx.pro = .antiAdd := rfl
 example : determinerCtx.pro = .addMult := rfl
 
-/-- The main example: *Every job that involves a giant squid is dangerous* ⊑ *Not every job that
+/-- In the main example, *Every job that involves a giant squid is dangerous* ⊑ *Not every job that
 involves a cephalopod is safe* (the paper misprints *giant squid* in the conclusion). Substituting
 *safe* for *dangerous* under `⊞` keeps `|`, *cephalopod* for *giant squid* under `◇` turns `⊑` into
 `⊒`, and *not every* for *every* under `⊕⊞` keeps `^`; Composition then gives `| ⋈ ⊒ = |` and `| ⋈ ^
@@ -360,7 +360,7 @@ theorem derives_squid : Derives Assumption t₀ .forward t₀' :=
     .subst determinerCtx (.ax Assumption.everyNegNotEvery)
   (h₁.comp h₂).comp h₃
 
-/-- Section 3.3: the calculus is not confluent. Substituting *octopus* for *squid* under
+/-- The calculus is not confluent (Section 3.3). Substituting *octopus* for *squid* under
 *some* on the assumption *squid* | *octopus* yields `#`, from which nothing stronger is
 recovered, though *some squid* ⊑ *some cephalopod* is derivable directly. -/
 example : project .alternation .additive = .independent ∧ ⊤ * Relation.forward = ⊤ :=
@@ -373,11 +373,11 @@ antitone context, strong ones an anti-additive context and superstrong ones an
 anti-morphic one. -/
 
 /-- A signature licenses an item of a Zwarts class when the strength of negation it realizes,
-`Signature.toDEStrength`, is at least as strong. -/
-def Licenses (level : PolarityItem.DEStrength) (σ : Signature) : Prop :=
-  (level : WithBot PolarityItem.DEStrength) ≤ σ.toDEStrength
+`Signature.negationStrength`, is at least as strong. -/
+def Licenses (level : Negation.Strength) (σ : Signature) : Prop :=
+  (level : WithBot Negation.Strength) ≤ σ.negationStrength
 
-instance (level : PolarityItem.DEStrength) (σ : Signature) : Decidable (Licenses level σ) :=
+instance (level : Negation.Strength) (σ : Signature) : Decidable (Licenses level σ) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
 /-- A downward signature licenses the weak items. -/
@@ -385,13 +385,14 @@ theorem licenses_weak {σ : Signature} (h : σ.sign = -1) :
     Licenses .weak σ := by
   cases σ <;> first | decide | exact absurd h (by decide)
 
-/-- (1)–(2): *yet* under *not every* and under *few*, antitone contexts. -/
+/-- Examples (1)–(2) put *yet* under *not every* and under *few*, antitone contexts. -/
 example : Licenses .weak .antiMult ∧ Licenses .weak .anti := by decide
 
-/-- (3)–(4): *in years* under *few* and under *no*, whose second argument is anti-additive. -/
+/-- Examples (3)–(4) put *in years* under *few* and under *no*, whose second argument is
+anti-additive. -/
 example : ¬ Licenses .antiAdditive .anti ∧ Licenses .antiAdditive .antiAdd := by decide
 
-/-- (5)–(6): *a tad bit* under *no* and under *not*, the anti-morphism. -/
+/-- Examples (5)–(6) put *a tad bit* under *no* and under *not*, the anti-morphism. -/
 example : ¬ Licenses .antiMorphic .antiAdd ∧ Licenses .antiMorphic negationSignature := by
   decide
 

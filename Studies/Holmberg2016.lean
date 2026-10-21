@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Syntax.PolarInterrogative.Answer
+public import Linglib.Syntax.Minimalist.Polarity
+public import Linglib.Syntax.Negation
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.Japanese.Particles
@@ -81,7 +82,8 @@ question is neutral or whose negation the annotation locates (`judgment_iff_pred
 
 namespace Holmberg2016
 
-open Question Discourse Semantics PolarInterrogative
+open Question Discourse Semantics
+open Minimalist (AnswerFeature ClauseNegation NegationHeight PolarInterrogative)
 
 variable {W : Type*}
 
@@ -275,7 +277,7 @@ inductive EnglishVariety where
 variety, none for the positive question; for non-preposed *not* a low or a middle negation, as
 speakers differ; for preposed *-n't* the high negation of the positive-bias reading and, in the
 tolerant variety, a negation inside the clause, at a height the book does not fix. -/
-def negations : EnglishVariety → Option NegationPosition → Set ClauseNegation
+def negations : EnglishVariety → Option Negation.Position → Set ClauseNegation
   | _, none => {.absent}
   | _, some .nonPreposed => {.height .low, .height .middle}
   | .restrictive, some .preposed => {.height .high}

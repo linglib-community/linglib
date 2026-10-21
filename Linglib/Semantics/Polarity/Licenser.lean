@@ -177,7 +177,7 @@ presupposition, the condition every negative polarity item puts on the meaning b
 exhaustivity operator ([von-fintel-1999], [gajewski-2011]'s Condition 1,
 [bylinina-nouwen-2018]'s (53)), and a stronger strength when it also holds that strength outright
 with its direct implicature factored in. -/
-def Carries (L : Licenser) : DEStrength → Prop
+def Carries (L : Licenser) : Negation.Strength → Prop
   | .weak => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
   | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s.toSignature
 
@@ -207,7 +207,7 @@ def LicensesByRelevance : Licenser → Prop
 theorem licensesByRelevance_question : question.LicensesByRelevance :=
   fun U μ _ P _ _ h ↦ Question.utility_wh_mono U μ P h
 
-variable {L : Licenser} {σ τ : Signature} {s t : DEStrength}
+variable {L : Licenser} {σ τ : Signature} {s t : Negation.Strength}
 
 theorem Holds.of_le (h : L.Holds σ) (hστ : σ ≤ τ) : L.Holds τ := by
   cases L with
@@ -217,7 +217,7 @@ theorem Holds.of_le (h : L.Holds σ) (hστ : σ ≤ τ) : L.Holds τ := by
 
 theorem Holds.toSignature_of_le (h : L.Holds t.toSignature) (hst : s ≤ t) :
     L.Holds s.toSignature :=
-  h.of_le (DEStrength.toSignature_antitone hst)
+  h.of_le (Negation.Strength.toSignature_antitone hst)
 
 theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
   cases L with
@@ -259,13 +259,14 @@ theorem carries_classical_iff {F : OperatorFamily} :
       ⟨⟨isStrawsonDE_of_holds_anti (h.1.toSignature_of_le (s := .weak) (by decide)), h.2⟩, h.1⟩⟩
 
 /-- A licenser holding exactly the strength `s₀` outright holds `s` exactly when `s ≤ s₀`. -/
-theorem holds_toSignature_iff {s₀ : DEStrength} (h : L.Holds s₀.toSignature)
+theorem holds_toSignature_iff {s₀ : Negation.Strength} (h : L.Holds s₀.toSignature)
     (hn : ∀ s, s₀ < s → ¬ L.Holds s.toSignature) : L.Holds s.toSignature ↔ s ≤ s₀ :=
   ⟨fun hs ↦ not_lt.mp fun hlt ↦ hn s hlt hs, fun hs ↦ h.toSignature_of_le hs⟩
 
 /-- A licenser holding no strength outright holds none. -/
 theorem not_holds_toSignature (h : ¬ L.Holds .anti) : ¬ L.Holds s.toSignature := fun hs ↦
-  h (hs.of_le (DEStrength.toSignature_antitone (by cases s <;> decide : DEStrength.weak ≤ s)))
+  h (hs.of_le (Negation.Strength.toSignature_antitone
+    (by cases s <;> decide : Negation.Strength.weak ≤ s)))
 
 /-- A non-trivial licenser that is downward entailing modulo presupposition, and not outright once
 its direct implicature is factored in, carries exactly weak strength ([gajewski-2011]). -/

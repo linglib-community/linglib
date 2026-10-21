@@ -364,12 +364,12 @@ noncomputable def licenser : LicensingContext → Licenser
 
 open Licenser
 
-theorem holds_negation (s : DEStrength) : negation.licenser.Holds s.toSignature :=
+theorem holds_negation (s : Negation.Strength) : negation.licenser.Holds s.toSignature :=
   (show negation.licenser.Holds .antiAddMult from fun _ ↦
     Signature.holdsFor_antiAddMult_compl).toSignature_of_le (s := s) (t := .antiMorphic)
       (by cases s <;> decide)
 
-theorem holds_nobody_iff {s : DEStrength} :
+theorem holds_nobody_iff {s : Negation.Strength} :
     nobody.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
     ⟨(rightAntiAdditive_iff_isAntiAdditive _).mp rightAntiAdditive_no _,
@@ -379,7 +379,7 @@ theorem holds_nobody_iff {s : DEStrength} :
     (· = true) (· = false)
   simp [GQ.no, Pi.inf_apply] at this
 
-theorem holds_few_iff {s : DEStrength} : few.licenser.Holds s.toSignature ↔ s ≤ .weak := by
+theorem holds_few_iff {s : Negation.Strength} : few.licenser.Holds s.toSignature ↔ s ≤ .weak := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_anti_iff.mpr (scopeAntitone_few p.A))
     fun s hs h ↦ ?_
   have := (Signature.holdsFor_antiAdd_iff.mp ((h.toSignature_of_le (s := .antiAdditive)
@@ -389,7 +389,8 @@ theorem holds_few_iff {s : DEStrength} : few.licenser.Holds s.toSignature ↔ s 
   rw [eq_iff_iff]
   decide
 
-theorem holds_atMost_iff {s : DEStrength} : atMost.licenser.Holds s.toSignature ↔ s ≤ .weak := by
+theorem holds_atMost_iff {s : Negation.Strength} :
+    atMost.licenser.Holds s.toSignature ↔ s ≤ .weak := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_anti_iff.mpr
     (scopeAntitone_atMost p.n p.A)) fun s hs h ↦ ?_
   have := (Signature.holdsFor_antiAdd_iff.mp ((h.toSignature_of_le (s := .antiAdditive)
@@ -399,7 +400,7 @@ theorem holds_atMost_iff {s : DEStrength} : atMost.licenser.Holds s.toSignature 
   rw [eq_iff_iff]
   decide
 
-theorem holds_universalRestrictor_iff {s : DEStrength} :
+theorem holds_universalRestrictor_iff {s : Negation.Strength} :
     universalRestrictor.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
     ⟨(leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_every _,
@@ -409,7 +410,7 @@ theorem holds_universalRestrictor_iff {s : DEStrength} :
     (· = true) (· = false)
   simp [GQ.every, Pi.inf_apply] at this
 
-theorem holds_withoutClause_iff {s : DEStrength} :
+theorem holds_withoutClause_iff {s : Negation.Strength} :
     withoutClause.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
     ⟨fun V V' ↦ by
@@ -419,7 +420,7 @@ theorem holds_withoutClause_iff {s : DEStrength} :
   have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨Unit, ⊥⟩)).2.2
   simp at this
 
-theorem holds_beforeClause_iff {s : DEStrength} :
+theorem holds_beforeClause_iff {s : Negation.Strength} :
     beforeClause.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
     ⟨fun _ _ ↦ propext beforeEver_union_right,
@@ -429,7 +430,7 @@ theorem holds_beforeClause_iff {s : DEStrength} :
   have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ∅⟩)).2.2
   simp [beforeEver, timeTrace] at this
 
-theorem holds_exceedsFamily_iff {s : DEStrength} :
+theorem holds_exceedsFamily_iff {s : Negation.Strength} :
     (classical exceedsFamily).Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
     ⟨fun Δ Δ' ↦ propext (show _ ∈ strictUpperBounds (Δ ∪ Δ') ↔ _ ∈ strictUpperBounds Δ ∧ _ by
@@ -439,15 +440,15 @@ theorem holds_exceedsFamily_iff {s : DEStrength} :
   have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ℕ, id, 1⟩)).2.1 ({2} : Set ℕ) {1}
   simp at this
 
-theorem holds_clausalComparative_iff {s : DEStrength} :
+theorem holds_clausalComparative_iff {s : Negation.Strength} :
     clausalComparative.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive :=
   holds_exceedsFamily_iff
 
-theorem holds_tooTo_iff {s : DEStrength} :
+theorem holds_tooTo_iff {s : Negation.Strength} :
     tooTo.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive :=
   holds_exceedsFamily_iff
 
-theorem holds_doubtVerb_iff {s : DEStrength} :
+theorem holds_doubtVerb_iff {s : Negation.Strength} :
     doubtVerb.licenser.Holds s.toSignature ↔ s ≤ .weak := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_anti_iff.mpr
     fun P Q hPQ hQ hP ↦ hQ fun _ hv ↦ hPQ (hP hv)) fun s hs h ↦ ?_
@@ -457,7 +458,7 @@ theorem holds_doubtVerb_iff {s : DEStrength} :
   simp only [SetRel.core, Set.mem_ofPred_eq, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
   decide
 
-theorem holds_denyVerb_iff {s : DEStrength} :
+theorem holds_denyVerb_iff {s : Negation.Strength} :
     denyVerb.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
     ⟨fun P Q ↦ propext (show p.w ∈ p.R.core (P ∪ Q)ᶜ ↔ p.w ∈ p.R.core Pᶜ ∧ p.w ∈ p.R.core Qᶜ from

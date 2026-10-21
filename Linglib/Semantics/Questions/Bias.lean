@@ -16,7 +16,7 @@ supports `¬p`, or neither, so its state is a sign, `1`, `-1` or `0`, and readin
 A bias value in Sudo's scheme is the set of states a question is compatible with:
 [+s] (`BiasValue.plus`), its complement [−s] (`BiasValue.minus`) and [neutral]. A `BiasProfile`
 pairs an evidential and an epistemic value, and its `felicity` is the set of situations it admits.
-The forms and readings of polar questions are `PolarInterrogative.NegationPosition` and
+The forms and readings of polar questions are `Negation.Position` and
 `Option Polarity`.
 
 ## References
