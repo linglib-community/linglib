@@ -509,7 +509,7 @@ theorem obama_apical : 1 / 2 < (S1 ingField 6 casual ∘ₘ select 6 obamaValue)
     Finset.sum_insert (by decide +kernel), Finset.sum_insert (by decide +kernel),
     Finset.sum_insert (by decide +kernel), Finset.sum_singleton] at hsum
   have heq : (select 6 obamaValue).real {doofus} = (select 6 obamaValue).real {sternLeader} := by
-    simp only [select_real_singleton, Real.softmax_def,
+    simp only [select_real_singleton, Real.softmax_apply,
       show obamaValue doofus = obamaValue sternLeader by
         unfold obamaValue; exact congrArg Nat.cast (by decide +kernel)]
   have hpos : 0 < (select 6 obamaValue).real {coolGuy} := by
@@ -587,7 +587,7 @@ theorem classRate_strictMono {α α' : ℝ} (hα : 0 < α) (hα' : 0 < α') :
     (by simp [classValue, sternLeader, doofus])
   have hlmc : (select α' (classValue ⟨.lowerMiddle, by decide⟩)).real {doofus} =
       (select α' (classValue ⟨.lowerMiddle, by decide⟩)).real {sternLeader} := by
-    simp only [select_real_singleton, Real.softmax_def, classValue]
+    simp only [select_real_singleton, Real.softmax_apply, classValue]
   refine strictMono_of_lt_half_eq_half_lt ?_ ?_ ?_ <;> rw [classRate_eq hα] <;> linarith
 
 /-- The model orders the classes as Labov's rates of *-in'* do (Tables 7 and 9). -/

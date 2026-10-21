@@ -231,17 +231,14 @@ instance (α : ℝ) (ε : I) (δ : ℝ) : IsProbabilityMeasure (policy α ε δ)
   isProbabilityMeasure_tilted .of_finite
 
 theorem policy_real_singleton (α : ℝ) (ε : I) (δ : ℝ) (r : Response) :
-    (policy α ε δ).real {r} =
-      exp (α * expectedUtility ε δ r) / ∑ r', exp (α * expectedUtility ε δ r') := by
-  rw [policy, tilted_real_singleton]
-  simp [measureReal_def]
+    (policy α ε δ).real {r} = softmax (fun r ↦ α * expectedUtility ε δ r) r :=
+  count_tilted_real_singleton _ r
 
 theorem policy_real_lt_iff {α : ℝ} (hα : 0 < α) {r r' : Response} :
     (policy α ε δ).real {r} < (policy α ε δ).real {r'} ↔
       expectedUtility ε δ r < expectedUtility ε δ r' := by
-  rw [policy_real_singleton, policy_real_singleton,
-    div_lt_div_iff_of_pos_right (Finset.sum_pos (fun _ _ ↦ exp_pos _) Finset.univ_nonempty),
-    exp_lt_exp, mul_lt_mul_iff_of_pos_left hα]
+  rw [policy_real_singleton, policy_real_singleton, softmax_lt_softmax_iff,
+    mul_lt_mul_iff_of_pos_left hα]
 
 theorem policy_real_exh_lt {α : ℝ} (hα : 0 < α) (hε : εL < εH) (hH : (εH : ℝ) ≤ 1 / 2) :
     (policy α εL δ).real {.exh} < (policy α εH δ).real {.exh} := by
@@ -251,8 +248,8 @@ theorem policy_real_exh_lt {α : ℝ} (hα : 0 < α) (hε : εL < εH) (hH : (ε
   have e₁ : exp (α * εH) = exp (α * εL) * exp (α * (εH - εL)) := by rw [← exp_add]; ring_nf
   have e₂ : exp (α * (1 - εL)) = exp (α * (1 - εH)) * exp (α * (εH - εL)) := by
     rw [← exp_add]; ring_nf
-  simp only [policy_real_singleton, sum_response, expectedUtility_ms1, expectedUtility_ms2,
-    expectedUtility_exh]
+  simp only [policy_real_singleton, softmax_apply, sum_response, expectedUtility_ms1,
+    expectedUtility_ms2, expectedUtility_exh]
   refine div_lt_div_of_pos_left (exp_pos _) (by positivity) ?_
   rw [e₁, e₂]
   nlinarith [mul_pos (sub_pos.2 h₁) (sub_pos.2 h₂)]

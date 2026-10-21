@@ -113,7 +113,7 @@ theorem isGreatest_uniform :
     ext q
     exact ⟨fun h ↦ ⟨h, Subsingleton.elim _ _⟩, And.left⟩
   · rw [maxEnt_real_singleton]
-    simp [harmony, softmax_def, show Fintype.card Phrase = 5 from rfl]
+    simp [harmony, softmax_apply, show Fintype.card Phrase = 5 from rfl]
 
 /-- The statistic of the first two constraints. -/
 def twoFeatures (φ : Phrase) : Fin 1 → ℝ := ![dansOrEn φ]
@@ -125,7 +125,7 @@ theorem twoModel_real_singleton :
     twoModel.real {dans} = 3 / 20 ∧ twoModel.real {en} = 3 / 20 ∧ twoModel.real {à} = 7 / 30 ∧
       twoModel.real {auCoursDe} = 7 / 30 ∧ twoModel.real {pendant} = 7 / 30 := by
   have he : exp (-log (14 / 9 : ℝ)) = 9 / 14 := by rw [exp_neg, exp_log (by norm_num)]; norm_num
-  simp only [twoModel, maxEnt_real_singleton, softmax_def, sum_eq]
+  simp only [twoModel, maxEnt_real_singleton, softmax_apply, sum_eq]
   norm_num [harmony, twoFeatures, dansOrEn, dotProduct, he]
 
 /-- Requiring `p(dans) + p(en) = 3/10`, the most uniform model gives *dans* and *en* `3/20` each
@@ -175,7 +175,7 @@ theorem maxEnt_three_real_singleton {d e a c : ℝ} (he : 0 < e) (ha : 0 < a) (h
       exp_log (div_pos he hc), exp_log (div_pos ha hc)]
     field_simp
     linear_combination hN
-  simp only [maxEnt_real_singleton, softmax_def, hH, hZ]
+  simp only [maxEnt_real_singleton, softmax_apply, hH, hZ]
   simp only [dansOrEn, dansOrÀ, mul_one, mul_zero, add_zero, zero_add, exp_zero, hd,
     exp_log (div_pos he hc), exp_log (div_pos ha hc)]
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> field_simp

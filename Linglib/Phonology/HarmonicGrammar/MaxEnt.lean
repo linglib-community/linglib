@@ -145,8 +145,8 @@ theorem integral_eq_sum (q : Measure C) [IsFiniteMeasure q] :
 
 /-! ### Probabilities -/
 
-theorem maxEnt_real_singleton (c : C) : (maxEnt T w).real {c} = softmax (harmony T w) c := by
-  simp [maxEnt, tilted_real_singleton, softmax_def]
+theorem maxEnt_real_singleton (c : C) : (maxEnt T w).real {c} = softmax (harmony T w) c :=
+  count_tilted_real_singleton _ c
 
 theorem maxEnt_singleton (c : C) :
     maxEnt T w {c} = ENNReal.ofReal (softmax (harmony T w) c) := by
@@ -283,14 +283,11 @@ theorem hasFDerivAt_logPartition :
   have hH (c : C) : HasFDerivAt (fun w ↦ harmony T w c) (-ℓ (T c)) w :=
     (-ℓ (T c)).hasFDerivAt.congr_of_eventuallyEq
       (Eventually.of_forall fun w ↦ by simp [harmony, hℓ, dotProduct_comm])
-  change HasFDerivAt (fun w ↦ log (∑ c, exp (harmony T w c))) _ w
-  refine ((HasFDerivAt.fun_sum fun c (_ : c ∈ univ) ↦ (hH c).exp).log
-    (sum_exp_pos (harmony T w)).ne').congr_fderiv ?_
+  refine (HasFDerivAt.log_sum_exp (f := fun c w ↦ harmony T w c) hH).congr_fderiv ?_
   ext v
-  simp only [neg_apply, smul_apply, _root_.sum_apply, hℓ, smul_eq_mul,
+  simp only [smul_neg, sum_neg_distrib, neg_apply, _root_.sum_apply, smul_apply, hℓ,
     LinearMap.coe_toContinuousLinearMap', dotProductBilin, LinearMap.coe_mk, AddHom.coe_mk,
-    integral_eq_sum, maxEnt_real_singleton, softmax_def, sum_dotProduct, smul_dotProduct,
-    mul_neg, sum_neg_distrib, mul_sum, div_eq_inv_mul, mul_assoc]
+    integral_eq_sum, maxEnt_real_singleton, sum_dotProduct, smul_dotProduct, smul_eq_mul]
 
 /-- The log-likelihood is concave in the weights: it is linear in them less the log-partition
 function. -/
