@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.Compare
 public import Linglib.Core.Order.Interval.Basic
+public import Linglib.Semantics.Tense.Defs
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Pi
@@ -34,7 +35,14 @@ The cells of the tense and aspect literature are named here, each read as one of
 strict part, overlap, and the first interval's starting within the second. The position of one
 interval relative to another is a function of their relation (`Allen.position_relation`), so a
 cell of positions, as the comparison cells of the tenses are read on intervals, is a cell
-(`Allen.ofPosition`).
+(`Allen.ofPosition`). The comparison cells of the tenses are also the cells of point intervals
+(`Allen.pure`), and their composition is Allen composition there (`Allen.comp_pure`).
+
+A clause locates its event by a chain of times, each related to the one before it by a head, a
+tense relating its reference time to the utterance time and an aspect the event time to the
+reference time (`Allen.HoldsAlong`). The last time of a chain stands to the first in the composite
+of its cells (`Allen.compAlong`), and on dense time without endpoints any two times that stand so
+are the ends of a realization of the chain (`Allen.mem_compAlong_iff`).
 
 ## Main definitions
 
@@ -43,7 +51,8 @@ cell of positions, as the comparison cells of the tenses are read on intervals, 
 * `Allen.toSetRel`: a cell as a relation between intervals.
 * `Allen.inv`, `Allen.comp`: the converse and the composite of cells.
 * `Allen.precedes`, `Allen.isBefore`, `Allen.le`, `Allen.lt`, `Allen.overlaps`,
-  `Allen.startsWithin`, `Allen.ofPosition`: the named cells.
+  `Allen.startsWithin`, `Allen.ofPosition`, `Allen.eq`, `Allen.pure`: the named cells.
+* `Allen.HoldsAlong`, `Allen.compAlong`: a chain of times along cells, and its composite.
 
 ## Main results
 
@@ -52,6 +61,9 @@ cell of positions, as the comparison cells of the tenses are read on intervals, 
 * `Allen.toSetRel_comp_subset`, `Allen.toSetRel_comp`: the composite of two cells' relations lies
   in the relation of their composite, and is it on dense time without endpoints.
 * `Allen.position_relation`: the position of two intervals is read off their relation.
+* `Allen.comp_pure`: on points, Allen composition is the composition of comparison cells.
+* `Allen.HoldsAlong.mem_compAlong`, `Allen.mem_compAlong_iff`: the ends of a chain stand in its
+  composite, and on dense time without endpoints exactly they do.
 * `Allen.relation_mem_precedes` and its siblings: the named cells relate the intervals that the
   relations of `Core/Order/Interval/Basic.lean` do.
 
@@ -130,6 +142,8 @@ def toSetRel (C : Finset Relation) : SetRel (NonemptyInterval T) (NonemptyInterv
 variable {C D : Finset Relation} {i j : NonemptyInterval T}
 
 @[simp] theorem mem_toSetRel : (i, j) ∈ toSetRel C ↔ relation i j ∈ C := .rfl
+
+instance : Decidable ((i, j) ∈ toSetRel C) := inferInstanceAs (Decidable (relation i j ∈ C))
 
 theorem toSetRel_mono (h : C ⊆ D) : (toSetRel C : SetRel (NonemptyInterval T) _) ⊆ toSetRel D :=
   fun _ hp ↦ h hp
@@ -322,6 +336,132 @@ theorem position_relation (i j : NonemptyInterval T) : i.position j = (relation 
 @[simp] theorem relation_mem_ofPosition {C : Finset Ordering} :
     relation i j ∈ ofPosition C ↔ i.position j ∈ C := by
   rw [ofPosition, relation_mem_filter, position_relation]
+
+end LinearOrder
+
+/-! ### Points
+
+A comparison cell, a `Finset Ordering` of the tenses, relates points; on point intervals it is
+the cell `pure C`, and the composite of two such cells is the cell of their composite as
+comparison cells. -/
+
+/-- The two intervals are the same. -/
+def eq : Finset Relation := atoms.filter fun r ↦ r.fstFst = .eq ∧ r.sndSnd = .eq
+
+/-- The cell of point intervals whose points compare as `C` allows. -/
+def pure (C : Finset Ordering) : Finset Relation :=
+  atoms.filter fun r ↦ r.firstShape = .eq ∧ r.secondShape = .eq ∧ r.fstFst ∈ C
+
+section LinearOrder
+
+variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
+
+@[simp] theorem relation_mem_eq : relation i j ∈ eq ↔ i = j := by
+  rw [eq, relation_mem_filter]
+  simp [relation, ofEndpoints, NonemptyInterval.ext_iff, Prod.ext_iff]
+
+@[simp] theorem relation_mem_pure {C : Finset Ordering} :
+    relation i j ∈ pure C ↔ i.IsPoint ∧ j.IsPoint ∧ compare i.fst j.fst ∈ C := by
+  rw [pure, relation_mem_filter]
+  simp [relation, ofEndpoints, NonemptyInterval.IsPoint]
+
+end LinearOrder
+
+private theorem exists_fin_of_mem_comp :
+    ∀ r s o : Ordering, o ∈ r.comp s →
+      ∃ x y z : Fin 6, compare x y = r ∧ compare y z = s ∧ compare x z = o := by
+  decide
+
+private theorem eq_of_mem_atoms_of_shapes :
+    ∀ t ∈ atoms, t.firstShape = .eq → t.secondShape = .eq →
+      t = ⟨t.fstFst, t.fstFst, t.fstFst, t.fstFst, .eq, .eq⟩ := by
+  decide +kernel
+
+/-- On points, Allen composition is the composition of comparison cells. -/
+theorem comp_pure (R S : Finset Ordering) : comp (pure R) (pure S) = pure (Tense.comp R S) := by
+  ext t
+  simp only [mem_comp, pure, Finset.mem_filter]
+  constructor
+  · rintro ⟨ht, e, -, -, -, ⟨-, h01, -, hR⟩, ⟨-, -, h45, hS⟩, rfl⟩
+    exact ⟨ht, h01, h45, Tense.compare_mem_comp hR hS⟩
+  · rintro ⟨ht, h1, h2, hc⟩
+    obtain ⟨r, hr, s, hs, ho⟩ := Tense.mem_comp.1 hc
+    obtain ⟨x, y, z, hxy, hyz, hxz⟩ := exists_fin_of_mem_comp r s _ ho
+    have hpt (a b : Fin 6) (C : Finset Ordering) (h : compare a b ∈ C) :
+        ofEndpoints a a b b ∈ atoms ∧ (ofEndpoints a a b b).firstShape = .eq ∧
+          (ofEndpoints a a b b).secondShape = .eq ∧ (ofEndpoints a a b b).fstFst ∈ C :=
+      ⟨relation_mem_atoms (.pure a) (.pure b), by simp [ofEndpoints], by simp [ofEndpoints], h⟩
+    refine ⟨ht, ![x, x, y, y, z, z], le_rfl, le_rfl, le_rfl, hpt x y R (hxy ▸ hr),
+      hpt y z S (hyz ▸ hs), ?_⟩
+    rw [eq_of_mem_atoms_of_shapes t ht h1 h2]
+    simp [ofEndpoints, hxz]
+
+/-! ### Chains
+
+A clause locates its event by a chain of times, each related to the one before it by a head: a
+tense relates its reference time to the utterance time, an aspect the event time to the reference
+time. A chain of cells relates its last time to its first by their composite, exactly so on dense
+time without endpoints. -/
+
+section LinearOrder
+
+variable {T : Type*} [LinearOrder T]
+
+/-- The intervals `tos` stand along the cells `cs` from `b`: the first stands to `b` as the first
+cell says, and each later one to the one before it as the next cell says. -/
+def HoldsAlong : List (Finset Relation) → NonemptyInterval T → List (NonemptyInterval T) → Prop
+  | [], _, [] => True
+  | C :: cs, y, x :: xs => (x, y) ∈ toSetRel C ∧ HoldsAlong cs x xs
+  | _, _, _ => False
+
+instance instDecidableHoldsAlong :
+    ∀ (cs : List (Finset Relation)) (b : NonemptyInterval T) tos,
+      Decidable (HoldsAlong cs b tos)
+  | [], _, [] => isTrue trivial
+  | [], _, _ :: _ => isFalse id
+  | _ :: _, _, [] => isFalse id
+  | C :: cs, y, x :: xs =>
+    have := instDecidableHoldsAlong cs x xs
+    inferInstanceAs (Decidable ((x, y) ∈ toSetRel C ∧ HoldsAlong cs x xs))
+
+end LinearOrder
+
+/-- The composite of a chain of cells, how its last time stands to its first. -/
+def compAlong : List (Finset Relation) → Finset Relation
+  | [] => eq
+  | C :: cs => comp (compAlong cs) C
+
+section LinearOrder
+
+variable {T : Type*} [LinearOrder T]
+
+/-- The last time of a chain stands to its first in the chain's composite. -/
+theorem HoldsAlong.mem_compAlong :
+    ∀ {cs : List (Finset Relation)} {b : NonemptyInterval T} {tos : List (NonemptyInterval T)},
+      HoldsAlong cs b tos → ((b :: tos).getLast (List.cons_ne_nil _ _), b) ∈ toSetRel (compAlong cs)
+  | [], b, [], _ => by simp [compAlong]
+  | C :: cs, b, x :: xs, ⟨hx, h⟩ => by
+    rw [compAlong, List.getLast_cons (List.cons_ne_nil _ _)]
+    exact toSetRel_comp_subset (SetRel.mem_comp.2 ⟨x, h.mem_compAlong, hx⟩)
+
+/-- On dense time without endpoints, two times stand in a chain's composite exactly when the chain
+can be realized from the first to the second. -/
+theorem mem_compAlong_iff [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] :
+    ∀ {cs : List (Finset Relation)} {b x : NonemptyInterval T},
+      (x, b) ∈ toSetRel (compAlong cs) ↔
+        ∃ tos, HoldsAlong cs b tos ∧ (b :: tos).getLast (List.cons_ne_nil _ _) = x
+  | [], b, x => by
+    rw [compAlong, mem_toSetRel, relation_mem_eq]
+    refine ⟨fun h ↦ ⟨[], trivial, h.symm⟩, ?_⟩
+    rintro ⟨_ | _, h, rfl⟩
+    · rfl
+    · exact absurd h id
+  | C :: cs, b, x => by
+    refine ⟨fun h ↦ ?_, fun ⟨tos, h, hx⟩ ↦ hx ▸ h.mem_compAlong⟩
+    rw [compAlong, toSetRel_comp] at h
+    obtain ⟨j, hxj, hjb⟩ := h
+    obtain ⟨tos, htos, rfl⟩ := mem_compAlong_iff.1 hxj
+    exact ⟨j :: tos, ⟨hjb, htos⟩, by simp⟩
 
 end LinearOrder
 

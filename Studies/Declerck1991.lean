@@ -30,8 +30,8 @@ after t₀, where [reichenbach-1947]'s ordering of points counts three tenses.
 
 ## Main definitions
 
-* `Declerck1991.Link`, `Declerck1991.Link.Holds`, `Declerck1991.Link.cell`: the relations a chain
-  is made of, and their cells of Allen relations.
+* `Declerck1991.Link`, `Declerck1991.Link.cell`: the relations a chain is made of, as cells of
+  Allen relations.
 * `Declerck1991.chain`: the chain of a tense form, read off its make-up.
 * `Declerck1991.tenses`: the eight tenses.
 * `Declerck1991.sector`, `Declerck1991.IsAbsolute`: the absolute sector a tense sets out in, and
@@ -94,47 +94,16 @@ inductive Link where
 
 namespace Link
 
-variable {T : Type*} [Preorder T]
-
-/-- `l.Holds x y`: the TO `x` stands to the TO `y` before it as `l` says. The preterit's TO lies
-wholly before (p. 338); anteriority is lying wholly before or up to, the final point coinciding
-(45); posteriority is lying wholly after or from onwards (92); and the present's TO includes the
-one before it (p. 317). -/
-def Holds : Link → NonemptyInterval T → NonemptyInterval T → Prop
-  | .past, x, y => x.Precedes y
-  | .anterior, x, y => x.IsBefore y
-  | .posterior, x, y => y.IsBefore x
-  | .around, x, y => y ≤ x
-
-instance [DecidableLE T] (l : Link) (x y : NonemptyInterval T) : Decidable (l.Holds x y) := by
-  cases l <;> unfold Holds <;> infer_instance
-
-/-- `HoldsAlong ls b tos`: the TOs `tos` stand along the links `ls` from `b`, each to the one
-before it, as the links of a chain connect only neighbouring times (p. 391). -/
-def HoldsAlong : List Link → NonemptyInterval T → List (NonemptyInterval T) → Prop
-  | [], _, [] => True
-  | l :: ls, y, x :: xs => l.Holds x y ∧ HoldsAlong ls x xs
-  | _, _, _ => False
-
-instance instDecidableHoldsAlong [DecidableLE T] :
-    ∀ (ls : List Link) (b : NonemptyInterval T) tos, Decidable (HoldsAlong ls b tos)
-  | [], _, [] => isTrue trivial
-  | [], _, _ :: _ => isFalse id
-  | _ :: _, _, [] => isFalse id
-  | l :: ls, y, x :: xs =>
-    have := instDecidableHoldsAlong ls x xs
-    inferInstanceAs (Decidable (l.Holds x y ∧ HoldsAlong ls x xs))
-
-/-- The cell of a link, the later TO first. -/
+/-- The cell of a link, the later TO first. The preterit's TO lies wholly before the TO before it
+(p. 338); anteriority is lying wholly before or up to it, the final point coinciding (45);
+posteriority is lying wholly after it or from it onwards (92); and the present's TO includes the
+one before it (p. 317). The links of a chain connect only neighbouring times (p. 391), as
+`Allen.HoldsAlong` relates them. -/
 def cell : Link → Finset Allen.Relation
   | .past => Allen.precedes
   | .anterior => Allen.isBefore
   | .posterior => Allen.inv Allen.isBefore
   | .around => Allen.inv Allen.le
-
-theorem holds_iff {T : Type*} [LinearOrder T] (l : Link) (x y : NonemptyInterval T) :
-    l.Holds x y ↔ (x, y) ∈ Allen.toSetRel l.cell := by
-  cases l <;> simp [Holds, cell]
 
 /-- Anteriority is the relation of the perfect viewpoint read from the situation's side: the
 situation-TO lies wholly before the TO before it or up to it. -/
@@ -228,42 +197,38 @@ theorem absolute_sector_bijective :
 
 section Realizations
 
-variable {T : Type*}
+variable {T : Type*} [LinearOrder T]
 
-section Preorder
-
-variable [Preorder T]
-
-/-- The TOs `tos` realize the tense `f` from the basic TO `b` when each stands to the one before
-it as the chain of `f` says, the last being the situation-TO. The basic TO is t₀ in an absolute
-use and, in the Present Perspective System, a TO of a post-present domain that behaves as t₀. -/
+/-- The TOs `tos` realize the tense `f` from the basic TO `b` when they stand along the cells of
+its chain, the last being the situation-TO. The basic TO is t₀ in an absolute use and, in the
+Present Perspective System, a TO of a post-present domain that behaves as t₀. -/
 def Realizes (f : Form) (b : NonemptyInterval T) (tos : List (NonemptyInterval T)) : Prop :=
-  Link.HoldsAlong (chain f) b tos
+  Allen.HoldsAlong ((chain f).map Link.cell) b tos
 
-instance [DecidableLE T] (f : Form) (b : NonemptyInterval T) (tos : List (NonemptyInterval T)) :
+instance (f : Form) (b : NonemptyInterval T) (tos : List (NonemptyInterval T)) :
     Decidable (Realizes f b tos) :=
-  inferInstanceAs (Decidable (Link.HoldsAlong _ _ _))
+  inferInstanceAs (Decidable (Allen.HoldsAlong _ _ _))
 
 variable {t₀ : T} {x : NonemptyInterval T}
 
 /-- The preterit places its situation-TO wholly before t₀. -/
 theorem realizes_simplePast_iff : Realizes .simplePast (.pure t₀) [x] ↔ x.snd < t₀ := by
-  simp [Realizes, show chain .simplePast = [.past] from rfl, Link.HoldsAlong, Link.Holds,
+  simp [Realizes, show chain .simplePast = [.past] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.Precedes]
 
 /-- The present perfect places its situation-TO wholly before t₀ or up to it. -/
 theorem realizes_presentPerfect_iff : Realizes .presentPerfect (.pure t₀) [x] ↔ x.snd ≤ t₀ := by
-  simp [Realizes, show chain .presentPerfect = [.anterior] from rfl, Link.HoldsAlong, Link.Holds,
+  simp [Realizes, show chain .presentPerfect = [.anterior] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.IsBefore]
 
 /-- The present tense places its situation-TO around t₀. -/
 theorem realizes_simplePresent_iff : Realizes .simplePresent (.pure t₀) [x] ↔ t₀ ∈ x := by
-  simp [Realizes, show chain .simplePresent = [.around] from rfl, Link.HoldsAlong, Link.Holds,
+  simp [Realizes, show chain .simplePresent = [.around] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.le_def, NonemptyInterval.mem_def]
 
 /-- The future tense places its situation-TO wholly after t₀ or from it onwards. -/
 theorem realizes_future_iff : Realizes .future (.pure t₀) [x] ↔ t₀ ≤ x.fst := by
-  simp [Realizes, show chain .future = [.posterior] from rfl, Link.HoldsAlong, Link.Holds,
+  simp [Realizes, show chain .future = [.posterior] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.IsBefore]
 
 /-- A situation-TO that reaches up to t₀, as in a continuative perfect, realizes the present
@@ -277,11 +242,11 @@ theorem realizes_presentPerfect_not_simplePast (h : x.snd = t₀) :
 situation-TO wholly before it. -/
 theorem Realizes.precedes_of_pastPerfect {b to₂ ts : NonemptyInterval T}
     (h : Realizes .pastPerfect b [to₂, ts]) : ts.Precedes b := by
-  simp only [Realizes, show chain .pastPerfect = [.past, .anterior] from rfl, Link.HoldsAlong,
-    Link.Holds, NonemptyInterval.Precedes, NonemptyInterval.IsBefore] at h
+  simp only [Realizes, show chain .pastPerfect = [.past, .anterior] from rfl, List.map,
+    Link.cell, Allen.HoldsAlong, Allen.mem_toSetRel, Allen.relation_mem_precedes,
+    Allen.relation_mem_isBefore, NonemptyInterval.Precedes, NonemptyInterval.IsBefore] at h
   exact (h.2.1.trans to₂.fst_le_snd).trans_lt h.1
 
-end Preorder
 
 /-- The conditional, the future perfect and the conditional perfect relate the situation-TO to an
 intermediate TO only, so its relation to t₀ is not expressed: each has realizations with the
@@ -295,15 +260,15 @@ theorem vague :
         ts.position (.pure 0) = o) ∧
       (∃ to₂ to₃ ts : NonemptyInterval ℤ, Realizes conditionalPerfect (.pure 0) [to₂, to₃, ts] ∧
         ts.position (.pure 0) = o)
-  | .lt => ⟨⟨.pure (-3), .pure (-1), by decide, by decide⟩,
-      ⟨.pure 3, .pure (-1), by decide, by decide⟩,
-      ⟨.pure (-6), .pure 3, .pure (-1), by decide, by decide⟩⟩
-  | .eq => ⟨⟨.pure (-3), .pure 0, by decide, by decide⟩,
-      ⟨.pure 3, .pure 0, by decide, by decide⟩,
-      ⟨.pure (-6), .pure 3, .pure 0, by decide, by decide⟩⟩
-  | .gt => ⟨⟨.pure (-3), .pure 1, by decide, by decide⟩,
-      ⟨.pure 3, .pure 1, by decide, by decide⟩,
-      ⟨.pure (-6), .pure 3, .pure 1, by decide, by decide⟩⟩
+  | .lt => ⟨⟨.pure (-3), .pure (-1), by decide +kernel, by decide⟩,
+      ⟨.pure 3, .pure (-1), by decide +kernel, by decide⟩,
+      ⟨.pure (-6), .pure 3, .pure (-1), by decide +kernel, by decide⟩⟩
+  | .eq => ⟨⟨.pure (-3), .pure 0, by decide +kernel, by decide⟩,
+      ⟨.pure 3, .pure 0, by decide +kernel, by decide⟩,
+      ⟨.pure (-6), .pure 3, .pure 0, by decide +kernel, by decide⟩⟩
+  | .gt => ⟨⟨.pure (-3), .pure 1, by decide +kernel, by decide⟩,
+      ⟨.pure 3, .pure 1, by decide +kernel, by decide⟩,
+      ⟨.pure (-6), .pure 3, .pure 1, by decide +kernel, by decide⟩⟩
 
 /-- Projected onto [reichenbach-1947]'s points, S at the basic TO, R at the intermediate TO and E
 at the situation-TO, the conditional realizes every order of the posterior past and the future
@@ -316,7 +281,7 @@ theorem covers_retrogressive :
     ∀ x ∈ Reichenbach1947.structures, x.1 = .gt → x.2.1 = .lt →
       ∃ s r e : Fin 3, Realizes .futurePerfect (.pure s) [.pure r, .pure e] ∧
         (compare r s, compare e r, compare e s) = x := by
-  refine ⟨?_, ?_⟩ <;> decide
+  refine ⟨?_, ?_⟩ <;> decide +kernel
 
 end Realizations
 
