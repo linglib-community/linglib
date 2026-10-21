@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
@@ -21,7 +22,6 @@ type-driven composition engine.
 ## Main definitions
 
 * `lowAppl`: the low applicative.
-* `cause`: Cause, the meaning shared by every causative head.
 * `CauseHead.Embeds`: the layers a causative head's complement may contain.
 
 ## Main results
@@ -201,18 +201,14 @@ theorem possessor_dative_transitivity :
 
 /-! ### Cause introduces a causing event, not a causer -/
 
-/-- Cause (9), the meaning shared by every causative head, relates the event it describes to a
-caused event of which the predicate `f` holds, and introduces no individual. -/
-def cause (CAUSE : E → E → Prop) (f : E → Prop) : E → Prop :=
-  fun e ↦ ∃ e', f e' ∧ CAUSE e e'
-
 /-- On the bieventive analysis (14) of *John melted the ice*, Voice relates John to an event
-that causes a melting, the reading (13b); on the θ-role analysis (16), a causer head relates
-John to the melting itself, the reading (15b). -/
-theorem melted_readings (CAUSE : E → E → Prop) (agent causer : Entity → E → Prop)
-    (melt : E → Prop) (john : Entity) (e : E) :
-    (eventIdentification agent (cause CAUSE melt) john e ↔
-        agent john e ∧ ∃ e', melt e' ∧ CAUSE e e') ∧
+that causes a melting, the reading (13b), since Cause (9), the meaning shared by every causative
+head, is the head `vCause`, which introduces no individual; on the θ-role analysis (16), a
+causer head relates John to the melting itself, the reading (15b). -/
+theorem melted_readings (M : EventStructure.Interpretation Entity E E)
+    (agent causer : Entity → E → Prop) (melt : E → Prop) (john : Entity) (e : E) :
+    (eventIdentification agent (M.vCause melt) john e ↔
+        agent john e ∧ ∃ e', M.cause e e' ∧ melt e') ∧
       (eventIdentification causer melt john e ↔ causer john e ∧ melt e) :=
   ⟨Iff.rfl, Iff.rfl⟩
 

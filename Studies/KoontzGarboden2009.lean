@@ -80,11 +80,12 @@ the underspecified `M.effector` for *romper* and an agent relation for *asesinar
 def causative (y x : Entity) (e : E) : Prop :=
   ∃ w, θ y w ∧ M.cause w e ∧ M.vBecome P x e
 
-/-- Over the underspecified causer, `causative` and the head `vCause` over `vBecome` have the same
-existential closure; they differ only in which event is the verb's argument. -/
+/-- Over the underspecified causer, `causative` and an event of `y` under the head `vCause` over
+`vBecome` have the same existential closure; they differ only in which event is the verb's
+argument. -/
 theorem exists_causative_iff (y x : Entity) :
-    (∃ e, causative M M.effector P y x e) ↔ ∃ w, M.vCause (M.vBecome P x) y w :=
-  ⟨fun ⟨e, w, hθ, hc, hi⟩ ↦ ⟨w, e, hθ, hc, hi⟩, fun ⟨w, e, hθ, hc, hi⟩ ↦ ⟨e, w, hθ, hc, hi⟩⟩
+    (∃ e, causative M M.effector P y x e) ↔ ∃ w, M.effector y w ∧ M.vCause (M.vBecome P x) w :=
+  ⟨fun ⟨e, w, hθ, hc, hi⟩ ↦ ⟨w, hθ, e, hc, hi⟩, fun ⟨w, hθ, e, hc, hi⟩ ↦ ⟨e, w, hθ, hc, hi⟩⟩
 
 /-- Anticausativization is reflexivization. The derived inchoative is the causative on its
 diagonal, so the undergoer is also the participant in the causing event. -/

@@ -80,10 +80,10 @@ which `P x` holds. -/
 def vBecome (P : Entity → State → Prop) (x : Entity) (e : Event) : Prop :=
   ∃ s, M.become s e ∧ P x s
 
-/-- The causative head `vCause Q y` holds of the events whose effector is `y` and which cause
-an event of which `Q` holds. -/
-def vCause (Q : Event → Prop) (y : Entity) (v : Event) : Prop :=
-  ∃ e, M.effector y v ∧ M.cause v e ∧ Q e
+/-- The causative head `vCause Q` holds of the eventualities that cause an eventuality of which
+`Q` holds. It introduces no individual. -/
+def vCause (Q : Event → Prop) (v : Event) : Prop :=
+  ∃ e, M.cause v e ∧ Q e
 
 variable {M}
 
@@ -91,14 +91,14 @@ theorem vBecome_mono (h : P ≤ P') : M.vBecome P ≤ M.vBecome P' :=
   fun x _ ⟨s, hb, hP⟩ ↦ ⟨s, hb, h x s hP⟩
 
 theorem vCause_mono (h : Q ≤ Q') : M.vCause Q ≤ M.vCause Q' :=
-  fun _ _ ⟨e, he, hc, hQ⟩ ↦ ⟨e, he, hc, h e hQ⟩
+  fun _ ⟨e, hc, hQ⟩ ↦ ⟨e, hc, h e hQ⟩
 
 /-- A change gives rise to a state of the predicate. -/
 theorem exists_state_of_vBecome (h : M.vBecome P x e) : ∃ s, M.become s e ∧ P x s := h
 
 /-- A causing event has a caused event of the embedded predicate. -/
-theorem exists_of_vCause (h : M.vCause Q y e) : ∃ e', Q e' :=
-  let ⟨e', _, _, hQ⟩ := h; ⟨e', hQ⟩
+theorem exists_of_vCause (h : M.vCause Q e) : ∃ e', Q e' :=
+  let ⟨e', _, hQ⟩ := h; ⟨e', hQ⟩
 
 /-! ### Meaning postulates on a state predicate -/
 

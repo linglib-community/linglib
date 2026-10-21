@@ -41,7 +41,8 @@ modifier such as *again* attached at different subterms.
 * `Template.hasCause_of_mem_kinds`: a template with a manner and a state has `CAUSE`
 * `Template.exists_denote_of_isSubterm`: a template's subterms are realized with its undergoer
 * `Template.IsSubterm.kinds_subset`: a subterm's primitives are among the template's
-* `Template.denote_cause_effector`: CAUSE with an individual causer is `vCause`
+* `Template.denote_cause_effector`: CAUSE with an individual causer is the effector of a
+  `vCause` event
 
 ## Implementation notes
 
@@ -182,15 +183,15 @@ def denote : {σ : Eventuality} → Template σ → Entity → Entity → σ.Car
   | _, act, y, _, v => M.effector y v ∧ Q v
   | _, effector, y, _, v => M.effector y v
   | _, become t, y, x, e => M.vBecome (fun x ↦ denote t y x) x e
-  | _, cause c t, y, x, v => denote c y x v ∧ M.vCause (denote t x x) y v
+  | _, cause c t, y, x, v => denote c y x v ∧ M.vCause (denote t x x) v
 
 variable {M P Q} {y x : Entity}
 
-/-- CAUSE with an individual causer is the head `vCause` over its caused subevent: an event
-whose effector is the causer. -/
+/-- CAUSE with an individual causer is the `vcause` of Beavers and Koontz-Garboden, an event
+whose effector is the causer and which causes the caused subevent. -/
 theorem denote_cause_effector {t : Template .event} {v : Event} :
-    (cause effector t).denote M P Q y x v ↔ M.vCause (t.denote M P Q x x) y v :=
-  ⟨And.right, fun h ↦ ⟨let ⟨_, he, _⟩ := h; he, h⟩⟩
+    (cause effector t).denote M P Q y x v ↔ M.effector y v ∧ M.vCause (t.denote M P Q x x) v :=
+  Iff.rfl
 
 /-- A template's denotation entails that each of its subterms is realized, with the same
 undergoer. -/
@@ -201,7 +202,7 @@ theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.I
   | refl => exact ⟨y, v, h⟩
   | become _ ih => obtain ⟨_, _, hs⟩ := h; exact ih hs
   | causing _ ih => exact ih h.1
-  | caused _ ih => obtain ⟨_, _, _, _, he⟩ := h; exact ih he
+  | caused _ ih => obtain ⟨_, _, _, he⟩ := h; exact ih he
 
 /-- A template with `BECOME` describes only eventualities that involve a change. -/
 theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
@@ -212,7 +213,7 @@ theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
   | cause c e ihc ihe =>
     simp only [HasResultState, kinds, Finset.mem_insert, Finset.mem_union, reduceCtorEq,
       false_or] at ht
-    obtain ⟨hc, _, _, _, he⟩ := h
+    obtain ⟨hc, _, _, he⟩ := h
     exact ht.elim (ihc · hc) (ihe · he)
 
 /-- A template with `CAUSE` describes only eventualities that involve a causal relation. -/
@@ -224,7 +225,7 @@ theorem exists_cause_of_denote {t : Template σ} (ht : t.HasCause)
     simp only [HasCause, kinds, Finset.mem_insert, reduceCtorEq, false_or] at ht
     obtain ⟨_, _, hs⟩ := h
     exact ih ht hs
-  | cause _ _ _ _ => obtain ⟨_, _, _, hc, _⟩ := h; exact ⟨_, _, hc⟩
+  | cause _ _ _ _ => obtain ⟨_, _, hc, _⟩ := h; exact ⟨_, _, hc⟩
 
 end Denotation
 
@@ -260,7 +261,7 @@ private theorem denote_noChange [Nonempty Event] {t : Template σ} (ht : ¬ t.Ha
   | cause c e ihc ihe =>
     simp only [HasResultState, kinds, Finset.mem_insert, Finset.mem_union, reduceCtorEq,
       false_or, not_or] at ht
-    exact ⟨ihc ht.1 y x v, Classical.arbitrary Event, trivial, trivial, ihe ht.2 x x _⟩
+    exact ⟨ihc ht.1 y x v, Classical.arbitrary Event, trivial, ihe ht.2 x x _⟩
 
 private theorem denote_noCause [Nonempty State] {t : Template σ} (ht : ¬ t.HasCause)
     (y x : Entity) (v : σ.Carrier State Event) :
