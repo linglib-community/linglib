@@ -5,32 +5,37 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Reference.Context.Basic
-public import Mathlib.Data.Finset.Insert
+public import Linglib.Semantics.Reference.Kaplan
+public import Mathlib.Data.Finset.Piecewise
+public import Mathlib.Logic.Function.DependsOn
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Overwriting coordinates of a context
 
-`overwrite s c i` is the context `c` with its coordinates in `s` taken from `i`, the operation by
-which a shifty operator replaces coordinates of the context with those of an index of the same
-type. An expression *depends on* a set of coordinates when taking the others from another context
-leaves it unchanged, as an indexical of a given class depends on one coordinate; after a sequence
-of overwrites such an expression reads the context of the last overwrite that took its coordinate.
+A context is the function from its coordinates to their values (`Context.equivPi`), and
+`overwrite s c i` is `c` with its coordinates in `s` taken from `i`, `Finset.piecewise` through that
+equivalence: the operation by which a shifty operator replaces coordinates of the context with those
+of an index of the same type. An indexical depends, in the sense of `DependsOn`, on one coordinate;
+after a sequence of overwrites it reads the context of the last overwrite that took that coordinate.
 
 ## Main definitions
 
-* `Context.Coord`: the coordinates of a context.
+* `Context.Coord`, `Context.equivPi`: the coordinates of a context, and the context as a function
+  on them.
 * `Context.overwrite s c i`: `c` with the coordinates in `s` taken from `i`.
-* `Context.DependsOn f s`: `f` depends only on the coordinates in `s`.
+* `Context.localDepth ss k`: the position of the last of the overwrites `ss` that takes `k`.
+* `shiftyOp s`: the shifty operator, evaluating its argument at the context overwritten from the
+  index, Kaplan's `shiftBy (overwrite s)`.
 
 ## Main results
 
 * `overwrite_overwrite`: overwriting `s` and then `t` from the same context overwrites `s ∪ t`.
-* `DependsOn.apply_overwrite_of_subset`, `DependsOn.apply_overwrite_of_disjoint`: an expression
-  reads the overwriting context when its coordinates are overwritten, the original one when not.
-* `DependsOn.apply_foldl_overwrite`: after a sequence of overwrites an expression depending on one
-  coordinate reads the context of the last overwrite that took it.
+* `apply_overwrite_of_subset`, `apply_overwrite_of_disjoint`: an expression reads the overwriting
+  context when its coordinates are overwritten, the original one when none is.
+* `apply_foldl_overwrite`: Local Determination.
+* `shiftyOp_shiftyOp`, `holdsAt_shiftyOp`: stacked shifty operators compose to the one overwriting
+  the union of their coordinates, and unembedded a shifty operator is vacuous.
 
 ## References
 
@@ -42,7 +47,9 @@ of overwrites such an expression reads the context of the last overwrite that to
 
 namespace Kaplan.Context
 
-variable {W E P T α β : Type*}
+universe u
+
+variable {W E P T : Type u} {α : Type*}
 
 /-- The coordinates of a context. -/
 inductive Coord
@@ -53,106 +60,171 @@ inductive Coord
   | position
   deriving DecidableEq, Fintype
 
+/-- The values a coordinate takes. -/
+abbrev Coord.Carrier (W E P T : Type u) : Coord → Type u
+  | .agent | .addressee => E
+  | .world => W
+  | .time => T
+  | .position => P
+
+/-- A context is the function from its coordinates to their values. -/
+def equivPi : Context W E P T ≃ Π k, Coord.Carrier W E P T k where
+  toFun c
+    | .agent => c.agent
+    | .addressee => c.addressee
+    | .world => c.world
+    | .time => c.time
+    | .position => c.position
+  invFun x := ⟨x .agent, x .addressee, x .world, x .time, x .position⟩
+  left_inv _ := rfl
+  right_inv x := funext fun k ↦ by cases k <;> rfl
+
 /-- The context `c` with the coordinates in `s` overwritten by those of `i`. -/
-@[simps]
-def overwrite (s : Finset Coord) (c i : Context W E P T) : Context W E P T where
-  agent := if .agent ∈ s then i.agent else c.agent
-  addressee := if .addressee ∈ s then i.addressee else c.addressee
-  world := if .world ∈ s then i.world else c.world
-  time := if .time ∈ s then i.time else c.time
-  position := if .position ∈ s then i.position else c.position
+def overwrite (s : Finset Coord) (c i : Context W E P T) : Context W E P T :=
+  equivPi.symm (s.piecewise (equivPi i) (equivPi c))
 
 section overwrite
 
 variable (s t : Finset Coord) (c i : Context W E P T)
 
-@[simp] theorem overwrite_empty : overwrite ∅ c i = c := by ext <;> simp
+@[simp] theorem equivPi_overwrite :
+    equivPi (overwrite s c i) = s.piecewise (equivPi i) (equivPi c) :=
+  equivPi.apply_symm_apply _
 
-@[simp] theorem overwrite_univ : overwrite .univ c i = i := by ext <;> simp
+@[simp] theorem overwrite_agent :
+    (overwrite s c i).agent = if .agent ∈ s then i.agent else c.agent := rfl
 
-@[simp] theorem overwrite_self : overwrite s i i = i := by ext <;> simp
+@[simp] theorem overwrite_addressee :
+    (overwrite s c i).addressee = if .addressee ∈ s then i.addressee else c.addressee := rfl
+
+@[simp] theorem overwrite_world :
+    (overwrite s c i).world = if .world ∈ s then i.world else c.world := rfl
+
+@[simp] theorem overwrite_time : (overwrite s c i).time = if .time ∈ s then i.time else c.time :=
+  rfl
+
+@[simp] theorem overwrite_position :
+    (overwrite s c i).position = if .position ∈ s then i.position else c.position := rfl
+
+@[simp] theorem overwrite_empty : overwrite ∅ c i = c := by simp [overwrite]
+
+@[simp] theorem overwrite_univ : overwrite .univ c i = i := by simp [overwrite]
+
+@[simp] theorem overwrite_self : overwrite s i i = i := by simp [overwrite, Finset.piecewise_same]
 
 /-- Overwriting `s` and then `t` from the same context overwrites `s ∪ t`. -/
 theorem overwrite_overwrite : overwrite t (overwrite s c i) i = overwrite (s ∪ t) c i := by
-  ext <;> simp only [overwrite_agent, overwrite_addressee, overwrite_world, overwrite_time,
-    overwrite_position, Finset.mem_union] <;> split_ifs <;> simp_all
-
-variable {s t}
-
-theorem overwrite_overwrite_of_subset (h : s ⊆ t) : overwrite s i (overwrite t c i) = i := by
-  ext <;> simp only [overwrite_agent, overwrite_addressee, overwrite_world, overwrite_time,
-    overwrite_position] <;> split_ifs with h₁ h₂ <;> first | rfl | exact absurd (h h₁) h₂
-
-theorem overwrite_overwrite_of_disjoint (h : Disjoint s t) :
-    overwrite s c (overwrite t c i) = c := by
-  ext <;> simp only [overwrite_agent, overwrite_addressee, overwrite_world, overwrite_time,
-    overwrite_position] <;> split_ifs with h₁ h₂ <;>
-    first | rfl | exact absurd h₂ (Finset.disjoint_left.1 h h₁)
+  refine equivPi.injective (funext fun k ↦ ?_)
+  simp only [equivPi_overwrite, Finset.piecewise, Finset.mem_union]
+  split_ifs <;> tauto
 
 end overwrite
 
-/-! ### Dependence on coordinates -/
+/-! ### Expressions reading some coordinates -/
 
-/-- `f` depends only on the coordinates in `s`: taking the other coordinates from another context
-leaves its value unchanged. -/
-def DependsOn (f : Context W E P T → α) (s : Finset Coord) : Prop :=
-  ∀ c i, f (overwrite s c i) = f i
+theorem dependsOn_agent :
+    DependsOn (agent ∘ equivPi.symm : (Π k, Coord.Carrier W E P T k) → E) {Coord.agent} :=
+  fun _ _ h ↦ h _ rfl
 
-theorem dependsOn_agent : DependsOn (agent : Context W E P T → E) {.agent} := fun _ _ ↦ by simp
+variable {f : Context W E P T → α} {s : Set Coord} {t : Finset Coord}
 
-theorem dependsOn_addressee : DependsOn (addressee : Context W E P T → E) {.addressee} :=
-  fun _ _ ↦ by simp
-
-theorem dependsOn_world : DependsOn (world : Context W E P T → W) {.world} := fun _ _ ↦ by simp
-
-theorem dependsOn_time : DependsOn (time : Context W E P T → T) {.time} := fun _ _ ↦ by simp
-
-theorem dependsOn_position : DependsOn (position : Context W E P T → P) {.position} :=
-  fun _ _ ↦ by simp
-
-namespace DependsOn
-
-variable {f : Context W E P T → α} {g : Context W E P T → β} {s t : Finset Coord}
-
-/-- An expression depending on the coordinates `s` reads the overwriting context when they are all
+/-- An expression reading only the coordinates `s` reads the overwriting context when they are all
 overwritten. -/
-theorem apply_overwrite_of_subset (hf : DependsOn f s) (h : s ⊆ t) (c i : Context W E P T) :
-    f (overwrite t c i) = f i := by
-  rw [← hf i (overwrite t c i), overwrite_overwrite_of_subset c i h]
+theorem apply_overwrite_of_subset (hf : DependsOn (f ∘ equivPi.symm) s) (h : s ⊆ t)
+    (c i : Context W E P T) : f (overwrite t c i) = f i := by
+  simpa only [Function.comp_apply, Equiv.symm_apply_apply] using
+    hf (x := equivPi (overwrite t c i)) (y := equivPi i)
+      fun k hk ↦ by simp [Finset.piecewise_eq_of_mem _ _ _ (h hk)]
 
-/-- An expression depending on the coordinates `s` reads the original context when none of them is
+/-- An expression reading only the coordinates `s` reads the original context when none of them is
 overwritten. -/
-theorem apply_overwrite_of_disjoint (hf : DependsOn f s) (h : Disjoint s t)
+theorem apply_overwrite_of_disjoint (hf : DependsOn (f ∘ equivPi.symm) s) (h : Disjoint s t)
     (c i : Context W E P T) : f (overwrite t c i) = f c := by
-  rw [← hf c (overwrite t c i), overwrite_overwrite_of_disjoint c i h]
+  simpa only [Function.comp_apply, Equiv.symm_apply_apply] using
+    hf (x := equivPi (overwrite t c i)) (y := equivPi c)
+      fun k hk ↦ by simp [Finset.piecewise_eq_of_notMem _ _ _ (Set.disjoint_left.1 h hk)]
 
-theorem mono (hf : DependsOn f s) (h : s ⊆ t) : DependsOn f t :=
-  hf.apply_overwrite_of_subset h
+/-- Overwriting from a context that agrees with the original on what an expression reads leaves
+the expression's value unchanged. -/
+theorem apply_overwrite_of_apply_eq {k : Coord} (hf : DependsOn (f ∘ equivPi.symm) {k})
+    {c i : Context W E P T} (h : f i = f c) : f (overwrite t c i) = f c := by
+  by_cases hk : k ∈ t
+  · rw [apply_overwrite_of_subset hf (by simpa using hk), h]
+  · exact apply_overwrite_of_disjoint hf (by simpa using hk) c i
 
-theorem comp (hf : DependsOn f s) (u : α → β) : DependsOn (u ∘ f) s :=
-  fun c i ↦ congrArg u (hf c i)
+/-! ### Local Determination -/
 
-theorem prodMk (hf : DependsOn f s) (hg : DependsOn g t) :
-    DependsOn (fun c ↦ (f c, g c)) (s ∪ t) := fun c i ↦ by
-  simp [(hf.mono Finset.subset_union_left) c i, (hg.mono Finset.subset_union_right) c i]
+/-- The position, counting from one, of the last of the overwrites `ss` that takes the coordinate
+`k`, or `0` if none does. -/
+def localDepth (ss : List (Finset Coord)) (k : Coord) : ℕ :=
+  ss.zipIdx.foldl (fun d p ↦ if k ∈ p.1 then p.2 + 1 else d) 0
+
+@[simp] theorem localDepth_nil (k : Coord) : localDepth [] k = 0 := rfl
+
+theorem localDepth_append_singleton (ss : List (Finset Coord)) (s : Finset Coord) (k : Coord) :
+    localDepth (ss ++ [s]) k = if k ∈ s then ss.length + 1 else localDepth ss k := by
+  simp [localDepth, List.zipIdx_append]
+
+theorem localDepth_le_length (ss : List (Finset Coord)) (k : Coord) :
+    localDepth ss k ≤ ss.length := by
+  induction ss using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton ss s ih =>
+    rw [localDepth_append_singleton, List.length_append, List.length_singleton]
+    split_ifs <;> omega
 
 /-- Local Determination: after overwrites by the pairs `ops`, outermost first, an expression
-depending on the coordinate `k` reads the context of the last pair that overwrites `k`, or the
-original context if none does. -/
-theorem apply_foldl_overwrite {k : Coord} (hf : DependsOn f {k}) (c : Context W E P T)
-    (ops : List (Finset Coord × Context W E P T)) :
+reading only the coordinate `k` reads the context of the last pair that overwrites `k`, the last of
+the first `localDepth` overwriting contexts, or the original context if none does. -/
+theorem apply_foldl_overwrite {k : Coord} (hf : DependsOn (f ∘ equivPi.symm) {k})
+    (c : Context W E P T) (ops : List (Finset Coord × Context W E P T)) :
     f (ops.foldl (fun c p ↦ overwrite p.1 c p.2) c) =
-      f (((ops.reverse.find? fun p ↦ k ∈ p.1).map Prod.snd).getD c) := by
+      f (((ops.map Prod.snd).take (localDepth (ops.map Prod.fst) k)).getLastD c) := by
   induction ops using List.reverseRecOn with
   | nil => rfl
   | append_singleton ops p ih =>
-    rw [List.foldl_append, List.foldl_cons, List.foldl_nil, List.reverse_append,
-      List.reverse_singleton, List.singleton_append, List.find?_cons]
+    simp only [List.foldl_append, List.foldl_cons, List.foldl_nil, List.map_append, List.map_cons,
+      List.map_nil, localDepth_append_singleton, List.length_map]
     by_cases hk : k ∈ p.1
-    · simpa [hk] using hf.apply_overwrite_of_subset (Finset.singleton_subset_iff.2 hk) _ _
-    · rw [hf.apply_overwrite_of_disjoint (Finset.disjoint_singleton_left.2 hk), ih]
-      simp [hk]
-
-end DependsOn
+    · simp only [hk, ↓reduceIte]
+      rw [apply_overwrite_of_subset hf (by simpa using hk), List.take_of_length_le (by simp)]
+      simp
+    · simp only [hk, ↓reduceIte]
+      rw [apply_overwrite_of_disjoint hf (by simpa using hk), ih, List.take_append_of_le_length
+        (by simpa using localDepth_le_length (ops.map Prod.fst) k)]
 
 end Kaplan.Context
+
+namespace Kaplan
+
+open Context
+
+universe u
+
+variable {W E P T : Type u} {α : Type*}
+
+/-- The shifty operator overwriting the coordinates `s` of the context with those of the index,
+`⟦OP α⟧^{c,i} = ⟦α⟧^{overwrite s c i, i}` ([anand-nevins-2004], [deal-2020]). -/
+def shiftyOp (s : Finset Coord) :
+    Character (Context W E P T) (Context W E P T) α →
+      Character (Context W E P T) (Context W E P T) α :=
+  shiftBy (overwrite s)
+
+variable (s t : Finset Coord) (χ : Character (Context W E P T) (Context W E P T) α)
+
+@[simp] theorem shiftyOp_apply (c i : Context W E P T) :
+    shiftyOp s χ c i = χ (overwrite s c i) i := rfl
+
+@[simp] theorem shiftyOp_empty : shiftyOp ∅ χ = χ := by ext; simp
+
+/-- Stacked shifty operators compose to the one overwriting the union of their coordinates. -/
+@[simp] theorem shiftyOp_shiftyOp : shiftyOp t (shiftyOp s χ) = shiftyOp (t ∪ s) χ := by
+  ext; simp [overwrite_overwrite]
+
+/-- Unembedded, a shifty operator is vacuous: a sentence holds at a context, taken as its own
+index, iff its complement does. -/
+theorem holdsAt_shiftyOp (χ : Character (Context W E P T) (Context W E P T) Prop)
+    (c : Context W E P T) : (shiftyOp s χ).HoldsAt id c ↔ χ.HoldsAt id c := by
+  simp [Character.HoldsAt]
+
+end Kaplan

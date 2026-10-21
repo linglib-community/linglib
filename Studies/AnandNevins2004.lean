@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Reference.Kaplan
+public import Linglib.Semantics.Reference.Context.Overwrite
 public import Linglib.Data.Examples.AnandNevins2004
 
 /-!
@@ -25,7 +25,7 @@ operator that overwrites coordinates of the context with those of the index (2).
 * `shiftyOp_opAll_iff_holdsAt`: `OP∀` is Stalnaker's diagonal (fn. 7).
 * `isMonster_shiftyOp_of_agent_mem`, `not_isMonster_say`: the operators are monsters, the verbs not.
 * `readings_vano_prod`, `rows_mixed`: Shift-Together (16).
-* `depth₂_ne_zero`: after a shift in the intermediate report the lowest clause cannot read the
+* `localDepth_ne_zero`: after a shift in the intermediate report the lowest clause cannot read the
   utterance context (32), which the binding account allows (`bound_origin`).
 * `rows_reported`, `rows_utterance`, `rows_double_report`: the rows' judgments.
 
@@ -54,10 +54,12 @@ Shift-Together from Amharic (46) and English (47)–(50), are rows without theor
 namespace AnandNevins2004
 
 open Kaplan (Character Context IsMonster shiftyOp isMonster_shiftBy_iff)
-open Kaplan.Context (Coord overwrite)
+open Kaplan.Context (Coord equivPi localDepth overwrite)
 open ContextTower (AccessPattern)
 
-variable {W E P T α β : Type*}
+universe u
+
+variable {W E P T : Type u} {α β : Type*}
 
 /-! ### Operators and attitude verbs -/
 
@@ -175,16 +177,6 @@ theorem readings_slaveWant :
 
 /-! ### Multiple embedding -/
 
-/-- The tower of two stacked reports over the utterance context `c`, with the reported contexts
-`j₁` and `j₂`. -/
-def tower₂ (c j₁ j₂ : Context W E P T) : ContextTower (Context W E P T) :=
-  ⟨c, [Function.const _ j₁, Function.const _ j₂]⟩
-
-/-- The depth in `tower₂` of the context from which the lowest of two stacked clauses reads the
-coordinate `k`, under options `S₁` of the intermediate verb and `S₂` of the lowest. -/
-def depth₂ (S₁ S₂ : Finset Coord) (k : Coord) : ℕ :=
-  if k ∈ S₂ then 2 else if k ∈ S₁ then 1 else 0
-
 variable (j₁ j₂ : Context W E P T) (S₁ S₂ : Finset Coord)
 
 /-- Two stacked reports evaluate the lowest complement at the utterance context overwritten by the
@@ -196,24 +188,28 @@ theorem say_shiftyOp_say_shiftyOp (acc' : E → Context W E P T → Set (Context
       ∀ j₁ ∈ acc x i, ∀ j₂ ∈ acc' y j₁, χ (overwrite S₂ (overwrite S₁ c j₁) j₂) j₂ := by
   simp [say]
 
-/-- The lowest of two stacked clauses reads the author of the context of the tower at the depth
-the operators fix. -/
-theorem agent_overwrite_overwrite :
-    (overwrite S₂ (overwrite S₁ c j₁) j₂).agent =
-      ((tower₂ c j₁ j₂).contextAt (depth₂ S₁ S₂ .agent)).agent := by
-  unfold depth₂; split_ifs <;> simp_all [tower₂, ContextTower.contextAt, Function.End.mul_def]
+/-- The operator account reads the tower of reports at the depth its operators fix: after reports
+with operators and reported contexts `ops`, an expression reading only the coordinate `k` reads the
+tower's context at `localDepth`, where the binding account (`Bound`) may read any depth. -/
+theorem apply_foldl_overwrite_eq_contextAt {f : Context W E P T → α} {k : Coord}
+    (hf : DependsOn (f ∘ equivPi.symm) {k}) (c : Context W E P T)
+    (ops : List (Finset Coord × Context W E P T)) :
+    f (ops.foldl (fun c p ↦ overwrite p.1 c p.2) c) =
+      f ((⟨c, (ops.map Prod.snd).map (Function.const _)⟩ : ContextTower _).contextAt
+        (localDepth (ops.map Prod.fst) k)) := by
+  rw [Kaplan.Context.apply_foldl_overwrite hf, ContextTower.contextAt_map_const]
 
 variable {c j₁ S₁ S₂}
 
 /-- (32): a shifted second person in the intermediate clause diagnoses `OP∀` there, after which
-the lowest clause reads no coordinate from the utterance context. -/
-theorem depth₂_ne_zero (h₁ : S₁ ∈ vano) (h₂ : S₂ ∈ vano)
+the lowest clause reads no coordinate from the utterance context, at depth `0`. -/
+theorem localDepth_ne_zero (h₁ : S₁ ∈ vano) (h₂ : S₂ ∈ vano)
     (hyou : (overwrite S₁ c j₁).addressee = j₁.addressee) (hne : c.addressee ≠ j₁.addressee)
-    (k : Coord) : depth₂ S₁ S₂ k ≠ 0 := by
+    (k : Coord) : localDepth [S₁, S₂] k ≠ 0 := by
   simp only [vano, Finset.mem_insert, Finset.mem_singleton] at h₁ h₂
   obtain rfl | rfl := h₁
   · exact absurd (by simpa using hyou) hne
-  · obtain rfl | rfl := h₂ <;> simp [depth₂]
+  · obtain rfl | rfl := h₂ <;> simp [localDepth]
 
 /-- The binding account of [schlenker-2003] as (19) renders it, with the constraint (22): the
 indexicals of a clause are bound by one context, the utterance context or a reported one above it,
@@ -294,7 +290,7 @@ theorem rows_double_report :
             ("lowest reported context", 2)], x.1 = d.1 →
           (x.2 = .acceptable ↔ ∃ S₁ ∈ p.1, ∃ S₂ ∈ p.1,
             (r.feature? "intermediate_shift" = some "yes" → .addressee ∈ S₁) ∧
-              ∀ k ∈ p.2, depth₂ S₁ S₂ k = d.2) := by
+              ∀ k ∈ p.2, localDepth [S₁, S₂] k = d.2) := by
   decide +kernel
 
 example : (Examples.all.filter fun r ↦ (singleReport? r).isSome).length = 18 := by decide +kernel
