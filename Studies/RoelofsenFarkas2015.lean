@@ -8,7 +8,7 @@ public import Linglib.Data.Examples.RoelofsenFarkas2015
 /-!
 # Roelofsen and Farkas (2015): Polarity particle responses as a window onto the interpretation of questions and assertions
 
-This file formalizes [roelofsen-farkas-2015]'s account of polarity particle responses. A response
+This file formalizes Roelofsen and Farkas's account of polarity particle responses. A response
 carries a relative feature, [agree] or [reverse], and an absolute feature, [+] or [−], each
 presupposing something of the possibilities its prejacent and its antecedent highlight; together
 they fix what the response expresses (`absolutePresup_and_relativePresup_iff`). So *yes, it is*
@@ -26,8 +26,9 @@ English particles mark (`usable_english_iff_mem`).
 
 * The most salient antecedent possibility is the one the antecedent formula highlights; the
   discourse context of the paper is not modelled.
-* Features are polarities, [agree] and [+] being positive, so the prejacent of a relative feature
-  `r` highlights `r • β` for the antecedent possibility `β`.
+* The features are `Discourse.Response.Feature`, whose [same] is the paper's [agree]. A feature
+  is unmarked when its value is positive, as [agree] and [+] are (78), (80), and the prejacent
+  of a relative feature `r` highlights `r • β` for the antecedent possibility `β`.
 * In the planets examples *odd* is the complement of *even*, so each proposition is recorded as
   the polarity whose action yields it from *even*.
 * French (9) prints its French sentences in the opposite order to their glosses; the French rows
@@ -84,18 +85,13 @@ theorem absolutePresup_and_relativePresup_iff {r s : Polarity} {q : Question W}
     refine ⟨⟨_, hq, hH⟩, (r * s, α), hant, ?_⟩
     rw [hH, Prod.smul_mk, smul_eq_mul, ← mul_assoc, Polarity.mul_self, Polarity.positive_mul]
 
-/-- On a prejacent of polarity `s` sharing the radical of an antecedent of polarity `t`, the two
-highlighting the images of one possibility `x` under `s` and `t`, the relative feature is the
-relative polarity of [farkas-bruce-2010] (`Discourse.Response.relative`): [agree] iff `s = t`. -/
-theorem relativePresup_smul_iff {r s t : Polarity} (x : Polarity × Set W) :
-    RelativePresup r {s • x} {t • x} ↔ r = s / t := by
+/-- When a response and its antecedent highlight the images of one possibility `β` under their
+polarities, the relative feature of the response is its relative polarity. -/
+theorem relativePresup_smul_iff {r : Polarity} (x : Response) (β : Polarity × Set W) :
+    RelativePresup r {x.polarity • β} {x.antecedent • β} ↔ r = x.relative := by
   simp only [RelativePresup, Set.singleton_eq_singleton_iff, exists_eq_left', smul_smul,
-    eq_div_iff_mul_eq']
-  constructor
-  · intro h
-    simpa using (congrArg Prod.fst h).symm
-  · rintro rfl
-    rfl
+    Response.relative, eq_div_iff_mul_eq']
+  exact ⟨fun h ↦ by simpa using (congrArg Prod.fst h).symm, fun h ↦ by rw [h]⟩
 
 /-! ### The questions of §3.3 -/
 
@@ -135,28 +131,13 @@ theorem not_relativePresup_disj [Nonempty W] (hodd : v o = (v e)ᶜ) (r : Polari
   have h₁ : ((.positive, v e) : Polarity × Set W) ∈ ({β} : Set _) := hant ▸ Or.inl rfl
   have h₂ : ((.positive, (v e)ᶜ) : Polarity × Set W) ∈ ({β} : Set _) := hant ▸ Or.inr rfl
   rw [Set.mem_singleton_iff] at h₁ h₂
-  have hp : v e = (v e)ᶜ := congrArg Prod.snd (h₁.trans h₂.symm)
-  obtain ⟨w⟩ := ‹Nonempty W›
-  by_cases hw : w ∈ v e
-  · exact (hp ▸ hw) hw
-  · exact hw (hp ▸ hw)
+  exact ne_compl_self (congrArg Prod.snd (h₁.trans h₂.symm))
 
 end Questions
 
 /-! ### Realization (§4.2, §5.2) -/
 
-/-- A polarity feature is relative, [agree] when positive and [reverse] when negative, or
-absolute, [+] or [−]. -/
-inductive Feature where
-  | relative (r : Polarity)
-  | absolute (s : Polarity)
-  deriving DecidableEq, Repr
-
-/-- The polarity of a feature, positive for the unmarked [agree] and [+] and negative for the
-marked [reverse] and [−] (78), (80). -/
-def Feature.value : Feature → Polarity
-  | .relative r => r
-  | .absolute s => s
+open Response (Feature)
 
 /-- A particle realizes features, or a feature combination [r, s] as a whole. -/
 inductive Target where
@@ -184,7 +165,7 @@ def german : German.PolarityParticle → List Target
 
 section Usable
 
-variable {P : Type*} [Fintype P] (R : P → List Target)
+variable {P : Type*} (R : P → List Target)
 
 /-- A particle can realize the combination [r, s] when it realizes one of its features or the
 combination itself. -/
@@ -199,7 +180,7 @@ def Usable (p : P) (r s : Polarity) : Prop :=
 instance (p : P) (r s : Polarity) : Decidable (Realizes R p r s) :=
   inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-instance [DecidableEq P] (p : P) (r s : Polarity) : Decidable (Usable R p r s) :=
+instance [Fintype P] [DecidableEq P] (p : P) (r s : Polarity) : Decidable (Usable R p r s) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 end Usable
@@ -230,8 +211,8 @@ theorem german_usable (p : German.PolarityParticle) :
       (Usable german p .positive .negative ↔ p ≠ .doch) := by
   cases p <;> decide
 
-/-- The English particles each realize a natural class of features, *yes* the unmarked and
-*no* the marked ones (80). -/
+/-- The English particles each realize a natural class of features, *yes* the unmarked ones,
+of positive value, and *no* the marked ones (80). -/
 theorem mem_english_iff (f : Feature) :
     (Target.feature f ∈ english .yes ↔ f.value = .positive) ∧
       (Target.feature f ∈ english .no ↔ f.value = .negative) := by
@@ -239,14 +220,14 @@ theorem mem_english_iff (f : Feature) :
   | relative r => cases r <;> decide
   | absolute s => cases s <;> decide
 
-/-- The English particles are usable in exactly the responses [farkas-bruce-2010] say they
-mark: *yes* [same] or [+], *no* [reverse] or [−]. -/
+/-- The English particles are usable in exactly the responses Farkas and Bruce say they mark,
+*yes* [same] or [+] and *no* [reverse] or [−]. -/
 theorem usable_english_iff_mem (p : English.PolarityParticle) (x : Response) :
     Usable english p x.relative x.polarity ↔ x ∈ FarkasBruce2010.english p := by
   obtain ⟨m, a, s⟩ := x
   cases m <;> cases p <;> cases a <;> cases s <;> decide
 
-/-- French *si* is usable in exactly the [reverse, +] responses of [farkas-bruce-2010]. -/
+/-- French *si* is usable in exactly the [reverse, +] responses of Farkas and Bruce. -/
 theorem usable_si_iff_mem_reversePositive (x : Response) :
     Usable french .si x.relative x.polarity ↔ x ∈ FarkasBruce2010.reversePositive := by
   obtain ⟨m, a, s⟩ := x
@@ -300,8 +281,8 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The relative feature of every response, the quotient of its polarity by its antecedent's
-(`relativePresup_smul_iff`), is the one the paper assigns it. -/
+/-- The relative feature of every response, its relative polarity (`relativePresup_smul_iff`),
+is the one the paper assigns it. -/
 theorem relative_eq : ∀ r ∈ rows, r.response.relative = r.relative := by
   decide
 
@@ -344,9 +325,9 @@ theorem ofDatum_isSome :
     ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome ∨ (QuestionRow.ofDatum ex).isSome := by
   decide
 
-/-- The prediction for a question row: a response of polarity `s` to a polar question of
-polarity `t` is acceptable when its particle is usable with the relative feature `s / t` and
-conveys `s` applied to the radical (`presup_query_ofPolarity`); no particle response to the
+/-- A question row is predicted when a response of polarity `s` to a polar question of polarity
+`t` is acceptable just when its particle is usable with the relative feature `s / t` and conveys
+`s` applied to the radical (`presup_query_ofPolarity`), and when no particle response to the
 alternative question is acceptable (`not_relativePresup_disj`). -/
 def QuestionRow.Predicted : QuestionRow → Prop
   | ⟨some (t, a), s, p, c, j⟩ => (j = .acceptable ↔ Usable english p (s / t) s) ∧ c = some (s * a)

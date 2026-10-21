@@ -8,7 +8,7 @@ public import Mathlib.Data.Fintype.Sum
 /-!
 # Polar interrogatives and their answers
 
-This file formalizes the syntax of yes–no questions and their answers of [holmberg-2016]. A
+This file formalizes Holmberg's syntax of yes–no questions and their answers. A
 `PolarInterrogative` is a sentence radical, its positive alternative, with a `ClauseNegation`,
 the negation of the clause, if any, with its height relative to the polarity head. Its primary
 alternative is the radical under the polarity the negation gives it, and it denotes the polar
@@ -22,52 +22,51 @@ feature, spelled out by an answer particle, with the clause inherited from the q
 normally elided. An `AnswerFeature` is that feature: a valued [+Pol] or [−Pol], or the
 affirmative [+Pol, REV] of a polarity-reversing particle such as Swedish *jo*, which eliminates
 the negation in the answer. Given the negation of the clause the answer inherits,
-`AnswerFeature.answer` computes the polarity
-of the alternative the answer confirms, relative to the question's positive alternative, or
-`none` for an ill-formed answer; the action of `Polarity` on propositions turns that polarity
-into the alternative itself.
-
-A negation out of the polarity head's reach, such as a low, VP-internal one, leaves the particle
-to value the head, and the value composes with the negation: an affirmative particle confirms
-the negative alternative, a negative one is a double negation. A middle negation values the head
-itself: a negative particle agrees with it and a plain affirmative clashes with it.
+`AnswerFeature.answer` computes the polarity of the alternative the answer confirms, relative to
+the question's positive alternative, or `none` for an ill-formed answer. A negation out of the
+polarity head's reach, such as a low, VP-internal one, leaves the particle to value the head,
+and the value composes with the negation; a middle negation values the head itself, so that a
+negative particle agrees with it and a plain affirmative clashes with it.
 
 The answers a feature gives to the questions whose negations a language allows form a set of
-`Discourse.Response`s (`AnswerFeature.responses`), the carrier of the polarity features of
-[farkas-bruce-2010], to whom [holmberg-2016] credits REV: a reversing feature gives exactly the
-[reverse, +] answers (`AnswerFeature.responses_reversing`). The systems for answering negative
-questions are properties of these sets (`Discourse.Response.ConfirmsNegativeQuestion`), and the
-mechanism derives them from the height of the negation: the affirmative feature confirms the
-negative alternative just when the negation is low, the truth-based system
-(`AnswerFeature.confirmsNegativeQuestion_responses_positive_iff`), and the negative feature just
-when it is middle, the polarity-based system
-(`AnswerFeature.confirmsNegativeQuestion_responses_negative_iff`); after a high negation neither
-does, the question being answered like a neutral one.
+`Discourse.Response`s (`AnswerFeature.responses`), whose polarity features are those of Farkas
+and Bruce, to whom Holmberg credits REV. The mechanism derives the two systems for answering
+negative questions from the syntax of negation. Out of the head's reach a valued feature fixes
+the relative polarity of the answer, the truth-based system
+(`AnswerFeature.responses_value_of_forall_not_valuesHead`), so that the affirmative feature
+confirms the negative alternative just when the negation is low
+(`AnswerFeature.confirmsNegativeQuestion_responses_positive_iff`). A negation valuing the head
+leaves only the negative feature, which fixes the absolute polarity, the polarity-based system
+(`AnswerFeature.responses_value_negative_of_valuesHead`,
+`AnswerFeature.responses_value_positive_of_valuesHead`). A reversing feature gives exactly the
+[reverse, +] answers (`AnswerFeature.responses_reversing`).
 
 ## Implementation notes
 
 * What decides the system is whether the negation can value the polarity head
-  (`ClauseNegation.ValuesHead`); the height of the negation matters only through that
-  ([holmberg-2016] on Thai, whose negation cannot value the head from inside the complement of
-  the question particle). Heights classify constructions, not languages: English *not* is read
+  (`ClauseNegation.ValuesHead`); the height of the negation matters only through that, as
+  Holmberg argues for Thai, whose negation cannot value the head from inside the complement of
+  the question particle. Heights classify constructions, not languages: English *not* is read
   low by some speakers and middle by others, and *-n't* in positive-bias questions is high.
 * REV needs a negation in the answer to eliminate, so a reversing particle is ill formed after a
   neutral or a positive-bias question. Colloquial Swedish, where *jo* can confirm the positive
-  alternative of any yes–no question ([holmberg-2016], footnote to the section on positive and
+  alternative of any yes–no question (Holmberg's footnote to the section on positive and
   negative bias), is not modelled.
 * The two versions of the negative particle in polarity-based languages, an interpretable one
   valuing the head and an uninterpretable one agreeing with a negation that values it, are one
   `AnswerFeature.value .negative`, whose agreement is built into `AnswerFeature.answer`.
 * The reading of a polar interrogative is an `Option Polarity`: `none` for a positive question,
   and for a negative one the polarity of the proposition it double-checks, relative to its
-  radical: [ladd-1981]'s outer reading, double-checking `p`, is `some .positive`, and his inner
+  radical. Ladd's outer reading, double-checking `p`, is `some .positive`, and his inner
   reading, double-checking `¬p`, is `some .negative`. Each analysis computes it from its own
   structure; here it is the primary polarity of the clause's negation
   (`ClauseNegation.primaryPolarity`), negative for a negation inside the clause and positive for a
-  high one ([holmberg-2016]).
-* Readings and forms (`NegationPosition`) are related, not identified: the preposed *-n't* of
-  *Isn't this the road to Lund?* has both readings for some speakers of English, so each language
-  or variety relates a form to a set of readings.
+  high one.
+* The position of the negation (`NegationPosition`) follows Romero and Han, and the form of a
+  polar interrogative, an `Option NegationPosition`, gives Romero's PosQ, LoNQ and HiNQ.
+  Readings and forms are related, not identified: the preposed *-n't* of *Isn't this the road to
+  Lund?* has both readings for some speakers of English, so each language or variety relates a
+  form to a set of readings.
 
 ## References
 
@@ -77,20 +76,19 @@ does, the question being answered like a neutral one.
 * [romero-han-2004]
 * [romero-2024]
 -/
-
 @[expose] public section
 
-/-- The feature an answer particle spells out ([holmberg-2016]): a valued polarity feature, or
-the affirmative polarity-reversing feature of *jo*, `[jo, +Pol, REV]`. -/
+/-- The feature an answer particle spells out, a valued polarity feature or the affirmative
+polarity-reversing feature of *jo*, `[jo, +Pol, REV]`. -/
 inductive AnswerFeature where
   /-- A valued polarity feature, [+Pol] or [−Pol]. -/
   | value (p : Polarity)
-  /-- [+Pol, REV]: positive polarity eliminating a negation in the answer. -/
+  /-- [+Pol, REV], positive polarity eliminating a negation in the answer. -/
   | reversing
   deriving DecidableEq, Repr
 
 /-- Structural height of a sentential negation relative to the polarity head. The height
-classifies constructions, not languages: English *not* is read low by some speakers and middle
+classifies constructions, not languages. English *not* is read low by some speakers and middle
 by others, and low by all after an adverb; *-n't* in positive-bias questions is high. -/
 inductive NegationHeight where
   /-- Negation below the reach of the polarity head, VP-internal (English *not* on its low
@@ -105,10 +103,8 @@ inductive NegationHeight where
   deriving DecidableEq, Repr, Fintype
 
 /-- The position of the negation of a negative polar interrogative relative to the rest of the
-clause ([romero-han-2004]): preposed with the finite verb, as English *n't* in *Isn't Jane
-coming?*, or not, as *not* in *Is Jane not coming?*. What matters is the relative position, not a
-particular one. The form of a polar interrogative is an `Option NegationPosition`, `none` for a
-positive question: [romero-2024]'s PosQ, LoNQ and HiNQ. -/
+clause, preposed with the finite verb, as English *n't* in *Isn't Jane coming?*, or not, as *not*
+in *Is Jane not coming?*. What matters is the relative position, not a particular one. -/
 inductive NegationPosition where
   /-- Negation preposed with the finite verb. -/
   | preposed
@@ -119,7 +115,7 @@ inductive NegationPosition where
 /-- The negation of a clause relative to its polarity head, if any. An answer inherits the
 negation of the clause it answers. -/
 inductive ClauseNegation where
-  /-- No negation: a neutral question or a positive statement. -/
+  /-- No negation, as in a neutral question or a positive statement. -/
   | absent
   /-- A negation of the given height, nothing intervening between it and the polarity head. -/
   | height (h : NegationHeight)
@@ -133,16 +129,17 @@ namespace ClauseNegation
 variable (n : ClauseNegation)
 
 /-- The negation is inside the clause the answer inherits, so that both alternatives of the
-question contain it: a low or middle negation. -/
+question contain it, as a low or middle negation is. -/
 def InClause : Prop := n = .height .low ∨ n = .height .middle ∨ n = .screened
 
 instance : Decidable n.InClause := inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-/-- The polarity of the question's primary alternative relative to its positive alternative:
+/-- The polarity of the question's primary alternative relative to its positive alternative,
 negative when the negation is inside the inherited clause. -/
 def primaryPolarity : Polarity := if n.InClause then .negative else .positive
 
-/-- The negation values the polarity head: a middle negation not screened off by an adverb. -/
+/-- The negation values the polarity head when it is a middle negation not screened off by an
+adverb. -/
 def ValuesHead : Prop := n = .height .middle
 
 instance : Decidable n.ValuesHead := inferInstanceAs (Decidable (_ = _))
@@ -154,7 +151,8 @@ theorem primaryPolarity_of_inClause (h : n.InClause) : n.primaryPolarity = .nega
 
 end ClauseNegation
 
-/-- A polar interrogative: its sentence radical, the positive alternative, and its negation. -/
+/-- A polar interrogative, given by its sentence radical, the positive alternative, and its
+negation. -/
 structure PolarInterrogative (W : Type*) where
   /-- The sentence radical, the positive alternative. -/
   radical : Set W
@@ -167,8 +165,8 @@ open Semantics
 
 variable {W : Type*} (q : PolarInterrogative W)
 
-/-- The primary alternative: the radical under the polarity its negation gives it, negative when
-the negation is inside the clause. -/
+/-- The primary alternative is the radical under the polarity its negation gives it, negative
+when the negation is inside the clause. -/
 def primary : Set W := q.negation.primaryPolarity • q.radical
 
 /-- A polar interrogative denotes the polar question of its primary alternative, the
@@ -177,8 +175,8 @@ instance : Denotes (PolarInterrogative W) (Question W) := ⟨fun q ↦ Question.
 
 theorem denote_def : ⟦q⟧ = Question.polar q.primary := rfl
 
-/-- A negative interrogative denotes the same question as its positive counterpart: the negation
-decides which alternative is primary, not what the alternatives are. -/
+/-- A negative interrogative denotes the same question as its positive counterpart, the negation
+deciding which alternative is primary, not what the alternatives are. -/
 @[simp] theorem denote_eq_polar_radical : ⟦q⟧ = Question.polar q.radical :=
   Question.polar_smul _ _
 
@@ -216,8 +214,8 @@ theorem answer_reversing_of_inClause (h : n.InClause) : reversing.answer n = som
 theorem answer_reversing_of_not_inClause (h : ¬ n.InClause) : reversing.answer n = none := by
   simp [answer, h]
 
-/-- A negation valuing the head: a negative feature agrees with it, confirming the negative
-alternative, and an affirmative one clashes with it. -/
+/-- When the negation values the head, a negative feature agrees with it, confirming the
+negative alternative, and an affirmative one clashes with it. -/
 theorem answer_value_of_valuesHead {p : Polarity} (h : n.ValuesHead) :
     (value p).answer n = if p = .negative then some .negative else none := by
   simp [answer, h]
@@ -236,14 +234,48 @@ theorem answer_ne_none_of_inClause (f : AnswerFeature) (hi : n.InClause) (h : ¬
   · simp [answer_value_of_not_valuesHead h]
   · simp [answer_reversing_of_inClause hi]
 
-/-- The answers a feature gives to polar questions whose negations are among `N`: the polarity
-of a question's primary alternative, and that of the alternative the answer confirms. -/
+/-- The answers a feature gives to polar questions whose negations are among `N`, each given by
+the polarity of the question's primary alternative and that of the alternative the answer
+confirms. -/
 def responses (f : AnswerFeature) (N : Set ClauseNegation) : Set Discourse.Response :=
   {x | x.reactsTo = .polarQuestion ∧
     ∃ n ∈ N, n.primaryPolarity = x.antecedent ∧ f.answer n = some x.polarity}
 
-/-- REV is [reverse, +] ([farkas-bruce-2010]): once some negation of `N` is inside the clause,
-a reversing feature gives exactly the positive answers reversing the primary alternative. -/
+/-- Out of the reach of every negation of `N`, a valued feature fixes the relative polarity of
+the answer to the question's primary alternative, as in the truth-based system. -/
+theorem responses_value_of_forall_not_valuesHead {p : Polarity} {N : Set ClauseNegation}
+    (hN : ∀ n ∈ N, ¬ n.ValuesHead) :
+    (value p).responses N = {x | x.reactsTo = .polarQuestion ∧
+      x.antecedent ∈ primaryPolarity '' N ∧ x.relative = p} := by
+  ext ⟨m, a, s⟩
+  simp only [responses, Set.mem_ofPred_eq, Set.mem_image, Discourse.Response.relative_mk]
+  refine and_congr_right fun _ ↦ ⟨?_, ?_⟩
+  · rintro ⟨n, hn, rfl, h⟩
+    rw [answer_value_of_not_valuesHead (hN n hn), Option.some_inj] at h
+    exact ⟨⟨n, hn, rfl⟩, by rw [← h, mul_div_cancel_right]⟩
+  · rintro ⟨⟨n, hn, rfl⟩, rfl⟩
+    exact ⟨n, hn, rfl, by rw [answer_value_of_not_valuesHead (hN n hn), div_mul_cancel]⟩
+
+/-- A negation valuing the head leaves the negative feature only the confirmation of the negative
+alternative, its absolute polarity, as in the polarity-based system. -/
+theorem responses_value_negative_of_valuesHead (hn : n.ValuesHead) :
+    (value .negative).responses {n} = {⟨.polarQuestion, .negative, .negative⟩} := by
+  obtain rfl : n = .height .middle := hn
+  ext ⟨m, a, s⟩
+  simp only [responses, Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left]
+  cases m <;> cases a <;> cases s <;> decide
+
+/-- A negation valuing the head leaves the affirmative feature no answer. -/
+theorem responses_value_positive_of_valuesHead (hn : n.ValuesHead) :
+    (value .positive).responses {n} = ∅ := by
+  obtain rfl : n = .height .middle := hn
+  ext ⟨m, a, s⟩
+  simp only [responses, Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left,
+    Set.mem_empty_iff_false, iff_false]
+  cases m <;> cases a <;> cases s <;> decide
+
+/-- REV is [reverse, +]. Once some negation of `N` is inside the clause, a reversing feature
+gives exactly the positive answers reversing the primary alternative. -/
 theorem responses_reversing {N : Set ClauseNegation} (hN : ∃ n ∈ N, n.InClause) :
     reversing.responses N = {x | x.reactsTo = .polarQuestion ∧ x.relative = .negative ∧
       x.polarity = .positive} := by
@@ -277,7 +309,7 @@ theorem confirmsNegativeQuestion_responses_iff {f : AnswerFeature} {N : Set Clau
   simp only [primaryPolarity]
   split_ifs with h <;> simp [h]
 
-/-- The truth-based system: the affirmative feature confirms the negative alternative of a
+/-- In the truth-based system the affirmative feature confirms the negative alternative of a
 question whose negation has height `h` iff the negation is low, out of the polarity head's
 reach. -/
 theorem confirmsNegativeQuestion_responses_positive_iff (h : NegationHeight) :
@@ -287,7 +319,7 @@ theorem confirmsNegativeQuestion_responses_positive_iff (h : NegationHeight) :
   cases h <;> simp [answer, ClauseNegation.InClause, ClauseNegation.ValuesHead,
     primaryPolarity]
 
-/-- The polarity-based system: the negative feature confirms the negative alternative of a
+/-- In the polarity-based system the negative feature confirms the negative alternative of a
 question whose negation has height `h` iff the negation is middle, valuing the polarity head. -/
 theorem confirmsNegativeQuestion_responses_negative_iff (h : NegationHeight) :
     Discourse.Response.ConfirmsNegativeQuestion ((value .negative).responses {.height h}) ↔
