@@ -5,9 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Fragments.Ga.Case
-public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
@@ -23,10 +21,11 @@ clusivity and no gender.
   has two, *mi* and the past-tense *ĩ*, and the impersonal *a* has neither objective nor
   possessive form. Table 3 also gives the third person singular objective as null, the form of an
   inanimate object (§4.2); the table records forms only.
-* The entry of a form has the cases of the cells it fills, and the flat value of their person and
-  number (`Flat.finsetInf`). *o* fills the second person singular subjective and possessive, so its
-  cases are the nominative and the genitive and its flat case (`Pronoun.case`) is `⊥`, which admits
-  the objective too: no flat case admits two cases and not a third.
+* The entry of a form has the cases of the cells it fills, and the flat value of their person
+  and number (`PersonalPronoun.ofTable`). *o* fills the second person singular subjective and
+  possessive, so its cases are the nominative and the genitive and its flat case
+  (`Pronoun.case`) is `⊥`, which admits the objective too: no flat case admits two cases and not
+  a third.
 * The paper does not classify the subject pronouns by structural deficiency: [campbell-2017]
   writes them as clitics prefixed to the verb, which the paper rejects on the strength of the
   negation that intervenes between the embedded subject and its verb, so `strength` stays `none`.
@@ -42,8 +41,6 @@ clusivity and no gender.
 @[expose] public section
 
 namespace Ga.Pronouns
-
-open Morphology
 
 /-- The rows of Table 3: a person and number each, and the third person impersonal. -/
 inductive Row where
@@ -77,12 +74,10 @@ def table : Row × Case → Finset String
   | (.pl2, _) => {"nyɛ"}
   | (.pl3, _) => {"amɛ"}
 
-/-- The pronoun `f`, with the cases of the cells it fills and their flat person and number. -/
-def entry (f : String) : PersonalPronoun :=
-  { form := f,
-    person := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.1.person : Flat Person),
-    number := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.1.number : Flat Number),
-    cases := (formCellsOf table f).image (·.2.label) }
+/-- The pronoun `f`, with the cases and referential categories of the cells it fills and their
+flat person and number. -/
+def entry : String → PersonalPronoun :=
+  PersonalPronoun.ofTable (·.1.person) (·.1.number) (fun _ ↦ none) (·.2.label) table
 
 /-- The personal pronoun inventory: the entry of every form of the table. -/
 def pronouns : Finset PersonalPronoun := (Finset.univ.biUnion table).image entry

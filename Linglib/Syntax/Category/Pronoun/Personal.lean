@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Pragmatics.SocialMeaning.Register
 public import Linglib.Syntax.Category.Pronoun.Basic
 
@@ -26,6 +27,8 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 * `PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber` — the person and
   number the pronoun contributes to interpretation
 * `PersonalPronoun.IsOrdinary` — the pronoun denotes what its agreement features realize
+* `PersonalPronoun.ofCells`, `PersonalPronoun.ofTable` — the pronoun of a form in a table of
+  cells, with the cases and referential categories of the cells it fills
 * `PersonalPronoun.paradigm` — the forms an inventory offers for each referential category,
   whose kernel `Setoid.ker` is the inventory's person-number syncretism
 
@@ -108,6 +111,31 @@ theorem paradigm_mono (h : I ⊆ J) (c : Person.Category) : paradigm I c ⊆ par
   Morphology.formsAt_mono h c
 
 end Paradigm
+
+/-! ### The pronouns of a table -/
+
+section Table
+
+variable {C : Type*} (person : C → Person) (number : C → Option Number)
+  (gender : C → Option Gender) (case : C → Case)
+
+/-- The pronoun `f` filling the cells `s`, where a cell has a person, a number, a gender and a
+case: the cases and referential categories of the cells, and the flat value of their person,
+number and gender. -/
+def ofCells (s : Finset C) (f : String) : PersonalPronoun :=
+  { form := f,
+    person := Flat.finsetInf s fun c ↦ (person c : Flat Person),
+    number := Flat.finsetInf s fun c ↦ (number c : Flat Number),
+    cases := s.image case,
+    gender := Flat.finsetInf s fun c ↦ (gender c : Flat Gender),
+    referential := s.biUnion fun c ↦
+      ((number c).map (Person.Category.ofPersonNumber (person c))).getD ∅ }
+
+/-- The pronoun `f` of a table, filling every cell the table gives it. -/
+def ofTable [Fintype C] (table : C → Finset String) (f : String) : PersonalPronoun :=
+  ofCells person number gender case (Morphology.formCellsOf table f) f
+
+end Table
 
 /-! ### The pronoun as a token -/
 
