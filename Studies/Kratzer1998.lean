@@ -329,9 +329,15 @@ theorem rows_outOfTheBlue :
         (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 
-/-- The German rows of (40) are in the form they are labelled with, since of the tense forms of
-*bauen* exactly the labelled one has all its words in the row. -/
+/-- The rows of (40) are in the form they are labelled with: of the tense forms of *build* for a
+third person singular subject exactly the labelled one occurs in the English row, and of those
+of *bauen* exactly the labelled one has all its words in each German row. -/
 theorem rows_realize :
+    (∀ f ∈ English.Tense.tenseForms,
+      ((∃ ws ∈ English.Verbs.build.tenseForm (English.Auxiliaries.cell .third .singular) f,
+          ' ' :: [' '].intercalate (ws.map String.toList) ++ [' '] <:+:
+            Examples.ex40a.primaryText.toList) ↔
+        Examples.ex40a.parse? "form" forms = some f)) ∧
     ∀ r ∈ [Examples.ex40b, Examples.ex40c], ∀ f ∈ German.tenseForms,
       ((∃ ws ∈ German.Verbs.bauen.principalParts.tenseForm f, ws ⊆ r.surfaceTokens) ↔
         r.parse? "form" forms = some f) := by
