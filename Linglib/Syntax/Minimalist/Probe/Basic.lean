@@ -17,8 +17,10 @@ satisfy the probe come apart in general, as for Halpert's Zulu L⁰, which every
 only augmentless nominals need it. The full operation, which copies from every interacting goal up
 to the satisfier, is `Probe.agree` in `Probe/Agree.lean`.
 
-Probe *specifications*, such as relativized targets, horizon profiles and articulated probes,
-denote a `Probe` by a `toProbe` map rather than re-implementing search.
+Probe *specifications*, such as relativized targets and feature specifications, denote a `Probe`
+by a `toProbe` map rather than re-implementing search. The search over a list is Relativized
+Minimality keyed by position, `Probe.Finds` in `Probe/Minimal.lean`, and a horizon cuts the domain
+the probe searches rather than relativizing the probe.
 
 ## Main definitions
 
