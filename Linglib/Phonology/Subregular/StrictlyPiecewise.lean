@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.PiecewiseTestable
+public import Linglib.Core.Computability.ShuffleIdeal
 
 /-!
 # Strictly piecewise languages (SP_k)
@@ -153,19 +153,11 @@ theorem isStrictlyPiecewise_compl_shuffleIdeal {p : List α} (hp : p.length ≤ 
   le_antisymm (fun _ hw hpw ↦ hw p hp hpw (Sublist.refl p))
     fun _ hw _ _ hs hps ↦ hw (hps.trans hs)
 
-/-- Widening the window loses nothing, `SP_k ⊆ SP_(k+1)`. -/
-theorem IsStrictlyPiecewise.succ (h : L.IsStrictlyPiecewise k) :
-    L.IsStrictlyPiecewise (k + 1) := by
-  refine le_antisymm (fun w hw ↦ ?_) fun w hw s _ hs ↦ h.isSublistClosed hs hw
-  rw [← h]
-  exact fun s hlen hs ↦ hw s (hlen.trans (Nat.le_succ k)) hs
-
-/-- `SP_k ⊆ SP_k'` for `k ≤ k'`. -/
+/-- Widening the window loses nothing, `SP_k ⊆ SP_k'` for `k ≤ k'`. -/
 theorem IsStrictlyPiecewise.mono {k' : ℕ} (h : L.IsStrictlyPiecewise k) (hk : k ≤ k') :
-    L.IsStrictlyPiecewise k' := by
-  induction hk with
-  | refl => exact h
-  | step _ ih => exact ih.succ
+    L.IsStrictlyPiecewise k' :=
+  le_antisymm (fun _ hw ↦ h ▸ fun s hs ↦ hw s (hs.trans hk)) fun _ hw _ _ hs ↦
+    h.isSublistClosed hs hw
 
 /-- The strictly-piecewise test, that every subsequence of length at most `k` is permitted,
 depends only on `subseqSet k`, so `SP_k ⊆ PT_k`. -/
@@ -188,11 +180,9 @@ theorem exists_isStrictlyPiecewise_iff_isSublistClosed [Finite α] :
     (∃ k, L.IsStrictlyPiecewise k) ↔ L.IsSublistClosed := by
   refine ⟨fun ⟨_, hk⟩ ↦ hk.isSublistClosed, fun hL ↦ ?_⟩
   obtain ⟨F, hF⟩ := hL.exists_finset_compl_eq_biSup_shuffleIdeal
-  have hFmem : ∀ w, w ∈ Lᶜ ↔ ∃ m ∈ F, m <+ w := fun w ↦ by
-    rw [show Lᶜ = _ from hF]; simp [Language.mem_iSup]
-  refine ⟨F.sup List.length, le_antisymm (fun w h ↦ by_contra fun hwL ↦ ?_)
-    fun w hw s _ hs ↦ hL hs hw⟩
+  have hFmem (w : List α) : w ∈ Lᶜ ↔ ∃ m ∈ F, m <+ w := by rw [hF]; simp [mem_iSup]
+  refine ⟨F.sup length, le_antisymm (fun w h ↦ by_contra fun hwL ↦ ?_) fun _ hw _ _ hs ↦ hL hs hw⟩
   obtain ⟨m, hm, hmw⟩ := (hFmem w).mp hwL
-  exact (hFmem m).mpr ⟨m, hm, Sublist.refl m⟩ (h m (Finset.le_sup hm) hmw)
+  exact (hFmem m).mpr ⟨m, hm, .refl m⟩ (h m (F.le_sup hm) hmw)
 
 end Language
