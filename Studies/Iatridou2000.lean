@@ -43,7 +43,7 @@ epistemically accessible alternatives; the *before* of temporal past is `Tempora
 namespace Iatridou2000
 
 open Modality.Exclusion
-open Reference
+open Kaplan
 
 /-! ### The exclusion feature -/
 

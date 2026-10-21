@@ -43,7 +43,9 @@ the attitude shift of Schlenker and of Anand and Nevins does whenever the holder
 
 @[expose] public section
 
-namespace Reference
+namespace Kaplan
+
+open ContextTower
 
 variable {C R W E P T : Type*}
 
@@ -69,7 +71,7 @@ theorem IsNecessary.isAPriori {χ : Character C W Prop} (h : χ.IsNecessary) :
 
 end Character
 
-namespace Kaplan
+section Tenets
 
 variable (agent : C → E) (world : C → W) (position : C → P) (time : C → T)
   (exists_ : E → W → Prop) (located : E → P → T → W → Prop)
@@ -103,7 +105,7 @@ theorem isAPriori_existsAgent_of_proper (h : ∀ c : Context W E P T, c.Proper e
     (existsAgent (C := Context W E P T) Context.agent exists_).IsAPriori Context.world :=
   h
 
-end Kaplan
+end Tenets
 
 /-! ### Monsters -/
 
@@ -150,8 +152,13 @@ theorem attitudeShift_ne_one (holder : E) (w' : W) (c : Context W E P T)
 
 end Monster
 
+end Kaplan
 
-namespace AccessPattern
+namespace ContextTower.AccessPattern
+
+open Kaplan
+
+variable {C R W E P T : Type*}
 
 /-- The identity shift leaves every access pattern stable. -/
 theorem stable_one (ap : AccessPattern C R) : ap.Stable 1 := by
@@ -196,7 +203,13 @@ def IsKaplanCompliant (ap : AccessPattern C R) : Prop := ∀ σ, ap.Stable σ
 theorem isKaplanCompliant_origin (f : C → R) : (origin f).IsKaplanCompliant :=
   fun σ ↦ stable_origin f σ
 
-end AccessPattern
+end ContextTower.AccessPattern
+
+namespace Kaplan
+
+open ContextTower
+
+variable {C W E P T : Type*}
 
 /-- A shift moves some context iff the innermost context is unstable under it. -/
 theorem ne_one_iff_not_stable_innermost_id (σ : Function.End C) :
@@ -206,8 +219,6 @@ theorem ne_one_iff_not_stable_innermost_id (σ : Function.End C) :
   exact ⟨fun ⟨c, hc⟩ ↦ ⟨ContextTower.root c, by simpa using hc⟩, fun ⟨t, ht⟩ ↦ ⟨t.innermost, ht⟩⟩
 
 /-! ### The English pure indexicals -/
-
-namespace Kaplan
 
 /-- *I* is the agent of the speech-act context. -/
 def I : AccessPattern (Context W E P T) E := .origin Context.agent
@@ -225,5 +236,3 @@ def here : AccessPattern (Context W E P T) P := .origin Context.position
 def actually : AccessPattern (Context W E P T) W := .origin Context.world
 
 end Kaplan
-
-end Reference

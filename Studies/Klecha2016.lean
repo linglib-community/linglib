@@ -38,7 +38,7 @@ namespace Klecha2016
 
 open Semantics
 
-open Tense HistoricalAlternatives Reference English English.Verbs
+open Tense HistoricalAlternatives English English.Verbs Kaplan
 
 variable {W T : Type*}
 

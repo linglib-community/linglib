@@ -41,7 +41,7 @@ wide scope when scrambled.
 
 namespace LeBruynDeSwart2022
 
-open Reference Mereology Quantifier
+open Mereology Quantifier
 
 /-- A book of the attested example (35) is either finished or unfinished. -/
 inductive Book

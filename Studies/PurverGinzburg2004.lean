@@ -142,7 +142,7 @@ def det : Sign := .word {.relation} ∅
 
 /-- A quantified noun phrase contributes the witness set its determiner picks out of the noun's
 property (72). A definite use abstracts it and an indefinite use stores it. -/
-def np : Reference.Definiteness → Sign
+def np : Definiteness → Sign
   | .definite => .phrase {.individual} ∅ cn {det}
   | .indefinite => .phrase {.individual} {.individual} cn {det}
 
@@ -152,7 +152,7 @@ def attributive : Sign := .phrase {.individual} ∅ cn {det} (params := {.functi
 
 /-- On the generalized-quantifier alternative the content is a quantifier, and a definite use
 abstracts a witness set of it (66). -/
-def gq : Reference.Definiteness → Sign
+def gq : Definiteness → Sign
   | .definite => .phrase {.quantifier} ∅ cn {det} (params := {.individual})
   | .indefinite => .phrase {.quantifier} ∅ cn {det} (params := ∅)
 
@@ -172,12 +172,12 @@ theorem indefinite_no_referent : Kind.individual ∉ (np .indefinite).cparams :=
 
 /-- The generalized-quantifier alternative makes the same parameters available as the
 witness-set account (§4.4.1). -/
-theorem cparams_gq (d : Reference.Definiteness) : (gq d).cparams = (np d).cparams := by
+theorem cparams_gq (d : Definiteness) : (gq d).cparams = (np d).cparams := by
   cases d <;> decide
 
 /-- The generalized-quantifier alternative never lets a reprise query its content, so it holds
 only the weak hypothesis (§4.4.1). -/
-theorem not_strong_gq (d : Reference.Definiteness) : ¬ (gq d).Strong := by cases d <;> decide
+theorem not_strong_gq (d : Definiteness) : ¬ (gq d).Strong := by cases d <;> decide
 
 /-- The functional analysis of attributive definites holds only the weak hypothesis (§4.1.3). -/
 theorem not_strong_attributive : ¬ attributive.Strong := by decide

@@ -61,17 +61,17 @@ def Value.toLabel : Value → Gender
 animacy. -/
 structure Noun extends GenderedNoun Value where
   /-- The animacy of the noun's referents. -/
-  animacy : Reference.Animacy
+  animacy : Animacy
   deriving DecidableEq, Repr
 
 /-- `Noun.ofNaturalGender form gloss a g` is the noun `form` 'gloss' for a referent of gender
 `g` and animacy `a`, whose gender is `g`. -/
-def Noun.ofNaturalGender (form gloss : String) (animacy : Reference.Animacy) (g : Value) :
+def Noun.ofNaturalGender (form gloss : String) (animacy : Animacy) (g : Value) :
     Noun :=
   ⟨⟨⟨form, gloss⟩, g, some g.toLabel⟩, animacy⟩
 
 @[simp]
-theorem Noun.isNaturalGender_ofNaturalGender (form gloss : String) (a : Reference.Animacy)
+theorem Noun.isNaturalGender_ofNaturalGender (form gloss : String) (a : Animacy)
     (g : Value) : (Noun.ofNaturalGender form gloss a g).IsNaturalGender Value.toLabel :=
   rfl
 

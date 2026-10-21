@@ -54,7 +54,7 @@ two vicinities may overlap here, as when the addressee stands by the speaker.
 
 namespace Moroney2021
 
-open Reference
+open Definiteness (MarkingStrategy ArticleType)
 open Genericity
 open Mereology (CUM)
 open scoped SetRel
@@ -168,7 +168,7 @@ noncomputable def bareDefinite {E : Type*} (restrictor : E → Prop) : Option E 
 
 section Demonstrative
 
-variable {W E P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) (χ : SetRel E E)
+variable {W E P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) (χ : SetRel E E)
 
 /-- The demonstrative of Moroney's (147)–(148) denotes the unique referent satisfying the restrictor
 and lying in its deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for *nâj*. -/

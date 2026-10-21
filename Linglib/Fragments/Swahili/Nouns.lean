@@ -45,7 +45,7 @@ structure Noun extends GenderedNoun Gender where
   /-- The pair of classes whose prefixes the noun carries. -/
   morphClass : Gender
   /-- The animacy of the noun's referents. -/
-  animacy : Reference.Animacy
+  animacy : Animacy
   /-- Augmentative or diminutive derivation, if any. -/
   evaluative : Option Evaluative := none
   deriving DecidableEq, Repr

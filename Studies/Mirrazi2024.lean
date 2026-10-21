@@ -44,7 +44,7 @@ restrictor is the same set in every belief world, (41)–(42): the fixed-set pro
 
 namespace Mirrazi2024
 
-open Reference Quantifier ModalLogic SetRel
+open Quantifier ModalLogic SetRel
 
 variable {W E : Type*} {R : SetRel W W} {w₀ : W} {VP : E → W → Prop}
 

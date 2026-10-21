@@ -60,7 +60,7 @@ instance [DecidableEq V] (x : E) : Decidable (extension kb D x) := by
   unfold extension; infer_instance
 
 /-- The description holds of the referent and of no distractor. -/
-abbrev Distinguishing : Prop := Reference.Distinguishes (extension kb) C r D
+abbrev Distinguishing : Prop := Distinguishes (extension kb) C r D
 
 /-- A distinguishing description with the fewest property occurrences. -/
 def IsMinimal : Prop := MinimalFor (Distinguishing kb r C) card D
@@ -85,20 +85,20 @@ variable {kb r C D}
 /-- On a set of pairs the notion is Dale and Reiter's. -/
 theorem distinguishing_val_iff (hC : C.Nonempty) {L : DaleReiter1995.Description A V} :
     Distinguishing kb r C L.val ↔ DaleReiter1995.Distinguishing kb r C L := by
-  rw [Distinguishing, Reference.distinguishes_prop_iff hC, DaleReiter1995.distinguishing_iff]
+  rw [Distinguishing, distinguishes_prop_iff hC, DaleReiter1995.distinguishing_iff]
   simp [extension]
 
 theorem not_distinguishing_zero (hC : C.Nonempty) : ¬ Distinguishing kb r C 0 :=
-  fun h ↦ ((Reference.distinguishes_prop_iff hC).1 h).2 _ hC.choose_spec
+  fun h ↦ ((distinguishes_prop_iff hC).1 h).2 _ hC.choose_spec
     fun _ h ↦ (Multiset.notMem_zero _ h).elim
 
 theorem Distinguishing.extension_referent (hC : C.Nonempty) (h : Distinguishing kb r C D) :
     extension kb D r :=
-  ((Reference.distinguishes_prop_iff hC).1 h).1
+  ((distinguishes_prop_iff hC).1 h).1
 
 theorem Distinguishing.not_extension (hC : C.Nonempty) (h : Distinguishing kb r C D) {c : E}
     (hc : c ∈ C) : ¬ extension kb D c :=
-  ((Reference.distinguishes_prop_iff hC).1 h).2 c hc
+  ((distinguishes_prop_iff hC).1 h).2 c hc
 
 /-- A distinguishing description with one occurrence is minimal. -/
 theorem isMinimal_of_card_eq_one (hC : C.Nonempty) (h : Distinguishing kb r C D)

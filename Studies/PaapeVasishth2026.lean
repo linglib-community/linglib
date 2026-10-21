@@ -47,7 +47,7 @@ Vasishth's earlier model. The fitted estimates and the model comparisons are not
 
 @[expose] public section
 
-open MeasureTheory Measure ProbabilityTheory unitInterval Reference
+open MeasureTheory Measure ProbabilityTheory unitInterval
 open scoped NNReal
 
 namespace PaapeVasishth2026

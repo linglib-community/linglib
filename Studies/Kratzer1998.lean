@@ -72,11 +72,11 @@ variable {W T : Type*}
 /-- The indexical tense with cell `C` is the variable `n` presupposing that its reference stands
 to the utterance time, the time of the index `0`, in a position of `C`. The present and the past
 are the tenses of the cells `present` and `past`. -/
-abbrev tense [LT T] (C : Finset Ordering) (n : ℕ) : Reference.Nominal (Assignment T) W T :=
+abbrev tense [LT T] (C : Finset Ordering) (n : ℕ) : Semantics.Nominal (Assignment T) W T :=
   pronoun C n 0
 
 /-- The zero tense is a variable with no presupposition, bound by the next tense up. -/
-abbrev zeroTense [LT T] (n : ℕ) : Reference.Nominal (Assignment T) W T := pronoun ⊤ n 0
+abbrev zeroTense [LT T] (n : ℕ) : Semantics.Nominal (Assignment T) W T := pronoun ⊤ n 0
 
 /-- An out-of-the-blue context has no salient time but the utterance time, so every temporal
 variable resolves to it. -/

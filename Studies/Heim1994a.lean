@@ -111,14 +111,14 @@ and the world–time pairs compatible with a holder's beliefs at a world and tim
 structure Model (V D A W T : Type*) [LinearOrder T] where
   ext : V → NonemptyInterval T → W → Prop
   desc : D → W → NonemptyInterval T
-  dox : A → W → NonemptyInterval T → Set (Reference.Index W (NonemptyInterval T))
+  dox : A → W → NonemptyInterval T → Set (Kaplan.Index W (NonemptyInterval T))
 
 /-- A context: its world and utterance time and the suitable time-concept it supplies (33), a
 function from world–time pairs to times. -/
 structure Context (W T : Type*) [LinearOrder T] where
   world : W
   time : NonemptyInterval T
-  concept : Reference.Index W (NonemptyInterval T) → NonemptyInterval T
+  concept : Kaplan.Index W (NonemptyInterval T) → NonemptyInterval T
 
 variable {V D A W : Type*} (M : Model V D A W T) (c : Context W T)
 
@@ -196,7 +196,7 @@ theorem def_res :
 
 /-- A concept that locates a later time at some alternative, as "the next time the lights go
 out" does, fails the presupposition of (32). -/
-theorem not_def_res_of_precedes {s : Reference.Index W (NonemptyInterval T)}
+theorem not_def_res_of_precedes {s : Kaplan.Index W (NonemptyInterval T)}
     (hs : s ∈ M.dox x w (g 1))
     (h : s.time.Precedes (c.concept s)) :
     ¬ Def M c (.believeRes x (.PAST 1) .past (.PAST 2) 3 (.pred v (.trace 3) .nonpast)) g w :=

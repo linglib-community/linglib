@@ -51,7 +51,6 @@ agreement is the exception.
 namespace Carstens2026
 
 open Bantu Minimalist.Coordination
-open Reference (Animacy)
 
 /-- Whether the n of a gender carries a feature that percolates to &P, (13) and (77b). -/
 def interpretability : GenderStatus → Minimalist.Interpretability

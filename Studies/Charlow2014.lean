@@ -121,7 +121,6 @@ Rooth's alternatives, is the library's `WithAlternatives`. Continuation results 
 
 @[expose] public section
 
-
 attribute [local instance] Set.monad
 
 namespace Charlow2014
@@ -646,7 +645,7 @@ function above the binder yields readings that no scope-taking derivation gives.
 
 section ChoiceFunction
 
-open Reference Quantifier
+open Quantifier
 
 /-- Closing the choice function above the conditional gives the exceptional reading that
 `exceptional_cond` derives by scope (4.34). -/

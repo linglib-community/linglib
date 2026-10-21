@@ -101,7 +101,7 @@ article competes with the indefinite under an expression-level Maximize Presuppo
 
 namespace CoppockBeaver2015
 
-open SignType Trivalent Reference DynamicSemantics
+open SignType Trivalent DynamicSemantics
 
 variable {E W : Type*}
 
@@ -398,7 +398,7 @@ open Classical in
 /-- Partee's `ident` applied to the individual-denoting Fregean entry yields the property of
 being the unique `P`, undefined when there is none (Table 2). -/
 noncomputable def identIota (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ (Reference.iota (P · = 1)).elim 0 fun j ↦ ofProp (x = j)
+  fun x ↦ (_root_.iota (P · = 1)).elim 0 fun j ↦ ofProp (x = j)
 
 theorem presupposesUniqueness_the [DecidablePred (WeakUnique (E := E))] :
     PresupposesUniqueness (the (E := E)) :=
@@ -453,8 +453,8 @@ theorem presupposesExistence_be_theFregeanGQ :
 theorem identIota_ne_zero_iff {P : (E → SignType)} {x : E} :
     identIota P x ≠ 0 ↔ ∃! y, P y = 1 := by
   classical
-  rw [identIota, ← Reference.iota_isSome_iff]
-  cases Reference.iota (P · = 1) <;> simp
+  rw [identIota, ← _root_.iota_isSome_iff]
+  cases _root_.iota (P · = 1) <;> simp
 
 /-- Lowering the individual-denoting Fregean entry by `ident` presupposes both existence and
 uniqueness (Table 2). -/
@@ -582,10 +582,10 @@ end Derivations
 /-! ### Existence in argument position -/
 
 /-- The iota shift (84) returns the unique satisfier, or the undefined individual. -/
-noncomputable def iota (P : (E → SignType)) : Option E := Reference.iota (P · = 1)
+noncomputable def iota (P : (E → SignType)) : Option E := _root_.iota (P · = 1)
 
 theorem iota_isSome_iff (P : (E → SignType)) : (iota P).isSome ↔ ∃! x, P x = 1 :=
-  Reference.iota_isSome_iff _
+  _root_.iota_isSome_iff _
 
 theorem iota_eq_none_iff (P : (E → SignType)) : iota P = none ↔ ¬ ∃! x, P x = 1 := by
   rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
@@ -642,7 +642,7 @@ theorem readings_agree_of_existsUnique {C : Set W} {π Q : W → (E → SignType
       CCP.Partial.ofTrivalent (fun w ↦ ex (π w) (Q w)) C := by
   refine CCP.Partial.ofTrivalent_congr fun w hw ↦ ?_
   obtain ⟨x, hx, hu⟩ := h w hw
-  have hi : iota (π w) = some x := (Reference.iota_eq_some_iff _).2 ⟨hx, hu⟩
+  have hi : iota (π w) = some x := (iota_eq_some_iff _).2 ⟨hx, hu⟩
   rw [hi, Option.elim_some, ex]
   refine (eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_).symm
   · simp only [existsHaug_eq_zero_iff, meetWeak_eq_zero_iff, (hπ w hw).ne_zero,

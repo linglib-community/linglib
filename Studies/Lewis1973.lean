@@ -36,7 +36,7 @@ deterministic scenarios. The paper's treatment of preemption is not represented.
 
 namespace Lewis1973
 
-open Reference CausalModel Relation
+open CausalModel Relation Kaplan
 
 section Dependence
 

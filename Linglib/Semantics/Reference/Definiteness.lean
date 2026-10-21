@@ -19,14 +19,14 @@ and the descriptions themselves denote in `Semantics/Reference/Description.lean`
 
 ## Main definitions
 
-* `Reference.Definiteness`: definite or indefinite, as a two-element bounded linear order.
-* `Reference.DefinitenessDegree`: the continuum of definiteness, with its cut
+* `Definiteness`: definite or indefinite, as a two-element bounded linear order.
+* `DefinitenessDegree`: the continuum of definiteness, with its cut
   `DefinitenessDegree.definiteness`.
-* `Reference.Description.Strength`, `Reference.NominalKind`: the strength of a definite article
+* `DefiniteDescription.Strength`, `NominalKind`: the strength of a definite article
   and the kind of nominal an inventory realizes, with `Strength.toKind` and `NominalKind.strength`.
-* `Reference.Description.Use`, `Reference.Description.Bridging`: the uses of a definite
+* `DefiniteDescription.Use`, `DefiniteDescription.Bridging`: the uses of a definite
   description and the bridging relations, each with the strength it calls for.
-* `Reference.ArticleType`, `Reference.MarkingStrategy`: the three-cell article typology of
+* `Definiteness.ArticleType`, `Definiteness.MarkingStrategy`: the three-cell article typology of
   Patel-Grosz and Grosz and the four-cell one of Jenks with Moroney's unmarked cell, and the
   coarsening `MarkingStrategy.articleType`.
 
@@ -46,8 +46,6 @@ and the descriptions themselves denote in `Semantics/Reference/Description.lean`
 -/
 
 @[expose] public section
-
-namespace Reference
 
 /-- A nominal is definite or indefinite. A definite retrieves a unique or familiar referent, an
 indefinite introduces a new one ([heim-1982]). -/
@@ -108,7 +106,7 @@ theorem definiteness_monotone : Monotone definiteness := by
 
 end DefinitenessDegree
 
-namespace Description
+namespace DefiniteDescription
 
 /-- A definite article's strength is uniqueness, which the weak article presupposes, or
 familiarity, which the strong article presupposes ([schwarz-2009]). -/
@@ -147,10 +145,10 @@ def Use.strength : Use → Strength
   | .immediateSituation | .largerSituation => .uniqueness
   | .bridging b => b.strength
 
-end Description
+end DefiniteDescription
 
-/-- A kind of nominal that a determiner inventory may realize is one of the forms of `Description`,
-or the indefinite, which denotes no partial individual. -/
+/-- A kind of nominal that a determiner inventory may realize is one of the forms of
+`DefiniteDescription`, or the indefinite, which denotes no partial individual. -/
 inductive NominalKind where
   | bare
   | indefinite
@@ -162,19 +160,21 @@ inductive NominalKind where
 
 /-- The weak article realizes the unique description and the strong article the anaphoric
 one. -/
-def Description.Strength.toKind : Description.Strength → NominalKind
+def DefiniteDescription.Strength.toKind : DefiniteDescription.Strength → NominalKind
   | .uniqueness  => .unique
   | .familiarity => .anaphoric
 
 /-- The strength a kind of nominal presupposes, where it is definite. -/
-def NominalKind.strength : NominalKind → Option Description.Strength
+def NominalKind.strength : NominalKind → Option DefiniteDescription.Strength
   | .bare | .indefinite         => none
   | .unique | .possessive       => some .uniqueness
   | .anaphoric | .demonstrative => some .familiarity
 
-@[simp] theorem Description.Strength.strength_toKind (p : Description.Strength) :
+@[simp] theorem DefiniteDescription.Strength.strength_toKind (p : DefiniteDescription.Strength) :
     p.toKind.strength = some p := by
   cases p <;> rfl
+
+namespace Definiteness
 
 /-- An article system has no article, a weak article only, or weak and strong articles
 ([patel-grosz-grosz-2017]). -/
@@ -203,4 +203,4 @@ def MarkingStrategy.articleType : MarkingStrategy → ArticleType
   | .bipartite => .weakAndStrong
   | .unmarked  => .articleless
 
-end Reference
+end Definiteness

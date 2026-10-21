@@ -29,7 +29,7 @@ namespace Xhosa
 plural class, together with the animacy of what it denotes. -/
 structure Noun extends GenderedNoun Gender where
   /-- The animacy of what the noun denotes. -/
-  animacy : Reference.Animacy
+  animacy : Animacy
   deriving DecidableEq, Repr
 
 namespace Nouns

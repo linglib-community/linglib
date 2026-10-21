@@ -32,13 +32,13 @@ continuing topic (Section 5.3).
 
 ## Implementation notes
 
-* The environments are the paper's six, read as `Description.Use`s, the donkey environment being an
-  anaphoric use under quantification, and mapped to Schwarz's presupposition types by
-  `Description.Use.strength`. The marked form is the language's obligatory exponent of the
+* The environments are the paper's six, read as `DefiniteDescription.Use`s, the donkey environment
+  being an anaphoric use under quantification, and mapped to Schwarz's presupposition types by
+  `DefiniteDescription.Use.strength`. The marked form is the language's obligatory exponent of the
   environment's presupposition, the demonstrative in Mandarin and [Clf-N] in Cantonese, so
   Cantonese's restricted demonstrative (57) is not modelled.
-* Jenks types the index of ι^x as a property (Section 4.4); `Description.anaphoric` carries an
-  individual index, so Section 4.4 is not formalized.
+* Jenks types the index of ι^x as a property (Section 4.4); `DefiniteDescription.anaphoric` carries
+  an individual index, so Section 4.4 is not formalized.
 
 ## References
 
@@ -52,7 +52,9 @@ continuing topic (Section 5.3).
 
 namespace Jenks2018
 
-open Reference Determiner Semantics
+open Determiner Semantics
+open DefiniteDescription (Restrictor)
+open Definiteness (MarkingStrategy)
 
 /-! ### Environments and principles -/
 
@@ -69,32 +71,33 @@ def IotaAvailable (inv : Inventory) : Prop := ¬ inv.Marks .uniqueness
 
 /-- An index is available exactly in the environments licensed by familiarity, Section 5.1:
 prior mention of the referent or, in producer-product bridging, of its argument. -/
-def IndexAvailable (env : Description.Use) : Prop := env.strength = .familiarity
+def IndexAvailable (env : DefiniteDescription.Use) : Prop := env.strength = .familiarity
 
 /-- The bare noun is licit when ι is available and, by Index! (50), no indexed form competes, or
 when the description is a continuing topic (Section 5.3). -/
-def BareLicit (inv : Inventory) (env : Description.Use) (t : Topic) : Prop :=
+def BareLicit (inv : Inventory) (env : DefiniteDescription.Use) (t : Topic) : Prop :=
   IotaAvailable inv ∧ (¬ (IndexAvailable env ∧ inv.Marks .familiarity) ∨ t = .continuing)
 
 /-- The marked form is licit when the inventory marks the environment's presupposition. -/
-def MarkedLicit (inv : Inventory) (env : Description.Use) : Prop := inv.Marks env.strength
+def MarkedLicit (inv : Inventory) (env : DefiniteDescription.Use) : Prop := inv.Marks env.strength
 
 instance (inv : Inventory) : Decidable (IotaAvailable inv) := by
   unfold IotaAvailable; infer_instance
 
-instance (env : Description.Use) : Decidable (IndexAvailable env) := by
+instance (env : DefiniteDescription.Use) : Decidable (IndexAvailable env) := by
   unfold IndexAvailable; infer_instance
 
-instance (inv : Inventory) (env : Description.Use) (t : Topic) :
+instance (inv : Inventory) (env : DefiniteDescription.Use) (t : Topic) :
     Decidable (BareLicit inv env t) := by
   unfold BareLicit; infer_instance
 
-instance (inv : Inventory) (env : Description.Use) : Decidable (MarkedLicit inv env) := by
+instance (inv : Inventory) (env : DefiniteDescription.Use) : Decidable (MarkedLicit inv env) := by
   unfold MarkedLicit; infer_instance
 
 /-- By Index!, with an index available and an indexed form in the inventory, a bare noun that is
 not a continuing topic is out. -/
-theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : Description.Use} {t : Topic}
+theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : DefiniteDescription.Use}
+    {t : Topic}
     (h : IndexAvailable env) (hm : inv.Marks .familiarity) (ht : t ≠ .continuing) :
     ¬ BareLicit inv env t :=
   fun ⟨_, h'⟩ ↦ h'.elim (fun h'' ↦ h'' ⟨h, hm⟩) ht
@@ -116,12 +119,12 @@ theorem not_iotaAvailable_cantonese : ¬ IotaAvailable Cantonese.Determiners.inv
 judgments on the bare and the marked form where the paper gives them. -/
 structure Row where
   inventory : Inventory
-  env : Description.Use
+  env : DefiniteDescription.Use
   topic : Topic
   bare : Option Bool
   marked : Option Bool
 
-def envOf : String → Option Description.Use
+def envOf : String → Option DefiniteDescription.Use
   | "largerSituation" => some .largerSituation
   | "immediateSituation" => some .immediateSituation
   | "partWholeBridging" => some (.bridging .partWhole)
@@ -172,21 +175,21 @@ restrictor holds of it, (27) to (30): the demonstrative supplies the index of ι
 index, not the situation, fixes the referent. -/
 theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
     (s : W) (x : E) :
-    ⟦Description.demonstrative R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
-  Description.denote_anaphoric_eq_some_iff R d g s
+    ⟦DefiniteDescription.demonstrative R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
+  DefiniteDescription.denote_anaphoric_eq_some_iff R d g s
 
 /-- A demonstrative cannot covary through the situation pronoun, its referents at any two situations
 coinciding. -/
 theorem demonstrative_rigid {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
-    {s s' : W} {x x' : E} (h : ⟦Description.demonstrative R d⟧ g s = some x)
-    (h' : ⟦Description.demonstrative R d⟧ g s' = some x') : x = x' :=
-  Description.denote_anaphoric_rigid R d g s h h'
+    {s s' : W} {x x' : E} (h : ⟦DefiniteDescription.demonstrative R d⟧ g s = some x)
+    (h' : ⟦DefiniteDescription.demonstrative R d⟧ g s' = some x') : x = x' :=
+  DefiniteDescription.denote_anaphoric_rigid R d g s h h'
 
 /-- The bare noun's covert ι does covary. Over the restrictor true of the situation itself, the bare
 noun denotes each situation at that situation, so distinct situations give distinct referents. -/
 theorem bare_covaries {W : Type} (g : Assignment W) (s : W) :
-    ⟦Description.bare fun _ s x ↦ x = s⟧ g s = some s :=
-  (Description.denote_bare_eq_some_iff _ _ _).2 ⟨rfl, fun _ h ↦ h⟩
+    ⟦DefiniteDescription.bare fun _ s x ↦ x = s⟧ g s = some s :=
+  (DefiniteDescription.denote_bare_eq_some_iff _ _ _).2 ⟨rfl, fun _ h ↦ h⟩
 
 /-! ### The typology (Table 2) -/
 

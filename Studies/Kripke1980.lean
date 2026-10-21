@@ -31,7 +31,7 @@ designator designates something that exists at every world (`IsStronglyRigid`).
 
 namespace Kripke1980
 
-open Reference
+open Kaplan
 
 variable {W E : Type*} {t name desc : W → E} {P : E → W → Prop} {w w₀ w₁ w₂ : W} {e : E}
 

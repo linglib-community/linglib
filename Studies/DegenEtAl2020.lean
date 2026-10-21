@@ -240,8 +240,8 @@ theorem S1_real_eq_one (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m 
 listener's best guess, exactly when it does under the meaning. -/
 theorem distinguishes_L0_iff (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (D : Finset E)
     (r : E) :
-    Reference.Distinguishes (fun u o ↦ L0 m u {o}) D r u ↔ Reference.Distinguishes m D r u :=
-  Reference.distinguishes_comp_iff (φ := fun x ↦ ENNReal.ofReal (x / ∑ o', m u o'))
+    Distinguishes (fun u o ↦ L0 m u {o}) D r u ↔ Distinguishes m D r u :=
+  distinguishes_comp_iff (φ := fun x ↦ ENNReal.ofReal (x / ∑ o', m u o'))
     (s := Set.Ici 0) (fun _ ha _ _ hab ↦ (ENNReal.ofReal_lt_ofReal_iff_of_nonneg
       (div_nonneg ha hpos.le)).2 ((div_lt_div_iff_of_pos_right hpos).2 hab))
     hm (L0_apply hm hpos)
@@ -430,8 +430,8 @@ theorem overmodification_odds_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤
 /-- The sufficient *small* distinguishes the small blue pin from the big ones, so that the
 listener's best guess is the target, exactly when the semantic value of size beats chance. -/
 theorem small_distinguishes_iff :
-    Reference.Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .small ↔ 1/2 < xs := by
-  simp [Reference.Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size]
+    Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .small ↔ 1/2 < xs := by
+  simp [Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size]
   constructor <;> intro h <;> linarith
 
 /-- The redundant *small blue* distinguishes the pin exactly when the semantic value of size
@@ -439,9 +439,9 @@ beats chance and the two values together exceed one, so a noisy colour can cost 
 identification that the sufficient description had. With Boolean values both descriptions
 distinguish. -/
 theorem smallBlue_distinguishes_iff (hc : 0 < xc) :
-    Reference.Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .smallBlue ↔
+    Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .smallBlue ↔
       1/2 < xs ∧ 1 < xs + xc := by
-  simp [Reference.Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size,
+  simp [Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size,
     Pin.color]
   constructor
   · rintro ⟨h1, h2⟩

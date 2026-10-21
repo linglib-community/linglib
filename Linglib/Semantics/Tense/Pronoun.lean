@@ -11,7 +11,7 @@ Read pronominally, after Partee, a tense refers to a time as a pronoun refers to
 It denotes the value of a temporal variable and presupposes that this time stands to the
 evaluation time, the value of a second variable, in a position of its cell, as a pronoun
 presupposes that its referent has its φ-features. `Tense.pronoun C k j` is this denotation, a
-nominal over times (`Reference.Nominal`) as the denotation of a personal pronoun is a nominal
+nominal over times (`Semantics.Nominal`) as the denotation of a personal pronoun is a nominal
 over individuals. The past and the present are the pronouns of their cells, and the zero tense
 of Kratzer, a variable with no presupposition, is the pronoun of the unconstrained cell `⊤`.
 One denotation serves the deictic, the anaphoric and the bound use, binding being abstraction
@@ -40,7 +40,8 @@ quantificational tense of its cell.
 
 namespace Tense
 
-open Reference Montague ModalLogic
+open Montague ModalLogic
+open Semantics (Nominal)
 open scoped SetRel
 
 variable {W T : Type*} {C : Finset Ordering} {k j : ℕ} {g : Assignment T} {w : W}

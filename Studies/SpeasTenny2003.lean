@@ -190,14 +190,14 @@ theorem Mood.seatOfKnowledge_ne_content (m : Mood) : m.seatOfKnowledge ≠ .cont
 the speech act, the self is the seat of knowledge, and the pivot is a thematic argument coindexed
 with the seat, an experiencer when a theme and the orientation of a predicate like *come* when a
 goal. -/
-def target : Reference.LogophoricRole → PRole
+def target : LogophoricRole → PRole
   | .source => .speaker
   | .self => .seatOfKnowledge
   | .pivot => .seatOfKnowledge
 
 /-- No logophoric role is a role of its own, since each is a coindexing with the speaker or the
 seat. -/
-theorem target_ne_hearer (r : Reference.LogophoricRole) : target r ≠ .hearer := by
+theorem target_ne_hearer (r : LogophoricRole) : target r ≠ .hearer := by
   cases r <;> decide
 
 end SpeasTenny2003

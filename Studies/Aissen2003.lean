@@ -51,7 +51,6 @@ Boersma's sense) are noted in docstrings but not represented.
 
 namespace Aissen2003
 
-open Reference (Animacy Nominality DefinitenessDegree Definiteness)
 open OptimalityTheory
 
 /-! ### The definiteness scale -/

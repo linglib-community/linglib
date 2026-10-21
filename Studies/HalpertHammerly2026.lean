@@ -201,7 +201,7 @@ theorem category_spec_inanimate : category inanimate.1.spec = Set.Ioi .animal :=
   decide
 
 /-- The core class of a referent of a given animacy. -/
-def ofAnimacy : Reference.Animacy → Core
+def ofAnimacy : Animacy → Core
   | .human => human
   | .animate => animal
   | .inanimate => inanimate

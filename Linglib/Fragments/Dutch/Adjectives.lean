@@ -52,8 +52,6 @@ its exceptions.
 
 namespace Dutch.Adjectives
 
-open Reference (Definiteness)
-
 /-- A Dutch adjective is the root entry with its form with the attributive ending *-e*, where
 it takes one. -/
 structure Adjective extends _root_.Adjective where

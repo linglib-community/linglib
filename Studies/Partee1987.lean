@@ -12,7 +12,7 @@ mappings between the three types come in inverse pairs, the paper's Figure 1: `l
 substrate's `Quantifier.NP.individual`, and `lower`, the total injection of an entity into
 its principal ultrafilter and its partial inverse; `ident` and `iota`, the singleton property
 of an entity and the unique member of a property; and `nom` and `pred`, the correlates of
-properties and entities after [chierchia-1984] (`lower_lift`, `Reference.iota_ident`). The
+properties and entities after [chierchia-1984] (`lower_lift`, `iota_ident`). The
 definite article has a partial entity meaning, `iota`, and a total quantifier meaning, `THE`,
 which is the determiner `GQ.the`. Whenever `iota(king')` is defined `THE(king')` is its lift,
 and otherwise the empty set of properties, so `lower(THE(king')) = iota(king')` either way. The
@@ -33,7 +33,7 @@ phrase.
 ## Implementation notes
 
 * The setting is extensional, so `pred` is `ident` and `nom` and `iota` are both the Russellian
-  `Reference.iota`.
+  `iota`.
 * Fact 2 is read with complete homomorphisms, the homomorphisms of [keenan-faltz-1985]'s result
   that the individuals generate the quantifiers, which the paper invokes for it; on an infinite
   domain a merely Boolean homomorphism need not preserve the infinite meets the argument uses.
@@ -51,7 +51,7 @@ phrase.
 
 namespace Partee1987
 
-open Quantifier Quantifier.GQ Quantifier.NP Reference
+open Quantifier Quantifier.GQ Quantifier.NP
 
 variable {E : Type*} (j : E) (P : E → Prop)
 

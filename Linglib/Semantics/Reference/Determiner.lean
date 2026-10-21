@@ -15,7 +15,7 @@ with the pronouns of `Semantics/Reference/Pronoun.lean`:
 | | pronoun | determiner |
 |---|---|---|
 | lexical record | `PersonalPronoun` | `Article`, `DemonstrativeDeterminer` |
-| selector | `Function.eval i` (`g ↦ g i`) | `⟦k⟧` for a `Description` `k` |
+| selector | `Function.eval i` (`g ↦ g i`) | `⟦k⟧` for a `DefiniteDescription` `k` |
 | intrinsic presupposition | φ-domain (`phiDom`) | vicinity of the anchors (`χ.image`) |
 
 The selector is the description's denotation, so a determiner and its description pick the same
@@ -24,12 +24,12 @@ presupposition, so deixis filters the referent but never selects it
 (`DemonstrativeDeterminer.denote_selector_eq_anaphoric`). Following Harbour's spatial head χ, the
 presupposition is that the referent lies in the vicinity of a referent whose participants form one
 of the demonstrative's participant sets: the χ-image of the preimage of those sets under
-`Reference.Context.participants`. For the first person's sets that preimage is the first person's
+`Kaplan.Context.participants`. For the first person's sets that preimage is the first person's
 φ-domain, and for the other persons' sets it is their φ-domain less the more prominent ones'.
 
 ## Main declarations
 
-* `Description.toNominal`: a description's `Nominal`, with vacuous intrinsic presupposition.
+* `DefiniteDescription.toNominal`: a description's `Nominal`, with vacuous intrinsic presupposition.
 * `DemonstrativeDeterminer.denote`: the demonstrative's `Nominal`.
 * `Article.toDescriptions`, `Article.denotations`: an article's possible descriptions, one per
   admissible strength, and their `Nominal`s; a syncretic article (English *the*) denotes both the
@@ -64,9 +64,7 @@ modeled. `Quantifier`, a generalized quantifier rather than an individual denota
 
 @[expose] public section
 
-namespace Reference
-
-open Semantics
+open Semantics Kaplan DefiniteDescription
 open scoped SetRel
 
 variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : Assignment E → W → E)
@@ -77,15 +75,16 @@ variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : Assignment E �
 /-- A description denotes the `Nominal` whose selector is its denotation and whose intrinsic
 presupposition is vacuous, a definite's only presupposition being that the selector is
 defined. -/
-noncomputable def Description.toNominal (k : Description E W) : Nominal (Assignment E) W E where
+noncomputable def DefiniteDescription.toNominal (k : DefiniteDescription E W) :
+    Nominal (Assignment E) W E where
   presup _ _ := True
   selector := ⟦k⟧
 
-@[simp] theorem Description.toNominal_selector (k : Description E W) :
+@[simp] theorem DefiniteDescription.toNominal_selector (k : DefiniteDescription E W) :
     k.toNominal.selector = ⟦k⟧ := rfl
 
-@[simp] theorem Description.toNominal_presup (k : Description E W) (g : Assignment E) (s : W) :
-    k.toNominal.presup g s = True := rfl
+@[simp] theorem DefiniteDescription.toNominal_presup (k : DefiniteDescription E W)
+    (g : Assignment E) (s : W) : k.toNominal.presup g s = True := rfl
 
 /-! ### The demonstrative determiner's denotation -/
 
@@ -99,7 +98,7 @@ description at discourse index `d` and whose intrinsic presupposition is that th
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer) :
     Nominal (Assignment E) W E where
   presup g _ := g d ∈ χ.image (c.participants ⁻¹' dem.deixis)
-  selector := ⟦Description.demonstrative R d⟧
+  selector := ⟦DefiniteDescription.demonstrative R d⟧
 
 /-- A demonstrative determiner denotes on every model, the restrictor, the index, the context of
 utterance and the vicinity relation being the Reader arguments of its domain. -/
@@ -136,11 +135,12 @@ theorem _root_.DemonstrativeDeterminer.denote_presup_or_iff_of_compl
     · exact .inr ⟨x, hm, hx⟩
 
 /-- Deixis filters and does not select, so a demonstrative determiner's selector is exactly the
-strong article's selector, the API-level form of `Description.denote_demonstrative_eq_anaphoric`;
-the deictic content lives entirely in the `presup` component. -/
+strong article's selector, the API-level form of
+`DefiniteDescription.denote_demonstrative_eq_anaphoric`; the deictic content lives entirely in the
+`presup` component. -/
 theorem _root_.DemonstrativeDeterminer.denote_selector_eq_anaphoric
     (dem : DemonstrativeDeterminer) :
-    (dem.denote R d c χ).selector = (Description.anaphoric R d).toNominal.selector := rfl
+    (dem.denote R d c χ).selector = (DefiniteDescription.anaphoric R d).toNominal.selector := rfl
 
 /-- Two demonstrative determiners differing only in deictic content share a
 selector — *this* and *that* pick the same referent and differ only in what
@@ -153,28 +153,28 @@ end Demonstrative
 
 /-! ### The article's descriptions and denotations -/
 
-/-- The descriptions an article can denote are the images of its admissible [schwarz-2009]
-strengths under `Description.ofStrength`. A syncretic article such as English *the* denotes both
-the weak and the strong description. -/
+/-- The descriptions an article can denote are the images of its admissible [schwarz-2009] strengths
+under `DefiniteDescription.ofStrength`. A syncretic article such as English *the* denotes both the
+weak and the strong description. -/
 def _root_.Article.toDescriptions (a : Article) (R : Restrictor E W)
-    (idx : ℕ) : Set (Description E W) :=
-  (Description.ofStrength · R idx) '' a.strengths
+    (idx : ℕ) : Set (DefiniteDescription E W) :=
+  (DefiniteDescription.ofStrength · R idx) '' a.strengths
 
 /-- An article realizes the kind of each of its own descriptions, so the denotation pipeline
-through `Description.ofStrength` and the inventory pipeline through
+through `DefiniteDescription.ofStrength` and the inventory pipeline through
 `Determiner.Inventory.Realizes` coincide. -/
 theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article) (idx : ℕ)
-    (k : Description E W) (hk : k ∈ a.toDescriptions R idx) :
+    (k : DefiniteDescription E W) (hk : k ∈ a.toDescriptions R idx) :
     Determiner.Inventory.Realizes [.article a] k.kind := by
   obtain ⟨p, hp, rfl⟩ := hk
-  rw [Description.kind_ofStrength, Determiner.Inventory.realizes_toKind,
+  rw [DefiniteDescription.kind_ofStrength, Determiner.Inventory.realizes_toKind,
     Determiner.Inventory.marks_singleton]
   exact (Article.mem_strengths_iff_marks a p).mp hp
 
 /-- The `Nominal`s an article can denote are those of its descriptions. -/
 def _root_.Article.denotations (a : Article) (R : Restrictor E W) (idx : ℕ) :
     Set (Nominal (Assignment E) W E) :=
-  Description.toNominal '' a.toDescriptions R idx
+  DefiniteDescription.toNominal '' a.toDescriptions R idx
 
 /-- An article denotes the set of its readings on every model, the restrictor and the index
 being the Reader arguments of its domain. -/
@@ -185,17 +185,17 @@ noncomputable instance : Denotes Article
 /-- Every denotation of an article arises from a description whose kind the article realizes. -/
 theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
     (nd : Nominal (Assignment E) W E) (h : nd ∈ a.denotations R idx) :
-    ∃ k : Description E W,
+    ∃ k : DefiniteDescription E W,
       Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = k.toNominal := by
   obtain ⟨k, hk, rfl⟩ := h
   exact ⟨k, Article.realizes_of_mem_toDescriptions R a idx k hk, rfl⟩
 
 /-! ### The possessive determiner's denotation -/
 
-/-- A possessive determiner denotes the `Nominal` of the definite description selecting the
-unique satisfier of the possessee restrictor `R` that stands in `rel` to the `possessor`, the
-`Description.possessive` selector (`iota` of `R ∧ rel possessor ·`). The intrinsic presupposition is
-vacuous; the definite's only presupposition is definedness, exposed as the
+/-- A possessive determiner denotes the `Nominal` of the definite description selecting the unique
+satisfier of the possessee restrictor `R` that stands in `rel` to the `possessor`, the
+`DefiniteDescription.possessive` selector (`iota` of `R ∧ rel possessor ·`). The intrinsic
+presupposition is vacuous; the definite's only presupposition is definedness, exposed as the
 selector returning `some`.
 
 The narrowing-aware GQ form for quantificational possessors ("every student's
@@ -203,7 +203,7 @@ cat") is `Possession.PossNP` — `(individual a)` of
 `PossNP` reduces here when the possessor is an entity. -/
 noncomputable def _root_.PossessiveDeterminer.denote (_p : PossessiveDeterminer) :
     Nominal (Assignment E) W E :=
-  (Description.possessive R possessor rel).toNominal
+  (DefiniteDescription.possessive R possessor rel).toNominal
 
 /-- A possessive determiner denotes on every model, the restrictor, the possessor and the
 possession relation being the Reader arguments of its domain. -/
@@ -217,13 +217,13 @@ selector — the determiner picks the unique possessee related to the
 possessor by construction. -/
 @[simp]
 theorem _root_.PossessiveDeterminer.denote_selector (p : PossessiveDeterminer) :
-    (p.denote R possessor rel).selector = ⟦Description.possessive R possessor rel⟧ := rfl
+    (p.denote R possessor rel).selector = ⟦DefiniteDescription.possessive R possessor rel⟧ := rfl
 
 /-- A possessive determiner realizes the kind of its own denotation — the
 denotational pipeline and the inventory pipeline agree, parallel to
 `Article.denotations_realized`. -/
 theorem _root_.PossessiveDeterminer.denote_realized (p : PossessiveDeterminer) :
-    Determiner.Inventory.Realizes [.possessive p] (Description.possessive R possessor rel).kind :=
+    Determiner.Inventory.Realizes [.possessive p]
+      (DefiniteDescription.possessive R possessor rel).kind :=
   ⟨.possessive p, List.mem_singleton_self _, rfl⟩
 
-end Reference

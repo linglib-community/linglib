@@ -34,8 +34,6 @@ Rigid intensions that agree at one index agree everywhere, which is the necessit
 
 @[expose] public section
 
-namespace Reference
-
 variable {W W' τ τ' : Type*} {f : W → τ} {S T : Set W}
 
 /-- An intension is rigid when it takes the same value at every index. -/
@@ -90,4 +88,3 @@ theorem IsRigidOn.precomp {f : W → τ} {S : Set W} (h : IsRigidOn f S) (g : W'
     IsRigidOn (f ∘ g) (g ⁻¹' S) :=
   fun w₁ hw₁ w₂ hw₂ => h (g w₁) hw₁ (g w₂) hw₂
 
-end Reference

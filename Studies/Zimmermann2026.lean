@@ -46,7 +46,6 @@ that negation cannot shift the situation argument of the function.
 
 @[expose] public section
 
-open Reference
 
 namespace Zimmermann2026
 

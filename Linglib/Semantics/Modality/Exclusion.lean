@@ -31,7 +31,7 @@ possibilities X-marking, and its absence O-marking.
 
 namespace Modality.Exclusion
 
-open Reference
+open Kaplan
 
 /-! ### ExclF: the exclusion feature -/
 

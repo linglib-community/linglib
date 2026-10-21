@@ -54,7 +54,7 @@ demonstrational analysis of Role Shift, which has no viewpoints, is left open by
 
 namespace SchlenkerEtAl2026
 
-open Reference
+open Kaplan
 
 variable {W E P T V S ι : Type*}
 

@@ -22,7 +22,7 @@ preordered type with parthood, nor the Pearl–Halpern partial valuation (`Causa
 
 @[expose] public section
 
-namespace Reference
+namespace Kaplan
 
 /-- A world–time index of evaluation. -/
 abbrev Index (W T : Type*) := W × T
@@ -42,4 +42,4 @@ abbrev time (i : Index W T) : T := i.2
 
 end Index
 
-end Reference
+end Kaplan

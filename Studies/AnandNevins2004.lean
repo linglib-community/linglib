@@ -42,7 +42,7 @@ pair verbs with operator options.
 
 namespace AnandNevins2004
 
-open Reference
+open Kaplan
 
 variable {W E P T : Type*}
 

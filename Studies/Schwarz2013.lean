@@ -14,16 +14,17 @@ public import Linglib.Fragments.Hausa.Determiners
 # Schwarz (2013): Two Kinds of Definites Cross-linguistically
 
 This file formalizes the survey's typology of definite articles. Beyond the German and Fering
-baseline of Schwarz's dissertation, where a weak article marks situational uniqueness and a strong one
-anaphoricity, the survey finds languages whose only overt definite article is anaphoric, with weak
-definites as bare nominals (Akan *nó*, Mauritian Creole *la*), languages with two overt articles
-(Lakhota *kiŋ* and *k'uŋ*, Hausa *-n* and *ɗîn*), and Haitian Creole *la*, a single article
+baseline of Schwarz's dissertation, where a weak article marks situational uniqueness and a strong
+one anaphoricity, the survey finds languages whose only overt definite article is anaphoric, with
+weak definites as bare nominals (Akan *nó*, Mauritian Creole *la*), languages with two overt
+articles (Lakhota *kiŋ* and *k'uŋ*, Hausa *-n* and *ɗîn*), and Haitian Creole *la*, a single article
 covering both use families that fits neither pattern. Each language's cell is derived from its
 fragment's `Determiners.inventory` through the substrate's `markingStrategy`, and the bridging
 split, part-whole bridging with the weak article and producer bridging with the strong one, is
-`Description.Bridging.strength`. The Lakhota classification is tentative in the survey itself, whose
-footnote 16 concedes Ingham's anaphoric *kiŋ*; the project fragment encodes that anaphoric use,
-under which the derived cell flips from bipartite to generally marked (`anaphoric_kin_flips_cell`).
+`DefiniteDescription.Bridging.strength`. The Lakhota classification is tentative in the survey
+itself, whose footnote 16 concedes Ingham's anaphoric *kiŋ*; the project fragment encodes that
+anaphoric use, under which the derived cell flips from bipartite to generally marked
+(`anaphoric_kin_flips_cell`).
 
 ## Implementation notes
 
@@ -43,8 +44,6 @@ substrate's two descriptions.
 
 namespace Schwarz2013
 
-open Reference
-
 /-! ### The German/Fering baseline (§3.1) -/
 
 /-- German and Fering each split the definite paradigm in two, Fering's A-form against its
@@ -58,8 +57,8 @@ theorem german_fering_bipartite :
 /-- In German (16) and Fering (17) alike, part-whole bridging, the fridge and its crisper, takes the
 weak article, and producer bridging, the play and its author, the strong one (§3.2). -/
 theorem bridging_split :
-    Description.Bridging.strength .partWhole = .uniqueness ∧
-    Description.Bridging.strength .relational = .familiarity :=
+    DefiniteDescription.Bridging.strength .partWhole = .uniqueness ∧
+    DefiniteDescription.Bridging.strength .relational = .familiarity :=
   ⟨rfl, rfl⟩
 
 /-! ### Languages with exclusively anaphoric articles (§4.1) -/

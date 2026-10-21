@@ -178,11 +178,11 @@ def jussiveOf (row : Datum) : Option Jussive :=
 
 section Reported
 
-variable {W E P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) (s o x : E)
+variable {W E P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) (s o x : E)
 
 /-- The context a verb of saying reports, whose agent is the matrix subject `s` and whose
 addressee is the matrix object `o`. -/
-def reported : Reference.Context W E P T := { c with agent := s, addressee := o }
+def reported : Kaplan.Context W E P T := { c with agent := s, addressee := o }
 
 /-- Evaluated at the reported context, a first person exclusive subject includes the matrix
 subject and not the object, a second person one the object and not the subject, and an inclusive
@@ -194,8 +194,8 @@ theorem mem_participantSets_reported :
       ((reported c s o).participants x ∈ Person.firstInclusive.participantSets ↔
         s ≤ x ∧ o ≤ x) := by
   simp only [Person.participantSets, Finset.mem_singleton, Finset.ext_iff,
-    Discourse.Role.forall_role, Reference.Context.speaker_mem_participants,
-    Reference.Context.addressee_mem_participants, reported]
+    Discourse.Role.forall_role, Kaplan.Context.speaker_mem_participants,
+    Kaplan.Context.addressee_mem_participants, reported]
   simp; tauto
 
 end Reported

@@ -47,7 +47,7 @@ from its semantics, so nothing would be proved about it.
 
 namespace Almog2014
 
-open Reference Kripke1980
+open Kripke1980 Kaplan
 
 variable {W E : Type*} {desc desc₁ desc₂ : W → E} {c w₀ w : W}
 

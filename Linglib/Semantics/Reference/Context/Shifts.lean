@@ -27,20 +27,20 @@ it preserves.
 
 @[expose] public section
 
-namespace Reference
+namespace Kaplan
 
 variable {W E P T : Type*} (c : Context W E P T)
 
-/-- The attitude shift: the holder becomes the agent and the attitude world the world;
-addressee, time and position are preserved. -/
+/-- The attitude shift makes the holder the agent and the attitude world the world, preserving the
+addressee, the time and the position. -/
 def attitudeShift (holder : E) (attWorld : W) : Function.End (Context W E P T) :=
   fun c ↦ { c with agent := holder, world := attWorld }
 
-/-- The temporal shift: the time moves to `newTime`; every other coordinate is preserved. -/
+/-- The temporal shift moves the time to `newTime` and preserves every other coordinate. -/
 def temporalShift (newTime : T) : Function.End (Context W E P T) :=
   fun c ↦ { c with time := newTime }
 
-/-- The world shift: the world moves to `newWorld`; every other coordinate is preserved. -/
+/-- The world shift moves the world to `newWorld` and preserves every other coordinate. -/
 def worldShift (newWorld : W) : Function.End (Context W E P T) :=
   fun c ↦ { c with world := newWorld }
 
@@ -95,4 +95,4 @@ variable (newWorld : W)
 
 end worldShift
 
-end Reference
+end Kaplan

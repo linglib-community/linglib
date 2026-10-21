@@ -11,16 +11,16 @@ public import Linglib.Semantics.Reference.Iota
 A description distinguishes its referent from a contrast set when its compatibility with the
 referent strictly exceeds its compatibility with every distractor, compatibility taking values in a
 preorder. At truth values this is the distinguishing description of Dale and Reiter, which holds of
-the referent and of no distractor, and the Russellian uniqueness of `Reference.iota` over the domain
+the referent and of no distractor, and the Russellian uniqueness of `iota` over the domain
 the contrast set restricts. Under a graded semantics it says the referent is the literal listener's
 best guess, since a strictly monotone rescaling of compatibility such as the listener's
-normalization does not change it (`Reference.distinguishes_comp_iff`). A graded
+normalization does not change it (`distinguishes_comp_iff`). A graded
 description distinguishes exactly when some level set of its compatibility does, so the truth-valued
 notion is the general one at a threshold.
 
 ## Main definitions
 
-* `Reference.Distinguishes compat C r d`: the compatibility of `d` with `r` strictly exceeds its
+* `Distinguishes compat C r d`: the compatibility of `d` with `r` strictly exceeds its
   compatibility with every member of `C`.
 
 ## Main results
@@ -41,8 +41,6 @@ notion is the general one at a threshold.
 -/
 
 @[expose] public section
-
-namespace Reference
 
 variable {D E α β : Type*}
 
@@ -131,4 +129,3 @@ theorem distinguishes_univ_erase_iff [Fintype E] [DecidableEq E] [Nontrivial E] 
 
 end TruthValues
 
-end Reference

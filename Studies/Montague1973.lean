@@ -54,7 +54,7 @@ mention no word outside the fragment are imposed.
 
 namespace Montague1973
 
-open Montague Reference Quantifier Polyadic
+open Montague Quantifier Polyadic
 
 /-! ### Categories and the category-to-type map -/
 

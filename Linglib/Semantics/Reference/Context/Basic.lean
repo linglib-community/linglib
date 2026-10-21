@@ -32,9 +32,9 @@ as arguments, and `Context` supplies them.
 
 @[expose] public section
 
-namespace Reference
+namespace Kaplan
 
-/-- The context of utterance: an agent, an addressee, a world, a time and a position. -/
+/-- A context of utterance has an agent, an addressee, a world, a time and a position. -/
 structure Context (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The agent (speaker) of the context -/
   agent : E
@@ -52,14 +52,14 @@ namespace Context
 
 variable {W E P T : Type*} (c : Context W E P T)
 
-/-- A proper context: the agent exists at the context's world. -/
+/-- A context is proper when its agent exists at its world. -/
 def Proper (exists_ : E → W → Prop) : Prop := exists_ c.agent c.world
 
-/-- A located context: the agent is at the context's position at its time in its world. -/
+/-- A context is located when its agent is at its position at its time in its world. -/
 def Located (located : E → P → T → W → Prop) : Prop :=
   located c.agent c.position c.time c.world
 
-/-- The index of evaluation of a context: its world and time. -/
+/-- The index of evaluation of a context is its world and time. -/
 def toIndex : Index W T := ⟨c.world, c.time⟩
 
 /-- Replace the world and time of a context by those of an index, keeping the agent, the
@@ -75,4 +75,4 @@ variable (s : Index W T)
 
 end Context
 
-end Reference
+end Kaplan

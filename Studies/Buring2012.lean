@@ -40,7 +40,7 @@ namespace Buring2012
 open English.Pronouns
 
 variable {E P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (g : Assignment E)
-  (n : ℕ) (c : Reference.Context PUnit E P T) (scope : E → PUnit → Prop)
+  (n : ℕ) (c : Kaplan.Context PUnit E P T) (scope : E → PUnit → Prop)
 
 /-- A pronoun denotes the value of its index under the assignment. Its selector is the canonical
 variable lookup, the same one for the bound, anaphoric and deictic uses. -/
