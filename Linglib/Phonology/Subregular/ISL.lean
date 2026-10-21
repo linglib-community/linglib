@@ -25,6 +25,7 @@ letterwise homomorphisms, and are subsequential over a finite alphabet.
 
 * `ISLRule k α β`: a rule emitting a block from a window of `k - 1` input symbols
 * `ISLRule.apply`: the function a rule computes
+* `ISLRule.applyOnTier`: a rule run with its window over the tier projection of its input
 * `IsLeftInputStrictlyLocal k f`, `IsRightInputStrictlyLocal k f`: some rule computes `f`,
   scanning left to right or right to left
 
@@ -48,6 +49,8 @@ there through a final output, is right-ISL here. `0`-ISL and `1`-ISL coincide, a
 * [J. Chandlee, R. Eyraud and J. Heinz, *Learning Strictly Local Subsequential Functions*
   (2014)][chandlee-eyraud-heinz-2014]
 * [J. Chandlee and J. Heinz, *Strict Locality and Phonological Maps* (2018)][chandlee-heinz-2018]
+* [S. Andersson, H. Dolatian and Y. Hao, *Computing Vowel Harmony: The Generative Capacity of
+  Search & Copy* (2020)][andersson-dolatian-hao-2020]
 -/
 
 @[expose] public section
@@ -204,5 +207,46 @@ theorem ISLRule.isMealyComputable_apply [Fintype α] (r : ISLRule k α β)
 theorem IsRightInputStrictlyLocal.isRightSubsequential [Fintype α]
     (hf : IsRightInputStrictlyLocal k f) : IsRightSubsequential f :=
   IsLeftInputStrictlyLocal.isLeftSubsequential hf
+
+/-! ### Input tiers -/
+
+namespace ISLRule
+
+variable (r : ISLRule k α β) (p : α → Prop) [DecidablePred p]
+
+/-- The rule run with its window over the tier `p` of the input alphabet, so that each block
+depends on the last `k - 1` on-tier symbols read ([andersson-dolatian-hao-2020]). -/
+def applyOnTier : List α → List β :=
+  windowRun (k - 1) r.windowOutput (fun _ x ↦ [x].filter (p ·)) []
+
+private lemma windowRun_filter (n : ℕ) (w u : List α) :
+    windowRun n (fun _ x ↦ [x].filter (p ·)) (fun _ x ↦ [x].filter (p ·)) w u =
+      u.filter (p ·) := by
+  induction u generalizing w with
+  | nil => rfl
+  | cons y ys ih => by_cases hy : p y <;> simp [windowRun, ih, hy]
+
+@[simp] lemma applyOnTier_nil : r.applyOnTier p [] = [] := rfl
+
+/-- The window before each symbol is the last `k - 1` on-tier symbols of the input read so far. -/
+theorem applyOnTier_append_singleton (u : List α) (x : α) :
+    r.applyOnTier p (u ++ [x]) =
+      r.applyOnTier p u ++ r.windowOutput ((u.filter (p ·)).rtake (k - 1)) x := by
+  have h := windowRun_append_singleton (out := r.windowOutput)
+    (upd := fun _ x ↦ [x].filter (p ·)) (w := []) (Nat.zero_le (k - 1)) u x
+  rwa [windowRun_filter, List.nil_append] at h
+
+/-- Over the total tier, `applyOnTier` is `apply`. -/
+theorem applyOnTier_true : r.applyOnTier (fun _ ↦ True) = r.apply := by
+  simp [applyOnTier]
+  rfl
+
+/-- Over a finite input alphabet the rule run over a tier is left-subsequential, the bounded
+tier window being the state. -/
+theorem isLeftSubsequential_applyOnTier [Fintype α] :
+    IsLeftSubsequential (r.applyOnTier p) :=
+  isLeftSubsequential_windowRun _ _ _
+
+end ISLRule
 
 end Subregular

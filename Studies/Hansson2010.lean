@@ -345,9 +345,10 @@ theorem saturated : navajo.Saturated := fun x hx ↦ by
   rw [← sibilantClass_of_onTier hx]
   exact hx
 
-theorem tierClosed : navajo.searchCopy.TierClosed := fun v x hx ↦ by
-  rw [System.searchCopy_tier, pattern_onTier_iff] at hx ⊢
-  exact onTier_setFeature hx v
+theorem preservesTier : navajo.searchCopy.PreservesTier := fun v x hx ↦ by
+  rw [System.searchCopy_tier, pattern_onTier_iff, pattern_onTier_iff]
+  exact iff_of_true (onTier_setFeature ((pattern_onTier_iff x).1 hx.2) v)
+    ((pattern_onTier_iff x).1 hx.2)
 
 /-- The sibilant class is the system's tier projection. -/
 theorem pattern_project : navajo.pattern.project = sibilantClass := by
@@ -372,7 +373,7 @@ def first (w : List Segment) : Option Bool := (sibilants w).head?.bind sibilantC
 of the leftmost one. -/
 theorem scan_eq (w : List Segment) :
     navajo.searchCopy.scan w = w.map (harmonize (first w)) := by
-  rw [navajo.scan_eq_map saturated tierClosed rfl, pattern_tier]
+  rw [navajo.scan_eq_map saturated preservesTier rfl, pattern_tier]
   refine List.map_congr_left fun x _ ↦ ?_
   have hfirst : (sibilants w).head?.bind navajo.pattern.value = first w := by
     rcases hh : (sibilants w).head? with _ | y
@@ -386,8 +387,8 @@ theorem scan_eq (w : List Segment) :
 /-- Anticipatory harmony is the search-and-copy run of the system in its direction. -/
 theorem anticipatory_eq_apply (w : List Segment) :
     anticipatory w = navajo.searchCopy.apply w := by
-  show anticipatory w = (navajo.searchCopy.scan w.reverse).reverse
-  rw [scan_eq, List.map_reverse, List.reverse_reverse, anticipatory]
+  rw [navajo.searchCopy.apply_eq_revConj_scan rfl, List.revConj, scan_eq, List.map_reverse,
+    List.reverse_reverse, anticipatory]
   congr 1
   simp [first, trigger, sibilants, List.filter_reverse, List.head?_reverse]
 
