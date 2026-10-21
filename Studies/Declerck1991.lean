@@ -8,56 +8,30 @@ public import Studies.Reichenbach1947
 /-!
 # Declerck (1991): Tense in English
 
-[declerck-1991] counts eight tenses in English, whether a tense is marked by inflection or by the
-auxiliaries *have* and *will*: the present tense, the preterit, the present perfect, the past
-perfect, the future tense, the future perfect, the conditional tense and the conditional perfect,
-the present and the preterit of the forms with neither, either or both of *will* and *have*. A
-tense locates the time of its situation, which coincides with a situation-TO (time of
-orientation), by a chain of relations from a basic TO, usually the temporal zero-point t₀, each
-TO related only to the one before it. The links come from the make-up of the form. The preterit
-places its TO wholly before the TO before it, in the past time-sphere; *have* places it wholly
-before or up to it; *will* places it wholly after it or from it onwards; and a present tense with
-neither auxiliary places it around t₀. The progressive, which every tense allows, adds no link.
-
-Time divides into the past time-sphere, wholly before t₀, and the present time-sphere, which
-contains t₀ and is divided by it into the pre-present, the present and the post-present sectors.
-These four absolute sectors each have exactly one tense that relates its situation to t₀ directly:
-the preterit, the present perfect, the present tense and the future tense. Since a chain relates
-each TO only to the one before it, a tense whose chain passes through an intermediate TO leaves
-the relation of the situation to t₀ unexpressed. The conditional, the future perfect and the
-conditional perfect are thus vague, not ambiguous, among the situation's lying before, at and
-after t₀, where [reichenbach-1947]'s ordering of points counts three tenses.
+This file formalizes the structure of the tenses in [declerck-1991]. The eight tenses are the
+present and the preterit of the forms with neither, either or both of *will* and *have*, and each
+locates its situation by a chain of relations between times of orientation (TOs), one link per
+part of its make-up.
 
 ## Main definitions
 
-* `Declerck1991.Link`, `Declerck1991.Link.cell`: the relations a chain is made of, as cells of
-  Allen relations.
-* `Declerck1991.chain`: the chain of a tense form, read off its make-up.
-* `Declerck1991.tenses`: the eight tenses.
-* `Declerck1991.sector`, `Declerck1991.IsAbsolute`: the absolute sector a tense sets out in, and
-  whether it relates its situation to t₀ directly.
-* `Declerck1991.Realizes`: the TOs that realize a tense.
+* `Declerck1991.Link`, `Declerck1991.chain`: the links of a tense, read off its form.
+* `Declerck1991.tenses`, `Declerck1991.sector`, `Declerck1991.IsAbsolute`: the tenses, their
+  absolute sectors, and the absolute tenses.
+* `Declerck1991.Realizes`: the TOs that realize a tense, along the Allen cells of its links.
 
 ## Main results
 
-* `Declerck1991.absolute_sector_bijective`: each absolute sector has exactly one absolute tense.
-* `Declerck1991.realizes_simplePast_iff` and its siblings: the four absolute tenses place the
-  situation-TO wholly before t₀, before or up to it, around it, and after it or from it onwards,
-  so that a situation-TO up to t₀ realizes the present perfect and not the preterit.
+* `Declerck1991.absolute_sector_bijective`: each absolute sector has one absolute tense.
+* `Declerck1991.realizes_simplePast_iff` and its siblings: the absolute tenses on intervals.
 * `Declerck1991.vague`, `Declerck1991.covers_retrogressive`: the tenses with an intermediate TO
-  are vague among the three positions of the situation against t₀, and the conditional and the
-  future perfect each realize the three orders of a retrogressive form of Reichenbach's.
+  are vague where [reichenbach-1947] counts three tenses (§5.1.2).
 
 ## Implementation notes
 
-TOs are intervals, as Declerck argues the times of a tense must be against Reichenbach's points
-(§5.1.2.1). The future perfect (100) and the conditional perfect (119) state only 'after' for the
-link that *will* contributes; it is taken here to be the posteriority of the future tense (92) and
-the conditional (110), wholly after or from onwards. Temporal subordination against shift of
-domain, the Present and Future Perspective Systems, the principle of unmarked temporal
-interpretation and the modal past are matters of discourse the chains do not decide; the
-companion grammar's examples of them, [declerck-1991-grammar], are the rows of
-`Data/Examples/Declerck1991.json`.
+TOs are intervals (§5.1.2.1). (100) and (119) state only 'after' for the link of *will*, taken
+here as the posteriority of (92) and (110). The discourse phenomena of the companion grammar
+[declerck-1991-grammar] are the rows of `Data/Examples/Declerck1991.json`.
 
 ## References
 
