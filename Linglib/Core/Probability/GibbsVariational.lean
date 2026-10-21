@@ -1,8 +1,6 @@
 module
 
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Core.MeasureTheory.Measure.Real
-public import Mathlib.MeasureTheory.Measure.Tilted
+public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Mathlib.MeasureTheory.Measure.LogLikelihoodRatio
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import Mathlib.Probability.Moments.Basic
@@ -14,8 +12,7 @@ For a probability measure `μ` and a function `f`, the free energy `𝔼_q[f] - 
 probability measure `q ≪ μ` is at most the cumulant generating function `cgf f μ 1`, with
 equality exactly at the tilted measure `μ.tilted f`. This is the Gibbs, or Donsker–Varadhan,
 variational principle, which the module docstring of `Mathlib/MeasureTheory/Measure/Tilted.lean`
-anticipates. On a finite type, tilting reweights each atom by the exponential of `f`, so tilting
-the counting measure gives `Real.softmax`.
+anticipates.
 
 ## Main definitions
 
@@ -29,10 +26,6 @@ the counting measure gives `Real.softmax`.
   `InformationTheory.eq_tilted_of_freeEnergy_eq_cgf`: the free energy is at most `cgf f μ 1`,
   with equality exactly at `μ.tilted f`.
 * `InformationTheory.isGreatest_cgf`: `cgf f μ 1` is the greatest free energy.
-* `MeasureTheory.tilted_real_singleton`, `MeasureTheory.count_tilted_real_singleton`: the tilted
-  measure of an atom on a finite type.
-* `MeasureTheory.eq_tilted_iff`: a measure on a finite type is a tilt exactly when its atoms are
-  proportional to the reweighted ones.
 
 ## Implementation notes
 
@@ -133,50 +126,3 @@ theorem isGreatest_cgf (μ : Measure α) [IsProbabilityMeasure μ] {f : α → �
   exact freeEnergy_le_cgf μ q hqμ hq_llr hq_f h_exp
 
 end InformationTheory
-
-namespace MeasureTheory
-
-variable {α : Type*} [MeasurableSpace α] [Fintype α] [MeasurableSingletonClass α]
-
-/-- On a finite type, the tilted measure at an atom is the atom's mass reweighted by the
-exponential of `f` and renormalized. -/
-theorem tilted_real_singleton (μ : Measure α) [IsFiniteMeasure μ] (f : α → ℝ) (a : α) :
-    (μ.tilted f).real {a} = μ.real {a} * Real.exp (f a) / ∑ b, μ.real {b} * Real.exp (f b) := by
-  have hZ : 0 ≤ ∫ x, Real.exp (f x) ∂μ := integral_nonneg fun _ ↦ (Real.exp_pos _).le
-  rw [measureReal_def, tilted_apply, lintegral_singleton, ENNReal.toReal_mul,
-    ENNReal.toReal_ofReal (div_nonneg (Real.exp_pos _).le hZ), ← measureReal_def,
-    integral_fintype .of_finite]
-  simp only [smul_eq_mul]
-  ring
-
-/-- On a finite type, a probability measure is the tilt of `ν` by `f` exactly when its atoms are
-proportional to those of `ν` reweighted by the exponential of `f`. -/
-theorem eq_tilted_iff (μ ν : Measure α) [IsProbabilityMeasure μ] [IsFiniteMeasure ν] [NeZero ν]
-    (f : α → ℝ) : μ = ν.tilted f ↔ ∃ Z > 0, ∀ a, μ.real {a} = ν.real {a} * Real.exp (f a) / Z := by
-  have hZ : 0 < ∑ b, ν.real {b} * Real.exp (f b) := by
-    obtain ⟨a, ha⟩ : ∃ a, ν {a} ≠ 0 := by
-      by_contra! h
-      exact NeZero.ne ν (Measure.ext_iff_singleton.2 fun a ↦ by simp [h a])
-    exact (mul_pos (ENNReal.toReal_pos ha (measure_ne_top _ _)) (Real.exp_pos _)).trans_le
-      (Finset.single_le_sum (fun b _ ↦ mul_nonneg measureReal_nonneg (Real.exp_pos _).le)
-        (Finset.mem_univ a))
-  constructor
-  · rintro rfl
-    exact ⟨_, hZ, tilted_real_singleton ν f⟩
-  · rintro ⟨Z, hZ0, h⟩
-    have hZeq : Z = ∑ b, ν.real {b} * Real.exp (f b) := by
-      have := sum_measureReal_singleton_eq_one μ
-      simp_rw [h, ← Finset.sum_div] at this
-      exact ((div_eq_one_iff_eq hZ0.ne').1 this).symm
-    have : IsProbabilityMeasure (ν.tilted f) := isProbabilityMeasure_tilted .of_finite
-    refine Measure.ext_iff_singleton.2 fun a ↦ ?_
-    rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _),
-      ← measureReal_def, ← measureReal_def, h, tilted_real_singleton, hZeq]
-
-/-- On a finite type, the counting measure tilted by `f` gives each point its softmax
-probability. -/
-theorem count_tilted_real_singleton (f : α → ℝ) (a : α) :
-    (Measure.count.tilted f).real {a} = Real.softmax f a := by
-  simp [tilted_real_singleton, Real.softmax_apply]
-
-end MeasureTheory

@@ -283,7 +283,7 @@ theorem hasFDerivAt_logPartition :
   have hH (c : C) : HasFDerivAt (fun w ↦ harmony T w c) (-ℓ (T c)) w :=
     (-ℓ (T c)).hasFDerivAt.congr_of_eventuallyEq
       (Eventually.of_forall fun w ↦ by simp [harmony, hℓ, dotProduct_comm])
-  refine (HasFDerivAt.log_sum_exp (f := fun c w ↦ harmony T w c) hH).congr_fderiv ?_
+  refine (HasFDerivAt.log_sum_exp hH).congr_fderiv ?_
   ext v
   simp only [smul_neg, sum_neg_distrib, neg_apply, _root_.sum_apply, smul_apply, hℓ,
     LinearMap.coe_toContinuousLinearMap', dotProductBilin, LinearMap.coe_mk, AddHom.coe_mk,

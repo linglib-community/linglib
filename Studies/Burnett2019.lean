@@ -71,16 +71,16 @@ variable {V P : Type*} [Fintype P] [DecidableEq P] {G : SimpleGraph P} [Decidabl
 
 /-- A speaker selects a persona by the softmax of her values at rationality `α'` (14). -/
 noncomputable def select (α' : ℝ) (value : Persona G → ℝ) : Measure (Persona G) :=
-  Measure.ofRealWeights (Real.softmax fun π ↦ α' * value π)
+  Measure.count.tilted fun π ↦ α' * value π
+
+@[simp] theorem select_real_singleton (α' : ℝ) (value : Persona G → ℝ) (π : Persona G) :
+    (select α' value).real {π} = Real.softmax (fun π ↦ α' * value π) π :=
+  count_tilted_real_singleton _ π
 
 variable [Nonempty (Persona G)]
 
 instance (α' : ℝ) (value : Persona G → ℝ) : IsProbabilityMeasure (select α' value) :=
-  Measure.isProbabilityMeasure_ofRealWeights (Real.softmax_nonneg _) (Real.sum_softmax _)
-
-@[simp] theorem select_real_singleton (α' : ℝ) (value : Persona G → ℝ) (π : Persona G) :
-    (select α' value).real {π} = Real.softmax (fun π ↦ α' * value π) π :=
-  Measure.ofRealWeights_real_singleton (Real.softmax_nonneg _) π
+  isProbabilityMeasure_tilted .of_finite
 
 variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V]
 
