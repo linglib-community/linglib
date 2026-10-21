@@ -26,27 +26,14 @@ namespace Szabolcsi2004
 open PolarityItem English.PolarityItems
 
 /-- The operators of the paradigm, clausemate negation, *no one*, *without* and *at most five*. -/
-inductive Operator where
-  | not
-  | noOne
-  | without
-  | atMostFive
-  deriving DecidableEq, Repr
-
-/-- The licensing context an operator is. -/
-def Operator.toLicensingContext : Operator → LicensingContext
-  | .not => .negation
-  | .noOne => .nobody
-  | .without => .withoutClause
-  | .atMostFive => .atMost
-
+def paradigm : List LicensingContext := [.negation, .nobody, .withoutClause, .atMost]
 
 /-- *Someone* is blocked immediately below an operator of the paradigm exactly when the operator
 is anti-additive. -/
-theorem antiLicenses_someone_iff (op : Operator) :
-    op.toLicensingContext.licenser.AntiLicenses someone ↔
-      op.toLicensingContext.licenser.Holds .antiAdd := by
-  cases op
+theorem antiLicenses_someone_iff :
+    ∀ c ∈ paradigm, c.licenser.AntiLicenses someone ↔ c.licenser.Holds .antiAdd := by
+  simp only [paradigm, List.mem_cons, List.not_mem_nil, or_false]
+  rintro c (rfl | rfl | rfl | rfl)
   · exact iff_of_true (by decide) (LicensingContext.holds_negation .antiAdditive)
   · exact iff_of_true (by decide)
       (LicensingContext.holds_nobody_iff (s := .antiAdditive) |>.2 le_rfl)
@@ -56,19 +43,19 @@ theorem antiLicenses_someone_iff (op : Operator) :
       fun h ↦ absurd (LicensingContext.holds_atMost_iff (s := .antiAdditive) |>.1 h) (by decide)
 
 /-- The operator a row names. -/
-def Operator.ofKey : String → Option Operator
-  | "not" => some .not
-  | "no one" => some .noOne
-  | "without" => some .without
-  | "at most five" => some .atMostFive
+def operatorOf : String → Option LicensingContext
+  | "not" => some .negation
+  | "no one" => some .nobody
+  | "without" => some .withoutClause
+  | "at most five" => some .atMost
   | _ => none
 
 /-- Every row is on *someone*, names its operator, and its reading with *someone* in the
 operator's immediate scope is acceptable exactly when the operator does not block *someone*. -/
 theorem readings_predicted :
     ∀ d ∈ Examples.all, d.feature? "item" = some "someone" ∧
-      ∃ op ∈ (d.feature? "operator").bind Operator.ofKey, ∃ r ∈ d.readings.head?,
-        (r.2 = .acceptable ↔ ¬ op.toLicensingContext.licenser.AntiLicenses someone) := by
+      ∃ c ∈ (d.feature? "operator").bind operatorOf, ∃ r ∈ d.readings.head?,
+        (r.2 = .acceptable ↔ ¬ c.licenser.AntiLicenses someone) := by
   decide +kernel
 
 end Szabolcsi2004

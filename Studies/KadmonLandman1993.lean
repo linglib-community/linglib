@@ -500,34 +500,18 @@ theorem almost_rows :
 
 /-! ### The licensing data -/
 
-/-- The licensing contexts the paper's rows name. -/
-inductive Context where
-  | negation
-  | generic
-  | universalRestrictor
-  | adversative
-  | conditionalAntecedent
-  deriving DecidableEq, Repr
-
-/-- The library's licensing context a row's context is. -/
-def Context.toLicensingContext : Context → LicensingContext
-  | .negation => .negation
-  | .generic => .generic
-  | .universalRestrictor => .universalRestrictor
-  | .adversative => .adversative
-  | .conditionalAntecedent => .conditionalAntecedent
-
 /-- A licensing row records the context at the narrowest operator over *any*, a licensing context
 or a local entailment signature, the settle-for-less and metalinguistic-denial readings, and the
 judgment. -/
 structure Row where
-  context : Option Context
+  context : Option LicensingContext
   localSignature : Signature
   settleForLess : Bool
   metalinguistic : Bool
   grammatical : Bool
 
-def contextOf : String → Option Context
+/-- The licensing context a row names. -/
+def contextOf : String → Option LicensingContext
   | "negation" => some .negation
   | "generic" => some .generic
   | "universalRestrictor" => some .universalRestrictor
@@ -560,7 +544,7 @@ strengthens, or it is read as settling for less under *glad*, or as a metalingui
 negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
-      (∃ c ∈ r.context, c.toLicensingContext.licenser.Licenses English.PolarityItems.any) ∨
+      (∃ c ∈ r.context, c.licenser.Licenses English.PolarityItems.any) ∨
         r.localSignature.negationStrength ≠ ⊥ ∨ r.settleForLess = true ∨
           r.metalinguistic = true := by
   decide +kernel

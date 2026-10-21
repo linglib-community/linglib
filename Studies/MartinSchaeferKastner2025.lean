@@ -104,30 +104,19 @@ inductive Form where
   | se
   deriving DecidableEq
 
-/-- The paper's two flavours of Voice for a French anticausative are the non-thematic Voice of
-the marked anticausative, `Minimalist.Voice.anticausative`, and the reflexive Voice,
-`Minimalist.Voice.reflexive`. -/
-inductive Flavor where
-  | nonThematic
-  | reflexive
-  deriving DecidableEq, Repr
-
-/-- The Voice head each flavour is. -/
-def Flavor.head : Flavor → Head
-  | .nonThematic => Minimalist.Voice.anticausative
-  | .reflexive => Minimalist.Voice.reflexive
-
-/-- The voice flavours a form admits. The bare form admits only the non-thematic anticausative
-and the *se* form the reflexive as well, the syncretism of [schaefer-2008] and
+/-- The Voice heads a form admits, of the paper's two flavours for a French anticausative: the
+non-thematic Voice of the marked anticausative and the reflexive Voice. The bare form admits only
+the anticausative and the *se* form the reflexive as well, the syncretism of [schaefer-2008] and
 [koontz-garboden-2009]. -/
-def Form.voiceOptions : Form → List Flavor
-  | .bare => [.nonThematic]
-  | .se => [.nonThematic, .reflexive]
+def Form.voiceOptions : Form → List Head
+  | .bare => [Minimalist.Voice.anticausative]
+  | .se => [Minimalist.Voice.anticausative, Minimalist.Voice.reflexive]
 
 /-- Both forms share the anticausative parse, and only the *se* form has the reflexive one. -/
 theorem se_ambiguous :
-    (∀ f : Form, Flavor.nonThematic ∈ f.voiceOptions) ∧
-      Flavor.reflexive ∈ Form.se.voiceOptions ∧ Flavor.reflexive ∉ Form.bare.voiceOptions := by
+    (∀ f : Form, Minimalist.Voice.anticausative ∈ f.voiceOptions) ∧
+      Minimalist.Voice.reflexive ∈ Form.se.voiceOptions ∧
+      Minimalist.Voice.reflexive ∉ Form.bare.voiceOptions := by
   refine ⟨fun f ↦ ?_, by decide, by decide⟩
   cases f <;> decide
 

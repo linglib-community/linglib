@@ -22,7 +22,8 @@ of a complement clause are in `Syntax/Clause/Complementation.lean`.
 * `Clause.SentenceType`, `Clause.SentenceType.IsInterrogative`: the sentence types.
 * `Clause.EmbeddingContext`, `Clause.root`, `Clause.embedded`: the embedding contexts and the
   cells of root and subordinated clauses.
-* `Clause.Occurrence`, `Clause.Distribution`: the value of a cell and a table of cells.
+* `Clause.Occurrence`, `Clause.Distribution`: the value of a cell, ordered by how far it is
+  required, and a table of cells.
 * `Clause.Distribution.recorded`, `possible`, `required`: the relations a distribution
   determines.
 * `Clause.Selection`: the sentence types a clause-typer types or a clausal position selects.
@@ -109,6 +110,25 @@ inductive Occurrence where
   | optional
   | excluded
   deriving DecidableEq, Repr, Fintype
+
+namespace Occurrence
+
+/-- The rank of an occurrence, from excluded to obligatory. -/
+def rank : Occurrence → ℕ
+  | .excluded => 0
+  | .optional => 1
+  | .obligatory => 2
+
+/-- Occurrences are ordered by how far the element is required. -/
+instance : LinearOrder Occurrence := .lift' rank (by decide)
+
+instance : BoundedOrder Occurrence where
+  bot := .excluded
+  bot_le o := by cases o <;> decide
+  top := .obligatory
+  le_top o := by cases o <;> decide
+
+end Occurrence
 
 /-- A distribution records the occurrence of an element or process in each cell; `none` means
 that the source records nothing for the cell, not that it is excluded. -/
