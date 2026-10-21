@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.Dargwa.Tanti.Locatives
+public import Linglib.Morphology.Morphotactics.AffixTemplate
 
 /-!
 # Tanti Dargwa verbs
@@ -16,6 +17,7 @@ share the orientation markers and directions of the locative forms.
 * `Dargwa.Tanti.Localization.preverb?`, `Dargwa.Tanti.Direction.preverb`: the preverbs of a
   localization with an orientation, and of a direction
 * `Dargwa.Tanti.localizationPreverbs`, `Dargwa.Tanti.directionPreverbs`: the two groups of preverbs
+* `Dargwa.Tanti.preverbTemplate`: the positions of the two groups, the first before the second
 * `Dargwa.Tanti.lightVerbs`, `Dargwa.Tanti.boundLightVerbs`: the light verbs, and those found only
   in complex verbs
 * `Dargwa.Tanti.ComplexVerb`, `Dargwa.Tanti.ComplexVerb.morphs`: a complex verb and its morphs
@@ -24,6 +26,8 @@ share the orientation markers and directions of the locative forms.
 
 * `Dargwa.Tanti.Localization.preverb?_super`: *če-*, *če-b-* and *če-r-* are *super* with the
   lative, essive and elative markers
+* `Dargwa.Tanti.length_le_two_of_licensed`: a verb whose preverbs the template licenses has at
+  most two
 * `Dargwa.Tanti.morphs_startCrying`: the stem and the light verb of *w-isːe-w-ig-* take the same
   marker
 
@@ -36,11 +40,6 @@ share the orientation markers and directions of the locative forms.
 * Sumbatova lists *aq-* both as 'hang' and among the light verbs found only in complex verbs, so
   `hang` is in both inventories.
 * Her list of light verbs omits *b-ut'-* 'cut', the light verb of *č'u-b-ut'-* 'divide by two'.
-
-## TODO
-
-* As a rule a verb has at most two preverbs, one of the first group followed by one of the
-  second, a two-position `Morphology.AffixTemplate`.
 
 ## References
 
@@ -100,6 +99,35 @@ def toAddressee : Gender.Marker → List Morph := fun _ ↦ [.pref "le"]
 /-- The preverbs of the second group, which express a direction. -/
 def directionPreverbs : Finset (Gender.Marker → List Morph) :=
   insert toAddressee (Finset.univ.image Direction.preverb)
+
+/-- The two groups of preverbs, the positions they fill. -/
+inductive PreverbGroup where
+  /-- The first group, which expresses a localization and an orientation. -/
+  | localization
+  /-- The second group, which expresses a direction. -/
+  | direction
+  deriving DecidableEq, Repr, Fintype
+
+/-- The preverbs of a group. -/
+def PreverbGroup.preverbs : PreverbGroup → Finset (Gender.Marker → List Morph)
+  | .localization => localizationPreverbs
+  | .direction => directionPreverbs
+
+/-- As a rule a verb has at most two preverbs, one of the first group followed by one of the
+second. -/
+def preverbTemplate : AffixTemplate PreverbGroup where
+  prefixSlots := [.localization, .direction]
+
+/-- The template licenses a string of preverbs exactly when it has at most one of each group, the
+first group's before the second's. -/
+theorem licensed_preverbTemplate_iff {E : PreverbGroup → Type*} {w : List (Σ σ, E σ)} :
+    preverbTemplate.Licensed w ↔ (w.map Sigma.fst).Sublist [.localization, .direction] :=
+  AffixTemplate.mem_language_iff_sublist rfl
+
+/-- A string of preverbs the template licenses has at most two. -/
+theorem length_le_two_of_licensed {E : PreverbGroup → Type*} {w : List (Σ σ, E σ)}
+    (h : preverbTemplate.Licensed w) : w.length ≤ 2 := by
+  simpa using (licensed_preverbTemplate_iff.1 h).length_le
 
 /-- *če-*, *če-b-* and *če-r-* are *super* with the lative, essive and elative markers. -/
 theorem Localization.preverb?_super :
@@ -210,8 +238,8 @@ structure ComplexVerb where
   stem : Gender.Marker → List Morph
   /-- The word class of the stem, `none` for a stem restricted to the complex verb. -/
   category : Option StemClass
-  /-- The preverbs between the stem and the light verb. -/
-  preverbs : Gender.Marker → List Morph := fun _ ↦ []
+  /-- The preverbs between the stem and the light verb, each with its group. -/
+  preverbs : List (Σ σ : PreverbGroup, σ.preverbs) := []
   /-- The light verb. -/
   lightVerb : Gender.Marker → List Morph
   /-- The meaning of the complex verb. -/
@@ -219,7 +247,7 @@ structure ComplexVerb where
 
 /-- The morphs of a complex verb whose agreement controller takes the marker `g`. -/
 def ComplexVerb.morphs (c : ComplexVerb) (g : Gender.Marker) : List Morph :=
-  c.stem g ++ c.preverbs g ++ c.lightVerb g
+  c.stem g ++ c.preverbs.flatMap (·.2.1 g) ++ c.lightVerb g
 
 /-- *taman-b-arq'-* 'finish' (transitive), from *taman* 'end'. -/
 def finish : ComplexVerb :=
@@ -253,8 +281,9 @@ def spin : ComplexVerb :=
 /-- *t'aš-ka-b-icː-* 'stop', from a stem found nowhere else, with the preverb *ka-* 'downward'
 between it and the light verb. -/
 def stop : ComplexVerb :=
-  { stem := fun _ ↦ [.root "t'aš"], category := none, preverbs := Direction.down.preverb,
-    lightVerb := standUp, gloss := "stop" }
+  { stem := fun _ ↦ [.root "t'aš"], category := none,
+    preverbs := [⟨.direction, Direction.down.preverb, by decide⟩], lightVerb := standUp,
+    gloss := "stop" }
 
 /-- In *w-isːe-w-ig-* 'start crying' the stem and the light verb each take the marker of the
 agreement controller. -/

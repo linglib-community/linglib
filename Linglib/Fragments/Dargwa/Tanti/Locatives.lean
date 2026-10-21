@@ -103,8 +103,8 @@ def Localization.region : Localization → Spatial.Localization
 /-- The localizations the translative combines with. -/
 def Localization.TakesTranslative (l : Localization) : Prop := l = .sub ∨ l = .ante ∨ l = .post
 
-instance : DecidablePred Localization.TakesTranslative := fun l ↦ by
-  unfold Localization.TakesTranslative; infer_instance
+instance : DecidablePred Localization.TakesTranslative := fun _ ↦
+  inferInstanceAs (Decidable (_ ∨ _))
 
 /-! ### Orientation -/
 
@@ -189,7 +189,7 @@ def IsSpatial : Prop :=
     (f.orientation = .translative → f.localization.TakesTranslative) ∧
     (f.localization = .post → f.orientation = .translative)
 
-instance : DecidablePred IsSpatial := fun f ↦ by unfold IsSpatial; infer_instance
+instance : DecidablePred IsSpatial := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- *kːumi-li-ja-r-sele* 'from the bridge hither' is the super-elative with the direction
 *hither*, a spatial form whose suffixes the slots derive. -/
