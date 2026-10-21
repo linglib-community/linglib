@@ -20,36 +20,44 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 ## Main definitions
 
 * `vocabulary`: the Vocabulary Items of the heads of (44), with (57a).
-* `candidates`, `tableau`: GEN, and the ranking of (64) and (80) over Positional Minimality (26a),
-  PRIORITY (60a), Match(ω, X⁰) (75a) and Match(φ, XP) (23b).
+* `Constituency`, `candidates`, `tableau`: the syntax of the head and the next word, GEN over the
+  allomorphs and the phrasings, and the ranking of (26c), (63), (64) and (80) over MAX-XP (23a),
+  SUBCAT (29b), Positional Minimality (26a), PRIORITY (60a), Match(ω, X⁰) (75a) and
+  Match(φ, XP) (23b).
 
 ## Main results
 
+* `optimal_joined_iff`: whether the head ends its φ follows from the syntax.
 * `optimal_exponent`: the calculus of top-down suppletion (88).
+* `suppletion_not_optimal_without_maxXP`: MAX-XP, which the tableaux of §3–§4 omit, is what keeps
+  a stranded head out of the next word's φ.
 * `rows_optimal`: the grammar inserts the attested allomorph in every example.
 * `optimal_item_eq_of_two_le`: only a monosyllabic unmarked allomorph suppletes.
 * `winner?_eq_some_item_of_mem_optimal`: PRIORITY undominated selects the Subset Principle's
   winner.
-* `forms_not_function_of_final`, `forms_not_function_of_footed`: neither the φ-edge nor it and
-  the footing of the next syllable determine the attested allomorph, so no rule set reading only
-  these inserts it (`not_realizes_of_final`, `not_realizes_of_footed`), nor does the Subset
-  Principle over the heads' neighborhoods (`not_subsetPrinciple_eq_forms`).
+* `forms_not_function_of_constituency`, `forms_not_function_of_footed`: neither the syntax nor it
+  and the footing of the next syllable determine the attested allomorph, so no rule set reading
+  only these inserts it (`not_realizes_of_constituency`, `not_realizes_of_footed`), nor does the
+  Subset Principle over the heads' neighborhoods (`not_subsetPrinciple_eq_forms`).
 
 ## Implementation notes
 
-* The input stipulates what the paper derives from the syntax: whether the head ends its φ, and
-  the phrases Match(φ, XP) reads, each word heading its own and the maximal φ answering to the
-  clause. The maximal φ is the paper's domain stipulation on Syllable Lifting (§4.3), stated in
-  GEN; an example records it where the paper brackets it or the clause has at most three words
-  (85).
+* The input is the syntax of the head and the next word: the phrases over the two words, each
+  anchored at its head's stressed syllable, the extended projection of a noun or predicate at the
+  noun or predicate, and whether the next word is a second-position element. MAX-XP is
+  `Prosody.syntaxProsodyMax`, the existential correspondence of [ito-mester-2019] as their tableaux
+  count it, which Brodkin adopts for (23a).
+* The maximal φ is the paper's domain stipulation on Syllable Lifting (§4.3), stated in GEN; an
+  example records it where the paper brackets it or the clause has at most three words (85). The
+  maximal φ over both words answers to the clause in Match(φ, XP).
 * A parse is built from the syllable count of the inserted form, its vowels in
   `Data.Forms.Brodkin2026`, whose 'who' forms are the surface forms of (42); what follows the head
   is a word whose first syllable is footed or unfooted under penultimate stress (14), (15).
 
 ## TODO
 
-* Derive the φ-phrasing from a syntactic input under MAX-XP, HEADEDNESS and SUBCAT (§2.3–§2.4,
-  (63)), and state the c-command argument of (92) over it.
+* The c-command argument of (92), over a phrase-structure tree of the clause rather than the
+  phrases of two words.
 * The segmental repairs of §2, Vʔ-epenthesis and blocked coalescence and gliding under DEP and
   ONSET, their suspension by Syllable Lifting ((71)–(73)), and the irreducible parallelism of
   (72b); the blocking of *a* 'maybe' (43b), which needs a null parse; prefixes in the parse, for
@@ -63,6 +71,7 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 * [bonet-lloret-mascaro-2007]
 * [halle-marantz-1993]
 * [selkirk-2011]
+* [ito-mester-2019]
 -/
 
 @[expose] public section
@@ -133,15 +142,44 @@ theorem vocabulary_pairwise : vocabulary.Pairwise fun i j ↦ j.specificity ≤ 
 
 /-! ### Inputs and candidates -/
 
+/-- The syntax of the head and the word after it: the phrases over the two words, in word units,
+each with the word heading it, and whether the second word is a second-position element, which
+subcategorizes for the minimal φ of the element before it (29). -/
+structure Constituency where
+  /-- The phrases over the two words, each as the words it spans and the word heading it. -/
+  phrases : List ((ℕ × ℕ) × ℕ)
+  /-- The second word is a second-position element. -/
+  subcat : Bool
+  deriving DecidableEq
+
+namespace Constituency
+
+/-- The head ends its phrase and the next word heads a sister phrase: a stranded head, or a
+wh-phrase before the predicate. -/
+def sisters : Constituency := ⟨[((0, 1), 0), ((1, 2), 1)], false⟩
+
+/-- The next word heads a phrase inside the head's own, the deictic *e* or *o* after a stranded
+demonstrative or negator ((33b), (36b)). -/
+def adjunct : Constituency := ⟨[((0, 2), 0), ((1, 2), 1)], false⟩
+
+/-- The next word heads the head's phrase, a noun or predicate whose extended projection the head
+belongs to ((33a), (36a)). -/
+def complement : Constituency := ⟨[((0, 2), 1), ((1, 2), 1)], false⟩
+
+/-- The next word is a second-position element hosted by the head's phrase ((40a)–(42a)). -/
+def host : Constituency := ⟨[((0, 1), 0)], true⟩
+
+end Constituency
+
 /-- The input at a head. -/
 structure Input where
   /-- The head and its morphosyntactic neighbors. -/
   neighborhood : Neighborhood (Finset Feature)
-  /-- The head ends its φ. -/
-  final : Bool
+  /-- The syntax of the head and the next word. -/
+  constituency : Constituency
   /-- The first syllable after the head is footed. -/
   footed : Bool
-  /-- The next φ shares the head's maximal φ. -/
+  /-- The next word shares the head's maximal φ. -/
   sameMax : Bool
   deriving DecidableEq
 
@@ -157,9 +195,17 @@ def IsTrochee (t : Tree) : Prop := IsFoot t ∧ Foot.childHeadFlags t = [true, f
 
 instance : DecidablePred IsTrochee := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
+/-- A minimal φ dominates no φ. -/
+def IsMinimalPhi (t : Tree) : Prop := t.value.level = .ph ∧ ∀ c ∈ t.children, c.value.level ≠ .ph
+
+instance : DecidablePred IsMinimalPhi := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
 section Penultimate
 
 variable (n : ℕ)
+
+@[simp] theorem level_value_penultimate (k : ℕ) : (penultimate k).value.level = .om := by
+  rcases k with _ | _ | n <;> rfl
 
 @[simp] theorem numLeaves_penultimate : (penultimate (n + 2)).numLeaves = n + 2 := by
   simp [penultimate]
@@ -168,12 +214,26 @@ theorem spans_penultimate_ph (k : ℕ) : (penultimate k).spans (·.value.level =
   rcases k with _ | _ | n <;>
     simp [penultimate, RoseTree.spansList_append, RoseTree.spansList_replicate]
 
+theorem spans_penultimate_isMinimalPhi (k : ℕ) : (penultimate k).spans IsMinimalPhi = [] := by
+  rcases k with _ | _ | n <;>
+    simp [penultimate, IsMinimalPhi, RoseTree.spansList_append, RoseTree.spansList_replicate]
+
 theorem spans_penultimate_isTrochee : (penultimate (n + 2)).spans IsTrochee = [(n, n + 2)] := by
   simp [penultimate, RoseTree.spansList_append, RoseTree.spansList_replicate, IsTrochee,
     IsConstituent, Foot.childHeadFlags, RoseTree.licensed_node_iff, Constituent.Licenses,
     Constituent.isHead]
 
 end Penultimate
+
+/-- How a candidate phrases the head and the next word. -/
+inductive Phrasing
+  /-- Both in one φ. -/
+  | joined
+  /-- Each in a φ of its own. -/
+  | separate
+  /-- Each in a φ of its own, with the first syllable after the head lifted into the head's foot. -/
+  | lifted
+  deriving DecidableEq, Repr, Fintype
 
 namespace Input
 
@@ -184,14 +244,27 @@ syllable after the head is footed and a trisyllable when it is not, since only t
 syllable bears on the constraints. -/
 def next : ℕ := if x.footed then 2 else 3
 
-/-- The parse of the input by a head of `k` syllables, with Syllable Lifting or without. -/
-def parse (k : ℕ) (lift : Bool) : Tree :=
-  if x.final then
-    let h := if lift then penultimate (k + 1) else penultimate k
-    let n := if lift then penultimate (x.next - 1) else penultimate x.next
+/-- The parse of the input by a head of `k` syllables under a phrasing, the two φs grouped into one
+maximal φ where the next word shares the head's. -/
+def parse (k : ℕ) : Phrasing → Tree
+  | .joined => .node .iota [Tree.ph [penultimate k, penultimate x.next]]
+  | .separate => pair (penultimate k) (penultimate x.next)
+  | .lifted => pair (penultimate (k + 1)) (penultimate (x.next - 1))
+where
+  /-- Two φs, under one maximal φ where the next word shares the head's. -/
+  pair (h n : Tree) : Tree :=
     if x.sameMax then .node .iota [Tree.ph [Tree.ph [h], Tree.ph [n]]]
     else .node .iota [Tree.ph [h], Tree.ph [n]]
-  else .node .iota [Tree.ph [penultimate k, penultimate x.next]]
+
+/-- The cut before word `w`, in syllables, for a head of `k` syllables. -/
+def cut (k w : ℕ) : ℕ := ([k, x.next].take w).sum
+
+/-- The stressed syllable of word `w`, its penult (14). -/
+def stress (k w : ℕ) : ℕ := x.cut k w + ([k, x.next].getD w 0 - 2)
+
+/-- The phrases in syllables, each with the stressed syllable of the word heading it. -/
+def phrases (k : ℕ) : List ((ℕ × ℕ) × ℕ) :=
+  x.constituency.phrases.map fun p ↦ ((x.cut k p.1.1, x.cut k p.1.2), x.stress k p.2)
 
 /-- The spans of the morphosyntactic words, the head's `k` syllables and then the next word's. -/
 def words (k : ℕ) : List (ℕ × ℕ) := [(0, k), (k, k + x.next)]
@@ -202,8 +275,8 @@ end Input
 structure Candidate where
   /-- The Vocabulary Item the candidate inserts at the head. -/
   item : Item
-  /-- The candidate lifts the first syllable after the head into the head's foot. -/
-  lift : Bool
+  /-- How the candidate phrases the head and the next word. -/
+  phrasing : Phrasing
   deriving DecidableEq
 
 section Tableau
@@ -211,13 +284,26 @@ section Tableau
 variable (v : RuleSet Item) (x : Input)
 
 /-- The parse a candidate gives the input. -/
-def Candidate.tree (c : Candidate) : Tree := x.parse (syllables c.item.exponent) c.lift
+def Candidate.tree (c : Candidate) : Tree := x.parse (syllables c.item.exponent) c.phrasing
 
-/-- GEN offers each item of `v` applicable to the head, with Syllable Lifting where the head ends
-its φ and the next φ lies in its maximal φ, the domain §4.3 gives Syllable Lifting. -/
+/-- GEN offers each item of `v` applicable to the head in each phrasing, Syllable Lifting only where
+the next word shares the head's maximal φ, the domain §4.3 gives it. -/
 def candidates : Finset Candidate :=
   ((v.applicable x.neighborhood).flatMap fun i ↦
-    (if x.final && x.sameMax then [false, true] else [false]).map (⟨i, ·⟩)).toFinset
+    ((if x.sameMax then [.joined, .separate, .lifted] else [.joined, .separate]).map
+      (⟨i, ·⟩))).toFinset
+
+/-- MAX-XP (23a), evaluated as [ito-mester-2019] evaluate it: one violation for each phrase with no
+φ of its own, a φ containing the phrase's head and no head from outside the phrase. -/
+def maxXP : Constraint Candidate := fun c ↦
+  syntaxProsodyMax (x.phrases (syllables c.item.exponent)) .ph (c.tree x)
+
+/-- SUBCAT (29b): a violation when a second-position element lies in no minimal φ together with the
+element before it. -/
+def subcat : Constraint Candidate :=
+  (Constraint.align fun (w p : ℕ × ℕ) ↦ p.1 < w.1 ∧ w.2 ≤ p.2).comap fun c ↦
+    let k := syllables c.item.exponent
+    (if x.constituency.subcat then [(k, k + x.next)] else [], (c.tree x).spans IsMinimalPhi)
 
 /-- Positional Minimality (26a), Align-R(φ, (σ́σ)): one violation for each φ whose right edge no
 disyllabic trochee shares. -/
@@ -232,18 +318,18 @@ def priority : Constraint Candidate := fun c ↦ (v.applicable x.neighborhood).i
 def matchOmega : Constraint Candidate := fun c ↦
   prosodySyntaxMatch .om (x.words (syllables c.item.exponent)) (c.tree x)
 
-/-- Match(φ, XP) (23b): one violation for each φ that is not the span of a phrase, each word
-heading its own and the maximal φ, where the two words share it, answering to the clause. -/
+/-- Match(φ, XP) (23b): one violation for each φ that is not the span of a phrase, the maximal φ
+over both words answering to the clause. -/
 def matchPhi : Constraint Candidate := fun c ↦
   let k := syllables c.item.exponent
-  prosodySyntaxMatch .ph ((if x.final && x.sameMax then [(0, k + x.next)] else []) ++ x.words k)
-    (c.tree x)
+  prosodySyntaxMatch .ph
+    ((x.phrases k).map (·.1) ++ if x.sameMax then [(0, k + x.next)] else []) (c.tree x)
 
-/-- The tableau of an input: Positional Minimality over PRIORITY over the Match constraints, as
-in (64) and (80). -/
-def tableau : Tableau Candidate 4 :=
+/-- The tableau of an input: MAX-XP and SUBCAT over Positional Minimality over PRIORITY over the
+Match constraints, as in (26c), (63), (64) and (80). -/
+def tableau : Tableau Candidate 6 :=
   Tableau.ofList (candidates v x)
-    [positionalMinimality x, priority v x, matchOmega x, matchPhi x]
+    [maxXP x, subcat x, positionalMinimality x, priority v x, matchOmega x, matchPhi x]
 
 end Tableau
 
@@ -261,12 +347,16 @@ def headTable : List (String × Head) :=
   [("this_in_hand", .thisInHand), ("this", .this), ("that", .that), ("neg", .neg), ("what", .what),
     ("which", .which), ("who", .who)]
 
+/-- The configurations by the names the examples give them. -/
+def constituencyTable : List (String × Constituency) :=
+  [("sisters", .sisters), ("adjunct", .adjunct), ("complement", .complement), ("host", .host)]
+
 /-- The row of an example. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
   let h ← ex.parse? "head" headTable
   let long ← ex.parse? "allomorph" [("short", false), ("long", true)]
-  let final ← ex.parse? "position" [("medial", false), ("final", true)]
-  pure ⟨⟨h.neighborhood (ex.feature? "affix" = some "verbalizer"), final,
+  let s ← ex.parse? "syntax" constituencyTable
+  pure ⟨⟨h.neighborhood (ex.feature? "affix" = some "verbalizer"), s,
     ex.feature? "next" ≠ some "unfooted", ex.feature? "maxPhi" = some "same"⟩,
     if long then h.long else h.short⟩
 
@@ -283,21 +373,61 @@ theorem rows_optimal :
 
 /-! ### Suppletion and its suspension -/
 
-/-- **The calculus of top-down suppletion** (88): a head takes its marked allomorph exactly at the
-right edge of its φ where Syllable Lifting is unavailable, the next φ beginning with a footed
-syllable or lying in another maximal φ. -/
-theorem optimal_exponent (h : Head) (final footed sameMax : Bool) :
-    (tableau vocabulary ⟨h.neighborhood false, final, footed, sameMax⟩).optimal.image
-      (·.item.exponent) = {if final && (footed || !sameMax) then h.long else h.short} := by
-  decide +revert
+/-- **φ-finality follows from the syntax**: the optimal parses phrase the head together with the
+next word exactly where the next word heads the head's phrase or is a second-position element it
+hosts, and otherwise end the head's φ at the head, as MAX-XP and SUBCAT require ((24)–(26),
+(29)). -/
+theorem optimal_joined_iff (h : Head) (footed sameMax : Bool) :
+    ∀ s ∈ [Constituency.sisters, .adjunct, .complement, .host],
+      ∀ c ∈ (tableau vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).optimal,
+        c.phrasing = .joined ↔ (s = .complement ∨ s = .host) := by
+  decide +revert +kernel
+
+/-- **The calculus of top-down suppletion** (88): a head takes its marked allomorph exactly where
+it ends its φ and Syllable Lifting is unavailable, the next φ beginning with a footed syllable or
+lying in another maximal φ. -/
+theorem optimal_exponent (h : Head) (footed sameMax : Bool) :
+    ∀ s ∈ [Constituency.sisters, .adjunct, .complement, .host],
+      (tableau vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).optimal.image
+        (·.item.exponent) = {if (s == .sisters || s == .adjunct) && (footed || !sameMax)
+          then h.long else h.short} := by
+  decide +revert +kernel
+
+/-- **MAX-XP is load-bearing.** Without it, joining a stranded head's φ with the next word's,
+which no tableau of the paper lists, does as well as suppletion on every other constraint and
+better on PRIORITY, so under no ranking of the other constraints in which PRIORITY is active is
+the suppleted head optimal, against (76a), (77a) and (78a). -/
+theorem suppletion_not_optimal_without_maxXP (h : Head) (footed : Bool)
+    {Fs : List (Constraint Candidate)}
+    (hFs : ∀ F ∈ Fs, F ∈ (fun x ↦ [subcat x, positionalMinimality x, priority vocabulary x,
+      matchOmega x, matchPhi x]) ⟨h.neighborhood false, .sisters, footed, true⟩)
+    (hp : priority vocabulary ⟨h.neighborhood false, .sisters, footed, true⟩ ∈ Fs) :
+    ⟨{Feature.head h} ⟷ h.long, .separate⟩ ∉ (Tableau.ofList
+      (candidates vocabulary ⟨h.neighborhood false, .sisters, footed, true⟩) Fs).optimal := by
+  set x : Input := ⟨h.neighborhood false, .sisters, footed, true⟩
+  have hle : ∀ F ∈ (fun x ↦ [subcat x, positionalMinimality x, priority vocabulary x,
+      matchOmega x, matchPhi x]) x,
+      F ⟨{Feature.head h} ⟷ h.short, .joined⟩ ≤ F ⟨{Feature.head h} ⟷ h.long, .separate⟩ := by
+    cases h <;> cases footed <;> decide
+  have hlt : priority vocabulary x ⟨{Feature.head h} ⟷ h.short, .joined⟩ <
+      priority vocabulary x ⟨{Feature.head h} ⟷ h.long, .separate⟩ := by
+    cases h <;> cases footed <;> decide
+  refine Tableau.notMem_optimal_of_lt (c := ⟨{Feature.head h} ⟷ h.short, .joined⟩)
+    (by rw [Tableau.ofList_candidates]; cases h <;> cases footed <;> decide)
+    (Pi.toLex_strictMono ?_)
+  obtain ⟨p, hp⟩ := List.get_of_mem hp
+  refine Pi.lt_def.2 ⟨fun q ↦ hle _ (hFs _ (List.get_mem _ _)), p, ?_⟩
+  show Fs.get p _ < Fs.get p _
+  rw [hp]
+  exact hlt
 
 section Priority
 
 variable {v : RuleSet Item} {x : Input} {c : Candidate} {i : Item}
 
-theorem mem_candidates :
-    c ∈ candidates v x ↔ c.item ∈ v.applicable x.neighborhood ∧ (c.lift → x.final ∧ x.sameMax) := by
-  obtain ⟨i, _ | _⟩ := c <;> obtain ⟨n, _ | _, fo, _ | _⟩ := x <;> simp [candidates]
+theorem mem_candidates : c ∈ candidates v x ↔
+    c.item ∈ v.applicable x.neighborhood ∧ (c.phrasing = .lifted → x.sameMax) := by
+  obtain ⟨i, _ | _ | _⟩ := c <;> obtain ⟨n, s, fo, _ | _⟩ := x <;> simp [candidates]
 
 /-- A candidate satisfies PRIORITY exactly when it inserts the first applicable item. -/
 theorem priority_eq_zero_iff (hi : (v.applicable x.neighborhood).head? = some i) :
@@ -305,32 +435,89 @@ theorem priority_eq_zero_iff (hi : (v.applicable x.neighborhood).head? = some i)
   obtain ⟨l, hl⟩ := List.head?_eq_some_iff.1 hi
   by_cases h : i = c.item <;> simp [priority, hl, h, eq_comm]
 
-/-- An item of at least two syllables, inserted without lifting, satisfies Positional
-Minimality. -/
-theorem positionalMinimality_eq_zero_of_two_le (x : Input) (hk : 2 ≤ syllables i.exponent) :
-    positionalMinimality x ⟨i, false⟩ = 0 := by
-  obtain ⟨n, hn⟩ := Nat.exists_eq_add_of_le' hk
-  obtain ⟨m, hm⟩ : ∃ m, x.next = m + 2 := by unfold Input.next; split; exacts [⟨0, rfl⟩, ⟨1, rfl⟩]
-  simp only [positionalMinimality, Constraint.comap_apply, Candidate.tree, hn, Input.parse, hm,
-    Constraint.align_eq_zero_iff]
-  cases x.final <;> cases x.sameMax <;>
-    simp [spans_penultimate_ph, spans_penultimate_isTrochee, IsTrochee, IsConstituent,
-      Foot.childHeadFlags, RoseTree.licensed_node_iff, Constituent.Licenses] <;> omega
+private theorem eq_zero_sisters {a : ℕ} (n : Neighborhood (Finset Feature)) (fo sm : Bool)
+    (ha : syllables i.exponent = a + 2) :
+    let x : Input := ⟨n, .sisters, fo, sm⟩
+    maxXP x ⟨i, .separate⟩ = 0 ∧ subcat x ⟨i, .separate⟩ = 0 ∧
+      positionalMinimality x ⟨i, .separate⟩ = 0 := by
+  cases fo <;> cases sm <;>
+    simp [maxXP, subcat, positionalMinimality, Candidate.tree, ha, syntaxProsodyMax,
+      Constraint.align, Input.phrases, Input.parse, Input.parse.pair, Input.cut, Input.stress,
+      Input.next, Constituency.sisters, spans_penultimate_ph, spans_penultimate_isTrochee,
+      spans_penultimate_isMinimalPhi, IsTrochee, IsConstituent, Foot.childHeadFlags,
+      RoseTree.licensed_node_iff, Constituent.Licenses, IsMinimalPhi]
 
-/-- **Only monosyllables supplete** (§3.3): where the first item of `v` applicable to a head has
-at least two syllables, every optimal candidate under Positional Minimality over PRIORITY inserts
-it, whatever the head's context and the constraints below. -/
-theorem optimal_item_eq_of_two_le (hi : (v.applicable x.neighborhood).head? = some i)
-    (hk : 2 ≤ syllables i.exponent) {Fs : List (Constraint Candidate)}
-    (hc : c ∈ (Tableau.ofList (candidates v x)
-      (positionalMinimality x :: priority v x :: Fs)).optimal) : c.item = i := by
-  rw [Tableau.optimal_ofList_cons, Tableau.optimal_ofList_cons] at hc
+private theorem eq_zero_adjunct {a : ℕ} (n : Neighborhood (Finset Feature)) (fo sm : Bool)
+    (ha : syllables i.exponent = a + 2) :
+    let x : Input := ⟨n, .adjunct, fo, sm⟩
+    maxXP x ⟨i, .separate⟩ = 0 ∧ subcat x ⟨i, .separate⟩ = 0 ∧
+      positionalMinimality x ⟨i, .separate⟩ = 0 := by
+  cases fo <;> cases sm <;>
+    simp [maxXP, subcat, positionalMinimality, Candidate.tree, ha, syntaxProsodyMax,
+      Constraint.align, Input.phrases, Input.parse, Input.parse.pair, Input.cut, Input.stress,
+      Input.next, Constituency.adjunct, spans_penultimate_ph, spans_penultimate_isTrochee,
+      spans_penultimate_isMinimalPhi, IsTrochee, IsConstituent, Foot.childHeadFlags,
+      RoseTree.licensed_node_iff, Constituent.Licenses, IsMinimalPhi] <;>
+    omega
+
+private theorem eq_zero_complement {a : ℕ} (n : Neighborhood (Finset Feature)) (fo sm : Bool)
+    (ha : syllables i.exponent = a + 2) :
+    let x : Input := ⟨n, .complement, fo, sm⟩
+    maxXP x ⟨i, .joined⟩ = 0 ∧ subcat x ⟨i, .joined⟩ = 0 ∧
+      positionalMinimality x ⟨i, .joined⟩ = 0 := by
+  cases fo <;> cases sm <;>
+    simp [maxXP, subcat, positionalMinimality, Candidate.tree, ha, syntaxProsodyMax,
+      Constraint.align, Input.phrases, Input.parse, Input.parse.pair, Input.cut, Input.stress,
+      Input.next, Constituency.complement, spans_penultimate_ph, spans_penultimate_isTrochee,
+      spans_penultimate_isMinimalPhi, IsTrochee, IsConstituent, Foot.childHeadFlags,
+      RoseTree.licensed_node_iff, Constituent.Licenses, IsMinimalPhi]
+
+private theorem eq_zero_host {a : ℕ} (n : Neighborhood (Finset Feature)) (fo sm : Bool)
+    (ha : syllables i.exponent = a + 2) :
+    let x : Input := ⟨n, .host, fo, sm⟩
+    maxXP x ⟨i, .joined⟩ = 0 ∧ subcat x ⟨i, .joined⟩ = 0 ∧
+      positionalMinimality x ⟨i, .joined⟩ = 0 := by
+  cases fo <;> cases sm <;>
+    simp [maxXP, subcat, positionalMinimality, Candidate.tree, ha, syntaxProsodyMax,
+      Constraint.align, Input.phrases, Input.parse, Input.parse.pair, Input.cut, Input.stress,
+      Input.next, Constituency.host, spans_penultimate_ph, spans_penultimate_isTrochee,
+      spans_penultimate_isMinimalPhi, IsTrochee, IsConstituent, Foot.childHeadFlags,
+      RoseTree.licensed_node_iff, Constituent.Licenses, IsMinimalPhi] <;>
+    omega
+
+/-- In each of the paper's configurations, a head of at least two syllables has a phrasing that
+satisfies MAX-XP, SUBCAT and Positional Minimality: separate φs where the next word heads a phrase
+of its own, one φ where it heads the head's phrase or is a second-position element. -/
+theorem exists_phrasing_eq_zero
+    (hs : x.constituency ∈ [Constituency.sisters, .adjunct, .complement, .host])
+    (hk : 2 ≤ syllables i.exponent) :
+    ∃ p ≠ Phrasing.lifted, maxXP x ⟨i, p⟩ = 0 ∧ subcat x ⟨i, p⟩ = 0 ∧
+      positionalMinimality x ⟨i, p⟩ = 0 := by
+  obtain ⟨a, ha⟩ := Nat.exists_eq_add_of_le' hk
+  obtain ⟨n, s, fo, sm⟩ := x
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hs
+  rcases hs with rfl | rfl | rfl | rfl
+  exacts [⟨.separate, nofun, eq_zero_sisters n fo sm ha⟩,
+    ⟨.separate, nofun, eq_zero_adjunct n fo sm ha⟩, ⟨.joined, nofun, eq_zero_complement n fo sm ha⟩,
+    ⟨.joined, nofun, eq_zero_host n fo sm ha⟩]
+
+/-- **Only monosyllables supplete** (§3.3): in each of the paper's configurations, where the first
+item of `v` applicable to a head has at least two syllables, every optimal candidate inserts it. -/
+theorem optimal_item_eq_of_two_le
+    (hs : x.constituency ∈ [Constituency.sisters, .adjunct, .complement, .host])
+    (hi : (v.applicable x.neighborhood).head? = some i) (hk : 2 ≤ syllables i.exponent)
+    (hc : c ∈ (tableau v x).optimal) : c.item = i := by
+  obtain ⟨p, hp, h₁, h₂, h₃⟩ := exists_phrasing_eq_zero hs hk
+  have hd : (⟨i, p⟩ : Candidate) ∈ candidates v x :=
+    mem_candidates.2 ⟨List.mem_of_mem_head? hi, fun h ↦ absurd h hp⟩
+  have z {s : Finset Candidate} {F : Constraint Candidate} (hs : (⟨i, p⟩ : Candidate) ∈ s)
+      (h0 : F ⟨i, p⟩ = 0) : (⟨i, p⟩ : Candidate) ∈ s.argmin F :=
+    Finset.mem_argmin.2 ⟨hs, fun _ _ ↦ h0.trans_le (Nat.zero_le _)⟩
+  rw [tableau, Tableau.optimal_ofList_cons, Tableau.optimal_ofList_cons,
+    Tableau.optimal_ofList_cons, Tableau.optimal_ofList_cons] at hc
   obtain ⟨-, hmin⟩ := Finset.mem_argmin.1 (Tableau.optimal_subset hc)
-  have hd : (⟨i, false⟩ : Candidate) ∈ (candidates v x).argmin (positionalMinimality x) :=
-    Finset.mem_argmin.2 ⟨(mem_candidates (c := ⟨i, false⟩)).2 ⟨List.mem_of_mem_head? hi, by simp⟩,
-      fun _ _ ↦ (positionalMinimality_eq_zero_of_two_le x hk).trans_le (Nat.zero_le _)⟩
-  exact (priority_eq_zero_iff hi).1
-    (Nat.le_zero.1 ((hmin _ hd).trans_eq ((priority_eq_zero_iff hi).2 rfl)))
+  exact (priority_eq_zero_iff hi).1 (Nat.le_zero.1
+    ((hmin _ (z (z (z hd h₁) h₂) h₃)).trans_eq ((priority_eq_zero_iff hi).2 rfl)))
 
 /-- **PRIORITY undominated reduces to selection.** §5, after [bonet-lloret-mascaro-2007], derives
 suppletion that is not output-optimizing from PRIORITY ranked over the output constraints. Where
@@ -346,8 +533,8 @@ theorem winner?_eq_some_item_of_mem_optimal
   rw [winner?_eq_head?_applicable hv]
   obtain ⟨i, hi⟩ := Option.isSome_iff_exists.1
     (List.isSome_head?.2 (List.ne_nil_of_mem (mem_candidates.1 hcs).1))
-  have h0 := hmin _ ((mem_candidates (c := ⟨i, false⟩)).2 ⟨List.mem_of_mem_head? hi, by simp⟩)
-  rw [(priority_eq_zero_iff (c := ⟨i, false⟩) hi).2 rfl, Nat.le_zero,
+  have h0 := hmin _ ((mem_candidates (c := ⟨i, .joined⟩)).2 ⟨List.mem_of_mem_head? hi, by simp⟩)
+  rw [(priority_eq_zero_iff (c := ⟨i, .joined⟩) hi).2 rfl, Nat.le_zero,
     priority_eq_zero_iff hi] at h0
   rw [hi, h0]
 
@@ -372,23 +559,24 @@ private theorem not_exists_of_rows {A : Input → V}
   obtain ⟨d, hd, e, he, hA, hne⟩ := h
   exact hne ((hf d hd).symm.trans (by rw [hA]; exact hf e he))
 
-/-- **The φ-edge does not determine the allomorph** ((76)–(78)): no function of a head's
-neighborhood and of whether it ends its φ gives the attested allomorphs, a φ-final head taking its
-marked allomorph before a footed syllable and its unmarked one before an unfooted one, as in (76a)
-and (76b). -/
-theorem forms_not_function_of_final :
-    ¬ ∃ f : Neighborhood (Finset Feature) × Bool → Form Forms.Cell,
-      ∀ d ∈ rows, f (d.input.neighborhood, d.input.final) = d.form :=
-  not_exists_of_rows (A := fun x ↦ (x.neighborhood, x.final)) (by decide)
+/-- **The syntax does not determine the allomorph** ((76)–(78)): no function of a head's
+neighborhood and of the syntax of the head and the next word gives the attested allomorphs, a
+stranded head taking its marked allomorph before a footed syllable and its unmarked one before an
+unfooted one, as in (76a) and (76b). -/
+theorem forms_not_function_of_constituency :
+    ¬ ∃ f : Neighborhood (Finset Feature) × Constituency → Form Forms.Cell,
+      ∀ d ∈ rows, f (d.input.neighborhood, d.input.constituency) = d.form :=
+  not_exists_of_rows (A := fun x ↦ (x.neighborhood, x.constituency)) (by decide)
 
-/-- **Nor does the next syllable** ((84), (86)): no function of a head's neighborhood, of whether
-it ends its φ and of whether the next syllable is footed gives the attested allomorphs, a stranded
-demonstrative taking its unmarked allomorph before an unfooted syllable of its maximal φ and its
-marked one before an unfooted syllable of the next, as in (86a) and (86b). -/
+/-- **Nor does the next syllable** ((84), (86)): no function of a head's neighborhood, of the syntax
+of the head and the next word and of whether the next syllable is footed gives the attested
+allomorphs, a stranded demonstrative taking its unmarked allomorph before an unfooted syllable of
+its maximal φ and its marked one before an unfooted syllable of the next, as in (86a) and
+(86b). -/
 theorem forms_not_function_of_footed :
-    ¬ ∃ f : Neighborhood (Finset Feature) × Bool × Bool → Form Forms.Cell,
-      ∀ d ∈ rows, f (d.input.neighborhood, d.input.final, d.input.footed) = d.form :=
-  not_exists_of_rows (A := fun x ↦ (x.neighborhood, x.final, x.footed)) (by decide)
+    ¬ ∃ f : Neighborhood (Finset Feature) × Constituency × Bool → Form Forms.Cell,
+      ∀ d ∈ rows, f (d.input.neighborhood, d.input.constituency, d.input.footed) = d.form :=
+  not_exists_of_rows (A := fun x ↦ (x.neighborhood, x.constituency, x.footed)) (by decide)
 
 variable {R : Type*} [Rule R Input (Form Forms.Cell)] [Preorder R]
   [DecidableRel (Applies : R → Input → Prop)] [DecidableRel (· < · : R → R → Prop)]
@@ -408,28 +596,29 @@ Principle over the heads' neighborhoods, since a head's neighborhood does not de
 allomorph. -/
 theorem not_subsetPrinciple_eq_forms :
     ¬ ∃ v : RuleSet Item, ∀ d ∈ rows, subsetPrinciple v d.input.neighborhood = some d.form :=
-  fun ⟨v, hv⟩ ↦ forms_not_function_of_final
+  fun ⟨v, hv⟩ ↦ forms_not_function_of_constituency
     ⟨fun y ↦ (subsetPrinciple v y.1).getD Head.what.short, fun d hd ↦ by simp [hv d hd]⟩
 
-/-- **No selection by the φ-edge**: no rule set whose rules read of the input only the head's
-neighborhood and whether it ends its φ, as the selectional frame (65) does, inserts the attested
-allomorphs. -/
-theorem not_realizes_of_final
-    (hw : ∀ r ∈ w, ∀ ⦃x y : Input⦄, (x.neighborhood, x.final) = (y.neighborhood, y.final) →
+/-- **No selection by the syntax**: no rule set whose rules read of the input only the head's
+neighborhood and the syntax of the head and the next word, as the selectional frame (65) reads the
+right edge of the head's phrase, inserts the attested allomorphs. -/
+theorem not_realizes_of_constituency
+    (hw : ∀ r ∈ w, ∀ ⦃x y : Input⦄,
+      (x.neighborhood, x.constituency) = (y.neighborhood, y.constituency) →
       (Applies r x ↔ Applies r y)) :
     ¬ ∀ d ∈ rows, w.realizeMinimal d.input = some d.form :=
-  not_realizes_of_not_exists w (A := fun x ↦ (x.neighborhood, x.final))
-    forms_not_function_of_final hw
+  not_realizes_of_not_exists w (A := fun x ↦ (x.neighborhood, x.constituency))
+    forms_not_function_of_constituency hw
 
 /-- **No selection by the next syllable**: no rule set whose rules read of the input only the
-head's neighborhood, whether it ends its φ and whether the next syllable is footed inserts the
-attested allomorphs. -/
+head's neighborhood, the syntax of the head and the next word and whether the next syllable is
+footed inserts the attested allomorphs. -/
 theorem not_realizes_of_footed
     (hw : ∀ r ∈ w, ∀ ⦃x y : Input⦄,
-      (x.neighborhood, x.final, x.footed) = (y.neighborhood, y.final, y.footed) →
+      (x.neighborhood, x.constituency, x.footed) = (y.neighborhood, y.constituency, y.footed) →
       (Applies r x ↔ Applies r y)) :
     ¬ ∀ d ∈ rows, w.realizeMinimal d.input = some d.form :=
-  not_realizes_of_not_exists w (A := fun x ↦ (x.neighborhood, x.final, x.footed))
+  not_realizes_of_not_exists w (A := fun x ↦ (x.neighborhood, x.constituency, x.footed))
     forms_not_function_of_footed hw
 
 end Globality

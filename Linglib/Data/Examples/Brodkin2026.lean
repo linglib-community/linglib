@@ -26,7 +26,7 @@ def ex_33a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "this_in_hand"), ("allomorph", "short"), ("position", "medial")] }
+    paperFeatures := [("head", "this_in_hand"), ("allomorph", "short"), ("syntax", "complement")] }
 
 def ex_33b : Datum :=
   { id := "brodkin2026_33b"
@@ -39,7 +39,7 @@ def ex_33b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "this_in_hand"), ("allomorph", "long"), ("position", "final"), ("next", "footed")] }
+    paperFeatures := [("head", "this_in_hand"), ("allomorph", "long"), ("syntax", "adjunct"), ("next", "footed")] }
 
 def ex_36a : Datum :=
   { id := "brodkin2026_36a"
@@ -52,7 +52,7 @@ def ex_36a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "neg"), ("allomorph", "short"), ("position", "medial")] }
+    paperFeatures := [("head", "neg"), ("allomorph", "short"), ("syntax", "complement")] }
 
 def ex_36b : Datum :=
   { id := "brodkin2026_36b"
@@ -65,7 +65,7 @@ def ex_36b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "neg"), ("allomorph", "long"), ("position", "final"), ("next", "footed")] }
+    paperFeatures := [("head", "neg"), ("allomorph", "long"), ("syntax", "adjunct"), ("next", "footed")] }
 
 def ex_40a : Datum :=
   { id := "brodkin2026_40a"
@@ -78,7 +78,7 @@ def ex_40a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "what"), ("allomorph", "short"), ("position", "medial")] }
+    paperFeatures := [("head", "what"), ("allomorph", "short"), ("syntax", "host")] }
 
 def ex_40b : Datum :=
   { id := "brodkin2026_40b"
@@ -91,7 +91,7 @@ def ex_40b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "what"), ("allomorph", "long"), ("position", "final"), ("next", "footed"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "what"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
 def ex_41a : Datum :=
   { id := "brodkin2026_41a"
@@ -104,7 +104,7 @@ def ex_41a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "which"), ("allomorph", "short"), ("position", "medial")] }
+    paperFeatures := [("head", "which"), ("allomorph", "short"), ("syntax", "host")] }
 
 def ex_41b : Datum :=
   { id := "brodkin2026_41b"
@@ -117,7 +117,7 @@ def ex_41b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "which"), ("allomorph", "long"), ("position", "final"), ("next", "footed"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "which"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
 def ex_42a : Datum :=
   { id := "brodkin2026_42a"
@@ -130,7 +130,7 @@ def ex_42a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "who"), ("allomorph", "short"), ("position", "medial")] }
+    paperFeatures := [("head", "who"), ("allomorph", "short"), ("syntax", "host")] }
 
 def ex_42b : Datum :=
   { id := "brodkin2026_42b"
@@ -143,7 +143,7 @@ def ex_42b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "who"), ("allomorph", "long"), ("position", "final"), ("next", "footed"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "who"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
 def ex_56a : Datum :=
   { id := "brodkin2026_56a"
@@ -156,7 +156,7 @@ def ex_56a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "what"), ("allomorph", "long"), ("position", "final"), ("affix", "verbalizer")] }
+    paperFeatures := [("head", "what"), ("allomorph", "long"), ("syntax", "sisters"), ("affix", "verbalizer")] }
 
 def ex_56b : Datum :=
   { id := "brodkin2026_56b"
@@ -169,7 +169,7 @@ def ex_56b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "what"), ("allomorph", "long"), ("position", "medial"), ("affix", "verbalizer")] }
+    paperFeatures := [("head", "what"), ("allomorph", "long"), ("syntax", "host"), ("affix", "verbalizer")] }
 
 def ex_76a : Datum :=
   { id := "brodkin2026_76a"
@@ -182,7 +182,7 @@ def ex_76a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "what"), ("allomorph", "long"), ("position", "final"), ("next", "footed"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "what"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
 def ex_76b : Datum :=
   { id := "brodkin2026_76b"
@@ -195,7 +195,7 @@ def ex_76b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "what"), ("allomorph", "short"), ("position", "final"), ("next", "unfooted"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "what"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
 def ex_77a : Datum :=
   { id := "brodkin2026_77a"
@@ -208,7 +208,7 @@ def ex_77a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "which"), ("allomorph", "long"), ("position", "final"), ("next", "footed"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "which"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
 def ex_77b : Datum :=
   { id := "brodkin2026_77b"
@@ -221,7 +221,7 @@ def ex_77b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "which"), ("allomorph", "short"), ("position", "final"), ("next", "unfooted"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "which"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
 def ex_78a : Datum :=
   { id := "brodkin2026_78a"
@@ -234,7 +234,7 @@ def ex_78a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "this_in_hand"), ("allomorph", "long"), ("position", "final"), ("next", "footed"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "this_in_hand"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
 
 def ex_78b : Datum :=
   { id := "brodkin2026_78b"
@@ -247,7 +247,7 @@ def ex_78b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "this_in_hand"), ("allomorph", "short"), ("position", "final"), ("next", "unfooted"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "this_in_hand"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
 def ex_83b : Datum :=
   { id := "brodkin2026_83b"
@@ -260,7 +260,7 @@ def ex_83b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "that"), ("allomorph", "short"), ("position", "final"), ("next", "unfooted"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "that"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
 def ex_84 : Datum :=
   { id := "brodkin2026_84"
@@ -273,7 +273,7 @@ def ex_84 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "that"), ("allomorph", "long"), ("position", "final"), ("next", "unfooted"), ("maxPhi", "different")] }
+    paperFeatures := [("head", "that"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "different")] }
 
 def ex_86a : Datum :=
   { id := "brodkin2026_86a"
@@ -286,7 +286,7 @@ def ex_86a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "that"), ("allomorph", "short"), ("position", "final"), ("next", "unfooted"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "that"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
 def ex_86b : Datum :=
   { id := "brodkin2026_86b"
@@ -299,7 +299,7 @@ def ex_86b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "that"), ("allomorph", "long"), ("position", "final"), ("next", "unfooted"), ("maxPhi", "different")] }
+    paperFeatures := [("head", "that"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "different")] }
 
 def ex_92 : Datum :=
   { id := "brodkin2026_92"
@@ -312,7 +312,7 @@ def ex_92 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "that"), ("allomorph", "short"), ("position", "final"), ("next", "unfooted"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "that"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
 
 def all : List Datum := [ex_33a, ex_33b, ex_36a, ex_36b, ex_40a, ex_40b, ex_41a, ex_41b, ex_42a, ex_42b, ex_56a, ex_56b, ex_76a, ex_76b, ex_77a, ex_77b, ex_78a, ex_78b, ex_83b, ex_84, ex_86a, ex_86b, ex_92]
 

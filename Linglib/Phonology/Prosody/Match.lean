@@ -18,12 +18,15 @@ spans of its constituents of a category, counted in the syllables of the output,
 candidate as the spans of its nodes at a level. Match(α, π) requires each α-span to be the span
 of a π-node and Match(π, α) each π-span to be an α-span: two-sided alignment, both edges of a
 constituent coinciding with those of one constituent of the other category. One-sided alignment is
-`Constraint.alignLeft` and `Constraint.alignRight` on the same families.
+`Constraint.alignLeft` and `Constraint.alignRight` on the same families. MAX(α, π) asks only that
+each α-constituent have a corresponding π-node, one containing its head and no head from outside
+it.
 
 ## Main definitions
 
 * `Prosody.levelSpans`: the spans of the nodes of a prosodic tree at a level.
 * `Prosody.syntaxProsodyMatch`, `Prosody.prosodySyntaxMatch`: Match(α, π) and Match(π, α).
+* `Prosody.syntaxProsodyMax`: MAX(α, π), existential correspondence.
 
 ## Implementation notes
 
@@ -58,9 +61,26 @@ constituent of the syntactic family `α`. -/
 def prosodySyntaxMatch (π : Level) (α : List (ℕ × ℕ)) : Constraint Tree :=
   (Constraint.align Eq).comap fun t ↦ (levelSpans π t, α)
 
+/-- **MAX(α, π)** ([ito-mester-2019]): one violation for each constituent of the family `α`, given
+by its span and the position of its head, that corresponds to no `π`-node, a `π`-node
+corresponding to a constituent when it contains the constituent's head and no head of the family
+lying outside the constituent. A `π`-node over two sister constituents so corresponds to neither,
+and one over a constituent and its subconstituents to the constituent, as their tableaux count. -/
+def syntaxProsodyMax (α : List ((ℕ × ℕ) × ℕ)) (π : Level) : Constraint Tree :=
+  (Constraint.align fun (a : (ℕ × ℕ) × ℕ) (p : ℕ × ℕ) ↦ p.1 ≤ a.2 ∧ a.2 < p.2 ∧
+      ∀ b ∈ α, p.1 ≤ b.2 → b.2 < p.2 → a.1.1 ≤ b.2 ∧ b.2 < a.1.2).comap
+    fun t ↦ (α, levelSpans π t)
+
 -- Two words phrased together: the φ over both matches the phrase spanning them, and neither word
 -- is matched by a φ of its own.
 example : prosodySyntaxMatch .ph [(0, 2)] (.ph [.om [.σ], .om [.σ]]) = 0 := by decide
 example : syntaxProsodyMatch [(0, 1), (1, 2)] .ph (.ph [.om [.σ], .om [.σ]]) = 2 := by decide
+-- Two sister phrases share no corresponding φ when phrased together, and each has its own when
+-- phrased apart under a φ over both.
+example : syntaxProsodyMax [((0, 1), 0), ((1, 2), 1)] .ph (.ph [.om [.σ], .om [.σ]]) = 2 := by
+  decide
+example : syntaxProsodyMax [((0, 1), 0), ((1, 2), 1)] .ph (.ph [.ph [.om [.σ]], .ph [.om [.σ]]])
+    = 0 := by
+  decide
 
 end Prosody
