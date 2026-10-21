@@ -27,7 +27,7 @@ namespace Thai.Determiners
 def inventory : Determiner.Inventory :=
   [ .demonstrative
       { form := "nan", deixis := Person.first.participantSetsᶜ,
-        definiteUses := {.anaphoric, .donkey} },
+        uses := {.anaphoric, .donkey} },
     .possessive { form := "khong" } ]
 
 /-- Thai derives the `.markedAnaphoric` Moroney cell. -/

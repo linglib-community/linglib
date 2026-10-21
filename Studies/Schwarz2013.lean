@@ -20,17 +20,16 @@ definites as bare nominals (Akan *nó*, Mauritian Creole *la*), languages with t
 (Lakhota *kiŋ* and *k'uŋ*, Hausa *-n* and *ɗîn*), and Haitian Creole *la*, a single article
 covering both use families that fits neither pattern. Each language's cell is derived from its
 fragment's `Determiners.inventory` through the substrate's `markingStrategy`, and the bridging
-split, part-whole bridging with the weak article and producer bridging with the strong one, is the
-substrate's `Bridging.strength`. The Lakhota classification is tentative in the survey itself,
-whose footnote 16 concedes [ingham-2003]'s anaphoric *kiŋ*; the project fragment encodes that
-anaphoric use, under which the derived cell flips from bipartite to generally marked
-(`anaphoric_kin_flips_cell`).
+split, part-whole bridging with the weak article and producer bridging with the strong one, is
+`Description.Bridging.strength`. The Lakhota classification is tentative in the survey itself, whose
+footnote 16 concedes Ingham's anaphoric *kiŋ*; the project fragment encodes that anaphoric use,
+under which the derived cell flips from bipartite to generally marked (`anaphoric_kin_flips_cell`).
 
 ## Implementation notes
 
-The survey's remarks on covarying uses, that both German and Fering articles and the creole *la*
-allow them, are recorded in the fragments' `.donkey` uses rather than proved here, since the
-survey reports no data on the remaining languages.
+The survey's remark that both German and Fering articles and the creole *la* allow covarying uses
+(§5.2) is not formalized: the fragments' `.donkey` uses record only the strong articles' covarying
+uses, and the survey reports no data on the remaining languages.
 
 ## References
 
@@ -56,12 +55,11 @@ theorem german_fering_bipartite :
     Fering.Determiners.inventory.markingStrategy = .bipartite :=
   ⟨German.Determiners.marking, Fering.Determiners.marking⟩
 
-/-- The bridging split (§3.2): part-whole bridging, the fridge and its crisper, takes the
-weak article, and producer bridging, the play and its author, the strong one, in German (16)
-and Fering (17) alike. -/
+/-- In German (16) and Fering (17) alike, part-whole bridging, the fridge and its crisper, takes the
+weak article, and producer bridging, the play and its author, the strong one (§3.2). -/
 theorem bridging_split :
-    Bridging.strength .partWhole = .uniqueness ∧
-    Bridging.strength .relational = .familiarity :=
+    Description.Bridging.strength .partWhole = .uniqueness ∧
+    Description.Bridging.strength .relational = .familiarity :=
   ⟨rfl, rfl⟩
 
 /-! ### Languages with exclusively anaphoric articles (§4.1) -/
@@ -73,8 +71,8 @@ theorem exclusively_anaphoric :
     MauritianCreole.Determiners.inventory.markingStrategy = .markedAnaphoric :=
   ⟨Akan.Determiners.marking, MauritianCreole.Determiners.marking⟩
 
-/-- The §4.1 pattern through the cell's characterization: neither language marks uniqueness
-overtly and both mark familiarity. -/
+/-- Through the cell's characterization, the §4.1 pattern is that neither language marks
+uniqueness overtly and both mark familiarity. -/
 theorem weak_definites_bare :
     (¬ Akan.Determiners.inventory.Marks .uniqueness ∧
       Akan.Determiners.inventory.Marks .familiarity) ∧
@@ -87,15 +85,15 @@ theorem weak_definites_bare :
 
 /-! ### Languages with two articles (§4.2) -/
 
-/-- Hausa splits its two overt articles: suffixal *-n* for uniquely identifiable referents,
-inferable first mentions included, and *ɗîn* for discourse-old ones (§4.2.2), the bipartite
-cell of German and Fering. -/
+/-- Hausa splits its two overt articles (§4.2.2), suffixal *-n* for uniquely identifiable
+referents, inferable first mentions included, and *ɗîn* for discourse-old ones, the bipartite cell
+of German and Fering. -/
 theorem hausa_bipartite :
     Hausa.Determiners.inventory.markingStrategy = .bipartite :=
   Hausa.Determiners.marking
 
-/-- The tentative construal of Lakhota in §4.2.1: *kiŋ* weak only, for globally and
-situationally unique referents ((30), (31)), and *k'uŋ* the anaphoric strong article, 'the
+/-- The tentative construal of Lakhota in §4.2.1 takes *kiŋ* as weak only, for globally and
+situationally unique referents ((30), (31)), and *k'uŋ* as the anaphoric strong article, 'the
 above-mentioned'. -/
 def lakhotaWeakStrongConstrual : Determiner.Inventory :=
   [ .article { form := "kiŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
@@ -107,9 +105,9 @@ def lakhotaWeakStrongConstrual : Determiner.Inventory :=
 theorem construal_bipartite :
     lakhotaWeakStrongConstrual.markingStrategy = .bipartite := by decide
 
-/-- The caveat of footnote 16: granting [ingham-2003]'s anaphoric *kiŋ*, as the project
-fragment does, makes *kiŋ* syncretic and flips the derived cell to generally marked, so the
-weak and strong parallel is indeed less extensive. -/
+/-- Granting [ingham-2003]'s anaphoric *kiŋ*, as footnote 16 does and the project fragment does,
+makes *kiŋ* syncretic and flips the derived cell to generally marked, so the weak and strong
+parallel is indeed less extensive. -/
 theorem anaphoric_kin_flips_cell :
     lakhotaWeakStrongConstrual.markingStrategy = .bipartite ∧
     Lakhota.Determiners.inventory.markingStrategy = .generallyMarked ∧

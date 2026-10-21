@@ -31,7 +31,7 @@ two genders of `Dutch.Gender`.
 
 The uses of *de* are the [schwarz-2009] use types. The generic and proper-name uses of the
 definite article, on which [schmuck-2020]'s micro-typology places Dutch between English and
-German, are not `DefiniteUse` cells and so go unrecorded.
+German, are not `Description.Use` cells and so go unrecorded.
 
 ## References
 

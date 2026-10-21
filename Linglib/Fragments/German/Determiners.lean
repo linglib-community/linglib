@@ -39,6 +39,8 @@ familiarity, and Moroney classes a language by how its articles mark the two.
 * `German.Determiners.injective_definite_sg_masc`, `German.Determiners.definite_nom_eq_acc_iff`,
   `German.Determiners.definite_gen_eq_dat_iff`: the case syncretisms of the definite article.
 * `German.Determiners.faithful`: the three-gender carrier is faithful to the definite article.
+* `German.Determiners.contracted`, `German.Determiners.nonContracted`: the definite article
+  contracted with a preposition and its full form.
 * `German.Determiners.inventory`, `German.Determiners.marking`: the inventory and its cell in
   Moroney's typology.
 
@@ -138,15 +140,24 @@ theorem faithful : Gender.Faithful fun g ↦ definite (.sg g) :=
 
 /-! ### The inventory -/
 
-/-- The inventory lists the weak definite article, the form contracted with a preposition as in
-*im*; the strong definite article, the full form as in *in dem*; the indefinite article; the
-demonstrative *dieser*, which no longer contrasts with *jener* and is distance-neutral, so it covers
-every participant set; and the possessive *mein*. -/
+/-- The definite article contracted with a preposition, as in *im* for *in dem*, expones the uses
+on which its referent is unique in the situation. -/
+def contracted : Article :=
+  { form := "im", definiteness := .definite, exponent := .dedicatedMorpheme,
+    uses := {.immediateSituation, .largerSituation} }
+
+/-- The non-contracted definite article, as *dem* in *in dem*, expones the uses on which it refers
+back to an antecedent. -/
+def nonContracted : Article :=
+  { form := definite (.sg .masc) .dat, definiteness := .definite, exponent := .dedicatedMorpheme,
+    uses := {.anaphoric, .donkey} }
+
+/-- The inventory lists the two definite articles, the contracted and the non-contracted form; the
+indefinite article; the demonstrative *dieser*, which no longer contrasts with *jener* and is
+distance-neutral, so it covers every participant set; and the possessive *mein*. -/
 def inventory : Determiner.Inventory :=
-  [ .article { form := "im", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := {.immediateSituation, .largerSituation} },
-    .article { form := definite (.sg .masc) .dat, definiteness := .definite,
-               exponent := .dedicatedMorpheme, uses := {.anaphoric, .donkey} },
+  [ .article contracted,
+    .article nonContracted,
     .article { form := "ein", definiteness := .indefinite, exponent := .dedicatedMorpheme },
     .demonstrative { form := dieser (.sg .masc) .nom, deixis := Finset.univ },
     .possessive { form := "mein" } ]

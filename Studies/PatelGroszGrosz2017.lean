@@ -26,9 +26,9 @@ away from the most prominent antecedent, or colloquial register (`DEMLicensingCo
 
 The German forms are typed as `PersonalPronoun`, article strength being a property of the
 series; deixis is the separate `DemonstrativePronoun` of the pronoun substrate, which *der*
-lacks. The divergence reuses the two-satisfier scenario of the Schwarz study, and Minimize
-DP! is a comparison of shell counts among the structures that achieve the intended
-interpretation; the gender-mismatch corpus counts are described in prose.
+lacks. The divergence is the weak and strong contrast of the Schwarz study, and Minimize DP! is
+a comparison of shell counts among the structures that achieve the intended interpretation; the
+gender-mismatch corpus counts are described in prose.
 
 ## References
 
@@ -55,27 +55,27 @@ inductive DEMLicensingContext where
 
 /-! ### The German inventory -/
 
-/-- The weak series: *er*. -/
+/-- *Er* belongs to the weak series. -/
 def er : PersonalPronoun :=
   { form := "er", person := some .third, number := some .singular, gender := some .masculine }
 
-/-- The weak series: *sie*. -/
+/-- *Sie* belongs to the weak series. -/
 def sie : PersonalPronoun :=
   { form := "sie", person := some .third, number := some .singular, gender := some .feminine }
 
-/-- The weak series: *es*. -/
+/-- *Es* belongs to the weak series. -/
 def es : PersonalPronoun :=
   { form := "es", person := some .third, number := some .singular, gender := some .neuter }
 
-/-- The strong series: *der*, the same core plus the anaphoric index. -/
+/-- *Der* belongs to the strong series, the core of *er* plus the anaphoric index. -/
 def der : PersonalPronoun :=
   { form := "der", person := some .third, number := some .singular, gender := some .masculine }
 
-/-- The strong series: *die*. -/
+/-- *Die* belongs to the strong series. -/
 def die : PersonalPronoun :=
   { form := "die", person := some .third, number := some .singular, gender := some .feminine }
 
-/-- The strong series: *das*. -/
+/-- *Das* belongs to the strong series. -/
 def das : PersonalPronoun :=
   { form := "das", person := some .third, number := some .singular, gender := some .neuter }
 
@@ -87,8 +87,8 @@ structure PronounSystem where
   determiners : Determiner.Inventory
   licensing : List DEMLicensingContext
 
-/-- German: the weak series *er*, *sie*, *es*, the strong series *der*, *die*, *das*, the
-weak and strong articles, and all three licensing effects. -/
+/-- German has the weak series *er*, *sie*, *es*, the strong series *der*, *die*, *das*, the weak
+and strong articles, and all three licensing effects. -/
 def german : PronounSystem where
   weak := [er, sie, es]
   strong := [der, die, das]
@@ -99,28 +99,33 @@ def german : PronounSystem where
 series (§4). -/
 theorem german_weakAndStrong : german.determiners.articleType = .weakAndStrong := by decide
 
-/-- The strong series is anaphoric in a way the weak one is not: over one restrictor with
-two satisfiers, the weak description of *er* fails uniqueness while the strong description
-of *der* reads its referent off the discourse index, the two-satisfier scenario of the
-Schwarz study. -/
-theorem der_er_can_diverge :
-    ⟦Description.ofStrength .uniqueness Schwarz2009.studentRestr 0⟧ Schwarz2009.gAlice true ≠
-      ⟦Description.ofStrength .familiarity Schwarz2009.studentRestr 0⟧ Schwarz2009.gAlice true :=
-  Schwarz2009.two_articles_can_disagree true
+section Divergence
 
-/-- DEM = PER + index: the strong description of *der* is the weak description of *er* exactly
-when every satisfier of the restrictor is the antecedent, so the index is the whole difference
-between the series. -/
-theorem der_eq_er_of_unique {E W : Type} (R : Restrictor E W) (i : ℕ) (g : Assignment E) (s : W)
-    (hUniq : ∀ y, R g s y → y = g i) :
+variable {E W : Type} {R : Restrictor E W} {i : ℕ} {g : Assignment E} {s : W}
+
+/-- The strong series is anaphoric in a way the weak one is not. Where the restrictor has a
+satisfier besides the antecedent, the weak description of *er* fails uniqueness while the strong
+description of *der* reads its referent off the discourse index. -/
+theorem der_er_can_diverge {y : E} (hi : R g s (g i)) (hy : R g s y) (hne : y ≠ g i) :
+    ⟦Description.ofStrength .uniqueness R i⟧ g s ≠
+      ⟦Description.ofStrength .familiarity R i⟧ g s := by
+  obtain ⟨hw, hs⟩ := Schwarz2009.weak_eq_none_strong_eq_some hi hy hne
+  exact fun h ↦ Option.some_ne_none _ ((hs.symm.trans h.symm).trans hw)
+
+/-- The strong description of *der* is the weak description of *er* when every satisfier of the
+restrictor is the antecedent, so the index is the whole difference between the series, DEM = PER
++ index. -/
+theorem der_eq_er_of_unique (hUniq : ∀ y, R g s y → y = g i) :
     ⟦Description.ofStrength .familiarity R i⟧ g s =
       ⟦Description.ofStrength .uniqueness R i⟧ g s :=
-  congrArg iota (funext fun x ↦ propext ⟨And.left, fun h ↦ ⟨h, hUniq x h⟩⟩)
+  Description.denote_anaphoric_eq_unique_of_forall_eq R i g s hUniq
+
+end Divergence
 
 /-! ### Minimize DP! (§5) -/
 
-/-- The two series as structures: the weak series is a single DP, the strong series adds a
-shell hosting the anaphoric index. -/
+/-- As structures, the weak series is a single DP and the strong series adds a shell hosting the
+anaphoric index. -/
 inductive Series where
   | weak
   | strong
@@ -140,8 +145,8 @@ def Series.HasIndex : Series → Prop
 requires one. -/
 def Series.Achieves (needsIndex : Prop) (s : Series) : Prop := needsIndex → s.HasIndex
 
-/-- Minimize DP!: among the series that achieve the interpretation, use the one with the
-fewest DP shells. -/
+/-- Minimize DP! selects, among the series that achieve the interpretation, the one with the fewest
+DP shells. -/
 def Series.Optimal (needsIndex : Prop) (s : Series) : Prop :=
   s.Achieves needsIndex ∧ ∀ s' : Series, s'.Achieves needsIndex → s.shells ≤ s'.shells
 
@@ -153,17 +158,17 @@ theorem optimal_iff (needsIndex : Prop) (s : Series) :
   constructor
   · rintro ⟨hach, hmin⟩
     cases s with
-    | weak => exact ⟨λ hp => (hach hp).elim, λ h => Series.noConfusion h⟩
+    | weak => exact ⟨fun hp ↦ (hach hp).elim, fun h ↦ Series.noConfusion h⟩
     | strong =>
-      refine ⟨λ _ => rfl, λ _ => Classical.byContradiction λ hp => ?_⟩
-      exact absurd (hmin .weak λ h => (hp h).elim) (by decide)
+      refine ⟨fun _ ↦ rfl, fun _ ↦ Classical.byContradiction fun hp ↦ ?_⟩
+      exact absurd (hmin .weak fun h ↦ (hp h).elim) (by decide)
   · intro h
     cases s with
     | weak =>
-      refine ⟨λ hp => Series.noConfusion (h.1 hp), λ s' _ => ?_⟩
+      refine ⟨fun hp ↦ Series.noConfusion (h.1 hp), fun s' _ ↦ ?_⟩
       cases s' <;> decide
     | strong =>
-      refine ⟨λ _ => trivial, λ s' hs' => ?_⟩
+      refine ⟨fun _ ↦ trivial, fun s' hs' ↦ ?_⟩
       cases s' with
       | weak => exact (hs' (h.2 rfl)).elim
       | strong => exact le_rfl

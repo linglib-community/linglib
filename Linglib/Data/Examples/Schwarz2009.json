@@ -1,0 +1,819 @@
+[
+  {
+    "id": "schwarz2009_ex25_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(25)"},
+    "language": "stan1295",
+    "primaryText": "In der New Yorker Bibliothek gibt es ein Buch über Topinambur. Neulich war ich dort und habe im Buch nach einer Antwort auf die Frage gesucht, ob man Topinambur grillen kann.",
+    "discourseSegments": [
+      "In der New Yorker Bibliothek gibt es ein Buch über Topinambur.",
+      "Neulich war ich dort und habe im Buch nach einer Antwort auf die Frage gesucht, ob man Topinambur grillen kann."
+    ],
+    "glossedTokens": [
+      ["In", "In"], ["der", "the"], ["New", "New"], ["Yorker", "York"], ["Bibliothek", "library"],
+      ["gibt", "exists"], ["es", "EXPL"], ["ein", "a"], ["Buch", "book"], ["über", "about"],
+      ["Topinambur", "topinambur"], ["Neulich", "Recently"], ["war", "was"], ["ich", "I"],
+      ["dort", "there"], ["und", "and"], ["habe", "have"], ["im", "in-the.WEAK"], ["Buch", "book"],
+      ["nach", "for"], ["einer", "an"], ["Antwort", "answer"], ["auf", "to"], ["die", "the"],
+      ["Frage", "question"], ["gesucht", "searched"], ["ob", "whether"], ["man", "one"],
+      ["Topinambur", "topinambur"], ["grillen", "grill"], ["kann", "can"]
+    ],
+    "translation": "In the New York public library, there is a book about topinambur. Recently, I was there and searched in the book for an answer to the question of whether one can grill topinambur.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "anaphoric"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "The library holds many books, so the weak article's uniqueness requirement fails (p. 240).",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex25_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(25)"},
+    "language": "stan1295",
+    "primaryText": "In der New Yorker Bibliothek gibt es ein Buch über Topinambur. Neulich war ich dort und habe in dem Buch nach einer Antwort auf die Frage gesucht, ob man Topinambur grillen kann.",
+    "discourseSegments": [
+      "In der New Yorker Bibliothek gibt es ein Buch über Topinambur.",
+      "Neulich war ich dort und habe in dem Buch nach einer Antwort auf die Frage gesucht, ob man Topinambur grillen kann."
+    ],
+    "glossedTokens": [
+      ["In", "In"], ["der", "the"], ["New", "New"], ["Yorker", "York"], ["Bibliothek", "library"],
+      ["gibt", "exists"], ["es", "EXPL"], ["ein", "a"], ["Buch", "book"], ["über", "about"],
+      ["Topinambur", "topinambur"], ["Neulich", "Recently"], ["war", "was"], ["ich", "I"],
+      ["dort", "there"], ["und", "and"], ["habe", "have"], ["in", "in"], ["dem", "the.STRONG"],
+      ["Buch", "book"], ["nach", "for"], ["einer", "an"], ["Antwort", "answer"], ["auf", "to"],
+      ["die", "the"], ["Frage", "question"], ["gesucht", "searched"], ["ob", "whether"],
+      ["man", "one"], ["Topinambur", "topinambur"], ["grillen", "grill"], ["kann", "can"]
+    ],
+    "translation": "In the New York public library, there is a book about topinambur. Recently, I was there and searched in the book for an answer to the question of whether one can grill topinambur.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "anaphoric"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "The library holds many books, so the weak article's uniqueness requirement fails (p. 240).",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex26_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(26)"},
+    "language": "stan1295",
+    "primaryText": "Bei der Gutshausbesichtigung hat mich eines der Zimmer besonders beeindruckt. Angeblich hat Goethe im Jahr 1810 eine Nacht im Zimmer verbracht.",
+    "discourseSegments": [
+      "Bei der Gutshausbesichtigung hat mich eines der Zimmer besonders beeindruckt.",
+      "Angeblich hat Goethe im Jahr 1810 eine Nacht im Zimmer verbracht."
+    ],
+    "glossedTokens": [
+      ["Bei", "During"], ["der", "the"], ["Gutshausbesichtigung", "mansion tour"], ["hat", "has"],
+      ["mich", "me"], ["eines", "one"], ["der", "the.GEN"], ["Zimmer", "rooms"],
+      ["besonders", "especially"], ["beeindruckt", "impressed"], ["Angeblich", "Supposedly"],
+      ["hat", "has"], ["Goethe", "Goethe"], ["im", "in-the.WEAK"], ["Jahr", "year"],
+      ["1810", "1810"], ["eine", "a"], ["Nacht", "night"], ["im", "in-the.WEAK"],
+      ["Zimmer", "room"], ["verbracht", "spent"]
+    ],
+    "translation": "One of the rooms especially impressed me during the mansion tour. Supposedly Goethe spent a night in the room in 1810.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "anaphoric"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "The partitive introduces several rooms, so the weak article's uniqueness requirement fails (pp. 42, 241).",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex26_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(26)"},
+    "language": "stan1295",
+    "primaryText": "Bei der Gutshausbesichtigung hat mich eines der Zimmer besonders beeindruckt. Angeblich hat Goethe im Jahr 1810 eine Nacht in dem Zimmer verbracht.",
+    "discourseSegments": [
+      "Bei der Gutshausbesichtigung hat mich eines der Zimmer besonders beeindruckt.",
+      "Angeblich hat Goethe im Jahr 1810 eine Nacht in dem Zimmer verbracht."
+    ],
+    "glossedTokens": [
+      ["Bei", "During"], ["der", "the"], ["Gutshausbesichtigung", "mansion tour"], ["hat", "has"],
+      ["mich", "me"], ["eines", "one"], ["der", "the.GEN"], ["Zimmer", "rooms"],
+      ["besonders", "especially"], ["beeindruckt", "impressed"], ["Angeblich", "Supposedly"],
+      ["hat", "has"], ["Goethe", "Goethe"], ["im", "in-the.WEAK"], ["Jahr", "year"],
+      ["1810", "1810"], ["eine", "a"], ["Nacht", "night"], ["in", "in"], ["dem", "the.STRONG"],
+      ["Zimmer", "room"], ["verbracht", "spent"]
+    ],
+    "translation": "One of the rooms especially impressed me during the mansion tour. Supposedly Goethe spent a night in the room in 1810.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "anaphoric"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "The partitive introduces several rooms, so the weak article's uniqueness requirement fails (pp. 42, 241).",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex28_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(28)"},
+    "language": "stan1295",
+    "primaryText": "Maria hat einen Ornithologen ins Seminar eingeladen. Ich halte vom Mann nicht sehr viel.",
+    "discourseSegments": [
+      "Maria hat einen Ornithologen ins Seminar eingeladen.",
+      "Ich halte vom Mann nicht sehr viel."
+    ],
+    "glossedTokens": [
+      ["Maria", "Maria"], ["hat", "has"], ["einen", "an"], ["Ornithologen", "ornithologist"],
+      ["ins", "to-the"], ["Seminar", "seminar"], ["eingeladen", "invited"], ["Ich", "I"],
+      ["halte", "hold"], ["vom", "of-the.WEAK"], ["Mann", "man"], ["nicht", "not"],
+      ["sehr", "very"], ["viel", "much"]
+    ],
+    "translation": "Maria has invited an ornithologist to the seminar. I don't think very highly of the man.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "anaphoric"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "There may be many men in the seminar situation (p. 240). The source prints the translation without its closing quotation mark.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex28_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(28)"},
+    "language": "stan1295",
+    "primaryText": "Maria hat einen Ornithologen ins Seminar eingeladen. Ich halte von dem Mann nicht sehr viel.",
+    "discourseSegments": [
+      "Maria hat einen Ornithologen ins Seminar eingeladen.",
+      "Ich halte von dem Mann nicht sehr viel."
+    ],
+    "glossedTokens": [
+      ["Maria", "Maria"], ["hat", "has"], ["einen", "an"], ["Ornithologen", "ornithologist"],
+      ["ins", "to-the"], ["Seminar", "seminar"], ["eingeladen", "invited"], ["Ich", "I"],
+      ["halte", "hold"], ["von", "of"], ["dem", "the.STRONG"], ["Mann", "man"], ["nicht", "not"],
+      ["sehr", "very"], ["viel", "much"]
+    ],
+    "translation": "Maria has invited an ornithologist to the seminar. I don't think very highly of the man.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "anaphoric"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "There may be many men in the seminar situation (p. 240). The source prints the translation without its closing quotation mark.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex29_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(29)"},
+    "language": "stan1295",
+    "primaryText": "Hans hat schon wieder angerufen. Ich will vom Idioten nichts mehr hören.",
+    "discourseSegments": [
+      "Hans hat schon wieder angerufen.",
+      "Ich will vom Idioten nichts mehr hören."
+    ],
+    "glossedTokens": [
+      ["Hans", "Hans"], ["hat", "has"], ["schon", "already"], ["wieder", "again"],
+      ["angerufen", "called"], ["Ich", "I"], ["will", "want"], ["vom", "of-the.WEAK"],
+      ["Idioten", "idiot"], ["nichts", "not"], ["mehr", "more"], ["hören", "hear"]
+    ],
+    "translation": "Hans has called again. I don't want to hear anything anymore from that idiot.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "anaphoric"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "An epithet; it is not common ground that there is a unique idiot in the situation (p. 240). The source glosses dem as the_s and prints the translation without its closing quotation mark.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex29_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(29)"},
+    "language": "stan1295",
+    "primaryText": "Hans hat schon wieder angerufen. Ich will von dem Idioten nichts mehr hören.",
+    "discourseSegments": [
+      "Hans hat schon wieder angerufen.",
+      "Ich will von dem Idioten nichts mehr hören."
+    ],
+    "glossedTokens": [
+      ["Hans", "Hans"], ["hat", "has"], ["schon", "already"], ["wieder", "again"],
+      ["angerufen", "called"], ["Ich", "I"], ["will", "want"], ["von", "of"],
+      ["dem", "the.STRONG"], ["Idioten", "idiot"], ["nichts", "not"], ["mehr", "more"],
+      ["hören", "hear"]
+    ],
+    "translation": "Hans has called again. I don't want to hear anything anymore from that idiot.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "anaphoric"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "An epithet; it is not common ground that there is a unique idiot in the situation (p. 240). The source glosses dem as the_s and prints the translation without its closing quotation mark.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex31_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(31)"},
+    "language": "stan1295",
+    "primaryText": "Jedes Mal, wenn ein Ornithologe im Seminar einen Vortrag hält, wollen die Studenten vom Mann wissen, ob Vogelgesang grammatischen Regeln folgt.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jedes", "Every"], ["Mal", "time"], ["wenn", "when"], ["ein", "an"],
+      ["Ornithologe", "ornithologist"], ["im", "in-the.WEAK"], ["Seminar", "seminar"],
+      ["einen", "a"], ["Vortrag", "lecture"], ["hält", "holds"], ["wollen", "want"],
+      ["die", "the"], ["Studenten", "students"], ["vom", "of-the.WEAK"], ["Mann", "man"],
+      ["wissen", "know"], ["ob", "whether"], ["Vogelgesang", "bird singing"],
+      ["grammatischen", "grammatical"], ["Regeln", "rules"], ["folgt", "follows"]
+    ],
+    "translation": "Every time an ornithologist gives a lecture in the seminar, the students want to know from the man whether bird songs follow grammatical rules.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "donkey"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "The situations quantified over contain more than one man (p. 242), where the example is repeated without 'from the man' in the translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex31_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(31)"},
+    "language": "stan1295",
+    "primaryText": "Jedes Mal, wenn ein Ornithologe im Seminar einen Vortrag hält, wollen die Studenten von dem Mann wissen, ob Vogelgesang grammatischen Regeln folgt.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jedes", "Every"], ["Mal", "time"], ["wenn", "when"], ["ein", "an"],
+      ["Ornithologe", "ornithologist"], ["im", "in-the.WEAK"], ["Seminar", "seminar"],
+      ["einen", "a"], ["Vortrag", "lecture"], ["hält", "holds"], ["wollen", "want"],
+      ["die", "the"], ["Studenten", "students"], ["von", "of"], ["dem", "the.STRONG"],
+      ["Mann", "man"], ["wissen", "know"], ["ob", "whether"], ["Vogelgesang", "bird singing"],
+      ["grammatischen", "grammatical"], ["Regeln", "rules"], ["folgt", "follows"]
+    ],
+    "translation": "Every time an ornithologist gives a lecture in the seminar, the students want to know from the man whether bird songs follow grammatical rules.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "donkey"],
+      ["unique", "no"],
+      ["antecedent", "yes"]
+    ],
+    "comment": "The situations quantified over contain more than one man (p. 242), where the example is repeated without 'from the man' in the translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex40_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(40)"},
+    "language": "stan1295",
+    "primaryText": "Das Buch, das du suchst, steht im Glasschrank.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "the"], ["Buch", "book"], ["das", "that"], ["du", "you"], ["suchst", "look for"],
+      ["steht", "stands"], ["im", "in-the.WEAK"], ["Glasschrank", "glass-cabinet"]
+    ],
+    "translation": "The book that you are looking for is in the glass-cabinet.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "immediateSituation"],
+      ["unique", "yes"],
+      ["antecedent", "no"]
+    ],
+    "comment": "Footnote 17: the strong article becomes acceptable given an antecedent.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex40_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(40)"},
+    "language": "stan1295",
+    "primaryText": "Das Buch, das du suchst, steht in dem Glasschrank.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "the"], ["Buch", "book"], ["das", "that"], ["du", "you"], ["suchst", "look for"],
+      ["steht", "stands"], ["in", "in"], ["dem", "the.STRONG"], ["Glasschrank", "glass-cabinet"]
+    ],
+    "translation": "The book that you are looking for is in the glass-cabinet.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "immediateSituation"],
+      ["unique", "yes"],
+      ["antecedent", "no"]
+    ],
+    "comment": "Footnote 17: the strong article becomes acceptable given an antecedent.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex41_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(41)"},
+    "language": "stan1295",
+    "primaryText": "Der Einbrecher ist zum Glück vom Hund verjagt worden.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["Einbrecher", "burglar"], ["ist", "is"], ["zum Glück", "luckily"],
+      ["vom", "by-the.WEAK"], ["Hund", "dog"], ["verjagt", "chase away"], ["worden", "been"]
+    ],
+    "translation": "Luckily, the burglar was chased away by the dog.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "largerSituation"],
+      ["unique", "yes"],
+      ["antecedent", "no"]
+    ],
+    "comment": "The source glosses zum Glück as the one word 'luckily'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex41_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(41)"},
+    "language": "stan1295",
+    "primaryText": "Der Einbrecher ist zum Glück von dem Hund verjagt worden.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["Einbrecher", "burglar"], ["ist", "is"], ["zum Glück", "luckily"],
+      ["von", "by"], ["dem", "the.STRONG"], ["Hund", "dog"], ["verjagt", "chase away"],
+      ["worden", "been"]
+    ],
+    "translation": "Luckily, the burglar was chased away by the dog.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "largerSituation"],
+      ["unique", "yes"],
+      ["antecedent", "no"]
+    ],
+    "comment": "The source glosses zum Glück as the one word 'luckily'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex42_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(42)"},
+    "language": "stan1295",
+    "primaryText": "Der Empfang wurde vom Bürgermeister eröffnet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "The"], ["Empfang", "reception"], ["wurde", "was"], ["vom", "by-the.WEAK"],
+      ["Bürgermeister", "mayor"], ["eröffnet", "opened"]
+    ],
+    "translation": "The reception was opened by the mayor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "largerSituation"],
+      ["unique", "yes"],
+      ["antecedent", "no"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex42_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(42)"},
+    "language": "stan1295",
+    "primaryText": "Der Empfang wurde von dem Bürgermeister eröffnet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "The"], ["Empfang", "reception"], ["wurde", "was"], ["von", "by"],
+      ["dem", "the.STRONG"], ["Bürgermeister", "mayor"], ["eröffnet", "opened"]
+    ],
+    "translation": "The reception was opened by the mayor.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "largerSituation"],
+      ["unique", "yes"],
+      ["antecedent", "no"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex46a_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(46a)"},
+    "language": "stan1295",
+    "primaryText": "In der Kabinettsitzung heute wird ein neuer Vorschlag vom Kanzler erwartet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["In", "In"], ["der", "the"], ["Kabinettsitzung", "cabinet meeting"], ["heute", "today"],
+      ["wird", "is"], ["ein", "a"], ["neuer", "new"], ["Vorschlag", "proposal"],
+      ["vom", "by-the.A"], ["Kanzler", "chancellor"], ["erwartet", "expected"]
+    ],
+    "translation": "In today's cabinet meeting, a new proposal by the chancellor is expected.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "largerSituation"],
+      ["unique", "yes"],
+      ["antecedent", "no"]
+    ],
+    "comment": "A cabinet meeting has one chancellor (p. 41). The source glosses vom as by-the_A, the A-form.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex46b_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(46b)"},
+    "language": "stan1295",
+    "primaryText": "In der Kabinettsitzung heute wird ein neuer Vorschlag vom Minister erwartet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["In", "In"], ["der", "the"], ["Kabinettsitzung", "cabinet meeting"], ["heute", "today"],
+      ["wird", "is"], ["ein", "a"], ["neuer", "new"], ["Vorschlag", "proposal"],
+      ["vom", "by-the.A"], ["Minister", "minister"], ["erwartet", "expected"]
+    ],
+    "translation": "In today's cabinet meeting, a new proposal by the minister is expected.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "largerSituation"],
+      ["unique", "no"],
+      ["antecedent", "no"]
+    ],
+    "comment": "A cabinet meeting has several ministers (p. 41). The source glosses vom as by-the_A, the A-form.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex48_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(48)"},
+    "language": "stan1295",
+    "primaryText": "Jedes Mal, wenn eine Runde vorbei ist, werden die Karten vom Gewinner neu gemischt und verteilt.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jedes", "Every"], ["Mal", "time"], ["wenn", "when"], ["eine", "a"], ["Runde", "round"],
+      ["vorbei", "over"], ["ist", "is"], ["werden", "are"], ["die", "the"], ["Karten", "cards"],
+      ["vom", "by-the.WEAK"], ["Gewinner", "winner"], ["neu", "newly"], ["gemischt", "shuffled"],
+      ["und", "and"], ["verteilt", "dealt"]
+    ],
+    "translation": "Every time when a round is over, the cards are shuffled and dealt anew by the winner.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["unique", "yes"],
+      ["antecedent", "no"]
+    ],
+    "comment": "A covarying use of the weak article: for each round, the winner of that round (p. 43).",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex58_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(58)"},
+    "language": "stan1295",
+    "primaryText": "Der Kühlschrank war so groß, dass der Kürbis problemlos im Gemüsefach untergebracht werden konnte.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "The"], ["Kühlschrank", "fridge"], ["war", "was"], ["so", "so"], ["groß", "big"],
+      ["dass", "that"], ["der", "the"], ["Kürbis", "pumpkin"], ["problemlos", "without a problem"],
+      ["im", "in-the.WEAK"], ["Gemüsefach", "crisper"], ["untergebracht", "stowed"],
+      ["werden", "be"], ["konnte", "could"]
+    ],
+    "translation": "The fridge was so big that the pumpkin could easily be stowed in the crisper.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "partWholeBridging"],
+      ["relation", "part"],
+      ["antecedent", "relatum"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex58_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(58)"},
+    "language": "stan1295",
+    "primaryText": "Der Kühlschrank war so groß, dass der Kürbis problemlos in dem Gemüsefach untergebracht werden konnte.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "The"], ["Kühlschrank", "fridge"], ["war", "was"], ["so", "so"], ["groß", "big"],
+      ["dass", "that"], ["der", "the"], ["Kürbis", "pumpkin"], ["problemlos", "without a problem"],
+      ["in", "in"], ["dem", "the.STRONG"], ["Gemüsefach", "crisper"], ["untergebracht", "stowed"],
+      ["werden", "be"], ["konnte", "could"]
+    ],
+    "translation": "The fridge was so big that the pumpkin could easily be stowed in the crisper.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "partWholeBridging"],
+      ["relation", "part"],
+      ["antecedent", "relatum"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex59_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(59)"},
+    "language": "stan1295",
+    "primaryText": "Das Theaterstück missfiel dem Kritiker so sehr, dass er in seiner Besprechung kein gutes Haar am Autor ließ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "The"], ["Theaterstück", "play"], ["missfiel", "displeased"], ["dem", "the"],
+      ["Kritiker", "critic"], ["so", "so"], ["sehr", "much"], ["dass", "that"], ["er", "he"],
+      ["in", "in"], ["seiner", "his"], ["Besprechung", "review"], ["kein", "no"],
+      ["gutes", "good"], ["Haar", "hair"], ["am", "on-the.WEAK"], ["Autor", "author"],
+      ["ließ", "left"]
+    ],
+    "translation": "The play displeased the critic so much that he tore the author to pieces in his review.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "producerBridging"],
+      ["relation", "nonPart"],
+      ["antecedent", "relatum"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex59_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(59)"},
+    "language": "stan1295",
+    "primaryText": "Das Theaterstück missfiel dem Kritiker so sehr, dass er in seiner Besprechung kein gutes Haar an dem Autor ließ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "The"], ["Theaterstück", "play"], ["missfiel", "displeased"], ["dem", "the"],
+      ["Kritiker", "critic"], ["so", "so"], ["sehr", "much"], ["dass", "that"], ["er", "he"],
+      ["in", "in"], ["seiner", "his"], ["Besprechung", "review"], ["kein", "no"],
+      ["gutes", "good"], ["Haar", "hair"], ["an", "on"], ["dem", "the.STRONG"],
+      ["Autor", "author"], ["ließ", "left"]
+    ],
+    "translation": "The play displeased the critic so much that he tore the author to pieces in his review.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "producerBridging"],
+      ["relation", "nonPart"],
+      ["antecedent", "relatum"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex62_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(62)"},
+    "language": "stan1295",
+    "primaryText": "Jeder, der einen Roman gekauft hat, hatte schon einmal eine Kurzgeschichte vom Autor gelesen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jeder", "Everyone"], ["der", "that"], ["einen", "a"], ["Roman", "novel"],
+      ["gekauft", "bought"], ["hat", "has"], ["hatte", "had"], ["schon", "already"],
+      ["einmal", "once"], ["eine", "a"], ["Kurzgeschichte", "short story"], ["vom", "by-the.WEAK"],
+      ["Autor", "author"], ["gelesen", "read"]
+    ],
+    "translation": "Everyone that bought a novel had already once read a short story by the author.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "producerBridging"],
+      ["relation", "nonPart"],
+      ["antecedent", "relatum"]
+    ],
+    "comment": "Both variants are judged where the example is repeated (p. 233); p. 63 prints the strong one only. Authors are not part of their books (p. 233).",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex62_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(62)"},
+    "language": "stan1295",
+    "primaryText": "Jeder, der einen Roman gekauft hat, hatte schon einmal eine Kurzgeschichte von dem Autor gelesen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jeder", "Everyone"], ["der", "that"], ["einen", "a"], ["Roman", "novel"],
+      ["gekauft", "bought"], ["hat", "has"], ["hatte", "had"], ["schon", "already"],
+      ["einmal", "once"], ["eine", "a"], ["Kurzgeschichte", "short story"], ["von", "by"],
+      ["dem", "the.STRONG"], ["Autor", "author"], ["gelesen", "read"]
+    ],
+    "translation": "Everyone that bought a novel had already once read a short story by the author.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "producerBridging"],
+      ["relation", "nonPart"],
+      ["antecedent", "relatum"]
+    ],
+    "comment": "Both variants are judged where the example is repeated (p. 233); p. 63 prints the strong one only. Authors are not part of their books (p. 233).",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex63_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(63)"},
+    "language": "stan1295",
+    "primaryText": "Jeder Student, der ein Auto parkte, brachte einen Parkschein am Rückspiegel an.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jeder", "Every"], ["Student", "student"], ["der", "that"], ["ein", "a"], ["Auto", "car"],
+      ["parkte", "parked"], ["brachte", "attached"], ["einen", "a"],
+      ["Parkschein", "parking-pass"], ["am", "on-the.WEAK"], ["Rückspiegel", "rear view mirror"],
+      ["an", "PART"]
+    ],
+    "translation": "Every student that parked a car attached a parking pass to the rearview mirror.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "partWholeBridging"],
+      ["relation", "part"],
+      ["antecedent", "relatum"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex231_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(231)"},
+    "language": "stan1295",
+    "primaryText": "An jedem Bahnhof, in den unser Zug einfuhr, wurde mir ein Brief vom Bürgermeister überreicht.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["An", "At"], ["jedem", "every"], ["Bahnhof", "train station"], ["in", "in"],
+      ["den", "which"], ["unser", "our"], ["Zug", "train"], ["einfuhr", "entered into"],
+      ["wurde", "was"], ["mir", "I"], ["ein", "a"], ["Brief", "letter"], ["vom", "from-the.WEAK"],
+      ["Bürgermeister", "mayor"], ["überreicht", "handed"]
+    ],
+    "translation": "At every train station that our train entered a letter from the mayor was handed to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "largerSituation"],
+      ["relation", "part"],
+      ["antecedent", "other"]
+    ],
+    "comment": "The mayor is part of the town, of which the train station is a part (p. 224); the strong article's index is bound by the train station, which has no mayor (p. 282).",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex231_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(231)"},
+    "language": "stan1295",
+    "primaryText": "An jedem Bahnhof, in den unser Zug einfuhr, wurde mir ein Brief von dem Bürgermeister überreicht.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["An", "At"], ["jedem", "every"], ["Bahnhof", "train station"], ["in", "in"],
+      ["den", "which"], ["unser", "our"], ["Zug", "train"], ["einfuhr", "entered into"],
+      ["wurde", "was"], ["mir", "I"], ["ein", "a"], ["Brief", "letter"], ["von", "from"],
+      ["dem", "the.STRONG"], ["Bürgermeister", "mayor"], ["überreicht", "handed"]
+    ],
+    "translation": "At every train station that our train entered a letter from the mayor was handed to me.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "largerSituation"],
+      ["relation", "part"],
+      ["antecedent", "other"]
+    ],
+    "comment": "The mayor is part of the town, of which the train station is a part (p. 224); the strong article's index is bound by the train station, which has no mayor (p. 282).",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex275_weak",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(275)"},
+    "language": "stan1295",
+    "primaryText": "Hans entdeckte in der Bibliothek einen Roman über den Hudson. Dabei fiel ihm ein, dass er vor langer Zeit einmal einen Vortrag vom Autor besucht hatte.",
+    "discourseSegments": [
+      "Hans entdeckte in der Bibliothek einen Roman über den Hudson.",
+      "Dabei fiel ihm ein, dass er vor langer Zeit einmal einen Vortrag vom Autor besucht hatte."
+    ],
+    "glossedTokens": [
+      ["Hans", "Hans"], ["entdeckte", "discovered"], ["in", "in"], ["der", "the"],
+      ["Bibliothek", "library"], ["einen", "a"], ["Roman", "novel"], ["über", "about"],
+      ["den", "the"], ["Hudson", "Hudson"], ["Dabei", "In the process"], ["fiel", "remembered"],
+      ["ihm", "he.DAT"], ["ein", "PART"], ["dass", "that"], ["er", "he"],
+      ["vor langer Zeit", "a long time ago"], ["einmal", "once"], ["einen", "a"],
+      ["Vortrag", "lecture"], ["vom", "by-the.WEAK"], ["Autor", "author"], ["besucht", "attended"],
+      ["hatte", "had"]
+    ],
+    "translation": "Hans discovered a novel about the Hudson in the library. In the process, he remembered that he had attended a lecture by the author a long time ago.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "weak"],
+      ["use", "producerBridging"],
+      ["relation", "nonPart"],
+      ["antecedent", "relatum"]
+    ],
+    "comment": "The source glosses vor langer Zeit as the phrase 'a long time ago'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "schwarz2009_ex275_strong",
+    "source": {"bibkey": "schwarz-2009", "paperLabel": "(275)"},
+    "language": "stan1295",
+    "primaryText": "Hans entdeckte in der Bibliothek einen Roman über den Hudson. Dabei fiel ihm ein, dass er vor langer Zeit einmal einen Vortrag von dem Autor besucht hatte.",
+    "discourseSegments": [
+      "Hans entdeckte in der Bibliothek einen Roman über den Hudson.",
+      "Dabei fiel ihm ein, dass er vor langer Zeit einmal einen Vortrag von dem Autor besucht hatte."
+    ],
+    "glossedTokens": [
+      ["Hans", "Hans"], ["entdeckte", "discovered"], ["in", "in"], ["der", "the"],
+      ["Bibliothek", "library"], ["einen", "a"], ["Roman", "novel"], ["über", "about"],
+      ["den", "the"], ["Hudson", "Hudson"], ["Dabei", "In the process"], ["fiel", "remembered"],
+      ["ihm", "he.DAT"], ["ein", "PART"], ["dass", "that"], ["er", "he"],
+      ["vor langer Zeit", "a long time ago"], ["einmal", "once"], ["einen", "a"],
+      ["Vortrag", "lecture"], ["von", "by"], ["dem", "the.STRONG"], ["Autor", "author"],
+      ["besucht", "attended"], ["hatte", "had"]
+    ],
+    "translation": "Hans discovered a novel about the Hudson in the library. In the process, he remembered that he had attended a lecture by the author a long time ago.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["article", "strong"],
+      ["use", "producerBridging"],
+      ["relation", "nonPart"],
+      ["antecedent", "relatum"]
+    ],
+    "comment": "The source glosses vor langer Zeit as the phrase 'a long time ago'.",
+    "verified": "page-image"
+  }
+]

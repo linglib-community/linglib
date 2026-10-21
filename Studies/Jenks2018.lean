@@ -10,33 +10,31 @@ public import Linglib.Fragments.German.Determiners
 /-!
 # Jenks (2018): Articulated Definiteness without Articles
 
-This file formalizes [jenks-2018], the claim that Mandarin, without a definite article,
-distinguishes the two definites of [schwarz-2009]: unique definites are bare nouns, read by
-[chierchia-1998]'s covert ι, and anaphoric definites are demonstrative descriptions, the
-demonstrative supplying the index of ι^x, (22). The distribution follows from three principles
-over a language's declared determiner inventory. The Blocking Principle, (23), makes the covert
-ι available exactly when no overt determiner marks uniqueness (`IotaAvailable`), which is how
-Mandarin bare nouns can be definite and Cantonese ones, whose [Clf-N] marks both
-presuppositions, cannot (`iotaAvailable_mandarin`, `not_iotaAvailable_cantonese`). ι^x is never
-a covert shift, since its domain restriction must be present in the syntax, Section 4.2, so an
-anaphoric definite needs the overt demonstrative. Index!, (50), an instance of Maximize
-Presupposition, requires the indexed form wherever an index is available, so bare nouns are
-excluded from anaphoric, donkey and producer-product bridging environments and demonstratives
-from the unique ones (`BareLicit`, `MarkedLicit`); and a bare anaphoric subject survives as a
-continuing topic, Section 5.3, but not as a new one. The paper's data, (10) to (20), (49) and
-(51) to (56), agree with the prediction row by row (`rows_agree`). A demonstrative denotes its
-index's value in every situation where it is defined, so it cannot covary through the situation
-pronoun as a bare noun does, Section 4.3; and Table 2's cells are the marking strategies the
-fragments derive, marked-unique being the unattested fourth (`table2`).
+Jenks argues that Mandarin, which has no definite article, still distinguishes Schwarz's two
+definites: a unique definite is a bare noun read by Chierchia's covert ι, and an anaphoric definite
+is a demonstrative description whose demonstrative supplies the index of ι^x (22). Three principles
+over a language's determiner inventory derive the distribution. The Blocking Principle (23) makes ι
+available exactly when no overt determiner marks uniqueness, as in Mandarin but not in Cantonese,
+whose [Clf-N] marks both presuppositions; ι^x is never a covert shift (Section 4.2); and Index!
+(50) requires the indexed form wherever an index is available, unless the description is a
+continuing topic (Section 5.3).
+
+## Main results
+
+* `iotaAvailable_mandarin`, `not_iotaAvailable_cantonese`: the Blocking Principle.
+* `rows_agree`: the data (10) to (20), (49) and (51) to (56) agree with the prediction.
+* `demonstrative_rigid`, `bare_covaries`: a demonstrative cannot covary through the situation
+  pronoun and a bare noun can (Section 4.3).
+* `table2`: Table 2's cells as the fragments derive them.
 
 ## Implementation notes
 
-* The environments are the paper's six, mapped to [schwarz-2013]'s presupposition types by
-  `DefiniteUse.strength` and `Bridging.strength`; the marked form is the language's obligatory
-  exponent of the environment's presupposition, the demonstrative in Mandarin and [Clf-N] in
-  Cantonese, so Cantonese's restricted demonstrative, (57), is not modelled.
-* [jenks-2018] types the index of ι^x as a property, Section 4.4; the substrate's
-  `Description.anaphoric` carries an individual index, so Section 4.4 is not formalized.
+* The environments are the paper's six, the `Description.Use`s, mapped to Schwarz's presupposition
+  types by `Description.Use.strength`. The marked form is the language's obligatory exponent of the
+  environment's presupposition, the demonstrative in Mandarin and [Clf-N] in Cantonese, so
+  Cantonese's restricted demonstrative (57) is not modelled.
+* Jenks types the index of ι^x as a property (Section 4.4); `Description.anaphoric` carries an
+  individual index, so Section 4.4 is not formalized.
 
 ## References
 
@@ -54,66 +52,48 @@ open Reference Determiner Semantics
 
 /-! ### Environments and principles -/
 
-/-- The definite environments of Sections 3 and 6. -/
-inductive Environment
-  | largerSituation
-  | immediateSituation
-  | partWholeBridging
-  | producerBridging
-  | anaphoric
-  | donkey
-  deriving DecidableEq, Repr
-
-/-- The presupposition an environment licenses, [schwarz-2013]'s split of bridging included. -/
-def Environment.presup : Environment → Description.Strength
-  | .largerSituation => DefiniteUse.strength .largerSituation
-  | .immediateSituation => DefiniteUse.strength .immediateSituation
-  | .partWholeBridging => Bridging.strength .partWhole
-  | .producerBridging => Bridging.strength .relational
-  | .anaphoric => DefiniteUse.strength .anaphoric
-  | .donkey => DefiniteUse.strength .donkey
-
-/-- A description's discourse status, Section 5.3: no topic, a continuing topic or a new one. -/
+/-- A description's discourse status (Section 5.3) is no topic, a continuing topic or a new one. -/
 inductive Topic
   | none
   | continuing
   | new
   deriving DecidableEq, Repr
 
-/-- The Blocking Principle, (23): the covert ι is available exactly when no overt determiner
+/-- By the Blocking Principle (23), the covert ι is available exactly when no overt determiner
 marks uniqueness. -/
 def IotaAvailable (inv : Inventory) : Prop := ¬ inv.Marks .uniqueness
 
 /-- An index is available exactly in the environments licensed by familiarity, Section 5.1:
 prior mention of the referent or, in producer-product bridging, of its argument. -/
-def IndexAvailable (env : Environment) : Prop := env.presup = .familiarity
+def IndexAvailable (env : Description.Use) : Prop := env.strength = .familiarity
 
-/-- The bare noun is licit: ι is available and, by Index!, (50), no indexed form competes, or the
-description is a continuing topic, Section 5.3. -/
-def BareLicit (inv : Inventory) (env : Environment) (t : Topic) : Prop :=
+/-- The bare noun is licit when ι is available and, by Index! (50), no indexed form competes, or
+when the description is a continuing topic (Section 5.3). -/
+def BareLicit (inv : Inventory) (env : Description.Use) (t : Topic) : Prop :=
   IotaAvailable inv ∧ (¬ (IndexAvailable env ∧ inv.Marks .familiarity) ∨ t = .continuing)
 
-/-- The marked form is licit: the inventory marks the environment's presupposition. -/
-def MarkedLicit (inv : Inventory) (env : Environment) : Prop := inv.Marks env.presup
+/-- The marked form is licit when the inventory marks the environment's presupposition. -/
+def MarkedLicit (inv : Inventory) (env : Description.Use) : Prop := inv.Marks env.strength
 
 instance (inv : Inventory) : Decidable (IotaAvailable inv) := by
   unfold IotaAvailable; infer_instance
 
-instance (env : Environment) : Decidable (IndexAvailable env) := by
+instance (env : Description.Use) : Decidable (IndexAvailable env) := by
   unfold IndexAvailable; infer_instance
 
-instance (inv : Inventory) (env : Environment) (t : Topic) : Decidable (BareLicit inv env t) := by
+instance (inv : Inventory) (env : Description.Use) (t : Topic) :
+    Decidable (BareLicit inv env t) := by
   unfold BareLicit; infer_instance
 
-instance (inv : Inventory) (env : Environment) : Decidable (MarkedLicit inv env) := by
+instance (inv : Inventory) (env : Description.Use) : Decidable (MarkedLicit inv env) := by
   unfold MarkedLicit; infer_instance
 
-/-- Index!: with an index available and an indexed form in the inventory, a bare noun that is
+/-- By Index!, with an index available and an indexed form in the inventory, a bare noun that is
 not a continuing topic is out. -/
-theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : Environment} {t : Topic}
+theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : Description.Use} {t : Topic}
     (h : IndexAvailable env) (hm : inv.Marks .familiarity) (ht : t ≠ .continuing) :
     ¬ BareLicit inv env t :=
-  λ ⟨_, h'⟩ => h'.elim (λ h'' => h'' ⟨h, hm⟩) ht
+  fun ⟨_, h'⟩ ↦ h'.elim (fun h'' ↦ h'' ⟨h, hm⟩) ht
 
 /-! ### Type-shifting under blocking -/
 
@@ -128,20 +108,20 @@ theorem not_iotaAvailable_cantonese : ¬ IotaAvailable Cantonese.Determiners.inv
 
 /-! ### The data -/
 
-/-- A row: the language's inventory, the environment, the discourse status, and the judgments on
-the bare and the marked form where the paper gives them. -/
+/-- A row records the language's inventory, the environment, the discourse status, and the
+judgments on the bare and the marked form where the paper gives them. -/
 structure Row where
   inventory : Inventory
-  env : Environment
+  env : Description.Use
   topic : Topic
   bare : Option Bool
   marked : Option Bool
 
-def envOf : String → Option Environment
+def envOf : String → Option Description.Use
   | "largerSituation" => some .largerSituation
   | "immediateSituation" => some .immediateSituation
-  | "partWholeBridging" => some .partWholeBridging
-  | "producerBridging" => some .producerBridging
+  | "partWholeBridging" => some (.bridging .partWhole)
+  | "producerBridging" => some (.bridging .relational)
   | "anaphoric" => some .anaphoric
   | "donkey" => some .donkey
   | _ => none
@@ -174,8 +154,8 @@ instance (p : Prop) [Decidable p] : ∀ o, Decidable (Agrees p o)
   | none => inferInstanceAs (Decidable True)
   | some _ => inferInstanceAs (Decidable (_ ↔ _))
 
-/-- The paper's data row by row: the bare noun is judged licit exactly when `BareLicit` and the
-marked form exactly when `MarkedLicit`. -/
+/-- Row by row, the paper judges the bare noun licit exactly when `BareLicit` holds and the marked
+form exactly when `MarkedLicit` does. -/
 theorem rows_agree :
     ∀ r ∈ rows, Agrees (BareLicit r.inventory r.env r.topic) r.bare ∧
       Agrees (MarkedLicit r.inventory r.env) r.marked := by
@@ -191,27 +171,26 @@ theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (d : ℕ) (g
     ⟦Description.demonstrative R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
   Description.denote_anaphoric_eq_some_iff R d g s
 
-/-- A demonstrative cannot covary through the situation pronoun: its referents at any two
-situations coincide. -/
+/-- A demonstrative cannot covary through the situation pronoun, its referents at any two situations
+coinciding. -/
 theorem demonstrative_rigid {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
     {s s' : W} {x x' : E} (h : ⟦Description.demonstrative R d⟧ g s = some x)
     (h' : ⟦Description.demonstrative R d⟧ g s' = some x') : x = x' :=
   Description.denote_anaphoric_rigid R d g s h h'
 
-/-- The bare noun's covert ι does covary: over the restrictor true of the situation itself, the
-bare noun denotes each situation at that situation, so distinct situations give distinct
-referents. -/
+/-- The bare noun's covert ι does covary. Over the restrictor true of the situation itself, the bare
+noun denotes each situation at that situation, so distinct situations give distinct referents. -/
 theorem bare_covaries {W : Type} (g : Assignment W) (s : W) :
     ⟦Description.bare fun _ s x ↦ x = s⟧ g s = some s :=
   (Description.denote_bare_eq_some_iff _ _ _).2 ⟨rfl, fun _ h ↦ h⟩
 
 /-! ### The typology (Table 2) -/
 
-/-- Table 2's attested cells: bipartite (German, Lakhota), marked anaphoric (Mandarin, Akan, Wu)
-and generally marked (Cantonese, English); the marked-unique cell is unattested. -/
+/-- Table 2 attests the bipartite cell (German, Lakhota), the marked anaphoric one (Mandarin, Akan,
+Wu) and the generally marked one (Cantonese, English), leaving the marked-unique cell empty. -/
 def attested : List MarkingStrategy := [.bipartite, .markedAnaphoric, .generallyMarked]
 
-/-- The fragments derive Table 2's columns: German bipartite, Mandarin marked anaphoric,
+/-- The fragments derive Table 2's columns, German being bipartite, Mandarin marked anaphoric, and
 Cantonese and English generally marked. -/
 theorem table2 :
     German.Determiners.inventory.markingStrategy = .bipartite ∧

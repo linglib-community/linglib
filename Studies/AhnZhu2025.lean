@@ -153,7 +153,7 @@ theorem bare_partWhole :
 distribution; the bare noun is nonetheless acceptable with every relational noun in the
 relational-bridging rows. -/
 theorem index_contradicted_by_bare_relational :
-    ¬ Jenks2018.BareLicit Mandarin.Determiners.inventory .producerBridging .none ∧
+    ¬ Jenks2018.BareLicit Mandarin.Determiners.inventory (.bridging .relational) .none ∧
     ∀ row ∈ Examples.all, row.feature? "definite_form" = some "bare" →
       row.feature? "bridging_type" = some "relational" →
       row.feature? "noun_arity" = some "relational" → row.judgment = .acceptable :=
