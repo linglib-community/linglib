@@ -330,10 +330,13 @@ theorem eq_of_says_report_ego (hy : ∀ w, ∃ p, R (w, y) p) (hx : SelfAware R 
 becomes the authority. -/
 def authorityShift (x : E) : Function.End (Context W E P T) := fun c ↦ { c with authority := x }
 
-/-- The shift changes the context, so it is a monster in Kaplan's sense. -/
-theorem isMonster_authorityShift (h : c.authority ≠ x) :
-    Reference.IsMonster (authorityShift (W := W) (P := P) (T := T) x) :=
-  (Reference.isMonster_iff _).2 ⟨c, fun e ↦ h (congrArg Context.authority e).symm⟩
+/-- The shift changes the context, so evaluating a character at the shifted context is a monster
+in Kaplan's sense. -/
+theorem isMonster_authorityShift [Nonempty W] (h : c.authority ≠ x) :
+    Reference.IsMonster (Reference.shift (authorityShift (W := W) (P := P) (T := T) x) :
+      Reference.Character (Context W E P T) W Prop → _) :=
+  (Reference.isMonster_shift_iff _).2 <|
+    (Reference.ne_one_iff_exists_smul_ne _).2 ⟨c, fun e ↦ h (congrArg Context.authority e).symm⟩
 
 /-- On the authority-indexical account a shifted report about a named individual is true exactly
 when the individual is the reported speaker and the plain report is true. -/

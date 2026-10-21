@@ -130,7 +130,7 @@ def ex31_weak : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("article", "weak"), ("use", "donkey"), ("unique", "no"), ("antecedent", "yes")] }
+    paperFeatures := [("article", "weak"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes"), ("covarying", "yes")] }
 
 def ex31_strong : Datum :=
   { id := "schwarz2009_ex31_strong"
@@ -143,7 +143,7 @@ def ex31_strong : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("article", "strong"), ("use", "donkey"), ("unique", "no"), ("antecedent", "yes")] }
+    paperFeatures := [("article", "strong"), ("use", "anaphoric"), ("unique", "no"), ("antecedent", "yes"), ("covarying", "yes")] }
 
 def ex40_weak : Datum :=
   { id := "schwarz2009_ex40_weak"
@@ -260,7 +260,7 @@ def ex48_weak : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("article", "weak"), ("unique", "yes"), ("antecedent", "no")] }
+    paperFeatures := [("article", "weak"), ("unique", "yes"), ("antecedent", "no"), ("covarying", "yes")] }
 
 def ex58_weak : Datum :=
   { id := "schwarz2009_ex58_weak"
@@ -325,7 +325,7 @@ def ex62_weak : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("article", "weak"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum")] }
+    paperFeatures := [("article", "weak"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum"), ("covarying", "yes")] }
 
 def ex62_strong : Datum :=
   { id := "schwarz2009_ex62_strong"
@@ -338,7 +338,7 @@ def ex62_strong : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("article", "strong"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum")] }
+    paperFeatures := [("article", "strong"), ("use", "producerBridging"), ("relation", "nonPart"), ("antecedent", "relatum"), ("covarying", "yes")] }
 
 def ex63_weak : Datum :=
   { id := "schwarz2009_ex63_weak"
@@ -351,7 +351,7 @@ def ex63_weak : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("article", "weak"), ("use", "partWholeBridging"), ("relation", "part"), ("antecedent", "relatum")] }
+    paperFeatures := [("article", "weak"), ("use", "partWholeBridging"), ("relation", "part"), ("antecedent", "relatum"), ("covarying", "yes")] }
 
 def ex231_weak : Datum :=
   { id := "schwarz2009_ex231_weak"
@@ -364,7 +364,7 @@ def ex231_weak : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("article", "weak"), ("use", "largerSituation"), ("relation", "part"), ("antecedent", "other")] }
+    paperFeatures := [("article", "weak"), ("use", "largerSituation"), ("relation", "part"), ("antecedent", "other"), ("covarying", "yes")] }
 
 def ex231_strong : Datum :=
   { id := "schwarz2009_ex231_strong"
@@ -377,7 +377,7 @@ def ex231_strong : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("article", "strong"), ("use", "largerSituation"), ("relation", "part"), ("antecedent", "other")] }
+    paperFeatures := [("article", "strong"), ("use", "largerSituation"), ("relation", "part"), ("antecedent", "other"), ("covarying", "yes")] }
 
 def ex275_weak : Datum :=
   { id := "schwarz2009_ex275_weak"

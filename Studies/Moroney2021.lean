@@ -114,7 +114,7 @@ theorem derive_article_types :
       Shan.Determiners.inventory.articleType = .articleless := by
   decide
 
-/-- `ArticleType` is lossy where `MarkingStrategy` is not: English and Mandarin differ in
+/-- `ArticleType` is lossy where `MarkingStrategy` is not, since English and Mandarin differ in
 strategy yet collapse to the same article type. -/
 theorem articleType_lossy :
     English.Determiners.inventory.markingStrategy ≠
@@ -136,8 +136,8 @@ theorem english_german_anaphoric_realized :
       German.Determiners.inventory.Realizes .anaphoric := by
   decide
 
-/-- Shan's derived strategy falls outside [jenks-2018]'s attested set — the fourth,
-unmarked cell. -/
+/-- Shan's derived strategy, the unmarked type, is none that the languages of [jenks-2018]'s
+Table 2 attest. -/
 theorem shan_refutes_jenks_typology :
     Shan.Determiners.inventory.markingStrategy ∉ Jenks2018.attested := by
   rw [Shan.Determiners.marking]; decide
@@ -152,8 +152,8 @@ def LacksMinimalParts {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
 /-- The dog-pluralities over two dogs are the nonempty subsets. -/
 abbrev isDog (x : Finset (Fin 2)) : Prop := x.Nonempty
 
-/-- Shan *mǎa* 'dog' patterns with English *furniture*: the sum of dogs is dogs, but the
-individual dogs are minimal, so the predicate is cumulative without being homogeneous. -/
+/-- Shan *mǎa* 'dog' patterns with English *furniture*. The sum of dogs is dogs, but the individual
+dogs are minimal, so the predicate is cumulative without being homogeneous. -/
 theorem maa_cumulative_not_divisive : CUM isDog ∧ ¬ LacksMinimalParts isDog := by
   refine ⟨fun _ hx _ _ ↦ hx.mono Finset.subset_union_left, fun h ↦ ?_⟩
   obtain ⟨y, hy, hne⟩ := h {0} (Finset.singleton_nonempty 0)
@@ -170,9 +170,8 @@ section Demonstrative
 
 variable {W E P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) (χ : SetRel E E)
 
-/-- The demonstrative denotation of Moroney's (147)–(148): the unique referent satisfying the
-restrictor and lying in the demonstrative's deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for
-*nâj*. -/
+/-- The demonstrative of Moroney's (147)–(148) denotes the unique referent satisfying the restrictor
+and lying in its deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for *nâj*. -/
 noncomputable def demDenotation (d : DemonstrativeDeterminer) (restrictor : E → Prop) :
     Option E :=
   iota fun x ↦ restrictor x ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis)

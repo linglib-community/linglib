@@ -5,8 +5,8 @@ public import Linglib.Syntax.Category.Determiner.Basic
 /-!
 # Thai determiner inventory
 
-Thai patterns with Mandarin ([jenks-2015]; [jenks-2018] reports identical
-facts): bare nouns serve unique definites, the demonstrative *nán* 'that'
+Thai patterns with Mandarin, as Jenks reports for both: bare nouns serve
+unique definites, the demonstrative *nán* 'that'
 obligatorily expones anaphoric definites including donkey anaphora, and
 possession is marked with *khɔ̌ɔng*.
 
@@ -27,7 +27,7 @@ namespace Thai.Determiners
 def inventory : Determiner.Inventory :=
   [ .demonstrative
       { form := "nan", deixis := Person.first.participantSetsᶜ,
-        uses := {.anaphoric, .donkey} },
+        uses := {.anaphoric} },
     .possessive { form := "khong" } ]
 
 /-- Thai derives the `.markedAnaphoric` Moroney cell. -/

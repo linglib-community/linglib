@@ -22,8 +22,8 @@ and the descriptions themselves denote in `Semantics/Reference/Description.lean`
 * `Reference.Definiteness`: definite or indefinite, as a two-element bounded linear order.
 * `Reference.DefinitenessDegree`: the continuum of definiteness, with its cut
   `DefinitenessDegree.definiteness`.
-* `Reference.Description.Strength`, `Reference.Description.Kind`: the strength of a definite
-  article and the kind of a description, with `Strength.toKind` and `Kind.strength`.
+* `Reference.Description.Strength`, `Reference.NominalKind`: the strength of a definite article
+  and the kind of nominal an inventory realizes, with `Strength.toKind` and `NominalKind.strength`.
 * `Reference.Description.Use`, `Reference.Description.Bridging`: the uses of a definite
   description and the bridging relations, each with the strength it calls for.
 * `Reference.ArticleType`, `Reference.MarkingStrategy`: the three-cell article typology of
@@ -110,38 +110,12 @@ end DefinitenessDegree
 
 namespace Description
 
-/-- The strength of a definite article ([schwarz-2009]): the weak article presupposes
-uniqueness, the strong article familiarity. -/
+/-- A definite article's strength is uniqueness, which the weak article presupposes, or
+familiarity, which the strong article presupposes ([schwarz-2009]). -/
 inductive Strength where
   | uniqueness
   | familiarity
   deriving DecidableEq, Repr
-
-/-- The kind of a nominal description is a constructor of `Description` with its payload erased,
-or the indefinite, which denotes no partial individual but which an inventory may realize. -/
-inductive Kind where
-  | bare
-  | indefinite
-  | unique
-  | anaphoric
-  | demonstrative
-  | possessive
-  deriving DecidableEq, Repr
-
-/-- The weak article realizes the unique description and the strong article the anaphoric
-one. -/
-def Strength.toKind : Strength → Kind
-  | .uniqueness  => .unique
-  | .familiarity => .anaphoric
-
-/-- The strength a kind of description presupposes, where it is definite. -/
-def Kind.strength : Kind → Option Strength
-  | .bare | .indefinite         => none
-  | .unique | .possessive       => some .uniqueness
-  | .anaphoric | .demonstrative => some .familiarity
-
-@[simp] theorem Strength.strength_toKind (p : Strength) : p.toKind.strength = some p := by
-  cases p <;> rfl
 
 /-- A bridging relation is part–whole, as from a fridge to its crisper, or relational, as from a
 play to its author ([schwarz-2013]). -/
@@ -156,24 +130,51 @@ def Bridging.strength : Bridging → Strength
   | .partWhole  => .uniqueness
   | .relational => .familiarity
 
-/-- A use of a definite description is one of [hawkins-1978]'s, with bridging split by its relation,
-or the donkey use of [schwarz-2009]. -/
+/-- A use of a definite description is one of [hawkins-1978]'s, with bridging split by its relation.
+A covarying use is not a further use, since uses of every kind covary under quantification
+([schwarz-2009]). -/
 inductive Use where
   | anaphoric
   | immediateSituation
   | largerSituation
   | bridging (b : Bridging)
-  | donkey
   deriving DecidableEq, Repr
 
-/-- The anaphoric and donkey uses call for the strong article, the situational uses for the weak
-one, and a bridging use for the strength of its relation ([schwarz-2009], [schwarz-2013]). -/
+/-- The anaphoric use calls for the strong article, the situational uses for the weak one, and a
+bridging use for the strength of its relation ([schwarz-2009], [schwarz-2013]). -/
 def Use.strength : Use → Strength
-  | .anaphoric | .donkey => .familiarity
+  | .anaphoric => .familiarity
   | .immediateSituation | .largerSituation => .uniqueness
   | .bridging b => b.strength
 
 end Description
+
+/-- A kind of nominal that a determiner inventory may realize is one of the forms of `Description`,
+or the indefinite, which denotes no partial individual. -/
+inductive NominalKind where
+  | bare
+  | indefinite
+  | unique
+  | anaphoric
+  | demonstrative
+  | possessive
+  deriving DecidableEq, Repr
+
+/-- The weak article realizes the unique description and the strong article the anaphoric
+one. -/
+def Description.Strength.toKind : Description.Strength → NominalKind
+  | .uniqueness  => .unique
+  | .familiarity => .anaphoric
+
+/-- The strength a kind of nominal presupposes, where it is definite. -/
+def NominalKind.strength : NominalKind → Option Description.Strength
+  | .bare | .indefinite         => none
+  | .unique | .possessive       => some .uniqueness
+  | .anaphoric | .demonstrative => some .familiarity
+
+@[simp] theorem Description.Strength.strength_toKind (p : Description.Strength) :
+    p.toKind.strength = some p := by
+  cases p <;> rfl
 
 /-- An article system has no article, a weak article only, or weak and strong articles
 ([patel-grosz-grosz-2017]). -/
@@ -183,21 +184,22 @@ inductive ArticleType where
   | weakAndStrong
   deriving DecidableEq, Repr
 
-/-- The definiteness-marking strategies of [jenks-2018], with [moroney-2021]'s unmarked cell:
-one form marks both strengths, two forms mark them apart, only the anaphoric strength is
-obligatorily marked, or neither is. A language's cell is derived from its determiner inventory
-by `Determiner.Inventory.markingStrategy`. -/
+/-- The definiteness-marking types of [jenks-2018], with [moroney-2021]'s unmarked type. One form
+marks both strengths, two forms mark them apart, only the anaphoric strength or only the unique
+strength is marked, or neither is. A language's type is derived from its determiner inventory by
+`Determiner.Inventory.markingStrategy`. -/
 inductive MarkingStrategy where
   | generallyMarked
   | bipartite
   | markedAnaphoric
+  | markedUnique
   | unmarked
   deriving DecidableEq, Repr
 
-/-- The article system of a marking strategy, which collapses the generally-marked and
-marked-anaphoric cells to a single weak article. -/
+/-- The article system of a marking strategy, which collapses the cells with a single marked form
+to a single article. -/
 def MarkingStrategy.articleType : MarkingStrategy → ArticleType
-  | .generallyMarked | .markedAnaphoric => .weakOnly
+  | .generallyMarked | .markedAnaphoric | .markedUnique => .weakOnly
   | .bipartite => .weakAndStrong
   | .unmarked  => .articleless
 

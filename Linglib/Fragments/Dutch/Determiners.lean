@@ -8,7 +8,7 @@ public import Linglib.Syntax.Category.Determiner.Basic
 
 This file records the Dutch articles and demonstratives after Broekhuis and Corver's grammar.
 The definite article is *de* with common-gender singulars and with every plural and *het* with
-neuter singulars, and it is one syncretic definite over the [schwarz-2009] use types. The
+neuter singulars, and it is one syncretic definite over Schwarz's use types. The
 indefinite article *een* occurs with singular count nouns only, since indefinite plural and mass
 noun phrases are bare. The negative article *geen* occurs with singular, plural and mass nouns
 alike, and the grammar argues that it is a quantifier rather than an article. The proximate
@@ -25,12 +25,12 @@ two genders of `Dutch.Gender`.
   two genders, and `Dutch.Determiners.faithful` concludes that the two genders are faithful to the
   evidence.
 * `Dutch.Determiners.inventory` is the inventory, whose citation forms are the plural forms,
-  and `Dutch.Determiners.marking` derives its [moroney-2021] cell.
+  and `Dutch.Determiners.marking` derives its marking type.
 
 ## Implementation notes
 
-The uses of *de* are the [schwarz-2009] use types. The generic and proper-name uses of the
-definite article, on which [schmuck-2020]'s micro-typology places Dutch between English and
+The uses of *de* are Schwarz's use types. The generic and proper-name uses of the definite
+article, on which Schmuck's micro-typology places Dutch between English and
 German, are not `Description.Use` cells and so go unrecorded.
 
 ## References
@@ -83,7 +83,7 @@ theorem faithful : Gender.Faithful singular :=
 types. -/
 def de : Article :=
   { form := plural .definite, definiteness := .definite, exponent := .dedicatedMorpheme
-    uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
+    uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
 /-- The indefinite article *een* occurs with singular count nouns, since indefinite plural and
 mass noun phrases are bare. -/

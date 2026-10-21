@@ -7,7 +7,7 @@ public import Linglib.Syntax.Category.Determiner.Basic
 
 The Standard Modern Greek articles in the nominative: the definite *o*, *i*, *to* of the
 masculine, feminine and neuter singular and *oi*, *ta* of the plural, one syncretic definite
-covering the [schwarz-2009] use types, and the indefinite *enas*, *mia*, *ena*.
+covering Schwarz's use types, and the indefinite *enas*, *mia*, *ena*.
 
 ## References
 
@@ -21,7 +21,7 @@ namespace Greek.StandardModern.Determiners
 /-- The definite article with the given form. -/
 def definite (form : String) : Article :=
   { form, definiteness := .definite, exponent := .dedicatedMorpheme
-    uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
+    uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
 /-- The indefinite article with the given form. -/
 def indefinite (form : String) : Article :=

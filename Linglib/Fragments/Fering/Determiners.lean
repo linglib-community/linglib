@@ -27,7 +27,7 @@ def aForm : Article :=
 /-- The D-form *di/det* expones the uses on which it refers back to an antecedent. -/
 def dForm : Article :=
   { form := "di", definiteness := .definite, exponent := .dedicatedMorpheme,
-    uses := {.anaphoric, .donkey} }
+    uses := {.anaphoric} }
 
 /-- The Fering determiners are the A-form and the D-form of the definite article. -/
 def inventory : Determiner.Inventory := [.article aForm, .article dForm]
