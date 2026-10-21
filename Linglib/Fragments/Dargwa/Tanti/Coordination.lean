@@ -13,8 +13,8 @@ word *ja* before each alternative, which with negation gives 'neither … nor', 
 
 ## Main definitions
 
-* `Dargwa.Tanti.Coordination.ra`, `Dargwa.Tanti.Coordination.ja`, `Dargwa.Tanti.Coordination.nu`: the additive
-  enclitic that conjoins, the disjunctive coordinator and the contrastive enclitic.
+* `Dargwa.Tanti.Coordination.ra`, `Dargwa.Tanti.Coordination.ja`, `Dargwa.Tanti.Coordination.nu`:
+  the additive enclitic that conjoins, the disjunctive coordinator and the contrastive enclitic.
 
 ## References
 

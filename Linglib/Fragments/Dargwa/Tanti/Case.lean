@@ -17,7 +17,8 @@ alignment is ergative without a split, A ergative and S and P absolutive.
 
 ## Main definitions
 
-* `Dargwa.Tanti.Case`, `Dargwa.Tanti.Case.label`: the six cases, and the comparative value each is named for
+* `Dargwa.Tanti.Case`, `Dargwa.Tanti.Case.label`: the six cases, and the comparative value each is
+  named for
 * `Dargwa.Tanti.obliqueStem`: the oblique stem suffix *-li*
 * `Dargwa.Tanti.Case.exponent`: the suffixes of a case after the direct stem
 * `Dargwa.Tanti.marking`: the ergative marking of the core arguments

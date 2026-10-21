@@ -36,12 +36,13 @@ and *-u* otherwise, so it marks exactly the clauses in which the verb agrees wit
 
 ## Main results
 
-* `Dargwa.Tanti.Gender.Value.sgMarker_injective`, `Dargwa.Tanti.Gender.Value.plMarker_masc_eq_fem`: the
-  singular markers distinguish the three genders; the plural ones do not.
-* `Dargwa.Tanti.PersonSet.realize_eq_nil_iff`: in every set, a cell is unmarked exactly when it is not
-  a speech-act participant's.
-* `Dargwa.Tanti.isDargic_clitic`, `Dargwa.Tanti.isDargic_optative`, `Dargwa.Tanti.not_isDargic_irrealis`: the
-  clitic and optative sets have the Dargic configuration, the irrealis set does not.
+* `Dargwa.Tanti.Gender.Value.sgMarker_injective`, `Dargwa.Tanti.Gender.Value.plMarker_masc_eq_fem`:
+  the singular markers distinguish the three genders; the plural ones do not.
+* `Dargwa.Tanti.PersonSet.realize_eq_nil_iff`: in every set, a cell is unmarked exactly when it is
+  not a speech-act participant's.
+* `Dargwa.Tanti.isDargic_clitic`, `Dargwa.Tanti.isDargic_optative`,
+  `Dargwa.Tanti.not_isDargic_irrealis`: the clitic and optative sets have the Dargic configuration,
+  the irrealis set does not.
 * `Dargwa.Tanti.thematic_eq_i_iff`: the thematic suffix is *-i* exactly when A controls person
   agreement.
 

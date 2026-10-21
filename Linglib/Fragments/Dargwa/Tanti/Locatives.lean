@@ -21,9 +21,11 @@ the standard of comparison.
 
 ## Main definitions
 
-* `Dargwa.Tanti.Localization`, `Dargwa.Tanti.Orientation`, `Dargwa.Tanti.Direction`: the three categories with
-  their suffixes, and `Localization.region` and `Orientation.pathDir` their comparative labels
-* `Dargwa.Tanti.Orientation.marker?`: the marker of an orientation, apart from the side it attaches on
+* `Dargwa.Tanti.Localization`, `Dargwa.Tanti.Orientation`, `Dargwa.Tanti.Direction`: the three
+  categories with their suffixes, and `Localization.region` and `Orientation.pathDir` their
+  comparative labels
+* `Dargwa.Tanti.Orientation.marker?`: the marker of an orientation, apart from the side it attaches
+  on
 * `Dargwa.Tanti.LocativeForm`: a form, with `LocativeForm.morphs` its suffixes and
   `LocativeForm.IsSpatial` the combinatorics of the spatial paradigm
 * `Dargwa.Tanti.comparisonStandard`: the super-elative of the standard of comparison
