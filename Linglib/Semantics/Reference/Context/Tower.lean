@@ -13,28 +13,31 @@ public import Mathlib.Algebra.BigOperators.Group.List.Basic
 /-!
 # Context towers
 
-A depth-indexed stack of context shifts over an origin, the one carrier for the
-context-manipulation mechanisms of [abusch-1997], [anand-nevins-2004], [cumming-2026] and
-[schlenker-2003]: Kaplanian indexicals read the origin, shifted indexicals the innermost
-context, De Bruijn temporal indexing a relative depth. A *shift* is an endomorphism of the
-context type, an element of the monoid `Function.End C` acting on contexts, and a tower is an
-origin, Kaplan's speech-act context, with its shifts from outermost to innermost
-(`ContextTower`). The context at depth `k` is the product of the first `k` shifts acting on
-the origin (`ContextTower.contextAt`), saturating at the innermost context
-(`ContextTower.innermost`), and pushing a shift multiplies it in (`ContextTower.push`,
-`push_innermost`). An access pattern reads a coordinate of the context at a depth given
-relative to the tower (`AccessPattern`, `DepthSpec`); `AccessPattern.origin` reads the
-speech-act context and `AccessPattern.innermost` the innermost one, and a pattern is *stable*
-under a shift when pushing it changes nothing (`AccessPattern.Stable`), which every origin
-pattern is (`AccessPattern.stable_origin`).
+A context tower is an origin, Kaplan's speech-act context, with a stack of shifts from outermost to
+innermost, each an element of the monoid `Function.End C`; an expression reads a coordinate of the
+context at some depth. Kaplanian indexicals read the origin and shifted indexicals the innermost
+context. The origin survives every shift, so an indexical can read it whatever the clauses between
+read: the binding account of indexical shift, against which Anand and Nevins argue that shifting
+overwrites the context.
+
+## Main definitions
+
+* `ContextTower`: an origin with its shifts; `contextAt k` is the first `k` shifts acting on the
+  origin, `innermost` all of them, and `push` embeds one level deeper.
+* `ContextTower.AccessPattern`: a depth, given relative to the tower, and a coordinate;
+  `AccessPattern.origin` and `AccessPattern.innermost`.
+* `AccessPattern.Stable`: pushing a shift leaves the pattern's value unchanged.
+
+## Main results
+
+* `push_innermost`, `push_contextAt_of_le`: a push acts on the innermost context alone.
+* `AccessPattern.stable_origin`: a pattern reading the origin is stable under every shift.
 
 ## References
 
 * [kaplan-1989]
 * [schlenker-2003]
 * [anand-nevins-2004]
-* [abusch-1997]
-* [cumming-2026]
 -/
 
 @[expose] public section

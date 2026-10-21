@@ -11,27 +11,31 @@ public import Linglib.Semantics.Reference.Context.Shifts
 /-!
 # Kaplan's theory of indexicality
 
-Kaplan's three tenets as Schlenker states them, over any context type with its coordinates given as
-projections. A sentence's character holds at a context when its content is true at that context's
-world (`Character.HoldsAt`); it is *a priori* when it holds at every context
-(`Character.IsAPriori`) and *necessary* when its content is true at every world
-(`Character.IsNecessary`). The two come apart because contexts are finer than worlds: when every
-context is proper, *I exist* is a priori (`Kaplan.isAPriori_existsAgent`) without being necessary
-(`Kaplan.not_isNecessary_existsAgent`), and when every context is located *I am here now* is a
-priori (`Kaplan.isAPriori_locatedAgent`).
+Kaplan's tenets as Schlenker states them, over any context type with its coordinates given as
+projections: a sentence is a priori when it holds at every context and necessary when it is true
+at every world, and the two come apart because contexts are finer than worlds. An operator on
+characters that evaluates its argument at another context is a *monster*; Kaplan's thesis for
+English is that its indexicals read the speech-act context under every embedding shift.
 
-The English pure indexicals read a coordinate of the speech-act context: as access patterns on the
-context tower they are `AccessPattern.origin` of a coordinate (`Kaplan.I`, `Kaplan.you`,
-`Kaplan.now`, `Kaplan.here`, `Kaplan.actually`), invariant under every embedding shift
-(`AccessPattern.stable_origin`), which is Kaplan's thesis for English. An access pattern is a
-character over towers with rigid content (`AccessPattern.toCharacter`), Kaplan's `dthat` of its
-coordinate at a root tower (`AccessPattern.origin_toCharacter_root`), and one stable under every
-shift is *Kaplan-compliant* (`AccessPattern.IsKaplanCompliant`). An operator on characters is
-a *monster* when it does not operate on contents (`IsMonster`); the operator evaluating a character
-at a shifted context is one exactly when the shift moves some context (`isMonster_shift_iff`), as
-the attitude shift of Schlenker and of Anand and Nevins does whenever the holder is not the speaker
-(`attitudeShift_ne_one`), and the identity shift of English attitude verbs does not
-(`not_isMonster_shift_one`, `AccessPattern.stable_one`).
+## Main definitions
+
+* `Character.HoldsAt`, `Character.IsAPriori`, `Character.IsNecessary`
+* `IsMonster`: an operator on characters that does not operate on contents.
+* `shiftBy τ`: evaluation at the context `τ c v` computed from the context and the index, as the
+  context-shifting operators of Anand and Nevins do; `shift σ` is its index-independent case.
+* `Kaplan.I`, `Kaplan.you`, `Kaplan.now`, `Kaplan.here`, `Kaplan.actually`: the pure indexicals,
+  origin access patterns on the context tower.
+* `AccessPattern.toCharacter`, `AccessPattern.IsKaplanCompliant`
+
+## Main results
+
+* `isAPriori_existsAgent`, `not_isNecessary_existsAgent`, `isAPriori_locatedAgent`: *I exist* and
+  *I am here now* are a priori, the first without being necessary.
+* `isMonster_shiftBy_iff`, `isMonster_shift_iff`: an operator evaluating at a computed or shifted
+  context is a monster iff it moves some context.
+* `attitudeShift_ne_one`, `not_isMonster_shift_one`, `AccessPattern.stable_one`: Schlenker's
+  attitude shift is a monster when the holder is not the speaker, the identity shift of English
+  attitude verbs is not.
 
 ## References
 
@@ -118,8 +122,29 @@ yields at a context is not determined by the content of its argument there ([kap
 def IsMonster (O : Character C V α → Character C V β) : Prop :=
   ¬ ∃ o : C → Content V α → Content V β, ∀ χ c, O χ c = o c (χ c)
 
+/-- The operator that evaluates a character, at a context and an index, at the context `τ c v`
+and the same index. -/
+def shiftBy (τ : C → V → C) (χ : Character C V α) : Character C V α := fun c v ↦ χ (τ c v) v
+
+@[simp] theorem shiftBy_apply (τ : C → V → C) (χ : Character C V α) (c : C) (v : V) :
+    shiftBy τ χ c v = χ (τ c v) v := rfl
+
+/-- Over values that can differ, an operator evaluating at a computed context is a monster iff the
+computation moves some context at some index. -/
+theorem isMonster_shiftBy_iff [Nontrivial α] (τ : C → V → C) :
+    IsMonster (shiftBy τ : Character C V α → Character C V α) ↔ ∃ c v, τ c v ≠ c := by
+  classical
+  refine ⟨fun h ↦ ?_, fun ⟨c, v, hc⟩ ⟨o, ho⟩ ↦ ?_⟩
+  · by_contra! hτ
+    exact h ⟨fun _ f ↦ f, fun χ c ↦ funext fun v ↦ by simp [hτ]⟩
+  obtain ⟨a, b, hab⟩ := exists_pair_ne α
+  have h₁ := congrFun (ho (fun _ _ ↦ a) c) v
+  have h₂ := congrFun (ho (Function.update (fun _ _ ↦ a) (τ c v) fun _ ↦ b) c) v
+  simp only [shiftBy_apply, Function.update_self, Function.update_of_ne hc.symm] at h₁ h₂
+  exact hab (h₁.trans h₂.symm)
+
 /-- The operator that evaluates a character at the shifted context. -/
-def shift (σ : Function.End C) (χ : Character C V α) : Character C V α := fun c ↦ χ (σ • c)
+def shift (σ : Function.End C) : Character C V α → Character C V α := shiftBy fun c _ ↦ σ • c
 
 @[simp] theorem shift_apply (σ : Function.End C) (χ : Character C V α) (c : C) :
     shift σ χ c = χ (σ • c) := rfl
@@ -132,14 +157,10 @@ theorem ne_one_iff_exists_smul_ne (σ : Function.End C) : σ ≠ 1 ↔ ∃ c : C
 context. -/
 theorem isMonster_shift_iff [Nontrivial (Content V α)] (σ : Function.End C) :
     IsMonster (shift σ : Character C V α → Character C V α) ↔ σ ≠ 1 := by
-  classical
-  refine ⟨fun h h1 ↦ h ⟨fun _ f ↦ f, fun χ c ↦ by simp [h1]⟩, fun h ⟨o, ho⟩ ↦ ?_⟩
-  obtain ⟨c, hc⟩ := (ne_one_iff_exists_smul_ne σ).1 h
-  obtain ⟨f, f', hf⟩ := exists_pair_ne (Content V α)
-  have h₁ := ho (fun _ ↦ f) c
-  have h₂ := ho (Function.update (fun _ ↦ f) (σ • c) f') c
-  simp only [shift_apply, Function.update_self, Function.update_of_ne hc.symm] at h₁ h₂
-  exact hf (h₁.trans h₂.symm)
+  have := Function.nontrivial_of_nontrivial V α
+  obtain ⟨f, g, h⟩ := exists_pair_ne (Content V α)
+  have : Nonempty V := (Function.ne_iff.1 h).nonempty
+  simp [shift, isMonster_shiftBy_iff, ne_one_iff_exists_smul_ne]
 
 /-- The identity shift, Kaplan's thesis for English attitude verbs, is no monster. -/
 theorem not_isMonster_shift_one : ¬ IsMonster (shift 1 : Character C V α → Character C V α) :=
