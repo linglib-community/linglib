@@ -30,8 +30,11 @@ endpoint rules out the contextual standard, and a totally closed scale prefers i
 * `Boundedness.withMax`: the boundedness with a greatest degree adjoined.
 * `Boundedness.DegreeShape`: a linear order of each boundedness.
 * `PositiveStandard`: the standards of the positive form.
+* `PositiveStandard.Complementary`: the standards of contradictory poles.
+* `MinStandardPos`, `MaxStandardPos`, `RelativePos`: the positive form at Kennedy's standards.
 * `Boundedness.Admits`: the standards Interpretive Economy admits on a scale.
 * `Boundedness.defaultStandard`: the standard Interpretive Economy prefers on a scale.
+* `EndpointModifier`, `Boundedness.Licenses`: maximizers and minimizers, licensed by an endpoint.
 
 ## Main statements
 
@@ -39,6 +42,8 @@ endpoint rules out the contextual standard, and a totally closed scale prefers i
 * `Boundedness.ofOrder_degreeShape`: every boundedness is that of a linear order.
 * `Boundedness.admits_withMin_iff`: a scale with a least degree adjoined admits the minimum
   standard, and the maximum exactly when the original scale has one.
+* `Boundedness.defaultStandard_eq_maxEndpoint_iff`: the default standard is the maximum iff any.
+* `Boundedness.complementary_defaultStandard_dual_iff`: poles on a half-closed scale contradict.
 
 ## References
 
@@ -97,6 +102,10 @@ instance : DecidablePred HasMax
 @[ext] theorem ext {b c : Boundedness} (hmin : b.HasMin ↔ c.HasMin) (hmax : b.HasMax ↔ c.HasMax) :
     b = c := by
   revert hmin hmax; cases b <;> cases c <;> decide
+
+/-- A scale is upper closed exactly when it has a maximum and no minimum. -/
+theorem eq_upperClosed_iff {b : Boundedness} : b = .upperClosed ↔ b.HasMax ∧ ¬ b.HasMin := by
+  cases b <;> decide
 
 /-! ### The boundedness of an order -/
 
@@ -309,6 +318,34 @@ instance : DecidablePred PositiveStandard.RequiresComparisonClass
   | .necessity   => inferInstanceAs (Decidable True)
   | .extreme     => inferInstanceAs (Decidable True)
 
+/-- Two standards are complementary when one is the minimum and the other the maximum. The poles
+of an antonym pair that take them are contradictory, denying one asserting the other
+([kennedy-2007] (47)), and any other pair of standards leaves a gap. -/
+def PositiveStandard.Complementary (s t : PositiveStandard) : Prop :=
+  s = .minEndpoint ∧ t = .maxEndpoint ∨ s = .maxEndpoint ∧ t = .minEndpoint
+
+instance : DecidableRel PositiveStandard.Complementary := fun _ _ ↦ by
+  unfold PositiveStandard.Complementary; infer_instance
+
+/-! ### The positive form at Kennedy's standards -/
+
+section PositiveForm
+variable {α D : Type*} [Preorder D] (μ : α → D)
+
+/-- The positive form at the minimum standard holds of `x` when its degree is above the least
+degree of the scale, as for *wet* and *bent*. -/
+def MinStandardPos [OrderBot D] (x : α) : Prop := ⊥ < μ x
+
+/-- The positive form at the maximum standard holds of `x` when its degree is the greatest degree
+of the scale, as for *dry* and *full*. -/
+def MaxStandardPos [OrderTop D] (x : α) : Prop := μ x = ⊤
+
+/-- The positive form at a contextual standard `θ` holds of `x` when its degree exceeds `θ`, as
+for *tall*. -/
+def RelativePos (θ : D) (x : α) : Prop := θ < μ x
+
+end PositiveForm
+
 namespace Boundedness
 
 /-- Interpretive Economy admits an endpoint standard exactly where the scale has that endpoint, the
@@ -335,6 +372,19 @@ def defaultStandard : Boundedness → PositiveStandard
 
 /-- The default standard is always admitted. -/
 theorem admits_defaultStandard (b : Boundedness) : b.Admits b.defaultStandard := by
+  cases b <;> decide
+
+/-- The default standard is the maximum exactly when the scale has one. -/
+theorem defaultStandard_eq_maxEndpoint_iff {b : Boundedness} :
+    b.defaultStandard = .maxEndpoint ↔ b.HasMax := by
+  cases b <;> decide
+
+/-- The default standards of a scale and its dual are complementary exactly when the scale has one
+endpoint. An open scale gives both poles a contextual standard and a totally closed one gives both
+the maximum, as for *full* and *empty*. -/
+theorem complementary_defaultStandard_dual_iff {b : Boundedness} :
+    b.defaultStandard.Complementary b.dual.defaultStandard ↔
+      b = .lowerClosed ∨ b = .upperClosed := by
   cases b <;> decide
 
 @[simp] theorem admits_contextual {b : Boundedness} : b.Admits .contextual ↔ b = .open_ :=
@@ -375,5 +425,30 @@ theorem defaultStandard_withMin (b : Boundedness) :
   cases b <;> rfl
 
 end Boundedness
+
+/-! ### Endpoint modifiers -/
+
+/-- An endpoint modifier is a degree modifier that refers to an endpoint of the scale, a maximizer
+such as *completely* or *fully*, or a minimizer such as *slightly* or *partially*
+([kennedy-mcnally-2005], [kennedy-2007] (61)). -/
+inductive EndpointModifier where
+  | maximizer
+  | minimizer
+  deriving DecidableEq, Repr
+
+/-- A scale licenses an endpoint modifier when it has the endpoint the modifier picks out. -/
+def Boundedness.Licenses (b : Boundedness) : EndpointModifier → Prop
+  | .maximizer => b.HasMax
+  | .minimizer => b.HasMin
+
+instance (b : Boundedness) : DecidablePred b.Licenses
+  | .maximizer => inferInstanceAs (Decidable b.HasMax)
+  | .minimizer => inferInstanceAs (Decidable b.HasMin)
+
+@[simp] theorem Boundedness.licenses_maximizer {b : Boundedness} :
+    b.Licenses .maximizer ↔ b.HasMax := Iff.rfl
+
+@[simp] theorem Boundedness.licenses_minimizer {b : Boundedness} :
+    b.Licenses .minimizer ↔ b.HasMin := Iff.rfl
 
 end Degree

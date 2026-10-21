@@ -135,8 +135,8 @@ structure ArgStructure where
   perfectAuxiliaries : Finset Verb.PerfectAuxiliary := ∅
   deriving BEq
 
-/-- The aspectual class of a verb is its Vendler class, lexical viewpoint, degree-achievement
-    scale, direction of motion, incrementality and phasal class. -/
+/-- The aspectual class of a verb is its Vendler class, lexical viewpoint, scale, direction of
+    motion, incrementality and phasal class. -/
 structure Aspect where
   /-- [vendler-1957] aspectual class of the verb's base VP.
       For verbs whose class depends on the object NP (eat apples = activity,
@@ -148,10 +148,11 @@ structure Aspect where
       and imperfective on verb stems, as the Slavic languages do, at its dictionary value; `none`
       where the language does not. -/
   perfectivity : Option Perfectivity := none
-  /-- The dimension of the scale along which a degree achievement measures change. -/
+  /-- The dimension of a gradable verb's scale, along which a degree achievement measures change
+      and on which a gradable state such as *believe* measures its holder. -/
   scaleDimension : Option Degree.ScalarDimension := none
-  /-- The pole of the dimension towards which a degree achievement measures change, negative
-      for *dry*, a decrease in wetness. -/
+  /-- The pole of the dimension the verb measures towards, negative for *dry*, a decrease in
+      wetness, and for *doubt*, the antonym of *believe*. -/
   scalePolarity : Polarity := .positive
   /-- The direction of the path along which a verb of motion displaces its theme, relative to
       the ground ([pantcheva-2011]). It is `.goal` for *arrive* and *come*, `.source` for
@@ -252,10 +253,20 @@ structure Verb extends Verb.ArgStructure, Verb.Aspect, Verb.Presupposition, Verb
 /-- The citation form of a verb is the surface form of its morphs, in boundary notation. -/
 def Verb.form (v : Verb) : String := Morph.surface v.morphs
 
-/-- The scale along which a degree achievement measures change is its dimension's, dualized
-when the change is towards the negative pole, as the scale of a negative adjective is. -/
-def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
+/-- The scale of a gradable verb is its dimension's, dualized for a verb towards the negative
+pole, as the scale of a negative adjective is. -/
+def Verb.boundedness (v : Verb) : Option Degree.Boundedness :=
   v.scaleDimension.map (v.scalePolarity • ·.boundedness)
+
+/-- The positive standard of a gradable verb is the one Interpretive Economy prefers on its
+scale. -/
+def Verb.standard (v : Verb) : Option Degree.PositiveStandard :=
+  v.boundedness.map (·.defaultStandard)
+
+/-- The scale along which a degree achievement measures change is the scale of a verb that is not
+a state, since a state measures no change. -/
+def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
+  if v.vendlerClass = some .state then none else v.boundedness
 
 /-! ### ArgumentFrame accessors
 

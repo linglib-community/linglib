@@ -5,7 +5,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 public import Linglib.Semantics.Attitudes.Preference.ExpectedValue
 public import Linglib.Core.Probability.UniformOn
-public import Studies.Kennedy2007
+public import Linglib.Fragments.English.Adjectives
 public import Studies.Lassiter2015
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 
@@ -162,21 +162,25 @@ theorem ofOrder_Ioo_zero_one :
 
 /-- As the book licenses maximizers and minimizers (§4.2.9), *completely* takes the positive
 form of a maximum adjective and *slightly* that of a minimum adjective, whatever the scale. -/
-def LicensesPos : Kennedy2007.DegreeModifier → PositiveStandard → Prop
+def LicensesPos : EndpointModifier → PositiveStandard → Prop
   | .maximizer, s => s = .maxEndpoint
   | .minimizer, s => s = .minEndpoint
 
+instance : ∀ m s, Decidable (LicensesPos m s)
+  | .maximizer, s => inferInstanceAs (Decidable (s = .maxEndpoint))
+  | .minimizer, s => inferInstanceAs (Decidable (s = .minEndpoint))
+
 /-- [kennedy-2007]'s licensing by the scale is the book's licensing by the positive form,
 quantified over the standards Interpretive Economy admits on the scale. -/
-theorem licenses_iff_exists_admits (m : Kennedy2007.DegreeModifier) (b : Boundedness) :
-    Kennedy2007.Licenses m b ↔ ∃ s, b.Admits s ∧ LicensesPos m s := by
-  cases m <;> cases b <;> simp [Kennedy2007.Licenses, LicensesPos, Boundedness.Admits,
+theorem licenses_iff_exists_admits (m : EndpointModifier) (b : Boundedness) :
+    b.Licenses m ↔ ∃ s, b.Admits s ∧ LicensesPos m s := by
+  cases m <;> cases b <;> simp [Boundedness.Licenses, LicensesPos, Boundedness.Admits,
     Boundedness.HasMin, Boundedness.HasMax]
 
 /-- A relative adjective licenses neither modifier, whatever its scale, which is why
 *completely likely* and *slightly likely* lack a degree reading on a closed scale
 ((4.62), (4.63)), where Kennedy's licensing predicts one. -/
-theorem not_licensesPos_contextual (m : Kennedy2007.DegreeModifier) :
+theorem not_licensesPos_contextual (m : EndpointModifier) :
     ¬ LicensesPos m .contextual := by
   cases m <;> simp [LicensesPos]
 
@@ -216,19 +220,19 @@ theorem mem_certain_iff : A ∈ certain P ↔ P.real A = 1 :=
 
 /-- *Likely* is [kennedy-2007]'s relative positive form on the probability scale. -/
 theorem mem_likely_iff_relativePos (θ : Probability) :
-    A ∈ likely P θ ↔ Kennedy2007.RelativePos (likelihood P) θ A :=
+    A ∈ likely P θ ↔ RelativePos (likelihood P) θ A :=
   Iff.rfl
 
 /-- *Certain* is Kennedy's maximum-standard positive form on the probability scale. -/
 theorem mem_certain_iff_maxStandardPos :
-    A ∈ certain P ↔ Kennedy2007.MaxStandardPos (likelihood P) A := by
-  rw [mem_certain_iff, Kennedy2007.MaxStandardPos, Subtype.ext_iff, coe_likelihood,
+    A ∈ certain P ↔ MaxStandardPos (likelihood P) A := by
+  rw [mem_certain_iff, MaxStandardPos, Subtype.ext_iff, coe_likelihood,
     Set.Icc.coe_top]
 
 /-- *Possible* is Kennedy's minimum-standard positive form on the probability scale. -/
 theorem mem_possible_iff_minStandardPos :
-    A ∈ possible P ↔ Kennedy2007.MinStandardPos (likelihood P) A := by
-  rw [mem_possible_iff, Kennedy2007.MinStandardPos, ← Subtype.coe_lt_coe, coe_likelihood,
+    A ∈ possible P ↔ MinStandardPos (likelihood P) A := by
+  rw [mem_possible_iff, MinStandardPos, ← Subtype.coe_lt_coe, coe_likelihood,
     Set.Icc.coe_bot]
 
 /-- The English fragment agrees, since its *possible* takes the minimum standard and its

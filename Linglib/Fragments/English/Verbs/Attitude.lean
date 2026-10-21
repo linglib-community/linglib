@@ -6,11 +6,11 @@ public import Linglib.Fragments.English.Verbs.Implicative
 # English attitude verbs
 
 This file defines the English clause-embedding verbs of attitude: the factives *know*, *regret*,
-*realize*, *discover* and *notice*, the doxastics *believe* and *think*, the preferentials *want*,
-*intend*, *decide*, *hope*, *pray*, *expect*, *wish*, *fear*, *dread* and *worry*, the
-clause-embedding predicates of Degen and Tonhauser's experiments, and the question-embedding
-*wonder*, *ask*, *investigate* and *depend on* with the rogative senses of *remember* and
-*forget*.
+*realize*, *discover* and *notice*, the doxastics *believe*, *think* and *doubt*, the
+preferentials *want*, *intend*, *decide*, *hope*, *pray*, *expect*, *wish*, *fear*, *dread* and
+*worry*, the clause-embedding predicates of Degen and Tonhauser's experiments, and the
+question-embedding *wonder*, *ask*, *investigate* and *depend on* with the rogative senses of
+*remember* and *forget*.
 
 ## References
 
@@ -19,6 +19,8 @@ clause-embedding predicates of Degen and Tonhauser's experiments, and the questi
 * [fusco-sgrizzi-2026]
 * [grano-2024]
 * [klecha-2016]
+* [hawthorne-rothschild-spectre-2016]
+* [koev-2026]
 -/
 
 @[expose] public section
@@ -84,11 +86,15 @@ def notice : Verb where
 
 /-! ### Doxastic Attitude -/
 
-/-- "believe" — doxastic attitude verb, creates opaque context -/
+/-- "believe" — doxastic attitude verb, creates opaque context. It is gradable, measuring the
+holder's degree of certainty in the complement ([hawthorne-rothschild-spectre-2016];
+[koev-2026] (3), (7)–(10)), and takes the maximizers *fully*, *completely* and *entirely* ((12)).
+The fragment enters it on the confidence scale of *certain*, *sure* and *confident*. -/
 def believe : Verb where
   morphs := [.root "believe"]
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
+  scaleDimension := some .confidence
   passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical)
@@ -106,6 +112,19 @@ def think : Verb where
   attitude := some (.doxastic .nonVeridical)
   complementSig := some .mono
   levinClasses := {LevinClass.declare}
+
+/-- "doubt" — doxastic attitude verb, the apparent antonym of *believe*, measuring certainty
+towards the negative pole ([koev-2026] (17), fn. 7). Its complement is downward entailing, as its
+licensing of negative polarity items shows. -/
+def doubt : Verb where
+  morphs := [.root "doubt"]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
+  vendlerClass := some .state
+  scaleDimension := some .confidence
+  scalePolarity := .negative
+  opaqueContext := true
+  attitude := some (.doxastic .nonVeridical)
+  complementSig := some .anti
 
 /-! ### Preferential Attitude -/
 

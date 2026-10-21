@@ -209,8 +209,7 @@ they are contradictory and denying one asserts the other, as for *wet* and *dry*
 contextual standards and an extreme pair (*pristine*, *filthy*) by standards beyond those of the
 weak pair ([morzycki-2012]; [alexandropoulou-gotzner-2024a], fn. 11). -/
 def ComplementaryStandards (p : AntonymPair) : Prop :=
-  (p.pos.standard = .minEndpoint ∧ p.neg.standard = .maxEndpoint) ∨
-    (p.pos.standard = .maxEndpoint ∧ p.neg.standard = .minEndpoint)
+  p.pos.standard.Complementary p.neg.standard
 
 instance (p : AntonymPair) : Decidable p.ComplementaryStandards := by
   unfold ComplementaryStandards; infer_instance
@@ -222,10 +221,8 @@ theorem complementaryStandards_iff_of_lexicalStandard_none (p : AntonymPair)
     (hp : p.posLexicalStandard = none) (hn : p.negLexicalStandard = none) :
     p.ComplementaryStandards ↔
       p.dimension.boundedness = .lowerClosed ∨ p.dimension.boundedness = .upperClosed := by
-  simp only [ComplementaryStandards, GradableAdjective.standard, GradableAdjective.boundedness, pos,
-    neg, hp, hn, Option.getD_none, Option.map_some, Boundedness.negative_smul]
-  generalize p.dimension.boundedness = b
-  cases b <;> decide
+  simpa [ComplementaryStandards, GradableAdjective.standard, GradableAdjective.boundedness, pos,
+    neg, hp, hn] using Boundedness.complementary_defaultStandard_dual_iff
 
 end AntonymPair
 

@@ -35,7 +35,7 @@ def verbs : List Verb :=
    weigh, cover, measure, buy, meet, set_, clarify, sell,
    leave, see, know, regret, realize, discover, notice, stop,
    quit, start, begin_, continue_, keep, manage, fail, try_,
-   persuade, promise, remember, forget, neglect, believe, think, want,
+   persuade, promise, remember, forget, neglect, believe, think, doubt, want,
    intend, decide_, hope, pray, expect, wish, fear, dread,
    worry, seem, cause, make, let_, have_caus, get_caus, force,
    prevent, kill, break_, tear_, crack, dent, scratch, shatter,

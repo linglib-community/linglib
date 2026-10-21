@@ -1,0 +1,583 @@
+[
+  {
+    "id": "koev2026_2",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "I believe the Patriots will win, but I'm not sure they will.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["contrast", "sure"]
+    ],
+    "comment": "Repeated as (21a). The felt weakness of believe that Hawthorne, Rothschild and Spectre take as evidence for a weak force; Koev reads it as subjective certainty against an objective reading of sure, (21b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_7",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(7)"},
+    "language": "stan1293",
+    "primaryText": "Each [farmer] believes as strongly as the other that his crops will not survive another week without water, and each cares as much as the other about the survival of his crops.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["degreeConstruction", "equative"]
+    ],
+    "comment": "Naturally occurring, collected via Google search in 2018.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "koev2026_8",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(8)"},
+    "language": "stan1293",
+    "primaryText": "He believes more strongly than I do that the organization of the executive branch of the federal government matters a great deal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["degreeConstruction", "comparative"]
+    ],
+    "comment": "Naturally occurring, collected via Google search in 2018.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "koev2026_9",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "What group on this map most strongly believes that climate change is not real?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["degreeConstruction", "superlative"]
+    ],
+    "comment": "Naturally occurring, collected via Google search in 2018.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "koev2026_10a",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(10a)"},
+    "language": "stan1293",
+    "primaryText": "No one believes more than me that fitness should be a top priority in our lives.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["degreeConstruction", "comparative"]
+    ],
+    "comment": "Naturally occurring; a comparative of believe without strongly.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "koev2026_10b",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(10b)"},
+    "language": "stan1293",
+    "primaryText": "What do you believe more, that the CIA killed JFK or that the government did 9/11?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["degreeConstruction", "comparative"]
+    ],
+    "comment": "Naturally occurring; a comparative of believe without strongly.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "koev2026_12a",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(12a)"},
+    "language": "stan1293",
+    "primaryText": "My boss fully believes that family comes first.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["modifier", "maximizer"],
+      ["adverb", "fully"]
+    ],
+    "comment": "Naturally occurring, collected via Google search in 2018.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_12b",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(12b)"},
+    "language": "stan1293",
+    "primaryText": "For one, I completely believe that Walmart is a monopoly, if you thought I was defending Walmart.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["modifier", "maximizer"],
+      ["adverb", "completely"]
+    ],
+    "comment": "Naturally occurring, collected via Google search in 2018.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_12c",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(12c)"},
+    "language": "stan1293",
+    "primaryText": "But Kathleen didn't entirely believe it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["modifier", "maximizer"],
+      ["adverb", "entirely"]
+    ],
+    "comment": "Naturally occurring, collected via Google search in 2018.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_multidim",
+    "source": {"bibkey": "koev-2026", "paperLabel": "§2"},
+    "language": "stan1293",
+    "primaryText": "Kim believes in some respects that it is raining outside.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [
+      {"form": "Kim believes in most respects that it is raining outside.", "judgment": "marginal"},
+      {"form": "Kim believes in all respects that it is raining outside.", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["respects", "overt"]
+    ],
+    "comment": "Printed ?Kim believes in some/most/all respects that it is raining outside: believe lacks the hallmarks of multidimensionality (Sassoon 2013).",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_fn4",
+    "source": {"bibkey": "koev-2026", "paperLabel": "fn. 4"},
+    "language": "stan1293",
+    "primaryText": "John slightly believes that the Patriots will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [
+      {"form": "John believes a bit that the Patriots will win.", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["modifier", "minimizer"],
+      ["adverb", "slightly"]
+    ],
+    "comment": "Printed ??John slightly believes/believes a bit that the Patriots will win, after a reviewer: believe is not lower closed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_13a",
+    "source": {"bibkey": "lassiter-2017", "paperLabel": "p. 101"},
+    "reportedIn": {"bibkey": "koev-2026", "paperLabel": "(13a)"},
+    "language": "stan1293",
+    "primaryText": "Bill is tall for a fourteen-year-old.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "tall"],
+      ["comparisonClass", "overt"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_13b",
+    "source": {"bibkey": "lassiter-2017", "paperLabel": "p. 101"},
+    "reportedIn": {"bibkey": "koev-2026", "paperLabel": "(13b)"},
+    "language": "stan1293",
+    "primaryText": "This room is full for a classroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "full"],
+      ["comparisonClass", "overt"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_14a",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(14a)"},
+    "language": "stan1293",
+    "primaryText": "Compared to an invasion of another neighboring country, an invasion of Ukraine is likely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "likely"],
+      ["comparisonClass", "overt"]
+    ],
+    "comment": "The page prints the mark in parentheses, (?).",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_14b",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(14b)"},
+    "language": "stan1293",
+    "primaryText": "Compared to an invasion of another neighboring country, I believe that Ukraine will be invaded.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["comparisonClass", "overt"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_fn6",
+    "source": {"bibkey": "koev-2026", "paperLabel": "fn. 6"},
+    "language": "stan1293",
+    "primaryText": "This glass is full for a wine glass.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "full"],
+      ["comparisonClass", "overt"]
+    ],
+    "comment": "Absolute predicates are sensitive to the kind of object, a wine glass counting as full at about half its capacity, but not with a comparison class restrictor.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_15a",
+    "source": {"bibkey": "lassiter-2017", "paperLabel": "p. 100"},
+    "reportedIn": {"bibkey": "koev-2026", "paperLabel": "(15a)"},
+    "language": "stan1293",
+    "primaryText": "The rod is not bent.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["negated", "bent"],
+      ["antonym", "straight"],
+      ["relation", "entails"]
+    ],
+    "comment": "Printed with an entailment arrow to The rod is straight.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_15b",
+    "source": {"bibkey": "lassiter-2017", "paperLabel": "p. 100"},
+    "reportedIn": {"bibkey": "koev-2026", "paperLabel": "(15b)"},
+    "language": "stan1293",
+    "primaryText": "The rod is not bent, but it is not straight either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["negated", "bent"],
+      ["antonym", "straight"],
+      ["construction", "doubleDenial"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_16a",
+    "source": {"bibkey": "lassiter-2017", "paperLabel": "p. 100"},
+    "reportedIn": {"bibkey": "koev-2026", "paperLabel": "(16a)"},
+    "language": "stan1293",
+    "primaryText": "Bill is not tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["negated", "tall"],
+      ["antonym", "short"],
+      ["relation", "does_not_entail"]
+    ],
+    "comment": "Printed with a struck entailment arrow to Bill is short.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_16b",
+    "source": {"bibkey": "lassiter-2017", "paperLabel": "p. 100"},
+    "reportedIn": {"bibkey": "koev-2026", "paperLabel": "(16b)"},
+    "language": "stan1293",
+    "primaryText": "Bill is not tall, but he is not short either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["negated", "tall"],
+      ["antonym", "short"],
+      ["construction", "doubleDenial"]
+    ],
+    "comment": "Printed with the continuation (He is just average.)",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_17a",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(17a)"},
+    "language": "stan1293",
+    "primaryText": "Jack doesn't doubt that Jill is at the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Jack is epistemically engaged with whether Jill is at the party.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["negated", "doubt"],
+      ["antonym", "believe"],
+      ["relation", "entails"]
+    ],
+    "comment": "Printed with an entailment arrow to Jack believes that Jill is at the party. The context is Koev's assumption of epistemic engagement, not a printed context line. Stated from not doubting to believing, since negated believe invites neg-raising and unembedded doubt is strengthened to believe not (fn. 8).",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_17b",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(17b)"},
+    "language": "stan1293",
+    "primaryText": "Jack doesn't believe that Jill is at the party, but he doesn't doubt it either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Jack is epistemically engaged with whether Jill is at the party.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["negated", "believe"],
+      ["antonym", "doubt"],
+      ["construction", "doubleDenial"]
+    ],
+    "comment": "The context is Koev's assumption of epistemic engagement, not a printed context line.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_18a",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(18a)"},
+    "language": "stan1293",
+    "primaryText": "Jill is likely to be at the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The chance that Jill is at the party is exactly 50 percent.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "likely"],
+      ["truthValue", "false"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_18b",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(18b)"},
+    "language": "stan1293",
+    "primaryText": "Jill is unlikely to be at the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The chance that Jill is at the party is exactly 50 percent.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "unlikely"],
+      ["truthValue", "false"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_19a",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(19a)"},
+    "language": "stan1293",
+    "primaryText": "It's 99 percent certain that Biden will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "It's 5 percent certain that Biden will win.", "judgment": "questionable"},
+      {"form": "It's 50 percent certain that Biden will win.", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "certain"],
+      ["modifier", "percentage"]
+    ],
+    "comment": "Printed It's ??5/?50/99 percent certain that Biden will win. The preference of maximum-degree modal adjectives for high percentages is Klecha 2014's and Lassiter 2017's observation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_19b",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(19b)"},
+    "language": "stan1293",
+    "primaryText": "It's 99 percent likely that Biden will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "It's 5 percent likely that Biden will win.", "judgment": "marginal"},
+      {"form": "It's 50 percent likely that Biden will win.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "likely"],
+      ["modifier", "percentage"]
+    ],
+    "comment": "Printed It's (?)5/50/99 percent likely that Biden will win. Relative modal adjectives show no preference (Klecha 2014, Lassiter 2017).",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_20",
+    "source": {"bibkey": "koev-2026", "paperLabel": "(20)"},
+    "language": "stan1293",
+    "primaryText": "I believe 99 percent that Biden will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "variable",
+    "alternatives": [
+      {"form": "I believe 5 percent that Biden will win.", "judgment": "unacceptable"},
+      {"form": "I believe 50 percent that Biden will win.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "believe"],
+      ["modifier", "percentage"]
+    ],
+    "comment": "Printed I believe #5/#50/%99 percent that Biden will win. Fn. 9 reports ratings from nine speakers, believe 99 percent bimodal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_fn10i",
+    "source": {"bibkey": "koev-2026", "paperLabel": "fn. 10 (i)"},
+    "language": "stan1293",
+    "primaryText": "I'm sure she was at the party, but I don't know it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "sure"],
+      ["reading", "subjective"]
+    ],
+    "comment": "The page prints the mark in parentheses, (?). With know inherently objective, sure is read subjectively.",
+    "verified": "page-image"
+  },
+  {
+    "id": "koev2026_fn10ii",
+    "source": {"bibkey": "koev-2026", "paperLabel": "fn. 10 (ii)"},
+    "language": "stan1293",
+    "primaryText": "I was sure that the Patriots would win, and yet they lost.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "sure"],
+      ["reading", "subjective"]
+    ],
+    "comment": "From an anonymous reviewer: sure expresses internal certainty against an objective claim.",
+    "verified": "page-image"
+  }
+]
