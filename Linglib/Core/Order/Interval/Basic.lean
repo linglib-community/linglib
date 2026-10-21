@@ -11,9 +11,7 @@ This file defines the relations between two nonempty intervals of an ordered typ
 a null element. Two intervals overlap when neither lies strictly beyond the other, `i₁` precedes
 `i₂` when it ends strictly before `i₂` starts, and `IsBefore` lets the endpoints touch. `During`
 and `FinalSubinterval` refine containment, and `IsPoint` singles out the intervals with a single
-element. In a linear order two intervals occupy exactly one of three positions, precedence either
-way or overlap, and `position` records which as an `Ordering`, so that on point intervals it is
-`compare`.
+element. In a linear order two intervals overlap exactly when neither precedes the other.
 
 Containment, the subinterval order and point intervals are mathlib's own (`t ∈ i`, `i₁ ≤ i₂`,
 `pure t`); `lt_def` unfolds strict containment to endpoints. On `Interval α`, where `≤` is
@@ -26,7 +24,6 @@ into `WithTop α`, and `Interval.Ici a` is the ray `[a, ⊤]`.
 * `NonemptyInterval.Overlaps`, `NonemptyInterval.Precedes`, `NonemptyInterval.IsBefore`: the
   order of two intervals.
 * `NonemptyInterval.During`, `NonemptyInterval.FinalSubinterval`: refinements of containment.
-* `NonemptyInterval.position`: the position of two intervals in a linear order as an `Ordering`.
 * `Interval.Precedes`, `Interval.Ici`: pointwise precedence and rays on intervals with a null
   element.
 
@@ -160,46 +157,6 @@ theorem Overlaps.mono_left {i₁' : NonemptyInterval α} (h : i₁.Overlaps i₂
 /-- In a linear order two intervals overlap exactly when neither precedes the other. -/
 theorem overlaps_iff_not_precedes : i₁.Overlaps i₂ ↔ ¬ i₁.Precedes i₂ ∧ ¬ i₂.Precedes i₁ := by
   simp only [Overlaps, Precedes, not_lt, and_comm]
-
-/-! ### Relative position
-
-In a linear order two intervals stand in exactly one of three positions: the first precedes the
-second, the second precedes the first, or they overlap. `position` records which as an
-`Ordering`, so that a set of admissible positions is a `Finset Ordering`, as a set of admissible
-comparisons of points is; on point intervals it is `compare`. -/
-
-/-- The position of `i₁` relative to `i₂` is `lt` when `i₁` precedes `i₂`, `gt` when `i₂`
-precedes `i₁`, and `eq` when the two overlap. -/
-def position (i₁ i₂ : NonemptyInterval α) : Ordering :=
-  if i₁.Precedes i₂ then .lt else if i₂.Precedes i₁ then .gt else .eq
-
-@[simp] theorem position_eq_lt : i₁.position i₂ = .lt ↔ i₁.Precedes i₂ := by
-  unfold position; split_ifs <;> simp [*]
-
-@[simp] theorem position_eq_gt : i₁.position i₂ = .gt ↔ i₂.Precedes i₁ := by
-  unfold position
-  split_ifs with h h'
-  · simp [precedes_asymm h]
-  · simp [h']
-  · simp [h']
-
-@[simp] theorem position_eq_eq : i₁.position i₂ = .eq ↔ i₁.Overlaps i₂ := by
-  rw [overlaps_iff_not_precedes]; unfold position; split_ifs <;> simp [*]
-
-@[simp] theorem position_self (i : NonemptyInterval α) : i.position i = .eq :=
-  position_eq_eq.2 (overlaps_refl i)
-
-/-- On point intervals the position is the comparison of the points. -/
-@[simp] theorem position_pure (a b : α) : (pure a).position (pure b) = compare a b := by
-  rcases lt_trichotomy a b with h | rfl | h
-  · rw [position_eq_lt.2 (by exact h), compare_lt_iff_lt.2 h]
-  · rw [position_self, compare_eq_iff_eq.2 rfl]
-  · rw [position_eq_gt.2 (by exact h), compare_gt_iff_gt.2 h]
-
-/-- An interval containing one that overlaps `i₂` overlaps `i₂`. -/
-theorem position_eq_eq_of_le {i₁' : NonemptyInterval α} (h : i₁.position i₂ = .eq)
-    (hle : i₁ ≤ i₁') : i₁'.position i₂ = .eq :=
-  position_eq_eq.2 ((position_eq_eq.1 h).mono_left hle)
 
 end LinearOrder
 
