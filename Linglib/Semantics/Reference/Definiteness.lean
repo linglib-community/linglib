@@ -11,11 +11,12 @@ This file gives the frame-free vocabulary of definiteness. A nominal is definite
 as Heim distinguishes them, and on the continuum of definiteness, or specificity, that Comrie,
 Aissen and Haspelmath share, a definite ranks above a specific indefinite above a non-specific
 one; Farkas and Brasoveanu separate the kinds of specificity, scopal, epistemic and partitive.
-A definite article has one of two strengths, uniqueness and familiarity, after Schwarz, and the
-article typologies are built on them. The strength a use of a definite calls for, after Hawkins
-and Schwarz, and the strength of a bridging relation are recorded as data here; which cell a
-language's determiner inventory falls in is derived in `Syntax/Category/Determiner/Basic.lean`,
-and the descriptions themselves denote in `Semantics/Reference/Description.lean`.
+A definite article has one of two strengths, uniqueness and familiarity, after Schwarz, ordered
+uniqueness below familiarity since the strong article narrows the weak one. The strength a use of a
+definite calls for, after Hawkins and Schwarz, and the strength of a bridging relation are recorded
+as data here; which strengths a language's determiner inventory marks is derived in
+`Syntax/Category/Determiner/Basic.lean`, and the descriptions themselves denote in
+`Semantics/Reference/Description.lean`.
 
 ## Main definitions
 
@@ -26,9 +27,6 @@ and the descriptions themselves denote in `Semantics/Reference/Description.lean`
   and the kind of nominal an inventory realizes, with `Strength.toKind` and `NominalKind.strength`.
 * `DefiniteDescription.Use`, `DefiniteDescription.Bridging`: the uses of a definite
   description and the bridging relations, each with the strength it calls for.
-* `Definiteness.ArticleType`, `Definiteness.MarkingStrategy`: the three-cell article typology of
-  Patel-Grosz and Grosz and the four-cell one of Jenks with Moroney's unmarked cell, and the
-  coarsening `MarkingStrategy.articleType`.
 
 ## References
 
@@ -113,7 +111,20 @@ familiarity, which the strong article presupposes ([schwarz-2009]). -/
 inductive Strength where
   | uniqueness
   | familiarity
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
+
+/-- The strong article is the weak article over a narrowed restrictor
+(`DefiniteDescription.denote_unique_restrictor`), so the strengths form the chain
+uniqueness < familiarity. -/
+instance : LinearOrder Strength := LinearOrder.lift' Strength.ctorIdx (by decide)
+
+/-- A set of strengths is an upper set iff it contains familiarity whenever it contains
+uniqueness. -/
+theorem Strength.isUpperSet_iff {s : Set Strength} :
+    IsUpperSet s ↔ (.uniqueness ∈ s → .familiarity ∈ s) :=
+  ⟨fun h hu ↦ h (by decide) hu, fun h a b hab ha ↦ by
+    cases a <;> cases b
+    exacts [ha, h ha, absurd hab (by decide), ha]⟩
 
 /-- A bridging relation is part–whole, as from a fridge to its crisper, or relational, as from a
 play to its author ([schwarz-2013]). -/
@@ -173,34 +184,3 @@ def NominalKind.strength : NominalKind → Option DefiniteDescription.Strength
 @[simp] theorem DefiniteDescription.Strength.strength_toKind (p : DefiniteDescription.Strength) :
     p.toKind.strength = some p := by
   cases p <;> rfl
-
-namespace Definiteness
-
-/-- An article system has no article, a weak article only, or weak and strong articles
-([patel-grosz-grosz-2017]). -/
-inductive ArticleType where
-  | articleless
-  | weakOnly
-  | weakAndStrong
-  deriving DecidableEq, Repr
-
-/-- The definiteness-marking types of [jenks-2018], with [moroney-2021]'s unmarked type. One form
-marks both strengths, two forms mark them apart, only the anaphoric strength or only the unique
-strength is marked, or neither is. A language's type is derived from its determiner inventory by
-`Determiner.Inventory.markingStrategy`. -/
-inductive MarkingStrategy where
-  | generallyMarked
-  | bipartite
-  | markedAnaphoric
-  | markedUnique
-  | unmarked
-  deriving DecidableEq, Repr
-
-/-- The article system of a marking strategy, which collapses the cells with a single marked form
-to a single article. -/
-def MarkingStrategy.articleType : MarkingStrategy → ArticleType
-  | .generallyMarked | .markedAnaphoric | .markedUnique => .weakOnly
-  | .bipartite => .weakAndStrong
-  | .unmarked  => .articleless
-
-end Definiteness

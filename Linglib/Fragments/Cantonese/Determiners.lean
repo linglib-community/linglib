@@ -30,7 +30,7 @@ def inventory : Determiner.Inventory :=
     .article { form := "jat-Clf-N", definiteness := .indefinite, exponent := .numeralClassifier },
     .demonstrative { form := "nei", deixis := Person.first.participantSets } ]
 
-/-- Cantonese derives the `.generallyMarked` Moroney cell. -/
-theorem marking : inventory.markingStrategy = .generallyMarked := by decide
+/-- A single article marks both strengths. -/
+theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Cantonese.Determiners

@@ -15,8 +15,8 @@ here.
 ## Main definitions
 
 * `Akan.Determiners.no`, `Akan.Determiners.bi`: the definite and the indefinite.
-* `Akan.Determiners.inventory`: the determiners, deriving the `.markedAnaphoric` cell of
-  [moroney-2021].
+* `Akan.Determiners.inventory`: the determiners, which mark familiarity only
+  (`strengths_inventory`).
 
 ## References
 
@@ -42,7 +42,7 @@ def bi : Article :=
 /-- The determiners. -/
 def inventory : Determiner.Inventory := [.article no, .article bi]
 
-/-- Akan derives the `.markedAnaphoric` cell. -/
-theorem marking : inventory.markingStrategy = .markedAnaphoric := by decide
+/-- Only familiarity is marked. -/
+theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Akan.Determiners

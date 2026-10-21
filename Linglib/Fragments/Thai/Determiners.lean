@@ -30,7 +30,7 @@ def inventory : Determiner.Inventory :=
         uses := {.anaphoric} },
     .possessive { form := "khong" } ]
 
-/-- Thai derives the `.markedAnaphoric` Moroney cell. -/
-theorem marking : inventory.markingStrategy = .markedAnaphoric := by decide
+/-- Only familiarity is marked. -/
+theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Thai.Determiners

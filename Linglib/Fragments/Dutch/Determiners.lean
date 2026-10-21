@@ -25,7 +25,7 @@ two genders of `Dutch.Gender`.
   two genders, and `Dutch.Determiners.faithful` concludes that the two genders are faithful to the
   evidence.
 * `Dutch.Determiners.inventory` is the inventory, whose citation forms are the plural forms,
-  and `Dutch.Determiners.marking` derives its marking type.
+  and `Dutch.Determiners.isSyncretic_inventory` says that its definite article marks both strengths.
 
 ## Implementation notes
 
@@ -106,7 +106,7 @@ def die : DemonstrativeDeterminer :=
 def inventory : Determiner.Inventory :=
   [.article de, .article een, .quantifier geen, .demonstrative deze, .demonstrative die]
 
-/-- Dutch derives the `.generallyMarked` [moroney-2021] cell. -/
-theorem marking : inventory.markingStrategy = .generallyMarked := by decide
+/-- A single article marks both strengths. -/
+theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Dutch.Determiners

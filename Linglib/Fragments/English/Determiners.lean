@@ -22,8 +22,8 @@ determiner kinds.
 * `QuantityWord`: the quantificational determiners, with the six-word scale
   `QuantityWord.scale` of van Tiel, Franke and Sauerland inside it.
 * `QuantityWord.toQuantifier`: a word as a determiner record.
-* `inventory`: the English determiner inventory, and `marking` derives its cell in Moroney's
-  typology of definite marking.
+* `inventory`: the English determiner inventory, whose *the* marks both strengths
+  (`isSyncretic_inventory`).
 
 ## References
 
@@ -174,8 +174,7 @@ def inventory : Determiner.Inventory :=
   allArticles.map .article ++ allDemonstratives.map .demonstrative ++
     allQuantifiers.map .quantifier ++ allPossessives.map .possessive
 
-/-- English's inventory is in the `.generallyMarked` cell of [moroney-2021], since the
-syncretic *the* covers both use types of [schwarz-2009]. -/
-theorem marking : inventory.markingStrategy = .generallyMarked := by decide
+/-- A single article marks both strengths. -/
+theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end English.Determiners

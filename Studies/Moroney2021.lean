@@ -22,7 +22,7 @@ Because Shan has no articles, no covert type-shift is blocked — ι, ι^x and �
 bare nouns — while the optional demonstratives *nâj/nân* only add spatial content. The cell is
 derived from `Shan.Determiners.inventory`, the bare-noun readings as the shifts the inventory leaves
 unblocked that are maximal under Dayal's Meaning Preservation, her (79), and the refutation is
-stated against `Jenks2018.attested`.
+stated against Jenks's four types (`Jenks2018.IsBipartite` and its siblings).
 
 Her comparison of Shan and English bare nouns (Table 2.3) finds them alike on the low-scope
 existential, kind and generic readings, alike in lacking a high-scope existential, and different
@@ -47,14 +47,14 @@ two vicinities may overlap here, as when the addressee stands by the speaker.
 ## References
 
 * [moroney-2021]
-* [dayal-2004], [deal-2017], [harbour-2016], [jenks-2018], [schwarz-2013]
+* [dayal-2004], [deal-2017], [harbour-2016], [jenks-2018]
 -/
 
 @[expose] public section
 
 namespace Moroney2021
 
-open Definiteness (MarkingStrategy ArticleType)
+open Jenks2018 (IsBipartite IsMarkedAnaphoric IsGenerallyMarked IsMarkedUnique)
 open Genericity
 open Mereology (CUM)
 open scoped SetRel
@@ -95,32 +95,17 @@ theorem shan_exists_is_last_resort :
 
 /-! ### The typology, derived per language -/
 
-/-- Each language's marking strategy, computed by `Determiner.Inventory.markingStrategy`
-from its declared inventory: the four languages fill all four cells of the revised
-typology. -/
+/-- An unmarked inventory marks neither presupposition. -/
+def IsUnmarked (ds : Determiner.Inventory) : Prop := ds.strengths = ∅
+
+/-- The four languages fill the four types of the revised typology, English being generally marked,
+German bipartite, Thai marked anaphoric and Shan unmarked. -/
 theorem derive_all_languages :
-    English.Determiners.inventory.markingStrategy = .generallyMarked ∧
-      German.Determiners.inventory.markingStrategy = .bipartite ∧
-      Thai.Determiners.inventory.markingStrategy = .markedAnaphoric ∧
-      Shan.Determiners.inventory.markingStrategy = .unmarked :=
-  ⟨English.Determiners.marking, German.Determiners.marking, Thai.Determiners.marking,
-    Shan.Determiners.marking⟩
-
-/-- The [schwarz-2013]-style article-type projection of the same inventories. -/
-theorem derive_article_types :
-    English.Determiners.inventory.articleType = .weakOnly ∧
-      German.Determiners.inventory.articleType = .weakAndStrong ∧
-      Thai.Determiners.inventory.articleType = .weakOnly ∧
-      Shan.Determiners.inventory.articleType = .articleless := by
-  decide
-
-/-- `ArticleType` is lossy where `MarkingStrategy` is not, since English and Mandarin differ in
-strategy yet collapse to the same article type. -/
-theorem articleType_lossy :
-    English.Determiners.inventory.markingStrategy ≠
-        Mandarin.Determiners.inventory.markingStrategy ∧
-      English.Determiners.inventory.articleType = Mandarin.Determiners.inventory.articleType := by
-  decide
+    IsGenerallyMarked English.Determiners.inventory ∧ IsBipartite German.Determiners.inventory ∧
+      IsMarkedAnaphoric Thai.Determiners.inventory ∧ IsUnmarked Shan.Determiners.inventory :=
+  ⟨English.Determiners.isSyncretic_inventory,
+    ⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
+    Thai.Determiners.strengths_inventory, Shan.Determiners.strengths_inventory⟩
 
 /-- Shan has no determiner realizing anaphoric definiteness, yet expresses it — through bare
 nouns (unblocked ι^x) and the optional demonstratives, which it does realize. -/
@@ -136,11 +121,14 @@ theorem english_german_anaphoric_realized :
       German.Determiners.inventory.Realizes .anaphoric := by
   decide
 
-/-- Shan's derived strategy, the unmarked type, is none that the languages of [jenks-2018]'s
-Table 2 attest. -/
+/-- Shan is of none of [jenks-2018]'s four types. -/
 theorem shan_refutes_jenks_typology :
-    Shan.Determiners.inventory.markingStrategy ∉ Jenks2018.attested := by
-  rw [Shan.Determiners.marking]; decide
+    ¬ (IsBipartite Shan.Determiners.inventory ∨ IsMarkedAnaphoric Shan.Determiners.inventory ∨
+      IsGenerallyMarked Shan.Determiners.inventory ∨
+        IsMarkedUnique Shan.Determiners.inventory) := by
+  simp only [IsBipartite, IsMarkedAnaphoric, IsGenerallyMarked, IsMarkedUnique,
+    Shan.Determiners.strengths_inventory]
+  decide
 
 /-! ### Shan count nouns are cumulative but not homogeneous -/
 

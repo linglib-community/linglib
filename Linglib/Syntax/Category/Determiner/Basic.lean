@@ -13,11 +13,11 @@ This file defines the determiner as a lexical object and the determiner inventor
 language. The base `Determiner` carries only a surface form, and the four specializations
 `Article`, `DemonstrativeDeterminer`, `Quantifier` and `PossessiveDeterminer` extend
 it. An inventory is
-a list of `Determiner.Entry` occurrences, and the typologies of definiteness marking are
-derived from it rather than declared. An entry marks an article strength when one of the
-definite uses it obligatorily expones calls for that strength, and a language's marking type,
-after Jenks and Moroney, and its article system, after Patel-Grosz and Grosz, are theorems about
-its inventory, discharged by `decide`.
+a list of `Determiner.Entry` occurrences. An entry marks an article strength when one of the
+definite uses it obligatorily expones calls for that strength, and an inventory marks the strengths
+its entries mark (`Inventory.strengths`). The typologies of definiteness marking, Jenks's and
+Moroney's types and Patel-Grosz and Grosz's article systems, are conditions on these strengths and
+on syncretism, stated in their studies.
 
 ## Main declarations
 
@@ -26,11 +26,11 @@ its inventory, discharged by `decide`.
   expones; `DemonstrativeDeterminer`, `Quantifier` and `PossessiveDeterminer` are the
   other specializations.
 * `Determiner.Entry` is an occurrence of one of the four kinds in an inventory, `Entry.kind`
-  is its kind together with an article's definiteness, and `Entry.Marks` says which strengths
-  it marks.
-* `Determiner.Inventory` is a language's declared inventory. `Inventory.Marks` and
-  `Inventory.IsSyncretic` lift the entry predicates, and `Inventory.markingStrategy` and
-  `Inventory.articleType` derive the typological cells, each characterized by an `_iff` lemma.
+  is its kind together with an article's definiteness, and `Entry.strengths` the strengths it
+  marks.
+* `Determiner.Inventory` is a language's declared inventory, and `Inventory.strengths` the
+  strengths its entries mark; `Inventory.Marks` and `Inventory.IsSyncretic` lift the entry
+  predicates.
 * `Determiner.Inventory.Realizes` says that the inventory carries a form for a kind of nominal
   description.
 * `Article.strengths` is the set of strengths an article admits.
@@ -57,7 +57,6 @@ selects is pragmatics (Jenks).
 
 @[expose] public section
 
-open Definiteness (MarkingStrategy ArticleType)
 
 /-- A determiner is a D head with a surface form, a representative morpheme or a construction
 label. The specializations extend it. -/
@@ -167,11 +166,18 @@ def uses : Entry → Finset DefiniteDescription.Use
 
 variable (e : Entry)
 
-/-- An entry marks an article strength when some definite use it expones calls for it. -/
-def Marks (p : DefiniteDescription.Strength) : Prop := ∃ u ∈ e.uses, u.strength = p
+/-- The strengths an entry marks are those its definite uses call for. -/
+def strengths : Finset DefiniteDescription.Strength := e.uses.image DefiniteDescription.Use.strength
 
-instance (p : DefiniteDescription.Strength) : Decidable (e.Marks p) := by
-  unfold Marks; infer_instance
+/-- An entry marks an article strength when some definite use it expones calls for it. -/
+def Marks (p : DefiniteDescription.Strength) : Prop := p ∈ e.strengths
+
+instance (p : DefiniteDescription.Strength) : Decidable (e.Marks p) :=
+  inferInstanceAs (Decidable (p ∈ e.strengths))
+
+theorem marks_iff (p : DefiniteDescription.Strength) :
+    e.Marks p ↔ ∃ u ∈ e.uses, u.strength = p :=
+  Finset.mem_image
 
 /-- An entry is syncretic when it marks both strengths, as English *the* does. -/
 def IsSyncretic : Prop := e.Marks .uniqueness ∧ e.Marks .familiarity
@@ -195,6 +201,10 @@ instance (ds : Inventory) (p : Entry → Prop) [DecidablePred p] : Decidable (�
 
 variable (ds : Inventory)
 
+/-- The strengths an inventory marks are those its entries mark. -/
+def strengths : Finset DefiniteDescription.Strength :=
+  (List.map Entry.strengths ds).foldr (· ∪ ·) ∅
+
 /-- An inventory marks an article strength when some entry marks it. -/
 def Marks (p : DefiniteDescription.Strength) : Prop := ∃ e ∈ ds, e.Marks p
 
@@ -205,67 +215,21 @@ instance (p : DefiniteDescription.Strength) : Decidable (ds.Marks p) := by
 theorem marks_singleton (e : Entry) (p : DefiniteDescription.Strength) : Marks [e] p ↔ e.Marks p :=
   ⟨fun ⟨_, he, h⟩ ↦ List.mem_singleton.mp he ▸ h, fun h ↦ ⟨e, List.mem_singleton_self e, h⟩⟩
 
-/-- An inventory is syncretic when a single entry marks both strengths, which separates the
-generally marked cell from the bipartite one. -/
+private theorem mem_foldr_union {l : List Entry} {p : DefiniteDescription.Strength} :
+    p ∈ (List.map Entry.strengths l).foldr (· ∪ ·) ∅ ↔ ∃ e ∈ l, p ∈ e.strengths := by
+  induction l with
+  | nil => simp
+  | cons e es ih => simp [ih]
+
+/-- An inventory marks a strength iff the strength is among those it marks. -/
+theorem marks_iff_mem_strengths (p : DefiniteDescription.Strength) :
+    ds.Marks p ↔ p ∈ ds.strengths :=
+  (mem_foldr_union (l := ds)).symm
+
+/-- An inventory is syncretic when a single entry marks both strengths. -/
 def IsSyncretic : Prop := ∃ e ∈ ds, e.IsSyncretic
 
 instance : Decidable ds.IsSyncretic := by unfold IsSyncretic; infer_instance
-
-/-! ### The marking typology
-
-A language's [jenks-2018] type, or [moroney-2021]'s unmarked type, is a theorem about its
-inventory, and each type is characterized by its `markingStrategy_eq_*_iff` lemma. An inventory
-with a form that marks both strengths is generally marked; otherwise the type is fixed by which
-strengths it marks, both by distinct forms, familiarity alone, uniqueness alone, or neither. -/
-
-section
-
-variable {ds}
-
-/-- A syncretic inventory marks both strengths. -/
-theorem IsSyncretic.marks (h : ds.IsSyncretic) (p : DefiniteDescription.Strength) : ds.Marks p :=
-  let ⟨e, he, hu, hf⟩ := h
-  ⟨e, he, by cases p; exacts [hu, hf]⟩
-
-end
-
-/-- The definiteness-marking type derived from an inventory. -/
-def markingStrategy : MarkingStrategy :=
-  if ds.IsSyncretic then .generallyMarked
-  else if ds.Marks .uniqueness then
-    if ds.Marks .familiarity then .bipartite else .markedUnique
-  else if ds.Marks .familiarity then .markedAnaphoric else .unmarked
-
-section
-
-variable {ds}
-
-theorem markingStrategy_eq_generallyMarked_iff :
-    ds.markingStrategy = .generallyMarked ↔ ds.IsSyncretic := by
-  unfold markingStrategy; split_ifs <;> simp_all
-
-theorem markingStrategy_eq_bipartite_iff :
-    ds.markingStrategy = .bipartite ↔
-      ds.Marks .uniqueness ∧ ds.Marks .familiarity ∧ ¬ds.IsSyncretic := by
-  unfold markingStrategy; split_ifs <;> simp_all
-
-theorem markingStrategy_eq_markedUnique_iff :
-    ds.markingStrategy = .markedUnique ↔ ds.Marks .uniqueness ∧ ¬ds.Marks .familiarity := by
-  unfold markingStrategy; split_ifs <;> simp_all [IsSyncretic.marks]
-
-theorem markingStrategy_eq_markedAnaphoric_iff :
-    ds.markingStrategy = .markedAnaphoric ↔ ¬ds.Marks .uniqueness ∧ ds.Marks .familiarity := by
-  unfold markingStrategy; split_ifs <;> simp_all [IsSyncretic.marks]
-
-theorem markingStrategy_eq_unmarked_iff :
-    ds.markingStrategy = .unmarked ↔ ¬ds.Marks .uniqueness ∧ ¬ds.Marks .familiarity := by
-  unfold markingStrategy; split_ifs <;> simp_all [IsSyncretic.marks]
-
-end
-
-/-- The article system of an inventory ([patel-grosz-grosz-2017]) is the coarsening
-`MarkingStrategy.articleType` of its marking type. -/
-def articleType : ArticleType := ds.markingStrategy.articleType
 
 /-! ### Realization -/
 
@@ -300,4 +264,4 @@ def Article.strengths (a : Article) : Finset DefiniteDescription.Strength :=
 /-- An article admits a strength iff, as an entry, it marks that strength. -/
 theorem Article.mem_strengths_iff_marks (a : Article) (p : DefiniteDescription.Strength) :
     p ∈ a.strengths ↔ (Determiner.Entry.article a).Marks p :=
-  Finset.mem_image
+  Iff.rfl

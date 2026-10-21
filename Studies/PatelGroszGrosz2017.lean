@@ -98,7 +98,9 @@ def german : PronounSystem where
 
 /-- German has two article forms, read off the determiner inventory, matching its two pronoun
 series (§4). -/
-theorem german_weakAndStrong : german.determiners.articleType = .weakAndStrong := by decide
+theorem german_weakAndStrong :
+    german.determiners.strengths = Finset.univ ∧ ¬ german.determiners.IsSyncretic :=
+  ⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩
 
 section Divergence
 
