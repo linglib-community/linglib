@@ -60,7 +60,8 @@ are the ends of a realization of the chain (`Allen.mem_compAlong_iff`).
 * `Allen.toSetRel_inv`: the converse of a cell's relation is the relation of its converse.
 * `Allen.toSetRel_comp_subset`, `Allen.toSetRel_comp`: the composite of two cells' relations lies
   in the relation of their composite, and is it on dense time without endpoints.
-* `Allen.position_relation`: the position of two intervals is read off their relation.
+* `NonemptyInterval.position`, `Allen.position_relation`: the position of two intervals, read off
+  their relation.
 * `Allen.comp_pure`: on points, Allen composition is the composition of comparison cells.
 * `Allen.HoldsAlong.mem_compAlong`, `Allen.mem_compAlong_iff`: the ends of a chain stand in its
   composite, and on dense time without endpoints exactly they do.
@@ -286,6 +287,60 @@ overlapping it. -/
 def Relation.position (r : Relation) : Ordering :=
   if r.sndFst = .lt then .lt else if r.fstSnd = .gt then .gt else .eq
 
+section LinearOrder
+
+variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
+
+/-- The position of `i` relative to `j`: `lt` when `i` precedes `j`, `gt` when `j` precedes `i`,
+and `eq` when the two overlap. Two intervals of a linear order stand in exactly one of these, so
+that a set of admissible positions is a `Finset Ordering`, as a set of admissible comparisons of
+points is. -/
+def _root_.NonemptyInterval.position (i j : NonemptyInterval T) : Ordering :=
+  (relation i j).position
+
+/-- The position of two intervals is read off their relation. -/
+theorem position_relation (i j : NonemptyInterval T) :
+    i.position j = (relation i j).position := rfl
+
+theorem _root_.NonemptyInterval.position_eq_ite :
+    i.position j = if i.Precedes j then .lt else if j.Precedes i then .gt else .eq := by
+  simp [NonemptyInterval.position, Relation.position, relation, ofEndpoints,
+    NonemptyInterval.Precedes, compare_gt_iff_gt, compare_lt_iff_lt]
+  split_ifs <;> rfl
+
+@[simp] theorem _root_.NonemptyInterval.position_eq_lt : i.position j = .lt ↔ i.Precedes j := by
+  rw [NonemptyInterval.position_eq_ite]; split_ifs <;> simp [*]
+
+@[simp] theorem _root_.NonemptyInterval.position_eq_gt : i.position j = .gt ↔ j.Precedes i := by
+  rw [NonemptyInterval.position_eq_ite]
+  split_ifs with h h'
+  · simp [NonemptyInterval.precedes_asymm h]
+  · simp [h']
+  · simp [h']
+
+@[simp] theorem _root_.NonemptyInterval.position_eq_eq : i.position j = .eq ↔ i.Overlaps j := by
+  rw [NonemptyInterval.overlaps_iff_not_precedes, NonemptyInterval.position_eq_ite]
+  split_ifs <;> simp [*]
+
+@[simp] theorem _root_.NonemptyInterval.position_self (i : NonemptyInterval T) :
+    i.position i = .eq :=
+  NonemptyInterval.position_eq_eq.2 (NonemptyInterval.overlaps_refl i)
+
+/-- On point intervals the position is the comparison of the points. -/
+@[simp] theorem _root_.NonemptyInterval.position_pure (a b : T) :
+    (NonemptyInterval.pure a).position (.pure b) = compare a b := by
+  rcases lt_trichotomy a b with h | rfl | h
+  · rw [NonemptyInterval.position_eq_lt.2 (by exact h), compare_lt_iff_lt.2 h]
+  · rw [NonemptyInterval.position_self, compare_eq_iff_eq.2 rfl]
+  · rw [NonemptyInterval.position_eq_gt.2 (by exact h), compare_gt_iff_gt.2 h]
+
+/-- An interval containing one that overlaps `j` overlaps `j`. -/
+theorem _root_.NonemptyInterval.position_eq_eq_of_le {i' : NonemptyInterval T}
+    (h : i.position j = .eq) (hle : i ≤ i') : i'.position j = .eq :=
+  NonemptyInterval.position_eq_eq.2 ((NonemptyInterval.position_eq_eq.1 h).mono_left hle)
+
+end LinearOrder
+
 /-- The cell of the relations whose position is one of `C`. -/
 def ofPosition (C : Finset Ordering) : Finset Relation := atoms.filter (·.position ∈ C)
 
@@ -326,12 +381,6 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
 @[simp] theorem relation_mem_startsWithin : relation i j ∈ startsWithin ↔ i.fst ∈ j := by
   rw [startsWithin, relation_mem_filter]
   simp [relation, ofEndpoints, NonemptyInterval.mem_def, compare_le_iff_le, compare_ge_iff_ge]
-
-/-- The position of two intervals is read off their relation. -/
-theorem position_relation (i j : NonemptyInterval T) : i.position j = (relation i j).position := by
-  simp [NonemptyInterval.position, Relation.position, relation, ofEndpoints,
-    NonemptyInterval.Precedes, compare_gt_iff_gt, compare_lt_iff_lt]
-  split_ifs <;> rfl
 
 @[simp] theorem relation_mem_ofPosition {C : Finset Ordering} :
     relation i j ∈ ofPosition C ↔ i.position j ∈ C := by
