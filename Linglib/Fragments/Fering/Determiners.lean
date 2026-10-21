@@ -32,7 +32,9 @@ def dForm : Article :=
 /-- The Fering determiners are the A-form and the D-form of the definite article. -/
 def inventory : Determiner.Inventory := [.article aForm, .article dForm]
 
-/-- Fering derives the `.bipartite` Moroney cell. -/
-theorem marking : inventory.markingStrategy = .bipartite := by decide
+/-- Both strengths are marked, by distinct articles. -/
+theorem strengths_inventory : inventory.strengths = Finset.univ := by decide
+
+theorem not_isSyncretic_inventory : ¬ inventory.IsSyncretic := by decide
 
 end Fering.Determiners

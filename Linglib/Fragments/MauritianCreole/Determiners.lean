@@ -25,7 +25,7 @@ def inventory : Determiner.Inventory :=
   [ .article { form := "la", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := {.anaphoric} } ]
 
-/-- Mauritian Creole derives the `.markedAnaphoric` Moroney cell. -/
-theorem marking : inventory.markingStrategy = .markedAnaphoric := by decide
+/-- Only familiarity is marked. -/
+theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end MauritianCreole.Determiners

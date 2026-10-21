@@ -189,8 +189,7 @@ def inventory : Determiner.Inventory :=
   [.demonstrative zhe, .demonstrative na] ++
     QuantityWord.toList.map (.quantifier ·.toQuantifier) ++ [.possessive de]
 
-/-- Mandarin's inventory derives the `.markedAnaphoric` cell of [moroney-2021]: only the
-demonstrative marks a definite use, and the use it marks is the anaphoric one. -/
-theorem marking : inventory.markingStrategy = .markedAnaphoric := by decide
+/-- Only familiarity is marked. -/
+theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Mandarin.Determiners

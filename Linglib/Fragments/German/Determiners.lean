@@ -41,8 +41,8 @@ familiarity, and Moroney classes a language by how its articles mark the two.
 * `German.Determiners.faithful`: the three-gender carrier is faithful to the definite article.
 * `German.Determiners.contracted`, `German.Determiners.nonContracted`: the definite article
   contracted with a preposition and its full form.
-* `German.Determiners.inventory`, `German.Determiners.marking`: the inventory and its cell in
-  Moroney's typology.
+* `German.Determiners.inventory`, `German.Determiners.strengths_inventory`: the inventory, whose
+  two definite articles mark the two strengths.
 
 ## References
 
@@ -162,7 +162,9 @@ def inventory : Determiner.Inventory :=
     .demonstrative { form := dieser (.sg .masc) .nom, deixis := Finset.univ },
     .possessive { form := "mein" } ]
 
-/-- German derives the `.bipartite` Moroney cell. -/
-theorem marking : inventory.markingStrategy = .bipartite := by decide
+/-- Both strengths are marked, by distinct articles. -/
+theorem strengths_inventory : inventory.strengths = Finset.univ := by decide
+
+theorem not_isSyncretic_inventory : ¬ inventory.IsSyncretic := by decide
 
 end German.Determiners

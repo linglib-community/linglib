@@ -134,7 +134,7 @@ end QuantityWord
 def inventory : Determiner.Inventory :=
   allArticles.map .article ++ QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
-/-- Italian derives the `.generallyMarked` [moroney-2021] cell. -/
-theorem marking : inventory.markingStrategy = .generallyMarked := by decide
+/-- A single article marks both strengths. -/
+theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Italian.Determiners

@@ -8,8 +8,8 @@ public import Linglib.Semantics.Denotation
 # Czech determiner inventory
 
 Czech has neither a definite nor an indefinite article, so its inventory holds only the
-demonstrative *ten* and the quantificational determiners, and it falls in the unmarked cell of
-Moroney's typology of definiteness marking. The quantificational determiners are the carrier
+demonstrative *ten* and the quantificational determiners, and it marks neither strength of
+definiteness (`strengths_inventory`). The quantificational determiners are the carrier
 `QuantityWord`, whose words project to `Quantifier` records and denote the readings the
 literature makes available for them. Two of them are polarity sensitive, the concord item
 *žádný* 'no' and the positive polarity item *nějaký* 'some', and their entries in
@@ -91,7 +91,7 @@ end QuantityWord
 def inventory : Determiner.Inventory :=
   .demonstrative ten :: QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
-/-- Czech derives the `.unmarked` Moroney cell. -/
-theorem marking : inventory.markingStrategy = .unmarked := by decide
+/-- No strength is marked. -/
+theorem strengths_inventory : inventory.strengths = ∅ := by decide
 
 end Czech.Determiners

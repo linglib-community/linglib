@@ -12,8 +12,8 @@ rarer ([latrouite-van-valin-2014]; [ingham-2003b] §15.1 has *ki* "for new
 or previously mentioned items without distinction" and *k'uŋ* as an
 infrequent switch back to an earlier topic — endorsing [curl-1999]'s
 topic-marking account — or an emphatic marker of 'enforced reality').
-Because *kiŋ* covers anaphora, the inventory derives `.generallyMarked`;
-the `.bipartite` cell follows only under [schwarz-2013] §4.2.1's tentative
+Because *kiŋ* covers anaphora it marks both strengths (`isSyncretic_inventory`);
+a weak and a strong article follow only under Schwarz's (2013, §4.2.1) tentative
 weak/strong construal of the pair, disputed also by [ingham-2003] (the
 element is basically a topic marker) and [ogorman-2011] (accessibility).
 Covarying (donkey) uses are unreported for either article. The singular
@@ -44,9 +44,7 @@ def inventory : Determiner.Inventory :=
                uses := {.anaphoric} },
     .article { form := "waŋ", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
 
-/-- Lakhota derives the `.generallyMarked` Moroney cell: *kiŋ* syncretically
-    covers both presupposition types, so the anaphoric-only *k'uŋ* does not
-    make the system `.bipartite`. -/
-theorem marking : inventory.markingStrategy = .generallyMarked := by decide
+/-- A single article marks both strengths. -/
+theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Lakhota.Determiners

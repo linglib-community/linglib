@@ -27,8 +27,8 @@ continuing topic (Section 5.3).
 * `rows_agree`: the data (10) to (20), (49) and (51) to (56) agree with the prediction.
 * `demonstrative_rigid`, `bare_covaries`: a demonstrative cannot covary through the situation
   pronoun and a bare noun can (Section 4.3).
-* `table2`, `markedUnique_not_mem_attested`: Table 2's cells as the fragments derive them, and its
-  gap, the marked-unique type.
+* `table2`, `isUpperSet_strengths`: Table 2's types as the fragments derive them, and its gap: the
+  marked presuppositions form an upper set, so no language is marked unique.
 
 ## Implementation notes
 
@@ -54,7 +54,6 @@ namespace Jenks2018
 
 open Determiner Semantics
 open DefiniteDescription (Restrictor)
-open Definiteness (MarkingStrategy)
 
 /-! ### Environments and principles -/
 
@@ -193,28 +192,56 @@ theorem bare_covaries {W : Type} (g : Assignment W) (s : W) :
 
 /-! ### The typology (Table 2) -/
 
+section Typology
+
+open DefiniteDescription (Strength)
+
+variable (ds : Inventory)
+
+/-- A bipartite inventory marks both presuppositions, with distinct forms. -/
+def IsBipartite : Prop := ds.strengths = Finset.univ ∧ ¬ ds.IsSyncretic
+
+/-- A marked-anaphoric inventory marks the anaphoric presupposition only. -/
+def IsMarkedAnaphoric : Prop := ds.strengths = {.familiarity}
+
+/-- A generally marked inventory marks both presuppositions with one form. -/
+def IsGenerallyMarked : Prop := ds.IsSyncretic
+
+/-- A marked-unique inventory marks the unique presupposition only. -/
+def IsMarkedUnique : Prop := ds.strengths = {.uniqueness}
+
+/-- The fragments derive Table 2's columns, German being bipartite, Mandarin marked anaphoric, and
+Cantonese and English generally marked. -/
+theorem table2 :
+    IsBipartite German.Determiners.inventory ∧ IsMarkedAnaphoric Mandarin.Determiners.inventory ∧
+      IsGenerallyMarked Cantonese.Determiners.inventory ∧
+      IsGenerallyMarked English.Determiners.inventory :=
+  ⟨⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
+    Mandarin.Determiners.strengths_inventory, Cantonese.Determiners.isSyncretic_inventory,
+    English.Determiners.isSyncretic_inventory⟩
+
+/-- An inventory whose marked presuppositions form an upper set, marking the anaphoric one wherever
+it marks the unique one, is not marked unique. -/
+theorem not_isMarkedUnique_of_isUpperSet (h : IsUpperSet (ds.strengths : Set Strength)) :
+    ¬ IsMarkedUnique ds := fun hu ↦ by
+  have := Strength.isUpperSet_iff.1 h
+  rw [IsMarkedUnique] at hu
+  simp [hu] at this
+
 /-- Table 2's languages with a fragment are German and Lakhota, Mandarin and Akan, and Cantonese
 and English. -/
 def table2Inventories : List Inventory :=
   [German.Determiners.inventory, Lakhota.Determiners.inventory, Mandarin.Determiners.inventory,
     Akan.Determiners.inventory, Cantonese.Determiners.inventory, English.Determiners.inventory]
 
-/-- The marking types that Table 2's languages attest. -/
-def attested : List MarkingStrategy := table2Inventories.map Inventory.markingStrategy
-
-/-- None of Table 2's languages is marked unique, the gap of the typology. -/
-theorem markedUnique_not_mem_attested : MarkingStrategy.markedUnique ∉ attested := by
-  simp [attested, table2Inventories, German.Determiners.marking, Lakhota.Determiners.marking,
-    Mandarin.Determiners.marking, Akan.Determiners.marking, Cantonese.Determiners.marking,
-    English.Determiners.marking]
-
-/-- The fragments derive Table 2's columns, German being bipartite, Mandarin marked anaphoric, and
-Cantonese and English generally marked. -/
-theorem table2 :
-    German.Determiners.inventory.markingStrategy = .bipartite ∧
-      Mandarin.Determiners.inventory.markingStrategy = .markedAnaphoric ∧
-      Cantonese.Determiners.inventory.markingStrategy = .generallyMarked ∧
-      English.Determiners.inventory.markingStrategy = .generallyMarked := by
+/-- In each of Table 2's languages the marked presuppositions form an upper set, so that overt
+marking begins with the anaphoric presupposition, as articles grammaticalize from demonstratives
+(p. 530), and none is marked unique. -/
+theorem isUpperSet_strengths :
+    ∀ ds ∈ table2Inventories, IsUpperSet (ds.strengths : Set Strength) := by
+  simp only [Strength.isUpperSet_iff, Finset.mem_coe]
   decide
+
+end Typology
 
 end Jenks2018
