@@ -11,7 +11,7 @@ directional heads Place, Goal, Source, and Route form the containment sequence o
 `Spatial.Path.Direction`, and a syncretism pattern over the four is a paradigm over that sequence
 (`Pattern`). Two constraints restrict the patterns: the *ABA generalization of Bobaljik (then
 circulating in manuscript), on which a syncretism targets only adjacent heads of the sequence,
-the same contiguity that governs nominal case in Caha's analysis (`Morphology.IsContiguous`);
+the same contiguity that governs nominal case in Caha's analysis (`IsContiguous`);
 and *A&¬A, on which Goal and Source never share a
 marker, because the Source head is the locus of a reversal of the Goal path (§5.4), so one
 marker for both would be contradictory (`GoalSourceMerged`, `goalSource_disjoint`).

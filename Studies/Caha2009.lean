@@ -66,7 +66,6 @@ second paradigm's identifier ends in `_2`.
 
 namespace Caha2009
 
-open Morphology (IsContiguous)
 open Data.Forms (Paradigm)
 open Forms
 open Morphology.Containment (SupersetSpellable isContiguous_iff_spelloutGenerable)

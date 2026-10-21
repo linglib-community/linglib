@@ -260,7 +260,7 @@ theorem winner?_retreat (hsub : n' ⊆ n) (h' : winner? items n' = some i') :
 an exponent inserted at two nested neighborhoods is inserted at every neighborhood between
 them. -/
 theorem isContiguous_subsetPrinciple (hv : items.Antihomophonous) :
-    Morphology.IsContiguous (subsetPrinciple items) :=
+    IsContiguous (subsetPrinciple items) :=
   RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hn hs ↦ VocabularyItem.applies_mono hs hn
 
 end SubsetPrinciple
