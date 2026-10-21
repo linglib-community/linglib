@@ -1,23 +1,25 @@
 module
 
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Syntax.Category.Particle.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # English particles
 
-This file defines the English polarity particles and the meta-question adverb *quick*. The
-polarity particles *yes* and *no* answer polar questions and respond to assertions, and English
-has no polarity-reversing particle ([holmberg-2016]). What each particle marks is a matter of
-analysis: a valued polarity feature for [holmberg-2016], features of the response for
-[farkas-bruce-2010]. *Quick* or *quickly* before a
-question tells the addressee to answer without delay; Dayal groups it with the meta-question
-particles, which occur in matrix questions and quotations and are ungrammatical embedded,
-*Mary asked Sue quick where she hid the matza*.
+This file defines the English polarity particles and the meta-question adverb *quick*. The polarity
+particles *yes* and *no* answer polar questions and respond to assertions, *yes* being the positive
+particle and *no* the negative one, and English has no polarity-reversing particle, as Holmberg
+notes. What each particle marks is a matter of analysis: a valued polarity feature for Holmberg,
+features of the response for Farkas and Bruce. *Quick* or *quickly* before a question tells the
+addressee to answer without delay; Dayal groups it with the meta-question particles, which occur in
+matrix questions and quotations and are ungrammatical embedded, *Mary asked Sue quick where she hid
+the matza*.
 
 ## Main definitions
 
-* `English.PolarityParticle`: the polarity particles.
+* `English.PolarityParticle`, `English.PolarityParticle.polarity`: the polarity particles and
+  their polarity.
 * `English.Particles.quick`: the meta-question adverb.
 
 ## References
@@ -38,6 +40,11 @@ inductive PolarityParticle where
   /-- *no*. -/
   | no
   deriving DecidableEq, Repr, Fintype
+
+/-- The polarity of a polarity particle, positive for *yes* and negative for *no*. -/
+def PolarityParticle.polarity : PolarityParticle → Polarity
+  | .yes => .positive
+  | .no => .negative
 
 /-- The spelling of a polarity particle. -/
 def PolarityParticle.form : PolarityParticle → String
