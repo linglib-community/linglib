@@ -314,16 +314,16 @@ theorem causer_reading_rows : ∀ e ∈ Examples.all,
 /-- A person case constraint sees the persons of the two clitics, and *me* and *nos* have the
 same person, so no such constraint separates *me le* from *nos le*. -/
 theorem isLicit_me_iff_nos (g : PCC.Grammar) :
-    (∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
+    (∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person,
         PCC.IsLicit g ⟨io, do_⟩) ↔
-      ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.nos_acc.person,
+      ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.nos.person,
         PCC.IsLicit g ⟨io, do_⟩ :=
   Iff.rfl
 
 /-- The weak constraint bans a third-person dative over a first-person accusative, as in the
 ditransitive examples, so it would ban stylistic *me le* as well. -/
 theorem weak_pcc_bans :
-    ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
+    ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person,
       ¬ PCC.IsLicit PCC.weakGrammar ⟨io, do_⟩ := by
   decide
 
