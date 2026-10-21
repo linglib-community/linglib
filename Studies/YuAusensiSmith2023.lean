@@ -14,34 +14,35 @@ Koontz-Garboden's two classes of result roots, property concept roots and the ro
 change, here called change-of-state roots, differ in semantic type. A property concept root, such
 as that of *open*, relates an individual to a state (20); a change-of-state root, such as that of
 *break*, relates an individual to an event of change into the state it names (19)
-(`Analysis.denote`). Events and states are sorts of one domain of eventualities, and the sorts
-restrict the variables of the denotations, not the relations of becoming and causing.
+(`Analysis.denote`). Events and states are sorts of one domain of eventualities (`Model`), and the
+sorts restrict the variables of the denotations, not the relations of becoming and causing.
 
-A reading is available for a root when some model realizes it (`Available`), and the sort of the
-root decides it (`available_iff`). Restitutive *again* needs a state that no change gave rise to,
-the internal reading of a *for*-phrase a state of the root, and modification of a resultative
-verb phrase by Event Identification an event of the root (`eventIdentification_states_eq_bot`);
-the readings at the verb phrase are always available, *Lucy broke the vase* (21) among them, and a
-denial that anything came to be in the root's state never is. No reading the account cannot
-derive is accepted in the examples (`rows_unavailable`), and every derivable one they reject is a
-resultative on a change-of-state root (`rows_available`), whose deviance the paper puts down to
-direct causation and world knowledge.
+Every argument of the paper is that a predicate of states and a predicate of events are disjoint.
+*Again* on a change-of-state root presupposes an earlier event wherever it attaches
+(`again_changeOfState`), a *for*-phrase finds no state of the root to measure, and a root that
+holds of states cannot modify a causative verb phrase by Event Identification
+(`eventIdentification_causative_eq_bot`). So the sort of the root decides each reading
+(`available_iff`), the causative verb phrase over any root being realized, *Lucy broke the vase*
+(21) among them. No reading the account cannot derive is accepted in the examples
+(`rows_unavailable`), and every derivable one they reject is a resultative on a change-of-state
+root (`rows_available`), whose deviance the paper puts down to direct causation and world
+knowledge.
 
 On Beavers and Koontz-Garboden's analysis a change-of-state root is a stative description that
-entails change (`BeaversEtAl2021.resultStative`). It predicts the same readings except the
-internal reading of a *for*-phrase, which the examples reject (`rows_beaversKoontzGarboden`). Its
-resultative conjoins the root with the result phrase by Event Identification (55), which makes
-one state a state of both; once each state has one holder, the Unique Role Requirement (56), the
-individual in the root's state is the holder of the result (`holder_eq_of_up`). On this analysis
-the holder of the root's state is existentially closed in a state of its own, so in *a couple of
-monks broke the corpse loose from the deck* it is the deck that breaks (`Monks.sentence`).
+entails change (`BeaversEtAl2021.resultStative`). *Again* cannot tell the analyses apart
+(`again_beaversKoontzGarboden`), but theirs predicts the internal reading of a *for*-phrase that
+the examples reject (`rows_beaversKoontzGarboden`). Its resultative conjoins the root with the
+result phrase by Event Identification (55), which makes one state a state of both; once each
+state has one holder, the Unique Role Requirement (56), the individual in the root's state is the
+holder of the result (`holder_eq_of_up`). On this analysis the holder of the root's state is
+existentially closed in a state of its own, so in *a couple of monks broke the corpse loose from
+the deck* it is the deck that breaks (`Monks.sentence`).
 
 ## Implementation notes
 
-* The causative head vCAUSE is `EventStructure.Interpretation.vCause` restricted to events. It
-  introduces no individual and quantifies over a caused eventuality of either sort (footnote 7).
-* A model is an `Interpretation` with `State` and `Event` both the domain of eventualities and a
-  predicate picking out the states (footnote 6).
+* The causative head vCAUSE is `EventStructure.Interpretation.vCause` restricted to events
+  (`Model.causative`). It introduces no individual and quantifies over a caused eventuality of
+  either sort (footnote 7).
 * The existential closure of the holder at the verb phrase is `Event.closure` of the flipped
   relation, and the agent of (33) is the effector of the change (footnote 17).
 * Beavers and Koontz-Garboden's first objection to (55), that one state cannot carry two
@@ -68,10 +69,14 @@ monks broke the corpse loose from the deck* it is the deck that breaks (`Monks.s
 
 namespace YuAusensiSmith2023
 
-open ArgumentStructure ArgumentStructure.EventStructure ModalLogic
+open ArgumentStructure ArgumentStructure.EventStructure ModalLogic Presupposition
 open scoped SetRel
 
-/-! ### Roots of two types -/
+/-- An interpretation of the event-structure primitives over one domain of eventualities, with
+the states among them (footnote 6). -/
+structure Model (Entity Ev : Type*) extends Interpretation Entity Ev Ev where
+  /-- The eventuality is a state. -/
+  IsState : Ev → Prop
 
 /-- The two classes of result roots (footnotes 1 and 4). -/
 inductive RootClass
@@ -88,38 +93,92 @@ inductive Analysis
   | beaversKoontzGarboden
   deriving DecidableEq
 
+/-! ### Roots and their sorts -/
+
 section Roots
 
-variable {Entity Ev : Type*} (M : Interpretation Entity Ev Ev) (IsState : Ev → Prop)
+variable {Entity Ev : Type*} (M : Model Entity Ev)
 
-/-- The events among the eventualities of `P`. -/
-def events (P : Ev → Prop) (e : Ev) : Prop := P e ∧ ¬ IsState e
-
-/-- The states among the eventualities of `P`. -/
-def states (P : Ev → Prop) (s : Ev) : Prop := P s ∧ IsState s
+/-- The causative head vCAUSE (21), (22): the events that cause an eventuality of `P`. -/
+def Model.causative (P : Ev → Prop) : Ev → Prop := M.vCause P ⊓ M.IsStateᶜ
 
 /-- The root of a class with state description `B`. A property concept root relates an
 individual to a state of `B` (20). A change-of-state root relates an individual to an event of
 change into a state of `B` (19) on this paper's analysis, and to a state of `B` that a change gave
 rise to (54a) on Beavers and Koontz-Garboden's. -/
 def Analysis.denote : Analysis → RootClass → (Entity → Ev → Prop) → Entity → Ev → Prop
-  | _, .propertyConcept, B, x => states IsState (B x)
-  | .yuAusensiSmith, .changeOfState, B, x => events IsState (M.vBecome B x)
+  | _, .propertyConcept, B, x => B x ⊓ M.IsState
+  | .yuAusensiSmith, .changeOfState, B, x => M.vBecome B x ⊓ M.IsStateᶜ
   | .beaversKoontzGarboden, .changeOfState, B, x =>
-    states IsState (BeaversEtAl2021.resultStative M B x)
+    BeaversEtAl2021.resultStative M.toInterpretation B x ⊓ M.IsState
 
-variable {IsState}
+/-- The root describes states: always on Beavers and Koontz-Garboden's analysis, and on this one
+when it is a property concept root. -/
+def Analysis.DescribesStates : Analysis → RootClass → Prop
+  | .yuAusensiSmith, c => c = .propertyConcept
+  | .beaversKoontzGarboden, _ => True
 
-theorem disjoint_events_states (P Q : Ev → Prop) : Disjoint (events IsState P) (states IsState Q) :=
-  Pi.disjoint_iff.2 fun _ ↦ Prop.disjoint_iff.2 fun ⟨⟨_, h⟩, _, h'⟩ ↦ h h'
+instance : ∀ a c, Decidable (Analysis.DescribesStates a c)
+  | .yuAusensiSmith, c => inferInstanceAs (Decidable (c = _))
+  | .beaversKoontzGarboden, _ => inferInstanceAs (Decidable True)
+
+variable {M} {a : Analysis} {c : RootClass}
+
+theorem Analysis.denote_le_isState (h : a.DescribesStates c) (B : Entity → Ev → Prop)
+    (x : Entity) : a.denote M c B x ≤ M.IsState := by
+  cases a <;> cases c
+  · exact inf_le_right
+  · cases h
+  all_goals exact inf_le_right
+
+theorem Analysis.denote_le_compl (h : ¬ a.DescribesStates c) (B : Entity → Ev → Prop)
+    (x : Entity) : a.denote M c B x ≤ M.IsStateᶜ := by
+  cases a <;> cases c
+  · exact absurd rfl h
+  · exact inf_le_right
+  all_goals exact absurd trivial h
+
+theorem Model.causative_le_compl (P : Ev → Prop) : M.causative P ≤ M.IsStateᶜ := inf_le_right
 
 /-- A root that holds of states, a property concept root among them, cannot modify a causative
 verb phrase by Event Identification (30), (31). -/
-theorem eventIdentification_states_eq_bot (B : Entity → Ev → Prop) (V : Ev → Prop) :
-    eventIdentification (fun x ↦ states IsState (B x)) (events IsState V) = ⊥ :=
-  eventIdentification_eq_bot_iff.2 fun _ ↦ (disjoint_events_states _ _).symm
+theorem eventIdentification_causative_eq_bot {ρ : Entity → Ev → Prop} (hρ : ∀ x, ρ x ≤ M.IsState)
+    (L : Ev → Prop) : eventIdentification ρ (M.causative L) = ⊥ :=
+  eventIdentification_eq_bot_iff.2 fun x ↦ disjoint_compl_right.mono (hρ x) inf_le_right
 
 end Roots
+
+/-! ### *Again* -/
+
+section Again
+
+variable {Entity Ev : Type*} {M : Model Entity Ev} {R : SetRel Ev Ev} {P : Ev → Prop} {v : Ev}
+
+/-- *Again* on a predicate of events presupposes an earlier event. -/
+theorem diamond_compl_of_again_ne_zero (hP : P ≤ M.IsStateᶜ) (h : again R P v ≠ 0) :
+    ◇[R] M.IsStateᶜ v :=
+  diamond_mono R hP v (again_eq_zero_iff.not_left.1 h)
+
+variable (B : Entity → Ev → Prop) (x : Entity)
+
+/-- *Again* on a change-of-state root presupposes an earlier event, whether it attaches to the
+root or to the causative verb phrase, so the root has no restitutive reading (25). -/
+theorem again_changeOfState :
+    (again R (Analysis.yuAusensiSmith.denote M .changeOfState B x) v ≠ 0 →
+        ◇[R] M.IsStateᶜ v) ∧
+      (again R (M.causative (Analysis.yuAusensiSmith.denote M .changeOfState B x)) v ≠ 0 →
+        ◇[R] M.IsStateᶜ v) :=
+  ⟨diamond_compl_of_again_ne_zero (Analysis.denote_le_compl (by decide) B x),
+    diamond_compl_of_again_ne_zero (Model.causative_le_compl _)⟩
+
+/-- On Beavers and Koontz-Garboden's analysis *again* on a change-of-state root presupposes an
+earlier state that a change gave rise to, so *again* does not tell the analyses apart (p. 1616). -/
+theorem again_beaversKoontzGarboden
+    (h : again R (Analysis.beaversKoontzGarboden.denote M .changeOfState B x) v ≠ 0) :
+    ◇[R] (fun w ↦ ∃ e, M.become w e) v :=
+  diamond_mono R (fun _ hw ↦ hw.1.2) v (again_eq_zero_iff.not_left.1 h)
+
+end Again
 
 /-! ### Readings -/
 
@@ -135,54 +194,54 @@ inductive Reading
   | internal
   /-- The root modifies a causative verb phrase. -/
   | modifier
-  /-- A resultative on the root continues with a denial that anything came to be in the root's
-  state. -/
-  | denial
   deriving DecidableEq
 
 section Realized
 
-variable {Entity Ev : Type*} (M : Interpretation Entity Ev Ev) (IsState : Ev → Prop)
-  (R : SetRel Ev Ev) (L : Ev → Prop) (ρ : Entity → Ev → Prop) (x : Entity)
+variable {Entity Ev : Type*} (M : Model Entity Ev) (L : Ev → Prop) (ρ : Entity → Ev → Prop)
+  (x : Entity)
 
-/-- The root `ρ`, applied to `x`, realizes the reading, with `R` relating an eventuality to the
-earlier ones and `L` the result phrase of a resultative. The causative verb phrase over the root is
-`events IsState (M.vCause (ρ x))`. -/
+/-- The root `ρ`, applied to `x`, realizes the reading: the root holds of a state that no change
+gave rise to, the causative verb phrase over it holds of an event, the root holds of a state, or
+the root conjoined with a causative verb phrase over the result phrase `L` holds of an event. -/
 def Reading.Realized : Reading → Prop
-  | .restitutive => ∃ v, ◇[R] (fun w ↦ ρ x w ∧ IsState w ∧ ∀ e, ¬ M.become w e) v
-  | .repetitive => ∃ v, ◇[R] (events IsState (M.vCause (ρ x))) v
-  | .durative => ∃ v, events IsState (M.vCause (ρ x)) v
-  | .internal => ∃ v, states IsState (ρ x) v
-  | .modifier => ∃ v, eventIdentification ρ (events IsState (M.vCause L)) x v
-  | .denial => ∃ v, eventIdentification ρ (events IsState (M.vCause L)) x v ∧ ∀ y, ¬ ρ y v
+  | .restitutive => ∃ w, ρ x w ∧ M.IsState w ∧ ∀ e, ¬ M.become w e
+  | .repetitive | .durative => ∃ v, M.causative (ρ x) v
+  | .internal => ∃ w, (ρ x ⊓ M.IsState) w
+  | .modifier => ∃ v, eventIdentification ρ (M.causative L) x v
+
+variable {M L ρ x}
+
+theorem not_realized_restitutive_of_le_compl (h : ρ x ≤ M.IsStateᶜ) :
+    ¬ Reading.restitutive.Realized M L ρ x :=
+  fun ⟨w, hw, hs, _⟩ ↦ h w hw hs
+
+theorem not_realized_restitutive_of_become (h : ∀ w, ρ x w → ∃ e, M.become w e) :
+    ¬ Reading.restitutive.Realized M L ρ x :=
+  fun ⟨w, hw, _, hb⟩ ↦ let ⟨e, he⟩ := h w hw; hb e he
+
+theorem not_realized_internal (h : ρ x ≤ M.IsStateᶜ) : ¬ Reading.internal.Realized M L ρ x :=
+  fun ⟨w, hw, hs⟩ ↦ h w hw hs
+
+theorem not_realized_modifier (h : ∀ y, ρ y ≤ M.IsState) : ¬ Reading.modifier.Realized M L ρ x :=
+  fun ⟨v, hv⟩ ↦ (congrFun₂ (eventIdentification_causative_eq_bot h L) x v).mp hv
 
 end Realized
 
 /-- The reading `r` is available for a root of class `c` on the analysis `a` when some model
 realizes it. -/
 def Available (a : Analysis) (c : RootClass) (r : Reading) : Prop :=
-  ∃ (Ev : Type) (M : Interpretation Unit Ev Ev) (IsState : Ev → Prop) (B : Unit → Ev → Prop)
-    (R : SetRel Ev Ev) (L : Ev → Prop), r.Realized M IsState R L (a.denote M IsState c B) ()
-
-/-- The root describes states: always on Beavers and Koontz-Garboden's analysis, and on this one
-when it is a property concept root. -/
-def Analysis.DescribesStates : Analysis → RootClass → Prop
-  | .yuAusensiSmith, c => c = .propertyConcept
-  | .beaversKoontzGarboden, _ => True
-
-instance : ∀ a c, Decidable (Analysis.DescribesStates a c)
-  | .yuAusensiSmith, c => inferInstanceAs (Decidable (c = _))
-  | .beaversKoontzGarboden, _ => inferInstanceAs (Decidable True)
+  ∃ (Ev : Type) (M : Model Unit Ev) (B : Unit → Ev → Prop) (L : Ev → Prop),
+    r.Realized M L (a.denote M c B) ()
 
 /-- What the sort of the root predicts: the readings at the verb phrase always, the restitutive
 reading for a root that entails no change, the internal reading for a root that describes states,
-the modifier for one that describes events, and the denial never. -/
+and the modifier for one that describes events. -/
 def Analysis.Predicts (a : Analysis) (c : RootClass) : Reading → Prop
   | .restitutive => c = .propertyConcept
   | .repetitive | .durative => True
   | .internal => a.DescribesStates c
   | .modifier => ¬ a.DescribesStates c
-  | .denial => False
 
 instance (a : Analysis) (c : RootClass) : DecidablePred (a.Predicts c) := fun r ↦ by
   cases r <;> unfold Analysis.Predicts <;> infer_instance
@@ -199,114 +258,99 @@ inductive Scene
   deriving DecidableEq
 
 /-- The causing event causes the change and its state, and the change causes its state. -/
-def scene : Interpretation Unit Scene Scene where
+def scene : Model Unit Scene where
   become s e := s = .result ∧ e = .change
   cause e v := e = .causing ∧ (v = .change ∨ v = .result) ∨ e = .change ∧ v = .result
   effector _ e := e = .causing
-
-/-- The states of the scene. -/
-def Scene.IsState (v : Scene) : Prop := v = .result ∨ v = .prior
+  IsState v := v = .result ∨ v = .prior
 
 /-! ### Predictions -/
 
 variable {a : Analysis} {c : RootClass}
 
 private theorem available_of {r : Reading}
-    (h : r.Realized scene Scene.IsState ⊤ (· = .result)
-      (a.denote scene Scene.IsState c fun _ ↦ Scene.IsState) ()) : Available a c r :=
-  ⟨Scene, scene, Scene.IsState, fun _ ↦ Scene.IsState, ⊤, (· = .result), h⟩
+    (h : r.Realized scene (· = .result) (a.denote scene c fun _ ↦ scene.IsState) ()) :
+    Available a c r :=
+  ⟨Scene, scene, fun _ ↦ scene.IsState, (· = .result), h⟩
 
 /-- A state that no change gave rise to is available exactly for a property concept root, on
 both analyses. -/
 theorem available_restitutive_iff : Available a c .restitutive ↔ c = .propertyConcept := by
-  refine ⟨fun ⟨_, M, _, B, R, _, _, _, _, hρ, hs, hb⟩ ↦ ?_, fun hc ↦ available_of ?_⟩
+  refine ⟨fun ⟨_, M, B, L, h⟩ ↦ ?_, fun hc ↦ available_of ?_⟩
   · cases c
     · rfl
     · cases a
-      · exact absurd hs hρ.2
-      · obtain ⟨⟨_, e, he⟩, _⟩ := hρ
-        exact absurd he (hb e)
+      · exact absurd h (not_realized_restitutive_of_le_compl
+          (Analysis.denote_le_compl (by decide) B ()))
+      · exact absurd h (not_realized_restitutive_of_become fun _ hw ↦ hw.1.2)
   · subst hc
-    exact ⟨.prior, .prior, trivial, by cases a <;> simp [Analysis.denote, states, Scene.IsState,
-      scene]⟩
+    exact ⟨.prior, by cases a <;> simp [Analysis.denote, scene]⟩
 
 /-- The internal reading needs a root that describes states. -/
 theorem available_internal_iff : Available a c .internal ↔ a.DescribesStates c := by
-  refine ⟨fun ⟨_, M, IsState, B, R, _, v, hρ, hs⟩ ↦ ?_, fun h ↦ available_of ⟨.result, ?_⟩⟩
-  · cases a <;> cases c
-    · rfl
-    · exact absurd hs hρ.2
-    all_goals trivial
-  · cases a <;> cases c <;>
-      simp_all [Analysis.denote, Analysis.DescribesStates, states, Scene.IsState,
-        BeaversEtAl2021.resultStative, scene]
+  refine ⟨fun ⟨_, M, B, L, h⟩ ↦ by_contra fun hd ↦
+    not_realized_internal (Analysis.denote_le_compl hd B ()) h, fun h ↦ available_of ⟨.result, ?_⟩⟩
+  cases a <;> cases c <;>
+    simp_all [Analysis.DescribesStates, Analysis.denote, BeaversEtAl2021.resultStative, scene]
 
 /-- The modifier needs a root that describes events. -/
 theorem available_modifier_iff : Available a c .modifier ↔ ¬ a.DescribesStates c := by
-  refine ⟨fun ⟨_, M, IsState, B, R, L, v, hρ, hv⟩ hd ↦ ?_, fun hd ↦ available_of ?_⟩
-  · cases a <;> cases c
-    · exact hv.2 hρ.2
-    · cases hd
-    all_goals exact hv.2 hρ.2
-  · cases a <;> cases c <;> simp only [Analysis.DescribesStates, not_true_eq_false] at hd
-    exact ⟨.change, ⟨⟨.result, ⟨rfl, rfl⟩, .inl rfl⟩, by simp [Scene.IsState]⟩,
-      ⟨.result, .inr ⟨rfl, rfl⟩, rfl⟩, by simp [Scene.IsState]⟩
+  refine ⟨fun ⟨_, M, B, L, h⟩ hd ↦ not_realized_modifier (Analysis.denote_le_isState hd B) h,
+    fun hd ↦ available_of ?_⟩
+  cases a <;> cases c <;> simp only [Analysis.DescribesStates, not_true_eq_false] at hd
+  exact ⟨.change, ⟨⟨.result, ⟨rfl, rfl⟩, .inl rfl⟩, by simp [scene]⟩,
+    ⟨.result, .inr ⟨rfl, rfl⟩, rfl⟩, by simp [scene]⟩
 
 /-- The causative verb phrase over any root is realized, *Lucy broke the vase* (21) and *Kim
-opened the door* (22) among them, and so are the readings of *again* and of a *for*-phrase that
-attach to it. -/
+opened the door* (22) among them. -/
 theorem available_durative : Available a c .durative := by
-  refine available_of ⟨.causing, ?_, by simp [Scene.IsState]⟩
+  refine available_of ⟨.causing, ?_, by simp [scene]⟩
   cases c
-  · exact ⟨.result, .inl ⟨rfl, .inr rfl⟩, by cases a <;> simp [Analysis.denote, states,
-      Scene.IsState]⟩
+  · exact ⟨.result, .inl ⟨rfl, .inr rfl⟩, by cases a <;> simp [Analysis.denote, scene]⟩
   · cases a
-    · exact ⟨.change, .inl ⟨rfl, .inl rfl⟩, ⟨.result, ⟨rfl, rfl⟩, .inl rfl⟩,
-        by simp [Scene.IsState]⟩
-    · exact ⟨.result, .inl ⟨rfl, .inr rfl⟩, ⟨⟨.inl rfl, .change, rfl, rfl⟩, .inl rfl⟩⟩
-
-theorem available_repetitive : Available a c .repetitive :=
-  let ⟨_, M, IsState, B, _, L, v, hv⟩ := available_durative (a := a) (c := c)
-  ⟨_, M, IsState, B, ⊤, L, v, v, trivial, hv⟩
-
-/-- No root survives a denial that anything came to be in its state. -/
-theorem not_available_denial : ¬ Available a c .denial :=
-  fun ⟨_, _, _, _, _, _, _, ⟨hρ, _⟩, hn⟩ ↦ hn _ hρ
+    · exact ⟨.change, .inl ⟨rfl, .inl rfl⟩, ⟨.result, ⟨rfl, rfl⟩, .inl rfl⟩, by simp [scene]⟩
+    · exact ⟨.result, .inl ⟨rfl, .inr rfl⟩, ⟨.inl rfl, .change, rfl, rfl⟩, .inl rfl⟩
 
 /-- Availability is the prediction of the sort of the root. -/
 theorem available_iff : ∀ r, Available a c r ↔ a.Predicts c r
   | .restitutive => available_restitutive_iff
-  | .repetitive => iff_of_true available_repetitive trivial
+  | .repetitive => iff_of_true available_durative trivial
   | .durative => iff_of_true available_durative trivial
   | .internal => available_internal_iff
   | .modifier => available_modifier_iff
-  | .denial => iff_of_false not_available_denial id
 
-/-! ### Beavers and Koontz-Garboden's resultative -/
+/-! ### Resultatives -/
 
-section UniqueRole
+section Resultative
 
-variable {Entity Ev : Type*} {M : Interpretation Entity Ev Ev} {IsState : Ev → Prop}
-  {B : Entity → Ev → Prop} {L : Ev → Prop} {holder : Entity → Ev → Prop} {c x : Entity} {s : Ev}
+variable {Entity Ev : Type*} {M : Model Entity Ev} {ρ : Entity → Ev → Prop} {L : Ev → Prop}
+
+/-- A resultative on any root entails that something came to be in the root's state, which the
+denials (36) and (37) contradict. -/
+theorem exists_of_resultative {e : Ev}
+    (h : Event.closure (flip (eventIdentification ρ (M.causative L))) e) : ∃ y, ρ y e :=
+  let ⟨y, hρ, _⟩ := h
+  ⟨y, hρ⟩
+
+variable {B : Entity → Ev → Prop} {holder : Entity → Ev → Prop} {c x : Entity} {s : Ev}
 
 /-- Beavers and Koontz-Garboden's resultative conjoins the change-of-state root with the result
 phrase by Event Identification (55), so one state is a state of both. Once each state has one
 holder (56) and each description entails its holder, the individual in the root's state is the
 holder of the result. -/
-theorem holder_eq_of_up (hU : Mereology.UP holder) (hB : ∀ x s, B x s → holder x s)
-    (hL : ∀ s, L s → holder c s)
-    (h : eventIdentification (Analysis.beaversKoontzGarboden.denote M IsState .changeOfState B) L
-      x s) : x = c :=
+theorem holder_eq_of_up (hU : Mereology.UP holder) (hB : B ≤ holder) (hL : L ≤ holder c)
+    (h : eventIdentification (Analysis.beaversKoontzGarboden.denote M .changeOfState B) L x s) :
+    x = c :=
   hU (hB x s h.1.1.1) (hL s h.2)
 
-end UniqueRole
+end Resultative
 
 /-! ### Breaking the corpse loose -/
 
 namespace Monks
 
 /-- The participants of *a couple of monks broke the corpse loose from the deck*. -/
-inductive Entity
+inductive Participant
   | monks
   | corpse
   | deck
@@ -314,7 +358,7 @@ inductive Entity
 
 /-- The eventualities of the sentence: the breaking, the broken state of the deck, and the
 corpse's state of being loose from it. -/
-inductive Ev
+inductive Eventuality
   | breaking
   | broken
   | loose
@@ -322,22 +366,21 @@ inductive Ev
 
 /-- The breaking gives rise to the broken state and causes the loose one, and the monks are its
 effector. -/
-def model : Interpretation Entity Ev Ev where
+def model : Model Participant Eventuality where
   become s e := s = .broken ∧ e = .breaking
   cause e s := e = .breaking ∧ s = .loose
   effector x e := x = .monks ∧ e = .breaking
-
-/-- The states of the scene. -/
-def IsState (v : Ev) : Prop := v ≠ .breaking
+  IsState v := v ≠ .breaking
 
 /-- The deck holds the broken state and the corpse the loose one. -/
-def holder (x : Entity) (v : Ev) : Prop := x = .deck ∧ v = .broken ∨ x = .corpse ∧ v = .loose
+def holder (x : Participant) (v : Eventuality) : Prop :=
+  x = .deck ∧ v = .broken ∨ x = .corpse ∧ v = .loose
 
 /-- *Broken*. -/
-def broken (x : Entity) (s : Ev) : Prop := holder x s ∧ s = .broken
+def broken (x : Participant) (s : Eventuality) : Prop := holder x s ∧ s = .broken
 
 /-- *The corpse loose from the deck*. -/
-def looseFromDeck (s : Ev) : Prop := holder .corpse s ∧ s = .loose
+def looseFromDeck (s : Eventuality) : Prop := holder .corpse s ∧ s = .loose
 
 /-- Each state of the scene has one holder. -/
 theorem up_holder : Mereology.UP holder := by
@@ -348,16 +391,15 @@ causes the corpse to be loose from the deck, and the thing that became broken is
 theorem sentence :
     eventIdentification model.effector
         (Event.closure (flip (eventIdentification
-          (Analysis.yuAusensiSmith.denote model IsState .changeOfState broken)
-          (events IsState (model.vCause looseFromDeck))))) .monks .breaking ∧
-      ∀ x, Analysis.yuAusensiSmith.denote model IsState .changeOfState broken x .breaking ↔
+          (Analysis.yuAusensiSmith.denote model .changeOfState broken)
+          (model.causative looseFromDeck)))) .monks .breaking ∧
+      ∀ x, Analysis.yuAusensiSmith.denote model .changeOfState broken x .breaking ↔
         x = .deck := by
   refine ⟨⟨⟨rfl, rfl⟩, .deck, ⟨⟨.broken, ⟨rfl, rfl⟩, .inl ⟨rfl, rfl⟩, rfl⟩, ?_⟩,
-    ⟨.loose, ⟨rfl, rfl⟩, .inr ⟨rfl, rfl⟩, rfl⟩, ?_⟩, fun x ↦ ?_⟩
-  · simp [IsState]
-  · simp [IsState]
-  · cases x <;> simp [Analysis.denote, events, Interpretation.vBecome, model, broken, holder,
-      IsState]
+    ⟨⟨.loose, ⟨rfl, rfl⟩, .inr ⟨rfl, rfl⟩, rfl⟩, ?_⟩⟩, fun x ↦ ?_⟩
+  · simp [model]
+  · simp [model]
+  · cases x <;> simp [Analysis.denote, Interpretation.vBecome, model, broken, holder]
 
 end Monks
 
@@ -368,13 +410,11 @@ def rootClass? (d : Datum) : Option RootClass :=
   d.parse? "root class"
     [("property concept", .propertyConcept), ("change of state", .changeOfState)]
 
-/-- The readings a row tests, with their judgments: a resultative tests the modifier and a denial
-the denial, each judged as the sentence, and the other rows the readings they name. -/
+/-- The readings a row tests, with their judgments: a resultative tests the modifier, judged as
+the sentence, and the other rows the readings they name. -/
 def tests (d : Datum) : List (Reading × Judgment) :=
-  match d.feature? "diagnostic" with
-  | some "resultative modifier" => [(.modifier, d.judgment)]
-  | some "entailment denial" => [(.denial, d.judgment)]
-  | _ => d.readings.filterMap fun r ↦
+  if d.feature? "diagnostic" = some "resultative modifier" then [(.modifier, d.judgment)]
+  else d.readings.filterMap fun r ↦
     ([("restitutive", Reading.restitutive), ("repetitive", .repetitive),
       ("durative", .durative), ("internal", .internal)].lookup r.1).map (·, r.2)
 

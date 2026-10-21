@@ -312,7 +312,7 @@ theorem manner_result_complementarity_false : ¬ ∀ r : Root, ¬ HasMannerAndRe
 
 /-! ### The entailments of the roots in a model
 
-The kinds of a root are meaning postulates on its state predicate
+The kinds of a root are meaning postulates on its state and manner predicates
 (`EventStructure.Interpretation.Respects`). In an interpretation that respects the signature of
 √crack, a cracked state arises from a caused change whatever template the root occurs in, while
 one that respects the signature of √flat may have a flat state that no change gave rise to. -/
@@ -328,13 +328,13 @@ variable {Entity State Event : Type*} {M : EventStructure.Interpretation Entity 
 that some event causes. -/
 theorem crack_entails_cause (h : M.Respects P Q crack.kinds) (hs : P x s) :
     ∃ e v, M.become s e ∧ M.cause v e :=
-  h .cause (by decide) x s hs
+  h.1 .cause (by decide) x s hs
 
 /-- In a model that respects the signature of √drown, a drowned state arises from a change
 whose every cause is an event of the root's manner. -/
 theorem drown_entails_manner (h : M.Respects P Q drown.kinds) (hs : P x s) :
     ∃ e, M.become s e ∧ ∀ v, M.cause v e → Q v :=
-  h .manner (by decide) x s hs
+  h.2 (by decide) (by decide) x s hs
 
 end Model
 
@@ -355,9 +355,9 @@ for a state predicate that holds. -/
 theorem flat_not_entailsChange :
     unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) flat.kinds ∧
       ¬ unchanging.EntailsChange (fun _ _ ↦ True) :=
-  ⟨fun k hk ↦ by
+  ⟨⟨fun k hk ↦ by
       obtain rfl : k = .state := by revert k; decide
-      trivial,
+      trivial, fun hm ↦ absurd hm (by decide)⟩,
     fun h ↦ let ⟨_, he⟩ := h () () trivial; he⟩
 
 /-- The signature of √crack is respected for a state predicate that holds, in the model where
@@ -365,11 +365,11 @@ every state arises from a caused change, and is not respected in the model witho
 theorem crack_respects :
     changing.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds ∧
       ¬ unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds :=
-  ⟨fun k hk ↦ by
+  ⟨⟨fun k hk ↦ by
       have : k = .result ∨ k = .cause := by revert k; decide
       rcases this with rfl | rfl
       · exact fun _ _ _ ↦ ⟨(), trivial⟩
-      · exact fun _ _ _ ↦ ⟨(), (), trivial, trivial⟩,
+      · exact fun _ _ _ ↦ ⟨(), (), trivial, trivial⟩, fun hm ↦ absurd hm (by decide)⟩,
     fun h ↦ let ⟨_, _, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
 
 /-! ### The root hypothesis against Levin's class profiles -/

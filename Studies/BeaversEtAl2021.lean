@@ -291,16 +291,17 @@ def Diagnostic.Passes (M : ArgumentStructure.EventStructure.Interpretation Entit
 end Diagnostics
 
 /-- A root of signature `ks` passes the diagnostic when its state description passes it in some
-model that respects the signature. -/
+model that respects the signature, with some manner. -/
 def Passes (ks : Root.Kinds) (g : Diagnostic) : Prop :=
   ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation Unit State Event)
-    (P : Unit → State → Prop) (R : SetRel State State), M.Respects P ⊤ ks ∧ g.Passes M R P ()
+    (P : Unit → State → Prop) (Q : Event → Prop) (R : SetRel State State),
+    M.Respects P Q ks ∧ g.Passes M R P ()
 
-/-- A root without a manner passes either diagnostic exactly when it does not entail change. -/
-theorem passes_iff {ks : Root.Kinds} (hm : Root.Kind.manner ∉ ks) (g : Diagnostic) :
+/-- A root passes either diagnostic exactly when it does not entail change. -/
+theorem passes_iff {ks : Root.Kinds} (g : Diagnostic) :
     Passes ks g ↔ Root.Kind.result ∉ Root.Kinds.close ks := by
-  refine ⟨fun ⟨_, _, M, P, R, hR, hg⟩ hr ↦ ?_, fun hr ↦ ⟨Bool, Unit, forged, sharp,
-    {p | p.2 < p.1}, fun k hk ↦ ?_, ?_⟩⟩
+  refine ⟨fun ⟨_, _, M, P, Q, R, hR, hg⟩ hr ↦ ?_, fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥,
+    {p | p.2 < p.1}, ⟨fun k hk ↦ ?_, fun _ hc ↦ ?_⟩, ?_⟩⟩
   · have hc := hR.entailsChange hr
     cases g with
     | changeDenial =>
@@ -311,9 +312,10 @@ theorem passes_iff {ks : Root.Kinds} (hm : Root.Kind.manner ∉ ks) (g : Diagnos
       exact hn (BeaversKoontzGarboden2020.exists_become_of_againAt_state_ne_zero hc ha)
   · cases k with
     | state => trivial
-    | manner => exact absurd hk hm
+    | manner => exact fun _ h ↦ h.elim
     | result => exact absurd (Root.Kinds.mem_close.2 ⟨_, hk, le_rfl⟩) hr
     | cause => exact absurd (Root.Kinds.mem_close.2 ⟨_, hk, .result_cause⟩) hr
+  · exact absurd (Root.Kinds.mem_close.2 ⟨_, hc, .result_cause⟩) hr
   · cases g with
     | changeDenial => exact ⟨false, forged_deniesChange⟩
     | restitutive => exact ⟨true, forged_restitutive⟩
@@ -333,12 +335,7 @@ sense, and Kakataibo, whose result root in (26) means 'not alive'. -/
 theorem rows : ∀ d ∈ Examples.all, ∀ ks ∈ kinds? d, ∀ g ∈ diagnostic? d,
     (d.judgment = .acceptable ↔ Passes ks g) ∨ d.feature? "judgedBy" = some "some speakers" ∨
       d.language = "cash1251" := by
-  have h : ∀ d ∈ Examples.all, ∀ ks ∈ kinds? d, ∀ g ∈ diagnostic? d, Root.Kind.manner ∉ ks ∧
-      ((d.judgment = .acceptable ↔ Root.Kind.result ∉ Root.Kinds.close ks) ∨
-        d.feature? "judgedBy" = some "some speakers" ∨ d.language = "cash1251") := by
-    decide
-  intro d hd ks hks g hg
-  obtain ⟨hm, h⟩ := h d hd ks hks g hg
-  rwa [passes_iff hm]
+  simp only [passes_iff]
+  decide
 
 end BeaversEtAl2021

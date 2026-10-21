@@ -69,6 +69,10 @@ instance : PartialOrder Kind where
   le_trans := by decide
   le_antisymm := by decide
 
+theorem isMax_manner : IsMax manner := by unfold IsMax; decide
+
+theorem isMax_cause : IsMax cause := by unfold IsMax; decide
+
 end Root.Kind
 
 /-! ### Signatures -/
@@ -103,6 +107,11 @@ def close : ClosureOperator Kinds := .ofPred (fun s ↦ univ.filter (∃ j ∈ s
 
 @[simp] theorem mem_close : k ∈ close s ↔ ∃ j ∈ s, k ≤ j := by
   rw [show close s = univ.filter (∃ j ∈ s, · ≤ j) from rfl]; simp
+
+/-- The closure adds no maximal kind, such as a manner or a cause. -/
+theorem mem_close_iff_of_isMax (hk : IsMax k) : k ∈ close s ↔ k ∈ s :=
+  ⟨fun h ↦ let ⟨_, hj, hkj⟩ := mem_close.1 h; le_antisymm (hk hkj) hkj ▸ hj,
+    fun h ↦ mem_close.2 ⟨k, h, le_rfl⟩⟩
 
 @[simp, norm_cast] theorem coe_close (s : Kinds) :
     (close s : Set Kind) = lowerClosure (s : Set Kind) := by
