@@ -61,7 +61,7 @@ def birbiri : ReciprocalPronoun :=
 
 /-- The accusative of *birbirleri*, the direct object form of the [bakay-etal-2026] stimuli. -/
 def birbirlerini : ReciprocalPronoun :=
-  { birbirleri with form := "birbirlerini", case_ := some .acc }
+  { birbirleri with form := "birbirlerini", cases := {.acc} }
 
 /-- The entered forms of the reciprocal are the four person forms and the accusative of
 *birbirleri*. -/

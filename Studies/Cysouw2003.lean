@@ -806,9 +806,9 @@ theorem explicitness_rungs :
 /-! ### Two paradigms from the Fragments -/
 
 /-- The English subject forms by referential category are the paradigm of the fragment's
-non-accusative pronouns. -/
+nominative pronouns. -/
 def englishSubject : Category → Finset String :=
-  PersonalPronoun.paradigm (English.Pronouns.pronouns.filter (·.case_ ≠ some .acc))
+  PersonalPronoun.paradigm (English.Pronouns.pronouns.filter (.nom ∈ ·.cases))
 
 /-- The English pronouns have the structure of the paradigm the book prints for them. -/
 theorem english_pronouns :

@@ -22,5 +22,8 @@ is sensitive to the same factors, but it is a reflexive and a `ReflexivePronoun`
 @[expose] public section
 
 /-- A logophoric pronoun is a `PersonalPronoun` of the logophoric kind. -/
+@[ext]
 structure LogophoricPronoun extends PersonalPronoun
-  deriving DecidableEq
+
+instance : DecidableEq LogophoricPronoun :=
+  fun _ _ ↦ decidable_of_iff _ LogophoricPronoun.ext_iff.symm

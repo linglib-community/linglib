@@ -24,10 +24,13 @@ place, time and manner, which surface as adverbs.
 @[expose] public section
 
 /-- An interrogative pronoun is a `Pronoun` with the ontological category it asks about. -/
+@[ext]
 structure InterrogativePronoun extends Pronoun where
   /-- The ontological category the form asks about. -/
   ontology : Pronoun.OntologicalCategory
-  deriving DecidableEq, Repr
+
+instance : DecidableEq InterrogativePronoun :=
+  fun _ _ ↦ decidable_of_iff _ InterrogativePronoun.ext_iff.symm
 
 namespace InterrogativePronoun
 

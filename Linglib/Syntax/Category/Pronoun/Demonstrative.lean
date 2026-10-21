@@ -34,10 +34,13 @@ without a deictic contrast.
 
 /-- A demonstrative pronoun is a `Pronoun` with its deictic content, the participant sets of the
 referents in whose vicinity it locates its referent. -/
+@[ext]
 structure DemonstrativePronoun extends Pronoun where
   /-- The participant sets of the referents in whose vicinity the form locates its referent. -/
   deixis : Finset (Finset Discourse.Role)
-  deriving DecidableEq
+
+instance : DecidableEq DemonstrativePronoun :=
+  fun _ _ ↦ decidable_of_iff _ DemonstrativePronoun.ext_iff.symm
 
 /-- A demonstrative's token is of UD pronoun type `Dem`. -/
 def DemonstrativePronoun.toWord (d : DemonstrativePronoun) : Morphology.Word :=

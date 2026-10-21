@@ -31,8 +31,11 @@ is not recorded on the entry.
 @[expose] public section
 
 /-- A reflexive pronoun is a `Pronoun` of the reflexive kind. -/
+@[ext]
 structure ReflexivePronoun extends Pronoun
-  deriving DecidableEq, Repr
+
+instance : DecidableEq ReflexivePronoun :=
+  fun _ _ ↦ decidable_of_iff _ ReflexivePronoun.ext_iff.symm
 
 namespace ReflexivePronoun
 

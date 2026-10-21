@@ -39,42 +39,42 @@ namespace Spanish.Clitics
 
 /-- *me*, first person singular accusative. -/
 def me_acc : PersonalPronoun :=
-  { form := "me", person := some .first, number := some .singular, case_ := some .acc,
+  { form := "me", person := some .first, number := some .singular, cases := {.acc},
     strength := some .clitic }
 
 /-- *te*, second person singular accusative. -/
 def te_acc : PersonalPronoun :=
-  { form := "te", person := some .second, number := some .singular, case_ := some .acc,
+  { form := "te", person := some .second, number := some .singular, cases := {.acc},
     strength := some .clitic }
 
 /-- *lo*, third person singular masculine accusative. -/
 def lo : PersonalPronoun :=
-  { form := "lo", person := some .third, number := some .singular, case_ := some .acc,
+  { form := "lo", person := some .third, number := some .singular, cases := {.acc},
     gender := some .masculine, strength := some .clitic }
 
 /-- *la*, third person singular feminine accusative. -/
 def la : PersonalPronoun :=
-  { form := "la", person := some .third, number := some .singular, case_ := some .acc,
+  { form := "la", person := some .third, number := some .singular, cases := {.acc},
     gender := some .feminine, strength := some .clitic }
 
 /-- *nos*, first person plural accusative. -/
 def nos_acc : PersonalPronoun :=
-  { form := "nos", person := some .first, number := some .plural, case_ := some .acc,
+  { form := "nos", person := some .first, number := some .plural, cases := {.acc},
     strength := some .clitic }
 
 /-- *os*, second person plural accusative, used in Spain. -/
 def os_acc : PersonalPronoun :=
-  { form := "os", person := some .second, number := some .plural, case_ := some .acc,
+  { form := "os", person := some .second, number := some .plural, cases := {.acc},
     strength := some .clitic }
 
 /-- *los*, third person plural masculine accusative. -/
 def los : PersonalPronoun :=
-  { form := "los", person := some .third, number := some .plural, case_ := some .acc,
+  { form := "los", person := some .third, number := some .plural, cases := {.acc},
     gender := some .masculine, strength := some .clitic }
 
 /-- *las*, third person plural feminine accusative. -/
 def las : PersonalPronoun :=
-  { form := "las", person := some .third, number := some .plural, case_ := some .acc,
+  { form := "las", person := some .third, number := some .plural, cases := {.acc},
     gender := some .feminine, strength := some .clitic }
 
 /-- The accusative series. -/
@@ -84,38 +84,38 @@ def accusative : Finset PersonalPronoun := {me_acc, te_acc, lo, la, nos_acc, os_
 
 /-- *me*, first person singular dative. -/
 def me_dat : PersonalPronoun :=
-  { form := "me", person := some .first, number := some .singular, case_ := some .dat,
+  { form := "me", person := some .first, number := some .singular, cases := {.dat},
     strength := some .clitic }
 
 /-- *te*, second person singular dative. -/
 def te_dat : PersonalPronoun :=
-  { form := "te", person := some .second, number := some .singular, case_ := some .dat,
+  { form := "te", person := some .second, number := some .singular, cases := {.dat},
     strength := some .clitic }
 
 /-- *le*, third person singular dative. -/
 def le : PersonalPronoun :=
-  { form := "le", person := some .third, number := some .singular, case_ := some .dat,
+  { form := "le", person := some .third, number := some .singular, cases := {.dat},
     strength := some .clitic }
 
 /-- *nos*, first person plural dative. -/
 def nos_dat : PersonalPronoun :=
-  { form := "nos", person := some .first, number := some .plural, case_ := some .dat,
+  { form := "nos", person := some .first, number := some .plural, cases := {.dat},
     strength := some .clitic }
 
 /-- *os*, second person plural dative, used in Spain. -/
 def os_dat : PersonalPronoun :=
-  { form := "os", person := some .second, number := some .plural, case_ := some .dat,
+  { form := "os", person := some .second, number := some .plural, cases := {.dat},
     strength := some .clitic }
 
 /-- *les*, third person plural dative. -/
 def les : PersonalPronoun :=
-  { form := "les", person := some .third, number := some .plural, case_ := some .dat,
+  { form := "les", person := some .third, number := some .plural, cases := {.dat},
     strength := some .clitic }
 
 /-- *se*, the form *le* and *les* take before a third-person accusative clitic, as in
 *se lo doy* 'I give it to them'. It is number-neutral. -/
 def se_dat : PersonalPronoun :=
-  { form := "se", person := some .third, number := some .general, case_ := some .dat,
+  { form := "se", person := some .third, number := some .general, cases := {.dat},
     strength := some .clitic }
 
 /-- The dative series. -/
@@ -168,7 +168,7 @@ theorem paradigm_reflexive_nonempty (c : Person.Category) :
 
 /-- Gender is marked by the third-person accusatives alone. -/
 theorem isSome_gender_iff {p : PersonalPronoun} (hp : p ∈ accusative ∪ dative) :
-    p.gender.isSome ↔ p.person = some .third ∧ p.case_ = some .acc := by
+    p.gender.isSome ↔ p.person = some .third ∧ .acc ∈ p.cases := by
   revert p; decide +kernel
 
 end Spanish.Clitics

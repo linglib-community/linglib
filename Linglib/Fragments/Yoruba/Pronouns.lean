@@ -28,33 +28,33 @@ namespace Yoruba.Pronouns
 
 /-- The first person singular subject *mo*. -/
 def mo : PersonalPronoun :=
-  { form := "mo", person := some .first, number := some .singular, case_ := some .nom,
+  { form := "mo", person := some .first, number := some .singular, cases := {.nom},
     strength := some .weak }
 
 /-- The second person singular subject *o*. -/
 def o : PersonalPronoun :=
-  { form := "o", person := some .second, number := some .singular, case_ := some .nom,
+  { form := "o", person := some .second, number := some .singular, cases := {.nom},
     strength := some .weak }
 
 /-- The third person singular subject *ó*. -/
 def «ó» : PersonalPronoun :=
-  { form := "ó", person := some .third, number := some .singular, case_ := some .nom,
+  { form := "ó", person := some .third, number := some .singular, cases := {.nom},
     strength := some .weak }
 
 /-- The first person plural subject *a*. -/
 def a : PersonalPronoun :=
-  { form := "a", person := some .first, number := some .plural, case_ := some .nom,
+  { form := "a", person := some .first, number := some .plural, cases := {.nom},
     strength := some .weak }
 
 /-- The second person plural subject *ẹ*. -/
 def «ẹ» : PersonalPronoun :=
-  { form := "ẹ", person := some .second, number := some .plural, case_ := some .nom,
+  { form := "ẹ", person := some .second, number := some .plural, cases := {.nom},
     strength := some .weak }
 
 /-- The third person plural subject *wọn*, as Awobuluyi's table gives it; Aremu prints the
 resumptive of a plural focus *wọ́n*. -/
 def «wọn» : PersonalPronoun :=
-  { form := "wọn", person := some .third, number := some .plural, case_ := some .nom,
+  { form := "wọn", person := some .third, number := some .plural, cases := {.nom},
     strength := some .weak }
 
 /-- The subject pronoun of a person and number, where Yorùbá has one. -/

@@ -110,7 +110,7 @@ def english (p : PersonalPronoun) : Category :=
 /-- Dialect B, (34) and (37c): the accusative third person plural *them* is reanalyzed as the
 D-morpheme *th-* over the clitic φP *'em*, a DP. -/
 def dialectB (p : PersonalPronoun) : Category :=
-  if p.person = some .third ∧ p.number = some .plural ∧ p.case_ = some .acc then .proDP
+  if p.person = some .third ∧ p.number = some .plural ∧ .acc ∈ p.cases then .proDP
   else english p
 
 /-! ### The rows -/

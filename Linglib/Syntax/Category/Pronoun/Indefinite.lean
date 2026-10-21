@@ -28,10 +28,13 @@ analysis of its distribution, which studies pair with the series.
 @[expose] public section
 
 /-- An indefinite pronoun is a `Pronoun` with the ontological category it stands for. -/
+@[ext]
 structure IndefinitePronoun extends Pronoun where
   /-- The ontological category the pronoun stands for. -/
   ontology : Pronoun.OntologicalCategory
-  deriving DecidableEq
+
+instance : DecidableEq IndefinitePronoun :=
+  fun _ _ ↦ decidable_of_iff _ IndefinitePronoun.ext_iff.symm
 
 namespace IndefinitePronoun
 

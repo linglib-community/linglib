@@ -23,10 +23,10 @@ clusivity and no gender.
   has two, *mi* and the past-tense *ĩ*, and the impersonal *a* has neither objective nor
   possessive form. Table 3 also gives the third person singular objective as null, the form of an
   inanimate object (§4.2); the table records forms only.
-* The entry of a form takes each feature from the cells it fills (`Flat.finsetInf`). *o* fills the
-  second person singular subjective and possessive, so it has no case and admits the objective
-  too: no flat case admits two cases and not a third, and the exact value is
-  `Morphology.formCellsOf table f`.
+* The entry of a form has the cases of the cells it fills, and the flat value of their person and
+  number (`Flat.finsetInf`). *o* fills the second person singular subjective and possessive, so its
+  cases are the nominative and the genitive and its flat case (`Pronoun.case`) is `⊥`, which admits
+  the objective too: no flat case admits two cases and not a third.
 * The paper does not classify the subject pronouns by structural deficiency: [campbell-2017]
   writes them as clitics prefixed to the verb, which the paper rejects on the strength of the
   negation that intervenes between the embedded subject and its verb, so `strength` stays `none`.
@@ -77,12 +77,12 @@ def table : Row × Case → Finset String
   | (.pl2, _) => {"nyɛ"}
   | (.pl3, _) => {"amɛ"}
 
-/-- The pronoun `f`: each of its features is the flat value of the cells it fills. -/
+/-- The pronoun `f`, with the cases of the cells it fills and their flat person and number. -/
 def entry (f : String) : PersonalPronoun :=
   { form := f,
     person := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.1.person : Flat Person),
     number := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.1.number : Flat Number),
-    case_ := Flat.finsetInf (formCellsOf table f) fun c ↦ (c.2.label : Flat _root_.Case) }
+    cases := (formCellsOf table f).image (·.2.label) }
 
 /-- The personal pronoun inventory: the entry of every form of the table. -/
 def pronouns : Finset PersonalPronoun := (Finset.univ.biUnion table).image entry
