@@ -22,6 +22,8 @@ type is the `Constraint.comap` of `align R` along the candidate's two families.
 ## Main definitions
 
 * `Constraint.align`: Generalized Alignment of one family of constituents to another along `R`.
+* `Constraint.alignLeft`, `Constraint.alignRight`: Align-L and Align-R over spans, the edges
+  compared at their left or their right cut.
 
 ## Main results
 
@@ -51,8 +53,18 @@ variable {R}
 theorem align_eq_zero_iff {x : List β × List γ} : align R x = 0 ↔ ∀ a ∈ x.1, ∃ b ∈ x.2, R a b := by
   simp [align, List.countP_eq_zero]
 
--- A phrase over two words is right-aligned with the second word but matches neither.
-example : align (fun a b : ℕ × ℕ ↦ a.2 = b.2) ([(0, 2)], [(0, 1), (1, 2)]) = 0 := by decide
+/-- **Align-L** over spans, `Align(Cat₁, L, Cat₂, L)` ([mccarthy-prince-1993b]): one violation for
+each span of the first family whose left cut begins no span of the second. -/
+abbrev alignLeft : Constraint (List (ℕ × ℕ) × List (ℕ × ℕ)) := align fun a b ↦ a.1 = b.1
+
+/-- **Align-R** over spans, `Align(Cat₁, R, Cat₂, R)` ([mccarthy-prince-1993b]): one violation for
+each span of the first family whose right cut ends no span of the second. -/
+abbrev alignRight : Constraint (List (ℕ × ℕ) × List (ℕ × ℕ)) := align fun a b ↦ a.2 = b.2
+
+-- A phrase over two words is right-aligned with the second word, not left-aligned with it, and
+-- matches neither.
+example : alignRight ([(0, 2)], [(0, 1), (1, 2)]) = 0 := by decide
+example : alignLeft ([(1, 2)], [(0, 2)]) = 1 := by decide
 example : align Eq ([(0, 2)], [(0, 1), (1, 2)]) = 1 := by decide
 
 end OptimalityTheory.Constraint

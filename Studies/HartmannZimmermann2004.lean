@@ -6,10 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.FinCases
-public import Linglib.Core.Data.RoseTree.Span
 public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.Prosody.Phrase
+public import Linglib.Phonology.Prosody.Match
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Syntax.Reflex
@@ -161,19 +161,12 @@ def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
 def separated : Prosody.Tree :=
   .node .iota [.node .ph [ω], .node .ph [ω]]
 
-/-- `phSpans t` lists the spans of the φ nodes of `t` in preorder, each as the number of leaves
-to its left and the number of its own leaves. -/
-def phSpans (t : Prosody.Tree) : List (ℕ × ℕ) :=
-  (t.positionedSubtrees.filter (·.2.value.level = .ph)).map fun x ↦
-    (t.leafIndex x.1.toList, x.2.numLeaves)
-
-/-- ALIGN-Focus is violated when no φ-edge sits at the focus's left edge (leaf offset 1, the
-object). -/
+/-- ALIGN-Focus is violated when no φ begins at the focus's left edge, the object at leaf 1. -/
 def alignFocus : Constraint Prosody.Tree :=
-  .binary (fun t ↦ ¬ ∃ s ∈ phSpans t, s.1 = 1)
+  Constraint.alignLeft.comap fun t ↦ ([(1, 2)], Prosody.levelSpans .ph t)
 
 /-- Phrasal economy assigns one violation per φ. -/
-def starPhi : Constraint Prosody.Tree := fun t ↦ (phSpans t).length
+def starPhi : Constraint Prosody.Tree := fun t ↦ (Prosody.levelSpans .ph t).length
 
 /-- Under object focus alignment dominates economy and the separated parse wins, which derives
 the φ-edge after the verb. -/
@@ -190,7 +183,8 @@ theorem neutral_parse_wraps :
 /-- No φ spans the V–O juncture in the separated parse — elision is
 blocked there and applies in the wrapped one. -/
 theorem separated_edge_wrapped_internal :
-    (0, 2) ∉ phSpans separated ∧ (0, 2) ∈ phSpans wrapped := by decide
+    (0, 2) ∉ Prosody.levelSpans .ph separated ∧ (0, 2) ∈ Prosody.levelSpans .ph wrapped := by
+  decide
 
 /-- The prosodic reflex is audible, since the boundary-blocked perfective form differs from the
 phrase-medial elided form. [kidda-1985]'s elision cascade is what makes `Reflex.boundary`

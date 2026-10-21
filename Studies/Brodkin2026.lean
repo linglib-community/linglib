@@ -2,8 +2,7 @@ module
 
 public import Linglib.Phonology.Prosody.Word
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
-public import Linglib.Core.Data.RoseTree.Span
+public import Linglib.Phonology.Prosody.Match
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Brodkin2026
@@ -223,25 +222,22 @@ def candidates : Finset Candidate :=
 /-- Positional Minimality (26a), Align-R(φ, (σ́σ)): one violation for each φ whose right edge no
 disyllabic trochee shares. -/
 def positionalMinimality : Constraint Candidate :=
-  (Constraint.align fun a b : ℕ × ℕ ↦ a.2 = b.2).comap fun c ↦
-    ((c.tree x).spans (·.value.level = .ph), (c.tree x).spans IsTrochee)
+  Constraint.alignRight.comap fun c ↦ (levelSpans .ph (c.tree x), (c.tree x).spans IsTrochee)
 
 /-- PRIORITY (60a), after [mascaro-2007]: as many violations as the inserted item stands below
 the first item of `v` applicable to the head. -/
 def priority : Constraint Candidate := fun c ↦ (v.applicable x.neighborhood).idxOf c.item
 
 /-- Match(ω, X⁰) (75a): one violation for each ω that is not the span of a word. -/
-def matchOmega : Constraint Candidate :=
-  (Constraint.align Eq).comap fun c ↦
-    ((c.tree x).spans (·.value.level = .om), x.words (syllables c.item.exponent))
+def matchOmega : Constraint Candidate := fun c ↦
+  prosodySyntaxMatch .om (x.words (syllables c.item.exponent)) (c.tree x)
 
 /-- Match(φ, XP) (23b): one violation for each φ that is not the span of a phrase, each word
 heading its own and the maximal φ, where the two words share it, answering to the clause. -/
-def matchPhi : Constraint Candidate :=
-  (Constraint.align Eq).comap fun c ↦
-    let k := syllables c.item.exponent
-    ((c.tree x).spans (·.value.level = .ph),
-      (if x.final && x.sameMax then [(0, k + x.next)] else []) ++ x.words k)
+def matchPhi : Constraint Candidate := fun c ↦
+  let k := syllables c.item.exponent
+  prosodySyntaxMatch .ph ((if x.final && x.sameMax then [(0, k + x.next)] else []) ++ x.words k)
+    (c.tree x)
 
 /-- The tableau of an input: Positional Minimality over PRIORITY over the Match constraints, as
 in (64) and (80). -/
@@ -404,7 +400,8 @@ private theorem not_realizes_of_not_exists {A : Input → V}
     ¬ ∀ d ∈ rows, w.realizeMinimal d.input = some d.form := fun hr ↦
   h ⟨fun y ↦ (Function.extend A w.realizeMinimal (fun _ ↦ none) y).getD Head.what.short,
     fun d hd ↦ by
-      simp only [(RuleSet.realizeMinimal_factorsThrough hw).extend_apply, hr d hd, Option.getD_some]⟩
+      simp only [(RuleSet.realizeMinimal_factorsThrough hw).extend_apply, hr d hd,
+        Option.getD_some]⟩
 
 /-- **No serial Vocabulary Insertion**: no vocabulary inserts the attested allomorphs by the Subset
 Principle over the heads' neighborhoods, since a head's neighborhood does not determine its
