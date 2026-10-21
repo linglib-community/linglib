@@ -180,11 +180,13 @@ def buka : Verb where
   valency := .ofFrame ArgumentFrame.np
   terClass := some .stative
 
-/-- *pecah* 'break', as in *Jendela itu terpecah* 'The window broke'. -/
+/-- *pecah* 'break', as in *Jendela itu terpecah* 'The window broke'. Its middle *berpecah* has
+the dispositional or passive reading alone. -/
 def pecah : Verb where
   morphs := [.root "pecah"]
   rootSegments := [p, e, c, a, h]
   valency := .ofFrame ArgumentFrame.np
+  ber := true
   terClass := some .stative
 
 /-- *tulis* 'write', whose stative is *Surat itu tertulis dalam bahasa Inggris* 'That letter is
