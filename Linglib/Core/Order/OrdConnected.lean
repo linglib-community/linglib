@@ -8,27 +8,27 @@ public import Mathlib.Order.Interval.Set.OrdConnected
 /-!
 # Order-connected sets and contiguous maps
 
+This file shows that an order-connected finset containing `⊤` is an interval `Icc a ⊤`, and
+defines contiguous maps, maps whose fibres are order-connected. Over a linear order with finite
+lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same kernel.
+
 `[UPSTREAM]` candidate for `Mathlib/Order/Interval/Set/OrdConnected.lean` and
-`Mathlib/Order/Interval/Finset/Basic.lean`. A map is contiguous when its fibres are order-connected,
-so that no value recurs across a distinct intervening value; over a linear order with finite lower
-intervals these are exactly the maps with the kernel of a monotone map to `ℕ`. This is the shape of
-a contiguous segment of a hierarchy wherever a linguistic scale is linearly ordered and a strategy
-covers a run of it.
+`Mathlib/Order/Interval/Finset/Basic.lean`.
 
 ## Main definitions
 
-* `IsContiguous`: no value recurs across a distinct intervening value.
+* `IsContiguous`: a map whose fibres are order-connected.
 
 ## Main statements
 
-* `isContiguous_iff_ordConnected_preimage`: contiguity is order-connectedness of every fibre.
-* `Monotone.isContiguous`: a monotone map is contiguous.
-* `isContiguous_iff_exists_monotone`: over a linear order with finite lower intervals, a map is
-  contiguous exactly when some monotone map to `ℕ` has its kernel.
-* `Finset.eq_Icc_top_of_ordConnected_coe`: with the top element in the set, the interval
-  reaches it.
-* `Set.OrdConnected.isUpperSet_of_top_mem`: an order-connected set containing the top element
-  is an upper set.
+* `isContiguous_iff_ordConnected_preimage`: contiguity in terms of fibres.
+* `Monotone.isContiguous`: monotone maps are contiguous.
+* `isContiguous_iff_exists_monotone`: contiguous maps are those with the kernel of a monotone map
+  to `ℕ`.
+* `Finset.eq_Icc_top_of_ordConnected_coe`: an order-connected finset containing `⊤` is
+  `Icc a ⊤`.
+* `Set.OrdConnected.isUpperSet_of_top_mem`: an order-connected set containing `⊤` is an upper
+  set.
 -/
 
 @[expose] public section
@@ -68,8 +68,7 @@ section Preorder
 
 variable {ι F : Type*} [Preorder ι]
 
-/-- A map is **contiguous** when no value recurs across a distinct intervening value: if the
-values at `i ≤ k` agree, every value between them agrees too. -/
+/-- A map `p` is contiguous if `p i = p k` implies `p i = p j` whenever `i ≤ j ≤ k`. -/
 def IsContiguous (p : ι → F) : Prop :=
   ∀ ⦃i j k : ι⦄, i ≤ j → j ≤ k → p i = p k → p i = p j
 
@@ -77,7 +76,7 @@ instance [Fintype ι] [DecidableLE ι] [DecidableEq F] (p : ι → F) :
     Decidable (IsContiguous p) :=
   inferInstanceAs (Decidable (∀ i j k : ι, i ≤ j → j ≤ k → p i = p k → p i = p j))
 
-/-- Contiguity is order-connectedness of every fibre. -/
+/-- A map is contiguous iff its fibres are order-connected. -/
 theorem isContiguous_iff_ordConnected_preimage (p : ι → F) :
     IsContiguous p ↔ ∀ y, (p ⁻¹' {y}).OrdConnected := by
   refine ⟨fun hp y ↦ ⟨fun i hi k hk j hj ↦ ?_⟩, fun h i j k hij hjk hik ↦ ?_⟩
@@ -107,7 +106,7 @@ section LinearOrder
 
 variable {ι F : Type*} [LinearOrder ι] [LocallyFiniteOrderBot ι] {p : ι → F} {i j : ι}
 
-/-- The number of distinct values a map takes up to and including `i`. -/
+/-- The number of values `p` takes on `Iic i`. -/
 private def score [DecidableEq F] (p : ι → F) (i : ι) : ℕ := ((Finset.Iic i).image p).card
 
 private theorem score_mono [DecidableEq F] : Monotone (score p) :=
@@ -137,9 +136,8 @@ private theorem eq_of_score_eq [DecidableEq F] (hp : IsContiguous p) (hij : i �
   rw [Finset.mem_Iic] at hl
   exact (hp hl hij hpl).symm.trans hpl
 
-/-- Over a linear order with finite lower intervals a map is contiguous exactly when some monotone
-map to `ℕ` has its kernel. Forward, the number of distinct values up to a point is such a map;
-backward, the kernel of a monotone map has order-connected classes. -/
+/-- Over a linear order with finite lower intervals, a map is contiguous iff some monotone map to
+`ℕ` has the same kernel. -/
 theorem isContiguous_iff_exists_monotone (p : ι → F) :
     IsContiguous p ↔ ∃ g : ι → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j := by
   classical
