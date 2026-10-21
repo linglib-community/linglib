@@ -138,7 +138,7 @@ theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise_i
   have hmem : [a, b, c] ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language := by
     rw [mem_ofForbiddenPairs_language_iff]
     simp [ha, hb, hc, hab, hbc]
-  have := h.mem_of_sublist (v := [a, c]) (by simp) hmem
+  have := h.isSublistClosed (v := [a, c]) (by simp) hmem
   rw [mem_ofForbiddenPairs_language_iff] at this
   simp [ha, hc, hac] at this
 

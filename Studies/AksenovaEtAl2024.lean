@@ -294,7 +294,7 @@ theorem buryat_not_isStrictlyPiecewise (k : ℕ) : ¬ buryat.language.IsStrictly
   fun h ↦ by
     have hmem : read BuryatV.ofChar "ɔr-ʊːl-aːd".toList ∈ buryat.language := by decide
     exact (by decide : read BuryatV.ofChar "ɔr-aːd".toList ∉ buryat.language)
-      (h.mem_of_sublist (by decide) hmem)
+      (h.isSublistClosed (by decide) hmem)
 
 /-! ### Yakut ((14), Table 34.5): harmonizing blockers -/
 
@@ -320,7 +320,7 @@ theorem yakut_rows :
 leaves its low vowels disagreeing in rounding, `*oa`. -/
 theorem yakut_not_isStrictlyPiecewise (k : ℕ) : ¬ yakut.language.IsStrictlyPiecewise k :=
   fun h ↦ (by decide : [some .o, some .a] ∉ yakut.language) <|
-    h.mem_of_sublist (by decide) (by decide : [some .o, some .u, some .a] ∈ yakut.language)
+    h.isSublistClosed (by decide) (by decide : [some .o, some .u, some .a] ∈ yakut.language)
 
 /-- In Yakut fronting harmony every vowel participates. -/
 def yakutFront : Pattern (Option TurkicV) Bool :=
