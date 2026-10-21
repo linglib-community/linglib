@@ -1,6 +1,6 @@
 module
 
-public import Studies.AnandNevins2004
+public import Linglib.Semantics.Reference.Context.Overwrite
 public import Linglib.Data.Examples.Deal2020
 public import Mathlib.Data.Finset.Powerset
 
@@ -16,27 +16,27 @@ force de se readings, those above it overwrite from the attitude event and do no
 
 ## Main definitions
 
-* `sequence`: the functional sequence of shifty operators, lowest first.
-* `stack n`: a complement projecting the lowest `n` operators.
+* `sequence`, `stack n`: the functional sequence of shifty operators, lowest first, and a
+  complement projecting the lowest `n` of them.
 * `comp`, `eventOp`: the finite complementizer (140) and an event-based shifter (143)–(144).
 * `complement n p`: a complement of size `n` with the complementizer after the lowest `p`.
+* `Verb`: the complements a verb selects and where their complementizer sits.
 
 ## Main results
 
-* `stack_eq`, `shiftyOp_opPers`: stacked operators overwrite the union of their coordinates, and a
-  bundle is their composition (172).
+* `stack_eq`, `holdsAt_stack`: stacked operators overwrite the union of their coordinates (172),
+  and unembedded they are vacuous (65).
 * `mem_shifted_of_lt`: (G2); `mem_ofBundles_iff`: bundled classes shift together (§4.4).
-* `apply_complementContext`, `mem_deSe_of_lt`: an indexical in a complement reads the index, the
-  attitude event or the utterance context by its class's position relative to C; (G3).
-* `medial_eq_lowest`, `lowest_of_agent_mem`: Local Determination (77) in (83) and (87).
+* `complement_apply` and the `apply_complementContext` lemmas: an indexical in a complement reads
+  the index, the attitude event or the utterance context by its class's position relative to C,
+  (G3).
+* `medial_eq_lowest`: Local Determination (77) in (83).
 * `rows_shift`, `rows_deSe`, `rows_nonDeSe`, `rows_double_report`: the rows' judgments.
 
 ## Implementation notes
 
-A language's verbs are given by the coordinate sets their complements may overwrite (`options?`),
-built from sizes of bottom segments or from bundles, and by the position of the complementizer
-(`cPosition?`); the rows are `Data.Examples.Deal2020`. Nez Perce has no temporal indexicals, so its
-complements' OP_TIME is unobservable. The example of Anderson English is filed as English.
+The rows are `Data.Examples.Deal2020`. Nez Perce has no temporal indexicals, so its complements'
+OP_TIME is unobservable; the example of Anderson English is filed as English.
 
 ## TODO
 
@@ -56,9 +56,11 @@ complements' OP_TIME is unobservable. The example of Anderson English is filed a
 namespace Deal2020
 
 open Kaplan (Character Context shiftyOp)
-open Kaplan.Context (Coord overwrite DependsOn)
+open Kaplan.Context (Coord dependsOn_agent equivPi localDepth overwrite)
 
-variable {W E P T α : Type*}
+universe u
+
+variable {W E P T : Type u} {α : Type*}
 
 /-! ### The functional sequence -/
 
@@ -66,9 +68,10 @@ variable {W E P T α : Type*}
 OP_LOC, each overwriting one coordinate of the context with that of the index (126). -/
 def sequence : List Coord := [.time, .agent, .addressee, .position]
 
-theorem sequence_nodup : sequence.Nodup := by decide
+/-- A class's position in the sequence. -/
+def rank (k : Coord) : ℕ := sequence.idxOf k
 
-/-- The operators of the sequence stacked over `χ`, the first innermost. -/
+/-- The operators `l` stacked over `χ`, the first innermost. -/
 def stackOf (l : List Coord) (χ : Character (Context W E P T) (Context W E P T) α) :
     Character (Context W E P T) (Context W E P T) α :=
   l.foldl (fun χ k ↦ shiftyOp {k} χ) χ
@@ -81,12 +84,14 @@ def stack (n : ℕ) : Character (Context W E P T) (Context W E P T) α →
 /-- The classes a complement projecting the lowest `n` operators shifts. -/
 def shifted (n : ℕ) : Finset Coord := (sequence.take n).toFinset
 
-theorem mem_shifted_iff {n : ℕ} {k : Coord} :
-    k ∈ shifted n ↔ k ∈ sequence ∧ sequence.idxOf k < n := by
+theorem mem_shifted_iff {n : ℕ} {k : Coord} : k ∈ shifted n ↔ k ∈ sequence ∧ rank k < n := by
   rw [shifted, List.mem_toFinset]
   refine ⟨fun h ↦ ?_, fun ⟨h, h'⟩ ↦ (List.mem_take_iff_idxOf_lt h).2 h'⟩
   have hk := List.mem_of_mem_take h
   exact ⟨hk, (List.mem_take_iff_idxOf_lt hk).1 h⟩
+
+theorem shifted_mono : Monotone shifted := fun _ _ h _ hk ↦
+  mem_shifted_iff.2 ⟨(mem_shifted_iff.1 hk).1, (mem_shifted_iff.1 hk).2.trans_le h⟩
 
 theorem stackOf_eq (l : List Coord) (χ : Character (Context W E P T) (Context W E P T) α) :
     stackOf l χ = shiftyOp l.toFinset χ := by
@@ -102,10 +107,17 @@ theorem stack_eq (n : ℕ) (χ : Character (Context W E P T) (Context W E P T) �
     stack n χ = shiftyOp (shifted n) χ :=
   stackOf_eq _ χ
 
+/-- (65): unembedded, a stack of operators is vacuous, since a sentence is true at a context when
+it is true at that context taken as its own index (64). -/
+theorem holdsAt_stack (n : ℕ) (χ : Character (Context W E P T) (Context W E P T) Prop)
+    (c : Context W E P T) : (stack n χ).HoldsAt id c ↔ χ.HoldsAt id c := by
+  rw [stack_eq]
+  exact Kaplan.holdsAt_shiftyOp _ χ c
+
 /-- (G2): in a complement of any size, an indexical class shifts only if every class below it in
 the sequence shifts as well. -/
 theorem mem_shifted_of_lt {n : ℕ} {k k' : Coord} (hk : k ∈ shifted n) (hk' : k' ∈ sequence)
-    (h : sequence.idxOf k' < sequence.idxOf k) : k' ∈ shifted n :=
+    (h : rank k' < rank k) : k' ∈ shifted n :=
   mem_shifted_iff.2 ⟨hk', h.trans (mem_shifted_iff.1 hk).2⟩
 
 /-! ### The complementizer and the de se -/
@@ -127,6 +139,23 @@ def eventOp (ev : Ev → Context W E P T) (s : Finset Coord)
     Ev → Character (Context W E P T) (Context W E P T) Prop :=
   fun e c i ↦ φ e (overwrite s c (ev e)) i
 
+/-- The event-based shifters `l` stacked over `φ`, the first innermost. -/
+def eventStackOf (ev : Ev → Context W E P T) (l : List Coord)
+    (φ : Ev → Character (Context W E P T) (Context W E P T) Prop) :
+    Ev → Character (Context W E P T) (Context W E P T) Prop :=
+  l.foldl (fun φ k ↦ eventOp ev {k} φ) φ
+
+theorem eventStackOf_eq (ev : Ev → Context W E P T) (l : List Coord)
+    (φ : Ev → Character (Context W E P T) (Context W E P T) Prop) :
+    eventStackOf ev l φ = eventOp ev l.toFinset φ := by
+  induction l generalizing φ with
+  | nil => funext e c i; simp [eventStackOf, eventOp]
+  | cons k l ih =>
+    simp only [eventStackOf, List.foldl_cons] at ih ⊢
+    funext e c i
+    simp only [ih, eventOp, Kaplan.Context.overwrite_overwrite, List.toFinset_cons,
+      Finset.insert_eq, Finset.union_comm]
+
 /-- The classes shifted from the index, and so read de se, in a complement of size `n` with the
 complementizer after the lowest `p` operators. -/
 def deSe (n p : ℕ) : Finset Coord := shifted (min p n)
@@ -135,41 +164,52 @@ def deSe (n p : ℕ) : Finset Coord := shifted (min p n)
 def eventShifted (n p : ℕ) : Finset Coord := shifted n \ shifted p
 
 /-- A complement of size `n` with the complementizer after the lowest `p` operators (145)–(148):
-the operators above the complementizer overwrite from the event, those below it from the index. -/
+the operators below the complementizer, overwriting from the index, then the complementizer, then
+the operators above it, overwriting from the event. -/
 def complement (n p : ℕ) (R : Ev → Set (Context W E P T)) (ev : Ev → Context W E P T)
     (χ : Character (Context W E P T) (Context W E P T) Prop) :
     Ev → Character (Context W E P T) (Context W E P T) Prop :=
-  eventOp ev (eventShifted n p) (comp R (shiftyOp (deSe n p) χ))
+  eventStackOf ev ((sequence.take n).filter (· ∉ sequence.take p)) (comp R (stack (min p n) χ))
 
 theorem complement_apply (n p : ℕ) (R : Ev → Set (Context W E P T)) (ev : Ev → Context W E P T)
     (χ : Character (Context W E P T) (Context W E P T) Prop) (e : Ev) (c i : Context W E P T) :
     complement n p R ev χ e c i ↔ ∀ i' ∈ R e,
-      χ (overwrite (deSe n p) (overwrite (eventShifted n p) c (ev e)) i') i' :=
-  Iff.rfl
+      χ (overwrite (deSe n p) (overwrite (eventShifted n p) c (ev e)) i') i' := by
+  have : ((sequence.take n).filter (· ∉ sequence.take p)).toFinset = eventShifted n p := by
+    ext k; simp [eventShifted, shifted]
+  rw [complement, eventStackOf_eq, this, stack_eq]
+  rfl
 
-/-- In a complement, an indexical of class `k` reads the centered index when its operator is below
-the complementizer, the attitude event when it is above, and the utterance context when the
-complement projects no operator for it: TP⟨author(i), addr(i), LOC(e)⟩ in Nez Perce (145). -/
-theorem apply_complementContext {f : Context W E P T → α} {k : Coord} (hf : DependsOn f {k})
-    (n p : ℕ) (c x i : Context W E P T) :
-    f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) =
-      if k ∈ deSe n p then f i else if k ∈ eventShifted n p then f x else f c := by
-  split_ifs with h₁ h₂
-  · exact hf.apply_overwrite_of_subset (Finset.singleton_subset_iff.2 h₁) _ _
-  · rw [hf.apply_overwrite_of_disjoint (Finset.disjoint_singleton_left.2 h₁),
-      hf.apply_overwrite_of_subset (Finset.singleton_subset_iff.2 h₂)]
-  · rw [hf.apply_overwrite_of_disjoint (Finset.disjoint_singleton_left.2 h₁),
-      hf.apply_overwrite_of_disjoint (Finset.disjoint_singleton_left.2 h₂)]
+section apply_complementContext
 
-/-- (G3): an indexical class must be read de se only if every class below it in the sequence must
-be as well. -/
-theorem mem_deSe_of_lt {n p : ℕ} {k k' : Coord} (hk : k ∈ deSe n p) (hk' : k' ∈ sequence)
-    (h : sequence.idxOf k' < sequence.idxOf k) : k' ∈ deSe n p :=
-  mem_shifted_of_lt hk hk' h
+variable {f : Context W E P T → α} {k : Coord} (hf : DependsOn (f ∘ equivPi.symm) {k}) {n p : ℕ}
+  (c x i : Context W E P T)
+include hf
 
-/-- The de se classes are shifted. -/
-theorem deSe_subset (n p : ℕ) : deSe n p ⊆ shifted n := fun _ hk ↦
-  mem_shifted_iff.2 ⟨(mem_shifted_iff.1 hk).1, (mem_shifted_iff.1 hk).2.trans_le (min_le_right p n)⟩
+/-- In a complement, an indexical whose operator sits below the complementizer reads the centered
+index: TP⟨author(i), addr(i), …⟩ in Nez Perce (145). -/
+theorem apply_complementContext_of_mem_deSe (h : k ∈ deSe n p) :
+    f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f i :=
+  Kaplan.Context.apply_overwrite_of_subset hf (by simpa using h) _ _
+
+/-- An indexical whose operator sits above the complementizer reads the attitude event:
+TP⟨…, LOC(e)⟩ in Nez Perce (145). -/
+theorem apply_complementContext_of_mem_eventShifted (h : k ∈ eventShifted n p) :
+    f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f x := by
+  have hk : k ∉ deSe n p := fun hk ↦
+    (Finset.mem_sdiff.1 h).2 (shifted_mono (min_le_left p n) hk)
+  rw [Kaplan.Context.apply_overwrite_of_disjoint hf (by simpa using hk),
+    Kaplan.Context.apply_overwrite_of_subset hf (by simpa using h)]
+
+/-- An indexical whose class the complement does not shift reads the utterance context. -/
+theorem apply_complementContext_of_notMem (h : k ∉ shifted n) :
+    f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f c := by
+  have h₁ : k ∉ deSe n p := fun hk ↦ h (shifted_mono (min_le_right p n) hk)
+  have h₂ : k ∉ eventShifted n p := fun hk ↦ h (Finset.mem_sdiff.1 hk).1
+  rw [Kaplan.Context.apply_overwrite_of_disjoint hf (by simpa using h₁),
+    Kaplan.Context.apply_overwrite_of_disjoint hf (by simpa using h₂)]
+
+end apply_complementContext
 
 /-! ### Local Determination -/
 
@@ -178,22 +218,16 @@ author of the medial thought, so whatever operators the two complements carry, t
 person refers as the medial one does: both shifted or neither (77). -/
 theorem medial_eq_lowest (s₁ s₂ : Finset Coord) (c j₁ j₂ : Context W E P T)
     (hj₂ : j₂.agent = (overwrite s₁ c j₁).agent) :
-    (overwrite s₂ (overwrite s₁ c j₁) j₂).agent = (overwrite s₁ c j₁).agent := by
-  by_cases h : Coord.agent ∈ s₂ <;> simp [h, hj₂]
-
-/-- (87): under an operator overwriting the author at the lowest complement's edge, the lowest first
-person refers to the lowest reported author whatever the intermediate complement carries. -/
-theorem lowest_of_agent_mem {s₂ : Finset Coord} (h : Coord.agent ∈ s₂) (s₁ : Finset Coord)
-    (c j₁ j₂ : Context W E P T) : (overwrite s₂ (overwrite s₁ c j₁) j₂).agent = j₂.agent := by
-  simp [h]
+    (overwrite s₂ (overwrite s₁ c j₁) j₂).agent = (overwrite s₁ c j₁).agent :=
+  Kaplan.Context.apply_overwrite_of_apply_eq (f := Context.agent) dependsOn_agent hj₂
 
 /-! ### Lexical bundling -/
 
 /-- OP_PERS, the bundle of OP_AUTH and OP_ADDR (58), (172). -/
-def opPers : Finset Coord := {.agent, .addressee}
+abbrev opPers : Finset Coord := {.agent, .addressee}
 
 /-- OP_ADV, the Korean bundle of OP_LOC and OP_TIME (§4.2.2). -/
-def opAdv : Finset Coord := {.position, .time}
+abbrev opAdv : Finset Coord := {.position, .time}
 
 /-- (172): OP_PERS is the composition of OP_ADDR and OP_AUTH. -/
 theorem shiftyOp_opPers (χ : Character (Context W E P T) (Context W E P T) α) :
@@ -211,7 +245,7 @@ def ofBundles (bs : Finset (Finset Coord)) : Finset (Finset Coord) :=
 
 /-- (G2) for every complement built from sizes. -/
 theorem mem_of_mem_ofSizes {ns : Finset ℕ} {s : Finset Coord} (hs : s ∈ ofSizes ns) {k k' : Coord}
-    (hk : k ∈ s) (hk' : k' ∈ sequence) (h : sequence.idxOf k' < sequence.idxOf k) : k' ∈ s := by
+    (hk : k ∈ s) (hk' : k' ∈ sequence) (h : rank k' < rank k) : k' ∈ s := by
   obtain ⟨n, -, rfl⟩ := Finset.mem_image.1 hs
   exact mem_shifted_of_lt hk hk' h
 
@@ -226,33 +260,50 @@ theorem mem_ofBundles_iff {bs : Finset (Finset Coord)} {k k' : Coord}
 
 /-! ### The languages -/
 
-/-- The coordinate sets the complements of the rows' verbs may overwrite. Nez Perce projects
-OP_PERS (172) and optionally OP_LOC above it, and Zazaki the whole sequence or none of it (§3.1.3);
-Uyghur projects OP_ADDR and OP_AUTH obligatorily (146), Slave *hadi* 'say' OP_AUTH alone, and
-Dhaasanac the person shifters (148), whose optionality the book does not report; Korean 'say'
-combines OP_PERS and OP_ADV freely and 'think' takes OP_ADV alone (§4.2.2), and Anderson English
-takes OP_TIME alone (§4.1). -/
-def options? : String → Option (Finset (Finset Coord))
-  | "nezperce_say" | "nezperce_think" => some (ofSizes {0, 3, 4})
-  | "zazaki_say" => some (ofSizes {0, 4})
-  | "uyghur_say" => some (ofSizes {3})
-  | "slave_say" => some (ofSizes {2})
-  | "dhaasanac_say" => some (ofSizes {3})
-  | "korean_say" => some (ofBundles {opPers, opAdv})
-  | "korean_think" => some (ofBundles {opAdv})
-  | "anderson_say" => some (ofSizes {0, 1})
-  | _ => none
+/-- A verb's complements: the coordinate sets they may overwrite, and the number of operators below
+their complementizer where the book places it. -/
+structure Verb where
+  /-- The coordinate sets the verb's complements may overwrite. -/
+  options : Finset (Finset Coord)
+  /-- The number of operators below the complementizer. -/
+  cPosition : Option ℕ
 
-/-- The number of operators below the complementizer in the rows' verbs' complements: C above
-OP_LOC in Zazaki (147) and Korean, between OP_LOC and OP_ADDR in Nez Perce (145), between OP_ADDR
-and OP_AUTH in Uyghur (146), below OP_AUTH in Dhaasanac (148), and below OP_TIME in Anderson English
-(167). (148) predates OP_TIME; Dhaasanac's C is placed above it here, which no row tests. -/
-def cPosition? : String → Option ℕ
-  | "nezperce_say" | "nezperce_think" => some 3
-  | "zazaki_say" | "korean_say" | "korean_think" => some 4
-  | "uyghur_say" => some 2
-  | "dhaasanac_say" => some 1
-  | "anderson_say" => some 0
+/-- Nez Perce verbs of speech and thought (130): OP_PERS (172), optionally with OP_LOC above it,
+or neither (§3.1.3), with C between OP_LOC and OP_ADDR (145). -/
+def nezPerce : Verb := ⟨ofSizes {0, 3, 4}, some 3⟩
+
+/-- Zazaki *vano* 'say': the whole sequence or none of it, with C above it (147). -/
+def zazakiSay : Verb := ⟨ofSizes {0, 4}, some 4⟩
+
+/-- Uyghur 'say': OP_ADDR and OP_AUTH obligatorily, with C between them (146). -/
+def uyghurSay : Verb := ⟨ofSizes {3}, some 2⟩
+
+/-- Slave *hadi* 'say': OP_AUTH obligatorily (§3.1.3); the book does not place its C. -/
+def slaveSay : Verb := ⟨ofSizes {2}, none⟩
+
+/-- Dhaasanac 'say': the person shifters, whose optionality the book does not report, with C below
+OP_AUTH (148). (148) predates OP_TIME; C is placed above it here, which no row tests. -/
+def dhaasanacSay : Verb := ⟨ofSizes {3}, some 1⟩
+
+/-- Korean 'say': OP_PERS and OP_ADV in any combination (§4.2.2), with C above them. -/
+def koreanSay : Verb := ⟨ofBundles {opPers, opAdv}, some 4⟩
+
+/-- Korean 'think': OP_ADV alone (161), (162), with C above it. -/
+def koreanThink : Verb := ⟨ofBundles {opAdv}, some 4⟩
+
+/-- Anderson English 'say': OP_TIME alone, with C below it (167). -/
+def andersonSay : Verb := ⟨ofSizes {0, 1}, some 0⟩
+
+/-- The rows' verbs. -/
+def verb? : String → Option Verb
+  | "nezperce_say" | "nezperce_think" => some nezPerce
+  | "zazaki_say" => some zazakiSay
+  | "uyghur_say" => some uyghurSay
+  | "slave_say" => some slaveSay
+  | "dhaasanac_say" => some dhaasanacSay
+  | "korean_say" => some koreanSay
+  | "korean_think" => some koreanThink
+  | "anderson_say" => some andersonSay
   | _ => none
 
 /-- The coordinate each indexical of the rows reads. -/
@@ -272,9 +323,17 @@ def shifted? : String → Option (Finset ℕ)
   | "second reported only" => some {1}
   | _ => none
 
-/-- The coordinate sets a row's verb may overwrite, and the coordinates its indexicals read. -/
-def verbCoords? (r : Datum) : Option (Finset (Finset Coord) × List Coord) :=
-  ((r.feature? "verb").bind options?).bind fun e ↦ ((r.features "indexical").mapM coord?).map (e, ·)
+/-- The depth, among the utterance context and two reported ones, from which a named reading of
+the lowest of two reports takes its indexicals. -/
+def depth? : String → Option ℕ
+  | "utterance context" => some 0
+  | "intermediate reported context" => some 1
+  | "lowest reported context" => some 2
+  | _ => none
+
+/-- A row's verb, and the coordinates its indexicals read. -/
+def verbCoords? (r : Datum) : Option (Verb × List Coord) :=
+  ((r.feature? "verb").bind verb?).bind fun v ↦ ((r.features "indexical").mapM coord?).map (v, ·)
 
 /-- Every judged reading of the rows' indexicals is available, at worst marginal, exactly when a
 complement the verb selects overwrites the coordinates of the indexicals the reading shifts and no
@@ -282,23 +341,23 @@ others: (G2) and Shift Together (72) in Nez Perce, Uyghur and Slave, and Korean'
 theorem rows_shift :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings,
       ∀ ps ∈ (shifted? x.1).toList,
-        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1, ∀ q ∈ p.2.zipIdx, (q.1 ∈ s ↔ q.2 ∈ ps)) := by
+        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ q ∈ p.2.zipIdx, (q.1 ∈ s ↔ q.2 ∈ ps)) := by
   decide +kernel
 
 /-- A judged de se reading of the rows' shifted indexicals is available exactly when a complement
 the verb selects shifts their coordinates. -/
 theorem rows_deSe :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings, x.1 = "de se" →
-      (.marginal ≤ x.2 ↔ ∃ s ∈ p.1, ∀ k ∈ p.2, k ∈ s) := by
+      (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s) := by
   decide +kernel
 
 /-- (G3) in the rows: a judged non-de se reading of the rows' shifted indexicals is available
 exactly when a complement the verb selects shifts their coordinates with operators above the
 complementizer, `eventShifted n c = shifted n \ shifted c`. -/
 theorem rows_nonDeSe :
-    ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList,
-      ∀ c ∈ ((r.feature? "verb").bind cPosition?).toList, ∀ x ∈ r.readings, x.1 = "non-de se" →
-        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1, ∀ k ∈ p.2, k ∈ s \ shifted c) := by
+    ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ c ∈ p.1.cPosition.toList,
+      ∀ x ∈ r.readings, x.1 = "non-de se" →
+        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s \ shifted c) := by
   decide +kernel
 
 /-- (87): in the lowest of two reports, a reading of a first person is available exactly when
@@ -306,11 +365,10 @@ complements of the two verbs make it read the context at that depth (Local Deter
 lowest complement overwriting the addressee to shift its second person. -/
 theorem rows_double_report :
     ∀ r ∈ Examples.all, r.feature? "lowest_shift" = some "yes" →
-      ∀ p ∈ (verbCoords? r).toList, ∀ e₂ ∈ ((r.feature? "lower_verb").bind options?).toList,
-        ∀ x ∈ r.readings, ∀ d ∈ [("utterance context", 0), ("intermediate reported context", 1),
-            ("lowest reported context", 2)], x.1 = d.1 →
-          (.marginal ≤ x.2 ↔ ∃ s₁ ∈ p.1, ∃ s₂ ∈ e₂, .addressee ∈ s₂ ∧
-            ∀ k ∈ p.2, AnandNevins2004.depth₂ s₁ s₂ k = d.2) := by
+      ∀ p ∈ (verbCoords? r).toList, ∀ v₂ ∈ ((r.feature? "lower_verb").bind verb?).toList,
+        ∀ x ∈ r.readings, ∀ d ∈ (depth? x.1).toList,
+          (.marginal ≤ x.2 ↔ ∃ s₁ ∈ p.1.options, ∃ s₂ ∈ v₂.options, .addressee ∈ s₂ ∧
+            ∀ k ∈ p.2, localDepth [s₁, s₂] k = d) := by
   decide +kernel
 
 example : (Examples.all.filter fun r ↦ (verbCoords? r).isSome).length = 24 := by decide +kernel

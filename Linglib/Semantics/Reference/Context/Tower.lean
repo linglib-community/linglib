@@ -100,6 +100,21 @@ theorem push_contextAt_of_lt (hk : t.depth < k) : (t.push σ).contextAt k = σ �
 @[simp] theorem push_contextAt_succ_depth : (t.push σ).contextAt (t.depth + 1) = σ • t.innermost :=
   push_contextAt_of_lt _ _ (Nat.lt_succ_self _)
 
+theorem prod_reverse_map_const_smul (l : List C) (c : C) :
+    ((l.map (Function.const C) : List (Function.End C))).reverse.prod • c = l.getLastD c := by
+  induction l generalizing c with
+  | nil => simp
+  | cons a l ih =>
+    simp only [List.map_cons, List.reverse_cons, List.prod_append, List.prod_singleton, mul_smul,
+      ih, List.getLastD_cons]
+    rfl
+
+/-- A tower of reports, each shift taking every context to a reported one, has at depth `k` the
+last of the first `k` reported contexts. -/
+theorem contextAt_map_const (c : C) (js : List C) (k : ℕ) :
+    (⟨c, js.map (Function.const C)⟩ : ContextTower C).contextAt k = (js.take k).getLastD c := by
+  rw [contextAt, ← List.map_take, prod_reverse_map_const_smul]
+
 end ContextTower
 
 namespace ContextTower
