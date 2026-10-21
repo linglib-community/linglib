@@ -11,14 +11,14 @@ public import Linglib.Semantics.Polarity.Strength
 /-!
 # Polarity items
 
-A polarity item is a lexical item with a defective distribution: a negative polarity item occurs
-only in a negative context and a positive polarity item cannot occur in one
-([vanderwouden-1997]). Both are graded by the strength of negation of `DEStrength`
-([zwarts-1998]): a negative polarity item needs at least some strength, which licenses it, and a
-positive polarity item is blocked by at least some strength, which anti-licenses it. The two are
-independent, and an item with both, like Dutch *ooit* 'ever', is bipolar. A free choice item is
-licensed in the generic contexts instead ([kadmon-landman-1993], [dayal-1996]); English *any* is
-both a negative polarity item and a free choice item.
+A polarity item is a lexical item with a defective distribution, as van der Wouden puts it: a
+negative polarity item occurs only in a negative context and a positive polarity item cannot occur
+in one. Both are graded by Zwarts's strengths of negation, `Negation.Strength`: a negative polarity
+item needs at least some strength, which licenses it, and a positive polarity item is blocked by at
+least some strength, which anti-licenses it. The two are independent, and an item with both, like
+Dutch *ooit* 'ever', is bipolar. A free choice item is licensed in the generic contexts instead,
+after Kadmon and Landman and Dayal; English *any* is both a negative polarity item and a free choice
+item.
 
 The record also holds the contexts in which the item is attested and those in which it is
 attested to be out, the data against which `Semantics/Polarity/Licensing.lean` checks the theory.
@@ -47,10 +47,10 @@ structure PolarityItem where
   /-- The weakest strength of negation that licenses the item, if it is a negative polarity
   item. A negative concord item that needs clausemate negation carries `antiMorphic`, the
   strength of clausal negation alone. -/
-  licensor : Option PolarityItem.DEStrength := none
+  licensor : Option Negation.Strength := none
   /-- The weakest strength of negation that blocks the item, if it is a positive polarity
   item. -/
-  antiLicensor : Option PolarityItem.DEStrength := none
+  antiLicensor : Option Negation.Strength := none
   /-- Whether the generic contexts license the item. -/
   freeChoice : Bool := false
   /-- The contexts in which the item is attested. -/

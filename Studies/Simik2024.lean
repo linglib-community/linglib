@@ -1,7 +1,7 @@
 module
 
 public import Studies.BuringGunlogson2000
-public import Linglib.Syntax.PolarInterrogative.Basic
+public import Linglib.Syntax.Negation
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Logic.Trivalent.Pointwise
@@ -69,7 +69,6 @@ sentence and so no quiz row.
 namespace Simik2024
 
 open Question
-open PolarInterrogative (NegationPosition)
 open scoped ModalLogic
 
 /-! ### Bias and the polarity of the prejacent (§3.1) -/
@@ -100,7 +99,7 @@ inductive VerbPosition
 
 /-- The position of a negation on the finite verb, in [romero-2024]'s forms: the clause-initial
 verb preposes it, giving a high negation question, and the verb in situ does not, a low one. -/
-def VerbPosition.negationPosition : VerbPosition → NegationPosition
+def VerbPosition.negationPosition : VerbPosition → Negation.Position
   | .v1 => .preposed
   | .nonV1 => .nonPreposed
 
@@ -128,7 +127,7 @@ def declPPQ : CzechPQForm := ⟨.nonV1, .positive⟩
 def declNPQ : CzechPQForm := ⟨.nonV1, .negative⟩
 
 /-- The position of the negation of a form, `none` for a positive question. -/
-def negation (f : CzechPQForm) : Option NegationPosition :=
+def negation (f : CzechPQForm) : Option Negation.Position :=
   if f.polarity = .negative then some f.verb.negationPosition else none
 
 end CzechPQForm
@@ -360,7 +359,7 @@ def SerbianPQForm.particle : SerbianPQForm → Particle
   | .hnpq => Serbian.QuestionParticles.li
 
 /-- The [romero-2024] form of each strategy. -/
-def SerbianPQForm.negation : SerbianPQForm → Option NegationPosition
+def SerbianPQForm.negation : SerbianPQForm → Option Negation.Position
   | .daLiPPQ | .jeLiPPQ => none
   | .hnpq => some .preposed
   | .lnpq => some .nonPreposed

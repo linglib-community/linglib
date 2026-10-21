@@ -42,7 +42,6 @@ low like inner negation but non-propositional like FALSUM.
 namespace Stankova2026
 
 open Question Simik2024
-open PolarInterrogative (NegationPosition)
 open StankovaSimik2025 (LicensedAt)
 
 /-! ### The three positions -/
@@ -220,7 +219,7 @@ def Position.toVerbPosition : Position → VerbPosition
 /-- Outer negation preposes the negated verb, giving the high negation form (HiNQ) of
 [romero-2024], and inner and medial negation leave it in situ, giving the low negation form
 (LoNQ). -/
-def Position.negationPosition (pos : Position) : NegationPosition :=
+def Position.negationPosition (pos : Position) : Negation.Position :=
   pos.toVerbPosition.negationPosition
 
 /-- Only outer negation (FALSUM) is obligatorily focused

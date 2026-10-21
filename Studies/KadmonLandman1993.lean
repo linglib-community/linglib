@@ -561,7 +561,8 @@ negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
       (∃ c ∈ r.context, c.toLicensingContext.licenser.Licenses English.PolarityItems.any) ∨
-        r.localSignature.toDEStrength ≠ ⊥ ∨ r.settleForLess = true ∨ r.metalinguistic = true := by
+        r.localSignature.negationStrength ≠ ⊥ ∨ r.settleForLess = true ∨
+          r.metalinguistic = true := by
   decide +kernel
 
 end KadmonLandman1993
