@@ -1,25 +1,15 @@
 module
 
 public import Linglib.Discourse.Response
-public import Linglib.Semantics.Denotation
-public import Linglib.Semantics.Questions.Hamblin
-public import Mathlib.Data.Fintype.Sum
+public import Linglib.Syntax.PolarInterrogative.Basic
 
 /-!
-# Polar interrogatives and their answers
+# Answers to polar interrogatives
 
-This file formalizes Holmberg's syntax of yes–no questions and their answers. A
-`PolarInterrogative` is a sentence radical, its positive alternative, with a `ClauseNegation`,
-the negation of the clause, if any, with its height relative to the polarity head. Its primary
-alternative is the radical under the polarity the negation gives it, and it denotes the polar
-question of that alternative; a negative interrogative and its positive counterpart denote the
-same question, differing only in which alternative is primary
-(`PolarInterrogative.denote_eq_polar_radical`), whose alternatives are the polarity alternatives
-of the radical (`PolarInterrogative.alt_denote`).
-
-The polarity head is merged unvalued, and a short answer merges a focused valued polarity
-feature, spelled out by an answer particle, with the clause inherited from the question,
-normally elided. An `AnswerFeature` is that feature: a valued [+Pol] or [−Pol], or the
+In Holmberg's syntax of yes–no questions the polarity head of a polar interrogative is merged
+unvalued, and a short answer merges a focused valued polarity feature, spelled out by an answer
+particle, with the clause inherited from the question, normally elided. A
+`PolarInterrogative.AnswerFeature` is that feature: a valued [+Pol] or [−Pol], or the
 affirmative [+Pol, REV] of a polarity-reversing particle such as Swedish *jo*, which eliminates
 the negation in the answer. Given the negation of the clause the answer inherits,
 `AnswerFeature.answer` computes the polarity of the alternative the answer confirms, relative to
@@ -44,10 +34,9 @@ leaves only the negative feature, which fixes the absolute polarity, the polarit
 ## Implementation notes
 
 * What decides the system is whether the negation can value the polarity head
-  (`ClauseNegation.ValuesHead`); the height of the negation matters only through that, as
-  Holmberg argues for Thai, whose negation cannot value the head from inside the complement of
-  the question particle. Heights classify constructions, not languages: English *not* is read
-  low by some speakers and middle by others, and *-n't* in positive-bias questions is high.
+  (`PolarInterrogative.ClauseNegation.ValuesHead`); the height of the negation matters only
+  through that, as Holmberg argues for Thai, whose negation cannot value the head from inside
+  the complement of the question particle.
 * REV needs a negation in the answer to eliminate, so a reversing particle is ill formed after a
   neutral or a positive-bias question. Colloquial Swedish, where *jo* can confirm the positive
   alternative of any yes–no question (Holmberg's footnote to the section on positive and
@@ -55,28 +44,16 @@ leaves only the negative feature, which fixes the absolute polarity, the polarit
 * The two versions of the negative particle in polarity-based languages, an interpretable one
   valuing the head and an uninterpretable one agreeing with a negation that values it, are one
   `AnswerFeature.value .negative`, whose agreement is built into `AnswerFeature.answer`.
-* The reading of a polar interrogative is an `Option Polarity`: `none` for a positive question,
-  and for a negative one the polarity of the proposition it double-checks, relative to its
-  radical. Ladd's outer reading, double-checking `p`, is `some .positive`, and his inner
-  reading, double-checking `¬p`, is `some .negative`. Each analysis computes it from its own
-  structure; here it is the primary polarity of the clause's negation
-  (`ClauseNegation.primaryPolarity`), negative for a negation inside the clause and positive for a
-  high one.
-* The position of the negation (`NegationPosition`) follows Romero and Han, and the form of a
-  polar interrogative, an `Option NegationPosition`, gives Romero's PosQ, LoNQ and HiNQ.
-  Readings and forms are related, not identified: the preposed *-n't* of *Isn't this the road to
-  Lund?* has both readings for some speakers of English, so each language or variety relates a
-  form to a set of readings.
 
 ## References
 
 * [holmberg-2016]
 * [farkas-bruce-2010]
-* [ladd-1981]
-* [romero-han-2004]
-* [romero-2024]
 -/
+
 @[expose] public section
+
+namespace PolarInterrogative
 
 /-- The feature an answer particle spells out, a valued polarity feature or the affirmative
 polarity-reversing feature of *jo*, `[jo, +Pol, REV]`. -/
@@ -86,108 +63,6 @@ inductive AnswerFeature where
   /-- [+Pol, REV], positive polarity eliminating a negation in the answer. -/
   | reversing
   deriving DecidableEq, Repr
-
-/-- Structural height of a sentential negation relative to the polarity head. The height
-classifies constructions, not languages. English *not* is read low by some speakers and middle
-by others, and low by all after an adverb; *-n't* in positive-bias questions is high. -/
-inductive NegationHeight where
-  /-- Negation below the reach of the polarity head, VP-internal (English *not* on its low
-  reading). -/
-  | low
-  /-- Negation in a local c-command relation to the polarity head (Swedish, Finnish, English
-  *not* on its middle reading). -/
-  | middle
-  /-- Negation above the polarity head, in the C-domain (English *-n't* in positive-bias
-  questions). -/
-  | high
-  deriving DecidableEq, Repr, Fintype
-
-/-- The position of the negation of a negative polar interrogative relative to the rest of the
-clause, preposed with the finite verb, as English *n't* in *Isn't Jane coming?*, or not, as *not*
-in *Is Jane not coming?*. What matters is the relative position, not a particular one. -/
-inductive NegationPosition where
-  /-- Negation preposed with the finite verb. -/
-  | preposed
-  /-- Negation in its clause-internal position. -/
-  | nonPreposed
-  deriving DecidableEq, Repr, Fintype
-
-/-- The negation of a clause relative to its polarity head, if any. An answer inherits the
-negation of the clause it answers. -/
-inductive ClauseNegation where
-  /-- No negation, as in a neutral question or a positive statement. -/
-  | absent
-  /-- A negation of the given height, nothing intervening between it and the polarity head. -/
-  | height (h : NegationHeight)
-  /-- A middle negation screened from the polarity head by an adverb scoping over it, as in
-  Swedish *Har Johan nångång inte kommit i tid?*. -/
-  | screened
-  deriving DecidableEq, Repr, Fintype
-
-namespace ClauseNegation
-
-variable (n : ClauseNegation)
-
-/-- The negation is inside the clause the answer inherits, so that both alternatives of the
-question contain it, as a low or middle negation is. -/
-def InClause : Prop := n = .height .low ∨ n = .height .middle ∨ n = .screened
-
-instance : Decidable n.InClause := inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-
-/-- The polarity of the question's primary alternative relative to its positive alternative,
-negative when the negation is inside the inherited clause. -/
-def primaryPolarity : Polarity := if n.InClause then .negative else .positive
-
-/-- The negation values the polarity head when it is a middle negation not screened off by an
-adverb. -/
-def ValuesHead : Prop := n = .height .middle
-
-instance : Decidable n.ValuesHead := inferInstanceAs (Decidable (_ = _))
-
-variable {n}
-
-theorem primaryPolarity_of_inClause (h : n.InClause) : n.primaryPolarity = .negative := by
-  simp [primaryPolarity, h]
-
-end ClauseNegation
-
-/-- A polar interrogative, given by its sentence radical, the positive alternative, and its
-negation. -/
-structure PolarInterrogative (W : Type*) where
-  /-- The sentence radical, the positive alternative. -/
-  radical : Set W
-  /-- The negation of the interrogative. -/
-  negation : ClauseNegation
-
-namespace PolarInterrogative
-
-open Semantics
-
-variable {W : Type*} (q : PolarInterrogative W)
-
-/-- The primary alternative is the radical under the polarity its negation gives it, negative
-when the negation is inside the clause. -/
-def primary : Set W := q.negation.primaryPolarity • q.radical
-
-/-- A polar interrogative denotes the polar question of its primary alternative, the
-disjunction of that alternative and its negation. -/
-instance : Denotes (PolarInterrogative W) (Question W) := ⟨fun q ↦ Question.polar q.primary⟩
-
-theorem denote_def : ⟦q⟧ = Question.polar q.primary := rfl
-
-/-- A negative interrogative denotes the same question as its positive counterpart, the negation
-deciding which alternative is primary, not what the alternatives are. -/
-@[simp] theorem denote_eq_polar_radical : ⟦q⟧ = Question.polar q.radical :=
-  Question.polar_smul _ _
-
-/-- The alternatives of a polar interrogative with a nontrivial radical are the values of its
-polarity variable applied to the radical, its polarity alternatives. -/
-theorem alt_denote {q : PolarInterrogative W} (hne : q.radical ≠ ∅)
-    (hnu : q.radical ≠ Set.univ) : Question.alt ⟦q⟧ = MulAction.orbit Polarity q.radical := by
-  rw [denote_eq_polar_radical]
-  exact Question.alt_polar_eq_orbit hne hnu
-
-end PolarInterrogative
 
 namespace AnswerFeature
 
@@ -329,3 +204,5 @@ theorem confirmsNegativeQuestion_responses_negative_iff (h : NegationHeight) :
     primaryPolarity]
 
 end AnswerFeature
+
+end PolarInterrogative

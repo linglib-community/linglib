@@ -1,7 +1,7 @@
 module
 
 public import Studies.BuringGunlogson2000
-public import Linglib.Syntax.PolarInterrogative
+public import Linglib.Syntax.PolarInterrogative.Basic
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Logic.Trivalent.Pointwise
@@ -69,6 +69,7 @@ sentence and so no quiz row.
 namespace Simik2024
 
 open Question
+open PolarInterrogative (NegationPosition)
 open scoped ModalLogic
 
 /-! ### Bias and the polarity of the prejacent (§3.1) -/

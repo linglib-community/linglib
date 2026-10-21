@@ -8,15 +8,16 @@ public import Linglib.Semantics.Polarity.Basic
 # Polar question bias
 
 A polar question is sensitive to two bodies of information bearing on its prejacent `p`: the
-contextual evidence available in the discourse ([buring-gunlogson-2000]) and the prior belief of
-the speaker, original bias ([ladd-1981], [romero-han-2004]). Each supports `p`, supports `¬p`, or
-neither, so its state is a sign, `1`, `-1` or `0`, and reading it relative to `¬p` negates it.
+contextual evidence available in the discourse, as Büring and Gunlogson put it, and the prior
+belief of the speaker, the original bias of Ladd and of Romero and Han. Each supports `p`,
+supports `¬p`, or neither, so its state is a sign, `1`, `-1` or `0`, and reading it relative to
+`¬p` negates it.
 
-A bias value in the scheme of [sudo-2013] is the set of states a question is compatible with:
+A bias value in Sudo's scheme is the set of states a question is compatible with:
 [+s] (`BiasValue.plus`), its complement [−s] (`BiasValue.minus`) and [neutral]. A `BiasProfile`
 pairs an evidential and an epistemic value, and its `felicity` is the set of situations it admits.
-The forms and readings of polar questions are `NegationPosition` and `Option Polarity` in
-`Syntax/PolarInterrogative`.
+The forms and readings of polar questions are `PolarInterrogative.NegationPosition` and
+`Option Polarity`.
 
 ## References
 
@@ -36,18 +37,18 @@ abbrev BiasValue := Finset SignType
 
 namespace BiasValue
 
-/-- [+s]: only a body of information supporting the `s` proposition. -/
+/-- The value [+s] admits only a body of information supporting the `s` proposition. -/
 def plus (s : Polarity) : BiasValue := {(s : SignType)}
 
-/-- [−s]: any body of information not supporting the `s` proposition. -/
+/-- The value [−s] admits any body of information not supporting the `s` proposition. -/
 def minus (s : Polarity) : BiasValue := (plus s)ᶜ
 
-/-- [neutral]: only a body of information supporting neither. -/
+/-- The value [neutral] admits only a body of information supporting neither. -/
 def neutral : BiasValue := {0}
 
 end BiasValue
 
-/-- A bias profile: the contextual evidence and the prior beliefs of the speaker a question is
+/-- A bias profile, the contextual evidence and the prior beliefs of the speaker a question is
 compatible with. -/
 structure BiasProfile where
   /-- The contextual evidence the question is compatible with. -/
@@ -56,7 +57,7 @@ structure BiasProfile where
   epistemic : BiasValue
   deriving DecidableEq
 
-/-- The situations a profile admits: pairs of contextual evidence and prior belief. -/
+/-- The situations a profile admits, as pairs of contextual evidence and prior belief. -/
 def BiasProfile.felicity (b : BiasProfile) : Finset (SignType × SignType) :=
   b.evidential ×ˢ b.epistemic
 

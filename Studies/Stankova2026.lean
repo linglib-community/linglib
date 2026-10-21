@@ -42,6 +42,7 @@ low like inner negation but non-propositional like FALSUM.
 namespace Stankova2026
 
 open Question Simik2024
+open PolarInterrogative (NegationPosition)
 open StankovaSimik2025 (LicensedAt)
 
 /-! ### The three positions -/
@@ -107,7 +108,7 @@ def licensed : Position → Finset Diagnostic
 /-- The position licenses the diagnostic, a cell of Table 1. -/
 abbrev Licenses (pos : Position) (d : Diagnostic) : Prop := d ∈ licensed pos
 
-/-- Table 1 fingerprints the positions: no two license the same diagnostics. -/
+/-- Table 1 fingerprints the positions, since no two license the same diagnostics. -/
 theorem licensed_injective : Function.Injective licensed := by decide
 
 variable {pos : Position}
@@ -198,8 +199,8 @@ theorem particle_signatures_distinct (pos pos' : Position)
   revert h1 h2 h3
   cases pos <;> cases pos' <;> decide
 
-/-- *copak* is outside Table 1: it appears in positive and negative PQs
-alike ([stankova-simik-2025] exs. 19a-b). -/
+/-- *copak* is outside Table 1, appearing in positive and negative PQs
+alike (Staňková and Šimík's exs. 19a-b). -/
 theorem copak_no_diagnostic : diagnostic? copak = none := by decide
 
 /-! ### Word order and PQ-form typology
@@ -235,8 +236,8 @@ instance : DecidablePred Position.RequiresFocus := fun pos ↦ by
 (InterNPQ), and inner and medial negation a declarative one (DeclNPQ). -/
 def Position.toCzechPQForm (pos : Position) : CzechPQForm := ⟨pos.toVerbPosition, .negative⟩
 
-/-- The two form typologies agree: [simik-2024]'s grid refines
-[romero-2024]'s. -/
+/-- The two form typologies agree, Šimík's grid refining
+Romero's. -/
 theorem czechPQForm_negation (pos : Position) :
     pos.toCzechPQForm.negation = some pos.negationPosition :=
   rfl
@@ -285,7 +286,7 @@ def analyzedExamples : List (Datum × Position × Diagnostic) :=
   , (Examples.ex15a, .inner,  .fakt)
   , (Examples.ex15d, .outer,  .fakt) ]
 
-/-- Table 1 predicts each example's judgment: the diagnostic is
+/-- Table 1 predicts each example's judgment, the diagnostic being
 licensed at the example's negation position iff the example is
 acceptable. -/
 theorem examples_match_table1 :
