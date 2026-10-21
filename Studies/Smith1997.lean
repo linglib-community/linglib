@@ -8,8 +8,7 @@ public import Linglib.Semantics.Aspect.Viewpoint
 
 This file formalizes Smith's two-component theory, in which a sentence's aspectual meaning
 combines a situation type (`VendlerClass`) and an independently chosen viewpoint
-(`ViewpointType`). What each viewpoint makes visible is derived from the substrate's relation
-between topic time and situation time, not stipulated per viewpoint.
+(`ViewpointType`).
 
 ## Main results
 
