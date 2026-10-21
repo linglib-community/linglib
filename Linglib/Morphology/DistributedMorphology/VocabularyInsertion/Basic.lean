@@ -232,6 +232,16 @@ theorem winner?_eq_head?_applicable (h : items.Pairwise fun i j ↦ j.specificit
     winner? items n = (items.applicable n).head? :=
   RuleSet.selectBy_eq_head?_applicable h
 
+theorem subsetPrinciple_eq_map_winner? :
+    subsetPrinciple items n = (winner? items n).map (·.exponent) := rfl
+
+/-- On a vocabulary listed by non-increasing specificity, the exponent is that of the first
+applicable item. -/
+theorem subsetPrinciple_eq_head?_applicable
+    (h : items.Pairwise fun i j ↦ j.specificity ≤ i.specificity) :
+    subsetPrinciple items n = ((items.applicable n).head?).map (·.exponent) := by
+  rw [subsetPrinciple_eq_map_winner?, winner?_eq_head?_applicable h]
+
 /-- The winner is an Elsewhere winner of the shared core, with no faithfulness hypothesis, since
 `VocabularyItem.specificity` is strictly antitone outright. -/
 theorem winner?_isElsewhereWinner (h : winner? items n = some i) : items.IsElsewhereWinner n i :=

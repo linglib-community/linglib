@@ -148,9 +148,6 @@ theorem fragment_realize :
 private theorem root_ne_zero : Morph.root r ≠ zero := by
   simp [zero, Morph.root, Morph.suff]
 
-private theorem subsetPrinciple_eq (c : Neighborhood (Finset Feature)) :
-    subsetPrinciple vocab c = (winner? vocab c).map (·.exponent) := rfl
-
 /-- In the context v presents, the root is inside and the bare n outside. -/
 def vContext : Neighborhood (Finset Feature) :=
   ⟨{(cat .v : Feature)}, [{exp (.root r)}], [{(cat .n : Feature)}]⟩
@@ -184,18 +181,20 @@ theorem insertAt_word_zero :
     insertAt (word r none) 0 = word r (subsetPrinciple vocab (vContext r)) := by
   unfold insertAt ComplexHead.insertAt
   rw [contextAt_word_zero]
-  cases h : winner? vocab (vContext r) <;> simp [h, word, subsetPrinciple_eq, Morpheme.IsRealized]
+  cases h : winner? vocab (vContext r) <;>
+    simp [h, word, subsetPrinciple_eq_map_winner?, Morpheme.IsRealized]
 
 theorem insertAt_word_one :
     (insertAt (word r (some e)) 1).heads[1]? >>= (·.exp) =
       subsetPrinciple vocab (nContext r e) := by
   unfold insertAt ComplexHead.insertAt
   rw [contextAt_word_one]
-  cases h : winner? vocab (nContext r e) <;> simp [h, word, subsetPrinciple_eq, Morpheme.IsRealized]
+  cases h : winner? vocab (nContext r e) <;>
+    simp [h, word, subsetPrinciple_eq_map_winner?, Morpheme.IsRealized]
 
 /-- v always receives an exponent, since zero is its elsewhere item. -/
 theorem subsetPrinciple_vContext_isSome : (subsetPrinciple vocab (vContext r)).isSome := by
-  rw [subsetPrinciple_eq, Option.isSome_map, winner?_isSome_iff]
+  rw [subsetPrinciple_eq_map_winner?, Option.isSome_map, winner?_isSome_iff]
   exact ⟨{Feature.cat .v} ⟷ zero, by decide, by simp [vContext]⟩
 
 /-- The exponent of v in the nominal of the root `r`. -/
