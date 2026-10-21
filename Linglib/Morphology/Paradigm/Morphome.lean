@@ -121,7 +121,7 @@ the witness cell. -/
 theorem isValueConjunction_coe_iff [Fintype Cell] [DecidableEq Cell] (feats : ι → Setoid Cell)
     [∀ i, DecidableRel (feats i)] (X : Finset Cell) :
     IsValueConjunction feats ↑X ↔
-      ∃ (S : Finset ι) (c₀ : Cell), Finset.univ.filter (λ c => ∀ i ∈ S, feats i c c₀) = X := by
+      ∃ (S : Finset ι) (c₀ : Cell), Finset.univ.filter (fun c ↦ ∀ i ∈ S, feats i c c₀) = X := by
   simp only [IsValueConjunction, ← Finset.coe_inj, Finset.coe_filter, Finset.mem_univ, true_and,
     eq_comm]
 
