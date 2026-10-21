@@ -9,6 +9,8 @@ public import Linglib.Core.Computability.ContextFreeGrammar
 public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Core.Data.RoseTree.Span
 public import Linglib.Core.Data.RoseTree.Encodable
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Nat.Find
@@ -206,6 +208,54 @@ theorem ruleAt?_eq_some {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)
     (h : subtreeAt t p = some (node (.nonterminal A) cs)) :
     ruleAt? t p = some ⟨A, cs.map value⟩ := by
   simp [ruleAt?, h]
+
+/-- The rule at the root of a tree is `r` when the root is `r`'s left-hand side and its children
+spell out `r`'s right-hand side. -/
+theorem ruleAt?_nil_eq_some_iff {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+    {r : ContextFreeRule T g.NT} :
+    ruleAt? t [] = some r ↔ t.value = .nonterminal r.input ∧ t.children.map value = r.output := by
+  obtain ⟨s, cs⟩ := t
+  obtain ⟨A, w⟩ := r
+  cases s <;> simp [ruleAt?, subtreeAt, eq_comm]
+
+/-- Below the root of a licensed tree every node is labelled by a symbol on the right-hand side
+of a rule. -/
+theorem Licensed.exists_mem_output_of_isSubtree {g : ContextFreeGrammar T}
+    {t s : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) (hs : IsSubtree s t)
+    (hne : s ≠ t) : ∃ r ∈ g.rules, s.value ∈ r.output := by
+  obtain rfl | ⟨u, hsu, hut⟩ := hs.cases_head
+  · exact absurd rfl hne
+  have hlic := ht u hut
+  obtain ⟨b, cs⟩ := u
+  cases b with
+  | terminal a => exact absurd hsu (by simp [ContextFreeGrammar.Licenses] at hlic; simp [hlic])
+  | nonterminal A =>
+    exact ⟨⟨A, cs.map value⟩, hlic, List.mem_map_of_mem hsu⟩
+
+/-- In a licensed tree, the applications of the rules with left-hand side `A` are the nodes
+labelled `A`. -/
+theorem Licensed.sum_ruleCount_eq_count_values [DecidableEq T] {g : ContextFreeGrammar T}
+    [DecidableEq g.NT] {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) (A : g.NT) :
+    ∑ r ∈ g.rules.filter (·.input = A), ruleCount r t = t.values.count (.nonterminal A) := by
+  induction ht using Licensed.grammar_induction with
+  | terminal a => simp [leaf, ruleCount_node_terminal]
+  | nonterminal B cs hrule hcs ih =>
+    have hsum (cs' : List (RoseTree (Symbol T g.NT))) (hcs' : ∀ c ∈ cs', c ∈ cs) :
+        ∑ r ∈ g.rules.filter (·.input = A), (cs'.map (ruleCount r)).sum =
+          (cs'.map fun c ↦ c.values.count (.nonterminal A)).sum := by
+      induction cs' with
+      | nil => simp
+      | cons c cs' ihc =>
+        simp only [List.map_cons, List.sum_cons, Finset.sum_add_distrib]
+        rw [ih c (hcs' c (List.mem_cons_self ..)),
+          ihc fun c' hc' ↦ hcs' c' (List.mem_cons_of_mem _ hc')]
+    simp only [ruleCount_node_nonterminal, Finset.sum_add_distrib, hsum cs fun _ h ↦ h,
+      values_node, List.count_cons, List.count_flatten, List.map_map, Function.comp_def,
+      Finset.sum_ite_eq', Finset.mem_filter, beq_iff_eq, Symbol.nonterminal.injEq]
+    by_cases hB : B = A
+    · subst hB
+      simp [hrule, add_comm]
+    · simp [hB]
 
 /-- Along an address into a licensed tree, every proper prefix ends at a nonterminal node, and so
 does the address itself when the subtree there has children. -/

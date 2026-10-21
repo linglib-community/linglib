@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "bibkey": "odonnell-2015",
+    "description": "O'Donnell's counts for the nominalizers *-ness*:Adj>N and *-ion*:V>N in the CELEX-derived training corpus of Chapter 7: word types, word tokens and hapax legomena. Page numbers are those of the 2015 MIT Press edition."
+  },
+  "types": [
+    {
+      "name": "Suffix",
+      "doc": "The two nominalizers whose frequency spectra Figure 7.4 compares.",
+      "levels": [
+        {
+          "name": "ness",
+          "label": "-ness",
+          "doc": "*-ness*:Adj>N, abstract nouns from adjectives, as in *pine-scentedness*"
+        },
+        {
+          "name": "ion",
+          "label": "-ion",
+          "doc": "*-ion*:V>N, nouns from verbs, as in *regression*"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "spectrum",
+      "structure": "SpectrumRow",
+      "doc": "The word types, word tokens and hapax legomena of a nominalizer in the training corpus.",
+      "locator": "pp. 267–268",
+      "verified": "page-image",
+      "key": [
+        "suffix"
+      ],
+      "columns": [
+        {
+          "name": "suffix",
+          "type": "Suffix",
+          "doc": "The nominalizer."
+        },
+        {
+          "name": "wordTypes",
+          "type": "nat",
+          "doc": "The number of word types containing the nominalizer."
+        },
+        {
+          "name": "wordTokens",
+          "type": "nat",
+          "doc": "The number of word tokens containing the nominalizer."
+        },
+        {
+          "name": "hapaxes",
+          "type": "nat",
+          "doc": "The number of word types containing the nominalizer that occur once."
+        }
+      ],
+      "rows": [
+        {
+          "suffix": "-ness",
+          "wordTypes": 1024,
+          "wordTokens": 15568,
+          "hapaxes": 350,
+          "note": "p. 268 misprints -ion for -ness here; Figure 7.4 and the next sentence settle it"
+        },
+        {
+          "suffix": "-ion",
+          "wordTypes": 1117,
+          "wordTokens": 162573,
+          "hapaxes": 83
+        }
+      ]
+    }
+  ]
+}

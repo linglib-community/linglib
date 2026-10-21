@@ -38,6 +38,22 @@ theorem uniformOn_finset_real_singleton [DecidableEq W] (A : Finset W) (w : W) :
   rw [measureReal_def, uniformOn_finset_apply_singleton]
   split_ifs <;> simp
 
+/-- At a point of both finsets, the uniform measure on `A` gives the point at most the mass the
+uniform measure on `B` gives it exactly when `B` is no larger than `A`. -/
+theorem uniformOn_finset_real_singleton_le_iff [DecidableEq W] {A B : Finset W} {w : W}
+    (hA : w ∈ A) (hB : w ∈ B) :
+    (uniformOn (A : Set W)).real {w} ≤ (uniformOn (B : Set W)).real {w} ↔ B.card ≤ A.card := by
+  rw [uniformOn_finset_real_singleton, uniformOn_finset_real_singleton, ite_eq_left hA,
+    ite_eq_left hB, inv_le_inv₀ (by exact_mod_cast Finset.card_pos.mpr ⟨w, hA⟩)
+      (by exact_mod_cast Finset.card_pos.mpr ⟨w, hB⟩), Nat.cast_le]
+
+/-- The uniform measure on a proper subset gives each of its points more mass. -/
+theorem uniformOn_finset_real_singleton_lt_of_ssubset [DecidableEq W] {A B : Finset W} {w : W}
+    (h : B ⊂ A) (hw : w ∈ B) :
+    (uniformOn (A : Set W)).real {w} < (uniformOn (B : Set W)).real {w} :=
+  lt_of_not_ge fun hle ↦
+    (Finset.card_lt_card h).not_ge ((uniformOn_finset_real_singleton_le_iff hw (h.1 hw)).mp hle)
+
 /-- The uniform measure on a finite set gives a set, on reals, the proportion of the atoms of `s`
 lying in `e`, with `0 / 0 = 0` when `s` is empty. -/
 theorem uniformOn_real_apply_of_finite {s : Set W} (hs : s.Finite) (e : Set W) :
