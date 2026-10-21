@@ -154,6 +154,12 @@ variable {T : Type*} {g : ContextFreeGrammar T}
 abbrev RulesWithLHS (g : ContextFreeGrammar T) [DecidableEq g.NT] (a : g.NT) :=
   {r : ContextFreeRule T g.NT // r ∈ g.rules.filter (·.input = a)}
 
+/-- A grammar has rules with left-hand side `a` exactly when `a` is the input of one of its
+rules. -/
+theorem nonempty_rulesWithLHS_iff [DecidableEq g.NT] {a : g.NT} :
+    Nonempty (g.RulesWithLHS a) ↔ a ∈ g.rules.image (·.input) := by
+  simp [Finset.mem_image]
+
 /-- A production from a concatenation `u₁ ++ u₂` happens entirely in `u₁` or entirely in
 `u₂`. -/
 theorem Produces.append_split {u₁ u₂ v : List (Symbol T g.NT)} (h : g.Produces (u₁ ++ u₂) v) :

@@ -42,8 +42,9 @@ This file is measure-free: the law of the sequence and its exchangeability are i
 
 * `ProbabilityTheory.polyaUrnProb_update_succ`, `ProbabilityTheory.polyaUrnProb_countVec_snoc`:
   drawing colour `c` multiplies the probability by the probability of drawing `c`.
-* `ProbabilityTheory.polyaUrnProb_add`: conjugacy; after the counts `x`, the urn with weights
-  `θ + x` gives the probability of the further counts `y`.
+* `ProbabilityTheory.polyaUrnProb_add`, `ProbabilityTheory.polyaUrnPredictive_add`: conjugacy;
+  after the counts `x`, the urn with weights `θ + x` gives the probability of the further counts
+  `y`, and predicts as the original urn does after `x + y`.
 * `ProbabilityTheory.sum_polyaUrnPredictive`: the prediction rule is a probability.
 
 ## Implementation notes
@@ -184,21 +185,53 @@ theorem polyaUrnProb_add (x y : α → ℕ) :
   simp only [polyaUrnProb, Pi.add_apply, sum_add_distrib, hasc, prod_mul_distrib, Nat.cast_sum]
   rw [div_mul_div_comm]
 
+/-- **Conjugacy of the prediction rule.** After the counts `x`, the urn with weights `θ + x`
+predicts as the original urn does after the counts `x + y`. -/
+theorem polyaUrnPredictive_add (x y : α → ℕ) :
+    polyaUrnPredictive (θ + fun c ↦ (x c : ℝ)) y = polyaUrnPredictive θ (x + y) := by
+  funext c
+  simp only [polyaUrnPredictive, Pi.add_apply, sum_add_distrib, Nat.cast_add, add_assoc]
+
+/-- With at most one draw made, the probability of the counts `x` is the product of the
+first-draw probabilities raised to the counts. -/
+theorem polyaUrnProb_eq_prod_pow_of_sum_le_one {x : α → ℕ} (hx : ∑ c, x c ≤ 1) :
+    polyaUrnProb θ x = ∏ c, polyaUrnPredictive θ 0 c ^ x c := by
+  have hpow (a : ℝ) {m : ℕ} (hm : m ≤ 1) : (ascPochhammer ℝ m).eval a = a ^ m := by
+    rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hm with rfl | rfl <;> simp
+  rw [polyaUrnProb, hpow _ hx, prod_congr rfl fun c _ ↦
+    hpow (θ c) ((single_le_sum (fun _ _ ↦ Nat.zero_le _) (mem_univ c)).trans hx)]
+  simp only [polyaUrnPredictive_zero, div_pow, prod_div_distrib, prod_pow_eq_pow_sum]
+
 variable {θ}
+
+private theorem sum_add_sum_pos [Nonempty α] (hθ : ∀ i, 0 < θ i) (x : α → ℕ) :
+    0 < ∑ i, θ i + ∑ i, (x i : ℝ) :=
+  add_pos_of_pos_of_nonneg (sum_pos (fun i _ ↦ hθ i) univ_nonempty)
+    (sum_nonneg fun _ _ ↦ Nat.cast_nonneg _)
 
 theorem polyaUrnPredictive_nonneg (hθ : ∀ i, 0 ≤ θ i) (x : α → ℕ) (c : α) :
     0 ≤ polyaUrnPredictive θ x c :=
   div_nonneg (add_nonneg (hθ c) (Nat.cast_nonneg _))
     (add_nonneg (sum_nonneg fun i _ ↦ hθ i) (sum_nonneg fun _ _ ↦ Nat.cast_nonneg _))
 
+theorem polyaUrnPredictive_pos (hθ : ∀ i, 0 < θ i) (x : α → ℕ) (c : α) :
+    0 < polyaUrnPredictive θ x c :=
+  have : Nonempty α := ⟨c⟩
+  div_pos (add_pos_of_pos_of_nonneg (hθ c) (Nat.cast_nonneg _)) (sum_add_sum_pos hθ x)
+
+/-- After the same draws, the urn predicts colour `c` less often than `c'` exactly when `c` has
+the smaller weight plus count. -/
+theorem polyaUrnPredictive_lt_polyaUrnPredictive_iff (hθ : ∀ i, 0 < θ i) {x : α → ℕ}
+    {c c' : α} :
+    polyaUrnPredictive θ x c < polyaUrnPredictive θ x c' ↔ θ c + x c < θ c' + x c' :=
+  have : Nonempty α := ⟨c⟩
+  div_lt_div_iff_of_pos_right (sum_add_sum_pos hθ x)
+
 /-- The prediction rule is a probability on the colours. -/
 theorem sum_polyaUrnPredictive [Nonempty α] (hθ : ∀ i, 0 < θ i) (x : α → ℕ) :
     ∑ c, polyaUrnPredictive θ x c = 1 := by
-  have h : 0 < ∑ i, θ i + ∑ i, (x i : ℝ) :=
-    add_pos_of_pos_of_nonneg (sum_pos (fun i _ ↦ hθ i) univ_nonempty)
-      (sum_nonneg fun _ _ ↦ Nat.cast_nonneg _)
   simp only [polyaUrnPredictive, ← sum_div, sum_add_distrib]
-  exact div_self h.ne'
+  exact div_self (sum_add_sum_pos hθ x).ne'
 
 theorem polyaUrnProb_pos [Nonempty α] (hθ : ∀ i, 0 < θ i) (x : α → ℕ) : 0 < polyaUrnProb θ x :=
   div_pos (prod_pos fun i _ ↦ ascPochhammer_pos _ _ (hθ i))
