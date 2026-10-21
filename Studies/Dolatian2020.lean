@@ -114,16 +114,12 @@ def deletable : WindowFormula (Seg × Bool) :=
     (.conj (.label (.c, false) x.succ) (nucleusAt x.succ.succ)))
 
 /-- Destressed high vowel reduction as a quantifier-free transduction, (46): the destressed high
-vowel, marked `true`, becomes schwa unless deletion is licensed, in which case it matches no
-clause and is deleted; every other segment is faithful. -/
-def dhr : Transduction (Seg × Bool) Seg where
-  copies := 1
-  clauses _ :=
-    [(.conj (.label (.h, true) x) deletable.neg, .schwa),
-      (.label (.c, false) x, .c), (.label (.h, false) x, .h), (.label (.v, false) x, .v),
-      (.label (.uj, false) x, .uj), (.label (.schwa, false) x, .schwa),
-      (.label (.c, true) x, .c), (.label (.v, true) x, .v), (.label (.uj, true) x, .uj),
-      (.label (.schwa, true) x, .schwa)]
+vowel, marked `true`, is deleted where deletion is licensed and becomes schwa elsewhere; every
+other segment is kept, its mark dropped. -/
+def dhr : Transduction (Seg × Bool) Seg :=
+  ⟨[((WindowFormula.label (.h, true) x).conj deletable, []), (.label (.h, true) x, [.schwa])] ++
+    [Seg.c, .h, .v, .uj, .schwa].flatMap fun s ↦
+      [(.label (s, false) x, [s]), (.label (s, true) x, [s])]⟩
 
 /-- The string with the destressed position marked. -/
 def mark (w : List Seg) (p : ℕ) : List (Seg × Bool) := w.mapIdx fun n s ↦ (s, decide (n = p))
