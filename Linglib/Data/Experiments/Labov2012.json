@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "bibkey": "labov-2012",
+    "description": "Labov's figures for (ING) in Chapter 2: President Obama's percentage of *-in'* on three recorded occasions of increasing formality. Page numbers are those of the 2014 paperback."
+  },
+  "types": [
+    {
+      "name": "Style",
+      "doc": "The three contextual styles of Figure 3, from the least to the most formal, each the occasion of one recording.",
+      "levels": [
+        {
+          "name": "casual",
+          "label": "Casual",
+          "doc": "the Father's Day barbecue on the White House lawn, chatting with a chef about barbecue technique"
+        },
+        {
+          "name": "careful",
+          "label": "Careful",
+          "doc": "the Father's Day ceremonies that followed, asking and answering political questions"
+        },
+        {
+          "name": "formal",
+          "label": "Formal",
+          "doc": "the scripted acceptance speech at the Democratic National Convention"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "ingByStyle",
+      "structure": "IngCell",
+      "doc": "President Obama's percentage of *-in'* out of all occurrences of (ING) in a contextual style.",
+      "locator": "Figure 3, pp. 13–14",
+      "verified": "page-image",
+      "key": [
+        "style"
+      ],
+      "columns": [
+        {
+          "name": "style",
+          "type": "Style",
+          "doc": "The contextual style."
+        },
+        {
+          "name": "percent",
+          "type": "nat",
+          "doc": "The percentage of *-in'*, as the text prints it."
+        }
+      ],
+      "rows": [
+        {
+          "style": "Casual",
+          "percent": 72
+        },
+        {
+          "style": "Careful",
+          "percent": 33
+        },
+        {
+          "style": "Formal",
+          "percent": 3
+        }
+      ]
+    }
+  ]
+}
