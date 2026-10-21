@@ -26,7 +26,8 @@ embedding with a total head function, which extends the raising head.
 ## Main definitions
 
 * `PlanarSyntacticObject.termAt`: the term at a position.
-* `Minimalist.headIndex?`: the head daughter of a planar tree.
+* `Minimalist.headIndex?`, `PlanarSyntacticObject.headIndexAt`: the head daughter of a planar
+  tree, and of the subtree at each position.
 
 ## Main statements
 
@@ -36,6 +37,7 @@ embedding with a total head function, which extends the raising head.
   `PlanarSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
+* `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
 * `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
   wherever there is one.
 
@@ -83,6 +85,20 @@ variable (t) in
 def termAt (p : t.val.Positions) : SyntacticObject := ⟨_, isSyntacticObject_subtree p⟩
 
 @[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject := rfl
+
+/-- A position that is not a leaf has two daughters, since Merge is binary. -/
+theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
+  have h2 : p.subtree.children.length = 2 := by
+    have hs := isSyntacticObject_subtree p
+    rw [Positions.isMax_iff] at hp
+    rcases hsub : p.subtree with ⟨v, cs⟩
+    rw [hsub] at hp hs
+    exact (SyntacticObject.length_eq_zero_or_two hs).resolve_left (by simpa using hp)
+  have hv : ∀ i < 2, (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.val.validPaths := fun i hi ↦
+    mem_validPaths_append_singleton_iff.2 ⟨_, p.subtreeAt_eq, h2 ▸ hi⟩
+  refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨0, rfl⟩),
+    ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨1, rfl⟩), fun h ↦ ?_⟩
+  simpa using congrArg (fun q : t.val.Positions ↦ q.val.toList.getLast?) h
 
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
@@ -213,6 +229,10 @@ it has none, the first step of the drawing convention's head path. -/
 def headIndex? (s : RoseTree Vertex) : Option ℕ :=
   ((treeRaisingHead s).bind fun h ↦ s.children.findIdx? (treeRaisingHead · = some h)) <|>
     (conventionHeadPos? s).bind List.head?
+
+/-- The head daughter of the subtree at a position of a planar object, `none` off the object. -/
+def PlanarSyntacticObject.headIndexAt (t : PlanarSyntacticObject) (q : TreePath) : Option ℕ :=
+  (t.val.subtreeAt q.toList).bind headIndex?
 
 /-- Where a planar syntactic object with daughters has a raising head, its head daughter carries
 it. -/

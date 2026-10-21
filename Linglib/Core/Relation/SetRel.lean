@@ -6,20 +6,22 @@ public import Mathlib.Logic.Function.Iterate
 public import Mathlib.Order.SetNotation
 
 /-!
-# Complements and transitive closure of relations as sets of pairs
+# Complements, asymmetric parts and transitive closure of relations as sets of pairs
 
 `[UPSTREAM]` supplements to `Mathlib/Basic/Rel.lean`. The core and the preimage of a relation
 are dual under complement (`SetRel.core_compl`, `SetRel.preimage_compl`), the core is antitone
 in the relation (`SetRel.core_subset_core_left`) and sends unions to intersections
 (`SetRel.core_iUnion`), and the transitive closure of a relation
 (`SetRel.transGen`) has as core the intersection of the iterated cores
-(`SetRel.core_transGen`).
+(`SetRel.core_transGen`). The asymmetric part of a relation (`SetRel.asymmetrize`) complements
+mathlib's symmetric part `SetRel.symmetrize`.
 
 ## Main definitions
 
 * `SetRel.ofSuccessors`: a set-valued function `α → Set β` as a relation, whose core at `a` is
   inclusion of `f a` (`SetRel.mem_core_ofSuccessors`) and whose image is the union of the values
   (`SetRel.image_ofSuccessors`).
+* `SetRel.asymmetrize`: the pairs a relation relates in one direction only.
 * `SetRel.transGen`: the transitive closure of `R : SetRel α α`, `Relation.TransGen` of its
   pointwise relation.
 -/
@@ -65,6 +67,43 @@ instance [Fintype β] (R : SetRel α β) (a : α) [∀ b, Decidable (a ~[R] b)] 
 
 instance [Fintype α] (R : SetRel α β) (b : β) [∀ a, Decidable (a ~[R] b)] : Decidable (b ∈ R.cod) :=
   decidable_of_iff (∃ a, a ~[R] b) mem_cod.symm
+
+/-! ### The asymmetric part -/
+
+section Asymmetrize
+
+variable {R R₁ R₂ : SetRel α α} {a b : α}
+
+variable (R) in
+/-- The pairs a relation relates in one direction only, the complement of its symmetric part
+`SetRel.symmetrize` within it. -/
+def asymmetrize : SetRel α α := R \ R.inv
+
+@[simp] theorem mem_asymmetrize : a ~[R.asymmetrize] b ↔ a ~[R] b ∧ ¬ b ~[R] a := .rfl
+
+theorem asymmetrize_subset_self : R.asymmetrize ⊆ R := Set.sdiff_subset
+
+instance isIrrefl_asymmetrize : R.asymmetrize.IsIrrefl := ⟨fun _ h ↦ h.2 h.1⟩
+
+instance [DecidablePred (· ∈ R)] : DecidablePred (· ∈ R.asymmetrize) := fun p ↦
+  inferInstanceAs (Decidable (p ∈ R ∧ ¬ (p.2, p.1) ∈ R))
+
+/-- Under an injective map the asymmetric part of the image is the image of the asymmetric
+part. -/
+theorem asymmetrize_image_prodMap {β : Type*} {f : α → β} (hf : Function.Injective f) :
+    asymmetrize (Prod.map f f '' R) = Prod.map f f '' R.asymmetrize := by
+  ext ⟨x, y⟩
+  constructor
+  · rintro ⟨⟨⟨a, b⟩, h, he⟩, hn⟩
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
+    exact ⟨(a, b), ⟨h, fun h' ↦ hn ⟨(b, a), h', rfl⟩⟩, rfl⟩
+  · rintro ⟨⟨a, b⟩, ⟨h, hn⟩, he⟩
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
+    refine ⟨⟨(a, b), h, rfl⟩, fun ⟨⟨b', a'⟩, h', he'⟩ ↦ hn ?_⟩
+    obtain ⟨hb, ha⟩ := Prod.mk.inj he'
+    exact hf ha ▸ hf hb ▸ h'
+
+end Asymmetrize
 
 /-! ### Relations from set-valued functions -/
 

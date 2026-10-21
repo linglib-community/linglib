@@ -28,11 +28,14 @@ maximal elements (`Flag.forall_mem_iff`) and so makes it decidable.
 ## Main definitions
 
 * `IsLeftLinear M`: the predecessors of every element are linearly ordered.
+* `IsBranching x`: `x` has at least two covers.
 * `Flag.ofIsMax`: the down-set of a maximal element, as a flag.
 
 ## Main results
 
 * `IsLeftLinear.isChain_Iic`: every principal down-set is a chain.
+* `exists_cherry`: in a finite order whose non-maximal elements all branch, some element is
+  covered by two maximal elements.
 * `Flag.exists_mem_gt_of_lt`: a flag cannot stop at an element with a strict successor; this
   holds in any order.
 * `Flag.exists_isMax_eq_ofIsMax`, `Flag.forall_mem_iff`: on a finite left-linear order the
@@ -78,6 +81,30 @@ theorem le_of_lt_of_covBy {a b m : M} (hm : m ⋖ a) (hb : b < a) : b ≤ m :=
     h.eq_or_lt.elim Eq.ge fun hlt ↦ (hm.2 hlt hb).elim
 
 end IsLeftLinear
+
+/-! ### Branching
+
+A node branches when it has two daughters. In a finite order in which every node with a daughter
+branches, a topmost node with daughters has only maximal daughters, so some node has two maximal
+daughters, a cherry in the language of phylogenetic trees. -/
+
+section Branching
+
+variable {M : Type*} [PartialOrder M]
+
+/-- A node is branching when it has at least two covers. -/
+def IsBranching (x : M) : Prop := {a | x ⋖ a}.Nontrivial
+
+/-- In a finite order in which every non-maximal node branches, a non-maximal node yields a node
+covered by two distinct maximal ones. -/
+theorem exists_cherry [Finite M] (hb : ∀ x : M, ¬ IsMax x → IsBranching x) {x : M}
+    (hx : ¬ IsMax x) : ∃ m a b : M, m ⋖ a ∧ m ⋖ b ∧ a ≠ b ∧ IsMax a ∧ IsMax b := by
+  obtain ⟨m, hm, hmax⟩ := (Set.toFinite {y : M | ¬ IsMax y}).exists_maximal ⟨x, hx⟩
+  obtain ⟨a, ha, b, hb', hab⟩ := hb m hm
+  have key : ∀ c, m ⋖ c → IsMax c := fun c hc ↦ of_not_not fun h ↦ hc.lt.not_ge (hmax h hc.le)
+  exact ⟨m, a, b, ha, hb', hab, key a ha, key b hb'⟩
+
+end Branching
 
 /-! ### Flags
 
