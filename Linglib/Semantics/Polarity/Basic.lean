@@ -20,11 +20,12 @@ notion of polarity in the library is an action of this one group:
 * the polarity of a sentence acts on propositions, the negative polarity by complement
   (`negative • p = pᶜ`), and the orbit of a proposition, the proposition and its negation, is
   the set of its polarity alternatives (`orbit_eq_pair_compl`): the focus value of a focused
-  polarity and the answers of the polar question;
+  polarity and the answers of the polar question. Once there is a world the action is free,
+  no proposition being its own negation;
 * the polarity of an antonym acts on degrees by negation (`negative • x = -x`) and on scales by
   duality (`Semantics/Degree/Antonymy`);
-* the relative polarity of a response to an antecedent, [same] or [reverse], is the product of
-  their polarities;
+* the relative polarity of a response to an antecedent, [same] or [reverse], is the quotient of
+  their polarities, the polarity taking the antecedent's proposition to the response's;
 * the direction of a function, strictly monotone or strictly antitone (`StrictMonoBy`), with
   directions composing as polarities multiply.
 
@@ -125,6 +126,14 @@ instance : MulAction Polarity (Set α) where
   mul_smul s t p := by cases s <;> cases t <;> first | rfl | exact (compl_compl p).symm
 
 @[simp] theorem negative_smul_set (p : Set α) : negative • p = pᶜ := rfl
+
+/-- Over a nonempty type the action on propositions is free, since no proposition is its own
+complement. -/
+instance [Nonempty α] : IsCancelSMul Polarity (Set α) :=
+  isCancelSMul_iff_eq_one_of_smul_eq.mpr fun s p h ↦ by
+    cases s
+    · rfl
+    · exact absurd h compl_ne_self
 
 /-- The polarity alternatives of a proposition, its orbit under the polarity group, are the
 proposition and its negation, the focus value of a focused polarity ([wilder-2013],
