@@ -98,18 +98,18 @@ structure Article extends Determiner where
   /-- The exponent of the article. -/
   exponent : Determiner.Exponent
   /-- The definite uses the article obligatorily expones. -/
-  uses : Finset DefiniteUse := ∅
+  uses : Finset Description.Use := ∅
   deriving DecidableEq
 
 /-- A demonstrative determiner carries its deictic content, the participant sets of the referents
-in whose vicinity it locates its referent. Its `definiteUses` are the definite uses it obligatorily
+in whose vicinity it locates its referent. Its `uses` are the definite uses it obligatorily
 expones, as Mandarin *na* expones the anaphoric use, and they are empty for a demonstrative that
 merely can be used anaphorically. -/
 structure DemonstrativeDeterminer extends Determiner where
   /-- The participant sets of the referents in whose vicinity the form locates its referent. -/
   deixis : Finset (Finset Discourse.Role)
   /-- The definite uses the demonstrative obligatorily expones. -/
-  definiteUses : Finset DefiniteUse := ∅
+  uses : Finset Description.Use := ∅
   deriving DecidableEq
 
 /-- A quantificational determiner records only what its generalized-quantifier denotation
@@ -158,16 +158,16 @@ def kind : Entry → Kind
   | .possessive _ => .possessive
 
 /-- The definite uses an entry obligatorily expones are an article's `uses` and a
-demonstrative's `definiteUses`; a quantifier or possessive expones none. -/
-def definiteUses : Entry → Finset DefiniteUse
+demonstrative's `uses`; a quantifier or possessive expones none. -/
+def uses : Entry → Finset Description.Use
   | .article a => a.uses
-  | .demonstrative d => d.definiteUses
+  | .demonstrative d => d.uses
   | .quantifier _ | .possessive _ => ∅
 
 variable (e : Entry)
 
 /-- An entry marks an article strength when some definite use it expones calls for it. -/
-def Marks (p : Description.Strength) : Prop := ∃ u ∈ e.definiteUses, u.strength = p
+def Marks (p : Description.Strength) : Prop := ∃ u ∈ e.uses, u.strength = p
 
 instance (p : Description.Strength) : Decidable (e.Marks p) := by unfold Marks; infer_instance
 
@@ -280,7 +280,7 @@ end Determiner
 /-- The strengths an article admits are those its uses call for. A syncretic article such as
 English *the* admits both, and a weak or strong article admits one. -/
 def Article.strengths (a : Article) : Finset Description.Strength :=
-  a.uses.image DefiniteUse.strength
+  a.uses.image Description.Use.strength
 
 /-- An article admits a strength iff, as an entry, it marks that strength. -/
 theorem Article.mem_strengths_iff_marks (a : Article) (p : Description.Strength) :

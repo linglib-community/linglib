@@ -27,7 +27,7 @@ largest member.
 
 ## Main results
 
-* `iota_eq_some_iff`, `iota_isSome_iff`, `iota_eq_none_iff`.
+* `iota_eq_some_iff`, `iota_isSome_iff`, `iota_eq_none_iff`, `iota_eq_none_of_ne`.
 * `existsUnique_iff_nonempty_subsingleton`: `∃!` is nonemptiness with subsingletonness.
 * `the_sem_iff_iota`: the determiner *the* asserts its scope of the referent.
 * `iota_isGreatest_eq_some_iff`: the largest member, Chierchia's (11a).
@@ -94,6 +94,10 @@ theorem iota_isSome_iff : (iota P).isSome ↔ ∃! x, P x := by
 
 theorem iota_eq_none_iff : iota P = none ↔ ¬ ∃! x, P x := by
   rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
+
+/-- A predicate with two distinct satisfiers has no iota. -/
+theorem iota_eq_none_of_ne {e' : E} (he : P e) (he' : P e') (hne : e ≠ e') : iota P = none :=
+  (iota_eq_none_iff P).2 fun h ↦ hne (h.unique he he')
 
 /-! ### The definite article -/
 

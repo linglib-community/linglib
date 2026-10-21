@@ -24,11 +24,11 @@ and the descriptions themselves denote in `Semantics/Reference/Description.lean`
   `DefinitenessDegree.definiteness`.
 * `Reference.Description.Strength`, `Reference.Description.Kind`: the strength of a definite
   article and the kind of a description, with `Strength.toKind` and `Kind.strength`.
-* `Reference.DefiniteUse`, `Reference.Bridging`: the uses of a definite and the bridging
-  relations, each with the strength it calls for.
-* `Reference.ArticleType`, `Reference.MarkingStrategy`: the three-cell and four-cell article
-  typologies of Schwarz and of Jenks with Moroney's unmarked cell, and the coarsening
-  `MarkingStrategy.articleType`.
+* `Reference.Description.Use`, `Reference.Description.Bridging`: the uses of a definite
+  description and the bridging relations, each with the strength it calls for.
+* `Reference.ArticleType`, `Reference.MarkingStrategy`: the three-cell article typology of
+  Patel-Grosz and Grosz and the four-cell one of Jenks with Moroney's unmarked cell, and the
+  coarsening `MarkingStrategy.articleType`.
 
 ## References
 
@@ -143,38 +143,40 @@ def Kind.strength : Kind → Option Strength
 @[simp] theorem Strength.strength_toKind (p : Strength) : p.toKind.strength = some p := by
   cases p <;> rfl
 
-end Description
-
-/-- [hawkins-1978]'s uses of a definite description, with the donkey use of [schwarz-2009]. -/
-inductive DefiniteUse where
-  | anaphoric
-  | immediateSituation
-  | largerSituation
-  | bridging
-  | donkey
-  deriving DecidableEq, Repr
-
-/-- The article strength a use calls for ([schwarz-2013]): the anaphoric and donkey uses the
-strong article, the situational uses the weak one, bridging the weak one by default. -/
-def DefiniteUse.strength : DefiniteUse → Description.Strength
-  | .anaphoric | .donkey => .familiarity
-  | .immediateSituation | .largerSituation | .bridging => .uniqueness
-
-/-- The bridging relations ([schwarz-2013]): part–whole bridging, the fridge and its crisper,
-and relational bridging, the play and its author. -/
+/-- A bridging relation is part–whole, as from a fridge to its crisper, or relational, as from a
+play to its author ([schwarz-2013]). -/
 inductive Bridging where
   | partWhole
   | relational
   deriving DecidableEq, Repr
 
-/-- The article strength a bridging relation calls for ([schwarz-2013]): part–whole bridging
-the weak article, relational bridging the strong one. -/
-def Bridging.strength : Bridging → Description.Strength
+/-- Part–whole bridging calls for the weak article and relational bridging for the strong one
+([schwarz-2009]). -/
+def Bridging.strength : Bridging → Strength
   | .partWhole  => .uniqueness
   | .relational => .familiarity
 
-/-- The article systems of [schwarz-2009] and [patel-grosz-grosz-2017]: no article, a weak
-article only, or weak and strong articles. -/
+/-- A use of a definite description is one of [hawkins-1978]'s, with bridging split by its relation,
+or the donkey use of [schwarz-2009]. -/
+inductive Use where
+  | anaphoric
+  | immediateSituation
+  | largerSituation
+  | bridging (b : Bridging)
+  | donkey
+  deriving DecidableEq, Repr
+
+/-- The anaphoric and donkey uses call for the strong article, the situational uses for the weak
+one, and a bridging use for the strength of its relation ([schwarz-2009], [schwarz-2013]). -/
+def Use.strength : Use → Strength
+  | .anaphoric | .donkey => .familiarity
+  | .immediateSituation | .largerSituation => .uniqueness
+  | .bridging b => b.strength
+
+end Description
+
+/-- An article system has no article, a weak article only, or weak and strong articles
+([patel-grosz-grosz-2017]). -/
 inductive ArticleType where
   | articleless
   | weakOnly
