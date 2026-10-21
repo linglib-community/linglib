@@ -34,7 +34,10 @@ entails change (`BeaversEtAl2021.resultStative`). *Again* cannot tell the analys
 the examples reject (`rows_beaversKoontzGarboden`). Its resultative conjoins the root with the
 result phrase by Event Identification (55), which makes one state a state of both; once each
 state has one holder, the Unique Role Requirement (56), the individual in the root's state is the
-holder of the result (`holder_eq_of_up`). On this analysis the holder of the root's state is
+holder of the result (`holder_eq_of_up`). In their own two-sorted interpretations, read as one
+domain, the restitutive reading of a root is their change-denial diagnostic and the internal
+reading a state of their deverbal stative (`not_realized_restitutive_relativize`,
+`realized_internal_relativize_iff`). On this analysis the holder of the root's state is
 existentially closed in a state of its own, so in *a couple of monks broke the corpse loose from
 the deck* it is the deck that breaks (`Monks.sentence`).
 
@@ -43,6 +46,9 @@ the deck* it is the deck that breaks (`Monks.sentence`).
 * The causative head vCAUSE is `EventStructure.Interpretation.vCause` restricted to events
   (`Model.causative`). It introduces no individual and quantifies over a caused eventuality of
   either sort (footnote 7).
+* In two-sorted interpretations `cause` relates events, so the causative head cannot take a stative
+  complement as in (22), Harley's structure without vBECOME (footnote 8); the readings at the verb
+  phrase are compared in one-domain models.
 * The existential closure of the holder at the verb phrase is `Event.closure` of the flipped
   relation, and the agent of (33) is the effector of the change (footnote 17).
 * Beavers and Koontz-Garboden's first objection to (55), that one state cannot carry two
@@ -319,6 +325,128 @@ theorem available_iff : ∀ r, Available a c r ↔ a.Predicts c r
   | .durative => iff_of_true available_durative trivial
   | .internal => available_internal_iff
   | .modifier => available_modifier_iff
+
+/-! ### Two sorts as one domain
+
+Beavers and Koontz-Garboden's interpretations keep states and events as separate types. Such an
+interpretation is a one-domain model over the sum of its sorts, the states on the left
+(`relativize`), and a state predicate is a predicate on the left (`liftState`). Read through it,
+their change-of-state root is their own deverbal stative and this paper's is their own
+change-of-state head, on the event side (`denote_relativize_beaversKoontzGarboden`,
+`denote_relativize_yuAusensiSmith`). The readings of the root are then
+their own notions: a restitutive reading is a state that survives the denial of change, so their
+change-of-state root has none (`not_realized_restitutive_relativize`), and an internal reading is a
+state of the deverbal stative. -/
+
+section Relativize
+
+universe u
+
+variable {Entity : Type*} {State Event : Type u} (N : Interpretation Entity State Event)
+
+/-- The one-domain model of a two-sorted interpretation, on the sum of its sorts with the states
+on the left. -/
+def relativize : Model Entity (State ⊕ Event) where
+  become := Prod.map Sum.inl Sum.inr '' N.become
+  cause := Prod.map Sum.inr Sum.inr '' N.cause
+  effector x := Sum.elim ⊥ (N.effector x)
+  IsState v := v.isLeft
+
+/-- A state predicate as a predicate of the sum of the sorts. -/
+def liftState (P : Entity → State → Prop) (x : Entity) : State ⊕ Event → Prop := Sum.elim (P x) ⊥
+
+variable {N} {P : Entity → State → Prop} {x : Entity}
+
+theorem diamond_relativize_become_inl {q : State ⊕ Event → Prop} {s : State} :
+    ◇[(relativize N).become] q (.inl s) ↔ ◇[N.become] (q ∘ .inr) s := by
+  simp [diamond_iff, relativize]
+
+theorem not_diamond_relativize_become_inr {q : State ⊕ Event → Prop} {e : Event} :
+    ¬ ◇[(relativize N).become] q (.inr e) := by
+  simp [diamond_iff, relativize]
+
+theorem vBecome_relativize_inr {e : Event} :
+    (relativize N).vBecome (liftState P) x (.inr e) ↔ N.vBecome P x e := by
+  simp [Interpretation.vBecome_iff, relativize, liftState]
+
+theorem not_vBecome_relativize_inl {s : State} :
+    ¬ (relativize N).vBecome (liftState P) x (.inl s) := by
+  simp [Interpretation.vBecome_iff, relativize, liftState]
+
+/-- Through relativization a property concept root is its state predicate. -/
+theorem denote_relativize_propertyConcept (a : Analysis) :
+    a.denote (relativize N) .propertyConcept (liftState P) = liftState P := by
+  funext x v
+  rcases v with s | e <;> cases a <;> simp [Analysis.denote, liftState, relativize]
+
+/-- Through relativization Beavers and Koontz-Garboden's change-of-state root is their deverbal
+stative. -/
+theorem denote_relativize_beaversKoontzGarboden :
+    Analysis.beaversKoontzGarboden.denote (relativize N) .changeOfState (liftState P) =
+      liftState (BeaversEtAl2021.resultStative N P) := by
+  funext x v
+  rcases v with s | e
+  · exact propext ⟨fun ⟨⟨hp, hd⟩, _⟩ ↦ ⟨hp, diamond_relativize_become_inl.1 hd⟩,
+      fun ⟨hp, hd⟩ ↦ ⟨⟨hp, diamond_relativize_become_inl.2 hd⟩, rfl⟩⟩
+  · exact propext ⟨fun h ↦ h.1.1, False.elim⟩
+
+/-- Through relativization this paper's change-of-state root is Beavers and Koontz-Garboden's
+change-of-state head, on the event side. -/
+theorem denote_relativize_yuAusensiSmith :
+    Analysis.yuAusensiSmith.denote (relativize N) .changeOfState (liftState P) =
+      fun x ↦ Sum.elim ⊥ (N.vBecome P x) := by
+  funext x v
+  rcases v with s | e
+  · exact propext ⟨fun h ↦ h.2 rfl, False.elim⟩
+  · exact propext ⟨fun h ↦ vBecome_relativize_inr.1 h.1,
+      fun h ↦ ⟨vBecome_relativize_inr.2 h, Bool.false_ne_true⟩⟩
+
+variable {L : State ⊕ Event → Prop} {Q : Entity → State → Prop}
+
+/-- A restitutive reading of a state predicate is one of its states that survives the denial of
+change. -/
+theorem realized_restitutive_liftState_iff :
+    Reading.restitutive.Realized (relativize N) L (liftState Q) x ↔
+      ∃ s, BeaversEtAl2021.DeniesChange N Q x s := by
+  constructor
+  · rintro ⟨s | e, hq, -, hn⟩
+    · exact ⟨s, hq, fun h ↦ hn (diamond_relativize_become_inl.2 h)⟩
+    · exact hq.elim
+  · rintro ⟨s, hq, hn⟩
+    exact ⟨.inl s, hq, rfl, fun h ↦ hn (diamond_relativize_become_inl.1 h)⟩
+
+/-- An internal reading of a state predicate is one of its states. -/
+theorem realized_internal_liftState_iff :
+    Reading.internal.Realized (relativize N) L (liftState Q) x ↔ ∃ s, Q x s :=
+  ⟨fun ⟨v, hq, _⟩ ↦ match v, hq with | .inl s, hq => ⟨s, hq⟩,
+    fun ⟨s, hq⟩ ↦ ⟨.inl s, hq, rfl⟩⟩
+
+/-- In their own interpretations Beavers and Koontz-Garboden's change-of-state root has no
+restitutive reading, since a deverbal stative never survives the denial of change. -/
+theorem not_realized_restitutive_relativize :
+    ¬ Reading.restitutive.Realized (relativize N) L
+      (Analysis.beaversKoontzGarboden.denote (relativize N) .changeOfState (liftState P)) x := by
+  rw [denote_relativize_beaversKoontzGarboden, realized_restitutive_liftState_iff]
+  exact fun ⟨_, h⟩ ↦ BeaversEtAl2021.not_deniesChange_resultStative N h
+
+/-- In their own interpretations Beavers and Koontz-Garboden's change-of-state root has an
+internal reading wherever a change has given rise to a state of its description. -/
+theorem realized_internal_relativize_iff :
+    Reading.internal.Realized (relativize N) L
+        (Analysis.beaversKoontzGarboden.denote (relativize N) .changeOfState (liftState P)) x ↔
+      ∃ s, BeaversEtAl2021.resultStative N P x s := by
+  rw [denote_relativize_beaversKoontzGarboden, realized_internal_liftState_iff]
+
+/-- In the interpretation in which every state arises from a change, Beavers and
+Koontz-Garboden's change-of-state root has the internal reading that the examples reject,
+(27)–(29). -/
+theorem changing_internal :
+    Reading.internal.Realized (relativize BeaversKoontzGarboden2020.changing) ⊥
+      (Analysis.beaversKoontzGarboden.denote (relativize BeaversKoontzGarboden2020.changing)
+        .changeOfState (liftState fun _ _ ↦ True)) () :=
+  realized_internal_relativize_iff.2 ⟨(), trivial, (), trivial, trivial⟩
+
+end Relativize
 
 /-! ### Resultatives -/
 
