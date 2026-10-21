@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Probe.Agree
+public import Linglib.Syntax.Minimalist.Probe.Minimal
+public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.List.MinMax
 
@@ -29,6 +30,8 @@ Multiple Agree. On singleton classes these are `Probe.search` and `Probe.Spec.ag
 
 * `Minimalist.Probe.Spec.mem_bestMatches_iff`: Best Match as the closest class with a satisfier.
 * `Minimalist.Probe.Spec.card_satFeatures_eq_of_mem_bestMatches`: best matches match equally.
+* `Minimalist.Probe.Spec.mem_bestMatches_iff_finds`: Best Match is Relativized Minimality keyed by
+  a goal's class and then by the satisfaction features it bears.
 * `Minimalist.Probe.Spec.bestMatches_map_singleton`,
   `Minimalist.Probe.Spec.interacted_map_singleton`, `Minimalist.Probe.Spec.copied_map_singleton`:
   singleton classes give the linear search and Agree.
@@ -257,5 +260,121 @@ theorem mem_flatten_of_mem_interacted (h : a ∈ sp.interacted feats d) : a ∈ 
 
 @[simp] theorem copied_bot : (⊥ : Spec F).copied feats d = ∅ := by
   simp [copied]
+
+/-! ### Best Match as Relativized Minimality -/
+
+/-- A best match is an inspected goal that satisfies the probe. -/
+theorem mem_bestMatches_iff_mem_inspected :
+    a ∈ sp.bestMatches feats d ↔ a ∈ sp.inspected feats d ∧ (sp.toProbe feats).sat a := by
+  refine ⟨fun h ↦ ⟨List.mem_append_right _ h, sat_of_mem_bestMatches h⟩, fun ⟨h, hs⟩ ↦ ?_⟩
+  rcases List.mem_append.mp h with h | h
+  · obtain ⟨c, hc, hac⟩ := List.mem_flatten.mp h
+    have := List.mem_takeWhile_imp hc
+    simp only [Bool.not_eq_eq_eq_not, Bool.not_true, List.any_eq_false] at this
+    exact absurd hs (by simpa using this a hac)
+  · exact h
+
+section Key
+
+variable [DecidableEq α]
+
+variable (sp feats) in
+/-- The key of Best Match over a domain of classes: a goal's class, and then the satisfaction
+features it bears, more features being closer. -/
+def bestMatchKey (d : List (List α)) (a : α) : ℕ ×ₗ ℕᵒᵈ :=
+  toLex (d.findIdx (a ∈ ·), OrderDual.toDual (sp.satFeatures feats a).card)
+
+private theorem bestMatchKey_cons_of_not_mem (h : a ∉ c) :
+    sp.bestMatchKey feats (c :: d) a =
+      toLex (d.findIdx (a ∈ ·) + 1, OrderDual.toDual (sp.satFeatures feats a).card) := by
+  simp [bestMatchKey, List.findIdx_cons, h]
+
+private theorem bestMatchKey_cons_of_mem (h : a ∈ c) :
+    sp.bestMatchKey feats (c :: d) a =
+      toLex (0, OrderDual.toDual (sp.satFeatures feats a).card) := by
+  simp [bestMatchKey, List.findIdx_cons, h]
+
+/-- The goals a specification inspects are those no satisfier is closer than under the key of
+Best Match. -/
+theorem mem_inspected_iff_inspects :
+    a ∈ sp.inspected feats d ↔
+      (sp.toProbe feats).Inspects {b | b ∈ d.flatten} (sp.bestMatchKey feats d) a := by
+  induction d with
+  | nil => simp [inspected, Inspects]
+  | cons c d ih =>
+    by_cases h : c.any (sp.toProbe feats).sat
+    · have hins : sp.inspected feats (c :: d) = sp.bestIn feats c := by
+        simp [inspected, h, bestMatches_cons_of_any h]
+      obtain ⟨s, hs, hss⟩ := List.any_eq_true.mp h
+      rw [hins, mem_bestIn_iff]
+      constructor
+      · rintro ⟨ha, hmax⟩
+        refine ⟨by simp [ha], fun b hb hsb hlt ↦ ?_⟩
+        by_cases hbc : b ∈ c
+        · rw [bestMatchKey_cons_of_mem hbc, bestMatchKey_cons_of_mem ha,
+            Prod.Lex.toLex_lt_toLex] at hlt
+          simp only [lt_self_iff_false, true_and, false_or, OrderDual.toDual_lt_toDual] at hlt
+          exact absurd (hmax b hbc) (not_le.2 hlt)
+        · rw [bestMatchKey_cons_of_not_mem hbc, bestMatchKey_cons_of_mem ha,
+            Prod.Lex.toLex_lt_toLex] at hlt
+          simp at hlt
+      · rintro ⟨ha, hins⟩
+        have hac : a ∈ c := by
+          by_contra hac
+          refine hins (by simp [hs]) hss ?_
+          rw [bestMatchKey_cons_of_mem hs, bestMatchKey_cons_of_not_mem hac,
+            Prod.Lex.toLex_lt_toLex]
+          exact .inl (Nat.succ_pos _)
+        refine ⟨hac, fun b hb ↦ le_of_not_gt fun hlt ↦ ?_⟩
+        have hsb : (sp.toProbe feats).sat b := by
+          simp only [toProbe_sat, decide_eq_true_eq, ← Finset.card_pos]
+          exact (Nat.zero_le _).trans_lt hlt
+        refine hins (by simp [hb]) hsb ?_
+        rw [bestMatchKey_cons_of_mem hb, bestMatchKey_cons_of_mem hac, Prod.Lex.toLex_lt_toLex]
+        exact .inr ⟨rfl, OrderDual.toDual_lt_toDual.2 hlt⟩
+    · have hins : sp.inspected feats (c :: d) = c ++ sp.inspected feats d := by
+        simp [inspected, h, bestMatches_cons_of_not_any h]
+      simp only [List.any_eq_true, not_exists, not_and] at h
+      rw [hins, List.mem_append, ih]
+      by_cases hac : a ∈ c
+      · simp only [hac, true_or, true_iff]
+        refine ⟨by simp [hac], fun b hb hsb hlt ↦ ?_⟩
+        have hbc : b ∉ c := fun hbc ↦ h b hbc hsb
+        rw [bestMatchKey_cons_of_not_mem hbc, bestMatchKey_cons_of_mem hac,
+          Prod.Lex.toLex_lt_toLex] at hlt
+        simp at hlt
+      · simp only [hac, false_or, Inspects, Set.mem_ofPred_eq, List.flatten_cons, List.mem_append]
+        constructor
+        · rintro ⟨ha, hins⟩
+          refine ⟨ha, fun b hb hsb hlt ↦ ?_⟩
+          have hbc : b ∉ c := fun hbc ↦ h b hbc hsb
+          rw [bestMatchKey_cons_of_not_mem hbc, bestMatchKey_cons_of_not_mem hac,
+            Prod.Lex.toLex_lt_toLex] at hlt
+          refine hins (hb.resolve_left hbc) hsb ?_
+          simp only [bestMatchKey, Prod.Lex.toLex_lt_toLex]
+          simpa using hlt
+        · rintro ⟨ha, hins⟩
+          refine ⟨ha, fun b hb hsb hlt ↦ ?_⟩
+          have hbc : b ∉ c := fun hbc ↦ h b hbc hsb
+          refine hins (.inr hb) hsb ?_
+          rw [bestMatchKey_cons_of_not_mem hbc, bestMatchKey_cons_of_not_mem hac,
+            Prod.Lex.toLex_lt_toLex]
+          simp only [bestMatchKey, Prod.Lex.toLex_lt_toLex] at hlt
+          simpa using hlt
+
+/-- Best Match is Relativized Minimality keyed by a goal's class and then by the satisfaction
+features it bears. -/
+theorem mem_bestMatches_iff_finds :
+    a ∈ sp.bestMatches feats d ↔
+      (sp.toProbe feats).Finds {b | b ∈ d.flatten} (sp.bestMatchKey feats d) a := by
+  rw [mem_bestMatches_iff_mem_inspected, mem_inspected_iff_inspects, finds_iff]
+
+/-- Agree over classes flags the goals the probe agrees with under the key of Best Match. -/
+theorem mem_interacted_iff_agreesWith :
+    a ∈ sp.interacted feats d ↔
+      (sp.toProbe feats).AgreesWith {b | b ∈ d.flatten} (sp.bestMatchKey feats d) a := by
+  rw [interacted, List.mem_filter, mem_inspected_iff_inspects, AgreesWith]
+
+end Key
 
 end Minimalist.Probe.Spec

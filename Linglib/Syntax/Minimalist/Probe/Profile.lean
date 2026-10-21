@@ -13,8 +13,8 @@ that terminates its search, its horizon. Keine labels a clause bilaterally, by t
 it projects, and a clause is transparent to a probe exactly when its label does not contain the
 horizon. Transparency is then antitone in the extension order of clause spines, which is Upward
 Entailment, and a probe whose horizon lies in the label of its own sister is vacuous, the premise
-of the Height–Locality Theorem. A profile denotes a `Probe` over any goal type that exposes a
-label; the tree-native counterpart of a horizon is `SyntacticObject.behindHorizonIn`.
+of the Height–Locality Theorem. A horizon cuts the domain a probe searches
+(`Probe.Inspects.of_subset`); its tree-native form is `SyntacticObject.behindHorizonIn`.
 
 ## Main definitions
 
@@ -22,7 +22,6 @@ label; the tree-native counterpart of a horizon is `SyntacticObject.behindHorizo
 * `Minimalist.Probe.Profile.TransparentTo`: a bilateral label not containing the horizon.
 * `Minimalist.Probe.Profile.IsVacuous`: a horizon lying in the label of the probe's sister on the
   standard verbal spine.
-* `Minimalist.Probe.Profile.toProbe`: the probe a profile denotes over goals exposing labels.
 
 ## Main results
 
@@ -100,13 +99,6 @@ instance : Decidable p.IsVacuous := inferInstanceAs (Decidable (¬ _))
 /-- A probe without horizon is never vacuous. -/
 @[simp] theorem not_isVacuous_mk_none (head : Cat) : ¬ (Probe.Profile.mk head none).IsVacuous :=
   not_not_intro (transparentTo_mk_none head _)
-
-/-! ### Denotation into the canonical `Probe` -/
-
-/-- The probe a profile denotes over goals exposing a label, which sees a goal iff the goal's
-label is transparent to it. -/
-def toProbe {α : Type*} (labelOf : α → Finset Cat) : Probe α :=
-  .relativized fun a ↦ decide (p.TransparentTo (labelOf a))
 
 end Probe.Profile
 
