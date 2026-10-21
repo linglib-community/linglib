@@ -130,10 +130,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "Mɨ kes paci kɛrd.",
-        "judgment": "ungrammatical"
-      }
+      {"form": "Mɨ kes paci kɛrd.", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": {"test": "npi", "npi": "kes"},
@@ -246,7 +243,12 @@
       {"name": "mixed I-utterance you-reported", "judgment": "unacceptable"},
       {"name": "mixed I-reported you-utterance", "judgment": "unacceptable"}
     ],
-    "paperFeatures": {"entry": "vano", "indexicals": "I, you", "test": "shift_together"},
+    "paperFeatures": [
+      ["entry", "vano"],
+      ["indexical", "I"],
+      ["indexical", "you"],
+      ["test", "shift_together"]
+    ],
     "comment": "",
     "verified": "page-image"
   },
@@ -265,13 +267,15 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "Hɛsen mɨ-ra va kɛ ɛz nɨka ita ena.",
-        "judgment": "ungrammatical"
-      }
+      {"form": "Hɛsen mɨ-ra va kɛ ɛz nɨka ita ena.", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": {"entry": "vano", "indexicals": "now, here", "test": "shift_together"},
+    "paperFeatures": [
+      ["entry", "vano"],
+      ["indexical", "now"],
+      ["indexical", "here"],
+      ["test", "shift_together"]
+    ],
     "comment": "",
     "verified": "page-image"
   },
@@ -295,7 +299,13 @@
       {"name": "both reported", "judgment": "acceptable"},
       {"name": "mixed persons-reported time-utterance", "judgment": "unacceptable"}
     ],
-    "paperFeatures": {"entry": "vano", "indexicals": "I, you, in two weeks", "test": "shift_together"},
+    "paperFeatures": [
+      ["entry", "vano"],
+      ["indexical", "I"],
+      ["indexical", "you"],
+      ["indexical", "in two weeks"],
+      ["test", "shift_together"]
+    ],
     "comment": "",
     "verified": "page-image"
   },
@@ -340,7 +350,12 @@
       {"name": "mixed friend-reported slippers-utterance", "judgment": "unacceptable"},
       {"name": "mixed friend-utterance slippers-reported", "judgment": "unacceptable"}
     ],
-    "paperFeatures": {"entry": "slave_want", "indexicals": "I, I", "test": "shift_together"},
+    "paperFeatures": [
+      ["entry", "slave_want"],
+      ["indexical", "I"],
+      ["indexical", "I"],
+      ["test", "shift_together"]
+    ],
     "comment": "The two first-person possessors must both be the embedded author. The paper prints gon´ɨhkie with a spacing acute before ɨ, distinct from its apostrophe ’; copied as printed, the intended form being uncertain.",
     "verified": "page-image"
   },
@@ -367,7 +382,13 @@
       {"name": "mixed first-reported second-utterance", "judgment": "unacceptable"},
       {"name": "mixed first-utterance second-reported", "judgment": "unacceptable"}
     ],
-    "paperFeatures": {"entry": "vano", "indexicals": "me, me", "test": "shift_together", "c_command": "no"},
+    "paperFeatures": [
+      ["entry", "vano"],
+      ["indexical", "me"],
+      ["indexical", "me"],
+      ["test", "shift_together"],
+      ["c_command", "no"]
+    ],
     "comment": "The two indexicals are in separate relative clauses, so Shift-Together is not a crossing-binding-paths effect. The paper's gloss line prints the second clause as 'me.OBL NEG like do', with NEG and like in the reverse order of hes ne.",
     "verified": "page-image"
   },
@@ -388,9 +409,9 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "Hesen (lowest report)", "judgment": "acceptable"},
-      {"name": "Ali (intermediate report)", "judgment": "acceptable"},
-      {"name": "Andrew (utterance)", "judgment": "unacceptable"}
+      {"name": "lowest reported context", "judgment": "acceptable"},
+      {"name": "intermediate reported context", "judgment": "acceptable"},
+      {"name": "utterance context", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "I", "test": "multiple_embedding", "intermediate_shift": "yes"},
     "comment": "The shifted *to-ra* 'to you' (Andrew, not the neighbor) diagnoses the operator in the intermediate clause, which has overwritten the utterance context.",
@@ -413,9 +434,9 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "Hesen (lowest report)", "judgment": "acceptable"},
-      {"name": "Ali (intermediate report)", "judgment": "acceptable"},
-      {"name": "Andrew (utterance)", "judgment": "acceptable"}
+      {"name": "lowest reported context", "judgment": "acceptable"},
+      {"name": "intermediate reported context", "judgment": "acceptable"},
+      {"name": "utterance context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "I", "test": "multiple_embedding", "intermediate_shift": "no"},
     "comment": "The gloss subscript {H,A,U} and the prose allow the utterance author; the printed translation's asterisk on Andrew is a typo carried over from (32).",
@@ -471,9 +492,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "reported context", "judgment": "acceptable"}
+      {"name": "both reported", "judgment": "acceptable"}
     ],
-    "paperFeatures": {"entry": "slave_tell", "indexical": "I", "indexicals": "I, you"},
+    "paperFeatures": [
+      ["entry", "slave_tell"],
+      ["indexical", "I"],
+      ["indexical", "you"]
+    ],
     "comment": "Under TELL both embedded persons refer to the author and addressee of the reported context. The paper prints ráwǫd´ɨ with a spacing acute before ɨ, distinct from its apostrophe ’; copied as printed, the intended form being uncertain.",
     "verified": "page-image"
   },
@@ -636,12 +661,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "mixed I-reported me-utterance",
-        "judgment": "unacceptable"
-      }
+      {"name": "mixed I-reported me-utterance", "judgment": "unacceptable"}
     ],
-    "paperFeatures": {"test": "shift_together", "indexicals": "I, me"},
+    "paperFeatures": [
+      ["test", "shift_together"],
+      ["indexical", "I"],
+      ["indexical", "me"]
+    ],
     "comment": "Schlenker's apparent counterexample to Shift-Together (from Leslau 1995); the authors add that the sentence cannot mean John_i said that he_i will not obey me, the mixed reading.",
     "verified": "page-image"
   },

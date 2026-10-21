@@ -156,7 +156,7 @@ def ex_13 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("both reported", .acceptable), ("both utterance", .acceptable), ("mixed I-utterance you-reported", .unacceptable), ("mixed I-reported you-utterance", .unacceptable)]
-    paperFeatures := [("entry", "vano"), ("indexicals", "I, you"), ("test", "shift_together")] }
+    paperFeatures := [("entry", "vano"), ("indexical", "I"), ("indexical", "you"), ("test", "shift_together")] }
 
 def ex_14 : Datum :=
   { id := "anandnevins2004_14"
@@ -169,7 +169,7 @@ def ex_14 : Datum :=
     judgment := .acceptable
     alternatives := [("Hɛsen mɨ-ra va kɛ ɛz nɨka ita ena.", .ungrammatical)]
     readings := []
-    paperFeatures := [("entry", "vano"), ("indexicals", "now, here"), ("test", "shift_together")] }
+    paperFeatures := [("entry", "vano"), ("indexical", "now"), ("indexical", "here"), ("test", "shift_together")] }
 
 def ex_15 : Datum :=
   { id := "anandnevins2004_15"
@@ -182,7 +182,7 @@ def ex_15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("both reported", .acceptable), ("mixed persons-reported time-utterance", .unacceptable)]
-    paperFeatures := [("entry", "vano"), ("indexicals", "I, you, in two weeks"), ("test", "shift_together")] }
+    paperFeatures := [("entry", "vano"), ("indexical", "I"), ("indexical", "you"), ("indexical", "in two weeks"), ("test", "shift_together")] }
 
 def ex_17 : Datum :=
   { id := "anandnevins2004_17"
@@ -208,7 +208,7 @@ def ex_18 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("both reported", .acceptable), ("mixed friend-reported slippers-utterance", .unacceptable), ("mixed friend-utterance slippers-reported", .unacceptable)]
-    paperFeatures := [("entry", "slave_want"), ("indexicals", "I, I"), ("test", "shift_together")] }
+    paperFeatures := [("entry", "slave_want"), ("indexical", "I"), ("indexical", "I"), ("test", "shift_together")] }
 
 def ex_21 : Datum :=
   { id := "anandnevins2004_21"
@@ -221,7 +221,7 @@ def ex_21 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("both reported", .acceptable), ("both utterance", .acceptable), ("mixed first-reported second-utterance", .unacceptable), ("mixed first-utterance second-reported", .unacceptable)]
-    paperFeatures := [("entry", "vano"), ("indexicals", "me, me"), ("test", "shift_together"), ("c_command", "no")] }
+    paperFeatures := [("entry", "vano"), ("indexical", "me"), ("indexical", "me"), ("test", "shift_together"), ("c_command", "no")] }
 
 def ex_32 : Datum :=
   { id := "anandnevins2004_32"
@@ -233,7 +233,7 @@ def ex_32 : Datum :=
     context := "Andrew, secretly the brother of the traitor Rojda, is confronted by Hesen; Ali overhears, then tells Andrew what Hesen said; Andrew reports Ali's words to his neighbor (31)."
     judgment := .acceptable
     alternatives := []
-    readings := [("Hesen (lowest report)", .acceptable), ("Ali (intermediate report)", .acceptable), ("Andrew (utterance)", .unacceptable)]
+    readings := [("lowest reported context", .acceptable), ("intermediate reported context", .acceptable), ("utterance context", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "multiple_embedding"), ("intermediate_shift", "yes")] }
 
 def ex_33 : Datum :=
@@ -246,7 +246,7 @@ def ex_33 : Datum :=
     context := "As for (32), but Ali overheard Hesen telling Fatima."
     judgment := .acceptable
     alternatives := []
-    readings := [("Hesen (lowest report)", .acceptable), ("Ali (intermediate report)", .acceptable), ("Andrew (utterance)", .acceptable)]
+    readings := [("lowest reported context", .acceptable), ("intermediate reported context", .acceptable), ("utterance context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "multiple_embedding"), ("intermediate_shift", "no")] }
 
 def ex_34a : Datum :=
@@ -285,8 +285,8 @@ def ex_36 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("reported context", .acceptable)]
-    paperFeatures := [("entry", "slave_tell"), ("indexical", "I"), ("indexicals", "I, you")] }
+    readings := [("both reported", .acceptable)]
+    paperFeatures := [("entry", "slave_tell"), ("indexical", "I"), ("indexical", "you")] }
 
 def ex_37a : Datum :=
   { id := "anandnevins2004_37a"
@@ -390,7 +390,7 @@ def ex_46 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("mixed I-reported me-utterance", .unacceptable)]
-    paperFeatures := [("test", "shift_together"), ("indexicals", "I, me")] }
+    paperFeatures := [("test", "shift_together"), ("indexical", "I"), ("indexical", "me")] }
 
 def ex_47 : Datum :=
   { id := "anandnevins2004_47"
