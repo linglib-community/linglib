@@ -50,7 +50,7 @@ the modal-base timing licenses *will*, and the acquisition timing does not
 
 namespace Huijsmans2025
 
-open Modality Tense
+open Modality Semantics Tense
 
 variable {T W : Type*} [LinearOrder T]
 
@@ -123,10 +123,15 @@ theorem futureClaim_of_necessityClaim {mb : Set (T → W → Prop)} {h : Backgro
 
 /-- On the rival analysis (39), the future morphemes require the evidence to be acquired before the
 event, and the inferential at or after it, the frame's `Downstream`. -/
-def EatFuture (f : EvidentialFrame T) : Prop := f.acquisitionTime < f.eventTime
+def EatFuture (f : EvidentialFrame T) : Prop :=
+  ({ eventToAcquisition := ⟦future⟧ } : EvidentialFrame.Constraint).Holds f
 
 instance (f : EvidentialFrame T) : Decidable (EatFuture f) :=
-  inferInstanceAs (Decidable (_ < _))
+  inferInstanceAs (Decidable (EvidentialFrame.Constraint.Holds _ f))
+
+/-- The evidence is acquired before the event. -/
+theorem eatFuture_iff {f : EvidentialFrame T} : EatFuture f ↔ f.acquisitionTime < f.eventTime := by
+  simp [EatFuture, EvidentialFrame.Constraint.Holds]
 
 /-- A modal-base proposition can be acquired only once it holds. -/
 def AcquiredAfterOnset (mb : Set (T → W → Prop)) (w : W) (f : EvidentialFrame T) : Prop :=

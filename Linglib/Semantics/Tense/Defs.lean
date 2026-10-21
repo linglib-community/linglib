@@ -118,6 +118,10 @@ theorem comp_sup_right (R S S' : Finset Ordering) : comp R (S ⊔ S') = comp R S
 /-- A future followed by a past leaves the relation of the outer times open. -/
 @[simp] theorem comp_future_past : comp ⟦future⟧ ⟦past⟧ = ⊤ := by decide
 
+/-- A nonfuture followed by a nonfuture is a nonfuture. -/
+@[simp] theorem comp_compl_future_compl_future : comp ⟦future⟧ᶜ ⟦future⟧ᶜ = ⟦future⟧ᶜ := by
+  decide
+
 variable {T : Type*} {C D : Finset Ordering} {p r : T}
 
 /-! ### Cells on linear time -/
