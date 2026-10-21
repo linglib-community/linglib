@@ -6,8 +6,9 @@ public import Linglib.Semantics.Aspect.Viewpoint
 /-!
 # Smith (1997): The Parameter of Aspect
 
-Aspectual meaning as an independent choice of situation type (`VendlerClass`) and viewpoint
-(`ViewpointType`). What a viewpoint makes visible is derived from the substrate's relation
+This file formalizes Smith's two-component theory, in which a sentence's aspectual meaning
+combines a situation type (`VendlerClass`) and an independently chosen viewpoint
+(`ViewpointType`). What each viewpoint makes visible is derived from the substrate's relation
 between topic time and situation time, not stipulated per viewpoint.
 
 ## Main results
