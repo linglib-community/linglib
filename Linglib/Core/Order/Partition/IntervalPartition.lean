@@ -6,35 +6,40 @@ public import Mathlib.Data.Finset.Sort
 /-!
 # Interval partitions
 
-`[UPSTREAM]` candidate beside `Mathlib/Order/Partition/Finpartition.lean`. An interval partition
-of a finite subset of a linear order lists the subset's parts from the bottom up, each nonempty and
-lying wholly below the next. Each part is then a run of the subset, the parts are the fibres of a
-contiguous map on it, and the partition is determined by the part each element lies in.
+This file defines interval partitions of a finite subset of a linear order: lists of nonempty
+finsets, each lying below the next. The parts are intervals of the support, and the map sending an
+element to its part is contiguous and determines the partition.
 
-## Main definitions
+`[UPSTREAM]` candidate beside `Mathlib/Order/Partition/Finpartition.lean`.
 
-* `IntervalPartition`: the parts of a finite subset of a linear order, from the bottom up.
-* `IntervalPartition.support`, `IntervalPartition.part`: the subset, and the part of an element.
-* `IntervalPartition.discrete`, `IntervalPartition.indiscrete`: singleton parts, and one part.
+## Main declarations
+
+* `IntervalPartition α`: an interval partition of a finite subset of `α`.
+* `IntervalPartition.support`: the union of the parts.
+* `IntervalPartition.part`: the part containing an element, or `∅`.
+* `IntervalPartition.discrete`, `IntervalPartition.indiscrete`: the partitions into singletons
+  and into one part.
 
 ## Main statements
 
-* `IntervalPartition.mem_of_le_of_le`: a part is a run of the support.
-* `IntervalPartition.isContiguous_part`: the parts are the fibres of a contiguous map.
-* `IntervalPartition.ext_part`: a partition is determined by the parts of its elements.
+* `IntervalPartition.mem_of_le_of_le`: the parts are intervals of the support.
+* `IntervalPartition.isContiguous_part`: `part` is contiguous on the support.
+* `IntervalPartition.ext_part`: an interval partition is determined by `part`.
+* `IntervalPartition.eq_discrete_iff_injOn`: an interval partition is discrete iff `part` is
+  injective on its support.
 -/
 
 @[expose] public section
 
-/-- An interval partition of a finite subset of `α`: its parts from the bottom up, each nonempty
-and lying wholly below the next. -/
+/-- An interval partition of a finite subset of `α`: a list of nonempty finsets, each lying below
+the next. -/
 @[ext]
 structure IntervalPartition (α : Type*) [LinearOrder α] where
-  /-- The parts, from the bottom up. -/
+  /-- The parts, in increasing order. -/
   parts : List (Finset α)
-  /-- Every part is nonempty. -/
+  /-- The parts are nonempty. -/
   nonempty_of_mem_parts ⦃A : Finset α⦄ : A ∈ parts → A.Nonempty
-  /-- Each part lies wholly below every later one. -/
+  /-- Each part lies below every later part. -/
   pairwise : parts.Pairwise fun A B ↦ ∀ a ∈ A, ∀ b ∈ B, a < b
   deriving DecidableEq
 
@@ -42,12 +47,12 @@ namespace IntervalPartition
 
 variable {α : Type*} [LinearOrder α] (P : IntervalPartition α) {A B s : Finset α} {x y z : α}
 
-/-- The elements the parts cover. -/
+/-- The union of the parts. -/
 def support : Finset α := P.parts.toFinset.biUnion id
 
 @[simp] theorem mem_support : x ∈ P.support ↔ ∃ A ∈ P.parts, x ∈ A := by simp [support]
 
-/-- Of two distinct parts one lies wholly below the other. -/
+/-- Of two distinct parts, one lies below the other. -/
 theorem lt_or_gt_of_ne (hA : A ∈ P.parts) (hB : B ∈ P.parts) (hAB : A ≠ B) :
     (∀ a ∈ A, ∀ b ∈ B, a < b) ∨ ∀ a ∈ A, ∀ b ∈ B, b < a := by
   obtain ⟨i, hi, rfl⟩ := List.getElem_of_mem hA
@@ -56,7 +61,6 @@ theorem lt_or_gt_of_ne (hA : A ∈ P.parts) (hB : B ∈ P.parts) (hAB : A ≠ B)
   rcases lt_trichotomy i j with h | rfl | h
   exacts [.inl (hP i j hi hj h), absurd rfl hAB, .inr fun a ha b hb ↦ hP j i hj hi h b hb a ha]
 
-/-- Parts that share an element are equal. -/
 theorem eq_of_mem_parts (hA : A ∈ P.parts) (hB : B ∈ P.parts) (hxA : x ∈ A) (hxB : x ∈ B) :
     A = B := by
   by_contra hAB
@@ -67,8 +71,7 @@ theorem nodup_parts : P.parts.Nodup :=
     obtain ⟨a, ha⟩ := P.nonempty_of_mem_parts hA
     exact (h a ha a (hAB ▸ ha)).false
 
-/-- A part is a run of the support: an element of the support between two elements of a part
-lies in that part. -/
+/-- A part contains every element of the support lying between two of its elements. -/
 theorem mem_of_le_of_le (hA : A ∈ P.parts) (hx : x ∈ A) (hz : z ∈ A) (hy : y ∈ P.support)
     (hxy : x ≤ y) (hyz : y ≤ z) : y ∈ A := by
   obtain ⟨B, hB, hyB⟩ := P.mem_support.1 hy
@@ -79,7 +82,7 @@ theorem mem_of_le_of_le (hA : A ∈ P.parts) (hx : x ∈ A) (hz : z ∈ A) (hy :
 
 /-! ### The part of an element -/
 
-/-- The part containing `x`, or `∅` if no part does. -/
+/-- The part containing `x`, or `∅` if `x ∉ P.support`. -/
 def part (x : α) : Finset α := (P.parts.find? (x ∈ ·)).getD ∅
 
 theorem part_eq_of_mem (hA : A ∈ P.parts) (hx : x ∈ A) : P.part x = A := by
@@ -114,14 +117,18 @@ alias ⟨_, mem_part⟩ := mem_part_self
   ⟨fun h hx ↦ by simpa [h] using P.mem_part hx, fun hx ↦ by
     ext y; simpa [mem_part_iff_exists] using fun A hA _ hxA ↦ hx (P.mem_support.2 ⟨A, hA, hxA⟩)⟩
 
-/-- The parts are the fibres of a contiguous map on the support. -/
+@[simp] theorem part_subset_support (x : α) : P.part x ⊆ P.support := fun _ hy ↦ by
+  obtain ⟨A, hA, hyA, -⟩ := P.mem_part_iff_exists.1 hy
+  exact P.mem_support.2 ⟨A, hA, hyA⟩
+
+/-- `part` is contiguous on the support. -/
 theorem isContiguous_part : IsContiguous fun x : P.support ↦ P.part x := by
   intro x y z hxy hyz (hxz : P.part x = P.part z)
   have hA := P.part_mem.2 x.2
   exact (P.part_eq_of_mem hA (P.mem_of_le_of_le hA (P.mem_part x.2)
     (hxz ▸ P.mem_part z.2) y.2 hxy hyz)).symm
 
-/-- A partition is determined by the parts of its elements. -/
+/-- An interval partition is determined by `part`. -/
 theorem ext_part {Q : IntervalPartition α} (h : ∀ x, P.part x = Q.part x) : P = Q := by
   have hmem {P Q : IntervalPartition α} (h : ∀ x, P.part x = Q.part x) {A : Finset α}
       (hA : A ∈ P.parts) : A ∈ Q.parts := by
@@ -136,7 +143,7 @@ theorem ext_part {Q : IntervalPartition α} (h : ∀ x, P.part x = Q.part x) : P
   obtain ⟨b, hb⟩ := Q.nonempty_of_mem_parts hB
   exact absurd (hAB a ha b hb) (hBA b hb a ha).asymm
 
-/-! ### Singleton parts, and one part -/
+/-! ### Discrete and indiscrete partitions -/
 
 /-- The partition of `s` into singletons. -/
 def discrete (s : Finset α) : IntervalPartition α where
@@ -146,7 +153,7 @@ def discrete (s : Finset α) : IntervalPartition α where
     rw [Finset.mem_singleton] at ha hb
     exact ha ▸ hb ▸ h
 
-/-- The partition of a nonempty `s` into one part. -/
+/-- The partition of a nonempty `s` into a single part. -/
 def indiscrete (s : Finset α) (hs : s.Nonempty) : IntervalPartition α :=
   ⟨[s], by simpa using hs, List.pairwise_singleton _ _⟩
 
@@ -160,5 +167,16 @@ def indiscrete (s : Finset α) (hs : s.Nonempty) : IntervalPartition α :=
 
 @[simp] theorem part_indiscrete (hs : s.Nonempty) (hx : x ∈ s) : (indiscrete s hs).part x = s :=
   part_eq_of_mem _ (List.mem_singleton_self s) hx
+
+/-- An interval partition is discrete iff `part` is injective on its support. -/
+theorem eq_discrete_iff_injOn : P = discrete P.support ↔ Set.InjOn P.part P.support := by
+  refine ⟨fun h x hx y hy hxy ↦ ?_, fun h ↦ ext_part _ fun x ↦ ?_⟩
+  · rw [h, support_discrete] at *
+    exact Finset.singleton_injective (by simpa [part_discrete hx, part_discrete hy] using hxy)
+  by_cases hx : x ∈ P.support
+  · rw [part_discrete hx]
+    refine Finset.eq_singleton_iff_unique_mem.2 ⟨P.mem_part hx, fun y hy ↦ ?_⟩
+    exact h (P.part_subset_support x hy) hx (P.part_eq_of_mem (P.part_mem.2 hx) hy)
+  · rw [P.part_eq_empty.2 hx, (discrete P.support).part_eq_empty.2 (by simpa using hx)]
 
 end IntervalPartition
