@@ -1,0 +1,548 @@
+[
+  {
+    "id": "hammerlymathieu2026_1a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(1a)"},
+    "language": "rain1239",
+    "primaryText": "nin-gikendam mindido-d mooz",
+    "glossedTokens": [
+      ["nin-gikendam", "1-know.AI"], ["mindido-d", "big-3"], ["mooz", "moose"]
+    ],
+    "translation": "I know that the moose is big.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["subject", "3"],
+      ["lda", "none"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_1b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(1b)"},
+    "language": "rain1239",
+    "primaryText": "nin-gikenim-aa mindido-d mooz",
+    "glossedTokens": [
+      ["nin-gikenim-aa", "1-know.TA-3"], ["mindido-d", "big-3"], ["mooz", "moose"]
+    ],
+    "translation": "I know that the moose is big.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["subject", "3"],
+      ["lda", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_6a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(6a)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waaband-aan Tom gii-pashkizw-aa-d adikw-an",
+    "glossedTokens": [
+      ["in-gii-waaband-aan", "1-PAST-see.TI-0"], ["Tom", "Tom.PROX"],
+      ["gii-pashkizw-aa-d", "PAST-shoot-3-3"], ["adikw-an", "caribou-OBV"]
+    ],
+    "translation": "I saw that Tom shot the caribou.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "none"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_6b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(6b)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waabam-aa Tom gii-pashkizw-aa-d adikw-an",
+    "glossedTokens": [
+      ["in-gii-waabam-aa", "1-PAST-see.TA-3"], ["Tom", "Tom.PROX"],
+      ["gii-pashkizw-aa-d", "PAST-shoot-3-3"], ["adikw-an", "caribou-OBV"]
+    ],
+    "translation": "I saw that Tom shot the caribou.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "ea"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_7",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(7)"},
+    "language": "rain1239",
+    "primaryText": "gii'-ikido gii'-niimi-d Ziibiins dibikong",
+    "glossedTokens": [
+      ["gii'-ikido", "PAST-say.TA.3"], ["gii'-niimi-d", "PAST-dance.AI-3"],
+      ["Ziibiins", "Ziibiins"], ["dibikong", "last.night"]
+    ],
+    "translation": "She said that Ziibiins danced last night.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "disjoint", "judgment": "acceptable"},
+      {"name": "coreferent", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [],
+    "comment": "The source indexes 'She₁ said that Ziibiins₂/*₁': the matrix null subject cannot corefer with Ziibiins.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_9a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(9a)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waabam-aa John gii-paashkizw-aa-d adikw-an",
+    "glossedTokens": [
+      ["in-gii-waabam-aa", "1-PAST-see.TA-3"], ["John", "John.PROX"],
+      ["gii-paashkizw-aa-d", "PAST-shoot.TA-3-3"], ["adikw-an", "caribou-OBV"]
+    ],
+    "translation": "I saw that John shot the caribou.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "ea"],
+      ["order", "PROX V OBV"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_9b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(9b)"},
+    "language": "rain1239",
+    "primaryText": "ingii-waabamaa gii-paashkizwaad John adikwan",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "ea"],
+      ["order", "V PROX OBV"]
+    ],
+    "comment": "Printed without gloss or translation; the words of (9a) in another order.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_9c",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(9c)"},
+    "language": "rain1239",
+    "primaryText": "ingii-waabamaa gii-paashkizwaad adikwan John",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "ea"],
+      ["order", "V OBV PROX"]
+    ],
+    "comment": "Printed without gloss or translation; the words of (9a) in another order.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_9d",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(9d)"},
+    "language": "rain1239",
+    "primaryText": "ingii-waabamaa adikwan gii-paashkizwaad John",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "ea"],
+      ["order", "OBV V PROX"]
+    ],
+    "comment": "Printed without gloss or translation; the words of (9a) in another order.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_10a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(10a)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waabam-imaa-n John gii-paashkizw-aa-d adikw-an",
+    "glossedTokens": [
+      ["in-gii-waabam-imaa-n", "1-PAST-see.TA-3′-3′"], ["John", "John.PROX"],
+      ["gii-paashkizw-aa-d", "PAST-shoot.TA-3-3"], ["adikw-an", "caribou-OBV"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "ia"],
+      ["order", "PROX V OBV"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_10b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(10b)"},
+    "language": "rain1239",
+    "primaryText": "ingii-waabamimaan gii-paashkizwaad inini adikwan",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "ia"],
+      ["order", "V PROX OBV"]
+    ],
+    "comment": "Printed without gloss or translation; the source prints inini 'man' where (10a), (10c) and (10d) have John.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_10c",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(10c)"},
+    "language": "rain1239",
+    "primaryText": "ingii-waabamimaan gii-paashkizwaad adikwan John",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "ia"],
+      ["order", "V OBV PROX"]
+    ],
+    "comment": "Printed without gloss or translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_10d",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(10d)"},
+    "language": "rain1239",
+    "primaryText": "ingii-waabamimaan adikwan gii-paashkizwaad John",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "obv"],
+      ["lda", "ia"],
+      ["order", "OBV V PROX"]
+    ],
+    "comment": "Printed without gloss or translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_11a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(11a)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waabam-aa ikwe gii-miigwechiwi'-igo-d John-an",
+    "glossedTokens": [
+      ["in-gii-waabam-aa", "1-PAST-see.TA-3"], ["ikwe", "woman.PROX"],
+      ["gii-miigwechiwi'-igo-d", "PAST-thank.TA-INV-3"], ["John-an", "John-OBV"]
+    ],
+    "translation": "I saw that the woman was thanked by John.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "obv"],
+      ["ia", "prox"],
+      ["lda", "ia"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_11b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(11b)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waabam-imaa-n John-an gii-miigwechiwi'-igo-d ikwe",
+    "glossedTokens": [
+      ["in-gii-waabam-imaa-n", "1-PAST-see.TA-3′-3′"], ["John-an", "John-OBV"],
+      ["gii-miigwechiwi'-igo-d", "PAST-thank.TA-INV-3"], ["ikwe", "woman.PROX"]
+    ],
+    "translation": "Intended: I saw that the woman was thanked by John.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "obv"],
+      ["ia", "prox"],
+      ["lda", "ea"]
+    ],
+    "comment": "The obviative agent precedes the verb; the source offers (11b) as showing that the obviative agent cannot be the target of LDA.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_12a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(12a)"},
+    "language": "rain1239",
+    "primaryText": "gi-gii-waabam-ig John gii-miigwechiwi'-i-yan",
+    "glossedTokens": [
+      ["gi-gii-waabam-ig", "2-PAST-see.TA-INV"], ["John", "John.PROX"],
+      ["gii-miigwechiwi'-i-yan", "PAST-thank.TA-1-2"]
+    ],
+    "translation": "John saw that you thanked me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "2"],
+      ["ia", "1"],
+      ["lda", "ea"]
+    ],
+    "comment": "The prose before (12) says LDA is with the first person in (12a) and the second in (12b); the person prefixes gi- '2' and in- '1' of the printed examples say the reverse, which this row follows.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_12b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(12b)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waabam-ig John gii-miigwechiwi'-i-yan",
+    "glossedTokens": [
+      ["in-gii-waabam-ig", "1-PAST-see.TA-INV"], ["John", "John.PROX"],
+      ["gii-miigwechiwi'-i-yan", "PAST-thank.TA-1-2"]
+    ],
+    "translation": "John saw that you thanked me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "2"],
+      ["ia", "1"],
+      ["lda", "ia"]
+    ],
+    "comment": "The prose before (12) says LDA is with the first person in (12a) and the second in (12b); the person prefixes gi- '2' and in- '1' of the printed examples say the reverse, which this row follows.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_13a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(13a)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waabam-ig John gii-miigwechiwi'-in-aan",
+    "glossedTokens": [
+      ["in-gii-waabam-ig", "1-PAST-see.TA-INV"], ["John", "John.PROX"],
+      ["gii-miigwechiwi'-in-aan", "PAST-thank.TA-2-1"]
+    ],
+    "translation": "John saw that I thanked you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "2"],
+      ["lda", "ea"]
+    ],
+    "comment": "The source adds the paraphrase 'John saw me giving thanks to you.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_13b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(13b)"},
+    "language": "rain1239",
+    "primaryText": "gi-gii-waabam-ig John gii-miigwechiwi'-in-aan",
+    "glossedTokens": [
+      ["gi-gii-waabam-ig", "2-PAST-see.TA-INV"], ["John", "John.PROX"],
+      ["gii-miigwechiwi'-in-aan", "PAST-thank.TA-2-1"]
+    ],
+    "translation": "John saw that I thanked you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "2"],
+      ["lda", "ia"]
+    ],
+    "comment": "The source adds the paraphrase 'John saw you when I thanked you.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_14a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(14a)"},
+    "language": "rain1239",
+    "primaryText": "gi-gii-waabam-in gii-miigwechiwi'-ad John",
+    "glossedTokens": [
+      ["gi-gii-waabam-in", "2-PAST-see.TA-2"], ["gii-miigwechiwi'-ad", "PAST-thank.TA-2>3"],
+      ["John", "John.PROX"]
+    ],
+    "translation": "I saw that you thanked John.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "2"],
+      ["ia", "prox"],
+      ["lda", "ea"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_14b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(14b)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waabam-aa gii-miigwechiwi'-ad John",
+    "glossedTokens": [
+      ["in-gii-waabam-aa", "1-PAST-see.TA-3"], ["gii-miigwechiwi'-ad", "PAST-thank.TA-2>3"],
+      ["John", "John.PROX"]
+    ],
+    "translation": "Intended: I saw that you thanked John.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "2"],
+      ["ia", "prox"],
+      ["lda", "ia"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_15a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(15a)"},
+    "language": "rain1239",
+    "primaryText": "in-gii-waabam-aa ikwe gii-miiwechiwi'-ik",
+    "glossedTokens": [
+      ["in-gii-waabam-aa", "1-PAST-see.TA-3"], ["ikwe", "woman.PROX"],
+      ["gii-miiwechiwi'-ik", "PAST-thank.TA-3>2"]
+    ],
+    "translation": "I saw that the woman thanked you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "2"],
+      ["lda", "ea"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_15b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(15b)"},
+    "language": "rain1239",
+    "primaryText": "gi-gii-waabam-in gii-miiwechiwi'-ik ikwe",
+    "glossedTokens": [
+      ["gi-gii-waabam-in", "2-PAST-see.TA-2"], ["gii-miiwechiwi'-ik", "PAST-thank.TA-3>2"],
+      ["ikwe", "woman.PROX"]
+    ],
+    "translation": "I saw that the woman thanked you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "2"],
+      ["lda", "ia"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_16a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(16a)"},
+    "language": "rain1239",
+    "primaryText": "gi-gii-waabam-aa ina gii-miiwechiwi'-ag ikwe",
+    "glossedTokens": [
+      ["gi-gii-waabam-aa", "2-PAST-see.TA-3"], ["ina", "Q"],
+      ["gii-miiwechiwi'(-aa)-ag", "PAST-thank.TA(-3)-1>3"], ["ikwe", "woman.PROX"]
+    ],
+    "translation": "Intended: Did you see that I thanked the woman?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "prox"],
+      ["lda", "ia"]
+    ],
+    "comment": "The source parenthesizes a morph absent from the surface form; primaryText omits it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_16b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(16b)"},
+    "language": "rain1239",
+    "primaryText": "gi-gii-waabam-aa ina ikwe gii-miiwechiwi'-ag",
+    "glossedTokens": [
+      ["gi-gii-waabam-aa", "2-PAST-see.TA-3"], ["ina", "Q"], ["ikwe", "woman.PROX"],
+      ["gii-miiwechiwi'(-aa)-ag", "PAST-thank.TA(-3)-1>3"]
+    ],
+    "translation": "Intended: Did you see that I thanked the woman?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "prox"],
+      ["lda", "ia"]
+    ],
+    "comment": "The source parenthesizes a morph absent from the surface form; primaryText omits it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_17",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(17)"},
+    "language": "rain1239",
+    "primaryText": "gi-gii-waabam ina gii-miiwechiwi'-ag ikwe",
+    "glossedTokens": [
+      ["gi-gii-waabam(-i)", "2-PAST-see.TA(-1)"], ["ina", "Q"],
+      ["gii-miiwechiwi'(-aa)-ag", "PAST-thank.TA(-3)-1>3"], ["ikwe", "woman.PROX"]
+    ],
+    "translation": "Did you see that I thanked the woman?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "prox"],
+      ["lda", "ea"]
+    ],
+    "comment": "The source parenthesizes a morph absent from the surface form; primaryText omits it. The first person theme sign -i is deleted word-finally.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_18a",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(18a)"},
+    "language": "rain1239",
+    "primaryText": "gi-gii-waabam-aa ina ikwe gii-miiwechiwi'-i-d",
+    "glossedTokens": [
+      ["gi-gii-waabam-aa", "2-PAST-see.TA-3"], ["ina", "Q"], ["ikwe", "woman.PROX"],
+      ["gii-miiwechiwi'-i-d", "PAST-thank.TA-1-3"]
+    ],
+    "translation": "Did you see that the woman thanked me?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "1"],
+      ["lda", "ea"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hammerlymathieu2026_18b",
+    "source": {"bibkey": "hammerly-mathieu-2026", "paperLabel": "(18b)"},
+    "language": "rain1239",
+    "primaryText": "gi-gii-waabam ina gii-miiwechiwi'-i-d ikwe",
+    "glossedTokens": [
+      ["gi-gii-waabam(-i)", "2-PAST-see.TA(-1)"], ["ina", "Q"],
+      ["gii-miiwechiwi'-i-d", "PAST-thank.TA-1-3"], ["ikwe", "woman.PROX"]
+    ],
+    "translation": "Did you see that the woman thanked me?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["ea", "prox"],
+      ["ia", "1"],
+      ["lda", "ia"]
+    ],
+    "comment": "The source parenthesizes a morph absent from the surface form; primaryText omits it.",
+    "verified": "page-image"
+  }
+]
