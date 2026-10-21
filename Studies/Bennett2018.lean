@@ -2,6 +2,8 @@ module
 
 public import Linglib.Phonology.Prosody.Word
 public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
+public import Linglib.Core.Data.RoseTree.Span
 
 /-!
 # Bennett 2018: recursive prosodic words in Kaqchikel
@@ -23,8 +25,9 @@ above the constraint that every prosodic word correspond to a morphological word
 * `flat`, `nested`: the two parses of a prefix sequence over a stem.
 * `omegaInitial`, `OmegaSeparates`: the structural side of the two diagnostics — the
   ω-initial leaves, and whether an ω boundary separates two leaves.
-* `matchWord`, `matchOmega`, `subCat`: `Match (X⁰, ω)`, `Match (ω, X⁰)`, and the
-  subcategorization frame, as constraints on prosodic trees.
+* `matchWord`, `matchOmega`, `subCat`: `Match (X⁰, ω)` and `Match (ω, X⁰)`, Generalized
+  Alignment of the morphological word's span and the ω spans, and the subcategorization frame,
+  aligned with each prefix's index in the frontier.
 
 ## Main results
 
@@ -92,20 +95,18 @@ over a vowel-initial stem give `n + 1` loci of [ʔ]-insertion ((21)–(23)). -/
 theorem omegaInitial_nested {ps : List Constituent} {s : Constituent}
     (hps : ∀ p ∈ ps, p.level ≠ .om) (hs : s.level ≠ .om) :
     omegaInitial (nested ps s) = ps ++ [s] := by
-  have hom (h : Bool) : (Constituent.om h).level = .om := rfl
   induction ps with
-  | nil => simp [omegaInitial, nested, leftmost, hs, hom]
+  | nil => simp [omegaInitial, nested, leftmost, hs]
   | cons p ps ih =>
     have ih := ih fun q hq ↦ hps q (List.mem_cons_of_mem p hq)
     simp only [omegaInitial] at ih
-    simp [omegaInitial, nested, leftmost, hps p (List.mem_cons_self ..), hom, ih]
+    simp [omegaInitial, nested, leftmost, hps p (List.mem_cons_self ..), ih]
 
 /-- In the flat parse only the first prefix is ω-initial: one locus of [ʔ]-insertion. -/
 theorem omegaInitial_flat {p : Constituent} {ps : List Constituent} {s : Constituent}
     (hp : p.level ≠ .om) (hps : ∀ q ∈ ps, q.level ≠ .om) (hs : s.level ≠ .om) :
     omegaInitial (flat (p :: ps) s) = [p] := by
-  have hom (h : Bool) : (Constituent.om h).level = .om := rfl
-  simpa [omegaInitial, flat, leftmost, hp, hs, hom, List.filter_flatMap,
+  simpa [omegaInitial, flat, leftmost, hp, hs, List.filter_flatMap,
     List.flatMap_eq_nil_iff] using hps
 
 -- (22)–(23): three high prefixes and a vowel-initial root, four glottal stops.
@@ -118,32 +119,36 @@ example : OmegaSeparates pref stem (nested [pref] stem) := by decide
 
 /-! ### Constraints and the ranking -/
 
-/-- `Match (X⁰, ω)` (13) for a single morphological word: a violation unless one ω dominates
-all of its segments, i.e. unless the root is an ω. Undominated in Kaqchikel. -/
-def matchWord : Constraint Tree := fun t => if t.value.level = .om then 0 else 1
+/-- `Match (X⁰, ω)` (13): the prefixes and the stem form one morphological word, spanning the
+whole frontier, which matches no ω unless one ω spans it. Undominated in Kaqchikel. -/
+def matchWord : Constraint Tree :=
+  (Constraint.align Eq).comap fun t ↦ ([(0, t.numLeaves)], t.spans (·.value.level = .om))
 
-/-- `Match (ω, X⁰)` for a single morphological word: every ω other than a root ω fails to
-correspond to a morphological word. -/
-def matchOmega : Constraint Tree := fun t =>
-  t.values.countP (·.level = .om) - if t.value.level = .om then 1 else 0
+/-- `Match (ω, X⁰)`: one violation for each ω not spanning the morphological word. -/
+def matchOmega : Constraint Tree :=
+  (Constraint.align Eq).comap fun t ↦ (t.spans (·.value.level = .om), [(0, t.numLeaves)])
 
-/-- Whether the leaf `p` is the left sister of an ω inside an ω: the subcategorization frame
-`[ω p [ω ]]` (30) is realised. -/
-def hasFrame (p : Constituent) (t : Tree) : Bool :=
-  t.subtrees.any fun s ↦ decide (s.value.level = .om) && match s.children with
-    | [.node q [], .node b _] => q == p && decide (b.level = .om)
-    | _ => false
+/-- The subcategorization frame `[ω p [ω ]]` (30): an ω whose daughters are a syllable and an ω. -/
+def IsFrame (t : Tree) : Prop :=
+  t.value.level = .om ∧ t.children.map (·.value.level) = [.syl, .om]
 
-/-- `SubCat`: one violation per high-attaching prefix whose frame (30) is not realised. -/
-def subCat (prefs : List Constituent) : Constraint Tree := fun t =>
-  (prefs.filter fun p => !hasFrame p t).length
+instance : DecidablePred IsFrame := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- `SubCat`: one violation per high-attaching prefix, at its index in the frontier, at which no
+frame (30) begins. -/
+def subCat (prefs : List ℕ) : Constraint Tree :=
+  (Constraint.align fun (i : ℕ) (x : ℕ × ℕ) ↦ i = x.1).comap fun t ↦ (prefs, t.spans IsFrame)
 
 /-- A high-attaching prefix is parsed recursively: under `SubCat ≫ Match (ω, X⁰)`, with
 `Match (X⁰, ω)` undominated, the recursive parse is the unique optimum. -/
 theorem high_prefix_recursive :
     (Tableau.ofList {nested [pref] stem, flat [pref] stem, phrasal}
-      [matchWord, subCat [pref], matchOmega]).optimal = {nested [pref] stem} := by
+      [matchWord, subCat [0], matchOmega]).optimal = {nested [pref] stem} := by
   decide
+
+-- Stacked high prefixes each realise their frame only in the recursive parse.
+example : subCat [0, 1] (nested [pref, pref] stem) = 0 := by decide
+example : subCat [0, 1] (flat [pref, pref] stem) = 2 := by decide
 
 /-- A low-attaching prefix, carrying no frame, is parsed flat: `Match (ω, X⁰)` alone rules
 out the extra ω. -/

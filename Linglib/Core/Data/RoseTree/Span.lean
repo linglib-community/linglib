@@ -25,6 +25,7 @@ begin at the same leaf.
 ## Main definitions
 
 * `RoseTree.leafIndex`: the number of leaves left of the subtree at an address.
+* `RoseTree.spans`: the slices of the frontier that the subtrees satisfying a predicate cover.
 
 ## Main results
 
@@ -33,6 +34,9 @@ begin at the same leaf.
 * `RoseTree.leafList_replaceAt`: replacing a subtree replaces its slice.
 * `RoseTree.leafIndex_add_numLeaves_le_of_precedes`: a subtree ends before one it precedes begins.
 * `RoseTree.leftAligned_iff_leafIndex_eq`: left-aligned positions are those with one index.
+* `RoseTree.mem_spans`: the spans are the slices of the subtrees satisfying the predicate.
+* `RoseTree.spans_node`: the spans of a node are its own and those of its children, each shifted
+  past the leaves of the children before it.
 -/
 
 @[expose] public section
@@ -276,5 +280,81 @@ theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : (t.subtreeAt p.toLis
     · have := leafIndex_add_numLeaves_le_of_precedes hqp hu hp
       have := numLeaves_pos u
       omega
+
+/-! ### Spans -/
+
+section Spans
+
+variable (P : RoseTree α → Prop) [DecidablePred P] (t) {x : ℕ × ℕ}
+
+/-- The spans of the subtrees of `t` satisfying `P`, in preorder: for the subtree at an address,
+the index in the frontier at which its slice begins and the index at which it ends. -/
+def spans : List (ℕ × ℕ) :=
+  t.vertices.filterMap fun p ↦ (t.subtreeAt p).bind fun s ↦
+    if P s then some (t.leafIndex p, t.leafIndex p + s.numLeaves) else none
+
+variable {P t}
+
+theorem mem_spans : x ∈ t.spans P ↔
+    ∃ p s, t.subtreeAt p = some s ∧ P s ∧ (t.leafIndex p, t.leafIndex p + s.numLeaves) = x := by
+  simp only [spans, List.mem_filterMap, mem_vertices, Option.bind_eq_some_iff,
+    Option.ite_none_right_eq_some, Option.some.injEq]
+  exact ⟨fun ⟨p, _, s, hs, hP, hx⟩ ↦ ⟨p, s, hs, hP, hx⟩,
+    fun ⟨p, s, hs, hP, hx⟩ ↦ ⟨p, by simp [hs], s, hs, hP, hx⟩⟩
+
+variable (P) in
+/-- The spans of a forest, each tree's shifted past the leaves of the trees before it. -/
+def spansList : List (RoseTree α) → List (ℕ × ℕ)
+  | [] => []
+  | c :: cs => c.spans P ++ (spansList cs).map fun x ↦ (c.numLeaves + x.1, c.numLeaves + x.2)
+
+@[simp] theorem spansList_nil : spansList P ([] : List (RoseTree α)) = [] := rfl
+
+@[simp] theorem spansList_cons (c : RoseTree α) (cs : List (RoseTree α)) :
+    spansList P (c :: cs) =
+      c.spans P ++ (spansList P cs).map fun x ↦ (c.numLeaves + x.1, c.numLeaves + x.2) :=
+  rfl
+
+private theorem filterMap_verticesList (a : α) (cs : List (RoseTree α)) :
+    (verticesList cs).filterMap (fun p ↦ ((node a cs).subtreeAt p).bind fun s ↦
+      if P s then some ((node a cs).leafIndex p, (node a cs).leafIndex p + s.numLeaves)
+      else none) = spansList P cs := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih =>
+    rw [verticesList_cons, List.filterMap_append, List.filterMap_map, List.filterMap_map,
+      spansList_cons, ← ih, List.map_filterMap]
+    congr 1
+    · exact List.filterMap_congr fun p _ ↦ by simp [leafIndex_cons]
+    refine List.filterMap_congr fun p hp ↦ ?_
+    obtain ⟨j, q, rfl⟩ := exists_cons_of_mem_verticesList hp
+    simp only [Function.comp_apply, List.modifyHead_cons, subtreeAt_cons, children_node,
+      List.getElem?_cons_succ, leafIndex_cons, List.take_succ_cons, List.map_cons, List.sum_cons]
+    cases cs[j]?.bind (·.subtreeAt q) with
+    | none => rfl
+    | some s => by_cases hP : P s <;> simp [hP, Nat.add_assoc]
+
+/-- The spans of a node are its own, if it satisfies `P`, and those of its forest of
+children. -/
+@[simp] theorem spans_node (a : α) (cs : List (RoseTree α)) :
+    (node a cs).spans P =
+      (if P (node a cs) then [(0, (node a cs).numLeaves)] else []) ++ spansList P cs := by
+  rw [spans, vertices_node, List.filterMap_cons, filterMap_verticesList]
+  by_cases hP : P (node a cs) <;> simp [hP]
+
+theorem spansList_append (l₁ l₂ : List (RoseTree α)) :
+    spansList P (l₁ ++ l₂) = spansList P l₁ ++ (spansList P l₂).map
+      fun x ↦ ((l₁.map numLeaves).sum + x.1, (l₁.map numLeaves).sum + x.2) := by
+  induction l₁ with
+  | nil => simp
+  | cons c l ih => simp [ih, Nat.add_assoc]
+
+/-- A forest of copies of a tree with no span has none. -/
+theorem spansList_replicate (n : ℕ) (h : t.spans P = []) : spansList P (.replicate n t) = [] := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [List.replicate_succ, h, ih]
+
+end Spans
 
 end RoseTree

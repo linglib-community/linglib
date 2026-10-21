@@ -31,6 +31,8 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
 * `RuleSet.selectBy_eq_some_of_applies`: selection by a score is consistent under
   contraction, so the rule selected in a context stays selected in any context with fewer
   applicable rules where it still applies.
+* `RuleSet.selectBy_eq_head?_applicable`: on a rule set listed by non-increasing score,
+  selection takes the first applicable rule.
 * `RuleSet.selectBy_map`: selection commutes with a map of rules preserving applicability
   and the comparison of scores.
 * `RuleSet.isContiguous_realize_of_monotone`, `RuleSet.isContiguous_realize_of_antitone`:
@@ -43,9 +45,10 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
   selection is consistent under contraction and realizes contiguous patterns.
 * `RuleSet.realizeMinimal_eq_realize`: under Pāṇinian Determinism minimal selection realizes
   what selection on any score strictly reversing specificity realizes.
-* `RuleSet.selectMinimal_factorsThrough`, `RuleSet.realizeMinimalD_factorsThrough`:
-  selection, and realization with a fallback, factor through any map on contexts that every
-  rule's applicability (and the fallback) factors through.
+* `RuleSet.selectMinimal_factorsThrough`, `RuleSet.realizeMinimal_factorsThrough`,
+  `RuleSet.realizeMinimalD_factorsThrough`: selection, realization, and realization with a
+  fallback, factor through any map on contexts that every rule's applicability (and the
+  fallback) factors through.
 * `RuleSet.realizeMinimalD_eq_of_isElsewhereWinner`: over a coherent rule set under
   Pāṇinian Determinism, realization with a fallback is the exponent of any
   Elsewhere winner, whatever the order of the rule set.
@@ -89,6 +92,11 @@ theorem selectBy_applies (h : v.selectBy f c = some r) : Applies r c :=
 
 theorem selectBy_eq_none_iff : v.selectBy f c = none ↔ v.applicable c = [] :=
   List.argmax_eq_none
+
+/-- On a rule set listed by non-increasing score, selection takes the first applicable rule. -/
+theorem selectBy_eq_head?_applicable (h : v.Pairwise fun r s ↦ f s ≤ f r) :
+    v.selectBy f c = (v.applicable c).head? :=
+  List.argmax_eq_head? (h.filter _)
 
 theorem selectBy_isSome_iff : (v.selectBy f c).isSome ↔ ∃ r ∈ v, Applies r c := by
   simp [← Option.ne_none_iff_isSome, selectBy_eq_none_iff, applicable, List.filter_eq_nil_iff]
@@ -307,6 +315,13 @@ theorem selectMinimal_factorsThrough {V : Type*} {A : Ctx → V}
 `realize`. -/
 def realizeMinimal (v : RuleSet R) (c : Ctx) : Option E :=
   (v.selectMinimal c).map exponent
+
+/-- A rule system sensitive only to what `A` sees realizes the same exponent in contexts that `A`
+identifies. -/
+theorem realizeMinimal_factorsThrough {V : Type*} {A : Ctx → V}
+    (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
+    v.realizeMinimal.FactorsThrough A :=
+  fun _ _ hA ↦ congrArg (Option.map exponent) (selectMinimal_factorsThrough h hA)
 
 theorem realizeMinimal_eq_none_iff : v.realizeMinimal c = none ↔ v.applicable c = [] :=
   Option.map_eq_none_iff.trans selectMinimal_eq_none_iff
