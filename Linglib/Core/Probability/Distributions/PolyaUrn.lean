@@ -47,7 +47,7 @@ variable {α : Type*} [DecidableEq α] [Fintype α] [MeasurableSpace α] [Measur
 probability `polyaUrnPredictive θ (countVec s) c`. -/
 noncomputable def polyaUrnRule (n : ℕ) : Kernel (Fin n → α) α :=
   Kernel.ofFunOfCountable fun s ↦
-    Measure.ofWeights fun c ↦ ENNReal.ofReal (polyaUrnPredictive θ (countVec s) c)
+    Measure.ofRealWeights (polyaUrnPredictive θ (countVec s))
 
 /-- The *Pólya urn*: the law of the first `n` draws from the urn with weights `θ`. -/
 noncomputable def polyaUrn (n : ℕ) : Measure (Fin n → α) :=
