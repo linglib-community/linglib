@@ -81,19 +81,15 @@ namespace Input
 
 variable (x : Input)
 
-/-- The number of terminals. -/
-def length : ℕ := if x.next then 3 else 2
-
-/-- The head of the function word's phrase: the lexical word after it, the phrase being that
-word's extended projection (fn. 3), or else the function word. -/
-def fncHead : ℕ := if x.next then 2 else 1
-
 /-- The phrases, in terminals, each with its head: the topmost phrase, headed by the host unless
-the host is a phrase of its own, the host's, and the function word's. -/
+the host is a phrase of its own, the host's, and the function word's, headed by the lexical word
+after the function word, the phrase being that word's extended projection (fn. 3), or else by the
+function word. -/
 def phrases : List ((ℕ × ℕ) × ℕ) :=
-  ((0, x.length), if x.hostPhrase then x.fncHead else 0) ::
-    ((if x.hostPhrase then [((0, 1), 0)] else []) ++
-      if x.fncPhrase then [((1, x.length), x.fncHead)] else [])
+  let n := if x.next then 3 else 2
+  let h := if x.next then 2 else 1
+  ((0, n), if x.hostPhrase then h else 0) ::
+    ((if x.hostPhrase then [((0, 1), 0)] else []) ++ if x.fncPhrase then [((1, n), h)] else [])
 
 /-- The lexical words, in terminals, each its own head: the host and the word after the function
 word. -/
@@ -129,11 +125,6 @@ inductive Form
   | proclitic
   deriving DecidableEq, Repr
 
-/-- The forms available in an input: strong and weak, and 's where the word has it, proclitic only
-before a word. -/
-def Input.forms (x : Input) : List Form :=
-  [.strong, .weak] ++ if x.clitic then .enclitic :: if x.next then [.proclitic] else [] else []
-
 /-- A candidate: a form of the function word and the φs over the words. -/
 structure Candidate where
   /-- The form of the function word. -/
@@ -146,10 +137,13 @@ structure Candidate where
   top : Bool
   deriving DecidableEq
 
-/-- GEN: each available form under each choice of φs. -/
+/-- GEN: each available form, strong and weak, and 's where the word has it, proclitic only before
+a word, under each choice of φs. -/
 def candidates (x : Input) : Finset Candidate :=
-  (x.forms.flatMap fun f ↦ [false, true].flatMap fun h ↦ [false, true].flatMap fun g ↦
-    [false, true].map fun t ↦ ⟨f, h, g, t⟩).toFinset
+  let forms : List Form :=
+    [.strong, .weak] ++ if x.clitic then .enclitic :: if x.next then [.proclitic] else [] else []
+  (forms.flatMap fun f ↦ [false, true].flatMap fun h ↦ [false, true].flatMap fun g ↦
+    [false, true].map fun t ↦ (⟨f, h, g, t⟩ : Candidate)).toFinset
 
 /-- A lexical word, or a function word in its strong form: a prosodic word over a foot over its
 syllable. -/
@@ -159,37 +153,29 @@ namespace Candidate
 
 variable (x : Input) (c : Candidate)
 
-/-- The function word and what follows it, an enclitic or proclitic having no syllable of its
-own. -/
-def tail : List Tree :=
-  (match c.form with | .strong => [word] | .weak => [.σ] | _ => []) ++
+/-- The prosodic tree: an intonational phrase over the chosen φs, over the host and the function
+word and what follows it, an enclitic or proclitic having no syllable of its own; a φ over nothing
+is none. -/
+def tree : Tree :=
+  let tail := (match c.form with | .strong => [word] | .weak => [.σ] | _ => []) ++
     if x.next then [word] else []
-
-/-- The prosodic tree: an intonational phrase over the chosen φs, a φ over nothing being none. -/
-def tree : Tree := .node .iota (wrap c.top (wrap c.host [word] ++ wrap c.fnc (c.tail x)))
+  .node .iota (wrap c.top (wrap c.host [word] ++ wrap c.fnc tail))
 where
   /-- A φ over a nonempty list of nodes, if chosen. -/
   wrap (b : Bool) (l : List Tree) : List Tree := if b ∧ l ≠ [] then [Tree.ph l] else l
 
-/-- The terminals each syllable realizes, two where it holds 's. -/
-def realizes : List ℕ :=
-  [if c.form = .enclitic then 2 else 1] ++ (if c.form = .strong ∨ c.form = .weak then [1] else [])
-    ++ if x.next then [if c.form = .proclitic then 2 else 1] else []
-
-/-- The spans of the `ℓ`-nodes, in terminals. -/
+/-- The spans of the `ℓ`-nodes, in terminals, each syllable realizing one terminal and a second
+where it holds 's. -/
 def spans (ℓ : Level) : List (ℕ × ℕ) :=
-  let cut (i : ℕ) := ((c.realizes x).take i).sum
+  let realizes := [if c.form = .enclitic then 2 else 1] ++
+    (if c.form = .strong ∨ c.form = .weak then [1] else []) ++
+      if x.next then [if c.form = .proclitic then 2 else 1] else []
+  let cut (i : ℕ) := (realizes.take i).sum
   (levelSpans ℓ (c.tree x)).map (Prod.map cut cut)
 
 end Candidate
 
 /-! ### Constraints -/
-
-/-- HEADEDNESS ([selkirk-1996]): one violation for each node above the syllable immediately
-dominating no node of its own level or the level below, as a φ over a lone syllable does. -/
-def headedness : Constraint Tree := fun t ↦
-  (t.spans fun s ↦ s.value.level ≠ .syl ∧ ∀ c ∈ s.children,
-    c.value.level ≠ s.value.level ∧ c.value.level.toNat + 1 ≠ s.value.level.toNat).length
 
 /-- The constraint slots of (41)–(46). The two theories fill the phrase and word slots
 differently. -/
@@ -201,14 +187,18 @@ inductive Con
 slot, a φ or ω corresponding to a phrase or lexical word when it contains its head and no foreign
 one (`Prosody.Corresponds`). INIT-FAITH (34) counts each ω corresponding to a lexical word but
 beginning where none does, as ω('sleaving) does, and PRIORITY ([mascaro-2007]) each form of *is*
-where 's is available. -/
+where 's is available. HEADEDNESS ([selkirk-1996]) counts each node above the syllable
+immediately dominating no node of its own level or the level below, as a φ over a lone syllable
+does. -/
 def correspondence : ConstraintSystem Input Candidate Con where
   gen := candidates
   con
     | .initFaith => Constraint.alignLeft.comap fun xc ↦
         ((xc.2.spans xc.1 .om).filter fun w ↦ ∃ l ∈ xc.1.lex, Corresponds xc.1.lex l w,
           xc.1.lex.map (·.1))
-    | .headedness => headedness.comap fun xc ↦ xc.2.tree xc.1
+    | .headedness => fun xc ↦ (xc.2.tree xc.1).subtrees.countP fun s ↦
+        s.value.level ≠ .syl ∧ ∀ c ∈ s.children,
+          c.value.level ≠ s.value.level ∧ c.value.level.toNat + 1 ≠ s.value.level.toNat
     | .phrase => fun xc ↦
         Constraint.deficiency (Corresponds xc.1.phrases) (xc.1.phrases, xc.2.spans xc.1 .ph)
     | .alignR => Constraint.alignRight.comap fun xc ↦
@@ -232,7 +222,7 @@ def matchTheory : ConstraintSystem Input Candidate Con where
 terminal spans. -/
 theorem phrase_le (x : Input) (c : Candidate) :
     correspondence.con .phrase (x, c) ≤ matchTheory.con .phrase (x, c) := by
-  have hx : (x.phrases.map (·.1)).Nodup ∧ ∀ a ∈ x.phrases, a.1.1 ≤ a.2 ∧ a.2 < a.1.2 := by
+  have hx : (x.phrases.map (·.1)).Nodup ∧ ∀ a ∈ x.phrases, a.2 ∈ Set.Ico a.1.1 a.1.2 := by
     obtain ⟨_ | _, _ | _, _ | _, _ | _⟩ := x <;> decide
   exact deficiency_corresponds_le hx.1 hx.2 (c.spans x .ph)
 

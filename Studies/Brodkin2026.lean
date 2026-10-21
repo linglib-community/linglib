@@ -444,10 +444,11 @@ theorem priority_eq_zero_iff (hi : (v.applicable x.neighborhood).head? = some i)
 section Configurations
 
 attribute [local simp] maxXP subcat positionalMinimality Candidate.tree syntaxProsodyMax
-  Constraint.align Constraint.deficiency Constraint.matchingNumber Input.phrases Input.parse
+  Constraint.align Constraint.deficiency List.matchingNumber Input.phrases Input.parse
   Input.parse.pair Input.cut Input.stress Input.next spans_penultimate_ph
   spans_penultimate_isTrochee spans_penultimate_isMinimalPhi IsTrochee IsConstituent
   Foot.childHeadFlags RoseTree.licensed_node_iff Constituent.Licenses IsMinimalPhi Corresponds
+  Set.mem_Ico Finset.filter_insert Finset.filter_singleton Finset.sup_insert Finset.sup_singleton
 
 private theorem eq_zero_sisters {a : ℕ} (n : Neighborhood (Finset Feature)) (fo sm : Bool)
     (ha : syllables i.exponent = a + 2) :

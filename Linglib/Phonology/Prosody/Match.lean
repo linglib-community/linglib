@@ -32,8 +32,7 @@ it, no π-node answering to two α-constituents.
 
 ## Main results
 
-* `Prosody.deficiency_corresponds_le`, `Prosody.syntaxProsodyMax_le_syntaxProsodyMatch`:
-  MAX(α, π) asks no more than Match(α, π).
+* `Prosody.deficiency_corresponds_le`: MAX(α, π) asks no more than Match(α, π).
 
 ## Implementation notes
 
@@ -72,7 +71,7 @@ def prosodySyntaxMatch (π : Level) (α : List (ℕ × ℕ)) : Constraint Tree :
 and the position of its head, when it contains the head of `a` and no head of `α` lying outside
 `a` ([ito-mester-2019]). -/
 abbrev Corresponds (α : List ((ℕ × ℕ) × ℕ)) (a : (ℕ × ℕ) × ℕ) (p : ℕ × ℕ) : Prop :=
-  p.1 ≤ a.2 ∧ a.2 < p.2 ∧ ∀ b ∈ α, p.1 ≤ b.2 → b.2 < p.2 → a.1.1 ≤ b.2 ∧ b.2 < a.1.2
+  a.2 ∈ Set.Ico p.1 p.2 ∧ ∀ b ∈ α, b.2 ∈ Set.Ico p.1 p.2 → b.2 ∈ Set.Ico a.1.1 a.1.2
 
 /-- **MAX(α, π)** ([ito-mester-2019]): one violation for each constituent of the family `α`, given
 by its span and the position of its head, left without a corresponding `π`-node by the best
@@ -88,19 +87,12 @@ variable {α : List ((ℕ × ℕ) × ℕ)}
 constituents of `α` have distinct spans each containing its head, fewer of them lack a
 corresponding node than lack a node of the same span. -/
 theorem deficiency_corresponds_le (hα : (α.map (·.1)).Nodup)
-    (hhead : ∀ a ∈ α, a.1.1 ≤ a.2 ∧ a.2 < a.1.2) (m : List (ℕ × ℕ)) :
+    (hhead : ∀ a ∈ α, a.2 ∈ Set.Ico a.1.1 a.1.2) (m : List (ℕ × ℕ)) :
     Constraint.deficiency (Corresponds α) (α, m) ≤ Constraint.align Eq (α.map (·.1), m) := by
   have h := Constraint.deficiency_le_align (R := Corresponds α) (S := fun a p ↦ a.1 = p)
-    (x := (α, m)) (List.Nodup.of_map _ hα)
-    (fun a ha p hp ↦ by subst hp; exact ⟨(hhead a ha).1, (hhead a ha).2, fun _ _ h₁ h₂ ↦ ⟨h₁, h₂⟩⟩)
+    (x := (α, m)) (List.Nodup.of_map _ hα) (fun a ha p hp ↦ hp ▸ ⟨hhead a ha, fun _ _ ↦ id⟩)
     fun a ha a' ha' p h h' ↦ List.inj_on_of_nodup_map hα ha ha' (h.trans h'.symm)
   simpa [Constraint.align, List.countP_map, Function.comp_def] using h
-
-/-- MAX(α, π) counts no more violations than Match(α, π), `deficiency_corresponds_le`. -/
-theorem syntaxProsodyMax_le_syntaxProsodyMatch (hα : (α.map (·.1)).Nodup)
-    (hhead : ∀ a ∈ α, a.1.1 ≤ a.2 ∧ a.2 < a.1.2) (π : Level) (t : Tree) :
-    syntaxProsodyMax α π t ≤ syntaxProsodyMatch (α.map (·.1)) π t :=
-  deficiency_corresponds_le hα hhead _
 
 -- Two words phrased together: the φ over both matches the phrase spanning them, and neither word
 -- is matched by a φ of its own.
