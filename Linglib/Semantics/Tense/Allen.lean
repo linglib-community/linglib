@@ -122,6 +122,18 @@ theorem toSetRel_mono (h : C ⊆ D) : (toSetRel C : SetRel (NonemptyInterval T) 
 
 end LinearOrder
 
+/-- One cell's relation lies within another's on every linear order exactly when its realizable
+relations lie in the other cell, since each is realized among four points. -/
+theorem forall_toSetRel_subset_iff {C D : Finset Relation} :
+    (∀ (T : Type) [LinearOrder T], (toSetRel C : SetRel (NonemptyInterval T) _) ⊆ toSetRel D) ↔
+      C ∩ atoms ⊆ D := by
+  refine ⟨fun h r hr ↦ ?_, fun h T _ p hp ↦ h (Finset.mem_inter.2 ⟨hp, relation_mem_atoms _ _⟩)⟩
+  obtain ⟨hC, ha⟩ := Finset.mem_inter.1 hr
+  obtain ⟨⟨a, b, c, d⟩, hx, rfl⟩ := Finset.mem_image.1 ha
+  obtain ⟨-, hab, hcd⟩ := Finset.mem_filter.1 hx
+  have := h (Fin 4) (a := (⟨(a, b), hab⟩, ⟨(c, d), hcd⟩)) (mem_toSetRel.2 hC)
+  exact mem_toSetRel.1 this
+
 /-! ### Converse -/
 
 /-- The converse of a relation: how the second interval stands to the first. -/

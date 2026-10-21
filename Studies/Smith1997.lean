@@ -6,32 +6,25 @@ public import Linglib.Semantics.Aspect.Viewpoint
 /-!
 # Smith (1997): The Parameter of Aspect
 
-This file formalizes the two-component theory of [smith-1997]: aspectual meaning factors into a
-situation type (`VendlerClass`) and a viewpoint (`ViewpointType`), independent and freely
-combined. The visibility properties of chapter 4 are not stipulated per viewpoint: whether a
-viewpoint asserts the initial point or the final point of the situation, presents it as closed,
-or focuses an interval inside it are predicates over the substrate's relation between topic
-time and situation time, and the chapter's table of what each viewpoint makes visible is
-recovered as four theorems (`showsInitialPoint_iff`, `showsFinalPoint_iff`,
-`presentsClosed_iff`, `focusesPreliminaryStages_iff`). The perfective makes both endpoints
-visible and is closed, the imperfective makes neither visible and is open, and the neutral
-viewpoint of section 4.2.3 sits between them, including the initial point and at least one
-stage but never the preliminary stages that separate it from the imperfective
-(`perfective_closed`, `imperfective_open`, `neutral_intermediate`,
-`neutral_no_preliminary_stages`). Section 4.2 records the viewpoint inventories of the four
-languages of Part II and the three relations between the perfective and statives
-(`Language.system`); the perfective conveys completion for telic and termination for atelic
-situation types (`perfectiveEffect`, `completion_iff_telic`); and the imperfective paradox of
-section 4.3.2 is the invisibility of a telic situation's final point under a viewpoint that
-does not show it (`CompletionInvisible`).
+This file formalizes Smith's two-component theory, in which a sentence's aspectual meaning
+combines a situation type (`VendlerClass`) and an independently chosen viewpoint
+(`ViewpointType`).
+
+## Main results
+
+* `showsInitialPoint_iff`, `showsFinalPoint_iff`, `presentsClosed_iff`,
+  `focusesPreliminaryStages_iff`: what each viewpoint makes visible (section 4.1).
+* `perfective_closed`, `imperfective_open`, `neutral_intermediate`,
+  `neutral_no_preliminary_stages`: the neutral viewpoint between the other two (section 4.2).
+* `completion_iff_telic`: the perfective conveys completion exactly for telic types.
+* `completionInvisible_iff`: the imperfective paradox (section 4.3.2).
+* `Language.system`: the viewpoint systems of the four languages of Part II.
 
 ## Implementation notes
 
-* The visibility predicates quantify over every linearly ordered time domain; the negative
-  cases are witnessed on the integers.
-* The per-language systems are the chapter's claims about which viewpoints a language
-  grammaticizes, which viewpoint is dominant in an asymmetric system, and how its perfective
-  treats statives. The compositional rules of section 3.3 are not formalized.
+* A visibility property quantifies over every linear order, and is decided as the inclusion of
+  the viewpoint's Allen cell in the property's cell (`Allen.forall_toSetRel_subset_iff`).
+* The compositional rules of section 3.3 are not formalized.
 
 ## References
 
@@ -67,150 +60,51 @@ def FocusesPreliminaryStages (v : ViewpointType) : Prop :=
   ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
     v.ttTSitRelation tt tsit → tt < tsit
 
-private theorem rel_imperfective :
-    ViewpointType.imperfective.ttTSitRelation (⟨⟨1, 2⟩, by omega⟩ : NonemptyInterval ℤ)
-      ⟨⟨0, 3⟩, by omega⟩ := by
-  decide
-
-private theorem rel_perfect :
-    ViewpointType.perfect.ttTSitRelation (⟨⟨3, 4⟩, by omega⟩ : NonemptyInterval ℤ)
-      ⟨⟨0, 2⟩, by omega⟩ := by
-  decide
-
-private theorem rel_prospective :
-    ViewpointType.prospective.ttTSitRelation (⟨⟨0, 1⟩, by omega⟩ : NonemptyInterval ℤ)
-      ⟨⟨2, 3⟩, by omega⟩ := by
-  decide
-
-private theorem rel_neutral_short :
-    ViewpointType.neutral.ttTSitRelation (⟨⟨0, 1⟩, by omega⟩ : NonemptyInterval ℤ)
-      ⟨⟨0, 5⟩, by omega⟩ := by
-  decide
-
-private theorem rel_neutral_wide :
-    ViewpointType.neutral.ttTSitRelation (⟨⟨0, 10⟩, by omega⟩ : NonemptyInterval ℤ)
-      ⟨⟨0, 5⟩, by omega⟩ := by
-  decide
-
-private theorem rel_perfective_refl :
-    ViewpointType.perfective.ttTSitRelation (⟨⟨0, 1⟩, by omega⟩ : NonemptyInterval ℤ)
-      ⟨⟨0, 1⟩, by omega⟩ := by
-  decide
+/-- A visibility property of a viewpoint, that every topic time and situation time it relates
+stand in the cell `D`, is the inclusion of the viewpoint's realizable relations in `D`. -/
+private theorem forall_imp_iff {D : Finset Allen.Relation}
+    {P : ∀ {T : Type} [LinearOrder T], NonemptyInterval T → NonemptyInterval T → Prop}
+    (hP : ∀ {T : Type} [LinearOrder T] (tt tsit : NonemptyInterval T),
+      P tt tsit ↔ (tt, tsit) ∈ Allen.toSetRel D) (v : ViewpointType) :
+    (∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
+      v.ttTSitRelation tt tsit → P tt tsit) ↔ v.cell ∩ Allen.atoms ⊆ D := by
+  rw [← Allen.forall_toSetRel_subset_iff]
+  exact ⟨fun h T _ ⟨tt, tsit⟩ hv ↦ (hP tt tsit).1 (h ((v.ttTSitRelation_iff tt tsit).2 hv)),
+    fun h T _ tt tsit hv ↦ (hP tt tsit).2 (h T ((v.ttTSitRelation_iff tt tsit).1 hv))⟩
 
 /-- The initial point: the perfective and the neutral viewpoint assert it. -/
 theorem showsInitialPoint_iff (v : ViewpointType) :
     ShowsInitialPoint v ↔ v = .perfective ∨ v = .neutral := by
-  refine ⟨?_, ?_⟩
-  · intro h
-    cases v with
-    | perfective => exact Or.inl rfl
-    | neutral => exact Or.inr rfl
-    | imperfective =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_imperfective
-        have : (1 : ℤ) ≤ 0 := hC.1
-        omega
-    | perfect =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_perfect
-        have : (3 : ℤ) ≤ 0 := hC.1
-        omega
-    | prospective =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_prospective
-        have : (2 : ℤ) ≤ 1 := hC.2
-        omega
-  · rintro (rfl | rfl)
-    · intro _ _ tt tsit h
-      exact ⟨h.1, le_trans tsit.fst_le_snd h.2⟩
-    · intro _ _ _ _ h
-      exact h
+  refine (forall_imp_iff (D := Allen.inv Allen.startsWithin)
+    (P := @fun _ _ tt tsit ↦ tsit.fst ∈ tt) (fun _ _ ↦ by simp) v).trans ?_
+  cases v <;> decide +kernel
 
 /-- The final point: only the perfective asserts it. -/
 theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .perfective := by
-  refine ⟨?_, ?_⟩
-  · intro h
-    cases v with
-    | perfective => rfl
-    | imperfective =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_imperfective
-        have : (3 : ℤ) ≤ 2 := hC.2
-        omega
-    | perfect =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_perfect
-        have : (3 : ℤ) ≤ 2 := hC.1
-        omega
-    | prospective =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_prospective
-        have : (3 : ℤ) ≤ 1 := hC.2
-        omega
-    | neutral =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_neutral_short
-        have : (5 : ℤ) ≤ 1 := hC.2
-        omega
-  · rintro rfl
-    intro _ _ tt tsit h
-    exact ⟨le_trans h.1 tsit.fst_le_snd, h.2⟩
+  refine (forall_imp_iff
+    (D := Allen.atoms.filter fun r ↦ r.fstSnd ≠ .gt ∧ r.sndSnd ≠ .lt)
+    (P := @fun _ _ tt tsit ↦ tsit.snd ∈ tt) (fun _ _ ↦ ?_) v).trans ?_
+  · rw [Allen.mem_toSetRel, Allen.relation_mem_filter]
+    simp [Allen.relation, Allen.ofEndpoints, NonemptyInterval.mem_def, compare_le_iff_le,
+      compare_ge_iff_ge]
+  · cases v <;> decide +kernel
 
 /-- Closure: the perfective and the perfect present the situation as closed. -/
 theorem presentsClosed_iff (v : ViewpointType) :
     PresentsClosed v ↔ v = .perfective ∨ v = .perfect := by
-  refine ⟨?_, ?_⟩
-  · intro h
-    cases v with
-    | perfective => exact Or.inl rfl
-    | perfect => exact Or.inr rfl
-    | imperfective =>
-        exfalso
-        have : (3 : ℤ) ≤ 2 := @h ℤ _ _ _ rel_imperfective
-        omega
-    | prospective =>
-        exfalso
-        have : (3 : ℤ) ≤ 1 := @h ℤ _ _ _ rel_prospective
-        omega
-    | neutral =>
-        exfalso
-        have : (5 : ℤ) ≤ 1 := @h ℤ _ _ _ rel_neutral_short
-        omega
-  · rintro (rfl | rfl)
-    · intro _ _ _ _ h
-      exact h.2
-    · intro _ _ tt _ h
-      exact le_trans h tt.fst_le_snd
+  refine (forall_imp_iff (D := Allen.atoms.filter (·.sndSnd ≠ .lt))
+    (P := @fun _ _ tt tsit ↦ tsit.snd ≤ tt.snd) (fun _ _ ↦ ?_) v).trans ?_
+  · rw [Allen.mem_toSetRel, Allen.relation_mem_filter]
+    simp [Allen.relation, Allen.ofEndpoints, compare_ge_iff_ge]
+  · cases v <;> decide +kernel
 
 /-- Preliminary stages: only the imperfective places the topic time strictly inside the
 situation. -/
 theorem focusesPreliminaryStages_iff (v : ViewpointType) :
     FocusesPreliminaryStages v ↔ v = .imperfective := by
-  refine ⟨?_, ?_⟩
-  · intro h
-    cases v with
-    | imperfective => rfl
-    | perfective =>
-        exfalso
-        exact lt_irrefl _ (@h ℤ _ _ _ rel_perfective_refl)
-    | perfect =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_perfect
-        have : (4 : ℤ) ≤ 2 := hC.1.2
-        omega
-    | prospective =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_prospective
-        have : (2 : ℤ) ≤ 0 := hC.1.1
-        omega
-    | neutral =>
-        exfalso
-        have hC := @h ℤ _ _ _ rel_neutral_wide
-        have : (10 : ℤ) ≤ 5 := hC.1.2
-        omega
-  · rintro rfl
-    intro _ _ _ _ h
-    exact h
+  refine (forall_imp_iff (D := Allen.lt) (P := @fun _ _ tt tsit ↦ tt < tsit)
+    (fun _ _ ↦ by simp) v).trans ?_
+  cases v <;> decide +kernel
 
 /-- The perfective makes both endpoints visible and presents the situation as closed,
 section 4.2.1. -/
