@@ -4,6 +4,7 @@ public import Mathlib.Basic.Rel
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Concept
 public import Mathlib.Order.Cover
+public import Mathlib.Order.Minimal
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Core.Relation.SetRel
@@ -35,6 +36,7 @@ dominance image of asymmetric c-command as precedence among terminals.
 * `RoseTree.CCommands`: Reinhart's c-command, between positions neither of which dominates the
   other, and `RoseTree.cCommandDomain`, the positions a position c-commands.
 * `PhraseStructure.dominanceImage`: the relation a relation induces on the nodes below.
+* `PhraseStructure.ancestors`: the generators properly dominating a node, the key of closeness.
 
 ## Main statements
 
@@ -47,7 +49,11 @@ dominance image of asymmetric c-command as precedence among terminals.
   dominates if the mother is a generator, and what its mother commands if not. By
   `PhraseStructure.eq_commandRelation_of_forall_covBy` the command relation is the only relation
   obeying these two rules in which the root commands every node.
-* `RoseTree.cCommands_iff_parent_lt`: c-command is sisterhood plus dominance.
+* `RoseTree.cCommands_iff_parent_lt`: c-command is sisterhood plus dominance, and by
+  `RoseTree.ancestors_ssubset_ancestors_iff_cCommands` strict closeness is asymmetric c-command.
+* `PhraseStructure.ancestors_ssubset_ancestors_iff`, `PhraseStructure.minimalFor_ancestors_iff`:
+  between nodes neither of which dominates the other, strict closeness is asymmetric command, and
+  minimality under closeness is the Minimal Link Condition.
 * `PhraseStructure.not_mem_dominanceImage_asymmetrize_of_covBy`: siblings are not related by
   the dominance image of the asymmetric part of a relation between disconnected nodes.
 
@@ -181,6 +187,74 @@ theorem mem_mateRelation :
     a ~[mateRelation P] b ↔ a ~[commandRelation P] b ∧ b ~[commandRelation P] a := Iff.rfl
 
 end Mates
+
+/-! ### Closeness
+
+Of two nodes a probe can reach, the closer is the one fewer generators dominate: `a` is at least as
+close as `b` when every generator properly dominating `a` properly dominates `b`. Closeness is the
+order the generators above a node induce, `ancestors P` ordered by inclusion, and a probe finds its
+goal under it (`Minimalist.Probe.Finds`). Between nodes neither of which dominates the other it is
+command, so that strict closeness is asymmetric command and equidistance is mateship; the
+branching generators give the Minimal Link Condition with sisters equidistant, and the maximal
+projections give equidistance within a minimal domain. Unlike command, closeness also orders a
+node before the nodes it dominates through a generator, the container before the contained. -/
+
+section Closeness
+
+variable [PartialOrder α] {P : Set α} {a b x : α}
+
+/-- The generators properly dominating a node, the key of closeness. -/
+def ancestors (P : Set α) (a : α) : Set α := P ∩ Iio a
+
+theorem mem_ancestors : x ∈ ancestors P a ↔ x ∈ P ∧ x < a := Iff.rfl
+
+/-- A node is at least as close as the nodes it dominates. -/
+theorem ancestors_subset_ancestors_of_le (h : a ≤ b) : ancestors P a ⊆ ancestors P b :=
+  fun _ hx ↦ ⟨hx.1, hx.2.trans_le h⟩
+
+/-- A node is strictly closer than a node it dominates through a generator. -/
+theorem ancestors_ssubset_ancestors_of_le_of_lt (hax : a ≤ x) (hxb : x < b) (hx : x ∈ P) :
+    ancestors P a ⊂ ancestors P b :=
+  (ssubset_iff_of_subset (ancestors_subset_ancestors_of_le (hax.trans hxb.le))).2
+    ⟨x, ⟨hx, hxb⟩, fun h ↦ lt_irrefl x (h.2.trans_le hax)⟩
+
+/-- Between nodes neither of which dominates the other, closeness is command. -/
+theorem ancestors_subset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
+    ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b := by
+  refine ⟨fun h x hx hxa ↦ (h ⟨hx, hxa⟩).2.le, fun h x hx ↦ ⟨hx.1, ?_⟩⟩
+  refine lt_of_le_of_ne (mem_commandRelation.1 h _ hx.1 hx.2) ?_
+  rintro rfl
+  exact hba hx.2.le
+
+/-- Between nodes neither of which dominates the other, strict closeness is asymmetric
+command. -/
+theorem ancestors_ssubset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
+    ancestors P a ⊂ ancestors P b ↔ a ~[commandRelation P] b ∧ ¬ b ~[commandRelation P] a := by
+  rw [ssubset_def, ancestors_subset_ancestors_iff hab hba, ancestors_subset_ancestors_iff hba hab]
+
+/-- Between nodes neither of which dominates the other, equidistance is mateship. -/
+theorem ancestors_eq_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
+    ancestors P a = ancestors P b ↔ a ~[mateRelation P] b := by
+  rw [Subset.antisymm_iff, ancestors_subset_ancestors_iff hab hba,
+    ancestors_subset_ancestors_iff hba hab, mem_mateRelation]
+
+/-- Among nodes none of which dominates another, the closest are those that no node of the set
+asymmetrically commands, the Minimal Link Condition. -/
+theorem minimalFor_ancestors_iff {S : Set α} (hS : IsAntichain (· ≤ ·) S) :
+    MinimalFor (· ∈ S) (ancestors P) a ↔
+      a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) := by
+  rw [minimalFor_iff_forall_lt]
+  refine and_congr_right fun ha ↦ ⟨fun h b hb hcmd ↦ ?_, fun h b hlt hb ↦ ?_⟩
+  · have hne : b ≠ a := by
+      rintro rfl
+      exact hcmd.2 hcmd.1
+    exact h ((ancestors_ssubset_ancestors_iff (hS hb ha hne) (hS ha hb hne.symm)).2 hcmd) hb
+  · have hne : b ≠ a := by
+      rintro rfl
+      exact lt_irrefl _ hlt
+    exact h hb ((ancestors_ssubset_ancestors_iff (hS hb ha hne) (hS ha hb hne.symm)).1 hlt)
+
+end Closeness
 
 /-! ### Dominance images
 
@@ -332,6 +406,15 @@ theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : TreePath} (ha : a ≠ �
   refine ⟨fun ⟨hpb, hab, hba⟩ ↦ ⟨lt_of_le_of_ne hpb fun he ↦ hba (he ▸ hcov.le), hab⟩,
     fun ⟨hpb, hab⟩ ↦ ⟨hpb.le, hab, fun hba ↦ hab ?_⟩⟩
   exact ((hcov.eq_or_eq hpb.le hba).resolve_left hpb.ne').ge
+
+/-- Between positions neither of which dominates the other, strict closeness under the branching
+positions is asymmetric c-command. -/
+theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : TreePath}
+    (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
+    ancestors {p | t.IsBranchingAt p} a ⊂ ancestors {p | t.IsBranchingAt p} b ↔
+      t.CCommands a b ∧ ¬ t.CCommands b a := by
+  rw [ancestors_ssubset_ancestors_iff hab hba, cCommands_iff, cCommands_iff]
+  tauto
 
 /-- Relabelling preserves the branching positions. -/
 theorem isBranchingAt_map {γ : Type*} (f : β → γ) (t : RoseTree β) (p : TreePath) :
