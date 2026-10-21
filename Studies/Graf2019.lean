@@ -76,13 +76,12 @@ open Morphology Morphology.Exponence Morphology.Containment
 
 /-! ### Feasible monotonicity -/
 
-/-- A map is **feasibly monotone**, definition (6), when some monotone score identifies exactly
-the cells it identifies. Over finitely many cells this is monotonicity with respect to some linear
-order on the forms, since forms are bins and only the kernel matters. -/
+/-- A map is feasibly monotone, definition (6), if some monotone map to `ℕ` has the same
+kernel. -/
 def FeasiblyMonotone {ι F : Type*} [Preorder ι] (p : ι → F) : Prop :=
   ∃ g : ι → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j
 
-/-- Over linearly ordered cells a map is contiguous iff it is feasibly monotone. -/
+/-- Over a linear order with finite lower intervals, contiguity is feasible monotonicity. -/
 theorem isContiguous_iff_feasiblyMonotone {ι F : Type*} [LinearOrder ι]
     [LocallyFiniteOrderBot ι] (p : ι → F) : IsContiguous p ↔ FeasiblyMonotone p :=
   isContiguous_iff_exists_monotone p

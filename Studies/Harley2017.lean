@@ -8,43 +8,38 @@ public import Studies.Pylkkanen2008
 /-!
 # Harley (2017): The "bundling" hypothesis and the disparate functions of little v
 
-Harley follows Pylkkänen in letting the functions of little v be bundled on one head or split
-across several, and closes with a hierarchy of verbal projections over the root, vP > ApplP >
-CausP1 > VoiceP > CausP2 (49), each language realizing some of them and bundling some of those it
-realizes. A pattern is an interval partition of the projections a structure realizes, its heads
-the parts. On Key's account of Turkish the root-specific allomorphs of the lexical causative are
-specified for v and Caus together, so they realize only a head bundling the two, whatever its
-context, while the elsewhere *-DIr* realizes Caus alone.
+Harley adopts Pylkkänen's view that the functions of little v may be bundled on one head or split
+across several, and proposes the hierarchy vP > ApplP > CausP1 > VoiceP > CausP2 (49). A pattern
+is an interval partition of the projections a structure realizes, whose parts are its heads. Key's
+analysis of Turkish causatives follows by Vocabulary Insertion over these heads.
 
 ## Main definitions
 
-* `Feature`: the projections of (49), from the root up.
+* `Feature`: the projections of (49).
 * `turkish`, `hiaki`, `korean`, `italian`: the patterns of (49a–d).
 * `vocabulary`: Key's Turkish causative vocabulary.
-* `ofCauseHead`: Pylkkänen's root- and verb-selecting causative heads on the hierarchy.
+* `ofCauseHead`: Pylkkänen's root- and verb-selecting causative heads as patterns.
 
 ## Main statements
 
-* `voice_mem_part_v_iff`: of the four patterns only Italian bundles v with Voice.
-* `v_mem_of_applies`: a lexical causative allomorph applies to the Caus head only where v is
-  bundled with it, in every context.
-* `subsetPrinciple_lexical`, `subsetPrinciple_productive`: the root's allomorph in the lexical
-  causative, and *-DIr* in the productive one even next to the root.
-* `hasCauseePosition_iff`: Pylkkänen's causee position exists exactly where v and Voice head
-  separate projections.
+* `voice_mem_part_v_iff`: among (49a–d), only Italian puts v and Voice on one head.
+* `v_mem_of_applies`: a lexical causative allomorph applies to the Caus head only if v is on it.
+* `subsetPrinciple_lexical`, `subsetPrinciple_productive`: the root's allomorph is inserted in the
+  lexical causative and *-DIr* in the productive one.
+* `hasCauseePosition_iff`: Pylkkänen's causee position exists iff v and Voice are on different
+  heads.
 
 ## Implementation notes
 
-* A projection that (49) calls distinct is a part of its own, and an absent projection lies
-  outside the support.
-* Pylkkänen's phase-selecting Cause sits above an embedded Voice the hierarchy has no second place
-  for, so `ofCauseHead` reads only root- and verb-selecting heads.
+* A projection absent from a pattern lies outside its support; the projections (49) calls
+  distinct are singleton parts.
+* `ofCauseHead` is undefined on phase-selecting Cause, which would need a second Voice below
+  CausP2.
 
 ## TODO
 
-* The bundling diagnostics of Chol, Persian, Hiaki and Chemehuevi, the complementarity of passive
-  and light verb constructions in Italian, and the footnote setting English apart from
-  Pylkkänen's Voice-bundling English.
+* Harley's diagnostics for Chol, Persian, Hiaki and Chemehuevi; Italian passives and light verb
+  constructions; the footnote setting English apart from Pylkkänen's analysis.
 
 ## References
 
@@ -61,7 +56,7 @@ open DistributedMorphology Morphology.Exponence
 
 /-! ### The hierarchy (49) and its patterns -/
 
-/-- The verbal projections of (49), from the root up. -/
+/-- The verbal projections of (49), in order from the root. -/
 inductive Feature where
   /-- The verbalizer. -/
   | v
@@ -77,21 +72,19 @@ inductive Feature where
 
 instance : LinearOrder Feature := LinearOrder.lift' Feature.ctorIdx (by decide)
 
-/-- (49a) Turkish: v, the lower Caus and Voice each head a projection, with no Appl and no
-upper Caus. -/
+/-- (49a) Turkish: v, the lower Caus and Voice on separate heads. -/
 def turkish : IntervalPartition Feature := .discrete {.v, .caus₁, .voice}
 
-/-- (49b) Hiaki: all five project, each separately. -/
+/-- (49b) Hiaki: all five projections on separate heads. -/
 def hiaki : IntervalPartition Feature := .discrete .univ
 
-/-- (49c) Korean: v and Appl separate, no lower Caus, the upper Caus bundled with Voice. -/
+/-- (49c) Korean: v and Appl on separate heads, the upper Caus on the head of Voice. -/
 def korean : IntervalPartition Feature := ⟨[{.v}, {.appl}, {.voice, .caus₂}], by decide, by decide⟩
 
-/-- (49d) Italian: v bundled with Voice, with no Appl and no lower Caus. -/
+/-- (49d) Italian: v and Voice on one head. -/
 def italian : IntervalPartition Feature := .indiscrete {.v, .voice} (by decide)
 
-/-- Of the four patterns only Italian puts Voice on the head of v, as the chapter classifies
-Italian with the bundling languages and Hiaki and Korean with the splitting ones. -/
+/-- Among (49a–d), only Italian puts Voice on the head of v. -/
 theorem voice_mem_part_v_iff :
     ∀ P ∈ [turkish, hiaki, korean, italian], Feature.voice ∈ P.part .v ↔ P = italian := by
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
@@ -103,29 +96,29 @@ theorem voice_mem_part_v_iff :
 
 /-! ### Key's Turkish causatives -/
 
-/-- The causative exponents: a root's lexical allomorph, or the elsewhere *-DIr*. -/
+/-- The Turkish causative exponents. -/
 inductive Exponent where
-  /-- The lexical allomorph listed for the root `ρ`. -/
+  /-- The lexical allomorph of the root `ρ`. -/
   | lexical (ρ : Root)
   /-- The elsewhere *-DIr*. -/
   | dir
   deriving DecidableEq, Repr
 
-/-- The terminal of a head, its projections as features, beside roots. -/
+/-- Terminals: finsets of projections and roots. -/
 abbrev Terminal := Finset (Feature ⊕ Root)
 
-/-- The lexical causative allomorph of `ρ` realizes v and Caus together next to `ρ`. -/
+/-- The lexical causative allomorph of `ρ`, realizing v and Caus in the context of `ρ`. -/
 def lexicalItem (ρ : Root) : VocabularyItem (Feature ⊕ Root) Exponent :=
   ⟨{(0, .inl .v), (0, .inl .caus₁), (-1, .inr ρ)}, .lexical ρ⟩
 
-/-- The elsewhere *-DIr* realizes Caus alone. -/
+/-- The elsewhere *-DIr*, realizing Caus. -/
 def dirItem : VocabularyItem (Feature ⊕ Root) Exponent := {.inl .caus₁} ⟷ .dir
 
-/-- Key's vocabulary for a root with a listed lexical causative. -/
+/-- Key's vocabulary for a root `ρ` with a lexical causative allomorph. -/
 def vocabulary (ρ : Root) : RuleSet (VocabularyItem (Feature ⊕ Root) Exponent) :=
   [lexicalItem ρ, dirItem]
 
-/-- The lexical allomorph is listed before *-DIr*, which it is more specific than. -/
+/-- The vocabulary is listed in order of decreasing specificity. -/
 private theorem vocabulary_pairwise (ρ : Root) :
     (vocabulary ρ).Pairwise fun i j ↦ j.specificity ≤ i.specificity := by
   have hlt : lexicalItem ρ < dirItem := by
@@ -140,19 +133,19 @@ private theorem vocabulary_pairwise (ρ : Root) :
 def causTerminal (P : IntervalPartition Feature) : Terminal :=
   (P.part .caus₁).map .inl
 
-/-- The lexical causative bundles v with the lower Caus. -/
+/-- The lexical causative: v and the lower Caus on one head. -/
 def lexical : IntervalPartition Feature := ⟨[{.v, .caus₁}, {.voice}], by decide, by decide⟩
 
 theorem lexical_part_caus₁ : lexical.part .caus₁ = {.v, .caus₁} := by decide
 
-/-- **No phase boundary needed.** A lexical causative allomorph applies to the head bearing Caus
-only where that head bundles v with it, in every context. -/
+/-- A lexical causative allomorph applies to the head bearing Caus only if v is on that head, in
+every context. -/
 theorem v_mem_of_applies {P : IntervalPartition Feature} {ρ : Root} {l r : List Terminal}
     (h : Applies (lexicalItem ρ) (⟨causTerminal P, l, r⟩ : Neighborhood Terminal)) :
     Feature.v ∈ P.part .caus₁ := by
   simpa [Neighborhood.mem_def, causTerminal] using h (0, .inl .v) (by simp [lexicalItem])
 
-/-- In the lexical causative next to its root, the root's allomorph wins. -/
+/-- In the lexical causative next to its root, the root's allomorph is inserted. -/
 theorem subsetPrinciple_lexical (ρ : Root) :
     subsetPrinciple (vocabulary ρ) ⟨causTerminal lexical, [{.inr ρ}], []⟩ = some (.lexical ρ) := by
   have hl : Applies (lexicalItem ρ) (⟨causTerminal lexical, [{.inr ρ}], []⟩ : Neighborhood _) := by
@@ -165,7 +158,7 @@ theorem subsetPrinciple_lexical (ρ : Root) :
       simp [RuleSet.applicable, vocabulary, hl, hd]]
   rfl
 
-/-- In the productive causative of (49a) *-DIr* wins, even next to the root. -/
+/-- In the productive causative (49a), *-DIr* is inserted in every context. -/
 theorem subsetPrinciple_productive (ρ : Root) (l r : List Terminal) :
     subsetPrinciple (vocabulary ρ) ⟨causTerminal turkish, l, r⟩ = some .dir := by
   have hl : ¬ Applies (lexicalItem ρ) (⟨causTerminal turkish, l, r⟩ : Neighborhood _) :=
@@ -180,10 +173,9 @@ theorem subsetPrinciple_productive (ρ : Root) (l r : List Terminal) :
 /-! ### Pylkkänen's causative heads -/
 
 open Pylkkanen2008 in
-/-- Pylkkänen's root- and verb-selecting causative heads on the hierarchy, as the chapter reads
-them after [key-2013]: a root-selecting Cause, a lexical causative, bundles v with Caus, and a
-verb-selecting Cause is the lower Caus over a separate v; Voice-bundling puts Caus on Voice's
-head. -/
+/-- Pylkkänen's root- and verb-selecting causative heads as patterns, on the chapter's reading of
+[key-2013]: root-selecting Cause shares the head of v, verb-selecting Cause is the lower Caus on a
+head of its own, and Voice-bundling puts Cause on the head of Voice. -/
 def ofCauseHead : CauseHead → Option (IntervalPartition Feature)
   | ⟨.root, true⟩ => some (.indiscrete {.v, .caus₁, .voice} (by decide))
   | ⟨.root, false⟩ => some lexical
@@ -191,8 +183,7 @@ def ofCauseHead : CauseHead → Option (IntervalPartition Feature)
   | ⟨.verb, false⟩ => some turkish
   | ⟨.phase, _⟩ => none
 
-/-- **Pylkkänen's causee generalization as bundling.** On the chapter's reading a causee position
-exists exactly where v and Voice head separate projections. -/
+/-- A causative head has a causee position iff its pattern puts v and Voice on different heads. -/
 theorem hasCauseePosition_iff {c : Pylkkanen2008.CauseHead} {P : IntervalPartition Feature}
     (h : ofCauseHead c = some P) : c.HasCauseePosition ↔ Feature.voice ∉ P.part .v := by
   obtain ⟨_ | _ | _, _ | _⟩ := c <;> cases h <;>

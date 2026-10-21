@@ -69,6 +69,7 @@ namespace AlexiadouLohndal2017
 
 open PhraseStructure BobaljikHarley2017
 open DistributedMorphology (MayCondition MayCondition')
+open DistributedMorphology.RootCategorization (Attachment)
 
 /-! ### Hiaki suppletion without Root complements -/
 
@@ -101,11 +102,6 @@ inductive View
 /-- The classes of Roots, manner Roots like √COLOR and state or result Roots like √BLACK. -/
 inductive RootClass
   | manner | result
-  deriving DecidableEq, Repr
-
-/-- A Root is attached to v as its complement or as its modifier. -/
-inductive Attachment
-  | complement | modifier
   deriving DecidableEq, Repr
 
 /-- How each view attaches a Root of each class to v; a Root inserted after syntax is attached in
