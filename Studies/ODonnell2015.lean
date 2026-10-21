@@ -86,7 +86,7 @@ Fig 7.3, all of which place *-ion* in their top 5). -/
 def moreProductiveThan (a b : Suffix) : Prop :=
   a.productivityIndex > b.productivityIndex
 
-instance : DecidableRel moreProductiveThan := λ a b =>
+instance : DecidableRel moreProductiveThan := fun a b ↦
   inferInstanceAs (Decidable (a.productivityIndex > b.productivityIndex))
 
 /-! ## Frequency-spectrum statistics (Fig 7.4, pp. 267–268)
@@ -200,7 +200,7 @@ theorem corpusProbGivenTables_nonneg (D : Multiset (RoseTree (Symbol T G.NT)))
 
 /-- The table assignment with no customers at any nonterminal. -/
 def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
-  λ _ => ⟨0, ⊥⟩
+  fun _ ↦ ⟨0, ⊥⟩
 
 @[simp]
 theorem pypFactor_emptyTables (a : G.NT) : M.pypFactor a (emptyTables G) = 1 := by
@@ -209,9 +209,7 @@ theorem pypFactor_emptyTables (a : G.NT) : M.pypFactor a (emptyTables G) = 1 := 
 
 @[simp]
 theorem corpusProbGivenTables_empty : M.corpusProbGivenTables 0 (emptyTables G) = 1 :=
-  Finset.prod_eq_one λ a ha =>
-    have := DirichletPCFG.nonempty_rulesWithLHS_of_mem_image ha
-    by simp
+  Finset.prod_eq_one fun _ _ ↦ by simp
 
 /-- The conjugate update of the Dirichlet component by a corpus; the Pitman–Yor
 hyperparameters are unchanged. -/
@@ -276,14 +274,14 @@ noncomputable def corpusProbGivenStorage (D : Multiset (RoseTree (Symbol T G.NT)
 theorem corpusProbGivenStorage_nonneg (D : Multiset (RoseTree (Symbol T G.NT)))
     (Y : AdaptorGrammar.TableAssignment G) (Z : HaltCounts G) :
     0 ≤ M.corpusProbGivenStorage D Y Z :=
-  mul_nonneg (M.corpusProbGivenTables_nonneg D Y) <| Finset.prod_nonneg λ r _ =>
-    Finset.prod_nonneg λ i _ => (polyaUrnProb_pos (M.halt_pos r i) _).le
+  mul_nonneg (M.corpusProbGivenTables_nonneg D Y) <| Finset.prod_nonneg fun r _ ↦
+    Finset.prod_nonneg fun i _ ↦ (polyaUrnProb_pos (M.halt_pos r i) _).le
 
 @[simp]
 theorem corpusProbGivenStorage_empty :
     M.corpusProbGivenStorage 0 (AdaptorGrammar.emptyTables G) 0 = 1 := by
   simp only [corpusProbGivenStorage, AdaptorGrammar.corpusProbGivenTables_empty, one_mul]
-  exact Finset.prod_eq_one λ r _ => Finset.prod_eq_one λ i _ => polyaUrnProb_zero (M.halt r i)
+  exact Finset.prod_eq_one fun r _ ↦ Finset.prod_eq_one fun i _ ↦ polyaUrnProb_zero (M.halt r i)
 
 /-- In the conjugate update by a corpus `D` and its halt counts `Z`, the adaptor-grammar
 component absorbs the rule counts of `D`, and the urn at each slot absorbs the decisions taken
@@ -362,12 +360,17 @@ def suffixGrammar : ContextFreeGrammar Sym where
   initial := SuffixNT.N
   rules := {rNess, rIon, rAte, rAdj, rV, rBnd}
 
-/-- `DecidableEq` for the grammar's `NT` projection — needed by
-    `DirichletPCFG`'s typeclass arguments. Not synthesised automatically
-    because `suffixGrammar.NT` is a structure projection that the
-    typeclass solver does not reduce to `SuffixNT`. -/
+/-- `DecidableEq` for the grammar's `NT` projection, which `ContextFreeGrammar.RulesWithLHS`
+    needs. Not synthesised automatically because `suffixGrammar.NT` is a structure projection
+    that the typeclass solver does not reduce to `SuffixNT`. -/
 instance : DecidableEq suffixGrammar.NT :=
   inferInstanceAs (DecidableEq SuffixNT)
+
+/-- The `-ness` nominalisation among the rules expanding `N`. -/
+def nessRule : suffixGrammar.RulesWithLHS SuffixNT.N := ⟨rNess, by decide⟩
+
+/-- The `-ion` nominalisation among the rules expanding `N`. -/
+def ionRule : suffixGrammar.RulesWithLHS SuffixNT.N := ⟨rIon, by decide⟩
 
 /-! ## The Dirichlet prior over the toy grammar -/
 
@@ -416,11 +419,6 @@ private lemma pseudoVal_rIon : pseudoVal rIon = 2 := by
 
 /-! ## Theorems -/
 
-/-- Any Dirichlet PCFG over `suffixGrammar` assigns probability `1`, hence positive
-    probability, to the empty corpus. -/
-theorem corpusProb_pos_for_empty (M : DirichletPCFG suffixGrammar) : 0 < M.corpusProb 0 := by
-  rw [DirichletPCFG.corpusProb_zero]; exact zero_lt_one
-
 /-- A stronger productivity ranking (`moreProductiveThan`) implies a larger pseudo-count for
     the corresponding rule, so a revision of `Suffix.productivityIndex` that contradicts the
     rule-level encoding breaks here. -/
@@ -441,20 +439,21 @@ theorem suffixPrior_pseudo_respects_productivity
 theorem suffixPrior_predictive_lt_of_count_gap (D : Multiset (RoseTree (Symbol Sym SuffixNT)))
     (h : RoseTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
          RoseTree.corpusRuleCount (N := SuffixNT) rIon D) :
-    suffixPrior.predictive rNess D < suffixPrior.predictive rIon D := by
-  refine (suffixPrior.predictive_lt_iff_of_same_lhs (r := rNess) (r' := rIon) (by decide) rfl).2 ?_
-  have h' : (RoseTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) + 1 <
-      RoseTree.corpusRuleCount (N := SuffixNT) rIon D := by exact_mod_cast h
-  show pseudoVal rNess + _ < pseudoVal rIon + _
+    suffixPrior.predictive SuffixNT.N D nessRule < suffixPrior.predictive SuffixNT.N D ionRule := by
+  refine suffixPrior.predictive_lt_predictive_iff.2 ?_
+  show pseudoVal rNess + (RoseTree.corpusRuleCount rNess D : ℝ) <
+    pseudoVal rIon + RoseTree.corpusRuleCount rIon D
   rw [pseudoVal_rNess, pseudoVal_rIon]
+  have : (RoseTree.corpusRuleCount rNess D : ℝ) + 1 < RoseTree.corpusRuleCount rIon D := by
+    exact_mod_cast h
   linarith
 
 /-- With no data the Dirichlet PCFG orders the nominalising rules correctly, since the prior
     predictive is the normalised pseudo-count and `pseudoVal rNess > pseudoVal rIon`. The
     model's failure is data-driven, not prior-driven. -/
 theorem suffixPrior_predictive_prior_lt :
-    suffixPrior.predictive rIon 0 < suffixPrior.predictive rNess 0 := by
-  refine (suffixPrior.predictive_lt_iff_of_same_lhs (r := rIon) (r' := rNess) (by decide) rfl).2 ?_
+    suffixPrior.predictive SuffixNT.N 0 ionRule < suffixPrior.predictive SuffixNT.N 0 nessRule := by
+  refine suffixPrior.predictive_lt_predictive_iff.2 ?_
   show pseudoVal rIon + _ < pseudoVal rNess + _
   rw [pseudoVal_rIon, pseudoVal_rNess, RoseTree.corpusRuleCount_zero,
     RoseTree.corpusRuleCount_zero]
@@ -463,10 +462,10 @@ theorem suffixPrior_predictive_prior_lt :
 /-- The same prior comparison as a fact about the predictive PCFG, the point estimate the
     Dirichlet prior induces. -/
 theorem suffixPrior_predictivePCFG_prior_lt :
-    (suffixPrior.predictivePCFG 0).weight rIon < (suffixPrior.predictivePCFG 0).weight rNess := by
-  rw [DirichletPCFG.predictivePCFG_weight _ (by decide),
-    DirichletPCFG.predictivePCFG_weight _ (by decide),
-    ENNReal.ofReal_lt_ofReal_iff (suffixPrior.predictive_pos (by decide) 0)]
+    (suffixPrior.predictivePCFG 0).weight ionRule <
+      (suffixPrior.predictivePCFG 0).weight nessRule := by
+  rw [suffixPrior.predictivePCFG_weight, suffixPrior.predictivePCFG_weight,
+    ENNReal.ofReal_lt_ofReal_iff (suffixPrior.predictive_pos _ 0 _)]
   exact suffixPrior_predictive_prior_lt
 
 /-- The Chapter 7 critique of the Dirichlet PCFG in one theorem is that it is right without
@@ -475,9 +474,28 @@ theorem suffixPrior_predictivePCFG_prior_lt :
 theorem suffixPrior_prior_and_posterior_disagree (D : Multiset (RoseTree (Symbol Sym SuffixNT)))
     (h : RoseTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
          RoseTree.corpusRuleCount (N := SuffixNT) rIon D) :
-    suffixPrior.predictive rIon 0 < suffixPrior.predictive rNess 0 ∧
-      suffixPrior.predictive rNess D < suffixPrior.predictive rIon D :=
+    suffixPrior.predictive SuffixNT.N 0 ionRule < suffixPrior.predictive SuffixNT.N 0 nessRule ∧
+      suffixPrior.predictive SuffixNT.N D nessRule < suffixPrior.predictive SuffixNT.N D ionRule :=
   ⟨suffixPrior_predictive_prior_lt, suffixPrior_predictive_lt_of_count_gap D h⟩
+
+/-- The derivation of an *-ness* noun from an adjective base: `N → A ness`, then `A → adj`. -/
+def nessTree : RoseTree (Symbol Sym suffixGrammar.NT) :=
+  .node (.nonterminal SuffixNT.N)
+    [.node (.nonterminal SuffixNT.A) [.leaf (.terminal Sym.adj)], .leaf (.terminal Sym.ness)]
+
+theorem nessTree_licensed : nessTree.Licensed suffixGrammar.Licenses := by
+  refine .nonterminal _ _ (by decide) ?_
+  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
+  exact ⟨.nonterminal _ _ (by decide) fun c hc ↦ List.mem_singleton.mp hc ▸ .terminal _,
+    .terminal _⟩
+
+/-- The toy grammar expands each nonterminal at most once in the *-ness* derivation, so the
+predictive PCFG given a corpus is the Dirichlet PCFG's exact posterior probability of that
+derivation coming next. -/
+theorem suffixPrior_derivProb_nessTree (D : Multiset (RoseTree (Symbol Sym suffixGrammar.NT))) :
+    (suffixPrior.predictivePCFG D).derivProb nessTree =
+      .ofReal ((suffixPrior.posterior D).corpusProb {nessTree}) :=
+  suffixPrior.derivProb_predictivePCFG nessTree_licensed (fun a ↦ by cases a <;> decide) D
 
 /-! ### The Probabilistic Elsewhere Condition (§5.5.3)
 

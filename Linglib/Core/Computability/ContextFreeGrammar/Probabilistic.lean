@@ -82,7 +82,7 @@ noncomputable def symbolWeight : Symbol T G.NT → List (Symbol T G.NT) → ℝ�
 /-- The probability of a derivation tree is the product over its nodes of the weight of the rule
 applied there. -/
 noncomputable def derivProb (t : RoseTree (Symbol T G.NT)) : ℝ≥0∞ :=
-  (t.localTrees.map fun p => W.symbolWeight p.1 p.2).prod
+  (t.localTrees.map fun p ↦ W.symbolWeight p.1 p.2).prod
 
 theorem derivProb_node (s : Symbol T G.NT) (cs : List (RoseTree (Symbol T G.NT))) :
     W.derivProb (RoseTree.node s cs) =
@@ -108,7 +108,7 @@ theorem corpusProb_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) :
 theorem sum_weight_le_one (A : G.NT) : ∑ r ∈ G.rules.filter (·.input = A), W.weight r ≤ 1 := by
   by_cases hA : A ∈ G.rules.image (·.input)
   · exact (W.sum_weight A hA).le
-  · rw [Finset.sum_eq_zero fun r hr => (hA (Finset.mem_image.mpr
+  · rw [Finset.sum_eq_zero fun r hr ↦ (hA (Finset.mem_image.mpr
       ⟨r, (Finset.mem_filter.mp hr).1, (Finset.mem_filter.mp hr).2⟩)).elim]
     exact zero_le_one
 
@@ -133,7 +133,7 @@ theorem derivProb_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)}
     | nil => simp
     | cons c cs ihl =>
       simp only [List.map_cons, List.prod_cons, List.sum_cons, pow_add, Finset.prod_mul_distrib]
-      rw [ih c (List.mem_cons_self ..), ihl λ c' hc' => ih c' (List.mem_cons_of_mem _ hc')]
+      rw [ih c (List.mem_cons_self ..), ihl fun c' hc' ↦ ih c' (List.mem_cons_of_mem _ hc')]
 
 /-- Over licensed derivation trees, corpus probability is the product over the grammar's rules of
 the rule weight raised to the corpus count of that rule. -/
@@ -144,7 +144,7 @@ theorem corpusProb_eq_prod_pow_count (D : Multiset (RoseTree (Symbol T G.NT)))
   | empty => simp
   | cons t D ih =>
     rw [← Multiset.singleton_add, corpusProb_add,
-      ih λ t' ht' => h t' (Multiset.mem_cons_of_mem ht')]
+      ih fun t' ht' ↦ h t' (Multiset.mem_cons_of_mem ht')]
     simp only [corpusProb, Multiset.map_singleton, Multiset.prod_singleton,
       RoseTree.corpusRuleCount_add, pow_add, Finset.prod_mul_distrib,
       W.derivProb_eq_prod_pow_ruleCount (h t (Multiset.mem_cons_self t D)),
@@ -158,11 +158,11 @@ noncomputable def uniform : PCFG G where
   sum_weight a ha := by
     obtain ⟨r₀, hr₀, hra⟩ := Finset.mem_image.mp ha
     have hcard :
-        ((G.rules.filter λ r : ContextFreeRule T G.NT => r.input = a).card : ℝ≥0∞) ≠ 0 := by
+        ((G.rules.filter fun r : ContextFreeRule T G.NT ↦ r.input = a).card : ℝ≥0∞) ≠ 0 := by
       exact_mod_cast (Finset.card_pos.mpr ⟨r₀, Finset.mem_filter.mpr ⟨hr₀, hra⟩⟩).ne'
     rw [Finset.sum_congr rfl
-        (g := λ _ => ((G.rules.filter λ r : ContextFreeRule T G.NT => r.input = a).card : ℝ≥0∞)⁻¹)
-        λ r hr => by rw [ite_eq_left (Finset.mem_filter.mp hr).1, (Finset.mem_filter.mp hr).2],
+        (g := fun _ ↦ ((G.rules.filter fun r : ContextFreeRule T G.NT ↦ r.input = a).card : ℝ≥0∞)⁻¹)
+        fun r hr ↦ by rw [ite_eq_left (Finset.mem_filter.mp hr).1, (Finset.mem_filter.mp hr).2],
       Finset.sum_const, nsmul_eq_mul, ENNReal.mul_inv_cancel hcard (ENNReal.natCast_ne_top _)]
 
 noncomputable instance : Inhabited (PCFG G) := ⟨uniform⟩
