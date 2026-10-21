@@ -176,11 +176,15 @@ theorem ground_contrastField_approximate (e : Experiment) :
     (contrastField e).ground.indexes .approximate = {.incompetent, .warm, .solidary} := by
   rw [(antipodal_contrastField e).ground_indexes, ground_contrastField_precise]; decide
 
+/-- On the opposition reading the precise and approximate variants ground as complementary
+personae, each meeting every persona but the other's. -/
+theorem complementary_contrastField (e : Experiment) :
+    (contrastField e).ground.Complementary .precise .approximate :=
+  (antipodal_contrastField e).complementary fun d ↦ by revert d; cases e <;> decide +kernel
+
 theorem lift_contrastField_precise (e : Experiment) :
     (contrastField e).ground.lift .precise = {{.competent, .cold, .antiSolidary}} := by
-  rw [GroundedField.lift_eq_singleton _ _ ?_, ground_contrastField_precise]
-  rw [AssociationField.ground_indexes_mem_maximalIndepSets_iff]
-  cases e <;> decide +kernel
+  rw [(complementary_contrastField e).lift_eq_singleton, ground_contrastField_precise]
 
 theorem borneOut_contrastField (e e' : Experiment) : BorneOut (contrastField e) e' := by
   have h : contrastField e = contrastField e' := by

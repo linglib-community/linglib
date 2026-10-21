@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "bibkey": "burnett-2019",
+    "description": "The (ING) rates Burnett reproduces from Labov's New York City survey: the approximate percentage of *-in'* in casual style by social class."
+  },
+  "types": [
+    {
+      "name": "SocialClass",
+      "doc": "The social classes of Table 7, from the highest to the lowest.",
+      "levels": [
+        {
+          "name": "upperMiddle",
+          "label": "Upper middle class",
+          "doc": "the upper middle class"
+        },
+        {
+          "name": "lowerMiddle",
+          "label": "Lower middle class",
+          "doc": "the lower middle class"
+        },
+        {
+          "name": "working",
+          "label": "Working class",
+          "doc": "the working class"
+        },
+        {
+          "name": "lower",
+          "label": "Lower class",
+          "doc": "the lower class"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "ingByClass",
+      "structure": "IngCell",
+      "doc": "the approximate percentage of *-in'* in casual style of a social class in New York City.",
+      "locator": "Table 7, p. 439",
+      "verified": "page-image",
+      "key": [
+        "socialClass"
+      ],
+      "columns": [
+        {
+          "name": "socialClass",
+          "type": "SocialClass",
+          "doc": "The social class."
+        },
+        {
+          "name": "percent",
+          "type": "nat",
+          "doc": "The approximate percentage of *-in'*."
+        }
+      ],
+      "rows": [
+        {
+          "socialClass": "Upper middle class",
+          "percent": 10
+        },
+        {
+          "socialClass": "Lower middle class",
+          "percent": 40
+        },
+        {
+          "socialClass": "Working class",
+          "percent": 50
+        },
+        {
+          "socialClass": "Lower class",
+          "percent": 80
+        }
+      ]
+    }
+  ]
+}

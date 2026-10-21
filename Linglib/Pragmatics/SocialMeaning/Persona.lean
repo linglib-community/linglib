@@ -29,6 +29,7 @@ takes the game as the current formalization of social meaning as reasoning.
 * `Persona`: a maximal independent set of the incompatibility graph, and
   `GroundedField.personae`, the personae that meet a variant.
 * `AssociationField.ground`: the grounded field of an association field over the dimensions.
+* `GroundedField.Complementary`: two variants indexing complementary personae.
 
 ## Main results
 
@@ -37,6 +38,10 @@ takes the game as the current formalization of social meaning as reasoning.
 * `GroundedField.lift_eq_singleton`: a variant that indexes a whole persona lifts to it alone.
 * `AssociationField.Antipodal.ground_indexes`: of an antipodal pair, the second grounds as the
   opposites of the poles the first grounds as.
+* `GroundedField.Complementary.personae_eq_compl`: of two complementary variants, each meets every
+  persona but the one the other indexes.
+* `AssociationField.Antipodal.complementary`: an antipodal pair indexing every dimension grounds
+  as complementary personae.
 
 ## References
 
@@ -117,6 +122,76 @@ def GroundedField.personae {Variant P : Type*} {G : SimpleGraph P} [Fintype P] [
     {π : Persona G} : π ∈ F.personae v ↔ F.Meets v π.1 := by
   simp [GroundedField.personae]
 
+namespace GroundedField
+
+variable {Variant P : Type*} [Fintype P] [DecidableEq P] {G : SimpleGraph P} [DecidableRel G.Adj]
+
+/-- Two variants are complementary when each indexes a persona and each indexes the properties
+the other does not. -/
+structure Complementary (F : GroundedField Variant G) (v w : Variant) : Prop where
+  left_mem : F.indexes v ∈ G.maximalIndepSets
+  right_mem : F.indexes w ∈ G.maximalIndepSets
+  indexes_eq_compl : F.indexes v = (F.indexes w)ᶜ
+
+namespace Complementary
+
+variable {F : GroundedField Variant G} {v w : Variant} (h : F.Complementary v w)
+include h
+
+theorem symm : F.Complementary w v :=
+  ⟨h.right_mem, h.left_mem, by rw [h.indexes_eq_compl, compl_compl]⟩
+
+/-- The persona the first variant indexes, which only it meets. -/
+def left : Persona G := ⟨F.indexes v, h.left_mem⟩
+
+/-- The persona the second variant indexes. -/
+def right : Persona G := ⟨F.indexes w, h.right_mem⟩
+
+theorem symm_left : h.symm.left = h.right := rfl
+
+theorem symm_right : h.symm.right = h.left := rfl
+
+theorem left_ne_right [Nonempty P] : h.left ≠ h.right := by
+  intro he
+  obtain ⟨p⟩ := ‹Nonempty P›
+  have := congrArg (p ∈ ·.1) he
+  simp [left, right, h.indexes_eq_compl] at this
+
+/-- The first variant meets every persona but the one the second indexes, the persona with none
+of its properties. -/
+theorem personae_eq_compl : F.personae v = {h.right}ᶜ := by
+  ext π
+  rw [mem_personae, Finset.mem_compl, Finset.mem_singleton, Meets, h.indexes_eq_compl,
+    disjoint_compl_left_iff, not_iff_not, Subtype.ext_iff]
+  refine ⟨fun hsub ↦ ?_, fun he ↦ he ▸ le_rfl⟩
+  have hπ := π.2
+  rw [SimpleGraph.mem_maximalIndepSets] at hπ
+  exact Finset.coe_injective (hπ.eq_of_subset (F.isIndepSet w) (Finset.coe_subset.2 hsub))
+
+theorem right_notMem_personae : h.right ∉ F.personae v := by
+  rw [h.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton, not_not]
+
+theorem left_mem_personae [Nonempty P] : h.left ∈ F.personae v := by
+  rw [h.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton]
+  exact h.left_ne_right
+
+/-- A persona other than the two the variants index meets both. -/
+theorem mem_personae_of_ne {p : Persona G} (hl : p ≠ h.left) (hr : p ≠ h.right) {u : Variant}
+    (hu : u = v ∨ u = w) : p ∈ F.personae u := by
+  rcases hu with rfl | rfl
+  · rw [h.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton]
+    exact hr
+  · rw [h.symm.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton]
+    exact hl
+
+/-- The first variant is compatible with the persona it indexes alone. -/
+theorem lift_eq_singleton : F.lift v = {F.indexes v} :=
+  F.lift_eq_singleton v h.left_mem
+
+end Complementary
+
+end GroundedField
+
 /-- An association field over the dimensions grounds as the poles whose polarity is the sign
 of the variant's association with their dimension. -/
 def AssociationField.ground {Variant R : Type*} [Zero R] [Preorder R] [DecidableLT R]
@@ -167,6 +242,26 @@ theorem Antipodal.ground_indexes {M : AssociationField Variant Dimension SignTyp
   simp only [Pole.oppositeEquiv_symm, Pole.oppositeEquiv_apply, Pole.dimension_opposite,
     Pole.polarity_opposite, Pi.neg_apply, hs]
   exact neg_eq_iff_eq_neg
+
+/-- An antipodal pair of sign fields that index every dimension ground as complementary
+personae. -/
+theorem Antipodal.complementary {M : AssociationField Variant Dimension SignType}
+    (h : M.Antipodal v₁ v₂) (hv : ∀ d, M v₁ d ≠ 0) : M.ground.Complementary v₁ v₂ := by
+  have h₂ (d : Dimension) : M v₂ d = -M v₁ d := by rw [congrFun h d, Pi.neg_apply, neg_neg]
+  refine ⟨ground_indexes_mem_maximalIndepSets_iff.2 hv,
+    ground_indexes_mem_maximalIndepSets_iff.2 fun d ↦ by
+      have := hv d
+      rw [h₂]
+      revert this
+      generalize M v₁ d = s
+      revert s
+      decide, ?_⟩
+  ext p
+  rw [Finset.mem_compl, mem_ground_indexes, mem_ground_indexes, h₂]
+  have := hv p.dimension
+  revert this
+  generalize M v₁ p.dimension = s
+  cases p <;> revert s <;> decide
 
 end AssociationField
 
