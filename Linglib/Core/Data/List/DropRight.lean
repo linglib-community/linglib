@@ -32,7 +32,8 @@ its front counterpart through `List.rtake_eq_reverse_take_reverse` or
   and mathlib's `List.rdrop_append_length` and `List.rdrop_append_length_add`.
 * `List.rdrop_prefix`, `List.rtake_suffix`, `List.rdrop_append_rtake`: a tail-drop is a prefix, a
   tail-take a suffix, and together they recover the list, mirroring `List.take_prefix`,
-  `List.drop_suffix`, and `List.take_append_drop`.
+  `List.drop_suffix`, and `List.take_append_drop`. `List.rtake_eq_iff` characterizes a tail-take
+  as the suffix of its length, mirroring `List.suffix_iff_eq_drop`.
 * `List.rtake_append_rtake` and `List.rtake_append_append_of_le_length`: the last `n` elements
   are a sufficient state, so truncating before appending, or prepending anything to a block of
   length at least `n`, leaves the tail-take unchanged.
@@ -90,6 +91,14 @@ theorem rdrop_append : (l₁ ++ l₂).rdrop n = l₁.rdrop (n - l₂.length) ++ 
 theorem rdrop_prefix (n : ℕ) (l : List α) : l.rdrop n <+: l := take_prefix _ _
 
 theorem rtake_suffix (n : ℕ) (l : List α) : l.rtake n <:+ l := drop_suffix _ _
+
+/-- The last `n` elements of `l` are the suffix of `l` of length `min n l.length`, mirroring
+`List.suffix_iff_eq_drop`. -/
+theorem rtake_eq_iff {u : List α} : l.rtake n = u ↔ u <:+ l ∧ u.length = min n l.length := by
+  refine ⟨by rintro rfl; exact ⟨rtake_suffix n l, length_rtake⟩, fun ⟨h, hlen⟩ ↦ ?_⟩
+  rw [suffix_iff_eq_drop.1 h, hlen, rtake]
+  congr 1
+  omega
 
 @[simp] theorem rdrop_append_rtake (n : ℕ) (l : List α) : l.rdrop n ++ l.rtake n = l := by
   rw [rdrop_eq_reverse_drop_reverse, rtake_eq_reverse_take_reverse, ← reverse_append,
