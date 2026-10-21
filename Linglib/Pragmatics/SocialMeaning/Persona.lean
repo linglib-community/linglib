@@ -141,25 +141,23 @@ include h
 theorem symm : F.Complementary w v :=
   ⟨h.right_mem, h.left_mem, by rw [h.indexes_eq_compl, compl_compl]⟩
 
-/-- The persona the first variant indexes, which only it meets. -/
-def left : Persona G := ⟨F.indexes v, h.left_mem⟩
+/-- The persona the first variant indexes, the second's being `h.symm.persona`. -/
+def persona : Persona G := ⟨F.indexes v, h.left_mem⟩
 
-/-- The persona the second variant indexes. -/
-def right : Persona G := ⟨F.indexes w, h.right_mem⟩
-
-theorem symm_left : h.symm.left = h.right := rfl
-
-theorem symm_right : h.symm.right = h.left := rfl
-
-theorem left_ne_right [Nonempty P] : h.left ≠ h.right := by
+theorem persona_ne [Nonempty P] : h.persona ≠ h.symm.persona := by
   intro he
   obtain ⟨p⟩ := ‹Nonempty P›
   have := congrArg (p ∈ ·.1) he
-  simp [left, right, h.indexes_eq_compl] at this
+  simp [persona, h.indexes_eq_compl] at this
+
+/-- Two complementary variants are distinct. -/
+theorem ne [Nonempty P] : v ≠ w := by
+  rintro rfl
+  exact h.persona_ne rfl
 
 /-- The first variant meets every persona but the one the second indexes, the persona with none
 of its properties. -/
-theorem personae_eq_compl : F.personae v = {h.right}ᶜ := by
+theorem personae_eq_compl : F.personae v = {h.symm.persona}ᶜ := by
   ext π
   rw [mem_personae, Finset.mem_compl, Finset.mem_singleton, Meets, h.indexes_eq_compl,
     disjoint_compl_left_iff, not_iff_not, Subtype.ext_iff]
@@ -168,21 +166,21 @@ theorem personae_eq_compl : F.personae v = {h.right}ᶜ := by
   rw [SimpleGraph.mem_maximalIndepSets] at hπ
   exact Finset.coe_injective (hπ.eq_of_subset (F.isIndepSet w) (Finset.coe_subset.2 hsub))
 
-theorem right_notMem_personae : h.right ∉ F.personae v := by
+theorem symm_persona_notMem_personae : h.symm.persona ∉ F.personae v := by
   rw [h.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton, not_not]
 
-theorem left_mem_personae [Nonempty P] : h.left ∈ F.personae v := by
+theorem persona_mem_personae [Nonempty P] : h.persona ∈ F.personae v := by
   rw [h.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton]
-  exact h.left_ne_right
+  exact h.persona_ne
 
 /-- A persona other than the two the variants index meets both. -/
-theorem mem_personae_of_ne {p : Persona G} (hl : p ≠ h.left) (hr : p ≠ h.right) {u : Variant}
-    (hu : u = v ∨ u = w) : p ∈ F.personae u := by
+theorem mem_personae_of_ne {p : Persona G} (hp : p ≠ h.persona) (hp' : p ≠ h.symm.persona)
+    {u : Variant} (hu : u = v ∨ u = w) : p ∈ F.personae u := by
   rcases hu with rfl | rfl
   · rw [h.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton]
-    exact hr
+    exact hp'
   · rw [h.symm.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton]
-    exact hl
+    exact hp
 
 /-- The first variant is compatible with the persona it indexes alone. -/
 theorem lift_eq_singleton : F.lift v = {F.indexes v} :=

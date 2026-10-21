@@ -26,7 +26,7 @@ indexes, and the paper's predictions come out in closed form from the prior mass
 * `S1_real_singleton_of_ne`: it produces a variant in proportion to the `α`-th power of the
   rival's extension, which gives the barbecue's 69% and the journalists' 31% (`casual_apical`,
   `careful_apical`).
-* `L1_real_singleton_of_ne`, `L1_real_singleton_left`: when the excluded personae are equally
+* `L1_real_singleton_of_ne`, `L1_real_singleton_persona`: when the excluded personae are equally
   likely, a variant doubles the persona only it conveys and leaves every other at its prior,
   which gives Rice's Table 12 and Bush's bulletproofing (`bush_bulletproof`).
 * `classRate_lt_classRate_iff`: the value functions of Table 8 order the classes as Labov's
@@ -71,22 +71,16 @@ variable {V P : Type*} [Fintype P] [DecidableEq P] {G : SimpleGraph P} [Decidabl
 
 /-- A speaker selects a persona by the softmax of her values at rationality `α'` (14). -/
 noncomputable def select (α' : ℝ) (value : Persona G → ℝ) : Measure (Persona G) :=
-  Measure.ofWeights fun π ↦ ENNReal.ofReal (Real.softmax (fun π ↦ α' * value π) π)
-
-instance (α' : ℝ) (value : Persona G → ℝ) : IsFiniteMeasure (select α' value) :=
-  Measure.isFiniteMeasure_ofWeights fun _ ↦ ENNReal.ofReal_ne_top
+  Measure.ofRealWeights (Real.softmax fun π ↦ α' * value π)
 
 variable [Nonempty (Persona G)]
 
-@[simp] theorem select_real_singleton (α' : ℝ) (value : Persona G → ℝ) (π : Persona G) :
-    (select α' value).real {π} = Real.softmax (fun π ↦ α' * value π) π := by
-  rw [measureReal_def, select, Measure.ofWeights_apply_singleton,
-    ENNReal.toReal_ofReal (Real.softmax_nonneg _ _)]
+instance (α' : ℝ) (value : Persona G → ℝ) : IsProbabilityMeasure (select α' value) :=
+  Measure.isProbabilityMeasure_ofRealWeights (Real.softmax_nonneg _) (Real.sum_softmax _)
 
-@[simp] theorem select_real_univ (α' : ℝ) (value : Persona G → ℝ) :
-    (select α' value).real Set.univ = 1 := by
-  rw [← Finset.coe_univ, ← sum_measureReal_singleton]
-  simp only [select_real_singleton, Real.sum_softmax]
+@[simp] theorem select_real_singleton (α' : ℝ) (value : Persona G → ℝ) (π : Persona G) :
+    (select α' value).real {π} = Real.softmax (fun π ↦ α' * value π) π :=
+  Measure.ofRealWeights_real_singleton (Real.softmax_nonneg _) π
 
 variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V]
 
@@ -105,7 +99,26 @@ noncomputable abbrev L1 (α : ℝ) (prior : Measure (Persona G)) : Kernel V (Per
 
 end Game
 
-/-! ### Binary variables -/
+private theorem ofWeights_ne_zero {β : Type*} [Fintype β] [MeasurableSpace β]
+    [MeasurableSingletonClass β] {w : β → ℕ} (hw : ∀ b, w b ≠ 0) (b : β) :
+    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)) {b} ≠ 0 :=
+  Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw b))
+
+private theorem ofWeights_real_univ {β : Type*} [Fintype β] [MeasurableSpace β]
+    [MeasurableSingletonClass β] (w : β → ℕ) :
+    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)).real Set.univ = ((∑ b, w b : ℕ) : ℝ) := by
+  rw [measureReal_def, ← Finset.coe_univ, Measure.ofWeights_apply_finset, ← Nat.cast_sum,
+    ENNReal.toReal_natCast]
+
+private theorem ofWeights_real_singleton {β : Type*} [Fintype β] [MeasurableSpace β]
+    [MeasurableSingletonClass β] (w : β → ℕ) (b : β) :
+    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)).real {b} = w b := by
+  rw [Measure.ofWeights_real_singleton, ENNReal.toReal_natCast]
+
+/-! ### Binary variables
+
+Two variants index complementary personae, `h.persona` and `h.symm.persona`; every other
+persona both convey. -/
 
 section Binary
 
@@ -120,41 +133,71 @@ variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] {prior : M
 include hα
 
 /-- The persona only the second variant conveys never produces the first. -/
-theorem S1_right_real_singleton : (S1 F α prior h.right).real {v} = 0 :=
+theorem S1_symm_persona_real_singleton : (S1 F α prior h.symm.persona).real {v} = 0 :=
   speaker_listener_truthful_dirac_real_singleton_eq_zero hα 0 prior _
-    (Finset.mem_coe.not.2 h.right_notMem_personae)
+    (Finset.mem_coe.not.2 h.symm_persona_notMem_personae)
 
-/-- Hearing the first variant rules out the persona it excludes. -/
-theorem L1_real_singleton_right : (L1 F α prior v).real {h.right} = 0 := by
+/-- Hearing the first variant rules out the persona the second indexes. -/
+theorem L1_real_singleton_symm_persona : (L1 F α prior v).real {h.symm.persona} = 0 := by
   rw [measureReal_def, listener_speaker_listener_truthful_apply_singleton_of_notMem hα 0 prior
-    (fun u ↦ ↑(F.personae u)) (w := h.right)
-    (Finset.mem_coe.not.2 h.right_notMem_personae), ENNReal.toReal_zero]
+    (fun u ↦ ↑(F.personae u)) (w := h.symm.persona)
+    (Finset.mem_coe.not.2 h.symm_persona_notMem_personae), ENNReal.toReal_zero]
 
 end Exclusion
 
-variable {prior : Measure (Persona G)} [IsFiniteMeasure prior] {α : ℝ}
-
-theorem measureReal_personae :
-    prior.real ↑(F.personae v) = prior.real Set.univ - prior.real {h.right} := by
-  rw [h.personae_eq_compl, Finset.coe_compl, Finset.coe_singleton,
-    measureReal_compl (measurableSet_singleton _)]
+variable {prior : Measure (Persona G)} {α : ℝ}
 
 /-- The share of the first variant among the personae both variants convey, the `α`-th power of
 the second's extension over the sum of the powers of both. -/
 noncomputable def share (prior : Measure (Persona G)) (α : ℝ) : ℝ :=
-  (prior.real Set.univ - prior.real {h.left}) ^ α /
-    ((prior.real Set.univ - prior.real {h.right}) ^ α +
-      (prior.real Set.univ - prior.real {h.left}) ^ α)
+  (prior.real Set.univ - prior.real {h.persona}) ^ α /
+    ((prior.real Set.univ - prior.real {h.symm.persona}) ^ α +
+      (prior.real Set.univ - prior.real {h.persona}) ^ α)
+
+/-- Under integer weights the share is computed from the weights. -/
+theorem share_ofWeights (wt : Persona G → ℕ) :
+    share h (Measure.ofWeights (wt ·)) α =
+      (((∑ p, wt p : ℕ) : ℝ) - wt h.persona) ^ α /
+        ((((∑ p, wt p : ℕ) : ℝ) - wt h.symm.persona) ^ α +
+          (((∑ p, wt p : ℕ) : ℝ) - wt h.persona) ^ α) := by
+  simp only [share, ofWeights_real_univ, ofWeights_real_singleton]
+
+variable [IsFiniteMeasure prior]
+
+theorem measureReal_personae :
+    prior.real ↑(F.personae v) = prior.real Set.univ - prior.real {h.symm.persona} := by
+  rw [h.personae_eq_compl, Finset.coe_compl, Finset.coe_singleton,
+    measureReal_compl (measurableSet_singleton _)]
+
+section Consensus
+
+variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] (hvw : ∀ u, u = v ∨ u = w)
+  (hα : 0 < α)
+include hvw hα
+
+/-- Every persona both variants convey is produced alike, so speakers constructing different
+personae shift between the variants together. -/
+theorem S1_eq {p p' : Persona G} (hp : prior {p} ≠ 0) (hp' : prior {p'} ≠ 0)
+    (hl : p ≠ h.persona) (hr : p ≠ h.symm.persona) (hl' : p' ≠ h.persona)
+    (hr' : p' ≠ h.symm.persona) : S1 F α prior p' = S1 F α prior p :=
+  speaker_listener_truthful_dirac_congr hα 0 prior _ hp hp' fun u ↦ by
+    simp only [Finset.mem_coe, h.mem_personae_of_ne hl hr (hvw u),
+      h.mem_personae_of_ne hl' hr' (hvw u)]
+
+end Consensus
+
+variable [Nonempty P]
 
 /-- When the two personae the variants index are equally likely, either variant's share of the
 personae both convey is one half, at every rationality. -/
-theorem share_eq_half [Nonempty P] (hp : prior {h.left} ≠ 0)
-    (hpr : prior {h.left} = prior {h.right}) : share h prior α = 1 / 2 := by
-  have hlr : prior.real {h.left} = prior.real {h.right} := by simp only [measureReal_def, hpr]
-  have hpos : 0 < prior.real Set.univ - prior.real {h.right} := by
+theorem share_eq_half (hp : prior {h.persona} ≠ 0)
+    (hpr : prior {h.persona} = prior {h.symm.persona}) : share h prior α = 1 / 2 := by
+  have hlr : prior.real {h.persona} = prior.real {h.symm.persona} := by
+    simp only [measureReal_def, hpr]
+  have hpos : 0 < prior.real Set.univ - prior.real {h.symm.persona} := by
     rw [← measureReal_personae h]
     exact (ENNReal.toReal_pos hp (measure_ne_top _ _)).trans_le
-      (measureReal_mono (Set.singleton_subset_iff.2 (Finset.mem_coe.2 h.left_mem_personae)))
+      (measureReal_mono (Set.singleton_subset_iff.2 (Finset.mem_coe.2 h.persona_mem_personae)))
   have := Real.rpow_pos_of_pos hpos α
   rw [share, hlr]
   field_simp
@@ -162,19 +205,17 @@ theorem share_eq_half [Nonempty P] (hp : prior {h.left} ≠ 0)
 
 /-- A persona both variants convey prefers the first exactly when the persona it rules out is the
 likelier, the more informative variant being the one that rules out more. -/
-theorem half_lt_share_iff [Nonempty P] (hα : 0 < α) (hl : prior {h.left} ≠ 0)
-    (hr : prior {h.right} ≠ 0) :
-    1 / 2 < share h prior α ↔ prior.real {h.left} < prior.real {h.right} := by
-  have hA : 0 < prior.real Set.univ - prior.real {h.left} := by
-    have := measureReal_personae h.symm (prior := prior)
-    rw [h.symm_right] at this
-    rw [← this]
-    exact (ENNReal.toReal_pos hr (measure_ne_top _ _)).trans_le
-      (measureReal_mono (Set.singleton_subset_iff.2 (Finset.mem_coe.2 h.symm.left_mem_personae)))
-  have hB : 0 < prior.real Set.univ - prior.real {h.right} := by
+theorem half_lt_share_iff (hα : 0 < α) (hp : prior {h.persona} ≠ 0)
+    (hp' : prior {h.symm.persona} ≠ 0) :
+    1 / 2 < share h prior α ↔ prior.real {h.persona} < prior.real {h.symm.persona} := by
+  have hA : 0 < prior.real Set.univ - prior.real {h.persona} := by
+    rw [← measureReal_personae h.symm]
+    exact (ENNReal.toReal_pos hp' (measure_ne_top _ _)).trans_le
+      (measureReal_mono (Set.singleton_subset_iff.2 (Finset.mem_coe.2 h.symm.persona_mem_personae)))
+  have hB : 0 < prior.real Set.univ - prior.real {h.symm.persona} := by
     rw [← measureReal_personae h]
-    exact (ENNReal.toReal_pos hl (measure_ne_top _ _)).trans_le
-      (measureReal_mono (Set.singleton_subset_iff.2 (Finset.mem_coe.2 h.left_mem_personae)))
+    exact (ENNReal.toReal_pos hp (measure_ne_top _ _)).trans_le
+      (measureReal_mono (Set.singleton_subset_iff.2 (Finset.mem_coe.2 h.persona_mem_personae)))
   have := Real.rpow_pos_of_pos hA α
   have := Real.rpow_pos_of_pos hB α
   have key := Real.rpow_lt_rpow_iff hB.le hA.le hα
@@ -189,54 +230,44 @@ variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] (hvw : ∀
   (hα : 0 < α)
 include hvw hα
 
-/-- Every persona both variants convey is produced alike, so speakers constructing different
-personae shift between the variants together. -/
-theorem S1_eq {p p' : Persona G} (hp : prior {p} ≠ 0) (hp' : prior {p'} ≠ 0)
-    (hl : p ≠ h.left) (hr : p ≠ h.right) (hl' : p' ≠ h.left) (hr' : p' ≠ h.right) :
-    S1 F α prior p' = S1 F α prior p :=
-  speaker_listener_truthful_dirac_congr hα 0 prior _ hp hp' fun u ↦ by
-    simp only [Finset.mem_coe, h.mem_personae_of_ne hl hr (hvw u),
-      h.mem_personae_of_ne hl' hr' (hvw u)]
-
-/-- A persona both variants convey produces the first in its share, the `α`-th power of the
-second's extension over the sum of both, each extension being everything but the persona its
-rival indexes. -/
-theorem S1_real_singleton_of_ne (hne : v ≠ w) {p : Persona G} (hp : prior {p} ≠ 0)
-    (hl : p ≠ h.left) (hr : p ≠ h.right) : (S1 F α prior p).real {v} = share h prior α := by
-  rw [speaker_listener_truthful_dirac_zero_real_singleton_of_pair hα prior _ hp hne
+/-- A persona both variants convey produces the first in its share, each extension being every
+persona but the one its rival indexes. -/
+theorem S1_real_singleton_of_ne {p : Persona G} (hp : prior {p} ≠ 0) (hl : p ≠ h.persona)
+    (hr : p ≠ h.symm.persona) : (S1 F α prior p).real {v} = share h prior α := by
+  rw [speaker_listener_truthful_dirac_zero_real_singleton_of_pair hα prior _ hp h.ne
     (h.mem_personae_of_ne hl hr (.inl rfl)) (h.mem_personae_of_ne hl hr (.inr rfl))
-    fun u _ ↦ hvw u, measureReal_personae h, measureReal_personae h.symm, h.symm_right,
-    share]
+    fun u _ ↦ hvw u, measureReal_personae h, measureReal_personae h.symm, share]
 
 /-- The persona only the first variant conveys produces it with certainty. -/
-theorem S1_left_real_singleton [Nonempty P] (hp : prior {h.left} ≠ 0) :
-    (S1 F α prior h.left).real {v} = 1 := by
+theorem S1_persona_real_singleton (hp : prior {h.persona} ≠ 0) :
+    (S1 F α prior h.persona).real {v} = 1 := by
   rw [measureReal_def, speaker_listener_truthful_dirac_eq_one (u := v) hα 0 prior
-    (fun u ↦ ↑(F.personae u)) hp (Finset.mem_coe.2 h.left_mem_personae) fun u hu ↦ ?_,
+    (fun u ↦ ↑(F.personae u)) hp (Finset.mem_coe.2 h.persona_mem_personae) fun u hu ↦ ?_,
     ENNReal.toReal_one]
   obtain rfl := (hvw u).resolve_left hu
-  exact Finset.mem_coe.not.2 h.symm.right_notMem_personae
+  exact Finset.mem_coe.not.2 h.symm.symm_persona_notMem_personae
 
-variable [Nonempty P] (hne : v ≠ w) (hprior : ∀ p, prior {p} ≠ 0)
-include hne hprior
+variable (hprior : ∀ p, prior {p} ≠ 0)
+include hprior
 
 /-- Mixed over a measure on personae, the speaker produces the first variant with the mass of
 the persona only it conveys and its share of the personae both convey. -/
 theorem comp_real_singleton (ρ : Measure (Persona G)) [IsFiniteMeasure ρ] :
-    (S1 F α prior ∘ₘ ρ).real {v} = ρ.real {h.left} +
-      share h prior α * (ρ.real Set.univ - ρ.real {h.left} - ρ.real {h.right}) := by
+    (S1 F α prior ∘ₘ ρ).real {v} = ρ.real {h.persona} +
+      share h prior α * (ρ.real Set.univ - ρ.real {h.persona} - ρ.real {h.symm.persona}) := by
   have hrow (p : Persona G) : ρ.real {p} * (S1 F α prior p).real {v} =
-      ρ.real {p} * share h prior α + (if p = h.left then ρ.real {p} * (1 - share h prior α)
-        else 0) - (if p = h.right then ρ.real {p} * share h prior α else 0) := by
-    by_cases hl : p = h.left
+      ρ.real {p} * share h prior α + (if p = h.persona then ρ.real {p} * (1 - share h prior α)
+        else 0) - (if p = h.symm.persona then ρ.real {p} * share h prior α else 0) := by
+    by_cases hl : p = h.persona
     · subst hl
-      rw [S1_left_real_singleton h hvw hα (hprior _), ite_eq_left rfl, ite_eq_right h.left_ne_right]
+      rw [S1_persona_real_singleton h hvw hα (hprior _), ite_eq_left rfl,
+        ite_eq_right h.persona_ne]
       ring
-    by_cases hr : p = h.right
+    by_cases hr : p = h.symm.persona
     · subst hr
-      rw [S1_right_real_singleton h hα, ite_eq_right hl, ite_eq_left rfl]
+      rw [S1_symm_persona_real_singleton h hα, ite_eq_right hl, ite_eq_left rfl]
       ring
-    rw [S1_real_singleton_of_ne h hvw hα hne (hprior p) hl hr, ite_eq_right hl, ite_eq_right hr]
+    rw [S1_real_singleton_of_ne h hvw hα (hprior p) hl hr, ite_eq_right hl, ite_eq_right hr]
     ring
   rw [Measure.comp_real_singleton, Finset.sum_congr rfl fun p _ ↦ hrow p, Finset.sum_sub_distrib,
     Finset.sum_add_distrib, ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ,
@@ -247,70 +278,47 @@ theorem comp_real_singleton (ρ : Measure (Persona G)) [IsFiniteMeasure ρ] :
 /-- By Bayes' rule the first variant's marginal times the naive listener's posterior is the prior
 times the speaker's row. -/
 theorem mul_L1_real_singleton (p : Persona G) :
-    (prior.real {h.left} + share h prior α *
-        (prior.real Set.univ - prior.real {h.left} - prior.real {h.right})) *
+    (prior.real {h.persona} + share h prior α *
+        (prior.real Set.univ - prior.real {h.persona} - prior.real {h.symm.persona})) *
       (L1 F α prior v).real {p} = prior.real {p} * (S1 F α prior p).real {v} := by
-  rw [← comp_real_singleton h hvw hα hne hprior]
+  rw [← comp_real_singleton h hvw hα hprior]
   exact comp_real_mul_listener_real _ _ v p
 
-variable (hpr : prior {h.left} = prior {h.right})
+variable (hpr : prior {h.persona} = prior {h.symm.persona})
 include hpr
 
 private theorem mul_L1_real_singleton_of_eq (p : Persona G) :
     prior.real Set.univ / 2 * (L1 F α prior v).real {p} =
       prior.real {p} * (S1 F α prior p).real {v} := by
-  have hlr : prior.real {h.left} = prior.real {h.right} := by simp only [measureReal_def, hpr]
-  rw [← mul_L1_real_singleton h hvw hα hne hprior, share_eq_half h (hprior _) hpr, hlr]
+  have hlr : prior.real {h.persona} = prior.real {h.symm.persona} := by
+    simp only [measureReal_def, hpr]
+  rw [← mul_L1_real_singleton h hvw hα hprior, share_eq_half h (hprior _) hpr, hlr]
   ring
 
 /-- When the two personae the variants index are equally likely, hearing the first variant leaves
-every persona both convey at its prior, so a listener already sure of such a persona stays
-sure whatever the speaker says. -/
-theorem L1_real_singleton_of_ne {p : Persona G} (hl : p ≠ h.left) (hr : p ≠ h.right) :
+every persona both convey at its prior, so a listener already sure of such a persona stays sure
+whatever the speaker says. -/
+theorem L1_real_singleton_of_ne {p : Persona G} (hl : p ≠ h.persona) (hr : p ≠ h.symm.persona) :
     (L1 F α prior v).real {p} = prior.real {p} / prior.real Set.univ := by
-  have key := mul_L1_real_singleton_of_eq h hvw hα hne hprior hpr p
-  rw [S1_real_singleton_of_ne h hvw hα hne (hprior p) hl hr, share_eq_half h (hprior _) hpr] at key
-  have : 0 < prior.real Set.univ := (ENNReal.toReal_pos (hprior h.left)
+  have key := mul_L1_real_singleton_of_eq h hvw hα hprior hpr p
+  rw [S1_real_singleton_of_ne h hvw hα (hprior p) hl hr, share_eq_half h (hprior _) hpr] at key
+  have : 0 < prior.real Set.univ := (ENNReal.toReal_pos (hprior h.persona)
     (measure_ne_top _ _)).trans_le (measureReal_mono (Set.subset_univ _))
   field_simp at key ⊢
   linarith
 
 /-- When the two personae the variants index are equally likely, hearing the first variant
 doubles the probability of the persona only it conveys. -/
-theorem L1_real_singleton_left :
-    (L1 F α prior v).real {h.left} = 2 * prior.real {h.left} / prior.real Set.univ := by
-  have key := mul_L1_real_singleton_of_eq h hvw hα hne hprior hpr h.left
-  rw [S1_left_real_singleton h hvw hα (hprior _)] at key
-  have : 0 < prior.real Set.univ := (ENNReal.toReal_pos (hprior h.left)
+theorem L1_real_singleton_persona :
+    (L1 F α prior v).real {h.persona} = 2 * prior.real {h.persona} / prior.real Set.univ := by
+  have key := mul_L1_real_singleton_of_eq h hvw hα hprior hpr h.persona
+  rw [S1_persona_real_singleton h hvw hα (hprior _)] at key
+  have : 0 < prior.real Set.univ := (ENNReal.toReal_pos (hprior h.persona)
     (measure_ne_top _ _)).trans_le (measureReal_mono (Set.subset_univ _))
   field_simp at key ⊢
   linarith
 
 end Binary
-
-/-! ### Priors as weights -/
-
-section Weights
-
-variable {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β] (w : β → ℕ)
-
-private theorem ofWeights_real_singleton (b : β) :
-    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)).real {b} = w b := by
-  rw [measureReal_def, Measure.ofWeights_apply_singleton, ENNReal.toReal_natCast]
-
-private theorem ofWeights_real_univ :
-    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)).real Set.univ = ((∑ b, w b : ℕ) : ℝ) := by
-  rw [measureReal_def, ← Finset.coe_univ, Measure.ofWeights_apply_finset, ← Nat.cast_sum,
-    ENNReal.toReal_natCast]
-
-private theorem ofWeights_ne_zero {w : β → ℕ} (hw : ∀ b, w b ≠ 0) (b : β) :
-    (Measure.ofWeights fun b ↦ (w b : ℝ≥0∞)) {b} ≠ 0 :=
-  Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw b))
-
-private theorem rpow_six (x : ℝ) : x ^ (6 : ℝ) = x ^ 6 := by
-  exact_mod_cast Real.rpow_natCast x 6
-
-end Weights
 
 /-! ### (ING)
 
@@ -379,13 +387,9 @@ theorem ing : ingField.Complementary .velar .apical where
   right_mem := by decide +kernel
   indexes_eq_compl := by decide +kernel
 
-@[simp] theorem ing_left : ing.left = sternLeader := rfl
+@[simp] theorem ing_persona : ing.persona = sternLeader := rfl
 
-@[simp] theorem ing_right : ing.right = doofus := rfl
-
-@[simp] theorem ing_symm_left : ing.symm.left = doofus := rfl
-
-@[simp] theorem ing_symm_right : ing.symm.right = sternLeader := rfl
+@[simp] theorem ing_symm_persona : ing.symm.persona = doofus := rfl
 
 /-- *-ing* meets every persona but the doofus (Table 1). -/
 theorem personae_velar : ingField.personae .velar = {doofus}ᶜ := ing.personae_eq_compl
@@ -422,24 +426,21 @@ private theorem careful_ne_zero : ∀ π, careful {π} ≠ 0 :=
 69% (p. 435). -/
 theorem casual_apical :
     (S1 ingField 6 casual coolGuy).real {.apical} = 8 ^ 6 / (7 ^ 6 + 8 ^ 6) := by
-  rw [S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (by decide)
-    (casual_ne_zero _) (by decide) (by decide), share, ing_symm_left,
-    ing_symm_right, ofWeights_real_univ, ofWeights_real_singleton, ofWeights_real_singleton,
-    show ∑ π, casualWeight π = 10 by decide +kernel,
-    show casualWeight doofus = 2 by decide +kernel,
-    show casualWeight sternLeader = 3 by decide +kernel, rpow_six, rpow_six]
+  rw [S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (casual_ne_zero _) (by decide)
+    (by decide), share_ofWeights, ing_symm_persona, ing_persona,
+    show ∑ π, casualWeight π = 10 by decide +kernel, show casualWeight doofus = 2 by decide +kernel,
+    show casualWeight sternLeader = 3 by decide +kernel]
   norm_num
 
 /-- With the journalists the cool guy says *-in'* with probability `7 ^ 6 / (7 ^ 6 + 8 ^ 6)`,
 about 31% (p. 436). -/
 theorem careful_apical :
     (S1 ingField 6 careful coolGuy).real {.apical} = 7 ^ 6 / (7 ^ 6 + 8 ^ 6) := by
-  rw [S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (by decide)
-    (careful_ne_zero _) (by decide) (by decide), share, ing_symm_left,
-    ing_symm_right, ofWeights_real_univ, ofWeights_real_singleton, ofWeights_real_singleton,
+  rw [S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (careful_ne_zero _) (by decide)
+    (by decide), share_ofWeights, ing_symm_persona, ing_persona,
     show ∑ π, carefulWeight π = 10 by decide +kernel,
     show carefulWeight doofus = 3 by decide +kernel,
-    show carefulWeight sternLeader = 2 by decide +kernel, rpow_six, rpow_six]
+    show carefulWeight sternLeader = 2 by decide +kernel]
   norm_num
 
 /-- The asshole, whom both variants convey too, is produced exactly as the cool guy is. -/
@@ -475,7 +476,8 @@ barbecue through about 31% with the journalists to nothing at the convention. -/
 theorem apicalRate_strictAnti (formal : Measure Persona) : StrictAnti (apicalRate formal) := by
   have hcasual : apicalRate formal .casual = 8 ^ 6 / (7 ^ 6 + 8 ^ 6) := casual_apical
   have hcareful : apicalRate formal .careful = 7 ^ 6 / (7 ^ 6 + 8 ^ 6) := careful_apical
-  have hformal : apicalRate formal .formal = 0 := S1_right_real_singleton ing.symm (by norm_num)
+  have hformal : apicalRate formal .formal = 0 :=
+    S1_symm_persona_real_singleton ing.symm (by norm_num)
   intro s t h
   cases s <;> cases t <;> first | exact absurd h (by decide) | (simp only [*]; norm_num)
 
@@ -499,10 +501,10 @@ def obamaValue (π : Persona) : ℝ := (π.1 ∩ {.competent, .friendly}).card
 /-- With persona selection *-in'* remains the more likely variant at the barbecue (p. 438). -/
 theorem obama_apical : 1 / 2 < (S1 ingField 6 casual ∘ₘ select 6 obamaValue).real {.apical} := by
   have hs : share ing.symm casual 6 = 8 ^ 6 / (7 ^ 6 + 8 ^ 6) := by
-    rw [← S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (by decide)
-      (casual_ne_zero coolGuy) (by decide) (by decide)]
+    rw [← S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (casual_ne_zero coolGuy)
+      (by decide) (by decide)]
     exact casual_apical
-  have hsum := select_real_univ 6 obamaValue
+  have hsum := probReal_univ (μ := select 6 obamaValue)
   rw [← Finset.coe_univ, ← sum_measureReal_singleton, personae_eq,
     Finset.sum_insert (by decide +kernel), Finset.sum_insert (by decide +kernel),
     Finset.sum_insert (by decide +kernel), Finset.sum_singleton] at hsum
@@ -514,8 +516,8 @@ theorem obama_apical : 1 / 2 < (S1 ingField 6 casual ∘ₘ select 6 obamaValue)
     rw [select_real_singleton]
     exact Real.softmax_pos _ _
   have hnn : 0 ≤ (select 6 obamaValue).real {asshole} := measureReal_nonneg
-  rw [comp_real_singleton ing.symm apical_or_velar (by norm_num) (by decide) casual_ne_zero,
-    ing_symm_left, ing_symm_right, hs, select_real_univ]
+  rw [comp_real_singleton ing.symm apical_or_velar (by norm_num) casual_ne_zero,
+    ing_symm_persona, ing_persona, hs, probReal_univ]
   linarith
 
 /-! #### Stratification
@@ -560,9 +562,9 @@ the doofus and the stern leader. -/
 theorem classRate_eq {α : ℝ} (hα : 0 < α) (α' : ℝ) (c : ValuedClass) :
     classRate α α' c = 1 / 2 + ((select α' (classValue c)).real {doofus} -
       (select α' (classValue c)).real {sternLeader}) / 2 := by
-  rw [classRate, comp_real_singleton ing.symm apical_or_velar hα (by decide) uniform_ne_zero,
-    ing_symm_left, ing_symm_right, share_eq_half ing.symm (uniform_ne_zero _)
-      (by simp [Measure.ofWeights_apply_singleton]), select_real_univ]
+  rw [classRate, comp_real_singleton ing.symm apical_or_velar hα uniform_ne_zero,
+    ing_symm_persona, ing_persona, share_eq_half ing.symm (uniform_ne_zero _)
+      (by simp [Measure.ofWeights_apply_singleton]), probReal_univ]
   ring
 
 private theorem strictMono_of_lt_half_eq_half_lt {f : ValuedClass → ℝ}
@@ -675,10 +677,9 @@ theorem release : field.Complementary .released .flapped where
   right_mem := by decide +kernel
   indexes_eq_compl := by decide +kernel
 
-@[simp] theorem release_left : release.left = articulateAloof := rfl
-@[simp] theorem release_right : release.right = inarticulateFriendly := rfl
-@[simp] theorem release_symm_left : release.symm.left = inarticulateFriendly := rfl
-@[simp] theorem release_symm_right : release.symm.right = articulateAloof := rfl
+@[simp] theorem release_persona : release.persona = articulateAloof := rfl
+
+@[simp] theorem release_symm_persona : release.symm.persona = inarticulateFriendly := rfl
 
 variable {α : ℝ}
 
@@ -701,7 +702,7 @@ private theorem rice_real (π : Persona) : rice.real {π} / rice.real Set.univ =
 convey (Table 11). -/
 theorem rice_S1 (hα : 0 < α) {p : Persona} (hl : p ≠ articulateAloof)
     (hr : p ≠ inarticulateFriendly) : (S1 field α rice p).real {.released} = 1 / 2 := by
-  rw [S1_real_singleton_of_ne release released_or_flapped hα (by decide) (rice_ne_zero p) hl hr,
+  rw [S1_real_singleton_of_ne release released_or_flapped hα (rice_ne_zero p) hl hr,
     share_eq_half release (rice_ne_zero _) rice_eq]
 
 /-- After released /t/ the listener doubles her belief in the articulate aloof persona, rules out
@@ -711,13 +712,13 @@ theorem rice_released (hα : 0 < α) :
       (L1 field α rice .released).real {articulateFriendly} = 1 / 4 ∧
       (L1 field α rice .released).real {inarticulateAloof} = 1 / 4 ∧
       (L1 field α rice .released).real {inarticulateFriendly} = 0 := by
-  have hl := L1_real_singleton_left release released_or_flapped hα (by decide) rice_ne_zero
+  have hl := L1_real_singleton_persona release released_or_flapped hα rice_ne_zero
     rice_eq
   have hn (p : Persona) (hl : p ≠ articulateAloof) (hr : p ≠ inarticulateFriendly) :=
-    L1_real_singleton_of_ne release released_or_flapped hα (by decide) rice_ne_zero rice_eq
+    L1_real_singleton_of_ne release released_or_flapped hα rice_ne_zero rice_eq
       hl hr
-  refine ⟨?_, ?_, ?_, L1_real_singleton_right release hα⟩
-  · rw [release_left] at hl
+  refine ⟨?_, ?_, ?_, L1_real_singleton_symm_persona release hα⟩
+  · rw [release_persona] at hl
     rw [hl, mul_div_assoc, rice_real]
     norm_num
   · rw [hn _ (by decide) (by decide), rice_real]
@@ -729,15 +730,15 @@ theorem rice_flapped (hα : 0 < α) :
       (L1 field α rice .flapped).real {articulateFriendly} = 1 / 4 ∧
       (L1 field α rice .flapped).real {inarticulateAloof} = 1 / 4 ∧
       (L1 field α rice .flapped).real {inarticulateFriendly} = 1 / 2 := by
-  have hl := L1_real_singleton_left release.symm flapped_or_released hα (by decide) rice_ne_zero
+  have hl := L1_real_singleton_persona release.symm flapped_or_released hα rice_ne_zero
     rice_eq.symm
   have hn (p : Persona) (hl : p ≠ inarticulateFriendly) (hr : p ≠ articulateAloof) :=
-    L1_real_singleton_of_ne release.symm flapped_or_released hα (by decide) rice_ne_zero
+    L1_real_singleton_of_ne release.symm flapped_or_released hα rice_ne_zero
       rice_eq.symm hl hr
-  refine ⟨L1_real_singleton_right release.symm hα, ?_, ?_, ?_⟩
+  refine ⟨L1_real_singleton_symm_persona release.symm hα, ?_, ?_, ?_⟩
   · rw [hn _ (by decide) (by decide), rice_real]
   · rw [hn _ (by decide) (by decide), rice_real]
-  · rw [release_symm_left] at hl
+  · rw [release_symm_persona] at hl
     rw [hl, mul_div_assoc, rice_real]
     norm_num
 
@@ -781,13 +782,17 @@ private theorem pelosi_if : pelosi.real {inarticulateFriendly} = 9 := by
 /-- At rationality 6 Pelosi's speaker releases /t/ for a persona both variants convey with
 probability `19 ^ 6 / (11 ^ 6 + 19 ^ 6)`, released /t/ ruling out the likelier persona. -/
 theorem pelosi_share : share release pelosi 6 = 19 ^ 6 / (11 ^ 6 + 19 ^ 6) := by
-  rw [share, release_left, release_right, pelosi_univ, pelosi_aa, pelosi_if,
-    rpow_six, rpow_six]
+  rw [share_ofWeights, release_persona, release_symm_persona,
+    show ∑ π, pelosiWeight π = 20 by decide +kernel,
+    show pelosiWeight articulateAloof = 1 by decide +kernel,
+    show pelosiWeight inarticulateFriendly = 9 by decide +kernel]
   norm_num
 
 theorem pelosi_symm_share : share release.symm pelosi 6 = 11 ^ 6 / (19 ^ 6 + 11 ^ 6) := by
-  rw [share, release_symm_left, release_symm_right, pelosi_univ, pelosi_aa,
-    pelosi_if, rpow_six, rpow_six]
+  rw [share_ofWeights, release_symm_persona, release_persona,
+    show ∑ π, pelosiWeight π = 20 by decide +kernel,
+    show pelosiWeight articulateAloof = 1 by decide +kernel,
+    show pelosiWeight inarticulateFriendly = 9 by decide +kernel]
   norm_num
 
 /-- Released /t/ leaves the listener more than 80% sure that Pelosi is inarticulate and aloof and
@@ -796,14 +801,15 @@ her inarticulate and only her friendliness differs (Table 14, p. 443). -/
 theorem pelosi_L1 : 4 / 5 < (L1 field 6 pelosi .released).real {inarticulateAloof} ∧
     19 / 20 < (L1 field 6 pelosi .flapped).real {inarticulateFriendly} := by
   have h₁ := mul_L1_real_singleton release released_or_flapped (by norm_num : (0 : ℝ) < 6)
-    (by decide) pelosi_ne_zero inarticulateAloof
-  rw [S1_real_singleton_of_ne release released_or_flapped (by norm_num) (by decide)
-      (pelosi_ne_zero _) (by decide) (by decide), pelosi_share, release_left, release_right,
+    pelosi_ne_zero inarticulateAloof
+  rw [S1_real_singleton_of_ne release released_or_flapped (by norm_num)
+      (pelosi_ne_zero _) (by decide) (by decide), pelosi_share, release_persona,
+    release_symm_persona,
     pelosi_univ, pelosi_aa, pelosi_ia, pelosi_if] at h₁
   have h₂ := mul_L1_real_singleton release.symm flapped_or_released (by norm_num : (0 : ℝ) < 6)
-    (by decide) pelosi_ne_zero release.symm.left
-  rw [S1_left_real_singleton release.symm flapped_or_released (by norm_num) (pelosi_ne_zero _),
-    pelosi_symm_share, release_symm_left, release_symm_right, pelosi_univ, pelosi_aa,
+    pelosi_ne_zero release.symm.persona
+  rw [S1_persona_real_singleton release.symm flapped_or_released (by norm_num) (pelosi_ne_zero _),
+    pelosi_symm_share, release_symm_persona, release_persona, pelosi_univ, pelosi_aa,
     pelosi_if] at h₂
   constructor <;> norm_num at h₁ h₂ ⊢ <;> linarith
 
@@ -832,9 +838,9 @@ theorem bush_bulletproof (hα : 0 < α) (u : Variant) :
       show bushWeight inarticulateAloof = 97 by decide +kernel]
     norm_num
   rcases u.eq_released_or_eq_flapped with rfl | rfl
-  · rw [L1_real_singleton_of_ne release released_or_flapped hα (by decide) bush_ne_zero
+  · rw [L1_real_singleton_of_ne release released_or_flapped hα bush_ne_zero
       bush_eq (by decide) (by decide), hreal]
-  · rw [L1_real_singleton_of_ne release.symm flapped_or_released hα (by decide) bush_ne_zero
+  · rw [L1_real_singleton_of_ne release.symm flapped_or_released hα bush_ne_zero
       bush_eq.symm (by decide) (by decide), hreal]
 
 end Release
