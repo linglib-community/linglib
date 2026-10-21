@@ -3,6 +3,8 @@ module
 public import Linglib.Phonology.Prosody.Word
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.Prosody.Match
+public import Linglib.Syntax.Tree.Basic
+public import Linglib.Syntax.Command
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Brodkin2026
@@ -39,6 +41,8 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
   and the footing of the next syllable determine the attested allomorph, so no rule set reading
   only these inserts it (`not_realizes_of_constituency`, `not_realizes_of_footed`), nor does the
   Subset Principle over the heads' neighborhoods (`not_subsetPrinciple_eq_forms`).
+* `forms_not_function_of_cCommanded`: nor do the words a head c-commands in the ditransitive
+  clause (90), against insertion bounded by the c-command domain (92).
 
 ## Implementation notes
 
@@ -50,14 +54,14 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 * The maximal φ is the paper's domain stipulation on Syllable Lifting (§4.3), stated in GEN; an
   example records it where the paper brackets it or the clause has at most three words (85). The
   maximal φ over both words answers to the clause in Match(φ, XP).
+* The c-command argument reads a phrase-structure tree of the ditransitive clause (90), built
+  from each example's words, with `RoseTree.CCommands`.
 * A parse is built from the syllable count of the inserted form, its vowels in
   `Data.Forms.Brodkin2026`, whose 'who' forms are the surface forms of (42); what follows the head
   is a word whose first syllable is footed or unfooted under penultimate stress (14), (15).
 
 ## TODO
 
-* The c-command argument of (92), over a phrase-structure tree of the clause rather than the
-  phrases of two words.
 * The segmental repairs of §2, Vʔ-epenthesis and blocked coalescence and gliding under DEP and
   ONSET, their suspension by Syllable Lifting ((71)–(73)), and the irreducible parallelism of
   (72b); the blocking of *a* 'maybe' (43b), which needs a null parse; prefixes in the parse, for
@@ -622,5 +626,75 @@ theorem not_realizes_of_footed
     forms_not_function_of_footed hw
 
 end Globality
+
+/-! ### C-command -/
+
+section CCommand
+
+open PhraseStructure Core.Order
+
+/-- The categories of the ditransitive clause (90). -/
+inductive Cat
+  | voice | v | appl | verb | det | noun
+  deriving DecidableEq, Repr
+
+/-- The ditransitive clause of (90), the verb raised to Voice over the internal argument, a
+demonstrative whose noun phrase is elided, and the applied argument in a rightward specifier of
+Appl above it ((89)). The traces of the raised verb and the elided noun phrase are silent leaves;
+the silent external argument and the final deictic are left out. -/
+def ditransitive (verb o d : String) : PhraseStructure.Tree Cat String :=
+  Tree.node .voice [Tree.terminal .voice verb,
+    Tree.node .v [Tree.trace 0 .v,
+      Tree.node .appl [
+        Tree.node .appl [Tree.trace 0 .appl,
+          Tree.node .verb [Tree.trace 0 .verb,
+            Tree.node .det [Tree.terminal .det o, Tree.trace 1 .noun]]],
+        Tree.node .det [Tree.terminal .noun d]]]]
+
+/-- The words of the terminals a position c-commands. -/
+def cCommandedWords (t : PhraseStructure.Tree Cat String) (p : TreePath) : List String :=
+  (t.positionedTerminals.filter fun x ↦ t.CCommands p x.1).map (·.2.2)
+
+-- The raised verb c-commands both arguments, and the applied argument c-commands the internal
+-- argument's demonstrative, which c-commands neither.
+example : cCommandedWords (ditransitive "u-kiriŋ-aŋ" "do" "guru-u") ⟨[0]⟩ = ["do", "guru-u"] := by
+  decide
+example : cCommandedWords (ditransitive "u-kiriŋ-aŋ" "do" "guru-u") ⟨[1, 1, 1, 0]⟩ = ["do"] := by
+  decide
+
+/-- The words the head of a ditransitive example c-commands, the clause built from its verb, its
+internal argument and its applied argument. -/
+def cCommanded? (ex : Datum) : Option (List String) := do
+  guard (ex.feature? "clause" = some "ditransitive")
+  let verb ← ex.glossedTokens[0]?
+  let o ← ex.glossedTokens[2]?
+  let d ← ex.glossedTokens[3]?
+  let t := ditransitive verb.1 o.1 d.1
+  let p ← (t.positionedTerminals.find? (·.2.1 = .det)).map (·.1)
+  pure (cCommandedWords t p)
+
+/-- The ditransitive examples, (78a), (78b) and (92), each with the words its head c-commands. -/
+def ditransitiveRows : List (Row × List String) :=
+  Examples.all.filterMap fun ex ↦ do pure (← Row.ofDatum ex, ← cCommanded? ex)
+
+/-- In the ditransitive examples the stranded demonstrative c-commands no overt word: the applied
+argument lies outside its c-command domain. -/
+theorem cCommanded_ditransitiveRows : ∀ x ∈ ditransitiveRows, x.2 = [] := by decide
+
+/-- **No c-command-bounded insertion** ((92), §4.3): no function of a head's neighborhood and of
+the words it c-commands gives the attested allomorphs, the stranded demonstrative in the internal
+argument taking its marked allomorph before *guru* (78a) and its unmarked one before *guru-na*
+(78b), the applied argument outside its c-command domain. Vocabulary Insertion that sees only a
+head's c-command domain, inserting cyclically from the bottom up, cannot insert them. -/
+theorem forms_not_function_of_cCommanded :
+    ¬ ∃ f : Neighborhood (Finset Feature) × List String → Form Forms.Cell,
+      ∀ x ∈ ditransitiveRows, f (x.1.input.neighborhood, x.2) = x.1.form := by
+  rintro ⟨f, hf⟩
+  obtain ⟨x, hx, y, hy, he, hne⟩ : ∃ x ∈ ditransitiveRows, ∃ y ∈ ditransitiveRows,
+      (x.1.input.neighborhood, x.2) = (y.1.input.neighborhood, y.2) ∧ x.1.form ≠ y.1.form := by
+    decide
+  exact hne ((hf x hx).symm.trans (he ▸ hf y hy))
+
+end CCommand
 
 end Brodkin2026

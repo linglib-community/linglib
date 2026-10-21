@@ -234,7 +234,7 @@ def ex_78a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "this_in_hand"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "this_in_hand"), ("allomorph", "long"), ("syntax", "sisters"), ("next", "footed"), ("maxPhi", "same"), ("clause", "ditransitive")] }
 
 def ex_78b : Datum :=
   { id := "brodkin2026_78b"
@@ -247,7 +247,7 @@ def ex_78b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "this_in_hand"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "this_in_hand"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same"), ("clause", "ditransitive")] }
 
 def ex_83b : Datum :=
   { id := "brodkin2026_83b"
@@ -312,7 +312,7 @@ def ex_92 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("head", "that"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same")] }
+    paperFeatures := [("head", "that"), ("allomorph", "short"), ("syntax", "sisters"), ("next", "unfooted"), ("maxPhi", "same"), ("clause", "ditransitive")] }
 
 def all : List Datum := [ex_33a, ex_33b, ex_36a, ex_36b, ex_40a, ex_40b, ex_41a, ex_41b, ex_42a, ex_42b, ex_56a, ex_56b, ex_76a, ex_76b, ex_77a, ex_77b, ex_78a, ex_78b, ex_83b, ex_84, ex_86a, ex_86b, ex_92]
 

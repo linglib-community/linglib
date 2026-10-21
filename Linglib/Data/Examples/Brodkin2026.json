@@ -391,7 +391,8 @@
       ["allomorph", "long"],
       ["syntax", "sisters"],
       ["next", "footed"],
-      ["maxPhi", "same"]
+      ["maxPhi", "same"],
+      ["clause", "ditransitive"]
     ],
     "comment": "The elided NP after the demonstrative is omitted. V, O and D are three prosodic words, one maximal φ under the three-word limit (85), as the paper brackets the same configuration in (92).",
     "verified": "page-image"
@@ -416,7 +417,8 @@
       ["allomorph", "short"],
       ["syntax", "sisters"],
       ["next", "unfooted"],
-      ["maxPhi", "same"]
+      ["maxPhi", "same"],
+      ["clause", "ditransitive"]
     ],
     "comment": "The elided NP after the demonstrative is omitted. V, O and D are three prosodic words, one maximal φ under the three-word limit (85), as the paper brackets the same configuration in (92).",
     "verified": "page-image"
@@ -541,7 +543,8 @@
       ["allomorph", "short"],
       ["syntax", "sisters"],
       ["next", "unfooted"],
-      ["maxPhi", "same"]
+      ["maxPhi", "same"],
+      ["clause", "ditransitive"]
     ],
     "comment": "The elided NP after the demonstrative is omitted.",
     "verified": "page-image"
