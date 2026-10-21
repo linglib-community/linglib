@@ -19,7 +19,8 @@ and the value composes with the negation; a middle negation values the head itse
 negative particle agrees with it and a plain affirmative clashes with it.
 
 The answers a feature gives to the questions whose negations a language allows form a set of
-`Discourse.Response`s (`AnswerFeature.responses`), whose polarity features are those of Farkas
+`Discourse.Response`s (`AnswerFeature.responses`), the image of the response the feature gives
+each negation (`AnswerFeature.response`), whose polarity features are those of Farkas
 and Bruce, to whom Holmberg credits REV. The mechanism derives the two systems for answering
 negative questions from the syntax of negation. Out of the head's reach a valued feature fixes
 the relative polarity of the answer, the truth-based system
@@ -28,8 +29,8 @@ confirms the negative alternative just when the negation is low
 (`AnswerFeature.confirmsNegativeQuestion_responses_positive_iff`). A negation valuing the head
 leaves only the negative feature, which fixes the absolute polarity, the polarity-based system
 (`AnswerFeature.responses_value_negative_of_valuesHead`,
-`AnswerFeature.responses_value_positive_of_valuesHead`). A reversing feature gives exactly the
-[reverse, +] answers (`AnswerFeature.responses_reversing`).
+`AnswerFeature.responses_value_positive_of_valuesHead`). The only answer a reversing feature
+gives is the [reverse, +] answer to a negative question (`AnswerFeature.responses_reversing`).
 
 ## Implementation notes
 
@@ -109,76 +110,107 @@ theorem answer_ne_none_of_inClause (f : AnswerFeature) (hi : n.InClause) (h : ¬
   · simp [answer_value_of_not_valuesHead h]
   · simp [answer_reversing_of_inClause hi]
 
-/-- The answers a feature gives to polar questions whose negations are among `N`, each given by
-the polarity of the question's primary alternative and that of the alternative the answer
-confirms. -/
+/-- The response an answer with feature `f` gives to a polar question whose negation is `n`, if
+the answer is well formed, recording the polarity of the question's primary alternative and that
+of the alternative the answer confirms. -/
+def response (f : AnswerFeature) (n : ClauseNegation) : Option Discourse.Response :=
+  (f.answer n).map (⟨.polarQuestion, n.primaryPolarity, ·⟩)
+
+theorem response_eq_some_iff {f : AnswerFeature} {x : Discourse.Response} :
+    f.response n = some x ↔ x.reactsTo = .polarQuestion ∧ x.antecedent = n.primaryPolarity ∧
+      f.answer n = some x.polarity := by
+  obtain ⟨m, a, s⟩ := x
+  cases h : f.answer n <;> simp [response, h, and_comm, eq_comm]
+
+/-- Without a negation valuing the head, a valued feature answers with the response of relative
+polarity `p` to the question's primary alternative. -/
+theorem response_value_of_not_valuesHead {p : Polarity} (h : ¬ n.ValuesHead) :
+    (value p).response n = some ⟨.polarQuestion, n.primaryPolarity, p * n.primaryPolarity⟩ := by
+  simp [response, answer_value_of_not_valuesHead h]
+
+/-- Out of the head's reach, the relative polarity of an answer is the value of its feature. -/
+theorem relative_of_response_value {p : Polarity} {x : Discourse.Response}
+    (hn : ¬ n.ValuesHead) (h : (value p).response n = some x) : x.relative = p := by
+  rw [response_value_of_not_valuesHead hn, Option.some_inj] at h
+  rw [← h, Discourse.Response.relative_mk, mul_div_cancel_right]
+
+/-- A reversing feature answers a question with a negation inside the clause by reversing its
+negative primary alternative. -/
+theorem response_reversing_of_inClause (h : n.InClause) :
+    reversing.response n = some ⟨.polarQuestion, .negative, .positive⟩ := by
+  simp [response, answer_reversing_of_inClause h, primaryPolarity_of_inClause h]
+
+theorem response_reversing_of_not_inClause (h : ¬ n.InClause) : reversing.response n = none := by
+  simp [response, answer_reversing_of_not_inClause h]
+
+/-- The answers a feature gives to polar questions whose negations are among `N`. -/
 def responses (f : AnswerFeature) (N : Set ClauseNegation) : Set Discourse.Response :=
-  {x | x.reactsTo = .polarQuestion ∧
-    ∃ n ∈ N, n.primaryPolarity = x.antecedent ∧ f.answer n = some x.polarity}
+  {x | ∃ n ∈ N, f.response n = some x}
+
+variable {f : AnswerFeature} {N : Set ClauseNegation}
+
+theorem mem_responses {x : Discourse.Response} :
+    x ∈ f.responses N ↔ ∃ n ∈ N, f.response n = some x :=
+  Iff.rfl
+
+theorem responses_singleton_of_response_eq_some {x : Discourse.Response}
+    (h : f.response n = some x) : f.responses {n} = {x} := by
+  ext y
+  simp [responses, h, eq_comm]
+
+theorem responses_singleton_of_response_eq_none (h : f.response n = none) :
+    f.responses {n} = ∅ := by
+  ext y
+  simp [responses, h]
 
 /-- Out of the reach of every negation of `N`, a valued feature fixes the relative polarity of
 the answer to the question's primary alternative, as in the truth-based system. -/
-theorem responses_value_of_forall_not_valuesHead {p : Polarity} {N : Set ClauseNegation}
-    (hN : ∀ n ∈ N, ¬ n.ValuesHead) :
+theorem responses_value_of_forall_not_valuesHead {p : Polarity} (hN : ∀ n ∈ N, ¬ n.ValuesHead) :
     (value p).responses N = {x | x.reactsTo = .polarQuestion ∧
       x.antecedent ∈ primaryPolarity '' N ∧ x.relative = p} := by
-  ext ⟨m, a, s⟩
-  simp only [responses, Set.mem_ofPred_eq, Set.mem_image, Discourse.Response.relative_mk]
-  refine and_congr_right fun _ ↦ ⟨?_, ?_⟩
-  · rintro ⟨n, hn, rfl, h⟩
-    rw [answer_value_of_not_valuesHead (hN n hn), Option.some_inj] at h
-    exact ⟨⟨n, hn, rfl⟩, by rw [← h, mul_div_cancel_right]⟩
-  · rintro ⟨⟨n, hn, rfl⟩, rfl⟩
-    exact ⟨n, hn, rfl, by rw [answer_value_of_not_valuesHead (hN n hn), div_mul_cancel]⟩
+  ext x
+  refine ⟨fun ⟨n, hn, h⟩ ↦ ?_, fun ⟨hm, ⟨n, hn, ha⟩, hr⟩ ↦ ⟨n, hn, ?_⟩⟩
+  · obtain ⟨hm, ha, -⟩ := response_eq_some_iff.1 h
+    exact ⟨hm, ⟨n, hn, ha.symm⟩, relative_of_response_value (hN n hn) h⟩
+  · obtain ⟨m, a, s⟩ := x
+    obtain rfl : m = .polarQuestion := hm
+    obtain rfl : n.primaryPolarity = a := ha
+    obtain rfl : s / n.primaryPolarity = p := hr
+    rw [response_value_of_not_valuesHead (hN n hn), div_mul_cancel]
 
 /-- A negation valuing the head leaves the negative feature only the confirmation of the negative
 alternative, its absolute polarity, as in the polarity-based system. -/
 theorem responses_value_negative_of_valuesHead (hn : n.ValuesHead) :
     (value .negative).responses {n} = {⟨.polarQuestion, .negative, .negative⟩} := by
   obtain rfl : n = .height .middle := hn
-  ext ⟨m, a, s⟩
-  simp only [responses, Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left]
-  cases m <;> cases a <;> cases s <;> decide
+  exact responses_singleton_of_response_eq_some rfl
 
 /-- A negation valuing the head leaves the affirmative feature no answer. -/
 theorem responses_value_positive_of_valuesHead (hn : n.ValuesHead) :
     (value .positive).responses {n} = ∅ := by
   obtain rfl : n = .height .middle := hn
-  ext ⟨m, a, s⟩
-  simp only [responses, Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left,
-    Set.mem_empty_iff_false, iff_false]
-  cases m <;> cases a <;> cases s <;> decide
+  exact responses_singleton_of_response_eq_none rfl
 
-/-- REV is [reverse, +]. Once some negation of `N` is inside the clause, a reversing feature
-gives exactly the positive answers reversing the primary alternative. -/
-theorem responses_reversing {N : Set ClauseNegation} (hN : ∃ n ∈ N, n.InClause) :
-    reversing.responses N = {x | x.reactsTo = .polarQuestion ∧ x.relative = .negative ∧
-      x.polarity = .positive} := by
+/-- REV is [reverse, +]. Once some negation of `N` is inside the clause, the only answer of a
+reversing feature reverses a negative primary alternative with a positive answer. -/
+theorem responses_reversing (hN : ∃ n ∈ N, n.InClause) :
+    reversing.responses N = {⟨.polarQuestion, .negative, .positive⟩} := by
   obtain ⟨n₀, hn₀, hi₀⟩ := hN
-  ext ⟨m, a, p⟩
-  simp only [responses, Set.mem_ofPred_eq, Discourse.Response.relative_mk]
-  constructor
-  · rintro ⟨rfl, n, -, rfl, h⟩
-    by_cases hi : n.InClause
-    · rw [answer_reversing_of_inClause hi, Option.some_inj] at h
-      subst h
-      rw [primaryPolarity_of_inClause hi]
-      exact ⟨rfl, rfl, rfl⟩
-    · rw [answer_reversing_of_not_inClause hi] at h
-      cases h
-  · rintro ⟨rfl, ha, rfl⟩
-    refine ⟨rfl, n₀, hn₀, ?_, answer_reversing_of_inClause hi₀⟩
-    rw [primaryPolarity_of_inClause hi₀]
-    cases a
-    · exact absurd ha (by decide)
-    · rfl
+  ext x
+  refine ⟨fun ⟨n, _, h⟩ ↦ ?_, fun h ↦ ⟨n₀, hn₀, h ▸ response_reversing_of_inClause hi₀⟩⟩
+  by_cases hi : n.InClause
+  · rw [response_reversing_of_inClause hi, Option.some_inj] at h
+    exact h.symm
+  · rw [response_reversing_of_not_inClause hi] at h
+    cases h
 
 /-- The answers of a feature to questions whose negations are among `N` confirm the negative
 alternative of a negative question iff some negation of `N` inside the clause yields it. -/
-theorem confirmsNegativeQuestion_responses_iff {f : AnswerFeature} {N : Set ClauseNegation} :
+theorem confirmsNegativeQuestion_responses_iff :
     Discourse.Response.ConfirmsNegativeQuestion (f.responses N) ↔
       ∃ n ∈ N, n.InClause ∧ f.answer n = some .negative := by
-  simp only [Discourse.Response.ConfirmsNegativeQuestion, responses, Set.mem_ofPred_eq,
+  simp only [Discourse.Response.ConfirmsNegativeQuestion,
+    Discourse.Response.negativeQuestionConfirmation, mem_responses, response_eq_some_iff,
     true_and]
   refine exists_congr fun n ↦ and_congr_right fun _ ↦ and_congr_left fun _ ↦ ?_
   simp only [primaryPolarity]

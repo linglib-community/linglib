@@ -42,16 +42,16 @@ iff the `Discourse.Response` of their polarities is [same] or [reverse], as (31)
 features (`Confirming.iff_relative_eq_positive`, `Reversing.iff_relative_eq_negative`).
 
 §5.2 says what the polarity particles mark, as sets of responses bearing features: the English *yes*
-[same] or [+] and *no* [reverse] or [−], their double duty (`english`); the Romanian *da* [+], *nu*
-[−] and *ba* [reverse] except in a [reverse, −] answer to a question (`romanian`); and French *si*
-and German *doch* the marked combination [reverse, +] (`reversePositive`). Both English particles
-can confirm a negative question, while in Romanian only *nu* does
-(`english_confirmsNegativeQuestion`, `romanian_confirmsNegativeQuestion_iff`). `rows` are the
-responding assertions of (4), (5) and (35)–(50), whose particles are the fragments' polarity
-particles; every acceptable response is one its English and Romanian particles mark (`english_mem`,
-`romanian_mem`), *si* and *doch* occur in [reverse, +] responses only
-(`si_doch_mem_reversePositive`), and *ba* is possible in every denial (`ba_denial`) and required to
-be absent from a [reverse, −] answer (`ba_not_reverse_answer_neg`).
+the unmarked features [same] and [+] and *no* the marked [reverse] and [−], their double duty
+(`english`, `mem_english_iff`); the Romanian *da* [+], *nu* [−] and *ba* [reverse] except in a
+[reverse, −] answer to a question (`romanian`); and French *si* and German *doch* the marked
+combination [reverse, +] (`reversePositive`). Both English particles can confirm a negative
+question, while in Romanian only *nu* does (`english_confirmsNegativeQuestion`,
+`romanian_confirmsNegativeQuestion_iff`). `rows` are the responding assertions of (4), (5) and
+(35)–(50), whose particles are the fragments' polarity particles; every acceptable response is one
+its English and Romanian particles mark (`english_mem`, `romanian_mem`), *si* and *doch* occur in
+[reverse, +] responses only (`si_doch_mem_reversePositive`), and *ba* is possible in every denial
+(`ba_denial`) and required to be absent from a [reverse, −] answer (`ba_not_reverse_answer_neg`).
 
 ## Implementation notes
 
@@ -229,7 +229,7 @@ theorem Confirming.iff_relative_eq_positive [Nonempty W] {s t : Sentence W}
     (h : t.radical = s.radical) (m : InitiatingMove) :
     Confirming s t ↔ (⟨m, s.polarity, t.polarity⟩ : Response).relative = .positive := by
   rw [Confirming, Sentence.prop, Sentence.prop, h]
-  exact Response.polarity_smul_eq_iff (x := ⟨m, s.polarity, t.polarity⟩) _
+  exact Response.polarity_smul_eq_antecedent_smul_iff (x := ⟨m, s.polarity, t.polarity⟩) _
 
 /-- A [reverse] response to an assertion is a denial, which puts the conversation in crisis. -/
 theorem inCrisis_reversing_assert {s t : Sentence W} (h : Reversing s t) (a b : Discourse.Role) :
@@ -246,10 +246,14 @@ theorem not_inCrisis_reversing_polarQuestion {s t : Sentence W} (h : Reversing s
 
 /-! ### Polarity particles -/
 
-/-- The English *yes* marks [same] or [+], and *no* marks [reverse] or [−] (§5.2). -/
-def english : English.PolarityParticle → Set Response
-  | .yes => {x | x.HasFeature (.relative .positive) ∨ x.HasFeature (.absolute .positive)}
-  | .no => {x | x.HasFeature (.relative .negative) ∨ x.HasFeature (.absolute .negative)}
+/-- An English particle marks the features of its polarity, *yes* the unmarked [same] and [+]
+and *no* the marked [reverse] and [−] (§5.2). -/
+def english (p : English.PolarityParticle) : Set Response :=
+  {x | ∃ f : Response.Feature, f.value = p.polarity ∧ x.HasFeature f}
+
+theorem mem_english_iff {p : English.PolarityParticle} {x : Response} :
+    x ∈ english p ↔ x.relative = p.polarity ∨ x.polarity = p.polarity :=
+  Response.exists_value_eq_and_hasFeature_iff
 
 /-- The Romanian *da* marks [+], *nu* [−], and *ba* [reverse], except in a [reverse, −] answer to
 a question, where *ba* is impossible (43) (§5.2). -/
@@ -263,8 +267,8 @@ def romanian : Romanian.PolarityParticle → Set Response
 def reversePositive : Set Response :=
   {x | x.HasFeature (.relative .negative) ∧ x.HasFeature (.absolute .positive)}
 
-instance (p : English.PolarityParticle) : DecidablePred (· ∈ english p) := fun _ ↦ by
-  cases p <;> exact inferInstanceAs (Decidable (_ ∨ _))
+instance (p : English.PolarityParticle) : DecidablePred (· ∈ english p) := fun _ ↦
+  decidable_of_iff _ mem_english_iff.symm
 
 instance (p : Romanian.PolarityParticle) : DecidablePred (· ∈ romanian p) := fun x ↦ by
   cases p

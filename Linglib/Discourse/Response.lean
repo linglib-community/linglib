@@ -37,9 +37,18 @@ polarity-based, or yes/no, system.
 
 * `Discourse.Response.eq_relative_iff_smul_eq`: under a free polarity action the relative
   polarity is the only polarity taking the antecedent's proposition to the response's.
-* `Discourse.Response.polarity_smul_eq_iff`, `Discourse.Response.polarity_smul_eq_compl_iff`:
-  a response asserts the proposition on the Table iff it is [same], and its complement iff it
-  is [reverse].
+* `Discourse.Response.polarity_smul_eq_antecedent_smul_iff`,
+  `Discourse.Response.polarity_smul_eq_compl_iff`: a response asserts the proposition on the
+  Table iff it is [same], and its complement iff it is [reverse].
+* `Discourse.Response.exists_value_eq_and_hasFeature_iff`: a response bears a feature of a given
+  value iff its relative or its absolute polarity has it.
+
+## Implementation notes
+
+Over a radical `p`, the propositions of a response and of its antecedent are two points of the
+orbit `{p, pᶜ}`, on which the polarity group acts freely and transitively. The orbit is thus a
+torsor and the relative polarity the quotient of the two points; `eq_relative_iff_smul_eq` states
+this through freeness (`IsCancelSMul`) without building the torsor.
 
 ## References
 
@@ -109,7 +118,7 @@ theorem eq_relative_iff_smul_eq [IsCancelSMul Polarity X] (a : X) :
   exact ⟨fun h ↦ h ▸ rfl, IsCancelSMul.right_cancel _ _ _⟩
 
 /-- Under a free action, a response asserts the proposition on the Table iff it is [same]. -/
-theorem polarity_smul_eq_iff [IsCancelSMul Polarity X] (a : X) :
+theorem polarity_smul_eq_antecedent_smul_iff [IsCancelSMul Polarity X] (a : X) :
     x.polarity • a = x.antecedent • a ↔ x.relative = .positive := by
   rw [eq_comm, eq_comm (b := Polarity.positive), eq_relative_iff_smul_eq a,
     Polarity.positive_smul]
@@ -155,16 +164,26 @@ instance (x : Response) : DecidablePred x.HasFeature
   | .relative _ => inferInstanceAs (Decidable (_ = _))
   | .absolute _ => inferInstanceAs (Decidable (_ = _))
 
+/-- A response bears a feature of value `v` iff its relative or its absolute polarity is `v`. -/
+theorem exists_value_eq_and_hasFeature_iff {v : Polarity} :
+    (∃ f : Feature, f.value = v ∧ x.HasFeature f) ↔ x.relative = v ∨ x.polarity = v := by
+  constructor
+  · rintro ⟨_ | _, rfl, h⟩
+    exacts [Or.inl h, Or.inr h]
+  · rintro (h | h)
+    exacts [⟨.relative v, rfl, h⟩, ⟨.absolute v, rfl, h⟩]
+
 /-! ### Answering systems -/
 
-/-- The responses `S` include the confirmation of the negative alternative of a negative polar
-question, [same, −]. -/
-def ConfirmsNegativeQuestion (S : Set Response) : Prop :=
-  ⟨.polarQuestion, .negative, .negative⟩ ∈ S
+/-- The confirmation of the negative alternative of a negative polar question, [same, −]. -/
+def negativeQuestionConfirmation : Response := ⟨.polarQuestion, .negative, .negative⟩
 
-instance (S : Set Response) [h : Decidable (⟨.polarQuestion, .negative, .negative⟩ ∈ S)] :
-    Decidable (ConfirmsNegativeQuestion S) :=
-  h
+/-- The responses `S` include the confirmation of the negative alternative of a negative polar
+question. -/
+def ConfirmsNegativeQuestion (S : Set Response) : Prop := negativeQuestionConfirmation ∈ S
+
+instance (S : Set Response) [DecidablePred (· ∈ S)] : Decidable (ConfirmsNegativeQuestion S) :=
+  inferInstanceAs (Decidable (negativeQuestionConfirmation ∈ S))
 
 end Response
 

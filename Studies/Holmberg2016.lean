@@ -96,10 +96,8 @@ theorem smul_mem_alt {q : PolarInterrogative W} (hne : q.radical ≠ ∅)
 
 /-! ### The particles -/
 
-/-- The features of the English particles. -/
-def english : English.PolarityParticle → AnswerFeature
-  | .yes => .value .positive
-  | .no => .value .negative
+/-- An English particle spells out the valued feature of its polarity. -/
+def english (p : English.PolarityParticle) : AnswerFeature := .value p.polarity
 
 /-- The features of the Swedish particles, *jo* being [+Pol, REV]. -/
 def swedish : Swedish.PolarityParticle → AnswerFeature
@@ -221,10 +219,8 @@ theorem responses_reversing_eq_reversePositive {N : Set ClauseNegation}
     AnswerFeature.reversing.responses N =
       FarkasBruce2010.reversePositive ∩ {x | x.reactsTo = .polarQuestion} := by
   rw [AnswerFeature.responses_reversing hN]
-  ext x
-  simp only [FarkasBruce2010.reversePositive, Set.mem_inter_iff, Set.mem_ofPred_eq,
-    Response.hasFeature_relative, Response.hasFeature_absolute]
-  tauto
+  ext ⟨m, a, s⟩
+  cases m <;> cases a <;> cases s <;> decide
 
 /-- Reversing particles are needed only where a negation values the polarity head, since in a
 truth-based configuration every particle yields a well-formed answer, which is why no language

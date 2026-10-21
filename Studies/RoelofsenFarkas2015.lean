@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Algebra.Group.Action.Prod
 public import Linglib.Semantics.Questions.Highlighting
 public import Linglib.Semantics.Questions.Hamblin
 public import Studies.FarkasBruce2010
@@ -89,9 +90,8 @@ theorem absolutePresup_and_relativePresup_iff {r s : Polarity} {q : Question W}
 polarities, the relative feature of the response is its relative polarity. -/
 theorem relativePresup_smul_iff {r : Polarity} (x : Response) (β : Polarity × Set W) :
     RelativePresup r {x.polarity • β} {x.antecedent • β} ↔ r = x.relative := by
-  simp only [RelativePresup, Set.singleton_eq_singleton_iff, exists_eq_left', smul_smul,
-    Response.relative, eq_div_iff_mul_eq']
-  exact ⟨fun h ↦ by simpa using (congrArg Prod.fst h).symm, fun h ↦ by rw [h]⟩
+  simp only [RelativePresup, Set.singleton_eq_singleton_iff, exists_eq_left']
+  exact (Response.eq_relative_iff_smul_eq β).trans eq_comm |>.symm
 
 /-! ### The questions of §3.3 -/
 
@@ -145,10 +145,10 @@ inductive Target where
   | combination (r s : Polarity)
   deriving DecidableEq, Repr
 
-/-- English *yes* realizes [agree] and [+], and *no* [reverse] and [−] (76). -/
-def english : English.PolarityParticle → List Target
-  | .yes => [.feature (.relative .positive), .feature (.absolute .positive)]
-  | .no => [.feature (.relative .negative), .feature (.absolute .negative)]
+/-- An English particle realizes the relative and the absolute feature of its polarity, *yes*
+[agree] and [+], and *no* [reverse] and [−] (76). -/
+def english (p : English.PolarityParticle) : List Target :=
+  [.feature (.relative p.polarity), .feature (.absolute p.polarity)]
 
 /-- French *oui* realizes [+], *non* [−], and *si* the combination [reverse, +] (118). -/
 def french : French.PolarityParticle → List Target
@@ -211,21 +211,22 @@ theorem german_usable (p : German.PolarityParticle) :
       (Usable german p .positive .negative ↔ p ≠ .doch) := by
   cases p <;> decide
 
-/-- The English particles each realize a natural class of features, *yes* the unmarked ones,
-of positive value, and *no* the marked ones (80). -/
-theorem mem_english_iff (f : Feature) :
-    (Target.feature f ∈ english .yes ↔ f.value = .positive) ∧
-      (Target.feature f ∈ english .no ↔ f.value = .negative) := by
-  cases f with
-  | relative r => cases r <;> decide
-  | absolute s => cases s <;> decide
+/-- Each English particle realizes a natural class of features, those of its polarity, *yes*
+the unmarked ones and *no* the marked ones (80). -/
+theorem mem_english_iff {p : English.PolarityParticle} {f : Feature} :
+    Target.feature f ∈ english p ↔ f.value = p.polarity := by
+  cases f <;> simp [english, Response.Feature.value]
+
+theorem combination_notMem_english (p : English.PolarityParticle) (r s : Polarity) :
+    Target.combination r s ∉ english p := by
+  simp [english]
 
 /-- The English particles are usable in exactly the responses Farkas and Bruce say they mark,
 *yes* [same] or [+] and *no* [reverse] or [−]. -/
 theorem usable_english_iff_mem (p : English.PolarityParticle) (x : Response) :
     Usable english p x.relative x.polarity ↔ x ∈ FarkasBruce2010.english p := by
-  obtain ⟨m, a, s⟩ := x
-  cases m <;> cases p <;> cases a <;> cases s <;> decide
+  simp [Usable, Realizes, mem_english_iff, combination_notMem_english, Response.Feature.value,
+    FarkasBruce2010.mem_english_iff]
 
 /-- French *si* is usable in exactly the [reverse, +] responses of Farkas and Bruce. -/
 theorem usable_si_iff_mem_reversePositive (x : Response) :
