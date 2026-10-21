@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Reference.Character
-public import Linglib.Semantics.Reference.Context.Overwrite
 public import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
@@ -22,9 +21,8 @@ English is that its indexicals read the speech-act context under every embedding
 
 * `Character.HoldsAt`, `Character.IsAPriori`, `Character.IsNecessary`
 * `IsMonster`: an operator on characters that does not operate on contents.
-* `shiftBy τ`: evaluation at the context `τ c v` computed from the context and the index;
-  `shift σ` is its index-independent case, and `shiftyOp s`, overwriting the coordinates `s` of the
-  context with those of the index, the shifty operators of Anand and Nevins and of Deal.
+* `shiftBy τ`: evaluation at the context `τ c v` computed from the context and the index, as the
+  shifty operators of `Context/Overwrite.lean` do; `shift σ` is its index-independent case.
 * `Kaplan.I`, `Kaplan.you`, `Kaplan.now`, `Kaplan.here`, `Kaplan.actually`: the pure indexicals,
   origin access patterns on the context tower.
 * `AccessPattern.toCharacter`, `AccessPattern.IsKaplanCompliant`
@@ -45,7 +43,6 @@ English is that its indexicals read the speech-act context under every embedding
 * [schlenker-2011]
 * [schlenker-2003]
 * [anand-nevins-2004]
-* [deal-2020]
 -/
 
 @[expose] public section
@@ -173,34 +170,6 @@ theorem not_isMonster_shift_one : ¬ IsMonster (shift 1 : Character C V α → C
 theorem attitudeShift_ne_one (holder : E) (w' : W) (c : Context W E P T)
     (h : c.agent ≠ holder) : attitudeShift (P := P) (T := T) holder w' ≠ 1 :=
   (ne_one_iff_exists_smul_ne _).2 ⟨c, fun e ↦ h (by simpa using (congrArg Context.agent e).symm)⟩
-
-/-- The shifty operator overwriting the coordinates `s` of the context with those of the index,
-`⟦OP α⟧^{c,i} = ⟦α⟧^{overwrite s c i, i}` ([anand-nevins-2004], [deal-2020]). -/
-def shiftyOp (s : Finset Context.Coord) :
-    Character (Context W E P T) (Context W E P T) α →
-      Character (Context W E P T) (Context W E P T) α :=
-  shiftBy (Context.overwrite s)
-
-section shiftyOp
-
-variable (s t : Finset Context.Coord) (χ : Character (Context W E P T) (Context W E P T) α)
-
-@[simp] theorem shiftyOp_apply (c i : Context W E P T) :
-    shiftyOp s χ c i = χ (Context.overwrite s c i) i := rfl
-
-@[simp] theorem shiftyOp_empty : shiftyOp ∅ χ = χ := by ext; simp
-
-/-- Stacked shifty operators compose to the one overwriting the union of their coordinates. -/
-@[simp] theorem shiftyOp_shiftyOp : shiftyOp t (shiftyOp s χ) = shiftyOp (t ∪ s) χ := by
-  ext; simp [Context.overwrite_overwrite]
-
-/-- Unembedded, a shifty operator is vacuous: a sentence holds at a context, taken as its own
-index, iff its complement does. -/
-theorem holdsAt_shiftyOp (χ : Character (Context W E P T) (Context W E P T) Prop)
-    (c : Context W E P T) : (shiftyOp s χ).HoldsAt id c ↔ χ.HoldsAt id c := by
-  simp [Character.HoldsAt]
-
-end shiftyOp
 
 end Monster
 
