@@ -30,19 +30,19 @@ Bybee's relevance hierarchy.
 
 ## Implementation notes
 
-* The Japanese suffix order is `Japanese.Verb.slots`, the order of the paper's text, its
+* The Japanese suffix order is `Japanese.Verb.template`'s, the order of the paper's text, its
   supplement and its code, with the polite suffix before the desiderative; the paper's Table 2
   lists the two the other way round. The supplement's forms attest neither order, the two
   suffixes never sharing a form there.
 * `japaneseCategory?` and `sesothoCategory?` map the slots the paper labels with a category of
-  [bybee-1985]'s hierarchy to it. The paper's Japanese "Voice and Mood" slot of the passive and
+  Bybee's hierarchy to it. The paper's Japanese "Voice and Mood" slot of the passive and
   the potential is read as voice, and its final "Tense, Aspect, Mood, and Finiteness" slot and
   the Sesotho "Tense/aspect" prefix as tense. The slots it labels otherwise, *suru*, politeness,
   negation, the reversive and the interrogative and relative markers, have no rank and are left
   out of the comparison.
 * The paper orders the Sesotho passive before the perfect, in its text, its Table 4 and its
-  supplement; [demuth-1992]'s schema (14) and examples (28) and (44) order the perfect before
-  the passive, and the Fragment follows Demuth. The paper's order is `paperSesothoSuffixes`.
+  supplement; Demuth's schema (14) and examples (28) and (44) order the perfect before
+  the passive, and the Fragment follows Demuth. The paper's order is `paperSesothoTemplate`.
 * The Sesotho rows are the verbs of Demuth's examples, their glosses without the noun classes,
   and two corpus forms from the supplement in which a tense prefix is fused with the
   neighbouring marker and glossed as that marker.
@@ -235,7 +235,7 @@ def japaneseForms : List Datum :=
 the Fragment, and the suffixes of the form are licensed by `Japanese.Verb.template`. -/
 theorem japanese_forms_licensed :
     ∀ r ∈ japaneseForms, (japaneseSuffixes r).length + 1 = r.glossLine.length ∧
-      Japanese.Verb.Licensed (japaneseSuffixes r) := by
+      Japanese.Verb.template.Licensed (japaneseSuffixes r) := by
   decide
 
 /-! ### The Sesotho affix template
@@ -244,8 +244,9 @@ The paper's examples (2), the forms of [demuth-1992] its supplement tabulates, a
 from the corpus are segmented into a stem and its affixes; every gloss but the stem's names an
 affix of the Fragment, and the affixes of every form are licensed by its template. -/
 
-/-- The affixes a gloss names: Demuth's labels, the corpus labels of the supplement, and the
-fused applicative perfect *-ets-*. Demuth's mood vowel is read as the indicative ending. -/
+/-- The affixes a gloss names, the glosses being Demuth's labels, the corpus labels of the
+supplement and the fused applicative perfect *-ets-*. Demuth's mood vowel is read as the
+indicative ending. -/
 def sesothoAffix : String → List (Σ σ, Sesotho.Verb.Exponent σ)
   | "SM" => [⟨_, .subject⟩]
   | "OBJ" => [⟨_, .object⟩]
@@ -278,19 +279,20 @@ def sesothoForms : List Datum :=
 form are licensed by `Sesotho.Verb.template`. -/
 theorem sesotho_forms_licensed :
     ∀ r ∈ sesothoForms, (r.glossLine.filter fun g ↦ (sesothoAffix g).isEmpty).length = 1 ∧
-      Sesotho.Verb.Licensed (sesothoAffixes r) := by
+      Sesotho.Verb.template.Licensed (sesothoAffixes r) := by
   decide
 
-/-- The paper's own Sesotho suffix order, which places the passive before the perfect. -/
-def paperSesothoSuffixes : List Sesotho.Verb.Slot :=
-  [.reversive, .extension, .voice, .tense, .mood, .interrogativeRelative]
+/-- The Fragment's template with the paper's own suffix order, which places the passive before
+the perfect. -/
+def paperSesothoTemplate : AffixTemplate Sesotho.Verb.Slot :=
+  { Sesotho.Verb.template with
+    suffixSlots := [.reversive, .extension, .voice, .tense, .mood, .interrogativeRelative] }
 
 /-- Demuth's *pheh-ets-w-e* (44), the perfect before the passive, is licensed by the Fragment
 and not by the paper's order. -/
 theorem demuth_perfect_passive :
-    Sesotho.Verb.Licensed (sesothoAffixes Examples.so6) ∧
-      ¬ List.Sublist ((sesothoAffixes Examples.so6).map Sigma.fst)
-        (Sesotho.Verb.prefixes ++ paperSesothoSuffixes) := by
+    Sesotho.Verb.template.Licensed (sesothoAffixes Examples.so6) ∧
+      ¬ paperSesothoTemplate.Licensed (sesothoAffixes Examples.so6) := by
   decide
 
 /-! ### Morpheme order and the relevance hierarchy
@@ -316,11 +318,11 @@ def sesothoCategory? : Sesotho.Verb.Slot → Option RelevanceHierarchy
 
 /-- The Sesotho suffix order in Bybee's vocabulary, stem-outward. -/
 def sesothoSuffixCategories : List RelevanceHierarchy :=
-  Sesotho.Verb.suffixes.filterMap sesothoCategory?
+  Sesotho.Verb.template.suffixSlots.filterMap sesothoCategory?
 
 /-- The Sesotho prefix order in Bybee's vocabulary, stem-outward. -/
 def sesothoPrefixCategories : List RelevanceHierarchy :=
-  Sesotho.Verb.prefixes.reverse.filterMap sesothoCategory?
+  Sesotho.Verb.template.prefixSlots.reverse.filterMap sesothoCategory?
 
 /-- The hierarchy category of a Japanese suffix position, when the paper's label is one. -/
 def japaneseCategory? : Japanese.Verb.Slot → Option RelevanceHierarchy
@@ -334,13 +336,13 @@ def japaneseCategory? : Japanese.Verb.Slot → Option RelevanceHierarchy
 
 /-- The Japanese suffix order in Bybee's vocabulary. -/
 def japaneseCategories : List RelevanceHierarchy :=
-  Japanese.Verb.slots.filterMap japaneseCategory?
+  Japanese.Verb.template.suffixSlots.filterMap japaneseCategory?
 
 /-- The paper's Sesotho suffix order, the extensions, the passive, the perfect and the mood
 vowel, is sorted by the relevance hierarchy, which on the surveyed categories is
 [bybee-1985]'s order, `Bybee1985.survey_order_iso_relevance`. -/
 theorem paper_sesotho_suffixes_respect_relevance :
-    (paperSesothoSuffixes.filterMap sesothoCategory?).SortedLE := by decide
+    (paperSesothoTemplate.suffixSlots.filterMap sesothoCategory?).SortedLE := by decide
 
 /-- The Fragment's suffix order, [demuth-1992]'s, has the perfect before the passive, tense
 before voice, and is not sorted by the hierarchy: the paper's agreement rests on its order. -/
@@ -354,7 +356,7 @@ theorem sesotho_prefixes_violate_relevance :
       ¬ sesothoPrefixCategories.SortedLE := by
   decide
 
-/-- The paper's claim for Japanese: no tense, aspect or mood suffix lies closer to the stem
+/-- The paper claims for Japanese that no tense, aspect or mood suffix lies closer to the stem
 than a valence or voice suffix. -/
 theorem japanese_valence_voice_inside :
     japaneseCategories.Pairwise fun a b ↦ b ≤ .voice → a ≤ .voice := by

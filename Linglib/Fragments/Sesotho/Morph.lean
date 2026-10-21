@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Computability.RegularExpressions
+public import Linglib.Morphology.Morphotactics.AffixTemplate
 
 /-!
 # Sesotho verb affixes
@@ -12,34 +12,23 @@ mood marker and the object marker or the reflexive; after it, stem-outward, the 
 applicative *-el-*, the completive *-ell-*, which reduplicates the applicative, and the
 reciprocal *-an-*), the perfect *-il-*, the passive *-w-*, the mood vowel and the
 interrogative or relative *-ng*. A form takes at most one affix of each position except the
-extensions, which stack, so the template is a regular expression over the positions with the
-extension position starred, and a string of affixes in linear order, the stem left out, is
-licensed when its positions match it.
+extensions, which stack.
 
-The order is [demuth-1992]'s schema (14) of the verbal complex, subject marker, tense or
+The order is Demuth's schema (14) of the verbal complex, subject marker, tense or
 aspect, object marker, stem, extensions, perfect, passive, mood, in which the passive is added
 last when an extension, the perfect and the passive co-occur, as in *pheh-ets-w-e* 'was cooked
 (food)' (44), and the relative *-ng* follows the mood vowel, *pheh-il-e-ng* (29). The
-inventory within the positions is the one [hahn-degen-futrell-2021] extract from the corpus of
-[demuth-1992] and document from [doke-mofokeng-1967]; the paper's own order places the passive
-before the perfect, against (44). The corpus fuses some neighbouring markers, a tense prefix
+inventory within the positions is the one Hahn, Degen and Futrell extract from Demuth's corpus
+and document from the grammar of Doke and Mofokeng; their own order places the passive before
+the perfect, against (44). The corpus fuses some neighbouring markers, a tense prefix
 with the following object marker in particular, and treats the interrogative *-ng*, a clitic
 form of *eng* 'what', as a suffix.
 
 ## Main definitions
 
 * `Sesotho.Verb.Slot`, `Sesotho.Verb.Exponent`: the affix positions and the affixes of each.
-* `Sesotho.Verb.prefixes`, `Sesotho.Verb.suffixes`: the positions before and after the stem,
-  word-edge inward and stem-outward.
-* `Sesotho.Verb.template`, `Sesotho.Verb.Licensed`: the regular expression over the positions
-  and the affix strings it admits.
-
-## Main results
-
-* `Sesotho.Verb.licensed_of_sublist`: a string that fills each position at most once, in
-  order, is licensed.
-* `Sesotho.Verb.licensed_replicate_extension`: the extension position takes any number of
-  affixes.
+* `Sesotho.Verb.template`: the positions before and after the stem, the extension position
+  stacking.
 
 ## Implementation notes
 
@@ -60,7 +49,7 @@ entered.
 
 namespace Sesotho.Verb
 
-/-- The affix positions of the verb: the prefix positions word-edge inward, then the suffix
+/-- The affix positions of the verb, the prefix positions word-edge inward and then the suffix
 positions stem-outward. -/
 inductive Slot where
   /-- The subject marker. -/
@@ -137,51 +126,12 @@ inductive Exponent : Slot → Type where
   | relative : Exponent .interrogativeRelative
   deriving DecidableEq
 
-/-- The prefix positions, word-edge inward. -/
-def prefixes : List Slot := [.subject, .negation, .tam, .object]
-
-/-- The suffix positions, stem-outward. -/
-def suffixes : List Slot :=
-  [.reversive, .extension, .tense, .voice, .mood, .interrogativeRelative]
-
-open RegularExpression in
-/-- The template: the positions in linear order, each at most once, the extension position any
-number of times. -/
-def template : RegularExpression Slot :=
-  sublists [.subject, .negation, .tam, .object, .reversive] * (char .extension).star *
-    sublists [.tense, .voice, .mood, .interrogativeRelative]
-
-/-- A string of affixes, in linear order, is licensed when its positions match the template. -/
-def Licensed (w : List (Σ σ, Exponent σ)) : Prop := w.map Sigma.fst ∈ template.matches'
-
-instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
-
-open List RegularExpression in
-/-- A string of affixes that fills each position at most once, in order, is licensed. -/
-theorem licensed_of_sublist {w : List (Σ σ, Exponent σ)}
-    (h : w.map Sigma.fst <+ prefixes ++ suffixes) : Licensed w := by
-  have h' : w.map Sigma.fst <+
-      ([.subject, .negation, .tam, .object, .reversive] ++ [.extension]) ++
-        [.tense, .voice, .mood, .interrogativeRelative] := h
-  obtain ⟨a', c, hw, ha', hc⟩ := sublist_append_iff.mp h'
-  obtain ⟨a, b, rfl, ha, hb⟩ := sublist_append_iff.mp ha'
-  have hb' : b ∈ KStar.kstar ({[Slot.extension]} : Language Slot) := by
-    rcases sublist_singleton.mp hb with rfl | rfl
-    · exact Language.nil_mem_kstar _
-    · exact Language.mem_kstar.mpr ⟨[[.extension]], rfl, fun y hy ↦ by
-        rw [List.mem_singleton.mp hy]; exact Set.mem_singleton _⟩
-  simp only [Licensed, template, matches'_mul, matches'_star, matches'_sublists, matches'_char,
-    Language.mem_mul]
-  exact ⟨a ++ b, ⟨a, ha, b, hb', rfl⟩, c, hc, hw.symm⟩
-
-open RegularExpression in
-/-- The extension position takes any number of affixes: `n` applicatives are licensed. -/
-theorem licensed_replicate_extension (n : ℕ) :
-    Licensed (List.replicate n ⟨_, Exponent.applicative⟩) := by
-  simp only [Licensed, template, matches'_mul, matches'_star, matches'_sublists, matches'_char,
-    Language.mem_mul, List.map_replicate]
-  refine ⟨_, ⟨[], List.nil_sublist _, _, ?_, rfl⟩, [], List.nil_sublist _, List.append_nil _⟩
-  exact Language.mem_kstar.mpr ⟨List.replicate n [.extension], by simp, fun y hy ↦ by
-    rw [List.eq_of_mem_replicate hy]; exact Set.mem_singleton _⟩
+/-- The subject, negative, tense or aspect and object positions before the stem, word-edge
+inward, and after it, stem-outward, the reversive, the stacking extensions, the perfect, the
+passive, the mood vowel and *-ng*. -/
+def template : Morphology.AffixTemplate Slot where
+  prefixSlots := [.subject, .negation, .tam, .object]
+  suffixSlots := [.reversive, .extension, .tense, .voice, .mood, .interrogativeRelative]
+  stacking := {.extension}
 
 end Sesotho.Verb

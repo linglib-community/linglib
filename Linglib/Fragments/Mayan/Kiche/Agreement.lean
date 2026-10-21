@@ -51,7 +51,8 @@ open Mayan (ExponentTable)
 
 /-- The position classes of the verbal complex, the aspect marker, Set B and Set A before the
 stem and the status suffix after it. -/
-def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .setA], [.status]⟩
+def template : Morphology.AffixTemplate Mayan.VerbSlot :=
+  { prefixSlots := [.aspect, .setB, .setA], suffixSlots := [.status] }
 
 /-- K'iche' is ergative in every aspect. -/
 def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative

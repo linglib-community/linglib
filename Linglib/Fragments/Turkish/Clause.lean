@@ -106,7 +106,7 @@ def follows : Converb → Verb.Slot
 /-- An exponent of the slot may precede the converb, since the slot is the one the converb
 follows or the finite verb's template admits it before that one. -/
 def Admits (c : Converb) (s : Verb.Slot) : Prop :=
-  c.follows = s ∨ [s, c.follows] ∈ Verb.template.matches'
+  c.follows = s ∨ [s, c.follows] ∈ Verb.template.language
 
 instance (c : Converb) (s : Verb.Slot) : Decidable (c.Admits s) :=
   inferInstanceAs (Decidable (_ ∨ _))
