@@ -85,9 +85,9 @@ def mapNonterminal (f : N → N') : Symbol T N → Symbol T N'
     (s.mapNonterminal f).terminal? = s.terminal? := by cases s <;> rfl
 
 instance [Countable T] [Countable N] : Countable (Symbol T N) :=
-  Function.Injective.countable (f := fun s : Symbol T N => match s with
+  Function.Injective.countable (f := fun s : Symbol T N ↦ match s with
     | .terminal t => Sum.inl t
-    | .nonterminal n => Sum.inr n) fun s s' h => by
+    | .nonterminal n => Sum.inr n) fun s s' h ↦ by
     cases s <;> cases s' <;> simp_all
 
 end Symbol
@@ -159,6 +159,10 @@ rules. -/
 theorem nonempty_rulesWithLHS_iff [DecidableEq g.NT] {a : g.NT} :
     Nonempty (g.RulesWithLHS a) ↔ a ∈ g.rules.image (·.input) := by
   simp [Finset.mem_image]
+
+theorem card_filter_input_ne_zero [DecidableEq g.NT] {a : g.NT} (ha : a ∈ g.rules.image (·.input)) :
+    (g.rules.filter (·.input = a)).card ≠ 0 :=
+  Finset.card_ne_zero.mpr (Finset.nonempty_coe_sort.mp (nonempty_rulesWithLHS_iff.mpr ha))
 
 /-- A production from a concatenation `u₁ ++ u₂` happens entirely in `u₁` or entirely in
 `u₂`. -/

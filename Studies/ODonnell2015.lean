@@ -28,6 +28,7 @@ derives both rankings from the book's counts (`spectrum`, pp. 267–268), and Ba
 * `Realizes.dmpcfg_ness_lt_ion`, `Realizes.mag_ness_lt_ion`, `Realizes.baayenP_ion_lt_ness`: the
   three rankings.
 * `exists_realizes`: some corpus has the book's counts.
+* `AdaptorGrammar.prob_replicate_one`: with discount `1` the adaptor grammar is the DMPCFG.
 * `FullListing.counts_eq_card_filter_toFinset`: at a nonterminal on no right-hand side the
   full-listing counts are type counts.
 * `isElsewhereWinner_of_forall_uniformOn_le`: the probabilistic Elsewhere Condition (§5.5.3).
@@ -67,8 +68,8 @@ inductive Sym (ι : Type) where
   | ate
   deriving DecidableEq, Repr
 
-/-- The nonterminals of the suffix grammar: nouns, adjectives, verbs, and bound stems, the bases
-of *-ate* (*segregat-*). -/
+/-- The nonterminals of the suffix grammar are nouns, adjectives, verbs, and the bound stems
+that *-ate* attaches to (*segregat-*). -/
 inductive SuffixNT where
   | N
   | Adj
@@ -152,8 +153,7 @@ theorem Suffix.rule_mem (s : Suffix) :
   · exact Finset.mem_filter.mpr ⟨mem_rules.mpr (.inl rfl), rfl⟩
   · exact Finset.mem_filter.mpr ⟨mem_rules.mpr (.inr (.inl rfl)), rfl⟩
 
-
-/-- The word a nominalizer forms on stem `i`: `N → Adj -ness` over `Adj → adj i`, or
+/-- The word a nominalizer forms on stem `i`, by `N → Adj -ness` over `Adj → adj i` or by
 `N → V -ion` over `V → v i`. -/
 def Suffix.word : Suffix → ι → RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT)
   | .ness, i => .node (.nonterminal SuffixNT.N)
@@ -167,18 +167,8 @@ theorem Suffix.word_injective : Function.Injective fun p : Suffix × ι ↦ p.1.
 
 theorem Suffix.licensed_word (s : Suffix) (i : ι) :
     (s.word i).Licensed (suffixGrammar ι).Licenses := by
-  have hleaf (c : RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT)) (x : Sym ι)
-      (hc : c ∈ [RoseTree.leaf (.terminal x)]) : c.Licensed (suffixGrammar ι).Licenses :=
-    List.mem_singleton.mp hc ▸ .terminal _
-  cases s
-  · refine .nonterminal _ _ (mem_rules.mpr (.inl rfl)) ?_
-    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨.nonterminal _ _ (mem_rules.mpr (.inr (.inr (.inr (.inl ⟨i, rfl⟩))))) (hleaf · _),
-      .terminal _⟩
-  · refine .nonterminal _ _ (mem_rules.mpr (.inr (.inl rfl))) ?_
-    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨.nonterminal _ _ (mem_rules.mpr (.inr (.inr (.inr (.inr (.inl ⟨i, rfl⟩))))))
-      (hleaf · _), .terminal _⟩
+  cases s <;> simp [Suffix.word, RoseTree.licensed_node_iff, ContextFreeGrammar.Licenses, mem_rules,
+    rNess, rIon, rAte, rAdj, rV, rBnd]
 
 /-- The word of `s` has the rule of `s` at its root. -/
 theorem Suffix.ruleAt?_word (s : Suffix) (i : ι) :
@@ -206,14 +196,14 @@ abbrev Corpus : Type :=
 def dmpcfg : DirichletPCFG (suffixGrammar ι) :=
   ⟨fun _ ↦ 1, fun _ _ ↦ one_pos⟩
 
-/-- Under the DMPCFG's Pólya-urn representation, the probability that the word after a corpus `D`
-is the word of a nominalizer is its probability under the predictive PCFG given `D`, since the
-word has at most one node of each category. -/
-theorem dmpcfg_derivProb_word (s : Suffix) (i : ι) (D : Corpus ι) :
-    (dmpcfg.predictivePCFG D).derivProb (s.word i) =
-      .ofReal ((dmpcfg.posterior D).corpusProb {s.word i}) :=
-  dmpcfg.derivProb_predictivePCFG (s.licensed_word i)
-    (fun a ↦ by cases s <;> cases a <;> simp [Suffix.word]) D
+/-- Under the DMPCFG's Pólya-urn representation, the probability that the word after a corpus with
+rule counts `x` is the word of a nominalizer is its probability under the mean PCFG of the
+posterior given `x`, since the word has at most one node of each category. -/
+theorem dmpcfg_derivProb_word (x : ContextFreeRule (Sym ι) (suffixGrammar ι).NT → ℕ) (s : Suffix)
+    (i : ι) : (dmpcfg.update x).mean.derivProb (s.word i) =
+      .ofReal ((dmpcfg.update x).countsProb (RoseTree.ruleCounts {s.word i})) :=
+  (dmpcfg.update x).derivProb_mean (s.licensed_word i)
+    fun a ↦ by cases s <;> cases a <;> simp [Suffix.word]
 
 /-! ## Adaptor and fragment grammars (§3.1.7, §3.1.8)
 
@@ -226,7 +216,7 @@ nonterminal on the right-hand side of a rule it decides, by a beta-binomial urn,
 fragment continues there, and these decisions are its third kind of count, `Z`. The book's
 hyperparameters are `π = 1`, `a = 0.5`, `b = 100` and `ψ = 50` (§3.5.5). -/
 
-/-- The book's adaptor grammar over `G`: a Dirichlet PCFG with a Pitman–Yor process memoizing
+/-- The book's adaptor grammar over `G` adds to a Dirichlet PCFG a Pitman–Yor process memoizing
 the derivations rooted at each nonterminal. -/
 @[ext]
 structure AdaptorGrammar {T : Type} (G : ContextFreeGrammar T) extends DirichletPCFG G where
@@ -284,18 +274,26 @@ theorem prob_nonneg (X : ContextFreeRule T G.NT → ℕ) (Y : G.NT → Multiset 
 theorem prob_zero : M.prob 0 0 = 1 := by
   simp [prob]
 
+/-- **Full parsing is the adaptor grammar that never reuses.** With discount `1` every use of a
+nonterminal sits at a table of its own (p. 89), and an analysis whose tables are all singletons
+has the probability the DMPCFG gives its rule counts. -/
+theorem prob_replicate_one (h : ∀ a, M.discount a = 1) (X : ContextFreeRule T G.NT → ℕ)
+    (n : G.NT → ℕ) : M.prob X (fun a ↦ Multiset.replicate (n a) 1) = M.countsProb X := by
+  refine (congrArg _ (Finset.prod_eq_one fun a _ ↦ ?_)).trans (mul_one _)
+  rw [pypFactor, h a]
+  exact pitmanYorEPPF_one_replicate_one (by simpa [h a] using M.neg_discount_lt_concentration a) _
+
 end AdaptorGrammar
 
-/-- The decision at a nonterminal slot of a rule: `recurse` continues the stored fragment there,
-`halt` leaves the slot open. -/
+/-- At a nonterminal slot of a rule, `recurse` continues the stored fragment and `halt` leaves the
+slot open. -/
 inductive FragmentGrammar.Decision
   | recurse
   | halt
   deriving DecidableEq, Fintype, Inhabited
 
-/-- The book's fragment grammar over `G`: an adaptor grammar with, at each nonterminal slot of
-each rule, a Pólya urn over the decisions there, whose pseudo-counts are the beta parameters
-`ψ`. -/
+/-- The book's fragment grammar over `G` adds to an adaptor grammar a Pólya urn over the
+decisions at each nonterminal slot of each rule, with the beta parameters `ψ` as pseudo-counts. -/
 @[ext]
 structure FragmentGrammar {T : Type} (G : ContextFreeGrammar T) extends AdaptorGrammar G where
   /-- The pseudo-counts of the urn over the decisions at nonterminal slot `i` of rule `r`. -/
@@ -307,8 +305,8 @@ namespace FragmentGrammar
 
 variable {T : Type} {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
-/-- The decision counts `Z`: at each nonterminal slot of each rule, how often each decision was
-taken. -/
+/-- The decision counts `Z` record how often each decision was taken at each nonterminal slot of
+each rule. -/
 abbrev SlotCounts (G : ContextFreeGrammar T) : Type :=
   (r : ContextFreeRule T G.NT) → r.NonterminalPos → Decision → ℕ
 
@@ -351,17 +349,17 @@ variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT
 def subtrees : Finset (RoseTree (Symbol T G.NT)) :=
   D.toFinset.biUnion fun t ↦ t.subtrees.toFinset
 
-/-- The rule counts `X` of the full-listing analysis: how many stored derivations have each rule
-at the root, each table having used the rule at its root once. -/
+/-- The rule counts `X` of the full-listing analysis count the stored derivations with each rule
+at the root, since each table used its root rule once. -/
 def counts (r : ContextFreeRule T G.NT) : ℕ :=
   ((subtrees D).filter (RoseTree.ruleAt? (g := G) · [] = some r)).card
 
-/-- The customers at the table of a stored derivation `s`: the words of the corpus that are `s`,
-and the occurrences of `s` among the children of the stored derivations. -/
+/-- The customers at the table of a stored derivation `s` are the words of the corpus that are
+`s` and the occurrences of `s` among the children of the stored derivations. -/
 def customers (s : RoseTree (Symbol T G.NT)) : ℕ :=
   D.count s + ∑ u ∈ subtrees D, u.children.count s
 
-/-- The table sizes `Y` of the full-listing analysis at `a`: the numbers of customers at the
+/-- The table sizes `Y` of the full-listing analysis at `a` are the numbers of customers at the
 tables of the stored derivations rooted at `a`. -/
 def seating (a : G.NT) : Multiset ℕ :=
   ((subtrees D).filter (·.value = .nonterminal a)).val.map (customers D)
@@ -405,21 +403,21 @@ end FullListing
 
 section Counts
 
-/-- The tokens of a nominalizer in a corpus: the uses of its rule. -/
+/-- The tokens of a nominalizer in a corpus are the uses of its rule. -/
 def tokens (D : Corpus ι) (s : Suffix) : ℕ :=
-  RoseTree.corpusRuleCount (N := (suffixGrammar ι).NT) s.rule D
+  RoseTree.ruleCounts (N := (suffixGrammar ι).NT) D s.rule
 
-/-- The word types of a nominalizer in a corpus: the distinct words formed with its rule. -/
+/-- The word types of a nominalizer in a corpus are the distinct words formed with its rule. -/
 def wordTypes (D : Corpus ι) (s : Suffix) :
     Finset (RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT)) :=
   D.toFinset.filter (RoseTree.ruleAt? · [] = some s.rule)
 
-/-- The hapax legomena of a nominalizer in a corpus: its word types occurring once. -/
+/-- The hapax legomena of a nominalizer in a corpus are its word types that occur once. -/
 def hapaxes (D : Corpus ι) (s : Suffix) : ℕ :=
   ((wordTypes D s).filter (D.count · = 1)).card
 
-/-- Baayen's category-conditioned degree of productivity `P` of a nominalizer: its hapaxes over
-its tokens (Equation 6.9). -/
+/-- Baayen's category-conditioned degree of productivity `P` of a nominalizer is the ratio of its
+hapaxes to its tokens (Equation 6.9). -/
 noncomputable def baayenP (D : Corpus ι) (s : Suffix) : ℝ :=
   hapaxes D s / tokens D s
 
@@ -506,13 +504,7 @@ theorem count_corpus (m : Suffix → ι → ℕ) (s : Suffix) (i : ι) :
   simp
 
 theorem tokens_corpus (m : Suffix → ι → ℕ) (s : Suffix) : tokens (corpus m) s = ∑ i, m s i := by
-  let hom : Corpus ι →+ ℕ :=
-    ⟨⟨RoseTree.corpusRuleCount (N := (suffixGrammar ι).NT) s.rule,
-      RoseTree.corpusRuleCount_zero _⟩,
-      RoseTree.corpusRuleCount_add _⟩
-  change hom (corpus m) = _
-  simp only [corpus, map_sum, map_nsmul]
-  simp [hom, Suffix.ruleCount_word, Finset.sum_ite_eq']
+  simp [tokens, corpus, map_sum, map_nsmul, Finset.sum_apply, Suffix.ruleCount_word]
 
 theorem wordTypes_corpus (m : Suffix → ι → ℕ) (s : Suffix) :
     wordTypes (corpus m) s = (Finset.univ.filter (m s · ≠ 0)).image s.word := by

@@ -77,18 +77,18 @@ theorem offspring_singleton (s : Symbol T G.NT) (syms : List (Symbol T G.NT)) :
   | nonterminal A =>
     rw [offspring, Measure.map_apply .of_discrete .of_discrete, ruleMeasure_apply,
       symbolWeight_nonterminal,
-      Finset.sum_congr rfl fun r hr =>
+      Finset.sum_congr rfl fun r hr ↦
         show W.weight r * (ContextFreeRule.output ⁻¹' {syms}).indicator 1 r =
           if r = ⟨A, syms⟩ then W.weight r else 0 from ?_, Finset.sum_ite_eq']
     · split_ifs with h
       · rfl
-      · rw [W.weight_eq_zero_of_not_mem _ fun h' => h (Finset.mem_filter.mpr ⟨h', rfl⟩)]
+      · rw [W.weight_eq_zero_of_not_mem _ fun h' ↦ h (Finset.mem_filter.mpr ⟨h', rfl⟩)]
     · obtain ⟨-, rfl⟩ := Finset.mem_filter.mp hr
       by_cases hs : r.output = syms
       · rw [Set.indicator_of_mem (by simpa using hs), ite_eq_left (by cases r; simp_all)]
         simp
       · rw [Set.indicator_of_notMem (by simpa using hs),
-          ite_eq_right fun h => hs (congrArg ContextFreeRule.output h)]
+          ite_eq_right fun h ↦ hs (congrArg ContextFreeRule.output h)]
         simp
 
 theorem offspring_nonterminal_univ (A : G.NT) :
@@ -112,7 +112,7 @@ noncomputable def galtonWatson : Kernel (Symbol T G.NT) (List (Symbol T G.NT)) :
 /-- A grammar with a rule at every nonterminal has a Markov offspring kernel. -/
 theorem isMarkovKernel_galtonWatson (h : ∀ A, A ∈ G.rules.image (·.input)) :
     IsMarkovKernel W.galtonWatson :=
-  ⟨fun s => ⟨by
+  ⟨fun s ↦ ⟨by
     cases s with
     | terminal a => simp [offspring]
     | nonterminal A => exact (W.offspring_nonterminal_univ A).trans (W.sum_weight A (h A))⟩⟩
@@ -157,6 +157,6 @@ consistency. -/
 def IsTight : Prop := ∀ s, GaltonWatson.extinctionProb W.galtonWatson s = 1
 
 theorem isTight_iff : W.IsTight ↔ IsMarkovKernel W.derivationMeasure :=
-  ⟨fun h => ⟨fun s => ⟨h s⟩⟩, fun h s => (h.isProbabilityMeasure s).measure_univ⟩
+  ⟨fun h ↦ ⟨fun s ↦ ⟨h s⟩⟩, fun h s ↦ (h.isProbabilityMeasure s).measure_univ⟩
 
 end PCFG
