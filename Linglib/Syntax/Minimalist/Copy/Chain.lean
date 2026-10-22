@@ -33,6 +33,7 @@ links are in `Locality/Chain.lean`.
 
 * `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
+* `occurrencesWith`: the pronounced copies of the tokens a predicate holds of.
 * `HasAntecedent`, `orphanTraces`: whether a pronounced copy c-commands a deleted one, and the
   deleted copies without antecedents, seen from their own conjunct copies.
 * `IsLink`, `links`, `chainTop`: the links of a chain and its scope position.
@@ -106,6 +107,12 @@ variable (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
 /-- The positions of the pronounced copies of `tok`. -/
 def occurrences : List TreePath :=
   (tokenList t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
+
+/-- The positions of the pronounced copies of the tokens `P` holds of. -/
+def occurrencesWith (P : LexicalItem.Token → Prop) [DecidablePred P] : List TreePath :=
+  (tokenList t.val).filterMap fun x ↦ if P x.2 then some x.1 else none
+
+theorem occurrencesWith_eq : occurrencesWith t (· = tok) = occurrences t tok := rfl
 
 /-- The positions of the deleted copies of `tok`. -/
 def traces : List TreePath :=

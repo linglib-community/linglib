@@ -114,14 +114,9 @@ def Invisible (a : LexicalItem.Token) : Prop := a = vStar ∨ a = cNull
 
 instance : DecidablePred Invisible := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The positions of the heads `P` holds of. -/
-def headPositions (P : LexicalItem.Token → Prop) [DecidablePred P] (t : LinearizedSyntacticObject) :
-    Finset TreePath :=
-  ((tokenList t.val).filterMap fun x ↦ if P x.2 then some x.1 else none).toFinset
-
 /-- The object built at the phase level of a position. -/
 def stageOf (t : LinearizedSyntacticObject) (n : t.val.Positions) : LinearizedSyntacticObject :=
-  t.linearizedTermAt (phaseLevel t (headPositions IsPhaseHead t) n)
+  t.linearizedTermAt (phaseLevel t (occurrencesWith t IsPhaseHead).toFinset n)
 
 /-- Labeling at the phase level: an occurrence of `x` is labeled in the object built at its phase
 level, and later movement leaves the label in place. -/
@@ -137,8 +132,8 @@ instance (ag : Agreement) (t : LinearizedSyntacticObject) (x : SyntacticObject) 
 the phase heads `I` holds of are invisible, of the head inheriting its phasehood: the PIC. -/
 def ViolatesPic (I : LexicalItem.Token → Prop) [DecidablePred I] (t : LinearizedSyntacticObject)
     (tok : LexicalItem.Token) : Prop :=
-  LinkLeaves t tok
-    (sealed (headPositions IsPhaseHead t) (complementDomain t (headPositions I t)) (Pic1 t))
+  LinkLeaves t tok (sealed (occurrencesWith t IsPhaseHead).toFinset
+    (complementDomain t (occurrencesWith t I).toFinset) (Pic1 t))
 
 instance (I : LexicalItem.Token → Prop) [DecidablePred I] (t : LinearizedSyntacticObject)
     (tok : LexicalItem.Token) : Decidable (ViolatesPic I t tok) :=
