@@ -49,11 +49,11 @@ namespace DiscriminativeLexicon
 open Matrix Morphology
 
 variable {n d : ℕ} {L Cell : Type*} (G : Matrix (Fin d) (Fin n) ℝ)
-  (s : L → Cell → MeaningVector d)
+  (s : ParadigmSystem L Cell (MeaningVector d))
 
 /-- The form table of a production matrix over a meaning assignment lists the predicted form at
 the meaning of each lexeme at each cell. -/
-def paradigm (l : L) (c : Cell) : FormVector n := s l c ᵥ* G
+def paradigm : ParadigmSystem L Cell (FormVector n) := fun l c ↦ s l c ᵥ* G
 
 @[simp] theorem paradigm_apply (l : L) (c : Cell) : paradigm G s l c = s l c ᵥ* G := rfl
 
@@ -77,7 +77,7 @@ theorem isAnalogicallyRegular_imputed {V : Type*} [AddCommGroup V] (σ : L → V
   exact isAnalogicallyRegular_add σ ε
 
 /-- A production matrix carries analogically regular meanings to analogically regular forms. -/
-theorem isAnalogicallyRegular_paradigm {s : L → Cell → MeaningVector d}
+theorem isAnalogicallyRegular_paradigm {s : ParadigmSystem L Cell (MeaningVector d)}
     (h : IsAnalogicallyRegular s) : IsAnalogicallyRegular (paradigm G s) :=
   h.map G.vecMulLinear
 

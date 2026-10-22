@@ -236,6 +236,11 @@ the fragment. -/
 def pastTense (v c : Fin 2) : FormVector 13 :=
   cueVector 3 trigram ((verb v).realize (cell c)).toList
 
+/-- Only the forms of *walk* carry the cue `#wa`. -/
+private theorem mem_cues_walk_iff (v c : Fin 2) :
+    trigram 0 ∈ cues 3 ((verb v).realize (cell c)).toList ↔ v = walk := by
+  revert v c; decide +kernel
+
 /-- Only *walked* carries the cue `ed#`. -/
 private theorem mem_cues_iff (v c : Fin 2) :
     trigram 6 ∈ cues 3 ((verb v).realize (cell c)).toList ↔ v = walk ∧ c = past := by
@@ -248,5 +253,14 @@ meanings (`not_exists_paradigm_eq_of_not_regular`), while independent embeddings
 theorem pastTense_not_regular : ¬ IsAnalogicallyRegular pastTense := fun h ↦ by
   have := congrFun (isAnalogicallyRegular_iff.1 h walk go past base) 6
   simp [pastTense, cueVector, multiHot, mem_cues_iff] at this
+
+/-- The table is nonetheless analogical under arbitrary operations, each form identifying its
+verb, so analogy under translations is strictly stronger. -/
+example : IsAnalogical Set.univ pastTense ∧ ¬ IsAnalogicallyRegular pastTense := by
+  refine ⟨isAnalogical_univ_iff.2 fun c _ ↦ Function.Injective.factorsThrough
+    (fun v v' h ↦ ?_) _, pastTense_not_regular⟩
+  have := congrFun h 0
+  simp only [pastTense, cueVector, multiHot, mem_cues_walk_iff] at this
+  revert this; fin_cases v <;> fin_cases v' <;> simp
 
 end HeitmeierChuangBaayen2026
