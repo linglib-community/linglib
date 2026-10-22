@@ -1,0 +1,525 @@
+[
+  {
+    "id": "brananerlewine2024_ex12a",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(12a)"
+    },
+    "language": "nucl1301",
+    "primaryText": "kız-ı sok-an arı",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the bee that stung the girl",
+    "context": "Subject relative with the SR form.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "SR"
+      ]
+    ],
+    "comment": "Cagri 2005:24, (15a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex12b",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(12b)"
+    },
+    "language": "nucl1301",
+    "primaryText": "arı-nın sok-tuğ-u kız",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the girl that the bee stung",
+    "context": "Object relative across a high subject, with the NSR form.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "NSR"
+      ]
+    ],
+    "comment": "Jaklin Kornfilt, pers. comm.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex13a",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(13a)"
+    },
+    "language": "nucl1301",
+    "primaryText": "arı sok-an adam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the man that a bee stung",
+    "context": "Object relative with the SR form; the subject is a low indefinite.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "SR"
+      ]
+    ],
+    "comment": "Temürcü 2001:147, (199a). Source structure (13b): Adam-ı arı sok-tu.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex14a",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(14a)"
+    },
+    "language": "nucl1301",
+    "primaryText": "bomba patlay-an gün",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the day a bomb exploded",
+    "context": "Temporal relative with the SR form; the subject is a low indefinite.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "SR"
+      ]
+    ],
+    "comment": "Cagri 2005:180, (62a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex14b",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(14b)"
+    },
+    "language": "nucl1301",
+    "primaryText": "kar yağ-an gün-ler",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the days it snowed",
+    "context": "Temporal relative with the SR form; the subject is a low indefinite.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "SR"
+      ]
+    ],
+    "comment": "Cagri 2005:180, (62b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex16a",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(16a)"
+    },
+    "language": "nucl1301",
+    "primaryText": "oğl-u mekteb-e gid-en adam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the man whose son goes to school",
+    "context": "Possessor-of-subject relative with the SR form.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "SR"
+      ]
+    ],
+    "comment": "Underhill 1972:88, (4).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex16b",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(16b)"
+    },
+    "language": "nucl1301",
+    "primaryText": "oğl-u-un mekteb-e git-tiğ-i adam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the man whose son goes to school",
+    "context": "Possessor-of-subject relative with the NSR form.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "NSR"
+      ]
+    ],
+    "comment": "Underhill 1972:89, (6).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex18",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(18)"
+    },
+    "language": "nucl1301",
+    "primaryText": "kız-ın-ı arı sok-an adam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the man whose daughter a bee stung",
+    "context": "Possessor-of-object relative with the SR form; the subject is a low indefinite.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "SR"
+      ]
+    ],
+    "comment": "Hankamer and Knecht 1976:133, (36). Printed with the alternative {sok-an / *sok-tuğ-u}.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex18_nsr",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(18)"
+    },
+    "language": "nucl1301",
+    "primaryText": "kız-ın-ı arı sok-tuğ-u adam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the man whose daughter a bee stung",
+    "context": "Possessor-of-object relative with the NSR form; the subject is a low indefinite.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "NSR"
+      ]
+    ],
+    "comment": "Hankamer and Knecht 1976:133, (36). The starred alternative of (18).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex20a",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(20a)"
+    },
+    "language": "nucl1301",
+    "primaryText": "(birkaç) arı-nın bacağ-ın-ı sok-tuğ-u kız",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the girl whose leg the/some bee stung",
+    "context": "Possessor-of-object relative across a high subject, with the NSR form.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "NSR"
+      ]
+    ],
+    "comment": "Cagri 2005:99, (29a); 32, (25a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex20b",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(20b)"
+    },
+    "language": "nucl1301",
+    "primaryText": "(birkaç) arı bacağ-ın-ı sok-an kız",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the girl whose leg the/some bee stung",
+    "context": "Possessor-of-object relative across a high subject, with the SR form.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "SR"
+      ]
+    ],
+    "comment": "Cagri 2005:99, (29b); Jaklin Kornfilt, pers. comm.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex21a",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(21a)"
+    },
+    "language": "reja1240",
+    "primaryText": "tun gi pelisi o m-akep kelem o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the person that the police arrested last night",
+    "context": "Theme relative of an active verb across a full subject.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "active"
+      ]
+    ],
+    "comment": "McGinn 1998:362, (5b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex21b",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(21b)"
+    },
+    "language": "reja1240",
+    "primaryText": "tun gi t⟨en⟩akep pelisi kelem o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the person that was arrested by the police last night",
+    "context": "Theme relative of a passive verb.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "passive"
+      ]
+    ],
+    "comment": "McGinn 1998:362, (6).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex22",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(22)"
+    },
+    "language": "reja1240",
+    "primaryText": "Jano gi ko t⟨em⟩okoa?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "What did you buy?",
+    "context": "Active theme wh-question across a pronominal subject.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "active"
+      ]
+    ],
+    "comment": "McGinn 1989:208, (1b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex23b",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(23b)"
+    },
+    "language": "reja1240",
+    "primaryText": "pilem gi mulaé ku t⟨em⟩oton kelem o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the movie that I began to watch last night",
+    "context": "Active theme relative across an immediately preverbal pronominal agent.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "active"
+      ]
+    ],
+    "comment": "McGinn 1998:372, (36). The declarative (23a), Uku mulaé t⟨em⟩oton pilem o, has the full pronoun above the auxiliary.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex26a",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(26a)"
+    },
+    "language": "reja1240",
+    "primaryText": "tun tuey gi n-adea' Alui bawo si teko ceño' o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the old person of whom it was said that he/she came late",
+    "context": "Long-distance subject relative with the complementizer bawo and a resumptive pronoun; the higher clause is passive.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "passive"
+      ]
+    ],
+    "comment": "McGinn 1998:368, (26).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex26b",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(26b)"
+    },
+    "language": "reja1240",
+    "primaryText": "tun tuey gi n-adea' Alui gi teko ceño' o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the old person of whom it was said that he/she came late",
+    "context": "Long-distance subject relative with the complementizer gi and a gap; the higher clause is passive.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "passive"
+      ]
+    ],
+    "comment": "McGinn 1998:368, (28).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex28a",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(28a)"
+    },
+    "language": "reja1240",
+    "primaryText": "tun gi ku m-adea' gi t⟨em⟩anang Pak Lu'ea' kelem o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the person that I said visited the headman last night",
+    "context": "Long-distance subject relative over an active verb with a pronominal subject.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "active"
+      ]
+    ],
+    "comment": "McGinn 1998:373, (37a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex28b",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(28b)"
+    },
+    "language": "reja1240",
+    "primaryText": "filem gi ko m-adea' gi mulaé ko t⟨em⟩oton kelem o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the movie that you said that you began to watch last night",
+    "context": "Long-distance theme relative over active verbs with pronominal subjects.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "active"
+      ]
+    ],
+    "comment": "McGinn 1998:373, (37b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex29a",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(29a)"
+    },
+    "language": "reja1240",
+    "primaryText": "tun gi nyung ne panjang o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the person whose nose is long",
+    "context": "Possessor-of-subject relative with a resumptive pronoun.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "McGinn 1998:370, (33a). Printed *(ne): the resumptive is obligatory.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex29b",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(29b)"
+    },
+    "language": "reja1240",
+    "primaryText": "tun gi Alui k⟨em⟩lea' ngenyan ne o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the person whose wife Alui saw",
+    "context": "Possessor-of-object relative across a full subject.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "active"
+      ]
+    ],
+    "comment": "McGinn 1998:370, (33b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brananerlewine2024_ex30",
+    "source": {
+      "bibkey": "branan-erlewine-2024",
+      "paperLabel": "(30)"
+    },
+    "language": "reja1240",
+    "primaryText": "api bae de Keme m-anjang omor ne",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "whomsoever We cause to live long",
+    "context": "Possessor-of-object relative over a pronominal subject.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "voice",
+        "active"
+      ]
+    ],
+    "comment": "Dibul 2019, Quran 36:68 (Shakir translation); literally 'whoever We lengthen their age'. The complementizer de is a dialectal form of gi.",
+    "verified": "page-image"
+  }
+]
