@@ -34,8 +34,8 @@ than and agrees with those of them that interact. Keyed by position, these are `
 * `Minimalist.Probe.exists_finds`: under a well-founded key a probe with a satisfier finds a goal.
 * `Minimalist.Probe.Inspects.of_subset`: a goal inspected in a domain is inspected in any part of
   it containing the goal, as a horizon cuts the domain.
-* `Minimalist.Probe.Finds.of_bestMatch`: a goal found under Best Match is found under the key it
-  refines.
+* `Minimalist.Probe.Finds.of_refines`, `Minimalist.Probe.Finds.of_bestMatch`: a goal found under a
+  key is found under any key it refines, such as the closeness Best Match refines.
 * `Minimalist.Probe.agreesWith_iff_finds`: when the interacting goals satisfy the probe, it agrees
   with what it finds.
 * `Minimalist.Probe.search_eq_some_iff_finds`, `Minimalist.Probe.mem_inspected_iff_inspects`,
@@ -108,6 +108,12 @@ theorem Finds.of_subset {t : Set α} (h : p.Finds s key a) (hts : t ⊆ s) (ha :
     p.Finds t key a :=
   finds_iff.2 ⟨h.inspects.of_subset hts ha, h.sat⟩
 
+/-- A goal found under a key that refines another is found under that one: a goal closer under
+the coarser key is closer under the finer. -/
+theorem Finds.of_refines {γ : Type*} [Preorder γ] {key' : α → γ}
+    (hk : ∀ ⦃a b⦄, key a < key b → key' a < key' b) (h : p.Finds s key' a) : p.Finds s key a :=
+  finds_iff.2 ⟨⟨h.mem, fun _ hb hsb hlt ↦ h.inspects.2 hb hsb (hk hlt)⟩, h.sat⟩
+
 /-- When every interacting goal satisfies the probe, it agrees with the goals it finds that
 interact. -/
 theorem agreesWith_iff_finds (hp : ∀ a, p.int a → p.sat a) :
@@ -179,11 +185,8 @@ end Spec
 /-- A goal found under Best Match is found under the closeness it refines. -/
 theorem Finds.of_bestMatch {F : Type*} [DecidableEq F] {sp : Spec F} {feats : α → Finset F}
     (h : (sp.toProbe feats).Finds s (sp.bestMatch feats key) a) :
-    (sp.toProbe feats).Finds s key a := by
-  rw [finds_iff] at h ⊢
-  refine ⟨⟨h.1.1, fun b hb hsb hlt ↦ h.1.2 hb hsb ?_⟩, h.2⟩
-  rw [Spec.bestMatch, Spec.bestMatch, Prod.Lex.toLex_lt_toLex]
-  exact .inl hlt
+    (sp.toProbe feats).Finds s key a :=
+  h.of_refines fun _ _ hlt ↦ Prod.Lex.toLex_lt_toLex.2 (.inl hlt)
 
 /-! ### Closeness in phrase structure -/
 
