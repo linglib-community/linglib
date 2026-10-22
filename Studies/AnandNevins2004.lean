@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Context.Overwrite
+public import Studies.Schlenker2003
 public import Linglib.Data.Examples.AnandNevins2004
 
 /-!
@@ -25,8 +26,10 @@ operator that overwrites coordinates of the context with those of the index (2).
 * `shiftyOp_opAll_iff_holdsAt`: `OP∀` is Stalnaker's diagonal (fn. 7).
 * `isMonster_shiftyOp_of_agent_mem`, `not_isMonster_say`: the operators are monsters, the verbs not.
 * `readings_vano_prod`, `rows_mixed`: Shift-Together (16).
+* `say_shiftyOp_opAll_iff_say`: on a single report `OP∀` under *say* is Schlenker's quantification
+  over contexts (§3.4).
 * `localDepth_ne_zero`: after a shift in the intermediate report the lowest clause cannot read the
-  utterance context (32), which the binding account allows (`bound_origin`).
+  utterance context (32), which Schlenker's binding account allows (`say_say_bound_origin`).
 * `rows_reported`, `rows_utterance`, `rows_double_report`: the rows' judgments.
 
 ## Implementation notes
@@ -195,9 +198,8 @@ theorem apply_foldl_overwrite_eq_contextAt {f : Context W E P T → α} {k : Coo
     (hf : DependsOn (f ∘ equivPi.symm) {k}) (c : Context W E P T)
     (ops : List (Finset Coord × Context W E P T)) :
     f (ops.foldl (fun c p ↦ overwrite p.1 c p.2) c) =
-      f ((⟨c, (ops.map Prod.snd).map (Function.const _)⟩ : ContextTower _).contextAt
-        (localDepth (ops.map Prod.fst) k)) := by
-  rw [Kaplan.Context.apply_foldl_overwrite hf, ContextTower.contextAt_map_const]
+      f ((⟨c, ops.map Prod.snd⟩ : ContextTower _).contextAt (localDepth (ops.map Prod.fst) k)) :=
+  Kaplan.Context.apply_foldl_overwrite hf c ops
 
 variable {c j₁ S₁ S₂}
 
@@ -222,6 +224,33 @@ above it read: binding locally does not prevent binding at a distance, against (
 theorem bound_origin (t : ContextTower (Context W E P T)) (f : Context W E P T → α) :
     Bound t f (f t.origin) :=
   ⟨0, Nat.zero_le _, by simp [AccessPattern.resolve]⟩
+
+/-- (19): Schlenker's English *I*, the author of the utterance context, and Amharic *I*, the author
+of the innermost context variable, are bound readings of the first person. -/
+theorem bound_I_amharicI (t : ContextTower (Context W E P T)) :
+    Bound t Context.agent (Kaplan.I.resolve t) ∧
+      Bound t Context.agent (Schlenker2003.amharicI.resolve t) :=
+  ⟨by simpa [Kaplan.I] using bound_origin t Context.agent,
+    ⟨t.depth, le_rfl, by
+      simp [AccessPattern.resolve, AccessPattern.innermost, Schlenker2003.amharicI]⟩⟩
+
+/-- On a single report the binding account matches the operator account (§3.4): *say* with `OP∀`
+evaluates its complement at each reported context, the contexts Schlenker's verb binds. -/
+theorem say_shiftyOp_opAll_iff_say (compat : E → T → W → Set (Context W E P T))
+    (χ : Character (Context W E P T) (Context W E P T) Prop) (c i : Context W E P T) :
+    say (fun x i ↦ compat x i.time i.world) x (shiftyOp opAll χ) c i ↔
+      Schlenker2003.Say compat x i.time i.world (fun t ↦ χ t.innermost t.innermost) (.root c) := by
+  simp [say, Schlenker2003.Say]
+
+/-- (32): under two reports with Schlenker's verbs, the lowest clause can still read the utterance
+context, which the operator account excludes once the intermediate clause shifts
+(`localDepth_ne_zero`). -/
+theorem say_say_bound_origin (compat compat' : E → T → W → Set (Context W E P T)) (y : E)
+    (f : Context W E P T → α) (c : Context W E P T) :
+    Schlenker2003.Say compat x c.time c.world
+      (fun t ↦ Schlenker2003.Say compat' y t.innermost.time t.innermost.world
+        (fun t' ↦ Bound t' f (f c)) t) (.root c) :=
+  fun _ _ _ _ ↦ bound_origin _ f
 
 /-! ### The rows -/
 
