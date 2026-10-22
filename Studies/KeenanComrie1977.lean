@@ -8,6 +8,7 @@ public import Linglib.Fragments.Welsh.Relativization
 public import Linglib.Fragments.Arabic.ModernStandard.Relativization
 public import Linglib.Fragments.Hebrew.Relativization
 public import Linglib.Fragments.TobaBatak.Relativization
+public import Linglib.Fragments.TobaBatak.Voice
 public import Linglib.Fragments.Korean.Relativization
 public import Linglib.Fragments.Finnish.Relativization
 public import Linglib.Fragments.Malagasy.Relativization
@@ -24,45 +25,40 @@ public import Linglib.Fragments.Turkish.Relativization
 /-!
 # Keenan and Comrie (1977): Noun Phrase Accessibility and Universal Grammar
 
-This file formalizes the Hierarchy Constraints of [keenan-comrie-1977] on the Accessibility
-Hierarchy of grammatical positions, subject > direct object > indirect object > oblique >
-genitive > object of comparison: a language must relativize subjects, every relative-clause
-strategy applies to a continuous segment of the hierarchy, and a strategy may cease at any
-lower point (Section 1.2). A strategy is primary when it relativizes subjects, and the paper's
-Primary Relativization Constraint, that a primary strategy reaching a low position reaches
-every higher one, follows from continuity: the positions a continuous primary strategy covers
-form an upper set of the hierarchy order (`prc_of_hc2`).
+This file formalizes Keenan and Comrie's Hierarchy Constraints on the Accessibility Hierarchy,
+subject > direct object > indirect object > oblique > genitive > object of comparison, and
+checks them on the languages of Table 1 that the fragments record. A strategy is a placement of
+the clause together with ±case, and the positions it covers are derived from a language's
+relativizers. Toba Batak, whose two strategies leave the direct object between them, refutes the
+stronger constraint on languages and satisfies its weakening by promotion.
 
-The paper's strategies are derived, not recorded. Two relative clauses are formed by different
-strategies when their heads are placed differently or when one is case-coding, presenting an
-element that expresses which position is relativized, and the other not (p. 65); a retained
-personal pronoun codes case as a relative pronoun does (p. 66). So a strategy is a placement and
-a case-coding value (`Strategy`), and the positions it covers in a language are those some
-relativizer of the language realizes with an element of that value (`Strategy.positions`).
-Table 1's rows follow from the fragments' relativizers: Hebrew's direct object is covered by
-both of its strategies (`hebrew_table1`), and Arabic's row is the gap at the subject and
-pronoun retention below it (`arabic_table1`).
+## Main definitions
 
-The constraints are then checked on the seventeen languages of Table 1 whose relativizers the
-fragments record (`hc1_verified`, `hc2_verified`), so every primary strategy of the sample covers
-the interval from its cut-off up to the subject (`primary_positions_eq_Icc_top`); each position
-from subject to genitive is attested as the cut-off of a primary strategy, the paper's Section
-1.3 argument for the third constraint (`each_upper_cutoff_attested`); and Toba Batak's gap at
-direct object between two continuous strategies shows why the constraints are stated per
-strategy rather than per language (`toba_batak_do_gap`). The pattern of pronoun retention
-(Section 2.2.2, Table 2) is derived the same way: once a language retains a pronoun at a
-position it retains one at every lower position it relativizes (`retention_verified`).
+* `Strategy`, `Strategy.positions`: a strategy and the positions it covers in a language.
+* `SatisfiesHC1`, `SatisfiesHC2`, `SatisfiesPRC`: the Hierarchy Constraints and the Primary
+  Relativization Constraint.
+* `SatisfiesHCPromotion`, `Promotes`: the strong constraint with promotion, and promotion to
+  subject by a voice system.
+* `retention`, `RetainsDownward`: pronoun retention and its downward closure.
+
+## Main statements
+
+* `prc_of_hc2`: the Primary Relativization Constraint follows from HC₂.
+* `hc1_verified`, `hc2_verified`, `retention_verified`: the constraints hold of the sample.
+* `each_upper_cutoff_attested`: each position down to the genitive is a cut-off.
+* `tobaBatak_needs_promotion`, `mem_relativizable_tobaBatak_iff`: Toba Batak needs promotion,
+  and relativizes directly the subject and the positions its voices cannot promote.
 
 ## Implementation notes
 
-The hierarchy order is the substrate's `Position` bounded linear order, the subject its top, and
-a strategy's continuity is order-connectedness of the positions it covers. A relative pronoun
-agreeing with the head, such as English *who* (p. 65), leaves the relativized position a gap
-(`Relativization.NPRel`), so case coding is a property of what occupies that position
-(`IsCaseCoding`). Table 1 records Classical Arabic and the fragment Modern Standard Arabic, whose
-relativizer covers the row's positions; since the paper considers only definite relative
-clauses (p. 64), the sample takes the relativizer of a definite antecedent. The languages the
-fragments add after 1977 are not consulted.
+* Continuity is order-connectedness in the substrate's `Position` order. A relative pronoun
+  agreeing with the head, English *who* (p. 65), leaves the relativized position a gap, so case
+  coding is a property of what occupies that position (`IsCaseCoding`).
+* The sample takes Classical Arabic by the Modern Standard Arabic relativizer of a definite
+  antecedent (p. 64) and leaves out Yoruba, whose fragment follows Awobuluyi rather than
+  Table 1. Entries +/− and +? count as +, and a blank, which marks missing data, as −, as for
+  Toba Batak's object of comparison. Table 1 classes Hindi's correlative as internally headed.
+* Promotion is read off pivot selection, which suits Toba Batak's symmetrical voices.
 
 ## References
 
@@ -207,12 +203,65 @@ theorem each_upper_cutoff_attested :
       ∃ L ∈ sample, ∃ s : Strategy, s.positions L = Icc p ⊤ := by
   decide
 
-/-! ### Toba Batak (Section 1.2.2) -/
+/-! ### Gaps and promotion (Section 1.2.2) -/
 
-/-- Toba Batak relativizes subjects by one strategy and indirect objects through genitives by
-another, but direct objects by neither: the gap lies between two continuous strategies, which
-is why the constraints govern strategies rather than languages. -/
-theorem toba_batak_do_gap : ∀ r ∈ tobaBatak, r.realize .directObject = ∅ := by decide
+/-- The positions a language relativizes. -/
+def relativizable (L : List Relativizer) : Finset Position :=
+  univ.filter fun p ↦ ∃ r ∈ L, (r.realize p).Nonempty
+
+/-- The strong constraint with promotion (p. 69): a language relativizing a position relativizes
+every higher one, directly or by promoting it along `R` to a position it relativizes directly. -/
+def SatisfiesHCPromotion (L : List Relativizer) (R : Position → Position → Prop) : Prop :=
+  ∀ p ∈ relativizable L, ∀ q, p ≤ q → q ∈ relativizable L ∨ ∃ q' ∈ relativizable L, R q q'
+
+instance (L : List Relativizer) (R : Position → Position → Prop) [DecidableRel R] :
+    Decidable (SatisfiesHCPromotion L R) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+
+/-- Without promotion the constraint is the stronger one the paper rejects (p. 68): a language
+relativizes an upper set of the hierarchy. -/
+theorem satisfiesHCPromotion_bot_iff {L : List Relativizer} :
+    SatisfiesHCPromotion L ⊥ ↔ IsUpperSet (relativizable L : Set Position) :=
+  ⟨fun h _ _ hpq hp ↦ (h _ hp _ hpq).resolve_right fun ⟨_, _, h⟩ ↦ h,
+    fun h _ hp _ hpq ↦ .inl (h hpq hp)⟩
+
+/-- A voice system promotes a position to subject when one of its voices selects as pivot the
+term role that `role` gives the position's noun phrase. -/
+def Promotes (S : Voice.System) (role : Position → Option Voice.TermRole) (p q : Position) :
+    Prop :=
+  q = ⊤ ∧ ∃ r ∈ role p, some r ∈ S.pivotRoles
+
+instance (S : Voice.System) (role : Position → Option Voice.TermRole) :
+    DecidableRel (Promotes S role) :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The term role of the noun phrase at each position of a Toba Batak clause: A for the subject
+and P for the direct object of the actor voice, X for an indirect object or oblique, which a
+preposition governs (p. 69), and none for a genitive or an object of comparison, which is no
+term of the verb. -/
+def tobaBatakRole : Position → Option Voice.TermRole
+  | .subject => some .A
+  | .directObject => some .P
+  | .indirectObject | .oblique => some .X
+  | .genitive | .objComparison => none
+
+/-- Toba Batak relativizes indirect objects but not direct objects, refuting the stronger
+constraint (p. 68), and satisfies the constraint with promotion, its object voice promoting the
+direct object to subject (p. 69). -/
+theorem tobaBatak_needs_promotion :
+    ¬ SatisfiesHCPromotion tobaBatak ⊥ ∧
+      SatisfiesHCPromotion tobaBatak (Promotes TobaBatak.voices tobaBatakRole) :=
+  ⟨satisfiesHCPromotion_bot_iff.not.2 fun h ↦
+    absurd (h (show Position.indirectObject ≤ .directObject by decide) (by decide)) (by decide),
+    by decide⟩
+
+/-- Toba Batak relativizes directly the subject and just the positions its voices cannot promote
+(p. 69): a direct object is relativized as a promoted subject, and a noun phrase governed by a
+preposition by the +case strategy. The object of comparison, on which Table 1 has no data, is
+set aside. -/
+theorem mem_relativizable_tobaBatak_iff {p : Position} (hp : p ≠ ⊥) :
+    p ∈ relativizable tobaBatak ↔ p = ⊤ ∨ ¬ Promotes TobaBatak.voices tobaBatakRole p ⊤ := by
+  revert p; decide
 
 /-! ### Strategies by their relativized position (Section 1.3) -/
 
@@ -234,20 +283,10 @@ theorem finnish_plus_case_is_primary :
 
 /-! ### Pronoun retention (Section 2.2.2) -/
 
-/-- A personal pronoun at the relativized position; pronouns of verb agreement are excluded
-(p. 92). -/
-def IsPronoun (x : NPRel) : Prop :=
-  x = .resumptive ∨ x = .resumptiveMovement ∨ x = .resumptiveBound
-
-instance : DecidablePred IsPronoun := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
-
-/-- The positions a language relativizes. -/
-def relativizable (L : List Relativizer) : Finset Position :=
-  univ.filter fun p ↦ ∃ r ∈ L, (r.realize p).Nonempty
-
-/-- The positions at which a language retains a pronoun, its row of Table 2 (p. 93). -/
+/-- The positions at which a language retains a personal pronoun, its row of Table 2 (p. 93);
+pronouns of verb agreement are excluded (p. 92). -/
 def retention (L : List Relativizer) : Finset Position :=
-  univ.filter fun p ↦ ∃ r ∈ L, ∃ x ∈ r.realize p, IsPronoun x
+  univ.filter fun p ↦ ∃ r ∈ L, .resumptive ∈ r.realize p
 
 /-- "Once a language begins to retain pronouns it must do so for as long as relativization is
 possible at all" (p. 92). -/

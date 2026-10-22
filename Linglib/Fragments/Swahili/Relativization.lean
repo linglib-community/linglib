@@ -55,16 +55,14 @@ open Agreement Morphology
 /-! ### The amba relative clause -/
 
 /-- The complementizer *amba* with the relative concord of the head's class. A relativized
-subject or direct object leaves a gap, and the verb agrees with both. The object of a
-monosyllabic preposition is resumed by a pronoun suffixed to it, a bound pronoun, the only
-option inside an adjunct island, or a movement copy without person, diagnosed by parasitic
-gaps. -/
+subject or direct object leaves a gap, and the verb agrees with both; the object of a
+monosyllabic preposition is resumed by a pronoun suffixed to it. -/
 def amba : Relativizer where
   form := "amba"
   placement := .postNominal
   realize
     | .subject | .directObject => {.gap}
-    | .oblique => {.resumptiveBound, .resumptiveMovement}
+    | .oblique => {.resumptive}
     | _ => ∅
 
 /-- The relativizers. -/

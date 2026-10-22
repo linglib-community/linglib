@@ -23,6 +23,7 @@ objects, a movement copy, is the matter of the studies of resumption.
 ## References
 
 * [keenan-comrie-1977]
+* [sichel-2014]
 -/
 
 @[expose] public section
