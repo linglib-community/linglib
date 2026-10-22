@@ -1,0 +1,1353 @@
+{
+ "bibkey": "dixon-1982",
+ "description": "Dixon's sample of seventeen languages (§1.4.1): the part-of-speech membership of the seven semantic types of adjectival meaning.",
+ "ContributionTable": [
+  {
+   "ID": "table_2",
+   "Name": "Table 2",
+   "Lean": "table2",
+   "Source": "dixon-1982[Table 2, p. 35]",
+   "Description": "The part-of-speech membership of the seven types, from the basic part of speech of the roots expressing three dozen representative concepts in each language (§1.4.1).",
+   "comment": "Transcribed from the page image. Some, one, two and few mark a code Minor."
+  }
+ ],
+ "LanguageTable": [
+  {
+   "ID": "swahili",
+   "Name": "Swahili",
+   "Glottocode": "swah1253"
+  },
+  {
+   "ID": "luganda",
+   "Name": "Luganda",
+   "Glottocode": "gand1255"
+  },
+  {
+   "ID": "bemba",
+   "Name": "Bemba",
+   "Glottocode": "bemb1257"
+  },
+  {
+   "ID": "japanese",
+   "Name": "Japanese",
+   "Glottocode": "nucl1643"
+  },
+  {
+   "ID": "sango",
+   "Name": "Sango",
+   "Glottocode": "sang1328"
+  },
+  {
+   "ID": "hausa",
+   "Name": "Hausa",
+   "Glottocode": "haus1257"
+  },
+  {
+   "ID": "acooli",
+   "Name": "Acooli",
+   "Glottocode": "acol1236"
+  },
+  {
+   "ID": "hua",
+   "Name": "Hua",
+   "Glottocode": "huaa1250"
+  },
+  {
+   "ID": "alamblak",
+   "Name": "Alamblak",
+   "Glottocode": "alam1246"
+  },
+  {
+   "ID": "telugu",
+   "Name": "Telugu",
+   "Glottocode": "telu1262"
+  },
+  {
+   "ID": "kiriwinian",
+   "Name": "Kiriwinian",
+   "Glottocode": "kili1267"
+  },
+  {
+   "ID": "tzotzil",
+   "Name": "Tzotzil",
+   "Glottocode": "tzot1259"
+  },
+  {
+   "ID": "chinook",
+   "Name": "Chinook",
+   "Glottocode": "wasc1239",
+   "comment": "The data are mainly for the Wishram-Wasco dialect of Upper Chinook, supplemented from Boas on Lower Chinook (fn. 48)."
+  },
+  {
+   "ID": "yurok",
+   "Name": "Yurok",
+   "Glottocode": "yuro1248"
+  },
+  {
+   "ID": "samoan",
+   "Name": "Samoan",
+   "Glottocode": "samo1305"
+  },
+  {
+   "ID": "english",
+   "Name": "English",
+   "Glottocode": "stan1293"
+  },
+  {
+   "ID": "dyirbal",
+   "Name": "Dyirbal",
+   "Glottocode": "dyir1250"
+  }
+ ],
+ "ParameterTable": [
+  {
+   "ID": "part_of_speech",
+   "Name": "part of speech",
+   "Lean": "PartOfSpeech",
+   "Description": "The part of speech of the items of a semantic type in a language, in the abbreviations of Table 2 (p. 35)."
+  },
+  {
+   "ID": "speed",
+   "Name": "SPEED",
+   "Lean": "Speed",
+   "Codes": "part_of_speech",
+   "Description": "The parts of speech of the SPEED items (p. 35)."
+  },
+  {
+   "ID": "dimension",
+   "Name": "DIMENSION",
+   "Lean": "Dimension",
+   "Codes": "part_of_speech",
+   "Description": "The parts of speech of the DIMENSION items (p. 35)."
+  },
+  {
+   "ID": "physical_property",
+   "Name": "PHYSICAL PROPERTY",
+   "Lean": "PhysicalProperty",
+   "Codes": "part_of_speech",
+   "Description": "The parts of speech of the PHYSICAL PROPERTY items (p. 35)."
+  },
+  {
+   "ID": "colour",
+   "Name": "COLOUR",
+   "Lean": "Color",
+   "Codes": "part_of_speech",
+   "Description": "The parts of speech of the COLOUR items (p. 35)."
+  },
+  {
+   "ID": "human_propensity",
+   "Name": "HUMAN PROPENSITY",
+   "Lean": "HumanPropensity",
+   "Codes": "part_of_speech",
+   "Description": "The parts of speech of the HUMAN PROPENSITY items (p. 35)."
+  },
+  {
+   "ID": "value",
+   "Name": "VALUE",
+   "Lean": "Value",
+   "Codes": "part_of_speech",
+   "Description": "The parts of speech of the VALUE items (p. 35)."
+  },
+  {
+   "ID": "age",
+   "Name": "AGE",
+   "Lean": "Age",
+   "Codes": "part_of_speech",
+   "Description": "The parts of speech of the AGE items (p. 35)."
+  }
+ ],
+ "CodeTable": [
+  {
+   "ID": "pos_a",
+   "Parameter_ID": "part_of_speech",
+   "Name": "A",
+   "Lean": "adjective",
+   "Description": "adjective"
+  },
+  {
+   "ID": "pos_n",
+   "Parameter_ID": "part_of_speech",
+   "Name": "N",
+   "Lean": "noun",
+   "Description": "noun"
+  },
+  {
+   "ID": "pos_v",
+   "Parameter_ID": "part_of_speech",
+   "Name": "V",
+   "Lean": "verb",
+   "Description": "verb"
+  },
+  {
+   "ID": "pos_adverb",
+   "Parameter_ID": "part_of_speech",
+   "Name": "ADVERB",
+   "Lean": "adverb",
+   "Description": "adverb"
+  },
+  {
+   "ID": "pos_part",
+   "Parameter_ID": "part_of_speech",
+   "Name": "PART",
+   "Lean": "particle",
+   "Description": "particle"
+  },
+  {
+   "ID": "pos_nv",
+   "Parameter_ID": "part_of_speech",
+   "Name": "Nᵛ",
+   "Lean": "verbalisedNoun",
+   "Description": "verbalised noun, a verb compounding a noun with *hu* 'do' or a few other verbs (Hua, p. 41)"
+  },
+  {
+   "ID": "pos_n_a",
+   "Parameter_ID": "part_of_speech",
+   "Name": "N-A",
+   "Lean": "nounAdjective",
+   "Description": "a noun that can also modify as an adjective (Telugu, p. 42)"
+  },
+  {
+   "ID": "pos_ad_n",
+   "Parameter_ID": "part_of_speech",
+   "Name": "Ad[+N]",
+   "Lean": "adjunctiveN",
+   "Description": "an adjunctive that modifies only nouns (Sango, p. 39)"
+  },
+  {
+   "ID": "pos_ad_v",
+   "Parameter_ID": "part_of_speech",
+   "Name": "Ad[+V]",
+   "Lean": "adjunctiveV",
+   "Description": "an adjunctive that modifies only verbs (Sango, p. 39)"
+  },
+  {
+   "ID": "pos_ad_nvs",
+   "Parameter_ID": "part_of_speech",
+   "Name": "Ad[+N,+V,S]",
+   "Lean": "adjunctiveNVS",
+   "Description": "an adjunctive that modifies nouns or verbs or is a substantive (Sango, p. 39)"
+  },
+  {
+   "ID": "pos_ad_ns",
+   "Parameter_ID": "part_of_speech",
+   "Name": "Ad[+N,S]",
+   "Lean": "adjunctiveNS",
+   "Description": "an adjunctive that modifies nouns or is a substantive (Sango, p. 39)"
+  },
+  {
+   "ID": "pos_a_v",
+   "Parameter_ID": "part_of_speech",
+   "Name": "A/V",
+   "Lean": "adjectiveVerb",
+   "Description": "an adjective for the unmarked member of an antonym pair and a verb for the marked (pp. 51-52)"
+  },
+  {
+   "ID": "pos_n_v",
+   "Parameter_ID": "part_of_speech",
+   "Name": "N/V",
+   "Lean": "nounVerb",
+   "Description": "a noun for the unmarked member of an antonym pair and a verb for the marked (pp. 51-52)"
+  },
+  {
+   "ID": "pos_a_adverb",
+   "Parameter_ID": "part_of_speech",
+   "Name": "A/ADVERB",
+   "Lean": "adjectiveAdverb",
+   "Description": "an adjective for one member of an antonym pair and an adverb for the other (Luganda, p. 48)"
+  },
+  {
+   "ID": "pos_n_adverb",
+   "Parameter_ID": "part_of_speech",
+   "Name": "N/ADVERB",
+   "Lean": "nounAdverb",
+   "Description": "a noun for the unmarked member of an antonym pair and an adverb for the marked (Hausa, p. 52)"
+  }
+ ],
+ "ValueTable": [
+  {
+   "Language_ID": "swahili",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "pA"
+  },
+  {
+   "Language_ID": "swahili",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "pA"
+  },
+  {
+   "Language_ID": "swahili",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "p & npA"
+  },
+  {
+   "Language_ID": "swahili",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "pA"
+  },
+  {
+   "Language_ID": "swahili",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "swahili",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "some A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "swahili",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "pA"
+  },
+  {
+   "Language_ID": "swahili",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "pA"
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_a_adverb",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2",
+   "Value": "some N",
+   "Minor": true
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Minor": true
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "some A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "luganda",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "bemba",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_adverb",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "bemba",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "bemba",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "bemba",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "two A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "bemba",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "bemba",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "bemba",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "one A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "bemba",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "bemba",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Value": "some V",
+   "Minor": true
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2",
+   "Minor": true
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "some A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "japanese",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_ad_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_ad_nvs",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2",
+   "Value": "some N",
+   "Minor": true
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_ad_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_ad_ns",
+   "Contribution_ID": "table_2",
+   "Value": "one Ad[+N,S]",
+   "Minor": true
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_ad_nvs",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "sango",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_ad_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_n_adverb",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_n_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_n_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "one A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hausa",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "acooli",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_adverb",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "acooli",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A(some+nu)"
+  },
+  {
+   "Language_ID": "acooli",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "acooli",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "acooli",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "acooli",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "acooli",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "some A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "acooli",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A[+nu]"
+  },
+  {
+   "Language_ID": "acooli",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_nv",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_nv",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "two A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_nv",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "one A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Value": "few V",
+   "Minor": true
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_nv",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "one A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Value": "some V",
+   "Minor": true
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_nv",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "hua",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_adverb",
+   "Contribution_ID": "table_2",
+   "Value": "ADVERBS"
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "two A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "alamblak",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_n_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A(-N)"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_n_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "one Aⁿⁱ",
+   "Minor": true
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "Aⁿⁱ"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A(-N)"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_n_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "Aⁿⁱ"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A(-N)"
+  },
+  {
+   "Language_ID": "telugu",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A(-N)"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_adverb",
+   "Contribution_ID": "table_2",
+   "Value": "ADVERBS"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A[+cl]"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "[±cl]"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A[±cl]"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "[−cl]"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2",
+   "Value": "few N",
+   "Minor": true
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "one A[±cl]",
+   "Minor": true
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A[−cl]"
+  },
+  {
+   "Language_ID": "kiriwinian",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "A[+cl]"
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Value": "some V",
+   "Minor": true
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Value": "some V",
+   "Minor": true
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2",
+   "Value": "some A",
+   "Minor": true
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Minor": true
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "tzotzil",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_part",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2",
+   "Value": "N ma"
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_part",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2",
+   "Value": "some N ma",
+   "Minor": true
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Minor": true,
+   "comment": "One verb, 'to be hot' (p. 44)."
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_part",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Value": "some V",
+   "Minor": true
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_part",
+   "Contribution_ID": "table_2",
+   "Minor": true,
+   "comment": "Some particles, as 'glad' (p. 44)."
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2",
+   "Value": "N ma"
+  },
+  {
+   "Language_ID": "chinook",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "yurok",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "yurok",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Value": "V[cl]"
+  },
+  {
+   "Language_ID": "yurok",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "yurok",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Value": "V[cl]"
+  },
+  {
+   "Language_ID": "yurok",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "yurok",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "yurok",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2",
+   "Value": "some N",
+   "Minor": true
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_v",
+   "Contribution_ID": "table_2",
+   "Value": "some V",
+   "Minor": true
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_n",
+   "Contribution_ID": "table_2",
+   "Value": "some N",
+   "Minor": true
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "dyirbal",
+   "Parameter_ID": "speed",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "dyirbal",
+   "Parameter_ID": "dimension",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "dyirbal",
+   "Parameter_ID": "physical_property",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "dyirbal",
+   "Parameter_ID": "colour",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "dyirbal",
+   "Parameter_ID": "human_propensity",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "dyirbal",
+   "Parameter_ID": "value",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  },
+  {
+   "Language_ID": "dyirbal",
+   "Parameter_ID": "age",
+   "Code_ID": "pos_a",
+   "Contribution_ID": "table_2"
+  }
+ ]
+}

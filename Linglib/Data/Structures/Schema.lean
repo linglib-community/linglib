@@ -25,7 +25,10 @@ parameters, their codes and the rows of a sample are generated per paper.
   CLDF tables `ContributionTable`, `LanguageTable`, `ParameterTable`, `CodeTable` and
   `ValueTable` under CLDF column names, and is compiled by `scripts/gen_structures.py` into
   `{AuthorYear}.lean`, declaring `namespace {AuthorYear}.Structures`.
-* Each parameter becomes an inductive type with a constructor for each code. The values, long
+* Each parameter becomes an inductive type with a constructor for each code, except that a
+  parameter may take the codes of another, as the semantic types of a sample may share their
+  parts of speech; a parameter whose codes others take and which has no values of its own is a
+  type and no field. The values, long
   in the JSON as CLDF has them, are emitted as one row per language with a field for each
   parameter, so a theorem about the sample reads each language once.
 * Each table of a paper is a contribution with its own list of rows. Languages, parameters and
@@ -61,6 +64,9 @@ structure Coded (C : Type*) where
   questionable : Bool := false
   /-- The source marks the strategy the code names as optional. -/
   optional : Bool := false
+  /-- The source marks the code as holding of only a few of the language's items, as *some*,
+  *one* or *few* do. -/
+  minor : Bool := false
   deriving DecidableEq, Repr
 
 end Data.Structures
