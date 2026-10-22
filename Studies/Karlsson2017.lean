@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Karlsson2017
-public import Linglib.Data.Forms.Karlsson2017
+public import Linglib.Data.Wordlist.Karlsson2017
 public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Semantics.Aspect.Defs
 
@@ -159,7 +159,7 @@ theorem rows_agree : ∀ r ∈ rows, r.object.case = r.case := by decide
 
 section WordStructure
 
-open Finnish Phonology Data.Forms
+open Finnish Phonology Data.Wordlist
 
 /-- A word of the tables is given by its stem and its endings. -/
 structure Word where
@@ -186,7 +186,7 @@ def caseEnding : UD.Case → Option (Option Finnish.Case)
   | _ => none
 
 /-- The agreement of a possessive suffix. -/
-def possessorOf : Forms.Possessor → Agreement.Bundle
+def possessorOf : Wordlist.Possessor → Agreement.Bundle
   | .sg1 => .personNumber .first .singular
   | .sg2 => .personNumber .second .singular
   | .sg3 => .personNumber .third .singular
@@ -195,20 +195,20 @@ def possessorOf : Forms.Possessor → Agreement.Bundle
   | .pl3 => .personNumber .third .plural
 
 /-- The infinitive of the tables' label. -/
-def infinitiveOf : Forms.Infinitive → Infinitive
+def infinitiveOf : Wordlist.Infinitive → Infinitive
   | .a => .a
   | .e => .e
   | .ma => .ma
 
 /-- The clitic of the tables' label. -/
-def cliticOf : Forms.Clitic → Clitic
+def cliticOf : Wordlist.Clitic → Clitic
   | .kO => .kO
   | .kin => .kin
   | .hAn => .hAn
   | .kAAn => .kAAn
 
 /-- The plural exponent of a cell, *-t* in the nominative and *-i-* in the other cases. -/
-def numberOf (c : Forms.Cell) : Option (Nominal.Exponent .number) :=
+def numberOf (c : Wordlist.Cell) : Option (Nominal.Exponent .number) :=
   match (c.number : Option UD.Number), (c.case_ : Option UD.Case) with
   | some .Plur, some .Nom => some .nominativePlural
   | some .Plur, _ => some .plural
@@ -218,28 +218,28 @@ def numberOf (c : Forms.Cell) : Option (Nominal.Exponent .number) :=
 def spell (w : String) : Option (List Segment) := (w.toList.map Char.toLower).mapM ofChar
 
 /-- A word from a form's segmentation and cell. -/
-def Word.ofForm (f : Form Forms.Cell) : Option Word := do
+def Word.ofForm (f : Form Wordlist.Cell) : Option Word := do
   let stem ← f.segments.head?.bind spell
   let c ← (f.cell.case_ : Option UD.Case).bind caseEnding
-  let inf := (f.cell.infinitive : Option Forms.Infinitive).map infinitiveOf
+  let inf := (f.cell.infinitive : Option Wordlist.Infinitive).map infinitiveOf
   let num := numberOf f.cell
-  let p := (f.cell.possessor : Option Forms.Possessor).map possessorOf
-  let k := (f.cell.clitic : Option Forms.Clitic).map cliticOf
+  let p := (f.cell.possessor : Option Wordlist.Possessor).map possessorOf
+  let k := (f.cell.clitic : Option Wordlist.Clitic).map cliticOf
   some ⟨stem, (inf.map (⟨_, .infinitive ·⟩)).toList ++ (num.map (⟨_, ·⟩)).toList ++
     (c.map (⟨_, .case ·⟩)).toList ++ (p.map (⟨_, .possessive ·⟩)).toList ++
     (k.map (⟨_, .clitic ·⟩)).toList⟩
 
 /-- Every form of the tables is a word. -/
-theorem isSome_ofForm : ∀ f ∈ Forms.all, (Word.ofForm f).isSome := by
+theorem isSome_ofForm : ∀ f ∈ Wordlist.all, (Word.ofForm f).isSome := by
   decide +kernel
 
 /-- The endings of each form make a word. -/
 theorem wellFormed_forms :
-    ∀ f ∈ Forms.all, ∀ w ∈ Word.ofForm f, Nominal.WellFormed w.endings := by
+    ∀ f ∈ Wordlist.all, ∀ w ∈ Word.ofForm f, Nominal.WellFormed w.endings := by
   decide +kernel
 
 /-- The Fragment gives each form of the tables. -/
-theorem forms_derived : ∀ f ∈ Forms.all, ∀ w ∈ Word.ofForm f,
+theorem forms_derived : ∀ f ∈ Wordlist.all, ∀ w ∈ Word.ofForm f,
     ∃ x ∈ spell f.form, x ∈ Nominal.realize w.stem w.endings := by
   decide +kernel
 

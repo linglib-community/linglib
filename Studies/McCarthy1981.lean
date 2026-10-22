@@ -3,7 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Morphology.Morphotactics.Association
 public import Linglib.Fragments.Arabic.ModernStandard.ConsonantalRoots
-public import Linglib.Data.Forms.McCarthy1981
+public import Linglib.Data.Wordlist.McCarthy1981
 
 /-!
 # McCarthy (1981): A Prosodic Theory of Nonconcatenative Morphology
@@ -494,14 +494,14 @@ def Vowel.transcription : Vowel → String
 def ktbAblaut : Ablaut := ⟨.a, .u⟩
 
 /-- The binyan of a label of the table, a quadriliteral one being its triliteral binyan (31). -/
-def binyanOf : Forms.Binyan → Binyan
+def binyanOf : Wordlist.Binyan → Binyan
   | .i => .I | .ii => .II | .iii => .III | .iv => .IV | .v => .V | .vi => .VI | .vii => .VII
   | .viii => .VIII | .ix => .IX | .x => .X | .xi => .XI | .xii => .XII | .xiii => .XIII
   | .xiv => .XIV | .xv => .XV | .qi => .ofQuadriliteral 0 | .qii => .ofQuadriliteral 1
   | .qiii => .ofQuadriliteral 2 | .qiv => .ofQuadriliteral 3
 
 /-- The category of a cell's aspect, verb form and voice. -/
-def category? (c : Forms.Cell) : Option Category :=
+def category? (c : Wordlist.Cell) : Option Category :=
   match (c.aspect : Option UD.Aspect), (c.verbForm : Option UD.VerbForm),
     (c.voice : Option UD.Voice) with
   | some .Perf, _, some .Act => some .perfActive
@@ -531,8 +531,8 @@ structure Cell where
   root : ConsonantalRoot String
 
 /-- The cell of a form, read off its features and its concept. -/
-def cell? (f : Data.Forms.Form Forms.Cell) : Option Cell := do
-  let b ← (f.cell.binyan : Option Forms.Binyan).map binyanOf
+def cell? (f : Data.Wordlist.Form Wordlist.Cell) : Option Cell := do
+  let b ← (f.cell.binyan : Option Wordlist.Binyan).map binyanOf
   let c ← category? f.cell
   pure ⟨b, c, ← root? f.parameterId⟩
 
@@ -547,19 +547,19 @@ def Cell.stem (x : Cell) : TemplateMatch String :=
   McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut x.category x.binyan x.root
 
 /-- Every form has a cell. -/
-theorem isSome_cell? : ∀ f ∈ Forms.all, (cell? f).isSome := by decide +kernel
+theorem isSome_cell? : ∀ f ∈ Wordlist.all, (cell? f).isSome := by decide +kernel
 
 /-- The derivation produces every form of the table and of (33), (34) and (38) whose cell the
 analysis covers. -/
 theorem forms_derived :
-    ∀ f ∈ Forms.all, ∀ x ∈ cell? f, x.Covered → x.stem.spellout = f.segments := by
+    ∀ f ∈ Wordlist.all, ∀ x ∈ cell? f, x.Covered → x.stem.spellout = f.segments := by
   decide +kernel
 
 /-- The forms of uncovered cells are the participles kaatib and maktuub, which the derivation
 does not produce. -/
 theorem forms_uncovered :
-    (Forms.all.filter fun f ↦ ∃ x ∈ cell? f, ¬x.Covered).map (·.form) = ["kaatib", "maktuub"] ∧
-      ∀ f ∈ Forms.all, ∀ x ∈ cell? f, ¬x.Covered → x.stem.spellout ≠ f.segments := by
+    (Wordlist.all.filter fun f ↦ ∃ x ∈ cell? f, ¬x.Covered).map (·.form) = ["kaatib", "maktuub"] ∧
+      ∀ f ∈ Wordlist.all, ∀ x ∈ cell? f, ¬x.Covered → x.stem.spellout ≠ f.segments := by
   decide +kernel
 
 /-- Every stem of ktb and of dḥrj is well formed on each tier, in that no association lines
@@ -589,7 +589,7 @@ theorem root?_map_seg : (root? "write").map (·.map seg) = some ktb ∧
     (root? "magnetize").map (·.map seg) = some «mğnṭš» := ⟨rfl, rfl, rfl⟩
 
 /-- Over the fragment's segments the derivation produces the forms read as segments. -/
-theorem forms_derived_seg : ∀ f ∈ Forms.all, ∀ x ∈ cell? f, x.Covered →
+theorem forms_derived_seg : ∀ f ∈ Wordlist.all, ∀ x ∈ cell? f, x.Covered →
     (McCarthy1981.stem (transcribedAffixes.map seg) (seg ∘ Vowel.transcription) ktbAblaut
       x.category x.binyan (x.root.map seg)).spellout = f.segments.map seg := by
   intro f hf x hx hc

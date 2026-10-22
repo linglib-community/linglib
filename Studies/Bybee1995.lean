@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Data.Forms.Bybee1995
+public import Linglib.Data.Wordlist.Bybee1995
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Mathlib.Data.Multiset.Filter
 public import Mathlib.Data.Finset.Card
@@ -104,12 +104,13 @@ def strungSchema : Schema (Fin 3) (Flat String) := ⟨![⊥, ↑"ʌ", ⊥], {0}�
 
 /-- The stored members of the class. -/
 def strungClass : Set (Fin 3 → Flat String) :=
-  {Forms.strung.slots, Forms.stung.slots, Forms.flung.slots, Forms.hung.slots}
+  {Wordlist.strung.slots, Wordlist.stung.slots, Wordlist.flung.slots, Wordlist.hung.slots}
 
 /-- The dialectal new members fit the shape of the class. -/
 theorem struck_instantiates :
-    strungSchema.Instantiates Forms.struck.slots ∧ strungSchema.Instantiates Forms.snuck.slots ∧
-      strungSchema.Instantiates Forms.drug.slots := by
+    strungSchema.Instantiates Wordlist.struck.slots ∧
+      strungSchema.Instantiates Wordlist.snuck.slots ∧
+      strungSchema.Instantiates Wordlist.drug.slots := by
   decide
 
 /-- The variables of a source-oriented pairing of base and past: the shared onset and coda,
@@ -135,7 +136,7 @@ def pastSub : Fin 3 → PairVar := ![.onset, .past, .coda]
 /-- *string* and *strung* are a paired instantiation of the source-oriented schema. -/
 theorem string_strung_pairs :
     sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
-      (Sum.elim Forms.string.slots Forms.strung.slots) :=
+      (Sum.elim Wordlist.string.slots Wordlist.strung.slots) :=
   ⟨λ | .onset => ↑"str" | .coda => ↑"ŋ" | .base => ↑"ɪ" | .past => ↑"ʌ",
     λ v => by cases v <;> decide,
     funext λ p => by rcases p with p | p <;> fin_cases p <;> decide⟩
@@ -144,11 +145,11 @@ theorem string_strung_pairs :
 while the product-oriented schema admits them. -/
 theorem not_sourceOriented_pairs :
     ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
-        (Sum.elim Forms.strike.slots Forms.struck.slots) ∧
+        (Sum.elim Wordlist.strike.slots Wordlist.struck.slots) ∧
       ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
-        (Sum.elim Forms.sneak.slots Forms.snuck.slots) ∧
+        (Sum.elim Wordlist.sneak.slots Wordlist.snuck.slots) ∧
       ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
-        (Sum.elim Forms.drag.slots Forms.drug.slots) := by
+        (Sum.elim Wordlist.drag.slots Wordlist.drug.slots) := by
   refine ⟨λ h => ?_, λ h => ?_, λ h => ?_⟩ <;>
     exact absurd (Flat.coe_le_iff.1 ((Schema.instantiatesAt_elim_iff.1 h).1 1)) (by decide)
 

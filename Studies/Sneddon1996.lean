@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Indonesian.Phonology
 public import Linglib.Phonology.Segmental.NaturalClass
-public import Linglib.Data.Forms.Sneddon1996
+public import Linglib.Data.Wordlist.Sneddon1996
 
 /-!
 # Sneddon (1996): the prefixes *meN-* and *peN-*
@@ -32,7 +32,7 @@ forms Sneddon gives for them, each read through the glyphs of PHOIBLE's Indonesi
 
 namespace Sneddon1996
 
-open Phonology Indonesian.Phonology Sneddon1996.Forms Data.Forms
+open Phonology Indonesian.Phonology Sneddon1996.Wordlist Data.Wordlist
 
 /-! ### The rules -/
 

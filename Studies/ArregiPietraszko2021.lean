@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Algebra.Free
 public import Linglib.Data.Examples.ArregiPietraszko2021
 public import Linglib.Data.Examples.HarizanovGribanova2019
-public import Linglib.Data.Forms.ArregiPietraszko2021
+public import Linglib.Data.Wordlist.ArregiPietraszko2021
 public import Linglib.Fragments.Ndebele.Phonology
 public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
@@ -528,14 +528,14 @@ def segmentPieces : List (String × Piece) :=
   [("doe", .dummy), ("ha", .finiteStem), ("s", .finite), ("d", .finite), ("n't", .contracted)]
 
 /-- The head the paper takes a contracted form's verb to be. -/
-def verbHead : Forms.Verb → Head
+def verbHead : Wordlist.Verb → Head
   | .dummy => .V
   | .auxiliary => .Aux
 
 /-- The paper's *doe-s-n't* and *ha-d-n't* have their pieces in the order that Negative Merger
 derives. -/
 theorem contracted_forms :
-    ∀ a ∈ Forms.analyses, a.form.languageId = "stan1293" →
+    ∀ a ∈ Wordlist.analyses, a.form.languageId = "stan1293" →
       ∃ verb ∈ a.verb.map verbHead,
         (derive english (.negation english) verb).negativeMerger.finite.word english =
           some (a.form.segments.map fun s ↦ (segmentPieces.lookup s).toList) := by
@@ -681,7 +681,7 @@ def transcribe? : List Char → Option (List Segment)
   | c :: cs => do pure ((← letters.lookup c) :: (← transcribe? cs))
 
 /-- The exponents a row of the prefix table gives the heads of the relative prefix. -/
-def exponents? (a : Forms.Analysis) : Option (Head → Exponent) := do
+def exponents? (a : Wordlist.Analysis) : Option (Head → Exponent) := do
   let lnk ← transcribe? (← a.lnk).toList
   let d ← transcribe? (← a.d).toList
   let t ← transcribe? (← a.t).toList
@@ -690,7 +690,7 @@ def exponents? (a : Forms.Analysis) : Option (Head → Exponent) := do
 /-- Cyclic coalescence over the Mirror-obeying complex head derives the relative prefix of each
 class, free of the hiatus its exponents present. -/
 theorem relative_prefixes :
-    ∀ a ∈ Forms.analyses, a.form.languageId = "nort2795" → ∃ e ∈ exponents? a,
+    ∀ a ∈ Wordlist.analyses, a.form.languageId = "nort2795" → ∃ e ∈ exponents? a,
       some (lift e relative.mvalue).segments = transcribe? a.form.form.toList ∧
         Hiatus.Free (lift e relative.mvalue).segments ∧
         ¬ Hiatus.Free (relative.terminals.reverse.flatMap fun h ↦ (e h).segments) := by
@@ -703,7 +703,7 @@ def nonMirror : FreeMagma Head := of .T * (of .C * (of .D * of .Lnk))
 bracketing of the same terminals as *i-*. -/
 theorem mirror_class9 :
     (FreeMagma.lift FreeMonoid.of nonMirror).toList = relative.terminals ∧
-      ∃ e ∈ exponents? Forms.f_19_cl9.analysis,
+      ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis,
         (lift e relative.mvalue).segments = [Ndebele.e] ∧
           (lift e nonMirror).segments = [Ndebele.i] := by
   decide +kernel
@@ -744,7 +744,7 @@ theorem amalgamation_class9 :
       ∃ a, amalgamateSpine [.single .T none, .single .C (some .lowering),
           .single .D (some .raising), .single .Lnk (some .lowering)] = some [a] ∧
         a.members = relative.terminals ∧ a.complex ≠ relative.mvalue ∧
-        ∃ e ∈ exponents? Forms.f_19_cl9.analysis, (lift e a.complex).segments = [Ndebele.i] :=
+        ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis, (lift e a.complex).segments = [Ndebele.i] :=
   ⟨rfl, _, rfl, rfl, by decide, by decide +kernel⟩
 
 /-- The two accounts meet on a single complex head. Wherever a chain is pronounced, [M] features

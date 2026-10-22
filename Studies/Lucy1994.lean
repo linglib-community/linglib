@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Root.Defs
 public import Linglib.Semantics.ArgumentStructure.SalienceClass
 public import Linglib.Morphology.Exponence.Select
-public import Linglib.Data.Forms.Lucy1994
+public import Linglib.Data.Wordlist.Lucy1994
 
 /-!
 # Lucy (1994): The Role of Semantic Value in Lexical Comparison
@@ -19,7 +19,7 @@ a root that influence case marking. Roots are encoded by their entailment signat
 valency after Beavers and Koontz-Garboden and after Coon, the classifier is the substrate's
 `ArgumentStructure.SalienceClass.ofKinds`, and the derivations predicted from the encoding
 reproduce every derivation the paper attests (`predicted_matches_attested`), the attestations
-being the form relations of `Data/Forms/Lucy1994`. Notional motion roots land in the
+being the form relations of `Data/Wordlist/Lucy1994`. Notional motion roots land in the
 patient-salient class, each classified as *kíim* 'die' is (`motion_roots_not_separate_class`);
 at best the roots lacking the *-Vl* imperfective form a formal class of motion verbs, a
 distinction invisible to the entailment grid (`hash_not_signature_definable`). Positional
@@ -48,33 +48,33 @@ with the unaccusativity tradition are described in prose.
 
 namespace Lucy1994
 
-open Semantics ArgumentStructure Morphology Data.Forms
+open Semantics ArgumentStructure Morphology Data.Wordlist
 
 /-- A sampled root, the meaning of a root with the form row that spells it. -/
 structure SampledRoot extends Root where
   /-- The form row that spells the root. -/
-  form : Form Forms.Cell
+  form : Form Wordlist.Cell
   deriving DecidableEq
 
 /-- The root of the sample that a form spells, with its kind signature. -/
-def ofForm (f : Form Forms.Cell) (kinds : Root.Kinds) : SampledRoot := { form := f, kinds }
+def ofForm (f : Form Wordlist.Cell) (kinds : Root.Kinds) : SampledRoot := { form := f, kinds }
 
 /-! ### Agent-salient roots ((1a), p. 629) -/
 
 /-- síit' 'jump' (1a). -/
-def siit : SampledRoot := ofForm Forms.siit {.manner}
+def siit : SampledRoot := ofForm Wordlist.siit {.manner}
 
 /-- ¢'iib' 'write' (p. 629). -/
-def tziib : SampledRoot := ofForm Forms.tziib {.manner}
+def tziib : SampledRoot := ofForm Wordlist.tziib {.manner}
 
 /-- mìis 'sweep' (p. 629), denominal from 'broom'. -/
-def miis : SampledRoot := ofForm Forms.miis {.manner}
+def miis : SampledRoot := ofForm Wordlist.miis {.manner}
 
 /-- čé'eh 'smile' (p. 629). -/
-def cheh : SampledRoot := ofForm Forms.cheh {.manner}
+def cheh : SampledRoot := ofForm Wordlist.cheh {.manner}
 
 /-- páak 'weed' (p. 629). -/
-def paak : SampledRoot := ofForm Forms.paak {.manner}
+def paak : SampledRoot := ofForm Wordlist.paak {.manner}
 
 /-! ### Agent-patient-salient roots ((1b), p. 629)
 
@@ -82,19 +82,19 @@ Root transitives, carrying no uniform signature: *kuč*, *p'is*, *ha¢* and *lo�
 surface contact without an entailed result, while *k'os* 'cut' is manner and result. -/
 
 /-- kuč 'carry' (1b). -/
-def kuc : SampledRoot := ofForm Forms.kuc {.manner}
+def kuc : SampledRoot := ofForm Wordlist.kuc {.manner}
 
 /-- k'os 'cut' (p. 629), manner and result. -/
-def kos : SampledRoot := ofForm Forms.kos {.manner, .result}
+def kos : SampledRoot := ofForm Wordlist.kos {.manner, .result}
 
 /-- p'is 'measure' (p. 629), no entailed change of state. -/
-def pis : SampledRoot := ofForm Forms.pis {.manner}
+def pis : SampledRoot := ofForm Wordlist.pis {.manner}
 
 /-- ha¢ 'whip' (p. 629). -/
-def hats : SampledRoot := ofForm Forms.hats {.manner}
+def hats : SampledRoot := ofForm Wordlist.hats {.manner}
 
 /-- loš 'punch' (p. 629), surface contact without an entailed result. -/
-def los : SampledRoot := ofForm Forms.los {.manner}
+def los : SampledRoot := ofForm Wordlist.los {.manner}
 
 /-! ### Patient-salient roots ((2), pp. 629–630)
 
@@ -102,41 +102,41 @@ List (2) is arranged in antonym pairs listed in vertical adjacency: 'ah ~ wen, s
 tú'ub' ~ k'a'ah, ču'un ~ č'en, hó'op' ~ háaw. The order below is the list's. -/
 
 /-- 'ah '(a)wake(n)', 'ah=s 'wake (someone)'. -/
-def ah : SampledRoot := ofForm Forms.ah {.result}
+def ah : SampledRoot := ofForm Wordlist.ah {.result}
 
 /-- wen '(fall a)sleep', ween=s 'put to sleep'; fn. 7 flags it as also denoting continuation in
 the state. -/
-def wen : SampledRoot := ofForm Forms.wen {.result}
+def wen : SampledRoot := ofForm Wordlist.wen {.result}
 
 /-- siih 'be born', siih=s 'give birth, bear'. -/
-def siih : SampledRoot := ofForm Forms.siih {.result}
+def siih : SampledRoot := ofForm Wordlist.siih {.result}
 
 /-- kíim 'die' (1c), kíim=s 'kill'. -/
-def kiim : SampledRoot := ofForm Forms.kiim {.result}
+def kiim : SampledRoot := ofForm Wordlist.kiim {.result}
 
 /-- tú'ub' 'forget', tú'ub'=s 'distract, cause to forget'. -/
-def tuub : SampledRoot := ofForm Forms.tuub {.result}
+def tuub : SampledRoot := ofForm Wordlist.tuub {.result}
 
 /-- k'a'ah 'remember', k'á'ah=s 'remind, mention, invoke'. -/
-def kaah : SampledRoot := ofForm Forms.kaah {.result}
+def kaah : SampledRoot := ofForm Wordlist.kaah {.result}
 
 /-- ču'un 'begin activity', ču'un=s 'cause to begin'. -/
-def chuun : SampledRoot := ofForm Forms.chuun {.result}
+def chuun : SampledRoot := ofForm Wordlist.chuun {.result}
 
 /-- č'en 'stop, cease', č'en=s 'cause to stop, suspend'. -/
-def chen : SampledRoot := ofForm Forms.chen {.result}
+def chen : SampledRoot := ofForm Wordlist.chen {.result}
 
 /-- hó'op' 'begin, start', hó'op'=s 'cause to begin'. -/
-def hoop : SampledRoot := ofForm Forms.hoop {.result}
+def hoop : SampledRoot := ofForm Wordlist.hoop {.result}
 
 /-- háaw 'stop, cease, heal', háaw=s 'stop, revoke, medicate'. -/
-def haaw : SampledRoot := ofForm Forms.haaw {.result}
+def haaw : SampledRoot := ofForm Wordlist.haaw {.result}
 
 /-- hé'el 'rest, stop at', hé'e(l)=s 'rest'. -/
-def heel : SampledRoot := ofForm Forms.heel {.result}
+def heel : SampledRoot := ofForm Wordlist.heel {.result}
 
 /-- p'át 'remain', p'át=s 'abandon'. -/
-def paat : SampledRoot := ofForm Forms.paat {.result}
+def paat : SampledRoot := ofForm Wordlist.paat {.result}
 
 /-! ### Motion roots ((4), p. 640)
 
@@ -146,40 +146,40 @@ the imperfective; fn. 17 adds that *péek* and *'ú'ul* are also irregular in th
 perfective forms, where they pattern like agent-salient roots. -/
 
 /-- máan 'pass by' (`#`), maan=s 'pass, transfer, transport'. -/
-def maan : SampledRoot := ofForm Forms.maan {.result}
+def maan : SampledRoot := ofForm Wordlist.maan {.result}
 
 /-- péek 'move, vibrate' (`#`), pek=s 'cause to move, vibrate'. -/
-def peek : SampledRoot := ofForm Forms.peek {.result}
+def peek : SampledRoot := ofForm Wordlist.peek {.result}
 
 /-- b'in 'go' (`#`), bi(n)=s 'take'. -/
-def bin : SampledRoot := ofForm Forms.bin {.result}
+def bin : SampledRoot := ofForm Wordlist.bin {.result}
 
 /-- tàal 'come (here)' (`#`), taa(l)=s 'bring'. -/
-def taal : SampledRoot := ofForm Forms.taal {.result}
+def taal : SampledRoot := ofForm Wordlist.taal {.result}
 
 /-- 'ú'ul 'arrive (here)' (`#`), 'u'uh=s 'bring it to here'. -/
-def uul : SampledRoot := ofForm Forms.uul {.result}
+def uul : SampledRoot := ofForm Wordlist.uul {.result}
 
 /-- 'ok 'enter, intrude', 'ook=s 'move it in(to)'. -/
-def ok : SampledRoot := ofForm Forms.ok {.result}
+def ok : SampledRoot := ofForm Wordlist.ok {.result}
 
 /-- lúub' 'fall', luub'=s 'fell'. -/
-def luub : SampledRoot := ofForm Forms.luub {.result}
+def luub : SampledRoot := ofForm Wordlist.luub {.result}
 
 /-- líik' '(a)rise, ascend', lii(k)'=s 'raise, lift, put away'. -/
-def liik : SampledRoot := ofForm Forms.liik {.result}
+def liik : SampledRoot := ofForm Wordlist.liik {.result}
 
 /-- ná'ak '(a)rise, ascend', na'ak=s 'raise'; distinct from náak 'arrive, reach, hit', not
 sampled here. -/
-def naak : SampledRoot := ofForm Forms.naak {.result}
+def naak : SampledRoot := ofForm Wordlist.naak {.result}
 
 /-! ### Positional roots ((5) to (7), pp. 642–644) -/
 
 /-- čin 'bow, bend down, bend over' ((5) to (7)); zero-derives a transitive, (6) 'I bent it'. -/
-def cin : SampledRoot := ofForm Forms.cin {.state}
+def cin : SampledRoot := ofForm Wordlist.cin {.state}
 
 /-- čil 'lie down, lying down' (7). -/
-def cil : SampledRoot := ofForm Forms.cil {.state}
+def cil : SampledRoot := ofForm Wordlist.cil {.state}
 
 /-! ### Valency and class lists -/
 
@@ -275,7 +275,7 @@ def predictedExponents (r : SampledRoot) : List String :=
 /-- The derivations the paper attests for a root. Each is the final segment of a form that the
 root's row is related to, a derived stem or the bare derivational morpheme. -/
 def attested (r : SampledRoot) : List String :=
-  (Forms.relations.filter (·.form.form == r.form.form)).filterMap (·.target.segments.getLast?)
+  (Wordlist.relations.filter (·.form.form == r.form.form)).filterMap (·.target.segments.getLast?)
 
 /-- The derivations predicted from signature and valency reproduce every derivation the paper
 attests. -/

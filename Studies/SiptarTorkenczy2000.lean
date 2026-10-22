@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.Autosegmental.Melody
 public import Linglib.Fragments.Hungarian.Phonology
-public import Linglib.Data.Forms.SiptarTorkenczy2000
+public import Linglib.Data.Wordlist.SiptarTorkenczy2000
 
 /-!
 # Siptár and Törkenczy (2000): The Phonology of Hungarian
@@ -39,7 +39,7 @@ by prelinking (`sourceValue_agrees`, `sourceValue_viz`, `sourceValue_hid`,
   suffixes one, and a prelinked feature is one tier element per node it is linked to.
   Apertures are read from the vowel letters and matter only through the constraint against a
   low labial node; long vowels are not distinguished.
-* The forms are rows of `Data/Forms/SiptarTorkenczy2000.json`; a derivation is compared with
+* The forms are rows of `Data/Wordlist/SiptarTorkenczy2000.json`; a derivation is compared with
   the suffixed form's segments after the stem's, since three of the chapter's forms shorten
   the stem vowel.
 
@@ -259,7 +259,7 @@ structure Stem where
   floating : List Place
 
 /-- The representation of a stem row whose vowels bear the given prelinked features. -/
-def Stem.ofRow (row : Data.Forms.Form Forms.Cell) (linked : List (List Place))
+def Stem.ofRow (row : Data.Wordlist.Form Wordlist.Cell) (linked : List (List Place))
     (floating : List Place) : Stem :=
   ⟨((row.segments.filter fun l ↦ (ofLetter l).isSome).map VNode.ofLetter).zip linked, floating⟩
 
@@ -323,53 +323,54 @@ def Stem.isBack (s : Stem) : Bool :=
 namespace Stem
 
 /-- The pure DOR stem *ház* 'house' has a floating DOR (8a). -/
-def haz : Stem := ofRow Forms.haz [[]] [.dor]
+def haz : Stem := ofRow Wordlist.haz [[]] [.dor]
 
 /-- The pure LAB stem *tűz* 'fire' has a floating LAB (8b). -/
-def tuz : Stem := ofRow Forms.tuz [[]] [.lab]
+def tuz : Stem := ofRow Wordlist.tuz [[]] [.lab]
 
 /-- The pure COR stem *víz* 'water' has a floating COR (8c). -/
-def viz : Stem := ofRow Forms.viz [[]] [.cor]
+def viz : Stem := ofRow Wordlist.viz [[]] [.cor]
 
 /-- The COR + DOR stem *piros* 'red' has a linked COR and a floating DOR (9a). -/
-def piros : Stem := ofRow Forms.piros [[.cor], []] [.dor]
+def piros : Stem := ofRow Wordlist.piros [[.cor], []] [.dor]
 
 /-- The LAB + DOR stem *nüansz* 'nuance' has both features linked (10a). -/
-def nuansz : Stem := ofRow Forms.nuansz [[.lab], [.dor]] []
+def nuansz : Stem := ofRow Wordlist.nuansz [[.lab], [.dor]] []
 
 /-- The LAB + COR stem *öreg* 'old' has both features linked (10b). -/
-def oreg : Stem := ofRow Forms.oreg [[.lab], [.cor]] []
+def oreg : Stem := ofRow Wordlist.oreg [[.lab], [.cor]] []
 
 /-- The COR + LAB stem *szemölcs* 'wart' has a floating COR and a linked LAB (11a). -/
-def szemolcs : Stem := ofRow Forms.szemolcs [[], [.lab]] [.cor]
+def szemolcs : Stem := ofRow Wordlist.szemolcs [[], [.lab]] [.cor]
 
 /-- The DOR + LAB stem *sofőr* 'driver' has a linked DOR and a labial vowel exceptionally also
 coronal, which keeps DOR from spreading onto it (11b). -/
-def sofor : Stem := ofRow Forms.sofor [[.dor], [.cor, .lab]] []
+def sofor : Stem := ofRow Wordlist.sofor [[.dor], [.cor, .lab]] []
 
 /-- The transparent DOR + COR stem *papír* 'paper' has a floating DOR and a linked COR (12a). -/
-def papir : Stem := ofRow Forms.papir [[], [.cor]] [.dor]
+def papir : Stem := ofRow Wordlist.papir [[], [.cor]] [.dor]
 
 /-- The antiharmonic DOR + COR stem *híd* 'bridge' has a linked COR and a floating DOR with no
 node in the stem to link to (12b). -/
-def hid : Stem := ofRow Forms.hid [[.cor]] [.dor]
+def hid : Stem := ofRow Wordlist.hid [[.cor]] [.dor]
 
 /-- The opaque DOR + COR stem *kódex* 'codex' has both features linked (12c). -/
-def kodex : Stem := ofRow Forms.kodex [[.dor], [.cor]] []
+def kodex : Stem := ofRow Wordlist.kodex [[.dor], [.cor]] []
 
 /-- The vacillating stem *dzsungel* 'jungle' represented like *papír*. -/
-def dzsungelTransparent : Stem := ofRow Forms.dzsungel [[], [.cor]] [.dor]
+def dzsungelTransparent : Stem := ofRow Wordlist.dzsungel [[], [.cor]] [.dor]
 
 /-- The vacillating stem *dzsungel* 'jungle' represented like *kódex*. -/
-def dzsungelOpaque : Stem := ofRow Forms.dzsungel [[.dor], [.cor]] []
+def dzsungelOpaque : Stem := ofRow Wordlist.dzsungel [[.dor], [.cor]] []
 
 end Stem
 
 /-- The stems of Table 18, each with the row of its base form. -/
-def stems : List (Data.Forms.Form Forms.Cell × Stem) :=
-  [(Forms.haz, .haz), (Forms.tuz, .tuz), (Forms.viz, .viz), (Forms.piros, .piros),
-    (Forms.nuansz, .nuansz), (Forms.oreg, .oreg), (Forms.szemolcs, .szemolcs),
-    (Forms.sofor, .sofor), (Forms.papir, .papir), (Forms.hid, .hid), (Forms.kodex, .kodex)]
+def stems : List (Data.Wordlist.Form Wordlist.Cell × Stem) :=
+  [(Wordlist.haz, .haz), (Wordlist.tuz, .tuz), (Wordlist.viz, .viz), (Wordlist.piros, .piros),
+    (Wordlist.nuansz, .nuansz), (Wordlist.oreg, .oreg), (Wordlist.szemolcs, .szemolcs),
+    (Wordlist.sofor, .sofor), (Wordlist.papir, .papir), (Wordlist.hid, .hid),
+    (Wordlist.kodex, .kodex)]
 
 /-- The suffixes of the derivations, by the names of the relations in the data. -/
 def suffixes : List (String × Suffix) :=
@@ -379,7 +380,7 @@ def suffixes : List (String × Suffix) :=
 /-- Every derivation of (13) to (23), each a relation of the data from a stem of Table 18 other
 than the vacillating *dzsungel*, yields the attested suffix, so transparency, antiharmony and
 opacity follow from the prelinking of Table 18 by the same rules. -/
-theorem derivations : ∀ rel ∈ Forms.relations, rel.form ≠ Forms.dzsungel →
+theorem derivations : ∀ rel ∈ Wordlist.relations, rel.form ≠ Wordlist.dzsungel →
     ∃ s ∈ stems.lookup rel.form, ∃ x ∈ suffixes.lookup rel.relation,
       derived s x = some (rel.target.segments.drop rel.form.segments.length) := by
   decide +kernel
@@ -388,9 +389,9 @@ theorem derivations : ∀ rel ∈ Forms.relations, rel.form ≠ Forms.dzsungel �
 representation and its front form from the opaque one. -/
 theorem dzsungel_vacillates :
     derived .dzsungelTransparent .iness =
-        some (Forms.dzsungelban.segments.drop Forms.dzsungel.segments.length) ∧
+        some (Wordlist.dzsungelban.segments.drop Wordlist.dzsungel.segments.length) ∧
       derived .dzsungelOpaque .iness =
-        some (Forms.dzsungelben.segments.drop Forms.dzsungel.segments.length) := by
+        some (Wordlist.dzsungelben.segments.drop Wordlist.dzsungel.segments.length) := by
   decide
 
 /-! ### The surface generalization of section 3.2
@@ -400,8 +401,8 @@ the transparent neutral vowels. -/
 
 /-- The stems whose harmonic vowels govern their suffixes as section 3.2 describes, all but the
 pure COR *víz*, the antiharmonic *híd* and the opaque *kódex*. -/
-def regular : List (Data.Forms.Form Forms.Cell × Stem) :=
-  stems.filter (·.1 ∉ [Forms.viz, Forms.hid, Forms.kodex])
+def regular : List (Data.Wordlist.Form Wordlist.Cell × Stem) :=
+  stems.filter (·.1 ∉ [Wordlist.viz, Wordlist.hid, Wordlist.kodex])
 
 /-- On the regular stems the surface generalization and the derivations agree. -/
 theorem sourceValue_agrees : ∀ t ∈ regular,
@@ -411,21 +412,21 @@ theorem sourceValue_agrees : ∀ t ∈ regular,
 /-- A pure COR stem has no harmonic vowel to read, and its floating COR derives front
 suffixes. -/
 theorem sourceValue_viz :
-    palatalHarmony.searchCopy.sourceValue (vowelsOf Forms.viz.segments) = none ∧
+    palatalHarmony.searchCopy.sourceValue (vowelsOf Wordlist.viz.segments) = none ∧
       Stem.viz.isBack = false := by
   decide
 
 /-- An antiharmonic stem has no harmonic vowel to read either; its floating DOR derives back
 suffixes. -/
 theorem sourceValue_hid :
-    palatalHarmony.searchCopy.sourceValue (vowelsOf Forms.hid.segments) = none ∧
+    palatalHarmony.searchCopy.sourceValue (vowelsOf Wordlist.hid.segments) = none ∧
       Stem.hid.isBack = true := by
   decide
 
 /-- An opaque stem's last harmonic vowel is back, yet its linked DOR cannot reach the suffix
 and its linked COR derives front suffixes. -/
 theorem sourceValue_kodex :
-    palatalHarmony.searchCopy.sourceValue (vowelsOf Forms.kodex.segments) = some true ∧
+    palatalHarmony.searchCopy.sourceValue (vowelsOf Wordlist.kodex.segments) = some true ∧
       Stem.kodex.isBack = false := by
   decide
 

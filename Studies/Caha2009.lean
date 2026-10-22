@@ -3,7 +3,7 @@ module
 public import Linglib.Morphology.Exponence.Containment.Contiguity
 public import Linglib.Fragments.Slavic.Czech.Nouns
 public import Studies.Blake1994
-public import Linglib.Data.Forms.Caha2009
+public import Linglib.Data.Wordlist.Caha2009
 public import Linglib.Morphology.Word.UD
 
 /-!
@@ -23,7 +23,7 @@ open, and a Slovene paradigm he passes over.
 * `slavicCase`, `form`: the Slavic sequence (13), nominative, accusative, genitive,
   prepositional, dative, instrumental, and a paradigm's forms along it; the paradigms are the
   columns of the Serbian, Slovene, Czech, Slovak and Ukrainian tables of chapter 8, read from
-  `Data/Forms/Caha2009`
+  `Data/Wordlist/Caha2009`
 * `accounts`, `analyses`: Caha's treatment of the paradigms with an offending syncretism
 * `czechCase`, `Declines`: the Czech case at each place of the sequence, and a noun of the Czech
   fragment declining a paradigm of the tables at a place
@@ -66,8 +66,8 @@ second paradigm's identifier ends in `_2`.
 
 namespace Caha2009
 
-open Data.Forms (Paradigm)
-open Forms
+open Data.Wordlist (Paradigm)
+open Wordlist
 open Morphology.Containment (SupersetSpellable isContiguous_iff_spelloutGenerable)
 
 /-! ### The Case sequence -/
@@ -85,7 +85,7 @@ theorem exists_position_lt {i j : Fin 6} (h : i < j) :
 
 /-! ### The Slavic tables
 
-Caha's paradigms are the columns of the tables of chapter 8, read from `Data/Forms/Caha2009`
+Caha's paradigms are the columns of the tables of chapter 8, read from `Data/Wordlist/Caha2009`
 with the segmentation and the locator each table prints. A paradigm's form at a place of the
 Slavic sequence (13) is its form in the cell of that case. -/
 
@@ -95,11 +95,11 @@ def slavicCase : Fin 6 → Case := ![.nom, .acc, .gen, .loc, .dat, .inst]
 
 /-- `form p i` is the form the paradigm `p` gives the case at the place `i` of the Slavic
 sequence. -/
-def form (p : Paradigm Forms.Cell) : Morphology.Paradigm 6 String := fun i ↦
+def form (p : Paradigm Wordlist.Cell) : Morphology.Paradigm 6 String := fun i ↦
   ((p.forms.find? (Morphology.Features.ofUD ·.cell .case = ↑(slavicCase i))).map (·.form)).getD ""
 
 /-- `number p` is the number of the paradigm's cells. -/
-def number (p : Paradigm Forms.Cell) : Option Number :=
+def number (p : Paradigm Wordlist.Cell) : Option Number :=
   p.forms.head?.bind fun f ↦ Morphology.Features.ofUD f.cell .number
 
 /-! ### Contiguity -/
@@ -112,7 +112,7 @@ inductive Account
   deriving DecidableEq, Repr
 
 /-- `accounts` pairs each paradigm Caha accounts for with his account. -/
-def accounts : List (Paradigm Forms.Cell × Account) :=
+def accounts : List (Paradigm Wordlist.Cell × Account) :=
   [(slv_ta_n.paradigm, .conflation), (slv_potnik_pl.paradigm, .conflation),
     (slv_ta_f.paradigm, .accidental), (ukr_bezkrajij_msg_2.paradigm, .conflation),
     (ces_ulice_sg.paradigm, .accidental), (ces_muz_pl.paradigm, .conflation),
@@ -123,16 +123,16 @@ def accounts : List (Paradigm Forms.Cell × Account) :=
 /-- `offenders` lists the paradigms Caha accounts for, the Ukrainian variant of 'region' he leaves
 open (70), and the Slovene 'lady' (16), whose accusative–instrumental *gospó* he leaves unshaded
 although he takes that syncretism to be confined to the declension of 'this'. -/
-def offenders : List (Paradigm Forms.Cell) :=
+def offenders : List (Paradigm Wordlist.Cell) :=
   accounts.map Prod.fst ++ [ukr_kraj_sg_2.paradigm, slv_gospa_sg.paradigm]
 
 /-- A paradigm of the tables is not contiguous exactly when it is an offender. -/
 theorem not_isContiguous_iff :
-    ∀ p ∈ Forms.paradigms, ¬ IsContiguous (form p) ↔ p ∈ offenders := by
+    ∀ p ∈ Wordlist.paradigms, ¬ IsContiguous (form p) ↔ p ∈ offenders := by
   decide +kernel
 
 /-- Superset spellout generates every paradigm of the tables but the offenders. -/
-theorem supersetSpellable_form {p : Paradigm Forms.Cell} (hp : p ∈ Forms.paradigms)
+theorem supersetSpellable_form {p : Paradigm Wordlist.Cell} (hp : p ∈ Wordlist.paradigms)
     (h : p ∉ offenders) :
     SupersetSpellable (form p) :=
   (isContiguous_iff_spelloutGenerable _).1 <|
@@ -141,7 +141,7 @@ theorem supersetSpellable_form {p : Paradigm Forms.Cell} (hp : p ∈ Forms.parad
 /-- `analyses` pairs a paradigm with the underlying ending or lexical index Caha gives each cell,
 or `""`: the indexed endings of 'street' (40), the underlying endings of (19), (32), (52), (58)
 and note 26, and the endings of p. 270. -/
-def analyses : List (Paradigm Forms.Cell × Morphology.Paradigm 6 String) :=
+def analyses : List (Paradigm Wordlist.Cell × Morphology.Paradigm 6 String) :=
   [(ces_ulice_sg.paradigm, !["e1", "i1", "e2", "i2", "i2", "í2"]),
     (ces_muz_pl.paradigm, !["i", "", "", "", "", "y"]),
     (ces_hoch_pl.paradigm, !["", "", "", "", "", "yø"]),
@@ -192,16 +192,16 @@ instrumental. -/
 
 /-- A noun of the fragment declines a paradigm of the tables at a place of the sequence when the
 paradigm's form there is one of the noun's forms in that case and the paradigm's number. -/
-def Declines (n : _root_.Czech.Noun) (p : Paradigm Forms.Cell) (i : Fin 6) : Prop :=
+def Declines (n : _root_.Czech.Noun) (p : Paradigm Wordlist.Cell) (i : Fin 6) : Prop :=
   ∃ m ∈ number p, ∃ h : m ∈ _root_.Czech.Declension.numbers,
     _root_.Czech.Declension.segments (form p i) ∈ n.forms (czechCase i, ⟨_, h⟩)
 
-instance (n : _root_.Czech.Noun) (p : Paradigm Forms.Cell) (i : Fin 6) :
+instance (n : _root_.Czech.Noun) (p : Paradigm Wordlist.Cell) (i : Fin 6) :
     Decidable (Declines n p i) :=
   inferInstanceAs (Decidable (∃ m ∈ number p, _))
 
 /-- The literary paradigms of the tables that decline nouns of the fragment, with the nouns. -/
-def czechNouns : List (Paradigm Forms.Cell × _root_.Czech.Noun) :=
+def czechNouns : List (Paradigm Wordlist.Cell × _root_.Czech.Noun) :=
   [(ces_muz_sg.paradigm, _root_.Czech.muz), (ces_muz_pl.paradigm, _root_.Czech.muz),
     (ces_stroj_sg.paradigm, _root_.Czech.stroj), (ces_stroj_pl.paradigm, _root_.Czech.stroj),
     (ces_kost_sg.paradigm, _root_.Czech.kost), (ces_kost_pl.paradigm, _root_.Czech.kost),

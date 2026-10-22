@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Core.Computability.ElgotMezei
-public import Linglib.Data.Forms.McCollumEtAl2020
+public import Linglib.Data.Wordlist.McCollumEtAl2020
 public import Linglib.Phonology.Subregular.Docking
 
 /-!
@@ -45,7 +45,7 @@ composition theorem the map is regular.
 * A word is its prefix vowels and its root, the consonants dropped as in the transducers of the
   paper's supplementary materials. Prefixes are underlyingly `[−ATR]` (§2.3.1), and docking
   raises a prefix vowel to `[+ATR]`.
-* The words of `Data/Forms/McCollumEtAl2020.json` are transcribed from the page images, with
+* The words of `Data/Wordlist/McCollumEtAl2020.json` are transcribed from the page images, with
   the source's misprints recorded in their comments. The vowel of the negation prefix, printed
   much like ⟨í⟩, is a distinct glyph in the PDF and is read as ⟨ɪ́⟩, as the column headers of
   (3) and (5) and the tape (26) require.
@@ -130,7 +130,7 @@ def vowelFeatures : Char → Option (Bool × Bool)
 /-- `ofAnalysis a` is the underlying and the surface string of the word `a` analyses. The vowels
 of its underlying form after the last morpheme boundary are the root's, and its surface vowels
 are aligned with them. -/
-def ofAnalysis (a : Forms.Analysis) : Option (List Seg × List Seg) := do
+def ofAnalysis (a : Wordlist.Analysis) : Option (List Seg × List Seg) := do
   let f := a.form
   let u := a.underlying.toList.reverse
   let pre := (u.dropWhile (· != '-')).reverse.filterMap vowelFeatures
@@ -143,7 +143,8 @@ def ofAnalysis (a : Forms.Analysis) : Option (List Seg × List Seg) := do
 
 /-- The map takes the underlying form of every word of (1) to (8) and (27) to its surface
 form. -/
-theorem tutrugbu_map_forms : ∀ a ∈ Forms.analyses, ∃ p ∈ ofAnalysis a, tutrugbu.map p.1 = p.2 := by
+theorem tutrugbu_map_forms :
+    ∀ a ∈ Wordlist.analyses, ∃ p ∈ ofAnalysis a, tutrugbu.map p.1 = p.2 := by
   decide
 
 /-! ### Unbounded circumambience

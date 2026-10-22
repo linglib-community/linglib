@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Istratkova2004
-public import Linglib.Data.Forms.Istratkova2004
+public import Linglib.Data.Wordlist.Istratkova2004
 public import Studies.Svenonius2004
 
 /-!
@@ -129,160 +129,160 @@ theorem attenuative_outermost {l : List SuperlexicalSubtype} (h : l.Pairwise Abo
 /-! ### The attested stacks -/
 
 /-- (1a) *za-piša* 'put down in writing' has lexical *za-* on *piša*. -/
-def a1a : Analysis := ⟨Forms.f_1a, pisha, [(za, .lexical)]⟩
+def a1a : Analysis := ⟨Wordlist.f_1a, pisha, [(za, .lexical)]⟩
 
 /-- (3a) *iz-misl'a* 'make up (a story)' has lexical *iz-*. -/
-def a3a : Analysis := ⟨Forms.f_3a, misla, [(iz, .lexical)]⟩
+def a3a : Analysis := ⟨Wordlist.f_3a, misla, [(iz, .lexical)]⟩
 
 /-- (3b) *za-običam* 'start to love' has low inceptive *za-* on a homogeneous verb. -/
-def a3b : Analysis := ⟨Forms.f_3b, obicham, [(za, .superlexical .inceptive)]⟩
+def a3b : Analysis := ⟨Wordlist.f_3b, obicham, [(za, .superlexical .inceptive)]⟩
 
 /-- (3c) *po-znam* 'guess' has lexical *po-*. -/
-def a3c : Analysis := ⟨Forms.f_3c, znam, [(po, .lexical)]⟩
+def a3c : Analysis := ⟨Wordlist.f_3c, znam, [(po, .lexical)]⟩
 
 /-- (3d) *za-blest'a* 'start to glitter' has low inceptive *za-*. -/
-def a3d : Analysis := ⟨Forms.f_3d, blesta, [(za, .superlexical .inceptive)]⟩
+def a3d : Analysis := ⟨Wordlist.f_3d, blesta, [(za, .superlexical .inceptive)]⟩
 
 /-- (3i) *pro-četa* 'read completely' has lexical *pro-*. -/
-def a3i : Analysis := ⟨Forms.f_3i, cheta, [(pro, .lexical)]⟩
+def a3i : Analysis := ⟨Wordlist.f_3i, cheta, [(pro, .lexical)]⟩
 
 /-- (11) *iz-po-na-raz-pro-dam* 'sell completely many things in excess one by one'. -/
 def a11 : Analysis :=
-  ⟨Forms.f_11, dam, [(iz, .superlexical .completive), (po, .superlexical .distributive),
+  ⟨Wordlist.f_11, dam, [(iz, .superlexical .completive), (po, .superlexical .distributive),
     (na, .superlexical .cumulative), (raz, .superlexical .excessive), (pro, .lexical)]⟩
 
 /-- (13a) *iz-raz-kaža* 'narrate completely' has completive *iz-* outside lexical *raz-*. -/
 def a13a : Analysis :=
-  ⟨Forms.f_13a, kazha, [(iz, .superlexical .completive), (raz, .lexical)]⟩
+  ⟨Wordlist.f_13a, kazha, [(iz, .superlexical .completive), (raz, .lexical)]⟩
 
 /-- (15) *iz-po-na-kaža* has the innermost prefix read as lexical out of context. -/
 def a15 : Analysis :=
-  ⟨Forms.f_15, kazha,
+  ⟨Wordlist.f_15, kazha,
     [(iz, .superlexical .completive), (po, .superlexical .distributive), (na, .lexical)]⟩
 
 /-- (18a) *raz-pre-pro-dam* 'sell again in excess'. -/
 def a18a : Analysis :=
-  ⟨Forms.f_18a, dam,
+  ⟨Wordlist.f_18a, dam,
     [(raz, .superlexical .excessive), (pre, .superlexical .repetitive), (pro, .lexical)]⟩
 
 /-- (18b) *po-pre-pro-dam* 'sell again a little bit'. -/
 def a18b : Analysis :=
-  ⟨Forms.f_18b, dam,
+  ⟨Wordlist.f_18b, dam,
     [(po, .superlexical .attenuative), (pre, .superlexical .repetitive), (pro, .lexical)]⟩
 
 /-- (19a) *po-raz-pre-pro-dam* has attenuative *po-* lowering the intensity of *raz-*. -/
 def a19a : Analysis :=
-  ⟨Forms.f_19a, dam, [(po, .superlexical .attenuative), (raz, .superlexical .excessive),
+  ⟨Wordlist.f_19a, dam, [(po, .superlexical .attenuative), (raz, .superlexical .excessive),
     (pre, .superlexical .repetitive), (pro, .lexical)]⟩
 
 /-- (19b) *iz-raz-pre-pro-dam* 'completely sell again to the very end'. -/
 def a19b : Analysis :=
-  ⟨Forms.f_19b, dam, [(iz, .superlexical .completive), (raz, .superlexical .excessive),
+  ⟨Wordlist.f_19b, dam, [(iz, .superlexical .completive), (raz, .superlexical .excessive),
     (pre, .superlexical .repetitive), (pro, .lexical)]⟩
 
 /-- (20b) *na-pre-pro-dam* 'sell again a lot of things'. -/
 def a20b : Analysis :=
-  ⟨Forms.f_20b, dam,
+  ⟨Wordlist.f_20b, dam,
     [(na, .superlexical .cumulative), (pre, .superlexical .repetitive), (pro, .lexical)]⟩
 
 /-- (20c) *na-pro-dam* 'sell a lot'. -/
-def a20c : Analysis := ⟨Forms.f_20c, dam, [(na, .superlexical .cumulative), (pro, .lexical)]⟩
+def a20c : Analysis := ⟨Wordlist.f_20c, dam, [(na, .superlexical .cumulative), (pro, .lexical)]⟩
 
 /-- (20d) *po-na-pro-dam* 'sell a little' has attenuative *po-* modifying cumulative *na-*. -/
 def a20d : Analysis :=
-  ⟨Forms.f_20d, dam,
+  ⟨Wordlist.f_20d, dam,
     [(po, .superlexical .attenuative), (na, .superlexical .cumulative), (pro, .lexical)]⟩
 
 /-- (21a) *iz-po-na-pro-dam* has distributive *po-* under completive *iz-*. -/
 def a21a : Analysis :=
-  ⟨Forms.f_21a, dam, [(iz, .superlexical .completive), (po, .superlexical .distributive),
+  ⟨Wordlist.f_21a, dam, [(iz, .superlexical .completive), (po, .superlexical .distributive),
     (na, .superlexical .cumulative), (pro, .lexical)]⟩
 
 /-- (21b) *iz-po-raz-pro-dam*. -/
 def a21b : Analysis :=
-  ⟨Forms.f_21b, dam, [(iz, .superlexical .completive), (po, .superlexical .distributive),
+  ⟨Wordlist.f_21b, dam, [(iz, .superlexical .completive), (po, .superlexical .distributive),
     (raz, .superlexical .excessive), (pro, .lexical)]⟩
 
 /-- (21c) *iz-po-pre-pro-dam*. -/
 def a21c : Analysis :=
-  ⟨Forms.f_21c, dam, [(iz, .superlexical .completive), (po, .superlexical .distributive),
+  ⟨Wordlist.f_21c, dam, [(iz, .superlexical .completive), (po, .superlexical .distributive),
     (pre, .superlexical .repetitive), (pro, .lexical)]⟩
 
 /-- (23b) *po-raz-pro-dam* 'sell almost everything'. -/
 def a23b : Analysis :=
-  ⟨Forms.f_23b, dam,
+  ⟨Wordlist.f_23b, dam,
     [(po, .superlexical .attenuative), (raz, .superlexical .excessive), (pro, .lexical)]⟩
 
 /-- (23d) *po-iz-pro-dam* 'sell almost completely'. -/
 def a23d : Analysis :=
-  ⟨Forms.f_23d, dam,
+  ⟨Wordlist.f_23d, dam,
     [(po, .superlexical .attenuative), (iz, .superlexical .completive), (pro, .lexical)]⟩
 
 /-- (23e) *po-pro-dam* 'sell a little bit'. -/
-def a23e : Analysis := ⟨Forms.f_23e, dam, [(po, .superlexical .attenuative), (pro, .lexical)]⟩
+def a23e : Analysis := ⟨Wordlist.f_23e, dam, [(po, .superlexical .attenuative), (pro, .lexical)]⟩
 
 /-- (25a) *do-pro-dam* 'finish selling'. -/
-def a25a : Analysis := ⟨Forms.f_25a, dam, [(do_, .superlexical .terminative), (pro, .lexical)]⟩
+def a25a : Analysis := ⟨Wordlist.f_25a, dam, [(do_, .superlexical .terminative), (pro, .lexical)]⟩
 
 /-- (25b) *do-pre-pro-dam* 'finish selling again'. -/
 def a25b : Analysis :=
-  ⟨Forms.f_25b, dam,
+  ⟨Wordlist.f_25b, dam,
     [(do_, .superlexical .terminative), (pre, .superlexical .repetitive), (pro, .lexical)]⟩
 
 /-- (25c) *do-raz-pre-pro-dam* 'finish selling again to the very end'. -/
 def a25c : Analysis :=
-  ⟨Forms.f_25c1, dam, [(do_, .superlexical .terminative), (raz, .superlexical .excessive),
+  ⟨Wordlist.f_25c1, dam, [(do_, .superlexical .terminative), (raz, .superlexical .excessive),
     (pre, .superlexical .repetitive), (pro, .lexical)]⟩
 
 /-- (25d) *do-iz-po-raz-pre-pro-dam* 'finish re-selling everything to the end'. -/
 def a25d : Analysis :=
-  ⟨Forms.f_25d, dam, [(do_, .superlexical .terminative), (iz, .superlexical .completive),
+  ⟨Wordlist.f_25d, dam, [(do_, .superlexical .terminative), (iz, .superlexical .completive),
     (po, .superlexical .distributive), (raz, .superlexical .excessive),
     (pre, .superlexical .repetitive), (pro, .lexical)]⟩
 
 /-- (25e) *po-do-iz-raz-pro-dam* 'almost finish reselling to the end'. -/
 def a25e : Analysis :=
-  ⟨Forms.f_25e, dam, [(po, .superlexical .attenuative), (do_, .superlexical .terminative),
+  ⟨Wordlist.f_25e, dam, [(po, .superlexical .attenuative), (do_, .superlexical .terminative),
     (iz, .superlexical .completive), (raz, .superlexical .excessive), (pro, .lexical)]⟩
 
 /-- (25g) *do-peja* 'finish singing' has low terminative *do-* on a homogeneous verb. -/
-def a25g : Analysis := ⟨Forms.f_25g, peja, [(do_, .superlexical .terminative)]⟩
+def a25g : Analysis := ⟨Wordlist.f_25g, peja, [(do_, .superlexical .terminative)]⟩
 
 /-- (26a) *po-peja* 'sing for a while' has delimitative *po-* on a simplex atelic verb. -/
-def a26a : Analysis := ⟨Forms.f_26a, peja, [(po, .superlexical .delimitative)]⟩
+def a26a : Analysis := ⟨Wordlist.f_26a, peja, [(po, .superlexical .delimitative)]⟩
 
 /-- (27c) *iz-po-pro-dam* 'sell completely one by one'. -/
 def a27c : Analysis :=
-  ⟨Forms.f_27c, dam,
+  ⟨Wordlist.f_27c, dam,
     [(iz, .superlexical .completive), (po, .superlexical .distributive), (pro, .lexical)]⟩
 
 /-- (28c) *iz-po-raz-kaža* 'narrate completely one by one'. -/
 def a28c : Analysis :=
-  ⟨Forms.f_28c, kazha,
+  ⟨Wordlist.f_28c, kazha,
     [(iz, .superlexical .completive), (po, .superlexical .distributive), (raz, .lexical)]⟩
 
 /-- (28d) *iz-po-na-raz-kaža* 'narrate completely many stories one by one'. -/
 def a28d : Analysis :=
-  ⟨Forms.f_28d, kazha, [(iz, .superlexical .completive), (po, .superlexical .distributive),
+  ⟨Wordlist.f_28d, kazha, [(iz, .superlexical .completive), (po, .superlexical .distributive),
     (na, .superlexical .cumulative), (raz, .lexical)]⟩
 
 /-- (29) *za-iz-po-na-raz-kaža* 'start narrating many stories one by one'. -/
 def a29 : Analysis :=
-  ⟨Forms.f_29, kazha, [(za, .superlexical .inceptive), (iz, .superlexical .completive),
+  ⟨Wordlist.f_29, kazha, [(za, .superlexical .inceptive), (iz, .superlexical .completive),
     (po, .superlexical .distributive), (na, .superlexical .cumulative), (raz, .lexical)]⟩
 
 /-- (33a) *iz-po-pro-četa* 'read through completely little by little'. -/
 def a33a : Analysis :=
-  ⟨Forms.f_33a, cheta,
+  ⟨Wordlist.f_33a, cheta,
     [(iz, .superlexical .completive), (po, .superlexical .distributive), (pro, .lexical)]⟩
 
 /-- (34a) *po-za-peja* 'start singing a bit' has attenuative *po-* over low inceptive *za-*. -/
 def a34a : Analysis :=
-  ⟨Forms.f_34a, peja, [(po, .superlexical .attenuative), (za, .superlexical .inceptive)]⟩
+  ⟨Wordlist.f_34a, peja, [(po, .superlexical .attenuative), (za, .superlexical .inceptive)]⟩
 
 /-- (35a) *iz-po-na-reža* 'cut completely into many pieces little by little'. -/
 def a35a : Analysis :=
-  ⟨Forms.f_35a, rezha, [(iz, .superlexical .completive), (po, .superlexical .distributive),
+  ⟨Wordlist.f_35a, rezha, [(iz, .superlexical .completive), (po, .superlexical .distributive),
     (na, .superlexical .cumulative)]⟩
 
 /-- The attested stacks. -/
@@ -296,32 +296,32 @@ def attested : List Analysis :=
 /-- The starred (25b) *pre-do-prodam*, segmented *pre-do-pro-dam*, has repetitive *pre-* above
 terminative *do-*. -/
 def s25b : Analysis :=
-  ⟨Forms.f_25b_alt, dam,
+  ⟨Wordlist.f_25b_alt, dam,
     [(pre, .superlexical .repetitive), (do_, .superlexical .terminative), (pro, .lexical)]⟩
 
 /-- Table 3 *na-po-pro-dam* has cumulative *na-* above *po-*. -/
 def sNaPo : Analysis :=
-  ⟨Forms.t3_na_po_pro_dam, dam,
+  ⟨Wordlist.t3_na_po_pro_dam, dam,
     [(na, .superlexical .cumulative), (po, .superlexical .attenuative), (pro, .lexical)]⟩
 
 /-- Table 3 *raz-po-pro-dam* has excessive *raz-* above *po-*. -/
 def sRazPo : Analysis :=
-  ⟨Forms.t3_raz_po_pro_dam, dam,
+  ⟨Wordlist.t3_raz_po_pro_dam, dam,
     [(raz, .superlexical .excessive), (po, .superlexical .attenuative), (pro, .lexical)]⟩
 
 /-- (29) without *iz-*, *za-po-na-raz-kaža*, has inceptive *za-* above *po-*. -/
 def s29 : Analysis :=
-  ⟨Forms.f_29_alt, kazha, [(za, .superlexical .inceptive), (po, .superlexical .attenuative),
+  ⟨Wordlist.f_29_alt, kazha, [(za, .superlexical .inceptive), (po, .superlexical .attenuative),
     (na, .superlexical .cumulative), (raz, .lexical)]⟩
 
 /-- Table 2 *pre-na-raz-dam* has repetitive *pre-* above cumulative *na-*. -/
 def sPreNa : Analysis :=
-  ⟨Forms.t2_pre_na_raz_dam, dam,
+  ⟨Wordlist.t2_pre_na_raz_dam, dam,
     [(pre, .superlexical .repetitive), (na, .superlexical .cumulative), (raz, .lexical)]⟩
 
 /-- Table 2 *po-pre-na-raz-dam*. -/
 def sPoPreNa : Analysis :=
-  ⟨Forms.t2_po_pre_na_raz_dam, dam, [(po, .superlexical .attenuative),
+  ⟨Wordlist.t2_po_pre_na_raz_dam, dam, [(po, .superlexical .attenuative),
     (pre, .superlexical .repetitive), (na, .superlexical .cumulative), (raz, .lexical)]⟩
 
 /-- The starred stacks that reverse two heads of the hierarchy, or place *po-* below another

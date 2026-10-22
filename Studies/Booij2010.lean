@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Core.Order.Cover
-public import Linglib.Data.Forms.Booij2010
+public import Linglib.Data.Wordlist.Booij2010
 public import Linglib.Fragments.Dutch.Verbs
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Morphology.ConstructionMorphology.Schema
@@ -42,8 +42,8 @@ no intermediate *bedwingbaar* listed (`onbedwingbaar_generates`).
 
 ## Implementation notes
 
-* The words are the CLDF forms of `Data/Forms/Booij2010.json`, read as slot-indexed segments
-  on the flat carrier by `Data.Forms.Form.slots`. The *-ness* and *-baar* schemas are over the
+* The words are the CLDF forms of `Data/Wordlist/Booij2010.json`, read as slot-indexed segments
+  on the flat carrier by `Data.Wordlist.Form.slots`. The *-ness* and *-baar* schemas are over the
   two slots base and affix, and the *on-V-baar* schema over prefix, base and suffix, so the
   embedding `[on [V baar]]` of the paper's display is the concatenation of three slots; the
   two-slot *-baar* schema is the three-slot one read at base and suffix
@@ -79,14 +79,14 @@ def nessSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ne
 
 /-- The stored nouns in *-ness*: the opening word set (1b) and *awareness* (2). -/
 def nessLexicon : Set (Fin 2 → Flat String) :=
-  {Forms.baldness.slots, Forms.bigness.slots, Forms.blackness.slots, Forms.britishness.slots,
-    Forms.awareness.slots}
+  {Wordlist.baldness.slots, Wordlist.bigness.slots, Wordlist.blackness.slots,
+    Wordlist.britishness.slots, Wordlist.awareness.slots}
 
 /-- The schema is the abstraction over the stored nouns of (1b): the meet of their descriptions
 keeps the shared affix and leaves a variable where the bases differ. -/
 theorem nessSchema_body_eq_inf :
-    nessSchema.body = Forms.baldness.slots ⊓ Forms.bigness.slots ⊓ Forms.blackness.slots ⊓
-      Forms.britishness.slots := by
+    nessSchema.body = Wordlist.baldness.slots ⊓ Wordlist.bigness.slots ⊓ Wordlist.blackness.slots ⊓
+      Wordlist.britishness.slots := by
   funext i
   fin_cases i <;> decide
 
@@ -98,14 +98,14 @@ theorem ness_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ness") :
   · exact bot_le
   · exact h.ge
 
-theorem carlessness_instantiates : nessSchema.Instantiates Forms.carlessness.slots :=
+theorem carlessness_instantiates : nessSchema.Instantiates Wordlist.carlessness.slots :=
   ness_instantiates (by decide)
 
 /-- Coining is unification: unifying the adjective *carless* with the schema returns the
 construct *carlessness*. -/
 theorem carlessness_unifies :
-    PartialUnify.unify nessSchema.body Forms.carlessness.slots =
-      WithTop.some Forms.carlessness.slots :=
+    PartialUnify.unify nessSchema.body Wordlist.carlessness.slots =
+      WithTop.some Wordlist.carlessness.slots :=
   nessSchema.instantiates_iff_unify.mp carlessness_instantiates
 
 theorem nessSchema_isProductive : nessSchema.IsProductive := Schema.isProductive_productive _
@@ -113,11 +113,11 @@ theorem nessSchema_isProductive : nessSchema.IsProductive := Schema.isProductive
 /-- The schema's generative role: it coins the novel *carlessness* over the stored nouns, its
 open base taking an unlisted adjective. -/
 theorem carlessness_generates :
-    nessSchema.Generates nessLexicon Forms.carlessness.slots :=
+    nessSchema.Generates nessLexicon Wordlist.carlessness.slots :=
   nessSchema_isProductive.generates_iff.2 carlessness_instantiates
 
 /-- The schema's relational role: it motivates the listed *awareness*. -/
-theorem awareness_related : nessSchema.Relates nessLexicon Forms.awareness.slots :=
+theorem awareness_related : nessSchema.Relates nessLexicon Wordlist.awareness.slots :=
   ⟨by simp [nessLexicon], ness_instantiates (by decide)⟩
 
 /-! ### The compound hierarchy
@@ -217,8 +217,8 @@ def baarSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ba
 /-- The description at each node: the schema, or a word with no variable. -/
 def baarFamily : BaarNode → Schema (Fin 2) (Flat String)
   | .schema => baarSchema
-  | .leesbaar => ⟨Forms.leesbaar.slots, ∅⟩
-  | .werkbaar => ⟨Forms.werkbaar.slots, ∅⟩
+  | .leesbaar => ⟨Wordlist.leesbaar.slots, ∅⟩
+  | .werkbaar => ⟨Wordlist.werkbaar.slots, ∅⟩
 
 /-- The *-baar* hierarchy, ordered by the generality of the descriptions. -/
 instance : PartialOrder BaarNode := Schema.generalityOrder baarFamily (by decide)
@@ -283,7 +283,7 @@ theorem onbaarSchema_instantiates_iff {w : Fin 3 → Flat String} :
 
 /-- The unified schema coins *onbedwingbaar* over the empty lexicon: no intermediate
 *bedwingbaar* need be listed. -/
-theorem onbedwingbaar_generates : onbaarSchema.Generates ∅ Forms.onbedwingbaar.slots :=
+theorem onbedwingbaar_generates : onbaarSchema.Generates ∅ Wordlist.onbedwingbaar.slots :=
   (Schema.isProductive_productive _).generates_iff.2 (by decide)
 
 end Booij2010

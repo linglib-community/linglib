@@ -9,7 +9,7 @@ public import Studies.Bobaljik2012
 # Scoring theories of root suppletion on Bobaljik (2012)
 
 The data are the cognate triples of Bobaljik's Tables 4.1 and 4.2, read from
-`Data/Forms/Bobaljik2012`: for each, a source's judgment of which of a word's positive,
+`Data/Wordlist/Bobaljik2012`: for each, a source's judgment of which of a word's positive,
 comparative and superlative share a root, and the root pattern over the grades that the judgment
 gives (`Bobaljik2012.rootPattern`). A triple is observed unless a source rejects one of its forms
 in its cell (`Contested`), as the 2009 questionnaire rejects Zajkov's Karelian *äij-in*.
@@ -61,9 +61,9 @@ analyses of §3.4, four stipulations (`verdict_syntheticSuperlatives_naive`,
 namespace Eval.Suppletion.Bobaljik2012
 
 open Morphology Morphology.Exponence Morphology.Containment
-open Data.Forms (RootClasses)
+open Data.Wordlist (RootClasses)
 open _root_.Bobaljik2012 (rootPattern positiveEmbedding)
-open _root_.Bobaljik2012.Forms
+open _root_.Bobaljik2012.Wordlist
 
 /-! ### The data -/
 
@@ -238,15 +238,15 @@ row records the synthetic extents of its language's adjectives only if it satisf
 superlatives, and Alutor has the comparative suffix that the longer description of its sister
 Koryak records. -/
 
-open _root_.Bobaljik2012.Structures (Row zulu armenian_western armenian_eastern alutor)
+open _root_.Bobaljik2012.StructureDataset (Row zulu armenian_western armenian_eastern alutor)
 
 /-- The row the samples give a language, the broad sample's first. -/
-def row (L : Data.Structures.Language) : Option Row :=
-  (_root_.Bobaljik2012.Structures.broadSample ++ _root_.Bobaljik2012.Structures.focusedSurvey).find?
-    (·.language = L)
+def row (L : Data.StructureDataset.Language) : Option Row :=
+  (_root_.Bobaljik2012.StructureDataset.broadSample ++
+    _root_.Bobaljik2012.StructureDataset.focusedSurvey).find? (·.language = L)
 
 /-- How a theory reads a language's row: as recorded, or as an analysis stipulated for it. -/
-abbrev RowParser := Parser Data.Structures.Language (Option Row) (Row → Row)
+abbrev RowParser := Parser Data.StructureDataset.Language (Option Row) (Row → Row)
 
 /-- A row with a morphological comparative, as for a null comparative affix. -/
 def withComparative (r : Row) : Row := { r with cmpr := { code := .morphological } :: r.cmpr }
@@ -279,7 +279,8 @@ end Rows
 /-- Each language of [bobaljik-2012]'s samples scored by whether a theory, under its reading of
 the row, accounts for it: a containment theory accounts for a row that records synthetic extents,
 and the theory without containment predicts nothing. -/
-def syntheticSuperlatives : Experiment (Theory × RowParser) Data.Structures.Language Bool where
+def syntheticSuperlatives :
+    Experiment (Theory × RowParser) Data.StructureDataset.Language Bool where
   observed L := (row L).map fun _ ↦ true
   predicted Tπ L := if Tπ.1.Containment then
       (row L).bind fun r ↦ (Tπ.2.parse row L).map fun (f : Row → Row) ↦

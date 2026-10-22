@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Forms.Stump2006
+public import Linglib.Data.Wordlist.Stump2006
 public import Linglib.Morphology.Paradigm.Linkage
 public import Linglib.Morphology.Exponence.Domain
 public import Linglib.Morphology.Word.UD
@@ -123,7 +123,7 @@ heteroclite, is left out, as are n. 21's stem indexing and n. 22's alternants. S
 
 namespace Stump2006
 
-open Morphology Data.Forms Finset
+open Morphology Data.Wordlist Finset
 
 /-! ### Cells and the attested forms -/
 
@@ -132,15 +132,15 @@ Czech inventory with a number, gender being constant within a paradigm. -/
 abbrev CzCell : Type := Czech.Declension.Cell
 
 /-- The case of a form's cell. -/
-def caseOfForm (f : Form Forms.Cell) : Option Case :=
+def caseOfForm (f : Form Wordlist.Cell) : Option Case :=
   (f.cell.case_ : Option UD.Case).map Case.fromUD
 
 /-- The number of a form's cell. -/
-def numberOfForm (f : Form Forms.Cell) : Option Number :=
+def numberOfForm (f : Form Wordlist.Cell) : Option Number :=
   (f.cell.number : Option UD.Number).bind Number.fromUD
 
 /-- `czForms` are the Czech rows of the forms data, those of Tables 1, 6 and 8. -/
-def czForms : List (Form Forms.Cell) := Forms.all.filter (·.languageId == "czec1258")
+def czForms : List (Form Wordlist.Cell) := Wordlist.all.filter (·.languageId == "czec1258")
 
 /-- The Czech nouns of Tables 1, 6 and 8 are POKOJ 'room', PRAMEN 'spring', MOST 'bridge',
 ŽENA 'woman', PŘEDSEDA 'president', FILOSOF 'philosopher', SLUHA 'servant', FILOLOG
@@ -1119,17 +1119,17 @@ def strength (g : SktGender) (σ : SktCell) : Strength :=
 def weak (g : SktGender) : Finset SktCell := {σ | strength g σ = .weak}
 
 /-- A Sanskrit row expresses the concept `pid` in the gender `g` at the cell `σ`. -/
-def SktRow (pid : String) (g : SktGender) (σ : SktCell) (f : Form Forms.Cell) : Bool :=
+def SktRow (pid : String) (g : SktGender) (σ : SktCell) (f : Form Wordlist.Cell) : Bool :=
   f.languageId == "sans1269" && f.parameterId == pid && f.cell.gender = ↑g.ud &&
     caseOfForm f == some σ.1.1 && numberOfForm f == some σ.2.1
 
 /-- `sktRows pid g σ` are the Sanskrit rows expressing the concept `pid` in the gender `g` at the
 cell `σ`, those of Tables 9 and 10. -/
-def sktRows (pid : String) (g : SktGender) (σ : SktCell) : List (Form Forms.Cell) :=
-  Forms.all.filter (SktRow pid g σ)
+def sktRows (pid : String) (g : SktGender) (σ : SktCell) : List (Form Wordlist.Cell) :=
+  Wordlist.all.filter (SktRow pid g σ)
 
 /-- The ending of a row is what follows its stem alternant, nothing for a bare stem. -/
-def endingOf (f : Form Forms.Cell) : List String := f.segments.drop 1
+def endingOf (f : Form Wordlist.Cell) : List String := f.segments.drop 1
 
 /-- `d.exemplar` is the concept whose rows exemplify the declension `d`, PRATYAÑC 'westerly' for
 the general consonant-stem declension and, for the neuter an-stem and as-stem declensions, NĀMAN
@@ -1267,11 +1267,11 @@ def SktLex.paramId : SktLex → String
 
 /-- `l.analyses σ` are the paper's analyses of the rows of the forms data for the cell `σ` of
 `l`. -/
-def SktLex.analyses (l : SktLex) (σ : SktCell) : List Forms.Analysis :=
-  Forms.analyses.filter (SktRow l.paramId (sktEntry l).gender σ ·.form)
+def SktLex.analyses (l : SktLex) (σ : SktCell) : List Wordlist.Analysis :=
+  Wordlist.analyses.filter (SktRow l.paramId (sktEntry l).gender σ ·.form)
 
 /-- `gradeOf g` reads a grade of the paper's analysis as a grade. -/
-def gradeOf : Forms.Grade → Grade
+def gradeOf : Wordlist.Grade → Grade
   | .strong => .strong
   | .middle => .middle
   | .weakest => .weakest

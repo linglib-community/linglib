@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.JackendoffAudring2020
-public import Linglib.Data.Forms.JackendoffAudring2020
+public import Linglib.Data.Wordlist.JackendoffAudring2020
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Core.Relation.ReflTransGen
@@ -57,8 +57,8 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
   inheritance hierarchy; the book argues from the above-and-below paradox and makes no
   well-foundedness claim.
 * The syllables and the *-ish* adjectives are the CLDF forms of
-  `Data/Forms/JackendoffAudring2020.json`, read as slot-indexed segments by
-  `Data.Forms.Form.slots`; a syllable's positions are onset, nucleus and coda.
+  `Data/Wordlist/JackendoffAudring2020.json`, read as slot-indexed segments by
+  `Data.Wordlist.Form.slots`; a syllable's positions are onset, nucleus and coda.
 * The correspondence between a schema's variable coindices and the constant coindices of its
   instances, left unformalized in Section 4.13.2, is the subscripting of
   `ConstructionMorphology.Schema.InstantiatesAt`; a productive variable is one marked open
@@ -98,31 +98,31 @@ def toponymD : Schema (Fin 4) (Flat String) := ⟨![↑"the", ⊥, ↑"of", ⊥]
 
 /-- `toponymsA` holds the stored toponyms of (17a). -/
 def toponymsA : Set (Fin 2 → Flat String) :=
-  {Forms.arrowheadLake.slots, Forms.loonMountain.slots, Forms.wissahickonCreek.slots,
-    Forms.laurelHill.slots, Forms.sugarIsland.slots}
+  {Wordlist.arrowheadLake.slots, Wordlist.loonMountain.slots, Wordlist.wissahickonCreek.slots,
+    Wordlist.laurelHill.slots, Wordlist.sugarIsland.slots}
 
 /-- `toponymsB` holds the stored toponyms of (17b). -/
 def toponymsB : Set (Fin 2 → Flat String) :=
-  {Forms.mountEverest.slots, Forms.lakeMichigan.slots, Forms.capeCod.slots}
+  {Wordlist.mountEverest.slots, Wordlist.lakeMichigan.slots, Wordlist.capeCod.slots}
 
 /-- `toponymsD` holds the stored toponyms of (17d). -/
 def toponymsD : Set (Fin 4 → Flat String) :=
-  {Forms.bayOfFundy.slots, Forms.gulfOfStLawrence.slots, Forms.capeOfGoodHope.slots,
-    Forms.isleOfWight.slots}
+  {Wordlist.bayOfFundy.slots, Wordlist.gulfOfStLawrence.slots, Wordlist.capeOfGoodHope.slots,
+    Wordlist.isleOfWight.slots}
 
 /-- *Morris Mountain* is licensed by (18a), since the name is open and *Mountain* is
 attested. -/
-theorem morrisMountain_generates : toponymA.Generates toponymsA Forms.morrisMountain.slots :=
+theorem morrisMountain_generates : toponymA.Generates toponymsA Wordlist.morrisMountain.slots :=
   ⟨fun i ↦ bot_le, fun i _ hi ↦ by
     fin_cases i
     · exact absurd (Set.mem_singleton _) hi
-    · exact ⟨Forms.loonMountain.slots, ⟨by simp [toponymsA], fun _ ↦ bot_le⟩, by decide⟩⟩
+    · exact ⟨Wordlist.loonMountain.slots, ⟨by simp [toponymsA], fun _ ↦ bot_le⟩, by decide⟩⟩
 
 /-- *Mount Morris* is licensed by (18b) likewise. -/
-theorem mountMorris_generates : toponymB.Generates toponymsB Forms.mountMorris.slots :=
+theorem mountMorris_generates : toponymB.Generates toponymsB Wordlist.mountMorris.slots :=
   ⟨fun i ↦ bot_le, fun i _ hi ↦ by
     fin_cases i
-    · exact ⟨Forms.mountEverest.slots, ⟨by simp [toponymsB], fun _ ↦ bot_le⟩, by decide⟩
+    · exact ⟨Wordlist.mountEverest.slots, ⟨by simp [toponymsB], fun _ ↦ bot_le⟩, by decide⟩
     · exact absurd (Set.mem_singleton _) hi⟩
 
 /-- *Mountain Morris* is not licensed, since *Mountain* is not an attested feature of the
@@ -451,11 +451,11 @@ theorem syllable_pairs (o v w c : String) :
 subschema, and the German *sprech-*/*sprich-* of (43) instantiates the shape of (45). -/
 theorem ablaut_words :
     singSang.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim Forms.sing.slots Forms.sang.slots) ∧
+        (Sum.elim Wordlist.sing.slots Wordlist.sang.slots) ∧
       stringStrung.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim Forms.string.slots Forms.strung.slots) ∧
+        (Sum.elim Wordlist.string.slots Wordlist.strung.slots) ∧
       ablaut.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim Forms.sprech.slots Forms.sprich.slots) := by
+        (Sum.elim Wordlist.sprech.slots Wordlist.sprich.slots) := by
   simp only [singSang, stringStrung, ablaut, nucleusPair_iff]
   refine ⟨⟨by decide, by decide, ?_⟩, ⟨by decide, by decide, ?_⟩,
     ⟨bot_le, bot_le, ?_⟩⟩
@@ -630,7 +630,8 @@ def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish
 /-- Structural Intersection constructs the schema, since the description of (6) is the meet of
 the three sisters of (5), keeping what they share and leaving a variable where they differ. -/
 theorem ishSchema_body_eq_inf :
-    ishSchema.body = Forms.piggish.slots ⊓ Forms.childish.slots ⊓ Forms.sluggish.slots := by
+    ishSchema.body =
+      Wordlist.piggish.slots ⊓ Wordlist.childish.slots ⊓ Wordlist.sluggish.slots := by
   funext v
   fin_cases v <;> decide
 
@@ -638,17 +639,17 @@ theorem ishSchema_body_eq_inf :
 all three exactly when it is instantiated by the schema's description. -/
 theorem instantiates_ishSchema_iff {s : Schema (Fin 2) (Flat String)} :
     s.Instantiates ishSchema.body ↔
-      s.Instantiates Forms.piggish.slots ∧ s.Instantiates Forms.childish.slots ∧
-        s.Instantiates Forms.sluggish.slots := by
+      s.Instantiates Wordlist.piggish.slots ∧ s.Instantiates Wordlist.childish.slots ∧
+        s.Instantiates Wordlist.sluggish.slots := by
   rw [ishSchema_body_eq_inf, Schema.instantiates_inf_iff, Schema.instantiates_inf_iff,
     and_assoc]
 
-theorem ishSchema_le_foolish : ishSchema.body ≤ Forms.foolish.slots := fun i ↦ by
+theorem ishSchema_le_foolish : ishSchema.body ≤ Wordlist.foolish.slots := fun i ↦ by
   fin_cases i <;> decide
 
 /-- A newly encountered sister intersected with the schema yields the schema again, the
 Minimal Generalization Learner's fixed point. -/
-theorem ishSchema_inf_foolish : ishSchema.body ⊓ Forms.foolish.slots = ishSchema.body :=
+theorem ishSchema_inf_foolish : ishSchema.body ⊓ Wordlist.foolish.slots = ishSchema.body :=
   inf_eq_left.2 ishSchema_le_foolish
 
 end JackendoffAudring2020

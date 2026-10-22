@@ -3,7 +3,7 @@ module
 public import Linglib.Phonology.Subregular.Dependence
 public import Linglib.Phonology.Subregular.BMRS
 public import Linglib.Phonology.Tone.Surfacing
-public import Linglib.Data.Forms.Yolyan2025
+public import Linglib.Data.Wordlist.Yolyan2025
 public import Studies.McCollumEtAl2020
 
 /-!
@@ -42,9 +42,9 @@ conjunctive dual ⊘ of §6.3 (Def. 6.5) expresses Sour Grapes exactly (`sourGra
 * Bemba spreading is a `Tone.Surfacing` instance built from the paper's characterization: a
   high spreads to the word end when no high follows it, and onto the next two tone-bearing
   units when one does. Unlike plateauing, the surface set is not convex and the map is neither
-  monotone nor idempotent. The words of Example 2.11 are in `Data/Forms/Yolyan2025.json`, their
+  monotone nor idempotent. The words of Example 2.11 are in `Data/Wordlist/Yolyan2025.json`, their
   tones read off the accents; the Tutrugbu words of Example 2.12 are McCollum et al.'s, and
-  `Data/Forms/McCollumEtAl2020.json` cites them.
+  `Data/Wordlist/McCollumEtAl2020.json` cites them.
 * Thm. 5.2 settles Heinz and Lai's conjecture under Def. 5.1; under their own definition Lamont,
   O'Hara and Smith express Sour Grapes as a composition of contradirectional subsequential
   functions.
@@ -286,7 +286,7 @@ def toneOf : Char → Option BTone
 
 /-- `ofAnalysis a` is the tones of the underlying and of the surface form of the word `a`
 analyses, one per vowel, when the two have as many vowels. -/
-def ofAnalysis (a : Forms.Analysis) : Option (List BTone × List BTone) :=
+def ofAnalysis (a : Wordlist.Analysis) : Option (List BTone × List BTone) :=
   let u := a.underlying.toList.filterMap toneOf
   let s := a.form.form.toList.filterMap toneOf
   if u.length = s.length then some (u, s) else none
@@ -294,12 +294,12 @@ def ofAnalysis (a : Forms.Analysis) : Option (List BTone × List BTone) :=
 /-- Bemba spreading takes the tones of each word of Example 2.11 to its surface tones. In (a) the
 initial high spreads to the end of the word, and in (b) a following high bounds the spread to the
 next two tone-bearing units. -/
-theorem bemba_map_forms : ∀ a ∈ Forms.analyses, ∀ p ∈ ofAnalysis a, bemba.map p.1 = p.2 := by
+theorem bemba_map_forms : ∀ a ∈ Wordlist.analyses, ∀ p ∈ ofAnalysis a, bemba.map p.1 = p.2 := by
   decide
 
 /-- All words of Example 2.11 but the second of (b), whose surface lengthens a vowel, keep their
 number of vowels. -/
-example : (Forms.analyses.filterMap ofAnalysis).length = 4 := by decide
+example : (Wordlist.analyses.filterMap ofAnalysis).length = 4 := by decide
 
 /-- In the lone-trigger flank word the middle surfaces, since the initial H is the last H and
 the unbounded spread reaches it. -/

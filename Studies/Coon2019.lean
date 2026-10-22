@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Semantics.Composition.Ty
 public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Data.Forms.Coon2019
+public import Linglib.Data.Wordlist.Coon2019
 public import Linglib.Fragments.Mayan.Chuj.Voice
 public import Linglib.Data.Examples.Coon2019
 public import Mathlib.Tactic.DeriveFintype
@@ -29,7 +29,7 @@ ergative case, Ch'ol, has no agentive intransitive stems.
 ## Implementation notes
 
 The roots of the class table (5), of (17) and (20) and of the examples are the forms of
-`Data/Forms/Coon2019`, each with its class as Coon's analysis, and the class fixes the root's
+`Data/Wordlist/Coon2019`, each with its class as Coon's analysis, and the class fixes the root's
 type, valency and compatibility with the agent-merging head. The heads are Minimalist Voice heads whose parametric semantics supplies two of the three
 properties the licensing count reads, an external argument and its implicitness; the third,
 inherent ergative case, is the transitive head's own, since the substrate's Case checking is
@@ -64,7 +64,7 @@ inanimate causer of (70a) and the isolated -j form (71) are recorded as data onl
 namespace Coon2019
 
 open Chuj Minimalist.Voice ArgumentStructure
-open Forms (RootClass)
+open Wordlist (RootClass)
 open scoped Montague
 
 /-! ### Root classes -/
@@ -72,21 +72,21 @@ open scoped Montague
 /-- The core-argument positions a root class introduces, in the sense of [coon-2019]'s (2):
 transitive and intransitive roots an internal argument, positional and nominal roots none
 (39). -/
-def Forms.RootClass.valency : RootClass → Valency
+def Wordlist.RootClass.valency : RootClass → Valency
   | .tv | .itv => {.internal}
   | .pos | .nom => ∅
 
 /-- The semantic type of a root class, (3): transitive and intransitive roots are event
 predicates over an internal argument, positional roots measure functions after
 [henderson-2017] and nominal roots properties. -/
-def Forms.RootClass.ty : RootClass → Montague.Ty
+def Wordlist.RootClass.ty : RootClass → Montague.Ty
   | .tv | .itv => .e ⇒ .v ⇒ .t
   | .pos => .e ⇒ .v ⇒ .d
   | .nom => .e ⇒ .t
 
 /-- The root class combines with the transitive-forming v ~ Voice head that merges an agent,
 the coordinate separating √TV from the unaccusative √ITV, §3.3. -/
-def Forms.RootClass.LicensesTransitiveVoice (rc : RootClass) : Prop := rc = .tv
+def Wordlist.RootClass.LicensesTransitiveVoice (rc : RootClass) : Prop := rc = .tv
 
 instance : DecidablePred RootClass.LicensesTransitiveVoice :=
   fun rc ↦ inferInstanceAs (Decidable (rc = .tv))
@@ -383,8 +383,8 @@ end Semantics
 /-! ### The rows -/
 
 /-- The analysis of a row's root, found in the root inventory by its form. -/
-def rowRoot (row : Datum) : Option Forms.Analysis :=
-  row.feature? "rootForm" >>= fun f ↦ Forms.analyses.find? (·.form.form == f)
+def rowRoot (row : Datum) : Option Wordlist.Analysis :=
+  row.feature? "rootForm" >>= fun f ↦ Wordlist.analyses.find? (·.form.form == f)
 
 def heads : List (String × V) :=
   [("transitive", .transitive), ("intransitive", .intransitive), ("w", .w), ("ch", .ch),

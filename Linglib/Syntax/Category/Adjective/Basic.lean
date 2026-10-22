@@ -33,7 +33,7 @@ open Degree Morphology
 the morphs of the form and empty where the entry gives none. A grade formed with a degree word is a
 form of two words, and a suppletive grade is one word on another root, as *better* is. Which roots
 of the grades are one root is a source's judgment, recorded with the source in
-`Data/Forms/`. -/
+`Data/Wordlist/`. -/
 structure Adjective.Comparison where
   /-- The comparative. -/
   comparative : List Morph := []

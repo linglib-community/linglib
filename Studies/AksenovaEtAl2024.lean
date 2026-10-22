@@ -3,7 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Phonology.Harmony.Basic
 public import Linglib.Phonology.Subregular.Agree
-public import Linglib.Data.Forms.AksenovaEtAl2024
+public import Linglib.Data.Wordlist.AksenovaEtAl2024
 
 /-!
 # Aksënova, Rawski, Graf & Heinz (2024): The computational power of harmonic forms
@@ -41,7 +41,7 @@ harmony.
   both grammars, and a prenasalized stop is read as one onset off the nasal tier: with `m`
   projected, Table 34.7 would ban the paper's own `-somp-el-`, `-tomb-ol-`, and `-lemb-ol-`.
 * The starred counterparts the paper prints are rows of their own, marked ungrammatical, so each
-  harmony theorem accepts the forms of `Forms.all` and rejects those of `Forms.marked`.
+  harmony theorem accepts the forms of `Wordlist.all` and rejects those of `Wordlist.marked`.
 * Table 34.5's `H_r2` prints `*üö` twice and omits `*üo`, which `H_front` bans anyway.
 
 ## References
@@ -140,9 +140,9 @@ abbrev lokaa : TierStrictlyLocalGrammar 2 (Option LokaaV) := tierGrammar lokaaBa
 
 /-- The (3) forms are accepted and their starred counterparts rejected. -/
 theorem lokaa_rows :
-    (∀ f ∈ Forms.all, f.languageId = "loka1252" →
+    (∀ f ∈ Wordlist.all, f.languageId = "loka1252" →
         read LokaaV.ofChar f.form.toList ∈ lokaa.language) ∧
-      ∀ f ∈ Forms.marked, f.languageId = "loka1252" →
+      ∀ f ∈ Wordlist.marked, f.languageId = "loka1252" →
         read LokaaV.ofChar f.form.toList ∉ lokaa.language := by
   decide
 
@@ -199,9 +199,9 @@ abbrev kirghiz : TierStrictlyLocalGrammar 2 (Option TurkicV) := tierGrammar kirg
 
 /-- The (5) forms are accepted and the starred forms of Figure 34.3 rejected. -/
 theorem kirghiz_rows :
-    (∀ f ∈ Forms.all, f.languageId = "kirg1245" →
+    (∀ f ∈ Wordlist.all, f.languageId = "kirg1245" →
         read TurkicV.ofChar f.form.toList ∈ kirghiz.language) ∧
-      ∀ f ∈ Forms.marked, f.languageId = "kirg1245" →
+      ∀ f ∈ Wordlist.marked, f.languageId = "kirg1245" →
         read TurkicV.ofChar f.form.toList ∉ kirghiz.language := by
   decide
 
@@ -263,9 +263,9 @@ abbrev buryat : TierStrictlyLocalGrammar 2 (Option BuryatV) := tierGrammar burya
 /-- The (9) forms are accepted, `ɔr-ʊːl-aːd` because the high causative blocks rounding, and
 their starred counterparts rejected. -/
 theorem buryat_rows :
-    (∀ f ∈ Forms.all, f.languageId = "russ1264" →
+    (∀ f ∈ Wordlist.all, f.languageId = "russ1264" →
         read BuryatV.ofChar f.form.toList ∈ buryat.language) ∧
-      ∀ f ∈ Forms.marked, f.languageId = "russ1264" →
+      ∀ f ∈ Wordlist.marked, f.languageId = "russ1264" →
         read BuryatV.ofChar f.form.toList ∉ buryat.language := by
   decide
 
@@ -310,9 +310,9 @@ instance : DecidableRel yakutBanned := fun _ _ ↦ by unfold yakutBanned; infer_
 abbrev yakut : TierStrictlyLocalGrammar 2 (Option TurkicV) := tierGrammar yakutBanned
 
 theorem yakut_rows :
-    (∀ f ∈ Forms.all, f.languageId = "yaku1245" →
+    (∀ f ∈ Wordlist.all, f.languageId = "yaku1245" →
         read TurkicV.ofChar f.form.toList ∈ yakut.language) ∧
-      ∀ f ∈ Forms.marked, f.languageId = "yaku1245" →
+      ∀ f ∈ Wordlist.marked, f.languageId = "yaku1245" →
         read TurkicV.ofChar f.form.toList ∉ yakut.language := by
   decide
 
@@ -407,9 +407,9 @@ instance : DecidablePred (· ∈ kikongo) := fun w ↦
 
 /-- The (16) and (18) forms are accepted and the starred forms of Figure 34.6 rejected. -/
 theorem kikongo_rows :
-    (∀ f ∈ Forms.all, f.languageId = "koon1247" →
+    (∀ f ∈ Wordlist.all, f.languageId = "koon1247" →
         KikongoSeg.parse f.form.toList ∈ kikongo) ∧
-      ∀ f ∈ Forms.marked, f.languageId = "koon1247" →
+      ∀ f ∈ Wordlist.marked, f.languageId = "koon1247" →
         KikongoSeg.parse f.form.toList ∉ kikongo := by
   decide
 

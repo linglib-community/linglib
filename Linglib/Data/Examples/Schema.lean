@@ -17,7 +17,7 @@ reports with it in the sense of Tonhauser and Matthewson: an expression (the exa
 alternant of it), the context it is judged in, and the judgment, less the information about the
 speakers that papers seldom give. A datum is a row of the Examples component of the
 Cross-Linguistic Data Formats of Forkel et al., in version 1.3, and the
-sentence-level counterpart of `Data/Forms/`.
+sentence-level counterpart of `Data/Wordlist/`.
 
 ## Main definitions
 

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Data.Examples.Jablonska2004
-public import Linglib.Data.Forms.Jablonska2004
+public import Linglib.Data.Wordlist.Jablonska2004
 public import Studies.Svenonius2004
 
 /-!
@@ -73,7 +73,7 @@ property, or a path.
 namespace Jablonska2004
 
 open Morphology Polish.Verbs
-open Data.Forms (Form)
+open Data.Wordlist (Form)
 
 /-! ### Verbalizers -/
 
@@ -616,62 +616,62 @@ attenuative-frequentatives of (56) and (65), the purely perfectivized stems of (
 inchoatives of (75), the class shift of (77), the semelfactive and its non-semelfactive stem of
 (79), and the lexical *po-* of (81) to (83). -/
 def attested : List Analysis :=
-  [⟨Forms.f_3a, .siwiec, [.asp1 po], false, []⟩,
-   ⟨Forms.f_3b, .jasniec, [.asp1 po], false, []⟩,
-   ⟨Forms.f_3d, .smutniec, [.asp1 po], false, []⟩,
-   ⟨Forms.f_8a, .drozec, [], false, []⟩,
-   ⟨Forms.f_10a_po, .ciemniec, [.asp1 po], false, [.considerableChange]⟩,
-   ⟨Forms.f_10a_z, .ciemniec, [.perf z], false, []⟩,
-   ⟨Forms.f_10b_po, .drozec, [.asp1 po], false, [.considerableChange]⟩,
-   ⟨Forms.f_10b_z, .drozec, [.perf z], false, []⟩,
-   ⟨Forms.f_23a, .babiec, [.asp1 po], true, [.distributive]⟩,
-   ⟨Forms.f_24a, .czytac, [.lexical prze, .si, .asp3 po], true, [.distributive]⟩,
-   ⟨Forms.f_27a, .czytac, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Forms.f_27b, .grac, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Forms.f_27c, .chodzic, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Forms.f_27d, .palic, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Forms.f_28a, .chowac, [.asp1 po], true, [.distributive, .delimitative]⟩,
-   ⟨Forms.f_28b, .pisac, [.lexical prze, .si, .asp3 po], true, [.distributive, .delimitative]⟩,
-   ⟨Forms.f_28c, .spiewac, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Forms.f_28d, .chodzic, [.lexical w, .si, .asp3 po], true, [.distributive, .delimitative]⟩,
-   ⟨Forms.f_30, .pisac, [.lexical prze], false, []⟩,
-   ⟨Forms.f_31a, .pisac, [.lexical prze, .si], false, []⟩,
-   ⟨Forms.f_34a, .pisac, [.lexical prze, .si, .asp3 po], true, [.delimitative]⟩,
-   ⟨Forms.f_34a, .pisac, [.lexical prze, .si, .asp3 po], true, [.distributive]⟩,
-   ⟨Forms.f_39a, .marznac, [.asp1 po], true, [.distributive]⟩,
-   ⟨Forms.f_39b, .gluchnac, [.asp1 po], true, [.distributive]⟩,
-   ⟨Forms.f_39c, .wiednac, [.asp1 po], true, [.distributive]⟩,
-   ⟨Forms.f_39d, .slepnac, [.asp1 po], true, [.distributive]⟩,
-   ⟨Forms.f_43a, .kopac, [.lexical ob, .si, .asp3 po], true, [.distributive, .delimitative]⟩,
-   ⟨Forms.f_46b, .machnac, [], false, []⟩,
-   ⟨Forms.f_50b, .biec, [.asp1 po], false, [.centrifugal]⟩,
-   ⟨Forms.f_50c, .leciec, [.asp1 po], false, [.centrifugal]⟩,
-   ⟨Forms.f_50d, .ciagnac, [.asp1 po], false, [.centrifugal]⟩,
-   ⟨Forms.f_51b, .biegac, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Forms.f_51c, .latac, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Forms.f_51d, .ciagac, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Forms.f_54a, .kochac, [.asp1 po], false, [.inceptive]⟩,
-   ⟨Forms.f_54b, .lubic, [.asp1 po], false, [.inceptive]⟩,
-   ⟨Forms.fn21, .siedziec, [.asp1 po], false, [.delimitative]⟩,
-   ⟨Forms.f_56b, .grac, [.asp1 po, .si], false, [.delimitative]⟩,
-   ⟨Forms.f_56d, .palic, [.asp1 po, .si], false, [.delimitative]⟩,
-   ⟨Forms.f_65a, .dmuchac, [.asp1 po, .si], false, [.delimitative]⟩,
-   ⟨Forms.f_67a_pf, .tracic, [.perf s], false, []⟩,
-   ⟨Forms.f_67b_pf, .robic, [.perf z], false, []⟩,
-   ⟨Forms.f_67c_pf, .chowac, [.perf s], false, []⟩,
-   ⟨Forms.f_69a_pf, .brudzic, [.perf po], false, []⟩,
-   ⟨Forms.f_69b_pf, .bic, [.perf po], false, []⟩,
-   ⟨Forms.f_69c_pf, .chwalic, [.perf po], false, []⟩,
-   ⟨Forms.f_75a, .gasnac, [.lexical wy], false, []⟩,
-   ⟨Forms.f_75b, .gasnac, [.perf z], false, []⟩,
-   ⟨Forms.f_77, .gasAj, [.lexical wy, .si], false, []⟩,
-   ⟨Forms.f_79a, .szepnac, [.lexical pod], false, []⟩,
-   ⟨Forms.f_79c, .szeptac, [], false, []⟩,
-   ⟨Forms.f_79d, .szeptac, [.lexical pod, .si], false, []⟩,
-   ⟨Forms.f_80b, .plywac, [.lexical do_, .si], false, []⟩,
-   ⟨Forms.f_81c, .rownac, [.lexical po], false, []⟩,
-   ⟨Forms.f_82c, .rownac, [.lexical po, .si], false, []⟩,
-   ⟨Forms.f_83a, .rownac, [.lexical po, .si, .asp3 po], true, [.distributive]⟩]
+  [⟨Wordlist.f_3a, .siwiec, [.asp1 po], false, []⟩,
+   ⟨Wordlist.f_3b, .jasniec, [.asp1 po], false, []⟩,
+   ⟨Wordlist.f_3d, .smutniec, [.asp1 po], false, []⟩,
+   ⟨Wordlist.f_8a, .drozec, [], false, []⟩,
+   ⟨Wordlist.f_10a_po, .ciemniec, [.asp1 po], false, [.considerableChange]⟩,
+   ⟨Wordlist.f_10a_z, .ciemniec, [.perf z], false, []⟩,
+   ⟨Wordlist.f_10b_po, .drozec, [.asp1 po], false, [.considerableChange]⟩,
+   ⟨Wordlist.f_10b_z, .drozec, [.perf z], false, []⟩,
+   ⟨Wordlist.f_23a, .babiec, [.asp1 po], true, [.distributive]⟩,
+   ⟨Wordlist.f_24a, .czytac, [.lexical prze, .si, .asp3 po], true, [.distributive]⟩,
+   ⟨Wordlist.f_27a, .czytac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Wordlist.f_27b, .grac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Wordlist.f_27c, .chodzic, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Wordlist.f_27d, .palic, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Wordlist.f_28a, .chowac, [.asp1 po], true, [.distributive, .delimitative]⟩,
+   ⟨Wordlist.f_28b, .pisac, [.lexical prze, .si, .asp3 po], true, [.distributive, .delimitative]⟩,
+   ⟨Wordlist.f_28c, .spiewac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Wordlist.f_28d, .chodzic, [.lexical w, .si, .asp3 po], true, [.distributive, .delimitative]⟩,
+   ⟨Wordlist.f_30, .pisac, [.lexical prze], false, []⟩,
+   ⟨Wordlist.f_31a, .pisac, [.lexical prze, .si], false, []⟩,
+   ⟨Wordlist.f_34a, .pisac, [.lexical prze, .si, .asp3 po], true, [.delimitative]⟩,
+   ⟨Wordlist.f_34a, .pisac, [.lexical prze, .si, .asp3 po], true, [.distributive]⟩,
+   ⟨Wordlist.f_39a, .marznac, [.asp1 po], true, [.distributive]⟩,
+   ⟨Wordlist.f_39b, .gluchnac, [.asp1 po], true, [.distributive]⟩,
+   ⟨Wordlist.f_39c, .wiednac, [.asp1 po], true, [.distributive]⟩,
+   ⟨Wordlist.f_39d, .slepnac, [.asp1 po], true, [.distributive]⟩,
+   ⟨Wordlist.f_43a, .kopac, [.lexical ob, .si, .asp3 po], true, [.distributive, .delimitative]⟩,
+   ⟨Wordlist.f_46b, .machnac, [], false, []⟩,
+   ⟨Wordlist.f_50b, .biec, [.asp1 po], false, [.centrifugal]⟩,
+   ⟨Wordlist.f_50c, .leciec, [.asp1 po], false, [.centrifugal]⟩,
+   ⟨Wordlist.f_50d, .ciagnac, [.asp1 po], false, [.centrifugal]⟩,
+   ⟨Wordlist.f_51b, .biegac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Wordlist.f_51c, .latac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Wordlist.f_51d, .ciagac, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Wordlist.f_54a, .kochac, [.asp1 po], false, [.inceptive]⟩,
+   ⟨Wordlist.f_54b, .lubic, [.asp1 po], false, [.inceptive]⟩,
+   ⟨Wordlist.fn21, .siedziec, [.asp1 po], false, [.delimitative]⟩,
+   ⟨Wordlist.f_56b, .grac, [.asp1 po, .si], false, [.delimitative]⟩,
+   ⟨Wordlist.f_56d, .palic, [.asp1 po, .si], false, [.delimitative]⟩,
+   ⟨Wordlist.f_65a, .dmuchac, [.asp1 po, .si], false, [.delimitative]⟩,
+   ⟨Wordlist.f_67a_pf, .tracic, [.perf s], false, []⟩,
+   ⟨Wordlist.f_67b_pf, .robic, [.perf z], false, []⟩,
+   ⟨Wordlist.f_67c_pf, .chowac, [.perf s], false, []⟩,
+   ⟨Wordlist.f_69a_pf, .brudzic, [.perf po], false, []⟩,
+   ⟨Wordlist.f_69b_pf, .bic, [.perf po], false, []⟩,
+   ⟨Wordlist.f_69c_pf, .chwalic, [.perf po], false, []⟩,
+   ⟨Wordlist.f_75a, .gasnac, [.lexical wy], false, []⟩,
+   ⟨Wordlist.f_75b, .gasnac, [.perf z], false, []⟩,
+   ⟨Wordlist.f_77, .gasAj, [.lexical wy, .si], false, []⟩,
+   ⟨Wordlist.f_79a, .szepnac, [.lexical pod], false, []⟩,
+   ⟨Wordlist.f_79c, .szeptac, [], false, []⟩,
+   ⟨Wordlist.f_79d, .szeptac, [.lexical pod, .si], false, []⟩,
+   ⟨Wordlist.f_80b, .plywac, [.lexical do_, .si], false, []⟩,
+   ⟨Wordlist.f_81c, .rownac, [.lexical po], false, []⟩,
+   ⟨Wordlist.f_82c, .rownac, [.lexical po, .si], false, []⟩,
+   ⟨Wordlist.f_83a, .rownac, [.lexical po, .si, .asp3 po], true, [.distributive]⟩]
 
 /-- The starred forms put *po-* in Asp3 over a perfective, (24b); form the Secondary Imperfective
 of a bare stem, (32), of a semelfactive, (48) and (79b), of a purely perfectivized stem, (67),
@@ -679,31 +679,31 @@ of a bare stem, (32), of a semelfactive, (48) and (79b), of a purely perfectiviz
 inchoative, (76); and put *po-* with a lexical or purely perfectivizing prefix, (42), on a
 semelfactive, (45) and (63b), or over an attenuative-frequentative, (61). -/
 def starred : List Analysis :=
-  [⟨Forms.f_24b, .czytac, [.lexical prze, .asp3 po], true, []⟩,
-   ⟨Forms.f_32a, .robic, [.si], false, []⟩,
-   ⟨Forms.f_42a, .tracic, [.perf s, .asp1 po], false, []⟩,
-   ⟨Forms.f_42b, .kopac, [.lexical ob, .asp1 po], false, []⟩,
-   ⟨Forms.f_45a, .warknac, [.asp1 po], false, []⟩,
-   ⟨Forms.f_45b, .kopnac, [.asp1 po], false, []⟩,
-   ⟨Forms.f_45c, .machnac, [.asp1 po], false, []⟩,
-   ⟨Forms.f_48, .warknac, [.asp1 po, .si], false, []⟩,
-   ⟨Forms.f_58c, .kochac, [.asp1 po, .si], false, []⟩,
-   ⟨Forms.f_59a, .siwiec, [.asp1 po, .si], false, []⟩,
-   ⟨Forms.f_61a, .grac, [.asp1 po, .si, .asp3 po], false, []⟩,
-   ⟨Forms.f_61b, .palic, [.asp1 po, .si, .asp3 po], false, []⟩,
-   ⟨Forms.f_63b, .miauknac, [.asp1 po], false, []⟩,
-   ⟨Forms.f_67a_si, .tracic, [.perf s, .si], false, []⟩,
-   ⟨Forms.f_67b_si, .robic, [.perf z, .si], false, []⟩,
-   ⟨Forms.f_67c_si, .chowac, [.perf s, .si], false, []⟩,
-   ⟨Forms.f_69a_si, .brudzic, [.perf po, .si], false, []⟩,
-   ⟨Forms.f_69b_si, .bic, [.perf po, .si], false, []⟩,
-   ⟨Forms.f_69c_si, .chwalic, [.perf po, .si], false, []⟩,
-   ⟨Forms.f_73a, .dziczec, [.perf z, .si], false, []⟩,
-   ⟨Forms.f_74, .siwiec, [.asp1 po, .si], false, []⟩,
-   ⟨Forms.f_76_a, .gasnac, [.lexical wy, .si], false, []⟩,
-   ⟨Forms.f_76_b, .gasnac, [.lexical wy, .si], false, []⟩,
-   ⟨Forms.f_78, .gasnac, [.perf z, .si], false, []⟩,
-   ⟨Forms.f_79b, .szepnac, [.lexical pod, .si], false, []⟩]
+  [⟨Wordlist.f_24b, .czytac, [.lexical prze, .asp3 po], true, []⟩,
+   ⟨Wordlist.f_32a, .robic, [.si], false, []⟩,
+   ⟨Wordlist.f_42a, .tracic, [.perf s, .asp1 po], false, []⟩,
+   ⟨Wordlist.f_42b, .kopac, [.lexical ob, .asp1 po], false, []⟩,
+   ⟨Wordlist.f_45a, .warknac, [.asp1 po], false, []⟩,
+   ⟨Wordlist.f_45b, .kopnac, [.asp1 po], false, []⟩,
+   ⟨Wordlist.f_45c, .machnac, [.asp1 po], false, []⟩,
+   ⟨Wordlist.f_48, .warknac, [.asp1 po, .si], false, []⟩,
+   ⟨Wordlist.f_58c, .kochac, [.asp1 po, .si], false, []⟩,
+   ⟨Wordlist.f_59a, .siwiec, [.asp1 po, .si], false, []⟩,
+   ⟨Wordlist.f_61a, .grac, [.asp1 po, .si, .asp3 po], false, []⟩,
+   ⟨Wordlist.f_61b, .palic, [.asp1 po, .si, .asp3 po], false, []⟩,
+   ⟨Wordlist.f_63b, .miauknac, [.asp1 po], false, []⟩,
+   ⟨Wordlist.f_67a_si, .tracic, [.perf s, .si], false, []⟩,
+   ⟨Wordlist.f_67b_si, .robic, [.perf z, .si], false, []⟩,
+   ⟨Wordlist.f_67c_si, .chowac, [.perf s, .si], false, []⟩,
+   ⟨Wordlist.f_69a_si, .brudzic, [.perf po, .si], false, []⟩,
+   ⟨Wordlist.f_69b_si, .bic, [.perf po, .si], false, []⟩,
+   ⟨Wordlist.f_69c_si, .chwalic, [.perf po, .si], false, []⟩,
+   ⟨Wordlist.f_73a, .dziczec, [.perf z, .si], false, []⟩,
+   ⟨Wordlist.f_74, .siwiec, [.asp1 po, .si], false, []⟩,
+   ⟨Wordlist.f_76_a, .gasnac, [.lexical wy, .si], false, []⟩,
+   ⟨Wordlist.f_76_b, .gasnac, [.lexical wy, .si], false, []⟩,
+   ⟨Wordlist.f_78, .gasnac, [.perf z, .si], false, []⟩,
+   ⟨Wordlist.f_79b, .szepnac, [.lexical pod, .si], false, []⟩]
 
 /-- The attested forms are accepted and the starred ones rejected. -/
 theorem judgments :
@@ -743,7 +743,7 @@ theorem stem_vendlerClass : ∀ a ∈ attested ++ starred,
 first, and the stem are the morphs of the attested word, accepted or starred. The Secondary
 Imperfective replaces the stem's verbalizer, which the fragment's citation forms do not
 separate. -/
-theorem spells : ∀ a ∈ attested ++ starred, a.form.cell = Forms.inf → .si ∉ a.layers →
+theorem spells : ∀ a ∈ attested ++ starred, a.form.cell = Wordlist.inf → .si ∉ a.layers →
     Svenonius2004.Spells a.morphs a.form.form := by
   decide
 
@@ -768,15 +768,15 @@ structure Test where
 /-- The phase-verb sentences, *zacząć* 'begin' with *po-prze-pis-ywa-ć*, (33a), and with
 *mach-ną-ć*, (46a). -/
 def phaseTests : List Test :=
-  [⟨Examples.ex_33a, ⟨Forms.f_34a, .pisac, [.lexical prze, .si, .asp3 po], true, []⟩⟩,
-   ⟨Examples.ex_46a, ⟨Forms.f_46a, .machnac, [], false, []⟩⟩]
+  [⟨Examples.ex_33a, ⟨Wordlist.f_34a, .pisac, [.lexical prze, .si, .asp3 po], true, []⟩⟩,
+   ⟨Examples.ex_46a, ⟨Wordlist.f_46a, .machnac, [], false, []⟩⟩]
 
 /-- The present-tense sentences: *po-prze-pis-uj-e-sz*, (33b), and *mach-ni-e-sz*, (46b), read only
 as futures, and *do-pływa*, (80b), read as an actual present. -/
 def presentTests : List Test :=
-  [⟨Examples.ex_33b, ⟨Forms.f_33b, .pisac, [.lexical prze, .si, .asp3 po], true, []⟩⟩,
-   ⟨Examples.ex_46b, ⟨Forms.f_46b, .machnac, [], false, []⟩⟩,
-   ⟨Examples.ex_80b, ⟨Forms.f_80b, .plywac, [.lexical do_, .si], false, []⟩⟩]
+  [⟨Examples.ex_33b, ⟨Wordlist.f_33b, .pisac, [.lexical prze, .si, .asp3 po], true, []⟩⟩,
+   ⟨Examples.ex_46b, ⟨Wordlist.f_46b, .machnac, [], false, []⟩⟩,
+   ⟨Examples.ex_80b, ⟨Wordlist.f_80b, .plywac, [.lexical do_, .si], false, []⟩⟩]
 
 /-- The tested forms are well-formed derivations. -/
 theorem tests_wellFormed :
@@ -806,11 +806,11 @@ Secondary Imperfective without a prefix. -/
 
 /-- *po-chadz-a-ć*, (56c), which the paper rejects, has *po-* in Asp1 under the Secondary
 Imperfective of a non-directed motion stem. -/
-def gap56c : Analysis := ⟨Forms.f_56c, .chodzic, [.asp1 po, .si], false, []⟩
+def gap56c : Analysis := ⟨Wordlist.f_56c, .chodzic, [.asp1 po, .si], false, []⟩
 
 /-- *gr-ywa-ć*, (60), which the paper accepts, fn. 23, is the Secondary Imperfective of a bare
 processual stem. -/
-def exception60 : Analysis := ⟨Forms.f_60_bare, .grac, [.si], false, []⟩
+def exception60 : Analysis := ⟨Wordlist.f_60_bare, .grac, [.si], false, []⟩
 
 /-- The gap (56c) is a well-formed derivation: attenuative-frequentative formation is not
 productive, (56) to (58), and the paper gives no rule for which stems lack it. -/
