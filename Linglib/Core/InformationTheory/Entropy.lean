@@ -453,21 +453,6 @@ theorem condEntropy_comp_right_of_measurableEmbedding {U : Type*} [MeasurableSpa
   congr with y
   rw [Set.preimage_comp, ← Set.image_singleton, hg.injective.preimage_image]
 
-/-- The conditional entropy given a random variable valued in a finite set is a sum over that
-set. -/
-theorem condEntropy_eq_sum_finset [MeasurableSingletonClass T] (X : Ω → S) (hY : Measurable Y)
-    (μ : Measure Ω) [IsFiniteMeasure μ] {B : Finset T} (hB : ∀ ω, Y ω ∈ B) :
-    H[X | Y ; μ] = ∑ y ∈ B, μ.real (Y ⁻¹' {y}) * H[X ; μ[|Y ⁻¹' {y}]] := by
-  let Y' : Ω → B := fun ω ↦ ⟨Y ω, hB ω⟩
-  have hY' : Measurable Y' := hY.subtype_mk
-  have hval : MeasurableEmbedding (Subtype.val : B → T) :=
-    MeasurableEmbedding.subtype_coe B.measurableSet
-  rw [show Y = Subtype.val ∘ Y' from rfl,
-    condEntropy_comp_right_of_measurableEmbedding X μ hY' hval, condEntropy_eq_sum X hY' μ,
-    ← Finset.sum_coe_sort B]
-  refine Finset.sum_congr rfl fun y _ ↦ ?_
-  rw [show (Subtype.val ∘ Y') ⁻¹' {y.1} = Y' ⁻¹' {y} from Set.ext fun _ ↦ Subtype.ext_iff.symm]
-
 /-- Mutual information of two random variables. -/
 noncomputable def mutualInfo (X : Ω → S) (Y : Ω → T) (μ : Measure Ω) : ℝ :=
   H[X ; μ] + H[Y ; μ] - H[fun ω ↦ (X ω, Y ω) ; μ]
