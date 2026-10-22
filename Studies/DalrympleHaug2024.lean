@@ -5,7 +5,7 @@ public import Linglib.Semantics.Plurality.Reciprocal.Scope
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Wan.Reciprocals
 public import Studies.Landau2015
-public import Studies.Rakosi2019
+public import Studies.Rakosi2020
 
 /-!
 # Dalrymple and Haug, constraints on reciprocal scope (2024)
@@ -51,7 +51,7 @@ construction, and check them against the paper's judgments.
 * [J. Higginbotham, *Reciprocal interpretation* (1980)][higginbotham-1980]
 * [T. Nishigauchi, *Syntax of reciprocals in Japanese* (1992)][nishigauchi-1992]
 * [G. Rákosi, *Reciprocal anaphors in singular constructions in Hungarian*
-  (2019)][rakosi-2019]
+  (2020)][rakosi-2020]
 * [W. Tay, K. New, M. Dalrymple and D. Haug, *Reciprocal scope in Mandarin*
   (2021)][tay-new-dalrymple-haug-2021]
 * [I. Landau, *Elements of control* (2000)][landau-2000]
@@ -211,7 +211,7 @@ theorem wide_of_individual {A : Analysis} {a : Antecedent} (h : a.grain = some .
 /-- The Hungarian complement subject, a null pronoun whose number is the agreement on its verb,
     Rákosi's bound-variable construction ((10)), his (17). -/
 def hungarian : Antecedent :=
-  .ofNumber <| (Rakosi2019.verbAgr? Rakosi2019.Examples.ex_17).map Prod.snd
+  .ofNumber <| (Rakosi2020.verbAgr? Rakosi2020.Examples.ex_17).map Prod.snd
 
 /-- A singular null pronoun must be bound, so (10) has wide scope only on every analysis. -/
 theorem hungarian_fits (A : Analysis) : Fits A hungarian Examples.ex_10 :=

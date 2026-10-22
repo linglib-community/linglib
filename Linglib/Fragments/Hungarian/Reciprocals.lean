@@ -11,7 +11,7 @@ numeral *egy* 'one' and the distributor *más* 'other', which fills the object p
 keeps the verb transitive, *a gyerekek látták egymást* 'the children saw each other'. It is
 invariable, the same form for an antecedent of any person and number, whereas the reflexive
 inflects (`Hungarian.Pronouns.reflexives`). The antecedents *egymás* tolerates are the matter of
-`Studies/Rakosi2019.lean`.
+`Studies/Rakosi2020.lean`.
 
 A reciprocal verb such as *csókolózik* 'kiss' is intransitive, *János és Mari csókolóztak* 'János
 and Mari kissed'. Its suffix *-óz-* is one of the derivational suffixes of argument reduction,
@@ -26,7 +26,7 @@ as *érkezik* 'arrive', so the suffix does not by itself mark a verb as reciproc
 
 ## References
 
-* [rakosi-2019]
+* [rakosi-2020]
 * [rakosi-2008]
 * [rounds-2001]
 * [nordlinger-2023]
