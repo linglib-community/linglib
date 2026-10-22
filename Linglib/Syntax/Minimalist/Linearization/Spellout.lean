@@ -46,9 +46,6 @@ def pronouncedAt (tok : LexicalItem.Token) : Option TreePath := (occurrences t t
 
 /-! ### Ellipsis -/
 
-/-- The complement of the head at `p` is its sister. -/
-def complement (p : TreePath) : TreePath := ⟨p.toList.dropLast ++ [1 - p.toList.getLastD 0]⟩
-
 /-- The [E] heads. -/
 def eHeads : List TreePath :=
   (tokenList t.val).filterMap fun x ↦ if x.2.item.ellipsis then some x.1 else none

@@ -96,6 +96,14 @@ def termAt (p : t.val.Positions) : SyntacticObject := ⟨_, isSyntacticObject_su
 
 @[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject := rfl
 
+variable (t) in
+/-- The term of `t` at a position, with the order of daughters it has in `t`. -/
+def linearizedTermAt (p : t.val.Positions) : LinearizedSyntacticObject :=
+  ⟨_, isSyntacticObject_subtree p⟩
+
+@[simp] theorem toSyntacticObject_linearizedTermAt :
+    (t.linearizedTermAt p).toSyntacticObject = t.termAt p := rfl
+
 /-- A position that is not a leaf has two daughters, since Merge is binary. -/
 theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 2 := by
   have hs := isSyntacticObject_subtree p
