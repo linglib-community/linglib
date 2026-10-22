@@ -9,7 +9,7 @@ public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Atoms
 public import Linglib.Syntax.Command
 public import Linglib.Syntax.Projection
-public import Linglib.Syntax.Minimalist.SyntacticObject.RaisingHead
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
@@ -32,6 +32,8 @@ embedding with a total head function, which extends the raising head.
 * `LinearizedSyntacticObject.maximalProjections`, `LinearizedSyntacticObject.branching`,
   `LinearizedSyntacticObject.above`: the maximal projections and branching positions of a linearized
   object, and the generators above a position, its closeness key.
+* `Minimalist.projectionAt`, `Minimalist.complement`: the maximal projection of a position and the
+  sister of a head.
 
 ## Main statements
 
@@ -49,6 +51,8 @@ embedding with a total head function, which extends the raising head.
   asymmetric c-command.
 * `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
   wherever there is one.
+* `Minimalist.mem_cCommandDomain_iff_complement_le`: a head c-commands exactly the positions below
+  its complement.
 
 ## Implementation notes
 
@@ -56,8 +60,8 @@ embedding with a total head function, which extends the raising head.
   complements: a left leaf that selects nothing is a specifier and the right daughter heads, a left
   leaf that selects is the head, and otherwise the right daughter heads. It decides only where the
   raising head is undefined, at a phrase merged in place beside another phrase, which the labeling
-  algorithm leaves unlabeled until one of the two moves on (`Probe/Label.lean`); labels by shared
-  features arise at landing sites.
+  algorithm leaves unlabeled until one of the two moves on (`Label/MinimalSearch.lean`); labels by
+  shared features arise at landing sites.
 
 ## TODO
 
@@ -414,5 +418,67 @@ theorem above_branching_lt_of_cCommands (hqg : t.val.CCommands q g)
   (above_branching_lt_iff hqg.2.1 hqg.2.2).2 ⟨hqg, hgq⟩
 
 end LinearizedSyntacticObject
+
+/-! ### Maximal projections and complements -/
+
+section Projection
+
+variable (t : LinearizedSyntacticObject)
+
+/-- The maximal projection of the position `p`, the highest position reached from `p` by climbing
+while the position is the head daughter of its mother. -/
+def projectionAt (p : TreePath) : TreePath :=
+  maximalProjectionAt t.headIndexAt p
+
+/-- The complement of the head at `p` is its sister. -/
+def complement (p : TreePath) : TreePath := ⟨p.toList.dropLast ++ [1 - p.toList.getLastD 0]⟩
+
+/-- The mother of a position is covered by its complement. -/
+theorem parent_covBy_complement (p : TreePath) : p.parent ⋖ complement p :=
+  TreePath.covBy_iff.2 ⟨_, rfl⟩
+
+variable {t} in
+/-- In a syntactic object, a head other than the root c-commands exactly the positions below its
+complement. -/
+theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.val.validPaths)
+    (h0 : h ≠ ⊥) (hq : q ∈ t.val.validPaths) :
+    q ∈ t.val.cCommandDomain h ↔ complement h ≤ q := by
+  set hp : t.val.Positions := ⟨h, hh⟩
+  have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
+  have hm : Order.pred hp ⋖ hp :=
+    Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
+  have hmv : (Order.pred hp).val = h.parent := Positions.pred_val hp
+  have hlen := LinearizedSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
+  have hcv : complement h ∈ t.val.validPaths := by
+    refine mem_validPaths_append_singleton_iff.2 ⟨(Order.pred hp).subtree, ?_, ?_⟩
+    · rw [← TreePath.parent_toList, ← hmv]
+      exact (Order.pred hp).subtreeAt_eq
+    · rw [hlen]
+      omega
+  set hc : t.val.Positions := ⟨complement h, hcv⟩
+  have hmc : Order.pred hp ⋖ hc :=
+    Positions.covBy_iff.2 (hmv ▸ parent_covBy_complement h)
+  have hhc : hp ≠ hc := fun he ↦ by
+    have := congrArg (fun r : t.val.Positions ↦ r.val.toList.getLastD 0) he
+    simp only [hp, hc, complement, List.getLastD_concat] at this
+    omega
+  rw [RoseTree.mem_cCommandDomain, cCommands_iff_parent_lt h0
+    (LinearizedSyntacticObject.isBranchingAt_parent (t := t) hp0)]
+  set qp : t.val.Positions := ⟨q, hq⟩
+  constructor
+  · rintro ⟨hlt, hnl⟩
+    obtain ⟨e, hme, heq⟩ := exists_covBy_le_of_lt
+      (show Order.pred hp < qp from Subtype.coe_lt_coe.1 (hmv ▸ hlt))
+    rcases LinearizedSyntacticObject.eq_or_eq_of_covBy hm hmc hhc hme with rfl | rfl
+    · exact absurd heq hnl
+    · exact heq
+  · intro hcq
+    refine ⟨(parent_covBy_complement h).lt.trans_le hcq, fun hhq ↦ hhc (Subtype.ext ?_)⟩
+    exact IsLeftLinear.eq_of_covBy_of_le (Positions.covBy_iff.1 hm) (Positions.covBy_iff.1 hmc)
+      hhq hcq
+
+theorem projectionAt_le (p : TreePath) : projectionAt t p ≤ p := maximalProjectionAt_le _ p
+
+end Projection
 
 end Minimalist

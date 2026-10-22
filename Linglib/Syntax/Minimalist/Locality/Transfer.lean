@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Locality
+public import Linglib.Syntax.Minimalist.Locality.Chain
 
 /-!
 # Transfer and the Phase Impenetrability Condition

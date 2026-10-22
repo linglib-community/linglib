@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Head
+public import Linglib.Syntax.Minimalist.Label.Head
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 
 /-!

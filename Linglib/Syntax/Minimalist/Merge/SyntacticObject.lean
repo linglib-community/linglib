@@ -8,7 +8,7 @@ module
 public import Linglib.Syntax.Minimalist.Merge.Internal
 public import Linglib.Syntax.Minimalist.Workspace.Basic
 public import Linglib.Syntax.Minimalist.SyntacticObject.Replace
-public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+public import Linglib.Syntax.Minimalist.Label.Selection
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Core.Combinatorics.RootedTree.Conservation
 

@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Syntax.Minimalist.LateMerger
-public import Linglib.Syntax.Minimalist.Probe.Label
-public import Linglib.Syntax.Minimalist.Derivation.Freezing
+public import Linglib.Syntax.Minimalist.Label.MinimalSearch
+public import Linglib.Syntax.Minimalist.Locality.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Licensing
 public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
 public import Linglib.Syntax.Case.Basic

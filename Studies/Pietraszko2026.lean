@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
-public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
+public import Linglib.Syntax.Minimalist.Locality.Phase
 
 /-!
 # Pietraszko (2026): In Defense of the Clause-Internal Phase

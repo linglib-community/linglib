@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Agree.Basic
-public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
+public import Linglib.Syntax.Minimalist.Locality.Phase
 
 /-!
 # Zeijlstra (2012): There Is Only One Way to Agree

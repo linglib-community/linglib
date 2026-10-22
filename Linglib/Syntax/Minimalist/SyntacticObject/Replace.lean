@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Data.UnorderedTree.Replace
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
-public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+public import Linglib.Syntax.Minimalist.Label.Selection
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!

@@ -2,7 +2,7 @@ module
 
 public import Studies.Chomsky2013
 public import Linglib.Data.Examples.Chomsky2015
-public import Linglib.Syntax.Minimalist.Domain.Basic
+public import Linglib.Syntax.Minimalist.Locality.Transfer
 
 /-!
 # Chomsky (2015): Problems of projection: Extensions

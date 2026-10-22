@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+public import Linglib.Syntax.Minimalist.Label.Selection
 
 /-!
 # The raising head
@@ -29,8 +29,8 @@ lower copy inside the other, the first has raised out of the second, which proje
 
 ## Implementation notes
 
-* The raising head delimits the phases of `SyntacticObject/Phase.lean` and gives the head daughters
-  of `SyntacticObject/Position.lean`. Labeling by minimal search is `Probe/Label.lean`.
+* The raising head delimits the phases of `Locality/Phase.lean` and gives the head daughters
+  of `SyntacticObject/Position.lean`. Labeling by minimal search is `Label/MinimalSearch.lean`.
 
 ## TODO
 

@@ -3,9 +3,9 @@ module
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
-public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
+public import Linglib.Syntax.Minimalist.Locality.Phase
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Linglib.Syntax.Minimalist.SyntacticObject.Locality
+public import Linglib.Syntax.Minimalist.Locality.Chain
 public import Linglib.Data.Examples.ShenHuang2026
 public import Linglib.Data.Examples.DaviesDubinsky2003
 public import Mathlib.Data.Finset.Card
