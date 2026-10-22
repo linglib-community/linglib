@@ -8,6 +8,7 @@ module
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.Preorder.Chain
 public import Linglib.Core.Order.Monotone.Monovary
 
@@ -95,6 +96,10 @@ theorem isNonCrossing_union_iff :
 instance [DecidableLT ι] [DecidableLE κ] (links : Finset (ι × κ)) :
     Decidable (IsNonCrossing (links : SetRel ι κ)) :=
   inferInstanceAs (Decidable (MonovaryOn _ _ (links : Set (ι × κ))))
+
+instance [Fintype ι] [Fintype κ] [DecidableLT ι] [DecidableLE κ] (R : SetRel ι κ)
+    [DecidablePred (· ∈ R)] : Decidable (IsNonCrossing R) :=
+  decidable_of_iff (∀ a, a ∈ R → ∀ b, b ∈ R → a.1 < b.1 → a.2 ≤ b.2) Iff.rfl
 
 end Preorder
 

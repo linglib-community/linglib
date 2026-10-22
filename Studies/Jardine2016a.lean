@@ -147,16 +147,15 @@ plateau, Hyman and Katamba's rule as given in (7). -/
 
 open Autosegmental in
 /-- The merged output's links are the fused `H` over the surfacing positions. -/
-theorem link_collapse_realize_toAR_map :
-    ((AR.realize TBU.toAR (utp.map w)).collapse true).link true false k j ↔
+theorem link_collapse_prod_map_toAR_map :
+    (((utp.map w).map TBU.toAR).prod.collapse true).Link true false k j ↔
       k = 0 ∧ utp.Surfaces w j := by
-  rw [TBU.link_collapse_realize_toAR, utp.map_getElem?_H_iff]
+  rw [TBU.link_collapse_prod_map_toAR, utp.map_getElem?_H_iff]
 
 /-- `HØØH` fuses to one H linked to all four TBUs. -/
 example : ∀ j < 4,
-    ((Autosegmental.AR.realize TBU.toAR (utp.map [.H, .O, .O, .H])).collapse true).link
-      true false 0 j := by
-  simp only [link_collapse_realize_toAR_map, true_and]
+    (((utp.map [.H, .O, .O, .H]).map TBU.toAR).prod.collapse true).Link true false 0 j := by
+  simp only [link_collapse_prod_map_toAR_map, true_and]
   decide
 
 end Jardine2016a

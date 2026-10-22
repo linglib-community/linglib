@@ -7,7 +7,7 @@ module
 
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.OCP
-public import Linglib.Phonology.Autosegmental.NormalForm
+public import Linglib.Phonology.Autosegmental.Basic
 public import Linglib.Fragments.Laal.Prosody
 
 /-!
@@ -142,8 +142,8 @@ theorem ocp_raised_merge_clean (tier : List TRN) :
 /-! ### The register-tier geometry on the multi-tier substrate (§5–§6)
 
 The geometry of (52) is a hub and spokes around the tonal root node: the `[±upper]` tier,
-the `[±raised]` tier, and the mora tier each associate to it. On the graph foundation this
-is a four-tier graph, on which a subtonal feature is a tier of its own and so can be
+the `[±raised]` tier, and the mora tier each associate to it. On the multi-tier substrate this
+is a four-tier representation, on which a subtonal feature is a tier of its own and so can be
 manipulated apart from the whole node, the paper's partial activity, which the bundled
 `TRN` record cannot express; whole-node operations act on the node-to-mora layer. -/
 
@@ -165,23 +165,11 @@ def laalSpokes (i j : Fin 4) (p q : ℕ) : Prop :=
 instance (i j : Fin 4) (p q : ℕ) : Decidable (laalSpokes i j p q) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The M-toned form on the graph foundation. -/
-def mForm : AR (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
-  AR.ofData laalWords laalSpokes
-
-instance : Fintype mForm.obj.V :=
-  inferInstanceAs (Fintype ((_ : Fin 4) × Fin _))
-
-instance (v w : mForm.obj.V) : Decidable (mForm.obj.edges.Adj v w) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-instance (v w : mForm.obj.V) : Decidable (mForm.obj.arcs.Adj v w) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+/-- The M-toned form on the multi-tier substrate. -/
+def mForm : AR laalTier := AR.fromRel laalWords laalSpokes
 
 /-- The form obeys the NCC, each spoke being a single association. -/
-theorem mForm_noCrossing : NoCrossing mForm.obj.edges mForm.obj.arcs := by
-  unfold NoCrossing
-  decide
+theorem mForm_noCrossing : mForm.NoCrossing := by decide
 
 /-- Delinking a feature acts on one tier-pair layer alone (**partial activity**, §5), here
 `[raised]`↔TRN, the pair `(1, 2)`. -/
@@ -189,26 +177,22 @@ def delink (L : Fin 4 → Fin 4 → ℕ → ℕ → Prop) (i₀ j₀ : Fin 4)
     (i j : Fin 4) (p q : ℕ) : Prop :=
   ¬ (i = i₀ ∧ j = j₀) ∧ L i j p q
 
+instance (L : Fin 4 → Fin 4 → ℕ → ℕ → Prop) [∀ i j p q, Decidable (L i j p q)]
+    (i₀ j₀ i j : Fin 4) (p q : ℕ) : Decidable (delink L i₀ j₀ i j p q) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
 /-- The M form with the subtonal `[−raised]` feature delinked. -/
-def delinkRaised : AR (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
-  AR.ofData laalWords (delink laalSpokes 1 2)
-
-instance : Finite mForm.obj.V := inferInstanceAs (Finite ((_ : Fin 4) × Fin _))
-
-instance : Finite delinkRaised.obj.V := inferInstanceAs (Finite ((_ : Fin 4) × Fin _))
+def delinkRaised : AR laalTier := AR.fromRel laalWords (delink laalSpokes 1 2)
 
 /-- Delinking the subtonal `[−raised]` feature leaves the node-to-mora layer, the tier pair
 `(2, 3)`, untouched, so partial activity is independent of full activity. -/
 theorem partial_indep_of_full (p q : ℕ) :
-    delinkRaised.link 2 3 p q ↔ mForm.link 2 3 p q := by
-  unfold delinkRaised mForm
-  rw [AR.link_ofData, AR.link_ofData]
-  simp [delink, laalSpokes]
+    delinkRaised.Link 2 3 p q ↔ mForm.Link 2 3 p q := by
+  simp [delinkRaised, mForm, delink, laalSpokes]
 
 /-- And it does remove the `[raised]`↔TRN association. -/
-theorem delinkRaised_erases (p q : ℕ) : ¬ delinkRaised.link 1 2 p q := by
-  unfold delinkRaised
-  rw [AR.link_ofData]
+theorem delinkRaised_erases (p q : ℕ) : ¬ delinkRaised.Link 1 2 p q := by
+  rw [delinkRaised, AR.link_fromRel]
   rintro ⟨-, -, -, ⟨hne, -⟩ | ⟨-, h2, -⟩⟩
   · exact hne ⟨rfl, rfl⟩
   · rcases h2 with h2 | h2 | h2 <;> simp_all

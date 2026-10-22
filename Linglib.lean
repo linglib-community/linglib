@@ -679,7 +679,6 @@ import Linglib.Morphology.Root.Consonantal
 import Linglib.Morphology.Word.Agree
 import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Word.Tree
-import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Correspondence
 import Linglib.Phonology.Autosegmental.Factors
 import Linglib.Phonology.Autosegmental.Floating
@@ -687,7 +686,6 @@ import Linglib.Phonology.Autosegmental.Graph
 import Linglib.Phonology.Autosegmental.Hull
 import Linglib.Phonology.Autosegmental.Melody
 import Linglib.Phonology.Autosegmental.NonCrossing
-import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.FeatureGeometry

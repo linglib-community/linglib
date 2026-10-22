@@ -11,7 +11,7 @@ public import Linglib.Phonology.Tone.Basic
 /-!
 # Jardine (2017): The local nature of tone-association patterns
 
-This file formalizes [jardine-2017]'s claim that tone-association patterns are local: each is
+This file formalizes Jardine's claim that tone-association patterns are local: each is
 specified by a finite grammar `¬r₁ ∧ … ∧ ¬rₙ` of forbidden connected subgraphs of
 autosegmental representations, so that well-formedness is checked, and learned, by scanning a
 bounded window. The directional patterns of the paper's typology are the test case: Mende
@@ -50,7 +50,7 @@ abbrev ar (tones : List TRN) (tbus : List TBUKind) (lines : List (ℕ × ℕ)) :
   AR.ofWords tones tbus fun p q => (p, q) ∈ lines
 
 /-- The grammar of forbidden subgraphs `¬r₁ ∧ … ∧ ¬rₙ` of (3a), as the list of factors. -/
-abbrev Grammar := List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V}
+abbrev Grammar := List (AR (TwoTier TRN TBUKind))
 
 /-! ### Mende: multiple association at the right edge -/
 
@@ -76,10 +76,9 @@ abbrev nonfinalLH := ar [L, H] [σ, σ] [(0, 0), (1, 0)]
 
 /-- The Mende grammar (21). -/
 def grammar : Grammar :=
-  [⟨nonfinalH, inferInstance⟩, ⟨nonfinalL, inferInstance⟩, ⟨nonfinalHL, inferInstance⟩,
-    ⟨nonfinalLH, inferInstance⟩]
+  [nonfinalH, nonfinalL, nonfinalHL, nonfinalLH]
 
-theorem free_grammar_iff (X : TieredAR Bool (TwoTier TRN TBUKind)) [Finite X.obj.V] :
+theorem free_grammar_iff (X : AR (TwoTier TRN TBUKind)) :
     X.Free grammar ↔ ¬ nonfinalH.FactorEmbeds X ∧ ¬ nonfinalL.FactorEmbeds X ∧
       ¬ nonfinalHL.FactorEmbeds X ∧ ¬ nonfinalLH.FactorEmbeds X := by
   simp only [grammar, AR.free_cons, AR.free_nil, and_true]
@@ -118,10 +117,9 @@ abbrev noninitialLH := ar [L, H] [σ, σ] [(0, 1), (1, 1)]
 
 /-- The Hausa grammar (22). -/
 def grammar : Grammar :=
-  [⟨noninitialH, inferInstance⟩, ⟨noninitialL, inferInstance⟩,
-    ⟨noninitialHL, inferInstance⟩, ⟨noninitialLH, inferInstance⟩]
+  [noninitialH, noninitialL, noninitialHL, noninitialLH]
 
-theorem free_grammar_iff (X : TieredAR Bool (TwoTier TRN TBUKind)) [Finite X.obj.V] :
+theorem free_grammar_iff (X : AR (TwoTier TRN TBUKind)) :
     X.Free grammar ↔ ¬ noninitialH.FactorEmbeds X ∧ ¬ noninitialL.FactorEmbeds X ∧
       ¬ noninitialHL.FactorEmbeds X ∧ ¬ noninitialLH.FactorEmbeds X := by
   simp only [grammar, AR.free_cons, AR.free_nil, and_true]
