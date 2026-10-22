@@ -19,9 +19,11 @@ vector and the inflectional function's vector (`imputed`), the meaning of *walke
 of *walk* plus a past-tense vector. Either way the realization is total and univalent. The model
 itself posits no stems or exponents; its lexeme and inflectional function are semantic
 primitives, and the realization interface is linglib's comparison device rather than the
-theory's ontology. Over imputed semantics the form table is analogically regular by construction
-(`Morphology.IsAnalogicallyRegular`), which `Studies/HeitmeierChuangBaayen2026` turns into an
-equivalence; over word-specific embeddings it need not be.
+theory's ontology. Imputed meanings are analogically regular (`Morphology.IsAnalogicallyRegular`),
+the shift from *walk* to *walks* being the shift from *jump* to *jumps*, and a production matrix
+carries regular meanings to regular forms, so over imputed semantics the form table is regular,
+which `Studies/HeitmeierChuangBaayen2026` turns into an equivalence; over word-specific
+embeddings it need not be.
 
 ## Main definitions
 
@@ -31,8 +33,8 @@ equivalence; over word-specific embeddings it need not be.
 ## Main results
 
 * `realization_isTotal`, `realization_isUnivalent`: the realization is total and univalent.
-* `isAnalogicallyRegular_paradigm_imputed`: over imputed semantics the table is analogically
-  regular.
+* `isAnalogicallyRegular_imputed`: imputed meanings are analogically regular.
+* `isAnalogicallyRegular_paradigm`: a production matrix preserves analogical regularity.
 
 ## References
 
@@ -67,13 +69,16 @@ theorem realization_isTotal : (realization G s).IsTotal := fun _ _ ↦ Finset.si
 theorem realization_isUnivalent : (realization G s).IsUnivalent := fun _ _ ↦
   (Finset.card_singleton _).le
 
-/-- Over imputed semantics the form table is analogically regular, since the form shift of a
-cell is lexeme-independent. -/
-theorem isAnalogicallyRegular_paradigm_imputed (σ : L → MeaningVector d)
-    (ε : Cell → MeaningVector d) : IsAnalogicallyRegular (paradigm G (imputed σ ε)) := by
-  have : paradigm G (imputed σ ε) = fun l c ↦ G.vecMulLinear.toAddMonoidHom (σ l + ε c) :=
-    funext fun l ↦ funext fun c ↦ by simp [add_vecMul]
-  rw [this]
-  exact (isAnalogicallyRegular_add σ ε).map _
+/-- Imputed meanings are analogically regular: the shift between two cells is the difference of
+their vectors for every lexeme (eqs. 1.10–1.12). -/
+theorem isAnalogicallyRegular_imputed {V : Type*} [AddCommGroup V] (σ : L → V) (ε : Cell → V) :
+    IsAnalogicallyRegular (imputed σ ε) := by
+  rw [show imputed σ ε = _ from funext₂ (imputed_apply σ ε)]
+  exact isAnalogicallyRegular_add σ ε
+
+/-- A production matrix carries analogically regular meanings to analogically regular forms. -/
+theorem isAnalogicallyRegular_paradigm {s : L → Cell → MeaningVector d}
+    (h : IsAnalogicallyRegular s) : IsAnalogicallyRegular (paradigm G s) :=
+  h.map G.vecMulLinear
 
 end DiscriminativeLexicon

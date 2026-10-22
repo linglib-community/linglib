@@ -41,8 +41,8 @@ conditional entropy is zero.
   entropy, and vocabular clarity is zero average conditional entropy, under the uniform measure.
 * `ParadigmSystem.avgCondEntropy_le_measureEntropy`: the average conditional entropy is at most
   the declension entropy.
-* `ParadigmSystem.isVocabularClear_of_isAnalogical`: classes related by proportional analogy
-  (`Morphology.IsAnalogical`) are vocabularly clear.
+* `ParadigmSystem.isVocabularClear_iff_isAnalogical`: vocabular clarity is analogy under
+  arbitrary operations (`Morphology.IsAnalogical`).
 
 ## References
 
@@ -240,21 +240,10 @@ theorem isVocabularClear_iff_avgCondEntropy_eq_zero [Nonempty D] [Nonempty Form]
 
 end Entropy
 
-/-- A system whose classes are the paradigms of a family related by proportional analogy under
-any operations is vocabularly clear: a cell's form fixes the lexeme's whole paradigm
-([blevins-2016]'s analogy as implicative structure). -/
-theorem isVocabularClear_of_isAnalogical {L : Type*} {ops : Set (Form → Form)}
-    {p : L → Fin n → Form} (h : IsAnalogical ops p) (hM : ∀ d, ∃ l, M d = p l) :
-    M.IsVocabularClear := by
-  intro c j
-  rw [predicts_iff]
-  intro d d' hag
-  obtain ⟨l, hl⟩ := hM d
-  obtain ⟨l', hl'⟩ := hM d'
-  obtain ⟨g, -, hg⟩ := h c j
-  have hc := hag c (Finset.mem_singleton_self c)
-  rw [hl, hl'] at hc ⊢
-  rw [hg l, hg l', hc]
+/-- A system is vocabularly clear iff its classes are analogical under arbitrary operations, so
+analogy under any class of operations makes it vocabularly clear. -/
+theorem isVocabularClear_iff_isAnalogical : M.IsVocabularClear ↔ IsAnalogical Set.univ M := by
+  simp [IsVocabularClear, IsPrincipalPartSet, predicts_singleton_iff, isAnalogical_univ_iff]
 
 end ParadigmSystem
 
