@@ -49,6 +49,9 @@ every interacting goal satisfies the probe; and Multiple Agree is the case of an
   probe it denotes.
 * `Minimalist.Probe.Spec.dynamicUpdate_subset_Ici`: dynamic interaction narrows the interaction
   condition to the features a dynamic feature dominates.
+* `Minimalist.Probe.Spec.foldl_dynamicUpdate`, `Minimalist.Probe.Spec.mem_agree_interacted_iff`:
+  the interaction condition a goal meets is the one the last goal before it bearing a dynamic
+  feature sets, so the goals Agree flags are fixed by their position in the search.
 
 ## Implementation notes
 
@@ -345,6 +348,100 @@ theorem agree_empty (goals : List α) :
     rw [Dynamic.agree_cons, Probe.agree_cons]
     dsimp only [toProbe, intFeatures, satFeatures] at ih ⊢
     split_ifs <;> dsimp only <;> rw [ih]
+
+/-- A goal bearing a feature marked for dynamic interaction resets the interaction condition,
+whatever it was. -/
+theorem dynamicUpdate_eq_of_nonempty {a : α} (h : (feats a ∩ dyn).Nonempty) (int int' : Finset F) :
+    dynamicUpdate feats dyn a int = dynamicUpdate feats dyn a int' := by
+  simp [dynamicUpdate, h]
+
+theorem dynamicUpdate_eq_self {a : α} (h : ¬ (feats a ∩ dyn).Nonempty) (int : Finset F) :
+    dynamicUpdate feats dyn a int = int := by
+  simp [dynamicUpdate, h]
+
+/-- After a sequence of goals the interaction condition is the one the last goal bearing a dynamic
+feature sets, and the initial condition if no goal bears one. -/
+theorem foldl_dynamicUpdate (int : Finset F) (l : List α) :
+    l.foldl (fun i a ↦ dynamicUpdate feats dyn a i) int =
+      ((l.filter fun a ↦ (feats a ∩ dyn).Nonempty).getLast?).elim int
+        fun b ↦ dynamicUpdate feats dyn b int := by
+  induction l using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton l a ih =>
+    rw [List.foldl_append, List.foldl_cons, List.foldl_nil, ih, List.filter_append]
+    by_cases h : (feats a ∩ dyn).Nonempty
+    · rw [dynamicUpdate_eq_of_nonempty feats dyn h _ int]
+      simp [h]
+    · simp [h, dynamicUpdate_eq_self feats dyn h]
+
+private theorem mem_interacted_iff {a : α} (st : State F) (goals : List α) :
+    a ∈ (Dynamic.agree (fun st ↦ ({ sp with int := st.int } : Spec F).toProbe feats)
+      (fun a st ↦ ⟨st.copied ∪ (feats a ∩ st.int), st.int⟩)
+      (fun a st ↦ ⟨st.copied, dynamicUpdate feats dyn a st.int⟩) st goals).interacted ↔
+    ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ (∀ b ∈ l₁, ¬ (sp.toProbe feats).sat b) ∧
+      (feats a ∩ l₁.foldl (fun i b ↦ dynamicUpdate feats dyn b i) st.int).Nonempty := by
+  induction goals generalizing st with
+  | nil => simp
+  | cons x xs ih =>
+    rw [Dynamic.agree_cons]
+    have hint : (({ sp with int := st.int } : Spec F).toProbe feats).int x =
+        decide (feats x ∩ st.int).Nonempty := rfl
+    by_cases hs : (sp.toProbe feats).sat x
+    · rw [ite_eq_left (show (({ sp with int := st.int } : Spec F).toProbe feats).sat x from hs)]
+      dsimp only
+      constructor
+      · intro ha
+        rw [hint] at ha
+        split_ifs at ha with hx
+        · obtain rfl := List.mem_singleton.1 ha
+          exact ⟨[], xs, rfl, by simp, by simpa using hx⟩
+        · simp at ha
+      · rintro ⟨_ | ⟨y, l₁⟩, l₂, he, hl₁, ha⟩
+        · obtain ⟨rfl, rfl⟩ := List.cons.inj he
+          rw [hint, ite_eq_left (by simpa using ha)]
+          exact List.mem_singleton_self _
+        · obtain ⟨rfl, -⟩ := List.cons.inj he
+          exact absurd hs (hl₁ _ (List.mem_cons_self ..))
+    · rw [ite_eq_right (show ¬ (({ sp with int := st.int } : Spec F).toProbe feats).sat x from hs)]
+      dsimp only
+      rw [List.mem_append, ih]
+      have hupd : ∀ st' : State F, st'.int = st.int →
+          (dynamicUpdate feats dyn x st'.int) = dynamicUpdate feats dyn x st.int :=
+        fun _ h ↦ h ▸ rfl
+      constructor
+      · rintro (ha | ⟨l₁, l₂, rfl, hl₁, ha⟩)
+        · rw [hint] at ha
+          split_ifs at ha with hx
+          · obtain rfl := List.mem_singleton.1 ha
+            exact ⟨[], xs, rfl, by simp, by simpa using hx⟩
+          · simp at ha
+        · refine ⟨x :: l₁, l₂, rfl, ?_, ?_⟩
+          · rintro b (_ | ⟨_, hb⟩)
+            · exact hs
+            · exact hl₁ b hb
+          · rw [List.foldl_cons]
+            convert ha using 3
+            split_ifs <;> rfl
+      · rintro ⟨_ | ⟨y, l₁⟩, l₂, he, hl₁, ha⟩
+        · obtain ⟨rfl, rfl⟩ := List.cons.inj he
+          left
+          rw [hint, ite_eq_left (by simpa using ha)]
+          exact List.mem_singleton_self _
+        · obtain ⟨rfl, rfl⟩ := List.cons.inj he
+          right
+          refine ⟨l₁, l₂, rfl, fun b hb ↦ hl₁ b (List.mem_cons_of_mem _ hb), ?_⟩
+          rw [List.foldl_cons] at ha
+          convert ha using 3
+          split_ifs <;> rfl
+
+/-- Agree with dynamic interaction flags a goal iff no goal before it satisfies the probe and it
+bears a feature of the interaction condition the goals before it leave, which
+`foldl_dynamicUpdate` reads off the last of them bearing a dynamic feature. -/
+theorem mem_agree_interacted_iff {a : α} (goals : List α) :
+    a ∈ (sp.agree feats dyn goals).interacted ↔
+      ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ (∀ b ∈ l₁, ¬ (sp.toProbe feats).sat b) ∧
+        (feats a ∩ l₁.foldl (fun i b ↦ dynamicUpdate feats dyn b i) sp.int).Nonempty :=
+  mem_interacted_iff sp feats dyn ⟨∅, sp.int⟩ goals
 
 end Dynamic
 
