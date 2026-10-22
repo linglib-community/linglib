@@ -97,13 +97,16 @@ def termAt (p : t.val.Positions) : SyntacticObject := ⟨_, isSyntacticObject_su
 @[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject := rfl
 
 /-- A position that is not a leaf has two daughters, since Merge is binary. -/
+theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 2 := by
+  have hs := isSyntacticObject_subtree p
+  rw [Positions.isMax_iff] at hp
+  rcases hsub : p.subtree with ⟨v, cs⟩
+  rw [hsub] at hp hs
+  exact (SyntacticObject.length_eq_zero_or_two hs).resolve_left (by simpa using hp)
+
+/-- A position that is not a leaf branches. -/
 theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
-  have h2 : p.subtree.children.length = 2 := by
-    have hs := isSyntacticObject_subtree p
-    rw [Positions.isMax_iff] at hp
-    rcases hsub : p.subtree with ⟨v, cs⟩
-    rw [hsub] at hp hs
-    exact (SyntacticObject.length_eq_zero_or_two hs).resolve_left (by simpa using hp)
+  have h2 := length_children_subtree hp
   have hv : ∀ i < 2, (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.val.validPaths := fun i hi ↦
     mem_validPaths_append_singleton_iff.2 ⟨_, p.subtreeAt_eq, h2 ▸ hi⟩
   refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨0, rfl⟩),
@@ -168,11 +171,8 @@ theorem exists_cCommands_termAt_of_cCommands (h : t.toSyntacticObject.CCommands 
   have hm : m.val = c.val.parent := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hmc]
   refine ⟨c, q, (cCommands_iff_parent_lt (fun h ↦ hc (Subtype.ext h)) (isBranchingAt_parent hc)).2
     ⟨hm ▸ Subtype.coe_lt_coe.2 (hmd.lt.trans_le hdq), fun hcq ↦ hne ?_⟩, rfl, rfl⟩
-  have hcd : c = d := by
-    rcases IsLeftLinear.comparable_of_le_common hcq (Subtype.coe_le_coe.2 hdq) with h | h
-    · exact (hmd.eq_or_eq hmc.le (Subtype.coe_le_coe.1 h)).resolve_left hmc.ne'
-    · exact ((hmc.eq_or_eq hmd.le (Subtype.coe_le_coe.1 h)).resolve_left hmd.ne').symm
-  rw [hcd]
+  rw [Subtype.ext (IsLeftLinear.eq_of_covBy_of_le (Positions.covBy_iff.1 hmc)
+    (Positions.covBy_iff.1 hmd) hcq (Subtype.coe_le_coe.2 hdq))]
 
 /-- C-command between occurrences is c-command between their terms when the commander's term
 differs from those of its sisters, [collins-stabler-2016]'s Theorem 3; their Merge applies only to
@@ -210,6 +210,96 @@ theorem eq_termAt_pred_of_immediatelyContains (hu : ∀ q, t.termAt q = t.termAt
   obtain rfl := hu c hca
   rw [Order.pred_eq_of_covBy hmc]
 
+/-! ### Daughters -/
+
+variable {c d e q q' : t.val.Positions}
+
+/-- A position has at most two daughters. -/
+theorem eq_or_eq_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (he : a ⋖ e) : e = c ∨ e = d := by
+  have hlen := length_children_subtree (not_isMax_of_lt hc.lt)
+  have hlt : ∀ (r : t.val.Positions) (m : ℕ), r.val.toList = a.val.toList ++ [m] → m < 2 := by
+    intro r m hm
+    have hr := r.2
+    rw [show r.val = ⟨a.val.toList ++ [m]⟩ from TreePath.ext hm] at hr
+    obtain ⟨s, hs, hms⟩ := mem_validPaths_append_singleton_iff.1 hr
+    rw [a.subtreeAt_eq, Option.some.injEq] at hs
+    exact hlen ▸ hs ▸ hms
+  obtain ⟨i, hi⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hc)
+  obtain ⟨j, hj⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hd)
+  obtain ⟨k, hk⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 he)
+  have := hlt c i hi
+  have := hlt d j hj
+  have := hlt e k hk
+  have hij : i ≠ j := fun h ↦ hcd (Subtype.ext (TreePath.ext (by rw [hi, hj, h])))
+  rcases (by omega : k = i ∨ k = j) with rfl | rfl
+  · exact .inl (Subtype.ext (TreePath.ext (hk.trans hi.symm)))
+  · exact .inr (Subtype.ext (TreePath.ext (hk.trans hj.symm)))
+
+/-- The terms the term at a position immediately contains are those of its two daughters. -/
+theorem immediatelyContains_termAt_iff_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) :
+    ImmediatelyContains (t.termAt a) x ↔ x = t.termAt c ∨ x = t.termAt d := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h.elim (· ▸ immediatelyContains_termAt.2 ⟨c, hc, rfl⟩)
+    (· ▸ immediatelyContains_termAt.2 ⟨d, hd, rfl⟩)⟩
+  obtain ⟨e, he, rfl⟩ := immediatelyContains_termAt.1 h
+  exact (eq_or_eq_of_covBy hc hd hcd he).imp (congrArg _) (congrArg _)
+
+/-- A daughter c-commands the positions below its mother outside itself. -/
+theorem cCommands_of_covBy (hc : a ⋖ c) (hq : a < q) (hcq : ¬ c ≤ q) : t.val.CCommands c q := by
+  have hpar : c.val.parent = a.val := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hc]
+  exact (cCommands_iff_of_covBy (Positions.covBy_iff.1 hc)
+    (hpar ▸ isBranchingAt_parent (ne_bot_of_gt hc.lt))).2 ⟨hq, hcq⟩
+
+/-- A position strictly below one daughter c-commands no position below another. -/
+theorem not_cCommands_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (hcq : c < q)
+    (hdq' : d ≤ q') : ¬ t.val.CCommands q q' := by
+  intro h
+  have hq0 : q ≠ ⊥ := ne_bot_of_gt hcq
+  rw [cCommands_iff_parent_lt (fun h0 ↦ hq0 (Subtype.ext h0)) (isBranchingAt_parent hq0)] at h
+  have hcq' : c.val ≤ q'.val := (Subtype.coe_le_coe.2 (Order.le_pred_of_lt hcq)).trans
+    ((Positions.pred_val q).symm ▸ h.1.le)
+  exact hcd (Subtype.ext (IsLeftLinear.eq_of_covBy_of_le (Positions.covBy_iff.1 hc)
+    (Positions.covBy_iff.1 hd) hcq' (Subtype.coe_le_coe.2 hdq')))
+
+/-- The daughters of a position whose term is `merge x y` carry `x` and `y`. -/
+theorem termAt_eq_or_eq_of_covBy {y : SyntacticObject} (hn : t.termAt a = SyntacticObject.merge x y)
+    (he : a ⋖ e) : t.termAt e = x ∨ t.termAt e = y :=
+  (immediatelyContains_merge _ _ _).1 (hn ▸ immediatelyContains_termAt.2 ⟨e, he, rfl⟩)
+
+theorem exists_covBy_termAt_eq_left {y : SyntacticObject}
+    (hn : t.termAt a = SyntacticObject.merge x y) :
+    ∃ c, a ⋖ c ∧ t.termAt c = x :=
+  immediatelyContains_termAt.1 (hn ▸ (immediatelyContains_merge _ _ _).2 (.inl rfl))
+
+theorem exists_covBy_termAt_eq_right {y : SyntacticObject}
+    (hn : t.termAt a = SyntacticObject.merge x y) :
+    ∃ d, a ⋖ d ∧ t.termAt d = y :=
+  immediatelyContains_termAt.1 (hn ▸ (immediatelyContains_merge _ _ _).2 (.inr rfl))
+
+/-! ### Heads -/
+
+variable (t) in
+/-- The term at a position is a lexical item, a head. -/
+def IsHeadAt (q : t.val.Positions) : Prop := (t.termAt q).token?.isSome
+
+instance : DecidablePred t.IsHeadAt := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
+theorem isHeadAt_iff : t.IsHeadAt q ↔ ∃ tok : LexicalItem.Token, t.termAt q = ↑tok := by
+  unfold IsHeadAt
+  rw [Option.isSome_iff_exists]
+  exact exists_congr fun _ ↦ token?_eq_some_iff
+
+/-- A head occupies a leaf position. -/
+theorem IsHeadAt.isMax (h : t.IsHeadAt q) : IsMax q := by
+  obtain ⟨tok, htok⟩ := isHeadAt_iff.1 h
+  refine fun r hqr ↦ hqr.lt_or_eq.elim (fun hlt ↦ ?_) (·.ge)
+  obtain ⟨e, he, -⟩ := exists_covBy_le_of_lt hlt
+  exact (immediatelyContains_leaf tok _ (htok ▸ immediatelyContains_termAt.2 ⟨e, he, rfl⟩)).elim
+
+/-- A head below a position that is not a leaf lies below one of its daughters. -/
+theorem IsHeadAt.exists_covBy_le (h : t.IsHeadAt q) (ha : ¬ IsMax a) (haq : a ≤ q) :
+    ∃ e, a ⋖ e ∧ e ≤ q :=
+  exists_covBy_le_of_lt (lt_of_le_of_ne haq fun he ↦ ha (he ▸ h.isMax))
+
 end LinearizedSyntacticObject
 
 /-! ### Head daughters -/
@@ -217,7 +307,7 @@ end LinearizedSyntacticObject
 /-- The raising head of a planar tree, that of its unordered image. -/
 def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
   (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.sel), 0⟩ : RaisingState)) raisingTraceState
-    (UnorderedTree.mk s)).label.label
+    (UnorderedTree.mk s)).state.head
 
 theorem treeRaisingHead_subtree {t : LinearizedSyntacticObject} (p : t.val.Positions) :
     treeRaisingHead p.subtree = (t.termAt p).raisingHead := rfl

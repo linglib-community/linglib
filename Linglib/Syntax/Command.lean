@@ -399,6 +399,13 @@ theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : TreePath} (ha : a ≠ �
     fun ⟨hpb, hab⟩ ↦ ⟨hpb.le, hab, fun hba ↦ hab ?_⟩⟩
   exact ((hcov.eq_or_eq hpb.le hba).resolve_left hpb.ne').ge
 
+/-- A daughter of a branching position c-commands exactly the positions properly below its mother
+and not below itself. -/
+theorem cCommands_iff_of_covBy {t : RoseTree β} {m c q : TreePath} (hc : m ⋖ c)
+    (hm : IsBranchingAt t m) : CCommands t c q ↔ m < q ∧ ¬ c ≤ q := by
+  have hpar : c.parent = m := by rw [← TreePath.pred_eq_parent, Order.pred_eq_of_covBy hc]
+  rw [cCommands_iff_parent_lt (ne_bot_of_gt hc.lt) (hpar ▸ hm), hpar]
+
 /-- Between positions neither of which dominates the other, strict closeness under the branching
 positions is asymmetric c-command. -/
 theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : TreePath}

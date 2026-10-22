@@ -1,0 +1,110 @@
+[
+  {
+    "id": "chomsky2015_ex1",
+    "source": {"bibkey": "chomsky-2015", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "Which dog do you wonder John likes?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The wh-phrase raised out of its criterial position, the specifier of the interrogative C.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["structure", "criterialRaised"]
+    ],
+    "comment": "Printed as *[β which dog do you wonder [α t [γ CQ John likes t']]]; the halting problem.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chomsky2015_ex2",
+    "source": {"bibkey": "chomsky-2015", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "Tom read a book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The subject raised from the specifier of v*P to the specifier of T.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["structure", "subject"]
+    ],
+    "comment": "Printed as [δ C [α Tom T [β t v* ...]]].",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chomsky2015_ex2prime",
+    "source": {"bibkey": "chomsky-2015", "paperLabel": "(2′)"},
+    "language": "stan1293",
+    "primaryText": "Who do you think that read the book?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The subject moved on from the specifier of T to the matrix clause, with the complementizer present.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["structure", "subjectExtracted"]
+    ],
+    "comment": "Printed as [γ who do you v* [ε think [δ C [α t T β]]]]; ECP is observed for English but not for Italian.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chomsky2015_ex3",
+    "source": {"bibkey": "chomsky-2015", "paperLabel": "(3)"},
+    "language": "stan1293",
+    "primaryText": "They expected John to win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Raising to object: the embedded subject raised to the specifier of the root expect.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["structure", "objectRaised"]
+    ],
+    "comment": "Printed as [δ v* [α John R [β t ...]]].",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chomsky2015_ex3prime",
+    "source": {"bibkey": "chomsky-2015", "paperLabel": "(3′)"},
+    "language": "stan1293",
+    "primaryText": "Who do you expect to win?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The raised object extracted further to the matrix clause.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["structure", "objectExtracted"]
+    ],
+    "comment": "Printed as [γ who do you [δ v* [α t R β]]]; ECP is universally violated here.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chomsky2015_ex4",
+    "source": {"bibkey": "chomsky-2015", "paperLabel": "(4)"},
+    "language": "stan1293",
+    "primaryText": "Who do you think read the book?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The subject extracted with the complementizer deleted.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["structure", "subjectExtractedNoC"]
+    ],
+    "comment": "Printed as [γ who do you v* think Ø [α t T β]]; the that-trace filter, stated backwards.",
+    "verified": "text-layer"
+  }
+]

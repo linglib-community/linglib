@@ -153,14 +153,10 @@ theorem dHead_visible :
 
 /-! ### Attract Closest -/
 
-/-- The [EPP:D] probe of T⁰ and Appl⁰ on the positions of `t`, satisfied by D leaves. -/
-def dProbe (t : LinearizedSyntacticObject) : Probe t.val.Positions :=
-  .relativized fun q ↦ decide (isLeafOf .D (t.termAt q))
-
 /-- The goals an [EPP:D] probe on the head `h` of `t` can attract: the D leaves at the positions
 `h` c-commands that no other such leaf asymmetrically c-commands. -/
 def dGoals (t : LinearizedSyntacticObject) (h : SyntacticObject) : Finset SyntacticObject :=
-  t.goals (dProbe t) h
+  t.goals (t.leafProbe .D) h
 
 /-- The possessor of a non-specific S_O is T⁰'s closest D-goal: it raises to Spec,TP and can
 strand the possessum. -/

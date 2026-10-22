@@ -20,6 +20,8 @@ probe slot, only adding information.
 ## Main definitions
 
 * `Minimalist.LinearizedSyntacticObject.goals`: the terms a probe on a head finds.
+* `Minimalist.LinearizedSyntacticObject.leafProbe`, `phraseProbe`: the probes satisfied by the
+  leaves of a category, and by the phrases its heads form.
 * `Minimalist.SyntacticObject.behindHorizonIn`: a target c-commanded by a horizon-category leaf
   in the probe's domain.
 * `Minimalist.FeatureBundle.valueAt`, `Minimalist.FeatureBundle.applyAgree`: valuation of an
@@ -81,6 +83,19 @@ theorem mem_goals {h x : SyntacticObject} : x ∈ t.goals p h ↔
   simp only [goals, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨fun ⟨g, ⟨a, ha, hg⟩, hx⟩ ↦ ⟨a, ha, g, hg, hx⟩,
     fun ⟨a, ha, g, hg, hx⟩ ↦ ⟨g, ⟨a, ha, hg⟩, hx⟩⟩
+
+variable (t) in
+/-- The probe satisfied by the leaves of category `c`. -/
+def leafProbe (c : Cat) : Probe t.val.Positions :=
+  .relativized fun q ↦ decide (SyntacticObject.isLeafOf c (t.termAt q))
+
+variable (t) in
+/-- The probe satisfied by the phrases a head of category `c` forms with its sister, so that a
+phrase in a specifier is closer than whatever its sister contains. -/
+def phraseProbe (c : Cat) : Probe t.val.Positions :=
+  .relativized fun q ↦
+    decide (∃ e : t.val.Positions, e ≠ ⊥ ∧ e.val.parent = q.val ∧
+      SyntacticObject.isLeafOf c (t.termAt e))
 
 end LinearizedSyntacticObject
 
