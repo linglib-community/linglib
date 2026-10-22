@@ -21,11 +21,10 @@ but it follows the verb, never enters a cluster and bears word stress.
 
 * `Italian.Pronouns.pronouns` — the tonic series
 * `Italian.Pronouns.atonic` — the atonic object pronouns by person, number, gender and case
-* `Italian.Pronouns.accusative`, `Italian.Pronouns.dative`, `Italian.Pronouns.reflexive` — the
-  atonic series
-* `Italian.Pronouns.atonic_acc_eq_atonic_dat_iff`,
-  `Italian.Pronouns.paradigm_dative_eq_paradigm_reflexive_iff` — the atonic series are syncretic
-  exactly outside the third person
+* `Italian.Pronouns.accusative`, `Italian.Pronouns.dative`, `Italian.Pronouns.reflexiveForms`,
+  `Italian.Pronouns.reflexive` — the atonic series
+* `Italian.Pronouns.atonic_acc_eq_atonic_dat_iff`, `Italian.Pronouns.atonic_eq_reflexiveForms_iff` —
+  the atonic series differ in the third person alone
 * `Italian.Pronouns.strength_eq_weak_iff` — dative *loro* is the one atonic form that is not a
   clitic
 
@@ -177,7 +176,7 @@ def atonic : Row × Case → Finset String
 
 /-- The clitic `f` filling the cells `s`. -/
 def cliticOf (s : Finset (Row × Case)) (f : String) : PersonalPronoun :=
-  { PersonalPronoun.ofCells (·.1.person) (some ·.1.number) (·.1.gender) (·.2.label) s f with
+  { PersonalPronoun.ofCells (·.1.person) (some ·.1.number) (·.1.gender) (some ·.2.label) s f with
     strength := some .clitic }
 
 /-- The clitic `f`, filling every cell the table gives it. -/
@@ -237,28 +236,37 @@ theorem forms_accusative_dative :
 
 /-! ### The reflexive series -/
 
+/-- The reflexive forms of each row: the first and second person forms "also function as reflexive
+pronouns", and the third person has *si* (Tables 6.A and 6.B, p. 96). -/
+def reflexiveForms : Row → Finset String
+  | .sg1 => {"mi"}
+  | .sg2 => {"ti"}
+  | .pl1 => {"ci"}
+  | .pl2 => {"vi"}
+  | _ => {"si"}
+
+/-- The reflexive clitic `f`, with the rows it fills. -/
+def reflexiveOf (f : String) : ReflexivePronoun :=
+  ⟨{ Pronoun.ofTable Row.person (some ·.number) Row.gender (fun _ ↦ none) reflexiveForms f with
+      strength := some .clitic }⟩
+
 /-- *mi*, first person singular reflexive. -/
-def mi_refl : ReflexivePronoun :=
-  { form := "mi", person := some .first, number := some .singular, strength := some .clitic }
+def mi_refl : ReflexivePronoun := reflexiveOf "mi"
 
 /-- *ti*, second person singular reflexive. -/
-def ti_refl : ReflexivePronoun :=
-  { form := "ti", person := some .second, number := some .singular, strength := some .clitic }
+def ti_refl : ReflexivePronoun := reflexiveOf "ti"
 
-/-- *si*, third person reflexive, number-neutral. -/
-def si : ReflexivePronoun :=
-  { form := "si", person := some .third, number := some .general, strength := some .clitic }
+/-- *si*, third person reflexive of either number. -/
+def si : ReflexivePronoun := reflexiveOf "si"
 
 /-- *ci*, first person plural reflexive. -/
-def ci_refl : ReflexivePronoun :=
-  { form := "ci", person := some .first, number := some .plural, strength := some .clitic }
+def ci_refl : ReflexivePronoun := reflexiveOf "ci"
 
 /-- *vi*, second person plural reflexive. -/
-def vi_refl : ReflexivePronoun :=
-  { form := "vi", person := some .second, number := some .plural, strength := some .clitic }
+def vi_refl : ReflexivePronoun := reflexiveOf "vi"
 
 /-- The reflexive series. -/
-def reflexive : Finset ReflexivePronoun := {mi_refl, ti_refl, si, ci_refl, vi_refl}
+def reflexive : Finset ReflexivePronoun := (Finset.univ.biUnion reflexiveForms).image reflexiveOf
 
 /-! ### Syncretism and strength -/
 
@@ -268,11 +276,11 @@ theorem atonic_acc_eq_atonic_dat_iff (r : Row) :
     atonic (r, .acc) = atonic (r, .dat) ↔ r.person ≠ .third := by
   cases r <;> decide
 
-/-- The dative and the reflexive have the same forms exactly outside the third person. -/
-theorem paradigm_dative_eq_paradigm_reflexive_iff (c : Person.Category) :
-    PersonalPronoun.paradigm dative c = ReflexivePronoun.paradigm reflexive c ↔
-      c.person ≠ .third := by
-  cases c <;> decide +kernel
+/-- The atonic forms of a row are its reflexive exactly outside the third person, where the
+reflexive *si* "does not distinguish case, gender or number" (p. 96). -/
+theorem atonic_eq_reflexiveForms_iff (r : Row) (k : Case) :
+    atonic (r, k) = reflexiveForms r ↔ r.person ≠ .third := by
+  cases r <;> cases k <;> decide
 
 /-- Dative *loro* is the one atonic object form that is weak rather than a clitic. -/
 theorem strength_eq_weak_iff {p : PersonalPronoun} (hp : p ∈ accusative ∪ dative) :
