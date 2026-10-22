@@ -45,9 +45,10 @@ rational, and the beliefs of the ranking function, the propositions true at ever
 
 ## Implementation notes
 
-* Ranks, conditional ranks and parts are defined for any function `W → ℕ`, since none of their
-  laws needs a world of rank `0` and the revision of Darwiche and Pearl relaxes normalisation.
-  The results that need such a world, and conditionalization, take a `RankingFunction`.
+* Ranks, conditional ranks, parts and the consequence relation are defined for any function
+  `W → ℕ`, since none of their laws needs a world of rank `0` and the revision of Darwiche and
+  Pearl relaxes normalisation. The results that need such a world, and conditionalization, take a
+  `RankingFunction`.
 
 ## Notation
 
@@ -213,7 +214,7 @@ theorem condRank_eq_condRank_add_sub (hA : rank κ A ≠ ⊤) :
     κ[B | A] = κ[A | B] + rank κ B - rank κ A := by
   rw [condRank_add_rank, Set.inter_comm, condRank_of_ne_top _ hA]
 
-/-! ### Conditionalization -/
+/-! ### Parts of a ranking -/
 
 /-- The A-part `κ(w | A) = κ(w) − κ(A)` of a ranking is the ranking within `A`, shifted so that
 its best world has rank `0`. -/
@@ -229,6 +230,66 @@ theorem condRank_singleton (hw : w ∈ A) : κ[{w} | A] = aPart κ A w := by
 theorem exists_aPart_eq_zero (hA : A.Nonempty) : ∃ w ∈ A, aPart κ A w = 0 := by
   obtain ⟨w, hw, e⟩ := exists_apply_eq_rank κ hA
   exact ⟨w, hw, by simp [aPart, ← e]⟩
+
+/-! ### The induced consequence relation -/
+
+/-- `B` follows from `A` in `κ` when the `A`-worlds of least rank are `B`-worlds. This is the
+consequence relation of the ranked model `Preorder.lift κ`, under which `w` is at least as normal
+as `v` when its rank is at most that of `v`. -/
+def Entails (A B : Set W) : Prop := Nonmonotonic.Entails (Preorder.lift κ) A B
+
+theorem entails_iff_forall_least :
+    Entails κ A B ↔ ∀ w ∈ A, (∀ v ∈ A, κ w ≤ κ v) → w ∈ B :=
+  ⟨fun h _ hw hmin ↦ h ((Preorder.mem_minimals_lift κ).2 ⟨hw, hmin⟩),
+    fun h w hw ↦ have := (Preorder.mem_minimals_lift κ).1 hw; h w this.1 this.2⟩
+
+/-- `B` follows from `A` exactly when every `A`-world outside `B` is outranked by an `A`-world
+in `B`. -/
+theorem entails_iff_forall_exists_lt :
+    Entails κ A B ↔ ∀ x ∈ A, x ∉ B → ∃ y ∈ A, y ∈ B ∧ κ y < κ x :=
+  Nonmonotonic.entails_iff_forall_exists_lt (Preorder.wellFounded_lt_lift κ)
+
+/-- `B` follows from `A` exactly when `A` is impossible or `A ∩ B` is less disbelieved than
+`A \ B`. -/
+theorem entails_iff_rank :
+    Entails κ A B ↔ rank κ A = ⊤ ∨ rank κ (A ∩ B) < rank κ (A \ B) := by
+  rw [entails_iff_forall_exists_lt]
+  constructor
+  · intro h
+    rcases A.eq_empty_or_nonempty with rfl | hA
+    · exact Or.inl (rank_empty κ)
+    rcases (A \ B).eq_empty_or_nonempty with he | hne
+    · have hAB : A ∩ B = A := Set.inter_eq_left.2 (Set.sdiff_eq_empty.1 he)
+      exact Or.inr (by rw [he, hAB, rank_empty]; exact (rank_ne_top κ hA).lt_top)
+    · obtain ⟨x, hx, e⟩ := exists_apply_eq_rank κ hne
+      obtain ⟨y, hyA, hyB, hlt⟩ := h x hx.1 hx.2
+      refine Or.inr ((rank_le κ (A := A ∩ B) ⟨hyA, hyB⟩).trans_lt ?_)
+      rw [← e]
+      exact_mod_cast hlt
+  · rintro (hA | hlt) x hx hxB
+    · exact absurd ((rank_eq_top_iff κ).1 hA ▸ hx) (Set.notMem_empty x)
+    · have hne : (A ∩ B).Nonempty := Set.nonempty_iff_ne_empty.2 fun he ↦ by simp [he] at hlt
+      obtain ⟨y, hy, e⟩ := exists_apply_eq_rank κ hne
+      have hxr := rank_le κ (A := A \ B) ⟨hx, hxB⟩
+      exact ⟨y, hy.1, hy.2, by exact_mod_cast e ▸ hlt.trans_le hxr⟩
+
+/-- `B` follows from `A` exactly when `Bᶜ` has positive rank given `A`. -/
+theorem entails_iff_condRank : Entails κ A B ↔ 0 < κ[Bᶜ | A] := by
+  rw [entails_iff_rank]
+  by_cases hA : rank κ A = ⊤
+  · simp [hA, condRank_of_eq_top _ hA]
+  · have h := rank_union κ (A ∩ B) (A \ B)
+    rw [Set.inter_union_sdiff] at h
+    rw [condRank_of_ne_top _ hA, tsub_pos_iff_lt, ← Set.sdiff_eq, or_iff_right hA, h,
+      min_lt_iff, lt_self_iff_false, or_false]
+
+instance [Fintype W] [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] :
+    Decidable (Entails κ A B) :=
+  decidable_of_iff _ (entails_iff_forall_exists_lt κ).symm
+
+/-- The consequence relation of a ranking function is rational. -/
+theorem isRational_entails : Nonmonotonic.IsRational (Entails κ) :=
+  Nonmonotonic.isRational_entails (Preorder.wellFounded_lt_lift κ) (Preorder.total_lift κ)
 
 end Grading
 
@@ -247,6 +308,16 @@ theorem rank_eq_zero_or_compl (A : Set W) : rank κ A = 0 ∨ rank κ Aᶜ = 0 :
 
 @[simp] theorem condRank_univ (B : Set W) : κ[B | Set.univ] = rank κ B := by
   simp [condRank]
+
+/-- The beliefs, the consequences of the tautology, are the propositions true at every world of
+rank `0`. -/
+theorem entails_univ_iff : Entails κ Set.univ A ↔ ∀ w, κ w = 0 → w ∈ A := by
+  rw [entails_iff_forall_least]
+  refine ⟨fun h w hw ↦ h w trivial fun v _ ↦ hw ▸ Nat.zero_le _, fun h w _ hmin ↦ h w ?_⟩
+  obtain ⟨w₀, hw₀⟩ := κ.exists_eq_zero
+  exact Nat.le_zero.1 (hw₀ ▸ hmin w₀ trivial)
+
+/-! ### Conditionalization -/
 
 open Classical in
 /-- The A,α-conditionalization of `κ` is its A-part on `A` and its Aᶜ-part lifted by the firmness
@@ -334,83 +405,5 @@ theorem rank_conditionα_eq (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (α : ℕ) (
   rw [condRank_conditionα_compl _ hA hA', rank_conditionα_compl _ hA hA'] at h₂
   rw [h₁, h₂, ← rank_union, ← Set.union_inter_distrib_right, Set.union_compl_self,
     Set.univ_inter]
-
-/-! ### The induced consequence relation -/
-
-/-- In the normality order of a ranking function, `w` is at least as normal as `v` when its rank
-is at most that of `v`. -/
-@[reducible] def toPreorder : Preorder W := Preorder.lift κ
-
-
-/-- `B` follows from `A` in `κ` when the `A`-worlds of least rank are `B`-worlds. This is the
-consequence relation of the ranked model `κ.toPreorder`. -/
-def Entails (A B : Set W) : Prop := Nonmonotonic.Entails κ.toPreorder A B
-
-theorem entails_iff_forall_least :
-    κ.Entails A B ↔ ∀ w ∈ A, (∀ v ∈ A, κ w ≤ κ v) → w ∈ B :=
-  ⟨fun h _ hw hmin ↦ h ((Preorder.mem_minimals_lift κ).2 ⟨hw, hmin⟩),
-    fun h w hw ↦ have := (Preorder.mem_minimals_lift κ).1 hw; h w this.1 this.2⟩
-
-/-- `B` follows from `A` exactly when every `A`-world outside `B` is outranked by an `A`-world
-in `B`. -/
-theorem entails_iff_exists_lt :
-    κ.Entails A B ↔ ∀ x ∈ A, x ∉ B → ∃ y ∈ A, y ∈ B ∧ κ y < κ x := by
-  refine ⟨fun h x hx hxB ↦ ?_, fun h w hw ↦ by_contra fun hwB ↦ ?_⟩
-  · obtain ⟨y, hy, hyx⟩ := Preorder.exists_le_mem_minimals (Preorder.wellFounded_lt_lift κ) hx
-    refine ⟨y, hy.1, h hy, lt_of_le_of_ne hyx fun e ↦ hxB (h ?_)⟩
-    exact (Preorder.mem_minimals_lift κ).2
-      ⟨hx, fun v hv ↦ e ▸ ((Preorder.mem_minimals_lift κ).1 hy).2 v hv⟩
-  · obtain ⟨y, hy, -, hlt⟩ := h w hw.1 hwB
-    exact absurd (((Preorder.mem_minimals_lift κ).1 hw).2 y hy) (not_le.2 hlt)
-
-/-- `B` follows from `A` exactly when `A` is impossible or `A ∩ B` is less disbelieved than
-`A \ B`. -/
-theorem entails_iff_rank :
-    κ.Entails A B ↔ rank κ A = ⊤ ∨ rank κ (A ∩ B) < rank κ (A \ B) := by
-  rw [entails_iff_exists_lt]
-  constructor
-  · intro h
-    rcases A.eq_empty_or_nonempty with rfl | hA
-    · exact Or.inl (rank_empty κ)
-    rcases (A \ B).eq_empty_or_nonempty with he | hne
-    · have hAB : A ∩ B = A := Set.inter_eq_left.2 (Set.sdiff_eq_empty.1 he)
-      exact Or.inr (by rw [he, hAB, rank_empty]; exact (rank_ne_top κ hA).lt_top)
-    · obtain ⟨x, hx, e⟩ := exists_apply_eq_rank κ hne
-      obtain ⟨y, hyA, hyB, hlt⟩ := h x hx.1 hx.2
-      refine Or.inr ((rank_le κ (A := A ∩ B) ⟨hyA, hyB⟩).trans_lt ?_)
-      rw [← e]
-      exact_mod_cast hlt
-  · rintro (hA | hlt) x hx hxB
-    · exact absurd ((rank_eq_top_iff κ).1 hA ▸ hx) (Set.notMem_empty x)
-    · have hne : (A ∩ B).Nonempty := Set.nonempty_iff_ne_empty.2 fun he ↦ by simp [he] at hlt
-      obtain ⟨y, hy, e⟩ := exists_apply_eq_rank κ hne
-      have hxr := rank_le κ (A := A \ B) ⟨hx, hxB⟩
-      exact ⟨y, hy.1, hy.2, by exact_mod_cast e ▸ hlt.trans_le hxr⟩
-
-/-- `B` follows from `A` exactly when `Bᶜ` has positive rank given `A`. -/
-theorem entails_iff_condRank : κ.Entails A B ↔ 0 < κ[Bᶜ | A] := by
-  rw [entails_iff_rank]
-  by_cases hA : rank κ A = ⊤
-  · simp [hA, condRank_of_eq_top _ hA]
-  · have h := rank_union κ (A ∩ B) (A \ B)
-    rw [Set.inter_union_sdiff] at h
-    rw [condRank_of_ne_top _ hA, tsub_pos_iff_lt, ← Set.sdiff_eq, or_iff_right hA, h,
-      min_lt_iff, lt_self_iff_false, or_false]
-
-instance [Fintype W] [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] :
-    Decidable (κ.Entails A B) :=
-  decidable_of_iff _ κ.entails_iff_exists_lt.symm
-
-/-- The consequence relation of a ranking function is rational. -/
-theorem isRational_entails : Nonmonotonic.IsRational κ.Entails :=
-  Nonmonotonic.isRational_entails (Preorder.wellFounded_lt_lift κ) (Preorder.total_lift κ)
-
-/-- The beliefs, the consequences of the tautology, are the propositions true at every world of
-rank `0`. -/
-theorem entails_univ_iff : κ.Entails Set.univ A ↔ ∀ w, κ w = 0 → w ∈ A := by
-  rw [entails_iff_forall_least]
-  refine ⟨fun h w hw ↦ h w trivial fun v _ ↦ hw ▸ Nat.zero_le _, fun h w _ hmin ↦ h w ?_⟩
-  obtain ⟨w₀, hw₀⟩ := κ.exists_eq_zero
-  exact Nat.le_zero.1 (hw₀ ▸ hmin w₀ trivial)
 
 end RankingFunction
