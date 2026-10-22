@@ -3,27 +3,24 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Degree.Boundedness
 public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Semantics.Degree.PropertyDomain
 public import Linglib.Semantics.Degree.Measure.Dimension
 
 /-!
 # Scalar dimensions
 
 This file defines `Degree.ScalarDimension`, the dimensions along which gradable adjectives and
-degree achievements measure, such as height, temperature and fullness. A dimension has a
-perceptual domain, the shape of its scale in its increasing direction, and, when it is a dimension
-of physical measurement, the physical dimension its degrees are measured in. Evaluative and
-psychological scales have none, which is why they reject measure phrases (*six feet tall* but not
-*six feet happy*), and speed is a primitive lexical scale although physically a quotient, in line
-with Bale and Schwarz's hypothesis that semantic composition has no quantity division. The degrees
-of a
-dimension are the canonical linear order of its scale's shape, and the default Vendler class of a
-degree achievement is read off that shape.
+degree achievements measure, such as height, temperature and fullness. A dimension has the
+shape of its scale in its increasing direction and, when it is a dimension of physical
+measurement, the physical dimension its degrees are measured in. Evaluative and psychological
+scales have none, which is why they reject measure phrases (*six feet tall* but not *six feet
+happy*), and speed is a primitive lexical scale although physically a quotient, in line with
+Bale and Schwarz's hypothesis that semantic composition has no quantity division. The degrees of
+a dimension are the canonical linear order of its scale's shape, and the default Vendler class of
+a degree achievement is read off that shape.
 
 ## Main definitions
 
 * `ScalarDimension`: the dimensions of gradable predicates.
-* `ScalarDimension.domain`: the perceptual or cognitive domain of a dimension.
 * `ScalarDimension.boundedness`: the shape of a dimension's scale.
 * `ScalarDimension.dimension?`: the physical dimension of a dimension, if it has one.
 * `ScalarDimension.degree`: the degrees of a dimension.
@@ -74,20 +71,6 @@ inductive ScalarDimension
   -- Perceptual colour + verb-only scalar-change dimensions
   | color | curvature | boiling | corrosion | quantity | unspecified
   deriving DecidableEq, Repr, Fintype, Inhabited, BEq
-
-/-- The perceptual or cognitive domain of a dimension. -/
-def ScalarDimension.domain : ScalarDimension → PropertyDomain
-  | .height | .width | .length | .weight | .thickness | .depth | .speed
-  | .strength | .age | .generalSize | .quantity => .size
-  | .temperature | .brightness | .volume | .taste => .sensory
-  | .happiness | .cost | .price | .quality | .value | .danger | .beauty
-  | .importance | .safety => .evaluative
-  | .intelligence | .expectation | .possibility | .confidence => .psychological
-  | .fullness | .wetness | .cleanliness | .straightness | .flatness | .openness
-  | .freedom | .tightness | .alive | .pregnancy | .hardness | .smoothness | .purity
-  | .cracking | .denting | .scratching | .shattering
-  | .curvature | .boiling | .corrosion | .unspecified => .state
-  | .color => .color
 
 /-- The shape of a dimension's scale in its increasing direction ([kennedy-mcnally-2005]
     (24)–(27), [kennedy-2007] (33), (49)–(50), (60)). Wetness is lower closed, *wet* taking a

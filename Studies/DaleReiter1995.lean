@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Degree.PropertyDomain
 public import Linglib.Semantics.Reference.Distinguishing
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Prod
@@ -9,6 +8,7 @@ public import Mathlib.Data.List.MinMax
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Order.Minimal
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Dale and Reiter, computational interpretations of the Gricean maxims (1995)
@@ -466,10 +466,17 @@ end Incremental
 
 /-! ### The paper's examples -/
 
+/-- The perceptual properties of the paper's examples. -/
+inductive Property where
+  | color
+  | size
+  | material
+  deriving DecidableEq, Repr, Fintype
+
 /-- The head noun and the perceptual properties, the attributes of the paper's examples. -/
 inductive Attr where
   | type
-  | property (d : Degree.PropertyDomain)
+  | property (p : Property)
   deriving DecidableEq, Repr, Fintype
 
 /-- The values of the paper's examples. -/
