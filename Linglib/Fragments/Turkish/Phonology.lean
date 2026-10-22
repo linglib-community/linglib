@@ -63,6 +63,7 @@ writing one segment.
 * `naturalClass_archiphoneme`: the natural class of `A`, `I` or `D` is its alternants.
 * `setFeature_back_A`, `setFeature_voice_D`: an archiphoneme with its feature filled in is one
   of its alternants.
+* `length_surface`: the surface form of a word has its length.
 
 ## Implementation notes
 
@@ -277,6 +278,10 @@ def raising : Rule where
 search-and-copy runs of fronting, rounding and voicing in turn. -/
 def surface (w : List Segment) : List Segment :=
   voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply (raising.apply w)))
+
+/-- The surface form of a word has its length, since no rule deletes or inserts. -/
+@[simp] theorem length_surface (w : List Segment) : (surface w).length = w.length := by
+  simp [surface, Rule.length_apply (show raising.effect ≠ .delete by simp [raising])]
 
 /-! ### Spelling -/
 
