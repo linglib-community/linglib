@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Core.Probability.AutoregressiveSequenceModel
+public import Linglib.Core.Probability.AutoregressiveSequenceModel.Tight
 public import Linglib.Core.Probability.Kernel.Softmax
 
 /-!
