@@ -49,8 +49,9 @@ namespace Chomsky2013
 open Minimalist Minimalist.LinearizedSyntacticObject
 
 /-- A token of the examples. -/
-def tok (id : ℕ) (cat : Cat) (phon : String := "") (wh : Bool := false) : LexicalItem.Token :=
-  ⟨LexicalItem.of cat [] phon wh false, id⟩
+def tok (id : ℕ) (cat : Cat) (phon : String := "") (wh : Bool := false) (sel : SelStack := []) :
+    LexicalItem.Token :=
+  ⟨LexicalItem.of cat sel phon wh false, id⟩
 
 /-- A nominal: a determiner over a nominalizer and a root. -/
 def nominal (d n r : LexicalItem.Token) : LinearizedSyntacticObject :=

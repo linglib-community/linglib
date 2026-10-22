@@ -2,6 +2,7 @@ module
 
 public import Studies.Chomsky2013
 public import Linglib.Data.Examples.Chomsky2015
+public import Linglib.Syntax.Minimalist.Domain.Basic
 
 /-!
 # Chomsky (2015): Problems of projection: Extensions
@@ -11,22 +12,27 @@ English, while Italian T, with rich agreement, labels by itself. T merged with i
 then labeled only by agreement with a subject in its specifier, the EPP, and a subject moved on
 leaves T alone, unable to label, the ECP. A root merged with the object labels only once the object
 raises to its specifier and agrees with the φ-features the root inherits from v*, raising to
-object. A wh-phrase raised out of its criterial position leaves the interrogative C to label the
-clause by itself, as a yes-no question.
+object. Labels are computed at the phase level and kept: a deleted complementizer passes its
+phasehood to T, and v*, invisible once the root raises to it, passes its phasehood to the root, so
+that a subject or object labeled at their edge is free to move on. A wh-phrase raised out of its
+criterial position leaves the interrogative C to label the clause by itself, as a yes-no question.
 
 ## Implementation notes
 
-* Labeling reads the structure at one stage. The paper keeps a label assigned in a lower phase when
-  the subject or object moves on, phase-level memory, so that (3′) and (4) are labeled; at one stage
-  they are not, and `ex3prime_ex4_unlabeled` records the misprediction.
+* The phase heads are C and v*. An occurrence is labeled in the object built at its phase level
+  (`Minimalist.phaseLevel`), and the label stays.
+* Transfer seals the complement of a phase head, or of the head inheriting its phasehood, once its
+  phase is complete (`Minimalist.Pic1`).
+* The matrix clauses of (2′), (3′) and (4) are cut down to the raised wh-phrase over the verb or
+  *do*.
 * Weakness is fixed by the richness of agreement the paper attributes to a language.
 * A root inherits φ-features when minimal search finds it in the sister of v*.
 
 ## TODO
 
-* Phase-level label memory, which derives (3′), (4) and the halting problem (6).
 * The amalgam a root forms by raising to v*, with v* affixed and invisible, which needs head
   movement; and the crash at the conceptual-intentional interface of (1) read as a yes-no question.
+* The free order of operations of (8), evaluated at the phase level, which needs a derivation.
 
 ## References
 
@@ -38,7 +44,7 @@ clause by itself, as a yes-no question.
 
 namespace Chomsky2015
 
-open Minimalist Minimalist.LinearizedSyntacticObject
+open Core.Order Minimalist Minimalist.LinearizedSyntacticObject
 open Chomsky2013 (tok nominal Feature IsRoot IsCategorizer IsLabeledWith AgreedVia)
 
 /-! ### Weak heads and agreement -/
@@ -65,7 +71,7 @@ def Weak (ag : Agreement) (a : LexicalItem.Token) : Prop :=
 
 instance (ag : Agreement) : DecidablePred (Weak ag) := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-def vStar := tok 100 .v "v*"
+def vStar := tok 100 .v "v*" (sel := [.V])
 
 /-- A root that minimal search finds in the sister of v*, which inherits its φ-features. -/
 def InheritsPhi (t : LinearizedSyntacticObject) (r : LexicalItem.Token) : Prop :=
@@ -92,10 +98,60 @@ abbrev Agreed (t : LinearizedSyntacticObject) : Feature → LexicalItem.Token �
 abbrev IsLabeled (ag : Agreement) (t : LinearizedSyntacticObject) (x : SyntacticObject) : Prop :=
   IsLabeledWith (Weak ag) (Agreed t) t x
 
+/-! ### Phases -/
+
+/-- The deleted complementizer, Ø. -/
+def cNull := tok 135 .C (sel := [.T])
+
+/-- The phase heads: C and v*. -/
+def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat = .C ∨ a = vStar
+
+instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The phase heads that pass their phasehood to the head of their complement: v*, affixed to the
+root that raises to it, and the deleted complementizer. -/
+def Invisible (a : LexicalItem.Token) : Prop := a = vStar ∨ a = cNull
+
+instance : DecidablePred Invisible := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The positions of the heads `P` holds of. -/
+def headPositions (P : LexicalItem.Token → Prop) [DecidablePred P] (t : LinearizedSyntacticObject) :
+    Finset TreePath :=
+  ((tokenList t.val).filterMap fun x ↦ if P x.2 then some x.1 else none).toFinset
+
+/-- The object built at the phase level of a position. -/
+def stageOf (t : LinearizedSyntacticObject) (n : t.val.Positions) : LinearizedSyntacticObject :=
+  t.linearizedTermAt (phaseLevel t (headPositions IsPhaseHead t) n)
+
+/-- Labeling at the phase level: an occurrence of `x` is labeled in the object built at its phase
+level, and later movement leaves the label in place. -/
+def IsLabeledAtPhase (ag : Agreement) (t : LinearizedSyntacticObject) (x : SyntacticObject) :
+    Prop :=
+  ∃ n, t.termAt n = x ∧ IsLabeled ag (stageOf t n) x
+
+instance (ag : Agreement) (t : LinearizedSyntacticObject) (x : SyntacticObject) :
+    Decidable (IsLabeledAtPhase ag t x) :=
+  inferInstanceAs (Decidable (∃ _, _))
+
+/-- A link of the chain of `tok` leaves a transferred complement, that of a phase head or, where
+the phase heads `I` holds of are invisible, of the head inheriting its phasehood: the PIC. -/
+def ViolatesPic (I : LexicalItem.Token → Prop) [DecidablePred I] (t : LinearizedSyntacticObject)
+    (tok : LexicalItem.Token) : Prop :=
+  LinkLeaves t tok
+    (sealed (headPositions IsPhaseHead t) (complementDomain t (headPositions I t)) (Pic1 t))
+
+instance (I : LexicalItem.Token → Prop) [DecidablePred I] (t : LinearizedSyntacticObject)
+    (tok : LexicalItem.Token) : Decidable (ViolatesPic I t tok) :=
+  inferInstanceAs (Decidable (LinkLeaves _ _ _))
+
+/-- A nominal of the examples, its determiner selecting the nominalizer, which selects the root. -/
+def dp (id : ℕ) (d r : String) : LinearizedSyntacticObject :=
+  nominal (tok id .D d (sel := [.n])) (tok (id + 1) .n (sel := [.N])) (tok (id + 2) .N r)
+
 /-! ### Categorizers and roots -/
 
-def n₁ := tok 101 .n
-def the₁ := tok 102 .D "the"
+def n₁ := tok 101 .n (sel := [.N])
+def the₁ := tok 102 .D "the" (sel := [.n])
 def dogRoot := tok 103 .N "dog"
 
 /-- A categorizer labels its merge with a root, in either language. -/
@@ -111,14 +167,14 @@ theorem determiner_root_not_isLabeled (ag : Agreement) :
 
 /-! ### Subjects of CP: EPP and ECP (2), (2′), (4) -/
 
-def c := tok 104 .C "that"
-def t := tok 105 .T
-def think := tok 106 .V "think"
-def read := tok 107 .V "read"
+def c := tok 104 .C "that" (sel := [.T])
+def t := tok 105 .T (sel := [.v])
+def think := tok 106 .V "think" (sel := [.C])
+def read := tok 107 .V "read" (sel := [.D])
 /-- *Tom*. -/
-def tom : LinearizedSyntacticObject := nominal (tok 108 .D) (tok 109 .n) (tok 110 .N "Tom")
+def tom : LinearizedSyntacticObject := dp 108 "" "Tom"
 /-- *a book*. -/
-def aBook : LinearizedSyntacticObject := nominal (tok 111 .D "a") (tok 112 .n) (tok 113 .N "book")
+def aBook : LinearizedSyntacticObject := dp 111 "a" "book"
 
 /-- `β`: the verb phrase with its external argument *Tom*. -/
 def beta : LinearizedSyntacticObject := tom * (vStar * (read * aBook))
@@ -139,13 +195,13 @@ theorem tBeta_isLabeled_iff (ag : Agreement) : IsLabeled ag tBeta tBeta ↔ ag =
 /-- (2): with the subject in its specifier, `α` is labeled by the φ-features T and the subject
 agree in: the EPP is met. -/
 theorem ex2 : ∀ ag ∈ agreementOf Examples.ex2.language,
-    (Examples.ex2.judgment = .acceptable ↔ IsLabeled ag clause alpha) := by
+    (Examples.ex2.judgment = .acceptable ↔ IsLabeledAtPhase ag clause alpha) := by
   decide +kernel
 
-def vSmall := tok 114 .v
-def arrive := tok 115 .V "arrive"
+def vSmall := tok 114 .v (sel := [.V])
+def arrive := tok 115 .V "arrive" (sel := [.D])
 /-- *a dog*. -/
-def aDog : LinearizedSyntacticObject := nominal (tok 116 .D "a") (tok 117 .n) (tok 118 .N "dog")
+def aDog : LinearizedSyntacticObject := dp 116 "a" "dog"
 
 /-- An unaccusative verb phrase, *arrive a dog*, which has no external argument. -/
 def vUnacc : LinearizedSyntacticObject := vSmall * (arrive * aDog)
@@ -163,35 +219,51 @@ theorem unaccusative_epp (ag : Agreement) :
     (IsLabeled ag tUnacc tUnacc ↔ ag = .rich) ∧ IsLabeled ag unaccRaised unaccRaised := by
   cases ag <;> decide +kernel
 
+/-- The determiner of *who*. -/
+def whoD := tok 119 .D "who" (wh := true) (sel := [.n])
 /-- *who*, a wh-nominal. -/
-def who : LinearizedSyntacticObject := nominal (tok 119 .D "who" (wh := true)) (tok 120 .n)
-  (tok 121 .N "who")
+def who : LinearizedSyntacticObject := nominal whoD (tok 120 .n (sel := [.N])) (tok 121 .N "who")
 
 /-- `α` of (2′): *who* in the specifier of T. -/
 def alphaWho : LinearizedSyntacticObject := who * (t * (who * (vStar * (read * aBook))))
 
-/-- (2′): *who do you think that read the book*, *who* moved on from the specifier of T. -/
-def whoThink : LinearizedSyntacticObject := who * (think * (c * alphaWho))
+/-- *who* raised from the specifier of T straight out of the clause of *that*. -/
+def whoThinkDirect : LinearizedSyntacticObject := who * (think * (c * alphaWho))
+
+/-- (2′): *who do you think that read the book*, *who* moved on through the specifier of C. -/
+def whoThink : LinearizedSyntacticObject := who * (think * (who * (c * alphaWho)))
+
+/-- (2′): the complement of C is transferred, so *who* moves on through the specifier of C, and at
+the phase level leaves T alone in `α`, which labels it in Italian but not in English: the ECP, and
+its absence where agreement is rich. -/
+theorem ex2prime :
+    ViolatesPic Invisible whoThinkDirect whoD ∧ ¬ ViolatesPic Invisible whoThink whoD ∧
+      (∀ ag ∈ agreementOf Examples.ex2prime.language,
+        (Examples.ex2prime.judgment = .acceptable ↔ IsLabeledAtPhase ag whoThink alphaWho)) ∧
+      IsLabeledAtPhase .rich whoThink alphaWho := by
+  decide +kernel
 
 /-- (4): *who do you think read the book*, the complementizer deleted. -/
-def whoThinkNoC : LinearizedSyntacticObject := who * (think * alphaWho)
+def whoThinkNoC : LinearizedSyntacticObject := who * (think * (cNull * alphaWho))
 
-/-- (2′): *who* moved on leaves T alone in `α`, which labels it in Italian but not in English: the
-ECP, and its absence where agreement is rich. -/
-theorem ex2prime :
-    (∀ ag ∈ agreementOf Examples.ex2prime.language,
-      (Examples.ex2prime.judgment = .acceptable ↔ IsLabeled ag whoThink alphaWho)) ∧
-      IsLabeled .rich whoThink alphaWho := by
+/-- (4): the deleted complementizer passes its phasehood to T, whose complement alone is
+transferred, so *who* moves on from the specifier of T, where a visible complementizer would seal
+it. `α`, labeled at the phase level by the φ-features T and *who* agree in, stays labeled, though at
+the last stage T is alone. -/
+theorem ex4 : ¬ ViolatesPic Invisible whoThinkNoC whoD ∧
+    ViolatesPic (· = vStar) whoThinkNoC whoD ∧ ¬ IsLabeled .weak whoThinkNoC alphaWho ∧
+    ∀ ag ∈ agreementOf Examples.ex4.language,
+      (Examples.ex4.judgment = .acceptable ↔ IsLabeledAtPhase ag whoThinkNoC alphaWho) := by
   decide +kernel
 
 /-! ### Raising to object (3), (3′) -/
 
-def toInf := tok 122 .T "to"
-def vInf := tok 123 .v
+def toInf := tok 122 .T "to" (sel := [.v])
+def vInf := tok 123 .v (sel := [.V])
 def win := tok 124 .V "win"
-def expect := tok 125 .V "expect"
+def expect := tok 125 .V "expect" (sel := [.T])
 /-- *John*. -/
-def john : LinearizedSyntacticObject := nominal (tok 126 .D) (tok 127 .n) (tok 128 .N "John")
+def john : LinearizedSyntacticObject := dp 126 "" "John"
 
 /-- The embedded infinitive *John to win*, its subject raised from the verb phrase. -/
 def infinitive : LinearizedSyntacticObject := john * (toInf * (john * (vInf * win)))
@@ -214,32 +286,41 @@ theorem expect_not_isLabeled (ag : Agreement) :
 /-- (3): raised to the specifier of the root, the object agrees with it in the φ-features it
 inherits from v*, which label `α`: raising to object is forced. -/
 theorem ex3 : ∀ ag ∈ agreementOf Examples.ex3.language,
-    (Examples.ex3.judgment = .acceptable ↔ IsLabeled ag expectRaised alphaObject) := by
+    (Examples.ex3.judgment = .acceptable ↔ IsLabeledAtPhase ag expectRaised alphaObject) := by
   decide +kernel
+
+def doT := tok 136 .T "do" (sel := [.v])
+/-- *you*. -/
+def you : LinearizedSyntacticObject := dp 137 "" "you"
 
 /-- `α` of (3′), *who* raised to the specifier of *expect*. -/
 def alphaWhoObject : LinearizedSyntacticObject :=
   who * (expect * (who * (toInf * (who * (vInf * win)))))
 
-/-- (3′): *who do you expect to win*, *who* moved on from the specifier of *expect*. -/
-def whoExpect : LinearizedSyntacticObject := who * (vStar * alphaWhoObject)
+/-- (3′): *who do you expect to win*, *who* moved on from the specifier of *expect*, with the
+external argument *you* in the specifier of v*. -/
+def whoExpect : LinearizedSyntacticObject := who * (doT * (you * (vStar * alphaWhoObject)))
 
-/-- (3′) and (4) are acceptable, but at one stage the moved object leaves the weak root, and the
-moved subject leaves weak T, alone and unlabeled: the paper keeps the label they received in the
-lower phase. -/
-theorem ex3prime_ex4_unlabeled :
-    Examples.ex3prime.judgment = .acceptable ∧ ¬ IsLabeled .weak whoExpect alphaWhoObject ∧
-      Examples.ex4.judgment = .acceptable ∧ ¬ IsLabeled .weak whoThinkNoC alphaWho := by
+/-- (3′): v*, invisible once the root raises to it, passes its phasehood to the root, whose
+complement alone is transferred, so *who* moves on from the specifier of *expect*, where a visible
+v* would seal it. `α`, labeled at the phase level by the φ-features the root and *who* agree in,
+stays labeled, though at the last stage the root is alone: the ECP holds in no language. -/
+theorem ex3prime : ¬ ViolatesPic Invisible whoExpect whoD ∧
+    ViolatesPic (· = cNull) whoExpect whoD ∧ ¬ IsLabeled .weak whoExpect alphaWhoObject ∧
+    ∀ ag ∈ agreementOf Examples.ex3prime.language,
+      (Examples.ex3prime.judgment = .acceptable ↔
+        IsLabeledAtPhase ag whoExpect alphaWhoObject) := by
   decide +kernel
 
 /-! ### Criterial freezing (1) -/
 
-def cQ := tok 129 .C (wh := true)
-def wonder := tok 130 .V "wonder"
-def like := tok 131 .V "like"
+def cQ := tok 129 .C (wh := true) (sel := [.T])
+def wonder := tok 130 .V "wonder" (sel := [.C])
+def like := tok 131 .V "like" (sel := [.D])
 /-- *which dog*. -/
 def whichDog : LinearizedSyntacticObject :=
-  nominal (tok 132 .D "which" (wh := true)) (tok 133 .n) (tok 134 .N "dog")
+  nominal (tok 132 .D "which" (wh := true) (sel := [.n])) (tok 133 .n (sel := [.N]))
+    (tok 134 .N "dog")
 
 /-- *John likes which dog*, the subject raised from the verb phrase. -/
 def likes : LinearizedSyntacticObject := john * (t * (john * (vStar * (like * whichDog))))
@@ -257,12 +338,14 @@ def wonderRaised : LinearizedSyntacticObject := whichDog * (wonder * alphaQ)
 feature, which labels `α`, an indirect question; the embedded clause is labeled by φ-features. -/
 theorem alphaQ_isLabeledByFeature :
     wonderInSitu.IsLabeledByFeature (Agreed wonderInSitu) alphaQ .Q ∧
-      IsLabeled .weak wonderInSitu likes := by
+      IsLabeledAtPhase .weak wonderInSitu likes := by
   decide +kernel
 
-/-- (1): raised out of its criterial position, *which dog* leaves the interrogative C to label `α`
-by itself, which the paper reads as a yes-no question. -/
-theorem ex1 : wonderRaised.IsLabeledBy alphaQ cQ ∧
+/-- (1): `α`, the edge of its phase, is labeled at the next, where *which dog* raised out of its
+criterial position leaves the interrogative C to label `α` by itself, which the paper reads as a
+yes-no question. -/
+theorem ex1 : (∀ n, wonderRaised.termAt n = alphaQ → stageOf wonderRaised n = wonderRaised) ∧
+    wonderRaised.IsLabeledBy alphaQ cQ ∧
     (Examples.ex1.judgment = .acceptable ↔
       wonderRaised.IsLabeledByFeature (Agreed wonderRaised) alphaQ .Q) := by
   decide +kernel

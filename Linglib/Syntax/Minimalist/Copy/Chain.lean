@@ -35,6 +35,8 @@ links are in `SyntacticObject/Locality.lean`.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
 * `projectionAt`: the phrase a copy stands for, its maximal projection along head daughters
   (`LinearizedSyntacticObject.headIndexAt`, `PhraseStructure.maximalProjectionAt`).
+* `complement`: the sister of a head, the positions below which it c-commands
+  (`mem_cCommandDomain_iff_complement_le`).
 * `HasAntecedent`, `orphanTraces`: whether a pronounced copy c-commands a deleted one, and the
   deleted copies without antecedents, seen from their own conjunct copies.
 * `IsLink`, `links`, `chainTop`: the links of a chain and its scope position.
@@ -133,6 +135,53 @@ instance : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
 climbing while the position is the head daughter of its mother. -/
 def projectionAt (p : TreePath) : TreePath :=
   maximalProjectionAt t.headIndexAt p
+
+/-- The complement of the head at `p` is its sister. -/
+def complement (p : TreePath) : TreePath := ⟨p.toList.dropLast ++ [1 - p.toList.getLastD 0]⟩
+
+/-- The mother of a position is covered by its complement. -/
+theorem parent_covBy_complement (p : TreePath) : p.parent ⋖ complement p :=
+  TreePath.covBy_iff.2 ⟨_, rfl⟩
+
+variable {t} in
+/-- In a syntactic object, a head other than the root c-commands exactly the positions below its
+complement. -/
+theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.val.validPaths)
+    (h0 : h ≠ ⊥) (hq : q ∈ t.val.validPaths) :
+    q ∈ t.val.cCommandDomain h ↔ complement h ≤ q := by
+  set hp : t.val.Positions := ⟨h, hh⟩
+  have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
+  have hm : Order.pred hp ⋖ hp :=
+    Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
+  have hmv : (Order.pred hp).val = h.parent := Positions.pred_val hp
+  have hlen := LinearizedSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
+  have hcv : complement h ∈ t.val.validPaths := by
+    refine mem_validPaths_append_singleton_iff.2 ⟨(Order.pred hp).subtree, ?_, ?_⟩
+    · rw [← TreePath.parent_toList, ← hmv]
+      exact (Order.pred hp).subtreeAt_eq
+    · rw [hlen]
+      omega
+  set hc : t.val.Positions := ⟨complement h, hcv⟩
+  have hmc : Order.pred hp ⋖ hc :=
+    Positions.covBy_iff.2 (hmv ▸ parent_covBy_complement h)
+  have hhc : hp ≠ hc := fun he ↦ by
+    have := congrArg (fun r : t.val.Positions ↦ r.val.toList.getLastD 0) he
+    simp only [hp, hc, complement, List.getLastD_concat] at this
+    omega
+  rw [RoseTree.mem_cCommandDomain, cCommands_iff_parent_lt h0
+    (LinearizedSyntacticObject.isBranchingAt_parent (t := t) hp0)]
+  set qp : t.val.Positions := ⟨q, hq⟩
+  constructor
+  · rintro ⟨hlt, hnl⟩
+    obtain ⟨e, hme, heq⟩ := exists_covBy_le_of_lt
+      (show Order.pred hp < qp from Subtype.coe_lt_coe.1 (hmv ▸ hlt))
+    rcases LinearizedSyntacticObject.eq_or_eq_of_covBy hm hmc hhc hme with rfl | rfl
+    · exact absurd heq hnl
+    · exact heq
+  · intro hcq
+    refine ⟨(parent_covBy_complement h).lt.trans_le hcq, fun hhq ↦ hhc (Subtype.ext ?_)⟩
+    exact IsLeftLinear.eq_of_covBy_of_le (Positions.covBy_iff.1 hm) (Positions.covBy_iff.1 hmc)
+      hhq hcq
 
 theorem projectionAt_le (p : TreePath) : projectionAt t p ≤ p := maximalProjectionAt_le _ p
 
