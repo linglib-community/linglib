@@ -5,16 +5,16 @@ public import Linglib.Syntax.Clause.Relative
 /-!
 # Toba Batak relative clauses
 
-Toba Batak has two postnominal relative-clause strategies and can relativize direct objects by
-neither. The relativizer *na* introduces a clause with the relativized position left empty, as
-in *boru-boru na manussi abit i* 'the woman who is washing clothes', and it relativizes subjects
-only; a direct object must first be passivized into a subject. Noun phrases governed by
-prepositions, indirect objects included, cannot be promoted, so a second strategy with the
-marker *ima na* retains a personal pronoun in the relativized position, as in *dakdanak i, ima
-na nipaboa ni si Rotua turi-turian i tu ibana* 'the child that Rotua told the story to'; it
-relativizes indirect objects, obliques and genitives. The gap at the direct object is the
-paper's reason for stating the Hierarchy Constraints per strategy. The data are
-[keenan-comrie-1977]'s.
+Toba Batak has two postnominal relative-clause strategies, and neither relativizes direct
+objects. The relativizer *na* introduces a clause with the relativized position left empty, as
+in *boru-boru na manussi abit i* 'the woman who is washing clothes', and relativizes subjects
+only. A direct object is relativized as the subject of the object voice
+(`TobaBatak.objectVoice`), whose *di-* becomes *ni-* in a subordinate clause: *abit na nisussi
+ni boru-boru i* 'the clothes that were washed by the woman'. No voice makes a noun phrase governed
+by a preposition, an indirect object included, the subject, and these are relativized by *ima
+na*, which retains a personal pronoun in the relativized position: *dakdanak i, ima- na nipaboa
+ni si Rotua turi-turian-i tu ibana* 'the child that Rotua told the story to'. The data are
+Keenan and Comrie's.
 
 ## References
 

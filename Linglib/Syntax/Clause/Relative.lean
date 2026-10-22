@@ -27,7 +27,9 @@ records one entry per relativizer, as a grammar describes it, with free variatio
 grammar reports it (Hebrew *she-* with a gap or a resumptive at the direct object).
 A classification of relative clauses is a predicate on `NPRel` pulled back along the
 realization, and lives with the paper that draws it: Keenan and Comrie's ±case and their
-"RC-forming strategies" are derived in `Studies/KeenanComrie1977.lean`.
+"RC-forming strategies" are derived in `Studies/KeenanComrie1977.lean`. So is an analysis of
+resumptive pronouns, as a pronoun bound by the head or a pronounced copy of movement
+(`Studies/Scott2021.lean`).
 
 A restrictive relative clause needs no semantic rule of its own: the composition engine of
 `Semantics/Composition/Tree.lean` interprets it by Predicate Abstraction over the gap and
@@ -37,8 +39,6 @@ Predicate Modification with the head, as `Studies/HeimKratzer1998.lean` computes
 
 * [keenan-comrie-1977]
 * [ryding-2005]
-* [scott-2021]
-* [sichel-2014]
 -/
 
 @[expose] public section
@@ -115,12 +115,6 @@ inductive NPRel where
   /-- A personal pronoun, Modern Standard Arabic *al-kitaab-u lladhii qaraʾ-naa-hu* 'the book
   that we read (it)' ([ryding-2005]). -/
   | resumptive
-  /-- A resumptive that is a partially pronounced lower copy of an Ā-movement chain, diagnosed
-  by parasitic gaps ([scott-2021]). -/
-  | resumptiveMovement
-  /-- A base-generated resumptive bound by the head, obligatory inside adjunct islands
-  ([scott-2021]). -/
-  | resumptiveBound
   /-- A relative pronoun marked for the relativized position, by its case or an accompanying
   adposition, German "der Mann [den ich sah]". -/
   | relPronoun
