@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Derivation.Basic
+public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
@@ -17,11 +17,15 @@ since whatever a raised VP still contains cannot be extracted and whatever left 
 raised can. `Frozen d x` says that `x` sits inside some
 mover of `d`, and `ObeysFreezing d` that no mover of `d` sits inside an earlier one, a pairwise
 condition on the list of movers in the shape of `List.Nodup`. Movers carry the traces of what
-evacuated them earlier, not the evacuees, so a remnant freezes nothing that left it.
+evacuated them earlier, not the evacuees, so a remnant freezes nothing that left it. Its rival, the
+Unlabeled Immobility Condition, lets a moved constituent be extracted from and instead bars a
+constituent from moving when it is unlabeled in the object built so far, as a phrase whose specifier
+does not agree with it is.
 
 ## Main definitions
 
 * `Minimalist.Derivation.Frozen`, `Minimalist.Derivation.ObeysFreezing`
+* `Minimalist.Derivation.ObeysUIC`: every mover is labeled when it moves.
 
 ## Main results
 
@@ -29,6 +33,8 @@ evacuated them earlier, not the evacuees, so a remnant freezes nothing that left
   contain and nothing else.
 * `Minimalist.Derivation.obeysFreezing_append_im_iff`: a further movement obeys Freezing exactly
   when its mover is not frozen.
+* `Minimalist.Derivation.obeysUIC_append_im_iff`: a further movement obeys the Unlabeled
+  Immobility Condition exactly when its mover is labeled.
 
 ## References
 
@@ -36,6 +42,7 @@ evacuated them earlier, not the evacuees, so a remnant freezes nothing that left
 * [chung-2006]
 * [collins-2005]
 * [cole-hermon-2008]
+* [boskovic-2018]
 -/
 
 @[expose] public section
@@ -90,5 +97,56 @@ theorem obeysFreezing_append_iff :
 @[simp] theorem obeysFreezing_append_em_iff {item : LinearizedSyntacticObject} {side : Edge} :
     (d.append [.em side item]).ObeysFreezing ↔ d.ObeysFreezing := by
   simp [obeysFreezing_append_iff]
+
+/-! ### Unlabeled immobility -/
+
+variable (L : LinearizedSyntacticObject → SyntacticObject → Prop)
+
+/-- [boskovic-2018]'s Unlabeled Immobility Condition: each mover of `d` is labeled, as `L` reads
+labels, in the object the derivation has built when it moves. -/
+def ObeysUIC (d : Derivation) : Prop :=
+  ∀ i < d.length, ∀ m ∈ d.mover? i, ∃ p ∈ (d.take i).externalize?, L p m
+
+instance [∀ p, DecidablePred (L p)] (d : Derivation) : Decidable (d.ObeysUIC L) :=
+  inferInstanceAs (Decidable (∀ _ < _, _))
+
+variable {L}
+
+theorem ObeysUIC.mono {L' : LinearizedSyntacticObject → SyntacticObject → Prop}
+    (hL : ∀ p x, L p x → L' p x) (h : d.ObeysUIC L) : d.ObeysUIC L' :=
+  fun i hi m hm ↦ (h i hi m hm).imp fun p ⟨hp, hpm⟩ ↦ ⟨hp, hL p m hpm⟩
+
+/-- Extending a derivation by one step keeps the condition on its earlier movers. -/
+theorem obeysUIC_append_singleton_iff {step : Step} :
+    (d.append [step]).ObeysUIC L ↔ d.ObeysUIC L ∧
+      ∀ m ∈ step.mover?, ∃ p ∈ d.externalize?, L p m := by
+  have hlast : (d.append [step]).mover? d.length = step.mover? := by
+    simp [mover?, append, length]
+  constructor
+  · intro h
+    refine ⟨fun i hi m hm ↦ ?_, fun m hm ↦ ?_⟩
+    · have := h i (by simp; omega) m (by rwa [mover?_append_of_lt hi])
+      rwa [take_append_of_le hi.le] at this
+    · have := h d.length (by simp) m (by rwa [hlast])
+      rwa [take_length_append] at this
+  · rintro ⟨h, hs⟩ i hi m hm
+    rcases Nat.lt_or_ge i d.length with hlt | hge
+    · rw [take_append_of_le hlt.le]
+      exact h i hlt m (by rwa [mover?_append_of_lt hlt] at hm)
+    · obtain rfl : i = d.length := by simp at hi; omega
+      rw [take_length_append]
+      exact hs m (by rwa [hlast] at hm)
+
+/-- A further movement obeys the Unlabeled Immobility Condition exactly when its mover is labeled
+in the object built so far. -/
+@[simp] theorem obeysUIC_append_im_iff {m : SyntacticObject} {side : Edge} :
+    (d.append [.im m side]).ObeysUIC L ↔ d.ObeysUIC L ∧ ∃ p ∈ d.externalize?, L p m := by
+  simp [obeysUIC_append_singleton_iff]
+
+/-- A further External Merge obeys the Unlabeled Immobility Condition exactly when the derivation
+does. -/
+@[simp] theorem obeysUIC_append_em_iff {item : LinearizedSyntacticObject} {side : Edge} :
+    (d.append [.em side item]).ObeysUIC L ↔ d.ObeysUIC L := by
+  simp [obeysUIC_append_singleton_iff]
 
 end Minimalist.Derivation
