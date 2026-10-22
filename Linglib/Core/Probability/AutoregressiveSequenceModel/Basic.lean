@@ -19,18 +19,24 @@ An autoregressive sequence model over an alphabet `α` gives, after every prefix
 over the next symbol or the end of the string, `none` [du-etal-2023]. The prefix probability of a
 string is the product of the conditional probabilities along it, the probability of the string
 itself multiplies in the probability of ending after it, and the model is tight when the string
-probabilities sum to one. Conversely, a language model, a probability measure on strings, is the
-string law of the model whose conditionals are its next-symbol laws.
+probabilities sum to one. Conversely, a language model, a probability measure on strings, gives
+after each prefix the law of its continuation, and it is the string law of the model whose
+conditionals are the laws of the first symbol of the continuation.
 
 ## Main definitions
 
+* `MeasureTheory.Measure.continuation`: the law of what follows a prefix under a measure on
+  strings.
 * `AutoregressiveSequenceModel α`: a Markov kernel from prefixes to `Option α`.
 * `condPrefixProb`, `prefixProb`, `stringProb`, `stringMeasure`, `IsTight`.
 * `after`: the model after a context.
-* `ofMeasure`: the model of the next-symbol laws of a measure on strings.
+* `ofMeasure`: the model whose conditionals are the first symbols of the continuations of a
+  measure on strings.
 
 ## Main results
 
+* `MeasureTheory.Measure.continuation_setOf_prefix`: the continuations beginning with `w` have
+  the conditional probability of the strings extending the prefix by `w`.
 * `condPrefixProb_append`, `condPrefixProb_eq_prod`: the chain rule.
 * `neg_log_condPrefixProb`: the surprisal of a continuation is the sum of the surprisals of its
   symbols.
@@ -55,6 +61,57 @@ with measurable singletons; [du-etal-2023] take it finite.
 open InformationTheory MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
+/-! ### Continuations -/
+
+namespace MeasureTheory.Measure
+
+variable {α : Type*} (μ : Measure (List α))
+
+/-- The continuation law of a measure on strings: after the prefix `c`, the law of what follows
+`c` among the strings extending it. -/
+noncomputable def continuation : Kernel (List α) (List α) :=
+  ⟨fun c ↦ (μ[|{y | c <+: y}]).map (List.drop c.length), .of_discrete⟩
+
+theorem continuation_apply (c : List α) :
+    μ.continuation c = (μ[|{y | c <+: y}]).map (List.drop c.length) :=
+  rfl
+
+instance (c : List α) : IsZeroOrProbabilityMeasure (μ.continuation c) := by
+  rw [continuation_apply]
+  infer_instance
+
+theorem isProbabilityMeasure_continuation [IsFiniteMeasure μ] {c : List α}
+    (hc : μ {y | c <+: y} ≠ 0) : IsProbabilityMeasure (μ.continuation c) := by
+  have := cond_isProbabilityMeasure (s := {y | c <+: y}) hc
+  rw [continuation_apply]
+  infer_instance
+
+/-- The continuations of `c` beginning with `w` have the conditional probability of the strings
+extending `c ++ w` among those extending `c`. -/
+theorem continuation_setOf_prefix (c w : List α) :
+    μ.continuation c {a | w <+: a} = μ[{y | c ++ w <+: y} | {y | c <+: y}] := by
+  rw [continuation_apply, map_apply .of_discrete .of_discrete, cond_apply .of_discrete,
+    cond_apply .of_discrete]
+  congr 2
+  ext y
+  simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_ofPred_eq]
+  refine and_congr_right fun ⟨r, hr⟩ ↦ ?_
+  subst hr
+  simp
+
+/-- The continuation of `c` is empty with the conditional probability of `c` itself. -/
+theorem continuation_singleton_nil (c : List α) :
+    μ.continuation c {[]} = μ[{c} | {y | c <+: y}] := by
+  rw [continuation_apply, map_apply .of_discrete .of_discrete, cond_apply .of_discrete,
+    cond_apply .of_discrete]
+  congr 2
+  ext y
+  simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_ofPred_eq,
+    List.drop_eq_nil_iff]
+  exact ⟨fun ⟨h, hl⟩ ↦ ⟨h, (h.eq_of_length_le hl).symm⟩, fun ⟨h, hy⟩ ↦ ⟨h, hy ▸ le_rfl⟩⟩
+
+end MeasureTheory.Measure
+
 /-- An autoregressive sequence model over the alphabet `α`: after each prefix, a distribution over
 the next symbol, or the end of the string, `none`. -/
 structure AutoregressiveSequenceModel (α : Type*) [MeasurableSpace α] where
@@ -63,16 +120,6 @@ structure AutoregressiveSequenceModel (α : Type*) [MeasurableSpace α] where
   [isMarkovKernel_next : IsMarkovKernel next]
 
 namespace AutoregressiveSequenceModel
-
-private theorem append_singleton_prefix_iff {α : Type*} {x y : List α} {a : α} :
-    x ++ [a] <+: y ↔ x <+: y ∧ y[x.length]? = some a := by
-  constructor
-  · rintro ⟨r, rfl⟩
-    exact ⟨(List.prefix_append x [a]).trans (List.prefix_append _ r), by simp⟩
-  · rintro ⟨⟨r, rfl⟩, h⟩
-    cases r with
-    | nil => simp at h
-    | cons b r => simp at h; subst h; exact ⟨r, by simp⟩
 
 attribute [instance] isMarkovKernel_next
 
@@ -216,10 +263,10 @@ theorem stringMeasure_setOf_prefix (x : List α) :
 
 /-! ### The model of a language model
 
-A measure on strings gives, after each prefix of positive probability, the law of the next symbol
-among the strings extending the prefix, with `none` where the prefix ends them. These laws form a
-model. When the measure is a probability measure, every model that agrees with them after each
-prefix of positive probability has the measure as its string law. -/
+After each prefix of positive probability, the first symbol of the continuation of a measure on
+strings, `none` where the continuation is empty, has a law, and these laws form a model. When the
+measure is a probability measure, every model that agrees with them after each prefix of positive
+probability has the measure as its string law. -/
 
 section ofMeasure
 
@@ -227,29 +274,28 @@ variable (μ : Measure (List α))
 
 open Classical in
 /-- The model of a measure on strings: after a prefix of positive finite measure, the law of the
-symbol after it among the strings extending it, and the end of the string after any other
-prefix. -/
+first symbol of its continuation, and the end of the string after any other prefix. -/
 noncomputable def ofMeasure : AutoregressiveSequenceModel α where
-  next := ⟨fun x ↦ if μ[|{y | x <+: y}] = 0 then .dirac none
-    else (μ[|{y | x <+: y}]).map (·[x.length]?), .of_discrete⟩
+  next := ⟨fun x ↦ if μ.continuation x = 0 then .dirac none
+    else (μ.continuation x).map List.head?, .of_discrete⟩
   isMarkovKernel_next := ⟨fun x ↦ by
     change IsProbabilityMeasure (if _ then _ else _)
     split_ifs with h
     · infer_instance
-    · have := (eq_zero_or_isProbabilityMeasure (μ[|{y | x <+: y}])).resolve_left h
+    · have := (eq_zero_or_isProbabilityMeasure (μ.continuation x)).resolve_left h
       infer_instance⟩
 
 open Classical in
 private theorem next_ofMeasure (x : List α) :
-    (ofMeasure μ).next x = if μ[|{y | x <+: y}] = 0 then .dirac none
-      else (μ[|{y | x <+: y}]).map (·[x.length]?) :=
+    (ofMeasure μ).next x = if μ.continuation x = 0 then .dirac none
+      else (μ.continuation x).map List.head? :=
   rfl
 
-theorem next_ofMeasure_of_ne_zero {x : List α} (hx : μ[|{y | x <+: y}] ≠ 0) :
-    (ofMeasure μ).next x = (μ[|{y | x <+: y}]).map (·[x.length]?) := by
+theorem next_ofMeasure_of_ne_zero {x : List α} (hx : μ.continuation x ≠ 0) :
+    (ofMeasure μ).next x = (μ.continuation x).map List.head? := by
   rw [next_ofMeasure, ite_eq_right hx]
 
-theorem next_ofMeasure_of_eq_zero {x : List α} (hx : μ[|{y | x <+: y}] = 0) :
+theorem next_ofMeasure_of_eq_zero {x : List α} (hx : μ.continuation x = 0) :
     (ofMeasure μ).next x = .dirac none := by
   rw [next_ofMeasure, ite_eq_left hx]
 
@@ -257,26 +303,23 @@ variable [MeasurableSingletonClass α]
 
 theorem next_ofMeasure_apply_some (x : List α) (a : α) :
     (ofMeasure μ).next x {some a} = μ[{y | x ++ [a] <+: y} | {y | x <+: y}] := by
-  by_cases h : μ[|{y | x <+: y}] = 0
+  rw [← Measure.continuation_setOf_prefix]
+  by_cases h : μ.continuation x = 0
   · simp [next_ofMeasure_of_eq_zero μ h, h]
-  rw [next_ofMeasure_of_ne_zero μ h, Measure.map_apply .of_discrete (measurableSet_singleton _),
-    cond_apply .of_discrete, cond_apply .of_discrete]
-  congr 2
-  ext y
-  simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_ofPred_eq,
-    append_singleton_prefix_iff]
-  exact ⟨fun h ↦ ⟨h.1, h⟩, fun h ↦ h.2⟩
+  rw [next_ofMeasure_of_ne_zero μ h, Measure.map_apply .of_discrete (measurableSet_singleton _)]
+  congr 1
+  ext l
+  cases l <;> simp [eq_comm]
 
 theorem next_ofMeasure_apply_none [IsFiniteMeasure μ] {x : List α} (hx : μ {y | x <+: y} ≠ 0) :
     (ofMeasure μ).next x {none} = μ[{x} | {y | x <+: y}] := by
-  rw [next_ofMeasure_of_ne_zero μ (by simp [hx, measure_ne_top]),
-    Measure.map_apply .of_discrete (measurableSet_singleton _), cond_apply .of_discrete,
-    cond_apply .of_discrete]
-  congr 2
-  ext y
-  simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_ofPred_eq,
-    List.getElem?_eq_none_iff]
-  exact ⟨fun ⟨h, hl⟩ ↦ ⟨h, (h.eq_of_length_le hl).symm⟩, fun ⟨h, hy⟩ ↦ ⟨h, hy ▸ le_rfl⟩⟩
+  have := μ.isProbabilityMeasure_continuation hx
+  rw [next_ofMeasure_of_ne_zero μ (IsProbabilityMeasure.ne_zero _),
+    Measure.map_apply .of_discrete (measurableSet_singleton _),
+    ← Measure.continuation_singleton_nil]
+  congr 1
+  ext l
+  cases l <;> simp
 
 variable [IsProbabilityMeasure μ] {μ}
 
