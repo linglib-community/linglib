@@ -113,7 +113,7 @@ theorem agreeWith_eq (f : Nominal → Nominal) (ns : List Nominal) :
   | cons n ns =>
     simp only [agreeWith, List.modifyHead_cons, Probe.goal, phiProbe, Probe.ofInt_search,
       List.head?_cons, Option.filter_some, Probe.ofInt_int, List.tail_cons]
-    cases n.isActive <;> simp
+    by_cases h : n.isActive <;> simp [h]
 
 /-- `agreeWith f` applies `f` to the goal `phiProbe` Agrees with and leaves the other nominals as
 they are. -/
@@ -148,7 +148,7 @@ def numAgree (c : Case) : List Nominal → List Nominal
 
 /-- `raise can ns` moves the closest nominal of `ns` satisfying `can` to the top (§5). -/
 def raise (can : Nominal → Bool) (ns : List Nominal) : List Nominal :=
-  ((Probe.relativized can).search ns).toList ++ ns.eraseP can
+  ((Probe.relativized (can ·)).search ns).toList ++ ns.eraseP can
 
 /-! ### Heads and their derivations -/
 

@@ -72,8 +72,10 @@ with the goal it halts on when that goal can occupy Spec,TP. The embedded subjec
 satisfaction the Agree, the reverse of [deal-2025a]'s algorithm, on which the second probing of
 section 4.3 is one `Probe.agree` whose interacting clause does not satisfy the probe. -/
 def eppProbe : Probe Goal where
-  int := fun g => match g with | .clause c => c.canSatisfyEPP | .subject => true
-  sat := fun g => match g with | .clause c => c.interacts | .subject => true
+  int | .clause c => c.canSatisfyEPP | .subject => True
+  sat | .clause c => c.interacts | .subject => True
+  decInt g := by cases g <;> infer_instance
+  decSat g := by cases g <;> infer_instance
 
 /-- The clause c-commands the embedded subject. -/
 def goals (c : Clause) : List Goal := [.clause c, .subject]
@@ -116,12 +118,11 @@ def raisingOutcome (c : Clause) (hasEPP : Bool) : RaisingOutcome :=
 
 private theorem search_clause {c : Clause} (h : c.interacts = true) :
     eppProbe.search (goals c) = some (.clause c) := by
-  simp only [Probe.search, goals, eppProbe, List.find?_cons_of_pos, h]
+  simp [Probe.search, goals, eppProbe, h]
 
 private theorem search_subject {c : Clause} (h : c.interacts = false) :
     eppProbe.search (goals c) = some .subject := by
-  simp only [Probe.search, goals, eppProbe, List.find?_cons_of_neg, h,
-    List.find?_cons_of_pos, Bool.false_eq_true, not_false_eq_true]
+  simp [Probe.search, goals, eppProbe, h]
 
 /-- No EPP ⇒ no raising, whatever the clause. -/
 theorem raisingOutcome_eq_noRaising (c : Clause) :
@@ -132,7 +133,7 @@ theorem raisingOutcome_eq_noRaising (c : Clause) :
 theorem raisingOutcome_eq_subjectRaises {c : Clause} (h : c.interacts = false) :
     raisingOutcome c true = .subjectRaises := by
   have : eppProbe.goal (goals c) = some .subject :=
-    Probe.goal_eq_some_iff.mpr ⟨search_subject h, rfl⟩
+    Probe.goal_eq_some_iff.mpr ⟨search_subject h, trivial⟩
   simp only [raisingOutcome, this, ite_true]
 
 /-- A φ-goal that satisfies the EPP raises as a whole clause; the
@@ -149,7 +150,7 @@ theorem raisingOutcome_eq_hyperRaises {c : Clause} (hi : c.interacts = true)
     (ha : c.canAgree = true) (he : c.canSatisfyEPP = false) :
     raisingOutcome c true = .hyperRaises := by
   have : eppProbe.goal (goals c) = none :=
-    Probe.goal_eq_none_of_not_int (search_clause hi) he
+    Probe.goal_eq_none_of_not_int (search_clause hi) (by simp [eppProbe, he])
   simp only [raisingOutcome, this, ha, ite_true]
 
 /-- A defective intervener (interacts, but T cannot Agree with it) stalls
@@ -158,7 +159,7 @@ theorem raisingOutcome_eq_blocked {c : Clause} (hi : c.interacts = true)
     (ha : c.canAgree = false) (he : c.canSatisfyEPP = false) :
     raisingOutcome c true = .blocked := by
   have : eppProbe.goal (goals c) = none :=
-    Probe.goal_eq_none_of_not_int (search_clause hi) he
+    Probe.goal_eq_none_of_not_int (search_clause hi) (by simp [eppProbe, he])
   simp only [raisingOutcome, this, ha, ite_true, ite_false, Bool.false_eq_true]
 
 /-! ### Cross-linguistic raising profiles -/

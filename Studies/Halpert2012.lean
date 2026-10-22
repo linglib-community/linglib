@@ -134,8 +134,8 @@ within it. -/
 def Converges (c : Clause) : Prop :=
   (∀ g ∈ c.outside, ¬ g.NeedsL) ∧
     if c.Inherits then
-      L.AllLicensed (decide ·.NeedsL) c.above ∧ V.AllLicensed (decide ·.NeedsL) c.vDomain
-    else L.AllLicensed (decide ·.NeedsL) c.vP
+      L.AllLicensed (·.NeedsL) c.above ∧ V.AllLicensed (·.NeedsL) c.vDomain
+    else L.AllLicensed (·.NeedsL) c.vP
 
 instance : DecidablePred Converges := fun c ↦ by unfold Converges; infer_instance
 
@@ -148,8 +148,8 @@ theorem converges_iff :
         ∀ g ∈ c.vDomain.head?, g.NeedsL → c.above = [] ∨ c.Inherits := by
   unfold Converges vP L V
   by_cases hi : c.Inherits <;>
-    simp only [hi, ↓reduceIte, Probe.indiscriminate_allLicensed_iff, decide_eq_false_iff_not,
-      or_true, implies_true, and_true, or_false]
+    simp only [hi, ↓reduceIte, Probe.indiscriminate_allLicensed_iff, or_true, implies_true,
+      and_true, or_false]
   rcases c.above with _ | ⟨u, us⟩ <;> rcases c.vDomain with _ | ⟨l, ls⟩ <;>
     simp [or_imp, forall_and]
   tauto
@@ -191,14 +191,11 @@ variable {c : Clause}
 /-- The verb is conjoint when L⁰'s search finds a goal in vP and disjoint, the overt member, when
 it fails, a failure that does not crash the derivation (§4.3, p. 166). -/
 def spellout (c : Clause) : VerbForm :=
-  match L.outcome c.vP with
-  | .valued => .conjoint
-  | .unvalued => .disjoint
+  if (L.search c.vP).isSome then .conjoint else .disjoint
 
 /-- The verb is disjoint iff vP is empty after A-movement, the generalization (180). -/
 theorem spellout_eq_disjoint_iff : c.spellout = .disjoint ↔ c.vP = [] := by
-  cases h : c.vP <;> simp [spellout, h, L, Probe.outcome, Probe.search, Probe.indiscriminate,
-    Probe.relativized]
+  cases h : c.vP <;> simp [spellout, h, L]
 
 end Clause
 
@@ -221,8 +218,8 @@ theorem search_eq_search_evacuate {base : List (Goal × Bool)} (h : ∀ x ∈ ba
 
 /-- Without Activity, L⁰ probing before the subject moves would spell out the conjoint where
 (184a) is disjoint. -/
-example : Clause.L.outcome [.nominal true] = .valued ∧
-    Clause.L.outcome (evacuate [(.nominal true, true)]) = .unvalued := by
+example : (Clause.L.search [.nominal true]).isSome ∧
+    Clause.L.search (evacuate [(.nominal true, true)]) = none := by
   decide
 
 /-! ### The paradigms -/

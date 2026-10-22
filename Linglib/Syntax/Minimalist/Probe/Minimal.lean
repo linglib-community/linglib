@@ -116,16 +116,17 @@ theorem agreesWith_iff_finds (hp : ∀ a, p.int a → p.sat a) :
   exact ⟨fun ⟨h, hi⟩ ↦ ⟨⟨h, hp a hi⟩, hi⟩, fun ⟨⟨h, _⟩, hi⟩ ↦ ⟨h, hi⟩⟩
 
 /-- A relativized probe agrees with what it finds. -/
-theorem agreesWith_relativized_iff {f : α → Bool} :
+theorem agreesWith_relativized_iff {f : α → Prop} [DecidablePred f] :
     (relativized f).AgreesWith s key a ↔ (relativized f).Finds s key a := by
   rw [agreesWith_iff_finds fun _ h ↦ h]
   exact ⟨And.left, fun h ↦ ⟨h, h.sat⟩⟩
 
 /-- An insatiable probe inspects its whole domain, Multiple Agree ([hiraiwa-2001]). -/
-theorem inspects_insatiable_iff {f : α → Bool} : (insatiable f).Inspects s key a ↔ a ∈ s := by
+theorem inspects_insatiable_iff {f : α → Prop} [DecidablePred f] :
+    (insatiable f).Inspects s key a ↔ a ∈ s := by
   simp [Inspects]
 
-theorem agreesWith_insatiable_iff {f : α → Bool} :
+theorem agreesWith_insatiable_iff {f : α → Prop} [DecidablePred f] :
     (insatiable f).AgreesWith s key a ↔ a ∈ s ∧ f a := by
   simp [AgreesWith, inspects_insatiable_iff]
 
@@ -233,7 +234,7 @@ theorem mem_inspected_iff_inspects :
   | cons x l ih =>
     by_cases hx : p.sat x
     · have hins : p.inspected (x :: l) = [x] := by
-        simp [Probe.inspected, search, hx, List.find?_cons_of_pos hx]
+        simp [Probe.inspected, search, hx]
       rw [hins, List.mem_singleton]
       constructor
       · rintro rfl
@@ -243,7 +244,7 @@ theorem mem_inspected_iff_inspects :
         exact h (List.mem_cons_self ..) hx (by simp [List.idxOf_cons_self, List.idxOf_cons_ne l
           (Ne.symm hne)])
     · have hins : p.inspected (x :: l) = x :: p.inspected l := by
-        simp [Probe.inspected, search, hx, List.find?_cons_of_neg hx]
+        simp [Probe.inspected, search, hx]
       rw [hins, List.mem_cons, ih]
       by_cases hax : a = x
       · subst hax
@@ -272,7 +273,7 @@ theorem search_eq_some_iff_finds : p.search l = some a ↔ p.Finds {b | b ∈ l}
 /-- The list Agree flags the goals the probe agrees with, keyed by position. -/
 theorem mem_agree_interacted_iff {σ : Type*} {copy : α → σ → σ} {st : σ} :
     a ∈ (p.agree copy st l).interacted ↔ p.AgreesWith {b | b ∈ l} l.idxOf a := by
-  rw [agree_interacted, List.mem_filter, mem_inspected_iff_inspects, AgreesWith]
+  rw [agree_interacted, List.mem_filter, mem_inspected_iff_inspects, AgreesWith, decide_eq_true_iff]
 
 end List
 
