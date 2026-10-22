@@ -1,6 +1,7 @@
 ID,Name,Glottocode,ISO639P3code,Level,Macroarea,Latitude,Longitude
 abkh1244,Abkhaz,abkh1244,abk,language,Eurasia,43.056218,41.159115
 achi1257,Acehnese,achi1257,ace,language,Eurasia;Papunesia,3.90757,96.6032
+adam1253,Adamawa Fulfulde,adam1253,fub,language,Africa,8.140326,13.077338
 adyg1241,West Circassian,adyg1241,ady,language,Eurasia,44.0,39.33
 afar1241,Afar,afar1241,aar,language,Africa,12.2281,41.8083
 afri1274,Afrikaans,afri1274,afr,language,Africa,-31.63272,20.46356
@@ -185,6 +186,7 @@ leng1262,Lengua,leng1262,,family,South America,-22.6559,-58.9053
 lezg1247,Lezgian,lezg1247,lez,language,Eurasia,41.5157,47.8951
 lill1248,Lillooet,lill1248,lil,language,North America,50.7272,-122.04
 limb1263,Limburgan,limb1263,lim,language,Eurasia,51.015,5.87705
+limb1266,Limbu,limb1266,lif,language,Eurasia,27.2703,87.8859
 lith1251,Lithuanian,lith1251,lit,language,Eurasia,55.1429,23.9601
 loja1235,Loja Highland Quichua,loja1235,qvj,language,South America,-3.69352,-79.29151
 lomb1257,Lombard,lomb1257,lmo,language,Eurasia,45.8817,9.39509
