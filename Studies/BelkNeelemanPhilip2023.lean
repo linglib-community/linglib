@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Chain
+public import Linglib.Syntax.Minimalist.Copy.Chain
 
 /-!
 # Belk, Neeleman and Philip (2023): What Divides, and What Unites, Right-Node Raising

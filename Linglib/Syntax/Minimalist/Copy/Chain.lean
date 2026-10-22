@@ -52,7 +52,7 @@ links are in `SyntacticObject/Locality.lean`.
 
 ## TODO
 
-* Chains on the copy object of `Derivation.replayWithCopies?` (`Derivation/Copy.lean`), the
+* Chains on the copy object of `Derivation.replayWithCopies?` (`Copy/Replay.lean`), the
   positions holding one term, with the token chains here as their case without remnant movement.
 
 ## References

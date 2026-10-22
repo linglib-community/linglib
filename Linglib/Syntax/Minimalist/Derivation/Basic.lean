@@ -383,6 +383,9 @@ theorem take_append_of_le {d : Derivation} {n : Nat} (h : n ≤ d.length) (steps
     (d.append steps).take n = d.take n := by
   simp [take, append, List.take_append_of_le_length h]
 
+@[simp] theorem take_length (d : Derivation) : d.take d.length = d := by
+  simp [take, length]
+
 @[simp] theorem take_length_append (d : Derivation) (steps : List Step) :
     (d.append steps).take d.length = d := by
   unfold take append
@@ -448,6 +451,11 @@ def items (d : Derivation) : Workspace := Step.itemsList d.steps
 externally. -/
 def lexTokens (d : Derivation) : Multiset LexicalItem.Token :=
   d.initial.yield + (d.items.map SyntacticObject.yield).sum
+
+theorem lexTokens_append (d : Derivation) (steps : List Step) :
+    (d.append steps).lexTokens =
+      d.lexTokens + ((Step.itemsList steps).map SyntacticObject.yield).sum := by
+  simp [lexTokens, items, append, Step.itemsList, List.map_append, List.sum_append, add_assoc]
 
 /-- A derivation is admissible when each of its steps is, beside the items still to come. -/
 def Admissible (d : Derivation) : Prop := Step.AdmissibleList d.steps d.initial
