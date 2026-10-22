@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.LateMerger
-public import Linglib.Syntax.Minimalist.SyntacticObject.Label
+public import Linglib.Syntax.Minimalist.Probe.Label
 public import Linglib.Syntax.Minimalist.Derivation.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Licensing
 public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
@@ -64,6 +64,8 @@ attraction is not ordered by a case hierarchy (section 3.5).
   chain of the head's restrictor does not model; the rows ch. 6 (11) and (12) record the data.
 * The merge positions that section 5.4.4 gives the head inside a postpositional phrase are not
   modelled; `konaRows_case` records the pattern they derive.
+* A bare-noun object is a lexical leaf, which ties with the verb under minimal search;
+  `label_merge_object` covers phrasal objects.
 
 ## References
 
@@ -324,21 +326,14 @@ not force the head noun phrase out of it. -/
 theorem inSitu_rows : ∀ r ∈ inSituRows, r.2 = true ↔ ¬ (analysis r.1).ForcedExSitu := by
   decide
 
-open Minimalist.SyntacticObject in
-/-- Section 5.3.2: the labeling algorithm of `Minimalist.SyntacticObject.label` labels a verb
-merged with any saturated noun phrase it selects, whatever case the phrase's head bears, so a
-failure to label, the alternative account of forced displacement the section examines, cannot
-displace a direct object with ICA. -/
-theorem label_merge_object {v d : Minimalist.LexicalItem.Token} {x : Minimalist.SyntacticObject}
-    (hv : v.item.sel = [d.item.cat]) (hx : x.selCheck = .of d []) :
-    (merge (leaf v) x).label = some v := by
-  apply label_eq_of_selHead
-  · simp only [selHead, selCheck_node, selCheck_leaf, hx, hv,
-      Minimalist.SelectionState.mul_def, Minimalist.SelectionState.of, Minimalist.selCombine]
-    rfl
-  · intro tok h
-    have := congrArg (·.val.numNodes) h
-    simp at this
+/-- Section 5.3.2: the labeling algorithm labels a verb merged with a noun phrase, whatever case
+the phrase's head bears, so a failure to label, the alternative account of forced displacement the
+section examines, cannot displace a direct object with ICA. -/
+theorem label_merge_object {t : Minimalist.LinearizedSyntacticObject}
+    {v : Minimalist.LexicalItem.Token} {x : Minimalist.SyntacticObject}
+    (hex : ∃ n, t.termAt n = .merge (.leaf v) x) (hx : x.token? = none)
+    (hv : t.InDomain (.merge (.leaf v) x) (.leaf v)) : t.IsLabeledBy (.merge (.leaf v) x) v :=
+  Minimalist.LinearizedSyntacticObject.isLabeledBy_merge_head hex hx hv
 
 /-- Section 5.2.2: the relative determiner selects the head noun while the noun still selects the
 relative clause, so the two merge with selection pending on both, which triggered Merge never

@@ -57,7 +57,7 @@ phrase it heads, so it gets that phrase's value, saturated with the token's cate
 trace remembers no token and gets the saturated dummy `.of .bareTrace []`. `selCheck`
 reads only the token's category and `sel`. Two saturated sisters have no head, as in
 [marcolli-chomsky-berwick-2025]'s partial head functions: a specifier and its sister are
-labeled, if at all, by the labeling algorithm (`SyntacticObject/Label.lean`).
+labeled, if at all, by the labeling algorithm (`Probe/Label.lean`).
 
 ## References
 
