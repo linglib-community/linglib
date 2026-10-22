@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Atoms
 public import Linglib.Syntax.Command
+public import Linglib.Syntax.Projection
 public import Linglib.Syntax.Minimalist.SyntacticObject.Label
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
@@ -38,6 +39,8 @@ embedding with a total head function, which extends the raising head.
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
 * `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
+* `PlanarSyntacticObject.maximalProjections`, `PlanarSyntacticObject.above`: the maximal
+  projections of a planar object, and the generators above a position, its closeness key.
 * `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
   wherever there is one.
 
@@ -253,5 +256,31 @@ theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : Lexica
   · have hr' : treeRaisingHead r = some ℓ :=
       (raisingHead_merge (l := ⟨_, hl⟩) (r := ⟨_, hr⟩) (hm ▸ h)).resolve_left fun h' ↦ hl' h'
     exact ⟨1, r, by simp [headIndex?, h, hl', hr', List.findIdx?_cons], rfl, hr'⟩
+
+/-! ### Closeness at positions -/
+
+namespace PlanarSyntacticObject
+
+variable (t : PlanarSyntacticObject)
+
+/-- The maximal projections of a planar object, the positions that are no position's head
+daughter. -/
+def maximalProjections : Set TreePath :=
+  {x | IsMaximalProjection (headDaughterRel t.headIndexAt) x}
+
+instance : DecidablePred (· ∈ t.maximalProjections) :=
+  fun x ↦ inferInstanceAs (Decidable (IsMaximalProjection (headDaughterRel t.headIndexAt) x))
+
+/-- The generators in `P` properly dominating a position, the key under which a probe searching the
+object compares goals (`PhraseStructure.ancestors`). -/
+def above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.val.Positions) : Finset TreePath :=
+  (Finset.Iio q.val).filter (· ∈ P)
+
+theorem coe_above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.val.Positions) :
+    (t.above P q : Set TreePath) = ancestors P q.val := by
+  ext x
+  simp [above, ancestors, and_comm]
+
+end PlanarSyntacticObject
 
 end Minimalist

@@ -8,6 +8,7 @@ module
 public import Linglib.Syntax.Command
 public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Mathlib.Order.Minimal
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Relativized Minimality
@@ -24,6 +25,8 @@ than and agrees with those of them that interact. Keyed by position, these are `
 * `Minimalist.Probe.Finds`: a goal is a closest satisfier.
 * `Minimalist.Probe.Inspects`, `Minimalist.Probe.AgreesWith`: no satisfier is closer than a goal,
   and the goal also interacts.
+* `Minimalist.Probe.Spec.bestMatch`, `Minimalist.Probe.Spec.copied`: Best Match as a refinement of
+  a closeness key, and the features Agree copies.
 
 ## Main results
 
@@ -40,6 +43,8 @@ than and agrees with those of them that interact. Keyed by position, these are `
 
 * [rizzi-1990]
 * [deal-2025a]
+* [hiraiwa-2001]
+* [hammerly-mathieu-2026]
 -/
 
 @[expose] public section
@@ -105,13 +110,68 @@ theorem agreesWith_relativized_iff {f : α → Bool} :
   rw [agreesWith_iff_finds fun _ h ↦ h]
   exact ⟨And.left, fun h ↦ ⟨h, h.sat⟩⟩
 
-/-- An insatiable probe inspects its whole domain, Multiple Agree. -/
+/-- An insatiable probe inspects its whole domain, Multiple Agree ([hiraiwa-2001]). -/
 theorem inspects_insatiable_iff {f : α → Bool} : (insatiable f).Inspects s key a ↔ a ∈ s := by
   simp [Inspects]
 
 theorem agreesWith_insatiable_iff {f : α → Bool} :
     (insatiable f).AgreesWith s key a ↔ a ∈ s ∧ f a := by
   simp [AgreesWith, inspects_insatiable_iff]
+
+/-! ### Finite domains -/
+
+section Fintype
+
+variable [Fintype α] [DecidablePred (· ∈ s)] [DecidableRel ((· < ·) : β → β → Prop)]
+
+instance : DecidablePred (p.Inspects s key) := fun a ↦
+  inferInstanceAs (Decidable (a ∈ s ∧ ∀ ⦃b⦄, b ∈ s → p.sat b → ¬ key b < key a))
+
+instance : DecidablePred (p.Finds s key) := fun _ ↦ decidable_of_iff _ finds_iff.symm
+
+instance : DecidablePred (p.AgreesWith s key) := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+end Fintype
+
+/-! ### Feature specifications: Best Match and copying -/
+
+namespace Spec
+
+variable {F : Type*} [DecidableEq F] (sp : Spec F) (feats : α → Finset F)
+
+/-- Best Match refines a closeness key: of equally close goals, the one bearing more satisfaction
+features is closer ([hammerly-mathieu-2026]). -/
+def bestMatch (key : α → β) (a : α) : β ×ₗ ℕᵒᵈ :=
+  toLex (key a, OrderDual.toDual (sp.satFeatures feats a).card)
+
+/-- Comparing goals under Best Match is decidable when comparing their closeness is. -/
+instance [DecidableEq β] [DecidableRel ((· < ·) : β → β → Prop)] :
+    DecidableRel ((· < ·) : β ×ₗ ℕᵒᵈ → β ×ₗ ℕᵒᵈ → Prop) :=
+  Prod.Lex.decidable _ _
+
+/-- The features Agree copies, the interaction features of the goals the probe agrees with. -/
+def copied [Fintype α] (s : Set α) [DecidablePred (· ∈ s)] (key : α → β)
+    [DecidableRel ((· < ·) : β → β → Prop)] : Finset F :=
+  (Finset.univ.filter fun a ↦ (sp.toProbe feats).AgreesWith s key a).biUnion (sp.intFeatures feats)
+
+variable {sp feats}
+
+theorem mem_copied_iff [Fintype α] {s : Set α} [DecidablePred (· ∈ s)] {key : α → β}
+    [DecidableRel ((· < ·) : β → β → Prop)] {x : F} :
+    x ∈ sp.copied feats s key ↔
+      ∃ a, (sp.toProbe feats).AgreesWith s key a ∧ x ∈ sp.intFeatures feats a := by
+  simp [copied]
+
+end Spec
+
+/-- A goal found under Best Match is found under the closeness it refines. -/
+theorem Finds.of_bestMatch {F : Type*} [DecidableEq F] {sp : Spec F} {feats : α → Finset F}
+    (h : (sp.toProbe feats).Finds s (sp.bestMatch feats key) a) :
+    (sp.toProbe feats).Finds s key a := by
+  rw [finds_iff] at h ⊢
+  refine ⟨⟨h.1.1, fun b hb hsb hlt ↦ h.1.2 hb hsb ?_⟩, h.2⟩
+  rw [Spec.bestMatch, Spec.bestMatch, Prod.Lex.toLex_lt_toLex]
+  exact .inl hlt
 
 /-! ### Closeness in phrase structure -/
 

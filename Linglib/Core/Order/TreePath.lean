@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.List.Lex
+public import Mathlib.Order.Interval.Finset.Defs
 public import Linglib.Core.Data.List.Infix
 public import Linglib.Core.Order.LeftLinear
 
@@ -79,6 +80,12 @@ theorem length_strictMono : StrictMono fun p : TreePath ↦ p.toList.length := f
   h.le.length_le.lt_of_ne fun hlen ↦ h.ne (TreePath.ext (h.le.eq_of_length hlen))
 
 instance : WellFoundedLT TreePath := length_strictMono.wellFoundedLT
+
+/-- The paths at or above a path are its prefixes, finitely many. -/
+instance : LocallyFiniteOrderBot TreePath :=
+  .ofIic TreePath (fun p ↦ (p.toList.inits.map TreePath.mk).toFinset) fun a p ↦ by
+    simp only [List.mem_toFinset, List.mem_map, List.mem_inits]
+    exact ⟨fun ⟨l, hl, e⟩ ↦ e ▸ hl, fun h ↦ ⟨p.toList, h, rfl⟩⟩
 
 /-! ### Parents -/
 

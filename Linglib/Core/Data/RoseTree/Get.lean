@@ -108,6 +108,9 @@ subtree, since identical subtrees occur at several positions, so orders and grap
 positions. -/
 def validPaths (t : RoseTree α) : Set TreePath := {p | (t.subtreeAt p.toList).isSome}
 
+instance (t : RoseTree α) : DecidablePred (· ∈ t.validPaths) :=
+  fun p ↦ inferInstanceAs (Decidable ((t.subtreeAt p.toList).isSome = true))
+
 theorem bot_mem_validPaths (t : RoseTree α) : (⊥ : TreePath) ∈ t.validPaths := by
   simp [validPaths]
 

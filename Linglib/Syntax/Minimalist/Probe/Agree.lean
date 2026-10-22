@@ -55,7 +55,7 @@ every interacting goal satisfies the probe; and Multiple Agree is the case of an
 
 ## Implementation notes
 
-Movement, the M subfeatures of lines 5–6 and 9–10 of (30), is not modelled; `Spec.attract` gives
+Movement, the M subfeatures of lines 5–6 and 9–10 of (30), is not modelled; `Probe.attract` gives
 movement a search of its own instead. Line 13 installs the closure of one feature marked for
 dynamic interaction; when a goal bears several, `Spec.dynamicUpdate` installs the features all of
 them dominate, which on a chain of features is the closure of the most specific one.
