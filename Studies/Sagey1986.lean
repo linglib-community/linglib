@@ -190,8 +190,8 @@ that admits one articulator under the place node therefore rounds only labials. 
 theorem isComplex_of_round_of_coronal {s : Segment} (hs : s.Licensed) (hr : (s .round).isSome)
     (hc : s .coronal = some true) : s.IsComplex := by
   have hl : s .labial = some true := hs .round hr .labial rfl .labial rfl
-  exact Finset.one_lt_card.2 ⟨.labial, by simp [Segment.articulators, hl], .coronal,
-    by simp [Segment.articulators, hc], by decide⟩
+  exact Finset.one_lt_card.2 ⟨.labial, by simp [Segment.articulators, Segment.HasValue, hl],
+    .coronal, by simp [Segment.articulators, Segment.HasValue, hc], by decide⟩
 
 /-- The double occlusions of Halle's survey and the Kinyarwanda triple occlusion are the
 labiovelar, labiocoronal, coronovelar and labiocoronovelar stops. -/

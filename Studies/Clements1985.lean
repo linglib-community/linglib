@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Fragments.English.Phonology
-public import Linglib.Core.Data.Fintype.Sets
 public import Linglib.Core.Data.Fintype.Order
 public import Mathlib.Data.Fintype.Card
 public import Linglib.Phonology.FeatureGeometry
@@ -101,8 +100,6 @@ formalisms.
 namespace Clements1985
 
 open Phonology Phonology.FeatureGeometry English Subregular.LocalRewrite English.Phonology
-
-attribute [local instance] Set.decidableEqOnOfFintype
 
 /-! ### Class nodes -/
 
