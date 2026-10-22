@@ -1,102 +1,108 @@
 module
 
-public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Algebra.Group.Basic
 public import Mathlib.Algebra.Group.Hom.Defs
-public import Mathlib.Tactic.Abel
 public import Mathlib.Basic.IsEmpty.Basic
+public import Mathlib.Data.Set.Operations
+public import Mathlib.Tactic.Choose
 
 /-!
 # Proportional analogy
 
-Word-and-paradigm morphology relates the forms of one lexeme to those of another by
-**proportional analogy**, *cat : cats :: dog : dogs* ([blevins-2016]): the operation taking the
-form at one cell to the form at another is the same for every lexeme. Which operations count is a
-parameter, affixation on strings or translation on vectors, so a lexeme-indexed family of
-paradigms `p : L → Cell → F` is **analogical** under a class of operations when every pair of
-cells is related by one operation of the class shared across lexemes (`IsAnalogical`). Analogy
-under any class makes each cell's form identify the lexeme's whole paradigm, Ackerman and
-Malouf's vocabular clarity (`ParadigmSystem.isVocabularClear_of_isAnalogical` in
-`Complexity.lean`). For forms in an additive group and translations as the operations, the cell
-contrast is a difference and the family is **analogically regular** (`IsAnalogicallyRegular`):
-every contrast is lexeme-independent, equivalently the family is a lexeme part plus a cell part
-(`isAnalogicallyRegular_iff_exists_add`), and the property is preserved by additive maps of the
-form space (`IsAnalogicallyRegular.map`). This is the case a discriminative lexicon realises
-exactly (`Studies/HeitmeierChuangBaayen2026`).
+A family of paradigms `p : L → Cell → F` gives the form of each lexeme at each cell. It is
+analogical under a class of operations on forms when the forms at any two cells are related by
+one operation of the class, the same for every lexeme, as in *walk : walks = jump : jumps*.
+Under arbitrary operations this says only that the form at each cell determines the form at
+every other cell. Under the translations of an additive group it says that the shift between
+two cells is the same for every lexeme, which holds iff the family is a lexeme part plus a cell
+part.
 
-## Main declarations
+## Main definitions
 
-* `Morphology.IsAnalogical ops p` — every pair of cells is related by one operation of `ops`,
-  the same for every lexeme.
-* `Morphology.IsAnalogicallyRegular p` — analogy under the translations of an additive group;
-  `isAnalogicallyRegular_iff` is its difference form.
-* `Morphology.isAnalogicallyRegular_iff_exists_add` — regular iff a lexeme part plus a cell
-  part.
+* `Morphology.IsAnalogical`: analogy under a class of operations on forms.
+* `Morphology.IsAnalogicallyRegular`: analogy under translations.
+
+## Main statements
+
+* `Morphology.isAnalogical_univ_iff`: analogy under arbitrary operations is mutual
+  determination of the cells.
+* `Morphology.isAnalogicallyRegular_iff`: regularity as equality of differences.
+* `Morphology.isAnalogicallyRegular_iff_exists_add`: regularity as additive separability.
 
 ## References
 
-* [J. P. Blevins, *Word and Paradigm Morphology* (2016)][blevins-2016]
+* [blevins-2016]
+* [heitmeier-chuang-baayen-2026]
 -/
 
 @[expose] public section
 
 namespace Morphology
 
-variable {L Cell F G : Type*}
+variable {L Cell F G : Type*} {p : L → Cell → F}
 
-/-- A lexeme-indexed family of paradigms is **analogical** under a class of operations on forms
-when every pair of cells is related by one operation of the class, the same for every lexeme. -/
+/-- A family of paradigms is analogical under a class of operations on forms when the forms at
+any two cells are related by one operation of the class, the same for every lexeme. -/
 def IsAnalogical (ops : Set (F → F)) (p : L → Cell → F) : Prop :=
   ∀ c c', ∃ g ∈ ops, ∀ l, p l c' = g (p l c)
 
+theorem IsAnalogical.mono {ops ops' : Set (F → F)} (h : IsAnalogical ops p) (hops : ops ⊆ ops') :
+    IsAnalogical ops' p :=
+  fun c c' ↦ (h c c').imp fun _ ⟨hg, hp⟩ ↦ ⟨hops hg, hp⟩
+
+/-- Analogy under arbitrary operations says only that the form at each cell determines the form
+at every other cell. -/
+theorem isAnalogical_univ_iff :
+    IsAnalogical Set.univ p ↔ ∀ c c', (p · c').FactorsThrough (p · c) := by
+  refine ⟨fun h c c' l l' hl ↦ ?_, fun h c c' ↦
+    ⟨_, trivial, fun l ↦ ((h c c').extend_apply id l).symm⟩⟩
+  obtain ⟨g, -, hg⟩ := h c c'
+  exact (hg l).trans <| (congrArg g hl).trans (hg l').symm
+
+section Add
+
+variable [Add F] [Add G]
+
+/-- A family of paradigms is analogically regular when it is analogical under translations, so
+that the shift from the form at one cell to the form at another is the same for every lexeme. -/
+def IsAnalogicallyRegular (p : L → Cell → F) : Prop :=
+  IsAnalogical (Set.range fun v ↦ (· + v)) p
+
+theorem IsAnalogicallyRegular.map {M : Type*} [FunLike M F G] [AddHomClass M F G]
+    (h : IsAnalogicallyRegular p) (f : M) : IsAnalogicallyRegular fun l c ↦ f (p l c) := by
+  intro c c'
+  obtain ⟨_, ⟨v, rfl⟩, hv⟩ := h c c'
+  exact ⟨_, ⟨f v, rfl⟩, fun l ↦ (congrArg f (hv l)).trans (map_add f _ _)⟩
+
+end Add
+
 section AddCommGroup
 
-variable [AddCommGroup F] [AddCommGroup G]
+variable [AddCommGroup F]
 
-/-- Analogy under translations: the form contrast between any two cells is the same for every
-lexeme. -/
-def IsAnalogicallyRegular (p : L → Cell → F) : Prop :=
-  IsAnalogical (Set.range fun v : F => (· + v)) p
-
-/-- The difference form of analogical regularity. -/
-theorem isAnalogicallyRegular_iff {p : L → Cell → F} :
+theorem isAnalogicallyRegular_iff :
     IsAnalogicallyRegular p ↔ ∀ l l' c c', p l c - p l c' = p l' c - p l' c' := by
-  constructor
-  · intro h l l' c c'
-    obtain ⟨_, ⟨v, rfl⟩, hv⟩ := h c c'
-    dsimp only at hv
-    rw [hv l, hv l']
-    abel
-  · intro h c c'
-    rcases isEmpty_or_nonempty L with hL | ⟨⟨l₀⟩⟩
-    · exact ⟨_, ⟨0, rfl⟩, fun l => (hL.false l).elim⟩
-    · refine ⟨_, ⟨p l₀ c' - p l₀ c, rfl⟩, fun l => ?_⟩
-      show p l c' = p l c + (p l₀ c' - p l₀ c)
-      rw [← h l l₀ c' c]
-      abel
+  refine ⟨fun h l l' c c' ↦ ?_, fun h c c' ↦ ?_⟩
+  · obtain ⟨_, ⟨v, rfl⟩, hv⟩ := h c' c
+    exact (sub_eq_of_eq_add' (hv l)).trans (sub_eq_of_eq_add' (hv l')).symm
+  · rcases isEmpty_or_nonempty L with hL | ⟨⟨l₀⟩⟩
+    · exact ⟨(· + 0), ⟨0, rfl⟩, isEmptyElim⟩
+    · exact ⟨_, ⟨p l₀ c' - p l₀ c, rfl⟩, fun l ↦ eq_add_of_sub_eq' (h l l₀ c' c)⟩
 
-/-- A lexeme part plus a cell part is analogically regular. -/
 theorem isAnalogicallyRegular_add (a : L → F) (b : Cell → F) :
-    IsAnalogicallyRegular fun l c => a l + b c :=
-  isAnalogicallyRegular_iff.2 fun _ _ _ _ => by abel
+    IsAnalogicallyRegular fun l c ↦ a l + b c :=
+  isAnalogicallyRegular_iff.2 fun _ _ _ _ ↦ by
+    rw [add_sub_add_left_eq_sub, add_sub_add_left_eq_sub]
 
-/-- Analogical regularity is preserved by additive maps of the form space. -/
-theorem IsAnalogicallyRegular.map {p : L → Cell → F} (h : IsAnalogicallyRegular p) (f : F →+ G) :
-    IsAnalogicallyRegular fun l c => f (p l c) :=
-  isAnalogicallyRegular_iff.2 fun l l' c c' => by
-    rw [← map_sub, ← map_sub, isAnalogicallyRegular_iff.1 h l l' c c']
-
-/-- Analogical regularity is additivity: a regular family is a lexeme part plus a cell part. -/
-theorem isAnalogicallyRegular_iff_exists_add [Nonempty L] [Nonempty Cell] {p : L → Cell → F} :
+theorem isAnalogicallyRegular_iff_exists_add :
     IsAnalogicallyRegular p ↔ ∃ (a : L → F) (b : Cell → F), ∀ l c, p l c = a l + b c := by
-  refine ⟨fun h => ?_, fun ⟨a, b, hab⟩ => ?_⟩
-  · obtain ⟨l₀⟩ := ‹Nonempty L›
-    obtain ⟨c₀⟩ := ‹Nonempty Cell›
-    refine ⟨fun l => p l c₀, fun c => p l₀ c - p l₀ c₀, fun l c => ?_⟩
-    dsimp only
-    rw [← isAnalogicallyRegular_iff.1 h l l₀ c c₀]
-    abel
-  · have : p = fun l c => a l + b c := funext fun l => funext fun c => hab l c
-    rw [this]
+  refine ⟨fun h ↦ ?_, fun ⟨a, b, hab⟩ ↦ ?_⟩
+  · rcases isEmpty_or_nonempty Cell with hC | ⟨⟨c₀⟩⟩
+    · exact ⟨0, 0, fun _ ↦ isEmptyElim⟩
+    choose g hg hgp using h c₀
+    choose v hv using hg
+    exact ⟨(p · c₀), v, fun l c ↦ by rw [hgp c l, ← hv c]⟩
+  · rw [show p = fun l c ↦ a l + b c from funext₂ hab]
     exact isAnalogicallyRegular_add a b
 
 end AddCommGroup
