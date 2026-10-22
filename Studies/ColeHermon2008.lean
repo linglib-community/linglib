@@ -522,6 +522,14 @@ theorem passive_stages :
       ¬ ex67.vos.BindsAtSurface ex67.patient ex67.agent) := by
   decide
 
+/-- The derivational condition is binding at the copy object: in (67) the patient c-commands the
+agent at some stage exactly when some copy of the patient c-commands some copy of the agent. -/
+example :
+    ex67.vos.BindsAtSomeStage ↑ex67.patient ↑ex67.agent ↔
+      ex67.vos.BindsAtLF ↑ex67.patient ↑ex67.agent :=
+  Derivation.bindsAtSomeStage_iff_bindsAtLF (by decide) (by decide +kernel) (by decide)
+    (by decide) (by decide +kernel)
+
 /-! ### Merge is unordered (§6) -/
 
 /-- Up to the sides of its Merges, the VOS derivation is one derivation. -/

@@ -24,17 +24,16 @@ Voice attracts one, and a participle must be licensed by exactly one of them, wh
 *has seen* and *was seen by* and excludes *has seen by* and *was seen*.
 
 The movement is smuggling: the object inside PartP, which the external argument in Spec,vP
-c-commands and so shields from Infl by Relativized Minimality, is carried past it, after which
-the object is Infl's closest goal and raises to Spec,IP. Without the movement, or with head
-movement of the verb alone, the object stays behind the external argument and the passive
-cannot be derived; the derivation extracts the object from a moved constituent, and the paper
-takes Freezing not to hold of PartP movement. A PP that follows the by-phrase has evacuated
-PartP before the remnant fronted, so the external argument c-commands it, and a PP that precedes
-the by-phrase has not, so it does not: negative polarity, *each* … *the other* and Principle C
-line up with the position of the PP. A reflexive or a bound variable inside the fronted PartP
-is bound only by reconstruction, which the paper takes to be marginal, and Principle B applies
-as the external argument is Merged, so a coindexed pronoun inside PartP is out however PartP
-later moves.
+c-commands and so shields from Infl by Relativized Minimality, is carried past it, after which the
+object is as close to Infl as the external argument and raises to Spec,IP. Without the movement, or
+with head movement of the verb alone, the object stays behind the external argument and the passive
+cannot be derived; the derivation extracts the object from a moved constituent, and the paper takes
+Freezing not to hold of PartP movement. A PP that follows the by-phrase has evacuated PartP before
+the remnant fronted, so the external argument c-commands it, and a PP that precedes the by-phrase
+has not, so it does not: negative polarity, *each* … *the other* and Principle C line up with the
+position of the PP. A reflexive or a bound variable inside the fronted PartP is bound only by
+reconstruction, which the paper takes to be marginal, and Principle B applies as the external
+argument is Merged, so a coindexed pronoun inside PartP is out however PartP later moves.
 
 The passive is a `Derivation` on the syntactic-object carrier under each of the three analyses, the
 surface strings are its externalizations, Relativized Minimality is the search of Infl's probe over
@@ -59,7 +58,8 @@ analysis was built for.
   participle phrase, head movement re-Merges the verb's leaf at the root, standing in for the
   adjunction of (13), and the in-situ analysis raises nothing before the object moves.
   Convergence is whether the object is a closest D-goal for Infl at the stage where it raises;
-  the Case side of the argument is prose.
+  the external argument is then as close, and the Case side of the argument, which keeps it in
+  place, is prose.
 * Principle A and bound-variable binding are evaluated at the surface, with reconstruction to
   any stage as the degraded option; Principle B at any stage, without the local-domain and
   Case-checked clauses of (83), which the monoclausal rows never exercise; Principle C at the
@@ -192,13 +192,20 @@ def passive (a : Analysis) (evacuate : Bool) : Derivation :=
 /-- The active perfect (26): *have* and Infl over vP, and the external argument to Spec,IP. -/
 def active : Derivation := (p.vP false).append [.em .left has₀, .em .left infl₀, .im p.agent]
 
-/-- The analysis converges: at the stage where Infl attracts, the object is one of the D-goals
-Infl's probe finds among the positions it c-commands, so its raising violates neither the Minimal
-Link Condition nor Relativized Minimality (§5). -/
-def Converges (a : Analysis) (evacuate : Bool) : Prop :=
+/-- At the stage where Infl attracts, its probe finds `goal`, a D leaf among the positions it
+c-commands that no other such leaf asymmetrically c-commands. -/
+def InflFinds (a : Analysis) (evacuate : Bool) (goal : LexicalItem.Token) : Prop :=
   ∃ t ∈ (p.preRaising a evacuate).externalize?, ∃ i g, t.termAt i = infl₀ ∧
-    t.termAt g = p.patient ∧ (Probe.relativized fun q ↦ decide (isLeafOf .D (t.termAt q))).Finds
+    t.termAt g = goal ∧ (Probe.relativized fun q ↦ decide (isLeafOf .D (t.termAt q))).Finds
       {q | t.val.CCommands i q} (t.above t.branching) g
+
+instance (a : Analysis) (evacuate : Bool) (goal : LexicalItem.Token) :
+    Decidable (p.InflFinds a evacuate goal) := by
+  unfold InflFinds; infer_instance
+
+/-- The analysis converges: Infl's probe finds the object, so its raising violates neither the
+Minimal Link Condition nor Relativized Minimality (§5). -/
+def Converges (a : Analysis) (evacuate : Bool) : Prop := p.InflFinds a evacuate p.patient
 
 instance (a : Analysis) (evacuate : Bool) : Decidable (p.Converges a evacuate) := by
   unfold Converges; infer_instance
@@ -278,6 +285,10 @@ John written* (9a) and head movement both fail. -/
 theorem rm_converges (a : Analysis) :
     ex9.Converges a false ↔ a = .partP := by
   cases a <;> decide
+
+/-- Smuggling brings the object level with the external argument, not past it: once PartP has
+moved, Infl's probe finds both. -/
+example : ex9.InflFinds .partP false ex9.agent := by decide +kernel
 
 /-- Of the three analyses, the one that converges is the one that violates [muller-1998]'s
 Freezing (35): the object raises out of the fronted PartP that smuggled it, so the paper assumes
@@ -362,7 +373,8 @@ def Clause.at? (p : Clause) : Position → Option LexicalItem.Token
   | .pp => p.extra
 
 /-- The level at which a binding condition is evaluated, the surface or any stage of the
-derivation, reconstruction included. -/
+derivation, reconstruction included: for these derivations, binding at some copy
+(`Derivation.bindsAtSomeStage_iff_bindsAtLF`). -/
 inductive Level
   | surface | anyStage
   deriving DecidableEq, Repr
@@ -375,6 +387,14 @@ def Level.CCommands : Level → Derivation → SyntacticObject → SyntacticObje
 instance : ∀ (ℓ : Level) (d : Derivation), DecidableRel (ℓ.CCommands d)
   | .surface, d => fun x y ↦ inferInstanceAs (Decidable (d.BindsAtSurface x y))
   | .anyStage, d => fun x y ↦ inferInstanceAs (Decidable (d.BindsAtSomeStage x y))
+
+/-- Reconstruction to a stage is binding at the copy object: in the passive (9b) the external
+argument c-commands the object at some stage exactly when some copy of it does. -/
+example :
+    (ex9.passive .partP false).BindsAtSomeStage ↑ex9.agent ↑ex9.patient ↔
+      (ex9.passive .partP false).BindsAtLF ↑ex9.agent ↑ex9.patient :=
+  Derivation.bindsAtSomeStage_iff_bindsAtLF (by decide) (by decide +kernel) (by decide)
+    (by decide) (by decide +kernel)
 
 /-- The binding configuration of `p` at level `ℓ` of its derivation `d`, in which one position
 commands another when its leaf c-commands the other's there. -/
