@@ -13,7 +13,8 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 
 Lemmas on mathlib's conditional measure `μ[|s]` that mathlib does not state: monotonicity in
 the conditioning event, real-valued forms, pushforwards and products, invariance under scaling
-with the composition of two Bayesian updates, and conditioning on nested events up to null sets.
+with the composition of two Bayesian updates, and nested events: ratios, the chain rule, and
+conditioning up to null sets.
 `[UPSTREAM]` candidates for `Mathlib/Probability/ConditionalProbability.lean`.
 -/
 
@@ -101,12 +102,29 @@ end ProbabilityTheory
 
 /-! ### Nested events
 
-Conditioning sees an event only up to a null set, so conditioning on an event almost contained in
-another is conditioning the conditional, and the two conditionals are then comparable. -/
+The conditional of an event given a larger one is the ratio of their masses, and conditionals of
+nested events chain. Conditioning sees an event only up to a null set, so conditioning on an event
+almost contained in another is conditioning the conditional, and the two conditionals are then
+comparable. -/
 
 namespace ProbabilityTheory
 
-variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {s t : Set Ω}
+variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {r s t : Set Ω}
+
+/-- The conditional of an event given a larger one is the ratio of their masses. -/
+theorem cond_apply_of_subset (hs : MeasurableSet s) (hts : t ⊆ s) : μ[t | s] = μ t / μ s := by
+  rw [cond_apply hs, Set.inter_eq_right.2 hts, ENNReal.div_eq_inv_mul]
+
+/-- The chain rule for nested events. -/
+theorem cond_mul_cond_of_subset (hr : MeasurableSet r) (hs : MeasurableSet s) (hsr : s ⊆ r)
+    (hts : t ⊆ s) : μ[s | r] * μ[t | s] = μ[t | r] := by
+  rw [cond_apply_of_subset hr hsr, cond_apply_of_subset hs hts,
+    cond_apply_of_subset hr (hts.trans hsr)]
+  rcases eq_or_ne (μ s) 0 with h0 | h0
+  · simp [h0, measure_mono_null hts h0]
+  rcases eq_or_ne (μ s) ∞ with htop | htop
+  · simp [htop, top_le_iff.1 (htop ▸ measure_mono hsr)]
+  · rw [mul_comm, ENNReal.div_mul_div_cancel h0 htop]
 
 theorem cond_congr_set (h : s =ᵐ[μ] t) : μ[|s] = μ[|t] := by
   rw [cond, cond, measure_congr h, Measure.restrict_congr_set h]

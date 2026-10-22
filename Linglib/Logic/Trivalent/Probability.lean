@@ -109,15 +109,15 @@ variable [DiscreteMeasurableSpace W]
 that of its truth and falsity together. -/
 theorem prob_eq_div (h : μ (support p) ≠ 0) :
     prob μ p = μ (posExt p) / (μ (posExt p) + μ (negExt p)) := by
-  rw [prob_of_measure_support_ne_zero h, cond_apply .of_discrete,
-    Set.inter_eq_right.2 (posExt_subset_support p), ← posExt_union_negExt,
-    measure_union (disjoint_posExt_negExt p) .of_discrete, ENNReal.div_eq_inv_mul]
+  rw [prob_of_measure_support_ne_zero h,
+    cond_apply_of_subset .of_discrete (posExt_subset_support p), ← posExt_union_negExt,
+    measure_union (disjoint_posExt_negExt p) .of_discrete]
 
 /-- The weight of truth and falsity together is the weight of the defined region. -/
 theorem prob_eq_div_measure_support (h : μ (support p) ≠ 0) :
     prob μ p = μ (posExt p) / μ (support p) := by
-  rw [prob_of_measure_support_ne_zero h, cond_apply .of_discrete,
-    Set.inter_eq_right.2 (posExt_subset_support p), ENNReal.div_eq_inv_mul]
+  rw [prob_of_measure_support_ne_zero h,
+    cond_apply_of_subset .of_discrete (posExt_subset_support p)]
 
 /-- Against the counting credence, trivalent probability is a ratio of world counts. -/
 theorem prob_count_eq {P S : Finset W} (hpos : ∀ w, p w = 1 ↔ w ∈ P)
