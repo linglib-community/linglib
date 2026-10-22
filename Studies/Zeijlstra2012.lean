@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Agree.Basic
 public import Linglib.Syntax.Minimalist.Locality.Phase
+public import Linglib.Syntax.Minimalist.Probe.Minimal
 
 /-!
 # Zeijlstra (2012): There Is Only One Way to Agree
@@ -26,6 +27,8 @@ clause boundary (`sot_licit`) while Negative Concord does not (`nc_across_cp_ill
 
 * Feature bearers are given by predicates on the leaves of a syntactic object, as the paper
   annotates its bracketings; the lexical items themselves carry only categories and selection.
+* Upward Agree is the probe's search (`Probe.Finds`) over the elements c-commanding it, with
+  closeness the dual of depth, so that the closest is the lowest.
 * The phase-edge condition is stated for a phase head leaf through the substrate's phase
   domains: when the probe lies in the phase interior and the goal outside the phase, some
   element of the phase edge must carry the uninterpretable feature.
@@ -48,27 +51,35 @@ namespace Zeijlstra2012
 
 open Minimalist Minimalist.SyntacticObject
 
-variable {root probe goal : SyntacticObject} {pred : SyntacticObject → Prop}
 
 /-! ### Upward Agree -/
 
-/-- In upward Agree, `goal`, carrying the interpretable feature marked by `pred`, c-commands the
-uninterpretable `probe` and is the closest such element, no other `pred`-node c-commanding the
-probe being asymmetrically c-commanded by it. -/
-def IsUpwardGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
-  CCommands root goal probe ∧ pred goal ∧
-    ∀ x ∈ root.terms, CCommands root x probe → pred x → ¬ AsymmCCommands root goal x
+/-- The depth of `x` in `root`, the number of its terms that contain `x`. -/
+def depthIn (root x : SyntacticObject) : ℕ := (root.terms.filter (Contains · x)).card
 
-instance [DecidablePred pred] (root probe goal : SyntacticObject) :
-    Decidable (IsUpwardGoalIn root probe goal pred) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ root.terms, _))
+/-- The domain of upward Agree, the terms c-commanding the probe. -/
+def upwardDomain (root probe : SyntacticObject) : Set SyntacticObject :=
+  {x | x ∈ root.terms ∧ CCommands root x probe}
+
+/-- In upward Agree, `goal`, carrying the interpretable feature marked by `pred`, is what the
+probe finds among its c-commanders, the lowest of those carrying the feature. -/
+def IsUpwardGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop)
+    [DecidablePred pred] : Prop :=
+  (Probe.relativized pred).Finds (upwardDomain root probe) (OrderDual.toDual ∘ depthIn root) goal
+
+instance (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop)
+    [DecidablePred pred] : Decidable (IsUpwardGoalIn root probe goal pred) :=
+  decidable_of_iff ((goal ∈ root.terms ∧ CCommands root goal probe) ∧ (∀ x ∈ root.terms,
+      CCommands root x probe → pred x → ¬ depthIn root goal < depthIn root x) ∧ pred goal) <| by
+    simp [IsUpwardGoalIn, Probe.finds_iff, Probe.Inspects, upwardDomain, and_assoc]
 
 /-- In Multiple Agree every probe in the list is checked by the same goal. -/
 def MultipleAgree (root goal : SyntacticObject) (probes : List SyntacticObject)
-    (pred : SyntacticObject → Prop) : Prop :=
+    (pred : SyntacticObject → Prop) [DecidablePred pred] : Prop :=
   ∀ p ∈ probes, IsUpwardGoalIn root p goal pred
 
-instance [DecidablePred pred] (root goal : SyntacticObject) (probes : List SyntacticObject) :
+instance (root goal : SyntacticObject) (probes : List SyntacticObject)
+    (pred : SyntacticObject → Prop) [DecidablePred pred] :
     Decidable (MultipleAgree root goal probes pred) :=
   inferInstanceAs (Decidable (∀ p ∈ probes, _))
 
@@ -105,12 +116,27 @@ def sot : LinearizedSyntacticObject :=
 /-- The bearers of `[iPAST]`. -/
 def iPast (s : SyntacticObject) : Prop := s = opPast
 
-private instance : DecidablePred iPast := fun s ↦ inferInstanceAs (Decidable (s = _))
+instance : DecidablePred iPast := fun s ↦ inferInstanceAs (Decidable (s = _))
 
 /-- The bearers of `[uPAST]` or `[uT]` are both finite verbs and the complementizer. -/
 def uPast (s : SyntacticObject) : Prop := s = said ∨ s = was ∨ s = thatC
 
-private instance : DecidablePred uPast := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred uPast := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+/-- A second past operator. -/
+def opPast₂ : LinearizedSyntacticObject := .leaf ⟨.of .T [.V] "Op[PAST]", 30⟩
+
+/-- Two past operators above a verb. -/
+def twoOps : LinearizedSyntacticObject := {opPast, {opPast₂, {was, ill}}}
+
+/-- The bearers of `[iPAST]` in `twoOps`. -/
+def iPast₂ (s : SyntacticObject) : Prop := s = opPast ∨ s = opPast₂
+
+instance : DecidablePred iPast₂ := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Of two past operators above a verb, upward Agree checks the verb against the lower. -/
+example : IsUpwardGoalIn twoOps was opPast₂ iPast₂ ∧ ¬ IsUpwardGoalIn twoOps was opPast iPast₂ := by
+  decide
 
 /-- Both past morphemes Agree upward with the single past operator. -/
 theorem sot_multipleAgree : MultipleAgree sot opPast [said, was] iPast := by decide
@@ -155,12 +181,12 @@ def ncAcrossCP : LinearizedSyntacticObject :=
 /-- The bearers of `[iNEG]`. -/
 def iNeg (s : SyntacticObject) : Prop := s = non
 
-private instance : DecidablePred iNeg := fun s ↦ inferInstanceAs (Decidable (s = _))
+instance : DecidablePred iNeg := fun s ↦ inferInstanceAs (Decidable (s = _))
 
 /-- The bearers of `[uNEG]`, the n-words. -/
 def uNeg (s : SyntacticObject) : Prop := s = niente ∨ s = nessuno
 
-private instance : DecidablePred uNeg := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred uNeg := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Both n-words Agree upward with the negative marker. -/
 theorem nc_clausemate_multipleAgree : MultipleAgree ncClausemate non [niente, nessuno] iNeg := by
