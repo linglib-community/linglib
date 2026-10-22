@@ -72,14 +72,15 @@ counterpart of `Examples/`, whose datum is a sentence and its gloss.
 
 Per-paper language samples in the shape of the CLDF StructureDataset: a
 `ContributionTable` (each table of the paper, emitted as its own list of rows,
-with languages, parameters and codes shared among them), a
-`LanguageTable` (the sample, with Glottocodes where the source's name
-determines one, and a comment saying why where it does not), a
-`ParameterTable` and `CodeTable` (each parameter with its codes, including
-codes no language takes), and a `ValueTable` (a language's codes, marked
-questionable or optional as the source marks them). Each parameter becomes an
-inductive type; the long `ValueTable` is emitted as one row per language with a
-list-valued field per parameter, so a theorem reads each language once.
+with languages, parameters and codes shared among them), a `LanguageTable`
+(the sample, with Glottocodes where the source's name determines one, and a
+comment saying why where it does not), a `ParameterTable` and `CodeTable`
+(each parameter with its codes, including codes no language takes, or with the
+codes of another parameter, as semantic types share their parts of speech),
+and a `ValueTable` (a language's codes, marked questionable, optional or minor
+as the source marks them). Each parameter with codes of its own becomes an
+inductive type; the long `ValueTable` is emitted as one row per language with
+a list-valued field per parameter, so a theorem reads each language once.
 
 - **Schema**: `Linglib/Data/Structures/Schema.lean`
 - **Generator**: `scripts/gen_structures.py` (`--check` verifies sync)
