@@ -74,7 +74,7 @@ variable (σ : Lexeme → MeaningVector d) (ε : Cell → MeaningVector d)
 
 /-- A table violating proportional analogy is the paradigm of no linear mapping over imputed
 semantics, so irregular forms cannot be produced from constructed meanings (§12.9). -/
-theorem not_exists_paradigm_eq_of_not_regular {f : Lexeme → Cell → FormVector n}
+theorem not_exists_paradigm_eq_of_not_regular {f : ParadigmSystem Lexeme Cell (FormVector n)}
     (hf : ¬ IsAnalogicallyRegular f) :
     ¬ ∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G (imputed σ ε) = f := by
   rintro ⟨G, rfl⟩
@@ -85,8 +85,9 @@ theorem not_exists_paradigm_eq_of_not_regular {f : Lexeme → Cell → FormVecto
 /-- Over word-specific, linearly independent embeddings any form table is the paradigm of some
 linear mapping, irregulars included, which is the irregular-linear cell of Table 16.2 and the
 English past tense on empirical embeddings (§12.9). -/
-theorem exists_paradigm_eq_of_linearIndependent {s : Lexeme → Cell → MeaningVector d}
-    (hs : LinearIndependent ℝ (Function.uncurry s)) (f : Lexeme → Cell → FormVector n) :
+theorem exists_paradigm_eq_of_linearIndependent {s : ParadigmSystem Lexeme Cell (MeaningVector d)}
+    (hs : LinearIndependent ℝ (Function.uncurry s))
+    (f : ParadigmSystem Lexeme Cell (FormVector n)) :
     ∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G s = f := by
   obtain ⟨G, hG⟩ := hs.exists_linearMap_apply_eq (Function.uncurry f)
   obtain ⟨G, rfl⟩ := toLinearMapRight'.surjective G
@@ -96,7 +97,7 @@ theorem exists_paradigm_eq_of_linearIndependent {s : Lexeme → Cell → Meaning
 is the paradigm of some linear mapping over imputed semantics iff it is analogically regular,
 so for a regularized system linearity and regularity are the same constraint (§16.6). -/
 theorem exists_paradigm_imputed_eq_iff (hind : LinearIndependent ℝ (Sum.elim σ ε))
-    (f : Lexeme → Cell → FormVector n) :
+    (f : ParadigmSystem Lexeme Cell (FormVector n)) :
     (∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G (imputed σ ε) = f) ↔
       IsAnalogicallyRegular f := by
   refine ⟨fun ⟨G, hG⟩ ↦ hG ▸ isAnalogicallyRegular_paradigm G (isAnalogicallyRegular_imputed σ ε),
@@ -115,14 +116,14 @@ variable [Fintype Lexeme] [Fintype Cell]
 
 /-- A paradigm is a training experience whose semantic matrix holds the imputed meanings and
 whose form matrix holds the form table, one row per lexeme and cell. -/
-noncomputable def paradigmExperience (f : Lexeme → Cell → FormVector n) :
+noncomputable def paradigmExperience (f : ParadigmSystem Lexeme Cell (FormVector n)) :
     TrainingExperience (Fintype.card (Lexeme × Cell)) n d :=
   let e := (Fintype.equivFin (Lexeme × Cell)).symm
   ⟨of (Function.uncurry (imputed σ ε) ∘ e), of (Function.uncurry f ∘ e)⟩
 
 /-- Irregularity forces positive training loss, since no mapping matrix fits a suppletive
 paradigm exactly and so every trained matrix carries residual error. -/
-theorem pos_weightedLoss_of_not_regular {f : Lexeme → Cell → FormVector n}
+theorem pos_weightedLoss_of_not_regular {f : ParadigmSystem Lexeme Cell (FormVector n)}
     (hf : ¬ IsAnalogicallyRegular f) {q : FrequencyVector (Fintype.card (Lexeme × Cell))}
     (hq : ∀ i, 0 < q i) (G : Matrix (Fin d) (Fin n) ℝ) :
     0 < weightedLoss (paradigmExperience σ ε f) q G := by
@@ -214,14 +215,14 @@ abbrev walk : Fin 2 := 0
 /-- *go* is the second verb. -/
 abbrev go : Fin 2 := 1
 
-/-- The base and past cells of the fragment's verb paradigm are the two cells of the table. -/
-def cell : Fin 2 → English.Verbs.Verb.Cell := ![.base, .past]
+/-- The cells of the table are the base and past cells of the fragment's verb paradigm. -/
+abbrev cells : Finset English.Verbs.Verb.Cell := {.base, .past}
 
-/-- The base cell is the first cell. -/
-abbrev base : Fin 2 := 0
+/-- The base cell. -/
+abbrev base : cells := ⟨.base, by decide⟩
 
-/-- The past cell is the second cell. -/
-abbrev past : Fin 2 := 1
+/-- The past cell. -/
+abbrev past : cells := ⟨.past, by decide⟩
 
 /-- The letter-trigram cue inventory of the four forms; §12.9 codes forms as letter trigrams. -/
 def trigram : Fin 13 → Augmented Char :=
@@ -233,17 +234,18 @@ def trigram : Fin 13 → Augmented Char :=
 
 /-- The past-tense form table at the trigram coding takes each verb's form at each cell from
 the fragment. -/
-def pastTense (v c : Fin 2) : FormVector 13 :=
-  cueVector 3 trigram ((verb v).realize (cell c)).toList
+def pastTense : ParadigmSystem (Fin 2) cells (FormVector 13) := fun v c ↦
+  cueVector 3 trigram ((verb v).realize c).toList
 
 /-- Only the forms of *walk* carry the cue `#wa`. -/
-private theorem mem_cues_walk_iff (v c : Fin 2) :
-    trigram 0 ∈ cues 3 ((verb v).realize (cell c)).toList ↔ v = walk := by
+private theorem mem_cues_walk_iff (v : Fin 2) (c : English.Verbs.Verb.Cell) :
+    trigram 0 ∈ cues 3 ((verb v).realize c).toList ↔ v = walk := by
   revert v c; decide +kernel
 
-/-- Only *walked* carries the cue `ed#`. -/
-private theorem mem_cues_iff (v c : Fin 2) :
-    trigram 6 ∈ cues 3 ((verb v).realize (cell c)).toList ↔ v = walk ∧ c = past := by
+/-- Only *walked*, the past and past participle of *walk*, carries the cue `ed#`. -/
+private theorem mem_cues_iff (v : Fin 2) (c : English.Verbs.Verb.Cell) :
+    trigram 6 ∈ cues 3 ((verb v).realize c).toList ↔
+      v = walk ∧ (c = .past ∨ c = .pastParticiple) := by
   revert v c; decide +kernel
 
 /-- The English past tense violates proportional analogy, since *walked* adds the cue `ed#` to

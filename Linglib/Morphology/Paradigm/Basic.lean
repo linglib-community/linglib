@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Image
 public import Linglib.Core.Data.Setoid.Basic
+public import Linglib.Morphology.Realization
 
 /-!
 # Paradigms: forms over cells
@@ -18,6 +19,8 @@ whose cells form any type; it carries implicative structure and entropy over the
 * `Morphology.Paradigm n F`: a form for each of `n` ordered cells.
 * `Morphology.formsAt`: the forms an inventory offers for each cell.
 * `Morphology.ParadigmSystem D Cell Form`: a form for each row of `D` at each cell of `Cell`.
+* `Morphology.ParadigmSystem.toRealization`: a paradigm system as a total, univalent
+  `Realization`.
 
 ## References
 
@@ -65,5 +68,22 @@ end FormsAt
 each cell, such as the inflection-class table of [ackerman-malouf-2013]'s Table 1, whose class
 count (the enumerative complexity of that paper's Table 3) is `Fintype.card D`. -/
 abbrev ParadigmSystem (D Cell Form : Type*) := D → Cell → Form
+
+namespace ParadigmSystem
+
+variable {D Cell Form : Type*} (M : ParadigmSystem D Cell Form)
+
+/-- A paradigm system realizes each row at each cell by its one form. -/
+def toRealization : Realization D Cell Form := ⟨fun d c ↦ {M d c}⟩
+
+@[simp] theorem toRealization_realize (d : D) (c : Cell) : M.toRealization.realize d c = {M d c} :=
+  rfl
+
+theorem isTotal_toRealization : M.toRealization.IsTotal := fun _ _ ↦ Finset.singleton_nonempty _
+
+theorem isUnivalent_toRealization : M.toRealization.IsUnivalent := fun _ _ ↦
+  (Finset.card_singleton _).le
+
+end ParadigmSystem
 
 end Morphology

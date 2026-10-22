@@ -368,6 +368,17 @@ theorem entropy_eq_sum [Fintype S] [MeasurableSingletonClass S] (hX : Measurable
   rw [entropy, measureEntropy_eq_sum]
   simp_rw [map_measureReal_apply hX (.singleton _)]
 
+/-- The entropy of a random variable valued in a finite set is a sum over that set. -/
+theorem entropy_eq_sum_finset [MeasurableSingletonClass S] (hX : Measurable X) (μ : Measure Ω)
+    [IsZeroOrProbabilityMeasure μ] {A : Finset S} (hA : ∀ ω, X ω ∈ A) :
+    H[X ; μ] = ∑ s ∈ A, negMulLog (μ.real (X ⁻¹' {s})) := by
+  rw [entropy, measureEntropy_of_isProbabilityMeasure_finite (A := A)]
+  · simp_rw [map_measureReal_apply hX (.singleton _)]
+  · rw [Measure.map_apply hX A.measurableSet.compl]
+    convert measure_empty (μ := μ)
+    ext ω
+    simpa using hA ω
+
 /-- A random variable with at most one value has no entropy. -/
 theorem entropy_of_subsingleton [Fintype S] [MeasurableSingletonClass S] [Subsingleton S]
     (X : Ω → S) (μ : Measure Ω) : H[X ; μ] = 0 :=
@@ -427,6 +438,20 @@ theorem condEntropy_eq_sum [Fintype T] [MeasurableSingletonClass T] (X : Ω → 
     H[X | Y ; μ] = ∑ y, μ.real (Y ⁻¹' {y}) * H[X ; μ[|Y ⁻¹' {y}]] := by
   rw [condEntropy, integral_fintype .of_finite]
   simp_rw [smul_eq_mul, map_measureReal_apply hY (.singleton _)]
+
+/-- Recoding `X` injectively leaves its entropy given `Y` unchanged. -/
+theorem condEntropy_comp_of_injective [MeasurableSingletonClass S] {U : Type*} [MeasurableSpace U]
+    [MeasurableSingletonClass U] (Y : Ω → T) (μ : Measure Ω) (hX : Measurable X) {f : S → U}
+    (hf : Measurable f) (hinj : f.Injective) : H[f ∘ X | Y ; μ] = H[X | Y ; μ] := by
+  simp only [condEntropy, entropy_comp_of_injective _ hX hf hinj]
+
+/-- Recoding `Y` by a measurable embedding leaves the entropy of `X` given `Y` unchanged. -/
+theorem condEntropy_comp_right_of_measurableEmbedding {U : Type*} [MeasurableSpace U]
+    (X : Ω → S) (μ : Measure Ω) (hY : Measurable Y) {g : T → U} (hg : MeasurableEmbedding g) :
+    H[X | g ∘ Y ; μ] = H[X | Y ; μ] := by
+  rw [condEntropy, ← Measure.map_map hg.measurable hY, hg.integral_map, condEntropy]
+  congr with y
+  rw [Set.preimage_comp, ← Set.image_singleton, hg.injective.preimage_image]
 
 /-- Mutual information of two random variables. -/
 noncomputable def mutualInfo (X : Ω → S) (Y : Ω → T) (μ : Measure Ω) : ℝ :=
@@ -749,6 +774,30 @@ theorem condEntropy_uniformOn_univ [Fintype Ω] {S T : Type*} [MeasurableSpace S
   rw [uniformOn_univ_cond, entropy_eq_sum (measurable_of_finite X), uniformOn_real_apply,
     Set.univ_inter, Set.ncard_univ, Nat.card_eq_fintype_card]
   simp_rw [uniformOn_real_apply, hY, hXY]
+
+/-- `condEntropy_uniformOn_univ` for attributes valued in finite sets `A` and `B`, the sums running
+over those sets. -/
+theorem condEntropy_uniformOn_univ_finset [Fintype Ω] {S T : Type*} [MeasurableSpace S]
+    [MeasurableSingletonClass S] [DecidableEq S] [MeasurableSpace T] [MeasurableSingletonClass T]
+    [DecidableEq T] {X : Ω → S} {Y : Ω → T} {A : Finset S} {B : Finset T} (hX : ∀ ω, X ω ∈ A)
+    (hY : ∀ ω, Y ω ∈ B) :
+    H[X | Y ; uniformOn (Set.univ : Set Ω)]
+      = ∑ y ∈ B, ((Finset.univ.filter (Y · = y)).card / Fintype.card Ω : ℝ)
+          * ∑ x ∈ A, negMulLog (((Finset.univ.filter fun ω ↦ Y ω = y ∧ X ω = x).card
+              / (Finset.univ.filter (Y · = y)).card : ℝ)) := by
+  let X' : Ω → A := fun ω ↦ ⟨X ω, hX ω⟩
+  let Y' : Ω → B := fun ω ↦ ⟨Y ω, hY ω⟩
+  have hval : MeasurableEmbedding (Subtype.val : B → T) :=
+    MeasurableEmbedding.subtype_coe B.measurableSet
+  have h : H[X | Y ; uniformOn (Set.univ : Set Ω)] = H[X' | Y' ; uniformOn Set.univ] := by
+    rw [← condEntropy_comp_of_injective Y' _ (measurable_of_finite _) measurable_subtype_coe
+      Subtype.val_injective, ← condEntropy_comp_right_of_measurableEmbedding _ _
+      (measurable_of_finite _) hval]
+    rfl
+  rw [h, condEntropy_uniformOn_univ, ← Finset.sum_coe_sort B]
+  refine Finset.sum_congr rfl fun y _ ↦ ?_
+  rw [← Finset.sum_coe_sort A]
+  simp only [X', Y', Subtype.ext_iff]
 
 end Empirical
 
