@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.NonCrossing
 public import Linglib.Phonology.Autosegmental.TwoTier
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fin.Embedding
@@ -17,8 +16,8 @@ A form is a two-tier autosegmental representation in position coordinates: an up
 autosegments over a lower tier of slots, each element sponsored by a morpheme, and a finite set
 of association lines between positions of the two tiers. Forms concatenate by juxtaposing the
 tiers and shifting the right factor's lines, and they form a monoid. A form is a computable
-presentation of a graph-theoretic representation, `Form.toAR`, and its concatenation is the
-tensor there, so the No-Crossing Constraint on its lines is Axiom 5 on the graph.
+presentation of a representation, `Form.toAR`, and presentation is a monoid hom, so the
+No-Crossing Constraint on its lines is the constraint on the representation.
 
 A candidate of a form records the autosegments deleted so far and the current surface lines,
 the state of a serial optimality-theoretic derivation. GEN acts on candidates and never on the
@@ -39,8 +38,7 @@ autosegment that is neither deleted nor linked on the surface is floating.
 
 * `Form.noCrossing_toAR_iff`: the presented representation obeys the NCC iff the lines are
   non-crossing.
-* `Form.toARConcatIso`, `Form.clsHom`: presenting a concatenation gives the tensor, so
-  presentation is a monoid hom into the representations up to isomorphism.
+* `Form.toARHom`: presentation is a monoid hom from forms to representations.
 * `Form.isNonCrossing_links_concat`: concatenation preserves the No-Crossing Constraint.
 * `Candidate.isNonCrossing_links_of_mem_gen`: GEN is closed on the No-Crossing Constraint.
 
@@ -283,35 +281,23 @@ section Presentation
 universe u
 variable {S T M : Type u} (f g : Form S T M)
 
-open scoped CategoryTheory.MonoidalCategory
-
 namespace Form
 
 /-- The representation a form presents, with the sponsors on its labels. -/
-def toAR : TieredAR Bool (TwoTier (Sponsored T M) (Sponsored S M)) :=
+def toAR : AR (TwoTier (Sponsored T M) (Sponsored S M)) :=
   AR.ofWords f.upper f.lower fun p q ↦ (p, q) ∈ f.lines
 
-instance : Finite f.toAR.obj.V := inferInstanceAs (Finite (AR.ofWords _ _ _).obj.V)
+@[simp] theorem word_toAR_true : f.toAR.word true = f.upper := rfl
 
-@[simp] theorem tierWord_toAR_true : f.toAR.tierWord true = f.upper :=
-  AR.tierWord_ofWords_true
+@[simp] theorem word_toAR_false : f.toAR.word false = f.lower := rfl
 
-@[simp] theorem tierWord_toAR_false : f.toAR.tierWord false = f.lower :=
-  AR.tierWord_ofWords_false
-
-@[simp] theorem tierLength_toAR_true : f.toAR.tierLength true = f.upper.length :=
-  AR.tierLength_ofWords_true
-
-@[simp] theorem tierLength_toAR_false : f.toAR.tierLength false = f.lower.length :=
-  AR.tierLength_ofWords_false
-
-@[simp] theorem link_toAR {p q : ℕ} : f.toAR.link true false p q ↔ (p, q) ∈ f.lines :=
+@[simp] theorem link_toAR {p q : ℕ} : f.toAR.Link true false p q ↔ (p, q) ∈ f.lines :=
   AR.link_ofWords.trans
     ⟨fun h ↦ h.2.2, fun h ↦ ⟨(f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, h⟩⟩
 
 /-- The presented representation obeys the NCC iff the lines are non-crossing. -/
 theorem noCrossing_toAR_iff :
-    NoCrossing f.toAR.obj.edges f.toAR.obj.arcs ↔
+    f.toAR.NoCrossing ↔
       IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)) := by
   refine AR.noCrossing_ofWords_iff.trans ?_
   rw [← isNonCrossing_lines_iff]
@@ -320,22 +306,30 @@ theorem noCrossing_toAR_iff :
   simp only [Set.mem_ofPred_eq, Finset.mem_coe]
   exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨(f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, h⟩⟩
 
-/-- A concatenation presents the tensor of the presented representations. -/
-noncomputable def toARConcatIso : Graph.Iso (f.concat g).toAR.obj (f.toAR ⊗ g.toAR).obj :=
-  AR.fullIsoOfReaderEq (fun i ↦ by cases i <;> simp)
-    (AR.link_iff_of_true_false fun p q ↦ by
-      rw [AR.link_tensor]
-      simp only [link_toAR, tierLength_toAR_true, tierLength_toAR_false, mem_lines,
-        mem_links_concat]
-      constructor
-      · rintro ⟨r, (⟨s, hs, h₁, h₂⟩ | ⟨s, hs, h₁, h₂⟩), rfl, rfl⟩
-        · exact .inl ⟨s, hs, h₁, h₂⟩
-        · exact .inr ⟨by omega, by omega, s, hs, by omega, by omega⟩
-      · rintro (⟨s, hs, h₁, h₂⟩ | ⟨hp, hq, s, hs, h₁, h₂⟩)
-        · exact ⟨(castAppend _ _ s.1, castAppend _ _ s.2), .inl ⟨s, hs, rfl, rfl⟩,
-            by simpa using h₁, by simpa using h₂⟩
-        · exact ⟨(natAddAppend _ _ s.1, natAddAppend _ _ s.2), .inr ⟨s, hs, rfl, rfl⟩,
-            by simp; omega, by simp; omega⟩)
+/-- Presenting a concatenation gives the concatenation of the presentations. -/
+theorem toAR_concat : (f.concat g).toAR = f.toAR * g.toAR :=
+  AR.ext_of_true_false rfl rfl fun p q ↦ by
+    rw [AR.link_mul]
+    simp only [link_toAR, word_toAR_true, word_toAR_false, mem_lines, mem_links_concat]
+    constructor
+    · rintro ⟨r, (⟨s, hs, h₁, h₂⟩ | ⟨s, hs, h₁, h₂⟩), rfl, rfl⟩
+      · exact .inl ⟨s, hs, h₁, h₂⟩
+      · exact .inr ⟨by omega, by omega, s, hs, by omega, by omega⟩
+    · rintro (⟨s, hs, h₁, h₂⟩ | ⟨hp, hq, s, hs, h₁, h₂⟩)
+      · exact ⟨(castAppend _ _ s.1, castAppend _ _ s.2), .inl ⟨s, hs, rfl, rfl⟩,
+          by simpa using h₁, by simpa using h₂⟩
+      · exact ⟨(natAddAppend _ _ s.1, natAddAppend _ _ s.2), .inr ⟨s, hs, rfl, rfl⟩,
+          by simp; omega, by simp; omega⟩
+
+/-- The empty form presents the empty representation. -/
+theorem toAR_empty : (empty : Form S T M).toAR = 1 :=
+  AR.ext_of_true_false rfl rfl fun p q ↦ by simp [lines, empty]
+
+/-- Presentation is a monoid hom from forms to representations. -/
+@[simps] def toARHom : Form S T M →* AR (TwoTier (Sponsored T M) (Sponsored S M)) where
+  toFun := toAR
+  map_one' := toAR_empty
+  map_mul' := toAR_concat
 
 /-- Concatenation preserves the No-Crossing Constraint, as concatenation of representations
 does ([jardine-2016b] Theorem 4). -/
@@ -343,27 +337,9 @@ theorem isNonCrossing_links_concat
     (h₁ : IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)))
     (h₂ : IsNonCrossing (g.links : SetRel (Fin g.upper.length) (Fin g.lower.length))) :
     IsNonCrossing ((f.concat g).links :
-      SetRel (Fin (f.concat g).upper.length) (Fin (f.concat g).lower.length)) :=
-  (f.concat g).noCrossing_toAR_iff.1 <| (f.toARConcatIso g).noCrossing_iff.2 <|
-    Graph.noCrossing_concat _ (f.noCrossing_toAR_iff.2 h₁) (g.noCrossing_toAR_iff.2 h₂)
-
-/-- The empty form presents the unit. -/
-noncomputable def toAREmptyIso :
-    Graph.Iso (empty : Form S T M).toAR.obj (𝟙_ (TieredAR Bool _)).obj :=
-  AR.fullIsoOfReaderEq (fun i ↦ by cases i <;> simp)
-    (AR.link_iff_of_true_false fun p q ↦ by simp [lines, empty])
-
-/-- Presentation is a monoid hom from forms to representations up to isomorphism, so the
-strict monoid of forms models concatenation of representations. -/
-noncomputable def clsHom :
-    Form S T M →* CategoryTheory.Skeleton (PrecAR Bool (TwoTier (Sponsored T M) (Sponsored S M)))
-    where
-  toFun f := AR.cls f.toAR
-  map_one' := Quotient.sound ⟨AR.fullIsoToWideIso toAREmptyIso⟩
-  map_mul' f g := by
-    show AR.cls (f.concat g).toAR = AR.cls f.toAR * AR.cls g.toAR
-    rw [← AR.cls_tensor]
-    exact Quotient.sound ⟨AR.fullIsoToWideIso (f.toARConcatIso g)⟩
+      SetRel (Fin (f.concat g).upper.length) (Fin (f.concat g).lower.length)) := by
+  rw [← noCrossing_toAR_iff, toAR_concat]
+  exact ((noCrossing_toAR_iff f).2 h₁).mul ((noCrossing_toAR_iff g).2 h₂)
 
 end Form
 

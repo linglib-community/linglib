@@ -62,18 +62,24 @@ def hts (L : Bool → Bool → ℕ → ℕ → Prop) (i j : ℕ) (b b' : Bool) (
 def lld (L : Bool → Bool → ℕ → ℕ → Prop) (i j : ℕ) (b b' : Bool) (p q : ℕ) : Prop :=
   L b b' p q ∧ ¬ (b = true ∧ b' = false ∧ p = i ∧ q = j)
 
+instance (L : Bool → Bool → ℕ → ℕ → Prop) [∀ b b', DecidableRel (L b b')] (i j : ℕ)
+    (b b' : Bool) : DecidableRel (hts L i j b b') :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+instance (L : Bool → Bool → ℕ → ℕ → Prop) [∀ b b', DecidableRel (L b b')] (i j : ℕ)
+    (b b' : Bool) : DecidableRel (lld L i j b b') :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
 variable {ws : ∀ b, List (TwoTier Tone Unit b)} {L : Bool → Bool → ℕ → ℕ → Prop}
+  [∀ b b', DecidableRel (L b b')]
 
 /-- Spread creates the falling contour (§4.6), since the docked TBU surfaces with H
     on top of whatever it already bore. -/
 theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
     (hj : j + 1 < (ws false).length) :
-    (AR.ofData ws (hts L i j)).SurfacesWith Tone.H (j + 1) := by
+    (AR.fromRel ws (hts L i j)).SurfacesWith Tone.H (j + 1) := by
   rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
-  refine ⟨i, (AR.link_ofData true false i (j + 1)).mpr
-    ⟨by decide, hi, hj, Or.inl (Or.inr ⟨rfl, rfl, rfl, rfl⟩)⟩, ?_⟩
-  rw [AR.tierWord_ofData]
-  exact hH
+  exact ⟨i, AR.link_fromRel.mpr ⟨by decide, hi, hj, .inl (.inr ⟨rfl, rfl, rfl, rfl⟩)⟩, hH⟩
 
 /-- Spread followed by Left Line Delinking shifts the H one TBU rightward
     ((34)), as the docked TBU keeps the new line and the source loses the
@@ -81,18 +87,16 @@ theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
 theorem lld_hts_shift {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
     (hj : j + 1 < (ws false).length) (hne : j + 1 ≠ j)
     (hor : ∀ p q, ¬ L false true p q) :
-    (AR.ofData ws (lld (hts L i j) i j)).SurfacesWith Tone.H (j + 1) ∧
-      ¬ (AR.ofData ws (lld (hts L i j) i j)).link true false i j := by
+    (AR.fromRel ws (lld (hts L i j) i j)).SurfacesWith Tone.H (j + 1) ∧
+      ¬ (AR.fromRel ws (lld (hts L i j) i j)).Link true false i j := by
   rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
   constructor
-  · refine ⟨i, (AR.link_ofData true false i (j + 1)).mpr
-      ⟨by decide, hi, hj, Or.inl ⟨Or.inr ⟨rfl, rfl, rfl, rfl⟩, ?_⟩⟩, ?_⟩
-    · rintro ⟨-, -, -, h⟩
-      exact hne h
-    · rw [AR.tierWord_ofData]
-      exact hH
+  · refine ⟨i, AR.link_fromRel.mpr
+      ⟨by decide, hi, hj, .inl ⟨.inr ⟨rfl, rfl, rfl, rfl⟩, ?_⟩⟩, hH⟩
+    rintro ⟨-, -, -, h⟩
+    exact hne h
   · rintro h
-    rcases (AR.link_ofData true false i j).mp h with
+    rcases AR.link_fromRel.mp h with
       ⟨-, -, -, ⟨-, hno⟩ | ⟨hraw | ⟨hfalse, -⟩, -⟩⟩
     · exact hno ⟨rfl, rfl, rfl, rfl⟩
     · exact hor _ _ hraw

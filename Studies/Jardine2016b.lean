@@ -11,7 +11,7 @@ public import Linglib.Data.Examples.Jardine2016b
 /-!
 # Jardine (2016): intervocalic voicing as a local string relation
 
-This file formalizes chapter 7 of [jardine-2016b], which presents a phonological process as a
+This file formalizes chapter 7 of Jardine's dissertation, which presents a phonological process as a
 relation between input and output strings: a set of correspondence graphs, carved out of GEN by
 banned-subgraph constraints. Section 7.2 runs the idea on intervocalic voicing, (7.1), whose
 relation over `a`, `b` and `p` is `Rvoice`, (7.5). The primitives Γ of (7.14), an input symbol
@@ -136,7 +136,7 @@ theorem spell_eq_some_iff {w v : List Seg} {γs : List Pair} :
 /-- Jardine's `g` on Γ-strings ((7.15)): the correspondence graph spelling the input and
 output symbols position by position. -/
 abbrev g (γs : List Pair) : Rep Seg Seg :=
-  Rep.ofWords (γs.map Pair.input) (γs.map Pair.output) (· = ·)
+  AR.ofWords (γs.map Pair.input) (γs.map Pair.output) (· = ·)
 
 /-- A Γ-string's graph between the boundaries ⋊ and ⋉. -/
 abbrev gen (γs : List Pair) : Rep Seg Seg := g (.lb :: γs ++ [.rb])
@@ -144,39 +144,38 @@ abbrev gen (γs : List Pair) : Rep Seg Seg := g (.lb :: γs ++ [.rb])
 /-! ### The grammar φ_apba -/
 
 /-- φ_apa (7.19): a surface `apa` — output-only, the markedness constraint *VTV. -/
-abbrev banApa : Rep Seg Seg := Rep.ofWords [] [.a, .p, .a] λ _ _ => False
+abbrev banApa : Rep Seg Seg := AR.ofWords [] [.a, .p, .a] fun _ _ ↦ False
 
 /-- φ_⋊pb (7.21): a `p` surfacing as `b` word-initially. -/
-abbrev banInitialPb : Rep Seg Seg := Rep.ofWords [.p] [.lb, .b] λ i o => i = 0 ∧ o = 1
+abbrev banInitialPb : Rep Seg Seg := AR.ofWords [.p] [.lb, .b] fun i o ↦ i = 0 ∧ o = 1
 
 /-- φ_pb⋉ (7.21): a `p` surfacing as `b` word-finally. -/
-abbrev banFinalPb : Rep Seg Seg := Rep.ofWords [.p] [.b, .rb] λ i o => i = 0 ∧ o = 0
+abbrev banFinalPb : Rep Seg Seg := AR.ofWords [.p] [.b, .rb] fun i o ↦ i = 0 ∧ o = 0
 
 /-- φ_ppb (7.21): a `p` surfacing as `b` after a surface `p`. -/
-abbrev banPbAfterP : Rep Seg Seg := Rep.ofWords [.p] [.p, .b] λ i o => i = 0 ∧ o = 1
+abbrev banPbAfterP : Rep Seg Seg := AR.ofWords [.p] [.p, .b] fun i o ↦ i = 0 ∧ o = 1
 
 /-- φ_pbp (7.21): a `p` surfacing as `b` before a surface `p`. -/
-abbrev banPbBeforeP : Rep Seg Seg := Rep.ofWords [.p] [.b, .p] λ i o => i = 0 ∧ o = 0
+abbrev banPbBeforeP : Rep Seg Seg := AR.ofWords [.p] [.b, .p] fun i o ↦ i = 0 ∧ o = 0
 
 /-- φ_apba (7.22). -/
 def voicingGrammar : List (Rep Seg Seg) :=
   [banApa, banInitialPb, banFinalPb, banPbAfterP, banPbBeforeP]
 
-theorem specifiedByRep_voicingGrammar (G : Rep Seg Seg) :
-    specifiedByRep voicingGrammar G ↔
-      ¬ banApa.val.FactorEmbeds G.val ∧ ¬ banInitialPb.val.FactorEmbeds G.val ∧
-        ¬ banFinalPb.val.FactorEmbeds G.val ∧ ¬ banPbAfterP.val.FactorEmbeds G.val ∧
-          ¬ banPbBeforeP.val.FactorEmbeds G.val := by
-  simp only [voicingGrammar, specifiedByRep_cons, specifiedByRep_nil, and_true]
+theorem free_voicingGrammar_iff (G : Rep Seg Seg) :
+    G.Free voicingGrammar ↔
+      ¬ banApa.FactorEmbeds G ∧ ¬ banInitialPb.FactorEmbeds G ∧ ¬ banFinalPb.FactorEmbeds G ∧
+        ¬ banPbAfterP.FactorEmbeds G ∧ ¬ banPbBeforeP.FactorEmbeds G := by
+  simp only [voicingGrammar, AR.free_cons, AR.free_nil, and_true]
 
 /-- On GEN the grammar decides. -/
-instance (γs : List Pair) : Decidable (specifiedByRep voicingGrammar (gen γs)) :=
-  decidable_of_iff _ (specifiedByRep_voicingGrammar (gen γs)).symm
+instance (γs : List Pair) : Decidable ((gen γs).Free voicingGrammar) :=
+  decidable_of_iff _ (free_voicingGrammar_iff (gen γs)).symm
 
 /-! ### The relation R(CG(φ_apba)) -/
 
 /-- CG(φ_apba): the graphs of GEN = CG(Γ) free of the grammar. -/
-def CG (G : Rep Seg Seg) : Prop := (∃ γs, G = gen γs) ∧ specifiedByRep voicingGrammar G
+def CG (G : Rep Seg Seg) : Prop := (∃ γs, G = gen γs) ∧ G.Free voicingGrammar
 
 /-- R(CG(φ_apba)) (Def. 25), on boundary-augmented strings. -/
 def voicing (w v : List Seg) : Prop := relRep CG (.lb :: w ++ [.rb]) (.lb :: v ++ [.rb])
@@ -185,7 +184,7 @@ def voicing (w v : List Seg) : Prop := relRep CG (.lb :: w ++ [.rb]) (.lb :: v +
 graph is free of the grammar. -/
 theorem voicing_iff {w v : List Seg} :
     voicing w v ↔ ∃ γs, γs.map Pair.input = w ∧ γs.map Pair.output = v ∧
-      specifiedByRep voicingGrammar (gen γs) := by
+      (gen γs).Free voicingGrammar := by
   constructor
   · rintro ⟨G, ⟨⟨γs, rfl⟩, hφ⟩, hi, ho⟩
     refine ⟨γs, ?_, ?_, hφ⟩
@@ -197,7 +196,7 @@ theorem voicing_iff {w v : List Seg} :
 /-- Definition 25 by spelling: the Γ-string spelling the pair is unique, so `(w, v)` is in the
 relation iff that string exists and its graph is free of the grammar. -/
 theorem voicing_iff_spell {w v : List Seg} :
-    voicing w v ↔ ∃ γs, spell w v = some γs ∧ specifiedByRep voicingGrammar (gen γs) := by
+    voicing w v ↔ ∃ γs, spell w v = some γs ∧ (gen γs).Free voicingGrammar := by
   simp only [voicing_iff, spell_eq_some_iff, and_assoc]
 
 instance (w v : List Seg) : Decidable (voicing w v) :=

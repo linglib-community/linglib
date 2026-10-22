@@ -110,50 +110,38 @@ theorem sum_length_melody (w : List TBU) :
 
 /-- A TBU translates into the primitive with one timing slot carrying the TBU's melody
 (Jardine's reading of the string as a representation). -/
-def toAR (a : TBU) : TieredAR Bool (TwoTier TRN Unit) := AR.primitive (melody a) ()
+def toAR (a : TBU) : AR (TwoTier TRN Unit) := AR.primitive (melody a) ()
 
-instance (a : TBU) : Finite (toAR a).obj.V :=
-  inferInstanceAs (Finite (AR.primitive (melody a) ()).obj.V)
+@[simp] theorem word_toAR_true (a : TBU) : (toAR a).word true = melody a := rfl
 
-@[simp] theorem tierWord_toAR_true (a : TBU) : (toAR a).tierWord true = melody a :=
-  AR.tierWord_ofWords_true
-
-@[simp] theorem tierWord_toAR_false (a : TBU) : (toAR a).tierWord false = [()] :=
-  AR.tierWord_ofWords_false
-
-@[simp] theorem tierLength_toAR_true (a : TBU) :
-    (toAR a).tierLength true = (melody a).length :=
-  AR.tierLength_ofWords_true
-
-@[simp] theorem tierLength_toAR_false (a : TBU) : (toAR a).tierLength false = 1 :=
-  AR.tierLength_ofWords_false
+@[simp] theorem word_toAR_false (a : TBU) : (toAR a).word false = [()] := rfl
 
 @[simp] theorem link_toAR (a : TBU) (p q : ℕ) :
-    (toAR a).link true false p q ↔ p < (melody a).length ∧ q = 0 := by
+    (toAR a).Link true false p q ↔ p < (melody a).length ∧ q = 0 := by
   simp [toAR]
 
 /-- The melody of a realized string has one `H` node per H-toned TBU. -/
-@[simp] theorem tierWord_realize_toAR_true (w : List TBU) :
-    (AR.realize toAR w).tierWord true = List.replicate (w.count .H) TRN.H := by
+@[simp] theorem word_prod_map_toAR_true (w : List TBU) :
+    (w.map toAR).prod.word true = List.replicate (w.count .H) TRN.H := by
   induction w with
-  | nil => simp
+  | nil => rfl
   | cons a w ih => cases a <;> simp [ih, List.replicate_succ]
 
 /-- The timing tier of a realized string has one slot per TBU. -/
-@[simp] theorem tierWord_realize_toAR_false (w : List TBU) :
-    (AR.realize toAR w).tierWord false = List.replicate w.length () := by
+@[simp] theorem word_prod_map_toAR_false (w : List TBU) :
+    (w.map toAR).prod.word false = List.replicate w.length () := by
   induction w with
-  | nil => simp
+  | nil => rfl
   | cons a w ih => simp [ih, List.replicate_succ]
 
 /-- In a realized string, slot `j` links to melody node `p` exactly when TBU `j` is
 H-toned and `p` is its accumulated melody position. -/
-theorem link_realize_toAR (w : List TBU) (p j : ℕ) :
-    (AR.realize toAR w).link true false p j ↔
+theorem link_prod_map_toAR (w : List TBU) (p j : ℕ) :
+    (w.map toAR).prod.Link true false p j ↔
       p = (w.take j).count .H ∧ w[j]? = some .H := by
   have hoff : AR.tierOffset toAR true w j = (w.take j).count .H := by
-    simp only [AR.tierOffset, AR.tierLength_realize, tierLength_toAR_true, sum_length_melody]
-  rw [AR.link_realize_of_tierLength_eq_one toAR fun _ => tierLength_toAR_false _]
+    simp only [AR.tierOffset, word_toAR_true, sum_length_melody]
+  rw [AR.link_prod_map_of_length_eq_one toAR fun _ ↦ rfl]
   simp only [link_toAR, hoff, and_true, length_melody, List.getElem?_eq_some_iff]
   constructor
   · rintro ⟨hj, hle, hlt⟩
@@ -165,11 +153,11 @@ theorem link_realize_toAR (w : List TBU) (p j : ℕ) :
 
 /-- In the OCP-merged realization the single fused `H` node (index `0`) links exactly to
 the H-toned slots. -/
-theorem link_collapse_realize_toAR (w : List TBU) (k j : ℕ) :
-    ((AR.realize toAR w).collapse true).link true false k j ↔ k = 0 ∧ w[j]? = some .H := by
+theorem link_collapse_prod_map_toAR (w : List TBU) (k j : ℕ) :
+    ((w.map toAR).prod.collapse true).Link true false k j ↔ k = 0 ∧ w[j]? = some .H := by
   rw [AR.link_collapse]
   simp only [repointIdx_self, repointIdx_of_ne (by decide : false ≠ true),
-    link_realize_toAR, tierWord_realize_toAR_true, OCP.runIdx_replicate]
+    link_prod_map_toAR, word_prod_map_toAR_true, OCP.runIdx_replicate]
   constructor
   · rintro ⟨p, q, ⟨-, h⟩, rfl, rfl⟩
     exact ⟨rfl, h⟩
@@ -180,21 +168,18 @@ end TBU
 
 /-- The output representation, in coordinates, is the OCP-merge and then the hull, both at the
 melody tier. -/
-noncomputable def plateauAR (w : List TBU) : TieredAR Bool (TwoTier TRN Unit) :=
-  ((AR.realize TBU.toAR w).collapse true).hull true
-
-instance (w : List TBU) : Finite (plateauAR w).obj.V :=
-  inferInstanceAs (Finite (((AR.realize TBU.toAR w).collapse true).hull true).obj.V)
+def plateauAR (w : List TBU) : AR (TwoTier TRN Unit) :=
+  ((w.map TBU.toAR).prod.collapse true).hull true
 
 /-- In the output representation the fused `H` links to slot `j` iff some H-toned TBU lies at
 or before `j` and some at or after it, fusion then spreading read back as the string window. -/
 theorem link_plateauAR (w : List TBU) (k j : ℕ) :
-    (plateauAR w).link true false k j ↔ k = 0 ∧ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
+    (plateauAR w).Link true false k j ↔ k = 0 ∧ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
   by_cases hj : j < w.length
   · unfold plateauAR
     rw [AR.link_hull_left true _ (by decide)
-      (by simpa using hj : j < ((AR.realize TBU.toAR w).collapse true).tierLength false)]
-    simp only [TBU.link_collapse_realize_toAR, List.mem_take_iff_getElem?,
+      (by simpa using hj : j < (((w.map TBU.toAR).prod.collapse true).word false).length)]
+    simp only [TBU.link_collapse_prod_map_toAR, List.mem_take_iff_getElem?,
       List.mem_drop_iff_getElem?, Nat.lt_succ_iff]
     constructor
     · rintro ⟨q₁, q₂, ⟨rfl, h₁⟩, ⟨-, h₂⟩, hle₁, hle₂⟩
@@ -202,8 +187,7 @@ theorem link_plateauAR (w : List TBU) (k j : ℕ) :
     · rintro ⟨rfl, ⟨q₁, hle₁, h₁⟩, q₂, hle₂, h₂⟩
       exact ⟨q₁, q₂, ⟨rfl, h₁⟩, ⟨rfl, h₂⟩, hle₁, hle₂⟩
   · refine iff_of_false (fun h => hj ?_) fun ⟨_, _, h⟩ => hj (List.lt_length_of_mem_drop h)
-    obtain ⟨-, hq, -⟩ := id h
-    simpa [plateauAR] using hq
+    simpa [plateauAR] using h.lt_right
 
 /-- Slot `j` surfaces with H in the output representation iff the string window holds. -/
 theorem surfacesWith_plateauAR (w : List TBU) (j : ℕ) :

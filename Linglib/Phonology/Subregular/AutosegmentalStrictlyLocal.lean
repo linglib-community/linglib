@@ -33,7 +33,7 @@ constraints, hence star-free.
   language is downward closed under containment of realizations.
 * `Language.bannedSubgraph_ofList_boundary`: a forbidden-factor `SL_k` language is the
   banned-subgraph language of its factors over boundary-padded strings.
-* `Language.bannedSubgraph_realize_eq_of_link_free`, `Language.isStarFree_bannedSubgraph_realize`:
+* `Language.bannedSubgraph_prod_map_eq_of_link_free`, `Language.isStarFree_bannedSubgraph_prod_map`:
   without lines, a banned-subgraph language is an intersection of unions of tier-avoidance
   preimages, and so star-free.
 
@@ -41,8 +41,8 @@ constraints, hence star-free.
 
 The class is parametrized by the realization itself rather than by a primitive map: Jardine's
 `ASL^g` is the class at the merging realization of `g` with border primitives, and the unmerged
-realization and the string realization are other instances. The grammar's factors live in the
-realization's universe. Jardine bans only connected factors (`Autosegmental/Factors.lean`), so
+realization `fun w ↦ (w.map g).prod` and the string realization are other instances. Jardine bans
+only connected factors (`Autosegmental/Factors.lean`), so
 the class here contains his and its separation results are the stronger statements.
 
 ## References
@@ -57,22 +57,17 @@ namespace Language
 
 open Autosegmental
 
-universe u₁ u₂ u₃
-
-variable {S : Type*} {ι : Type u₁} {τ : ι → Type u₂}
-variable (r : List S → TieredAR.{u₁, u₂, u₃} ι τ) [∀ w, Finite (r w).obj.V]
+variable {S ι : Type*} {τ : ι → Type*} (r : List S → AR τ)
 
 /-- The strings whose realization under `r` avoids every factor of the grammar `B`. -/
-def bannedSubgraph (B : List {F : TieredAR.{u₁, u₂, u₃} ι τ // Finite F.obj.V}) : Language S :=
-  {w | (r w).Free B}
+def bannedSubgraph (B : List (AR τ)) : Language S := {w | (r w).Free B}
 
 /-- A language is **autosegmental strictly local** over `r` when a banned-subgraph grammar
 describes it. -/
 def IsAutosegmentalStrictlyLocal (L : Language S) : Prop :=
-  ∃ B : List {F : TieredAR.{u₁, u₂, u₃} ι τ // Finite F.obj.V}, bannedSubgraph r B = L
+  ∃ B : List (AR τ), bannedSubgraph r B = L
 
-variable {r} {B : List {F : TieredAR.{u₁, u₂, u₃} ι τ // Finite F.obj.V}} {L : Language S}
-  {u v w : List S}
+variable {r} {B : List (AR τ)} {L : Language S} {u v w : List S}
 
 @[simp] theorem mem_bannedSubgraph : w ∈ bannedSubgraph r B ↔ (r w).Free B := Iff.rfl
 
@@ -84,8 +79,8 @@ theorem isAutosegmentalStrictlyLocal_bannedSubgraph :
   Set.eq_univ_of_forall fun _ ↦ AR.free_nil
 
 /-- A grammar's language is the intersection of its factors' avoidance languages. -/
-theorem bannedSubgraph_cons (F : {F : TieredAR.{u₁, u₂, u₃} ι τ // Finite F.obj.V}) :
-    bannedSubgraph r (F :: B) = {w | F.val.FactorEmbeds (r w)}ᶜ ⊓ bannedSubgraph r B :=
+theorem bannedSubgraph_cons (F : AR τ) :
+    bannedSubgraph r (F :: B) = {w | F.FactorEmbeds (r w)}ᶜ ⊓ bannedSubgraph r B :=
   Set.ext fun _ ↦ AR.free_cons
 
 /-! ### Downward closure -/
@@ -121,15 +116,11 @@ variable {α : Type*}
 over boundary-padded strings. -/
 theorem bannedSubgraph_ofList_boundary {Fs : List (Augmented α)} {k : ℕ}
     (hk : ∀ f ∈ Fs, f.length = k) :
-    bannedSubgraph (fun w ↦ AR.ofList (boundary k w))
-        (Fs.map fun f ↦ ⟨AR.ofList f, inferInstance⟩) =
+    bannedSubgraph (fun w ↦ AR.ofList (boundary k w)) (Fs.map AR.ofList) =
       (StrictlyLocalGrammar.ofForbidden {f | f ∈ Fs}).language k :=
   Set.ext fun w ↦ by
-    refine Iff.trans (show _ ↔ ∀ F ∈ Fs.map fun f ↦ (⟨AR.ofList f, inferInstance⟩ :
-      {F : TieredAR Unit (fun _ ↦ Option α) // Finite F.obj.V}),
-        ¬ F.val.FactorEmbeds (AR.ofList (boundary k w)) from Iff.rfl) ?_
-    rw [StrictlyLocalGrammar.mem_ofForbidden_language]
-    simp only [List.forall_mem_map, AR.factorEmbeds_ofList_iff, Set.mem_ofPred_eq,
+    rw [mem_bannedSubgraph, StrictlyLocalGrammar.mem_ofForbidden_language]
+    simp only [AR.Free, List.forall_mem_map, AR.factorEmbeds_ofList_iff, Set.mem_ofPred_eq,
       List.mem_kFactors]
     grind
 
@@ -149,51 +140,47 @@ namespace Language
 
 open Autosegmental
 
-universe u₁ u₂ u₃
-
-variable {S : Type*} {ι : Type u₁} {τ : ι → Type u₂}
-  (g : S → TieredAR.{u₁, u₂, u₃} ι τ) [∀ s, Finite (g s).obj.V]
+variable {S ι : Type*} {τ : ι → Type*} (g : S → AR τ)
 
 /-- The strings whose realization contains a link-free factor are those whose tier projections
-contain its tier words. -/
-theorem setOf_factorEmbeds_realize_eq_of_link_free (F : TieredAR ι τ) [Finite F.obj.V]
-    (hF : ∀ i j p q, ¬ F.link i j p q) :
-    {w : List S | F.FactorEmbeds (AR.realize g w)} =
-      ⋂ i, {w : List S | F.tierWord i <:+: AR.tierProj g i (FreeMonoid.ofList w)} := by
+contain its words. -/
+theorem setOf_factorEmbeds_prod_map_eq_of_link_free (F : AR τ) (hF : ∀ i j p q, ¬ F.Link i j p q) :
+    {w : List S | F.FactorEmbeds (w.map g).prod} =
+      ⋂ i, {w : List S | F.word i <:+: (AR.wordHom i).comp (FreeMonoid.lift g) (.ofList w)} := by
   ext w
   simp only [Set.mem_ofPred_eq, Set.mem_iInter, AR.factorEmbeds_iff_infix_of_link_free hF,
-    AR.tierProj_ofList]
+    MonoidHom.comp_apply, FreeMonoid.lift_ofList, AR.wordHom_apply]
   exact Iff.rfl
 
 /-- Without lines, a banned-subgraph language is an intersection over the factors of unions
 over the tiers of tier-avoidance preimages. -/
-theorem bannedSubgraph_realize_eq_of_link_free
-    (B : List {F : TieredAR.{u₁, u₂, u₃} ι τ // Finite F.obj.V})
-    (hB : ∀ F ∈ B, ∀ i j p q, ¬ F.val.link i j p q) :
-    bannedSubgraph (AR.realize g) B =
-      ⋂ F ∈ B, ⋃ i, {w : List S | ¬ F.val.tierWord i <:+: AR.tierProj g i (FreeMonoid.ofList w)} :=
+theorem bannedSubgraph_prod_map_eq_of_link_free (B : List (AR τ))
+    (hB : ∀ F ∈ B, ∀ i j p q, ¬ F.Link i j p q) :
+    bannedSubgraph (fun w ↦ (w.map g).prod) B =
+      ⋂ F ∈ B, ⋃ i, {w : List S | ¬ F.word i <:+:
+        (AR.wordHom i).comp (FreeMonoid.lift g) (.ofList w)} :=
   Set.ext fun w ↦ by
-    refine Iff.trans (show _ ↔ ∀ F ∈ B, ¬ F.val.FactorEmbeds (AR.realize g w) from Iff.rfl) ?_
+    refine Iff.trans (show _ ↔ ∀ F ∈ B, ¬ F.FactorEmbeds (w.map g).prod from Iff.rfl) ?_
     refine Iff.trans ?_ Set.mem_iInter₂.symm
     refine forall₂_congr fun F hF ↦ Iff.trans ?_ Set.mem_iUnion.symm
     rw [AR.factorEmbeds_iff_infix_of_link_free (hB F hF)]
-    simp only [not_forall, Set.mem_ofPred_eq, AR.tierProj_ofList]
+    simp only [not_forall, Set.mem_ofPred_eq, MonoidHom.comp_apply, FreeMonoid.lift_ofList,
+      AR.wordHom_apply]
     exact Iff.rfl
 
 variable [Finite ι]
 
 /-- Without lines, a banned-subgraph language over a realization is star-free. -/
-theorem isStarFree_bannedSubgraph_realize
-    (B : List {F : TieredAR.{u₁, u₂, u₃} ι τ // Finite F.obj.V})
-    (hB : ∀ F ∈ B, ∀ i j p q, ¬ F.val.link i j p q) :
-    IsStarFree (bannedSubgraph (AR.realize g) B) := by
+theorem isStarFree_bannedSubgraph_prod_map (B : List (AR τ))
+    (hB : ∀ F ∈ B, ∀ i j p q, ¬ F.Link i j p q) :
+    IsStarFree (bannedSubgraph (fun w ↦ (w.map g).prod) B) := by
   induction B with
   | nil => simpa using isStarFree_univ (α := S)
   | cons F B ih =>
-    rw [bannedSubgraph_cons, setOf_factorEmbeds_realize_eq_of_link_free g F.val
+    rw [bannedSubgraph_cons, setOf_factorEmbeds_prod_map_eq_of_link_free g F
       (hB F (List.mem_cons_self ..))]
-    exact (IsStarFree.iInter fun i ↦
-      (isStarFree_setOf_infix (F.val.tierWord i)).comap (AR.tierProj g i)).compl.inter
+    exact (IsStarFree.iInter fun i ↦ (isStarFree_setOf_infix (F.word i)).comap
+      ((AR.wordHom i).comp (FreeMonoid.lift g))).compl.inter
         (ih fun F' hF' ↦ hB F' (List.mem_cons_of_mem _ hF'))
 
 end Language

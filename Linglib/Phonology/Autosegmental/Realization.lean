@@ -5,33 +5,26 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Algebra.FreeMonoid.Basic
-public import Mathlib.CategoryTheory.Monoidal.Skeleton
-public import Linglib.Phonology.Autosegmental.NormalForm
+public import Linglib.Phonology.Autosegmental.Basic
 
 /-!
 # Realization of strings as representations
 
-Each symbol denotes a representation primitive, and a string denotes the iterated tensor of its
-symbols' primitives. This is Jardine's mapping `g` without the melody merge, which
-`AR.mergeRealize` adds. The monoid-homomorphism content lives on the skeleton of the
-precedence-preserving wide subcategory `PrecAR`, where concatenation is strictly associative;
-broad categorical isomorphism forgets the arcs and is too coarse to preserve tier words.
+Each symbol denotes a primitive representation, and a string denotes the product of its
+symbols' primitives, `(w.map g₀).prod`. This is Jardine's mapping `g`, the monoid hom
+`FreeMonoid.lift g₀` out of the free monoid on the symbols, without the melody merge of
+`AR.collapse` and `MergeAR`.
 
 ## Main definitions
 
-* `PrecAR`, `AR.cls`: representations with the classical precedence-preserving
-  morphisms, and the monoid of their isomorphism classes.
-* `AR.realize`, `AR.tierProj`: the realization as iterated tensor, and its per-tier
-  projections as free-monoid homomorphisms.
+* `AR.tierOffset`: the tier content of the symbols before a given one.
 
 ## Main results
 
-* `AR.cls_normalize`: normal forms represent their class.
-* `AR.tierWord_realize`, `AR.link_realize`: tier content and links of a realization are
-  compositional — each link lives inside one symbol's primitive at that symbol's tier
-  offsets (`AR.tierOffset`).
-* `AR.noCrossing_realize`: realization preserves the NCC of its primitives.
+* `AR.word_prod`: the words of a product are the concatenated words of its factors.
+* `AR.NoCrossing.prod`: a product of representations obeying the NCC obeys it.
+* `AR.link_prod_map`: each line of a realization lies inside one symbol's primitive, at that
+  symbol's tier offsets.
 
 ## References
 
@@ -43,153 +36,77 @@ broad categorical isomorphism forgets the arcs and is too coarse to preserve tie
 
 namespace Autosegmental
 
-open CategoryTheory
-
 variable {ι : Type*} {τ : ι → Type*}
-
-/-- Representations with the classical precedence-preserving morphisms. -/
-abbrev PrecAR (ι : Type*) (τ : ι → Type*) :=
-  WideSubcategory (AR.precPreserving (t := (Sigma.fst : ((i : ι) × τ i) → ι)))
 
 namespace AR
 
-open scoped MonoidalCategory
+/-- The words of a product are the concatenated words of its factors. -/
+theorem word_prod (l : List (AR τ)) (i : ι) : l.prod.word i = (l.map (·.word i)).flatten := by
+  induction l with
+  | nil => rfl
+  | cons X l ih => simp [ih]
 
-variable {S : Type*} (g₀ : S → TieredAR ι τ)
+/-- A product of representations obeying the NCC obeys it ([jardine-2016b] Theorem 4). -/
+theorem NoCrossing.prod {l : List (AR τ)} (h : ∀ X ∈ l, X.NoCrossing) : l.prod.NoCrossing := by
+  induction l with
+  | nil => exact NoCrossing.one
+  | cons X l ih =>
+    rw [List.prod_cons]
+    exact (h X (by simp)).mul (ih fun Y hY ↦ h Y (by simp [hY]))
 
-/-! ### The monoid of representations up to isomorphism -/
+variable {S : Type*} (g₀ : S → AR τ)
 
-/-- A full isomorphism is an isomorphism of the precedence-preserving category;
-    both directions preserve arcs. -/
-noncomputable def fullIsoToWideIso {A B : TieredAR ι τ}
-    (e : Graph.Iso A.obj B.obj) : (⟨A⟩ : PrecAR ι τ) ≅ ⟨B⟩ :=
-  CategoryTheory.WideSubcategory.isoMk (mkIso e) e.toHom_precPreserving e.symm.toHom_precPreserving
-
-/-- The class of a representation, its isomorphism class in the skeleton of the
-    precedence-preserving category. -/
-noncomputable def cls (A : TieredAR ι τ) : Skeleton (PrecAR ι τ) :=
-  toSkeleton ⟨A⟩
-
-/-- Concatenation of classes is the class of the tensor. -/
-theorem cls_tensor (A B : TieredAR ι τ) : cls (A ⊗ B) = cls A * cls B :=
-  CategoryTheory.Skeleton.toSkeleton_tensorObj (⟨A⟩ : PrecAR ι τ) ⟨B⟩
-
-/-- Normal forms represent their class. -/
-theorem cls_normalize {X : TieredAR ι τ} [Finite X.obj.V] :
-    cls (X.normalize) = cls X :=
-  Quotient.sound ⟨fullIsoToWideIso X.normalizeFullIso⟩
-
-/-! ### Realization of strings -/
-
-/-- The realization of a string is the iterated tensor of its symbols' primitives, unmerged. -/
-noncomputable def realize (w : List S) : TieredAR ι τ :=
-  (w.map g₀).foldr (· ⊗ ·) (𝟙_ _)
-
-@[simp] theorem realize_nil : realize g₀ [] = 𝟙_ _ := rfl
-
-@[simp] theorem realize_cons (a : S) (w : List S) :
-    realize g₀ (a :: w) = g₀ a ⊗ realize g₀ w := rfl
-
-/-- A string of primitives obeying the NCC realizes a representation obeying it
-([jardine-2016b] Theorem 4). -/
-theorem noCrossing_realize (hg : ∀ s, NoCrossing (g₀ s).obj.edges (g₀ s).obj.arcs)
-    (w : List S) : NoCrossing (realize g₀ w).obj.edges (realize g₀ w).obj.arcs := by
-  induction w with
-  | nil => exact fun v => v.elim
-  | cons a w ih => exact Graph.noCrossing_concat _ (hg a) ih
-
-/-! ### Tier content of realizations -/
-
-instance realize.instFinite [∀ s, Finite (g₀ s).obj.V] (w : List S) :
-    Finite (realize g₀ w).obj.V := by
-  induction w with
-  | nil => exact inferInstanceAs (Finite PEmpty)
-  | cons a w ih => exact inferInstanceAs (Finite ((g₀ a).obj.V ⊕ (realize g₀ w).obj.V))
-
-/-- The tier word of a realized string is the concatenation of its symbols' tier words. -/
-theorem tierWord_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
-    (realize g₀ w).tierWord i = (w.map fun s => (g₀ s).tierWord i).flatten := by
-  induction w with
-  | nil => simp
-  | cons a w ih => simp [ih]
-
-@[simp] theorem tierLength_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
-    (realize g₀ w).tierLength i = (w.map fun s => (g₀ s).tierLength i).sum := by
-  rw [← length_tierWord, tierWord_realize, List.length_flatten, List.map_map]
-  simp [Function.comp_def]
-
-/-! ### Links of realizations -/
-
-variable [∀ s, Finite (g₀ s).obj.V]
-
-/-- The tier-`i` offset of the `k`-th symbol of `w` is the tier-`i` content of the prefix
-before it. -/
-noncomputable def tierOffset (i : ι) (w : List S) (k : ℕ) : ℕ :=
-  (realize g₀ (w.take k)).tierLength i
+/-- The tier-`i` offset of the `k`-th symbol of `w`: the tier-`i` content of the symbols before
+it. -/
+def tierOffset (i : ι) (w : List S) (k : ℕ) : ℕ :=
+  ((w.take k).map fun s ↦ ((g₀ s).word i).length).sum
 
 @[simp] theorem tierOffset_zero (i : ι) (w : List S) : tierOffset g₀ i w 0 = 0 := by
   simp [tierOffset]
 
 @[simp] theorem tierOffset_cons_succ (i : ι) (a : S) (w : List S) (k : ℕ) :
-    tierOffset g₀ i (a :: w) (k + 1) = (g₀ a).tierLength i + tierOffset g₀ i w k := by
-  simp [tierOffset, List.take_succ_cons]
+    tierOffset g₀ i (a :: w) (k + 1) = ((g₀ a).word i).length + tierOffset g₀ i w k := by
+  simp [tierOffset]
 
-/-- A link of a realization lives inside one symbol's primitive, at that symbol's tier
-offsets. -/
-theorem link_realize (i j : ι) (w : List S) (p q : ℕ) :
-    (realize g₀ w).link i j p q ↔
+/-- A line of a realization lies inside one symbol's primitive, at that symbol's tier offsets. -/
+theorem link_prod_map (i j : ι) (w : List S) (p q : ℕ) :
+    (w.map g₀).prod.Link i j p q ↔
       ∃ k, ∃ hk : k < w.length, tierOffset g₀ i w k ≤ p ∧ tierOffset g₀ j w k ≤ q ∧
-        (g₀ w[k]).link i j (p - tierOffset g₀ i w k) (q - tierOffset g₀ j w k) := by
+        (g₀ w[k]).Link i j (p - tierOffset g₀ i w k) (q - tierOffset g₀ j w k) := by
   induction w generalizing p q with
   | nil => simp
   | cons a w ih =>
-    rw [show (realize g₀ (a :: w)).link i j p q ↔ (g₀ a ⊗ realize g₀ w).link i j p q from
-      Iff.rfl, link_tensor, ih]
+    rw [List.map_cons, List.prod_cons, link_mul, ih]
     constructor
     · rintro (h | ⟨hp, hq, k, hk, hpk, hqk, h⟩)
       · exact ⟨0, by simp, by simp, by simp, by simpa using h⟩
       · exact ⟨k + 1, by simpa using hk, by simp; omega, by simp; omega,
           by simpa [Nat.sub_sub] using h⟩
     · rintro ⟨_ | k, hk, hpk, hqk, h⟩
-      · exact Or.inl (by simpa using h)
+      · exact .inl (by simpa using h)
       · simp only [tierOffset_cons_succ, List.getElem_cons_succ] at hpk hqk h
-        exact Or.inr ⟨by omega, by omega, k, by simpa using hk, by omega, by omega,
+        exact .inr ⟨by omega, by omega, k, by simpa using hk, by omega, by omega,
           by simpa [Nat.sub_sub] using h⟩
 
-/-- With one tier-`j` position per symbol, tier-`j` positions of the realization are the
-string's positions: a link at position `q` is a link inside the `q`-th symbol's primitive. -/
-theorem link_realize_of_tierLength_eq_one {j : ι} (hj : ∀ s, (g₀ s).tierLength j = 1)
+/-- With one tier-`j` position per symbol, the tier-`j` positions of a realization are the
+string's positions: a line at position `q` lies inside the `q`-th symbol's primitive. -/
+theorem link_prod_map_of_length_eq_one {j : ι} (hj : ∀ s, ((g₀ s).word j).length = 1)
     (i : ι) (w : List S) (p q : ℕ) :
-    (realize g₀ w).link i j p q ↔
+    (w.map g₀).prod.Link i j p q ↔
       ∃ hq : q < w.length, tierOffset g₀ i w q ≤ p ∧
-        (g₀ w[q]).link i j (p - tierOffset g₀ i w q) 0 := by
-  have hoff : ∀ k ≤ w.length, tierOffset g₀ j w k = k := fun k hk => by
+        (g₀ w[q]).Link i j (p - tierOffset g₀ i w q) 0 := by
+  have hoff : ∀ k ≤ w.length, tierOffset g₀ j w k = k := fun k hk ↦ by
     simp [tierOffset, hj, hk]
-  rw [link_realize]
+  rw [link_prod_map]
   constructor
   · rintro ⟨k, hk, hpk, hqk, h⟩
     rw [hoff k hk.le] at hqk h
-    obtain ⟨-, hlt, -⟩ := id h
+    have hlt := h.lt_right
     rw [hj] at hlt
     obtain rfl : k = q := by omega
     exact ⟨hk, hpk, by simpa using h⟩
   · rintro ⟨hq, hpq, h⟩
     exact ⟨q, hq, hpq, by rw [hoff q hq.le], by simpa [hoff q hq.le] using h⟩
-
-/-- The tier-`i` projection of a realization, as a free-monoid homomorphism:
-    each symbol contributes its primitive's tier word. -/
-noncomputable def tierProj (i : ι) : FreeMonoid S →* FreeMonoid (τ i) :=
-  FreeMonoid.lift fun s => FreeMonoid.ofList ((g₀ s).tierWord i)
-
-@[simp] theorem tierProj_of (i : ι) (a : S) :
-    tierProj g₀ i (FreeMonoid.of a) = FreeMonoid.ofList ((g₀ a).tierWord i) := rfl
-
-/-- On a word, `tierProj` is the realized tier word. -/
-theorem tierProj_ofList (i : ι) (w : List S) :
-    tierProj g₀ i (FreeMonoid.ofList w) = FreeMonoid.ofList ((realize g₀ w).tierWord i) := by
-  induction w with
-  | nil => simp
-  | cons a w ih => simp [FreeMonoid.ofList_cons, FreeMonoid.ofList_append, ih]
 
 end AR
 

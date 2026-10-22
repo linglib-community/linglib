@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.NormalForm
+public import Linglib.Phonology.Autosegmental.Basic
 
 /-!
 # The association hull
@@ -13,7 +13,7 @@ public import Linglib.Phonology.Autosegmental.NormalForm
 `AR.hull m` closes each node of melody tier `m` to the interval hull of its links on every
 other tier: a melody node links to a position iff that position lies between two of its
 links. Applied after OCP fusion, the hull of the fused H's links is the plateau of
-[hyman-katamba-2010]'s plateauing rule (`Phonology/Tone/Plateauing`). The hull of a melody
+Hyman and Katamba's plateauing rule (`Phonology/Tone/Plateauing`). The hull of a melody
 with several nodes can violate the No-Crossing Constraint, since two interleaved hulls cross;
 the rule applies to the fused representation, whose melody is a single node.
 
@@ -32,95 +32,65 @@ the rule applies to the fused representation, whose melody is a single node.
 
 namespace Autosegmental
 
-section CoordinateHull
+namespace AR
 
-variable {ι : Type*} [Finite ι] {τ : ι → Type*}
-variable (m : ι) (X : TieredAR ι τ) [Finite X.obj.V]
+variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*} (m : ι) (X : AR τ)
 
 /-- The hull closes each tier-`m` node's association set to its interval hull on each
 other tier. -/
-noncomputable def AR.hull :
-    TieredAR ι τ :=
-  AR.ofData (fun i => X.tierWord i)
-    (fun i j p q =>
-      (i = m ∧ ∃ q₁ q₂, X.link i j p q₁ ∧ X.link i j p q₂ ∧ q₁ ≤ q ∧ q ≤ q₂) ∨
-        (i ≠ m ∧ j ≠ m ∧ X.link i j p q))
+def hull : AR τ :=
+  fromRel X.word fun i j p q ↦
+    (i = m ∧ ∃ q₁ < (X.word j).length, ∃ q₂ < (X.word j).length,
+      X.Link i j p q₁ ∧ X.Link i j p q₂ ∧ q₁ ≤ q ∧ q ≤ q₂) ∨ (i ≠ m ∧ j ≠ m ∧ X.Link i j p q)
 
-instance : Finite (X.hull m).obj.V :=
-  inferInstanceAs (Finite ((_ : ι) × Fin _))
-
-@[simp] theorem AR.tierWord_hull (i : ι) :
-    (X.hull m).tierWord i = X.tierWord i :=
-  AR.tierWord_ofData i
-
-@[simp] theorem AR.tierLength_hull (i : ι) : (X.hull m).tierLength i = X.tierLength i := by
-  rw [← AR.length_tierWord, AR.tierWord_hull, AR.length_tierWord]
+@[simp] theorem word_hull : (X.hull m).word = X.word := rfl
 
 /-- In the hull, melody node `p` links to `q` iff `q` lies between two of `p`'s links. -/
-theorem AR.link_hull_left {j : ι} (hj : m ≠ j) {p q : ℕ}
-    (hq : q < X.tierLength j) :
-    (X.hull m).link m j p q ↔
-      ∃ q₁ q₂, X.link m j p q₁ ∧ X.link m j p q₂ ∧ q₁ ≤ q ∧ q ≤ q₂ := by
-  unfold AR.hull
-  rw [AR.link_ofData]
+theorem link_hull_left {j : ι} (hj : m ≠ j) {p q : ℕ} (hq : q < (X.word j).length) :
+    (X.hull m).Link m j p q ↔
+      ∃ q₁ q₂, X.Link m j p q₁ ∧ X.Link m j p q₂ ∧ q₁ ≤ q ∧ q ≤ q₂ := by
+  rw [hull, link_fromRel]
   constructor
-  · rintro ⟨-, -, -, (⟨-, hfl⟩ | ⟨hne, -, -⟩) | (⟨rfl, -⟩ | ⟨-, hne, -⟩)⟩
-    · exact hfl
+  · rintro ⟨-, -, -, (⟨-, q₁, -, q₂, -, hfl⟩ | ⟨hne, -, -⟩) | (⟨rfl, -⟩ | ⟨-, hne, -⟩)⟩
+    · exact ⟨q₁, q₂, hfl⟩
     · exact absurd rfl hne
     · exact absurd rfl hj
     · exact absurd rfl hne
   · rintro ⟨q₁, q₂, h₁, h₂, hle₁, hle₂⟩
-    obtain ⟨hp, -, -⟩ := id h₁
-    refine ⟨hj, ?_, ?_, Or.inl (Or.inl ⟨rfl, q₁, q₂, h₁, h₂, hle₁, hle₂⟩)⟩
-    · simpa using hp
-    · simpa [AR.length_tierWord] using hq
+    exact ⟨hj, h₁.lt_left, hq,
+      .inl (.inl ⟨rfl, q₁, h₁.lt_right, q₂, h₂.lt_right, h₁, h₂, hle₁, hle₂⟩)⟩
 
-/-- Links not involving the melody tier pass through the hull unchanged. -/
-theorem AR.link_hull_of_ne {i j : ι} (hi : i ≠ m) (hj : j ≠ m) (p q : ℕ) :
-    (X.hull m).link i j p q ↔ X.link i j p q := by
-  unfold AR.hull
-  rw [AR.link_ofData]
+/-- Lines not involving the melody tier pass through the hull unchanged. -/
+theorem link_hull_of_ne {i j : ι} (hi : i ≠ m) (hj : j ≠ m) (p q : ℕ) :
+    (X.hull m).Link i j p q ↔ X.Link i j p q := by
+  rw [hull, link_fromRel]
   constructor
   · rintro ⟨-, -, -, (⟨rfl, -⟩ | ⟨-, -, hl⟩) | (⟨rfl, -⟩ | ⟨-, -, hl⟩)⟩
     · exact absurd rfl hi
     · exact hl
     · exact absurd rfl hj
-    · exact X.link_symm hl
+    · exact hl.symm
   · intro hl
-    obtain ⟨hp, hq, -⟩ := id hl
-    refine ⟨?_, by simpa using hp, by simpa using hq,
-      Or.inl (Or.inr ⟨hi, hj, hl⟩)⟩
-    rintro rfl
-    exact X.not_link_self_tier i p q hl
+    exact ⟨hl.ne, hl.lt_left, hl.lt_right, .inl (.inr ⟨hi, hj, hl⟩)⟩
 
-/-- Melody links flank themselves: the hull extends the link relation. -/
-theorem AR.link_subset_hull {i j : ι} {p q : ℕ} (h : X.link i j p q) :
-    (X.hull m).link i j p q := by
-  obtain ⟨hp, hq, -⟩ := id h
+/-- Melody lines flank themselves: the hull extends the link relation. -/
+theorem link_subset_hull {i j : ι} {p q : ℕ} (h : X.Link i j p q) : (X.hull m).Link i j p q := by
   rcases eq_or_ne m i with rfl | hi
   · rcases eq_or_ne m j with rfl | hj
-    · exact absurd h (X.not_link_self_tier m p q)
-    · exact (X.link_hull_left m hj hq).mpr ⟨q, q, h, h, le_rfl, le_rfl⟩
+    · exact absurd rfl h.ne
+    · exact (X.link_hull_left m hj h.lt_right).mpr ⟨q, q, h, h, le_rfl, le_rfl⟩
   · rcases eq_or_ne m j with rfl | hj
-    · exact (X.hull m).link_symm ((X.link_hull_left m hi hp).mpr
-        ⟨p, p, X.link_symm h, X.link_symm h, le_rfl, le_rfl⟩)
+    · exact ((X.link_hull_left m hi h.lt_left).mpr ⟨p, p, h.symm, h.symm, le_rfl, le_rfl⟩).symm
     · exact (X.link_hull_of_ne m (Ne.symm hi) (Ne.symm hj) p q).mpr h
 
-/-- Each melody node's hull links form an interval. -/
-theorem AR.link_hull_convex {j : ι} (hj : m ≠ j) {p q₁ q q₂ : ℕ}
-    (hq : q < X.tierLength j)
-    (h₁ : (X.hull m).link m j p q₁) (h₂ : (X.hull m).link m j p q₂)
-    (hle₁ : q₁ ≤ q) (hle₂ : q ≤ q₂) : (X.hull m).link m j p q := by
-  have hlen : (X.hull m).tierLength j = X.tierLength j := by
-    rw [← AR.length_tierWord, AR.tierWord_hull,
-      AR.length_tierWord]
-  obtain ⟨-, hb₁, -⟩ := id h₁
-  obtain ⟨-, hb₂, -⟩ := id h₂
-  rw [hlen] at hb₁ hb₂
-  obtain ⟨a₁, -, ha₁, -, hle₃, -⟩ := (X.link_hull_left m hj hb₁).mp h₁
-  obtain ⟨-, a₂, -, ha₂, -, hle₄⟩ := (X.link_hull_left m hj hb₂).mp h₂
+/-- Each melody node's hull lines form an interval. -/
+theorem link_hull_convex {j : ι} (hj : m ≠ j) {p q₁ q q₂ : ℕ} (hq : q < (X.word j).length)
+    (h₁ : (X.hull m).Link m j p q₁) (h₂ : (X.hull m).Link m j p q₂)
+    (hle₁ : q₁ ≤ q) (hle₂ : q ≤ q₂) : (X.hull m).Link m j p q := by
+  obtain ⟨a₁, -, ha₁, -, hle₃, -⟩ := (X.link_hull_left m hj h₁.lt_right).mp h₁
+  obtain ⟨-, a₂, -, ha₂, -, hle₄⟩ := (X.link_hull_left m hj h₂.lt_right).mp h₂
   exact (X.link_hull_left m hj hq).mpr ⟨a₁, a₂, ha₁, ha₂, by omega, by omega⟩
 
-end CoordinateHull
+end AR
 
 end Autosegmental
