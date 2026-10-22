@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Turkish.Possession
 public import Linglib.Fragments.Turkish.Verbs
 
 /-!
@@ -21,6 +22,9 @@ The grammar's example words are licensed with their stacked voice suffixes, reve
 not, and the rule that markers of one position cannot co-occur (§8.2.3) holds because the
 template does not repeat the position.
 
+The possessive and locative existential sentences of §12.1.1.2 are those of
+`Turkish.Possession`, with the possessive suffix on the possessee obligatory (§14.4).
+
 ## Main results
 
 * `followers_table`: the §3.1 table of permissible vowel sequences.
@@ -34,6 +38,8 @@ template does not repeat the position.
 * `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
 * `finite_verb`: §8.2 (7), every slot of the finite verb.
 * `same_position_excluded`: §8.2.3 (i), since the template does not repeat position 3.
+* `possessive_existential`, `locative_existential`: §12.1.1.2 (21), (22), (26) and (17).
+* `possessive_obligatory`: §14.4 (117), the possessive suffix on the possessee.
 
 ## References
 
@@ -289,5 +295,44 @@ theorem reversed_orders :
 theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
     ¬ Verb.template.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
   show [Verb.Slot.tam, .tam] ∉ Verb.template.language by decide
+
+/-! ### Existential sentences (§12.1.1.2) -/
+
+/-- The possessive existential sentences (21), with the adverbial after or before the
+possessor, (22), with a past copula and no possessor, and (26): *Ayten-in İstanbul'da iki
+arkadaş-ı var* and *İstanbul'da Ayten-in iki arkadaş-ı var* 'Ayten has two friends in
+Istanbul', *O gün paramız yoktu* 'We had no money that day' and *Murat'ın yatı var* 'Murat
+has a yacht'. -/
+theorem possessive_existential :
+    Possession.IsPossessive [[a, y, t, e, n]] [realize [i, s, t, a, n, b, u, l] [locative.form]]
+        [[i, k, i], [a, r, k, a, d, a, ş]] (.personNumber .third .singular) Possession.var
+        [[a, y, t, e, n, i, n], [i, s, t, a, n, b, u, l, d, a], [i, k, i],
+          [a, r, k, a, d, a, ş, ı], [v, a, r]] ∧
+    Possession.IsPossessive [[a, y, t, e, n]] [realize [i, s, t, a, n, b, u, l] [locative.form]]
+        [[i, k, i], [a, r, k, a, d, a, ş]] (.personNumber .third .singular) Possession.var
+        [[i, s, t, a, n, b, u, l, d, a], [a, y, t, e, n, i, n], [i, k, i],
+          [a, r, k, a, d, a, ş, ı], [v, a, r]] ∧
+    Possession.IsPossessive [] [[o], [g, ü, n]] [[p, a, r, a]] (.personNumber .first .plural)
+        (Possession.predicate Possession.yok (some pastCopula))
+        [[o], [g, ü, n], [p, a, r, a, m, ı, z], [y, o, k, t, u]] ∧
+    Possession.IsPossessive [[m, u, r, a, t]] [] [[y, a, t]] (.personNumber .third .singular)
+        Possession.var [[m, u, r, a, t, ı, n], [y, a, t, ı], [v, a, r]] := by
+  decide
+
+/-- The locative existential sentence (17), *Ben-de bir kitap var* 'I have a book'. -/
+theorem locative_existential :
+    Possession.locative [[b, e, n]] [[b, i, r], [k, i, t, a, p]] Possession.var =
+      [[b, e, n, d, e], [b, i, r], [k, i, t, a, p], [v, a, r]] := by
+  decide
+
+/-- The possessive suffix on *araba* in (117) is obligatory (§14.4): *Siz-in araba-nız var*
+'You have a car', without the question particle, and no person-number cell gives *Sizin
+araba var*. -/
+theorem possessive_obligatory :
+    Possession.IsPossessive [[s, i, z]] [] [[a, r, a, b, a]] (.personNumber .second .plural)
+        Possession.var [[s, i, z, i, n], [a, r, a, b, a, n, ı, z], [v, a, r]] ∧
+      ∀ c ∈ Agreement.Bundle.personNumberCells, ¬ Possession.IsPossessive [[s, i, z]] []
+        [[a, r, a, b, a]] c Possession.var [[s, i, z, i, n], [a, r, a, b, a], [v, a, r]] :=
+  ⟨by decide, fun _ hc h ↦ h.ne_bare (np := []) hc [[s, i, z, i, n]] rfl⟩
 
 end GokselKerslake2005

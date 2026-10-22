@@ -55,6 +55,7 @@ exactly when it differs from the last segment of the stem in being a vowel.
 * `Suffix.attach_eq_elideV2`, `Suffix.attach_eq_epenthesize`, `Suffix.attach_concat_eq_repair`:
   after a vowel-final stem, attachment is one of the repairs of `Phonology.Hiatus`, elision of
   the suffix's vowel or insertion of its bracketed consonant.
+* `realize_singleton_ne_self`: a suffix with fixed segments changes every stem it attaches to.
 
 ## Implementation notes
 
@@ -172,6 +173,15 @@ theorem underlying_append (w : List Segment) (sfxs sfxs' : List Suffix) :
 
 /-- `realize w sfxs` is the surface form of the stem `w` with the suffixes `sfxs`. -/
 def realize (w : List Segment) (sfxs : List Suffix) : List Segment := surface (underlying w sfxs)
+
+@[simp] theorem length_realize (w : List Segment) (sfxs : List Suffix) :
+    (realize w sfxs).length = (underlying w sfxs).length := by
+  simp [realize]
+
+/-- A suffix whose fixed segments are not empty changes every stem it attaches to. -/
+theorem realize_singleton_ne_self {s : Suffix} (hs : s.segments ≠ []) (w : List Segment) :
+    realize w [s] ≠ w := fun h ↦ by
+  simpa [Suffix.attach, hs] using congrArg List.length h
 
 /-! ### The finite verb -/
 
