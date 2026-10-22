@@ -64,8 +64,8 @@ attraction is not ordered by a case hierarchy (section 3.5).
   chain of the head's restrictor does not model; the rows ch. 6 (11) and (12) record the data.
 * The merge positions that section 5.4.4 gives the head inside a postpositional phrase are not
   modelled; `konaRows_case` records the pattern they derive.
-* A bare-noun object is a lexical leaf, which ties with the verb under minimal search;
-  `label_merge_object` covers phrasal objects.
+* A bare-noun object is a lexical leaf, which ties with the verb under minimal search, so the
+  labeling argument of section 5.3.2 covers phrasal objects only.
 
 ## References
 
@@ -326,13 +326,13 @@ not force the head noun phrase out of it. -/
 theorem inSitu_rows : ∀ r ∈ inSituRows, r.2 = true ↔ ¬ (analysis r.1).ForcedExSitu := by
   decide
 
-/-- Section 5.3.2: the labeling algorithm labels a verb merged with a noun phrase, whatever case
-the phrase's head bears, so a failure to label, the alternative account of forced displacement the
-section examines, cannot displace a direct object with ICA. -/
-theorem label_merge_object {t : Minimalist.LinearizedSyntacticObject}
-    {v : Minimalist.LexicalItem.Token} {x : Minimalist.SyntacticObject}
-    (hex : ∃ n, t.termAt n = .merge (.leaf v) x) (hx : x.token? = none)
-    (hv : t.InDomain (.merge (.leaf v) x) (.leaf v)) : t.IsLabeledBy (.merge (.leaf v) x) v :=
+-- Section 5.3.2: the labeling algorithm labels a verb merged with any phrasal object, whatever
+-- case the object's head bears, so a failure to label, the alternative account of forced
+-- displacement the section examines, cannot displace a direct object with ICA.
+example {t : Minimalist.LinearizedSyntacticObject} {v : Minimalist.LexicalItem.Token}
+    {x : Minimalist.SyntacticObject} (hex : ∃ n, t.termAt n = .merge (.leaf v) x)
+    (hx : x.token? = none) (hv : t.InDomain (.leaf v) (.merge (.leaf v) x)) :
+    t.IsLabeledBy (.merge (.leaf v) x) v :=
   Minimalist.LinearizedSyntacticObject.isLabeledBy_merge_head hex hx hv
 
 /-- Section 5.2.2: the relative determiner selects the head noun while the noun still selects the

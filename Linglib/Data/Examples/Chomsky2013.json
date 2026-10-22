@@ -1,0 +1,56 @@
+[
+  {
+    "id": "chomsky2013_ex20",
+    "source": {"bibkey": "chomsky-2013", "paperLabel": "(20)"},
+    "language": "stan1293",
+    "primaryText": "They thought JFK was assassinated in which Texas city?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Asking a question in a quiz show, where the wh-phrase stays in situ.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["structure", "whInSitu"]
+    ],
+    "comment": "English allows wh-in-situ here, so apart from labeling it is not obvious why the wh-phrase must raise.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chomsky2013_ex21",
+    "source": {"bibkey": "chomsky-2013", "paperLabel": "(21)"},
+    "language": "stan1293",
+    "primaryText": "They thought in which Texas city JFK was assassinated?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The wh-phrase stops at the edge of the embedded declarative CP, with the interpretation of (20).",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["structure", "whAtDeclarativeEdge"]
+    ],
+    "comment": "The paper prints (21) as a bracketed structure, [α in which Texas city [C, [JFK was assassinated]]], and calls it impossible.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "chomsky2013_ex22",
+    "source": {"bibkey": "chomsky-2013", "paperLabel": "(22)"},
+    "language": "stan1293",
+    "primaryText": "They wondered in which Texas city JFK was assassinated.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "An indirect question: the wh-phrase at the edge of an interrogative CP.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["structure", "whAtInterrogativeEdge"]
+    ],
+    "comment": "Printed as they wondered [α in which Texas city [β C [JFK was assassinated]]].",
+    "verified": "text-layer"
+  }
+]

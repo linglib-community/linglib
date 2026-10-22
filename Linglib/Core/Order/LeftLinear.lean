@@ -80,6 +80,13 @@ theorem le_of_lt_of_covBy {a b m : M} (hm : m ⋖ a) (hb : b < a) : b ≤ m :=
   (comparable_of_le_common hb.le hm.le).elim id fun h ↦
     h.eq_or_lt.elim Eq.ge fun hlt ↦ (hm.2 hlt hb).elim
 
+/-- In a left-linear order two covers of an element below a common element are equal: the
+daughters of a node dominate disjoint subtrees. -/
+theorem eq_of_covBy_of_le {m c d x : M} (hc : m ⋖ c) (hd : m ⋖ d) (hcx : c ≤ x) (hdx : d ≤ x) :
+    c = d :=
+  (comparable_of_le_common hcx hdx).elim (fun h ↦ (hd.eq_or_eq hc.le h).resolve_left hc.ne')
+    fun h ↦ ((hc.eq_or_eq hd.le h).resolve_left hd.ne').symm
+
 end IsLeftLinear
 
 /-! ### Branching

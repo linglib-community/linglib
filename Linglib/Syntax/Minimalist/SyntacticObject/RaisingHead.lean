@@ -14,12 +14,12 @@ Marcolli, Chomsky and Berwick state labeling over a partial head function and re
 function to be raising: the object Internal Merge forms is headed by the head of what it raised out
 of, so the landing site of a wh-phrase beside a C is headed by C. The raising head reads this off
 the finished object from the selection head, a lower copy satisfying selection as the phrase it
-copies and otherwise invisible (`LabelState`): where two phrases merge and the head of one has a
+copies and otherwise invisible (`CopyState`): where two phrases merge and the head of one has a
 lower copy inside the other, the first has raised out of the second, which projects.
 
 ## Main definitions
 
-* `Minimalist.LabelState`: a selection state or a lower copy, a commutative magma with zero.
+* `Minimalist.CopyState`: a selection state or a lower copy, a commutative magma with zero.
 * `Minimalist.RaisingState`, `Minimalist.SyntacticObject.raisingHead`: the raising state and the
   raising head of a syntactic object.
 
@@ -39,7 +39,7 @@ copy would still select, is not distinguished.
 
 ## References
 
-* [marcolli-chomsky-berwick-2025], Definitions 1.15.1 and 1.15.2
+* [marcolli-chomsky-berwick-2025]
 -/
 
 @[expose] public section
@@ -48,23 +48,23 @@ namespace Minimalist
 
 open SyntacticObject
 
-/-- A constituent's labeling state is its selection state, or a lower copy of the phrase a token
-heads, which satisfies selection as that phrase and is otherwise invisible to the labeling
+/-- A constituent's copy state is its selection state, or a lower copy of the phrase a token
+heads, which satisfies selection as that phrase and is otherwise invisible to the raising
 algorithm. -/
-inductive LabelState where
-  /-- The selection state of a constituent the labeling algorithm sees. -/
+inductive CopyState where
+  /-- The selection state of a constituent the raising head sees. -/
   | sel (x : SelectionState)
   /-- A lower copy of the phrase `tok` heads. -/
   | copy (tok : LexicalItem.Token)
   deriving DecidableEq
 
-namespace LabelState
+namespace CopyState
 
-instance : Zero LabelState := ⟨sel 0⟩
+instance : Zero CopyState := ⟨sel 0⟩
 
 /-- A lower copy satisfies the selection of a sister selecting the phrase it copies and is
 otherwise invisible; two lower copies leave nothing to see. -/
-instance : Mul LabelState where
+instance : Mul CopyState where
   mul
     | sel x, sel y => sel (x * y)
     | copy a, sel y => if SelectionState.of a [] * y = 0 then sel y else sel (.of a [] * y)
@@ -79,7 +79,7 @@ theorem copy_mul_sel (a : LexicalItem.Token) (y : SelectionState) :
 theorem sel_mul_copy (x : SelectionState) (a : LexicalItem.Token) :
     sel x * copy a = if x * SelectionState.of a [] = 0 then sel x else sel (x * .of a []) := rfl
 
-instance : CommMagma LabelState where
+instance : CommMagma CopyState where
   mul_comm
     | sel x, sel y => congrArg sel (mul_comm x y)
     | copy a, sel y | sel y, copy a => by
@@ -87,30 +87,30 @@ instance : CommMagma LabelState where
       rw [mul_comm y]
     | copy _, copy _ => rfl
 
-instance : MulZeroClass LabelState where
+instance : MulZeroClass CopyState where
   zero_mul
     | sel _ => rfl
-    | copy a => by rw [show (0 : LabelState) = sel 0 from rfl, sel_mul_copy]; simp
+    | copy a => by rw [show (0 : CopyState) = sel 0 from rfl, sel_mul_copy]; simp
   mul_zero
     | sel x => congrArg sel (mul_zero x)
-    | copy a => by rw [show (0 : LabelState) = sel 0 from rfl, copy_mul_sel]; simp
+    | copy a => by rw [show (0 : CopyState) = sel 0 from rfl, copy_mul_sel]; simp
 
-/-- The label a labeling state provides is the head of a visible constituent, and none for a lower
+/-- The head a copy state provides is that of a visible constituent, and none for a lower
 copy. -/
-def label : LabelState → Option LexicalItem.Token
+def head : CopyState → Option LexicalItem.Token
   | sel x => x.head
   | copy _ => none
 
-/-- A labeling state never combines with itself. -/
-@[simp] theorem mul_self (l : LabelState) : l * l = 0 := by
+/-- A copy state never combines with itself. -/
+@[simp] theorem mul_self (l : CopyState) : l * l = 0 := by
   rcases l with x | a
   · show sel (x * x) = sel 0
     rw [SelectionState.mul_self]
   · rfl
 
-/-- The label of a labeling product is a factor's label. -/
-instance : Head LabelState where
-  head := label
+/-- The head of a product of copy states is a factor's head. -/
+instance : Head CopyState where
+  head := head
   head_zero := rfl
   mem_head_or_mem_head_of_mem_head_mul {x y h} hxy := by
     rcases x with x | a <;> rcases y with y | b
@@ -127,15 +127,15 @@ instance : Head LabelState where
       · exact .inr (SelectionState.head_of_mul_of hxy)
     · cases hxy
 
-end LabelState
+end CopyState
 
 /-! ### The raising head -/
 
-/-- The raising state of a constituent pairs its labeling state with the tokens whose lower copies
+/-- The raising state of a constituent pairs its copy state with the tokens whose lower copies
 it contains. -/
 structure RaisingState where
-  /-- The labeling state. -/
-  label : LabelState
+  /-- The copy state. -/
+  state : CopyState
   /-- The tokens heading the phrases of which the constituent contains a lower copy. -/
   copies : Multiset LexicalItem.Token
   deriving DecidableEq
@@ -144,15 +144,15 @@ namespace RaisingState
 
 instance : Zero RaisingState := ⟨⟨0, 0⟩⟩
 
-/-- Under raising, two merged constituents take the labeling product where it is defined, and
-otherwise the labeling state of the one containing a lower copy of the other's head, since the
-other raised out of it and it projects. -/
-def raise (x y : RaisingState) : LabelState :=
-  if x.label * y.label ≠ 0 then x.label * y.label else
-  match x.label.label, y.label.label with
+/-- Under raising, two merged constituents take the product of their copy states where it is
+defined, and otherwise the copy state of the one containing a lower copy of the other's head,
+since the other raised out of it and it projects. -/
+def raise (x y : RaisingState) : CopyState :=
+  if x.state * y.state ≠ 0 then x.state * y.state else
+  match x.state.head, y.state.head with
   | some a, some b =>
-    if a ∈ y.copies ∧ b ∉ x.copies then y.label
-    else if b ∈ x.copies ∧ a ∉ y.copies then x.label else 0
+    if a ∈ y.copies ∧ b ∉ x.copies then y.state
+    else if b ∈ x.copies ∧ a ∉ y.copies then x.state else 0
   | _, _ => 0
 
 instance : Mul RaisingState := ⟨fun x y ↦ ⟨raise x y, x.copies + y.copies⟩⟩
@@ -161,10 +161,10 @@ theorem mul_def (x y : RaisingState) : x * y = ⟨raise x y, x.copies + y.copies
 
 theorem raise_comm (x y : RaisingState) : raise x y = raise y x := by
   unfold raise
-  rw [mul_comm y.label]
+  rw [mul_comm y.state]
   split_ifs with h₁
   · rfl
-  · rcases hx : x.label.label with _ | a <;> rcases hy : y.label.label with _ | b <;> simp only
+  · rcases hx : x.state.head with _ | a <;> rcases hy : y.state.head with _ | b <;> simp only
     grind
 
 instance : CommMagma RaisingState where
@@ -172,13 +172,13 @@ instance : CommMagma RaisingState where
 
 /-- The raising head of a product is a factor's raising head. -/
 instance : Head RaisingState where
-  head x := x.label.label
+  head x := x.state.head
   head_zero := rfl
   mem_head_or_mem_head_of_mem_head_mul {x y t} h := by
     simp only [mul_def, raise] at h
     split_ifs at h with h0
-    · exact mem_head_or_mem_head_of_mem_head_mul (β := LabelState) h
-    · rcases hx : x.label.label with _ | a <;> rcases hy : y.label.label with _ | b <;>
+    · exact mem_head_or_mem_head_of_mem_head_mul (β := CopyState) h
+    · rcases hx : x.state.head with _ | a <;> rcases hy : y.state.head with _ | b <;>
         simp only [hx, hy] at h ⊢
       · cases h
       · cases h
@@ -205,9 +205,9 @@ def raisingCheck : RaisingState :=
   liftFun (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState s
 
 /-- The raising head of a syntactic object, [marcolli-chomsky-berwick-2025]'s raising head
-function: the label where there is one, and at a landing site the head of the phrase moved out
-of. -/
-def raisingHead : Option LexicalItem.Token := s.raisingCheck.label.label
+function: the selection head where there is one, and at a landing site the head of the phrase
+moved out of. -/
+def raisingHead : Option LexicalItem.Token := s.raisingCheck.state.head
 
 @[simp] theorem raisingCheck_merge (l r : SyntacticObject) :
     (merge l r).raisingCheck = l.raisingCheck * r.raisingCheck :=
@@ -226,8 +226,8 @@ theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
 /-- An object merged with itself has no raising head. -/
 @[simp] theorem raisingHead_merge_self (x : SyntacticObject) : (merge x x).raisingHead = none := by
   rw [raisingHead, raisingCheck_merge, RaisingState.mul_def]
-  simp only [RaisingState.raise, LabelState.mul_self, ne_eq, not_true_eq_false, ↓reduceIte]
-  rcases x.raisingCheck.label.label with _ | a
+  simp only [RaisingState.raise, CopyState.mul_self, ne_eq, not_true_eq_false, ↓reduceIte]
+  rcases x.raisingCheck.state.head with _ | a
   · rfl
   · dsimp only
     split_ifs with h₁ <;> first | rfl | exact (h₁.2 h₁.1).elim

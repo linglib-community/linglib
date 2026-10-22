@@ -196,7 +196,7 @@ def active : Derivation := (p.vP false).append [.em .left has₀, .em .left infl
 c-commands that no other such leaf asymmetrically c-commands. -/
 def InflFinds (a : Analysis) (evacuate : Bool) (goal : LexicalItem.Token) : Prop :=
   ∃ t ∈ (p.preRaising a evacuate).externalize?,
-    ↑goal ∈ t.goals (.relativized fun q ↦ decide (isLeafOf .D (t.termAt q))) infl₀
+    ↑goal ∈ t.goals (t.leafProbe .D) infl₀
 
 instance (a : Analysis) (evacuate : Bool) (goal : LexicalItem.Token) :
     Decidable (p.InflFinds a evacuate goal) := by

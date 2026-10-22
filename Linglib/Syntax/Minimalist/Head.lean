@@ -11,13 +11,13 @@ public import Linglib.Syntax.Minimalist.LexicalItem
 /-!
 # Heads
 
-A licensing of Merge is a morphism of magmas out of the syntactic objects into a commutative
-magma with zero, `0` being the failure of Merge, and its head function reads a head off each
-value. Marcolli, Chomsky and Berwick's head functions are partial, and the head of a Merge is the
-head of the daughter that projects; `Head` records that law on the target, so the head function
-of every licensing is endocentric. Where `0` absorbs, the domain of a licensing is closed under
-daughters (`ne_zero_and_ne_zero_of_mul` after `map_mul`), though not under Merge, since an
-exocentric Merge of two headed objects has no head. Selection, labeling and raising are instances.
+A licensing of Merge is a morphism of magmas out of the syntactic objects into a commutative magma
+with zero, `0` being the failure of Merge, and its head function reads a head off each value.
+Marcolli, Chomsky and Berwick's head functions are partial, and the head of a Merge is the head of
+the daughter that projects; `Head` records that law on the target, so the head function of every
+licensing is endocentric. Where `0` absorbs, the domain of a licensing is closed under daughters
+(`ne_zero_and_ne_zero_of_mul` after `map_mul`), though not under Merge, since an exocentric Merge of
+two headed objects has no head. Selection, copy states and raising are instances.
 
 ## Main definitions
 
