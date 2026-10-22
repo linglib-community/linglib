@@ -1,0 +1,742 @@
+{
+  "description": "Turkish suffix vowel harmony in Padgett 2002: the suffix alternations of (6), taken there from Clements and Sezer 1982 and expanded, the genitive plurals of p. 85, and the stems in palatalized lateral of (21). Forms are in the paper's transcription, with ɨ for Turkish ı.",
+  "CellTable": [
+    {
+      "ID": "nom_sg",
+      "Name": "nominative singular",
+      "Features": "Case=Nom|Number=Sing"
+    },
+    {
+      "ID": "acc_sg",
+      "Name": "accusative singular",
+      "Features": "Case=Acc|Number=Sing"
+    },
+    {
+      "ID": "gen_sg",
+      "Name": "genitive singular",
+      "Features": "Case=Gen|Number=Sing"
+    },
+    {
+      "ID": "nom_pl",
+      "Name": "nominative plural",
+      "Features": "Case=Nom|Number=Plur"
+    },
+    {
+      "ID": "gen_pl",
+      "Name": "genitive plural",
+      "Features": "Case=Gen|Number=Plur"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "rope",
+      "Name": "rope",
+      "Description": ""
+    },
+    {
+      "ID": "girl",
+      "Name": "girl",
+      "Description": ""
+    },
+    {
+      "ID": "face",
+      "Name": "face",
+      "Description": ""
+    },
+    {
+      "ID": "stamp",
+      "Name": "stamp",
+      "Description": ""
+    },
+    {
+      "ID": "hand",
+      "Name": "hand",
+      "Description": ""
+    },
+    {
+      "ID": "stalk",
+      "Name": "stalk",
+      "Description": ""
+    },
+    {
+      "ID": "village",
+      "Name": "village",
+      "Description": ""
+    },
+    {
+      "ID": "end",
+      "Name": "end",
+      "Description": ""
+    },
+    {
+      "ID": "system",
+      "Name": "system",
+      "Description": ""
+    },
+    {
+      "ID": "petrol",
+      "Name": "petrol",
+      "Description": ""
+    },
+    {
+      "ID": "question",
+      "Name": "question",
+      "Description": ""
+    },
+    {
+      "ID": "school",
+      "Name": "school",
+      "Description": ""
+    },
+    {
+      "ID": "police_station",
+      "Name": "police_station",
+      "Description": ""
+    },
+    {
+      "ID": "fork",
+      "Name": "fork",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "rope",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "rope",
+      "Name": "ip",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "girl",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "girl",
+      "Name": "kɨz",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "face",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "face",
+      "Name": "yüz",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "stamp",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "stamp",
+      "Name": "pul",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "hand",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "hand",
+      "Name": "el",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "stalk",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "stalk",
+      "Name": "sap",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "village",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "village",
+      "Name": "köy",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "end",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "end",
+      "Name": "son",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "system",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "system",
+      "Name": "usulʸ",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "petrol",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "petrol",
+      "Name": "petrolʸ",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "question",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "question",
+      "Name": "sualʸ",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "school",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "school",
+      "Name": "okul",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "police_station",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "police_station",
+      "Name": "karakol",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "fork",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "fork",
+      "Name": "tʃatal",
+      "POS": "NOUN"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "padgett2002_ip",
+      "Lexeme_ID": "rope",
+      "Cell": "nom_sg",
+      "Form": "ip",
+      "Segments": ["i", "p"],
+      "Morphs": ["ip"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_ip_i",
+      "Lexeme_ID": "rope",
+      "Cell": "acc_sg",
+      "Form": "ipi",
+      "Segments": ["i", "p", "i"],
+      "Morphs": ["ip", "i"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_ip_in",
+      "Lexeme_ID": "rope",
+      "Cell": "gen_sg",
+      "Form": "ipin",
+      "Segments": ["i", "p", "i", "n"],
+      "Morphs": ["ip", "in"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_ip_ler",
+      "Lexeme_ID": "rope",
+      "Cell": "nom_pl",
+      "Form": "ipler",
+      "Segments": ["i", "p", "l", "e", "r"],
+      "Morphs": ["ip", "ler"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_kiiz",
+      "Lexeme_ID": "girl",
+      "Cell": "nom_sg",
+      "Form": "kɨz",
+      "Segments": ["k", "ɨ", "z"],
+      "Morphs": ["kɨz"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_kiiz_ii",
+      "Lexeme_ID": "girl",
+      "Cell": "acc_sg",
+      "Form": "kɨzɨ",
+      "Segments": ["k", "ɨ", "z", "ɨ"],
+      "Morphs": ["kɨz", "ɨ"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_kiiz_iin",
+      "Lexeme_ID": "girl",
+      "Cell": "gen_sg",
+      "Form": "kɨzɨn",
+      "Segments": ["k", "ɨ", "z", "ɨ", "n"],
+      "Morphs": ["kɨz", "ɨn"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_kiiz_lar",
+      "Lexeme_ID": "girl",
+      "Cell": "nom_pl",
+      "Form": "kɨzlar",
+      "Segments": ["k", "ɨ", "z", "l", "a", "r"],
+      "Morphs": ["kɨz", "lar"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_yuez",
+      "Lexeme_ID": "face",
+      "Cell": "nom_sg",
+      "Form": "yüz",
+      "Segments": ["y", "ü", "z"],
+      "Morphs": ["yüz"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_yuez_ue",
+      "Lexeme_ID": "face",
+      "Cell": "acc_sg",
+      "Form": "yüzü",
+      "Segments": ["y", "ü", "z", "ü"],
+      "Morphs": ["yüz", "ü"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_yuez_uen",
+      "Lexeme_ID": "face",
+      "Cell": "gen_sg",
+      "Form": "yüzün",
+      "Segments": ["y", "ü", "z", "ü", "n"],
+      "Morphs": ["yüz", "ün"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_yuez_ler",
+      "Lexeme_ID": "face",
+      "Cell": "nom_pl",
+      "Form": "yüzler",
+      "Segments": ["y", "ü", "z", "l", "e", "r"],
+      "Morphs": ["yüz", "ler"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_pul",
+      "Lexeme_ID": "stamp",
+      "Cell": "nom_sg",
+      "Form": "pul",
+      "Segments": ["p", "u", "l"],
+      "Morphs": ["pul"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_pul_u",
+      "Lexeme_ID": "stamp",
+      "Cell": "acc_sg",
+      "Form": "pulu",
+      "Segments": ["p", "u", "l", "u"],
+      "Morphs": ["pul", "u"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_pul_un",
+      "Lexeme_ID": "stamp",
+      "Cell": "gen_sg",
+      "Form": "pulun",
+      "Segments": ["p", "u", "l", "u", "n"],
+      "Morphs": ["pul", "un"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_pul_lar",
+      "Lexeme_ID": "stamp",
+      "Cell": "nom_pl",
+      "Form": "pullar",
+      "Segments": ["p", "u", "l", "l", "a", "r"],
+      "Morphs": ["pul", "lar"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_el",
+      "Lexeme_ID": "hand",
+      "Cell": "nom_sg",
+      "Form": "el",
+      "Segments": ["e", "l"],
+      "Morphs": ["el"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_el_i",
+      "Lexeme_ID": "hand",
+      "Cell": "acc_sg",
+      "Form": "eli",
+      "Segments": ["e", "l", "i"],
+      "Morphs": ["el", "i"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_el_in",
+      "Lexeme_ID": "hand",
+      "Cell": "gen_sg",
+      "Form": "elin",
+      "Segments": ["e", "l", "i", "n"],
+      "Morphs": ["el", "in"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_el_ler",
+      "Lexeme_ID": "hand",
+      "Cell": "nom_pl",
+      "Form": "eller",
+      "Segments": ["e", "l", "l", "e", "r"],
+      "Morphs": ["el", "ler"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_sap",
+      "Lexeme_ID": "stalk",
+      "Cell": "nom_sg",
+      "Form": "sap",
+      "Segments": ["s", "a", "p"],
+      "Morphs": ["sap"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_sap_ii",
+      "Lexeme_ID": "stalk",
+      "Cell": "acc_sg",
+      "Form": "sapɨ",
+      "Segments": ["s", "a", "p", "ɨ"],
+      "Morphs": ["sap", "ɨ"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_sap_iin",
+      "Lexeme_ID": "stalk",
+      "Cell": "gen_sg",
+      "Form": "sapɨn",
+      "Segments": ["s", "a", "p", "ɨ", "n"],
+      "Morphs": ["sap", "ɨn"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_sap_lar",
+      "Lexeme_ID": "stalk",
+      "Cell": "nom_pl",
+      "Form": "saplar",
+      "Segments": ["s", "a", "p", "l", "a", "r"],
+      "Morphs": ["sap", "lar"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_koey",
+      "Lexeme_ID": "village",
+      "Cell": "nom_sg",
+      "Form": "köy",
+      "Segments": ["k", "ö", "y"],
+      "Morphs": ["köy"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_koey_ue",
+      "Lexeme_ID": "village",
+      "Cell": "acc_sg",
+      "Form": "köyü",
+      "Segments": ["k", "ö", "y", "ü"],
+      "Morphs": ["köy", "ü"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_koey_uen",
+      "Lexeme_ID": "village",
+      "Cell": "gen_sg",
+      "Form": "köyün",
+      "Segments": ["k", "ö", "y", "ü", "n"],
+      "Morphs": ["köy", "ün"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_koey_ler",
+      "Lexeme_ID": "village",
+      "Cell": "nom_pl",
+      "Form": "köyler",
+      "Segments": ["k", "ö", "y", "l", "e", "r"],
+      "Morphs": ["köy", "ler"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_son",
+      "Lexeme_ID": "end",
+      "Cell": "nom_sg",
+      "Form": "son",
+      "Segments": ["s", "o", "n"],
+      "Morphs": ["son"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_son_u",
+      "Lexeme_ID": "end",
+      "Cell": "acc_sg",
+      "Form": "sonu",
+      "Segments": ["s", "o", "n", "u"],
+      "Morphs": ["son", "u"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_son_un",
+      "Lexeme_ID": "end",
+      "Cell": "gen_sg",
+      "Form": "sonun",
+      "Segments": ["s", "o", "n", "u", "n"],
+      "Morphs": ["son", "un"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_son_lar",
+      "Lexeme_ID": "end",
+      "Cell": "nom_pl",
+      "Form": "sonlar",
+      "Segments": ["s", "o", "n", "l", "a", "r"],
+      "Morphs": ["son", "lar"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_ip_ler_in",
+      "Lexeme_ID": "rope",
+      "Cell": "gen_pl",
+      "Form": "iplerin",
+      "Segments": ["i", "p", "l", "e", "r", "i", "n"],
+      "Morphs": ["ip", "ler", "in"],
+      "Source": ["padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_kiiz_lar_iin",
+      "Lexeme_ID": "girl",
+      "Cell": "gen_pl",
+      "Form": "kɨzlarɨn",
+      "Segments": ["k", "ɨ", "z", "l", "a", "r", "ɨ", "n"],
+      "Morphs": ["kɨz", "lar", "ɨn"],
+      "Source": ["padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_pul_lar_iin",
+      "Lexeme_ID": "stamp",
+      "Cell": "gen_pl",
+      "Form": "pullarɨn",
+      "Segments": ["p", "u", "l", "l", "a", "r", "ɨ", "n"],
+      "Morphs": ["pul", "lar", "ɨn"],
+      "Source": ["padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_yuez_ler_in",
+      "Lexeme_ID": "face",
+      "Cell": "gen_pl",
+      "Form": "yüzlerin",
+      "Segments": ["y", "ü", "z", "l", "e", "r", "i", "n"],
+      "Morphs": ["yüz", "ler", "in"],
+      "Source": ["padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_pul_lar_un_star",
+      "Lexeme_ID": "stamp",
+      "Cell": "gen_pl",
+      "Form": "pullarun",
+      "Segments": ["p", "u", "l", "l", "a", "r", "u", "n"],
+      "Morphs": ["pul", "lar", "un"],
+      "Judgment": "ungrammatical",
+      "Source": ["padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_yuez_ler_uen_star",
+      "Lexeme_ID": "face",
+      "Cell": "gen_pl",
+      "Form": "yüzlerün",
+      "Segments": ["y", "ü", "z", "l", "e", "r", "ü", "n"],
+      "Morphs": ["yüz", "ler", "ün"],
+      "Judgment": "ungrammatical",
+      "Source": ["padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_usulj",
+      "Lexeme_ID": "system",
+      "Cell": "nom_sg",
+      "Form": "usulʸ",
+      "Segments": ["u", "s", "u", "lʸ"],
+      "Morphs": ["usulʸ"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_usulj_ue",
+      "Lexeme_ID": "system",
+      "Cell": "acc_sg",
+      "Form": "usulʸü",
+      "Segments": ["u", "s", "u", "lʸ", "ü"],
+      "Morphs": ["usulʸ", "ü"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_petrolj",
+      "Lexeme_ID": "petrol",
+      "Cell": "nom_sg",
+      "Form": "petrolʸ",
+      "Segments": ["p", "e", "t", "r", "o", "lʸ"],
+      "Morphs": ["petrolʸ"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_petrolj_ue",
+      "Lexeme_ID": "petrol",
+      "Cell": "acc_sg",
+      "Form": "petrolʸü",
+      "Segments": ["p", "e", "t", "r", "o", "lʸ", "ü"],
+      "Morphs": ["petrolʸ", "ü"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_sualj",
+      "Lexeme_ID": "question",
+      "Cell": "nom_sg",
+      "Form": "sualʸ",
+      "Segments": ["s", "u", "a", "lʸ"],
+      "Morphs": ["sualʸ"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_sualj_i",
+      "Lexeme_ID": "question",
+      "Cell": "acc_sg",
+      "Form": "sualʸi",
+      "Segments": ["s", "u", "a", "lʸ", "i"],
+      "Morphs": ["sualʸ", "i"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_okul",
+      "Lexeme_ID": "school",
+      "Cell": "nom_sg",
+      "Form": "okul",
+      "Segments": ["o", "k", "u", "l"],
+      "Morphs": ["okul"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_okul_u",
+      "Lexeme_ID": "school",
+      "Cell": "acc_sg",
+      "Form": "okulu",
+      "Segments": ["o", "k", "u", "l", "u"],
+      "Morphs": ["okul", "u"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_karakol",
+      "Lexeme_ID": "police_station",
+      "Cell": "nom_sg",
+      "Form": "karakol",
+      "Segments": ["k", "a", "r", "a", "k", "o", "l"],
+      "Morphs": ["karakol"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_karakol_u",
+      "Lexeme_ID": "police_station",
+      "Cell": "acc_sg",
+      "Form": "karakolu",
+      "Segments": ["k", "a", "r", "a", "k", "o", "l", "u"],
+      "Morphs": ["karakol", "u"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_tshatal",
+      "Lexeme_ID": "fork",
+      "Cell": "nom_sg",
+      "Form": "tʃatal",
+      "Segments": ["tʃ", "a", "t", "a", "l"],
+      "Morphs": ["tʃatal"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_tshatal_ii",
+      "Lexeme_ID": "fork",
+      "Cell": "acc_sg",
+      "Form": "tʃatalɨ",
+      "Segments": ["tʃ", "a", "t", "a", "l", "ɨ"],
+      "Morphs": ["tʃatal", "ɨ"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    }
+  ],
+  "ParadigmTable": [
+    {
+      "ID": "padgett2002_rope",
+      "Lexeme_ID": "rope",
+      "Form_IDs": ["padgett2002_ip", "padgett2002_ip_i", "padgett2002_ip_in", "padgett2002_ip_ler", "padgett2002_ip_ler_in"],
+      "Source": ["padgett-2002[(6), p. 84]", "padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_girl",
+      "Lexeme_ID": "girl",
+      "Form_IDs": ["padgett2002_kiiz", "padgett2002_kiiz_ii", "padgett2002_kiiz_iin", "padgett2002_kiiz_lar", "padgett2002_kiiz_lar_iin"],
+      "Source": ["padgett-2002[(6), p. 84]", "padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_face",
+      "Lexeme_ID": "face",
+      "Form_IDs": ["padgett2002_yuez", "padgett2002_yuez_ue", "padgett2002_yuez_uen", "padgett2002_yuez_ler", "padgett2002_yuez_ler_in"],
+      "Source": ["padgett-2002[(6), p. 84]", "padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_stamp",
+      "Lexeme_ID": "stamp",
+      "Form_IDs": ["padgett2002_pul", "padgett2002_pul_u", "padgett2002_pul_un", "padgett2002_pul_lar", "padgett2002_pul_lar_iin"],
+      "Source": ["padgett-2002[(6), p. 84]", "padgett-2002[p. 85]"]
+    },
+    {
+      "ID": "padgett2002_hand",
+      "Lexeme_ID": "hand",
+      "Form_IDs": ["padgett2002_el", "padgett2002_el_i", "padgett2002_el_in", "padgett2002_el_ler"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_stalk",
+      "Lexeme_ID": "stalk",
+      "Form_IDs": ["padgett2002_sap", "padgett2002_sap_ii", "padgett2002_sap_iin", "padgett2002_sap_lar"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_village",
+      "Lexeme_ID": "village",
+      "Form_IDs": ["padgett2002_koey", "padgett2002_koey_ue", "padgett2002_koey_uen", "padgett2002_koey_ler"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_end",
+      "Lexeme_ID": "end",
+      "Form_IDs": ["padgett2002_son", "padgett2002_son_u", "padgett2002_son_un", "padgett2002_son_lar"],
+      "Source": ["padgett-2002[(6), p. 84]"]
+    },
+    {
+      "ID": "padgett2002_system",
+      "Lexeme_ID": "system",
+      "Form_IDs": ["padgett2002_usulj", "padgett2002_usulj_ue"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_petrol",
+      "Lexeme_ID": "petrol",
+      "Form_IDs": ["padgett2002_petrolj", "padgett2002_petrolj_ue"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_question",
+      "Lexeme_ID": "question",
+      "Form_IDs": ["padgett2002_sualj", "padgett2002_sualj_i"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_school",
+      "Lexeme_ID": "school",
+      "Form_IDs": ["padgett2002_okul", "padgett2002_okul_u"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_police_station",
+      "Lexeme_ID": "police_station",
+      "Form_IDs": ["padgett2002_karakol", "padgett2002_karakol_u"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    },
+    {
+      "ID": "padgett2002_fork",
+      "Lexeme_ID": "fork",
+      "Form_IDs": ["padgett2002_tshatal", "padgett2002_tshatal_ii"],
+      "Source": ["padgett-2002[(21), p. 93]"]
+    }
+  ]
+}
