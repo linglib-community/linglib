@@ -6,7 +6,7 @@ public import Mathlib.Data.Fintype.EquivFin
 public import Linglib.Phonology.FeatureGeometry
 public import Mathlib.Data.List.Iterate
 public import Linglib.Phonology.Segmental.FeatureClass
-public import Linglib.Phonology.Autosegmental.NonCrossing
+public import Linglib.Phonology.Autosegmental.IntervalOrder
 public import Linglib.Core.Order.Interval.Basic
 public import Mathlib.Data.Set.Pairwise.Basic
 
@@ -272,12 +272,9 @@ def TierRealization.assoc (R : TierRealization T) (k i : ℕ) : Association T :=
 /-- A link set whose links are all realised as valid associations satisfies Goldsmith's
 index-level No-Crossing Constraint. -/
 theorem isNonCrossing_of_valid (R : TierRealization T) {links : SetRel ℕ ℕ}
-    (h : ∀ p ∈ links, (R.assoc p.1 p.2).Valid) : IsNonCrossing links := by
-  rw [isNonCrossing_iff]
-  intro l₁ hl₁ l₂ hl₂ hlt
-  by_contra hgt
-  push Not at hgt
-  exact (h l₂ hl₂).not_crosses (h l₁ hl₁) ⟨R.timing_precedes hgt, R.melody_precedes hlt⟩
+    (h : ∀ p ∈ links, (R.assoc p.1 p.2).Valid) : IsNonCrossing links :=
+  .of_intervals (fun _ _ ↦ R.melody_precedes) (fun _ _ ↦ R.timing_precedes)
+    fun p hp ↦ NonemptyInterval.overlaps_symm (h p hp)
 
 /-- Position `n` of either tier occupies the interval from `2n` to `2n + 1`. -/
 def TierRealization.canonical : TierRealization ℤ where

@@ -158,6 +158,18 @@ theorem Overlaps.mono_left {i₁' : NonemptyInterval α} (h : i₁.Overlaps i₂
 theorem overlaps_iff_not_precedes : i₁.Overlaps i₂ ↔ ¬ i₁.Precedes i₂ ∧ ¬ i₂.Precedes i₁ := by
   simp only [Overlaps, Precedes, not_lt, and_comm]
 
+/-- An interval precedes another iff each of its points precedes each point of the other. -/
+theorem precedes_iff_forall_mem : i₁.Precedes i₂ ↔ ∀ a ∈ i₁, ∀ b ∈ i₂, a < b :=
+  ⟨fun h _ ha _ hb ↦ ((mem_def.1 ha).2.trans_lt h).trans_le (mem_def.1 hb).1,
+    fun h ↦ h _ (mem_def.2 ⟨i₁.fst_le_snd, le_rfl⟩) _ (mem_def.2 ⟨le_rfl, i₂.fst_le_snd⟩)⟩
+
+/-- Two intervals overlap iff they share a point. -/
+theorem overlaps_iff_exists_mem : i₁.Overlaps i₂ ↔ ∃ a, a ∈ i₁ ∧ a ∈ i₂ :=
+  ⟨fun h ↦ ⟨max i₁.fst i₂.fst, mem_def.2 ⟨le_max_left .., max_le i₁.fst_le_snd h.2⟩,
+      mem_def.2 ⟨le_max_right .., max_le h.1 i₂.fst_le_snd⟩⟩,
+    fun ⟨_, h₁, h₂⟩ ↦ ⟨(mem_def.1 h₁).1.trans (mem_def.1 h₂).2,
+      (mem_def.1 h₂).1.trans (mem_def.1 h₁).2⟩⟩
+
 end LinearOrder
 
 /-! ### Embedding into `WithTop` -/
