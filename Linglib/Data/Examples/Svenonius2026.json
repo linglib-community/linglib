@@ -1,0 +1,122 @@
+[
+  {
+    "id": "svenonius2026_ex13a",
+    "source": {
+      "bibkey": "mcintosh-1982",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "svenonius-2026",
+      "paperLabel": "(13a)"
+    },
+    "language": "adam1253",
+    "primaryText": "Raa no ndef-ir-ay-mi-ndi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Raa", "see"],
+      ["no", "how"],
+      ["ndef-ir-ay-mi-ndi", "cook-EXT-INC-I-it"]
+    ],
+    "translation": "See how I cook it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.3.2"],
+      ["phenomenon", "outwardSensitivePCSA"],
+      ["allomorph", "ay"],
+      ["environment", "elsewhere"]
+    ],
+    "comment": "The elsewhere allomorph -ay of incompletive aspect (INC), before the consonant-initial subject suffix -mi; EXT stands for extension. The chapter credits the observation to Carstairs (1988).",
+    "verified": "page-image"
+  },
+  {
+    "id": "svenonius2026_ex13b",
+    "source": {
+      "bibkey": "mcintosh-1982",
+      "paperLabel": "p. 211"
+    },
+    "reportedIn": {
+      "bibkey": "svenonius-2026",
+      "paperLabel": "(13b)"
+    },
+    "language": "adam1253",
+    "primaryText": "Walaa to ndur-ot-on-ɗi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Walaa", "is.NEG"],
+      ["to", "where"],
+      ["ndur-ot-on-ɗi", "graze-INC-you-them"]
+    ],
+    "translation": "There is nowhere for you (pl) to graze them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.3.2"],
+      ["phenomenon", "outwardSensitivePCSA"],
+      ["allomorph", "ot"],
+      ["environment", "prevocalic"]
+    ],
+    "comment": "The prevocalic allomorph -Vt of incompletive aspect, the copy vowel matching the vowel of the following subject suffix -on.",
+    "verified": "page-image"
+  },
+  {
+    "id": "svenonius2026_fn7return",
+    "source": {
+      "bibkey": "van-driem-1987",
+      "paperLabel": "p. 385"
+    },
+    "reportedIn": {
+      "bibkey": "svenonius-2026",
+      "paperLabel": "fn. 7"
+    },
+    "language": "limb1266",
+    "primaryText": "nuːŋ-s-i-ge~nuːks-i-ge",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "return (first person exclusive dual~plural)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.3.2"],
+      ["phenomenon", "outwardSensitivePCSA"],
+      ["elsewhereForm", "nuːŋ"],
+      ["prevocalicForm", "nuːks"]
+    ],
+    "comment": "Root allomorphy: elsewhere nuːŋ- before the dual -s, prevocalic nuːks- before the nonsingular -i; -ge is first person exclusive, -i nonsingular, -s dual.",
+    "verified": "page-image"
+  },
+  {
+    "id": "svenonius2026_fn7live",
+    "source": {
+      "bibkey": "van-driem-1987",
+      "paperLabel": "p. 385"
+    },
+    "reportedIn": {
+      "bibkey": "svenonius-2026",
+      "paperLabel": "fn. 7"
+    },
+    "language": "limb1266",
+    "primaryText": "hiŋ-s-i-ge~hiŋ-i-ge",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "live (first person exclusive dual~plural)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.3.2"],
+      ["phenomenon", "outwardSensitivePCSA"],
+      ["elsewhereForm", "hiŋ"],
+      ["prevocalicForm", "hiŋ"]
+    ],
+    "comment": "The control: hiŋ- is unchanged before the dual -s and the nonsingular -i alike, so the nuːŋ~nuːks alternation is root allomorphy rather than phonology.",
+    "verified": "page-image"
+  }
+]
