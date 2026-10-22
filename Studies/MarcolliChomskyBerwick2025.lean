@@ -209,9 +209,10 @@ open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
 /-! ### Internal Merge: an example (§1.4.4) -/
 
 /-- *the apple*, the term `T₂` that Internal Merge raises in §1.4.4. -/
-private def theApple : SyntacticObject :=
-  (LinearizedSyntacticObject.merge (.leaf ⟨.of .D [.N] "the", 0⟩)
-    (.leaf ⟨.of .N [] "apple", 1⟩)).toSyntacticObject
+private def theAppleLinearized : LinearizedSyntacticObject :=
+  LinearizedSyntacticObject.merge (.leaf ⟨.of .D [.N] "the", 0⟩) (.leaf ⟨.of .N [] "apple", 1⟩)
+
+private def theApple : SyntacticObject := theAppleLinearized.toSyntacticObject
 
 /-- The workspace `T = {was, {eaten, {the, apple}}}` of §1.4.4. -/
 private def wasEatenTheApple : SyntacticObject :=
@@ -294,7 +295,7 @@ example :
     NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})
       (({eaten, theApple} : Workspace).map Subtype.val)
       (({merge theApple eaten} : Workspace).map Subtype.val) :=
-  Step.noComplexityLoss (step := .em .left theApple) (W := 0) (by simp [Step.Admissible])
+  Step.noComplexityLoss (step := .em .left theAppleLinearized) (W := 0) (by simp [Step.Admissible])
     (by decide) (by simp only [Step.items, Multiset.mem_singleton, forall_eq]; decide)
 
 /-- The four pruning cuts of *the apple*. -/

@@ -38,9 +38,9 @@ harmonic linearization of its object.
 
 ## Implementation notes
 
-* The replay is partial, `none` when an externally merged item is not a leaf, since an unordered
-  complex item has no order to replay, when a mover is absent, or when nothing is left to merge
-  back. Traces are unpronounced.
+* The replay is partial, `none` when the initial object is not a leaf, when a mover is absent, or
+  when nothing is left to merge back. An externally merged item replays in the order it was built
+  in. Traces are unpronounced.
 * Sibling accounts of linearization are the selection-induced harmonic order
   (`Linearization/Externalization.lean`) and cyclic linearization (`Linearization/Cyclic.lean`).
 
@@ -76,13 +76,12 @@ open Derivation (Cfg)
 
 /-- A step on a linearized configuration, `Step.run` with each new daughter on its side. Internal
     Merge raises the leftmost occurrence of the mover, leaving the trace of its head under `τ`,
-    and an extraction stacks it; `none` when an externally merged item is not a leaf, the mover is
-    absent, or the stack is empty. -/
+    and an extraction stacks it; `none` when the mover is absent or the stack is empty. -/
 def Step.replay? (step : Step) (c : Cfg LinearizedSyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
     Option (Cfg LinearizedSyntacticObject) :=
   match step, c with
-  | .em side item, ⟨p, st⟩ => item.toLinearizedLeaf?.map fun i ↦ ⟨p.attach side i, st⟩
+  | .em side item, ⟨p, st⟩ => some ⟨p.attach side item, st⟩
   | .im mover side, ⟨p, st⟩ =>
       (p.find? mover).map fun s ↦ ⟨(p.replace mover (mover.traceLinearized τ)).attach side s, st⟩
   | .extract mover, ⟨p, st⟩ =>
@@ -92,8 +91,8 @@ def Step.replay? (step : Step) (c : Cfg LinearizedSyntacticObject)
 
 namespace Derivation
 
-/-- The derivation's linearized configuration under the trace encoder `τ`, or `none` if a merged
-    item is not a leaf, a mover is absent, or `remerge` finds the stack empty. -/
+/-- The derivation's linearized configuration under the trace encoder `τ`, or `none` if the initial
+    object is not a leaf, a mover is absent, or `remerge` finds the stack empty. -/
 def replay? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
     Option (Cfg LinearizedSyntacticObject) :=
   d.initial.toLinearizedLeaf?.bind fun p ↦ d.steps.foldlM (fun c step ↦ step.replay? c τ) ⟨p, []⟩
@@ -151,7 +150,7 @@ theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObj
       cases h₀
       have := hm step List.mem_cons_self
       cases step with
-      | em side item => obtain ⟨i, -, rfl⟩ := Option.map_eq_some_iff.1 h₁; rfl
+      | em side item => obtain rfl := Option.some.inj h₁; rfl
       | im mover side => obtain ⟨s, -, rfl⟩ := Option.map_eq_some_iff.1 h₁; rfl
       | extract mover => exact this.elim
       | remerge side => exact this.elim
@@ -167,8 +166,8 @@ private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step
   obtain ⟨p, st⟩ := c
   cases step with
   | em side item =>
-    obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 h
-    simp [Cfg.map, Step.run, Step.apply_em, toSyntacticObject_of_toLinearizedLeaf? hi]
+    obtain rfl := Option.some.inj h
+    simp [Cfg.map, Step.run, Step.apply_em]
   | im mover side =>
     obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
     simp [Cfg.map, Step.run, Step.apply_im, deleteAccessible,
@@ -181,7 +180,7 @@ private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step
     rcases st with _ | ⟨m, st⟩
     · cases h
     · obtain rfl := Option.some.inj h
-      simp [Cfg.map, Step.run, Step.apply_em]
+      simp [Cfg.map, Step.run]
 
 /-- A successful replay forgets to the derivation's configuration, the object and every copy on
     the stack, forgetting the order being a morphism of magmas
@@ -295,12 +294,12 @@ theorem linearize?_of_find? {cur m : SyntacticObject} {pc s : LinearizedSyntacti
 end SyntacticObject
 
 /-- A step is harmonic for the head side `side` at a configuration when each daughter it merges
-    projects exactly if it takes the head side, an externally merged item is a leaf, and a mover
-    is a term of the object whose trace keeps its selection state. -/
+    projects exactly if it takes the head side, an externally merged item is built in its harmonic
+    order, and a mover is a term of the object whose trace keeps its selection state. -/
 def Step.Harmonic (side : Edge) (τ : SyntacticObject → Option LexicalItem.Token)
     (c : Cfg SyntacticObject) : Step → Prop
-  | .em e item => item.toLinearizedLeaf?.isSome ∧
-      selSide item.selCheck c.current.selCheck = some (decide (e = side))
+  | .em e item => (item : SyntacticObject).linearize? side = some item ∧
+      selSide (item : SyntacticObject).selCheck c.current.selCheck = some (decide (e = side))
   | .im mover e => mover ∈ c.current.terms ∧ (mover.headTrace τ).selCheck = mover.selCheck ∧
       selSide mover.selCheck (deleteAccessible mover c.current τ).selCheck =
         some (decide (e = side))
@@ -338,10 +337,9 @@ theorem Step.replay?_of_harmonic {step : Step} {c : Cfg SyntacticObject}
   cases step with
   | em e item =>
     obtain ⟨hi, hside⟩ := h
-    obtain ⟨i, hi⟩ := Option.isSome_iff_exists.1 hi
-    refine ⟨⟨qc.attach e i, qst⟩, by simp [Step.replay?, hi], ?_⟩
+    refine ⟨⟨qc.attach e item, qst⟩, rfl, ?_⟩
     simp only [Cfg.map, Step.run, Step.apply_em, Cfg.mk.injEq, hst, and_true]
-    exact linearize?_merge (linearize?_of_toLinearizedLeaf? hi) hc hside
+    exact linearize?_merge hi hc hside
   | im mover e =>
     obtain ⟨hm, hsel, hside⟩ := h
     obtain ⟨s, hs⟩ := Option.isSome_iff_exists.1
@@ -372,7 +370,7 @@ theorem Step.replay?_of_harmonic {step : Step} {c : Cfg SyntacticObject}
         simp only [List.map_cons, List.cons.injEq] at hst
         exact ⟨qm, qst', rfl, hst⟩
     refine ⟨⟨qc.attach e qm, qst'⟩, rfl, ?_⟩
-    simp only [Cfg.map, Step.run, Step.apply_em, Cfg.mk.injEq, hst', and_true]
+    simp only [Cfg.map, Step.run, Cfg.mk.injEq, hst', and_true]
     exact linearize?_merge hqm hc hside
 
 /-- A harmonic list of steps replays to the harmonic linearization of the configuration it
@@ -408,7 +406,7 @@ theorem Derivation.externalize?_eq_linearize? {d : Derivation}
 theorem Derivation.not_factorsThrough_final :
     ¬ Function.FactorsThrough (externalize? · selHead) (final · selHead) := fun h ↦ by
   have := @h ⟨.leaf ⟨.of .N [], 0⟩, [.em .left (.leaf ⟨.of .N [], 1⟩)]⟩
-    ⟨.leaf ⟨.of .N [], 0⟩, [.em .right (.leaf ⟨.of .N [], 1⟩)]⟩ (merge_comm _ _)
+    ⟨.leaf ⟨.of .N [], 0⟩, [.em .right (.leaf ⟨.of .N [], 1⟩)]⟩ rfl
   revert this
   decide
 

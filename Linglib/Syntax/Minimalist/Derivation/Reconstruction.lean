@@ -179,34 +179,29 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
     | extract mover => exact hs.elim
     | remerge side => exact hs.elim
     | em side item =>
-      obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 hstep
-      have hitem := SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? hi
+      obtain rfl := Option.some.inj hstep
       have hreplay : (d.append [.em side item]).replay? =
-          some ⟨c.current.contract.attach side i, c.stack.map Marked.contract⟩ := by
+          some ⟨c.current.contract.attach side item, c.stack.map Marked.contract⟩ := by
         rw [replay?_append_singleton, hcT]
-        simp [Step.replay?, Cfg.map, hi]
+        simp [Step.replay?, Cfg.map]
       simp only [Marked.unmark_attach,
-        Marked.unmark_ofLinearized, LinearizedSyntacticObject.toSyntacticObject_attach,
-        hitem] at hsis
+        Marked.unmark_ofLinearized, LinearizedSyntacticObject.toSyntacticObject_attach] at hsis
       rcases Sisters.of_merge hsis with hl | hr | ⟨hx, rfl⟩ | ⟨hx, rfl⟩
-      · exact absurd hl (not_sisters_of_toLinearizedLeaf? hi)
+      · refine hfinal _ hreplay ?_
+        rw [LinearizedSyntacticObject.toSyntacticObject_attach]
+        refine CCommands.mono ⟨z, hl.mem_right, hl, hzy⟩ fun w hw ↦ ?_
+        rw [terms_merge]
+        exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inl hw))
       · exact (ih' ⟨_, hdC, z, hr.mem_right, hr, hzy⟩).append
       · have hy := mem_yield_iff.1 (hpron y (mem_terms.2 hzy))
         refine hfinal _ hreplay ?_
-        rw [LinearizedSyntacticObject.toSyntacticObject_attach, hitem, ← hx]
+        rw [LinearizedSyntacticObject.toSyntacticObject_attach, ← hx]
         exact cCommands_merge_left (hne _ hy) hy
-      · have hyi : z = leaf y := by
-          have := mem_terms.2 hzy
-          rcases z.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
-          · rw [terms_leaf, Multiset.mem_singleton] at this; exact this.symm
-          · simp at this
-          · simp at this
-          · simp [toLinearizedLeaf?, merge_val] at hi
-        have hTx := Marked.contract_eq_leaf_of_unmark_eq_leaf hx.symm
+      · have hTx := Marked.contract_eq_leaf_of_unmark_eq_leaf hx.symm
           (hpron x (hx ▸ self_mem_terms _))
         refine hfinal _ hreplay ?_
-        rw [LinearizedSyntacticObject.toSyntacticObject_attach, hitem, hTx, hyi, merge_comm]
-        exact cCommands_merge_left (by simpa using hxy) (self_mem_terms _)
+        rw [LinearizedSyntacticObject.toSyntacticObject_attach, hTx, merge_comm]
+        exact cCommands_merge_left (hne _ (mem_terms.2 hzy)) (mem_terms.2 hzy)
     | im mover side =>
       obtain ⟨sM, hsM, rfl⟩ := Option.map_eq_some_iff.1 hstep
       have hu := Marked.mem_terms_of_find? hsM

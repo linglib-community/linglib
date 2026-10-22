@@ -136,7 +136,7 @@ structure Stage where
 containing the overt noun to the left edge, the subtrees read off the derivation's ordered
 object. -/
 def step (m : LexicalItem.Token) (st : Stage) : List Stage :=
-  let d := st.derivation.append [.em .left (leaf m)]
+  let d := st.derivation.append [.em .left m]
   ⟨d, st.marks, st.raises⟩ :: match st.derivation.externalize? with
     | none => []
     | some p => (p.val.subtrees.filter hasN).filterMap fun s ↦
@@ -172,17 +172,17 @@ Num; in that of (6n) `[A N]` pied-pipes past Num, of the picture-of-who type, `[
 
 /-- The Merge order (7a) with nothing moved. -/
 def mergeOrder : Derivation :=
-  ⟨leaf tokN, [.em .left (leaf tokA), .em .left (leaf tokNum), .em .left (leaf tokDem)]⟩
+  ⟨leaf tokN, [.em .left tokA, .em .left tokNum, .em .left tokDem]⟩
 
 /-- The derivation of (6o): NP raises past A, and `[N [A t]]` past Num. -/
 def derivation6o : Derivation :=
-  ⟨leaf tokN, [.em .left (leaf tokA), .im (leaf tokN), .em .left (leaf tokNum),
-    .im (tokN * (tokA * .traceOf tokN) : LinearizedSyntacticObject), .em .left (leaf tokDem)]⟩
+  ⟨leaf tokN, [.em .left tokA, .im (leaf tokN), .em .left tokNum,
+    .im (tokN * (tokA * .traceOf tokN) : LinearizedSyntacticObject), .em .left tokDem]⟩
 
 /-- The derivation of (6n): `[A N]` raises past Num. -/
 def derivation6n : Derivation :=
-  ⟨leaf tokN, [.em .left (leaf tokA), .em .left (leaf tokNum),
-    .im (tokA * tokN : LinearizedSyntacticObject), .em .left (leaf tokDem)]⟩
+  ⟨leaf tokN, [.em .left tokA, .em .left tokNum,
+    .im (tokA * tokN : LinearizedSyntacticObject), .em .left tokDem]⟩
 
 /-- With nothing moved the order is (6a), Dem Num A N. -/
 theorem surfaceCats_mergeOrder : mergeOrder.surfaceCats = [.Dem, .Num, .A, .N] := by decide

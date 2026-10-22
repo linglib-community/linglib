@@ -67,8 +67,7 @@ lower copies, each with the trace of the mover's head under `τ`; an extraction 
 def Step.replayWithCopies? (step : Step) (c : Cfg Marked)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Option (Cfg Marked) :=
   match step, c with
-  | .em side item, ⟨p, st⟩ =>
-      item.toLinearizedLeaf?.map fun i ↦ ⟨p.attach side (.ofLinearized i), st⟩
+  | .em side item, ⟨p, st⟩ => some ⟨p.attach side (.ofLinearized item), st⟩
   | .im mover side, ⟨p, st⟩ =>
       (p.find? mover).map fun s ↦ ⟨(p.mark mover (τ mover)).attach side s, st⟩
   | .extract mover, ⟨p, st⟩ => (p.find? mover).map fun s ↦ ⟨p.mark mover (τ mover), s :: st⟩
@@ -90,11 +89,7 @@ theorem Step.map_contract_replayWithCopies? (step : Step) (c : Cfg Marked) :
       step.replay? (c.map Marked.contract) τ := by
   obtain ⟨p, st⟩ := c
   cases step with
-  | em side item =>
-    simp only [Step.replayWithCopies?, Step.replay?, Option.map_map]
-    congr 1
-    funext i
-    simp [Cfg.map]
+  | em side item => simp [Step.replayWithCopies?, Step.replay?, Cfg.map]
   | im mover side =>
     simp only [Step.replayWithCopies?, Step.replay?, Cfg.map]
     rw [← Marked.map_contract_find?, Option.map_map, Option.map_map]
@@ -166,12 +161,13 @@ theorem Derivation.replayWithCopies?_append_singleton (d : Derivation) (step : S
   cases step.replayWithCopies? c <;> rfl
 
 /-- External Merge merges the copy object with the item. -/
-theorem Step.toSyntacticObject_replayWithCopies?_em {side : Edge} {item : SyntacticObject}
-    {c c' : Cfg Marked} (h : (Step.em side item).replayWithCopies? c τ = some c') :
+theorem Step.toSyntacticObject_replayWithCopies?_em {side : Edge}
+    {item : LinearizedSyntacticObject} {c c' : Cfg Marked}
+    (h : (Step.em side item).replayWithCopies? c τ = some c') :
     c'.current.unmark.toSyntacticObject = merge item c.current.unmark.toSyntacticObject := by
   obtain ⟨p, st⟩ := c
-  obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 h
-  simp [SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? hi]
+  obtain rfl := Option.some.inj h
+  simp
 
 /-- Internal Merge merges the copy object with one of its own terms. -/
 theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
@@ -228,16 +224,12 @@ theorem Derivation.terms_subset_copyObject?_append {d : Derivation} {steps : Lis
   exact ⟨_, Option.map_eq_some_iff.2 ⟨c, hc, rfl⟩,
     terms_subset_terms (mem_terms.1 (mem_terms_foldlM_replayWithCopies? hc'))⟩
 
-/-- External Merge merges the copy object with the item, a leaf from outside. -/
-theorem Derivation.copyObject?_append_em (d : Derivation) (side : Edge) (item : SyntacticObject) :
-    (d.append [.em side item]).copyObject? τ =
-      (d.copyObject? τ).bind fun C ↦ item.toLinearizedLeaf?.map fun _ ↦ merge item C := by
-  simp only [copyObject?, replayWithCopies?_append, Option.map_bind, Option.bind_map]
-  congr 1
-  funext c
-  rcases h : item.toLinearizedLeaf? with _ | i
-  · simp [Step.replayWithCopies?, h]
-  · simp [Step.replayWithCopies?, h, SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? h]
+/-- External Merge merges the copy object with the item, built outside. -/
+theorem Derivation.copyObject?_append_em (d : Derivation) (side : Edge)
+    (item : LinearizedSyntacticObject) :
+    (d.append [.em side item]).copyObject? τ = (d.copyObject? τ).map (merge item) := by
+  simp only [copyObject?, replayWithCopies?_append]
+  cases d.replayWithCopies? τ <;> simp [Step.replayWithCopies?]
 
 /-- Internal Merge merges the copy object with one of its own terms, so Internal and External
 Merge are one operation, differing in where its object comes from. -/
@@ -268,8 +260,7 @@ private theorem Step.mem_yield_map_replayWithCopies? {step : Step} {c c' : Cfg M
   obtain ⟨p, st⟩ := c
   cases step with
   | em side item =>
-    obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 h
-    rw [← SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? hi]
+    obtain rfl := Option.some.inj h
     simp only [Cfg.yield_map, Marked.unmark_attach, Marked.unmark_ofLinearized,
       LinearizedSyntacticObject.yield_attach, Step.items, Multiset.map_singleton,
       Multiset.sum_singleton, Multiset.mem_add] at ht ⊢

@@ -7,7 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
-public import Linglib.Syntax.Minimalist.Derivation.Basic
+public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 
 /-!
@@ -32,8 +32,8 @@ indirect passive *Mary was sent a letter* is derived by dative shift followed by
 The oblique dative and dative shift are the paper's second and third sections, the indirect
 passive its fourth, and recoverability the second part of its fifth. The head movement of the verb
 from the inner to the outer shell is not modelled, since the c-command facts depend only on the
-positions of the arguments; each derivation is paired with the linearized tree it produces, on which
-c-command is decided. The recoverability entries record the roles the paper assigns to each
+positions of the arguments; each derivation externalizes, with bare traces, to the linearized tree
+beside it, on which c-command is decided. The recoverability entries record the roles the paper assigns to each
 verb's indirect object.
 
 ## References
@@ -85,13 +85,16 @@ def obliqueDative : Derivation :=
   { initial := V_send
     steps := [
       .em .right ppToMaryP,
-      .em .left DP_letter,
-      .em .left DP_john
+      .em .left tok_letter,
+      .em .left tok_john
     ] }
 
 /-- The oblique dative's tree, `[John [a letter [send [to Mary]]]]`. -/
 def obliqueDativeTree : LinearizedSyntacticObject :=
   tok_john * (tok_letter * (tok_send * ppToMaryP))
+
+theorem obliqueDative_externalize? : obliqueDative.externalize? = some obliqueDativeTree := by
+  decide
 
 theorem oblique_do_ccommands_goal :
     CCommands obliqueDativeTree DP_letter DP_mary := by decide
@@ -111,14 +114,18 @@ def docDativeShift : Derivation :=
   { initial := V_send
     steps := [
       .em .right ppToMaryP,
-      .em .left DP_letter,
+      .em .left tok_letter,
       .im DP_mary,
-      .em .left DP_john
+      .em .left tok_john
     ] }
 
 /-- The double object construction's tree, `[John [Mary [a letter [send [to t]]]]]`. -/
 def docDativeShiftTree : LinearizedSyntacticObject :=
   tok_john * (tok_mary * (tok_letter * (tok_send * (tok_to * LinearizedSyntacticObject.trace))))
+
+theorem docDativeShift_externalize? :
+    docDativeShift.externalize? (fun _ ↦ none) = some docDativeShiftTree := by
+  decide
 
 /-- In the double object construction the indirect object c-commands the theme. -/
 theorem doc_io_ccommands_do :
@@ -140,14 +147,18 @@ the object is promoted above the subject. -/
 def standardPassive : Derivation :=
   { initial := V_kick
     steps := [
-      .em .right DP_ball,
-      .em .left DP_john,
+      .em .right tok_ball,
+      .em .left tok_john,
       .im DP_ball
     ] }
 
 /-- The passive's tree, `[the ball [John [kicked t]]]`. -/
 def standardPassiveTree : LinearizedSyntacticObject :=
   tok_ball * (tok_john * (tok_kick * LinearizedSyntacticObject.trace))
+
+theorem standardPassive_externalize? :
+    standardPassive.externalize? (fun _ ↦ none) = some standardPassiveTree := by
+  decide
 
 theorem passive_object_ccommands_subject :
     CCommands standardPassiveTree DP_ball DP_john := by decide
@@ -218,7 +229,7 @@ def indirectPassive : Derivation :=
   { initial := V_sent
     steps := [
       .em .right (tok_to2 * tok_mary2 : LinearizedSyntacticObject),
-      .em .left DP_letter2,
+      .em .left tok_letter2,
       .im DP_mary2,
       .im DP_mary2
     ] }
@@ -228,6 +239,10 @@ extraction site. -/
 def indirectPassiveTree : LinearizedSyntacticObject :=
   tok_mary2 * (LinearizedSyntacticObject.trace * (tok_letter2 * (tok_sent * (tok_to2 *
     LinearizedSyntacticObject.trace))))
+
+theorem indirectPassive_externalize? :
+    indirectPassive.externalize? (fun _ ↦ none) = some indirectPassiveTree := by
+  decide
 
 theorem indirect_passive_io_ccommands_do :
     CCommands indirectPassiveTree DP_mary2 DP_letter2 := by decide

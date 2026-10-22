@@ -50,8 +50,7 @@ private theorem Step.yield_map_replay? {step : Step} {c c' : Cfg LinearizedSynta
     Multiset.nodup_of_le ((Multiset.le_add_right _ _).trans (Multiset.le_add_right _ _)) hc
   cases step with
   | em side item =>
-    obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 h
-    rw [← SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? hi]
+    obtain rfl := Option.some.inj h
     simp only [Cfg.yield_map, Step.items, Multiset.map_singleton, Multiset.sum_singleton,
       LinearizedSyntacticObject.yield_attach]
     abel
