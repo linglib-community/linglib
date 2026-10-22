@@ -42,6 +42,8 @@ embedding with a total head function, which extends the raising head.
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
 * `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
+* `PlanarSyntacticObject.maximalProjections_eq`: the maximal projections are those of the head
+  relation.
 * `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
 * `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
@@ -273,6 +275,11 @@ def maximalProjections : Set TreePath :=
 
 instance : DecidablePred (· ∈ t.maximalProjections) :=
   fun x ↦ inferInstanceAs (Decidable (IsMaximalProjection (headDaughterRel t.headIndexAt) x))
+
+/-- The maximal projections are those of the head relation, with no adjunction. -/
+theorem maximalProjections_eq :
+    t.maximalProjections = PhraseStructure.maximalProjections (headDaughterRel t.headIndexAt) ⊥ :=
+  PhraseStructure.maximalProjections_bot.symm
 
 /-- The generators in `P` properly dominating a position, the key under which a probe searching the
 object compares goals (`PhraseStructure.ancestors`). -/

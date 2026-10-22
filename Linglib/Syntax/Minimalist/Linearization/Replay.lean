@@ -13,27 +13,15 @@ public import Linglib.Syntax.Minimalist.Linearization.Externalization
 # Replaying a derivation on planar objects
 
 Free symmetric Merge builds unordered objects, so the surface order is not recoverable from
-`Derivation.final`, but each step of a derivation records the side its new daughter takes.
-`Derivation.replay?` replays the steps with Merge on planar trees, each daughter on its side, on
-a configuration of a `PlanarSyntacticObject` and the planar copies extracted from it, so that
-surface orders `decide`; `Derivation.externalize?` is its object. This is Merge in the
-noncommutative magma of planar trees ([marcolli-chomsky-berwick-2025] §1.13.1), and forgetting the
-order is a morphism of magmas (their Lemma 1.13.1), so a successful replay forgets to the
-derivation's own configuration (`Derivation.replay?_faithful`): the readouts `surfaceTokens`,
-`surfaceCats` and `surfacePhon` are the word order of the derived object. The order is a datum
-of the derivation, not of the object it derives, since one object has derivations in two orders
-(`Derivation.not_factorsThrough_final`). When every daughter a derivation merges takes the head
-side exactly if it projects, the order is the harmonic planarization of its object, the harmonic
-candidate for MCB's externalization section (`Derivation.externalize?_eq_planarize?`). The
-replay is partial, `none` when an
-externally merged item is not a leaf, an unordered complex item having no order to replay, when
-a mover is absent, or when nothing is left to merge back. Traces are unpronounced. Sibling
-accounts of linearization: the selection-induced harmonic order
-(`Linearization/Externalization.lean`) and cyclic linearization (`Linearization/Cyclic.lean`).
+`Derivation.final`, but each step records the side its new daughter takes. `Derivation.replay?`
+replays the steps by Merge on planar trees, and a successful replay forgets to the derivation's
+own configuration, so the readouts `surfaceTokens`, `surfaceCats` and `surfacePhon` are the word
+order of the derived object. The order is a datum of the derivation rather than of its object, and
+a derivation whose daughters take the head side exactly when they project records the harmonic
+planarization of its object.
 
 ## Main definitions
 
-* `Minimalist.PlanarSyntacticObject.find?`, `replace`: an occurrence and its replacement.
 * `Minimalist.Step.replay?`, `Minimalist.Derivation.replay?`, `externalize?`: the replay.
 * `Minimalist.Step.Harmonic`, `Step.HarmonicList`: steps that place the projecting daughter on
   the head side.
@@ -47,6 +35,14 @@ accounts of linearization: the selection-induced harmonic order
   the derived object.
 * `Minimalist.Derivation.externalize?_eq_planarize?`: a harmonic derivation records the harmonic
   planarization of its object.
+
+## Implementation notes
+
+* The replay is partial, `none` when an externally merged item is not a leaf, since an unordered
+  complex item has no order to replay, when a mover is absent, or when nothing is left to merge
+  back. Traces are unpronounced.
+* Sibling accounts of linearization are the selection-induced harmonic order
+  (`Linearization/Externalization.lean`) and cyclic linearization (`Linearization/Cyclic.lean`).
 
 ## References
 

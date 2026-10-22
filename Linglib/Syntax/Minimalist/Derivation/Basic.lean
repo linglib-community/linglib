@@ -12,33 +12,20 @@ public import Linglib.Syntax.Minimalist.Merge.SyntacticObject
 /-!
 # Derivations
 
-An ordered derivation is an initial syntactic object with a sequence of Merge steps, each placing
-its new daughter on a side. External Merge adds an item, and Internal Merge raises a mover: the
-step re-merges the mover with the remainder `deleteAccessible mover current`, the current object
-with the mover's occurrences replaced by the trace of the mover's head. Which item heads the mover
-is a theory's choice, so the steps and stages take the trace encoder as a parameter, by default
-the head by selection. Internal Merge also comes in its two stages: `extract` puts a copy of the
-mover on a stack beside the object, leaving its trace, and `remerge` merges the copy on top back,
-so a derivation runs on a configuration of the object and the stack (`Derivation.run`) and
-copies extracted in one order merge back in the reverse. Each step is the algebraic Merge on the
-workspace of the current object, the items it introduces, and the items still to come, when it
-matches no accessible term of those items and an Internal Merge raises a uniquely accessible term
-(`Step.mergeOp_workspace`); an admissible derivation is then the iterated algebraic Merge on the
-workspace of its initial object and its items (`Derivation.mergeOpList_initial`). The node being
-commutative, the two sides build the same
-object; the side is a planarization datum that matters only for the surface order, which
-`Linearization/Replay.lean` recovers on an ordered planar accumulator, since the final object is an
-unordered quotient. Since `node` is noncomputable, so are `Step.apply` and `Derivation.final`,
-while the movers are read off the steps. A derivation extends by further steps, whose early stages
-and movers are the original's, and normalizes by moving every new daughter to the left, which
-changes no stage and no mover.
+An ordered derivation is an initial syntactic object with a sequence of steps. External Merge adds
+an item, and Internal Merge raises a mover, re-merging it with the current object in which its
+occurrences are replaced by the trace of its head; Internal Merge also comes in two stages,
+`extract` and `remerge`, through a stack of copies. An admissible derivation is the iterated
+algebraic Merge on the workspace of its initial object and its items. The side on which a step
+places its daughter is a planarization datum that only externalization reads.
 
 ## Main definitions
 
-* `Minimalist.Step`, `Step.apply`, `Step.run`, `Step.mover?`, `Step.mergeOp`,
+* `Minimalist.Step`, `Step.apply`, `Step.run`, `Step.mover?`, `Step.IsMerge`, `Step.mergeOp`,
   `Step.Admissible`
 * `Minimalist.Derivation`, `Derivation.Cfg`, `Derivation.run`, `final`, `stageAt`, `movedItems`,
-  `mover?`, `take`, `append`, `leftward`, `items`, `Admissible`
+  `mover?`, `take`, `append`, `leftward`, `items`, `lexTokens`, `Admissible`
+* `Minimalist.Derivation.Cfg.yield`: the tokens a configuration pronounces.
 
 ## Main results
 
@@ -52,6 +39,13 @@ changes no stage and no mover.
   keeps the early stages and the movers.
 * `Minimalist.Derivation.stageAt_leftward`, `movedItems_leftward`: the sides
   change no stage and no mover.
+
+## Implementation notes
+
+* Which item heads the mover is a theory's choice, so the steps and stages take the trace encoder
+  as a parameter, by default the head by selection.
+* `node` is noncomputable, so `Step.apply` and `Derivation.final` are too; the movers are read
+  off the steps.
 
 ## TODO
 
@@ -109,6 +103,14 @@ def map (f : α → β) (c : Cfg α) : Cfg β := ⟨f c.current, c.stack.map f�
 @[simp] theorem map_current (f : α → β) (c : Cfg α) : (c.map f).current = f c.current := rfl
 
 @[simp] theorem map_stack (f : α → β) (c : Cfg α) : (c.map f).stack = c.stack.map f := rfl
+
+/-- The tokens a configuration pronounces, its object's and those of the copies on its stack. -/
+def yield (c : Cfg SyntacticObject) : Multiset LexicalItem.Token :=
+  c.current.yield + (c.stack.map SyntacticObject.yield).sum
+
+@[simp] theorem yield_map (f : α → SyntacticObject) (c : Cfg α) :
+    (c.map f).yield = (f c.current).yield + (c.stack.map fun x ↦ (f x).yield).sum := by
+  simp [yield, map, Function.comp_def]
 
 end Derivation.Cfg
 

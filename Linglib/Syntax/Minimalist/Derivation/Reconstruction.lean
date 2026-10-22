@@ -30,6 +30,9 @@ in the relation, and in a derivation of Merge steps that merges no token twice t
 * `Minimalist.Derivation.CCommandsAt.cCommands_stageAt`: the predicate speaks
   of the derivation's own stage.
 * `Minimalist.Derivation.cCommandsAt_append_of_le`, `BindsAtSomeStage.append`.
+* `Minimalist.Derivation.BindsAtSomeStage.bindsAtLF`, `BindsAtLF.bindsAtSomeStage`: binding at
+  some stage is binding at the copy object, and conversely in a derivation of Merge steps that
+  merges no token twice and moves no trace.
 * `Minimalist.Derivation.bindsAtSomeStage_iff_bindsAtLF`: derivational binding is binding at
   the copy object.
 
@@ -158,7 +161,8 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
       rw [← map_contract_replayWithCopies?, hc]; rfl
     have hT : c.current.contract.toSyntacticObject.yield = d.lexTokens := by
       have := d.yield_replay? hd0 hcT
-      rwa [stack_eq_nil_of_replay? hm' hcT, List.map_nil, List.sum_nil, add_zero] at this
+      rwa [Derivation.Cfg.yield_map, stack_eq_nil_of_replay? hm' hcT, List.map_nil, List.sum_nil,
+        add_zero] at this
     have hpron : ∀ t : LexicalItem.Token, leaf t ∈ c.current.unmark.toSyntacticObject.terms →
         t ∈ c.current.contract.toSyntacticObject.yield := fun t ht ↦
       hT ▸ mem_lexTokens_of_mem_yield_copyObject? hdC (mem_yield_iff.2 ht)

@@ -214,6 +214,22 @@ structure Stage where
   /-- The token the last probe moved, if any. -/
   moved : Option LexicalItem.Token := none
 
+/-- What the head `h` at the position `hq` of the object copies by Agree under Best Match with
+`agr`, added to what the heads have copied. -/
+def agreeCopies (v : Voice) (x : Clause) (h : LexicalItem.Token) (agr : Spec Feature) (st : Stage)
+    (hq : st.obj.val.Positions) : Copies :=
+  let feats := featuresAt v x st.copies st.obj
+  Function.update st.copies h
+    (agr.copied feats {q | st.obj.val.CCommands hq q} (agr.bestMatch feats (closeness st.obj)))
+
+/-- The nominals a head at the position `hq` c-commands, among which its EPP probe searches. -/
+def nominalDomain (t : PlanarSyntacticObject) (hq : t.val.Positions) : Set t.val.Positions :=
+  {q | t.val.CCommands hq q ∧ isNominal t q = true}
+
+instance (t : PlanarSyntacticObject) (hq : t.val.Positions) :
+    DecidablePred (· ∈ nominalDomain t hq) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
 /-- A probing head at the position `hp` of the object: it Agrees by `agr` under Best Match,
 recording what it copies, and attracts the nominal it agrees with by `epp`, which re-merges as its
 outer specifier. -/
@@ -221,12 +237,9 @@ def probeStep (v : Voice) (x : Clause) (h : LexicalItem.Token) (hp : TreePath)
     (agr epp : Spec Feature) (st : Stage) : Stage :=
   let t := st.obj
   if hhp : hp ∈ t.val.validPaths then
-    let hq : t.val.Positions := ⟨hp, hhp⟩
-    let feats := featuresAt v x st.copies t
-    let c := Function.update st.copies h
-      (agr.copied feats {q | t.val.CCommands hq q} (agr.bestMatch feats (closeness t)))
+    let c := agreeCopies v x h agr st ⟨hp, hhp⟩
     let feats' := featuresAt v x c t
-    match t.attractStep? (epp.toProbe feats') {q | t.val.CCommands hq q ∧ isNominal t q = true}
+    match t.attractStep? (epp.toProbe feats') (nominalDomain t ⟨hp, hhp⟩)
         (epp.bestMatch feats' (closeness t)) with
     | some step =>
         ⟨((step.replay? ⟨t, []⟩).map (·.current)).getD t, c, step.mover?.bind (·.token?)⟩
@@ -385,13 +398,10 @@ def probeOptions (v : Voice) (x : Clause) (h : LexicalItem.Token) (hp : TreePath
     (agr epp : Spec Feature) (st : Stage) : Multiset Stage :=
   let t := st.obj
   if hhp : hp ∈ t.val.validPaths then
-    let hq : t.val.Positions := ⟨hp, hhp⟩
-    let feats := featuresAt v x st.copies t
-    let c := Function.update st.copies h
-      (agr.copied feats {q | t.val.CCommands hq q} (agr.bestMatch feats (closeness t)))
+    let c := agreeCopies v x h agr st ⟨hp, hhp⟩
     let feats' := featuresAt v x c t
     let movers := Finset.univ.filter fun q ↦ (epp.toProbe feats').AgreesWith
-      {q | t.val.CCommands hq q ∧ isNominal t q = true} (epp.bestMatch feats' (closeness t)) q
+      (nominalDomain t ⟨hp, hhp⟩) (epp.bestMatch feats' (closeness t)) q
     if movers = ∅ then {⟨t, c, none⟩} else movers.val.map fun q ↦
       ⟨(((Step.im (t.termAt q)).replay? ⟨t, []⟩).map (·.current)).getD t, c, (t.termAt q).token?⟩
   else {st}

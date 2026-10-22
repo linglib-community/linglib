@@ -6,6 +6,7 @@ public import Mathlib.Order.Concept
 public import Mathlib.Order.Cover
 public import Mathlib.Order.Minimal
 public import Mathlib.Order.UpperLower.Closure
+public import Linglib.Core.Order.Minimal
 public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Core.Relation.SetRel
 
@@ -242,17 +243,8 @@ theorem ancestors_eq_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
 asymmetrically commands, the Minimal Link Condition. -/
 theorem minimalFor_ancestors_iff {S : Set α} (hS : IsAntichain (· ≤ ·) S) :
     MinimalFor (· ∈ S) (ancestors P) a ↔
-      a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) := by
-  rw [minimalFor_iff_forall_lt]
-  refine and_congr_right fun ha ↦ ⟨fun h b hb hcmd ↦ ?_, fun h b hlt hb ↦ ?_⟩
-  · have hne : b ≠ a := by
-      rintro rfl
-      exact hcmd.2 hcmd.1
-    exact h ((ancestors_ssubset_ancestors_iff (hS hb ha hne) (hS ha hb hne.symm)).2 hcmd) hb
-  · have hne : b ≠ a := by
-      rintro rfl
-      exact lt_irrefl _ hlt
-    exact h hb ((ancestors_ssubset_ancestors_iff (hS hb ha hne) (hS ha hb hne.symm)).1 hlt)
+      a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) :=
+  minimalFor_iff_of_isAntichain hS (fun _ h ↦ h.2 h.1) fun _ _ ↦ ancestors_ssubset_ancestors_iff
 
 end Closeness
 
