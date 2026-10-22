@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Probe.Label
+public import Linglib.Syntax.Minimalist.Label.MinimalSearch
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Data.Examples.Chomsky2013
 

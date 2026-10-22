@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Derivation.Freezing
+public import Linglib.Syntax.Minimalist.Locality.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
 
 /-!

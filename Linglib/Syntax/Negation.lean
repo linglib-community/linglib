@@ -35,7 +35,7 @@ Romero and Han draw.
   identified: the preposed *-n't* of *Isn't this the road to Lund?* has both readings for some
   speakers of English, so each language or variety relates a form to a set of readings.
 * Structural positions of negation are a framework's, such as the heights relative to the
-  polarity head in `Minimalist.ClauseNegation`.
+  polarity head in `Studies/Holmberg2016.lean`.
 
 ## References
 

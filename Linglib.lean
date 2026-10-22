@@ -964,7 +964,6 @@ import Linglib.Syntax.Mereological.Parthood
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Agree.Coordination
 import Linglib.Syntax.Minimalist.Agree.Cyclic
-import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
 import Linglib.Syntax.Minimalist.Economy.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.LateMerger
@@ -983,7 +982,6 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Lift
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
-import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.Theta.Basic
 import Linglib.Syntax.Minimalist.Theta.Realize
 import Linglib.Syntax.Minimalist.Verbal.Applicative

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.ChanShen2026
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Linglib.Syntax.Minimalist.SyntacticObject.Locality
+public import Linglib.Syntax.Minimalist.Locality.Chain
 
 /-!
 # Chan and Shen (2026): Conditions on *wh-the-hell* licensing

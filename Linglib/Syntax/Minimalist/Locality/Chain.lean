@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Copy.Chain
-public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
+public import Linglib.Syntax.Minimalist.Locality.Phase
 
 /-!
 # Locality on chains

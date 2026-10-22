@@ -9,10 +9,10 @@ public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Core.RingTheory.HahnSeries.RotaBaxter
 public import Linglib.Syntax.Minimalist.Linearization.Replay
-public import Linglib.Syntax.Minimalist.Derivation.Economy
+public import Linglib.Syntax.Minimalist.Economy.Derivation
 public import Linglib.Syntax.Minimalist.Merge.MinimalSearch
 public import Linglib.Syntax.Minimalist.Merge.Sideward
-public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+public import Linglib.Syntax.Minimalist.Label.Selection
 public import Linglib.Syntax.Minimalist.Copy.FormCopy
 public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
 public import Mathlib.RingTheory.LaurentSeries

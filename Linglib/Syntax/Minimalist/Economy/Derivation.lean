@@ -7,7 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Derivation.Basic
 public import Linglib.Syntax.Minimalist.Economy.NoComplexityLoss
-public import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
+public import Linglib.Syntax.Minimalist.Economy.MinimalYield
 
 /-!
 # Economy of derivations

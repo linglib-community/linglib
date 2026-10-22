@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
+public import Linglib.Syntax.Minimalist.Locality.Phase
 public import Mathlib.Data.Finset.Insert
 public import Linglib.Data.Examples.Greco2020
 

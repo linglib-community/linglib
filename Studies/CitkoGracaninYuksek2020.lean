@@ -43,7 +43,7 @@ economy bans.
   antecedent. Neither condition is stated here.
 * Coordination of arguments, obligatorily transitive verbs and subject wh-phrases follows from the
   pronoun saturating the verb in the second conjunct; the selection check of
-  `SyntacticObject/Selection.lean` is undefined at the adjunction and specifier nodes involved.
+  `Label/Selection.lean` is undefined at the adjunction and specifier nodes involved.
 * The independence of the two ellipses, which needs an overt pronoun when the second TP survives,
   and the absence of the clause-mate condition and of the category restriction of multiple
   sluicing.

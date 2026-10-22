@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.RaisingHead
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
