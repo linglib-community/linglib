@@ -7,7 +7,9 @@ module
 
 public import Mathlib.Algebra.Group.Hom.Defs
 public import Mathlib.Data.List.Perm.Basic
+public import Linglib.Core.Algebra.FreeCommMagma
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Mathlib.Algebra.GroupWithZero.WithZero
 
 /-!
 # The universal property of the syntactic-object carrier
@@ -36,6 +38,8 @@ induction.
 * `Minimalist.SyntacticObject.hom_ext`: morphisms of magmas out of
   `SyntacticObject L` agreeing on lexical and trace leaves are equal.
 * `Minimalist.SyntacticObject.liftN_merge`: the magma law on the unordered carrier.
+* `Minimalist.SyntacticObject.liftEquiv`, `Minimalist.SyntacticObject.equivFreeCommMagma`: the
+  universal property, and the carrier as the free commutative magma on its leaf alphabet.
 -/
 
 @[expose] public section
@@ -179,5 +183,113 @@ theorem hom_ext [Mul β] {f g : SyntacticObject L →ₙ* β}
     | traceOf tok => exact htraceOf tok
     | merge l r ihl ihr =>
       rw [show merge l r = l * r from rfl, map_mul, map_mul, ihl, ihr]
+
+/-! ### Freeness -/
+
+section Freeness
+
+variable {M : Type*} [CommMagma M]
+
+/-- Adjoining a zero to a commutative magma commutes. `[UPSTREAM]` candidate for
+`Mathlib/Algebra/GroupWithZero/WithZero.lean`. -/
+instance : CommMagma (WithZero M) where
+  mul_comm a b := by
+    induction a <;> induction b <;> simp [← WithZero.coe_mul, mul_comm]
+
+/-- The leaf of the alphabet `L ⊕ Option L`: a lexical leaf, or a trace. -/
+def ofLeaf : L ⊕ Option L → SyntacticObject L
+  | .inl a => leaf a
+  | .inr none => trace
+  | .inr (some a) => traceOf a
+
+theorem liftFun_coe_ne_zero (f : L ⊕ Option L → M) (s : SyntacticObject L) :
+    liftFun (fun a ↦ (f (.inl a) : WithZero M)) (fun o ↦ (f (.inr o) : WithZero M)) s ≠ 0 := by
+  induction s using ind with
+  | leaf a => simp
+  | trace => simp
+  | traceOf a => simp
+  | merge l r ihl ihr =>
+    obtain ⟨x, hx⟩ := WithZero.ne_zero_iff_exists.1 ihl
+    obtain ⟨y, hy⟩ := WithZero.ne_zero_iff_exists.1 ihr
+    rw [liftFun_merge, ← hx, ← hy, ← WithZero.coe_mul]
+    exact WithZero.coe_ne_zero
+
+/-- Lifting leaf data valued in a commutative magma `M` to a magma homomorphism. The fold runs in
+`WithZero M`, whose zero absorbs the off-carrier arities and is never reached. -/
+noncomputable def liftHom (f : L ⊕ Option L → M) : SyntacticObject L →ₙ* M where
+  toFun s := WithZero.unzero (liftFun_coe_ne_zero f s)
+  map_mul' l r := WithZero.coe_inj.1 <| by
+    rw [WithZero.coe_unzero, WithZero.coe_mul, WithZero.coe_unzero, WithZero.coe_unzero,
+      show l * r = merge l r from rfl, liftFun_merge]
+
+theorem coe_liftHom (f : L ⊕ Option L → M) (s : SyntacticObject L) :
+    (liftHom f s : WithZero M)
+      = liftFun (fun a ↦ (f (.inl a) : WithZero M)) (fun o ↦ (f (.inr o) : WithZero M)) s :=
+  WithZero.coe_unzero _
+
+@[simp] theorem liftHom_ofLeaf (f : L ⊕ Option L → M) (x : L ⊕ Option L) :
+    liftHom f (ofLeaf x) = f x := by
+  rw [← WithZero.coe_inj, coe_liftHom]
+  rcases x with a | (_ | a) <;> rfl
+
+/-- The universal property of the carrier: leaf data valued in a commutative magma `M`
+corresponds to magma homomorphisms out of `SyntacticObject L`, so the carrier is the free
+commutative magma on `L ⊕ Option L`, its lexical items and traces. -/
+noncomputable def liftEquiv : (L ⊕ Option L → M) ≃ (SyntacticObject L →ₙ* M) where
+  toFun := liftHom
+  invFun F := F ∘ ofLeaf
+  left_inv f := funext fun x ↦ liftHom_ofLeaf f x
+  right_inv F := hom_ext
+    (fun a ↦ liftHom_ofLeaf (F ∘ ofLeaf) (.inl a))
+    (liftHom_ofLeaf (F ∘ ofLeaf) (.inr none))
+    (fun a ↦ liftHom_ofLeaf (F ∘ ofLeaf) (.inr (some a)))
+
+@[simp] theorem liftEquiv_apply_ofLeaf (f : L ⊕ Option L → M) (x : L ⊕ Option L) :
+    liftEquiv f (ofLeaf x) = f x :=
+  liftHom_ofLeaf f x
+
+@[simp] theorem liftEquiv_apply_leaf (f : L ⊕ Option L → M) (a : L) :
+    liftEquiv f (leaf a) = f (.inl a) :=
+  liftEquiv_apply_ofLeaf f (.inl a)
+
+@[simp] theorem liftEquiv_apply_trace (f : L ⊕ Option L → M) :
+    liftEquiv f (trace : SyntacticObject L) = f (.inr none) :=
+  liftEquiv_apply_ofLeaf f (.inr none)
+
+@[simp] theorem liftEquiv_apply_traceOf (f : L ⊕ Option L → M) (a : L) :
+    liftEquiv f (traceOf a) = f (.inr (some a)) :=
+  liftEquiv_apply_ofLeaf f (.inr (some a))
+
+@[simp] theorem liftEquiv_symm_apply (F : SyntacticObject L →ₙ* M) (x : L ⊕ Option L) :
+    liftEquiv.symm F x = F (ofLeaf x) := rfl
+
+/-- The syntactic-object carrier is the free commutative magma on its leaf alphabet, the
+canonical isomorphism induced by the two universal properties. -/
+noncomputable def equivFreeCommMagma : SyntacticObject L ≃* FreeCommMagma (L ⊕ Option L) where
+  toFun := liftEquiv FreeCommMagma.of
+  invFun := FreeCommMagma.lift ofLeaf
+  left_inv s := by
+    have h : (FreeCommMagma.lift ofLeaf).comp
+          (liftEquiv (M := FreeCommMagma (L ⊕ Option L)) FreeCommMagma.of)
+        = MulHom.id (SyntacticObject L) :=
+      hom_ext (fun a ↦ by simp [ofLeaf]) (by simp [ofLeaf]) (fun a ↦ by simp [ofLeaf])
+    exact MulHom.ext_iff.1 h s
+  right_inv x := by
+    have h : ((liftEquiv (M := FreeCommMagma (L ⊕ Option L)) FreeCommMagma.of :
+            SyntacticObject L →ₙ* _).comp (FreeCommMagma.lift ofLeaf))
+        = MulHom.id (FreeCommMagma (L ⊕ Option L)) :=
+      FreeCommMagma.hom_ext fun x ↦ by rcases x with a | (_ | a) <;> simp [ofLeaf]
+    exact MulHom.ext_iff.1 h x
+  map_mul' := map_mul (liftEquiv FreeCommMagma.of)
+
+@[simp] theorem equivFreeCommMagma_leaf (a : L) :
+    equivFreeCommMagma (leaf a) = FreeCommMagma.of (.inl a) :=
+  liftHom_ofLeaf FreeCommMagma.of (.inl a)
+
+@[simp] theorem equivFreeCommMagma_symm_of (x : L ⊕ Option L) :
+    equivFreeCommMagma.symm (FreeCommMagma.of x) = ofLeaf (L := L) x :=
+  FreeCommMagma.lift_of _ _
+
+end Freeness
 
 end Minimalist.SyntacticObject
