@@ -37,23 +37,13 @@ open Minimalist Minimalist.SyntacticObject
 
 /-! ### Attraction under Shortest -/
 
-variable {tree head x : SyntacticObject}
-
-/-- A quantifier the P-feature-bearing head can attract is one in its c-command domain. The
-subject, merged in the head's specifier, is not among them. -/
-def Attractable (tree head x : SyntacticObject) : Prop := CCommands tree head x
-
-instance : Decidable (Attractable tree head x) := inferInstanceAs (Decidable (CCommands _ _ _))
-
 /-- The quantifiers among `qs` that the P-feature head `h` of `t` may attract first. Shortest
 licenses attracting a quantifier first only when no other candidate asymmetrically c-commands it,
 since such a candidate would form a smaller well-formed pair with the attractor, so these are the
 candidates the head's probe finds among the positions it c-commands. -/
 def firsts (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
     Finset SyntacticObject :=
-  (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
-    (Probe.relativized fun q ↦ decide (t.termAt q ∈ qs)).Finds {q | t.val.CCommands a q}
-      (t.above t.branching) g).image t.termAt
+  t.goals (.relativized fun q ↦ decide (t.termAt q ∈ qs)) h
 
 /-- Since later movements tuck in beneath earlier ones, the quantifier attracted first takes widest
 scope, so scope is ambiguous exactly when two candidates may be attracted first. -/
@@ -88,8 +78,8 @@ def doc : PlanarSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTelesco
 /-- The quantifiers competing for attraction in the double object construction. -/
 def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
 
-/-- The first object asymmetrically c-commands the second ([barss-lasnik-1986]). -/
-theorem doc_goal_asym_theme : AsymmCCommands doc aGirl everyTelescope := by decide
+-- The first object asymmetrically c-commands the second ([barss-lasnik-1986]).
+example : AsymmCCommands doc aGirl everyTelescope := by decide
 
 /-- Only the first object may be attracted first, since it asymmetrically c-commands the second,
 so the derivation fixes the base order and the second object cannot come to scope over the first:
@@ -111,8 +101,8 @@ def locative : PlanarSyntacticObject := {ozzy, {v, {gave, {everyTelescope, toAGi
 /-- The candidates in the locative, the direct object and the PP that pied-pipes the goal. -/
 def locativeQuantifiers : List SyntacticObject := [everyTelescope, toAGirl]
 
-/-- Direct object and PP c-command each other, so neither asymmetrically c-commands the other. -/
-theorem locative_mutual_cCommand :
+-- Direct object and PP c-command each other, so neither asymmetrically c-commands the other.
+example :
     CCommands locative everyTelescope toAGirl ∧ CCommands locative toAGirl everyTelescope := by
   constructor <;> decide
 
@@ -131,7 +121,7 @@ theorem locative_ambiguous : Ambiguous locative v locativeQuantifiers := by
 /-- The subject is merged in the attractor's specifier, outside its c-command domain, so it never
 competes with the objects for attraction, and either object can take scope over it even where the
 two objects' relative scope is frozen. -/
-theorem subject_not_attractable : ¬ Attractable doc v ozzy := by decide
+theorem subject_not_attractable : firsts doc v [ozzy] = ∅ := by decide +kernel
 
 /-- The passive of a double object construction. With no external argument, the goal raises to the
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
@@ -140,8 +130,7 @@ def passive : PlanarSyntacticObject := {aGirl, {v, {gave, {appl, everyTelescope}
 /-- In the passive the derived subject is no longer attractable while the theme is, so Shortest
 imposes no order between them and the ambiguity returns: *a (different) girl was given every
 telescope*. -/
-theorem passive_ambiguous :
-    ¬ Attractable passive v aGirl ∧ Attractable passive v everyTelescope := by
-  constructor <;> decide
+theorem passive_ambiguous : firsts passive v docQuantifiers = {↑everyTelescope} := by
+  decide +kernel
 
 end Bruening2001

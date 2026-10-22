@@ -160,8 +160,7 @@ def dProbe (t : PlanarSyntacticObject) : Probe t.val.Positions :=
 /-- The goals an [EPP:D] probe on the head `h` of `t` can attract: the D leaves at the positions
 `h` c-commands that no other such leaf asymmetrically c-commands. -/
 def dGoals (t : PlanarSyntacticObject) (h : SyntacticObject) : Finset SyntacticObject :=
-  (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
-    (dProbe t).Finds {q | t.val.CCommands a q} (t.above t.branching) g).image t.termAt
+  t.goals (dProbe t) h
 
 /-- The possessor of a non-specific S_O is T⁰'s closest D-goal: it raises to Spec,TP and can
 strand the possessum. -/

@@ -19,6 +19,7 @@ only adding information.
 
 ## Main definitions
 
+* `Minimalist.PlanarSyntacticObject.goals`: the terms a probe on a head finds.
 * `Minimalist.SyntacticObject.behindHorizonIn`: a target c-commanded by a horizon-category leaf
   in the probe's domain.
 * `Minimalist.FeatureBundle.valueAt`, `Minimalist.FeatureBundle.applyAgree`: valuation of an
@@ -64,13 +65,22 @@ asymmetrically c-commands: mutually c-commanding candidates are equidistant. -/
 theorem finds_above_branching_iff (hs : IsAntichain (· ≤ ·) {q | q ∈ s ∧ p.sat q}) :
     p.Finds s (t.above t.branching) g ↔ (g ∈ s ∧ p.sat g) ∧
       ∀ ⦃q⦄, q ∈ s → p.sat q → ¬ (t.val.CCommands q g ∧ ¬ t.val.CCommands g q) := by
-  rw [Probe.Finds, minimalFor_iff_forall_lt]
-  refine and_congr_right fun hg ↦
-    ⟨fun h q hq hsq hcc ↦ h (above_branching_lt_of_cCommands hcc.1 hcc.2) ⟨hq, hsq⟩,
-      fun h q hlt hq ↦ ?_⟩
-  have hne : q ≠ g := by rintro rfl; exact lt_irrefl _ hlt
-  exact h hq.1 hq.2 ((above_branching_lt_iff (fun hle ↦ hs hq hg hne hle)
-    (fun hle ↦ hs hg hq hne.symm hle)).1 hlt)
+  simpa only [Probe.Finds, and_imp] using minimalFor_iff_of_isAntichain hs (fun _ h ↦ h.2 h.1)
+    fun _ _ ↦ above_branching_lt_iff
+
+variable (t) in
+/-- The terms a probe on the head `h` finds: those at the closest satisfying positions that an
+occurrence of `h` c-commands. -/
+def goals (p : Probe t.val.Positions) (h : SyntacticObject) : Finset SyntacticObject :=
+  (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
+    p.Finds {q | t.val.CCommands a q} (t.above t.branching) g).image t.termAt
+
+theorem mem_goals {h x : SyntacticObject} : x ∈ t.goals p h ↔
+    ∃ a, t.termAt a = h ∧ ∃ g, p.Finds {q | t.val.CCommands a q} (t.above t.branching) g ∧
+      t.termAt g = x := by
+  simp only [goals, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
+  exact ⟨fun ⟨g, ⟨a, ha, hg⟩, hx⟩ ↦ ⟨a, ha, g, hg, hx⟩,
+    fun ⟨a, ha, g, hg, hx⟩ ↦ ⟨g, ⟨a, ha, hg⟩, hx⟩⟩
 
 end PlanarSyntacticObject
 

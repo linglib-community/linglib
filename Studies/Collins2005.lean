@@ -195,9 +195,8 @@ def active : Derivation := (p.vP false).append [.em .left has₀, .em .left infl
 /-- At the stage where Infl attracts, its probe finds `goal`, a D leaf among the positions it
 c-commands that no other such leaf asymmetrically c-commands. -/
 def InflFinds (a : Analysis) (evacuate : Bool) (goal : LexicalItem.Token) : Prop :=
-  ∃ t ∈ (p.preRaising a evacuate).externalize?, ∃ i g, t.termAt i = infl₀ ∧
-    t.termAt g = goal ∧ (Probe.relativized fun q ↦ decide (isLeafOf .D (t.termAt q))).Finds
-      {q | t.val.CCommands i q} (t.above t.branching) g
+  ∃ t ∈ (p.preRaising a evacuate).externalize?,
+    ↑goal ∈ t.goals (.relativized fun q ↦ decide (isLeafOf .D (t.termAt q))) infl₀
 
 instance (a : Analysis) (evacuate : Bool) (goal : LexicalItem.Token) :
     Decidable (p.InflFinds a evacuate goal) := by
@@ -373,8 +372,7 @@ def Clause.at? (p : Clause) : Position → Option LexicalItem.Token
   | .pp => p.extra
 
 /-- The level at which a binding condition is evaluated, the surface or any stage of the
-derivation, reconstruction included: for these derivations, binding at some copy
-(`Derivation.bindsAtSomeStage_iff_bindsAtLF`). -/
+derivation, reconstruction included. -/
 inductive Level
   | surface | anyStage
   deriving DecidableEq, Repr
@@ -387,14 +385,6 @@ def Level.CCommands : Level → Derivation → SyntacticObject → SyntacticObje
 instance : ∀ (ℓ : Level) (d : Derivation), DecidableRel (ℓ.CCommands d)
   | .surface, d => fun x y ↦ inferInstanceAs (Decidable (d.BindsAtSurface x y))
   | .anyStage, d => fun x y ↦ inferInstanceAs (Decidable (d.BindsAtSomeStage x y))
-
-/-- Reconstruction to a stage is binding at the copy object: in the passive (9b) the external
-argument c-commands the object at some stage exactly when some copy of it does. -/
-example :
-    (ex9.passive .partP false).BindsAtSomeStage ↑ex9.agent ↑ex9.patient ↔
-      (ex9.passive .partP false).BindsAtLF ↑ex9.agent ↑ex9.patient :=
-  Derivation.bindsAtSomeStage_iff_bindsAtLF (by decide) (by decide +kernel) (by decide)
-    (by decide) (by decide +kernel)
 
 /-- The binding configuration of `p` at level `ℓ` of its derivation `d`, in which one position
 commands another when its leaf c-commands the other's there. -/
@@ -460,6 +450,20 @@ def Licensing.ofRow (row : Datum) : Option Licensing := do
 
 /-- The PartP-movement derivation of the configuration, with the PP evacuated or not. -/
 def Licensing.derivation (c : Licensing) : Derivation := c.clause.passive .partP c.evacuated
+
+/-- On the rows' derivations reconstruction to a stage is binding at the copy object
+(`Derivation.bindsAtSomeStage_iff_bindsAtLF`): one token c-commands another at some stage exactly
+when some copy of it does. -/
+example : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, ∀ x y : LexicalItem.Token, x ≠ y →
+    (c.derivation.BindsAtSomeStage ↑x ↑y ↔ c.derivation.BindsAtLF ↑x ↑y) := by
+  have h : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, c.derivation.lexTokens.Nodup ∧
+      (∀ step ∈ c.derivation.steps, step.IsMerge) ∧
+      (∀ step ∈ c.derivation.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) ∧
+      c.derivation.replay?.isSome := by
+    decide +kernel
+  intro row hrow c hc x y hxy
+  obtain ⟨hd, hm, hmv, hr⟩ := h row hrow c hc
+  exact Derivation.bindsAtSomeStage_iff_bindsAtLF hxy hd hm hmv hr
 
 /-- The judgment the configuration predicts on its derivation. -/
 def Licensing.predict (c : Licensing) : Judgment :=

@@ -34,8 +34,8 @@ object, so that the coproduct extracts identified copies only together.
 * `SyntacticObject.StructurallyIdentical.merge`: structural identity is a congruence for Merge
 * `SyntacticObject.mk_mem_copyRel_merge`: Form Copy relates an object merged with a term to every
   structurally identical inscription inside that term
-* `SyntacticObject.self_mem_copyRel_merge`: the copy Internal Merge leaves is related to its
-  antecedent
+* `SyntacticObject.self_mem_copyRel_merge_iff`: the copy Internal Merge leaves is related to its
+  antecedent, unless the whole object moves
 * `SyntacticObject.structurallyIdentical_renumber`: a fresh inscription is structurally identical
   to the original
 * `SyntacticObject.copyRel_subset_id`: in an object whose tokens inscribe distinct items, Form Copy
@@ -203,15 +203,11 @@ instance (s : SyntacticObject) (p : SyntacticObject × SyntacticObject) :
     Decidable (p ∈ s.copyRel) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- An object merged with a term c-commands everything that term reflexively contains. -/
-theorem cCommands_merge (hne : x ≠ t) (h : ContainsOrEq t y) : CCommands (merge x t) x y :=
-  ⟨t, mem_terms.2 (.single (by simp)), ⟨merge x t, self_mem_terms _, by simp, by simp, hne⟩, h⟩
-
 /-- Form Copy relates an object merged with a term to every structurally identical inscription
 inside that term: the configuration of control, where the lower inscription is a repetition. -/
 theorem mk_mem_copyRel_merge (h : Contains t y) (hxy : StructurallyIdentical x y) :
     (x, y) ∈ (merge x t).copyRel := by
-  refine ⟨cCommands_merge ?_ (containsOrEq_iff_eq_or_contains.2 (.inr h)), hxy⟩
+  refine ⟨cCommands_merge_left ?_ (mem_terms.2 (Relation.TransGen.to_reflTransGen h)), hxy⟩
   rintro rfl
   exact (numNodes_lt_of_contains h).ne hxy.numNodes_eq.symm
 
@@ -219,6 +215,18 @@ theorem mk_mem_copyRel_merge (h : Contains t y) (hxy : StructurallyIdentical x y
 containing it c-commands its own lower occurrence. -/
 theorem self_mem_copyRel_merge (h : Contains t x) : (x, x) ∈ (merge x t).copyRel :=
   mk_mem_copyRel_merge h rfl
+
+/-- A term merged with the object it is a term of is related to itself exactly when it is a proper
+term: an object merged with itself c-commands nothing. -/
+theorem self_mem_copyRel_merge_iff (hx : x ∈ t.terms) : (x, x) ∈ (merge x t).copyRel ↔ x ≠ t := by
+  refine ⟨?_, fun hne ↦ self_mem_copyRel_merge
+    ((containsOrEq_iff_eq_or_contains.1 (mem_terms.1 hx)).resolve_left hne)⟩
+  rintro ⟨⟨z, -, hxz, -⟩, -⟩ rfl
+  obtain ⟨-, -, -, -, hne⟩ := id hxz
+  rcases Sisters.of_merge hxz with ⟨w, hw, hwx, -⟩ | ⟨w, hw, hwx, -⟩ | ⟨-, rfl⟩ | ⟨-, rfl⟩
+  · exact contains_irrefl x (Relation.TransGen.tail' (mem_terms.1 hw) hwx)
+  · exact contains_irrefl x (Relation.TransGen.tail' (mem_terms.1 hw) hwx)
+  all_goals exact hne rfl
 
 /-! ### Objects without repetitions -/
 

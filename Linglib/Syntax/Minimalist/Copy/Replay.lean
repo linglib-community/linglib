@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.List.Monadic
+public import Linglib.Syntax.Minimalist.Copy.FormCopy
 public import Linglib.Syntax.Minimalist.Copy.Marked
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 
@@ -31,6 +32,8 @@ every later one, and only the tokens the derivation merges are pronounced.
 * `Minimalist.Step.unmark_replayWithCopies?_im`: Extension and No Tampering.
 * `Minimalist.Derivation.copyObject?_append_em`, `copyObject?_append_im`: External Merge merges the
   copy object with an item from outside, Internal Merge with one of its own terms.
+* `Minimalist.Derivation.copyRel_copyObject?_append_im`: Internal Merge leaves a copy in the sense
+  of Form Copy.
 * `Minimalist.Derivation.terms_subset_copyObject?_append`: preservation of terms.
 * `Minimalist.Derivation.mem_lexTokens_of_mem_yield_copyObject?`: Inclusiveness.
 
@@ -137,7 +140,7 @@ theorem Step.unmark_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
   obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
   refine ⟨s, ?_, by simp⟩
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 hs
-  exact (Marked.isSubtree_of_mem_outerSubtrees hr).map _
+  exact (isSubtree_of_mem_subtreesUntil hr).map _
 
 /-! ### The copy object -/
 
@@ -246,30 +249,34 @@ theorem Derivation.copyObject?_append_im {d : Derivation} {mover : SyntacticObje
   exact ⟨_, Option.map_eq_some_iff.2 ⟨c, hc, rfl⟩,
     Step.toSyntacticObject_replayWithCopies?_im (by simpa using hc')⟩
 
+/-- The occurrence Internal Merge leaves is a copy of the one it merges, in the sense of Form Copy,
+unless the whole object moves. -/
+theorem Derivation.copyRel_copyObject?_append_im {d : Derivation} {mover : SyntacticObject}
+    {side : Edge} {C' : SyntacticObject} (h : (d.append [.im mover side]).copyObject? τ = some C') :
+    ∃ C ∈ d.copyObject? τ, ∃ u ∈ C.terms, C' = merge u C ∧ ((u, u) ∈ C'.copyRel ↔ u ≠ C) := by
+  obtain ⟨C, hC, u, hu, rfl⟩ := copyObject?_append_im h
+  exact ⟨C, hC, u, hu, rfl, self_mem_copyRel_merge_iff hu⟩
 
 /-! ### Inclusiveness -/
 
-/-- The tokens a configuration's copy object and stacked copies pronounce. -/
-private def cfgCopyYield (c : Cfg Marked) : Multiset LexicalItem.Token :=
-  c.current.unmark.toSyntacticObject.yield + (c.stack.map (·.unmark.toSyntacticObject.yield)).sum
-
-private theorem Step.mem_cfgCopyYield {step : Step} {c c' : Cfg Marked}
+private theorem Step.mem_yield_map_replayWithCopies? {step : Step} {c c' : Cfg Marked}
     (h : step.replayWithCopies? c τ = some c') {tok : LexicalItem.Token}
-    (ht : tok ∈ cfgCopyYield c') :
-    tok ∈ cfgCopyYield c ∨ tok ∈ (step.items.map SyntacticObject.yield).sum := by
+    (ht : tok ∈ (c'.map (·.unmark.toSyntacticObject)).yield) :
+    tok ∈ (c.map (·.unmark.toSyntacticObject)).yield ∨
+      tok ∈ (step.items.map SyntacticObject.yield).sum := by
   obtain ⟨p, st⟩ := c
   cases step with
   | em side item =>
     obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 h
     rw [← SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hi]
-    simp only [cfgCopyYield, Marked.unmark_attach, Marked.unmark_ofPlanar,
+    simp only [Cfg.yield_map, Marked.unmark_attach, Marked.unmark_ofPlanar,
       PlanarSyntacticObject.yield_attach, Step.items, Multiset.map_singleton,
       Multiset.sum_singleton, Multiset.mem_add] at ht ⊢
     tauto
   | im mover side =>
     obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
     have hle := SyntacticObject.yield_le_of_mem_terms (Marked.mem_terms_of_find? hs)
-    simp only [cfgCopyYield, Marked.unmark_attach, Marked.unmark_mark,
+    simp only [Cfg.yield_map, Marked.unmark_attach, Marked.unmark_mark,
       PlanarSyntacticObject.yield_attach, Multiset.mem_add] at ht ⊢
     rcases ht with (ht | ht) | ht
     · exact .inl (.inl (Multiset.mem_of_le hle ht))
@@ -278,7 +285,7 @@ private theorem Step.mem_cfgCopyYield {step : Step} {c c' : Cfg Marked}
   | extract mover =>
     obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
     have hle := SyntacticObject.yield_le_of_mem_terms (Marked.mem_terms_of_find? hs)
-    simp only [cfgCopyYield, Marked.unmark_mark, List.map_cons, List.sum_cons,
+    simp only [Cfg.yield_map, Marked.unmark_mark, List.map_cons, List.sum_cons,
       Multiset.mem_add] at ht ⊢
     rcases ht with ht | ht | ht
     · exact .inl (.inl ht)
@@ -288,20 +295,21 @@ private theorem Step.mem_cfgCopyYield {step : Step} {c c' : Cfg Marked}
     rcases st with _ | ⟨m, st⟩
     · cases h
     · obtain rfl := Option.some.inj h
-      simp only [cfgCopyYield, Marked.unmark_attach, PlanarSyntacticObject.yield_attach,
+      simp only [Cfg.yield_map, Marked.unmark_attach, PlanarSyntacticObject.yield_attach,
         List.map_cons, List.sum_cons, Multiset.mem_add] at ht ⊢
       tauto
 
-private theorem mem_cfgCopyYield_foldlM : ∀ {steps : List Step} {c c' : Cfg Marked},
+private theorem mem_yield_map_foldlM_replayWithCopies? : ∀ {steps : List Step} {c c' : Cfg Marked},
     steps.foldlM (fun c step ↦ step.replayWithCopies? c τ) c = some c' →
-    ∀ tok ∈ cfgCopyYield c',
-      tok ∈ cfgCopyYield c ∨ tok ∈ ((Step.itemsList steps).map SyntacticObject.yield).sum
+    ∀ tok ∈ (c'.map (·.unmark.toSyntacticObject)).yield,
+      tok ∈ (c.map (·.unmark.toSyntacticObject)).yield ∨
+        tok ∈ ((Step.itemsList steps).map SyntacticObject.yield).sum
   | [], _, _, h, _, ht => by obtain rfl := Option.some.inj h; exact .inl ht
   | step :: steps, _, _, h, tok, ht => by
     obtain ⟨c₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
     rw [Step.itemsList_cons, Multiset.map_add, Multiset.sum_add, Multiset.mem_add]
-    rcases mem_cfgCopyYield_foldlM h tok ht with ht | ht
-    · rcases Step.mem_cfgCopyYield h₁ ht with ht | ht
+    rcases mem_yield_map_foldlM_replayWithCopies? h tok ht with ht | ht
+    · rcases Step.mem_yield_map_replayWithCopies? h₁ ht with ht | ht
       · exact .inl ht
       · exact .inr (.inl ht)
     · exact .inr (.inr ht)
@@ -312,8 +320,8 @@ theorem Derivation.mem_lexTokens_of_mem_yield_copyObject? {d : Derivation} {C : 
     tok ∈ d.lexTokens := by
   obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
   obtain ⟨p, hp, hc⟩ := Option.bind_eq_some_iff.1 hc
-  rcases mem_cfgCopyYield_foldlM hc tok (Multiset.mem_add.2 (.inl ht)) with ht | ht
-  · simpa [cfgCopyYield, lexTokens, SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hp] using
+  rcases mem_yield_map_foldlM_replayWithCopies? hc tok (Multiset.mem_add.2 (.inl ht)) with ht | ht
+  · simpa [Cfg.yield_map, lexTokens, SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hp] using
       Multiset.mem_add.2 (.inl ht)
   · exact Multiset.mem_add.2 (.inr ht)
 

@@ -12,14 +12,15 @@ public import Linglib.Core.Data.RoseTree.Leaves
 /-!
 # Substitution of subtrees of a rose tree
 
-`RoseTree.replaceIf p r` replaces every outermost subtree satisfying `p` by `r`, and
-`RoseTree.modifyIf p f` applies `f` to each. The subtrees replaced are `RoseTree.outerMatches p`,
-the first match in preorder among them, and replacing them trades their leaves for copies of the
-replacement's.
+`RoseTree.modifyIf p f` applies `f` to every outermost subtree satisfying `p`, and
+`RoseTree.replaceIf p r` replaces each by `r`. The subtrees modified are `RoseTree.outerMatches p`,
+those satisfying `p` among the subtrees reached without passing through one
+(`RoseTree.subtreesUntil p`); the first match in preorder is among them, and replacing them trades
+their leaves for copies of the replacement's.
 
 ## Main definitions
 
-* `RoseTree.replaceIf`, `RoseTree.modifyIf`, `RoseTree.outerMatches`
+* `RoseTree.modifyIf`, `RoseTree.replaceIf`, `RoseTree.subtreesUntil`, `RoseTree.outerMatches`
 
 ## Main results
 
@@ -36,39 +37,13 @@ namespace RoseTree
 
 variable {α : Type*}
 
-section ReplaceIf
-
-variable (p : RoseTree α → Prop) [DecidablePred p] (r : RoseTree α)
-
-mutual
-/-- Replace every subtree satisfying `p` by `r`, testing each subtree before its children. -/
-def replaceIf : RoseTree α → RoseTree α
-  | .node a cs => if p (.node a cs) then r else .node a (replaceIfList cs)
-/-- `replaceIf` in each tree of a list. -/
-def replaceIfList : List (RoseTree α) → List (RoseTree α)
-  | [] => []
-  | c :: cs => replaceIf c :: replaceIfList cs
-end
-
-theorem replaceIfList_eq (cs : List (RoseTree α)) :
-    replaceIfList p r cs = cs.map (replaceIf p r) := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => rw [replaceIfList, ih, List.map_cons]
-
-theorem replaceIf_node (a : α) (cs : List (RoseTree α)) :
-    replaceIf p r (node a cs) = if p (node a cs) then r else node a (cs.map (replaceIf p r)) := by
-  rw [replaceIf, replaceIfList_eq]
-
-end ReplaceIf
-
 section ModifyIf
 
 variable (p : RoseTree α → Prop) [DecidablePred p] (f : RoseTree α → RoseTree α)
 
 mutual
-/-- Apply `f` to every outermost subtree satisfying `p`, testing each subtree before its children;
-`replaceIf` is the case of a constant `f`. -/
+/-- Apply `f` to every outermost subtree satisfying `p`, testing each subtree before its
+children. -/
 def modifyIf : RoseTree α → RoseTree α
   | .node a cs => if p (.node a cs) then f (.node a cs) else .node a (modifyIfList cs)
 /-- `modifyIf` in each tree of a list. -/
@@ -88,43 +63,80 @@ theorem modifyIf_node (a : α) (cs : List (RoseTree α)) :
       node a (cs.map (modifyIf p f)) := by
   rw [modifyIf, modifyIfList_eq]
 
+variable (r : RoseTree α)
+
+/-- Replace every outermost subtree satisfying `p` by `r`. -/
+def replaceIf : RoseTree α → RoseTree α := modifyIf p fun _ ↦ r
+
+theorem replaceIf_node (a : α) (cs : List (RoseTree α)) :
+    replaceIf p r (node a cs) = if p (node a cs) then r else node a (cs.map (replaceIf p r)) :=
+  modifyIf_node _ _ a cs
+
 end ModifyIf
+
+section SubtreesUntil
+
+variable (p : RoseTree α → Prop) [DecidablePred p]
+
+mutual
+/-- The subtrees reached in preorder without passing through a subtree satisfying `p`, those
+satisfying it included. -/
+def subtreesUntil : RoseTree α → List (RoseTree α)
+  | .node a cs => .node a cs :: if p (.node a cs) then [] else subtreesUntilList cs
+/-- `subtreesUntil` of the trees of a list. -/
+def subtreesUntilList : List (RoseTree α) → List (RoseTree α)
+  | [] => []
+  | c :: cs => subtreesUntil c ++ subtreesUntilList cs
+end
+
+theorem subtreesUntilList_eq (cs : List (RoseTree α)) :
+    subtreesUntilList p cs = cs.flatMap (subtreesUntil p) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => rw [subtreesUntilList, ih, List.flatMap_cons]
+
+theorem subtreesUntil_node (a : α) (cs : List (RoseTree α)) :
+    subtreesUntil p (node a cs) =
+      node a cs :: if p (node a cs) then [] else cs.flatMap (subtreesUntil p) := by
+  rw [subtreesUntil, subtreesUntilList_eq]
+
+variable {p}
+
+theorem isSubtree_of_mem_subtreesUntil {s t : RoseTree α} (h : s ∈ subtreesUntil p t) :
+    IsSubtree s t := by
+  induction t with
+  | node a cs ih =>
+    rw [subtreesUntil_node, List.mem_cons] at h
+    rcases h with rfl | h
+    · exact .refl _
+    · split_ifs at h
+      · simp at h
+      · obtain ⟨c, hc, hs⟩ := List.mem_flatMap.1 h
+        exact (ih c hc hs).trans (.of_mem_children hc)
+
+end SubtreesUntil
 
 section OuterMatches
 
 variable (p : RoseTree α → Prop) [DecidablePred p]
 
-mutual
-/-- The outermost subtrees satisfying `p`, in preorder: those `replaceIf p` replaces. -/
-def outerMatches : RoseTree α → List (RoseTree α)
-  | .node a cs => if p (.node a cs) then [.node a cs] else outerMatchesList cs
-/-- `outerMatches` of the trees of a list. -/
-def outerMatchesList : List (RoseTree α) → List (RoseTree α)
-  | [] => []
-  | c :: cs => outerMatches c ++ outerMatchesList cs
-end
-
-theorem outerMatchesList_eq (cs : List (RoseTree α)) :
-    outerMatchesList p cs = cs.flatMap (outerMatches p) := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => rw [outerMatchesList, ih, List.flatMap_cons]
+/-- The outermost subtrees satisfying `p`, in preorder: those `modifyIf p` modifies. -/
+def outerMatches (t : RoseTree α) : List (RoseTree α) := (subtreesUntil p t).filter (p ·)
 
 theorem outerMatches_node (a : α) (cs : List (RoseTree α)) :
     outerMatches p (node a cs) =
       if p (node a cs) then [node a cs] else cs.flatMap (outerMatches p) := by
-  rw [outerMatches, outerMatchesList_eq]
+  rw [outerMatches, subtreesUntil_node]
+  split_ifs with h
+  · simp [h]
+  · simp only [h, decide_false, List.filter_cons_of_neg, Bool.false_eq_true,
+      not_false_eq_true, List.filter_flatMap]
+    rfl
 
 variable {p}
 
 theorem of_mem_outerMatches {s t : RoseTree α} (h : s ∈ outerMatches p t) : p s := by
-  induction t with
-  | node a cs ih =>
-    rw [outerMatches_node] at h
-    split_ifs at h with hp
-    · exact (List.mem_singleton.1 h) ▸ hp
-    · obtain ⟨c, hc, hs⟩ := List.mem_flatMap.1 h
-      exact ih c hc hs
+  simpa using (List.mem_filter.1 h).2
 
 /-- The first subtree in preorder satisfying `p` is an outermost one. -/
 theorem mem_outerMatches_of_find? {s t : RoseTree α}

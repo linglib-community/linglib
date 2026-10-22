@@ -215,27 +215,10 @@ theorem contract_mark (m : SyntacticObject) (τ : SyntacticObject → Option Lex
 
 /-! ### Occurrences -/
 
-mutual
 /-- The subtrees outside the lower copies, in preorder, a lower copy itself included: the subtrees
 whose contractions are the subtrees of the contraction. -/
-def outerSubtrees :
-    RoseTree (CopyMark × Vertex) →
-      List (RoseTree (CopyMark × Vertex))
-  | .node (some l, a) cs => [.node (some l, a) cs]
-  | .node (none, a) cs => .node (none, a) cs :: outerSubtreesList cs
-/-- `outerSubtrees` of the trees of a list. -/
-def outerSubtreesList :
-    List (RoseTree (CopyMark × Vertex)) →
-      List (RoseTree (CopyMark × Vertex))
-  | [] => []
-  | c :: cs => outerSubtrees c ++ outerSubtreesList cs
-end
-
-theorem outerSubtreesList_eq (cs : List (RoseTree (CopyMark × Vertex))) :
-    outerSubtreesList cs = cs.flatMap outerSubtrees := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => rw [outerSubtreesList, ih, List.flatMap_cons]
+abbrev outerSubtrees (s : RoseTree (CopyMark × Vertex)) : List (RoseTree (CopyMark × Vertex)) :=
+  s.subtreesUntil (·.value.1.isSome)
 
 theorem map_contractTree_outerSubtrees (s : RoseTree (CopyMark × Vertex)) :
     (outerSubtrees s).map contractTree = (contractTree s).subtrees := by
@@ -243,30 +226,17 @@ theorem map_contractTree_outerSubtrees (s : RoseTree (CopyMark × Vertex)) :
   | node v cs ih =>
     obtain ⟨k, a⟩ := v
     rcases k with _ | l
-    · rw [outerSubtrees, outerSubtreesList_eq, contractTree_none, subtrees_node, List.map_cons,
-        contractTree_none, List.map_flatMap, List.flatMap_map]
+    · rw [outerSubtrees, subtreesUntil_node, ite_eq_right (by simp), contractTree_none,
+        subtrees_node, List.map_cons, contractTree_none, List.map_flatMap, List.flatMap_map]
       exact congrArg _ (List.flatMap_congr ih)
-    · simp [outerSubtrees]
-
-theorem isSubtree_of_mem_outerSubtrees {r s : RoseTree (CopyMark × Vertex)}
-    (h : r ∈ outerSubtrees s) : IsSubtree r s := by
-  induction s with
-  | node v cs ih =>
-    obtain ⟨k, a⟩ := v
-    rcases k with _ | l
-    · rw [outerSubtrees, outerSubtreesList_eq, List.mem_cons, List.mem_flatMap] at h
-      rcases h with rfl | ⟨c, hc, hr⟩
-      · exact .refl _
-      · exact (ih c hc hr).trans (.of_mem_children hc)
-    · rw [outerSubtrees, List.mem_singleton] at h
-      exact h ▸ .refl _
+    · simp [subtreesUntil_node]
 
 /-- The leftmost, outermost subtree outside the lower copies whose contraction is `target`. -/
 def find? (t : Marked) (target : SyntacticObject) : Option Marked :=
   ((outerSubtrees t.val).find? fun s ↦ UnorderedTree.mk (contractTree s) = target.val).pmap
     (p := (· ∈ outerSubtrees t.val))
     (fun s hs ↦ ⟨s, (isSyntacticObject_mk _).2
-      (((isSyntacticObject_mk _).1 t.2).of_isSubtree ((isSubtree_of_mem_outerSubtrees hs).map _))⟩)
+      (((isSyntacticObject_mk _).1 t.2).of_isSubtree ((isSubtree_of_mem_subtreesUntil hs).map _))⟩)
     fun _ h ↦ List.mem_of_find?_eq_some h
 
 /-- The occurrence found is a term of the copy object. -/
@@ -274,7 +244,7 @@ theorem mem_terms_of_find? {target : SyntacticObject} {s : Marked} (h : t.find? 
     s.unmark.toSyntacticObject ∈ t.unmark.toSyntacticObject.terms := by
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 h
   exact PlanarSyntacticObject.mem_terms_toSyntacticObject.2
-    ⟨_, mem_subtrees.2 ((isSubtree_of_mem_outerSubtrees hr).map _), rfl⟩
+    ⟨_, mem_subtrees.2 ((isSubtree_of_mem_subtreesUntil hr).map _), rfl⟩
 
 /-- The occurrence found contracts to the target. -/
 theorem mk_contractTree_of_find? {target : SyntacticObject} {s : Marked}
@@ -364,7 +334,7 @@ theorem cCommands_unmark_of_cCommands_contract {t : Marked} {x y : LexicalItem.T
   obtain ⟨q, hq, hqw⟩ := PlanarSyntacticObject.mem_terms_toSyntacticObject.1 hw
   rw [show t.contract.val = contractTree t.val from rfl, ← map_contractTree_outerSubtrees] at hq
   obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hq
-  have hrt := isSubtree_of_mem_outerSubtrees hr
+  have hrt := isSubtree_of_mem_subtreesUntil hr
   obtain ⟨⟨k, a⟩, rs⟩ := r
   rcases k with _ | l
   swap
@@ -390,7 +360,7 @@ theorem cCommands_unmark_of_cCommands_contract {t : Marked} {x y : LexicalItem.T
   have hzcy : SyntacticObject.leaf y ∈ zc.terms :=
     val_mem_subtrees.1 (by
       rw [UnorderedTree.subtrees_mk, unorderedSubtrees_eq_map, Multiset.mem_coe]
-      exact List.mem_map.2 ⟨_, mem_subtrees.2 ((isSubtree_of_mem_outerSubtrees hr').map _), rfl⟩)
+      exact List.mem_map.2 ⟨_, mem_subtrees.2 ((isSubtree_of_mem_subtreesUntil hr').map _), rfl⟩)
   refine ⟨zc, mem_terms_unmark hjt, ⟨_, mem_terms_unmark hrt, ?_, ?_, fun he ↦ ?_⟩,
     mem_terms.1 hzcy⟩
   · simp only [ImmediatelyContains, map_node, UnorderedTree.children_mk, Multiset.mem_coe,

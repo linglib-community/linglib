@@ -22,8 +22,9 @@ which recognizes the trace leaves, bare or indexed.
 ## Main definitions
 
 * `Minimalist.PlanarSyntacticObject.toSyntacticObjectHom`: forgetting the order.
+* `Minimalist.SyntacticObject.yield`: the pronounced tokens.
 * `Minimalist.PlanarSyntacticObject.attach`, `yield`: Merge on a given edge, and the pronounced
-  tokens.
+  tokens in order.
 * `Minimalist.SyntacticObject.mkLeaf`, `mkLeafPhon`: lexical leaves from features.
 * `Minimalist.SyntacticObject.token?`, `isTrace`, `leafCount`, `nodeCount`, `IsLeaf`.
 
@@ -31,6 +32,8 @@ which recognizes the trace leaves, bare or indexed.
 
 * `Minimalist.PlanarSyntacticObject.isEmpty_mulHom`: no homomorphism of magmas forgets in the
   other direction.
+* `Minimalist.PlanarSyntacticObject.coe_yield`: a planar object pronounces the tokens of its
+  object.
 
 ## References
 
