@@ -58,7 +58,7 @@ described only in the docstring of the virtual form cell.
 
 namespace Stump2012
 
-open Morphology Data.Wordlist
+open Morphology CLDF.Wordlist
 
 /-- `attested pid c` is the segmentation of the first attested form with parameter `pid` in the
 cell `c`, or the empty list when there is none. -/

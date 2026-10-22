@@ -69,7 +69,7 @@ violates it in (16a). The stems that (14) prints only in spelling have the segme
 
 namespace Steriade1997
 
-open OptimalityTheory Phonology Data.PHOIBLE Data.Wordlist
+open OptimalityTheory Phonology Data.PHOIBLE CLDF.Wordlist
 
 /-! ### Lexical conservatism conditions -/
 

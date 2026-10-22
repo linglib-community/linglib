@@ -58,7 +58,7 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 * The c-command argument reads a phrase-structure tree of the ditransitive clause (90), built
   from each example's words, with `RoseTree.CCommands`.
 * A parse is built from the syllable count of the inserted form, its vowels in
-  `Data.Wordlist.Brodkin2026`, whose 'who' forms are the surface forms of (42); what follows the
+  `Brodkin2026.Wordlist`, whose 'who' forms are the surface forms of (42); what follows the
   head is a word whose first syllable is footed or unfooted under penultimate stress (14), (15).
 
 ## TODO
@@ -83,7 +83,7 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 
 namespace Brodkin2026
 
-open Prosody OptimalityTheory DistributedMorphology Morphology.Exponence Data.Wordlist
+open Prosody OptimalityTheory DistributedMorphology Morphology.Exponence CLDF.Wordlist
 
 /-! ### The vocabulary -/
 

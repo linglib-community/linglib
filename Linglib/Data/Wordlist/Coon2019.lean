@@ -13,7 +13,7 @@ by hand; edit the JSON and re-run the generator. Declarations live in `namespace
 
 namespace Coon2019.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `RootClass` the source distinguishes. -/
 inductive RootClass where

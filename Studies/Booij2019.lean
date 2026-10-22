@@ -33,7 +33,7 @@ an adjective with the comparative template over the same three consonants
 ## Implementation notes
 
 * The words are the CLDF forms of `Data/Wordlist/Booij2019.json`, read as slot-indexed segments
-  on the flat carrier by `Data.Wordlist.Form.slots`; slots are `Fin n` positions. A variable
+  on the flat carrier by `CLDF.Wordlist.Form.slots`; slots are `Fin n` positions. A variable
   standing for a sequence of sounds, the paper's `y`, is one segment holding the residue.
 * The higher-order schema for Dutch *-er* and the affixoid discussion are not formalized.
 

@@ -313,12 +313,12 @@ doublet (143), and ABB for the rest, by the summary on p. 109. The quantifier tr
 follow in their own section. A triple counts once however many languages share it (section 1.3). -/
 
 /-- The root pattern of a triple over the positive, the comparative and the superlative. -/
-def rootPattern (r : Data.Wordlist.RootClasses Wordlist.Cell) : Paradigm 3 ℕ := fun g ↦
+def rootPattern (r : CLDF.Wordlist.RootClasses Wordlist.Cell) : Paradigm 3 ℕ := fun g ↦
   (r.classOf (![Wordlist.positive, Wordlist.comparative, Wordlist.superlative] g)).getD 0
 
 /-- A triple of quantifiers, which the book treats apart from adjectives since they may not be
 adjectives in every language (p. 105). -/
-def Quantifier (r : Data.Wordlist.RootClasses Wordlist.Cell) : Prop :=
+def Quantifier (r : CLDF.Wordlist.RootClasses Wordlist.Cell) : Prop :=
   r.lexeme.parameterId ∈ ["many_much", "few"]
 
 instance : DecidablePred Quantifier := fun r ↦
@@ -356,7 +356,7 @@ theorem abc_iff : ∀ r ∈ Wordlist.rootClasses,
   decide +kernel
 
 /-- CSG1 holds of every adjectival triple but the Basque doublet. -/
-theorem csg1_of_ne_basque {r : Data.Wordlist.RootClasses Wordlist.Cell}
+theorem csg1_of_ne_basque {r : CLDF.Wordlist.RootClasses Wordlist.Cell}
     (hr : r ∈ Wordlist.rootClasses) (hq : ¬ Quantifier r)
     (h : r.id ≠ Wordlist.eus_good_on.roots.id) : rootPattern r 2 ≠ rootPattern r 0 :=
   csg1 ((isContiguous_iff_ne_basque r hr hq).2 h) (suppletive_comparative r hr)

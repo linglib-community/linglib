@@ -14,7 +14,7 @@ Karlsson2017.Wordlist`.
 
 namespace Karlsson2017.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `Possessor` the source distinguishes. -/
 inductive Possessor where

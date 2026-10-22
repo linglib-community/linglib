@@ -14,7 +14,7 @@ Declarations live in `namespace Dixon1982.StructureDataset`.
 
 namespace Dixon1982.StructureDataset
 
-open Data.StructureDataset
+open CLDF.StructureDataset
 
 /-- part of speech: The part of speech of the items of a semantic type in a language, in the abbreviations of Table 2 (p. 35). -/
 inductive PartOfSpeech where

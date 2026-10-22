@@ -14,7 +14,7 @@ HeinzLai2013.Wordlist`.
 
 namespace HeinzLai2013.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- A cell of the source's tables, by its Universal Dependencies features. -/
 abbrev Cell := UD.MorphFeatures

@@ -59,7 +59,7 @@ support and which changes no outcome.
 
 namespace Stojkovic2026
 
-open Phonology OptimalityTheory Data.Wordlist
+open Phonology OptimalityTheory CLDF.Wordlist
 
 /-! ### Segments -/
 

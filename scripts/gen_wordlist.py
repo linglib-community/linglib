@@ -624,7 +624,7 @@ class Module:
 
 namespace {self.paper}.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 {body}
 

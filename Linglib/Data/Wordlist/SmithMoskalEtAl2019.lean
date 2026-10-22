@@ -14,7 +14,7 @@ SmithMoskalEtAl2019.Wordlist`.
 
 namespace SmithMoskalEtAl2019.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `Base` the source distinguishes. -/
 inductive Base where

@@ -159,7 +159,7 @@ theorem rows_agree : ∀ r ∈ rows, r.object.case = r.case := by decide
 
 section WordStructure
 
-open Finnish Phonology Data.Wordlist
+open Finnish Phonology CLDF.Wordlist
 
 /-- A word of the tables is given by its stem and its endings. -/
 structure Word where

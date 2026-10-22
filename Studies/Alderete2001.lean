@@ -305,7 +305,7 @@ theorem cogo_coke :
   decide
 
 /-- The input of a plural of (6) is its singular followed by the plural suffix. -/
-def pluralInput (r : Data.Wordlist.FormRelation Wordlist.Analysis) : List Segment :=
+def pluralInput (r : CLDF.Wordlist.FormRelation Wordlist.Analysis) : List Segment :=
   (word r.form.form.form ++ suffix r.target.form.form).map segment
 
 /-- Every plural of (6) is a winner of the exchange ranking among all the voicings of its
