@@ -6,38 +6,37 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.MeasureTheory.Constructions.List
-public import Linglib.Processing.Surprisal.PrefixProbability
+public import Linglib.Core.Probability.ConditionalProbability
 
 /-!
-# Kiegeland, Snæbjarnarson, Vieira and Cotterell (2026): On the Proper Treatment of Units in Surprisal Theory
+# Kiegeland et al. (2026): On the Proper Treatment of Units in Surprisal Theory
 
 [kiegeland-etal-2026] separate the unit of analysis from the alphabet of the language model. A
 unit parser maps each symbol string to a string of units, and the language model over units is
-the pushforward of the one over symbols: the prefix probability of a unit string is the
-probability of the symbol strings whose parse extends it (`Surprisal.consistent`). To compute it
-with a language model over symbols, each unit is spelled as its underlying string followed by a
-separator and the parse is transduced into spellings. The spelling of a unit string is a prefix of
-the spelling of a parse exactly when the unit string is a prefix of the parse
-(`encode_isPrefix_encode_iff`, the paper's prefix identity), so the unit model's conditional
-prefix probabilities are the transduced model's conditional prefix probabilities of spellings
-(`cond_consistent_encode`).
+the pushforward of the one over symbols along the parse. To compute it with a language model over
+symbols, each unit is spelled as its underlying string followed by a separator, and the unit model
+is pushed forward along the spelling. The spelling of a unit string is a prefix of the spelling of
+another exactly when the unit string is a prefix of it (`encode_isPrefix_encode_iff`, the paper's
+prefix identity), so the unit model's conditional prefix probabilities are the spelled model's
+conditional prefix probabilities of spellings (`cond_map_encode`).
 
 The identity depends on the separator closing each unit. Placed at the onset instead, a unit's
 spelling is a prefix of the spelling of a longer unit sharing its underlying prefix, and the
-prefix identity fails (`not_forall_encodeOnset_isPrefix_iff`). In the paper's two-unit example the unit model and the
-completion spelling give the shorter unit prefix probability one half, the onset spelling one
-(`prob_consistent_unit`, `prob_consistent_encode`, `prob_consistent_encodeOnset`). The
+prefix identity fails (`not_forall_encodeOnset_isPrefix_iff`). In the paper's two-unit example
+the unit model and the completion spelling give the shorter unit prefix probability one half, the
+onset spelling one (`map_parse_setOf_prefix`, `map_encode_setOf_prefix`,
+`map_encodeOnset_setOf_prefix`). The
 separator also carries probability of its own: a unit's conditional probability is that of its
-underlying string times that of the separator after it (`cond_consistent_encode_singleton`), so
-summing symbol surprisals over a unit's spelling omits the boundary.
+underlying string times that of the separator after it (`cond_map_encode_singleton`), so summing
+symbol surprisals over a unit's spelling omits the boundary.
 
 ## Implementation notes
 
 * The separator is `none` in `Option Ξ`, and a unit's underlying string is given by an injective
   spelling function; the paper takes units to be strings over `Ξ`.
 * The paper computes the pushforward with finite-state transducers under a regularity assumption
-  on the unit inventory; the identities here hold for any deterministic unit parser and any
-  injective spelling.
+  on the unit inventory; the identities here hold for any unit language model, so for the
+  pushforward along any deterministic unit parser, and any injective spelling.
 * The paper's aggregation over regions of interest and its reading-time analyses are not
   formalized.
 
@@ -50,7 +49,7 @@ summing symbol surprisals over a unit's spelling omits the boundary.
 
 namespace KiegelandEtAl2026
 
-open MeasureTheory ProbabilityTheory Surprisal
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal ProbabilityTheory
 
 variable {U Ξ : Type*} (ξ : U → List Ξ)
@@ -103,36 +102,33 @@ theorem encode_isPrefix_encode_iff (hξ : Function.Injective ξ) {us vs : List U
       obtain ⟨huv, h⟩ := eq_and_isPrefix_of_block h
       exact List.cons_prefix_cons.2 ⟨hξ huv, ih h⟩
 
-variable {T : Type*}
-
-/-- The symbol strings whose parse extends a unit string are those whose transduced parse extends
-its spelling. -/
-theorem consistent_encode_comp (hξ : Function.Injective ξ) (ρ : T → List U) (us : List U) :
-    consistent (encode ξ ∘ ρ) (encode ξ us) = consistent ρ us := by
-  ext t
+/-- The unit strings whose spelling extends the spelling of `us` are those extending `us`. -/
+theorem encode_preimage_setOf_prefix (hξ : Function.Injective ξ) (us : List U) :
+    encode ξ ⁻¹' {l | encode ξ us <+: l} = {l | us <+: l} := by
+  ext l
   exact encode_isPrefix_encode_iff hξ
 
-variable [MeasurableSpace T] (P : Measure T)
+variable (ν : Measure (List U))
 
-/-- The unit model's conditional prefix probability of a continuation is the transduced model's
+/-- The unit model's conditional prefix probability of a continuation is the spelled model's
 conditional prefix probability of its spelling. -/
-theorem cond_consistent_encode (hξ : Function.Injective ξ) (ρ : T → List U) (cs us : List U) :
-    P[consistent ρ (cs ++ us) | consistent ρ cs] =
-      P[consistent (encode ξ ∘ ρ) (encode ξ cs ++ encode ξ us) |
-        consistent (encode ξ ∘ ρ) (encode ξ cs)] := by
-  rw [← encode_append, consistent_encode_comp hξ, consistent_encode_comp hξ]
+theorem cond_map_encode (hξ : Function.Injective ξ) (cs us : List U) :
+    (ν.map (encode ξ))[{l | encode ξ cs ++ encode ξ us <+: l} | {l | encode ξ cs <+: l}] =
+      ν[{l | cs ++ us <+: l} | {l | cs <+: l}] := by
+  rw [cond_map .of_discrete .of_discrete, Measure.map_apply .of_discrete .of_discrete,
+    ← encode_append, encode_preimage_setOf_prefix hξ, encode_preimage_setOf_prefix hξ]
 
 /-- A unit's conditional probability is the conditional probability of its underlying string
 times that of the separator after it. -/
-theorem cond_consistent_encode_singleton [DiscreteMeasurableSpace T] [IsFiniteMeasure P]
-    (hξ : Function.Injective ξ) (ρ : T → List U) (cs : List U) (u : U) :
-    P[consistent ρ (cs ++ [u]) | consistent ρ cs] =
-      P[consistent (encode ξ ∘ ρ) (encode ξ cs ++ (ξ u).map some) |
-          consistent (encode ξ ∘ ρ) (encode ξ cs)] *
-        P[consistent (encode ξ ∘ ρ) (encode ξ cs ++ (ξ u).map some ++ [none]) |
-          consistent (encode ξ ∘ ρ) (encode ξ cs ++ (ξ u).map some)] := by
-  rw [cond_consistent_encode P hξ, ← cond_consistent_append]
-  simp [encode]
+theorem cond_map_encode_singleton (hξ : Function.Injective ξ) (cs : List U) (u : U) :
+    ν[{l | cs ++ [u] <+: l} | {l | cs <+: l}] =
+      (ν.map (encode ξ))[{l | encode ξ cs ++ (ξ u).map some <+: l} | {l | encode ξ cs <+: l}] *
+        (ν.map (encode ξ))[{l | encode ξ cs ++ (ξ u).map some ++ [none] <+: l} |
+          {l | encode ξ cs ++ (ξ u).map some <+: l}] := by
+  rw [← cond_map_encode ν hξ, show encode ξ [u] = (ξ u).map some ++ [none] by simp [encode],
+    ← List.append_assoc]
+  exact (cond_mul_cond_of_subset .of_discrete .of_discrete
+    (fun _ ↦ (List.prefix_append _ _).trans) fun _ ↦ (List.prefix_append _ _).trans).symm
 
 /-! ### The two-unit example -/
 
@@ -155,17 +151,19 @@ theorem not_forall_encodeOnset_isPrefix_iff :
     ¬ ∀ us vs : List Bool, encodeOnset spell us <+: encodeOnset spell vs ↔ us <+: vs :=
   fun h ↦ absurd ((h [false] [true]).1 (by decide)) (by decide)
 
-theorem prob_consistent_unit : source (consistent parse [false]) = 2⁻¹ := by
-  simp [source, consistent, parse, Measure.dirac_apply' _ MeasurableSet.of_discrete]
+theorem map_parse_setOf_prefix : source.map parse {l | [false] <+: l} = 2⁻¹ := by
+  simp [source, parse, Measure.map_apply .of_discrete .of_discrete,
+    Measure.dirac_apply' _ MeasurableSet.of_discrete]
 
-theorem prob_consistent_encode :
-    source (consistent (encode spell ∘ parse) (encode spell [false])) = 2⁻¹ := by
-  rw [consistent_encode_comp (fun b b' h ↦ by cases b <;> cases b' <;> simp_all [spell]),
-    prob_consistent_unit]
+theorem map_encode_setOf_prefix :
+    (source.map parse).map (encode spell) {l | encode spell [false] <+: l} = 2⁻¹ := by
+  rw [Measure.map_apply .of_discrete .of_discrete,
+    encode_preimage_setOf_prefix (fun b b' h ↦ by cases b <;> cases b' <;> simp_all [spell]),
+    map_parse_setOf_prefix]
 
-theorem prob_consistent_encodeOnset :
-    source (consistent (encodeOnset spell ∘ parse) (encodeOnset spell [false])) = 1 := by
-  simp [source, consistent, parse, encodeOnset, spell,
+theorem map_encodeOnset_setOf_prefix :
+    (source.map parse).map (encodeOnset spell) {l | encodeOnset spell [false] <+: l} = 1 := by
+  simp [source, parse, encodeOnset, spell, Measure.map_apply .of_discrete .of_discrete,
     Measure.dirac_apply' _ MeasurableSet.of_discrete, ENNReal.inv_two_add_inv_two]
 
 end KiegelandEtAl2026

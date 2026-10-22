@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Analysis.SpecificLimits.ProdOneSub
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Linglib.Core.MeasureTheory.Constructions.Option
+public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
 public import Mathlib.Data.List.ReduceOption
 public import Mathlib.Probability.Kernel.Basic
@@ -21,6 +22,9 @@ over the next symbol or the end of the string, `none` [du-etal-2023]. The prefix
 string is the product of the conditional probabilities along it, and the probability of the
 string itself multiplies in the probability of ending after it. The string probabilities need not
 sum to one: the remaining mass leaks to sequences that never end. A model is tight when they do.
+Conversely, a language model, a probability measure on strings, is the string law of the model
+whose conditionals are its next-symbol laws, and a tight model's conditionals are the next-symbol
+laws of its own string law.
 
 Tightness is a statement about survival, the probability that no end symbol appears in the first
 `n` steps. The probabilities of the strings shorter than `n` and the survival at `n` sum to one,
@@ -43,6 +47,7 @@ and the model is tight exactly when the trajectory ends almost surely, which is 
 * `IsTight`: the string probabilities sum to one.
 * `survival`, `stopProb`, `eosHazard`.
 * `after`: the model after a context.
+* `ofMeasure`: the model of the next-symbol laws of a measure on strings.
 * `rule`, `trajectory`: the model as a prediction rule on the extended alphabet, and the law of
   its whole trajectory.
 
@@ -64,6 +69,11 @@ and the model is tight exactly when the trajectory ends almost surely, which is 
   at most `(1 - c) / c` under an end probability of at least `c`.
 * `IsTight.tsum_prefixProb`: in a tight model the prefix probabilities sum to the expected
   length plus one ([opedal-chodroff-cotterell-wilcox-2024]).
+* `stringMeasure_eq_of_next_eq`, `stringMeasure_ofMeasure`: a model whose conditionals are the
+  next-symbol laws of a language model after every prefix of positive probability has that
+  language model as its string law ([du-etal-2023]).
+* `IsTight.next_ofMeasure_stringMeasure`: a tight model's conditionals are the next-symbol laws of
+  its string law.
 * `trajectory_setOf_forall_lt_ne_none`, `trajectory_cylinder`: survival and string probabilities
   as probabilities of the trajectory.
 * `isTight_iff_trajectory_setOf_forall_ne_none`: tight exactly when the trajectory ends almost
@@ -110,6 +120,17 @@ private theorem reduceOption_map_some {α : Type*} (l : List α) :
   induction l with
   | nil => rfl
   | cons a l ih => rw [List.map_cons, List.reduceOption_cons_of_some, ih]
+
+/-- A list extends `x ++ [a]` exactly when it extends `x` and has `a` right after it. -/
+private theorem append_singleton_prefix_iff {α : Type*} {x y : List α} {a : α} :
+    x ++ [a] <+: y ↔ x <+: y ∧ y[x.length]? = some a := by
+  constructor
+  · rintro ⟨r, rfl⟩
+    exact ⟨(List.prefix_append x [a]).trans (List.prefix_append _ r), by simp⟩
+  · rintro ⟨⟨r, rfl⟩, h⟩
+    cases r with
+    | nil => simp at h
+    | cons b r => simp at h; subst h; exact ⟨r, by simp⟩
 
 attribute [instance] isMarkovKernel_next
 
@@ -232,6 +253,117 @@ theorem stringMeasure_setOf_prefix (x : List α) :
   rw [tsum_congr hind, ← _root_.tsum_subtype, ← e.tsum_eq]
   exact tsum_congr fun z ↦ M.stringProb_append x z
 
+/-! ### The model of a language model
+
+A measure on strings gives, after each prefix of positive probability, the law of the next symbol
+among the strings extending the prefix, with `none` where the prefix ends them. These laws form a
+model. When the measure is a probability measure, every model that agrees with them after each
+prefix of positive probability has the measure as its string law. -/
+
+section ofMeasure
+
+variable (μ : Measure (List α))
+
+open Classical in
+/-- The model of a measure on strings: after a prefix of positive finite measure, the law of the
+symbol after it among the strings extending it, and the end of the string after any other
+prefix. -/
+noncomputable def ofMeasure : AutoregressiveSequenceModel α where
+  next := ⟨fun x ↦ if μ[|{y | x <+: y}] = 0 then .dirac none
+    else (μ[|{y | x <+: y}]).map (·[x.length]?), .of_discrete⟩
+  isMarkovKernel_next := ⟨fun x ↦ by
+    change IsProbabilityMeasure (if _ then _ else _)
+    split_ifs with h
+    · infer_instance
+    · have := (eq_zero_or_isProbabilityMeasure (μ[|{y | x <+: y}])).resolve_left h
+      infer_instance⟩
+
+open Classical in
+private theorem next_ofMeasure (x : List α) :
+    (ofMeasure μ).next x = if μ[|{y | x <+: y}] = 0 then .dirac none
+      else (μ[|{y | x <+: y}]).map (·[x.length]?) :=
+  rfl
+
+theorem next_ofMeasure_of_ne_zero {x : List α} (hx : μ[|{y | x <+: y}] ≠ 0) :
+    (ofMeasure μ).next x = (μ[|{y | x <+: y}]).map (·[x.length]?) := by
+  rw [next_ofMeasure, ite_eq_right hx]
+
+theorem next_ofMeasure_of_eq_zero {x : List α} (hx : μ[|{y | x <+: y}] = 0) :
+    (ofMeasure μ).next x = .dirac none := by
+  rw [next_ofMeasure, ite_eq_left hx]
+
+variable [MeasurableSingletonClass α]
+
+theorem next_ofMeasure_apply_some (x : List α) (a : α) :
+    (ofMeasure μ).next x {some a} = μ[{y | x ++ [a] <+: y} | {y | x <+: y}] := by
+  by_cases h : μ[|{y | x <+: y}] = 0
+  · simp [next_ofMeasure_of_eq_zero μ h, h]
+  rw [next_ofMeasure_of_ne_zero μ h, Measure.map_apply .of_discrete (measurableSet_singleton _),
+    cond_apply .of_discrete, cond_apply .of_discrete]
+  congr 2
+  ext y
+  simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_ofPred_eq,
+    append_singleton_prefix_iff]
+  exact ⟨fun h ↦ ⟨h.1, h⟩, fun h ↦ h.2⟩
+
+theorem next_ofMeasure_apply_none [IsFiniteMeasure μ] {x : List α} (hx : μ {y | x <+: y} ≠ 0) :
+    (ofMeasure μ).next x {none} = μ[{x} | {y | x <+: y}] := by
+  rw [next_ofMeasure_of_ne_zero μ (by simp [hx, measure_ne_top]),
+    Measure.map_apply .of_discrete (measurableSet_singleton _), cond_apply .of_discrete,
+    cond_apply .of_discrete]
+  congr 2
+  ext y
+  simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Set.mem_ofPred_eq,
+    List.getElem?_eq_none_iff]
+  exact ⟨fun ⟨h, hl⟩ ↦ ⟨h, (h.eq_of_length_le hl).symm⟩, fun ⟨h, hy⟩ ↦ ⟨h, hy ▸ le_rfl⟩⟩
+
+variable [IsProbabilityMeasure μ] {μ}
+
+/-- A model whose conditionals are the next-symbol laws of a probability measure on strings after
+every prefix of positive probability gives each prefix the measure of the strings extending it. -/
+theorem prefixProb_eq_of_next_eq {M : AutoregressiveSequenceModel α}
+    (h : ∀ x, μ {y | x <+: y} ≠ 0 → M.next x = (ofMeasure μ).next x) (x : List α) :
+    M.prefixProb x = μ {y | x <+: y} := by
+  induction x using List.reverseRecOn with
+  | nil => simp
+  | append_singleton x a ih =>
+    have hsub : {y | x ++ [a] <+: y} ⊆ {y | x <+: y} := fun y ↦ (List.prefix_append x [a]).trans
+    rw [prefixProb_concat, ih]
+    rcases eq_or_ne (μ {y | x <+: y}) 0 with h0 | h0
+    · rw [h0, zero_mul, measure_mono_null hsub h0]
+    rw [h x h0, next_ofMeasure_apply_some, cond_apply_of_subset .of_discrete hsub,
+      ENNReal.mul_div_cancel h0 (measure_ne_top _ _)]
+
+variable (μ) in
+theorem prefixProb_ofMeasure (x : List α) : (ofMeasure μ).prefixProb x = μ {y | x <+: y} :=
+  prefixProb_eq_of_next_eq (fun _ _ ↦ rfl) x
+
+variable [Countable α]
+
+/-- A model whose conditionals are the next-symbol laws of a probability measure on strings after
+every prefix of positive probability has the measure as its string law ([du-etal-2023],
+footnote 4). -/
+theorem stringMeasure_eq_of_next_eq {M : AutoregressiveSequenceModel α}
+    (h : ∀ x, μ {y | x <+: y} ≠ 0 → M.next x = (ofMeasure μ).next x) : M.stringMeasure = μ := by
+  refine Measure.ext_of_singleton fun x ↦ ?_
+  have hsub : {x} ⊆ {y | x <+: y} := Set.singleton_subset_iff.2 (List.prefix_refl x)
+  rw [stringMeasure_singleton, stringProb, prefixProb_eq_of_next_eq h]
+  rcases eq_or_ne (μ {y | x <+: y}) 0 with h0 | h0
+  · rw [h0, zero_mul, measure_mono_null hsub h0]
+  rw [h x h0, next_ofMeasure_apply_none μ h0, cond_apply_of_subset .of_discrete hsub,
+    ENNReal.mul_div_cancel h0 (measure_ne_top _ _)]
+
+variable (μ) in
+theorem stringMeasure_ofMeasure : (ofMeasure μ).stringMeasure = μ :=
+  stringMeasure_eq_of_next_eq fun _ _ ↦ rfl
+
+variable (μ) in
+theorem isTight_ofMeasure : (ofMeasure μ).IsTight := by
+  rw [isTight_iff_isProbabilityMeasure, stringMeasure_ofMeasure]
+  infer_instance
+
+end ofMeasure
+
 /-! ### Survival -/
 
 /-- The probability that no end symbol appears in the first `n` steps: the total prefix
@@ -262,9 +394,33 @@ private def concatEquiv (n : ℕ) :
   left_inv p := by ext <;> simp
   right_inv y := Subtype.ext (List.dropLast_append_getLast _)
 
+/-- The strings of length `n` end with probability at least `c` times survival to `n` when every
+prefix of length `n` ends with probability at least `c`. -/
+theorem mul_survival_le_stopProb {n : ℕ} {c : ℝ≥0∞}
+    (hc : ∀ x : List α, x.length = n → c ≤ M.next x {none}) :
+    c * M.survival n ≤ M.stopProb n := by
+  rw [survival, ← ENNReal.tsum_mul_left, stopProb]
+  refine ENNReal.tsum_le_tsum fun x ↦ ?_
+  rw [stringProb, mul_comm c]
+  gcongr
+  exact hc x x.2
+
+/-- Surviving `n` steps after `x` is surviving `n + |x|` steps through `x`. -/
+theorem prefixProb_mul_survival_after_le (x : List α) (n : ℕ) :
+    M.prefixProb x * (M.after x).survival n ≤ M.survival (n + x.length) := by
+  calc M.prefixProb x * (M.after x).survival n
+      = ∑' z : {z : List α // z.length = n}, M.prefixProb (x ++ z.1) := by
+        rw [survival, ← ENNReal.tsum_mul_left]
+        exact tsum_congr fun z ↦ (M.prefixProb_append x z).symm
+    _ ≤ M.survival (n + x.length) :=
+      ENNReal.tsum_comp_le_tsum_of_injective
+        (f := fun z ↦
+          (⟨x ++ z.1, by simp [z.2, add_comm]⟩ : {y : List α // y.length = n + x.length}))
+        (fun z z' h ↦ Subtype.ext (List.append_cancel_left (congrArg Subtype.val h)))
+        fun y ↦ M.prefixProb y.1
+
 variable [MeasurableSingletonClass α]
 
-omit M in
 theorem measurableSet_setOf_forall_lt_ne_none (n : ℕ) :
     MeasurableSet {ω : ℕ → Option α | ∀ i < n, ω i ≠ none} := by
   have hi (i : ℕ) : MeasurableSet {ω : ℕ → Option α | ω i ≠ none} :=
@@ -346,18 +502,6 @@ theorem isTight_iff : M.IsTight ↔ (∃ n, M.eosHazard n = 1) ∨ ∑' n, M.eos
   rw [isTight_iff_tendsto_survival, funext M.survival_eq_prod]
   exact ENNReal.tendsto_prod_range_one_sub_nhds_zero_iff M.eosHazard_le_one
 
-omit [Countable α] [MeasurableSingletonClass α] in
-/-- The strings of length `n` end with probability at least `c` times survival to `n` when every
-prefix of length `n` ends with probability at least `c`. -/
-theorem mul_survival_le_stopProb {n : ℕ} {c : ℝ≥0∞}
-    (hc : ∀ x : List α, x.length = n → c ≤ M.next x {none}) :
-    c * M.survival n ≤ M.stopProb n := by
-  rw [survival, ← ENNReal.tsum_mul_left, stopProb]
-  refine ENNReal.tsum_le_tsum fun x ↦ ?_
-  rw [stringProb, mul_comm c]
-  gcongr
-  exact hc x x.2
-
 /-- A model whose end probability after every prefix of length `t - 1` is at least `f t`, for a
 divergent series of bounds, is tight ([du-etal-2023], Proposition 4.3). -/
 theorem isTight_of_le_next_none {f : ℕ → ℝ≥0∞}
@@ -415,21 +559,6 @@ theorem tsum_stringProb_le_one : ∑' x, M.stringProb x ≤ 1 := by
   rw [tsum_stringProb, ENNReal.tsum_eq_iSup_nat]
   exact iSup_le fun n ↦ le_self_add.trans (M.sum_range_stopProb_add_survival n).le
 
-omit [Countable α] [MeasurableSingletonClass α] in
-/-- Surviving `n` steps after `x` is surviving `n + |x|` steps through `x`. -/
-theorem prefixProb_mul_survival_after_le (x : List α) (n : ℕ) :
-    M.prefixProb x * (M.after x).survival n ≤ M.survival (n + x.length) := by
-  calc M.prefixProb x * (M.after x).survival n
-      = ∑' z : {z : List α // z.length = n}, M.prefixProb (x ++ z.1) := by
-        rw [survival, ← ENNReal.tsum_mul_left]
-        exact tsum_congr fun z ↦ (M.prefixProb_append x z).symm
-    _ ≤ M.survival (n + x.length) :=
-      ENNReal.tsum_comp_le_tsum_of_injective
-        (f := fun z ↦
-          (⟨x ++ z.1, by simp [z.2, add_comm]⟩ : {y : List α // y.length = n + x.length}))
-        (fun z z' h ↦ Subtype.ext (List.append_cancel_left (congrArg Subtype.val h)))
-        fun y ↦ M.prefixProb y.1
-
 /-- The model after a prefix of positive probability inherits tightness. -/
 theorem IsTight.after {M : AutoregressiveSequenceModel α} (hM : M.IsTight) {x : List α}
     (hx : M.prefixProb x ≠ 0) : (M.after x).IsTight := by
@@ -448,6 +577,25 @@ theorem IsTight.stringMeasure_setOf_prefix {M : AutoregressiveSequenceModel α} 
   by_cases hx : M.prefixProb x = 0
   · rw [hx, zero_mul]
   · rw [hM.after hx, mul_one]
+
+/-- A tight model's conditional after a prefix of positive probability is the next-symbol law of
+its string law. -/
+theorem IsTight.next_ofMeasure_stringMeasure {M : AutoregressiveSequenceModel α} (hM : M.IsTight)
+    {x : List α} (hx : M.prefixProb x ≠ 0) : (ofMeasure M.stringMeasure).next x = M.next x := by
+  have := M.isTight_iff_isProbabilityMeasure.1 hM
+  refine Measure.ext_of_singleton fun o ↦ ?_
+  cases o with
+  | some a =>
+    have hsub : {y | x ++ [a] <+: y} ⊆ {y | x <+: y} := fun y ↦ (List.prefix_append x [a]).trans
+    rw [next_ofMeasure_apply_some, cond_apply_of_subset .of_discrete hsub,
+      hM.stringMeasure_setOf_prefix, hM.stringMeasure_setOf_prefix, prefixProb_concat,
+      mul_comm (M.prefixProb x), ENNReal.mul_div_cancel_right hx (M.prefixProb_ne_top x)]
+  | none =>
+    have hsub : {x} ⊆ {y | x <+: y} := Set.singleton_subset_iff.2 (List.prefix_refl x)
+    rw [next_ofMeasure_apply_none _ (by rwa [hM.stringMeasure_setOf_prefix]),
+      cond_apply_of_subset .of_discrete hsub, stringMeasure_singleton,
+      hM.stringMeasure_setOf_prefix, stringProb, mul_comm (M.prefixProb x),
+      ENNReal.mul_div_cancel_right hx (M.prefixProb_ne_top x)]
 
 /-! ### Expected length
 
