@@ -37,7 +37,7 @@ open Minimalist Minimalist.SyntacticObject
 
 /-! ### Attraction under Shortest -/
 
-variable {tree head x y : SyntacticObject} {qs : List SyntacticObject}
+variable {tree head x : SyntacticObject}
 
 /-- A quantifier the P-feature-bearing head can attract is one in its c-command domain. The
 subject, merged in the head's specifier, is not among them. -/
@@ -45,41 +45,25 @@ def Attractable (tree head x : SyntacticObject) : Prop := CCommands tree head x
 
 instance : Decidable (Attractable tree head x) := inferInstanceAs (Decidable (CCommands _ _ _))
 
-/-- Shortest licenses attracting `x` first only when no other candidate asymmetrically c-commands
-it, since such a candidate would form a smaller well-formed pair with the attractor. Thus `x` is
-a closest goal among the candidates. -/
-def LicensedFirst (tree head : SyntacticObject) (qs : List SyntacticObject)
-    (x : SyntacticObject) : Prop :=
-  isClosestGoalIn tree head x (· ∈ qs)
-
-instance : Decidable (LicensedFirst tree head qs x) :=
-  inferInstanceAs (Decidable (isClosestGoalIn _ _ _ _))
+/-- The quantifiers among `qs` that the P-feature head `h` of `t` may attract first. Shortest
+licenses attracting a quantifier first only when no other candidate asymmetrically c-commands it,
+since such a candidate would form a smaller well-formed pair with the attractor, so these are the
+candidates the head's probe finds among the positions it c-commands. -/
+def firsts (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
+    Finset SyntacticObject :=
+  (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
+    (Probe.relativized fun q ↦ decide (t.termAt q ∈ qs)).Finds {q | t.val.CCommands a q}
+      (t.above t.branching) g).image t.termAt
 
 /-- Since later movements tuck in beneath earlier ones, the quantifier attracted first takes widest
 scope, so scope is ambiguous exactly when two candidates may be attracted first. -/
-def Ambiguous (tree head : SyntacticObject) (qs : List SyntacticObject) : Prop :=
-  ∃ x ∈ qs, ∃ y ∈ qs, x ≠ y ∧ LicensedFirst tree head qs x ∧ LicensedFirst tree head qs y
+def Ambiguous (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
+    Prop :=
+  1 < (firsts t h qs).card
 
-instance : Decidable (Ambiguous tree head qs) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- A candidate that some other candidate asymmetrically c-commands is never attracted first,
-whatever interpretation moving it first would produce. -/
-theorem not_licensedFirst_of_asymCCommand (hy : y ∈ qs) (hattr : Attractable tree head y)
-    (hasym : AsymmCCommands tree y x) : ¬ LicensedFirst tree head qs x :=
-  fun ⟨_, _, h⟩ => h y (mem_cCommandDomain.2 hattr) hy hasym
-
-/-- Two candidates that c-command each other both satisfy Shortest, since the pairs they form with
-the attractor are equivalent, so either may be attracted first. -/
-theorem ambiguous_of_mutual_cCommand (hx : x ∈ qs) (hy : y ∈ qs) (hne : x ≠ y)
-    (hattrx : Attractable tree head x) (hattry : Attractable tree head y)
-    (hxy : CCommands tree x y) (hyx : CCommands tree y x)
-    (hother : ∀ z ∈ qs, z = x ∨ z = y) : Ambiguous tree head qs := by
-  have key : ∀ a ∈ qs, ∀ b ∈ qs, Attractable tree head a → ¬ AsymmCCommands tree b a := by
-    rintro a ha b hb - ⟨hba, hab⟩
-    rcases hother a ha with rfl | rfl <;> rcases hother b hb with rfl | rfl
-    exacts [hab hba, hab hxy, hab hyx, hab hba]
-  exact ⟨x, hx, y, hy, hne, ⟨mem_cCommandDomain.2 hattrx, hx, fun b _ hb => key x hx b hb hattrx⟩,
-    ⟨mem_cCommandDomain.2 hattry, hy, fun b _ hb => key y hy b hb hattry⟩⟩
+instance (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
+    Decidable (Ambiguous t h qs) :=
+  inferInstanceAs (Decidable (1 < _))
 
 /-! ### The double object construction -/
 
@@ -107,15 +91,13 @@ def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
 /-- The first object asymmetrically c-commands the second ([barss-lasnik-1986]). -/
 theorem doc_goal_asym_theme : AsymmCCommands doc aGirl everyTelescope := by decide
 
-/-- Only the first object may be attracted first, so the derivation fixes the base order and the
-second object cannot come to scope over the first: *I gave a (#different) child each doll*. -/
-theorem doc_frozen : LicensedFirst doc v docQuantifiers aGirl ∧
-    ¬ LicensedFirst doc v docQuantifiers everyTelescope :=
-  ⟨by decide, not_licensedFirst_of_asymCCommand (y := aGirl) (by simp [docQuantifiers]) (by decide)
-    doc_goal_asym_theme⟩
+/-- Only the first object may be attracted first, since it asymmetrically c-commands the second,
+so the derivation fixes the base order and the second object cannot come to scope over the first:
+*I gave a (#different) child each doll*. -/
+theorem doc_frozen : firsts doc v docQuantifiers = {↑aGirl} := by decide +kernel
 
 /-- No two candidates may be attracted first, so the double object construction is unambiguous. -/
-theorem doc_not_ambiguous : ¬ Ambiguous doc v docQuantifiers := by decide
+theorem doc_not_ambiguous : ¬ Ambiguous doc v docQuantifiers := by decide +kernel
 
 /-! ### The locative variant -/
 
@@ -134,12 +116,15 @@ theorem locative_mutual_cCommand :
     CCommands locative everyTelescope toAGirl ∧ CCommands locative toAGirl everyTelescope := by
   constructor <;> decide
 
-/-- Either candidate may be attracted first, so the locative is ambiguous: *I gave a doll to each
-child* has both readings. -/
-theorem locative_ambiguous : Ambiguous locative v locativeQuantifiers :=
-  ambiguous_of_mutual_cCommand (by simp [locativeQuantifiers]) (by simp [locativeQuantifiers])
-    (by decide) (by decide) (by decide) locative_mutual_cCommand.1 locative_mutual_cCommand.2
-    (by simp [locativeQuantifiers])
+/-- Either candidate may be attracted first, since mutually c-commanding candidates are
+equidistant. -/
+theorem locative_firsts :
+    firsts locative v locativeQuantifiers = {↑everyTelescope, ↑toAGirl} := by decide +kernel
+
+/-- So the locative is ambiguous: *I gave a doll to each child* has both readings. -/
+theorem locative_ambiguous : Ambiguous locative v locativeQuantifiers := by
+  rw [Ambiguous, locative_firsts]
+  decide
 
 /-! ### The freezing is relativized -/
 

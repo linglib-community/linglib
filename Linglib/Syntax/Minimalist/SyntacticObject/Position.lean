@@ -29,6 +29,9 @@ embedding with a total head function, which extends the raising head.
 * `PlanarSyntacticObject.termAt`: the term at a position.
 * `Minimalist.headIndex?`, `PlanarSyntacticObject.headIndexAt`: the head daughter of a planar
   tree, and of the subtree at each position.
+* `PlanarSyntacticObject.maximalProjections`, `PlanarSyntacticObject.branching`,
+  `PlanarSyntacticObject.above`: the maximal projections and branching positions of a planar
+  object, and the generators above a position, its closeness key.
 
 ## Main statements
 
@@ -39,8 +42,8 @@ embedding with a total head function, which extends the raising head.
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
 * `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
-* `PlanarSyntacticObject.maximalProjections`, `PlanarSyntacticObject.above`: the maximal
-  projections of a planar object, and the generators above a position, its closeness key.
+* `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
+  asymmetric c-command.
 * `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
   wherever there is one.
 
@@ -280,6 +283,27 @@ theorem coe_above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.val.Posit
     (t.above P q : Set TreePath) = ancestors P q.val := by
   ext x
   simp [above, ancestors, and_comm]
+
+/-- The branching positions of a planar object, the generators of c-command. -/
+def branching : Set TreePath := {x | t.val.IsBranchingAt x}
+
+instance : DecidablePred (· ∈ t.branching) :=
+  fun x ↦ inferInstanceAs (Decidable (t.val.IsBranchingAt x))
+
+variable {t} {q g : t.val.Positions}
+
+/-- Between positions neither of which dominates the other, closeness under the branching
+positions is asymmetric c-command. -/
+theorem above_branching_lt_iff (hqg : ¬ q ≤ g) (hgq : ¬ g ≤ q) :
+    t.above t.branching q < t.above t.branching g ↔
+      t.val.CCommands q g ∧ ¬ t.val.CCommands g q := by
+  rw [← Finset.coe_ssubset, coe_above, coe_above]
+  exact ancestors_ssubset_ancestors_iff_cCommands hqg hgq
+
+/-- A position that asymmetrically c-commands another is closer under the branching positions. -/
+theorem above_branching_lt_of_cCommands (hqg : t.val.CCommands q g)
+    (hgq : ¬ t.val.CCommands g q) : t.above t.branching q < t.above t.branching g :=
+  (above_branching_lt_iff hqg.2.1 hqg.2.2).2 ⟨hqg, hgq⟩
 
 end PlanarSyntacticObject
 
