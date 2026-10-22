@@ -2677,7 +2677,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Data/Examples/GilesEtAl2026.json;Semantics/Degree/PropertyDomain.lean;Studies/GilesEtAl2026.lean}
+  sources   = {Data/Examples/GilesEtAl2026.json;Studies/GilesEtAl2026.lean}
 }
 @article{rubio-fernandez-2019,
   author    = {Rubio-Fern{\'a}ndez, Paula},
@@ -2853,7 +2853,7 @@
   subfield  = {semantics/reference},
   validated = {true},
   role      = {cited},
-  sources   = {Semantics/Degree/PropertyDomain.lean;Studies/GilesEtAl2026.lean}
+  sources   = {Studies/GilesEtAl2026.lean}
 }
 @article{ronderos-etal-2024,
   author    = {Ronderos, Camilo R. and Aparicio, Helena and Long, Miriam and Shukla, Vishakha and Jara-Ettinger, Julian and Rubio-Fernandez, Paula},
@@ -25915,10 +25915,13 @@
 @book{dixon-1982,
   author    = {Dixon, R. M. W.},
   year      = {1982},
-  title     = {Where Have All the Adjectives Gone?},
+  title     = {Where Have All the Adjectives Gone? and Other Essays in Semantics and Syntax},
+  series    = {Janua Linguarum, Series Maior},
+  number    = {107},
   doi       = {10.1515/9783110822939},
+  isbn      = {9789027933096},
   publisher = {Mouton},
-  address   = {The Hague},
+  address   = {Berlin},
   subfield  = {morphology},
   role      = {cited},
   validated = {true},
@@ -30128,15 +30131,19 @@
   role      = {cited},
   sources   = {Studies/KoontzGarboden2009.lean}
 }
-@book{haspelmath-1993,
+@incollection{haspelmath-1993,
   author    = {Haspelmath, Martin},
   year      = {1993},
-  title     = {A Grammar of {L}ezgian},
-  series    = {Mouton Grammar Library},
-  number    = {9},
-  publisher = {Mouton de Gruyter},
-  doi       = {10.1515/9783110884210},
-  subfield  = {typology/grammar},
+  title     = {More on the typology of inchoative/causative verb alternations},
+  booktitle = {Causatives and Transitivity},
+  editor    = {Comrie, Bernard and Polinsky, Maria},
+  series    = {Studies in Language Companion Series},
+  number    = {23},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {87--120},
+  doi       = {10.1075/slcs.23.05has},
+  subfield  = {typology},
   role      = {cited},
   sources   = {Studies/BeaversEtAl2021.lean}
 }
@@ -34300,7 +34307,7 @@
   doi       = {10.1007/s11049-025-09671-7},
   subfield  = {semantics/lexical},
   role      = {formalized},
-  sources   = {Data/Examples/HaninkKoontzGarboden2025.json;Fragments/Washo/PropertyConcepts.lean;Semantics/Composition/Ty.lean;Semantics/Possession/Relationalizer.lean;Semantics/Root/PropertyConcept.lean;Studies/HaninkKoontzGarboden2025.lean}
+  sources   = {Data/Examples/HaninkKoontzGarboden2025.json;Fragments/Washo/PropertyConcepts.lean;Semantics/Composition/Ty.lean;Semantics/Possession/Relationalizer.lean;Studies/HaninkKoontzGarboden2025.lean}
 }
 @inproceedings{menon-pancheva-2014,
   author    = {Menon, Mythili and Pancheva, Roumyana},
@@ -48802,7 +48809,7 @@
   doi       = {10.1086/669630},
   subfield  = {morphology},
   role      = {cited},
-  sources   = {Data/Examples/HaninkKoontzGarboden2025.json;Fragments/Washo/PropertyConcepts.lean}
+  sources   = {Data/Examples/HaninkKoontzGarboden2025.json}
 }
 
 @phdthesis{bochnak-2013,
@@ -48811,6 +48818,22 @@
   title     = {Cross-linguistic variation in the semantics of comparatives},
   school    = {University of Chicago},
   address   = {Chicago},
+  subfield  = {semantics},
+  role      = {cited},
+  sources   = {Fragments/Washo/PropertyConcepts.lean}
+}
+
+@inproceedings{bochnak-etal-2011,
+  author    = {Bochnak, M. Ryan and Grinsell, Timothy and Yu, Alan C. L.},
+  year      = {2011},
+  title     = {Copula agreement and the stage-level/individual-level distinction in {W}asho},
+  booktitle = {Proceedings of the Workshop on the Structure and Constituency of Languages of the Americas ({WSCLA}) 16},
+  editor    = {Black, Alexis and Louie, Meagan},
+  series    = {UBC Working Papers in Linguistics},
+  publisher = {UBCWPL},
+  address   = {Vancouver},
+  pages     = {1--10},
+  url       = {https://lingpapers.sites.olt.ubc.ca/files/2018/01/2011WSCLA16-Bochnak_Grinsell_Yu-n.pdf},
   subfield  = {semantics},
   role      = {cited},
   sources   = {Fragments/Washo/PropertyConcepts.lean}

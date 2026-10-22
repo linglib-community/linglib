@@ -1,18 +1,25 @@
 module
 
 public import Linglib.Semantics.Root.PropertyConcept
+public import Linglib.Syntax.Category.Verb.Defs
 
 /-!
 # Washo property concepts
 
-The seventy property-concept stems of [hanink-koontz-garboden-2025]'s appendix, each with
-[dixon-1982]'s semantic category and the shape of the stative verb it forms: a bare root inflected
-like any intransitive, a root that needs the attributive-agentive suffix *-iʔ* ([jacobsen-1964]),
-or a reduplicated root flanked by the attributive prefix *ʔil-* and *-iʔ* ([jacobsen-1980]). The
-paper takes most stems from the Washo Archive, a few from [bochnak-2013], [bochnak-rhomieux-2013],
-[jacobsen-1980], and a tribal dictionary; the reduplicated stems are cited in their reduplicated
-form. Orthography follows [jacobsen-1964]: *:* marks length, *ʔ* the glottal stop, *ɨ* the high
-central vowel, *’* glottalization, and capital *L* and *M* voiceless sonorants.
+Washo has no adjectives: its property concepts are intransitive verbs of three morphological
+classes. A Class 1 verb is the bare root, a Class 2 verb is the root with the suffix *-iʔ*, and a
+Class 3 verb is a reduplicated root flanked by the prefix *ʔil-* and *-iʔ*. The entries are the
+seventy stems of Hanink and Koontz-Garboden's appendix, with their Dixon categories; most stems
+are from the Washo Archive, and the reduplicated stems are cited reduplicated. Orthography
+follows Jacobsen: *:* marks length, *ʔ* the glottal stop, *ɨ* the high central vowel, *’*
+glottalization, and capital *L* and *M* voiceless sonorants.
+
+## Main declarations
+
+* `Washo.iq`, `Washo.il`: the suffix *-iʔ* and the prefix *ʔil-*.
+* `Washo.PropertyConcept`: a property-concept verb with its Dixon category.
+* `Washo.PropertyConcept.shape`: the class of a verb, read off its affixes.
+* `Washo.propertyConcepts`: the seventy stems of the appendix.
 
 ## References
 
@@ -21,16 +28,23 @@ central vowel, *’* glottalization, and capital *L* and *M* voiceless sonorants
 * [jacobsen-1964]
 * [jacobsen-1980]
 * [bochnak-2013]
-* [bochnak-rhomieux-2013]
+* [bochnak-etal-2011]
 -/
 
 @[expose] public section
 
 namespace Washo
 
-open Semantics
+open Morphology (Morph)
 
-/-- The shape of the stative verb a property-concept stem forms. -/
+/-- The suffix *-iʔ*, which [jacobsen-1964] calls attributive-agentive. -/
+def iq : Morph := .suff "iʔ"
+
+/-- The prefix *ʔil-*, glossed attributive, which reduplicates the root it attaches to
+([jacobsen-1980]). -/
+def il : Morph := .pref "ʔil"
+
+/-- The class of a property-concept verb. -/
 inductive Shape where
   /-- The bare root, with subject agreement and mood only: *ʔíhuk’i* 'it is dry'. -/
   | bare
@@ -41,101 +55,262 @@ inductive Shape where
   | prefixed
   deriving DecidableEq, Repr, Fintype
 
-/-- A property-concept stem. -/
-structure PropertyConcept where
-  stem : String
-  gloss : String
-  category : PropertyConcept.Class
-  shape : Shape
-  deriving DecidableEq, Repr
+/-- A property-concept verb is a verb entry whose morphs are its root and the affixes of its
+class, with the Dixon category of its root. -/
+structure PropertyConcept extends _root_.Verb where
+  /-- The Dixon category of the root, as the appendix assigns it. -/
+  category : Semantics.PropertyConcept.Class
+
+namespace PropertyConcept
+
+variable (root : String) (c : Semantics.PropertyConcept.Class)
+
+/-- The Class 1 verb of a root, inflected like any intransitive verb. -/
+def bare : PropertyConcept where
+  morphs := [.root root]
+  valency := .ofFrame .intransitive
+  category := c
+
+/-- The Class 2 verb of a root. -/
+def suffixed : PropertyConcept where
+  morphs := [.root root, iq]
+  valency := .ofFrame .intransitive
+  category := c
+
+/-- The Class 3 verb of a reduplicated root. -/
+def prefixed : PropertyConcept where
+  morphs := [il, .root root, iq]
+  valency := .ofFrame .intransitive
+  category := c
+
+/-- The class of a verb is read off its affixes: *ʔil-* marks Class 3, and *-iʔ* without it
+Class 2. -/
+def shape (e : PropertyConcept) : Shape :=
+  if il ∈ e.morphs then .prefixed else if iq ∈ e.morphs then .suffixed else .bare
+
+end PropertyConcept
 
 /-! ### Age -/
 
-def MiLe : PropertyConcept := ⟨"MiLe", "old", .age, .bare⟩
-def ešlut : PropertyConcept := ⟨"ešlut’", "young", .age, .suffixed⟩
+/-- *MiLe* 'old'. -/
+def MiLe : PropertyConcept := .bare "MiLe" .age
+
+/-- *ešlut’* 'young'. -/
+def ešlut : PropertyConcept := .suffixed "ešlut’" .age
 
 /-! ### Color -/
 
-def leleg : PropertyConcept := ⟨"leleg", "red", .color, .prefixed⟩
-def pilpil : PropertyConcept := ⟨"p’ilp’il", "blue", .color, .prefixed⟩
-def popo : PropertyConcept := ⟨"popo", "white", .color, .prefixed⟩
-def šošoŋ : PropertyConcept := ⟨"šošoŋ", "brown", .color, .prefixed⟩
-def yiŋyiŋ : PropertyConcept := ⟨"ʔyɨŋʔyɨŋ", "varicolored", .color, .prefixed⟩
+/-- *leleg* 'red'. -/
+def leleg : PropertyConcept := .prefixed "leleg" .color
+
+/-- *p’ilp’il* 'blue'. -/
+def pilpil : PropertyConcept := .prefixed "p’ilp’il" .color
+
+/-- *popo* 'white'. -/
+def popo : PropertyConcept := .prefixed "popo" .color
+
+/-- *šošoŋ* 'brown'. -/
+def šošoŋ : PropertyConcept := .prefixed "šošoŋ" .color
+
+/-- *ʔyɨŋʔyɨŋ* 'varicolored'. -/
+def yiŋyiŋ : PropertyConcept := .prefixed "ʔyɨŋʔyɨŋ" .color
 
 /-! ### Dimension -/
 
-def beheziŋ : PropertyConcept := ⟨"beheziŋ", "small", .dimension, .bare⟩
-def wgohat : PropertyConcept := ⟨"wgohat", "wide", .dimension, .bare⟩
-def lupdep : PropertyConcept := ⟨"ʔlupdep", "thin (of object)", .dimension, .bare⟩
-def udaw : PropertyConcept := ⟨"ʔudaw", "tall (of object)", .dimension, .bare⟩
-def iyel : PropertyConcept := ⟨"i:yel", "big", .dimension, .suffixed⟩
-def hamham : PropertyConcept := ⟨"hamham", "light (in weight)", .dimension, .prefixed⟩
-def šišiš : PropertyConcept := ⟨"šɨšɨš", "heavy", .dimension, .prefixed⟩
+/-- *beheziŋ* 'small'. -/
+def beheziŋ : PropertyConcept := .bare "beheziŋ" .dimension
+
+/-- *wgohat* 'wide', from [bochnak-2013]. -/
+def wgohat : PropertyConcept := .bare "wgohat" .dimension
+
+/-- *ʔlupdep* 'thin (of object)'. -/
+def lupdep : PropertyConcept := .bare "ʔlupdep" .dimension
+
+/-- *ʔudaw* 'tall (of object)'. -/
+def udaw : PropertyConcept := .bare "ʔudaw" .dimension
+
+/-- *i:yel* 'big'. -/
+def iyel : PropertyConcept := .suffixed "i:yel" .dimension
+
+/-- *hamham* 'light (in weight)'. -/
+def hamham : PropertyConcept := .prefixed "hamham" .dimension
+
+/-- *šɨšɨš* 'heavy'. -/
+def šišiš : PropertyConcept := .prefixed "šɨšɨš" .dimension
 
 /-! ### Human propensity -/
 
-def bišapu : PropertyConcept := ⟨"bišapuʔ", "hungry", .humanPropensity, .bare⟩
-def gumbiis : PropertyConcept := ⟨"gumbiʔis", "proud", .humanPropensity, .bare⟩
-def gumyol : PropertyConcept := ⟨"gumyoʔl", "tired", .humanPropensity, .bare⟩
-def kiwil : PropertyConcept := ⟨"k’iwɨl", "sharp-thinking", .humanPropensity, .bare⟩
-def Lokaš : PropertyConcept := ⟨"Lokaš", "afraid", .humanPropensity, .bare⟩
-def meleyik : PropertyConcept := ⟨"meleyɨk", "inebriated", .humanPropensity, .bare⟩
-def melotik : PropertyConcept := ⟨"melot’ik", "thirsty", .humanPropensity, .bare⟩
-def šašiw : PropertyConcept := ⟨"šašɨw", "afraid", .humanPropensity, .bare⟩
-def tesu : PropertyConcept := ⟨"t’e:su", "jealous", .humanPropensity, .bare⟩
-def yaha : PropertyConcept := ⟨"yaha", "sick/hurt", .humanPropensity, .bare⟩
-def yomuŋ : PropertyConcept := ⟨"yomuŋ", "full (from eating)", .humanPropensity, .bare⟩
-def yumil : PropertyConcept := ⟨"yumɨl", "full (from eating)", .humanPropensity, .bare⟩
-def gumsutim : PropertyConcept := ⟨"gumsut’ɨm", "brave", .humanPropensity, .suffixed⟩
-def musiw : PropertyConcept := ⟨"musiw", "generous", .humanPropensity, .suffixed⟩
-def tamugayl : PropertyConcept := ⟨"tamugayʔl", "bored", .humanPropensity, .suffixed⟩
+/-- *bišapuʔ* 'hungry'. -/
+def bišapu : PropertyConcept := .bare "bišapuʔ" .humanPropensity
+
+/-- *gumbiʔis* 'proud'. -/
+def gumbiis : PropertyConcept := .bare "gumbiʔis" .humanPropensity
+
+/-- *gumyoʔl* 'tired'. -/
+def gumyol : PropertyConcept := .bare "gumyoʔl" .humanPropensity
+
+/-- *k’iwɨl* 'sharp-thinking'. -/
+def kiwil : PropertyConcept := .bare "k’iwɨl" .humanPropensity
+
+/-- *Lokaš* 'afraid'. -/
+def Lokaš : PropertyConcept := .bare "Lokaš" .humanPropensity
+
+/-- *meleyɨk* 'inebriated', from [bochnak-etal-2011]. -/
+def meleyik : PropertyConcept := .bare "meleyɨk" .humanPropensity
+
+/-- *melot’ik* 'thirsty'. -/
+def melotik : PropertyConcept := .bare "melot’ik" .humanPropensity
+
+/-- *šašɨw* 'afraid'. -/
+def šašiw : PropertyConcept := .bare "šašɨw" .humanPropensity
+
+/-- *t’e:su* 'jealous'. -/
+def tesu : PropertyConcept := .bare "t’e:su" .humanPropensity
+
+/-- *yaha* 'sick/hurt'. -/
+def yaha : PropertyConcept := .bare "yaha" .humanPropensity
+
+/-- *yomuŋ* 'full (from eating)'. -/
+def yomuŋ : PropertyConcept := .bare "yomuŋ" .humanPropensity
+
+/-- *yumɨl* 'full (from eating)'. -/
+def yumil : PropertyConcept := .bare "yumɨl" .humanPropensity
+
+/-- *gumsut’ɨm* 'brave'. -/
+def gumsutim : PropertyConcept := .suffixed "gumsut’ɨm" .humanPropensity
+
+/-- *musiw* 'generous'. -/
+def musiw : PropertyConcept := .suffixed "musiw" .humanPropensity
+
+/-- *tamugayʔl* 'bored'. -/
+def tamugayl : PropertyConcept := .suffixed "tamugayʔl" .humanPropensity
 
 /-! ### Value -/
 
-def aŋaw : PropertyConcept := ⟨"ʔaŋaw", "good", .value, .bare⟩
-def muaŋ : PropertyConcept := ⟨"mu:ʔaŋ", "tasty", .value, .suffixed⟩
-def nuš : PropertyConcept := ⟨"ʔnu:š", "poor condition", .value, .suffixed⟩
-def umbiic : PropertyConcept := ⟨"ʔumbiʔic’", "expensive", .value, .suffixed⟩
+/-- *ʔaŋaw* 'good'. -/
+def aŋaw : PropertyConcept := .bare "ʔaŋaw" .value
+
+/-- *mu:ʔaŋ* 'tasty'. -/
+def muaŋ : PropertyConcept := .suffixed "mu:ʔaŋ" .value
+
+/-- *ʔnu:š* 'poor condition'. -/
+def nuš : PropertyConcept := .suffixed "ʔnu:š" .value
+
+/-- *ʔumbiʔic’* 'expensive'. -/
+def umbiic : PropertyConcept := .suffixed "ʔumbiʔic’" .value
 
 /-! ### Physical property -/
 
-def golgoš : PropertyConcept := ⟨"golgoš", "short and fat", .physicalProperty, .bare⟩
-def ibik : PropertyConcept := ⟨"ibik’", "ripe", .physicalProperty, .bare⟩
-def ihuk : PropertyConcept := ⟨"ihuk’", "dry", .physicalProperty, .bare⟩
-def keše : PropertyConcept := ⟨"k’eše", "alive", .physicalProperty, .bare⟩
-def metu : PropertyConcept := ⟨"metuʔ", "cold", .physicalProperty, .bare⟩
-def mipil : PropertyConcept := ⟨"mi:p’ɨl", "full", .physicalProperty, .bare⟩
-def mosot : PropertyConcept := ⟨"mosot", "wet", .physicalProperty, .bare⟩
-def mucucu : PropertyConcept := ⟨"muc’uc’u", "sweet", .physicalProperty, .bare⟩
-def wihl : PropertyConcept := ⟨"wɨhl", "cold", .physicalProperty, .bare⟩
-def yakaš : PropertyConcept := ⟨"yak’aš", "warm", .physicalProperty, .bare⟩
-def yasaŋ : PropertyConcept := ⟨"yasaŋ", "hot", .physicalProperty, .bare⟩
-def yayaŋ : PropertyConcept := ⟨"ʔyaʔyaŋ", "naked", .physicalProperty, .bare⟩
-def gucu : PropertyConcept := ⟨"guc’u", "torn", .physicalProperty, .suffixed⟩
-def gumbeyécik : PropertyConcept := ⟨"gumbeyéc’ɨk", "closed", .physicalProperty, .suffixed⟩
-def kakt : PropertyConcept := ⟨"kakt", "quiet", .physicalProperty, .suffixed⟩
-def Loyaw : PropertyConcept := ⟨"Loyaw", "dark", .physicalProperty, .suffixed⟩
-def nuuš : PropertyConcept := ⟨"nuʔuš", "stinky", .physicalProperty, .suffixed⟩
-def wkuli : PropertyConcept := ⟨"wkuliʔ", "solid", .physicalProperty, .suffixed⟩
-def yacim : PropertyConcept := ⟨"yac’im", "smoky", .physicalProperty, .suffixed⟩
-def babab : PropertyConcept := ⟨"ba:bab", "spotted", .physicalProperty, .prefixed⟩
-def huhu : PropertyConcept := ⟨"hu:hu", "striped", .physicalProperty, .prefixed⟩
-def kawkaw : PropertyConcept := ⟨"k’awk’aw", "closed", .physicalProperty, .prefixed⟩
-def kunkun : PropertyConcept := ⟨"k’unk’un", "bent", .physicalProperty, .prefixed⟩
-def kaykay : PropertyConcept := ⟨"kaykay", "tall", .physicalProperty, .prefixed⟩
-def kuškuš : PropertyConcept := ⟨"kuškuš", "short and fat", .physicalProperty, .prefixed⟩
-def lotlot : PropertyConcept := ⟨"lotlot", "soft", .physicalProperty, .prefixed⟩
-def mukmuk : PropertyConcept := ⟨"mukmuk", "chubby", .physicalProperty, .prefixed⟩
-def naynay : PropertyConcept := ⟨"naynay", "muddy", .physicalProperty, .prefixed⟩
-def pepel : PropertyConcept := ⟨"p’ep’el", "bitter", .physicalProperty, .prefixed⟩
-def pipi : PropertyConcept := ⟨"p’ɨp’ɨ", "thin", .physicalProperty, .prefixed⟩
-def šapšap : PropertyConcept := ⟨"šapšap", "fuzzy", .physicalProperty, .prefixed⟩
-def šišip : PropertyConcept := ⟨"ši:šip", "straight", .physicalProperty, .prefixed⟩
-def sinsin : PropertyConcept := ⟨"sɨnsɨn", "thin", .physicalProperty, .prefixed⟩
-def siwsiw : PropertyConcept := ⟨"siwsiw", "smooth", .physicalProperty, .prefixed⟩
-def tetep : PropertyConcept := ⟨"t’et’ep", "fat", .physicalProperty, .prefixed⟩
-def tintin : PropertyConcept := ⟨"t’ɨnt’ɨn", "rough", .physicalProperty, .prefixed⟩
-def witwit : PropertyConcept := ⟨"witwit", "stiff", .physicalProperty, .prefixed⟩
+/-- *golgoš* 'short and fat'. -/
+def golgoš : PropertyConcept := .bare "golgoš" .physicalProperty
+
+/-- *ibik’* 'ripe'. -/
+def ibik : PropertyConcept := .bare "ibik’" .physicalProperty
+
+/-- *ihuk’* 'dry'. -/
+def ihuk : PropertyConcept := .bare "ihuk’" .physicalProperty
+
+/-- *k’eše* 'alive'. -/
+def keše : PropertyConcept := .bare "k’eše" .physicalProperty
+
+/-- *metuʔ* 'cold'. -/
+def metu : PropertyConcept := .bare "metuʔ" .physicalProperty
+
+/-- *mi:p’ɨl* 'full'. -/
+def mipil : PropertyConcept := .bare "mi:p’ɨl" .physicalProperty
+
+/-- *mosot* 'wet'. -/
+def mosot : PropertyConcept := .bare "mosot" .physicalProperty
+
+/-- *muc’uc’u* 'sweet'. -/
+def mucucu : PropertyConcept := .bare "muc’uc’u" .physicalProperty
+
+/-- *wɨhl* 'cold'. -/
+def wihl : PropertyConcept := .bare "wɨhl" .physicalProperty
+
+/-- *yak’aš* 'warm'. -/
+def yakaš : PropertyConcept := .bare "yak’aš" .physicalProperty
+
+/-- *yasaŋ* 'hot'. -/
+def yasaŋ : PropertyConcept := .bare "yasaŋ" .physicalProperty
+
+/-- *ʔyaʔyaŋ* 'naked'. -/
+def yayaŋ : PropertyConcept := .bare "ʔyaʔyaŋ" .physicalProperty
+
+/-- *guc’u* 'torn'. -/
+def gucu : PropertyConcept := .suffixed "guc’u" .physicalProperty
+
+/-- *gumbeyéc’ɨk* 'closed'. -/
+def gumbeyécik : PropertyConcept := .suffixed "gumbeyéc’ɨk" .physicalProperty
+
+/-- *kakt* 'quiet'. -/
+def kakt : PropertyConcept := .suffixed "kakt" .physicalProperty
+
+/-- *Loyaw* 'dark'. -/
+def Loyaw : PropertyConcept := .suffixed "Loyaw" .physicalProperty
+
+/-- *nuʔuš* 'stinky'. -/
+def nuuš : PropertyConcept := .suffixed "nuʔuš" .physicalProperty
+
+/-- *wkuliʔ* 'solid', from the tribal dictionary. -/
+def wkuli : PropertyConcept := .suffixed "wkuliʔ" .physicalProperty
+
+/-- *yac’im* 'smoky'. -/
+def yacim : PropertyConcept := .suffixed "yac’im" .physicalProperty
+
+/-- *ba:bab* 'spotted'. -/
+def babab : PropertyConcept := .prefixed "ba:bab" .physicalProperty
+
+/-- *hu:hu* 'striped'. -/
+def huhu : PropertyConcept := .prefixed "hu:hu" .physicalProperty
+
+/-- *k’awk’aw* 'closed', from [jacobsen-1980]. -/
+def kawkaw : PropertyConcept := .prefixed "k’awk’aw" .physicalProperty
+
+/-- *k’unk’un* 'bent'. -/
+def kunkun : PropertyConcept := .prefixed "k’unk’un" .physicalProperty
+
+/-- *kaykay* 'tall'. -/
+def kaykay : PropertyConcept := .prefixed "kaykay" .physicalProperty
+
+/-- *kuškuš* 'short and fat'. -/
+def kuškuš : PropertyConcept := .prefixed "kuškuš" .physicalProperty
+
+/-- *lotlot* 'soft'. -/
+def lotlot : PropertyConcept := .prefixed "lotlot" .physicalProperty
+
+/-- *mukmuk* 'chubby'. -/
+def mukmuk : PropertyConcept := .prefixed "mukmuk" .physicalProperty
+
+/-- *naynay* 'muddy'. -/
+def naynay : PropertyConcept := .prefixed "naynay" .physicalProperty
+
+/-- *p’ep’el* 'bitter'. -/
+def pepel : PropertyConcept := .prefixed "p’ep’el" .physicalProperty
+
+/-- *p’ɨp’ɨ* 'thin', from the tribal dictionary. -/
+def pipi : PropertyConcept := .prefixed "p’ɨp’ɨ" .physicalProperty
+
+/-- *šapšap* 'fuzzy'. -/
+def šapšap : PropertyConcept := .prefixed "šapšap" .physicalProperty
+
+/-- *ši:šip* 'straight', from [jacobsen-1980]. -/
+def šišip : PropertyConcept := .prefixed "ši:šip" .physicalProperty
+
+/-- *sɨnsɨn* 'thin'. -/
+def sinsin : PropertyConcept := .prefixed "sɨnsɨn" .physicalProperty
+
+/-- *siwsiw* 'smooth', from [jacobsen-1980]. -/
+def siwsiw : PropertyConcept := .prefixed "siwsiw" .physicalProperty
+
+/-- *t’et’ep* 'fat'. -/
+def tetep : PropertyConcept := .prefixed "t’et’ep" .physicalProperty
+
+/-- *t’ɨnt’ɨn* 'rough'. -/
+def tintin : PropertyConcept := .prefixed "t’ɨnt’ɨn" .physicalProperty
+
+/-- *witwit* 'stiff'. -/
+def witwit : PropertyConcept := .prefixed "witwit" .physicalProperty
 
 /-- The seventy stems of the appendix. -/
 def propertyConcepts : List PropertyConcept :=

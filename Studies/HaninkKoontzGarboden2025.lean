@@ -26,8 +26,10 @@ of types to shapes, `RootType.ofShape`, then derives the morphology of each shap
 well-typed verbalization, `derivation_minimal`, and the bipartite gap for the suffixed roots
 (49), `wellTyped_become_iff`. The change-of-state head is Beavers and Koontz-Garboden's
 inchoative operator, and the resultative entails the result state of its theme (46). The
-seventy stems of the appendix are the rows of `Washo.propertyConcepts`, on which Dixon's
-categories predict the shape only for color; the examples are the rows of
+seventy stems of the appendix are the rows of `Washo.propertyConcepts`, whose class is read off
+their affixes, `Washo.PropertyConcept.shape`. Dixon's categories predict neither the class nor
+the meaning of a root, `not_factorsThrough_rootType`, and color is the only category whose stems
+share a class, `exists_shape_iff`. The examples are the rows of
 `Data.Examples.HaninkKoontzGarboden2025`.
 
 ## Implementation notes
@@ -38,6 +40,14 @@ them in the semantic definitions. Possession relates a possessor to a possessum 
 ordinary possession (67) and the possession of a state (35) are one operator. Causation and change
 are interpreted by the substrate's `EventStructure.Interpretation`, whose heads `vBecome` and
 `vCause` are the paper's (43) and whose effector stands for the paper's AGENT.
+
+## TODO
+
+The appendix's categories depart from Dixon's English examples: it puts 'heavy' and 'light'
+under dimension, which he puts under physical property, and 'fat' and two stems glossed 'thin'
+under physical property, which he puts under dimension. On his assignment the conclusions stand,
+since color and age are unchanged and dimension and physical property still mix classes. The
+appendix also counts 35 Class 3 stems where its table lists 25, the seventy being 30, 15 and 25.
 
 ## References
 
@@ -80,7 +90,7 @@ root meaning. -/
 theorem exists_rootType_ne :
     ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts,
       RootType.ofShape e₁.shape ≠ RootType.ofShape e₂.shape :=
-  ⟨ihuk, by decide, iyel, by decide, by decide⟩
+  ⟨ihuk, by simp [propertyConcepts], iyel, by simp [propertyConcepts], by decide⟩
 
 /-! ### The verbalizing heads and their types -/
 
@@ -203,18 +213,38 @@ theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event → Prop}
   let ⟨_, _, _, s, _, hs⟩ := h
   ⟨s, hs⟩
 
-/-! ### The stems of the appendix -/
+/-! ### Dixon's categories, appendix -/
 
-/-- The only category whose members share a shape is color, all of whose stems are prefixed
-(appendix). -/
+/-- The stems of the appendix. -/
+def sample : Set PropertyConcept := {e | e ∈ propertyConcepts}
+
+/-- No stem is of the speed category, which Washo expresses only by tempo suffixes on verbs of
+motion (74). -/
+theorem category_ne_speed : ∀ e ∈ propertyConcepts, e.category ≠ .speed := by
+  decide
+
+/-- A stem's category does not predict its meaning, since the antonyms *MiLe* 'old', a relation,
+and *ešlut’* 'young', a quality, are both of age. -/
+theorem not_factorsThrough_rootType :
+    ¬ (sample.domRestrict fun e ↦ RootType.ofShape e.shape).FactorsThrough
+      (sample.domRestrict (·.category)) := fun h ↦
+  absurd (@h ⟨MiLe, by simp [sample, propertyConcepts]⟩
+    ⟨ešlut, by simp [sample, propertyConcepts]⟩ rfl) (by decide)
+
+/-- Nor, then, does it predict its class. -/
+theorem not_factorsThrough_shape :
+    ¬ (sample.domRestrict PropertyConcept.shape).FactorsThrough
+      (sample.domRestrict (·.category)) :=
+  fun h ↦ not_factorsThrough_rootType fun _ _ hab ↦ congrArg RootType.ofShape (h hab)
+
+/-- Every stem of color is of Class 3. -/
 theorem color_prefixed : ∀ e ∈ propertyConcepts, e.category = .color → e.shape = .prefixed := by
   decide
 
-/-- [dixon-1982]'s categories do not predict the shape, since the antonyms *MiLe* 'old' and
-*ešlut’* 'young' differ. -/
-theorem category_not_predictive :
-    ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts,
-      e₁.category = e₂.category ∧ e₁.shape ≠ e₂.shape :=
-  ⟨MiLe, by decide, ešlut, by decide, rfl, by decide⟩
+/-- Color is the only category whose stems share a class. -/
+theorem exists_shape_iff {c : PropertyConcept.Class} (hc : c ≠ .speed) :
+    (∃ s, ∀ e ∈ propertyConcepts, e.category = c → e.shape = s) ↔ c = .color := by
+  revert hc
+  cases c <;> decide
 
 end HaninkKoontzGarboden2025
