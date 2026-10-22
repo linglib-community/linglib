@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Derivation.Copy
+public import Linglib.Syntax.Minimalist.Copy.Replay
+public import Linglib.Syntax.Minimalist.Linearization.ChainReduction
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
@@ -100,32 +101,6 @@ def BindsAtLF (d : Derivation) (x y : SyntacticObject) : Prop :=
 instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtLF x y) := by
   unfold BindsAtLF; infer_instance
 
-theorem take_length (d : Derivation) : d.take d.length = d := by
-  simp [take, length]
-
-theorem lexTokens_append (d : Derivation) (steps : List Step) :
-    (d.append steps).lexTokens =
-      d.lexTokens + ((Step.itemsList steps).map SyntacticObject.yield).sum := by
-  simp [lexTokens, items, append, Step.itemsList, List.map_append, List.sum_append, add_assoc]
-
-theorem replay?_append_singleton (d : Derivation) (step : Step) :
-    (d.append [step]).replay? = d.replay?.bind (step.replay? ·) := by
-  simp only [replay?, append, List.foldlM_append, List.foldlM_cons, List.foldlM_nil,
-    Option.bind_assoc]
-  congr 1
-  funext p
-  congr 1
-  funext c
-  cases step.replay? c <;> rfl
-
-theorem replayWithCopies?_append_singleton (d : Derivation) (step : Step) :
-    (d.append [step]).replayWithCopies? = d.replayWithCopies?.bind (step.replayWithCopies? ·) := by
-  rw [replayWithCopies?_append]
-  congr 1
-  funext c
-  simp only [List.foldlM_cons, List.foldlM_nil]
-  cases step.replayWithCopies? c <;> rfl
-
 /-- Binding at some stage is binding at the copy object, where every stage survives. -/
 theorem BindsAtSomeStage.bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
     (hd : d.replay?.isSome) (h : d.BindsAtSomeStage ↑x ↑y) : d.BindsAtLF ↑x ↑y := by
@@ -142,22 +117,6 @@ theorem BindsAtSomeStage.bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
   rw [Option.mem_def, copyObject?, hc', Option.map_some] at hC
   obtain rfl := Option.some.inj hC
   exact ⟨C', hC', h1.mono hsub⟩
-
-/-- A lexical leaf or trace has no sisters inside it. -/
-private theorem not_sisters_of_toPlanarLeaf? {s x z : SyntacticObject}
-    {p : PlanarSyntacticObject} (hs : s.toPlanarLeaf? = some p) : ¬ Sisters s x z := by
-  rintro ⟨w, hw, hwx, -, -⟩
-  rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
-  · rw [terms_leaf, Multiset.mem_singleton] at hw
-    subst hw
-    simp [ImmediatelyContains, leaf_val] at hwx
-  · rw [terms_trace, Multiset.mem_singleton] at hw
-    subst hw
-    simp [ImmediatelyContains, trace_val] at hwx
-  · rw [terms_traceOf, Multiset.mem_singleton] at hw
-    subst hw
-    simp [ImmediatelyContains, traceOf_val] at hwx
-  · simp [toPlanarLeaf?, merge_val] at hs
 
 /-- Binding at the copy object is binding at some stage, in a derivation of Merge steps that moves
 no trace and merges no token twice: two copies stand in a c-command relation only if, at the step

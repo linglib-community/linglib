@@ -9,6 +9,7 @@ public import Mathlib.Logic.Relation
 public import Linglib.Core.Data.UnorderedTree.Count
 public import Linglib.Core.Data.UnorderedTree.Subtree
 public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
 # Terms, containment, and c-command
@@ -231,6 +232,13 @@ def terms (s : SyntacticObject) : Multiset SyntacticObject :=
 theorem self_mem_terms (s : SyntacticObject) : s ∈ s.terms :=
   mem_terms.2 ReflTransGen.refl
 
+theorem val_mem_subtrees {S U : SyntacticObject} : S.val ∈ U.val.subtrees ↔ S ∈ U.terms := by
+  rw [← map_val_terms, Multiset.mem_map_of_injective Subtype.val_injective]
+
+theorem mem_terms_merge_right (u C : SyntacticObject) : C ∈ (merge u C).terms := by
+  rw [terms_merge]
+  exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inr (self_mem_terms C)))
+
 theorem terms_subset_terms (h : ContainsOrEq x y) : y.terms ⊆ x.terms :=
   fun _ hz ↦ mem_terms.2 (ReflTransGen.trans h (mem_terms.1 hz))
 
@@ -375,6 +383,30 @@ instance (root x y : SyntacticObject) : Decidable (AsymmCCommands root x y) :=
 theorem Sisters.not_asymmCCommands (h : Sisters root x y) :
     ¬ AsymmCCommands root x y :=
   fun h' ↦ h'.2 (Sisters.cCommands h.symm)
+
+/-! ### Pronounced tokens of terms -/
+
+/-- A token is pronounced in an object exactly when its leaf is a term. -/
+theorem mem_yield_iff {s : SyntacticObject} {tok : LexicalItem.Token} :
+    tok ∈ s.yield ↔ leaf tok ∈ s.terms := by
+  induction s using ind with
+  | leaf a => simp
+  | trace => simp
+  | traceOf a => simp
+  | merge l r ihl ihr => simp [ihl, ihr, leaf_ne_merge]
+
+/-- A term pronounces no more than its object. -/
+theorem yield_le_of_mem_terms {s u : SyntacticObject} (h : u ∈ s.terms) : u.yield ≤ s.yield := by
+  induction s using ind with
+  | leaf a => rw [terms_leaf, Multiset.mem_singleton] at h; rw [h]
+  | trace => rw [terms_trace, Multiset.mem_singleton] at h; rw [h]
+  | traceOf a => rw [terms_traceOf, Multiset.mem_singleton] at h; rw [h]
+  | merge l r ihl ihr =>
+    rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at h
+    rcases h with rfl | h | h
+    · exact le_rfl
+    · exact (ihl h).trans (by rw [yield_merge]; exact Multiset.le_add_right _ _)
+    · exact (ihr h).trans (by rw [yield_merge]; exact Multiset.le_add_left _ _)
 
 end SyntacticObject
 

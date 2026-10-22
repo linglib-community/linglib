@@ -44,7 +44,7 @@ outside its interior.
 
 * Terms are values, not occurrences, so all copies of a head share one phase, and the lower
   copies of a moved phrase are one term; positions tell copies apart in
-  `SyntacticObject/Chain.lean`.
+  `Copy/Chain.lean`.
 * Every head that projects heads a phase, as in the book; the heads a study counts as phase heads
   (C alone, or also v, D, or Voice) are the list `Accessible` takes.
 * Under the raising head a phrase raised to the edge of a head lies in its phase; a phrase merged

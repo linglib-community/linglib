@@ -13,7 +13,7 @@ public import Linglib.Syntax.Minimalist.Derivation.Economy
 public import Linglib.Syntax.Minimalist.Merge.MinimalSearch
 public import Linglib.Syntax.Minimalist.Merge.Sideward
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
-public import Linglib.Syntax.Minimalist.SyntacticObject.FormCopy
+public import Linglib.Syntax.Minimalist.Copy.FormCopy
 public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
 public import Mathlib.RingTheory.LaurentSeries
 

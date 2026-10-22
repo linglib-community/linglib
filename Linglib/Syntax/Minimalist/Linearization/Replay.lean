@@ -59,130 +59,6 @@ namespace Minimalist
 
 open RoseTree UnorderedTree SyntacticObject
 
-/-! ### Planar leaves -/
-
-/-- The planar form of a leaf object, which has only one; `none` on a merged object. -/
-def SyntacticObject.toPlanarLeaf? (s : SyntacticObject) : Option PlanarSyntacticObject :=
-  match s.val.value with
-  | .inl (some tok) => some (.leaf tok)
-  | .inl none => none
-  | .inr none => some .trace
-  | .inr (some tok) => some (.traceOf tok)
-
-/-- A planar leaf forgets to the object it came from. -/
-theorem SyntacticObject.toSyntacticObject_of_toPlanarLeaf? {s : SyntacticObject}
-    {p : PlanarSyntacticObject} (h : s.toPlanarLeaf? = some p) : p.toSyntacticObject = s := by
-  rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ <;>
-    simp [toPlanarLeaf?, merge_val] at h <;> subst h <;> rfl
-
-/-! ### Occurrences in planar objects -/
-
-namespace PlanarSyntacticObject
-
-/-- The leftmost, outermost subtree of `p` projecting to `target`. -/
-def find? (p : PlanarSyntacticObject) (target : SyntacticObject) : Option PlanarSyntacticObject :=
-  (p.val.subtrees.find? (mk · = target.val)).pmap (p := (mk · = target.val))
-    (fun s hs ↦ ⟨s, hs.symm ▸ target.2⟩) fun _ h ↦ by simpa using List.find?_some h
-
-theorem toSyntacticObject_find? {p s : PlanarSyntacticObject} {target : SyntacticObject}
-    (h : p.find? target = some s) : s.toSyntacticObject = target := by
-  obtain ⟨t, ht, -, rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at h)
-  exact Subtype.ext ht
-
-/-- Every subtree of `p` projecting to `target` replaced by `rep`. -/
-def replace (p : PlanarSyntacticObject) (target : SyntacticObject)
-    (rep : PlanarSyntacticObject) : PlanarSyntacticObject :=
-  ⟨replaceIf (mk · = target.val) rep.val p.val, by
-    rw [mk_replaceIf]
-    exact isSyntacticObject_replace target rep.toSyntacticObject p.toSyntacticObject⟩
-
-/-- Replacement forgets to substitution in the syntactic object. -/
-@[simp] theorem toSyntacticObject_replace (p : PlanarSyntacticObject) (target : SyntacticObject)
-    (rep : PlanarSyntacticObject) :
-    (p.replace target rep).toSyntacticObject
-      = p.toSyntacticObject.replace target rep.toSyntacticObject :=
-  Subtype.ext (mk_replaceIf _ _ _)
-
-/-- The terms of a planar object's object are the projections of its planar subtrees. -/
-theorem mem_terms_toSyntacticObject {p : PlanarSyntacticObject} {m : SyntacticObject} :
-    m ∈ p.toSyntacticObject.terms ↔ ∃ q ∈ p.val.subtrees, mk q = m.val := by
-  rw [← val_mem_subtrees, toSyntacticObject_val, subtrees_mk, unorderedSubtrees_eq_map,
-    Multiset.mem_coe, List.mem_map]
-
-/-- An occurrence is found exactly when the target is a term. -/
-theorem isSome_find?_iff {p : PlanarSyntacticObject} {m : SyntacticObject} :
-    (p.find? m).isSome ↔ m ∈ p.toSyntacticObject.terms := by
-  rw [mem_terms_toSyntacticObject, find?, Option.isSome_pmap, List.find?_isSome]
-  simp
-
-/-- The occurrence found is a planar subtree. -/
-theorem mem_subtrees_of_find? {p s : PlanarSyntacticObject} {m : SyntacticObject}
-    (h : p.find? m = some s) : s.val ∈ p.val.subtrees := by
-  obtain ⟨t, -, ht, rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at h)
-  exact List.mem_of_find?_eq_some ht
-
-/-- Replacing at the root yields the replacement. -/
-theorem replace_of_toSyntacticObject_eq {p r : PlanarSyntacticObject} {target : SyntacticObject}
-    (h : p.toSyntacticObject = target) : p.replace target r = r := by
-  obtain ⟨⟨a, cs⟩, hp⟩ := p
-  apply Subtype.ext
-  simp only [replace, replaceIf_node]
-  split_ifs with hc
-  · rfl
-  · exact absurd (congrArg Subtype.val h) hc
-
-/-- Away from the root, replacement recurses into the daughters. -/
-theorem replace_attach {p d r : PlanarSyntacticObject} {target : SyntacticObject} {e : Edge}
-    (h : SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject ≠ target) :
-    (p.attach e d).replace target r = (p.replace target r).attach e (d.replace target r) := by
-  have h' : (p.attach e d).toSyntacticObject ≠ target := by rwa [toSyntacticObject_attach]
-  apply Subtype.ext
-  cases e <;> simp only [replace, attach, merge_val, replaceIf_node, List.map_cons,
-    List.map_nil] <;> split_ifs with hc <;> first | rfl | exact (h' (Subtype.ext hc)).elim
-
-/-- A leaf other than the target is kept. -/
-theorem replace_of_val_eq_leaf {p r : PlanarSyntacticObject} {target : SyntacticObject}
-    {a : Vertex} (hp : p.val = RoseTree.leaf a) (h : p.toSyntacticObject ≠ target) :
-    p.replace target r = p := by
-  apply Subtype.ext
-  simp only [replace, hp, replaceIf_node, List.map_nil]
-  split_ifs with hc
-  · exact (h (Subtype.ext (by rw [toSyntacticObject_val, hp]; exact hc))).elim
-  · rfl
-
-end PlanarSyntacticObject
-
-/-- The planar trace a moved object leaves, `SyntacticObject.headTrace` with its order. -/
-def SyntacticObject.tracePlanar (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : PlanarSyntacticObject :=
-  (τ s).elim PlanarSyntacticObject.trace PlanarSyntacticObject.traceOf
-
-/-- The planar trace of `s` is the trace leaf of its label. -/
-theorem SyntacticObject.tracePlanar_val (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
-    (s.tracePlanar τ).val = .node (.inr (τ s)) [] := by
-  unfold tracePlanar; cases τ s <;> rfl
-
-@[simp] theorem SyntacticObject.toSyntacticObject_tracePlanar (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
-    (s.tracePlanar τ).toSyntacticObject = s.headTrace τ := by
-  unfold tracePlanar headTrace; cases τ s <;> rfl
-
-/-- Raising the occurrence of `m` that `find?` locates, with its occurrences replaced by its trace,
-keeps the pronounced tokens when none is pronounced twice. -/
-theorem PlanarSyntacticObject.yield_replace_add_yield {p s : PlanarSyntacticObject}
-    {m : SyntacticObject} (τ : SyntacticObject → Option LexicalItem.Token)
-    (hp : p.toSyntacticObject.yield.Nodup) (hs : p.find? m = some s) :
-    (p.replace m (m.tracePlanar τ)).toSyntacticObject.yield + s.toSyntacticObject.yield =
-      p.toSyntacticObject.yield := by
-  obtain ⟨s', -, hs', rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at hs)
-  refine filterMap_leaves_replaceIf_add _ _ (L := m.yield) (fun u hu ↦ ?_) ?_ hp
-    (mem_outerMatches_of_find? hs')
-  · rw [← UnorderedTree.leaves_mk, hu]
-    rfl
-  · rw [SyntacticObject.tracePlanar_val]
-    rfl
-
 variable {side : Edge}
 
 /-- A leaf's planar form is its harmonic planarization. -/
@@ -248,6 +124,44 @@ end Derivation
 /-! ### Faithfulness -/
 
 variable {τ : SyntacticObject → Option LexicalItem.Token}
+
+namespace Derivation
+
+theorem replay?_append_singleton (d : Derivation) (step : Step) :
+    (d.append [step]).replay? = d.replay?.bind (step.replay? ·) := by
+  simp only [replay?, append, List.foldlM_append, List.foldlM_cons, List.foldlM_nil,
+    Option.bind_assoc]
+  congr 1
+  funext p
+  congr 1
+  funext c
+  cases step.replay? c <;> rfl
+
+/-- A derivation of Merge steps leaves nothing on the stack. -/
+theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
+    (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c) : c.stack = [] := by
+  obtain ⟨p, -, h⟩ := Option.bind_eq_some_iff.1 h
+  have key : ∀ (steps : List Step) (c₀ c : Cfg PlanarSyntacticObject),
+      (∀ step ∈ steps, step.IsMerge) → c₀.stack = [] →
+        steps.foldlM (fun c step ↦ step.replay? c τ) c₀ = some c → c.stack = [] := by
+    intro steps
+    induction steps with
+    | nil => intro c₀ c _ h₀ h; obtain rfl := Option.some.inj h; exact h₀
+    | cons step steps ih =>
+      intro c₀ c hm h₀ h
+      obtain ⟨c₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
+      refine ih c₁ c (fun s hs ↦ hm s (List.mem_cons_of_mem _ hs)) ?_ h
+      obtain ⟨p₀, st₀⟩ := c₀
+      cases h₀
+      have := hm step List.mem_cons_self
+      cases step with
+      | em side item => obtain ⟨i, -, rfl⟩ := Option.map_eq_some_iff.1 h₁; rfl
+      | im mover side => obtain ⟨s, -, rfl⟩ := Option.map_eq_some_iff.1 h₁; rfl
+      | extract mover => exact this.elim
+      | remerge side => exact this.elim
+  exact key _ _ _ hm rfl h
+
+end Derivation
 
 /-- A successful replay step forgets to `Step.run`. -/
 private theorem Step.map_of_replay? {c c' : Cfg PlanarSyntacticObject} {step : Step}

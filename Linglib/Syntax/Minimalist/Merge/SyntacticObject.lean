@@ -93,6 +93,11 @@ theorem headTrace_val (s : SyntacticObject) (τ : SyntacticObject → Option Lex
     (s.headTrace τ).val = UnorderedTree.leaf (Sum.inr (τ s)) := by
   unfold headTrace; cases τ s <;> rfl
 
+@[simp] theorem toSyntacticObject_tracePlanar (s : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token) :
+    (s.tracePlanar τ).toSyntacticObject = s.headTrace τ := by
+  unfold tracePlanar headTrace; cases τ s <;> rfl
+
 /-- The remainder `T/mover` is the current object with the mover's occurrences replaced by the
     trace of its head under `τ`. For a uniquely accessible mover it is the trunk of the trace cut
     that extracts the mover (`cutSummandsCN_filter_mover`); `replace` extends it to a chain of
@@ -145,9 +150,6 @@ theorem mergeOpC_im (hm : mover.val.value.isLeft) (h : current.terms.count mover
       (cutSummandsCN_filter_mover hm h hne) rfl (fun h' ↦ hne (Subtype.ext h')), merge_val]
 
 /-! ### Merge beside a spectator workspace -/
-
-theorem val_mem_subtrees {S U : SyntacticObject} : S.val ∈ U.val.subtrees ↔ S ∈ U.terms := by
-  rw [← map_val_terms, Multiset.mem_map_of_injective Subtype.val_injective]
 
 private theorem disjoint_pair_subtrees {S S' U : SyntacticObject}
     (h : S ∉ U.terms ∧ S' ∉ U.terms) :

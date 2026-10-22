@@ -6,11 +6,12 @@ public import Linglib.Fragments.TobaBatak.Voice
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Syntax.Binding.Basic
-public import Linglib.Syntax.Minimalist.Derivation.Copy
+public import Linglib.Syntax.Minimalist.Copy.Replay
+public import Linglib.Syntax.Minimalist.Linearization.ChainReduction
 public import Linglib.Syntax.Minimalist.Derivation.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
-public import Linglib.Syntax.Minimalist.SyntacticObject.Chain
+public import Linglib.Syntax.Minimalist.Copy.Chain
 
 /-!
 # Cole and Hermon 2008: VP raising in a VOS language
