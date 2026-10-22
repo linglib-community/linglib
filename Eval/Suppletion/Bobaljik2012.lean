@@ -249,7 +249,7 @@ def row (L : Data.Structures.Language) : Option Row :=
 abbrev RowParser := Parser Data.Structures.Language (Option Row) (Row → Row)
 
 /-- A row with a morphological comparative, as for a null comparative affix. -/
-def withComparative (r : Row) : Row := { r with cmpr := ⟨.morphological, false, false⟩ :: r.cmpr }
+def withComparative (r : Row) : Row := { r with cmpr := { code := .morphological } :: r.cmpr }
 
 /-- A row whose morphological superlatives are absolute ones. -/
 def withAbsolute (r : Row) : Row :=
