@@ -90,7 +90,7 @@ def closure (f : PhiFeature) : Finset Feature := (Finset.univ.filter (f ≤ ·))
   simp [closure, Feature.ofPhi]
 
 /-- The probe relativized to `f`, [INT:{f}, SAT:{f}]. -/
-def relativizedTo (f : PhiFeature) : Spec Feature := ⟨closure f, {.phi f}⟩
+def relativizedTo (f : PhiFeature) : Spec Feature := .ofFeatures (closure f) {.phi f}
 
 /-- An argument of the embedded clause. -/
 structure Arg where
@@ -137,7 +137,7 @@ def Voice.epp : Voice → Spec Feature
   | .ergative => relativizedTo .phi
 
 /-- The agreement probe of Infl (24), [INT:{φ}, SAT:{PROX}]. -/
-def inflAgr : Spec Feature := ⟨closure .phi, {.phi .prox}⟩
+def inflAgr : Spec Feature := .ofFeatures (closure .phi) {.phi .prox}
 
 /-- The movement probe of Infl (24), [INT:{PROX}, SAT:{PROX}]. -/
 def inflEpp : Spec Feature := relativizedTo .prox
@@ -146,7 +146,7 @@ def inflEpp : Spec Feature := relativizedTo .prox
 def phiEpp : Spec Feature := relativizedTo .phi
 
 /-- C's pure δ-probe, of free LDA (31a). -/
-def deltaEpp : Spec Feature := ⟨{.delta}, {.delta}⟩
+def deltaEpp : Spec Feature := .ofFeatures {.delta} {.delta}
 
 /-- The movement probe of C (25), (32), [INT:{φ ∨ δ}, SAT:{φ ∨ δ}], the join of the φ-probe and the
 δ-probe, so that a goal bearing both matches better than a goal bearing one. -/
