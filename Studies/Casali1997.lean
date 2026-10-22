@@ -89,7 +89,7 @@ def con : ConstraintSet ElidedVowel (Option Prominence) :=
 /-- `corr c e` is the correspondence between the unrepaired concatenation and the form that the
 elision `e` gives. -/
 def corr (e : ElidedVowel) : Correspondence BinaryRole Segment :=
-  Correspondence.eraseIdx c.input (position c e)
+  Correspondence.eraseIdx c.input ⟨position c e, position_lt_length_input c e⟩
 
 /-- `resolve c e` is the form that the elision `e` gives. -/
 def resolve (e : ElidedVowel) : List Segment := (corr c e).form .rhs
@@ -102,7 +102,7 @@ theorem resolve_second : resolve c .second = c.elideV2 := c.elideV2_eq_eraseIdx.
 output. -/
 theorem con_eq_maxViolAt (i : Option Prominence) (e : ElidedVowel) :
     con c i e = (corr c e).maxViolAt (protects c i) .lhs .rhs :=
-  maxAt_singleton_eq_maxViolAt _ (position_lt_length_input c e)
+  maxAt_singleton_eq_maxViolAt _ ⟨position c e, position_lt_length_input c e⟩
 
 /-- General MAX counts the input segments that have no correspondent in the output. -/
 theorem con_none (e : ElidedVowel) : con c none e = (corr c e).maxViol .lhs .rhs :=

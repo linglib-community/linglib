@@ -3,7 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Forms.Stojkovic2026
 public import Linglib.Phonology.Hiatus
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -131,7 +131,7 @@ def output : Candidate → List Segment
 /-- `corr c k` is the correspondence of the candidate `k` to the input, a deletion of the empty
 node for `delete` and position by position for the others. -/
 def corr : Candidate → Correspondence BinaryRole Segment
-  | .delete => .deletion (input c) (output c .delete) 1
+  | .delete => .deletion (input c) (output c .delete) ⟨1, by simp [input]⟩ rfl
   | k => .parallel (input c) (output c k)
 
 /-- The candidates of a context. A front vowel is a candidate only after a palatal. -/

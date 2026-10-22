@@ -97,6 +97,15 @@ inductive BinaryRole where
   | rhs
   deriving DecidableEq, Repr
 
+/-- `r.swap` is the other role of a binary correspondence. -/
+def BinaryRole.swap : BinaryRole → BinaryRole
+  | .lhs => .rhs
+  | .rhs => .lhs
+
+@[simp] theorem BinaryRole.swap_lhs : BinaryRole.lhs.swap = .rhs := rfl
+
+@[simp] theorem BinaryRole.swap_rhs : BinaryRole.rhs.swap = .lhs := rfl
+
 /-- The roles of the basic model of reduplication are the input, the base and the
 reduplicant. -/
 inductive ReduplicationRole where
@@ -402,6 +411,47 @@ theorem reduplication_edge (input base reduplicant : List α) {r₁ r₂ : Redup
         ((reduplication input base reduplicant).form r₂).length :=
   diagram_edge_pos _ _ h
 
+/-- `ofFun s t f` is the binary correspondence in which each position `i` of `s` has the single
+correspondent `f i` in `t`. -/
+def ofFun (s t : List α) (f : Fin s.length → Fin t.length) : Correspondence BinaryRole α where
+  form
+    | .lhs => s
+    | .rhs => t
+  edge
+    | .lhs, .rhs => Finset.univ.filter fun p ↦ f p.1 = p.2
+    | .rhs, .lhs => Finset.univ.filter fun p ↦ f p.2 = p.1
+    | .lhs, .lhs | .rhs, .rhs => ∅
+
+section ofFun
+
+variable (s t : List α) (f : Fin s.length → Fin t.length)
+
+@[simp] theorem ofFun_form_lhs : (ofFun s t f).form .lhs = s := rfl
+
+@[simp] theorem ofFun_form_rhs : (ofFun s t f).form .rhs = t := rfl
+
+variable {s t f} in
+@[simp] theorem mem_ofFun_edge {i : Fin s.length} {j : Fin t.length} :
+    (i, j) ∈ (ofFun s t f).edge .lhs .rhs ↔ f i = j := by
+  simp [ofFun]
+
+theorem ofFun_isSymmetric : (ofFun s t f).IsSymmetric := by
+  rintro (_ | _) (_ | _) <;> ext ⟨a, b⟩ <;> simp [ofFun, eq_comm]
+
+end ofFun
+
+/-- `c.swap` is the binary correspondence `c` with its two strings exchanged. -/
+def swap (c : Correspondence BinaryRole α) : Correspondence BinaryRole α where
+  form r := c.form r.swap
+  edge r₁ r₂ := c.edge r₁.swap r₂.swap
+
+theorem IsSymmetric.swap {c : Correspondence BinaryRole α} (h : c.IsSymmetric) :
+    c.swap.IsSymmetric :=
+  fun r₁ r₂ ↦ h r₁.swap r₂.swap
+
+theorem depViolAt_swap (c : Correspondence BinaryRole α) (P : ℕ → Prop) [DecidablePred P]
+    (r₁ r₂ : BinaryRole) : c.swap.depViolAt P r₁ r₂ = c.depViolAt P r₁.swap r₂.swap := rfl
+
 /-! ### Faithfulness on the diagonal
 
 MAX, DEP and IDENT vanish on a diagonal edge between equal strings — the fully faithful
@@ -535,6 +585,82 @@ theorem edgeOfPairs_diagonalPairs {m n k : ℕ} (h : min m n ≤ k) :
   have := b.2
   omega
 
+/-! ### Symmetric correspondences
+
+Read along the reverse edge of a symmetric correspondence, MAX is DEP and IDENT is unchanged. -/
+
+namespace IsSymmetric
+
+variable {c} (h : c.IsSymmetric)
+include h
+
+theorem maxViolAt_eq (P : ℕ → Prop) [DecidablePred P] :
+    c.maxViolAt P r₂ r₁ = c.depViolAt P r₁ r₂ := by
+  rw [maxViolAt, depViolAt, h r₁ r₂, Finset.image_image]
+  rfl
+
+theorem maxViol_eq : c.maxViol r₂ r₁ = c.depViol r₁ r₂ := by
+  rw [← maxViolAt_true, ← depViolAt_true, h.maxViolAt_eq]
+
+theorem identViol_eq [DecidableEq α] : c.identViol r₂ r₁ = c.identViol r₁ r₂ := by
+  simp only [identViol, h r₁ r₂, Finset.filter_image,
+    Finset.card_image_of_injective _ Prod.swap_injective]
+  exact congrArg Finset.card (Finset.filter_congr fun _ _ ↦ ne_comm)
+
+end IsSymmetric
+
+/-! ### Edges that are graphs
+
+An edge is the graph of a map `f` from the positions of `form r₁` to those of `form r₂` when each
+position `i` corresponds to `f i` alone. Such an edge violates neither MAX nor INTEGRITY, DEP
+counts the positions off the range of `f`, and UNIFORMITY and LINEARITY hold when `f` is injective
+and monotone. -/
+
+section Graph
+
+variable {c r₁ r₂} {f : Fin (c.form r₁).length → Fin (c.form r₂).length}
+  (hf : ∀ i j, (i, j) ∈ c.edge r₁ r₂ ↔ f i = j)
+include hf
+
+theorem maxViol_eq_zero_of_graph : c.maxViol r₁ r₂ = 0 :=
+  (maxViol_eq_zero_iff c r₁ r₂).2 fun i _ ↦ Finset.mem_image.2 ⟨(i, f i), (hf _ _).2 rfl, rfl⟩
+
+theorem depViolAt_of_graph (P : ℕ → Prop) [DecidablePred P] :
+    c.depViolAt P r₁ r₂ =
+      ((Finset.univ.filter fun j : Fin (c.form r₂).length ↦ P j) \ Finset.univ.image f).card := by
+  rw [depViolAt]
+  congr 2
+  ext j
+  simp [hf]
+
+theorem integrityViol_eq_zero_of_graph : c.integrityViol r₁ r₂ = 0 :=
+  (integrityViol_eq_zero_iff c r₁ r₂).2 fun _ ↦ Finset.card_le_one.2 fun p hp q hq ↦ by
+    rw [Finset.mem_filter] at hp hq
+    refine Prod.ext (hp.2.trans hq.2.symm) ?_
+    rw [← (hf _ _).1 hp.1, ← (hf _ _).1 hq.1, hp.2, hq.2]
+
+theorem uniformityViol_eq_zero_of_graph (hinj : Function.Injective f) :
+    c.uniformityViol r₁ r₂ = 0 :=
+  (uniformityViol_eq_zero_iff c r₁ r₂).2 fun _ ↦ Finset.card_le_one.2 fun p hp q hq ↦ by
+    rw [Finset.mem_filter] at hp hq
+    refine Prod.ext (hinj ?_) (hp.2.trans hq.2.symm)
+    rw [(hf _ _).1 hp.1, (hf _ _).1 hq.1, hp.2, hq.2]
+
+theorem linearityViol_eq_zero_of_graph (hmono : Monotone f) : c.linearityViol r₁ r₂ = 0 :=
+  (linearityViol_eq_zero_iff c r₁ r₂).2 fun p hp q hq hpq ↦ by
+    rw [← (hf _ _).1 hp, ← (hf _ _).1 hq]
+    exact not_lt.2 (hmono hpq.le)
+
+theorem identViol_eq_zero_iff_of_graph [DecidableEq α] :
+    c.identViol r₁ r₂ = 0 ↔ ∀ i, (c.form r₁)[i] = (c.form r₂)[f i] := by
+  simp only [identViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff, not_not]
+  refine ⟨fun H i ↦ H ((hf _ _).2 rfl), ?_⟩
+  rintro H ⟨i, j⟩ hij
+  rw [← (hf _ _).1 hij]
+  exact H i
+
+end Graph
+
 /-! ### Faithfulness as order isomorphism -/
 
 /-- An edge is faithful when it has no MAX, DEP, INTEGRITY, UNIFORMITY or LINEARITY
@@ -561,52 +687,44 @@ theorem exists_fun_mem_edge_iff (hmax : c.maxViol r₁ r₂ = 0)
   choose f hf huniq using hexU
   exact ⟨f, fun i j => ⟨fun h => (huniq i j h).symm, fun h => h ▸ hf i⟩⟩
 
+/-- Without MAX, INTEGRITY, UNIFORMITY or LINEARITY violations the edge is the graph of an order
+embedding. -/
+theorem exists_orderEmbedding_mem_edge_iff (hmax : c.maxViol r₁ r₂ = 0)
+    (hint : c.integrityViol r₁ r₂ = 0) (huni : c.uniformityViol r₁ r₂ = 0)
+    (hlin : c.linearityViol r₁ r₂ = 0) :
+    ∃ f : Fin (c.form r₁).length ↪o Fin (c.form r₂).length,
+      ∀ i j, (i, j) ∈ c.edge r₁ r₂ ↔ f i = j := by
+  obtain ⟨f, mem_iff⟩ := exists_fun_mem_edge_iff c r₁ r₂ hmax hint
+  have memf : ∀ i, (i, f i) ∈ c.edge r₁ r₂ := fun i => (mem_iff i (f i)).2 rfl
+  -- UNIFORMITY rules out collisions and LINEARITY inversions, so `f` is strictly monotone.
+  have hmono : StrictMono f := by
+    intro a b hab
+    rcases lt_trichotomy (f a) (f b) with h | h | h
+    · exact h
+    · have hu := Finset.card_le_one.1 ((uniformityViol_eq_zero_iff c r₁ r₂).1 huni (f b))
+      exact absurd (congrArg Prod.fst <| hu _ (Finset.mem_filter.2 ⟨memf a, h⟩)
+        _ (Finset.mem_filter.2 ⟨memf b, rfl⟩)) (ne_of_lt hab)
+    · exact absurd h ((linearityViol_eq_zero_iff c r₁ r₂).1 hlin _ (memf a) _ (memf b) hab)
+  exact ⟨.ofStrictMono f hmono, mem_iff⟩
+
 theorem isFaithful_iff_exists_orderIso :
     c.IsFaithful r₁ r₂ ↔
       ∃ e : Fin (c.form r₁).length ≃o Fin (c.form r₂).length,
         ∀ i j, (i, j) ∈ c.edge r₁ r₂ ↔ e i = j := by
   constructor
   · rintro ⟨hmax, hdep, hint, huni, hlin⟩
-    obtain ⟨f, mem_iff⟩ := exists_fun_mem_edge_iff c r₁ r₂ hmax hint
-    have memf : ∀ i, (i, f i) ∈ c.edge r₁ r₂ := fun i => (mem_iff i (f i)).2 rfl
-    -- UNIFORMITY rules out collisions and LINEARITY inversions, so `f` is strictly monotone.
-    have hmono : StrictMono f := by
-      intro a b hab
-      rcases lt_trichotomy (f a) (f b) with h | h | h
-      · exact h
-      · have hu := Finset.card_le_one.1 ((uniformityViol_eq_zero_iff c r₁ r₂).1 huni (f b))
-        exact absurd (congrArg Prod.fst <| hu _ (Finset.mem_filter.2 ⟨memf a, h⟩)
-          _ (Finset.mem_filter.2 ⟨memf b, rfl⟩)) (ne_of_lt hab)
-      · exact absurd h ((linearityViol_eq_zero_iff c r₁ r₂).1 hlin _ (memf a) _ (memf b) hab)
+    obtain ⟨f, mem_iff⟩ := exists_orderEmbedding_mem_edge_iff c r₁ r₂ hmax hint huni hlin
     have hsurj : Function.Surjective f := fun j => by
       obtain ⟨p, hp, hp2⟩ := Finset.mem_image.1
         ((depViol_eq_zero_iff c r₁ r₂).1 hdep (Finset.mem_univ j))
       exact ⟨p.1, (mem_iff p.1 j).1 (by simpa [← hp2] using hp)⟩
-    exact ⟨StrictMono.orderIsoOfSurjective f hmono hsurj,
+    exact ⟨StrictMono.orderIsoOfSurjective f f.strictMono hsurj,
       fun i j => by rw [mem_iff, StrictMono.coe_orderIsoOfSurjective]⟩
   · rintro ⟨e, he⟩
-    refine ⟨?_, ?_, ?_, ?_, ?_⟩
-    · exact (maxViol_eq_zero_iff c r₁ r₂).2 fun i _ =>
-        Finset.mem_image.2 ⟨(i, e i), (he i (e i)).2 rfl, rfl⟩
-    · exact (depViol_eq_zero_iff c r₁ r₂).2 fun j _ =>
-        Finset.mem_image.2 ⟨(e.symm j, j), (he _ j).2 (e.apply_symm_apply j), rfl⟩
-    · refine (integrityViol_eq_zero_iff c r₁ r₂).2 fun i =>
-        Finset.card_le_one.2 fun p hp q hq => ?_
-      rw [Finset.mem_filter] at hp hq
-      exact Prod.ext (hp.2.trans hq.2.symm) <| calc
-        p.2 = e p.1 := ((he p.1 p.2).1 hp.1).symm
-        _   = e q.1 := by rw [hp.2.trans hq.2.symm]
-        _   = q.2   := (he q.1 q.2).1 hq.1
-    · refine (uniformityViol_eq_zero_iff c r₁ r₂).2 fun j =>
-        Finset.card_le_one.2 fun p hp q hq => ?_
-      rw [Finset.mem_filter] at hp hq
-      refine Prod.ext (e.injective ?_) (hp.2.trans hq.2.symm)
-      calc e p.1 = p.2 := (he p.1 p.2).1 hp.1
-        _ = q.2   := hp.2.trans hq.2.symm
-        _ = e q.1 := ((he q.1 q.2).1 hq.1).symm
-    · refine (linearityViol_eq_zero_iff c r₁ r₂).2 fun p hp q hq hpq => ?_
-      rw [← (he p.1 p.2).1 hp, ← (he q.1 q.2).1 hq]
-      exact not_lt.2 (e.lt_iff_lt.2 hpq).le
+    refine ⟨maxViol_eq_zero_of_graph he, ?_, integrityViol_eq_zero_of_graph he,
+      uniformityViol_eq_zero_of_graph he e.injective, linearityViol_eq_zero_of_graph he e.monotone⟩
+    rw [← depViolAt_true, depViolAt_of_graph he, Finset.image_univ_of_surjective e.surjective]
+    simp
 
 /-- A faithful edge joins strings of equal length. -/
 theorem length_eq_of_isFaithful (h : c.IsFaithful r₁ r₂) :

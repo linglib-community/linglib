@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -65,9 +65,9 @@ theorem maxAt_insert {k : ℕ} {D : Finset ℕ} (hk : k ∉ D) :
 
 /-- On the deletion of one position from a string, `maxAt P` counts the input segments in `P`
 that have no correspondent in the output. -/
-theorem maxAt_singleton_eq_maxViolAt {α : Type*} {s : List α} {k : ℕ} (hk : k < s.length) :
-    maxAt P {k} = (Correspondence.eraseIdx s k).maxViolAt P .lhs .rhs := by
-  rw [maxAt_singleton, Correspondence.maxViolAt_eraseIdx hk]
+theorem maxAt_singleton_eq_maxViolAt {α : Type*} {s : List α} (k : Fin s.length) :
+    maxAt P {(k : ℕ)} = (Correspondence.eraseIdx s k).maxViolAt P .lhs .rhs := by
+  rw [maxAt_singleton, Correspondence.maxViolAt_eraseIdx]
 
 end MaxAt
 

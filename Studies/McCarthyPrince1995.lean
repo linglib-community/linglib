@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Akan.Phonology
-public import Linglib.Phonology.OptimalityTheory.Correspondence
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Mathlib.Tactic.FinCases
 
