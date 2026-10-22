@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ke2026_ex13",
+    "source": {
+      "bibkey": "ke-2026",
+      "paperLabel": "(13)"
+    },
+    "language": "stan1293",
+    "primaryText": "To whom will he say that Mary gave the book?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Successive-cyclic wh-movement through the edges of vP1, CP1, vP2 and CP2.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "successiveCyclic"
+      ]
+    ],
+    "comment": "Equivalent to example (3) of Fox and Pesetsky 2005a (fn. 18).",
+    "verified": "page-image"
+  }
+]
