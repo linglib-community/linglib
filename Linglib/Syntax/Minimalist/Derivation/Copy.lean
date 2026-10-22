@@ -6,8 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.List.Monadic
-public import Linglib.Core.Data.UnorderedTree.Leaves
-public import Linglib.Core.Order.TreePath
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 
 /-!
@@ -23,19 +21,24 @@ the algebraic account of Merge) is the replay with traces, which pronounces each
 
 * `Minimalist.Derivation.copyObject?`: the copy object, a syntactic object.
 * `Minimalist.PlanarSyntacticObject.Marked`, `Minimalist.Derivation.replayWithCopies?`: the planar
-  copy object with its lower copies marked, the datum externalization reads; `unmark`, `contract`
-  and `lowerCopies` read off the copy object, its contraction and the cut.
-* `Minimalist.SyntacticObject.yield`, `Minimalist.Derivation.lexTokens`: the pronounced tokens of
-  an object and the tokens a derivation merges.
+  copy object with its lower copies marked, the datum externalization reads; `unmark` and
+  `contract` read off the copy object and its contraction.
 
 ## Main results
 
-* `Minimalist.Derivation.copyObject?_append_im`, `copyObject?_append_em`: Internal Merge merges the
-  copy object with one of its terms, External Merge with an item from outside.
+* `Minimalist.Derivation.copyObject?_append_em`, `copyObject?_append_im`: External Merge merges the
+  copy object with an item from outside, Internal Merge with one of its own terms.
 * `Minimalist.Derivation.terms_subset_copyObject?_append`: preservation of terms.
 * `Minimalist.Derivation.map_contract_replayWithCopies?`: contracting the lower copies gives the
   replay with traces.
 * `Minimalist.Derivation.coe_surfaceTokens`: chain reduction, each merged token pronounced once.
+
+## TODO
+
+* Steps name their movers in the replay with traces, so a remnant mover carries traces and the copy
+  object depends on the trace encoder `τ`. Name movers independently of traces, or prove the copy
+  object independent of `τ` when no token is merged twice.
+* The lower copies as an admissible cut of the copy object, the one its contraction contracts.
 
 ## References
 
@@ -49,12 +52,14 @@ namespace Minimalist
 
 open RoseTree SyntacticObject
 
-/-- A planar syntactic object with its lower copies marked, the datum externalization reads: the
-root of each lower copy carries `some l`, `l` the label of the trace that stands for it, and every
-other vertex `none`. The copy object itself is a syntactic object, order and marks forgotten. -/
+/-- The mark on a vertex of a planar copy object: `some l` on the root of a lower copy, `l` the
+label of the trace that stands for it, and `none` elsewhere. -/
+abbrev CopyMark : Type := Option (Option LexicalItem.Token)
+
+/-- A planar syntactic object with its lower copies marked, the datum externalization reads. The
+copy object itself is a syntactic object, order and marks forgotten. -/
 def PlanarSyntacticObject.Marked : Type :=
-  {t : RoseTree (Option (Option LexicalItem.Token) × Vertex) //
-    IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))}
+  {t : RoseTree (CopyMark × Vertex) // IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))}
 
 instance : DecidableEq PlanarSyntacticObject.Marked := Subtype.instDecidableEq
 
@@ -62,35 +67,20 @@ namespace PlanarSyntacticObject.Marked
 
 /-! ### Contraction -/
 
-mutual
 /-- The contraction of a marked tree: each marked subtree becomes the trace leaf of its mark. -/
-def contractTree : RoseTree (Option (Option LexicalItem.Token) × Vertex) → RoseTree Vertex
-  | .node (some l, _) _ => .node (.inr l) []
-  | .node (none, a) cs => .node a (contractList cs)
-/-- `contractTree` on each tree of a list. -/
-def contractList :
-    List (RoseTree (Option (Option LexicalItem.Token) × Vertex)) → List (RoseTree Vertex)
-  | [] => []
-  | c :: cs => contractTree c :: contractList cs
-end
-
-theorem contractList_eq (cs : List (RoseTree (Option (Option LexicalItem.Token) × Vertex))) :
-    contractList cs = cs.map contractTree := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => rw [contractList, ih, List.map_cons]
+def contractTree : RoseTree (CopyMark × Vertex) → RoseTree Vertex :=
+  fold fun v cs ↦ v.1.elim (.node v.2 cs) fun l ↦ .node (.inr l) []
 
 @[simp] theorem contractTree_some (l : Option LexicalItem.Token) (a : Vertex)
-    (cs : List (RoseTree (Option (Option LexicalItem.Token) × Vertex))) :
+    (cs : List (RoseTree (CopyMark × Vertex))) :
     contractTree (.node (some l, a) cs) = .node (.inr l) [] := by
-  rw [contractTree]
+  simp [contractTree, fold_node]
 
-@[simp] theorem contractTree_none (a : Vertex)
-    (cs : List (RoseTree (Option (Option LexicalItem.Token) × Vertex))) :
+@[simp] theorem contractTree_none (a : Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
     contractTree (.node (none, a) cs) = .node a (cs.map contractTree) := by
-  rw [contractTree, contractList_eq]
+  simp [contractTree, fold_node]
 
-theorem isSyntacticObject_contractTree {t : RoseTree (Option (Option LexicalItem.Token) × Vertex)}
+theorem isSyntacticObject_contractTree {t : RoseTree (CopyMark × Vertex)}
     (h : IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))) :
     IsSyntacticObject (UnorderedTree.mk (contractTree t)) := by
   induction t with
@@ -117,7 +107,7 @@ def contract : PlanarSyntacticObject := ⟨contractTree t.val, isSyntacticObject
 /-! ### Planar objects without lower copies -/
 
 theorem map_snd_map (s : RoseTree Vertex) :
-    (s.map ((none, ·) : Vertex → Option (Option LexicalItem.Token) × Vertex)).map Prod.snd = s := by
+    (s.map ((none, ·) : Vertex → CopyMark × Vertex)).map Prod.snd = s := by
   rw [← comp_map]
   exact id_map s
 
@@ -166,56 +156,34 @@ section Mark
 
 variable (m : SyntacticObject) (l : Option LexicalItem.Token)
 
-mutual
-/-- Mark every outermost subtree whose contraction is `m` as a lower copy whose trace carries `l`,
-testing each subtree before its children: `replaceIf` on the contraction. -/
-def markTree :
-    RoseTree (Option (Option LexicalItem.Token) × Vertex) →
-      RoseTree (Option (Option LexicalItem.Token) × Vertex)
-  | .node (k, a) cs =>
-      if UnorderedTree.mk (contractTree (.node (k, a) cs)) = m.val then .node (some l, a) cs
-      else match k with
-        | some l' => .node (some l', a) cs
-        | none => .node (none, a) (markList cs)
-/-- `markTree` on each tree of a list. -/
-def markList :
-    List (RoseTree (Option (Option LexicalItem.Token) × Vertex)) →
-      List (RoseTree (Option (Option LexicalItem.Token) × Vertex))
-  | [] => []
-  | c :: cs => markTree c :: markList cs
-end
+/-- The tree with its root marked as a lower copy whose trace carries `l`. -/
+def setMark : RoseTree (CopyMark × Vertex) → RoseTree (CopyMark × Vertex)
+  | .node (_, a) cs => .node (some l, a) cs
 
-theorem markList_eq (cs : List (RoseTree (Option (Option LexicalItem.Token) × Vertex))) :
-    markList m l cs = cs.map (markTree m l) := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => rw [markList, ih, List.map_cons]
+/-- Mark every outermost subtree whose contraction is `m` as a lower copy whose trace carries `l`:
+`replaceIf` on the contraction. -/
+def markTree : RoseTree (CopyMark × Vertex) → RoseTree (CopyMark × Vertex) :=
+  modifyIf (fun s ↦ UnorderedTree.mk (contractTree s) = m.val) (setMark l)
 
-theorem markTree_node (k : Option (Option LexicalItem.Token)) (a : Vertex)
-    (cs : List (RoseTree (Option (Option LexicalItem.Token) × Vertex))) :
-    markTree m l (.node (k, a) cs) =
-      if UnorderedTree.mk (contractTree (.node (k, a) cs)) = m.val then .node (some l, a) cs
-      else match k with
-        | some l' => .node (some l', a) cs
-        | none => .node (none, a) (cs.map (markTree m l)) := by
-  simp only [markTree, markList_eq]
+theorem markTree_node (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
+    markTree m l (.node v cs) =
+      if UnorderedTree.mk (contractTree (.node v cs)) = m.val then setMark l (.node v cs)
+      else .node v (cs.map (markTree m l)) :=
+  modifyIf_node _ _ v cs
 
 /-- Marking changes no vertex of the copy object. -/
-theorem map_snd_markTree (s : RoseTree (Option (Option LexicalItem.Token) × Vertex)) :
+theorem map_snd_markTree (s : RoseTree (CopyMark × Vertex)) :
     (markTree m l s).map Prod.snd = s.map Prod.snd := by
   induction s with
   | node v cs ih =>
-    obtain ⟨k, a⟩ := v
     rw [markTree_node]
     split_ifs
-    · simp
-    · rcases k with _ | l'
-      · rw [map_node, map_node, List.map_map]
-        exact congrArg _ (List.map_congr_left ih)
-      · rfl
+    · simp [setMark]
+    · rw [map_node, map_node, List.map_map]
+      exact congrArg _ (List.map_congr_left ih)
 
 /-- Marking the copies of `m` contracts to replacing `m` in the contraction. -/
-theorem contractTree_markTree (s : RoseTree (Option (Option LexicalItem.Token) × Vertex)) :
+theorem contractTree_markTree (s : RoseTree (CopyMark × Vertex)) :
     contractTree (markTree m l s) =
       replaceIf (UnorderedTree.mk · = m.val) (.node (.inr l) []) (contractTree s) := by
   induction s with
@@ -223,12 +191,15 @@ theorem contractTree_markTree (s : RoseTree (Option (Option LexicalItem.Token) �
     obtain ⟨k, a⟩ := v
     rw [markTree_node]
     rcases k with _ | l' <;> split_ifs with h
-    · rw [contractTree_some, contractTree_none, replaceIf_node, ite_eq_left (by simpa using h)]
+    · rw [setMark, contractTree_some, contractTree_none, replaceIf_node,
+        ite_eq_left (by simpa using h)]
     · rw [contractTree_none, contractTree_none, replaceIf_node, ite_eq_right (by simpa using h),
         List.map_map, List.map_map]
       exact congrArg _ (List.map_congr_left ih)
-    · rw [contractTree_some, contractTree_some, replaceIf_node, ite_eq_left (by simpa using h)]
-    · rw [contractTree_some, replaceIf_node, ite_eq_right (by simpa using h), List.map_nil]
+    · rw [setMark, contractTree_some, contractTree_some, replaceIf_node,
+        ite_eq_left (by simpa using h)]
+    · rw [contractTree_some, contractTree_some, replaceIf_node, ite_eq_right (by simpa using h),
+        List.map_nil]
 
 end Mark
 
@@ -256,25 +227,25 @@ mutual
 /-- The subtrees outside the lower copies, in preorder, a lower copy itself included: the subtrees
 whose contractions are the subtrees of the contraction. -/
 def outerSubtrees :
-    RoseTree (Option (Option LexicalItem.Token) × Vertex) →
-      List (RoseTree (Option (Option LexicalItem.Token) × Vertex))
+    RoseTree (CopyMark × Vertex) →
+      List (RoseTree (CopyMark × Vertex))
   | .node (some l, a) cs => [.node (some l, a) cs]
   | .node (none, a) cs => .node (none, a) cs :: outerSubtreesList cs
 /-- `outerSubtrees` of the trees of a list. -/
 def outerSubtreesList :
-    List (RoseTree (Option (Option LexicalItem.Token) × Vertex)) →
-      List (RoseTree (Option (Option LexicalItem.Token) × Vertex))
+    List (RoseTree (CopyMark × Vertex)) →
+      List (RoseTree (CopyMark × Vertex))
   | [] => []
   | c :: cs => outerSubtrees c ++ outerSubtreesList cs
 end
 
-theorem outerSubtreesList_eq (cs : List (RoseTree (Option (Option LexicalItem.Token) × Vertex))) :
+theorem outerSubtreesList_eq (cs : List (RoseTree (CopyMark × Vertex))) :
     outerSubtreesList cs = cs.flatMap outerSubtrees := by
   induction cs with
   | nil => rfl
   | cons c cs ih => rw [outerSubtreesList, ih, List.flatMap_cons]
 
-theorem map_contractTree_outerSubtrees (s : RoseTree (Option (Option LexicalItem.Token) × Vertex)) :
+theorem map_contractTree_outerSubtrees (s : RoseTree (CopyMark × Vertex)) :
     (outerSubtrees s).map contractTree = (contractTree s).subtrees := by
   induction s with
   | node v cs ih =>
@@ -285,7 +256,7 @@ theorem map_contractTree_outerSubtrees (s : RoseTree (Option (Option LexicalItem
       exact congrArg _ (List.flatMap_congr ih)
     · simp [outerSubtrees]
 
-theorem isSubtree_of_mem_outerSubtrees {r s : RoseTree (Option (Option LexicalItem.Token) × Vertex)}
+theorem isSubtree_of_mem_outerSubtrees {r s : RoseTree (CopyMark × Vertex)}
     (h : r ∈ outerSubtrees s) : IsSubtree r s := by
   induction s with
   | node v cs ih =>
@@ -314,24 +285,6 @@ theorem map_contract_find? (target : SyntacticObject) :
   simp only [Function.comp_apply, contract, Option.pmap_eq_map]
   rw [← map_contractTree_outerSubtrees, List.find?_map]
   simp [Function.comp_def]
-
-/-! ### Lower copies -/
-
-mutual
-/-- The addresses of the outermost marked subtrees, in preorder. -/
-def lowerCopyAddrs : RoseTree (Option (Option LexicalItem.Token) × Vertex) → List (List ℕ)
-  | .node (some _, _) _ => [[]]
-  | .node (none, _) cs => lowerCopyAddrsList 0 cs
-/-- `lowerCopyAddrs` of the trees of a list, those of the `i`-th prefixed by `i`. -/
-def lowerCopyAddrsList :
-    ℕ → List (RoseTree (Option (Option LexicalItem.Token) × Vertex)) → List (List ℕ)
-  | _, [] => []
-  | i, c :: cs => (lowerCopyAddrs c).map (i :: ·) ++ lowerCopyAddrsList (i + 1) cs
-end
-
-/-- The positions of the lower copies, left to right, each outermost: the cut the contraction
-contracts ([marcolli-chomsky-berwick-2025] Definition 1.2.6). -/
-def lowerCopies (t : Marked) : List Core.Order.TreePath := (lowerCopyAddrs t.val).map .mk
 
 end PlanarSyntacticObject.Marked
 
@@ -399,10 +352,15 @@ theorem Derivation.map_contract_replayWithCopies? (d : Derivation) :
   simp [Cfg.map]
 
 /-- The externalized object is the contraction of the copy object. -/
-theorem Derivation.map_contract_current_replayWithCopies? (d : Derivation) :
-    (d.replayWithCopies? τ).map (·.current.contract) = d.externalize? τ := by
+theorem Derivation.externalize?_eq_map_replayWithCopies? (d : Derivation) :
+    d.externalize? τ = (d.replayWithCopies? τ).map (·.current.contract) := by
   rw [externalize?, ← d.map_contract_replayWithCopies?, Option.map_map]
   rfl
+
+/-- The replay with copies fails exactly when the replay with traces does. -/
+theorem Derivation.isSome_replayWithCopies? (d : Derivation) :
+    (d.replayWithCopies? τ).isSome = (d.replay? τ).isSome := by
+  rw [← d.map_contract_replayWithCopies?, Option.isSome_map]
 
 /-- Internal Merge with copies merges a copy of a subtree of the copy object onto the object
 unchanged: Extension and No Tampering. -/
@@ -497,15 +455,16 @@ theorem Derivation.terms_subset_copyObject?_append {d : Derivation} {steps : Lis
   exact ⟨_, Option.map_eq_some_iff.2 ⟨c, hc, rfl⟩,
     terms_subset_terms (mem_terms.1 (mem_terms_foldlM_replayWithCopies? hc'))⟩
 
-/-- External Merge merges the copy object with an item from outside. -/
-theorem Derivation.copyObject?_append_em {d : Derivation} {side : Edge} {item : SyntacticObject}
-    {C' : SyntacticObject} (h : (d.append [.em side item]).copyObject? τ = some C') :
-    ∃ C ∈ d.copyObject? τ, C' = merge item C := by
-  obtain ⟨c', hc', rfl⟩ := Option.map_eq_some_iff.1 h
-  rw [replayWithCopies?_append] at hc'
-  obtain ⟨c, hc, hc'⟩ := Option.bind_eq_some_iff.1 hc'
-  exact ⟨_, Option.map_eq_some_iff.2 ⟨c, hc, rfl⟩,
-    Step.toSyntacticObject_replayWithCopies?_em (by simpa using hc')⟩
+/-- External Merge merges the copy object with the item, a leaf from outside. -/
+theorem Derivation.copyObject?_append_em (d : Derivation) (side : Edge) (item : SyntacticObject) :
+    (d.append [.em side item]).copyObject? τ =
+      (d.copyObject? τ).bind fun C ↦ item.toPlanarLeaf?.map fun _ ↦ merge item C := by
+  simp only [copyObject?, replayWithCopies?_append, Option.map_bind, Option.bind_map]
+  congr 1
+  funext c
+  rcases h : item.toPlanarLeaf? with _ | i
+  · simp [Step.replayWithCopies?, h]
+  · simp [Step.replayWithCopies?, h, SyntacticObject.toSyntacticObject_of_toPlanarLeaf? h]
 
 /-- Internal Merge merges the copy object with one of its own terms, so Internal and External
 Merge are one operation, differing in where its object comes from. -/
@@ -519,85 +478,6 @@ theorem Derivation.copyObject?_append_im {d : Derivation} {mover : SyntacticObje
     Step.toSyntacticObject_replayWithCopies?_im (by simpa using hc')⟩
 
 /-! ### Pronunciation -/
-
-/-- The pronounced tokens of a syntactic object, its lexical leaves. -/
-def SyntacticObject.yield (s : SyntacticObject) : Multiset LexicalItem.Token :=
-  s.val.leaves.filterMap (Sum.elim id fun _ ↦ none)
-
-namespace PlanarSyntacticObject
-
-theorem yield_toSyntacticObject (p : PlanarSyntacticObject) :
-    p.toSyntacticObject.yield = p.val.leaves.filterMap (Sum.elim id fun _ ↦ none) := rfl
-
-/-- The pronounced tokens of a planar object are those of its object, in order. -/
-theorem coe_yield (p : PlanarSyntacticObject) :
-    (p.yield : Multiset LexicalItem.Token) = p.toSyntacticObject.yield := by
-  rw [yield, ← Multiset.filterMap_coe, RoseTree.coe_leafList]
-  rfl
-
-theorem yield_attach (p : PlanarSyntacticObject) (e : Edge) (d : PlanarSyntacticObject) :
-    (p.attach e d).toSyntacticObject.yield =
-      d.toSyntacticObject.yield + p.toSyntacticObject.yield := by
-  cases e <;>
-    simp only [yield_toSyntacticObject, attach, merge_val, RoseTree.leaves_node_cons,
-      List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, Multiset.filterMap_add]
-  exact add_comm _ _
-
-private theorem filterMap_nsmul {α β : Type*} (f : α → Option β) (n : ℕ) (s : Multiset α) :
-    (n • s).filterMap f = n • s.filterMap f := by
-  induction n with
-  | zero => simp
-  | succ n ih => rw [succ_nsmul, Multiset.filterMap_add, ih, succ_nsmul]
-
-private theorem le_one_of_nodup_nsmul {α : Type*} [DecidableEq α] {n : ℕ} {s : Multiset α}
-    (h : (n • s).Nodup) (hs : s ≠ 0) : n ≤ 1 := by
-  obtain ⟨a, ha⟩ := Multiset.exists_mem_of_ne_zero hs
-  have h1 := Multiset.nodup_iff_count_le_one.1 h a
-  rw [Multiset.count_nsmul] at h1
-  exact le_trans (Nat.le_mul_of_pos_right n (Multiset.count_pos.2 ha)) h1
-
-/-- Raising the occurrence of `m` that `find?` locates, with its occurrences replaced by its trace,
-keeps the pronounced tokens when none is pronounced twice. -/
-theorem yield_replace_add_yield {p s : PlanarSyntacticObject} {m : SyntacticObject}
-    (τ : SyntacticObject → Option LexicalItem.Token) (hp : p.toSyntacticObject.yield.Nodup)
-    (hs : p.find? m = some s) :
-    (p.replace m (m.tracePlanar τ)).toSyntacticObject.yield + s.toSyntacticObject.yield =
-      p.toSyntacticObject.yield := by
-  have key := congrArg (Multiset.filterMap (Sum.elim id fun _ ↦ none))
-    (leaves_replaceIf (UnorderedTree.mk · = m.val) (m.tracePlanar τ).val p.val)
-  have hom : (outerMatches (UnorderedTree.mk · = m.val) p.val).map leaves =
-      List.replicate (outerMatches (UnorderedTree.mk · = m.val) p.val).length m.val.leaves := by
-    refine List.eq_replicate_iff.2 ⟨by simp, fun x hx ↦ ?_⟩
-    obtain ⟨o, ho, rfl⟩ := List.mem_map.1 hx
-    rw [← UnorderedTree.leaves_mk, of_mem_outerMatches ho]
-  rw [hom, List.sum_replicate, Multiset.filterMap_add, Multiset.filterMap_add, filterMap_nsmul,
-    filterMap_nsmul, tracePlanar_val, leaves_leaf] at key
-  have htr : (({.inr (τ m)} : Multiset Vertex).filterMap (Sum.elim id fun _ ↦ none)) = 0 := rfl
-  rw [htr, nsmul_zero, add_zero] at key
-  obtain ⟨s', -, hs', rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at hs)
-  have hmem := mem_outerMatches_of_find? hs'
-  have hsm : s'.leaves.filterMap (Sum.elim id fun _ ↦ none) =
-      m.val.leaves.filterMap (Sum.elim id fun _ ↦ none) := by
-    rw [← UnorderedTree.leaves_mk, of_mem_outerMatches hmem]
-  change _ + _ = p.val.leaves.filterMap _ at key
-  change (replaceIf _ _ p.val).leaves.filterMap _ + s'.leaves.filterMap _ =
-    p.val.leaves.filterMap _
-  rw [hsm, tracePlanar_val]
-  by_cases h0 : m.val.leaves.filterMap (Sum.elim id fun _ ↦ none) = 0
-  · rw [h0, nsmul_zero, add_zero] at key
-    rw [h0, add_zero, key]
-  · have hle := le_one_of_nodup_nsmul
-      (Multiset.nodup_of_le (key ▸ Multiset.le_add_left _ _) hp) h0
-    have hk : (outerMatches (UnorderedTree.mk · = m.val) p.val).length = 1 :=
-      le_antisymm hle (List.length_pos_of_mem hmem)
-    rwa [hk, one_nsmul] at key
-
-end PlanarSyntacticObject
-
-/-- The tokens a derivation merges: those of its initial object and of every item it merges
-externally. -/
-def Derivation.lexTokens (d : Derivation) : Multiset LexicalItem.Token :=
-  d.initial.yield + (d.items.map SyntacticObject.yield).sum
 
 /-- The pronounced tokens of a configuration, its object's and those of the copies on its stack. -/
 private def cfgYield (c : Cfg PlanarSyntacticObject) : Multiset LexicalItem.Token :=
@@ -668,5 +548,14 @@ theorem Derivation.coe_surfaceTokens {d : Derivation} (hd : d.lexTokens.Nodup)
   rw [hst, List.map_nil, List.sum_nil, add_zero] at this
   rw [surfaceTokens, externalize?, hc, Option.map_some, Option.map_some, Option.getD_some,
     PlanarSyntacticObject.coe_yield, this]
+
+/-- Chain reduction needs the tokens fresh: raising a token merged twice replaces both occurrences
+by its trace, so one of the two goes unpronounced. -/
+example :
+    let a : LexicalItem.Token := ⟨.of .D [], 0⟩
+    let b : LexicalItem.Token := ⟨.of .V [.D], 1⟩
+    let d : Derivation := ⟨a, [.em .left b, .em .left a, .im a]⟩
+    (d.surfaceTokens : Multiset _) ≠ d.lexTokens := by
+  decide
 
 end Minimalist

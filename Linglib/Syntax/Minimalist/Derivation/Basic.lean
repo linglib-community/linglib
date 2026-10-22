@@ -435,6 +435,11 @@ def leftward (d : Derivation) : Derivation := ⟨d.initial, d.steps.map Step.lef
 /-- The items a derivation introduces by External Merge. -/
 def items (d : Derivation) : Workspace := Step.itemsList d.steps
 
+/-- The tokens a derivation merges: those of its initial object and of every item it merges
+externally. -/
+def lexTokens (d : Derivation) : Multiset LexicalItem.Token :=
+  d.initial.yield + (d.items.map SyntacticObject.yield).sum
+
 /-- A derivation is admissible when each of its steps is, beside the items still to come. -/
 def Admissible (d : Derivation) : Prop := Step.AdmissibleList d.steps d.initial
 

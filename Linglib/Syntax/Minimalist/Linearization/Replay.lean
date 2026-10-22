@@ -168,6 +168,21 @@ theorem SyntacticObject.tracePlanar_val (s : SyntacticObject)
     (s.tracePlanar τ).toSyntacticObject = s.headTrace τ := by
   unfold tracePlanar headTrace; cases τ s <;> rfl
 
+/-- Raising the occurrence of `m` that `find?` locates, with its occurrences replaced by its trace,
+keeps the pronounced tokens when none is pronounced twice. -/
+theorem PlanarSyntacticObject.yield_replace_add_yield {p s : PlanarSyntacticObject}
+    {m : SyntacticObject} (τ : SyntacticObject → Option LexicalItem.Token)
+    (hp : p.toSyntacticObject.yield.Nodup) (hs : p.find? m = some s) :
+    (p.replace m (m.tracePlanar τ)).toSyntacticObject.yield + s.toSyntacticObject.yield =
+      p.toSyntacticObject.yield := by
+  obtain ⟨s', -, hs', rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at hs)
+  refine filterMap_leaves_replaceIf_add _ _ (L := m.yield) (fun u hu ↦ ?_) ?_ hp
+    (mem_outerMatches_of_find? hs')
+  · rw [← UnorderedTree.leaves_mk, hu]
+    rfl
+  · rw [SyntacticObject.tracePlanar_val]
+    rfl
+
 variable {side : Edge}
 
 /-- A leaf's planar form is its harmonic planarization. -/
