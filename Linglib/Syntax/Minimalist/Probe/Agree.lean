@@ -39,6 +39,8 @@ every interacting goal satisfies the probe; and Multiple Agree is the case of an
 * `Minimalist.Probe.Spec`: interaction and satisfaction conditions, each a finite set of feature
   bundles presenting the upper set of bundles containing one of them.
 * `Minimalist.Probe.Spec.ofFeatures`: the conditions met by bearing any one of some features.
+* `Minimalist.Probe.Spec.ofGeometry`, `Minimalist.Probe.Spec.relativized`: `[INT:f, SAT:g]` over a
+  feature geometry, interaction copying `f` and the features it dominates.
 * `Minimalist.Probe.Spec.agree`: Agree over goals exposing feature sets, with dynamic interaction.
 
 ## Main results
@@ -53,6 +55,8 @@ every interacting goal satisfies the probe; and Multiple Agree is the case of an
   probe it denotes.
 * `Minimalist.Probe.Spec.sup_toProbe_int`, `Minimalist.Probe.Spec.sup_toProbe_sat`: the join of
   two specifications is a disjunctive probe.
+* `Minimalist.Probe.Spec.ofGeometry_toProbe_int_iff`: over a privative geometry, interacting with
+  `[INT:f]` is bearing `f`.
 * `Minimalist.Probe.Spec.subset_Ici_of_mem_dynamicUpdate`: dynamic interaction narrows the
   interaction condition to the features a dynamic feature dominates.
 * `Minimalist.Probe.Spec.foldl_dynamicUpdate`, `Minimalist.Probe.Spec.mem_agree_interacted_iff`:
@@ -339,6 +343,36 @@ variable {int sat : Finset F} {a : α}
 @[simp] theorem ofFeatures_satFeatures :
     (ofFeatures int sat).satFeatures feats a = feats a ∩ sat := by
   simp [satFeatures, ofFeatures, Finset.powersetCard_one, Finset.sup_map]
+
+section Geometry
+
+variable [Preorder F] [LocallyFiniteOrderTop F]
+
+/-- The specification `[INT:f, SAT:g]` over a feature geometry, in which a feature is below the
+features it dominates: interaction with `f` copies `f` and every feature it dominates, (8a) of
+[deal-2024], and satisfaction is bearing `g`. -/
+def ofGeometry (f g : F) : Spec F := ofFeatures (Finset.Ici f) {g}
+
+/-- The relativized probe `[INT:f, SAT:f]`. -/
+abbrev relativized (f : F) : Spec F := ofGeometry f f
+
+variable {f g : F}
+
+/-- Interaction copies `f` and the features it dominates. -/
+@[simp] theorem ofGeometry_intFeatures :
+    (ofGeometry f g).intFeatures feats a = feats a ∩ Finset.Ici f :=
+  ofFeatures_intFeatures
+
+/-- When a goal bears every feature dominating one it bears, as in a privative geometry, it
+interacts with `[INT:f]` exactly when it bears `f`. -/
+theorem ofGeometry_toProbe_int_iff (hc : ∀ x ∈ feats a, ∀ y ≤ x, y ∈ feats a) :
+    ((ofGeometry f g).toProbe feats).int a ↔ f ∈ feats a := by
+  rw [ofGeometry, ofFeatures_toProbe_int]
+  refine ⟨fun ⟨x, hx⟩ ↦ ?_, fun hf ↦ ⟨f, Finset.mem_inter.2 ⟨hf, Finset.mem_Ici.2 le_rfl⟩⟩⟩
+  rw [Finset.mem_inter, Finset.mem_Ici] at hx
+  exact hc x hx.1 f hx.2
+
+end Geometry
 
 variable (sp feats)
 

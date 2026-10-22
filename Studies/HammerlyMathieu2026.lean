@@ -68,7 +68,31 @@ instance : LinearOrder PhiFeature := LinearOrder.lift' PhiFeature.ctorIdx (by de
 inductive Feature where
   | phi (f : PhiFeature)
   | delta
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
+
+/-- The geometry of (22): a φ-feature dominates the more specific ones, and δ stands alone. -/
+def Feature.Le : Feature → Feature → Prop
+  | .phi f, .phi g => f ≤ g
+  | .delta, .delta => True
+  | _, _ => False
+
+instance : DecidableRel Feature.Le := fun a b ↦ by
+  cases a <;> cases b <;> unfold Feature.Le <;> infer_instance
+
+instance : PartialOrder Feature where
+  le := Feature.Le
+  le_refl a := by cases a <;> simp [Feature.Le]
+  le_trans := by decide
+  le_antisymm := by decide
+
+instance : DecidableLE Feature := inferInstanceAs (DecidableRel Feature.Le)
+
+/-- `Finset.Ici f` is `f` and the features it dominates. -/
+instance : LocallyFiniteOrderTop Feature :=
+  .ofIci' Feature (fun a ↦ Finset.univ.filter (a ≤ ·)) fun _ _ ↦ by simp
+
+@[simp] theorem Feature.phi_le_phi {f g : PhiFeature} : Feature.phi f ≤ .phi g ↔ f ≤ g :=
+  Iff.rfl
 
 /-- The φ-features as features. -/
 def Feature.ofPhi : PhiFeature ↪ Feature := ⟨.phi, fun _ _ ↦ Feature.phi.inj⟩
@@ -82,15 +106,9 @@ def phiFeatures (f : PhiFeature) : Finset Feature := (Finset.univ.filter (· ≤
 @[simp] theorem delta_not_mem_phiFeatures (f : PhiFeature) : Feature.delta ∉ phiFeatures f := by
   simp [phiFeatures, Feature.ofPhi]
 
-/-- [f] in an interaction specification, `f` and the φ-features it dominates, the convention of
-[deal-2024], so that a probe interacting with [φ] copies every φ-feature of its goal. -/
-def closure (f : PhiFeature) : Finset Feature := (Finset.univ.filter (f ≤ ·)).map Feature.ofPhi
-
-@[simp] theorem mem_closure {f g : PhiFeature} : Feature.phi g ∈ closure f ↔ f ≤ g := by
-  simp [closure, Feature.ofPhi]
-
-/-- The probe relativized to `f`, [INT:{f}, SAT:{f}]. -/
-def relativizedTo (f : PhiFeature) : Spec Feature := .ofFeatures (closure f) {.phi f}
+/-- The probe relativized to `f`, [INT:{f}, SAT:{f}], whose interaction copies `f` and the
+φ-features it dominates. -/
+def relativizedTo (f : PhiFeature) : Spec Feature := .relativized (.phi f)
 
 /-- An argument of the embedded clause. -/
 structure Arg where
@@ -137,7 +155,7 @@ def Voice.epp : Voice → Spec Feature
   | .ergative => relativizedTo .phi
 
 /-- The agreement probe of Infl (24), [INT:{φ}, SAT:{PROX}]. -/
-def inflAgr : Spec Feature := .ofFeatures (closure .phi) {.phi .prox}
+def inflAgr : Spec Feature := .ofGeometry (.phi .phi) (.phi .prox)
 
 /-- The movement probe of Infl (24), [INT:{PROX}, SAT:{PROX}]. -/
 def inflEpp : Spec Feature := relativizedTo .prox
@@ -146,7 +164,7 @@ def inflEpp : Spec Feature := relativizedTo .prox
 def phiEpp : Spec Feature := relativizedTo .phi
 
 /-- C's pure δ-probe, of free LDA (31a). -/
-def deltaEpp : Spec Feature := .ofFeatures {.delta} {.delta}
+def deltaEpp : Spec Feature := .relativized .delta
 
 /-- The movement probe of C (25), (32), [INT:{φ ∨ δ}, SAT:{φ ∨ δ}], the join of the φ-probe and the
 δ-probe, so that a goal bearing both matches better than a goal bearing one. -/
