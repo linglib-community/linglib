@@ -35,7 +35,9 @@ positions extends the order of its tiers and makes its lines overlaps (26).
 * `IsEventStructure.not_crossing`, `IsEventStructureOf.noCrossing`: the derivation of the
   No-Crossing Constraint.
 * `clements_consistent`: the representation (27) of Clements's `mo yɛ ka` is consistent.
-* `not_isEventStructureOf_cycle`: three tiers whose lines cross none pairwise are inconsistent.
+* `not_isEventStructureOf_cycle`: three tiers whose lines cross none pairwise are inconsistent
+  when the lines join the tiers in a cycle, and `path_consistent`: consistent once one line is
+  removed.
 
 ## Implementation notes
 
@@ -45,8 +47,9 @@ a precedence satisfying (13) with overlap its incomparability is an interval ord
 endpoint definitions (12), which the paper considers and sets aside, state overlap strictly, so
 under them a one-point interval does not overlap itself; the point-set definitions (11) read off
 closed intervals are those of `NonemptyInterval`. The cycle of three tiers is a consequence of
-the axioms that the paper does not discuss: they are strictly stronger than the classical
-pairwise No-Crossing Constraint once lines join three tiers in a cycle.
+the axioms that the paper does not discuss: they agree with the classical pairwise No-Crossing
+Constraint when lines join only tiers adjacent in a forest, and are strictly stronger once lines
+join three tiers in a cycle.
 
 ## References
 
@@ -223,5 +226,19 @@ theorem not_isEventStructureOf_cycle (prec ov : cycle.Pos → cycle.Pos → Prop
   have h₂₀ := h.prec_of_prec_of_ov h₂ (h.ov_of_adj (by decide)) h₁
   exact h.not_ov_of_prec (h.prec_of_prec_of_ov h₂₀ (h.ov_of_adj (by decide)) h₀)
     (h.ov_of_adj (by decide))
+
+/-- The cycle without the line from the last tier back to the first, so that the tiers form a
+path. -/
+abbrev path : AR fun _ : Fin 3 ↦ Unit :=
+  AR.fromRel (fun _ ↦ [(), ()]) fun i j p q ↦ p = 0 ∧ q = 1 ∧ j = i + 1 ∧ i ≠ 2
+
+/-- The path is consistent: its lines cross none pairwise and join only tiers adjacent in a
+path, a forest. -/
+theorem path_consistent : ∃ prec ov, IsEventStructureOf path prec ov := by
+  have hX : ∀ v w : path.Pos, path.assoc.Adj v w → (SimpleGraph.pathGraph 3).Adj v.1 w.1 := by
+    decide
+  exact exists_isEventStructureOf_of_hasIntervalOrder <|
+    (AR.noCrossing_iff_hasIntervalOrder_of_isAcyclic (SimpleGraph.isAcyclic_pathGraph 3)
+      fun v w ↦ hX v w).1 (by decide)
 
 end BirdKlein1990
