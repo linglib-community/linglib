@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Feature.Basic
-public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Syntax.Minimalist.Probe.Minimal
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
@@ -9,26 +9,16 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 /-!
 # Agree: closest goals, horizons, and valuation
 
-This file defines the structural conditions of Agree over syntactic objects and its valuation
-step over feature bundles. A closest goal for a probe is a node of the probe's c-command domain
-that satisfies the probe's relativization and that no other such node asymmetrically
-c-commands, which is the Minimal Link Condition of [chomsky-1995] with mutually c-commanding
-candidates equidistant. A target lies behind a horizon for a probe when a leaf of the horizon
-category lies in the probe's domain and c-commands the target, so that the probe's search
-terminates before reaching it ([keine-2019]). Valuation copies a goal's value into an unvalued
-probe slot and is inflationary in the subsumption order on bundles, so Agree only adds
-information.
-
-The closest-goal predicate is the tree-native form of the list search `Probe.search`. A probe's
-search over an enumeration of its domain sorted by c-command finds one of its closest visible
-goals (`isClosestGoalIn_of_search_eq_some`). At the positions of a planar object whose terms each
-occur once, it is minimality under the branching positions above a candidate, the closeness of
-`PhraseStructure.ancestors`, wherever no candidate dominates another.
+This file states the structural conditions of Agree over syntactic objects and its valuation step
+over feature bundles. A probe on the head at a position of a planar object searches the positions
+the head c-commands, closest by the branching positions above them, and so finds a goal that no
+other satisfier asymmetrically c-commands: the Minimal Link Condition, with mutually c-commanding
+candidates equidistant. A target lies behind a horizon when a leaf of the horizon category in the
+probe's domain c-commands it, and valuation copies a goal's value into an unvalued probe slot,
+only adding information.
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.isClosestGoalIn`: a goal in the probe's domain that no other
-  candidate asymmetrically c-commands.
 * `Minimalist.SyntacticObject.behindHorizonIn`: a target c-commanded by a horizon-category leaf
   in the probe's domain.
 * `Minimalist.FeatureBundle.valueAt`, `Minimalist.FeatureBundle.applyAgree`: valuation of an
@@ -36,9 +26,10 @@ occur once, it is minimality under the branching positions above a candidate, th
 
 ## Main results
 
-* `Minimalist.PlanarSyntacticObject.isClosestGoalIn_termAt_iff`,
-  `Minimalist.PlanarSyntacticObject.isClosestGoalIn_termAt_iff_minimalFor`: a closest goal at
-  positions, and as minimality under closeness.
+* `Minimalist.PlanarSyntacticObject.not_finds_of_cCommands`: a satisfier that asymmetrically
+  c-commands a position blocks the goal there.
+* `Minimalist.PlanarSyntacticObject.finds_above_branching_iff`: among satisfiers none of which
+  dominates another, a probe finds those that no satisfier asymmetrically c-commands.
 
 ## References
 
@@ -51,46 +42,39 @@ occur once, it is minimality under the branching positions above a candidate, th
 
 namespace Minimalist
 
+/-! ### Closest goals
+
+A probe on the head at a position searches the positions the head c-commands, keyed by the
+branching positions above each (`PlanarSyntacticObject.above`), and finds a goal minimal under the
+key, the Minimal Link Condition of [chomsky-1995]. -/
+
+namespace PlanarSyntacticObject
+
+variable {t : PlanarSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
+  {q g : t.val.Positions}
+
+/-- A satisfier that asymmetrically c-commands a position blocks the goal there, whatever else the
+probe's domain holds. -/
+theorem not_finds_of_cCommands (hq : q ∈ s) (hsq : p.sat q) (hqg : t.val.CCommands q g)
+    (hgq : ¬ t.val.CCommands g q) : ¬ p.Finds s (t.above t.branching) g := fun h ↦
+  h.inspects.2 hq hsq (above_branching_lt_of_cCommands hqg hgq)
+
+/-- Among satisfiers none of which dominates another, a probe finds those that no satisfier
+asymmetrically c-commands: mutually c-commanding candidates are equidistant. -/
+theorem finds_above_branching_iff (hs : IsAntichain (· ≤ ·) {q | q ∈ s ∧ p.sat q}) :
+    p.Finds s (t.above t.branching) g ↔ (g ∈ s ∧ p.sat g) ∧
+      ∀ ⦃q⦄, q ∈ s → p.sat q → ¬ (t.val.CCommands q g ∧ ¬ t.val.CCommands g q) := by
+  rw [Probe.Finds, minimalFor_iff_forall_lt]
+  refine and_congr_right fun hg ↦
+    ⟨fun h q hq hsq hcc ↦ h (above_branching_lt_of_cCommands hcc.1 hcc.2) ⟨hq, hsq⟩,
+      fun h q hlt hq ↦ ?_⟩
+  have hne : q ≠ g := by rintro rfl; exact lt_irrefl _ hlt
+  exact h hq.1 hq.2 ((above_branching_lt_iff (fun hle ↦ hs hq hg hne hle)
+    (fun hle ↦ hs hg hq hne.symm hle)).1 hlt)
+
+end PlanarSyntacticObject
+
 namespace SyntacticObject
-
-variable {root probe goal : SyntacticObject} {pred : SyntacticObject → Prop}
-
-/-! ### Closest goals -/
-
-/-- A closest `pred`-goal for `probe` in `root` is a node of `probe`'s c-command domain
-satisfying `pred` that no other `pred`-node of the domain asymmetrically c-commands. Mutually
-c-commanding candidates are equidistant and do not block each other. -/
-def isClosestGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
-  goal ∈ cCommandDomain root probe ∧ pred goal ∧
-    ∀ x ∈ cCommandDomain root probe, pred x → ¬ AsymmCCommands root x goal
-
-instance [DecidablePred pred] (root probe goal : SyntacticObject) :
-    Decidable (isClosestGoalIn root probe goal pred) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ cCommandDomain root probe, _))
-
-/-- A probe's search over an enumeration of its domain sorted by c-command finds one of its
-closest visible goals. -/
-theorem isClosestGoalIn_of_search_eq_some {p : Probe SyntacticObject} {dom : List SyntacticObject}
-    (hdom : (dom : Multiset SyntacticObject) = cCommandDomain root probe)
-    (hord : dom.Pairwise λ x y => ¬ AsymmCCommands root y x)
-    (h : p.search dom = some goal) :
-    isClosestGoalIn root probe goal (p.sat ·) := by
-  refine ⟨?_, Probe.sat_of_search_eq_some h, λ x hx hvx hasym => ?_⟩
-  · rw [← hdom]; exact Multiset.mem_coe.2 (Probe.mem_of_search_eq_some h)
-  · rw [← hdom] at hx
-    exact Probe.not_rel_of_search_eq_some hord h x (Multiset.mem_coe.1 hx) hvx
-      (λ e => hasym.2 (e ▸ hasym.1)) hasym
-
-/-- Sisters are equidistant. A closest goal need only be free of asymmetric c-command by the
-`pred`-nodes of the domain that are not its sisters, since a sister never asymmetrically
-c-commands it. -/
-theorem isClosestGoalIn_iff_forall_not_sister :
-    isClosestGoalIn root probe goal pred ↔
-      goal ∈ cCommandDomain root probe ∧ pred goal ∧ ∀ x ∈ cCommandDomain root probe, pred x →
-        ¬ Sisters root x goal → ¬ AsymmCCommands root x goal :=
-  and_congr_right λ _ => and_congr_right λ _ => forall₂_congr λ _ _ => imp_congr_right λ _ =>
-    ⟨λ h _ => h, λ h hasym => (em _).elim (λ hs => Sisters.not_asymmCCommands hs hasym)
-      (λ hs => h hs hasym)⟩
 
 /-! ### Horizons -/
 
@@ -106,66 +90,6 @@ instance (root probe target : SyntacticObject) (c : Cat) :
   Multiset.decidableExistsMultiset
 
 end SyntacticObject
-
-/-! ### Closest goals at positions
-
-When every term of a planar object occurs once, c-command between terms is c-command between
-their positions, so a closest goal is the term at a position that the probe's position c-commands
-and that no candidate position asymmetrically c-commands. Among candidates none of which dominates
-another this is minimality under closeness, the generators above a position
-(`PhraseStructure.ancestors`), the key under which a probe finds its goal. -/
-
-namespace PlanarSyntacticObject
-
-open RoseTree PhraseStructure
-
-variable {t : PlanarSyntacticObject} {pred : SyntacticObject → Prop} {a g : t.val.Positions}
-
-/-- When every term occurs once, c-command between the terms at two positions is c-command between
-the positions. -/
-theorem cCommands_termAt_termAt_iff (hu : Function.Injective t.termAt) {p q : t.val.Positions} :
-    t.toSyntacticObject.CCommands (t.termAt p) (t.termAt q) ↔ t.val.CCommands p q := by
-  rw [cCommands_termAt_iff fun _ h ↦ hu h]
-  exact ⟨fun ⟨_, hq', he⟩ ↦ hu he ▸ hq', fun h ↦ ⟨q, h, rfl⟩⟩
-
-/-- When every term occurs once, a closest goal is the term at a position the probe's position
-c-commands that no candidate position asymmetrically c-commands. -/
-theorem isClosestGoalIn_termAt_iff (hu : Function.Injective t.termAt) :
-    SyntacticObject.isClosestGoalIn t.toSyntacticObject (t.termAt a) (t.termAt g) pred ↔
-      t.val.CCommands a g ∧ pred (t.termAt g) ∧ ∀ q : t.val.Positions, t.val.CCommands a q →
-        pred (t.termAt q) → ¬ (t.val.CCommands q g ∧ ¬ t.val.CCommands g q) := by
-  unfold SyntacticObject.isClosestGoalIn SyntacticObject.AsymmCCommands
-  simp only [SyntacticObject.mem_cCommandDomain]
-  rw [cCommands_termAt_termAt_iff hu]
-  refine and_congr_right fun _ ↦ and_congr_right fun _ ↦
-    ⟨fun h q hq hpq ↦ ?_, fun h x hx hpx ↦ ?_⟩
-  · rw [← cCommands_termAt_termAt_iff hu, ← cCommands_termAt_termAt_iff hu]
-    exact h _ ((cCommands_termAt_termAt_iff hu).2 hq) hpq
-  · obtain ⟨q, hq, rfl⟩ := (cCommands_termAt_iff fun _ h ↦ hu h).1 hx
-    rw [cCommands_termAt_termAt_iff hu, cCommands_termAt_termAt_iff hu]
-    exact h q hq hpx
-
-/-- When every term occurs once and no candidate position dominates another, a closest goal is the
-term at a candidate position minimal under closeness: the Minimal Link Condition is `MinimalFor`
-keyed by the branching positions above. -/
-theorem isClosestGoalIn_termAt_iff_minimalFor (hu : Function.Injective t.termAt)
-    (hS : IsAntichain (· ≤ ·) {q : t.val.Positions | t.val.CCommands a q ∧ pred (t.termAt q)}) :
-    SyntacticObject.isClosestGoalIn t.toSyntacticObject (t.termAt a) (t.termAt g) pred ↔
-      MinimalFor (fun q : t.val.Positions ↦ t.val.CCommands a q ∧ pred (t.termAt q))
-        (fun q ↦ ancestors {p | t.val.IsBranchingAt p} q.val) g := by
-  rw [isClosestGoalIn_termAt_iff hu, minimalFor_iff_forall_lt, and_assoc]
-  refine and_congr_right fun hg ↦ and_congr_right fun hpg ↦
-    ⟨fun h q hlt hq ↦ ?_, fun h q hq hpq hcc ↦ ?_⟩
-  · have hne : q ≠ g := by rintro rfl; exact lt_irrefl _ hlt
-    exact h q hq.1 hq.2 ((ancestors_ssubset_ancestors_iff_cCommands
-      (fun hle ↦ hS hq ⟨hg, hpg⟩ hne (Subtype.coe_le_coe.1 hle))
-      (fun hle ↦ hS ⟨hg, hpg⟩ hq hne.symm (Subtype.coe_le_coe.1 hle))).1 hlt)
-  · have hne : q ≠ g := by rintro rfl; exact hcc.2 hcc.1
-    exact h ((ancestors_ssubset_ancestors_iff_cCommands
-      (fun hle ↦ hS ⟨hq, hpq⟩ ⟨hg, hpg⟩ hne (Subtype.coe_le_coe.1 hle))
-      (fun hle ↦ hS ⟨hg, hpg⟩ ⟨hq, hpq⟩ hne.symm (Subtype.coe_le_coe.1 hle))).2 hcc) ⟨hq, hpq⟩
-
-end PlanarSyntacticObject
 
 namespace FeatureBundle
 
