@@ -9,7 +9,7 @@ public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Atoms
 public import Linglib.Syntax.Command
 public import Linglib.Syntax.Projection
-public import Linglib.Syntax.Minimalist.SyntacticObject.Label
+public import Linglib.Syntax.Minimalist.SyntacticObject.RaisingHead
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
@@ -55,8 +55,9 @@ embedding with a total head function, which extends the raising head.
 * The drawing convention puts specifiers to the left of their heads and heads to the left of their
   complements: a left leaf that selects nothing is a specifier and the right daughter heads, a left
   leaf that selects is the head, and otherwise the right daughter heads. It decides only where the
-  raising head is undefined, at a phrase merged in place beside another phrase, which
-  [chomsky-2013] labels by features the two share.
+  raising head is undefined, at a phrase merged in place beside another phrase, which the labeling
+  algorithm leaves unlabeled until one of the two moves on (`Probe/Label.lean`); labels by shared
+  features arise at landing sites.
 
 ## TODO
 

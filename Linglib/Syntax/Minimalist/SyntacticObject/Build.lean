@@ -241,6 +241,12 @@ theorem traceOf_ne_trace (tok : LexicalItem.Token) : traceOf tok ≠ trace := by
 @[simp] theorem token?_merge (l r : SyntacticObject) : (merge l r).token? = none := by
   rw [token?, merge_val, UnorderedTree.value_node]
 
+/-- An object with a root token is that token's leaf. -/
+theorem token?_eq_some_iff {s : SyntacticObject} {tok : LexicalItem.Token} :
+    s.token? = some tok ↔ s = leaf tok := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ token?_leaf tok⟩
+  rcases s.exists_form with ⟨tok', rfl⟩ | rfl | ⟨tok', rfl⟩ | ⟨l, r, rfl⟩ <;> simp_all
+
 /-- A trace leaf, bare or indexed. -/
 def isTrace (s : SyntacticObject) : Prop :=
   (UnorderedTree.value s.val).isRight = true ∧ UnorderedTree.numNodes s.val = 1
