@@ -4,6 +4,7 @@ public import Linglib.Morphology.Exponence.Select
 public import Linglib.Morphology.Paradigm.Linkage
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # The PFM1 paradigm function
@@ -121,24 +122,15 @@ structure Rule (L P F : Type*) where
 section Narrowness
 variable [PartialOrder P]
 
-/-- Rules are ordered by two-clause Pāṇinian narrowness ([stump-2001]), under
-which `r` is at least as narrow as `s` when either they share a class and `s`
-realizes a subset of `r`'s properties, or `r`'s class is properly smaller. The
-order is intensional, strictly finer than applicability-set inclusion (see
+/-- Two-clause Pāṇinian narrowness ([stump-2001]) as a key: `r` is at least as narrow as `s` when
+`r`'s class is properly smaller, or they share a class and `s` realizes a subset of `r`'s
+properties. Narrowness is intensional, strictly finer than applicability-set inclusion (see
 `Rule.applySet_mono`; the converse fails). -/
-instance : Preorder (Rule L P F) where
-  le r s := (r.klass = s.klass ∧ s.props ≤ r.props) ∨ r.klass ⊂ s.klass
-  le_refl _ := Or.inl ⟨rfl, le_refl _⟩
-  le_trans r s t hrs hst := by
-    rcases hrs with ⟨hk, hp⟩ | hk <;> rcases hst with ⟨hk', hp'⟩ | hk'
-    · exact Or.inl ⟨hk.trans hk', hp'.trans hp⟩
-    · exact Or.inr (hk ▸ hk')
-    · exact Or.inr (hk' ▸ hk)
-    · exact Or.inr (hk.trans hk')
+def Rule.narrowness (r : Rule L P F) : Finset L ×ₗ Pᵒᵈ := toLex (r.klass, OrderDual.toDual r.props)
 
-theorem Rule.le_iff {r s : Rule L P F} :
-    r ≤ s ↔ (r.klass = s.klass ∧ s.props ≤ r.props) ∨ r.klass ⊂ s.klass :=
-  Iff.rfl
+theorem Rule.narrowness_le_iff {r s : Rule L P F} :
+    r.narrowness ≤ s.narrowness ↔ r.klass ⊂ s.klass ∨ r.klass = s.klass ∧ s.props ≤ r.props :=
+  Prod.Lex.toLex_le_toLex
 
 /-- Under [bonami-stump-2016]'s rule format, a rule applies to a cell `⟨L, σ⟩`
 when `L` is in its class and its property set is contained in `σ`. -/
@@ -155,29 +147,26 @@ narrower rule applies in a subset of the contexts, [stump-2001]'s two-clause
 narrowness falling under [stump-2016]'s single-clause domain-subset precedence.
 Across classes the order is strictly intensional (a smaller class outranks a
 larger one whatever the property sets), so a class hypothesis is required. -/
-theorem Rule.applySet_mono {r s : Rule L P F} (hk : r.klass = s.klass) (h : r ≤ s) :
-    Exponence.applySet r ⊆ Exponence.applySet s := by
-  rcases h with ⟨_, hp⟩ | hlt
+theorem Rule.applySet_mono {r s : Rule L P F} (hk : r.klass = s.klass)
+    (h : r.narrowness ≤ s.narrowness) : Exponence.applySet r ⊆ Exponence.applySet s := by
+  rcases Rule.narrowness_le_iff.1 h with hlt | ⟨_, hp⟩
+  · exact absurd hk hlt.ne
   · intro c hc
     rw [Exponence.mem_applySet] at hc ⊢
     exact ⟨hk ▸ hc.1, hp.trans hc.2⟩
-  · exact absurd hk hlt.ne
 
 end Narrowness
 
 /-! ### Selection over the narrowness order -/
 
 section Selection
-variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
+variable [PartialOrder P] [DecidableEq L] [DecidableLE P] [DecidableLT P]
 
 instance : DecidableRel (Exponence.Applies : Rule L P F → L × P → Prop) :=
   fun r c => inferInstanceAs (Decidable (c.1 ∈ r.klass ∧ r.props ≤ c.2))
 
-instance : DecidableLE (Rule L P F) := fun r s =>
-  inferInstanceAs (Decidable ((r.klass = s.klass ∧ s.props ≤ r.props) ∨ r.klass ⊂ s.klass))
-
-instance : DecidableLT (Rule L P F) := fun r s =>
-  inferInstanceAs (Decidable (r ≤ s ∧ ¬ s ≤ r))
+instance : DecidableRel ((· < ·) : Finset L ×ₗ Pᵒᵈ → Finset L ×ₗ Pᵒᵈ → Prop) :=
+  Prod.Lex.decidable _ _
 
 /-! ### The Identity Function Default -/
 
@@ -193,26 +182,26 @@ def identityDefault : Rule L P (Action Z P) where
   props := ⊥
   payload := .const id
 
-omit [DecidableEq L] [DecidableLE P] in
+omit [DecidableEq L] [DecidableLE P] [DecidableLT P] in
 theorem identityDefault_applies (c : L × P) :
     Exponence.Applies (identityDefault (L := L) (Z := Z) (P := P)) c :=
   ⟨Finset.mem_univ _, bot_le⟩
 
-omit [DecidableLE P] in
+omit [DecidableLE P] [DecidableLT P] in
 /-- The IFD is `≤`-maximal, since every rule is at least as narrow. It is a top
 element of the narrowness order without an `OrderTop` instance (which would force
 `Fintype`/`OrderBot` globally). -/
 theorem le_identityDefault (r : Rule L P (Action Z P)) :
-    r ≤ identityDefault (Z := Z) (P := P) := by
+    r.narrowness ≤ (identityDefault (Z := Z) (P := P)).narrowness := by
   by_cases h : r.klass = Finset.univ
-  · exact Or.inl ⟨h, bot_le⟩
-  · exact Or.inr (Finset.ssubset_univ_iff.mpr h)
+  · exact Rule.narrowness_le_iff.2 (.inr ⟨h, bot_le⟩)
+  · exact Rule.narrowness_le_iff.2 (.inl (Finset.ssubset_univ_iff.mpr h))
 
 /-- A block containing the IFD always selects a rule — the totality of Nar
 ([bonami-stump-2016]'s (14)) that [stump-2001] secures by stipulating the IFD. -/
 theorem selectMinimal_isSome_of_mem_identityDefault
     {v : RuleSet (Rule L P (Action Z P))} {c : L × P}
-    (h : identityDefault (Z := Z) (P := P) ∈ v) : (v.selectMinimal c).isSome :=
+    (h : identityDefault (Z := Z) (P := P) ∈ v) : (v.selectMinimal Rule.narrowness c).isSome :=
   RuleSet.selectMinimal_isSome_iff.mpr
     ⟨identityDefault (P := P), h, identityDefault_applies c⟩
 
@@ -229,7 +218,7 @@ referral rules; it is the target of a referral's re-selection. -/
 def expoFragment (b : Block L Z P) : Block L Z P :=
   b.filter (fun r => r.payload matches .expo _)
 
-omit [PartialOrder P] [DecidableEq L] [DecidableLE P] in
+omit [PartialOrder P] [DecidableEq L] [DecidableLE P] [DecidableLT P] in
 /-- Every member of a block's exponence fragment carries an exponence payload. -/
 theorem mem_expoFragment_expo {b : Block L Z P} {r : Rule L P (Action Z P)}
     (h : r ∈ expoFragment b) : ∃ f, r.payload = Action.expo f := by
@@ -244,12 +233,13 @@ a form. An exponence rule applies its form operation, and a referral rule
 re-selects among the block's exponence rules at the retargeted property set (one
 hop). The stem is left unchanged when nothing applies. -/
 def evalBlockForm (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z :=
-  match b.selectMinimal (Lindex wσ.1, wσ.2) with
+  match b.selectMinimal Rule.narrowness (Lindex wσ.1, wσ.2) with
   | some r =>
     match r.payload with
     | .expo f => f wσ.2 wσ.1
     | .referral retarget =>
-      match RuleSet.selectMinimal (expoFragment b) (Lindex wσ.1, retarget wσ.2) with
+      match RuleSet.selectMinimal (expoFragment b) Rule.narrowness
+          (Lindex wσ.1, retarget wσ.2) with
       | some s =>
         match s.payload with
         | .expo g => g (retarget wσ.2) wσ.1
@@ -262,11 +252,11 @@ rule at `(w, σ)` is a referral to `retarget`, evaluating the block equals evalu
 exponence fragment at the retargeted cell. -/
 theorem evalBlockForm_referral {Lindex : Z → L} {b : Block L Z P} {w : Z} {σ : P}
     {r : Rule L P (Action Z P)} {retarget : P → P}
-    (hr : b.selectMinimal (Lindex w, σ) = some r)
+    (hr : b.selectMinimal Rule.narrowness (Lindex w, σ) = some r)
     (hpay : r.payload = Action.referral retarget) :
     evalBlockForm Lindex b (w, σ)
       = evalBlockForm Lindex (expoFragment b) (w, retarget σ) := by
-  cases hs : RuleSet.selectMinimal (expoFragment b) (Lindex w, retarget σ) with
+  cases hs : RuleSet.selectMinimal (expoFragment b) Rule.narrowness (Lindex w, retarget σ) with
   | none => simp only [evalBlockForm, hr, hpay, hs]
   | some s =>
     obtain ⟨g, hg⟩ := mem_expoFragment_expo (RuleSet.selectMinimal_mem hs)
@@ -327,22 +317,26 @@ since a maximal rule is preempted by any genuine competitor and fires only in th
 elsewhere. This is the mechanism shared by `identityDefault` and
 `functionCompositionDefault`. -/
 theorem selectMinimal_append_maximal {v : RuleSet (Rule L P F)} {c : L × P}
-    {top : Rule L P F} (hmax : ∀ r, r ≤ top)
+    {top : Rule L P F} (hmax : ∀ r : Rule L P F, r.narrowness ≤ top.narrowness)
     (htop : Exponence.Applies top c) :
-    RuleSet.selectMinimal (v ++ [top]) c = (v.selectMinimal c).or (some top) := by
+    RuleSet.selectMinimal (v ++ [top]) Rule.narrowness c =
+      (v.selectMinimal Rule.narrowness c).or (some top) := by
   have htop' : c.1 ∈ top.klass ∧ top.props ≤ c.2 := htop
   have happl : RuleSet.applicable (v ++ [top]) c = v.applicable c ++ [top] := by
     simp [RuleSet.applicable, List.filter_append, htop']
   have hpred : (fun r : Rule L P F =>
-        (RuleSet.applicable (v ++ [top]) c).all (fun s => decide (¬ s < r)))
-      = (fun r : Rule L P F => (v.applicable c).all (fun s => decide (¬ s < r))) := by
+        (RuleSet.applicable (v ++ [top]) c).all
+          (fun s => decide (¬ s.narrowness < r.narrowness)))
+      = (fun r : Rule L P F =>
+          (v.applicable c).all (fun s => decide (¬ s.narrowness < r.narrowness))) := by
     funext r
-    have : ¬ top < r := fun hlt => absurd (hmax r) (not_le_of_gt hlt)
+    have : ¬ top.narrowness < r.narrowness := fun hlt => absurd (hmax r) (not_le_of_gt hlt)
     rw [happl]; simp [List.all_append, this]
-  have hfold : List.find? (fun r => (v.applicable c).all (fun s => decide (¬ s < r)))
-      (v.applicable c) = v.selectMinimal c := rfl
+  have hfold : List.find?
+      (fun r => (v.applicable c).all (fun s => decide (¬ s.narrowness < r.narrowness)))
+      (v.applicable c) = v.selectMinimal Rule.narrowness c := rfl
   rw [RuleSet.selectMinimal, hpred, happl, List.find?_append, hfold]
-  rcases hs : v.selectMinimal c with _ | r
+  rcases hs : v.selectMinimal Rule.narrowness c with _ | r
   · have hnil : v.applicable c = [] := RuleSet.selectMinimal_eq_none_iff.mp hs
     rw [Option.none_or, hnil]
     simp
@@ -377,10 +371,11 @@ theorem functionCompositionDefault_applies (Lindex : Z → L) (bm bn : Block L Z
 explicit portmanteau rule always preempts it ([spencer-2013]). The statement has
 the shape of `le_identityDefault`. -/
 theorem le_functionCompositionDefault (Lindex : Z → L) (bm bn : Block L Z P)
-    (r : Rule L P (Action Z P)) : r ≤ functionCompositionDefault Lindex bm bn := by
+    (r : Rule L P (Action Z P)) :
+    r.narrowness ≤ (functionCompositionDefault Lindex bm bn).narrowness := by
   by_cases h : r.klass = Finset.univ
-  · exact Or.inl ⟨h, bot_le⟩
-  · exact Or.inr (Finset.ssubset_univ_iff.mpr h)
+  · exact Rule.narrowness_le_iff.2 (.inr ⟨h, bot_le⟩)
+  · exact Rule.narrowness_le_iff.2 (.inl (Finset.ssubset_univ_iff.mpr h))
 
 /-- For a portmanteau block `bmn` of rules of exponence, the stipulated
 `evalPortmanteau` equals the block `bmn ++ [fcd]` evaluated as an ordinary
@@ -413,7 +408,7 @@ theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
     rw [List.isEmpty_iff] at h
     obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ h
     obtain ⟨r', hr'⟩ := Option.isSome_iff_exists.mp
-      (RuleSet.selectMinimal_isSome_iff.mpr
+      (RuleSet.selectMinimal_isSome_iff (key := Rule.narrowness).mpr
         ⟨r, (RuleSet.mem_applicable.mp hr).1, (RuleSet.mem_applicable.mp hr).2⟩)
     obtain ⟨f, hf⟩ := hbmn r' (RuleSet.selectMinimal_mem hr')
     rw [hr', Option.some_or] at hsel
@@ -445,12 +440,13 @@ theorem _root_.Morphology.Linkage.ofFun_realized_eq_paradigmFunction [DecidableE
 /-- The linkage of rules of paradigm linkage realizes its block cascade as the paradigm function
 whose basic stem choice realizes each lexeme's rules over its root. -/
 theorem _root_.Morphology.Linkage.ofRules_realized_eq_paradigmFunction [DecidableEq Z]
-    {R : Type*} [Exponence.Rule R P Z] [Preorder R] [DecidableRel (· < · : R → R → Prop)]
+    {R : Type*} [Exponence.Rule R P Z] {κ : Type*} [Preorder κ] (key : R → κ)
+    [DecidableRel (· < · : κ → κ → Prop)]
     [DecidableRel (Exponence.Applies : R → P → Prop)] (rules : L → List R) (root : L → Z)
     (Lindex : Z → L) (blocks : List (Block L Z P)) (l : L) (σ : P) :
-    (Linkage.ofRules id rules root).realized (fun z τ ↦ (blocksEval Lindex blocks (z, τ)).1) l σ
+    (Linkage.ofRules id key rules root).realized (fun z τ ↦ (blocksEval Lindex blocks (z, τ)).1) l σ
       = {paradigmFunction Lindex
-          (fun c ↦ RuleSet.realizeMinimalD (rules c.1) (fun _ ↦ root c.1) c.2) blocks (l, σ)} :=
+          (fun c ↦ RuleSet.realizeMinimalD (rules c.1) key (fun _ ↦ root c.1) c.2) blocks (l, σ)} :=
   Linkage.realized_eq_paradigmFunction _ Lindex _ blocks l σ (fun _ _ ↦ rfl) fun _ _ ↦ rfl
 
 /-- `paradigmRealization` presents the paradigm function as a realization whose
@@ -491,28 +487,23 @@ def Rule.mapPayload (g : F → F') (r : Rule L P F) : Rule L P F' where
 @[simp] theorem Rule.mapPayload_props (g : F → F') (r : Rule L P F) :
     (r.mapPayload g).props = r.props := rfl
 
-section
-variable [PartialOrder P]
-
-@[simp] theorem Rule.mapPayload_lt_iff {g : F → F'} {r s : Rule L P F} :
-    r.mapPayload g < s.mapPayload g ↔ r < s := Iff.rfl
-
-end
+@[simp] theorem Rule.narrowness_mapPayload {g : F → F'} {r : Rule L P F} :
+    (r.mapPayload g).narrowness = r.narrowness := rfl
 
 section
-variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
+variable [PartialOrder P] [DecidableEq L] [DecidableLE P] [DecidableLT P]
 
 /-- Applicability and narrowness read only class and props, so narrowest-rule
 selection is blind to a payload relabelling. -/
 theorem selectMinimal_map_payload (g : F → F') (v : RuleSet (Rule L P F)) (c : L × P) :
-    RuleSet.selectMinimal (v.map (Rule.mapPayload g)) c
-      = (v.selectMinimal c).map (Rule.mapPayload g) := by
+    RuleSet.selectMinimal (v.map (Rule.mapPayload g)) Rule.narrowness c
+      = (v.selectMinimal Rule.narrowness c).map (Rule.mapPayload g) := by
   have hA : RuleSet.applicable (v.map (Rule.mapPayload g)) c
       = (v.applicable c).map (Rule.mapPayload g) := by
     simp only [RuleSet.applicable, List.filter_map, Function.comp_def, Rule.applies_iff,
       Rule.mapPayload_klass, Rule.mapPayload_props]
   rw [RuleSet.selectMinimal, RuleSet.selectMinimal, hA, List.find?_map]
-  simp only [Function.comp_def, List.all_map, Rule.mapPayload_lt_iff]
+  simp only [Function.comp_def, List.all_map, Rule.narrowness_mapPayload]
 
 end
 

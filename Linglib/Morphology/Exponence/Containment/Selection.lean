@@ -59,8 +59,8 @@ section Realize
 
 variable {v : RuleSet (SpanRule n F)} {it : SpanRule n F}
 
-theorem realize_realizes (h : realize v g = some φ) : v.Realizes g φ :=
-  RuleSet.realize_realizes (SpanRule.threshold_strictAnti.strictAntiOn _) h
+theorem realize_realizes (h : realize v g = some φ) : v.Realizes applySet g φ :=
+  RuleSet.realize_realizes (fun _ _ _ _ h ↦ SpanRule.applySet_ssubset_iff.1 h) h
 
 /-- The rule selected at a grade is realized at every lower grade its threshold reaches, so
 Elsewhere insertion plateaus between thresholds. -/
@@ -82,8 +82,9 @@ section Spellout
 
 variable {v : RuleSet (SupersetRule n F)} {e : SupersetRule n F}
 
-theorem spellout_realizes (h : spellout v g = some φ) : v.Realizes g φ :=
-  RuleSet.realize_realizes (SupersetRule.spans_strictMono.dual_right.strictAntiOn _) h
+theorem spellout_realizes (h : spellout v g = some φ) : v.Realizes applySet g φ :=
+  RuleSet.realize_realizes (f := fun e : SupersetRule n F ↦ OrderDual.toDual e.spans)
+    (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.2 (SupersetRule.applySet_ssubset_iff.1 h)) h
 
 /-- Spellout gaps propagate upward, since an entry matching a higher grade matches the lower one
 too, [dekier-2021]'s paradigm-gap monotonicity for indefinites. -/

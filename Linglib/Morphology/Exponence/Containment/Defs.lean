@@ -24,9 +24,10 @@ in opposite directions.
 
 ## Main results
 
-* `SpanRule.le_iff`: a rule is more specific than another iff its threshold is higher.
-* `SupersetRule.le_iff`: an entry is more specific than another iff its span is smaller, the
-  nanosyntax principle Minimize Junk.
+* `SpanRule.applySet_subset_iff`: a rule is more specific than another iff its threshold is
+  higher.
+* `SupersetRule.applySet_subset_iff`: an entry is more specific than another iff its span is
+  smaller, the nanosyntax principle Minimize Junk.
 
 ## References
 
@@ -68,8 +69,6 @@ def SpanRule.threshold (it : SpanRule n F) : Fin n :=
 instance : Rule (SpanRule n F) (Fin n) F :=
   ⟨SpanRule.exponent, fun it g ↦ it.threshold ≤ g⟩
 
-instance : Preorder (SpanRule n F) := toPreorder
-
 instance : DecidableRel (Applies : SpanRule n F → Fin n → Prop) :=
   fun it g ↦ inferInstanceAs (Decidable (it.threshold ≤ g))
 
@@ -83,13 +82,11 @@ variable {it jt : SpanRule n F} {g : Fin n}
 
 /-- Over a linear hierarchy the applicability sets are nested, so specificity is the reverse of
 threshold order and the Elsewhere ordering ([kiparsky-1973]) is total. -/
-theorem le_iff : it ≤ jt ↔ jt.threshold ≤ it.threshold := Set.Ici_subset_Ici
+theorem applySet_subset_iff : applySet it ⊆ applySet jt ↔ jt.threshold ≤ it.threshold :=
+  Set.Ici_subset_Ici
 
-theorem lt_iff : it < jt ↔ jt.threshold < it.threshold := by
-  simp only [lt_iff_le_not_ge, le_iff]
-
-theorem threshold_strictAnti : StrictAnti (threshold : SpanRule n F → Fin n) :=
-  fun _ _ ↦ lt_iff.mp
+theorem applySet_ssubset_iff : applySet it ⊂ applySet jt ↔ jt.threshold < it.threshold :=
+  Set.Ici_ssubset_Ici
 
 end SpanRule
 
@@ -138,8 +135,6 @@ structure SupersetRule (n : ℕ) (F : Type*) where
 instance : Rule (SupersetRule n F) (Fin n) F :=
   ⟨SupersetRule.exponent, fun e g ↦ g ≤ e.spans⟩
 
-instance : Preorder (SupersetRule n F) := toPreorder
-
 instance : DecidableRel (Applies : SupersetRule n F → Fin n → Prop) :=
   fun e g ↦ inferInstanceAs (Decidable (g ≤ e.spans))
 
@@ -153,13 +148,9 @@ variable {e e' : SupersetRule n F} {g : Fin n}
 
 /-- An entry is more specific than another iff it stores the smaller constituent, the nanosyntax
 principle Minimize Junk. -/
-theorem le_iff : e ≤ e' ↔ e.spans ≤ e'.spans := Set.Iic_subset_Iic
+theorem applySet_subset_iff : applySet e ⊆ applySet e' ↔ e.spans ≤ e'.spans := Set.Iic_subset_Iic
 
-theorem lt_iff : e < e' ↔ e.spans < e'.spans := by
-  simp only [lt_iff_le_not_ge, le_iff]
-
-theorem spans_strictMono : StrictMono (spans : SupersetRule n F → Fin n) :=
-  fun _ _ ↦ lt_iff.mp
+theorem applySet_ssubset_iff : applySet e ⊂ applySet e' ↔ e.spans < e'.spans := Set.Iic_ssubset_Iic
 
 end SupersetRule
 

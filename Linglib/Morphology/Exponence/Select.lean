@@ -8,8 +8,8 @@ public import Linglib.Morphology.Paradigm.Contiguity
 /-!
 # Elsewhere selection
 
-This file defines selection by a specificity score (`selectBy`) and over the
-specificity preorder (`selectMinimal`), and proves that both produce Elsewhere
+This file defines selection by a specificity score (`selectBy`) and by minimality under a
+specificity key (`selectMinimal`), and proves that both produce Elsewhere
 winners. Selection by a score keeps its choice when the competition shrinks around the winner,
 so rules applicable on upper sets of ordered contexts realize contiguous patterns. Minimal
 selection does the same, and agrees with selection by a score, where Stump's Pāṇinian
@@ -236,37 +236,37 @@ end Map
 
 /-! ### Soundness -/
 
-variable [Preorder R]
+variable {κ : Type*} [Preorder κ] {key : R → κ}
 
-/-- A score strictly antitone on the applicable rules selects an
-Elsewhere winner. -/
+/-- A score that strictly reverses specificity on the applicable rules selects an Elsewhere
+winner. -/
 theorem selectBy_isElsewhereWinner
-    (hf : StrictAntiOn f {r | r ∈ v.applicable c})
-    (h : v.selectBy f c = some r) : v.IsElsewhereWinner c r := by
-  refine ⟨mem_applicable.mp (List.argmax_mem h), fun s hs hsr ↦ ?_⟩
-  by_contra hrs
+    (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r)
+    (h : v.selectBy f c = some r) : v.IsElsewhereWinner key c r := by
+  refine minimalFor_iff_forall_lt.2 ⟨mem_applicable.mp (List.argmax_mem h), fun s hsr hs ↦ ?_⟩
   exact absurd (List.le_of_mem_argmax (mem_applicable.mpr hs) h)
-    (not_le_of_gt (hf (mem_applicable.mpr hs) (List.argmax_mem h)
-      (lt_of_le_not_ge hsr hrs)))
+    (not_le_of_gt (hf _ (mem_applicable.mpr hs) _ (List.argmax_mem h) hsr))
 
 /-- Realized exponents satisfy `Realizes`. -/
-theorem realize_realizes (hf : StrictAntiOn f {r | r ∈ v.applicable c})
-    (h : v.realize f c = some φ) : v.Realizes c φ := by
+theorem realize_realizes
+    (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r)
+    (h : v.realize f c = some φ) : v.Realizes key c φ := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, selectBy_isElsewhereWinner hf hr, rfl⟩
 
 /-! ### Order selection -/
 
-variable [DecidableRel (· < · : R → R → Prop)]
+variable [DecidableRel (· < · : κ → κ → Prop)]
 
-/-- The first applicable rule that no applicable rule strictly undercuts. -/
-def selectMinimal (v : RuleSet R) (c : Ctx) : Option R :=
-  (v.applicable c).find? (fun r ↦ (v.applicable c).all (fun s ↦ decide (¬ s < r)))
+/-- The first applicable rule that no applicable rule is strictly more specific than,
+specificity read through `key`. -/
+def selectMinimal (v : RuleSet R) (key : R → κ) (c : Ctx) : Option R :=
+  (v.applicable c).find? (fun r ↦ (v.applicable c).all (fun s ↦ decide (¬ key s < key r)))
 
 /-- Minimal selection picks the first rule of the rule set that applies and that no applicable
-rule strictly undercuts. -/
-theorem selectMinimal_eq_find? : v.selectMinimal c =
-    v.find? (fun r ↦ decide (Applies r c ∧ ∀ s ∈ v.applicable c, ¬ s < r)) := by
+rule is strictly more specific than. -/
+theorem selectMinimal_eq_find? : v.selectMinimal key c =
+    v.find? (fun r ↦ decide (Applies r c ∧ ∀ s ∈ v.applicable c, ¬ key s < key r)) := by
   unfold selectMinimal
   nth_rewrite 2 [applicable]
   rw [List.find?_filter]
@@ -274,87 +274,89 @@ theorem selectMinimal_eq_find? : v.selectMinimal c =
 
 /-- `selectMinimal` returns an Elsewhere winner. -/
 theorem selectMinimal_isElsewhereWinner
-    (h : v.selectMinimal c = some r) : v.IsElsewhereWinner c r := by
+    (h : v.selectMinimal key c = some r) : v.IsElsewhereWinner key c r := by
   have hall := List.find?_some h
   simp only [List.all_eq_true, decide_eq_true_eq, mem_applicable] at hall
-  exact minimal_iff_forall_lt.mpr
+  exact minimalFor_iff_forall_lt.mpr
     ⟨mem_applicable.mp (List.mem_of_find?_eq_some h), fun s hlt hs ↦ hall s hs hlt⟩
 
-theorem selectMinimal_mem (h : v.selectMinimal c = some r) : r ∈ v :=
+theorem selectMinimal_mem (h : v.selectMinimal key c = some r) : r ∈ v :=
   (selectMinimal_isElsewhereWinner h).prop.1
 
-theorem selectMinimal_applies (h : v.selectMinimal c = some r) : Applies r c :=
+theorem selectMinimal_applies (h : v.selectMinimal key c = some r) : Applies r c :=
   (selectMinimal_isElsewhereWinner h).prop.2
 
 /-- `selectMinimal` succeeds iff some rule applies. -/
 theorem selectMinimal_isSome_iff :
-    (v.selectMinimal c).isSome ↔ ∃ r ∈ v, Applies r c := by
+    (v.selectMinimal key c).isSome ↔ ∃ r ∈ v, Applies r c := by
   rw [selectMinimal, List.find?_isSome]
   simp only [List.all_eq_true, decide_eq_true_eq, mem_applicable]
-  exact ⟨fun ⟨r, hr, _⟩ ↦ ⟨r, hr⟩, fun h ↦ (exists_isElsewhereWinner h).imp
+  exact ⟨fun ⟨r, hr, _⟩ ↦ ⟨r, hr⟩, fun h ↦ (exists_isElsewhereWinner (key := key) h).imp
     fun w hw ↦ ⟨hw.1, fun s hs ↦ hw.not_lt hs⟩⟩
 
 theorem selectMinimal_eq_none_iff :
-    v.selectMinimal c = none ↔ v.applicable c = [] := by
+    v.selectMinimal key c = none ↔ v.applicable c = [] := by
   rw [← Option.not_isSome_iff_eq_none, selectMinimal_isSome_iff]
   simp [applicable, List.filter_eq_nil_iff]
 
 /-- Contexts with the same applicable rules select the same rule. -/
 theorem selectMinimal_congr (h : v.applicable c = v.applicable c') :
-    v.selectMinimal c = v.selectMinimal c' := by
+    v.selectMinimal key c = v.selectMinimal key c' := by
   rw [selectMinimal, selectMinimal, h]
 
 /-- A rule system sensitive only to what `A` sees selects the same rule in
 contexts that `A` identifies. -/
 theorem selectMinimal_factorsThrough {V : Type*} {A : Ctx → V}
     (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
-    v.selectMinimal.FactorsThrough A :=
+    (v.selectMinimal key).FactorsThrough A :=
   fun _ _ hA ↦ selectMinimal_congr <| List.filter_congr fun r hr ↦ by simp [h r hr hA]
 
 /-- The exponent of the rule selected by `selectMinimal`, the order-based counterpart of
 `realize`. -/
-def realizeMinimal (v : RuleSet R) (c : Ctx) : Option E :=
-  (v.selectMinimal c).map exponent
+def realizeMinimal (v : RuleSet R) (key : R → κ) (c : Ctx) : Option E :=
+  (v.selectMinimal key c).map exponent
 
 /-- A rule system sensitive only to what `A` sees realizes the same exponent in contexts that `A`
 identifies. -/
 theorem realizeMinimal_factorsThrough {V : Type*} {A : Ctx → V}
     (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
-    v.realizeMinimal.FactorsThrough A :=
+    (v.realizeMinimal key).FactorsThrough A :=
   fun _ _ hA ↦ congrArg (Option.map exponent) (selectMinimal_factorsThrough h hA)
 
-theorem realizeMinimal_eq_none_iff : v.realizeMinimal c = none ↔ v.applicable c = [] :=
+theorem realizeMinimal_eq_none_iff : v.realizeMinimal key c = none ↔ v.applicable c = [] :=
   Option.map_eq_none_iff.trans selectMinimal_eq_none_iff
 
-theorem realizeMinimal_isSome_iff : (v.realizeMinimal c).isSome ↔ ∃ r ∈ v, Applies r c := by
+theorem realizeMinimal_isSome_iff : (v.realizeMinimal key c).isSome ↔ ∃ r ∈ v, Applies r c := by
   rw [realizeMinimal, Option.isSome_map]
   exact selectMinimal_isSome_iff
 
 /-- Contexts with the same applicable rules realize the same exponent. -/
 theorem realizeMinimal_congr (h : v.applicable c = v.applicable c') :
-    v.realizeMinimal c = v.realizeMinimal c' :=
+    v.realizeMinimal key c = v.realizeMinimal key c' :=
   congrArg (Option.map exponent) (selectMinimal_congr h)
 
 /-- Minimally realized exponents satisfy `Realizes`. -/
-theorem realizeMinimal_realizes (h : v.realizeMinimal c = some φ) : v.Realizes c φ := by
+theorem realizeMinimal_realizes (h : v.realizeMinimal key c = some φ) : v.Realizes key c φ := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, selectMinimal_isElsewhereWinner hr, rfl⟩
 
 /-- Over a coherent rule set whose Elsewhere winners form a chain, the minimally realized
 exponent is that of any Elsewhere winner, so it does not depend on the order of the
 rule set. -/
-theorem realizeMinimal_eq_of_isElsewhereWinner (hv : v.Coherent)
-    (hc : IsChain (· ≤ ·) {s | v.IsElsewhereWinner c s}) (hr : v.IsElsewhereWinner c r) :
-    v.realizeMinimal c = some (exponent r) := by
+theorem realizeMinimal_eq_of_isElsewhereWinner (hv : v.Coherent key)
+    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hr : v.IsElsewhereWinner key c r) :
+    v.realizeMinimal key c = some (exponent r) := by
   obtain ⟨φ, hφ⟩ := Option.isSome_iff_exists.mp
-    (realizeMinimal_isSome_iff.mpr ⟨r, hr.prop.1, hr.prop.2⟩)
+    (realizeMinimal_isSome_iff (key := key).mpr ⟨r, hr.prop.1, hr.prop.2⟩)
   rw [hφ, (realizeMinimal_realizes hφ).eq hv hc ⟨r, hr, rfl⟩]
 
 /-- Under Pāṇinian Determinism a coherent rule set realizes by minimal selection what it
 realizes by selection on any score strictly reversing specificity. -/
-theorem realizeMinimal_eq_realize (hv : v.Coherent)
-    (hc : IsChain (· ≤ ·) {s | v.IsElsewhereWinner c s})
-    (hf : StrictAntiOn f {r | r ∈ v.applicable c}) : v.realizeMinimal c = v.realize f c := by
+theorem realizeMinimal_eq_realize (hv : v.Coherent key)
+    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r) :
+    v.realizeMinimal key c = v.realize f c := by
   rcases hs : v.selectBy f c with - | r
   · rw [realize, hs, Option.map_none, realizeMinimal_eq_none_iff,
       ← selectBy_eq_none_iff (f := f), hs]
@@ -367,17 +369,18 @@ theorem realizeMinimal_eq_realize (hv : v.Coherent)
 context form a chain, Stump's Pāṇinian Determinism. The rule selected at `c'` is then selected
 at any context whose applicable rules are among those at `c'`, as long as it applies there. -/
 theorem selectMinimal_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
-    (hc : IsChain (· ≤ ·) {s | v.IsElsewhereWinner c s}) (hr : v.selectMinimal c' = some r)
-    (hrc : Applies r c) : v.selectMinimal c = some r := by
+    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hr : v.selectMinimal key c' = some r)
+    (hrc : Applies r c) : v.selectMinimal key c = some r := by
   have hwr' := selectMinimal_isElsewhereWinner hr
-  have hwr : v.IsElsewhereWinner c r := hwr'.of_applies h hrc
+  have hwr : v.IsElsewhereWinner key c r := hwr'.of_applies h hrc
   rw [selectMinimal_eq_find?] at hr ⊢
   refine List.find?_eq_some_of_imp hr ?_ fun x hx hpx ↦ ?_
   · exact decide_eq_true ⟨hrc, fun s hs hlt ↦ hwr.not_lt (mem_applicable.mp hs) hlt⟩
   obtain ⟨hxc, hxmin⟩ := of_decide_eq_true hpx
-  have hwx : v.IsElsewhereWinner c x := minimal_iff_forall_lt.mpr
+  have hwx : v.IsElsewhereWinner key c x := minimalFor_iff_forall_lt.mpr
     ⟨⟨hx, hxc⟩, fun s hlt hs ↦ hxmin s (mem_applicable.mpr hs) hlt⟩
-  have hxr : x ≤ r := by
+  have hxr : key x ≤ key r := by
     by_contra hxr
     exact hxmin r (mem_applicable.mpr hwr.prop)
       (lt_of_le_not_ge ((hc.total hwx hwr).resolve_left hxr) hxr)
@@ -385,7 +388,7 @@ theorem selectMinimal_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Appli
     fun s hs hlt ↦ hwr'.not_lt (mem_applicable.mp hs) (lt_of_lt_of_le hlt hxr)⟩
 
 theorem selectMinimal_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
-    (hr : v.selectMinimal c' = none) : v.selectMinimal c = none := by
+    (hr : v.selectMinimal key c' = none) : v.selectMinimal key c = none := by
   rw [selectMinimal_eq_none_iff, applicable_eq_filter h, selectMinimal_eq_none_iff.mp hr,
     List.filter_nil]
 
@@ -393,14 +396,14 @@ theorem selectMinimal_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Appli
 Across three contexts whose applicable rules are nested, an antihomophonous rule set that
 realizes one exponent at both outer contexts realizes it at the middle one. -/
 theorem realizeMinimal_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
-    (hc : IsChain (· ≤ ·) {s | v.IsElsewhereWinner c₂ s})
+    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c₂ s})
     (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₂) (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
-    (h : v.realizeMinimal c₁ = v.realizeMinimal c₃) :
-    v.realizeMinimal c₂ = v.realizeMinimal c₁ := by
-  rcases h₃ : v.selectMinimal c₃ with - | r
+    (h : v.realizeMinimal key c₁ = v.realizeMinimal key c₃) :
+    v.realizeMinimal key c₂ = v.realizeMinimal key c₁ := by
+  rcases h₃ : v.selectMinimal key c₃ with - | r
   · rw [realizeMinimal, realizeMinimal, selectMinimal_eq_none_of_applies h₂ h₃,
       selectMinimal_eq_none_of_applies h₁ (selectMinimal_eq_none_of_applies h₂ h₃)]
-  · obtain ⟨r₁, hr₁, he⟩ : ∃ r₁, v.selectMinimal c₁ = some r₁ ∧ exponent r₁ = exponent r := by
+  · obtain ⟨r₁, hr₁, he⟩ : ∃ r₁, v.selectMinimal key c₁ = some r₁ ∧ exponent r₁ = exponent r := by
       simpa [realizeMinimal, h₃] using h
     obtain rfl := hv (selectMinimal_mem hr₁) (selectMinimal_mem h₃) he
     rw [realizeMinimal, realizeMinimal, hr₁, selectMinimal_eq_some_of_applies h₂ hc h₃
@@ -413,16 +416,16 @@ variable [Preorder Ctx]
 /-- Under Pāṇinian Determinism, rules applicable on upper sets of contexts realize contiguous
 patterns by minimal selection. -/
 theorem isContiguous_realizeMinimal_of_monotone (hv : v.Antihomophonous)
-    (hc : ∀ c, IsChain (· ≤ ·) {s | v.IsElsewhereWinner c s})
-    (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous v.realizeMinimal :=
+    (hc : ∀ c, IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (v.realizeMinimal key) :=
   fun _ _ _ hij hjk he ↦ (realizeMinimal_eq_of_applies hv (hc _)
     (fun s hs ↦ h s hs hij) (fun s hs ↦ h s hs hjk) he).symm
 
 /-- Under Pāṇinian Determinism, rules applicable on lower sets of contexts realize contiguous
 patterns by minimal selection. -/
 theorem isContiguous_realizeMinimal_of_antitone (hv : v.Antihomophonous)
-    (hc : ∀ c, IsChain (· ≤ ·) {s | v.IsElsewhereWinner c s})
-    (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous v.realizeMinimal :=
+    (hc : ∀ c, IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (v.realizeMinimal key) :=
   fun _ _ _ hij hjk he ↦ he.trans (realizeMinimal_eq_of_applies hv (hc _)
     (fun s hs ↦ h s hs hjk) (fun s hs ↦ h s hs hij) he.symm).symm
 
@@ -430,45 +433,45 @@ end Contiguity
 
 /-! ### Realization with a fallback -/
 
-/-- `v.realizeMinimalD fallback c` is the exponent of the rule selected by `selectMinimal`, or
+/-- `v.realizeMinimalD key fallback c` is the exponent of the rule selected by `selectMinimal`, or
 `fallback c` where no rule of `v` applies at `c`. -/
-def realizeMinimalD (v : RuleSet R) (fallback : Ctx → E) (c : Ctx) : E :=
-  (v.realizeMinimal c).getD (fallback c)
+def realizeMinimalD (v : RuleSet R) (key : R → κ) (fallback : Ctx → E) (c : Ctx) : E :=
+  (v.realizeMinimal key c).getD (fallback c)
 
 variable {fallback : Ctx → E}
 
 /-- With no rules, realization is the fallback. -/
 @[simp] theorem realizeMinimalD_nil (fallback : Ctx → E) :
-    realizeMinimalD ([] : RuleSet R) fallback = fallback :=
+    realizeMinimalD ([] : RuleSet R) key fallback = fallback :=
   funext fun _ ↦ rfl
 
-theorem realizeMinimalD_eq_of_selectMinimal_eq_some (h : v.selectMinimal c = some r) :
-    v.realizeMinimalD fallback c = exponent r := by
+theorem realizeMinimalD_eq_of_selectMinimal_eq_some (h : v.selectMinimal key c = some r) :
+    v.realizeMinimalD key fallback c = exponent r := by
   simp [realizeMinimalD, realizeMinimal, h]
 
-theorem realizeMinimalD_eq_fallback_of_selectMinimal_eq_none (h : v.selectMinimal c = none) :
-    v.realizeMinimalD fallback c = fallback c := by
+theorem realizeMinimalD_eq_fallback_of_selectMinimal_eq_none (h : v.selectMinimal key c = none) :
+    v.realizeMinimalD key fallback c = fallback c := by
   simp [realizeMinimalD, realizeMinimal, h]
 
 /-- The realized value is the fallback or the exponent of one of the rules. -/
-theorem realizeMinimalD_eq_fallback_or_mem : v.realizeMinimalD fallback c = fallback c ∨
-    ∃ r ∈ v, v.realizeMinimalD fallback c = exponent r :=
-  match h : v.selectMinimal c with
+theorem realizeMinimalD_eq_fallback_or_mem : v.realizeMinimalD key fallback c = fallback c ∨
+    ∃ r ∈ v, v.realizeMinimalD key fallback c = exponent r :=
+  match h : v.selectMinimal key c with
   | none => .inl (realizeMinimalD_eq_fallback_of_selectMinimal_eq_none h)
   | some r => .inr ⟨r, selectMinimal_mem h, realizeMinimalD_eq_of_selectMinimal_eq_some h⟩
 
 /-- A property of the fallback and of every rule's exponent holds of the realized value. -/
 theorem realizeMinimalD_induction (q : E → Prop) (hd : q (fallback c))
-    (hv : ∀ r ∈ v, q (exponent r)) : q (v.realizeMinimalD fallback c) := by
+    (hv : ∀ r ∈ v, q (exponent r)) : q (v.realizeMinimalD key fallback c) := by
   obtain h | ⟨r, hr, h⟩ :=
-    realizeMinimalD_eq_fallback_or_mem (v := v) (fallback := fallback) (c := c)
+    realizeMinimalD_eq_fallback_or_mem (v := v) (key := key) (fallback := fallback) (c := c)
   · exact h ▸ hd
   · exact h ▸ hv r hr
 
 /-- Contexts with the same applicable rules and the same fallback realize the same value. -/
 theorem realizeMinimalD_congr (h : v.applicable c = v.applicable c')
     (hd : fallback c = fallback c') :
-    v.realizeMinimalD fallback c = v.realizeMinimalD fallback c' := by
+    v.realizeMinimalD key fallback c = v.realizeMinimalD key fallback c' := by
   rw [realizeMinimalD, realizeMinimalD, realizeMinimal_congr h, hd]
 
 /-- Rules whose applicability sees only what `A` sees, with a fallback that factors through
@@ -478,15 +481,16 @@ heteroclisis. -/
 theorem realizeMinimalD_factorsThrough {V : Type*} {A : Ctx → V}
     (hd : fallback.FactorsThrough A)
     (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
-    (v.realizeMinimalD fallback).FactorsThrough A :=
+    (v.realizeMinimalD key fallback).FactorsThrough A :=
   fun _ _ hA ↦ by rw [realizeMinimalD, realizeMinimalD, realizeMinimal, realizeMinimal,
     selectMinimal_factorsThrough h hA, hd hA]
 
 /-- Over a coherent rule set whose Elsewhere winners form a chain, the realized value is the
 exponent of any Elsewhere winner, so it does not depend on the order of the rule set. -/
-theorem realizeMinimalD_eq_of_isElsewhereWinner (hv : v.Coherent)
-    (hc : IsChain (· ≤ ·) {s | v.IsElsewhereWinner c s}) (hr : v.IsElsewhereWinner c r) :
-    v.realizeMinimalD fallback c = exponent r := by
+theorem realizeMinimalD_eq_of_isElsewhereWinner (hv : v.Coherent key)
+    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hr : v.IsElsewhereWinner key c r) :
+    v.realizeMinimalD key fallback c = exponent r := by
   rw [realizeMinimalD, realizeMinimal_eq_of_isElsewhereWinner hv hc hr, Option.getD_some]
 
 end Morphology.Exponence.RuleSet

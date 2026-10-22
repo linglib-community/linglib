@@ -15,8 +15,8 @@ domain rules.
 
 ## Main definitions
 
-* `Exponence.DomainRule`: a finite domain with an exponent, with its `Exponence.Rule` instance
-  and the specificity preorder of domain inclusion.
+* `Exponence.DomainRule`: a finite domain with an exponent, with its `Exponence.Rule` instance;
+  its specificity key is the domain, ordered by inclusion.
 
 ## Main results
 
@@ -54,21 +54,12 @@ variable {Ctx E : Type*} {r s : DomainRule Ctx E} {c : Ctx}
 
 instance : Rule (DomainRule Ctx E) Ctx E := ⟨DomainRule.exponent, fun r c ↦ c ∈ r.dom⟩
 
-/-- Domain rules are ordered by the specificity preorder, so that a rule whose domain is
-included in another's is the more specific. -/
-instance : Preorder (DomainRule Ctx E) := toPreorder
-
 @[simp] theorem applies_iff : Applies r c ↔ c ∈ r.dom := Iff.rfl
 
 @[simp] theorem rule_exponent : Rule.exponent r = r.exponent := rfl
 
-theorem le_iff : r ≤ s ↔ r.dom ⊆ s.dom := Finset.coe_subset
-
-theorem lt_iff : r < s ↔ r.dom ⊂ s.dom := Finset.coe_ssubset
-
-/-- A strictly more specific rule has a strictly smaller domain. -/
-theorem strictMono_card_dom : StrictMono fun r : DomainRule Ctx E ↦ r.dom.card :=
-  fun _ _ h ↦ Finset.card_lt_card (lt_iff.mp h)
+/-- A rule's domain is the set of contexts it applies in. -/
+theorem coe_dom : (r.dom : Set Ctx) = applySet r := rfl
 
 /-- A domain rule's applicability factors through `A` exactly when its domain is a union of
 fibers of `A`. -/
@@ -79,18 +70,15 @@ theorem factorsThrough_applies_iff {V : Type*} {A : Ctx → V} :
 /-- Rules whose overlapping domains are nested satisfy Pāṇinian Determinism, their Elsewhere
 winners at any context forming a chain. -/
 theorem isChain_of_nested {v : RuleSet (DomainRule Ctx E)}
-    (h : ∀ r ∈ v, ∀ s ∈ v, ¬ Disjoint r.dom s.dom → r ≤ s ∨ s ≤ r) (c : Ctx) :
-    IsChain (· ≤ ·) {r | v.IsElsewhereWinner c r} :=
-  fun r (hr : v.IsElsewhereWinner c r) s (hs : v.IsElsewhereWinner c s) _ ↦
+    (h : ∀ r ∈ v, ∀ s ∈ v, ¬ Disjoint r.dom s.dom → r.dom ⊆ s.dom ∨ s.dom ⊆ r.dom) (c : Ctx) :
+    IsChain (fun r s ↦ r.dom ≤ s.dom) {r | v.IsElsewhereWinner (·.dom) c r} :=
+  fun r (hr : v.IsElsewhereWinner (·.dom) c r) s (hs : v.IsElsewhereWinner (·.dom) c s) _ ↦
     h r hr.prop.1 s hs.prop.1 (Finset.not_disjoint_iff.mpr ⟨c, hr.prop.2, hs.prop.2⟩)
 
 variable [DecidableEq Ctx]
 
 instance : DecidableRel (Applies : DomainRule Ctx E → Ctx → Prop) :=
   fun r c ↦ inferInstanceAs (Decidable (c ∈ r.dom))
-
-instance : DecidableRel (· < · : DomainRule Ctx E → DomainRule Ctx E → Prop) :=
-  fun r s ↦ inferInstanceAs (Decidable (r.dom ⊂ s.dom))
 
 instance [Fintype Ctx] {V : Type*} [DecidableEq V] (r : DomainRule Ctx E) (A : Ctx → V) :
     Decidable ((Applies r).FactorsThrough A) :=
@@ -103,7 +91,8 @@ chain `{0} ⊆ {0, 1} ⊆ {0, 1, 2}`: at `{0, 1}` the winners `S` and `R` are in
 list order picks `S`. -/
 theorem exists_not_isContiguous_realizeMinimal :
     ∃ v : RuleSet (DomainRule (Finset (Fin 3)) String), v.Antihomophonous ∧
-      (∀ r ∈ v, IsUpperSet (r.dom : Set (Finset (Fin 3)))) ∧ ¬ IsContiguous v.realizeMinimal := by
+      (∀ r ∈ v, IsUpperSet (r.dom : Set (Finset (Fin 3)))) ∧
+        ¬ IsContiguous (v.realizeMinimal (·.dom)) := by
   let up (x : Finset (Fin 3)) : Finset (Finset (Fin 3)) := Finset.univ.filter (x ⊆ ·)
   have hup (x) : IsUpperSet (up x : Set (Finset (Fin 3))) := fun a b hab ha ↦ by
     simp only [up, Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢

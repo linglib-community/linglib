@@ -32,8 +32,8 @@ pattern across nested neighborhoods.
 
 ## Main statements
 
-* `DistributedMorphology.VocabularyItem.le_iff`: an item is more specific than another exactly
-  when its site contains the other's.
+* `DistributedMorphology.VocabularyItem.applySet_subset_iff`: an item is more specific than another
+  exactly when its site contains the other's.
 * `DistributedMorphology.winner?_isElsewhereWinner`: the winner is an Elsewhere winner of the
   shared core.
 * `DistributedMorphology.winner?_eq_head?_applicable`: over a vocabulary listed by non-increasing
@@ -119,8 +119,6 @@ it applies in those bearing every positioned feature of its site. -/
 instance : Rule (VocabularyItem F E) (Neighborhood (Finset F)) E :=
   ⟨exponent, fun i n ↦ ∀ x ∈ i.site, x ∈ n⟩
 
-instance : Preorder (VocabularyItem F E) := toPreorder
-
 theorem applies_iff : Applies i n ↔ ∀ x ∈ i.site, x ∈ n := Iff.rfl
 
 theorem applies_iff_subset_toFinset [DecidableEq F] : Applies i n ↔ i.site ⊆ n.toFinset := by
@@ -152,16 +150,14 @@ theorem applies_mono {n' : Neighborhood (Finset F)} (h : Applies i n) (hn : n �
     Applies i n' :=
   fun _ hx ↦ Neighborhood.mem_of_subset hn (h _ hx)
 
-/-- The engine's specificity order is reverse inclusion of sites, since principal up-sets are
-ordered reversely to their generators. -/
-theorem le_iff : i ≤ j ↔ j.site ⊆ i.site := by
+/-- Specificity is reverse inclusion of sites: an item applies in fewer neighborhoods exactly when
+its site is larger, since principal up-sets are ordered reversely to their generators. -/
+theorem applySet_subset_iff : applySet i ⊆ applySet j ↔ j.site ⊆ i.site := by
   classical
-  change applySet i ⊆ applySet j ↔ _
   rw [applySet_eq, applySet_eq, Set.Ici_subset_Ici, Neighborhood.ofFinset_subset_ofFinset]
 
-/-- A strictly more specific item has a strictly larger site. -/
-theorem site_strictAnti : StrictAnti (site : VocabularyItem F E → Finset (ℤ × F)) :=
-  strictAnti_of_le_iff_le fun _ _ ↦ le_iff
+theorem applySet_ssubset_iff : applySet i ⊂ applySet j ↔ j.site ⊂ i.site := by
+  simp only [Set.ssubset_def, Finset.ssubset_def, applySet_subset_iff]
 
 /-- An item's specificity counts the features its site puts on the terminal, then those it puts
 on the context: the terminal's features decide, as the Subset Principle chooses the item
@@ -169,10 +165,11 @@ matching most of them ([halle-1997]), and context breaks ties ([mcginnis-2013]).
 def specificity (i : VocabularyItem F E) : ℕ ×ₗ ℕ :=
   toLex ((i.site.filter (·.1 = 0)).card, (i.site.filter (·.1 ≠ 0)).card)
 
-theorem specificity_strictAnti : StrictAnti (specificity : VocabularyItem F E → ℕ ×ₗ ℕ) := by
+/-- A strictly more specific item has a strictly greater specificity. -/
+theorem specificity_lt_of_applySet_ssubset (hij : applySet i ⊂ applySet j) :
+    j.specificity < i.specificity := by
   classical
-  intro i j hij
-  have hs := site_strictAnti hij
+  have hs := applySet_ssubset_iff.1 hij
   have h₀ := Finset.filter_subset_filter (·.1 = 0) hs.subset
   have h₁ := Finset.filter_subset_filter (·.1 ≠ 0) hs.subset
   refine Prod.Lex.toLex_lt_toLex.mpr ((Finset.card_le_card h₀).lt_or_eq.imp id fun heq ↦
@@ -244,11 +241,14 @@ theorem subsetPrinciple_eq_head?_applicable
 
 /-- The winner is an Elsewhere winner of the shared core, with no faithfulness hypothesis, since
 `VocabularyItem.specificity` is strictly antitone outright. -/
-theorem winner?_isElsewhereWinner (h : winner? items n = some i) : items.IsElsewhereWinner n i :=
-  RuleSet.selectBy_isElsewhereWinner (VocabularyItem.specificity_strictAnti.strictAntiOn _) h
+theorem winner?_isElsewhereWinner (h : winner? items n = some i) :
+    items.IsElsewhereWinner applySet n i :=
+  RuleSet.selectBy_isElsewhereWinner
+    (fun _ _ _ _ h ↦ VocabularyItem.specificity_lt_of_applySet_ssubset h) h
 
-theorem subsetPrinciple_realizes (h : subsetPrinciple items n = some e) : items.Realizes n e :=
-  RuleSet.realize_realizes (VocabularyItem.specificity_strictAnti.strictAntiOn _) h
+theorem subsetPrinciple_realizes (h : subsetPrinciple items n = some e) :
+    items.Realizes applySet n e :=
+  RuleSet.realize_realizes (fun _ _ _ _ h ↦ VocabularyItem.specificity_lt_of_applySet_ssubset h) h
 
 /-- Impoverishment that deletes only features the winning item does not mention leaves the winner
 in place, since every item applicable after the deletion was applicable before it. -/

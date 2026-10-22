@@ -573,15 +573,14 @@ theorem forms_not_function_of_footed :
       ∀ d ∈ rows, f (d.input.neighborhood, d.input.constituency, d.input.footed) = d.form :=
   not_exists_of_rows (A := fun x ↦ (x.neighborhood, x.constituency, x.footed)) (by decide)
 
-variable {R : Type*} [Rule R Input (Form Wordlist.Cell)] [Preorder R]
-  [DecidableRel (Applies : R → Input → Prop)] [DecidableRel (· < · : R → R → Prop)]
-  (w : RuleSet R)
+variable {R : Type*} [Rule R Input (Form Wordlist.Cell)] [DecidableRel (Applies : R → Input → Prop)]
+  {κ : Type*} [Preorder κ] [DecidableRel (· < · : κ → κ → Prop)] (w : RuleSet R) (key : R → κ)
 
 private theorem not_realizes_of_not_exists {A : Input → V}
     (h : ¬ ∃ f : V → Form Wordlist.Cell, ∀ d ∈ rows, f (A d.input) = d.form)
     (hw : ∀ r ∈ w, ∀ ⦃x y : Input⦄, A x = A y → (Applies r x ↔ Applies r y)) :
-    ¬ ∀ d ∈ rows, w.realizeMinimal d.input = some d.form := fun hr ↦
-  h ⟨fun y ↦ (Function.extend A w.realizeMinimal (fun _ ↦ none) y).getD Head.what.short,
+    ¬ ∀ d ∈ rows, w.realizeMinimal key d.input = some d.form := fun hr ↦
+  h ⟨fun y ↦ (Function.extend A (w.realizeMinimal key) (fun _ ↦ none) y).getD Head.what.short,
     fun d hd ↦ by
       simp only [(RuleSet.realizeMinimal_factorsThrough hw).extend_apply, hr d hd,
         Option.getD_some]⟩
@@ -601,8 +600,8 @@ theorem not_realizes_of_constituency
     (hw : ∀ r ∈ w, ∀ ⦃x y : Input⦄,
       (x.neighborhood, x.constituency) = (y.neighborhood, y.constituency) →
       (Applies r x ↔ Applies r y)) :
-    ¬ ∀ d ∈ rows, w.realizeMinimal d.input = some d.form :=
-  not_realizes_of_not_exists w (A := fun x ↦ (x.neighborhood, x.constituency))
+    ¬ ∀ d ∈ rows, w.realizeMinimal key d.input = some d.form :=
+  not_realizes_of_not_exists w key (A := fun x ↦ (x.neighborhood, x.constituency))
     forms_not_function_of_constituency hw
 
 /-- **No selection by the next syllable**: no rule set whose rules read of the input only the
@@ -612,8 +611,8 @@ theorem not_realizes_of_footed
     (hw : ∀ r ∈ w, ∀ ⦃x y : Input⦄,
       (x.neighborhood, x.constituency, x.footed) = (y.neighborhood, y.constituency, y.footed) →
       (Applies r x ↔ Applies r y)) :
-    ¬ ∀ d ∈ rows, w.realizeMinimal d.input = some d.form :=
-  not_realizes_of_not_exists w (A := fun x ↦ (x.neighborhood, x.constituency, x.footed))
+    ¬ ∀ d ∈ rows, w.realizeMinimal key d.input = some d.form :=
+  not_realizes_of_not_exists w key (A := fun x ↦ (x.neighborhood, x.constituency, x.footed))
     forms_not_function_of_footed hw
 
 end Globality

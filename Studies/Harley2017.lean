@@ -121,13 +121,13 @@ def vocabulary (ρ : Root) : RuleSet (VocabularyItem (Feature ⊕ Root) Exponent
 /-- The vocabulary is listed in order of decreasing specificity. -/
 private theorem vocabulary_pairwise (ρ : Root) :
     (vocabulary ρ).Pairwise fun i j ↦ j.specificity ≤ i.specificity := by
-  have hlt : lexicalItem ρ < dirItem := by
-    refine lt_of_le_not_ge (VocabularyItem.le_iff.2 ?_) fun h ↦ ?_
+  have hlt : applySet (lexicalItem ρ) ⊂ applySet dirItem := by
+    refine ssubset_of_subset_not_subset (VocabularyItem.applySet_subset_iff.2 ?_) fun h ↦ ?_
     · simp [Finset.subset_iff, lexicalItem, dirItem]
     · have hρ : ((-1 : ℤ), (.inr ρ : Feature ⊕ Root)) ∈ (lexicalItem ρ).site := by
         simp [lexicalItem]
-      simpa [dirItem] using VocabularyItem.le_iff.1 h hρ
-  simpa [vocabulary] using (VocabularyItem.specificity_strictAnti hlt).le
+      simpa [dirItem] using VocabularyItem.applySet_subset_iff.1 h hρ
+  simpa [vocabulary] using (VocabularyItem.specificity_lt_of_applySet_ssubset hlt).le
 
 /-- The terminal of the head bearing the lower Caus. -/
 def causTerminal (P : IntervalPartition Feature) : Terminal :=

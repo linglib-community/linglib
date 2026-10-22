@@ -30,7 +30,7 @@ where tree spellout is also the spellout of the containment engine.
 
 ## Main results
 
-* `LexicalEntry.le_iff`: specificity is reverse containment of the stored trees.
+* `LexicalEntry.applySet_subset_iff`: specificity is reverse containment of the stored trees.
 * `treeSelect_isElsewhereWinner`: smallest-tree selection picks an Elsewhere winner.
 * `footConditionMet_of_matches_chainTree`: an entry storing a chain meets the Foot Condition
   wherever it matches, so the condition constrains only entries with branching trees.
@@ -90,23 +90,21 @@ instance [DecidableEq F] (e : LexicalEntry F α) (t : RoseTree F) : Decidable (e
 instance : Exponence.Rule (LexicalEntry F α) (RoseTree F) α :=
   ⟨LexicalEntry.exponent, fun e t ↦ e.Matches t⟩
 
-instance : Preorder (LexicalEntry F α) := Exponence.toPreorder
-
 /-- One entry is at least as specific as another exactly when the other's stored tree contains
 its stored tree. -/
-theorem LexicalEntry.le_iff {a b : LexicalEntry F α} : a ≤ b ↔ IsSubtree a.tree b.tree :=
+theorem LexicalEntry.applySet_subset_iff {a b : LexicalEntry F α} :
+    Exponence.applySet a ⊆ Exponence.applySet b ↔ IsSubtree a.tree b.tree :=
   ⟨fun h ↦ h (.refl a.tree), fun h _ hc ↦ hc.trans h⟩
 
 /-! ### Spellout -/
 
-/-- The size of the stored tree is strictly antitone in specificity, since a strictly containing
+/-- A strictly more specific entry stores a strictly smaller tree, since a strictly containing
 tree is strictly larger. -/
-private theorem numNodes_strictAnti :
-    StrictAnti (fun e : LexicalEntry F α ↦ OrderDual.toDual e.tree.numNodes) := by
-  intro s r hlt
-  have hcon := LexicalEntry.le_iff.mp hlt.le
-  refine OrderDual.toDual_lt_toDual.mpr (lt_of_le_of_ne hcon.numNodes_le fun heq ↦ ?_)
-  exact not_le_of_gt hlt (LexicalEntry.le_iff.mpr (hcon.eq_of_numNodes_le heq.ge ▸ .refl _))
+private theorem numNodes_lt_of_applySet_ssubset {s r : LexicalEntry F α}
+    (hlt : Exponence.applySet s ⊂ Exponence.applySet r) : s.tree.numNodes < r.tree.numNodes := by
+  have hcon := LexicalEntry.applySet_subset_iff.mp hlt.le
+  refine lt_of_le_of_ne hcon.numNodes_le fun heq ↦ ?_
+  exact hlt.not_ge (LexicalEntry.applySet_subset_iff.mpr (hcon.eq_of_numNodes_le heq.ge ▸ .refl _))
 
 section
 variable [DecidableEq F]
@@ -127,13 +125,15 @@ def treeSpellout (entries : RuleSet (LexicalEntry F α)) (t : RoseTree F) : Opti
 /-- Smallest-tree selection picks an Elsewhere winner. -/
 theorem treeSelect_isElsewhereWinner {entries : RuleSet (LexicalEntry F α)} {t : RoseTree F}
     {e : LexicalEntry F α} (h : treeSelect entries t = some e) :
-    entries.IsElsewhereWinner t e :=
-  RuleSet.selectBy_isElsewhereWinner (numNodes_strictAnti.strictAntiOn _) h
+    entries.IsElsewhereWinner Exponence.applySet t e :=
+  RuleSet.selectBy_isElsewhereWinner
+    (f := fun e : LexicalEntry F α ↦ OrderDual.toDual e.tree.numNodes)
+    (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.2 (numNodes_lt_of_applySet_ssubset h)) h
 
 /-- The spelled-out exponent is the exponent of an Elsewhere winner. -/
 theorem treeSpellout_isElsewhereWinner {entries : RuleSet (LexicalEntry F α)} {t : RoseTree F}
     {x : α} (h : treeSpellout entries t = some x) :
-    ∃ e ∈ entries, e.exponent = x ∧ entries.IsElsewhereWinner t e := by
+    ∃ e ∈ entries, e.exponent = x ∧ entries.IsElsewhereWinner Exponence.applySet t e := by
   obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨e, RuleSet.selectBy_mem he, rfl, treeSelect_isElsewhereWinner he⟩
 

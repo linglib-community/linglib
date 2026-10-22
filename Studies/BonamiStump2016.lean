@@ -118,7 +118,8 @@ def lindex (v : Verb) : String → Verb := fun _ ↦ v
 
 /-- Bonami and Stump's basic stem choice (7) gives a cell the stem of its narrowest applicable
 rule of basic stem choice, the narrowness order of the rules of exponence resolving conflicts. -/
-def stemChoice : Verb × Finset Feat → String := iceStems.realizeMinimalD fun _ ↦ ""
+def stemChoice : Verb × Finset Feat → String :=
+  iceStems.realizeMinimalD Rule.narrowness fun _ ↦ ""
 
 /-- The Icelandic paradigm function (13) applies basic stem choice and then Blocks I–III. -/
 def pf (v : Verb) (σ : Finset Feat) : String × Finset Feat :=
@@ -153,7 +154,9 @@ theorem nar_aetla_imp : evalBlock (lindex aetla) blockIII ("ætla", {imp, p2, sg
 
 /-- In the example of (15), the weak.4.b `-ðu` is narrower than the zero imperative, which is
 narrower than `-r`. -/
-theorem blockIII_narrowness : weak4bImp < zeroImp ∧ zeroImp < rSg2 := by decide
+theorem blockIII_narrowness :
+    weak4bImp.narrowness < zeroImp.narrowness ∧ zeroImp.narrowness < rSg2.narrowness := by
+  decide
 
 end Icelandic
 
