@@ -66,6 +66,8 @@ paper's sections on belief revision and causal networks are not formalized.
 
 namespace GoldszmidtPearl1996
 
+open RankingFunction
+
 variable {W : Type*}
 
 /-- A default rule "if φ then normally ψ" on decidable predicates. -/
@@ -147,14 +149,14 @@ Principle (3) a consequent follows when its negation has positive rank given the
 (`RankingFunction.entails_iff_condRank`), equivalently when it holds in every most normal world
 of the antecedent (`RankingFunction.entails_iff_forall_least`). -/
 theorem admissible_iff_forall_entails {κ : RankingFunction W} {Δ : KnowledgeBase W} :
-    Admissible κ Δ ↔ ∀ r ∈ Δ, κ.Entails {x | r.ante x} {x | r.cons x} := by
-  simp only [Admissible, RankingFunction.entails_iff_exists_lt, Rule.Falsified, Set.mem_ofPred_eq,
+    Admissible κ Δ ↔ ∀ r ∈ Δ, Entails κ {x | r.ante x} {x | r.cons x} := by
+  simp only [Admissible, entails_iff_forall_exists_lt, Rule.Falsified, Set.mem_ofPred_eq,
     and_imp]
 
 /-- A proposition p-entails another when it entails it in every admissible ranking
 (Definition 8). -/
 def PEntails (Δ : KnowledgeBase W) (φ σ : Set W) : Prop :=
-  ∀ κ : RankingFunction W, Admissible κ Δ → κ.Entails φ σ
+  ∀ κ : RankingFunction W, Admissible κ Δ → Entails κ φ σ
 
 /-- A rule is p-entailed by its own antecedent. -/
 theorem pEntails_of_mem {Δ : KnowledgeBase W} {r : Rule W} (h : r ∈ Δ) :
@@ -163,18 +165,18 @@ theorem pEntails_of_mem {Δ : KnowledgeBase W} {r : Rule W} (h : r ∈ Δ) :
 
 /-- An admissible ranking in which σ does not follow from φ refutes p-entailment. -/
 theorem not_pEntails {Δ : KnowledgeBase W} {κ : RankingFunction W} (hκ : Admissible κ Δ)
-    {φ σ : Set W} (h : ¬ κ.Entails φ σ) : ¬ PEntails Δ φ σ :=
+    {φ σ : Set W} (h : ¬ Entails κ φ σ) : ¬ PEntails Δ φ σ :=
   fun hp ↦ h (hp κ hκ)
 
 /-- P-entailment is a preferential consequence relation, since each rule of system P holds in
 every admissible ranking. -/
 theorem isPreferential_pEntails (Δ : KnowledgeBase W) :
     Nonmonotonic.IsPreferential (PEntails Δ) where
-  refl φ κ _ := κ.isRational_entails.refl φ
-  rightWeakening h hs κ hκ := κ.isRational_entails.rightWeakening (h κ hκ) hs
-  and h₁ h₂ κ hκ := κ.isRational_entails.and (h₁ κ hκ) (h₂ κ hκ)
-  or h₁ h₂ κ hκ := κ.isRational_entails.or (h₁ κ hκ) (h₂ κ hκ)
-  cautiousMonotonicity h₁ h₂ κ hκ := κ.isRational_entails.cautiousMonotonicity (h₁ κ hκ) (h₂ κ hκ)
+  refl φ κ _ := (isRational_entails κ).refl φ
+  rightWeakening h hs κ hκ := (isRational_entails κ).rightWeakening (h κ hκ) hs
+  and h₁ h₂ κ hκ := (isRational_entails κ).and (h₁ κ hκ) (h₂ κ hκ)
+  or h₁ h₂ κ hκ := (isRational_entails κ).or (h₁ κ hκ) (h₂ κ hκ)
+  cautiousMonotonicity h₁ h₂ κ hκ := (isRational_entails κ).cautiousMonotonicity (h₁ κ hκ) (h₂ κ hκ)
 
 /-! ### System Z⁺ (section 3) -/
 
@@ -306,14 +308,14 @@ undecided when neither. -/
 
 /-- The query "Do penguin-birds fly?" is answered NO under z-entailment. -/
 theorem z_penguin_birds_dont_fly :
-    κz.Entails {x | penguin x ∧ bird x} {x | ¬ flies x} := by decide
+    Entails κz {x | penguin x ∧ bird x} {x | ¬ flies x} := by decide
 
 /-- The query "Do penguin-birds fly?" is answered NO under p-entailment, by specificity in every
 admissible ranking. A most normal penguin-bird that flew would falsify r₃, and the world r₃ then
 places below it is a penguin-bird or, failing r₂, is outranked by one. -/
 theorem p_penguin_birds_dont_fly : PEntails Δpb {x | penguin x ∧ bird x} {x | ¬ flies x} := by
   intro κ hκ
-  rw [RankingFunction.entails_iff_forall_least]
+  rw [entails_iff_forall_least]
   rintro x ⟨hp, hb⟩ hmin hf
   obtain ⟨y, hyp, hyf, hlt⟩ := hκ r₃ (by simp [Δpb]) x ⟨hp, not_not.mpr hf⟩
   by_cases hyb : bird y
@@ -322,13 +324,13 @@ theorem p_penguin_birds_dont_fly : PEntails Δpb {x | penguin x ∧ bird x} {x |
     exact absurd (hmin z ⟨hzp, hzb⟩) (not_le.mpr (hlt'.trans hlt))
 
 /-- The query "Are birds typically penguins?" is answered NO under z-entailment. -/
-theorem z_birds_not_penguins : κz.Entails {x | bird x} {x | ¬ penguin x} := by decide
+theorem z_birds_not_penguins : Entails κz {x | bird x} {x | ¬ penguin x} := by decide
 
 /-- The query "Are birds typically penguins?" is answered NO under p-entailment. A most normal
 bird that was a penguin would falsify r₁ or r₃, and either rule places a bird below it. -/
 theorem p_birds_not_penguins : PEntails Δpb {x | bird x} {x | ¬ penguin x} := by
   intro κ hκ
-  rw [RankingFunction.entails_iff_forall_least]
+  rw [entails_iff_forall_least]
   intro x hb hmin hp
   by_cases hf : flies x
   · obtain ⟨y, hyp, hyf, hlt⟩ := hκ r₃ (by simp [Δpb]) x ⟨hp, not_not.mpr hf⟩
@@ -341,7 +343,7 @@ theorem p_birds_not_penguins : PEntails Δpb {x | bird x} {x | ¬ penguin x} := 
 
 /-- The query "Do red birds fly?" is answered YES under z-entailment, which discounts the
 irrelevant feature. -/
-theorem z_red_birds_fly : κz.Entails {x | red x ∧ bird x} {x | flies x} := by decide
+theorem z_red_birds_fly : Entails κz {x | red x ∧ bird x} {x | flies x} := by decide
 
 /-- The query "Do red birds fly?" is undecided under p-entailment. Adding the rule that red birds do
 not fly keeps the base consistent, and its ranking is admissible for Δ_pb; so is κᶻ, where they fly.
@@ -366,7 +368,7 @@ theorem not_isRational_pEntails : ¬ Nonmonotonic.IsRational (PEntails Δpb) := 
     rwa [Set.inter_comm] at this
 
 /-- The query "Are birds airborne?" is answered YES under z-entailment, by chaining r₁ and r₅. -/
-theorem z_birds_airborne : κz.Entails {x | bird x} {x | airborne x} := by decide
+theorem z_birds_airborne : Entails κz {x | bird x} {x | airborne x} := by decide
 
 /-- The query "Are birds airborne?" is undecided under p-entailment, since neither "birds are
 airborne" nor "birds are not airborne" makes the base inconsistent. -/
@@ -381,8 +383,8 @@ theorem p_birds_airborne_undecided :
 /-- The query "Are penguins winged animals?" is undecided under z-entailment, the exceptional
 subclass inheriting nothing from birds. -/
 theorem z_penguins_winged_undecided :
-    ¬ κz.Entails {x | penguin x} {x | winged x} ∧
-      ¬ κz.Entails {x | penguin x} {x | ¬ winged x} := by decide
+    ¬ Entails κz {x | penguin x} {x | winged x} ∧
+      ¬ Entails κz {x | penguin x} {x | ¬ winged x} := by decide
 
 /-- The query "Are penguins winged animals?" is undecided under p-entailment. -/
 theorem p_penguins_winged_undecided :
@@ -473,8 +475,8 @@ def κPlus : RankingFunction World :=
 /-- Penguin-birds do not fly under κ⁺ whatever the strengths, because the preference for r₃ over
 r₁ is a matter of specificity, not of the δ's (Theorem 25). -/
 theorem zPlus_penguin_birds_dont_fly :
-    (κPlus δ₁ δ₂ δ₃ δ₄ δ₅).Entails {x | penguin x ∧ bird x} {x | ¬ flies x} := by
-  rw [RankingFunction.entails_iff_exists_lt]
+    Entails (κPlus δ₁ δ₂ δ₃ δ₄ δ₅) {x | penguin x ∧ bird x} {x | ¬ flies x} := by
+  rw [entails_iff_forall_exists_lt]
   rintro x ⟨hp, -⟩ hf
   have : δ₁ + δ₃ + 1 + 1 ≤ zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅) x :=
     le_zPlusRank_of_falsified (q := (⟨r₃, δ₃⟩, δ₁ + δ₃ + 1)) (by simp [ΔpbPlus])
@@ -485,8 +487,8 @@ theorem zPlus_penguin_birds_dont_fly :
 
 /-- Penguins inherit wings under κ⁺ exactly when the wing rule is firmer than the flying rule. -/
 theorem zPlus_penguins_winged_iff :
-    (κPlus δ₁ δ₂ δ₃ δ₄ δ₅).Entails {x | penguin x} {x | winged x} ↔ δ₁ < δ₄ := by
-  rw [RankingFunction.entails_iff_exists_lt]
+    Entails (κPlus δ₁ δ₂ δ₃ δ₄ δ₅) {x | penguin x} {x | winged x} ↔ δ₁ < δ₄ := by
+  rw [entails_iff_forall_exists_lt]
   constructor
   · intro h
     obtain ⟨y, hyp, -, hlt⟩ := h ⟨true, true, false, false, true, false⟩ rfl (by decide)
@@ -569,8 +571,8 @@ private theorem zPlusRank_qrp :
 /-- A Quaker Republican is a pacifist exactly when religious conviction outweighs political
 affiliation: no specificity decides the diamond, only the strengths. -/
 theorem nixon_pacifist_iff :
-    (κqr δ₁ δ₂).Entails {x | quaker x ∧ republican x} {x | pacifist x} ↔ δ₂ < δ₁ := by
-  rw [RankingFunction.entails_iff_exists_lt]
+    Entails (κqr δ₁ δ₂) {x | quaker x ∧ republican x} {x | pacifist x} ↔ δ₂ < δ₁ := by
+  rw [entails_iff_forall_exists_lt]
   constructor
   · intro h
     obtain ⟨y, ⟨hyq, hyr⟩, hyp, hlt⟩ := h ⟨true, true, false⟩ ⟨rfl, rfl⟩ (by decide)
@@ -595,7 +597,6 @@ end Example26
 
 section SoftEvidence
 
-open RankingFunction
 
 variable (κ : RankingFunction W) {A : Set W} {L : ℕ} {w : W}
 
@@ -717,7 +718,6 @@ end SoftEvidence
 
 section Example28
 
-open RankingFunction
 
 /-- A world of Example 28 says whether Mary and whether Bill go to the party. -/
 structure Party where

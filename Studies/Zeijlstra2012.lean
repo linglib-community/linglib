@@ -87,19 +87,19 @@ instance {uF : SyntacticObject → Prop} [DecidablePred uF] (root probe goal : S
 /-! ### Sequence of Tense -/
 
 /-- The abstract past operator carrying `[iPAST]`. -/
-def opPast : PlanarSyntacticObject := .leaf ⟨.of .T [.V] "Op[PAST]", 1⟩
-def john : PlanarSyntacticObject := .leaf ⟨.of .D [] "John", 2⟩
+def opPast : LinearizedSyntacticObject := .leaf ⟨.of .T [.V] "Op[PAST]", 1⟩
+def john : LinearizedSyntacticObject := .leaf ⟨.of .D [] "John", 2⟩
 /-- The matrix verb, with its own vacuous `[uPAST]`. -/
-def said : PlanarSyntacticObject := .leaf ⟨.of .V [.C] "said", 3⟩
+def said : LinearizedSyntacticObject := .leaf ⟨.of .V [.C] "said", 3⟩
 /-- The embedding complementizer, carrying `[uT]`. -/
-def thatC : PlanarSyntacticObject := .leaf ⟨.of .C [.V] "that", 4⟩
-def mary : PlanarSyntacticObject := .leaf ⟨.of .D [] "Mary", 5⟩
+def thatC : LinearizedSyntacticObject := .leaf ⟨.of .C [.V] "that", 4⟩
+def mary : LinearizedSyntacticObject := .leaf ⟨.of .D [] "Mary", 5⟩
 /-- The subordinate verb, with `[uPAST]`, selecting its predicate and its subject. -/
-def was : PlanarSyntacticObject := .leaf ⟨.of .V [.A, .D] "was", 6⟩
-def ill : PlanarSyntacticObject := .leaf ⟨.of .A [] "ill", 7⟩
+def was : LinearizedSyntacticObject := .leaf ⟨.of .V [.A, .D] "was", 6⟩
+def ill : LinearizedSyntacticObject := .leaf ⟨.of .A [] "ill", 7⟩
 
 /-- *John said Mary was ill*, with the past operator above both verbs. -/
-def sot : PlanarSyntacticObject :=
+def sot : LinearizedSyntacticObject :=
   {john, {opPast, {said, {thatC, {mary, {was, ill}}}}}}
 
 /-- The bearers of `[iPAST]`. -/
@@ -129,27 +129,27 @@ theorem sot_licit :
 
 /-! ### Negative Concord -/
 
-def gianni : PlanarSyntacticObject := .leaf ⟨.of .D [] "Gianni", 11⟩
+def gianni : LinearizedSyntacticObject := .leaf ⟨.of .D [] "Gianni", 11⟩
 /-- The negative marker carrying `[iNEG]`. -/
-def non : PlanarSyntacticObject := .leaf ⟨.of .Neg [.T] "non", 12⟩
-def ha : PlanarSyntacticObject := .leaf ⟨.of .T [.V] "ha", 13⟩
-def detto : PlanarSyntacticObject := .leaf ⟨.of .V [.D] "detto", 14⟩
-def dettoC : PlanarSyntacticObject := .leaf ⟨.of .V [.C] "detto", 15⟩
-def niente : PlanarSyntacticObject := .leaf ⟨.of .D [.P] "niente", 16⟩
-def a : PlanarSyntacticObject := .leaf ⟨.of .P [.D] "a", 17⟩
-def nessuno : PlanarSyntacticObject := .leaf ⟨.of .D [] "nessuno", 18⟩
+def non : LinearizedSyntacticObject := .leaf ⟨.of .Neg [.T] "non", 12⟩
+def ha : LinearizedSyntacticObject := .leaf ⟨.of .T [.V] "ha", 13⟩
+def detto : LinearizedSyntacticObject := .leaf ⟨.of .V [.D] "detto", 14⟩
+def dettoC : LinearizedSyntacticObject := .leaf ⟨.of .V [.C] "detto", 15⟩
+def niente : LinearizedSyntacticObject := .leaf ⟨.of .D [.P] "niente", 16⟩
+def a : LinearizedSyntacticObject := .leaf ⟨.of .P [.D] "a", 17⟩
+def nessuno : LinearizedSyntacticObject := .leaf ⟨.of .D [] "nessuno", 18⟩
 /-- The embedding complementizer, without any negative feature. -/
-def che : PlanarSyntacticObject := .leaf ⟨.of .C [.T] "che", 19⟩
-def ha₂ : PlanarSyntacticObject := .leaf ⟨.of .T [.V] "ha", 20⟩
-def telefonato : PlanarSyntacticObject := .leaf ⟨.of .V [.P] "telefonato", 21⟩
+def che : LinearizedSyntacticObject := .leaf ⟨.of .C [.T] "che", 19⟩
+def ha₂ : LinearizedSyntacticObject := .leaf ⟨.of .T [.V] "ha", 20⟩
+def telefonato : LinearizedSyntacticObject := .leaf ⟨.of .V [.P] "telefonato", 21⟩
 
 /-- *Gianni non ha detto niente a nessuno* has two n-words under one negative marker. -/
-def ncClausemate : PlanarSyntacticObject :=
+def ncClausemate : LinearizedSyntacticObject :=
   {gianni, {non, {ha, {detto, {niente, {a, nessuno}}}}}}
 
 /-- *Gianni non ha detto che ha telefonato a nessuno* has the n-word inside an embedded
 clause. -/
-def ncAcrossCP : PlanarSyntacticObject :=
+def ncAcrossCP : LinearizedSyntacticObject :=
   {gianni, {non, {ha, {dettoC, {che, {ha₂, {telefonato, {a, nessuno}}}}}}}}
 
 /-- The bearers of `[iNEG]`. -/

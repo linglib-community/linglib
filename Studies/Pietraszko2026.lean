@@ -321,21 +321,21 @@ def phaseHeads (sp : Spine) : List LexicalItem.Token :=
   (sp.zipIdx.filter (·.1.phase)).map fun x ↦ tokOf sp x.2 x.1
 
 /-- The copy of the subject at height `j`, when it is pronounced at height `k`. -/
-def copyAt (k j : ℕ) : PlanarSyntacticObject := if j = k then .leaf subj else .traceOf subj
+def copyAt (k j : ℕ) : LinearizedSyntacticObject := if j = k then .leaf subj else .traceOf subj
 
 /-- Once the first `n` heads are merged, the tree has the subject pronounced at its height then,
 with deleted copies at its base and in every specifier it passed through. -/
-def treeAt (sp : Spine) (n : ℕ) : PlanarSyntacticObject :=
+def treeAt (sp : Spine) (n : ℕ) : LinearizedSyntacticObject :=
   let k := (stateAt sp n).height
   (sp.take n).zipIdx.foldl (fun t x ↦
-    let hp : PlanarSyntacticObject := .leaf (tokOf sp x.2 x.1) * t
+    let hp : LinearizedSyntacticObject := .leaf (tokOf sp x.2 x.1) * t
     if x.1.epp ∧ x.2 + 1 ≤ k then copyAt k (x.2 + 1) * hp else hp)
     (copyAt k 0 * (v * (V * obj)))
 
 /-- The subject is accessible under the condition `s` to the head at index `i`, merged on the tree
 built so far. -/
 def TreeAccessible (s : Impenetrability) (sp : Spine) (i : ℕ) : Prop :=
-  ∀ hd ∈ sp[i]?, ((.leaf (tokOf sp i hd) * treeAt sp i : PlanarSyntacticObject) :
+  ∀ hd ∈ sp[i]?, ((.leaf (tokOf sp i hd) * treeAt sp i : LinearizedSyntacticObject) :
     SyntacticObject).Accessible (phaseHeads sp) s (tokOf sp i hd) subj
 
 instance (s : Impenetrability) (sp : Spine) (i : ℕ) : Decidable (TreeAccessible s sp i) :=

@@ -102,17 +102,10 @@ theorem seqLaw_rule_singleton_some : ∀ {n : ℕ} (f : Fin n → α),
 /-- Survival to `n` is the law of the first `n` draws on the histories of units. -/
 theorem survival_eq_seqLaw (n : ℕ) :
     M.survival n = seqLaw M.rule n {h | ∀ i, h i ≠ none} := by
-  have hU : {h : Fin n → Option α | ∀ i, h i ≠ none} = ⋃ f : Fin n → α, {some ∘ f} := by
+  have hU : {h : Fin n → Option α | ∀ i, h i ≠ none} = Set.range (some ∘ ·) := by
     ext h
-    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_singleton_iff]
-    constructor
-    · intro hh
-      exact ⟨fun i ↦ (h i).get (Option.ne_none_iff_isSome.1 (hh i)), funext fun i ↦ by simp⟩
-    · rintro ⟨f, rfl⟩ i
-      exact Option.some_ne_none _
-  have hinj : Function.Injective fun f : Fin n → α ↦ some ∘ f := (Option.some_injective α).comp_left
-  rw [hU, measure_iUnion (fun f g hfg ↦ Set.disjoint_singleton.2 (hinj.ne hfg))
-    fun _ ↦ measurableSet_singleton _, survival]
+    simp [Option.ne_none_iff_exists, Classical.skolem, funext_iff]
+  rw [hU, measure_range_eq_tsum (Option.some_injective α).comp_left, survival]
   show ∑' x : List.Vector α n, M.prefixProb x.1 = _
   rw [← (Equiv.vectorEquivFin α n).symm.tsum_eq]
   exact tsum_congr fun f ↦ by

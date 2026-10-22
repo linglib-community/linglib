@@ -48,7 +48,7 @@ with the unaccusativity tradition are described in prose.
 
 namespace Lucy1994
 
-open Semantics ArgumentStructure Morphology Data.Wordlist
+open Semantics ArgumentStructure Morphology CLDF.Wordlist
 
 /-- A sampled root, the meaning of a root with the form row that spells it. -/
 structure SampledRoot extends Root where

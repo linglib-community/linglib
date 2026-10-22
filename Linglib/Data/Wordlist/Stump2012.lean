@@ -14,7 +14,7 @@ Stump2012.Wordlist`.
 
 namespace Stump2012.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `System` the source distinguishes. -/
 inductive System where

@@ -17,7 +17,7 @@ an item, and Internal Merge raises a mover, re-merging it with the current objec
 occurrences are replaced by the trace of its head; Internal Merge also comes in two stages,
 `extract` and `remerge`, through a stack of copies. An admissible derivation is the iterated
 algebraic Merge on the workspace of its initial object and its items. The side on which a step
-places its daughter is a planarization datum that only externalization reads.
+places its daughter is a linearization datum that only externalization reads.
 
 ## Main definitions
 
@@ -68,7 +68,7 @@ open RoseTree UnorderedTree SyntacticObject
 /-! ### Steps -/
 
 /-- A derivation step. A Merge step attaches its new daughter on an `Edge` of the mother, a
-planarization datum that externalization reads and the derived object ignores. `im` records only
+linearization datum that externalization reads and the derived object ignores. `im` records only
 the mover; the trace it leaves is that of its head under the trace encoder the step is applied
 with. Internal Merge is also available in its two stages, `extract` and `remerge`
 ([marcolli-chomsky-berwick-2025] Proposition 1.4.2), so that several copies can wait on the stack

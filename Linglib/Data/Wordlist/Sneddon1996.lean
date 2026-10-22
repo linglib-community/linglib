@@ -14,7 +14,7 @@ Sneddon1996.Wordlist`.
 
 namespace Sneddon1996.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- A cell of the source's tables, by its Universal Dependencies features. -/
 abbrev Cell := UD.MorphFeatures

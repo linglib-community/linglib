@@ -8,57 +8,38 @@ module
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
-# The labeling algorithm
+# The raising head
 
-The labeling algorithm of [chomsky-2013] is minimal search for the head that tells the interfaces
-what kind of object a constituent is. A head merged with a phrase labels the result. Two phrases
-do not: minimal search finds two heads, and the object is labeled only if one of the phrases
-raises, its lower copy being invisible to the search, or if the two heads share an agreed
-feature. [marcolli-chomsky-berwick-2025] (Definition 1.15.2) state the algorithm over a partial
-head function: label by the head where it is defined, and where a term has raised, by the head of
-the object with the lower copy deleted. Here the head function is the selection head `selHead`
-and a lower copy is the trace of a token: it still satisfies the selection of whatever selected
-the phrase it copies (`traceState`), and is otherwise invisible. So the labeling state of a
-constituent is its selection state, or a lower copy (`LabelState`), and the label extends the
-selection head (`label_eq_of_selHead`): a lower copy beside a saturated phrase leaves the phrase
-to label their sum (`label_merge_traceOf`), and two saturated phrases leave it unlabeled
-(`label_merge_eq_none`), the configuration [chomsky-2013] takes to force successive-cyclic
-movement.
-
-[marcolli-chomsky-berwick-2025] also require the head function to be raising (Definition 1.15.1):
-the object Internal Merge forms is headed by the head of what it raised out of, so the landing site
-of a wh-phrase in the specifier of a C is headed by C. The raising head `raisingHead` reads this
-off the finished object: where two phrases merge and the head of one has a lower copy inside the
-other, the first has raised out of the second, which projects. It extends the label
-(`raisingHead_eq_of_label`).
-
-## Implementation notes
-
-* The selection head and the label are not raising: they leave a landing site, two saturated
-  phrases, without a head, as [chomsky-2013]'s (21) requires of an intermediate landing site.
-* The raising head reads Definition 1.15.1 on the finished object, a lower copy recording the token
-  that heads the phrase it copies; the phases of `SyntacticObject/Phase.lean` are delimited by it.
+Marcolli, Chomsky and Berwick state labeling over a partial head function and require that
+function to be raising: the object Internal Merge forms is headed by the head of what it raised out
+of, so the landing site of a wh-phrase beside a C is headed by C. The raising head reads this off
+the finished object from the selection head, a lower copy satisfying selection as the phrase it
+copies and otherwise invisible (`LabelState`): where two phrases merge and the head of one has a
+lower copy inside the other, the first has raised out of the second, which projects.
 
 ## Main definitions
 
 * `Minimalist.LabelState`: a selection state or a lower copy, a commutative magma with zero.
-* `Minimalist.SyntacticObject.labelCheck`, `Minimalist.SyntacticObject.label`: the labeling state
-  and the label of a syntactic object.
 * `Minimalist.RaisingState`, `Minimalist.SyntacticObject.raisingHead`: the raising state and the
   raising head of a syntactic object.
 
+## Main results
+
+* `Minimalist.SyntacticObject.raisingHead_merge`: the raising head of a merge is a daughter's.
+
+## Implementation notes
+
+* The raising head delimits the phases of `SyntacticObject/Phase.lean` and gives the head daughters
+  of `SyntacticObject/Position.lean`. Labeling by minimal search is `Probe/Label.lean`.
+
 ## TODO
 
-The labeling of two phrases by a feature their heads share, the interrogative feature of an
-indirect question or the φ-features of subject and predicate, which [chomsky-2013] requires to be
-agreed rather than merely matched, needs Agree and is not formalized. The trace of a token is the
-lower copy of the phrase the token heads; a moved head, whose lower copy would still select, is
-not distinguished.
+The trace of a token is the lower copy of the phrase the token heads; a moved head, whose lower
+copy would still select, is not distinguished.
 
 ## References
 
-* [chomsky-2013]
-* [marcolli-chomsky-berwick-2025]
+* [marcolli-chomsky-berwick-2025], Definitions 1.15.1 and 1.15.2
 -/
 
 @[expose] public section
@@ -148,84 +129,6 @@ instance : Head LabelState where
 
 end LabelState
 
-/-- A trace's labeling state is the lower copy of the phrase its token heads; the bare trace, which
-remembers no token and belongs to no chain, keeps its selection state. -/
-def labelTraceState : Option LexicalItem.Token → LabelState
-  | some tok => .copy tok
-  | none => .sel (traceState none)
-
-namespace SyntacticObject
-
-variable (s : SyntacticObject)
-
-/-- The labeling state of a syntactic object. -/
-def labelCheck : LabelState :=
-  liftFun (fun tok ↦ .sel (.of tok tok.item.sel)) labelTraceState s
-
-/-- The label of a syntactic object, `none` where the labeling algorithm finds none. -/
-def label : Option LexicalItem.Token := s.labelCheck.label
-
-@[simp] theorem labelCheck_leaf (tok : LexicalItem.Token) :
-    (SyntacticObject.leaf tok).labelCheck = .sel (.of tok tok.item.sel) := rfl
-
-@[simp] theorem labelCheck_traceOf (tok : LexicalItem.Token) :
-    (traceOf tok).labelCheck = .copy tok := rfl
-
-@[simp] theorem labelCheck_trace : trace.labelCheck = .sel (traceState none) := rfl
-
-@[simp] theorem labelCheck_merge (l r : SyntacticObject) :
-    (merge l r).labelCheck = l.labelCheck * r.labelCheck :=
-  liftFun_merge _ _ l r
-
-/-- Where the selection head is defined, the labeling algorithm sees the selection state, unless
-the object is itself a lower copy. -/
-theorem labelCheck_eq_sel_or (h : s.selCheck ≠ 0) :
-    s.labelCheck = .sel s.selCheck ∨ ∃ tok, s = traceOf tok := by
-  induction s using SyntacticObject.ind with
-  | leaf tok => exact .inl rfl
-  | trace => exact .inl rfl
-  | traceOf tok => exact .inr ⟨tok, rfl⟩
-  | merge l r ihl ihr =>
-    left
-    rw [selCheck_node] at h
-    have hl : l.selCheck ≠ 0 := fun h0 ↦ h (by rw [h0, zero_mul])
-    have hr : r.selCheck ≠ 0 := fun h0 ↦ h (by rw [h0, mul_zero])
-    rw [labelCheck_merge, selCheck_node]
-    rcases ihl hl with hl' | ⟨a, rfl⟩ <;> rcases ihr hr with hr' | ⟨b, rfl⟩
-    · rw [hl', hr']; rfl
-    · rw [selCheck_traceOf] at h ⊢
-      rw [hl', labelCheck_traceOf, LabelState.sel_mul_copy]
-      simp [h]
-    · rw [selCheck_traceOf] at h ⊢
-      rw [hr', labelCheck_traceOf, LabelState.copy_mul_sel]
-      simp [h]
-    · exact absurd rfl h
-
-/-- The label extends the selection head: where [marcolli-chomsky-berwick-2025]'s head function
-is defined, it labels. -/
-theorem label_eq_of_selHead {h : LexicalItem.Token} (hs : s.selHead = some h)
-    (hc : ∀ tok, s ≠ traceOf tok) :
-    s.label = some h := by
-  have h0 : s.selCheck ≠ 0 := fun h0 ↦ by simp [selHead, h0] at hs
-  rcases s.labelCheck_eq_sel_or h0 with hl | ⟨tok, rfl⟩
-  · rw [label, hl]; exact hs
-  · exact absurd rfl (hc tok)
-
-/-- A lower copy beside a saturated phrase is invisible, so the phrase labels their sum. -/
-theorem label_merge_traceOf (a : LexicalItem.Token) {r : SyntacticObject} {h : LexicalItem.Token}
-    (hr : r.labelCheck = .sel (.of h [])) : (merge (traceOf a) r).label = some h := by
-  rw [label, labelCheck_merge, labelCheck_traceOf, hr]
-  rfl
-
-/-- Two saturated phrases leave their sum unlabeled. -/
-theorem label_merge_eq_none {l r : SyntacticObject} {a b : LexicalItem.Token}
-    (hl : l.labelCheck = .sel (.of a [])) (hr : r.labelCheck = .sel (.of b [])) :
-    (merge l r).label = none := by
-  rw [label, labelCheck_merge, hl, hr, LabelState.sel_mul_sel]
-  rfl
-
-end SyntacticObject
-
 /-! ### The raising head -/
 
 /-- The raising state of a constituent pairs its labeling state with the tokens whose lower copies
@@ -309,32 +212,6 @@ def raisingHead : Option LexicalItem.Token := s.raisingCheck.label.label
 @[simp] theorem raisingCheck_merge (l r : SyntacticObject) :
     (merge l r).raisingCheck = l.raisingCheck * r.raisingCheck :=
   liftFun_merge _ _ l r
-
-/-- The raising state refines the labeling state. -/
-theorem raisingCheck_label_eq_or : s.raisingCheck.label = s.labelCheck ∨ s.labelCheck = 0 := by
-  induction s using SyntacticObject.ind with
-  | leaf tok => exact .inl rfl
-  | trace => exact .inl rfl
-  | traceOf tok => exact .inl rfl
-  | merge l r ihl ihr =>
-    rw [raisingCheck_merge, labelCheck_merge, RaisingState.mul_def]
-    rcases ihl with hl | hl
-    · rcases ihr with hr | hr
-      · simp only [RaisingState.raise, hl, hr]
-        split_ifs with h0
-        · exact .inl rfl
-        · exact .inr (not_not.1 h0)
-      · exact .inr (by rw [hr, mul_zero])
-    · exact .inr (by rw [hl, zero_mul])
-
-/-- The raising head extends the label. -/
-theorem raisingHead_eq_of_label {a : LexicalItem.Token} (hs : s.label = some a) :
-    s.raisingHead = some a := by
-  rcases s.raisingCheck_label_eq_or with hl | hl
-  · rw [raisingHead, hl]; exact hs
-  · rw [label, hl] at hs
-    exact absurd (show (none : Option LexicalItem.Token) = some a from hs)
-      (Option.some_ne_none a).symm
 
 /-- `raisingCheck` as a morphism of magmas. -/
 noncomputable def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=

@@ -57,7 +57,7 @@ namespace Svenonius2004
 
 open Morphology (Morph)
 open Morphology.Word (Tree)
-open Data.Wordlist (Form)
+open CLDF.Wordlist (Form)
 
 /-- The aspectual subtypes of superlexical prefixes, the glosses of (57)–(58) with
 [istratkova-2004]'s terminative and excessive. -/

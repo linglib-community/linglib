@@ -76,60 +76,60 @@ theorem dProbe_sees_through (root probe target : SyntacticObject) :
 
 /-! ### The structures -/
 
-def C₀ : PlanarSyntacticObject := .leaf ⟨.of .C [], 1⟩
-def T₀ : PlanarSyntacticObject := .leaf ⟨.of .T [], 2⟩
-def V₀ : PlanarSyntacticObject := .leaf ⟨.of .V [], 3⟩
-def v₀ : PlanarSyntacticObject := .leaf ⟨.of .v [], 4⟩
-def Appl₀ : PlanarSyntacticObject := .leaf ⟨.of .Appl [], 5⟩
-def P₀ : PlanarSyntacticObject := .leaf ⟨.of .P [], 6⟩
-def Psr : PlanarSyntacticObject := .leaf ⟨.of .D [], 7⟩
-def Psm : PlanarSyntacticObject := .leaf ⟨.of .N [], 8⟩
-def D₀ : PlanarSyntacticObject := .leaf ⟨.of .D [], 9⟩
-def Agt : PlanarSyntacticObject := .leaf ⟨.of .D [], 10⟩
-def SubjD : PlanarSyntacticObject := .leaf ⟨.of .D [], 11⟩
-def SubjN : PlanarSyntacticObject := .leaf ⟨.of .N [], 12⟩
-def ThemeD : PlanarSyntacticObject := .leaf ⟨.of .D [], 13⟩
-def ThemeN : PlanarSyntacticObject := .leaf ⟨.of .N [], 14⟩
-def Pivot : PlanarSyntacticObject := .leaf ⟨.of .N [], 15⟩
+def C₀ : LinearizedSyntacticObject := .leaf ⟨.of .C [], 1⟩
+def T₀ : LinearizedSyntacticObject := .leaf ⟨.of .T [], 2⟩
+def V₀ : LinearizedSyntacticObject := .leaf ⟨.of .V [], 3⟩
+def v₀ : LinearizedSyntacticObject := .leaf ⟨.of .v [], 4⟩
+def Appl₀ : LinearizedSyntacticObject := .leaf ⟨.of .Appl [], 5⟩
+def P₀ : LinearizedSyntacticObject := .leaf ⟨.of .P [], 6⟩
+def Psr : LinearizedSyntacticObject := .leaf ⟨.of .D [], 7⟩
+def Psm : LinearizedSyntacticObject := .leaf ⟨.of .N [], 8⟩
+def D₀ : LinearizedSyntacticObject := .leaf ⟨.of .D [], 9⟩
+def Agt : LinearizedSyntacticObject := .leaf ⟨.of .D [], 10⟩
+def SubjD : LinearizedSyntacticObject := .leaf ⟨.of .D [], 11⟩
+def SubjN : LinearizedSyntacticObject := .leaf ⟨.of .N [], 12⟩
+def ThemeD : LinearizedSyntacticObject := .leaf ⟨.of .D [], 13⟩
+def ThemeN : LinearizedSyntacticObject := .leaf ⟨.of .N [], 14⟩
+def Pivot : LinearizedSyntacticObject := .leaf ⟨.of .N [], 15⟩
 
 /-- A non-specific possessive, `{Psr, Psm}`. -/
-def PossP : PlanarSyntacticObject := {Psr, Psm}
+def PossP : LinearizedSyntacticObject := {Psr, Psm}
 
 /-- A specific possessive, `{D⁰, PossP}`. -/
-def DP : PlanarSyntacticObject := {D₀, PossP}
+def DP : LinearizedSyntacticObject := {D₀, PossP}
 
 /-- A locative PP over a non-specific possessive, `{P, PossP}`. -/
-def PP : PlanarSyntacticObject := {P₀, PossP}
+def PP : LinearizedSyntacticObject := {P₀, PossP}
 
 /-- (9c) with a non-specific possessive S_O. -/
-def unaccPossP : PlanarSyntacticObject := {T₀, {V₀, PossP}}
+def unaccPossP : LinearizedSyntacticObject := {T₀, {V₀, PossP}}
 
 /-- (9c) with a specific possessive S_O. -/
-def unaccDP : PlanarSyntacticObject := {T₀, {V₀, DP}}
+def unaccDP : LinearizedSyntacticObject := {T₀, {V₀, DP}}
 
 /-- (9a) with a non-specific possessive O. -/
-def transPossP : PlanarSyntacticObject := {T₀, {Agt, {v₀, {V₀, PossP}}}}
+def transPossP : LinearizedSyntacticObject := {T₀, {Agt, {v₀, {V₀, PossP}}}}
 
 /-- (29) the raising applicative under T⁰. -/
-def raisingAppl : PlanarSyntacticObject := {T₀, {Agt, {v₀, {Appl₀, {V₀, PossP}}}}}
+def raisingAppl : LinearizedSyntacticObject := {T₀, {Agt, {v₀, {Appl₀, {V₀, PossP}}}}}
 
 /-- (9b) with a locative PP, for a specific or a non-specific S_A. -/
-def unerg (subj : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def unerg (subj : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
   {T₀, {subj, {v₀, {V₀, PP}}}}
 
 /-- (71) theme over locative, for a specific or a non-specific theme: path verbs, locative
 existentials and locative copulas. -/
-def themeLoc (theme : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def themeLoc (theme : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
   {T₀, {V₀, {theme, PP}}}
 
 /-- (83) the experiencer PP merged above the theme. -/
-def experiencer : PlanarSyntacticObject := {T₀, {PP, {V₀, ThemeD}}}
+def experiencer : LinearizedSyntacticObject := {T₀, {PP, {V₀, ThemeD}}}
 
 /-- (40a) an existential with a bare pivot. -/
-def existential : PlanarSyntacticObject := {T₀, {V₀, Pivot}}
+def existential : LinearizedSyntacticObject := {T₀, {V₀, Pivot}}
 
 /-- The clause under C⁰. -/
-def cp (tp : PlanarSyntacticObject) : PlanarSyntacticObject := {C₀, tp}
+def cp (tp : LinearizedSyntacticObject) : LinearizedSyntacticObject := {C₀, tp}
 
 /-! ### Nominal opacity -/
 
@@ -154,12 +154,12 @@ theorem dHead_visible :
 /-! ### Attract Closest -/
 
 /-- The [EPP:D] probe of T⁰ and Appl⁰ on the positions of `t`, satisfied by D leaves. -/
-def dProbe (t : PlanarSyntacticObject) : Probe t.val.Positions :=
+def dProbe (t : LinearizedSyntacticObject) : Probe t.val.Positions :=
   .relativized fun q ↦ decide (isLeafOf .D (t.termAt q))
 
 /-- The goals an [EPP:D] probe on the head `h` of `t` can attract: the D leaves at the positions
 `h` c-commands that no other such leaf asymmetrically c-commands. -/
-def dGoals (t : PlanarSyntacticObject) (h : SyntacticObject) : Finset SyntacticObject :=
+def dGoals (t : LinearizedSyntacticObject) (h : SyntacticObject) : Finset SyntacticObject :=
   t.goals (dProbe t) h
 
 /-- The possessor of a non-specific S_O is T⁰'s closest D-goal: it raises to Spec,TP and can
@@ -204,7 +204,7 @@ inductive JudgmentType
 
 /-- A clause is categorical when T⁰'s [EPP:D] probe finds a goal to raise to Spec,TP, the
 ψ-subject, and thetic when it finds none. -/
-def judgment (t : PlanarSyntacticObject) (h : SyntacticObject) : JudgmentType :=
+def judgment (t : LinearizedSyntacticObject) (h : SyntacticObject) : JudgmentType :=
   if (dGoals t h).Nonempty then .categorical else .thetic
 
 /-- An existential with a bare pivot contains no DP: the clause is thetic. -/

@@ -13,7 +13,7 @@ by hand; edit the JSON and re-run the generator. Declarations live in `namespace
 
 namespace Qin2025.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `Boundness` the source distinguishes. -/
 inductive Boundness where

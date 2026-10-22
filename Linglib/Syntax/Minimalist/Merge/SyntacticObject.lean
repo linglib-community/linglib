@@ -93,10 +93,10 @@ theorem headTrace_val (s : SyntacticObject) (τ : SyntacticObject → Option Lex
     (s.headTrace τ).val = UnorderedTree.leaf (Sum.inr (τ s)) := by
   unfold headTrace; cases τ s <;> rfl
 
-@[simp] theorem toSyntacticObject_tracePlanar (s : SyntacticObject)
+@[simp] theorem toSyntacticObject_traceLinearized (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token) :
-    (s.tracePlanar τ).toSyntacticObject = s.headTrace τ := by
-  unfold tracePlanar headTrace; cases τ s <;> rfl
+    (s.traceLinearized τ).toSyntacticObject = s.headTrace τ := by
+  unfold traceLinearized headTrace; cases τ s <;> rfl
 
 /-- The remainder `T/mover` is the current object with the mover's occurrences replaced by the
     trace of its head under `τ`. For a uniquely accessible mover it is the trunk of the trace cut
@@ -190,7 +190,7 @@ theorem mergeOpC_im_residual (hm : mover.val.value.isLeft) (h : current.terms.co
 private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
 private def demoCurrent : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf (demoTok 0))
+  (LinearizedSyntacticObject.merge (.leaf (demoTok 0))
     (.leaf (demoTok 1))).toSyntacticObject
 
 /-- Raising one daughter of a two-leaf object meets the hypotheses of `mergeOpC_im`. -/

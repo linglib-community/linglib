@@ -34,6 +34,9 @@ the second.
   normal `φ`-worlds are all `ψ`-worlds.
 * `Nonmonotonic.isPreferential_entails`, `Nonmonotonic.isRational_entails`: soundness for
   well-founded preorders and for well-founded total preorders.
+* `Nonmonotonic.entails_iff_forall_exists_lt`, `Nonmonotonic.entails_iff_exists_forall_lt`: a
+  consequence holds when each exception is outranked, or, in a total model, when one normal
+  world outranks every exception.
 * `Nonmonotonic.IsPreferential.cut`: the cut rule of the cumulative systems is derivable.
 * `Nonmonotonic.exists_minimals_eq_iff`, `Nonmonotonic.IsRational.preorder`: a choice of worlds
   for each proposition picks the most normal ones under a well-founded total preorder iff the
@@ -148,6 +151,32 @@ theorem isRational_entails (hp : WellFounded p.lt) (hc : Std.Total p.le) :
     obtain ⟨u, hu, huψ⟩ := Set.not_subset.1 hψ
     have hwu : p.le w u := (hc.total w u).elim id (hw.2 ⟨hu.1, not_not.1 huψ⟩)
     exact hχ ⟨hw.1.1, fun v hv hvw ↦ p.le_trans _ _ _ hwu (hu.2 hv (p.le_trans _ _ _ hvw hwu))⟩
+
+/-- In a well-founded model `ψ` follows from `φ` exactly when every `φ`-world outside `ψ` is
+outranked by a `φ`-world in `ψ`. -/
+theorem entails_iff_forall_exists_lt (hp : WellFounded p.lt) :
+    Entails p φ ψ ↔ ∀ x ∈ φ, x ∉ ψ → ∃ y ∈ φ, y ∈ ψ ∧ p.lt y x := by
+  refine ⟨fun h x hx hxψ ↦ ?_, fun h w hw ↦ by_contra fun hwψ ↦ ?_⟩
+  · obtain ⟨y, hy, hyx⟩ := Preorder.exists_le_mem_minimals hp hx
+    refine ⟨y, hy.1, h hy, (p.lt_iff_le_not_ge _ _).2 ⟨hyx, fun hxy ↦ hxψ (h ⟨hx, fun b hb hbx ↦
+      p.le_trans _ _ _ hxy (hy.2 hb (p.le_trans _ _ _ hbx hxy))⟩)⟩⟩
+  · obtain ⟨y, hy, -, hlt⟩ := h w hw.1 hwψ
+    have hlt' := (p.lt_iff_le_not_ge _ _).1 hlt
+    exact hlt'.2 (hw.2 hy hlt'.1)
+
+/-- In a well-founded total model `ψ` follows from a satisfiable `φ` exactly when some `φ`-world in
+`ψ` is more normal than every `φ`-world outside `ψ`. -/
+theorem entails_iff_exists_forall_lt (hp : WellFounded p.lt) (hc : Std.Total p.le)
+    (hφ : φ.Nonempty) : Entails p φ ψ ↔ ∃ w ∈ φ ∩ ψ, ∀ v ∈ φ \ ψ, p.lt w v := by
+  refine ⟨fun h ↦ ?_, fun ⟨w, ⟨hwφ, _⟩, hlt⟩ x hx ↦ by_contra fun hxψ ↦ ?_⟩
+  · obtain ⟨w, hw, -⟩ := Preorder.exists_le_mem_minimals hp hφ.some_mem
+    rw [Preorder.mem_minimals_iff_forall_le hc] at hw
+    refine ⟨w, ⟨hw.1, h ((Preorder.mem_minimals_iff_forall_le hc).2 hw)⟩, fun v hv ↦
+      (Preorder.lt_iff_not_ge hc).2 fun hvw ↦ hv.2 (h ?_)⟩
+    exact (Preorder.mem_minimals_iff_forall_le hc).2
+      ⟨hv.1, fun y hy ↦ p.le_trans _ _ _ hvw (hw.2 y hy)⟩
+  · have hlt' := (p.lt_iff_le_not_ge _ _).1 (hlt x ⟨hx.1, hxψ⟩)
+    exact hlt'.2 (hx.2 hwφ hlt'.1)
 
 /-- Totality cannot be dropped. Let `0` be more normal than `2` and `1` comparable to
 neither. Then normally `0` or `1` holds and it is not normal that `0` holds, yet given `1` or

@@ -210,18 +210,18 @@ open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
 
 /-- *the apple*, the term `T₂` that Internal Merge raises in §1.4.4. -/
 private def theApple : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf ⟨.of .D [.N] "the", 0⟩)
+  (LinearizedSyntacticObject.merge (.leaf ⟨.of .D [.N] "the", 0⟩)
     (.leaf ⟨.of .N [] "apple", 1⟩)).toSyntacticObject
 
 /-- The workspace `T = {was, {eaten, {the, apple}}}` of §1.4.4. -/
 private def wasEatenTheApple : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
+  (LinearizedSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
     (.merge (.leaf ⟨.of .V [.D] "eaten", 3⟩)
       (.merge (.leaf ⟨.of .D [.N] "the", 0⟩) (.leaf ⟨.of .N [] "apple", 1⟩)))).toSyntacticObject
 
 /-- The quotient `T/T₂`, with the trace of the head *the* in place of *the apple*. -/
 private def wasEatenTrace : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
+  (LinearizedSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
     (.merge (.leaf ⟨.of .V [.D] "eaten", 3⟩) (.traceOf ⟨.of .D [.N] "the", 0⟩))).toSyntacticObject
 
 /-- The remainder of raising *the apple* out of `T` is the quotient `T/T₂`. -/
@@ -278,15 +278,15 @@ because the trace of *the* takes the place of *the*. -/
 
 /-- *the*, a term of *the apple*. -/
 private def theD : SyntacticObject :=
-  (PlanarSyntacticObject.leaf ⟨.of .D [.N] "the", 0⟩).toSyntacticObject
+  (LinearizedSyntacticObject.leaf ⟨.of .D [.N] "the", 0⟩).toSyntacticObject
 
 /-- *apple*, the other term of *the apple*. -/
 private def appleN : SyntacticObject :=
-  (PlanarSyntacticObject.leaf ⟨.of .N [] "apple", 1⟩).toSyntacticObject
+  (LinearizedSyntacticObject.leaf ⟨.of .N [] "apple", 1⟩).toSyntacticObject
 
 /-- *eaten*, the other component of the workspace of §1.3.4. -/
 private def eaten : SyntacticObject :=
-  (PlanarSyntacticObject.leaf ⟨.of .V [.D] "eaten", 3⟩).toSyntacticObject
+  (LinearizedSyntacticObject.leaf ⟨.of .V [.D] "eaten", 3⟩).toSyntacticObject
 
 /-- External Merge of *the apple* with *eaten* loses no complexity graded by the size `σ`: its term
     of Merge takes both whole (Proposition 1.6.10). -/
@@ -712,17 +712,17 @@ private def theDog : SyntacticObject :=
      .node (Vertex.lex ⟨.of .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
 
 /-- In the harmonic head-initial planarization the projecting `D` comes first. -/
-example : (theDog.planarize? .left).map (·.yield.map (·.id)) = some [0, 1] := by decide
+example : (theDog.linearize? .left).map (·.yield.map (·.id)) = some [0, 1] := by decide
 
 /-- In the harmonic head-final planarization the same head function is mirrored. -/
-example : (theDog.planarize? .right).map (·.yield.map (·.id)) = some [1, 0] := by decide
+example : (theDog.linearize? .right).map (·.yield.map (·.id)) = some [1, 0] := by decide
 
-example : (theDog.planarize? .left).map (·.yield.filterMap (·.item.phonForm?)) =
+example : (theDog.linearize? .left).map (·.yield.filterMap (·.item.phonForm?)) =
     some ["the", "dog"] := by decide
 
 /-- Merging *the* on the left of *dog*, which it selects, is harmonic for a head-initial
 language, so that derivation records the head-initial planarization
-(`Derivation.externalize?_eq_planarize?`); merging it on the right is not harmonic. -/
+(`Derivation.externalize?_eq_linearize?`); merging it on the right is not harmonic. -/
 example : Step.HarmonicList .left selHead [.em .left (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
       ⟨.leaf ⟨.of .N [] (phonForm := "dog"), 1⟩, []⟩ ∧
     ¬ Step.HarmonicList .left selHead [.em .right (.leaf ⟨.of .D [.N] (phonForm := "the"), 0⟩)]
@@ -736,7 +736,7 @@ private def exoNN : SyntacticObject :=
     [.node (Vertex.lex ⟨.of .N [] (phonForm := "cats"), 0⟩) [],
      .node (Vertex.lex ⟨.of .N [] (phonForm := "dogs"), 1⟩) []]), by decide⟩
 
-example : exoNN.planarize? .left = none ∧ exoNN.planarize? .right = none := by decide
+example : exoNN.linearize? .left = none ∧ exoNN.linearize? .right = none := by decide
 
 /-! ### FormSet (§1.16) -/
 

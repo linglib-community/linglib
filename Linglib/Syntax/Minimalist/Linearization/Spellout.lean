@@ -8,9 +8,9 @@ module
 public import Linglib.Syntax.Minimalist.Copy.Chain
 
 /-!
-# Spell-out of planar syntactic objects
+# Spell-out of linearized syntactic objects
 
-PF pronounces the pronounced copies of a planar syntactic object (`Chain.lean`) and nothing
+PF pronounces the pronounced copies of a linearized syntactic object (`Chain.lean`) and nothing
 else, so a deleted copy, a trace, is silent wherever it stands. A shared token is one token,
 pronounced once, at its last occurrence, as Wilder and de Vries linearize multidominance, so that
 material two conjuncts share is pronounced in the second. An [E] feature on a head silences the
@@ -39,7 +39,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject Core.Order
 
-variable (t : PlanarSyntacticObject)
+variable (t : LinearizedSyntacticObject)
 
 /-- `tok` is pronounced at its last occurrence. -/
 def pronouncedAt (tok : LexicalItem.Token) : Option TreePath := (occurrences t tok).getLast?

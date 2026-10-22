@@ -10,15 +10,15 @@ public import Linglib.Core.Data.List.Monadic
 public import Linglib.Syntax.Minimalist.Linearization.Externalization
 
 /-!
-# Replaying a derivation on planar objects
+# Replaying a derivation on linearized objects
 
 Free symmetric Merge builds unordered objects, so the surface order is not recoverable from
 `Derivation.final`, but each step records the side its new daughter takes. `Derivation.replay?`
-replays the steps by Merge on planar trees, and a successful replay forgets to the derivation's
-own configuration, so the readouts `surfaceTokens`, `surfaceCats` and `surfacePhon` are the word
-order of the derived object. The order is a datum of the derivation rather than of its object, and
-a derivation whose daughters take the head side exactly when they project records the harmonic
-planarization of its object.
+replays the steps by Merge on linearized objects, and a successful replay forgets to the
+derivation's own configuration, so the readouts `surfaceTokens`, `surfaceCats` and `surfacePhon` are
+the word order of the derived object. The order is a datum of the derivation rather than of its
+object, and a derivation whose daughters take the head side exactly when they project records the
+harmonic linearization of its object.
 
 ## Main definitions
 
@@ -31,10 +31,10 @@ planarization of its object.
 
 * `Minimalist.Derivation.replay?_faithful`, `externalize?_faithful`: a successful replay forgets
   to `run` and `final`.
-* `Minimalist.Derivation.not_factorsThrough_final`: the planar object does not factor through
+* `Minimalist.Derivation.not_factorsThrough_final`: the linearized object does not factor through
   the derived object.
-* `Minimalist.Derivation.externalize?_eq_planarize?`: a harmonic derivation records the harmonic
-  planarization of its object.
+* `Minimalist.Derivation.externalize?_eq_linearize?`: a harmonic derivation records the harmonic
+  linearization of its object.
 
 ## Implementation notes
 
@@ -57,51 +57,51 @@ open RoseTree UnorderedTree SyntacticObject
 
 variable {side : Edge}
 
-/-- A leaf's planar form is its harmonic planarization. -/
-theorem planarize?_of_toPlanarLeaf? {s : SyntacticObject} {p : PlanarSyntacticObject}
-    (h : s.toPlanarLeaf? = some p) : s.planarize? side = some p := by
+/-- A leaf's linearized form is its harmonic linearization. -/
+theorem linearize?_of_toLinearizedLeaf? {s : SyntacticObject} {p : LinearizedSyntacticObject}
+    (h : s.toLinearizedLeaf? = some p) : s.linearize? side = some p := by
   rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ <;>
-    simp [toPlanarLeaf?, merge_val] at h <;> subst h <;> rfl
+    simp [toLinearizedLeaf?, merge_val] at h <;> subst h <;> rfl
 
-/-- The trace a mover leaves is planarized as its planar trace. -/
-theorem planarize?_headTrace (s : SyntacticObject)
+/-- The trace a mover leaves is linearized as its linearized trace. -/
+theorem linearize?_headTrace (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token) :
-    (s.headTrace τ).planarize? side = some (s.tracePlanar τ) := by
-  unfold headTrace tracePlanar; cases τ s <;> rfl
+    (s.headTrace τ).linearize? side = some (s.traceLinearized τ) := by
+  unfold headTrace traceLinearized; cases τ s <;> rfl
 
 
 /-! ### The replay -/
 
 open Derivation (Cfg)
 
-/-- A step on a planar configuration, `Step.run` with each new daughter on its side. Internal
+/-- A step on a linearized configuration, `Step.run` with each new daughter on its side. Internal
     Merge raises the leftmost occurrence of the mover, leaving the trace of its head under `τ`,
     and an extraction stacks it; `none` when an externally merged item is not a leaf, the mover is
     absent, or the stack is empty. -/
-def Step.replay? (step : Step) (c : Cfg PlanarSyntacticObject)
+def Step.replay? (step : Step) (c : Cfg LinearizedSyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option (Cfg PlanarSyntacticObject) :=
+    Option (Cfg LinearizedSyntacticObject) :=
   match step, c with
-  | .em side item, ⟨p, st⟩ => item.toPlanarLeaf?.map fun i ↦ ⟨p.attach side i, st⟩
+  | .em side item, ⟨p, st⟩ => item.toLinearizedLeaf?.map fun i ↦ ⟨p.attach side i, st⟩
   | .im mover side, ⟨p, st⟩ =>
-      (p.find? mover).map fun s ↦ ⟨(p.replace mover (mover.tracePlanar τ)).attach side s, st⟩
+      (p.find? mover).map fun s ↦ ⟨(p.replace mover (mover.traceLinearized τ)).attach side s, st⟩
   | .extract mover, ⟨p, st⟩ =>
-      (p.find? mover).map fun s ↦ ⟨p.replace mover (mover.tracePlanar τ), s :: st⟩
+      (p.find? mover).map fun s ↦ ⟨p.replace mover (mover.traceLinearized τ), s :: st⟩
   | .remerge side, ⟨p, m :: st⟩ => some ⟨p.attach side m, st⟩
   | .remerge _, ⟨_, []⟩ => none
 
 namespace Derivation
 
-/-- The derivation's planar configuration under the trace encoder `τ`, or `none` if a merged item
-    is not a leaf, a mover is absent, or `remerge` finds the stack empty. -/
+/-- The derivation's linearized configuration under the trace encoder `τ`, or `none` if a merged
+    item is not a leaf, a mover is absent, or `remerge` finds the stack empty. -/
 def replay? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option (Cfg PlanarSyntacticObject) :=
-  d.initial.toPlanarLeaf?.bind fun p ↦ d.steps.foldlM (fun c step ↦ step.replay? c τ) ⟨p, []⟩
+    Option (Cfg LinearizedSyntacticObject) :=
+  d.initial.toLinearizedLeaf?.bind fun p ↦ d.steps.foldlM (fun c step ↦ step.replay? c τ) ⟨p, []⟩
 
-/-- The derivation's planar object under the trace encoder `τ`; copies still on the stack are not
-    part of it. -/
+/-- The derivation's linearized object under the trace encoder `τ`; copies still on the stack are
+    not part of it. -/
 def externalize? (d : Derivation) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    Option PlanarSyntacticObject :=
+    Option LinearizedSyntacticObject :=
   (d.replay? τ).map (·.current)
 
 /-- The pronounced tokens, left to right; empty if the replay fails. -/
@@ -134,10 +134,10 @@ theorem replay?_append_singleton (d : Derivation) (step : Step) :
   cases step.replay? c <;> rfl
 
 /-- A derivation of Merge steps leaves nothing on the stack. -/
-theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
+theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObject}
     (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c) : c.stack = [] := by
   obtain ⟨p, -, h⟩ := Option.bind_eq_some_iff.1 h
-  have key : ∀ (steps : List Step) (c₀ c : Cfg PlanarSyntacticObject),
+  have key : ∀ (steps : List Step) (c₀ c : Cfg LinearizedSyntacticObject),
       (∀ step ∈ steps, step.IsMerge) → c₀.stack = [] →
         steps.foldlM (fun c step ↦ step.replay? c τ) c₀ = some c → c.stack = [] := by
     intro steps
@@ -160,23 +160,23 @@ theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
 end Derivation
 
 /-- A successful replay step forgets to `Step.run`. -/
-private theorem Step.map_of_replay? {c c' : Cfg PlanarSyntacticObject} {step : Step}
+private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step : Step}
     (h : step.replay? c τ = some c') :
-    c'.map PlanarSyntacticObject.toSyntacticObject
-      = step.run (c.map PlanarSyntacticObject.toSyntacticObject) τ := by
+    c'.map LinearizedSyntacticObject.toSyntacticObject
+      = step.run (c.map LinearizedSyntacticObject.toSyntacticObject) τ := by
   obtain ⟨p, st⟩ := c
   cases step with
   | em side item =>
     obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 h
-    simp [Cfg.map, Step.run, Step.apply_em, toSyntacticObject_of_toPlanarLeaf? hi]
+    simp [Cfg.map, Step.run, Step.apply_em, toSyntacticObject_of_toLinearizedLeaf? hi]
   | im mover side =>
     obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
     simp [Cfg.map, Step.run, Step.apply_im, deleteAccessible,
-      PlanarSyntacticObject.toSyntacticObject_find? hs, SyntacticObject.merge_comm]
+      LinearizedSyntacticObject.toSyntacticObject_find? hs, SyntacticObject.merge_comm]
   | extract mover =>
     obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
     simp [Cfg.map, Step.run, Step.apply, deleteAccessible,
-      PlanarSyntacticObject.toSyntacticObject_find? hs]
+      LinearizedSyntacticObject.toSyntacticObject_find? hs]
   | remerge side =>
     rcases st with _ | ⟨m, st⟩
     · cases h
@@ -186,18 +186,19 @@ private theorem Step.map_of_replay? {c c' : Cfg PlanarSyntacticObject} {step : S
 /-- A successful replay forgets to the derivation's configuration, the object and every copy on
     the stack, forgetting the order being a morphism of magmas
     ([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
-theorem Derivation.replay?_faithful (d : Derivation) {c : Cfg PlanarSyntacticObject}
+theorem Derivation.replay?_faithful (d : Derivation) {c : Cfg LinearizedSyntacticObject}
     (h : d.replay? τ = some c) :
-    c.map PlanarSyntacticObject.toSyntacticObject = d.run τ := by
+    c.map LinearizedSyntacticObject.toSyntacticObject = d.run τ := by
   obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
   rw [List.foldl_eq_of_foldlM_eq_some (f := fun c (step : Step) ↦ step.replay? c τ)
-    (g := fun c (step : Step) ↦ step.run c τ) (π := Cfg.map PlanarSyntacticObject.toSyntacticObject)
+    (g := fun c (step : Step) ↦ step.run c τ)
+    (π := Cfg.map LinearizedSyntacticObject.toSyntacticObject)
     (fun _ _ _ ↦ Step.map_of_replay?) h, Derivation.run, Cfg.map, List.map_nil,
-    toSyntacticObject_of_toPlanarLeaf? hp]
+    toSyntacticObject_of_toLinearizedLeaf? hp]
 
 /-- A successful externalization forgets to the derived object, so the surface readouts are the
     word order of `final` itself. -/
-theorem Derivation.externalize?_faithful (d : Derivation) {p : PlanarSyntacticObject}
+theorem Derivation.externalize?_faithful (d : Derivation) {p : LinearizedSyntacticObject}
     (h : d.externalize? τ = some p) : p.toSyntacticObject = d.final τ := by
   obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
   rw [Derivation.final, ← d.replay?_faithful hc, Cfg.map_current]
@@ -205,7 +206,7 @@ theorem Derivation.externalize?_faithful (d : Derivation) {p : PlanarSyntacticOb
 /-- Faithfulness holds for prefixes, since a successful replay of the first `n` steps forgets to
     stage `n`. -/
 theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
-    {p : PlanarSyntacticObject} (h : (d.take n).externalize? τ = some p) :
+    {p : LinearizedSyntacticObject} (h : (d.take n).externalize? τ = some p) :
     p.toSyntacticObject = d.stageAt n τ :=
   externalize?_faithful (d.take n) h
 
@@ -213,19 +214,20 @@ theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
 
 A derivation is harmonic for a head side when each daughter it merges projects exactly if it takes
 the head side, and each mover leaves a trace with its selection state. Its recorded order is then
-the harmonic planarization of its object (`Derivation.externalize?_eq_planarize?`). -/
+the harmonic linearization of its object (`Derivation.externalize?_eq_linearize?`). -/
 
 namespace SyntacticObject
 
 /-- Replacing an object by one with its selection state, at the root. -/
 private theorem linearizationState_replace_self {cur t : SyntacticObject} {σ}
-    {pc pt : PlanarSyntacticObject} (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
-    (ht : t.planarize? side = some pt) (hsel : t.selCheck = cur.selCheck) :
+    {pc pt : LinearizedSyntacticObject} (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
+    (ht : t.linearize? side = some pt) (hsel : t.selCheck = cur.selCheck) :
     (cur.replace cur t).linearizationState side = ⟨some (σ, pc.replace cur pt)⟩ := by
-  have hpc : cur.planarize? side = some pc := by simp [planarize?, hc, LinearizationState.planar?]
+  have hpc : cur.linearize? side = some pc := by
+    simp [linearize?, hc, LinearizationState.linearized?]
   rw [replace_self,
-    PlanarSyntacticObject.replace_of_toSyntacticObject_eq (toSyntacticObject_of_planarize? hpc)]
-  obtain ⟨σt, hσt, hst⟩ := linearizationState_eq_of_planarize? ht
+    LinearizedSyntacticObject.replace_of_toSyntacticObject_eq (toSyntacticObject_of_linearize? hpc)]
+  obtain ⟨σt, hσt, hst⟩ := linearizationState_eq_of_linearize? ht
   have : cur.selCheck = ⟨some σ⟩ := by rw [← sel_linearizationState side cur, hc]; rfl
   rw [hσt, this] at hsel
   cases hsel
@@ -233,22 +235,22 @@ private theorem linearizationState_replace_self {cur t : SyntacticObject} {σ}
 
 /-- Replacing in a leaf, which is the target or is kept. -/
 private theorem linearizationState_replace_leaf {cur m t : SyntacticObject} {a : Vertex} {σ}
-    {pc pt : PlanarSyntacticObject} (hs : cur.val = UnorderedTree.leaf a)
+    {pc pt : LinearizedSyntacticObject} (hs : cur.val = UnorderedTree.leaf a)
     (hpv : pc.val = .node a []) (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
-    (ht : t.planarize? side = some pt) (hsel : t.selCheck = m.selCheck) :
+    (ht : t.linearize? side = some pt) (hsel : t.selCheck = m.selCheck) :
     (cur.replace m t).linearizationState side = ⟨some (σ, pc.replace m pt)⟩ := by
   by_cases heq : cur = m
   · subst heq; exact linearizationState_replace_self hc ht hsel
-  · have hpc : cur.planarize? side = some pc := by
-      simp [planarize?, hc, LinearizationState.planar?]
-    rw [replace_of_val_eq_leaf hs heq, PlanarSyntacticObject.replace_of_val_eq_leaf hpv
-      (by rwa [toSyntacticObject_of_planarize? hpc]), hc]
+  · have hpc : cur.linearize? side = some pc := by
+      simp [linearize?, hc, LinearizationState.linearized?]
+    rw [replace_of_val_eq_leaf hs heq, LinearizedSyntacticObject.replace_of_val_eq_leaf hpv
+      (by rwa [toSyntacticObject_of_linearize? hpc]), hc]
 
 /-- Replacing a term by an object with its selection state keeps the selection state, and the
-    planarization changes by the same replacement. -/
+    linearization changes by the same replacement. -/
 theorem linearizationState_replace {cur m t : SyntacticObject} {σ}
-    {pc pt : PlanarSyntacticObject} (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
-    (ht : t.planarize? side = some pt) (hsel : t.selCheck = m.selCheck) :
+    {pc pt : LinearizedSyntacticObject} (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
+    (ht : t.linearize? side = some pt) (hsel : t.selCheck = m.selCheck) :
     (cur.replace m t).linearizationState side = ⟨some (σ, pc.replace m pt)⟩ := by
   induction cur using ind generalizing σ pc with
   | leaf tok | trace | traceOf tok =>
@@ -268,27 +270,27 @@ theorem linearizationState_replace {cur m t : SyntacticObject} {σ}
       rw [LinearizationState.some_mul_some] at hc
       obtain ⟨⟨b, σ'⟩, hcomb, he⟩ := Option.map_eq_some_iff.1 (LinearizationState.mk.inj hc)
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
-      have hpl : l.planarize? side = some pl := by
-        simp [planarize?, hl, LinearizationState.planar?]
-      have hpr : r.planarize? side = some pr := by
-        simp [planarize?, hr, LinearizationState.planar?]
+      have hpl : l.linearize? side = some pl := by
+        simp [linearize?, hl, LinearizationState.linearized?]
+      have hpr : r.linearize? side = some pr := by
+        simp [linearize?, hr, LinearizationState.linearized?]
       rw [replace_merge_of_ne heq, linearizationState_node, ihl hl, ihr hr,
         LinearizationState.some_mul_some, hcomb]
-      have hl' := toSyntacticObject_of_planarize? hpl
-      have hr' := toSyntacticObject_of_planarize? hpr
+      have hl' := toSyntacticObject_of_linearize? hpl
+      have hr' := toSyntacticObject_of_linearize? hpr
       cases b <;> dsimp only [cond]
-      · rw [PlanarSyntacticObject.replace_attach
+      · rw [LinearizedSyntacticObject.replace_attach
           (by rw [hl', hr']; exact fun h ↦ heq ((merge_comm l r).trans h))]
         rfl
-      · rw [PlanarSyntacticObject.replace_attach (by rw [hl', hr']; exact heq)]
+      · rw [LinearizedSyntacticObject.replace_attach (by rw [hl', hr']; exact heq)]
         rfl
 
-/-- The occurrence the replay finds in a harmonic planarization is the mover's own. -/
-theorem planarize?_of_find? {cur m : SyntacticObject} {pc s : PlanarSyntacticObject}
-    (hc : cur.planarize? side = some pc) (hf : pc.find? m = some s) :
-    m.planarize? side = some s := by
-  rw [← PlanarSyntacticObject.toSyntacticObject_find? hf]
-  exact planarize?_of_mem_subtrees hc (PlanarSyntacticObject.mem_subtrees_of_find? hf) s.2
+/-- The occurrence the replay finds in a harmonic linearization is the mover's own. -/
+theorem linearize?_of_find? {cur m : SyntacticObject} {pc s : LinearizedSyntacticObject}
+    (hc : cur.linearize? side = some pc) (hf : pc.find? m = some s) :
+    m.linearize? side = some s := by
+  rw [← LinearizedSyntacticObject.toSyntacticObject_find? hf]
+  exact linearize?_of_mem_subtrees hc (LinearizedSyntacticObject.mem_subtrees_of_find? hf) s.2
 
 end SyntacticObject
 
@@ -297,7 +299,7 @@ end SyntacticObject
     is a term of the object whose trace keeps its selection state. -/
 def Step.Harmonic (side : Edge) (τ : SyntacticObject → Option LexicalItem.Token)
     (c : Cfg SyntacticObject) : Step → Prop
-  | .em e item => item.toPlanarLeaf?.isSome ∧
+  | .em e item => item.toLinearizedLeaf?.isSome ∧
       selSide item.selCheck c.current.selCheck = some (decide (e = side))
   | .im mover e => mover ∈ c.current.terms ∧ (mover.headTrace τ).selCheck = mover.selCheck ∧
       selSide mover.selCheck (deleteAccessible mover c.current τ).selCheck =
@@ -312,49 +314,50 @@ def Step.HarmonicList (side : Edge) (τ : SyntacticObject → Option LexicalItem
   | [], _ => True
   | step :: steps, c => step.Harmonic side τ c ∧ HarmonicList side τ steps (step.run c τ)
 
-/-- The remainder of a harmonic movement is the replaced planarization. -/
-private theorem planarize?_deleteAccessible {cur mover : SyntacticObject}
-    {pc : PlanarSyntacticObject} (hc : cur.planarize? side = some pc)
+/-- The remainder of a harmonic movement is the replaced linearization. -/
+private theorem linearize?_deleteAccessible {cur mover : SyntacticObject}
+    {pc : LinearizedSyntacticObject} (hc : cur.linearize? side = some pc)
     (hsel : (mover.headTrace τ).selCheck = mover.selCheck) :
-    (deleteAccessible mover cur τ).planarize? side =
-      some (pc.replace mover (mover.tracePlanar τ)) := by
-  obtain ⟨σ, -, hs⟩ := linearizationState_eq_of_planarize? hc
-  simp [planarize?, deleteAccessible,
-    linearizationState_replace hs (planarize?_headTrace mover τ) hsel, LinearizationState.planar?]
+    (deleteAccessible mover cur τ).linearize? side =
+      some (pc.replace mover (mover.traceLinearized τ)) := by
+  obtain ⟨σ, -, hs⟩ := linearizationState_eq_of_linearize? hc
+  simp [linearize?, deleteAccessible,
+    linearizationState_replace hs (linearize?_headTrace mover τ) hsel,
+    LinearizationState.linearized?]
 
-/-- A harmonic step replays to the harmonic planarization of the configuration it reaches. -/
+/-- A harmonic step replays to the harmonic linearization of the configuration it reaches. -/
 theorem Step.replay?_of_harmonic {step : Step} {c : Cfg SyntacticObject}
-    {q : Cfg PlanarSyntacticObject} (h : step.Harmonic side τ c)
-    (hq : c.map (·.planarize? side) = q.map some) :
-    ∃ q', step.replay? q τ = some q' ∧ (step.run c τ).map (·.planarize? side) = q'.map some := by
+    {q : Cfg LinearizedSyntacticObject} (h : step.Harmonic side τ c)
+    (hq : c.map (·.linearize? side) = q.map some) :
+    ∃ q', step.replay? q τ = some q' ∧ (step.run c τ).map (·.linearize? side) = q'.map some := by
   obtain ⟨cur, st⟩ := c
   obtain ⟨qc, qst⟩ := q
   simp only [Cfg.map, Cfg.mk.injEq] at hq
   obtain ⟨hc, hst⟩ := hq
-  have hqc := toSyntacticObject_of_planarize? hc
+  have hqc := toSyntacticObject_of_linearize? hc
   cases step with
   | em e item =>
     obtain ⟨hi, hside⟩ := h
     obtain ⟨i, hi⟩ := Option.isSome_iff_exists.1 hi
     refine ⟨⟨qc.attach e i, qst⟩, by simp [Step.replay?, hi], ?_⟩
     simp only [Cfg.map, Step.run, Step.apply_em, Cfg.mk.injEq, hst, and_true]
-    exact planarize?_merge (planarize?_of_toPlanarLeaf? hi) hc hside
+    exact linearize?_merge (linearize?_of_toLinearizedLeaf? hi) hc hside
   | im mover e =>
     obtain ⟨hm, hsel, hside⟩ := h
     obtain ⟨s, hs⟩ := Option.isSome_iff_exists.1
-      (PlanarSyntacticObject.isSome_find?_iff.2 (hqc ▸ hm))
-    refine ⟨⟨(qc.replace mover (mover.tracePlanar τ)).attach e s, qst⟩,
+      (LinearizedSyntacticObject.isSome_find?_iff.2 (hqc ▸ hm))
+    refine ⟨⟨(qc.replace mover (mover.traceLinearized τ)).attach e s, qst⟩,
       by simp [Step.replay?, hs], ?_⟩
     simp only [Cfg.map, Step.run, Step.apply_im, Cfg.mk.injEq, hst, and_true]
     rw [merge_comm]
-    exact planarize?_merge (planarize?_of_find? hc hs) (planarize?_deleteAccessible hc hsel) hside
+    exact linearize?_merge (linearize?_of_find? hc hs) (linearize?_deleteAccessible hc hsel) hside
   | extract mover =>
     obtain ⟨hm, hsel⟩ := h
     obtain ⟨s, hs⟩ := Option.isSome_iff_exists.1
-      (PlanarSyntacticObject.isSome_find?_iff.2 (hqc ▸ hm))
-    refine ⟨⟨qc.replace mover (mover.tracePlanar τ), s :: qst⟩, by simp [Step.replay?, hs], ?_⟩
+      (LinearizedSyntacticObject.isSome_find?_iff.2 (hqc ▸ hm))
+    refine ⟨⟨qc.replace mover (mover.traceLinearized τ), s :: qst⟩, by simp [Step.replay?, hs], ?_⟩
     simp only [Cfg.map, Step.run, Step.apply, List.map_cons, hst,
-      planarize?_deleteAccessible hc hsel, planarize?_of_find? hc hs]
+      linearize?_deleteAccessible hc hsel, linearize?_of_find? hc hs]
   | remerge e =>
     obtain ⟨m, hm, hside⟩ := h
     obtain ⟨st, rfl⟩ : ∃ st', st = m :: st' := by
@@ -362,7 +365,7 @@ theorem Step.replay?_of_harmonic {step : Step} {c : Cfg SyntacticObject}
       | nil => cases hm
       | cons m' st' => exact ⟨st', by cases hm; rfl⟩
     obtain ⟨qm, qst', rfl, hqm, hst'⟩ : ∃ qm qst', qst = qm :: qst' ∧
-        m.planarize? side = some qm ∧ st.map (·.planarize? side) = qst'.map some := by
+        m.linearize? side = some qm ∧ st.map (·.linearize? side) = qst'.map some := by
       cases qst with
       | nil => cases hst
       | cons qm qst' =>
@@ -370,15 +373,15 @@ theorem Step.replay?_of_harmonic {step : Step} {c : Cfg SyntacticObject}
         exact ⟨qm, qst', rfl, hst⟩
     refine ⟨⟨qc.attach e qm, qst'⟩, rfl, ?_⟩
     simp only [Cfg.map, Step.run, Step.apply_em, Cfg.mk.injEq, hst', and_true]
-    exact planarize?_merge hqm hc hside
+    exact linearize?_merge hqm hc hside
 
-/-- A harmonic list of steps replays to the harmonic planarization of the configuration it
+/-- A harmonic list of steps replays to the harmonic linearization of the configuration it
     reaches. -/
 theorem foldlM_replay?_of_harmonicList : ∀ {steps : List Step} {c : Cfg SyntacticObject}
-    {q : Cfg PlanarSyntacticObject}, Step.HarmonicList side τ steps c →
-      c.map (·.planarize? side) = q.map some →
+    {q : Cfg LinearizedSyntacticObject}, Step.HarmonicList side τ steps c →
+      c.map (·.linearize? side) = q.map some →
       ∃ q', steps.foldlM (fun q (step : Step) ↦ step.replay? q τ) q = some q' ∧
-        (steps.foldl (fun c (step : Step) ↦ step.run c τ) c).map (·.planarize? side) =
+        (steps.foldl (fun c (step : Step) ↦ step.run c τ) c).map (·.linearize? side) =
           q'.map some
   | [], _, q, _, hq => ⟨q, rfl, hq⟩
   | _ :: _, _, _, ⟨h, hs⟩, hq => by
@@ -387,19 +390,20 @@ theorem foldlM_replay?_of_harmonicList : ∀ {steps : List Step} {c : Cfg Syntac
     exact ⟨q', by simp [List.foldlM_cons, h₁, h'], hq'⟩
 
 /-- A derivation from a leaf whose every step is harmonic externalizes to the harmonic
-    planarization of its object: the order the derivation records is the one the head function
+    linearization of its object: the order the derivation records is the one the head function
     determines. -/
-theorem Derivation.externalize?_eq_planarize? {d : Derivation}
-    (hi : d.initial.toPlanarLeaf?.isSome) (hd : Step.HarmonicList side τ d.steps ⟨d.initial, []⟩) :
-    d.externalize? τ = (d.final τ).planarize? side := by
+theorem Derivation.externalize?_eq_linearize? {d : Derivation}
+    (hi : d.initial.toLinearizedLeaf?.isSome)
+    (hd : Step.HarmonicList side τ d.steps ⟨d.initial, []⟩) :
+    d.externalize? τ = (d.final τ).linearize? side := by
   obtain ⟨p, hp⟩ := Option.isSome_iff_exists.1 hi
   obtain ⟨q', h', hq'⟩ := foldlM_replay?_of_harmonicList (q := ⟨p, []⟩) hd
-    (by simp [Cfg.map, planarize?_of_toPlanarLeaf? hp])
+    (by simp [Cfg.map, linearize?_of_toLinearizedLeaf? hp])
   simp only [Cfg.map, Cfg.mk.injEq] at hq'
   rw [Derivation.externalize?, Derivation.replay?, hp, Option.bind_some, h', Option.map_some,
     Derivation.final, Derivation.run, hq'.1]
 
-/-- The planar object is a datum of the derivation, not of the object it derives: merging a
+/-- The linearized object is a datum of the derivation, not of the object it derives: merging a
     second leaf on the left and on the right derives one object in two orders. -/
 theorem Derivation.not_factorsThrough_final :
     ¬ Function.FactorsThrough (externalize? · selHead) (final · selHead) := fun h ↦ by

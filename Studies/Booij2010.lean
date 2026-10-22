@@ -43,7 +43,7 @@ no intermediate *bedwingbaar* listed (`onbedwingbaar_generates`).
 ## Implementation notes
 
 * The words are the CLDF forms of `Data/Wordlist/Booij2010.json`, read as slot-indexed segments
-  on the flat carrier by `Data.Wordlist.Form.slots`. The *-ness* and *-baar* schemas are over the
+  on the flat carrier by `CLDF.Wordlist.Form.slots`. The *-ness* and *-baar* schemas are over the
   two slots base and affix, and the *on-V-baar* schema over prefix, base and suffix, so the
   embedding `[on [V baar]]` of the paper's display is the concatenation of three slots; the
   two-slot *-baar* schema is the three-slot one read at base and suffix

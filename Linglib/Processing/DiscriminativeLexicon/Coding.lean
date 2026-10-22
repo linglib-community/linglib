@@ -19,8 +19,8 @@ grammars (`boundary`), so the model's trigrams are not the 3-factors of subregul
 meaning is a multiset of atomic semantic primitives, a lexeme together with its inflectional
 functions, and conceptualization builds its vector as the sum of the primitives' vectors, so
 that a novel inflected word is conceptualized from known primitives. Conceptualization is
-additive in the multiset by construction, which is what makes a linear mapping respect
-proportional analogy (`Studies/HeitmeierChuangBaayen2026`).
+additive in the multiset by construction, which makes imputed meanings analogically regular
+(`isAnalogicallyRegular_imputed` in `Realization.lean`).
 
 ## Main definitions
 

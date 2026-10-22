@@ -41,39 +41,39 @@ open Minimalist Minimalist.SyntacticObject
 licenses attracting a quantifier first only when no other candidate asymmetrically c-commands it,
 since such a candidate would form a smaller well-formed pair with the attractor, so these are the
 candidates the head's probe finds among the positions it c-commands. -/
-def firsts (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
+def firsts (t : LinearizedSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
     Finset SyntacticObject :=
   t.goals (.relativized fun q ↦ decide (t.termAt q ∈ qs)) h
 
 /-- Since later movements tuck in beneath earlier ones, the quantifier attracted first takes widest
 scope, so scope is ambiguous exactly when two candidates may be attracted first. -/
-def Ambiguous (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
+def Ambiguous (t : LinearizedSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
     Prop :=
   1 < (firsts t h qs).card
 
-instance (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
+instance (t : LinearizedSyntacticObject) (h : SyntacticObject) (qs : List SyntacticObject) :
     Decidable (Ambiguous t h qs) :=
   inferInstanceAs (Decidable (1 < _))
 
 /-! ### The double object construction -/
 
 /-- The light verb bearing the P-feature that attracts quantifiers ([kratzer-1996]'s Voice). -/
-def v : PlanarSyntacticObject := .leaf ⟨.of .Voice [.V] "v[P]", 400⟩
+def v : LinearizedSyntacticObject := .leaf ⟨.of .Voice [.V] "v[P]", 400⟩
 /-- The applicative head introducing the first object ([pylkkanen-2008]). -/
-def appl : PlanarSyntacticObject := .leaf ⟨.of .Appl [.D] "Appl", 402⟩
-def gave : PlanarSyntacticObject := .leaf ⟨.of .V [.Appl] "gave", 404⟩
-def ozzy : PlanarSyntacticObject := .leaf ⟨.of .D [] "Ozzy", 406⟩
+def appl : LinearizedSyntacticObject := .leaf ⟨.of .Appl [.D] "Appl", 402⟩
+def gave : LinearizedSyntacticObject := .leaf ⟨.of .V [.Appl] "gave", 404⟩
+def ozzy : LinearizedSyntacticObject := .leaf ⟨.of .D [] "Ozzy", 406⟩
 /-- The first object, the goal. -/
-def aGirl : PlanarSyntacticObject := .leaf ⟨.of .D [] "a girl", 407⟩
+def aGirl : LinearizedSyntacticObject := .leaf ⟨.of .D [] "a girl", 407⟩
 /-- The second object, the theme. -/
-def everyTelescope : PlanarSyntacticObject := .leaf ⟨.of .D [] "every telescope", 408⟩
+def everyTelescope : LinearizedSyntacticObject := .leaf ⟨.of .D [] "every telescope", 408⟩
 /-- The preposition of the locative variant. -/
-def toP : PlanarSyntacticObject := .leaf ⟨.of .P [.D] "to", 409⟩
+def toP : LinearizedSyntacticObject := .leaf ⟨.of .P [.D] "to", 409⟩
 
 /-- `{Ozzy, {v, {gave, {a girl, {Appl, every telescope}}}}}`. The first object is the argument of
 the applicative head, merged above the projection containing the second, so it asymmetrically
 c-commands it. -/
-def doc : PlanarSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTelescope}}}}}
+def doc : LinearizedSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTelescope}}}}}
 
 /-- The quantifiers competing for attraction in the double object construction. -/
 def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
@@ -92,11 +92,11 @@ theorem doc_not_ambiguous : ¬ Ambiguous doc v docQuantifiers := by decide +kern
 /-! ### The locative variant -/
 
 /-- The PP that pied-pipes the goal. -/
-def toAGirl : PlanarSyntacticObject := {toP, aGirl}
+def toAGirl : LinearizedSyntacticObject := {toP, aGirl}
 
 /-- `{Ozzy, {v, {gave, {every telescope, {to, a girl}}}}}`. The direct object and the PP are
 co-arguments of the same head, hence sisters, and c-command each other. -/
-def locative : PlanarSyntacticObject := {ozzy, {v, {gave, {everyTelescope, toAGirl}}}}
+def locative : LinearizedSyntacticObject := {ozzy, {v, {gave, {everyTelescope, toAGirl}}}}
 
 /-- The candidates in the locative, the direct object and the PP that pied-pipes the goal. -/
 def locativeQuantifiers : List SyntacticObject := [everyTelescope, toAGirl]
@@ -125,7 +125,7 @@ theorem subject_not_attractable : firsts doc v [ozzy] = ∅ := by decide +kernel
 
 /-- The passive of a double object construction. With no external argument, the goal raises to the
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
-def passive : PlanarSyntacticObject := {aGirl, {v, {gave, {appl, everyTelescope}}}}
+def passive : LinearizedSyntacticObject := {aGirl, {v, {gave, {appl, everyTelescope}}}}
 
 /-- In the passive the derived subject is no longer attractable while the theme is, so Shortest
 imposes no order between them and the ambiguity returns: *a (different) girl was given every

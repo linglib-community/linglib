@@ -9,13 +9,13 @@ public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Atoms
 public import Linglib.Syntax.Command
 public import Linglib.Syntax.Projection
-public import Linglib.Syntax.Minimalist.SyntacticObject.Label
+public import Linglib.Syntax.Minimalist.SyntacticObject.RaisingHead
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
-# Positions of planar syntactic objects
+# Positions of linearized syntactic objects
 
-The positions of a planar syntactic object, the paths to its vertices, form a rooted tree
+The positions of a linearized syntactic object, the paths to its vertices, form a rooted tree
 (`RoseTree.Positions`). Each carries a term, the subtree there read as a syntactic object: the
 terms at the covers of a position are the terms its term immediately contains, and the terms at
 the positions below it are the terms its term contains, so c-command by a term occurring once is
@@ -26,25 +26,26 @@ embedding with a total head function, which extends the raising head.
 
 ## Main definitions
 
-* `PlanarSyntacticObject.termAt`: the term at a position.
-* `Minimalist.headIndex?`, `PlanarSyntacticObject.headIndexAt`: the head daughter of a planar
+* `LinearizedSyntacticObject.termAt`: the term at a position.
+* `Minimalist.headIndex?`, `LinearizedSyntacticObject.headIndexAt`: the head daughter of a planar
   tree, and of the subtree at each position.
-* `PlanarSyntacticObject.maximalProjections`, `PlanarSyntacticObject.branching`,
-  `PlanarSyntacticObject.above`: the maximal projections and branching positions of a planar
+* `LinearizedSyntacticObject.maximalProjections`, `LinearizedSyntacticObject.branching`,
+  `LinearizedSyntacticObject.above`: the maximal projections and branching positions of a linearized
   object, and the generators above a position, its closeness key.
 
 ## Main statements
 
-* `PlanarSyntacticObject.immediatelyContains_termAt`, `PlanarSyntacticObject.containsOrEq_termAt`:
-  terms contain one another as their positions dominate one another.
-* `PlanarSyntacticObject.exists_cCommands_termAt_of_cCommands`,
-  `PlanarSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
+* `LinearizedSyntacticObject.immediatelyContains_termAt`,
+  `LinearizedSyntacticObject.containsOrEq_termAt`: terms contain one another as their positions
+  dominate one another.
+* `LinearizedSyntacticObject.exists_cCommands_termAt_of_cCommands`,
+  `LinearizedSyntacticObject.cCommands_termAt_of_cCommands`: c-command between terms is witnessed by
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
-* `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
-* `PlanarSyntacticObject.maximalProjections_eq`: the maximal projections are those of the head
+* `LinearizedSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
+* `LinearizedSyntacticObject.maximalProjections_eq`: the maximal projections are those of the head
   relation.
-* `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
+* `LinearizedSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
 * `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
   wherever there is one.
@@ -54,8 +55,9 @@ embedding with a total head function, which extends the raising head.
 * The drawing convention puts specifiers to the left of their heads and heads to the left of their
   complements: a left leaf that selects nothing is a specifier and the right daughter heads, a left
   leaf that selects is the head, and otherwise the right daughter heads. It decides only where the
-  raising head is undefined, at a phrase merged in place beside another phrase, which
-  [chomsky-2013] labels by features the two share.
+  raising head is undefined, at a phrase merged in place beside another phrase, which the labeling
+  algorithm leaves unlabeled until one of the two moves on (`Probe/Label.lean`); labels by shared
+  features arise at landing sites.
 
 ## TODO
 
@@ -77,11 +79,11 @@ open RoseTree SyntacticObject Core.Order PhraseStructure
 
 /-! ### Terms at positions -/
 
-namespace PlanarSyntacticObject
+namespace LinearizedSyntacticObject
 
 open RoseTree SyntacticObject
 
-variable {t : PlanarSyntacticObject} {p : t.val.Positions} {y : SyntacticObject}
+variable {t : LinearizedSyntacticObject} {p : t.val.Positions} {y : SyntacticObject}
 
 theorem isSyntacticObject_subtree (p : t.val.Positions) :
     IsSyntacticObject (UnorderedTree.mk p.subtree) :=
@@ -132,7 +134,7 @@ theorem containsOrEq_termAt : ContainsOrEq (t.termAt p) y ↔ ∃ q, p ≤ q ∧
   · rintro ⟨q, hpq, rfl⟩
     exact ⟨q.subtree, ⟨q, hpq, rfl⟩, rfl⟩
 
-/-- The terms of a planar object are the terms at its positions. -/
+/-- The terms of a linearized object are the terms at its positions. -/
 theorem mem_terms_iff : y ∈ t.toSyntacticObject.terms ↔ ∃ q, t.termAt q = y := by
   rw [mem_terms, ← termAt_bot, containsOrEq_termAt]
   simp
@@ -208,7 +210,7 @@ theorem eq_termAt_pred_of_immediatelyContains (hu : ∀ q, t.termAt q = t.termAt
   obtain rfl := hu c hca
   rw [Order.pred_eq_of_covBy hmc]
 
-end PlanarSyntacticObject
+end LinearizedSyntacticObject
 
 /-! ### Head daughters -/
 
@@ -217,7 +219,7 @@ def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
   (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.sel), 0⟩ : RaisingState)) raisingTraceState
     (UnorderedTree.mk s)).label.label
 
-theorem treeRaisingHead_subtree {t : PlanarSyntacticObject} (p : t.val.Positions) :
+theorem treeRaisingHead_subtree {t : LinearizedSyntacticObject} (p : t.val.Positions) :
     treeRaisingHead p.subtree = (t.termAt p).raisingHead := rfl
 
 /-- The drawing convention makes a token or trace leaf its own head; at a binary node it takes a
@@ -238,11 +240,12 @@ def headIndex? (s : RoseTree Vertex) : Option ℕ :=
   ((treeRaisingHead s).bind fun h ↦ s.children.findIdx? (treeRaisingHead · = some h)) <|>
     (conventionHeadPos? s).bind List.head?
 
-/-- The head daughter of the subtree at a position of a planar object, `none` off the object. -/
-def PlanarSyntacticObject.headIndexAt (t : PlanarSyntacticObject) (q : TreePath) : Option ℕ :=
+/-- The head daughter of the subtree at a position of a linearized object, `none` off the object. -/
+def LinearizedSyntacticObject.headIndexAt (t : LinearizedSyntacticObject) (q : TreePath) :
+    Option ℕ :=
   (t.val.subtreeAt q.toList).bind headIndex?
 
-/-- Where a planar syntactic object with daughters has a raising head, its head daughter carries
+/-- Where a linearized syntactic object with daughters has a raising head, its head daughter carries
 it. -/
 theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
     (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
@@ -264,11 +267,11 @@ theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : Lexica
 
 /-! ### Closeness at positions -/
 
-namespace PlanarSyntacticObject
+namespace LinearizedSyntacticObject
 
-variable (t : PlanarSyntacticObject)
+variable (t : LinearizedSyntacticObject)
 
-/-- The maximal projections of a planar object, the positions that are no position's head
+/-- The maximal projections of a linearized object, the positions that are no position's head
 daughter. -/
 def maximalProjections : Set TreePath :=
   {x | IsMaximalProjection (headDaughterRel t.headIndexAt) x}
@@ -291,7 +294,7 @@ theorem coe_above (P : Set TreePath) [DecidablePred (· ∈ P)] (q : t.val.Posit
   ext x
   simp [above, ancestors, and_comm]
 
-/-- The branching positions of a planar object, the generators of c-command. -/
+/-- The branching positions of a linearized object, the generators of c-command. -/
 def branching : Set TreePath := {x | t.val.IsBranchingAt x}
 
 instance : DecidablePred (· ∈ t.branching) :=
@@ -312,6 +315,6 @@ theorem above_branching_lt_of_cCommands (hqg : t.val.CCommands q g)
     (hgq : ¬ t.val.CCommands g q) : t.above t.branching q < t.above t.branching g :=
   (above_branching_lt_iff hqg.2.1 hqg.2.2).2 ⟨hqg, hgq⟩
 
-end PlanarSyntacticObject
+end LinearizedSyntacticObject
 
 end Minimalist

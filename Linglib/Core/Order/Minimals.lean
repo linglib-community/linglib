@@ -22,8 +22,9 @@ definition here unfolds to `Minimal` for the membership predicate, so the lemmas
   contains it.
 * `Preorder.exists_le_mem_minimals`: under a well-founded strict order, every element of a set
   lies above a minimal element of the set.
-* `Preorder.mem_minimals_iff_forall_le`, `Preorder.mem_minimals_pair`: under a total preorder
-  the minimal elements are the least elements, and minimality in a pair is the order relation.
+* `Preorder.lt_iff_not_ge`, `Preorder.mem_minimals_iff_forall_le`, `Preorder.mem_minimals_pair`:
+  under a total preorder the strict order is the negated converse, the minimal elements are the
+  least elements, and minimality in a pair is the order relation.
 * `Preorder.minimals_inter_eq`, `Preorder.eq_of_minimals_eq`: under a total preorder, restricting
   a set to a part that meets its minimal elements restricts them, and the minimal elements
   determine the preorder.
@@ -87,6 +88,10 @@ theorem exists_le_mem_minimals (hp : WellFounded p.lt) (ha : a ∈ s) :
   haveI : WellFoundedLT α := hp
   let ⟨b, hba, hb⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ s) a ha
   ⟨b, hb, hba⟩
+
+/-- Under a total preorder `a < b` exactly when `b ≤ a` fails. -/
+theorem lt_iff_not_ge (hp : Std.Total p.le) {b : α} : p.lt a b ↔ ¬ p.le b a :=
+  (p.lt_iff_le_not_ge a b).trans (and_iff_right_of_imp fun h ↦ (hp.total a b).resolve_right h)
 
 /-- Under a total preorder the minimal elements of a set are its least elements. -/
 theorem mem_minimals_iff_forall_le (hp : Std.Total p.le) :

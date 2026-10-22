@@ -14,7 +14,7 @@ Stojkovic2026.Wordlist`.
 
 namespace Stojkovic2026.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `Root` the source distinguishes. -/
 inductive Root where

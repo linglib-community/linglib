@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.InformationTheory.Surprisal
 public import Linglib.Core.MeasureTheory.Constructions.List
-public import Linglib.Core.MeasureTheory.Constructions.Option
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.ConditionalProbability
 public import Mathlib.Probability.Kernel.Basic
 public import Mathlib.Probability.Kernel.Composition.MapComap

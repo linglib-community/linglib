@@ -255,7 +255,7 @@ Declarations live in `namespace {paper}.StructureDataset`.
 
 namespace {paper}.StructureDataset
 
-open Data.StructureDataset
+open CLDF.StructureDataset
 
 {body}
 

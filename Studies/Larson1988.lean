@@ -32,7 +32,7 @@ indirect passive *Mary was sent a letter* is derived by dative shift followed by
 The oblique dative and dative shift are the paper's second and third sections, the indirect
 passive its fourth, and recoverability the second part of its fifth. The head movement of the verb
 from the inner to the outer shell is not modelled, since the c-command facts depend only on the
-positions of the arguments; each derivation is paired with the planar tree it produces, on which
+positions of the arguments; each derivation is paired with the linearized tree it produces, on which
 c-command is decided. The recoverability entries record the roles the paper assigns to each
 verb's indirect object.
 
@@ -62,7 +62,7 @@ def DP_letter := mkLeafPhon .D []    "a letter" 304
 def V_kick    := mkLeafPhon .V [.D]  "kicked"   310
 def DP_ball   := mkLeafPhon .D []    "the ball" 311
 
-/-! The planar tokens of the result trees on which c-command is decided. -/
+/-! The tokens of the linearized result trees on which c-command is decided. -/
 
 def tok_send   : LexicalItem.Token := ⟨.of .V [.D] (phonForm := "send"), 300⟩
 def tok_to     : LexicalItem.Token := ⟨.of .P [.D] (phonForm := "to"), 301⟩
@@ -73,7 +73,7 @@ def tok_kick   : LexicalItem.Token := ⟨.of .V [.D] (phonForm := "kicked"), 310
 def tok_ball   : LexicalItem.Token := ⟨.of .D [] (phonForm := "the ball"), 311⟩
 
 /-- The constituent *to Mary*. -/
-def ppToMaryP : PlanarSyntacticObject := tok_to * tok_mary
+def ppToMaryP : LinearizedSyntacticObject := tok_to * tok_mary
 
 /-! ### The oblique dative
 
@@ -90,7 +90,7 @@ def obliqueDative : Derivation :=
     ] }
 
 /-- The oblique dative's tree, `[John [a letter [send [to Mary]]]]`. -/
-def obliqueDativeTree : PlanarSyntacticObject :=
+def obliqueDativeTree : LinearizedSyntacticObject :=
   tok_john * (tok_letter * (tok_send * ppToMaryP))
 
 theorem oblique_do_ccommands_goal :
@@ -117,8 +117,8 @@ def docDativeShift : Derivation :=
     ] }
 
 /-- The double object construction's tree, `[John [Mary [a letter [send [to t]]]]]`. -/
-def docDativeShiftTree : PlanarSyntacticObject :=
-  tok_john * (tok_mary * (tok_letter * (tok_send * (tok_to * PlanarSyntacticObject.trace))))
+def docDativeShiftTree : LinearizedSyntacticObject :=
+  tok_john * (tok_mary * (tok_letter * (tok_send * (tok_to * LinearizedSyntacticObject.trace))))
 
 /-- In the double object construction the indirect object c-commands the theme. -/
 theorem doc_io_ccommands_do :
@@ -146,8 +146,8 @@ def standardPassive : Derivation :=
     ] }
 
 /-- The passive's tree, `[the ball [John [kicked t]]]`. -/
-def standardPassiveTree : PlanarSyntacticObject :=
-  tok_ball * (tok_john * (tok_kick * PlanarSyntacticObject.trace))
+def standardPassiveTree : LinearizedSyntacticObject :=
+  tok_ball * (tok_john * (tok_kick * LinearizedSyntacticObject.trace))
 
 theorem passive_object_ccommands_subject :
     CCommands standardPassiveTree DP_ball DP_john := by decide
@@ -217,7 +217,7 @@ def tok_to2     : LexicalItem.Token := ⟨.of .P [.D] (phonForm := "to"), 323⟩
 def indirectPassive : Derivation :=
   { initial := V_sent
     steps := [
-      .em .right (tok_to2 * tok_mary2 : PlanarSyntacticObject),
+      .em .right (tok_to2 * tok_mary2 : LinearizedSyntacticObject),
       .em .left DP_letter2,
       .im DP_mary2,
       .im DP_mary2
@@ -225,9 +225,9 @@ def indirectPassive : Derivation :=
 
 /-- The indirect passive's tree, `[Mary [t [a letter [sent [to t]]]]]`, with a trace at each
 extraction site. -/
-def indirectPassiveTree : PlanarSyntacticObject :=
-  tok_mary2 * (PlanarSyntacticObject.trace * (tok_letter2 * (tok_sent * (tok_to2 *
-    PlanarSyntacticObject.trace))))
+def indirectPassiveTree : LinearizedSyntacticObject :=
+  tok_mary2 * (LinearizedSyntacticObject.trace * (tok_letter2 * (tok_sent * (tok_to2 *
+    LinearizedSyntacticObject.trace))))
 
 theorem indirect_passive_io_ccommands_do :
     CCommands indirectPassiveTree DP_mary2 DP_letter2 := by decide

@@ -531,7 +531,7 @@ structure Cell where
   root : ConsonantalRoot String
 
 /-- The cell of a form, read off its features and its concept. -/
-def cell? (f : Data.Wordlist.Form Wordlist.Cell) : Option Cell := do
+def cell? (f : CLDF.Wordlist.Form Wordlist.Cell) : Option Cell := do
   let b ← (f.cell.binyan : Option Wordlist.Binyan).map binyanOf
   let c ← category? f.cell
   pure ⟨b, c, ← root? f.parameterId⟩

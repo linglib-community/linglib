@@ -259,7 +259,7 @@ structure Stem where
   floating : List Place
 
 /-- The representation of a stem row whose vowels bear the given prelinked features. -/
-def Stem.ofRow (row : Data.Wordlist.Form Wordlist.Cell) (linked : List (List Place))
+def Stem.ofRow (row : CLDF.Wordlist.Form Wordlist.Cell) (linked : List (List Place))
     (floating : List Place) : Stem :=
   ⟨((row.segments.filter fun l ↦ (ofLetter l).isSome).map VNode.ofLetter).zip linked, floating⟩
 
@@ -366,7 +366,7 @@ def dzsungelOpaque : Stem := ofRow Wordlist.dzsungel [[.dor], [.cor]] []
 end Stem
 
 /-- The stems of Table 18, each with the row of its base form. -/
-def stems : List (Data.Wordlist.Form Wordlist.Cell × Stem) :=
+def stems : List (CLDF.Wordlist.Form Wordlist.Cell × Stem) :=
   [(Wordlist.haz, .haz), (Wordlist.tuz, .tuz), (Wordlist.viz, .viz), (Wordlist.piros, .piros),
     (Wordlist.nuansz, .nuansz), (Wordlist.oreg, .oreg), (Wordlist.szemolcs, .szemolcs),
     (Wordlist.sofor, .sofor), (Wordlist.papir, .papir), (Wordlist.hid, .hid),
@@ -401,7 +401,7 @@ the transparent neutral vowels. -/
 
 /-- The stems whose harmonic vowels govern their suffixes as section 3.2 describes, all but the
 pure COR *víz*, the antiharmonic *híd* and the opaque *kódex*. -/
-def regular : List (Data.Wordlist.Form Wordlist.Cell × Stem) :=
+def regular : List (CLDF.Wordlist.Form Wordlist.Cell × Stem) :=
   stems.filter (·.1 ∉ [Wordlist.viz, Wordlist.hid, Wordlist.kodex])
 
 /-- On the regular stems the surface generalization and the derivations agree. -/

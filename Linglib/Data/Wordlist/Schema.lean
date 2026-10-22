@@ -21,15 +21,15 @@ inflected forms, which shares its column names. It is the morphological counterp
 
 ## Main definitions
 
-* `Data.Wordlist.Lexeme`: a row of the `LexemeTable`, a word of a language by the concept it
+* `CLDF.Wordlist.Lexeme`: a row of the `LexemeTable`, a word of a language by the concept it
   expresses.
-* `Data.Wordlist.Form`: a row of the `FormTable`, the form of a lexeme in a cell, with the source's
+* `CLDF.Wordlist.Form`: a row of the `FormTable`, the form of a lexeme in a cell, with the source's
   segmentation and its judgment of the form.
-* `Data.Wordlist.FormRelation`: a row of the `FormRelationTable`, a relation a source asserts from
+* `CLDF.Wordlist.FormRelation`: a row of the `FormRelationTable`, a relation a source asserts from
   one form to another.
-* `Data.Wordlist.Paradigm`: a row of the `ParadigmTable`, the forms a source gives a lexeme as one
+* `CLDF.Wordlist.Paradigm`: a row of the `ParadigmTable`, the forms a source gives a lexeme as one
   column of its table.
-* `Data.Wordlist.RootClasses`: a row of the `RootClassTable`, a source's judgment that the cells of
+* `CLDF.Wordlist.RootClasses`: a row of the `RootClassTable`, a source's judgment that the cells of
   a paradigm divide into classes sharing a root.
 
 ## Implementation notes
@@ -68,7 +68,7 @@ inflected forms, which shares its column names. It is the morphological counterp
 
 @[expose] public section
 
-namespace Data.Wordlist
+namespace CLDF.Wordlist
 
 /-- A `Lexeme` is a row of the `LexemeTable`, a word of a language, by the concept it expresses
 and its citation form. -/
@@ -174,4 +174,4 @@ structure RootClasses (C : Type*) extends Paradigm C where
 def RootClasses.classOf {C : Type*} [DecidableEq C] (r : RootClasses C) (c : C) : Option ℕ :=
   r.classes.lookup c
 
-end Data.Wordlist
+end CLDF.Wordlist

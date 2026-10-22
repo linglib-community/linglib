@@ -14,7 +14,7 @@ Declarations live in `namespace Bobaljik2012.StructureDataset`.
 
 namespace Bobaljik2012.StructureDataset
 
-open Data.StructureDataset
+open CLDF.StructureDataset
 
 /-- region: The broad geographic region under which the table groups the language (p. 229). -/
 inductive Region where

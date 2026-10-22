@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Analysis.SpecificLimits.ProdOneSub
+public import Linglib.Core.MeasureTheory.Measure.Basic
 public import Linglib.Core.Probability.AutoregressiveSequenceModel.Basic
 
 /-!
@@ -119,10 +120,8 @@ variable [MeasurableSingletonClass α] [Countable α]
 /-- After any prefix the model either ends or continues with some symbol. -/
 theorem next_none_add_tsum_next_some (x : List α) :
     M.next x {none} + ∑' a, M.next x {some a} = 1 := by
-  have hU : ({none} : Set (Option α))ᶜ = ⋃ a, {some a} := by ext o; cases o <;> simp
-  rw [← measure_iUnion (fun a b hab ↦ Set.disjoint_singleton.2 ((Option.some_injective α).ne hab))
-    fun a ↦ measurableSet_singleton _, ← hU, measure_add_measure_compl (measurableSet_singleton _),
-    measure_univ]
+  rw [← measure_range_eq_tsum (Option.some_injective α),
+    measure_singleton_none_add_measure_range_some, measure_univ]
 
 theorem survival_succ_add_stopProb (n : ℕ) : M.survival (n + 1) + M.stopProb n = M.survival n := by
   rw [survival, ← (concatEquiv n).tsum_eq, ENNReal.tsum_prod', stopProb, survival,

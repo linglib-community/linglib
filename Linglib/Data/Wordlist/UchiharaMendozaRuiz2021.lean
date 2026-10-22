@@ -14,7 +14,7 @@ live in `namespace UchiharaMendozaRuiz2021.Wordlist`.
 
 namespace UchiharaMendozaRuiz2021.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- A cell of the source's tables, by its Universal Dependencies features. -/
 abbrev Cell := UD.MorphFeatures

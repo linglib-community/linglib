@@ -78,7 +78,7 @@ theorem not_exists_paradigm_eq_of_not_regular {f : Lexeme → Cell → FormVecto
     (hf : ¬ IsAnalogicallyRegular f) :
     ¬ ∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G (imputed σ ε) = f := by
   rintro ⟨G, rfl⟩
-  exact hf (isAnalogicallyRegular_paradigm_imputed G σ ε)
+  exact hf (isAnalogicallyRegular_paradigm G (isAnalogicallyRegular_imputed σ ε))
 
 /-! ### Interpolation -/
 
@@ -95,11 +95,12 @@ theorem exists_paradigm_eq_of_linearIndependent {s : Lexeme → Cell → Meaning
 /-- When the lexeme and inflectional-function vectors are jointly linearly independent, a table
 is the paradigm of some linear mapping over imputed semantics iff it is analogically regular,
 so for a regularized system linearity and regularity are the same constraint (§16.6). -/
-theorem exists_paradigm_imputed_eq_iff [Nonempty Lexeme] [Nonempty Cell]
-    (hind : LinearIndependent ℝ (Sum.elim σ ε)) (f : Lexeme → Cell → FormVector n) :
+theorem exists_paradigm_imputed_eq_iff (hind : LinearIndependent ℝ (Sum.elim σ ε))
+    (f : Lexeme → Cell → FormVector n) :
     (∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G (imputed σ ε) = f) ↔
       IsAnalogicallyRegular f := by
-  refine ⟨fun ⟨G, hG⟩ ↦ hG ▸ isAnalogicallyRegular_paradigm_imputed G σ ε, fun hreg ↦ ?_⟩
+  refine ⟨fun ⟨G, hG⟩ ↦ hG ▸ isAnalogicallyRegular_paradigm G (isAnalogicallyRegular_imputed σ ε),
+    fun hreg ↦ ?_⟩
   obtain ⟨a, b, hab⟩ := isAnalogicallyRegular_iff_exists_add.1 hreg
   obtain ⟨G, hG⟩ := hind.exists_linearMap_apply_eq (Sum.elim a b)
   obtain ⟨G, rfl⟩ := toLinearMapRight'.surjective G

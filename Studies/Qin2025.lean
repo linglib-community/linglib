@@ -48,7 +48,7 @@ as well.
 
 namespace Qin2025
 
-open Morphology Data.Wordlist
+open Morphology CLDF.Wordlist
 
 /-! ### The base definition and *-fer* (§3.1) -/
 

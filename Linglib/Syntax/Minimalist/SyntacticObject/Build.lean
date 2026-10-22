@@ -14,25 +14,25 @@ public import Linglib.Core.Data.UnorderedTree.Leaves
 
 Merge on the carrier is written `*`: External Merge of two objects, and the re-merge of a mover
 with the remainder in Internal Merge. The objects form a commutative magma and the ordered
-objects a noncommutative one. Concrete objects are built ordered, as `PlanarSyntacticObject`s,
+objects a noncommutative one. Concrete objects are built ordered, as `LinearizedSyntacticObject`s,
 and forgotten to the carrier by `toSyntacticObject`, a homomorphism of magmas with none going
 back. The accessors read the root token, the leaf and node counts, and the trace predicate,
 which recognizes the trace leaves, bare or indexed.
 
 ## Main definitions
 
-* `Minimalist.PlanarSyntacticObject.toSyntacticObjectHom`: forgetting the order.
+* `Minimalist.LinearizedSyntacticObject.toSyntacticObjectHom`: forgetting the order.
 * `Minimalist.SyntacticObject.yield`: the pronounced tokens.
-* `Minimalist.PlanarSyntacticObject.attach`, `yield`: Merge on a given edge, and the pronounced
+* `Minimalist.LinearizedSyntacticObject.attach`, `yield`: Merge on a given edge, and the pronounced
   tokens in order.
 * `Minimalist.SyntacticObject.mkLeaf`, `mkLeafPhon`: lexical leaves from features.
 * `Minimalist.SyntacticObject.token?`, `isTrace`, `leafCount`, `nodeCount`, `IsLeaf`.
 
 ## Main results
 
-* `Minimalist.PlanarSyntacticObject.isEmpty_mulHom`: no homomorphism of magmas forgets in the
+* `Minimalist.LinearizedSyntacticObject.isEmpty_mulHom`: no homomorphism of magmas forgets in the
   other direction.
-* `Minimalist.PlanarSyntacticObject.coe_yield`: a planar object pronounces the tokens of its
+* `Minimalist.LinearizedSyntacticObject.coe_yield`: a linearized object pronounces the tokens of its
   object.
 
 ## References
@@ -88,34 +88,34 @@ def yield (s : SyntacticObject) : Multiset LexicalItem.Token :=
 
 end SyntacticObject
 
-namespace PlanarSyntacticObject
+namespace LinearizedSyntacticObject
 
 /-- Merge on the ordered carrier, in the given order, is written `l * r`. -/
-instance : Mul PlanarSyntacticObject := ⟨merge⟩
+instance : Mul LinearizedSyntacticObject := ⟨merge⟩
 
-@[simp] theorem mul_def (l r : PlanarSyntacticObject) : l * r = merge l r := rfl
+@[simp] theorem mul_def (l r : LinearizedSyntacticObject) : l * r = merge l r := rfl
 
 /-- A lexical item is a leaf. -/
-instance : Coe LexicalItem.Token PlanarSyntacticObject := ⟨leaf⟩
+instance : Coe LexicalItem.Token LinearizedSyntacticObject := ⟨leaf⟩
 
 /-- An ordered object is an object. -/
-instance : Coe PlanarSyntacticObject SyntacticObject := ⟨toSyntacticObject⟩
+instance : Coe LinearizedSyntacticObject SyntacticObject := ⟨toSyntacticObject⟩
 
 /-- Forgetting the order is a homomorphism of magmas ([marcolli-chomsky-berwick-2025]
     Lemma 1.13.1). -/
-def toSyntacticObjectHom : PlanarSyntacticObject →ₙ* SyntacticObject :=
+def toSyntacticObjectHom : LinearizedSyntacticObject →ₙ* SyntacticObject :=
   ⟨toSyntacticObject, toSyntacticObject_merge⟩
 
-@[simp] theorem toSyntacticObjectHom_apply (p : PlanarSyntacticObject) :
+@[simp] theorem toSyntacticObjectHom_apply (p : LinearizedSyntacticObject) :
     toSyntacticObjectHom p = p.toSyntacticObject := rfl
 
-theorem merge_inj {l r l' r' : PlanarSyntacticObject} :
+theorem merge_inj {l r l' r' : LinearizedSyntacticObject} :
     merge l r = merge l' r' ↔ l = l' ∧ r = r' := by
   refine ⟨fun h ↦ ?_, fun ⟨hl, hr⟩ ↦ hl ▸ hr ▸ rfl⟩
   obtain ⟨hl, hr⟩ : l.val = l'.val ∧ r.val = r'.val := by simpa using congrArg Subtype.val h
   exact ⟨Subtype.ext hl, Subtype.ext hr⟩
 
-theorem merge_ne_left (l r : PlanarSyntacticObject) : merge l r ≠ l := fun h ↦ by
+theorem merge_ne_left (l r : LinearizedSyntacticObject) : merge l r ≠ l := fun h ↦ by
   have := congrArg (·.val.numNodes) h
   simp only [merge_val, RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil] at this
@@ -124,49 +124,50 @@ theorem merge_ne_left (l r : PlanarSyntacticObject) : merge l r ≠ l := fun h �
 /-- No homomorphism of magmas forgets in the other direction, since the ordered objects have no
     commutative submagma: the images of `t * (t * t)` and `(t * t) * t` would coincide
     ([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
-theorem isEmpty_mulHom : IsEmpty (SyntacticObject →ₙ* PlanarSyntacticObject) := by
+theorem isEmpty_mulHom : IsEmpty (SyntacticObject →ₙ* LinearizedSyntacticObject) := by
   refine ⟨fun φ ↦ ?_⟩
   have h := congrArg φ (mul_comm (default : SyntacticObject) (default * default))
   simp only [map_mul, mul_def, merge_inj] at h
   exact merge_ne_left _ _ h.1.symm
 
 /-- `p.attach e d` merges `d` into `p` as the daughter on edge `e`. -/
-def attach (p : PlanarSyntacticObject) (e : Edge) (d : PlanarSyntacticObject) :
-    PlanarSyntacticObject :=
+def attach (p : LinearizedSyntacticObject) (e : Edge) (d : LinearizedSyntacticObject) :
+    LinearizedSyntacticObject :=
   match e with
   | .left => merge d p
   | .right => merge p d
 
-@[simp] theorem attach_left (p d : PlanarSyntacticObject) : p.attach .left d = merge d p := rfl
+@[simp] theorem attach_left (p d : LinearizedSyntacticObject) : p.attach .left d = merge d p := rfl
 
-@[simp] theorem attach_right (p d : PlanarSyntacticObject) : p.attach .right d = merge p d := rfl
+@[simp] theorem attach_right (p d : LinearizedSyntacticObject) : p.attach .right d = merge p d :=
+  rfl
 
-theorem attach_swap (p d : PlanarSyntacticObject) (e : Edge) :
+theorem attach_swap (p d : LinearizedSyntacticObject) (e : Edge) :
     p.attach e.swap d = d.attach e p := by
   cases e <;> rfl
 
 /-- Merge on either edge forgets to Merge. -/
-@[simp] theorem toSyntacticObject_attach (p d : PlanarSyntacticObject) (e : Edge) :
+@[simp] theorem toSyntacticObject_attach (p d : LinearizedSyntacticObject) (e : Edge) :
     (p.attach e d).toSyntacticObject = SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject
     := by
   cases e
   · exact toSyntacticObject_merge d p
   · exact (toSyntacticObject_merge p d).trans (SyntacticObject.merge_comm _ _)
 
-/-- The pronounced tokens of a planar object, left to right; traces are unpronounced. -/
-def yield (p : PlanarSyntacticObject) : List LexicalItem.Token :=
+/-- The pronounced tokens of a linearized object, left to right; traces are unpronounced. -/
+def yield (p : LinearizedSyntacticObject) : List LexicalItem.Token :=
   p.val.leafList.filterMap (Sum.elim id fun _ ↦ none)
 
-theorem yield_toSyntacticObject (p : PlanarSyntacticObject) :
+theorem yield_toSyntacticObject (p : LinearizedSyntacticObject) :
     p.toSyntacticObject.yield = p.val.leaves.filterMap (Sum.elim id fun _ ↦ none) := rfl
 
-/-- The pronounced tokens of a planar object are those of its object, in order. -/
-theorem coe_yield (p : PlanarSyntacticObject) :
+/-- The pronounced tokens of a linearized object are those of its object, in order. -/
+theorem coe_yield (p : LinearizedSyntacticObject) :
     (p.yield : Multiset LexicalItem.Token) = p.toSyntacticObject.yield := by
   rw [yield, ← Multiset.filterMap_coe, RoseTree.coe_leafList]
   rfl
 
-theorem yield_attach (p : PlanarSyntacticObject) (e : Edge) (d : PlanarSyntacticObject) :
+theorem yield_attach (p : LinearizedSyntacticObject) (e : Edge) (d : LinearizedSyntacticObject) :
     (p.attach e d).toSyntacticObject.yield =
       d.toSyntacticObject.yield + p.toSyntacticObject.yield := by
   cases e <;>
@@ -180,16 +181,17 @@ theorem yield_attach (p : PlanarSyntacticObject) (e : Edge) (d : PlanarSyntactic
 `insert a {b}`, so with `{p} = p` the object `{T, {V, PossP}}` is `T * (V * PossP)`, in the given
 order; its elements are objects, a head entering as its leaf. -/
 
-instance : Singleton PlanarSyntacticObject PlanarSyntacticObject := ⟨id⟩
+instance : Singleton LinearizedSyntacticObject LinearizedSyntacticObject := ⟨id⟩
 
-instance : Insert PlanarSyntacticObject PlanarSyntacticObject := ⟨merge⟩
+instance : Insert LinearizedSyntacticObject LinearizedSyntacticObject := ⟨merge⟩
 
-@[simp] theorem singleton_def (p : PlanarSyntacticObject) : ({p} : PlanarSyntacticObject) = p := rfl
+@[simp] theorem singleton_def (p : LinearizedSyntacticObject) :
+    ({p} : LinearizedSyntacticObject) = p := rfl
 
-@[simp] theorem insert_def (l r : PlanarSyntacticObject) :
-    ({l, r} : PlanarSyntacticObject) = merge l r := rfl
+@[simp] theorem insert_def (l r : LinearizedSyntacticObject) :
+    ({l, r} : LinearizedSyntacticObject) = merge l r := rfl
 
-end PlanarSyntacticObject
+end LinearizedSyntacticObject
 
 namespace SyntacticObject
 
@@ -239,6 +241,12 @@ theorem traceOf_ne_trace (tok : LexicalItem.Token) : traceOf tok ≠ trace := by
 @[simp] theorem token?_merge (l r : SyntacticObject) : (merge l r).token? = none := by
   rw [token?, merge_val, UnorderedTree.value_node]
 
+/-- An object with a root token is that token's leaf. -/
+theorem token?_eq_some_iff {s : SyntacticObject} {tok : LexicalItem.Token} :
+    s.token? = some tok ↔ s = leaf tok := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ token?_leaf tok⟩
+  rcases s.exists_form with ⟨tok', rfl⟩ | rfl | ⟨tok', rfl⟩ | ⟨l, r, rfl⟩ <;> simp_all
+
 /-- A trace leaf, bare or indexed. -/
 def isTrace (s : SyntacticObject) : Prop :=
   (UnorderedTree.value s.val).isRight = true ∧ UnorderedTree.numNodes s.val = 1
@@ -286,8 +294,8 @@ end SyntacticObject
 private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
 private def demoVP : SyntacticObject :=
-  (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf (demoTok 0))
-    (PlanarSyntacticObject.leaf (demoTok 1))).toSyntacticObject
+  (LinearizedSyntacticObject.merge (LinearizedSyntacticObject.leaf (demoTok 0))
+    (LinearizedSyntacticObject.leaf (demoTok 1))).toSyntacticObject
 
 /-- The DSL-built tree is a genuine syntactic object. -/
 example : IsSyntacticObject demoVP.val := by decide
