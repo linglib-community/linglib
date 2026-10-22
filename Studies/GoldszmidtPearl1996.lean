@@ -604,44 +604,44 @@ open Classical in
 `A` to degree `L` (section 5.2). It lifts the worlds outside `A` by `L` and shifts the ranking
 back to start at `0` by subtracting `min[κ(A); κ(¬A) + L]`. -/
 noncomputable def lCondition (A : Set W) (L : ℕ) : RankingFunction W where
-  toFun w := κ w + (if w ∈ A then 0 else L) - (min (κ.rank A) (κ.rank Aᶜ + L)).toNat
+  toFun w := κ w + (if w ∈ A then 0 else L) - (min (rank κ A) (rank κ Aᶜ + L)).toNat
   exists_eq_zero' := by
-    rcases le_total (κ.rank A) (κ.rank Aᶜ + L) with h | h
+    rcases le_total (rank κ A) (rank κ Aᶜ + L) with h | h
     · rcases A.eq_empty_or_nonempty with rfl | hA
       · simp at h
-      obtain ⟨u, hu, e⟩ := κ.exists_apply_eq_rank hA
+      obtain ⟨u, hu, e⟩ := exists_apply_eq_rank κ hA
       refine ⟨u, ?_⟩
       rw [ite_eq_left hu, min_eq_left h, ← e, ENat.toNat_natCast, add_zero, Nat.sub_self]
     · rcases Aᶜ.eq_empty_or_nonempty with he | hA'
       · rw [Set.compl_empty_iff.1 he] at h
         simp at h
-      obtain ⟨u, hu, e⟩ := κ.exists_apply_eq_rank hA'
+      obtain ⟨u, hu, e⟩ := exists_apply_eq_rank κ hA'
       refine ⟨u, ?_⟩
       rw [ite_eq_right hu, min_eq_right h, ← e, ← Nat.cast_add, ENat.toNat_natCast, Nat.sub_self]
 
 theorem lCondition_of_mem (hw : w ∈ A) :
-    lCondition κ A L w = κ w - (min (κ.rank A) (κ.rank Aᶜ + L)).toNat := by
+    lCondition κ A L w = κ w - (min (rank κ A) (rank κ Aᶜ + L)).toNat := by
   simp [lCondition, hw]
 
 theorem lCondition_of_notMem (hw : w ∉ A) :
-    lCondition κ A L w = κ w + L - (min (κ.rank A) (κ.rank Aᶜ + L)).toNat := by
+    lCondition κ A L w = κ w + L - (min (rank κ A) (rank κ Aᶜ + L)).toNat := by
   simp [lCondition, hw]
 
 open Classical in
 /-- Up to the constant that normalizes it, L-conditioning lifts the worlds outside `A` by `L`. -/
 theorem exists_lCondition_add (A : Set W) (L : ℕ) :
     ∃ c, ∀ w, lCondition κ A L w + c = κ w + if w ∈ A then 0 else L := by
-  refine ⟨(min (κ.rank A) (κ.rank Aᶜ + L)).toNat, fun w ↦ ?_⟩
+  refine ⟨(min (rank κ A) (rank κ Aᶜ + L)).toNat, fun w ↦ ?_⟩
   by_cases hw : w ∈ A
-  · have := ENat.toNat_le_of_le_natCast ((min_le_left _ (κ.rank Aᶜ + L)).trans
-      (κ.rank_le hw))
+  · have := ENat.toNat_le_of_le_natCast ((min_le_left _ (rank κ Aᶜ + L)).trans
+      (rank_le κ hw))
     rw [lCondition_of_mem κ hw, ite_eq_left hw]
     omega
-  · have : (min (κ.rank A) (κ.rank Aᶜ + L)).toNat ≤ κ w + L :=
+  · have : (min (rank κ A) (rank κ Aᶜ + L)).toNat ≤ κ w + L :=
       ENat.toNat_le_of_le_natCast ((min_le_right _ _).trans (by
         rw [Nat.cast_add]
         gcongr
-        exact κ.rank_le (A := Aᶜ) hw))
+        exact rank_le κ (A := Aᶜ) hw))
     rw [lCondition_of_notMem κ hw, ite_eq_right hw]
     omega
 
@@ -674,10 +674,10 @@ theorem lCondition_lCondition (A : Set W) (L M : ℕ) :
   split_ifs at * <;> omega
 
 private theorem toNat_min_rank (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) :
-    (min (κ.rank A) (κ.rank Aᶜ + L)).toNat =
-      min (κ.rank A).toNat ((κ.rank Aᶜ).toNat + L) := by
-  obtain ⟨u, -, e⟩ := κ.exists_apply_eq_rank hA
-  obtain ⟨u', -, e'⟩ := κ.exists_apply_eq_rank hA'
+    (min (rank κ A) (rank κ Aᶜ + L)).toNat =
+      min (rank κ A).toNat ((rank κ Aᶜ).toNat + L) := by
+  obtain ⟨u, -, e⟩ := exists_apply_eq_rank κ hA
+  obtain ⟨u', -, e'⟩ := exists_apply_eq_rank κ hA'
   rw [← e, ← e', ← Nat.cast_add, ENat.toNat_natCast, ENat.toNat_natCast]
   rcases le_total (κ u) (κ u' + L) with h | h
   · rw [min_eq_left (by exact_mod_cast h), min_eq_left h, ENat.toNat_natCast]
@@ -686,15 +686,15 @@ private theorem toNat_min_rank (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) :
 /-- Eq. (32) on the worlds of `A`, where `κ(ω | φ)` is the A-part
 (`RankingFunction.condRank_singleton`) and `max[0; x − y]` is the truncated difference. -/
 theorem lCondition_eq_aPart_of_mem (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (hw : w ∈ A) :
-    lCondition κ A L w = κ.aPart A w + ((κ.rank A).toNat - ((κ.rank Aᶜ).toNat + L)) := by
-  have := κ.toNat_rank_le hw
+    lCondition κ A L w = aPart κ A w + ((rank κ A).toNat - ((rank κ Aᶜ).toNat + L)) := by
+  have := toNat_rank_le κ hw
   rw [lCondition_of_mem κ hw, toNat_min_rank κ hA hA', aPart]
   omega
 
 /-- Eq. (32) on the worlds outside `A`. -/
 theorem lCondition_eq_aPart_of_notMem (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (hw : w ∉ A) :
-    lCondition κ A L w = κ.aPart Aᶜ w + ((κ.rank Aᶜ).toNat + L - (κ.rank A).toNat) := by
-  have := κ.toNat_rank_le (A := Aᶜ) hw
+    lCondition κ A L w = aPart κ Aᶜ w + ((rank κ Aᶜ).toNat + L - (rank κ A).toNat) := by
+  have := toNat_rank_le κ (A := Aᶜ) hw
   rw [lCondition_of_notMem κ hw, toNat_min_rank κ hA hA', aPart]
   omega
 
@@ -702,8 +702,8 @@ theorem lCondition_eq_aPart_of_notMem (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (h
 conditionalization of Eq. (25), at the firmness `κ(¬A) + L − κ(A)` that Eq. (30) gives the
 negation. -/
 theorem lCondition_eq_conditionα (hA : A.Nonempty) (hA' : Aᶜ.Nonempty)
-    (h : (κ.rank A).toNat ≤ (κ.rank Aᶜ).toNat + L) :
-    lCondition κ A L = κ.conditionα A hA ((κ.rank Aᶜ).toNat + L - (κ.rank A).toNat) := by
+    (h : (rank κ A).toNat ≤ (rank κ Aᶜ).toNat + L) :
+    lCondition κ A L = κ.conditionα A hA ((rank κ Aᶜ).toNat + L - (rank κ A).toNat) := by
   ext w
   by_cases hw : w ∈ A
   · rw [lCondition_eq_aPart_of_mem κ hA hA' hw, κ.conditionα_of_mem _ _ hw]
@@ -761,12 +761,12 @@ noncomputable def κm' : RankingFunction Party := κm.conditionα {x | mary x} �
 
 /-- In the right of Fig. 5, the worlds without Mary rise to rank 2. -/
 theorem κm'_apply (x : Party) : κm' x = if mary x then (if bill x then 3 else 0) else 2 := by
-  have h₁ : κm.rank {x | mary x} = 0 :=
-    (κm.rank_eq_of_forall_le (A := {x | mary x}) (w := ⟨true, false⟩) rfl
+  have h₁ : rank κm {x | mary x} = 0 :=
+    (rank_eq_of_forall_le κm (A := {x | mary x}) (w := ⟨true, false⟩) rfl
       (by simp only [κm_apply]; decide)).trans
       (by simp [κm_apply, mary, bill])
-  have h₂ : κm.rank {x | mary x}ᶜ = 0 :=
-    (κm.rank_eq_of_forall_le (A := {x | mary x}ᶜ) (w := ⟨false, false⟩) (by decide)
+  have h₂ : rank κm {x | mary x}ᶜ = 0 :=
+    (rank_eq_of_forall_le κm (A := {x | mary x}ᶜ) (w := ⟨false, false⟩) (by decide)
       (by simp only [κm_apply]; decide)).trans (by simp [κm_apply, mary, bill])
   by_cases hx : mary x
   · rw [κm', κm.conditionα_of_mem (A := {x | mary x}) _ _ hx, aPart, h₁, κm_apply]
@@ -775,13 +775,13 @@ theorem κm'_apply (x : Party) : κm' x = if mary x then (if bill x then 3 else 
     simp [hx]
 
 /-- After the Type-J report on Mary, the belief that Bill stays home has strength 2. -/
-theorem rank_κm'_bill : κm'.rank {x | bill x} = 2 :=
-  (κm'.rank_eq_of_forall_le (A := {x | bill x}) (w := ⟨false, true⟩) rfl
+theorem rank_κm'_bill : rank κm' {x | bill x} = 2 :=
+  (rank_eq_of_forall_le κm' (A := {x | bill x}) (w := ⟨false, true⟩) rfl
     (by simp only [κm'_apply]; decide)).trans
     (by simp [κm'_apply, mary])
 
-theorem rank_κm'_not_bill : κm'.rank {x | bill x}ᶜ = 0 :=
-  (κm'.rank_eq_of_forall_le (A := {x | bill x}ᶜ) (w := ⟨true, false⟩) (by decide)
+theorem rank_κm'_not_bill : rank κm' {x | bill x}ᶜ = 0 :=
+  (rank_eq_of_forall_le κm' (A := {x | bill x}ᶜ) (w := ⟨true, false⟩) (by decide)
     (by simp only [κm'_apply]; decide)).trans (by simp [κm'_apply, mary, bill])
 
 /-- L-conditioning κ⁺′ on evidence of strength 2 that Bill goes lowers `M ∧ B` to 1 and
@@ -800,14 +800,14 @@ theorem lCondition_κm'_apply (x : Party) :
 /-- The Type-L report on Bill brings back the initial ranks of Bill and Mary, `κ⁺″(B) = 0` and
 `κ⁺″(¬M) = 0`, while lowering the disbelief in both going to `κ⁺″(M ∧ B) = 1`. -/
 theorem fig6 :
-    (lCondition κm' {x | bill x} 2).rank {x | bill x} = 0 ∧
-      (lCondition κm' {x | bill x} 2).rank {x | ¬ mary x} = 0 ∧
-        (lCondition κm' {x | bill x} 2).rank {x | mary x ∧ bill x} = 1 := by
+    rank (lCondition κm' {x | bill x} 2) {x | bill x} = 0 ∧
+      rank (lCondition κm' {x | bill x} 2) {x | ¬ mary x} = 0 ∧
+        rank (lCondition κm' {x | bill x} 2) {x | mary x ∧ bill x} = 1 := by
   refine ⟨?_, ?_, ?_⟩
   · exact (rank_eq_zero_iff _).2 ⟨⟨false, true⟩, rfl, by rw [lCondition_κm'_apply]; decide⟩
   · exact (rank_eq_zero_iff _).2
       ⟨⟨false, true⟩, by decide, by rw [lCondition_κm'_apply]; decide⟩
-  · exact ((lCondition κm' {x | bill x} 2).rank_eq_of_forall_le (A := {x | mary x ∧ bill x})
+  · exact (rank_eq_of_forall_le (lCondition κm' {x | bill x} 2) (A := {x | mary x ∧ bill x})
       (w := ⟨true, true⟩)
       ⟨rfl, rfl⟩ (by simp only [lCondition_κm'_apply]; decide)).trans
         (by rw [lCondition_κm'_apply]; simp [mary, bill])
@@ -816,8 +816,8 @@ theorem fig6 :
 strength 2, but Mary's going keeps rank 1. The paper reports `κ⁺″(M) = 2`, which would need the
 prior to rank `M ∧ B` at 4 or more, and then the Type-L reading would leave `κ⁺″(M ∧ B)` above 1. -/
 theorem typeJ_bill :
-    (κm'.conditionα {x | bill x} ⟨⟨false, true⟩, rfl⟩ 2).rank {x | bill x}ᶜ = 2 ∧
-      (κm'.conditionα {x | bill x} ⟨⟨false, true⟩, rfl⟩ 2).rank {x | mary x} = 1 := by
+    rank (κm'.conditionα {x | bill x} ⟨⟨false, true⟩, rfl⟩ 2) {x | bill x}ᶜ = 2 ∧
+      rank (κm'.conditionα {x | bill x} ⟨⟨false, true⟩, rfl⟩ 2) {x | mary x} = 1 := by
   refine ⟨rank_conditionα_compl _ _ ⟨⟨true, false⟩, by decide⟩ _, ?_⟩
   have hJ : ∀ x, κm'.conditionα {x | bill x} ⟨⟨false, true⟩, rfl⟩ 2 x =
       if bill x then (if mary x then 1 else 0) else (if mary x then 2 else 4) := fun x ↦ by
@@ -827,7 +827,7 @@ theorem typeJ_bill :
     · rw [κm'.conditionα_of_notMem (A := {x | bill x}) _ _ hx, aPart, rank_κm'_not_bill,
         κm'_apply]
       by_cases hm : mary x <;> simp [hx, hm]
-  exact ((κm'.conditionα _ _ 2).rank_eq_of_forall_le (A := {x | mary x}) (w := ⟨true, true⟩) rfl
+  exact (rank_eq_of_forall_le (κm'.conditionα _ _ 2) (A := {x | mary x}) (w := ⟨true, true⟩) rfl
     (by simp only [hJ]; decide)).trans (by rw [hJ]; simp [mary, bill])
 
 end Example28

@@ -2,13 +2,15 @@ module
 
 public import Linglib.Core.Order.Minimals
 public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Preferential and rational consequence relations
 
 This file defines preferential and rational consequence relations between sets of worlds. It
-proves that the consequence relation of a well-founded preorder on worlds is preferential, and
-that it is rational when the preorder is also total.
+proves that the consequence relation of a well-founded preorder on worlds is preferential, that
+it is rational when the preorder is also total, and that on finitely many worlds every rational
+relation preserving consistency is of this form.
 
 A nonmonotonic consequence relation `φ |~ ψ` reads "if `φ`, normally `ψ`". Kraus, Lehmann and
 Magidor call such a relation *preferential* when it satisfies reflexivity, left logical
@@ -20,8 +22,9 @@ partial order that satisfies a smoothness condition, where `φ |~ ψ` holds when
 `φ`-states satisfy `ψ`. Lehmann and Magidor call a preferential relation *rational* when it also
 satisfies rational monotonicity, and show that the rational relations are exactly those defined
 by a ranked model, whose order is pulled back from a total order along a ranking of the states.
-The theorems of this file are the soundness halves of the two representation theorems, for
-models whose states are the worlds themselves.
+For models whose states are the worlds themselves, this file proves the soundness halves of the
+two representation theorems and, for relations preserving consistency, the completeness half of
+the second.
 
 ## Main declarations
 
@@ -32,6 +35,10 @@ models whose states are the worlds themselves.
 * `Nonmonotonic.isPreferential_entails`, `Nonmonotonic.isRational_entails`: soundness for
   well-founded preorders and for well-founded total preorders.
 * `Nonmonotonic.IsPreferential.cut`: the cut rule of the cumulative systems is derivable.
+* `Nonmonotonic.exists_minimals_eq_iff`, `Nonmonotonic.IsRational.preorder`: a choice of worlds
+  for each proposition picks the most normal ones under a well-founded total preorder iff the
+  relation it defines is rational and preserves consistency; the preorder is read off pairs.
+* `Nonmonotonic.isRational_and_iff_exists_entails_eq`: completeness on finitely many worlds.
 * `Nonmonotonic.exists_not_isRational_entails`: a three-world preorder with an incomparable
   world whose consequence relation violates rational monotonicity.
 
@@ -164,5 +171,131 @@ theorem exists_not_isRational_entails : ∃ p : Preorder (Fin 3), ¬ IsRational 
       · exact Or.inl rfl⟩
   have h₃ := h.rationalMonotonicity h₁ (fun h' ↦ absurd (h' h1) (by simp)) h2
   simp at h₃
+
+/-! ### Completeness for rational relations -/
+
+section Selection
+
+variable {C : Set W → Set W}
+
+private theorem nonempty_of_consistent (hc : ∀ φ, C φ ⊆ ∅ → φ = ∅) (hφ : φ.Nonempty) :
+    (C φ).Nonempty :=
+  Set.nonempty_iff_ne_empty.2 fun he ↦ hφ.ne_empty (hc φ he.subset)
+
+namespace IsRational
+
+/-- Under a rational relation of the form `C φ ⊆ ψ`, when the worlds selected for `φ` meet `ψ`,
+the worlds selected for `φ ∩ ψ` are those selected for `φ` in `ψ`. Rational monotonicity gives one
+inclusion and Or the other. -/
+theorem inter_eq (h : IsRational fun φ ψ ↦ C φ ⊆ ψ) (hne : (C φ ∩ ψ).Nonempty) :
+    C (φ ∩ ψ) = C φ ∩ ψ := by
+  refine (Set.subset_inter (h.rationalMonotonicity (χ := C φ) subset_rfl ?_)
+    ((h.refl _).trans Set.inter_subset_right)).antisymm ?_
+  · obtain ⟨w, hw, hwψ⟩ := hne
+    exact fun hsub ↦ hsub hw hwψ
+  · have hor : C (φ ∩ ψ ∪ φ ∩ ψᶜ) ⊆ C (φ ∩ ψ) ∪ ψᶜ :=
+      h.or Set.subset_union_left ((h.refl _).trans fun _ hw ↦ Or.inr hw.2)
+    rw [← Set.inter_union_distrib_left, Set.union_compl_self, Set.inter_univ] at hor
+    exact fun w ⟨hw, hwψ⟩ ↦ (hor hw).resolve_right (not_not.2 hwψ)
+
+/-- Arrow's form of `inter_eq`, for a part `t` of `s`. -/
+theorem eq_inter_of_subset (h : IsRational fun φ ψ ↦ C φ ⊆ ψ) {s t : Set W} (hts : t ⊆ s)
+    (hne : (C s ∩ t).Nonempty) : C t = C s ∩ t := by
+  rw [← h.inter_eq hne, Set.inter_eq_right.2 hts]
+
+theorem mem_pair_or (h : IsRational fun φ ψ ↦ C φ ⊆ ψ) (hc : ∀ φ, C φ ⊆ ∅ → φ = ∅) (w v : W) :
+    w ∈ C {w, v} ∨ v ∈ C {w, v} := by
+  obtain ⟨u, hu⟩ := nonempty_of_consistent hc (Set.insert_nonempty w {v})
+  rcases h.refl _ hu with rfl | rfl
+  exacts [.inl hu, .inr hu]
+
+/-- The ordering of a consistency-preserving rational relation of the form `C φ ⊆ ψ`, under which
+`w` is at least as normal as `v` when `w` is selected from `{w, v}`. -/
+@[reducible] def preorder (h : IsRational fun φ ψ ↦ C φ ⊆ ψ) (hc : ∀ φ, C φ ⊆ ∅ → φ = ∅) :
+    Preorder W :=
+  Preorder.ofLE (fun w v ↦ w ∈ C {w, v})
+    (fun w ↦ by simpa using h.mem_pair_or hc w w)
+    (fun a b c hab hbc ↦ by
+      replace hab : a ∈ C {a, b} := hab
+      replace hbc : b ∈ C {b, c} := hbc
+      by_cases hne : (C {a, b, c} ∩ {a, b}).Nonempty
+      · rw [h.eq_inter_of_subset (Set.pair_subset (by simp) (by simp)) hne] at hab
+        show a ∈ C {a, c}
+        rw [h.eq_inter_of_subset (s := {a, b, c}) (Set.pair_subset (by simp) (by simp))
+          ⟨a, hab.1, by simp⟩]
+        exact ⟨hab.1, by simp⟩
+      · obtain ⟨u, hu⟩ := nonempty_of_consistent hc (Set.insert_nonempty a {b, c})
+        rcases h.refl _ hu with rfl | rfl | rfl
+        · exact absurd ⟨u, hu, by simp⟩ hne
+        · exact absurd ⟨u, hu, by simp⟩ hne
+        · rw [h.eq_inter_of_subset (s := {a, b, u}) (Set.pair_subset (by simp) (by simp))
+            ⟨u, hu, by simp⟩] at hbc
+          exact absurd ⟨b, hbc.1, by simp⟩ hne)
+
+variable (h : IsRational fun φ ψ ↦ C φ ⊆ ψ) (hc : ∀ φ, C φ ⊆ ∅ → φ = ∅)
+
+theorem le_preorder_iff {w v : W} : (h.preorder hc).le w v ↔ w ∈ C {w, v} := Iff.rfl
+
+theorem total_preorder : Std.Total (h.preorder hc).le :=
+  ⟨fun w v ↦ (h.mem_pair_or hc w v).imp id fun hv ↦ by
+    rw [le_preorder_iff, Set.pair_comm]; exact hv⟩
+
+/-- The ordering of the relation is its model: the worlds selected for `φ` are the most normal
+`φ`-worlds. -/
+theorem minimals_preorder (φ : Set W) : (h.preorder hc).minimals φ = C φ := by
+  ext w
+  rw [Preorder.mem_minimals_iff_forall_le (h.total_preorder hc)]
+  refine ⟨fun ⟨hw, hle⟩ ↦ ?_, fun hw ↦ ⟨h.refl φ hw, fun v hv ↦ ?_⟩⟩
+  · obtain ⟨u, hu⟩ := nonempty_of_consistent hc ⟨w, hw⟩
+    have hwu : w ∈ C {w, u} := hle u (h.refl φ hu)
+    rw [h.eq_inter_of_subset (Set.pair_subset hw (h.refl φ hu)) ⟨u, hu, by simp⟩] at hwu
+    exact hwu.1
+  · show w ∈ C {w, v}
+    rw [h.eq_inter_of_subset (Set.pair_subset (h.refl φ hw) hv) ⟨w, hw, by simp⟩]
+    exact ⟨hw, by simp⟩
+
+theorem wellFounded_preorder_lt : WellFounded (h.preorder hc).lt :=
+  WellFounded.wellFounded_iff_has_min.2 fun φ hφ ↦
+    have ⟨m, hm⟩ := nonempty_of_consistent hc hφ
+    ⟨m, h.refl φ hm, fun x hx hlt ↦ hlt.2 <| ((Preorder.mem_minimals_iff_forall_le
+      (h.total_preorder hc)).1 (h.minimals_preorder hc φ ▸ hm)).2 x hx⟩
+
+end IsRational
+
+/-- A choice of worlds for each proposition is the choice of the most normal worlds under a
+well-founded total preorder exactly when the relation it defines is rational and preserves
+consistency. -/
+theorem exists_minimals_eq_iff :
+    (∃ p : Preorder W, Std.Total p.le ∧ WellFounded p.lt ∧ p.minimals = C) ↔
+      (IsRational fun φ ψ ↦ C φ ⊆ ψ) ∧ ∀ φ, C φ ⊆ ∅ → φ = ∅ :=
+  ⟨fun ⟨_, hp, hwf, e⟩ ↦ e ▸ ⟨isRational_entails hwf hp, fun _ hφ ↦
+      Set.not_nonempty_iff_eq_empty.1 fun ⟨_, hw⟩ ↦
+        let ⟨_, hv, _⟩ := Preorder.exists_le_mem_minimals hwf hw; hφ hv⟩,
+    fun ⟨h, hc⟩ ↦ ⟨h.preorder hc, h.total_preorder hc, h.wellFounded_preorder_lt hc,
+      funext (h.minimals_preorder hc)⟩⟩
+
+end Selection
+
+/-- On finitely many worlds a consistency-preserving relation is rational exactly when it is the
+consequence relation of a total preorder on the worlds. -/
+theorem isRational_and_iff_exists_entails_eq [Finite W] :
+    (IsRational r ∧ ∀ φ, r φ ∅ → φ = ∅) ↔ ∃ p : Preorder W, Std.Total p.le ∧ Entails p = r := by
+  refine ⟨fun ⟨h, hc⟩ ↦ ?_, fun ⟨p, hp, e⟩ ↦ e ▸ ⟨isRational_entails (letI := p; wellFounded_lt) hp,
+    fun φ hφ ↦ Set.not_nonempty_iff_eq_empty.1 fun hne ↦
+      (p.minimals_nonempty hne).ne_empty (Set.subset_empty_iff.1 hφ)⟩⟩
+  have hsInter : ∀ φ, r φ (⋂₀ {ψ | r φ ψ}) := fun φ ↦ by
+    refine Set.Finite.induction_on_subset (motive := fun t _ ↦ r φ (⋂₀ t)) _ (Set.toFinite _)
+      ?_ fun hψ _ _ ht ↦ ?_
+    · simpa using h.of_subset (Set.subset_univ φ)
+    · rw [Set.sInter_insert]
+      exact h.and hψ ht
+  have e : r = fun φ ψ ↦ ⋂₀ {ψ | r φ ψ} ⊆ ψ := funext₂ fun φ ψ ↦ propext
+    ⟨fun hψ ↦ Set.sInter_subset_of_mem hψ, h.rightWeakening (hsInter φ)⟩
+  obtain ⟨p, hp, -, hpC⟩ := (exists_minimals_eq_iff (C := fun φ ↦ ⋂₀ {ψ | r φ ψ})).2
+    ⟨e ▸ h, fun φ hφ ↦ hc φ (h.rightWeakening (hsInter φ) hφ)⟩
+  refine ⟨p, hp, ?_⟩
+  rw [e]
+  funext φ ψ
+  exact congrArg (· ⊆ ψ) (congrFun hpC φ)
 
 end Nonmonotonic

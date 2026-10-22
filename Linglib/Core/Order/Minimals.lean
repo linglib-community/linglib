@@ -24,10 +24,14 @@ definition here unfolds to `Minimal` for the membership predicate, so the lemmas
   lies above a minimal element of the set.
 * `Preorder.mem_minimals_iff_forall_le`, `Preorder.mem_minimals_pair`: under a total preorder
   the minimal elements are the least elements, and minimality in a pair is the order relation.
+* `Preorder.minimals_inter_eq`, `Preorder.eq_of_minimals_eq`: under a total preorder, restricting
+  a set to a part that meets its minimal elements restricts them, and the minimal elements
+  determine the preorder.
 * `Preorder.minimals_nonempty`, `Preorder.minimals_nonempty_of_finite`: on a finite type, and in
   a finite set, every nonempty set has a minimal element.
-* `Preorder.total_lift`, `Preorder.mem_minimals_lift`: the pullback of a linear order along a map
-  is total, and its minimal elements are the elements of least value.
+* `Preorder.total_lift`, `Preorder.wellFounded_lt_lift`, `Preorder.mem_minimals_lift`: the
+  pullback of a linear order along a map is total, that of a well-founded order is well-founded,
+  and its minimal elements are the elements of least value.
 * `Preorder.minimals_ofCriteria_eq`: under a criteria-derived preorder, when some element of
   the set satisfies every criterion, the minimal elements are exactly those that do.
 -/
@@ -98,6 +102,22 @@ theorem mem_minimals_pair (hp : Std.Total p.le) {b : α} : a ∈ p.minimals {a, 
     forall_eq]
   exact ⟨fun h ↦ h.2, fun h ↦ ⟨p.le_refl a, h⟩⟩
 
+/-- Under a total preorder, when the minimal elements of `s` meet `t`, the minimal elements of
+`s ∩ t` are those of `s` in `t`. -/
+theorem minimals_inter_eq (hp : Std.Total p.le) (h : (p.minimals s ∩ t).Nonempty) :
+    p.minimals (s ∩ t) = p.minimals s ∩ t := by
+  obtain ⟨b, hb, hbt⟩ := h
+  rw [mem_minimals_iff_forall_le hp] at hb
+  ext a
+  simp only [Set.mem_inter_iff, mem_minimals_iff_forall_le hp]
+  exact ⟨fun ⟨⟨has, hat⟩, ha⟩ ↦ ⟨⟨has, fun c hc ↦ p.le_trans _ _ _ (ha b ⟨hb.1, hbt⟩) (hb.2 c hc)⟩,
+      hat⟩, fun ⟨⟨has, ha⟩, hat⟩ ↦ ⟨⟨has, hat⟩, fun c hc ↦ ha c hc.1⟩⟩
+
+/-- A total preorder is determined by its minimal elements. -/
+theorem eq_of_minimals_eq {q : Preorder α} (hp : Std.Total p.le) (hq : Std.Total q.le)
+    (h : p.minimals = q.minimals) : p = q :=
+  Preorder.ext fun a b ↦ by rw [← mem_minimals_pair hp, ← mem_minimals_pair hq, h]
+
 /-- On a finite type every nonempty set has a minimal element. -/
 theorem minimals_nonempty [Finite α] (p : Preorder α) (hs : s.Nonempty) :
     (p.minimals s).Nonempty :=
@@ -140,6 +160,10 @@ instance [Preorder β] [DecidableLT β] : DecidableRel (Preorder.lift f).lt :=
 /-- The pullback of a linear order is total. -/
 theorem total_lift [LinearOrder β] : Std.Total (Preorder.lift f).le :=
   ⟨fun a b ↦ le_total (f a) (f b)⟩
+
+/-- The pullback of a well-founded order is well-founded. -/
+theorem wellFounded_lt_lift [Preorder β] [WellFoundedLT β] : WellFounded (Preorder.lift f).lt :=
+  InvImage.wf f wellFounded_lt
 
 /-- The minimal elements under the pullback of a linear order are the elements of least
 value. -/

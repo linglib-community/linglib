@@ -2,48 +2,44 @@ module
 
 public import Mathlib.Order.Antisymmetrization
 public import Linglib.Logic.RankingFunction
-public import Mathlib.Order.Lattice.Nat
 
 /-!
 # Iterated belief revision
 
-This file defines revision operators on epistemic states and the postulates of Darwiche and Pearl
-for iterated belief revision, and proves their representation by total preorders on worlds.
+This file defines revision operators on epistemic states, the postulates of Alchourrón,
+Gärdenfors and Makinson in the form Katsuno and Mendelzon gave them, and the iterated-revision
+postulates of Darwiche and Pearl. An operator satisfies the first postulates iff a faithful
+assignment of total preorders to states represents it, and the assignment is unique. Each
+iterated-revision postulate is equivalent to a condition relating the preorder of a state to that
+of its revision, and Spohn's conditionalisation of rankings meets the postulates.
 
-Darwiche and Pearl revise *epistemic states* rather than belief sets. A state carries the worlds
-its belief set admits together with a disposition to revise, and a revision operator sends a state
-and a proposition, a set of worlds, to a new state. The postulates of Alchourrón, Gärdenfors and
-Makinson, in the form Katsuno and Mendelzon gave them, transfer to states with syntax-irrelevance
-weakened. An operator satisfies them iff a faithful assignment of total preorders to states
-represents it, which means that the belief worlds of a state are its least worlds and that
-revision by `μ` selects the least `μ`-worlds (Theorem 2). A state accepts `β` given `α` when
-revising it by `α` yields a state that believes `β`. These conditional beliefs form a rational
-consequence relation in the sense of Lehmann and Magidor, and the preorder of the state encodes
-them. This is the translation between belief revision and nonmonotonic inference that Gärdenfors
-and Makinson describe, under which superexpansion corresponds to Or, subexpansion to rational
-monotonicity, and consistency to consistency preservation. The iterated-revision postulates C1–C4
-say which conditional beliefs a revision preserves. Each of them, and Boutilier's postulate CB, is
-equivalent to a condition on how the preorder of a state relates to the preorder of its revision
-(Theorems 3 and 4). The conditions are agreement on the `μ`-worlds, agreement on the
-non-`μ`-worlds, preservation of strict and of weak rankings of a `μ`-world over a non-`μ`-world,
-and agreement outside the revised belief set. Spohn's conditionalisation of rankings, which makes
-the evidence one degree more plausible than it was implausible, is represented by the rankings'
-own orderings and meets every postulate (Theorem 5). On a normalised ranking it is
-conditionalisation on the evidence at the firmness one above the rank of its negation.
+## Main statements
+
+* `BeliefRevision.Revision.isAGM_iff`, `BeliefRevision.Revision.Faithful.unique`: the
+  representation theorem (Theorem 2).
+* `BeliefRevision.Revision.IsAGM.isRational_accepts`: the conditional beliefs of a state form a
+  rational consequence relation, whose preorder is the one representing the operator.
+* `BeliefRevision.Revision.Faithful.c1_iff` to `c6_iff`, `cb_iff`: the postulates as conditions
+  on preorders (Theorems 3, 4 and 7).
+* `BeliefRevision.Revision.Faithful.cb_iff_c1_c2_c3_c4_c5_c6`: Boutilier's postulate is (C1)–(C6)
+  together.
+* `BeliefRevision.spohnRevision_faithful`, `BeliefRevision.spohnRevision_c1` to `c4`: Spohn's
+  revision meets the postulates (Theorem 5).
 
 ## Implementation notes
 
-* Rankings are bare functions `W → ℕ`, as the paper relaxes normalisation so that revision by
-  an unsatisfiable proposition yields an unsatisfiable belief set; `rank` of a proposition is
-  the infimum of its worlds' ranks.
-* A faithful assignment sends each state to a preorder given as a term, with totality a field
-  of `Faithful`. The revised belief worlds are then `Preorder.minimals` of the evidence, and the
-  conditional beliefs of a state are `Nonmonotonic.Entails` of its preorder
-  (`Faithful.accepts_iff`).
-* The postulate of syntax-irrelevance holds by construction: propositions are sets of worlds
-  and revision is a function of the state.
-* The consistency postulate and the representation of C3 and C4 need least elements to exist,
-  which a finite set of worlds, the paper's propositional setting, guarantees.
+* Rankings are bare functions `W → ℕ`, as the paper relaxes normalisation so that revision by an
+  unsatisfiable proposition yields an unsatisfiable belief set. Their ranks and parts are those of
+  `RankingFunction`, which are defined for any such function.
+* A faithful assignment sends each state to a preorder given as a term. Its preorders are total
+  and well-founded, as total preorders on the finitely many worlds of a propositional language
+  are; well-foundedness supplies the least worlds that consistency needs.
+* The preorder an AGM operator induces ranks `w` below `v` when `w` survives revision by
+  `{w, v}`. The paper's construction adds the disjunct that `w` is believed, which expansion makes
+  redundant.
+* Lemma 1 needs its premise satisfiable, which the paper leaves implicit.
+* The postulate of syntax-irrelevance holds by construction: propositions are sets of worlds and
+  revision is a function of the state.
 
 ## References
 
@@ -53,8 +49,8 @@ conditionalisation on the evidence at the firmness one above the rank of its neg
   Meet Contraction and Revision Functions* (1985)][alchouron-gardenfors-makinson-1985]
 * [H. Katsuno and A. O. Mendelzon, *Propositional Knowledge Base Revision and Minimal Change*
   (1991)][katsuno-mendelzon-1991]
-* [D. Lehmann and M. Magidor, *What Does a Conditional Knowledge Base Entail?*
-  (1992)][lehmann-magidor-1992]
+* [C. Boutilier, *Iterated Revision and Minimal Change of Conditional Beliefs*
+  (1996)][boutilier-1996]
 * [P. Gärdenfors and D. Makinson, *Nonmonotonic Inference Based on Expectations*
   (1994)][gardenfors-makinson-1994]
 * [W. Spohn, *Ordinal Conditional Functions: A Dynamic Theory of Epistemic States*
@@ -79,34 +75,31 @@ structure Revision (S W : Type*) where
 def AgreesOn (p q : Preorder W) (d : Set W) : Prop :=
   ∀ w ∈ d, ∀ v ∈ d, (p.le w v ↔ q.le w v)
 
-/-- A `μ`-world strictly below a non-`μ`-world in `p` stays strictly below in `q`. -/
-def PreservesLt (p q : Preorder W) (μ : Set W) : Prop :=
-  ∀ w ∈ μ, ∀ v ∉ μ, p.lt w v → q.lt w v
+/-- An `A`-world strictly below a `B`-world in `p` stays strictly below in `q`. -/
+def PreservesLt (p q : Preorder W) (A B : Set W) : Prop :=
+  ∀ w ∈ A, ∀ v ∈ B, p.lt w v → q.lt w v
 
-/-- A `μ`-world weakly below a non-`μ`-world in `p` stays weakly below in `q`. -/
-def PreservesLe (p q : Preorder W) (μ : Set W) : Prop :=
-  ∀ w ∈ μ, ∀ v ∉ μ, p.le w v → q.le w v
+/-- An `A`-world weakly below a `B`-world in `p` stays weakly below in `q`. -/
+def PreservesLe (p q : Preorder W) (A B : Set W) : Prop :=
+  ∀ w ∈ A, ∀ v ∈ B, p.le w v → q.le w v
 
 section Decidable
 
 variable [Fintype W] {p q : Preorder W} [DecidableRel p.le] [DecidableRel q.le]
-  [DecidableRel p.lt] [DecidableRel q.lt] {d : Set W} [DecidablePred (· ∈ d)]
+  [DecidableRel p.lt] [DecidableRel q.lt] {A B : Set W} [DecidablePred (· ∈ A)]
+  [DecidablePred (· ∈ B)]
 
-instance : Decidable (AgreesOn p q d) := by unfold AgreesOn; infer_instance
+instance : Decidable (AgreesOn p q A) := by unfold AgreesOn; infer_instance
 
-instance : Decidable (PreservesLt p q d) := by unfold PreservesLt; infer_instance
+instance : Decidable (PreservesLt p q A B) := by unfold PreservesLt; infer_instance
 
-instance : Decidable (PreservesLe p q d) := by unfold PreservesLe; infer_instance
+instance : Decidable (PreservesLe p q A B) := by unfold PreservesLe; infer_instance
 
 end Decidable
 
-theorem AgreesOn.minimals_eq {p q : Preorder W} {d α : Set W} (h : AgreesOn p q d)
-    (hα : α ⊆ d) : p.minimals α = q.minimals α := by
-  ext w
-  exact ⟨fun ⟨hw, hle⟩ ↦ ⟨hw, fun y hy hyw ↦
-      (h w (hα hw) y (hα hy)).1 (hle hy ((h y (hα hy) w (hα hw)).2 hyw))⟩,
-    fun ⟨hw, hle⟩ ↦ ⟨hw, fun y hy hyw ↦
-      (h w (hα hw) y (hα hy)).2 (hle hy ((h y (hα hy) w (hα hw)).1 hyw))⟩⟩
+theorem AgreesOn.lt_iff {p q : Preorder W} {d : Set W} (h : AgreesOn p q d) {w v : W}
+    (hw : w ∈ d) (hv : v ∈ d) : p.lt w v ↔ q.lt w v := by
+  rw [p.lt_iff_le_not_ge, q.lt_iff_le_not_ge, h w hw v hv, h v hv w hw]
 
 namespace Revision
 
@@ -123,11 +116,12 @@ structure IsAGM : Prop where
   subexpansion : ∀ Ψ μ φ, (r.bel (r.revise Ψ μ) ∩ φ).Nonempty →
     r.bel (r.revise Ψ (μ ∩ φ)) ⊆ r.bel (r.revise Ψ μ) ∩ φ
 
-/-- An assignment of total preorders to states is faithful and represents `r` when the belief
-worlds of a state are equally plausible and strictly more plausible than the others, and
-revision selects the least worlds of the evidence. -/
+/-- An assignment of well-founded total preorders to states is faithful and represents `r` when
+the belief worlds of a state are equally plausible and strictly more plausible than the others,
+and revision selects the least worlds of the evidence. -/
 structure Faithful (ord : S → Preorder W) : Prop where
   total : ∀ Ψ, Std.Total (ord Ψ).le
+  wellFounded : ∀ Ψ, WellFounded (ord Ψ).lt
   equiv_of_mem : ∀ Ψ w v, w ∈ r.bel Ψ → v ∈ r.bel Ψ → AntisymmRel (ord Ψ).le w v
   lt_of_mem : ∀ Ψ w v, w ∈ r.bel Ψ → v ∉ r.bel Ψ → (ord Ψ).lt w v
   bel_revise : ∀ Ψ μ, r.bel (r.revise Ψ μ) = (ord Ψ).minimals μ
@@ -148,6 +142,18 @@ def C3 : Prop :=
 uncontradicted. -/
 def C4 : Prop :=
   ∀ Ψ μ α, ¬ r.bel (r.revise Ψ α) ⊆ μᶜ → ¬ r.bel (r.revise (r.revise Ψ μ) α) ⊆ μᶜ
+
+/-- Postulate (C5) says that the conditional belief `μ ∣ α` is not acquired on accommodating
+evidence `μ` that rules out the premise `α`. -/
+def C5 : Prop :=
+  ∀ Ψ μ α, r.bel (r.revise Ψ μ) ⊆ αᶜ → ¬ r.bel (r.revise Ψ α) ⊆ μ →
+    ¬ r.bel (r.revise (r.revise Ψ μ) α) ⊆ μ
+
+/-- Postulate (C6) says that the conditional belief `μᶜ ∣ α` is not given up on accommodating
+evidence `μ` that rules out the premise `α`. -/
+def C6 : Prop :=
+  ∀ Ψ μ α, r.bel (r.revise Ψ μ) ⊆ αᶜ → r.bel (r.revise Ψ α) ⊆ μᶜ →
+    r.bel (r.revise (r.revise Ψ μ) α) ⊆ μᶜ
 
 /-- Boutilier's postulate (CB) says that evidence contradicted by later evidence is forgotten. -/
 def CB : Prop :=
@@ -226,6 +232,31 @@ theorem IsAGM.accepts_empty_iff (h : r.IsAGM) {Ψ : S} {α : Set W} :
 
 /-! ### The representation theorem -/
 
+/-- The preorder of a state of an AGM operator is that of its conditional beliefs, under which `w`
+is at least as plausible as `v` when `w` survives revision by `{w, v}`. -/
+@[reducible] def IsAGM.ord (h : r.IsAGM) (Ψ : S) : Preorder W :=
+  Nonmonotonic.IsRational.preorder (C := fun μ ↦ r.bel (r.revise Ψ μ)) (h.isRational_accepts Ψ)
+    fun _ ↦ h.accepts_empty_iff.1
+
+theorem IsAGM.ord_le_iff (h : r.IsAGM) {Ψ : S} {w v : W} :
+    (h.ord Ψ).le w v ↔ w ∈ r.bel (r.revise Ψ {w, v}) :=
+  Iff.rfl
+
+/-- The preorders of an AGM operator are a faithful assignment representing it. -/
+theorem IsAGM.faithful (h : r.IsAGM) : r.Faithful h.ord where
+  total _ := Nonmonotonic.IsRational.total_preorder _ _
+  wellFounded _ := Nonmonotonic.IsRational.wellFounded_preorder_lt _ _
+  equiv_of_mem Ψ w v hw hv := by
+    rw [AntisymmRel, h.ord_le_iff, h.ord_le_iff, h.expansion Ψ _ ⟨w, hw, by simp⟩,
+      h.expansion Ψ _ ⟨v, hv, by simp⟩]
+    exact ⟨⟨hw, by simp⟩, ⟨hv, by simp⟩⟩
+  lt_of_mem Ψ w v hw hv := by
+    rw [(h.ord Ψ).lt_iff_le_not_ge, h.ord_le_iff, h.ord_le_iff, h.expansion Ψ _ ⟨w, hw, by simp⟩,
+      h.expansion Ψ _ ⟨w, hw, by simp⟩]
+    exact ⟨⟨hw, by simp⟩, fun hv' ↦ hv hv'.1⟩
+  bel_revise Ψ μ :=
+    (Nonmonotonic.IsRational.minimals_preorder (C := fun μ ↦ r.bel (r.revise Ψ μ)) _ _ μ).symm
+
 /-- Under a faithful assignment the revised belief worlds are the least worlds of the
 evidence. -/
 theorem Faithful.mem_bel_revise {ord : S → Preorder W} (h : r.Faithful ord) {Ψ : S} {μ : Set W}
@@ -246,9 +277,14 @@ theorem Faithful.mem_bel_revise_pair {ord : S → Preorder W} (h : r.Faithful or
     {w v : W} : w ∈ r.bel (r.revise Ψ {w, v}) ↔ (ord Ψ).le w v := by
   rw [h.bel_revise, Preorder.mem_minimals_pair (h.total Ψ)]
 
+/-- At most one faithful assignment represents an operator. -/
+theorem Faithful.unique {o₁ o₂ : S → Preorder W} (h₁ : r.Faithful o₁) (h₂ : r.Faithful o₂) :
+    o₁ = o₂ :=
+  funext fun Ψ ↦ Preorder.eq_of_minimals_eq (h₁.total Ψ) (h₂.total Ψ) <|
+    funext fun μ ↦ (h₁.bel_revise Ψ μ).symm.trans (h₂.bel_revise Ψ μ)
+
 /-- A faithfully represented operator satisfies the postulates. -/
-theorem Faithful.isAGM [Finite W] {ord : S → Preorder W} (h : r.Faithful ord) :
-    r.IsAGM where
+theorem Faithful.isAGM {ord : S → Preorder W} (h : r.Faithful ord) : r.IsAGM where
   success Ψ μ := by rw [h.bel_revise]; exact (ord Ψ).minimals_subset μ
   expansion Ψ μ hne := by
     obtain ⟨u, hu, huμ⟩ := hne
@@ -262,96 +298,21 @@ theorem Faithful.isAGM [Finite W] {ord : S → Preorder W} (h : r.Faithful ord) 
       by_cases hyΨ : y ∈ r.bel Ψ
       · exact (h.equiv_of_mem Ψ w y hwΨ hyΨ).1
       · exact h.le_of_mem hwΨ hyΨ
-  consistency Ψ μ hμ := by rw [h.bel_revise]; exact (ord Ψ).minimals_nonempty hμ
+  consistency Ψ μ := fun ⟨_, hw⟩ ↦ by
+    obtain ⟨v, hv, -⟩ := Preorder.exists_le_mem_minimals (h.wellFounded Ψ) hw
+    exact ⟨v, h.bel_revise Ψ μ ▸ hv⟩
   superexpansion Ψ μ φ := by
-    rintro w ⟨hw, hwφ⟩
-    rw [h.mem_bel_revise] at hw ⊢
-    exact ⟨⟨hw.1, hwφ⟩, fun y hy ↦ hw.2 y hy.1⟩
+    simp only [h.bel_revise]
+    rcases ((ord Ψ).minimals μ ∩ φ).eq_empty_or_nonempty with he | hne
+    · exact he ▸ Set.empty_subset _
+    · exact (Preorder.minimals_inter_eq (h.total Ψ) hne).ge
   subexpansion Ψ μ φ hne := by
-    obtain ⟨u, hu, huφ⟩ := hne
-    rw [h.mem_bel_revise] at hu
-    rintro w hw
-    rw [h.mem_bel_revise] at hw
-    exact ⟨h.mem_bel_revise.2
-      ⟨hw.1.1, fun y hy ↦ (ord Ψ).le_trans _ _ _ (hw.2 u ⟨hu.1, huφ⟩) (hu.2 y hy)⟩, hw.1.2⟩
+    simp only [h.bel_revise] at hne ⊢
+    exact (Preorder.minimals_inter_eq (h.total Ψ) hne).le
 
-/-- In the ordering an AGM operator induces on a state, `w` is at least as plausible as `v` when
-`w` is believed or survives revision by the pair. -/
-@[reducible] def IsAGM.ord (h : r.IsAGM) (Ψ : S) : Preorder W :=
-  Preorder.ofLE (fun w v ↦ w ∈ r.bel Ψ ∨ w ∈ r.bel (r.revise Ψ {w, v}))
-    (fun w ↦ by
-      obtain ⟨u, hu⟩ := h.consistency Ψ {w, w} ⟨w, by simp⟩
-      have := h.success Ψ _ hu
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, or_self] at this
-      subst this
-      exact Or.inr hu)
-    (fun w₁ w₂ w₃ h₁₂ h₂₃ ↦ by
-      by_cases hw₁ : w₁ ∈ r.bel Ψ
-      · exact Or.inl hw₁
-      right
-      have h₁ : w₁ ∈ r.bel (r.revise Ψ {w₁, w₂}) := h₁₂.resolve_left hw₁
-      have hw₂ : w₂ ∉ r.bel Ψ := fun hw₂ ↦ hw₁ (by
-        rw [h.expansion Ψ {w₁, w₂} ⟨w₂, hw₂, by simp⟩] at h₁
-        exact h₁.1)
-      have h₂ : w₂ ∈ r.bel (r.revise Ψ {w₂, w₃}) := h₂₃.resolve_left hw₂
-      set T : Set W := {w₁, w₂, w₃} with hT
-      have key : ∀ φ ⊆ T, (r.bel (r.revise Ψ T) ∩ φ).Nonempty →
-          r.bel (r.revise Ψ φ) = r.bel (r.revise Ψ T) ∩ φ := fun φ hφ hne ↦ by
-        have := h.revise_inter hne
-        rwa [Set.inter_eq_right.2 hφ] at this
-      by_cases hne : (r.bel (r.revise Ψ T) ∩ {w₁, w₂}).Nonempty
-      · have e := key {w₁, w₂} (by simp [hT, Set.pair_subset_iff]) hne
-        have hw₁T : w₁ ∈ r.bel (r.revise Ψ T) := (e ▸ h₁).1
-        have e' := key {w₁, w₃} (by simp [hT, Set.pair_subset_iff]) ⟨w₁, hw₁T, by simp⟩
-        rw [e']
-        exact ⟨hw₁T, by simp⟩
-      · exfalso
-        rw [Set.not_nonempty_iff_eq_empty] at hne
-        have hnot : ∀ x ∈ r.bel (r.revise Ψ T), x ≠ w₁ ∧ x ≠ w₂ := fun x hx ↦
-          ⟨fun e ↦ Set.eq_empty_iff_forall_notMem.1 hne x ⟨hx, by simp [e]⟩,
-            fun e ↦ Set.eq_empty_iff_forall_notMem.1 hne x ⟨hx, by simp [e]⟩⟩
-        obtain ⟨u, hu⟩ := h.consistency Ψ T ⟨w₁, by simp [hT]⟩
-        have huT := h.success Ψ T hu
-        simp only [hT, Set.mem_insert_iff, Set.mem_singleton_iff] at huT
-        rcases huT with rfl | rfl | rfl
-        · exact (hnot u hu).1 rfl
-        · exact (hnot u hu).2 rfl
-        · have e := key {w₂, u} (by simp [hT]) ⟨u, hu, by simp⟩
-          exact (hnot w₂ (e ▸ h₂).1).2 rfl)
-
-/-- The induced ordering is total. -/
-theorem IsAGM.ord_total (h : r.IsAGM) (Ψ : S) : Std.Total (h.ord Ψ).le :=
-  ⟨fun w v ↦ by
-    obtain ⟨u, hu⟩ := h.consistency Ψ {w, v} ⟨w, by simp⟩
-    rcases Set.mem_insert_iff.1 (h.success Ψ _ hu) with rfl | huv
-    · exact Or.inl (Or.inr hu)
-    · rw [Set.mem_singleton_iff] at huv
-      subst huv
-      exact Or.inr (Or.inr (by rwa [Set.pair_comm]))⟩
-
-/-- The induced ordering is a faithful assignment representing the operator. -/
-theorem IsAGM.faithful (h : r.IsAGM) : r.Faithful h.ord where
-  total := h.ord_total
-  equiv_of_mem _ _ _ hw hv := ⟨Or.inl hw, Or.inl hv⟩
-  lt_of_mem Ψ w v hw hv := ⟨Or.inl hw, fun hvw ↦ hvw.elim hv fun hvw ↦ hv (by
-    rw [h.expansion Ψ {v, w} ⟨w, hw, by simp⟩] at hvw
-    exact hvw.1)⟩
-  bel_revise Ψ μ := by
-    ext w
-    rw [Preorder.mem_minimals_iff_forall_le (h.ord_total Ψ)]
-    constructor
-    · intro hw
-      refine ⟨h.success Ψ μ hw, fun v hv ↦ Or.inr ?_⟩
-      have := h.superexpansion Ψ μ {w, v} ⟨hw, by simp⟩
-      rwa [Set.inter_eq_right.2 (Set.pair_subset (h.success Ψ μ hw) hv)] at this
-    · rintro ⟨hwμ, hw⟩
-      obtain ⟨u, hu⟩ := h.consistency Ψ μ ⟨w, hwμ⟩
-      rcases hw u (h.success Ψ μ hu) with hwΨ | hwu
-      · rw [h.expansion Ψ μ ⟨w, hwΨ, hwμ⟩]
-        exact ⟨hwΨ, hwμ⟩
-      · have := h.subexpansion Ψ μ {w, u} ⟨u, hu, by simp⟩
-        rw [Set.inter_eq_right.2 (Set.pair_subset hwμ (h.success Ψ μ hu))] at this
-        exact (this hwu).1
+/-- An operator satisfies the postulates iff a faithful assignment represents it (Theorem 2). -/
+theorem isAGM_iff : r.IsAGM ↔ ∃ ord, r.Faithful ord :=
+  ⟨fun h ↦ ⟨_, h.faithful⟩, fun ⟨_, h⟩ ↦ h.isAGM⟩
 
 /-- The preorder of a state encodes its conditional beliefs, since `β` is accepted given `α`
 exactly when the least `α`-worlds are `β`-worlds. -/
@@ -359,10 +320,21 @@ theorem Faithful.accepts_iff {ord : S → Preorder W} (h : r.Faithful ord) {Ψ :
     {α β : Set W} : r.Accepts Ψ α β ↔ Nonmonotonic.Entails (ord Ψ) α β := by
   rw [Accepts, h.bel_revise, Nonmonotonic.Entails]
 
-/-- An operator satisfies the postulates iff a faithful assignment represents it
-(Theorem 2). -/
-theorem isAGM_iff [Finite W] : r.IsAGM ↔ ∃ ord, r.Faithful ord :=
-  ⟨fun h ↦ ⟨_, h.faithful⟩, fun ⟨_, h⟩ ↦ h.isAGM⟩
+/-- A state accepts `β` given a satisfiable `α` iff some `α ∩ β`-world is strictly more plausible
+than every `α \ β`-world (Lemma 1). -/
+theorem Faithful.accepts_iff_exists_lt {ord : S → Preorder W} (h : r.Faithful ord) {Ψ : S}
+    {α β : Set W} (hα : α.Nonempty) :
+    r.Accepts Ψ α β ↔ ∃ w ∈ α ∩ β, ∀ v ∈ α \ β, (ord Ψ).lt w v := by
+  constructor
+  · intro hαβ
+    obtain ⟨w, hw⟩ := h.isAGM.consistency Ψ α hα
+    refine ⟨w, ⟨(h.mem_bel_revise.1 hw).1, hαβ hw⟩, fun v hv ↦ (ord Ψ).lt_iff_le_not_ge _ _ |>.2
+      ⟨(h.mem_bel_revise.1 hw).2 v hv.1, fun hvw ↦ hv.2 (hαβ (h.mem_bel_revise.2
+        ⟨hv.1, fun y hy ↦ (ord Ψ).le_trans _ _ _ hvw ((h.mem_bel_revise.1 hw).2 y hy)⟩))⟩⟩
+  · rintro ⟨w, ⟨hwα, -⟩, hlt⟩ x hx
+    by_contra hxβ
+    exact ((ord Ψ).lt_iff_le_not_ge _ _).1 (hlt x ⟨(h.mem_bel_revise.1 hx).1, hxβ⟩) |>.2
+      ((h.mem_bel_revise.1 hx).2 w hwα)
 
 /-! ### The iterated-revision postulates -/
 
@@ -377,7 +349,8 @@ theorem Faithful.agreesAfter_iff {ord : S → Preorder W} (h : r.Faithful ord)
     have e := hC Ψ μ {w, v} (Set.pair_subset hw hv)
     rw [← h.mem_bel_revise_pair (Ψ := Ψ), ← h.mem_bel_revise_pair (Ψ := r.revise Ψ μ), e]
   · intro hCR Ψ μ α hα
-    rw [h.bel_revise, h.bel_revise, (hCR Ψ μ).minimals_eq hα]
+    rw [h.bel_revise, h.bel_revise,
+      Preorder.minimals_congr fun a ha b hb ↦ hCR Ψ μ a (hα ha) b (hα hb)]
 
 /-- Postulate (C1) holds iff the preorders of a state and of its revision by `μ` agree on the
 `μ`-worlds, which is condition (CR1) of Theorem 4. -/
@@ -400,8 +373,8 @@ theorem Faithful.cb_iff {ord : S → Preorder W} (h : r.Faithful ord) :
 
 /-- Postulate (C3) holds iff revision by `μ` preserves each strict ranking of a `μ`-world below a
 non-`μ`-world, which is condition (CR3) of Theorem 4. -/
-theorem Faithful.c3_iff [Finite W] {ord : S → Preorder W} (h : r.Faithful ord) :
-    r.C3 ↔ ∀ Ψ μ, PreservesLt (ord Ψ) (ord (r.revise Ψ μ)) μ := by
+theorem Faithful.c3_iff {ord : S → Preorder W} (h : r.Faithful ord) :
+    r.C3 ↔ ∀ Ψ μ, PreservesLt (ord Ψ) (ord (r.revise Ψ μ)) μ μᶜ := by
   constructor
   · intro hC Ψ μ w hw v hv hlt
     have hlt' := ((ord Ψ).lt_iff_le_not_ge _ _).1 hlt
@@ -429,8 +402,8 @@ theorem Faithful.c3_iff [Finite W] {ord : S → Preorder W} (h : r.Faithful ord)
 
 /-- Postulate (C4) holds iff revision by `μ` preserves each weak ranking of a `μ`-world below a
 non-`μ`-world, which is condition (CR4) of Theorem 4. -/
-theorem Faithful.c4_iff [Finite W] {ord : S → Preorder W} (h : r.Faithful ord) :
-    r.C4 ↔ ∀ Ψ μ, PreservesLe (ord Ψ) (ord (r.revise Ψ μ)) μ := by
+theorem Faithful.c4_iff {ord : S → Preorder W} (h : r.Faithful ord) :
+    r.C4 ↔ ∀ Ψ μ, PreservesLe (ord Ψ) (ord (r.revise Ψ μ)) μ μᶜ := by
   constructor
   · intro hC Ψ μ w hw v hv hle
     have h₁ : ¬ r.bel (r.revise Ψ {w, v}) ⊆ μᶜ :=
@@ -454,46 +427,123 @@ theorem Faithful.c4_iff [Finite W] {ord : S → Preorder W} (h : r.Faithful ord)
     · exact ⟨u, h.mem_bel_revise.2 ⟨hu'.1, fun y hy ↦ (ord _).le_trans _ _ _
         (hCR Ψ μ u huμ w hwμ (hu'.2 w hw'.1)) (hw'.2 y hy)⟩, fun huc ↦ huc huμ⟩
 
+/-- Postulate (C5) holds iff revision by `μ` preserves each weak ranking of a non-`μ`-world below
+a `μ`-world outside the revised belief set, which is condition (CR5) of Theorem 7, its world `ω₃`
+witnessing that `ω₁` is not among the least `μ`-worlds. -/
+theorem Faithful.c5_iff {ord : S → Preorder W} (h : r.Faithful ord) :
+    r.C5 ↔ ∀ Ψ μ, PreservesLe (ord Ψ) (ord (r.revise Ψ μ)) μᶜ (μ \ r.bel (r.revise Ψ μ)) := by
+  constructor
+  · intro hC Ψ μ w hw v hv hle
+    have hα : r.bel (r.revise Ψ μ) ⊆ ({w, v} : Set W)ᶜ := by
+      rintro x hx (rfl | rfl)
+      exacts [hw (h.isAGM.success Ψ μ hx), hv.2 hx]
+    obtain ⟨x, hx, hxμ⟩ := Set.not_subset.1 (hC Ψ μ {w, v} hα fun hsub ↦
+      hw (hsub (h.mem_bel_revise_pair.2 hle)))
+    rcases (h.mem_bel_revise.1 hx).1 with rfl | rfl
+    · exact h.mem_bel_revise_pair.1 hx
+    · exact absurd hv.1 hxμ
+  · intro hCR Ψ μ α hα hαμ hsub
+    obtain ⟨u, hu, huμ⟩ := Set.not_subset.1 hαμ
+    have hu' := h.mem_bel_revise.1 hu
+    obtain ⟨x, hx⟩ := h.isAGM.consistency (r.revise Ψ μ) α ⟨u, hu'.1⟩
+    have hx' := h.mem_bel_revise.1 hx
+    have hux := hCR Ψ μ u huμ x ⟨hsub hx, fun hxB ↦ hα hxB hx'.1⟩ (hu'.2 x hx'.1)
+    exact huμ (hsub (h.mem_bel_revise.2
+      ⟨hu'.1, fun y hy ↦ (ord _).le_trans _ _ _ hux (hx'.2 y hy)⟩))
+
+/-- Postulate (C6) holds iff revision by `μ` preserves each strict ranking of a non-`μ`-world
+below a `μ`-world outside the revised belief set, which is condition (CR6) of Theorem 7. -/
+theorem Faithful.c6_iff {ord : S → Preorder W} (h : r.Faithful ord) :
+    r.C6 ↔ ∀ Ψ μ, PreservesLt (ord Ψ) (ord (r.revise Ψ μ)) μᶜ (μ \ r.bel (r.revise Ψ μ)) := by
+  constructor
+  · intro hC Ψ μ w hw v hv hlt
+    have hα : r.bel (r.revise Ψ μ) ⊆ ({w, v} : Set W)ᶜ := by
+      rintro x hx (rfl | rfl)
+      exacts [hw (h.isAGM.success Ψ μ hx), hv.2 hx]
+    have hαμ : r.bel (r.revise Ψ {w, v}) ⊆ μᶜ := by
+      intro x hx
+      rcases (h.mem_bel_revise.1 hx).1 with rfl | rfl
+      · exact hw
+      · exact absurd ((h.mem_bel_revise.1 hx).2 w (by simp))
+          (((ord Ψ).lt_iff_le_not_ge _ _).1 hlt).2
+    have hnvw : ¬ (ord (r.revise Ψ μ)).le v w := fun hvw ↦
+      hC Ψ μ {w, v} hα hαμ (by rw [Set.pair_comm]; exact h.mem_bel_revise_pair.2 hvw) hv.1
+    exact ((ord _).lt_iff_le_not_ge _ _).2 ⟨((h.total _).total w v).resolve_right hnvw, hnvw⟩
+  · intro hCR Ψ μ α hα hαμ x hx hxμ
+    have hx' := h.mem_bel_revise.1 hx
+    obtain ⟨u, hu⟩ := h.isAGM.consistency Ψ α ⟨x, hx'.1⟩
+    have hu' := h.mem_bel_revise.1 hu
+    have hlt : (ord Ψ).lt u x := ((ord Ψ).lt_iff_le_not_ge _ _).2
+      ⟨hu'.2 x hx'.1, fun hxu ↦ hαμ (h.mem_bel_revise.2
+        ⟨hx'.1, fun y hy ↦ (ord Ψ).le_trans _ _ _ hxu (hu'.2 y hy)⟩) hxμ⟩
+    exact (((ord _).lt_iff_le_not_ge _ _).1
+      (hCR Ψ μ u (hαμ hu) x ⟨hxμ, fun hxB ↦ hα hxB hx'.1⟩ hlt)).2 (hx'.2 u hu'.1)
+
+/-- Boutilier's postulate (CB) is postulates (C1)–(C6) together, the absolute minimisation of
+change in conditional beliefs of Section 7. -/
+theorem Faithful.cb_iff_c1_c2_c3_c4_c5_c6 {ord : S → Preorder W} (h : r.Faithful ord) :
+    r.CB ↔ r.C1 ∧ r.C2 ∧ r.C3 ∧ r.C4 ∧ r.C5 ∧ r.C6 := by
+  simp only [h.cb_iff, h.c1_iff, h.c2_iff, h.c3_iff, h.c4_iff, h.c5_iff, h.c6_iff, ← forall_and]
+  refine forall₂_congr fun Ψ μ ↦ ?_
+  have hB {w} : w ∈ r.bel (r.revise Ψ μ) ↔ w ∈ μ ∧ ∀ y ∈ μ, (ord Ψ).le w y := h.mem_bel_revise
+  have hBμ {w} (hw : w ∈ r.bel (r.revise Ψ μ)) : w ∈ μ := (hB.1 hw).1
+  have hlt {p : Preorder W} (hp : Std.Total p.le) {w v : W} (hwv : ¬ p.le w v) : p.lt v w :=
+    (p.lt_iff_le_not_ge _ _).2 ⟨(hp.total v w).resolve_right hwv, hwv⟩
+  constructor
+  · intro hA
+    refine ⟨fun w hw v hv ↦ ?_, fun w hw v hv ↦ hA w (mt hBμ hw) v (mt hBμ hv),
+      fun w hw v hv hwv ↦ ?_, fun w hw v hv hwv ↦ ?_, fun w hw v hv ↦
+        (hA w (mt hBμ hw) v hv.2).1, fun w hw v hv ↦ (hA.lt_iff (mt hBμ hw) hv.2).1⟩
+    · by_cases hwB : w ∈ r.bel (r.revise Ψ μ)
+      · refine iff_of_true ((hB.1 hwB).2 v hv) ?_
+        by_cases hvB : v ∈ r.bel (r.revise Ψ μ)
+        exacts [(h.equiv_of_mem _ w v hwB hvB).1, h.le_of_mem hwB hvB]
+      by_cases hvB : v ∈ r.bel (r.revise Ψ μ)
+      · exact iff_of_false (fun hwv ↦ hwB (hB.2 ⟨hw, fun y hy ↦
+          (ord Ψ).le_trans _ _ _ hwv ((hB.1 hvB).2 y hy)⟩)) (h.not_le_of_mem hvB hwB)
+      · exact hA w hwB v hvB
+    · by_cases hwB : w ∈ r.bel (r.revise Ψ μ)
+      · exact h.lt_of_mem _ w v hwB (mt hBμ hv)
+      · exact (hA.lt_iff hwB (mt hBμ hv)).1 hwv
+    · by_cases hwB : w ∈ r.bel (r.revise Ψ μ)
+      · exact h.le_of_mem hwB (mt hBμ hv)
+      · exact (hA w hwB v (mt hBμ hv)).1 hwv
+  · rintro ⟨h1, h2, h3, h4, h5, h6⟩ w hw v hv
+    by_cases hwμ : w ∈ μ <;> by_cases hvμ : v ∈ μ
+    · exact h1 w hwμ v hvμ
+    · exact ⟨h4 w hwμ v hvμ, fun hq ↦ by_contra fun hp ↦ (((ord _).lt_iff_le_not_ge _ _).1
+        (h6 v hvμ w ⟨hwμ, hw⟩ (hlt (h.total Ψ) hp))).2 hq⟩
+    · exact ⟨h5 w hwμ v ⟨hvμ, hv⟩, fun hq ↦ by_contra fun hp ↦ (((ord _).lt_iff_le_not_ge _ _).1
+        (h3 v hvμ w hwμ (hlt (h.total Ψ) hp))).2 hq⟩
+    · exact h2 w hwμ v hvμ
+
 end Revision
 
 /-! ### Spohn's revision of rankings -/
 
 section Spohn
 
+open RankingFunction
+
 variable (κ : W → ℕ) (μ : Set W)
-
-/-- The rank of a proposition is the least rank of its worlds, and `0` for the empty
-proposition. -/
-noncomputable def rank : ℕ := sInf (κ '' μ)
-
-theorem rank_le {w : W} (hw : w ∈ μ) : rank κ μ ≤ κ w :=
-  Nat.sInf_le (Set.mem_image_of_mem κ hw)
-
-theorem exists_rank_eq (hμ : μ.Nonempty) : ∃ w ∈ μ, κ w = rank κ μ :=
-  Nat.sInf_mem (hμ.image κ)
-
-theorem rank_eq_of {n : ℕ} (h₁ : ∃ w ∈ μ, κ w = n) (h₂ : ∀ w ∈ μ, n ≤ κ w) :
-    rank κ μ = n := by
-  obtain ⟨w, hw, e⟩ := h₁
-  exact le_antisymm (e ▸ rank_le κ μ hw)
-    (le_csInf ⟨n, w, hw, e⟩ (by rintro _ ⟨v, hv, rfl⟩; exact h₂ v hv))
 
 open Classical in
 /-- Spohn's revision shifts the `μ`-worlds down so that the best reach rank `0` and the others
 up by one, which makes the evidence one degree more plausible than it was implausible. -/
-noncomputable def spohn : W → ℕ := fun w ↦ if w ∈ μ then κ w - rank κ μ else κ w + 1
+noncomputable def spohn : W → ℕ := fun w ↦ if w ∈ μ then aPart κ μ w else κ w + 1
 
 /-- Spohn's revision is an operator on rankings whose belief sets are the rank-`0` worlds. -/
 noncomputable def spohnRevision (W : Type*) : Revision (W → ℕ) W where
   bel κ := {w | κ w = 0}
   revise := spohn
 
-/-- A revision of rankings that conditions the `μ`-worlds on `μ` and leaves the rest
+/-- A revision of rankings that takes the `μ`-worlds to their `μ`-part and leaves the rest
 disbelieved is represented by the rankings' own orderings. -/
 theorem faithful_lift {f : (W → ℕ) → Set W → W → ℕ}
-    (hμ : ∀ κ μ, ∀ w ∈ μ, f κ μ w = κ w - rank κ μ) (hν : ∀ κ μ, ∀ w ∉ μ, 0 < f κ μ w) :
+    (hμ : ∀ κ μ, ∀ w ∈ μ, f κ μ w = aPart κ μ w) (hν : ∀ κ μ, ∀ w ∉ μ, 0 < f κ μ w) :
     Revision.Faithful ⟨fun κ ↦ {w | κ w = 0}, f⟩ (fun κ ↦ Preorder.lift κ) where
   total κ := Preorder.total_lift κ
+  wellFounded κ := Preorder.wellFounded_lt_lift κ
   equiv_of_mem κ w v hw hv := by
     simp only [Set.mem_ofPred_eq] at hw hv
     exact ⟨by simp [hw, hv], by simp [hw, hv]⟩
@@ -504,25 +554,25 @@ theorem faithful_lift {f : (W → ℕ) → Set W → W → ℕ}
     ext w
     simp only [Set.mem_ofPred_eq, Preorder.mem_minimals_lift]
     by_cases hw : w ∈ μ
-    · rw [hμ κ μ w hw]
+    · rw [hμ κ μ w hw, aPart]
       constructor
       · intro h
-        exact ⟨hw, fun y hy ↦ (Nat.sub_eq_zero_iff_le.1 h).trans (rank_le κ μ hy)⟩
+        exact ⟨hw, fun y hy ↦ (Nat.sub_eq_zero_iff_le.1 h).trans (toNat_rank_le κ hy)⟩
       · rintro ⟨-, h⟩
-        obtain ⟨u, hu, e⟩ := exists_rank_eq κ μ ⟨w, hw⟩
-        exact Nat.sub_eq_zero_iff_le.2 (e ▸ h u hu)
+        obtain ⟨u, hu, e⟩ := exists_apply_eq_rank κ ⟨w, hw⟩
+        exact Nat.sub_eq_zero_iff_le.2 (by rw [← e, ENat.toNat_natCast]; exact h u hu)
     · exact ⟨fun h ↦ absurd h (hν κ μ w hw).ne', fun h ↦ absurd h.1 hw⟩
 
-/-- Conditioning the `μ`-worlds on `μ` preserves their ordering. -/
+/-- Taking the `μ`-worlds to their `μ`-part preserves their ordering. -/
 theorem agreesOn_lift {f : (W → ℕ) → Set W → W → ℕ}
-    (hμ : ∀ κ μ, ∀ w ∈ μ, f κ μ w = κ w - rank κ μ) :
+    (hμ : ∀ κ μ, ∀ w ∈ μ, f κ μ w = aPart κ μ w) :
     AgreesOn (Preorder.lift κ) (Preorder.lift (f κ μ)) μ := fun w hw v hv ↦ by
-  simp only [Preorder.lift_le_iff, hμ κ μ w hw, hμ κ μ v hv]
-  have h₁ := rank_le κ μ hw
-  have h₂ := rank_le κ μ hv
+  simp only [Preorder.lift_le_iff, hμ κ μ w hw, hμ κ μ v hv, aPart]
+  have h₁ := toNat_rank_le κ hw
+  have h₂ := toNat_rank_le κ hv
   constructor <;> intro <;> omega
 
-theorem spohn_of_mem {w : W} (hw : w ∈ μ) : spohn κ μ w = κ w - rank κ μ := by
+theorem spohn_of_mem {w : W} (hw : w ∈ μ) : spohn κ μ w = aPart κ μ w := by
   simp [spohn, hw]
 
 theorem spohn_of_notMem {w : W} (hw : w ∉ μ) : spohn κ μ w = κ w + 1 := by
@@ -546,20 +596,20 @@ theorem spohn_agreesOn_compl :
 
 /-- Spohn's revision satisfies condition (CR3), the third part of Lemma 3. -/
 theorem spohn_preservesLt :
-    PreservesLt (Preorder.lift κ) (Preorder.lift (spohn κ μ)) μ := fun w hw v hv h ↦ by
+    PreservesLt (Preorder.lift κ) (Preorder.lift (spohn κ μ)) μ μᶜ := fun w hw v hv h ↦ by
   rw [Preorder.lift_lt_iff] at h ⊢
-  rw [spohn_of_mem κ μ hw, spohn_of_notMem κ μ hv]
+  rw [spohn_of_mem κ μ hw, spohn_of_notMem κ μ hv, aPart]
   omega
 
 /-- Spohn's revision satisfies condition (CR4), the fourth part of Lemma 3. -/
 theorem spohn_preservesLe :
-    PreservesLe (Preorder.lift κ) (Preorder.lift (spohn κ μ)) μ := fun w hw v hv h ↦ by
+    PreservesLe (Preorder.lift κ) (Preorder.lift (spohn κ μ)) μ μᶜ := fun w hw v hv h ↦ by
   rw [Preorder.lift_le_iff] at h ⊢
-  rw [spohn_of_mem κ μ hw, spohn_of_notMem κ μ hv]
+  rw [spohn_of_mem κ μ hw, spohn_of_notMem κ μ hv, aPart]
   omega
 
 /-- Spohn's revision satisfies the AGM postulates (Theorem 5). -/
-theorem spohnRevision_isAGM [Finite W] : (spohnRevision W).IsAGM :=
+theorem spohnRevision_isAGM : (spohnRevision W).IsAGM :=
   spohnRevision_faithful.isAGM
 
 /-- Spohn's revision satisfies (C1) (Theorem 5). -/
@@ -571,27 +621,22 @@ theorem spohnRevision_c2 : (spohnRevision W).C2 :=
   spohnRevision_faithful.c2_iff.2 spohn_agreesOn_compl
 
 /-- Spohn's revision satisfies (C3) (Theorem 5). -/
-theorem spohnRevision_c3 [Finite W] : (spohnRevision W).C3 :=
+theorem spohnRevision_c3 : (spohnRevision W).C3 :=
   spohnRevision_faithful.c3_iff.2 spohn_preservesLt
 
 /-- Spohn's revision satisfies (C4) (Theorem 5). -/
-theorem spohnRevision_c4 [Finite W] : (spohnRevision W).C4 :=
+theorem spohnRevision_c4 : (spohnRevision W).C4 :=
   spohnRevision_faithful.c4_iff.2 spohn_preservesLe
 
 /-- On a ranking function, Spohn's revision by `A` is conditionalization on `A` at the firmness
 `κ(Aᶜ) + 1`. -/
 theorem spohn_eq_conditionα (κ : RankingFunction W) {A : Set W} (hA : A.Nonempty) :
-    spohn κ A = κ.conditionα A hA ((κ.rank Aᶜ).toNat + 1) := by
+    spohn κ A = κ.conditionα A hA ((rank κ Aᶜ).toNat + 1) := by
   funext w
   by_cases hw : w ∈ A
-  · obtain ⟨u, hu, e⟩ := exists_rank_eq κ A hA
-    obtain ⟨v, hv, e'⟩ := κ.exists_apply_eq_rank hA
-    have hrank : (κ.rank A).toNat = rank κ A := by
-      rw [← e', ENat.toNat_natCast, ← e]
-      exact le_antisymm (by exact_mod_cast e' ▸ κ.rank_le hu) (e ▸ rank_le κ A hv)
-    rw [κ.conditionα_of_mem _ _ hw, spohn_of_mem κ A hw, RankingFunction.aPart, hrank]
-  · have := κ.toNat_rank_le (A := Aᶜ) hw
-    rw [κ.conditionα_of_notMem _ _ hw, spohn_of_notMem κ A hw, RankingFunction.aPart]
+  · rw [κ.conditionα_of_mem _ _ hw, spohn_of_mem κ A hw]
+  · have := toNat_rank_le κ (A := Aᶜ) hw
+    rw [κ.conditionα_of_notMem _ _ hw, spohn_of_notMem κ A hw, aPart]
     omega
 
 /-- The conditional beliefs of a ranking function under Spohn's revision are the consequences
