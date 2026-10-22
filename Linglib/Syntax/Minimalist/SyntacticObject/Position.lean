@@ -32,8 +32,8 @@ embedding with a total head function, which extends the raising head.
 * `LinearizedSyntacticObject.maximalProjections`, `LinearizedSyntacticObject.branching`,
   `LinearizedSyntacticObject.above`: the maximal projections and branching positions of a linearized
   object, and the generators above a position, its closeness key.
-* `Minimalist.projectionAt`, `Minimalist.complement`: the maximal projection of a position and the
-  sister of a head.
+* `Minimalist.projectionAt`, `Minimalist.lexicalHeadAt`, `Minimalist.complement`: the maximal
+  projection of a position, the lexical head of the phrase there, and the sister of a head.
 
 ## Main statements
 
@@ -504,6 +504,10 @@ theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.val.
       hhq hcq
 
 theorem projectionAt_le (p : TreePath) : projectionAt t p ≤ p := maximalProjectionAt_le _ p
+
+/-- The lexical head of the phrase at `p`, reached by descending through head daughters. -/
+def lexicalHeadAt (p : TreePath) : TreePath :=
+  (fun q ↦ (t.headIndexAt q).elim q fun i ↦ ⟨q.toList ++ [i]⟩)^[t.val.subtrees.length] p
 
 end Projection
 

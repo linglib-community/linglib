@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
 public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.Copy.Chain
 
 /-!
 # Spell-out domains of a derivation
@@ -22,7 +23,9 @@ schedule of Spell-outs when those snapshots cohere (`Derivation.Linearizes`).
 
 Fox and Pesetsky spell a domain out when it is built, which reads the surface of its stage
 (`Derivation.spellout_self`); spelling a phase out when the next phase head merges, as Chomsky
-proposes, takes the stage after that merge (`Derivation.mergeStage?`). Which constituent a study
+proposes, takes the stage after that merge (`Derivation.mergeStage?`). A phase is complete at
+the last stage its head heads the object, so a schedule that spells each phase out when it is
+complete follows from the phase heads (`Derivation.phaseSchedule`). Which constituent a study
 spells out, the whole phase or the head with its complement, is the stage it names. A head moved
 into a phase head by Internal Merge stays inside the constituent the two build, so the moved verb
 of a verb-plus-v head is spelled out with v.
@@ -32,6 +35,8 @@ of a verb-plus-v head is spelled out with v.
 * `Minimalist.Derivation.spelloutDomain`, `Derivation.spellout`: a domain at a
   later stage, and its Spell-out.
 * `Minimalist.Derivation.Linearizes`: a derivation linearizes under a schedule.
+* `Minimalist.Derivation.phaseStages`, `Derivation.phaseSchedule`: the stages at which phases are
+  complete, and the schedule spelling them out then.
 
 ## Main statements
 
@@ -82,6 +87,20 @@ def mergeStage? (item : SyntacticObject) : Option ℕ :=
   (d.steps.findIdx? fun step ↦ match step with
     | .em _ x => decide (x = item)
     | _ => false).map (· + 1)
+
+/-- The head of the object at stage `n`, the token at the lexical head of its root. -/
+def stageHead? : Option LexicalItem.Token :=
+  (d.stage? n).bind fun t ↦ (tokenList t.val).lookup (lexicalHeadAt t ⊥)
+
+/-- The stages at which the phase of a head `Φ` holds of is complete: the head heads the object
+built so far, and the next step merges something that projects over it. -/
+def phaseStages (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] : List ℕ :=
+  (List.range (d.length + 1)).filter fun n ↦
+    (d.stageHead? n).any (Φ ·) && (n == d.length || d.stageHead? (n + 1) != d.stageHead? n)
+
+/-- The schedule that spells each phase out when it is complete. -/
+def phaseSchedule (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] : List (ℕ × ℕ) :=
+  (d.phaseStages Φ).map fun n ↦ (n, n)
 
 /-- A derivation linearizes under a schedule of Spell-outs, each the stage at which a domain is
 built and the stage at which it is spelled out, when their snapshots cohere. -/

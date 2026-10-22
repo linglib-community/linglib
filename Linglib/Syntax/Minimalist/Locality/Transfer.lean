@@ -63,10 +63,6 @@ abbrev Schedule := Finset TreePath → TreePath → TreePath → Prop
 
 variable (t : LinearizedSyntacticObject)
 
-/-- The lexical head of the phrase at `p`, reached by descending through head daughters. -/
-def lexicalHeadAt (p : TreePath) : TreePath :=
-  (fun q ↦ (t.headIndexAt q).elim q fun i ↦ ⟨q.toList ++ [i]⟩)^[t.val.subtrees.length] p
-
 /-- The head whose complement a phase head transfers: the phase head itself, or, where it has
 deleted, the lexical head of its complement, which inherits its phasehood. -/
 def transferHead (deleted : Finset TreePath) (h : TreePath) : TreePath :=

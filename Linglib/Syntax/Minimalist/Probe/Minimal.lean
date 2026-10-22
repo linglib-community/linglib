@@ -103,6 +103,11 @@ theorem Inspects.of_subset {t : Set α} (h : p.Inspects s key a) (hts : t ⊆ s)
     p.Inspects t key a :=
   ⟨ha, fun _ hb ↦ h.2 (hts hb)⟩
 
+/-- A goal found in a domain is found in any part of it that contains the goal. -/
+theorem Finds.of_subset {t : Set α} (h : p.Finds s key a) (hts : t ⊆ s) (ha : a ∈ t) :
+    p.Finds t key a :=
+  finds_iff.2 ⟨h.inspects.of_subset hts ha, h.sat⟩
+
 /-- When every interacting goal satisfies the probe, it agrees with the goals it finds that
 interact. -/
 theorem agreesWith_iff_finds (hp : ∀ a, p.int a → p.sat a) :

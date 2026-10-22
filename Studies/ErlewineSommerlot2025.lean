@@ -28,6 +28,8 @@ extraction (§5.2); and the registers of Madurese differ in whether Voice has a 
 
 * `ErlewineSommerlot2025.Clause.spellouts_eq`: the derivations spell out the paper's VoiceP and
   CP snapshots.
+* `ErlewineSommerlot2025.Clause.schedule_eq`: the phases of Voice and C are complete when VoiceP
+  is built and at the end.
 * `ErlewineSommerlot2025.rows_grammatical`: the grammars predict every example's judgment.
 * `ErlewineSommerlot2025.overt_voice_paradox`: an overt Voice blocks the order-preserving
   extraction of two nominals (57).
@@ -35,8 +37,9 @@ extraction (§5.2); and the registers of Madurese differ in whether Voice has a 
 ## Implementation notes
 
 * A clause is its syntactic parameters, and the exponents of Voice and v are chosen after VoiceP
-  Spell-out. v+V is one terminal of category v, the paper not showing V-to-v movement, and one
-  terminal stands for T with its auxiliaries.
+  Spell-out. Each phase, of Voice or C, is spelled out when the next head projects over it
+  (`Minimalist.Derivation.phaseSchedule`). v+V is one terminal of category v, the paper not
+  showing V-to-v movement, and one terminal stands for T with its auxiliaries.
 * The active v always projects its agent (30). The ban on an agent licensed by the passive v
   moving to Spec,VoiceP is the antilocality the paper tentatively suggests (§3.3).
 * Desa's T licenses a nominal in situ instead of attracting one under nominal Ā-extraction (§3.3).
@@ -98,21 +101,27 @@ inductive Term
   | aux
   deriving DecidableEq, Repr, Fintype
 
-/-- Each terminal spells out its own lexical item, v+V that of the light verb it projects. -/
+/-- Each terminal spells out its own lexical item, v+V that of the light verb it projects, which
+selects the theme; Voice selects vP and T selects VoiceP. -/
 def Term.token : Term → LexicalItem.Token
   | .dp .agent => ⟨.of .D [], 1⟩
   | .dp .theme => ⟨.of .D [], 2⟩
   | .pp => ⟨.of .P [], 3⟩
-  | .voice => ⟨.of .Voice [], 4⟩
-  | .verb => ⟨.of .v [], 5⟩
-  | .aux => ⟨.of .T [], 6⟩
+  | .voice => ⟨.of .Voice [.v], 4⟩
+  | .verb => ⟨.of .v [.D], 5⟩
+  | .aux => ⟨.of .T [.Voice], 6⟩
 
 /-- A lexical item spells out at most one terminal. -/
 def Term.ofToken? (tok : LexicalItem.Token) : Option Term :=
   [Term.dp .agent, .dp .theme, .pp, .voice, .verb, .aux].find? (·.token = tok)
 
 /-- The complementizer that attracts the Ā-extracted phrase is silent. -/
-def C₀ : LexicalItem.Token := ⟨.of .C [], 7⟩
+def C₀ : LexicalItem.Token := ⟨.of .C [.T], 7⟩
+
+/-- Voice and C head phases. -/
+def IsPhaseHead (a : LexicalItem.Token) : Prop := a = Term.voice.token ∨ a = C₀
+
+instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- An extracted phrase is a nominal or the PP. -/
 def Extracted.term : Extracted → Term
@@ -154,9 +163,8 @@ def cpSteps : List Step :=
 /-- A clause's derivation starts from the theme. -/
 def derivation : Derivation := ⟨(Term.dp .theme).token, c.voicePSteps ++ c.cpSteps⟩
 
-/-- VoiceP is spelled out when its derivation is complete, and CP at the end. -/
-def schedule : List (ℕ × ℕ) :=
-  [(c.voicePSteps.length, c.voicePSteps.length), (c.derivation.length, c.derivation.length)]
+/-- Each phase is spelled out when it is complete. -/
+def schedule : List (ℕ × ℕ) := c.derivation.phaseSchedule IsPhaseHead
 
 /-- The derivation's Spell-outs read as terminals, before vocabulary insertion. -/
 def spellouts : List (List Term) :=
@@ -221,6 +229,11 @@ instance : Decidable c.WellFormed := by unfold WellFormed; infer_instance
 
 /-- Every well-formed clause's derivation spells out the paper's VoiceP and CP snapshots. -/
 theorem spellouts_eq : ∀ c : Clause, c.WellFormed → c.spellouts = [c.voiceP, c.cP] := by
+  decide +kernel
+
+/-- The phase of Voice is complete when VoiceP is built, and that of C at the end. -/
+theorem schedule_eq : ∀ c : Clause, c.WellFormed → c.schedule =
+    [(c.voicePSteps.length, c.voicePSteps.length), (c.derivation.length, c.derivation.length)] := by
   decide +kernel
 
 /-- Voice and v are adjacent exactly when the agent does not stay between them. -/
