@@ -452,6 +452,12 @@ theorem IsSymmetric.swap {c : Correspondence BinaryRole α} (h : c.IsSymmetric) 
 theorem depViolAt_swap (c : Correspondence BinaryRole α) (P : ℕ → Prop) [DecidablePred P]
     (r₁ r₂ : BinaryRole) : c.swap.depViolAt P r₁ r₂ = c.depViolAt P r₁.swap r₂.swap := rfl
 
+theorem maxViol_swap (c : Correspondence BinaryRole α) (r₁ r₂ : BinaryRole) :
+    c.swap.maxViol r₁ r₂ = c.maxViol r₁.swap r₂.swap := rfl
+
+theorem identViol_swap [DecidableEq α] (c : Correspondence BinaryRole α) (r₁ r₂ : BinaryRole) :
+    c.swap.identViol r₁ r₂ = c.identViol r₁.swap r₂.swap := rfl
+
 /-! ### Faithfulness on the diagonal
 
 MAX, DEP and IDENT vanish on a diagonal edge between equal strings — the fully faithful
