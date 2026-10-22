@@ -152,6 +152,15 @@ theorem Step.apply_em (side : Edge) (item current : SyntacticObject) :
   · rfl
   · exact merge_comm current item
 
+/-- A step is a Merge, external or internal, rather than one of the two stages of Internal
+Merge. -/
+def Step.IsMerge : Step → Prop
+  | .em _ _ | .im _ _ => True
+  | .extract _ | .remerge _ => False
+
+instance : DecidablePred Step.IsMerge :=
+  fun s ↦ by cases s <;> unfold Step.IsMerge <;> infer_instance
+
 /-- The mover of an Internal-Merge step or an extraction. -/
 def Step.mover? : Step → Option SyntacticObject
   | .im mover _ | .extract mover => some mover

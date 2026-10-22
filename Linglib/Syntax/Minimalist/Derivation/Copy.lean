@@ -277,6 +277,19 @@ def find? (t : Marked) (target : SyntacticObject) : Option Marked :=
       (((isSyntacticObject_mk _).1 t.2).of_isSubtree ((isSubtree_of_mem_outerSubtrees hs).map _))⟩)
     fun _ h ↦ List.mem_of_find?_eq_some h
 
+/-- The occurrence found is a term of the copy object. -/
+theorem mem_terms_of_find? {target : SyntacticObject} {s : Marked} (h : t.find? target = some s) :
+    s.unmark.toSyntacticObject ∈ t.unmark.toSyntacticObject.terms := by
+  obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 h
+  exact PlanarSyntacticObject.mem_terms_toSyntacticObject.2
+    ⟨_, mem_subtrees.2 ((isSubtree_of_mem_outerSubtrees hr).map _), rfl⟩
+
+/-- The occurrence found contracts to the target. -/
+theorem mk_contractTree_of_find? {target : SyntacticObject} {s : Marked}
+    (h : t.find? target = some s) : UnorderedTree.mk (contractTree s.val) = target.val := by
+  obtain ⟨r, -, hr, rfl⟩ := Option.pmap_eq_some_iff.1 h
+  simpa using List.find?_some hr
+
 /-- The occurrence found contracts to the occurrence found in the contraction. -/
 theorem map_contract_find? (target : SyntacticObject) :
     (t.find? target).map contract = t.contract.find? target := by
@@ -285,6 +298,117 @@ theorem map_contract_find? (target : SyntacticObject) :
   simp only [Function.comp_apply, contract, Option.pmap_eq_map]
   rw [← map_contractTree_outerSubtrees, List.find?_map]
   simp [Function.comp_def]
+
+/-! ### Leaves -/
+
+/-- A marked object whose copy object is a lexical leaf is that leaf, perhaps marked. -/
+theorem exists_val_eq_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
+    (h : t.unmark.toSyntacticObject = SyntacticObject.leaf x) :
+    ∃ k, t.val = .node (k, .inl (some x)) [] := by
+  obtain ⟨⟨⟨k, a⟩, cs⟩, ht⟩ := t
+  have hv := congrArg Subtype.val h
+  simp only [unmark, PlanarSyntacticObject.toSyntacticObject_val, map_node,
+    SyntacticObject.leaf_val, UnorderedTree.leaf, UnorderedTree.mk_node_eq_mk_node_iff] at hv
+  obtain ⟨rfl, hcs⟩ := hv
+  have hc : cs = [] := by simpa using congrArg Multiset.card hcs
+  subst hc
+  exact ⟨k, rfl⟩
+
+/-- A copy object that is a lexical leaf contracts to that leaf when the leaf is pronounced. -/
+theorem contract_eq_leaf_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
+    (h : t.unmark.toSyntacticObject = SyntacticObject.leaf x)
+    (hx : x ∈ t.contract.toSyntacticObject.yield) :
+    t.contract.toSyntacticObject = SyntacticObject.leaf x := by
+  obtain ⟨k, hk⟩ := exists_val_eq_of_unmark_eq_leaf h
+  rcases k with _ | l
+  · exact Subtype.ext (by simp [contract, hk, SyntacticObject.leaf_val])
+  · simp [PlanarSyntacticObject.yield_toSyntacticObject, contract, hk] at hx
+
+/-- An occurrence found whose copy is a lexical leaf is that leaf, when the target is no trace. -/
+theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalItem.Token}
+    (h : t.find? target = some s) (ht : target.val.value.isLeft)
+    (hs : s.unmark.toSyntacticObject = SyntacticObject.leaf x) :
+    target = SyntacticObject.leaf x := by
+  have hc := mk_contractTree_of_find? h
+  obtain ⟨k, hk⟩ := exists_val_eq_of_unmark_eq_leaf hs
+  rw [hk] at hc
+  rcases k with _ | l
+  · exact Subtype.ext (by rw [← hc, contractTree_none, SyntacticObject.leaf_val]; rfl)
+  · rw [← hc, contractTree_some] at ht
+    simp at ht
+
+/-! ### C-command in the contraction and in the copy object -/
+
+/-- A subtree contracting to a lexical leaf is that leaf, unmarked. -/
+theorem eq_of_mk_contractTree_eq_leaf {r : RoseTree (CopyMark × Vertex)} {x : LexicalItem.Token}
+    (h : UnorderedTree.mk (contractTree r) = (SyntacticObject.leaf x).val) :
+    r = .node (none, .inl (some x)) [] := by
+  obtain ⟨⟨k, a⟩, cs⟩ := r
+  rcases k with _ | l
+  · rw [contractTree_none, SyntacticObject.leaf_val, UnorderedTree.leaf,
+      UnorderedTree.mk_node_eq_mk_node_iff] at h
+    obtain ⟨rfl, hcs⟩ := h
+    have hc : cs = [] := by simpa using congrArg Multiset.card hcs
+    rw [hc]
+  · rw [contractTree_some, SyntacticObject.leaf_val, UnorderedTree.leaf,
+      UnorderedTree.mk_node_eq_mk_node_iff] at h
+    exact absurd h.1 (by simp)
+
+private theorem isSyntacticObject_of_isSubtree {t : Marked} {r : RoseTree (CopyMark × Vertex)}
+    (hr : IsSubtree r t.val) : IsSyntacticObject (UnorderedTree.mk (r.map Prod.snd)) :=
+  (isSyntacticObject_mk _).2 (((isSyntacticObject_mk _).1 t.2).of_isSubtree (hr.map _))
+
+private theorem mem_terms_unmark {t : Marked} {r : RoseTree (CopyMark × Vertex)}
+    (hr : IsSubtree r t.val) :
+    (⟨_, isSyntacticObject_of_isSubtree hr⟩ : SyntacticObject) ∈ t.unmark.toSyntacticObject.terms :=
+  PlanarSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 (hr.map _), rfl⟩
+
+/-- A c-command between two pronounced leaves of the contraction holds between the same leaves of
+the copy object, the contraction changing nothing outside the lower copies. -/
+theorem cCommands_unmark_of_cCommands_contract {t : Marked} {x y : LexicalItem.Token}
+    (hxy : x ≠ y) (h : t.contract.toSyntacticObject.CCommands ↑x ↑y) :
+    t.unmark.toSyntacticObject.CCommands ↑x ↑y := by
+  obtain ⟨z, -, ⟨w, hw, hwx, hwz, hxz⟩, hzy⟩ := h
+  obtain ⟨q, hq, hqw⟩ := PlanarSyntacticObject.mem_terms_toSyntacticObject.1 hw
+  rw [show t.contract.val = contractTree t.val from rfl, ← map_contractTree_outerSubtrees] at hq
+  obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hq
+  have hrt := isSubtree_of_mem_outerSubtrees hr
+  obtain ⟨⟨k, a⟩, rs⟩ := r
+  rcases k with _ | l
+  swap
+  · simp [ImmediatelyContains, ← hqw] at hwx
+  simp only [ImmediatelyContains, ← hqw, contractTree_none, UnorderedTree.children_mk,
+    Multiset.mem_coe, List.mem_map] at hwx hwz
+  obtain ⟨ci, hci, hix⟩ := hwx
+  obtain ⟨ri, hri, rfl⟩ := List.mem_map.1 (show ci ∈ rs.map contractTree from hci)
+  obtain rfl := eq_of_mk_contractTree_eq_leaf hix
+  obtain ⟨cj, hcj, hjz⟩ := hwz
+  obtain ⟨rj, hrj, rfl⟩ := List.mem_map.1 (show cj ∈ rs.map contractTree from hcj)
+  -- `y` is a pronounced leaf of `rj`
+  have hy : ∃ r' ∈ outerSubtrees rj, r' = .node (none, .inl (some y)) [] := by
+    have := (val_mem_subtrees.2 (mem_terms.2 hzy))
+    rw [← hjz, UnorderedTree.subtrees_mk, unorderedSubtrees_eq_map, Multiset.mem_coe,
+      List.mem_map, ← map_contractTree_outerSubtrees] at this
+    obtain ⟨q', hq', hq'y⟩ := this
+    obtain ⟨r', hr', rfl⟩ := List.mem_map.1 hq'
+    exact ⟨r', hr', eq_of_mk_contractTree_eq_leaf hq'y⟩
+  obtain ⟨r', hr', rfl⟩ := hy
+  have hjt : IsSubtree rj t.val := (IsSubtree.of_mem_children hrj).trans hrt
+  set zc : SyntacticObject := ⟨_, isSyntacticObject_of_isSubtree hjt⟩
+  have hzcy : SyntacticObject.leaf y ∈ zc.terms :=
+    val_mem_subtrees.1 (by
+      rw [UnorderedTree.subtrees_mk, unorderedSubtrees_eq_map, Multiset.mem_coe]
+      exact List.mem_map.2 ⟨_, mem_subtrees.2 ((isSubtree_of_mem_outerSubtrees hr').map _), rfl⟩)
+  refine ⟨zc, mem_terms_unmark hjt, ⟨_, mem_terms_unmark hrt, ?_, ?_, fun he ↦ ?_⟩,
+    mem_terms.1 hzcy⟩
+  · simp only [ImmediatelyContains, map_node, UnorderedTree.children_mk, Multiset.mem_coe,
+      List.mem_map]
+    exact ⟨_, show _ ∈ rs.map (map Prod.snd) from List.mem_map_of_mem hri, rfl⟩
+  · simp only [ImmediatelyContains, map_node, UnorderedTree.children_mk, Multiset.mem_coe,
+      List.mem_map]
+    exact ⟨_, show _ ∈ rs.map (map Prod.snd) from List.mem_map_of_mem hrj, rfl⟩
+  · rw [← he, terms_leaf, Multiset.mem_singleton, leaf_inj] at hzcy
+    exact hxy hzcy.symm
 
 end PlanarSyntacticObject.Marked
 
@@ -548,6 +672,136 @@ theorem Derivation.coe_surfaceTokens {d : Derivation} (hd : d.lexTokens.Nodup)
   rw [hst, List.map_nil, List.sum_nil, add_zero] at this
   rw [surfaceTokens, externalize?, hc, Option.map_some, Option.map_some, Option.getD_some,
     PlanarSyntacticObject.coe_yield, this]
+
+/-! ### Inclusiveness -/
+
+namespace SyntacticObject
+
+/-- A token is pronounced in an object exactly when its leaf is a term. -/
+theorem mem_yield_iff {s : SyntacticObject} {tok : LexicalItem.Token} :
+    tok ∈ s.yield ↔ leaf tok ∈ s.terms := by
+  induction s using ind with
+  | leaf a => simp
+  | trace => simp
+  | traceOf a => simp
+  | merge l r ihl ihr => simp [ihl, ihr, leaf_ne_merge]
+
+/-- A term pronounces no more than its object. -/
+theorem yield_le_of_mem_terms {s u : SyntacticObject} (h : u ∈ s.terms) : u.yield ≤ s.yield := by
+  induction s using ind with
+  | leaf a => rw [terms_leaf, Multiset.mem_singleton] at h; rw [h]
+  | trace => rw [terms_trace, Multiset.mem_singleton] at h; rw [h]
+  | traceOf a => rw [terms_traceOf, Multiset.mem_singleton] at h; rw [h]
+  | merge l r ihl ihr =>
+    rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at h
+    rcases h with rfl | h | h
+    · exact le_rfl
+    · exact (ihl h).trans (by rw [yield_merge]; exact Multiset.le_add_right _ _)
+    · exact (ihr h).trans (by rw [yield_merge]; exact Multiset.le_add_left _ _)
+
+end SyntacticObject
+
+/-- The tokens a configuration's copy object and stacked copies pronounce. -/
+private def cfgCopyYield (c : Cfg Marked) : Multiset LexicalItem.Token :=
+  c.current.unmark.toSyntacticObject.yield + (c.stack.map (·.unmark.toSyntacticObject.yield)).sum
+
+private theorem Step.mem_cfgCopyYield {step : Step} {c c' : Cfg Marked}
+    (h : step.replayWithCopies? c τ = some c') {tok : LexicalItem.Token}
+    (ht : tok ∈ cfgCopyYield c') :
+    tok ∈ cfgCopyYield c ∨ tok ∈ (step.items.map SyntacticObject.yield).sum := by
+  obtain ⟨p, st⟩ := c
+  cases step with
+  | em side item =>
+    obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 h
+    rw [← SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hi]
+    simp only [cfgCopyYield, Marked.unmark_attach, Marked.unmark_ofPlanar,
+      PlanarSyntacticObject.yield_attach, Step.items, Multiset.map_singleton,
+      Multiset.sum_singleton, Multiset.mem_add] at ht ⊢
+    tauto
+  | im mover side =>
+    obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
+    have hle := SyntacticObject.yield_le_of_mem_terms (Marked.mem_terms_of_find? hs)
+    simp only [cfgCopyYield, Marked.unmark_attach, Marked.unmark_mark,
+      PlanarSyntacticObject.yield_attach, Multiset.mem_add] at ht ⊢
+    rcases ht with (ht | ht) | ht
+    · exact .inl (.inl (Multiset.mem_of_le hle ht))
+    · exact .inl (.inl ht)
+    · exact .inl (.inr ht)
+  | extract mover =>
+    obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
+    have hle := SyntacticObject.yield_le_of_mem_terms (Marked.mem_terms_of_find? hs)
+    simp only [cfgCopyYield, Marked.unmark_mark, List.map_cons, List.sum_cons,
+      Multiset.mem_add] at ht ⊢
+    rcases ht with ht | ht | ht
+    · exact .inl (.inl ht)
+    · exact .inl (.inl (Multiset.mem_of_le hle ht))
+    · exact .inl (.inr ht)
+  | remerge side =>
+    rcases st with _ | ⟨m, st⟩
+    · cases h
+    · obtain rfl := Option.some.inj h
+      simp only [cfgCopyYield, Marked.unmark_attach, PlanarSyntacticObject.yield_attach,
+        List.map_cons, List.sum_cons, Multiset.mem_add] at ht ⊢
+      tauto
+
+private theorem mem_cfgCopyYield_foldlM : ∀ {steps : List Step} {c c' : Cfg Marked},
+    steps.foldlM (fun c step ↦ step.replayWithCopies? c τ) c = some c' →
+    ∀ tok ∈ cfgCopyYield c',
+      tok ∈ cfgCopyYield c ∨ tok ∈ ((Step.itemsList steps).map SyntacticObject.yield).sum
+  | [], _, _, h, _, ht => by obtain rfl := Option.some.inj h; exact .inl ht
+  | step :: steps, _, _, h, tok, ht => by
+    obtain ⟨c₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
+    rw [Step.itemsList_cons, Multiset.map_add, Multiset.sum_add, Multiset.mem_add]
+    rcases mem_cfgCopyYield_foldlM h tok ht with ht | ht
+    · rcases Step.mem_cfgCopyYield h₁ ht with ht | ht
+      · exact .inl ht
+      · exact .inr (.inl ht)
+    · exact .inr (.inr ht)
+
+/-- Inclusiveness: the copy object pronounces only tokens the derivation merges. -/
+theorem Derivation.mem_lexTokens_of_mem_yield_copyObject? {d : Derivation} {C : SyntacticObject}
+    {tok : LexicalItem.Token} (h : d.copyObject? τ = some C) (ht : tok ∈ C.yield) :
+    tok ∈ d.lexTokens := by
+  obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
+  obtain ⟨p, hp, hc⟩ := Option.bind_eq_some_iff.1 hc
+  rcases mem_cfgCopyYield_foldlM hc tok (Multiset.mem_add.2 (.inl ht)) with ht | ht
+  · simpa [cfgCopyYield, lexTokens, SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hp] using
+      Multiset.mem_add.2 (.inl ht)
+  · exact Multiset.mem_add.2 (.inr ht)
+
+/-- A derivation of Merge steps leaves nothing on the stack. -/
+theorem Derivation.stack_eq_nil_of_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
+    (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c) : c.stack = [] := by
+  obtain ⟨p, -, h⟩ := Option.bind_eq_some_iff.1 h
+  have key : ∀ (steps : List Step) (c₀ c : Cfg PlanarSyntacticObject),
+      (∀ step ∈ steps, step.IsMerge) → c₀.stack = [] →
+        steps.foldlM (fun c step ↦ step.replay? c τ) c₀ = some c → c.stack = [] := by
+    intro steps
+    induction steps with
+    | nil => intro c₀ c _ h₀ h; obtain rfl := Option.some.inj h; exact h₀
+    | cons step steps ih =>
+      intro c₀ c hm h₀ h
+      obtain ⟨c₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
+      refine ih c₁ c (fun s hs ↦ hm s (List.mem_cons_of_mem _ hs)) ?_ h
+      obtain ⟨p₀, st₀⟩ := c₀
+      cases h₀
+      have := hm step List.mem_cons_self
+      cases step with
+      | em side item => obtain ⟨i, -, rfl⟩ := Option.map_eq_some_iff.1 h₁; rfl
+      | im mover side => obtain ⟨s, -, rfl⟩ := Option.map_eq_some_iff.1 h₁; rfl
+      | extract mover => exact this.elim
+      | remerge side => exact this.elim
+  exact key _ _ _ hm rfl h
+
+/-- In a derivation of Merge steps with no token merged twice, every token merged is pronounced in
+its object. -/
+theorem Derivation.mem_yield_of_mem_lexTokens {d : Derivation} {c : Cfg PlanarSyntacticObject}
+    (hd : d.lexTokens.Nodup) (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c)
+    {tok : LexicalItem.Token} (ht : tok ∈ d.lexTokens) :
+    tok ∈ c.current.toSyntacticObject.yield := by
+  have := d.yield_replay? hd h
+  rw [stack_eq_nil_of_replay? hm h, List.map_nil, List.sum_nil, add_zero] at this
+  rwa [this]
 
 /-- Chain reduction needs the tokens fresh: raising a token merged twice replaces both occurrences
 by its trace, so one of the two goes unpronounced. -/

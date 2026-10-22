@@ -72,6 +72,17 @@ instance : Singleton SyntacticObject SyntacticObject := ⟨id⟩
 def yield (s : SyntacticObject) : Multiset LexicalItem.Token :=
   s.val.leaves.filterMap (Sum.elim id fun _ ↦ none)
 
+@[simp] theorem yield_leaf (tok : LexicalItem.Token) : (leaf tok).yield = {tok} := rfl
+
+@[simp] theorem yield_trace : trace.yield = 0 := rfl
+
+@[simp] theorem yield_traceOf (tok : LexicalItem.Token) : (traceOf tok).yield = 0 := rfl
+
+@[simp] theorem yield_merge (l r : SyntacticObject) : (merge l r).yield = l.yield + r.yield := by
+  rw [yield, merge_val, show ({l.val, r.val} : Multiset _) = l.val ::ₘ {r.val} from rfl,
+    UnorderedTree.leaves_node_cons]
+  simp [yield, Multiset.filterMap_add]
+
 end SyntacticObject
 
 namespace PlanarSyntacticObject

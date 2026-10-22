@@ -330,6 +330,33 @@ theorem CCommands.left_mem_terms (h : CCommands root x y) : x ∈ root.terms :=
   let ⟨_, _, hs, _⟩ := h
   hs.mem_left
 
+/-- C-command depends on the root only through its terms. -/
+theorem CCommands.mono {root' : SyntacticObject} (h : CCommands root x y)
+    (hsub : root.terms ⊆ root'.terms) : CCommands root' x y :=
+  let ⟨z, hz, ⟨w, hw, hwx, hwz, hxz⟩, hzy⟩ := h
+  ⟨z, hsub hz, ⟨w, hsub hw, hwx, hwz, hxz⟩, hzy⟩
+
+/-- A daughter of a merged object c-commands what its sister contains. -/
+theorem cCommands_merge_left (hlr : l ≠ r) (hy : y ∈ r.terms) : CCommands (merge l r) l y :=
+  ⟨r, mem_terms.2 (.single ((immediatelyContains_merge _ _ _).2 (.inr rfl))),
+    ⟨merge l r, self_mem_terms _, (immediatelyContains_merge _ _ _).2 (.inl rfl),
+      (immediatelyContains_merge _ _ _).2 (.inr rfl), hlr⟩, mem_terms.1 hy⟩
+
+/-- Sisters in a merged object are its two daughters or sisters inside one of them. -/
+theorem Sisters.of_merge {x z : SyntacticObject} (h : Sisters (merge l r) x z) :
+    Sisters l x z ∨ Sisters r x z ∨ x = l ∧ z = r ∨ x = r ∧ z = l := by
+  obtain ⟨w, hw, hwx, hwz, hxz⟩ := h
+  rw [terms_merge, Multiset.mem_cons, Multiset.mem_add] at hw
+  rcases hw with rfl | hw | hw
+  · rw [immediatelyContains_merge] at hwx hwz
+    rcases hwx with rfl | rfl <;> rcases hwz with rfl | rfl
+    · exact absurd rfl hxz
+    · exact .inr (.inr (.inl ⟨rfl, rfl⟩))
+    · exact .inr (.inr (.inr ⟨rfl, rfl⟩))
+    · exact absurd rfl hxz
+  · exact .inl ⟨w, hw, hwx, hwz, hxz⟩
+  · exact .inr (.inl ⟨w, hw, hwx, hwz, hxz⟩)
+
 /-- The c-command domain of `x` in `root`, the search space of a probe sitting at `x`. -/
 def cCommandDomain (root x : SyntacticObject) : Multiset SyntacticObject :=
   root.terms.filter (CCommands root x)

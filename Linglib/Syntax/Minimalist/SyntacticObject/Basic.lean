@@ -226,6 +226,14 @@ theorem leaf_ne_merge (tok : LexicalItem.Token) (l r : SyntacticObject) : leaf t
   fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
 
 @[simp]
+theorem leaf_ne_trace (tok : LexicalItem.Token) : leaf tok ≠ trace :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
+
+@[simp]
+theorem leaf_ne_traceOf (tok tok' : LexicalItem.Token) : leaf tok ≠ traceOf tok' :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
+
+@[simp]
 theorem traceOf_ne_merge (tok : LexicalItem.Token) (l r : SyntacticObject) :
     traceOf tok ≠ merge l r :=
   fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
