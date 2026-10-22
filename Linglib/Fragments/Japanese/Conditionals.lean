@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.Reading
-public import Linglib.Semantics.Modality.Exclusion
+public import Linglib.Semantics.Modality.XMarking
 
 /-!
 # Japanese conditional markers
@@ -46,6 +46,6 @@ def eba : Conditional.Marker where
 
 /-- Japanese X-marking is the fake past *-ta* ([ogihara-2014], [mizuno-kaufmann-2019];
 [mizuno-2024] ex. 3). -/
-def xMarking : Option Modality.Exclusion.XMarkingExponent := some ⟨"-ta", [.past]⟩
+def xMarking : Option Modality.XMarking.XMarkingExponent := some ⟨"-ta", [.past]⟩
 
 end Japanese.Conditionals

@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Modality.Exclusion
 public import Linglib.Semantics.Mood.Defs
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Finset.Image
@@ -15,9 +14,7 @@ for all the speaker knows, is the speaker's: over times the topic time excludes 
 time, temporal past, and over worlds the topic worlds exclude the actual worlds,
 counterfactuality (`Excludes`). What is asserted is a relation to the topic, not to the
 situation, so the counterfactual inference is cancellable and *John was in the classroom; in
-fact he still is* is consistent (`Claim.consistent_with_inclusion`). The library's
-`Modality.Exclusion.ExclF` on context towers is the feature at a point-sized topic
-(`exclF_iff_excludes`).
+fact he still is* is consistent (`Claim.consistent_with_inclusion`).
 
 One feature over worlds leaves the rest of the antecedent to be evaluated as with present
 tense, so the future less vivid and the present counterfactual readings are the future and
@@ -41,9 +38,6 @@ epistemically accessible alternatives; the *before* of temporal past is `Tempora
 @[expose] public section
 
 namespace Iatridou2000
-
-open Modality.Exclusion
-open Kaplan
 
 /-! ### The exclusion feature -/
 
@@ -83,13 +77,6 @@ theorem Claim.excludes_situation_iff (c : Claim X) :
     Excludes c.situation c.speaker ↔ ∀ x ∈ c.speaker, x ∉ c.situation :=
   Set.disjoint_right
 
-/-- The library's exclusion feature on a context tower is the feature at a point-sized topic:
-the innermost coordinate against the origin's. -/
-theorem exclF_iff_excludes {W E P T : Type*} (tower : ContextTower (Context W E P T)) :
-    (ExclF .temporal tower ↔ Excludes {tower.innermost.time} {tower.origin.time}) ∧
-      (ExclF .modal tower ↔ Excludes {tower.innermost.world} {tower.origin.world}) :=
-  ⟨Set.disjoint_singleton.symm, Set.disjoint_singleton.symm⟩
-
 /-! ### The three counterfactuals -/
 
 /-- The counterfactual conditionals of the paper are the future less vivid, the present
@@ -98,6 +85,13 @@ inductive CounterfactualType where
   | flv
   | presCF
   | pastCF
+  deriving DecidableEq, Repr
+
+/-- The coordinates an exclusion feature ranges over: the temporal and the modal past are one
+feature on different coordinates, not a lexical ambiguity. -/
+inductive ExclDimension where
+  | temporal
+  | modal
   deriving DecidableEq, Repr
 
 /-- A counterfactual has one exclusion feature over worlds, and the past counterfactual a
@@ -113,7 +107,7 @@ inductive Aktionsart where
   | activity
   | ilStative
   | slStative
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- The times at which an antecedent can be evaluated. -/
 inductive Evaluation where
@@ -149,20 +143,11 @@ theorem readings_slStative : readings .slStative = {.flv, .presCF} := by decide
 theorem pastCF_notMem_readings (a : Aktionsart) : .pastCF ∉ readings a := by
   cases a <;> decide
 
-/-- In a one-feature conditional a world shift alone excludes on worlds and, keeping the
-time, not on times. -/
-theorem one_feature {W E P T : Type*} (c : Context W E P T) {w' : W} (hw : w' ≠ c.world) :
-    ExclF .modal ((ContextTower.root c).push (worldShift w')) ∧
-      ¬ ExclF .temporal ((ContextTower.root c).push (worldShift w')) :=
-  ⟨worldShift_produces_modal_exclF c w' hw, fun h ↦ h rfl⟩
-
-/-- The pluperfect's two layers, a world shift and a temporal shift, exclude on both
-dimensions, giving the past counterfactual. -/
-theorem two_features {W E P T : Type*} (c : Context W E P T) {w' : W} {t' : T}
-    (hw : w' ≠ c.world) (ht : t' ≠ c.time) :
-    ExclF .modal (((ContextTower.root c).push (worldShift w')).push (temporalShift t')) ∧
-      ExclF .temporal (((ContextTower.root c).push (worldShift w')).push (temporalShift t')) :=
-  two_shifts_two_exclFs c w' t' hw ht
+/-- The counterfactuals with one feature on some predicate are those whose only feature ranges
+over worlds. -/
+theorem exists_mem_readings_iff (c : CounterfactualType) :
+    (∃ a, c ∈ readings a) ↔ c.dimensions = {.modal} := by
+  cases c <;> decide
 
 /-! ### Aspect and mood -/
 

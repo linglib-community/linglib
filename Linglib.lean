@@ -846,7 +846,6 @@ import Linglib.Semantics.Modality.Directive
 import Linglib.Logic.Modal.Epistemic
 import Linglib.Logic.Modal.Extensional
 import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Semantics.Modality.Exclusion
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Modality.Kernel
 import Linglib.Semantics.Modification.Basic
@@ -893,7 +892,6 @@ import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Reference.Context.Index
-import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Reference.Rigidity
