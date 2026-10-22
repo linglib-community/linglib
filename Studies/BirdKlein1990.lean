@@ -35,9 +35,7 @@ positions extends the order of its tiers and makes its lines overlaps (26).
 * `IsEventStructure.not_crossing`, `IsEventStructureOf.noCrossing`: the derivation of the
   No-Crossing Constraint.
 * `clements_consistent`: the representation (27) of Clements's `mo yɛ ka` is consistent.
-* `not_isEventStructureOf_cycle`: three tiers whose lines cross none pairwise are inconsistent
-  when the lines join the tiers in a cycle, and `path_consistent`: consistent once one line is
-  removed.
+* `not_isEventStructureOf_cycle`: three tiers whose lines cross none pairwise are inconsistent.
 
 ## Implementation notes
 
@@ -234,7 +232,7 @@ abbrev path : AR fun _ : Fin 3 ↦ Unit :=
 
 /-- The path is consistent: its lines cross none pairwise and join only tiers adjacent in a
 path, a forest. -/
-theorem path_consistent : ∃ prec ov, IsEventStructureOf path prec ov := by
+example : ∃ prec ov, IsEventStructureOf path prec ov := by
   have hX : ∀ v w : path.Pos, path.assoc.Adj v w → (SimpleGraph.pathGraph 3).Adj v.1 w.1 := by
     decide
   exact exists_isEventStructureOf_of_hasIntervalOrder <|

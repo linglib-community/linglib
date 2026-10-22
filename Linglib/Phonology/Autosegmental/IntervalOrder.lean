@@ -105,14 +105,6 @@ theorem HasIntervalOrder.noCrossing (h : X.HasIntervalOrder) : X.NoCrossing := b
     (htier j (show (⟨q', hq'⟩ : Fin _) < ⟨q, hq⟩ from hgt)) with h | h
   exacts [hadj h₁ h, hadj h₂.symm h]
 
-/-- Two lines from one tier to another do not cross. -/
-private theorem NoCrossing.le_of_adj (h : X.NoCrossing) {u u' v v' : X.Pos} (hu : u.1 = u'.1)
-    (hv : v.1 = v'.1) (h₁ : X.assoc.Adj u v) (h₂ : X.assoc.Adj u' v') (hlt : (u.2 : ℕ) < u'.2) :
-    (v.2 : ℕ) ≤ v'.2 := by
-  obtain ⟨i, p⟩ := u; obtain ⟨_, p'⟩ := u'; obtain ⟨j, q⟩ := v; obtain ⟨_, q'⟩ := v'
-  obtain rfl : i = _ := hu; obtain rfl : j = _ := hv
-  exact isNonCrossing_lines_iff.1 (h i j) ⟨p.2, q.2, h₁⟩ ⟨p'.2, q'.2, h₂⟩ hlt
-
 /-- Intervals place the tiers of `s`: in order along each tier, with the lines among them
 overlaps. -/
 private def Placed (X : AR τ) (s : Set ι) : Prop :=
@@ -129,28 +121,15 @@ private theorem Placed.insert [Fintype ι] {G : SimpleGraph ι} (hX : X.assoc �
     Placed X (insert ℓ s) := by
   classical
   obtain ⟨T, _, I, hI, hA⟩ := h
-  have fst_le {v w : X.Pos} (hv : v.1 ∈ s) (h : v.1 = w.1) (hle : (v.2 : ℕ) ≤ w.2) :
-      (I v).fst ≤ (I w).fst := by
-    obtain ⟨i, p⟩ := v; obtain ⟨_, q⟩ := w; obtain rfl : i = _ := h
-    obtain hpq | rfl := (Fin.le_iff_val_le_val.2 hle).lt_or_eq
-    exacts [((I _).fst_le_snd.trans_lt (hI i hv hpq)).le, le_rfl]
   let M (k : ℕ) : WithBot T := (Finset.univ.filter fun v : X.Pos ↦ v.1 ∈ s ∧
-    ∃ u : X.Pos, u.1 = ℓ ∧ (u.2 : ℕ) < k ∧ X.assoc.Adj u v).sup fun v ↦ ((I v).fst : WithBot T)
-  have le_M {u v : X.Pos} {k : ℕ} (hu : u.1 = ℓ) (hv : v.1 ∈ s) (hk : (u.2 : ℕ) < k)
-      (huv : X.assoc.Adj u v) : ((I v).fst : WithBot T) ≤ M k :=
+    ∃ p : Fin (X.word ℓ).length, (p : ℕ) < k ∧ X.assoc.Adj ⟨ℓ, p⟩ v).sup fun v ↦ ↑(I v).fst
+  have le_M {p : Fin (X.word ℓ).length} {v : X.Pos} {k : ℕ} (hv : v.1 ∈ s) (hp : (p : ℕ) < k)
+      (hpv : X.assoc.Adj ⟨ℓ, p⟩ v) : ((I v).fst : WithBot T) ≤ M k :=
     Finset.le_sup (f := fun v ↦ ((I v).fst : WithBot T))
-      (Finset.mem_filter.2 ⟨Finset.mem_univ _, hv, u, hu, hk, huv⟩)
+      (Finset.mem_filter.2 ⟨Finset.mem_univ _, hv, p, hp, hpv⟩)
   have M_mono : Monotone M := fun k k' hk ↦ Finset.sup_le fun v hv ↦ by
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hv
-    obtain ⟨hv, u, hu, huk, huv⟩ := hv
-    exact le_M hu hv (huk.trans_le hk) huv
-  have M_le {u v : X.Pos} {k : ℕ} (hu : u.1 = ℓ) (hv : v.1 ∈ s) (hk : k ≤ u.2)
-      (huv : X.assoc.Adj u v) : M k ≤ (I v).fst := Finset.sup_le fun w hw ↦ by
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hw
-    obtain ⟨hw, u', hu', hu'k, hu'w⟩ := hw
-    have hwv := hℓ hw hv (by simpa [hu'] using hX hu'w) (by simpa [hu] using hX huv)
-    exact WithBot.coe_le_coe.2 <| fst_le hw hwv <|
-      hNC.le_of_adj (hu'.trans hu.symm) hwv hu'w huv (hu'k.trans_le hk)
+    obtain ⟨-, hv, p, hp, hpv⟩ := Finset.mem_filter.1 hv
+    exact le_M hv (hp.trans_le hk) hpv
   have lex_le {a b : WithBot T} {m n : ℕ} (h₁ : a ≤ b) (h₂ : m ≤ n) : toLex (a, m) ≤ toLex (b, n) :=
     Prod.Lex.toLex_mono (Prod.mk_le_mk.2 ⟨h₁, h₂⟩)
   let J (v : X.Pos) : NonemptyInterval (WithBot T ×ₗ ℕ) :=
@@ -158,27 +137,32 @@ private theorem Placed.insert [Fintype ι] {G : SimpleGraph ι} (hX : X.assoc �
       lex_le (M_mono (Nat.le_succ _)) le_rfl⟩
     else ⟨(toLex ((I v).fst, 0), toLex ((I v).snd, (X.word ℓ).length)),
       lex_le (WithBot.coe_le_coe.2 (I v).fst_le_snd) (Nat.zero_le _)⟩
-  have hJ {u v : X.Pos} (hu : u.1 = ℓ) (hv : v.1 ∈ s) (huv : X.assoc.Adj u v) :
-      (J u).Overlaps (J v) := by
-    have hvℓ : v.1 ≠ ℓ := fun h ↦ fst_ne_of_adj huv (hu.trans h.symm)
-    have hlen : (u.2 : ℕ) ≤ (X.word ℓ).length :=
-      (u.2.isLt.trans_eq (congrArg (fun i ↦ (X.word i).length) hu)).le
-    simp only [J, hu, hvℓ, ↓reduceIte]
-    exact ⟨lex_le ((M_le hu hv le_rfl huv).trans (WithBot.coe_le_coe.2 (I v).fst_le_snd)) hlen,
-      lex_le (le_M hu hv (Nat.lt_succ_self _) huv) (Nat.zero_le _)⟩
-  refine ⟨WithBot T ×ₗ ℕ, inferInstance, J, fun i hi p q hpq ↦ ?_, fun v w hv hw hvw ↦ ?_⟩
-  · by_cases h : i = ℓ
-    · simp only [J, h, ↓reduceIte]
+  have hJ {q : Fin (X.word ℓ).length} {v : X.Pos} (hv : v.1 ∈ s) (hqv : X.assoc.Adj ⟨ℓ, q⟩ v) :
+      (J ⟨ℓ, q⟩).Overlaps (J v) := by
+    have hM : M q ≤ (I v).fst := Finset.sup_le fun w hw ↦ by
+      obtain ⟨-, hw, p, hp, hpw⟩ := Finset.mem_filter.1 hw
+      obtain ⟨j, r⟩ := w; obtain ⟨_, r'⟩ := v
+      obtain rfl : j = _ := hℓ hw hv (hX hpw) (hX hqv)
+      obtain hlt | rfl := (show r ≤ r' from @hNC ℓ j (p, r) hpw (q, r') hqv hp).lt_or_eq
+      exacts [WithBot.coe_le_coe.2 ((I _).fst_le_snd.trans_lt (hI j hw hlt)).le, le_rfl]
+    simp only [J, (fst_ne_of_adj hqv).symm, ↓reduceIte]
+    exact ⟨lex_le (hM.trans (WithBot.coe_le_coe.2 (I v).fst_le_snd)) q.2.le,
+      lex_le (le_M hv (Nat.lt_succ_self _) hqv) (Nat.zero_le _)⟩
+  refine ⟨WithBot T ×ₗ ℕ, inferInstance, J, fun i hi p q hpq ↦ ?_, ?_⟩
+  · obtain rfl | h := eq_or_ne ℓ i
+    · simp only [J, ↓reduceIte]
       exact Prod.Lex.toLex_strictMono (Prod.mk_lt_mk.2
         (.inr ⟨M_mono (show (p : ℕ) + 1 ≤ q from hpq), hpq⟩))
-    · simp only [J, h, ↓reduceIte]
-      exact Prod.Lex.toLex_lt_toLex.2 (.inl (WithBot.coe_lt_coe.2 (hI i (hi.resolve_left h) hpq)))
-  · by_cases hvℓ : v.1 = ℓ
-    · exact hJ hvℓ (hw.resolve_left fun h ↦ fst_ne_of_adj hvw (hvℓ.trans h.symm)) hvw
-    by_cases hwℓ : w.1 = ℓ
-    · exact overlaps_symm (hJ hwℓ (hv.resolve_left hvℓ) hvw.symm)
-    obtain ⟨h₁, h₂⟩ := hA (hv.resolve_left hvℓ) (hw.resolve_left hwℓ) hvw
-    simp only [J, hvℓ, hwℓ, ↓reduceIte]
+    · simp only [J, h.symm, ↓reduceIte]
+      exact Prod.Lex.toLex_lt_toLex.2 <| .inl <| WithBot.coe_lt_coe.2 <|
+        hI i (hi.resolve_left h.symm) hpq
+  · rintro ⟨i, p⟩ ⟨j, q⟩ hi hj h
+    obtain rfl | hi' := eq_or_ne ℓ i
+    · exact hJ (hj.resolve_left fun hj ↦ fst_ne_of_adj h hj.symm) h
+    obtain rfl | hj' := eq_or_ne ℓ j
+    · exact overlaps_symm (hJ (hi.resolve_left hi'.symm) h.symm)
+    obtain ⟨h₁, h₂⟩ := hA (hi.resolve_left hi'.symm) (hj.resolve_left hj'.symm) h
+    simp only [J, hi'.symm, hj'.symm, ↓reduceIte]
     exact ⟨lex_le (WithBot.coe_le_coe.2 h₁) (Nat.zero_le _),
       lex_le (WithBot.coe_le_coe.2 h₂) (Nat.zero_le _)⟩
 

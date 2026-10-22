@@ -10,8 +10,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 /-!
 # Leaves of finite forests
 
-`[UPSTREAM]` candidate for `Mathlib/Combinatorics/SimpleGraph/Acyclic.lean`: a nonempty finite
-forest has a vertex with at most one neighbour, the forest analogue of
+`[UPSTREAM]` candidate for `Mathlib/Combinatorics/SimpleGraph/Acyclic.lean`: a nonempty forest
+with finitely many edges has a vertex with at most one neighbour, the forest analogue of
 `SimpleGraph.IsTree.exists_vert_degree_one_of_nontrivial`.
 -/
 
@@ -21,9 +21,10 @@ namespace SimpleGraph
 
 variable {V : Type*} {G : SimpleGraph V}
 
-/-- A nonempty finite forest has a vertex with at most one neighbour: an end of a longest
-path. -/
-theorem IsAcyclic.exists_neighborSet_subsingleton [Finite V] [Nonempty V] (hG : G.IsAcyclic) :
+/-- A nonempty forest with finitely many edges has a vertex with at most one neighbour: an end
+of a longest path. -/
+theorem IsAcyclic.exists_neighborSet_subsingleton [Nonempty V] [Finite G.edgeSet]
+    (hG : G.IsAcyclic) :
     ∃ v, (G.neighborSet v).Subsingleton := by
   obtain ⟨u, v, p, hp, hmax⟩ := Walk.exists_isPath_forall_isPath_length_le_length G
   have h {w} (hw : G.Adj u w) : w = p.snd := hG.eq_snd_of_adj_start hp hw <| by_contra fun hw' ↦
