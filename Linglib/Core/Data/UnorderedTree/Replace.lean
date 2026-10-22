@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.Leaves
 public import Linglib.Core.Data.UnorderedTree.DecEq
 public import Linglib.Core.Data.UnorderedTree.Basic
 
@@ -21,11 +23,14 @@ replacing the planar subtrees in a class is `replace` on the class (`UnorderedTr
 ## Main definitions
 
 * `UnorderedTree.replace`, `RoseTree.unorderedReplace`
-* `RoseTree.replaceIf`
+* `RoseTree.replaceIf`, `RoseTree.outerMatches`: the planar substitution and the subtrees it
+  replaces.
 
 ## Main results
 
 * `UnorderedTree.mk_replaceIf`: the quotient map commutes with substitution.
+* `RoseTree.leaves_replaceIf`: substitution trades the leaves of the replaced subtrees for those of
+  the replacement.
 -/
 
 @[expose] public section
@@ -59,6 +64,98 @@ theorem replaceIf_node (a : α) (cs : List (RoseTree α)) :
   rw [replaceIf, replaceIfList_eq]
 
 end ReplaceIf
+
+section OuterMatches
+
+variable (p : RoseTree α → Prop) [DecidablePred p]
+
+mutual
+/-- The outermost subtrees satisfying `p`, in preorder: those `replaceIf p` replaces. -/
+def outerMatches : RoseTree α → List (RoseTree α)
+  | .node a cs => if p (.node a cs) then [.node a cs] else outerMatchesList cs
+/-- `outerMatches` of the trees of a list. -/
+def outerMatchesList : List (RoseTree α) → List (RoseTree α)
+  | [] => []
+  | c :: cs => outerMatches c ++ outerMatchesList cs
+end
+
+theorem outerMatchesList_eq (cs : List (RoseTree α)) :
+    outerMatchesList p cs = cs.flatMap (outerMatches p) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => rw [outerMatchesList, ih, List.flatMap_cons]
+
+theorem outerMatches_node (a : α) (cs : List (RoseTree α)) :
+    outerMatches p (node a cs) =
+      if p (node a cs) then [node a cs] else cs.flatMap (outerMatches p) := by
+  rw [outerMatches, outerMatchesList_eq]
+
+variable {p}
+
+theorem of_mem_outerMatches {s t : RoseTree α} (h : s ∈ outerMatches p t) : p s := by
+  induction t with
+  | node a cs ih =>
+    rw [outerMatches_node] at h
+    split_ifs at h with hp
+    · exact (List.mem_singleton.1 h) ▸ hp
+    · obtain ⟨c, hc, hs⟩ := List.mem_flatMap.1 h
+      exact ih c hc hs
+
+/-- The first subtree in preorder satisfying `p` is an outermost one. -/
+theorem mem_outerMatches_of_find? {s t : RoseTree α}
+    (h : t.subtrees.find? (fun u ↦ decide (p u)) = some s) : s ∈ outerMatches p t := by
+  induction t with
+  | node a cs ih =>
+    rw [subtrees_node, List.find?_cons] at h
+    rw [outerMatches_node]
+    split_ifs with hp
+    · simp only [hp, decide_true] at h
+      exact List.mem_singleton.2 (Option.some.inj h).symm
+    · simp only [hp, decide_false] at h
+      clear hp
+      induction cs with
+      | nil => simp at h
+      | cons c cs ihcs =>
+        rw [List.flatMap_cons, List.find?_append] at h
+        rw [List.flatMap_cons, List.mem_append]
+        cases hc : (c.subtrees.find? fun u ↦ decide (p u)) with
+        | some s' =>
+          rw [hc, Option.some_or] at h
+          exact .inl (ih c List.mem_cons_self (hc.trans h))
+        | none =>
+          rw [hc, Option.none_or] at h
+          exact .inr (ihcs (fun c hc ↦ ih c (List.mem_cons_of_mem _ hc)) h)
+
+variable (p) (r : RoseTree α)
+
+private theorem leaves_replaceIf_list (cs : List (RoseTree α))
+    (ih : ∀ c ∈ cs, (replaceIf p r c).leaves + ((outerMatches p c).map leaves).sum =
+      c.leaves + (outerMatches p c).length • r.leaves) :
+    (cs.map (leaves ∘ replaceIf p r)).sum + ((cs.flatMap (outerMatches p)).map leaves).sum =
+      (cs.map leaves).sum + (cs.flatMap (outerMatches p)).length • r.leaves := by
+  induction cs with
+  | nil => simp
+  | cons x xs ihxs =>
+    simp only [List.map_cons, List.sum_cons, List.flatMap_cons, List.map_append, List.sum_append,
+      List.length_append, add_nsmul, Function.comp_apply]
+    rw [add_add_add_comm, ih x List.mem_cons_self,
+      ihxs fun y hy ↦ ih y (List.mem_cons_of_mem _ hy), add_add_add_comm]
+
+/-- Substitution trades the leaves of the replaced subtrees for copies of the replacement's. -/
+theorem leaves_replaceIf (t : RoseTree α) :
+    (replaceIf p r t).leaves + ((outerMatches p t).map leaves).sum =
+      t.leaves + (outerMatches p t).length • r.leaves := by
+  induction t with
+  | node a cs ih =>
+    rw [replaceIf_node, outerMatches_node]
+    split_ifs
+    · simp [add_comm, one_nsmul]
+    · rcases cs with _ | ⟨c, cs⟩
+      · simp
+      · rw [List.map_cons, leaves_node_cons, leaves_node_cons, ← List.map_cons, List.map_map]
+        exact leaves_replaceIf_list p r _ ih
+
+end OuterMatches
 
 variable [DecidableEq α]
 

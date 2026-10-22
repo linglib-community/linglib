@@ -288,17 +288,18 @@ theorem vos_remnant :
 
 /-! ### Copies -/
 
-/-- Under the copy theory the VOS derivation of (49) leaves its movers in place: the pivot has three
-copies, at its landing site and in both copies of the raised VoiceP, and the verb four. The lower
-copies are the raised VoiceP's own and the three it carries, of Voice, the pivot and the verb;
-contracting them gives the replay with traces, which pronounces the pivot once. -/
+/-- Under the copy theory the VOS derivation of (49) leaves its movers in place: its copy object has
+three copies of the pivot, at its landing site and in both copies of the raised VoiceP, and four of
+the verb, two in each VoiceP. -/
 theorem vos_copies :
-    (ex49.vos.replayWithCopies?.map fun c ↦
-      ((occurrences c.current.unmark ex49.pivot).length,
-        (occurrences c.current.unmark ex49.verb).length, c.current.lowerCopies.length)) =
-      some (3, 4, 4) ∧
-    (ex49.vos.externalize?.map fun t ↦ (occurrences t ex49.pivot).length) = some 1 := by
+    ex49.vos.copyObject?.map (fun C ↦ (C.terms.count ↑ex49.pivot, C.terms.count ↑ex49.verb)) =
+      some (3, 4) := by
   decide +kernel
+
+/-- No token of (49) is merged twice, so its externalization pronounces each once, chain reduction
+deleting the other copies. -/
+theorem vos_pronounced_once : (ex49.vos.surfaceTokens : Multiset _) = ex49.vos.lexTokens :=
+  Derivation.coe_surfaceTokens (by decide +kernel) (by decide +kernel)
 
 /-- The raised remnant carries the trace of the pivot away from its pronounced copy, so in the
 externalized object that trace has no antecedent: a chain read off the traces breaks under

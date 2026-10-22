@@ -6,37 +6,41 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.List.Monadic
+public import Linglib.Core.Data.UnorderedTree.Leaves
 public import Linglib.Core.Order.TreePath
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 
 /-!
 # Derivations with copies
 
-Under the copy theory Internal Merge merges a copy of the mover and leaves the mover in place; the
-trace of the planar replay is the contraction of that lower copy to a leaf (Definition 1.2.4 of the
-algebraic account of Merge), the form externalization reads. The replay with copies marks each
-lower copy with the label of its trace, so that contracting the marks gives the replay with traces
-step by step, a remnant carrying the marks of what left it. On the copy object Internal Merge
-leaves the object as it was and merges a copy of one of its subtrees: Extension and No Tampering.
+Under the copy theory Internal Merge merges a copy of the mover and leaves the mover in place. The
+copy object a derivation builds is a syntactic object, on which Internal Merge is Merge with one of
+the object's own terms, and the terms of each stage are terms of every later one. Externalization
+reads the planar copy object with its lower copies marked: their contraction (Definition 1.2.4 of
+the algebraic account of Merge) is the replay with traces, which pronounces each token once.
 
 ## Main definitions
 
-* `Minimalist.PlanarSyntacticObject.Marked`: a planar syntactic object with its lower copies
-  marked; `unmark`, `contract` and `lowerCopies` read off the copy object, its contraction and the
-  positions contracted.
-* `Minimalist.Step.replayWithCopies?`, `Minimalist.Derivation.replayWithCopies?`: the replay with
-  copies.
+* `Minimalist.Derivation.copyObject?`: the copy object, a syntactic object.
+* `Minimalist.PlanarSyntacticObject.Marked`, `Minimalist.Derivation.replayWithCopies?`: the planar
+  copy object with its lower copies marked, the datum externalization reads; `unmark`, `contract`
+  and `lowerCopies` read off the copy object, its contraction and the cut.
+* `Minimalist.SyntacticObject.yield`, `Minimalist.Derivation.lexTokens`: the pronounced tokens of
+  an object and the tokens a derivation merges.
 
 ## Main results
 
-* `Minimalist.Derivation.map_contract_replayWithCopies?`: contracting the copies gives the replay
-  with traces.
-* `Minimalist.Step.unmark_replayWithCopies?_im`: Internal Merge with copies merges a copy of a
-  subtree of the object onto the object unchanged.
+* `Minimalist.Derivation.copyObject?_append_im`, `copyObject?_append_em`: Internal Merge merges the
+  copy object with one of its terms, External Merge with an item from outside.
+* `Minimalist.Derivation.terms_subset_copyObject?_append`: preservation of terms.
+* `Minimalist.Derivation.map_contract_replayWithCopies?`: contracting the lower copies gives the
+  replay with traces.
+* `Minimalist.Derivation.coe_surfaceTokens`: chain reduction, each merged token pronounced once.
 
 ## References
 
 * [marcolli-chomsky-berwick-2025], Definitions 1.2.4–1.2.6 and §1.8
+* [nunes-2004]
 -/
 
 @[expose] public section
@@ -45,8 +49,9 @@ namespace Minimalist
 
 open RoseTree SyntacticObject
 
-/-- A planar syntactic object with its lower copies marked: the root of each lower copy carries
-`some l`, `l` the label of the trace that stands for it, and every other vertex `none`. -/
+/-- A planar syntactic object with its lower copies marked, the datum externalization reads: the
+root of each lower copy carries `some l`, `l` the label of the trace that stands for it, and every
+other vertex `none`. The copy object itself is a syntactic object, order and marks forgotten. -/
 def PlanarSyntacticObject.Marked : Type :=
   {t : RoseTree (Option (Option LexicalItem.Token) × Vertex) //
     IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))}
@@ -410,5 +415,258 @@ theorem Step.unmark_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
   refine ⟨s, ?_, by simp⟩
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 hs
   exact (Marked.isSubtree_of_mem_outerSubtrees hr).map _
+
+/-! ### The copy object -/
+
+/-- The derivation's copy object, the syntactic object with every copy in place and neither order
+nor marks: the form the semantic interface receives. -/
+def Derivation.copyObject? (d : Derivation)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Option SyntacticObject :=
+  (d.replayWithCopies? τ).map (·.current.unmark.toSyntacticObject)
+
+theorem Derivation.replayWithCopies?_append (d : Derivation) (steps : List Step) :
+    (d.append steps).replayWithCopies? τ = (d.replayWithCopies? τ).bind fun c ↦
+      steps.foldlM (fun c step ↦ step.replayWithCopies? c τ) c := by
+  simp only [replayWithCopies?, append, List.foldlM_append, Option.bind_assoc]
+  rfl
+
+/-- External Merge merges the copy object with the item. -/
+theorem Step.toSyntacticObject_replayWithCopies?_em {side : Edge} {item : SyntacticObject}
+    {c c' : Cfg Marked} (h : (Step.em side item).replayWithCopies? c τ = some c') :
+    c'.current.unmark.toSyntacticObject = merge item c.current.unmark.toSyntacticObject := by
+  obtain ⟨p, st⟩ := c
+  obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 h
+  simp [SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hi]
+
+/-- Internal Merge merges the copy object with one of its own terms. -/
+theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
+    {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c') :
+    ∃ u ∈ c.current.unmark.toSyntacticObject.terms,
+      c'.current.unmark.toSyntacticObject = merge u c.current.unmark.toSyntacticObject := by
+  obtain ⟨s, hs, he⟩ := Step.unmark_replayWithCopies?_im h
+  refine ⟨s.unmark.toSyntacticObject, ?_,
+    by rw [he, PlanarSyntacticObject.toSyntacticObject_attach]⟩
+  exact PlanarSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 hs, rfl⟩
+
+private theorem mem_terms_merge_right (u C : SyntacticObject) : C ∈ (merge u C).terms := by
+  rw [terms_merge]
+  exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inr (self_mem_terms C)))
+
+/-- Each step keeps the copy object as a term of the next. -/
+theorem Step.mem_terms_replayWithCopies? {step : Step} {c c' : Cfg Marked}
+    (h : step.replayWithCopies? c τ = some c') :
+    c.current.unmark.toSyntacticObject ∈ c'.current.unmark.toSyntacticObject.terms := by
+  obtain ⟨p, st⟩ := c
+  cases step with
+  | em side item =>
+    rw [Step.toSyntacticObject_replayWithCopies?_em h]
+    exact mem_terms_merge_right _ _
+  | im mover side =>
+    obtain ⟨u, -, hu⟩ := Step.toSyntacticObject_replayWithCopies?_im h
+    rw [hu]
+    exact mem_terms_merge_right _ _
+  | extract mover =>
+    obtain ⟨s, -, rfl⟩ := Option.map_eq_some_iff.1 h
+    simp only [Marked.unmark_mark]
+    exact self_mem_terms _
+  | remerge side =>
+    rcases st with _ | ⟨m, st⟩
+    · cases h
+    · obtain rfl := Option.some.inj h
+      simp only [Marked.unmark_attach, PlanarSyntacticObject.toSyntacticObject_attach]
+      exact mem_terms_merge_right _ _
+
+private theorem mem_terms_foldlM_replayWithCopies? :
+    ∀ {steps : List Step} {c c' : Cfg Marked},
+      steps.foldlM (fun c step ↦ step.replayWithCopies? c τ) c = some c' →
+        c.current.unmark.toSyntacticObject ∈ c'.current.unmark.toSyntacticObject.terms
+  | [], _, _, h => by obtain rfl := Option.some.inj h; exact self_mem_terms _
+  | step :: steps, _, _, h => by
+    obtain ⟨c₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
+    exact terms_subset_terms (mem_terms.1 (mem_terms_foldlM_replayWithCopies? h))
+      (Step.mem_terms_replayWithCopies? h₁)
+
+/-- Preservation of terms: the terms of the copy object at a stage are terms of the copy object at
+every later stage. -/
+theorem Derivation.terms_subset_copyObject?_append {d : Derivation} {steps : List Step}
+    {C' : SyntacticObject} (h : (d.append steps).copyObject? τ = some C') :
+    ∃ C ∈ d.copyObject? τ, C.terms ⊆ C'.terms := by
+  obtain ⟨c', hc', rfl⟩ := Option.map_eq_some_iff.1 h
+  rw [replayWithCopies?_append] at hc'
+  obtain ⟨c, hc, hc'⟩ := Option.bind_eq_some_iff.1 hc'
+  exact ⟨_, Option.map_eq_some_iff.2 ⟨c, hc, rfl⟩,
+    terms_subset_terms (mem_terms.1 (mem_terms_foldlM_replayWithCopies? hc'))⟩
+
+/-- External Merge merges the copy object with an item from outside. -/
+theorem Derivation.copyObject?_append_em {d : Derivation} {side : Edge} {item : SyntacticObject}
+    {C' : SyntacticObject} (h : (d.append [.em side item]).copyObject? τ = some C') :
+    ∃ C ∈ d.copyObject? τ, C' = merge item C := by
+  obtain ⟨c', hc', rfl⟩ := Option.map_eq_some_iff.1 h
+  rw [replayWithCopies?_append] at hc'
+  obtain ⟨c, hc, hc'⟩ := Option.bind_eq_some_iff.1 hc'
+  exact ⟨_, Option.map_eq_some_iff.2 ⟨c, hc, rfl⟩,
+    Step.toSyntacticObject_replayWithCopies?_em (by simpa using hc')⟩
+
+/-- Internal Merge merges the copy object with one of its own terms, so Internal and External
+Merge are one operation, differing in where its object comes from. -/
+theorem Derivation.copyObject?_append_im {d : Derivation} {mover : SyntacticObject} {side : Edge}
+    {C' : SyntacticObject} (h : (d.append [.im mover side]).copyObject? τ = some C') :
+    ∃ C ∈ d.copyObject? τ, ∃ u ∈ C.terms, C' = merge u C := by
+  obtain ⟨c', hc', rfl⟩ := Option.map_eq_some_iff.1 h
+  rw [replayWithCopies?_append] at hc'
+  obtain ⟨c, hc, hc'⟩ := Option.bind_eq_some_iff.1 hc'
+  exact ⟨_, Option.map_eq_some_iff.2 ⟨c, hc, rfl⟩,
+    Step.toSyntacticObject_replayWithCopies?_im (by simpa using hc')⟩
+
+/-! ### Pronunciation -/
+
+/-- The pronounced tokens of a syntactic object, its lexical leaves. -/
+def SyntacticObject.yield (s : SyntacticObject) : Multiset LexicalItem.Token :=
+  s.val.leaves.filterMap (Sum.elim id fun _ ↦ none)
+
+namespace PlanarSyntacticObject
+
+theorem yield_toSyntacticObject (p : PlanarSyntacticObject) :
+    p.toSyntacticObject.yield = p.val.leaves.filterMap (Sum.elim id fun _ ↦ none) := rfl
+
+/-- The pronounced tokens of a planar object are those of its object, in order. -/
+theorem coe_yield (p : PlanarSyntacticObject) :
+    (p.yield : Multiset LexicalItem.Token) = p.toSyntacticObject.yield := by
+  rw [yield, ← Multiset.filterMap_coe, RoseTree.coe_leafList]
+  rfl
+
+theorem yield_attach (p : PlanarSyntacticObject) (e : Edge) (d : PlanarSyntacticObject) :
+    (p.attach e d).toSyntacticObject.yield =
+      d.toSyntacticObject.yield + p.toSyntacticObject.yield := by
+  cases e <;>
+    simp only [yield_toSyntacticObject, attach, merge_val, RoseTree.leaves_node_cons,
+      List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, Multiset.filterMap_add]
+  exact add_comm _ _
+
+private theorem filterMap_nsmul {α β : Type*} (f : α → Option β) (n : ℕ) (s : Multiset α) :
+    (n • s).filterMap f = n • s.filterMap f := by
+  induction n with
+  | zero => simp
+  | succ n ih => rw [succ_nsmul, Multiset.filterMap_add, ih, succ_nsmul]
+
+private theorem le_one_of_nodup_nsmul {α : Type*} [DecidableEq α] {n : ℕ} {s : Multiset α}
+    (h : (n • s).Nodup) (hs : s ≠ 0) : n ≤ 1 := by
+  obtain ⟨a, ha⟩ := Multiset.exists_mem_of_ne_zero hs
+  have h1 := Multiset.nodup_iff_count_le_one.1 h a
+  rw [Multiset.count_nsmul] at h1
+  exact le_trans (Nat.le_mul_of_pos_right n (Multiset.count_pos.2 ha)) h1
+
+/-- Raising the occurrence of `m` that `find?` locates, with its occurrences replaced by its trace,
+keeps the pronounced tokens when none is pronounced twice. -/
+theorem yield_replace_add_yield {p s : PlanarSyntacticObject} {m : SyntacticObject}
+    (τ : SyntacticObject → Option LexicalItem.Token) (hp : p.toSyntacticObject.yield.Nodup)
+    (hs : p.find? m = some s) :
+    (p.replace m (m.tracePlanar τ)).toSyntacticObject.yield + s.toSyntacticObject.yield =
+      p.toSyntacticObject.yield := by
+  have key := congrArg (Multiset.filterMap (Sum.elim id fun _ ↦ none))
+    (leaves_replaceIf (UnorderedTree.mk · = m.val) (m.tracePlanar τ).val p.val)
+  have hom : (outerMatches (UnorderedTree.mk · = m.val) p.val).map leaves =
+      List.replicate (outerMatches (UnorderedTree.mk · = m.val) p.val).length m.val.leaves := by
+    refine List.eq_replicate_iff.2 ⟨by simp, fun x hx ↦ ?_⟩
+    obtain ⟨o, ho, rfl⟩ := List.mem_map.1 hx
+    rw [← UnorderedTree.leaves_mk, of_mem_outerMatches ho]
+  rw [hom, List.sum_replicate, Multiset.filterMap_add, Multiset.filterMap_add, filterMap_nsmul,
+    filterMap_nsmul, tracePlanar_val, leaves_leaf] at key
+  have htr : (({.inr (τ m)} : Multiset Vertex).filterMap (Sum.elim id fun _ ↦ none)) = 0 := rfl
+  rw [htr, nsmul_zero, add_zero] at key
+  obtain ⟨s', -, hs', rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at hs)
+  have hmem := mem_outerMatches_of_find? hs'
+  have hsm : s'.leaves.filterMap (Sum.elim id fun _ ↦ none) =
+      m.val.leaves.filterMap (Sum.elim id fun _ ↦ none) := by
+    rw [← UnorderedTree.leaves_mk, of_mem_outerMatches hmem]
+  change _ + _ = p.val.leaves.filterMap _ at key
+  change (replaceIf _ _ p.val).leaves.filterMap _ + s'.leaves.filterMap _ =
+    p.val.leaves.filterMap _
+  rw [hsm, tracePlanar_val]
+  by_cases h0 : m.val.leaves.filterMap (Sum.elim id fun _ ↦ none) = 0
+  · rw [h0, nsmul_zero, add_zero] at key
+    rw [h0, add_zero, key]
+  · have hle := le_one_of_nodup_nsmul
+      (Multiset.nodup_of_le (key ▸ Multiset.le_add_left _ _) hp) h0
+    have hk : (outerMatches (UnorderedTree.mk · = m.val) p.val).length = 1 :=
+      le_antisymm hle (List.length_pos_of_mem hmem)
+    rwa [hk, one_nsmul] at key
+
+end PlanarSyntacticObject
+
+/-- The tokens a derivation merges: those of its initial object and of every item it merges
+externally. -/
+def Derivation.lexTokens (d : Derivation) : Multiset LexicalItem.Token :=
+  d.initial.yield + (d.items.map SyntacticObject.yield).sum
+
+/-- The pronounced tokens of a configuration, its object's and those of the copies on its stack. -/
+private def cfgYield (c : Cfg PlanarSyntacticObject) : Multiset LexicalItem.Token :=
+  c.current.toSyntacticObject.yield + (c.stack.map (·.toSyntacticObject.yield)).sum
+
+private theorem Step.cfgYield_replay? {step : Step} {c c' : Cfg PlanarSyntacticObject}
+    (hc : (cfgYield c + (step.items.map SyntacticObject.yield).sum).Nodup)
+    (h : step.replay? c τ = some c') :
+    cfgYield c' = cfgYield c + (step.items.map SyntacticObject.yield).sum := by
+  obtain ⟨p, st⟩ := c
+  have hp : p.toSyntacticObject.yield.Nodup :=
+    Multiset.nodup_of_le ((Multiset.le_add_right _ _).trans (Multiset.le_add_right _ _)) hc
+  cases step with
+  | em side item =>
+    obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.1 h
+    rw [← SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hi]
+    simp only [cfgYield, Step.items, Multiset.map_singleton, Multiset.sum_singleton,
+      PlanarSyntacticObject.yield_attach]
+    abel
+  | im mover side =>
+    obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
+    simp only [cfgYield, Step.items, Multiset.map_zero, Multiset.sum_zero, add_zero,
+      PlanarSyntacticObject.yield_attach]
+    rw [add_comm s.toSyntacticObject.yield, PlanarSyntacticObject.yield_replace_add_yield τ hp hs]
+  | extract mover =>
+    obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
+    simp only [cfgYield, Step.items, Multiset.map_zero, Multiset.sum_zero, add_zero, List.map_cons,
+      List.sum_cons]
+    rw [← add_assoc, PlanarSyntacticObject.yield_replace_add_yield τ hp hs]
+  | remerge side =>
+    rcases st with _ | ⟨m, st⟩
+    · cases h
+    · obtain rfl := Option.some.inj h
+      simp only [cfgYield, Step.items, Multiset.map_zero, Multiset.sum_zero, add_zero,
+        List.map_cons, List.sum_cons, PlanarSyntacticObject.yield_attach]
+      abel
+
+private theorem cfgYield_foldlM_replay? : ∀ {steps : List Step} {c c' : Cfg PlanarSyntacticObject},
+    steps.foldlM (fun c step ↦ step.replay? c τ) c = some c' →
+    (cfgYield c + ((Step.itemsList steps).map SyntacticObject.yield).sum).Nodup →
+    cfgYield c' = cfgYield c + ((Step.itemsList steps).map SyntacticObject.yield).sum
+  | [], _, _, h, _ => by obtain rfl := Option.some.inj h; simp
+  | step :: steps, c, _, h, hn => by
+    obtain ⟨c₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
+    rw [Step.itemsList_cons, Multiset.map_add, Multiset.sum_add, ← add_assoc] at hn ⊢
+    have e₁ := Step.cfgYield_replay? (Multiset.nodup_of_le (Multiset.le_add_right _ _) hn) h₁
+    rw [← e₁] at hn ⊢
+    exact cfgYield_foldlM_replay? h hn
+
+/-- When no token is merged twice, a derivation pronounces each token it merges once, in its
+object or in a copy left on the stack, however many copies its movements leave. -/
+theorem Derivation.yield_replay? {d : Derivation} {c : Cfg PlanarSyntacticObject}
+    (hd : d.lexTokens.Nodup) (h : d.replay? τ = some c) :
+    c.current.toSyntacticObject.yield + (c.stack.map (·.toSyntacticObject.yield)).sum =
+      d.lexTokens := by
+  obtain ⟨p, hp, h⟩ := Option.bind_eq_some_iff.1 h
+  have h0 : cfgYield ⟨p, []⟩ = d.initial.yield := by
+    simp [cfgYield, SyntacticObject.toSyntacticObject_of_toPlanarLeaf? hp]
+  have := cfgYield_foldlM_replay? h (by rwa [h0])
+  rwa [h0] at this
+
+/-- Chain reduction ([nunes-2004]): when no token is merged twice and no extracted copy is left on
+the stack, a derivation pronounces every token it merges exactly once. -/
+theorem Derivation.coe_surfaceTokens {d : Derivation} (hd : d.lexTokens.Nodup)
+    (h : d.replay?.map (·.stack) = some []) : (d.surfaceTokens : Multiset _) = d.lexTokens := by
+  obtain ⟨c, hc, hst⟩ := Option.map_eq_some_iff.1 h
+  have := d.yield_replay? hd hc
+  rw [hst, List.map_nil, List.sum_nil, add_zero] at this
+  rw [surfaceTokens, externalize?, hc, Option.map_some, Option.map_some, Option.getD_some,
+    PlanarSyntacticObject.coe_yield, this]
 
 end Minimalist
