@@ -5,15 +5,14 @@ public import Linglib.Morphology.Paradigm.Basic
 public import Linglib.Syntax.Number.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Data.Fintype.Sets
 
 /-!
 # Modern Greek nominal declensions
 
 The eight nominal inflection classes of Modern Greek by their case–number endings, after
 Ralli's description as Ackerman and Malouf simplify it (stem alternations and stress set aside),
-as a paradigm system whose classes are the paper's rows 1–8 and whose cells pair the four cases
-with the two numbers.
+as a paradigm system whose classes are the paper's rows 1–8 and whose cells pair a number with
+one of the four cases.
 
 ## References
 
@@ -26,66 +25,45 @@ namespace Greek.StandardModern.Declension
 
 open Morphology
 
-/-- The nominal endings. -/
-inductive Ending
-  | os
-  | u
-  | on
-  | e
-  | i
-  | us
-  | s
-  | zero
-  | es
-  | is
-  | o
-  | a
-  deriving DecidableEq, Repr
+/-- The rows of the cells: the singular and the plural. -/
+inductive Row where
+  | sg
+  | pl
+  deriving DecidableEq, Fintype, Repr
 
-/-- Modern Greek distinguishes the singular and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
-
-/-- A cell pairs a case with a number. -/
-abbrev Cell : Type := Case × numberSystem.values
+/-- The number of a row. -/
+def Row.number : Row → Number
+  | .sg => .singular
+  | .pl => .plural
 
 /-- The nominative singular. -/
-abbrev nomSg : Cell := (.nom, numberSystem.value .singular)
+abbrev nomSg : Row × Case := (.sg, .nom)
 /-- The genitive singular. -/
-abbrev genSg : Cell := (.gen, numberSystem.value .singular)
+abbrev genSg : Row × Case := (.sg, .gen)
 /-- The accusative singular. -/
-abbrev accSg : Cell := (.acc, numberSystem.value .singular)
+abbrev accSg : Row × Case := (.sg, .acc)
 /-- The vocative singular. -/
-abbrev vocSg : Cell := (.voc, numberSystem.value .singular)
+abbrev vocSg : Row × Case := (.sg, .voc)
 /-- The nominative plural. -/
-abbrev nomPl : Cell := (.nom, numberSystem.value .plural)
+abbrev nomPl : Row × Case := (.pl, .nom)
 /-- The genitive plural. -/
-abbrev genPl : Cell := (.gen, numberSystem.value .plural)
+abbrev genPl : Row × Case := (.pl, .gen)
 /-- The accusative plural. -/
-abbrev accPl : Cell := (.acc, numberSystem.value .plural)
+abbrev accPl : Row × Case := (.pl, .acc)
 /-- The vocative plural. -/
-abbrev vocPl : Cell := (.voc, numberSystem.value .plural)
+abbrev vocPl : Row × Case := (.pl, .voc)
 
-/-- `row nom gen acc voc` gives each case its ending, in the column order of the paper's
-Table 1. -/
-def row (nom gen acc voc : Ending) : Case → Ending
-  | .nom => nom
-  | .gen => gen
-  | .acc => acc
-  | .voc => voc
-
-/-- The singular and plural endings of the eight declensions, rows 1–8 of the paper's Table 1. -/
-def endings : Fin 8 → (Case → Ending) × (Case → Ending) :=
-  ![(row .os .u .on .e, row .i .on .us .i),
-    (row .s .zero .zero .zero, row .es .on .es .es),
-    (row .zero .s .zero .zero, row .es .on .es .es),
-    (row .zero .s .zero .zero, row .is .on .is .is),
-    (row .o .u .o .o, row .a .on .a .a),
-    (row .zero .u .zero .zero, row .a .on .a .a),
-    (row .os .us .os .os, row .i .on .i .i),
-    (row .zero .os .zero .zero, row .a .on .a .a)]
-
-/-- The eight declensions as a paradigm system over the case–number cells. -/
-def nominal : ParadigmSystem (Fin 8) Cell Ending := fun d σ ↦
-  (numberSystem.elim (endings d).1 (endings d).2) σ.2 σ.1
+/-- The endings of the eight declensions, rows 1–8 of the paper's Table 1, *-∅* the zero
+ending. -/
+def nominal : ParadigmSystem (Fin 8) (Row × Case) String := ![
+  fun | (.sg, .nom) => "-os" | (.sg, .gen) => "-u" | (.sg, .acc) => "-on" | (.sg, .voc) => "-e"
+      | (.pl, .gen) => "-on" | (.pl, .acc) => "-us" | (.pl, _) => "-i",
+  fun | (.sg, .nom) => "-s" | (.sg, _) => "-∅" | (.pl, .gen) => "-on" | (.pl, _) => "-es",
+  fun | (.sg, .gen) => "-s" | (.sg, _) => "-∅" | (.pl, .gen) => "-on" | (.pl, _) => "-es",
+  fun | (.sg, .gen) => "-s" | (.sg, _) => "-∅" | (.pl, .gen) => "-on" | (.pl, _) => "-is",
+  fun | (.sg, .gen) => "-u" | (.sg, _) => "-o" | (.pl, .gen) => "-on" | (.pl, _) => "-a",
+  fun | (.sg, .gen) => "-u" | (.sg, _) => "-∅" | (.pl, .gen) => "-on" | (.pl, _) => "-a",
+  fun | (.sg, .gen) => "-us" | (.sg, _) => "-os" | (.pl, .gen) => "-on" | (.pl, _) => "-i",
+  fun | (.sg, .gen) => "-os" | (.sg, _) => "-∅" | (.pl, .gen) => "-on" | (.pl, _) => "-a"]
 
 end Greek.StandardModern.Declension

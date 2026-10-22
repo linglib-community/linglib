@@ -33,6 +33,8 @@ conditional entropy is zero.
 * `ParadigmSystem.realizations`, `ParadigmSystem.maxRealizations`,
   `ParadigmSystem.ParadigmEconomy`: enumerative counts and the paradigm economy principle.
 * `ParadigmSystem.avgCondEntropy`: the average conditional entropy of one cell given another.
+* `ParadigmSystem.cellForm`: the form at a cell valued in the cell's realizations, through which
+  the entropy statements hold for any type of forms.
 
 ## Main statements
 
@@ -96,20 +98,33 @@ theorem predicts_of_mem (hj : j ∈ S) : M.Predicts S j :=
 
 section Counting
 
-variable (M) [Fintype D] [Fintype Cell] [DecidableEq Form]
+variable (M) [Fintype D] [DecidableEq Form]
 
 instance : Decidable (M.Predicts S j) := decidable_of_iff _ predicts_iff.symm
 
-instance : Decidable (M.IsPrincipalPartSet S) :=
+instance [Fintype Cell] : Decidable (M.IsPrincipalPartSet S) :=
   inferInstanceAs (Decidable (∀ j, M.Predicts S j))
 
-instance : Decidable M.IsVocabularClear :=
+instance [Fintype Cell] : Decidable M.IsVocabularClear :=
   inferInstanceAs (Decidable (∀ c, M.IsPrincipalPartSet {c}))
 
 /-! ### Enumerative counts -/
 
 /-- The forms realizing cell `c`. -/
 def realizations (c : Cell) : Finset Form := Finset.univ.image (M · c)
+
+/-- The form at the cell `c`, valued in the cell's realizations. -/
+def cellForm (c : Cell) (d : D) : M.realizations c :=
+  ⟨M d c, Finset.mem_image_of_mem _ (Finset.mem_univ d)⟩
+
+instance [Nonempty D] (c : Cell) : Nonempty (M.realizations c) :=
+  let ⟨d⟩ := ‹Nonempty D›; ⟨M.cellForm c d⟩
+
+theorem factorsThrough_cellForm_iff :
+    (M.cellForm c).FactorsThrough (M.cellForm j) ↔ (M · c).FactorsThrough (M · j) :=
+  forall₂_congr fun _ _ ↦ by simp [cellForm, Subtype.ext_iff]
+
+variable [Fintype Cell]
 
 /-- The largest number of rival realizations of a single cell. -/
 def maxRealizations : ℕ := Finset.univ.sup fun c ↦ (M.realizations c).card
@@ -158,10 +173,10 @@ theorem avgCondEntropy_nonneg (μ : Measure D) : 0 ≤ M.avgCondEntropy μ :=
 
 end Average
 
-variable [Fintype D] [MeasurableSingletonClass Form]
+variable [Fintype D] [MeasurableSingletonClass Form] [DecidableEq Form]
 
 /-- A cell with at most one realization has zero entropy. -/
-theorem entropy_eq_zero_of_card_realizations_le_one [DecidableEq Form] (μ : Measure D)
+theorem entropy_eq_zero_of_card_realizations_le_one (μ : Measure D)
     [IsProbabilityMeasure μ] (h : (M.realizations c).card ≤ 1) : H[(M · c) ; μ] = 0 := by
   rcases isEmpty_or_nonempty D with hD | ⟨⟨d₀⟩⟩
   · exact absurd (measure_univ (μ := μ)) (by simp [Set.univ_eq_empty_iff.2 hD])
@@ -170,23 +185,37 @@ theorem entropy_eq_zero_of_card_realizations_le_one [DecidableEq Form] (μ : Mea
         (Finset.mem_image_of_mem _ (Finset.mem_univ d₀))
     rw [this, entropy_const]
 
-variable [MeasurableSingletonClass D] [Fintype Form]
+variable [MeasurableSingletonClass D]
+
+/-- The forms at two cells carry the same conditional entropy valued in the cells' realizations,
+which are finite whatever the type of forms. -/
+theorem condEntropy_cellForm (μ : Measure D) :
+    H[M.cellForm c₁ | M.cellForm c₂ ; μ] = H[(M · c₁) | (M · c₂) ; μ] := by
+  have hval : MeasurableEmbedding (Subtype.val : M.realizations c₂ → Form) :=
+    MeasurableEmbedding.subtype_coe (M.realizations c₂).measurableSet
+  rw [← condEntropy_comp_of_injective (M.cellForm c₂) μ (measurable_of_finite _)
+    measurable_subtype_coe Subtype.val_injective,
+    ← condEntropy_comp_right_of_measurableEmbedding _ μ (measurable_of_finite _) hval]
+  rfl
 
 /-- A predicted cell has zero conditional entropy given its predictor, whatever the class
 probabilities. -/
-theorem condEntropy_eq_zero_of_predicts [Nonempty Form] (μ : Measure D)
-    [IsProbabilityMeasure μ] (h : M.Predicts {c₂} c₁) : H[(M · c₁) | (M · c₂) ; μ] = 0 := by
-  obtain ⟨f, hf⟩ := (Function.factorsThrough_iff _).1 (predicts_singleton_iff.1 h)
-  rw [hf]
+theorem condEntropy_eq_zero_of_predicts (μ : Measure D) [IsProbabilityMeasure μ]
+    (h : M.Predicts {c₂} c₁) : H[(M · c₁) | (M · c₂) ; μ] = 0 := by
+  have := nonempty_of_isProbabilityMeasure μ
+  obtain ⟨f, hf⟩ := (Function.factorsThrough_iff _).1
+    ((M.factorsThrough_cellForm_iff).2 (predicts_singleton_iff.1 h))
+  rw [← condEntropy_cellForm, hf]
   exact condEntropy_comp_self μ (measurable_of_finite _) f
 
 /-- Under the uniform measure on the classes, one cell predicts another exactly when the
 conditional entropy of the second given the first vanishes. -/
-theorem predicts_iff_condEntropy_eq_zero [Nonempty D] [Nonempty Form] :
+theorem predicts_iff_condEntropy_eq_zero [Nonempty D] :
     M.Predicts {c₂} c₁ ↔ H[(M · c₁) | (M · c₂) ; uniformOn (Set.univ : Set D)] = 0 := by
   have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := D)) Set.univ_nonempty
-  rw [condEntropy_eq_zero_iff _ (measurable_of_finite _) (measurable_of_finite _),
-    predicts_singleton_iff, Function.factorsThrough_iff]
+  rw [← condEntropy_cellForm, condEntropy_eq_zero_iff _ (measurable_of_finite _)
+    (measurable_of_finite _), predicts_singleton_iff, ← M.factorsThrough_cellForm_iff,
+    Function.factorsThrough_iff]
   simp only [uniformOn_univ_ae_iff, funext_iff, Function.comp_apply]
 
 variable [Fintype Cell] [DecidableEq Cell]
@@ -201,8 +230,9 @@ theorem avgCondEntropy_le_measureEntropy (μ : Measure D) [IsProbabilityMeasure 
     calc _ ≤ ∑ c₁ : Cell, ((Finset.univ.erase c₁).card : ℝ) * Hm[μ] :=
           Finset.sum_le_sum fun c₁ _ ↦ by
             rw [← nsmul_eq_mul, ← Finset.sum_const]
-            exact Finset.sum_le_sum fun c₂ _ ↦ (condEntropy_le_entropy μ (measurable_of_finite _)
-              (measurable_of_finite _)).trans (entropy_le_measureEntropy μ _)
+            exact Finset.sum_le_sum fun c₂ _ ↦ condEntropy_cellForm (M := M) μ ▸
+              (condEntropy_le_entropy μ (measurable_of_finite _) (measurable_of_finite _)).trans
+                (entropy_le_measureEntropy μ _)
       _ = _ := by simp [Finset.card_erase_of_mem, mul_assoc]
   rcases (Nat.cast_nonneg (α := ℝ) (Fintype.card Cell * (Fintype.card Cell - 1))).eq_or_lt
     with h0 | hpos
@@ -211,7 +241,7 @@ theorem avgCondEntropy_le_measureEntropy (μ : Measure D) [IsProbabilityMeasure 
   · rw [avgCondEntropy, div_le_iff₀ hpos, mul_comm]
     exact hle
 
-theorem avgCondEntropy_eq_zero_of_isVocabularClear [Nonempty Form] (μ : Measure D)
+theorem avgCondEntropy_eq_zero_of_isVocabularClear (μ : Measure D)
     [IsProbabilityMeasure μ] (h : M.IsVocabularClear) : M.avgCondEntropy μ = 0 := by
   rw [avgCondEntropy, Finset.sum_eq_zero, zero_div]
   exact fun c₁ _ ↦ Finset.sum_eq_zero fun c₂ _ ↦
@@ -219,7 +249,7 @@ theorem avgCondEntropy_eq_zero_of_isVocabularClear [Nonempty Form] (μ : Measure
 
 /-- Vocabular clarity is zero average conditional entropy under the uniform measure
 ([ackerman-malouf-2013]: "average conditional entropy, as a consequence, should be zero"). -/
-theorem isVocabularClear_iff_avgCondEntropy_eq_zero [Nonempty D] [Nonempty Form] :
+theorem isVocabularClear_iff_avgCondEntropy_eq_zero [Nonempty D] :
     M.IsVocabularClear ↔ M.avgCondEntropy (uniformOn Set.univ) = 0 := by
   have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := D)) Set.univ_nonempty
   refine ⟨avgCondEntropy_eq_zero_of_isVocabularClear _, fun h c j ↦ ?_⟩

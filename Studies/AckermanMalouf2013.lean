@@ -33,6 +33,8 @@ sharpened to what its Table 6 supports.
 
 ## Implementation notes
 
+* Forms are the strings the paper's tables print, *-∅* the Greek zero ending, and outcomes
+  carry the discrete σ-algebra on `String`.
 * Class probabilities are `uniformOn Set.univ`, the paper's (5), under which every printed
   number is computed; entropies are in nats, the paper's bits are these divided by `log 2`.
 * `avgCondEntropy` averages over ordered pairs of distinct cells, which reproduces Table 2's
@@ -44,7 +46,7 @@ sharpened to what its Table 6 supports.
 ## TODO
 
 * `greek_avgCondEntropy`: the closed form of Table 2's grand average, provable from
-  `condEntropy_uniformOn_univ` with a per-pair count table.
+  `condEntropy_uniformOn_univ_finset` with a per-pair count table.
 * Table 5's average entropies and the tone system's realization count are computed on the
   appendix's full Table A6 data and do not follow from Tables 6–7, so they are not stated.
 
@@ -62,24 +64,10 @@ namespace AckermanMalouf2013
 open Morphology Morphology.ParadigmSystem MeasureTheory ProbabilityTheory InformationTheory Real
 open Greek.StandardModern.Declension Burmeso.ObjectAgreement Mazatec.Verbs
 
-/-! ### Instances for the fragments' form types -/
+/-! ### Forms as outcomes -/
 
-instance : Fintype Ending :=
-  ⟨{.os, .u, .on, .e, .i, .us, .s, .zero, .es, .is, .o, .a}, fun x ↦ by cases x <;> decide⟩
-
-instance : Nonempty Ending := ⟨.on⟩
-instance : MeasurableSpace Ending := ⊤
-instance : MeasurableSingletonClass Ending := ⟨fun _ ↦ trivial⟩
-
-instance : Fintype AgreementPrefix :=
-  ⟨{.j, .s, .g, .b, .t, .n}, fun x ↦ by cases x <;> decide⟩
-
-instance : Nonempty AgreementPrefix := ⟨.j⟩
-instance : MeasurableSpace AgreementPrefix := ⊤
-instance : MeasurableSingletonClass AgreementPrefix := ⟨fun _ ↦ trivial⟩
-
-instance : MeasurableSpace Vowel := ⊤
-instance : MeasurableSingletonClass Vowel := ⟨fun _ ↦ trivial⟩
+instance : MeasurableSpace String := ⊤
+instance : MeasurableSingletonClass String := ⟨fun _ ↦ trivial⟩
 
 /-! ### Modern Greek: enumerative complexity -/
 
@@ -110,7 +98,7 @@ remain. -/
 theorem greek_not_predicts : ¬ nominal.Predicts {accPl} genSg := by decide
 
 /-- An accusative plural in *-i* fixes the genitive singular in *-us*. -/
-theorem greek_accPl_i_genSg : ∀ d, nominal d accPl = .i → nominal d genSg = .us := by decide
+theorem greek_accPl_i_genSg : ∀ d, nominal d accPl = "-i" → nominal d genSg = "-us" := by decide
 
 /-- Nominative singular, genitive singular, and accusative plural are principal parts; the
 last two alone are not. -/
@@ -141,9 +129,9 @@ theorem greek_condEntropy_nomPl_accPl :
 /-- In the paper's (13), an accusative plural in *-a* leaves the genitive singular split two
 to one, carrying `log 3 − (2/3) log 2` nats = 0.918 bits. -/
 theorem greek_genSg_given_accPl_a :
-    H[(nominal · genSg) ; uniformOn ((nominal · accPl) ⁻¹' {Ending.a})] =
+    H[(nominal · genSg) ; uniformOn ((nominal · accPl) ⁻¹' {"-a"})] =
       log 3 - 2 / 3 * log 2 := by
-  have hA : (nominal · accPl) ⁻¹' {Ending.a} = ↑({4, 5, 7} : Finset (Fin 8)) := by
+  have hA : (nominal · accPl) ⁻¹' {"-a"} = ↑({4, 5, 7} : Finset (Fin 8)) := by
     ext d
     simp only [Set.mem_preimage, Set.mem_singleton_iff, Finset.coe_insert, Finset.coe_singleton,
       Set.mem_insert_iff]
@@ -151,20 +139,18 @@ theorem greek_genSg_given_accPl_a :
   rw [hA]
   have := isProbabilityMeasure_uniformOn
     (Set.toFinite (↑({4, 5, 7} : Finset (Fin 8)) : Set (Fin 8))) ⟨4, by simp⟩
-  rw [entropy_eq_sum (measurable_of_finite _)]
-  have key : ∀ r : Ending,
+  rw [entropy_eq_sum_finset (measurable_of_finite _) _
+    (A := {"-u", "-∅", "-s", "-us", "-os"}) (by decide)]
+  have key : ∀ r : String,
       ((↑({4, 5, 7} : Finset (Fin 8)) ∩ (nominal · genSg) ⁻¹' {r}).ncard : ℝ)
         = (({4, 5, 7} : Finset (Fin 8)).filter (nominal · genSg = r)).card := fun r ↦ by
     rw [← Set.ncard_coe_finset, Finset.coe_filter]
     congr 2
-  have cards : ∀ r : Ending, (({4, 5, 7} : Finset (Fin 8)).filter (nominal · genSg = r)).card
-      = if r = .u then 2 else if r = .os then 1 else 0 := by decide
-  simp only [uniformOn_real_apply, key, cards, Set.ncard_coe_finset, Nat.cast_ite,
-    Nat.cast_ofNat, Nat.cast_one, Nat.cast_zero]
-  rw [show (Finset.univ : Finset Ending)
-      = {.os, .u, .on, .e, .i, .us, .s, .zero, .es, .is, .o, .a} from rfl]
+  have cards : ∀ r ∈ ({"-u", "-∅", "-s", "-us", "-os"} : Finset String),
+      (({4, 5, 7} : Finset (Fin 8)).filter (nominal · genSg = r)).card
+        = if r = "-u" then 2 else if r = "-os" then 1 else 0 := by decide
+  rw [Finset.sum_congr rfl fun r hr ↦ by rw [uniformOn_real_apply, key, cards r hr]]
   simp (disch := decide) only [Finset.sum_insert, Finset.sum_singleton]
-  simp only [reduceCtorEq, ite_true, ite_false]
   norm_num [negMulLog, log_div]
   ring
 
@@ -172,18 +158,19 @@ theorem greek_genSg_given_accPl_a :
 `(3/8) log 3` nats = 0.594 bits. -/
 theorem greek_genSg_given_accPl :
     H[(nominal · genSg) | (nominal · accPl) ; uniformOn Set.univ] = 3 / 8 * log 3 := by
-  rw [condEntropy_uniformOn_univ]
-  have cards1 : ∀ y : Ending, (Finset.univ.filter fun d => nominal d accPl = y).card
-      = if y = .us ∨ y = .is ∨ y = .i then 1 else if y = .es then 2 else
-        if y = .a then 3 else 0 := by decide
-  have cards2 : ∀ y x : Ending,
-      (Finset.univ.filter fun d => nominal d accPl = y ∧ nominal d genSg = x).card
-      = if (y = .us ∧ x = .u) ∨ (y = .es ∧ (x = .zero ∨ x = .s)) ∨ (y = .is ∧ x = .s)
-          ∨ (y = .a ∧ x = .os) ∨ (y = .i ∧ x = .us) then 1 else
-        if y = .a ∧ x = .u then 2 else 0 := by decide
-  simp only [cards1, cards2, Fintype.card_fin]
-  rw [show (Finset.univ : Finset Ending)
-      = {.os, .u, .on, .e, .i, .us, .s, .zero, .es, .is, .o, .a} from rfl]
+  rw [condEntropy_uniformOn_univ_finset (A := {"-u", "-∅", "-s", "-us", "-os"})
+    (B := {"-us", "-es", "-is", "-a", "-i"}) (by decide) (by decide)]
+  have cards1 : ∀ y ∈ ({"-us", "-es", "-is", "-a", "-i"} : Finset String),
+      (Finset.univ.filter fun d => nominal d accPl = y).card
+        = if y = "-es" then 2 else if y = "-a" then 3 else 1 := by decide
+  have cards2 : ∀ y ∈ ({"-us", "-es", "-is", "-a", "-i"} : Finset String),
+      ∀ x ∈ ({"-u", "-∅", "-s", "-us", "-os"} : Finset String),
+        (Finset.univ.filter fun d => nominal d accPl = y ∧ nominal d genSg = x).card
+          = if (y = "-us" ∧ x = "-u") ∨ (y = "-es" ∧ (x = "-∅" ∨ x = "-s")) ∨
+              (y = "-is" ∧ x = "-s") ∨ (y = "-a" ∧ x = "-os") ∨ (y = "-i" ∧ x = "-us") then 1
+            else if y = "-a" ∧ x = "-u" then 2 else 0 := by decide
+  simp only [Fintype.card_fin]
+  simp (disch := assumption) only [cards1, cards2]
   simp (disch := decide) only [Finset.sum_insert, Finset.sum_singleton]
   norm_num [negMulLog, log_div]
   ring
@@ -216,8 +203,8 @@ theorem mazatec_vowels_not_clear : ¬ finalVowels.IsVocabularClear := by decide
 
 /-- The first and second person plural vowels are constant across classes. -/
 theorem mazatec_vowels_constant :
-    H[(finalVowels · firstPl) ; uniformOn Set.univ] = 0 ∧
-      H[(finalVowels · secondPl) ; uniformOn Set.univ] = 0 :=
+    H[(finalVowels · .pl1) ; uniformOn Set.univ] = 0 ∧
+      H[(finalVowels · .pl2) ; uniformOn Set.univ] = 0 :=
   ⟨entropy_eq_zero_of_card_realizations_le_one _ (by decide),
     entropy_eq_zero_of_card_realizations_le_one _ (by decide)⟩
 
@@ -225,8 +212,8 @@ theorem mazatec_vowels_constant :
 The third person predicts the second singular yet is no principal part, while the first
 singular predicts the first inclusive. -/
 theorem mazatec_vowels_diagnosticity :
-    finalVowels.Predicts {third} secondSg ∧ ¬ finalVowels.IsPrincipalPartSet {third} ∧
-      finalVowels.Predicts {firstSg} firstIncl := by
+    finalVowels.Predicts {.third} .sg2 ∧ ¬ finalVowels.IsPrincipalPartSet {.third} ∧
+      finalVowels.Predicts {.sg1} .incl := by
   decide
 
 /-- No cell of the tone patterns is diagnostic of class membership. -/

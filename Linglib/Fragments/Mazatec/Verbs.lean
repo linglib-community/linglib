@@ -4,17 +4,13 @@ public import Linglib.Morphology.Paradigm.Basic
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Person.Basic
 public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Data.Fintype.Option
-public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Data.Fintype.Sets
 
 /-!
 # Chiquihuitlán Mazatec verb inflection
 
 Two of the three cross-cutting inflection-class systems of Chiquihuitlán Mazatec verbs over the
 cells 1sg, 2sg, 3, 1incl, 1pl, 2pl, after Jamieson's description as Ackerman and Malouf tabulate
-it: the ten final-vowel classes and the six neutral-aspect tone patterns. A cell is a person with
-a number where the paper's label gives one.
+it: the ten final-vowel classes and the six neutral-aspect tone patterns.
 
 ## References
 
@@ -27,90 +23,46 @@ namespace Mazatec.Verbs
 
 open Morphology
 
-/-- The cells 1sg, 2sg, 3, 1incl, 1pl and 2pl as person and number, the number given where the
-paper's label gives one. The first plural is exclusive, the inclusive being a cell of its own. -/
-def cells : Finset (Person × Option Number) :=
-  {(.first, some .singular), (.second, some .singular), (.third, none), (.firstInclusive, none),
-    (.firstExclusive, some .plural), (.second, some .plural)}
+/-- The cells of the paper's Tables 6 and 7: 1sg, 2sg, 3, 1incl, 1pl and 2pl. -/
+inductive Row where
+  | sg1 | sg2 | third | incl | pl1 | pl2
+  deriving DecidableEq, Fintype, Repr
 
-/-- A cell is one of the six. -/
-abbrev Cell : Type := cells
+/-- The person of a row. The first plural is exclusive, the inclusive being a row of its own. -/
+def Row.person : Row → Person
+  | .sg1 => .first
+  | .sg2 | .pl2 => .second
+  | .third => .third
+  | .incl => .firstInclusive
+  | .pl1 => .firstExclusive
 
-/-- The first person singular. -/
-abbrev firstSg : Cell := ⟨(.first, some .singular), by decide⟩
-/-- The second person singular. -/
-abbrev secondSg : Cell := ⟨(.second, some .singular), by decide⟩
-/-- The third person. -/
-abbrev third : Cell := ⟨(.third, none), by decide⟩
-/-- The first person inclusive. -/
-abbrev firstIncl : Cell := ⟨(.firstInclusive, none), by decide⟩
-/-- The first person plural, exclusive. -/
-abbrev firstPl : Cell := ⟨(.firstExclusive, some .plural), by decide⟩
-/-- The second person plural. -/
-abbrev secondPl : Cell := ⟨(.second, some .plural), by decide⟩
+/-- The number of a row, none where the paper's label gives none. -/
+def Row.number : Row → Option Number
+  | .sg1 | .sg2 => some .singular
+  | .pl1 | .pl2 => some .plural
+  | .third | .incl => none
 
-/-- `row sg1 sg2 third incl pl1 pl2` gives each cell its value, in the column order of the
-paper's Tables 6 and 7. -/
-def row {α : Type*} (sg1 sg2 third incl pl1 pl2 : α) (σ : Cell) : α :=
-  match σ.1 with
-  | (.first, some .singular) => sg1
-  | (.second, some .singular) => sg2
-  | (.third, none) => third
-  | (.firstInclusive, none) => incl
-  | (.firstExclusive, some .plural) => pl1
-  | _ => pl2
+/-- The ten final-vowel classes, the paper's Table 6. -/
+def finalVowels : ParadigmSystem (Fin 10) Row String := ![
+  fun | .sg1 => "-æ" | .sg2 | .third => "-i" | .incl => "-ẽ" | .pl1 => "-ĩ" | .pl2 => "-ũ",
+  fun | .sg1 => "-æ" | .sg2 | .third => "-e" | .incl => "-ẽ" | .pl1 => "-ĩ" | .pl2 => "-ũ",
+  fun | .sg1 | .third => "-æ" | .sg2 => "-e" | .incl => "-ẽ" | .pl1 => "-ĩ" | .pl2 => "-ũ",
+  fun | .sg1 | .third => "-u" | .sg2 => "-i" | .incl | .pl2 => "-ũ" | .pl1 => "-ĩ",
+  fun | .sg1 | .third => "-o" | .sg2 => "-e" | .incl => "-õ" | .pl1 => "-ĩ" | .pl2 => "-ũ",
+  fun | .sg1 | .third => "-a" | .sg2 => "-e" | .incl => "-ã" | .pl1 => "-ĩ" | .pl2 => "-ũ",
+  fun | .sg1 | .incl => "-ẽ" | .sg2 | .third | .pl1 => "-ĩ" | .pl2 => "-ũ",
+  fun | .sg1 | .third | .incl => "-ẽ" | .sg2 | .pl1 => "-ĩ" | .pl2 => "-ũ",
+  fun | .sg1 | .third | .incl | .pl2 => "-ũ" | .sg2 | .pl1 => "-ĩ",
+  fun | .sg1 | .incl => "-ã" | .sg2 | .pl1 => "-ĩ" | .third => "-ẽ" | .pl2 => "-ũ"]
 
-/-- Final vowels, nasal ones suffixed `N`. -/
-inductive Vowel
-  | ae
-  | i
-  | e
-  | u
-  | o
-  | a
-  | eN
-  | iN
-  | uN
-  | oN
-  | aN
-  deriving DecidableEq, Repr
-
-/-- The ten final-vowel classes. -/
-def finalVowels : ParadigmSystem (Fin 10) Cell Vowel :=
-  ![row .ae .i .i .eN .iN .uN,
-    row .ae .e .e .eN .iN .uN,
-    row .ae .e .ae .eN .iN .uN,
-    row .u .i .u .uN .iN .uN,
-    row .o .e .o .oN .iN .uN,
-    row .a .e .a .aN .iN .uN,
-    row .eN .iN .iN .eN .iN .uN,
-    row .eN .iN .eN .eN .iN .uN,
-    row .uN .iN .uN .uN .iN .uN,
-    row .aN .iN .eN .aN .iN .uN]
-
-/-- Tone patterns, named by their tone numbers. -/
-inductive Tone
-  | t3_1
-  | t3_31
-  | t3_14
-  | t1_1
-  | t2_2
-  | t2_24
-  | t3_2
-  | t1_43
-  | t3_24
-  | t14_42
-  | t14_34
-  | t14_3
-  deriving DecidableEq, Repr
-
-/-- The six neutral-aspect tone patterns. -/
-def tones : ParadigmSystem (Fin 6) Cell Tone :=
-  ![row .t3_1 .t3_1 .t3_1 .t3_31 .t3_14 .t3_1,
-    row .t1_1 .t2_2 .t2_2 .t2_2 .t2_24 .t2_2,
-    row .t3_1 .t2_2 .t3_2 .t2_2 .t2_24 .t2_2,
-    row .t1_43 .t1_43 .t3_24 .t14_42 .t14_34 .t14_3,
-    row .t1_1 .t3_2 .t3_2 .t3_2 .t3_24 .t3_2,
-    row .t3_1 .t3_2 .t3_2 .t3_2 .t3_24 .t3_2]
+/-- The six neutral-aspect tone patterns, the paper's Table 7. -/
+def tones : ParadigmSystem (Fin 6) Row String := ![
+  fun | .sg1 | .sg2 | .third | .pl2 => "3-1" | .incl => "3-31" | .pl1 => "3-14",
+  fun | .sg1 => "1-1" | .sg2 | .third | .incl | .pl2 => "2-2" | .pl1 => "2-24",
+  fun | .sg1 => "3-1" | .sg2 | .incl | .pl2 => "2-2" | .third => "3-2" | .pl1 => "2-24",
+  fun | .sg1 | .sg2 => "1-43" | .third => "3-24" | .incl => "14-42" | .pl1 => "14-34"
+      | .pl2 => "14-3",
+  fun | .sg1 => "1-1" | .sg2 | .third | .incl | .pl2 => "3-2" | .pl1 => "3-24",
+  fun | .sg1 => "3-1" | .sg2 | .third | .incl | .pl2 => "3-2" | .pl1 => "3-24"]
 
 end Mazatec.Verbs
