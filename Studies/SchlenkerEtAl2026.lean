@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Reference.Context.Shifts
+public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Data.Examples.SchlenkerEtAl2026
 public import Mathlib.Basic.Real.Basic
 
@@ -37,8 +37,8 @@ demonstrational analysis of Role Shift, which has no viewpoints, is left open by
   of classifier time to evaluation time in (27) is an arbitrary clock from the moments of the
   movement to times, started at the time of evaluation. An object is still when its projection
   from any fixed viewpoint does not change over time.
-* Role Shift (34) is composed from the substrate's attitude and temporal shifts of the context,
-  which the paper's context triple identifies with the agent, world and time coordinates.
+* Role Shift (34) evaluates its clause at the paper's context triple, here the context with its
+  agent, time and world replaced and its addressee and position kept.
 * The elicited paradigms are recorded as rows with the mean judgment on the seven-point scale;
   the paper's inferences about the character's path from the side on which the classifier passes
   are not modeled, since they require the geometry.
@@ -128,7 +128,7 @@ def Restrictive (s : ℕ → T → W → V) : Prop := ∀ i, IsStatic (s i)
 clause at the shifted context and at that time and world. -/
 def roleShift (IP : Context W E P T → T → W → Prop) (c : Context W E P T) (x : E) (t : T)
     (w : W) : Prop :=
-  IP (temporalShift t (attitudeShift x w c)) t w
+  IP { c with agent := x, time := t, world := w } t w
 
 /-- (31), (36): the iconic component of a dynamic classifier with viewpoint variable `π`: its
 argument projects to the classifier from the viewpoint `π` denotes, along the clock started at

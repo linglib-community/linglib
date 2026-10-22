@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Reference.Context.Index
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # The context of utterance
@@ -14,10 +14,7 @@ The context of utterance of [kaplan-1989], a tuple of an agent, a world, a time 
 position, with the addressee of [speas-tenny-2003] as a fifth coordinate. A context is
 *proper* when its agent exists at its world (`Context.Proper`), which validates *I exist*, and
 *located* when its agent is at its position at its time in its world (`Context.Located`),
-which validates *I am here now*. The world and time of a context form its index of evaluation
-(`Context.toIndex`), and replacing them by another index (`Context.shiftWorldTime`) is the
-shift to an alternative situation that keeps the agent fixed, used to quantify a concept
-across a believer's alternatives.
+which validates *I am here now*.
 
 Contexts may also be taken as primitive, with functions returning their coordinates
 [schlenker-2011]: Kaplan's tenets in `Reference/Kaplan.lean` take the coordinate projections
@@ -59,20 +56,6 @@ def Proper (exists_ : E → W → Prop) : Prop := exists_ c.agent c.world
 /-- A context is located when its agent is at its position at its time in its world. -/
 def Located (located : E → P → T → W → Prop) : Prop :=
   located c.agent c.position c.time c.world
-
-/-- The index of evaluation of a context is its world and time. -/
-def toIndex : Index W T := ⟨c.world, c.time⟩
-
-/-- Replace the world and time of a context by those of an index, keeping the agent, the
-addressee and the position. -/
-def shiftWorldTime (s : Index W T) : Context W E P T := { c with world := s.world, time := s.time }
-
-variable (s : Index W T)
-
-@[simp] theorem shiftWorldTime_world : (c.shiftWorldTime s).world = s.world := rfl
-@[simp] theorem shiftWorldTime_time : (c.shiftWorldTime s).time = s.time := rfl
-@[simp] theorem shiftWorldTime_agent : (c.shiftWorldTime s).agent = c.agent := rfl
-@[simp] theorem shiftWorldTime_toIndex : (c.shiftWorldTime s).toIndex = s := rfl
 
 end Context
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.Reading
-public import Linglib.Semantics.Modality.Exclusion
+public import Linglib.Semantics.Modality.XMarking
 
 /-!
 # English conditional markers
@@ -27,6 +27,6 @@ def if_ : Conditional.Marker where
 
 /-- English X-marking is the fake past ([iatridou-2000]), with *woll* added in the consequent
 ([von-fintel-iatridou-2023] §2). -/
-def xMarking : Option Modality.Exclusion.XMarkingExponent := some ⟨"Past", [.past, .future]⟩
+def xMarking : Option Modality.XMarking.XMarkingExponent := some ⟨"Past", [.past, .future]⟩
 
 end English.Conditionals

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Exclusion
+public import Linglib.Semantics.Modality.XMarking
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Discourse.CommonGround
 public import Linglib.Fragments.English.Conditionals
@@ -61,7 +61,7 @@ hypothesis. The Mandarin exponent *le* is study-local, resting on the paper's si
 
 namespace Mizuno2024
 
-open Modality.Exclusion (MarkingStrategy XMarkingExponent)
+open Modality.XMarking (MarkingStrategy XMarkingExponent)
 open Conditional (Reading strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
 
 /-! ### Scenarios and felicity

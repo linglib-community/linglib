@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Reference.Character
-public import Linglib.Semantics.Reference.Context.Shifts
+public import Linglib.Semantics.Reference.Context.Tower
 
 /-!
 # Kaplan's theory of indexicality
@@ -33,9 +33,8 @@ English is that its indexicals read the speech-act context under every embedding
   *I am here now* are a priori, the first without being necessary.
 * `isMonster_shiftBy_iff`, `isMonster_shift_iff`: an operator evaluating at a computed or shifted
   context is a monster iff it moves some context.
-* `attitudeShift_ne_one`, `not_isMonster_shift_one`, `AccessPattern.stable_one`: Schlenker's
-  attitude shift is a monster when the holder is not the speaker, the identity shift of English
-  attitude verbs is not.
+* `not_isMonster_shift_one`, `AccessPattern.stable_one`: the identity shift of English attitude
+  verbs is no monster and leaves every access pattern stable.
 
 ## References
 
@@ -165,11 +164,6 @@ theorem isMonster_shift_iff [Nontrivial (Content V α)] (σ : Function.End C) :
 /-- The identity shift, Kaplan's thesis for English attitude verbs, is no monster. -/
 theorem not_isMonster_shift_one : ¬ IsMonster (shift 1 : Character C V α → Character C V α) :=
   fun h ↦ h ⟨fun _ f ↦ f, fun _ _ ↦ rfl⟩
-
-/-- An attitude shift to a holder other than some context's agent moves that context. -/
-theorem attitudeShift_ne_one (holder : E) (w' : W) (c : Context W E P T)
-    (h : c.agent ≠ holder) : attitudeShift (P := P) (T := T) holder w' ≠ 1 :=
-  (ne_one_iff_exists_smul_ne _).2 ⟨c, fun e ↦ h (by simpa using (congrArg Context.agent e).symm)⟩
 
 end Monster
 
