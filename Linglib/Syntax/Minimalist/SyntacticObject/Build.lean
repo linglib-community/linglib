@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 public import Linglib.Core.Computability.Edge
+public import Linglib.Core.Data.UnorderedTree.Leaves
 
 /-!
 # Building and reading syntactic objects
@@ -66,6 +67,10 @@ noncomputable instance : Insert SyntacticObject SyntacticObject := ⟨merge⟩
 instance : Singleton SyntacticObject SyntacticObject := ⟨id⟩
 
 @[simp] theorem insert_def (l r : SyntacticObject) : ({l, r} : SyntacticObject) = merge l r := rfl
+
+/-- The pronounced tokens of a syntactic object, its lexical leaves; traces are unpronounced. -/
+def yield (s : SyntacticObject) : Multiset LexicalItem.Token :=
+  s.val.leaves.filterMap (Sum.elim id fun _ ↦ none)
 
 end SyntacticObject
 
@@ -137,6 +142,23 @@ theorem attach_swap (p d : PlanarSyntacticObject) (e : Edge) :
 /-- The pronounced tokens of a planar object, left to right; traces are unpronounced. -/
 def yield (p : PlanarSyntacticObject) : List LexicalItem.Token :=
   p.val.leafList.filterMap (Sum.elim id fun _ ↦ none)
+
+theorem yield_toSyntacticObject (p : PlanarSyntacticObject) :
+    p.toSyntacticObject.yield = p.val.leaves.filterMap (Sum.elim id fun _ ↦ none) := rfl
+
+/-- The pronounced tokens of a planar object are those of its object, in order. -/
+theorem coe_yield (p : PlanarSyntacticObject) :
+    (p.yield : Multiset LexicalItem.Token) = p.toSyntacticObject.yield := by
+  rw [yield, ← Multiset.filterMap_coe, RoseTree.coe_leafList]
+  rfl
+
+theorem yield_attach (p : PlanarSyntacticObject) (e : Edge) (d : PlanarSyntacticObject) :
+    (p.attach e d).toSyntacticObject.yield =
+      d.toSyntacticObject.yield + p.toSyntacticObject.yield := by
+  cases e <;>
+    simp only [yield_toSyntacticObject, attach, merge_val, RoseTree.leaves_node_cons,
+      List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, Multiset.filterMap_add]
+  exact add_comm _ _
 
 /-! ### Merge in braces
 
