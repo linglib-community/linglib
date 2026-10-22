@@ -7,23 +7,22 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
-# Agree: closest goals, horizons, and valuation
+# Agree: closest goals and valuation
 
 This file states the structural conditions of Agree over syntactic objects and its valuation step
 over feature bundles. A probe on the head at a position of a linearized object searches the
 positions the head c-commands, closest by the branching positions above them, and so finds a goal
 that no other satisfier asymmetrically c-commands: the Minimal Link Condition, with mutually
-c-commanding candidates equidistant. A target lies behind a horizon when a leaf of the horizon
-category in the probe's domain c-commands it, and valuation copies a goal's value into an unvalued
-probe slot, only adding information.
+c-commanding candidates equidistant. Positions closed to the search, by the PIC or by a horizon,
+cut its domain, and valuation copies a goal's value into an unvalued probe slot, only adding
+information.
 
 ## Main definitions
 
-* `Minimalist.LinearizedSyntacticObject.goals`: the terms a probe on a head finds.
+* `Minimalist.LinearizedSyntacticObject.goals`, `goalsUnder`: the terms a probe on a head finds,
+  and those it finds with some positions closed to it.
 * `Minimalist.LinearizedSyntacticObject.leafProbe`, `phraseProbe`: the probes satisfied by the
   leaves of a category, and by the phrases its heads form.
-* `Minimalist.SyntacticObject.behindHorizonIn`: a target c-commanded by a horizon-category leaf
-  in the probe's domain.
 * `Minimalist.FeatureBundle.valueAt`, `Minimalist.FeatureBundle.applyAgree`: valuation of an
   unvalued slot, and the probe's bundle valued from a goal's.
 
@@ -37,8 +36,6 @@ probe slot, only adding information.
 ## References
 
 * [chomsky-1995], [chomsky-2000]
-* [keine-2019]
-* [aissen-polian-2025]
 -/
 
 @[expose] public section
@@ -85,6 +82,30 @@ theorem mem_goals {h x : SyntacticObject} : x ∈ t.goals p h ↔
     fun ⟨a, ha, g, hg, hx⟩ ↦ ⟨g, ⟨a, ha, hg⟩, hx⟩⟩
 
 variable (t) in
+/-- The terms a probe on the head `h` finds when, at each occurrence `a` of `h`, the positions
+`cut a` are closed to its search, by the PIC or by a horizon. -/
+def goalsUnder (p : Probe t.val.Positions) (h : SyntacticObject)
+    (cut : Core.Order.TreePath → Set Core.Order.TreePath) [∀ a, DecidablePred (· ∈ cut a)] :
+    Finset SyntacticObject :=
+  (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
+    p.Finds {q | t.val.CCommands a q ∧ q.val ∉ cut a.val} (t.above t.branching) g).image t.termAt
+
+/-- With nothing closed, the search is unrestricted. -/
+@[simp] theorem goalsUnder_empty {h : SyntacticObject} :
+    t.goalsUnder p h (fun _ ↦ ∅) = t.goals p h := by
+  simp only [goalsUnder, goals, Set.mem_empty_iff_false, not_false_eq_true, and_true]
+
+/-- A goal found outside the closed positions is still found: closing part of the domain removes
+only the goals inside it, though it can expose goals they shielded. -/
+theorem mem_goalsUnder_of_finds {h : SyntacticObject}
+    {cut : Core.Order.TreePath → Set Core.Order.TreePath}
+    [∀ a, DecidablePred (· ∈ cut a)] {a : t.val.Positions} (ha : t.termAt a = h)
+    (hg : p.Finds {q | t.val.CCommands a q} (t.above t.branching) g) (hgc : g.val ∉ cut a.val) :
+    t.termAt g ∈ t.goalsUnder p h cut := by
+  simp only [goalsUnder, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
+  exact ⟨g, ⟨a, ha, hg.of_subset (fun _ hq ↦ hq.1) ⟨hg.mem, hgc⟩⟩, rfl⟩
+
+variable (t) in
 /-- The probe satisfied by the leaves of category `c`. -/
 def leafProbe (c : Cat) : Probe t.val.Positions :=
   .relativized fun q ↦ decide (SyntacticObject.isLeafOf c (t.termAt q))
@@ -98,23 +119,6 @@ def phraseProbe (c : Cat) : Probe t.val.Positions :=
       SyntacticObject.isLeafOf c (t.termAt e))
 
 end LinearizedSyntacticObject
-
-namespace SyntacticObject
-
-/-! ### Horizons -/
-
-/-- A target lies behind a horizon of category `c` for `probe` in `root` when a `c` leaf of
-`probe`'s c-command domain c-commands it, so that `probe`'s search terminates before reaching it
-([keine-2019]). With N a horizon for the wh-probe on C, the D head of `[DP D [PossP Psr N]]`
-stays visible while the possessor, c-commanded by N, does not ([aissen-polian-2025]). -/
-def behindHorizonIn (root probe target : SyntacticObject) (c : Cat) : Prop :=
-  ∃ n ∈ cCommandDomain root probe, isLeafOf c n ∧ CCommands root n target
-
-instance (root probe target : SyntacticObject) (c : Cat) :
-    Decidable (behindHorizonIn root probe target c) :=
-  Multiset.decidableExistsMultiset
-
-end SyntacticObject
 
 namespace FeatureBundle
 

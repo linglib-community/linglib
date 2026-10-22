@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Agree.Basic
+public import Linglib.Syntax.Minimalist.Locality.Horizon
 public import Linglib.Syntax.Minimalist.Probe.Profile
 public import Linglib.Data.Examples.AissenPolian2025
 
@@ -14,10 +15,11 @@ possessive's D layer, an agent, a specific subject or theme, or an occupied Spec
 it. Hence only non-specific possessums strand, and the possessor that reaches Spec,TP is the
 ψ-subject of a categorical judgment.
 
-Nominal opacity is the profile `nominalOpacity` read through `Invisible`, Attract Closest is
-`dGoals`, the positional search for D leaves on the paper's structures, `judgment` reads the
-judgment type off the same search, and the paper's examples are the rows, over which
-`stranding_iff`, `piedPiping_specific` and `psi_no_piedPiping` hold.
+Nominal opacity is the profile `nominalOpacity` read through `Invisible`, the positions behind the
+probe's horizon (`Minimalist.horizon`), and C⁰'s wh-probe searches short of them (`whGoals`).
+Attract Closest is `dGoals`, the positional search for D leaves on the paper's structures,
+`judgment` reads the judgment type off the same search, and the paper's examples are the rows,
+over which `stranding_iff`, `piedPiping_specific` and `psi_no_piedPiping` hold.
 
 ## References
 
@@ -36,7 +38,7 @@ judgment type off the same search, and the paper's examples are the rows, over w
 
 namespace AissenPolian2025
 
-open Minimalist SyntacticObject
+open Minimalist SyntacticObject LinearizedSyntacticObject
 
 /-! ### Probes -/
 
@@ -53,24 +55,26 @@ def dProbeAppl : Probe.Profile := ⟨.Appl, none⟩
 /-- The [EPP:WH] probe on D⁰ that drives pied-piping with inversion, without horizon. -/
 def secondaryWh : Probe.Profile := ⟨.D, none⟩
 
-/-- `target` is invisible to a probe with profile `p` sitting at `probe` when it lies behind the
-profile's horizon. -/
-def Invisible (p : Probe.Profile) (root probe target : SyntacticObject) : Prop :=
-  ∃ h ∈ p.horizon, behindHorizonIn root probe target h
+/-- `target` is invisible in `t` to a probe with profile `p` on `probe` when an occurrence of it
+lies behind the profile's horizon for an occurrence of the probe. -/
+def Invisible (p : Probe.Profile) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
+    Prop :=
+  ∃ c ∈ p.horizon, ∃ a q : t.val.Positions,
+    t.termAt a = probe ∧ t.termAt q = target ∧ q.val ∈ horizon t a.val c
 
-theorem invisible_iff_behindHorizon (h : Cat) (root probe target : SyntacticObject)
-    {p : Probe.Profile} (hp : p.horizon = some h) :
-    Invisible p root probe target ↔ behindHorizonIn root probe target h := by
-  simp [Invisible, hp]
+instance (p : Probe.Profile) (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
+    Decidable (Invisible p t probe target) := by
+  unfold Invisible; infer_instance
 
 /-- A probe without horizon sees everything in its domain. -/
-theorem not_invisible_of_horizon_none (root probe target : SyntacticObject) {p : Probe.Profile}
-    (hp : p.horizon = none) : ¬ Invisible p root probe target := by
+theorem not_invisible_of_horizon_none (t : LinearizedSyntacticObject)
+    (probe target : SyntacticObject) {p : Probe.Profile} (hp : p.horizon = none) :
+    ¬ Invisible p t probe target := by
   simp [Invisible, hp]
 
-theorem dProbe_sees_through (root probe target : SyntacticObject) :
-    ¬ Invisible dProbeT root probe target ∧ ¬ Invisible dProbeAppl root probe target ∧
-      ¬ Invisible secondaryWh root probe target :=
+theorem dProbe_sees_through (t : LinearizedSyntacticObject) (probe target : SyntacticObject) :
+    ¬ Invisible dProbeT t probe target ∧ ¬ Invisible dProbeAppl t probe target ∧
+      ¬ Invisible secondaryWh t probe target :=
   ⟨not_invisible_of_horizon_none _ _ _ rfl, not_invisible_of_horizon_none _ _ _ rfl,
    not_invisible_of_horizon_none _ _ _ rfl⟩
 
@@ -134,22 +138,35 @@ def cp (tp : LinearizedSyntacticObject) : LinearizedSyntacticObject := {C₀, tp
 /-! ### Nominal opacity -/
 
 /-- The possessor of a specific S_O is invisible to C⁰'s wh-probe. -/
-theorem psr_invisible_dp : Invisible nominalOpacity (cp unaccDP) C₀ Psr := ⟨.N, rfl, by decide⟩
+theorem psr_invisible_dp : Invisible nominalOpacity (cp unaccDP) C₀ Psr := by decide +kernel
 
 /-- So is the possessor of a non-specific S_O: opacity does not depend on size. -/
-theorem psr_invisible_possP : Invisible nominalOpacity (cp unaccPossP) C₀ Psr :=
-  ⟨.N, rfl, by decide⟩
+theorem psr_invisible_possP : Invisible nominalOpacity (cp unaccPossP) C₀ Psr := by
+  decide +kernel
 
 /-- And the possessor inside a locative PP: PP islands follow from nominal opacity. -/
-theorem psr_invisible_pp : Invisible nominalOpacity (cp (themeLoc ThemeN)) C₀ Psr :=
-  ⟨.N, rfl, by decide⟩
+theorem psr_invisible_pp : Invisible nominalOpacity (cp (themeLoc ThemeN)) C₀ Psr := by
+  decide +kernel
 
 /-- The D head of a specific possessive is visible, so the whole DP can be pied-piped. -/
-theorem dHead_visible :
-    ¬ Invisible nominalOpacity (cp unaccDP) C₀ D₀ :=
-  fun ⟨_, hh, hb⟩ => by
-    simp only [nominalOpacity, Option.mem_def, Option.some.injEq] at hh
-    exact absurd (hh ▸ hb) (by decide)
+theorem dHead_visible : ¬ Invisible nominalOpacity (cp unaccDP) C₀ D₀ := by decide +kernel
+
+/-- C⁰'s wh-probe, satisfied by the wh-possessor. -/
+def whProbe (t : LinearizedSyntacticObject) : Probe t.val.Positions :=
+  .relativized fun q ↦ decide (t.termAt q = ↑Psr)
+
+/-- What C⁰'s wh-probe finds, searching short of its horizon at N⁰. -/
+def whGoals (t : LinearizedSyntacticObject) : Finset SyntacticObject :=
+  t.goalsUnder (whProbe t) C₀ (horizon t · .N)
+
+/-- The possessor raised to Spec,TP out of a non-specific S_O. -/
+def psrRaised : LinearizedSyntacticObject := {Psr, unaccPossP}
+
+/-- The wh-probe would find the possessor in situ but for its horizon; raised to Spec,TP, the
+possessor is found: Ā-extraction of a possessor goes through A-movement. -/
+theorem wh_needs_raising : (cp unaccPossP).goals (whProbe _) C₀ = {↑Psr} ∧
+    whGoals (cp unaccPossP) = ∅ ∧ whGoals (cp psrRaised) = {↑Psr} := by
+  decide +kernel
 
 /-! ### Attract Closest -/
 

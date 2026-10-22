@@ -14,7 +14,7 @@ it projects, and a clause is transparent to a probe exactly when its label does 
 horizon. Transparency is then antitone in the extension order of clause spines, which is Upward
 Entailment, and a probe whose horizon lies in the label of its own sister is vacuous, the premise
 of the Height–Locality Theorem. A horizon cuts the domain a probe searches
-(`Probe.Inspects.of_subset`); its tree-native form is `SyntacticObject.behindHorizonIn`.
+(`Probe.Inspects.of_subset`); on positions it is `Minimalist.horizon`.
 
 ## Main definitions
 
