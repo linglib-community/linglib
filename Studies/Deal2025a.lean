@@ -43,7 +43,8 @@ open Deal2024 Minimalist PersonSegment Clause
 
 /-- The probe of a 2024 grammar as a specification of (30), [INT:φ] with its satisfaction
 feature. -/
-def toSpec (g : Grammar) : Probe.Spec PersonSegment := ⟨Finset.univ, g.satisfaction.toFinset⟩
+def toSpec (g : Grammar) : Probe.Spec PersonSegment :=
+  .ofFeatures Finset.univ g.satisfaction.toFinset
 
 /-- A clitic combination ⟨IO, DO⟩ is licit under (30) when the probe, meeting the direct object
 first, interacts with both objects. -/
