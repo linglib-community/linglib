@@ -376,7 +376,7 @@ def czRoot (l : CzNoun) : Stem := (entry l).root
 /-- The stem of a cell's form correspondent is the one Pāṇini's principle selects, that of an
 applicable rule no applicable rule is narrower than, or the root where no rule applies. -/
 def stemFor (l : CzNoun) (σ : CzCell) : Stem :=
-  Exponence.RuleSet.realizeMinimalD (czRules l) (fun _ ↦ czRoot l) σ
+  Exponence.RuleSet.realizeMinimalD (czRules l) (·.dom) (fun _ ↦ czRoot l) σ
 
 /-- Every noun's entry describes that noun. -/
 @[simp] theorem entry_lexeme (l : CzNoun) : (entry l).lexeme = l := by cases l <;> rfl
@@ -468,7 +468,7 @@ def czRealizeTable (z : Stem) (σ : CzCell) : Finset (List String) :=
 
 /-- The Czech paradigm linkage gives each content cell the stem its rules select, and
 preserves its property set. -/
-def czLinkage : Linkage CzNoun Stem CzCell CzCell := Linkage.ofRules id czRules czRoot
+def czLinkage : Linkage CzNoun Stem CzCell CzCell := Linkage.ofRules id (·.dom) czRules czRoot
 
 /-- Each cell's selected stem realizes exactly the attested forms. -/
 theorem czRealize_stemFor : ∀ l σ, czRealize (stemFor l σ) σ = attested l σ := by
@@ -1104,7 +1104,7 @@ def rule19b (g : SktGender) : Exponence.DomainRule SktCell Strength :=
 
 /-- Clause (19b) is narrower than (19a), for "because 19b is the more narrowly applicable of the
 two clauses, it overrides 19a, in accordance with Pāṇini's principle" (n. 19). -/
-theorem rule19b_lt_rule19a : rule19b .masc < rule19a .masc := by decide
+theorem rule19b_lt_rule19a : (rule19b .masc).dom ⊂ (rule19a .masc).dom := by decide
 
 /-- The strength of a property set is given by (19) (p. 294), which reads "Where α is masculine
 or feminine, β is any direct case (nominative, vocative, or accusative), and γ is any number
@@ -1113,7 +1113,7 @@ default; b. but instances of {α accusative plural} are weak; in addition, c. an
 gender/case/number combination that is not strong according to (a) is weak." Clause (19b)
 overrides (19a) by Pāṇini's principle, and (19c) is the default. -/
 def strength (g : SktGender) (σ : SktCell) : Strength :=
-  Exponence.RuleSet.realizeMinimalD [rule19a g, rule19b g] (fun _ ↦ .weak) σ
+  Exponence.RuleSet.realizeMinimalD [rule19a g, rule19b g] (·.dom) (fun _ ↦ .weak) σ
 
 /-- `weak g` is the set of weak property sets of a lexeme of gender `g`. -/
 def weak (g : SktGender) : Finset SktCell := {σ | strength g σ = .weak}
@@ -1239,7 +1239,7 @@ def sktRoot (l : SktLex) : SktStem := (sktEntry l).root
 narrower of the two rules, override 20b in any instance in which the former rule is applicable"
 (p. 295). -/
 def sktStem (l : SktLex) (σ : SktCell) : SktStem :=
-  Exponence.RuleSet.realizeMinimalD (sktRules l) (fun _ ↦ sktRoot l) σ
+  Exponence.RuleSet.realizeMinimalD (sktRules l) (·.dom) (fun _ ↦ sktRoot l) σ
 
 /-- The Sanskrit paradigm linkage gives each content cell the stem its rules select, with the
 form property set that `f₁` maps its property set to. -/
@@ -1283,7 +1283,7 @@ theorem sktEndings_length : ∀ l σ, ∀ z ∈ (sktEntry l).weakest,
 
 /-- Rule (20a) is narrower than (20b) for each lexeme (p. 295). -/
 theorem rule20a_lt_rule20b : ∀ l, ∀ a ∈ rule20a (sktEntry l), ∀ b ∈ rule20b (sktEntry l),
-    a < b := by decide
+    a.dom ⊂ b.dom := by decide
 
 /-- The rules (19) and (20a,b) give every cell of PRATYAÑC's masculine and neuter paradigms the
 grade that Table 9 (p. 294) shades it with, each cell having one row. -/

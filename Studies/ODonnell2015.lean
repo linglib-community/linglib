@@ -579,8 +579,9 @@ size, through `Exponence.RuleSet.selectBy` on the size reversed by `OrderDual`, 
 Elsewhere winner. -/
 theorem selectByCard_isElsewhereWinner {v : RuleSet (DomainRule Ctx F)} {c : Ctx}
     {r : DomainRule Ctx F} (h : v.selectBy (fun s ↦ OrderDual.toDual s.dom.card) c = some r) :
-    v.IsElsewhereWinner c r :=
-  RuleSet.selectBy_isElsewhereWinner (DomainRule.strictMono_card_dom.dual_right.strictAntiOn _) h
+    v.IsElsewhereWinner (·.dom) c r :=
+  RuleSet.selectBy_isElsewhereWinner (f := fun s : DomainRule Ctx F ↦ OrderDual.toDual s.dom.card)
+    (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.2 (Finset.card_lt_card h)) h
 
 variable [MeasurableSpace Ctx] [MeasurableSingletonClass Ctx]
 
@@ -591,10 +592,10 @@ theorem isElsewhereWinner_of_forall_uniformOn_le {v : RuleSet (DomainRule Ctx F)
     {r : DomainRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.dom)
     (hmax : ∀ s ∈ v, c ∈ s.dom →
       (uniformOn (s.dom : Set Ctx)).real {c} ≤ (uniformOn (r.dom : Set Ctx)).real {c}) :
-    v.IsElsewhereWinner c r := by
-  refine ⟨⟨hrv, hrc⟩, fun s ⟨hsv, hsc⟩ hle ↦ ?_⟩
+    v.IsElsewhereWinner (·.dom) c r := by
+  refine ⟨⟨hrv, hrc⟩, fun s ⟨hsv, hsc⟩ (hle : s.dom ⊆ r.dom) ↦ ?_⟩
   have hsc : c ∈ s.dom := hsc
-  exact DomainRule.le_iff.mpr (Finset.eq_of_subset_of_card_le (DomainRule.le_iff.mp hle)
+  exact (Finset.eq_of_subset_of_card_le hle
     ((uniformOn_finset_real_singleton_le_iff hsc hrc).mp (hmax s hsv hsc))).symm.subset
 
 end ProbabilisticElsewhere

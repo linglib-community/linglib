@@ -311,9 +311,9 @@ theorem clausal : system.realize ∅ = some .neuter := by decide
 /-- No neuter–feminine syncretism to the exclusion of masculine, for any vocabulary with one
 item per exponent over the Greek feature sets. -/
 theorem no_aba (v : RuleSet (VocabularyItem Node Gender)) (hv : v.Antihomophonous) {φ : Gender}
-    (hn : v.Realizes (Neighborhood.ofBundle {.cls}) φ)
-    (hf : v.Realizes (Neighborhood.ofBundle {.fem, .masc, .cls}) φ) :
-    v.Realizes (Neighborhood.ofBundle {.masc, .cls}) φ :=
+    (hn : v.Realizes applySet (Neighborhood.ofBundle {.cls}) φ)
+    (hf : v.Realizes applySet (Neighborhood.ofBundle {.fem, .masc, .cls}) φ) :
+    v.Realizes applySet (Neighborhood.ofBundle {.masc, .cls}) φ :=
   RuleSet.Realizes.of_realizes hv (fun _ _ h ↦ VocabularyItem.applies_mono h (by decide))
     (fun _ _ h ↦ VocabularyItem.applies_mono h (by decide)) hn hf
 

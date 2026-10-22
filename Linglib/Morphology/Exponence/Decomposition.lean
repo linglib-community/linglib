@@ -58,18 +58,6 @@ instance : Exponence.Rule (Rule Cell D F) Cell F :=
 @[simp] theorem applies_iff {r : Rule Cell D F} {c : Cell} :
     Exponence.Applies r c ↔ r.feats ⊆ D c := Iff.rfl
 
-/-- Rules are preordered by inclusion of their applicability sets, so the engine participates in
-the shared core's Elsewhere selection theory (`Exponence/Select.lean`). Unlike the linear
-containment order this is only a preorder, since incomparable specifications (No Case
-Containment) are the point. -/
-instance : Preorder (Rule Cell D F) := Exponence.toPreorder
-
-/-- Specificity is applicability-set inclusion, so `r ≤ s` iff `s` applies wherever `r`
-does. -/
-theorem le_iff {r s : Rule Cell D F} :
-    r ≤ s ↔ ∀ ⦃c⦄, Exponence.Applies r c → Exponence.Applies s c :=
-  Iff.rfl
-
 /-- In strict competition `r` beats every other applicable rule on feature cardinality. -/
 def IsWinner (v : RuleSet (Rule Cell D F)) (c : Cell) (r : Rule Cell D F) : Prop :=
   r ∈ v ∧ r.feats ⊆ D c ∧

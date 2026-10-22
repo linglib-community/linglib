@@ -330,20 +330,21 @@ theorem canonical_isCanonical {ι : S → M} (hι : Function.Injective ι) (st :
 
 section Rules
 
-variable {R : Type*} [Exponence.Rule R S Z] [Preorder R] [DecidableRel (· < · : R → R → Prop)]
-  [DecidableRel (Exponence.Applies : R → S → Prop)]
+variable {R : Type*} [Exponence.Rule R S Z] {κ : Type*} [Preorder κ]
+  [DecidableRel (· < · : κ → κ → Prop)] [DecidableRel (Exponence.Applies : R → S → Prop)]
 
 /-- The linkage of rules of paradigm linkage gives each content cell the stem that its
 lexeme's rules realize, the exponent of an applicable rule that no applicable rule is narrower
-than, or the lexeme's root, by the universal default rule (5) of [stump-2006], where none of its
-rules applies; its form property set is the image under `ι` of the cell's. -/
-abbrev ofRules (ι : S → M) (rules : L → List R) (root : L → Z) : Linkage L Z S M :=
-  ofFun ι fun l σ ↦ Exponence.RuleSet.realizeMinimalD (rules l) (fun _ ↦ root l) σ
+than under `key`, or the lexeme's root, by the universal default rule (5) of [stump-2006], where
+none of its rules applies; its form property set is the image under `ι` of the cell's. -/
+abbrev ofRules (ι : S → M) (key : R → κ) (rules : L → List R) (root : L → Z) :
+    Linkage L Z S M :=
+  ofFun ι fun l σ ↦ Exponence.RuleSet.realizeMinimalD (rules l) key (fun _ ↦ root l) σ
 
 /-- With no language-specific rules, the linkage of rules is the canonical linkage of the
 roots. -/
-theorem ofRules_nil (ι : S → M) (st : L → Z) :
-    ofRules ι (fun _ ↦ ([] : List R)) st = canonical ι st :=
+theorem ofRules_nil (ι : S → M) (key : R → κ) (st : L → Z) :
+    ofRules ι key (fun _ ↦ ([] : List R)) st = canonical ι st :=
   rfl
 
 end Rules
