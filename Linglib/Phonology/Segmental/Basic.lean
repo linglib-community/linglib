@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Segmental.Defs
+public import Linglib.Core.Data.Fintype.Sets
 
 /-!
 # Basic theory of segments
@@ -31,7 +32,8 @@ sonority rise between two classes, and the Parker sonority ranking.
   likewise for consonants, stops, fricatives, nasals, sibilants and glides.
 * `Segment.setFeature_hasValue`: the feature-change operations act as specified.
 * `IsDistinctive`: a feature set on which no two segments of an inventory agree, with
-  `Segment.restrict_eq_restrict_iff` relating restriction to agreement on the set.
+  `Segment.restrict_eq_restrict_iff` relating restriction to agreement on the set, which is
+  decidable.
 * `Sonority.ofSegment_congr`: sonority depends on a segment only through the major-class
   features and continuancy, so it is blind to place and laryngeal features.
 * `Sonority.rise_pos`, `Sonority.rise_eq_zero`, `Sonority.rise_neg`: the sign of the
@@ -174,6 +176,9 @@ end Segment
 section Distinctive
 
 variable {C D : Finset Feature} {I J : Finset Segment}
+
+instance (s s' : Segment) (C : Finset Feature) : Decidable (Set.EqOn s s' ↑C) :=
+  Set.decidableEqOnOfFintype _ _ _
 
 /-- Two segments have the same restriction to a feature set iff they agree on it. -/
 theorem Segment.restrict_eq_restrict_iff {s s' : Segment} :

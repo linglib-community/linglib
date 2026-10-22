@@ -54,9 +54,9 @@ namespace Phonology
     [hayes-2009] names among the vowel features but leaves off his chart, noting
     that whether it is the same feature as [tense] is unsettled; it is kept
     distinct here. [RTR], the other tongue-root feature of [halle-vaux-wolfe-2000],
-    distinguishes the pharyngealized consonants, which the PHOIBLE chart codes by it. -/
+    distinguishes the pharyngealized consonants, which the PHOIBLE chart codes by it. The
+    grouping of the features into classes is `Phonology.FeatureClass`. -/
 inductive Feature where
-  -- Manner / root
   | syllabic         -- [+syll] = vowels
   | consonantal      -- [+cons] = oral constriction
   | sonorant         -- [+son] = spontaneous voicing
@@ -68,19 +68,15 @@ inductive Feature where
   | strident         -- [+strid] = high-amplitude noise
   | tap              -- [+tap] = ballistic gesture
   | trill            -- [+trill] = aerodynamic vibration
-  -- Laryngeal
   | voice            -- [+voice] = vocal cord vibration
   | spreadGlottis    -- [+s.g.] = aspiration
   | constrGlottis    -- [+c.g.] = glottal constriction
-  -- Place: Labial
   | labial           -- [+lab] = lips involved
   | round            -- [+round] = lip rounding
   | labiodental      -- [+labiodental] = lower lip to upper teeth
-  -- Place: Coronal
   | coronal          -- [+cor] = tongue blade/tip
   | anterior         -- [+ant] = alveolar ridge or forward
   | distributed      -- [+dist] = laminal contact
-  -- Place: Dorsal
   | dorsal           -- [+dor] = tongue body
   | high             -- tongue body raised
   | low              -- tongue body lowered

@@ -30,10 +30,10 @@ and which substitute.
 
 ## Implementation notes
 
-The place class contains [strident] and [lateral], which the PHOIBLE chart specifies on coronals
-alone. A nasal assimilated to a sibilant or a lateral copies `+` for them, so `nonstrident` and
-`nonlateral` reset it, and a nasal assimilated to a consonant with no oral articulator, such as
-a glottal stop, loses its place, which `defaultPlace` restores.
+Assimilation copies the whole place class, as Hayes's rule does, and the class contains
+[strident] and [lateral]. A nasal assimilated to a sibilant or a lateral therefore copies `+` for
+them, which `nonstrident` and `nonlateral` reset, and a nasal assimilated to a consonant with no
+oral articulator, such as a glottal stop, loses its place, which `defaultPlace` restores.
 
 ## References
 
@@ -51,7 +51,8 @@ namespace Phonology.NasalSubstitution
 
 open Subregular.LocalRewrite
 
-/-- A nasal takes the place of a following segment of the class `trigger`. -/
+/-- A nasal takes every place feature value of a following segment of the class `trigger`, Hayes's
+/n/ Assimilation with its [−syllabic] trigger as a parameter ([hayes-2009] p. 89). -/
 def placeAssimilation (trigger : Segment) : Rule where
   target := Segment.ofSpecs [(.nasal, true)]
   effect := .copyRight FeatureClass.place
