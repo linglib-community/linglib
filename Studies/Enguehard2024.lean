@@ -8,7 +8,7 @@ public import Linglib.Syntax.Number.Resolve
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Pragmatics.Competition
 public import Linglib.Semantics.Polarity.Basic
-public import Linglib.Core.MeasureTheory.Constructions.Option
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Mathlib.Probability.ConditionalProbability
 public import Mathlib.Probability.Kernel.Defs
