@@ -1,15 +1,20 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Interrogative
+public import Linglib.Syntax.Category.Pronoun.Reflexive
 
 /-!
-# Hungarian interrogative pronouns
+# Hungarian pronouns
 
 This file defines the Hungarian interrogative pronouns *ki* 'who', *mi* 'what', *milyen* 'what
 kind', *melyik* 'which', *hány* 'how many' and *mennyi* 'how much', and the interrogative
 pro-adverbs *hol* 'where', *hova* 'to where', *honnan* 'from where', *mikor* 'when' and
 *hogy(an)* 'how'. Each is recorded with the ontological category it asks about. They are the
 bases of the indefinite series of `Hungarian.Indefinites`.
+
+The reflexive is the possessive inflection of a stem *mag-*, one form for each person and
+number, from *magam* 'myself' to *maguk* 'themselves', collected in
+`Hungarian.Pronouns.reflexives`. Hungarian has no grammatical gender.
 
 ## References
 
@@ -54,5 +59,30 @@ def mennyi : InterrogativePronoun := { form := "mennyi", ontology := .amount }
 
 /-- *melyik* 'which' is a determiner. -/
 def melyik : InterrogativePronoun := { form := "melyik", ontology := .determiner }
+
+/-! ### Reflexive pronouns -/
+
+/-- *magam* 'myself'. -/
+def magam : ReflexivePronoun := { form := "magam", person := some .first, number := some .singular }
+
+/-- *magad* 'yourself'. -/
+def magad : ReflexivePronoun :=
+  { form := "magad", person := some .second, number := some .singular }
+
+/-- *maga* 'himself, herself, itself'. -/
+def maga : ReflexivePronoun := { form := "maga", person := some .third, number := some .singular }
+
+/-- *magunk* 'ourselves'. -/
+def magunk : ReflexivePronoun := { form := "magunk", person := some .first, number := some .plural }
+
+/-- *magatok* 'yourselves'. -/
+def magatok : ReflexivePronoun :=
+  { form := "magatok", person := some .second, number := some .plural }
+
+/-- *maguk* 'themselves'. -/
+def maguk : ReflexivePronoun := { form := "maguk", person := some .third, number := some .plural }
+
+/-- The reflexive paradigm. -/
+def reflexives : Finset ReflexivePronoun := {magam, magad, maga, magunk, magatok, maguk}
 
 end Hungarian.Pronouns

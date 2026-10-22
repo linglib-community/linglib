@@ -3,10 +3,9 @@ module
 public import Linglib.Data.Examples.DalrympleHaug2024
 public import Linglib.Semantics.Plurality.Reciprocal.Scope
 public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.Hungarian.Reciprocals
-public import Linglib.Data.Examples.Rakosi2019
 public import Linglib.Fragments.Wan.Reciprocals
 public import Studies.Landau2015
+public import Studies.Rakosi2019
 
 /-!
 # Dalrymple and Haug, constraints on reciprocal scope (2024)
@@ -126,11 +125,11 @@ structure Analysis where
 
 /-- On the quantificational analysis the quantifier part of the reciprocal raises to the
     reading's locus and binds the local antecedent in situ ((2), (4)). -/
-def quantificational : Analysis := { antecedentLocus := λ _ => .low, distributes := true }
+def quantificational : Analysis := { antecedentLocus := fun _ ↦ .low, distributes := true }
 
 /-- On the relational analysis the reciprocal is a pronoun anaphoric on the local antecedent,
     which is therefore interpreted where the reciprocal is ((3), (6)–(9)). -/
-def relational : Analysis := { antecedentLocus := λ r => r.reading.locus, distributes := false }
+def relational : Analysis := { antecedentLocus := fun r ↦ r.reading.locus, distributes := false }
 
 /-- Reading `r` is available for the local antecedent `a` on analysis `A`: `r` gives the local
     antecedent the denotation its form forces, a logophor stays inside the report, a
@@ -189,11 +188,11 @@ theorem available_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distribu
 
 theorem fits_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distributor = none)
     (hl : a.logophoric = false) (e : Datum) : Fits A a e ↔ Fits B a e :=
-  forall_congr' λ r => iff_congr (available_iff_of_none hd hl r) Iff.rfl
+  forall_congr' fun r ↦ iff_congr (available_iff_of_none hd hl r) Iff.rfl
 
 theorem covers_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distributor = none)
     (hl : a.logophoric = false) (e : Datum) : Covers A a e ↔ Covers B a e :=
-  forall_congr' λ r => imp_congr Iff.rfl (available_iff_of_none hd hl r)
+  forall_congr' fun r ↦ imp_congr Iff.rfl (available_iff_of_none hd hl r)
 
 /-- Wide scope binds the local antecedent, so a form that must denote the plurality has narrow
     scope only ((11), (12)). -/
@@ -209,12 +208,10 @@ theorem wide_of_individual {A : Analysis} {a : Antecedent} (h : a.grain = some .
 
 /-! ### Bound and nonbound antecedents (§2) -/
 
-/-- The Hungarian complement subject, a null pronoun whose number is the singular agreement on
-    its verb, Rákosi's bound-variable construction ((10)), his (17): the verb agreement recorded
-    on that row. -/
+/-- The Hungarian complement subject, a null pronoun whose number is the agreement on its verb,
+    Rákosi's bound-variable construction ((10)), his (17). -/
 def hungarian : Antecedent :=
-  .ofNumber <| some <|
-    if Rakosi2019.Examples.ex_17.feature? "verb" = some "pl" then .plural else .singular
+  .ofNumber <| (Rakosi2019.verbAgr? Rakosi2019.Examples.ex_17).map Prod.snd
 
 /-- A singular null pronoun must be bound, so (10) has wide scope only on every analysis. -/
 theorem hungarian_fits (A : Analysis) : Fits A hungarian Examples.ex_10 :=
@@ -273,7 +270,7 @@ theorem partial_narrow (A : Analysis) : Available A partialPlural .narrow := by
 /-- The wide-only judgment recorded for (13) since Higginbotham is therefore not what any
     analysis predicts for a partial-control verb. -/
 theorem not_fits_received_judgment (A : Analysis) : ¬ Fits A partialPlural Examples.ex_13 :=
-  λ h => absurd ((h .narrow).mp (partial_narrow A)) (by decide)
+  fun h ↦ absurd ((h .narrow).mp (partial_narrow A)) (by decide)
 
 /-- A collectively read matrix predicate leaves narrow scope only, whatever the control type,
     the first of the two readings Heim, Lasnik and May attribute to (14). -/
