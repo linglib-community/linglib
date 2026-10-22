@@ -84,6 +84,10 @@ instance : BoundedOrder Position where
   bot := .objComparison
   bot_le := by decide
 
+@[simp] theorem top_eq_subject : (⊤ : Position) = .subject := rfl
+
+@[simp] theorem bot_eq_objComparison : (⊥ : Position) = .objComparison := rfl
+
 instance : LocallyFiniteOrder Position := Fintype.toLocallyFiniteOrder
 
 end Position
