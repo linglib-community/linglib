@@ -49,16 +49,16 @@
         "plural"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "pl"
+        "3pl"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "",
@@ -114,16 +114,16 @@
         "plural"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "pl"
+        "3pl"
       ],
       [
         "anaphor",
-        "reflexivePl"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maguk"
       ]
     ],
     "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
@@ -179,16 +179,16 @@
         "atomic"
       ],
       [
+        "semanticNumber",
+        "singular"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "no"
+        "egymás"
       ]
     ],
     "comment": "",
@@ -244,16 +244,16 @@
         "atomic"
       ],
       [
+        "semanticNumber",
+        "singular"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexiveSg"
-      ],
-      [
-        "semanticPlural",
-        "no"
+        "maga"
       ]
     ],
     "comment": "The paper labels this sub-example \"a.\" (misprint for b.). The prose calls it (2b).",
@@ -297,16 +297,16 @@
         "inclusive"
       ],
       [
+        "semanticNumber",
+        "singular"
+      ],
+      [
         "verb",
-        "sg"
+        "1sg"
       ],
       [
         "anaphor",
-        "inclusiveReflexive"
-      ],
-      [
-        "semanticPlural",
-        "no"
+        "magunk"
       ]
     ],
     "comment": "Inclusive reference anaphora (den Dikken et al. 2001): the 1SG subject is included in the denotation of the 1PL reflexive; Hungarian National Corpus.",
@@ -363,16 +363,16 @@
         "inclusive"
       ],
       [
+        "semanticNumber",
+        "singular"
+      ],
+      [
         "verb",
-        "sg"
+        "1sg"
       ],
       [
         "anaphor",
-        "inclusiveReflexive"
-      ],
-      [
-        "semanticPlural",
-        "no"
+        "magunk"
       ]
     ],
     "comment": "Under *csak* the inclusive reflexive is only referential: no other people feel sorry for us, not for themselves.",
@@ -425,16 +425,16 @@
         "plural"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "pl"
+        "1pl"
       ],
       [
         "anaphor",
-        "reflexivePl"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "magunk"
       ]
     ],
     "comment": "",
@@ -487,16 +487,16 @@
         "plural"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "pl"
+        "1pl"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "",
@@ -548,16 +548,16 @@
         "plural"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "pl"
+        "3pl"
       ],
       [
         "anaphor",
-        "reflexivePl"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maguk"
       ]
     ],
     "comment": "Inherently reflexive verb: the object can only be a reflexive anaphor.",
@@ -609,16 +609,16 @@
         "atomic"
       ],
       [
+        "semanticNumber",
+        "singular"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexivePl"
-      ],
-      [
-        "semanticPlural",
-        "no"
+        "maguk"
       ]
     ],
     "comment": "No collective construal of the object is available, so the inclusive reading is out.",
@@ -662,16 +662,16 @@
         "inclusive"
       ],
       [
+        "semanticNumber",
+        "singular"
+      ],
+      [
         "verb",
-        "sg"
+        "1sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "no"
+        "egymás"
       ]
     ],
     "comment": "",
@@ -727,16 +727,16 @@
         "quantified"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexiveSg"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maga"
       ]
     ],
     "comment": "",
@@ -792,16 +792,16 @@
         "quantified"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexivePl"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maguk"
       ]
     ],
     "comment": "",
@@ -853,16 +853,16 @@
         "quantified"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexiveSg"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maga"
       ]
     ],
     "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
@@ -914,16 +914,16 @@
         "quantified"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexivePl"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maguk"
       ]
     ],
     "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
@@ -979,16 +979,16 @@
         "quantified"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "Hungarian National Corpus.",
@@ -1044,16 +1044,16 @@
         "quantified"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "",
@@ -1101,16 +1101,16 @@
         "quantified"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "Pronominal quantifier antecedent; Hungarian National Corpus.",
@@ -1166,16 +1166,16 @@
         "quantified"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "Pronominal quantifier antecedent; Hungarian National Corpus.",
@@ -1227,16 +1227,16 @@
         "coordinate"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexiveSg"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maga"
       ]
     ],
     "comment": "",
@@ -1288,16 +1288,16 @@
         "coordinate"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexivePl"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maguk"
       ]
     ],
     "comment": "",
@@ -1349,16 +1349,16 @@
         "coordinate"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "pl"
+        "3pl"
       ],
       [
         "anaphor",
-        "reflexivePl"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maguk"
       ]
     ],
     "comment": "",
@@ -1410,16 +1410,16 @@
         "coordinate"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "pl"
+        "3pl"
       ],
       [
         "anaphor",
-        "reflexiveSg"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maga"
       ]
     ],
     "comment": "",
@@ -1479,16 +1479,16 @@
         "coordinate"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "The paper glosses tükörben as \"picture-ACC\" (copied from (10)) and prints \"mirorr\" in the translation.",
@@ -1548,16 +1548,16 @@
         "coordinate"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "pl"
+        "3pl"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "The paper glosses tükörben as \"picture-ACC\" (copied from (10)) and prints \"mirorr\" in the translation.",
@@ -1610,16 +1610,12 @@
         "collective"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
-      ],
-      [
-        "anaphor",
-        "none"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "3sg"
       ]
     ],
     "comment": "Collective nouns never trigger plural agreement.",
@@ -1671,16 +1667,16 @@
         "collective"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "Hungarian National Corpus, abbreviated. The gloss line prints \"frigthened\".",
@@ -1736,16 +1732,16 @@
         "collective"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "Hungarian National Corpus, abbreviated.",
@@ -1805,16 +1801,16 @@
         "collective"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "Hungarian National Corpus, abbreviated.",
@@ -1870,16 +1866,16 @@
         "collective"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexiveSg"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maga"
       ]
     ],
     "comment": "",
@@ -1935,16 +1931,16 @@
         "collective"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reflexivePl"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "maguk"
       ]
     ],
     "comment": "",
@@ -2018,16 +2014,16 @@
         "boundPro"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "3sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "The pro-dropped singular embedded subject is the local antecedent; an overt pronoun is out, and only the broad-scope reading (Péter thinks he loves Éva and Éva thinks she loves Péter) is available. Expands the printed hogy (*ő) szereti: the row is the variant without ő, the alternative the starred one.",
@@ -2092,16 +2088,16 @@
         "boundPro"
       ],
       [
+        "semanticNumber",
+        "plural"
+      ],
+      [
         "verb",
-        "sg"
+        "1sg"
       ],
       [
         "anaphor",
-        "reciprocal"
-      ],
-      [
-        "semanticPlural",
-        "yes"
+        "egymás"
       ]
     ],
     "comment": "Frigyes Karinthy; an anecdotal, creative use, with obligatory pro-drop of the 1SG antecedent as in (17). Expands the printed és (*én) játszottam: the row is the variant without én, the alternative the starred one.",

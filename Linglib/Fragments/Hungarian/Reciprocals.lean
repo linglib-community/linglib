@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Category.Pronoun.Reflexive
 public import Linglib.Syntax.Reciprocal
 public import Linglib.Syntax.Category.Pronoun.Reciprocal
 
@@ -12,8 +11,7 @@ numeral *egy* 'one' and the distributor *más* 'other', which fills the object p
 keeps the verb transitive, *a gyerekek látták egymást* 'the children saw each other', and with
 the verbal suffix *-óz-*, which yields a monovalent verb, *János és Mari csókolóztak* 'János and
 Mari kissed'. As Rákosi notes, *egymás* is invariable, showing no person or number
-inflection, whereas the reflexive *maga* 'oneself' has a full paradigm, *maga* in the singular
-and *maguk* in the plural; Hungarian has no grammatical gender, so neither shows gender. The
+inflection, whereas the reflexive has the full paradigm of `Hungarian.Pronouns.reflexives`. The
 antecedents *egymás* tolerates are the matter of `Studies/Rakosi2019.lean`.
 
 ## Main definitions
@@ -21,7 +19,6 @@ antecedents *egymás* tolerates are the matter of `Studies/Rakosi2019.lean`.
 * `Hungarian.Reciprocals.egymas`, `Hungarian.Reciprocals.ozSuffix`,
   `Hungarian.Reciprocals.markers`: the reciprocal pronoun, the verbal suffix and the marker
   inventory.
-* `Hungarian.Reciprocals.maga`, `Hungarian.Reciprocals.maguk`: the third person reflexive.
 
 ## References
 
@@ -44,11 +41,5 @@ def ozSuffix : Marker := { morphs := [.suff "óz"], strategy := .verbalAffix }
 
 /-- The reciprocal markers. -/
 def markers : Finset Marker := {ozSuffix, egymas.toMarker}
-
-/-- The third person singular reflexive *maga*. -/
-def maga : ReflexivePronoun := { form := "maga", person := some .third, number := some .singular }
-
-/-- The third person plural reflexive *maguk*. -/
-def maguk : ReflexivePronoun := { form := "maguk", person := some .third, number := some .plural }
 
 end Hungarian.Reciprocals

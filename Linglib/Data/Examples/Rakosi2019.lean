@@ -26,7 +26,7 @@ def ex_1a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "1"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "egymás")] }
 
 def ex_1b : Datum :=
   { id := "rakosi2019_1b"
@@ -39,7 +39,7 @@ def ex_1b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "1"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maguk")] }
 
 def ex_2a : Datum :=
   { id := "rakosi2019_2a"
@@ -52,7 +52,7 @@ def ex_2a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "no")] }
+    paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("semanticNumber", "singular"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_2b : Datum :=
   { id := "rakosi2019_2b"
@@ -65,7 +65,7 @@ def ex_2b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "no")] }
+    paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("semanticNumber", "singular"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_3b : Datum :=
   { id := "rakosi2019_3b"
@@ -78,7 +78,7 @@ def ex_3b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("verb", "sg"), ("anaphor", "inclusiveReflexive"), ("semanticPlural", "no")] }
+    paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("semanticNumber", "singular"), ("verb", "1sg"), ("anaphor", "magunk")] }
 
 def ex_4a : Datum :=
   { id := "rakosi2019_4a"
@@ -91,7 +91,7 @@ def ex_4a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("referential", .acceptable), ("bound variable", .ungrammatical)]
-    paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("verb", "sg"), ("anaphor", "inclusiveReflexive"), ("semanticPlural", "no")] }
+    paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("semanticNumber", "singular"), ("verb", "1sg"), ("anaphor", "magunk")] }
 
 def ex_4b : Datum :=
   { id := "rakosi2019_4b"
@@ -104,7 +104,7 @@ def ex_4b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("bound variable", .acceptable)]
-    paperFeatures := [("section", "2"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "2"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "1pl"), ("anaphor", "magunk")] }
 
 def ex_4c : Datum :=
   { id := "rakosi2019_4c"
@@ -117,7 +117,7 @@ def ex_4c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("bound variable", .acceptable)]
-    paperFeatures := [("section", "2"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "2"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "1pl"), ("anaphor", "egymás")] }
 
 def ex_5a : Datum :=
   { id := "rakosi2019_5a"
@@ -130,7 +130,7 @@ def ex_5a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "2"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maguk")] }
 
 def ex_5b : Datum :=
   { id := "rakosi2019_5b"
@@ -143,7 +143,7 @@ def ex_5b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "atomic"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "no")] }
+    paperFeatures := [("section", "2"), ("antecedent", "atomic"), ("semanticNumber", "singular"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_6 : Datum :=
   { id := "rakosi2019_6"
@@ -156,7 +156,7 @@ def ex_6 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "no")] }
+    paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("semanticNumber", "singular"), ("verb", "1sg"), ("anaphor", "egymás")] }
 
 def ex_8a : Datum :=
   { id := "rakosi2019_8a"
@@ -169,7 +169,7 @@ def ex_8a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_8a_ : Datum :=
   { id := "rakosi2019_8a_"
@@ -182,7 +182,7 @@ def ex_8a_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_8b : Datum :=
   { id := "rakosi2019_8b"
@@ -195,7 +195,7 @@ def ex_8b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_8b_ : Datum :=
   { id := "rakosi2019_8b_"
@@ -208,7 +208,7 @@ def ex_8b_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_9a : Datum :=
   { id := "rakosi2019_9a"
@@ -221,7 +221,7 @@ def ex_9a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_9b : Datum :=
   { id := "rakosi2019_9b"
@@ -234,7 +234,7 @@ def ex_9b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_9c : Datum :=
   { id := "rakosi2019_9c"
@@ -247,7 +247,7 @@ def ex_9c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_9d : Datum :=
   { id := "rakosi2019_9d"
@@ -260,7 +260,7 @@ def ex_9d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_11a : Datum :=
   { id := "rakosi2019_11a"
@@ -273,7 +273,7 @@ def ex_11a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_11a_ : Datum :=
   { id := "rakosi2019_11a_"
@@ -286,7 +286,7 @@ def ex_11a_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_11b : Datum :=
   { id := "rakosi2019_11b"
@@ -299,7 +299,7 @@ def ex_11b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "pl"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maguk")] }
 
 def ex_11b_ : Datum :=
   { id := "rakosi2019_11b_"
@@ -312,7 +312,7 @@ def ex_11b_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "pl"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maga")] }
 
 def ex_12 : Datum :=
   { id := "rakosi2019_12"
@@ -325,7 +325,7 @@ def ex_12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_12_ : Datum :=
   { id := "rakosi2019_12_"
@@ -338,7 +338,7 @@ def ex_12_ : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "pl"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "egymás")] }
 
 def ex_14 : Datum :=
   { id := "rakosi2019_14"
@@ -351,7 +351,7 @@ def ex_14 : Datum :=
     judgment := .acceptable
     alternatives := [("A személyzet fáradt voltak.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "none"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg")] }
 
 def ex_15a : Datum :=
   { id := "rakosi2019_15a"
@@ -364,7 +364,7 @@ def ex_15a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_15b : Datum :=
   { id := "rakosi2019_15b"
@@ -377,7 +377,7 @@ def ex_15b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_15c : Datum :=
   { id := "rakosi2019_15c"
@@ -390,7 +390,7 @@ def ex_15c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_16 : Datum :=
   { id := "rakosi2019_16"
@@ -403,7 +403,7 @@ def ex_16 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_16_ : Datum :=
   { id := "rakosi2019_16_"
@@ -416,7 +416,7 @@ def ex_16_ : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_17 : Datum :=
   { id := "rakosi2019_17"
@@ -429,7 +429,7 @@ def ex_17 : Datum :=
     judgment := .acceptable
     alternatives := [("Péter és Éva az-t gondolja, hogy ő szereti egymás-t.", .ungrammatical)]
     readings := [("broad scope", .acceptable)]
-    paperFeatures := [("section", "6"), ("antecedent", "boundPro"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "6"), ("antecedent", "boundPro"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_18 : Datum :=
   { id := "rakosi2019_18"
@@ -442,7 +442,7 @@ def ex_18 : Datum :=
     judgment := .acceptable
     alternatives := [("Álmomban két macska voltam, és én játszottam egymás-sal.", .ungrammatical)]
     readings := []
-    paperFeatures := [("section", "6"), ("antecedent", "boundPro"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
+    paperFeatures := [("section", "6"), ("antecedent", "boundPro"), ("semanticNumber", "plural"), ("verb", "1sg"), ("anaphor", "egymás")] }
 
 def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3b, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6, ex_8a, ex_8a_, ex_8b, ex_8b_, ex_9a, ex_9b, ex_9c, ex_9d, ex_11a, ex_11a_, ex_11b, ex_11b_, ex_12, ex_12_, ex_14, ex_15a, ex_15b, ex_15c, ex_16, ex_16_, ex_17, ex_18]
 
