@@ -79,10 +79,9 @@ theorem disconfirmed_eq_one_sub [DiscreteMeasurableSpace T] [IsProbabilityMeasur
 variable [MeasurableSpace W]
 
 /-- The surprisals of the words of `rest`, read one by one after the prefix `acc`. -/
-noncomputable def totalSurprisal : List W → List W → ℝ
-  | _, [] => 0
-  | acc, w :: rest =>
-    surprisal ((ofMeasure (P.map str)).next acc) (some w) + totalSurprisal (acc ++ [w]) rest
+noncomputable def totalSurprisal (acc rest : List W) : ℝ :=
+  ∑ i : Fin rest.length,
+    surprisal ((ofMeasure (P.map str)).next (acc ++ rest.take i)) (some rest[i])
 
 variable [DiscreteMeasurableSpace T] [MeasurableSingletonClass W]
 
@@ -126,26 +125,22 @@ theorem log_le_surprisal_next {k : ℝ} (hk : 0 ≤ k)
 
 variable [IsProbabilityMeasure P]
 
-/-- Word surprisals telescope: reading `rest` after `acc` costs the log of the ratio of the
-masses before and after, whenever the whole string has positive mass. -/
+/-- Word surprisals telescope: by the chain rule of the language model, reading `rest` after
+`acc` costs the log of the ratio of the masses before and after, whenever the whole string has
+positive mass. -/
 theorem totalSurprisal_eq {acc rest : List W}
     (hpos : 0 < P.real (consistent str (acc ++ rest))) :
     totalSurprisal P str acc rest =
       Real.log (P.real (consistent str acc)) -
         Real.log (P.real (consistent str (acc ++ rest))) := by
-  induction rest generalizing acc with
-  | nil => simp [totalSurprisal]
-  | cons w rest ih =>
-    rw [totalSurprisal]
-    have hpos' : 0 < P.real (consistent str (acc ++ [w] ++ rest)) := by
-      rwa [List.append_assoc, List.singleton_append]
-    have h₁ : 0 < P.real (consistent str (acc ++ [w])) :=
-      hpos'.trans_le (measureReal_mono (consistent_anti str (List.prefix_append _ rest)))
-    have h₀ : 0 < P.real (consistent str acc) :=
-      h₁.trans_le (measureReal_mono (consistent_anti str (List.prefix_append acc [w])))
-    rw [ih hpos', List.append_assoc, List.singleton_append, surprisal_next_eq_log_div,
-      Real.log_div h₀.ne' h₁.ne']
-    ring
+  have h₀ : 0 < P.real (consistent str acc) :=
+    hpos.trans_le (measureReal_mono (consistent_anti str (List.prefix_append acc rest)))
+  simp only [measureReal_def] at hpos h₀ ⊢
+  have h := condPrefixProb_ofMeasure_map str P (ENNReal.toReal_pos_iff.1 h₀).1.ne' rest
+  rw [totalSurprisal, ← neg_log_condPrefixProb _ (h ▸ ENNReal.div_ne_zero.2
+    ⟨(ENNReal.toReal_pos_iff.1 hpos).1.ne', measure_ne_top _ _⟩), h, ENNReal.toReal_div,
+    Real.log_div hpos.ne' h₀.ne']
+  ring
 
 /-- The linking hypothesis at the sentence level (section 4): the total surprisal of a sentence
 is the negative log of its prefix mass, the whole disconfirmed mass paid out word by word. -/

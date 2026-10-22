@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.AutoregressiveSequenceModel
+public import Linglib.Core.Probability.AutoregressiveSequenceModel.Basic
 
 /-!
 # Prefix probabilities of a generative process
@@ -23,8 +23,8 @@ inputs of surprisal theory ([hale-2001], [levy-2008]).
 
 ## Main results
 
-* `prefixProb_ofMeasure_map`: the prefix probability of a string is the mass of the structures
-  consistent with it.
+* `condPrefixProb_ofMeasure_map`: the probability of continuing a prefix with a string is the
+  ratio of the prefix probabilities after and before it.
 * `next_ofMeasure_map_apply_some`: the probability of the next word is the process conditioned on
   the prefix, at the structures consistent with the extended prefix.
 
@@ -65,11 +65,17 @@ theorem map_apply_setOf_prefix (ws : List W) :
 
 variable [MeasurableSpace W] [MeasurableSingletonClass W]
 
-/-- The prefix probability of a string under the autoregressive model of a process is the mass of
-the structures consistent with it. -/
-theorem prefixProb_ofMeasure_map [IsProbabilityMeasure P] (ws : List W) :
-    (ofMeasure (P.map str)).prefixProb ws = P (consistent str ws) := by
-  rw [prefixProb_ofMeasure, map_apply_setOf_prefix]
+/-- After a prefix of positive probability, the autoregressive model of a process continues with
+`xs` with the ratio of the masses of the structures consistent with the extended prefix and with
+the prefix. -/
+theorem condPrefixProb_ofMeasure_map [IsProbabilityMeasure P] {ws : List W}
+    (hws : P (consistent str ws) ≠ 0) (xs : List W) :
+    (ofMeasure (P.map str)).condPrefixProb ws xs =
+      P (consistent str (ws ++ xs)) / P (consistent str ws) := by
+  have hsub : {l : List W | ws ++ xs <+: l} ⊆ {l | ws <+: l} :=
+    fun _ ↦ (List.prefix_append ws xs).trans
+  rw [condPrefixProb_ofMeasure (by rwa [map_apply_setOf_prefix]),
+    cond_apply_of_subset .of_discrete hsub, map_apply_setOf_prefix, map_apply_setOf_prefix]
 
 /-- The probability of the next word `w` after the prefix `ws` is the process conditioned on the
 prefix, at the structures consistent with the extended prefix. -/
