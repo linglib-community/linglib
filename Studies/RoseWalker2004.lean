@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Examples.RoseWalker2004
 public import Mathlib.Tactic.DeriveFintype
@@ -7,43 +8,36 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Rose & Walker (2004): A Typology of Consonant Agreement as Correspondence
 
-This file formalizes the paper's account of long-distance consonant agreement: consonants of
-an output that are similar enough stand in a correspondence relation, demanded by CORR
-constraints arrayed in a fixed hierarchy by similarity, and IDENT-CC constraints require
-correspondents to agree in the harmonizing feature, so that intervening segments are neutral
-and agreement holds between exactly the pairs whose CORR constraint outranks the input–output
-faithfulness resisting the change. The nasal case studies are formalized: the nasal
-correspondence hierarchy (`nasalSimilarity`, `corr`), IDENT-OI(nasal) interpolated at a cut in
-it, and the typology `winner_eq`, that a nasal and an oral consonant agree in the optimal output
-exactly when their pair is at least as similar as the cut, so that demoting the faithfulness
-constraint only widens the agreeing class (`agree_of_le`). Ngbaka cuts the hierarchy below the
-homorganic nasal–prenasal pairs, and its words are the fixed points of that grammar
-(`ngbaka_rows`); Kikongo cuts it below every nasal–voiced-stop and nasal–approximant pair and
-splits IDENT-CC by direction, so that only consonants to the right of a nasal agree, and its
-alternations are the rows of `kikongo_rows`, with the paper's tableaux for the agreeing suffix,
-the neutral voiceless stop, and the direction of agreement reproduced over generated or the
-paper's own candidates.
+Similar consonants of an output stand in correspondence, demanded by CORR constraints ranked by
+similarity, and IDENT-CC constraints require correspondents to agree, so intervening segments are
+neutral. A candidate is a correspondence: input and output aligned position by position, and the
+consonants of the output corresponding among themselves, read left to right. The directional
+IDENT-CC constraints are MAX and DEP of [nasal] along that relation, as the paper frames them, and
+IDENT-OI(nas) is DEP of [nasal] from input to output.
+
+## Main results
+
+* `winner_eq`, `agree_of_le`: a nasal and an oral consonant agree exactly when their pair is at
+  least as similar as the cut below which IDENT-OI(nas) sits.
+* `ngbaka_rows`: the Ngbaka words of (41) and (42) are the fixed points of its grammar.
+* `kikongo_rows`, `kikongo_grammar`: the Kikongo alternations of (43) and (44) are the map
+  `harmonize`, which the grammar derives for the stems without NC clusters.
+* `tumidi`, `nikulu`, `kudumukila_winner`: the paper's Kikongo tableaux.
+* `not_isFaithfulness_corr`, `not_isMarkedness_corr`: CORR is neither faithfulness nor
+  markedness, while the IDENT constraints are faithfulness.
 
 ## Implementation notes
 
-Segments are the paper's chart of stop series on the nasality–voicing continuum by place,
-approximants, fricatives, and vocoids; a candidate is an output string aligned with the input
-and a correspondence relation among its consonants, listed as coindexed pairs. CORR constraints
-count the consonant pairs at least as similar as their stratum that fail to correspond, the
-directional IDENT-CC constraints the coindexed pairs in which a nasal is followed, or preceded,
-by an oral correspondent, and IDENT-OI(nasal) the consonants nasalized. GEN keeps or nasalizes
-each consonant and coindexes the consonants by any partition; the tableau of the paper's
-five-consonant directional example is over the paper's own candidates. Kikongo's surface map
-`harmonize` is the analysis's generalization, rightward agreement at the Kikongo cut with NC
-clusters neither triggering nor undergoing, which the paper attributes to a constraint on the
-structural roles of correspondents; that constraint, the exclusion of prefixes from the stem
-domain, and the laryngeal case studies are not formalized. Transcriptions omit tone, and the
-example numbers of the rows are those of the manuscript [rose-walker-2001].
+* GEN keeps or nasalizes each consonant and coindexes the consonants by any partition; the
+  tableau of *kudumuk-ila* is over the paper's own candidates.
+* `harmonize` is the analysis's generalization for Kikongo, NC clusters neither triggering nor
+  undergoing. The paper derives that neutrality from SROLE-CC (55), which is not formalized, nor
+  are the exclusion of prefixes from the stem domain and the laryngeal case studies.
+* Transcriptions omit tone.
 
 ## References
 
 * [rose-walker-2004]
-* [rose-walker-2001]
 * [mccarthy-prince-1995]
 * [prince-smolensky-1993]
 -/
@@ -143,10 +137,6 @@ theorem AtLeast.mono {k k' : Fin 4} {a b : Seg} (h : AtLeast k a b) (hk : k ≤ 
 def consonants (w : List Seg) : List ℕ :=
   (List.range w.length).filter fun i ↦ (w.getD i .vocoid).IsConsonant
 
-/-- The pairs of consonant positions of a string, left position first. -/
-def consonantPairs (w : List Seg) : List (ℕ × ℕ) :=
-  (consonants w).flatMap fun i ↦ ((consonants w).filter (i < ·)).map (i, ·)
-
 /-- An output candidate: the output string, aligned position by position with the input, and
 the correspondence relation among its consonants as coindexed pairs of positions, each written
 left position first. -/
@@ -155,45 +145,85 @@ structure Cand where
   corr : List (ℕ × ℕ)
   deriving DecidableEq, Repr
 
-/-- The segment of a candidate at a position. -/
-def Cand.seg (c : Cand) (i : ℕ) : Seg := c.out.getD i .vocoid
+/-- The correspondence of a candidate to an input: input and output correspond position by
+position, and the consonants of the output correspond as the candidate coindexes them, each pair
+read left to right. -/
+def Cand.correspondence (input : List Seg) (c : Cand) : Correspondence BinaryRole Seg :=
+  .ofPairs (fun | .lhs => input | .rhs => c.out) fun
+    | .lhs, .rhs | .rhs, .lhs => Correspondence.diagonalPairs input.length
+    | .rhs, .rhs => c.corr
+    | .lhs, .lhs => []
 
-/-- CORR at stratum `k`: a violation for each consonant pair at least as similar as the stratum
-that does not correspond. -/
-def corr (k : Fin 4) : Constraint Cand := fun c ↦
-  ((consonantPairs c.out).filter fun p ↦ AtLeast k (c.seg p.1) (c.seg p.2) ∧ p ∉ c.corr).length
+/-- CORR at stratum `k` of the nasal correspondence hierarchy (47): a violation for each pair of
+output consonants at least as similar as the stratum, left first, that do not correspond. -/
+def corr (k : Fin 4) : Constraint (Correspondence BinaryRole Seg) := fun c ↦
+  let C := Finset.univ.filter fun i : Fin (c.form .rhs).length ↦ (c.form .rhs)[i].IsConsonant
+  ((C ×ˢ C).filter fun p ↦ p.1 < p.2 ∧ AtLeast k (c.form .rhs)[p.1] (c.form .rhs)[p.2] ∧
+    p ∉ c.edge .rhs .rhs).card
 
-/-- IDENT-CLCR(nasal): a violation for each coindexed pair whose left member is nasal and
-whose right member is oral. -/
-def identCLCR : Constraint Cand := fun c ↦
-  (c.corr.filter fun p ↦ (c.seg p.1).IsNasal ∧ ¬ (c.seg p.2).IsNasal).length
+/-- IDENT-CLCR(nas) (51a): MAX of [nasal] along the correspondence of the output read left to
+right, a violation for each nasal with an oral correspondent to its right. -/
+def identCLCR : Constraint (Correspondence BinaryRole Seg) :=
+  (·.maxViolFeature Seg.IsNasal .rhs .rhs)
 
-/-- IDENT-CRCL(nasal): a violation for each coindexed pair whose right member is nasal and
-whose left member is oral. -/
-def identCRCL : Constraint Cand := fun c ↦
-  (c.corr.filter fun p ↦ ¬ (c.seg p.1).IsNasal ∧ (c.seg p.2).IsNasal).length
+/-- IDENT-CRCL(nas) (51b): DEP of [nasal] along the correspondence of the output read left to
+right, a violation for each nasal with an oral correspondent to its left. -/
+def identCRCL : Constraint (Correspondence BinaryRole Seg) :=
+  (·.depViolFeature Seg.IsNasal .rhs .rhs)
 
-/-- IDENT-OI(nasal) for an input: a violation for each segment nasal in the output but not in
-the input. -/
-def identOI (input : List Seg) : Constraint Cand := fun c ↦
-  ((List.range input.length).filter fun i ↦
-    ¬ (input.getD i .vocoid).IsNasal ∧ (c.seg i).IsNasal).length
+/-- IDENT-OI(nas): DEP of [nasal] from input to output, a violation for each segment nasal in the
+output but not in the input. -/
+def identOI : Constraint (Correspondence BinaryRole Seg) :=
+  (·.depViolFeature Seg.IsNasal .lhs .rhs)
 
-/-- The nasal correspondence hierarchy with IDENT-OI(nasal) interpolated below stratum `k`,
-under the IDENT-CC constraints `top` and above `bottom`. -/
-def hierarchy (top : List (Constraint Cand)) (k : Fin 4) (input : List Seg)
-    (bottom : List (Constraint Cand)) : List (Constraint Cand) :=
-  top ++ ((List.finRange 4).map corr).insertIdx (k.val + 1) (identOI input) ++ bottom
+/-- The nasal correspondence hierarchy with IDENT-OI(nas) interpolated below stratum `k`, under
+the IDENT-CC constraints `top` and above `bottom`. -/
+def hierarchy (top : List (Constraint (Correspondence BinaryRole Seg))) (k : Fin 4)
+    (bottom : List (Constraint (Correspondence BinaryRole Seg))) :
+    List (Constraint (Correspondence BinaryRole Seg)) :=
+  top ++ ((List.finRange 4).map corr).insertIdx (k.val + 1) identOI ++ bottom
 
-/-- The Ngbaka ranking: both directional IDENT-CC constraints undominated and IDENT-OI(nasal)
-below the homorganic nasal–prenasal stratum. -/
-def ngbaka (input : List Seg) : List (Constraint Cand) :=
-  hierarchy [identCLCR, identCRCL] 1 input []
+/-- The Ngbaka ranking (57b): both directional IDENT-CC constraints undominated and
+IDENT-OI(nas) below the homorganic nasal–prenasal stratum. -/
+def ngbaka : List (Constraint (Correspondence BinaryRole Seg)) :=
+  hierarchy [identCLCR, identCRCL] 1 []
 
-/-- The Kikongo ranking: IDENT-CLCR undominated, IDENT-OI(nasal) below every stratum, and
+/-- The Kikongo ranking (57a): IDENT-CLCR undominated, IDENT-OI(nas) below every stratum, and
 IDENT-CRCL at the bottom. -/
-def kikongo (input : List Seg) : List (Constraint Cand) :=
-  hierarchy [identCLCR] 3 input [identCRCL]
+def kikongo : List (Constraint (Correspondence BinaryRole Seg)) :=
+  hierarchy [identCLCR] 3 [identCRCL]
+
+/-! ### Faithfulness and correspondence -/
+
+/-- The IDENT constraints are faithfulness constraints, which the fully faithful candidate
+satisfies: its output has no correspondence among its consonants. -/
+theorem isFaithfulness_identCLCR : Correspondence.IsFaithfulness identCLCR := fun s ↦ by
+  simp [identCLCR, Correspondence.maxViolFeature, Correspondence.identity]
+
+theorem isFaithfulness_identCRCL : Correspondence.IsFaithfulness identCRCL := fun s ↦ by
+  simp [identCRCL, Correspondence.depViolFeature, Correspondence.identity]
+
+theorem isFaithfulness_identOI : Correspondence.IsFaithfulness identOI := fun s ↦ by
+  rw [identOI, Correspondence.identity, Correspondence.depViolFeature_of_diagonal _ _ _ _
+    (Correspondence.parallel_edge_lhs_rhs s s)]
+  induction s with
+  | nil => rfl
+  | cons a s ih => simpa [List.countP_cons] using ih
+
+/-- CORR is neither faithfulness, since the fully faithful candidate of two identical nasals
+violates it, nor markedness, since two candidates with the same output can differ on it: it
+demands correspondence itself. -/
+theorem not_isFaithfulness_corr (k : Fin 4) : ¬ Correspondence.IsFaithfulness (corr k) := by
+  have : ∀ k, corr k (.identity [.stop .coronal .nasal, .vocoid, .stop .coronal .nasal]) ≠ 0 := by
+    decide
+  exact fun h ↦ this k (h _)
+
+theorem not_isMarkedness_corr (k : Fin 4) : ¬ Correspondence.IsMarkedness .rhs (corr k) := by
+  let w : List Seg := [.stop .coronal .nasal, .vocoid, .stop .coronal .nasal]
+  have : ∀ k, corr k ((⟨w, []⟩ : Cand).correspondence []) ≠
+      corr k ((⟨w, [(0, 2)]⟩ : Cand).correspondence []) := by
+    decide
+  exact fun h ↦ this k (h rfl)
 
 /-! ### GEN -/
 
@@ -218,10 +248,10 @@ def corrOf (P : List (List ℕ)) : List (ℕ × ℕ) :=
 def gen (input : List Seg) : List Cand :=
   (outputs input).flatMap fun o ↦ (partitions (consonants input)).map fun P ↦ ⟨o, corrOf P⟩
 
-/-- The tableau of an input under a ranking, over GEN. -/
-def tableau (ranking : List Seg → List (Constraint Cand)) (input : List Seg) :
-    Tableau Cand (ranking input).length :=
-  Tableau.ofList (gen input).toFinset (ranking input)
+/-- The tableau of an input under a ranking, over GEN, each candidate evaluated as its
+correspondence to the input. -/
+def tableau (ranking : List (Constraint (Correspondence BinaryRole Seg))) (input : List Seg) :=
+  Tableau.ofList (gen input).toFinset (ranking.map (·.comap (Cand.correspondence input)))
 
 /-! ### The typology of the cut -/
 
@@ -229,8 +259,8 @@ def tableau (ranking : List Seg → List (Constraint Cand)) (input : List Seg) :
 def pair (a b : Seg) : List Seg := [a, .vocoid, b]
 
 /-- Both directional IDENT-CC constraints undominated and IDENT-OI(nasal) below stratum `k`. -/
-def cut (k : Fin 4) (input : List Seg) : List (Constraint Cand) :=
-  hierarchy [identCLCR, identCRCL] k input []
+def cut (k : Fin 4) : List (Constraint (Correspondence BinaryRole Seg)) :=
+  hierarchy [identCLCR, identCRCL] k []
 
 /-- The typology: a nasal followed by an oral consonant agrees with it, the two corresponding,
 exactly when the pair is at least as similar as the cut below which IDENT-OI(nasal) sits;
@@ -287,10 +317,11 @@ def parse : List Char → List Seg
 
 /-- The words of a language as the fixed points of its grammar: some optimal candidate has the
 input as its output. -/
-def IsFixedPoint (ranking : List Seg → List (Constraint Cand)) (w : List Seg) : Prop :=
+def IsFixedPoint (ranking : List (Constraint (Correspondence BinaryRole Seg))) (w : List Seg) :
+    Prop :=
   ∃ c ∈ (tableau ranking w).optimal, c.out = w
 
-instance (ranking : List Seg → List (Constraint Cand)) (w : List Seg) :
+instance (ranking : List (Constraint (Correspondence BinaryRole Seg))) (w : List Seg) :
     Decidable (IsFixedPoint ranking w) :=
   inferInstanceAs (Decidable (∃ c ∈ (tableau ranking w).optimal, c.out = w))
 
@@ -381,7 +412,8 @@ def kudumukila : List Cand :=
 it, the suffix consonant to the right of the nasal nasalizes and the voiced stop to its left
 stays oral. -/
 theorem kudumukila_winner :
-    (Tableau.ofList kudumukila.toFinset (kikongo (parse "kudumuk-ila".toList))).optimal =
+    (Tableau.ofList kudumukila.toFinset
+      (kikongo.map (·.comap (Cand.correspondence (parse "kudumuk-ila".toList))))).optimal =
       {kudumukila[0]} := by
   decide +kernel
 

@@ -1,7 +1,127 @@
 [
   {
-    "id": "rosewalker2004_ex26a-i",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26a-i)"},
+    "id": "rosewalker2004_ex41a",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(41a)"},
+    "language": "ngba1284",
+    "primaryText": "nanɛ",
+    "glossedTokens": [],
+    "translation": "today",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"]
+    ],
+    "comment": "Ngbaka: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal; tone omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex41a-star",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(41a)"},
+    "language": "ngba1284",
+    "primaryText": "naⁿdɛ",
+    "glossedTokens": [],
+    "translation": "today",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"]
+    ],
+    "comment": "Ngbaka: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal; tone omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex41b",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(41b)"},
+    "language": "ngba1284",
+    "primaryText": "ᵐbɛɛᵐbɛ",
+    "glossedTokens": [],
+    "translation": "snail",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"]
+    ],
+    "comment": "Ngbaka: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal; tone omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex41b-star",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(41b)"},
+    "language": "ngba1284",
+    "primaryText": "ᵐbɛɛmɛ",
+    "glossedTokens": [],
+    "translation": "snail",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"]
+    ],
+    "comment": "Ngbaka: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal; tone omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex42a",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(42a)"},
+    "language": "ngba1284",
+    "primaryText": "boma",
+    "glossedTokens": [],
+    "translation": "how",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"]
+    ],
+    "comment": "Ngbaka: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal; tone omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex42b",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(42b)"},
+    "language": "ngba1284",
+    "primaryText": "maᵑga",
+    "glossedTokens": [],
+    "translation": "net",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"]
+    ],
+    "comment": "Ngbaka: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal; tone omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex42c",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(42c)"},
+    "language": "ngba1284",
+    "primaryText": "mini",
+    "glossedTokens": [],
+    "translation": "tongue",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"]
+    ],
+    "comment": "Ngbaka: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal; tone omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex42d",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(42d)"},
+    "language": "ngba1284",
+    "primaryText": "ᵑgaᵐba",
+    "glossedTokens": [],
+    "translation": "navvy",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"]
+    ],
+    "comment": "Ngbaka: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal; tone omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex43a-i",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43a)"},
     "language": "koon1244",
     "primaryText": "m-bud-idi",
     "glossedTokens": [],
@@ -13,12 +133,12 @@
       ["stem", "bud-idi"],
       ["underlying", "bud-idi"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26a-ii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26a-ii)"},
+    "id": "rosewalker2004_ex43a-ii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43a)"},
     "language": "koon1244",
     "primaryText": "n-suk-idi",
     "glossedTokens": [],
@@ -30,29 +150,46 @@
       ["stem", "suk-idi"],
       ["underlying", "suk-idi"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26a-iii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26a-iii)"},
+    "id": "rosewalker2004_ex43a-iii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43a)"},
     "language": "koon1244",
-    "primaryText": "tu-kin-ini",
+    "primaryText": "sos-ele",
+    "glossedTokens": [],
+    "translation": "searched for",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"],
+      ["stem", "sos-ele"],
+      ["underlying", "sos-ele"]
+    ],
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex43a-iv",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43a)"},
+    "language": "koon1244",
+    "primaryText": "tu-kun-ini",
     "glossedTokens": [],
     "translation": "we planted",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["phenomenon", "nasalAgreement"],
-      ["stem", "kin-ini"],
-      ["underlying", "kin-idi"]
+      ["stem", "kun-ini"],
+      ["underlying", "kun-idi"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26a-iv",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26a-iv)"},
+    "id": "rosewalker2004_ex43a-v",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43a)"},
     "language": "koon1244",
     "primaryText": "tu-nik-ini",
     "glossedTokens": [],
@@ -64,46 +201,29 @@
       ["stem", "nik-ini"],
       ["underlying", "nik-idi"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26a-v",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26a-v)"},
+    "id": "rosewalker2004_ex43a-vi",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43a)"},
     "language": "koon1244",
-    "primaryText": "n-tum-ini",
+    "primaryText": "sim-ini",
     "glossedTokens": [],
-    "translation": "I sent",
+    "translation": "prohibited",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["phenomenon", "nasalAgreement"],
-      ["stem", "tum-ini"],
-      ["underlying", "tum-idi"]
+      ["stem", "sim-ini"],
+      ["underlying", "sim-idi"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26a-vi",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26a-vi)"},
-    "language": "koon1244",
-    "primaryText": "futumuk-ini",
-    "glossedTokens": [],
-    "translation": "resuscitated (intr.)",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"],
-      ["stem", "futumuk-ini"],
-      ["underlying", "futumuk-idi"]
-    ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex26a-vii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26a-vii)"},
+    "id": "rosewalker2004_ex43a-vii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43a)"},
     "language": "koon1244",
     "primaryText": "leem-ene",
     "glossedTokens": [],
@@ -115,12 +235,29 @@
       ["stem", "leem-ene"],
       ["underlying", "leem-ele"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26b-i",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26b-i)"},
+    "id": "rosewalker2004_ex43a-viii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43a)"},
+    "language": "koon1244",
+    "primaryText": "futumuk-ini",
+    "glossedTokens": [],
+    "translation": "resuscitated (intr.)",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"],
+      ["stem", "futumuk-ini"],
+      ["underlying", "futumuk-idi"]
+    ],
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex43b-i",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43b)"},
     "language": "koon1244",
     "primaryText": "m-bul-ulu",
     "glossedTokens": [],
@@ -132,46 +269,12 @@
       ["stem", "bul-ulu"],
       ["underlying", "bul-ulu"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26b-ii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26b-ii)"},
-    "language": "koon1244",
-    "primaryText": "n-suk-ulu",
-    "glossedTokens": [],
-    "translation": "I was washed",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"],
-      ["stem", "suk-ulu"],
-      ["underlying", "suk-ulu"]
-    ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex26b-iii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26b-iii)"},
-    "language": "koon1244",
-    "primaryText": "ma-kin-unu",
-    "glossedTokens": [],
-    "translation": "it was planted",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"],
-      ["stem", "kin-unu"],
-      ["underlying", "kin-ulu"]
-    ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex26b-iv",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26b-iv)"},
+    "id": "rosewalker2004_ex43b-ii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43b)"},
     "language": "koon1244",
     "primaryText": "ma-nik-unu",
     "glossedTokens": [],
@@ -183,33 +286,33 @@
       ["stem", "nik-unu"],
       ["underlying", "nik-ulu"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26c-i",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26c-i)"},
+    "id": "rosewalker2004_ex43c-i",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43c)"},
     "language": "koon1244",
-    "primaryText": "kutootila-ila",
+    "primaryText": "ku-toot-ila",
     "glossedTokens": [],
     "translation": "to harvest for",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["phenomenon", "nasalAgreement"],
-      ["stem", "tootila-ila"],
-      ["underlying", "tootila-ila"]
+      ["stem", "toot-ila"],
+      ["underlying", "toot-ila"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26c-ii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26c-ii)"},
+    "id": "rosewalker2004_ex43c-ii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43c)"},
     "language": "koon1244",
     "primaryText": "sakid-ila",
     "glossedTokens": [],
-    "translation": "to congratulate for",
+    "translation": "congratulate for",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -217,14 +320,14 @@
       ["stem", "sakid-ila"],
       ["underlying", "sakid-ila"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26c-iii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26c-iii)"},
+    "id": "rosewalker2004_ex43c-iii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43c)"},
     "language": "koon1244",
-    "primaryText": "kukin-ina",
+    "primaryText": "ku-kin-ina",
     "glossedTokens": [],
     "translation": "to dance for",
     "context": "",
@@ -234,14 +337,31 @@
       ["stem", "kin-ina"],
       ["underlying", "kin-ila"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26c-iv",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26c-iv)"},
+    "id": "rosewalker2004_ex43c-iv",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43c)"},
     "language": "koon1244",
-    "primaryText": "kudumuk-ina",
+    "primaryText": "non-ena",
+    "glossedTokens": [],
+    "translation": "pick up for",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"],
+      ["stem", "non-ena"],
+      ["underlying", "non-ela"]
+    ],
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex43c-v",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43c)"},
+    "language": "koon1244",
+    "primaryText": "ku-dumuk-ina",
     "glossedTokens": [],
     "translation": "to jump for",
     "context": "",
@@ -251,14 +371,14 @@
       ["stem", "dumuk-ina"],
       ["underlying", "dumuk-ila"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26c-v",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26c-v)"},
+    "id": "rosewalker2004_ex43c-vi",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43c)"},
     "language": "koon1244",
-    "primaryText": "kukin-is-ina",
+    "primaryText": "ku-kin-is-ina",
     "glossedTokens": [],
     "translation": "to cause to dance for",
     "context": "",
@@ -268,14 +388,14 @@
       ["stem", "kin-is-ina"],
       ["underlying", "kin-is-ila"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex26c-vi",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(26c-vi)"},
+    "id": "rosewalker2004_ex43c-vii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(43c)"},
     "language": "koon1244",
-    "primaryText": "kudumuk-is-ina",
+    "primaryText": "ku-dumuk-is-ina",
     "glossedTokens": [],
     "translation": "to cause to jump for",
     "context": "",
@@ -285,80 +405,29 @@
       ["stem", "dumuk-is-ina"],
       ["underlying", "dumuk-is-ila"]
     ],
-    "comment": "Kikongo perfective, passive, and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere in the stem; prefixes (m-, n-, tu-, ma-, ku-) stand outside the stem domain. Tone omitted.",
+    "comment": "Kikongo perfective active, perfective passive and applicative suffixes: the suffix consonant, [d] before [i] and [l] before other vowels, is [n] after a nasal anywhere to its left in the stem; prefixes (m-, n-, tu-, ma-, ku-, wu-) stand outside the stem domain. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex27a-i",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27a-i)"},
+    "id": "rosewalker2004_ex44a-i",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44a)"},
     "language": "koon1244",
-    "primaryText": "kamb-ila",
+    "primaryText": "bantik-idi",
     "glossedTokens": [],
-    "translation": "to intercept",
+    "translation": "begun",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["phenomenon", "nasalAgreement"],
-      ["stem", "kamb-ila"],
-      ["underlying", "kamb-ila"]
+      ["stem", "bantik-idi"],
+      ["underlying", "bantik-idi"]
     ],
-    "comment": "NC clusters do not trigger nasal agreement: the suffix consonant stays oral after a stem whose only nasal is the first half of a cluster.",
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex27a-ii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27a-ii)"},
-    "language": "koon1244",
-    "primaryText": "somp-ela",
-    "glossedTokens": [],
-    "translation": "to borrow from/for",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"],
-      ["stem", "somp-ela"],
-      ["underlying", "somp-ela"]
-    ],
-    "comment": "NC clusters do not trigger nasal agreement: the suffix consonant stays oral after a stem whose only nasal is the first half of a cluster.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex27a-iii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27a-iii)"},
-    "language": "koon1244",
-    "primaryText": "bind-ula",
-    "glossedTokens": [],
-    "translation": "to unlock",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"],
-      ["stem", "bind-ula"],
-      ["underlying", "bind-ula"]
-    ],
-    "comment": "NC clusters do not trigger nasal agreement: the suffix consonant stays oral after a stem whose only nasal is the first half of a cluster.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex27a-iv",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27a-iv)"},
-    "language": "koon1244",
-    "primaryText": "kunt-ila",
-    "glossedTokens": [],
-    "translation": "shake for",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"],
-      ["stem", "kunt-ila"],
-      ["underlying", "kunt-ila"]
-    ],
-    "comment": "NC clusters do not trigger nasal agreement: the suffix consonant stays oral after a stem whose only nasal is the first half of a cluster.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex27a-v",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27a-v)"},
+    "id": "rosewalker2004_ex44a-ii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44a)"},
     "language": "koon1244",
     "primaryText": "tu-biŋg-idi",
     "glossedTokens": [],
@@ -370,63 +439,114 @@
       ["stem", "biŋg-idi"],
       ["underlying", "biŋg-idi"]
     ],
-    "comment": "NC clusters do not trigger nasal agreement: the suffix consonant stays oral after a stem whose only nasal is the first half of a cluster.",
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex27a-vi",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27a-vi)"},
+    "id": "rosewalker2004_ex44a-iii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44a)"},
     "language": "koon1244",
-    "primaryText": "koŋk-ela",
+    "primaryText": "kemb-ele",
     "glossedTokens": [],
-    "translation": "to push to",
+    "translation": "swept",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["phenomenon", "nasalAgreement"],
-      ["stem", "koŋk-ela"],
-      ["underlying", "koŋk-ela"]
+      ["stem", "kemb-ele"],
+      ["underlying", "kemb-ele"]
     ],
-    "comment": "NC clusters do not trigger nasal agreement: the suffix consonant stays oral after a stem whose only nasal is the first half of a cluster.",
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex27b-i",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27b-i)"},
+    "id": "rosewalker2004_ex44a-iv",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44a)"},
     "language": "koon1244",
-    "primaryText": "tu-meŋg-ini",
+    "primaryText": "n-tond-ele",
     "glossedTokens": [],
-    "translation": "we hated",
+    "translation": "I loved",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["phenomenon", "nasalAgreement"],
-      ["stem", "meŋg-ini"],
-      ["underlying", "meŋg-idi"]
+      ["stem", "tond-ele"],
+      ["underlying", "tond-ele"]
     ],
-    "comment": "NC clusters are transparent: a singleton nasal before the cluster nasalizes the suffix consonant across it.",
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex27b-ii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27b-ii)"},
+    "id": "rosewalker2004_ex44a-v",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44a)"},
     "language": "koon1244",
-    "primaryText": "tu-meŋg-ono",
+    "primaryText": "dimb-ulu",
     "glossedTokens": [],
-    "translation": "we were hated",
+    "translation": "had listened",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["phenomenon", "nasalAgreement"],
-      ["stem", "meŋg-ono"],
-      ["underlying", "meŋg-olo"]
+      ["stem", "dimb-ulu"],
+      ["underlying", "dimb-ulu"]
     ],
-    "comment": "NC clusters are transparent: a singleton nasal before the cluster nasalizes the suffix consonant across it.",
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex27b-iii",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27b-iii)"},
+    "id": "rosewalker2004_ex44a-vi",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44a)"},
+    "language": "koon1244",
+    "primaryText": "tu-koŋg-olo",
+    "glossedTokens": [],
+    "translation": "we were tied",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"],
+      ["stem", "koŋg-olo"],
+      ["underlying", "koŋg-olo"]
+    ],
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex44a-vii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44a)"},
+    "language": "koon1244",
+    "primaryText": "tu-biŋg-ulu",
+    "glossedTokens": [],
+    "translation": "we were hunted",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"],
+      ["stem", "biŋg-ulu"],
+      ["underlying", "biŋg-ulu"]
+    ],
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex44a-viii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44a)"},
+    "language": "koon1244",
+    "primaryText": "somp-ela",
+    "glossedTokens": [],
+    "translation": "borrow from/for",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"],
+      ["stem", "somp-ela"],
+      ["underlying", "somp-ela"]
+    ],
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex44b-i",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44b)"},
     "language": "koon1244",
     "primaryText": "tu-mant-ini",
     "glossedTokens": [],
@@ -438,12 +558,29 @@
       ["stem", "mant-ini"],
       ["underlying", "mant-idi"]
     ],
-    "comment": "NC clusters are transparent: a singleton nasal before the cluster nasalizes the suffix consonant across it.",
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex27b-iv",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(27b-iv)"},
+    "id": "rosewalker2004_ex44b-ii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44b)"},
+    "language": "koon1244",
+    "primaryText": "tu-meŋg-ini",
+    "glossedTokens": [],
+    "translation": "we hated",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["phenomenon", "nasalAgreement"],
+      ["stem", "meŋg-ini"],
+      ["underlying", "meŋg-idi"]
+    ],
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rosewalker2004_ex44b-iii",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44b)"},
     "language": "koon1244",
     "primaryText": "wu-mant-unu",
     "glossedTokens": [],
@@ -455,187 +592,24 @@
       ["stem", "mant-unu"],
       ["underlying", "mant-ulu"]
     ],
-    "comment": "NC clusters are transparent: a singleton nasal before the cluster nasalizes the suffix consonant across it.",
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   },
   {
-    "id": "rosewalker2004_ex23a",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(23a)"},
-    "language": "ngba1284",
-    "primaryText": "nanɛ",
+    "id": "rosewalker2004_ex44b-iv",
+    "source": {"bibkey": "rose-walker-2004", "paperLabel": "(44b)"},
+    "language": "koon1244",
+    "primaryText": "tu-meŋg-ono",
     "glossedTokens": [],
-    "translation": "today",
+    "translation": "we were hated",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
+      ["phenomenon", "nasalAgreement"],
+      ["stem", "meŋg-ono"],
+      ["underlying", "meŋg-olo"]
     ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted. The manuscript prints nɑnɛ̀ with ɑ; the published version (Rose & Walker 2004, ex. 41a) prints nanɛ̀.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex23a-star",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(23a-star)"},
-    "language": "ngba1284",
-    "primaryText": "naⁿdɛ",
-    "glossedTokens": [],
-    "translation": "today",
-    "context": "",
-    "judgment": "ungrammatical",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted. The manuscript prints *nɑⁿdɛ̀ with ɑ; the published version (Rose & Walker 2004, ex. 41a) prints *naⁿdɛ̀.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex23b",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(23b)"},
-    "language": "ngba1284",
-    "primaryText": "ᵐbɛɛᵐbɛ",
-    "glossedTokens": [],
-    "translation": "snail",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex23b-star",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(23b-star)"},
-    "language": "ngba1284",
-    "primaryText": "ᵐbɛɛmɛ",
-    "glossedTokens": [],
-    "translation": "snail",
-    "context": "",
-    "judgment": "ungrammatical",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex25a",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(25a)"},
-    "language": "ngba1284",
-    "primaryText": "boma",
-    "glossedTokens": [],
-    "translation": "how",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex25b",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(25b)"},
-    "language": "ngba1284",
-    "primaryText": "maᵑga",
-    "glossedTokens": [],
-    "translation": "net",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex25c",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(25c)"},
-    "language": "ngba1284",
-    "primaryText": "mini",
-    "glossedTokens": [],
-    "translation": "tongue",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex25d",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(25d)"},
-    "language": "ngba1284",
-    "primaryText": "ᵑgaᵐba",
-    "glossedTokens": [],
-    "translation": "navvy",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex29a",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(29a)"},
-    "language": "ngba1284",
-    "primaryText": "ᵐbɔ",
-    "glossedTokens": [],
-    "translation": "small",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex29b",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(29b)"},
-    "language": "ngba1284",
-    "primaryText": "kɔⁿdɛ",
-    "glossedTokens": [],
-    "translation": "heart",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex29c",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(29c)"},
-    "language": "ngba1284",
-    "primaryText": "ⁿda",
-    "glossedTokens": [],
-    "translation": "place",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rosewalker2004_ex29d",
-    "source": {"bibkey": "rose-walker-2001", "paperLabel": "(29d)"},
-    "language": "ngba1284",
-    "primaryText": "lɔᵑgɔ",
-    "glossedTokens": [],
-    "translation": "elephant trap",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["phenomenon", "nasalAgreement"]
-    ],
-    "comment": "Ngbaka morpheme structure constraint: a nasal and a homorganic prenasal stop do not co-occur in a word; prenasal stops are written with a superscript nasal, tone and vowel nasality omitted.",
+    "comment": "Kikongo NC clusters are neutral: their nasal does not trigger agreement, and their oral stop is not targeted. The underlying field gives the stem with the suffix consonant in its oral alternant.",
     "verified": "page-image"
   }
 ]
