@@ -79,7 +79,7 @@ def doc : LinearizedSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTel
 def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
 
 -- The first object asymmetrically c-commands the second ([barss-lasnik-1986]).
-example : AsymmCCommands doc aGirl everyTelescope := by decide
+example : AsymmCCommands doc aGirl (everyTelescope : SyntacticObject) := by decide
 
 /-- Only the first object may be attracted first, since it asymmetrically c-commands the second,
 so the derivation fixes the base order and the second object cannot come to scope over the first:
@@ -103,7 +103,8 @@ def locativeQuantifiers : List SyntacticObject := [everyTelescope, toAGirl]
 
 -- Direct object and PP c-command each other, so neither asymmetrically c-commands the other.
 example :
-    CCommands locative everyTelescope toAGirl ∧ CCommands locative toAGirl everyTelescope := by
+    CCommands locative everyTelescope (toAGirl : SyntacticObject) ∧
+      CCommands locative toAGirl (everyTelescope : SyntacticObject) := by
   constructor <;> decide
 
 /-- Either candidate may be attracted first, since mutually c-commanding candidates are

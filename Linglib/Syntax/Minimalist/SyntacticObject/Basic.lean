@@ -15,18 +15,19 @@ public import Linglib.Syntax.Minimalist.LexicalItem
 # Syntactic objects
 
 A syntactic object is a binary rooted tree with leaves labelled by the lexical alphabet and no
-labels at internal vertices: an element of the free non-associative commutative magma on `SO₀`. This
-file builds two carriers for it over one alphabet of vertices, `Vertex`, an option of a token on
-either side. The left summand is structure: a lexical item `Vertex.lex tok` on a leaf, or the
-bare label `Vertex.bare` on a binary internal node. The right summand is a trace: the index-free
-`Vertex.trace`, or the trace `Vertex.traceOf tok` of a token, the cancellation `T/T_v` remembering
-the head of `T_v`. Traces are exactly the right summand, the convention of the trace coproduct.
-`SyntacticObject` is the well-formed unordered tree over `Vertex`, the object Merge builds, and
-`LinearizedSyntacticObject` the well-formed ordered tree, the form linearization produces and PF
-reads, Marcolli, Chomsky and Berwick's planar embedding. Well-formedness is a local condition, each
-vertex licensing its children (`Vertex.Licenses`), so it descends to the quotient;
-`LinearizedSyntacticObject.toSyntacticObject` forgets the order and is a homomorphism for the
-vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
+labels at internal vertices: an element of the free non-associative commutative magma on `SO₀`.
+This file builds two carriers for it over one alphabet of vertices, `Vertex L`, an option of a
+leaf label on either side. The left summand is structure: a leaf `Vertex.lex a` of the lexical
+alphabet `L`, or the bare label `Vertex.bare` on a binary internal node. The right summand is a
+trace: the index-free `Vertex.trace`, or the trace `Vertex.traceOf a` of a label, the cancellation
+`T/T_v` remembering the head of `T_v`. Traces are exactly the right summand, the convention of the
+trace coproduct. `SyntacticObject L` is the well-formed unordered tree over `Vertex L`, the object
+Merge builds, and `LinearizedSyntacticObject L` the well-formed ordered tree, the form
+linearization produces and PF reads, Marcolli, Chomsky and Berwick's planar embedding.
+Well-formedness is a local condition, each vertex licensing its children (`Vertex.Licenses`), so
+it descends to the quotient; `LinearizedSyntacticObject.toSyntacticObject` forgets the order and
+is a homomorphism for the vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and
+`merge`.
 
 ## Main definitions
 
@@ -38,8 +39,13 @@ vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
 ## Main results
 
 * `Minimalist.SyntacticObject.ind`, `exists_form`: induction and case analysis over the shapes.
-* `Minimalist.LinearizedSyntacticObject.toSyntacticObject_merge`: forgetting the order commutes with
-  Merge.
+* `Minimalist.LinearizedSyntacticObject.toSyntacticObject_merge`: forgetting the order commutes
+  with Merge.
+
+## Implementation notes
+
+The lexical alphabet `L` defaults to `LexicalItem.Token`, so a bare `SyntacticObject` is the
+carrier over tokens; the default pins `L` to `Type`.
 
 ## References
 
@@ -53,62 +59,67 @@ namespace Minimalist
 
 open RoseTree UnorderedTree
 
-/-- A vertex carries structure on the left, a lexical token or the bare internal label, and a
-    trace on the right, index-free or of a token. -/
-abbrev SyntacticObject.Vertex : Type := Option LexicalItem.Token ⊕ Option LexicalItem.Token
+/-- A vertex carries structure on the left, a leaf of the lexical alphabet `L` or the bare
+    internal label, and a trace on the right, index-free or of a label. -/
+abbrev SyntacticObject.Vertex (L : Type := LexicalItem.Token) : Type := Option L ⊕ Option L
 
 namespace SyntacticObject
 
-/-- The lexical item `tok` on a leaf. -/
-@[match_pattern] abbrev Vertex.lex (tok : LexicalItem.Token) : Vertex := .inl (some tok)
+variable {L : Type}
+
+/-- The lexical leaf `a`. -/
+@[match_pattern] abbrev Vertex.lex (a : L) : Vertex L := .inl (some a)
 
 /-- The bare label of a binary internal node. -/
-@[match_pattern] abbrev Vertex.bare : Vertex := .inl none
+@[match_pattern] abbrev Vertex.bare : Vertex L := .inl none
 
 /-- The index-free trace. -/
-@[match_pattern] abbrev Vertex.trace : Vertex := .inr none
+@[match_pattern] abbrev Vertex.trace : Vertex L := .inr none
 
-/-- The trace of the token `tok`. -/
-@[match_pattern] abbrev Vertex.traceOf (tok : LexicalItem.Token) : Vertex := .inr (some tok)
+/-- The trace of the leaf `a`. -/
+@[match_pattern] abbrev Vertex.traceOf (a : L) : Vertex L := .inr (some a)
 
 /-! ### Well-formedness -/
 
-/-- A vertex licenses its children when a lexical item or a trace has none and the bare label has
+/-- A vertex licenses its children when a lexical leaf or a trace has none and the bare label has
 two. -/
-def Vertex.Licenses : Vertex → Multiset Vertex → Prop
+def Vertex.Licenses : Vertex L → Multiset (Vertex L) → Prop
   | .inl (some _), ks => ks = 0
   | .inl none, ks => Multiset.card ks = 2
   | .inr _, ks => ks = 0
 
-instance : ∀ (a : Vertex) (ks : Multiset Vertex), Decidable (Vertex.Licenses a ks)
-  | .inl (some _), ks => inferInstanceAs (Decidable (ks = 0))
+instance : ∀ (a : Vertex L) (ks : Multiset (Vertex L)), Decidable (Vertex.Licenses a ks)
+  | .inl (some _), _ => decidable_of_iff _ Multiset.card_eq_zero
   | .inl none, ks => inferInstanceAs (Decidable (Multiset.card ks = 2))
-  | .inr _, ks => inferInstanceAs (Decidable (ks = 0))
+  | .inr _, _ => decidable_of_iff _ Multiset.card_eq_zero
 
 /-- The licensing of a vertex depends only on how many children it has. -/
-theorem Vertex.licenses_iff_of_card_eq {a : Vertex} {ks ls : Multiset Vertex}
+theorem Vertex.licenses_iff_of_card_eq {a : Vertex L} {ks ls : Multiset (Vertex L)}
     (h : Multiset.card ks = Multiset.card ls) : a.Licenses ks ↔ a.Licenses ls := by
   rcases a with (_ | _) | _ <;>
     simp only [Vertex.Licenses, ← Multiset.card_eq_zero, h]
 
 end SyntacticObject
 
-/-- An unordered tree over `Vertex` is a syntactic object when every vertex licenses its
-    children, so that lexical items and traces are leaves and bare vertices are binary. -/
-def IsSyntacticObject (t : UnorderedTree SyntacticObject.Vertex) : Prop :=
+/-- An unordered tree over `Vertex L` is a syntactic object when every vertex licenses its
+    children, so that lexical leaves and traces are leaves and bare vertices are binary. -/
+def IsSyntacticObject {L : Type} (t : UnorderedTree (SyntacticObject.Vertex L)) : Prop :=
   t.Licensed SyntacticObject.Vertex.Licenses
 
-instance : DecidablePred IsSyntacticObject := fun t ↦ inferInstanceAs (Decidable (t.Licensed _))
+instance {L : Type} : DecidablePred (IsSyntacticObject (L := L)) :=
+  fun t ↦ inferInstanceAs (Decidable (t.Licensed _))
 
-@[simp] theorem isSyntacticObject_mk (t : RoseTree SyntacticObject.Vertex) :
+@[simp] theorem isSyntacticObject_mk {L : Type} (t : RoseTree (SyntacticObject.Vertex L)) :
     IsSyntacticObject (UnorderedTree.mk t) ↔
       t.Licensed fun a ks ↦ SyntacticObject.Vertex.Licenses a (ks : Multiset _) :=
   Iff.rfl
 
 namespace SyntacticObject
 
-/-- A leaf carrying a lexical item or a trace is a syntactic object. -/
-theorem isSyntacticObject_mk_leaf {a : Vertex} (ha : a ≠ Vertex.bare) :
+variable {L : Type}
+
+/-- A leaf carrying a lexical leaf or a trace is a syntactic object. -/
+theorem isSyntacticObject_mk_leaf {a : Vertex L} (ha : a ≠ Vertex.bare) :
     IsSyntacticObject (UnorderedTree.mk (.node a [])) := by
   refine (isSyntacticObject_mk _).mpr (licensed_node_iff.mpr ⟨?_, by simp⟩)
   match a, ha with
@@ -116,13 +127,13 @@ theorem isSyntacticObject_mk_leaf {a : Vertex} (ha : a ≠ Vertex.bare) :
   | .inl none, h => exact absurd rfl h
 
 /-- A bare binary node is a syntactic object exactly when both daughters are. -/
-@[simp] theorem isSyntacticObject_mk_merge (l r : RoseTree Vertex) :
+@[simp] theorem isSyntacticObject_mk_merge (l r : RoseTree (Vertex L)) :
     IsSyntacticObject (UnorderedTree.mk (.node Vertex.bare [l, r])) ↔
       IsSyntacticObject (UnorderedTree.mk l) ∧ IsSyntacticObject (UnorderedTree.mk r) := by
   simp [licensed_node_iff, Vertex.Licenses]
 
 /-- A node of a syntactic object has either no children or exactly two. -/
-theorem length_eq_zero_or_two {a : Vertex} {cs : List (RoseTree Vertex)}
+theorem length_eq_zero_or_two {a : Vertex L} {cs : List (RoseTree (Vertex L))}
     (h : IsSyntacticObject (UnorderedTree.mk (.node a cs))) : cs.length = 0 ∨ cs.length = 2 := by
   have h := (licensed_node_iff.mp ((isSyntacticObject_mk _).mp h)).1
   match a with
@@ -130,7 +141,7 @@ theorem length_eq_zero_or_two {a : Vertex} {cs : List (RoseTree Vertex)}
   | .inl none => exact .inr (by simpa [Vertex.Licenses] using h)
 
 /-- A node of a syntactic object with children is bare. -/
-theorem eq_bare_of_ne_nil {a : Vertex} {cs : List (RoseTree Vertex)}
+theorem eq_bare_of_ne_nil {a : Vertex L} {cs : List (RoseTree (Vertex L))}
     (h : IsSyntacticObject (UnorderedTree.mk (.node a cs))) (hcs : cs ≠ []) : a = Vertex.bare := by
   have h := (licensed_node_iff.mp ((isSyntacticObject_mk _).mp h)).1
   match a with
@@ -140,81 +151,88 @@ theorem eq_bare_of_ne_nil {a : Vertex} {cs : List (RoseTree Vertex)}
 end SyntacticObject
 
 /-- The vertices of a syntactic object have zero or two children. -/
-theorem IsSyntacticObject.isFullBinary {t : UnorderedTree SyntacticObject.Vertex}
+theorem IsSyntacticObject.isFullBinary {L : Type} {t : UnorderedTree (SyntacticObject.Vertex L)}
     (h : IsSyntacticObject t) : t.IsFullBinary :=
   UnorderedTree.Licensed.mono (R := SyntacticObject.Vertex.Licenses) (fun
     | .inl (some _), _, h | .inr _, _, h => .inl (congrArg Multiset.card h)
     | .inl none, _, h => .inr h) h
 
-/-- The syntactic objects are the well-formed unordered trees over `Vertex`. -/
-def SyntacticObject : Type := { t : UnorderedTree SyntacticObject.Vertex // IsSyntacticObject t }
+/-- The syntactic objects over the lexical alphabet `L` are the well-formed unordered trees over
+    `Vertex L`. -/
+def SyntacticObject (L : Type := LexicalItem.Token) : Type :=
+  { t : UnorderedTree (SyntacticObject.Vertex L) // IsSyntacticObject t }
 
-/-- The linearized syntactic objects are the well-formed ordered trees over `Vertex`, in any order
-    of the daughters: [marcolli-chomsky-berwick-2025] §1.12's planar embeddings. -/
-def LinearizedSyntacticObject : Type :=
-  { t : RoseTree SyntacticObject.Vertex // IsSyntacticObject (UnorderedTree.mk t) }
+/-- The linearized syntactic objects are the well-formed ordered trees over `Vertex L`, in any
+    order of the daughters: [marcolli-chomsky-berwick-2025] §1.12's planar embeddings. -/
+def LinearizedSyntacticObject (L : Type := LexicalItem.Token) : Type :=
+  { t : RoseTree (SyntacticObject.Vertex L) // IsSyntacticObject (UnorderedTree.mk t) }
 
-instance : DecidableEq SyntacticObject := Subtype.instDecidableEq
+instance {L : Type} [DecidableEq L] : DecidableEq (SyntacticObject L) :=
+  Subtype.instDecidableEq
 
-instance : DecidableEq LinearizedSyntacticObject := Subtype.instDecidableEq
+instance {L : Type} [DecidableEq L] : DecidableEq (LinearizedSyntacticObject L) :=
+  Subtype.instDecidableEq
 
 /-! ### The shapes -/
 
 namespace SyntacticObject
 
+variable {L : Type}
+
 /-- A lexical leaf. -/
-@[coe] def leaf (tok : LexicalItem.Token) : SyntacticObject :=
-  ⟨UnorderedTree.leaf (Vertex.lex tok), isSyntacticObject_mk_leaf (by simp)⟩
+@[coe] def leaf (a : L) : SyntacticObject L :=
+  ⟨UnorderedTree.leaf (Vertex.lex a), isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The index-free trace, the mark an admissible cut leaves in the remaining tree
     ([marcolli-chomsky-berwick-2025], Definition 1.2.6); `traceOf` is the indexed trace. -/
-def trace : SyntacticObject :=
+def trace : SyntacticObject L :=
   ⟨UnorderedTree.leaf Vertex.trace, isSyntacticObject_mk_leaf (by simp)⟩
 
-/-- The trace of `tok`. -/
-def traceOf (tok : LexicalItem.Token) : SyntacticObject :=
-  ⟨UnorderedTree.leaf (Vertex.traceOf tok), isSyntacticObject_mk_leaf (by simp)⟩
+/-- The trace of `a`. -/
+def traceOf (a : L) : SyntacticObject L :=
+  ⟨UnorderedTree.leaf (Vertex.traceOf a), isSyntacticObject_mk_leaf (by simp)⟩
 
-@[simp] theorem leaf_val (tok : LexicalItem.Token) :
-    (leaf tok).val = UnorderedTree.leaf (Vertex.lex tok) :=
+@[simp] theorem leaf_val (a : L) :
+    (leaf a).val = UnorderedTree.leaf (Vertex.lex a) :=
   rfl
 
-@[simp] theorem leaf_inj {a b : LexicalItem.Token} : leaf a = leaf b ↔ a = b :=
+@[simp] theorem leaf_inj {a b : L} : leaf a = leaf b ↔ a = b :=
   ⟨fun h ↦ Option.some_injective _
-    (Sum.inl_injective (congrArg (fun s : SyntacticObject ↦ s.val.value) h)), congrArg leaf⟩
-@[simp] theorem trace_val : trace.val = UnorderedTree.leaf Vertex.trace := rfl
-@[simp] theorem traceOf_val (tok : LexicalItem.Token) :
-    (traceOf tok).val = UnorderedTree.leaf (Vertex.traceOf tok) := rfl
+    (Sum.inl_injective (congrArg (fun s : SyntacticObject L ↦ s.val.value) h)), congrArg leaf⟩
+@[simp] theorem trace_val : (trace : SyntacticObject L).val = UnorderedTree.leaf Vertex.trace :=
+  rfl
+@[simp] theorem traceOf_val (a : L) :
+    (traceOf a).val = UnorderedTree.leaf (Vertex.traceOf a) := rfl
 
 /-- A bare binary node is a syntactic object exactly when both daughters are. -/
-theorem isSyntacticObject_merge_iff (a b : UnorderedTree Vertex) :
+theorem isSyntacticObject_merge_iff (a b : UnorderedTree (Vertex L)) :
     IsSyntacticObject (UnorderedTree.node Vertex.bare {a, b}) ↔
       IsSyntacticObject a ∧ IsSyntacticObject b := by
   refine Quotient.inductionOn₂ a b fun pa pb ↦ ?_
   show IsSyntacticObject (UnorderedTree.node Vertex.bare {UnorderedTree.mk pa,
     UnorderedTree.mk pb}) ↔
     IsSyntacticObject (UnorderedTree.mk pa) ∧ IsSyntacticObject (UnorderedTree.mk pb)
-  rw [show ({UnorderedTree.mk pa, UnorderedTree.mk pb} : Multiset (UnorderedTree Vertex))
+  rw [show ({UnorderedTree.mk pa, UnorderedTree.mk pb} : Multiset (UnorderedTree (Vertex L)))
         = Multiset.ofList ([pa, pb].map UnorderedTree.mk) from rfl, UnorderedTree.node_mk_tree_list]
   exact isSyntacticObject_mk_merge pa pb
 
 /-- Merge on the carrier, the bare binary node over two syntactic objects, also written `*`.
     Noncomputable, since it goes through the smart constructor `UnorderedTree.node`; concrete
     results are built ordered and forgotten by `LinearizedSyntacticObject.toSyntacticObject`. -/
-noncomputable def merge (l r : SyntacticObject) : SyntacticObject :=
+noncomputable def merge (l r : SyntacticObject L) : SyntacticObject L :=
   ⟨UnorderedTree.node Vertex.bare {l.val, r.val}, (isSyntacticObject_merge_iff _ _).2 ⟨l.2, r.2⟩⟩
 
-@[simp] theorem merge_val (l r : SyntacticObject) :
+@[simp] theorem merge_val (l r : SyntacticObject L) :
     (merge l r).val = UnorderedTree.node Vertex.bare {l.val, r.val} := rfl
 
-theorem merge_comm (l r : SyntacticObject) : merge l r = merge r l :=
+theorem merge_comm (l r : SyntacticObject L) : merge l r = merge r l :=
   Subtype.ext (by rw [merge_val, merge_val, Multiset.pair_comm])
 
 /-- Merge is injective up to the order of its daughters. -/
-theorem merge_eq_merge_iff {l r l' r' : SyntacticObject} :
+theorem merge_eq_merge_iff {l r l' r' : SyntacticObject L} :
     merge l r = merge l' r' ↔ l = l' ∧ r = r' ∨ l = r' ∧ r = l' := by
   refine ⟨fun h ↦ ?_, ?_⟩
-  · have := congrArg (fun s : SyntacticObject ↦ s.val.children) h
+  · have := congrArg (fun s : SyntacticObject L ↦ s.val.children) h
     simp only [merge_val, UnorderedTree.children_node] at this
     rcases Multiset.pair_eq_pair_iff.1 this with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
     exacts [.inl ⟨Subtype.ext h₁, Subtype.ext h₂⟩, .inr ⟨Subtype.ext h₁, Subtype.ext h₂⟩]
@@ -222,33 +240,33 @@ theorem merge_eq_merge_iff {l r l' r' : SyntacticObject} :
     exacts [rfl, merge_comm _ _]
 
 @[simp]
-theorem leaf_ne_merge (tok : LexicalItem.Token) (l r : SyntacticObject) : leaf tok ≠ merge l r :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
+theorem leaf_ne_merge (a : L) (l r : SyntacticObject L) : leaf a ≠ merge l r :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
 
 @[simp]
-theorem leaf_ne_trace (tok : LexicalItem.Token) : leaf tok ≠ trace :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
+theorem leaf_ne_trace (a : L) : leaf a ≠ trace :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
 
 @[simp]
-theorem leaf_ne_traceOf (tok tok' : LexicalItem.Token) : leaf tok ≠ traceOf tok' :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
+theorem leaf_ne_traceOf (a b : L) : leaf a ≠ traceOf b :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
 
 @[simp]
-theorem traceOf_ne_merge (tok : LexicalItem.Token) (l r : SyntacticObject) :
-    traceOf tok ≠ merge l r :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
+theorem traceOf_ne_merge (a : L) (l r : SyntacticObject L) :
+    traceOf a ≠ merge l r :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
 
 @[simp]
-theorem traceOf_ne_leaf (a b : LexicalItem.Token) : traceOf a ≠ leaf b :=
-  fun h ↦ by simpa using congrArg (fun s : SyntacticObject ↦ s.val.value) h
+theorem traceOf_ne_leaf (a b : L) : traceOf a ≠ leaf b :=
+  fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
 
 /-- Merge of two ordered-built objects is the ordered binary node, so concrete results reduce. -/
-theorem merge_mk (pl pr : RoseTree Vertex)
+theorem merge_mk (pl pr : RoseTree (Vertex L))
     (hl : IsSyntacticObject (UnorderedTree.mk pl)) (hr : IsSyntacticObject (UnorderedTree.mk pr)) :
     (merge ⟨UnorderedTree.mk pl, hl⟩ ⟨UnorderedTree.mk pr, hr⟩).val
       = UnorderedTree.mk (.node Vertex.bare [pl, pr]) := by
   rw [merge_val,
-      show ({UnorderedTree.mk pl, UnorderedTree.mk pr} : Multiset (UnorderedTree Vertex))
+      show ({UnorderedTree.mk pl, UnorderedTree.mk pr} : Multiset (UnorderedTree (Vertex L)))
         = Multiset.ofList ([pl, pr].map UnorderedTree.mk) from rfl,
       UnorderedTree.node_mk_tree_list]
 
@@ -258,48 +276,52 @@ namespace LinearizedSyntacticObject
 
 open SyntacticObject (Vertex isSyntacticObject_mk_leaf isSyntacticObject_mk_merge)
 
+variable {L : Type}
+
 /-- A lexical leaf. -/
-@[coe] def leaf (tok : LexicalItem.Token) : LinearizedSyntacticObject :=
-  ⟨.node (Vertex.lex tok) [], isSyntacticObject_mk_leaf (by simp)⟩
+@[coe] def leaf (a : L) : LinearizedSyntacticObject L :=
+  ⟨.node (Vertex.lex a) [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The index-free trace. -/
-def trace : LinearizedSyntacticObject :=
+def trace : LinearizedSyntacticObject L :=
   ⟨.node Vertex.trace [], isSyntacticObject_mk_leaf (by simp)⟩
 
-/-- The trace of `tok`. -/
-def traceOf (tok : LexicalItem.Token) : LinearizedSyntacticObject :=
-  ⟨.node (Vertex.traceOf tok) [], isSyntacticObject_mk_leaf (by simp)⟩
+/-- The trace of `a`. -/
+def traceOf (a : L) : LinearizedSyntacticObject L :=
+  ⟨.node (Vertex.traceOf a) [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- Merge, with the daughters in the given order. -/
-def merge (l r : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def merge (l r : LinearizedSyntacticObject L) : LinearizedSyntacticObject L :=
   ⟨.node Vertex.bare [l.val, r.val], (isSyntacticObject_mk_merge _ _).mpr ⟨l.2, r.2⟩⟩
 
-@[simp] theorem leaf_val (tok : LexicalItem.Token) :
-    (leaf tok).val = .node (Vertex.lex tok) [] := rfl
-@[simp] theorem trace_val : trace.val = .node Vertex.trace [] := rfl
-@[simp] theorem traceOf_val (tok : LexicalItem.Token) :
-    (traceOf tok).val = .node (Vertex.traceOf tok) [] :=
+@[simp] theorem leaf_val (a : L) :
+    (leaf a).val = .node (Vertex.lex a) [] := rfl
+@[simp] theorem trace_val : (trace : LinearizedSyntacticObject L).val = .node Vertex.trace [] :=
   rfl
-@[simp] theorem merge_val (l r : LinearizedSyntacticObject) :
+@[simp] theorem traceOf_val (a : L) :
+    (traceOf a).val = .node (Vertex.traceOf a) [] :=
+  rfl
+@[simp] theorem merge_val (l r : LinearizedSyntacticObject L) :
     (merge l r).val = .node Vertex.bare [l.val, r.val] := rfl
 
 /-- Forgetting the order is the quotient map to the syntactic object. -/
-@[coe] def toSyntacticObject (p : LinearizedSyntacticObject)
-  : SyntacticObject := ⟨UnorderedTree.mk p.val, p.2⟩
+@[coe] def toSyntacticObject (p : LinearizedSyntacticObject L)
+  : SyntacticObject L := ⟨UnorderedTree.mk p.val, p.2⟩
 
-@[simp] theorem toSyntacticObject_val (p : LinearizedSyntacticObject) :
+@[simp] theorem toSyntacticObject_val (p : LinearizedSyntacticObject L) :
     p.toSyntacticObject.val = UnorderedTree.mk p.val := rfl
 
-@[simp] theorem toSyntacticObject_leaf (tok : LexicalItem.Token) :
-    (leaf tok).toSyntacticObject = SyntacticObject.leaf tok := rfl
+@[simp] theorem toSyntacticObject_leaf (a : L) :
+    (leaf a).toSyntacticObject = SyntacticObject.leaf a := rfl
 
-@[simp] theorem toSyntacticObject_trace : trace.toSyntacticObject = SyntacticObject.trace := rfl
+@[simp] theorem toSyntacticObject_trace :
+    (trace : LinearizedSyntacticObject L).toSyntacticObject = SyntacticObject.trace := rfl
 
-@[simp] theorem toSyntacticObject_traceOf (tok : LexicalItem.Token) :
-    (traceOf tok).toSyntacticObject = SyntacticObject.traceOf tok := rfl
+@[simp] theorem toSyntacticObject_traceOf (a : L) :
+    (traceOf a).toSyntacticObject = SyntacticObject.traceOf a := rfl
 
 /-- Forgetting the order commutes with Merge. -/
-@[simp] theorem toSyntacticObject_merge (l r : LinearizedSyntacticObject) :
+@[simp] theorem toSyntacticObject_merge (l r : LinearizedSyntacticObject L) :
     (merge l r).toSyntacticObject = SyntacticObject.merge l.toSyntacticObject r.toSyntacticObject :=
   Subtype.ext (SyntacticObject.merge_mk l.val r.val l.2 r.2).symm
 
@@ -309,16 +331,18 @@ end LinearizedSyntacticObject
 
 namespace SyntacticObject
 
+variable {L : Type}
+
 /-- Induction on syntactic objects, each of which is a lexical leaf, a trace, or the Merge of two
     syntactic objects. -/
 @[elab_as_elim]
-theorem ind {motive : SyntacticObject → Prop}
-    (leaf : ∀ tok, motive (leaf tok))
+theorem ind {motive : SyntacticObject L → Prop}
+    (leaf : ∀ a, motive (leaf a))
     (trace : motive trace)
-    (traceOf : ∀ tok, motive (traceOf tok))
-    (merge : ∀ l r : SyntacticObject, motive l → motive r → motive (merge l r))
-    (s : SyntacticObject) : motive s := by
-  suffices H : ∀ n (p : RoseTree Vertex) (hp : IsSyntacticObject (UnorderedTree.mk p)),
+    (traceOf : ∀ a, motive (traceOf a))
+    (merge : ∀ l r : SyntacticObject L, motive l → motive r → motive (merge l r))
+    (s : SyntacticObject L) : motive s := by
+  suffices H : ∀ n (p : RoseTree (Vertex L)) (hp : IsSyntacticObject (UnorderedTree.mk p)),
       p.numNodes = n → motive ⟨UnorderedTree.mk p, hp⟩ by
     obtain ⟨t, ht⟩ := s
     refine Quotient.inductionOn (motive := fun t ↦ ∀ (ht : IsSyntacticObject t), motive ⟨t, ht⟩)
@@ -329,17 +353,17 @@ theorem ind {motive : SyntacticObject → Prop}
     rintro ⟨lbl, cs⟩ hp hw
     rcases length_eq_zero_or_two hp with hlen | hlen
     · obtain rfl := List.length_eq_zero_iff.mp hlen
-      rcases lbl with (_ | tok) | (_ | tok)
+      rcases lbl with (_ | a) | (_ | a)
       · exact absurd (licensed_node_iff.mp ((isSyntacticObject_mk _).mp hp)).1
           (by simp [Vertex.Licenses])
-      · exact leaf tok
+      · exact leaf a
       · exact trace
-      · exact traceOf tok
+      · exact traceOf a
     · obtain ⟨pl, pr, rfl⟩ := List.length_eq_two.mp hlen
       obtain rfl := eq_bare_of_ne_nil hp (by simp)
       obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge pl pr).mp hp
       have hmerge : (⟨UnorderedTree.mk (RoseTree.node Vertex.bare [pl, pr]), hp⟩
-          : SyntacticObject) =
+          : SyntacticObject L) =
             SyntacticObject.merge ⟨UnorderedTree.mk pl, hl⟩ ⟨UnorderedTree.mk pr, hr⟩ :=
         Subtype.ext (merge_mk pl pr hl hr).symm
       rw [hmerge]
@@ -348,12 +372,12 @@ theorem ind {motive : SyntacticObject → Prop}
       exact merge _ _ (IH pl.numNodes (by omega) pl hl rfl) (IH pr.numNodes (by omega) pr hr rfl)
 
 /-- Every syntactic object is a lexical leaf, a trace, or a Merge. -/
-theorem exists_form (s : SyntacticObject) :
-    (∃ tok, s = leaf tok) ∨ s = trace ∨ (∃ tok, s = traceOf tok) ∨ (∃ l r, s = merge l r) := by
+theorem exists_form (s : SyntacticObject L) :
+    (∃ a, s = leaf a) ∨ s = trace ∨ (∃ a, s = traceOf a) ∨ (∃ l r, s = merge l r) := by
   induction s using ind with
-  | leaf tok => exact Or.inl ⟨tok, rfl⟩
+  | leaf a => exact Or.inl ⟨a, rfl⟩
   | trace => exact Or.inr (Or.inl rfl)
-  | traceOf tok => exact Or.inr (Or.inr (Or.inl ⟨tok, rfl⟩))
+  | traceOf a => exact Or.inr (Or.inr (Or.inl ⟨a, rfl⟩))
   | merge l r _ _ => exact Or.inr (Or.inr (Or.inr ⟨l, r, rfl⟩))
 
 end SyntacticObject
