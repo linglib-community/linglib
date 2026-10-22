@@ -142,7 +142,9 @@ example : IsUpwardGoalIn twoOps was opPast₂ iPast₂ ∧ ¬ IsUpwardGoalIn two
 theorem sot_multipleAgree : MultipleAgree sot opPast [said, was] iPast := by decide
 
 /-- Neither verb c-commands the operator, so no downward-probing Agree relates them. -/
-theorem sot_not_downward : ¬ CCommands sot said opPast ∧ ¬ CCommands sot was opPast := by
+theorem sot_not_downward :
+    ¬ CCommands sot said (opPast : SyntacticObject) ∧
+      ¬ CCommands sot was (opPast : SyntacticObject) := by
   decide
 
 /-- Sequence of Tense crosses the clause boundary: the subordinate verb sits in the interior of
