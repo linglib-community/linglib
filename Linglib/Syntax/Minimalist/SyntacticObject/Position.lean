@@ -437,6 +437,32 @@ def complement (p : TreePath) : TreePath := ⟨p.toList.dropLast ++ [1 - p.toLis
 theorem parent_covBy_complement (p : TreePath) : p.parent ⋖ complement p :=
   TreePath.covBy_iff.2 ⟨_, rfl⟩
 
+@[simp] theorem parent_complement (p : TreePath) : (complement p).parent = p.parent :=
+  TreePath.ext (by simp [complement])
+
+variable {t} in
+/-- In a syntactic object, the complement of the complement of a position other than the root is
+the position itself, Merge being binary. -/
+theorem complement_complement {h : TreePath} (hh : h ∈ t.val.validPaths) (h0 : h ≠ ⊥) :
+    complement (complement h) = h := by
+  set hp : t.val.Positions := ⟨h, hh⟩
+  have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
+  have hm : Order.pred hp ⋖ hp :=
+    Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using hp0)
+  have hlen := LinearizedSyntacticObject.length_children_subtree (not_isMax_of_lt hm.lt)
+  obtain ⟨i, hi⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hm)
+  have hlt : i < 2 := by
+    have hv := hp.2
+    rw [show hp.val = ⟨(Order.pred hp).val.toList ++ [i]⟩ from TreePath.ext hi] at hv
+    obtain ⟨s, hs, his⟩ := mem_validPaths_append_singleton_iff.1 hv
+    rw [(Order.pred hp).subtreeAt_eq, Option.some.injEq] at hs
+    exact hlen ▸ hs ▸ his
+  have hhv : h.toList = (Order.pred hp).val.toList ++ [i] := hi
+  apply TreePath.ext
+  simp only [complement, hhv, List.dropLast_concat, List.getLastD_concat]
+  congr 2
+  omega
+
 variable {t} in
 /-- In a syntactic object, a head other than the root c-commands exactly the positions below its
 complement. -/

@@ -1,0 +1,338 @@
+[
+  {
+    "id": "erlewine2020_ex6a",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did he say hid the rutabaga?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Long-distance subject extraction.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "none"
+      ]
+    ],
+    "comment": "From Perlmutter 1968: 214.",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex6a_that",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did he say that hid the rutabaga?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Long-distance subject extraction across that.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "Printed as Who did he say [CP (*that) __ hid the rutabaga]?",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex6b",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1293",
+    "primaryText": "What did he say Laura hid?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Long-distance object extraction.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "none"
+      ]
+    ],
+    "comment": "From Perlmutter 1968: 214.",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex6b_that",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1293",
+    "primaryText": "What did he say that Laura hid?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Long-distance object extraction across that.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "Printed as What did he say [CP (that) Laura hid __]?",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex12a",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(12a)"
+    },
+    "language": "stan1293",
+    "primaryText": "What do you think that is in the box?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The subject extracted from Spec,TP across that.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "From Rizzi 2006: 124.",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex12b",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(12b)"
+    },
+    "language": "stan1293",
+    "primaryText": "What do you think that there is in the box?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The subject extracted from the small clause, there in Spec,TP.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "From Rizzi 2006: 124.",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex13a",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did she say that tomorrow would regret his words?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A high adverb between that and the subject.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "Printed as Who did she say [CP __ that *(tomorrow) __ would regret his words]?; from Bresnan 1977.",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex13a_noadverb",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did she say that would regret his words?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "No adverb between that and the subject.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "The starred omission of tomorrow in (13a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex15a",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(15a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did John say that fortunately ran to the store?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A high adverb above TP.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "From Brillman & Hirsch 2016: 78.",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex15b",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(15b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did John say that quickly ran to the store?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A low adverb below TP.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "From Brillman & Hirsch 2016: 78.",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex18a",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's in these villages that we all believe can be found the best examples of this cuisine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The locative of locative inversion extracted.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "none"
+      ]
+    ],
+    "comment": "From Bresnan 1994: 97.",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex18a_that",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's in these villages that we all believe that can be found the best examples of this cuisine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The locative of locative inversion extracted across that.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "Printed as It's [PP in these villages] that we all believe [CP __ (*that) __ can be found the best examples of this cuisine].",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex18b",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's in these villages that we all believe the best examples of this cuisine can be found.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The locative extracted without locative inversion.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "none"
+      ]
+    ],
+    "comment": "From Bresnan 1994: 97.",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewine2020_ex18b_that",
+    "source": {
+      "bibkey": "erlewine-2020",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's in these villages that we all believe that the best examples of this cuisine can be found.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The locative extracted across that without locative inversion.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "Printed as It's [PP in these villages] that we all believe [CP __ (that) the best examples of this cuisine can be found __].",
+    "verified": "page-image"
+  }
+]
