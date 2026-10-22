@@ -102,7 +102,7 @@ where
   go : Option H → List FeatureType → State H → List (Option H) × State H
   | _, [], s => ([], s)
   | prev, t :: ts, s =>
-    let r := (Probe.relativized (goalMatches s α t)).agree (fun g s ↦ agree act s α t g) s
+    let r := (Probe.relativized (goalMatches s α t ·)).agree (fun g s ↦ agree act s α t g) s
       (prev.elim dom fun β ↦ dom.dropWhile fun x ↦ decide (x ≠ β))
     let rest := go r.satisfier ts r.state
     (r.satisfier :: rest.1, rest.2)
@@ -134,7 +134,7 @@ def multipleAgree (s : State H) (α : H) (t : FeatureType) (dom : List H) : List
 each later application, its landing site being above the probe, searches the remaining domain
 afresh. The result lists the movers in order of movement. -/
 def whFronting (s : State H) (α : H) (dom : List H) : List H :=
-  let p := Probe.relativized (goalMatches s α .wh)
+  let p := Probe.relativized (goalMatches s α .wh ·)
   match (multipleAgree s α .wh dom).getLast? with
   | none => []
   | some β =>
@@ -492,7 +492,7 @@ theorem bulgarian_order : whFronting bulgarianInitial .c bulgarianDomain = [.whO
 
 /-- Without Multiple Agree the wh-probe's first goal is the subject, the order minimality
 alone predicts. -/
-example : (Probe.relativized (goalMatches bulgarianInitial .c .wh)).search bulgarianDomain =
+example : (Probe.relativized (goalMatches bulgarianInitial .c .wh ·)).search bulgarianDomain =
     some .whSbj := by decide
 
 /-! ### Agreement with unmarked DPs in Hindi-Urdu (§4.3.1) -/

@@ -346,9 +346,9 @@ theorem agreement_animateProbe {n : Nominal Core} (hc : .animate ∈ n.core.1)
 /-- In Nyaturu object doubling (14) an object probe relativized to [+Animate] is valued by an
 aligned noun iff its core is animate, so an inanimate object leaves it unvalued and no object
 marker surfaces. -/
-theorem animateProbe_outcome (c : Core) :
-    animateProbe.outcome (Nominal.mk c none).genders.reverse = .valued ↔ .animate ∈ c.1 := by
-  simp [Probe.outcome_eq_valued_iff, Nominal.genders, animateProbe, Probe.relativized]
+theorem animateProbe_search_isSome (c : Core) :
+    (animateProbe.search (Nominal.mk c none).genders.reverse).isSome ↔ .animate ∈ c.1 := by
+  simp [Nominal.genders, animateProbe]
 
 /-- By (28) and (29) *isikhohleli* agrees in class 7 with a flat probe and in class 1 with the
 relativized one. -/

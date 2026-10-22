@@ -122,13 +122,13 @@ theorem agree_cons (a : α) (as : List α) :
 
 /-- When satisfaction does not depend on the state, the satisfier is the first goal that
 satisfies the probe. -/
-theorem agree_satisfier {sat : α → Bool} (h : ∀ s, (P s).sat = sat) :
-    (P.agree copy update s goals).satisfier = goals.find? sat := by
+theorem agree_satisfier {q : Probe α} (h : ∀ s, (P s).sat = q.sat) :
+    (P.agree copy update s goals).satisfier = q.search goals := by
   induction goals generalizing s with
   | nil => rfl
   | cons a as ih =>
-    rw [agree_cons, h]
-    cases ha : sat a <;> simp [ha, ih]
+    rw [agree_cons]
+    by_cases ha : q.sat a <;> simp [h, ha, ih, search]
 
 end Dynamic
 
@@ -139,7 +139,7 @@ def agree (p : Probe α) (copy : α → σ → σ) : σ → List α → Result �
 
 /-- The goals a probe inspects, those before the first satisfying goal together with it. -/
 def inspected (p : Probe α) (goals : List α) : List α :=
-  goals.takeWhile (!p.sat ·) ++ (p.search goals).toList
+  goals.takeWhile (¬ p.sat ·) ++ (p.search goals).toList
 
 variable {p : Probe α} {copy : α → σ → σ} {s : σ} {goals : List α}
 
@@ -154,16 +154,17 @@ theorem agree_cons (a : α) (as : List α) :
 
 /-- The satisfier is the goal the search finds. -/
 @[simp] theorem agree_satisfier : (p.agree copy s goals).satisfier = p.search goals :=
-  Dynamic.agree_satisfier fun _ ↦ rfl
+  Dynamic.agree_satisfier (q := p) fun _ ↦ rfl
 
 /-- The goals flagged as interacting are the inspected goals that interact. -/
 @[simp] theorem agree_interacted :
-    (p.agree copy s goals).interacted = (p.inspected goals).filter p.int := by
+    (p.agree copy s goals).interacted = (p.inspected goals).filter (p.int ·) := by
   induction goals generalizing s with
   | nil => rfl
   | cons a as ih =>
     rw [agree_cons]
-    cases hs : p.sat a <;> cases hi : p.int a <;> simp [inspected, search, hs, hi, ih]
+    by_cases hs : p.sat a <;> by_cases hi : p.int a <;>
+      simp [inspected, search, hs, hi, ih]
 
 /-- The state is the fold of `copy` over the goals flagged as interacting. -/
 theorem agree_state :
@@ -173,7 +174,7 @@ theorem agree_state :
   | nil => rfl
   | cons a as ih =>
     rw [agree_cons]
-    cases p.sat a <;> cases p.int a <;> simp [ih]
+    by_cases hs : p.sat a <;> by_cases hi : p.int a <;> simp [hs, hi, ih]
 
 /-- An inspected goal is a member of the sequence. -/
 theorem mem_of_mem_inspected {a : α} (ha : a ∈ p.inspected goals) : a ∈ goals := by
@@ -190,21 +191,19 @@ theorem agree_state_eq_of_forall_not_int (h : ∀ a ∈ goals, ¬ p.int a) :
     (p.agree copy s goals).state = s := by
   rw [agree_state, agree_interacted, List.filter_eq_nil_iff.mpr]
   · rfl
-  · exact fun a ha hi ↦ h a (mem_of_mem_inspected ha) hi
+  · exact fun a ha hi ↦ h a (mem_of_mem_inspected ha) (of_decide_eq_true hi)
 
 /-- When every interacting goal satisfies the probe, the only inspected goal that interacts is the
 goal of the probe. -/
 theorem inspected_filter_int_eq_goal (h : ∀ a, p.int a → p.sat a) :
-    (p.inspected goals).filter p.int = (p.goal goals).toList := by
+    (p.inspected goals).filter (p.int ·) = (p.goal goals).toList := by
   rw [inspected, List.filter_append, List.filter_eq_nil_iff.mpr, List.nil_append]
   · cases hs : p.search goals with
     | none => simp [goal, hs]
     | some a =>
-      simp only [Option.toList_some, List.filter_cons, List.filter_nil, goal, hs,
-        Option.filter_some]
-      cases p.int a <;> rfl
+      by_cases hi : p.int a <;> simp [goal, hs, hi, Option.filter_some]
   · intro a ha hi
-    exact absurd (h a hi) (by simpa using List.mem_takeWhile_imp ha)
+    exact absurd (h a (of_decide_eq_true hi)) (by simpa using List.mem_takeWhile_imp ha)
 
 /-- When every interacting goal satisfies the probe, the only goal flagged as interacting is the
 goal of the probe. -/
@@ -213,13 +212,13 @@ theorem agree_interacted_eq_goal (h : ∀ a, p.int a → p.sat a) :
   rw [agree_interacted, inspected_filter_int_eq_goal h]
 
 /-- A relativized probe flags the goal it finds. -/
-theorem relativized_agree_interacted (f : α → Bool) :
+theorem relativized_agree_interacted (f : α → Prop) [DecidablePred f] :
     ((relativized f).agree copy s goals).interacted = ((relativized f).search goals).toList := by
   rw [agree_interacted_eq_goal (fun _ h ↦ h), relativized_goal]
 
 /-- An insatiable probe flags every interacting goal, Multiple Agree ([hiraiwa-2001]). -/
-theorem insatiable_agree_interacted (f : α → Bool) :
-    ((insatiable f).agree copy s goals).interacted = goals.filter f := by
+theorem insatiable_agree_interacted (f : α → Prop) [DecidablePred f] :
+    ((insatiable f).agree copy s goals).interacted = goals.filter (f ·) := by
   rw [agree_interacted, inspected, List.takeWhile_eq_self_iff.mpr (by simp),
     search_eq_none_iff.mpr (by simp [insatiable])]
   simp [insatiable]
@@ -289,14 +288,13 @@ def satFeatures (a : α) : Finset F := feats a ∩ sp.sat
 iff it bears a feature of the interaction specification and satisfied iff it bears one of the
 satisfaction specification. -/
 def toProbe : Probe α :=
-  ⟨fun a ↦ decide (sp.intFeatures feats a).Nonempty,
-    fun a ↦ decide (sp.satFeatures feats a).Nonempty⟩
+  ⟨fun a ↦ (sp.intFeatures feats a).Nonempty, fun a ↦ (sp.satFeatures feats a).Nonempty⟩
 
 @[simp] theorem toProbe_int (a : α) :
-    (sp.toProbe feats).int a = decide (sp.intFeatures feats a).Nonempty := rfl
+    (sp.toProbe feats).int a ↔ (sp.intFeatures feats a).Nonempty := Iff.rfl
 
 @[simp] theorem toProbe_sat (a : α) :
-    (sp.toProbe feats).sat a = decide (sp.satFeatures feats a).Nonempty := rfl
+    (sp.toProbe feats).sat a ↔ (sp.satFeatures feats a).Nonempty := Iff.rfl
 
 section Dynamic
 
@@ -319,7 +317,7 @@ def agree (goals : List α) : Result α (State F) :=
 interaction. -/
 theorem agree_satisfier (goals : List α) :
     (sp.agree feats dyn goals).satisfier = (sp.toProbe feats).search goals :=
-  Dynamic.agree_satisfier fun _ ↦ rfl
+  Dynamic.agree_satisfier (q := sp.toProbe feats) fun _ ↦ rfl
 
 /-- Dynamic interaction narrows the interaction condition to the features that a dynamic feature
 of the goal dominates. -/
@@ -384,21 +382,18 @@ private theorem mem_interacted_iff {a : α} (st : State F) (goals : List α) :
   | nil => simp
   | cons x xs ih =>
     rw [Dynamic.agree_cons]
-    have hint : (({ sp with int := st.int } : Spec F).toProbe feats).int x =
-        decide (feats x ∩ st.int).Nonempty := rfl
     by_cases hs : (sp.toProbe feats).sat x
     · rw [ite_eq_left (show (({ sp with int := st.int } : Spec F).toProbe feats).sat x from hs)]
       dsimp only
       constructor
       · intro ha
-        rw [hint] at ha
         split_ifs at ha with hx
         · obtain rfl := List.mem_singleton.1 ha
-          exact ⟨[], xs, rfl, by simp, by simpa using hx⟩
+          exact ⟨[], xs, rfl, by simp, hx⟩
         · simp at ha
       · rintro ⟨_ | ⟨y, l₁⟩, l₂, he, hl₁, ha⟩
         · obtain ⟨rfl, rfl⟩ := List.cons.inj he
-          rw [hint, ite_eq_left (by simpa using ha)]
+          rw [ite_eq_left (show (({ sp with int := st.int } : Spec F).toProbe feats).int x from ha)]
           exact List.mem_singleton_self _
         · obtain ⟨rfl, -⟩ := List.cons.inj he
           exact absurd hs (hl₁ _ (List.mem_cons_self ..))
@@ -410,10 +405,9 @@ private theorem mem_interacted_iff {a : α} (st : State F) (goals : List α) :
         fun _ h ↦ h ▸ rfl
       constructor
       · rintro (ha | ⟨l₁, l₂, rfl, hl₁, ha⟩)
-        · rw [hint] at ha
-          split_ifs at ha with hx
+        · split_ifs at ha with hx
           · obtain rfl := List.mem_singleton.1 ha
-            exact ⟨[], xs, rfl, by simp, by simpa using hx⟩
+            exact ⟨[], xs, rfl, by simp, hx⟩
           · simp at ha
         · refine ⟨x :: l₁, l₂, rfl, ?_, ?_⟩
           · rintro b (_ | ⟨_, hb⟩)
@@ -425,7 +419,7 @@ private theorem mem_interacted_iff {a : α} (st : State F) (goals : List α) :
       · rintro ⟨_ | ⟨y, l₁⟩, l₂, he, hl₁, ha⟩
         · obtain ⟨rfl, rfl⟩ := List.cons.inj he
           left
-          rw [hint, ite_eq_left (by simpa using ha)]
+          rw [ite_eq_left (show (({ sp with int := st.int } : Spec F).toProbe feats).int x from ha)]
           exact List.mem_singleton_self _
         · obtain ⟨rfl, rfl⟩ := List.cons.inj he
           right

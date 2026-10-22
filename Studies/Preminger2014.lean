@@ -169,13 +169,11 @@ theorem participant_marker (s o : Bundle) (h : ¬ (s.IsSAP ∧ o.IsSAP)) :
 
 /-! ### Obligatory operations (chapter 5) -/
 
-/-- The slot is empty exactly when both probes end unvalued, so failed Agree at the level of
-outcomes and at the level of the slot are one fact. -/
+/-- The slot is empty exactly when both probes' searches fail, so failed Agree at the level of
+the probes and at the level of the slot are one fact. -/
 theorem afTarget_eq_none_iff (s o : Bundle) :
-    afTarget s o = none ↔
-      piProbe.outcome [s, o] = .unvalued ∧ numProbe.outcome [s, o] = .unvalued := by
-  rw [afTarget, Probe.cascade_eq_none_iff, Probe.outcome_eq_unvalued_iff,
-    Probe.outcome_eq_unvalued_iff]
+    afTarget s o = none ↔ piProbe.search [s, o] = none ∧ numProbe.search [s, o] = none := by
+  rw [afTarget, Probe.cascade_eq_none_iff, Probe.search_eq_none_iff, Probe.search_eq_none_iff]
   simp
 
 /-- Failed Agree is tolerated (112), (113). With no participant and no plural argument, both
