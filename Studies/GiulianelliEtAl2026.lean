@@ -5,35 +5,37 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
+public import Linglib.Core.Probability.AutoregressiveSequenceModel.Basic
 public import Linglib.Processing.Surprisal.Generalized
 
 /-!
-# Giulianelli, Wallbridge, Cotterell and Fernández (2026): Incremental Alternative Sampling as a Lens into the Temporal and Representational Resolution of Linguistic Prediction
+# Giulianelli et al. (2026): Incremental Alternative Sampling
 
-This file formalizes the incremental alternative sampling (IAS) family of [giulianelli-etal-2026].
-A language model is the family of next-unit kernels of an autoregressive process, and a
-comprehender samples continuations of the context over a forecast horizon of `h` units, the
-partial trajectory of the process (`Kernel.partialTraj`); the generalised surprisal of the next
-unit is the substrate's `genSurprisal` at that kernel. Standard surprisal is the member with the
-negative logarithm and the prefix indicator at every horizon, because the alternatives' first
-unit is distributed as the model's next unit (`genSurprisal_prefixIndicator`); it thus evaluates
-alternatives by lexical identity alone, and the discrete distance shows what this conflates,
-since information value with it is the probability of error (`informationValue_discrete`).
-Incremental information value replaces the indicator by a representational distance between each
-alternative and the observed unit followed by the alternatives sampled after it, the double
-expectation of the paper's definition (`iiv`), whose horizon-one case is the information value of
-the substrate (`iiv_zero`).
+[giulianelli-etal-2026] measure a comprehender's predictive uncertainty with alternatives: a
+language model, a probability measure on strings, samples continuations of the context, and the
+generalised surprisal of a target string scores them against it. Standard surprisal is the member
+with the negative logarithm and the prefix indicator, since the continuations beginning with the
+target have its conditional prefix probability (`genSurprisal_prefixIndicator`), and by the chain
+rule it is the sum of the surprisals of the target's units under the language model's next-unit
+laws (`genSurprisal_prefixIndicator_eq_sum`), the paper's treatment of words spanning several
+tokens. The indicator evaluates a continuation by its prefix alone: information value with the
+complementary distance is the probability of error
+(`informationValue_one_sub_prefixIndicator`). Incremental information value (`iiv`) replaces it by
+a representational distance between a continuation sampled before the target and the target
+followed by a continuation sampled after it, and a distance whose forecast horizon does not reach
+past the target reduces it to information value (`iiv_eq_informationValue`).
 
 ## Implementation notes
 
-* Contexts are trajectories `Π i : Iic n, X i` of the process and alternatives are trajectories
-  to time `n + h`, which carry the context as their prefix; a fixed alphabet is the constant
-  family, and an end-of-string unit belongs to it, absorbing if the model makes it so.
-* The alternative-set reformulation with mean, minimum and maximum summary statistics, and its
-  reduction to the single-alternative definition under the mean, are not formalized; nor are the
-  representation functions, which the paper takes from a Transformer's layers and which enter
-  here only through the distance.
+* The paper's `p(· | c)` is `μ.continuation c`, the law of what follows `c` among the strings
+  extending it, and its conditional prefix probability `p̄(w | c)` (eq. (1)) is the
+  `condPrefixProb` of the autoregressive model of `μ`.
+* The forecast horizon enters through the representation function, which averages the encodings
+  of the first `min(h, |a|)` units of an alternative (eq. (12)); here it is a distance that reads
+  only the first `h` units of each string.
+* The alternative-set reformulation with mean, minimum and maximum summary statistics, Monte Carlo
+  estimation, and the representation functions, which the paper takes from a Transformer's layers
+  and which enter here only through the distance, are not formalized.
 * The paper's regression results, which horizon and layer best predict cloze probability, the
   N400 and P600, and eye-tracked and self-paced reading times, are empirical fits and stay in
   prose: explicit predictability peaks at horizon one and lexical representations, the ERP
@@ -43,84 +45,87 @@ the substrate (`iiv_zero`).
 
 * [giulianelli-etal-2026]
 * [giulianelli-opedal-cotterell-2024]
-* [levy-2008]
+* [giulianelli-wallbridge-fernandez-2023]
 -/
 
 @[expose] public section
 
-open Finset InformationTheory MeasureTheory ProbabilityTheory Surprisal
+open InformationTheory MeasureTheory ProbabilityTheory Surprisal AutoregressiveSequenceModel
 
 namespace GiulianelliEtAl2026
 
-variable {X : ℕ → Type*} [∀ n, MeasurableSpace (X n)] [∀ n, MeasurableSingletonClass (X n)]
-  (κ : (n : ℕ) → Kernel (Π i : Iic n, X i) (X (n + 1))) [∀ n, IsMarkovKernel (κ n)] {n h : ℕ}
+variable {α : Type*} (μ : Measure (List α))
 
-/-- The context `x` followed by the unit `w`. -/
-def snoc (x : Π i : Iic n, X i) (w : X (n + 1)) : Π i : Iic (n + 1), X i :=
-  IicProdIoc n (n + 1) (x, MeasurableEquiv.piSingleton n w)
+/-! ### Standard surprisal -/
 
-/-! ### Standard surprisal at every horizon -/
+/-- The prefix indicator (eq. (5)): one when the alternative begins with the target. -/
+noncomputable def prefixIndicator (a w _ : List α) : ℝ :=
+  ({a' | w <+: a'} : Set (List α)).indicator 1 a
 
-/-- The prefix indicator: one when the alternative's first unit is `w`. -/
-noncomputable def prefixIndicator (w : X (n + 1)) (a : Π i : Iic (n + h + 1), X i) : ℝ :=
-  ({w} : Set (X (n + 1))).indicator 1 (a ⟨n + 1, mem_Iic.2 (by omega)⟩)
-
-/-- The expected prefix indicator is the next-unit probability, at every horizon. -/
-theorem integral_prefixIndicator (x : Π i : Iic n, X i) (w : X (n + 1)) :
-    ∫ a, prefixIndicator w a ∂(Kernel.partialTraj κ n (n + h + 1) x) = (κ n x).real {w} := by
-  have hm : Measurable fun a : Π i : Iic (n + h + 1), X i => a ⟨n + 1, mem_Iic.2 (by omega)⟩ :=
-    measurable_pi_apply _
+/-- The expected prefix indicator is the conditional prefix probability of the target
+(eqs. (1), (2d)). -/
+theorem integral_prefixIndicator (c w : List α) :
+    ∫ a, prefixIndicator a w c ∂μ.continuation c =
+      (μ[{y | c ++ w <+: y} | {y | c <+: y}]).toReal := by
   simp only [prefixIndicator]
-  rw [← integral_map hm.aemeasurable
-      (stronglyMeasurable_one.indicator (measurableSet_singleton w)).aestronglyMeasurable,
-    ← Kernel.map_apply _ hm, Kernel.map_partialTraj_eval_succ (by omega),
-    integral_indicator_one (measurableSet_singleton w)]
+  rw [integral_indicator_one .of_discrete, measureReal_def, Measure.continuation_setOf_prefix]
+
+section LanguageModel
+
+variable [MeasurableSpace α] [MeasurableSingletonClass α] [IsProbabilityMeasure μ] {c : List α}
 
 /-- Standard surprisal is the generalised surprisal with the negative logarithm and the prefix
-indicator, at every horizon. -/
-theorem genSurprisal_prefixIndicator (x : Π i : Iic n, X i) (w : X (n + 1)) :
-    genSurprisal (Kernel.partialTraj κ n (n + h + 1)) (fun r ↦ -Real.log r)
-      (fun a w _ ↦ prefixIndicator w a) x w = surprisal (κ n x) w := by
-  simp only [genSurprisal]
-  rw [integral_prefixIndicator]
-  rfl
+indicator (eqs. (2a)–(2d), (4), (5)): the negative log of the target's conditional prefix
+probability. -/
+theorem genSurprisal_prefixIndicator (hc : μ {y | c <+: y} ≠ 0) (w : List α) :
+    genSurprisal μ.continuation (fun r ↦ -Real.log r) prefixIndicator c w =
+      -Real.log ((ofMeasure μ).condPrefixProb c w).toReal := by
+  rw [genSurprisal, integral_prefixIndicator, condPrefixProb_ofMeasure hc]
+
+/-- The surprisal of a target is the sum of the surprisals of its units under the language
+model's next-unit laws, the paper's treatment of words spanning several tokens. -/
+theorem genSurprisal_prefixIndicator_eq_sum (hc : μ {y | c <+: y} ≠ 0) {w : List α}
+    (hw : μ {y | c ++ w <+: y} ≠ 0) :
+    genSurprisal μ.continuation (fun r ↦ -Real.log r) prefixIndicator c w =
+      ∑ i : Fin w.length, surprisal ((ofMeasure μ).next (c ++ w.take i)) (some w[i]) := by
+  have hsub : {y | c ++ w <+: y} ⊆ {y | c <+: y} := fun _ ↦ (List.prefix_append c w).trans
+  rw [genSurprisal_prefixIndicator μ hc, neg_log_condPrefixProb]
+  rw [condPrefixProb_ofMeasure hc, cond_apply_of_subset .of_discrete hsub]
+  exact ENNReal.div_ne_zero.2 ⟨hw, measure_ne_top _ _⟩
 
 /-! ### What the indicator conflates -/
 
-/-- The discrete distance on units: an alternative is accurate only when identical to the
-unit. -/
-noncomputable def discrete (a w : X (n + 1)) (_ : Π i : Iic n, X i) : ℝ :=
-  1 - ({w} : Set (X (n + 1))).indicator 1 a
-
-/-- Information value with the discrete distance is the probability of error, `1 − p(w | c)`: the
-alternatives' similarity to the unit counts for nothing, as under surprisal. -/
-theorem informationValue_discrete (x : Π i : Iic n, X i) (w : X (n + 1)) :
-    informationValue (κ n) discrete x w = 1 - (κ n x).real {w} := by
-  simp only [informationValue, discrete]
-  rw [integral_sub (g := ({w} : Set (X (n + 1))).indicator 1) (integrable_const _)
-      ((integrable_const 1).indicator (measurableSet_singleton w)),
-    integral_const, integral_indicator_one (measurableSet_singleton w)]
+/-- The prefix indicator evaluates a continuation by its prefix alone: information value with the
+complementary distance is the probability of error, `1 - p̄(w | c)`. -/
+theorem informationValue_one_sub_prefixIndicator (hc : μ {y | c <+: y} ≠ 0) (w : List α) :
+    informationValue μ.continuation (fun a w c ↦ 1 - prefixIndicator a w c) c w =
+      1 - ((ofMeasure μ).condPrefixProb c w).toReal := by
+  have := μ.isProbabilityMeasure_continuation hc
+  have hi : Integrable (fun a ↦ prefixIndicator a w c) (μ.continuation c) :=
+    (integrable_const 1).indicator .of_discrete
+  rw [informationValue, integral_sub (integrable_const _) hi, integral_const,
+    integral_prefixIndicator, condPrefixProb_ofMeasure hc]
   simp
+
+end LanguageModel
 
 /-! ### Incremental information value -/
 
-/-- Incremental information value at horizon `h + 1`: the expected representational distance
-between an alternative sampled before the unit and the unit followed by the alternatives sampled
-after it, the paper's double expectation. -/
-noncomputable def iiv (d : (Π i : Iic (n + h + 1), X i) → (Π i : Iic (n + h + 1), X i) → ℝ)
-    (x : Π i : Iic n, X i) (w : X (n + 1)) : ℝ :=
-  ∫ a, ∫ a', d a a' ∂(Kernel.partialTraj κ (n + 1) (n + h + 1) (snoc x w))
-    ∂(Kernel.partialTraj κ n (n + h + 1) x)
+/-- Incremental information value (eq. (9)): the expected distance between a continuation sampled
+before the target and the target followed by a continuation sampled after it. -/
+noncomputable def iiv (d : List α → List α → ℝ) (c w : List α) : ℝ :=
+  ∫ a, ∫ a', d a (w ++ a') ∂μ.continuation (c ++ w) ∂μ.continuation c
 
-/-- At horizon one, incremental information value is the information value of the substrate,
-with the distance read on the extended contexts. -/
-theorem iiv_zero [∀ n, Countable (X n)]
-    (d : (Π i : Iic (n + 1), X i) → (Π i : Iic (n + 1), X i) → ℝ) (x : Π i : Iic n, X i)
-    (w : X (n + 1)) :
-    iiv κ (h := 0) d x w = informationValue (κ n) (fun a w' x ↦ d (snoc x a) (snoc x w')) x w := by
-  simp only [iiv, informationValue, Nat.add_zero, Kernel.partialTraj_self, Kernel.id_apply,
-    integral_dirac, Kernel.partialTraj_succ_self_apply]
-  rw [integral_map (by fun_prop) (measurable_of_countable _).aestronglyMeasurable]
-  rfl
+/-- A distance whose forecast horizon `h` does not reach past the target reduces incremental
+information value to information value: the continuation after the target lies beyond the
+horizon. -/
+theorem iiv_eq_informationValue [IsFiniteMeasure μ] {d : List α → List α → ℝ} {h : ℕ}
+    (hd : ∀ a b, d a b = d (a.take h) (b.take h)) {c w : List α} (hw : h ≤ w.length)
+    (hcw : μ {y | c ++ w <+: y} ≠ 0) :
+    iiv μ d c w = informationValue μ.continuation (fun a w _ ↦ d a w) c w := by
+  have := μ.isProbabilityMeasure_continuation hcw
+  have hdw (a a' : List α) : d a (w ++ a') = d a w := by
+    rw [hd, List.take_append_of_le_length hw, ← hd]
+  simp only [iiv, informationValue, hdw, integral_const, probReal_univ, one_smul]
 
 end GiulianelliEtAl2026
