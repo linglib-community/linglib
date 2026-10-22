@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Paradigm.Basic
 public import Mathlib.Algebra.Group.Basic
 public import Mathlib.Algebra.Group.Hom.Defs
 public import Mathlib.Basic.IsEmpty.Basic
@@ -9,8 +10,8 @@ public import Mathlib.Tactic.Choose
 /-!
 # Proportional analogy
 
-A family of paradigms `p : L → Cell → F` gives the form of each lexeme at each cell. It is
-analogical under a class of operations on forms when the forms at any two cells are related by
+A paradigm system `p : ParadigmSystem L Cell F` gives the form of each lexeme at each cell. It
+is analogical under a class of operations on forms when the forms at any two cells are related by
 one operation of the class, the same for every lexeme, as in *walk : walks = jump : jumps*.
 Under arbitrary operations this says only that the form at each cell determines the form at
 every other cell. Under the translations of an additive group it says that the shift between
@@ -39,11 +40,11 @@ part.
 
 namespace Morphology
 
-variable {L Cell F G : Type*} {p : L → Cell → F}
+variable {L Cell F G : Type*} {p : ParadigmSystem L Cell F}
 
-/-- A family of paradigms is analogical under a class of operations on forms when the forms at
-any two cells are related by one operation of the class, the same for every lexeme. -/
-def IsAnalogical (ops : Set (F → F)) (p : L → Cell → F) : Prop :=
+/-- A paradigm system is analogical under a class of operations on forms when the forms at any
+two cells are related by one operation of the class, the same for every lexeme. -/
+def IsAnalogical (ops : Set (F → F)) (p : ParadigmSystem L Cell F) : Prop :=
   ∀ c c', ∃ g ∈ ops, ∀ l, p l c' = g (p l c)
 
 theorem IsAnalogical.mono {ops ops' : Set (F → F)} (h : IsAnalogical ops p) (hops : ops ⊆ ops') :
@@ -63,9 +64,9 @@ section Add
 
 variable [Add F] [Add G]
 
-/-- A family of paradigms is analogically regular when it is analogical under translations, so
-that the shift from the form at one cell to the form at another is the same for every lexeme. -/
-def IsAnalogicallyRegular (p : L → Cell → F) : Prop :=
+/-- A paradigm system is analogically regular when it is analogical under translations, so that
+the shift from the form at one cell to the form at another is the same for every lexeme. -/
+def IsAnalogicallyRegular (p : ParadigmSystem L Cell F) : Prop :=
   IsAnalogical (Set.range fun v ↦ (· + v)) p
 
 theorem IsAnalogicallyRegular.map {M : Type*} [FunLike M F G] [AddHomClass M F G]

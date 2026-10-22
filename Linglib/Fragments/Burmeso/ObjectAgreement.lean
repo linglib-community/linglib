@@ -31,7 +31,7 @@ inductive AgreementPrefix
   deriving DecidableEq, Repr
 
 /-- The two classes over the cells I.sg, I.pl, …, VI.sg, VI.pl. -/
-def objectAgreement : ParadigmSystem (Fin 2) 12 AgreementPrefix :=
+def objectAgreement : ParadigmSystem (Fin 2) (Fin 12) AgreementPrefix :=
   ![![.j, .s, .g, .s, .g, .j, .j, .j, .j, .g, .g, .g],
     ![.b, .t, .n, .t, .n, .b, .b, .b, .b, .n, .n, .n]]
 

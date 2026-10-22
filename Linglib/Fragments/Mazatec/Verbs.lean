@@ -45,7 +45,7 @@ inductive Vowel
   deriving DecidableEq, Repr
 
 /-- The ten final-vowel classes. -/
-def finalVowels : ParadigmSystem (Fin 10) 6 Vowel :=
+def finalVowels : ParadigmSystem (Fin 10) (Fin 6) Vowel :=
   ![![.ae, .i, .i, .eN, .iN, .uN],
     ![.ae, .e, .e, .eN, .iN, .uN],
     ![.ae, .e, .ae, .eN, .iN, .uN],
@@ -74,7 +74,7 @@ inductive Tone
   deriving DecidableEq, Repr
 
 /-- The six neutral-aspect tone patterns. -/
-def tones : ParadigmSystem (Fin 6) 6 Tone :=
+def tones : ParadigmSystem (Fin 6) (Fin 6) Tone :=
   ![![.t3_1, .t3_1, .t3_1, .t3_31, .t3_14, .t3_1],
     ![.t1_1, .t2_2, .t2_2, .t2_2, .t2_24, .t2_2],
     ![.t3_1, .t2_2, .t3_2, .t2_2, .t2_24, .t2_2],

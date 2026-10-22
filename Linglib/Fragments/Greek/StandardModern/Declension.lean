@@ -48,7 +48,7 @@ abbrev accPl : Fin 8 := 6
 abbrev vocPl : Fin 8 := 7
 
 /-- The eight declensions, rows 1–8 of the paper's Table 1. -/
-def nominal : ParadigmSystem (Fin 8) 8 Ending :=
+def nominal : ParadigmSystem (Fin 8) (Fin 8) Ending :=
   ![![.os, .u, .on, .e, .i, .on, .us, .i],
     ![.s, .zero, .zero, .zero, .es, .on, .es, .es],
     ![.zero, .s, .zero, .zero, .es, .on, .es, .es],

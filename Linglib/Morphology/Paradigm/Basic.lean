@@ -4,41 +4,33 @@ public import Mathlib.Data.Finset.Image
 public import Linglib.Core.Data.Setoid.Basic
 
 /-!
-# Paradigms: forms over ordered cells
+# Paradigms: forms over cells
 
-The morphologist's primary observable: a **paradigm** assigns a surface
-form to each of `n` linearly ordered cells; its **syncretism** is the
-kernel setoid of that assignment, `Setoid.ker p`, whose classes are the cells
-sharing a form, decidable over finitely many cells by the instances of
-`Core/Data/Setoid/Basic.lean`. One type serves both
-research lines that consume it — realization-pattern typology (*ABA and
-contiguity, `Morphology/Paradigm/Contiguity.lean`) and paradigm-cell
-information theory (implicative structure and complexity,
-`Morphology/Paradigm/Complexity.lean`). A **paradigm system** is a finite
-family of paradigms indexed by its inflection classes, an inflection-class
-table read as a matrix whose rows are the classes
-([ackerman-malouf-2013]; [bobaljik-2012]-style realization patterns are
-single paradigms over graded cells). Class probabilities — uniform in
-[ackerman-malouf-2013]'s computations, type frequencies in its general
-definitions — are a `MeasureTheory.Measure` on the classes, a parameter of
-the entropy statements in `Complexity.lean`, never a field of the data.
+A paradigm assigns a surface form to each of `n` linearly ordered cells, and its syncretism is
+the kernel setoid `Setoid.ker p` of that assignment, decidable over finitely many cells. The
+ordered carrier serves realization-pattern typology (*ABA and contiguity). A paradigm system
+assigns a form to each row and cell of a table whose rows are lexemes or inflection classes and
+whose cells form any type; it carries implicative structure and entropy over the cells
+(`Complexity.lean`) and proportional analogy (`Analogy.lean`).
 
 ## Main declarations
 
-* `Paradigm n F` — assignment of a form to each of the `n` cells
-* `formsAt` — the form assignment of an inventory: the forms its items offer for each cell
-* `ParadigmSystem D n Form` — a family of paradigms indexed by the inflection classes `D`
+* `Morphology.Paradigm n F`: a form for each of `n` ordered cells.
+* `Morphology.formsAt`: the forms an inventory offers for each cell.
+* `Morphology.ParadigmSystem D Cell Form`: a form for each row of `D` at each cell of `Cell`.
+
+## References
+
+* [ackerman-malouf-2013]
+* [bobaljik-2012]
 -/
 
 @[expose] public section
 
 namespace Morphology
 
-/-- A **paradigm** over `n` linearly ordered cells assigns the form occupying
-each cell. The single carrier for realization patterns
-([bobaljik-2012]'s AAA/ABB/ABC shapes; see
-`Morphology/Paradigm/Contiguity.lean`) and for inflection-class rows
-([ackerman-malouf-2013]; a family of them is a `ParadigmSystem`). -/
+/-- A paradigm over `n` linearly ordered cells assigns the form occupying each cell, the carrier
+of [bobaljik-2012]'s realization patterns such as AAA, ABB and ABC. -/
 abbrev Paradigm (n : ℕ) (F : Type*) := Fin n → F
 
 /-! ### The paradigm of an inventory -/
@@ -69,10 +61,9 @@ theorem formsAt_union [DecidableEq ι] (I J : Finset ι) (c : Cell) :
 
 end FormsAt
 
-/-- A **paradigm system** is a family of paradigms indexed by its inflection classes `D`, an
-inflection-class table read as a matrix whose rows are the classes, such as
-[ackerman-malouf-2013]'s Table 1. The number of classes (the enumerative class count of that
-paper's Table 3) is `Fintype.card D`. -/
-abbrev ParadigmSystem (D : Type*) (n : ℕ) (Form : Type*) := D → Paradigm n Form
+/-- A paradigm system assigns a form to each row of a table, a lexeme or an inflection class, at
+each cell, such as the inflection-class table of [ackerman-malouf-2013]'s Table 1, whose class
+count (the enumerative complexity of that paper's Table 3) is `Fintype.card D`. -/
+abbrev ParadigmSystem (D Cell Form : Type*) := D → Cell → Form
 
 end Morphology
