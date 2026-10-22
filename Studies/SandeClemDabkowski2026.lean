@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Guebie.ParticleVerbs
 public import Linglib.Phonology.Harmony.Basic
-public import Linglib.Phonology.OptimalityTheory.Correspondence
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain

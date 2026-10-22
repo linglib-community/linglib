@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Tone.Grammatical
-public import Linglib.Phonology.OptimalityTheory.Correspondence
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Cophonology
 
 /-!

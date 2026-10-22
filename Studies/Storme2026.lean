@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Linglib.Phonology.Hiatus
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
 public import Linglib.Fragments.Farsi.Phonology
 
 /-!
@@ -135,8 +135,9 @@ def starHiatus : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
 suffix vowel for epenthesis, and the deletion of the suffix vowel for elision. -/
 def corr : Resolution → Hiatus.Juncture → Correspondence BinaryRole Segment
   | .hiatus, j => Correspondence.identity j.input
-  | .epenthesis, j => Correspondence.insertIdx j.input j.v2Idx glottalStop
-  | .deletion, j => Correspondence.eraseIdx j.input j.v2Idx
+  | .epenthesis, j =>
+    Correspondence.insertIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input.trans (by omega)⟩ glottalStop
+  | .deletion, j => Correspondence.eraseIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input⟩
 
 /-- The output of each correspondence is the surface form of its candidate. -/
 theorem corr_form_rhs (o : Resolution) (j : Hiatus.Juncture) :
@@ -159,16 +160,16 @@ theorem depConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     depConstraint (j, o) = if o = .epenthesis then 1 else 0 := by
   cases o
   · exact Correspondence.depViol_identity _
-  · exact Correspondence.depViol_insertIdx _ j.v2Idx_lt_length_input.le
-  · exact Correspondence.depViol_eraseIdx j.v2Idx_lt_length_input
+  · exact Correspondence.depViol_insertIdx
+  · exact Correspondence.depViol_eraseIdx
 
 /-- MAX is violated once by deletion and by no other candidate, for any juncture. -/
 theorem maxConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     maxConstraint (j, o) = if o = .deletion then 1 else 0 := by
   cases o
   · exact Correspondence.maxViol_identity _
-  · exact Correspondence.maxViol_insertIdx _ j.v2Idx_lt_length_input.le
-  · exact Correspondence.maxViol_eraseIdx j.v2Idx_lt_length_input
+  · exact Correspondence.maxViol_insertIdx
+  · exact Correspondence.maxViol_eraseIdx
 
 /-- \*HIATUS's string count is its binary tableau column on the paradigm's
 junctures — unlike DEP and MAX this depends on their segmental content, since
