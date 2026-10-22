@@ -7,10 +7,8 @@ public import Mathlib.Order.UpperLower.Principal
 # Heyting implication of lower sets
 
 [UPSTREAM] Lower sets of a preorder form a completely distributive lattice, hence a Heyting
-algebra, in mathlib. This file characterizes membership in the Heyting implication: `a` lies in
-`P ⇨ Q` when every element below `a` that lies in `P` lies in `Q`. This is the support clause of
-intuitionistic and inquisitive implication, whose propositions are lower sets of information
-states.
+algebra. This file characterizes membership in the Heyting implication: `a` lies in `P ⇨ Q` when
+every element below `a` that lies in `P` lies in `Q`.
 
 ## Main results
 
