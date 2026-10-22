@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Erlewine2016
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Mathlib.Order.Interval.Finset.Nat
+public import Linglib.Syntax.Minimalist.Locality.AntiLocality
 public import Studies.CoonMateoPedroPreminger2014
 
 /-!
@@ -24,6 +24,8 @@ Popti', Akatek and Ch'ol.
 
 ## Main statements
 
+* `extractionTooClose_iff`: an extraction is too close exactly when the subject moves from Spec,TP
+  to the layer immediately above, read off the chain of the clause each derivation builds.
 * `rows_optimal`: every example is grammatical exactly when an optimal derivation realizes its
   verb form.
 * `af_iff_immediately_preverbal`: with at most one participant argument, Kaqchikel AF is optimal
@@ -36,11 +38,11 @@ Popti', Akatek and Ch'ol.
 
 ## Implementation notes
 
-* A clause is the spine VP, vP, TP and the layers above TP, an adverb's projection after Cinque,
-  the CPs of Rizzi's split periphery and the topic projection, indexed from the bottom; the
-  crossing set of a step is the interval of projections from the origin's up to the landing
-  site's. Long-distance extraction is the embedded clause's competition, since movement stops at
-  the embedded Spec,CP.
+* A derivation builds the spine VP, vP, TP and the layers above TP, an adverb's projection after
+  Cinque, the CPs of Rizzi's split periphery and the topic projection, with a copy of each argument
+  at each position it occupies; anti-locality is read off the chain of the extracted argument
+  (`Minimalist.SpecToSpec`). Long-distance extraction is the embedded clause's competition, since
+  movement stops at the embedded Spec,CP.
 * A candidate is a choice of the optional Set A probe and of the Set B probe's target; the two
   probes cannot share a goal, the Set A probe sees only the subject at the vP edge, and Popti'
   and Akatek restrict Set B to the object. The constraint preferring plural targets is not
@@ -69,6 +71,7 @@ Popti', Akatek and Ch'ol.
 namespace Erlewine2016
 
 open OptimalityTheory Erlewine2016.Examples
+open Minimalist (Cat LexicalItem LinearizedSyntacticObject chainTop links projectionAt SpecToSpec)
 
 /-- The arguments of a verb. -/
 inductive Arg
@@ -106,41 +109,28 @@ def Input.person (i : Input) : Arg → Person
   | .subj => i.subj
   | .obj => i.obj
 
-/-! ### The spine and anti-locality -/
+/-! ### The clause and anti-locality -/
 
-/-- The index of TP in the spine VP, vP, TP, layers. -/
-def tP : ℕ := 2
+/-- The category of a layer's head: an adverb's projection is one of Cinque's modal heads. -/
+def Layer.cat : Layer → Cat
+  | .advP => .Mod
+  | .cP => .C
+  | .topP => .Top
 
-/-- The index of the `k`th layer above TP. -/
-def layerIndex (k : ℕ) : ℕ := 3 + k
+/-- The head of the `j`th layer above TP, selecting the category below it. -/
+def Layer.head (l : Layer) (j : ℕ) (below : Cat) : LexicalItem.Token := ⟨.of l.cat [below], 10 + j⟩
 
-/-- The base position of an argument, Spec,vP for the subject and the complement of V for the
-object (§4.1). -/
-def Arg.base : Arg → ℕ
-  | .subj => 1
-  | .obj => 0
+/-- The verb, selecting the object when it is transitive. -/
+def verb (transitive : Bool) : LexicalItem.Token := ⟨.of .V (if transitive then [.D] else []), 0⟩
 
-/-- The projections a step crosses (43), those dominating the origin, which lies within
-projection `α`, but not the landing site, the specifier of projection `β`. -/
-def crosses (α β : ℕ) : Finset ℕ := Finset.Ico α β
+def littleV : LexicalItem.Token := ⟨.of .v [.V], 1⟩
 
-/-- Spec-to-Spec Anti-Locality, (42): a step is too close when it crosses no maximal projection
-other than the one it leaves. -/
-def TooClose (α β : ℕ) : Prop := ∀ γ ∈ crosses α β, γ = α
+def tense : LexicalItem.Token := ⟨.of .T [.v], 2⟩
 
-instance (α β : ℕ) : Decidable (TooClose α β) := by unfold TooClose; infer_instance
-
-/-- An upward step is too close exactly when its landing site immediately dominates its
-origin, the configuration of (44). -/
-theorem tooClose_iff {α β : ℕ} (h : α < β) : TooClose α β ↔ β = α + 1 := by
-  constructor
-  · intro H
-    by_contra hne
-    have := H (α + 1) (by simp only [crosses, Finset.mem_Ico]; omega)
-    omega
-  · intro hβ γ hγ
-    simp only [crosses, Finset.mem_Ico] at hγ
-    omega
+/-- The token of an argument. -/
+def Arg.token : Arg → LexicalItem.Token
+  | .subj => ⟨.of .D [], 3⟩
+  | .obj => ⟨.of .D [], 4⟩
 
 /-! ### Derivations and constraints -/
 
@@ -167,18 +157,34 @@ def CrossRef (c : Candidate) (a : Arg) : Prop := (c.aProbe ∧ a = .subj) ∨ c.
 
 instance (c : Candidate) (a : Arg) : Decidable (CrossRef c a) := by unfold CrossRef; infer_instance
 
-/-- The position an extracted argument moves from, Spec,TP for a subject the Set A probe has
-attracted, its base position otherwise. -/
-def Candidate.origin (c : Candidate) : Arg → ℕ
-  | .subj => if c.aProbe then tP else Arg.subj.base
-  | .obj => Arg.obj.base
+/-- The clause a derivation builds (§4.1), with a copy of each argument at each position it
+occupies: the subject in Spec,vP and, when the Set A probe attracts it, in Spec,TP; the object as
+the complement of V; and an extracted argument in the specifier of the layer it lands in. -/
+def Input.clause (i : Input) (c : Candidate) : LinearizedSyntacticObject :=
+  let vP : LinearizedSyntacticObject := Arg.subj.token * (littleV *
+    (if i.transitive then (verb true * Arg.obj.token : LinearizedSyntacticObject) else verb false))
+  let tP : LinearizedSyntacticObject :=
+    if c.aProbe then Arg.subj.token * (tense * vP) else tense * vP
+  (i.layers.zipIdx.foldl (fun (x : LinearizedSyntacticObject × Cat) (l, j) ↦
+    let y := l.head j x.2 * x.1
+    (match i.extracted with
+      | some (a, k) => if k = j then a.token * y else y
+      | none => y, l.cat)) (tP, .T)).1
 
-/-- Spec-to-Spec Anti-Locality as a violable constraint: one violation per step that is too
-close. -/
+/-- The step that extracts `a` is too close: the link landing at the top of its chain moves a
+specifier across no maximal projection but its own, Spec-to-Spec Anti-Locality (42). -/
+def ExtractionTooClose (t : LinearizedSyntacticObject) (a : Arg) : Prop :=
+  ∃ p ∈ chainTop t a.token, ∃ x ∈ links t a.token, x.1 = projectionAt t p ∧ SpecToSpec t x
+
+instance (t : LinearizedSyntacticObject) (a : Arg) : Decidable (ExtractionTooClose t a) := by
+  unfold ExtractionTooClose; infer_instance
+
+/-- Spec-to-Spec Anti-Locality as a violable constraint: one violation for an extraction that is
+too close. -/
 def ssal (i : Input) : Constraint Candidate := fun c ↦
   match i.extracted with
   | none => 0
-  | some (a, k) => if TooClose (c.origin a) (layerIndex k) then 1 else 0
+  | some (a, _) => if ExtractionTooClose (i.clause c) a then 1 else 0
 
 /-- XRef assigns one violation per argument not cross-referenced. -/
 def xref (i : Input) : Constraint Candidate := fun c ↦ (i.args.filter (¬ CrossRef c ·)).length
@@ -286,6 +292,14 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 /-- The Kaqchikel rows. -/
 def kaqchikelRows : List Row :=
   (Examples.all.filter (·.language = "kaqc1270")).filterMap Row.ofDatum
+
+/-- The configuration of (44): in the clause of every row, an extraction is too close exactly when
+the subject moves from Spec,TP to the layer immediately above TP. -/
+theorem extractionTooClose_iff :
+    ∀ r ∈ rows, ∀ c ∈ candidatesOf r.input.transitive r.grammar.objectOnly,
+      ∀ x ∈ r.input.extracted,
+        (ExtractionTooClose (r.input.clause c) x.1 ↔ x.1 = .subj ∧ c.aProbe = true ∧ x.2 = 0) := by
+  decide
 
 /-- In every row the attested form is grammatical exactly when an optimal derivation realizes
 it. -/
