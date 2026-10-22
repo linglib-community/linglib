@@ -36,16 +36,16 @@ is bound only by reconstruction, which the paper takes to be marginal, and Princ
 as the external argument is Merged, so a coindexed pronoun inside PartP is out however PartP
 later moves.
 
-The passive is a `Derivation` on the syntactic-object carrier under each of the three analyses,
-the surface strings are its externalizations, Relativized Minimality is the substrate's
-closest-goal relation at the stage where Infl attracts, smuggling and remnant fronting are the
-substrate's step predicates, and the paper's examples are the rows: `rm_converges` singles out
-PartP movement, which `converges_iff_not_obeysFreezing` shows the one analysis Freezing
-excludes, `licensing_rows` derives the c-command and binding judgments from surface and
-derivational c-command, the binding judgments being the conditions of `Syntax/Binding` at the
-levels the paper assigns them, of which the rows force Principle B's (`principleB_anyStage`),
-`participle_rows` the auxiliary paradigm from the licensing principle, and `active_shares_vP`
-is the θ-uniformity the analysis was built for.
+The passive is a `Derivation` on the syntactic-object carrier under each of the three analyses, the
+surface strings are its externalizations, Relativized Minimality is the search of Infl's probe over
+the positions it c-commands at the stage where it attracts, smuggling and remnant fronting are the
+substrate's step predicates, and the paper's examples are the rows: `rm_converges` singles out PartP
+movement, which `converges_iff_not_obeysFreezing` shows the one analysis Freezing excludes,
+`licensing_rows` derives the c-command and binding judgments from surface and derivational
+c-command, the binding judgments being the conditions of `Syntax/Binding` at the levels the paper
+assigns them, of which the rows force Principle B's (`principleB_anyStage`), `participle_rows` the
+auxiliary paradigm from the licensing principle, and `active_shares_vP` is the θ-uniformity the
+analysis was built for.
 
 ## Implementation notes
 
@@ -192,11 +192,13 @@ def passive (a : Analysis) (evacuate : Bool) : Derivation :=
 /-- The active perfect (26): *have* and Infl over vP, and the external argument to Spec,IP. -/
 def active : Derivation := (p.vP false).append [.em .left has₀, .em .left infl₀, .im p.agent]
 
-/-- The analysis converges: at the stage where Infl attracts, the object is one of its closest
-D-goals, so its raising violates neither the Minimal Link Condition nor Relativized
-Minimality (§5). -/
+/-- The analysis converges: at the stage where Infl attracts, the object is one of the D-goals
+Infl's probe finds among the positions it c-commands, so its raising violates neither the Minimal
+Link Condition nor Relativized Minimality (§5). -/
 def Converges (a : Analysis) (evacuate : Bool) : Prop :=
-  ∃ q ∈ (p.preRaising a evacuate).externalize?, isClosestGoalIn q infl₀ p.patient (isLeafOf .D)
+  ∃ t ∈ (p.preRaising a evacuate).externalize?, ∃ i g, t.termAt i = infl₀ ∧
+    t.termAt g = p.patient ∧ (Probe.relativized fun q ↦ decide (isLeafOf .D (t.termAt q))).Finds
+      {q | t.val.CCommands i q} (t.above t.branching) g
 
 instance (a : Analysis) (evacuate : Bool) : Decidable (p.Converges a evacuate) := by
   unfold Converges; infer_instance
@@ -345,7 +347,7 @@ converges: PartP movement does, head movement and no movement leave the external
 between Infl and the object. -/
 theorem order_rows : ∀ row ∈ Examples.all, ∀ o ∈ Order.ofRow row,
     (row.judgment ≠ .ungrammatical ↔ o.clause.Converges o.analysis o.evacuated) := by
-  decide
+  decide +kernel
 
 /-! ### C-command and binding across the by-phrase (§3, §7, §9, §10) -/
 
