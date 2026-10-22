@@ -26,6 +26,7 @@ character (`Character.const`), rigid also as a function of the context in the se
 * `Character C W E`, `Content W E`
 * `Character.IsDirectlyReferential`
 * `Character.dthat`, `Character.const`
+* `Character.HoldsAt`: the evaluation of a root sentence at a context.
 
 ## References
 
@@ -75,6 +76,10 @@ theorem const_isDirectlyReferential (e : E) :
 theorem dthat_ne {f : W → E} {w₀ w₁ : W} (h : f w₁ ≠ f w₀) :
     (dthat f : Character W W E) w₀ ≠ f :=
   fun e ↦ h (congrFun e w₁).symm
+
+/-- A character holds at a context when its content is true at the world of that context: the
+evaluation of a root sentence. -/
+def HoldsAt (world : C → W) (χ : Character C W Prop) (c : C) : Prop := χ c (world c)
 
 end Character
 

@@ -9,7 +9,7 @@ public import Linglib.Semantics.Reference.Kaplan
 Schlenker treats attitude verbs as quantifiers over contexts. Kaplan's Fixity Thesis (1) holds that
 an indexical's value is fixed by the context of the actual speech act, so that no operator shifts
 contexts; Amharic, where the first person under *say* denotes the reported speaker (3), is the
-counterexample (`not_isKaplanCompliant_amharicI`). An attitude verb quantifies over the contexts
+counterexample (`not_stable_amharicI`). An attitude verb quantifies over the contexts
 compatible with its subject's claim, binding a context variable to each (`Say`), and Hintikka's
 quantification over worlds is the case where the embedded meaning reads only the world
 (`say_world_only`, `doxastic_holdsAt_iff_say`). The Amharic second person shifts to the hearer of
@@ -19,9 +19,9 @@ embedded context who is not the actual speaker (`Logophoric`), so none is first 
 ## Implementation notes
 
 A context variable bound by an attitude verb is a level of the context tower of
-`Semantics/Reference/Context/Tower`, whose origin is the actual context: the verb pushes the
-constant shift to each compatible context, and an embedded meaning reads the tower, so a clause can
-mix shifted and unshifted indexicals. An embedded clause is evaluated at the time and world of the
+`Semantics/Reference/Context/Tower`, whose origin is the actual context: the verb binds each
+compatible context, and an embedded meaning reads the tower, so a clause can mix shifted and
+unshifted indexicals. An embedded clause is evaluated at the time and world of the
 innermost context, as in (6). Shiftability is the choice between the origin and the innermost
 access pattern; the paper's filtering and agreement mechanisms (§5.1.2, §5.1.3) are not modelled.
 
@@ -44,11 +44,10 @@ variable {W E P T : Type*}
 /-! ### Quantification over contexts -/
 
 /-- (58b): `SAY⟨x,t,w⟩ cᵢ φ` holds iff `φ` holds with the context variable `cᵢ` bound to each
-context compatible with the claim `x` makes at `t` in `w`, that is at the tower with that context
-pushed. -/
+context compatible with the claim `x` makes at `t` in `w`, at the tower binding that context. -/
 def Say (compat : E → T → W → Set (Context W E P T)) (x : E) (t : T) (w : W)
     (φ : ContextTower (Context W E P T) → Prop) (τ : ContextTower (Context W E P T)) : Prop :=
-  ∀ c ∈ compat x t w, φ (τ.push (Function.const _ c))
+  ∀ c ∈ compat x t w, φ (τ.push c)
 
 variable (compat : E → T → W → Set (Context W E P T)) (x : E) (t : T) (w : W) (p : W → Prop)
   (τ : ContextTower (Context W E P T)) (c : Context W E P T)
@@ -78,30 +77,27 @@ def amharicI : AccessPattern (Context W E P T) E := .innermost Context.agent
 def amharicYou : AccessPattern (Context W E P T) E := .innermost Context.addressee
 
 @[simp] theorem amharicI_resolve_push :
-    amharicI.resolve (τ.push (Function.const _ c)) = c.agent := by
+    amharicI.resolve (τ.push c) = c.agent := by
   simp [amharicI]
 
 @[simp] theorem amharicYou_resolve_push :
-    amharicYou.resolve (τ.push (Function.const _ c)) = c.addressee := by
+    amharicYou.resolve (τ.push c) = c.addressee := by
   simp [amharicYou]
 
-/-- English *I* satisfies the Fixity Thesis (1), Kaplan-compliance. -/
-example : (Kaplan.I : AccessPattern (Context W E P T) E).IsKaplanCompliant :=
-  AccessPattern.isKaplanCompliant_origin _
-
-/-- Amharic *I* falsifies the Fixity Thesis (1). -/
-theorem not_isKaplanCompliant_amharicI [Nontrivial E] [Nonempty W] [Nonempty P] [Nonempty T] :
-    ¬ (amharicI : AccessPattern (Context W E P T) E).IsKaplanCompliant := by
+/-- Amharic *I* falsifies the Fixity Thesis (1), stability under every embedding, which English
+*I* satisfies. -/
+theorem not_stable_amharicI [Nontrivial E] [Nonempty W] [Nonempty P] [Nonempty T] :
+    ¬ (amharicI : AccessPattern (Context W E P T) E).Stable := by
+  rw [amharicI, AccessPattern.stable_innermost_iff]
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   obtain ⟨w⟩ := ‹Nonempty W›; obtain ⟨p⟩ := ‹Nonempty P›; obtain ⟨t⟩ := ‹Nonempty T›
-  intro h
-  exact hab (by simpa [amharicI] using h (Function.const _ ⟨a, a, w, t, p⟩) (.root ⟨b, a, w, t, p⟩))
+  exact fun h ↦ hab (h ⟨a, a, w, t, p⟩ ⟨b, a, w, t, p⟩)
 
 /-- (3): bound to a context whose agent is not the speaker, Amharic *I* and English *I* resolve
 differently. -/
 theorem amharicI_ne_I (h : c.agent ≠ τ.origin.agent) :
-    amharicI.resolve (τ.push (Function.const _ c)) ≠
-      Kaplan.I.resolve (τ.push (Function.const _ c)) := by
+    amharicI.resolve (τ.push c) ≠
+      Kaplan.I.resolve (τ.push c) := by
   simpa [Kaplan.I] using h
 
 /-! ### Person features as presuppositions -/
@@ -117,17 +113,17 @@ def Logophoric (d : DepthSpec) (x : E) (t : ContextTower (Context W E P T)) : Pr
   AuthorAt d x t ∧ ¬ AuthorAt .origin x t
 
 instance [DecidableEq E] (d : DepthSpec) (x : E) (t : ContextTower (Context W E P T)) :
-    Decidable (AuthorAt d x t) := by
-  unfold AuthorAt; infer_instance
+    Decidable (AuthorAt d x t) :=
+  inferInstanceAs (Decidable (x = _))
 
 instance [DecidableEq E] (d : DepthSpec) (x : E) (t : ContextTower (Context W E P T)) :
-    Decidable (Logophoric d x t) := by
-  unfold Logophoric; infer_instance
+    Decidable (Logophoric d x t) :=
+  inferInstanceAs (Decidable (AuthorAt d x t ∧ ¬ AuthorAt .origin x t))
 
 /-- Bound to a context whose agent is not the speaker, that agent is logophoric at the local
 depth. -/
 theorem logophoric_local_of_ne (h : c.agent ≠ τ.origin.agent) :
-    Logophoric .local c.agent (τ.push (Function.const _ c)) :=
+    Logophoric .local c.agent (τ.push c) :=
   ⟨by simp [AuthorAt, AccessPattern.resolve], by simpa [AuthorAt, AccessPattern.resolve] using h⟩
 
 /-- (81): the actual speaker is never logophoric, so no logophoric pronoun is first person. -/

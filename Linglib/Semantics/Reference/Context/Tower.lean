@@ -6,32 +6,31 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Reference.Context.Basic
-public import Linglib.Semantics.Reference.Rigidity
-public import Mathlib.Algebra.Group.Action.End
-public import Mathlib.Algebra.BigOperators.Group.List.Basic
+public import Mathlib.Data.List.Basic
 
 /-!
 # Context towers
 
-A context tower is an origin, Kaplan's speech-act context, with a stack of shifts from outermost to
-innermost, each an element of the monoid `Function.End C`; an expression reads a coordinate of the
-context at some depth. Kaplanian indexicals read the origin and shifted indexicals the innermost
-context. The origin survives every shift, so an indexical can read it whatever the clauses between
-read: the binding account of indexical shift, against which Anand and Nevins argue that shifting
-overwrites the context.
+A context tower is an origin, Kaplan's speech-act context, with the contexts bound by the
+embeddings above an expression, from outermost to innermost; an expression reads a coordinate of
+the context at some depth. Kaplanian indexicals read the origin and shifted indexicals the innermost
+context. The origin survives every embedding, so an indexical can read it whatever the clauses
+between read: the binding account of indexical shift, against which Anand and Nevins argue that
+shifting overwrites the context.
 
 ## Main definitions
 
-* `ContextTower`: an origin with its shifts; `contextAt k` is the first `k` shifts acting on the
-  origin, `innermost` all of them, and `push` embeds one level deeper.
+* `ContextTower`: an origin with its bound contexts; `contextAt k` is the `k`-th of them,
+  `innermost` the last, and `push` binds one more.
 * `ContextTower.AccessPattern`: a depth, given relative to the tower, and a coordinate;
   `AccessPattern.origin` and `AccessPattern.innermost`.
-* `AccessPattern.Stable`: pushing a shift leaves the pattern's value unchanged.
+* `AccessPattern.Stable`: binding another context leaves the pattern's value unchanged.
 
 ## Main results
 
-* `push_innermost`, `push_contextAt_of_le`: a push acts on the innermost context alone.
-* `AccessPattern.stable_origin`: a pattern reading the origin is stable under every shift.
+* `push_innermost`, `push_contextAt_of_le`: a push binds the innermost context alone.
+* `AccessPattern.stable_origin`, `AccessPattern.stable_innermost_iff`: a pattern reading the origin
+  is stable, one reading the innermost context only if its coordinate is constant.
 
 ## References
 
@@ -42,40 +41,42 @@ overwrites the context.
 
 @[expose] public section
 
-/-- A context tower is an origin with a stack of shifts, from outermost to innermost. -/
+universe u
+
+/-- A context tower is an origin with the contexts bound above it, from outermost to innermost. -/
 structure ContextTower (C : Type*) where
   /-- The root context, the speech-act context. -/
   origin : C
-  /-- The shifts, the first being the outermost embedding. -/
-  shifts : List (Function.End C)
+  /-- The bound contexts, the first bound by the outermost embedding. -/
+  bound : List C
 
 namespace ContextTower
 
-variable {C : Type*} (t : ContextTower C) (σ : Function.End C) (c : C) {k : ℕ}
+variable {C : Type*} (t : ContextTower C) (c : C) {k : ℕ}
 
-/-- The embedding depth is the number of shifts. -/
-def depth : ℕ := t.shifts.length
+/-- The embedding depth is the number of bound contexts. -/
+def depth : ℕ := t.bound.length
 
-/-- The context at depth `k` is the first `k` shifts acting on the origin, saturating at the
-innermost context. -/
-def contextAt (k : ℕ) : C := (t.shifts.take k).reverse.prod • t.origin
+/-- The context at depth `k` is the `k`-th bound context, saturating at the innermost one. -/
+def contextAt (k : ℕ) : C := (t.bound.take k).getLastD t.origin
 
-/-- The innermost context is every shift acting on the origin. -/
-def innermost : C := t.shifts.reverse.prod • t.origin
+/-- The innermost context is the last bound context. -/
+def innermost : C := t.bound.getLastD t.origin
 
 /-- The trivial tower over a context. -/
-def root (c : C) : ContextTower C := ⟨c, []⟩
+def root : ContextTower C := ⟨c, []⟩
 
-/-- Embed one level deeper. -/
-def push : ContextTower C := ⟨t.origin, t.shifts ++ [σ]⟩
+/-- Embed one level deeper, binding `c`. -/
+def push : ContextTower C := ⟨t.origin, t.bound ++ [c]⟩
 
 @[simp] theorem root_origin : (root c).origin = c := rfl
-@[simp] theorem root_innermost : (root c).innermost = c := one_smul _ _
+@[simp] theorem root_innermost : (root c).innermost = c := rfl
 @[simp] theorem root_depth : (root c).depth = 0 := rfl
 @[simp] theorem root_contextAt : (root c).contextAt k = c := by simp [root, contextAt]
-@[simp] theorem contextAt_zero : t.contextAt 0 = t.origin := one_smul _ _
-@[simp] theorem push_origin : (t.push σ).origin = t.origin := rfl
-@[simp] theorem push_depth : (t.push σ).depth = t.depth + 1 := by simp [push, depth]
+@[simp] theorem contextAt_zero : t.contextAt 0 = t.origin := by simp [contextAt]
+@[simp] theorem push_origin : (t.push c).origin = t.origin := rfl
+@[simp] theorem push_depth : (t.push c).depth = t.depth + 1 := by simp [push, depth]
+@[simp] theorem push_innermost : (t.push c).innermost = c := by simp [push, innermost]
 
 @[simp] theorem contextAt_depth : t.contextAt t.depth = t.innermost := by
   simp [contextAt, innermost, depth]
@@ -84,36 +85,17 @@ def push : ContextTower C := ⟨t.origin, t.shifts ++ [σ]⟩
 theorem contextAt_saturates (hk : t.depth ≤ k) : t.contextAt k = t.innermost := by
   simp [contextAt, innermost, List.take_of_length_le hk]
 
-/-- Pushing a shift lets it act on the innermost context. -/
-@[simp] theorem push_innermost : (t.push σ).innermost = σ • t.innermost := by
-  simp [push, innermost, mul_smul]
-
 /-- Below the tower depth, a push leaves the context at each depth unchanged. -/
-theorem push_contextAt_of_le (hk : k ≤ t.depth) : (t.push σ).contextAt k = t.contextAt k := by
+theorem push_contextAt_of_le (hk : k ≤ t.depth) : (t.push c).contextAt k = t.contextAt k := by
   simp only [contextAt, push]
   rw [List.take_append_of_le_length hk]
 
-/-- Beyond the tower depth, a push saturates at the shifted innermost context. -/
-theorem push_contextAt_of_lt (hk : t.depth < k) : (t.push σ).contextAt k = σ • t.innermost := by
-  rw [← push_innermost, contextAt_saturates _ (by rw [push_depth]; exact hk)]
+/-- Beyond the tower depth, a push saturates at the bound context. -/
+theorem push_contextAt_of_lt (hk : t.depth < k) : (t.push c).contextAt k = c := by
+  rw [contextAt_saturates _ (by rw [push_depth]; exact hk), push_innermost]
 
-@[simp] theorem push_contextAt_succ_depth : (t.push σ).contextAt (t.depth + 1) = σ • t.innermost :=
+@[simp] theorem push_contextAt_succ_depth : (t.push c).contextAt (t.depth + 1) = c :=
   push_contextAt_of_lt _ _ (Nat.lt_succ_self _)
-
-theorem prod_reverse_map_const_smul (l : List C) (c : C) :
-    ((l.map (Function.const C) : List (Function.End C))).reverse.prod • c = l.getLastD c := by
-  induction l generalizing c with
-  | nil => simp
-  | cons a l ih =>
-    simp only [List.map_cons, List.reverse_cons, List.prod_append, List.prod_singleton, mul_smul,
-      ih, List.getLastD_cons]
-    rfl
-
-/-- A tower of reports, each shift taking every context to a reported one, has at depth `k` the
-last of the first `k` reported contexts. -/
-theorem contextAt_map_const (c : C) (js : List C) (k : ℕ) :
-    (⟨c, js.map (Function.const C)⟩ : ContextTower C).contextAt k = (js.take k).getLastD c := by
-  rw [contextAt, ← List.map_take, prod_reverse_map_const_smul]
 
 end ContextTower
 
@@ -152,10 +134,7 @@ structure AccessPattern (C : Type*) (R : Type*) where
 
 namespace AccessPattern
 
-universe u
-
 variable {C R : Type*} (ap : AccessPattern C R) (t : ContextTower C) (f : C → R)
-  (σ : Function.End C)
 
 /-- Resolve an access pattern against a tower. -/
 def resolve : R := ap.project (t.contextAt (ap.depth.resolve t.depth))
@@ -189,29 +168,16 @@ def innermost : AccessPattern C R := ⟨.local, f⟩
 @[simp] theorem innermost_resolve : (innermost f).resolve t = f t.innermost := by
   simp [innermost, resolve]
 
-/-- An access pattern is stable under a shift when pushing the shift onto any tower leaves its
-resolution unchanged. Kaplan-compliance is stability under every shift and monsterhood
-instability of some pattern (`Reference/Kaplan.lean`). -/
-def Stable : Prop := ∀ t, ap.resolve (t.push σ) = ap.resolve t
+/-- An access pattern is stable when binding another context on any tower leaves its resolution
+unchanged: Kaplan's thesis for the indexicals of English, and the Fixity Thesis of Schlenker. -/
+def Stable : Prop := ∀ t c, ap.resolve (t.push c) = ap.resolve t
 
-/-- Origin access is invariant under push, which is Kaplan's thesis for expressions reading the
-speech-act context. -/
-theorem origin_stable (ap : AccessPattern C R) (hd : ap.depth = .origin) (t : ContextTower C)
-    (σ : Function.End C) : ap.resolve (t.push σ) = ap.resolve t := by
-  simp only [resolve, hd, DepthSpec.origin_resolve, ContextTower.contextAt_zero,
-    ContextTower.push_origin]
+/-- A pattern reading the speech-act context is stable. -/
+theorem stable_origin : (origin f).Stable := fun t c ↦ by simp
 
-theorem stable_of_depth_origin (ap : AccessPattern C R) (hd : ap.depth = .origin)
-    (σ : Function.End C) : ap.Stable σ :=
-  fun t ↦ ap.origin_stable hd t σ
-
-theorem stable_origin : (origin f).Stable σ := stable_of_depth_origin _ rfl σ
-
-/-- Innermost access tracks the pushed shift. -/
-theorem local_updates (ap : AccessPattern C R) (hd : ap.depth = .local) (t : ContextTower C)
-    (σ : Function.End C) : ap.resolve (t.push σ) = ap.project (σ • t.innermost) := by
-  simp only [resolve, hd, DepthSpec.local_resolve, ContextTower.push_depth,
-    ContextTower.push_contextAt_succ_depth]
+/-- A pattern reading the innermost context is stable iff its coordinate is constant. -/
+theorem stable_innermost_iff : (innermost f).Stable ↔ ∀ c c', f c = f c' :=
+  ⟨fun h c c' ↦ by simpa using h (root c') c, fun h t c ↦ by simpa using h c t.innermost⟩
 
 end AccessPattern
 

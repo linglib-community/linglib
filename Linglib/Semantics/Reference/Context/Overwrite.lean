@@ -45,9 +45,9 @@ after a sequence of overwrites it reads the context of the last overwrite that t
 
 @[expose] public section
 
-namespace Kaplan.Context
-
 universe u
+
+namespace Kaplan.Context
 
 variable {W E P T : Type u} {α : Type*}
 
@@ -198,8 +198,6 @@ end Kaplan.Context
 namespace Kaplan
 
 open Context
-
-universe u
 
 variable {W E P T : Type u} {α : Type*}
 

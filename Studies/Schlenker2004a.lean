@@ -8,6 +8,7 @@ module
 public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Logic.Assignment
 public import Linglib.Data.Examples.Schlenker2004a
+public import Studies.Kaplan1989
 
 /-!
 # Schlenker (2004a): Context of Thought and Context of Utterance
@@ -323,10 +324,10 @@ theorem not_defined_lamPres_name_self (hf : ∀ t, f t ≠ t) (a : E) :
 denotes the speaker of the Context of Utterance, so when that speaker is not alive at its time
 in its world the context is improper in the sense of [kaplan-1989]. -/
 theorem not_proper_of_defined_lamPres (alive : E → T → W → Prop) {j : ℕ}
-    (hd : (lamPres f Q (.I j) k).Defined sE sT cu ct) (h : ¬ alive (sE j) cu.time cu.world) :
-    ¬ cu.Proper (alive · cu.time ·) := by
+    (hd : (lamPres f Q (.I j) k).Defined sE sT cu ct) (h : ¬ alive (sE j) cu.time cu.world)
+    (located : E → P → T → W → Prop) : ¬ Kaplan1989.Proper (alive · cu.time ·) located cu := by
   rw [(defined_lamPres_iff.1 hd).1] at h
-  exact h
+  exact fun hp ↦ h hp.1
 
 end Formula
 
