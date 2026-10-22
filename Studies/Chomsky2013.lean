@@ -42,7 +42,7 @@ head movement.
 
 namespace Chomsky2013
 
-open Minimalist Minimalist.PlanarSyntacticObject
+open Minimalist Minimalist.LinearizedSyntacticObject
 
 /-- A token of the examples. -/
 def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false) :
@@ -57,21 +57,21 @@ def the := tok 2 .D [.N] "the"
 def cause := tok 3 .N (phon := "cause")
 
 /-- The small clause *[lightning, the cause of the fire]*, two phrases. -/
-def smallClause : PlanarSyntacticObject := lightning * (the * cause)
+def smallClause : LinearizedSyntacticObject := lightning * (the * cause)
 
 /-- The small clause after *lightning* has raised out of it, leaving its lower copy. -/
-def smallClauseRaised : PlanarSyntacticObject := .traceOf lightning * (the * cause)
+def smallClauseRaised : LinearizedSyntacticObject := .traceOf lightning * (the * cause)
 
 /-- (18): the small clause is unlabeled, so the copula cannot select it. -/
 theorem smallClause_label_eq_none :
     (smallClause : SyntacticObject).label = none ∧
-      ((be * smallClause : PlanarSyntacticObject) : SyntacticObject).label = none := by
+      ((be * smallClause : LinearizedSyntacticObject) : SyntacticObject).label = none := by
   decide
 
 /-- (18): once one term raises, the other labels the small clause, and the copula selects it. -/
 theorem smallClauseRaised_label :
     (smallClauseRaised : SyntacticObject).label = some the ∧
-      ((be * smallClauseRaised : PlanarSyntacticObject) : SyntacticObject).label = some be := by
+      ((be * smallClauseRaised : LinearizedSyntacticObject) : SyntacticObject).label = some be := by
   decide
 
 /-! ### The external argument and the EPP (17) -/
@@ -83,18 +83,18 @@ def ea := tok 7 .D (phon := "John")
 def ia := tok 8 .D (phon := "Bill")
 
 /-- The verb phrase *v [see Bill]*. -/
-def vP : PlanarSyntacticObject := v * (see * ia)
+def vP : LinearizedSyntacticObject := v * (see * ia)
 
 /-- (17): the external argument and the verb phrase are two phrases, so `β` is unlabeled. -/
 theorem beta_label_eq_none :
-    ((ea * vP : PlanarSyntacticObject) : SyntacticObject).label = none := by
+    ((ea * vP : LinearizedSyntacticObject) : SyntacticObject).label = none := by
   decide
 
 /-- (17): once the external argument raises, `β` is labeled `v` and `T` selects it, so the EPP is
 forced. -/
 theorem beta_label_of_raising :
-    ((.traceOf ea * vP : PlanarSyntacticObject) : SyntacticObject).label = some v ∧
-      ((t * (.traceOf ea * vP) : PlanarSyntacticObject) : SyntacticObject).label = some t := by
+    ((.traceOf ea * vP : LinearizedSyntacticObject) : SyntacticObject).label = some v ∧
+      ((t * (.traceOf ea * vP) : LinearizedSyntacticObject) : SyntacticObject).label = some t := by
   decide
 
 /-! ### Successive-cyclic movement (21) -/
@@ -107,20 +107,21 @@ def assassinated := tok 13 .V [.D] "assassinated"
 def jfk := tok 14 .D (phon := "JFK")
 
 /-- The embedded clause *C [was assassinated JFK]*. -/
-def cP : PlanarSyntacticObject := c * (was * (assassinated * jfk))
+def cP : LinearizedSyntacticObject := c * (was * (assassinated * jfk))
 
 /-- (21): *in which Texas city* stopping in the specifier of the embedded declarative CP leaves `α`
 unlabeled, and *thought* cannot select it. -/
 theorem alpha_label_eq_none :
-    ((whichCity * cP : PlanarSyntacticObject) : SyntacticObject).label = none ∧
-      ((thought * (whichCity * cP) : PlanarSyntacticObject) : SyntacticObject).label = none := by
+    ((whichCity * cP : LinearizedSyntacticObject) : SyntacticObject).label = none ∧
+      ((thought * (whichCity * cP) : LinearizedSyntacticObject) :
+        SyntacticObject).label = none := by
   decide
 
 /-- Moving on, the wh-phrase leaves its lower copy, `α` is labeled `C`, and *thought* selects it:
 successive-cyclic movement is forced. -/
 theorem alpha_label_of_raising :
-    ((.traceOf whichCity * cP : PlanarSyntacticObject) : SyntacticObject).label = some c ∧
-      ((thought * (.traceOf whichCity * cP) : PlanarSyntacticObject) : SyntacticObject).label =
+    ((.traceOf whichCity * cP : LinearizedSyntacticObject) : SyntacticObject).label = some c ∧
+      ((thought * (.traceOf whichCity * cP) : LinearizedSyntacticObject) : SyntacticObject).label =
         some thought := by
   decide
 

@@ -9,28 +9,29 @@ public import Linglib.Core.Data.RoseTree.Get
 public import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 
 /-!
-# Planar objects with their lower copies marked
+# Linearized objects with their lower copies marked
 
 Under the copy theory a moved constituent leaves a copy of itself, and externalization pronounces
-only the highest. A planar syntactic object with its lower copies marked carries both: forgetting
-the marks gives the copy object, and contracting each marked subtree to the trace leaf of its mark
-gives the object externalization reads, the contraction quotient of the algebraic account of Merge
-(Definition 1.2.4). Marking the outermost copies of a term mirrors replacing them in the
+only the highest. A linearized syntactic object with its lower copies marked carries both:
+forgetting the marks gives the copy object, and contracting each marked subtree to the trace leaf of
+its mark gives the object externalization reads, the contraction quotient of the algebraic account
+of Merge (Definition 1.2.4). Marking the outermost copies of a term mirrors replacing them in the
 contraction, and a c-command between pronounced leaves of the contraction holds in the copy object.
 
 ## Main definitions
 
-* `Minimalist.CopyMark`, `Minimalist.PlanarSyntacticObject.Marked`: marks and marked objects.
-* `Minimalist.PlanarSyntacticObject.Marked.unmark`, `contract`: the copy object and its contraction.
-* `Minimalist.PlanarSyntacticObject.Marked.mark`, `find?`: marking the lower copies of a term, and
-  the occurrence of a term outside the lower copies.
+* `Minimalist.CopyMark`, `Minimalist.LinearizedSyntacticObject.Marked`: marks and marked objects.
+* `Minimalist.LinearizedSyntacticObject.Marked.unmark`, `contract`: the copy object and its
+  contraction.
+* `Minimalist.LinearizedSyntacticObject.Marked.mark`, `find?`: marking the lower copies of a term,
+  and the occurrence of a term outside the lower copies.
 
 ## Main results
 
-* `Minimalist.PlanarSyntacticObject.Marked.contract_mark`: marking contracts to replacement.
-* `Minimalist.PlanarSyntacticObject.Marked.map_contract_find?`: the occurrence found contracts to
-  the occurrence found in the contraction.
-* `Minimalist.PlanarSyntacticObject.Marked.cCommands_unmark_of_cCommands_contract`: c-command
+* `Minimalist.LinearizedSyntacticObject.Marked.contract_mark`: marking contracts to replacement.
+* `Minimalist.LinearizedSyntacticObject.Marked.map_contract_find?`: the occurrence found contracts
+  to the occurrence found in the contraction.
+* `Minimalist.LinearizedSyntacticObject.Marked.cCommands_unmark_of_cCommands_contract`: c-command
   between pronounced leaves of the contraction holds in the copy object.
 
 ## References
@@ -44,18 +45,18 @@ namespace Minimalist
 
 open RoseTree SyntacticObject
 
-/-- The mark on a vertex of a planar copy object: `some l` on the root of a lower copy, `l` the
+/-- The mark on a vertex of a linearized copy object: `some l` on the root of a lower copy, `l` the
 label of the trace that stands for it, and `none` elsewhere. -/
 abbrev CopyMark : Type := Option (Option LexicalItem.Token)
 
-/-- A planar syntactic object with its lower copies marked, the datum externalization reads. The
+/-- A linearized syntactic object with its lower copies marked, the datum externalization reads. The
 copy object itself is a syntactic object, order and marks forgotten. -/
-def PlanarSyntacticObject.Marked : Type :=
+def LinearizedSyntacticObject.Marked : Type :=
   {t : RoseTree (CopyMark × Vertex) // IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))}
 
-instance : DecidableEq PlanarSyntacticObject.Marked := Subtype.instDecidableEq
+instance : DecidableEq LinearizedSyntacticObject.Marked := Subtype.instDecidableEq
 
-namespace PlanarSyntacticObject.Marked
+namespace LinearizedSyntacticObject.Marked
 
 /-! ### Contraction -/
 
@@ -90,21 +91,21 @@ theorem isSyntacticObject_contractTree {t : RoseTree (CopyMark × Vertex)}
 variable (t : Marked)
 
 /-- The copy object, the marks forgotten. -/
-def unmark : PlanarSyntacticObject := ⟨t.val.map Prod.snd, t.2⟩
+def unmark : LinearizedSyntacticObject := ⟨t.val.map Prod.snd, t.2⟩
 
 /-- The contraction: each lower copy becomes the trace that stands for it, the form
 externalization reads ([marcolli-chomsky-berwick-2025] Definition 1.2.4). -/
-def contract : PlanarSyntacticObject := ⟨contractTree t.val, isSyntacticObject_contractTree t.2⟩
+def contract : LinearizedSyntacticObject := ⟨contractTree t.val, isSyntacticObject_contractTree t.2⟩
 
-/-! ### Planar objects without lower copies -/
+/-! ### Linearized objects without lower copies -/
 
 theorem map_snd_map (s : RoseTree Vertex) :
     (s.map ((none, ·) : Vertex → CopyMark × Vertex)).map Prod.snd = s := by
   rw [← comp_map]
   exact id_map s
 
-/-- A planar object with no lower copy. -/
-def ofPlanar (p : PlanarSyntacticObject) : Marked :=
+/-- A linearized object with no lower copy. -/
+def ofLinearized (p : LinearizedSyntacticObject) : Marked :=
   ⟨p.val.map ((none, ·)), by rw [map_snd_map]; exact p.2⟩
 
 theorem contractTree_map (s : RoseTree Vertex) :
@@ -114,10 +115,11 @@ theorem contractTree_map (s : RoseTree Vertex) :
     rw [map_node, contractTree_none, List.map_map]
     exact congrArg _ ((List.map_congr_left ih).trans (List.map_id cs))
 
-@[simp] theorem unmark_ofPlanar (p : PlanarSyntacticObject) : (ofPlanar p).unmark = p :=
+@[simp] theorem unmark_ofLinearized (p : LinearizedSyntacticObject) : (ofLinearized p).unmark = p :=
   Subtype.ext (map_snd_map p.val)
 
-@[simp] theorem contract_ofPlanar (p : PlanarSyntacticObject) : (ofPlanar p).contract = p :=
+@[simp] theorem contract_ofLinearized (p : LinearizedSyntacticObject) :
+    (ofLinearized p).contract = p :=
   Subtype.ext (contractTree_map p.val)
 
 /-! ### Merge -/
@@ -134,13 +136,13 @@ variable {t}
 
 @[simp] theorem unmark_attach (e : Edge) (d : Marked) :
     (t.attach e d).unmark = t.unmark.attach e d.unmark := by
-  cases e <;> exact Subtype.ext (by simp [attach, unmark, PlanarSyntacticObject.attach,
-    PlanarSyntacticObject.merge])
+  cases e <;> exact Subtype.ext (by simp [attach, unmark, LinearizedSyntacticObject.attach,
+    LinearizedSyntacticObject.merge])
 
 @[simp] theorem contract_attach (e : Edge) (d : Marked) :
     (t.attach e d).contract = t.contract.attach e d.contract := by
-  cases e <;> exact Subtype.ext (by simp [attach, contract, PlanarSyntacticObject.attach,
-    PlanarSyntacticObject.merge])
+  cases e <;> exact Subtype.ext (by simp [attach, contract, LinearizedSyntacticObject.attach,
+    LinearizedSyntacticObject.merge])
 
 /-! ### Marking lower copies -/
 
@@ -206,11 +208,11 @@ def mark (t : Marked) (m : SyntacticObject) (l : Option LexicalItem.Token) : Mar
 
 /-- Marking the copies of `m` with its trace contracts to replacing `m` by its trace. -/
 theorem contract_mark (m : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
-    (t.mark m (τ m)).contract = t.contract.replace m (m.tracePlanar τ) :=
+    (t.mark m (τ m)).contract = t.contract.replace m (m.traceLinearized τ) :=
   Subtype.ext (by
     change contractTree (markTree m (τ m) t.val) =
-      replaceIf _ (m.tracePlanar τ).val (contractTree t.val)
-    rw [tracePlanar_val]
+      replaceIf _ (m.traceLinearized τ).val (contractTree t.val)
+    rw [traceLinearized_val]
     exact contractTree_markTree m (τ m) t.val)
 
 /-! ### Occurrences -/
@@ -243,7 +245,7 @@ def find? (t : Marked) (target : SyntacticObject) : Option Marked :=
 theorem mem_terms_of_find? {target : SyntacticObject} {s : Marked} (h : t.find? target = some s) :
     s.unmark.toSyntacticObject ∈ t.unmark.toSyntacticObject.terms := by
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 h
-  exact PlanarSyntacticObject.mem_terms_toSyntacticObject.2
+  exact LinearizedSyntacticObject.mem_terms_toSyntacticObject.2
     ⟨_, mem_subtrees.2 ((isSubtree_of_mem_subtreesUntil hr).map _), rfl⟩
 
 /-- The occurrence found contracts to the target. -/
@@ -256,7 +258,7 @@ theorem mk_contractTree_of_find? {target : SyntacticObject} {s : Marked}
 theorem map_contract_find? (target : SyntacticObject) :
     (t.find? target).map contract = t.contract.find? target := by
   apply Option.map_injective Subtype.val_injective
-  rw [Option.map_map, find?, PlanarSyntacticObject.find?, Option.map_pmap, Option.map_pmap]
+  rw [Option.map_map, find?, LinearizedSyntacticObject.find?, Option.map_pmap, Option.map_pmap]
   simp only [Function.comp_apply, contract, Option.pmap_eq_map]
   rw [← map_contractTree_outerSubtrees, List.find?_map]
   simp [Function.comp_def]
@@ -269,7 +271,7 @@ theorem exists_val_eq_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
     ∃ k, t.val = .node (k, .inl (some x)) [] := by
   obtain ⟨⟨⟨k, a⟩, cs⟩, ht⟩ := t
   have hv := congrArg Subtype.val h
-  simp only [unmark, PlanarSyntacticObject.toSyntacticObject_val, map_node,
+  simp only [unmark, LinearizedSyntacticObject.toSyntacticObject_val, map_node,
     SyntacticObject.leaf_val, UnorderedTree.leaf, UnorderedTree.mk_node_eq_mk_node_iff] at hv
   obtain ⟨rfl, hcs⟩ := hv
   have hc : cs = [] := by simpa using congrArg Multiset.card hcs
@@ -284,7 +286,7 @@ theorem contract_eq_leaf_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
   obtain ⟨k, hk⟩ := exists_val_eq_of_unmark_eq_leaf h
   rcases k with _ | l
   · exact Subtype.ext (by simp [contract, hk, SyntacticObject.leaf_val])
-  · simp [PlanarSyntacticObject.yield_toSyntacticObject, contract, hk] at hx
+  · simp [LinearizedSyntacticObject.yield_toSyntacticObject, contract, hk] at hx
 
 /-- An occurrence found whose copy is a lexical leaf is that leaf, when the target is no trace. -/
 theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalItem.Token}
@@ -323,7 +325,7 @@ private theorem isSyntacticObject_of_isSubtree {t : Marked} {r : RoseTree (CopyM
 private theorem mem_terms_unmark {t : Marked} {r : RoseTree (CopyMark × Vertex)}
     (hr : IsSubtree r t.val) :
     (⟨_, isSyntacticObject_of_isSubtree hr⟩ : SyntacticObject) ∈ t.unmark.toSyntacticObject.terms :=
-  PlanarSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 (hr.map _), rfl⟩
+  LinearizedSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 (hr.map _), rfl⟩
 
 /-- A c-command between two pronounced leaves of the contraction holds between the same leaves of
 the copy object, the contraction changing nothing outside the lower copies. -/
@@ -331,7 +333,7 @@ theorem cCommands_unmark_of_cCommands_contract {t : Marked} {x y : LexicalItem.T
     (hxy : x ≠ y) (h : t.contract.toSyntacticObject.CCommands ↑x ↑y) :
     t.unmark.toSyntacticObject.CCommands ↑x ↑y := by
   obtain ⟨z, -, ⟨w, hw, hwx, hwz, hxz⟩, hzy⟩ := h
-  obtain ⟨q, hq, hqw⟩ := PlanarSyntacticObject.mem_terms_toSyntacticObject.1 hw
+  obtain ⟨q, hq, hqw⟩ := LinearizedSyntacticObject.mem_terms_toSyntacticObject.1 hw
   rw [show t.contract.val = contractTree t.val from rfl, ← map_contractTree_outerSubtrees] at hq
   obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hq
   have hrt := isSubtree_of_mem_subtreesUntil hr
@@ -372,6 +374,6 @@ theorem cCommands_unmark_of_cCommands_contract {t : Marked} {x y : LexicalItem.T
   · rw [← he, terms_leaf, Multiset.mem_singleton, leaf_inj] at hzcy
     exact hxy hzcy.symm
 
-end PlanarSyntacticObject.Marked
+end LinearizedSyntacticObject.Marked
 
 end Minimalist

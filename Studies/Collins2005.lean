@@ -152,9 +152,9 @@ def vpSteps : List Step :=
 
 /-- The PartP at the point it fronts: over the VP, with the evacuated element's trace when it
 has left. -/
-def partP (evacuate : Bool) : PlanarSyntacticObject :=
-  let leaf := PlanarSyntacticObject.leaf
-  let vp : PlanarSyntacticObject := match p.extra with
+def partP (evacuate : Bool) : LinearizedSyntacticObject :=
+  let leaf := LinearizedSyntacticObject.leaf
+  let vp : LinearizedSyntacticObject := match p.extra with
     | some x => {leaf p.patient, {leaf p.verb, if evacuate then .traceOf x else leaf x}}
     | none => {leaf p.verb, leaf p.patient}
   {leaf part₀, vp}
@@ -316,8 +316,8 @@ theorem pp_remnant : (ex56.passive .partP true).IsRemnantStep (ex56.voiceP true)
 /-- The by-phrase of (29), *by the book*, has no projecting head: *by* selects a vP, and a DP
 does not satisfy it; over the vP of (30) it projects. -/
 theorem by_selects_vP :
-    (({PlanarSyntacticObject.leaf by₀, PlanarSyntacticObject.leaf ex9.patient} :
-      PlanarSyntacticObject).toSyntacticObject).selHead = none ∧
+    (({LinearizedSyntacticObject.leaf by₀, LinearizedSyntacticObject.leaf ex9.patient} :
+      LinearizedSyntacticObject).toSyntacticObject).selHead = none ∧
     ∃ q ∈ (ex9.voiceP false).externalize?, q.toSyntacticObject.selHead = some by₀ := by
   decide
 

@@ -28,7 +28,7 @@ such as *own the dog* yields nothing (`agent_stative_eq_bot`).
 Event Identification is `ArgumentStructure.eventIdentification`, and the agentive Voice head
 is `Voice.agentive`; the derivation is stated for an arbitrary agent relation and verb. Kratzer's
 Event Identification is undefined on inputs with disjoint sorts of events; the library's is
-total, so the clash comes out as the empty relation. The tree is built from planar leaf tokens,
+total, so the clash comes out as the empty relation. The tree is built from linearized leaf tokens,
 and the paper's structural claim is its c-command relations.
 
 ## References
@@ -102,7 +102,7 @@ def mittie : LexicalItem.Token := ⟨.of .D [] "Mittie", 203⟩
 def theDog : LexicalItem.Token := ⟨.of .D [] "the dog", 204⟩
 
 /-- The tree of the sentence is `[VoiceP Mittie [Voice' Voice [vP v [VP fed [DP the dog]]]]]`. -/
-def tree : PlanarSyntacticObject := mittie * (voice * (little_v * (fed * theDog)))
+def tree : LinearizedSyntacticObject := mittie * (voice * (little_v * (fed * theDog)))
 
 /-- The external argument c-commands the internal argument, and not conversely. -/
 theorem mittie_cCommands_theDog :

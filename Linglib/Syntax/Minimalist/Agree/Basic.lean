@@ -10,16 +10,16 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 # Agree: closest goals, horizons, and valuation
 
 This file states the structural conditions of Agree over syntactic objects and its valuation step
-over feature bundles. A probe on the head at a position of a planar object searches the positions
-the head c-commands, closest by the branching positions above them, and so finds a goal that no
-other satisfier asymmetrically c-commands: the Minimal Link Condition, with mutually c-commanding
-candidates equidistant. A target lies behind a horizon when a leaf of the horizon category in the
-probe's domain c-commands it, and valuation copies a goal's value into an unvalued probe slot,
-only adding information.
+over feature bundles. A probe on the head at a position of a linearized object searches the
+positions the head c-commands, closest by the branching positions above them, and so finds a goal
+that no other satisfier asymmetrically c-commands: the Minimal Link Condition, with mutually
+c-commanding candidates equidistant. A target lies behind a horizon when a leaf of the horizon
+category in the probe's domain c-commands it, and valuation copies a goal's value into an unvalued
+probe slot, only adding information.
 
 ## Main definitions
 
-* `Minimalist.PlanarSyntacticObject.goals`: the terms a probe on a head finds.
+* `Minimalist.LinearizedSyntacticObject.goals`: the terms a probe on a head finds.
 * `Minimalist.SyntacticObject.behindHorizonIn`: a target c-commanded by a horizon-category leaf
   in the probe's domain.
 * `Minimalist.FeatureBundle.valueAt`, `Minimalist.FeatureBundle.applyAgree`: valuation of an
@@ -27,9 +27,9 @@ only adding information.
 
 ## Main results
 
-* `Minimalist.PlanarSyntacticObject.not_finds_of_cCommands`: a satisfier that asymmetrically
+* `Minimalist.LinearizedSyntacticObject.not_finds_of_cCommands`: a satisfier that asymmetrically
   c-commands a position blocks the goal there.
-* `Minimalist.PlanarSyntacticObject.finds_above_branching_iff`: among satisfiers none of which
+* `Minimalist.LinearizedSyntacticObject.finds_above_branching_iff`: among satisfiers none of which
   dominates another, a probe finds those that no satisfier asymmetrically c-commands.
 
 ## References
@@ -46,12 +46,12 @@ namespace Minimalist
 /-! ### Closest goals
 
 A probe on the head at a position searches the positions the head c-commands, keyed by the
-branching positions above each (`PlanarSyntacticObject.above`), and finds a goal minimal under the
-key, the Minimal Link Condition of [chomsky-1995]. -/
+branching positions above each (`LinearizedSyntacticObject.above`), and finds a goal minimal under
+the key, the Minimal Link Condition of [chomsky-1995]. -/
 
-namespace PlanarSyntacticObject
+namespace LinearizedSyntacticObject
 
-variable {t : PlanarSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
+variable {t : LinearizedSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
   {q g : t.val.Positions}
 
 /-- A satisfier that asymmetrically c-commands a position blocks the goal there, whatever else the
@@ -82,7 +82,7 @@ theorem mem_goals {h x : SyntacticObject} : x ∈ t.goals p h ↔
   exact ⟨fun ⟨g, ⟨a, ha, hg⟩, hx⟩ ↦ ⟨a, ha, g, hg, hx⟩,
     fun ⟨a, ha, g, hg, hx⟩ ↦ ⟨g, ⟨a, ha, hg⟩, hx⟩⟩
 
-end PlanarSyntacticObject
+end LinearizedSyntacticObject
 
 namespace SyntacticObject
 
