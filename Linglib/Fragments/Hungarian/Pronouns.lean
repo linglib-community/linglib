@@ -12,9 +12,9 @@ pro-adverbs *hol* 'where', *hova* 'to where', *honnan* 'from where', *mikor* 'wh
 *hogy(an)* 'how'. Each is recorded with the ontological category it asks about. They are the
 bases of the indefinite series of `Hungarian.Indefinites`.
 
-The reflexive inflects for person and number, one form for each of the six cells, from *magam*
-'myself' to *maguk* 'themselves', collected in `Hungarian.Pronouns.reflexives`. Hungarian has
-no grammatical gender.
+The reflexive is the possessive inflection of a stem *mag-*, one form for each person and
+number, from *magam* 'myself' to *maguk* 'themselves', collected in
+`Hungarian.Pronouns.reflexives`. Hungarian has no grammatical gender.
 
 ## References
 
