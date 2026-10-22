@@ -5,26 +5,32 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Probe.BestMatch
+public import Linglib.Syntax.Minimalist.Probe.Minimal
+public import Linglib.Syntax.Minimalist.SyntacticObject.Position
+public import Linglib.Syntax.Minimalist.Derivation.Basic
+public import Mathlib.Data.Fintype.Inv
 
 /-!
 # Movement probes
 
 A head may carry conditions on movement as well as on agreement, each an interaction and a
-satisfaction specification, a relativized EPP. A movement probe searches its domain as Agree does
-and attracts the goal it interacts with to its specifier. Merge being binary, it attracts at most
-one goal, so a probe that interacts with two goals attracts neither, the Ban on Multiple Move.
+satisfaction specification, a relativized EPP. A movement probe attracts the goal it agrees with to
+its specifier, and since Merge is binary it attracts at most one: a probe that agrees with two goals
+attracts neither, the Ban on Multiple Move. On a planar syntactic object a probe on a head searches
+the positions the head c-commands, and the goal it attracts is the mover of an Internal Merge step.
 
 ## Main definitions
 
-* `Minimalist.Probe.Spec.attract`: the goal a movement probe attracts.
+* `Minimalist.Probe.attract`: the goal a movement probe attracts.
+* `Minimalist.PlanarSyntacticObject.attractStep?`: the Internal Merge a probe on a head triggers.
+  Its domain is the positions the head c-commands, or a part of them such as the nominals.
 
 ## Main results
 
-* `Minimalist.Probe.Spec.attract_eq_some_iff`: a probe attracts the one goal it interacts with.
-* `Minimalist.Probe.Spec.attract_eq_none_of_mem_of_mem_of_ne`: the Ban on Multiple Move.
-* `Minimalist.Probe.Spec.attract_map_singleton`: on singleton classes a probe whose interacting
-  goals satisfy it attracts the goal of the linear search.
+* `Minimalist.Probe.attract_eq_some_iff`: a probe attracts the one goal it agrees with.
+* `Minimalist.Probe.attract_eq_none_of_ne`: the Ban on Multiple Move.
+* `Minimalist.PlanarSyntacticObject.attractStep?_eq_some_iff`: the mover of the step is the term at
+  the attracted position.
 
 ## Implementation notes
 
@@ -41,45 +47,61 @@ modelled.
 
 @[expose] public section
 
-namespace Minimalist.Probe.Spec
+namespace Minimalist.Probe
 
-variable {α F : Type*} [DecidableEq F] (sp : Spec F) (feats : α → Finset F)
+variable {α β : Type*} [Preorder β] [Fintype α] [DecidableEq α] (p : Probe α) (s : Set α)
+  [DecidablePred (· ∈ s)] (key : α → β) [DecidableRel ((· < ·) : β → β → Prop)]
 
-/-- The goal a movement probe attracts, the one goal it interacts with. Binary Merge cannot move
-two goals at once ([coon-keine-2021]), and a probe that interacts with several attracts none, the
-Ban on Multiple Move of [hammerly-mathieu-2026]. -/
-def attract (d : List (List α)) : Option α :=
-  match sp.interacted feats d with
-  | [a] => some a
-  | _ => none
+instance : Decidable (∃! a, p.AgreesWith s key a) :=
+  inferInstanceAs (Decidable (∃ a, p.AgreesWith s key a ∧ ∀ b, p.AgreesWith s key b → b = a))
 
-variable {sp feats} {a b : α} {d : List (List α)}
+/-- The goal a movement probe attracts, the one goal it agrees with. Binary Merge cannot move two
+goals at once ([coon-keine-2021]), and a probe that agrees with several attracts none, the Ban on
+Multiple Move of [hammerly-mathieu-2026]. -/
+def attract : Option α :=
+  if h : ∃! a, p.AgreesWith s key a then some (Fintype.choose _ h) else none
 
-theorem attract_eq_some_iff : sp.attract feats d = some a ↔ sp.interacted feats d = [a] := by
+variable {p s key} {a b : α}
+
+theorem attract_eq_some_iff :
+    p.attract s key = some a ↔ p.AgreesWith s key a ∧ ∀ b, p.AgreesWith s key b → b = a := by
   unfold attract
-  split <;> simp_all
+  split
+  · rename_i h
+    rw [Option.some.injEq]
+    constructor
+    · rintro rfl
+      exact ⟨Fintype.choose_spec _ h, fun b hb ↦ h.unique hb (Fintype.choose_spec _ h)⟩
+    · rintro ⟨ha, hu⟩
+      exact hu _ (Fintype.choose_spec _ h)
+  · rename_i h
+    simp only [reduceCtorEq, false_iff]
+    rintro ⟨ha, hu⟩
+    exact h ⟨a, ha, hu⟩
 
-/-- The Ban on Multiple Move: a probe interacting with two goals attracts neither. -/
-theorem attract_eq_none_of_mem_of_mem_of_ne (ha : a ∈ sp.interacted feats d)
-    (hb : b ∈ sp.interacted feats d) (hab : a ≠ b) : sp.attract feats d = none :=
-  Option.eq_none_iff_forall_ne_some.2 fun x hx ↦ by
-    rw [attract_eq_some_iff.1 hx, List.mem_singleton] at ha hb
-    exact hab (ha.trans hb.symm)
+/-- The Ban on Multiple Move: a probe agreeing with two goals attracts neither. -/
+theorem attract_eq_none_of_ne (ha : p.AgreesWith s key a) (hb : p.AgreesWith s key b)
+    (hab : a ≠ b) : p.attract s key = none :=
+  Option.eq_none_iff_forall_ne_some.2 fun c hc ↦ by
+    obtain ⟨-, hu⟩ := attract_eq_some_iff.1 hc
+    exact hab ((hu a ha).trans (hu b hb).symm)
 
-/-- An attracted goal is a goal of the domain. -/
-theorem mem_flatten_of_attract_eq_some (h : sp.attract feats d = some a) : a ∈ d.flatten :=
-  mem_flatten_of_mem_interacted (sp := sp) (feats := feats) <| by
-    rw [attract_eq_some_iff.mp h]; exact List.mem_singleton_self a
+end Minimalist.Probe
 
-/-- On singleton classes a probe whose interacting goals satisfy it attracts the goal of the
-linear search. -/
-theorem attract_map_singleton (l : List α)
-    (h : ∀ a, (sp.toProbe feats).int a → (sp.toProbe feats).sat a) :
-    sp.attract feats (l.map ([·])) = (sp.toProbe feats).goal l := by
-  rw [attract, interacted_map_singleton, inspected_filter_int_eq_goal h]
-  cases (sp.toProbe feats).goal l <;> rfl
+namespace Minimalist.PlanarSyntacticObject
 
-@[simp] theorem attract_bot : (⊥ : Spec F).attract feats d = none := by
-  simp [attract]
+variable {β : Type*} [Preorder β] [DecidableRel ((· < ·) : β → β → Prop)]
 
-end Minimalist.Probe.Spec
+/-- The Internal Merge a movement probe searching the positions `s` of `t` triggers, those its head
+c-commands or a part of them: the term at the goal it attracts re-merges. -/
+def attractStep? (t : PlanarSyntacticObject) (p : Probe t.val.Positions) (s : Set t.val.Positions)
+    [DecidablePred (· ∈ s)] (key : t.val.Positions → β) : Option Step :=
+  (p.attract s key).map fun q ↦ .im (t.termAt q)
+
+theorem attractStep?_eq_some_iff {t : PlanarSyntacticObject} {p : Probe t.val.Positions}
+    {s : Set t.val.Positions} [DecidablePred (· ∈ s)] {key : t.val.Positions → β} {step : Step} :
+    t.attractStep? p s key = some step ↔
+      ∃ q, p.attract s key = some q ∧ step = .im (t.termAt q) := by
+  simp [attractStep?, eq_comm]
+
+end Minimalist.PlanarSyntacticObject
