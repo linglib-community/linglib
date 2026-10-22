@@ -69,7 +69,7 @@ and three he does not.
 
 namespace Dixon1982
 
-open Semantics Data.StructureDataset UD
+open Semantics CLDF.StructureDataset UD
 
 namespace StructureDataset
 

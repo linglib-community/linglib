@@ -16,8 +16,8 @@ parameters, their codes and the rows of a sample are generated per paper.
 
 ## Main definitions
 
-* `Data.StructureDataset.Language`: a row of the `LanguageTable`.
-* `Data.StructureDataset.Coded`: a value of the `ValueTable`, a code with the marks a source puts
+* `CLDF.StructureDataset.Language`: a row of the `LanguageTable`.
+* `CLDF.StructureDataset.Coded`: a value of the `ValueTable`, a code with the marks a source puts
   on it.
 
 ## Implementation notes
@@ -43,7 +43,7 @@ parameters, their codes and the rows of a sample are generated per paper.
 
 @[expose] public section
 
-namespace Data.StructureDataset
+namespace CLDF.StructureDataset
 
 /-- A `Language` is a row of a CLDF `LanguageTable`, a language of the sample. -/
 structure Language where
@@ -70,4 +70,4 @@ structure Coded (C : Type*) where
   minor : Bool := false
   deriving DecidableEq, Repr
 
-end Data.StructureDataset
+end CLDF.StructureDataset

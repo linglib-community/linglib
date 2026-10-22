@@ -73,7 +73,7 @@ property, or a path.
 namespace Jablonska2004
 
 open Morphology Polish.Verbs
-open Data.Wordlist (Form)
+open CLDF.Wordlist (Form)
 
 /-! ### Verbalizers -/
 

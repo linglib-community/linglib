@@ -123,7 +123,7 @@ heteroclite, is left out, as are n. 21's stem indexing and n. 22's alternants. S
 
 namespace Stump2006
 
-open Morphology Data.Wordlist Finset
+open Morphology CLDF.Wordlist Finset
 
 /-! ### Cells and the attested forms -/
 

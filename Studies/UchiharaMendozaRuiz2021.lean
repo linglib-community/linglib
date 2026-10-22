@@ -39,7 +39,7 @@ in casual speech, is not represented. The factorial typology uses the paper's si
 faithfulness constraint F, read as the number of moras added to or removed from an input of
 `n` moras, `faith`, over a candidate space of light-syllable footings of up to four moras. The
 tree-level `Prosody.PerfectWord` is the headed counterpart of `IsPerfect`. The forms are the
-rows of `Data.Wordlist.UchiharaMendozaRuiz2021`.
+rows of `UchiharaMendozaRuiz2021.Wordlist`.
 
 ## References
 

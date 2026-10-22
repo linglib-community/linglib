@@ -32,7 +32,7 @@ forms Sneddon gives for them, each read through the glyphs of PHOIBLE's Indonesi
 
 namespace Sneddon1996
 
-open Phonology Indonesian.Phonology Sneddon1996.Wordlist Data.Wordlist
+open Phonology Indonesian.Phonology Sneddon1996.Wordlist CLDF.Wordlist
 
 /-! ### The rules -/
 

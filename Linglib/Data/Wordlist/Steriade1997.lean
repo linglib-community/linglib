@@ -14,7 +14,7 @@ Steriade1997.Wordlist`.
 
 namespace Steriade1997.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `Sandhi` the source distinguishes. -/
 inductive Sandhi where

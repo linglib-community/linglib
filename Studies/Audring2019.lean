@@ -36,7 +36,7 @@ do not, and cannot state the pairing they do.
 ## Implementation notes
 
 * The words are the CLDF forms of `Data/Wordlist/Audring2019.json`, read as slot-indexed segments
-  by `Data.Wordlist.Form.slots`: a base slot and an affix slot on the flat carrier, one tier of the
+  by `CLDF.Wordlist.Form.slots`: a base slot and an affix slot on the flat carrier, one tier of the
   paper's three; the same subscripting mechanism coindexes across tiers. The paper's remaining
   cases for a mother, an antonymic scale and the feature matrix of an inflectional paradigm,
   are not formalized.

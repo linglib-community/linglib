@@ -61,7 +61,7 @@ analyses of §3.4, four stipulations (`verdict_syntheticSuperlatives_naive`,
 namespace Eval.Suppletion.Bobaljik2012
 
 open Morphology Morphology.Exponence Morphology.Containment
-open Data.Wordlist (RootClasses)
+open CLDF.Wordlist (RootClasses)
 open _root_.Bobaljik2012 (rootPattern positiveEmbedding)
 open _root_.Bobaljik2012.Wordlist
 
@@ -241,12 +241,12 @@ Koryak records. -/
 open _root_.Bobaljik2012.StructureDataset (Row zulu armenian_western armenian_eastern alutor)
 
 /-- The row the samples give a language, the broad sample's first. -/
-def row (L : Data.StructureDataset.Language) : Option Row :=
+def row (L : CLDF.StructureDataset.Language) : Option Row :=
   (_root_.Bobaljik2012.StructureDataset.broadSample ++
     _root_.Bobaljik2012.StructureDataset.focusedSurvey).find? (·.language = L)
 
 /-- How a theory reads a language's row: as recorded, or as an analysis stipulated for it. -/
-abbrev RowParser := Parser Data.StructureDataset.Language (Option Row) (Row → Row)
+abbrev RowParser := Parser CLDF.StructureDataset.Language (Option Row) (Row → Row)
 
 /-- A row with a morphological comparative, as for a null comparative affix. -/
 def withComparative (r : Row) : Row := { r with cmpr := { code := .morphological } :: r.cmpr }
@@ -280,7 +280,7 @@ end Rows
 the row, accounts for it: a containment theory accounts for a row that records synthetic extents,
 and the theory without containment predicts nothing. -/
 def syntheticSuperlatives :
-    Experiment (Theory × RowParser) Data.StructureDataset.Language Bool where
+    Experiment (Theory × RowParser) CLDF.StructureDataset.Language Bool where
   observed L := (row L).map fun _ ↦ true
   predicted Tπ L := if Tπ.1.Containment then
       (row L).bind fun r ↦ (Tπ.2.parse row L).map fun (f : Row → Row) ↦

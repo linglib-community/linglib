@@ -14,7 +14,7 @@ Alderete2001.Wordlist`.
 
 namespace Alderete2001.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `OORelation` the source distinguishes. -/
 inductive OORelation where

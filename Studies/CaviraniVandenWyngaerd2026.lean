@@ -70,7 +70,7 @@ The reflexes of /ɦ/ pattern as those of /k/ do, small against medium and big.
 
 namespace CaviraniVandenWyngaerd2026
 
-open ElementTheory Data.Wordlist
+open ElementTheory CLDF.Wordlist
 open Autosegmental (Slot)
 
 /-! ### The plain consonants -/

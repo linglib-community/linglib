@@ -58,7 +58,7 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
   well-foundedness claim.
 * The syllables and the *-ish* adjectives are the CLDF forms of
   `Data/Wordlist/JackendoffAudring2020.json`, read as slot-indexed segments by
-  `Data.Wordlist.Form.slots`; a syllable's positions are onset, nucleus and coda.
+  `CLDF.Wordlist.Form.slots`; a syllable's positions are onset, nucleus and coda.
 * The correspondence between a schema's variable coindices and the constant coindices of its
   instances, left unformalized in Section 4.13.2, is the subscripting of
   `ConstructionMorphology.Schema.InstantiatesAt`; a productive variable is one marked open

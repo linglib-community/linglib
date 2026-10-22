@@ -14,7 +14,7 @@ Stump2006.Wordlist`.
 
 namespace Stump2006.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `Grade` the source distinguishes. -/
 inductive Grade where

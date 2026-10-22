@@ -14,7 +14,7 @@ McCarthy1981.Wordlist`.
 
 namespace McCarthy1981.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `Binyan` the source distinguishes. -/
 inductive Binyan where

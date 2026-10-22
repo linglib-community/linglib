@@ -14,7 +14,7 @@ ArregiPietraszko2021.Wordlist`.
 
 namespace ArregiPietraszko2021.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `Verb` the source distinguishes. -/
 inductive Verb where

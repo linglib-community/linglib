@@ -13,7 +13,7 @@ by hand; edit the JSON and re-run the generator. Declarations live in `namespace
 
 namespace Vago2017.Wordlist
 
-open Data.Wordlist
+open CLDF.Wordlist
 
 /-- The values of `Kind` the source distinguishes. -/
 inductive Kind where

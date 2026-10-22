@@ -604,7 +604,7 @@ instance [DecidableEq α] (isV : α → Bool) (base w : List α) :
 
 /-- `baseStem f` is the stem of a base, its segments before a boundary *+*. (32) prints the suffixes
 after it outside the stem. -/
-def baseStem (f : Data.Wordlist.Form Wordlist.Cell) : List String := f.segments.takeWhile (· ≠ "+")
+def baseStem (f : CLDF.Wordlist.Form Wordlist.Cell) : List String := f.segments.takeWhile (· ≠ "+")
 
 /-- `candidates a` lists the binyan and voice of a verb where the book prints them, and every
 active binyan where it does not. -/
@@ -617,7 +617,7 @@ def candidates (a : Wordlist.Analysis) : List (Binyan × Voice) :=
 *qoded* (41a, b), whose {o, e} (25) does not list. None is the verb the root of its base derives in
 its binyan, so *misger* is not *siger*, *musgar* not *sugar* and *mixšev* not *xišev*. -/
 theorem denominals :
-    ((Wordlist.analysisRelations.filter fun rel : Data.Wordlist.FormRelation Wordlist.Analysis ↦
+    ((Wordlist.analysisRelations.filter fun rel : CLDF.Wordlist.FormRelation Wordlist.Analysis ↦
         ¬∃ x ∈ candidates rel.target,
         IsStemModification isVowel transcribedPx Vowel.transcription x.1 x.2
           (baseStem rel.form.form) rel.target.form.segments).map (·.target.form.form) =
