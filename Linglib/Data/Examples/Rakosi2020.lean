@@ -3,21 +3,21 @@ module
 public import Linglib.Data.Examples.Schema
 
 /-!
-# `Rakosi2019` — typed example data
+# `Rakosi2020` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/Rakosi2019.json` by
+Auto-generated from `Linglib/Data/Examples/Rakosi2020.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace Rakosi2019.Examples`.
+this module; declarations live in `namespace Rakosi2020.Examples`.
 -/
 
 @[expose] public section
 
-namespace Rakosi2019.Examples
+namespace Rakosi2020.Examples
 
 def ex_1a : Datum :=
-  { id := "rakosi2019_1a"
-    source := ⟨"rakosi-2019", "(1a)"⟩
+  { id := "rakosi2020_1a"
+    source := ⟨"rakosi-2020", "(1a)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A gyerek-ek látták egymás-t a tükörben."
@@ -29,8 +29,8 @@ def ex_1a : Datum :=
     paperFeatures := [("section", "1"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "egymás")] }
 
 def ex_1b : Datum :=
-  { id := "rakosi2019_1b"
-    source := ⟨"rakosi-2019", "(1b)"⟩
+  { id := "rakosi2020_1b"
+    source := ⟨"rakosi-2020", "(1b)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A gyerek-ek látták maguk-at a tükörben."
@@ -42,8 +42,8 @@ def ex_1b : Datum :=
     paperFeatures := [("section", "1"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maguk")] }
 
 def ex_2a : Datum :=
-  { id := "rakosi2019_2a"
-    source := ⟨"rakosi-2019", "(2a)"⟩
+  { id := "rakosi2020_2a"
+    source := ⟨"rakosi-2020", "(2a)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A gyerek látta egymás-t a tükörben."
@@ -55,8 +55,8 @@ def ex_2a : Datum :=
     paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("semanticNumber", "singular"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_2b : Datum :=
-  { id := "rakosi2019_2b"
-    source := ⟨"rakosi-2019", "(2b)"⟩
+  { id := "rakosi2020_2b"
+    source := ⟨"rakosi-2020", "(2b)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A gyerek látta magá-t a tükörben."
@@ -68,8 +68,8 @@ def ex_2b : Datum :=
     paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("semanticNumber", "singular"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_3b : Datum :=
-  { id := "rakosi2019_3b"
-    source := ⟨"rakosi-2019", "(3b)"⟩
+  { id := "rakosi2020_3b"
+    source := ⟨"rakosi-2020", "(3b)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Sokszor sajnálom magunk-at."
@@ -81,8 +81,8 @@ def ex_3b : Datum :=
     paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("semanticNumber", "singular"), ("verb", "1sg"), ("anaphor", "magunk")] }
 
 def ex_4a : Datum :=
-  { id := "rakosi2019_4a"
-    source := ⟨"rakosi-2019", "(4a)"⟩
+  { id := "rakosi2020_4a"
+    source := ⟨"rakosi-2020", "(4a)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Csak én sajnálom magunk-at."
@@ -94,8 +94,8 @@ def ex_4a : Datum :=
     paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("semanticNumber", "singular"), ("verb", "1sg"), ("anaphor", "magunk")] }
 
 def ex_4b : Datum :=
-  { id := "rakosi2019_4b"
-    source := ⟨"rakosi-2019", "(4b)"⟩
+  { id := "rakosi2020_4b"
+    source := ⟨"rakosi-2020", "(4b)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Csak mi sajnáljuk magunk-at."
@@ -107,8 +107,8 @@ def ex_4b : Datum :=
     paperFeatures := [("section", "2"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "1pl"), ("anaphor", "magunk")] }
 
 def ex_4c : Datum :=
-  { id := "rakosi2019_4c"
-    source := ⟨"rakosi-2019", "(4c)"⟩
+  { id := "rakosi2020_4c"
+    source := ⟨"rakosi-2020", "(4c)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Csak mi sajnáljuk egymás-t."
@@ -120,8 +120,8 @@ def ex_4c : Datum :=
     paperFeatures := [("section", "2"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "1pl"), ("anaphor", "egymás")] }
 
 def ex_5a : Datum :=
-  { id := "rakosi2019_5a"
-    source := ⟨"rakosi-2019", "(5a)"⟩
+  { id := "rakosi2020_5a"
+    source := ⟨"rakosi-2020", "(5a)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A gyerek-ek jól viselték maguk-at."
@@ -133,8 +133,8 @@ def ex_5a : Datum :=
     paperFeatures := [("section", "2"), ("antecedent", "plural"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maguk")] }
 
 def ex_5b : Datum :=
-  { id := "rakosi2019_5b"
-    source := ⟨"rakosi-2019", "(5b)"⟩
+  { id := "rakosi2020_5b"
+    source := ⟨"rakosi-2020", "(5b)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A gyerek jól viselte maguk-at."
@@ -146,8 +146,8 @@ def ex_5b : Datum :=
     paperFeatures := [("section", "2"), ("antecedent", "atomic"), ("semanticNumber", "singular"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_6 : Datum :=
-  { id := "rakosi2019_6"
-    source := ⟨"rakosi-2019", "(6)"⟩
+  { id := "rakosi2020_6"
+    source := ⟨"rakosi-2020", "(6)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Sokszor sajnálom egymás-t."
@@ -159,8 +159,8 @@ def ex_6 : Datum :=
     paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("semanticNumber", "singular"), ("verb", "1sg"), ("anaphor", "egymás")] }
 
 def ex_8a : Datum :=
-  { id := "rakosi2019_8a"
-    source := ⟨"rakosi-2019", "(8a)"⟩
+  { id := "rakosi2020_8a"
+    source := ⟨"rakosi-2020", "(8a)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A két gyerek jól érezte magá-t."
@@ -172,8 +172,8 @@ def ex_8a : Datum :=
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_8a_ : Datum :=
-  { id := "rakosi2019_8a_"
-    source := ⟨"rakosi-2019", "(8a')"⟩
+  { id := "rakosi2020_8a_"
+    source := ⟨"rakosi-2020", "(8a')"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A két gyerek jól érezte maguk-at."
@@ -185,8 +185,8 @@ def ex_8a_ : Datum :=
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_8b : Datum :=
-  { id := "rakosi2019_8b"
-    source := ⟨"rakosi-2019", "(8b)"⟩
+  { id := "rakosi2020_8b"
+    source := ⟨"rakosi-2020", "(8b)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Néhány gyerek jól érezte magá-t."
@@ -198,8 +198,8 @@ def ex_8b : Datum :=
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_8b_ : Datum :=
-  { id := "rakosi2019_8b_"
-    source := ⟨"rakosi-2019", "(8b')"⟩
+  { id := "rakosi2020_8b_"
+    source := ⟨"rakosi-2020", "(8b')"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Néhány gyerek jól érezte maguk-at."
@@ -211,8 +211,8 @@ def ex_8b_ : Datum :=
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_9a : Datum :=
-  { id := "rakosi2019_9a"
-    source := ⟨"rakosi-2019", "(9a)"⟩
+  { id := "rakosi2020_9a"
+    source := ⟨"rakosi-2020", "(9a)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A szobában három kisgyerek kergeti egymás-t."
@@ -224,8 +224,8 @@ def ex_9a : Datum :=
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_9b : Datum :=
-  { id := "rakosi2019_9b"
-    source := ⟨"rakosi-2019", "(9b)"⟩
+  { id := "rakosi2020_9b"
+    source := ⟨"rakosi-2020", "(9b)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Néhány szomszéd gyerek nagyon szereti egymás-t."
@@ -237,8 +237,8 @@ def ex_9b : Datum :=
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_9c : Datum :=
-  { id := "rakosi2019_9c"
-    source := ⟨"rakosi-2019", "(9c)"⟩
+  { id := "rakosi2020_9c"
+    source := ⟨"rakosi-2020", "(9c)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Otthon mindenki szerette egymás-t."
@@ -250,8 +250,8 @@ def ex_9c : Datum :=
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_9d : Datum :=
-  { id := "rakosi2019_9d"
-    source := ⟨"rakosi-2019", "(9d)"⟩
+  { id := "rakosi2020_9d"
+    source := ⟨"rakosi-2020", "(9d)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A sokaságban senki se keresi egymás-t."
@@ -263,8 +263,8 @@ def ex_9d : Datum :=
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_11a : Datum :=
-  { id := "rakosi2019_11a"
-    source := ⟨"rakosi-2019", "(11a)"⟩
+  { id := "rakosi2020_11a"
+    source := ⟨"rakosi-2020", "(11a)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Kati és Éva kihúzta magát."
@@ -276,8 +276,8 @@ def ex_11a : Datum :=
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_11a_ : Datum :=
-  { id := "rakosi2019_11a_"
-    source := ⟨"rakosi-2019", "(11a')"⟩
+  { id := "rakosi2020_11a_"
+    source := ⟨"rakosi-2020", "(11a')"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Kati és Éva kihúzta magukat."
@@ -289,8 +289,8 @@ def ex_11a_ : Datum :=
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_11b : Datum :=
-  { id := "rakosi2019_11b"
-    source := ⟨"rakosi-2019", "(11b)"⟩
+  { id := "rakosi2020_11b"
+    source := ⟨"rakosi-2020", "(11b)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Kati és Éva kihúzták magukat."
@@ -302,8 +302,8 @@ def ex_11b : Datum :=
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maguk")] }
 
 def ex_11b_ : Datum :=
-  { id := "rakosi2019_11b_"
-    source := ⟨"rakosi-2019", "(11b')"⟩
+  { id := "rakosi2020_11b_"
+    source := ⟨"rakosi-2020", "(11b')"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Kati és Éva kihúzták magát."
@@ -315,8 +315,8 @@ def ex_11b_ : Datum :=
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "maga")] }
 
 def ex_12 : Datum :=
-  { id := "rakosi2019_12"
-    source := ⟨"rakosi-2019", "(12)"⟩
+  { id := "rakosi2020_12"
+    source := ⟨"rakosi-2020", "(12)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Kati és Éva látta egymás-t a tükörben."
@@ -328,8 +328,8 @@ def ex_12 : Datum :=
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_12_ : Datum :=
-  { id := "rakosi2019_12_"
-    source := ⟨"rakosi-2019", "(12')"⟩
+  { id := "rakosi2020_12_"
+    source := ⟨"rakosi-2020", "(12')"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Kati és Éva látták egymás-t a tükörben."
@@ -341,8 +341,8 @@ def ex_12_ : Datum :=
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("semanticNumber", "plural"), ("verb", "3pl"), ("anaphor", "egymás")] }
 
 def ex_14 : Datum :=
-  { id := "rakosi2019_14"
-    source := ⟨"rakosi-2019", "(14)"⟩
+  { id := "rakosi2020_14"
+    source := ⟨"rakosi-2020", "(14)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A személyzet fáradt volt."
@@ -354,8 +354,8 @@ def ex_14 : Datum :=
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg")] }
 
 def ex_15a : Datum :=
-  { id := "rakosi2019_15a"
-    source := ⟨"rakosi-2019", "(15a)"⟩
+  { id := "rakosi2020_15a"
+    source := ⟨"rakosi-2020", "(15a)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A személyzet riadtan nézte egymás-t."
@@ -367,8 +367,8 @@ def ex_15a : Datum :=
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_15b : Datum :=
-  { id := "rakosi2019_15b"
-    source := ⟨"rakosi-2019", "(15b)"⟩
+  { id := "rakosi2020_15b"
+    source := ⟨"rakosi-2020", "(15b)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A Facebookon szidta egymás-t a család."
@@ -380,8 +380,8 @@ def ex_15b : Datum :=
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_15c : Datum :=
-  { id := "rakosi2019_15c"
-    source := ⟨"rakosi-2019", "(15c)"⟩
+  { id := "rakosi2020_15c"
+    source := ⟨"rakosi-2020", "(15c)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "A pár az interneten találta meg egymás-t."
@@ -393,8 +393,8 @@ def ex_15c : Datum :=
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_16 : Datum :=
-  { id := "rakosi2019_16"
-    source := ⟨"rakosi-2019", "(16)"⟩
+  { id := "rakosi2020_16"
+    source := ⟨"rakosi-2020", "(16)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Az egész család jól érezte magá-t."
@@ -406,8 +406,8 @@ def ex_16 : Datum :=
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maga")] }
 
 def ex_16_ : Datum :=
-  { id := "rakosi2019_16_"
-    source := ⟨"rakosi-2019", "(16')"⟩
+  { id := "rakosi2020_16_"
+    source := ⟨"rakosi-2020", "(16')"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Az egész család jól érezte maguk-at."
@@ -419,8 +419,8 @@ def ex_16_ : Datum :=
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "maguk")] }
 
 def ex_17 : Datum :=
-  { id := "rakosi2019_17"
-    source := ⟨"rakosi-2019", "(17)"⟩
+  { id := "rakosi2020_17"
+    source := ⟨"rakosi-2020", "(17)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Péter és Éva az-t gondolja, hogy szereti egymás-t."
@@ -432,8 +432,8 @@ def ex_17 : Datum :=
     paperFeatures := [("section", "6"), ("antecedent", "boundPro"), ("semanticNumber", "plural"), ("verb", "3sg"), ("anaphor", "egymás")] }
 
 def ex_18 : Datum :=
-  { id := "rakosi2019_18"
-    source := ⟨"rakosi-2019", "(18)"⟩
+  { id := "rakosi2020_18"
+    source := ⟨"rakosi-2020", "(18)"⟩
     reportedIn := none
     language := "hung1274"
     primaryText := "Álmomban két macska voltam, és játszottam egymás-sal."
@@ -446,4 +446,4 @@ def ex_18 : Datum :=
 
 def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3b, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6, ex_8a, ex_8a_, ex_8b, ex_8b_, ex_9a, ex_9b, ex_9c, ex_9d, ex_11a, ex_11a_, ex_11b, ex_11b_, ex_12, ex_12_, ex_14, ex_15a, ex_15b, ex_15c, ex_16, ex_16_, ex_17, ex_18]
 
-end Rakosi2019.Examples
+end Rakosi2020.Examples

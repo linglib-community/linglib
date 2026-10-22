@@ -9,10 +9,10 @@ public import Mathlib.Data.Set.Restrict
 public import Linglib.Syntax.Agreement.Phi
 public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Fragments.Hungarian.Reciprocals
-public import Linglib.Data.Examples.Rakosi2019
+public import Linglib.Data.Examples.Rakosi2020
 
 /-!
-# Rákosi (2019): Reciprocal anaphors in singular constructions in Hungarian
+# Rákosi (2020): Reciprocal anaphors in singular constructions in Hungarian
 
 An antecedent has a grammatical number, which the verb agrees in, and a semantic number, that of
 the individuals it denotes. Quantified, coordinate and collective antecedents and bound singular
@@ -25,29 +25,29 @@ agreement.
 
 ## Main definitions
 
-* `Rakosi2019.HasAnaphor`: the anaphor of a row is a given pronoun of the fragment.
-* `Rakosi2019.verbAgr?`, `Rakosi2019.semanticNumber?`: the person and number the verb agrees in,
+* `Rakosi2020.HasAnaphor`: the anaphor of a row is a given pronoun of the fragment.
+* `Rakosi2020.verbAgr?`, `Rakosi2020.semanticNumber?`: the person and number the verb agrees in,
   and the semantic number of the antecedent.
 
 ## Main results
 
-* `Rakosi2019.reflexive_acceptable_iff_agree`, `Rakosi2019.not_factorsThrough_semanticNumber`: a
+* `Rakosi2020.reflexive_acceptable_iff_agree`, `Rakosi2020.not_factorsThrough_semanticNumber`: a
   bound reflexive is acceptable exactly when it agrees with the verb, whatever its antecedent
   denotes.
-* `Rakosi2019.reciprocal_acceptable_iff`, `Rakosi2019.not_factorsThrough_verbAgr`: the reciprocal
+* `Rakosi2020.reciprocal_acceptable_iff`, `Rakosi2020.not_factorsThrough_verbAgr`: the reciprocal
   is acceptable exactly when its antecedent is semantically plural, whatever the verb agrees in.
-* `Rakosi2019.reciprocal_with_singular_verb`: in each of §§3–6 the reciprocal is accepted with a
+* `Rakosi2020.reciprocal_with_singular_verb`: in each of §§3–6 the reciprocal is accepted with a
   singular verb and a semantically plural antecedent.
-* `Rakosi2019.inclusive_not_bound`: the inclusive reflexive of §2 is not a bound variable.
+* `Rakosi2020.inclusive_not_bound`: the inclusive reflexive of §2 is not a bound variable.
 
 ## References
 
-* [rakosi-2019]
+* [rakosi-2020]
 -/
 
 @[expose] public section
 
-namespace Rakosi2019
+namespace Rakosi2020
 
 open Hungarian.Pronouns Hungarian.Reciprocals
 open Examples (all)
@@ -140,4 +140,4 @@ theorem inclusive_not_bound :
       e.readings.lookup "bound variable" ≠ some .acceptable := by
   decide
 
-end Rakosi2019
+end Rakosi2020
