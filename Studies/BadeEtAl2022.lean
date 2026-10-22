@@ -45,9 +45,9 @@ best-worlds possibility veridical (`exists_not_possibility`).
 
 ## Implementation notes
 
-* Alternatives are Hamblin sets `Set (Set W)`: the repo's InqB supports are lower sets, so the
-  attentive `φ ∨ ⊤` collapses to `⊤` there (`support_inqDisj_top`), exactly what the attentive
-  proposal avoids.
+* Alternatives are Hamblin sets `Set (Set W)`: InqB supports are lower sets, so the attentive
+  `φ ∨ ⊤` collapses to `⊤` there (`support_inqDisj_top`), exactly what the attentive proposal
+  avoids.
 * The indefinite instance uses the `Overlaps` selection rule: its match is on the witness,
   which bare propositions cannot see, and the paper gives no criterion beyond "related to".
 * (4b) is `Exhaustification.exhIE_conjDisjAlternatives`; the four-member Sauerland set
@@ -157,9 +157,9 @@ open Inquisitive
 
 variable {Atom : Type*} [DecidableEq W] (M : Model W Atom) (φ : Formula Atom)
 
-/-- In the repo's InqB, support is a lower set, so inquisitive disjunction with the tautology
-is the tautology: the attentive content of (7a), where the alternatives properly include one
-another, is not expressible there, which is why the study keeps Hamblin sets. -/
+/-- In InqB, support is a lower set, so inquisitive disjunction with the tautology is the
+tautology: the attentive content of (7a), where the alternatives properly include one another, is
+not expressible there, which is why the study keeps Hamblin sets. -/
 theorem support_inqDisj_top :
     support M (.inqDisj φ Formula.bot.neg) = support M Formula.bot.neg := by
   simp only [support, himp_self, sup_top_eq]
