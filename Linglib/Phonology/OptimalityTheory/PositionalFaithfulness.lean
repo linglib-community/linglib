@@ -22,8 +22,9 @@ protecting the other position are not a proper subset of those protecting its ow
 
 ## Main results
 
-* `OptimalityTheory.maxAt_singleton_eq_maxViolAt`: on the deletion of one position from a string,
-  `maxAt` is MAX restricted to the positions in the sense of Correspondence Theory.
+* `OptimalityTheory.maxAt_eq_maxViolAt`, `maxAt_singleton_eq_maxViolAt`: on the deletion of a set
+  of positions, or of one, from a string, `maxAt` is MAX restricted to the positions in the sense
+  of Correspondence Theory.
 * `OptimalityTheory.exists_mem_optimal_positionalMax_iff`: of two single deletions, one is optimal
   under some ranking iff the constraints protecting the other position are not a proper subset of
   those protecting its own.
@@ -68,6 +69,12 @@ that have no correspondent in the output. -/
 theorem maxAt_singleton_eq_maxViolAt {α : Type*} {s : List α} (k : Fin s.length) :
     maxAt P {(k : ℕ)} = (Correspondence.eraseIdx s k).maxViolAt P .lhs .rhs := by
   rw [maxAt_singleton, Correspondence.maxViolAt_eraseIdx]
+
+/-- On the deletion of the positions `D` from a string, `maxAt P` counts the input segments in `P`
+that have no correspondent in the output. -/
+theorem maxAt_eq_maxViolAt {α : Type*} {s : List α} {D : Finset ℕ} (hD : ∀ k ∈ D, k < s.length) :
+    maxAt P D = (Correspondence.eraseIdxs s D).maxViolAt P .lhs .rhs :=
+  (Correspondence.maxViolAt_eraseIdxs hD P).symm
 
 end MaxAt
 

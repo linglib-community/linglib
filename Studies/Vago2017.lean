@@ -20,6 +20,9 @@ predictions for Hungarian.
 
 * `optimal_regular`: between a morph and a suffix that are not roots, the regular hierarchy
   deletes the second vowel when the first is long or alone in its morph, and the first otherwise.
+* `corr_form_rhs`, `maxAt_deleted_eq_maxViolAt`: a candidate is the deletion of its vowels from
+  the unrepaired concatenation, and each MAX constraint counts the protected input segments that
+  have no correspondent in its output.
 * `tableaux`: for every example, the tableau of its four candidates (no deletion, either vowel,
   both) under the hierarchy of its suffix selects the attested deletion, and its output spells the
   attested form.
@@ -71,6 +74,44 @@ def deleted (D : Finset ElidedVowel) : Finset ℕ := D.image (Casali1997.positio
 def resolve (D : Finset ElidedVowel) : List Segment :=
   c.stemBody ++ (if .first ∈ D then [] else [c.v1]) ++ (if .second ∈ D then [] else [c.v2]) ++
     c.suffixBody
+
+/-- `corr c D` is the correspondence between the unrepaired concatenation and the form that the
+candidate `D` gives, the deletion of the positions of its vowels. -/
+def corr (D : Finset ElidedVowel) : Correspondence BinaryRole Segment :=
+  Correspondence.eraseIdxs c.input (deleted c D)
+
+/-- The output of each correspondence is the form of its candidate. -/
+theorem corr_form_rhs (D : Finset ElidedVowel) : (corr c D).form .rhs = resolve c D := by
+  have hmem (k : ℕ) : k ∈ deleted c D ↔
+      .first ∈ D ∧ k = c.stemBody.length ∨ .second ∈ D ∧ k = c.stemBody.length + 1 := by
+    simp only [deleted, Finset.mem_image]
+    refine ⟨?_, by rintro (⟨h, rfl⟩ | ⟨h, rfl⟩) <;> exact ⟨_, h, rfl⟩⟩
+    rintro ⟨_ | _, h, rfl⟩ <;> simp [h, Casali1997.position, Juncture.v1Idx, Juncture.v2Idx]
+  have hkeep (l : List Segment) (k : ℕ) (hk : ∀ p ∈ l.zipIdx k, p.2 ∉ deleted c D) :
+      (l.zipIdx k).filter (fun p ↦ p.2 ∉ deleted c D) = l.zipIdx k :=
+    List.filter_eq_self.2 fun p hp ↦ decide_eq_true (hk p hp)
+  rw [corr, Correspondence.eraseIdxs_form_rhs, Juncture.input, List.zipIdx_append,
+    List.zipIdx_cons, List.zipIdx_cons, List.filter_append,
+    hkeep _ _ fun p hp ↦ ?stem, List.filter_cons, List.filter_cons,
+    hkeep _ _ fun p hp ↦ ?suffix]
+  · by_cases h₁ : ElidedVowel.first ∈ D <;> by_cases h₂ : ElidedVowel.second ∈ D <;>
+      simp [hmem, h₁, h₂, resolve, List.zipIdx_map_fst]
+  case stem =>
+    have := List.snd_lt_of_mem_zipIdx hp
+    rw [hmem]
+    rintro (⟨-, h⟩ | ⟨-, h⟩) <;> omega
+  case suffix =>
+    have := List.le_snd_of_mem_zipIdx hp
+    rw [hmem]
+    rintro (⟨-, h⟩ | ⟨-, h⟩) <;> omega
+
+/-- Each MAX constraint counts the input segments it protects that have no correspondent in the
+output. -/
+theorem maxAt_deleted_eq_maxViolAt (P : ℕ → Prop) [DecidablePred P] (D : Finset ElidedVowel) :
+    maxAt P (deleted c D) = (corr c D).maxViolAt P .lhs .rhs :=
+  maxAt_eq_maxViolAt P fun k hk ↦ by
+    obtain ⟨e, -, rfl⟩ := Finset.mem_image.1 hk
+    exact Casali1997.position_lt_length_input c e
 
 /-- The violations of a candidate, with the long vowels at the positions `long`. -/
 def marks (D : Finset ElidedVowel) : Con → ℕ
