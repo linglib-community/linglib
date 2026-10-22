@@ -22,7 +22,8 @@ general here, polymorphic in the value type, and decoupled from the `SyntacticOb
 
 * `Minimalist.FeatureSlot` — `WithBot (Flat α)`, with the patterns `absent`, `unvalued`,
   `valued` and the eliminator `FeatureSlot.rec'`
-* `Minimalist.FeatureSlot.valueWith` — valuation of an unvalued slot
+* `Minimalist.FeatureSlot.valueWith` — valuation, unification of a present slot with a value,
+  `⊤` on a clash
 
 ## References
 
@@ -65,6 +66,8 @@ def rec' {motive : FeatureSlot α → Sort*} (absent : motive .absent) (unvalued
 
 @[simp] theorem valued_ne_absent (v : α) : valued v ≠ absent := nofun
 
+@[simp] theorem absent_ne_valued (v : α) : absent ≠ valued v := nofun
+
 @[simp] theorem valued_ne_unvalued (v : α) : valued v ≠ unvalued := nofun
 
 @[simp] theorem valued_inj {v w : α} : valued v = valued w ↔ v = w :=
@@ -90,29 +93,95 @@ def value? : FeatureSlot α → Option α
   | valued v => some v
   | _ => none
 
-/-- Valuing a slot with `v` fills it when it is unvalued and leaves an absent or valued slot as it
-is. -/
-def valueWith (v : α) : FeatureSlot α → FeatureSlot α
-  | unvalued => valued v
-  | s => s
+/-- Valuing a slot with `v` unifies it with `valued v` when the item bears the dimension: an
+unvalued slot takes `v`, a slot valued `v` stays, and a slot valued otherwise clashes, `⊤`. An absent
+slot stays absent. -/
+def valueWith [DecidableEq α] (v : α) (s : FeatureSlot α) : WithTop (FeatureSlot α) :=
+  if s = absent then s else PartialUnify.unify s (valued v)
 
-@[simp] theorem valueWith_absent (v : α) : valueWith v absent = absent := rfl
-@[simp] theorem valueWith_unvalued (v : α) : valueWith v unvalued = valued v := rfl
-@[simp] theorem valueWith_valued (v w : α) : valueWith v (valued w) = valued w := rfl
+section Valuation
 
-theorem valueWith_of_ne_unvalued (v : α) {s : FeatureSlot α} (h : s ≠ unvalued) :
-    valueWith v s = s := by
+variable [DecidableEq α] {v w : α} {s s' : FeatureSlot α}
+
+@[simp] theorem valueWith_absent (v : α) :
+    valueWith v (absent : FeatureSlot α) = ↑(absent : FeatureSlot α) := by
+  simp [valueWith]
+
+@[simp] theorem valueWith_unvalued (v : α) :
+    valueWith v (unvalued : FeatureSlot α) = valued v := by
+  simp only [valueWith, unvalued_ne_absent, ↓reduceIte]
+  exact PartialUnify.unify_eq_right.2 (WithBot.coe_le_coe.2 bot_le)
+
+@[simp] theorem valueWith_valued (v w : α) :
+    valueWith v (valued w) = if w = v then ↑(valued w : FeatureSlot α) else ⊤ := by
+  simp only [valueWith, valued_ne_absent, ↓reduceIte]
+  split_ifs with h
+  · subst h
+    exact PartialUnify.unify_self _
+  · refine PartialUnify.unify_eq_top_iff.2 fun ⟨u, hu⟩ ↦ h ?_
+    obtain ⟨h1, h2⟩ := mem_upperBounds_pair.1 hu
+    obtain ⟨f, rfl, hf⟩ := WithBot.coe_le_iff.1 h1
+    exact Flat.coe_inj.1 ((Flat.coe_le_iff.1 hf).symm.trans
+      (Flat.coe_le_iff.1 (WithBot.coe_le_coe.1 h2)))
+
+/-- On a slot the item bears, a successful valuation is the least slot above both the slot and
+the value. -/
+theorem isLUB_of_valueWith_eq_coe (hs : s ≠ absent) (h : valueWith v s = s') :
+    IsLUB {s, valued v} s' := by
+  simp only [valueWith, hs, ↓reduceIte] at h
+  exact PartialUnify.isLUB_of_unify_eq_coe h
+
+/-- On a slot the item bears, valuation clashes exactly when no slot is above both the slot and
+the value. -/
+theorem valueWith_eq_top_iff_not_bddAbove (hs : s ≠ absent) :
+    valueWith v s = ⊤ ↔ ¬ BddAbove ({s, valued v} : Set (FeatureSlot α)) := by
+  simp only [valueWith, hs, ↓reduceIte]
+  exact PartialUnify.unify_eq_top_iff
+
+/-- Valuation clashes exactly on a slot valued otherwise. -/
+theorem valueWith_eq_top_iff : valueWith v s = ⊤ ↔ ∃ w, w ≠ v ∧ s = valued w := by
   cases s with
-  | absent => rfl
-  | unvalued => exact absurd rfl h
-  | valued w => rfl
+  | absent => simp
+  | unvalued => simp
+  | valued w => by_cases h : w = v <;> simp [h]
 
-/-- Valuation is inflationary in the subsumption order. -/
-theorem le_valueWith (v : α) (s : FeatureSlot α) : s ≤ valueWith v s := by
+/-- Valuation only adds information. -/
+theorem le_of_valueWith_eq_coe (h : valueWith v s = s') : s ≤ s' := by
   cases s with
   | absent => exact bot_le
-  | unvalued => exact WithBot.coe_le_coe.2 bot_le
-  | valued w => exact le_rfl
+  | unvalued =>
+    obtain rfl : valued v = s' := WithTop.coe_inj.1 (by simpa using h)
+    exact WithBot.coe_le_coe.2 bot_le
+  | valued w =>
+    by_cases hw : w = v
+    · subst hw
+      obtain rfl : valued w = s' := WithTop.coe_inj.1 (by simpa using h)
+      exact le_rfl
+    · simp [hw] at h
+
+/-- Valuation is monotone: a slot carrying more information values to one carrying at least as
+much, a clash carrying the most. -/
+theorem valueWith_mono (v : α) :
+    Monotone (valueWith v : FeatureSlot α → WithTop (FeatureSlot α)) := by
+  intro s s' h
+  cases s with
+  | absent =>
+    rw [valueWith_absent]
+    exact (WithTop.coe_bot (α := FeatureSlot α)) ▸ bot_le
+  | unvalued =>
+    cases s' with
+    | absent => exact absurd h (WithBot.not_coe_le_bot _)
+    | unvalued => exact le_rfl
+    | valued w => by_cases hw : w = v <;> simp [hw]
+  | valued u =>
+    cases s' with
+    | absent => exact absurd h (WithBot.not_coe_le_bot _)
+    | unvalued => exact absurd (Flat.coe_le_iff.1 (WithBot.coe_le_coe.1 h)) (by simp)
+    | valued w =>
+      obtain rfl : u = w := Flat.coe_le_coe.1 (WithBot.coe_le_coe.1 h)
+      exact le_rfl
+
+end Valuation
 
 @[simp] theorem isSpecified_iff_ne_bot {s : FeatureSlot α} :
     s.isSpecified = true ↔ s ≠ ⊥ := by
