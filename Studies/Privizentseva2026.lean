@@ -429,7 +429,7 @@ def externalD : LexicalItem.Token := ⟨.of .D [.N], 6⟩
 
 /-- *Kona*'s phrase once the noun is copied out of it, the noun's trace in its place. -/
 def konaRemnant : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf kona) (.traceOf headNoun)).toSyntacticObject
+  (LinearizedSyntacticObject.merge (.leaf kona) (.traceOf headNoun)).toSyntacticObject
 
 /-- The raising relative of section 5.2.2. The noun merges with *kona* while it still selects the
 relative CP, which is built over them. Once the complementizer is merged, the noun and then
@@ -460,7 +460,7 @@ theorem triggeredMerge_rejects_raisingRelative :
 
 /-- *Kona*'s phrase, *kona* selecting the noun. -/
 def konaPhrase : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf kona) (.leaf headNoun)).toSyntacticObject
+  (LinearizedSyntacticObject.merge (.leaf kona) (.leaf headNoun)).toSyntacticObject
 
 /-- The alternative footnote 14 of the article reports: *kona*'s phrase moves to the edge of the
 relative CP, and the noun is then subextracted from it to select the CP. -/

@@ -30,8 +30,8 @@ economy bans.
 
 ## Implementation notes
 
-* A structure is a planar syntactic object spelled out by `Linearization/Spellout.lean`: a token at
-  two positions is shared and pronounced at its last occurrence, a fronted wh-phrase leaves a
+* A structure is a linearized syntactic object spelled out by `Linearization/Spellout.lean`: a token
+  at two positions is shared and pronounced at its last occurrence, a fronted wh-phrase leaves a
   deleted copy, and the coordinator is left out, so a string is its conjuncts' words.
 * The E-type pronoun of the second conjunct is a deleted copy of the first wh-phrase without an
   antecedent in its conjunct, Merchant's pronominal correlate of the wh-trace.
@@ -61,7 +61,7 @@ economy bans.
 
 namespace CitkoGracaninYuksek2020
 
-open Minimalist Minimalist.PlanarSyntacticObject Core.Order
+open Minimalist Minimalist.LinearizedSyntacticObject Core.Order
 
 /-! ### The lexicon -/
 
@@ -89,9 +89,9 @@ def sang' := tok 11 .V [.D] "sang"
 /-- `nonBulk c` is the structure of the coordinated wh-question (13b): the two CPs share their
 complementizer `c`, subject, T and verb, and each holds one wh-phrase, *what* as the verb's object
 in the first and *where* adjoined to the verb phrase in the second. -/
-def nonBulk (c : LexicalItem.Token) : PlanarSyntacticObject :=
+def nonBulk (c : LexicalItem.Token) : LinearizedSyntacticObject :=
   (what * (c * (john * (T * (sang * traceOf what))))) *
-    («where» * (c * (john * (T * (traceOf «where» * (sang : PlanarSyntacticObject))))))
+    («where» * (c * (john * (T * (traceOf «where» * (sang : LinearizedSyntacticObject))))))
 
 /-- The coordinated wh-question (13b). -/
 abbrev cwh := nonBulk c
@@ -101,7 +101,7 @@ abbrev csFromCWH := nonBulk cE
 
 /-- The coordinated sluice (70b) coordinates two clauses, each with its own [E] complementizer and
 TP; the second TP holds the E-type pronoun, a deleted copy of *what*. -/
-def cs : PlanarSyntacticObject :=
+def cs : LinearizedSyntacticObject :=
   (what * (cE * (john * (T * (sang * traceOf what))))) *
     («where» * (cE' * (john' * (T' * (traceOf «where» * (sang' * traceOf what))))))
 
@@ -110,7 +110,7 @@ def cs : PlanarSyntacticObject :=
 /-- A coordination has the it reading when its second conjunct holds a deleted copy, without an
 antecedent there, of a token pronounced in the first, which it reads as an E-type pronoun ((41),
 (54)). -/
-def ItReading (t : PlanarSyntacticObject) : Prop :=
+def ItReading (t : LinearizedSyntacticObject) : Prop :=
   ∃ x ∈ orphanTraces t, (⟨[1]⟩ : TreePath) ≤ x.1 ∧ ∃ p ∈ occurrences t x.2, (⟨[0]⟩ : TreePath) ≤ p
 
 instance : DecidablePred ItReading := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -118,28 +118,28 @@ instance : DecidablePred ItReading := fun _ ↦ inferInstanceAs (Decidable (∃ 
 /-! ### Vacuous ellipsis -/
 
 /-- The tokens of `t`, each once. -/
-def tokens (t : PlanarSyntacticObject) : Finset LexicalItem.Token :=
+def tokens (t : LinearizedSyntacticObject) : Finset LexicalItem.Token :=
   ((tokenList t.val).map (·.2)).toFinset
 
 /-- The pronounceable tokens the application of ellipsis at the domain `K` silences. -/
-def silencedBy (t : PlanarSyntacticObject) (K : TreePath) : Finset LexicalItem.Token :=
+def silencedBy (t : LinearizedSyntacticObject) (K : TreePath) : Finset LexicalItem.Token :=
   (tokens t).filter fun s ↦ s.item.phonForm?.isSome ∧ (occurrences t s).any (decide <| K ≤ ·)
 
 /-- The application at `K` is vacuous when the earlier applications already silenced every token
 it silences. -/
-def IsVacuous (t : PlanarSyntacticObject) (K : TreePath) : Prop :=
+def IsVacuous (t : LinearizedSyntacticObject) (K : TreePath) : Prop :=
   silencedBy t K ⊆ ((elidedDomains t).takeWhile (· ≠ K)).toFinset.biUnion (silencedBy t)
 
-instance (t : PlanarSyntacticObject) (K : TreePath) : Decidable (IsVacuous t K) :=
+instance (t : LinearizedSyntacticObject) (K : TreePath) : Decidable (IsVacuous t K) :=
   inferInstanceAs (Decidable (silencedBy t K ⊆ _))
 
 /-- Economy bans vacuous ellipsis, since an operation applies only when it affects pronunciation or
 interpretation, as Fox's Scope Economy bans vacuous scope shifting, and ellipsis affects only
 pronunciation. -/
-def NoVacuousEllipsis (t : PlanarSyntacticObject) : Prop :=
+def NoVacuousEllipsis (t : LinearizedSyntacticObject) : Prop :=
   ∀ K ∈ elidedDomains t, ¬ IsVacuous t K
 
-instance (t : PlanarSyntacticObject) : Decidable (NoVacuousEllipsis t) :=
+instance (t : LinearizedSyntacticObject) : Decidable (NoVacuousEllipsis t) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-! ### Coordinated wh-questions and coordinated sluices -/

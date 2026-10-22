@@ -16,30 +16,30 @@ function's value on a tree as the ordered leaves of that embedding (eq. (1.13.3)
 identifies head functions with bare-phrase-structure projection ([chomsky-1995-bare]); composed
 with [adger-2003]'s identification of the projecting item as the selecting item (a synthesis
 step of this formalization, not a claim of the book), c-selection computes the embedding. The
-harmonic planarization `SyntacticObject.planarize?` places the projecting daughter on a
-language's head side at every node. It is the planar component of the head function's value,
+harmonic linearization `SyntacticObject.linearize?` places the projecting daughter on a
+language's head side at every node. It is the linearized component of the head function's value,
 a morphism of commutative magmas out of the carrier (`SyntacticObject.headHom`), and a section of
 forgetting the order wherever every node has a head
-(`SyntacticObject.toSyntacticObject_of_planarize?`): the harmonic candidate for the book's
+(`SyntacticObject.toSyntacticObject_of_linearize?`): the harmonic candidate for the book's
 externalization section σ_L, which must extend it noncanonically off that domain.
 
 ## Main declarations
 
 * `Minimalist.LinearizationState`: the value of the head function in its two descriptions, the
-  selection state and the planar object the head determines, `0` off `Dom(h)`; a `CommMagma`
+  selection state and the linearized object the head determines, `0` off `Dom(h)`; a `CommMagma`
   and `MulZeroClass` under the Merge-local product.
 * `Minimalist.LinearizationState.sel`: the projection morphism to `SelectionState`.
 * `Minimalist.SyntacticObject.headHom`: the head function as a morphism of magmas
   `SyntacticObject →ₙ* LinearizationState side`, refining `selCheckHom`.
-* `Minimalist.SyntacticObject.planarize?`: the harmonic planarization.
+* `Minimalist.SyntacticObject.linearize?`: the harmonic linearization.
 
 ## Main results
 
 * `Minimalist.SyntacticObject.sel_comp_headHom`: fusion, the selection component of the head
   function's value being the selection check, by `SyntacticObject.hom_ext`.
-* `Minimalist.SyntacticObject.toSyntacticObject_of_planarize?`: the harmonic planarization is a
+* `Minimalist.SyntacticObject.toSyntacticObject_of_linearize?`: the harmonic linearization is a
   section of forgetting the order on its domain.
-* `Minimalist.SyntacticObject.planarize?_merge`: a daughter merged on an edge is planarized there
+* `Minimalist.SyntacticObject.linearize?_merge`: a daughter merged on an edge is linearized there
   when it projects exactly if the edge is the head side.
 
 ## Implementation notes
@@ -48,11 +48,11 @@ The head side is an `Edge`, `left` for head-initial and `right` for head-final. 
 are partial ([marcolli-chomsky-berwick-2025] §1.13.2): at exocentric nodes no daughter projects
 and no order is determined, the book rejecting an order induced from a total order on labels as
 "not a realistic linguistic assumption", so the state is `0` there, the absorbing element of the
-book's renormalization reading of partial head functions. The selection state and the planar
+book's renormalization reading of partial head functions. The selection state and the linearized
 object are the book's two descriptions of *one* head function: eq. (1.13.3) reads `h(T)` as "a
 single leaf (the head)" or as the ordered leaves of the planar embedding it determines,
 "switch[ing] between these two descriptions without changing the notation". `LinearizationState`
-fuses them into one partial value, so the planarization is defined exactly on `Dom(h)`.
+fuses them into one partial value, so the linearization is defined exactly on `Dom(h)`.
 **Naming**: the head-function *maps* (`headHom` and the leaf data it lifts) carry the book's name
 for `h`; the *value* type does not, the book restricting "the term head to terminal elements"
 (quoting [chomsky-1995-bare] §4), and the strict head is recovered via `sel`.
@@ -77,18 +77,18 @@ open RoseTree UnorderedTree
 /-! ### The linearization state -/
 
 /-- The value of the head function in its two descriptions: the projecting head with its residual
-    stack, and the planar object it determines; `0` off `Dom(h)`. The head side is phantom in
+    stack, and the linearized object it determines; `0` off `Dom(h)`. The head side is phantom in
     the carrier; the multiplication reads it. -/
 structure LinearizationState (side : Edge) : Type where
-  toOption : Option ((LexicalItem.Token × List Cat) × PlanarSyntacticObject)
+  toOption : Option ((LexicalItem.Token × List Cat) × LinearizedSyntacticObject)
 deriving DecidableEq
 
 namespace LinearizationState
 
 variable {side : Edge}
 
-/-- A defined state: projecting head `tok`, residual stack `stack`, planar object `p`. -/
-def of (tok : LexicalItem.Token) (stack : List Cat) (p : PlanarSyntacticObject) :
+/-- A defined state: projecting head `tok`, residual stack `stack`, linearized object `p`. -/
+def of (tok : LexicalItem.Token) (stack : List Cat) (p : LinearizedSyntacticObject) :
     LinearizationState side :=
   ⟨some ((tok, stack), p)⟩
 
@@ -106,7 +106,7 @@ instance : MulZeroClass (LinearizationState side) where
   mul_zero x := by rcases x with ⟨_ | _⟩ <;> rfl
 
 /-- `*` on defined states: the canonical accessor. -/
-theorem some_mul_some (s₁ s₂ : LexicalItem.Token × List Cat) (p₁ p₂ : PlanarSyntacticObject) :
+theorem some_mul_some (s₁ s₂ : LexicalItem.Token × List Cat) (p₁ p₂ : LinearizedSyntacticObject) :
     (⟨some (s₁, p₁)⟩ * ⟨some (s₂, p₂)⟩ : LinearizationState side) =
       ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun d =>
           (d.2, (bif d.1 then p₂ else p₁).attach side (bif d.1 then p₁ else p₂))⟩ := rfl
@@ -131,28 +131,32 @@ def sel : LinearizationState side →ₙ* SelectionState where
       simp only [Option.map_map]
       rfl
 
-@[simp] theorem sel_of (tok : LexicalItem.Token) (stack : List Cat) (p : PlanarSyntacticObject) :
+@[simp] theorem sel_of (tok : LexicalItem.Token) (stack : List Cat)
+    (p : LinearizedSyntacticObject) :
     sel (of tok stack p : LinearizationState side) = .of tok stack := rfl
 
 @[simp] theorem sel_zero : sel (0 : LinearizationState side) = 0 := rfl
 
-/-- The planar component, the embedding the head function determines; `none` off `Dom(h)`. -/
-def planar? (x : LinearizationState side) : Option PlanarSyntacticObject := x.toOption.map (·.2)
+/-- The linearized component, the order the head function determines; `none` off `Dom(h)`. -/
+def linearized? (x : LinearizationState side) : Option LinearizedSyntacticObject :=
+  x.toOption.map (·.2)
 
-@[simp] theorem planar?_of (tok : LexicalItem.Token) (stack : List Cat)
-    (p : PlanarSyntacticObject) : (of tok stack p : LinearizationState side).planar? = some p :=
+@[simp] theorem linearized?_of (tok : LexicalItem.Token) (stack : List Cat)
+    (p : LinearizedSyntacticObject) :
+    (of tok stack p : LinearizationState side).linearized? = some p :=
   rfl
 
-@[simp] theorem planar?_zero : (0 : LinearizationState side).planar? = none := rfl
+@[simp] theorem linearized?_zero : (0 : LinearizationState side).linearized? = none := rfl
 
-/-- A defined product attaches one factor's planar object to the other's on the head side. -/
-theorem planar?_mul_eq_some {x y : LinearizationState side} {p : PlanarSyntacticObject}
-    (h : (x * y).planar? = some p) : ∃ px py, x.planar? = some px ∧ y.planar? = some py ∧
+/-- A defined product attaches one factor's linearized object to the other's on the head side. -/
+theorem linearized?_mul_eq_some {x y : LinearizationState side} {p : LinearizedSyntacticObject}
+    (h : (x * y).linearized? = some p) :
+    ∃ px py, x.linearized? = some px ∧ y.linearized? = some py ∧
       (p = py.attach side px ∨ p = px.attach side py) := by
   match x, y with
   | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
     rw [some_mul_some] at h
-    simp only [planar?, Option.map_map] at h
+    simp only [linearized?, Option.map_map] at h
     obtain ⟨⟨b, _⟩, -, rfl⟩ := Option.map_eq_some_iff.1 h
     exact ⟨p₁, p₂, rfl, rfl, by cases b <;> simp⟩
   | ⟨none⟩, _ => cases h
@@ -160,7 +164,7 @@ theorem planar?_mul_eq_some {x y : LinearizationState side} {p : PlanarSyntactic
 
 end LinearizationState
 
-/-! ### Harmonic planarization -/
+/-! ### Harmonic linearization -/
 
 namespace SyntacticObject
 
@@ -210,73 +214,73 @@ theorem sel_comp_headHom :
     LinearizationState.sel (s.linearizationState side) = s.selCheck :=
   DFunLike.congr_fun (sel_comp_headHom side) s
 
-/-- The harmonic planarization, the projecting daughter on the head side at every node
+/-- The harmonic linearization, the projecting daughter on the head side at every node
     ([marcolli-chomsky-berwick-2025] Lemma 1.13.5); `none` off `Dom(h)`. -/
-def planarize? (s : SyntacticObject) : Option PlanarSyntacticObject :=
-  (s.linearizationState side).planar?
+def linearize? (s : SyntacticObject) : Option LinearizedSyntacticObject :=
+  (s.linearizationState side).linearized?
 
 variable {side}
 
-/-- The harmonic planarization is a section of forgetting the order on its domain. -/
-theorem toSyntacticObject_of_planarize? {s : SyntacticObject} {p : PlanarSyntacticObject}
-    (h : s.planarize? side = some p) : p.toSyntacticObject = s := by
+/-- The harmonic linearization is a section of forgetting the order on its domain. -/
+theorem toSyntacticObject_of_linearize? {s : SyntacticObject} {p : LinearizedSyntacticObject}
+    (h : s.linearize? side = some p) : p.toSyntacticObject = s := by
   induction s using ind generalizing p with
   | leaf tok | trace | traceOf tok => obtain rfl := Option.some.inj h; rfl
   | merge l r ihl ihr =>
-    rw [planarize?, linearizationState_node] at h
-    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := LinearizationState.planar?_mul_eq_some h
-    · rw [PlanarSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr]
-    · rw [PlanarSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr, merge_comm]
+    rw [linearize?, linearizationState_node] at h
+    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := LinearizationState.linearized?_mul_eq_some h
+    · rw [LinearizedSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr]
+    · rw [LinearizedSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr, merge_comm]
 
-/-- A defined planarization comes with the selection state it refines. -/
-theorem linearizationState_eq_of_planarize? {s : SyntacticObject} {p : PlanarSyntacticObject}
-    (h : s.planarize? side = some p) :
+/-- A defined linearization comes with the selection state it refines. -/
+theorem linearizationState_eq_of_linearize? {s : SyntacticObject} {p : LinearizedSyntacticObject}
+    (h : s.linearize? side = some p) :
     ∃ σ, s.selCheck = ⟨some σ⟩ ∧ s.linearizationState side = ⟨some (σ, p)⟩ := by
   rcases hx : s.linearizationState side with ⟨_ | ⟨σ, q⟩⟩
-  · simp [planarize?, hx, LinearizationState.planar?] at h
-  · simp only [planarize?, hx, LinearizationState.planar?, Option.map_some,
+  · simp [linearize?, hx, LinearizationState.linearized?] at h
+  · simp only [linearize?, hx, LinearizationState.linearized?, Option.map_some,
       Option.some.injEq] at h
     subst h
     exact ⟨σ, by rw [← sel_linearizationState side s, hx]; rfl, rfl⟩
 
 /-- Merging `d` on edge `e` of `l` is harmonic when `d` projects exactly if `e` is the head
 side. -/
-theorem planarize?_merge {d l : SyntacticObject} {pd pl : PlanarSyntacticObject} {e : Edge}
-    (hd : d.planarize? side = some pd) (hl : l.planarize? side = some pl)
+theorem linearize?_merge {d l : SyntacticObject} {pd pl : LinearizedSyntacticObject} {e : Edge}
+    (hd : d.linearize? side = some pd) (hl : l.linearize? side = some pl)
     (h : selSide d.selCheck l.selCheck = some (decide (e = side))) :
-    (merge d l).planarize? side = some (pl.attach e pd) := by
-  obtain ⟨σd, hσd, hsd⟩ := linearizationState_eq_of_planarize? hd
-  obtain ⟨σl, hσl, hsl⟩ := linearizationState_eq_of_planarize? hl
+    (merge d l).linearize? side = some (pl.attach e pd) := by
+  obtain ⟨σd, hσd, hsd⟩ := linearizationState_eq_of_linearize? hd
+  obtain ⟨σl, hσl, hsl⟩ := linearizationState_eq_of_linearize? hl
   rw [hσd, hσl, selSide] at h
   obtain ⟨⟨_, x⟩, hc, rfl⟩ := Option.map_eq_some_iff.1 h
-  rw [planarize?, linearizationState_node, hsd, hsl, LinearizationState.some_mul_some, hc]
+  rw [linearize?, linearizationState_node, hsd, hsl, LinearizationState.some_mul_some, hc]
   cases e <;> cases side <;> rfl
 
-/-- The subtrees of a harmonic planarization are the harmonic planarizations of their objects,
+/-- The subtrees of a harmonic linearization are the harmonic linearizations of their objects,
     the head function of a term being the restriction of the whole's. -/
-theorem planarize?_of_mem_subtrees {cur : SyntacticObject} {pc : PlanarSyntacticObject}
-    (hc : cur.planarize? side = some pc) {q : RoseTree Vertex} (hq : q ∈ pc.val.subtrees)
+theorem linearize?_of_mem_subtrees {cur : SyntacticObject} {pc : LinearizedSyntacticObject}
+    (hc : cur.linearize? side = some pc) {q : RoseTree Vertex} (hq : q ∈ pc.val.subtrees)
     (hqs : IsSyntacticObject (mk q)) :
-    planarize? side ⟨mk q, hqs⟩ = some (⟨q, hqs⟩ : PlanarSyntacticObject) := by
-  have root : ∀ {cur : SyntacticObject} {pc : PlanarSyntacticObject},
-      cur.planarize? side = some pc → ∀ hqs : IsSyntacticObject (mk pc.val),
-      planarize? side ⟨mk pc.val, hqs⟩ = some (⟨pc.val, hqs⟩ : PlanarSyntacticObject) :=
+    linearize? side ⟨mk q, hqs⟩ = some (⟨q, hqs⟩ : LinearizedSyntacticObject) := by
+  have root : ∀ {cur : SyntacticObject} {pc : LinearizedSyntacticObject},
+      cur.linearize? side = some pc → ∀ hqs : IsSyntacticObject (mk pc.val),
+      linearize? side ⟨mk pc.val, hqs⟩ = some (⟨pc.val, hqs⟩ : LinearizedSyntacticObject) :=
     fun hc _ ↦ by
-      rw [show (⟨_, _⟩ : SyntacticObject) = _ from toSyntacticObject_of_planarize? hc, hc]; rfl
+      rw [show (⟨_, _⟩ : SyntacticObject) = _ from toSyntacticObject_of_linearize? hc, hc]; rfl
   induction cur using ind generalizing pc with
   | leaf tok | trace | traceOf tok =>
     obtain rfl := Option.some.inj hc
-    simp only [PlanarSyntacticObject.leaf_val, PlanarSyntacticObject.trace_val,
-      PlanarSyntacticObject.traceOf_val, RoseTree.subtrees_node, List.flatMap_nil, List.mem_cons,
-      List.not_mem_nil, or_false] at hq
+    simp only [LinearizedSyntacticObject.leaf_val, LinearizedSyntacticObject.trace_val,
+      LinearizedSyntacticObject.traceOf_val, RoseTree.subtrees_node, List.flatMap_nil,
+      List.mem_cons, List.not_mem_nil, or_false] at hq
     subst hq
     exact root hc hqs
   | merge l r ihl ihr =>
     have hc' := hc
-    rw [planarize?, linearizationState_node] at hc'
-    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := LinearizationState.planar?_mul_eq_some hc' <;>
+    rw [linearize?, linearizationState_node] at hc'
+    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := LinearizationState.linearized?_mul_eq_some hc' <;>
       cases side <;>
-      simp only [PlanarSyntacticObject.attach, PlanarSyntacticObject.merge_val,
+      simp only [LinearizedSyntacticObject.attach, LinearizedSyntacticObject.merge_val,
         RoseTree.subtrees_node,
         List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_cons,
         List.mem_append] at hq <;>

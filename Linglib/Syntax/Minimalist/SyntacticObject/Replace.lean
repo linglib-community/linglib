@@ -102,70 +102,72 @@ example (l r : SyntacticObject) (h : merge l r ≠ r) :
 
 end SyntacticObject
 
-/-! ### Planar leaves -/
+/-! ### Linearized leaves -/
 
-/-- The planar form of a leaf object, which has only one; `none` on a merged object. -/
-def SyntacticObject.toPlanarLeaf? (s : SyntacticObject) : Option PlanarSyntacticObject :=
+/-- The linearized form of a leaf object, which has only one; `none` on a merged object. -/
+def SyntacticObject.toLinearizedLeaf? (s : SyntacticObject) : Option LinearizedSyntacticObject :=
   match s.val.value with
   | .inl (some tok) => some (.leaf tok)
   | .inl none => none
   | .inr none => some .trace
   | .inr (some tok) => some (.traceOf tok)
 
-/-- A planar leaf forgets to the object it came from. -/
-theorem SyntacticObject.toSyntacticObject_of_toPlanarLeaf? {s : SyntacticObject}
-    {p : PlanarSyntacticObject} (h : s.toPlanarLeaf? = some p) : p.toSyntacticObject = s := by
+/-- A linearized leaf forgets to the object it came from. -/
+theorem SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? {s : SyntacticObject}
+    {p : LinearizedSyntacticObject} (h : s.toLinearizedLeaf? = some p) :
+    p.toSyntacticObject = s := by
   rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ <;>
-    simp [toPlanarLeaf?, merge_val] at h <;> subst h <;> rfl
+    simp [toLinearizedLeaf?, merge_val] at h <;> subst h <;> rfl
 
-/-! ### Occurrences in planar objects -/
+/-! ### Occurrences in linearized objects -/
 
-namespace PlanarSyntacticObject
+namespace LinearizedSyntacticObject
 
 /-- The leftmost, outermost subtree of `p` projecting to `target`. -/
-def find? (p : PlanarSyntacticObject) (target : SyntacticObject) : Option PlanarSyntacticObject :=
+def find? (p : LinearizedSyntacticObject) (target : SyntacticObject) :
+    Option LinearizedSyntacticObject :=
   (p.val.subtrees.find? (mk · = target.val)).pmap (p := (mk · = target.val))
     (fun s hs ↦ ⟨s, hs.symm ▸ target.2⟩) fun _ h ↦ by simpa using List.find?_some h
 
-theorem toSyntacticObject_find? {p s : PlanarSyntacticObject} {target : SyntacticObject}
+theorem toSyntacticObject_find? {p s : LinearizedSyntacticObject} {target : SyntacticObject}
     (h : p.find? target = some s) : s.toSyntacticObject = target := by
   obtain ⟨t, ht, -, rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at h)
   exact Subtype.ext ht
 
 /-- Every subtree of `p` projecting to `target` replaced by `rep`. -/
-def replace (p : PlanarSyntacticObject) (target : SyntacticObject)
-    (rep : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def replace (p : LinearizedSyntacticObject) (target : SyntacticObject)
+    (rep : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
   ⟨replaceIf (mk · = target.val) rep.val p.val, by
     rw [mk_replaceIf]
     exact isSyntacticObject_replace target rep.toSyntacticObject p.toSyntacticObject⟩
 
 /-- Replacement forgets to substitution in the syntactic object. -/
-@[simp] theorem toSyntacticObject_replace (p : PlanarSyntacticObject) (target : SyntacticObject)
-    (rep : PlanarSyntacticObject) :
+@[simp] theorem toSyntacticObject_replace (p : LinearizedSyntacticObject) (target : SyntacticObject)
+    (rep : LinearizedSyntacticObject) :
     (p.replace target rep).toSyntacticObject
       = p.toSyntacticObject.replace target rep.toSyntacticObject :=
   Subtype.ext (mk_replaceIf _ _ _)
 
-/-- The terms of a planar object's object are the projections of its planar subtrees. -/
-theorem mem_terms_toSyntacticObject {p : PlanarSyntacticObject} {m : SyntacticObject} :
+/-- The terms of a linearized object's object are the projections of its subtrees. -/
+theorem mem_terms_toSyntacticObject {p : LinearizedSyntacticObject} {m : SyntacticObject} :
     m ∈ p.toSyntacticObject.terms ↔ ∃ q ∈ p.val.subtrees, mk q = m.val := by
   rw [← val_mem_subtrees, toSyntacticObject_val, subtrees_mk, unorderedSubtrees_eq_map,
     Multiset.mem_coe, List.mem_map]
 
 /-- An occurrence is found exactly when the target is a term. -/
-theorem isSome_find?_iff {p : PlanarSyntacticObject} {m : SyntacticObject} :
+theorem isSome_find?_iff {p : LinearizedSyntacticObject} {m : SyntacticObject} :
     (p.find? m).isSome ↔ m ∈ p.toSyntacticObject.terms := by
   rw [mem_terms_toSyntacticObject, find?, Option.isSome_pmap, List.find?_isSome]
   simp
 
-/-- The occurrence found is a planar subtree. -/
-theorem mem_subtrees_of_find? {p s : PlanarSyntacticObject} {m : SyntacticObject}
+/-- The occurrence found is a subtree. -/
+theorem mem_subtrees_of_find? {p s : LinearizedSyntacticObject} {m : SyntacticObject}
     (h : p.find? m = some s) : s.val ∈ p.val.subtrees := by
   obtain ⟨t, -, ht, rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at h)
   exact List.mem_of_find?_eq_some ht
 
 /-- Replacing at the root yields the replacement. -/
-theorem replace_of_toSyntacticObject_eq {p r : PlanarSyntacticObject} {target : SyntacticObject}
+theorem replace_of_toSyntacticObject_eq {p r : LinearizedSyntacticObject} {target : SyntacticObject}
     (h : p.toSyntacticObject = target) : p.replace target r = r := by
   obtain ⟨⟨a, cs⟩, hp⟩ := p
   apply Subtype.ext
@@ -175,7 +177,7 @@ theorem replace_of_toSyntacticObject_eq {p r : PlanarSyntacticObject} {target : 
   · exact absurd (congrArg Subtype.val h) hc
 
 /-- Away from the root, replacement recurses into the daughters. -/
-theorem replace_attach {p d r : PlanarSyntacticObject} {target : SyntacticObject} {e : Edge}
+theorem replace_attach {p d r : LinearizedSyntacticObject} {target : SyntacticObject} {e : Edge}
     (h : SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject ≠ target) :
     (p.attach e d).replace target r = (p.replace target r).attach e (d.replace target r) := by
   have h' : (p.attach e d).toSyntacticObject ≠ target := by rwa [toSyntacticObject_attach]
@@ -184,7 +186,7 @@ theorem replace_attach {p d r : PlanarSyntacticObject} {target : SyntacticObject
     List.map_nil] <;> split_ifs with hc <;> first | rfl | exact (h' (Subtype.ext hc)).elim
 
 /-- A leaf other than the target is kept. -/
-theorem replace_of_val_eq_leaf {p r : PlanarSyntacticObject} {target : SyntacticObject}
+theorem replace_of_val_eq_leaf {p r : LinearizedSyntacticObject} {target : SyntacticObject}
     {a : Vertex} (hp : p.val = RoseTree.leaf a) (h : p.toSyntacticObject ≠ target) :
     p.replace target r = p := by
   apply Subtype.ext
@@ -193,37 +195,37 @@ theorem replace_of_val_eq_leaf {p r : PlanarSyntacticObject} {target : Syntactic
   · exact (h (Subtype.ext (by rw [toSyntacticObject_val, hp]; exact hc))).elim
   · rfl
 
-end PlanarSyntacticObject
+end LinearizedSyntacticObject
 
-/-- The planar trace a moved object leaves, `SyntacticObject.headTrace` with its order. -/
-def SyntacticObject.tracePlanar (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : PlanarSyntacticObject :=
-  (τ s).elim PlanarSyntacticObject.trace PlanarSyntacticObject.traceOf
+/-- The linearized trace a moved object leaves, `SyntacticObject.headTrace` with its order. -/
+def SyntacticObject.traceLinearized (s : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : LinearizedSyntacticObject :=
+  (τ s).elim LinearizedSyntacticObject.trace LinearizedSyntacticObject.traceOf
 
-/-- The planar trace of `s` is the trace leaf of its label. -/
-theorem SyntacticObject.tracePlanar_val (s : SyntacticObject)
+/-- The linearized trace of `s` is the trace leaf of its label. -/
+theorem SyntacticObject.traceLinearized_val (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token) :
-    (s.tracePlanar τ).val = .node (.inr (τ s)) [] := by
-  unfold tracePlanar; cases τ s <;> rfl
+    (s.traceLinearized τ).val = .node (.inr (τ s)) [] := by
+  unfold traceLinearized; cases τ s <;> rfl
 
 /-- Raising the occurrence of `m` that `find?` locates, with its occurrences replaced by its trace,
 keeps the pronounced tokens when none is pronounced twice. -/
-theorem PlanarSyntacticObject.yield_replace_add_yield {p s : PlanarSyntacticObject}
+theorem LinearizedSyntacticObject.yield_replace_add_yield {p s : LinearizedSyntacticObject}
     {m : SyntacticObject} (τ : SyntacticObject → Option LexicalItem.Token)
     (hp : p.toSyntacticObject.yield.Nodup) (hs : p.find? m = some s) :
-    (p.replace m (m.tracePlanar τ)).toSyntacticObject.yield + s.toSyntacticObject.yield =
+    (p.replace m (m.traceLinearized τ)).toSyntacticObject.yield + s.toSyntacticObject.yield =
       p.toSyntacticObject.yield := by
   obtain ⟨s', -, hs', rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at hs)
   refine filterMap_leaves_replaceIf_add _ _ (L := m.yield) (fun u hu ↦ ?_) ?_ hp
     (mem_outerMatches_of_find? hs')
   · rw [← UnorderedTree.leaves_mk, hu]
     rfl
-  · rw [SyntacticObject.tracePlanar_val]
+  · rw [SyntacticObject.traceLinearized_val]
     rfl
 
 /-- A lexical leaf or trace has no sisters inside it. -/
-theorem SyntacticObject.not_sisters_of_toPlanarLeaf? {s x z : SyntacticObject}
-    {p : PlanarSyntacticObject} (hs : s.toPlanarLeaf? = some p) : ¬ Sisters s x z := by
+theorem SyntacticObject.not_sisters_of_toLinearizedLeaf? {s x z : SyntacticObject}
+    {p : LinearizedSyntacticObject} (hs : s.toLinearizedLeaf? = some p) : ¬ Sisters s x z := by
   rintro ⟨w, hw, hwx, -, -⟩
   rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
   · rw [terms_leaf, Multiset.mem_singleton] at hw
@@ -235,6 +237,6 @@ theorem SyntacticObject.not_sisters_of_toPlanarLeaf? {s x z : SyntacticObject}
   · rw [terms_traceOf, Multiset.mem_singleton] at hw
     subst hw
     simp [ImmediatelyContains, traceOf_val] at hwx
-  · simp [toPlanarLeaf?, merge_val] at hs
+  · simp [toLinearizedLeaf?, merge_val] at hs
 
 end Minimalist

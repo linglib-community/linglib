@@ -22,23 +22,23 @@ bare label `Vertex.bare` on a binary internal node. The right summand is a trace
 `Vertex.trace`, or the trace `Vertex.traceOf tok` of a token, the cancellation `T/T_v` remembering
 the head of `T_v`. Traces are exactly the right summand, the convention of the trace coproduct.
 `SyntacticObject` is the well-formed unordered tree over `Vertex`, the object Merge builds, and
-`PlanarSyntacticObject` the well-formed ordered tree, the planar embedding of Marcolli, Chomsky
-and Berwick, the form linearization and PF read. Well-formedness is a local condition, each vertex
-licensing its children (`Vertex.Licenses`), so it descends to the quotient;
-`PlanarSyntacticObject.toSyntacticObject` forgets the order and is a homomorphism for the vocabulary
-the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
+`LinearizedSyntacticObject` the well-formed ordered tree, the form linearization produces and PF
+reads, Marcolli, Chomsky and Berwick's planar embedding. Well-formedness is a local condition, each
+vertex licensing its children (`Vertex.Licenses`), so it descends to the quotient;
+`LinearizedSyntacticObject.toSyntacticObject` forgets the order and is a homomorphism for the
+vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
 
 ## Main definitions
 
 * `Minimalist.SyntacticObject.Vertex`, `Minimalist.IsSyntacticObject`
-* `Minimalist.SyntacticObject`, `Minimalist.PlanarSyntacticObject`: the unordered and the ordered
-  carrier, each with `leaf`, `trace`, `traceOf` and `merge`.
-* `Minimalist.PlanarSyntacticObject.toSyntacticObject`: forgetting the order.
+* `Minimalist.SyntacticObject`, `Minimalist.LinearizedSyntacticObject`: the unordered and the
+  ordered carrier, each with `leaf`, `trace`, `traceOf` and `merge`.
+* `Minimalist.LinearizedSyntacticObject.toSyntacticObject`: forgetting the order.
 
 ## Main results
 
 * `Minimalist.SyntacticObject.ind`, `exists_form`: induction and case analysis over the shapes.
-* `Minimalist.PlanarSyntacticObject.toSyntacticObject_merge`: forgetting the order commutes with
+* `Minimalist.LinearizedSyntacticObject.toSyntacticObject_merge`: forgetting the order commutes with
   Merge.
 
 ## References
@@ -149,14 +149,14 @@ theorem IsSyntacticObject.isFullBinary {t : UnorderedTree SyntacticObject.Vertex
 /-- The syntactic objects are the well-formed unordered trees over `Vertex`. -/
 def SyntacticObject : Type := { t : UnorderedTree SyntacticObject.Vertex // IsSyntacticObject t }
 
-/-- The planar syntactic objects are the well-formed ordered trees over `Vertex`,
-    [marcolli-chomsky-berwick-2025] §1.12's planar embeddings. -/
-def PlanarSyntacticObject : Type :=
+/-- The linearized syntactic objects are the well-formed ordered trees over `Vertex`, in any order
+    of the daughters: [marcolli-chomsky-berwick-2025] §1.12's planar embeddings. -/
+def LinearizedSyntacticObject : Type :=
   { t : RoseTree SyntacticObject.Vertex // IsSyntacticObject (UnorderedTree.mk t) }
 
 instance : DecidableEq SyntacticObject := Subtype.instDecidableEq
 
-instance : DecidableEq PlanarSyntacticObject := Subtype.instDecidableEq
+instance : DecidableEq LinearizedSyntacticObject := Subtype.instDecidableEq
 
 /-! ### The shapes -/
 
@@ -200,7 +200,7 @@ theorem isSyntacticObject_merge_iff (a b : UnorderedTree Vertex) :
 
 /-- Merge on the carrier, the bare binary node over two syntactic objects, also written `*`.
     Noncomputable, since it goes through the smart constructor `UnorderedTree.node`; concrete
-    results are built ordered and forgotten by `PlanarSyntacticObject.toSyntacticObject`. -/
+    results are built ordered and forgotten by `LinearizedSyntacticObject.toSyntacticObject`. -/
 noncomputable def merge (l r : SyntacticObject) : SyntacticObject :=
   ⟨UnorderedTree.node Vertex.bare {l.val, r.val}, (isSyntacticObject_merge_iff _ _).2 ⟨l.2, r.2⟩⟩
 
@@ -254,23 +254,24 @@ theorem merge_mk (pl pr : RoseTree Vertex)
 
 end SyntacticObject
 
-namespace PlanarSyntacticObject
+namespace LinearizedSyntacticObject
 
 open SyntacticObject (Vertex isSyntacticObject_mk_leaf isSyntacticObject_mk_merge)
 
 /-- A lexical leaf. -/
-@[coe] def leaf (tok : LexicalItem.Token) : PlanarSyntacticObject :=
+@[coe] def leaf (tok : LexicalItem.Token) : LinearizedSyntacticObject :=
   ⟨.node (Vertex.lex tok) [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The index-free trace. -/
-def trace : PlanarSyntacticObject := ⟨.node Vertex.trace [], isSyntacticObject_mk_leaf (by simp)⟩
+def trace : LinearizedSyntacticObject :=
+  ⟨.node Vertex.trace [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The trace of `tok`. -/
-def traceOf (tok : LexicalItem.Token) : PlanarSyntacticObject :=
+def traceOf (tok : LexicalItem.Token) : LinearizedSyntacticObject :=
   ⟨.node (Vertex.traceOf tok) [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- Merge, with the daughters in the given order. -/
-def merge (l r : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def merge (l r : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
   ⟨.node Vertex.bare [l.val, r.val], (isSyntacticObject_mk_merge _ _).mpr ⟨l.2, r.2⟩⟩
 
 @[simp] theorem leaf_val (tok : LexicalItem.Token) :
@@ -279,14 +280,14 @@ def merge (l r : PlanarSyntacticObject) : PlanarSyntacticObject :=
 @[simp] theorem traceOf_val (tok : LexicalItem.Token) :
     (traceOf tok).val = .node (Vertex.traceOf tok) [] :=
   rfl
-@[simp] theorem merge_val (l r : PlanarSyntacticObject) :
+@[simp] theorem merge_val (l r : LinearizedSyntacticObject) :
     (merge l r).val = .node Vertex.bare [l.val, r.val] := rfl
 
 /-- Forgetting the order is the quotient map to the syntactic object. -/
-@[coe] def toSyntacticObject (p : PlanarSyntacticObject)
+@[coe] def toSyntacticObject (p : LinearizedSyntacticObject)
   : SyntacticObject := ⟨UnorderedTree.mk p.val, p.2⟩
 
-@[simp] theorem toSyntacticObject_val (p : PlanarSyntacticObject) :
+@[simp] theorem toSyntacticObject_val (p : LinearizedSyntacticObject) :
     p.toSyntacticObject.val = UnorderedTree.mk p.val := rfl
 
 @[simp] theorem toSyntacticObject_leaf (tok : LexicalItem.Token) :
@@ -298,11 +299,11 @@ def merge (l r : PlanarSyntacticObject) : PlanarSyntacticObject :=
     (traceOf tok).toSyntacticObject = SyntacticObject.traceOf tok := rfl
 
 /-- Forgetting the order commutes with Merge. -/
-@[simp] theorem toSyntacticObject_merge (l r : PlanarSyntacticObject) :
+@[simp] theorem toSyntacticObject_merge (l r : LinearizedSyntacticObject) :
     (merge l r).toSyntacticObject = SyntacticObject.merge l.toSyntacticObject r.toSyntacticObject :=
   Subtype.ext (SyntacticObject.merge_mk l.val r.val l.2 r.2).symm
 
-end PlanarSyntacticObject
+end LinearizedSyntacticObject
 
 /-! ### Induction and case analysis -/
 

@@ -35,7 +35,7 @@ Giannakidou and the attitude-phrase account of Vu and Lohiniva each miss one str
 
 The structures are schematic Singlish questions (2), (11), which the Malay and Mandarin rows
 share, since what the accounts read, the chains and where their copies are pronounced, is the
-same; the English rows are multiple questions with the subject wh-phrase fronted. Planar objects
+same; the English rows are multiple questions with the subject wh-phrase fronted. Linearized objects
 have no pair-Merge, so *the-hell* adjoined to the wh-head is merged as the head's complement: the
 head projects, as the host of an adjunct does, and every copy of the wh-phrase carries the
 modifier. The schematic clauses have no T, so C selects the verb phrase and each verb selects its
@@ -113,28 +113,28 @@ def loves := tok 20 .V [.D, .D] "loves"
 /-- A wh-phrase is pronounced as `phrase`, and its deleted copies are those of its head. -/
 structure WhPhrase where
   head : LexicalItem.Token
-  phrase : PlanarSyntacticObject
+  phrase : LinearizedSyntacticObject
 
 /-- A bare wh-phrase. -/
 def WhPhrase.bare (w : LexicalItem.Token) : WhPhrase := ⟨w, w⟩
 
 /-- The wh-phrase headed by `w` with `m` adjoined to its head. -/
-def WhPhrase.adjoin (w m : LexicalItem.Token) : WhPhrase := ⟨w, (w : PlanarSyntacticObject) * m⟩
+def WhPhrase.adjoin (w m : LexicalItem.Token) : WhPhrase := ⟨w, (w : LinearizedSyntacticObject) * m⟩
 
 /-- *What the hell*. -/
 def whatTheHell : WhPhrase := .adjoin whatH theHell
 
 /-- The embedded CP, *Natalie baking x* or, in the island, *Mary eat x*, with `spec` in its
 specifier. -/
-def embedded (island : Bool) (spec : Option PlanarSyntacticObject) (x : PlanarSyntacticObject) :
-    PlanarSyntacticObject :=
+def embedded (island : Bool) (spec : Option LinearizedSyntacticObject)
+    (x : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
   let tp := if island then mary * (eat * x) else natalie * (baking * x)
   (spec.map (· * (c₂ * tp))).getD (c₂ * tp)
 
 /-- The matrix CP over the embedded one, *you think …* or, in the island, *John like the man that
 think …*, with `spec` in matrix Spec-CP. -/
-def matrix (island : Bool) (spec : Option PlanarSyntacticObject) (emb : PlanarSyntacticObject) :
-    PlanarSyntacticObject :=
+def matrix (island : Bool) (spec : Option LinearizedSyntacticObject)
+    (emb : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
   let vp := if island then john * (like * (the * (man * (that * (thinkRel * emb)))))
     else you * (think * emb)
   (spec.map (· * (c₁ * vp))).getD (c₁ * vp)
@@ -142,34 +142,34 @@ def matrix (island : Bool) (spec : Option PlanarSyntacticObject) (emb : PlanarSy
 variable (w : WhPhrase) (island : Bool)
 
 /-- (7): full movement, successive cyclic, the top copy pronounced. -/
-def full : PlanarSyntacticObject :=
+def full : LinearizedSyntacticObject :=
   matrix island (some w.phrase) (embedded island (some (.traceOf w.head)) (.traceOf w.head))
 
 /-- (14): partial movement, overt to the intermediate Spec-CP and covert from there. -/
-def partialMovement : PlanarSyntacticObject :=
+def partialMovement : LinearizedSyntacticObject :=
   matrix island (some (.traceOf w.head)) (embedded island (some w.phrase) (.traceOf w.head))
 
 /-- (8): the wh-phrase in situ, bound by the question operator: one copy. -/
-def bound : PlanarSyntacticObject :=
+def bound : LinearizedSyntacticObject :=
   matrix island none (embedded island none w.phrase)
 
 /-- The LF-movement analysis of wh-in-situ ([huang-1982]): a deleted copy in matrix Spec-CP over
 the pronounced one. -/
-def covert : PlanarSyntacticObject :=
+def covert : LinearizedSyntacticObject :=
   matrix island (some (.traceOf w.head)) (embedded island none w.phrase)
 
 /-- (19): *daodi* before the verb of the embedded clause over a wh-phrase in situ, moved covertly
 on its own to the embedded and then the matrix point-of-view operator ([chou-2012]'s (31c)),
 which Chan and Shen place in Spec-CP. -/
-def daodiQuestion : PlanarSyntacticObject :=
+def daodiQuestion : LinearizedSyntacticObject :=
   matrix false (some (.traceOf daodi))
     (.traceOf daodi * (c₂ * (natalie * (daodi * (baking * what)))))
 
 /-- An English multiple question, the subject wh-phrase fronted over the object in situ. -/
-def multiple (subj obj : WhPhrase) : PlanarSyntacticObject :=
+def multiple (subj obj : WhPhrase) : LinearizedSyntacticObject :=
   subj.phrase * (c₁ * (.traceOf subj.head * (loves * obj.phrase)))
 
-variable (t : PlanarSyntacticObject)
+variable (t : LinearizedSyntacticObject)
 
 /-- The chain of `h` takes scope in matrix Spec-CP: the phrase of a copy at its top is there. -/
 def ReachesScope (h : LexicalItem.Token) : Prop :=
@@ -270,8 +270,8 @@ example : Intervention.Licensed (bound whatTheHell false) theHell ∧
 
 /-- The structure of a row: its strategy, in a complex NP or not, with the modifier it records
 and an in-situ wh-phrase construed by `inSitu`; a multiple question fronts its subject. -/
-def structureOf (inSitu : WhPhrase → Bool → PlanarSyntacticObject) (e : Datum) :
-    Option PlanarSyntacticObject :=
+def structureOf (inSitu : WhPhrase → Bool → LinearizedSyntacticObject) (e : Datum) :
+    Option LinearizedSyntacticObject :=
   let island := e.feature? "island" = some "complexNP"
   let hell := e.feature? "modifier" = some "theHell"
   if e.feature? "modifier" = some "daodi" then some daodiQuestion

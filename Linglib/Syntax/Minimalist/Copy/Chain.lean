@@ -11,9 +11,9 @@ public import Linglib.Syntax.Projection
 public import Linglib.Core.Data.RoseTree.Get
 
 /-!
-# Chains on planar syntactic objects
+# Chains on linearized syntactic objects
 
-A planar syntactic object is a copy-theoretic representation. A vertex `Vertex.lex tok` is a
+A linearized syntactic object is a copy-theoretic representation. A vertex `Vertex.lex tok` is a
 pronounced copy of `tok` and a vertex `Vertex.traceOf tok` a deleted one, the trace Internal Merge
 leaves, Marcolli, Chomsky and Berwick's cancellation `T/T_v` with the head of `T_v` remembered.
 The chain of a token is the list of its copies, and a copy stands for the maximal projection of
@@ -34,7 +34,7 @@ links are in `SyntacticObject/Locality.lean`.
 * `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
 * `projectionAt`: the phrase a copy stands for, its maximal projection along head daughters
-  (`PlanarSyntacticObject.headIndexAt`, `PhraseStructure.maximalProjectionAt`).
+  (`LinearizedSyntacticObject.headIndexAt`, `PhraseStructure.maximalProjectionAt`).
 * `HasAntecedent`, `orphanTraces`: whether a pronounced copy c-commands a deleted one, and the
   deleted copies without antecedents, seen from their own conjunct copies.
 * `IsLink`, `links`, `chainTop`: the links of a chain and its scope position.
@@ -103,7 +103,7 @@ def tokenList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
 def traceList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
   positions (Sum.elim (fun _ ↦ none) id)
 
-variable (t : PlanarSyntacticObject) (tok : LexicalItem.Token)
+variable (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions of the pronounced copies of `tok`. -/
 def occurrences : List TreePath :=

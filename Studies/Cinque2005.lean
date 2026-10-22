@@ -141,7 +141,7 @@ def step (m : LexicalItem.Token) (st : Stage) : List Stage :=
     | none => []
     | some p => (p.val.subtrees.filter hasN).filterMap fun s ↦
         if h : IsSyntacticObject (UnorderedTree.mk s) then
-          some ⟨d.append [.im (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)],
+          some ⟨d.append [.im (LinearizedSyntacticObject.toSyntacticObject ⟨s, h⟩)],
             (markOf p.val s).toList ++ st.marks, st.raises + 1⟩
         else none
 
@@ -177,12 +177,12 @@ def mergeOrder : Derivation :=
 /-- The derivation of (6o): NP raises past A, and `[N [A t]]` past Num. -/
 def derivation6o : Derivation :=
   ⟨leaf tokN, [.em .left (leaf tokA), .im (leaf tokN), .em .left (leaf tokNum),
-    .im (tokN * (tokA * .traceOf tokN) : PlanarSyntacticObject), .em .left (leaf tokDem)]⟩
+    .im (tokN * (tokA * .traceOf tokN) : LinearizedSyntacticObject), .em .left (leaf tokDem)]⟩
 
 /-- The derivation of (6n): `[A N]` raises past Num. -/
 def derivation6n : Derivation :=
   ⟨leaf tokN, [.em .left (leaf tokA), .em .left (leaf tokNum),
-    .im (tokA * tokN : PlanarSyntacticObject), .em .left (leaf tokDem)]⟩
+    .im (tokA * tokN : LinearizedSyntacticObject), .em .left (leaf tokDem)]⟩
 
 /-- With nothing moved the order is (6a), Dem Num A N. -/
 theorem surfaceCats_mergeOrder : mergeOrder.surfaceCats = [.Dem, .Num, .A, .N] := by decide

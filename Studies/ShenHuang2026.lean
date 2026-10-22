@@ -98,10 +98,10 @@ def determiner : Definiteness → LexicalItem.Token
   | .indefinite => a
 
 /-- The object DP of (25) has the wh-phrase in the complement of the determiner. -/
-def dp (o : Definiteness) : PlanarSyntacticObject := determiner o * (book * (about * wh))
+def dp (o : Definiteness) : LinearizedSyntacticObject := determiner o * (book * (about * wh))
 
 /-- The verb phrase of (25). -/
-def vp (o : Definiteness) : PlanarSyntacticObject := verb * dp o
+def vp (o : Definiteness) : LinearizedSyntacticObject := verb * dp o
 
 /-- The wh-phrase lies in the domain of the determiner, so the PIC (4) freezes it in any phase the
 determiner heads (5). -/
@@ -111,7 +111,7 @@ theorem impenetrable (o : Definiteness) :
 
 /-- The escape hatch the account denies (§2.1) is the verb phrase with the wh-phrase moved to
 Spec,DP. -/
-def vpEdge : PlanarSyntacticObject := verb * (wh * (that * (book * (about * .traceOf wh))))
+def vpEdge : LinearizedSyntacticObject := verb * (wh * (that * (book * (about * .traceOf wh))))
 
 /-- At the edge of the phase, the wh-phrase is in the phase but outside the reach of the PIC. -/
 theorem edge_not_impenetrable :
@@ -120,12 +120,12 @@ theorem edge_not_impenetrable :
 
 /-- The wh-phrase fronted out of the object DP, leaving a deleted copy in the complement of
 *about*. -/
-def extracted (o : Definiteness) : PlanarSyntacticObject :=
+def extracted (o : Definiteness) : LinearizedSyntacticObject :=
   wh * (verb * (determiner o * (book * (about * .traceOf wh))))
 
 /-- The LF-movement analysis of an in-situ wh-phrase ([huang-1982b], §5.2) puts a deleted copy
 above the pronounced one. -/
-def covert (o : Definiteness) : PlanarSyntacticObject := .traceOf wh * vp o
+def covert (o : Definiteness) : LinearizedSyntacticObject := .traceOf wh * vp o
 
 /-- Covert movement leaves the string of the in-situ object. -/
 example (o : Definiteness) : pfPhon (covert o) = pfPhon (vp o) := by
@@ -133,11 +133,11 @@ example (o : Definiteness) : pfPhon (covert o) = pfPhon (vp o) := by
 
 /-- The object of a cell is the wh-phrase extracted, or in situ, bound by an operator after
 [li-1992]. -/
-def Config.tree (c : Config) : PlanarSyntacticObject :=
+def Config.tree (c : Config) : LinearizedSyntacticObject :=
   if c.fronted then extracted c.object else vp c.object
 
 /-- The object of a cell on the LF-movement analysis of wh-in-situ. -/
-def Config.covertTree (c : Config) : PlanarSyntacticObject :=
+def Config.covertTree (c : Config) : LinearizedSyntacticObject :=
   if c.fronted then extracted c.object else covert c.object
 
 /-! ### The two constraints -/
@@ -153,10 +153,10 @@ def Config.specific (c : Config) : Option SyntacticObject :=
 
 /-- The PIC (4) is violated in `t` when a link of the wh-phrase's chain leaves the phase that the
 cell's determiner heads, from its interior. -/
-def Config.ViolatesPIC (c : Config) (t : PlanarSyntacticObject) : Prop :=
+def Config.ViolatesPIC (c : Config) (t : LinearizedSyntacticObject) : Prop :=
   ∃ ℓ ∈ c.phaseHead, ∃ h ∈ occurrences t ℓ, Crosses t wh h
 
-instance (c : Config) (t : PlanarSyntacticObject) : Decidable (c.ViolatesPIC t) :=
+instance (c : Config) (t : LinearizedSyntacticObject) : Decidable (c.ViolatesPIC t) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The two constraints. -/
