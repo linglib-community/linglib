@@ -24,9 +24,10 @@ evidence not contradicted by later evidence stays uncontradicted (C4). Each is e
 condition on the faithful total preorders that represent the operator, Spohn's
 conditionalisation satisfies them all, and Boutilier's stronger postulate, minimising every
 change of conditional belief, forgets a colour observation once the animal's species is
-corrected. Four partial operators in the appendix show that the AGM postulates entail none of
-C1–C4, and an operator that moves the disbelieved worlds of rank two or more down rather than
-up satisfies C1 but neither C3 nor C4.
+corrected. That postulate is C1–C4 together with two more, C5 and C6, and Spohn's
+conditionalisation violates C6. Four partial operators in the appendix show that the AGM
+postulates entail none of C1–C4, and an operator that moves the disbelieved worlds of rank two
+or more down rather than up satisfies C1 but neither C3 nor C4.
 
 The framework and its theorems are in `Logic/BeliefRevision/Iterated.lean`; here the paper's
 examples and appendix tables are checked against them.
@@ -52,7 +53,7 @@ examples and appendix tables are checked against them.
 
 namespace DarwichePearl1997
 
-open BeliefRevision
+open BeliefRevision RankingFunction
 
 /-! ### Epistemic states against belief sets -/
 
@@ -177,7 +178,7 @@ theorem example₈ :
       w ∈ (Preorder.lift table₃).minimals second) ∧
     (∀ w, w ∈ (Preorder.lift table₃).minimals first ↔ w = (true, true)) ∧
     (∀ w, w ∈ (Preorder.lift table₃').minimals first ↔ w ∈ first) ∧
-    ¬ PreservesLt (Preorder.lift table₃) (Preorder.lift table₃') second := by
+    ¬ PreservesLt (Preorder.lift table₃) (Preorder.lift table₃') second secondᶜ := by
   decide
 
 /-- Table 4, before revising by `nice_day`. -/
@@ -203,7 +204,7 @@ theorem example₉ :
       w ∈ (Preorder.lift table₄).minimals second) ∧
     (∀ w, w ∈ (Preorder.lift table₄).minimals first ↔ w ∈ first) ∧
     (∀ w, w ∈ (Preorder.lift table₄').minimals first ↔ w = (true, false)) ∧
-    ¬ PreservesLe (Preorder.lift table₄) (Preorder.lift table₄') second := by
+    ¬ PreservesLe (Preorder.lift table₄) (Preorder.lift table₄') second secondᶜ := by
   decide
 
 /-! ### Boutilier's postulate forgets -/
@@ -219,13 +220,55 @@ theorem cb_forgets {S W : Type*} {r : Revision S W} (h : r.IsAGM) (hCB : r.CB) {
     rw [h.expansion Ψ red (by rwa [hΨ]), hΨ, compl_compl]
     exact Set.inter_subset_left), hΨ']
 
+/-! ### Boutilier's postulate is stronger than (C1)–(C4) -/
+
+/-- A prior believing world `0`, with the `μ`-world `1` less plausible than the non-`μ`-world
+`2`. -/
+def table₇ : Fin 3 → ℕ
+  | 0 => 0
+  | 1 => 2
+  | 2 => 1
+
+/-- `table₇` after Spohn's revision by `μ₇`. -/
+def table₇' : Fin 3 → ℕ
+  | 0 => 0
+  | 1 => 2
+  | 2 => 2
+
+/-- The evidence of `table₇`. -/
+abbrev μ₇ : Set (Fin 3) := {w | w ≠ 2}
+
+theorem spohn_table₇ : spohn table₇ μ₇ = table₇' := by
+  have h : rank table₇ μ₇ = 0 := (rank_eq_zero_iff _).2 ⟨0, by decide, rfl⟩
+  funext w
+  match w with
+  | 0 | 1 | 2 => simp only [spohn, aPart, h]; simp [μ₇, table₇, table₇']
+
+/-- Spohn's revision violates (C6): revising `table₇` by `μ₇` ties the disbelieved `μ`-world `1`
+with the non-`μ`-world `2` that was strictly more plausible. -/
+theorem not_spohnRevision_c6 : ¬ (spohnRevision (Fin 3)).C6 := by
+  intro h
+  have hlt := spohnRevision_faithful.c6_iff.1 h table₇ μ₇ 2 (by simp) 1
+    ⟨by simp, by simp [spohnRevision, spohn_table₇, table₇']⟩ (by decide)
+  change spohn table₇ μ₇ 2 < spohn table₇ μ₇ 1 at hlt
+  rw [spohn_table₇] at hlt
+  exact absurd hlt (by decide)
+
+/-- (CB) implies (C1)–(C4) but is not implied by them (Section 7): Spohn's revision meets (C1)–(C4)
+and violates (CB), since it violates (C6). -/
+theorem spohnRevision_c1_c2_c3_c4_not_cb :
+    (spohnRevision (Fin 3)).C1 ∧ (spohnRevision (Fin 3)).C2 ∧ (spohnRevision (Fin 3)).C3 ∧
+      (spohnRevision (Fin 3)).C4 ∧ ¬ (spohnRevision (Fin 3)).CB :=
+  ⟨spohnRevision_c1, spohnRevision_c2, spohnRevision_c3, spohnRevision_c4, fun h ↦
+    not_spohnRevision_c6 (spohnRevision_faithful.cb_iff_c1_c2_c3_c4_c5_c6.1 h).2.2.2.2.2⟩
+
 /-! ### An operator satisfying (C1) but neither (C3) nor (C4) -/
 
 open Classical in
 /-- The operator of Theorem 6 is Spohn's, except that a disbelieved world of rank two or more moves
 down a degree instead of up. -/
 noncomputable def diamond {W : Type*} (κ : W → ℕ) (μ : Set W) : W → ℕ := fun w ↦
-  if w ∈ μ then κ w - rank κ μ else if κ w < 2 then κ w + 1 else κ w - 1
+  if w ∈ μ then aPart κ μ w else if κ w < 2 then κ w + 1 else κ w - 1
 
 /-- `diamond` as a revision operator on rankings. -/
 noncomputable def diamondRevision (W : Type*) : Revision (W → ℕ) W where
@@ -233,7 +276,7 @@ noncomputable def diamondRevision (W : Type*) : Revision (W → ℕ) W where
   revise := diamond
 
 theorem diamond_of_mem {W : Type*} {κ : W → ℕ} {μ : Set W} {w : W} (hw : w ∈ μ) :
-    diamond κ μ w = κ w - rank κ μ := by
+    diamond κ μ w = aPart κ μ w := by
   simp [diamond, hw]
 
 theorem diamond_of_notMem {W : Type*} {κ : W → ℕ} {μ : Set W} {w : W} (hw : w ∉ μ) :
@@ -246,7 +289,7 @@ theorem diamondRevision_faithful (W : Type*) :
   faithful_lift (fun _ _ _ hw ↦ diamond_of_mem hw)
     (fun _ _ _ hw ↦ by rw [diamond_of_notMem hw]; split_ifs <;> omega)
 
-theorem diamondRevision_isAGM (W : Type*) [Finite W] : (diamondRevision W).IsAGM :=
+theorem diamondRevision_isAGM (W : Type*) : (diamondRevision W).IsAGM :=
   (diamondRevision_faithful W).isAGM
 
 /-- `diamond` satisfies (C1) (Theorem 6). -/
@@ -274,10 +317,10 @@ abbrev μ₅ : Set (Fin 4) := {w | w = 0 ∨ w = 1}
 abbrev α₅ : Set (Fin 4) := {w | w = 1 ∨ w = 2}
 
 theorem diamond_table₅ : diamond table₅ μ₅ = table₅' := by
-  have h : rank table₅ μ₅ = 0 := rank_eq_of _ _ ⟨0, by decide, rfl⟩ (by decide)
+  have h : rank table₅ μ₅ = 0 := (rank_eq_zero_iff _).2 ⟨0, by decide, rfl⟩
   funext w
   match w with
-  | 0 | 1 | 2 | 3 => simp only [diamond, h]; simp [μ₅, table₅, table₅']
+  | 0 | 1 | 2 | 3 => simp only [diamond, aPart, h]; simp [μ₅, table₅, table₅']
 
 /-- `diamond` violates (C3), by Table 5 (Theorem 6). -/
 theorem not_diamondRevision_c3 : ¬ (diamondRevision (Fin 4)).C3 := by
@@ -306,10 +349,10 @@ def table₆' : Fin 4 → ℕ
   | 3 => 1
 
 theorem diamond_table₆ : diamond table₆ μ₅ = table₆' := by
-  have h : rank table₆ μ₅ = 0 := rank_eq_of _ _ ⟨0, by decide, rfl⟩ (by decide)
+  have h : rank table₆ μ₅ = 0 := (rank_eq_zero_iff _).2 ⟨0, by decide, rfl⟩
   funext w
   match w with
-  | 0 | 1 | 2 | 3 => simp only [diamond, h]; simp [μ₅, table₆, table₆']
+  | 0 | 1 | 2 | 3 => simp only [diamond, aPart, h]; simp [μ₅, table₆, table₆']
 
 /-- `diamond` violates (C4), by Table 6 (Theorem 6). -/
 theorem not_diamondRevision_c4 : ¬ (diamondRevision (Fin 4)).C4 := by
