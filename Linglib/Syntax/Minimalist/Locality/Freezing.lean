@@ -87,7 +87,7 @@ theorem obeysFreezing_append_iff :
   simp [obeysFreezing_append_iff]
 
 /-- A further External Merge obeys Freezing exactly when the derivation does. -/
-@[simp] theorem obeysFreezing_append_em_iff {item : SyntacticObject} {side : Edge} :
+@[simp] theorem obeysFreezing_append_em_iff {item : LinearizedSyntacticObject} {side : Edge} :
     (d.append [.em side item]).ObeysFreezing ↔ d.ObeysFreezing := by
   simp [obeysFreezing_append_iff]
 

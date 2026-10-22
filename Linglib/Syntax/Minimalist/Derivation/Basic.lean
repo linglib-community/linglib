@@ -13,11 +13,12 @@ public import Linglib.Syntax.Minimalist.Merge.SyntacticObject
 # Derivations
 
 An ordered derivation is an initial syntactic object with a sequence of steps. External Merge adds
-an item, and Internal Merge raises a mover, re-merging it with the current object in which its
+an item built in its own workspace, and Internal Merge raises a mover, re-merging it with the current object in which its
 occurrences are replaced by the trace of its head; Internal Merge also comes in two stages,
 `extract` and `remerge`, through a stack of copies. An admissible derivation is the iterated
 algebraic Merge on the workspace of its initial object and its items. The side on which a step
-places its daughter is a linearization datum that only externalization reads.
+places its daughter, and the order of an item's daughters, are linearization data that only
+externalization reads.
 
 ## Main definitions
 
@@ -67,15 +68,16 @@ open RoseTree UnorderedTree SyntacticObject
 
 /-! ### Steps -/
 
-/-- A derivation step. A Merge step attaches its new daughter on an `Edge` of the mother, a
-linearization datum that externalization reads and the derived object ignores. `im` records only
+/-- A derivation step. A Merge step attaches its new daughter on an `Edge` of the mother, and an
+External Merge step merges its item as built in its own workspace, with the order of its daughters:
+linearization data that externalization reads and the derived object ignores. `im` records only
 the mover; the trace it leaves is that of its head under the trace encoder the step is applied
 with. Internal Merge is also available in its two stages, `extract` and `remerge`
 ([marcolli-chomsky-berwick-2025] Proposition 1.4.2), so that several copies can wait on the stack
 of the workspace. -/
 inductive Step where
   /-- External Merge, the new item as the daughter on `side`. -/
-  | em (side : Edge) (item : SyntacticObject)
+  | em (side : Edge) (item : LinearizedSyntacticObject)
   /-- Internal Merge raises `mover` to the daughter on `side`, the left unless stated otherwise,
   leaving the trace of its head in its place. -/
   | im (mover : SyntacticObject) (side : Edge := .left)
@@ -115,14 +117,12 @@ def yield (c : Cfg SyntacticObject) : Multiset LexicalItem.Token :=
 end Derivation.Cfg
 
 /-- The object a step builds from the current one, the copies on the stack aside. External Merge
-    adds the item on the given side, Internal Merge merges the remainder and the mover, leaving
-    the trace of its head under `τ`, and an extraction leaves the remainder. `remerge` needs the
-    stack (`Step.run`). -/
+    adds the item, Internal Merge merges the remainder and the mover, leaving the trace of its head
+    under `τ`, and an extraction leaves the remainder. `remerge` needs the stack (`Step.run`). -/
 noncomputable def Step.apply (step : Step) (current : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
   match step with
-  | .em .left item => merge item current
-  | .em .right item => merge current item
+  | .em _ item => merge item current
   | .im mover _ => merge (deleteAccessible mover current τ) mover
   | .extract mover => deleteAccessible mover current τ
   | .remerge _ => current
@@ -133,26 +133,20 @@ noncomputable def Step.run (step : Step) (c : Derivation.Cfg SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : Derivation.Cfg SyntacticObject :=
   match step, c.stack with
   | .extract mover, st => ⟨step.apply c.current τ, mover :: st⟩
-  | .remerge side, m :: st => ⟨(Step.em side m).apply c.current τ, st⟩
+  | .remerge _, m :: st => ⟨merge m c.current, st⟩
   | _, st => ⟨step.apply c.current τ, st⟩
 
 variable {τ : SyntacticObject → Option LexicalItem.Token}
 
-theorem Step.apply_em_left (item current : SyntacticObject) :
-    (Step.em .left item).apply current τ = merge item current := rfl
-
-theorem Step.apply_em_right (item current : SyntacticObject) :
-    (Step.em .right item).apply current τ = merge current item := rfl
+theorem Step.apply_em_right (item : LinearizedSyntacticObject) (current : SyntacticObject) :
+    (Step.em .right item).apply current τ = merge current item := merge_comm _ _
 
 theorem Step.apply_im (mover : SyntacticObject) (side : Edge) (current : SyntacticObject) :
     (Step.im mover side).apply current τ = merge (deleteAccessible mover current τ) mover := rfl
 
 /-- The sides build the same object; they differ only at externalization. -/
-theorem Step.apply_em (side : Edge) (item current : SyntacticObject) :
-    (Step.em side item).apply current τ = merge item current := by
-  cases side
-  · rfl
-  · exact merge_comm current item
+theorem Step.apply_em (side : Edge) (item : LinearizedSyntacticObject) (current : SyntacticObject) :
+    (Step.em side item).apply current τ = merge item current := rfl
 
 /-- A step is a Merge, external or internal, rather than one of the two stages of Internal
 Merge. -/
@@ -168,7 +162,7 @@ def Step.mover? : Step → Option SyntacticObject
   | .im mover _ | .extract mover => some mover
   | .em _ _ | .remerge _ => none
 
-@[simp] theorem Step.mover?_em (side : Edge) (item : SyntacticObject) :
+@[simp] theorem Step.mover?_em (side : Edge) (item : LinearizedSyntacticObject) :
     (Step.em side item).mover? = none := rfl
 
 @[simp] theorem Step.mover?_im (mover : SyntacticObject) (side : Edge) :
@@ -182,7 +176,7 @@ def Step.leftward : Step → Step
   | .extract mover => .extract mover
   | .remerge _ => .remerge
 
-@[simp] theorem Step.leftward_em (side : Edge) (item : SyntacticObject) :
+@[simp] theorem Step.leftward_em (side : Edge) (item : LinearizedSyntacticObject) :
     (Step.em side item).leftward = .em .left item := rfl
 
 @[simp] theorem Step.leftward_im (mover : SyntacticObject) (side : Edge) :
@@ -202,8 +196,7 @@ theorem Step.apply_leftward (step : Step) (current : SyntacticObject) :
 /-- A step and its leftward form reach the same configuration. -/
 theorem Step.run_leftward (step : Step) (c : Derivation.Cfg SyntacticObject) :
     step.leftward.run c τ = step.run c τ := by
-  obtain ⟨cur, _ | ⟨m, st⟩⟩ := c <;> cases step <;>
-    first | rfl | simp only [Step.run, Step.leftward, Step.apply_em]
+  obtain ⟨cur, _ | ⟨m, st⟩⟩ := c <;> cases step <;> rfl
 
 /-- Internal Merge is an extraction followed by merging the copy back
     ([marcolli-chomsky-berwick-2025] Proposition 1.4.2). -/
@@ -211,7 +204,7 @@ theorem Step.run_im (mover : SyntacticObject) (side : Edge) (c : Derivation.Cfg 
     (Step.im mover side).run c τ = (Step.remerge side).run ((Step.extract mover).run c τ) τ := by
   obtain ⟨cur, st⟩ := c
   show (⟨_, st⟩ : Derivation.Cfg SyntacticObject) = ⟨_, st⟩
-  rw [Step.apply_em, Step.apply_im, merge_comm]
+  rw [Step.apply_im, merge_comm]
   rfl
 
 /-! ### Derivations as workspace Merges
@@ -226,7 +219,7 @@ admissible here. -/
 
 /-- The item an External Merge step introduces. -/
 def Step.items : Step → Workspace
-  | .em _ item => {item}
+  | .em _ item => {↑item}
   | .im _ _ | .extract _ | .remerge _ => 0
 
 /-- The items a list of steps introduces. -/
@@ -245,7 +238,7 @@ noncomputable def Step.mergeOp (step : Step)
     (current : SyntacticObject) :
     ConnesKreimer ℤ (UnorderedTree Vertex) →ₗ[ℤ] ConnesKreimer ℤ (UnorderedTree Vertex) :=
   match step with
-  | .em _ item => Merge.mergeOpC traceEncoder Vertex.bare current.val item.val
+  | .em _ item => Merge.mergeOpC traceEncoder Vertex.bare current.val item.toSyntacticObject.val
   | .im mover _ => Merge.mergeOpC traceEncoder Vertex.bare (deleteAccessible mover current).val
       mover.val ∘ₗ Merge.mergeOpUnitC traceEncoder mover.val
   | .extract mover => Merge.mergeOpUnitC traceEncoder mover.val
@@ -256,7 +249,7 @@ noncomputable def Step.mergeOp (step : Step)
     is not a trace. -/
 def Step.Admissible (current : SyntacticObject)
     (W : Workspace) : Step → Prop
-  | .em _ item => ∀ U ∈ W, current ∉ U.terms ∧ item ∉ U.terms
+  | .em _ item => ∀ U ∈ W, current ∉ U.terms ∧ ↑item ∉ U.terms
   | .im mover _ => mover.val.value.isLeft ∧ current.terms.count mover = 1 ∧ current ≠ mover ∧
       ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms
   | .extract _ | .remerge _ => False
@@ -270,7 +263,7 @@ theorem Step.mergeOp_workspace {step : Step}
   cases step with
   | em side item =>
     rw [Step.apply_em, merge_comm]
-    exact mergeOpC_node_residual traceEncoder current item h
+    exact mergeOpC_node_residual traceEncoder current ↑item h
   | im mover _ =>
     obtain ⟨hm, hc, hne, hW⟩ := h
     exact mergeOpC_im_residual hm hc hne hW
@@ -474,32 +467,33 @@ end Derivation
 
 /-! ### Carrier tests -/
 
-private def demoTok (i : Nat) : SyntacticObject := SyntacticObject.leaf ⟨.of .N [], i⟩
+private def demoTok (i : Nat) : LexicalItem.Token := ⟨.of .N [], i⟩
 
 example :
     (Derivation.mk (demoTok 0)
       [Step.em .left (demoTok 1), Step.im (demoTok 1), Step.em .right (demoTok 2),
-        Step.im (demoTok 2) .right]).movedItems = [demoTok 1, demoTok 2] := by
-  simp [Derivation.movedItems, demoTok]
+        Step.im (demoTok 2) .right]).movedItems = [↑(demoTok 1), ↑(demoTok 2)] := by
+  simp [Derivation.movedItems]
 
 example : (Derivation.mk (demoTok 0) [Step.em .left (demoTok 1)]).length = 1 := rfl
 
 /-- Extension keeps the movers and adds the new ones. -/
 example :
     ((Derivation.mk (demoTok 0) [Step.em .left (demoTok 1)]).append
-      [Step.im (demoTok 1)]).movedItems = [demoTok 1] := by
-  simp [Derivation.movedItems, Derivation.append, demoTok]
+      [Step.im (demoTok 1)]).movedItems = [↑(demoTok 1)] := by
+  simp [Derivation.movedItems, Derivation.append]
 
 /-- Raising the item a derivation has just merged is admissible, so `mergeOpList_initial` applies
     to it. -/
 example :
     (Derivation.mk (demoTok 0) [Step.em .left (demoTok 1), Step.im (demoTok 1)]).Admissible := by
-  have hne : merge (demoTok 1) (demoTok 0) ≠ demoTok 1 := fun h ↦ by
+  have hne : merge ↑(demoTok 1) ↑(demoTok 0) ≠ (↑(demoTok 1) : SyntacticObject) := fun h ↦ by
     have := congrArg (fun s : SyntacticObject ↦ s.val.numNodes) h
-    simp [demoTok] at this
+    simp at this
   simp only [Derivation.Admissible, Step.AdmissibleList, Step.Admissible, Step.itemsList_cons,
-    Step.itemsList_nil, Step.items, Step.apply_em_left, add_zero, Multiset.notMem_zero,
-    IsEmpty.forall_iff, implies_true, and_true, true_and, ne_eq, hne, not_false_eq_true]
+    Step.itemsList_nil, Step.items, Step.apply_em, add_zero, Multiset.notMem_zero,
+    IsEmpty.forall_iff, implies_true, and_true, true_and, ne_eq,
+    LinearizedSyntacticObject.toSyntacticObject_leaf, hne, not_false_eq_true]
   refine ⟨rfl, ?_⟩
   rw [terms_merge, Multiset.count_cons_of_ne hne.symm]
   simp [demoTok]

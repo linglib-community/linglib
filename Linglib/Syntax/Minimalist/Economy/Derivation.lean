@@ -137,11 +137,11 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.va
   cases step with
   | em side item =>
     simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
-    have hs := emTerm_mem current.val item.val (W.map Subtype.val)
-    have hm := UnorderedTree.accessibleCount_merge none current.val item.val
+    have hs := emTerm_mem current.val (item : SyntacticObject).val (W.map Subtype.val)
+    have hm := UnorderedTree.accessibleCount_merge none current.val (item : SyntacticObject).val
       (traceLeafCount_lt_numNodes hcur) (traceLeafCount_lt_numNodes hitems)
     have := NoComplexityLoss.of_componentMap hs
-      (X := UnorderedTree.node Vertex.bare {current.val, item.val})
+      (X := UnorderedTree.node Vertex.bare {current.val, (item : SyntacticObject).val})
       ((NoComplexityLoss.map_componentMap_merge_iff hs
         (hasExtractionCost_accessibleSize_cutSummandsCN hs (emTerm_lexical _ hcur hitems))
         (fun T ↦ by simp) (emTerm_crown ..)
