@@ -85,6 +85,12 @@ instance : ∀ (a : Vertex) (ks : Multiset Vertex), Decidable (Vertex.Licenses a
   | .inl none, ks => inferInstanceAs (Decidable (Multiset.card ks = 2))
   | .inr _, ks => inferInstanceAs (Decidable (ks = 0))
 
+/-- The licensing of a vertex depends only on how many children it has. -/
+theorem Vertex.licenses_iff_of_card_eq {a : Vertex} {ks ls : Multiset Vertex}
+    (h : Multiset.card ks = Multiset.card ls) : a.Licenses ks ↔ a.Licenses ls := by
+  rcases a with (_ | _) | _ <;>
+    simp only [Vertex.Licenses, ← Multiset.card_eq_zero, h]
+
 end SyntacticObject
 
 /-- An unordered tree over `Vertex` is a syntactic object when every vertex licenses its

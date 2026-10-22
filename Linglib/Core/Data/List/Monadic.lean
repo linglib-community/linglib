@@ -17,6 +17,8 @@ start. [UPSTREAM] candidate for `Init/Data/List/Monadic.lean`.
 ## Main results
 
 * `List.foldl_eq_of_foldlM_eq_some`: a successful partial fold projects to the total fold.
+* `List.map_foldlM`: a partial fold whose steps commute with a projection maps to the projected
+  partial fold.
 -/
 
 @[expose] public section
@@ -34,5 +36,17 @@ theorem foldl_eq_of_foldlM_eq_some (hf : ∀ b a b', f b a = some b' → π b' =
     obtain ⟨c, hc, h⟩ := Option.bind_eq_some_iff.1 h
     rw [foldl_cons, ← hf b a c hc]
     exact foldl_eq_of_foldlM_eq_some hf h
+
+/-- A partial fold whose steps commute with `π` maps under `π` to the partial fold of the
+projected steps. -/
+theorem map_foldlM {f : β → α → Option β} {g : γ → α → Option γ}
+    (hf : ∀ b a, (f b a).map π = g (π b) a) :
+    ∀ (l : List α) (b : β), (l.foldlM f b).map π = l.foldlM g (π b)
+  | [], _ => rfl
+  | a :: l, b => by
+    rw [foldlM_cons, foldlM_cons, ← hf b a]
+    cases f b a with
+    | none => rfl
+    | some b' => exact map_foldlM hf l b'
 
 end List

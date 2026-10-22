@@ -217,6 +217,15 @@ instance : @Trans (RoseTree α) (RoseTree α) (RoseTree α) IsSubtree IsSubtree 
 theorem IsSubtree.of_mem_children {c t : RoseTree α} (h : c ∈ t.children) : IsSubtree c t :=
   Relation.ReflTransGen.single h
 
+/-- Relabelling preserves the subtree relation. -/
+theorem IsSubtree.map {β : Type*} {s t : RoseTree α} (f : α → β) (h : IsSubtree s t) :
+    IsSubtree (s.map f) (t.map f) :=
+  Relation.ReflTransGen.lift (RoseTree.map f) (fun c u hc ↦ by
+    obtain ⟨a, cs⟩ := u
+    change RoseTree.map f c ∈ (RoseTree.map f (node a cs)).children
+    rw [map_node]
+    exact List.mem_map_of_mem hc) _ _ h
+
 /-- The subtrees of `t` are exactly the values of `subtreeAt t` at addresses inside `t`. -/
 theorem isSubtree_iff_exists_subtreeAt {s t : RoseTree α} :
     IsSubtree s t ↔ ∃ p, t.subtreeAt p = some s := by

@@ -46,12 +46,14 @@ links are in `SyntacticObject/Locality.lean`.
   undefined (`headIndex?`, `SyntacticObject/Position.lean`), so that a phrase with a specifier
   merged in place still has a maximal projection to locate a copy in.
 * A chain here is the copies an object contains; the replay of a derivation
-  (`Derivation.externalize?`) builds overt chains with bound traces, while covert movement,
-  sharing and copies without antecedents are available to the representation only.
+  (`Derivation.externalize?`) builds overt chains, while covert movement and sharing are available
+  to the representation only. Remnant movement carries a deleted copy away from its antecedent,
+  so an externalized object can have orphan traces.
 
 ## TODO
 
-* A successful `Derivation.externalize?` has no deleted copy without an antecedent.
+* Chains on the copy object of `Derivation.replayWithCopies?` (`Derivation/Copy.lean`), the
+  positions holding one term, with the token chains here as their case without remnant movement.
 
 ## References
 

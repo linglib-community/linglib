@@ -157,6 +157,12 @@ def SyntacticObject.tracePlanar (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : PlanarSyntacticObject :=
   (τ s).elim PlanarSyntacticObject.trace PlanarSyntacticObject.traceOf
 
+/-- The planar trace of `s` is the trace leaf of its label. -/
+theorem SyntacticObject.tracePlanar_val (s : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token) :
+    (s.tracePlanar τ).val = .node (.inr (τ s)) [] := by
+  unfold tracePlanar; cases τ s <;> rfl
+
 @[simp] theorem SyntacticObject.toSyntacticObject_tracePlanar (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token) :
     (s.tracePlanar τ).toSyntacticObject = s.headTrace τ := by
