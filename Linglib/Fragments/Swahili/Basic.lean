@@ -14,7 +14,8 @@ traditional numbering. A noun of a class carries its prefix, *ki-kapu* 'basket' 
 adjective, the numeral and the verb. A controller gender is the pair of classes a noun takes
 its agreements from, and Corbett's outline of the gender forms, after Welmers, gives the noun
 prefixes and the verbal agreements of each. A verb agrees with its subject by a prefix, the
-class prefix for a nominal subject and a person prefix for a speech-act participant.
+class prefix for a nominal subject and a person prefix for a speech-act participant. In the
+negative indicative *ha-* precedes the subject prefix, changing in the three persons singular.
 
 ## Main definitions
 
@@ -23,10 +24,14 @@ class prefix for a nominal subject and a person prefix for a speech-act particip
   genders as pairs of classes
 * `Swahili.subjectPrefix`: the subject prefixes of the person cells, the third person those of
   classes 1 and 2
+* `Swahili.NounClass.negSubjPrefix`, `Swahili.negativeSubjectPrefix`: the negative subject
+  prefixes of the classes and of the person cells
 
 ## Main results
 
 * `Swahili.Gender.faithful_subjPrefix`: subject agreement distinguishes the five genders
+* `Swahili.negativeSubjectPrefix_eq_iff`: a negative person prefix is *ha-* before the
+  affirmative one exactly in the plural
 
 ## Implementation notes
 
@@ -38,17 +43,11 @@ class prefix for a nominal subject and a person prefix for a speech-act particip
   *mw-* before a vowel in classes 1 and 3, *ji-* or nothing in class 5, and a nasal that
   assimilates to the stem in classes 9 and 10.
 
-## TODO
-
-* The second person plural prefix *m-* is not attested in the sources opened.
-
 ## References
 
+* [E. O. Ashton, *Swahili Grammar (Including Intonation)* (1947)][ashton-1947]
 * [G. G. Corbett, *Gender* (1991)][corbett-1991]
-* [B. Heine, *Possession: Cognitive Sources, Forces, and Grammaticalization*
-  (1997)][heine-1997]
 * [T. Scott, *Two Types of Resumptive Pronouns in Swahili* (2021)][scott-2021]
-* [L. Stassen, *Predicative Possession* (2009)][stassen-2009]
 -/
 
 @[expose] public section
@@ -85,16 +84,17 @@ inductive NounClass where
   | cl14
   /-- *ku-*, the infinitive class: *ku-la* 'to eat'. -/
   | cl15
-  /-- *pa-*, a locative class: *pa-na watu wengi* 'there are many people'. -/
+  /-- *pa-*, a locative class of definite place: *hapa pa-na miti* 'there are trees here'. -/
   | cl16
-  /-- *ku-*, a locative class: *ku-na chakula* 'there is food'. -/
+  /-- *ku-*, a locative class of indefinite place: *nje ku-na watu* 'there are some people
+  outside'. -/
   | cl17
-  /-- *mu-*, a locative class, with the connective *mw-a* of *uvungu-ni mw-a kiti* 'under a
-  chair'. -/
+  /-- *mu-*, a locative class of area or withinness: *kisima-ni m-na maji* 'there is water in
+  the well'. -/
   | cl18
   deriving DecidableEq, Repr, Fintype
 
-/-- The subject prefix of the class on the verb. -/
+/-- The subject prefix of the class on the verb, *m-* in class 18 before a consonant. -/
 def NounClass.subjPrefix : NounClass → Morph
   | .cl1 => .pref "a"
   | .cl2 => .pref "wa"
@@ -110,7 +110,7 @@ def NounClass.subjPrefix : NounClass → Morph
   | .cl15 => .pref "ku"
   | .cl16 => .pref "pa"
   | .cl17 => .pref "ku"
-  | .cl18 => .pref "mu"
+  | .cl18 => .pref "m"
 
 /-! ### Genders -/
 
@@ -166,5 +166,31 @@ def subjectPrefix : Paradigm Morph :=
     (.personNumber .first .plural, .pref "tu"),
     (.personNumber .second .plural, .pref "m"),
     (.personNumber .third .plural, NounClass.cl2.subjPrefix)]
+
+/-! ### Negative subject prefixes -/
+
+/-- The negative *ha-* of the indicative, prefixed to the subject prefix. -/
+def ha : Morph := .pref "ha"
+
+/-- The negative subject prefix of a class is *ha-* before its subject prefix, into which the
+*a-* of class 1 is elided. -/
+def NounClass.negSubjPrefix : NounClass → List Morph
+  | .cl1 => [ha]
+  | c => [ha, c.subjPrefix]
+
+/-- The negative subject prefixes of the person cells are *si-*, *hu-* and *ha-* in the
+singular and *ha-* before *tu-*, *m-* and *wa-* in the plural. -/
+def negativeSubjectPrefix : Paradigm (List Morph) :=
+  [(.personNumber .first .singular, [.pref "si"]), (.personNumber .second .singular, [.pref "hu"]),
+    (.personNumber .third .singular, NounClass.cl1.negSubjPrefix),
+    (.personNumber .first .plural, [ha, .pref "tu"]),
+    (.personNumber .second .plural, [ha, .pref "m"]),
+    (.personNumber .third .plural, NounClass.cl2.negSubjPrefix)]
+
+/-- A negative person prefix is *ha-* before the affirmative one exactly in the plural, the
+three persons singular changing. -/
+theorem negativeSubjectPrefix_eq_iff : ∀ c ∈ Bundle.personNumberCells,
+    negativeSubjectPrefix.realize c = (subjectPrefix.realize c).map ([ha, ·]) ↔ c.IsPlural := by
+  decide
 
 end Swahili
