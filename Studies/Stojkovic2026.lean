@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Data.Forms.Stojkovic2026
+public import Linglib.Data.Wordlist.Stojkovic2026
 public import Linglib.Phonology.Hiatus
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
 public import Linglib.Phonology.OptimalityTheory.Tableau
@@ -59,7 +59,7 @@ support and which changes no outcome.
 
 namespace Stojkovic2026
 
-open Phonology OptimalityTheory Data.Forms
+open Phonology OptimalityTheory Data.Wordlist
 
 /-! ### Segments -/
 
@@ -80,7 +80,7 @@ def vowel (back high : Bool) : Segment :=
 
 /-! ### Contexts and candidates -/
 
-deriving instance Fintype for Forms.Root
+deriving instance Fintype for Wordlist.Root
 
 /-- The theme after the verbalizer is /-a-/ or /-je-/. -/
 inductive Theme where
@@ -90,7 +90,7 @@ inductive Theme where
 
 /-- The stem-final consonant before the verbalizer, plain or palatal by the root: a plain
 consonant has no backness, and a palatal is [−back]. -/
-def Forms.Root.segment : Forms.Root → Segment
+def Wordlist.Root.segment : Wordlist.Root → Segment
   | .plain => Segment.ofSpecs [(.syllabic, false), (.consonantal, true), (.high, false)]
   | .palatal =>
     Segment.ofSpecs [(.syllabic, false), (.consonantal, true), (.high, true), (.back, false)]
@@ -103,7 +103,7 @@ def Theme.segment : Theme → Segment
 
 /-- A context is the stem-final consonant before the verbalizer and the theme after it. -/
 structure Context where
-  stemFinal : Forms.Root
+  stemFinal : Wordlist.Root
   theme : Theme
   deriving DecidableEq, Fintype, Repr
 
@@ -213,13 +213,13 @@ def paperConstraints : List (Constraint Candidate) :=
 
 /-- Over the paper's constraints [uv] does at least as well as [ov] on every constraint and
 better on DEP[−high], before /-a-/. -/
-theorem uv_le_ov (s : Forms.Root) :
+theorem uv_le_ov (s : Wordlist.Root) :
     (∀ con ∈ paperConstraints ⟨s, .a⟩, con (.fill true true) ≤ con (.fill true false)) ∧
       depNonhigh ⟨s, .a⟩ (.fill true true) < depNonhigh ⟨s, .a⟩ (.fill true false) := by
   revert s; decide
 
 /-- No ranking of the paper's constraints gives [ov], since [uv] harmonically bounds it. -/
-theorem uv_bounds_ov (s : Forms.Root) {rk : List (Constraint Candidate)}
+theorem uv_bounds_ov (s : Wordlist.Root) {rk : List (Constraint Candidate)}
     (hrk : rk.Perm (paperConstraints ⟨s, .a⟩)) :
     Candidate.fill true false ∉
       (Tableau.ofList (candidates ⟨s, .a⟩) rk).optimal := by
@@ -265,7 +265,7 @@ def spelling (k : Candidate) : String :=
 
 /-- `context? a` is the context of the verbalizer in the form `a` analyses. The root is plain or
 palatal by the table the form comes from, and the theme is the morph after the verbalizer. -/
-def context? (a : Forms.Analysis) : Option Context := do
+def context? (a : Wordlist.Analysis) : Option Context := do
   let t ← match (← a.form.morphs[2]?).toList.head? with
     | some 'a' => some Theme.a
     | some 'j' => some .je
@@ -274,23 +274,23 @@ def context? (a : Forms.Analysis) : Option Context := do
 
 /-- The verbalizer a form is written with. Belarusian writes the reduced vowel of [ov] as
 *a*, and the paper takes it to be /o/. -/
-def verbalizer? (f : Form Forms.Cell) : Option String :=
+def verbalizer? (f : Form Wordlist.Cell) : Option String :=
   f.morphs[1]?.map fun s ↦ if f.lexeme.variety = "Belarusian" ∧ s = "av" then "ov" else s
 
 /-- A group generates a form when the form is written with the group's verbalizer for its
 context. -/
-def Generates (g : Group) (a : Forms.Analysis) : Prop :=
+def Generates (g : Group) (a : Wordlist.Analysis) : Prop :=
   ∃ c ∈ context? a, verbalizer? a.form = some (spelling c (g.form c))
 
-instance (g : Group) (a : Forms.Analysis) : Decidable (Generates g a) :=
+instance (g : Group) (a : Wordlist.Analysis) : Decidable (Generates g a) :=
   inferInstanceAs (Decidable (∃ c ∈ context? a, _))
 
 /-- The varieties of the two tables. -/
-def varieties : List String := (Forms.lexemes.map (·.variety)).dedup
+def varieties : List String := (Wordlist.lexemes.map (·.variety)).dedup
 
 /-- The analysed forms of a variety. -/
-def formsOf (variety : String) : List Forms.Analysis :=
-  Forms.analyses.filter (·.form.lexeme.variety = variety)
+def formsOf (variety : String) : List Wordlist.Analysis :=
+  Wordlist.analyses.filter (·.form.lexeme.variety = variety)
 
 /-- For every variety exactly one group generates all of its forms, the infinitive-stem forms
 after a plain and after a palatal root and the present forms alike. The Bulgarian and

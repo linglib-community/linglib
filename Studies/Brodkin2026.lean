@@ -8,7 +8,7 @@ public import Linglib.Syntax.Command
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Brodkin2026
-public import Linglib.Data.Forms.Brodkin2026
+public import Linglib.Data.Wordlist.Brodkin2026
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -58,8 +58,8 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 * The c-command argument reads a phrase-structure tree of the ditransitive clause (90), built
   from each example's words, with `RoseTree.CCommands`.
 * A parse is built from the syllable count of the inserted form, its vowels in
-  `Data.Forms.Brodkin2026`, whose 'who' forms are the surface forms of (42); what follows the head
-  is a word whose first syllable is footed or unfooted under penultimate stress (14), (15).
+  `Data.Wordlist.Brodkin2026`, whose 'who' forms are the surface forms of (42); what follows the
+  head is a word whose first syllable is footed or unfooted under penultimate stress (14), (15).
 
 ## TODO
 
@@ -83,7 +83,7 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 
 namespace Brodkin2026
 
-open Prosody OptimalityTheory DistributedMorphology Morphology.Exponence Data.Forms
+open Prosody OptimalityTheory DistributedMorphology Morphology.Exponence Data.Wordlist
 
 /-! ### The vocabulary -/
 
@@ -102,16 +102,16 @@ inductive Feature
 namespace Head
 
 /-- A head's unmarked allomorph, its φ-medial form in (44). -/
-def short : Head → Form Forms.Cell
-  | thisInHand => Forms.this_in_hand_short | this => Forms.this_short | that => Forms.that_short
-  | neg => Forms.neg_short | what => Forms.what_short | which => Forms.which_short
-  | who => Forms.who_short
+def short : Head → Form Wordlist.Cell
+  | thisInHand => Wordlist.this_in_hand_short | this => Wordlist.this_short
+  | that => Wordlist.that_short | neg => Wordlist.neg_short | what => Wordlist.what_short
+  | which => Wordlist.which_short | who => Wordlist.who_short
 
 /-- A head's marked allomorph, its φ-final form in (44). -/
-def long : Head → Form Forms.Cell
-  | thisInHand => Forms.this_in_hand_long | this => Forms.this_long | that => Forms.that_long
-  | neg => Forms.neg_long | what => Forms.what_long | which => Forms.which_long
-  | who => Forms.who_long
+def long : Head → Form Wordlist.Cell
+  | thisInHand => Wordlist.this_in_hand_long | this => Wordlist.this_long
+  | that => Wordlist.that_long | neg => Wordlist.neg_long | what => Wordlist.what_long
+  | which => Wordlist.which_long | who => Wordlist.who_long
 
 /-- The neighborhood of a head, with a v⁰ one terminal toward the clause or not. -/
 def neighborhood (h : Head) (verbalized : Bool) : Neighborhood (Finset Feature) :=
@@ -120,19 +120,19 @@ def neighborhood (h : Head) (verbalized : Bool) : Neighborhood (Finset Feature) 
 end Head
 
 /-- The pairs of the heads are the top-down suppletion relations of the forms table. -/
-theorem relations_eq : Forms.relations.map (fun r ↦ (r.form, r.target)) =
+theorem relations_eq : Wordlist.relations.map (fun r ↦ (r.form, r.target)) =
     [.thisInHand, .this, .that, .neg, .what, .which, .who].map fun h : Head ↦ (h.short, h.long) :=
   rfl
 
 /-- The syllables of a form of (44), one to each vowel. -/
-def syllables (f : Form Forms.Cell) : ℕ := f.segments.countP (· ∈ ["a", "e", "i", "o", "u"])
+def syllables (f : Form Wordlist.Cell) : ℕ := f.segments.countP (· ∈ ["a", "e", "i", "o", "u"])
 
 /-- Each unmarked allomorph is a monosyllable and each marked one longer. -/
 theorem syllables_short_long (h : Head) : syllables h.short = 1 ∧ 2 ≤ syllables h.long := by
   cases h <;> decide
 
 /-- A Vocabulary Item inserts a form of (44). -/
-abbrev Item := VocabularyItem Feature (Form Forms.Cell)
+abbrev Item := VocabularyItem Feature (Form Wordlist.Cell)
 
 /-- The vocabulary in PRIORITY's order: (57a), √WHAT as *apa* under v⁰, then each head's
 unconditioned unmarked item before its marked one. -/
@@ -346,7 +346,7 @@ structure Row where
   /-- The input at its head. -/
   input : Input
   /-- The allomorph the head takes. -/
-  form : Form Forms.Cell
+  form : Form Wordlist.Cell
 
 /-- The heads by the names the examples give them. -/
 def headTable : List (String × Head) :=
@@ -549,7 +549,7 @@ variable {V : Type*}
 
 private theorem not_exists_of_rows {A : Input → V}
     (h : ∃ d ∈ rows, ∃ e ∈ rows, A d.input = A e.input ∧ d.form ≠ e.form) :
-    ¬ ∃ f : V → Form Forms.Cell, ∀ d ∈ rows, f (A d.input) = d.form := by
+    ¬ ∃ f : V → Form Wordlist.Cell, ∀ d ∈ rows, f (A d.input) = d.form := by
   rintro ⟨f, hf⟩
   obtain ⟨d, hd, e, he, hA, hne⟩ := h
   exact hne ((hf d hd).symm.trans (by rw [hA]; exact hf e he))
@@ -559,7 +559,7 @@ neighborhood and of the syntax of the head and the next word gives the attested 
 stranded head taking its marked allomorph before a footed syllable and its unmarked one before an
 unfooted one, as in (76a) and (76b). -/
 theorem forms_not_function_of_constituency :
-    ¬ ∃ f : Neighborhood (Finset Feature) × Constituency → Form Forms.Cell,
+    ¬ ∃ f : Neighborhood (Finset Feature) × Constituency → Form Wordlist.Cell,
       ∀ d ∈ rows, f (d.input.neighborhood, d.input.constituency) = d.form :=
   not_exists_of_rows (A := fun x ↦ (x.neighborhood, x.constituency)) (by decide)
 
@@ -569,16 +569,16 @@ allomorphs, a stranded demonstrative taking its unmarked allomorph before an unf
 its maximal φ and its marked one before an unfooted syllable of the next, as in (86a) and
 (86b). -/
 theorem forms_not_function_of_footed :
-    ¬ ∃ f : Neighborhood (Finset Feature) × Constituency × Bool → Form Forms.Cell,
+    ¬ ∃ f : Neighborhood (Finset Feature) × Constituency × Bool → Form Wordlist.Cell,
       ∀ d ∈ rows, f (d.input.neighborhood, d.input.constituency, d.input.footed) = d.form :=
   not_exists_of_rows (A := fun x ↦ (x.neighborhood, x.constituency, x.footed)) (by decide)
 
-variable {R : Type*} [Rule R Input (Form Forms.Cell)] [Preorder R]
+variable {R : Type*} [Rule R Input (Form Wordlist.Cell)] [Preorder R]
   [DecidableRel (Applies : R → Input → Prop)] [DecidableRel (· < · : R → R → Prop)]
   (w : RuleSet R)
 
 private theorem not_realizes_of_not_exists {A : Input → V}
-    (h : ¬ ∃ f : V → Form Forms.Cell, ∀ d ∈ rows, f (A d.input) = d.form)
+    (h : ¬ ∃ f : V → Form Wordlist.Cell, ∀ d ∈ rows, f (A d.input) = d.form)
     (hw : ∀ r ∈ w, ∀ ⦃x y : Input⦄, A x = A y → (Applies r x ↔ Applies r y)) :
     ¬ ∀ d ∈ rows, w.realizeMinimal d.input = some d.form := fun hr ↦
   h ⟨fun y ↦ (Function.extend A w.realizeMinimal (fun _ ↦ none) y).getD Head.what.short,
@@ -678,7 +678,7 @@ argument taking its marked allomorph before *guru* (78a) and its unmarked one be
 (78b), the applied argument outside its c-command domain. Vocabulary Insertion that sees only a
 head's c-command domain, inserting cyclically from the bottom up, cannot insert them. -/
 theorem forms_not_function_of_cCommanded :
-    ¬ ∃ f : Neighborhood (Finset Feature) × List String → Form Forms.Cell,
+    ¬ ∃ f : Neighborhood (Finset Feature) × List String → Form Wordlist.Cell,
       ∀ x ∈ ditransitiveRows, f (x.1.input.neighborhood, x.2) = x.1.form := by
   rintro ⟨f, hf⟩
   obtain ⟨x, hx, y, hy, he, hne⟩ : ∃ x ∈ ditransitiveRows, ∃ y ∈ ditransitiveRows,

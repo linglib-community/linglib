@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Experiments.Steriade1997
-public import Linglib.Data.Forms.Steriade1997
+public import Linglib.Data.Wordlist.Steriade1997
 public import Linglib.Data.PHOIBLE.Chart
 public import Linglib.Phonology.Hiatus
 public import Linglib.Phonology.OptimalityTheory.Tableau
@@ -69,7 +69,7 @@ violates it in (16a). The stems that (14) prints only in spelling have the segme
 
 namespace Steriade1997
 
-open OptimalityTheory Phonology Data.PHOIBLE Data.Forms
+open OptimalityTheory Phonology Data.PHOIBLE Data.Wordlist
 
 /-! ### Lexical conservatism conditions -/
 
@@ -148,14 +148,14 @@ structure Allomorph where
   /-- The stressed syllables. -/
   stressed : Finset ℕ
   /-- The cell. -/
-  cell : Forms.Cell
+  cell : Wordlist.Cell
   deriving DecidableEq
 
 namespace Allomorph
 
 /-- The allomorph of a form is its segments before the first boundary, with the syllables an
 accent marks as stressed, in the form's cell. -/
-def ofForm (f : Form Forms.Cell) : Allomorph :=
+def ofForm (f : Form Wordlist.Cell) : Allomorph :=
   let w := (f.segments.span (· ∉ boundaries)).1
   ⟨w.map segment, ((w.filter fun x ↦ (segment x).IsVowel).findIdxs (· ∈ accented)).toFinset,
     f.cell⟩
@@ -169,27 +169,27 @@ end Allomorph
 
 /-- The segments after the first boundary of a form, the noun after an adjective or the suffix
 after a stem. -/
-def following (f : Form Forms.Cell) : List Segment :=
+def following (f : Form Wordlist.Cell) : List Segment :=
   ((f.segments.span (· ∉ boundaries)).2.drop 1).map segment
 
 /-- The listed allomorphs of a lexeme are the forms of its paradigms, which (8) and (13)
 print. -/
 def listed (x : Lexeme) : Finset Allomorph :=
-  (((Forms.paradigms.filter (·.lexeme = x)).flatMap (·.forms)).map .ofForm).toFinset
+  (((Wordlist.paradigms.filter (·.lexeme = x)).flatMap (·.forms)).map .ofForm).toFinset
 
 /-! ### French liaison -/
 
 namespace Liaison
 
 /-- The liaison forms the sources record for an adjective, accepted or marked. -/
-def liaisonForms (x : Lexeme) : List (Form Forms.Cell) :=
-  (Forms.all ++ Forms.marked).filter fun f ↦ f.lexeme = x ∧ f.cell = Forms.masc_liaison
+def liaisonForms (x : Lexeme) : List (Form Wordlist.Cell) :=
+  (Wordlist.all ++ Wordlist.marked).filter fun f ↦ f.lexeme = x ∧ f.cell = Wordlist.masc_liaison
 
 /-- The candidates for the liaison form of an adjective are its recorded liaison allomorphs and
 its listed allomorphs, all in the masculine liaison cell, as in (8). -/
 def candidates (x : Lexeme) : Finset Allomorph :=
   ((liaisonForms x).map Allomorph.ofForm).toFinset ∪
-    (listed x).image fun a ↦ { a with cell := Forms.masc_liaison }
+    (listed x).image fun a ↦ { a with cell := Wordlist.masc_liaison }
 
 /-- The final consonant of an allomorph, if it ends in one. -/
 def finalConsonant (a : Allomorph) : Finset Segment :=
@@ -240,41 +240,42 @@ def syllableRanking : List (Constraint Allomorph) :=
   [lexC L, noHiatus n, lexSyllable L, lexVGender L]
 
 /-- The noun *espoir*, as (3b) transcribes it after *vain*. -/
-def espoir : List Segment := following Forms.vain_espoir
+def espoir : List Segment := following Wordlist.vain_espoir
 
 /-- Under Lex C] ≫ \*Hiatus, the paper's (8), a recorded liaison form wins iff the sources accept
 it. Both forms of *vain espoir* win, and *joli enfant* with its hiatus beats *\*jolit enfant*,
 whose [t] has no precedent. -/
-theorem mem_optimal_iff : ∀ f ∈ Forms.all ++ Forms.marked, f.cell = Forms.masc_liaison →
+theorem mem_optimal_iff : ∀ f ∈ Wordlist.all ++ Wordlist.marked, f.cell = Wordlist.masc_liaison →
     (Allomorph.ofForm f ∈ (tableau f.lexeme (hiatusRanking (following f))).optimal ↔
-      f ∈ Forms.all) := by
+      f ∈ Wordlist.all) := by
   decide +kernel
 
 /-- The citation masculine *[vɛ̃] espoir* loses on \*Hiatus, leaving the two winners of (8b). -/
 theorem vain_optimal :
-    (tableau Forms.Lexemes.vain (hiatusRanking espoir)).optimal =
-      {.ofForm Forms.vain_espoir, .ofForm Forms.vain_espoir_fem} := by
+    (tableau Wordlist.Lexemes.vain (hiatusRanking espoir)).optimal =
+      {.ofForm Wordlist.vain_espoir, .ofForm Wordlist.vain_espoir_fem} := by
   decide +kernel
 
 /-- In the split-base effect (11), *[vɛ̃n] espoir* takes its consonant from the feminine and its
 vowel from the masculine. It satisfies Lex C], \*Hiatus and Lex 'V-gender, and being identical to
 no listed allomorph it violates Lex σ'. -/
 theorem split_base :
-    (genderRanking espoir (listed Forms.Lexemes.vain)).map (· (.ofForm Forms.vain_espoir)) =
+    (genderRanking espoir (listed Wordlist.Lexemes.vain)).map (· (.ofForm Wordlist.vain_espoir)) =
       [0, 0, 0, 1] ∧
-    ∀ l ∈ listed Forms.Lexemes.vain,
-      l.segments ≠ (Allomorph.ofForm Forms.vain_espoir).segments := by
+    ∀ l ∈ listed Wordlist.Lexemes.vain,
+      l.segments ≠ (Allomorph.ofForm Wordlist.vain_espoir).segments := by
   decide +kernel
 
 /-- Speakers ranking Lex 'V-gender above Lex σ' say the split-base *[vɛ̃n] espoir* (10). -/
 theorem vain_split :
-    (tableau Forms.Lexemes.vain (genderRanking espoir)).optimal = {.ofForm Forms.vain_espoir} := by
+    (tableau Wordlist.Lexemes.vain (genderRanking espoir)).optimal =
+      {.ofForm Wordlist.vain_espoir} := by
   decide +kernel
 
 /-- Speakers ranking Lex σ' above Lex 'V-gender say the feminine *[vɛn] espoir* (p. 10). -/
 theorem vain_feminine :
-    (tableau Forms.Lexemes.vain (syllableRanking espoir)).optimal =
-      {.ofForm Forms.vain_espoir_fem} := by
+    (tableau Wordlist.Lexemes.vain (syllableRanking espoir)).optimal =
+      {.ofForm Wordlist.vain_espoir_fem} := by
   decide +kernel
 
 end Liaison
@@ -307,7 +308,7 @@ def onsetful (w : List Segment) : Finset ℕ :=
     fun p ↦ p.2.any fun q ↦ !decide q.IsVowel).toFinset
 
 /-- The suffix *-able*, [əbl̩], after the morph boundary of the printed *remédiable*. -/
-def able : List Segment := following Forms.remediable
+def able : List Segment := following Wordlist.remediable
 
 /-- \*Lapse σσσ (p. 15) is violated when the *-able* form has three syllables with onsets in
 one stretch of stressless syllables. -/
@@ -318,24 +319,24 @@ def noLapse : Constraint Allomorph := Constraint.binary fun a ↦
 
 /-- The verb of a base. -/
 def lexeme : Base → Lexeme
-  | .remedy => Forms.Lexemes.remedy
-  | .parody => Forms.Lexemes.parody
+  | .remedy => Wordlist.Lexemes.remedy
+  | .parody => Wordlist.Lexemes.parody
 
 /-- The *-able* derivations the sources record on a base. -/
-def derivations (b : Base) : List (FormRelation (Form Forms.Cell)) :=
-  Forms.relations.filter (·.form.lexeme = lexeme b)
+def derivations (b : Base) : List (FormRelation (Form Wordlist.Cell)) :=
+  Wordlist.relations.filter (·.form.lexeme = lexeme b)
 
 /-- The verbal stem of the *-able* form of a derivation with a stress pattern of (14). Unchanged
 it is the verb, shifted to the second syllable it is the stem of the printed *-able* form, and on
 the first and third syllables it is the verb restressed. -/
-def candidate (r : FormRelation (Form Forms.Cell)) : Pattern → Allomorph
+def candidate (r : FormRelation (Form Wordlist.Cell)) : Pattern → Allomorph
   | .sameAsBase => .ofForm r.form
-  | .second => { Allomorph.ofForm r.target with cell := Forms.verb }
+  | .second => { Allomorph.ofForm r.target with cell := Wordlist.verb }
   | .firstThird => { Allomorph.ofForm r.form with stressed := {0, 2} }
 
 /-- The tableau of a derivation's *-able* form under a ranking of conditions on the verb's listed
 allomorphs, its candidates those of (14). -/
-def tableau (r : FormRelation (Form Forms.Cell))
+def tableau (r : FormRelation (Form Wordlist.Cell))
     (cs : Finset Allomorph → List (Constraint Allomorph)) :=
   Tableau.ofList (Finset.univ.image (candidate r)) (cs (listed r.form.lexeme))
 
@@ -353,13 +354,13 @@ theorem derivations_ne_nil : ∀ b, derivations b ≠ [] := by
 
 /-- The stem of the verb lapses before *-able*, and the stem stressed on its second syllable
 does not (16). -/
-theorem noLapse_candidate : ∀ r ∈ Forms.relations,
+theorem noLapse_candidate : ∀ r ∈ Wordlist.relations,
     noLapse (candidate r .sameAsBase) = 1 ∧ noLapse (candidate r .second) = 0 := by
   decide +kernel
 
 /-- A stem stressed on its third syllable has no stressed precedent there, which is why
 *rèmedíable* and *pàrodíable* are dispreferred (p. 16). -/
-theorem lexStress_firstThird : ∀ r ∈ Forms.relations,
+theorem lexStress_firstThird : ∀ r ∈ Wordlist.relations,
     lexStress (listed r.form.lexeme) (candidate r .firstThird) = 1 := by
   decide +kernel
 

@@ -1,7 +1,7 @@
 module
 
 public import Studies.Benua1997
-public import Linglib.Data.Forms.Alderete2001
+public import Linglib.Data.Wordlist.Alderete2001
 public import Linglib.Data.PHOIBLE.Chart
 public import Linglib.Phonology.Segmental.PHOIBLE
 
@@ -70,7 +70,7 @@ past tense *yón-da*; the two agree on the accent the derivative inherits.
 namespace Alderete2001
 
 open OptimalityTheory Benua1997
-open Forms (OORelation)
+open Wordlist (OORelation)
 
 /-! ### Transderivational anti-faithfulness -/
 
@@ -305,15 +305,15 @@ theorem cogo_coke :
   decide
 
 /-- The input of a plural of (6) is its singular followed by the plural suffix. -/
-def pluralInput (r : Data.Forms.FormRelation Forms.Analysis) : List Segment :=
+def pluralInput (r : Data.Wordlist.FormRelation Wordlist.Analysis) : List Segment :=
   (word r.form.form.form ++ suffix r.target.form.form).map segment
 
 /-- Every plural of (6) is a winner of the exchange ranking among all the voicings of its
 segments, the voiced *bed-e*, *luð-e* and the devoiced *čok-e*, *owet-e* alike. -/
-theorem plurals : ∀ r ∈ Forms.analysisRelations, r.target.relation = some .exchange →
+theorem plurals : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some .exchange →
     segments r.target.form.form ∈ (tableau (derivation (segments r.form.form.form) (pluralInput r))
       (voicings (segments r.target.form.form)) recursive exchange .exchange).optimal := by
-  have h : ∀ r ∈ Forms.analysisRelations, r.target.relation = some .exchange →
+  have h : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some .exchange →
       segments r.target.form.form ∈ voicings (segments r.target.form.form) ∧
         identVoice (derivation (segments r.form.form.form) (pluralInput r)
           (segments r.target.form.form)) .base .derivative = 1 := by
@@ -453,7 +453,7 @@ theorem root_dominance :
 
 /-- The words of (1), (12), (17), (18) are those of the data with an underlying form; the base of a
 derivative is the first morph of it, and an underived word has none. -/
-def base (x : Forms.Analysis) : List Char :=
+def base (x : Wordlist.Analysis) : List Char :=
   if x.relation.isSome then stem (x.underlying.getD "") else []
 
 /-- **One grammar for every word** (§3.4). With ¬OO_Dom-MAX(Ac) over IO-MAX(Ac) and CULMIN, the
@@ -461,7 +461,7 @@ summary ranking derives each word of (1), (12), (17), (18) from its input over e
 at most one accent, the dominant derivatives (17), (18) like the recessive (1) and the underived
 *hasi* (28). An underived word has no base, so it rates its candidates alike on every OO
 constraint, whichever relation it is evaluated under. -/
-theorem rows : ∀ x ∈ Forms.analyses, ∀ u ∈ x.underlying,
+theorem rows : ∀ x ∈ Wordlist.analyses, ∀ u ∈ x.underlying,
     eval grammar (base x) (word u) (word x.form.form) (x.relation.getD .dominant) =
       {word x.form.form} := by
   simp only [eval_eq]
@@ -600,7 +600,7 @@ theorem toneless_wins :
 /-- **One grammar for every word.** With ¬OO_Dom-NOFLOP(Tone) over IO-NOFLOP(Tone), the summary
 ranking derives each derived form of (42) and (48) from its base, the dragging tone mutating and
 the falling tone staying. -/
-theorem rows : ∀ r ∈ Forms.analysisRelations, r.target.relation = some .dominant →
+theorem rows : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some .dominant →
     eval grammar (word r.form.form.form) (word r.form.form.form ++ suffix r.target.form.form)
       (word r.target.form.form) = {word r.target.form.form} := by
   simp only [eval_eq]

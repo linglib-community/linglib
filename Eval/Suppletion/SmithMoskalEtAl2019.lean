@@ -7,7 +7,7 @@ public import Studies.SmithMoskalEtAl2019
 /-!
 # Scoring theories of root suppletion on Smith, Moskal, Xu, Kang and Bobaljik (2019)
 
-The data are the pronoun paradigms the paper analyzes, read from `Data/Forms/SmithMoskalEtAl2019`
+The data are the pronoun paradigms the paper analyzes, read from `Data/Wordlist/SmithMoskalEtAl2019`
 (`SmithMoskalEtAl2019.paradigm`). Over the case hierarchy the Wardaman third singular and the
 Khinalugh second singular are AAB, the Icelandic and Russian first singular ABB and the Lezgian
 first singular AAA; over the number hierarchy the Awtuw first person is ABB and the Yagua second

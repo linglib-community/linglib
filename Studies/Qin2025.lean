@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Root.Basic
-public import Linglib.Data.Forms.Qin2025
+public import Linglib.Data.Wordlist.Qin2025
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Tactic.DeriveFintype
 
@@ -48,7 +48,7 @@ as well.
 
 namespace Qin2025
 
-open Morphology Data.Forms
+open Morphology Data.Wordlist
 
 /-! ### The base definition and *-fer* (§3.1) -/
 
@@ -105,27 +105,27 @@ theorem tier_card :
 /-! ### The Mandarin case study (§4, Appendix A) -/
 
 /-- A form's judgments on the four criteria, read from the appendix's codes. -/
-def interpret (f : Form Forms.Cell) : Option Row := do
-  let c1 ← match (f.cell.boundness : Option Forms.Boundness) with
+def interpret (f : Form Wordlist.Cell) : Option Row := do
+  let c1 ← match (f.cell.boundness : Option Wordlist.Boundness) with
     | some .free => some true
     | some .bound => some false
     | none => none
-  let c2 ← match (f.cell.positionalFlexibility : Option Forms.PositionalFlexibility) with
+  let c2 ← match (f.cell.positionalFlexibility : Option Wordlist.PositionalFlexibility) with
     | some .flexible => some true
     | some .left | some .right => some false
     | none => none
-  let c3 ← match (f.cell.phonologicalRichness : Option Forms.PhonologicalRichness) with
+  let c3 ← match (f.cell.phonologicalRichness : Option Wordlist.PhonologicalRichness) with
     | some .one => some true
     | some .toneless => some false
     | none => none
-  let c4 ← match (f.cell.meaningLexicality : Option Forms.MeaningLexicality) with
+  let c4 ← match (f.cell.meaningLexicality : Option Wordlist.MeaningLexicality) with
     | some .lexical => some true
     | some .nonLexical => some false
     | none => none
   pure ⟨c1, c2, c3, c4⟩
 
 /-- The number of criteria a form fails. -/
-def violations? (f : Form Forms.Cell) : Option ℕ := (interpret f).map Row.violations
+def violations? (f : Form Wordlist.Cell) : Option ℕ := (interpret f).map Row.violations
 
 /-- The appendix's group of a form, canonical roots first, then non-canonical roots by the number
 of criteria violated. -/
@@ -139,22 +139,22 @@ def group? : String → Option ℕ
 
 /-- Every form is classified on all four criteria, and its group is the number it fails. -/
 theorem forms_group :
-    ∀ a ∈ Forms.analyses, group? a.group = violations? a.form ∧ (violations? a.form).isSome := by
+    ∀ a ∈ Wordlist.analyses, group? a.group = violations? a.form ∧ (violations? a.form).isSome := by
   decide +kernel
 
 /-- A phonologically deficient morpheme is maximally non-canonical: only the bottom cell of the
 space holds a toneless morpheme. -/
 theorem deficient_maximal :
-    ∀ f ∈ Forms.all, ∀ row ∈ interpret f, row.c3 = false → row.violations = 4 := by
+    ∀ f ∈ Wordlist.all, ∀ row ∈ interpret f, row.c3 = false → row.violations = 4 := by
   decide +kernel
 
 /-- Each of the five tiers has a member: canonical 厂 *chǎng* (Table 3), 不 *bù* deviating on
 meaning alone, bound and fixed 霸 *bà*, schematic 性 *xìng*, and the toneless 边 *-bian* and
 个 *-ge* meeting no criterion. -/
 theorem mandarin_tiers :
-    violations? Forms.chang = some 0 ∧ violations? Forms.bu_2 = some 1 ∧
-      violations? Forms.ba_2 = some 2 ∧ violations? Forms.xing_4 = some 3 ∧
-      violations? Forms.bian = some 4 ∧ violations? Forms.ge_2 = some 4 := by
+    violations? Wordlist.chang = some 0 ∧ violations? Wordlist.bu_2 = some 1 ∧
+      violations? Wordlist.ba_2 = some 2 ∧ violations? Wordlist.xing_4 = some 3 ∧
+      violations? Wordlist.bian = some 4 ∧ violations? Wordlist.ge_2 = some 4 := by
   decide
 
 end Qin2025

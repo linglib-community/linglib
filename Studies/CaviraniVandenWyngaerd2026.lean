@@ -9,7 +9,7 @@ public import Linglib.Phonology.Segmental.ElementTheory
 public import Linglib.Phonology.Autosegmental.Skeleton
 public import Linglib.Phonology.StrictCV.Basic
 public import Linglib.Fragments.Slavic.Czech.Phonology
-public import Linglib.Data.Forms.CaviraniVandenWyngaerd2026
+public import Linglib.Data.Wordlist.CaviraniVandenWyngaerd2026
 
 /-!
 # Cavirani and Vanden Wyngaerd (2026): A representational analysis of Czech palatalisation
@@ -70,7 +70,7 @@ The reflexes of /ɦ/ pattern as those of /k/ do, small against medium and big.
 
 namespace CaviraniVandenWyngaerd2026
 
-open ElementTheory Data.Forms
+open ElementTheory Data.Wordlist
 open Autosegmental (Slot)
 
 /-! ### The plain consonants -/
@@ -303,7 +303,7 @@ theorem derive_comparative (h : .H ∈ b.manner.elements) :
 
 /-- The phonemes that the alternating consonant of a form writes, its second segment, read in the
 context of the whole form. -/
-def alternant (form : Form Forms.Cell) : Option (List Phonology.Segment) :=
+def alternant (form : Form Wordlist.Cell) : Option (List Phonology.Segment) :=
   match form.segments.map fun w ↦ w.toList.map Char.toLower with
   | stem :: c :: ending => do
     let whole ← Czech.Phonology.ofChars (stem ++ c ++ ending.flatten)
@@ -321,7 +321,7 @@ structure Row where
   /-- The suffix. -/
   suffix : Suffix
   /-- The suffixed form. -/
-  form : Form Forms.Cell
+  form : Form Wordlist.Cell
 
 /-- The suffixes, by the names of the relations in the data. -/
 def suffixes : List (String × Suffix) :=
@@ -330,33 +330,34 @@ def suffixes : List (String × Suffix) :=
 
 /-- The base-final consonant of a base form, the consonant of the tables that its second segment
 writes. -/
-def baseConsonant (form : Form Forms.Cell) : Option (String × Phonology.Segment × Option Segment) :=
+def baseConsonant (form : Form Wordlist.Cell) :
+    Option (String × Phonology.Segment × Option Segment) :=
   match form.segments with
   | _ :: c :: _ => consonants.find? (·.1 = c)
   | _ => none
 
 /-- The row of a relation between a base form and a suffixed form, with the base-final consonant
 of the base form. -/
-def Row.ofRelation (rel : FormRelation (Form Forms.Cell)) : Option Row := do
+def Row.ofRelation (rel : FormRelation (Form Wordlist.Cell)) : Option Row := do
   let suffix ← suffixes.lookup rel.relation
   let (_, base, melody) ← baseConsonant rel.form
   pure ⟨base, melody, suffix, rel.target⟩
 
 /-- Every pair of the tables is a row, save the two possessives that stand in for a participle. -/
-theorem isSome_ofRelation : ∀ rel ∈ Forms.relations,
+theorem isSome_ofRelation : ∀ rel ∈ Wordlist.relations,
     rel.relation ≠ "possessive" → (Row.ofRelation rel).isSome := by
   decide +kernel
 
 /-- A noun or an adjective writes the base-final consonant itself, read in the context of the
 whole form. The base form of a participle is an infinitive, whose theme vowel palatalises. -/
-theorem alternant_base : ∀ rel ∈ Forms.relations,
+theorem alternant_base : ∀ rel ∈ Wordlist.relations,
     rel.relation ∈ ["locDatFSg", "comparative", "causative"] →
       alternant rel.form = (baseConsonant rel.form).map ([·.2.1]) := by
   decide +kernel
 
 /-- The rows of the tables of small and big palatalisation, of the comparative and of the
 causative. -/
-def rows : List Row := Forms.relations.filterMap Row.ofRelation
+def rows : List Row := Wordlist.relations.filterMap Row.ofRelation
 
 /-- The root nodes that the analysis builds for a row, if it gives the base a melody. -/
 def Row.roots (a : Row) : Option (List (Slot × Segment)) := a.melody.map (derive · a.suffix)
@@ -390,8 +391,8 @@ theorem interpret_roots : ∀ a ∈ rows, a.base ≠ Czech.Phonology.h →
 palatalisation, while *knize* has [z] and *strožejší* has [ʒ]. -/
 theorem derive_h :
     derive (x ⊔ voice) comparative = derive (x ⊔ voice) locDat ∧
-      alternant Forms.knize = some [Czech.Phonology.z] ∧
-      alternant Forms.strozejsi = some [Czech.Phonology.ž] :=
+      alternant Wordlist.knize = some [Czech.Phonology.z] ∧
+      alternant Wordlist.strozejsi = some [Czech.Phonology.ž] :=
   ⟨derive_comparative (by decide), by decide +kernel⟩
 
 /-- Three structures are pronounced [ʃ], palatalised /x/ with unheaded and with headed |I|, and

@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.FinCases
-public import Linglib.Data.Forms.Svenonius2004
+public import Linglib.Data.Wordlist.Svenonius2004
 public import Linglib.Fragments.Slavic.Russian.Verbs
 public import Linglib.Fragments.Slavic.Polish.Verbs
 public import Linglib.Fragments.Slavic.Bulgarian.Verbs
@@ -57,7 +57,7 @@ namespace Svenonius2004
 
 open Morphology (Morph)
 open Morphology.Word (Tree)
-open Data.Forms (Form)
+open Data.Wordlist (Form)
 
 /-- The aspectual subtypes of superlexical prefixes, the glosses of (57)–(58) with
 [istratkova-2004]'s terminative and excessive. -/
@@ -214,25 +214,25 @@ section Russian
 open Russian.Verbs
 
 /-- (1a) *za-brosil* has lexical spatial *za-* on perfective *brositj*. -/
-def a1a : Analysis := ⟨Forms.f_1a, brosit, [(za, .lexical)]⟩
+def a1a : Analysis := ⟨Wordlist.f_1a, brosit, [(za, .lexical)]⟩
 
 /-- (1b) *za-brosil* 'gave up' has the same lexical *za-*, idiomatic. -/
-def a1b : Analysis := ⟨Forms.f_1b, brosit, [(za, .lexical)]⟩
+def a1b : Analysis := ⟨Wordlist.f_1b, brosit, [(za, .lexical)]⟩
 
 /-- (1c) *za-brosal* has superlexical inceptive *za-* on imperfective *brosatj*, the minimal pair
 with (1a) on the same fragment morph. -/
-def a1c : Analysis := ⟨Forms.f_1c, brosat, [(za, .superlexical .inceptive)]⟩
+def a1c : Analysis := ⟨Wordlist.f_1c, brosat, [(za, .superlexical .inceptive)]⟩
 
 /-- (4a) *po-vy-brasyvatj* has superlexical distributive *po-* outside lexical *vy-* on the
 secondary-imperfective stem. -/
 def a4a : Analysis :=
-  ⟨Forms.f_4a, brasyvat, [(po, .superlexical .distributive), (vy, .lexical)]⟩
+  ⟨Wordlist.f_4a, brasyvat, [(po, .superlexical .distributive), (vy, .lexical)]⟩
 
 /-- (58) *za-kuritj* has superlexical inceptive *za-*. -/
-def a58za : Analysis := ⟨Forms.f_58za, kurit, [(za, .superlexical .inceptive)]⟩
+def a58za : Analysis := ⟨Wordlist.f_58za, kurit, [(za, .superlexical .inceptive)]⟩
 
 /-- (58) *po-čitatj* has superlexical attenuative *po-*. -/
-def a58po : Analysis := ⟨Forms.f_58po, chitat, [(po, .superlexical .attenuative)]⟩
+def a58po : Analysis := ⟨Wordlist.f_58po, chitat, [(po, .superlexical .attenuative)]⟩
 
 /-- The Russian analyses. -/
 def russianAnalyses : List Analysis := [a1a, a1b, a1c, a4a, a58za, a58po]
@@ -244,7 +244,7 @@ open Polish.Verbs
 
 /-- (4c) *po-w-chodzili* has superlexical distributive *po-* outside lexical *w-*. -/
 def a4c : Analysis :=
-  ⟨Forms.f_4c, chodzic, [(po, .superlexical .distributive), (w, .lexical)]⟩
+  ⟨Wordlist.f_4c, chodzic, [(po, .superlexical .distributive), (w, .lexical)]⟩
 
 end Polish
 
@@ -253,13 +253,13 @@ open Bulgarian.Verbs
 
 /-- (3a) *po-na-razkaža*, glossed DLMT-CMLT, on perfective *razkaža*. -/
 def a3a : Analysis :=
-  ⟨Forms.f_3a, razkazha,
+  ⟨Wordlist.f_3a, razkazha,
     [(po, .superlexical .delimitative), (na, .superlexical .cumulative)]⟩
 
 /-- (3e) *iz-po-na-pre-razkaža*, glossed CMPL-DSTR-CMLT-RPET, the deepest stack cited from
 [istratkova-2004]. -/
 def a3e : Analysis :=
-  ⟨Forms.f_3e, razkazha,
+  ⟨Wordlist.f_3e, razkazha,
     [(iz, .superlexical .completive), (po, .superlexical .distributive),
      (na, .superlexical .cumulative), (pre, .superlexical .repetitive)]⟩
 
@@ -270,9 +270,9 @@ def analyses : List Analysis := [a1a, a1b, a1c, a4a, a58za, a58po, a4c, a3a, a3e
 
 /-- The starred reversals (4b) and (4d), with the classes of the prefixes in (4a) and (4c). -/
 def starred : List Analysis :=
-  [⟨Forms.f_4b, Russian.Verbs.brasyvat,
+  [⟨Wordlist.f_4b, Russian.Verbs.brasyvat,
     [(Russian.Verbs.vy, .lexical), (Russian.Verbs.po, .superlexical .distributive)]⟩,
-   ⟨Forms.f_4d, Polish.Verbs.chodzic,
+   ⟨Wordlist.f_4d, Polish.Verbs.chodzic,
     [(Polish.Verbs.w, .lexical), (Polish.Verbs.po, .superlexical .distributive)]⟩]
 
 /-! ### Results -/

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Forms.Stump2012
+public import Linglib.Data.Wordlist.Stump2012
 public import Linglib.Morphology.Paradigm.Linkage
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.Prod
@@ -58,12 +58,12 @@ described only in the docstring of the virtual form cell.
 
 namespace Stump2012
 
-open Morphology Data.Forms
+open Morphology Data.Wordlist
 
 /-- `attested pid c` is the segmentation of the first attested form with parameter `pid` in the
 cell `c`, or the empty list when there is none. -/
-def attested (pid : String) (c : Forms.Cell) : List String :=
-  ((Forms.all.find? fun f ↦ f.parameterId == pid && f.cell == c).map (·.segments)).getD []
+def attested (pid : String) (c : Wordlist.Cell) : List String :=
+  ((Wordlist.all.find? fun f ↦ f.parameterId == pid && f.cell == c).map (·.segments)).getD []
 
 /-- `Agr` lists the six person-number agreement values that the Latin verb paradigms share. -/
 inductive Agr
@@ -87,7 +87,7 @@ def Agr.number : Agr → UD.Number
   | .p1 | .p2 | .p3 => .Plur
 
 /-- `a.cell c` is the cell `c` with the person and number of the agreement value `a`. -/
-def Agr.cell (a : Agr) (c : Forms.Cell := {}) : Forms.Cell :=
+def Agr.cell (a : Agr) (c : Wordlist.Cell := {}) : Wordlist.Cell :=
   { c with person := ↑a.person, number := ↑a.number }
 
 /-- `System` splits the Latin verb cells into present-system and perfect-system cells. -/
@@ -152,7 +152,7 @@ def coepisseLinkage : Linkage CoepLex CoepStem SysCell SysCell where
 /-- `perfEnding a` is the perfect ending for the agreement `a`, read off FERRE's perfect form
 of (41) after its stem `tul`. -/
 def perfEnding (a : Agr) : List String :=
-  (attested "carry" (a.cell { system := ↑Forms.System.perf })).drop 3
+  (attested "carry" (a.cell { system := ↑Wordlist.System.perf })).drop 3
 
 /-- A form cell of `coep` realizes as the stem followed by the perfect ending. -/
 def coepRealize : CoepStem → SysCell → List String
@@ -169,7 +169,7 @@ theorem coepisse_present_no_realization :
 paper's (17) lists, with FERRE's perfect endings. -/
 theorem coepisse_perfect_realized (a : Agr) :
     coepisseLinkage.realized coepRealize .coepisse ⟨.perf, a⟩ =
-      {(attested "begin" (a.cell { system := ↑Forms.System.perf }), ⟨.perf, a⟩)} := by
+      {(attested "begin" (a.cell { system := ↑Wordlist.System.perf }), ⟨.perf, a⟩)} := by
   revert a; decide
 
 /-- COEPISSE keeps a single stem, so it is stem-invariant. -/
@@ -394,7 +394,7 @@ inductive PersNum
   deriving DecidableEq, Fintype, Repr
 
 /-- `pn.cell` is the cell of the person-number property `pn` in the forms data. -/
-def PersNum.cell : PersNum → Forms.Cell
+def PersNum.cell : PersNum → Wordlist.Cell
   | .p1sg => { person := ↑UD.Person.first, number := ↑UD.Number.Sing }
   | .p2sg => { person := ↑UD.Person.second, number := ↑UD.Number.Sing }
 

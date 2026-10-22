@@ -6,8 +6,8 @@ Three sibling directories at this level:
 |---|---|---|---|
 | `Examples/` | Per-paper typed examples (`Datum` schema) | JSON, one file per paper | `Examples/{AuthorYear}.lean` |
 | `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
-| `Forms/` | Per-paper word forms, CLDF Wordlist and Paralex (`LexemeTable`, `CellTable`, `FormTable`; custom relation, paradigm, root-class and analysis tables) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
-| `Structures/` | Per-paper CLDF language samples (`ContributionTable`, `LanguageTable`, `ParameterTable`, `CodeTable`, `ValueTable`) | JSON, one file per paper | `Structures/{AuthorYear}.lean` |
+| `Wordlist/` | Per-paper word forms, CLDF Wordlist and Paralex (`LexemeTable`, `CellTable`, `FormTable`; custom relation, paradigm, root-class and analysis tables) | JSON, one file per paper | `Wordlist/{AuthorYear}.lean` |
+| `StructureDataset/` | Per-paper CLDF language samples (`ContributionTable`, `LanguageTable`, `ParameterTable`, `CodeTable`, `ValueTable`) | JSON, one file per paper | `StructureDataset/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
 | `WALS/` | World Atlas of Language Structures | CSV (raw under `WALS/raw/`) | `Features/F*.lean`, the features some module imports |
 
@@ -41,7 +41,7 @@ schema has nested fields. `scripts/export_examples_cldf.py` exports the whole
 set as a CLDF dataset, validated in CI, with its languages in
 `Examples/languages.csv` (Glottolog 5.3).
 
-### Forms — word forms, paradigms and their analyses
+### Wordlist — word forms, paradigms and their analyses
 
 Per-paper word-level data in the shape of the Cross-Linguistic Data Formats
 Wordlist and of the Paralex standard for lexicons of inflected forms, which
@@ -64,11 +64,11 @@ analyses, so no study joins rows by identifier. Comments, cognate lists and
 the `ParameterTable` are validated but not emitted. The morphological
 counterpart of `Examples/`, whose datum is a sentence and its gloss.
 
-- **Schema**: `Linglib/Data/Forms/Schema.lean`
-- **Generator**: `scripts/gen_forms.py` (`--check` verifies sync, `--fmt` canonical JSON)
-- **Input/Output**: `Linglib/Data/Forms/{AuthorYear}.json` → `{AuthorYear}.lean`
+- **Schema**: `Linglib/Data/Wordlist/Schema.lean`
+- **Generator**: `scripts/gen_wordlist.py` (`--check` verifies sync, `--fmt` canonical JSON)
+- **Input/Output**: `Linglib/Data/Wordlist/{AuthorYear}.json` → `{AuthorYear}.lean`
 
-### Structures — CLDF language samples
+### StructureDataset — CLDF language samples
 
 Per-paper language samples in the shape of the CLDF StructureDataset: a
 `ContributionTable` (each table of the paper, emitted as its own list of rows,
@@ -82,9 +82,9 @@ as the source marks them). Each parameter with codes of its own becomes an
 inductive type; the long `ValueTable` is emitted as one row per language with
 a list-valued field per parameter, so a theorem reads each language once.
 
-- **Schema**: `Linglib/Data/Structures/Schema.lean`
-- **Generator**: `scripts/gen_structures.py` (`--check` verifies sync)
-- **Input/Output**: `Linglib/Data/Structures/{AuthorYear}.json` → `{AuthorYear}.lean`
+- **Schema**: `Linglib/Data/StructureDataset/Schema.lean`
+- **Generator**: `scripts/gen_structure_dataset.py` (`--check` verifies sync)
+- **Input/Output**: `Linglib/Data/StructureDataset/{AuthorYear}.json` → `{AuthorYear}.lean`
 
 ### Treebank coverage of non-projectivity constraints
 

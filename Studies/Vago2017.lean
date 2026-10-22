@@ -2,7 +2,7 @@ module
 
 public import Studies.Casali1997
 public import Linglib.Fragments.Hungarian.Phonology
-public import Linglib.Data.Forms.Vago2017
+public import Linglib.Data.Wordlist.Vago2017
 
 /-!
 # Vago (2017): \*VV in Hungarian
@@ -31,7 +31,7 @@ predictions for Hungarian.
 
 ## Implementation notes
 
-* Each example is a row of `Data/Forms/Vago2017` giving its two morphs, their kinds, the morph
+* Each example is a row of `Data/Wordlist/Vago2017` giving its two morphs, their kinds, the morph
   before them, the attested deletion and the hierarchy its suffix is indexed to. Long vowels are
   read off the accents of the spelling, length being prosodic in the Hungarian fragment.
 * The hierarchy that deletes the first vowel is taken as Table 2 prints it, without the
@@ -129,7 +129,7 @@ abbrev tableau (order : List Con) : Tableau (Finset ElidedVowel) order.length :=
 regular hierarchy (8a), MAX LEX ≫ \*VV ≫ MAX MI, below MAX on long vowels and on morphs of one
 segment; the reranking (8b) that deletes the first vowel, \*VV ≫ MAX MI ≫ MAX LEX; and the
 reranking (9b) that deletes neither vowel, MAX LEX ≫ MAX MI ≫ \*VV. -/
-def Forms.Hierarchy.order : Forms.Hierarchy → List Con
+def Wordlist.Hierarchy.order : Wordlist.Hierarchy → List Con
   | .regular => [.maxLong, .maxMS, .maxLex, .starVV, .maxMI]
   | .v1Deletion => [.starVV, .maxMI, .maxLex]
   | .noDeletion => [.maxLex, .maxMI, .starVV]
@@ -157,13 +157,13 @@ private theorem v1Idx_ne_v2Idx : c.v1Idx ≠ c.v2Idx := by
 /-- Under the regular hierarchy one candidate beats another when it ties with it on the `k`
 most dominant constraints and does better on the next. -/
 private theorem regular_lt {D D' : Finset ElidedVowel} (k : ℕ)
-    (hk : k < Forms.Hierarchy.regular.order.length)
-    (h : ∀ j (hj : j < k), marks c long D (Forms.Hierarchy.regular.order.get ⟨j, by omega⟩) =
-      marks c long D' (Forms.Hierarchy.regular.order.get ⟨j, by omega⟩))
-    (hi : marks c long D (Forms.Hierarchy.regular.order.get ⟨k, hk⟩) <
-      marks c long D' (Forms.Hierarchy.regular.order.get ⟨k, hk⟩)) :
-    (tableau c long Forms.Hierarchy.regular.order).profile D <
-      (tableau c long Forms.Hierarchy.regular.order).profile D' :=
+    (hk : k < Wordlist.Hierarchy.regular.order.length)
+    (h : ∀ j (hj : j < k), marks c long D (Wordlist.Hierarchy.regular.order.get ⟨j, by omega⟩) =
+      marks c long D' (Wordlist.Hierarchy.regular.order.get ⟨j, by omega⟩))
+    (hi : marks c long D (Wordlist.Hierarchy.regular.order.get ⟨k, hk⟩) <
+      marks c long D' (Wordlist.Hierarchy.regular.order.get ⟨k, hk⟩)) :
+    (tableau c long Wordlist.Hierarchy.regular.order).profile D <
+      (tableau c long Wordlist.Hierarchy.regular.order).profile D' :=
   ⟨⟨k, hk⟩, fun j hj ↦ h j.1 hj, hi⟩
 
 private theorem finset_cases (D : Finset ElidedVowel) :
@@ -177,8 +177,8 @@ decides. -/
 local macro "regular_beats " k:num : tactic =>
   `(tactic| (refine regular_lt $k (by decide) (fun j hj ↦ ?_) ?_ <;>
     [(rcases j with _ | _ | _ | _ | j <;>
-      first | omega | simp_all [Forms.Hierarchy.order, marks, maxAt_insert]);
-      simp_all [Forms.Hierarchy.order, marks, maxAt_insert, Nat.pos_iff_ne_zero]]))
+      first | omega | simp_all [Wordlist.Hierarchy.order, marks, maxAt_insert]);
+      simp_all [Wordlist.Hierarchy.order, marks, maxAt_insert, Nat.pos_iff_ne_zero]]))
 
 /-- Between a morph and a suffix that is not a root, under the regular hierarchy, the second
 vowel deletes when the first is long or the sole segment of its morph, and the first vowel deletes
@@ -187,7 +187,7 @@ either vowel or both leaves no vowel sequence. -/
 theorem optimal_regular (hl : c.left ≠ .root) (hr : c.right ≠ .root) (hv₂ : c.v2Idx ∉ long)
     (hs : c.suffixBody ≠ []) (hfree : ∀ D : Finset ElidedVowel, D.Nonempty →
       Hiatus.count (resolve c D) = 0) :
-    (tableau c long Forms.Hierarchy.regular.order).optimal =
+    (tableau c long Wordlist.Hierarchy.regular.order).optimal =
       {if c.v1Idx ∈ long ∨ c.stemBody = [] then {.second} else {.first}} := by
   have hne := v1Idx_ne_v2Idx (c := c)
   have h₀ : Hiatus.count (resolve c ∅) ≠ 0 := fun h ↦
@@ -231,22 +231,22 @@ structure Example where
   context : Context
   long : Finset ℕ
   before : List Segment
-  hierarchy : Forms.Hierarchy
+  hierarchy : Wordlist.Hierarchy
   deletion : Finset ElidedVowel
 
 /-- The morph kind of the paper's label. -/
-def kindOf : Forms.Kind → Morph.Kind
+def kindOf : Wordlist.Kind → Morph.Kind
   | .root => .root
   | .suffix => .bound .after .affix
 
 /-- The deleted vowels of the paper's label. -/
-def deletionOf : Forms.Deleted → Finset ElidedVowel
+def deletionOf : Wordlist.Deleted → Finset ElidedVowel
   | .neither => ∅
   | .first => {.first}
   | .second => {.second}
 
 /-- The example the paper's analysis of a form records. -/
-def example? (a : Forms.Analysis) : Option Example := do
+def example? (a : Wordlist.Analysis) : Option Example := do
   let l ← Hungarian.transcribe? a.left
   let r ← Hungarian.transcribe? a.right
   let c ← context? (a.beforeKind.map kindOf) (kindOf a.leftKind) (kindOf a.rightKind) l r
@@ -256,7 +256,7 @@ def example? (a : Forms.Analysis) : Option Example := do
 /-- For every example, the tableau of its candidates under the hierarchy of its suffix selects the
 attested deletion, and the form it gives, after the morph before it, spells the attested form. -/
 theorem tableaux :
-    ∀ a ∈ Forms.analyses, ∃ x ∈ example? a,
+    ∀ a ∈ Wordlist.analyses, ∃ x ∈ example? a,
       (tableau x.context x.long x.hierarchy.order).optimal = {x.deletion} ∧
         some (x.before ++ resolve x.context x.deletion) = Hungarian.transcribe? a.form.form := by
   decide +kernel
@@ -268,7 +268,7 @@ def con (x : Example) : ConstraintSet (Finset ElidedVowel) Con :=
   fun i D ↦ marks x.context x.long D i
 
 /-- The example erdő-ész of Table 2. -/
-def erdesz : Example := (example? Forms.erdesz.analysis).get (by decide +kernel)
+def erdesz : Example := (example? Wordlist.erdesz.analysis).get (by decide +kernel)
 
 private theorem con_erdesz_lt_iff (i : Con) :
     con erdesz i {.first} < con erdesz i ∅ ↔ i = .starVV := by

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Data.Forms.Audring2019
+public import Linglib.Data.Wordlist.Audring2019
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Core.Logic.Function.FactorsThrough
 public import Mathlib.Data.Fin.VecNotation
@@ -35,8 +35,8 @@ do not, and cannot state the pairing they do.
 
 ## Implementation notes
 
-* The words are the CLDF forms of `Data/Forms/Audring2019.json`, read as slot-indexed segments
-  by `Data.Forms.Form.slots`: a base slot and an affix slot on the flat carrier, one tier of the
+* The words are the CLDF forms of `Data/Wordlist/Audring2019.json`, read as slot-indexed segments
+  by `Data.Wordlist.Form.slots`: a base slot and an affix slot on the flat carrier, one tier of the
   paper's three; the same subscripting mechanism coindexes across tiers. The paper's remaining
   cases for a mother, an antonymic scale and the feature matrix of an inflectional paradigm,
   are not formalized.
@@ -63,7 +63,7 @@ def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish
 
 /-- The stored family of (8). -/
 def ishFamily : Set (Fin 2 → Flat String) :=
-  {Forms.boyish.slots, Forms.foolish.slots, Forms.childish.slots}
+  {Wordlist.boyish.slots, Wordlist.foolish.slots, Wordlist.childish.slots}
 
 /-- Any word whose affix is *-ish* instantiates the mother. -/
 theorem ishSchema_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ish") :
@@ -97,13 +97,13 @@ def baseLink : Fin 2 ⊕ Fin 2 → BaseLink := Sum.elim ![.base, .affix₁] ![.b
 
 /-- *boyish* and *childish* are sisters at the affix, since the pair factors through the link. -/
 theorem ish_affix_sisters :
-    (Sum.elim Forms.boyish.slots Forms.childish.slots).FactorsThrough affixLink := by
+    (Sum.elim Wordlist.boyish.slots Wordlist.childish.slots).FactorsThrough affixLink := by
   decide
 
 /-- *boyish* and *childish* cannot be coindexed at the base. The relation between *boy* and
 *child* is equivalence of function, not sameness, and no sister link states it. -/
 theorem not_base_sisters :
-    ¬ (Sum.elim Forms.boyish.slots Forms.childish.slots).FactorsThrough baseLink := by
+    ¬ (Sum.elim Wordlist.boyish.slots Wordlist.childish.slots).FactorsThrough baseLink := by
   decide
 
 /-- The mother relates every member of the family through its one variable. -/
@@ -117,7 +117,7 @@ theorem ishSchema_relates {w : Fin 2 → Flat String} (hw : w ∈ ishFamily) :
 theorem ishSchema_isProductive : ishSchema.IsProductive := Schema.isProductive_productive _
 
 /-- The mother generates the novel *Trumpish* with nothing stored. -/
-theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ Forms.trumpish.slots :=
+theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ Wordlist.trumpish.slots :=
   ishSchema_isProductive.generates_iff.2 (ishSchema_instantiates (by decide))
 
 /-- A fully specified word, taken as a schema, generates nothing but itself. A sister link
@@ -167,7 +167,7 @@ def fulLessWord (b : String) : FulLessVar → Flat String
 affixes. -/
 theorem careful_careless_pairs :
     fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim Forms.careful.slots Forms.careless.slots) :=
+      (Sum.elim Wordlist.careful.slots Wordlist.careless.slots) :=
   ⟨fulLessWord "care", fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl,
     funext fun p ↦ by rcases p with p | p <;> fin_cases p <;> decide⟩
 
@@ -175,7 +175,7 @@ theorem careful_careless_pairs :
 differently. -/
 theorem not_careful_clueless_pairs :
     ¬ fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim Forms.careful.slots Forms.clueless.slots) :=
+      (Sum.elim Wordlist.careful.slots Wordlist.clueless.slots) :=
   fun h ↦ absurd ((Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 0 0 rfl) (by decide)
 
 /-- A mother of the two schemas would be the meet of their descriptions, which over these slots

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Data.Forms.Booij2019
+public import Linglib.Data.Wordlist.Booij2019
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Morphology.Morphotactics.TemplateMatch
 public import Mathlib.Data.Fin.VecNotation
@@ -32,8 +32,8 @@ an adjective with the comparative template over the same three consonants
 
 ## Implementation notes
 
-* The words are the CLDF forms of `Data/Forms/Booij2019.json`, read as slot-indexed segments
-  on the flat carrier by `Data.Forms.Form.slots`; slots are `Fin n` positions. A variable
+* The words are the CLDF forms of `Data/Wordlist/Booij2019.json`, read as slot-indexed segments
+  on the flat carrier by `Data.Wordlist.Form.slots`; slots are `Fin n` positions. A variable
   standing for a sequence of sounds, the paper's `y`, is one segment holding the residue.
 * The higher-order schema for Dutch *-er* and the affixoid discussion are not formalized.
 
@@ -82,10 +82,10 @@ theorem occupation_instantiatesAt_iff {w : Fin 6 → Flat String} :
 
 /-- The nouns of (1) instantiate the template. -/
 theorem occupation_nouns :
-    occupation.InstantiatesAt occupationSub Forms.xabbaaz.slots ∧
-      occupation.InstantiatesAt occupationSub Forms.xaddaam.slots ∧
-        occupation.InstantiatesAt occupationSub Forms.bawwaab.slots ∧
-          occupation.InstantiatesAt occupationSub Forms.sammaak.slots := by
+    occupation.InstantiatesAt occupationSub Wordlist.xabbaaz.slots ∧
+      occupation.InstantiatesAt occupationSub Wordlist.xaddaam.slots ∧
+        occupation.InstantiatesAt occupationSub Wordlist.bawwaab.slots ∧
+          occupation.InstantiatesAt occupationSub Wordlist.sammaak.slots := by
   simp only [occupation_instantiatesAt_iff]
   decide
 
@@ -116,7 +116,7 @@ def xabbaazAssoc (i : Fin 6) : Option (AssocSource × Nat) :=
   (xabbaazMatch.associations.find? (·.slotIndex == i.val)).map fun a ↦ (a.source, a.melodyIndex)
 
 /-- The association lines spell out *xabbaaz*. -/
-theorem xabbaazMatch_spellout : xabbaazMatch.spellout = Forms.xabbaaz.segments := by
+theorem xabbaazMatch_spellout : xabbaazMatch.spellout = Wordlist.xabbaaz.segments := by
   decide
 
 /-- The subscripting and the association agree, as two slots carry the same part exactly when
@@ -165,11 +165,11 @@ theorem reduplication_pairs_iff {r : Fin 4 → Flat String} {b : Fin 2 → Flat 
 /-- The verbs of (12) with their bases. -/
 theorem reduplication_verbs :
     reduplication.InstantiatesAt (Sum.elim redSub baseSub)
-        (Sum.elim Forms.tetamu.slots Forms.tamu.slots) ∧
+        (Sum.elim Wordlist.tetamu.slots Wordlist.tamu.slots) ∧
       reduplication.InstantiatesAt (Sum.elim redSub baseSub)
-        (Sum.elim Forms.jejawah.slots Forms.jawah.slots) ∧
+        (Sum.elim Wordlist.jejawah.slots Wordlist.jawah.slots) ∧
       reduplication.InstantiatesAt (Sum.elim redSub baseSub)
-        (Sum.elim Forms.gegeni.slots Forms.geni.slots) := by
+        (Sum.elim Wordlist.gegeni.slots Wordlist.geni.slots) := by
   simp only [reduplication_pairs_iff]
   decide
 
@@ -214,11 +214,11 @@ theorem comparative_pairs_iff {p q : Fin 5 → Flat String} :
 /-- *kibiir* pairs with *akbar* and *tixiin* with *atxan*, and *kibiir* not with *atxan*. -/
 theorem comparative_pairs :
     comparative.InstantiatesAt (Sum.elim adjSub cmpSub)
-        (Sum.elim Forms.kibiir.slots Forms.akbar.slots) ∧
+        (Sum.elim Wordlist.kibiir.slots Wordlist.akbar.slots) ∧
       comparative.InstantiatesAt (Sum.elim adjSub cmpSub)
-        (Sum.elim Forms.tixiin.slots Forms.atxan.slots) ∧
+        (Sum.elim Wordlist.tixiin.slots Wordlist.atxan.slots) ∧
         ¬ comparative.InstantiatesAt (Sum.elim adjSub cmpSub)
-          (Sum.elim Forms.kibiir.slots Forms.atxan.slots) := by
+          (Sum.elim Wordlist.kibiir.slots Wordlist.atxan.slots) := by
   simp only [comparative_pairs_iff]
   decide
 

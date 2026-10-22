@@ -144,11 +144,11 @@ def spec(paper):
 
 def sample_row(ident):
     """A language's name and its row's codes, when a cell names a language of a paper's
-    `Data/Structures` file (`Paper.Structures.language`)."""
+    `Data/StructureDataset` file (`Paper.StructureDataset.language`)."""
     parts = ident.split(".")
-    if len(parts) < 3 or parts[-2] != "Structures":
+    if len(parts) < 3 or parts[-2] != "StructureDataset":
         return None
-    f = ROOT / "Linglib" / "Data" / "Structures" / f"{parts[-3]}.json"
+    f = ROOT / "Linglib" / "Data" / "StructureDataset" / f"{parts[-3]}.json"
     if not f.exists():
         return None
     d = json.loads(f.read_text(encoding="utf-8"))
@@ -230,12 +230,12 @@ def language_name(glottocode):
 
 def root_classes(ident):
     """The forms and root classes of a triple, when a cell names a row of a paper's
-    `Data/Forms` file (`Paper.Forms.row.roots`)."""
+    `Data/Wordlist` file (`Paper.Wordlist.row.roots`)."""
     parts = ident.split(".")
-    if "Forms" not in parts[:-1]:
+    if "Wordlist" not in parts[:-1]:
         return None
-    i = parts.index("Forms")
-    f = ROOT / "Linglib" / "Data" / "Forms" / f"{parts[i - 1]}.json"
+    i = parts.index("Wordlist")
+    f = ROOT / "Linglib" / "Data" / "Wordlist" / f"{parts[i - 1]}.json"
     if i == 0 or not f.exists():
         return None
     d = json.loads(f.read_text(encoding="utf-8"))

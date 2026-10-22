@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Root.PropertyConcept
-public import Linglib.Data.Structures.Dixon1982
+public import Linglib.Data.StructureDataset.Dixon1982
 public import Linglib.Data.UD.UPOS
 
 /-!
@@ -11,15 +11,16 @@ Dixon argues that the adjectives of a language draw on seven semantic types, and
 language's adjective class is small the types fall to its other parts of speech in a regular way.
 In a language with a closed adjective class, age, dimension, value and colour stay adjectives,
 human propensity goes to the nouns, and speed follows physical property. Table 2 records the parts
-of speech of the seven types in seventeen languages, `Dixon1982.Structures.table2`, and each of
-Dixon's generalisations holds of it with exactly the exceptions stated here: those he lists, and
-three he does not.
+of speech of the seven types in seventeen languages, `Dixon1982.StructureDataset.table2`, and each
+of Dixon's generalisations holds of it with exactly the exceptions stated here: those he lists,
+and three he does not.
 
 ## Main definitions
 
-* `Dixon1982.Structures.PartOfSpeech.parts`: the basic parts of speech a code of Table 2 involves.
-* `Dixon1982.Structures.Row.Takes`, `Dixon1982.Structures.Row.Predominantly`: some, or more than
-  a few, of a type's items are of a part of speech.
+* `Dixon1982.StructureDataset.PartOfSpeech.parts`: the basic parts of speech a code of Table 2
+  involves.
+* `Dixon1982.StructureDataset.Row.Takes`, `Dixon1982.StructureDataset.Row.Predominantly`: some,
+  or more than a few, of a type's items are of a part of speech.
 * `Dixon1982.openClass`, `Dixon1982.noClass`, `Dixon1982.closedClass`: the languages by their
   adjective class.
 
@@ -68,9 +69,9 @@ three he does not.
 
 namespace Dixon1982
 
-open Semantics Data.Structures UD
+open Semantics Data.StructureDataset UD
 
-namespace Structures
+namespace StructureDataset
 
 /-- The basic parts of speech a code of Table 2 involves. -/
 def PartOfSpeech.parts : PartOfSpeech → List UPOS
@@ -116,9 +117,9 @@ instance : Decidable (r.Predominantly t p) := inferInstanceAs (Decidable (∃ _ 
 
 end Row
 
-end Structures
+end StructureDataset
 
-open Structures
+open StructureDataset
 
 /-- The languages with an open adjective class (§1.4.3), Tzotzil only probably. -/
 def openClass : List Language := [english, dyirbal, tzotzil]

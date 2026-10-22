@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Exponence.Containment.Contiguity
-public import Linglib.Data.Forms.SmithMoskalEtAl2019
+public import Linglib.Data.Wordlist.SmithMoskalEtAl2019
 
 /-!
 # Smith, Moskal, Xu, Kang and Bobaljik (2019): Case and Number Suppletion in Pronouns
@@ -12,7 +12,7 @@ hierarchy of Caha, and to pronominal number, over a hierarchy in which the dual 
 the plural (Greenberg's Universal 34, the paper's (26)). Each hierarchy is a three-grade
 containment structure, so Elsewhere insertion over it generates exactly the contiguous
 patterns and excludes *ABA (`generable_iff_contiguous`, `aba_not_generable`); the attested
-AAA, ABB and ABC patterns are read off the pronoun paradigms of `Data/Forms/SmithMoskalEtAl2019`
+AAA, ABB and ABC patterns are read off the pronoun paradigms of `Data/Wordlist/SmithMoskalEtAl2019`
 (`paradigm`, `lezgian_aaa`, `icelandic_abb`, `russian_abb`, `awtuw_abb`), and the rules (15) for
 the Icelandic first person generate its ABB (`icelandic_abb_generated`).
 
@@ -71,55 +71,55 @@ open Morphology Morphology.Exponence Morphology.Containment
 /-! ### Paradigms from the form table -/
 
 /-- The base class the paper's pattern label assigns a form. -/
-def baseOf (a : Forms.Analysis) : ℕ :=
+def baseOf (a : Wordlist.Analysis) : ℕ :=
   match a.base with
   | .a => 0
   | .b => 1
 
 /-- Three cells in the order of the hierarchy as a paradigm of base classes. -/
-def paradigm (a b c : Forms.Analysis) : Paradigm 3 ℕ := ![baseOf a, baseOf b, baseOf c]
+def paradigm (a b c : Wordlist.Analysis) : Paradigm 3 ℕ := ![baseOf a, baseOf b, baseOf c]
 
 /-- Wardaman third singular, absolutive, ergative and dative (Table 25, [merlan-1994]). -/
 def wardaman3sg : Paradigm 3 ℕ :=
-  paradigm Forms.wardaman_3sg_abs.analysis Forms.wardaman_3sg_erg.analysis
-    Forms.wardaman_3sg_dat.analysis
+  paradigm Wordlist.wardaman_3sg_abs.analysis Wordlist.wardaman_3sg_erg.analysis
+    Wordlist.wardaman_3sg_dat.analysis
 
 /-- Khinalugh second singular (Table 24). -/
 def khinalugh2sg : Paradigm 3 ℕ :=
-  paradigm Forms.khinalugh_2sg_abs.analysis Forms.khinalugh_2sg_erg.analysis
-    Forms.khinalugh_2sg_dat.analysis
+  paradigm Wordlist.khinalugh_2sg_abs.analysis Wordlist.khinalugh_2sg_erg.analysis
+    Wordlist.khinalugh_2sg_dat.analysis
 
 /-- Icelandic first singular, nominative, accusative and dative (Table 6). -/
 def icelandic1sg : Paradigm 3 ℕ :=
-  paradigm Forms.icelandic_1sg_nom.analysis Forms.icelandic_1sg_acc.analysis
-    Forms.icelandic_1sg_dat.analysis
+  paradigm Wordlist.icelandic_1sg_nom.analysis Wordlist.icelandic_1sg_acc.analysis
+    Wordlist.icelandic_1sg_dat.analysis
 
 /-- Russian first singular (Table 10). -/
 def russian1sg : Paradigm 3 ℕ :=
-  paradigm Forms.russian_1sg_nom.analysis Forms.russian_1sg_acc.analysis
-    Forms.russian_1sg_dat.analysis
+  paradigm Wordlist.russian_1sg_nom.analysis Wordlist.russian_1sg_acc.analysis
+    Wordlist.russian_1sg_dat.analysis
 
 /-- Lezgian first singular (Table 11). -/
 def lezgian1sg : Paradigm 3 ℕ :=
-  paradigm Forms.lezgian_1sg_abs.analysis Forms.lezgian_1sg_erg.analysis
-    Forms.lezgian_1sg_dat.analysis
+  paradigm Wordlist.lezgian_1sg_abs.analysis Wordlist.lezgian_1sg_erg.analysis
+    Wordlist.lezgian_1sg_dat.analysis
 
 /-- Awtuw first person, singular, plural and dual (Table 33). -/
 def awtuw1 : Paradigm 3 ℕ :=
-  paradigm Forms.awtuw_1_sg.analysis Forms.awtuw_1_pl.analysis Forms.awtuw_1_dl.analysis
+  paradigm Wordlist.awtuw_1_sg.analysis Wordlist.awtuw_1_pl.analysis Wordlist.awtuw_1_dl.analysis
 
 /-- Yagua second person (Table 46). -/
 def yagua2 : Paradigm 3 ℕ :=
-  paradigm Forms.yagua_2_sg.analysis Forms.yagua_2_pl.analysis Forms.yagua_2_dl.analysis
+  paradigm Wordlist.yagua_2_sg.analysis Wordlist.yagua_2_pl.analysis Wordlist.yagua_2_dl.analysis
 
 /-- Wambaya first inclusive (Table 46). -/
 def wambaya1incl : Paradigm 3 ℕ :=
-  paradigm Forms.wambaya_1incl_sg.analysis Forms.wambaya_1incl_pl.analysis
-    Forms.wambaya_1incl_dl.analysis
+  paradigm Wordlist.wambaya_1incl_sg.analysis Wordlist.wambaya_1incl_pl.analysis
+    Wordlist.wambaya_1incl_dl.analysis
 
 /-- Dehu third masculine (Table 46). -/
 def dehu3m : Paradigm 3 ℕ :=
-  paradigm Forms.dehu_3m_sg.analysis Forms.dehu_3m_pl.analysis Forms.dehu_3m_dl.analysis
+  paradigm Wordlist.dehu_3m_sg.analysis Wordlist.dehu_3m_pl.analysis Wordlist.dehu_3m_dl.analysis
 
 /-! ### Containment excludes ABA, sections 3.3 and 4.2 -/
 
@@ -178,11 +178,11 @@ theorem khinalugh_aab : Setoid.ker khinalugh2sg = Setoid.ker Paradigm.aab := by 
 ergative are distinct forms on one base, where the Archi second singular's are identical, the
 {A=A}B of Table 20 the paper sets aside as a two-way contrast. -/
 theorem genuine_aab :
-    Forms.wardaman_3sg_abs.form ≠ Forms.wardaman_3sg_erg.form ∧
-      Forms.khinalugh_2sg_abs.form ≠ Forms.khinalugh_2sg_erg.form := by
+    Wordlist.wardaman_3sg_abs.form ≠ Wordlist.wardaman_3sg_erg.form ∧
+      Wordlist.khinalugh_2sg_abs.form ≠ Wordlist.khinalugh_2sg_erg.form := by
   decide
 
-theorem archi_syncretic : Forms.archi_2sg_abs.form = Forms.archi_2sg_erg.form := by decide
+theorem archi_syncretic : Wordlist.archi_2sg_abs.form = Wordlist.archi_2sg_erg.form := by decide
 
 /-- The number witnesses of Table 46 are AAB. -/
 theorem yagua_aab : Setoid.ker yagua2 = Setoid.ker Paradigm.aab := by decide

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Fintype.Option
-public import Linglib.Data.Forms.HeinzLai2013
+public import Linglib.Data.Wordlist.HeinzLai2013
 public import Linglib.Phonology.Subregular.Dependence
 public import Linglib.Phonology.Subregular.WeakDeterminism
 
@@ -94,13 +94,13 @@ def ofLetter : Char → Seg
 
 /-- `ofAnalysis a` is the underlying and the surface string of the word `a` analyses, read off
 its underlying form without the slashes and the morpheme boundary, and off its segments. -/
-def ofAnalysis (a : Forms.Analysis) : List Seg × List Seg :=
+def ofAnalysis (a : Wordlist.Analysis) : List Seg × List Seg :=
   ((a.underlying.toList.filter fun c ↦ c != '/' && c != '-').map ofLetter,
     a.form.segments.map fun s ↦ (s.toList.headD ' ' |> ofLetter))
 
 /-- Progressive harmony takes the underlying form of each Turkish genitive of Table 2 to its
 surface form. -/
-theorem ph_forms : ∀ a ∈ Forms.analyses, ph.run (ofAnalysis a).1 = (ofAnalysis a).2 := by
+theorem ph_forms : ∀ a ∈ Wordlist.analyses, ph.run (ofAnalysis a).1 = (ofAnalysis a).2 := by
   decide
 
 /-! ### Sour grapes -/

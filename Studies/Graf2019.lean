@@ -106,9 +106,9 @@ theorem isContiguous_tfae {n : ℕ} {F : Type*} (p : Paradigm n F) :
 
 /-- Every adjectival triple of [bobaljik-2012]'s Table 4.1 but the Basque doublet is feasibly
 monotonic, as Table 1's attested rows AAA *smart* and ABB *good* are. -/
-theorem feasiblyMonotone_of_ne_basque {r : Data.Forms.RootClasses Bobaljik2012.Forms.Cell}
-    (hr : r ∈ Bobaljik2012.Forms.rootClasses) (hq : ¬ Bobaljik2012.Quantifier r)
-    (hb : r.id ≠ Bobaljik2012.Forms.eus_good_on.roots.id) :
+theorem feasiblyMonotone_of_ne_basque {r : Data.Wordlist.RootClasses Bobaljik2012.Wordlist.Cell}
+    (hr : r ∈ Bobaljik2012.Wordlist.rootClasses) (hq : ¬ Bobaljik2012.Quantifier r)
+    (hb : r.id ≠ Bobaljik2012.Wordlist.eus_good_on.roots.id) :
     FeasiblyMonotone (Bobaljik2012.rootPattern r) :=
   (isContiguous_iff_feasiblyMonotone _).1 ((Bobaljik2012.isContiguous_iff_ne_basque r hr hq).2 hb)
 

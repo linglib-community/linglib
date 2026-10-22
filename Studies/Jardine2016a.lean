@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.ElgotMezei
-public import Linglib.Data.Forms.Jardine2016a
+public import Linglib.Data.Wordlist.Jardine2016a
 public import Linglib.Phonology.Tone.Plateauing
 
 /-!
@@ -31,7 +31,7 @@ the OCP-merged output is one H linked to the plateau (Section 4.4).
 
 * The conjecture of Section 5.2, after Heinz and Lai, that plateauing has no mark-up-free
   decomposition and so is not weakly deterministic, is not stated.
-* The words of `Data/Forms/Jardine2016a.json` carry the paper's string representation one symbol
+* The words of `Data/Wordlist/Jardine2016a.json` carry the paper's string representation one symbol
   per mora, a long vowel counting two; the Digo, Xhosa and Yaka data, whose plateaus interact
   with tone shift or an accentual analysis, are not encoded.
 
@@ -59,13 +59,13 @@ written `O`, an unspecified one, read off the paper's autosegmental diagrams. -/
 def tbuString (s : String) : List TBU := s.toList.map fun c ↦ if c = 'H' then .H else .O
 
 /-- `ofAnalysis a` is the underlying and the surface TBU string of the word `a` analyses. -/
-def ofAnalysis (a : Forms.Analysis) : List TBU × List TBU :=
+def ofAnalysis (a : Wordlist.Analysis) : List TBU × List TBU :=
   (tbuString a.underlyingTones, tbuString a.surfaceTones)
 
 /-- The map (36) reproduces every plateau of Section 2.2, Luganda (8) to (12), Zulu (18b) and
 Saramaccan (21), with no change for at most one H and a plateau between the outermost Hs
 otherwise. -/
-theorem utp_map_forms : ∀ a ∈ Forms.analyses, utp.map (ofAnalysis a).1 = (ofAnalysis a).2 := by
+theorem utp_map_forms : ∀ a ∈ Wordlist.analyses, utp.map (ofAnalysis a).1 = (ofAnalysis a).2 := by
   decide
 
 variable {w : List TBU} {j k : ℕ}

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Slavic.Czech.Phonology
-public import Linglib.Data.Forms.Short1993
+public import Linglib.Data.Wordlist.Short1993
 public import Mathlib.Data.Finset.Card
 
 /-!
@@ -33,7 +33,7 @@ prints, against its phonemic transcription where it gives one.
 
 namespace Short1993
 
-open Phonology Czech.Phonology Short1993.Forms
+open Phonology Czech.Phonology Short1993.Wordlist
 
 /-! ### Phonemes -/
 
