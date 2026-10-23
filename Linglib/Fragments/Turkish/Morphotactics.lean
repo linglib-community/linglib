@@ -37,7 +37,7 @@ exactly when it differs from the last segment of the stem in being a vowel.
 ## Main definitions
 
 * `Turkish.Verb.Slot`, `Turkish.Verb.Exponent`, `Turkish.Verb.template`: the slots, exponents
-  and template of the finite verb.
+  and template of the finite verb, the slots ordered as the template lists them.
 * `Turkish.Nominal.Slot`, `Turkish.Nominal.Exponent`, `Turkish.Nominal.template`: the same for
   the nominal.
 * `Turkish.Suffix`, `Suffix.attach`: a suffix in citation form, with its bracketed initial
@@ -56,6 +56,7 @@ exactly when it differs from the last segment of the stem in being a vowel.
   after a vowel-final stem, attachment is one of the repairs of `Phonology.Hiatus`, elision of
   the suffix's vowel or insertion of its bracketed consonant.
 * `realize_singleton_ne_self`: a suffix with fixed segments changes every stem it attaches to.
+* `Verb.pairwise_lt_suffixSlots`: the template lists the slots of the finite verb in order.
 
 ## Implementation notes
 
@@ -207,7 +208,10 @@ inductive Slot where
   | person
   /-- The generalizing-modality marker -DIr, position 5 (§8.3.3). -/
   | generalizing
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
+
+/-- The slots in the order of the template. -/
+instance : LinearOrder Slot := .lift' Slot.ctorIdx (by decide)
 
 /-- A person-marker group of §8.4. Group 1 follows -DI, -sA and the copular markers -(y)DI and
 -(y)sA, and group 2 follows the other position-3 markers, the copular -(y)mIş and nominal
@@ -330,6 +334,8 @@ def template : Morphology.AffixTemplate Slot where
   suffixSlots :=
     [.voice, .possibility, .negation, .auxiliary, .tam, .copula, .person, .generalizing]
   stacking := {.voice}
+
+theorem pairwise_lt_suffixSlots : template.suffixSlots.Pairwise (· < ·) := by decide
 
 end Verb
 

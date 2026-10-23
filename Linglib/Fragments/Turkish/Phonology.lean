@@ -10,8 +10,8 @@ public import Linglib.Phonology.Subregular.LocalRewrite
 # Turkish phonology
 
 This file defines the segments of Turkish, its two vowel harmonies, the voicing of a
-suffix-initial stop, and the surface form of a suffixed word, following the reference grammar
-of Göksel and Kerslake.
+suffix-initial stop or affricate, and the surface form of a suffixed word, following the
+reference grammar of Göksel and Kerslake.
 
 Turkish has one vowel for each combination of [back], [round] and [high]. Fronting harmony
 copies [back] from the preceding vowel to a suffix vowel, and rounding harmony copies [round]
@@ -21,8 +21,8 @@ high and unspecified for both features (§3.2.1). The targets of each harmony ar
 vowels lacking its feature, and a suffix vowel specified for it, such as the `o` of -(I)yor, is
 skipped and triggers what follows (§3.4). Consonants are off both tiers, except that the
 palatal l of loans such as *gol*, which Clements and Sezer discuss, carries [−back] and fronts
-the suffix (§3.4). The suffix-initial D of -DI and -DA copies [voice] from the preceding
-segment (§6.1.2).
+the suffix (§3.4). The suffix-initial D of -DI and -DA and C of -CI copy [voice] from the
+preceding segment (§6.1.2).
 
 The phonemes are segments named by their letters, and their feature values come from the
 PHOIBLE chart. A vowel keeps the chart's values for the features that distinguish the
@@ -31,7 +31,8 @@ contrastive only on the palatal lateral, so every other consonant keeps each cha
 [back], as in Clements and Sezer's analysis, where plain consonants are unspecified for the
 feature and the palatals are linked to [−back]. There are two departures from the chart. Its
 `a` is central, and the grammar's `a` is a back vowel. The palatal l is the chart's l with
-[−back]. The archiphonemes `A`, `I` and `D` are meets, the features their alternants share.
+[−back]. The archiphonemes `A`, `I`, `D` and `C` are meets, the features their alternants
+share.
 
 Before -(I)yor a stem-final `a` or `e` becomes high and then harmonizes, as in *anlıyor* from
 *anla-* and the negative *-mIyor* from *-mA* (§8.2.2, §8.2.3.3). The surface form of a word
@@ -43,8 +44,8 @@ writing one segment.
 * `a`, `e`, …, `y`: the phonemes, in Göksel and Kerslake's phonemic spelling, so that
   underlying forms mix phonemes with archiphonemes, as in `[A, c, A, K]`; `vowels` and
   `consonants` are the sets of them.
-* `A`, `I`, `D`, `K`: the suffix archiphonemes.
-* `fronting`, `rounding`, `voicing`: the two vowel harmonies and D-voicing, as
+* `A`, `I`, `D`, `C`, `K`: the suffix archiphonemes.
+* `fronting`, `rounding`, `voicing`: the two vowel harmonies and the voicing of D and C, as
   `Phonology.Harmony.System`s. The suffixes they apply to are the exponent forms of
   `Turkish.Morphotactics`.
 * `raising`: the raising of a stem-final `a` or `e` before -(I)yor, as a
@@ -60,9 +61,9 @@ writing one segment.
 * `unspecified_back_iff`, `not_unspecified_voice`: a consonant lacks [back] unless it is the
   palatal lateral, and every phoneme has a value for [voice], which the tier tests of fronting
   and voicing rely on.
-* `naturalClass_archiphoneme`: the natural class of `A`, `I` or `D` is its alternants.
-* `setFeature_back_A`, `setFeature_voice_D`: an archiphoneme with its feature filled in is one
-  of its alternants.
+* `naturalClass_archiphoneme`: the natural class of `A`, `I`, `D` or `C` is its alternants.
+* `setFeature_back_A`, `setFeature_voice_D`, `setFeature_voice_C`: an archiphoneme with its
+  feature filled in is one of its alternants.
 * `length_surface`: the surface form of a word has its length.
 
 ## Implementation notes
@@ -70,8 +71,8 @@ writing one segment.
 The raised vowel harmonizes for rounding as well as backness, as in *okşuyor* from *okşa-*, so
 raising replaces the stem vowel by the archiphoneme `I` instead of setting [high] alone. The
 loss of the suffix's own `I` after a vowel is a matter of attachment, in
-`Turkish.Morphotactics`. The letters *ç*, *f*, *ğ* and *j* write segments outside the
-inventory and have no value under `ofChar`. The grammar's examples are derived in
+`Turkish.Morphotactics`. The letters *f*, *ğ* and *j* write segments outside the inventory
+and have no value under `ofChar`. The grammar's examples are derived in
 `Studies/GokselKerslake2005.lean`.
 The inventory is PHOIBLE 2217, whose glyphs the chart entries follow, the coronals being
 dental there. `K` is `k` without a value for [continuant] and not a meet, since the meet of
@@ -146,6 +147,9 @@ def g : Segment := consonant .«ɡ»
 /-- The voiced postalveolar affricate `c`, /dʒ/. -/
 def c : Segment := consonant .«d̠ʒ»
 
+/-- The voiceless postalveolar affricate `ç`, /tʃ/. -/
+def ç : Segment := consonant .«t̠ʃ»
+
 /-- The voiceless dental fricative `s`. -/
 def s : Segment := consonant .«s̪»
 
@@ -185,7 +189,7 @@ def vowels : Finset Segment := ⟨↑[a, e, ı, i, o, ö, u, ü], by decide⟩
 
 /-- The consonants, pairwise distinct. -/
 def consonants : Finset Segment :=
-  ⟨↑[p, b, t, d, k, g, c, s, z, ş, v, h, m, n, l, l', r, y], by decide⟩
+  ⟨↑[p, b, t, d, k, g, c, ç, s, z, ş, v, h, m, n, l, l', r, y], by decide⟩
 
 /-- Every phoneme but `a` and the two laterals is a segment of PHOIBLE's Turkish inventory,
 and the chart entry of `a` is in that inventory. -/
@@ -209,6 +213,10 @@ def I : Segment := ı ⊓ i ⊓ u ⊓ ü
 and `d` otherwise (§6.1.2). It is what `t` and `d` share. -/
 def D : Segment := t ⊓ d
 
+/-- `C` is the suffix-initial affricate of -CI, which is `ç` after a voiceless consonant and `c`
+otherwise (§6.1.2). It is what `ç` and `c` share. -/
+def C : Segment := ç ⊓ c
+
 /-- `K` is the final consonant of -(y)AcAK, which is `k`, or `ğ` before a vowel (Chapter 2). It
 is `k` without a value for [continuant]. -/
 def K : Segment := Segment.restrict {.continuant}ᶜ k
@@ -217,15 +225,15 @@ def K : Segment := Segment.restrict {.continuant}ᶜ k
 fronting's tier test reads. -/
 theorem unspecified_back_iff : ∀ x ∈ consonants, x.Unspecified .back ↔ x ≠ l' := by decide
 
-/-- Every phoneme has a value for [voice], so that only `D` is a target of voicing. -/
+/-- Every phoneme has a value for [voice], so that only `D` and `C` are targets of voicing. -/
 theorem not_unspecified_voice : ∀ x ∈ vowels ∪ consonants, ¬ x.Unspecified .voice := by
   decide
 
-/-- The natural class of a vowel archiphoneme among the vowels, and of `D` among the
+/-- The natural class of a vowel archiphoneme among the vowels, and of `D` or `C` among the
 consonants, is its alternants. -/
 theorem naturalClass_archiphoneme :
     A.naturalClass vowels = {a, e} ∧ I.naturalClass vowels = {ı, i, u, ü} ∧
-      D.naturalClass consonants = {t, d} := by
+      D.naturalClass consonants = {t, d} ∧ C.naturalClass consonants = {c, ç} := by
   decide
 
 /-- `A` with [back] filled in is `a` or `e`. -/
@@ -236,6 +244,11 @@ theorem setFeature_back_A :
 /-- `D` with [voice] filled in is `d` or `t`. -/
 theorem setFeature_voice_D :
     D.setFeature .voice true = d ∧ D.setFeature .voice false = t := by
+  decide
+
+/-- `C` with [voice] filled in is `c` or `ç`. -/
+theorem setFeature_voice_C :
+    C.setFeature .voice true = c ∧ C.setFeature .voice false = ç := by
   decide
 
 /-! ### Alternations -/
@@ -256,7 +269,7 @@ def rounding : System Segment :=
       s .round = none)
     (IsTransparent := fun s ↦ ¬ s.HasValue .syllabic true)
 
-/-- A suffix-initial `D` takes the [voice] of the preceding segment (§6.1.2). -/
+/-- A suffix-initial `D` or `C` takes the [voice] of the preceding segment (§6.1.2). -/
 def voicing : System Segment :=
   System.mk' (feature := .voice)
     (IsTarget      := fun s ↦ s .voice = none)
@@ -291,7 +304,7 @@ def ofChar : Char → Option Segment
   | 'a' => some a | 'e' => some e | 'ı' => some ı | 'i' => some i
   | 'o' => some o | 'ö' => some ö | 'u' => some u | 'ü' => some ü
   | 'p' => some p | 'b' => some b | 't' => some t | 'd' => some d | 'k' => some k
-  | 'g' => some g | 'c' => some c | 's' => some s | 'z' => some z | 'ş' => some ş
+  | 'g' => some g | 'c' => some c | 'ç' => some ç | 's' => some s | 'z' => some z | 'ş' => some ş
   | 'v' => some v | 'h' => some h | 'm' => some m | 'n' => some n | 'l' => some l
   | 'r' => some r | 'y' => some y
   | _ => none
