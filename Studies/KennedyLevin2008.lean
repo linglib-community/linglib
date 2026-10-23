@@ -1,36 +1,39 @@
 module
 
-public import Linglib.Core.Algebra.Order.Interval.Set.Group
-public import Linglib.Core.Order.Interval.Set.ProjIcc
 public import Linglib.Semantics.Degree.Boundedness
+public import Mathlib.Algebra.Order.Group.PosPart
 public import Studies.HayKennedyLevin1999
 
 /-!
 # Kennedy and Levin (2008): Measure of Change
 
 This file formalizes Kennedy and Levin's account of variable telicity in degree achievements.
-Following Kennedy and McNally, a comparative such as *wider than the carpet* measures on the part
-of its adjective's scale from the comparative standard up, which Kennedy and Levin call a difference
-function. A degree achievement is built on a measure of change, the difference function at the
+Following Kennedy and McNally, a comparative such as *wider than the carpet* is the positive form
+of a difference function, which measures on the part of its adjective's scale from the comparative
+standard up. A degree achievement is built on a measure of change, the difference function at the
 degree its argument has when the event begins, applied when it ends. The scale of a measure of
 change always has a least degree and inherits any greatest degree of the adjective's scale, so
 Interpretive Economy admits a minimum standard for every degree achievement, giving the atelic
 comparative reading, and a maximum standard, giving the telic reading, exactly when the adjective's
-scale is closed above; the telic reading entails the atelic one and is preferred. *Widen* thus has
-no telic reading and never means *become wide*.
+scale is closed above. The telic reading is the positive form of the adjective at the end of the
+event, entails the atelic one and is preferred. *Widen* thus has no telic reading and never means
+*become wide*.
 
-The account agrees with Hay, Kennedy and Levin's difference values on both readings and on
-*completely* and *slightly*, and differs on measure phrases, which require at least their degree of
-change here and exactly that degree there. The English fragment's degree achievements take the
-Vendler class that Interpretive Economy gives their base scales.
+On every set of positive difference values the measure of change agrees with Hay, Kennedy and
+Levin's difference value, so the two accounts differ only in the values a modifier names: a measure
+phrase requires at least its degree of change here and exactly that degree there. The English
+fragment's degree achievements take the Vendler class that Interpretive Economy gives their base
+scales.
 
 ## Implementation notes
 
 * The difference function of `m` at `d` is `Set.projIci d ∘ m`, onto the ray `Set.Ici d` whose `⊥`
-  and `⊤` are the derived zero and the inherited maximum, and the measure of change for `x` over
-  an event from `i` to `f` is `Set.projIci (m x i) (m x f)`. The paper applies `m` to the initial
-  and final intervals of the event. The amount of change is the distance above the derived zero,
-  the positive part of the difference (`Set.coe_projIci_sub`).
+  and `⊤` are the derived zero and the inherited maximum, and `measureOfChange m x i` is the
+  difference function of `m x` at the degree `x` has at the time `i`. The paper applies `m` to the
+  initial and final intervals of the event. The verbal positive form (26) at the minimum and
+  maximum standards is `Degree.MinStandardPos` and `Degree.MaxStandardPos`, as for adjectives.
+* The amount of change is the distance above the derived zero, the positive part of the
+  difference (`coe_measureOfChange_sub`), as the paper glosses the difference function (23).
 * The minimum standard is read strictly, `⊥ < ·`, after the prose and Kennedy's positive form,
   though the verbal positive form is printed with `⪰`. An argument that begins with the greatest
   degree meets the maximum standard without changing, so the theorems relating the two readings
@@ -66,30 +69,19 @@ namespace KennedyLevin2008
 
 open Degree Aspect Set
 
-/-! ### Difference functions (23)–(24) -/
+/-! ### The measure of change (25) -/
 
-section Difference
+section MeasureOfChange
 
-variable {E δ : Type*} [LinearOrder δ] (μ : E → δ) (a b : E)
+variable {α δ T : Type*} [LinearOrder δ]
 
-/-- At the minimum standard, the difference function at `b`'s degree holds of `a` exactly
-when `a` has more of the property than `b` ((23)–(24)). -/
-theorem comparative_iff : ⊥ < projIci (μ b) (μ a) ↔ μ b < μ a :=
-  bot_lt_projIci
+/-- The measure of change of `m` for `x` from the time `i` (25) is the difference function of
+`m x` at the degree `x` has at `i`. Its value at a later time is how far `x` has moved up the
+scale, and the derived zero when it has not moved up. -/
+def measureOfChange (m : α → T → δ) (x : α) (i : T) : T → Ici (m x i) :=
+  projIci (m x i) ∘ m x
 
-/-- At a maximum standard, a comparative would hold exactly when the positive form does,
-unless the standard already has the greatest degree (fn. 16). -/
-theorem comparative_eq_top_iff [OrderTop δ] (h : μ b ≠ ⊤) :
-    projIci (μ b) (μ a) = ⊤ ↔ μ a = ⊤ := by
-  rw [projIci_eq_top, or_iff_right h]
-
-end Difference
-
-/-! ### The measure of change and its readings (25)–(27) -/
-
-section Readings
-
-variable {α δ T : Type*} [LinearOrder δ] (m : α → T → δ) (x : α) (i f : T)
+variable (m : α → T → δ) (x : α) (i : T)
 
 /-- Interpretive Economy admits the minimum standard on the scale of a measure of change, the
 maximum exactly when the adjective's scale has a greatest degree, and never the contextual
@@ -112,24 +104,35 @@ theorem defaultStandard_eq :
       if (Boundedness.ofOrder δ).HasMax then .maxEndpoint else .minEndpoint := by
   rw [Boundedness.ofOrder_Ici, Boundedness.defaultStandard_withMin]
 
-/-- The minimum-standard reading has the truth conditions of the comparative, the argument
-ending the event with more of the property than it began with ((27)). -/
-theorem minStandard_iff : ⊥ < projIci (m x i) (m x f) ↔ m x i < m x f :=
-  comparative_iff (m x) f i
+end MeasureOfChange
+
+/-! ### The readings of a degree achievement (26)–(27) -/
+
+section Readings
+
+variable {α δ T : Type*} [LinearOrder δ] {m : α → T → δ} {x : α} {i f : T}
+
+/-- The minimum-standard reading of a degree achievement (27) has the truth conditions of the
+comparative, the argument ending the event with more of the property than it began with. -/
+theorem minStandardPos_measureOfChange_iff :
+    MinStandardPos (measureOfChange m x i) f ↔ m x i < m x f :=
+  minStandardPos_projIci_comp_iff
 
 variable [OrderTop δ]
 
-/-- Unless the argument begins with the greatest degree, the maximum-standard reading holds
-exactly when it ends with that degree, as the positive form of the adjective requires ((27)). -/
-theorem maxStandard_iff (h : m x i ≠ ⊤) : projIci (m x i) (m x f) = ⊤ ↔ m x f = ⊤ :=
-  comparative_eq_top_iff (m x) f i h
+/-- Unless the argument begins with the greatest degree, the maximum-standard reading of a degree
+achievement (27) is the positive form of its adjective at the end of the event, so *straighten*
+and *straight* share their standard (§7.3.3). -/
+theorem maxStandardPos_measureOfChange_iff (h : m x i ≠ ⊤) :
+    MaxStandardPos (measureOfChange m x i) f ↔ MaxStandardPos (m x) f :=
+  maxStandardPos_projIci_comp_iff h
 
 /-- Unless the argument begins with the greatest degree, the telic reading entails the atelic
-one. -/
-theorem minStandard_of_maxStandard (h : m x i ≠ ⊤) (hmax : projIci (m x i) (m x f) = ⊤) :
-    ⊥ < projIci (m x i) (m x f) := by
-  rw [bot_lt_projIci, (maxStandard_iff m x i f h).1 hmax]
-  exact h.lt_top
+one, which is why it is preferred (§7.3.3). -/
+theorem minStandardPos_of_maxStandardPos (h : m x i ≠ ⊤)
+    (hmax : MaxStandardPos (measureOfChange m x i) f) :
+    MinStandardPos (measureOfChange m x i) f :=
+  hmax.minStandardPos h.lt_top
 
 end Readings
 
@@ -140,46 +143,62 @@ section Modifiers
 open HayKennedyLevin1999
 
 variable {α δ T : Type*} [AddCommGroup δ] [LinearOrder δ] [IsOrderedAddMonoid δ]
-  (m : α → T → δ) (x : α) (i f : T)
+  {m : α → T → δ} {x : α} {i f : T}
 
-/-- The minimum-standard reading is the reading of [hay-kennedy-levin-1999] with the
-difference value "some amount". -/
-theorem minStandard_iff_describes_someAmount :
-    ⊥ < projIci (m x i) (m x f) ↔ Describes m x someAmount i f := by
-  rw [bot_lt_projIci, describes_iff_sub_mem, someAmount, mem_Ioi, sub_pos]
+/-- The amount of change, the distance of the measure of change above its derived zero, is the
+positive part of the difference between the final and the initial degree: a positive value when
+there is a positive difference, and zero otherwise, as the paper glosses (23). -/
+theorem coe_measureOfChange_sub : (measureOfChange m x i f : δ) - m x i = (m x f - m x i)⁺ := by
+  rw [measureOfChange, Function.comp_apply, coe_projIci, max_comm, sup_eq_add_posPart_sub,
+    add_sub_cancel_left]
 
-omit [IsOrderedAddMonoid δ] in
+/-- On positive difference values the two accounts agree: a description of
+[hay-kennedy-levin-1999] whose difference values are all positive holds exactly when the amount of
+change is one of them. -/
+theorem describes_iff_of_subset_Ioi {D : Set δ} (hD : D ⊆ Ioi 0) :
+    Describes m x D i f ↔ (measureOfChange m x i f : δ) - m x i ∈ D := by
+  rw [describes_iff_sub_mem, coe_measureOfChange_sub]
+  rcases le_or_gt (m x f - m x i) 0 with h | h
+  · rw [posPart_eq_zero.2 h]
+    exact iff_of_false (fun hd ↦ (mem_Ioi.1 (hD hd)).not_ge h)
+      fun hd ↦ lt_irrefl _ (mem_Ioi.1 (hD hd))
+  · rw [posPart_eq_self.2 h.le]
+
+/-- The minimum-standard reading is the reading of [hay-kennedy-levin-1999] with the difference
+value "some amount". -/
+theorem minStandardPos_measureOfChange_iff_describes_someAmount :
+    MinStandardPos (measureOfChange m x i) f ↔ Describes m x someAmount i f := by
+  rw [minStandardPos_measureOfChange_iff, describes_iff_sub_mem, someAmount, mem_Ioi, sub_pos]
+
 /-- Against a maximal degree `top` above the initial degree, the maximum-standard reading, which
 *completely* also gives ((34a)), is the reading of [hay-kennedy-levin-1999] with *completely*. -/
-theorem maxStandard_iff_describes_completely {top : δ} (h : m x i < top) :
-    (projIci (m x i) (m x f) : δ) = top ↔ Describes m x (completely top (m x i)) i f := by
-  rw [coe_projIci, describes_iff_sub_mem, completely, mem_singleton_iff, sub_left_inj,
-    max_eq_iff]
-  exact ⟨fun h' ↦ h'.elim (fun h' ↦ absurd h'.1 h.ne) And.left,
-    fun h' ↦ .inr ⟨h', h' ▸ h.le⟩⟩
+theorem coe_measureOfChange_eq_iff_describes_completely {top : δ} (h : m x i < top) :
+    (measureOfChange m x i f : δ) = top ↔ Describes m x (completely top (m x i)) i f := by
+  rw [completely, describes_iff_of_subset_Ioi (singleton_subset_iff.2 (mem_Ioi.2 (sub_pos.2 h))),
+    mem_singleton_iff, sub_left_inj]
 
 /-- *Slightly*, a positive change up to a small degree `s` ((34b)), is the reading of
 [hay-kennedy-levin-1999] with *slightly*. -/
-theorem slightly_iff_describes_slightly (s : Ici (m x i)) :
-    ⊥ < projIci (m x i) (m x f) ∧ projIci (m x i) (m x f) ≤ s ↔
+theorem minStandardPos_and_le_iff_describes_slightly (s : Ici (m x i)) :
+    MinStandardPos (measureOfChange m x i) f ∧ measureOfChange m x i f ≤ s ↔
       Describes m x (slightly ((s : δ) - m x i)) i f := by
-  rw [bot_lt_projIci, ← Subtype.coe_le_coe, coe_projIci, max_le_iff, describes_iff_sub_mem,
-    slightly, mem_Ioc, sub_pos, sub_le_sub_iff_right]
-  exact and_congr_right fun _ ↦ and_iff_right s.2
+  rw [slightly, describes_iff_of_subset_Ioi Ioc_subset_Ioi_self, mem_Ioc, sub_pos,
+    sub_le_sub_iff_right, Subtype.coe_le_coe]
+  rfl
 
 /-- For a positive degree `n`, the amount of change is at least `n`, as a measure phrase requires
 ((32)–(33)), exactly when the event is described by the difference values of at least `n`. -/
-theorem measurePhrase_iff {n : δ} (hn : 0 < n) :
-    n ≤ (projIci (m x i) (m x f) : δ) - m x i ↔ Describes m x (Ici n) i f := by
-  rw [coe_projIci_sub, posPart_def, le_sup_iff, or_iff_left hn.not_ge, describes_iff_sub_mem,
-    mem_Ici]
+theorem le_coe_measureOfChange_sub_iff {n : δ} (hn : 0 < n) :
+    n ≤ (measureOfChange m x i f : δ) - m x i ↔ Describes m x (Ici n) i f :=
+  (describes_iff_of_subset_Ioi (Ici_subset_Ioi.2 hn)).symm
 
-/-- The exact difference value that [hay-kennedy-levin-1999] give a measure phrase entails
-the at-least reading. -/
-theorem le_of_describes_measurePhrase {n : δ} (hn : 0 < n)
+/-- The exact difference value that [hay-kennedy-levin-1999] give a measure phrase entails the
+at-least reading. -/
+theorem le_coe_measureOfChange_sub_of_describes_measurePhrase {n : δ} (hn : 0 < n)
     (h : Describes m x (measurePhrase n) i f) :
-    n ≤ (projIci (m x i) (m x f) : δ) - m x i :=
-  (measurePhrase_iff m x i f hn).2 (describes_iff_sub_mem.2 (describes_iff_sub_mem.1 h).ge)
+    n ≤ (measureOfChange m x i f : δ) - m x i :=
+  (mem_singleton_iff.1 ((describes_iff_of_subset_Ioi
+    (singleton_subset_iff.2 (mem_Ioi.2 hn))).1 h)).ge
 
 end Modifiers
 

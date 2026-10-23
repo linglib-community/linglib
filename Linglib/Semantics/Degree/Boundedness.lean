@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Interval.Set.ProjIcc
 public import Mathlib.Algebra.Order.Ring.Int
 public import Mathlib.Order.Directed
 public import Mathlib.Order.Interval.Set.Basic
@@ -19,7 +20,9 @@ about its degrees. The tag is what a lexical entry stores, since a record field 
 The negative member of an antonym pair measures on the same degrees in the reverse order, and
 `Boundedness.dual` is that operation on tags. The file also defines the standards of the positive
 form and Kennedy's Interpretive Economy, which selects among them by the tag. A scale with an
-endpoint rules out the contextual standard, and a totally closed scale prefers its maximum.
+endpoint rules out the contextual standard, and a totally closed scale prefers its maximum. A
+difference function, which measures on the ray above a degree, always has the minimum standard,
+and at it the positive form is a comparative.
 
 ## Main definitions
 
@@ -42,6 +45,8 @@ endpoint rules out the contextual standard, and a totally closed scale prefers i
 * `Boundedness.ofOrder_degreeShape`: every boundedness is that of a linear order.
 * `Boundedness.admits_withMin_iff`: a scale with a least degree adjoined admits the minimum
   standard, and the maximum exactly when the original scale has one.
+* `minStandardPos_projIci_comp_iff`: a comparative is the positive form of a difference function
+  at the minimum standard.
 * `Boundedness.defaultStandard_eq_maxEndpoint_iff`: the default standard is the maximum iff any.
 * `Boundedness.complementary_defaultStandard_dual_iff`: poles on a half-closed scale contradict.
 
@@ -344,7 +349,38 @@ def MaxStandardPos [OrderTop D] (x : α) : Prop := μ x = ⊤
 for *tall*. -/
 def RelativePos (θ : D) (x : α) : Prop := θ < μ x
 
+variable {μ} in
+/-- When the least degree is below the greatest, the positive form at the maximum standard entails
+the one at the minimum, which is why a totally closed scale prefers its maximum. -/
+theorem MaxStandardPos.minStandardPos [OrderBot D] [OrderTop D] (h : (⊥ : D) < ⊤) {x : α}
+    (hx : MaxStandardPos μ x) : MinStandardPos μ x :=
+  h.trans_eq (Eq.symm hx)
+
 end PositiveForm
+
+/-! ### Difference functions
+
+The difference function of a measure `μ` at a degree `d` is `Set.projIci d ∘ μ`, which measures on
+the ray above `d` and sends every degree at or below `d` to `d`, the derived zero. The ray has a
+least degree (`Boundedness.ofOrder_Ici`), so Interpretive Economy admits the minimum standard for
+a difference function, giving the truth conditions of a comparative with standard `d`, and the
+maximum standard exactly when the scale of `μ` has one. -/
+
+section Difference
+variable {α D : Type*} [LinearOrder D] {μ : α → D} {d : D} {x : α}
+
+/-- The positive form of a difference function at the minimum standard holds of what `μ` places
+above `d`, the comparative ([kennedy-mcnally-2005], [kennedy-levin-2008] (24)). -/
+theorem minStandardPos_projIci_comp_iff : MinStandardPos (Set.projIci d ∘ μ) x ↔ d < μ x :=
+  Set.bot_lt_projIci
+
+/-- Unless `d` is the greatest degree, the positive form of a difference function at the maximum
+standard is that of `μ` itself ([kennedy-levin-2008] fn. 16). -/
+theorem maxStandardPos_projIci_comp_iff [OrderTop D] (hd : d ≠ ⊤) :
+    MaxStandardPos (Set.projIci d ∘ μ) x ↔ MaxStandardPos μ x := by
+  rw [MaxStandardPos, MaxStandardPos, Function.comp_apply, Set.projIci_eq_top, or_iff_right hd]
+
+end Difference
 
 namespace Boundedness
 
