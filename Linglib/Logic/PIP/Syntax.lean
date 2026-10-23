@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.List.FinRange
+public import Mathlib.Order.SetNotation
 
 /-!
 # Syntax of PIP
@@ -18,7 +19,8 @@ distinguished argument. Truth is defined in `Semantics.lean` and felicity in `Fe
 * `Kind`, `Expr`, `Term`, `Formula`: the syntax, one inductive type indexed by kind.
 * `Formula.disj`, `Formula.impl`, `Formula.iff_`, `Formula.forall_`, `Formula.some_`: the defined
   connectives; `Term.sgPronoun`: a singular summation pronoun.
-* `Expr.locals`: the local variables; `Expr.subst`: substitution for a variable.
+* `Expr.vars`: the variables occurring in an expression; `Expr.locals`: its local variables;
+  `Expr.subst`: substitution for a variable.
 * `Expr.PresupFree`: expressions without presuppositions, decidably.
 * `Expr.substLabels`, `Expr.defs`, `assignment`, `Formula.expand`, `Formula.expandSelf`: label
   assignment and expansion, as a bounded fixpoint of simultaneous substitution.
@@ -97,7 +99,29 @@ def Formula.some_ (s t : Term V L P) : Formula V L P := .neg (.eq (.inter s t) .
 def Term.sgPronoun (x : V) (φ : Formula V L P) : Term V L P :=
   .presup (.sigma x φ) (.sg (.sigma x φ))
 
-/-! ### Local variables and substitution -/
+/-! ### Variables and substitution -/
+
+/-- The variables occurring in an expression, bracketed or not, bound or free. -/
+def Expr.vars : ∀ {k : Kind}, Expr V L P k → Set V
+  | _, .var x => {x}
+  | _, .bvar x => {x}
+  | _, .abs x φ => insert x φ.vars
+  | _, .sigma x φ => insert x φ.vars
+  | _, .inter s t => s.vars ∪ t.vars
+  | _, .empty => ∅
+  | _, .top => ∅
+  | _, .atom _ w ts => w.vars ∪ ⋃ i, (ts i).vars
+  | _, .eq s t => s.vars ∪ t.vars
+  | _, .subset s t => s.vars ∪ t.vars
+  | _, .mem s t => s.vars ∪ t.vars
+  | _, .sg t => t.vars
+  | _, .pl t => t.vars
+  | _, .neg φ => φ.vars
+  | _, .conj φ ψ => φ.vars ∪ ψ.vars
+  | _, .exists_ x φ => insert x φ.vars
+  | _, .labelDef _ φ => φ.vars
+  | _, .label _ => ∅
+  | _, .presup e ψ => e.vars ∪ ψ.vars
 
 section Syntax
 

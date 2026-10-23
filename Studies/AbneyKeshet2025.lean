@@ -18,9 +18,11 @@ or reference set (`SA`); modals and negation store their prejacent in a label th
 intensional functional application (`IFA`). The fragment is `Tree` and `interp` over the
 typed metalanguage `Sem`, and the paper's worked trees (47), (56), (59), (66), (93), (99)
 and (121) are derived (`interp_aRedDogBarked`, …, `interp_mostOfThemUsedIt`), the last
-reading the preceding sentence's labels through `PA`; `value_aRedDogBarked` checks
-intersubstitutability with the paper's abbreviated form, and `value_bvar_ne_var` that
-bracketing is not a matter of truth.
+reading the preceding sentence's labels through `PA`; `intersubstitutable_aRedDogBarked`
+checks intersubstitutability with the paper's abbreviated form, and
+`not_intersubstitutable_bvar_var` and `not_intersubstitutable_conj_comm` that truth-equivalent
+formulas need not be intersubstitutable, through bracketing and through the order of
+conjuncts.
 
 The applications are stated as PIP translations and their truth and felicity conditions
 proved on scenario models (`Scenario.model`) at a world of evaluation `w₀`: the paycheck
@@ -41,7 +43,7 @@ negation as summation over worlds the two readings come apart, and the double ne
 * [abney-keshet-2025]
 * [keshet-abney-2024]
 * [heim-kratzer-1998]
-* [karttunen-1974]
+* [karttunen-1974-presupposition]
 * [keshet-2018]
 * [roberts-1987]
 -/
@@ -297,28 +299,33 @@ def form92 : Fm :=
 
 variable {W E : Type}
 
-/-- The meaning of (47) is intersubstitutable with its abbreviation (92): same truth,
-felicity, local variables and label definitions. -/
-theorem value_aRedDogBarked (M : Model Sym (Atom W E)) (g : Var → Set (Atom W E)) :
-    (interp [] aRedDogBarked).value M g = form92.value M g := by
+/-- The meaning of (47) is intersubstitutable with its abbreviation (92). -/
+theorem intersubstitutable_aRedDogBarked :
+    (interp [] aRedDogBarked).Intersubstitutable (Atom W E) form92 := by
   rw [interp_aRedDogBarked]
-  refine Value.ext (propext ?_) (propext ?_) rfl rfl
-  · simp only [Formula.value, Formula.realize_conj, Formula.realize_atom, Formula.realize_eq,
-      restricted, pred₁, pred₂, form92, Matrix.comp_vecCons, Matrix.comp_vecEmpty, Term.realize_var,
+  refine ⟨fun M g => ⟨?_, ?_⟩, fun _ => Iff.rfl, fun _ => Iff.rfl⟩
+  · simp only [Formula.realize_conj, Formula.realize_atom, Formula.realize_eq, restricted, pred₁,
+      pred₂, form92, Matrix.comp_vecCons, Matrix.comp_vecEmpty, Term.realize_var,
       Term.realize_bvar, and_assoc, true_and]
-  · simp only [Formula.value, Formula.felicitous_conj, Formula.felicitous_atom,
-      Formula.felicitous_eq, restricted, pred₁, pred₂, form92, Fin.forall_fin_succ,
-      Matrix.cons_val_zero, Matrix.cons_val_succ, IsEmpty.forall_iff, Term.felicitous_var,
-      Term.felicitous_bvar, and_self, implies_true]
+  · simp only [Formula.felicitous_conj, Formula.felicitous_atom, Formula.felicitous_eq, restricted,
+      pred₁, pred₂, form92, Fin.forall_fin_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
+      IsEmpty.forall_iff, Term.felicitous_var, Term.felicitous_bvar, and_self, implies_true]
 
 theorem realize_bvar_iff_var (M : Model Sym (Atom W E)) (g : Var → Set (Atom W E)) (c : Lex 1)
     (v : Var) : (pred₁ c (.bvar v)).Realize M g ↔ (pred₁ c (.var v)).Realize M g := by
   simp only [pred₁, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
     Term.realize_var, Term.realize_bvar]
 
-theorem value_bvar_ne_var (M : Model Sym (Atom W E)) (g : Var → Set (Atom W E)) (c : Lex 1)
-    (v : Var) : (pred₁ c (.bvar v)).value M g ≠ (pred₁ c (.var v)).value M g :=
-  fun h => List.cons_ne_nil v [] (congrArg Value.locals h)
+/-- `DOG_w([d])` and `DOG_w(d)` are truth-equivalent but not intersubstitutable (fn. 7). -/
+theorem not_intersubstitutable_bvar_var (c : Lex 1) (v : Var) :
+    ¬ (pred₁ c (.bvar v)).Intersubstitutable (Atom W E) (pred₁ c (.var v)) :=
+  fun h => by simpa [pred₁, Expr.locals] using (h.2.1 v).1
+
+/-- A conjunction and its converse are truth-equivalent but need not be intersubstitutable,
+since the first conjunct may satisfy a presupposition of the second ((34), fn. 13). -/
+theorem not_intersubstitutable_conj_comm :
+    ¬ ∀ φ ψ : Fm, Formula.Intersubstitutable (Atom W E) (φ.conj ψ) (ψ.conj φ) := fun h => by
+  simpa using ((h (.neg .top) (.presup .top (.neg .top))).1 ⟨fun _ _ _ => False⟩ fun _ => ∅).2
 
 /-- (56): "chased a cat", a VP. -/
 def chasedACat : Tree (.fn .e .t) :=
