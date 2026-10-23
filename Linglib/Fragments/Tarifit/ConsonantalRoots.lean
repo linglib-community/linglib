@@ -6,7 +6,7 @@ public import Linglib.Morphology.Root.Consonantal
 /-!
 # Tarifit consonantal roots
 
-This file defines triconsonantal verb roots of Tarifit as melodies over the phones of
+This file defines triconsonantal verb roots of Tarifit as melodies over the consonants of
 `Fragments/Tarifit/Phonology.lean`, each named by its radicals and given with its simple
 imperative, the CCəC form with a schwa between the second and third radicals. A gloss is given
 where Afkir and Zellou give one.

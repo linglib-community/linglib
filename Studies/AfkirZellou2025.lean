@@ -3,6 +3,7 @@ module
 public import Linglib.Fragments.Tarifit.ConsonantalRoots
 public import Linglib.Morphology.Morphotactics.Association
 public import Linglib.Data.Examples.AfkirZellou2025
+import Mathlib.Data.Fin.VecNotation
 import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!
@@ -65,12 +66,13 @@ def imperative (r : ConsonantalRoot Segment) : TemplateMatch Segment :=
 
 theorem spellout_imperative (a b c : Segment) :
     (imperative ⟨[a, b, c]⟩).spellout = [a, b, «ə», c] := by
-  simp [imperative, imperativeTemplate, TemplateMatch.associate, TemplateMatch.associateOneToOne,
-    TemplateMatch.associateRemaining, TemplateMatch.spread, TemplateMatch.unassociated,
-    TemplateMatch.freeBearers, TemplateMatch.bearers, TemplateMatch.link, TemplateMatch.spellout,
-    TemplateMatch.melody, TemplateMatch.segmentAt, TemplateMatch.IsAssociated,
-    TemplateMatch.IsFilled, Autosegmental.Skeleton.cSlots, Autosegmental.Skeleton.vSlots,
-    List.range_succ]
+  have h : ((({ root := ⟨[0, 1, 2]⟩, vocalism := [3], template := imperativeTemplate,
+                 associations := [] } : TemplateMatch (Fin 4)).associate .root).associate
+      .vocalism).spellout = [0, 1, 3, 2] := by
+    decide +kernel
+  have := congrArg (List.map ![a, b, c, «ə»]) h
+  rwa [← TemplateMatch.spellout_map, ← TemplateMatch.associate_map,
+    ← TemplateMatch.associate_map] at this
 
 /-- The transcription of a root's imperative. -/
 def surface (r : ConsonantalRoot Segment) : String :=
@@ -81,6 +83,8 @@ def targets : List (ConsonantalRoot Segment) :=
   [«ðfʕ», ðqr, «ʁdˤr», «ʁfr», «ʁrβ», ħmð, nqr, qβr, qðf, qfr, qrβ, «qrʕ», «qtˤʕ», rmð, srm,
     «stˤr», χrf, «ʒβð», «ʒmð», «ʕβð», «ʕrm», ħsβ, ħzn, «ʃmθ», χzn, βkm, ħlm, ħsn, nqβ, «qmʕ»,
     «sʃn», χns, «ʒmʕ», sχf, ħkm, ntf, skf, rsq]
+
+example : ∀ r ∈ targets, ∀ x ∈ r.segments, x ∈ consonants ∨ x = l := by decide +kernel
 
 /-! ### Sonority profiles -/
 
@@ -120,12 +124,12 @@ with a fall (§3.2.1). -/
 theorem countP_rising_plateau_falling :
     targets.countP (Rising ·) = 17 ∧ targets.countP (Plateau ·) = 6 ∧
       targets.countP (Falling ·) = 15 := by
-  decide
+  decide +kernel
 
 example : ∀ r ∈ targets, ∀ a ∈ r.segments[0]?, ∀ b ∈ r.segments[1]?,
     compare (sonority a) (sonority b) =
       compare (Sonority.Class.ofSegment a).parkerRank (Sonority.Class.ofSegment b).parkerRank := by
-  decide
+  decide +kernel
 
 /-! ### The tables -/
 
@@ -167,41 +171,41 @@ def vowelless? (e : Datum) : Option Vowelless :=
 
 theorem rows_complete :
     ∀ e ∈ Examples.all, (root? e).isSome ∧ (intrusion? e).isSome ∧ (vowelless? e).isSome := by
-  decide
+  decide +kernel
 
 /-! ### The intrusive schwa -/
 
 theorem almostExclusively_iff_c2_r :
     ∀ e ∈ Examples.all, ∀ r ∈ root? e,
       intrusion? e = some .almostExclusively ↔ r.segments[1]? = some Tarifit.r := by
-  decide
+  decide +kernel
 
 theorem intrusion_of_rising :
     ∀ e ∈ Examples.all, ∀ r ∈ root? e, Rising r →
       intrusion? e = some .variably ∨ intrusion? e = some .almostExclusively ∨
         VoicelessAt r 1 := by
-  decide
+  decide +kernel
 
 theorem nonRising_or_voiceless_of_never_rarely :
     ∀ e ∈ Examples.all, (intrusion? e = some .never ∨ intrusion? e = some .rarely) →
       ∀ r ∈ root? e, ¬ Rising r ∨ VoicelessAt r 1 := by
-  decide
+  decide +kernel
 
 theorem variably_exceptions :
     ∀ e ∈ Examples.all, intrusion? e = some .variably →
       ∀ r ∈ root? e, Rising r ∨ ¬ VoicelessAt r 1 ∨ r ∈ [nqβ, nqr, «qtˤʕ»] := by
-  decide
+  decide +kernel
 
 /-! ### Vowelless production -/
 
 theorem voiceless_of_often_vowelless :
     ∀ e ∈ Examples.all, vowelless? e = some .often →
       ∀ r ∈ root? e, (VoicelessAt r 1 ∧ VoicelessAt r 2) ∨ r = ħkm := by
-  decide
+  decide +kernel
 
 theorem voiced_of_never_vowelless :
     ∀ e ∈ Examples.all, vowelless? e = some .never →
       ∀ r ∈ root? e, ¬ VoicelessAt r 1 ∨ ¬ VoicelessAt r 2 := by
-  decide
+  decide +kernel
 
 end AfkirZellou2025
