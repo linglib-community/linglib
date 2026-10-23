@@ -26,6 +26,8 @@ can accommodate one of a trigger's two presuppositions while the other projects.
 * `presupFailure_clause`, `clause_projects_and_accommodates`: on the partial composition engine,
   the antecedent and the elided clause of (26) share one λ-abstract, and only the elided clause
   accommodates ((66)–(70)).
+* `ofPart_clause`: the engine's denotation of the clause reads out as the Strong Kleene negation
+  of the enriched predicate ((67)).
 * `enrichment_by_definedness`: enrichment by definedness is `A` (§5.2).
 * `partial_accommodation`, `partial_accommodation_rows`: enrichment by one presupposition of a
   trigger accommodates it alone ((34), (38), (39), §5.2.1).
@@ -132,7 +134,9 @@ theorem enrichment_eq_meetMiddle (R : Prop) [Decidable R] (a : SignType) :
 
 /-- Enriching a trigger that presupposes `S ∩ T` by `S` accommodates `S` and leaves the
 conditional presupposition that `S` implies `T` (§5.2.1), while `A` above the trigger leaves no
-presupposition at all ((35), `Trivalent.gapExt_ofProp_eq_one`). -/
+presupposition at all ((35), `Trivalent.gapExt_ofProp_eq_one`), as does the substrate's
+accommodation of every trigger at once
+(`Presupposition.Formula.isBivalent_middleKleene_accommodate`). -/
 theorem partial_accommodation (S T : Set W) [DecidablePred (· ∈ S)] {f : W → SignType}
     (hf : IsBivalent f) :
     gapExt (fun w ↦ ofProp (w ∈ S) ⊓ (S ∩ T).indicator f w) = S \ T := by
@@ -227,10 +231,11 @@ def clause (d : D) : Tree Unit (Word D) := .bin (.leaf (.day d)) vp
 
 variable (P : W → D →. Prop) (R : D → W → Prop) (w : W) (g : Assignment D) (d : D)
 
-/-- The clause fails exactly where the enrichment holds and the predicate is undefined ((68),
-(70)). -/
-theorem presupFailure_clause :
-    PresupFailure (lexicon P R w) g (clause d) ↔ R d w ∧ ¬ (P w d).Dom := by
+open Classical in
+/-- The engine's denotation of the clause is the negated enriched predicate at its subject,
+(67). -/
+theorem interpPartial_clause : interpPartial (lexicon P R w) g (clause d) =
+    some ⟨.t, (if R d w then P w d else Part.some False).map Not⟩ := by
   classical
   have : interpPartial (lexicon P R w) g (clause d) =
       some ⟨.t, (if R d w then P w d else Part.some False).bind fun p ↦ Part.some (¬ p)⟩ := by
@@ -238,8 +243,24 @@ theorem presupFailure_clause :
       interpPartial_trace, lexicon, Option.bind_some, Option.map_some, Mode.combine?_fn_left,
       Mode.combine?_fn_right, valueAtPartial, dite_true, Function.update_self, Mode.evalPartial]
     erw [Part.bind_some, Part.bind_some, Part.bind_some, Part.bind_some, Part.bind_some]
-  rw [PresupFailure, this]
-  by_cases h : R d w <;> simp [h]
+  rw [this, Part.bind_some_eq_map]
+
+open Classical in
+/-- The three-valued readout of the engine's denotation is the Strong Kleene negation of the
+enriched predicate, so the engine and `enrichment_projects_and_accommodates` describe one
+object. -/
+theorem ofPart_clause :
+    ofPart ((if R d w then P w d else Part.some False).map Not) =
+      -(ofProp (R d w) ⊓ ofPart (P w d)) := by
+  rw [ofPart_map_not, ofPart_ite_some_false]
+
+/-- The clause fails exactly where the enrichment holds and the predicate is undefined ((68),
+(70)). -/
+theorem presupFailure_clause :
+    PresupFailure (lexicon P R w) g (clause d) ↔ R d w ∧ ¬ (P w d).Dom := by
+  classical
+  rw [presupFailure_iff_ofPart_eq_zero _ _ (interpPartial_clause P R w g d), ofPart_clause]
+  simp [and_comm]
 
 /-- With an enrichment trivial at `Y` and entailing the presupposition at `X`, the clause shared
 by the antecedent and the elided clause fails at `Y` exactly where the presupposition does and
