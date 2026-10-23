@@ -229,9 +229,27 @@ where `R` holds. -/
     gapExt (fun w ↦ ofProp (p w = 1)) = ∅ := by
   ext w; simp
 
+@[simp] theorem posExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
+    posExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ posExt p := by
+  ext w; by_cases h : R w <;> simp [h]
+
+@[simp] theorem negExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
+    negExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w}ᶜ ∪ negExt p := by
+  ext w; by_cases h : R w <;> simp [h]
+
 @[simp] theorem gapExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
     gapExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ gapExt p := by
   ext w; simp [and_comm]
+
+/-- Composing with a function undefined exactly at `0` preserves the gap. -/
+theorem gapExt_comp {f : SignType → SignType} (hf : ∀ a, f a = 0 ↔ a = 0) (p : W → SignType) :
+    gapExt (f ∘ p) = gapExt p := by
+  ext w; simp [hf]
+
+/-- Composing with a function that is never `0` leaves no gap. -/
+theorem isBivalent_comp {f : SignType → SignType} (hf : ∀ a, f a ≠ 0) (p : W → SignType) :
+    IsBivalent (f ∘ p) :=
+  (isBivalent_iff_forall_ne_zero _).2 fun _ ↦ hf _
 
 theorem isBivalent_ofProp_eq_one (p : W → SignType) : IsBivalent fun w ↦ ofProp (p w = 1) :=
   fun w ↦ by by_cases h : p w = 1 <;> simp [h]
