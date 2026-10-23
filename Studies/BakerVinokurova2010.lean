@@ -26,25 +26,42 @@ only where a `v` probes.
 
 * `grammar`: the two-modality grammar of Sakha.
 * `pureMarantz`, `pureChomsky`: the two pure grammars beside it.
-* `subject`, `internal`, `possessor`, `pro`, `finite`: the NP positions and the finite probe
-  the paper's derivations use.
+* `transitive`, `ditransitiveClause`, `causativeClause`, `passiveClause`, `possessedClause`,
+  `derivedCases`: derivations of the constructions, and the cases the grammar reads off them.
+* `subject`, `internal`, `possessor`, `pro`, `finite`: hand-placed NP positions and the finite
+  probe, which the rows use.
 * `Slot`, `candidates`: the NPs of a row's domain from the slots the rows name, highest first;
   the covert agent and object shift are the free choices where the paper leaves them free.
 * `derive`, `Licensed`, `Agrees`, `Derivable`: assignment with the probes a row's morphology
   shows, the Case filter, the case–agreement link, and derivability under some choice.
-* `transitive`, `ditransitiveClause`, `possessedClause`, `derivedCases`: schematic derivations of
-  the constructions, and the cases the grammar reads off them.
 
 ## Main results
 
-* `dom`, `ditransitive`, `causative`, `passive`, `agentive_nominal`, `raising`, `promise`,
-  `possessed`: the paper's constructions.
+* `dom`, `ditransitive`, `causative`, `passive`, `possessed`: the constructions, on their
+  derivations; `agentive_nominal`, `raising`, `promise`, on hand-placed positions.
+* `derivedCases_eq_cases`: on the constructions the hand-placed positions value what the
+  derivations do.
 * `no_elsewhere_case`, `pureChomsky_no_dative`, `pureChomsky_v_of_acc`: Sakha values nothing as
   unmarked, and an Agree-only grammar values nothing dative and an accusative only where a `v`
   probes, whatever the domain.
 * `rows_case`: acceptability is derivability under the two-modality grammar.
 * `pure_marantz_overgenerates`: without the Case filter and the agreement link, the
   configurational grammar derives rejected examples.
+
+## Implementation notes
+
+* The phase heads are v, whose complement is the paper's VP phase (note 6), C, and a D with a
+  complement. Object shift is Internal Merge to the specifier of v, where the paper adjoins the
+  object to VP ((11b)); either way the object leaves the VP phase for the clause's.
+* The paper assigns the dative on the VP cycle, before the theme shifts ((14), (30)). Here a
+  phase sees an NP through any copy in what it transfers on its own, so the shifted theme's
+  lower copy, `<letter>` in (30), keeps the VP-cycle configuration.
+* The covert agent of a passive is a nominal in the specifier of passive v, PRO in (28b).
+
+## TODO
+
+* Agentive nominalizations ((34)–(37)), raising ((46)) and *promise* on derivations: the
+  nominalizer's own VP phase, and the edge of the embedded *dien* clause.
 
 ## References
 
@@ -114,6 +131,84 @@ theorem pureChomsky_v_of_acc {α : Type*} (np : α → PhasedNP) (probes : List 
     revert hh; cases hd <;> decide
   exact ⟨d, hmem⟩
 
+/-! ### Case read off derivations
+
+Each construction is a schematic head-final derivation. The phase heads are v, whose complement
+is the paper's VP phase, C, and a D with a complement, and each phase sees the NPs with a copy in
+what its complement transfers on its own. -/
+
+/-- The phase heads: v, C, and a D that takes a complement. -/
+def IsPhaseHead (a : LexicalItem.Token) : Prop :=
+  a.item.cat = .v ∨ a.item.cat = .C ∨ a.item.cat = .D ∧ a.item.sel ≠ []
+
+instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Schematic heads: nominals, an intransitive, a transitive and a ditransitive verb, the
+causative verb, active and passive v, T and C, the covert agent of a passive, and a D with a
+possessor in its complement. -/
+def subjD : LexicalItem.Token := ⟨.of .D [], 1⟩
+@[inherit_doc subjD] def objD : LexicalItem.Token := ⟨.of .D [], 2⟩
+@[inherit_doc subjD] def goalD : LexicalItem.Token := ⟨.of .D [], 3⟩
+@[inherit_doc subjD] def verb : LexicalItem.Token := ⟨.of .V [.D], 4⟩
+@[inherit_doc subjD] def verb₂ : LexicalItem.Token := ⟨.of .V [.D, .D], 5⟩
+@[inherit_doc subjD] def littleV : LexicalItem.Token := ⟨.of .v [.V], 6⟩
+@[inherit_doc subjD] def tense : LexicalItem.Token := ⟨.of .T [.v], 7⟩
+@[inherit_doc subjD] def comp : LexicalItem.Token := ⟨.of .C [.T], 8⟩
+@[inherit_doc subjD] def possD : LexicalItem.Token := ⟨.of .D [], 9⟩
+@[inherit_doc subjD] def noun : LexicalItem.Token := ⟨.of .N [.D], 10⟩
+@[inherit_doc subjD] def det : LexicalItem.Token := ⟨.of .D [.N], 11⟩
+@[inherit_doc subjD] def causeeD : LexicalItem.Token := ⟨.of .D [], 12⟩
+@[inherit_doc subjD] def causVerb : LexicalItem.Token := ⟨.of .V [.V, .D], 13⟩
+@[inherit_doc subjD] def verb₀ : LexicalItem.Token := ⟨.of .V [], 14⟩
+@[inherit_doc subjD] def passiveV : LexicalItem.Token := ⟨.of .v [.V], 15⟩
+@[inherit_doc subjD] def proD : LexicalItem.Token := ⟨.of .D [], 16⟩
+
+/-- A transitive clause, its object shifted to the edge of vP or not. -/
+def transitive (shifted : Bool) : Derivation :=
+  ⟨verb, [.em .left objD, .em .right littleV] ++ (if shifted then [.im objD .left] else []) ++
+    [.em .left subjD, .em .right tense, .em .right comp]⟩
+
+/-- A ditransitive clause, its theme shifted or not. -/
+def ditransitiveClause (shifted : Bool) : Derivation :=
+  ⟨verb₂, [.em .left objD, .em .left goalD, .em .right littleV] ++
+    (if shifted then [.im objD .left] else []) ++
+    [.em .left subjD, .em .right tense, .em .right comp]⟩
+
+/-- The possessed noun phrase `[D [possessor N]]`. -/
+def possessedNP : LinearizedSyntacticObject :=
+  .merge (.leaf det) (.merge (.leaf possD) (.leaf noun))
+
+/-- A transitive clause whose shifted object is a possessed noun phrase. -/
+def possessedClause : Derivation :=
+  ⟨verb, [.em .left possessedNP, .em .right littleV, .im possessedNP.toSyntacticObject .left,
+    .em .left subjD, .em .right tense, .em .right comp]⟩
+
+/-- A morphological causative, the causee merged in the verb phrase the causative heads above the
+base verb's, transitive or not; the base verb's object shifts, or the causee of an intransitive
+base. -/
+def causativeClause (transitiveBase shifted : Bool) : Derivation :=
+  if transitiveBase then
+    ⟨verb, [.em .left objD, .em .right causVerb, .em .left causeeD, .em .right littleV] ++
+      (if shifted then [.im objD .left] else []) ++
+      [.em .left subjD, .em .right tense, .em .right comp]⟩
+  else
+    ⟨verb₀, [.em .right causVerb, .em .left causeeD, .em .right littleV] ++
+      (if shifted then [.im causeeD .left] else []) ++
+      [.em .left subjD, .em .right tense, .em .right comp]⟩
+
+/-- A passive, its theme shifted to the edge of the voice phrase, with a goal or not, and a covert
+agent in the specifier of passive v or not ((28), (30)). -/
+def passiveClause (agent goal : Bool) : Derivation :=
+  ⟨if goal then verb₂ else verb, [.em .left objD] ++ (if goal then [.em .left goalD] else []) ++
+    [.em .right passiveV, .im objD .left] ++ (if agent then [.em .left proD] else []) ++
+    [.em .right tense, .em .right comp]⟩
+
+/-- The cases Sakha's grammar values on the nominals `xs` of a derivation. -/
+def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (Option Case)) :=
+  d.externalize?.map fun t ↦
+    (grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead (fun _ ↦ none)
+      xs).map (·.2.map (·.1))
+
 /-! ### Positions -/
 
 /-- A caseless NP merged in the clause. -/
@@ -147,39 +242,44 @@ attribute [local simp] cases CaseAssigners.assign CaseAssigners.domainPass
 
 
 /-- In differential object marking a shifted object is accusative and an unshifted one
-    caseless, the subject nominative from T either way. -/
+    caseless, the subject nominative from T either way ((10), (11)). -/
 theorem dom (shifted : Bool) :
-    cases grammar finite [subject, internal shifted] =
-      [some .nom, if shifted then some .acc else none] := by
-  cases shifted <;> simp
+    derivedCases (transitive shifted) [subjD, objD] =
+      some [some .nom, if shifted then some .acc else none] := by
+  cases shifted <;> decide +kernel
 
 /-- In a ditransitive the goal is dative on the verb-phrase cycle whether or not the theme
-    shifts, and the theme accusative exactly when it does; a causative of a transitive base
-    is the same configuration, with the causee the higher of the two. -/
+    shifts, and the theme accusative exactly when it does ((13), (14)). -/
 theorem ditransitive (shifted : Bool) :
-    cases grammar finite [subject, internal false, internal shifted] =
-      [some .nom, some .dat, if shifted then some .acc else none] := by
-  cases shifted <;> simp
+    derivedCases (ditransitiveClause shifted) [subjD, goalD, objD] =
+      some [some .nom, some .dat, if shifted then some .acc else none] := by
+  cases shifted <;> decide +kernel
 
 /-- In a causative the causee of a transitive base is dative, c-commanding the theme in the
     verb phrase, and the causee of an intransitive base, alone there, is accusative once it
-    shifts and never dative. -/
+    shifts and never dative ((23), (24)). -/
 theorem causative (shifted : Bool) :
-    cases grammar finite [subject, internal false, internal shifted] =
-      [some .nom, some .dat, if shifted then some .acc else none] ∧
-    cases grammar finite [subject, internal shifted] =
-      [some .nom, if shifted then some .acc else none] :=
-  ⟨ditransitive shifted, dom shifted⟩
+    derivedCases (causativeClause true shifted) [subjD, causeeD, objD] =
+      some [some .nom, some .dat, if shifted then some .acc else none] ∧
+    derivedCases (causativeClause false shifted) [subjD, causeeD] =
+      some [some .nom, if shifted then some .acc else none] := by
+  cases shifted <;> decide +kernel
 
 /-- In a passive the shifted theme is accusative exactly when a covert agent is present, and
-    nominative from T otherwise; a goal is dative either way. -/
+    nominative from T otherwise; a goal is dative either way ((26)–(30)). -/
 theorem passive :
-    cases grammar finite [pro, internal true] = [some .nom, some .acc] ∧
-    cases grammar finite [internal true] = [some .nom] ∧
-    cases grammar finite [pro, internal false, internal true] =
-      [some .nom, some .dat, some .acc] ∧
-    cases grammar finite [internal false, internal true] = [some .dat, some .nom] := by
-  simp
+    derivedCases (passiveClause true false) [proD, objD] = some [some .nom, some .acc] ∧
+    derivedCases (passiveClause false false) [objD] = some [some .nom] ∧
+    derivedCases (passiveClause true true) [proD, goalD, objD] =
+      some [some .nom, some .dat, some .acc] ∧
+    derivedCases (passiveClause false true) [goalD, objD] = some [some .dat, some .nom] := by
+  decide +kernel
+
+/-- A possessor is genitive from its D, and invisible to the clause. -/
+theorem possessed :
+    derivedCases possessedClause [subjD, possD, det] =
+      some [some .nom, some .gen, some .acc] := by
+  decide +kernel
 
 /-- An agentive nominalization has no T, but its covert agent makes the shifted object
     accusative; without the agent the object is caseless. -/
@@ -203,18 +303,31 @@ theorem promise :
     cases grammar finite [subject, internal true] = [some .nom, some .acc] := by
   simp
 
-/-- A possessor is genitive from its D, and invisible to the clause. -/
-theorem possessed :
-    cases grammar (finite ++ [(.D, .D)]) [subject, possessor, internal true] =
-      [some .nom, some .gen, some .acc] := by
-  simp
-
 theorem elsewhere_contrast :
     cases grammar finite [subject, internal false] = [some .nom, none] ∧
     cases grammar [] [subject] = [none] ∧
     cases pureMarantz finite [subject, internal false] = [some .nom, some .nom] ∧
     cases pureMarantz [] [subject] = [some .nom] := by
   simp
+
+/-- The positions the rows are stated over are those the derivations give: on each construction
+    the hand-placed NPs value what the derivation does. -/
+theorem derivedCases_eq_cases :
+    (∀ b, derivedCases (transitive b) [subjD, objD] =
+      some (cases grammar finite [subject, internal b])) ∧
+    (∀ b, derivedCases (ditransitiveClause b) [subjD, goalD, objD] =
+      some (cases grammar finite [subject, internal false, internal b])) ∧
+    (∀ b, derivedCases (causativeClause true b) [subjD, causeeD, objD] =
+      some (cases grammar finite [subject, internal false, internal b])) ∧
+    (∀ b, derivedCases (causativeClause false b) [subjD, causeeD] =
+      some (cases grammar finite [subject, internal b])) ∧
+    (∀ a g, derivedCases (passiveClause a g) ((if a then [proD] else []) ++
+        (if g then [goalD] else []) ++ [objD]) =
+      some (cases grammar finite ((if a then [pro] else []) ++
+        (if g then [internal false] else []) ++ [internal true]))) ∧
+    derivedCases possessedClause [subjD, possD, det] =
+      some (cases grammar (finite ++ [(.D, .D)]) [subject, possessor, internal true]) := by
+  decide +kernel
 
 /-! ### The rows -/
 
@@ -389,71 +502,5 @@ theorem rows_case :
 theorem pure_marantz_overgenerates :
     ∃ r ∈ Examples.all, r.judgment ≠ .acceptable ∧ Derivable pureMarantz false r := by
   decide
-
-/-! ### Case read off derivations
-
-The constructions' positions read off schematic head-final derivations: the phase heads are v, C
-and a D with a complement, and each phase sees what its complement transfers. -/
-
-/-- The phase heads: v, C, and a D that takes a complement. -/
-def IsPhaseHead (a : LexicalItem.Token) : Prop :=
-  a.item.cat = .v ∨ a.item.cat = .C ∨ a.item.cat = .D ∧ a.item.sel ≠ []
-
-instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
-
-/-- Schematic heads: three nominals, a transitive and a ditransitive verb, v, T and C, and a D
-with a possessor in its complement. -/
-def subjD : LexicalItem.Token := ⟨.of .D [], 1⟩
-@[inherit_doc subjD] def objD : LexicalItem.Token := ⟨.of .D [], 2⟩
-@[inherit_doc subjD] def goalD : LexicalItem.Token := ⟨.of .D [], 3⟩
-@[inherit_doc subjD] def verb : LexicalItem.Token := ⟨.of .V [.D], 4⟩
-@[inherit_doc subjD] def verb₂ : LexicalItem.Token := ⟨.of .V [.D, .D], 5⟩
-@[inherit_doc subjD] def littleV : LexicalItem.Token := ⟨.of .v [.V], 6⟩
-@[inherit_doc subjD] def tense : LexicalItem.Token := ⟨.of .T [.v], 7⟩
-@[inherit_doc subjD] def comp : LexicalItem.Token := ⟨.of .C [.T], 8⟩
-@[inherit_doc subjD] def possD : LexicalItem.Token := ⟨.of .D [], 9⟩
-@[inherit_doc subjD] def noun : LexicalItem.Token := ⟨.of .N [.D], 10⟩
-@[inherit_doc subjD] def det : LexicalItem.Token := ⟨.of .D [.N], 11⟩
-
-/-- A transitive clause, its object shifted to the edge of vP or not. -/
-def transitive (shifted : Bool) : Derivation :=
-  ⟨verb, [.em .left objD, .em .right littleV] ++ (if shifted then [.im objD .left] else []) ++
-    [.em .left subjD, .em .right tense, .em .right comp]⟩
-
-/-- A ditransitive clause, its theme shifted or not. -/
-def ditransitiveClause (shifted : Bool) : Derivation :=
-  ⟨verb₂, [.em .left objD, .em .left goalD, .em .right littleV] ++
-    (if shifted then [.im objD .left] else []) ++
-    [.em .left subjD, .em .right tense, .em .right comp]⟩
-
-/-- The possessed noun phrase `[D [possessor N]]`. -/
-def possessedNP : LinearizedSyntacticObject :=
-  .merge (.leaf det) (.merge (.leaf possD) (.leaf noun))
-
-/-- A transitive clause whose shifted object is a possessed noun phrase. -/
-def possessedClause : Derivation :=
-  ⟨verb, [.em .left possessedNP, .em .right littleV, .im possessedNP.toSyntacticObject .left,
-    .em .left subjD, .em .right tense, .em .right comp]⟩
-
-/-- The cases Sakha's grammar values on the nominals `xs` of a derivation. -/
-def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (Option Case)) :=
-  d.externalize?.map fun t ↦
-    (grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead (fun _ ↦ none)
-      xs).map (·.2.map (·.1))
-
-example : derivedCases (transitive true) [subjD, objD] = some [some .nom, some .acc] ∧
-    derivedCases (transitive false) [subjD, objD] = some [some .nom, none] := by
-  decide +kernel
-
-example :
-    derivedCases (ditransitiveClause true) [subjD, goalD, objD] =
-      some [some .nom, some .dat, some .acc] ∧
-    derivedCases (ditransitiveClause false) [subjD, goalD, objD] =
-      some [some .nom, some .dat, none] := by
-  decide +kernel
-
-example :
-    derivedCases possessedClause [subjD, possD, det] = some [some .nom, some .gen, some .acc] := by
-  decide +kernel
 
 end BakerVinokurova2010
