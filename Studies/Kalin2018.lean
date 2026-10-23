@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Kalin2018
-public import Linglib.Syntax.Minimalist.Case.Dependent
+public import Linglib.Syntax.Minimalist.Case.SyntacticObject
+public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Core.Data.List.Forall2
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Order.CompleteLattice.Finset
@@ -38,7 +39,9 @@ is monotone in the licensers (`license_mono`), so the Licensing Economy Principl
 secondary licenser coincides with the preference for a derivation with fewer licensers
 (`economical_iff`). Licensing is the Agree modality of case assignment of
 [baker-vinokurova-2010]: case assigners with no dependent or elsewhere case assign exactly what
-the licensing derivation does (`assign_eq_map_license`).
+the licensing derivation does (`assign_eq_map_license`), and read off Senaya's clauses and the toy
+language's, whose phase heads place the nominals, case under the licensers values what licensing
+does (`senayaCases_eq_license`, `toyCases_eq_license`).
 
 ## Implementation notes
 
@@ -274,40 +277,39 @@ def CaseValue.assigned (κ : Cat → _root_.Case) :
   | .lexical c => (c, .lexical)
   | .licenser l => (κ l.head, .agree)
 
-private theorem rules_eq_of (g : CaseAssigners) (hg : ∀ d ∈ g.domains, d.2 = {}) (c : Cat) :
-    g.rules c = {} := by
-  unfold CaseAssigners.rules
-  rcases hf : g.domains.find? (·.1 == c) with _ | d
-  · rw [hf]; rfl
-  · rw [hf]; exact hg d (mem_of_find?_eq_some hf)
-
-theorem assign_eq_map_license (g : CaseAssigners)
-    (hg : ∀ d ∈ g.domains, d.2 = {}) (κ : Cat → _root_.Case) {ls : List Licenser}
+theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c ∈ ds, g.rules c = {})
+    (κ : Cat → _root_.Case) {ls : List Licenser}
     (hκ : ∀ l ∈ ls, g.agreeCase l.head = some (κ l.head)) (nps : List PhasedNP) :
-    g.assign id (ls.map fun l ↦ (l.head, l.domain)) nps =
-      (license (g.domains.map (·.1)) ls nps).map
-        (Prod.map id (Option.map (CaseValue.assigned κ))) := by
+    g.assign id (ls.map fun l ↦ (l.head, l.domain)) ds nps =
+      (license ds ls nps).map (Prod.map id (Option.map (CaseValue.assigned κ))) := by
   set φ : PhasedNP × Option CaseValue → PhasedNP × Option (_root_.Case × _root_.Case.Mechanism) :=
     Prod.map id (Option.map (CaseValue.assigned κ))
   have key (c : Cat) (L : List Licenser)
       (hL : ∀ l ∈ L, l.domain = c ∧ g.agreeCase l.head = some (κ l.head))
       (st : Valuation PhasedNP CaseValue) :
-      L.foldl (fun st l ↦ g.probePass id c l.head st) (st.map φ) =
+      ((L.map fun l ↦ (l.head, l.domain)).filterMap fun hp ↦
+          (g.agreeCase hp.1).map (·, fun x ↦ (id x).visible c)).foldl
+        (fun st p ↦ agreeValueOn (fun _ _ ↦ False) p.2 (p.1, .agree) st) (st.map φ) =
         (L.foldl (fun st l ↦ l.agree st) st).map φ := by
     induction L generalizing st with
     | nil => rfl
     | cons l L ih =>
       obtain ⟨hdom, hcase⟩ := hL l (mem_cons_self ..)
-      have hstep : g.probePass id c l.head (st.map φ) = (l.agree st).map φ := by
-        simp only [CaseAssigners.probePass, hcase, Licenser.agree, hdom]
+      have hstep : agreeValue (fun x ↦ (id x).visible c) (κ l.head, .agree) (st.map φ) =
+          (l.agree st).map φ := by
+        simp only [Licenser.agree, hdom]
         exact agreeValue_map (P := (·.visible c)) (P' := (·.visible c)) (v := .licenser l)
           id (CaseValue.assigned κ) (fun _ ↦ rfl) rfl st
-      rw [foldl_cons, foldl_cons, hstep, ih (fun l hl ↦ hL l (mem_cons_of_mem _ hl))]
-  have hcycle (c : Cat) (st : Valuation PhasedNP CaseValue) :
-      g.domainPass id (ls.map fun l ↦ (l.head, l.domain)) c (st.map φ) =
+      rw [map_cons, filterMap_cons, hcase, Option.map_some, foldl_cons, foldl_cons,
+        agreeValueOn_false, hstep, ih (fun l hl ↦ hL l (mem_cons_of_mem _ hl))]
+  have hcycle (c : Cat) (hc : c ∈ ds) (st : Valuation PhasedNP CaseValue) :
+      domainPassBy g.rules (fun c x ↦ (id x).visible c) (fun _ p q ↦ p.1 < q.1)
+          (fun _ _ _ ↦ False) (g.probesIn id (ls.map fun l ↦ (l.head, l.domain)))
+          (fun c x ↦ (id x).spellOut == c) c (st.map φ) =
         (cycle ls c st).map φ := by
-    rw [CaseAssigners.domainPass, rules_eq_of g hg, DependentCase.Rules.unmarkedPass_of_none _ _ rfl,
-      DependentCase.Rules.dependentPass_of_none _ _ rfl rfl, filter_map, foldl_map, cycle]
+    rw [domainPassBy, hg c hc, DependentCase.Rules.unmarkedPass_of_none _ _ rfl,
+      DependentCase.Rules.dependentPassBy_of_none _ _ _ rfl rfl, CaseAssigners.probesIn,
+      filter_map, cycle]
     exact key c _ (fun l hl ↦ by
       obtain ⟨hl, hc⟩ := mem_filter.1 hl
       exact ⟨by simpa using hc, hκ l hl⟩) st
@@ -315,15 +317,18 @@ theorem assign_eq_map_license (g : CaseAssigners)
       (initial nps).map φ := by
     simp [_root_.Case.lexicalValuation, initial, Valuation.initial, φ, Option.map_map,
       Function.comp_def, CaseValue.assigned]
-  rw [CaseAssigners.assign, CaseAssigners.derive, license, hinit]
-  suffices ∀ st : Valuation PhasedNP CaseValue, (g.domains.map (·.1)).foldl
-      (fun st c ↦ g.domainPass id (ls.map fun l ↦ (l.head, l.domain)) c st) (st.map φ) =
-      ((g.domains.map (·.1)).foldl (fun st c ↦ cycle ls c st) st).map φ by
-    exact this _
-  intro st
-  induction g.domains.map (·.1) generalizing st with
+  rw [CaseAssigners.assign, assignBy, license, hinit]
+  suffices ∀ ds' ⊆ ds, ∀ st : Valuation PhasedNP CaseValue, ds'.foldl
+      (fun st c ↦ domainPassBy g.rules (fun c x ↦ (id x).visible c) (fun _ p q ↦ p.1 < q.1)
+        (fun _ _ _ ↦ False) (g.probesIn id (ls.map fun l ↦ (l.head, l.domain)))
+        (fun c x ↦ (id x).spellOut == c) c st) (st.map φ) =
+      (ds'.foldl (fun st c ↦ cycle ls c st) st).map φ from this ds (fun _ h ↦ h) _
+  intro ds' hds' st
+  induction ds' generalizing st with
   | nil => rfl
-  | cons c ds ih => rw [foldl_cons, foldl_cons, hcycle, ih]
+  | cons c ds' ih =>
+    rw [foldl_cons, foldl_cons, hcycle c (hds' mem_cons_self),
+      ih (fun c hc ↦ hds' (mem_cons_of_mem _ hc))]
 
 end Licensing
 
@@ -484,6 +489,78 @@ theorem toy_inanimate_object (subject : Bool) :
         ((toyTransitive subject false).map (·.toPhasedNP))).map (·.2) =
         [some (.licenser toyT), none] := by
   cases subject <;> decide
+
+/-! ### Positions read off derivations
+
+Senaya's clause is a schematic derivation whose only phase head is C, v being none (§4.1), and
+the toy language's has v and C; the licensers are the heads whose domain they probe, deepest
+first. Read off these derivations, case assignment under the licensers values what licensing
+does on the nominals placed by hand. -/
+
+/-- Schematic heads: subject and object nominals, a transitive and an intransitive verb, v, Asp,
+T and C. -/
+def subjD : LexicalItem.Token := ⟨.of .D [], 1⟩
+@[inherit_doc subjD] def objD : LexicalItem.Token := ⟨.of .D [], 2⟩
+@[inherit_doc subjD] def verb : LexicalItem.Token := ⟨.of .V [.D], 3⟩
+@[inherit_doc subjD] def verb₀ : LexicalItem.Token := ⟨.of .V [], 4⟩
+@[inherit_doc subjD] def littleV : LexicalItem.Token := ⟨.of .v [.V], 5⟩
+@[inherit_doc subjD] def asp : LexicalItem.Token := ⟨.of .Asp [.v], 6⟩
+@[inherit_doc subjD] def tense : LexicalItem.Token := ⟨.of .T [.Asp], 7⟩
+@[inherit_doc subjD] def comp : LexicalItem.Token := ⟨.of .C [.T], 8⟩
+
+/-- A clause with an object or without, the subject in the specifier of vP. -/
+def clause (object : Bool) : Derivation :=
+  if object then
+    ⟨verb, [.em .left objD, .em .right littleV, .em .left subjD, .em .right asp,
+      .em .right tense, .em .right comp]⟩
+  else
+    ⟨verb₀, [.em .right littleV, .em .left subjD, .em .right asp, .em .right tense,
+      .em .right comp]⟩
+
+/-- The nominals of a clause, highest first. -/
+def clauseNominals (object : Bool) : List LexicalItem.Token :=
+  if object then [subjD, objD] else [subjD]
+
+/-- A label for the case each licensing head values, telling Asp's from T's; the cases chosen are
+arbitrary. -/
+def headCase : Cat → _root_.Case
+  | .Asp => .nom
+  | _ => .acc
+
+/-- Case assignment under licensers `ls`: no dependent rules, and each licensing head values its
+label under Agree. -/
+def underLicensers (ls : List Licenser) : CaseAssigners where
+  agreeCase c := if ls.any (·.head == c) then some (headCase c) else none
+
+/-- Case read off a clause under licensers `ls`, C the only phase head. -/
+def senayaCases (ls : List Licenser) (object : Bool) :
+    Option (List (Option (_root_.Case × _root_.Case.Mechanism))) :=
+  (clause object).externalize?.map fun t ↦
+    ((underLicensers ls).assignOn .raising t (complementDomain .raising t ∅) (·.item.cat = .C)
+      (fun _ ↦ none) (clauseNominals object)).map (·.2)
+
+/-- Read off Senaya's clauses, case under each activation of the licensers values what licensing
+does on the nominals placed by hand in the one phase domain. -/
+theorem senayaCases_eq_license (object : Bool) :
+    ∀ ls ∈ [activate imperfective ∅, activate imperfective {tImpf}, perfective],
+      senayaCases ls object = some ((license domains ls
+        ((clauseNominals object).map fun _ ↦ {})).map
+          fun p ↦ p.2.map (CaseValue.assigned headCase)) := by
+  cases object <;> decide +kernel
+
+/-- Case read off a toy clause, v and C its phase heads. -/
+def toyCases (ls : List Licenser) : Option (List (Option (_root_.Case × _root_.Case.Mechanism))) :=
+  (clause true).externalize?.map fun t ↦
+    ((underLicensers ls).assignOn .raising t (complementDomain .raising t ∅)
+      (fun a ↦ a.item.cat = .v ∨ a.item.cat = .C) (fun _ ↦ none) (clauseNominals true)).map (·.2)
+
+/-- Read off the toy language's transitive clause, case under each activation values what
+licensing does on the object placed by hand in the domain of v. -/
+theorem toyCases_eq_license :
+    ∀ ls ∈ [activate toy ∅, toy],
+      toyCases ls = some ((license toyDomains ls ((toyTransitive false false).map
+        (·.toPhasedNP))).map fun p ↦ p.2.map (CaseValue.assigned headCase)) := by
+  decide +kernel
 
 /-! ### Licensing against dependent case -/
 
