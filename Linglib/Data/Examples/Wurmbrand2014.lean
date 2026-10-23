@@ -234,7 +234,7 @@ def ex_17 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
-    paperFeatures := [("SOT", "blocked")] }
+    paperFeatures := [("SOT", "blocked"), ("stack", "will, past")] }
 
 def ex_18 : Datum :=
   { id := "wurmbrand2014_18"
@@ -247,7 +247,7 @@ def ex_18 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous (SOT)", .acceptable)]
-    paperFeatures := [("SOT", "applies")] }
+    paperFeatures := [("SOT", "applies"), ("stack", "infinitive, past")] }
 
 def ex_19 : Datum :=
   { id := "wurmbrand2014_19"
@@ -260,7 +260,7 @@ def ex_19 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous (SOT)", .acceptable)]
-    paperFeatures := [("SOT", "applies")] }
+    paperFeatures := [("SOT", "applies"), ("stack", "would, past")] }
 
 def ex_20 : Datum :=
   { id := "wurmbrand2014_20"
@@ -286,7 +286,7 @@ def ex_21 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("would", "temporal"), ("SOT", "blocked")] }
+    paperFeatures := [("would", "temporal"), ("SOT", "blocked"), ("stack", "will")] }
 
 def ex_22 : Datum :=
   { id := "wurmbrand2014_22"
@@ -299,7 +299,7 @@ def ex_22 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
-    paperFeatures := [("SOT", "blocked")] }
+    paperFeatures := [("SOT", "blocked"), ("stack", "infinitive, will")] }
 
 def ex_23 : Datum :=
   { id := "wurmbrand2014_23"

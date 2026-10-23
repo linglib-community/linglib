@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Algebra.Order.Ring.Int
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Syntax.Minimalist.Clause.Size
@@ -36,7 +37,9 @@ Times are the nonempty intervals of a linear order; an instant is an interval wh
 coincide. The evaluation time of *woll* and the attitude holder's NOW are one instant
 parameter, and adverbials that restrict a reference time to an instant fall under the same
 lemma as the NOW. The obligatory deletion of *would*'s past is taken as the paper does, as a
-lexical requirement.
+lexical requirement. The `…_rows` fits read the episodic, aspect and sequence-of-tense rows on
+integer time, episodicity decided by the table's three theorems and the `stack` feature naming
+the tenses above the lowest past, nearest first.
 
 ## References
 
@@ -131,6 +134,16 @@ theorem episodic_restructuring_iff :
   · rintro ⟨r, rfl, e, he, h⟩ hp
     exact not_perfective_of_isPoint he hp h
   · exact fun h ↦ ⟨matrixR, rfl, matrixR, h, le_rfl⟩
+
+/-- Episodicity is decided by the three cells of the table: always available after *woll*, never
+at the holder's NOW, and at the matrix reference time exactly when it is extended. -/
+instance [NoMaxOrder T] [DecidableEq T] (c : InfinitivalTenseClass) :
+    Decidable (Episodic matrixR now c) :=
+  match c with
+  | .futureIrrealis => .isTrue (episodic_futureIrrealis matrixR now)
+  | .propositional => .isFalse (not_episodic_propositional matrixR now)
+  | .restructuring =>
+      decidable_of_iff (¬ matrixR.fst = matrixR.snd) (episodic_restructuring_iff matrixR now).symm
 
 /-! ### Verbs -/
 
@@ -263,5 +276,73 @@ def WouldLicensed (above : List (Option (Finset Ordering))) : Prop := sotApplies
 instance : DecidablePred WouldLicensed := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
 theorem would_licensing : ¬ WouldLicensed [will.tense] ∧ WouldLicensed [some ⟦past⟧] := by decide
+
+/-! ### The data -/
+
+section Data
+
+open Examples
+
+/-- A bare-episodic test row: its infinitival class, or for a finite baseline its tense, with
+the reference time the matrix provides, on integer time. -/
+def episodicTest? (e : Datum) : Option (InfinitivalTenseClass × NonemptyInterval ℤ) := do
+  let _ ← e.parse? "episodic" [("possible", ()), ("impossible", ())]
+  match e.feature? "class", e.feature? "tense" with
+  | some "future", _ => some (.futureIrrealis, .pure 0)
+  | some "propositional", _ => some (.propositional, .pure 0)
+  | none, some "present" => some (.restructuring, .pure 0)
+  | none, some "past" => some (.restructuring, ⟨(-1, 0), by omega⟩)
+  | none, some "future" => some (.restructuring, ⟨(0, 1), by omega⟩)
+  | _, _ => none
+
+/-- The bare-episodic rows (2)–(3) and the finite baseline (45): a bare eventive is available
+exactly where the reference time its class or tense provides can include an extended event. -/
+theorem episodic_rows : ∀ e ∈ Examples.all,
+    e.Fits episodicTest? fun p ↦ .ofProp (Episodic p.2 (0 : ℤ) p.1) := by
+  decide
+
+theorem episodic_read : Datum.ReadCount episodicTest? Examples.all 6 := by decide
+
+/-- An aspect test row: whether its aspect is perfective, with its class and reference time; a
+*seem* with an overt or understood attitude holder is propositional, (70), and the tenseless
+simultaneous row (57b) sits under a present matrix, an instant. -/
+def aspectTest? (e : Datum) : Option (Bool × InfinitivalTenseClass × NonemptyInterval ℤ) := do
+  let perf ← e.parse? "aspect" [("perfective", true), ("imperfective", false)]
+  match e.feature? "class", e.feature? "attitude holder" with
+  | some "future", _ => some (perf, .futureIrrealis, .pure 0)
+  | some "propositional", _ => some (perf, .propositional, .pure 0)
+  | some "tenseless simultaneous", _ => some (perf, .restructuring, .pure 0)
+  | none, some _ => some (perf, .propositional, .pure 0)
+  | _, _ => none
+
+/-- The aspect rows of (53)–(57) and (70): an imperfective is available at any reference time
+(`imperfective_pure_of_mem`), a perfective exactly where its class admits an extended event. -/
+theorem aspect_rows : ∀ e ∈ Examples.all, e.Fits aspectTest? fun p ↦
+    if p.1 then .ofProp (Episodic p.2.2 (0 : ℤ) p.2.1) else .accepted := by
+  decide
+
+theorem aspect_read : Datum.ReadCount aspectTest? Examples.all 9 := by decide
+
+/-- The tense stack above the lowest past, nearest first, as a row's `stack` feature names it. -/
+def stackTable : List (String × List (Option (Finset Ordering))) :=
+  [("will, past", [will.tense, some ⟦past⟧]),
+    ("infinitive, past", [(infinitive true).tense, some ⟦past⟧]),
+    ("would, past", [would.tense, some ⟦past⟧]),
+    ("will", [will.tense]),
+    ("infinitive, will", [(infinitive true).tense, will.tense])]
+
+/-- The sequence-of-tense rows (24)–(30): the paper's applies/blocked verdicts are what
+`sotApplies` computes on each row's stack. -/
+theorem sot_rows : ∀ e ∈ Examples.all, ∀ s ∈ e.parse? "stack" stackTable,
+    ∀ v ∈ e.parse? "SOT" [("applies", true), ("blocked", false)],
+      sotApplies s ⟦past⟧ = v := by
+  decide
+
+theorem sot_read :
+    (Examples.all.filter fun e => (e.parse? "stack" stackTable).isSome ∧
+      (e.feature? "SOT").isSome).length = 5 := by
+  decide
+
+end Data
 
 end Wurmbrand2014
