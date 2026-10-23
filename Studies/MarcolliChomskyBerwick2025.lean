@@ -103,6 +103,8 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `Minimalist.card_singleton_add_trunk_add_numWhole`, `accessibleCount_merge_term`,
   `accessibleSize_merge_term`, `MinimalYield.merge_term_accessibleCount_iff`,
   `accessibleCount_unit_term` for `Δ^c`, and `MinimalYield.merge_term_numEdges_iff` for `Δ^d`.
+  Remark 1.6.9, Sideward Merge of type 2(b) on the workspace of §1.3.4:
+  `MarcolliChomskyBerwick2025.sideward2b_minimalYield`.
 * Lemma 1.6.3 (1.6.7): `ConnesKreimer.cutSummandsDN_numEdges`, from the unary vertices a cut
   leaves (`ConnesKreimer.cutSummandsN_numUnary`); for Internal Merge,
   `Minimalist.numEdges_im_of_cut`, `MinimalYieldWeak.im_numEdges_of_cut`,
@@ -211,10 +213,11 @@ open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
 /-! ### Internal Merge: an example (§1.4.4) -/
 
 /-- *the apple*, the term `T₂` that Internal Merge raises in §1.4.4. -/
-private def theAppleLinearized : LinearizedSyntacticObject :=
+def theAppleLinearized : LinearizedSyntacticObject :=
   LinearizedSyntacticObject.merge (.leaf ⟨.of .D [.N] "the", 0⟩) (.leaf ⟨.of .N [] "apple", 1⟩)
 
-private def theApple : SyntacticObject := theAppleLinearized.toSyntacticObject
+/-- *the apple* as a syntactic object. -/
+def theApple : SyntacticObject := theAppleLinearized.toSyntacticObject
 
 /-- The workspace `T = {was, {eaten, {the, apple}}}` of §1.4.4. -/
 private def wasEatenTheApple : SyntacticObject :=
@@ -280,15 +283,15 @@ the trace cuts graded by the size `σ`. At the trace cuts the vertex count does 
 because the trace of *the* takes the place of *the*. -/
 
 /-- *the*, a term of *the apple*. -/
-private def theD : SyntacticObject :=
+def theD : SyntacticObject :=
   (LinearizedSyntacticObject.leaf ⟨.of .D [.N] "the", 0⟩).toSyntacticObject
 
 /-- *apple*, the other term of *the apple*. -/
-private def appleN : SyntacticObject :=
+def appleN : SyntacticObject :=
   (LinearizedSyntacticObject.leaf ⟨.of .N [] "apple", 1⟩).toSyntacticObject
 
 /-- *eaten*, the other component of the workspace of §1.3.4. -/
-private def eaten : SyntacticObject :=
+def eaten : SyntacticObject :=
   (LinearizedSyntacticObject.leaf ⟨.of .V [.D] "eaten", 3⟩).toSyntacticObject
 
 /-- External Merge of *the apple* with *eaten* loses no complexity graded by the size `σ`: its term
@@ -428,8 +431,9 @@ private theorem sidewardTermN_mem :
 
 /-- The 2(b) term satisfies Minimal Yield under trace counting, so Minimal Yield does not tell it
     apart from Internal Merge (Remark 1.6.9). -/
-example : MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
-    {(merge eaten theD).val, (deleteAccessible theD theApple).val} := by
+theorem sideward2b_minimalYield :
+    MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
+      {(merge eaten theD).val, (deleteAccessible theD theApple).val} := by
   have := (MinimalYield.merge_term_accessibleCount_iff none sidewardTermC_mem
     (S := eaten.val) (S' := theD.val)
     (fun x hx _ ↦ by
