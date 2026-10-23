@@ -7,6 +7,7 @@ public import Linglib.Semantics.Mereology
 public import Linglib.Syntax.Category.Verb.Argument
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.GoldbergJackendoff2004
+public import Studies.Goldberg1995
 
 /-!
 # Goldberg and Jackendoff (2004): The English Resultative as a Family of Constructions
@@ -23,7 +24,8 @@ intransitive property resultative.
 
 ## Main definitions
 
-* `Subconstruction`: the four subconstructions of the family.
+* `Subconstruction`, `Subconstruction.link`: the four subconstructions of the family, and their
+  argument structures.
 * `resultative`: the resultative over a path trace.
 * `Row.Coheres`: the coherence of a row's roles with those of its construction.
 
@@ -45,13 +47,17 @@ phrases only as AP or PP; a row's subconstruction follows the summary (97), wher
 state (*into pieces*, *to death*) is a property result phrase, and the paper presents the examples
 (49) as transitive spatial resultatives. A row's `subjectRole` and `objectRole` are the paper's
 construals of the verb's arguments, per verb and referent: whether the argument is something that
-acts, an agent, or something to which something happens, a patient.
+acts, an agent, or something to which something happens, a patient. The causative property
+resultative is the resultative of [goldberg-1995], and the path resultatives take the frames of its
+caused motion and intransitive motion constructions, which (97) names them as; where Goldberg
+labels the moving host a theme, the roles here are those of §6.2.
 
 ## TODO
 
 - The temporal relations the subevent relation allows (33): a means does not follow the subevent it
   effects, and a result does not precede its cause.
-- Full argument realization (37), which excludes (41d) and (43b,c).
+- Full argument realization (37), which excludes (41d) and (43b,c), the Correspondence Principle
+  of [goldberg-1995] in another form (fn. 20, `ArgumentStructure.Corresponds`).
 - The stative extension readings (25), and the *follow* subconstructions (52), (55) and (56), which
   are transitive but not causative.
 
@@ -107,30 +113,36 @@ inductive ObjectSelection where
 The principle of semantic coherence (44): a verb role, given by the roles it can be construed as,
 unifies with a constructional role, given by the roles that are instances of it, only if some
 construal of the verb role is an instance of the constructional role, that is, only if the two
-sets of roles are not disjoint. -/
+sets of roles are not disjoint (`ArgumentStructure.Coherent`). -/
 
-/-- The roles the host of the constructional subevent admits (§6.2). The host of BECOME and a
-caused host are patients, while the host of an uncaused GO is agent or patient, as the subject
-of an intransitive motion verb is. -/
-def Subconstruction.hostRoles : Subconstruction → Finset ThetaRole
-  | ⟨false, .path⟩ => {.agent, .patient}
-  | _ => {.patient}
-
-/-- `s.subjectRoles` is the set of roles the construction admits for its subject, an agent, the
-causer, in a causative, and otherwise the host. -/
-def Subconstruction.subjectRoles (s : Subconstruction) : Finset ThetaRole :=
-  if s.causative then {.agent} else s.hostRoles
+/-- The argument structure of a subconstruction (97), whose subject the verb shares (§6.1). The
+causative property resultative is the resultative of [goldberg-1995], and the path resultatives
+have the frames of its caused motion and intransitive motion constructions (p. 563). A causer is
+an agent and a caused host a patient, the host of BECOME is a patient, and the host of an uncaused
+GO is an agent or a patient, as the subject of an intransitive motion verb is (§6.2). -/
+def Subconstruction.link : Subconstruction → LinkedFrame
+  | ⟨true, .property⟩ => Goldberg1995.resultative.meaning.link
+  | ⟨true, .path⟩ =>
+    { Goldberg1995.causedMotion.meaning.link with
+      roles := [(.external, ⟨{.agent}, true⟩), (.complement 0, ⟨{.patient}, false⟩),
+        (.complement 1, ⟨{.goal}, false⟩)] }
+  | ⟨false, .property⟩ =>
+    { frame := ⟨some .nominal, [.clausal]⟩
+      roles := [(.external, ⟨{.patient}, true⟩), (.complement 0, ⟨{.goal}, false⟩)] }
+  | ⟨false, .path⟩ =>
+    { Goldberg1995.intransitiveMotion.meaning.link with
+      roles := [(.external, ⟨{.agent, .patient}, true⟩), (.complement 0, ⟨{.goal}, false⟩)] }
 
 /-- A subject role compatible with the intransitive property resultative is compatible with the
 intransitive path resultative (§6.2). -/
 theorem coheres_noncausative_path {rV : Finset ThetaRole}
-    (h : ¬ Disjoint rV (Subconstruction.subjectRoles ⟨false, .property⟩)) :
-    ¬ Disjoint rV (Subconstruction.subjectRoles ⟨false, .path⟩) :=
+    (h : ¬ Disjoint rV ((⟨false, .property⟩ : Subconstruction).link.admits .external)) :
+    ¬ Disjoint rV ((⟨false, .path⟩ : Subconstruction).link.admits .external) :=
   fun hd ↦ h (hd.mono_right (by decide))
 
 /-- An agent subject, as of *yell*, is compatible with GO but not with BECOME. -/
-example : ¬ Disjoint {.agent} (Subconstruction.subjectRoles ⟨false, .path⟩) ∧
-    Disjoint {.agent} (Subconstruction.subjectRoles ⟨false, .property⟩) := by
+example : ¬ Disjoint {.agent} ((⟨false, .path⟩ : Subconstruction).link.admits .external) ∧
+    Disjoint {.agent} ((⟨false, .property⟩ : Subconstruction).link.admits .external) := by
   decide
 
 /-! ### Aspect -/
@@ -224,13 +236,19 @@ theorem rows_for_adverbial :
     ∀ r ∈ rows, ∀ b ∈ r.endBounded, r.judgment = .acceptable ↔ b = false := by
   decide
 
-/-- A row coheres when the paper's construal of the verb's subject is compatible with the
-construction's subject, and that of a selected object with the host. -/
-def Row.Coheres (r : Row) : Prop :=
-  (∀ ρ ∈ r.subjectRole, ¬ Disjoint ρ r.subconstruction.subjectRoles) ∧
-    ∀ ρ ∈ r.objectRole, ¬ Disjoint ρ r.subconstruction.hostRoles
+/-- The paper's construals of a row's subject and object, in the positions of its
+construction. -/
+def Row.construal (r : Row) : LinkedFrame :=
+  { r.subconstruction.link with
+    roles := (r.subjectRole.map fun ρ ↦ (.external, ⟨ρ, true⟩)).toList ++
+      (r.objectRole.map fun ρ ↦ (.complement 0, ⟨ρ, true⟩)).toList }
 
-instance (r : Row) : Decidable r.Coheres := inferInstanceAs (Decidable (_ ∧ _))
+/-- A row coheres when each argument the paper construes coheres with the construction's argument
+in its position. -/
+def Row.Coheres (r : Row) : Prop :=
+  Coherent r.construal r.subconstruction.link (r.construal.roles.map Prod.fst).toFinset.diag
+
+instance (r : Row) : Decidable r.Coheres := inferInstanceAs (Decidable (Coherent ..))
 
 /-- By §6.2, outside the telicity tests an example is acceptable exactly when its roles
 cohere. -/
