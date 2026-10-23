@@ -102,6 +102,14 @@ theorem termDenot_congr {t : Term Sig} (h : ∀ x ∈ t.freeVars, g x = g' x) :
   | var n => simp [h n (Finset.mem_singleton_self n)]
   | feat t α ih => rw [termDenot_feat, termDenot_feat, ih h]
 
+/-- A colon-free term denotes the same entity at every described entity. -/
+theorem termDenot_of_isColonFree {t : Term Sig} (ht : t.IsColonFree) (u v : U) :
+    I.termDenot g t u = I.termDenot g t v := by
+  induction t with
+  | colon => exact ht.elim
+  | var n => rfl
+  | feat t α ih => rw [termDenot_feat, termDenot_feat, ih ht]
+
 theorem termDenot_path (g g' : ℕ → U) (p : Path Sig) :
     I.termDenot g (.path p) u = I.termDenot g' (.path p) u :=
   termDenot_congr (by simp)
