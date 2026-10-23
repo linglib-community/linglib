@@ -90,8 +90,9 @@ theorem toFlat_sup_mono_left {a a' : SignType} (b : SignType)
 theorem toFlat_le_toFlat_ofProp_eq_one (a : SignType) : toFlat a ≤ toFlat (ofProp (a = 1)) := by
   cases a <;> decide
 
-theorem eq_of_toFlat_le {a b : SignType} (h : toFlat a ≤ toFlat b) (ha : a ≠ 0) : a = b := by
-  cases a <;> cases b <;> revert h ha <;> decide
+/-- The knowledge order on `SignType`, through `Flat.le_def`. -/
+theorem toFlat_le_toFlat_iff {a b : SignType} : toFlat a ≤ toFlat b ↔ a = 0 ∨ a = b := by
+  cases a <;> cases b <;> decide
 
 /-- Weak Kleene conjunction is not truth-monotone, since `0 ≤ 1` but `meetWeak 0 (-1) = 0` is not
 below `meetWeak 1 (-1) = -1`; unlike `⊓` it is no bilattice operation. -/

@@ -40,7 +40,7 @@ Enrichment (62) is `Modifier.intersective` at `fun x w ↦ ofProp (R x w)`, writ
 Kleene, Free Enrichment is instead a map on the lexicon, `if R d w then P w d else false`, which
 agrees with the Strong Kleene conjunction because `R` is two-valued (`enrichment_eq_meetMiddle`);
 the composition rules (63) are then the engine's own. Since every mode of that engine is strict
-(`Montague.Mode.dom_evalPartial`), `A` is no word meaning there.
+(`Montague.Mode.dom_right_of_dom_evalPartial`), `A` is no word meaning there.
 
 ## TODO
 
@@ -63,6 +63,8 @@ open SignType Trivalent
 
 universe u
 
+section StrongKleene
+
 variable {E W : Type*}
 
 /-! ### Operators and parallelism -/
@@ -74,14 +76,19 @@ theorem pointwise_projects_or_accommodates (f : SignType → SignType)
     (hf : ∀ a, a ≠ 0 → f a ≠ 0) (P : E → W → SignType) :
     (∀ x, gapExt (f ∘ P x) = gapExt (P x)) ∨ ∀ x, gapExt (f ∘ P x) = ∅ := by
   rcases eq_or_ne (f 0) 0 with h | h
-  · refine .inl fun x ↦ Set.ext fun w ↦ ?_
-    simp only [mem_gapExt, Function.comp_apply]
-    exact ⟨fun h' ↦ by_contra fun hw ↦ hf _ hw h', fun hw ↦ hw ▸ h⟩
-  · refine .inr fun x ↦ Set.eq_empty_of_forall_notMem fun w h' ↦ ?_
-    simp only [mem_gapExt, Function.comp_apply] at h'
-    by_cases hw : P x w = 0
-    · exact h (hw ▸ h')
-    · exact hf _ hw h'
+  · exact .inl fun x ↦ gapExt_comp (fun a ↦ ⟨fun hfa ↦ by_contra fun ha ↦ hf a ha hfa,
+      fun ha ↦ ha ▸ h⟩) (P x)
+  · refine .inr fun x ↦ (isBivalent_iff_gapExt_eq_empty _).1 (isBivalent_comp (fun a ↦ ?_) (P x))
+    rcases eq_or_ne a 0 with rfl | ha
+    · exact h
+    · exact hf a ha
+
+/-- Bochvar's `A` keeps defined values defined, so Table 1 applies to it: inserted in an elided
+clause, it would have to be in the antecedent too ([beaver-krahmer-2001]'s floating `A`). -/
+example (P : E → W → SignType) :
+    (∀ x, gapExt ((fun a ↦ ofProp (a = 1)) ∘ P x) = gapExt (P x)) ∨
+      ∀ x, gapExt ((fun a ↦ ofProp (a = 1)) ∘ P x) = ∅ :=
+  pointwise_projects_or_accommodates _ (fun _ _ ↦ ofProp_ne_zero) P
 
 /-! ### Free Enrichment -/
 
@@ -102,7 +109,8 @@ theorem enrichment_projects_and_accommodates (P : E → W → SignType) (R : E �
     Set.eq_empty_of_forall_notMem fun w h ↦ hX w h.1 h.2⟩
 
 /-- The antecedent is the shared λ-abstract at an alternative to the elided clause's focused
-argument, so it lies in that clause's focus value and semantic parallelism holds ((71)). -/
+argument, so it lies in that clause's focus value and semantic parallelism holds ((71)). The
+focus monad puts the arguments and the clause meanings in one universe. -/
 example {E W : Type u} (P : E → W → SignType) (R : E → W → Prop)
     [∀ x, DecidablePred (R x)] (X Y : E) :
     (fun w ↦ -(ofProp (R Y w) ⊓ P Y w)) ∈
@@ -126,8 +134,9 @@ theorem enrichment_eq_meetMiddle (R : Prop) [Decidable R] (a : SignType) :
 conditional presupposition that `S` implies `T` (§5.2.1), while `A` above the trigger leaves no
 presupposition at all ((35), `Trivalent.gapExt_ofProp_eq_one`). -/
 theorem partial_accommodation (S T : Set W) [DecidablePred (· ∈ S)] {f : W → SignType}
-    (hf : ∀ w, f w ≠ 0) : gapExt (fun w ↦ ofProp (w ∈ S) ⊓ (S ∩ T).indicator f w) = S \ T := by
-  ext w; by_cases hS : w ∈ S <;> by_cases hT : w ∈ T <;> simp [hS, hT, hf]
+    (hf : IsBivalent f) :
+    gapExt (fun w ↦ ofProp (w ∈ S) ⊓ (S ∩ T).indicator f w) = S \ T := by
+  ext w; by_cases hS : w ∈ S <;> by_cases hT : w ∈ T <;> simp [hS, hT, hf.ne_zero]
 
 /-- One of the two presuppositions of a double trigger, *notice* (36) or *return the book to the
 library* (38). -/
@@ -145,16 +154,16 @@ def Slot.set (S T : Set W) : Slot → Set W
   | .first => S
   | .second => T
 
-instance {S T : Set W} [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)] {w : W} :
-    (q : Slot) → Decidable (w ∈ Slot.set S T q)
-  | .first => inferInstanceAs (Decidable (w ∈ S))
-  | .second => inferInstanceAs (Decidable (w ∈ T))
+instance {S T : Set W} [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)] :
+    (q : Slot) → DecidablePred (· ∈ Slot.set S T q)
+  | .first => inferInstanceAs (DecidablePred (· ∈ S))
+  | .second => inferInstanceAs (DecidablePred (· ∈ T))
 
 /-- Each example accommodates one presupposition of its trigger and projects the other, so
 enriching by the accommodated one leaves exactly the other's conditional gap ((34), (38),
 (39)). -/
 theorem partial_accommodation_rows (S T : Set W) [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)]
-    {f : W → SignType} (hf : ∀ w, f w ≠ 0) : ∀ row ∈ Examples.all,
+    {f : W → SignType} (hf : IsBivalent f) : ∀ row ∈ Examples.all,
     ∀ q ∈ row.parse? "accommodated" slots, ∀ r ∈ row.parse? "projected" slots,
       q ≠ r ∧ gapExt (fun w ↦ ofProp (w ∈ Slot.set S T q) ⊓ (S ∩ T).indicator f w) =
         Slot.set S T q \ Slot.set S T r := by
@@ -175,13 +184,19 @@ theorem projection_entails_accommodation {C : SignType → SignType}
     (h : C a = 1) : C (ofProp (a = 1)) = 1 := by
   have := hC _ _ (toFlat_le_toFlat_ofProp_eq_one a)
   rw [h] at this
-  exact (eq_of_toFlat_le this (by decide)).symm
+  rcases toFlat_le_toFlat_iff.1 this with h' | h'
+  · exact absurd h' (by decide)
+  · exact h'.symm
 
 /-- Ann's sentence in (26) entails its locally accommodated reading. -/
 example {a : SignType} (h : -a = 1) : -ofProp (a = 1) = 1 :=
   projection_entails_accommodation (fun _ _ ↦ toFlat_neg_mono) h
 
-/-! ### Composition -/
+end StrongKleene
+
+/-! ### Composition
+
+The derivation of `Examples.ex_26` on the partial engine. -/
 
 section Composition
 
@@ -242,14 +257,13 @@ theorem presupFailure_clause_iff_mem_gapExt [DecidablePred (R d)] :
     PresupFailure (lexicon P R w) g (clause d) ↔
       w ∈ gapExt fun w ↦ ofProp (R d w) ⊓ ofPart (P w d) := by
   rw [presupFailure_clause, gapExt_ofProp_inf, Set.mem_inter_iff, mem_gapExt,
-    ofPart_eq_zero_iff]
-  rfl
+    ofPart_eq_zero_iff, Set.mem_ofPred_eq]
 
 /-- No word of type `⟨t,t⟩` turns an undefined argument into a defined value, so `A` is no word
 meaning on the partial engine. -/
 example (f : Part (Ty.PDomain D W (.t ⇒ .t))) {a : Part Prop} (ha : ¬ a.Dom) :
     ¬ (Mode.functionalLeft.evalPartial f a).Dom :=
-  fun h ↦ ha (Mode.dom_evalPartial _ h).2
+  fun h ↦ ha (Mode.dom_right_of_dom_evalPartial _ h)
 
 end Composition
 

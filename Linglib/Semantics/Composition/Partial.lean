@@ -33,8 +33,8 @@ difference between the engine returning no denotation and returning an undefined
 
 ## Main results
 
-* `Montague.Mode.dom_evalPartial`: every mode is strict, so no word turns an undefined argument
-  into a defined value.
+* `Montague.Mode.dom_left_of_dom_evalPartial`, `Montague.Mode.dom_right_of_dom_evalPartial`:
+  every mode is strict, so no word turns an undefined argument into a defined value.
 * `PhraseStructure.Tree.uninterpretable_congr`: uninterpretability depends on the leaves' types
   alone.
 * `PhraseStructure.Tree.interpPartial_lifts`: on a lexicon lifting a total one the partial
@@ -98,11 +98,15 @@ def Mode.evalPartial : Mode σ₁ σ₂ τ → Part (Ty.PDomain E W σ₁ S) →
   | .eventIdentificationRight, p, f => f.bind fun F ↦ p.bind fun P ↦
       Part.some fun x ↦ (F x).map fun Fx e ↦ (Fx e).bind fun a ↦ (P e).map fun b ↦ a ∧ b
 
-/-- Every mode is strict: a node is defined only where both its daughters are. -/
-theorem Mode.dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty.PDomain E W σ₁ S)}
-    {b : Part (Ty.PDomain E W σ₂ S)} (h : (m.evalPartial a b).Dom) : a.Dom ∧ b.Dom := by
-  cases m <;> obtain ⟨h₁, h₂⟩ := h <;>
-    first | exact ⟨h₁, Part.Dom.of_bind h₂⟩ | exact ⟨Part.Dom.of_bind h₂, h₁⟩
+/-- Every mode is strict in its left daughter. -/
+theorem Mode.dom_left_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty.PDomain E W σ₁ S)}
+    {b : Part (Ty.PDomain E W σ₂ S)} (h : (m.evalPartial a b).Dom) : a.Dom := by
+  cases m <;> obtain ⟨h₁, h₂⟩ := h <;> first | exact h₁ | exact Part.Dom.of_bind h₂
+
+/-- Every mode is strict in its right daughter. -/
+theorem Mode.dom_right_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty.PDomain E W σ₁ S)}
+    {b : Part (Ty.PDomain E W σ₂ S)} (h : (m.evalPartial a b).Dom) : b.Dom := by
+  cases m <;> obtain ⟨h₁, h₂⟩ := h <;> first | exact h₁ | exact Part.Dom.of_bind h₂
 
 open scoped Assignment
 
