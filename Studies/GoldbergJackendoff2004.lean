@@ -127,7 +127,7 @@ def Subconstruction.link : Subconstruction → LinkedFrame
       roles := [(.external, ⟨{.agent}, true⟩), (.complement 0, ⟨{.patient}, false⟩),
         (.complement 1, ⟨{.goal}, false⟩)] }
   | ⟨false, .property⟩ =>
-    { frame := ⟨some .nominal, [.clausal]⟩
+    { frame := .smallClause
       roles := [(.external, ⟨{.patient}, true⟩), (.complement 0, ⟨{.goal}, false⟩)] }
   | ⟨false, .path⟩ =>
     { Goldberg1995.intransitiveMotion.meaning.link with

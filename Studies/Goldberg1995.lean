@@ -38,6 +38,9 @@ change of location (pp. 81–84). A verb's participant roles are the slots of a 
 entry lists, linked to the labels the book construes them as; only *kick*'s entry records the
 entailments its labels derive from. Lexical profiling is the book's boldface. Caused motion's
 theme is contributable, as in Fig. 7.1 and the sneeze case, where Fig. 2.6 draws it as required.
+A construction's form is its frame in English order (`linearize`), which the book states at the
+subject-predicate construction (p. 110), so the conative's *at* and the resultative's AP or PP
+result phrase (Fig. 8.1) come from the frame.
 
 ## TODO
 
@@ -49,7 +52,9 @@ alone would not admit *kick at*: *kick*'s kicked role is a patient, not the cona
 a verb profiling two roles from fusing one with the theme, which is oblique and so not profiled;
 the book does not say how a verb of the intended result fuses. The intransitive resultative
 (Fig. 8.3), the passive's thematic hierarchy (p. 57), *send* (Fig. 2.11) and the senses of caused
-motion (p. 76) are not modelled.
+motion (p. 76) are not modelled, nor are the transfer caused-motion construction of Fig. 4.1 and
+the subject-predicate, transitive and intransitive constructions of Fig. 4.2, whose instance links
+add complements, where `LinkType.instance` admits only a lexically filled version of a form.
 
 ## References
 
@@ -110,84 +115,75 @@ example : causers = {.agent, .instrument, .stimulus} := by decide
 
 /-! ### The argument structure constructions -/
 
+/-- The slot an expressed argument position fills in a form: a noun for a nominal, a phrase headed
+by the adposition a PP selects, and any phrase for a predicative complement. -/
+def slot? : ArgumentFrame.Position → Option (ConstructionGrammar.Slot String)
+  | .nominal => some { filler := .open_ .NOUN }
+  | .adpositional _ (some p) => some { filler := .headed p.form .ADP }
+  | .adpositional _ none => some { filler := .open_ .ADP }
+  | .clausal .. => some { filler := .phrasal }
+  | .expletive => some { filler := .open_ .PRON }
+  | .implicit _ => none
+
+/-- `linearize fr` is the form of the frame `fr` in English order, the subject, the head verb and
+the expressed complements, an order the book states once, at the subject-predicate construction
+the argument structure constructions inherit from (p. 110, Fig. 4.2). -/
+def linearize (fr : ArgumentFrame) : TypedForm String :=
+  (fr.external.bind slot?).toList ++ [{ filler := .open_ .VERB, isHead := true }] ++
+    fr.complements.filterMap slot?
+
+/-- The argument structure construction meaning `pred` over `link`, with the relations
+`relations`, whose form is its frame linearized. -/
+def argumentStructure (pred : Predicate) (link : LinkedFrame) (relations : List SubeventRelation) :
+    Construction Sem :=
+  { form := linearize link.frame, meaning := ⟨pred, link, relations⟩ }
+
 /-- The ditransitive [Subj V Obj Obj₂] in the sense `m` means CAUSE-RECEIVE ⟨agt rec pat⟩, with
 the recipient contributable and the verb an instance or the means (Fig. 2.4; *Pat faxed Bill the
 letter*). In the benefactive sense the verb designates a precondition (Fig. 3.2), and the other
 senses keep the central sense's relations. -/
 def ditransitive (m : TransferModality) : Construction Sem :=
-  { form :=
-      [ { filler := .open_ .NOUN }
-      , { filler := .open_ .VERB, isHead := true }
-      , { filler := .open_ .NOUN }
-      , { filler := .open_ .NOUN } ]
-  , meaning :=
-      { pred := .causeReceive m
-        link :=
-          { frame := .np_np
-            roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.recipient}, false⟩),
-              (complement 1, ⟨{.patient}, true⟩)] }
-        relations := if m = .intended then [.precondition] else [.subtype, .means] } }
+  argumentStructure (.causeReceive m)
+    { frame := .np_np
+      roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.recipient}, false⟩),
+        (complement 1, ⟨{.patient}, true⟩)] }
+    (if m = .intended then [.precondition] else [.subtype, .means])
 
 /-- The caused-motion construction [Subj V Obj Obl] means CAUSE-MOVE ⟨cause goal theme⟩, with goal
 and theme contributable (Fig. 7.1), so that *sneeze* acquires motion and causation from it (*Pat
 sneezed the napkin off the table*). -/
 def causedMotion : Construction Sem :=
-  { form :=
-      [ { filler := .open_ .NOUN }
-      , { filler := .open_ .VERB, isHead := true }
-      , { filler := .open_ .NOUN }
-      , { filler := .open_ .ADP } ]
-  , meaning :=
-      { pred := .causeMove
-        link :=
-          { frame := .np_spatialPP
-            roles := [(external, ⟨causers, true⟩), (complement 0, ⟨{.theme}, false⟩),
-              (complement 1, ⟨{.goal}, false⟩)] }
-        relations := [.subtype, .means] } }
+  argumentStructure .causeMove
+    { frame := .np_spatialPP
+      roles := [(external, ⟨causers, true⟩), (complement 0, ⟨{.theme}, false⟩),
+        (complement 1, ⟨{.goal}, false⟩)] }
+    [.subtype, .means]
 
 /-- The resultative [Subj V Obj Xcomp] means CAUSE-BECOME ⟨agt pat result-goal⟩, with patient and
-result-goal contributable (Fig. 8.1; *Pat hammered the metal flat*, p. 81). -/
+result-goal contributable (Fig. 8.1; *Pat hammered the metal flat*, p. 81). Its result phrase, an
+AP or a PP, is the predicate of a small clause whose subject is the object. -/
 def resultative : Construction Sem :=
-  { form :=
-      [ { filler := .open_ .NOUN }
-      , { filler := .open_ .VERB, isHead := true }
-      , { filler := .open_ .NOUN }
-      , { filler := .open_ .ADJ } ]
-  , meaning :=
-      { pred := .causeBecome
-        link :=
-          { frame := ⟨some .nominal, [.nominal, .clausal]⟩
-            roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.patient}, false⟩),
-              (complement 1, ⟨{.goal}, false⟩)] }
-        relations := [.subtype, .means] } }
+  argumentStructure .causeBecome
+    { frame := ArgumentFrame.smallClause.withObject
+      roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.patient}, false⟩),
+        (complement 1, ⟨{.goal}, false⟩)] }
+    [.subtype, .means]
 
 /-- The intransitive motion construction [Subj V Obl] means MOVE ⟨theme goal⟩, with the goal
 contributable (Fig. 7.2; *The fly buzzed into the room*). -/
 def intransitiveMotion : Construction Sem :=
-  { form :=
-      [ { filler := .open_ .NOUN }
-      , { filler := .open_ .VERB, isHead := true }
-      , { filler := .open_ .ADP } ]
-  , meaning :=
-      { pred := .move
-        link :=
-          { frame := .spatialPP
-            roles := [(external, ⟨{.theme}, true⟩), (complement 0, ⟨{.goal}, false⟩)] }
-        relations := [.subtype, .means] } }
+  argumentStructure .move
+    { frame := .spatialPP
+      roles := [(external, ⟨{.theme}, true⟩), (complement 0, ⟨{.goal}, false⟩)] }
+    [.subtype, .means]
 
 /-- The conative [Subj V Obl_at] means DIRECT-ACTION-AT ⟨agt theme⟩ (Figs. 2.13–2.15; *Sam kicked
 at Bill*); its at-phrase marks the target without entailing contact. -/
 def conative : Construction Sem :=
-  { form :=
-      [ { filler := .open_ .NOUN }
-      , { filler := .open_ .VERB, isHead := true }
-      , { filler := .open_ .ADP } ]
-  , meaning :=
-      { pred := .directActionAt
-        link :=
-          { frame := .pp (some English.Adpositions.at_)
-            roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.theme}, true⟩)] }
-        relations := [.subtype] } }
+  argumentStructure .directActionAt
+    { frame := .pp (some English.Adpositions.at_)
+      roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.theme}, true⟩)] }
+    [.subtype]
 
 /-! ### Verbs in constructions (§2.4)
 
@@ -320,7 +316,7 @@ theorem contributed_talk :
 /-- *become* profiles its participant roles ⟨patient result-goal⟩ (p. 190), a subject and a
 predicative complement. -/
 def becomeLF : LinkedFrame :=
-  { frame := ⟨some .nominal, [.clausal]⟩
+  { frame := .smallClause
     roles := [(external, ⟨{.patient}, true⟩), (complement 0, ⟨{.goal}, true⟩)] }
 
 /-- *Become* does not fuse with the resultative, which needs the agent fused with an existing
