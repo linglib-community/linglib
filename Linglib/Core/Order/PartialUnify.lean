@@ -220,6 +220,41 @@ instance : PartialUnify ((t : F) → S t) where
     rw [dite_eq_left h]
     exact WithTop.coe_ne_top
 
+/-- Bundles unify to `u` exactly when every coordinate unifies to `u`'s. -/
+theorem unify_pi_eq_coe_iff {f g u : (t : F) → S t} :
+    unify f g = ↑u ↔ ∀ t, unify (f t) (g t) = ↑(u t) := by
+  rw [unify_eq_coe_iff_isLUB, isLUB_pi]
+  exact forall_congr' fun t ↦ by rw [unify_eq_coe_iff_isLUB, Set.image_pair]
+
+/-- Bundles fail to unify exactly when some coordinate's unification fails. -/
+theorem unify_pi_eq_top_iff {f g : (t : F) → S t} :
+    unify f g = ⊤ ↔ ∃ t, unify (f t) (g t) = ⊤ := by
+  simp only [unify_eq_top_iff, bddAbove_pi, Set.image_pair, not_forall]
+
+/-- Unification restricts along a reindexing `σ`: when two bundles unify, the reindexed bundles
+unify to the reindexing of the result. -/
+theorem unify_comp {G : Type*} [Fintype G] (σ : G → F) {f g u : (t : F) → S t}
+    (h : unify f g = ↑u) :
+    unify (fun i ↦ f (σ i)) (fun i ↦ g (σ i)) = ↑(fun i ↦ u (σ i)) :=
+  unify_pi_eq_coe_iff.2 fun i ↦ unify_pi_eq_coe_iff.1 h (σ i)
+
+/-- Unifying with a bundle specified at one coordinate unifies at that coordinate and leaves the
+others in place. -/
+theorem unify_update_bot [∀ t, OrderBot (S t)] [DecidableEq F] (f : (t : F) → S t) (t : F)
+    (x : S t) :
+    unify f (Function.update ⊥ t x) = (unify (f t) x).map (Function.update f t) := by
+  cases h : unify (f t) x with
+  | top =>
+    rw [WithTop.map_top]
+    exact unify_pi_eq_top_iff.2 ⟨t, by simpa using h⟩
+  | coe u =>
+    rw [WithTop.map_coe]
+    refine unify_pi_eq_coe_iff.2 fun t' ↦ ?_
+    rcases eq_or_ne t' t with rfl | ht
+    · simpa using h
+    · simp only [Function.update_of_ne ht, Pi.bot_apply]
+      exact unify_eq_left.2 bot_le
+
 end Pi
 
 /-! ### Adjoining a bottom -/
@@ -268,6 +303,14 @@ instance : PartialUnify (WithBot α) where
       obtain ⟨c, hc⟩ := WithTop.ne_top_iff_exists.mp (unify_ne_top_of_bddAbove
         ⟨u', mem_upperBounds_pair.mpr ⟨hau', WithBot.coe_le_coe.mp hyu⟩⟩)
       simp [PartialUnify.withBotUnify, ← hc]
+
+@[simp] theorem unify_bot_left (y : WithBot α) : unify (⊥ : WithBot α) y = ↑y := rfl
+
+@[simp] theorem unify_coe_bot (a : α) : unify (a : WithBot α) ⊥ = ↑(a : WithBot α) := rfl
+
+/-- Coerced elements unify as in the carrier. -/
+@[simp] theorem unify_coe_coe (a b : α) :
+    unify (a : WithBot α) (b : WithBot α) = (unify a b).map (↑) := rfl
 
 end WithBot
 

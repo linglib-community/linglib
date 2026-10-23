@@ -27,6 +27,9 @@ its host as well as its dimension.
 * `Minimalist.FeatureVal` — a dimension with a value
 * `Minimalist.FeatureBundle` — a checking slot at each dimension, with `ofList`, `toList` and
   `valued`
+* `Minimalist.FeatureBundle.agreement`, `Minimalist.FeatureBundle.ofAgreement` — the agreement
+  content of a checking bundle and the embedding of an agreement bundle, a Galois coinsertion
+  (`FeatureBundle.gciAgreement`)
 * `Minimalist.Interpretability` — ±interpretable
 
 ## References
@@ -173,6 +176,60 @@ instance : Repr FeatureBundle where
   reprPrec fb _ :=
     repr <| FeatureType.all.filterMap fun t ↦
       if (fb t).isSpecified then some (reprStr t, reprStr (fb t)) else none
+
+/-! ### The agreement restriction
+
+`FeatureType.agr` embeds the agreement dimensions and `FeatureSlot.ofFlat` embeds the flat slot,
+so a checking bundle restricts to its agreement content and an agreement bundle embeds as a
+checking bundle, borne exactly on its specified dimensions: reindexing along the embedding
+composed with the slot maps, a Galois coinsertion. -/
+
+/-- The agreement content of a checking bundle: a valued agreement dimension keeps its value, an
+unvalued or absent one is unspecified. -/
+def agreement (b : FeatureBundle) : Agreement.Bundle := fun d ↦ (b (.agr d)).toFlat
+
+@[simp] theorem agreement_apply (b : FeatureBundle) (d : Agreement.Dimension) :
+    b.agreement d = (b (.agr d)).toFlat := rfl
+
+/-- An agreement bundle as a checking bundle, borne and valued exactly on its specified agreement
+dimensions and absent elsewhere. -/
+def ofAgreement (c : Agreement.Bundle) : FeatureBundle := fun t ↦
+  match t with
+  | .agr d => .ofFlat (c d)
+  | _ => ⊥
+
+@[simp] theorem ofAgreement_agr (c : Agreement.Bundle) (d : Agreement.Dimension) :
+    ofAgreement c (.agr d) = .ofFlat (c d) := rfl
+
+@[simp] theorem agreement_ofAgreement (c : Agreement.Bundle) : (ofAgreement c).agreement = c :=
+  funext fun d ↦ FeatureSlot.toFlat_ofFlat (c d)
+
+theorem gc_ofAgreement_agreement : GaloisConnection ofAgreement agreement := by
+  intro c b
+  constructor
+  · exact fun h d ↦ (FeatureSlot.gc_ofFlat_toFlat _ _).1 (h (.agr d))
+  · intro h t
+    cases t
+    case agr d => exact (FeatureSlot.gc_ofFlat_toFlat _ _).2 (h d)
+    all_goals exact bot_le
+
+/-- The checking layer sits over the agreement layer by a Galois coinsertion. -/
+def gciAgreement : GaloisCoinsertion ofAgreement agreement :=
+  gc_ofAgreement_agreement.toGaloisCoinsertion fun c ↦ (agreement_ofAgreement c).le
+
+theorem monotone_agreement : Monotone agreement := gc_ofAgreement_agreement.monotone_u
+
+theorem monotone_ofAgreement : Monotone ofAgreement := gc_ofAgreement_agreement.monotone_l
+
+/-- Updating a checking bundle at an agreement dimension updates its agreement content there. -/
+theorem agreement_update_agr (b : FeatureBundle) (d : Agreement.Dimension)
+    (s : FeatureSlot d.Value) :
+    agreement (Function.update b (.agr d) s) = Function.update b.agreement d s.toFlat := by
+  funext d'
+  rcases eq_or_ne d' d with rfl | hd
+  · simp
+  · have ht : FeatureType.agr d' ≠ .agr d := by simpa using hd
+    simp [Function.update_of_ne, hd, ht]
 
 end FeatureBundle
 
