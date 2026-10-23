@@ -30,6 +30,8 @@ sentence-level counterpart of `Data/Wordlist/`.
 * `Datum.digits?`, `Datum.nat?`, `Datum.int?`: numerals.
 * `Datum.judgments`, `Datum.JudgedFelicitous`: every printed mark, and felicity as the mark and
   the prose give it.
+* `Datum.Fits`, `Datum.ReadCount`: a prediction's fit with the judgment band of what a reader
+  reads off a row, and the count of rows a reader reads, the coverage witness beside a fit.
 
 ## Main statements
 
@@ -185,6 +187,26 @@ def JudgedFelicitous : Prop :=
   e.judgment = .acceptable ∧ e.feature? "felicity" ≠ some "infelicitous"
 
 instance : Decidable e.JudgedFelicitous := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The prediction `P` over what the reader `f` reads off `e` fits the row: the band of `e`'s
+judgment is the predicted band. A row the reader does not read is unconstrained, so a `Fits`
+theorem is paired with a `Datum.ReadCount` for its reader. -/
+def Fits {α : Type*} (f : Datum → Option α) (P : α → Judgment.Band) : Prop :=
+  ∀ a ∈ f e, e.judgment.band = P a
+
+instance {α : Type*} (f : Datum → Option α) (P : α → Judgment.Band) :
+    Decidable (e.Fits f P) :=
+  inferInstanceAs (Decidable (∀ a ∈ f e, _ = _))
+
+/-- The reader `f` reads exactly `n` of `rows`: the coverage witness beside a `Fits` or other
+row-quantified theorem, without which the theorem goes silently vacuous when a feature key or a
+table value drifts. -/
+def ReadCount {α : Type*} (f : Datum → Option α) (rows : List Datum) (n : ℕ) : Prop :=
+  (rows.filterMap f).length = n
+
+instance {α : Type*} (f : Datum → Option α) (rows : List Datum) (n : ℕ) :
+    Decidable (ReadCount f rows n) :=
+  inferInstanceAs (Decidable (_ = _))
 
 variable {e key} {v : String}
 

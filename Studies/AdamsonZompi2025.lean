@@ -43,10 +43,10 @@ agreement valuation `Morphosyntactic` reads the fragments' `person` and the LF v
 As in the paper, the rejection by some Weak-PCC speakers of a first person dative over accusative
 LEI is left open (`first_dative_lei`). The Person Licensing Condition, the clitic logophoric
 restriction, and the rival accounts of polite pronouns by impoverishment or by unmarked-value
-recruitment have no formal counterpart here. `Row.ofDatum` reads only the rows whose `dative` and
-`accusative` features name a single pronoun, which leaves out the repair rows (stressed pronouns
-and prepositional datives obviate the constraint), the ambiguous clusters and the camouflage
-resumptions.
+recruitment have no formal counterpart here. The reader `pair?` reads only the rows whose
+`dative` and `accusative` features name a single pronoun, which leaves out the repair rows
+(stressed pronouns and prepositional datives obviate the constraint), the ambiguous clusters and
+the camouflage resumptions.
 
 ## References
 
@@ -203,45 +203,36 @@ section Data
 
 open Examples
 
-/-- A clitic-cluster row: the dative and accusative pronouns and the reported judgment. -/
-structure Row where
-  dat : PersonalPronoun
-  acc : PersonalPronoun
-  judgment : Judgment
-
-/-- The pronouns a row's `dative` and `accusative` features name, by digit for the ordinary
-persons and by name for the polite pronouns, per language. -/
-def Row.ofDatum (e : Datum) : Option Row := do
+/-- The dative and accusative pronouns a row's features name, by digit for the ordinary persons
+and by name for the polite pronouns, per language. -/
+def pair? (e : Datum) : Option (PersonalPronoun × PersonalPronoun) := do
   let table ← match e.language with
     | "ital1282" => some [("1", io), ("2", tu), ("3", lui), ("LEI", lei_formal)]
     | "stan1288" => some [("3", Spanish.Pronouns.el), ("USTED", Spanish.Pronouns.usted)]
     | "stan1295" => some [("2", German.Pronouns.du), ("3", German.Pronouns.er),
         ("3PL", German.Pronouns.sie_pl), ("SIE", German.Pronouns.sie_formal)]
     | _ => none
-  let dat ← e.parse? "dative" table
-  let acc ← e.parse? "accusative" table
-  pure ⟨dat, acc, e.judgment⟩
+  pure (← e.parse? "dative" table, ← e.parse? "accusative" table)
 
-/-- The unrepaired clitic-cluster rows. -/
-def rows : List Row := Examples.all.filterMap Row.ofDatum
+/-- The band the interpretable valuation predicts: accepted where both grammars license the
+pair, divided where the Weak grammar licenses what the Strong grammar rejects, the speaker split
+over a first person dative above accusative LEI, and rejected where neither licenses it. -/
+def predicted (p : PersonalPronoun × PersonalPronoun) : Judgment.Band :=
+  if ∀ g ∈ grammars, Syntacticosemantic (IsLicit g) p.1 p.2 then .accepted
+  else if Syntacticosemantic (IsLicit weakGrammar) p.1 p.2 then .divided
+  else .rejected
 
-/-- Every clitic-cluster judgment follows from the interpretable valuation: a row is acceptable
-iff both grammars license its pair, and marginal iff the Weak grammar licenses what the Strong
-grammar rejects, the speaker split over a first person dative above accusative LEI. -/
-theorem rows_predicted : ∀ r ∈ rows,
-    (r.judgment = .acceptable ↔
-      ∀ g ∈ grammars, Syntacticosemantic (IsLicit g) r.dat r.acc) ∧
-    (r.judgment = .marginal ↔
-      (Syntacticosemantic (IsLicit weakGrammar) r.dat r.acc ∧
-        ¬ Syntacticosemantic (IsLicit strongGrammar) r.dat r.acc)) := by
-  decide
+/-- Every clitic-cluster judgment lands in the band the interpretable valuation predicts. -/
+theorem rows_predicted : ∀ e ∈ Examples.all, e.Fits pair? predicted := by decide
+
+theorem rows_read : Datum.ReadCount pair? Examples.all 16 := by decide
 
 /-- Read over agreement person instead, both grammars license every rejected row whose accusative
 is polite, its agreement person differing from its interpretable person: the agreement valuation
 misses the paradigm. -/
-theorem morphosyntactic_misses : ∀ r ∈ rows, r.judgment ≠ .acceptable →
-    r.acc.person ≠ r.acc.referentialPerson →
-    ∀ g ∈ grammars, Morphosyntactic (IsLicit g) r.dat r.acc := by
+theorem morphosyntactic_misses : ∀ e ∈ Examples.all, ∀ p ∈ pair? e,
+    e.judgment ≠ .acceptable → p.2.person ≠ p.2.referentialPerson →
+    ∀ g ∈ grammars, Morphosyntactic (IsLicit g) p.1 p.2 := by
   decide
 
 end Data
