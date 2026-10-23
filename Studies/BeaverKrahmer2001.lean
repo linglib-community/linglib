@@ -64,8 +64,7 @@ semantics into a dynamic account of accommodation.
 ## TODO
 
 * The quantifier rows of the paper's Fact 2: meta-assertion commutes with the strong
-  Kleene quantifiers, but a strong Kleene universal as an infimum over `SignType` has no
-  substrate home yet.
+  Kleene quantifiers `Trivalent.forallStrong` and `Trivalent.existsStrong`.
 
 ## References
 

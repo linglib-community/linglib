@@ -36,6 +36,8 @@ disjunctions differ from Kleene's only in when a compound is undefined.
 
 * `SignType.eq_of_eq_zero_iff_of_eq_one_iff`: a value is fixed by whether it is `0` and whether
   it is `1`.
+* `SignType.ofProp_ne_zero_inf_self`: Bochvar's assertion operator is conjunction with
+  definedness.
 * `Trivalent.Designation.dual_threshold_le_neg_iff`: negation exchanges the K3 and LP standards.
 * `SignType.meetWeak_eq_meetWith` and companions: each connective is `meetWith` or `joinWith` at
   its definedness condition.
@@ -169,6 +171,10 @@ variable {P Q : Prop} [Decidable P] [Decidable Q]
 theorem ofProp_eq_one_of_ne_zero {a : SignType} [Decidable (a = 1)] (h : a ≠ 0) :
     ofProp (a = 1) = a := by
   revert h; cases a <;> simp
+
+/-- Bochvar's assertion operator is Strong Kleene conjunction with definedness. -/
+theorem ofProp_ne_zero_inf_self (a : SignType) : ofProp (a ≠ 0) ⊓ a = ofProp (a = 1) := by
+  cases a <;> decide
 
 @[congr] theorem ofProp_congr (h : P ↔ Q) : ofProp P = ofProp Q :=
   eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp [h])
