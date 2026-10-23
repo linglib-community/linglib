@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Computability.Edge
-public import Linglib.Syntax.Minimalist.Merge.SyntacticObject
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.SyntacticObject
 
 /-!
 # Derivations

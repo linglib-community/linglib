@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Merge.Internal
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.Internal
 public import Linglib.Syntax.Minimalist.Workspace.Basic
 public import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 public import Linglib.Syntax.Minimalist.Label.Selection

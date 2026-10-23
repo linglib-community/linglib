@@ -6,8 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Derivation.Basic
-public import Linglib.Syntax.Minimalist.Economy.NoComplexityLoss
-public import Linglib.Syntax.Minimalist.Economy.MinimalYield
+public import Linglib.Syntax.Minimalist.Workspace.NoComplexityLoss
+public import Linglib.Syntax.Minimalist.Workspace.MinimalYield
 
 /-!
 # Economy of derivations
