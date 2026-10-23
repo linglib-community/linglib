@@ -26,6 +26,10 @@
       [
         "construction",
         "suspension of the upper bound"
+      ],
+      [
+        "base",
+        "3"
       ]
     ],
     "comment": "The upper bound of a cardinal is an implicature and can be suspended.",
@@ -58,6 +62,10 @@
       [
         "construction",
         "suspension of the lower bound"
+      ],
+      [
+        "base",
+        "3"
       ]
     ],
     "comment": "The lower bound is asserted and cannot be suspended.",
@@ -158,6 +166,10 @@
       [
         "construction",
         "cancelling the upper bound"
+      ],
+      [
+        "base",
+        "3"
       ]
     ],
     "comment": "Logically consistent, so the upper bound is not an entailment.",
@@ -190,6 +202,10 @@
       [
         "construction",
         "contradicting the assertion of only"
+      ],
+      [
+        "base",
+        "3"
       ]
     ],
     "comment": "",
@@ -1366,6 +1382,10 @@
       [
         "lexicalization",
         "nor = and~"
+      ],
+      [
+        "route",
+        "inner"
       ]
     ],
     "comment": "",
@@ -1398,6 +1418,10 @@
       [
         "lexicalization",
         "*nand = or~"
+      ],
+      [
+        "route",
+        "inner"
       ]
     ],
     "comment": "No lexical item nand corresponds to or with a lower negation.",
@@ -1430,6 +1454,10 @@
       [
         "lexicalization",
         "neither = both~"
+      ],
+      [
+        "route",
+        "inner"
       ]
     ],
     "comment": "",
@@ -1462,6 +1490,10 @@
       [
         "lexicalization",
         "*noth = not both"
+      ],
+      [
+        "route",
+        "inner"
       ]
     ],
     "comment": "",
@@ -1762,6 +1794,10 @@
       [
         "lexicalization",
         "~(either...or) = neither...nor"
+      ],
+      [
+        "route",
+        "outer"
       ]
     ],
     "comment": "",

@@ -84,8 +84,9 @@ gives the punctual one.
   of strong items by enriched meanings, are not formalized; the NPI-licensing rows (40)–(42) and
   (114) await that machinery, and the right-boundary rows (170)–(176) a model of their argument
   clauses.
-* The rows' feature values are prose, so the verdict theorems list their rows by hand; typed
-  values would let a `Row.ofDatum` table read them, as `Studies/Giannakidou2002.lean` does.
+* The cancellation rows are read through `cancellation?` and `Datum.Fits`; the grammaticality,
+  expectation and construal clusters still list their rows by hand, since their feature values
+  are prose, and typed values would let readers take them over too.
 
 ## References
 
@@ -460,7 +461,8 @@ theorem widener_forces_event {P : Unit → NonemptyInterval ℤ → Prop} {t : �
   dsimp at this
   omega
 
-/-- A widened until time span, its left boundary fixed contextually, forces a relevant event. -/
+/-- A widened until time span, its left boundary fixed contextually, forces a relevant event: the
+noncancelable inferences of (123) and (149). -/
 theorem widener_forces_event_until {P : Unit → NonemptyInterval ℤ → Prop} {t : ℤ}
     {τ : NonemptyInterval ℤ} (h : Widened {τ' | τ'.fst = t} P () τ) : ∃ e, P () e := by
   have ht : τ.fst = t := h.1.1
@@ -471,18 +473,44 @@ theorem widener_forces_event_until {P : Unit → NonemptyInterval ℤ → Prop} 
   dsimp at this
   omega
 
-/-- The cancellation rows: denying any event outright is acceptable after the boundary-naming
-*in the last 5 years* and *since 2015*, (11)–(12), whose span admits an event-free model
-(`cancelable_of_lb`), and asserting the actuality inference, (26), is acceptable too; after the
-wideners the denial is unacceptable, (22), (123) and (149), since a widened span forces an event
-(`widener_forces_event`, `widener_forces_event_until`). -/
-theorem cancellation_rows :
-    ((∀ e ∈ [iz2021_s11b, iz2021_s12, iz2021_s26], e.judgment = .acceptable) ∧
-      ∃ P : Unit → NonemptyInterval ℤ → Prop, ∃ τ : NonemptyInterval ℤ,
-        τ.fst = 5 ∧ τ.snd = 10 ∧ τ ∉ PRFV P () ∧ ∀ e, ¬ P () e) ∧
-    ∀ e ∈ [iz2021_s22a, iz2021_s22b, iz2021_s123, iz2021_s149],
-      e.judgment = .unacceptable := by
-  refine ⟨⟨by decide, ?_⟩, by decide⟩
+/-- The two boundary adverbials of Section 1: one naming its own left boundary, like *in the
+last 5 years* and *since 2015*, and the widener *in years*. -/
+inductive BoundaryAdverbial where
+  | lbNamed
+  | widener
+  deriving DecidableEq, Repr
+
+/-- The canceling continuations of Section 1: professing ignorance of earlier events, or denying
+any. -/
+inductive Continuation where
+  | ignorance
+  | denial
+  deriving DecidableEq, Repr
+
+/-- A cancellation row's adverbial with its continuation. -/
+def cancellation? (e : Datum) : Option (BoundaryAdverbial × Continuation) := do
+  pure (← e.parse? "adverbial"
+      [("in the last 5 years, LB adverbial", .lbNamed),
+        ("in the 5 years that I have been here, LB adverbial", .lbNamed),
+        ("since 2015, LB adverbial", .lbNamed), ("in years", .widener)],
+    ← e.parse? "continuation" [("ignorance", .ignorance), ("denial", .denial)])
+
+/-- The cancellation rows (11)–(12) and (22): either continuation is consistent with a named
+boundary, whose span has an event-free model (`cancelable_of_lb`, `lbNamed_cancellable`), and
+contradicts the widener, whose widened span forces an event (`widener_forces_event`), so the
+band follows the adverbial alone. -/
+theorem cancellation_rows : ∀ e ∈ Examples.all, e.Fits cancellation? fun p ↦
+    match p.1 with
+    | .lbNamed => .accepted
+    | .widener => .rejected := by
+  decide
+
+theorem cancellation_read : Datum.ReadCount cancellation? Examples.all 4 := by decide
+
+/-- A named boundary admits the event-free model the cancellations of (11)–(12) describe. -/
+theorem lbNamed_cancellable :
+    ∃ P : Unit → NonemptyInterval ℤ → Prop, ∃ τ : NonemptyInterval ℤ,
+      τ.fst = 5 ∧ τ.snd = 10 ∧ τ ∉ PRFV P () ∧ ∀ e, ¬ P () e := by
   obtain ⟨P, τ, h₁, h₂, h₃, h₄⟩ :=
     (cancelable_of_lb (W := Unit) (E := NonemptyInterval ℤ) (w := ()) (t := 10) 5 (by omega)).1
   exact ⟨P, τ, h₁, h₂, h₃, h₄⟩

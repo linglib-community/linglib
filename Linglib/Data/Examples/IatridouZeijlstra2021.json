@@ -80,6 +80,14 @@
     "readings": [],
     "paperFeatures": [
       [
+        "adverbial",
+        "in the 5 years that I have been here, LB adverbial"
+      ],
+      [
+        "continuation",
+        "ignorance"
+      ],
+      [
         "section",
         "1"
       ],
@@ -108,6 +116,14 @@
     "readings": [],
     "paperFeatures": [
       [
+        "adverbial",
+        "in the last 5 years, LB adverbial"
+      ],
+      [
+        "continuation",
+        "denial"
+      ],
+      [
         "section",
         "1"
       ],
@@ -135,6 +151,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      [
+        "continuation",
+        "ignorance"
+      ],
       [
         "section",
         "1"
@@ -167,6 +187,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      [
+        "continuation",
+        "denial"
+      ],
       [
         "section",
         "1"

@@ -66,6 +66,13 @@ sentence-level counterpart of `Data/Wordlist/`.
   belong in `Data/Experiments/`, and an analysis the formaliser derives belongs in the study. A key
   repeats when the expression bears the property twice (two indefinite series in one clause), so
   the list is not a map: `feature?` reads the first value, `features` every value.
+* A feature is either a stimulus column, naming in the paper's own taxonomy the items,
+  construction or condition the example instantiates, or a claim column, recording what the paper
+  says the judgment shows. Only stimulus columns may feed a prediction (`Datum.Fits`): predicting
+  a judgment from the paper's claim about that judgment checks nothing. A claim column is read as
+  a target, checking that the formal account derives what the paper asserts, or stands as
+  documentation; prose commentary belongs in `comment`. A stimulus value is a key into a finite
+  taxonomy, so a `parse?` table can read it.
 * Studies decide propositions over rows, so every lookup reduces in the kernel. `digits?` reads a
   numeral by a fold over its characters because `String.toNat?` is well-founded recursive and
   does not.

@@ -26,7 +26,7 @@ def ex1_58b_more : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the upper bound")] }
+    paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the upper bound"), ("base", "3")] }
 
 def ex1_58b_fewer : Datum :=
   { id := "horn1972_ex1_58b_fewer"
@@ -39,7 +39,7 @@ def ex1_58b_fewer : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the lower bound")] }
+    paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the lower bound"), ("base", "3")] }
 
 def ex1_59a : Datum :=
   { id := "horn1972_ex1_59a"
@@ -78,7 +78,7 @@ def ex1_60a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "cancelling the upper bound")] }
+    paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "cancelling the upper bound"), ("base", "3")] }
 
 def ex1_60b : Datum :=
   { id := "horn1972_ex1_60b"
@@ -91,7 +91,7 @@ def ex1_60b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "contradicting the assertion of only")] }
+    paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "contradicting the assertion of only"), ("base", "3")] }
 
 def ex1_63b : Datum :=
   { id := "horn1972_ex1_63b"
@@ -572,7 +572,7 @@ def ex4_49a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.23"), ("connective", "and"), ("lexicalization", "nor = and~")] }
+    paperFeatures := [("section", "4.23"), ("connective", "and"), ("lexicalization", "nor = and~"), ("route", "inner")] }
 
 def ex4_49a_prime : Datum :=
   { id := "horn1972_ex4_49a_prime"
@@ -585,7 +585,7 @@ def ex4_49a_prime : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.23"), ("connective", "or"), ("lexicalization", "*nand = or~")] }
+    paperFeatures := [("section", "4.23"), ("connective", "or"), ("lexicalization", "*nand = or~"), ("route", "inner")] }
 
 def ex4_50a : Datum :=
   { id := "horn1972_ex4_50a"
@@ -598,7 +598,7 @@ def ex4_50a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.23"), ("connective", "both"), ("lexicalization", "neither = both~")] }
+    paperFeatures := [("section", "4.23"), ("connective", "both"), ("lexicalization", "neither = both~"), ("route", "inner")] }
 
 def ex4_50a_prime : Datum :=
   { id := "horn1972_ex4_50a_prime"
@@ -611,7 +611,7 @@ def ex4_50a_prime : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.23"), ("connective", "either"), ("lexicalization", "*noth = not both")] }
+    paperFeatures := [("section", "4.23"), ("connective", "either"), ("lexicalization", "*noth = not both"), ("route", "inner")] }
 
 def ex4_56a : Datum :=
   { id := "horn1972_ex4_56a"
@@ -728,7 +728,7 @@ def ex4_60f : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.3"), ("connective", "either...or"), ("implicates", "not both"), ("lexicalization", "~(either...or) = neither...nor")] }
+    paperFeatures := [("section", "4.3"), ("connective", "either...or"), ("implicates", "not both"), ("lexicalization", "~(either...or) = neither...nor"), ("route", "outer")] }
 
 def ex4_66a : Datum :=
   { id := "horn1972_ex4_66a"
