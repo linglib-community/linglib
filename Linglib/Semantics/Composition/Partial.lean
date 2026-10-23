@@ -124,7 +124,9 @@ variable {E W : Type} {S : Sorts}
 /-! ### Composition of defined daughters
 
 These are rewriting lemmas rather than `simp` lemmas, since the reducible `Ty.PDomain` keys a
-concrete domain and a variable one differently for `simp`'s index. -/
+concrete domain and a variable one differently for `simp`'s index. For the same reason, a `Part`
+redex at a concrete type, such as `(Part.some f).bind k` after `Mode.evalPartial` unfolds, is
+rewritten by `erw`, not `rw`. -/
 
 theorem Mode.combine?_evalPartial_fn_left {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) S)
     (a : Ty.PDomain E W σ S) :

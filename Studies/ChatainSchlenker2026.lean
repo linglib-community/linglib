@@ -2,11 +2,10 @@ module
 
 public import Linglib.Data.Examples.ChatainSchlenker2026
 public import Linglib.Logic.Trivalent.Flat
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Composition.Partial
 public import Linglib.Semantics.Composition.WithAlternatives
 public import Linglib.Semantics.Modification.Basic
-public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Chatain and Schlenker (2026): Local accommodation without covert operators
@@ -22,8 +21,8 @@ can accommodate one of a trigger's two presuppositions while the other projects.
 
 * `pointwise_projects_or_accommodates`: a context-free operator projects at every argument or
   accommodates at every argument (Table 1).
-* `enrichment_projects_and_accommodates`, `semantic_parallelism`: one enrichment does both, and
-  the clauses stay semantically parallel ((66)–(71)).
+* `enrichment_projects_and_accommodates`: one enrichment does both, and the clauses stay
+  semantically parallel ((66)–(71)).
 * `presupFailure_clause`, `clause_projects_and_accommodates`: on the partial composition engine,
   the antecedent and the elided clause of (26) share one λ-abstract, and only the elided clause
   accommodates ((66)–(70)).
@@ -104,7 +103,7 @@ theorem enrichment_projects_and_accommodates (P : E → W → SignType) (R : E �
 
 /-- The antecedent is the shared λ-abstract at an alternative to the elided clause's focused
 argument, so it lies in that clause's focus value and semantic parallelism holds ((71)). -/
-theorem semantic_parallelism {E W : Type u} (P : E → W → SignType) (R : E → W → Prop)
+example {E W : Type u} (P : E → W → SignType) (R : E → W → Prop)
     [∀ x, DecidablePred (R x)] (X Y : E) :
     (fun w ↦ -(ofProp (R Y w) ⊓ P Y w)) ∈
       ((fun x w ↦ -(ofProp (R x w) ⊓ P x w)) <$> WithAlternatives.focused X).alternatives := by
@@ -130,21 +129,42 @@ theorem partial_accommodation (S T : Set W) [DecidablePred (· ∈ S)] {f : W �
     (hf : ∀ w, f w ≠ 0) : gapExt (fun w ↦ ofProp (w ∈ S) ⊓ (S ∩ T).indicator f w) = S \ T := by
   ext w; by_cases hS : w ∈ S <;> by_cases hT : w ∈ T <;> simp [hS, hT, hf]
 
-/-- A trigger with two presuppositions, *notice* (36) or *return the book to the library* (38),
-over the values of its presuppositions and its assertion. -/
-def trigger (w : Bool × Bool × Bool) : SignType := if w.1 ∧ w.2.1 then ofProp w.2.2 else 0
+/-- One of the two presuppositions of a double trigger, *notice* (36) or *return the book to the
+library* (38). -/
+inductive Slot where
+  | first
+  | second
+  deriving DecidableEq
 
-/-- The presuppositions of `trigger` under the names the examples give them. -/
-def presuppositions : List (String × (Bool × Bool × Bool → Bool)) :=
-  [("alive", (·.1)), ("possession", (·.1)), ("unpopular", (·.2.1)), ("ownership", (·.2.1))]
+/-- The slot of each presupposition name the examples use. -/
+def slots : List (String × Slot) :=
+  [("alive", .first), ("possession", .first), ("unpopular", .second), ("ownership", .second)]
 
-/-- Enriching the trigger by the presupposition an example's continuation denies leaves it
-undefined only where that presupposition holds and the other fails ((34), (38), (39)). -/
-theorem partial_accommodation_rows : ∀ row ∈ Examples.all,
-    ∀ q ∈ row.parse? "accommodated" presuppositions,
-    ∀ r ∈ row.parse? "projected" presuppositions,
-      ∀ w, ofProp (q w) ⊓ trigger w = 0 ↔ q w ∧ ¬ r w := by
-  decide +kernel
+/-- The presupposition a slot picks out of a pair. -/
+def Slot.set (S T : Set W) : Slot → Set W
+  | .first => S
+  | .second => T
+
+instance {S T : Set W} [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)] {w : W} :
+    (q : Slot) → Decidable (w ∈ Slot.set S T q)
+  | .first => inferInstanceAs (Decidable (w ∈ S))
+  | .second => inferInstanceAs (Decidable (w ∈ T))
+
+/-- Each example accommodates one presupposition of its trigger and projects the other, so
+enriching by the accommodated one leaves exactly the other's conditional gap ((34), (38),
+(39)). -/
+theorem partial_accommodation_rows (S T : Set W) [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)]
+    {f : W → SignType} (hf : ∀ w, f w ≠ 0) : ∀ row ∈ Examples.all,
+    ∀ q ∈ row.parse? "accommodated" slots, ∀ r ∈ row.parse? "projected" slots,
+      q ≠ r ∧ gapExt (fun w ↦ ofProp (w ∈ Slot.set S T q) ⊓ (S ∩ T).indicator f w) =
+        Slot.set S T q \ Slot.set S T r := by
+  have h : ∀ row ∈ Examples.all, ∀ q ∈ row.parse? "accommodated" slots,
+      ∀ r ∈ row.parse? "projected" slots, q ≠ r := by decide +kernel
+  refine fun row hrow q hq r hr ↦ ⟨h row hrow q hq r hr, ?_⟩
+  cases q <;> cases r <;> first
+    | exact absurd rfl (h row hrow _ hq _ hr)
+    | exact partial_accommodation S T hf
+    | simpa [Slot.set, Set.inter_comm] using partial_accommodation T S hf
 
 /-! ### Projection and accommodation -/
 
@@ -216,12 +236,14 @@ theorem clause_projects_and_accommodates {X Y : D} (hY : ∀ w, R Y w)
   simp only [presupFailure_clause]
   exact ⟨and_iff_right (hY w), fun h ↦ h.2 (hX w h.1)⟩
 
-/-- The clause fails where the Strong Kleene enrichment of a trivalent version `Q` of the
-predicate is undefined, so the engine agrees with `enrichment_projects_and_accommodates`. -/
-theorem presupFailure_clause_iff_mem_gapExt {Q : D → W → SignType}
-    (hQ : ∀ w, Q d w = 0 ↔ ¬ (P w d).Dom) [DecidablePred (R d)] :
-    PresupFailure (lexicon P R w) g (clause d) ↔ w ∈ gapExt fun w ↦ ofProp (R d w) ⊓ Q d w := by
-  rw [presupFailure_clause, gapExt_ofProp_inf, Set.mem_inter_iff, mem_gapExt, hQ]; rfl
+/-- The clause fails where the Strong Kleene enrichment of the predicate's three-valued value is
+undefined, so the engine agrees with `enrichment_projects_and_accommodates`. -/
+theorem presupFailure_clause_iff_mem_gapExt [DecidablePred (R d)] :
+    PresupFailure (lexicon P R w) g (clause d) ↔
+      w ∈ gapExt fun w ↦ ofProp (R d w) ⊓ ofPart (P w d) := by
+  rw [presupFailure_clause, gapExt_ofProp_inf, Set.mem_inter_iff, mem_gapExt,
+    ofPart_eq_zero_iff]
+  rfl
 
 /-- No word of type `⟨t,t⟩` turns an undefined argument into a defined value, so `A` is no word
 meaning on the partial engine. -/
