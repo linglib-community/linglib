@@ -39,7 +39,7 @@ PCC typology through (30) and compares the outcomes.
 
 namespace Deal2025a
 
-open Deal2024 Minimalist PersonSegment Clause
+open Deal2024 Minimalist Phi PersonSegment Clause
 
 /-- The probe of a 2024 grammar as a specification of (30), [INT:π], interacting with π and every
 segment it dominates, with its satisfaction feature. -/

@@ -20,15 +20,15 @@ default.
 
 ## Main definitions
 
-* `Minimalist.PersonSegment`: the person segments, ordered by the dominance of the geometry.
-* `Minimalist.PersonSegment.toNode`: a segment as a node of the geometry.
-* `Minimalist.PersonSegment.spec`: the segments a person bears.
+* `Phi.PersonSegment`: the person segments, ordered by the dominance of the geometry.
+* `Phi.PersonSegment.toNode`: a segment as a node of the geometry.
+* `Phi.PersonSegment.spec`: the segments a person bears.
 
 ## Main results
 
-* `Minimalist.PersonSegment.spec_isLowerSet`: a person bears whatever its segments depend on.
-* `Minimalist.PersonSegment.participant_mem_spec_iff`,
-  `Minimalist.PersonSegment.speaker_mem_spec_iff`: the segments [participant] and [speaker] are
+* `Phi.PersonSegment.spec_isLowerSet`: a person bears whatever its segments depend on.
+* `Phi.PersonSegment.participant_mem_spec_iff`,
+  `Phi.PersonSegment.speaker_mem_spec_iff`: the segments [participant] and [speaker] are
   `Person.IsSAP` and `Person.IncludesSpeaker`.
 
 ## Implementation notes
@@ -44,7 +44,7 @@ default.
 
 @[expose] public section
 
-namespace Minimalist
+namespace Phi
 
 open Phi.Geometry
 
@@ -107,4 +107,4 @@ theorem speaker_mem_spec_iff {p : Person} : speaker ∈ spec p ↔ p.IncludesSpe
 
 end PersonSegment
 
-end Minimalist
+end Phi

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Agree.Coordination
+public import Linglib.Syntax.Minimalist.Feature.DualFeature
 public import Mathlib.Data.List.Iterate
 public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
@@ -18,7 +18,7 @@ Adamson and Anagnostopoulou derive the resolution of gender on coordinated nomin
 Icelandic, and Bosnian/Croatian/Serbian from three components and no default insertion: a
 language-particular geometry of privative gender features, a dual-feature system in which
 interpretable features go to LF and uninterpretable ones to PF, and the universal mechanism of
-percolation and conversion (`Minimalist.Coordination.resolve`). A system (`System`) fixes the
+percolation and conversion (`Minimalist.DualFeature.resolve`). A system (`System`) fixes the
 geometry, the node each referent type and each grammatical gender contributes, and the vocabulary of
 inflectional exponents; every derivation is then a computation. A nominal (`System.nominal`) bears
 the interpretable features of its referent and, unless its noun's gender is its referents', the
@@ -75,7 +75,7 @@ kind, is respected in the choice of derivation rather than derived.
 
 namespace AdamsonAnagnostopoulou2025
 
-open Minimalist.Coordination DistributedMorphology Morphology.Exponence
+open Minimalist.DualFeature DistributedMorphology Morphology.Exponence
 
 /-- The privative gender nodes of the three geometries. -/
 inductive Node where

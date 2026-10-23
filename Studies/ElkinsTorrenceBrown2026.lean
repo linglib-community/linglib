@@ -6,7 +6,7 @@ public import Linglib.Fragments.Mayan.Kiche.Extraction
 public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Syntax.Minimalist.Agree.Basic
+public import Linglib.Syntax.Minimalist.Feature.Valuation
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
