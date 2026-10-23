@@ -495,17 +495,16 @@ def cancellation? (e : Datum) : Option (BoundaryAdverbial × Continuation) := do
         ("since 2015, LB adverbial", .lbNamed), ("in years", .widener)],
     ← e.parse? "continuation" [("ignorance", .ignorance), ("denial", .denial)])
 
-/-- The cancellation rows (11)–(12) and (22): either continuation is consistent with a named
-boundary, whose span has an event-free model (`cancelable_of_lb`, `lbNamed_cancellable`), and
-contradicts the widener, whose widened span forces an event (`widener_forces_event`), so the
-band follows the adverbial alone. -/
-theorem cancellation_rows : ∀ e ∈ Examples.all, e.Fits cancellation? fun p ↦
-    match p.1 with
-    | .lbNamed => .accepted
-    | .widener => .rejected := by
-  decide
+/-- A canceling continuation is consistent with a named boundary, whose span has an event-free
+model (`cancelable_of_lb`, `lbNamed_cancellable`), and contradicts the widener, whose widened
+span forces an event (`widener_forces_event`), whatever the continuation. -/
+def BoundaryAdverbial.band : BoundaryAdverbial → Judgment.Band
+  | .lbNamed => .accepted
+  | .widener => .rejected
 
-theorem cancellation_read : Datum.ReadCount cancellation? Examples.all 4 := by decide
+/-- The cancellation rows (11)–(12) and (22): the band follows the adverbial alone. -/
+theorem cancellation_rows :
+    Datum.Checks cancellation? (fun p ↦ p.1.band) Examples.all 4 := by decide
 
 /-- A named boundary admits the event-free model the cancellations of (11)–(12) describe. -/
 theorem lbNamed_cancellable :

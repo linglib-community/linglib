@@ -223,9 +223,7 @@ def predicted (p : PersonalPronoun × PersonalPronoun) : Judgment.Band :=
   else .rejected
 
 /-- Every clitic-cluster judgment lands in the band the interpretable valuation predicts. -/
-theorem rows_predicted : ∀ e ∈ Examples.all, e.Fits pair? predicted := by decide
-
-theorem rows_read : Datum.ReadCount pair? Examples.all 16 := by decide
+theorem rows_predicted : Datum.Checks pair? predicted Examples.all 16 := by decide
 
 /-- Read over agreement person instead, both grammars license every rejected row whose accusative
 is polite, its agreement person differing from its interpretable person: the agreement valuation

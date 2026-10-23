@@ -200,7 +200,7 @@ where
 
 /-- The scenario rows with a truth-value judgment, (28) and (30), are true exactly where the
 component the determiner needs holds in the scenario. -/
-theorem scenario_verdicts : ∀ row ∈ Examples.all, row.FitsVerdict predicted id := by
+theorem scenario_verdicts : Datum.ChecksVerdict predicted id Examples.all 4 := by
   decide +kernel
 
 /-- The scenario rows judged for felicity rather than truth. -/
@@ -212,12 +212,7 @@ def felicity? (row : Datum) : Option Bool :=
 /-- The felicity rows (7) and (24)–(25): *algún* is felicitous in a scenario exactly where its
 Modal Variation component holds. -/
 theorem scenario_felicity :
-    ∀ row ∈ Examples.all, row.Fits felicity? fun b ↦ .ofProp (b = true) := by
-  decide +kernel
-
-theorem scenario_read :
-    Datum.ReadCount felicity? Examples.all 3 ∧
-      (Examples.all.filter fun row => row.verdict.isSome ∧ (predicted row).isSome).length = 4 := by
+    Datum.Checks felicity? (fun b ↦ .ofProp (b = true)) Examples.all 3 := by
   decide +kernel
 
 /-- Whether a determiner carries a modal component, (13) and (18): *algún* and the
@@ -232,40 +227,31 @@ def detClass? (e : Datum) : Option DetClass :=
   e.parse? "determiner"
     [("algún", .modal), ("irgendwelche", .modal), ("un", .plain), ("algunos", .plain)]
 
+/-- A singleton restrictor or an identity-revealing continuation is rejected exactly by a
+determiner with a modal component, whose anti-singleton selection returns no domain
+(`algún_ne_one_of_singleton`) and whose Modal Variation the revealed identity contradicts
+(`not_modalVariation_of_box_witnesses`). -/
+def DetClass.band : DetClass → Judgment.Band
+  | .modal => .rejected
+  | .plain => .accepted
+
 /-- A row whose determiner heads a singleton restrictor, (46)–(49). -/
 def singletonRestrictor? (e : Datum) : Option DetClass := do
-  let c ← detClass? e
-  let _ ← e.parse? "restrictor" [("singleton", ())]
-  pure c
+  guard (e.feature? "restrictor" = some "singleton")
+  detClass? e
 
-/-- A singleton restrictor is rejected exactly by a determiner with a modal component, whose
-anti-singleton selection returns no domain (`algún_ne_one_of_singleton`), (46)–(49). -/
-theorem restrictor_rows : ∀ e ∈ Examples.all, e.Fits singletonRestrictor? fun c ↦
-    match c with
-    | .modal => .rejected
-    | .plain => .accepted := by
-  decide +kernel
-
-theorem restrictor_read : Datum.ReadCount singletonRestrictor? Examples.all 4 := by
-  decide +kernel
+/-- The singleton-restrictor rows (46)–(49). -/
+theorem restrictor_rows :
+    Datum.Checks singletonRestrictor? DetClass.band Examples.all 4 := by decide +kernel
 
 /-- A row whose sentence carries an identity-revealing continuation, a *namely*-appositive or an
 answered which-question. -/
 def identityContinuation? (e : Datum) : Option DetClass := do
-  let c ← detClass? e
-  let _ ← e.parse? "continuation" [("namely", ()), ("which-question", ())]
-  pure c
+  guard ((e.feature? "continuation").isSome)
+  detClass? e
 
-/-- An identity-revealing continuation is rejected exactly by a determiner with a modal
-component, whose Modal Variation it contradicts (`not_modalVariation_of_box_witnesses`):
-(2)–(3), (8)–(11) and the plurals of (82). -/
-theorem continuation_rows : ∀ e ∈ Examples.all, e.Fits identityContinuation? fun c ↦
-    match c with
-    | .modal => .rejected
-    | .plain => .accepted := by
-  decide +kernel
-
-theorem continuation_read : Datum.ReadCount identityContinuation? Examples.all 8 := by
-  decide +kernel
+/-- The continuation rows (2)–(3), (8)–(11) and the plurals of (82). -/
+theorem continuation_rows :
+    Datum.Checks identityContinuation? DetClass.band Examples.all 8 := by decide +kernel
 
 end AlonsoOvalleMenendezBenito2010

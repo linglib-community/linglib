@@ -284,10 +284,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 /-- Every judgment on the UNTIL sentences follows from the connective's fragment entry, the
 homogeneity of the main clause and the licensing of the polarity item. -/
 theorem rows_predicted :
-    ∀ e ∈ Examples.all, e.Fits Row.ofDatum fun r ↦ .ofProp (Predicted r) := by
-  decide
-
-theorem rows_read : Datum.ReadCount Row.ofDatum Examples.all 36 := by decide
+    Datum.Checks Row.ofDatum (fun r ↦ .ofProp (Predicted r)) Examples.all 36 := by decide
 
 /-- A `Diagnostic` is one of the stativity diagnostics of the fifth section. -/
 inductive Diagnostic
@@ -315,11 +312,10 @@ def DiagnosticRow.ofDatum (ex : Datum) : Option DiagnosticRow := do
 
 /-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, with
 negation playing no role, so negation is no stativizer. -/
-theorem diagnostics_predicted : ∀ e ∈ Examples.all, e.Fits DiagnosticRow.ofDatum fun r ↦
-    .ofProp ((r.diagnostic = .imperative → ¬ Homog r.aspect r.eventuality) ∧
-      (r.diagnostic ≠ .imperative → Homog r.aspect r.eventuality)) := by
+theorem diagnostics_predicted : Datum.Checks DiagnosticRow.ofDatum
+    (fun r ↦ .ofProp ((r.diagnostic = .imperative → ¬ Homog r.aspect r.eventuality) ∧
+      (r.diagnostic ≠ .imperative → Homog r.aspect r.eventuality)))
+    Examples.all 12 := by
   decide
-
-theorem diagnostics_read : Datum.ReadCount DiagnosticRow.ofDatum Examples.all 12 := by decide
 
 end Giannakidou2002

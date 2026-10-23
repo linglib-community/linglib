@@ -34,6 +34,8 @@ sentence-level counterpart of `Data/Wordlist/`.
   reads off a row, and the count of rows a reader reads, the coverage witness beside a fit.
 * `Datum.FitsVerdict`: a prediction's fit with the truth-value judgment of a row whose task is
   truth in the context.
+* `Datum.Checks`, `Datum.ChecksVerdict`: the statement a study makes, a fit over the rows
+  bundled with its coverage count, so a fit cannot go silently vacuous.
 
 ## Main statements
 
@@ -232,6 +234,27 @@ def ReadCount {α : Type*} (f : Datum → Option α) (rows : List Datum) (n : �
 instance {α : Type*} (f : Datum → Option α) (rows : List Datum) (n : ℕ) :
     Decidable (ReadCount f rows n) :=
   inferInstanceAs (Decidable (_ = _))
+
+/-- The prediction `P` fits every row of `rows` the reader `f` reads, and `f` reads exactly `n`
+of them: the one statement a study makes about a cluster of rows. -/
+def Checks {α : Type*} (f : Datum → Option α) (P : α → Judgment.Band) (rows : List Datum)
+    (n : ℕ) : Prop :=
+  (∀ e ∈ rows, e.Fits f P) ∧ ReadCount f rows n
+
+instance {α : Type*} (f : Datum → Option α) (P : α → Judgment.Band) (rows : List Datum)
+    (n : ℕ) : Decidable (Checks f P rows n) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The truth-value counterpart of `Datum.Checks`: the prediction matches every reported verdict
+on a row the reader reads, and exactly `n` rows have both. -/
+def ChecksVerdict {α : Type*} (f : Datum → Option α) (P : α → Bool) (rows : List Datum)
+    (n : ℕ) : Prop :=
+  (∀ e ∈ rows, e.FitsVerdict f P) ∧
+    (rows.filter fun e ↦ (f e).isSome ∧ e.verdict.isSome).length = n
+
+instance {α : Type*} (f : Datum → Option α) (P : α → Bool) (rows : List Datum) (n : ℕ) :
+    Decidable (ChecksVerdict f P rows n) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 variable {e key} {v : String}
 

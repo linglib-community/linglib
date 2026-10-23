@@ -286,7 +286,7 @@ open Examples
 /-- A bare-episodic test row: its infinitival class, or for a finite baseline its tense, with
 the reference time the matrix provides, on integer time. -/
 def episodicTest? (e : Datum) : Option (InfinitivalTenseClass × NonemptyInterval ℤ) := do
-  let _ ← e.parse? "episodic" [("possible", ()), ("impossible", ())]
+  guard ((e.feature? "episodic").isSome)
   match e.feature? "class", e.feature? "tense" with
   | some "future", _ => some (.futureIrrealis, .pure 0)
   | some "propositional", _ => some (.propositional, .pure 0)
@@ -297,11 +297,9 @@ def episodicTest? (e : Datum) : Option (InfinitivalTenseClass × NonemptyInterva
 
 /-- The bare-episodic rows (2)–(3) and the finite baseline (45): a bare eventive is available
 exactly where the reference time its class or tense provides can include an extended event. -/
-theorem episodic_rows : ∀ e ∈ Examples.all,
-    e.Fits episodicTest? fun p ↦ .ofProp (Episodic p.2 (0 : ℤ) p.1) := by
+theorem episodic_rows : Datum.Checks episodicTest?
+    (fun p ↦ .ofProp (Episodic p.2 (0 : ℤ) p.1)) Examples.all 6 := by
   decide
-
-theorem episodic_read : Datum.ReadCount episodicTest? Examples.all 6 := by decide
 
 /-- An aspect test row: whether its aspect is perfective, with its class and reference time; a
 *seem* with an overt or understood attitude holder is propositional, (70), and the tenseless
@@ -317,11 +315,10 @@ def aspectTest? (e : Datum) : Option (Bool × InfinitivalTenseClass × NonemptyI
 
 /-- The aspect rows of (53)–(57) and (70): an imperfective is available at any reference time
 (`imperfective_pure_of_mem`), a perfective exactly where its class admits an extended event. -/
-theorem aspect_rows : ∀ e ∈ Examples.all, e.Fits aspectTest? fun p ↦
-    if p.1 then .ofProp (Episodic p.2.2 (0 : ℤ) p.2.1) else .accepted := by
+theorem aspect_rows : Datum.Checks aspectTest?
+    (fun p ↦ if p.1 then .ofProp (Episodic p.2.2 (0 : ℤ) p.2.1) else .accepted)
+    Examples.all 9 := by
   decide
-
-theorem aspect_read : Datum.ReadCount aspectTest? Examples.all 9 := by decide
 
 /-- The tense stack above the lowest past, nearest first, as a row's `stack` feature names it. -/
 def stackTable : List (String × List (Option (Finset Ordering))) :=
@@ -331,16 +328,16 @@ def stackTable : List (String × List (Option (Finset Ordering))) :=
     ("will", [will.tense]),
     ("infinitive, will", [(infinitive true).tense, will.tense])]
 
+/-- A sequence-of-tense row: its stack with the paper's applies/blocked verdict. -/
+def sotTest? (e : Datum) : Option (List (Option (Finset Ordering)) × Bool) := do
+  pure (← e.parse? "stack" stackTable,
+    ← e.parse? "SOT" [("applies", true), ("blocked", false)])
+
 /-- The sequence-of-tense rows (24)–(30): the paper's applies/blocked verdicts are what
 `sotApplies` computes on each row's stack. -/
-theorem sot_rows : ∀ e ∈ Examples.all, ∀ s ∈ e.parse? "stack" stackTable,
-    ∀ v ∈ e.parse? "SOT" [("applies", true), ("blocked", false)],
-      sotApplies s ⟦past⟧ = v := by
-  decide
-
-theorem sot_read :
-    (Examples.all.filter fun e => (e.parse? "stack" stackTable).isSome ∧
-      (e.feature? "SOT").isSome).length = 5 := by
+theorem sot_rows :
+    (∀ e ∈ Examples.all, ∀ p ∈ sotTest? e, sotApplies p.1 ⟦past⟧ = p.2) ∧
+      Datum.ReadCount sotTest? Examples.all 5 := by
   decide
 
 end Data
