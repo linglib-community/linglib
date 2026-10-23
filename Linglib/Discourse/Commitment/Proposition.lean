@@ -7,23 +7,28 @@ public import Linglib.Discourse.Commitment.Basic
 /-!
 # Commitment propositions
 
-That `k` is committed to `φ`, `k⊢φ`, is itself a proposition, true at the worlds where `k` vouches
-for `φ` ([krifka-2015], [krifka-2024a]). Over an accessibility `O k` for each holder `k`, it is the
-core of `φ`, the worlds all of whose `O k`-successors are `φ`-worlds: closed under consequence,
-its complement is the refusal `¬k⊢φ`, and a common ground can contain it without containing `φ`.
-Asserting `φ` is the performative update that makes `k⊢φ` hold everywhere, and public commitment
-sets, one set of worlds per holder known to all, are the accessibilities that do not depend on the
-world, onto which a commitment state of `Commitment.Basic` projects.
+In Krifka's account a commitment is itself a proposition, so `k⊢φ` holds at the worlds where `k`
+vouches for `φ`. Over an accessibility `O k` for each holder `k` it is the core of `φ`, the worlds
+all of whose `O k`-successors are `φ`-worlds. It is closed under consequence and conjunction, its
+complement is the refusal `¬k⊢φ`, and a common ground can contain it without containing `φ`.
+Asserting `φ` is the performative update that makes `k⊢φ` hold everywhere. Public commitment sets
+give the accessibilities that do not depend on the world, and a commitment state of
+`Commitment.Basic` projects onto them. Indices that pair a fact with every holder's commitment set
+are the canonical model in which commitments vary from world to world.
 
 ## Main definitions
 
 * `Commitment.committed O k φ`: `k⊢φ`.
 * `Commitment.perform O k φ`: the performative update by `k`'s commitment to `φ`.
 * `Commitment.ofSets P`: the accessibility of the public commitment sets `P`.
+* `Commitment.Index κ F`: a fact with a non-empty commitment set for each holder, with its
+  accessibility `Commitment.Index.access`.
 
 ## Main results
 
 * `Commitment.committed_perform_self`: after the performative update `k⊢φ` holds everywhere.
+* `Commitment.committed_iInter`: a commitment to each of a family of propositions is a commitment
+  to their conjunction.
 * `Commitment.disjoint_committed_compl`: a holder whose commitments are consistent is not
   committed to both `φ` and `¬φ`, so `k⊢¬φ` entails the refusal `¬k⊢φ`.
 * `Commitment.committed_ofSets`: a public commitment holds everywhere or nowhere.
@@ -48,12 +53,12 @@ open scoped SetRel
 
 variable {κ W : Type*} (O : κ → SetRel W W) (k : κ) (φ ψ : Set W)
 
-/-- `k⊢φ`: the worlds at which `k` is committed to `φ`, those all of whose `O k`-successors are
-`φ`-worlds. -/
+/-- The proposition `k⊢φ` holds at the worlds all of whose `O k`-successors are `φ`-worlds, where
+`k` is committed to `φ`. -/
 def committed : Set W := (O k).core φ
 
-/-- The performative update by `k`'s commitment to `φ` ([van-der-leer-2026] Definition 4):
-`O k` keeps its `φ`-successors and every other accessibility is unchanged. -/
+/-- The performative update by `k`'s commitment to `φ` keeps the `φ`-successors of `O k` and
+leaves every other accessibility unchanged ([van-der-leer-2026] Definition 4). -/
 def perform : κ → SetRel W W := fun k' ↦ {p | p ∈ O k' ∧ (k' = k → p.2 ∈ φ)}
 
 variable {O k φ ψ} {k' : κ}
@@ -67,6 +72,12 @@ theorem committed_inter : committed O k (φ ∩ ψ) = committed O k φ ∩ commi
   SetRel.core_inter _ _ _
 
 @[simp] theorem committed_univ : committed O k Set.univ = Set.univ := SetRel.core_univ
+
+theorem committed_iInter {ι : Sort*} (φ : ι → Set W) :
+    committed O k (⋂ i, φ i) = ⋂ i, committed O k (φ i) := by
+  ext
+  simp only [mem_committed, Set.mem_iInter]
+  exact ⟨fun h i _ hv ↦ h hv i, fun h _ hv i ↦ h i hv⟩
 
 theorem disjoint_committed_compl [IsSerial (O k)] :
     Disjoint (committed O k φ) (committed O k φᶜ) :=
@@ -108,8 +119,8 @@ instance [IsK45Frame (O k')] : IsK45Frame (perform O k φ k') where
 
 variable (P : κ → Set W)
 
-/-- The accessibility of the public commitment sets `P`: from every world, `k` reaches exactly
-the worlds compatible with its commitments. -/
+/-- From every world, the accessibility of the public commitment sets `P` reaches exactly the
+worlds compatible with `k`'s commitments. -/
 def ofSets : κ → SetRel W W := fun k ↦ SetRel.ofSuccessors fun _ ↦ P k
 
 instance : IsK45Frame (ofSets P k) where
@@ -136,5 +147,40 @@ theorem ofSets_commitmentSet_insert_commit {A : Type*} (K : State A W) (a : A) (
   · rw [commitmentSet, ofCommitter_insert_of_ne K a' _ (Ne.symm h)]
     ext
     simp [commitmentSet, h]
+
+/-! ### Indices -/
+
+/-- An index fixes a fact and, for each holder, the non-empty set of facts its commitments leave
+open. -/
+structure Index (κ F : Type*) where
+  /-- The fact at the index. -/
+  fact : F
+  /-- The facts left open by `k`'s commitments. -/
+  commitmentSet : κ → Set F
+  commitmentSet_nonempty : ∀ k, (commitmentSet k).Nonempty
+
+namespace Index
+
+variable {F : Type*}
+
+/-- From an index, `k` reaches the indices with the same commitment sets whose fact is left open
+by `k`'s commitments. -/
+def access : κ → SetRel (Index κ F) (Index κ F) :=
+  fun k ↦ {p | p.2.fact ∈ p.1.commitmentSet k ∧ p.2.commitmentSet = p.1.commitmentSet}
+
+instance : IsSerial (access (F := F) k) where
+  serial w := ⟨⟨(w.commitmentSet_nonempty k).some, w.commitmentSet, w.commitmentSet_nonempty⟩,
+    (w.commitmentSet_nonempty k).some_mem, rfl⟩
+
+instance : IsK45Frame (access (F := F) k) where
+  trans _ _ _ h₁ h₂ := ⟨h₁.2 ▸ h₂.1, h₂.2.trans h₁.2⟩
+  eucl _ _ _ h₁ h₂ := ⟨h₁.2 ▸ h₂.1, h₂.2.trans h₁.2.symm⟩
+
+theorem committed_access_preimage (φ : Set F) :
+    committed access k (fact ⁻¹' φ) = {w : Index κ F | w.commitmentSet k ⊆ φ} :=
+  Set.ext fun w ↦ ⟨fun h x hx ↦ h (b := ⟨x, w.commitmentSet, w.commitmentSet_nonempty⟩) ⟨hx, rfl⟩,
+    fun h _ hv ↦ h hv.1⟩
+
+end Index
 
 end Commitment

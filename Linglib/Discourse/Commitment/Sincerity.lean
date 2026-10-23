@@ -7,15 +7,14 @@ public import Linglib.Semantics.Attitudes.Preference.Structure
 # Sincerity
 
 A public commitment is sincere when the committer privately holds what it is committed to under
-the attitude of its force: belief for a doxastic commitment, preference for a preferential one.
-Sincerity is a relation between a commitment state and the participants' attitudes,
-`Force → A → W → Set (Set W)`, the propositions each participant holds under each attitude at
-each world. [condoravdi-lauer-2012]'s sincerity condition on a directive use of an imperative is
-the preferential case, with the effective preferences `Desire.Preferential.Want` as the attitude;
-through the consistency of the effective preference structure it is what makes successive
-imperatives consistent (`Studies/CondoravdiLauer2012.lean`) and what excludes a force-augmenting
-particle from contexts in which the preference it expresses is unrealizable
-(`Studies/Deo2025.lean`). The doxastic case is the Sincerity of [van-der-leer-2026]'s frames
+the attitude of its force, belief for a doxastic commitment and preference for a preferential one.
+Sincerity relates a commitment state to the participants' attitudes, given as the propositions
+each participant holds under each attitude at each world. Condoravdi and Lauer's sincerity
+condition on a directive use of an imperative is the preferential case, with effective preferences
+(`Desire.Preferential.Want`) as the attitude. Through the consistency of the effective preference
+structure it makes successive imperatives consistent (`Studies/CondoravdiLauer2012.lean`), and it
+excludes a force-augmenting particle from contexts in which the preference it expresses is
+unrealizable (`Studies/Deo2025.lean`). The doxastic case is the Sincerity of van der Leer's frames
 (`Commitment.Frame.sincere_iff_forall_sincere_toState`).
 
 ## Main definitions
@@ -39,13 +38,13 @@ open Desire.Preferential
 
 variable {A W : Type*}
 
-/-- `K` is sincere at `w` relative to the attitudes `M`: the committer of every undertaken
-commitment holds its content at `w` under the attitude `M` assigns to its force. -/
+/-- A commitment state is sincere at `w` relative to the attitudes `M` when the committer of every
+undertaken commitment holds its content at `w` under the attitude `M` assigns to its force. -/
 def Sincere (M : Force → A → W → Set (Set W)) (K : State A W) (w : W) : Prop :=
   ∀ c ∈ K, c.stance = .commit → c.content ∈ M c.force c.committer w
 
-/-- Effective preference as an attitude ([condoravdi-lauer-2012]): a preferential commitment is
-held when it is an effective preference, and a doxastic commitment is unconstrained. -/
+/-- The attitudes of [condoravdi-lauer-2012]'s sincerity condition hold a preferential commitment
+when its content is an effective preference and leave doxastic commitments unconstrained. -/
 def effectivePreference (P : A → W → PreferenceStructure W) : Force → A → W → Set (Set W)
   | .doxastic => ⊤
   | .preferential => fun a w ↦ {p | Want P a p w}

@@ -7,13 +7,14 @@ public import Linglib.Discourse.Commitment.Sincerity
 /-!
 # Belief–commitment frames
 
-The multi-relational Kripke frame of [van-der-leer-2026] (Definition 2): per-agent belief
-accessibility `B_a`, KD45, and commitment accessibility `O_{a,b}` for each ordered pair, K45 —
-transitive and Euclidean but not serial, so that an agent may be committed to a contradiction.
-Belief `B_a π` and commitment `C_{a,b} π` are `ModalLogic.Box` along these relations; `C_{a,b} π`
-holds exactly on the commitment proposition `Commitment.committed`, and the update of
-Definition 4 is the performative update `Commitment.perform`. What `a` is committed to towards
-`b` at a world is a commitment state of `Commitment.Basic`.
+Van der Leer's frames are multi-relational Kripke frames with a belief accessibility `B_a` for
+each agent, which is KD45, and a commitment accessibility `O_{a,b}` for each ordered pair of
+agents, which is K45. Commitment is transitive and Euclidean but not serial, so that an agent may
+be committed to a contradiction. Belief `B_a π` and commitment `C_{a,b} π` are `ModalLogic.Box`
+along these relations, `C_{a,b} π` holds exactly on the commitment proposition
+`Commitment.committed`, and the update of the thesis is the performative update
+`Commitment.perform`. What `a` is committed to towards `b` at a world is a commitment state of
+`Commitment.Basic`.
 
 ## Main definitions
 
@@ -21,8 +22,8 @@ Definition 4 is the performative update `Commitment.perform`. What `a` is commit
 * `Frame.Believes`, `Frame.Committed`: `B_a`, `C_{a,b}`.
 * `Frame.restrictCommitment`: the update `c⌈π⌉_{a,b}` (Definition 4), the performative update
   of `O_{a,b}` by `π`.
-* `Frame.Sincere`, `Frame.Competent`: the frame conditions of Definition 5, after
-  [asher-lascarides-2003].
+* `Frame.Sincere`, `Frame.Competent`: the frame conditions of Definition 5, after Asher and
+  Lascarides.
 * `Frame.toState`: the commitments of `a` towards `b` at `w`, as a commitment state.
 
 ## Main results
@@ -60,14 +61,15 @@ open scoped ModalLogic SetRel Filter
 
 variable {W A : Type*}
 
-/-- The belief–commitment frame of [van-der-leer-2026] (Definition 2, there a *commitment
-state*): KD45 belief per agent and K45 commitment per ordered agent pair. -/
+/-- A belief–commitment frame has a KD45 belief accessibility for each agent and a K45
+commitment accessibility for each ordered pair of agents ([van-der-leer-2026] Definition 2,
+where it is a *commitment state*). -/
 @[ext]
 structure Frame (W A : Type*) where
   /-- `a`'s doxastic accessibility. -/
   belief : A → SetRel W W
-  /-- `w ~[commitment (a, b)] v`: at `w`, `v` satisfies everything `a` is committed towards `b`
-  to. -/
+  /-- The commitment accessibility of `a` towards `b` relates `w` to the worlds that satisfy
+  everything `a` is committed to towards `b` at `w`. -/
   commitment : A × A → SetRel W W
   belief_kd45 : ∀ a, IsKD45Frame (belief a)
   commitment_k45 : ∀ k, IsK45Frame (commitment k)
@@ -87,8 +89,9 @@ instance : Inhabited (Frame W A) :=
      belief_kd45 _ := {}
      commitment_k45 _ := {} }⟩
 
-/-- `c⌈π⌉_{a,b}` ([van-der-leer-2026] Definition 4): the performative update of `O_{a,b}` by `π`,
-`O_{a,b} ∩ {(w, v) | v ∈ π}`; the other relations are unchanged. -/
+/-- The update `c⌈π⌉_{a,b}` is the performative update of `O_{a,b}` by `π`, which keeps the pairs
+`(w, v)` with `v ∈ π` and leaves the other relations unchanged ([van-der-leer-2026] Definition 4).
+-/
 def restrictCommitment : Frame W A where
   belief := c.belief
   commitment := perform c.commitment (a, b) π
@@ -122,20 +125,20 @@ theorem restrictCommitment_mono (h : π ⊆ τ) (k : A × A) :
 
 /-! ### Modal operators -/
 
-/-- `a` believes `π` at `w`: `π` holds at every `B_a`-accessible world
+/-- An agent `a` believes `π` at `w` when `π` holds at every `B_a`-accessible world
 ([van-der-leer-2026] Definition 3). -/
 def Believes : Prop :=
   □[c.belief a] (· ∈ π) w
 
-/-- `a` is committed towards `b` to `π` at `w`: `π` holds at every `O_{a,b}`-accessible world
-([van-der-leer-2026] Definition 3). -/
+/-- An agent `a` is committed towards `b` to `π` at `w` when `π` holds at every
+`O_{a,b}`-accessible world ([van-der-leer-2026] Definition 3). -/
 def Committed : Prop :=
   □[c.commitment (a, b)] (· ∈ π) w
 
 theorem setOf_committed : {w | c.Committed a b π w} = committed c.commitment (a, b) π := rfl
 
-/-- The performative update ([van-der-leer-2026] Theorem 25 at the level of states):
-`c⌈π⌉_{a,b} ⊨ C_{a,b} π`. -/
+/-- The performative update commits `a` towards `b` to `π`, `c⌈π⌉_{a,b} ⊨ C_{a,b} π`
+([van-der-leer-2026] Theorem 25 at the level of states). -/
 theorem committed_restrictCommitment : (c.restrictCommitment a b π).Committed a b π w :=
   fun _ h ↦ h.2 rfl
 
@@ -156,13 +159,14 @@ theorem restrictCommitment_restrictCommitment_eq_self_iff (a' b' : A) :
 
 /-! ### Frame conditions linking belief and commitment -/
 
-/-- **Sincerity** ([van-der-leer-2026] Definition 5): for every agent pair, belief is contained in
-commitment, so that an agent believes what it is committed to. -/
+/-- A frame is sincere when belief is contained in commitment for every pair of agents, so that
+an agent believes what it is committed to ([van-der-leer-2026] Definition 5). -/
 def Sincere : Prop :=
   ∀ x y, c.belief x ⊆ c.commitment (x, y)
 
-/-- **Competence** ([van-der-leer-2026] Definition 5): for every pair `(x, y)`, `y`'s
-belief-accessible worlds are `x`-accessible too, so that `y` believes what `x` believes. -/
+/-- A frame is competent when, for every pair `(x, y)`, the worlds `y` considers possible are
+among those `x` considers possible, so that `y` believes what `x` believes
+([van-der-leer-2026] Definition 5). -/
 def Competent : Prop :=
   ∀ x y, c.belief y ⊆ c.belief x
 
@@ -176,7 +180,7 @@ theorem Sincere.believes_of_committed (h : c.Sincere) : c.Committed a b π w →
 theorem Competent.believes_of_believes (h : c.Competent) : c.Believes a π w → c.Believes b π w :=
   fun hbel v hbelB ↦ hbel v (h a b hbelB)
 
-/-- Under Sincerity and Competence, `a`'s commitment towards `b` entails `b`'s belief: the
+/-- Under Sincerity and Competence, `a`'s commitment towards `b` entails `b`'s belief, the
 informative update ([van-der-leer-2026] Theorem 26(3)). -/
 theorem Sincere.believes_of_committed_of_competent (hsin : c.Sincere) (hcomp : c.Competent) :
     c.Committed a b π w → c.Believes b π w :=
@@ -198,8 +202,8 @@ theorem competent_iff : c.Competent ↔ ∀ x y, c.belief x = c.belief y :=
 
 variable (c a b π w)
 
-/-- The commitments of `a` towards `b` at `w`, as a commitment state: `a` commits to every
-proposition true at all `O_{a,b}`-successors of `w`. -/
+/-- The commitments of `a` towards `b` at `w` form the commitment state in which `a` commits to
+every proposition true at all `O_{a,b}`-successors of `w`. -/
 def toState : State A W := (commit a ·) '' {π | c.Committed a b π w}
 
 theorem contents_toState : contents (c.toState a b w) = {π | c.Committed a b π w} :=
