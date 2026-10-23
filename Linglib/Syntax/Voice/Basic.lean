@@ -6,54 +6,34 @@ public import Linglib.Morphology.Morph
 /-!
 # Voice
 
-A construction of a verb gives each of its participants a status: a nominal term with a
-transitivity-related role, a dative oblique, an implied participant, or none. A voice relates
-an initial and a derived diathesis of its participants, and so an initial and a derived
-construction, as two diatheses of a verb relate in an alternation. What a grammar says of a
-voice is read off that pair: the fate of each initial core term, whether a participant is
-nucleativized or denucleativized and so whether valency increases or decreases, and whether the
-voice only selects a pivot. A voice also records its pivot, the derived slot that is the
-syntactically privileged term, and the marker by which the verb codes it; a fragment states a
-voice with its marker, `Voice.passive.marked [.suff "x"]`, and the bare constants are unmarked.
+A *construction* of a verb gives each potential participant a status: a nominal term with a
+transitivity-related role, a dative oblique, an implied participant, or absent. A *voice* relates
+an initial and a derived diathesis of the participants, and so an initial and a derived
+construction. It also records its *pivot*, the syntactically privileged derived term, and its
+*marker*, the morphs coding it on the verb.
 
 ## Main definitions
 
 * `Voice.Status`, `Voice.Construction`: a participant's status, and a construction.
-* `Voice.Construction.Nucleativized`, `Denucleativized`, `fate`: an initial construction
-  compared with a derived one.
-* `Voice`: an initial and a derived diathesis, the pivot and the marker.
-* `Voice.of`: the voice whose initial participants are those of a frame's slots in order.
-* `Voice.Relates`, `Verb.Alternates`: two diatheses of a verb related by a voice, and a verb
-  with two such diatheses.
+* `Voice.Construction.Nucleativized`, `Denucleativized`, `fate`: comparing two constructions.
+* `Voice`, `Voice.of`: an initial and a derived diathesis, with a pivot and a marker.
+* `Voice.Relates`, `Verb.Alternates`: a voice relating two diatheses of a verb.
 * `Voice.passive`, `antipassive`, `anticausative`, `causative`, `reflexive`, `applicative`,
-  `patientVoice`, `obliqueVoice`: the voices.
-* `Voice.leaveImplicit`: the voice leaving one complement of a frame unexpressed.
+  `patientVoice`, `obliqueVoice`, `leaveImplicit`: the voices.
 
 ## Main statements
 
 * `Voice.Construction.valency_eq_of_nucleativized_of_denucleativized`: nucleativization is not
   valency increase.
-* `Voice.passive_anticausative_fate`: the passive keeps the initial A in participant structure,
-  the anticausative suppresses it.
+* `Voice.passive_anticausative_fate`: only the anticausative suppresses the initial A.
 * `Voice.isSymmetrical_refl`: the trivial voice neither nucleativizes nor denucleativizes.
 
 ## Implementation notes
 
-* A voice's participants are numbered as a verb's are: those of the initial frame's slots in
-  order, then those the voice adds, which the initial diathesis leaves out; a participant the
-  derived diathesis leaves out is suppressed.
-* A frame without a subject codes its core objects as such, so an impersonal construction keeps
-  its P; `IsImpersonal` reads impersonality off the pivot, which defaults to the first core slot
-  and is `none` for an impersonal construction.
-* The marker is the segmental material coding the voice, in surface order, and the coding type
-  is read off it: synthetic when every morph is bound, analytic when a free morph, an
-  auxiliary, is among them, uncoded when it is empty.
-* The names of the alternations as processes, passivization and the rest, are predicates on
-  pairs of constructions in `Studies/Creissels2024.lean`; the constants here are the voices.
-* An implicit object understood as the subject itself or as its members is not a separate
-  implied participant: its participant takes the subject's status, so Levin's understood
-  reflexive and reciprocal objects are Creissels' cumulations, and the reflexive and the
-  reciprocal are the voices leaving the object implicit under these two readings.
+* Participants are numbered as a verb's are: those of the initial frame's slots in order, then
+  those the voice adds. A participant the derived diathesis leaves out is suppressed.
+* The alternations as processes (passivization and the rest) are predicates on pairs of
+  constructions in `Studies/Creissels2024.lean`; the constants here are the voices.
 
 ## References
 
@@ -175,12 +155,12 @@ def Denucleativized (i : ι) : Prop := (c i).Nuclear ∧ ¬ (d i).Nuclear
 /-- A core term of the initial construction is removed from participant structure. -/
 def Suppressed (i : ι) : Prop := (c i).Nuclear ∧ d i = .absent
 
-/-- A participant the initial construction does not express as a core term is expressed, and
-differently, by the derived construction. -/
+/-- A participant that is not a core term of the initial construction is expressed, differently,
+by the derived construction. -/
 def Introduced (i : ι) : Prop := ¬ (c i).Nuclear ∧ c i ≠ d i ∧ (d i).role.isSome
 
-/-- A core term of the initial construction shares its derived A or S term with another; a
-clause has one A and one S, so two participants with either share it. -/
+/-- A core term of the initial construction shares its derived A or S term with another initial
+core term. A clause has one A and one S, so two participants with the same one share it. -/
 def Cumulated (i : ι) : Prop :=
   (c i).Nuclear ∧ (d i = .term .A ∨ d i = .term .S) ∧ ∃ j, j ≠ i ∧ (c j).Nuclear ∧ d j = d i
 
@@ -216,8 +196,8 @@ theorem isValencyDecreasing_iff :
   ⟨fun h ↦ ⟨h.denucleativizes, h.not_nucleativizes⟩, fun h ↦ ⟨h.1, h.2⟩⟩
 
 /-- The alternation is symmetrical when it neither nucleativizes nor denucleativizes and does
-not affect the transitivity of the construction ([creissels-2024] §8.1.7); a cumulation changes
-transitivity with neither. -/
+not change the transitivity of the construction ([creissels-2024] §8.1.7). A cumulation changes
+transitivity without doing either. -/
 structure IsSymmetrical : Prop where
   /-- No participant becomes a core term. -/
   not_nucleativizes : ¬ c.Nucleativizes d
@@ -235,12 +215,10 @@ theorem isSymmetrical_self : c.IsSymmetrical c :=
   ⟨fun ⟨_, h⟩ ↦ h.1 h.2, fun ⟨_, h⟩ ↦ h.2 h.1, .rfl⟩
 
 variable {c d} in
-/-- A valency-increasing alternation is not symmetrical. -/
 theorem IsValencyIncreasing.not_isSymmetrical (h : c.IsValencyIncreasing d) :
     ¬ c.IsSymmetrical d := fun h' ↦ h'.not_nucleativizes h.nucleativizes
 
 variable {c d} in
-/-- A valency-decreasing alternation is not symmetrical. -/
 theorem IsValencyDecreasing.not_isSymmetrical (h : c.IsValencyDecreasing d) :
     ¬ c.IsSymmetrical d := fun h' ↦ h'.not_denucleativizes h.denucleativizes
 
@@ -291,10 +269,11 @@ end Fintype
 
 end Construction
 
-/-- The status a frame gives the participant of a slot is the transitivity-related role of a
-core slot, X for an expressed oblique, and absent for an expletive or an unfilled slot. An
-implicit position leaves its participant implied, unless it is understood as the subject itself
-or as its members: then the subject's term cumulates the two roles ([creissels-2024] §8.3.3). -/
+/-- The status a frame gives the participant of slot `s`: its transitivity-related role if `s` is
+a core slot, X if it is an expressed oblique, and absent if it is an expletive or unfilled. An
+implicit slot leaves its participant implied, unless it is understood as the subject itself or as
+its members; then the subject's term cumulates the two roles ([creissels-2024] §8.3.3). Levin's
+understood reflexive and reciprocal objects are therefore cumulations, not implied participants. -/
 def _root_.ArgumentFrame.status (fr : ArgumentFrame) (s : ArgumentFrame.Slot) : Status :=
   match fr.argumentRole s, fr.get? s with
   | some r, _ => .term (.ofArgumentRole r)
@@ -312,7 +291,7 @@ def _root_.Diathesis.construction {n : ℕ} (d : Diathesis n) : Construction (Fi
 /-! ### Coding -/
 
 /-- A voice is coded on the verb by verbal morphology, by an analytic construction, or not at
-all, as the unmarked voice of a system and a flexivalent alternation are ([creissels-2024]
+all, like the unmarked voice of a system or a flexivalent alternation ([creissels-2024]
 §1.1.3). Equipollence is a property of a system, `Voice.System.IsEquipollent`. -/
 inductive Coding where
   | synthetic
@@ -330,7 +309,8 @@ def Coding.ofMarker (ms : List Morphology.Morph) : Coding :=
 end Voice
 
 /-- A voice relates an initial and a derived diathesis of its participants, privileges a slot of
-the derived diathesis as its pivot, and is coded by a marker on the verb. -/
+the derived diathesis as its pivot, and is coded by a marker on the verb; its classification is
+computed from the two diatheses. -/
 structure Voice where
   /-- The number of participants. -/
   arity : ℕ
@@ -338,12 +318,12 @@ structure Voice where
   initial : Diathesis arity
   /-- The derived diathesis, which leaves out the participants the voice suppresses. -/
   derived : Diathesis arity
-  /-- The pivot is the syntactically privileged term of the derived construction, its first
-      core slot, S or A, unless a symmetrical voice selects another; it is `none` for an
-      impersonal construction ([creissels-2024] §8.1.7). -/
+  /-- The syntactically privileged term of the derived construction: by default its first core
+      slot (S or A), unless a symmetrical voice selects another, and `none` for an impersonal
+      construction ([creissels-2024] §8.1.7). -/
   pivot : Option ArgumentFrame.Slot := derived.coreSlots.head?
-  /-- The marker lists the morphs coding the voice on the verb in surface order, affixes or an
-      auxiliary, and is empty for a zero-marked or an unmarked voice. -/
+  /-- The morphs (affixes or an auxiliary) coding the voice on the verb, in surface order; empty
+      for a zero-marked or an unmarked voice. -/
   marker : List Morphology.Morph := []
   deriving DecidableEq, Repr
 
@@ -351,9 +331,9 @@ namespace Voice
 
 open ArgumentFrame (Slot)
 
-/-- The voice from `fr` to `gr` whose participants are those of the slots of `fr` in order and
-then those it adds, each in the slot of `gr` that `links` lists for it, `none` for a participant
-`gr` leaves out. -/
+/-- The voice from frame `fr` to frame `gr`. Its participants are those of the slots of `fr`, in
+order, followed by those the voice adds; `links` gives each participant's slot in `gr`, or `none`
+if `gr` leaves it out. -/
 def of (fr gr : ArgumentFrame) (links : List (Option Slot)) : Voice where
   arity := links.length
   initial := { fr with links := .ofFn fun i ↦ fr.slots[i.val]? }
@@ -416,15 +396,17 @@ abbrev IsValencyDecreasing : Prop :=
 transitivity of the construction. -/
 abbrev IsSymmetrical : Prop := v.initial.construction.IsSymmetrical v.derived.construction
 
-/-- The pivot is an oblique, the selection a binary system does not allow
-([creissels-2024] §8.5.2). -/
+/-- The pivot is an oblique, which a binary system does not allow ([creissels-2024] §8.5.2). -/
 def SelectsOblique : Prop := v.pivotRole = some .X
 
-/-- A voice is impersonal when its derived construction privileges no term ([creissels-2024]
-§8.3.2.2). -/
+/-- A voice is impersonal when its derived construction privileges no term, so it has no pivot
+([creissels-2024] §8.3.2.2). A frame without a subject still codes its objects as core terms, so
+an impersonal construction keeps its P. -/
 def IsImpersonal : Prop := v.pivot = none
 
-/-- The coding type of the voice, read off its marker ([creissels-2024] §1.1.3). -/
+/-- The coding type of the voice: synthetic if every morph of its marker is bound, analytic if a
+free morph (an auxiliary) is among them, and uncoded if the marker is empty ([creissels-2024]
+§1.1.3). -/
 def coding : Coding := .ofMarker v.marker
 
 /-- A voice is coded when it is marked on the verb, as against a flexivalent alternation
@@ -437,7 +419,8 @@ instance : Decidable v.IsCoded := inferInstanceAs (Decidable (_ ≠ _))
 
 /-! ### Marking -/
 
-/-- The voice with the given marker. -/
+/-- The voice with the given marker. A fragment states a voice with its marker, as in
+`Voice.passive.marked [.suff "x"]`; the bare constants are unmarked. -/
 def marked (ms : List Morphology.Morph) : Voice := { v with marker := ms }
 
 @[simp] theorem marker_marked (ms : List Morphology.Morph) : (v.marked ms).marker = ms := rfl
@@ -471,7 +454,6 @@ theorem derived_refl (fr : ArgumentFrame) : (refl fr).derived = (refl fr).initia
   simp only [List.length_map] at hm
   simp [List.getElem?_eq_getElem hm]
 
-/-- The trivial voice is symmetrical. -/
 theorem isSymmetrical_refl (fr : ArgumentFrame) : (refl fr).IsSymmetrical := by
   show Construction.IsSymmetrical _ _
   rw [derived_refl]
@@ -487,18 +469,18 @@ def active : Voice := refl .np
 /-- The agent voice of a symmetrical system, with the agent the pivot, is the active. -/
 abbrev agentVoice : Voice := active
 
-/-- The passive of a frame with a complement, the transitive one by default, makes the first
-complement the subject, the pivot, and denucleativizes the external argument but maintains it in
-participant structure, implied here and expressed as an oblique in a long passive
+/-- The passive of a frame with a complement (by default the transitive frame). It makes the
+first complement the subject and pivot, and denucleativizes the external argument while keeping it
+in participant structure: implied here, expressed as an oblique in a long passive
 ([creissels-2024] §8.3.2.1). -/
 def passive (fr : ArgumentFrame := .np) : Voice :=
   of fr ⟨some .nominal, fr.complements.tail ++ [.implicit]⟩ <|
     some (complement (fr.complements.length - 1)) :: some external ::
       (List.range (fr.complements.length - 1)).map (some ∘ complement)
 
-/-- The impersonal passive denucleativizes the external argument as the passive does and leaves
-the complements in place, with no subject, so the initial P keeps its coding and the derived
-construction has no pivot ([creissels-2024] §8.3.2.2); of an intransitive frame, it
+/-- The impersonal passive denucleativizes the external argument as the passive does but leaves
+the complements in place, with no subject. The initial P keeps its coding and the derived
+construction has no pivot ([creissels-2024] §8.3.2.2). Applied to an intransitive frame, it
 denucleativizes the S (§8.3.2.4). -/
 def impersonalPassive (fr : ArgumentFrame := .np) : Voice :=
   { of fr ⟨none, fr.complements ++ [.implicit]⟩ <|
@@ -509,9 +491,9 @@ def impersonalPassive (fr : ArgumentFrame := .np) : Voice :=
 intransitive construction ([creissels-2024] §8.3.2.3). -/
 def antipassive : Voice := of .np .pp [some external, some (complement 0)]
 
-/-- The voice leaving the `i`-th complement of `fr` unexpressed, interpreted as `a`, every
-participant keeping its slot and the one of that complement implied there, as in Fillmore's null
-complements and Levin's unexpressed object alternations. -/
+/-- The voice that leaves the `i`-th complement of `fr` unexpressed but implied, with
+interpretation `a`; every participant keeps its slot. Examples are Fillmore's null complements and
+Levin's unexpressed object alternations. -/
 def leaveImplicit (fr : ArgumentFrame) (i : ℕ) (a : Option ImplicitInterp := none) : Voice :=
   of fr (fr.leaveImplicit i a) (fr.slots.map some)
 
@@ -576,8 +558,6 @@ theorem reflexive_cumulates : reflexive.Cumulates := by decide
 
 theorem reciprocal_cumulates : reciprocal.Cumulates := by decide
 
-/-- A cumulation changes transitivity without nucleativizing or denucleativizing, so it is not
-symmetrical. -/
 theorem reflexive_not_isSymmetrical : ¬ reflexive.IsSymmetrical := by decide
 
 theorem applicative_isValencyIncreasing : applicative.IsValencyIncreasing := by decide
@@ -596,10 +576,10 @@ section Relates
 
 variable {n : ℕ} (c d : Diathesis n)
 
-/-- A voice relates two diatheses of a verb when their frames refine its initial and derived
-frames and each participant moves as the voice says: a participant of an initial slot to the
-derived slot the voice sends it to, out of the construction where it sends it nowhere, and a
-participant the first diathesis leaves out to a derived slot no initial slot reaches, if any. -/
+/-- A voice relates two diatheses `c` and `d` of a verb when their frames refine its initial and
+derived frames and each participant is placed as the voice says. A participant of an initial slot
+goes to the voice's image of that slot, or out of the construction if there is none; a participant
+that `c` leaves out goes, if anywhere, to a derived slot that is the image of no initial slot. -/
 def Relates : Prop :=
   v.initial.toArgumentFrame ≤ c.toArgumentFrame ∧ v.derived.toArgumentFrame ≤ d.toArgumentFrame ∧
     ∀ i, (∀ s ∈ c.links.get i, d.links.get i = v.image s) ∧

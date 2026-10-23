@@ -6,33 +6,24 @@ public import Mathlib.Data.List.FinRange
 /-!
 # Syntax of PIP
 
-This file defines the terms and formulas of PIP, a plural intensional
-presuppositional predicate calculus: first-order predicate calculus with set
-abstraction, equality, the set-theoretic relations `⊆`, `∈`, `∩`, `∅` and the
-cardinality predicates `SG` and `PL`, extended by bracketed *local* variables
-`[x]`, summation `Σxφ`, formula labels `X ≡ φ` with their uses `X`, world
-arguments on relation symbols, and presuppositions `φ|ψ`. Relation symbols are
-indexed by arity and take a world as a distinguished argument. Terms and
-formulas are one inductive type indexed by their kind.
-
-It also defines the local variables of an expression, substitution for a
-variable, the presupposition-free expressions, the expansion of formula labels
-by their definitions, and the translation eliminating the PIP constructs.
-Truth is defined in `Semantics.lean` and felicity in `Felicity.lean`.
+This file defines the terms and formulas of PIP, a plural intensional presuppositional predicate
+calculus. Its base is first-order predicate calculus with set abstraction, equality, the
+set-theoretic relations `⊆`, `∈`, `∩`, `∅` and the cardinality predicates `SG` and `PL`. PIP adds
+bracketed *local* variables `[x]`, summation `Σxφ`, formula labels `X ≡ φ` with their uses `X`,
+and presuppositions `φ|ψ`. Relation symbols are indexed by arity and take a world as a
+distinguished argument. Truth is defined in `Semantics.lean` and felicity in `Felicity.lean`.
 
 ## Main definitions
 
-* `Kind`, `Expr`, `Term`, `Formula` — the syntax; `Formula.disj`,
-  `Formula.impl`, `Formula.iff_`, `Formula.forall_`, `Formula.some_` — the
-  defined connectives; `Term.sgPronoun` — a singular summation pronoun.
-* `Expr.locals` — the local variables; `Expr.subst` — substitution for a
-  variable.
-* `Expr.PresupFree` — expressions without presuppositions, decidably.
-* `Expr.substLabels`, `Expr.defs`, `assignment`, `Formula.expand`,
-  `Formula.expandSelf` — label assignment and expansion, as a bounded fixpoint
-  of simultaneous substitution.
-* `Formula.closeList`, `Expr.elim` — the translation into predicate calculus
-  with set abstraction.
+* `Kind`, `Expr`, `Term`, `Formula`: the syntax, one inductive type indexed by kind.
+* `Formula.disj`, `Formula.impl`, `Formula.iff_`, `Formula.forall_`, `Formula.some_`: the defined
+  connectives; `Term.sgPronoun`: a singular summation pronoun.
+* `Expr.locals`: the local variables; `Expr.subst`: substitution for a variable.
+* `Expr.PresupFree`: expressions without presuppositions, decidably.
+* `Expr.substLabels`, `Expr.defs`, `assignment`, `Formula.expand`, `Formula.expandSelf`: label
+  assignment and expansion, as a bounded fixpoint of simultaneous substitution.
+* `Formula.closeList`, `Expr.elim`: the translation eliminating the PIP constructs into predicate
+  calculus with set abstraction.
 
 ## References
 
@@ -56,7 +47,7 @@ set abstraction `⋃{x : φ}`, summation `Σxφ`, intersection and the empty
 plurality. Formulas: the constant `⊤`, predication `P_w(τ₁, …, τₙ)`, equality,
 inclusion, membership, the cardinality predicates `SG` and `PL`, negation,
 conjunction, selective existential quantification, label definition `X ≡ φ`
-and label use `X`. An expression of either kind with a presupposition,
+and label use `X`. An expression of either kind may carry a presupposition,
 `e|ψ`. -/
 inductive Expr (V : Type u) (L : Type v) (P : ℕ → Type w) : Kind → Type (max u v w)
   | var (x : V) : Expr V L P .term
@@ -113,8 +104,8 @@ section Syntax
 
 variable [DecidableEq V]
 
-/-- The local variables of an expression: bracketed occurrences at top level,
-with summation, set abstraction and quantification binding theirs. -/
+/-- The bracketed variables occurring free in an expression: set abstraction and quantification
+over `x` bind `[x]`, and summation binds all of them. -/
 def Expr.locals : ∀ {k : Kind}, Expr V L P k → List V
   | _, .var _ => []
   | _, .bvar x => [x]
@@ -295,9 +286,9 @@ variable [DecidableEq V]
 def Formula.closeList (xs : List V) (φ : Formula V L P) : Formula V L P :=
   xs.foldr Expr.exists_ φ
 
-/-- Translation into predicate calculus with set abstraction: brackets and
-presuppositions are dropped, summation becomes abstraction over the closure of
-the other local variables, label definitions become `⊤`. -/
+/-- The translation into predicate calculus with set abstraction. It drops brackets and
+presuppositions and replaces label definitions by `⊤`; a summation `Σxφ` becomes the set
+abstraction over `x` of `φ` with its other local variables existentially closed. -/
 def Expr.elim : ∀ {k : Kind}, Expr V L P k → Expr V L P k
   | _, .var x => .var x
   | _, .bvar x => .var x

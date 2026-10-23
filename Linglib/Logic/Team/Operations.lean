@@ -10,22 +10,10 @@ public import Linglib.Logic.Team.Definability
 /-!
 # Team operations
 
-A team-semantic connective takes the team properties defined by its arguments to the team
-property defined by the compound. The connectives are defined here once, as operations on
-`TeamProperty α`, so that each team logic's evaluation is a fold over them and each closure fact
-about a connective is proved once. They are the pointwise lift `flat` of a property of points,
-the tensor (split) disjunction `tensor`, the non-emptiness atom `ne`, and the modalities: Aloni's
-flat `poss` and `nec` over successor sets, Väänänen's single-witness `possWitness` and image
-`necImage` of modal dependence logic, and the lax `possLax` of modal inclusion logic.
-
-The operations are mathlib's where mathlib has them. Tensor disjunction is the pointwise sup
-`P ⊻ Q` (`Set.sups`) of the lattice `Finset α`, so its closure lemmas are the lattice-general
-ones of `Core/Data/Set/Sups.lean`; conjunction is intersection; the image modality is the preimage
-of a property along the bundled `SupBotHom` `biUnionHom R`, so its closure lemmas are
-`IsLowerSet.preimage` and `SupClosed.preimage`. Following Anttila, `flat` properties and the flat
-modalities are flat outright, and `flat` commutes with conjunction, tensor disjunction and the
-flat modalities, so a formula built from flat atoms by these connectives defines a flat
-property, pointwise its classical truth.
+This file defines the connectives of team semantics as operations on `TeamProperty α`, the sets
+of teams that support a formula. `Team.flat p` is the property of the teams all of whose points
+satisfy `p`; a formula built from such atoms by these connectives defines a flat property, whose
+teams are those all of whose points make the formula classically true.
 
 ## Main definitions
 
@@ -36,25 +24,17 @@ property, pointwise its classical truth.
 ## Main results
 
 * `Team.isFlat_flat`, `IsLowerSet.tensor`, `SupClosed.tensor`, `Team.empty_mem_tensor`,
-  `Set.OrdConnected.tensor`: closure per connective.
-* `Team.flat_inter`, `Team.tensor_flat`, `Team.poss_flat`, `Team.nec_flat`,
-  `Team.possWitness_flat`, `Team.possLax_flat`, `Team.necImage_flat`: `flat` is a
-  homomorphism.
-* `Team.poss_union`, `Team.nec_union`: the flat modalities send unions to tensor
-  disjunctions.
+  `Set.OrdConnected.tensor`: closure properties of each connective.
+* `Team.flat_inter`, `Team.tensor_flat`, `Team.poss_flat`, `Team.nec_flat`, `Team.possWitness_flat`,
+  `Team.possLax_flat`, `Team.necImage_flat`: `flat` commutes with each connective.
+* `Team.poss_union`, `Team.nec_union`: the flat modalities send unions to tensor disjunctions.
 
 ## Implementation notes
 
-The pointwise connectives need no decidable equality on points and come first; the split
-and image connectives, which form unions of teams, follow under `[DecidableEq α]`. The
-bilateral anti-support of `ne` is the singleton property `{∅}`. Membership in each
-operation unfolds definitionally (`mem_flat`, `mem_tensor`, …), so a logic's evaluation
-clauses written through these operations are the same propositions as the paper's; a
-split of a team appears as a witness `t₁ ∪ t₂ = t`.
-
-The points of a team are left abstract: worlds for BSML, world–assignment indices for
-QBSML, assignments for first-order dependence logic. "Team" is Väänänen's term; Aloni's
-state-based modal logics call the same object a "state".
+Tensor disjunction is `P ⊻ Q` (`Set.sups`) in `Finset α`, and `Team.necImage R` is a preimage
+under the `SupBotHom` `Team.biUnionHom R`, so their closure lemmas are lattice-general ones.
+Points are left abstract: worlds for BSML, world–assignment indices for QBSML, assignments for
+first-order dependence logic; Aloni calls a team a "state". The anti-support of `ne` is `{∅}`.
 
 ## References
 
@@ -79,15 +59,15 @@ variable {α : Type*}
 
 /-! ### Pointwise connectives -/
 
-/-- The pointwise lift `flat p` of a property of points holds of the teams all of whose points
-    satisfy `p`. Atoms, and every flat connective, define such properties. -/
+/-- `flat p` holds of the teams all of whose points satisfy `p`. Atoms, and every flat
+    connective, define such properties. -/
 def flat (p : α → Prop) : TeamProperty α := {t | ∀ x ∈ t, p x}
 
 /-- The non-emptiness atom `NE` holds of the non-empty teams. -/
 def ne : TeamProperty α := {t | t.Nonempty}
 
-/-- The flat possibility modality over successor sets `R` holds of a team when every point of it
-    has a non-empty set of successors in `P`. -/
+/-- The flat possibility modality over successor sets `R` holds of a team when each of its points
+    has a non-empty set of successors that is in `P`. -/
 def poss (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   flat fun x ↦ ∃ s ⊆ R x, s.Nonempty ∧ s ∈ P
 
@@ -96,9 +76,8 @@ def poss (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
 def nec (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   flat fun x ↦ R x ∈ P
 
-/-- The single-witness possibility modality of modal dependence logic ([vaananen-2008]
-    clause (T8), p. 245) holds of a team when one team `Y` in `P` supplies a successor to every
-    point. -/
+/-- The possibility modality of modal dependence logic holds of a team when a single team `Y` in
+    `P` contains a successor of each of its points ([vaananen-2008] clause (T8), p. 245). -/
 def possWitness (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   {t | ∃ Y, (∀ x ∈ t, ∃ y ∈ Y, y ∈ R x) ∧ Y ∈ P}
 
@@ -148,12 +127,9 @@ theorem isLowerSet_possWitness (R : α → Finset α) (P : TeamProperty α) :
 theorem empty_mem_possWitness (hP : ∅ ∈ P) : ∅ ∈ possWitness R P :=
   ⟨∅, fun _ hx ↦ absurd hx (Finset.notMem_empty _), hP⟩
 
-/-- `flat` commutes with conjunction. -/
 theorem flat_inter (p q : α → Prop) : flat p ∩ flat q = flat fun x ↦ p x ∧ q x :=
   Set.ext fun _ ↦ by simp [flat, forall_and]
 
-/-- A non-empty subteam of `u` on which `p` holds pointwise exists exactly when `p` holds
-somewhere in `u`, since the witness may be taken to be a singleton. -/
 theorem exists_nonempty_subset_forall_iff (u : Finset α) (p : α → Prop) :
     (∃ t ⊆ u, t.Nonempty ∧ ∀ x ∈ t, p x) ↔ ∃ x ∈ u, p x where
   mp := fun ⟨_, htu, ⟨x, hx⟩, h⟩ ↦ ⟨x, htu hx, h x hx⟩
@@ -161,12 +137,10 @@ theorem exists_nonempty_subset_forall_iff (u : Finset α) (p : α → Prop) :
     ⟨{x}, Finset.singleton_subset_iff.mpr hxu, Finset.singleton_nonempty x,
       fun _ hy ↦ Finset.mem_singleton.mp hy ▸ hx⟩
 
-/-- `flat` commutes with the flat possibility modality. -/
 theorem poss_flat (R : α → Finset α) (p : α → Prop) :
     poss R (flat p) = flat fun x ↦ ∃ y ∈ R x, p y :=
   Set.ext fun _ ↦ forall₂_congr fun x _ ↦ exists_nonempty_subset_forall_iff (R x) p
 
-/-- `flat` commutes with the flat necessity modality. -/
 theorem nec_flat (R : α → Finset α) (p : α → Prop) :
     nec R (flat p) = flat fun x ↦ ∀ y ∈ R x, p y := rfl
 
@@ -175,14 +149,12 @@ theorem nec_flat (R : α → Finset α) (p : α → Prop) :
 variable [DecidableEq α] {Q : TeamProperty α}
 
 /-- Tensor (split) disjunction holds of the teams that split into a part in `P` and a part in
-    `Q`. It is the pointwise sup `P ⊻ Q` of `Finset α` (`tensor_eq_sups`), spelled out so that
-    a split appears as `t₁ ∪ t₂ = t`. -/
+    `Q`. It is `P ⊻ Q` in `Finset α` (`tensor_eq_sups`), with the split written `t₁ ∪ t₂ = t`. -/
 def tensor (P Q : TeamProperty α) : TeamProperty α := {t | ∃ t₁ ∈ P, ∃ t₂ ∈ Q, t₁ ∪ t₂ = t}
 
 theorem tensor_eq_sups (P Q : TeamProperty α) : tensor P Q = P ⊻ Q := rfl
 
-/-- The image of a team under successor sets, `t ↦ t.biUnion R`, as a map of the bounded
-    join-semilattices of teams. -/
+/-- The union of the successor sets of a team's points, `t ↦ t.biUnion R`, as a `SupBotHom`. -/
 def biUnionHom {β : Type*} [DecidableEq β] (R : α → Finset β) :
     SupBotHom (Finset α) (Finset β) where
   toFun t := t.biUnion R
@@ -192,13 +164,14 @@ def biUnionHom {β : Type*} [DecidableEq β] (R : α → Finset β) :
 @[simp] theorem biUnionHom_apply {β : Type*} [DecidableEq β] (R : α → Finset β) (t : Finset α) :
     biUnionHom R t = t.biUnion R := rfl
 
-/-- The image necessity modality ([vaananen-2008] clause (T9), p. 245) holds of a team when the
-    union of its successor sets is in `P`. -/
+/-- The necessity modality of modal dependence logic holds of a team when the union of the
+    successor sets of its points is in `P` ([vaananen-2008] clause (T9), p. 245). -/
 def necImage (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   biUnionHom R ⁻¹' P
 
-/-- The lax possibility modality of modal inclusion logic ([anttila-haggblom-yang-2025]
-    Definition 2.2) holds of a team when some team of successors in `P` reaches every point. -/
+/-- The lax possibility modality of modal inclusion logic holds of a team when some set of
+    successors of its points is in `P` and contains a successor of each point
+    ([anttila-haggblom-yang-2025] Definition 2.2). -/
 def possLax (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   {t | ∃ S ⊆ t.biUnion R, (∀ x ∈ t, ∃ y ∈ S, y ∈ R x) ∧ S ∈ P}
 
@@ -311,7 +284,6 @@ theorem empty_mem_possLax (hP : ∅ ∈ P) : ∅ ∈ possLax R P :=
 
 /-! ### `flat` commutes with tensor disjunction ([anttila-2021] Proposition 2.2.16) -/
 
-/-- A team of points satisfying `p ∨ q` splits into its `p`-points and its `¬p`-points. -/
 theorem mem_tensor_flat : t ∈ tensor (flat p) (flat q) ↔ ∀ x ∈ t, p x ∨ q x where
   mp := fun ⟨_, h₁, _, h₂, hu⟩ x hx ↦ by
     subst hu
@@ -331,15 +303,13 @@ theorem poss_union (R : α → Finset α) (P Q : TeamProperty α) :
     poss R (P ∪ Q) = tensor (poss R P) (poss R Q) := by
   simp only [poss, tensor_flat, Set.mem_union, and_or_left, exists_or]
 
-/-- The flat necessity modality turns a union into a tensor disjunction. -/
 theorem nec_union (R : α → Finset α) (P Q : TeamProperty α) :
     nec R (P ∪ Q) = tensor (nec R P) (nec R Q) := by
   rw [nec, nec, nec, tensor_flat]; rfl
 
 /-! ### `flat` commutes with the image modalities
 
-On flat properties the single-witness, lax and image modalities agree with the flat ones:
-the witness team may be taken to be the `p`-successors of the team. -/
+On flat properties the modalities of dependence and inclusion logic agree with the flat ones. -/
 
 theorem mem_possWitness_flat : t ∈ possWitness R (flat p) ↔ ∀ x ∈ t, ∃ y ∈ R x, p y where
   mp := fun ⟨_, hY, hYp⟩ x hx ↦ (hY x hx).imp fun _ ⟨hyY, hyR⟩ ↦ ⟨hyR, hYp _ hyY⟩

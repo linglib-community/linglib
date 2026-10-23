@@ -9,25 +9,12 @@ public import Linglib.Semantics.Composition.WithAlternatives
 /-!
 # Structural alternatives
 
-This file defines Katzir's structural alternatives of a parse tree: the trees
-obtainable from it by deletion, contraction, and substitution of a constituent by a
-same-category item of the substitution source, the lexicon together with the tree's own
-subtrees. `StructuralOp` is one such operation, `atMostAsComplex` its reflexive-transitive
-closure, the complexity preorder of the paper's definition (19), `equalComplexity` the
-antisymmetrization of that preorder, and `structuralAlternatives` the set of trees at most as
-complex as the given one, definition (20). Structural alternatives form an alternative source
-for the competition relations of `Competition`.
-
-No operation introduces a category absent from the tree and the source
-(`category_preservation`), nor a phrase of a category of which neither has a phrase
-(`phrase_preservation`), which is what excludes the symmetric alternatives, nor a subtree
-property the operations cannot create (`subtree_preservation`); and substituting one lexical
-item for another of the same category throughout a tree, a Horn-scale alternative, is a chain
-of substitutions (`horn_alternatives_are_structural`), so scalar alternatives are a special
-case. More generally the Hamblin composition engine of `WithAlternatives`, applied to a tree
-whose terminals evoke their same-category lexical items, generates exactly the substitution
-fragment: its alternatives are structural (`alternatives_withAlternatives_subset`), while deletion
-and contraction, which act on the whole tree, lie outside any pointwise composition.
+The *structural alternatives* of a parse tree are the trees obtainable from it by deletion,
+contraction, and substitution of a constituent by a same-category item of the substitution
+source, the lexicon together with the tree's own subtrees. A tree is *at most as complex* as
+another if these operations reach it from the other (definition (19)), and the structural
+alternatives of a tree are the trees at most as complex as it (definition (20)). Structural
+alternatives are one source of alternatives for the competition relations of `Competition`.
 
 ## Main definitions
 
@@ -42,11 +29,12 @@ and contraction, which act on the whole tree, lie outside any pointwise composit
 
 * `category_preservation`, `phrase_preservation`, `subtree_preservation` — the operations
   create no category, no phrase of a category and no subtree property absent from the host and
-  the source.
-* `horn_alternatives_are_structural` — leaf substitution of a same-category lexical item is a
-  structural alternative.
-* `alternatives_withAlternatives_subset` — the alternatives composed by the Hamblin engine over the
-  lexicon are structural alternatives.
+  the source; `phrase_preservation` is what excludes the symmetric alternatives.
+* `horn_alternatives_are_structural` — substituting a same-category lexical item throughout a tree
+  is a chain of substitutions, so Horn-scale alternatives are structural alternatives.
+* `alternatives_withAlternatives_subset` — the Hamblin composition of `WithAlternatives`, with each
+  terminal evoking its same-category lexical items, generates only structural alternatives;
+  deletion and contraction, which act on the whole tree, lie outside any pointwise composition.
 
 ## Implementation notes
 
@@ -118,8 +106,6 @@ theorem equalComplexity.equivalence (source : Set (Tree C W)) :
     Equivalence (equalComplexity source) :=
   (AntisymmRel.setoid (Tree C W) (atMostAsComplex source)).iseqv
 
-/-- A same-category terminal substitution with both terminals in the source is reversible,
-so the two terminals are of equal complexity. -/
 theorem equalComplexity_terminal_subst {source : Set (Tree C W)} {cat : C} {oldW newW : W}
     (h_old : Tree.terminal cat oldW ∈ source) (h_new : Tree.terminal cat newW ∈ source) :
     equalComplexity source (.terminal cat oldW) (.terminal cat newW) :=
@@ -158,9 +144,8 @@ private theorem structuralOp_preserves_no_cat (source : Set (Tree C W)) (c : C) 
     rw [Tree.mem_cats_bind] at h_φ ⊢; push Not at h_φ ⊢
     exact ⟨h_φ.1, ih h_φ.2⟩
 
-/-- No tree reachable by structural operations contains a category absent from the source
-and the host, since substitution introduces only source material, deletion removes material, and
-contraction promotes a subtree. -/
+/-- No tree reachable by structural operations contains a category absent from the source and
+the host. -/
 theorem category_preservation (source : Set (Tree C W)) (c : C) (φ ψ : Tree C W)
     (h_source : ∀ s ∈ source, c ∉ s.cats) (h_φ : c ∉ φ.cats)
     (h_reach : atMostAsComplex source ψ φ) : c ∉ ψ.cats := by
@@ -170,9 +155,6 @@ theorem category_preservation (source : Set (Tree C W)) (c : C) (φ ψ : Tree C 
   | tail _ h_last ih =>
     exact structuralOp_preserves_no_cat source c _ _ h_source ih h_last
 
-/-- One structural operation cannot introduce a subtree property that no source item has,
-that the tree lacks, and that a node cannot acquire by losing a child, by having a child
-replaced, or by a change of a binder's body. -/
 private theorem structuralOp_preserves_free (source : Set (Tree C W))
     (Bad : Tree C W → Prop) (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ Bad t)
     (h_delete : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length), l.IsPhrase →
@@ -214,9 +196,9 @@ private theorem structuralOp_preserves_free (source : Set (Tree C W))
     · exact h_bind n cat body body' (h_φ _ (List.mem_cons_self ..))
     · exact ih (fun t ht ↦ h_φ t (List.mem_cons_of_mem _ ht)) t ht
 
-/-- A subtree property that no source item has, that the host lacks, and that a node cannot
-acquire by losing a child, by having a child replaced, or by a change of a binder's body,
-is absent from every structural alternative of the host. -/
+/-- Let `Bad` be a subtree property that the host and the source items lack, and that no node
+acquires by losing a child, by having a child replaced, or by a change of its binder's body. Then
+no structural alternative of the host has `Bad`. -/
 theorem subtree_preservation (source : Set (Tree C W)) (Bad : Tree C W → Prop)
     (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ Bad t)
     (h_delete : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length), l.IsPhrase →
@@ -233,8 +215,8 @@ theorem subtree_preservation (source : Set (Tree C W)) (Bad : Tree C W → Prop)
   | tail _ h_last ih =>
     exact structuralOp_preserves_free source Bad h_source h_delete h_set h_bind ih h_last
 
-/-- No structural alternative has a phrase of a category, a node or adjunction structure of
-category `c`, that neither the host nor any source item has. -/
+/-- If neither the host nor any source item has a phrase (a node or adjunction structure) of
+category `c`, no structural alternative has one. -/
 theorem phrase_preservation (source : Set (Tree C W)) (c : C)
     (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ (t.value.IsPhrase ∧ Tree.cat t = c))
     {φ ψ : Tree C W} (h_φ : ∀ t ∈ φ.subtrees, ¬ (t.value.IsPhrase ∧ Tree.cat t = c))
@@ -245,7 +227,6 @@ theorem phrase_preservation (source : Set (Tree C W)) (c : C)
 
 /-! ### Horn scales are structural alternatives -/
 
-/-- Lift a ReflTransGen chain at position i through inChild. -/
 private theorem lift_at_position {source : Set (Tree C W)}
     {l : Tree.Label C W} (hl : l.IsPhrase) (cs : List (Tree C W))
     (i : Nat) (hi : i < cs.length) (ψ : Tree C W)
@@ -263,8 +244,6 @@ private theorem lift_at_position {source : Set (Tree C W)}
     have hget : (cs.set i b).get ⟨i, hlen⟩ = b := List.getElem_set_self ..
     rw [hget]; exact hbd
 
-/-- A `ReflTransGen` chain lifts through a binder, a special case of
-`Relation.ReflTransGen.lift` with the homomorphism `StructuralOp.inBind`. -/
 private theorem lift_bind {source : Set (Tree C W)}
     {n : Nat} {cat : C} {body body' : Tree C W}
     (h : Relation.ReflTransGen (StructuralOp source) body body') :
@@ -272,8 +251,6 @@ private theorem lift_bind {source : Set (Tree C W)}
   Relation.ReflTransGen.lift (fun t ↦ Tree.bind n cat t)
     (fun _ _ h ↦ StructuralOp.inBind h) body body' h
 
-/-- Children reachable one by one make the node reachable. With `cs'` pointwise reachable from
-`cs`, `node cat cs` reaches `node cat cs'` by operations inside successive children. -/
 private theorem pointwise_reachable {source : Set (Tree C W)} {l : Tree.Label C W}
     (hl : l.IsPhrase) {cs cs' : List (Tree C W)} (hlen : cs'.length = cs.length)
     (hf : ∀ (i : Nat) (hi : i < cs.length),
@@ -318,8 +295,6 @@ private theorem pointwise_reachable {source : Set (Tree C W)} {l : Tree.Label C 
           simp [htk1_len, htk_len, List.getElem_drop]
           congr 1; omega
 
-/-- Processing the children one at a time, a phrase over `cs` reaches the phrase over
-`cs.map f`. -/
 private theorem mapChildren_reachable {source : Set (Tree C W)}
     {l : Tree.Label C W} (hl : l.IsPhrase) {cs : List (Tree C W)} {f : Tree C W → Tree C W}
     (hf : ∀ (i : Nat) (hi : i < cs.length),
@@ -328,8 +303,6 @@ private theorem mapChildren_reachable {source : Set (Tree C W)}
       (RoseTree.node l cs) (RoseTree.node l (cs.map f)) :=
   pointwise_reachable hl (by simp) fun i hi ↦ by rw [List.getElem_map]; exact hf i hi
 
-/-- Leaf substitution is reachable via structural operations for any
-source containing `.terminal c β`. -/
 private theorem leafSubst_reachable [DecidableEq C] [DecidableEq W] {source : Set (Tree C W)}
     (α β : W) (c : C) (h_β : Tree.terminal c β ∈ source) (φ : Tree C W) (hφ : φ.IsWellFormed) :
     Relation.ReflTransGen (StructuralOp source) φ (φ.leafSubst α β c) := by
@@ -354,15 +327,15 @@ private theorem leafSubst_reachable [DecidableEq C] [DecidableEq W] {source : Se
     exact lift_bind (ih (RoseTree.Licensed.of_mem hφ List.mem_cons_self))
   | junk l cs h _ => exact absurd (RoseTree.licensed_node_iff.mp hφ).1 h
 
-/-- Leaf substitution of a same-category lexical item throughout a well-formed tree is a
-structural alternative, so Horn-scale alternatives are a special case of structural ones. -/
+/-- Substituting a same-category lexical item for a leaf throughout a well-formed tree gives a
+structural alternative, so Horn-scale alternatives are structural alternatives. -/
 theorem horn_alternatives_are_structural [DecidableEq C] [DecidableEq W]
     (lex : Finset (Tree C W)) (φ : Tree C W) (α β : W) (c : C) (h_β : Tree.terminal c β ∈ lex)
     (hφ : φ.IsWellFormed) :
     φ.leafSubst α β c ∈ structuralAlternatives lex φ :=
   leafSubst_reachable α β c (Set.mem_union_left _ (Finset.mem_coe.2 h_β)) φ hφ
 
-/-! ### Hamblin composition generates the substitution fragment
+/-! ### Hamblin composition stays within the substitution fragment
 
 The composition engine of `WithAlternatives` computes alternatives pointwise from the parts:
 `withAlternatives lex φ` gives each terminal the same-category items of the lexicon as
@@ -387,7 +360,6 @@ where
   | [] => pure []
   | t :: ts => (· :: ·) <$> withAlternatives lex t <*> list lex ts
 
-/-- A node whose daughters its label does not license evokes only itself. -/
 theorem withAlternatives_node_of_not_licenses (lex : Finset (Tree C W)) {l : Tree.Label C W}
     {cs : List (Tree C W)}
     (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
@@ -407,7 +379,6 @@ theorem withAlternatives_node_of_not_licenses (lex : Finset (Tree C W)) {l : Tre
     · exact absurd rfl h
     · rfl
 
-/-- The ordinary value of the composition is the tree itself. -/
 theorem ordinary_withAlternatives (lex : Finset (Tree C W)) (φ : Tree C W) :
     (withAlternatives lex φ).ordinary = φ := by
   induction φ using Tree.rec' with
@@ -434,7 +405,6 @@ theorem ordinary_withAlternatives (lex : Finset (Tree C W)) (φ : Tree C W) :
   | bind n c body ih => simp only [withAlternatives, WithAlternatives.ordinary_map, ih]
   | junk l cs h _ => rw [withAlternatives_node_of_not_licenses lex h]; rfl
 
-/-- The composition is well formed, since the tree is among its own alternatives. -/
 theorem wellFormed_withAlternatives (lex : Finset (Tree C W)) (φ : Tree C W) :
     (withAlternatives lex φ).WellFormed := by
   induction φ using Tree.rec' with
@@ -460,8 +430,6 @@ theorem wellFormed_withAlternatives (lex : Finset (Tree C W)) (φ : Tree C W) :
   | junk l cs h _ =>
     rw [withAlternatives_node_of_not_licenses lex h]; exact WithAlternatives.WellFormed.unfeatured _
 
-/-- Over any source containing the lexicon, every alternative the composition evokes is
-reachable from the tree by structural operations. -/
 theorem reachable_of_mem_withAlternatives {source : Set (Tree C W)} (lex : Finset (Tree C W))
     (hlex : ↑lex ⊆ source) (φ : Tree C W) :
     ∀ ψ ∈ (withAlternatives lex φ).alternatives,

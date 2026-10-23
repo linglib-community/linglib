@@ -7,45 +7,34 @@ public import Linglib.Core.Logic.Function.FactorsThrough
 /-!
 # Gender systems
 
-This file defines a language's gender system over its own carrier of controller genders,
-the comparative labels cross-linguistic comparison uses for them, and the assigned system
-that gives every noun a controller gender.
-
-A gender is a class of nouns that take the same agreements, so a language's genders are
-language-particular: there is no universal inventory of gender values as there is of number
-and person values, only a vocabulary of comparative labels, masculine, feminine, neuter,
-common, animate and inanimate, that a system's genders may partially bear. The carrier of
-controller genders is a type parameter, as the index type of a basis is, and the number of
-genders is its cardinality; a carrier is faithful to agreement evidence when distinct
-genders are distinguished by some target. The rules assigning nouns to genders are the
-assignment systems of `Syntax/Gender/Assignment.lean`.
+A *gender* is a class of nouns that take the same agreements, so a language's genders are its
+own: there is no universal inventory of gender values as there is of number and person values.
+This file takes a language's controller genders as a type `G`, whose cardinality is the number of
+genders, and defines the comparative labels they may partially bear and when `G` is *faithful* to
+agreement evidence: distinct genders are distinguished by some agreement target.
 
 ## Main definitions
 
-* `Gender`: the comparative labels; the Universal Dependencies realization is in
-  `Morphology/Word/UD.lean`.
-* `Gender.Faithful`: a carrier is faithful to agreement evidence when the evidence is
-  injective.
+* `Gender`: the comparative labels, realized in Universal Dependencies in `Morphology/Word/UD`.
+* `Gender.Faithful`: the agreement evidence is injective on genders.
 
 ## Main results
 
 * `Gender.Faithful.card_le_pow`: `f` forms on each of `t` targets support at most `f ^ t`
   controller genders.
-* `Gender.factorsThrough_of_faithful`: when a faithful carrier mediates agreement,
-  assignment factors through agreement behaviour, genders as agreement classes by theorem
-  rather than by stipulation.
+* `Gender.factorsThrough_of_faithful`: under faithful agreement, nouns that agree alike have
+  the same gender, so genders are agreement classes.
 
 ## Implementation notes
 
-* The carrier is the controller-gender partition: singular and plural of one noun are one
-  gender. Classifiers and declension classes trigger no agreement and are not carriers.
-* The carrier makes no claim about where gender sits in the nominal spine; that is study
-  content. Languages lacking gender, the majority, declare no carrier.
-* Kramer's two-class minimum is the hypothesis `Nontrivial G` on the consumers that need
-  it: one agreement pattern for all nouns is the absence of a system.
-* Assignment systems, feature decompositions of the labels and the agreement classes of
-  nouns are separate modules; fragments' gender enums are carriers, and a fragment's
-  `toLabel` maps its carrier into the comparative labels.
+* `G` is the controller-gender partition: singular and plural of one noun are one gender.
+  Classifiers and declension classes trigger no agreement and are not genders.
+* Languages lacking gender, the majority, declare no `G`. Where gender is located in the nominal
+  spine is left to studies.
+* Kramer's two-class minimum is the hypothesis `Nontrivial G` where needed: one agreement pattern
+  for all nouns is the absence of a system.
+* A fragment's gender enum is a `G`, and its `toLabel` maps it into `Gender`. Assignment systems
+  are in `Syntax/Gender/Assignment.lean`.
 
 ## References
 
@@ -61,9 +50,9 @@ assignment systems of `Syntax/Gender/Assignment.lean`.
 /-- Comparative-concept labels for controller genders ([corbett-1991]).
 
     These are the descriptive labels cross-linguistic comparison uses for a
-    language's agreement classes — not a universal value inventory. A
-    language's actual genders are its own carrier, which a fragment's `toLabel`
-    maps into this vocabulary. -/
+    language's agreement classes, not a universal value inventory. A language's
+    actual genders form its own type, which a fragment's `toLabel` maps into this
+    vocabulary. -/
 inductive Gender where
   /-- The masculine holds male humans and higher animates, and is the default in many sex-based
   systems. -/
@@ -84,34 +73,32 @@ inductive Gender where
 
 namespace Gender
 
-/-! ### Carriers
+/-! ### Language-particular genders
 
-A gender system is language-particular: its values are the language's own controller
-genders, supplied as the carrier type `G`, a fragment's gender enum. The comparative labels
-above enter only through a fragment's partial map into them; the carrier itself is not
-constrained to fit them, which is what accommodates Bantu-scale inventories that no label
-vocabulary covers. -/
+A gender system is language-particular: its values are the language's own controller genders,
+supplied as a type `G` (a fragment's gender enum). The comparative labels above enter only through
+a fragment's partial map into them, and `G` need not fit them. This accommodates Bantu-scale
+inventories that no label vocabulary covers. -/
 
 variable {G : Type*}
 
 /-! ### Agreement faithfulness
 
-Agreement evidence for a carrier `G` is a behaviour map `agr : G → T → F`, the form each
-target shows for each gender. The carrier is faithful to the evidence when distinct genders
-are distinguished by some target; a carrier that is not faithful has posited a spurious
-distinction, since two genders that agree alike everywhere are one gender. The target and
-form types are parameters: the substrate is neutral about what counts as a target, which is
-where [kramer-2015]'s strict-Agree and loose-covariation definitions of gender differ. -/
+Agreement evidence for `G` is a map `agr : G → T → F` giving the form each target shows for
+each gender. `G` is faithful to the evidence when distinct genders are distinguished by some
+target. Otherwise it posits a spurious distinction, since two genders that agree alike everywhere
+are one gender. The target and form types are parameters, leaving open what counts as a target:
+this is where [kramer-2015]'s strict-Agree and loose-covariation definitions of gender differ. -/
 
 section Faithful
 
 variable {T F : Type*}
 
-/-- A carrier `G` of controller genders is faithful to agreement evidence `agr` when distinct
+/-- A type `G` of controller genders is faithful to agreement evidence `agr` when distinct
 genders are distinguished by some target's form.
 
 It is an `abbrev` so that `Function.Injective`'s decidability instance (under `[Fintype G]`,
-`[DecidableEq T]`, `[DecidableEq F]`) applies and concrete fragments discharge faithfulness by
+`[DecidableEq T]`, `[DecidableEq F]`) applies and concrete fragments prove faithfulness by
 `decide`. -/
 abbrev Faithful (agr : G → T → F) : Prop :=
   Function.Injective agr
@@ -129,20 +116,18 @@ end Faithful
 /-! ### Assignment and agreement
 
 An assignment gives every noun one controller gender, the Canonical Gender Principle of
-[corbett-fedden-2016]. When noun-level agreement is the per-gender behaviour of the assigned
-gender and the carrier is faithful, assignment factors through observable agreement
-behaviour: genders are agreement classes in [zaliznjak-1964]'s sense, the starting point of
-[corbett-1991]'s definition. Corbett's controller genders discount subgenders, inquorate
-genders and overdifferentiated targets on the way from agreement classes to genders, and
-those steps are not modelled here. -/
+[corbett-fedden-2016]. If each noun agrees as its assigned gender does and the genders are
+faithful, nouns that agree alike have the same gender: genders are agreement classes in
+[zaliznjak-1964]'s sense, the starting point of [corbett-1991]'s definition. Corbett's controller
+genders discount subgenders, inquorate genders and overdifferentiated targets on the way from
+agreement classes to genders; those steps are not modelled here. -/
 
 section Assignment
 
 variable {N T F : Type*}
 
-/-- Genders are agreement classes by derivation, not stipulation. If noun-level agreement
-`nounAgr` is the per-gender behaviour `agr` of the assigned gender and the carrier is
-faithful, then gender assignment factors through observable agreement behaviour. -/
+/-- Genders are agreement classes: if each noun's agreement `nounAgr` is the agreement `agr` of
+its assigned gender and `agr` is faithful, nouns with the same agreement have the same gender. -/
 theorem factorsThrough_of_faithful {assign : N → G} {nounAgr : N → T → F} {agr : G → T → F}
     (med : nounAgr = agr ∘ assign) (faith : Faithful agr) :
     Function.FactorsThrough assign nounAgr :=

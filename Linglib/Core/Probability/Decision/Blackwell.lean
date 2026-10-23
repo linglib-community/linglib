@@ -18,63 +18,33 @@ public import Mathlib.MeasureTheory.Measure.Count
 # Blackwell comparison of experiments
 
 A statistical experiment is a Markov kernel `P : Kernel Θ 𝓧` generating data in `𝓧` from a
-parameter in `Θ`. Experiment `P` is **at least as informative** as `P' : Kernel Θ 𝓧'` when `P'`
-can be recovered from `P` by Markov post-processing ("garbling"): `P' = η ∘ₖ P` for some Markov
-kernel `η`. This file develops that order and its characterization through Bayes risk.
-
-[blackwell-1953]'s comparison theorem states that `P` is at least as informative as `P'` if and
-only if, for every decision problem, the Bayes risk under `P` is no greater than under `P'`. We
-state and prove this equivalence over `ProbabilityTheory.bayesRisk` for finite spaces: the
-forward direction is the data-processing inequality, the converse the Blackwell–Sherman–Stein
-separation argument (see the implementation notes).
+parameter in `Θ`. Experiment `P` is *at least as informative* as `P' : Kernel Θ 𝓧'` when `P'` is a
+*garbling* of `P`: `P' = η ∘ₖ P` for some Markov kernel `η`. The comparison theorem of
+[blackwell-1953] states that `P` is at least as informative as `P'` iff, for every decision
+problem, the Bayes risk under `P` is no greater than under `P'`. This file proves it over
+`ProbabilityTheory.bayesRisk` for finite spaces.
 
 ## Main definitions
 
-* `Kernel.IsGarblingOf`: `P'.IsGarblingOf P` means `P'` is a Markov garbling of `P`, i.e. `P` is
-  at least as informative as `P'`. Reflexive (`Kernel.IsGarblingOf.refl`) and transitive
-  (`Kernel.IsGarblingOf.trans`).
-* `Kernel.BlackwellDominates`: `P.BlackwellDominates P'` means `P` has Bayes risk no greater than
-  `P'` for every decision problem and prior — the dual side of the Blackwell equivalence.
+* `Kernel.IsGarblingOf`: `P'` is a Markov garbling of `P`.
+* `Kernel.BlackwellDominates`: `P` has Bayes risk no greater than `P'` for every decision problem
+  and prior.
 
 ## Main statements
 
-* `bayesRisk_le_of_isGarblingOf` / `blackwellDominates_of_isGarblingOf`: if `P'` is a garbling of
-  `P`, then `P` Blackwell-dominates `P'` (the data-processing direction).
-* `isGarblingOf_of_blackwellDominates`: conversely, if `P` Blackwell-dominates `P'`, then `P'` is a
-  garbling of `P` (the Blackwell–Sherman–Stein direction, finite case). Requires finite, nonempty
-  `Θ` and that both `P` and `P'` are Markov kernels — false otherwise (see the theorem docstring
-  for counterexamples).
+* `blackwellDominates_of_isGarblingOf`: a garbling is dominated (the data-processing direction).
+* `isGarblingOf_of_blackwellDominates`: the converse, for finite nonempty `Θ` and Markov `P`, `P'`
+  (the Blackwell–Sherman–Stein direction).
 * `isGarblingOf_iff_blackwellDominates`: the two directions combined.
 
 ## Implementation notes
 
-The development is stated entirely over Mathlib's `Kernel` and `bayesRisk` with no further
-dependencies, so it can serve as a `Mathlib.Probability.Decision.Blackwell` candidate. On the
-utility scale, `Core.Probability.Decision.ValueOfInformation` reads the data-processing direction
-as the statement that garbling an experiment never raises its value of information, and reads
-the converse for deterministic experiments as a comparison of the value of observing
-classifiers.
-
-`Kernel.BlackwellDominates` quantifies over *all* decision problems (every measurable action space
-`𝓨` and loss `ℓ : Θ → 𝓨 → ℝ≥0∞`) and priors: dominance for a single one does not force garbling.
-The action-space universe is pinned to `u` (the universe of `𝓧'`) because the converse proof
-instantiates the dominance hypothesis at the action space `𝓨 := 𝓧'` (the identity estimator).
-
-The converse proof encodes finite kernels as real vectors of singleton masses (`encode`) and
-realizes the garblings of `P` as a compact convex polytope `garblingSet P` (the linear image of
-the product of standard simplices). If `encode P'` lies outside the polytope, the geometric
-Hahn–Banach theorem (`geometric_hahn_banach_point_closed`) yields a separating functional `f`;
-its coordinate matrix `a θ x' = f (Pi.single θ (Pi.single x' 1))`, shifted by a constant `C` to
-be nonnegative, defines a loss `ℓ θ x' = ENNReal.ofReal (a θ x' + C)` on actions `𝓧'`. Under the
-uniform prior, the Bayes risk of any experiment `Q` evaluated at the identity estimator equals
-`ENNReal.ofReal (|Θ|⁻¹ · f (encode Q) + C)`: the identity estimator pins `P'` to `f (encode P')`,
-while every estimator for `P` produces a garbling, whose `f`-value exceeds the separation level.
-This realizes `bayesRisk ℓ P' π < bayesRisk ℓ P π`, contradicting the hypothesis — no minimax
-theorem is needed, the infimum is bounded below directly. All analytic inputs come from Mathlib
-(`StdSimplex.compactSpace`, the `geometric_hahn_banach_*` lemmas, `bayesRisk_fintype`). The
-kernel-to-stochastic-matrix bridge (`encode`, `garblingMap`, `buildKernel`) is currently
-`private` proof scaffolding; it is a self-contained finite-kernel ↔ row-stochastic-matrix
-correspondence that would naturally graduate to its own public file when upstreamed.
+`Kernel.BlackwellDominates` quantifies over all decision problems and priors: dominance in a
+single one does not force garbling. Its action spaces live in the universe of `𝓧'`, which the
+converse uses as the action space. The development uses only mathlib's `Kernel` and `bayesRisk`,
+so it can serve as a `Mathlib.Probability.Decision.Blackwell` candidate. On the utility scale
+(`Core.Probability.Decision.ValueOfInformation`), garbling never raises the value of information,
+and the converse compares the value of observing classifiers.
 
 ## References
 
@@ -96,9 +66,6 @@ namespace ProbabilityTheory
 variable {Θ 𝓧 : Type*} {𝓧' : Type u} [mΘ : MeasurableSpace Θ]
   [m𝓧 : MeasurableSpace 𝓧] [m𝓧' : MeasurableSpace 𝓧']
 
-/-- On finite kernels, `comp` evaluated on a singleton is matrix multiplication:
-`(η ∘ₖ P) θ {x'} = ∑ₓ η x {x'} · P θ {x}`. The first brick of the finite Blackwell
-bridge (kernels ↔ stochastic matrices). -/
 private lemma comp_singleton_eq_sum [Fintype 𝓧] [MeasurableSingletonClass 𝓧]
     [MeasurableSingletonClass 𝓧']
     (η : Kernel 𝓧 𝓧') (P : Kernel Θ 𝓧) (θ : Θ) (x' : 𝓧') :
@@ -130,8 +97,6 @@ def Kernel.BlackwellDominates (P : Kernel Θ 𝓧) (P' : Kernel Θ 𝓧') : Prop
   ∀ {𝓨 : Type u} [MeasurableSpace 𝓨] (ℓ : Θ → 𝓨 → ℝ≥0∞) (π : Measure Θ),
     bayesRisk ℓ P π ≤ bayesRisk ℓ P' π
 
-/-- If `P'` is a garbling of `P`, the Bayes risk under `P` is at most that under `P'` in every
-decision problem. -/
 theorem bayesRisk_le_of_isGarblingOf {𝓨 : Type u} [MeasurableSpace 𝓨]
     (ℓ : Θ → 𝓨 → ℝ≥0∞) {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'}
     (h : P'.IsGarblingOf P) (π : Measure Θ) :
@@ -151,7 +116,8 @@ Over finite spaces, the Markov garblings `{η ∘ₖ P | η Markov}` of `P`, enc
 singleton masses as vectors in `Θ → 𝓧' → ℝ`, form a compact convex polytope `garblingSet P`.
 It is the linear image of the product of standard simplices — the stochastic matrices `η` —
 under `garblingMap P`. If `encode P'` lies outside the polytope, a separating functional gives
-a decision problem on which `P'` is strictly worse than `P`, which proves the converse. -/
+a decision problem on which `P'` is strictly worse than `P`, which proves the converse; no minimax
+theorem is needed. -/
 
 section GarblingPolytope
 
@@ -205,8 +171,6 @@ private theorem isClosed_garblingSet (P : Kernel Θ 𝓧) :
 private noncomputable def encodeMatrix (η : Kernel 𝓧 𝓧') : 𝓧 → 𝓧' → ℝ :=
   fun x x' => (η x {x'}).toReal
 
-/-- Encoding sends kernel composition to the garbling map,
-`encode (η ∘ₖ P) = garblingMap P (encodeMatrix η)`. -/
 private theorem encode_comp (P : Kernel Θ 𝓧) [IsMarkovKernel P]
     (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
     encode (η ∘ₖ P) = garblingMap P (encodeMatrix η) := by
@@ -217,7 +181,6 @@ private theorem encode_comp (P : Kernel Θ 𝓧) [IsMarkovKernel P]
   rw [comp_singleton_eq_sum, ENNReal.toReal_sum hne]
   exact Finset.sum_congr rfl fun x _ => ENNReal.toReal_mul
 
-/-- Finite kernels with the same encoding are equal, since singleton masses determine them. -/
 private theorem encode_injective {Q Q' : Kernel Θ 𝓧'}
     [IsFiniteKernel Q] [IsFiniteKernel Q'] (hQ : encode Q = encode Q') : Q = Q' := by
   refine Kernel.ext fun θ => Measure.ext_of_singleton fun x' => ?_
@@ -240,7 +203,6 @@ private lemma buildKernel_apply (M : 𝓧 → 𝓧' → ℝ) (x : 𝓧) (y : �
   rw [Finset.sum_ite_eq' Finset.univ y fun x' => ENNReal.ofReal (M x x')]
   simp
 
-/-- A row of a stochastic matrix is a probability vector. -/
 private theorem stochasticMatrices_row {M : 𝓧 → 𝓧' → ℝ} (hM : M ∈ stochasticMatrices)
     (x : 𝓧) : (∀ x', 0 ≤ M x x') ∧ ∑ x', M x x' = 1 := by
   have hx := Set.mem_univ_pi.mp hM x
@@ -262,8 +224,6 @@ private theorem encodeMatrix_buildKernel {M : 𝓧 → 𝓧' → ℝ}
   show (buildKernel M x {x'}).toReal = M x x'
   rw [buildKernel_apply, ENNReal.toReal_ofReal ((stochasticMatrices_row hM x).1 x')]
 
-/-- If `encode P'` lies in the garbling polytope of `P`, the kernel built from a witnessing
-stochastic matrix shows that `P'` is a garbling of `P`. -/
 private theorem isGarblingOf_of_encode_mem (P : Kernel Θ 𝓧) [IsMarkovKernel P]
     {P' : Kernel Θ 𝓧'} [IsMarkovKernel P'] (hmem : encode P' ∈ garblingSet P) :
     P'.IsGarblingOf P := by
@@ -272,12 +232,9 @@ private theorem isGarblingOf_of_encode_mem (P : Kernel Θ 𝓧) [IsMarkovKernel 
   refine ⟨buildKernel M, inferInstance, encode_injective ?_⟩
   rw [encode_comp, encodeMatrix_buildKernel hM, hMeq]
 
-/-- Each encoded singleton mass is nonnegative. -/
 private theorem encode_nonneg (Q : Kernel Θ 𝓧') (θ : Θ) (x' : 𝓧') : 0 ≤ encode Q θ x' :=
   ENNReal.toReal_nonneg
 
-/-- The encoded rows of a Markov kernel sum to one, so its whole encoding sums to
-`Fintype.card Θ`. -/
 private theorem sum_encode_eq [Fintype Θ] (Q : Kernel Θ 𝓧') [IsMarkovKernel Q] :
     ∑ θ, ∑ x', encode Q θ x' = (Fintype.card Θ : ℝ) := by
   have hrow : ∀ θ, ∑ x', encode Q θ x' = 1 := fun θ => by
@@ -287,7 +244,6 @@ private theorem sum_encode_eq [Fintype Θ] (Q : Kernel Θ 𝓧') [IsMarkovKernel
   rw [Finset.sum_congr rfl fun θ _ => hrow θ, Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
     mul_one]
 
-/-- The encoded stochastic matrix of a Markov kernel lies in the product of standard simplices. -/
 private theorem encodeMatrix_mem (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
     encodeMatrix η ∈ stochasticMatrices := by
   simp only [stochasticMatrices, Set.mem_univ_pi, StdSimplex.range_toFun_comp_weights,
@@ -296,8 +252,6 @@ private theorem encodeMatrix_mem (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
   rw [← ENNReal.toReal_sum fun x' _ => measure_ne_top _ _, sum_measure_singleton,
     Finset.coe_univ, measure_univ, ENNReal.toReal_one]
 
-/-- A continuous linear functional on `Θ → 𝓧' → ℝ` is the coordinate-weighted sum of its values
-on the standard basis `Pi.single θ (Pi.single x' 1)`. -/
 private theorem clm_apply_eq_sum_single [Fintype Θ] [DecidableEq Θ] [DecidableEq 𝓧']
     (f : (Θ → 𝓧' → ℝ) →L[ℝ] ℝ) (v : Θ → 𝓧' → ℝ) :
     f v = ∑ θ, ∑ x', v θ x' * f (Pi.single θ (Pi.single x' (1 : ℝ))) := by
@@ -314,9 +268,6 @@ private theorem clm_apply_eq_sum_single [Fintype Θ] [DecidableEq Θ] [Decidable
         rw [map_sum]
         exact Finset.sum_congr rfl fun x' _ => by rw [map_smul, smul_eq_mul]
 
-/-- Under the uniform prior on `Θ`, the average risk of the experiment `Q` at the identity
-estimator with the nonnegative affine loss `(θ, x') ↦ a θ x' + C` is `ENNReal.ofReal` of a
-nonnegative real double sum. -/
 private theorem avgRisk_id_uniform_eq [Fintype Θ] [Nonempty Θ] [MeasurableSingletonClass Θ]
     (a : Θ → 𝓧' → ℝ) {C : ℝ}
     (hC : ∀ θ x', 0 ≤ a θ x' + C) (Q : Kernel Θ 𝓧') [IsMarkovKernel Q] :

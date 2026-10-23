@@ -11,10 +11,10 @@ public import Linglib.Logic.Modal.Basic
 /-!
 # T × W tense-modal logic: the modal algebra of satisfaction
 
-The satisfaction clauses of T × W logic, its dual operators, and the hierarchy `box ⊃ N ⊃ A`.
-Historical necessity `N` is necessity along historical equivalence and `box` necessity along
-the universal relation, so both are S5 by modal correspondence: historical equivalence is a
-setoid, whose relation is reflexive, symmetric and transitive.
+This file states the satisfaction clauses of T × W logic and of its dual operators, and proves
+the hierarchy `box ⊃ N ⊃ A`. Historical necessity `N` is necessity along historical equivalence,
+and `box` is necessity along the universal relation. Both are S5 by modal correspondence, since
+historical equivalence is reflexive, symmetric and transitive.
 
 ## Main results
 
@@ -96,11 +96,10 @@ instance (t : T) : (F.alt t).IsTrans := ⟨fun _ _ _ ↦ (F.sim t).iseqv.trans�
 
 /-! ### The modality hierarchy `box ⊃ N ⊃ A` and S5, from modal correspondence
 
-`N` and `box` are necessities along relations, so the hierarchy and the S5 axioms come from
-modal correspondence: `box ⊃ N` from `box_restrict`, since the universal relation contains
-historical equivalence; the `T` axioms from reflexivity (`box_T`); the `4` axioms from
-transitivity (`box_four`); the `5` axioms from the symmetry and transitivity of historical
-equivalence. -/
+`N` and `box` are necessities along relations, so the hierarchy and the S5 axioms follow from
+modal correspondence. `box ⊃ N` holds because the universal relation contains historical
+equivalence (`box_restrict`). The `T` axioms follow from reflexivity (`box_T`), the `4` axioms from
+transitivity (`box_four`), and the `5` axioms from symmetry and transitivity. -/
 
 theorem sat_box_imp_N {a : OForm Atom} {t : T} {w : World} :
     F.sat V (.box a) t w → F.sat V (.N a) t w :=
@@ -136,8 +135,8 @@ theorem sat_dia_imp_box_dia {a : OForm Atom} {t : T} {w : World} :
   obtain ⟨w₀, ha⟩ := h
   exact ⟨w₀, ha⟩
 
-/-- Historical necessity `N` is an indicial modality in the sense of [gallin-1975], necessity
-along historical equivalence. -/
+/-- Historical necessity `N`, necessity along historical equivalence, is an indicial modality in
+the sense of [gallin-1975]. -/
 theorem N_isIndicial (t : T) : IsIndicial □[F.alt t] :=
   box_isIndicial _
 
