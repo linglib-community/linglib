@@ -358,10 +358,7 @@ def cardinal? (e : Datum) : Option (CardinalTest × ℕ) := do
 /-- The cardinal test rows of Section 1.21: a row is acceptable exactly where its test's claim
 holds at its base numeral. -/
 theorem cardinal_rows :
-    ∀ e ∈ Examples.all, e.Fits cardinal? fun p ↦ .ofProp (p.1.claim p.2) := by
-  decide
-
-theorem cardinal_read : Datum.ReadCount cardinal? Examples.all 4 := by decide
+    Datum.Checks cardinal? (fun p ↦ .ofProp (p.1.claim p.2)) Examples.all 4 := by decide
 
 /-- (2.46): *and* entails *or*, and *or* only implicates *not and*, since the world of both
 disjuncts verifies *or*. -/
@@ -398,10 +395,7 @@ def quantifier? (e : Datum) : Option RowQuantifier :=
 /-- The lower-negation rows (4.56) and the *some* of (4.60a): a row is acceptable exactly where
 its quantifier is compatible with a lower negation. -/
 theorem compatibility_rows :
-    ∀ e ∈ Examples.all, e.Fits quantifier? fun q ↦ .ofProp (Compatible q.set) := by
-  decide
-
-theorem compatibility_read : Datum.ReadCount quantifier? Examples.all 5 := by decide
+    Datum.Checks quantifier? (fun q ↦ .ofProp (Compatible q.set)) Examples.all 5 := by decide
 
 /-- (4.57): whatever expected size *many* demands, it is monotone in the count, so *many* and
 *not many* cannot both accept a lower negation (`not_compatible_compl`), and the pair splits as
@@ -455,10 +449,8 @@ def lexicalization? (e : Datum) : Option (RowConnective × NegationRoute) := do
 lexicalizes exactly on the route its compatibility licenses, so *nor* and *neither* exist while
 *nand* and *noth* do not. -/
 theorem lexicalization_rows :
-    ∀ e ∈ Examples.all, e.Fits lexicalization? fun p ↦ .ofProp (p.2.licensed p.1) := by
+    Datum.Checks lexicalization? (fun p ↦ .ofProp (p.2.licensed p.1)) Examples.all 5 := by
   decide
-
-theorem lexicalization_read : Datum.ReadCount lexicalization? Examples.all 5 := by decide
 
 end Data
 

@@ -232,11 +232,9 @@ def layers? (e : Datum) : Option (CounterfactualType × ℕ) := do
 
 /-- Each row's layers of past morphology are its type's exclusion features: two for the past
 counterfactual, one otherwise. -/
-theorem layers_rows : ∀ e ∈ Examples.all,
-    e.Fits layers? fun p ↦ .ofProp (p.1.dimensions.card = p.2) := by
+theorem layers_rows :
+    Datum.Checks layers? (fun p ↦ .ofProp (p.1.dimensions.card = p.2)) Examples.all 8 := by
   decide
-
-theorem layers_read : Datum.ReadCount layers? Examples.all 8 := by decide
 
 /-- A row's counterfactual type with its predicate's Aktionsart. -/
 def reading? (e : Datum) : Option (CounterfactualType × Aktionsart) := do
@@ -244,11 +242,8 @@ def reading? (e : Datum) : Option (CounterfactualType × Aktionsart) := do
 
 /-- Each row's counterfactual type is a reading of its predicate's Aktionsart, Table 1 over the
 rows. -/
-theorem readings_rows : ∀ e ∈ Examples.all,
-    e.Fits reading? fun p ↦ .ofProp (p.1 ∈ readings p.2) := by
-  decide
-
-theorem readings_read : Datum.ReadCount reading? Examples.all 8 := by decide
+theorem readings_rows :
+    Datum.Checks reading? (fun p ↦ .ofProp (p.1 ∈ readings p.2)) Examples.all 8 := by decide
 
 /-- A present-tense row's Aktionsart with its evaluation time. -/
 def evaluation? (e : Datum) : Option (Aktionsart × Evaluation) := do
@@ -257,11 +252,9 @@ def evaluation? (e : Datum) : Option (Aktionsart × Evaluation) := do
 
 /-- Each present-tense row's evaluation time is one its Aktionsart admits, Table 2 over the
 rows (65)–(67). -/
-theorem evaluation_rows : ∀ e ∈ Examples.all,
-    e.Fits evaluation? fun p ↦ .ofProp (p.2 ∈ p.1.evaluation) := by
+theorem evaluation_rows :
+    Datum.Checks evaluation? (fun p ↦ .ofProp (p.2 ∈ p.1.evaluation)) Examples.all 4 := by
   decide
-
-theorem evaluation_read : Datum.ReadCount evaluation? Examples.all 4 := by decide
 
 /-- A counterfactual row's language with its aspect; the reader reads only the rows that name a
 counterfactual type. -/
@@ -271,11 +264,9 @@ def aspect? (e : Datum) : Option (AspectLanguage × Bool) := do
 
 /-- Each counterfactual row carries the imperfective exactly where its language requires it,
 Section 5 over the English, Greek and French rows. -/
-theorem aspect_rows : ∀ e ∈ Examples.all,
-    e.Fits aspect? fun p ↦ .ofProp (p.1.cfAspect = .imperfective ↔ p.2 = true) := by
+theorem aspect_rows : Datum.Checks aspect?
+    (fun p ↦ .ofProp (p.1.cfAspect = .imperfective ↔ p.2 = true)) Examples.all 11 := by
   decide
-
-theorem aspect_read : Datum.ReadCount aspect? Examples.all 11 := by decide
 
 /-- (99): French, with a nonpast subjunctive only, puts the past indicative in its
 counterfactual antecedents, as `antecedentForm` chooses. -/
