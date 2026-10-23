@@ -105,6 +105,34 @@ def subtree (p : Positions t) : RoseTree α := (t.subtreeAt p.val.toList).get p.
 theorem subtreeAt_eq (p : Positions t) : t.subtreeAt p.val.toList = some p.subtree :=
   (Option.some_get p.2).symm
 
+/-- The subtrees at the positions are the subtrees, one per position. -/
+theorem map_subtree_univ (t : RoseTree α) :
+    (Finset.univ : Finset t.Positions).val.map subtree = (t.subtrees : Multiset (RoseTree α)) := by
+  have hs : ∀ l : List (List ℕ), (∀ p ∈ l, (t.subtreeAt p).isSome) →
+      (l.filterMap t.subtreeAt).map some = l.map t.subtreeAt := by
+    intro l hl
+    induction l with
+    | nil => rfl
+    | cons p l ih =>
+      obtain ⟨s, hp⟩ := Option.isSome_iff_exists.1 (hl p List.mem_cons_self)
+      rw [List.filterMap_cons_some hp, List.map_cons, List.map_cons, hp,
+        ih fun q hq ↦ hl q (List.mem_cons_of_mem _ hq)]
+  have hv : (Finset.univ : Finset t.Positions).val.map Subtype.val =
+      ↑(t.vertices.map TreePath.mk) := by
+    refine (Multiset.Nodup.ext (Multiset.Nodup.map Subtype.val_injective Finset.univ.nodup)
+      (Multiset.coe_nodup.2 ((nodup_vertices t).map fun _ _ h ↦ congrArg TreePath.toList h))).2
+      fun x ↦ ⟨fun hx ↦ ?_, fun hx ↦ ?_⟩
+    · obtain ⟨q, -, rfl⟩ := Multiset.mem_map.1 hx
+      exact Multiset.mem_coe.2 (List.mem_map.2 ⟨_, mem_vertices.2 q.2, rfl⟩)
+    · obtain ⟨p, hp, rfl⟩ := List.mem_map.1 (Multiset.mem_coe.1 hx)
+      exact Multiset.mem_map.2 ⟨⟨_, mem_vertices.1 hp⟩, by simp, rfl⟩
+  apply Multiset.map_injective (Option.some_injective _)
+  rw [Multiset.map_map, show (some ∘ subtree : t.Positions → _) =
+      (t.subtreeAt ∘ TreePath.toList) ∘ Subtype.val from funext fun q ↦ (subtreeAt_eq q).symm,
+    ← Multiset.map_map, hv, ← filterMap_subtreeAt_vertices, Multiset.map_coe, Multiset.map_coe,
+    List.map_map, hs _ fun p hp ↦ mem_vertices.1 hp]
+  rfl
+
 @[simp] theorem subtree_bot : (⊥ : Positions t).subtree = t := rfl
 
 theorem subtree_eq_iff : p.subtree = s ↔ t.subtreeAt p.val.toList = some s := by

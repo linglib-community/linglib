@@ -353,6 +353,24 @@ theorem mem_vertices {t : RoseTree α} {p : List ℕ} :
         rw [hc, Option.bind_some] at h
         exact ⟨j, q, c, ⟨rfl, rfl⟩, hc, (ih c (List.mem_of_getElem? hc)).mpr h⟩
 
+/-- The subtrees at the listed addresses are the listed subtrees. -/
+theorem filterMap_subtreeAt_vertices (t : RoseTree α) :
+    t.vertices.filterMap t.subtreeAt = t.subtrees := by
+  induction t with
+  | node a cs ih =>
+    rw [vertices_node, List.filterMap_cons_some (subtreeAt_nil _), subtrees_node]
+    congr 1
+    induction cs with
+    | nil => rfl
+    | cons c cs ihcs =>
+      rw [verticesList_cons, List.filterMap_append, List.filterMap_map, List.filterMap_map,
+        List.flatMap_cons, ← ih c List.mem_cons_self,
+        ← ihcs fun d hd ↦ ih d (List.mem_cons_of_mem _ hd)]
+      congr 1
+      refine List.filterMap_congr fun p hp ↦ ?_
+      obtain ⟨j, q, rfl⟩ := exists_cons_of_mem_verticesList hp
+      rfl
+
 mutual
 theorem length_vertices : ∀ t : RoseTree α, t.vertices.length = t.numNodes
   | node _ cs => by rw [vertices_node, List.length_cons, length_verticesList cs, numNodes_node]

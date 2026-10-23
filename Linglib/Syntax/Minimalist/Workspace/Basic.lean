@@ -108,6 +108,14 @@ theorem merge_def : W.merge P Q = W - {P, Q} + {SyntacticObject.merge P Q} := by
   rw [merge, mergeWith, id, id, replace_self_self, replace_self_self,
     Multiset.map_congr rfl fun U _ ↦ subst_contraction_id, Multiset.map_id']
 
+/-- MERGE of an object with one of its terms in the workspace of the object alone. -/
+theorem singleton_merge (u C : SyntacticObject) :
+    ({C} : Workspace).merge u C = {SyntacticObject.merge u C} := by
+  rw [merge_def, Multiset.insert_eq_cons, Multiset.sub_cons, Multiset.sub_singleton]
+  by_cases h : u = C
+  · simp [h]
+  · simp [Multiset.erase_of_notMem (by simpa using h : u ∉ ({C} : Workspace))]
+
 /-- Preservation of Terms: every term of a workspace is a term of the workspace MERGE makes. -/
 theorem terms_subset_terms_merge : W.terms ⊆ (W.merge P Q).terms := by
   intro x hx

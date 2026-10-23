@@ -29,6 +29,9 @@ every later one, and only the tokens the derivation merges are pronounced.
 
 * `Minimalist.Derivation.map_contract_replayWithCopies?`: contracting the lower copies gives the
   replay with traces.
+* `Minimalist.Step.replayWithCopies?_im_eq_merge`: Internal Merge with copies is MERGE leaving
+  copies on the copy object and MERGE leaving traces on its contraction.
+* `Minimalist.Step.count_terms_replayWithCopies?_im`: it adds a position to the chain it moves.
 * `Minimalist.Step.unmark_replayWithCopies?_im`: Extension and No Tampering.
 * `Minimalist.Derivation.copyObject?_append_em`, `copyObject?_append_im`: External Merge merges the
   copy object with an item from outside, Internal Merge with one of its own terms.
@@ -136,6 +139,31 @@ theorem Step.unmark_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 hs
   exact (isSubtree_of_mem_subtreesUntil hr).map _
 
+/-- Internal Merge with copies is MERGE leaving copies of a copy of the mover on the copy object,
+and MERGE leaving traces of the mover on the contraction. -/
+theorem Step.replayWithCopies?_im_eq_merge {mover : SyntacticObject} {side : Edge}
+    {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c')
+    (hne : c.current.contract.toSyntacticObject ≠ mover) :
+    ∃ s : Marked, s.contract.toSyntacticObject = mover ∧
+      ({c'.current.unmark.toSyntacticObject} : Workspace) =
+        ({c.current.unmark.toSyntacticObject} : Workspace).merge s.unmark.toSyntacticObject
+          c.current.unmark.toSyntacticObject ∧
+      ({c'.current.contract.toSyntacticObject} : Workspace) =
+        ({c.current.contract.toSyntacticObject} : Workspace).mergeWith (·.headTrace τ) mover
+          c.current.contract.toSyntacticObject := by
+  obtain ⟨p, st⟩ := c
+  obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.1 h
+  have hfind : p.contract.find? mover = some s.contract := by
+    rw [← Marked.map_contract_find?, hs]
+    rfl
+  have hsm := LinearizedSyntacticObject.toSyntacticObject_find? hfind
+  have hmc := LinearizedSyntacticObject.isSome_find?_iff.1 (by rw [hfind]; rfl)
+  have hW := Workspace.mergeWith_internal (leave := (·.headTrace τ)) (W := 0) hmc hne (by simp)
+  rw [add_zero, zero_add] at hW
+  refine ⟨s, hsm, ?_, ?_⟩
+  · simp [Workspace.singleton_merge]
+  · simp [hW, Marked.contract_mark, hsm]
+
 /-! ### The copy object -/
 
 /-- The derivation's copy object, the syntactic object with every copy in place and neither order
@@ -174,6 +202,16 @@ theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {s
   refine ⟨s.unmark.toSyntacticObject, ?_,
     by rw [he, LinearizedSyntacticObject.toSyntacticObject_attach]⟩
   exact LinearizedSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 hs, rfl⟩
+
+/-- Internal Merge with copies adds a position to the chain of the copy it merges
+(`LinearizedSyntacticObject.card_chainRel`). -/
+theorem Step.count_terms_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
+    {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c') :
+    ∃ u ∈ c.current.unmark.toSyntacticObject.terms,
+      c'.current.unmark.toSyntacticObject.terms.count u =
+        c.current.unmark.toSyntacticObject.terms.count u + 1 := by
+  obtain ⟨u, hu, he⟩ := Step.toSyntacticObject_replayWithCopies?_im h
+  exact ⟨u, hu, by rw [he, count_terms_merge_left]⟩
 
 theorem Step.mem_terms_replayWithCopies? {step : Step} {c c' : Cfg Marked}
     (h : step.replayWithCopies? c τ = some c') :

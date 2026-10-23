@@ -257,6 +257,24 @@ theorem mem_terms_of_merge_mem_terms {s : SyntacticObject L} (h : merge l r ∈ 
     terms_subset_terms (mem_terms.1 h) (mem_terms.2 (.single ((immediatelyContains_merge _ _ _).2
       (.inr rfl))))⟩
 
+theorem count_self_terms [DecidableEq L] (s : SyntacticObject L) : s.terms.count s = 1 := by
+  rcases exists_form s with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩
+  iterate 3 simp
+  have hl : merge l r ∉ l.terms := fun h ↦ contains_irrefl (merge l r)
+    (TransGen.trans_left (contains_merge.2 (.inl ReflTransGen.refl)) (mem_terms.1 h))
+  have hr : merge l r ∉ r.terms := fun h ↦ contains_irrefl (merge l r)
+    (TransGen.trans_left (contains_merge.2 (.inr ReflTransGen.refl)) (mem_terms.1 h))
+  rw [terms_merge, Multiset.count_cons_self, Multiset.count_add, Multiset.count_eq_zero.2 hl,
+    Multiset.count_eq_zero.2 hr]
+
+/-- Merging a term with an object adds one occurrence of it. -/
+theorem count_terms_merge_left [DecidableEq L] (u C : SyntacticObject L) :
+    (merge u C).terms.count u = C.terms.count u + 1 := by
+  have hne : u ≠ merge u C := fun h ↦ (numNodes_lt_of_contains
+    (contains_merge.2 (.inl ReflTransGen.refl) : Contains (merge u C) u)).ne
+      (congrArg (·.val.numNodes) h)
+  rw [terms_merge, Multiset.count_cons_of_ne hne, Multiset.count_add, count_self_terms, add_comm]
+
 theorem card_terms (s : SyntacticObject L) : s.terms.card = s.val.numNodes := by
   rw [terms, Multiset.card_pmap, UnorderedTree.card_subtrees]
 
