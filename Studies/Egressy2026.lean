@@ -256,8 +256,23 @@ theorem singleRows_predicted :
 
 /-- The fragment entry named by a row's `matrixVerb` feature. -/
 def matrixVerb? (e : Datum) : Option Verb :=
-  e.parse? "matrixVerb" [("lát", lat), ("hall", hall), ("álmodik", almodik), ("gondol", gondol),
-    ("aggaszt", aggaszt), ("mond", mond), ("rikolt", rikolt), ("morog", morog)]
+  (e.feature? "matrixVerb").bind (Verb.find? verbs ·)
+
+/-- Every single-embedding row names a fragment entry. -/
+theorem isSome_matrixVerb? : ∀ e ∈ singleRows, (matrixVerb? e).isSome := by decide
+
+/-- The case of a row's expletive diagnoses the clause's grammatical role (§2.1–2.2), accusative
+*azt* an object, nominative *az* a subject and instrumental *azzal* or *amiatt* an adjunct, and
+the role so named by a row's `clauseRole` feature matches a frame of its matrix verb: a clausal
+complement for an object row, a clausal subject for the subject row, and for an adjunct row a
+frame with no clausal position, the clause sitting outside the valency. -/
+theorem clauseRole_frames : ∀ e ∈ singleRows, ∀ v, matrixVerb? e = some v →
+    ((e.feature? "clauseRole" = some "object" → ∃ fr ∈ v.valency.frames, fr.HasClausal) ∧
+      (e.feature? "clauseRole" = some "subject" →
+        ∃ fr ∈ v.valency.frames, fr.HasClausalSubject) ∧
+      (e.feature? "clauseRole" = some "adjunct" →
+        ∃ fr ∈ v.valency.frames, ¬ fr.HasClausal ∧ ¬ fr.HasClausalSubject)) := by
+  decide
 
 /-- No assignment of clause types to matrix verbs fits the rows, since *hall* 'hear' in (5) and (13)
 and *morog* 'growl' in (9) and (11) embed both types (§2.2). -/
