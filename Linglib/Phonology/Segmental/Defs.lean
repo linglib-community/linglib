@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Mathlib.Order.Nat
 public import Mathlib.Data.Finset.Piecewise
 public import Linglib.Core.Order.Flat
 
@@ -21,21 +20,15 @@ features here: length is a segment on two timing slots, and stress belongs to sy
 segment gives each feature the value `+`, `−` or none, and segments are ordered by specificity,
 with the unspecified segment least and the meet of two segments the description they share.
 
-The file also defines the sonority hierarchy of Hayes's Table 4.1, whose five classes are cut by
-four features and defined by the descriptions of p. 77, and names the vowels, obstruents and
-nasals by those descriptions. Parker's hierarchy refines it, and is collapsed here to eight
-classes: his four obstruent classes, with the affricates among the stops, and his nasals,
-liquids, glides and vowels, with his several liquid and vowel classes each merged. Parker ranks
-/h/ alone, between the voiced fricatives and the nasals, and here a [−sonorant] /h/ falls among
-the voiceless fricatives. The theorems are in `Phonology/Segmental/Basic.lean`.
+The file also names some natural classes by their features. The sonority hierarchy is in
+`Phonology/Segmental/Sonority.lean`, and the theorems about segments in
+`Phonology/Segmental/Basic.lean`.
 
 ## References
 
-* [hayes-2009]: the features of ch. 4 and Table 4.7, the tongue-root feature (p. 83), the
-  sonority hierarchy of Table 4.1 (p. 76) and its manner classes (p. 77)
+* [hayes-2009]: the features of ch. 4 and Table 4.7, the tongue-root feature (p. 83), and the
+  manner classes (p. 77)
 * [halle-vaux-wolfe-2000]: [ATR] and [RTR]
-* [parker-2002]: the five classes as the hierarchy cited most often (p. 62), the default order of
-  voiced stops above voiceless fricatives (p. 70), and the sixteen classes of Table 5.28 (p. 240)
 -/
 
 @[expose] public section
@@ -192,126 +185,5 @@ inductive Segment.Class where
 /-- A segment is a vowel when [+syllabic] and a consonant otherwise. -/
 def Segment.toClass (s : Segment) : Segment.Class :=
   if s.IsVowel then .vowel else .consonant
-
-/-! ### Sonority -/
-
-/-- The sonority hierarchy, from least to most sonorous. -/
-inductive Sonority where
-  /-- The obstruents, [−sonorant]. -/
-  | obstruent
-  /-- The nasals, [−approximant, +sonorant]. -/
-  | nasal
-  /-- The liquids, [+consonantal, +approximant]. -/
-  | liquid
-  /-- The glides, [−syllabic, −consonantal]. -/
-  | glide
-  /-- The vowels, [+syllabic]. -/
-  | vowel
-  deriving DecidableEq, Repr, Fintype
-
-namespace Sonority
-
-/-- The position of a class on the hierarchy, the obstruents at 0. -/
-def rank : Sonority → ℕ
-  | .obstruent => 0 | .nasal => 1 | .liquid => 2 | .glide => 3 | .vowel => 4
-
-instance : LinearOrder Sonority :=
-  LinearOrder.lift' rank fun a b h ↦ by cases a <;> cases b <;> simp_all [rank]
-
-/-- The column of a class in Table 4.1: its values for [syllabic], [consonantal], [approximant]
-and [sonorant], the four features that cut the hierarchy. -/
-def toSegment : Sonority → Segment
-  | .obstruent =>
-    .ofSpecs [(.syllabic, false), (.consonantal, true), (.approximant, false), (.sonorant, false)]
-  | .nasal =>
-    .ofSpecs [(.syllabic, false), (.consonantal, true), (.approximant, false), (.sonorant, true)]
-  | .liquid =>
-    .ofSpecs [(.syllabic, false), (.consonantal, true), (.approximant, true), (.sonorant, true)]
-  | .glide =>
-    .ofSpecs [(.syllabic, false), (.consonantal, false), (.approximant, true), (.sonorant, true)]
-  | .vowel =>
-    .ofSpecs [(.syllabic, true), (.consonantal, false), (.approximant, true), (.sonorant, true)]
-
-/-- The features that define a class (Hayes p. 77): [−sonorant] for an obstruent, [−approximant,
-+sonorant] for a nasal, [+consonantal, +approximant] for a liquid, [−syllabic, −consonantal] for a
-glide and [+syllabic] for a vowel. -/
-def description : Sonority → Segment
-  | .obstruent => .ofSpecs [(.sonorant, false)]
-  | .nasal => .ofSpecs [(.approximant, false), (.sonorant, true)]
-  | .liquid => .ofSpecs [(.consonantal, true), (.approximant, true)]
-  | .glide => .ofSpecs [(.syllabic, false), (.consonantal, false)]
-  | .vowel => .ofSpecs [(.syllabic, true)]
-
-/-- The sonority of a segment: an obstruent if [−sonorant], else a nasal if [−approximant], else
-a liquid if [+consonantal], else a vowel if [+syllabic], and otherwise a glide. A syllabic liquid
-or nasal keeps the sonority of its class. -/
-def ofSegment (s : Segment) : Sonority :=
-  if s.HasValue .sonorant false then .obstruent
-  else if s.HasValue .approximant false then .nasal
-  else if s.HasValue .consonantal true then .liquid
-  else if s.HasValue .syllabic true then .vowel
-  else .glide
-
-/-! ### Parker's classes -/
-
-/-- Parker's sonority classes collapsed to eight, which split the obstruents by [continuant] and
-[voice]. -/
-inductive Class where
-  /-- The voiceless stops. -/
-  | vls
-  /-- The voiced stops. -/
-  | vds
-  /-- The voiceless fricatives. -/
-  | vlf
-  /-- The voiced fricatives. -/
-  | vdf
-  /-- The nasals. -/
-  | nasal
-  /-- The liquids. -/
-  | liquid
-  /-- The glides. -/
-  | glide
-  /-- The vowels. -/
-  | vowel
-  deriving DecidableEq, Repr
-
-namespace Class
-
-/-- Parker's ranking of the classes, with voiced stops above voiceless fricatives, his default
-order, which a language may reverse. -/
-def parkerRank : Class → ℕ
-  | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
-  | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
-
-/-- The voiceless obstruent classes. -/
-def Voiceless (c : Class) : Prop := c = .vls ∨ c = .vlf
-
-instance : DecidablePred Voiceless := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
-
-/-- The class of a segment: its sonority, with an obstruent split by [continuant] and
-[voice]. -/
-def ofSegment (s : Segment) : Class :=
-  match Sonority.ofSegment s with
-  | .obstruent =>
-    if s.HasValue .continuant true then
-      if s.HasValue .voice true then .vdf else .vlf
-    else
-      if s.HasValue .voice true then .vds else .vls
-  | .nasal => .nasal
-  | .liquid => .liquid
-  | .glide => .glide
-  | .vowel => .vowel
-
-/-- The sonority of a class, with the obstruents merged. -/
-def toSonority : Class → Sonority
-  | .vls | .vds | .vlf | .vdf => .obstruent
-  | .nasal => .nasal
-  | .liquid => .liquid
-  | .glide => .glide
-  | .vowel => .vowel
-
-end Class
-
-end Sonority
 
 end Phonology
