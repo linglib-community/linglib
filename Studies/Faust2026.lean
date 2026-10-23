@@ -608,7 +608,7 @@ theorem j_surfaces :
 /-- A root's final radical is barred from a [+c] slot when it is a glide, as in √klj and √fdj, or a
 vowel, as in √sma. -/
 def BarredFinal (r : ConsonantalRoot String) : Prop :=
-  match r.finalSegment with
+  match r.segments.getLast? with
   | some x => segClass x ≠ .consonant
   | none => False
 

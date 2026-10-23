@@ -5,31 +5,23 @@ public import Linglib.Phonology.Segmental.PHOIBLE
 /-!
 # Tarifit phones
 
-This file lists the consonants of Tarifit (Nador variety) that occur in the CCəC target words
+This file gives the consonants of Tarifit (Nador variety) that occur in the triconsonantal verbs
 of Afkir and Zellou's production study, as they surface in the simple imperative, together with
-the schwa, and gives each its segment. Singleton /b, d, t/ spirantize to [β, ð, θ] outside
-post-nasal and pharyngealized contexts. The sonority class of a phone on the Parker scale is
-read off the phone by `Sonority.Class.ofSegment` and not stored.
+the schwa. Tarifit spirantizes: the historical bilabial and dental stops surface as the
+fricatives /β ð θ/ except when geminated. A phone is named by its IPA symbol, and its sonority
+class is read off its features by `Sonority.Class.ofSegment` and not stored.
 
-The feature values come from the PHOIBLE chart, and a phone is its chart entry's segment
-with the phone's departure merged over it. There are two departures. PHOIBLE separates
-the pharyngealized stops /tˤ dˤ/ from plain /t d/ by its retracted tongue root feature alone,
-which the feature system here lacks, so they take the chart entries of /t d/ and the value
-[+back]. Afkir and Zellou describe the pharyngeal /ʕ/ as an approximant, where the chart has a
-fricative. PHOIBLE has no Tarifit inventory.
-
-## Main definitions
-
-* `Tarifit.q`, `Tarifit.emphaticT` and the like: the phones, as segments. A name is the phone's
-  IPA symbol where that is an identifier, and otherwise the symbol's name: `emphaticT` and
-  `emphaticD` are tˤ and dˤ, `ghayn` is ʁ, `ayn` is ʕ and `hbar` is ħ.
-* `Tarifit.transcriptions`, `Tarifit.ipa?`: the IPA transcription of each phone.
-* `Tarifit.inventory`: the set of phones.
+The feature values come from the PHOIBLE chart, which has no Tarifit inventory, and a phone is
+its chart entry's segment with the phone's departure merged over it. There are two departures.
+PHOIBLE gives the pharyngealized stop /tˤ/ a contour tongue-root value, which the chart omits, so
+it takes the chart's /t/ with [+RTR], as the chart's /d̙ˤ/ is its /d/ with [+RTR]. The book's
+consonant chart lists /ʕ/ among the fricatives, but its text groups /ʕ/ with /r/ as a sonorant
+that conditions vowels, and its count of rising, plateauing and falling onsets holds only with
+/ʕ/ above the tap, so /ʕ/ is the chart's segment as an approximant.
 
 ## References
 
 * [afkir-zellou-2025]
-* [parker-2002]
 * [moran-mccloy-2019]
 -/
 
@@ -50,20 +42,20 @@ def k : Segment := .ofChart .«k»
 /-- The voiceless alveolar stop /t/. -/
 def t : Segment := .ofChart .«t»
 
-/-- The pharyngealized stop /tˤ/, the chart's /t/ with [+back]. -/
-def emphaticT : Segment := .ofChart .«t» (Segment.ofSpecs [(.back, true)])
+/-- The pharyngealized voiceless stop /tˤ/. -/
+def «tˤ» : Segment := .ofChart .«t» (Segment.ofSpecs [(.rtr, true)])
 
-/-- The pharyngealized stop /dˤ/, the chart's /d/ with [+back]. -/
-def emphaticD : Segment := .ofChart .«d» (Segment.ofSpecs [(.back, true)])
+/-- The pharyngealized voiced stop /dˤ/. -/
+def «dˤ» : Segment := .ofChart .«d̙ˤ»
 
 /-- The voiced bilabial fricative /β/. -/
-def beta : Segment := .ofChart .«β»
+def β : Segment := .ofChart .«β»
 
 /-- The voiced dental fricative /ð/. -/
-def eth : Segment := .ofChart .«ð»
+def ð : Segment := .ofChart .«ð»
 
 /-- The voiceless dental fricative /θ/. -/
-def theta : Segment := .ofChart .«θ»
+def θ : Segment := .ofChart .«θ»
 
 /-- The voiceless labiodental fricative /f/. -/
 def f : Segment := .ofChart .«f»
@@ -72,25 +64,25 @@ def f : Segment := .ofChart .«f»
 def s : Segment := .ofChart .«s»
 
 /-- The voiceless postalveolar fricative /ʃ/. -/
-def esh : Segment := .ofChart .«ʃ»
+def «ʃ» : Segment := .ofChart .«ʃ»
 
 /-- The voiceless uvular fricative /χ/. -/
-def chi : Segment := .ofChart .«χ»
+def χ : Segment := .ofChart .«χ»
 
 /-- The voiceless pharyngeal fricative /ħ/. -/
-def hbar : Segment := .ofChart .«ħ»
+def ħ : Segment := .ofChart .«ħ»
 
 /-- The voiced alveolar fricative /z/. -/
 def z : Segment := .ofChart .«z»
 
 /-- The voiced postalveolar fricative /ʒ/. -/
-def ezh : Segment := .ofChart .«ʒ»
+def «ʒ» : Segment := .ofChart .«ʒ»
 
 /-- The voiced uvular fricative /ʁ/. -/
-def ghayn : Segment := .ofChart .«ʁ»
+def «ʁ» : Segment := .ofChart .«ʁ»
 
-/-- The pharyngeal /ʕ/, an approximant where the chart has a fricative. -/
-def ayn : Segment :=
+/-- The pharyngeal approximant /ʕ/. -/
+def «ʕ» : Segment :=
   .ofChart .«ʕ» (Segment.ofSpecs [(.consonantal, false), (.sonorant, true), (.approximant, true)])
 
 /-- The bilabial nasal /m/. -/
@@ -99,20 +91,20 @@ def m : Segment := .ofChart .«m»
 /-- The alveolar nasal /n/. -/
 def n : Segment := .ofChart .«n»
 
-/-- The tap /r/. -/
+/-- The alveolar tap /r/. -/
 def r : Segment := .ofChart .«ɾ»
 
-/-- The lateral /l/. -/
+/-- The alveolar lateral /l/. -/
 def l : Segment := .ofChart .«l»
 
 /-- The schwa /ə/. -/
-def schwa : Segment := .ofChart .«ə»
+def «ə» : Segment := .ofChart .«ə»
 
-/-- The phones of the CCəC target words, as they surface, each with its IPA transcription. -/
+/-- The phones, each with its IPA transcription. -/
 def transcriptions : List (Segment × String) :=
-  [(q, "q"), (k, "k"), (t, "t"), (emphaticT, "tˤ"), (emphaticD, "dˤ"), (beta, "β"), (eth, "ð"),
-    (theta, "θ"), (f, "f"), (s, "s"), (esh, "ʃ"), (chi, "χ"), (hbar, "ħ"), (z, "z"), (ezh, "ʒ"),
-    (ghayn, "ʁ"), (ayn, "ʕ"), (m, "m"), (n, "n"), (r, "r"), (l, "l"), (schwa, "ə")]
+  [(q, "q"), (k, "k"), (t, "t"), («tˤ», "tˤ"), («dˤ», "dˤ"), (β, "β"), (ð, "ð"), (θ, "θ"),
+    (f, "f"), (s, "s"), («ʃ», "ʃ"), (χ, "χ"), (ħ, "ħ"), (z, "z"), («ʒ», "ʒ"), («ʁ», "ʁ"),
+    («ʕ», "ʕ"), (m, "m"), (n, "n"), (r, "r"), (l, "l"), («ə», "ə")]
 
 /-- The phones, pairwise distinct. -/
 def inventory : Finset Segment := ⟨↑(transcriptions.map (·.1)), by decide⟩

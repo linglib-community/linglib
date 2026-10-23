@@ -281,15 +281,9 @@ def ofSegment (s : Segment) : Sonority :=
 
 /-! ### The Parker sonority scale -/
 
-/-- The 8-level Parker sonority partition ([parker-2002]) — a refinement of
-    `Sonority` that splits obstruents by [±continuant] and [±voice]. This is the
-    sonority *scale*; it is distinct from the natural-class predicates above
-    (`Segment.IsVowel` &c.), which are feature membership.
-
-    Crucially [parker-2002] ranks voiced stops above voiceless fricatives
-    (`vds = 3 > vlf = 2`) — his intensity-based default universal, reversible in
-    particular languages. It is the scale on which sonority-conditioned variation
-    such as Tarifit intrusive vowels is stated ([afkir-zellou-2025]). -/
+/-- The eight sonority classes of [parker-2002], which refine `Sonority` by splitting the
+    obstruents by voicing. Parker's default ranking, `Class.parkerRank`, puts voiced stops above
+    voiceless fricatives, and particular languages may reverse it. -/
 inductive Class where
   | vls    -- voiceless stops: [−son, −cont, −voice]
   | vds    -- voiced stops: [−son, −cont, +voice]

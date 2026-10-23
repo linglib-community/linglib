@@ -1,45 +1,47 @@
 module
 
 public import Linglib.Fragments.Tarifit.ConsonantalRoots
-public import Linglib.Morphology.Morphotactics.TemplateMatch
+public import Linglib.Morphology.Morphotactics.Association
 public import Linglib.Data.Examples.AfkirZellou2025
 import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!
 # Schwa variation in Tarifit CCəC words
 
-Tarifit triconsonantal verbs in the simple imperative carry a prosodic-template schwa between
-the second and third root consonants, and Afkir and Zellou find two further phonetic variants:
-a shorter, coarticulating intrusive schwa inside the initial cluster ([Cə̆CəC], about a quarter of
-productions), and vowelless forms ([CCC], about five percent), neither of them sensitive to
-speaking style. The two schwas are independent processes, the template schwa a targeted segment
-whose deletion shortens the word and the intrusive schwa a targetless vocoid. Their distribution
-over the thirty-eight target words is tabulated by word. The words are the fragment's roots
-vocalized by the simple-imperative template CCəC (`imperative`, `surface`), and this file states
-the tables' generalizations over the pooled rows (`root?`, `intrusion?`, `vowelless?`), with each
-root's initial-cluster sonority profile read off its phones (`Rising`, `Falling`).
+Tarifit triconsonantal verbs in the simple imperative carry a template schwa between the second
+and third radicals, and Afkir and Zellou find two further variants: a short intrusive schwa in
+the initial cluster ([Cə̆CəC]) and vowelless forms ([CCC]). This file builds the thirty-eight
+target words from the fragment's roots by McCarthy's association conventions, classifies their
+initial clusters on the book's sonority scale, and states the generalizations of Tables 7 and 9
+over the pooled rows.
 
-Two hypotheses about the intrusive schwa are set against each other: repair, on which
-insertion should be most frequent in the dispreferred falling-sonority clusters, and the
-syllable-planning account of Georgian, on which a vocoid is tolerated only where it boosts the
-planned sonority peak, hence in rising clusters. The data side with the second: every rising
-cluster shows intrusion at least variably unless its second consonant is voiceless
-(`intrusion_of_rising`), the words that never or rarely show intrusion are non-rising or have a
-voiceless second consonant (`nonRising_or_voiceless_of_never_rarely`), and the paper's three
-flagged exceptions are the only non-rising words with a voiceless second consonant that vary
-(`variably_exceptions`). The near-categorical class is exactly the words with medial /r/
-(`almostExclusively_iff_c2_r`); it is not the rising class, since on the paper's scale the
-pharyngeal outranks the tap and /ʕrəm/ falls.
-Vowellessness tracks low sonority: the often-vowelless words have voiceless second and third
-consonants, except the flagged /ħkəm/ (`voiceless_of_often_vowelless`), and the never-vowelless
-words all carry a voiced consonant there (`voiced_of_never_vowelless`). The regression
-estimates, the acoustic measurements, and the perception result that an intrusive vowel aids
-discrimination only in falling clusters are reported in the paper without a formal counterpart
-here.
+On the repair hypothesis, intrusion should be most frequent in the dispreferred falling clusters;
+on the syllable-planning account of Georgian, a vocoid is tolerated only in rising ones. The data
+side with the second (`intrusion_of_rising`, `nonRising_or_voiceless_of_never_rarely`), up to the
+book's flagged exceptions (`variably_exceptions`). The near-categorical class is exactly the words
+with medial /r/ (`almostExclusively_iff_c2_r`), not the rising class: the book's count of onset
+profiles (`countP_rising_plateau_falling`) needs /ʕ/ above the tap, so /ʕrəm/ falls although
+Table 9 files it under rising sonority. Vowellessness tracks voiceless second and third radicals
+(`voiceless_of_often_vowelless`, `voiced_of_never_vowelless`).
+
+## Main definitions
+
+* `AfkirZellou2025.imperative`: a root's simple imperative, by the association conventions.
+* `AfkirZellou2025.sonority`: the sonority of a phone on the scale of Figure 9.
+* `AfkirZellou2025.Rising`, `Plateau`, `Falling`: the sonority profile of the initial cluster.
+* `AfkirZellou2025.targets`: the thirty-eight CCəC target words, by root.
+
+## Implementation notes
+
+Figure 9 ranks voiced stops below voiceless fricatives, against the default of [parker-2002]
+that it cites (`Sonority.Class.parkerRank`). No target cluster pairs the two classes, so the
+profiles are the same on either scale. The regression estimates, the acoustic measurements and
+the perception study have no formal counterpart here.
 
 ## References
 
 * [afkir-zellou-2025]
+* [mccarthy-1981]
 * [parker-2002]
 * [hall-2006]
 -/
@@ -55,40 +57,75 @@ open Tarifit Morphology Phonology
 /-- The prosodic template CCəC of the simple imperative. -/
 def imperativeTemplate : Autosegmental.Skeleton := [.C, .C, .V, .C]
 
-/-- In the simple imperative the consonants of a root fill the C-slots in order and the schwa
-the V-slot. -/
-def imperative (r : ConsonantalRoot Segment) : TemplateMatch Segment where
-  root := r
-  vocalism := [schwa]
-  template := imperativeTemplate
-  associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 1⟩, ⟨.vocalism, 0, 2⟩, ⟨.root, 2, 3⟩]
+/-- The simple imperative of a root: the root and the schwa associated with the template CCəC by
+the universal association conventions. -/
+def imperative (r : ConsonantalRoot Segment) : TemplateMatch Segment :=
+  ((({ root := r, vocalism := [«ə»], template := imperativeTemplate, associations := [] } :
+    TemplateMatch Segment).associate .root).associate .vocalism)
 
 theorem spellout_imperative (a b c : Segment) :
-    (imperative ⟨[a, b, c]⟩).spellout = [a, b, schwa, c] := rfl
+    (imperative ⟨[a, b, c]⟩).spellout = [a, b, «ə», c] := by
+  simp [imperative, imperativeTemplate, TemplateMatch.associate, TemplateMatch.associateOneToOne,
+    TemplateMatch.associateRemaining, TemplateMatch.spread, TemplateMatch.unassociated,
+    TemplateMatch.freeBearers, TemplateMatch.bearers, TemplateMatch.link, TemplateMatch.spellout,
+    TemplateMatch.melody, TemplateMatch.segmentAt, TemplateMatch.IsAssociated,
+    TemplateMatch.IsFilled, Autosegmental.Skeleton.cSlots, Autosegmental.Skeleton.vSlots,
+    List.range_succ]
 
 /-- The transcription of a root's imperative. -/
 def surface (r : ConsonantalRoot Segment) : String :=
   String.join ((imperative r).spellout.filterMap ipa?)
 
-/-- The Parker sonority rank of a phone. -/
-def rank (x : Segment) : ℕ := (Sonority.Class.ofSegment x).parkerRank
+/-- The thirty-eight CCəC target words, by root, in the order of Table 7. -/
+def targets : List (ConsonantalRoot Segment) :=
+  [«ðfʕ», ðqr, «ʁdˤr», «ʁfr», «ʁrβ», ħmð, nqr, qβr, qðf, qfr, qrβ, «qrʕ», «qtˤʕ», rmð, srm,
+    «stˤr», χrf, «ʒβð», «ʒmð», «ʕβð», «ʕrm», ħsβ, ħzn, «ʃmθ», χzn, βkm, ħlm, ħsn, nqβ, «qmʕ»,
+    «sʃn», χns, «ʒmʕ», sχf, ħkm, ntf, skf, rsq]
+
+/-! ### Sonority profiles -/
+
+/-- The sonority scale of Figure 9, which ranks the obstruents by manner before voicing. -/
+def scale : Sonority.Class → ℕ
+  | .vls => 1 | .vds => 2 | .vlf => 3 | .vdf => 4
+  | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
+
+/-- The sonority of a phone on the scale of Figure 9. -/
+def sonority (x : Segment) : ℕ := scale (Sonority.Class.ofSegment x)
 
 /-- The phone at root position `i` is a voiceless obstruent. -/
 def VoicelessAt (r : ConsonantalRoot Segment) (i : ℕ) : Prop :=
-  ∃ p ∈ r.segmentAt i, (Sonority.Class.ofSegment p).Voiceless
+  ∃ p ∈ r.segments[i]?, (Sonority.Class.ofSegment p).Voiceless
 
 /-- The initial cluster rises in sonority. -/
 def Rising (r : ConsonantalRoot Segment) : Prop :=
-  ∃ a ∈ r.segmentAt 0, ∃ b ∈ r.segmentAt 1, rank a < rank b
+  ∃ a ∈ r.segments[0]?, ∃ b ∈ r.segments[1]?, sonority a < sonority b
+
+/-- The initial cluster is level in sonority. -/
+def Plateau (r : ConsonantalRoot Segment) : Prop :=
+  ∃ a ∈ r.segments[0]?, ∃ b ∈ r.segments[1]?, sonority a = sonority b
 
 /-- The initial cluster falls in sonority. -/
 def Falling (r : ConsonantalRoot Segment) : Prop :=
-  ∃ a ∈ r.segmentAt 0, ∃ b ∈ r.segmentAt 1, rank b < rank a
+  ∃ a ∈ r.segments[0]?, ∃ b ∈ r.segments[1]?, sonority b < sonority a
 
 instance (r : ConsonantalRoot Segment) (i : ℕ) : Decidable (VoicelessAt r i) := by
   unfold VoicelessAt; infer_instance
 instance (r : ConsonantalRoot Segment) : Decidable (Rising r) := by unfold Rising; infer_instance
+instance (r : ConsonantalRoot Segment) : Decidable (Plateau r) := by
+  unfold Plateau; infer_instance
 instance (r : ConsonantalRoot Segment) : Decidable (Falling r) := by unfold Falling; infer_instance
+
+/-- Seventeen of the target words begin with a rising cluster, six with a plateau and fifteen
+with a fall (§3.2.1). -/
+theorem countP_rising_plateau_falling :
+    targets.countP (Rising ·) = 17 ∧ targets.countP (Plateau ·) = 6 ∧
+      targets.countP (Falling ·) = 15 := by
+  decide
+
+example : ∀ r ∈ targets, ∀ a ∈ r.segments[0]?, ∀ b ∈ r.segments[1]?,
+    compare (sonority a) (sonority b) =
+      compare (Sonority.Class.ofSegment a).parkerRank (Sonority.Class.ofSegment b).parkerRank := by
+  decide
 
 /-! ### The tables -/
 
@@ -109,7 +146,7 @@ inductive Vowelless
 
 /-- The root a row reports, by the transcription of its imperative. -/
 def root? (e : Datum) : Option (ConsonantalRoot Segment) :=
-  roots.find? (surface · == e.primaryText)
+  targets.find? (surface · == e.primaryText)
 
 /-- The row's intrusion category. -/
 def intrusion? (e : Datum) : Option Intrusion :=
@@ -136,7 +173,7 @@ theorem rows_complete :
 
 theorem almostExclusively_iff_c2_r :
     ∀ e ∈ Examples.all, ∀ r ∈ root? e,
-      intrusion? e = some .almostExclusively ↔ r.segmentAt 1 = some Tarifit.r := by
+      intrusion? e = some .almostExclusively ↔ r.segments[1]? = some Tarifit.r := by
   decide
 
 theorem intrusion_of_rising :
@@ -152,14 +189,14 @@ theorem nonRising_or_voiceless_of_never_rarely :
 
 theorem variably_exceptions :
     ∀ e ∈ Examples.all, intrusion? e = some .variably →
-      ∀ r ∈ root? e, Rising r ∨ ¬ VoicelessAt r 1 ∨ r ∈ [nqeb, nqer, qtes] := by
+      ∀ r ∈ root? e, Rising r ∨ ¬ VoicelessAt r 1 ∨ r ∈ [nqβ, nqr, «qtˤʕ»] := by
   decide
 
 /-! ### Vowelless production -/
 
 theorem voiceless_of_often_vowelless :
     ∀ e ∈ Examples.all, vowelless? e = some .often →
-      ∀ r ∈ root? e, (VoicelessAt r 1 ∧ VoicelessAt r 2) ∨ r = hkem := by
+      ∀ r ∈ root? e, (VoicelessAt r 1 ∧ VoicelessAt r 2) ∨ r = ħkm := by
   decide
 
 theorem voiced_of_never_vowelless :

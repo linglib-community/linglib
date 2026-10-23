@@ -4,16 +4,16 @@ public import Linglib.Fragments.Tarifit.Phonology
 public import Linglib.Morphology.Root.Consonantal
 
 /-!
-# Tarifit triconsonantal roots
+# Tarifit consonantal roots
 
-The thirty-eight verb roots of the CCəC target words in the Tarifit production study, as
-consonantal melodies over the segments of `Fragments/Tarifit/Phonology.lean`; the
-simple-imperative template that vocalizes them with a schwa between the second and third
-consonants is stated with the study. Roots are named by their imperative citation form.
+This file defines triconsonantal verb roots of Tarifit as melodies over the phones of
+`Fragments/Tarifit/Phonology.lean`, each named by its radicals and given with its simple
+imperative, the CCəC form with a schwa between the second and third radicals. A gloss is given
+where Afkir and Zellou give one.
 
 ## References
 
-* [afkir-zellou-2025], Tables 7 and 9
+* [afkir-zellou-2025]
 -/
 
 @[expose] public section
@@ -22,87 +22,118 @@ namespace Tarifit
 
 open Morphology Phonology
 
-/-- /ðfəʕ/ -/
-def dfes : ConsonantalRoot Segment := ⟨[eth, f, ayn]⟩
-/-- /ðqər/ -/
-def dqer : ConsonantalRoot Segment := ⟨[eth, q, r]⟩
-/-- /ʁdˤər/ -/
-def ghder : ConsonantalRoot Segment := ⟨[ghayn, emphaticD, r]⟩
-/-- /ʁfər/ -/
-def ghfer : ConsonantalRoot Segment := ⟨[ghayn, f, r]⟩
-/-- /ʁrəβ/ -/
-def ghreb : ConsonantalRoot Segment := ⟨[ghayn, r, beta]⟩
-/-- /ħməð/ -/
-def hmed : ConsonantalRoot Segment := ⟨[hbar, m, eth]⟩
-/-- /nqər/ -/
-def nqer : ConsonantalRoot Segment := ⟨[n, q, r]⟩
-/-- /qβər/ -/
-def qber : ConsonantalRoot Segment := ⟨[q, beta, r]⟩
-/-- /qðəf/ -/
-def qdef : ConsonantalRoot Segment := ⟨[q, eth, f]⟩
-/-- /qfər/ -/
-def qfer : ConsonantalRoot Segment := ⟨[q, f, r]⟩
-/-- /qrəβ/ -/
-def qreb : ConsonantalRoot Segment := ⟨[q, r, beta]⟩
-/-- /qrəʕ/ 'rip!' -/
-def qres : ConsonantalRoot Segment := ⟨[q, r, ayn]⟩
-/-- /qtˤəʕ/ -/
-def qtes : ConsonantalRoot Segment := ⟨[q, emphaticT, ayn]⟩
-/-- /rməð/ -/
-def rmed : ConsonantalRoot Segment := ⟨[r, m, eth]⟩
-/-- /srəm/ -/
-def srem : ConsonantalRoot Segment := ⟨[s, r, m]⟩
-/-- /stˤər/ -/
-def ster : ConsonantalRoot Segment := ⟨[s, emphaticT, r]⟩
-/-- /χrəf/ -/
-def xref : ConsonantalRoot Segment := ⟨[chi, r, f]⟩
-/-- /ʒβəð/ -/
-def zhbed : ConsonantalRoot Segment := ⟨[ezh, beta, eth]⟩
-/-- /ʒməð/ 'freeze!' -/
-def zhmed : ConsonantalRoot Segment := ⟨[ezh, m, eth]⟩
-/-- /ʕβəð/ -/
-def aybed : ConsonantalRoot Segment := ⟨[ayn, beta, eth]⟩
-/-- /ʕrəm/ -/
-def ayrem : ConsonantalRoot Segment := ⟨[ayn, r, m]⟩
-/-- /ħsəβ/ 'count!' -/
-def hseb : ConsonantalRoot Segment := ⟨[hbar, s, beta]⟩
-/-- /ħzən/ -/
-def hzen : ConsonantalRoot Segment := ⟨[hbar, z, n]⟩
-/-- /ʃməθ/ -/
-def shmeth : ConsonantalRoot Segment := ⟨[esh, m, theta]⟩
-/-- /χzən/ -/
-def xzen : ConsonantalRoot Segment := ⟨[chi, z, n]⟩
-/-- /βkəm/ -/
-def bkem : ConsonantalRoot Segment := ⟨[beta, k, m]⟩
-/-- /ħləm/ -/
-def hlem : ConsonantalRoot Segment := ⟨[hbar, l, m]⟩
-/-- /ħsən/ -/
-def hsen : ConsonantalRoot Segment := ⟨[hbar, s, n]⟩
-/-- /nqəβ/ 'pick!' -/
-def nqeb : ConsonantalRoot Segment := ⟨[n, q, beta]⟩
-/-- /qməʕ/ 'suppress!' -/
-def qmes : ConsonantalRoot Segment := ⟨[q, m, ayn]⟩
-/-- /sʃən/ 'show!' -/
-def sshen : ConsonantalRoot Segment := ⟨[s, esh, n]⟩
-/-- /χnəs/ 'bend down!' -/
-def xnes : ConsonantalRoot Segment := ⟨[chi, n, s]⟩
-/-- /ʒməʕ/ -/
-def zhmes : ConsonantalRoot Segment := ⟨[ezh, m, ayn]⟩
-/-- /sχəf/ 'pass out!' -/
-def sxef : ConsonantalRoot Segment := ⟨[s, chi, f]⟩
-/-- /ħkəm/ 'judge!' -/
-def hkem : ConsonantalRoot Segment := ⟨[hbar, k, m]⟩
-/-- /ntəf/ 'pluck!' -/
-def ntef : ConsonantalRoot Segment := ⟨[n, t, f]⟩
-/-- /skəf/ -/
-def skef : ConsonantalRoot Segment := ⟨[s, k, f]⟩
-/-- /rsəq/ -/
-def rseq : ConsonantalRoot Segment := ⟨[r, s, q]⟩
+/-- The root ðfʕ, whose simple imperative is /ðfəʕ/. -/
+def «ðfʕ» : ConsonantalRoot Segment := ⟨[ð, f, «ʕ»]⟩
 
-/-- The thirty-eight target roots. -/
-def roots : List (ConsonantalRoot Segment) :=
-  [dfes, dqer, ghder, ghfer, ghreb, hmed, nqer, qber, qdef, qfer, qreb, qres, qtes, rmed, srem,
-    ster, xref, zhbed, zhmed, aybed, ayrem, hseb, hzen, shmeth, xzen, bkem, hlem, hsen, nqeb,
-    qmes, sshen, xnes, zhmes, sxef, hkem, ntef, skef, rseq]
+/-- The root ðqr, whose simple imperative /ðqər/ is 'weigh!'. -/
+def ðqr : ConsonantalRoot Segment := ⟨[ð, q, r]⟩
+
+/-- The root ʁdˤr, whose simple imperative is /ʁdˤər/. -/
+def «ʁdˤr» : ConsonantalRoot Segment := ⟨[«ʁ», «dˤ», r]⟩
+
+/-- The root ʁfr, whose simple imperative is /ʁfər/. -/
+def «ʁfr» : ConsonantalRoot Segment := ⟨[«ʁ», f, r]⟩
+
+/-- The root ʁrβ, whose simple imperative is /ʁrəβ/. -/
+def «ʁrβ» : ConsonantalRoot Segment := ⟨[«ʁ», r, β]⟩
+
+/-- The root ħmð, whose simple imperative /ħməð/ is 'thank!'. -/
+def ħmð : ConsonantalRoot Segment := ⟨[ħ, m, ð]⟩
+
+/-- The root nqr, whose simple imperative is /nqər/. -/
+def nqr : ConsonantalRoot Segment := ⟨[n, q, r]⟩
+
+/-- The root qβr, whose simple imperative is /qβər/. -/
+def qβr : ConsonantalRoot Segment := ⟨[q, β, r]⟩
+
+/-- The root qðf, whose simple imperative is /qðəf/. -/
+def qðf : ConsonantalRoot Segment := ⟨[q, ð, f]⟩
+
+/-- The root qfr, whose simple imperative is /qfər/. -/
+def qfr : ConsonantalRoot Segment := ⟨[q, f, r]⟩
+
+/-- The root qrβ, whose simple imperative is /qrəβ/. -/
+def qrβ : ConsonantalRoot Segment := ⟨[q, r, β]⟩
+
+/-- The root qrʕ, whose simple imperative /qrəʕ/ is 'rip!'. -/
+def «qrʕ» : ConsonantalRoot Segment := ⟨[q, r, «ʕ»]⟩
+
+/-- The root qtˤʕ, whose simple imperative is /qtˤəʕ/. -/
+def «qtˤʕ» : ConsonantalRoot Segment := ⟨[q, «tˤ», «ʕ»]⟩
+
+/-- The root rmð, whose simple imperative is /rməð/. -/
+def rmð : ConsonantalRoot Segment := ⟨[r, m, ð]⟩
+
+/-- The root srm, whose simple imperative is /srəm/. -/
+def srm : ConsonantalRoot Segment := ⟨[s, r, m]⟩
+
+/-- The root stˤr, whose simple imperative is /stˤər/. -/
+def «stˤr» : ConsonantalRoot Segment := ⟨[s, «tˤ», r]⟩
+
+/-- The root χrf, whose simple imperative is /χrəf/. -/
+def χrf : ConsonantalRoot Segment := ⟨[χ, r, f]⟩
+
+/-- The root ʒβð, whose simple imperative /ʒβəð/ is 'pull!'. -/
+def «ʒβð» : ConsonantalRoot Segment := ⟨[«ʒ», β, ð]⟩
+
+/-- The root ʒmð, whose simple imperative /ʒməð/ is 'freeze!'. -/
+def «ʒmð» : ConsonantalRoot Segment := ⟨[«ʒ», m, ð]⟩
+
+/-- The root ʕβð, whose simple imperative /ʕβəð/ is 'worship!'. -/
+def «ʕβð» : ConsonantalRoot Segment := ⟨[«ʕ», β, ð]⟩
+
+/-- The root ʕrm, whose simple imperative is /ʕrəm/. -/
+def «ʕrm» : ConsonantalRoot Segment := ⟨[«ʕ», r, m]⟩
+
+/-- The root ħsβ, whose simple imperative /ħsəβ/ is 'count!'. -/
+def ħsβ : ConsonantalRoot Segment := ⟨[ħ, s, β]⟩
+
+/-- The root ħzn, whose simple imperative is /ħzən/. -/
+def ħzn : ConsonantalRoot Segment := ⟨[ħ, z, n]⟩
+
+/-- The root ʃmθ, whose simple imperative is /ʃməθ/. -/
+def «ʃmθ» : ConsonantalRoot Segment := ⟨[«ʃ», m, θ]⟩
+
+/-- The root χzn, whose simple imperative is /χzən/. -/
+def χzn : ConsonantalRoot Segment := ⟨[χ, z, n]⟩
+
+/-- The root βkm, whose simple imperative is /βkəm/. -/
+def βkm : ConsonantalRoot Segment := ⟨[β, k, m]⟩
+
+/-- The root ħlm, whose simple imperative is /ħləm/. -/
+def ħlm : ConsonantalRoot Segment := ⟨[ħ, l, m]⟩
+
+/-- The root ħsn, whose simple imperative is /ħsən/. -/
+def ħsn : ConsonantalRoot Segment := ⟨[ħ, s, n]⟩
+
+/-- The root nqβ 'pick', whose simple imperative is /nqəβ/. -/
+def nqβ : ConsonantalRoot Segment := ⟨[n, q, β]⟩
+
+/-- The root qmʕ, whose simple imperative /qməʕ/ is 'suppress!'. -/
+def «qmʕ» : ConsonantalRoot Segment := ⟨[q, m, «ʕ»]⟩
+
+/-- The root sʃn, whose simple imperative /sʃən/ is 'show!'. -/
+def «sʃn» : ConsonantalRoot Segment := ⟨[s, «ʃ», n]⟩
+
+/-- The root χns 'bend down', whose simple imperative is /χnəs/. -/
+def χns : ConsonantalRoot Segment := ⟨[χ, n, s]⟩
+
+/-- The root ʒmʕ, whose simple imperative is /ʒməʕ/. -/
+def «ʒmʕ» : ConsonantalRoot Segment := ⟨[«ʒ», m, «ʕ»]⟩
+
+/-- The root sχf, whose simple imperative /sχəf/ is 'pass out!'. -/
+def sχf : ConsonantalRoot Segment := ⟨[s, χ, f]⟩
+
+/-- The root ħkm, whose simple imperative /ħkəm/ is 'judge!'. -/
+def ħkm : ConsonantalRoot Segment := ⟨[ħ, k, m]⟩
+
+/-- The root ntf, whose simple imperative /ntəf/ is 'pluck!'. -/
+def ntf : ConsonantalRoot Segment := ⟨[n, t, f]⟩
+
+/-- The root skf 'suck up', whose simple imperative is /skəf/. -/
+def skf : ConsonantalRoot Segment := ⟨[s, k, f]⟩
+
+/-- The root rsq, whose simple imperative is /rsəq/. -/
+def rsq : ConsonantalRoot Segment := ⟨[r, s, q]⟩
 
 end Tarifit
