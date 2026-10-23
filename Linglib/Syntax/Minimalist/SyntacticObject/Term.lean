@@ -243,6 +243,13 @@ theorem mem_terms_merge_right (u C : SyntacticObject L) : C ∈ (merge u C).term
 theorem terms_subset_terms (h : ContainsOrEq x y) : y.terms ⊆ x.terms :=
   fun _ hz ↦ mem_terms.2 (ReflTransGen.trans h (mem_terms.1 hz))
 
+theorem mem_terms_antisymm (h₁ : x ∈ y.terms) (h₂ : y ∈ x.terms) : x = y := by
+  rcases containsOrEq_iff_eq_or_contains.1 (mem_terms.1 h₁) with h | h
+  · exact h
+  rcases containsOrEq_iff_eq_or_contains.1 (mem_terms.1 h₂) with h' | h'
+  · exact h'.symm
+  · exact absurd (h.trans h') (contains_irrefl y)
+
 theorem mem_terms_of_merge_mem_terms {s : SyntacticObject L} (h : merge l r ∈ s.terms) :
     l ∈ s.terms ∧ r ∈ s.terms :=
   ⟨terms_subset_terms (mem_terms.1 h) (mem_terms.2 (.single ((immediatelyContains_merge _ _ _).2

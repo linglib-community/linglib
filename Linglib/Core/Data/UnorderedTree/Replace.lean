@@ -13,19 +13,22 @@ public import Linglib.Core.Data.UnorderedTree.Subtree
 /-!
 # Substitution of subtrees
 
-`UnorderedTree.replace target replacement t` rebuilds `t` with every subtree equal to `target`
-replaced by `replacement`. It is computed on a planar representative by
-`RoseTree.unorderedReplace`, and is well-defined because that recursion computes the
-`UnorderedTree.para` testing each subtree before rebuilding it from its substituted children.
-The planar substitution `RoseTree.replaceIf` replaces the subtrees satisfying a predicate, and
-replacing the planar subtrees in a class is `replace` on the class (`UnorderedTree.mk_replaceIf`).
+`UnorderedTree.subst f t` substitutes `f s` for every outermost subtree `s` of `t` on which `f` is
+defined, simultaneously: it is the paramorphism `UnorderedTree.para` that tests each subtree before
+rebuilding it from its substituted children, so `f` sees only subtrees of `t`.
+`UnorderedTree.replace target replacement` is its one-target case. On a planar representative it
+is computed by `RoseTree.unorderedReplace` (`UnorderedTree.replace_mk`), and the planar substitution
+`RoseTree.replaceIf` of the subtrees satisfying a predicate, replacing the planar subtrees in a
+class, is `replace` on the class (`UnorderedTree.mk_replaceIf`).
 
 ## Main definitions
 
-* `UnorderedTree.replace`, `RoseTree.unorderedReplace`
+* `UnorderedTree.subst`, `UnorderedTree.replace`, `RoseTree.unorderedReplace`
 
 ## Main results
 
+* `UnorderedTree.subst_congr`, `UnorderedTree.subst_eq_self`: substitutions agreeing on the
+  subtrees agree, and one fixing them is the identity.
 * `UnorderedTree.mk_replaceIf`: the quotient map commutes with substitution.
 -/
 
@@ -73,22 +76,74 @@ private theorem unorderedReplace_eq_para (target replacement : UnorderedTree α)
       rw [List.map_cons, ← Multiset.cons_coe, Multiset.map_cons, unorderedReplaceList,
         ih c List.mem_cons_self, ihcs fun c hc ↦ ih c (List.mem_cons_of_mem _ hc)]
 
+end UnorderedTree
+
+namespace UnorderedTree
+
+variable {α : Type*}
+
+/-! ### Simultaneous substitution -/
+
+/-- Substitute `f s` for every outermost subtree `s` on which `f` is defined, simultaneously. -/
+def subst (f : UnorderedTree α → Option (UnorderedTree α)) (t : UnorderedTree α) :
+    UnorderedTree α :=
+  para (fun a ps ↦ (f (node a (ps.map Prod.fst))).getD (node a (ps.map Prod.snd))) t
+
+@[simp] theorem subst_node (f : UnorderedTree α → Option (UnorderedTree α)) (a : α)
+    (F : Multiset (UnorderedTree α)) :
+    subst f (node a F) = (f (node a F)).getD (node a (F.map (subst f))) := by
+  simp only [subst, para_node, Multiset.map_map, Function.comp_def, Multiset.map_id']
+
+theorem subst_leaf (f : UnorderedTree α → Option (UnorderedTree α)) (a : α) :
+    subst f (leaf a) = (f (leaf a)).getD (leaf a) := by
+  simpa using subst_node f a 0
+
+theorem subst_node_pair (f : UnorderedTree α → Option (UnorderedTree α)) (a : α)
+    (l r : UnorderedTree α) :
+    subst f (node a {l, r}) = (f (node a {l, r})).getD (node a {subst f l, subst f r}) := by
+  simp
+
+theorem subst_congr {f g : UnorderedTree α → Option (UnorderedTree α)} {t : UnorderedTree α}
+    (h : ∀ s ∈ t.subtrees, f s = g s) : subst f t = subst g t := by
+  induction t with
+  | node a F ih =>
+    rw [subst_node, subst_node, h _ (by simp)]
+    congr 2
+    exact Multiset.map_congr rfl fun c hc ↦ ih c hc fun s hs ↦
+      h s (mem_subtrees_node_of_mem hc hs)
+
+theorem subst_eq_self {f : UnorderedTree α → Option (UnorderedTree α)} {t : UnorderedTree α}
+    (h : ∀ s ∈ t.subtrees, ∀ r, f s = some r → r = s) : subst f t = t := by
+  induction t with
+  | node a F ih =>
+    have hF : F.map (subst f) = F := by
+      conv_rhs => rw [← Multiset.map_id F]
+      exact Multiset.map_congr rfl fun c hc ↦ ih c hc fun s hs ↦
+        h s (mem_subtrees_node_of_mem hc hs)
+    rw [subst_node, hF]
+    cases hf : f (node a F) with
+    | none => rfl
+    | some r => exact (h _ (self_mem_subtrees _) r hf) ▸ rfl
+
+variable [DecidableEq α]
+
 /-- Replace every subtree equal to `target` by `replacement`. -/
 def replace (target replacement : UnorderedTree α) : UnorderedTree α → UnorderedTree α :=
-  Quotient.lift (unorderedReplace target replacement) fun _ _ h ↦ by
-    rw [unorderedReplace_eq_para, unorderedReplace_eq_para, mk, mk, Quotient.sound h]
+  subst fun s ↦ if s = target then some replacement else none
 
 @[simp] theorem replace_mk (target replacement : UnorderedTree α) (p : RoseTree α) :
-    replace target replacement (mk p) = unorderedReplace target replacement p := rfl
+    replace target replacement (mk p) = unorderedReplace target replacement p := by
+  rw [replace, subst, unorderedReplace_eq_para]
+  congr 1
+  funext a ps
+  split_ifs <;> rfl
 
 theorem replace_node (target replacement : UnorderedTree α) (a : α)
     (F : Multiset (UnorderedTree α)) :
     replace target replacement (node a F) =
       if node a F = target then replacement else node a (F.map (replace target replacement)) := by
-  have h (t : UnorderedTree α) : replace target replacement t = para (fun a ps ↦
-      if node a (ps.map Prod.fst) = target then replacement else node a (ps.map Prod.snd)) t :=
-    Quotient.inductionOn t (unorderedReplace_eq_para target replacement)
-  simp only [h, para_node, Multiset.map_map, Function.comp_def, Multiset.map_id']
+  rw [replace, subst_node]
+  split_ifs <;> rfl
 
 theorem replace_leaf (target replacement : UnorderedTree α) (x : α) :
     replace target replacement (leaf x) = if leaf x = target then replacement else leaf x := by
@@ -105,14 +160,15 @@ theorem replace_self (t r : UnorderedTree α) : replace t r t = r := by
 
 /-- Replacing a target that is no subtree leaves the tree unchanged. -/
 theorem replace_of_notMem_subtrees {target r t : UnorderedTree α} (h : target ∉ t.subtrees) :
-    replace target r t = t := by
-  induction t with
-  | node a F ih =>
-    rw [subtrees_node, Multiset.mem_cons, not_or] at h
-    rw [replace_node, ite_eq_right (Ne.symm h.1)]
-    conv_rhs => rw [← Multiset.map_id F]
-    exact congrArg (node a) (Multiset.map_congr rfl fun c hc ↦ ih c hc fun hm ↦
-      h.2 (Multiset.mem_join.2 ⟨_, Multiset.mem_map_of_mem _ hc, hm⟩))
+    replace target r t = t :=
+  subst_eq_self fun s hs r' hr ↦ by
+    split_ifs at hr with hst
+    exact absurd (hst ▸ hs) h
+
+@[simp] theorem replace_self_self (target t : UnorderedTree α) : replace target target t = t :=
+  subst_eq_self fun s _ r hr ↦ by
+    split_ifs at hr with hst
+    exact (Option.some.inj hr).symm.trans hst.symm
 
 /-- Replacing the planar subtrees in the class `target` is replacing `target` in the class. -/
 theorem mk_replaceIf (target : UnorderedTree α) (r t : RoseTree α) :

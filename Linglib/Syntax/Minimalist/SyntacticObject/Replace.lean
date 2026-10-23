@@ -13,18 +13,18 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 /-!
 # Substitution on syntactic objects
 
-`SyntacticObject.replace s target replacement` substitutes every subterm of `s` equal to
-`target` by `replacement`; it is `UnorderedTree.replace` closed under well-formedness, which holds
-because substitution preserves the arity of every vertex. The copy-theory use is
-`s.replace mover trace`, leaving a trace where a mover was. This is a structural operation:
-the Merge-algebraic Internal Merge is the coproduct composition of `Merge/Internal.lean`, with
-traces as cut remainders and chains held at the workspace level, and `replace` supports the
-transformational view that study files are written in. It is noncomputable; concrete cases
-reduce by `replace_self`, `replace_merge_of_ne`, and the leaf lemmas.
+`SyntacticObject.subst f s` substitutes `f u` for every outermost term `u` of `s` on which `f` is
+defined, simultaneously; it is `UnorderedTree.subst` closed under well-formedness, which holds
+because substitution preserves the arity of every vertex. `replace s target replacement` is its
+one-target case, and the copy-theory use is `deleteAccessible mover current`, `current` with the
+mover's occurrences replaced by the trace of its head (`headTrace`). The linearized objects carry
+the same replacement, commuting with forgetting the order (`toSyntacticObject_replace`).
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.replace`
+* `Minimalist.SyntacticObject.subst`, `Minimalist.SyntacticObject.replace`
+* `Minimalist.SyntacticObject.headTrace`, `Minimalist.SyntacticObject.deleteAccessible`
+* `Minimalist.LinearizedSyntacticObject.find?`, `Minimalist.LinearizedSyntacticObject.replace`
 -/
 
 @[expose] public section
@@ -33,69 +33,164 @@ namespace Minimalist
 
 open RoseTree UnorderedTree SyntacticObject
 
-theorem isSyntacticObject_replace (target replacement s : SyntacticObject) :
-    IsSyntacticObject (UnorderedTree.replace target.val replacement.val s.val) := by
+theorem isSyntacticObject_subst (f : SyntacticObject → Option SyntacticObject)
+    (s : SyntacticObject) :
+    IsSyntacticObject (UnorderedTree.subst (fun u ↦
+      if h : IsSyntacticObject u then (f ⟨u, h⟩).map Subtype.val else none) s.val) := by
+  have hg {u d : UnorderedTree Vertex} (hd : IsSyntacticObject d) :
+      IsSyntacticObject ((if h : IsSyntacticObject u then (f ⟨u, h⟩).map Subtype.val
+        else none).getD d) := by
+    split_ifs with h
+    · cases f ⟨u, h⟩ with
+      | none => exact hd
+      | some r => exact r.2
+    · exact hd
   induction s using ind with
   | leaf tok =>
-    rw [show (SyntacticObject.leaf tok).val = UnorderedTree.leaf (Vertex.lex tok) from rfl,
-      UnorderedTree.replace_leaf]
-    split
-    · exact replacement.2
-    · exact (SyntacticObject.leaf tok).2
-  | trace =>
-    rw [show trace.val = UnorderedTree.leaf (Sum.inr none) from rfl, UnorderedTree.replace_leaf]
-    split
-    · exact replacement.2
-    · exact trace.2
-  | traceOf tok =>
-    rw [show (traceOf tok).val = UnorderedTree.leaf (Sum.inr (some tok)) from rfl,
-      UnorderedTree.replace_leaf]
-    split
-    · exact replacement.2
-    · exact (traceOf tok).2
+    rw [leaf_val, UnorderedTree.subst_leaf]
+    exact hg (SyntacticObject.leaf tok).2
+  | trace => rw [trace_val, UnorderedTree.subst_leaf]; exact hg trace.2
+  | traceOf tok => rw [traceOf_val, UnorderedTree.subst_leaf]; exact hg (traceOf tok).2
   | merge l r ihl ihr =>
-    rw [merge_val, UnorderedTree.replace_node_pair]
-    split
-    · exact replacement.2
-    · exact (isSyntacticObject_merge_iff _ _).2 ⟨ihl, ihr⟩
+    rw [merge_val, UnorderedTree.subst_node_pair]
+    exact hg ((isSyntacticObject_merge_iff _ _).2 ⟨ihl, ihr⟩)
 
 namespace SyntacticObject
 
+/-- Substitute `f u` for every outermost term `u` of `s` on which `f` is defined, simultaneously. -/
+def subst (f : SyntacticObject → Option SyntacticObject) (s : SyntacticObject) : SyntacticObject :=
+  ⟨UnorderedTree.subst (fun u ↦
+    if h : IsSyntacticObject u then (f ⟨u, h⟩).map Subtype.val else none) s.val,
+    isSyntacticObject_subst f s⟩
+
+variable {f g : SyntacticObject → Option SyntacticObject}
+
+private theorem subst_val (f : SyntacticObject → Option SyntacticObject) (s : SyntacticObject) :
+    (s.subst f).val = UnorderedTree.subst (fun u ↦
+      if h : IsSyntacticObject u then (f ⟨u, h⟩).map Subtype.val else none) s.val := rfl
+
+private theorem subst_fun_val (f : SyntacticObject → Option SyntacticObject) (s : SyntacticObject) :
+    (if h : IsSyntacticObject s.val then (f ⟨s.val, h⟩).map Subtype.val else none) =
+      (f s).map Subtype.val :=
+  dite_eq_left s.2
+
+private theorem val_getD (o : Option SyntacticObject) (d : SyntacticObject) :
+    (o.getD d).val = (o.map Subtype.val).getD d.val := by
+  cases o <;> rfl
+
+@[simp] theorem subst_merge (f : SyntacticObject → Option SyntacticObject)
+    (l r : SyntacticObject) :
+    (merge l r).subst f = (f (merge l r)).getD (merge (l.subst f) (r.subst f)) := by
+  apply Subtype.ext
+  have h := UnorderedTree.subst_node_pair (fun u ↦
+    if h : IsSyntacticObject u then (f ⟨u, h⟩).map Subtype.val else none) Vertex.bare l.val r.val
+  rw [← merge_val] at h
+  rw [subst_val, h, val_getD, subst_fun_val]
+  rfl
+
+theorem subst_of_val_eq_leaf {s : SyntacticObject} {a : Vertex} (hs : s.val = UnorderedTree.leaf a)
+    (f : SyntacticObject → Option SyntacticObject) : s.subst f = (f s).getD s := by
+  apply Subtype.ext
+  have h := UnorderedTree.subst_leaf (fun u ↦
+    if h : IsSyntacticObject u then (f ⟨u, h⟩).map Subtype.val else none) a
+  rw [← hs] at h
+  rw [subst_val, h, val_getD, subst_fun_val]
+
+theorem subst_congr {s : SyntacticObject} (h : ∀ u ∈ s.terms, f u = g u) :
+    s.subst f = s.subst g := by
+  apply Subtype.ext
+  rw [subst_val, subst_val]
+  refine UnorderedTree.subst_congr fun u hu ↦ ?_
+  have hu' := isSyntacticObject_of_mem_subtrees s u hu
+  rw [dite_eq_left hu', dite_eq_left hu',
+    h ⟨u, hu'⟩ ((val_mem_subtrees (S := ⟨u, hu'⟩)).1 hu)]
+
+theorem subst_eq_self {s : SyntacticObject} (h : ∀ u ∈ s.terms, ∀ r, f u = some r → r = u) :
+    s.subst f = s := by
+  apply Subtype.ext
+  rw [subst_val]
+  refine UnorderedTree.subst_eq_self fun u hu r hr ↦ ?_
+  have hu' := isSyntacticObject_of_mem_subtrees s u hu
+  rw [dite_eq_left hu', Option.map_eq_some_iff] at hr
+  obtain ⟨r', hr', rfl⟩ := hr
+  exact congrArg Subtype.val (h ⟨u, hu'⟩ ((val_mem_subtrees (S := ⟨u, hu'⟩)).1 hu) r' hr')
+
+theorem subst_of_forall_eq_none {s : SyntacticObject} (h : ∀ u ∈ s.terms, f u = none) :
+    s.subst f = s :=
+  subst_eq_self fun u hu r hr ↦ by simp [h u hu] at hr
+
+/-! ### Replacement -/
+
 /-- Replace every subterm of `s` equal to `target` by `replacement`. -/
-noncomputable def replace (s target replacement : SyntacticObject) : SyntacticObject :=
-  ⟨UnorderedTree.replace target.val replacement.val s.val,
-    isSyntacticObject_replace target replacement s⟩
+def replace (s target replacement : SyntacticObject) : SyntacticObject :=
+  s.subst fun u ↦ if u = target then some replacement else none
 
 @[simp] theorem replace_val (s target replacement : SyntacticObject) :
     (replace s target replacement).val
-      = UnorderedTree.replace target.val replacement.val s.val := rfl
+      = UnorderedTree.replace target.val replacement.val s.val := by
+  rw [replace, subst_val, UnorderedTree.replace]
+  refine UnorderedTree.subst_congr fun u hu ↦ ?_
+  have hu' := isSyntacticObject_of_mem_subtrees s u hu
+  rw [dite_eq_left hu']
+  by_cases hut : u = target.val
+  · rw [ite_eq_left (Subtype.ext hut : (⟨u, hu'⟩ : SyntacticObject) = target), ite_eq_left hut]
+    rfl
+  · rw [ite_eq_right fun h ↦ hut (congrArg Subtype.val h), ite_eq_right hut]
+    rfl
 
 @[simp] theorem replace_self (target replacement : SyntacticObject) :
     replace target target replacement = replacement :=
   Subtype.ext (by rw [replace_val, UnorderedTree.replace_self])
 
+@[simp] theorem replace_self_self (target s : SyntacticObject) : s.replace target target = s :=
+  Subtype.ext (by rw [replace_val, UnorderedTree.replace_self_self])
+
+theorem replace_of_notMem_terms {s target replacement : SyntacticObject} (h : target ∉ s.terms) :
+    s.replace target replacement = s :=
+  Subtype.ext <| by
+    rw [replace_val, UnorderedTree.replace_of_notMem_subtrees (by rwa [val_mem_subtrees])]
+
 theorem replace_merge_of_ne {l r target replacement : SyntacticObject} (h : merge l r ≠ target) :
     replace (merge l r) target replacement
       = merge (replace l target replacement) (replace r target replacement) := by
-  apply Subtype.ext
-  rw [replace_val, merge_val, UnorderedTree.replace_node_pair, ite_eq_right, merge_val, replace_val,
-    replace_val]
-  rw [← merge_val]
-  exact fun heq => h (Subtype.ext heq)
+  rw [replace, subst_merge, ite_eq_right h]
+  rfl
 
 theorem replace_of_val_eq_leaf {s target replacement : SyntacticObject} {a : Vertex}
     (hs : s.val = UnorderedTree.leaf a) (h : s ≠ target) : s.replace target replacement = s := by
-  apply Subtype.ext
-  rw [replace_val, hs, UnorderedTree.replace_leaf]
-  split_ifs with hc
-  · exact (h (Subtype.ext (hs.trans hc))).elim
-  · rfl
+  rw [replace, subst_of_val_eq_leaf hs, ite_eq_right h]
+  rfl
 
 /-- Moving the daughter `r` out of `[l r]` and leaving a trace yields `[l′ t]`, with `l′` the
     substituted left daughter; a tree is never its own daughter, taken here as a hypothesis. -/
 example (l r : SyntacticObject) (h : merge l r ≠ r) :
     replace (merge l r) r trace = merge (replace l r trace) trace := by
   rw [replace_merge_of_ne h, replace_self]
+
+/-! ### Traces -/
+
+/-- A moved object leaves the trace of its head under the encoder `τ`, by default the head by
+    selection, or the bare trace when it has none. -/
+def headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
+    SyntacticObject :=
+  (τ s).elim trace traceOf
+
+/-- The trace a moved object leaves is the trace leaf its encoder labels. -/
+theorem headTrace_val (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
+    (s.headTrace τ).val = UnorderedTree.leaf (Sum.inr (τ s)) := by
+  unfold headTrace; cases τ s <;> rfl
+
+/-- The remainder `T/mover`, the current object with the mover's occurrences replaced by the trace
+    of its head under `τ`. -/
+def deleteAccessible (mover current : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
+  current.replace mover (mover.headTrace τ)
+
+@[simp] theorem deleteAccessible_val (mover current : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token) :
+    (deleteAccessible mover current τ).val
+      = UnorderedTree.replace mover.val (mover.headTrace τ).val current.val :=
+  replace_val _ _ _
 
 end SyntacticObject
 
@@ -135,13 +230,14 @@ def replace (p : LinearizedSyntacticObject) (target : SyntacticObject)
     (rep : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
   ⟨replaceIf (mk · = target.val) rep.val p.val, by
     rw [mk_replaceIf]
-    exact isSyntacticObject_replace target rep.toSyntacticObject p.toSyntacticObject⟩
+    exact replace_val p.toSyntacticObject target rep.toSyntacticObject ▸
+      (p.toSyntacticObject.replace target rep.toSyntacticObject).2⟩
 
 @[simp] theorem toSyntacticObject_replace (p : LinearizedSyntacticObject) (target : SyntacticObject)
     (rep : LinearizedSyntacticObject) :
     (p.replace target rep).toSyntacticObject
       = p.toSyntacticObject.replace target rep.toSyntacticObject :=
-  Subtype.ext (mk_replaceIf _ _ _)
+  Subtype.ext (by rw [replace_val]; exact mk_replaceIf _ _ _)
 
 theorem mem_terms_toSyntacticObject {p : LinearizedSyntacticObject} {m : SyntacticObject} :
     m ∈ p.toSyntacticObject.terms ↔ ∃ q ∈ p.val.subtrees, mk q = m.val := by
@@ -190,6 +286,11 @@ end LinearizedSyntacticObject
 def SyntacticObject.traceLinearized (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : LinearizedSyntacticObject :=
   (τ s).elim LinearizedSyntacticObject.trace LinearizedSyntacticObject.traceOf
+
+@[simp] theorem SyntacticObject.toSyntacticObject_traceLinearized (s : SyntacticObject)
+    (τ : SyntacticObject → Option LexicalItem.Token) :
+    (s.traceLinearized τ).toSyntacticObject = s.headTrace τ := by
+  unfold traceLinearized headTrace; cases τ s <;> rfl
 
 theorem SyntacticObject.traceLinearized_val (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token) :

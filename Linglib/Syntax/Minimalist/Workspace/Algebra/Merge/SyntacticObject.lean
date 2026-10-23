@@ -20,14 +20,13 @@ Merge on the carrier is the bare binary node `SyntacticObject.merge` with root l
 `Vertex.bare`. External Merge of two objects is the algebraic Merge operator on the two-object
 workspace, at the pruning cuts (`mergeOp_node`) and at the trace cuts (`mergeOpC_node`).
 
-Internal Merge goes through the trace cuts. The trace of an extracted term is a label of the leaf
-it contracts to ([marcolli-chomsky-berwick-2025] Definition 1.2.4), here compressed to a token by a
+Internal Merge goes through the trace cuts. The trace of an extracted term is a label of the leaf it
+contracts to ([marcolli-chomsky-berwick-2025] Definition 1.2.4), here compressed to a token by a
 trace encoder: a moved object leaves the trace of its head under the encoder (`headTrace`), by
-default the head by selection (`traceEncoder`). A uniquely
-accessible mover is extracted by exactly one trace cut, whose trunk is the remainder
-`deleteAccessible mover current` (`cutSummandsCN_filter_mover`), and Internal Merge is the
-composition `M_{T/β,β} ∘ M_{β,1}` of [marcolli-chomsky-berwick-2025] Proposition 1.4.2
-(`mergeOpC_im`).
+default the head by selection (`traceEncoder`). A uniquely accessible mover is extracted by exactly
+one trace cut, whose trunk is the remainder `deleteAccessible mover current`
+(`cutSummandsCN_filter_mover`), and Internal Merge is the composition `M_{T/β,β} ∘ M_{β,1}` of
+[marcolli-chomsky-berwick-2025] Proposition 1.4.2 (`mergeOpC_im`).
 
 The pruning cuts cannot carry Internal Merge on syntactic objects. A syntactic object is a full
 binary tree, so it has an odd number of vertices (`numNodes_odd`); a pruning cut removing one
@@ -36,7 +35,7 @@ syntactic object (`not_isSyntacticObject_of_mem_cutSummandsN`): the mover's pare
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.traceEncoder`, `headTrace`, `deleteAccessible`
+* `Minimalist.SyntacticObject.traceEncoder`
 
 ## Main results
 
@@ -49,8 +48,8 @@ syntactic object (`not_isSyntacticObject_of_mem_cutSummandsN`): the mover's pare
 * `Minimalist.SyntacticObject.mergeOpC_of'_merge`: on External Merge the Merge operator computes
   MERGE (`Workspace.merge`).
 * `mergeOpC_im_of'_merge`, `mergeOpC_sideward2b_of'_merge`, `mergeOpC_sideward3b_of'_merge`: on
-  Internal Merge and Sideward Merge of types 2(b) and 3(b) it computes MERGE with each member that
-  hosted an extracted term contracted, the term replaced by its trace.
+  Internal Merge and Sideward Merge of types 2(b) and 3(b) it computes MERGE leaving traces
+  (`Workspace.mergeWith`).
 * `Minimalist.SyntacticObject.numNodes_odd`: a syntactic object has an odd number of vertices.
 * `Minimalist.SyntacticObject.not_isSyntacticObject_of_mem_cutSummandsN`: no pruning cut removing
   one syntactic object from another leaves a syntactic object.
@@ -93,35 +92,6 @@ theorem mergeOpC_node (τ : UnorderedTree Vertex → Option LexicalItem.Token)
 
 /-- The trace encoder of derivations sends a tree to its head by selection. -/
 def traceEncoder (t : UnorderedTree Vertex) : Option LexicalItem.Token := (selCheckN t).head
-
-/-- A moved object leaves the trace of its head under the encoder `τ`, by default the head by
-    selection, or the bare trace when it has none. -/
-def headTrace (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token := selHead) :
-    SyntacticObject :=
-  (τ s).elim trace traceOf
-
-/-- The trace a moved object leaves is the trace leaf its encoder labels. -/
-theorem headTrace_val (s : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
-    (s.headTrace τ).val = UnorderedTree.leaf (Sum.inr (τ s)) := by
-  unfold headTrace; cases τ s <;> rfl
-
-@[simp] theorem toSyntacticObject_traceLinearized (s : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
-    (s.traceLinearized τ).toSyntacticObject = s.headTrace τ := by
-  unfold traceLinearized headTrace; cases τ s <;> rfl
-
-/-- The remainder `T/mover` is the current object with the mover's occurrences replaced by the
-    trace of its head under `τ`. For a uniquely accessible mover it is the trunk of the trace cut
-    that extracts the mover (`cutSummandsCN_filter_mover`); `replace` extends it to a chain of
-    occurrences. -/
-noncomputable def deleteAccessible (mover current : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token := selHead) : SyntacticObject :=
-  current.replace mover (mover.headTrace τ)
-
-@[simp] theorem deleteAccessible_val (mover current : SyntacticObject)
-    (τ : SyntacticObject → Option LexicalItem.Token) :
-    (deleteAccessible mover current τ).val
-      = UnorderedTree.replace mover.val (mover.headTrace τ).val current.val := rfl
 
 variable {mover current : SyntacticObject}
 
@@ -209,50 +179,37 @@ theorem mergeOpC_of'_merge (τ : UnorderedTree Vertex → Option LexicalItem.Tok
     Merge.mergeOpC (R := ℤ) τ Vertex.bare S.val S'.val (of' (W.map Subtype.val))
       = of' ((W.merge S S').map Subtype.val) := by
   conv_lhs => rw [← add_tsub_cancel_of_le hle]
-  rw [mergeOpC_node_residual τ S S' hW, Workspace.merge, add_comm]
-
-/-- Internal Merge's output is MERGE of the mover with the member containing it, followed by
-    contracting the mover's lower copy to the trace of its head. -/
-theorem merge_deleteAccessible_add_eq (τ : SyntacticObject → Option LexicalItem.Token)
-    {W : Workspace} (hne : current ≠ mover) (hmW : mover ∉ W) :
-    {merge (deleteAccessible mover current τ) mover} + W =
-      (({current} + W).merge mover current) - {merge mover current} +
-        {merge mover (deleteAccessible mover current τ)} := by
-  rw [Workspace.merge, add_tsub_cancel_right, Multiset.insert_eq_cons, Multiset.sub_cons,
-    Multiset.erase_of_notMem (by simpa [Ne.symm hne] using hmW), add_tsub_cancel_left,
-    merge_comm, add_comm]
+  rw [mergeOpC_node_residual τ S S' hW, Workspace.merge_def, add_comm]
 
 /-- Internal Merge ([marcolli-chomsky-berwick-2025] Proposition 1.4.2): the Merge operator at the
-    trace cuts computes MERGE of a uniquely accessible mover with the member containing it, with the
-    mover's lower copy contracted to its trace. -/
+    trace cuts computes MERGE of a uniquely accessible mover with the member containing it, leaving
+    the trace of its head. -/
 theorem mergeOpC_im_of'_merge (hm : mover.val.value.isLeft) (h : current.terms.count mover = 1)
     (hne : current ≠ mover) {W : Workspace}
     (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
     Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover current).val
         mover.val (Merge.mergeOpUnitC traceEncoder mover.val
           (of' (({current} + W).map Subtype.val)))
-      = of' (((({current} + W).merge mover current) - {merge mover current} +
-          {merge mover (deleteAccessible mover current)}).map Subtype.val) := by
-  rw [mergeOpC_im_residual hm h hne hW,
-    merge_deleteAccessible_add_eq _ hne fun hm' ↦ (hW mover hm').2 (self_mem_terms mover)]
+      = of' ((({current} + W).mergeWith (·.headTrace) mover current).map Subtype.val) := by
+  rw [mergeOpC_im_residual hm h hne hW, Workspace.mergeWith_internal
+    (Multiset.count_pos.1 (by omega)) hne fun U hU ↦ (hW U hU).2, add_comm W, merge_comm]
+  rfl
 
 /-- Sideward Merge of type 2(b) ([marcolli-chomsky-berwick-2025] Lemma 1.4.4): merging a member `T`
     with the only occurrence of a term `S'` of another member `T'`, the Merge operator at the trace
-    cuts computes MERGE with `T'` contracted, `S'` replaced in it by its trace. -/
+    cuts computes MERGE leaving the trace of the head of `S'` in `T'`, when `S'` is no term of `T`.
+    -/
 theorem mergeOpC_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Workspace}
     (hS' : S'.val.value.isLeft) (hc : T'.terms.count S' = 1) (hne : T' ≠ S') (hT : T ∉ T'.terms)
-    (hW : ∀ U ∈ W, T ∉ U.terms ∧ S' ∉ U.terms) :
+    (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, T ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare T.val S'.val
         (of' (({T, T'} + W).map Subtype.val))
-      = of' (((({T, T'} + W).merge T S') - {T'} + {deleteAccessible S' T'}).map
-          Subtype.val) := by
-  have hS'W : S' ∉ W := fun h ↦ (hW S' h).2 (self_mem_terms S')
-  have hout : (({T, T'} + W).merge T S') - {T'} + {deleteAccessible S' T'} =
+      = of' ((({T, T'} + W).mergeWith (·.headTrace) T S').map Subtype.val) := by
+  have hout : ({T, T'} + W).mergeWith (·.headTrace) T S' =
       W + {merge T S'} + {deleteAccessible S' T'} := by
-    simp only [Workspace.merge, Multiset.insert_eq_cons, Multiset.cons_add, Multiset.sub_cons,
-      Multiset.erase_cons_head, Multiset.sub_singleton, Multiset.singleton_add]
-    rw [Multiset.erase_cons_tail _ hne, Multiset.erase_of_notMem hS'W,
-      Multiset.cons_add, Multiset.erase_cons_head]
+    rw [Workspace.mergeWith_sideward_member (Multiset.count_pos.1 (by omega)) hne hT hS'T hW,
+      add_comm {_} W, add_right_comm]
+    rfl
   have hval : T.val ∉ T'.val.subtrees := by rwa [val_mem_subtrees]
   have hne' : S'.val ≠ T'.val := fun h ↦ hne (Subtype.ext h).symm
   rw [hout, Merge.mergeOpC, Multiset.map_add, of'_add, mul_comm,
@@ -268,29 +225,20 @@ theorem mergeOpC_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Workspace
 
 /-- Sideward Merge of type 3(b) ([marcolli-chomsky-berwick-2025] Lemma 1.4.4): merging the only
     occurrences of a term `S` of a member `T` and a term `S'` of another member `T'`, the Merge
-    operator at the trace cuts computes MERGE with `T` and `T'` contracted. -/
+    operator at the trace cuts computes MERGE leaving the traces of their heads. -/
 theorem mergeOpC_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Workspace}
     (hS : S.val.value.isLeft) (hS' : S'.val.value.isLeft) (hcS : T.terms.count S = 1)
     (hcS' : T'.terms.count S' = 1) (hneS : T ≠ S) (hneS' : T' ≠ S') (hST' : S ∉ T'.terms)
     (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
     Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare S.val S'.val
         (of' (({T, T'} + W).map Subtype.val))
-      = of' (((({T, T'} + W).merge S S') - {T, T'} +
-          {deleteAccessible S T, deleteAccessible S' T'}).map Subtype.val) := by
-  have hSW : S ∉ W := fun h ↦ (hW S h).1 (self_mem_terms S)
-  have hS'W : S' ∉ W := fun h ↦ (hW S' h).2 (self_mem_terms S')
-  have hST'ne : T' ≠ S := fun h ↦ hST' (h ▸ self_mem_terms T')
-  have hS'Tne : T ≠ S' := fun h ↦ hS'T (h ▸ self_mem_terms T)
-  have hout : (({T, T'} + W).merge S S') - {T, T'} +
-      {deleteAccessible S T, deleteAccessible S' T'} =
-        W + {merge S S'} + {deleteAccessible S T, deleteAccessible S' T'} := by
-    have h1 : ({T, T'} + W) - {S, S'} = {T, T'} + W := by
-      have hSm : S ∉ ({T, T'} + W : Workspace) := by simp [Ne.symm hneS, Ne.symm hST'ne, hSW]
-      have hS'm : S' ∉ ({T, T'} + W : Workspace) := by
-        simp [Ne.symm hS'Tne, Ne.symm hneS', hS'W]
-      rw [Multiset.insert_eq_cons S, Multiset.sub_cons, Multiset.sub_singleton,
-        Multiset.erase_of_notMem hSm, Multiset.erase_of_notMem hS'm]
-    rw [Workspace.merge, h1, add_assoc, add_tsub_cancel_left]
+      = of' ((({T, T'} + W).mergeWith (·.headTrace) S S').map Subtype.val) := by
+  have hout : ({T, T'} + W).mergeWith (·.headTrace) S S' =
+      W + {merge S S'} + {deleteAccessible S T, deleteAccessible S' T'} := by
+    rw [Workspace.mergeWith_sideward (Multiset.count_pos.1 (by omega))
+      (Multiset.count_pos.1 (by omega)) hneS hneS' hST' hS'T hW, add_comm {_, _} W,
+      add_right_comm]
+    rfl
   have hvS : S.val ∉ T'.val.subtrees := by rwa [val_mem_subtrees]
   have hvS' : S'.val ∉ T.val.subtrees := by rwa [val_mem_subtrees]
   rw [hout, Merge.mergeOpC, Multiset.map_add, of'_add, mul_comm,

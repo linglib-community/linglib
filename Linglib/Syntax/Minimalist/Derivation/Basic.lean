@@ -34,8 +34,8 @@ externalization reads.
 * `Minimalist.Step.run_im`: Internal Merge is an extraction followed by merging back.
 * `Minimalist.Step.mergeOp_workspace`: an admissible step is the algebraic Merge
   on the workspace.
-* `Minimalist.Step.apply_em_eq_merge`, `Step.apply_im_eq_merge`, `Step.run_remerge_eq_merge`: a
-  Merge step is MERGE, Internal Merge followed by contracting the mover's lower copy to its trace.
+* `Minimalist.Step.apply_em_eq_merge`, `Step.apply_im_eq_mergeWith`, `Step.run_remerge_eq_merge`:
+  a Merge step is MERGE, Internal Merge leaving the trace of the mover's head.
 * `Minimalist.Derivation.mergeOpList_initial`: an admissible derivation is the
   iterated algebraic Merge.
 * `Minimalist.Derivation.stageAt_append_of_le`, `movedItems_append`: extension
@@ -316,9 +316,9 @@ theorem Step.foldl_run_of_admissibleList :
 
 /-! ### Steps as MERGE
 
-A Merge step is MERGE (`Workspace.merge`) on the workspace of the current object, the items it
-introduces and the spectators: External Merge exactly, and Internal Merge followed by contracting
-the mover's lower copy to the trace of its head. Of the two stages of Internal Merge, `extract`
+A Merge step is MERGE on the workspace of the current object, the items it introduces and the
+spectators: External Merge leaving copies (`Workspace.merge`), and Internal Merge leaving the trace
+of the mover's head (`Workspace.mergeWith`). Of the two stages of Internal Merge, `extract`
 contracts and puts the mover's copy on the stack, and `remerge` is MERGE of that copy and the
 current object on the workspace that holds the stack. -/
 
@@ -328,17 +328,17 @@ theorem Step.apply_em_eq_merge (side : Edge) (item : LinearizedSyntacticObject)
     {(Step.em side item).apply current τ} + W =
       ({current} + (Step.em side item).items + W).merge ↑item current := by
   have h : ({current} + {↑item} + W : Workspace) = ({↑item} + {current}) + W := by abel
-  rw [Step.apply_em, Step.items, Workspace.merge, h, Multiset.insert_eq_cons,
+  rw [Step.apply_em, Step.items, Workspace.merge_def, h, Multiset.insert_eq_cons,
     ← Multiset.singleton_add, add_tsub_cancel_left, add_comm]
 
-/-- Internal Merge is MERGE of the mover and the current object, followed by contracting the
-    mover's lower copy to the trace of its head. -/
-theorem Step.apply_im_eq_merge (side : Edge) {mover current : SyntacticObject} {W : Workspace}
-    (hne : current ≠ mover) (hmW : mover ∉ W) :
+/-- Internal Merge is MERGE of the mover and the current object leaving the trace of the mover's
+    head. -/
+theorem Step.apply_im_eq_mergeWith (side : Edge) {mover current : SyntacticObject} {W : Workspace}
+    (hmc : mover ∈ current.terms) (hne : current ≠ mover) (hW : ∀ U ∈ W, mover ∉ U.terms) :
     {(Step.im mover side).apply current τ} + W =
-      (({current} + W).merge mover current) - {merge mover current} +
-        {merge mover (deleteAccessible mover current τ)} :=
-  merge_deleteAccessible_add_eq τ hne hmW
+      ({current} + W).mergeWith (·.headTrace τ) mover current := by
+  rw [Workspace.mergeWith_internal hmc hne hW, add_comm, merge_comm]
+  rfl
 
 /-- Merging the copy on top of the stack back is MERGE of the copy and the current object, on the
     workspace of the object, its stack and the spectators. -/
@@ -350,7 +350,8 @@ theorem Step.run_remerge_eq_merge (side : Edge) (current m : SyntacticObject)
   show {merge m current} + ↑st + W = _
   have h : ({current} + ↑(m :: st) + W : Workspace) = ({m} + {current}) + (↑st + W) := by
     rw [← Multiset.cons_coe, ← Multiset.singleton_add]; abel
-  rw [Workspace.merge, h, Multiset.insert_eq_cons, ← Multiset.singleton_add, add_tsub_cancel_left]
+  rw [Workspace.merge_def, h, Multiset.insert_eq_cons, ← Multiset.singleton_add,
+    add_tsub_cancel_left]
   abel
 
 /-! ### Derivations -/
