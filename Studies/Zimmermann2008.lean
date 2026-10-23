@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Examples.Zimmermann2008
 public import Linglib.Fragments.Hausa.Determiners
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Data.Finset.Card
@@ -32,7 +33,12 @@ universal under either negation, (91) (`neg_duk_iff`).
   read here as the generalized quantifiers `GQ.some` and `every`, the first of the three.
 * A collective predicate is one that holds only of pluralities of at least two members; the
   distributive universal applies it member by member and so fails.
-* The binding differences of §4.2.3 and the adverbial quantifiers of §6 are not represented.
+* The binding differences of §4.2.3 and the adverbial quantifiers of §6 are not represented,
+  nor are the plural-argument requirement of *duk*, (86), and the focus rescue of a subject
+  *koo*+*wh*, (75) against (78).
+* The collective rows are read by `collective_rows`, and the scope columns of the bare and
+  *wani* rows are checked against the readings the analyses generate in `bare_scope_rows` and
+  `wani_scope_rows`.
 
 ## References
 
@@ -148,5 +154,54 @@ theorem neg_duk_iff (R : Finset α) (P : α → Prop) :
 
 theorem kowWh_daura_false : ¬ kowWhSem (λ _ : Faasinjee => True) Daura :=
   λ h => h .cadi trivial
+
+/-! ### The data -/
+
+section Data
+
+open Examples
+
+/-- The universal of a collective-predicate row. -/
+inductive RowUniversal where
+  | kowWh
+  | duk
+  deriving DecidableEq, Repr
+
+/-- A collective test row: its universal quantifier. -/
+def collectiveTest? (e : Datum) : Option RowUniversal := do
+  let q ← e.parse? "quantifier" [("koo+wh", .kowWh), ("duk", .duk)]
+  let _ ← e.parse? "predicate" [("collective", ())]
+  pure q
+
+/-- The collective rows (89)–(90): the distributive universal rejects a collective predicate,
+which cannot hold of singletons (`not_every_collective`), and the collective universal takes it
+(`duk_collective`). -/
+theorem collective_rows : ∀ e ∈ Examples.all, e.Fits collectiveTest? fun q ↦
+    match q with
+    | .kowWh => .rejected
+    | .duk => .accepted := by
+  decide
+
+theorem collective_read : Datum.ReadCount collectiveTest? Examples.all 2 := by decide
+
+/-- The scope column of the bare-indefinite rows (11)–(13) is the one reading the predicative
+analysis generates, the negative existential (`neg_bareVerb_iff`, `bare_no_wide_scope`). -/
+theorem bare_scope_rows : ∀ e ∈ Examples.all, ∀ _ ∈ e.parse? "indefinite" [("bare", ())],
+    e.feature? "scope" = some "NEG > ∃" := by
+  decide
+
+/-- The scope column of the object *wani* rows (69) is the ambiguity the three-passenger model
+witnesses (`wani_ambiguity_witness`). -/
+theorem wani_scope_rows : ∀ e ∈ Examples.all, ∀ _ ∈ e.parse? "indefinite" [("wani", ())],
+    ∀ s ∈ e.feature? "scope", s = "ambiguous" := by
+  decide
+
+theorem scope_read :
+    ((Examples.all.filter fun e => (e.parse? "indefinite" [("bare", ())]).isSome).length,
+      (Examples.all.filter fun e => (e.parse? "indefinite" [("wani", ())]).isSome ∧
+        (e.feature? "scope").isSome).length) = (3, 2) := by
+  decide
+
+end Data
 
 end Zimmermann2008
