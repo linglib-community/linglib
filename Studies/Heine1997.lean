@@ -2,7 +2,6 @@ module
 
 public import Linglib.Data.Examples.Heine1997
 public import Linglib.Syntax.Case.Basic
-public import Linglib.Semantics.Possession.Defs
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.SymmDiff
 public import Mathlib.Tactic.DeriveFintype
@@ -25,7 +24,7 @@ the source meaning alone, then both meanings, then the target meaning alone, and
 a time and is never meaningless. The rows carry the chapter's examples, the Russian locative
 construction at each of the three stages (`russian_stages`), the Telugu division of labour
 between the Location Schema for physical possession and the Goal Schema for the permanent and
-inalienable notions of `Possession.Notion` (`telugu_notions`), and the Ewe and English cases.
+inalienable notions (`Notion`, `telugu_notions`), and the Ewe and English cases.
 
 The chapter's survey of source schemas in a hundred languages, the correlations between
 schemas and *have* or *belong* constructions, and the probabilistic generalizations about
@@ -51,8 +50,6 @@ possession.
 @[expose] public section
 
 namespace Heine1997
-
-open Possession
 
 /-! ### The event schemas -/
 
@@ -148,7 +145,7 @@ def Schema.formula : Schema → Formula
 it is grafted onto a simpler structure. -/
 def Schema.IsBasic (s : Schema) : Prop := s.formula.entry.IsCore
 
-instance : DecidablePred Schema.IsBasic := λ s =>
+instance : DecidablePred Schema.IsBasic := fun s ↦
   inferInstanceAs (Decidable s.formula.entry.IsCore)
 
 /-- The case marking the possessor when it is not the subject. -/
@@ -209,7 +206,7 @@ theorem overlap_of_gradual (f : ℕ → Finset Meaning) (hf : Gradual f) (h0 : f
       Meaning.target ∉ s → Meaning.target ∈ t → t = stage 1 := by
     decide
   obtain ⟨j, hj⟩ : ∃ j, Nat.find hex = j + 1 := by
-    refine Nat.exists_eq_succ_of_ne_zero λ h => ?_
+    refine Nat.exists_eq_succ_of_ne_zero fun h ↦ ?_
     have := Nat.find_spec hex
     rw [h, h0] at this
     simp [stage] at this
@@ -235,11 +232,36 @@ def meanings (r : Datum) : Finset Meaning :=
 /-- The meaning sets of the Russian rows (73), stages I, II, and III of the Location Schema's
 grammaticalization. -/
 def russianData : List (Finset Meaning) :=
-  (Examples.all.filter λ r => r.language = "russ1263").map meanings
+  (Examples.all.filter fun r ↦ r.language = "russ1263").map meanings
 
 /-- The Russian locative construction is attested at each stage of the Overlap Model, with the
 ambiguous (73c) at the overlap stage. -/
 theorem russian_stages : ∀ i, stage i ∈ russianData := by decide +kernel
+
+/-- The kinds of possession that languages tend to encode differently, from §1.3
+(pp. 34–35). -/
+inductive Notion where
+  /-- Possessor and possessee are physically associated at reference time, (29) *do you have a
+  pen?* -/
+  | physical
+  /-- The possessor can use the possessee for a limited time but does not own it, (30) *I have a
+  car that I use to go to the office but it belongs to Judy*. -/
+  | temporary
+  /-- The possessee is the possessor's property, typically by legal title, (31) *Judy has a car
+  but I use it all the time*. -/
+  | permanent
+  /-- The possessee is inseparable from the possessor, a body part or a relative, (32) *I have
+  blue eyes/two sisters*. -/
+  | inalienable
+  /-- The possessee is not visible or tangible, a disease, a feeling or a psychological state,
+  (33) *He has no time/no mercy*. -/
+  | abstract
+  /-- An inanimate possessor and an inseparable possessee, the part-whole relation, (34) *That
+  tree has few branches*. -/
+  | inanimateInalienable
+  /-- An inanimate possessor and a separable possessee, (35) *That tree has crows on it*. -/
+  | inanimateAlienable
+  deriving DecidableEq, Repr
 
 /-- The possessive notion a row expresses. -/
 def notion (r : Datum) : Option Notion :=
@@ -249,7 +271,7 @@ def notion (r : Datum) : Option Notion :=
 
 /-- The schema and notion of each Telugu row (85). -/
 def teluguData : List (Schema × Notion) :=
-  (Examples.all.filter λ r => r.language = "telu1262").filterMap λ r => do
+  (Examples.all.filter fun r ↦ r.language = "telu1262").filterMap fun r ↦ do
     pure (← schema r, ← notion r)
 
 /-- Telugu divides the notions between two schemas as the chapter's generalizations expect:

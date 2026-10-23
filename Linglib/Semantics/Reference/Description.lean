@@ -4,7 +4,7 @@ public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Denotation
-public import Linglib.Semantics.Possession.Relationalizer
+public import Linglib.Semantics.Possession.Quantifier
 
 /-!
 # Nominal descriptions
@@ -22,7 +22,8 @@ restrictor relationalized by the possession relation, Barker's `Possession.π`, 
 
 ## Main definitions
 
-* `DefiniteDescription.Restrictor E W`: a property of entities at a situation, relative to an assignment.
+* `DefiniteDescription.Restrictor E W`: a property of entities at a situation, relative to an
+  assignment.
 * `DefiniteDescription E W`, `DefiniteDescription.restrictor`, `DefiniteDescription.denote`: the
   descriptions, the restrictor each narrows, and the iota over it.
 * `DefiniteDescription.kind`, `DefiniteDescription.ofStrength`: the Frame-free kind and the
@@ -34,6 +35,8 @@ restrictor relationalized by the possession relation, Barker's `Possession.π`, 
   the referent conditions of the three iotas.
 * `denote_bare_eq_unique`, `denote_demonstrative_eq_anaphoric`: the covert iota is the weak
   article, and deixis filters without selecting.
+* `possNP_iff_exists_mem_denote_possessive`: the possessive description agrees with the
+  Peters–Westerståhl possessive quantifier on its definite reading.
 * `denote_unique_restrictor`: every description is the weak article over its restrictor, and
   `denote_anaphoric_eq_unique_of_forall_eq` the strong and weak articles agree where the antecedent
   is the only satisfier.
@@ -58,6 +61,7 @@ demonstrative's deictic content and the presupposition it imposes belong to the 
 * [russell-1905]
 * [sharvy-1980]
 * [barker-2011]
+* [peters-westerstahl-2006]
 -/
 
 @[expose] public section
@@ -224,6 +228,14 @@ possession relation to the possessor. -/
 theorem denote_possessive_isSome_iff :
     (⟦possessive R possessor rel⟧ g s).isSome ↔ ∃! x, R g s x ∧ rel g s (possessor g s) x :=
   iota_isSome_iff _
+
+/-- The possessive description agrees with the generalized-quantifier analysis of
+[peters-westerstahl-2006] on its definite reading: *John's cat is B* says, on both, that John
+has exactly one cat and that it is `B`. -/
+theorem possNP_iff_exists_mem_denote_possessive (B : E → Prop) :
+    Possession.PossNP (Quantifier.NP.individual (possessor g s)) Quantifier.GQ.the (rel g s)
+        (R g s) B ↔ ∃ x ∈ ⟦possessive R possessor rel⟧ g s, B x := by
+  rw [Possession.possNP_individual_the, the_sem_iff_iota, denote_possessive]
 
 end DefiniteDescription
 

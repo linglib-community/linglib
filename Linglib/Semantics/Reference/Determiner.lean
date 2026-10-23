@@ -192,15 +192,15 @@ theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
 
 /-! ### The possessive determiner's denotation -/
 
-/-- A possessive determiner denotes the `Nominal` of the definite description selecting the unique
-satisfier of the possessee restrictor `R` that stands in `rel` to the `possessor`, the
-`DefiniteDescription.possessive` selector (`iota` of `R ∧ rel possessor ·`). The intrinsic
-presupposition is vacuous; the definite's only presupposition is definedness, exposed as the
-selector returning `some`.
+/-- A possessive determiner denotes the possessive definite description: *my cat* picks out the
+unique cat that the speaker stands in the possession relation `rel` to
+(`DefiniteDescription.possessive`). The determiner adds no presupposition of its own; the only
+one is the definite's, that there is exactly one such cat, and where it fails the description
+picks out nothing.
 
-The narrowing-aware GQ form for quantificational possessors ("every student's
-cat") is `Possession.PossNP` — `(individual a)` of
-`PossNP` reduces here when the possessor is an entity. -/
+Quantified possessors (*every student's cat*) need the generalized-quantifier analysis,
+`Possession.PossNP`; with an individual possessor it says the same as this description on the
+definite reading (`DefiniteDescription.possNP_iff_exists_mem_denote_possessive`). -/
 noncomputable def _root_.PossessiveDeterminer.denote (_p : PossessiveDeterminer) :
     Nominal (Assignment E) W E :=
   (DefiniteDescription.possessive R possessor rel).toNominal
