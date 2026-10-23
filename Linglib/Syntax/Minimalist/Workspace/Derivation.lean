@@ -31,7 +31,7 @@ form a chain of economical transformations.
 * `Minimalist.Derivation.isChain_noComplexityLoss`, `isChain_minimalYield`: so is
   every step of an admissible derivation.
 * `Minimalist.Derivation.isChain_merge`: every step of an admissible derivation is MERGE, an
-  Internal Merge step followed by contracting the mover's lower copy to its trace.
+  Internal Merge step leaving the trace of the mover's head.
 
 ## References
 
@@ -233,20 +233,20 @@ noncomputable def workspaces (d : Derivation) : List Workspace :=
   ({d.initial} + d.items) :: Step.workspacesAfter d.steps d.initial
 
 /-- Each step of an admissible derivation is MERGE on the workspaces of its stages: an External
-    Merge step exactly, and an Internal Merge step followed by contracting the mover's lower copy to
-    the trace of its head. -/
+    Merge step leaving copies, and an Internal Merge step leaving the trace of the mover's head. -/
 theorem isChain_merge {d : Derivation} (hd : d.Admissible) :
     d.workspaces.IsChain fun W W' : Workspace ↦ ∃ P Q : SyntacticObject,
-      W' = W.merge P Q ∨ W' = W.merge P Q - {merge P Q} + {merge P (deleteAccessible P Q)} := by
+      W' = W.merge P Q ∨ W' = W.mergeWith (·.headTrace) P Q := by
   refine isChain_of_step (P := fun _ ↦ True) (fun {step current W} h _ _ ↦ ?_) (fun _ ↦ trivial)
     d.steps d.initial hd trivial fun _ _ ↦ trivial
   cases step with
   | em side item => exact ⟨↑item, current, .inl (Step.apply_em_eq_merge side item current W)⟩
   | im mover side =>
-    obtain ⟨-, -, hne, hW⟩ := h
+    obtain ⟨-, hc, hne, hW⟩ := h
     refine ⟨mover, current, .inr ?_⟩
     rw [Step.items, add_zero]
-    exact Step.apply_im_eq_merge side hne fun hm ↦ (hW mover hm).2 (self_mem_terms mover)
+    exact Step.apply_im_eq_mergeWith side (Multiset.count_pos.1 (by omega)) hne
+      fun U hU ↦ (hW U hU).2
   | extract _ | remerge _ => exact h.elim
 
 /-- Every step of an admissible derivation whose initial object and items are not traces satisfies

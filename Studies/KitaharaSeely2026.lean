@@ -16,13 +16,14 @@ Merge do not (23)–(25).
 
 Marcolli, Chomsky and Berwick state Minimal Yield over a count of accessible terms, and its
 condition on size is this one at the count of distinct terms (`minimalYield_of_minimalist`). Their
-Sideward Merge of type 2(b) satisfies their Minimal Yield, since the term it extracts leaves an
-inaccessible trace; MERGE of the same targets on the same workspace leaves the term accessible
-where it was and violates Minimal Yield (`sideward2b`).
+Sideward Merge of type 2(b) is MERGE leaving the extracted term's trace, an inaccessible leaf, and
+satisfies their Minimal Yield; MERGE of the same targets leaving the term's copy keeps it
+accessible where it was and violates Minimal Yield (`sideward2b`).
 
 ## Implementation notes
 
-* MERGE is `Workspace.merge`, and Preservation of Terms `Workspace.terms_subset_terms_merge`.
+* MERGE is `Workspace.merge`, MERGE leaving copies, and Preservation of Terms
+  `Workspace.terms_subset_terms_merge`; MERGE leaving traces is `Workspace.mergeWith`.
 * The terms of an object are counted once each, so the lower copy of an internally merged term is
   not counted again, minimal search finding the higher copy first; copies in different members of
   the workspace are counted apart.
@@ -89,7 +90,7 @@ theorem ex22 :
   decide +kernel
 
 /-- A derivation's Internal Merge step on (22) is not MERGE: it leaves the trace of `c` where MERGE
-leaves its copy, and is MERGE followed by that contraction (`Step.apply_im_eq_merge`). -/
+leaves its copy (`Step.apply_im_eq_mergeWith`). -/
 example : {(Step.im c).apply (merge a (merge b c))} ≠
     ({merge a (merge b c)} : Workspace).merge c (merge a (merge b c)) := by
   decide +kernel
@@ -119,13 +120,17 @@ theorem ex25 :
   decide +kernel
 
 /-- Sideward Merge of type 2(b) on the workspace `{eaten, {the, apple}}` of Marcolli, Chomsky and
-Berwick: their trace-cut term satisfies their Minimal Yield under the trace count, while MERGE of
-*eaten* and *the* violates Minimal Yield (12), the copy of *the* staying accessible in *the
-apple*. -/
+Berwick: MERGE of *eaten* and *the* leaving the trace of *the* satisfies their Minimal Yield under
+the trace count, while MERGE leaving its copy violates Minimal Yield (12), the copy staying
+accessible in *the apple*. -/
 theorem sideward2b :
     Minimalist.MinimalYield UnorderedTree.accessibleCount {eaten.val, theApple.val}
-      {(merge eaten theD).val, (deleteAccessible theD theApple).val} ∧
-    ¬ MinimalYield {eaten, theApple} (({eaten, theApple} : Workspace).merge eaten theD) :=
-  ⟨MarcolliChomskyBerwick2025.sideward2b_minimalYield, by decide +kernel⟩
+      ((({eaten, theApple} : Workspace).mergeWith (·.headTrace) eaten theD).map Subtype.val) ∧
+    ¬ MinimalYield {eaten, theApple} (({eaten, theApple} : Workspace).merge eaten theD) := by
+  have h := Workspace.mergeWith_sideward_member (leave := (·.headTrace)) (W := 0)
+    (T := eaten) (T' := theApple) (S' := theD) (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel) (by simp)
+  rw [add_zero, add_zero, add_comm, Multiset.singleton_add] at h
+  exact ⟨h ▸ MarcolliChomskyBerwick2025.sideward2b_minimalYield, by decide +kernel⟩
 
 end KitaharaSeely2026

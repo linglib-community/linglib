@@ -128,6 +128,11 @@ theorem self_mem_subtrees (t : UnorderedTree α) : t ∈ subtrees t := by
   induction t with
   | node a F _ => simp
 
+theorem mem_subtrees_node_of_mem {s c : UnorderedTree α} {a : α} {F : Multiset (UnorderedTree α)}
+    (hc : c ∈ F) (hs : s ∈ c.subtrees) : s ∈ (node a F).subtrees := by
+  rw [subtrees_node]
+  exact Multiset.mem_cons_of_mem (Multiset.mem_join.2 ⟨_, Multiset.mem_map_of_mem _ hc, hs⟩)
+
 /-- One subtree per vertex. -/
 theorem card_subtrees (t : UnorderedTree α) : (subtrees t).card = t.numNodes := by
   induction t with
