@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Finset.Pairwise
-public import Linglib.Syntax.Minimalist.Agree.Basic
+public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 
 /-!
 # Labeling by minimal search

@@ -1,14 +1,14 @@
 module
 
+public import Linglib.Syntax.Agreement.PersonSegment
 public import Linglib.Syntax.Clause.Scenario
-public import Linglib.Syntax.Minimalist.Agree.PersonSegment
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Mathlib.Order.Preorder.Chain
 
 /-!
 # Cyclic Agree over articulated person probes
 
-Person is decomposed into the privative segments of `Minimalist.PersonSegment`. Every person
+Person is decomposed into the privative segments of `Phi.PersonSegment`. Every person
 bears `π`, speech-act participants also `participant`, and the innermost segments `speaker` and
 `addressee` distinguish first from second person according to a geometry, which fixes which
 segments a language uses. A probe is a list of unvalued segments. A probe on v first meets the
@@ -47,6 +47,8 @@ direct exactly when it is downstream on the number of probe segments each person
 @[expose] public section
 
 namespace Minimalist.CyclicAgree
+
+open Phi (PersonSegment)
 
 /-! ### Person geometries -/
 
@@ -94,23 +96,23 @@ theorem PersonGeometry.not_branching_isChain : ¬ PersonGeometry.branching.IsCha
 
 /-- An articulated probe is a list of unvalued segments, from the most general to the most
 specific. -/
-abbrev _root_.Minimalist.Probe.Articulation := List PersonSegment
+abbrev Articulation := List PersonSegment
 
 /-- The flat probe `[uπ]`. -/
-def flatProbe : Probe.Articulation := [.pi]
+def flatProbe : Articulation := [.pi]
 
 /-- The partial probe `[uπ, uparticipant]`, which distinguishes participants from third person. -/
-def partialProbe : Probe.Articulation := [.pi, .participant]
+def partialProbe : Articulation := [.pi, .participant]
 
 /-- The full probe of a geometry, every segment the geometry uses. -/
-def fullProbe (geom : PersonGeometry) : Probe.Articulation := geom.nodes
+def fullProbe (geom : PersonGeometry) : Articulation := geom.nodes
 
 /-- A language's agreement system is a person geometry together with an articulated probe. -/
 structure AgreementSystem where
   /-- The person geometry. -/
   geometry : PersonGeometry
   /-- The articulated probe. -/
-  probe : Probe.Articulation
+  probe : Articulation
   deriving DecidableEq, Repr
 
 /-- One of the two arguments of a transitive clause. -/
@@ -130,7 +132,7 @@ abbrev spec (p : Person) : List PersonSegment := personSpec sys.geometry p
 
 /-- The residue of the probe after Agree with the internal argument, the segments it does not
 bear. -/
-def residue (ia : Person) : Probe.Articulation := sys.probe.filter fun x ↦ decide (x ∉ sys.spec ia)
+def residue (ia : Person) : Articulation := sys.probe.filter fun x ↦ decide (x ∉ sys.spec ia)
 
 /-- A context, the scenario of the external over the internal argument, is direct when the
 external argument bears some segment of the residue. -/
@@ -156,7 +158,7 @@ def value : Person := if sys.IsDirect s then s.high else s.low
 
 /-- The segments checked on each cycle, by the internal argument and then by the external one
 out of the residue. -/
-def cycles : Probe.Articulation × Probe.Articulation :=
+def cycles : Articulation × Articulation :=
   (sys.probe.filter (· ∈ sys.spec s.low), (sys.residue s.low).filter (· ∈ sys.spec s.high))
 
 /-- The rank of a person on the system's scale is the number of probe segments it bears. -/

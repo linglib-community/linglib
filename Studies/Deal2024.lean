@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
 public import Linglib.Syntax.Minimalist.Probe.Agree
-public import Linglib.Syntax.Minimalist.Agree.PersonSegment
+public import Linglib.Syntax.Agreement.PersonSegment
 public import Studies.CoonKeine2021
 public import Studies.Haspelmath2021
 public import Linglib.Syntax.Clause.Scenario
@@ -38,7 +38,7 @@ meets the indirect object first yields the reverse PCC of section 6.2.
 
 ## Implementation notes
 
-The features of the geometry (7) are the person segments of `Minimalist.PersonSegment`, [φ] its
+The features of the geometry (7) are the person segments of `Phi.PersonSegment`, [φ] its
 root `π`, [PART] `participant`, [SPKR] `speaker` and [ADDR] `addressee`, so a second person and an
 inclusive first person bear [ADDR]. The interaction condition is the set of features copied so
 far, a goal being visible when it bears them all, which is the set conception the paper's
@@ -58,7 +58,7 @@ Table (1) has no reflexive cells, so the classification of grammars ranges over 
 
 namespace Deal2024
 
-open Minimalist PersonSegment
+open Minimalist Phi PersonSegment
 open Clause (Scenario)
 
 /-! ### Probes and their runs -/

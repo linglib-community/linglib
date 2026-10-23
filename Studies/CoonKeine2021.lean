@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Agree.Cyclic
+public import Linglib.Syntax.Minimalist.Probe.Cyclic
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
 public import Linglib.Morphology.Exponence.Select
 public import Studies.BejarRezac2003
@@ -86,7 +86,7 @@ no configuration and enter no theorem.
 
 namespace CoonKeine2021
 
-open Minimalist Minimalist.CyclicAgree Morphology.Exponence
+open Minimalist Minimalist.CyclicAgree Morphology.Exponence Phi
 
 /-! ### Goals and their visible geometries -/
 
@@ -243,7 +243,7 @@ end Agree
 
 /-- Gluttony over a higher goal transfers to a bare 3rd person one, since whichever segment
 reached the lower goal past the higher reaches it past a lone person node. -/
-theorem gluttonous_third_of_gluttonous {P : Probe.Articulation} {hi lo : Goal}
+theorem gluttonous_third_of_gluttonous {P : Articulation} {hi lo : Goal}
     (hpi : PersonSegment.pi ∈ P) (h : Gluttonous Goal.personSegments P [hi, lo]) :
     Gluttonous Goal.personSegments P [dp .third, lo] := by
   obtain ⟨-, s, hs, hsh, hsl⟩ := gluttonous_pair_iff.1 h
@@ -256,26 +256,26 @@ theorem gluttonous_third_of_gluttonous {P : Probe.Articulation} {hi lo : Goal}
 /-- The PCC configuration is a clitic-doubling probe over IO > DO, the IO optionally K-encapsulated.
 By (30) each agreed-with DP must cliticize, which a gluttonous probe cannot satisfy, so gluttony is
 the violation. -/
-def PCCViolation (P : Probe.Articulation) (ioOpaque : Bool) (s : Clause.Scenario Person) : Prop :=
+def PCCViolation (P : Articulation) (ioOpaque : Bool) (s : Clause.Scenario Person) : Prop :=
   Gluttonous Goal.personSegments P [{ person := s.high, encapsulated := ioOpaque }, dp s.low]
 
-instance (P : Probe.Articulation) (b : Bool) : DecidablePred (PCCViolation P b) :=
+instance (P : Articulation) (b : Bool) : DecidablePred (PCCViolation P b) :=
   fun _ ↦ inferInstanceAs (Decidable (Gluttonous _ _ _))
 
 /-- The probe [uPERS [uPART]] of (39a) yields the Weak PCC, and is the person probe of German and
 Icelandic T ((55), (79)). -/
-abbrev weakProbe : Probe.Articulation := partialProbe
+abbrev weakProbe : Articulation := partialProbe
 
 /-- The probe [uPERS [uPART [uSPKR]]] of (39b) yields the Ultrastrong PCC. -/
-abbrev ultrastrongProbe : Probe.Articulation := fullProbe .standard
+abbrev ultrastrongProbe : Articulation := fullProbe .standard
 
 /-- The probe [uPERS [uSPKR]] of (39c) yields the Me-First PCC, with a missing intermediate segment.
 -/
-def meFirstProbe : Probe.Articulation := [.pi, .speaker]
+def meFirstProbe : Articulation := [.pi, .speaker]
 
 /-- The probe [uPERS [uPART [uSPKR] [uADDR]]] of fn. 22 (i) yields the Strong PCC over transparent
 datives, and Slovenian's reversible Strong PCC (fn. 26). -/
-def branchingProbe : Probe.Articulation := [.pi, .participant, .speaker, .addressee]
+def branchingProbe : Articulation := [.pi, .participant, .speaker, .addressee]
 
 /-- The Weak PCC (22) bans *3 > 1/2. -/
 theorem weak_pcc : ∀ s ∈ PCC.cliticPairs,
@@ -306,7 +306,7 @@ theorem branching_pcc : ∀ s ∈ PCC.cliticPairs,
 
 /-- No probe bans a direct or balanced configuration (§3.4.2), since a 3rd person direct object
 exposes nothing the indirect object lacks. -/
-theorem direct_never_banned (P : Probe.Articulation) (b : Bool) (io : Person) :
+theorem direct_never_banned (P : Articulation) (b : Bool) (io : Person) :
     ¬ PCCViolation P b ⟨io, .third⟩ :=
   not_gluttonous_of_subset fun s hs ↦ by
     rw [show (dp .third).personSegments = [.pi] from rfl, List.mem_singleton] at hs
@@ -314,7 +314,7 @@ theorem direct_never_banned (P : Probe.Articulation) (b : Bool) (io : Person) :
 
 /-- A probe rooted in [uPERS] that bans a cluster bans its direct object under a 3rd person
 indirect object (§3.4.2), so a ban on [PART] > [PART] entails the ban on 3 > [PART]. -/
-theorem pccViolation_third_of_pccViolation {P : Probe.Articulation} (hpi : PersonSegment.pi ∈ P)
+theorem pccViolation_third_of_pccViolation {P : Articulation} (hpi : PersonSegment.pi ∈ P)
     {b : Bool} {s : Clause.Scenario Person} (h : PCCViolation P b s) :
     PCCViolation P false ⟨.third, s.low⟩ :=
   gluttonous_third_of_gluttonous hpi h
@@ -388,17 +388,17 @@ theorem nonfinite_obviation :
 
 /-- The articulated number probe [uNUM [uPL]] of (23) and (55) comes paired with a person probe,
 since the probe-specification hierarchy (40) makes a number probe entail a person one. -/
-def numberProbe (P : Probe.Articulation) : List NumberSegment :=
+def numberProbe (P : Articulation) : List NumberSegment :=
   if P = [] then [] else [.num, .pl]
 
 /-- Clitic doubling removes the doubled DP from later probing (§3.2), which fixes what the number
 probe sees after the person probe. -/
-def afterDoubling (P : Probe.Articulation) (goals : List Goal) : List Goal :=
+def afterDoubling (P : Articulation) (goals : List Goal) : List Goal :=
   (goals.zipIdx.filter (· ∉ agreed Goal.personSegments P goals)).map (·.1)
 
 /-- There is no Number Case Constraint ((40)–(42)). Over two clitic-doubled objects the person
 probe, rooted in [uPERS], doubles the higher one, so the number probe sees one goal. -/
-theorem no_number_case_constraint {P : Probe.Articulation} (hpi : PersonSegment.pi ∈ P)
+theorem no_number_case_constraint {P : Articulation} (hpi : PersonSegment.pi ∈ P)
     {goals : List Goal} (h : goals.length ≤ 2) :
     ¬ Gluttonous Goal.numberSegments (numberProbe P) (afterDoubling P goals) := by
   apply not_gluttonous_of_length_le_one
@@ -519,7 +519,7 @@ def Paradigm.number : Paradigm → RuleSet (VI NumberSegment)
 
 /-- The number context of person insertion is the plural when the number probe's first value is
 plural, and the singular otherwise. -/
-def numberContext (P : Probe.Articulation) (goals : List Goal) : numberSystem.values :=
+def numberContext (P : Articulation) (goals : List Goal) : numberSystem.values :=
   if ∃ v ∈ (values Goal.numberSegments (numberProbe P) goals).head?, NumberSegment.pl ∈ v then
     (numberSystem.value .plural)
   else numberSystem.value .singular
@@ -535,14 +535,14 @@ inductive Aftermath where
 
 /-- A person probe converges over its goals when a clitic-doubling probe does not glutton, and when
 an agreement probe's person and number demands are resolvable in a glossed number context. -/
-def Aftermath.Converges : Aftermath → Probe.Articulation → List Goal → Prop
+def Aftermath.Converges : Aftermath → Articulation → List Goal → Prop
   | .cliticize, P, goals => ¬ Gluttonous Goal.personSegments P goals
   | .realize par, P, goals =>
       (∃ vocab ∈ par.person (numberContext P goals),
         Resolvable vocab (values Goal.personSegments P goals)) ∧
         Resolvable par.number (values Goal.numberSegments (numberProbe P) goals)
 
-instance (a : Aftermath) (P : Probe.Articulation) (goals : List Goal) :
+instance (a : Aftermath) (P : Articulation) (goals : List Goal) :
     Decidable (a.Converges P goals) := by
   cases a <;> simp only [Aftermath.Converges] <;> infer_instance
 
@@ -584,7 +584,7 @@ theorem kichean_omnivorous :
 /-- A configuration the paper assigns an example. -/
 structure Config where
   /-- The person probe, empty when the clause has none. -/
-  probe : Probe.Articulation
+  probe : Articulation
   /-- The accessible goals from higher to lower. -/
   goals : List Goal
   /-- What follows Agree. -/
@@ -597,7 +597,7 @@ def Config.Converges (c : Config) : Prop := c.aftermath.Converges c.probe c.goal
 instance (c : Config) : Decidable c.Converges :=
   inferInstanceAs (Decidable (Aftermath.Converges _ _ _))
 
-def probes : List (String × Probe.Articulation) :=
+def probes : List (String × Articulation) :=
   [("weak", weakProbe), ("branching", branchingProbe), ("none", [])]
 
 def paradigms : List (String × Paradigm) :=

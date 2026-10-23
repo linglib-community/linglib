@@ -21,7 +21,7 @@ presentations.
 
 * The bivalent presentation's three-cell bound `Features.card_wellFormed` is a claim about
   the presentation and not about gender systems: Fula has twenty controller genders.
-* Smith's dual-feature system is `Minimalist.Coordination.Bundle`, and Kramer's gender features
+* Smith's dual-feature system is `Minimalist.DualFeature.Bundle`, and Kramer's gender features
   on the nominal categorizer are in `Morphology/DistributedMorphology/Gender.lean`.
 * Hammerly's rejection of the presentation, with masculine a bare gender node and natural
   gender derived at LF, is a single-paper analysis for its study.

@@ -961,9 +961,6 @@ import Linglib.Syntax.HPSG.Interpretation
 import Linglib.Syntax.HPSG.Signature
 import Linglib.Syntax.Mereological.AngularLocality
 import Linglib.Syntax.Mereological.Parthood
-import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Minimalist.Agree.Coordination
-import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Economy.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.LateMerger

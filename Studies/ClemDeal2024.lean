@@ -78,7 +78,7 @@ its probe, and so global case splits range over the hierarchy effects of agreeme
 
 namespace ClemDeal2024
 
-open Deal2024 Minimalist.PersonSegment
+open Deal2024 Phi.PersonSegment
 
 /-! ### Dependent case as the flag of a second goal -/
 

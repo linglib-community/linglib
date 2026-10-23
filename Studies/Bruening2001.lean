@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Agree.Basic
+public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 
 /-!
 # Bruening 2001: QR obeys Superiority

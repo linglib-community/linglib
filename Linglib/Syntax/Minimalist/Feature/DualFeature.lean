@@ -19,11 +19,11 @@ needs no default.
 
 ## Main definitions
 
-* `Minimalist.Coordination.Bundle`: the interpretable and the uninterpretable features of a
-  nominal, built by `Minimalist.Coordination.Bundle.single` from one feature and its
-  interpretability and sent to PF by `Minimalist.Coordination.Bundle.toPF`.
-* `Minimalist.Coordination.resolve`: the intersection of two conjuncts' interpretable features.
-* `Minimalist.Coordination.realizeAll`: the exponent a family of feature sets all receive.
+* `Minimalist.DualFeature.Bundle`: the interpretable and the uninterpretable features of a
+  nominal, built by `Minimalist.DualFeature.Bundle.single` from one feature and its
+  interpretability and sent to PF by `Minimalist.DualFeature.Bundle.toPF`.
+* `Minimalist.DualFeature.resolve`: the intersection of two conjuncts' interpretable features.
+* `Minimalist.DualFeature.realizeAll`: the exponent a family of feature sets all receive.
 
 ## References
 
@@ -33,7 +33,7 @@ needs no default.
 
 @[expose] public section
 
-namespace Minimalist.Coordination
+namespace Minimalist.DualFeature
 
 variable {F E : Type*}
 
@@ -105,4 +105,4 @@ def realizeAll [DecidableEq E] (realize : Finset F → Option E) : List (Finset 
     (s : Finset F) : realizeAll realize [s] = realize s := by
   simp [realizeAll]
 
-end Minimalist.Coordination
+end Minimalist.DualFeature

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Agree.Cyclic
+public import Linglib.Syntax.Minimalist.Probe.Cyclic
 public import Studies.BejarRezac2003
 public import Linglib.Fragments.Basque.Agreement
 public import Linglib.Fragments.Georgian.Agreement
@@ -70,7 +70,7 @@ which would bring the Kashmiri past tense (31b) into the model.
 
 namespace BejarRezac2009
 
-open Minimalist Minimalist.CyclicAgree Agreement
+open Minimalist Minimalist.CyclicAgree Agreement Phi
 open Clause (Scenario)
 
 /-! ### The systems -/

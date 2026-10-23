@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Carstens2026
 public import Linglib.Fragments.Xhosa.Nouns
 public import Linglib.Fragments.Shona.Nouns
-public import Linglib.Syntax.Minimalist.Agree.Coordination
+public import Linglib.Syntax.Minimalist.Feature.DualFeature
 public import Linglib.Morphology.DistributedMorphology.Gender
 public import Studies.TaraldsenEtAl2018
 public import Mathlib.Data.Fintype.Inv
@@ -28,7 +28,7 @@ agreement is the exception.
 ## Implementation notes
 
 * A nominal is a core gender under an optional outer gender. The visible gender's feature
-  carries the interpretability of its n and resolves by `Minimalist.Coordination.resolve`, so
+  carries the interpretability of its n and resolves by `Minimalist.DualFeature.resolve`, so
   u-genders drop out by the substrate's percolation; the cores resolve as interpretable.
 * A noun's core is the gender whose n bears the flavor of what it denotes, read off the
   fragment's animacy and the genders' status; its outer layer is its own gender.
@@ -50,7 +50,7 @@ agreement is the exception.
 
 namespace Carstens2026
 
-open Bantu Minimalist.Coordination
+open Bantu Minimalist.DualFeature
 
 /-- Whether the n of a gender carries a feature that percolates to &P, (13) and (77b). -/
 def interpretability : GenderStatus → Minimalist.Interpretability
