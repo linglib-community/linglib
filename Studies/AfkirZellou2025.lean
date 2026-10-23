@@ -43,11 +43,11 @@ the intensive of /χns/ without the schwa after the geminate (`bend_down_imp_int
 ## Implementation notes
 
 Figure 9 ranks voiced stops below voiceless fricatives, the majority view in the literature,
-against the default of [parker-2002] that it cites (`Sonority.Class.parkerRank`). No target cluster pairs the two classes, so the
-profiles are the same on either scale. The book gives the intensive forms, not their derivation:
-the derivation here is McCarthy's for the Arabic second binyan, whose template CVCCVC the
-intensive shares (`intensiveStem_eq`). The regression estimates, the acoustic measurements and
-the perception study have no formal counterpart here.
+against the default of Parker, whom it cites (`Sonority.Class.parkerRank`). No target cluster
+pairs the two classes, so the profiles are the same on either scale. The book gives the
+intensive forms, not their derivation: the derivation here is McCarthy's for the Arabic second
+binyan, whose template CVCCVC the intensive shares (`intensiveStem_eq`). The regression
+estimates, the acoustic measurements and the perception study have no formal counterpart here.
 
 ## References
 
@@ -108,7 +108,6 @@ theorem simpleStem_eq (a b c v : α) :
           associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 1⟩, ⟨.root, 2, 3⟩, ⟨.vocalism, 0, 2⟩] } by
       decide +kernel)
 
-/-- The intensive stem links the medial radical to two slots. -/
 theorem intensiveStem_eq (a b c v : α) :
     intensiveStem v ⟨[a, b, c]⟩ =
       { root := ⟨[a, b, c]⟩, vocalism := [v], template := intensiveTemplate,
@@ -279,8 +278,7 @@ def spirants : Finset Segment := ⟨↑[β, θ, ð, «ðˤ»], by decide +kernel
 def harden (x : Segment) : Segment :=
   (x.setFeature .continuant false).setFeature .delayedRelease false
 
-/-- The labial and dental stops surface as fricatives except when geminated (p. 9): Figure 6
-lists the stops of the spirants geminated, and no spirant geminated. -/
+/-- The labial and dental stops are fricatives except when geminated (p. 9). -/
 theorem spirantization : ∀ x ∈ spirants, harden x ∈ geminates ∧ x ∉ geminates := by
   decide +kernel
 
@@ -298,7 +296,6 @@ def fortition (m : TemplateMatch Segment) : TemplateMatch Segment :=
 def intensive (r : ConsonantalRoot Segment) : TemplateMatch Segment :=
   fortition (intensiveStem «ə» r)
 
-/-- The medial radical of an intensive imperative is a fortis geminate. -/
 theorem spellout_intensive (a b c : Segment) :
     (intensive ⟨[a, b, c]⟩).spellout = [a, «ə», fortis b, fortis b, «ə», c] := by
   rw [intensive, intensiveStem_eq]; rfl
@@ -320,15 +317,14 @@ def stem (c : Wordlist.Cell) (r : ConsonantalRoot Segment) : TemplateMatch Segme
 /-- The roots of the imperatives of §2. -/
 def sketchRoots : List (ConsonantalRoot Segment) := [«ʒβð», χðm, skf, nqβ, fhm, rħm, χns]
 
-/-- One root of the fragment derives each verb's simple and intensive imperatives, except the
-intensive imperative of Table 1. -/
+/-- One root derives each verb's simple and intensive imperatives, except the intensive of
+Table 1. -/
 theorem imperatives_derived :
     ∀ ℓ ∈ Wordlist.lexemes, ∃ r ∈ sketchRoots, ∀ f ∈ Wordlist.all, f.lexeme = ℓ →
       f ≠ Wordlist.bend_down_imp_intens → written (stem f.cell r).spellout = some f.segments := by
   decide +kernel
 
-/-- Table 1 writes the intensive imperative of χns without the schwa that follows the geminate in
-the derived form, as in the intensive imperatives of p. 9. -/
+/-- Table 1 writes the intensive of χns without the schwa after the geminate. -/
 theorem bend_down_imp_intens :
     written (intensive χns).spellout ≠ some Wordlist.bend_down_imp_intens.segments ∧
       written ((intensive χns).spellout.eraseIdx 4) =

@@ -27,8 +27,6 @@ the sonority hierarchy, whose four features each cut it at one point, as in Haye
   obstruents and nasals are the segments above the descriptions of their sonority classes.
 * `IsDistinctive`: a feature set on which no two segments of an inventory agree, with
   `Segment.restrict_eq_restrict_iff` relating restriction to agreement on the set.
-* `Sonority.nasal_le_iff`, `Sonority.liquid_le_iff`, `Sonority.glide_le_iff`,
-  `Sonority.vowel_le_iff`: each feature of Table 4.1 cuts the hierarchy at one point.
 * `Sonority.ofSegment_eq_of_le`: a segment with the values of a column of Table 4.1 has that
   column's sonority.
 * `Sonority.description_le_iff`: on such a segment exactly that column's description holds.
@@ -36,7 +34,6 @@ the sonority hierarchy, whose four features each cut it at one point, as in Haye
   and not on [continuant].
 * `Sonority.rise_pos`, `Sonority.rise_eq_zero`, `Sonority.rise_neg`: the sign of the sonority
   rise separates rises, plateaus and falls.
-* `Sonority.Class.toSonority_ofSegment`: Parker's classes refine the hierarchy.
 
 ## References
 
@@ -180,19 +177,15 @@ namespace Sonority
 
 theorem rank_strictMono : StrictMono rank := fun _ _ h ↦ h
 
-/-- [+sonorant] cuts the hierarchy below the nasals. -/
 theorem nasal_le_iff {c : Sonority} : nasal ≤ c ↔ c.toSegment.HasValue .sonorant true := by
   cases c <;> decide
 
-/-- [+approximant] cuts the hierarchy below the liquids. -/
 theorem liquid_le_iff {c : Sonority} : liquid ≤ c ↔ c.toSegment.HasValue .approximant true := by
   cases c <;> decide
 
-/-- [−consonantal] cuts the hierarchy below the glides. -/
 theorem glide_le_iff {c : Sonority} : glide ≤ c ↔ c.toSegment.HasValue .consonantal false := by
   cases c <;> decide
 
-/-- [+syllabic] cuts the hierarchy below the vowels. -/
 theorem vowel_le_iff {c : Sonority} : vowel ≤ c ↔ c.toSegment.HasValue .syllabic true := by
   cases c <;> decide
 
@@ -215,7 +208,6 @@ theorem ofSegment_setFeature {f : Feature} (hf : f ∉ features) (s : Segment) (
 @[simp] theorem ofSegment_toSegment (c : Sonority) : ofSegment c.toSegment = c := by
   cases c <;> decide
 
-/-- A segment above a column of Table 4.1 agrees with it on the four features. -/
 theorem apply_eq_toSegment_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) {f : Feature}
     (hf : f ∈ features) : s f = c.toSegment f := by
   have key : ∀ c : Sonority, ∀ f ∈ features, ∃ v, c.toSegment f = some v := by decide
@@ -244,8 +236,6 @@ theorem description_le_iff_ofSegment_eq {c c' : Sonority} {s : Segment} (h : c.t
     c'.description ≤ s ↔ ofSegment s = c' := by
   rw [description_le_iff h, ofSegment_eq_of_le h, eq_comm]
 
-/-- [continuant] is not a sonority feature: nasals are [−continuant] and fricatives
-[+continuant]. -/
 theorem ofSegment_setFeature_continuant (s : Segment) (v : Bool) :
     ofSegment (s.setFeature .continuant v) = ofSegment s :=
   ofSegment_setFeature (by decide) s v
@@ -279,7 +269,6 @@ theorem parkerRank_injective : Function.Injective parkerRank := by
   intro a b h
   cases a <;> cases b <;> simp_all [parkerRank]
 
-/-- Parker's classes refine the hierarchy. -/
 @[simp] theorem toSonority_ofSegment (s : Segment) :
     (ofSegment s).toSonority = Sonority.ofSegment s := by
   unfold ofSegment
