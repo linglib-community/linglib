@@ -158,8 +158,9 @@ def Codependent (x y : U) : Prop :=
   (∃ v ∈ I.A .IDX x, v ∈ I.A .IDX y) ∧ (∃ v ∈ I.A .GEND x, v ∈ I.A .GEND y) ∧
     ∃ v ∈ I.A .NUM x, v ∈ I.A .NUM y
 
-/-- An anaphor falls under Condition A and a personal pronoun under Condition B. The fragment
-states no Principle C, so a nonpronoun has no binding class. -/
+/-- The binding class of a sort, under which an anaphor falls under Condition A, a personal
+pronoun under Condition B, and a nonpronoun under none, since the fragment states no
+Principle C. -/
 def Srt.bindingClass : Srt → Option _root_.Binding.BindingClass
   | .ana => some .reflexive
   | .ppro => some .pronoun

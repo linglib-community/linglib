@@ -36,16 +36,12 @@ reaches from it.
 
 ## Implementation notes
 
-The universe is a parameter of `Interpretation` rather than a field, as the carrier of a
-first-order structure is in mathlib, so that `Fintype` and `DecidableEq` instances on the
-universe are found without any per-model declaration.
-
-Richter builds sort resolution and total well-typedness into the definition of an
-interpretation. Here they are separate predicates, named as in Carpenter's typed feature logic,
-because a worked example usually interprets only the part of a feature structure that the
-principle under test mentions. Such an example is well-typed without being totally well-typed.
-Richter also restricts the tuples of a relation to entities that are components of one common
-entity. That restriction is not imposed.
+The universe is a parameter rather than a field, as the carrier of a first-order structure is in
+mathlib, so that instances on it are found by inference. Sort resolution and total
+well-typedness, which Richter builds into an interpretation, are separate predicates named as in
+Carpenter's typed feature logic, since a worked example often interprets only the part of a
+feature structure that a principle mentions. Richter's restriction of relation tuples to the
+components of one entity is not imposed.
 
 ## References
 
@@ -102,7 +98,6 @@ theorem termDenot_congr {t : Term Sig} (h : ∀ x ∈ t.freeVars, g x = g' x) :
   | var n => simp [h n (Finset.mem_singleton_self n)]
   | feat t α ih => rw [termDenot_feat, termDenot_feat, ih h]
 
-/-- A colon-free term denotes the same entity at every described entity. -/
 theorem termDenot_of_isColonFree {t : Term Sig} (ht : t.IsColonFree) (u v : U) :
     I.termDenot g t u = I.termDenot g t v := by
   induction t with
@@ -124,8 +119,7 @@ instance [Fintype Sig.Attr] [DecidableEq U] : DecidableRel I.attrSucc :=
   fun _ _ ↦ by unfold attrSucc; infer_instance
 
 variable (I) in
-/-- The entity `v` is a component of `u` when a sequence of attributes leads from `u` to `v`.
-Quantification in RSRL ranges over the components of the described entity. -/
+/-- The entity `v` is a component of `u` when a sequence of attributes leads from `u` to `v`. -/
 abbrev IsComponentOf (u v : U) : Prop := Relation.ReflTransGen I.attrSucc u v
 
 instance [Fintype U] [DecidableEq U] [Fintype Sig.Attr] (u v : U) :
