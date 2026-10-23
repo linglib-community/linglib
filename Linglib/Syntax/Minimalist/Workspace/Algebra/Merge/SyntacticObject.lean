@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.Internal
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.Sideward
 public import Linglib.Syntax.Minimalist.Workspace.Basic
 public import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 public import Linglib.Syntax.Minimalist.Label.Selection
@@ -45,11 +46,20 @@ syntactic object (`not_isSyntacticObject_of_mem_cutSummandsN`): the mover's pare
 * `Minimalist.SyntacticObject.mergeOpUnitC_current`, `mergeOpC_im`: Internal Merge on the carrier.
 * `Minimalist.SyntacticObject.mergeOpC_node_residual`, `mergeOpC_im_residual`: both beside a
   spectator workspace.
-* `Minimalist.SyntacticObject.mergeOpC_of'_merge`, `mergeOpC_im_of'_merge`: the Merge operator
-  computes MERGE (`Workspace.merge`), Internal Merge on the remainder its cut leaves.
+* `Minimalist.SyntacticObject.mergeOpC_of'_merge`: on External Merge the Merge operator computes
+  MERGE (`Workspace.merge`).
+* `mergeOpC_im_of'_merge`, `mergeOpC_sideward2b_of'_merge`, `mergeOpC_sideward3b_of'_merge`: on
+  Internal Merge and Sideward Merge of types 2(b) and 3(b) it computes MERGE with each member that
+  hosted an extracted term contracted, the term replaced by its trace.
 * `Minimalist.SyntacticObject.numNodes_odd`: a syntactic object has an odd number of vertices.
 * `Minimalist.SyntacticObject.not_isSyntacticObject_of_mem_cutSummandsN`: no pruning cut removing
   one syntactic object from another leaves a syntactic object.
+
+## TODO
+
+* Sideward Merge of type 3(a), two terms of one member, needs the uniqueness of the cut whose
+  crown is both terms. Where one target contains the other, as in Countercyclic Merge, no
+  admissible cut has the pair as its crown, so the operator should vanish there.
 
 ## References
 
@@ -201,20 +211,94 @@ theorem mergeOpC_of'_merge (τ : UnorderedTree Vertex → Option LexicalItem.Tok
   conv_lhs => rw [← add_tsub_cancel_of_le hle]
   rw [mergeOpC_node_residual τ S S' hW, Workspace.merge, add_comm]
 
-/-- Internal Merge: the Merge operator at the trace cuts computes MERGE of a uniquely accessible
-    mover with the remainder its cut leaves ([marcolli-chomsky-berwick-2025] Proposition 1.4.2). -/
+/-- Internal Merge ([marcolli-chomsky-berwick-2025] Proposition 1.4.2): the Merge operator at the
+    trace cuts computes MERGE of a uniquely accessible mover with the member containing it, with the
+    mover's lower copy contracted to its trace. -/
 theorem mergeOpC_im_of'_merge (hm : mover.val.value.isLeft) (h : current.terms.count mover = 1)
     (hne : current ≠ mover) {W : Workspace}
     (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
     Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover current).val
         mover.val (Merge.mergeOpUnitC traceEncoder mover.val
           (of' (({current} + W).map Subtype.val)))
-      = of' ((({deleteAccessible mover current} + W).merge (deleteAccessible mover current)
-          mover).map Subtype.val) := by
+      = of' (((({current} + W).merge mover current) - {merge mover current} +
+          {merge mover (deleteAccessible mover current)}).map Subtype.val) := by
   have hmW : mover ∉ W := fun hm' ↦ (hW mover hm').2 (self_mem_terms mover)
-  rw [mergeOpC_im_residual hm h hne hW, Workspace.merge, Multiset.insert_eq_cons,
-    ← Multiset.singleton_add, add_tsub_add_eq_tsub_left, Multiset.sub_singleton,
-    Multiset.erase_of_notMem hmW, add_comm]
+  have hout : (({current} + W).merge mover current) - {merge mover current} +
+      {merge mover (deleteAccessible mover current)} =
+        {merge (deleteAccessible mover current) mover} + W := by
+    rw [Workspace.merge, add_tsub_cancel_right, Multiset.insert_eq_cons, Multiset.sub_cons,
+      Multiset.erase_of_notMem (by simpa [Ne.symm hne] using hmW), add_tsub_cancel_left,
+      merge_comm, add_comm]
+  rw [mergeOpC_im_residual hm h hne hW, hout]
+
+/-- Sideward Merge of type 2(b) ([marcolli-chomsky-berwick-2025] Lemma 1.4.4): merging a member `T`
+    with the only occurrence of a term `S'` of another member `T'`, the Merge operator at the trace
+    cuts computes MERGE with `T'` contracted, `S'` replaced in it by its trace. -/
+theorem mergeOpC_sideward2b_of'_merge {T T' S' : SyntacticObject} {W : Workspace}
+    (hS' : S'.val.value.isLeft) (hc : T'.terms.count S' = 1) (hne : T' ≠ S') (hT : T ∉ T'.terms)
+    (hW : ∀ U ∈ W, T ∉ U.terms ∧ S' ∉ U.terms) :
+    Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare T.val S'.val
+        (of' (({T, T'} + W).map Subtype.val))
+      = of' (((({T, T'} + W).merge T S') - {T'} + {deleteAccessible S' T'}).map
+          Subtype.val) := by
+  have hS'W : S' ∉ W := fun h ↦ (hW S' h).2 (self_mem_terms S')
+  have hout : (({T, T'} + W).merge T S') - {T'} + {deleteAccessible S' T'} =
+      W + {merge T S'} + {deleteAccessible S' T'} := by
+    simp only [Workspace.merge, Multiset.insert_eq_cons, Multiset.cons_add, Multiset.sub_cons,
+      Multiset.erase_cons_head, Multiset.sub_singleton, Multiset.singleton_add]
+    rw [Multiset.erase_cons_tail _ hne, Multiset.erase_of_notMem hS'W,
+      Multiset.cons_add, Multiset.erase_cons_head]
+  have hval : T.val ∉ T'.val.subtrees := by rwa [val_mem_subtrees]
+  have hne' : S'.val ≠ T'.val := fun h ↦ hne (Subtype.ext h).symm
+  rw [hout, Merge.mergeOpC, Multiset.map_add, of'_add, mul_comm,
+    Merge.mergeOpG_of'_mul _ fun U hU ↦ by
+      obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
+      exact disjoint_pair_subtrees (hW U' hU'),
+    Multiset.map_add, Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
+    ← Multiset.insert_eq_cons, Merge.mergeOpG_sideward_2b Vertex.bare hval hne',
+    cutSummandsCN_filter_mover hS' hc hne]
+  simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_add, of'_add,
+    of'_singleton, merge_val]
+  ring
+
+/-- Sideward Merge of type 3(b) ([marcolli-chomsky-berwick-2025] Lemma 1.4.4): merging the only
+    occurrences of a term `S` of a member `T` and a term `S'` of another member `T'`, the Merge
+    operator at the trace cuts computes MERGE with `T` and `T'` contracted. -/
+theorem mergeOpC_sideward3b_of'_merge {T T' S S' : SyntacticObject} {W : Workspace}
+    (hS : S.val.value.isLeft) (hS' : S'.val.value.isLeft) (hcS : T.terms.count S = 1)
+    (hcS' : T'.terms.count S' = 1) (hneS : T ≠ S) (hneS' : T' ≠ S') (hST' : S ∉ T'.terms)
+    (hS'T : S' ∉ T.terms) (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
+    Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare S.val S'.val
+        (of' (({T, T'} + W).map Subtype.val))
+      = of' (((({T, T'} + W).merge S S') - {T, T'} +
+          {deleteAccessible S T, deleteAccessible S' T'}).map Subtype.val) := by
+  have hSW : S ∉ W := fun h ↦ (hW S h).1 (self_mem_terms S)
+  have hS'W : S' ∉ W := fun h ↦ (hW S' h).2 (self_mem_terms S')
+  have hST'ne : T' ≠ S := fun h ↦ hST' (h ▸ self_mem_terms T')
+  have hS'Tne : T ≠ S' := fun h ↦ hS'T (h ▸ self_mem_terms T)
+  have hout : (({T, T'} + W).merge S S') - {T, T'} +
+      {deleteAccessible S T, deleteAccessible S' T'} =
+        W + {merge S S'} + {deleteAccessible S T, deleteAccessible S' T'} := by
+    have h1 : ({T, T'} + W) - {S, S'} = {T, T'} + W := by
+      have hSm : S ∉ ({T, T'} + W : Workspace) := by simp [Ne.symm hneS, Ne.symm hST'ne, hSW]
+      have hS'm : S' ∉ ({T, T'} + W : Workspace) := by
+        simp [Ne.symm hS'Tne, Ne.symm hneS', hS'W]
+      rw [Multiset.insert_eq_cons S, Multiset.sub_cons, Multiset.sub_singleton,
+        Multiset.erase_of_notMem hSm, Multiset.erase_of_notMem hS'm]
+    rw [Workspace.merge, h1, add_assoc, add_tsub_cancel_left]
+  have hvS : S.val ∉ T'.val.subtrees := by rwa [val_mem_subtrees]
+  have hvS' : S'.val ∉ T.val.subtrees := by rwa [val_mem_subtrees]
+  rw [hout, Merge.mergeOpC, Multiset.map_add, of'_add, mul_comm,
+    Merge.mergeOpG_of'_mul _ fun U hU ↦ by
+      obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
+      exact disjoint_pair_subtrees (hW U' hU'),
+    Multiset.map_add, Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
+    ← Multiset.insert_eq_cons, Merge.mergeOpG_sideward_3b Vertex.bare
+      (fun h ↦ hneS (Subtype.ext h).symm) (fun h ↦ hneS' (Subtype.ext h).symm) hvS hvS',
+    cutSummandsCN_filter_mover hS hcS hneS, cutSummandsCN_filter_mover hS' hcS' hneS']
+  simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_add, of'_add,
+    of'_singleton, merge_val, Multiset.insert_eq_cons, Multiset.map_cons, of'_cons]
+  ring
 
 private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
