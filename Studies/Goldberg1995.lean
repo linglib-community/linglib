@@ -1,10 +1,6 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Mathlib.Data.Fintype.Sum
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Fintype.Option
-public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Semantics.ArgumentStructure.Linking
 public import Linglib.Syntax.Category.Verb.Argument
@@ -18,21 +14,19 @@ constructions carry meaning of their own and a verb's participant roles fuse wit
 construction's argument roles. A construction's meaning is a predicate, CAUSE-RECEIVE for the
 ditransitive, CAUSE-MOVE for caused motion, CAUSE-BECOME for the resultative, MOVE for intransitive
 motion and DIRECT-ACTION-AT for the conative, over an argument structure, a frame whose slots admit
-thematic roles. The verbs are the English fragment's entries, so a verb's participant roles are the
-slots of its lexical argument structure. The fusions the book draws follow from its Semantic
-Coherence and Correspondence Principles, and the constructions form a network of normal-mode
-inheritance links.
+thematic roles. A fusion is the set of lines the book draws between participant roles and argument
+roles, and the fusions it draws are the only ones its Semantic Coherence and Correspondence
+Principles allow. The constructions form a network of normal-mode inheritance links.
 
 ## Main results
 
-* `isFusion_kick_iff`: *kick* fuses with the ditransitive in only one way (Fig. 2.9)
-* `put_uses_exception`: *put* fuses with caused motion only through the three-role exception
-  (Fig. 2.7)
-* `isFusion_mail`: the ditransitive profiles *mail*'s mailee (Fig. 2.8)
-* `wipe_talk_contributed`: the resultative adds a result-goal to *wipe* and a patient as well to
-  *talk* (Fig. 8.2)
-* `not_isFusion_become`: *become* cannot fuse with the resultative (p. 190)
-* `exists_fused`: every construction shares a participant with its verb (p. 65)
+* `fusions_kick`: *kick* fuses with the ditransitive in only one way (Fig. 2.9)
+* `put_uses_exception`: *put* fuses with caused motion through the three-role exception (Fig. 2.7)
+* `fusions_mail`: the ditransitive profiles *mail*'s mailee (Fig. 2.8) or contributes a recipient
+* `contributed_wipe`, `contributed_talk`: the resultative adds a result-goal to *wipe* and a
+  patient as well to *talk* (Fig. 8.2)
+* `fusions_become`: *become* has no fusion with the resultative (p. 190)
+* `nonempty_of_isFusion`: every construction shares a participant with its verb (p. 65)
 * `network_wellTyped`, `inherited_statedForm`, `ditransitive_meaning_ne`: the network's links
   respect their types, and the ditransitive's senses share its form but not its meaning
 
@@ -40,22 +34,22 @@ inheritance links.
 
 Argument roles are `ThetaRole` labels: the cause of caused motion admits the labels whose Dowty
 profile entails causation, and the resultative's result-goal is a goal, change of state being
-change of location (pp. 81–84). A verb's participant roles are its fragment entry's argument
-structure, extended by the roles the book construes them as; its lexical profiling is the book's
-boldface. Caused motion's theme is contributable, as in Fig. 7.1 and the sneeze case, where
-Fig. 2.6 draws it as required.
+change of location (pp. 81–84). A verb's participant roles are the slots of a frame its fragment
+entry lists, linked to the labels the book construes them as; only *kick*'s entry records the
+entailments its labels derive from. Lexical profiling is the book's boldface. Caused motion's
+theme is contributable, as in Fig. 7.1 and the sneeze case, where Fig. 2.6 draws it as required.
 
 ## TODO
 
 The conative admits a verb of its intended result only if the verb is [+motion, +contact]
 (Figs. 2.13–2.15, p. 63), features the book takes from Guerssel, Hale, Laughren, Levin and White
-Eagle (1985). Until those features are formalized the conative lists only the subtype relation,
-and no construction restricts a relation by features (`Feature` is empty). Adding the
-intended-result relation will not by itself admit *kick at*: the conative's theme is oblique and
-so not profiled, and the Correspondence Principle forbids a verb profiling two roles, as *kick*
-does in Fig. 2.9, from fusing one with a nonprofiled role; the book does not say how a verb of the
-intended result fuses. The intransitive resultative (Fig. 8.3), the passive's thematic hierarchy
-(p. 57), *send* (Fig. 2.11) and the senses of caused motion (p. 76) are not modelled.
+Eagle (1985); until they are formalized the conative lists only the subtype relation. The relation
+alone would not admit *kick at*: *kick*'s kicked role is a patient, not the conative's theme
+(`fusions_kick_conative`), and were the two compatible, the Correspondence Principle would forbid
+a verb profiling two roles from fusing one with the theme, which is oblique and so not profiled;
+the book does not say how a verb of the intended result fuses. The intransitive resultative
+(Fig. 8.3), the passive's thematic hierarchy (p. 57), *send* (Fig. 2.11) and the senses of caused
+motion (p. 76) are not modelled.
 
 ## References
 
@@ -97,45 +91,22 @@ inductive Predicate where
   | directActionAt
   deriving DecidableEq, Repr
 
-/-- `Feature` is the type of verb features that can restrict a relation, empty until the
-features the conative uses are formalized. -/
-abbrev Feature := Empty
-
 /-- The meaning of an argument structure construction is a predicate over an argument structure,
-with the relations a verb's event may bear to the construction's, each restricted to the verbs
-with some features (§2.4.2, p. 64). -/
+with the relations a verb's event may bear to the construction's (§2.4.2, p. 64). -/
 structure Sem where
   /-- The construction's predicate. -/
   pred : Predicate
   /-- The argument structure, linked to the construction's frame. -/
   link : LinkedFrame
-  /-- The admissible relations, each with the features it requires of a verb. -/
-  relations : List (SubeventRelation × Finset Feature)
+  /-- The admissible relations. -/
+  relations : List SubeventRelation
   deriving DecidableEq
-
-/-- A construction admits a verb with features `k` under the relation `R`. -/
-def Sem.Admits (M : Sem) (k : Finset Feature) (R : SubeventRelation) : Prop :=
-  ∃ x ∈ M.relations, x.1 = R ∧ x.2 ⊆ k
-
-instance (M : Sem) (k : Finset Feature) (R : SubeventRelation) : Decidable (M.Admits k R) :=
-  inferInstanceAs (Decidable (∃ x ∈ M.relations, _))
 
 /-- `causers` is the set of labels whose Dowty profile entails causation, the roles a cause
 admits: "a putter is a type of cause" (p. 52). -/
 def causers : Finset ThetaRole := Finset.univ.filter fun r ↦ .causation ∈ r.canonicalProfile
 
 example : causers = {.agent, .instrument, .stimulus} := by decide
-
-/-- A fusion satisfies the Correspondence Principle when each profiled participant role fuses
-with a profiled argument role, except that a verb profiling three roles may fuse one with a
-nonprofiled argument role (p. 50). -/
-def Corresponds (V C : LinkedFrame) (σ : ArgumentFrame.Slot → Option ArgumentFrame.Slot) :
-    Prop :=
-  (V.obligatory.filter fun s ↦ ∃ t ∈ σ s, ¬ C.IsProfiled t).length ≤
-    if V.obligatory.length = 3 then 1 else 0
-
-instance (V C : LinkedFrame) (σ) : Decidable (Corresponds V C σ) :=
-  inferInstanceAs (Decidable (_ ≤ _))
 
 /-! ### The argument structure constructions -/
 
@@ -155,8 +126,7 @@ def ditransitive (m : TransferModality) : Construction Sem :=
           { frame := .np_np
             roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.recipient}, false⟩),
               (complement 1, ⟨{.patient}, true⟩)] }
-        relations :=
-          if m = .intended then [(.precondition, ∅)] else [(.subtype, ∅), (.means, ∅)] } }
+        relations := if m = .intended then [.precondition] else [.subtype, .means] } }
 
 /-- The caused-motion construction [Subj V Obj Obl] means CAUSE-MOVE ⟨cause goal theme⟩, with goal
 and theme contributable (Fig. 7.1), so that *sneeze* acquires motion and causation from it (*Pat
@@ -173,10 +143,10 @@ def causedMotion : Construction Sem :=
           { frame := .np_spatialPP
             roles := [(external, ⟨causers, true⟩), (complement 0, ⟨{.theme}, false⟩),
               (complement 1, ⟨{.goal}, false⟩)] }
-        relations := [(.subtype, ∅), (.means, ∅)] } }
+        relations := [.subtype, .means] } }
 
 /-- The resultative [Subj V Obj Xcomp] means CAUSE-BECOME ⟨agt pat result-goal⟩, with patient and
-result-goal contributable (Fig. 8.1; *She hammered the metal flat*). -/
+result-goal contributable (Fig. 8.1; *Pat hammered the metal flat*, p. 81). -/
 def resultative : Construction Sem :=
   { form :=
       [ { filler := .open_ .NOUN }
@@ -189,7 +159,7 @@ def resultative : Construction Sem :=
           { frame := ⟨some .nominal, [.nominal, .clausal]⟩
             roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.patient}, false⟩),
               (complement 1, ⟨{.goal}, false⟩)] }
-        relations := [(.subtype, ∅), (.means, ∅)] } }
+        relations := [.subtype, .means] } }
 
 /-- The intransitive motion construction [Subj V Obl] means MOVE ⟨theme goal⟩, with the goal
 contributable (Fig. 7.2; *The fly buzzed into the room*). -/
@@ -203,7 +173,7 @@ def intransitiveMotion : Construction Sem :=
         link :=
           { frame := .spatialPP
             roles := [(external, ⟨{.theme}, true⟩), (complement 0, ⟨{.goal}, false⟩)] }
-        relations := [(.subtype, ∅), (.means, ∅)] } }
+        relations := [.subtype, .means] } }
 
 /-- The conative [Subj V Obl_at] means DIRECT-ACTION-AT ⟨agt theme⟩ (Figs. 2.13–2.15; *Sam kicked
 at Bill*); its at-phrase marks the target without entailing contact. -/
@@ -217,17 +187,13 @@ def conative : Construction Sem :=
         link :=
           { frame := .pp (some English.Adpositions.at_)
             roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.theme}, true⟩)] }
-        relations := [(.subtype, ∅)] } }
-
-/-- The goal of caused motion is not profiled: "we can tell because it is linked to an oblique
-function" (p. 53). -/
-theorem not_isProfiled_goal : ¬ causedMotion.meaning.link.IsProfiled (complement 1) := by decide
+        relations := [.subtype] } }
 
 /-! ### Verbs in constructions (§2.4)
 
-Each verb is a fragment entry. Where the entry records the entailments of its arguments the
-book's roles are derived from them; otherwise the book's construal extends the entry's argument
-structure. -/
+A verb's participant roles are the slots of a frame its fragment entry lists, linked to the roles
+the book construes them as. A fusion is written as its lines, each joining a slot of the verb to a
+slot of the construction. -/
 
 /-- The argument structure of *kick*, ⟨kicker kicked⟩ (Fig. 2.9). -/
 def kickLF : LinkedFrame :=
@@ -237,28 +203,22 @@ def kickLF : LinkedFrame :=
 patient (p. 54). -/
 theorem kick_linkedFrame : English.Verbs.kick.linkedFrame? = some kickLF := by decide
 
-/-- `kickFusion f` fuses *kick*'s two slots with the ditransitive's three by `f`. -/
-def kickFusion (f : Fin 2 → Option (Fin 3)) : ArgumentFrame.Slot → Option ArgumentFrame.Slot :=
-  ofFin [external, complement 0] [external, complement 0, complement 1] f
-
-/-- *kick* fuses with the ditransitive in only one way: "The participant roles cannot fuse with
-the argument roles in any other way" (p. 54). -/
-theorem isFusion_kick_iff (f : Fin 2 → Option (Fin 3)) :
-    IsFusionOn kickLF (ditransitive .actual).meaning.link (kickFusion f) ↔
-      f = ![some 0, some 2] := by
-  revert f; decide
+/-- *kick* fuses with the ditransitive in only one way, kicker with agent and kicked with patient:
+"The participant roles cannot fuse with the argument roles in any other way" (p. 54). -/
+theorem fusions_kick : fusions kickLF (ditransitive .actual).meaning.link =
+    {{(external, external), (complement 0, complement 1)}} := by
+  decide +kernel
 
 /-- The ditransitive contributes the recipient to *kick*: "Crucially, the recipient role is
 contributed by the construction" (p. 54). -/
 theorem contributed_kick :
-    contributed kickLF (ditransitive .actual).meaning.link (kickFusion ![some 0, some 2]) =
-      [complement 0] := by
+    contributed (ditransitive .actual).meaning.link
+      {(external, external), (complement 0, complement 1)} = {complement 0} := by
   decide
 
-/-- The identity correspondence on three slots. -/
-def id₃ : ArgumentFrame.Slot → Option ArgumentFrame.Slot :=
-  ofFin [external, complement 0, complement 1] [external, complement 0, complement 1]
-    ![some 0, some 1, some 2]
+/-- The lines that join each of three slots to itself. -/
+def diag₃ : Finset (ArgumentFrame.Slot × ArgumentFrame.Slot) :=
+  ({external, complement 0, complement 1} : Finset ArgumentFrame.Slot).diag
 
 /-- *hand* profiles all three of its participant roles, each an instance of one argument role
 of the ditransitive (Fig. 2.5). -/
@@ -267,12 +227,15 @@ def handLF : LinkedFrame :=
     roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.recipient}, true⟩),
       (complement 1, ⟨{.patient}, true⟩)] }
 
-/-- *hand* fuses one-to-one with the ditransitive, which contributes nothing (Fig. 2.5). -/
-theorem isFusion_hand :
-    (English.Verbs.hand.linkedFrame?).all (·.Extends handLF) ∧
-      IsFusionOn handLF (ditransitive .actual).meaning.link id₃ ∧
-      Corresponds handLF (ditransitive .actual).meaning.link id₃ ∧
-      contributed handLF (ditransitive .actual).meaning.link id₃ = [] := by
+/-- *hand* fuses with the ditransitive in one way, each of its roles with the matching argument
+role (Fig. 2.5). -/
+theorem fusions_hand : fusions handLF (ditransitive .actual).meaning.link = {diag₃} := by
+  decide +kernel
+
+/-- The profiled participant roles of *hand* fuse with the profiled argument roles of the
+ditransitive, which contributes nothing (p. 51). -/
+theorem corresponds_hand : Corresponds handLF (ditransitive .actual).meaning.link diag₃ ∧
+    contributed (ditransitive .actual).meaning.link diag₃ = ∅ := by
   decide
 
 /-- *put* profiles all three roles: the putter is "a type of cause", the put.place role "is a
@@ -282,22 +245,15 @@ def putLF : LinkedFrame :=
     roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.theme}, true⟩),
       (complement 1, ⟨{.goal}, true⟩)] }
 
-/-- `putFusion f` fuses *put*'s three slots with caused motion's by `f`. -/
-def putFusion (f : Fin 3 → Option (Fin 3)) : ArgumentFrame.Slot → Option ArgumentFrame.Slot :=
-  ofFin [external, complement 0, complement 1] [external, complement 0, complement 1] f
+theorem fusions_put : fusions putLF causedMotion.meaning.link = {diag₃} := by decide +kernel
 
-theorem isFusion_put :
-    (English.Verbs.put.linkedFrame?).all (·.Extends putLF) ∧
-      IsFusionOn putLF causedMotion.meaning.link (putFusion ![some 0, some 1, some 2]) ∧
-      Corresponds putLF causedMotion.meaning.link (putFusion ![some 0, some 1, some 2]) := by
+/-- *put* fuses with caused motion by the three-role exception, its profiled put.place role
+fusing with the goal, which is not profiled: "we can tell because it is linked to an oblique
+function" (p. 53). -/
+theorem put_uses_exception :
+    profilingMismatches putLF causedMotion.meaning.link diag₃ = {(complement 1, complement 1)} ∧
+      Corresponds putLF causedMotion.meaning.link diag₃ := by
   decide
-
-/-- *Put* fuses with caused motion only by linking a role to a nonprofiled argument role, the
-three-role exception (p. 53). -/
-theorem put_uses_exception (f : Fin 3 → Option (Fin 3))
-    (h : IsFusionOn putLF causedMotion.meaning.link (putFusion f)) :
-    ∃ s ∈ putLF.obligatory, ∃ t ∈ putFusion f s, ¬ causedMotion.meaning.link.IsProfiled t := by
-  revert f; decide +kernel
 
 /-- *mail* profiles only its mailer and mailed (*Paul mailed a letter*, p. 53); the mailee is its
 *to*-phrase. -/
@@ -308,18 +264,21 @@ def mailLF : LinkedFrame :=
 
 /-- `mailFusion` fuses the mailer with the agent, the mailee with the recipient and the mailed
 with the patient (Fig. 2.8). -/
-def mailFusion : ArgumentFrame.Slot → Option ArgumentFrame.Slot :=
-  ofFin [external, complement 0, complement 1] [external, complement 0, complement 1]
-    ![some 0, some 2, some 1]
+def mailFusion : Finset (ArgumentFrame.Slot × ArgumentFrame.Slot) :=
+  {(external, external), (complement 0, complement 1), (complement 1, complement 0)}
 
-/-- The ditransitive "imposes a profiled status" on the mailee: not lexically profiled, it fuses
-with a profiled argument role (p. 53). -/
-theorem isFusion_mail :
-    mailLF.frame ∈ English.Verbs.mail.valency.frames ∧
-      IsFusionOn mailLF (ditransitive .actual).meaning.link mailFusion ∧
-      Corresponds mailLF (ditransitive .actual).meaning.link mailFusion ∧
-      complement 1 ∉ mailLF.obligatory ∧
-      ∃ t ∈ mailFusion (complement 1), (ditransitive .actual).meaning.link.IsProfiled t := by
+/-- The book's principles let the ditransitive fuse with *mail* as in Fig. 2.8 or, the mailee not
+being profiled, contribute the recipient as it does to *kick*. -/
+theorem fusions_mail :
+    fusions mailLF (ditransitive .actual).meaning.link =
+      {mailFusion, mailFusion.erase (complement 1, complement 0)} := by
+  decide +kernel
+
+/-- The ditransitive "imposes a profiled status" on the mailee, which fuses with the profiled
+recipient (p. 53). -/
+theorem mailee_profiled :
+    complement 1 ∉ mailLF.obligatory ∧ (complement 1, complement 0) ∈ mailFusion ∧
+      (ditransitive .actual).meaning.link.IsProfiled (complement 0) := by
   decide
 
 /-- *sneeze* "has a single profiled participant role, a sneezer" (p. 54), which the book fuses
@@ -329,42 +288,34 @@ def sneezeLF : LinkedFrame :=
 
 /-- *sneeze* fuses its sneezer with the cause, and caused motion contributes the goal and the
 theme (Fig. 2.10). -/
-theorem isFusion_sneeze :
-    (English.Verbs.sneeze.linkedFrame?).all (·.Extends sneezeLF) ∧
-      IsFusionOn sneezeLF causedMotion.meaning.link
-        (ofFin [external] [external, complement 0, complement 1] ![some 0]) ∧
-      contributed sneezeLF causedMotion.meaning.link
-        (ofFin [external] [external, complement 0, complement 1] ![some 0]) =
-          [complement 0, complement 1] := by
-  decide
+theorem fusions_sneeze : fusions sneezeLF causedMotion.meaning.link = {{(external, external)}} ∧
+    contributed causedMotion.meaning.link {(external, external)} =
+      {complement 0, complement 1} := by
+  decide +kernel
 
-/-- *wipe* profiles its participant roles ⟨wiper wiped⟩ (p. 189). Its lexical entry leaves the
-wiper's agentivity to pragmatics, a subject that only moves, and the book construes it as an
-agent. -/
+/-- *wipe* profiles its participant roles ⟨wiper wiped⟩ (p. 189). -/
 def wipeLF : LinkedFrame :=
   { frame := .np
-    roles := [(external, ⟨{.agent, .theme}, true⟩), (complement 0, ⟨{.patient}, true⟩)] }
+    roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.patient}, true⟩)] }
 
 /-- *talk* profiles its single participant role ⟨talker⟩ (p. 189). -/
 def talkLF : LinkedFrame :=
   { frame := .intransitive, roles := [(external, ⟨{.agent}, true⟩)] }
 
-/-- The resultative adds only a result-goal to *wipe*, and both a patient and a result-goal to
-*talk* (p. 190). -/
-theorem wipe_talk_contributed :
-    (English.Verbs.wipe.linkedFrame?).all (·.Extends wipeLF) ∧
-      IsFusionOn wipeLF resultative.meaning.link
-        (ofFin [external, complement 0] [external, complement 0, complement 1] ![some 0, some 1]) ∧
-      contributed wipeLF resultative.meaning.link
-        (ofFin [external, complement 0] [external, complement 0, complement 1] ![some 0, some 1]) =
-          [complement 1] ∧
-      (English.Verbs.talk.linkedFrame?).all (·.Extends talkLF) ∧
-      IsFusionOn talkLF resultative.meaning.link
-        (ofFin [external] [external, complement 0, complement 1] ![some 0]) ∧
-      contributed talkLF resultative.meaning.link
-        (ofFin [external] [external, complement 0, complement 1] ![some 0]) =
-          [complement 0, complement 1] := by
-  decide
+/-- The resultative adds only a result-goal to *wipe* (Fig. 8.2). -/
+theorem contributed_wipe :
+    fusions wipeLF resultative.meaning.link =
+        {{(external, external), (complement 0, complement 0)}} ∧
+      contributed resultative.meaning.link {(external, external), (complement 0, complement 0)} =
+        {complement 1} := by
+  decide +kernel
+
+/-- The resultative adds both a patient and a result-goal to *talk* (Fig. 8.2). -/
+theorem contributed_talk :
+    fusions talkLF resultative.meaning.link = {{(external, external)}} ∧
+      contributed resultative.meaning.link {(external, external)} =
+        {complement 0, complement 1} := by
+  decide +kernel
 
 /-- *become* profiles its participant roles ⟨patient result-goal⟩ (p. 190), a subject and a
 predicative complement. -/
@@ -374,10 +325,7 @@ def becomeLF : LinkedFrame :=
 
 /-- *Become* does not fuse with the resultative, which needs the agent fused with an existing
 participant role of the verb (p. 190). -/
-theorem not_isFusion_become (f : Fin 2 → Option (Fin 3)) :
-    ¬ IsFusionOn becomeLF resultative.meaning.link
-      (ofFin [external, complement 0] [external, complement 0, complement 1] f) := by
-  revert f; decide
+theorem fusions_become : fusions becomeLF resultative.meaning.link = ∅ := by decide +kernel
 
 /-- *aim* ⟨aimer target⟩ profiles only its aimer, the target not being in boldface in Fig. 2.14;
 it is an instance of DIRECT-ACTION-AT (p. 64). -/
@@ -386,13 +334,21 @@ def aimLF : LinkedFrame :=
     roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.theme}, false⟩)] }
 
 /-- *aim* fuses with the conative as an instance of it (Fig. 2.14). -/
-theorem isFusion_aim :
-    (English.Verbs.aim.linkedFrame?).all (·.Extends aimLF) ∧
-      IsFusionOn aimLF conative.meaning.link
-        (ofFin [external, complement 0] [external, complement 0] ![some 0, some 1]) ∧
-      Corresponds aimLF conative.meaning.link
-        (ofFin [external, complement 0] [external, complement 0] ![some 0, some 1]) ∧
-      conative.meaning.Admits ∅ .subtype := by
+theorem fusions_aim :
+    fusions aimLF conative.meaning.link = {{(external, external), (complement 0, complement 0)}} ∧
+      Corresponds aimLF conative.meaning.link {(external, external), (complement 0, complement 0)} ∧
+      .subtype ∈ conative.meaning.relations := by
+  decide +kernel
+
+/-- *kick*, construed as in Fig. 2.9, has no fusion with the conative of Fig. 2.13, whose example
+is *Sam kicked at Bill* (p. 4): its kicked role is a patient, not a theme. -/
+theorem fusions_kick_conative : fusions kickLF conative.meaning.link = ∅ := by decide +kernel
+
+/-- Each verb's construal is over a frame its fragment entry lists. -/
+theorem mem_frames :
+    ∀ x ∈ [(English.Verbs.hand, handLF), (English.Verbs.put, putLF), (English.Verbs.mail, mailLF),
+      (English.Verbs.sneeze, sneezeLF), (English.Verbs.wipe, wipeLF), (English.Verbs.talk, talkLF),
+      (English.Verbs.aim, aimLF)], x.2.frame ∈ x.1.valency.frames := by
   decide
 
 /-! ### The network (§3.3) -/
@@ -421,10 +377,10 @@ theorem obligatory_ne_nil (n : Node) : (construction n).meaning.link.obligatory 
 
 /-- The Shared Participant Condition holds of every construction of the network: it shares a
 participant with any verb fused with it (p. 65). -/
-theorem exists_fused (n : Node) {V : LinkedFrame}
-    {σ : ArgumentFrame.Slot → Option ArgumentFrame.Slot}
-    (h : IsFusion V (construction n).meaning.link σ) : ∃ s t, σ s = some t :=
-  h.exists_fused (obligatory_ne_nil n)
+theorem nonempty_of_isFusion (n : Node) {V : LinkedFrame}
+    {σ : Finset (ArgumentFrame.Slot × ArgumentFrame.Slot)}
+    (h : IsFusion V (construction n).meaning.link σ) : σ.Nonempty :=
+  h.nonempty (obligatory_ne_nil n)
 
 /-- The senses of the ditransitive differ in meaning from its central sense (pp. 75–77). -/
 theorem ditransitive_meaning_ne {m : TransferModality} (hm : m ≠ .actual) :
