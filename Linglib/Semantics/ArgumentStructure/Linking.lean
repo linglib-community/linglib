@@ -2,42 +2,42 @@ module
 
 public import Mathlib.Order.Disjoint
 public import Mathlib.Data.Finset.Lattice.Basic
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Finset.Prod
+public import Mathlib.Data.Fintype.Defs
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 
 /-!
 # Linked frames and fusion
 
-This file defines argument structures as linked frames and the fusion of one argument structure
-with another. A linked frame is an argument frame whose slots are linked to the thematic roles they
-admit, each slot either required of whatever fills the frame or open. A verb's lexical argument
-structure and the meaning of an argument structure construction are both linked frames. A clause
-arises when the verb's argument structure is fused with an event structure: a correspondence
-between their slots under which every pair of corresponding slots admits a common role, every slot
-the verb requires is fused, and every slot the event structure requires is filled. The slots of
-the event structure that nothing fuses with are contributed by it.
+This file defines argument structures as linked frames, argument frames whose slots are linked to
+the thematic roles they admit, and the fusion of a verb's argument structure with an event
+structure in the sense of [goldberg-1995]. A fusion is the set of lines in Goldberg's diagrams,
+each joining a slot of the verb to a slot of the event structure: a partial one-to-one
+correspondence that joins compatible slots and takes in every required slot on either side.
 
 ## Main definitions
 
 * `RoleSlot`, `LinkedFrame`: a slot's admitted roles, and a frame with its slots linked
 * `LinkedFrame.IsProfiled`: a slot is profiled when it is a core slot of the frame
-* `LinkedFrame.Extends`: one argument structure admits at least the roles of another
-* `IsFusion`: a correspondence of slots obeying coherence and the two obligations
-* `contributed`: the slots of the event structure no slot of the verb fuses with
+* `IsFusion`, `fusions`: fusions of one linked frame with another, and the finite set of them
+* `contributed`: the slots of the event structure no line ends at
+* `profilingMismatches`, `Corresponds`: the Correspondence Principle of [goldberg-1995]
 * `SubeventRelation`: how the verb's event relates to the event structure's
 
 ## Main results
 
-* `IsFusion.exists_fused`: an event structure with a required slot shares a participant with every
+* `mem_fusions`: `fusions` lists every fusion
+* `IsFusion.nonempty`: an event structure with a required slot shares a participant with every
   verb fused with it
-* `isFusion_refl`: the identity correspondence fuses an argument structure with itself
+* `isFusion_diag`: the diagonal fuses an argument structure with itself
 
 ## Implementation notes
 
-The roles a slot admits form a set of `ThetaRole` labels, and two slots are compatible when their
-sets meet. A correspondence is a map from slots to optional slots; `IsFusionOn` restates `IsFusion`
-over the verb's slots so that it can be decided, and `ofFin` builds a correspondence from a map
-between slot indices.
+A fusion is a finite set of lines rather than a map so that `fusions` can list every fusion. No
+slot is on two lines: two participant roles fuse with one argument role only in a construction
+that merges them, as reflexives do ([goldberg-1995], p. 58).
 
 ## References
 
@@ -94,13 +94,11 @@ def WF : Prop := ∀ x ∈ L.roles, x.1 ∈ L.frame.slots
 
 instance : Decidable L.WF := inferInstanceAs (Decidable (∀ x ∈ L.roles, _))
 
-/-- `L.Extends L'` holds when `L'` has the frame of `L` and admits at each slot every role `L`
-admits there, as a paper's construal of a verb extends the argument structure its lexical entry
-derives. -/
-def Extends (L' : LinkedFrame) : Prop :=
-  L.frame = L'.frame ∧ ∀ x ∈ L.roles, x.2.admits ⊆ L'.admits x.1
-
-instance (L' : LinkedFrame) : Decidable (L.Extends L') := inferInstanceAs (Decidable (_ ∧ _))
+theorem mem_slots_of_mem_obligatory {L : LinkedFrame} (hL : L.WF) {s : Slot}
+    (hs : s ∈ L.obligatory) : s ∈ L.frame.slots := by
+  simp only [obligatory, List.mem_map, List.mem_filter] at hs
+  obtain ⟨x, ⟨hx, _⟩, rfl⟩ := hs
+  exact hL x hx
 
 end LinkedFrame
 
@@ -126,92 +124,93 @@ inductive SubeventRelation where
   | coOccurrence
   deriving DecidableEq, Repr
 
-variable (V C : LinkedFrame) (σ : Slot → Option Slot)
+/-! ### Fusion -/
 
-/-- `IsFusion V C σ` holds when `σ` fuses the argument structure `V` with the event structure `C`:
-corresponding slots admit a common role, the Semantic Coherence Principle of [goldberg-1995]
-(p. 50), `σ` lands in `C`'s frame, and every required slot on either side takes part. -/
+variable (V C : LinkedFrame) (σ : Finset (Slot × Slot))
+
+/-- `IsFusion V C σ` holds when the lines `σ` fuse the argument structure `V` with the event
+structure `C`: each line joins a slot of `V` to a slot of `C` that admits a common role, the
+Semantic Coherence Principle of [goldberg-1995] (p. 50), no slot is on two lines, and every
+required slot on either side is on a line. -/
 structure IsFusion : Prop where
-  /-- Corresponding slots admit a common role. -/
-  coherent : ∀ s t, σ s = some t → ¬ Disjoint (V.admits s) (C.admits t)
-  /-- The correspondence lands in the frame of the event structure. -/
-  mem_target : ∀ s t, σ s = some t → t ∈ C.frame.slots
+  /-- Each line joins a slot of `V` to a slot of `C`. -/
+  subset : σ ⊆ V.frame.slots.toFinset ×ˢ C.frame.slots.toFinset
+  /-- The slots a line joins admit a common role. -/
+  coherent : ∀ x ∈ σ, ¬ Disjoint (V.admits x.1) (C.admits x.2)
+  /-- No slot of `V` is on two lines. -/
+  injOn_fst : Set.InjOn Prod.fst (σ : Set (Slot × Slot))
+  /-- No slot of `C` is on two lines. -/
+  injOn_snd : Set.InjOn Prod.snd (σ : Set (Slot × Slot))
   /-- Every required slot of the verb is fused. -/
-  obligatory_source : ∀ s ∈ V.obligatory, (σ s).isSome
+  obligatory_source : ∀ s ∈ V.obligatory, s ∈ σ.image Prod.fst
   /-- Every required slot of the event structure is fused with a slot of the verb. -/
-  obligatory_target : ∀ t ∈ C.obligatory, ∃ s ∈ V.frame.slots, σ s = some t
+  obligatory_target : ∀ t ∈ C.obligatory, t ∈ σ.image Prod.snd
 
-/-- `contributed V C σ` lists the slots of `C` that no slot of `V` fuses with, the roles a
+theorem isFusion_iff : IsFusion V C σ ↔
+    σ ⊆ V.frame.slots.toFinset ×ˢ C.frame.slots.toFinset ∧
+      (∀ x ∈ σ, ¬ Disjoint (V.admits x.1) (C.admits x.2)) ∧
+      Set.InjOn Prod.fst (σ : Set (Slot × Slot)) ∧ Set.InjOn Prod.snd (σ : Set (Slot × Slot)) ∧
+      (∀ s ∈ V.obligatory, s ∈ σ.image Prod.fst) ∧ ∀ t ∈ C.obligatory, t ∈ σ.image Prod.snd :=
+  ⟨fun ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩ ↦ ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩,
+    fun ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩ ↦ ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩⟩
+
+instance : Decidable (IsFusion V C σ) := decidable_of_iff _ (isFusion_iff V C σ).symm
+
+/-- `fusions V C` is the set of fusions of `V` with `C`. -/
+def fusions : Finset (Finset (Slot × Slot)) :=
+  (V.frame.slots.toFinset ×ˢ C.frame.slots.toFinset).powerset.filter (IsFusion V C)
+
+/-- `contributed C σ` is the set of slots of `C` that no line of `σ` ends at, the roles a
 construction contributes to a verb ([goldberg-1995], p. 54). -/
-def contributed : List Slot :=
-  C.frame.slots.filter fun t ↦ V.frame.slots.all fun s ↦ σ s != some t
+def contributed : Finset Slot := C.frame.slots.toFinset \ σ.image Prod.snd
 
-/-- `IsFusionOn V C σ` restates `IsFusion V C σ` over the slots of `V`, a decidable form. -/
-def IsFusionOn : Prop :=
-  (∀ s ∈ V.frame.slots, ∀ t ∈ σ s, ¬ Disjoint (V.admits s) (C.admits t) ∧ t ∈ C.frame.slots) ∧
-    (∀ s ∈ V.obligatory, (σ s).isSome) ∧ ∀ t ∈ C.obligatory, ∃ s ∈ V.frame.slots, σ s = some t
+/-- `profilingMismatches V C σ` is the set of lines of `σ` from a required slot of `V` to a
+nonprofiled slot of `C`, as *put* fuses its place with the oblique goal of caused motion
+([goldberg-1995], p. 53). -/
+def profilingMismatches : Finset (Slot × Slot) :=
+  σ.filter fun x ↦ x.1 ∈ V.obligatory ∧ ¬ C.IsProfiled x.2
 
-instance : Decidable (IsFusionOn V C σ) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+/-- `Corresponds V C σ` holds when `σ` obeys the Correspondence Principle of [goldberg-1995]
+(p. 50): every line from a required slot of `V` ends at a profiled slot of `C`, except that a
+verb with three required slots may have one line end at a nonprofiled slot. -/
+def Corresponds : Prop :=
+  (profilingMismatches V C σ).card ≤ if V.obligatory.length = 3 then 1 else 0
 
-/-- `ofFin vs cs f` is the correspondence that sends the `i`th slot of `vs` to the `f i`th slot of
-`cs`, and every other slot nowhere. -/
-def ofFin (vs cs : List Slot) (f : Fin vs.length → Option (Fin cs.length)) :
-    Slot → Option Slot := fun s ↦
-  match vs.idxOf? s with
-  | some i => if hi : i < vs.length then (f ⟨i, hi⟩).map fun j ↦ cs[j] else none
-  | none => none
+instance : Decidable (Corresponds V C σ) := inferInstanceAs (Decidable (_ ≤ _))
 
 variable {V C σ}
 
-theorem mem_contributed_iff {t : Slot} :
-    t ∈ contributed V C σ ↔ t ∈ C.frame.slots ∧ ∀ s ∈ V.frame.slots, σ s ≠ some t := by
+@[simp]
+theorem mem_fusions : σ ∈ fusions V C ↔ IsFusion V C σ := by
+  simpa [fusions] using fun h ↦ h.subset
+
+theorem mem_contributed {t : Slot} :
+    t ∈ contributed C σ ↔ t ∈ C.frame.slots ∧ ∀ s, (s, t) ∉ σ := by
   simp [contributed]
 
-theorem isFusionOn_iff_isFusion (hσ : ∀ s, s ∉ V.frame.slots → σ s = none) :
-    IsFusionOn V C σ ↔ IsFusion V C σ := by
-  constructor
-  · rintro ⟨h₁, h₂, h₃⟩
-    refine ⟨fun s t hst ↦ ?_, fun s t hst ↦ ?_, h₂, h₃⟩
-    · by_cases hs : s ∈ V.frame.slots
-      · exact (h₁ s hs t hst).1
-      · simp [hσ s hs] at hst
-    · by_cases hs : s ∈ V.frame.slots
-      · exact (h₁ s hs t hst).2
-      · simp [hσ s hs] at hst
-  · rintro ⟨h₁, h₂, h₃, h₄⟩
-    exact ⟨fun s _ t hst ↦ ⟨h₁ s t hst, h₂ s t hst⟩, h₃, h₄⟩
-
-/-- An event structure with an obligatory role shares a participant with every verb fused with it,
+/-- An event structure with a required slot shares a participant with every verb fused with it,
 the Shared Participant Condition of [goldberg-1995] (p. 65). -/
-theorem IsFusion.exists_fused (h : IsFusion V C σ) (ha : C.obligatory ≠ []) :
-    ∃ s t, σ s = some t :=
-  let ⟨t, ht⟩ := List.exists_mem_of_ne_nil _ ha
-  let ⟨s, _, hs⟩ := h.obligatory_target t ht
-  ⟨s, t, hs⟩
+theorem IsFusion.nonempty (h : IsFusion V C σ) (hC : C.obligatory ≠ []) : σ.Nonempty :=
+  let ⟨_, ht⟩ := List.exists_mem_of_ne_nil _ hC
+  Finset.image_nonempty.mp ⟨_, h.obligatory_target _ ht⟩
 
-/-- The identity correspondence fuses a well-formed argument structure whose slots all admit some
-role with itself, the case in which a verb's own argument structure is the clause's. -/
-theorem isFusion_refl (hV : V.WF) (hne : ∀ s ∈ V.frame.slots, (V.admits s).Nonempty) :
-    IsFusion V V fun s ↦ if s ∈ V.frame.slots then some s else none where
-  coherent s t hst := by
-    split_ifs at hst with hs
-    cases hst
-    exact fun hd ↦ (hne s hs).ne_empty (disjoint_self.mp hd)
-  mem_target s t hst := by
-    split_ifs at hst with hs
-    cases hst
-    exact hs
-  obligatory_source s hs := by
-    have : s ∈ V.frame.slots := by
-      simp only [LinkedFrame.obligatory, List.mem_map, List.mem_filter] at hs
-      obtain ⟨x, ⟨hx, _⟩, rfl⟩ := hs
-      exact hV x hx
-    simp [this]
-  obligatory_target t ht := by
-    have : t ∈ V.frame.slots := by
-      simp only [LinkedFrame.obligatory, List.mem_map, List.mem_filter] at ht
-      obtain ⟨x, ⟨hx, _⟩, rfl⟩ := ht
-      exact hV x hx
-    exact ⟨t, this, by simp [this]⟩
+/-- The diagonal fuses a well-formed argument structure whose slots all admit some role with
+itself, the case in which a verb's own argument structure is the clause's. -/
+theorem isFusion_diag (hV : V.WF) (hne : ∀ s ∈ V.frame.slots, (V.admits s).Nonempty) :
+    IsFusion V V V.frame.slots.toFinset.diag where
+  subset x hx := by
+    obtain ⟨h₁, h₂⟩ := Finset.mem_diag.mp hx
+    exact Finset.mem_product.mpr ⟨h₁, h₂ ▸ h₁⟩
+  coherent x hx := by
+    obtain ⟨h₁, h₂⟩ := Finset.mem_diag.mp hx
+    exact h₂ ▸ fun hd ↦ (hne _ (List.mem_toFinset.mp h₁)).ne_empty (disjoint_self.mp hd)
+  injOn_fst x hx y hy h := by
+    simp only [Finset.mem_coe, Finset.mem_diag] at hx hy
+    exact Prod.ext h (hx.2.symm.trans (h.trans hy.2))
+  injOn_snd x hx y hy h := by
+    simp only [Finset.mem_coe, Finset.mem_diag] at hx hy
+    exact Prod.ext (hx.2.trans (h.trans hy.2.symm)) h
+  obligatory_source s hs := by simpa using LinkedFrame.mem_slots_of_mem_obligatory hV hs
+  obligatory_target s hs := by simpa using LinkedFrame.mem_slots_of_mem_obligatory hV hs
 
 end ArgumentStructure
