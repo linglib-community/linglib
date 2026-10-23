@@ -34,6 +34,8 @@ externalization reads.
 * `Minimalist.Step.run_im`: Internal Merge is an extraction followed by merging back.
 * `Minimalist.Step.mergeOp_workspace`: an admissible step is the algebraic Merge
   on the workspace.
+* `Minimalist.Step.apply_em_eq_merge`, `Step.apply_im_eq_merge`, `Step.run_remerge_eq_merge`: a
+  Merge step is MERGE, Internal Merge followed by contracting the mover's lower copy to its trace.
 * `Minimalist.Derivation.mergeOpList_initial`: an admissible derivation is the
   iterated algebraic Merge.
 * `Minimalist.Derivation.stageAt_append_of_le`, `movedItems_append`: extension
@@ -311,6 +313,45 @@ theorem Step.foldl_run_of_admissibleList :
       | extract _ | remerge _ => exact h.elim
     rw [List.foldl_cons, List.foldl_cons, this]
     exact Step.foldl_run_of_admissibleList steps _ st hs
+
+/-! ### Steps as MERGE
+
+A Merge step is MERGE (`Workspace.merge`) on the workspace of the current object, the items it
+introduces and the spectators: External Merge exactly, and Internal Merge followed by contracting
+the mover's lower copy to the trace of its head. Of the two stages of Internal Merge, `extract`
+contracts and puts the mover's copy on the stack, and `remerge` is MERGE of that copy and the
+current object on the workspace that holds the stack. -/
+
+/-- External Merge is MERGE of the item and the current object. -/
+theorem Step.apply_em_eq_merge (side : Edge) (item : LinearizedSyntacticObject)
+    (current : SyntacticObject) (W : Workspace) :
+    {(Step.em side item).apply current τ} + W =
+      ({current} + (Step.em side item).items + W).merge ↑item current := by
+  have h : ({current} + {↑item} + W : Workspace) = ({↑item} + {current}) + W := by abel
+  rw [Step.apply_em, Step.items, Workspace.merge, h, Multiset.insert_eq_cons,
+    ← Multiset.singleton_add, add_tsub_cancel_left, add_comm]
+
+/-- Internal Merge is MERGE of the mover and the current object, followed by contracting the
+    mover's lower copy to the trace of its head. -/
+theorem Step.apply_im_eq_merge (side : Edge) {mover current : SyntacticObject} {W : Workspace}
+    (hne : current ≠ mover) (hmW : mover ∉ W) :
+    {(Step.im mover side).apply current τ} + W =
+      (({current} + W).merge mover current) - {merge mover current} +
+        {merge mover (deleteAccessible mover current τ)} :=
+  merge_deleteAccessible_add_eq τ hne hmW
+
+/-- Merging the copy on top of the stack back is MERGE of the copy and the current object, on the
+    workspace of the object, its stack and the spectators. -/
+theorem Step.run_remerge_eq_merge (side : Edge) (current m : SyntacticObject)
+    (st : List SyntacticObject) (W : Workspace) :
+    {((Step.remerge side).run ⟨current, m :: st⟩ τ).current} +
+        ↑((Step.remerge side).run ⟨current, m :: st⟩ τ).stack + W =
+      ({current} + ↑(m :: st) + W).merge m current := by
+  show {merge m current} + ↑st + W = _
+  have h : ({current} + ↑(m :: st) + W : Workspace) = ({m} + {current}) + (↑st + W) := by
+    rw [← Multiset.cons_coe, ← Multiset.singleton_add]; abel
+  rw [Workspace.merge, h, Multiset.insert_eq_cons, ← Multiset.singleton_add, add_tsub_cancel_left]
+  abel
 
 /-! ### Derivations -/
 

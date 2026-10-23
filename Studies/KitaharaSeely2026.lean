@@ -38,7 +38,7 @@ where it was and violates Minimal Yield (`sideward2b`).
 
 namespace KitaharaSeely2026
 
-open Minimalist (Workspace SyntacticObject)
+open Minimalist (Workspace SyntacticObject Step)
 open Minimalist.SyntacticObject (merge leaf deleteAccessible)
 open MarcolliChomskyBerwick2025 (eaten theD theApple)
 
@@ -86,6 +86,12 @@ theorem ex22 :
     accessibility {merge a (merge b c)} = 5 ∧
     MinimalYield {merge a (merge b c)}
       (({merge a (merge b c)} : Workspace).merge c (merge a (merge b c))) := by
+  decide +kernel
+
+/-- A derivation's Internal Merge step on (22) is not MERGE: it leaves the trace of `c` where MERGE
+leaves its copy, and is MERGE followed by that contraction (`Step.apply_im_eq_merge`). -/
+example : {(Step.im c).apply (merge a (merge b c))} ≠
+    ({merge a (merge b c)} : Workspace).merge c (merge a (merge b c)) := by
   decide +kernel
 
 /-- (23): Parallel or Sideward Merge of `a` with the `c` of `{b, c}` leaves `c` accessible twice,
