@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Examples.IatridouZeijlstra2021
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Quantification.Exceptive
@@ -44,6 +45,8 @@ gives the punctual one.
 * `isLeast_rightBoundaries_prfv`, `isLeast_rightBoundaries_unbounded`: a perfective argument of
   *until* sets the right boundary at the completion of its event, an imperfective one at the
   onset.
+* `cancellation_rows`, `expectation_rows`, `grammaticality_rows`: the judgments of the example
+  rows against the widening and exhaustification results, over the integers.
 
 ## Implementation notes
 
@@ -78,7 +81,11 @@ gives the punctual one.
   exclusion of (154c1–2) rests, is taken as given by the paper and not derived.
 * The satisfaction of the actuality inference on a future branch, (155)–(162), and the hypothesis
   that a presupposed span makes a domain widener a strong polarity item, after Gajewski's account
-  of strong items by enriched meanings, are not formalized.
+  of strong items by enriched meanings, are not formalized; the NPI-licensing rows (40)–(42) and
+  (114) await that machinery, and the right-boundary rows (170)–(176) a model of their argument
+  clauses.
+* The rows' feature values are prose, so the verdict theorems list their rows by hand; typed
+  values would let a `Row.ofDatum` table read them, as `Studies/Giannakidou2002.lean` does.
 
 ## References
 
@@ -429,5 +436,90 @@ theorem isLeast_rightBoundaries_unbounded (he : Q w e)
       hτ ▸ ((hfirst e' he').trans (le_def.1 hle).1).trans τ.fst_le_snd⟩
 
 end RightBoundary
+
+/-! ### The data
+
+The judgments of the example rows against the results above, over integer time with intervals as
+events: the wideners of Sections 1 and 7 force an event while a boundary-naming adverbial admits
+an event-free model, the widened span bounds the contextual alternatives, and exhaustification
+sorts the grammaticality rows by the aspect and polarity of the claim. -/
+
+section Data
+
+open Examples
+
+/-- A widened perfect time span, its right boundary fixed by tense, forces a relevant event, since
+over the integers an event-free span could always widen further. -/
+theorem widener_forces_event {P : Unit → NonemptyInterval ℤ → Prop} {t : ℤ}
+    {τ : NonemptyInterval ℤ} (h : Widened {τ' | τ'.snd = t} P () τ) : ∃ e, P () e := by
+  have ht : τ.snd = t := h.1.1
+  have hfs := τ.fst_le_snd
+  refine actuality_inference h ⟨⟨(τ.fst - 1, t), by omega⟩, rfl, ?_⟩
+  refine lt_of_le_of_ne (le_def.2 ⟨by dsimp; omega, by dsimp; omega⟩) fun heq ↦ ?_
+  have := congrArg (·.fst) heq
+  dsimp at this
+  omega
+
+/-- A widened until time span, its left boundary fixed contextually, forces a relevant event. -/
+theorem widener_forces_event_until {P : Unit → NonemptyInterval ℤ → Prop} {t : ℤ}
+    {τ : NonemptyInterval ℤ} (h : Widened {τ' | τ'.fst = t} P () τ) : ∃ e, P () e := by
+  have ht : τ.fst = t := h.1.1
+  have hfs := τ.fst_le_snd
+  refine actuality_inference h ⟨⟨(t, τ.snd + 1), by omega⟩, rfl, ?_⟩
+  refine lt_of_le_of_ne (le_def.2 ⟨by dsimp; omega, by dsimp; omega⟩) fun heq ↦ ?_
+  have := congrArg (·.snd) heq
+  dsimp at this
+  omega
+
+/-- The cancellation rows: denying any event outright is acceptable after the boundary-naming
+*in the last 5 years* and *since 2015*, (11)–(12), whose span admits an event-free model
+(`cancelable_of_lb`), and asserting the actuality inference, (26), is acceptable too; after the
+wideners the denial is unacceptable, (22), (123) and (149), since a widened span forces an event
+(`widener_forces_event`, `widener_forces_event_until`). -/
+theorem cancellation_rows :
+    ((∀ e ∈ [iz2021_s11b, iz2021_s12, iz2021_s26], e.judgment = .acceptable) ∧
+      ∃ P : Unit → NonemptyInterval ℤ → Prop, ∃ τ : NonemptyInterval ℤ,
+        τ.fst = 5 ∧ τ.snd = 10 ∧ τ ∉ PRFV P () ∧ ∀ e, ¬ P () e) ∧
+    ∀ e ∈ [iz2021_s22a, iz2021_s22b, iz2021_s123, iz2021_s149],
+      e.judgment = .unacceptable := by
+  refine ⟨⟨by decide, ?_⟩, by decide⟩
+  obtain ⟨P, τ, h₁, h₂, h₃, h₄⟩ :=
+    (cancelable_of_lb (W := Unit) (E := NonemptyInterval ℤ) (w := ()) (t := 10) 5 (by omega)).1
+  exact ⟨P, τ, h₁, h₂, h₃, h₄⟩
+
+/-- The beyond expectation rows: a span claimed shorter than a contextually event-free alternative
+contradicts widening (`beyond_expectation_inference`), (31b), (32b), (33b), (119b) and (121b),
+while the longer-than-expected (31a), (32c) and (119a) are acceptable. -/
+theorem expectation_rows :
+    (∀ e ∈ [iz2021_s31a, iz2021_s32c, iz2021_s119a], e.judgment = .acceptable) ∧
+    ∀ e ∈ [iz2021_s31b, iz2021_s32b, iz2021_s33b, iz2021_s119b, iz2021_s121b],
+      e.judgment = .unacceptable := by
+  decide
+
+/-- The exhaustification table over the rows: a bare perfective under a boundary adverbial is a
+contradiction (`in_years_contradictory`), (40b), (58), (128) and (134); under negation
+(`negated_perfective_exh_vacuous`) and with an imperfective predicate (`throughout_exh_vacuous`),
+exhaustification is vacuous and the rows acceptable, (40c), (52), (133) and (147b). -/
+theorem grammaticality_rows :
+    (∀ e ∈ [iz2021_s40b, iz2021_s58, iz2021_s128, iz2021_s134],
+      e.judgment = .ungrammatical) ∧
+    ∀ e ∈ [iz2021_s40c, iz2021_s52, iz2021_s133a, iz2021_s133b, iz2021_s147b],
+      e.judgment = .acceptable := by
+  decide
+
+/-- Over the integers a culminated point event is shorter than the span, so the positive claim is
+exhaustified to a contradiction, (44): a seizure at `0` cannot fill a span of years. -/
+example : (· = NonemptyInterval.pure (0 : ℤ)) ∉
+    exh (domainAlternatives (PRFV id) ⟨(1, 10), by omega⟩)
+      {v : NonemptyInterval ℤ → Prop | ⟨(1, 10), by omega⟩ ∈ PRFV id v} :=
+  in_years_contradictory Function.surjective_id (fun τ ↦ ⟨τ, rfl⟩) fun e he ↦ by
+    subst he
+    decide
+
+/-- (83): the continuation *maybe she didn't leave at all* is a contradiction, which the
+durative *until* of the ambiguity account fails to predict (`two_until_overgenerates`). -/
+theorem ambiguity_row : iz2021_s83.judgment = .unacceptable := rfl
+
+end Data
 
 end IatridouZeijlstra2021
