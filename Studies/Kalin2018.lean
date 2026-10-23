@@ -291,22 +291,22 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
       (hL : ∀ l ∈ L, l.domain = c ∧ g.agreeCase l.head = some (κ l.head))
       (st : Valuation PhasedNP CaseValue) (hst : st.map Prod.fst ⊆ nps) :
       ((L.map fun l ↦ (l.head, l.domain)).filterMap fun hp ↦
-          (g.agreeCase hp.1).map (·, fun x ↦ (id x).visible c)).foldl
-        (fun st p ↦ agreeValueOn (fun _ _ ↦ False) (fun x ↦ p.2 x && (id x).bearsCase)
+          (g.agreeCase hp.1).map (·, fun x ↦ decide ((id x).visible c))).foldl
+        (fun st p ↦ agreeValueOn (fun _ _ ↦ False) (fun x ↦ p.2 x ∧ (id x).bearsCase)
           (p.1, .agree) st) (st.map φ) =
         (L.foldl (fun st l ↦ l.agree st) st).map φ := by
     induction L generalizing st with
     | nil => rfl
     | cons l L ih =>
       obtain ⟨hdom, hcase⟩ := hL l (mem_cons_self ..)
-      have hstep : agreeValue (fun x ↦ (id x).visible c && (id x).bearsCase) (κ l.head, .agree)
-          (st.map φ) = (l.agree st).map φ := by
+      have hstep : agreeValue (fun x ↦ decide ((id x).visible c) ∧ (id x).bearsCase)
+          (κ l.head, .agree) (st.map φ) = (l.agree st).map φ := by
         rw [agreeValue_congr_of_mem (Q := fun x ↦ (id x).visible c) fun q hq ↦ by
           obtain ⟨r, hr, rfl⟩ := mem_map.1 hq
           simp [φ, hnps r.1 (hst (mem_map_of_mem hr))]]
         simp only [Licenser.agree, hdom]
         exact agreeValue_map (P := (·.visible c)) (P' := (·.visible c)) (v := .licenser l)
-          id (CaseValue.assigned κ) (fun _ ↦ rfl) rfl st
+          id (CaseValue.assigned κ) (fun _ ↦ Iff.rfl) rfl st
       rw [map_cons, filterMap_cons, hcase, Option.map_some, foldl_cons, foldl_cons,
         agreeValueOn_false, hstep,
         ih (fun l hl ↦ hL l (mem_cons_of_mem _ hl)) _ (by rw [hagree]; exact hst)]
@@ -314,7 +314,7 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
       (hst : st.map Prod.fst ⊆ nps) :
       domainPassBy g.rules (fun c x ↦ (id x).visible c) (fun _ p q ↦ p.1 < q.1)
           (fun _ _ _ ↦ False) (g.probesIn id (ls.map fun l ↦ (l.head, l.domain)))
-          (fun c x ↦ (id x).spellOut == c) (fun x ↦ (id x).bearsCase) c (st.map φ) =
+          (fun c x ↦ (id x).spellOut = c) (fun x ↦ (id x).bearsCase) c (st.map φ) =
         (cycle ls c st).map φ := by
     rw [domainPassBy, hg c hc, DependentCase.Rules.unmarkedPass_of_none _ _ rfl,
       DependentCase.Rules.dependentPassBy_of_none _ _ _ _ rfl rfl, CaseAssigners.probesIn,
@@ -336,7 +336,7 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
   suffices ∀ ds' ⊆ ds, ∀ st : Valuation PhasedNP CaseValue, st.map Prod.fst ⊆ nps → ds'.foldl
       (fun st c ↦ domainPassBy g.rules (fun c x ↦ (id x).visible c) (fun _ p q ↦ p.1 < q.1)
         (fun _ _ _ ↦ False) (g.probesIn id (ls.map fun l ↦ (l.head, l.domain)))
-        (fun c x ↦ (id x).spellOut == c) (fun x ↦ (id x).bearsCase) c st) (st.map φ) =
+        (fun c x ↦ (id x).spellOut = c) (fun x ↦ (id x).bearsCase) c st) (st.map φ) =
       (ds'.foldl (fun st c ↦ cycle ls c st) st).map φ from
     this ds (fun _ h ↦ h) _ (by simp [initial, Valuation.initial, Function.comp_def])
   intro ds' hds' st hst
