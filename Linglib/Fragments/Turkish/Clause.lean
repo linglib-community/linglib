@@ -1,34 +1,44 @@
 module
 
-public import Mathlib.Data.Finset.Union
 public import Linglib.Data.UD.Features
-public import Linglib.Morphology.Morph
 public import Linglib.Fragments.Turkish.Morphotactics
-public import Linglib.Fragments.Turkish.Negation
 public import Linglib.Syntax.Clause.Chaining
 
 /-!
 # Turkish converbs
 
-Turkish chains clauses with converbial suffixes on the verb of each medial clause before a
-single final verb, without switch-reference. *-(y)Ip* conjoins clauses of equal status in place
-of the tense, aspect and modality suffixes, *-(y)ArAk* gives the manner or means, *-(y)IncA*
-'when' sequences two events, *-(y)AlI* 'since' marks a starting point, *-mAdAn* 'without doing'
-contains the negative, *-DIkçA* marks proportionality, and *-(y)ken* 'while' and *-cAsInA* 'as
-if' attach not to the stem but to a tensed one, *-(y)ken* being the copula on a position-3
-marker or a nominal. The converbs take no person marker, except the third-person plural on
-*-(y)ken* and a person marker on *-mIşçAsInA*. Two more converbial subordinators go on a
-doubled verb: *-(A/I)r … -mAz* 'as soon as' and *-(y)A … -(y)A*, continuous manner.
+Turkish chains clauses with converbs, the non-finite verbs of adverbial clauses, without
+switch-reference. Most converbial suffixes stand in place of the tense, aspect or modality
+marker and all that follows it, after the voice suffixes, the negative and the markers of
+positions 1 and 2 (§8.2, §28.2). *-(y)ken*, which contains the copula, attaches to a
+position-3 marker or a nominal, and *-cAsInA* to the aorist or *-mIş* (§8.5.2.2). The converbs
+take no person marker, except one before *-cAsInA* and the third-person plural before
+*-(y)ken*. Three more converbial subordinators go on two verbs in succession.
+
+## Main definitions
+
+* `Turkish.Converb`: the converbial suffixes on one verb, with their forms, the relations they
+  encode and `Converb.follows`, the last slot of the finite verb that may precede them; they
+  are a `Clause.Chaining.MedialForm`.
+* `Turkish.DoubledConverb`: the converbial subordinators on two verbs.
 
 ## Implementation notes
 
-* Whether a converb takes a tense marker or the negative is read off the finite verb's
-  template `Turkish.Verb.template` from the slot the converb follows.
-* The clause-chaining typology over the converbs is in `Studies/SarvasyAikhenvald2025.lean`.
+The forms are strings of `Turkish.Suffix`, so that `Turkish.realize` gives a converb on a
+stem, and the negative of *-mAdAn* is the finite verb's. `InterclauseRelation` names neither
+the proportional and 'whenever' readings of *-DIkçA* nor the 'before' reading of *-mAdAn*.
+The clause-chaining typology over the converbs is in `Studies/SarvasyAikhenvald2025.lean`, and
+the grammar's examples are checked in `Studies/GokselKerslake2005.lean`.
+
+## TODO
+
+The other converbs built on the subordinators -DIK, -(y)AcAK, -mA and -mAK (§8.5.1), such as
+*-mAksIzIn* 'without', and those with a postposition, such as *-mAzdAn önce* and
+*-(y)IncAyA kadar* (§8.5.2.2), are not represented.
 
 ## References
 
-* [goksel-kerslake-2005]
+* [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
 -/
 
 @[expose] public section
@@ -36,18 +46,18 @@ doubled verb: *-(A/I)r … -mAz* 'as soon as' and *-(y)A … -(y)A*, continuous 
 namespace Turkish
 
 open Clause.Chaining (InterclauseRelation)
-open Morphology (Morph)
+open Turkish.Phonology
 
-/-- The converbial suffixes on a single verb, with vowel harmony shown by a capital
-archiphoneme and a buffer consonant in parentheses. -/
+/-- The converbial suffixes on one verb, those of §8.5.2.2 that need no postposition, and
+*-DIkçA*. -/
 inductive Converb where
-  /-- *-(y)Ip*, conjunctive 'and, and then'. -/
+  /-- *-(y)Ip* 'and, and then', conjoining clauses. -/
   | ip
   /-- *-(y)ArAk* 'by doing, doing', manner and means, also conjunctive. -/
   | arak
   /-- *-(y)IncA* 'when'. -/
   | inca
-  /-- *-(y)ken* 'while, as, when', the copula on a tensed stem or a nominal. -/
+  /-- *-(y)ken* 'while, as, when', the copula on a position-3 marker or a nominal. -/
   | ken
   /-- *-(y)AlI* 'since', colloquial. -/
   | ali
@@ -55,88 +65,64 @@ inductive Converb where
   | madan
   /-- *-cAsInA* 'as if', on the aorist or *-mIş*. -/
   | casina
-  /-- *-DIkçA* 'the more, as', proportional. -/
+  /-- *-DIkçA* 'the more, whenever'. -/
   | dikca
   deriving DecidableEq, Repr, Fintype
 
 namespace Converb
 
-/-- The morphs of a converb. -/
-def morphs : Converb → List Morph
-  | ip => [.suff "(y)Ip"]
-  | arak => [.suff "(y)ArAk"]
-  | inca => [.suff "(y)IncA"]
-  | ken => [.suff "(y)ken"]
-  | ali => [.suff "(y)AlI"]
-  | madan => Negation.mA.morphs ++ [.suff "DAn"]
-  | casina => [.suff "cAsInA"]
-  | dikca => [.suff "DIkçA"]
+/-- The citation form of a converb, the negative of *-mAdAn* being the finite verb's and the `c`
+of *-cAsInA* alternating with `ç`, as in *duymamışçasına*. -/
+def form : Converb → List Suffix
+  | ip => [⟨some y, [I, p]⟩]
+  | arak => [⟨some y, [A, r, A, k]⟩]
+  | inca => [⟨some y, [I, n, c, A]⟩]
+  | ken => [⟨some y, [k, e, n]⟩]
+  | ali => [⟨some y, [A, l, I]⟩]
+  | madan => [Verb.Exponent.negative.form, ⟨none, [D, A, n]⟩]
+  | casina => [⟨none, [C, A, s, I, n, A]⟩]
+  | dikca => [⟨none, [D, I, k, ç, A]⟩]
 
-/-- The form of a converb in boundary notation. -/
-def form (c : Converb) : String := Morph.surface c.morphs
-
-/-- The gloss. -/
-def gloss : Converb → String
-  | ip => "and, and then"
-  | arak => "by doing, doing"
-  | inca => "when"
-  | ken => "while, as, when"
-  | ali => "since"
-  | madan => "without doing, before doing"
-  | casina => "as if"
-  | dikca => "the more, as"
-
-/-- The interclausal relations a converb encodes. -/
+/-- The interclausal relations a converb encodes (§26.3, §28.2). -/
 def relations : Converb → Finset InterclauseRelation
   | ip => {.sequential, .additive}
   | arak => {.manner, .simultaneous, .additive}
   | inca | ali => {.sequential}
-  | ken => {.simultaneous}
+  | ken => {.simultaneous, .contrastive}
   | madan | casina => {.manner}
   | dikca => ∅
 
-/-- The last slot of the finite verb whose exponent may precede the converb, which is the
-negative for the converbs on the stem, a position-3 marker for *-(y)ken* and *-cAsInA*, and
-the possibility suffix for *-mAdAn*, which contains the negative itself. -/
+/-- The last slot of the finite verb whose exponent may precede the converb. The converbs on a
+non-finite stem follow the markers of position 2 (§8.2), *-(y)ken* a position-3 marker,
+*-cAsInA* a person marker, and *-mAdAn*, whose negative fills the negation slot, the
+possibility suffix of position 1. -/
 def follows : Converb → Verb.Slot
-  | ip | arak | inca | ali | dikca => .negation
-  | ken | casina => .tam
+  | ip | arak | inca | ali | dikca => .auxiliary
+  | ken => .tam
+  | casina => .person
   | madan => .possibility
 
-/-- An exponent of the slot may precede the converb, since the slot is the one the converb
-follows or the finite verb's template admits it before that one. -/
-def Admits (c : Converb) (s : Verb.Slot) : Prop :=
-  c.follows = s ∨ [s, c.follows] ∈ Verb.template.language
+/-- A position-3 marker of tense, aspect or modality may precede the converb. -/
+def Tensed (c : Converb) : Prop := .tam ≤ c.follows
 
-instance (c : Converb) (s : Verb.Slot) : Decidable (c.Admits s) :=
-  inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred Tensed := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
 
-/-- The converb is inherently negative. -/
-def InherentlyNegative (c : Converb) : Prop := c = madan
+/-- The converb contains the negative or admits it before it. -/
+def Negatable (c : Converb) : Prop :=
+  Verb.Exponent.negative.form ∈ c.form ∨ .negation ≤ c.follows
 
-instance : DecidablePred InherentlyNegative := fun _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred Negatable := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The converb can be negated, being negative itself or admitting the negative before it. -/
-def Negatable (c : Converb) : Prop := c.InherentlyNegative ∨ c.Admits .negation
+/-- A person marker may precede the converb: any before *-cAsInA*, and the third-person plural
+*-lAr* before *-(y)ken* (§8.5.2.2). -/
+def PersonMarked (c : Converb) : Prop := .person ≤ c.follows ∨ c = ken
 
-instance : DecidablePred Negatable := fun _ => inferInstanceAs (Decidable (_ ∨ _))
-
-/-- A tense, aspect or modality marker may precede the converb. -/
-def Tensed (c : Converb) : Prop := c.Admits .tam
-
-instance : DecidablePred Tensed := fun _ => inferInstanceAs (Decidable (_ ∨ _))
-
-/-- The converb may carry a person marker, the third-person plural on *-(y)ken* and a person
-marker on *-mIşçAsInA*. -/
-def PersonMarked (c : Converb) : Prop := c = ken ∨ c = casina
-
-instance : DecidablePred PersonMarked := fun _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred PersonMarked := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The verb form of a converb. -/
 def verbForm (_ : Converb) : UD.VerbForm := .Conv
 
-/-- The converbs as medial forms, neutral to switch-reference, encoding their relations, and
-indexing the subject where they may carry a person marker. -/
+/-- The converbs as medial forms, neutral to switch-reference. -/
 instance : Clause.Chaining.MedialForm Converb where
   sr _ := none
   relations := relations
@@ -144,10 +130,20 @@ instance : Clause.Chaining.MedialForm Converb where
 
 end Converb
 
-/-- *-(A/I)r … -mAz* 'as soon as', the positive and negative aorist on a doubled verb. -/
-def arMaz : List (List Morph) := [[.suff "(A/I)r"], Negation.mA.morphs ++ [.suff "z"]]
+/-- The converbial subordinators on two verbs in succession (§8.5.2.2). -/
+inductive DoubledConverb where
+  /-- *-(y)A … -(y)A*, continuous manner, as *baka baka* 'staring'. -/
+  | aA
+  /-- *-DI … -(y)AlI* 'ever since', the first verb with a person marker, as *duydum duyalı*. -/
+  | diAli
+  /-- *-(A/I)r … -mAz* 'as soon as', the positive and the negative aorist, as *yer yemez*. -/
+  | arMaz
+  deriving DecidableEq, Repr, Fintype
 
-/-- *-(y)A … -(y)A*, emphatic continuous manner on a doubled verb. -/
-def aA : List (List Morph) := [[.suff "(y)A"], [.suff "(y)A"]]
+/-- The suffixes of the first and of the second verb. -/
+def DoubledConverb.forms : DoubledConverb → List Suffix × List Suffix
+  | .aA => ([⟨some y, [A]⟩], [⟨some y, [A]⟩])
+  | .diAli => ([Verb.Exponent.di.form], Converb.ali.form)
+  | .arMaz => ([Verb.Exponent.aorist.form], [Verb.Exponent.negative.form, ⟨none, [z]⟩])
 
 end Turkish

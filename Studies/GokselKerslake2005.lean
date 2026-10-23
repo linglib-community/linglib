@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Turkish.Clause
 public import Linglib.Fragments.Turkish.Possession
 public import Linglib.Fragments.Turkish.Verbs
 
@@ -22,6 +23,10 @@ The grammar's example words are licensed with their stacked voice suffixes, reve
 not, and the rule that markers of one position cannot co-occur (§8.2.3) holds because the
 template does not repeat the position.
 
+The converbs of §8.5.2.2 are those of `Turkish.Converb` on the grammar's verbs, and
+*-(y)Ip* and *-(y)ArAk* follow every slot before the position-3 marker and none after it
+(§28.2).
+
 The possessive and locative existential sentences of §12.1.1.2 are those of
 `Turkish.Possession`, with the possessive suffix on the possessee obligatory (§14.4).
 
@@ -38,6 +43,8 @@ The possessive and locative existential sentences of §12.1.1.2 are those of
 * `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
 * `finite_verb`: §8.2 (7), every slot of the finite verb.
 * `same_position_excluded`: §8.2.3 (i), since the template does not repeat position 3.
+* `converbs`, `doubled_converbs`: the converbs of §8.5.2.2 and -DIkçA.
+* `conjunctive_converbs`: §28.2, -(y)Ip and -(y)ArAk in place of the position-3 marker.
 * `possessive_existential`, `locative_existential`: §12.1.1.2 (21), (22), (26) and (17).
 * `possessive_obligatory`: §14.4 (117), the possessive suffix on the possessee.
 
@@ -97,7 +104,7 @@ the converb -(y)ken is invariable in *bak-mış-ken* (§3.4 (vi)). -/
 theorem retriggering :
     realize [g, ö, r] [iyor.form, (person .two (.personNumber .first .singular)).form] =
       [g, ö, r, ü, y, o, r, u, m] ∧
-    realize [b, a, k] [miş.form, ⟨some y, [k, e, n]⟩] = [b, a, k, m, ı, ş, k, e, n] := by
+    realize [b, a, k] (miş.form :: Converb.ken.form) = [b, a, k, m, ı, ş, k, e, n] := by
   decide
 
 /-- The palatal l of *gol* and *hal* fronts the suffix in *gol-ü* and *hal-im*, while rounding
@@ -287,6 +294,52 @@ theorem reversed_orders :
 theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
     ¬ Verb.template.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
   show [Verb.Slot.tam, .tam] ∉ Verb.template.language by decide
+
+/-! ### Converbs (§8.5.2.2) -/
+
+/-- The converbs on the grammar's verbs: on the stem, as in *koş-up*, *kalk-ma-yınca*,
+*yık-ıl-ma-dan* and *koş-tukça*, -(y)ken on a position-3 marker or a nominal, as in
+*çalış-ır-ken* and *sokak-ta-y-ken*, and -cAsInA on -mIş and a person marker, as in
+*duy-ma-mış-çasına* and *konuş-uyor-muş-um-casına* (§8.5.1.1, §8.5.2.2, §26.2.3 (40),
+§26.3.8 (69), (73)). -/
+theorem converbs : ∀ w ∈ [("koş-up", [k, o, ş], Converb.ip.form),
+      ("gir-ip", [g, i, r], Converb.ip.form),
+      ("yüz-ünce", [y, ü, z], Converb.inca.form),
+      ("kalk-ma-yınca", [k, a, l, k], negative.form :: Converb.inca.form),
+      ("koş-arak", [k, o, ş], Converb.arak.form),
+      ("büyü-yerek", [b, ü, y, ü], Converb.arak.form),
+      ("çalış-arak", [ç, a, l, ı, ş], Converb.arak.form),
+      ("düşün-eli", [d, ü, ş, ü, n], Converb.ali.form),
+      ("gel-eli", [g, e, l], Converb.ali.form),
+      ("yık-ıl-ma-dan", [y, ı, k], passive.form :: Converb.madan.form),
+      ("seyret-me-den", [s, e, y, r, e, t], Converb.madan.form),
+      ("koş-tukça", [k, o, ş], Converb.dikca.form),
+      ("çalış-ır-ken", [ç, a, l, ı, ş], aorist.form :: Converb.ken.form),
+      ("çocuk-ken", [ç, o, c, u, k], Converb.ken.form),
+      ("sokak-ta-y-ken", [s, o, k, a, k], locative.form :: Converb.ken.form),
+      ("duy-ma-mış-çasına", [d, u, y], negative.form :: miş.form :: Converb.casina.form),
+      ("konuş-uyor-muş-um-casına", [k, o, n, u, ş], iyor.form :: evidentialCopula.form ::
+        (person .two (.personNumber .first .singular)).form :: Converb.casina.form)],
+    ofSegmented? w.1 = some (realize w.2.1 w.2.2) := by
+  decide
+
+/-- The converbs on two verbs, as in *baka baka*, *duy-du-m duy-alı* and *ye-r ye-mez*
+(§8.5.2.2). -/
+theorem doubled_converbs :
+    ofString? "baka" = some (realize [b, a, k] DoubledConverb.aA.forms.1) ∧
+    ofString? "baka" = some (realize [b, a, k] DoubledConverb.aA.forms.2) ∧
+    ofString? "duydum" = some (realize [d, u, y]
+      (DoubledConverb.diAli.forms.1 ++ [(person .one (.personNumber .first .singular)).form])) ∧
+    ofString? "duyalı" = some (realize [d, u, y] DoubledConverb.diAli.forms.2) ∧
+    ofString? "yer" = some (realize [y, e] DoubledConverb.arMaz.forms.1) ∧
+    ofString? "yemez" = some (realize [y, e] DoubledConverb.arMaz.forms.2) := by
+  decide
+
+/-- -(y)Ip and -(y)ArAk stand in place of the position-3 marker and all the suffixes after it,
+so they follow exactly the slots before it (§28.2). -/
+theorem conjunctive_converbs :
+    ∀ c ∈ [Converb.ip, .arak], ∀ s : Verb.Slot, s ≤ c.follows ↔ s < .tam := by
+  decide
 
 /-! ### Existential sentences (§12.1.1.2) -/
 
