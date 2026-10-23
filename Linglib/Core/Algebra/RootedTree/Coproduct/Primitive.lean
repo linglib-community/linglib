@@ -64,7 +64,6 @@ noncomputable def comulPrim : ConnesKreimer R T →ₐ[R] ConnesKreimer R T ⊗[
       ofTree t ⊗ₜ[R] (1 : ConnesKreimer R T) + (1 : ConnesKreimer R T) ⊗ₜ[R] ofTree t :=
   aeval_ofTree _ t
 
-/-- `Δ_P` is the only algebra homomorphism under which every tree is primitive. -/
 theorem comulPrim_unique
     (φ : ConnesKreimer R T →ₐ[R] ConnesKreimer R T ⊗[R] ConnesKreimer R T)
     (h : ∀ t, φ (ofTree t) =

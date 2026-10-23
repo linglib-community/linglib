@@ -87,7 +87,6 @@ omit [Fintype Ω] [MeasurableSpace Ω] [MeasurableSingletonClass Ω] [Fintype A]
   simp [mixedPayoff]
 
 omit [Fintype Ω] [MeasurableSpace Ω] [MeasurableSingletonClass Ω] in
-/-- A uniform mixture pays the average of its acts' payoffs. -/
 theorem mixedPayoff_uniformOn [DecidableEq A] (s : Finset A) (ω : Ω) :
     mixedPayoff U (uniformOn ↑s) ω = (∑ a ∈ s, U a ω) / s.card := by
   simp only [mixedPayoff_eq_sum, measureReal_def, uniformOn_finset_apply_singleton,
@@ -95,8 +94,6 @@ theorem mixedPayoff_uniformOn [DecidableEq A] (s : Finset A) (ω : Ω) :
     ite_mul, zero_mul, Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_div]
   exact Finset.sum_congr rfl fun a _ ↦ by ring
 
-/-- The expected payoff of the mixed act `μ` is the `μ`-average of the pure acts' expected
-payoffs, `𝔼U(Q) = ∑_σ Q(σ) 𝔼U(σ)` of the appendix. -/
 theorem expectedPayoff_eq_sum_sum (P : Measure Ω) [IsFiniteMeasure P] (μ : Measure A)
     [IsFiniteMeasure μ] : expectedPayoff U P μ = ∑ a, μ.real {a} * ∑ ω, P.real {ω} * U a ω := by
   simp only [expectedPayoff_eq_sum, mixedPayoff_eq_sum, Finset.mul_sum]
@@ -210,7 +207,6 @@ theorem uniformPreferred_real_singleton (φ : Act ι) :
   by_cases h : J.Preferred φ <;> simp [h, preferredCard]
 
 omit [Fintype Ω] in
-/-- When every comparison is strict, `Q★` is the single act gambling on every left side. -/
 theorem uniformPreferred_eq_dirac_of_strict_eq_univ (h : J.strict = Finset.univ) :
     J.uniformPreferred = Measure.dirac fun _ ↦ true := by
   have hfilter : Finset.univ.filter J.Preferred = {fun _ ↦ true} := by
@@ -242,7 +238,6 @@ omit [Fintype Ω] [Fintype ι] [DecidableEq ι] in
 def Representable : Prop := ∃ P : Measure Ω, IsProbabilityMeasure P ∧ J.Represents P
 
 omit [Fintype Ω] [Fintype ι] [DecidableEq ι] in
-/-- Judgments that agree with a representable relation are representable. -/
 theorem Agree.representable {J : Judgments Ω ι} {r : Set Ω → Set Ω → Prop} (h : J.Agree r)
     (hr : ComparativeProbability.Representable r) : J.Representable := by
   obtain ⟨μ, hμ, hm⟩ := hr
@@ -288,7 +283,6 @@ private theorem sum_mu_ite (A : Set Ω) (a b : ℝ) :
 
 omit [DecidableEq ι] in
 open scoped Classical in
-/-- The expected utility of a pure act is its weighted side values less the cost. -/
 theorem sum_mu_utility (c : ℝ) (φ : Act ι) :
     ∑ ω, P.real {ω} * J.utility s c φ ω =
       ∑ i, s.weight i * J.sideValue s P i (φ i) - if J.Preferred φ then c else 0 := by
@@ -579,8 +573,6 @@ def Balanced : Prop :=
   ∀ ω, ∑ i, (J.left i).indicator (1 : Ω → ℕ) ω = ∑ i, (J.right i).indicator 1 ω
 
 omit [Fintype Ω] [DecidableEq ι] [MeasurableSpace Ω] in
-/-- Under constant stakes, the act gambling on every right side pays what the act gambling on
-every left side pays, in every state, when the judgments are balanced. -/
 theorem preutility_const_false_of_balanced (hJ : J.Balanced) {w g b : ℝ} (hw : 0 < w)
     (hgb : b < g) (ω : Ω) :
     J.preutility (Stakes.const w g b hw hgb) (fun _ ↦ false) ω =
@@ -598,8 +590,6 @@ theorem preutility_const_false_of_balanced (hJ : J.Balanced) {w g b : ℝ} (hw :
   rw [key, key, h]
 
 omit [Fintype Ω] [MeasurableSpace Ω] in
-/-- Balanced strict judgments leave `Q★` strictly dominated under any constant stakes, by the
-act that gambles on every right side and pays no cost. -/
 theorem dominated_of_balanced [Nonempty ι] (hJ : J.Balanced) (hX : J.strict = Finset.univ)
     {w g b : ℝ} (hw : 0 < w) (hgb : b < g) {c : ℝ} (hc : 0 < c) :
     IsStrictlyPayoffDominated (J.utility (Stakes.const w g b hw hgb) c) J.uniformPreferred := by
@@ -611,9 +601,6 @@ theorem dominated_of_balanced [Nonempty ι] (hJ : J.Balanced) (hX : J.strict = F
   linarith
 
 omit [Fintype Ω] in
-/-- Balanced judgments with a strict comparison are not representable, since a representing
-measure would give both sides the same total mass yet make each left side at least as heavy and
-one strictly heavier. -/
 theorem not_representable_of_balanced [MeasurableSingletonClass Ω] [Finite Ω] (hJ : J.Balanced)
     (hX : J.strict.Nonempty) : ¬J.Representable := by
   classical
@@ -655,8 +642,6 @@ def ofRel (r : Set Ω → Set Ω → Prop) [DecidableRel r] :
     Judgments Ω {p : Set Ω × Set Ω // r p.1 p.2} :=
   ⟨fun p ↦ p.1.1, fun p ↦ p.1.2, Finset.univ.filter fun p ↦ ¬r p.1.2 p.1.1⟩
 
-/-- With every pair judged, the judgments of a total relation are representable exactly when the
-relation is. -/
 theorem ofRel_representable_iff (r : Set Ω → Set Ω → Prop) [DecidableRel r] [Std.Total r] :
     (ofRel r).Representable ↔ ComparativeProbability.Representable r := by
   constructor
@@ -674,7 +659,6 @@ theorem ofRel_representable_iff (r : Set Ω → Set Ω → Prop) [DecidableRel r
       exact ⟨(h _ _).1 p.2, (h _ _).1 hs⟩
 
 omit [Fintype ι] [DecidableEq ι] [MeasurableSpace Ω] in
-/-- A non-trivial monotone relation judges the whole space strictly more likely than `∅`. -/
 theorem ofRel_strict_nonempty (r : Set Ω → Set Ω → Prop) [DecidableRel r] [IsLikelihoodMono r]
     [IsNontrivial r] : (ofRel r).strict.Nonempty :=
   ⟨⟨(Set.univ, ∅), rel_empty _⟩, by simpa [ofRel] using not_rel_empty_univ (r := r)⟩
@@ -759,8 +743,6 @@ def ellsberg : Judgments (Fin 3) (Fin 2) :=
 noncomputable def coinStakes : Stakes (Fin 2) :=
   Stakes.const (1 / 2) 100 0 (by norm_num) (by norm_num)
 
-/-- The Ellsberg judgments violate de Finetti's quasi-additivity (note 7), since adding yellow to
-both sides of "red over black" gives "red or yellow over black or yellow", which they reverse. -/
 theorem ellsberg_not_agree (r : Set (Fin 3) → Set (Fin 3) → Prop) [IsQualitativeAdditive r] :
     ¬ellsberg.Agree r := fun h ↦ by
   have h0 := (h 0).1 (Finset.mem_univ _)
@@ -795,8 +777,6 @@ def worldCup : Judgments (Fin 5) (Fin 4) :=
 theorem worldCup_balanced : worldCup.Balanced := fun ω ↦ by
   fin_cases ω <;> simp [worldCup, Fin.sum_univ_four]
 
-/-- The World Cup judgments are not representable, since they are balanced, a failure of
-cancellation. -/
 theorem worldCup_not_representable : ¬worldCup.Representable :=
   worldCup.not_representable_of_balanced worldCup_balanced ⟨0, Finset.mem_univ _⟩
 
@@ -815,9 +795,6 @@ private theorem preimage_worldCupToKps_symm (s : Finset (Fin 5)) :
     worldCupToKps.symm ⁻¹' (↑s : Set (Fin 5)) = ↑(s.map worldCupToKps.toEmbedding) := by
   ext x; simp
 
-/-- **Note 12.** The World Cup judgments agree with a qualitative probability, the
-Kraft–Pratt–Seidenberg order relabelled, which satisfies quasi-additivity and every other
-de Finetti axiom; yet neither they nor that order is representable. -/
 theorem worldCup_agree_qualitativeProbability :
     ∃ r : Set (Fin 5) → Set (Fin 5) → Prop, IsQualitativeProbability r ∧ worldCup.Agree r ∧
       ¬ComparativeProbability.Representable r := by

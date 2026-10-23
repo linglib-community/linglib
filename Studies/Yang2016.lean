@@ -53,7 +53,6 @@ noncomputable def threshold (n : ℕ) : ℝ := (n : ℝ) / Real.log n
 under the threshold. -/
 def tolerates (n e : ℕ) : Prop := (e : ℝ) ≤ threshold n
 
-/-- The threshold is nonnegative. -/
 theorem threshold_nonneg (n : ℕ) : 0 ≤ threshold n := by
   unfold threshold
   apply div_nonneg (Nat.cast_nonneg n)
@@ -61,7 +60,6 @@ theorem threshold_nonneg (n : ℕ) : 0 ≤ threshold n := by
   · simp [h]
   · exact Real.log_nonneg (by exact_mod_cast h)
 
-/-- A rule with no exceptions is always tolerated. -/
 theorem tolerates_zero (n : ℕ) : tolerates n 0 := by
   simpa [tolerates] using threshold_nonneg n
 
@@ -73,7 +71,6 @@ frequencies are Zipfian: the `i`-th item has probability `1 / (i H_n)` and is re
 noncomputable def listTime (n : ℕ) : ℝ :=
   ∑ i ∈ range n, (1 / ((i + 1 : ℝ) * harmonic n)) * (i + 1 : ℝ)
 
-/-- The harmonic numbers are at least one from the first on. -/
 private theorem one_le_harmonic' : ∀ n : ℕ, 1 ≤ harmonic (n + 1)
   | 0 => by simp [harmonic_succ]
   | n + 1 => by
@@ -82,7 +79,6 @@ private theorem one_le_harmonic' : ∀ n : ℕ, 1 ≤ harmonic (n + 1)
     have : (0 : ℚ) ≤ (↑(n + 1 + 1) : ℚ)⁻¹ := by positivity
     linarith
 
-/-- The expected access time of a list is `n / H_n`. -/
 theorem listTime_eq (n : ℕ) : listTime n = n / harmonic n := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp [listTime]
@@ -96,7 +92,6 @@ theorem listTime_eq (n : ℕ) : listTime n = n / harmonic n := by
     rw [sum_congr rfl hterm, sum_const, card_range, nsmul_eq_mul, div_eq_mul_one_div]
     ring
 
-/-- Access in a list never takes longer than its length. -/
 theorem listTime_le_self (n : ℕ) : listTime n ≤ n := by
   rw [listTime_eq]
   rcases Nat.eq_zero_or_pos n with rfl | hn
@@ -114,13 +109,11 @@ noncomputable def ruleTime (n m : ℕ) : ℝ :=
 /-- A rule is productive when it costs no more than listing everything. -/
 def Productive (n m : ℕ) : Prop := ruleTime n m ≤ listTime n
 
-/-- Listing everything is the rule with every item an exception. -/
 theorem ruleTime_self (n : ℕ) (hn : 0 < n) : ruleTime n n = listTime n := by
   unfold ruleTime
   rw [div_self (by exact_mod_cast hn.ne')]
   ring
 
-/-- The rule's cost never exceeds the number of exceptions. -/
 theorem ruleTime_le {n m : ℕ} (hmn : m ≤ n) : ruleTime n m ≤ m := by
   unfold ruleTime
   rcases Nat.eq_zero_or_pos n with rfl | hn
@@ -132,12 +125,10 @@ theorem ruleTime_le {n m : ℕ} (hmn : m ≤ n) : ruleTime n m ≤ m := by
     have := listTime_le_self m
     nlinarith
 
-/-- A rule whose exceptions fit under the exact harmonic bound `n / H_n` is productive. -/
 theorem productive_of_le_listTime {n m : ℕ} (hmn : m ≤ n) (h : (m : ℝ) ≤ listTime n) :
     Productive n m :=
   (ruleTime_le hmn).trans h
 
-/-- The harmonic bound is at least `n / (1 + ln n)`. -/
 theorem div_one_add_log_le_listTime (n : ℕ) : (n : ℝ) / (1 + Real.log n) ≤ listTime n := by
   rw [listTime_eq]
   rcases Nat.eq_zero_or_pos n with rfl | hn
@@ -145,13 +136,10 @@ theorem div_one_add_log_le_listTime (n : ℕ) : (n : ℝ) / (1 + Real.log n) ≤
   · exact div_le_div_of_nonneg_left (Nat.cast_nonneg n)
       (by exact_mod_cast harmonic_pos hn.ne') (harmonic_le_one_add_log n)
 
-/-- A rule with at most `n / (1 + ln n)` exceptions is productive. -/
 theorem productive_of_le_div_one_add_log {n m : ℕ} (hmn : m ≤ n)
     (h : (m : ℝ) ≤ n / (1 + Real.log n)) : Productive n m :=
   productive_of_le_listTime hmn (h.trans (div_one_add_log_le_listTime n))
 
-/-- The book's threshold exceeds the exact sufficient bound: the logarithm undercounts the
-harmonic number. -/
 theorem div_one_add_log_le_threshold {n : ℕ} (hn : 2 ≤ n) :
     (n : ℝ) / (1 + Real.log n) ≤ threshold n :=
   div_le_div_of_nonneg_left (Nat.cast_nonneg n)
@@ -159,8 +147,6 @@ theorem div_one_add_log_le_threshold {n : ℕ} (hn : 2 ≤ n) :
 
 /-! ### The German feminine plural -/
 
-/-- Some eighty feminine nouns fail to pluralize in *-(e)n*, which five hundred feminine nouns
-suffice to tolerate. -/
 theorem tolerates_500_80 : tolerates 500 80 := by
   unfold tolerates threshold
   push_cast

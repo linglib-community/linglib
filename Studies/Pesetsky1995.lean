@@ -90,8 +90,6 @@ def canReachV (spine : List CascadeHead) (i : ℕ) : Prop := ∀ h ∈ spine.tak
 instance (spine : List CascadeHead) (i : ℕ) : Decidable (canReachV spine i) :=
   inferInstanceAs (Decidable (∀ h ∈ spine.take i, h.affixal = true))
 
-/-- A head below a given stretch of the spine reaches the verb iff that stretch is affixal
-throughout. -/
 theorem canReachV_append (above : List CascadeHead) (h : CascadeHead)
     (below : List CascadeHead) :
     canReachV (above ++ h :: below) above.length ↔ ∀ h' ∈ above, h'.affixal = true := by
@@ -140,15 +138,12 @@ def stimulusCascade (s : StimulusType) : Cascade :=
 /-- (514): the Experiencer in the specifier of CAUS, with no stimulus. -/
 def plainCascade : Cascade := .layer caus .experiencer (.complement .causer)
 
-/-- Both stimulus prepositions are non-affixes, so Target and Subject Matter block alike. -/
 theorem stimulusHead_nonaffixal (s : StimulusType) : (stimulusHead s).affixal = false := by
   cases s <;> rfl
 
-/-- The restriction: with a Target or Subject Matter present, CAUS cannot reach the verb. -/
 theorem tsm_restriction (s : StimulusType) : ¬ canReachV (stimulusCascade s).spine 1 := by
   cases s <;> decide
 
-/-- Without a stimulus nothing intervenes and CAUS reaches the verb. -/
 theorem caus_reaches_without_stimulus : canReachV plainCascade.spine 0 := by decide
 
 /-! ### Oehrle's observation (§6.2.1) -/
@@ -160,16 +155,11 @@ def doubleObjectCascade : Cascade :=
 /-- (512): the *to*-dative with CAUS below *to*. -/
 def toCascade : Cascade := .layer headTo .theme (.layer caus .goal (.complement .causer))
 
-/-- The causative reading of *give*, *the war years gave Mailer his first big success*,
-survives in the double object construction, whose G is an affix, and not with *to*. -/
 theorem oehrle : canReachV doubleObjectCascade.spine 1 ∧ ¬ canReachV toCascade.spine 1 := by
   decide
 
 /-! ### Backward binding (§6.2.2) -/
 
-/-- The Experiencer c-commands the Causer's base position with or without a stimulus: the
-Causer is a derived subject, raised from below the Experiencer, and reconstructs there, so
-the Experiencer can bind into it. -/
 theorem experiencer_ccommands_causer (s : StimulusType) :
     (stimulusCascade s).CCommands .experiencer .causer ∧
       plainCascade.CCommands .experiencer .causer := by

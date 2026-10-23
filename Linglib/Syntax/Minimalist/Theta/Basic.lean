@@ -233,8 +233,6 @@ theorem comb_derivable (g₀ : List PolarizedRole) (ρE : ThetaRole) (ρIs : Lis
     ⟨rfl, ⟨_, rfl, .inl (.close g₀ ρE (by simp) (by simp [upGrid]))⟩, trivial,
       combSpine_nodeLocal (by simp) (by simpa using hchain)⟩
 
-/-- The inputs of a comb spine: one receiver per internal role, then the head carrying the
-accumulated grid. -/
 theorem combSpine_inputs (g rest : List ThetaRole) :
     (combSpine (L := L) g rest).inputs =
       rest.map (fun ρ ↦ Color.free [.down ρ]) ++ [.free (upGrid (g ++ rest))] := by
@@ -242,8 +240,6 @@ theorem combSpine_inputs (g rest : List ThetaRole) :
   | nil => simp [combSpine]
   | cons ρ rest ih => simp [combSpine, ih (g ++ [ρ])]
 
-/-- The inputs of a comb: the external receiver, one receiver per internal role, and the head
-carrying the complete grid. -/
 theorem comb_inputs (g₀ : List PolarizedRole) (ρE : ThetaRole) (ρIs : List ThetaRole) :
     (comb (L := L) g₀ ρE ρIs).inputs =
       .free [.down ρE] :: ρIs.map (fun ρ ↦ Color.free [.down ρ]) ++
@@ -271,7 +267,6 @@ def SatisfiesCriterion (x : Bud.Tree (Color L)) : Prop :=
     (↑((x.inputs.eraseIdx i).map Color.receiver?) : Multiset (Option ThetaRole))
       = ↑(g.map some)
 
-/-- The bare theta combs satisfy the theta criterion. -/
 theorem comb_satisfiesCriterion (g₀ : List PolarizedRole) (ρE : ThetaRole)
     (ρIs : List ThetaRole) :
     SatisfiesCriterion (comb (L := L) g₀ ρE ρIs) := by
@@ -318,8 +313,6 @@ section SoleRole
 variable {hier : ThetaRole → ThetaRole → Prop} {g₀ : List PolarizedRole} {c a b : Color L}
   {x : Bud.Tree (Color L)}
 
-/-- A generator passes a sole receiver at its root down to its children, unless the second child
-is a movement landing site. -/
 theorem IsGen.soleReceiver (h : IsGen hier g₀ a b)
     (hc : (Color.free g₀ : Color L).SoleReceiver) (hb : b ≠ .emptyTree) :
     a.SoleReceiver ∧ b.SoleReceiver := by
@@ -339,7 +332,6 @@ theorem ThetaLocal.soleReceiver (h : ThetaLocal hier c a b) (hc : c.SoleReceiver
   obtain ⟨g₀, rfl, hg | hg⟩ := h
   exacts [hg.soleReceiver hc hb, (hg.soleReceiver hc ha).symm]
 
-/-- In a theta structure, only a leaf can carry the empty-tree marker. -/
 theorem out_ne_emptyTree (hx : x.NodeLocal (ThetaLocal hier))
     (hmove : Color.emptyTree ∉ x.inputs) : x.out ≠ .emptyTree := by
   cases x with

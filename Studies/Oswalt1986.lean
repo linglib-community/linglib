@@ -41,49 +41,37 @@ open Evidential Aspect Kashaya.Evidentiality
 
 /-! ### The columns of Table 1 -/
 
-/-- The suffixes of a column are mutually exclusive and cover disjoint sources. -/
 theorem paradigm_wellFormed (m : Mode) (a : Perfectivity) : WellFormed (paradigm m a) := by
   cases m <;> cases a <;> decide
 
-/-- A response drops the performative pair, the factual-visual pair taking its place. -/
 theorem paradigm_responsive (a : Perfectivity) :
     paradigm .responsive a = (paradigm .spontaneous a).erase (performative a) := by
   cases a <;> rfl
 
-/-- The performative does not take the responsive suffix, so that *men s̓ímela* 'I have done that'
-is normal as an isolated remark and *men s̓ímelam* does not occur. -/
 theorem performative_notMem_responsive (a : Perfectivity) :
     performative a ∉ paradigm .responsive a := by
   cases a <;> decide
 
-/-- Inferential II, never verb-final, belongs to no column. -/
 theorem inferentialII_notMem (m : Mode) (a : Perfectivity) : inferentialII ∉ paradigm m a := by
   cases m <;> cases a <;> decide
 
 /-! ### The narrative simplification -/
 
-/-- No column leaves a source unexpressed that a spontaneous remark expresses. -/
 theorem expressed_spontaneous_subset (m : Mode) (a : Perfectivity) :
     expressed (paradigm .spontaneous a) ⊆ expressed (paradigm m a) := by
   cases m <;> cases a <;> decide
 
-/-- Every column is a coarsening of the spontaneous column, its paradigm restricted to the
-sources a spontaneous remark expresses being refined by the spontaneous paradigm. -/
 theorem spontaneous_le (m : Mode) (a : Perfectivity) :
     Evidential.finpartition (paradigm .spontaneous a) (paradigm_wellFormed _ _) ≤
       (Evidential.finpartition (paradigm m a) (paradigm_wellFormed _ _)).restrict
         (expressed_spontaneous_subset m a) := by
   cases m <;> cases a <;> (show ∀ b ∈ _, ∃ c ∈ _, b ≤ c; decide)
 
-/-- A spontaneous remark makes four distinctions of source in either aspect, since the
-performative, covering no parameter, adds no block. -/
 theorem card_parts_spontaneous (a : Perfectivity) :
     (Evidential.finpartition (paradigm .spontaneous a) (paradigm_wellFormed _ _)).parts.card =
       4 := by
   cases a <;> decide
 
-/-- The narrative construction and the remote past simplify the distinctions to two, personal
-experience against the quotative. -/
 theorem card_parts_narrative (a : Perfectivity) :
     (Evidential.finpartition (paradigm .narrative a) (paradigm_wellFormed _ _)).parts.card = 2 ∧
     (Evidential.finpartition (paradigm .remote a) (paradigm_wellFormed _ _)).parts.card = 2 := by
@@ -96,8 +84,6 @@ them, the rows of Table 1 being ordered so that each has priority over those bel
 def preferred (es : List Evidential) (sources : Finset Parameter) : Option Evidential :=
   es.find? fun e ↦ (e.covers ∩ sources).Nonempty
 
-/-- Seeing takes priority over every other source, so whatever else a speaker has, the
-factual-visual is used. -/
 theorem preferred_of_visual_mem (a : Perfectivity) {S : Finset Parameter} (h : .visual ∈ S) :
     preferred (paradigm .spontaneous a) S = some (factualVisual a) := by
   cases a <;> simp [preferred, paradigm, List.find?, performative, factualVisual,
@@ -118,8 +104,6 @@ theorem preferred_append_singleton_eq_some {es : List Evidential} {e : Evidentia
     simp only [Option.some_or, Option.some.injEq]
     exact ⟨fun hxe ↦ (he (hxe ▸ hx)).elim, fun ⟨_, hall⟩ ↦ by simp_all⟩
 
-/-- The quotative is used exactly when report is at hand and no other row of the column covers
-a source at hand. -/
 theorem preferred_eq_quotative_iff (a : Perfectivity) (S : Finset Parameter) :
     preferred (paradigm .spontaneous a) S = some quotative ↔
       ¬ Disjoint quotative.covers S ∧
@@ -134,8 +118,6 @@ theorem preferred_eq_quotative_iff (a : Perfectivity) (S : Finset Parameter) :
   rcases List.mem_append.1 he with he | he
   exacts [h e he, (hq (List.mem_singleton.1 he)).elim]
 
-/-- The performative, whose source lies outside the parameters, is never chosen on the strength
-of one. -/
 theorem preferred_ne_performative (a : Perfectivity) (S : Finset Parameter) :
     preferred (paradigm .spontaneous a) S ≠ some (performative a) := fun h ↦ by
   have := List.find?_some h
@@ -172,15 +154,11 @@ def evidential? (r : Datum) (a : Perfectivity) : Option Evidential :=
   | some "remotePast" => some remotePast
   | _ => none
 
-/-- Every example names an evidential, and every one whose evidential is a suffix of the
-paradigm names its mode. -/
 theorem examples_named :
     ∀ r ∈ Examples.all, ∀ a ∈ aspects r,
       (evidential? r a).isSome ∧ (evidential? r a ≠ some inferentialII → (mode? r).isSome) := by
   decide
 
-/-- The evidential of each example lies in the paradigm of its mode, for the aspect of its
-stem. -/
 theorem examples_mem_paradigm :
     ∀ r ∈ Examples.all, ∀ m ∈ mode? r, ∀ a ∈ aspects r, ∀ e ∈ evidential? r a,
       e ∈ paradigm m a := by

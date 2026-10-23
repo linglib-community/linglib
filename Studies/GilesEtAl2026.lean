@@ -98,8 +98,6 @@ theorem predictedBy_eq_null (h : P level ↔ P ref) : predictedBy P level ref = 
 theorem predictedBy_eq_lower (hl : ¬ P level) (hr : P ref) : predictedBy P level ref = .lower := by
   simp [predictedBy, hl, hr]
 
-/-- A strategy that reads only the display predicts no difference between two conditions with
-the same display, in particular between two redundant attributes at matched discriminability. -/
 theorem predictedBy_self (P : Display D → Prop) [DecidablePred P] (d : Display D) :
     predictedBy P d d = .null :=
   predictedBy_eq_null Iff.rfl
@@ -158,21 +156,16 @@ theorem not_pressure_sHighRLow (h : lo < hi) : ¬ (DisplayType.sHighRLow.display
 theorem not_pressure_baseline : ¬ (DisplayType.baseline.display lo hi).Pressure :=
   λ hp => lt_irrefl _ ((Display.pressure_iff _).1 hp)
 
-/-- Against the critical display, the view predicts less overinformativeness when the sufficient
-attribute is easy and the redundant one hard. -/
 theorem predicted_sHighRLow (h : lo < hi) :
     predictedBy Display.Pressure (DisplayType.sHighRLow.display lo hi)
       (DisplayType.sLowRHigh.display lo hi) = .lower :=
   predictedBy_eq_lower (not_pressure_sHighRLow h) (pressure_sLowRHigh h)
 
-/-- Against the critical display, the view predicts less overinformativeness when both attributes
-are easy: speakers do not simply mention every easy attribute. -/
 theorem predicted_baseline (h : lo < hi) :
     predictedBy Display.Pressure (DisplayType.baseline.display lo hi)
       (DisplayType.sLowRHigh.display lo hi) = .lower :=
   predictedBy_eq_lower not_pressure_baseline (pressure_sLowRHigh h)
 
-/-- The rival strategy predicts no difference between the baseline and the critical display. -/
 theorem highRedundant_predicted_baseline :
     predictedBy (Display.HighRedundant hi) (DisplayType.baseline.display lo hi)
       (DisplayType.sLowRHigh.display lo hi) = .null :=
@@ -235,12 +228,9 @@ def Row.predicted (r : Row) : Direction := predictedBy Display.Pressure r.level 
 /-- The five coefficients of Tables 1 and 2. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Both display-type contrasts of the first experiment go the way the view predicts. -/
 theorem rows_displayType_predicted :
     ∀ r ∈ rows, r.predictor = .displayType → r.observed = r.predicted := by decide
 
-/-- The baseline contrast refutes the strategy of mentioning every highly discriminable attribute,
-which predicts no difference from the critical display. -/
 theorem rows_baseline_refutes_highRedundant :
     ∀ r ∈ rows, r.predictor = .displayType → r.level = DisplayType.baseline.display .low .high →
       r.observed ≠ predictedBy (Display.HighRedundant .high) r.level r.reference := by decide
@@ -251,17 +241,12 @@ theorem rows_attribute_level_eq_reference :
 theorem rows_attribute_observed_lower :
     ∀ r ∈ rows, r.predictor = .attribute → r.observed = .lower := by decide
 
-/-- Colour is special: no strategy that reads only the display distinguishes the redundant
-attributes of either experiment, yet redundant material and redundant orientation are both used
-less than redundant colour. -/
 theorem rows_colour_special (P : Display Discriminability → Prop) [DecidablePred P] :
     ∀ r ∈ rows, r.predictor = .attribute →
       predictedBy P r.level r.reference = .null ∧ r.observed = .lower := λ r hr hp =>
   ⟨by rw [← rows_attribute_level_eq_reference r hr hp]; exact predictedBy_self P r.level,
     rows_attribute_observed_lower r hr hp⟩
 
-/-- Low- and high-frequency colour terms do not differ, as the view predicts for one attribute at
-one discriminability. -/
 theorem rows_frequency_predicted :
     ∀ r ∈ rows, r.predictor = .frequency → r.observed = r.predicted := by decide
 

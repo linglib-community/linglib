@@ -94,7 +94,6 @@ theorem isFactive_iff {p : Predicate} :
     (entry p).IsFactive ↔ p ∈ Category.canonicallyFactive.predicates := by
   cases p <;> decide
 
-/-- The lexicon's presupposition triggers among the twenty are its factive predicates. -/
 theorem isTrigger_iff {p : Predicate} : (entry p).IsTrigger ↔ (entry p).IsFactive := by
   cases p <;> decide
 
@@ -110,8 +109,6 @@ def Separates (s : Set α) (f : α → β) : Prop := ∀ ⦃a⦄, a ∈ s → �
 theorem not_separates_of_le (ha : a ∈ s) (hb : b ∉ s) (h : f a ≤ f b) : ¬ Separates s f :=
   fun hs ↦ (hs ha hb).not_ge h
 
-/-- Over finitely many items, a rating separates a class with a non-member iff the class is
-everything the rating puts above some threshold. -/
 theorem separates_iff_exists_threshold [Finite α] (h : sᶜ.Nonempty) :
     Separates s f ↔ ∃ t, s = f ⁻¹' Ioi t := by
   obtain ⟨b, hb, hmax⟩ := sᶜ.exists_max_image f sᶜ.toFinite h
@@ -130,21 +127,14 @@ def Projects (t : Task) (p : Predicate) : Prop := p ∉ (projectionResults t).in
 
 instance (t : Task) : DecidablePred (Projects t) := fun _ ↦ inferInstanceAs (Decidable (_ ∉ _))
 
-/-- Every complement projects, so the canonically factive class has to be drawn within the
-ratings. -/
 theorem projects (t : Task) (p : Predicate) : Projects t p := by
   cases t <;> exact List.not_mem_nil
 
-/-- The complements at least as projective as that of *reveal* are those of the canonically
-factive predicates and of the optionally factive *acknowledge*, *hear* and *inform*, under either
-task. -/
 theorem certaintyMean_reveal_le_iff (t : Task) (p : Predicate) :
     certaintyMean t .reveal ≤ certaintyMean t p ↔
       p ∈ Category.canonicallyFactive.predicates ∨ p ∈ [.acknowledge, .hear, .inform] := by
   revert t p; decide +kernel
 
-/-- With *acknowledge*, *hear* and *inform* set aside, the canonically factive predicates are
-categorically more projective than the rest. -/
 theorem certaintyMean_lt_of_mem_of_not_mem {t : Task} {p q : Predicate}
     (hp : p ∈ Category.canonicallyFactive.predicates)
     (hq : q ∉ Category.canonicallyFactive.predicates) (hq' : q ∉ [.acknowledge, .hear, .inform]) :
@@ -184,9 +174,6 @@ theorem factive_eq_empty_or_not_separates (d : Diagnostic) (t t' : Task) :
       revert t t' <;> decide +kernel
   · exact .inl (eq_empty_of_forall_notMem fun p ↦ by cases t <;> exact List.not_mem_nil)
 
-/-- The best contenders on the second definition, *be right* and *prove*, whose complements alone
-the gradient inference ratings leave entailed, project less than every canonically factive
-predicate. -/
 theorem certaintyMean_lt_of_entailed {t : Task} {p q : Predicate}
     (hp : Entailed .inference .gradient p) (hq : q ∈ Category.canonicallyFactive.predicates) :
     certaintyMean t p < certaintyMean t q := by

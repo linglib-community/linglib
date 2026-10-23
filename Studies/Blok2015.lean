@@ -67,18 +67,14 @@ an answer `Ici m` for each lower bound `m`. -/
 def atMost (n : ℕ) : Set (Set ℕ) :=
   atMostInq (ranking (oneSided id)) (range (oneSided id)) (oneSided id n)
 
-/-- *At most `n`* raises the possibilities that between `m` and `n` hold, for each `m` up to `n`. -/
 theorem atMost_eq (n : ℕ) : atMost n = (Icc · n) '' Iic n :=
   CoppockBrochhagen2013.atMostInq_oneSided_id n
 
-/-- The informational content of *up to `n`* is its lower bound. At least the bottom of the
-scale hold, and nothing bounds the count from above. -/
 theorem sUnion_upTo (h : s ≤ n) : ⋃₀ upTo s n = Ici s := by
   ext k
   simp only [upTo, sUnion_image, mem_iUnion, mem_Icc, mem_Ici, exists_prop]
   exact ⟨fun ⟨m, hm, hk⟩ ↦ hm.1.trans hk, fun hk ↦ ⟨s, ⟨le_rfl, h⟩, hk⟩⟩
 
-/-- The informational content of *at most `n`* is its upper bound. -/
 theorem sUnion_atMost : ⋃₀ atMost n = Iic n := by
   ext k
   simp only [atMost_eq, sUnion_image, mem_iUnion, mem_Iic, mem_Icc, exists_prop]
@@ -89,7 +85,6 @@ theorem sUnion_atMost : ⋃₀ atMost n = Iic n := by
 /-- (51): the question of how many, with a possibility for each lower bound. -/
 def howMany : Set (Set ℕ) := range Ici
 
-/-- Exhaustified against the question of how many, *at least `m`* is *exactly `m`*. -/
 theorem Ici_diff_sUnion_howMany : Ici m \ ⋃₀ {q ∈ howMany | ¬ Ici m ⊆ q} = {m} := by
   ext k
   refine ⟨fun ⟨hk, hnot⟩ ↦ ?_, ?_⟩
@@ -107,19 +102,14 @@ theorem exh_upTo_howMany :
     Inquisitive.Unrestricted.exh (upTo s n) howMany = (fun m ↦ {m}) '' Icc s n := by
   simp only [Inquisitive.Unrestricted.exh, upTo, image_image, Ici_diff_sUnion_howMany]
 
-/-- The upper bound of *up to `n`* is an implicature. The exhaustified content is bounded by
-`n`, where the asserted content `sUnion_upTo` is not. -/
 theorem sUnion_exh_upTo : ⋃₀ Inquisitive.Unrestricted.exh (upTo s n) howMany = Icc s n := by
   rw [exh_upTo_howMany, sUnion_image, biUnion_of_singleton]
 
 /-! ### The range requirement -/
 
-/-- *Up to `n`* raises more than one possibility just in case `n` is above the bottom of the
-scale, which is the bottom-of-the-scale effect. -/
 theorem nontrivial_upTo : (upTo s n).Nontrivial ↔ s < n := by
   rw [upTo, image_nontrivial Ici_injective, ← not_subsingleton_iff, subsingleton_Icc_iff, not_le]
 
-/-- *At most `n`* raises more than one possibility just in case `n` is not zero. -/
 theorem nontrivial_atMost : (atMost n).Nontrivial ↔ 0 < n := by
   rw [atMost_eq]
   have hinj : InjOn (Icc · n) (Iic n) := fun a ha b hb (h : Icc a n = Icc b n) ↦
@@ -197,8 +187,6 @@ instance (d : Bool) (t : Test) : Decidable (Predicted (proposition d n) n t) := 
   · exact decidable_of_iff _ (predicted_atMost_iff t).symm
   · exact decidable_of_iff _ (predicted_upTo_iff t).symm
 
-/-- Every judgment of the paper's rows is the account's prediction. A row is acceptable just in
-case its modifier, with its number, passes its diagnostic. -/
 theorem judgment_rows :
     ∀ row ∈ Examples.all, ∃ t, (row.feature? "test").bind testOf = some t ∧
       ∃ n, row.nat? "numeral" = some n ∧

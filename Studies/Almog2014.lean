@@ -53,12 +53,10 @@ variable {W E : Type*} {desc desc₁ desc₂ : W → E} {c w₀ w : W}
 
 /-! ### Rigidity without singularity -/
 
-/-- `dthat` of a description is scope-inert. -/
 theorem dthat_deRe_iff_deDicto (P : E → W → Prop) :
     deRe P (Character.dthat desc c) w₀ w ↔ deDicto P (Character.dthat desc c) w :=
   (isRigid_iff_deRe_iff_deDicto (Character.dthat desc c) w₀).1 (isRigid_const (desc c)) P w
 
-/-- Descriptions that co-denote at the context world rigidify to one content. -/
 theorem dthat_eq_dthat_of_eq (h : desc₁ c = desc₂ c) :
     (Character.dthat desc₁ : Character W W E) c = Character.dthat desc₂ c :=
   funext λ _ => h
@@ -77,8 +75,6 @@ variable {a b : E} {P : E → W → Prop}
 /-- The unstructured proposition a singular proposition determines. -/
 def flatten (p : SingularProposition W E) : W → Prop := p.property p.individual
 
-/-- Singular propositions about distinct individuals are distinct, whatever their
-unstructured propositions: the Frege puzzle is dissolved by structure. -/
 theorem mk_ne_mk_of_ne (h : a ≠ b) : mk a P ≠ mk b P :=
   λ e => h (congrArg individual e)
 
@@ -86,16 +82,12 @@ end SingularProposition
 
 /-! ### Referential use is not rigidification -/
 
-/-- Reference fixed on an intended individual differs from `dthat` of a description that
-misfits it. -/
 theorem const_ne_dthat_of_ne {intended : E} (h : desc c ≠ intended) :
     (Character.const intended : Character W W E) c ≠ Character.dthat desc c :=
   λ e => h (congrFun e c).symm
 
 /-! ### The Russell–Partee–Kaplan challenge -/
 
-/-- The universal quantifier is not the lift of an individual: no subject of type `E` serves
-*every φ*. -/
 theorem not_exists_individual_eq_forall (a b : E) (hab : a ≠ b) :
     ¬ ∃ e : E, Quantifier.NP.individual e = λ P => ∀ x, P x := by
   rintro ⟨e, he⟩

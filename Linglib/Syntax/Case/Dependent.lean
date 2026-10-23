@@ -257,12 +257,10 @@ theorem Rules.dependentPass_alone (r : Rules) (P : α → Bool) {s : Valuation �
     fun ⟨k, hk, hki⟩ ↦ lt_irrefl i (halone k hk ▸ hki)
   simp [Rules.dependentPass, Valuation.fill_getElem?_of_none hx, h1, h2]
 
-/-- With no elsewhere case the pass does nothing. -/
 theorem Rules.unmarkedPass_of_none (r : Rules) (P : α → Bool) (h : r.unmarked = none)
     (s : Valuation α (Case × Mechanism)) : r.unmarkedPass P s = s := by
   simp [Rules.unmarkedPass, h]
 
-/-- With neither dependent case the pass does nothing. -/
 theorem Rules.dependentPass_of_none (r : Rules) (P : α → Bool) (hh : r.high = none)
     (hl : r.low = none) (s : Valuation α (Case × Mechanism)) : r.dependentPass P s = s := by
   simp [Rules.dependentPass, hh, hl]
@@ -306,8 +304,6 @@ theorem Rules.classifies_marking_ofAlignment {a : Alignment.AlignmentType} (ha :
 
 /-! ### Alignments on a transitive and an intransitive clause -/
 
-/-- Two caseless NPs: the accusative rules value the lower accusative and leave the higher
-    nominative, the ergative rules mirror this, and the tripartite rules do both. -/
 theorem assignCases_transitive :
     let xs : List (Fin 2) := [0, 1]
     (assignCases .accusative (fun _ ↦ none) xs).map (·.2.map (·.1)) = [some .nom, some .acc] ∧
@@ -315,7 +311,6 @@ theorem assignCases_transitive :
     (assignCases .tripartite (fun _ ↦ none) xs).map (·.2.map (·.1)) = [some .erg, some .acc] := by
   decide
 
-/-- A sole caseless NP takes the elsewhere case under every alignment. -/
 theorem assignCases_intransitive (a : Alignment.AlignmentType) :
     ((assignCases a (fun _ : Unit ↦ none) [()]).valueOf ()).map (·.2) = some .unmarked := by
   cases a <;> decide

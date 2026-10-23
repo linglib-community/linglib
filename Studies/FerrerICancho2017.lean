@@ -59,8 +59,6 @@ variable {g}
 
 /-! ### Crossings under a relabelling -/
 
-/-- Relabelling scores the crossing quadruples in the positions the
-permutation assigns rather than in `g`'s own. -/
 theorem crossings_map (σ : Perm (Fin n)) :
     (g.map σ).crossings = #{x : Fin n × Fin n × Fin n × Fin n |
       g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
@@ -72,16 +70,12 @@ theorem crossings_map (σ : Perm (Fin n)) :
 
 /-! ### One linearization in twenty-four alternates a distinct quadruple -/
 
-/-- Alternation is monotonicity of the permutation along the reordered
-quadruple. -/
 private theorem alternate_comp_iff {a b c d : Fin n} (σ : Perm (Fin n))
     (hq : Function.Injective ![a, c, b, d]) :
     Alternate (σ a) (σ b) (σ c) (σ d) ↔ Monotone (σ ∘ ![a, c, b, d]) :=
   .trans (by simp [Fin.strictMono_iff_lt_succ, Fin.forall_fin_succ])
     ⟨StrictMono.monotone, (·.strictMono_of_injective (σ.injective.comp hq))⟩
 
-/-- One linearization in `24` puts four fixed distinct positions into the
-alternating pattern. -/
 private theorem card_alternate {a b c d : Fin n} (hab : a ≠ b) (hac : a ≠ c)
     (had : a ≠ d) (hbc : b ≠ c) (hbd : b ≠ d) (hcd : c ≠ d) :
     24 * #{σ : Perm (Fin n) | Alternate (σ a) (σ b) (σ c) (σ d)} = n ! := by
@@ -90,7 +84,6 @@ private theorem card_alternate {a b c d : Fin n} (hab : a ≠ b) (hac : a ≠ c)
     show (4 : ℕ)! = 24 from rfl] using
     Perm.factorial_mul_card_monotone_comp (⟨_, hq⟩ : Fin 4 ↪ Fin n)
 
-/-- Alternation forces its four positions to be distinct. -/
 private theorem card_alternate_eq_zero {a b c d : Fin n}
     (h : ¬(a ≠ b ∧ a ≠ c ∧ a ≠ d ∧ b ≠ c ∧ b ≠ d ∧ c ≠ d)) :
     #{σ : Perm (Fin n) | Alternate (σ a) (σ b) (σ c) (σ d)} = 0 := by
@@ -107,8 +100,6 @@ private def distinct4 (x : Fin n × Fin n × Fin n × Fin n) : Prop :=
 private instance : DecidablePred (distinct4 (n := n)) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The crossings of all linearizations, regrouped by the quadruple that
-crosses. -/
 private theorem sum_crossings_map :
     ∑ σ : Perm (Fin n), (g.map σ).crossings =
       ∑ x ∈ univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
@@ -120,9 +111,6 @@ private theorem sum_crossings_map :
   by_cases h1 : g.Linked x.1 x.2.1 <;> by_cases h2 : g.Linked x.2.2.1 x.2.2.2 <;>
     simp [h1, h2]
 
-/-- Each linked quadruple of distinct positions contributes `n !` to
-twenty-four times the crossings of all linearizations; degenerate
-quadruples contribute nothing. -/
 private theorem mul_sum_crossings_map :
     24 * ∑ σ : Perm (Fin n), (g.map σ).crossings =
       n ! * #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
@@ -144,8 +132,6 @@ private theorem mul_sum_crossings_map :
 
 /-! ### Eight ordered witnesses per unordered disjoint pair -/
 
-/-- An involution preserving `P` and toggling `C` halves the count: there
-are as many `P`-elements with `C` as without. -/
 private theorem card_filter_eq_two_mul {α : Type*} [Fintype α] [DecidableEq α]
     {P C : α → Prop} [DecidablePred P] [DecidablePred C] (e : α → α)
     (he : Function.Involutive e) (hP : ∀ x, P x → P (e x))
@@ -158,8 +144,6 @@ private theorem card_filter_eq_two_mul {α : Type*} [Fintype α] [DecidableEq α
   simp only [mem_filter, mem_univ, true_and, Function.Involutive.coe_toPerm]
   grind [Function.Involutive]
 
-/-- Ordered linked quadruples of distinct positions come in eights: an
-orientation for each link and the order of the two links. -/
 private theorem card_linked_distinct :
     #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         (g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x)) =
@@ -229,7 +213,6 @@ private theorem card_adj_snd (v : V) : #{q : V × V | G.Adj q.1 q.2 ∧ q.2 = v}
   rw [← card_adj_fst G v]
   exact card_equiv (Equiv.prodComm V V) fun q ↦ by simp [G.adj_comm]
 
-/-- The darts disjoint from a dart `(a, b)`. -/
 private theorem card_disjoint_add {a b : V} (h : G.Adj a b) :
     #{q : V × V | G.Adj q.1 q.2 ∧ q.1 ≠ a ∧ q.1 ≠ b ∧ q.2 ≠ a ∧ q.2 ≠ b} +
       2 * (G.degree a + G.degree b) = 2 * #G.edgeFinset + 2 := by
@@ -269,8 +252,6 @@ private theorem card_disjoint_add {a b : V} (h : G.Adj a b) :
       tauto
   omega
 
-/-- Ordered pairs of vertex-disjoint darts in a graph with `m` edges and degrees `k`:
-`4 m (m + 1) - 4 ∑ k²`. -/
 private theorem card_disjoint_darts_add :
     #{x : V × V × V × V | G.Adj x.1 x.2.1 ∧ G.Adj x.2.2.1 x.2.2.2 ∧ x.1 ≠ x.2.2.1 ∧
         x.1 ≠ x.2.2.2 ∧ x.2.1 ≠ x.2.2.1 ∧ x.2.1 ≠ x.2.2.2} + 4 * ∑ v, G.degree v ^ 2 =
@@ -308,8 +289,6 @@ private theorem card_disjoint_darts_add :
 
 end Darts
 
-/-- **Potential crossings from the degrees**: in any link structure with `m` links,
-`2 · C_pairs + ∑ k² = m (m + 1)`. -/
 theorem two_mul_disjointLinkPairs_add_sum_degree_sq :
     2 * disjointLinkPairs g + ∑ v, g.toSimpleGraph.degree v ^ 2 =
       #g.toSimpleGraph.edgeFinset * (#g.toSimpleGraph.edgeFinset + 1) := by

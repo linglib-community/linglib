@@ -155,7 +155,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 /-- The examples (5) to (8) of Table 1. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The rows cover the four types in English, German and Swedish, with (8c′). -/
 theorem rows_length : rows.length = 13 := by decide
 
 /-- Table 1: every example has the profile of its kind and polarity. -/
@@ -219,8 +218,6 @@ def markingRows : List MarkingRow := Examples.all.filterMap MarkingRow.ofDatum
 and (24). -/
 theorem markingRows_length : markingRows.length = 11 := by decide
 
-/-- The generalization predicts every judgment: an example is acceptable as a rejecting question
-just when it carries the cues. -/
 theorem marking_iff :
     ∀ r ∈ markingRows, (r.judgment = .acceptable ↔ r.cues.MarksRQ r.polarity) := by
   decide

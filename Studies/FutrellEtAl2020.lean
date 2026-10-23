@@ -86,7 +86,6 @@ def whMovement : Graph 8 :=
 example : ¬ extraposition.IsProjective := by decide
 example : ¬ whMovement.IsProjective := by decide
 
-/-- Displacement stays mildly non-context-free: both trees have gap degree 1. -/
 theorem displacement_gap_degree_one :
     extraposition.gapDegree = 1 ∧ whMovement.gapDegree = 1 := by decide
 
@@ -194,8 +193,6 @@ example : lightParticleLate.totalLength = 7 := by decide
 example : heavyParticleEarly.totalLength = 11 := by decide
 example : heavyParticleLate.totalLength = 16 := by decide
 
-/-- The DLM penalty for late particle placement grows with object weight:
-    1 for the light object, 5 for the heavy one. -/
 theorem dlm_penalty_grows_with_weight :
     lightParticleLate.totalLength - lightParticleEarly.totalLength <
     heavyParticleLate.totalLength - heavyParticleEarly.totalLength := by decide
@@ -222,9 +219,6 @@ def reorderingB : Graph 6 := attestedOrder.map σB
 example : attestedOrder.totalLength = 6 := by decide
 example : reorderingB.totalLength = 9 := by decide
 
-/-- The attested order beats the reordering — and since `reorderingB` is a
-    `Graph.map` of `attestedOrder`, that they share a structure is not an
-    assertion but a definition. -/
 theorem attested_below_reordering :
     attestedOrder.totalLength < reorderingB.totalLength := by decide
 

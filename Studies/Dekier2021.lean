@@ -104,16 +104,12 @@ theorem map_syncretism :
       Setoid.ker (pattern latin) = Setoid.ker Paradigm.aab := by
   decide
 
-/-- Russian's ABC is the Elsewhere Principle at work, since *-to* covers the non-specific
-function beside *-nibud'*, so coverage gives that layer no single form, and the lexicon, storing
-*-to* at the specific unknown layer, gives it to the smaller match *-nibud'*. -/
 theorem russian_elsewhere :
     pattern russian 0 = none ∧
       spellout (lexicon russian) = ![some "-nibud'", some "-to", some "koe-"] ∧
       Setoid.ker (spellout (lexicon russian)) = Setoid.ker Paradigm.abc := by
   decide
 
-/-- Kannada's paradigm has a gap at the specific known layer. -/
 theorem kannada_gap : pattern kannada 2 = none := by decide
 
 /-- The lexicon read off each paradigm reproduces its coverage of the three functions by

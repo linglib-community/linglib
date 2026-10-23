@@ -75,7 +75,6 @@ def Value.adjForm (g : Value) : numberSystem.values → AdjForm :=
   numberSystem.elim (match g with | .masc => .zero | .fem => .ă | .neut => .zero)
     (match g with | .masc => .i | .fem => .e | .neut => .e)
 
-/-- Taking both numbers together, the adjective distinguishes all three genders. -/
 theorem faithful_adjForm : Gender.Faithful Value.adjForm := by decide
 
 end Romanian.Gender

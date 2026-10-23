@@ -340,29 +340,20 @@ def Row.ofDatum (r : Datum) : Option Row := do
 /-- The examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every row has its movement. -/
 theorem data_length : data.length = Examples.all.length := by decide +kernel
 
-/-- Under the constraints on chopping rules, a question or relativization is acceptable exactly
-when it violates none of the four. -/
 theorem chopping_rows :
     ∀ d ∈ data, d.rule = .chopping →
       (d.judgment = .acceptable ↔ ¬ d.movement.Violates) := by
   decide +kernel
 
-/-- The constraint the dissertation names for a starred example, or for a dislocation, is one
-its movement violates. -/
 theorem attributions : ∀ d ∈ data, ∀ c ∈ d.constraint, c.Fires d.movement := by
   decide +kernel
 
-/-- Copying rules are not subject to the constraints, since each Left Dislocation crosses one of
-the four islands and is acceptable. -/
 theorem copying_rows :
     ∀ d ∈ data, d.rule = .copying → d.judgment = .acceptable ∧ d.movement.Violates := by
   decide +kernel
 
-/-- The Sentential Subject Constraint is not the Complex NP Constraint, since the sentential
-subject has no lexical head noun, and the noun complement clause is not a subject. -/
 theorem ssc_cnpc_independent :
     (∃ d ∈ data, d.movement.SSC ∧ ¬ d.movement.CNPC) ∧
       ∃ d ∈ data, d.movement.CNPC ∧ ¬ d.movement.SSC := by

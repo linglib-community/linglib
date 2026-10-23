@@ -110,8 +110,6 @@ theorem numberIgnorance_of_competition (hc : □[R] (claim Q D) w)
   have := Finset.card_pos.2 ((claim_iff_witnesses_nonempty D Q v').1 (hc v' hv'))
   omega
 
-/-- Under uniqueness a true claim fixes the number of witnesses at one in every accessible
-world, so ignorance of number conflicts with the common ground. -/
 theorem not_numberIgnorance_of_uniqueness (hU : Uniqueness R w D Q) (h : □[R] (claim Q D) w) :
     ¬ NumberIgnorance R w D Q := by
   rintro ⟨v, hv, v', hv', hne⟩
@@ -195,7 +193,6 @@ where
 def observed (row : Datum) : Bool :=
   row.judgment == .acceptable && row.feature? "verdict" != some "false"
 
-/-- Every row in a modelled scenario carries the predicted verdict. -/
 theorem rows_agree :
     ∀ row ∈ Examples.all, ∀ b, predicted row = some b → observed row = b := by decide +kernel
 

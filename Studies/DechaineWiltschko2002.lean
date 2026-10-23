@@ -51,7 +51,6 @@ def Category.layers : Category → List Layer
   | .prophiP => [.phi, .N]
   | .proNP => [.N]
 
-/-- The categories nest: each is the next larger one without its top layer. -/
 theorem layers_suffix :
     Category.proNP.layers <:+ Category.prophiP.layers ∧
       Category.prophiP.layers <:+ Category.proDP.layers :=
@@ -131,8 +130,6 @@ def categoryOf (e : Datum) : Option Category :=
   | some "kare", _ => some .proNP
   | _, _ => none
 
-/-- A pronoun precedes a noun exactly when it is a DP, whose D takes an overt NP: *we
-linguists* and *us linguists* against *\*they linguists*, and dialect B's *them linguists*. -/
 theorem determiner_rows :
     ∀ e ∈ Examples.all, e.feature? "test" = some "precedesNoun" →
       ∀ c ∈ categoryOf e, (e.judgment = .acceptable ↔ c = .proDP) := by

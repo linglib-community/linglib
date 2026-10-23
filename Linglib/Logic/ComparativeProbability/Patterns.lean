@@ -80,7 +80,6 @@ def Conjunctivitis : Prop := ∀ a b : α, Probably r a → Probably r b → Pro
 
 variable {r}
 
-/-- V1 holds for **any** relation, by the logic of `Strict` and double complement. -/
 theorem probablyToNotProbablyNot : ProbablyToNotProbablyNot r := by
   rintro a ⟨_, hanot⟩ ⟨hac, _⟩
   rw [compl_compl] at hac; exact hanot hac
@@ -125,7 +124,6 @@ theorem probablyDistribInf [IsTrans α r] : ProbablyDistribInf r :=
 theorem chancyDisjunctionIntro [IsTrans α r] : ChancyDisjunctionIntro r :=
   fun _ _ h ↦ h.mono le_sup_left
 
-/-- V8 holds for the conditional read as entailment, since *probably* is upward closed. -/
 theorem chancyModusPonens_le [IsTrans α r] : ChancyModusPonens r (· ≤ ·) :=
   fun _ _ ↦ Probably.mono
 

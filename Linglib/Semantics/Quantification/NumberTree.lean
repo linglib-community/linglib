@@ -192,7 +192,6 @@ theorem ScopeMonotone.innerNeg (h : q.ScopeMonotone) : q.innerNeg.ScopeAntitone 
 theorem ScopeAntitone.innerNeg (h : q.ScopeAntitone) : q.innerNeg.ScopeMonotone :=
   fun a b ↦ h b a
 
-/-- Iterated, a scope-monotone quantifier survives moving `k` individuals into the scope. -/
 theorem ScopeMonotone.shift (h : q.ScopeMonotone) (k : ℕ) {a b : ℕ} (hq : q (a + k) b) :
     q a (b + k) := by
   induction k generalizing b with
@@ -201,13 +200,11 @@ theorem ScopeMonotone.shift (h : q.ScopeMonotone) (k : ℕ) {a b : ℕ} (hq : q 
     have := ih (h _ _ (by rwa [← Nat.add_assoc] at hq))
     rwa [Nat.add_assoc, Nat.add_comm 1 k] at this
 
-/-- A relation closed upwards in `|A ∩ B|` is scope monotone on the tree. -/
 theorem scopeMonotone_ofSizes {c : ℕ → ℕ → Prop} (hc : ∀ p, Monotone (c · p)) :
     (ofSizes c).ScopeMonotone := fun a b h ↦ by
   rw [ofSizes_apply, show a + (b + 1) = a + 1 + b by omega]
   exact hc _ b.le_succ h
 
-/-- A relation closed downwards in `|A ∩ B|` is scope antitone on the tree. -/
 theorem scopeAntitone_ofSizes {c : ℕ → ℕ → Prop} (hc : ∀ p, Antitone (c · p)) :
     (ofSizes c).ScopeAntitone := fun a b h ↦ by
   rw [ofSizes_apply, show a + 1 + b = a + (b + 1) by omega]
@@ -456,16 +453,12 @@ def _root_.Quantifier.GQ.Quantity (q : GQ α) : Prop :=
     {x | ¬ R₁ x ∧ ¬ S₁ x}.ncard = {x | ¬ R₂ x ∧ ¬ S₂ x}.ncard → (q R₁ S₁ ↔ q R₂ S₂)
 
 open Classical in
-/-- The cells of `R` and `S` are the fibres of `x ↦ (R x, S x)`. -/
 private theorem nat_card_fiber (R S : α → Prop) (p q : Bool) :
     Nat.card {x // (decide (R x), decide (S x)) = (p, q)} =
       {x | (R x ↔ p) ∧ (S x ↔ q)}.ncard := by
   rw [← Nat.card_coe_set_eq]
   exact Nat.card_congr (Equiv.subtypeEquivRight fun x ↦ by cases p <;> cases q <;> simp)
 
-/-- On a finite universe a permutation-invariant quantifier has quantity, since equal cell
-cardinalities give a permutation carrying each cell of one pair onto the same cell of the
-other. -/
 theorem _root_.Quantifier.GQ.QuantityInvariant.quantity [Finite α] (hQ : QuantityInvariant Q) :
     Q.Quantity := by
   classical
@@ -480,8 +473,6 @@ theorem _root_.Quantifier.GQ.QuantityInvariant.quantity [Finite α] (hQ : Quanti
     (fun x ↦ decide_eq_decide.1 (congrArg Prod.fst (congrFun he x)))
     fun x ↦ decide_eq_decide.1 (congrArg Prod.snd (congrFun he x))
 
-/-- A quantifier with quantity is permutation invariant, since a permutation preserves the
-cardinality of each cell. -/
 theorem _root_.Quantifier.GQ.Quantity.quantityInvariant (hQ : Q.Quantity) :
     QuantityInvariant Q := by
   intro A B A' B' f hf hA hB
@@ -491,8 +482,6 @@ theorem _root_.Quantifier.GQ.Quantity.quantityInvariant (hQ : Q.Quantity) :
   exact hQ A B A' B' (key _ _ fun x ↦ by rw [hA, hB]) (key _ _ fun x ↦ by rw [hA, hB])
     (key _ _ fun x ↦ by rw [hA, hB]) (key _ _ fun x ↦ by rw [hA, hB])
 
-/-- A conservative, permutation-invariant quantifier on a finite universe holds of `A` and `B`
-according to `|A \ B|` and `|A ∩ B|` alone. -/
 theorem _root_.Quantifier.GQ.iff_of_ncard_eq [Finite α] (hC : Conservative Q)
     (hQ : QuantityInvariant Q) (hd : {x | A x ∧ ¬ B x}.ncard = {x | A' x ∧ ¬ B' x}.ncard)
     (hi : {x | A x ∧ B x}.ncard = {x | A' x ∧ B' x}.ncard) : Q A B ↔ Q A' B' := by
@@ -534,7 +523,6 @@ theorem toGQ_apply (q : NumberTree) (A B : α → Prop) :
 
 @[simp] theorem toGQ_compl (q : NumberTree) : qᶜ.toGQ = (q.toGQᶜ : GQ α) := rfl
 
-/-- The quantifier of a tree's inner negation is the inner negation of its quantifier. -/
 @[simp] theorem toGQ_innerNeg (q : NumberTree) : q.innerNeg.toGQ = (q.toGQ : GQ α).innerNeg := by
   funext A B; simp only [toGQ, innerNeg_apply, GQ.innerNeg, not_not]
 
@@ -551,7 +539,6 @@ theorem conservative_toGQ (q : NumberTree) : Conservative (q.toGQ : GQ α) := fu
   unfold toGQ
   congr! 3 <;> ext <;> tauto
 
-/-- The quantifier of a tree has quantity, depending on two of the four cells. -/
 theorem quantity_toGQ (q : NumberTree) : (q.toGQ : GQ α).Quantity :=
   fun _ _ _ _ hi hd _ _ ↦ by rw [toGQ_apply, toGQ_apply, hi, hd]
 
@@ -616,7 +603,6 @@ not depend on its arguments at all. -/
 def ConstantBelow (q : NumberTree) (n : ℕ) : Prop :=
   ∀ a b a' b', a + b ≤ n → a' + b' ≤ n → (q a b ↔ q a' b')
 
-/-- A row is constant unless two adjacent points of it differ. -/
 theorem not_constantOnRow_iff {n : ℕ} :
     ¬ q.ConstantOnRow n ↔ ∃ a b, a + b + 1 = n ∧ ¬ (q (a + 1) b ↔ q a (b + 1)) := by
   refine ⟨fun h ↦ by_contra fun hn ↦ h ?_,
@@ -632,7 +618,6 @@ theorem not_constantOnRow_iff {n : ℕ} :
   intro a b a' b' h h'
   rw [show a = n - b by omega, show a' = n - b' by omega, key b (by omega), key b' (by omega)]
 
-/-- Rows `0` to `n` are constant unless two adjacent points among them differ. -/
 theorem not_constantBelow_iff {n : ℕ} :
     ¬ q.ConstantBelow n ↔
       ∃ a b, a + b + 1 ≤ n ∧ (¬ (q (a + 1) b ↔ q a b) ∨ ¬ (q a (b + 1) ↔ q a b)) := by
@@ -658,8 +643,6 @@ private theorem ncard_and_not_add_ncard_and (A B : α → Prop) :
     {x | A x ∧ ¬ B x}.ncard + {x | A x ∧ B x}.ncard = {x | A x}.ncard := by
   rw [add_comm]; exact Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | A x} {x | B x}
 
-/-- The quantifier of a tree holds of a restrictor of size `n` and a scope sharing `b` of its
-individuals iff the tree holds of `(n - b, b)`. -/
 private theorem toGQ_iff_of_ncard {A B : α → Prop} {n b : ℕ} (hA : {x | A x}.ncard = n)
     (hAB : {x | A x ∧ B x}.ncard = b) : q.toGQ A B ↔ q (n - b) b := by
   have := ncard_and_not_add_ncard_and A B
@@ -714,8 +697,6 @@ theorem dependsOn_toGQ_compl_singleton_iff (A : α → Prop) (e : α) :
       rw [toGQ_apply, toGQ_apply]
       exact Iff.of_eq (congrArg₂ q (congrArg Set.ncard (hs Not)) (congrArg Set.ncard (hs id)))
 
-/-- The quantifier of a tree, as a function of its restrictor, depends for some scope on whether
-an individual is in the restrictor iff the tree is not constant below the size of the universe. -/
 theorem exists_not_dependsOn_toGQ_restrictor_iff (e : α) :
     (∃ B, ¬ DependsOn (fun A ↦ q.toGQ A B) {e}ᶜ) ↔ ¬ q.ConstantBelow (Nat.card α) := by
   refine ⟨fun ⟨B, hB⟩ hc ↦ hB fun A A' _ ↦ propext ?_, fun hc ↦ ?_⟩

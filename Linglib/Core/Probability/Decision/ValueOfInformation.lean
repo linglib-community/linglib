@@ -93,7 +93,6 @@ theorem hasArgminEstimator_of_finite (ℓ : Θ → 𝓨 → ℝ≥0∞) (P : Ker
 
 end ArgminEstimator
 
-/-- Integrating against the composition of a kernel with a measure integrates twice. -/
 theorem _root_.MeasureTheory.Measure.integral_comp {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {μ : Measure 𝓧} {κ : Kernel 𝓧 Θ} {f : Θ → E} (hf : Integrable f (κ ∘ₘ μ)) :
     ∫ θ, f θ ∂(κ ∘ₘ μ) = ∫ x, ∫ θ, f θ ∂(κ x) ∂μ := by
@@ -134,8 +133,6 @@ theorem valueOfInformation_id (V : Measure Θ → ℝ) :
   exact integral_congr_ae
     ((posterior_id π).mono fun θ hθ ↦ congrArg V (hθ.trans (Kernel.id_apply θ)))
 
-/-- A fixed statistic gains nothing from an experiment, since the posteriors average back to the
-prior. -/
 theorem valueOfInformation_integral [Finite Θ] [MeasurableSingletonClass Θ] [Finite 𝓧]
     [MeasurableSingletonClass 𝓧] (g : Θ → ℝ) (κ : Kernel Θ 𝓧) [IsMarkovKernel κ]
     (π : Measure Θ) [IsProbabilityMeasure π] :
@@ -177,8 +174,6 @@ omit [Finite 𝓨] in
 theorem decisionValue_le (μ : Measure Θ) [IsProbabilityMeasure μ] : decisionValue U μ ≤ C :=
   ciSup_le fun a ↦ (integral_mono .of_finite (integrable_const C) (hC · a)).trans (by simp)
 
-/-- At a bound `C` on the utilities, the least expected regret `C − U` of an action is `C` less
-the decision value. -/
 theorem iInf_lintegral_ofReal_sub (μ : Measure Θ) [IsProbabilityMeasure μ] :
     ⨅ a, ∫⁻ θ, ENNReal.ofReal (C - U θ a) ∂μ = ENNReal.ofReal (C - decisionValue U μ) := by
   have h a : ∫⁻ θ, ENNReal.ofReal (C - U θ a) ∂μ = ENNReal.ofReal (C - ∫ θ, U θ a ∂μ) := by
@@ -202,8 +197,6 @@ private theorem integral_decisionValue_posterior_le :
 
 variable [MeasurableSpace 𝓨] [MeasurableSingletonClass 𝓨]
 
-/-- At the regret loss `C − U`, the Bayes risk of an experiment is `C` less the expected
-decision value of the posterior. -/
 theorem bayesRisk_ofReal_sub :
     bayesRisk (fun θ a ↦ ENNReal.ofReal (C - U θ a)) κ π =
       ENNReal.ofReal (C - ∫ x, decisionValue U ((κ†π) x) ∂(κ ∘ₘ π)) := by
@@ -292,8 +285,6 @@ theorem valueOfInformation_deterministic (V : Measure Θ → ℝ) {f : Θ → �
   · simp [measureReal_def, h]
   · rw [posterior_deterministic_eq_cond _ hf h]
 
-/-- Observing a function of `f` is worth no more to an expected-utility maximizer than observing
-`f`. -/
 theorem valueOfInformation_decisionValue_le_of_factorsThrough [Finite 𝓨] (U : Θ → 𝓨 → ℝ)
     {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'} [Finite 𝓧'] [MeasurableSingletonClass 𝓧']
     {f : Θ → 𝓧} {g : Θ → 𝓧'} (hf : Measurable f) (hg : Measurable g) (h : g.FactorsThrough f)

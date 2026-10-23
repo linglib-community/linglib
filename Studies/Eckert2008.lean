@@ -75,8 +75,6 @@ theorem subset_construe (S : Finset T) : S ⊆ I.construe S := Finset.subset_uni
 theorem construe_mono : Monotone I.construe := λ _ _ h =>
   Finset.union_subset_union h (Finset.biUnion_subset_biUnion_of_subset_left _ h)
 
-/-- Reconstrual only adds meanings, so the values of order `n` are among those of order
-`n + 1`. -/
 theorem monotone_construe_iterate (S : Finset T) : Monotone λ n => I.construe^[n] S :=
   I.construe_mono.monotone_iterate_of_le_map (I.subset_construe S)
 
@@ -96,7 +94,6 @@ def indexicalField : ClosureOperator (Finset T) :=
     t ∈ I.indexicalField S ↔ ∃ s ∈ S, Relation.ReflTransGen (λ a b => b ∈ I a) s t := by
   simp [indexicalField]
 
-/-- The reconstruals of every order lie in the field. -/
 theorem iterate_construe_subset_indexicalField (n : ℕ) (S : Finset T) :
     I.construe^[n] S ⊆ I.indexicalField S := by
   induction n with
@@ -109,8 +106,6 @@ theorem iterate_construe_subset_indexicalField (n : ℕ) (S : Finset T) :
     · obtain ⟨u, hu, hus⟩ := I.mem_indexicalField.1 (ih hs)
       exact I.mem_indexicalField.2 ⟨u, hu, hus.tail hts⟩
 
-/-- Continual reconstrual creates, in the end, the indexical field, a meaning lying in the field
-exactly when some order of reconstrual reaches it. -/
 theorem mem_indexicalField_iff_exists_iterate :
     t ∈ I.indexicalField S ↔ ∃ n, t ∈ I.construe^[n] S := by
   refine ⟨λ h => ?_, λ ⟨n, h⟩ => I.iterate_construe_subset_indexicalField n S h⟩
@@ -122,7 +117,6 @@ theorem mem_indexicalField_iff_exists_iterate :
     obtain ⟨n, hn⟩ := ih
     exact ⟨n + 1, by rw [Function.iterate_succ_apply']; exact I.mem_construe.2 (.inr ⟨_, hn, hbc⟩)⟩
 
-/-- A set of meanings is closed exactly when no reconstrual extends it. -/
 theorem isClosed_iff : I.indexicalField.IsClosed S ↔ I.construe S = S := by
   rw [I.indexicalField.isClosed_iff]
   constructor
@@ -134,7 +128,6 @@ theorem isClosed_iff : I.indexicalField.IsClosed S ↔ I.construe S = S := by
     obtain ⟨n, hn⟩ := I.mem_indexicalField_iff_exists_iterate.1 ht
     rwa [Function.iterate_fixed h] at hn
 
-/-- Once a reconstrual stabilizes, it is the indexical field. -/
 theorem indexicalField_eq_iterate {n : ℕ}
     (h : I.construe (I.construe^[n] S) = I.construe^[n] S) :
     I.indexicalField S = I.construe^[n] S :=
@@ -163,15 +156,11 @@ def vineyardIdeology : IdeologicalField VineyardMeaning
 /-- The first-order index of centralized (ay) is membership among Vineyarders. -/
 def centralizedAy : Finset VineyardMeaning := {.vineyarder}
 
-/-- The indicator becomes a marker, local authenticity being a second-order value of
-centralized (ay) and not a first-order one. -/
 theorem vineyard_marker :
     .localAuthenticity ∉ centralizedAy ∧
       .localAuthenticity ∈ vineyardIdeology.construe centralizedAy := by
   decide
 
-/-- The field of [labov-1963]'s variant reconstrued holds Vineyarders and what a Vineyarder
-is. -/
 theorem indexicalField_centralizedAy :
     vineyardIdeology.indexicalField centralizedAy =
       {.vineyarder, .localAuthenticity, .oppositionToMainland} :=
@@ -228,15 +217,12 @@ def INGMeaning.evaluation : INGMeaning → Option Evaluation
 def activate (e : Evaluation) (v : INGVariant) : Finset INGMeaning :=
   (ingField v).filter (·.evaluation = some e)
 
-/-- The pairs do not work in lockstep, each variant having favourable and unfavourable meanings. -/
 theorem activate_nonempty : ∀ e v, (activate e v).Nonempty := by decide
 
 /-- Presupposed indexicality expects of a speaker the variants whose field holds the impression
 the hearer has formed of the speaker from general style and content. -/
 def expected (i : INGMeaning) : Finset INGVariant := Finset.univ.filter (i ∈ ingField ·)
 
-/-- An impression of the speaker as educated leads the hearer to expect the velar variant, one
-as uneducated the apical. -/
 theorem expected_educated_uneducated :
     expected .educated = {.velar} ∧ expected .uneducated = {.apical} := by
   decide
@@ -257,7 +243,6 @@ theorem interpret_eq_empty_iff (i : INGMeaning) (v : INGVariant) :
     interpret i v = ∅ ↔ v ∈ expected i := by
   unfold interpret; split_ifs with h <;> simp [h, Finset.univ_nonempty.ne_empty]
 
-/-- The velar variant from a speaker taken to be uneducated is heard as a move. -/
 theorem interpret_velar_of_uneducated : interpret .uneducated .velar = Finset.univ := by
   decide
 
@@ -298,7 +283,6 @@ def accretion : IdeologicalField TMeaning
   | .stance s => {.quality (.habitual s)}
   | .quality _ => ∅
 
-/-- The stances of a set of meanings accrete into qualities. -/
 theorem quality_habitual_mem_construe {S : Finset TMeaning} {s : TStance}
     (h : .stance s ∈ S) : .quality (.habitual s) ∈ accretion.construe S :=
   accretion.mem_construe.2 (.inr ⟨_, h, by simp [accretion]⟩)
@@ -337,12 +321,10 @@ def SocialType.anchors : SocialType → Finset TMeaning
   | .nerdGirl => {.stance .clear, .quality .educated}
   | .gayDiva => {.quality .prissy, .stance .exasperated}
 
-/-- The nerd girls build on the school-teachery standard from which they distance themselves. -/
 theorem nerdGirl_anchors_subset :
     SocialType.nerdGirl.anchors ⊆ SocialType.schoolTeacher.anchors := by
   decide
 
-/-- The diva's generalized attitude of exasperation is the stance accreted into a quality. -/
 theorem gayDiva_habitual_exasperated :
     .quality (.habitual .exasperated) ∈ accretion.construe SocialType.gayDiva.anchors :=
   quality_habitual_mem_construe (by decide)
@@ -377,7 +359,6 @@ instance : OrderTop Articulation where
 /-- The diva style combines deletion with exaggerated bursts. -/
 def divaStyle : Finset Articulation := {.deletion, .exaggeratedRelease}
 
-/-- The diva style is the two extremes of the continuum. -/
 theorem divaStyle_eq : divaStyle = {⊥, ⊤} := rfl
 
 /-! ### Belten High, Figure 1 -/
@@ -419,12 +400,9 @@ instance (g : Group) : DecidablePred (Leads g)
   | .older => inferInstanceAs (Decidable (g.gender = .girl))
   | .newer | .negativeConcord => inferInstanceAs (Decidable (g.orientation = .burnout))
 
-/-- The burnout girls alone are among the leaders of every variable, the two leaderships
-crossing gender with orientation, the urban–suburban opposition embedded within the school. -/
 theorem leads_all_iff (g : Group) : (∀ s, Leads g s) ↔ g = ⟨.girl, .burnout⟩ :=
   ⟨λ h => by cases g; cases h .older; cases h .newer; rfl, by rintro rfl s; cases s <;> rfl⟩
 
-/-- The jock boys lead nothing. -/
 theorem jockBoys_lead_none : ∀ s, ¬ Leads ⟨.boy, .jock⟩ s := by decide
 
 end Eckert2008

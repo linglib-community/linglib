@@ -169,7 +169,6 @@ def canonicalize : Formula Atom → δ ⊕ δ
       ((canonicalize ψ).elim id Substrate.neg))
   | .neg φ => (canonicalize φ).swap
 
-/-- A negation-free formula's canonical form is its substrate meaning, positive. -/
 theorem canonicalize_of_negFree {φ : Formula Atom} (h : NegFree φ) :
     canonicalize ia ie φ = .inl (interp ia ie φ) := by
   induction h with
@@ -177,7 +176,6 @@ theorem canonicalize_of_negFree {φ : Formula Atom} (h : NegFree φ) :
   | exi _ => rfl
   | conj _ _ ihφ ihψ => simp only [canonicalize, ihφ, ihψ, Sum.elim_inl, id]; rfl
 
-/-- Every canonical form carries the substrate meaning of some formula. -/
 theorem canonicalize_eq (φ : Formula Atom) :
     ∃ ψ, canonicalize ia ie φ = .inl (interp ia ie ψ) ∨
       canonicalize ia ie φ = .inr (interp ia ie ψ) := by
@@ -209,14 +207,12 @@ def encodeCanonical : δ ⊕ δ → Δ
 
 variable [LawfulLift δ Δ]
 
-/-- An encoded canonical form lowers to its value, negated when odd. -/
 theorem down_encodeCanonical (s : δ ⊕ δ) :
     self.down (encodeCanonical Δ s) = s.elim id Substrate.neg := by
   cases s with
   | inl m => exact LawfulLift.down_up m
   | inr m => exact LawfulLift.down_neg_up m
 
-/-- Flipping the parity encodes as the lifted negation. -/
 theorem encodeCanonical_swap (s : δ ⊕ δ) :
     encodeCanonical Δ s.swap = self.neg (encodeCanonical Δ s) := by
   cases s with
@@ -242,7 +238,6 @@ theorem liftInterp_eq_encodeCanonical (φ : Formula Atom) :
     rw [ih]
     exact (encodeCanonical_swap Δ _).symm
 
-/-- Formulas with one canonical form are identified by every lawful lift. -/
 theorem liftInterp_eq_of_canonicalize_eq {φ ψ : Formula Atom}
     (h : canonicalize ia ie φ = canonicalize ia ie ψ) :
     liftInterp (Δ := Δ) ia ie φ = liftInterp ia ie ψ := by
@@ -337,8 +332,6 @@ instance : Lift δ (Decomposed δ) where
 
 variable {E : Type*}
 
-/-- Emb over DPL: conjoining the static closure with the dynamic tautology reconstitutes the
-update. -/
 theorem down_up (m : Update (Assignment E)) :
     Lift.down (Lift.up (Δ := Decomposed (Update (Assignment E))) m) = m :=
   rel_ext λ g h => by
@@ -348,7 +341,6 @@ theorem down_up (m : Update (Assignment E)) :
       · exact absurd ⟨g, rfl, hno⟩ hnn
     · exact λ hm => ⟨g, ⟨rfl, λ ⟨_, e, hno⟩ => hno ⟨h, e ▸ hm⟩⟩, .inl hm⟩
 
-/-- Neg over DPL. -/
 theorem down_neg_up (m : Update (Assignment E)) :
     Lift.down (Lift.neg (Lift.up (Δ := Decomposed (Update (Assignment E))) m)) =
       Update.test (Update.neg m) :=
@@ -360,15 +352,11 @@ theorem down_neg_up (m : Update (Assignment E)) :
     · rintro ⟨rfl, hno⟩
       exact ⟨g, ⟨rfl, λ ⟨_, e, hnn⟩ => hnn ⟨_, rfl, e ▸ hno⟩⟩, .inr ⟨rfl, hno⟩⟩
 
-/-- The hiccup with Inv: on the whole carrier the lifted negation is not an involution, since a
-bare existential is no test and its double negation is not itself. -/
 theorem not_neg_neg [Nontrivial E] :
     ∃ M : Decomposed (Update (Assignment E)), Lift.neg (Lift.neg M) ≠ M := by
   obtain ⟨x, φ, h⟩ := GroenendijkStokhof1991.dne_fails_anaphora (E := E)
   exact ⟨⟨Update.dexists x φ, Update.dexists x φ⟩, λ e => h (congrArg atIssue e)⟩
 
-/-- On the image of the lifted interpretation the at-issue coordinate is a negation, hence
-static. -/
 theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → Update (Assignment E))
     (ie : ℕ → Update (Assignment E)) (φ : Formula Atom) :
     ∃ X, (liftInterp (Δ := Decomposed (Update (Assignment E))) ia ie φ).atIssue =
@@ -379,8 +367,6 @@ theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → Update (Assignment E
   | conj φ ψ _ _ => exact ⟨_, rfl⟩
   | neg φ _ => exact ⟨_, rfl⟩
 
-/-- Inv on the image: the lifted negation is an involution on every lifted meaning, a static
-at-issue coordinate being restored by its double negation. -/
 theorem neg_neg_liftInterp {Atom : Type*} (ia : Atom → Update (Assignment E))
     (ie : ℕ → Update (Assignment E)) (φ : Formula Atom) :
     Lift.neg (Lift.neg (liftInterp (Δ := Decomposed (Update (Assignment E))) ia ie φ)) =
@@ -486,7 +472,6 @@ variable {one : Formula Atom} (hone : NegFree one)
   (hid : ∀ m, Substrate.conj m (interp ia ie one) = m)
 
 include hone hid in
-/-- A guarded formula's canonical form is the formula's substrate meaning, positive. -/
 theorem canonicalize_guard (φ : Formula Atom) :
     canonicalize ia ie (guard one φ) = .inl (interp ia ie φ) := by
   induction φ with

@@ -137,7 +137,6 @@ def snoresGluing : Theory snoresCtx :=
 theorem isGluing_snores : snoresCover.IsGluing (presheaf lang Var) snoresSections snoresGluing := by
   decide +kernel
 
-/-- Every literal over `{z}` renames a literal of a part, so the gluing is unique. -/
 theorem snores_unique {s : Theory snoresCtx}
     (hs : snoresCover.IsGluing (presheaf lang Var) snoresSections s) : s = snoresGluing :=
   hs.unique (by decide +kernel) isGluing_snores
@@ -213,7 +212,6 @@ def mergedCover : Cover greyCtx (Fin 3) where
   exists_map_eq := by decide +kernel
   exists_mem_vocab := by decide +kernel
 
-/-- Merging `x` and `y` makes the candidate hold `Man` and `¬Man` of one referent. -/
 theorem not_exists_isGluing_merged :
     ¬ ∃ s, mergedCover.IsGluing (presheaf lang Var) greySections s :=
   fun h => absurd (Cover.exists_isGluing_iff.1 h).1 (by decide +kernel)
@@ -289,7 +287,6 @@ def brokeGluing (b : Broken) : Theory brokeCtx :=
     lit .broke ![.x, b.var] (h := Fin.forall_fin_two.2 ⟨by cases b <;> decide +kernel, b.var_mem⟩)},
     by cases b <;> decide +kernel⟩
 
-/-- Either choice of antecedent yields a gluing. -/
 theorem isGluing_broke :
     ∀ b, (brokeCover b).IsGluing (presheaf lang Var) brokeSections (brokeGluing b) := by
   decide +kernel
@@ -321,8 +318,6 @@ def overlapSections : ∀ i, Theory (overlapCover.part i)
   | 0 => ⟨{lit .R (fun _ => .x), lit .S (fun _ => .u)}, by decide +kernel⟩
   | 1 => ⟨{lit .S (fun _ => .y), lit .R (fun _ => .v)}, by decide +kernel⟩
 
-/-- The sections do not glue, since the candidate `{R(z), S(w), S(z), R(w)}` restricts along the
-first map to `{R(x), S(x), R(u), S(u)} ≠ s₁`. -/
 theorem not_exists_isGluing_overlap :
     ¬ ∃ s, overlapCover.IsGluing (presheaf lang Var) overlapSections s := by
   rw [Cover.exists_isGluing_iff]

@@ -173,7 +173,6 @@ theorem exclusive_iff :
   · exact h _ hab (mem_upperClosure.2 ⟨a, ha, le_sup_left⟩)
       (mem_upperClosure.2 ⟨b, hb, le_sup_right⟩)
 
-/-- An exhaustive proposition is true or false at every world, a maximal possible state. -/
 theorem Exhaustive.mem_upperClosure (h : A.Exhaustive P) {w : S} (hw : Maximal (· ∈ P) w) :
     w ∈ upperClosure A.ver ∨ w ∈ upperClosure A.fal := by
   obtain ⟨t, ht, hwt⟩ | ⟨t, ht, hwt⟩ := h hw.prop
@@ -191,7 +190,6 @@ theorem exhaustive_iff (hP : ∀ s ∈ P, ∃ w, s ≤ w ∧ Maximal (· ∈ P) 
   · exact .inl ⟨t, ht, P.lower (sup_le hsw htw) hw.prop⟩
   · exact .inr ⟨t, ht, P.lower (sup_le hsw htw) hw.prop⟩
 
-/-- The excluded middle of an exhaustive proposition is true at every world. -/
 theorem Exhaustive.mem_upperClosure_disj_neg (h : A.Exhaustive P) {w : S}
     (hw : Maximal (· ∈ P) w) : w ∈ upperClosure (A.disj (-A)).ver := by
   simpa [upperClosure_union] using h.mem_upperClosure hw
@@ -217,15 +215,11 @@ theorem subjectMatter_conj (hA : A.ver.Nonempty) (hB : B.ver.Nonempty) :
   simp only [subjectMatter, ver_conj, fal_conj, Set.sSup_sups hA hB, sSup_union]
   exact sup_sup_sup_comm _ _ _ _
 
-/-- The subject-matter of a disjunction of propositions with falsifiers fuses their
-subject-matters. -/
 theorem subjectMatter_disj (hA : A.fal.Nonempty) (hB : B.fal.Nonempty) :
     (A.disj B).subjectMatter = A.subjectMatter ⊔ B.subjectMatter := by
   simp only [subjectMatter, ver_disj, fal_disj, Set.sSup_sups hA hB, sSup_union]
   exact sup_sup_sup_comm _ _ _ _
 
-/-- The excluded middle of a proposition with a verifier and a falsifier has the subject-matter of
-the proposition. -/
 theorem subjectMatter_disj_neg (hv : A.ver.Nonempty) (hf : A.fal.Nonempty) :
     (A.disj (-A)).subjectMatter = A.subjectMatter := by
   rw [subjectMatter_disj hf hv, subjectMatter_neg, sup_idem]
@@ -283,7 +277,6 @@ theorem maximal_possible_iff {w : Set (α × Bool)} :
     by_contra hyw
     exact hs y hy (hws (not_not.1 (mt (h y).2 hyw)))
 
-/-- A world of the canonical space contains every literal or its mirror image. -/
 theorem mem_or_mirror_mem_of_maximal {w : Set (α × Bool)} (hw : Maximal (· ∈ possible) w)
     (x : α × Bool) : x ∈ w ∨ mirror x ∈ w :=
   or_iff_not_imp_left.2 fun hx ↦ not_not.1 (mt (maximal_possible_iff.1 hw x).2 hx)
@@ -330,7 +323,6 @@ theorem subjectMatter_disj_neg_atom (a : α) :
     ((atom a).disj (-atom a)).subjectMatter = {(a, true), (a, false)} := by
   rw [subjectMatter_disj_neg ⟨_, rfl⟩ ⟨_, rfl⟩, subjectMatter_atom]
 
-/-- The subject-matter of the excluded middle of an atom is an impossible state. -/
 theorem subjectMatter_disj_neg_atom_not_mem (a : α) :
     ((atom a).disj (-atom a)).subjectMatter ∉ possible := by
   rw [subjectMatter_disj_neg_atom]

@@ -45,8 +45,6 @@ def pastSuffix : Paradigm Morph :=
    ((Bundle.personNumber .third .plural).set .gender .masculine, .suff "uu"),
    ((Bundle.personNumber .third .plural).set .gender .feminine, .suff "na")]
 
-/-- A person marker of the past tense marks gender except in the first person and the second
-person dual. -/
 theorem pastSuffix_gender_eq_bot_iff :
     ∀ c ∈ pastSuffix.cells,
       c .gender = ⊥ ↔ c .person = ↑Person.first ∨ c = .personNumber .second .dual := by

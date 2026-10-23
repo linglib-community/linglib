@@ -87,8 +87,6 @@ def HasIntervalOrder : Prop :=
 
 variable {X : AR τ}
 
-/-- Intervals placing each tier in order, with associated positions overlapping, give a
-representation an interval order: the precedence of the intervals. -/
 theorem hasIntervalOrder_of_intervals {T : Type*} [LinearOrder T] (I : X.Pos → NonemptyInterval T)
     (hI : ∀ i ⦃p q : Fin (X.word i).length⦄, p < q → (I ⟨i, p⟩).Precedes (I ⟨i, q⟩))
     (hA : ∀ ⦃v w⦄, X.assoc.Adj v w → (I v).Overlaps (I w)) : X.HasIntervalOrder :=
@@ -112,9 +110,6 @@ private def Placed (X : AR τ) (s : Set ι) : Prop :=
     (∀ i ∈ s, ∀ ⦃p q : Fin (X.word i).length⦄, p < q → (I ⟨i, p⟩).Precedes (I ⟨i, q⟩)) ∧
       ∀ ⦃v w⦄, v.1 ∈ s → w.1 ∈ s → X.assoc.Adj v w → (I v).Overlaps (I w)
 
-/-- A tier with at most one neighbour among the placed tiers can be placed too. In the
-lexicographic product with `ℕ`, its position `q` spans from the last start linked before `q` to
-the last start linked up to `q`, and the old intervals widen to make room. -/
 private theorem Placed.insert [Fintype ι] {G : SimpleGraph ι} (hX : X.assoc ≤ G.comap Sigma.fst)
     (hNC : X.NoCrossing) {s : Set ι} {ℓ : ι}
     (hℓ : ∀ ⦃i j⦄, i ∈ s → j ∈ s → G.Adj ℓ i → G.Adj ℓ j → i = j) (h : Placed X s) :

@@ -96,7 +96,6 @@ each connected to the next. -/
 def connectionGraph (C : α → α → Prop) (P : α → Prop) : SimpleGraph α :=
   SimpleGraph.fromRel fun a b ↦ P a ∧ P b ∧ C a b
 
-/-- Two connected `P`-entities are transitively connected. -/
 theorem connectionGraph_reachable {C : α → α → Prop} {P : α → Prop} {a b : α} (ha : P a)
     (hb : P b) (h : C a b) : (connectionGraph C P).Reachable a b := by
   by_cases hab : a = b

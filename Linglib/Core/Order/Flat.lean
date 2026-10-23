@@ -165,10 +165,8 @@ instance : PartialOrder (Flat α) where
 theorem coe_le_iff : (a : Flat α) ≤ y ↔ y = ↑a :=
   ⟨fun h => by cases h; rfl, fun h => h ▸ .refl a⟩
 
-/-- A value is maximal: nothing lies above it but itself. -/
 theorem isMax_coe (a : α) : IsMax (a : Flat α) := fun _ hy ↦ (coe_le_iff.1 hy).le
 
-/-- Every value other than `⊥` is maximal. -/
 theorem isMax_of_ne_bot (hx : x ≠ ⊥) : IsMax x := by
   obtain ⟨a, rfl⟩ := ne_bot_iff_exists.1 hx
   exact isMax_coe a
@@ -178,7 +176,6 @@ instance [DecidableEq α] : DecidableLE (Flat α)
   | (a : α), ⊥ => isFalse (not_coe_le_bot a)
   | (a : α), (b : α) => decidable_of_iff' _ coe_le_coe
 
-/-- A flat inequality with no definedness gain is an equality. -/
 theorem eq_of_le (h : x ≤ y) (hyx : y ≠ ⊥ → x ≠ ⊥) : x = y := by
   cases h with
   | bot_le y =>
@@ -205,7 +202,6 @@ theorem covBy_iff : x ⋖ y ↔ x = ⊥ ∧ y ≠ ⊥ := by
 @[simp] theorem bot_covBy_coe (a : α) : (⊥ : Flat α) ⋖ a :=
   covBy_iff.2 ⟨rfl, coe_ne_bot⟩
 
-/-- The flat order is `Part`'s order, along `Part.ofOption`. -/
 theorem le_iff_ofOption_le :
     x ≤ y ↔ Part.ofOption (x : Option α) ≤ Part.ofOption (y : Option α) := by
   constructor
@@ -353,7 +349,6 @@ theorem compat_iff : Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑
     obtain rfl := h a rfl b rfl
     exact compat_self _
 
-/-- On compatible slots the right slot also lies below the left-biased merge. -/
 theorem le_or_right (h : Compat x y) : y ≤ x.or y := by
   cases x with
   | bot => exact le_rfl

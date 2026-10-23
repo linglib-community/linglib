@@ -101,7 +101,6 @@ theorem dependsOn_entailsStep (s : ∀ v, Flat (α v)) (v : V) :
       imp_congr_left (forall₂_congr fun w hw ↦ ?_))))
   rw [h w hw]
 
-/-- A strict round settles no more than a Kleene round given more. -/
 theorem entailsStep_le_forcedStep (s : ∀ v, Flat (α v)) {P Q : ∀ v, α v → Prop} (h : P ≤ Q) :
     M.entailsStep s P ≤ M.forcedStep s Q := by
   rintro v x (hx | ⟨hs, -, hx⟩)
@@ -130,7 +129,6 @@ theorem causallyEntails_iff : M.CausallyEntails s v x ↔ s v = ↑x ∨ s v = �
       M.eqn v u y = x :=
   Iff.of_eq (congrFun (WellFounded.fixedPoint_apply (dependsOn_entailsStep s) v) x)
 
-/-- A root the observation leaves unobserved is settled exactly when its equation is constant. -/
 theorem causallyEntails_root_iff {t : ∀ v, Flat (α v)} {v : V} {x : α v}
     (hroot : ∀ w, ¬ M.graph.Adj w v) (hv : t v = ⊥) :
     M.CausallyEntails t v x ↔ ∀ u y, M.eqn v u y = x := by
@@ -145,7 +143,6 @@ theorem Forced.of_causallyEntails (h : M.CausallyEntails s v x) : M.Forced s v x
   WellFounded.fixedPoint_le_fixedPoint (dependsOn_entailsStep s) (dependsOn_forcedStep s)
     (fun _ _ ↦ entailsStep_le_forcedStep s) v x h
 
-/-- A variable the strict development settles, unobserved, has every parent settled. -/
 theorem CausallyEntails.parent_settled (h : M.CausallyEntails s v x) (hv : s v = ⊥) {w : V}
     (hw : M.graph.Adj w v) : ∃ z, M.CausallyEntails s w z := by
   rcases causallyEntails_iff.1 h with h | ⟨-, hpar, -⟩
@@ -166,22 +163,16 @@ theorem causallyEntails_congr {t : ∀ v, Flat (α v)}
       (forall₂_congr fun _ _ ↦ imp_congr_left (forall₂_congr fun w hw ↦
         forall_congr' fun z ↦ imp_congr_left (hpar w hw z))))
 
-/-- Settling `c` leaves what the strict development settles about a variable `c` does not reach
-unchanged. -/
 theorem causallyEntails_update_of_not_reflTransGen [DecidableEq V] {c : V}
     (h : ¬ Relation.ReflTransGen M.graph.Adj c v) (y : Flat (α c)) :
     M.CausallyEntails (Function.update s c y) v x ↔ M.CausallyEntails s v x :=
   causallyEntails_congr fun w hw ↦ Function.update_of_ne (fun hwc : w = c ↦ h (hwc ▸ hw)) y s
 
-/-- In a finite model, the Kleene development is reached by iterating its rounds once per
-variable. -/
 theorem forced_iff_iterate_card [Fintype V] :
     M.Forced s v x ↔ (M.forcedStep s)^[Fintype.card V] ⊥ v x :=
   Iff.of_eq (congrFun (congrFun (WellFounded.fixedPoint_eq_iterate_card
     (dependsOn_forcedStep s) ⊥) v) x)
 
-/-- In a finite model, the strict development is reached by iterating its rounds once per
-variable. -/
 theorem causallyEntails_iff_iterate_card [Fintype V] :
     M.CausallyEntails s v x ↔ (M.entailsStep s)^[Fintype.card V] ⊥ v x :=
   Iff.of_eq (congrFun (congrFun (WellFounded.fixedPoint_eq_iterate_card
@@ -235,7 +226,6 @@ theorem causallyEntails_solve_bot [M.ContextAtRoots] {u : U}
     · obtain ⟨z, hz⟩ := hs v (not_exists.1 hpar)
       exact hz.solve_bot_eq hu ▸ hz
 
-/-- The strict development settles a variable to at most one value. -/
 theorem CausallyEntails.unique [Nonempty U] {y : α v} (hx : M.CausallyEntails s v x)
     (hy : M.CausallyEntails s v y) : x = y := by
   classical
@@ -253,8 +243,6 @@ theorem CausallyEntails.unique [Nonempty U] {y : α v} (hx : M.CausallyEntails s
           fun w hw z' hz' ↦ by simp only [z, hw, ↓reduceDIte]; exact ih w hw (hy₀ w hw) hz'
         exact (hx (Classical.arbitrary U) z hz).symm.trans (hy _ z hz)
 
-/-- A variable the strict development settles, unobserved, takes its equation's value at the values
-the development settles for its parents, in every context. -/
 theorem CausallyEntails.eqn_eq [Nonempty U] (h : M.CausallyEntails s v x) (hv : s v = ⊥)
     {y : ∀ w, α w} (hy : ∀ w, M.graph.Adj w v → M.CausallyEntails s w (y w)) (u : U) :
     M.eqn v u y = x := by
@@ -429,7 +417,6 @@ theorem developKleene_apply (s : ∀ v, Flat (α v)) (v : V) :
   WellFounded.fixedPoint_apply (dependsOn_developKleeneStep s) v
 
 omit [∀ v, Nonempty (α v)] in
-/-- The Kleene development forces `v` to `x` exactly when its computation settles it so. -/
 theorem forced_iff_developKleene {s : ∀ v, Flat (α v)} {v : V} {x : α v} :
     M.Forced s v x ↔ M.developKleene s v = ↑x := by
   induction v using hM.induction with

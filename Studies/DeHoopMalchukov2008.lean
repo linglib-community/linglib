@@ -123,9 +123,6 @@ theorem distinguish_marks_confusable (pos : Position) :
       {(some (), pos.confusable), (none, pos.confusable.opposite)} := by
   cases pos <;> decide
 
-/-- The strategies converge in differential object marking and diverge in differential
-subject marking: they select the same pairs exactly when the confusable argument is the
-strong one. -/
 theorem converge_iff (pos : Position) :
     superoptimal asymmetrical (profile [identify () .strong, economy]) =
         superoptimal asymmetrical (profile [distinguish pos.confusable, economy]) ↔
@@ -156,14 +153,9 @@ theorem symmetrical_identify :
       {(some .identifying, .strong), (some .other, .weak)} := by
   decide
 
-/-- DISTINGUISHABILITY is vacuously satisfied throughout a symmetrical game, every candidate
-being case-marked. -/
 theorem distinguish_symmetrical (m : Strength) : ∀ p ∈ symmetrical, distinguish m p = 0 := by
   cases m <;> decide
 
-/-- So it cannot drive a symmetrical alternation: under DISTINGUISHABILITY over ECONOMY every
-pair is superoptimal and no case is paired with a strength. Symmetrical differential marking
-is necessarily due to IDENTIFY. -/
 theorem symmetrical_distinguish (m : Strength) :
     superoptimal symmetrical (profile [distinguish m, economy]) = symmetrical := by
   cases m <;> decide
@@ -214,9 +206,6 @@ variable {C M : Type*}
 def paip (al : Alignment) : Constraint (Position × Option C × M) :=
   .binary λ p => p.1 = al.primaryActant ∧ p.2.1.isSome
 
-/-- Differential marking is free of PAIP off the primary actant and violates it there: object
-marking in a nominative-accusative and subject marking in an ergative-absolutive language
-satisfy it, which is where differential object and subject marking are found. -/
 theorem paip_eq_zero_iff (al : Alignment) (pos : Position) (c : C) (m : M) :
     paip al (pos, some c, m) = 0 ↔ pos ≠ al.primaryActant := by
   simp [paip]

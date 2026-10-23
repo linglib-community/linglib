@@ -40,13 +40,11 @@ variable {α : Type*}
 
 /-! ### Infinitary closure -/
 
-/-- An indexed join of conservative quantifiers is conservative. -/
 theorem Conservative.iSup {ι : Sort*} {f : ι → GQ α} (hf : ∀ i, Conservative (f i)) :
     Conservative (⨆ i, f i) := fun R T => by
   simp only [iSup_apply, iSup_Prop_eq]
   exact exists_congr fun i => hf i R T
 
-/-- An indexed meet of conservative quantifiers is conservative. -/
 theorem Conservative.iInf {ι : Sort*} {f : ι → GQ α} (hf : ∀ i, Conservative (f i)) :
     Conservative (⨅ i, f i) := fun R T => by
   simp only [iInf_apply, iInf_Prop_eq]

@@ -65,8 +65,6 @@ def earlySpellout (toks : List LexicalItem.Token) :
     Spellout (Finset LexicalItem.Token) String :=
   ⟨[], fun n ↦ (subsetPrinciple (earlyItems toks) n).toList⟩
 
-/-- At a position whose focus is the singleton of a listed token, the only applicable early item
-is that token's own. -/
 theorem applicable_earlyItems {toks : List LexicalItem.Token} (hnd : toks.Nodup)
     {tok : LexicalItem.Token} (h : tok ∈ toks) {n : Neighborhood (Finset LexicalItem.Token)}
     (hfoc : n.focus = {tok}) :

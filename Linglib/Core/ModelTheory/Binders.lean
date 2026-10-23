@@ -47,8 +47,6 @@ section Realize
 
 variable {M : Type*} [L.Structure M]
 
-/-- Relabeling `n` to the bound variable and supplying `x` for it is updating the valuation
-at `n`. -/
 theorem realize_relabel_update (n : α) (φ : L.Formula α) (v : α → M) (x : M) :
     (BoundedFormula.relabel (Function.update Sum.inl n (Sum.inr (0 : Fin 1))) φ).Realize v
       (Fin.snoc (default : Fin 0 → M) x) ↔ φ.Realize (Function.update v n x) := by

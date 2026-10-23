@@ -118,7 +118,6 @@ def IsLabeled (x : SyntacticObject) : Prop :=
 variable {t Agreed} {n c d q : t.val.Positions} {x y z : SyntacticObject}
   {a b : LexicalItem.Token}
 
-/-- An object is labeled by a head exactly when minimal search finds one head. -/
 theorem card_labels_eq_one_iff : (t.labels x).card = 1 ↔ ∃ a, t.IsLabeledBy x a :=
   Finset.card_eq_one
 
@@ -152,7 +151,6 @@ theorem mem_labels : a ∈ t.labels x ↔ ∃ n, t.termAt n = x ∧ a ∈ t.labe
 theorem labelsAt_subset_labels (hn : t.termAt n = x) : t.labelsAt n ⊆ t.labels x :=
   fun _ h ↦ mem_labels.2 ⟨n, hn, h⟩
 
-/-- When every occurrence of `x` finds the same heads, those are its labels. -/
 theorem labels_eq_of_forall_labelsAt_eq {S : Finset LexicalItem.Token}
     (hex : ∃ n, t.termAt n = x) (h : ∀ n, t.termAt n = x → t.labelsAt n = S) : t.labels x = S := by
   ext a
@@ -173,12 +171,10 @@ theorem findsHead_iff : t.FindsHead n q ↔
   · exact fun p hp _ _ hne hle ↦
       hne ((IsHeadAt.isMax (t := t) (show t.IsHeadAt p from hp.2)).eq_of_le hle)
 
-/-- A head finds itself. -/
 theorem findsHead_self (hc : t.IsHeadAt c) : t.FindsHead c c :=
   findsHead_iff.2 ⟨⟨le_rfl, fun p hp ↦ ⟨p, le_rfl, hp⟩, hc⟩, fun _ hcq' _ _ hcc ↦
     hcc.2 ((hc.isMax.eq_of_le hcq').symm ▸ hcc.1)⟩
 
-/-- A visible head merged as a daughter is found. -/
 theorem findsHead_of_covBy (hc : n ⋖ c) (hh : t.IsHeadAt c)
     (hv : t.InDomain (t.termAt c) (t.termAt n)) : t.FindsHead n c := by
   refine findsHead_iff.2 ⟨⟨hc.le, hv, hh⟩, fun q' hnq' _ hq' hcc ↦ ?_⟩
@@ -187,7 +183,6 @@ theorem findsHead_of_covBy (hc : n ⋖ c) (hh : t.IsHeadAt c)
   · exact hcc.2 (cCommands_of_covBy hc (lt_of_le_of_ne hnq' fun h ↦ (h ▸ hq').isMax.not_lt hc.lt)
       fun h ↦ hqc (hh.isMax.eq_of_le h).symm)
 
-/-- A head merged with a non-head labels the result, unless it has moved on. -/
 theorem labelsAt_merge_head (hn : t.termAt n = SyntacticObject.merge ↑a x)
     (hx : x.token? = none) (ha : t.InDomain ↑a (SyntacticObject.merge ↑a x)) :
     t.labelsAt n = {a} := by
@@ -221,7 +216,6 @@ theorem isLabeledBy_merge_head (hex : ∃ n, t.termAt n = SyntacticObject.merge 
     t.IsLabeledBy (SyntacticObject.merge ↑a x) a :=
   labels_eq_of_forall_labelsAt_eq hex fun _ hn ↦ labelsAt_merge_head hn hx ha
 
-/-- Two heads merged together are both found, unless one has moved on. -/
 theorem labelsAt_merge_heads (hn : t.termAt n = SyntacticObject.merge ↑a ↑b)
     (ha : t.InDomain ↑a (SyntacticObject.merge ↑a ↑b))
     (hb : t.InDomain ↑b (SyntacticObject.merge ↑a ↑b)) : t.labelsAt n = {a, b} := by
@@ -251,8 +245,6 @@ theorem labels_merge_heads (hex : ∃ n, t.termAt n = SyntacticObject.merge ↑a
 
 /-! ### Search below a daughter -/
 
-/-- Where `x` immediately contains only `z` and `w`, a token outside `z` is in the domain of `x`
-exactly when it is in the domain of `w`, provided `w` has not moved out of `x`. -/
 theorem inDomain_iff_of_immediatelyContains {w : SyntacticObject} {tok : LexicalItem.Token}
     (hx : ∀ y, ImmediatelyContains x y → y = z ∨ y = w) (hxt : x.token? = none)
     (hw : t.InDomain w x) (hz : ¬ ContainsOrEq z ↑tok) :
@@ -267,8 +259,6 @@ theorem inDomain_iff_of_immediatelyContains {w : SyntacticObject} {tok : Lexical
   · exact absurd (he ▸ containsOrEq_termAt.2 ⟨p, hep, hp⟩) hz
   · exact ⟨e, hep, he⟩
 
-/-- Below a daughter `d` sharing no token with its sister, the mother's search and `d`'s see the
-same heads, when `d` has not moved out of the mother. -/
 theorem inDomain_iff_of_covBy {q' : t.val.Positions} (hc : n ⋖ c) (hd : n ⋖ d) (hcd : c ≠ d)
     (hdisj : Disjoint (t.termAt c).yield (t.termAt d).yield)
     (hv : t.InDomain (t.termAt d) (t.termAt n)) (hdq' : d ≤ q') (hq' : t.IsHeadAt q') :
@@ -282,8 +272,6 @@ theorem inDomain_iff_of_covBy {q' : t.val.Positions} (hc : n ⋖ c) (hd : n ⋖ 
       Multiset.disjoint_left.1 hdisj (mem_yield_iff.2 (mem_terms.2 hct)) ?_
   exact mem_yield_iff.2 (mem_terms.2 (htok ▸ containsOrEq_termAt.2 ⟨q', hdq', rfl⟩))
 
-/-- Below a daughter `d`, the mother's search finds what `d`'s finds, when the two see the same
-heads below `d` and the other daughter is no visible head. -/
 theorem findsHead_iff_of_covBy (hc : n ⋖ c) (hd : n ⋖ d) (hcd : c ≠ d) (hdq : d ≤ q)
     (hcv : t.IsHeadAt c → ¬ t.InDomain (t.termAt c) (t.termAt n))
     (hv : ∀ q', d ≤ q' → t.IsHeadAt q' →
@@ -360,7 +348,6 @@ finds. -/
 def LabelDaughter (n c : t.val.Positions) : Prop :=
   n ⋖ c ∧ ∃ a, t.labelsAt n = {a} ∧ a ∈ t.labelsAt c
 
-/-- A head merged with a non-head not containing it is the label daughter. -/
 theorem labelDaughter_iff_of_merge_head (hn : t.termAt n = SyntacticObject.merge ↑a x)
     (hx : x.token? = none) (ha : t.InDomain ↑a (SyntacticObject.merge ↑a x))
     (hax : a ∉ x.yield) : t.LabelDaughter n c ↔ n ⋖ c ∧ t.termAt c = ↑a := by

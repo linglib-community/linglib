@@ -71,14 +71,11 @@ def neg2Expl (p : Set W) : Set W := {w | necessity f g (· ∈ p) w}
 /-- (39), (47), (53): canonical *dhen* under expletive *min* is negative *min*. -/
 theorem neg2Expl_compl (p : Set W) : neg2Expl f g pᶜ = neg2 f g p := rfl
 
-/-- Negative *min* applied to a negation is expletive *min*: the two share the modal component
-and differ by the negation alone. -/
 theorem neg2_compl (p : Set W) : neg2 f g pᶜ = neg2Expl f g p := by
   simp only [neg2, neg2Expl, compl_compl]
 
 variable {f g}
 
-/-- Positive bias: under expletive *min* the negative alternative holds in no best world. -/
 theorem not_possibility_compl_of_mem_neg2Expl {p : Set W} {w : W} (h : w ∈ neg2Expl f g p) :
     ¬ possibility f g (· ∈ pᶜ) w :=
   (duality f g (· ∈ p) w).1 h
@@ -92,7 +89,6 @@ theorem not_ignorant_of_mem_neg2Expl {p : Set W} {w : W} (h : w ∈ neg2Expl f g
     ¬ Ignorant (f := f) (g := g) p w :=
   fun hi ↦ not_possibility_compl_of_mem_neg2Expl h hi.2
 
-/-- Expletive and negative *min* are jointly satisfiable only when no world is best. -/
 theorem bestWorlds_eq_empty_of_mem_neg2Expl_of_mem_neg2 {p : Set W} {w : W}
     (h₁ : w ∈ neg2Expl f g p) (h₂ : w ∈ neg2 f g p) : bestWorlds f g w = ∅ :=
   Set.eq_empty_iff_forall_notMem.2 fun w' hw' ↦ h₂ w' hw' (h₁ w' hw')

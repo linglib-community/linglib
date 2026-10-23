@@ -81,8 +81,6 @@ instance [Fintype W] [DecidableRel (premisePreorder A).le] [DecidablePred (· �
 theorem want_inter_iff : Want A dom (p ∩ q) ↔ Want A dom p ∧ Want A dom q :=
   Set.subset_inter_iff
 
-/-- What is wanted is wanted under every consequence it has in the domain, the doxastic-closure
-problem of [villalta-2008]. -/
 theorem Want.mono_on (hpq : ∀ w ∈ dom, w ∈ p → w ∈ q) (h : Want A dom p) : Want A dom q :=
   fun w hw ↦ hpq w hw.1 (h hw)
 

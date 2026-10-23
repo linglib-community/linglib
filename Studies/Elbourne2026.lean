@@ -88,8 +88,6 @@ the adjective to the trivial noun at a time that the tense relation `R` locates.
 def copula (R : I → I → Prop) (G : Modifier (Property I E)) : Property I E :=
   fun t x ↦ ∃ t', R t' t ∧ G ⊤ t' x
 
-/-- An intersective adjective under the copula holds of the subject at a time in the tense
-relation, since the trivial noun drops out of the meet. -/
 theorem copula_intersective (R : I → I → Prop) (Q : Property I E) :
     copula R (Modifier.intersective Q) = fun t x ↦ ∃ t', R t' t ∧ Q t' x := by
   funext t x
@@ -126,7 +124,6 @@ theorem john_was_a_former_judge [LT I] (judge : Property I E) (j : E) (t : I) :
 theorem former_isPrivative [LT I] : Modifier.IsPrivative (former : Modifier (Property I E)) :=
   isPrivative_iff.mpr fun _ _ _ h ↦ h.2
 
-/-- Given two ordered times, *former* has a non-empty extension, so it is not subsective. -/
 theorem former_not_isSubsective [Preorder I] {t' t : I} (h : t' < t) [Nonempty E] :
     ¬ Modifier.IsSubsective (former : Modifier (Property I E)) :=
   not_isSubsective_of_isPrivative former_isPrivative
@@ -254,7 +251,6 @@ instance (f : Features) : Decidable f.TakesNoun :=
 instance (f : Features) : Decidable f.Selectable :=
   inferInstanceAs (Decidable (_ ∈ _))
 
-/-- An entry is selectable exactly when all its features are optional. -/
 theorem selectable_iff (f : Features) : f.Selectable ↔ f.compulsory = ∅ := by
   simp only [Selectable, bundles, Finset.mem_image, Finset.mem_powerset]
   constructor
@@ -263,7 +259,6 @@ theorem selectable_iff (f : Features) : f.Selectable ↔ f.compulsory = ∅ := b
   · intro h
     exact ⟨∅, Finset.empty_subset _, by rw [h, Finset.empty_union]⟩
 
-/-- An entry takes a noun exactly when `E_R` is among its features. -/
 theorem takesNoun_iff (f : Features) : f.TakesNoun ↔ Selector.eR ∈ f.compulsory ∪ f.optional := by
   simp only [TakesNoun, bundles, Finset.mem_image, Finset.mem_powerset]
   constructor

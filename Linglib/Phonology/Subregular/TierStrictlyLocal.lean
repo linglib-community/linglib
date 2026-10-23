@@ -87,7 +87,6 @@ def language (G : TierStrictlyLocalGrammar k α) : Language α :=
     w ∈ G.language ↔
       ∀ f ∈ List.kFactors k (boundary k (w.filter (G.tier ·))), f ∈ G.permitted := Iff.rfl
 
-/-- Symbols off the tier are invisible to the grammar. -/
 theorem mem_language_append_cons_of_not_tier (G : TierStrictlyLocalGrammar k α) {a : α}
     (ha : ¬ G.tier a) (u v : List α) :
     u ++ a :: v ∈ G.language ↔ u ++ v ∈ G.language := by
@@ -106,8 +105,6 @@ namespace Language
 def IsTierStrictlyLocal (k : ℕ) (L : Language α) : Prop :=
   ∃ G : Subregular.TierStrictlyLocalGrammar k α, G.language = L
 
-/-- The language of a `TierStrictlyLocalGrammar` is tier-based strictly local, the introduction
-rule for `Language.IsTierStrictlyLocal`. -/
 theorem _root_.Subregular.TierStrictlyLocalGrammar.isTierStrictlyLocal_language {k : ℕ}
     (G : Subregular.TierStrictlyLocalGrammar k α) : IsTierStrictlyLocal k G.language :=
   ⟨G, rfl⟩
@@ -146,8 +143,6 @@ def PreprojectiveSuffixSubstitutionClosed (L : Language α) (T : α → Prop) [D
     k - 1 ≤ (x₁.filter (T ·)).length → u₁ ++ x₁ ++ v₁ ∈ L → u₂ ++ x₂ ++ v₂ ∈ L →
       u₁ ++ x₁ ++ v₂ ∈ L
 
-/-- A tier-based strictly local language has a tier whose off-tier symbols are freely insertable
-and deletable and along which it is closed under preprojective suffix substitution. -/
 theorem IsTierStrictlyLocal.exists_tier {k : ℕ} {L : Language α}
     (h : IsTierStrictlyLocal k L) :
     ∃ (T : α → Prop) (_ : DecidablePred T), (∀ u v a, ¬ T a → (u ++ a :: v ∈ L ↔ u ++ v ∈ L)) ∧

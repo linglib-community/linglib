@@ -85,8 +85,6 @@ def neSeries : List PolarityItem := [nejaky, nekdo]
 
 /-! ### Verification -/
 
-/-- A *ni-* item is licensed exactly by the contexts carrying anti-morphic strength, clausal
-negation alone among the named contexts: the strict concord of the series. -/
 theorem niSeries_strict_concord :
     ∀ e ∈ niSeries, ∀ c : LicensingContext,
       c.licenser.Licenses e ↔ c.licenser.Carries .antiMorphic := by
@@ -95,7 +93,6 @@ theorem niSeries_strict_concord :
   rcases he with rfl | rfl | rfl | rfl | rfl <;>
     exact Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
-/-- Clausemate negation blocks the *ně-* items. -/
 theorem neSeries_antiLicensed :
     ∀ e ∈ neSeries, LicensingContext.negation.licenser.AntiLicenses e := by
   decide

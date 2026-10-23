@@ -123,8 +123,6 @@ theorem status_41 :
       Status.of .finite .complement = .nc ∧ Status.of .finite .subject = .nc := by
   decide +kernel
 
-/-- Non-obligatory control arises only in a clause type that shows obligatory control
-somewhere. -/
 theorem exists_oc_of_noc {c : ClauseType} {p : Position} (h : Status.of c p = .noc) :
     ∃ q, Status.of c q = .oc := by
   unfold Status.of at h

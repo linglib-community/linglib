@@ -141,7 +141,6 @@ theorem RootLocal.cyclic_first (h : s.RootLocal cyclic i) (hi : cyclic s.heads[i
 theorem coactive_self (i : Fin s.heads.length) : s.Coactive cyclic i i := by
   unfold Coactive insertionCycle; omega
 
-/-- Heads of one cycle are present for one another. -/
 theorem coactive_of_cycle_eq (h : s.cycle cyclic i = s.cycle cyclic j) : s.Coactive cyclic i j := by
   unfold Coactive insertionCycle; omega
 
@@ -176,8 +175,6 @@ def lastCycle : List H :=
   s.heads.reverse.takeWhile (fun h ↦ !decide (cyclic h)) ++
     (s.heads.reverse.dropWhile (fun h ↦ !decide (cyclic h))).take 1
 
-/-- The last cycle of a word whose highest cyclic head is `h`, with the noncyclic heads `above`
-over it. -/
 theorem lastCycle_mk_append {r : R} {hs above : List H} {h : H} (hc : cyclic h)
     (ha : ∀ a ∈ above, ¬ cyclic a) :
     (⟨r, hs ++ h :: above⟩ : ComplexHead R H).lastCycle cyclic = above.reverse ++ [h] := by

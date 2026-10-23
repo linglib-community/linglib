@@ -142,8 +142,6 @@ theorem paretoRule_anonymous : Anonymous (paretoRule : Rule ι α K) := by
   simp only [paretoRule, Pi.le_def, Function.comp_apply]
   exact propext ⟨fun h i ↦ by simpa using h (σ.symm i), fun h i ↦ h _⟩
 
-/-- A trade-off, one individual ranking `x` strictly above `y` and another `y` above `x`, is
-incomparable under the Pareto rule. -/
 theorem paretoRule_incomparable {v : Profile ι α K} {x y : α} {i j : ι} (hi : v y i < v x i)
     (hj : v x j < v y j) : ¬ paretoRule v x y ∧ ¬ paretoRule v y x :=
   ⟨fun h ↦ (h j).not_gt hj, fun h ↦ (h i).not_gt hi⟩
@@ -214,8 +212,6 @@ theorem utilitarian_nonDictatorial [Nontrivial α] (h₂ : ∀ i, ∃ j, j ≠ i
   simp only [utilitarian, hx, hy, mul_add, mul_comm (c j) (c i)] at this
   exact (lt_add_of_pos_right _ (mul_pos hj hj)).not_ge this
 
-/-- With two positive weights the utilitarian rule is not even ratio-scale invariant, since
-rescaling one individual's values breaks a tie. -/
 theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
     (hj : 0 < c j) : ¬ Invariant ratio (utilitarian c : Rule ι α K) := by
   intro h
@@ -265,8 +261,6 @@ theorem paretoRule_iff_forall_utilitarian :
   have : M * d i = |1 ⬝ᵥ d| + d i := by simp only [M, add_mul, one_mul, div_mul_cancel₀ _ hd.ne']
   linarith [neg_abs_le (1 ⬝ᵥ d)]
 
-/-- The Pareto rule ranks `x` strictly above `y` iff every utilitarian rule with positive weights
-does. -/
 theorem asymmRel_paretoRule_iff_forall_utilitarian :
     AsymmRel (paretoRule v) x y ↔
       ∀ c : ι → K, (∀ i, 0 < c i) → AsymmRel (utilitarian c v) x y := by
@@ -326,7 +320,6 @@ theorem cobbDouglas_independent : Independent (cobbDouglas c : Rule ι α ℝ) :
   intro v w x y hx hy
   simp only [cobbDouglas, hx, hy]
 
-/-- On non-negative profiles the Cobb–Douglas rule is ratio-scale invariant. -/
 theorem cobbDouglas_transform_of_nonneg {f : ι → ℝ → ℝ} (hf : f ∈ ratio) {v : Profile ι α ℝ}
     (hv : ∀ x i, 0 ≤ v x i) : cobbDouglas c (v.transform f) = cobbDouglas c v := by
   obtain ⟨s, hs, hf⟩ := hf

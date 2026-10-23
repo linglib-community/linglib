@@ -121,8 +121,6 @@ theorem Candidate.admits_of_presup_some {c : Candidate W} {p : Set W} (h : c.pre
     c.admits = {ctx | ctx ⊆ K p} := by
   ext ctx; simp [Candidate.admits, h]
 
-/-- A presuppositional candidate is admitted by fewer contexts than a plain one, since the
-context `{∅}` admits no presupposition. -/
 theorem Candidate.admits_ssubset_univ {c : Candidate W} {p : Set W} (h : c.presup = some p) :
     c.admits ⊂ Set.univ := by
   rw [Candidate.admits_of_presup_some h]
@@ -138,8 +136,6 @@ def ViolMP (rival c : Candidate W) : Prop :=
 theorem violMP_iff {rival c : Candidate W} : ViolMP rival c ↔ rival.admits ⊂ c.admits :=
   ⟨fun ⟨_, h, hss⟩ ↦ h ▸ hss, fun h ↦ ⟨rival, rfl, h⟩⟩
 
-/-- A candidate without a presupposition violates Maximize Presupposition against a
-presuppositional rival, whatever the context. -/
 theorem violMP_of_presup_none {rival c : Candidate W} {p : Set W} (hc : c.presup = none)
     (hr : rival.presup = some p) : ViolMP rival c :=
   violMP_iff.2 (Candidate.admits_of_presup_none hc ▸ Candidate.admits_ssubset_univ hr)
@@ -158,23 +154,17 @@ evaluated for the competition between `sp` and its alternative. -/
 def ranking (ctx : Set (Set W)) (sp : Candidate W) : List (Candidate W → Prop) :=
   [ViolIC ctx, ViolFP ctx, ViolMP sp]
 
-/-- A presuppositional sentence violates Felicity Presupposition exactly when the context does
-not entail its presupposition. A trigger without an alternative, such as *jiu* 'only', enters no
-competition, so this alone bars it from every context short of entailing the presupposition. -/
 @[simp] theorem violFP_presupSentence {ctx : Set (Set W)} {p a : Set W} :
     ViolFP ctx (presupSentence p a) ↔ ¬ ctx ⊆ K p :=
   ⟨fun ⟨_, hq, h⟩ ↦ Option.some.inj hq ▸ h, fun h ↦ ⟨p, rfl, h⟩⟩
 
 /-! ### The three decisive facts -/
 
-/-- A coherent presuppositional sentence beats an incoherent alternative. -/
 theorem presup_beats_of_incoherent {ctx : Set (Set W)} {p a : Set W} {c : Candidate W}
     (hsp : ¬ Disjoint ctx (K (p ∩ a))) (hc : Disjoint ctx c.commitment) :
     Beats (ranking ctx (presupSentence p a)) (presupSentence p a) c :=
   Or.inl ⟨hsp, hc⟩
 
-/-- A coherent alternative beats a presuppositional sentence whose presupposition is not
-entailed, when both are coherent. -/
 theorem plain_beats_of_not_entailed {ctx : Set (Set W)} {p a : Set W} {c : Candidate W}
     (hc0 : c.presup = none) (hsp : ¬ Disjoint ctx (K (p ∩ a))) (hc : ¬ Disjoint ctx c.commitment)
     (hp : ¬ ctx ⊆ K p) :
@@ -182,8 +172,6 @@ theorem plain_beats_of_not_entailed {ctx : Set (Set W)} {p a : Set W} {c : Candi
   Or.inr ⟨⟨fun h ↦ absurd h hc, fun h ↦ absurd h hsp⟩,
     Or.inl ⟨fun ⟨q, hq, _⟩ ↦ by simp [hc0] at hq, ⟨p, rfl, hp⟩⟩⟩
 
-/-- A presuppositional sentence whose presupposition is entailed beats a coherent
-non-presuppositional alternative. -/
 theorem presup_beats_of_entailed {ctx : Set (Set W)} {p a : Set W} {c : Candidate W}
     (hc0 : c.presup = none) (hsp : ¬ Disjoint ctx (K (p ∩ a))) (hc : ¬ Disjoint ctx c.commitment)
     (hp : ctx ⊆ K p) :
@@ -344,7 +332,6 @@ def Trigger.altStructure : Trigger → AltStructure
   | .buzai | .zhidao => .replacement
   | .jiu | .houhui => .none
 
-/-- The verbal triggers are presupposition triggers by their fragment entries. -/
 theorem isTrigger_of_entry {t : Trigger} {v : Verb} (h : t.entry = .inr v) :
     v.IsTrigger := by
   cases t <;> simp only [Trigger.entry, Sum.inr.injEq, reduceCtorEq] at h <;> subst h <;> decide
@@ -371,8 +358,6 @@ def Candidate.ofTrivalent (φ : W → SignType) : Candidate W :=
 
 variable {R S : SetRel W W} {P : W → Prop} {ctx : Set (Set W)} {t : Trigger} {φ : W → SignType}
 
-/-- A sentence that asserts `a` wherever its meaning is defined is the presuppositional sentence
-with that presupposition and the assertion `a`. -/
 theorem Candidate.ofTrivalent_eq_presupSentence {a : Set W}
     (h : ∀ w, φ w ≠ 0 → (φ w = 1 ↔ w ∈ a)) :
     Candidate.ofTrivalent φ = presupSentence (Function.support φ) a := by
@@ -400,7 +385,6 @@ theorem eq_one_iff_of_altStructure_deletion (h : t.aspectual R S P = some φ)
   cases t <;>
     first | (cases ht; done) | (cases h; done) | (cases h; simp_all [Phasal.denote, again])
 
-/-- *Buzai* asserts the negation of its prejacent, so its alternative replaces it by negation. -/
 theorem eq_one_iff_buzai (h : Trigger.buzai.aspectual R S P = some φ) {w : W} (hw : φ w ≠ 0) :
     φ w = 1 ↔ ¬ P w := by
   cases h; simp_all [Phasal.denote]

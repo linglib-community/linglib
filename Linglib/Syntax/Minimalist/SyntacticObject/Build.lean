@@ -150,7 +150,6 @@ theorem attach_swap (p d : LinearizedSyntacticObject L) (e : Edge) :
     p.attach e.swap d = d.attach e p := by
   cases e <;> rfl
 
-/-- Merge on either edge forgets to Merge. -/
 @[simp] theorem toSyntacticObject_attach (p d : LinearizedSyntacticObject L) (e : Edge) :
     (p.attach e d).toSyntacticObject = SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject
     := by
@@ -246,7 +245,6 @@ theorem traceOf_ne_trace (tok : L) : traceOf tok ≠ trace := by
 @[simp] theorem token?_merge (l r : SyntacticObject L) : (merge l r).token? = none := by
   rw [token?, merge_val, UnorderedTree.value_node]
 
-/-- An object with a root token is that token's leaf. -/
 theorem token?_eq_some_iff {s : SyntacticObject L} {tok : L} :
     s.token? = some tok ↔ s = leaf tok := by
   refine ⟨fun h ↦ ?_, fun h ↦ h ▸ token?_leaf tok⟩

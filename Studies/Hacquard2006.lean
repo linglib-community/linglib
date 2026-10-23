@@ -59,8 +59,6 @@ variable {W E T : Type*}
 
 /-! ### One entry per modal, chapter 1 -/
 
-/-- Each Italian modal verb keeps one force across an epistemic and a root flavor, the pattern
-that argues for a single entry whose reading is fixed by structure. -/
 theorem italian_modals_one_entry :
     ∀ m ∈ Italian.modals,
       m.VariesFlavor ∧ ¬ m.VariesForce ∧ ¬ m.Epistemic ∧ ¬ m.Circumstantial := by
@@ -174,8 +172,6 @@ example :
 theorem position_determines_perspective :
     positionPerspective .aboveAsp ≠ positionPerspective .belowAsp := nofun
 
-/-- Embedded under a past attitude, a high modal is keyed to the attitude time, so the
-perspective tracks the binder and not the position. -/
 theorem embedding_shifts_perspective :
     binderPerspective ModalPosition.aboveAsp.embeddedBinder ≠
       binderPerspective ModalPosition.aboveAsp.matrixBinder := nofun

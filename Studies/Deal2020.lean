@@ -201,7 +201,6 @@ theorem apply_complementContext_of_mem_eventShifted (h : k ∈ eventShifted n p)
   rw [Kaplan.Context.apply_overwrite_of_disjoint hf (by simpa using hk),
     Kaplan.Context.apply_overwrite_of_subset hf (by simpa using h)]
 
-/-- An indexical whose class the complement does not shift reads the utterance context. -/
 theorem apply_complementContext_of_notMem (h : k ∉ shifted n) :
     f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f c := by
   have h₁ : k ∉ deSe n p := fun hk ↦ h (shifted_mono (min_le_right p n) hk)
@@ -243,7 +242,6 @@ bundle overwriting all its coordinates or none (§4.2.2). -/
 def ofBundles (bs : Finset (Finset Coord)) : Finset (Finset Coord) :=
   bs.powerset.image fun t ↦ t.sup id
 
-/-- (G2) for every complement built from sizes. -/
 theorem mem_of_mem_ofSizes {ns : Finset ℕ} {s : Finset Coord} (hs : s ∈ ofSizes ns) {k k' : Coord}
     (hk : k ∈ s) (hk' : k' ∈ sequence) (h : rank k' < rank k) : k' ∈ s := by
   obtain ⟨n, -, rfl⟩ := Finset.mem_image.1 hs

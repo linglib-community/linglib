@@ -156,8 +156,6 @@ def mixed (human inan : Bundle Node) : Option Gender :=
     (L.nominal n r).interp = (L.conceptual r).interp := by
   unfold nominal; split_ifs <;> simp [conceptual, arbitrary]
 
-/-- Conversion reads the referents alone, so two nominals resolve as their referents do whatever
-their nouns' genders. -/
 theorem converted_nominal (n₁ n₂ : GenderedNoun Gender) (r₁ r₂ : Referent) :
     L.converted (L.nominal n₁ r₁) (L.nominal n₂ r₂) = L.resolved r₁ r₂ := by
   simp only [converted, resolved, resolve, interp_nominal]
@@ -191,8 +189,6 @@ def system : System where
 
 theorem masc_mem_entailments_fem : .masc ∈ system.entailments .fem := by decide
 
-/-- Uniform humans resolve to their shared gender, as in *i Maria ke i Giota* and *o Petros ke o
-Kostas*. -/
 theorem human_uniform :
     system.converted (system.nominal maria .woman) (system.nominal giota .woman) =
         some .feminine ∧
@@ -200,22 +196,17 @@ theorem human_uniform :
         some .masculine := by
   decide
 
-/-- In *o andras ke i gineka ine eksipni* FEM is lost and MASC kept. -/
 theorem human_mismatch :
     system.converted (system.nominal andras .man) (system.nominal gineka .woman) =
       some .masculine := by
   decide
 
-/-- *I gineka ke to koritsi ine eksipnes*, where the neuter *koritsi* resolves by its female
-referent. -/
 theorem woman_girl :
     system.exponent (system.nominal koritsi .woman) = some .neuter ∧
       system.converted (system.nominal gineka .woman) (system.nominal koritsi .woman) =
         some .feminine := by
   decide
 
-/-- *I megalofiia ke i adherfi tu ine charumeni*, where two grammatically feminine nouns resolve
-masculine because the genius is a man. -/
 theorem genius_sister :
     system.exponent (system.nominal megalofiia .man) = some .feminine ∧
       system.exponent (system.nominal adherfi .woman) = some .feminine ∧
@@ -223,15 +214,12 @@ theorem genius_sister :
         some .masculine := by
   decide
 
-/-- *To thima ke i mitera tis ine charumenes*, where the neuter *thima* resolves feminine for a
-woman. -/
 theorem victim_mother :
     system.exponent (system.nominal thima .woman) = some .neuter ∧
       system.converted (system.nominal thima .woman) (system.nominal mitera .woman) =
         some .feminine := by
   decide
 
-/-- Uniform inanimates realize their shared arbitrary gender. -/
 theorem inanimate_uniform :
     system.formal (system.nominal fusta .thing) (system.nominal bluza .thing) = some .feminine ∧
       system.formal (system.nominal anaptiras .thing) (system.nominal fakos .thing) =
@@ -240,7 +228,6 @@ theorem inanimate_uniform :
         some .neuter := by
   decide
 
-/-- Mismatched inanimates resolve neuter through their interpretable CLASS. -/
 theorem inanimate_mismatch :
     system.converted (system.nominal pinakas .thing) (system.nominal karekla .thing) =
         some .neuter ∧
@@ -256,7 +243,6 @@ theorem inanimate_clash :
       system.formal (system.nominal scholio .thing) (system.nominal ekklisia .thing) = none := by
   decide
 
-/-- Uniform inanimates may also percolate CLASS and resolve neuter. -/
 theorem inanimate_uniform_neuter :
     system.converted (system.nominal fusta .thing) (system.nominal bluza .thing) =
       some .neuter := by
@@ -275,16 +261,12 @@ theorem closest_conjunct :
       some .masculine := by
   decide
 
-/-- *O kleftis ke to daxtilidi* and *o Giorgos ke to pukamiso tu*, where the man's MASC and the
-neuter's CLASS clash at PF; the paper excludes the remaining, all-interpretable option at LF. -/
 theorem human_inanimate_crash :
     system.mixed (system.nominal kleftis .man) (system.nominal daxtilidi .thing) = none ∧
       system.mixed (system.nominal giorgos .man) (system.nominal pukamiso .thing) = none ∧
       resolve (system.nominal kleftis .man) (system.nominal daxtilidi .thing) = {.cls} := by
   decide
 
-/-- Matched humans and inanimates converge, as in *o kleftis ke o pinakas* and *i gineka ke i
-ombrela*. -/
 theorem human_inanimate_match :
     system.mixed (system.nominal kleftis .man) (system.nominal pinakas .thing) =
         some .masculine ∧
@@ -292,9 +274,6 @@ theorem human_inanimate_match :
         some .feminine := by
   decide
 
-/-- The fixed-gender *megalofiia* and *thima* match an inanimate by their referents, as in
-*i megalofiia ke o pinakas tu*, *to thima ke o pinakas tu* and *to thima ke i fotografia tis*,
-and a victim who is a man does not match a feminine inanimate. -/
 theorem victim_painting :
     system.mixed (system.nominal megalofiia .man) (system.nominal pinakas .thing) =
         some .masculine ∧
@@ -305,11 +284,8 @@ theorem victim_painting :
       system.mixed (system.nominal thima .man) (system.nominal fotografia .thing) = none := by
   decide
 
-/-- Clausal subjects bear no gender features and are realized neuter. -/
 theorem clausal : system.realize ∅ = some .neuter := by decide
 
-/-- No neuter–feminine syncretism to the exclusion of masculine, for any vocabulary with one
-item per exponent over the Greek feature sets. -/
 theorem no_aba (v : RuleSet (VocabularyItem Node Gender)) (hv : v.Antihomophonous) {φ : Gender}
     (hn : v.Realizes applySet (Neighborhood.ofBundle {.cls}) φ)
     (hf : v.Realizes applySet (Neighborhood.ofBundle {.fem, .masc, .cls}) φ) :
@@ -340,20 +316,17 @@ def system : System where
 
 theorem masc_not_mem_entailments_fem : .masc ∉ system.entailments .fem := by decide
 
-/-- *Maðurinn og konan eru þreytt*, where only CLASS survives. -/
 theorem human_mismatch :
     system.converted (system.nominal madur .man) (system.nominal kona .woman) =
       some .neuter := by
   decide
 
-/-- *Skáldið og Jón eru frægir*, where the neuter *skáld* resolves masculine for a man. -/
 theorem poet_jon :
     system.exponent (system.nominal skald .man) = some .neuter ∧
       system.converted (system.nominal skald .man) (system.nominal jon .man) =
         some .masculine := by
   decide
 
-/-- *Frægð og frami eru tvíeggjuð*. -/
 theorem inanimate_mismatch :
     system.converted (system.nominal fraegd .thing) (system.nominal frami .thing) =
         some .neuter ∧
@@ -367,9 +340,6 @@ theorem inanimate_mismatch :
 mixture takes the neuter. The geometry reads referents instead, so the two agree wherever the
 gender is the referent's and part where it is not. -/
 
-/-- On Corbett's coordinations the rule and the geometry agree. The boy and the girl resolve
-neuter as mismatched humans, and the ewe and the lamb, which contribute CLASS alone as the
-paper's inanimates do, resolve neuter through it. -/
 theorem corbett_rows :
     Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [drengur.gender, telpa.gender] =
         some .neuter ∧
@@ -381,8 +351,6 @@ theorem corbett_rows :
         some .neuter := by
   decide
 
-/-- In *skáldið og Jón eru frægir* the rule resolves the neuter *skáld* and the masculine *Jón*
-to the neuter, and the geometry to the masculine of the two men. -/
 theorem corbett_skald_jon :
     Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [skald.gender, jon.gender] =
         some .neuter ∧
@@ -425,39 +393,30 @@ individuated thing otherwise. -/
 def inanimate (n : GenderedNoun Gender) : Bundle Node :=
   system.nominal n (if n.gender = .neuter then .mass else .thing)
 
-/-- *Muškarac i žena su sretni*. -/
 theorem human_mismatch :
     system.converted (system.nominal muskarac .man) (system.nominal zena .woman) =
       some .masculine := by
   decide
 
-/-- Uniform women still resolve feminine. -/
 theorem women : system.resolved .woman .woman = some .feminine := by decide
 
-/-- In *znanje i intuicija su saradivali* the INDIV from the coordination's GRP realizes
-masculine. -/
 theorem inanimate_mismatch :
     system.converted (inanimate znanje) (inanimate intuicija) = some .masculine := by
   decide
 
-/-- *Naše selo i celo jedno brdo su izgoreli*, where two neuters resolve masculine. -/
 theorem neuter_pair : system.converted (inanimate selo) (inanimate brdo) = some .masculine := by
   decide
 
-/-- Neuter alone is mass, so without GRP it stays neuter. -/
 theorem neuter_mass : system.realize (system.entailments .cls) = some .neuter := by decide
 
 end BCS
 
 /-! ### The geometries -/
 
-/-- Every node of the three geometries entails CLASS. -/
 theorem cls_mem_entailments :
     ∀ L ∈ [Greek.system, Icelandic.system, BCS.system], ∀ n, .cls ∈ L.entailments n := by
   decide
 
-/-- All three geometries satisfy mismatch resolution, since any two nodes share CLASS and so no
-pair of nodes needs a default. -/
 theorem mismatchResolution :
     ∀ L ∈ [Greek.system, Icelandic.system, BCS.system], ∀ a b,
       (L.entailments a ∩ L.entailments b).Nonempty := fun L hL a b ↦

@@ -136,7 +136,6 @@ def SeOmissible : Language → Environment → Prop
 instance : ∀ (l : Language) (e : Environment), Decidable (SeOmissible l e) := by
   intro l e; cases l <;> cases e <;> unfold SeOmissible <;> infer_instance
 
-/-- Analytic causatives are the pan-Romance diagnostic: every language omits *se* there. -/
 theorem every_language_diagnosable (l : Language) : SeOmissible l .analyticCausative := by
   cases l <;> decide
 
@@ -204,15 +203,11 @@ theorem class3_three_ways :
       [.pseudoReciprocal, .grammaticalReciprocal, .grammaticalReflexive] := by
   decide
 
-/-- Without *se* no grammatical reading survives, for any class: the reflexive and the
-accumulated-events reciprocal readings need the grammatical strategy. -/
 theorem grammatical_needs_se (c : VerbClass) :
     SeReading.grammaticalReciprocal ∉ c.readingsWithoutSe ∧
       SeReading.grammaticalReflexive ∉ c.readingsWithoutSe := by
   cases c <;> decide
 
-/-- The pseudo-reciprocal reading survives without *se* exactly for the classes with a lexical
-entry. -/
 theorem pseudo_without_se_iff (c : VerbClass) :
     SeReading.pseudoReciprocal ∈ c.readingsWithoutSe ↔ c.ReciprocityByItself := by
   cases c <;> decide
@@ -255,8 +250,6 @@ def VerbClass.AllowsWithConstruction : VerbClass → Prop
   | .plainTransitive => False
   | _ => True
 
-/-- The generalization of [kemmer-1993] over the class system: the 'with'-construction is
-available exactly where a lexical entry is. -/
 theorem withConstruction_iff_lexical (c : VerbClass) :
     c.AllowsWithConstruction ↔ c.ReciprocityByItself := by
   cases c <;> simp [VerbClass.AllowsWithConstruction, VerbClass.ReciprocityByItself,
@@ -278,14 +271,10 @@ def appendixC : List (Verb × Option Verb) :=
     (Swahili.Verbs.shindana, some Swahili.Verbs.shinda),
     (Swahili.Verbs.tengana, some Swahili.Verbs.tenga)]
 
-/-- Each lexical reciprocal with a base is the base with *-an-* before its final vowel. -/
 theorem appendixC_form :
     ∀ p ∈ appendixC, ∀ b ∈ p.2, p.1.form.toList = b.form.toList.dropLast ++ ['a', 'n', 'a'] := by
   decide
 
-/-- Swahili lexical reciprocals may lack a binary base altogether: *jibizana* 'discuss' has
-none, so lexical reciprocity is not always derivational, the Bantu analogue of the Romance
-intransitive class. -/
 theorem jibizana_no_binary_base : ∃ p ∈ appendixC, p.1.form = "jibizana" ∧ p.2.isNone := by
   decide
 

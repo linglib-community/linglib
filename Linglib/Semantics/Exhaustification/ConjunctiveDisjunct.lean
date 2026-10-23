@@ -34,9 +34,6 @@ variable {W : Type*} {a b c : Set W}
 def conjDisjAlternatives (a b c : Set W) : Set (Set W) :=
   {(a ∩ b) ∪ c, (a ∩ b) ∩ c, a ∪ c, b ∪ c, a ∩ c, b ∩ c, a ∩ b, a, b, c}
 
-/-- Exhaustifying `(a ∧ b) ∨ c` against its substitution alternatives yields the strongly
-exhaustive reading `(a ∧ b ∧ ¬c) ∨ (c ∧ ¬a ∧ ¬b)`, given a world of each disjunct without the
-other. -/
 theorem exhIE_conjDisjAlternatives (hab : ((a ∩ b) \ c).Nonempty)
     (hc : (c \ (a ∪ b)).Nonempty) :
     exhIE (conjDisjAlternatives a b c) ((a ∩ b) ∪ c) = ((a ∩ b) \ c) ∪ (c \ (a ∪ b)) := by
@@ -84,8 +81,6 @@ theorem exhIE_conjDisjAlternatives (hab : ((a ∩ b) \ c).Nonempty)
     · refine ⟨Or.inr huc, ?_⟩
       simp_all
 
-/-- With the strongly exhaustive reading, the conclusion of the illusory inference follows
-classically from the second premise. -/
 theorem stronglyExhaustive_inter_subset : (((a ∩ b) \ c) ∪ (c \ (a ∪ b))) ∩ a ⊆ b := by
   rintro u ⟨⟨⟨-, hub⟩, -⟩ | ⟨-, huab⟩, hua⟩
   · exact hub

@@ -203,7 +203,6 @@ noncomputable def resampleSufficiency {ι : Type*} [DecidableEq ι] (μ : Measur
     (w₀ : ι → Bool) (E : Set (ι → Bool)) (S : Finset ι) : ℝ≥0∞ :=
   μ {w | S.piecewise w₀ w ∈ E}
 
-/-- On the collider the two candidates for sufficiency agree. -/
 theorem resampleSufficiency_eq_sufficiency (s : CausalStructure) (hc : p c < 1) (ha : p a < 1) :
     resampleSufficiency (prior p) (fun _ ↦ true) (effect s) {c} =
       sufficiency (prior p) (fun _ ↦ true) (effect s) {c} := by
@@ -245,7 +244,6 @@ noncomputable def PNS (μ : Measure (ι → Bool)) (X : ι) (E : Set (ι → Boo
 
 variable {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)] {X : ι} {E : Set (ι → Bool)}
 
-/-- Under a product measure, conditioning on a variable's value is setting it. -/
 private theorem cond_real_pi_cause_singleton {b : Bool} {B : Set (ι → Bool)} (hb : ν X {b} ≠ 0) :
     ((Measure.pi ν)[|cause (fun _ ↦ b) {X}]).real B =
       (Measure.pi ν).real ((Function.update · X b) ⁻¹' B) := by
@@ -269,7 +267,6 @@ private theorem measureReal_mul_cond_real {μ : Measure (ι → Bool)} [IsFinite
   rw [measureReal_def, measureReal_def, measureReal_def, ← ENNReal.toReal_mul, mul_comm,
     cond_mul_eq_inter .of_discrete]
 
-/-- PNS is the probability that the cause makes the difference, on either side of the cause. -/
 private theorem PNS_eq {μ : Measure (ι → Bool)} [IsFiniteMeasure μ] :
     PNS μ X E = μ.real (cause (fun _ ↦ true) {X} ∩ ((Function.update · X true) ⁻¹' E \
         (Function.update · X false) ⁻¹' E)) +
@@ -412,8 +409,6 @@ instance : IsFiniteKernel (test μ w₀ E S) :=
 instance [IsFiniteMeasure μ] : IsFiniteMeasure (step μ w₀ E S) := by unfold step; infer_instance
 
 omit [Fintype ι] [DecidableEq ι] in
-/-- When the cause can fail, and fail together with the outcome, a step is a probability
-measure. -/
 theorem isProbabilityMeasure_step [IsProbabilityMeasure μ] (h₀ : μ (cause w₀ S)ᶜ ≠ 0)
     (h₁ : μ ((cause w₀ S)ᶜ ∩ Eᶜ) ≠ 0) : IsProbabilityMeasure (step μ w₀ E S) := by
   have : IsMarkovKernel (test μ w₀ E S) := ⟨fun x ↦ by

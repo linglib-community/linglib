@@ -78,13 +78,10 @@ theorem restrictor_eq_strict :
   rw [conditionalNecessity_iff_mem_orderingImp, strictImp_eq_orderingImp]
   simp
 
-/-- *If α, must β* holds vacuously when no accessible world satisfies α. -/
 theorem vacuous_conditional (h : ∀ w', w' ∈ f.accessibleWorlds w → ¬ α w') :
     conditionalNecessity f g α β w :=
   (conditionalNecessity_iff_mem_orderingImp f g α β w).2 fun v hv ↦ absurd hv.1.2 (h v hv.1.1)
 
-/-- With the evaluation world as its only accessible world and an empty ordering source, *if α,
-must β* is the material conditional. -/
 theorem material_from_restrictor (hTotal : f.accessibleWorlds w = {w}) :
     conditionalNecessity f ⊥ α β w ↔ (α w → β w) := by
   rw [restrictor_eq_strict, mem_strictImp_forall, hTotal]

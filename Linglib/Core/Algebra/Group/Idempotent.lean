@@ -57,10 +57,8 @@ theorem isRightZero_iff : IsRightZero a ↔ ∀ b, b * a = a := Iff.rfl
 @[simp] theorem isRightZero_op : IsRightZero (MulOpposite.op a) ↔ IsLeftZero a :=
   MulOpposite.op_surjective.forall.trans <| forall_congr' fun _ ↦ MulOpposite.op_inj
 
-/-- A left zero is idempotent. -/
 theorem IsLeftZero.isIdempotentElem (h : IsLeftZero a) : IsIdempotentElem a := h a
 
-/-- A right zero is idempotent. -/
 theorem IsRightZero.isIdempotentElem (h : IsRightZero a) : IsIdempotentElem a := h a
 
 section Hom

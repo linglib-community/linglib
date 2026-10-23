@@ -115,13 +115,11 @@ theorem Derivation.map_contract_replayWithCopies? (d : Derivation) :
     (fun c step ↦ Step.map_contract_replayWithCopies? step c)]
   simp [Cfg.map]
 
-/-- The externalized object is the contraction of the copy object. -/
 theorem Derivation.externalize?_eq_map_replayWithCopies? (d : Derivation) :
     d.externalize? τ = (d.replayWithCopies? τ).map (·.current.contract) := by
   rw [externalize?, ← d.map_contract_replayWithCopies?, Option.map_map]
   rfl
 
-/-- The replay with copies fails exactly when the replay with traces does. -/
 theorem Derivation.isSome_replayWithCopies? (d : Derivation) :
     (d.replayWithCopies? τ).isSome = (d.replay? τ).isSome := by
   rw [← d.map_contract_replayWithCopies?, Option.isSome_map]
@@ -160,7 +158,6 @@ theorem Derivation.replayWithCopies?_append_singleton (d : Derivation) (step : S
   simp only [List.foldlM_cons, List.foldlM_nil]
   cases step.replayWithCopies? c <;> rfl
 
-/-- External Merge merges the copy object with the item. -/
 theorem Step.toSyntacticObject_replayWithCopies?_em {side : Edge}
     {item : LinearizedSyntacticObject} {c c' : Cfg Marked}
     (h : (Step.em side item).replayWithCopies? c τ = some c') :
@@ -169,7 +166,6 @@ theorem Step.toSyntacticObject_replayWithCopies?_em {side : Edge}
   obtain rfl := Option.some.inj h
   simp
 
-/-- Internal Merge merges the copy object with one of its own terms. -/
 theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
     {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c') :
     ∃ u ∈ c.current.unmark.toSyntacticObject.terms,
@@ -179,7 +175,6 @@ theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {s
     by rw [he, LinearizedSyntacticObject.toSyntacticObject_attach]⟩
   exact LinearizedSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 hs, rfl⟩
 
-/-- Each step keeps the copy object as a term of the next. -/
 theorem Step.mem_terms_replayWithCopies? {step : Step} {c c' : Cfg Marked}
     (h : step.replayWithCopies? c τ = some c') :
     c.current.unmark.toSyntacticObject ∈ c'.current.unmark.toSyntacticObject.terms := by

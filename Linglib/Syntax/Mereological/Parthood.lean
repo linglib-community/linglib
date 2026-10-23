@@ -160,7 +160,6 @@ theorem descendant_of_nPart (h : P.NPart n x y) : P.Descendant x y :=
 theorem Descendant.trans (h₁ : P.Descendant x y) (h₂ : P.Descendant y z) : P.Descendant x z :=
   TransGen.trans h₁ h₂
 
-/-- An `n`-part chain into `y` ends at the `n`-part of `y`. -/
 theorem NPart.eq_or_nPart_of_imm (hz : P.Imm n z y) (h : P.NPart n x y) :
     x = z ∨ P.NPart n x z := by
   obtain ⟨z', hxz', hz'y⟩ := TransGen.tail'_iff.1 h
@@ -187,7 +186,6 @@ theorem part_eq_none_of_nextDim (h : P.nextDim y = some n) : P.part n y = none :
   unfold nextDim at h
   split at h <;> cases h <;> simp_all [part]
 
-/-- A subjunction to an object that already has a 1-part lands in the second dimension. -/
 theorem nextDim_eq_two (h₁ : (P.onePart y).isSome) (h : P.nextDim y = some n) : n = .two := by
   unfold nextDim at h
   split at h <;> simp_all

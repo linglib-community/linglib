@@ -88,7 +88,6 @@ theorem ofCenters_some (prevCb curCp : Option E) (c : E) : ofCenters prevCb (som
     if ∀ p ∈ prevCb, p = c then if curCp = some c then .continuation else .retaining
     else .shifting := rfl
 
-/-- A defined prior center gives the paper's three-way classification. -/
 theorem ofCenters_some_some (p c : E) (curCp : Option E) : ofCenters (some p) (some c) curCp =
     if p = c then if curCp = some c then .continuation else .retaining else .shifting := by
   simp [ofCenters_some]
@@ -125,7 +124,6 @@ def transitions (d : List (Utterance E R)) : List Transition :=
 
 @[simp] theorem transitions_singleton (u : Utterance E R) : transitions [u] = [] := rfl
 
-/-- Each transition after the first threads the previous pair's center as its prior center. -/
 theorem transitions_cons_cons (u₁ u₂ : Utterance E R) (d : List (Utterance E R)) :
     transitions (u₁ :: u₂ :: d) = transition none u₁ u₂ ::
       List.zipWith3 Transition.ofCenters (cbs (u₁ :: u₂ :: d)) (cbs (u₂ :: d))

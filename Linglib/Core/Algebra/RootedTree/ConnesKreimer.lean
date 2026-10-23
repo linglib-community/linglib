@@ -223,8 +223,6 @@ def single (F : Forest T) (r : R) : ConnesKreimer R T :=
 @[simp] theorem toFinsupp_single (F : Forest T) (r : R) :
     (single F r).toFinsupp = .single F r := rfl
 
-/-- To prove a property of every element it suffices to prove it at `0`, under `+`, and on every
-`single`. -/
 @[elab_as_elim]
 theorem induction_linear {motive : ConnesKreimer R T → Prop} (x : ConnesKreimer R T)
     (zero : motive 0) (add : ∀ f g, motive f → motive g → motive (f + g))
@@ -249,7 +247,6 @@ theorem smul_of' (F : Forest T) (r : R) : r • of' F = single F r := by
     (of' (R := R) (0 : Forest T) : ConnesKreimer R T) = 1 :=
   ext (by simp [toFinsupp_of', AddMonoidAlgebra.one_def])
 
-/-- Disjoint union of forests is the product of the algebra. -/
 @[simp] theorem of'_add (F G : Forest T) :
     (of' (R := R) (F + G) : ConnesKreimer R T)
       = of' (R := R) F * of' (R := R) G :=
@@ -262,7 +259,6 @@ theorem smul_of' (F : Forest T) (r : R) : r • of' F = single F r := by
     (of' (R := R) (t ::ₘ F) : ConnesKreimer R T) = ofTree t * of' F := by
   rw [← Multiset.singleton_add, of'_add, of'_singleton]
 
-/-- A forest is the product of its trees. -/
 theorem prod_map_ofTree (F : Forest T) : (F.map (ofTree (R := R))).prod = of' F := by
   induction F using Multiset.induction with
   | empty => simp
@@ -299,11 +295,9 @@ theorem coeff_single (F G : Forest T) (r : R) [Decidable (F = G)] :
 theorem coeff_of' (F G : Forest T) [Decidable (F = G)] :
     (of' (R := R) F).coeff G = if F = G then 1 else 0 := coeff_single F G 1
 
-/-- Elements agreeing coefficientwise are equal. -/
 theorem ext_coeff (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
   ext (AddMonoidAlgebra.coeff_inj.mp (Finsupp.ext h))
 
-/-- The coefficient of `F` in the formal sum of a multiset of forests is its multiplicity. -/
 theorem coeff_sum_map_of' [DecidableEq T] (s : Multiset (Forest T)) (F : Forest T) :
     ((s.map (of' (R := R))).sum).coeff F = s.count F := by
   induction s using Multiset.induction with
@@ -312,7 +306,6 @@ theorem coeff_sum_map_of' [DecidableEq T] (s : Multiset (Forest T)) (F : Forest 
     rw [Multiset.map_cons, Multiset.sum_cons, coeff_add, ih, coeff_of', Multiset.count_cons]
     split_ifs <;> subst_vars <;> simp_all [add_comm]
 
-/-- In characteristic zero a multiset of forests is determined by its formal sum. -/
 theorem sum_map_of'_injective [CharZero R] :
     Function.Injective fun s : Multiset (Forest T) ↦ (s.map (of' (R := R))).sum := by
   classical
@@ -358,20 +351,17 @@ def aeval (f : T → A) : ConnesKreimer R T →ₐ[R] A :=
 @[simp] theorem aeval_ofTree (f : T → A) (t : T) : aeval (R := R) f (ofTree t) = f t := by
   simp [← of'_singleton]
 
-/-- Algebra homs out of `ConnesKreimer` agree if they agree on forests. -/
 theorem algHom_ext {φ ψ : ConnesKreimer R T →ₐ[R] A}
     (h : ∀ F : Forest T, φ (of' F) = ψ (of' F)) : φ = ψ :=
   (AlgHom.cancel_right (f := toFinsuppAlgEquiv.symm.toAlgHom)
     toFinsuppAlgEquiv.symm.surjective).mp
     (AddMonoidAlgebra.algHom_ext (fun F => h F) (Subsingleton.elim _ _))
 
-/-- Algebra homs agree on a forest if they agree on each of its trees. -/
 theorem algHom_of'_eq_of_ofTree {φ ψ : ConnesKreimer R T →ₐ[R] A} {F : Forest T}
     (h : ∀ t ∈ F, φ (ofTree t) = ψ (ofTree t)) : φ (of' F) = ψ (of' F) := by
   simp only [← prod_map_ofTree, map_multiset_prod, Multiset.map_map, Function.comp_def]
   exact congrArg _ (Multiset.map_congr rfl h)
 
-/-- Algebra homs out of `ConnesKreimer` agree if they agree on trees. -/
 @[ext] theorem algHom_ext_ofTree {φ ψ : ConnesKreimer R T →ₐ[R] A}
     (h : ∀ t : T, φ (ofTree t) = ψ (ofTree t)) : φ = ψ :=
   algHom_ext fun _ ↦ algHom_of'_eq_of_ofTree fun t _ ↦ h t
@@ -412,7 +402,6 @@ def basisSingleOne :
 section LinearMap
 variable {M : Type*} [AddCommMonoid M] [Module R M]
 
-/-- Linear maps out of `ConnesKreimer` agree if they agree on forests. -/
 @[ext high] theorem lhom_ext' {f g : ConnesKreimer R T →ₗ[R] M}
     (h : ∀ F : Forest T, f (of' F) = g (of' F)) : f = g :=
   basisSingleOne.ext fun F ↦ by simpa using h F
@@ -438,8 +427,6 @@ tree to `0`. -/
 def counit : ConnesKreimer R T →ₐ[R] R :=
   aeval fun _ ↦ 0
 
-/-- `counit (of' F)` is `1` on the empty forest and `0` otherwise, stated with `card` to avoid
-`DecidableEq T`. -/
 @[simp] theorem counit_of' (F : Forest T) :
     (counit : ConnesKreimer R T →ₐ[R] R) (of' F)
       = (if F.card = 0 then 1 else 0 : R) := by

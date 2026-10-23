@@ -76,8 +76,6 @@ def Suffix.noun (s : Suffix) (form gloss : String) (naturalGender : Option Gende
     GenderedNoun Value :=
   { form, gloss, gender := s.gender, naturalGender }
 
-/-- A noun ending in a gender-fixing suffix has natural gender just when its referents' gender is
-the one the suffix fixes. -/
 theorem Suffix.isNaturalGender_noun_iff (s : Suffix) (form gloss : String) (g : Gender) :
     (s.noun form gloss g).IsNaturalGender Value.toLabel ↔ g = s.gender.toLabel := by
   simp [noun, GenderedNoun.IsNaturalGender]
@@ -105,7 +103,6 @@ def fraeulein : GenderedNoun Value := Suffix.lein.noun "Fräulein" "young lady" 
 /-- *Bübchen* 'little boy' is neuter, though its referents are male. -/
 def buebchen : GenderedNoun Value := Suffix.chen.noun "Bübchen" "little boy" (some .masculine)
 
-/-- The diminutives denoting persons are neuter whatever the sex of the referent. -/
 theorem not_isNaturalGender_diminutive :
     ¬ maedchen.IsNaturalGender Value.toLabel ∧ ¬ fraeulein.IsNaturalGender Value.toLabel ∧
       ¬ buebchen.IsNaturalGender Value.toLabel := by

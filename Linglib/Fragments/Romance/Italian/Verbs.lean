@@ -375,7 +375,6 @@ def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
       v.scaleDimension.isSome then .be
   else .have
 
-/-- The rule gives every entry on its basic frame an auxiliary its perfect takes. -/
 theorem perfectAuxiliary_mem : ∀ v ∈ allVerbs, v.perfectAuxiliaries.Nonempty →
     perfectAuxiliary v (v.valency.frames.headD .intransitive) ∈ v.perfectAuxiliaries := by
   decide

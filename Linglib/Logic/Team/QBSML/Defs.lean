@@ -209,8 +209,6 @@ theorem State.extendFunctional_mono {s t : Finset (Index W Var Domain)}
     State.extendFunctional s x h ⊆ State.extendFunctional t x h :=
   Finset.biUnion_subset_biUnion_of_subset_left _ hsub
 
-/-- The universal extension is the functional extension with the constant
-    full-domain functional. -/
 theorem State.extendUniversal_eq_extendFunctional [Fintype Domain]
     (s : Finset (Index W Var Domain)) (x : Var) :
     State.extendUniversal s x =
@@ -220,12 +218,6 @@ theorem State.extendUniversal_eq_extendFunctional [Fintype Domain]
     Finset.mem_univ, true_and]
   tauto
 
-/-- **Witness reconstruction**: a state `t` consisting of `x`-updates of
-    indices of `s` is recovered exactly as the functional extension of `s`
-    by the functional collecting, at each index, the values whose updates
-    land in `t`. The shared Finset surgery behind the existential-witness
-    steps of the free-choice facts
-    (`Logic/Team/QBSML/FreeChoice.lean`). -/
 theorem State.extendFunctional_filter_of_update_mem [Fintype Domain]
     {s t : Finset (Index W Var Domain)} {x : Var}
     (hpar : ∀ j ∈ t, ∃ i ∈ s, ∃ d, i.update x d = j) :
@@ -297,10 +289,6 @@ theorem State.isLowerSet_exi (hP : IsLowerSet P) : IsLowerSet (State.exi x P) :=
   rintro s t hts ⟨h, hne, hs⟩
   exact ⟨h, fun i hi ↦ hne i (hts hi), hP (State.extendFunctional_mono x h hts) hs⟩
 
-/-- Union closure of the functional clause needs downward closure of `P`: the two
-    functionals are merged with `s`'s taking precedence, so the merged extension of
-    `s ∪ t` is the union of `s`'s extension with the extension of `t \ s`, a subteam of
-    `t`'s. -/
 theorem State.supClosed_exi (hP : IsLowerSet P) (hP' : SupClosed P) :
     SupClosed (State.exi x P) := by
   rintro s ⟨h_s, hne_s, hs⟩ t ⟨h_t, hne_t, ht⟩
@@ -367,9 +355,6 @@ def State.modalLift (X : Finset W) (g : PartialAssign Var Domain) :
     exact hX
   · exact fun hw => ⟨(w, g), ⟨hw, rfl⟩, rfl⟩
 
-/-- A state contained in a modal pairing is recovered by projecting its
-    worlds and pairing them back with the same assignment: every index of
-    `s ⊆ State.modalLift X g` carries the assignment `g`. -/
 theorem State.modalLift_worldProj_of_subset {s : Finset (Index W Var Domain)}
     {X : Finset W} {g : PartialAssign Var Domain}
     (h : s ⊆ State.modalLift X g) :
@@ -476,7 +461,6 @@ def Formula.mapAtoms
   | .exi x φ => .exi x (φ.mapAtoms fp fc)
   | .univ x φ => .univ x (φ.mapAtoms fp fc)
 
-/-- An atom substitution with NE-free images preserves NE-freeness. -/
 theorem Formula.NEFree.mapAtoms
     {fp : Pred → Var → Formula Var Const Pred}
     {fc : Pred → Const → Formula Var Const Pred}

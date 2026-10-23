@@ -105,7 +105,6 @@ def ofParticipants (s : Finset Role) : Person :=
   split_ifs with hS hH hH <;> simp only [participantSets, Finset.singleton_inj] <;>
     ext r <;> cases r <;> simp_all
 
-/-- The values of the quadripartition are exactly those covering a single participant set. -/
 theorem participantSets_eq_singleton_iff {p : Person} {s : Finset Role} :
     p.participantSets = {s} ↔ p = ofParticipants s := by
   rw [← participantSets_inj, participantSets_ofParticipants]
@@ -145,7 +144,6 @@ def coarsen (p : Person) : Person := if p.MarksClusivity then .first else p
 @[simp] theorem coarsen_idempotent (p : Person) :
     p.coarsen.coarsen = p.coarsen := by revert p; decide
 
-/-- Coarsening erases exactly the clusivity marking. -/
 theorem coarsen_eq_self_iff (p : Person) :
     p.coarsen = p ↔ ¬MarksClusivity p := by
   revert p; decide

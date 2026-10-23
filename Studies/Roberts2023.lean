@@ -147,48 +147,34 @@ def realizes (c : Index W T) : Prop :=
 
 variable {history g f P a}
 
-/-- Applicable circumstances are actual future circumstances: in the world of evaluation and
-later than it. -/
 theorem applic_future (hf : IsFuturate history g f P a) {c c' : Index W T}
     (h : c' ∈ applic history g f P a c) : c'.world = c.world ∧ c.time < c'.time :=
   let ⟨h₁, h₂, _⟩ := hf c c' h.1
   ⟨h₁, h₂⟩
 
-/-- Realization is later still: the property is futurate. -/
 theorem realizes_time_lt {c c' : Index W T} (h : realizes history g f P a c)
     (hc' : c' ∈ applic history g f P a c) : ∃ t', c'.time < t' ∧ P (c'.world, t') a :=
   let ⟨t', ht, hP, _⟩ := h c' hc'
   ⟨t', ht, hP⟩
 
-/-- A circumstance at whose timely futures realizing the prejacent is worse than not, by the
-goals held there, is not applicable: a goal already accomplished or no longer relevant
-makes no circumstance applicable. -/
 theorem not_mem_applic {c c' c₁ c₂ : Index W T} (h₁ : c₁ ∈ timelyFut history g c')
     (h₂ : c₂ ∈ timelyFut history g c') (hP : P c₁ a) (hnP : ¬ P c₂ a)
     (hlt : profile (g c') c₁ < profile (g c') c₂) : c' ∉ applic history g f P a c :=
   fun h ↦ h.2 c₁ h₁ c₂ h₂ hP hnP hlt
 
-/-- The first pass agrees with Kratzer wherever Kratzer decides: a circumstance at whose timely
-futures some non-realizer is strictly better than a realizer by the goals held there is not
-applicable. -/
 theorem not_mem_applic_of_strictlyBetter {c c' c₁ c₂ : Index W T}
     (h₁ : c₁ ∈ timelyFut history g c') (h₂ : c₂ ∈ timelyFut history g c') (hP : P c₁ a)
     (hnP : ¬ P c₂ a) (hlt : (c₂ <[{p | p ∈ g c'}] c₁)) : c' ∉ applic history g f P a c :=
   not_mem_applic h₁ h₂ hP hnP (profile_lt_of_strictlyBetter hlt)
 
-/-- An if-clause adds its proposition to the modal base, which shrinks the applicable
-circumstances. -/
 theorem applic_restrict_subset (q : Index W T → Prop) (c : Index W T) :
     applic history g (f.restrict q) P a c ⊆ applic history g f P a c :=
   fun _ h ↦ ⟨Background.accessibleWorlds_anti (Set.subset_insert _ _) h.1, h.2⟩
 
-/-- A futurate modal base stays futurate under an if-clause. -/
 theorem IsFuturate.restrict (hf : IsFuturate history g f P a) (q : Index W T → Prop) :
     IsFuturate history g (f.restrict q) P a :=
   fun c c' h ↦ hf c c' (Background.accessibleWorlds_anti (Set.subset_insert _ _) h)
 
-/-- Imperatives are conditional: a direction entails its restriction by an if-clause, which
-only makes explicit some of the conditions on applicability. -/
 theorem realizes_restrict {c : Index W T} (h : realizes history g f P a c)
     (q : Index W T → Prop) : realizes history g (f.restrict q) P a c :=
   fun c' hc' ↦ h c' (applic_restrict_subset q c hc')
@@ -251,19 +237,16 @@ variable (p : Set (Index W T)) (P : Index W T → I → Prop)
 @[simp] theorem accept_proposition : K.accept i (.proposition p) = HasAssertion.assert K p :=
   rfl
 
-/-- A direction leaves the common ground untouched. -/
 @[simp] theorem commonGround_accept_property :
     commonGround (K.accept i (.property P)) = commonGround K :=
   rfl
 
-/-- A direction leaves the questions under discussion untouched. -/
 @[simp] theorem accept_property_qud : (K.accept i (.property P)).qud = K.qud := rfl
 
 @[simp] theorem accept_property_goals :
     (K.accept i (.property P)).goals i = K.goals i ++ [(P · i)] := by
   simp [accept]
 
-/-- A direction leaves the goals of every other interlocutor untouched. -/
 @[simp] theorem accept_property_goals_of_ne {j : I} (hj : j ≠ i) :
     (K.accept i (.property P)).goals j = K.goals j := by
   simp [accept, Function.update_of_ne hj]
@@ -290,14 +273,9 @@ is the Montague lift `NP.individual` of an addressee, which lives on the set of 
 `NP.individual_livesOn`. -/
 def nobody (addr : E → Prop) : NP E := GQ.no addr
 
-/-- Restricted *nobody* satisfies the conservativity presupposition, since *no* is
-conservative. -/
 theorem nobody_livesOn (addr : E → Prop) : NP.LivesOn (nobody addr) addr :=
   (GQ.conservative_iff_livesOn GQ.no).1 GQ.conservative_no addr
 
-/-- The derivation (42′) of *Nobody move!*: the addressees have the property when in every
-applicable circumstance there is a timely later time at which none of them moves, so each of
-them is directed not to move in the applicable circumstances. -/
 theorem realizes_nobody_move [Preorder T] {history : HistoricalAlternatives W T}
     {g : Index W T → List (Index W T → Prop)} {f : Background (Index W T)}
     {addr : E → Prop}

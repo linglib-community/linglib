@@ -128,36 +128,28 @@ def vowelless? (e : Datum) : Option Vowelless :=
   | some "often" => some .often
   | _ => none
 
-/-- Every row names a root and carries both categories. -/
 theorem rows_complete :
     ∀ e ∈ Examples.all, (root? e).isSome ∧ (intrusion? e).isSome ∧ (vowelless? e).isSome := by
   decide
 
 /-! ### The intrusive schwa -/
 
-/-- Intrusion is near-categorical exactly in the words whose second consonant is /r/. -/
 theorem almostExclusively_iff_c2_r :
     ∀ e ∈ Examples.all, ∀ r ∈ root? e,
       intrusion? e = some .almostExclusively ↔ r.segmentAt 1 = some Tarifit.r := by
   decide
 
-/-- A rising cluster shows intrusion at least variably unless its second consonant is
-voiceless. -/
 theorem intrusion_of_rising :
     ∀ e ∈ Examples.all, ∀ r ∈ root? e, Rising r →
       intrusion? e = some .variably ∨ intrusion? e = some .almostExclusively ∨
         VoicelessAt r 1 := by
   decide
 
-/-- Words that never or rarely show intrusion have a non-rising cluster or a voiceless second
-consonant. -/
 theorem nonRising_or_voiceless_of_never_rarely :
     ∀ e ∈ Examples.all, (intrusion? e = some .never ∨ intrusion? e = some .rarely) →
       ∀ r ∈ root? e, ¬ Rising r ∨ VoicelessAt r 1 := by
   decide
 
-/-- Variable intrusion goes with a rising cluster or a voiced second consonant, except for the
-three words the paper flags. -/
 theorem variably_exceptions :
     ∀ e ∈ Examples.all, intrusion? e = some .variably →
       ∀ r ∈ root? e, Rising r ∨ ¬ VoicelessAt r 1 ∨ r ∈ [nqeb, nqer, qtes] := by
@@ -165,13 +157,11 @@ theorem variably_exceptions :
 
 /-! ### Vowelless production -/
 
-/-- Often-vowelless words have voiceless second and third consonants, except /ħkəm/. -/
 theorem voiceless_of_often_vowelless :
     ∀ e ∈ Examples.all, vowelless? e = some .often →
       ∀ r ∈ root? e, (VoicelessAt r 1 ∧ VoicelessAt r 2) ∨ r = hkem := by
   decide
 
-/-- Never-vowelless words have a voiced second or third consonant. -/
 theorem voiced_of_never_vowelless :
     ∀ e ∈ Examples.all, vowelless? e = some .never →
       ∀ r ∈ root? e, ¬ VoicelessAt r 1 ∨ ¬ VoicelessAt r 2 := by

@@ -126,7 +126,6 @@ theorem pexPlural_eq_neg_one_iff : pexPlural D x P R w = -1 ↔ ∀ a ∈ x, a �
   obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 hw
   exact hnone a (Finset.mem_inter.1 ha).1 (Finset.mem_inter.1 ha).2 hPa
 
-/-- A sub-disjunction over fewer atoms than the plurality has is not the plurality's. -/
 private theorem biUnion_ne_of_card_lt (h : Separating D x P) {T : Finset Atom} (hT : T ⊆ x ∩ D)
     (hlt : T.card < (x ∩ D).card) : ⋃ i ∈ T, atom P i ≠ ⋃ i ∈ x ∩ D, atom P i := by
   intro heq

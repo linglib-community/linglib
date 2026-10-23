@@ -83,17 +83,14 @@ theorem truth_dia_disj (h : IncompRel (· ⊆ ·) (V p) (V q)) :
   change truth (possibility R (atom (V p) ⊔ atom (V q))) = _
   rw [truth_possibility, alt_sup_atom h]
 
-/-- An atom's necessity is orthodox: the relevant worlds are nonempty and inside its truth set. -/
 theorem truth_box_atom (p : At) :
     truth (Formula.eval V R (.box (.atom p))) = {w | (R w).Nonempty ∧ R w ⊆ V p} :=
   truth_necessity_of_alt_eq_singleton R _ (alt_atom_pro _)
 
-/-- An atom's possibility is orthodox: some relevant world is in its truth set. -/
 theorem truth_dia_atom (p : At) :
     truth (Formula.eval V R (.diamond (.atom p))) = {w | (R w ∩ V p).Nonempty} :=
   truth_possibility_of_alt_eq_singleton R _ (alt_atom_pro _)
 
-/-- `◇(p ∧ ¬q)` is true where some relevant world is a `p`-without-`q` world. -/
 theorem truth_dia_conj_neg (p q : At) :
     truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) =
       {w | (R w ∩ (V p \ V q)).Nonempty} :=
@@ -219,8 +216,6 @@ theorem box_right (w : Bool × Bool) : w ∉ (box rB (ofSet vB))ᶜ.info := by
   rw [info_compl, info_box, alt_ofSet, Set.notMem_compl_iff]
   exact (isMinCover_singleton_iff (show (rB w).Nonempty from ⟨(true, true), rfl⟩)).2 subset_rfl
 
-/-- In the bilateral semantics `¬◇(M ∨ B)` is not true in the same scenario: its truth needs a
-relevant world where both are false. -/
 theorem bilateral_not_neg_dia_disj (w : Bool × Bool) :
     w ∉ truth (possibility rB (atom vM ⊔ atom vB))ᶜ := by
   rw [truth_compl, falsity_possibility, alt_sup_atom_con, Set.mem_ofPred_eq,
@@ -264,7 +259,6 @@ theorem dia_independence_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
   rw [truth_dia_conj_neg]
   exact fun _ hw ↦ (dia_meta_independence V R h hw).2
 
-/-- The accessibility updated by `¬p` keeps the relevant worlds where `p` is false. -/
 theorem updateAccess_neg_atom (p : At) (w : W) :
     updateAccess R (Formula.eval V R (.neg (.atom p))) w = R w \ V p := by
   change R w ∩ truth (atom (V p))ᶜ = _
@@ -326,7 +320,6 @@ theorem free_choice (h : IncompRel (· ⊆ ·) (V p) (V q)) :
       truth (Formula.eval V R (.diamond (.atom p))) :=
   (dia_independence_left h).trans (truth_dia_conj_neg_subset V R p q)
 
-/-- Free Choice for the right disjunct, `◇(p ∨ q) ⊨ ◇q`. -/
 theorem free_choice_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
       truth (Formula.eval V R (.diamond (.atom q))) :=
@@ -535,7 +528,6 @@ theorem incomp : IncompRel (· ⊆ ·) vp vq :=
   ⟨fun h ↦ absurd (h (show (true, false) ∈ vp from rfl)) (by simp [vq]),
     fun h ↦ absurd (h (show (false, true) ∈ vq from rfl)) (by simp [vp])⟩
 
-/-- The model is admissible for `p` and `q`. -/
 theorem incomp_val : IncompRel (· ⊆ ·) (val true) (val false) := incomp
 
 /-- Figure 2: `{⟦p⟧, ⟦q⟧}` minimally covers the three `p ∨ q`-worlds. -/

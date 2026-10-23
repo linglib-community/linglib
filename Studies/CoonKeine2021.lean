@@ -178,7 +178,6 @@ theorem mem_agreed {t : Goal × ℕ} :
       t ∈ goals.zipIdx ∧ ∃ s ∈ P, segmentAgree geo s goals = some t := by
   simp [agreed]
 
-/-- Agree over two goals finds the higher if it bears the segment, else the lower if it does. -/
 theorem segmentAgree_pair {hi lo : Goal} :
     segmentAgree geo s [hi, lo] =
       if s ∈ geo hi then some (hi, 0) else if s ∈ geo lo then some (lo, 1) else none := by
@@ -193,8 +192,6 @@ theorem segmentAgree_pair_eq_lower_iff {hi lo : Goal} :
     segmentAgree geo s [hi, lo] = some (lo, 1) ↔ s ∉ geo hi ∧ s ∈ geo lo := by
   rw [segmentAgree_pair]; split_ifs <;> simp_all
 
-/-- Gluttony over two goals is an inverse configuration, in which some segment finds the higher
-goal and some segment the higher goal lacks finds the lower. -/
 theorem gluttonous_pair_iff {hi lo : Goal} :
     Gluttonous geo P [hi, lo] ↔
       (∃ s ∈ P, s ∈ geo hi) ∧ ∃ s ∈ P, s ∉ geo hi ∧ s ∈ geo lo := by
@@ -216,8 +213,6 @@ theorem gluttonous_pair_iff {hi lo : Goal} :
       (lo, 1), mem_agreed.2 ⟨by simp, s', hs', segmentAgree_pair_eq_lower_iff.2 ⟨hs'h, hs'l⟩⟩,
       by simp⟩
 
-/-- Gluttony arises only in inverse configurations, so when the lower goal bears no segment the
-higher lacks, no probe gluttons over them. -/
 theorem not_gluttonous_of_subset {hi lo : Goal} (h : geo lo ⊆ geo hi) :
     ¬ Gluttonous geo P [hi, lo] :=
   fun hg ↦ let ⟨_, _, _, hsh, hsl⟩ := gluttonous_pair_iff.1 hg; hsh (h hsl)
@@ -241,8 +236,6 @@ theorem not_gluttonous_singleton : ¬ Gluttonous geo [s] goals := by
 
 end Agree
 
-/-- Gluttony over a higher goal transfers to a bare 3rd person one, since whichever segment
-reached the lower goal past the higher reaches it past a lone person node. -/
 theorem gluttonous_third_of_gluttonous {P : Articulation} {hi lo : Goal}
     (hpi : PersonSegment.pi ∈ P) (h : Gluttonous Goal.personSegments P [hi, lo]) :
     Gluttonous Goal.personSegments P [dp .third, lo] := by
@@ -298,8 +291,6 @@ theorem meFirst_pcc : ∀ s ∈ PCC.cliticPairs,
     PCCViolation meFirstProbe false s ↔ s.low = .first ∧ s.high ≠ .first := by
   decide +kernel
 
-/-- The branching probe over transparent datives bans every distinct-person cluster with a
-1st or 2nd person direct object. -/
 theorem branching_pcc : ∀ s ∈ PCC.cliticPairs,
     PCCViolation branchingProbe false s ↔ s.low ≠ .third ∧ s.high ≠ s.low := by
   decide +kernel
@@ -323,16 +314,11 @@ section Typology
 
 open PCC
 
-/-- The Weak and Strong probes against the descriptive typology of table 1 as
-[pancheva-zubizarreta-2018] parametrize it, cell for cell. -/
 theorem weak_strong_typology :
     (∀ s ∈ cliticPairs, PCCViolation weakProbe false s ↔ ¬ IsLicit weakGrammar s) ∧
       ∀ s ∈ cliticPairs, PCCViolation weakProbe true s ↔ ¬ IsLicit strongGrammar s := by
   decide +kernel
 
-/-- Against that parametrization the Ultrastrong probe bans every cell but 2 > 2, on which table 1
-is silent, P-Uniqueness bans it, and the probe, matched throughout by the indirect object, permits
-it. -/
 theorem ultrastrong_typology :
     (∀ s ∈ cliticPairs, s ≠ ⟨.second, .second⟩ →
       (PCCViolation ultrastrongProbe false s ↔ ¬ IsLicit ultraStrongGrammar s)) ∧
@@ -340,8 +326,6 @@ theorem ultrastrong_typology :
       ¬ IsLicit ultraStrongGrammar ⟨.second, .second⟩ := by
   decide +kernel
 
-/-- The Me-First probe matches the typology in every cell but 1 > 1, which table 1 bans and the
-probe, whose [uSPKR] the indirect object matches, permits. -/
 theorem meFirst_typology :
     (∀ s ∈ cliticPairs, s ≠ ⟨.first, .first⟩ →
       (PCCViolation meFirstProbe false s ↔ ¬ IsLicit meFirstGrammar s)) ∧
@@ -633,7 +617,6 @@ def Grammatical (row : Datum) : Prop :=
 
 instance : DecidablePred Grammatical := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Every analysed example is grammatical exactly when its configuration converges. -/
 theorem analysed_rows : ∀ row ∈ Examples.all, (row.feature? "aftermath").isSome = true →
     ∃ c ∈ Config.ofRow row, (Grammatical row ↔ c.Converges) := by
   decide +kernel

@@ -129,8 +129,6 @@ def Form.implicature : Form → Polarity
   | .pi | .ni | .notFocus => .positive
   | .really => .negative
 
-/-- The implicated belief settles the proposition under the polarity of the form's implicature;
-the partition shared by the positive reading and *really* cannot fix it. -/
 theorem speakerBelief_eq (f : Form) : speakerBelief p f = Iic (f.implicature • p) := by
   cases f <;> simp [speakerBelief, Form.Doubt, Form.implicature, prejacent]
 
@@ -196,7 +194,6 @@ theorem bias_of_negation :
       (n = some .preposed → b = 1) ∧ (n = some .nonPreposed → b = 0) := by
   decide
 
-/-- The bias reported for a VERUM form is the belief the model implicates. -/
 theorem bias_of_form :
     ∀ d ∈ data, ∀ f ∈ d.form.toList, ∀ b ∈ d.bias.toList, b = f.implicature := by
   decide

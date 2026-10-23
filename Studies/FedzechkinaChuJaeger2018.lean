@@ -79,8 +79,6 @@ def language (d : HeadDirection) : Finset (Arrangement Constituent 3) := {a | a.
 
 theorem language_headFinal : language .headFinal = {.sov, .osv} := by decide
 
-/-- The verb-initial orders are the mirror images of the verb-final ones; mirroring reverses the
-order of subject and object (`Arrangement.precedes_mirror`). -/
 theorem language_headInitial :
     language .headInitial = (language .headFinal).image Arrangement.mirror := by
   decide
@@ -168,14 +166,12 @@ theorem fig1_yieldDist :
     fig1Vos.yieldDist 0 1 = Arrangement.vos.boundaryDist ℓ .verb .object := by
   decide +kernel
 
-/-- The printed numbers are 5 and 1, 1 and 2, 1 and 2, and 5 and 1. -/
 theorem fig1_yieldDist_eq :
     fig1Sov.yieldDist 5 0 = 5 ∧ fig1Sov.yieldDist 5 4 = 1 ∧ fig1Osv.yieldDist 5 4 = 1 ∧
     fig1Osv.yieldDist 5 3 = 2 ∧ fig1Vso.yieldDist 0 1 = 1 ∧ fig1Vso.yieldDist 0 2 = 2 ∧
     fig1Vos.yieldDist 0 5 = 5 ∧ fig1Vos.yieldDist 0 1 = 1 := by
   decide +kernel
 
-/-- The object's yield has four words and the subject's one. -/
 theorem fig1_projection_length :
     (fig1Sov.projection 4).length = 4 ∧ (fig1Sov.projection 0).length = 1 := by
   decide +kernel
@@ -186,8 +182,6 @@ section Events
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P] {A B : Set Ω}
 
-/-- An event of probability one half differs from `B` with probability within
-`min (P B) (1 - P B)` of one half. -/
 theorem abs_measureReal_symmDiff_sub_half_le (hA : MeasurableSet A) (hB : MeasurableSet B)
     (hA₂ : P.real A = 1 / 2) : |P.real (A ∆ B) - 1 / 2| ≤ min (P.real B) (1 - P.real B) := by
   have h₁ := abs_measureReal_sub_le_measureReal_symmDiff hA.nullMeasurableSet
@@ -230,7 +224,6 @@ def long (c : Constituent) : Set Production := Prod.fst ⁻¹' {c}
 /-- A production is in `longAdjacent` when its long argument is next to the verb. -/
 def longAdjacent : Set Production := {x | x.2.Adjacent .verb x.1}
 
-/-- With the verb at an edge, an argument is next to it exactly when it stands in the middle. -/
 theorem symm_one_eq_iff_adjacent {d : HeadDirection} {a : Arrangement Constituent 3}
     (ha : a ∈ language d) (c : Constituent) : a.symm 1 = c ↔ a.Adjacent .verb c := by
   revert c ha a
@@ -260,8 +253,6 @@ theorem ae_fst_ne_verb : ∀ᵐ x ∂P, x.1 ≠ .verb := by
     ext c; simp +decide
   exact measure_mono_null (fun x hx ↦ by simpa [long] using hx) this
 
-/-- In the verb-final language the long argument is next to the verb exactly when either the
-subject is long or it comes first, but not both. -/
 theorem longAdjacent_ae_eq_headFinal (hlang : ∀ᵐ x ∂P, x.2 ∈ language .headFinal) :
     longAdjacent =ᵐ[P] (long .subject ∆ subjectFirst : Set Production) := by
   filter_upwards [hlang, ae_fst_ne_verb hscene] with ⟨c, a⟩ hx hv
@@ -288,8 +279,6 @@ end Marginal
 
 variable [IsProbabilityMeasure P]
 
-/-- The mean dependency length is three plus `L - 1` times the probability that the long
-argument is next to the verb. -/
 theorem integral_dependencyLength (hlang : ∀ᵐ x ∂P, x.2 ∈ language d) :
     ∫ x, dependencyLength L x ∂P = 3 + ((L : ℝ) - 1) * P.real longAdjacent := by
   have h : dependencyLength L =ᵐ[P] fun x ↦ 3 + ((L : ℝ) - 1) * longAdjacent.indicator 1 x := by
@@ -343,7 +332,6 @@ theorem abs_integral_dependencyLength_sub_le (hL : 1 ≤ L) (hlang : ∀ᵐ x �
     (.of_discrete) (.of_discrete)
     (measureReal_long hscene (by decide))) hL'
 
-/-- The least mean length, 3, needs perfectly flexible order. -/
 theorem measureReal_subjectFirst_eq_half_of_integral_eq_three (hL : 1 < L)
     (hlang : ∀ᵐ x ∂P, x.2 ∈ language d) (h : ∫ x, dependencyLength L x ∂P = 3) :
     P.real subjectFirst = 1 / 2 := by
@@ -354,14 +342,12 @@ theorem measureReal_subjectFirst_eq_half_of_integral_eq_three (hL : 1 < L)
   have := le_of_mul_le_mul_left this hL'
   grind
 
-/-- Fixed order gives the input's mean length. -/
 theorem integral_dependencyLength_of_fixed (hL : 1 ≤ L) (hlang : ∀ᵐ x ∂P, x.2 ∈ language d)
     (h : P.real subjectFirst = 0 ∨ P.real subjectFirst = 1) :
     ∫ x, dependencyLength L x ∂P = ((L : ℝ) + 5) / 2 := by
   have := abs_integral_dependencyLength_sub_le hscene hL hlang
   rcases h with h | h <;> rw [h] at this <;> norm_num at this <;> linarith
 
-/-- The overall subject-first proportion averages those on the two kinds of scene. -/
 theorem measureReal_subjectFirst : P.real subjectFirst =
     ((P[|long .subject]).real subjectFirst + (P[|long .object]).real subjectFirst) / 2 := by
   have h : subjectFirst =ᵐ[P] (long .subject ∩ subjectFirst ∪ long .object ∩ subjectFirst :) := by

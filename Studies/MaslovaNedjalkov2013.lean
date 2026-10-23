@@ -68,7 +68,6 @@ def ofInventory (inv : Finset Marker) (F : Finset (List Morphology.Morph)) : Rec
 
 variable {inv : Finset Marker} {F : Finset (List Morphology.Morph)}
 
-/-- A nonempty inventory whose forms are all reflexive is not disjoint from the reflexives. -/
 theorem not_disjoint_of_subset (h₀ : inv ≠ ∅) (h : inv.image (·.morphs) ⊆ F) :
     ¬ Disjoint (inv.image (·.morphs)) F :=
   fun hd ↦ h₀ (Finset.image_eq_empty.mp (Finset.disjoint_self_iff_empty _ |>.mp (hd.mono_right h)))
@@ -135,20 +134,17 @@ def Language.reflexives : Language → Finset (List Morphology.Morph)
 
 /-! ### The chapter's examples (§2.2) -/
 
-/-- English has only non-reflexive reciprocals, *each other* and *one another*. -/
 theorem ofInventory_english :
     ofInventory English.Reciprocals.markers (Language.reflexives .english) =
       .distinctFromReflexive := by
   decide
 
-/-- German is of the mixed type: *sich* is also reflexive, *einander* is not. -/
 theorem ofInventory_german :
     ofInventory German.Reciprocals.markers (Language.reflexives .german) = .mixed := by
   decide
 
 /-! ### The coding -/
 
-/-- Each language's inventory has the value the chapter codes for it. -/
 theorem ofInventory_eq_wals (l : Language) :
     allData.lookup l.walsCode = some (ofInventory l.markers l.reflexives) := by
   cases l <;> decide +kernel

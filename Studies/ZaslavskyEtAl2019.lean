@@ -100,7 +100,6 @@ variable [Fintype W] (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C)
   [IsProbabilityMeasure μ]
 
 omit [Fintype W] [MeasurableSingletonClass W] in
-/-- The expected surprisal is the negative expected log posterior. -/
 theorem neg_expectedSurprisal (c : C) :
     -expectedSurprisal κ μ c = ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) := by
   rw [expectedSurprisal, ← integral_neg]
@@ -156,8 +155,6 @@ private theorem ncard_preimage_pos {α β : Type*} [Finite α] (f : α → β) (
     (0 : ℝ) < (f ⁻¹' {f a}).ncard := by
   exact_mod_cast (Set.ncard_pos (Set.toFinite _)).mpr ⟨a, mem_preimage_self f a⟩
 
-/-- Under a clustering system, the surprisal of a color is the log need of its cluster less its
-own log need. -/
 theorem expectedSurprisal_ofPartition (f : C → W) (μ : Measure C) [IsProbabilityMeasure μ]
     {c : C} (hc : μ {c} ≠ 0) :
     expectedSurprisal (ofPartition f) μ c = log (μ.real (f ⁻¹' {f c})) - log (μ.real {c}) := by
@@ -248,7 +245,6 @@ theorem clusterPrior_real_preimage (f : C → W) (c : C) :
     sum_const, nsmul_eq_mul, ← Set.ncard_eq_toFinset_card]
   field_simp
 
-/-- Under the cluster prior, the surprisal of a color is the log size of its cluster. -/
 theorem expectedSurprisal_ofPartition_clusterPrior (f : C → W) (c : C) :
     expectedSurprisal (ofPartition f) (clusterPrior f) c = log (f ⁻¹' {f c}).ncard := by
   rw [expectedSurprisal_ofPartition f _ ?_, clusterPrior_real_preimage,

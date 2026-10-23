@@ -120,17 +120,14 @@ theorem ext {e e' : AristotelianIso φ φ'} (h : ∀ i, e i = e' i) : e = e' := 
   map_codisjoint i j := (e.map_codisjoint i j).trans (e'.map_codisjoint _ _)
   map_lt i j := (e.map_lt i j).trans (e'.map_lt _ _)
 
-/-- An Aristotelian isomorphism preserves and reflects contradiction. -/
 theorem map_isCompl (e : AristotelianIso φ φ') (i j : ι) :
     IsCompl (φ i) (φ j) ↔ IsCompl (φ' (e i)) (φ' (e j)) := by
   simp only [isCompl_iff, e.map_disjoint, e.map_codisjoint, toFun_as_coe, coe_fn_toEquiv]
 
-/-- An Aristotelian isomorphism preserves and reflects contrariety. -/
 theorem map_isContrary (e : AristotelianIso φ φ') (i j : ι) :
     IsContrary (φ i) (φ j) ↔ IsContrary (φ' (e i)) (φ' (e j)) := by
   simp only [IsContrary, e.map_disjoint, e.map_codisjoint, toFun_as_coe, coe_fn_toEquiv]
 
-/-- An Aristotelian isomorphism preserves and reflects subcontrariety. -/
 theorem map_isSubcontrary (e : AristotelianIso φ φ') (i j : ι) :
     IsSubcontrary (φ i) (φ j) ↔ IsSubcontrary (φ' (e i)) (φ' (e j)) := by
   simp only [IsSubcontrary, e.map_disjoint, e.map_codisjoint, toFun_as_coe, coe_fn_toEquiv]

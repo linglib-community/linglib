@@ -128,9 +128,6 @@ section Listener
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
   [IsProbabilityMeasure ν] (α : ℝ)
 
-/-- A meaning is a possible interpretation of an utterance exactly when it has positive prior
-and some goal of positive prior has a feature value it shares with a meaning of positive prior
-bearing the category named. -/
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Cat) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ g, ν {g} ≠ 0 ∧ ∃ m', g.feature m'.2 = g.feature m.2 ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by

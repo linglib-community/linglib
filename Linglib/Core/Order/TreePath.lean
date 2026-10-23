@@ -156,7 +156,6 @@ protected theorem lt (h : Precedes p q) : p.toList < q.toList := by
   rw [← hp, ← hq, List.append_assoc, List.append_assoc]
   exact List.append_left_lt (List.cons_lt_cons_iff.mpr (.inl hij))
 
-/-- A position precedes no position it dominates. -/
 protected theorem not_le (h : Precedes p q) : ¬ p ≤ q := fun hle ↦ by
   obtain ⟨r, i, j, hij, hi, hj⟩ := h
   have hlen : (r ++ [i]).length = (r ++ [j]).length := by simp
@@ -164,25 +163,21 @@ protected theorem not_le (h : Precedes p q) : ¬ p ≤ q := fun hle ↦ by
   · exact hij.ne (by simpa using h.eq_of_length hlen)
   · exact hij.ne (by simpa using (h.eq_of_length hlen.symm).symm)
 
-/-- A position precedes no position that dominates it. -/
 protected theorem not_ge (h : Precedes p q) : ¬ q ≤ p := by
   rintro ⟨s, hs⟩
   exact List.le_append_left (hs ▸ h.lt)
 
-/-- Precedence passes to the positions each relatum dominates. -/
 protected theorem mono {p' q' : TreePath} (h : Precedes p q) (hp : p ≤ p') (hq : q ≤ q') :
     Precedes p' q' :=
   let ⟨r, i, j, hij, hi, hj⟩ := h
   ⟨r, i, j, hij, hi.trans hp, hj.trans hq⟩
 
-/-- Prefixing a common index preserves precedence. -/
 theorem cons (i : ℕ) (h : Precedes p q) : Precedes ⟨i :: p.toList⟩ ⟨i :: q.toList⟩ :=
   let ⟨r, a, b, hab, ha, hb⟩ := h
   ⟨i :: r, a, b, hab, List.cons_prefix_cons.mpr ⟨rfl, ha⟩, List.cons_prefix_cons.mpr ⟨rfl, hb⟩⟩
 
 end Precedes
 
-/-- Positions under distinct daughters of the root are ordered as the daughters are. -/
 theorem precedes_cons_of_lt {i j : ℕ} (hij : i < j) (p q : TreePath) :
     Precedes ⟨i :: p.toList⟩ ⟨j :: q.toList⟩ :=
   ⟨[], i, j, hij, by simp, by simp⟩
@@ -293,7 +288,6 @@ theorem leftAligned_iff_exists {p q : TreePath} :
     simpa only [LeftAligned, dropWhile_reverse_append_replicate] using
       congrArg (fun l ↦ l.reverse.dropWhile (· == 0)) h
 
-/-- Left-aligned positions lie on one branch. -/
 theorem LeftAligned.le_or_ge {p q : TreePath} (h : LeftAligned p q) : p ≤ q ∨ q ≤ p := by
   obtain ⟨j, k, h⟩ := leftAligned_iff_exists.1 h
   have hq : q.toList <+: p.toList ++ List.replicate j 0 := h ▸ List.prefix_append _ _

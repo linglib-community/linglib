@@ -80,8 +80,6 @@ theorem maximalCompat_of_maximal
     (hs : Maximal (· ∈ possible excl) s) : MaximalCompat excl s :=
   fun _ hu ↦ le_sup_left.trans (hs.le_of_ge (hF hu) le_sup_right)
 
-/-- If compatible states have a possible fusion, the null state is incompatible with every
-impossible state. -/
 theorem conflict_bot_of_not_mem_possible
     (hF : ∀ ⦃s t : S⦄, ¬ Conflict excl s t → s ⊔ t ∈ possible excl) (ht : t ∉ possible excl) :
     Conflict excl ⊥ t :=
@@ -112,7 +110,6 @@ theorem conflict_counterExcl_iff {a b : Set (Fin 2)} :
   · rintro ⟨ha, hb⟩
     exact ⟨{1}, Set.singleton_subset_iff.2 ha, {1}, Set.singleton_subset_iff.2 hb, rfl, rfl⟩
 
-/-- In the counterexample `{0}` is maximal with respect to parthood. -/
 theorem maximal_counterExcl : Maximal (· ∈ possible counterExcl) {0} := by
   refine ⟨by simp [mem_possible, conflict_counterExcl_iff], fun u hu h0u x hx ↦ ?_⟩
   simp only [mem_possible, conflict_counterExcl_iff, and_self] at hu
@@ -120,8 +117,6 @@ theorem maximal_counterExcl : Maximal (· ∈ possible counterExcl) {0} := by
   · rfl
   · exact absurd hx hu
 
-/-- In the counterexample `{0}` is not maximal with respect to compatibility, since `{1}` is
-compatible with it without being part of it. -/
 theorem not_maximalCompat_counterExcl : ¬ MaximalCompat counterExcl {0} := fun h ↦ by
   have := h (u := {1}) (by simp [conflict_counterExcl_iff])
   simp at this

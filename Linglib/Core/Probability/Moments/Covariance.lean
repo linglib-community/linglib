@@ -112,7 +112,6 @@ section UniformOn
 
 variable [MeasurableSingletonClass Ω] [Fintype Ω]
 
-/-- The integral under the uniform measure on a finite type is the sample mean. -/
 theorem integral_uniformOn_univ (f : Ω → ℝ) :
     ∫ ω, f ω ∂(uniformOn Set.univ) = (∑ ω, f ω) / Fintype.card Ω := by
   rw [integral_fintype .of_finite, div_eq_inv_mul, Finset.mul_sum]

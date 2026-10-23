@@ -154,21 +154,14 @@ def toSystem (c : Choices) : Number.System :=
   { values := c.values.toFinset, hasGeneral := decide (c.general ≠ .none),
     facultative := c.facultativeValues.toFinset }
 
-/-- Facultative choices are the last ones. -/
 theorem facultativeValues_suffix (c : Choices) : c.facultativeValues <:+ c.divisions :=
   List.drop_suffix _ _
 
-/-- The trial is chosen only after the dual, so in every system the determinate values are an
-initial segment and number resolution is the value of the sum of the conjuncts' referents
-(`Number.System.resolve_ofCard`). -/
 theorem toSystem_determinateInitial (c : Choices) : c.toSystem.DeterminateInitial := by
   obtain ⟨⟨d, p, gp⟩, g, f⟩ := c
   change (Choices.mk ⟨d, p, gp⟩ .none 0).toSystem.DeterminateInitial
   fin_cases d <;> fin_cases p <;> cases gp <;> decide
 
-/-- Facultative use works up from the last choice, as the count from the last builds in, so
-there could not be a language like Longgu with the plural for the dual but not for the
-paucal. -/
 theorem paucal_mem_facultativeValues_of_dual_mem (c : Choices)
     (hd : .dual ∈ c.facultativeValues) (hp : .paucal ∈ c.divisions) :
     .paucal ∈ c.facultativeValues := by
@@ -299,7 +292,6 @@ theorem Respects.isUpperSet {r : Range} (h : r.Respects) : IsUpperSet {p | ⊥ <
 def downTo (o f : AnimacyHierarchy) : Range :=
   fun p ↦ if o ≤ p then .obligatory else if f ≤ p then .optional else ⊥
 
-/-- Every such range respects the hierarchy. -/
 theorem downTo_respects (o f : AnimacyHierarchy) : (downTo o f).Respects := by
   revert o f; decide
 
@@ -383,8 +375,6 @@ theorem not_respects_dual_wider :
           | .dual => .downTo .inanimate .inanimate | _ => ⊥⟩ := by
   decide
 
-/-- A facultative value is optional somewhere in its range, but optional marking is not thereby
-facultative, as Slovene's dual against Kannada's plural, general number below humans, shows. -/
 theorem facultative_optional :
     (∀ v ∈ sloveneProfile.system.facultativeValues, ∃ p, sloveneProfile.range v p = .optional) ∧
       (∃ p, kannada.range .plural p = .optional) ∧
@@ -406,8 +396,6 @@ def miyaAgreement : Range := .downTo .higherAnimate .higherAnimate
 inanimates, which may carry a plural marker. -/
 def munaAgreement : Range := .downTo .human .lowerAnimate
 
-/-- Marking and agreement may split at different points, each in accord with the
-hierarchy. -/
 theorem tests_respect :
     miyaMarking.Respects ∧ miyaAgreement.Respects ∧ munaAgreement.Respects ∧
       mayaliAgreement.Respects := by
@@ -426,10 +414,8 @@ instance (c : Choices) (minor : List Number) : Decidable (Dispensable c minor) :
 /-- The Hebrew and Maltese minor dual, Figure 4.11. -/
 theorem hebrew_dispensable : Dispensable sanskrit [.dual] := by decide
 
-/-- The Avar minor paucal, within the system Walapai has at the top. -/
 theorem avar_dispensable : Dispensable walapai [.paucal] := by decide
 
-/-- The Maŋarayi minor trial. -/
 theorem mangarayi_dispensable : Dispensable dualTrial [.trial] := by decide
 
 /-- Constraint VII excludes a minor dual beside a major trial. -/
@@ -438,7 +424,6 @@ theorem not_dispensable_dual_of_trial : ¬ Dispensable dualTrial [.dual] := by d
 /-- The Hebrew dual, on a few nouns for measures of time and facultative there. -/
 def hebrewDual : Range := fun p ↦ if p = .inanimate then .optional else ⊥
 
-/-- A minor number is not a top segment, constraint V placing it within the plural's range. -/
 theorem hebrewDual_not_respects :
     ¬ hebrewDual.Respects ∧
       ∀ p, hebrewDual p ≤ Range.downTo .inanimate .inanimate p := by
@@ -509,8 +494,6 @@ def verbObject : Number → ObjectMarker
   | .dual => .du
   | _ => .inv
 
-/-- The noun conflates singular with dual for animates and dual with plural for inanimates,
-while the verb keeps the three apart, so a noun may show a system the verb never does. -/
 theorem noun_conflates_verb_not :
     ¬ (sgDuPl.map fun n ↦ decide (Inverse .animate n)).Nodup ∧
       ¬ (sgDuPl.map fun n ↦ decide (Inverse .inanimate n)).Nodup ∧
@@ -542,8 +525,6 @@ def relative (p : Person) (n : ℕ) : Number :=
   | 1 => .unitAugmented
   | _ => .augmented
 
-/-- *-bbarrah* marks one more than the minimum, three referents for the inclusive and two for
-the other persons, which the traditional labels split between trial and dual. -/
 theorem unitAugmented_one_more :
     relative .firstInclusive 3 = relative .firstExclusive 2 ∧
       Number.fromCard 3 ≠ Number.fromCard 2 := by
@@ -566,7 +547,6 @@ def verbNumber : Number → numberSystem.values
   | .plural => (numberSystem.value .plural)
   | _ => (numberSystem.value .singular)
 
-/-- Neither marking distinguishes the three numbers; together they construct the dual. -/
 theorem constructed :
     ¬ (sgDuPl.map pronounNumber).Nodup ∧ ¬ (sgDuPl.map verbNumber).Nodup ∧
       (sgDuPl.map fun n ↦ (pronounNumber n, verbNumber n)).Nodup := by
@@ -603,7 +583,6 @@ def scissors : Differentiability := ⟨true, false, false⟩
 /-- *friendliness* is off the scale. -/
 def friendliness : Differentiability := ⟨false, false, false⟩
 
-/-- The four types of the table are the only ones. -/
 theorem valid_iff (d : Differentiability) : d.Valid ↔ d ∈ [dog, sheep, scissors, friendliness] := by
   revert d; decide
 
@@ -616,7 +595,6 @@ plural. -/
 theorem bayso_pronounConcord_surjective :
     Function.Surjective (Function.uncurry Bayso.Gender.pronounConcord) := by decide
 
-/-- Four controller numbers and two genders fall together on the three concords. -/
 theorem bayso_concord_not_injective :
     ¬ Function.Injective (Function.uncurry Bayso.Gender.concord) := by decide
 
@@ -645,7 +623,6 @@ def nixon : Position → Option ℚ
   | .personalPronoun => some (274 / 10)
   | _ => none
 
-/-- The plural is likelier in the pronoun than in the predicate, as the hierarchy predicts. -/
 theorem nixon_respectsHierarchy : RespectsHierarchy nixon := by decide +kernel
 
 /-- The varieties of English. -/
@@ -661,7 +638,6 @@ def acceptance : Variety → ℚ
   | .american => 54 / 10
   | .newZealand => 725 / 10
 
-/-- Few speakers of American English concur, most British and New Zealand ones do. -/
 theorem acceptance_diverges :
     acceptance .american < acceptance .newZealand ∧
       acceptance .newZealand < acceptance .british := by
@@ -755,8 +731,6 @@ system has a dual and the plural in all other cases. -/
 def resolveNumber (c : Choices) (ns : List Number) : Number :=
   if .dual ∈ c.values ∧ ns = [.singular, .singular] then .dual else .plural
 
-/-- The rule is the substrate's resolution, the value of the sum of the conjuncts' referents, in
-Slovene as in English. -/
 theorem resolveNumber_eq_resolve :
     (∀ a ∈ slovene.values, ∀ b ∈ slovene.values,
       resolveNumber slovene [a, b] = slovene.toSystem.resolve a b) ∧
@@ -772,7 +746,6 @@ def russianConjoined : Position → Option ℚ
   | .relativePronoun => some 100
   | .personalPronoun => some 100
 
-/-- Resolved forms increase monotonically along the Agreement Hierarchy. -/
 theorem russianConjoined_respectsHierarchy : RespectsHierarchy russianConjoined := by decide
 
 /-- A row of Table 6.13 gives the percentage of plural predicates with conjoined subjects by the
@@ -806,15 +779,12 @@ def serboCroatResolution : Resolution := ⟨"Serbo-Croat", 100, 91, 70, 26⟩
 def resolutionRates : List Resolution :=
   [spanishResolution, germanResolution, russianResolution, serboCroatResolution]
 
-/-- Animacy and precedence each favour resolution, in every language of the table. -/
 theorem factors_favour_resolution :
     ∀ r ∈ resolutionRates,
       r.inanimateBefore < r.animateBefore ∧ r.animateAfter < r.animateBefore ∧
         r.inanimateAfter < r.animateAfter ∧ r.inanimateAfter < r.inanimateBefore := by
   decide
 
-/-- Animacy outweighs precedence in Medieval Spanish and German, precedence animacy in
-Serbo-Croat. -/
 theorem animacy_vs_precedence :
     spanishResolution.inanimateBefore < spanishResolution.animateAfter ∧
       germanResolution.inanimateBefore < germanResolution.animateAfter ∧

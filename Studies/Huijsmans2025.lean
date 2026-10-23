@@ -113,7 +113,6 @@ def necessityClaim (mb : Set (T → W → Prop)) (h : Background W) (p : T → W
     (t : T) (w : W) : Prop :=
   necessity (modalBaseAt mb t) h (fun w' ↦ p t w') w
 
-/-- Present orientation is a case of the future morphemes' non-past orientation. -/
 theorem futureClaim_of_necessityClaim {mb : Set (T → W → Prop)} {h : Background W}
     {p : T → W → Prop} {t : T} {w : W} (hc : necessityClaim mb h p t w) :
     futureClaim mb h p t w :=
@@ -129,7 +128,6 @@ def EatFuture (f : EvidentialFrame T) : Prop :=
 instance (f : EvidentialFrame T) : Decidable (EatFuture f) :=
   inferInstanceAs (Decidable (EvidentialFrame.Constraint.Holds _ f))
 
-/-- The evidence is acquired before the event. -/
 theorem eatFuture_iff {f : EvidentialFrame T} : EatFuture f ↔ f.acquisitionTime < f.eventTime := by
   simp [EatFuture, EvidentialFrame.Constraint.Holds]
 
@@ -252,8 +250,6 @@ theorem felipe_future : FuturePresup felipe.mb (from' felipe.prejacent) () := by
 theorem felipe_not_inferential : ¬ InferentialPresup felipe.mb (from' felipe.prejacent) () := by
   decide
 
-/-- The evidence is acquired after the event, so the acquisition analysis rejects *will* and *səm*
-here, against the judgments. -/
 theorem felipe_not_eatFuture : ¬ EatFuture felipe.frame := by decide
 
 theorem felipe_downstream : felipe.frame.Downstream := by decide

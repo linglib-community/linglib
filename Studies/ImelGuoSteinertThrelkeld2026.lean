@@ -182,7 +182,6 @@ theorem den_point {p : ForceFlavor} (hp : p ∈ space) : (point p).den = {p} := 
   rcases p with ⟨f, fl⟩
   cases f <;> cases fl <;> decide
 
-/-- Every meaning within the space is denoted, by the disjunction of its points. -/
 theorem exists_den (m : Meaning) (hm : m ⊆ space) : ∃ φ : Formula, φ.den = m := by
   induction m using Finset.induction_on with
   | empty => exact ⟨and (atom .weak) (atom .strong), by decide⟩
@@ -275,8 +274,6 @@ theorem combine_dens_subset {a b : ℕ} (ha : 1 ≤ a) (hb : 1 ≤ b) :
   exact subset_biUnion_of_mem (λ i => combine (dens (i + 1)) (dens (a + b - 1 - i)))
     (mem_range.2 (by omega))
 
-/-- A formula's denotation, and its complement in the space, lie in the denotations of its
-number of atoms. -/
 theorem den_mem_dens : ∀ φ : Formula, φ.den ∈ dens φ.atoms ∧ space \ φ.den ∈ dens φ.atoms
   | atom a => ⟨mem_union_left _ (mem_image_of_mem _ (mem_univ a)),
       mem_union_right _ (mem_image_of_mem _ (mem_univ a))⟩
@@ -296,7 +293,6 @@ theorem den_mem_dens : ∀ φ : Formula, φ.den ∈ dens φ.atoms ∧ space \ φ
     rw [den, sdiff_union_distrib]
     exact combine_dens_subset φ.one_le_atoms ψ.one_le_atoms (inter_mem_combine h₂ h₄)
 
-/-- Every denotation with `n` atoms is the denotation of a formula with `n` atoms. -/
 theorem exists_den_of_mem_dens : ∀ {n : ℕ} {m : Meaning}, m ∈ dens n →
     ∃ φ : Formula, φ.atoms = n ∧ φ.den = m := by
   intro n
@@ -361,14 +357,12 @@ needs three. -/
 theorem complexity_may : complexity may = 2 := by
   rw [may_eq, complexity_eq_iff (by decide)]; decide +kernel
 
-/-- *mought* needs four atoms, *(w ∧ e) ∨ (s ∧ d)*. -/
 theorem complexity_mought : complexity mought = 4 :=
   le_antisymm
     (complexity_le (.or (.and (.atom .weak) (.atom .epistemic))
       (.and (.atom .strong) (.atom .deontic))) (by decide))
     ((le_complexity_iff (by decide)).2 (by decide +kernel))
 
-/-- *notcirc* is the single literal *¬c*. -/
 theorem complexity_notcirc : complexity notcirc = 1 := by
   rw [complexity_eq_iff (by decide)]; decide +kernel
 
@@ -404,8 +398,6 @@ among the points a modal expresses. -/
 noncomputable def listen (m : Meaning) (p : ForceFlavor) : ℝ≥0∞ :=
   ∫⁻ q, utility p q ∂uniformOn ↑m
 
-/-- The expected utility is the mean of the probabilities that the listener's guess matches
-each axis of the intended point. -/
 theorem listen_eq_measure (m : Meaning) (p : ForceFlavor) :
     listen m p =
       (uniformOn ↑m {q : ForceFlavor | p.force = q.force} +
@@ -426,7 +418,6 @@ theorem listen_eq_measure (m : Meaning) (p : ForceFlavor) :
   rw [lintegral_add_left .of_discrete, h fun q => p.force = q.force,
     h fun q => p.flavor = q.flavor, ENNReal.div_add_div_same]
 
-/-- The axis-match probabilities counted on the modal's finset. -/
 theorem listen_eq (m : Meaning) (p : ForceFlavor) :
     listen m p =
       (#(m.filter fun q : ForceFlavor => p.force = q.force) / #m +
@@ -442,8 +433,6 @@ theorem listen_singleton (p : ForceFlavor) : listen {p} p = 1 := by
   norm_num [filter_singleton]
   exact ENNReal.div_self two_ne_zero ENNReal.ofNat_ne_top
 
-/-- A listener hearing a product modal earns half the reciprocal of each axis size, so the
-utility of an IFF modal depends only on how many forces and how many flavors it leaves open. -/
 theorem listen_product {F : Finset ModalForce} {Φ : Finset ModalFlavor} {p : ForceFlavor}
     (hF : p.force ∈ F) (hΦ : p.flavor ∈ Φ) :
     listen (F ×ˢ Φ) p = (1 / #F + 1 / #Φ) / 2 := by
@@ -547,8 +536,6 @@ theorem speak_singletons {p : ForceFlavor} (hp : p ∈ space) :
   rw [speak, speakers_singletons hp]
   simp
 
-/-- A modal for each point is maximally informative: every point of the space is conveyed
-exactly, so the informativeness is the need of the space, whatever the need. -/
 theorem informativeness_singletons (need : Measure ForceFlavor) :
     informativeness need singletons = need ↑space := by
   rw [informativeness, ← lintegral_indicator_one .of_discrete]
@@ -566,8 +553,6 @@ theorem speakers_whole_of_notMem {p : ForceFlavor} (hp : p ∉ space) : speakers
   rw [speakers, whole, Multiset.filter_singleton, ite_eq_right hp]
   rfl
 
-/-- One all-purpose modal conveys five twelfths of a point on average, half of a half plus a
-third, whatever the need. -/
 theorem informativeness_whole (need : Measure ForceFlavor) :
     informativeness need whole = 5 / 12 * need ↑space := by
   rw [informativeness, ← lintegral_indicator_const (MeasurableSet.of_discrete) (5 / 12)]
@@ -614,7 +599,6 @@ theorem speakers_replicate (k : ℕ) (m : Meaning) (p : ForceFlavor) :
   · exact Multiset.filter_eq_self.2 fun a ha => Multiset.eq_of_mem_replicate ha ▸ hp
   · exact Multiset.filter_eq_nil.2 fun a ha => Multiset.eq_of_mem_replicate ha ▸ hp
 
-/-- The speaker of a language of copies of one modal is the speaker of the modal alone. -/
 theorem speak_replicate {k : ℕ} (hk : k ≠ 0) (m : Meaning) (p : ForceFlavor) :
     speak (Multiset.replicate k m) p = speak {m} p := by
   rw [speak, speak, ← Multiset.replicate_one m, speakers_replicate, speakers_replicate,
@@ -627,13 +611,11 @@ theorem speak_replicate {k : ℕ} (hk : k ≠ 0) (m : Meaning) (p : ForceFlavor)
       ENNReal.inv_mul_cancel (Nat.cast_ne_zero.2 hk) (ENNReal.natCast_ne_top k), one_smul]
   · simp
 
-/-- Copies of one modal are as informative as the modal alone. -/
 theorem informativeness_replicate (need : Measure ForceFlavor) {k : ℕ} (hk : k ≠ 0)
     (m : Meaning) :
     informativeness need (Multiset.replicate k m) = informativeness need {m} :=
   lintegral_congr fun p => by rw [speak_replicate hk]
 
-/-- Synonymy hurts the trade-off: copies of a modal cost the same and add complexity. -/
 theorem dominates_replicate (need : Measure ForceFlavor) {m : Meaning} (hm : m ⊆ space)
     {k : ℕ} (hk : 2 ≤ k) : Dominates need {m} (Multiset.replicate k m) := by
   have h1 := one_le_complexity hm
@@ -642,8 +624,6 @@ theorem dominates_replicate (need : Measure ForceFlavor) {m : Meaning} (hm : m �
     rw [cost, cost, informativeness_replicate need (by omega)]
   refine ⟨?_, hcost.le, Or.inl ?_⟩ <;> rw [hc, totalComplexity_replicate] <;> nlinarith
 
-/-- A language of copies of one modal is not Pareto-optimal in any pool containing the modal
-alone. -/
 theorem not_paretoOptimal_replicate (need : Measure ForceFlavor)
     {pool : Set (Multiset Meaning)} {m : Meaning} (hm : m ⊆ space) (hpool : {m} ∈ pool)
     {k : ℕ} (hk : 2 ≤ k) : ¬ ParetoOptimal need pool (Multiset.replicate k m) :=
@@ -655,27 +635,19 @@ theorem not_paretoOptimal_replicate (need : Measure ForceFlavor)
 noncomputable def naturalness (L : List ModalItem) : ℝ≥0∞ :=
   (L.countP (ForceFlavorIndependent ·.meaning) : ℝ≥0∞) / L.length
 
-/-- Washo *-eʔ* varies on both axes, against the Single Axis of Variability universal of
-[nauze-2008], and satisfies IFF, its meaning being every force-flavor pair. -/
 theorem washo_not_singleAxis_forceFlavorIndependent :
     ¬ SingleAxis Washo.modalEq.meaning ∧
       ForceFlavorIndependent Washo.modalEq.meaning := by
   decide
 
-/-- Koryak *ivək* varies on both axes too, in force and between the doxastic and assertive
-flavors of [mocnik-abramovitz-2019], even without the existential 'say' they could not
-confirm. -/
 theorem ivek_not_singleAxis : ¬ SingleAxis MocnikAbramovitz2019.attested :=
   MocnikAbramovitz2019.not_singleAxis_attested
 
-/-- The meaning the universal rules out, epistemic necessity with circumstantial possibility. -/
 theorem not_forceFlavorIndependent_diagonal :
     ¬ ForceFlavorIndependent
       ({(.necessity, .epistemic), (.possibility, .circumstantial)} : Meaning) := by
   decide
 
-/-- Naturalness is graded: Modern Greek, one of the sampled languages, has one IFF modal in
-three. -/
 theorem naturalness_greek : naturalness Greek.StandardModern.modals = 1 / 3 := by
   rw [naturalness,
     show Greek.StandardModern.modals.countP (ForceFlavorIndependent ·.meaning) = 1 from by

@@ -67,8 +67,6 @@ def Unidirectional (h : History) : Prop := h.IsChain (· ⩿ ·)
 instance : DecidablePred Unidirectional := fun h ↦
   inferInstanceAs (Decidable (h.IsChain (· ⩿ ·)))
 
-/-- An item whose history begins at or below the subjective level and reaches an
-intersubjective meaning has a subjective one. -/
 theorem subjective_mem_of_intersubjective_mem {a : SubjectivityLevel} {h : History}
     (hc : Unidirectional (a :: h)) (ha : a ≤ .subjective) (hi : .intersubjective ∈ a :: h) :
     .subjective ∈ a :: h :=
@@ -96,7 +94,6 @@ def Stage.level : Stage → SubjectivityLevel
   | .extendedPartitive => .nonSubjective
   | .quantifier => .subjective
 
-/-- The stages' coded levels follow the cline. -/
 theorem stages_unidirectional :
     Unidirectional ([.partitive, .extendedPartitive, .quantifier].map Stage.level) := by
   decide
@@ -122,7 +119,6 @@ def Stage.IsGrammaticalized (s : Stage) : Prop := ∀ e : Expansion, e.stage ≤
 
 instance (s : Stage) : Decidable s.IsGrammaticalized := inferInstanceAs (Decidable (∀ _, _))
 
-/-- The Quantifier is the grammaticalized stage. -/
 theorem isGrammaticalized_iff {s : Stage} : s.IsGrammaticalized ↔ s = .quantifier := by
   cases s <;> decide
 

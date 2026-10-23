@@ -79,8 +79,6 @@ theorem not_isExhaustivelyResolvable_of_isNecessarilyOpenBelow [DenselyOrdered D
 
 /-! ### Implicatures and *only* -/
 
-/-- *More than d* necessarily describes an open interval, since the true degrees at `w` are those
-below the count. -/
 theorem isNecessarilyOpen_gt_over (μ : W → D) : IsNecessarilyOpen (μ ⁻¹' Set.Ioi ·) :=
   fun w => ⟨μ w, lt_irrefl _, fun _ h => h⟩
 
@@ -149,8 +147,6 @@ theorem not_isGreatest_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : Stri
 
 /-! ### Negative islands -/
 
-/-- *Not … d* is necessarily open from below, since the true degrees are those above the
-measure. -/
 theorem isNecessarilyOpenBelow_lt_over (μ : W → D) :
     IsNecessarilyOpenBelow (μ ⁻¹' Set.Iio ·) :=
   isNecessarilyOpen_gt_over (toDual ∘ μ)

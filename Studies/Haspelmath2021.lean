@@ -215,7 +215,6 @@ abbrev Relative (c : Scenario α → L) : Prop :=
 instance (c : Scenario α → L) [i : Decidable (∀ s t, s.kind = t.kind → c s = c t)] :
     Decidable (Relative c) := i
 
-/-- A split that is a function of the kind is relative. -/
 theorem relative_comp_kind (g : Scenario.Kind → L) :
     Relative (g ∘ Scenario.kind : Scenario α → L) :=
   fun _ _ h ↦ congrArg g h
@@ -235,7 +234,6 @@ def RoleReferenceUniversal (r : S → S → Prop) (c : S → L) : Prop :=
 instance (r : S → S → Prop) (c : S → L) [i : Decidable (∀ s t, r s t → c s ≤ c t)] :
     Decidable (RoleReferenceUniversal r c) := i
 
-/-- Universal 1 for a usualness relation holds for every relation it contains. -/
 theorem RoleReferenceUniversal.mono {r r' : S → S → Prop} {c : S → L} (hr : r ≤ r')
     (h : RoleReferenceUniversal r' c) : RoleReferenceUniversal r c :=
   fun _ _ hst ↦ h (hr _ _ hst)
@@ -291,30 +289,20 @@ def ScenarioUniversal (c : Scenario α → L) : Prop :=
 instance (c : Scenario α → L) [i : Decidable (∀ s t, t.kind < s.kind → c s ≤ c t)] :
     Decidable (ScenarioUniversal c) := i
 
-/-- Under Universal 5 a downstream scenario is coded no longer than any scenario that is
-not downstream. -/
 theorem ScenarioUniversal.downstream_le {c : Scenario α → L} (h : ScenarioUniversal c)
     {s t : Scenario α} (hs : s.kind = .downstream) (ht : t.kind ≠ .downstream) :
     c s ≤ c t :=
   h (show t.kind < s.kind by rw [hs]; exact lt_top_iff_ne_top.2 ht)
 
-/-- On a binary scale Universal 5 says that coding is antitone in the order of scenarios, since
-there one scenario is of a more usual kind than another exactly when it lies above it. -/
 theorem scenarioUniversal_iff_antitone [BoundedOrder α] [IsSimpleOrder α]
     {c : Scenario α → L} : ScenarioUniversal c ↔ Antitone c :=
   ⟨fun h ↦ antitone_iff_forall_lt.2 fun _ _ hst ↦ h (Scenario.kind_lt_kind_iff.2 hst),
     fun h _ _ hst ↦ h (Scenario.kind_lt_kind_iff.1 hst).le⟩
 
-/-- On a binary scale, a split monadic in the higher-ranked argument and antitone in its prominence
-obeys Universal 5, so it is coded longest at the upstream `⟨⊥, ⊤⟩` and shortest at the downstream
-`⟨⊤, ⊥⟩`. -/
 theorem scenarioUniversal_comp_high [BoundedOrder α] [IsSimpleOrder α] {f : α → L}
     (hf : Antitone f) : ScenarioUniversal (f ∘ Scenario.high) :=
   scenarioUniversal_iff_antitone.2 (hf.comp_monotone Scenario.high_mono)
 
-/-- On a scale with three levels, a split monadic in the higher-ranked argument obeys Universal 5
-only if it is constant, since a balanced scenario is coded no longer than an upstream one at the
-middle level and no shorter than a downstream one there. -/
 theorem ScenarioUniversal.comp_high_le {f : α → L} (h : ScenarioUniversal (f ∘ Scenario.high))
     {a b c : α} (hab : a < b) (hbc : b < c) (x y : α) : f x ≤ f y :=
   (h (s := ⟨x, x⟩) (t := ⟨b, c⟩) (show Scenario.kind _ < Scenario.kind _ by
@@ -322,8 +310,6 @@ theorem ScenarioUniversal.comp_high_le {f : α → L} (h : ScenarioUniversal (f 
     (h (s := ⟨b, a⟩) (t := ⟨y, y⟩) (show Scenario.kind _ < Scenario.kind _ by
       rw [Scenario.kind_eq_balanced_iff.2 rfl, Scenario.kind_eq_downstream_iff.2 hab]; decide))
 
-/-- On a scale with three levels, a split monadic in the lower-ranked argument obeys
-Universal 5 only if it is constant. -/
 theorem ScenarioUniversal.comp_low_le {g : α → L} (h : ScenarioUniversal (g ∘ Scenario.low))
     {a b c : α} (hab : a < b) (hbc : b < c) (x y : α) : g x ≤ g y :=
   (h (s := ⟨x, x⟩) (t := ⟨a, b⟩) (show Scenario.kind _ < Scenario.kind _ by
@@ -331,8 +317,6 @@ theorem ScenarioUniversal.comp_low_le {g : α → L} (h : ScenarioUniversal (g �
     (h (s := ⟨c, b⟩) (t := ⟨y, y⟩) (show Scenario.kind _ < Scenario.kind _ by
       rw [Scenario.kind_eq_balanced_iff.2 rfl, Scenario.kind_eq_downstream_iff.2 hbc]; decide))
 
-/-- On a binary scale, a split monadic in the lower-ranked argument and monotone in its
-prominence obeys Universal 5. -/
 theorem scenarioUniversal_comp_low [BoundedOrder α] [IsSimpleOrder α] {g : α → L}
     (hg : Monotone g) : ScenarioUniversal (g ∘ Scenario.low) :=
   scenarioUniversal_iff_antitone.2 (hg.comp_antitone Scenario.low_anti)
@@ -352,7 +336,6 @@ of an upstream scenario is no shorter than the direct form of a downstream one. 
 def InverseUniversal (v : Scenario α → L) : Prop :=
   ∀ ⦃s t⦄, s.kind = .downstream → t.kind = .upstream → v s ≤ v t
 
-/-- Verb coding that obeys the scenario universal obeys the inverse universal. -/
 theorem inverseUniversal_of_scenarioUniversal {v : Scenario α → L} (h : ScenarioUniversal v) :
     InverseUniversal v :=
   fun _ _ hs ht ↦ h (show _ < _ by rw [hs, ht]; exact bot_lt_top)
@@ -389,17 +372,14 @@ def minimalCoding (short : Scenario α → Prop) [DecidablePred short] (s : Scen
 The cited splits are cutoffs on a scale (`atLeast x`, `below x`); a scenario split is a
 cutoff on one argument's prominence or on the kind. -/
 
-/-- A P or T split from a cutoff up obeys Universal 3, hence Universals 4 and 8. -/
 theorem singleArgumentUniversal_atLeast {r : ArgumentRole} (h : r.IsLowerRanked) (x : α) :
     SingleArgumentUniversal r (atLeast x) :=
   (singleArgumentUniversal_iff_monotone h).2 (atLeast_monotone x)
 
-/-- An A or R split below a cutoff obeys Universal 3, hence Universals 6 and 7. -/
 theorem singleArgumentUniversal_below {r : ArgumentRole} (h : r.IsHigherRanked) (x : α) :
     SingleArgumentUniversal r (below x) :=
   (singleArgumentUniversal_iff_antitone h).2 (below_antitone x)
 
-/-- A relative split antitone in usualness obeys Universal 5, hence Universal 10. -/
 theorem scenarioUniversal_comp_kind {g : Scenario.Kind → L} (hg : Antitone g) :
     ScenarioUniversal (g ∘ Scenario.kind : Scenario α → L) :=
   fun _ _ hst ↦ hg hst.le
@@ -433,8 +413,6 @@ def warrgamayA : BinaryNominality → ℕ := below .personForm
 /-- Mangarrayi flags an inanimate (neuter) A with the ergative, as in (24). -/
 def mangarrayiA : BinaryAnimacy → ℕ := below .animate
 
-/-- Read through the cut, Mangarrayi's split is the split below the animates of the ternary
-scale, humans and animals alike escaping the ergative. -/
 theorem mangarrayiA_comp_ofAnimacy :
     mangarrayiA ∘ BinaryAnimacy.ofAnimacy = below (.animate : Animacy) := by
   funext a; cases a <;> rfl
@@ -565,17 +543,12 @@ theorem yukaghir_monadic_yurok_dyadic :
       ¬ Monadic Scenario.high yurokP ∧ ¬ Monadic Scenario.low yurokP :=
   ⟨fun _ _ h ↦ congrArg (below _) h, by decide, by decide⟩
 
-/-- Kolyma Yukaghir's and Greek's rules on the ternary person scale are antitone in the order of
-scenarios, as the binary rules are. -/
 theorem yukaghirP_greekT_ternary_antitone :
     Antitone (below (Person.prominence .second) ∘ Scenario.high) ∧
       Antitone (atLeast (Person.prominence .second) ∘ Scenario.low) :=
   ⟨(below_antitone _).comp_monotone Scenario.high_mono,
     (atLeast_monotone _).comp_antitone Scenario.low_anti⟩
 
-/-- Kolyma Yukaghir's rule on the ternary person scale, P flagged whenever A is third
-person, violates Universal 5, as every non-constant monadic split on a ternary scale does
-(`ScenarioUniversal.comp_high_le`). -/
 theorem yukaghirP_ternary_violates :
     ¬ ScenarioUniversal (below (Person.prominence .second) ∘ Scenario.high) :=
   fun h ↦ absurd
@@ -611,8 +584,6 @@ def bauleT : Scenario Nominality → ℕ := below .downstream ∘ Scenario.kind
 private def featuresUpTo (r : WithBot Person.Feature) : ℕ :=
   (Finset.univ.filter fun f : Person.Feature ↦ (f : WithBot Person.Feature) ≤ r).card
 
-/-- Kashmiri's full probe ranks a person by the segments it bears, one more than its person
-features. -/
 theorem kashmiri_rank (p : Person) : BejarRezac2009.kashmiri.rank p = p.toFeatures.card + 1 := by
   cases p <;> decide
 

@@ -169,20 +169,15 @@ end
 
 variable {c d : Construction ι}
 
-/-- Decausativization modifies participant structure: the initial A leaves it. -/
 theorem Decausativization.not_preservesStructure (h : Decausativization c d) :
     ¬ PreservesStructure c d :=
   let ⟨⟨⟨a, ha⟩, _⟩, hA, _⟩ := h
   fun hp ↦ absurd ((hp a).mpr (hA a ha).2) (by simp [ha])
 
-/-- The maintenance of the initial A in participant structure separates passivization from
-decausativization. -/
 theorem Passivization.not_decausativization (h : Passivization c d) : ¬ Decausativization c d :=
   let ⟨⟨⟨a, ha⟩, _⟩, hA, _⟩ := h
   fun h' ↦ (hA a ha).2.1 (h'.2.1 a ha).2
 
-/-- S-denucleativization leaves no core term when the initial construction has no core term
-but its S. -/
 theorem SDenucleativization.not_nuclear (h : SDenucleativization c d)
     (hc : ∀ i, (c i).Nuclear → c i = .term .S) (i : ι) : ¬ (d i).Nuclear := fun hd ↦ by
   by_cases hi : (c i).Nuclear
@@ -190,18 +185,13 @@ theorem SDenucleativization.not_nuclear (h : SDenucleativization c d)
   · obtain ⟨s, hs⟩ := h.2.1
     exact (h.2.2 s hs).2.2 ⟨i, hi, hd⟩
 
-/-- Portative derivation is not causativization: the initial S is the A of the one and the P
-of the other. -/
 theorem Portative.not_aNucleativization {i : ι} (h : Portative c d i)
     (hS : ∃ s, c s = .term .S) (j : ι) : ¬ ANucleativization c d j := by
   grind [Portative, ANucleativization, Status.Nuclear]
 
-/-- A symmetrical voice is not a passivization, nor any type defined by denucleativization. -/
 theorem not_passivization_of_isSymmetrical (h : c.IsSymmetrical d) : ¬ Passivization c d :=
   fun ⟨⟨⟨a, ha⟩, _⟩, hA, _⟩ ↦ h.not_denucleativizes ⟨a, (hA a ha).1⟩
 
-/-- A symmetrical voice is not an A/S-nucleativization, nor any type defined by
-nucleativization. -/
 theorem not_aNucleativization_of_isSymmetrical (h : c.IsSymmetrical d) (i : ι) :
     ¬ ANucleativization c d i :=
   fun hc ↦ h.not_nucleativizes ⟨i, hc.1⟩
@@ -287,15 +277,12 @@ theorem voices_typed :
     ∀ e ∈ voiceTypes, ∃ o, e.2.Realize e.1.initial.construction e.1.derived.construction o := by
   decide +kernel
 
-/-- A/S-nucleativization of an oblique nucleativizes the oblique and denucleativizes the
-initial A: neither valency-increasing nor valency-decreasing. -/
 theorem instrumentNucleativization_neutral :
     instrumentNucleativization.Nucleativizes ∧ instrumentNucleativization.Denucleativizes ∧
       ¬ instrumentNucleativization.IsValencyIncreasing ∧
       ¬ instrumentNucleativization.IsValencyDecreasing := by
   decide
 
-/-- Portative derivation is valency-increasing, like causativization and applicativization. -/
 theorem portative_isValencyIncreasing : portative.IsValencyIncreasing := by decide
 
 /-- English *break* is a decausativization in the fragment's own diatheses: the intransitive
@@ -372,21 +359,17 @@ end
 
 variable {t : Flagging} {ss : List Flag}
 
-/-- Over the S flags alone, obligatory A-coding is A-alignment throughout. -/
 theorem obligatoryACoding_iff :
     ObligatoryACoding t ss ↔ ∀ s ∈ ss, t.alignment s = some .A_alignment := by
   simp [ObligatoryACoding, ObligatoryCoding]
 
-/-- Over the S flags alone, obligatory P-coding is P-alignment throughout. -/
 theorem obligatoryPCoding_iff :
     ObligatoryPCoding t ss ↔ ∀ s ∈ ss, t.alignment s = some .P_alignment := by
   simp [ObligatoryPCoding, ObligatoryCoding]
 
-/-- A split-S language is not obligatory A-coding. -/
 theorem SplitS.not_obligatoryACoding (h : SplitS t ss) : ¬ ObligatoryACoding t ss := by
   grind [SplitS, ObligatoryACoding, ObligatoryCoding, Flagging.alignment, Flagging.ne]
 
-/-- A split-S language is not obligatory P-coding. -/
 theorem SplitS.not_obligatoryPCoding (h : SplitS t ss) : ¬ ObligatoryPCoding t ss := by
   grind [SplitS, ObligatoryPCoding, ObligatoryCoding, Flagging.alignment, Flagging.ne]
 
@@ -395,8 +378,6 @@ theorem SplitS.not_obligatoryPCoding (h : SplitS t ss) : ¬ ObligatoryPCoding t 
 -- Every printed share rounds a whole number of the sample's languages.
 example : ∀ t, (bahrtShares t).share.AttainablePercent bahrtSampleSize := by decide +kernel
 
-/-- Of the types Bahrt's survey counts, causativization is synthetically marked in the most
-languages and antipassivization in the fewest. -/
 theorem bahrtShares_extremes (t : BahrtType) :
     (bahrtShares .antipassivization).share.toRat ≤ (bahrtShares t).share.toRat ∧
       (bahrtShares t).share.toRat ≤ (bahrtShares .causativization).share.toRat := by
@@ -470,12 +451,10 @@ end Examples
 
 open Examples
 
-/-- Every label the rows carry parses to a type. -/
 theorem alternation_parses : ∀ row ∈ all,
     (row.feature? "alternation").isSome → (row.parse? "alternation" kindNames).isSome := by
   decide +kernel
 
-/-- Every initial construction or transitive use a row names is a row of the same example. -/
 theorem paired_resolves : ∀ row ∈ all, ∀ key ∈ ["initial", "transitive"],
     (row.feature? key).isSome → (paired key row).isSome := by
   decide +kernel
@@ -487,7 +466,6 @@ theorem rows_classified : ∀ row ∈ all, ∀ k ∈ row.parse? "alternation" ki
     k.Realize (construction init) (construction row) (row.parse? "new" slotNames) := by
   decide +kernel
 
-/-- A symmetrical voice selects a different, expressed participant as pivot. -/
 theorem symmetrical_rows : ∀ row ∈ all, row.parse? "alternation" kindNames = some .symmetrical →
     ∀ init ∈ paired "initial" row, ∃ p ∈ row.parse? "pivot" slotNames,
     ∃ q ∈ init.parse? "pivot" slotNames, p ≠ q ∧ (construction row p).role.isSome := by
@@ -522,10 +500,6 @@ theorem ambitransitivity_rows : ∀ row ∈ all,
     (PreservesStructure (construction init) (construction row) ↔ row.language = "bamb1269") := by
   decide +kernel
 
-/-- Tswana *-w* codes passivization, its impersonal variant and S-denucleativization; Tswana
-*-ɛl* codes P-applicativization, X-applicativization and the A-nucleativization of an
-oblique; Tswana *-is* codes causativization and, in chapter 12, portative derivation; Diré
-Songhay *-ndi* codes causativization and passivization. -/
 theorem coexpression :
     [Kind.passivization, .impersonalPassivization, .sDenucleativization] ⊆
       coExpressed "tswa1253" "-w" ∧
@@ -595,7 +569,6 @@ def balineseCausative : Voice :=
   (Voice.of .np .np_pp [some (complement 0), some (complement 1), some external]).marked
     [.suff "ang"]
 
-/-- The passive is a passivization. -/
 theorem balinesePassive_passivization :
     Passivization balinesePassive.initial.construction balinesePassive.derived.construction := by
   decide
@@ -645,7 +618,6 @@ theorem tagalog_pivotRoles : tagalog.symmetrical.pivotRoles = {some .A, some .P,
 /-- Tagalog is a multiple symmetrical system, since an oblique may be the pivot (§8.5.2). -/
 theorem tagalog_isMultiple : tagalog.IsMultiple := by decide
 
-/-- Every Tagalog voice is coded on the verb by an affix, the agent voice by the infix *-um-*. -/
 theorem tagalog_synthetic : ∀ v ∈ tagalog, v.coding = .synthetic := by decide
 
 /-! ### The reflexive–reciprocal polysemy (§11.3)

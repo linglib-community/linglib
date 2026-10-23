@@ -123,8 +123,6 @@ theorem IsExogenousSettlement.refl (s : ∀ v, Flat (α v)) : M.IsExogenousSettl
   ⟨le_rfl, fun _ hv hne ↦ absurd hv hne⟩
 
 omit [DecidableEq V] in
-/-- An exogenous settlement leaves open every variable with a parent that the observation leaves
-open. -/
 theorem IsExogenousSettlement.eq_bot {s s' : ∀ v, Flat (α v)} (h : M.IsExogenousSettlement s s')
     {v : V} (hv : s v = ⊥) (hpar : ∃ w, M.graph.Adj w v) : s' v = ⊥ := by
   by_contra hne

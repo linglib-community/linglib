@@ -131,21 +131,14 @@ def purplePlum : PhraseStructure.Tree Unit Morphology.Word :=
 def allegedThief : PhraseStructure.Tree Unit Morphology.Word :=
   .node () [.leaf (.mk' "alleged" .ADJ), .leaf (.mk' "thief" .NOUN)]
 
-/-- *Purple plum* has exactly one reading, the intersection, since the operator construction
-matches the form but its rule rejects two predicate daughters. -/
 theorem purple_plum_intersective :
     interps (demoCx E) (demoLex purple plum thief alleged) purplePlum
       = [.pred fun x ↦ purple x ∧ plum x] := rfl
 
-/-- *Alleged thief* has exactly one reading, the operator applied to the head predicate, and no
-intersective one. -/
 theorem alleged_thief_operator :
     interps (demoCx E) (demoLex purple plum thief alleged) allegedThief
       = [.pred (alleged thief)] := rfl
 
-/-- With only the intersective construction, *alleged thief* has no
-reading at all: the chapter's point that intersection cannot be the
-single rule of adjectival modification. -/
 theorem alleged_thief_needs_operator_construction :
     interps [intersectiveModification E] (demoLex purple plum thief alleged) allegedThief
       = [] := rfl

@@ -92,14 +92,10 @@ what it depends on, and the further features `extra`. -/
 def site (ns : List Node) (extra : Finset Feature) : Finset Feature :=
   ((ns.flatMap Node.below).map Feature.node).toFinset ∪ extra
 
-/-- A site bears a node iff the node lies below a mentioned one, the root aside, or is among the
-further features: sites are closed downward. -/
 theorem node_mem_site {a : Node} {ns : List Node} {extra : Finset Feature} :
     .node a ∈ site ns extra ↔ (∃ n ∈ ns, ⊥ < a ∧ a ≤ n) ∨ .node a ∈ extra := by
   simp [site, Node.mem_below]
 
-/-- A dependent node's site contains its dominator's, so geometric dependence is site inclusion
-and hence engine ranking (`VocabularyItem.le_iff`). -/
 theorem site_subset_site {a b : Node} (h : a ≤ b) (extra : Finset Feature) :
     site [a] extra ⊆ site [b] extra := by
   intro x hx

@@ -88,8 +88,6 @@ instance (objSort : Binding.Srt) (objIdx objGend objNum : ClauseEnt) (ρ : Bindi
     DecidablePred ((clause objSort objIdx objGend objNum).R ρ) :=
   fun xs ↦ inferInstanceAs (Decidable (xs 0 = .subj ∧ xs 1 = .obj))
 
-/-- Every worked clause whose object is a species of nominal object with an index, a gender and
-a number is sort-resolved and totally well-typed. -/
 theorem clause_isTotallyWellTyped :
     ∀ σ ∈ [Binding.Srt.ana, .ppro, .npro], ∀ i ∈ [ClauseEnt.iSubj, .iObj],
       ∀ γ ∈ [ClauseEnt.gMasc, .gFem], ∀ n ∈ [ClauseEnt.nSing, .nPlur],
@@ -106,19 +104,12 @@ def sorts : List (String × Binding.Srt) := [("anaphor", .ana), ("pronoun", .ppr
 def binders : List (String × ClauseEnt) :=
   [("local", .iSubj), ("nonlocal", .iObj)]
 
-/-- The rows on binding are acceptable exactly when the worked clause with a pronoun of the
-row's sort, coindexed with its local o-commander or not as the row records, satisfies the
-binding grammar: a reflexive needs a coindexed local o-commander and a nonreflexive pronoun
-must lack one. -/
 theorem binding_rows :
     ∀ x ∈ probing "binding", ∀ s ∈ x.parse? "sort" sorts, ∀ i ∈ x.parse? "binder" binders,
       (x.judgment = .acceptable ↔
         (clause s i .gFem .nSing).Models Binding.grammar) := by
   decide +kernel
 
-/-- *Susan likes herself* meets the framework-neutral Conditions A and B over local o-command:
-the part of its worked clause that the verb's sign generates is rooted at the sign and models
-the binding principles. -/
 theorem clause_satisfies_conditions :
     let I := (clause .ana .iSubj .gFem .nSing).generated .s
     (Binding.configuration I).Satisfies (Binding.Codependent I) (Binding.configuration I).exempt
@@ -188,23 +179,17 @@ NP, shared by the conjuncts that have one, and the mother's GAP is the first con
     | _, _ => none
   R := noRel
 
-/-- The worked coordinate constructs are well-typed. -/
 theorem coordConstruct_isWellTyped (g₁ g₂ : Bool) : (coordConstruct g₁ g₂).IsWellTyped := by
   cases g₁ <;> cases g₂ <;> decide
 
 def bools : List (String × Bool) := [("true", true), ("false", false)]
 
-/-- The rows on coordination are acceptable exactly when the coordinate construct with a gap in
-the conjuncts the row records satisfies the grammar: a gap in one conjunct alone breaks the
-identity of the conjuncts' GAP lists, and gaps in both, paired with one filler, keep it. -/
 theorem coordination_rows :
     ∀ x ∈ probing "coordination", ∀ g₁ ∈ x.parse? "gapInFirst" bools,
       ∀ g₂ ∈ x.parse? "gapInSecond" bools,
         (x.judgment = .acceptable ↔ (coordConstruct g₁ g₂).Models swbGrammar) := by
   decide +kernel
 
-/-- A conjunct is an overt expression and a gap a covert one, an argument unrealized in the
-syntax, so no well-typed interpretation has a gap for a conjunct. -/
 theorem gap_not_conjunct {U : Type*} {I : Interpretation sig U} (hI : I.IsWellTyped) {u v : U}
     (hv : I.A .CONJ1 u = some v) : ¬ I.S v ≤ .gap :=
   fun h ↦ not_le_covertExpr hI (by simp) hv (h.trans (by decide))

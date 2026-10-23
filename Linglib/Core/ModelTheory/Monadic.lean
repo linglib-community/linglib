@@ -149,9 +149,6 @@ theorem snoc (h : L.MonadicMatch v w) {a : M} {b : N} (heq : ∀ i, v i = a ↔ 
     exact eq_comm.trans ((heq _).trans eq_comm)
   · induction i using Fin.lastCases <;> simp [hab, h.unaryType_eq]
 
-/-- In the *forth* move of the counting strategy, a played element is answered by its partner
-and a fresh element of type `S` by a fresh element of type `S`, which exists because the fresh
-elements of type `S` are equinumerous on the two sides or both at least `j + 1`. -/
 theorem exists_snoc {j : ℕ} (h : L.MonadicMatch v w)
     (hc : ∀ S, min ((j + 1 : ℕ) : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range v).encard =
       min ((j + 1 : ℕ) : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range w).encard) (a : M) :
@@ -187,8 +184,6 @@ theorem exists_snoc {j : ℕ} (h : L.MonadicMatch v w)
 
 variable [L.IsMonadic]
 
-/-- Matched tuples in a monadic language satisfy the same atomic formulas, which are equalities
-and unary predications of variables. -/
 theorem realize_iff_of_isAtomic (h : L.MonadicMatch v w) {φ : L.BoundedFormula Empty n}
     (hφ : φ.IsAtomic) : φ.Realize default v ↔ φ.Realize default w := by
   have hvar : ∀ t : L.Term (Empty ⊕ Fin n), ∃ i, t = &i := by
@@ -239,14 +234,11 @@ theorem elementarilyEquivalentUpTo_of_min_encard_eq [L.IsMonadic] {t : ℕ}
 
 namespace DuplicatorWins
 
-/-- Tuples from which duplicator wins match, since equalities and unary predications of variables
-are atomic formulas. -/
 theorem monadicMatch {k : ℕ} (h : L.DuplicatorWins k v w) : L.MonadicMatch v w where
   eq_iff i j := h.realize_iff_of_isAtomic (φ := (&i).bdEqual &j) (.equal _ _)
   unaryType_eq i := funext fun R => propext <| by
     simpa [unaryType] using h.realize_iff_of_isAtomic (φ := R.boundedFormula₁ &i) (.rel _ _)
 
-/-- A *forth* move answers a fresh element of type `S` by a fresh element of type `S`. -/
 theorem exists_mem_sdiff_range {k : ℕ} (h : L.DuplicatorWins (k + 1) v w) {S : L.Relations 1 → Prop}
     {a : M} (ha : a ∈ L.unaryType ⁻¹' {S} \ Set.range v) :
     ∃ b ∈ L.unaryType ⁻¹' {S} \ Set.range w, L.DuplicatorWins k (Fin.snoc v a) (Fin.snoc w b) := by

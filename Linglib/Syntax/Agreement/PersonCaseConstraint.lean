@@ -66,7 +66,6 @@ instance : (t : ProminenceThreshold) → DecidablePred t.InherentlyMetBy
   | .proximate | .participant => inferInstanceAs (DecidablePred Person.IsSAP)
   | .author => inferInstanceAs (DecidablePred Person.IncludesSpeaker)
 
-/-- Raising the threshold only shrinks the set of persons that inherently meet it. -/
 theorem ProminenceThreshold.inherentlyMetBy_antitone (p : Person) :
     Antitone (InherentlyMetBy · p) := fun t₁ t₂ ht hm => by
   revert ht hm
@@ -204,8 +203,6 @@ instance : Preorder Grammar := Preorder.lift licitFinset
 instance (g₁ g₂ : Grammar) : Decidable (g₁ ≤ g₂) :=
   inferInstanceAs (Decidable (licitFinset g₁ ⊆ licitFinset g₂))
 
-/-- One grammar entails another when every combination licit in the first is licit in the
-second. -/
 theorem le_iff_isLicit_imp (g₁ g₂ : Grammar) :
     g₁ ≤ g₂ ↔ ∀ s ∈ cliticPairs, IsLicit g₁ s → IsLicit g₂ s := by
   show licitFinset g₁ ⊆ licitFinset g₂ ↔ _

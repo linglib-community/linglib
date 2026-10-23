@@ -128,15 +128,12 @@ theorem restrict_tcCurl_eq_k :
       Segment.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) k := by
   decide
 
-/-- Palatalization changes the value of [coronal]. -/
 theorem k_tcCurl_coronal :
     k.HasValue .coronal false ∧ tcCurl.HasValue .coronal true := by
   decide
 
-/-- The palatal affricate has two designated articulators. -/
 theorem tcCurl_isComplex : tcCurl.IsComplex := by decide
 
-/-- The front vowel /ɪ/ triggers palatalization and the low vowel /a/ does not. -/
 theorem smallCapitalI_front_a_not_front :
     smallCapitalI.HasValue .front true ∧ a.HasValue .front false := by
   decide

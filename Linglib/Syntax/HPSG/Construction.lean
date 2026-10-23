@@ -157,7 +157,6 @@ def Srt.rank : Srt → ℕ
   | .whExclCl | .nsWhIntCl | .finWhRelCl | .infWhRelCl | .theCl | .polarIntCl
   | .auxInitialExclCl => 6
 
-/-- Every immediate supersort of a sort has a lower rank. -/
 theorem Srt.rank_lt_of_mem_parents : ∀ σ : Srt, ∀ τ ∈ σ.parents, τ.rank < σ.rank := by
   decide +kernel
 
@@ -319,8 +318,6 @@ def constraints : List (Constraint sig) :=
 /-- The grammar of the fragment. -/
 def grammar : Grammar sig := constraints.map Constraint.toDesc
 
-/-- Every principle of the grammar is closed, so its satisfaction does not depend on the
-variable assignment. -/
 theorem freeVars_grammar : ∀ d ∈ grammar, d.freeVars = ∅ := by decide
 
 /-- The signature admits the paths of the filler-head construction from the sort it constrains,
@@ -331,9 +328,6 @@ example : sig.Admits .fillerHeadCxt [.HDDTR, .GAP, .FIRST, .INDEX] .idx ∧
 
 /-! ### Inheritance -/
 
-/-- Each filler-gap clause inherits the headed and filler-head constructions and the
-constructions on the clause types above it, and has a construction of its own. A finite
-wh-relative inherits five constructions. -/
 theorem map_sort_inherited_fillerGap :
     (Constraint.inherited constraints .topCl).map (·.sort) =
         [.headedCxt, .fillerHeadCxt, .topCl] ∧
@@ -351,8 +345,6 @@ theorem map_sort_inherited_fillerGap :
 
 variable {U : Type*} {I : Interpretation sig U} {g : ℕ → U} {u : U}
 
-/-- In a model of the grammar, every entity satisfies each construction on a sort above its
-own. -/
 theorem satisfies_body (hI : I.Models grammar) {c : Constraint sig} (hc : c ∈ constraints)
     (hu : I.S u ≤ c.sort) : I.Satisfies (fun _ ↦ u) u c.body :=
   hI.satisfies_body (List.mem_map_of_mem hc) hu
@@ -396,8 +388,6 @@ theorem satisfies_hdCat_iff (hI : I.Models grammar) (hu : I.S u ≤ .headedCxt) 
     Interpretation.termDenot_path_append, Interpretation.termDenot_path_append,
     Option.mem_def.1 hv, Option.mem_def.1 hv']
 
-/-- In a well-typed interpretation, an entity on which an attribute is defined has a sort below
-one that introduces the attribute. A category with an inversion value is therefore a verb. -/
 theorem satisfies_le_of_mem_termDenot (hI : I.IsWellTyped) {p : Path sig} {α : Attr} {σ : Srt}
     (hσ : ∀ d ∈ Attr.decl α, d.1 ≤ σ) {v : U}
     (hv : v ∈ I.termDenot g (.path (p ++ [α])) u) :
@@ -433,7 +423,6 @@ def ListMem (I : Interpretation sig U) (x l : U) : Prop :=
 instance [Fintype U] [DecidableEq U] (x l : U) : Decidable (ListMem I x l) := by
   unfold ListMem; infer_instance
 
-/-- An element of a list is the first element or an element of the rest. -/
 theorem listMem_iff {x l : U} :
     ListMem I x l ↔ I.A .FIRST l = some x ∨ ∃ y, I.A .REST l = some y ∧ ListMem I x y := by
   constructor
@@ -454,8 +443,6 @@ def memberDef : Desc sig :=
       (.or (.pathEq (.var 0) (.feat (.var 1) .FIRST))
         (.ex 2 (.and (.pathEq (.var 2) (.feat (.var 1) .REST)) (.rel .member ![0, 2])))))))
 
-/-- An entity satisfies `memberDef` when `member` relates two of its components exactly as
-the principle says, the rest of a list being a component wherever the list is. -/
 theorem satisfies_memberDef_iff : I.Satisfies g u memberDef ↔
     ∀ x, I.IsComponentOf u x → ∀ l, I.IsComponentOf u l →
       (I.R .member ![x, l] ↔ I.S l ≤ .nelist ∧
@@ -480,8 +467,6 @@ theorem satisfies_memberDef_iff : I.Satisfies g u memberDef ↔
     imp_congr_right fun hl ↦ iff_congr Iff.rfl <| and_congr_right fun _ ↦ or_congr_right <|
       exists_congr fun _ ↦ ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨hl.tail ⟨_, h.1⟩, h⟩⟩
 
-/-- An attribute of a list cell is defined only on a nonempty list in a well-typed
-interpretation. -/
 private theorem le_nelist_of_A {α : sig.Attr} (hI : I.IsWellTyped) (hα : α = .FIRST ∨ α = .REST)
     {l v : U} (h : I.A α l = some v) : I.S l ≤ .nelist := by
   obtain ⟨τ, hτ, -⟩ := hI α l v h
@@ -489,16 +474,12 @@ private theorem le_nelist_of_A {α : sig.Attr} (hI : I.IsWellTyped) (hα : α = 
   rwa [(by decide : ∀ α ∈ ([.FIRST, .REST] : List Attr), ∀ d ∈ Attr.decl α, d.1 = .nelist) α
     (by rcases hα with rfl | rfl <;> simp) d hd] at hle
 
-/-- In a well-typed interpretation, an element of a list is the first element or an element of
-the rest of a nonempty list. -/
 private theorem and_or_listMem_iff (hI : I.IsWellTyped) {x l : U} :
     (I.S l ≤ .nelist ∧ (I.A .FIRST l = some x ∨ ∃ y, I.A .REST l = some y ∧ ListMem I x y)) ↔
       ListMem I x l :=
   ⟨fun h ↦ listMem_iff.2 h.2, fun h ↦ ⟨(listMem_iff.1 h).elim (le_nelist_of_A hI (.inl rfl))
     fun ⟨_, hy, _⟩ ↦ le_nelist_of_A hI (.inr rfl) hy, listMem_iff.1 h⟩⟩
 
-/-- A well-typed interpretation models `memberDef` when `member` holds of two components of an
-entity just when the first is an element of the second. -/
 theorem models_memberDef_of_forall (hI : I.IsWellTyped)
     (h : ∀ u x l, I.IsComponentOf u x → I.IsComponentOf u l →
       (I.R .member ![x, l] ↔ ListMem I x l)) : I.Models [memberDef] := by

@@ -96,8 +96,6 @@ instance : LinearOrder Form := LinearOrder.lift' Form.markedness (by decide)
 
 instance : LinearOrder Situation := LinearOrder.lift' Situation.markedness (by decide)
 
-/-- The paper introduces no ranking between F and C, and none is needed, since the tableau under
-either ranking is strictly monotone in markedness, which is all the results below assume. -/
 theorem strictMono_profile_markedness :
     StrictMono (profile [(·.1.markedness), (·.2.markedness)] : Form × Situation → List ℕ) ∧
       StrictMono (profile [(·.2.markedness), (·.1.markedness)] : Form × Situation → List ℕ) := by
@@ -168,7 +166,6 @@ theorem weak_division_of_labour (hf : StrictMono f) :
   revert a b
   decide
 
-/-- The weak version admits the marked pair the strong version blocks. -/
 theorem strongOptimalSet_ssubset_superoptimalSet (hf : StrictMono f) :
     strongOptimalSet univ f ⊂ superoptimalSet univ f := by
   rw [strong_total_blocking hf (mem_univ _) (mem_univ _), weak_division_of_labour hf, pair_comm]
@@ -293,7 +290,6 @@ theorem accommodation_blocked :
       {(.indefinite, ())} := by
   decide
 
-/-- The blocking is a Q-principle effect: a form with the same outcome needs no accommodation. -/
 theorem accommodation_blocked_is_Q :
     QBlocks accidentAvoidA ↑(Finset.univ : Finset (Definiteness × Unit)) (.definite, ()) := by
   decide

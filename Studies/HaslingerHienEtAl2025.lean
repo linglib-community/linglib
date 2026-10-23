@@ -86,7 +86,6 @@ theorem MaxNonOverlap.mem (h : MaxNonOverlap P x) : x ∈ P := h.1
 theorem MaxNonOverlap.maximal (hx : ¬ IsBot x) (h : MaxNonOverlap P x) : Maximal (· ∈ P) x :=
   ⟨h.1, fun y hy hle ↦ h.2 y hy ⟨x, hx, le_rfl, hle⟩⟩
 
-/-- On a pairwise non-overlapping restrictor every element is maximal non-overlapping. -/
 theorem maxNonOverlap_iff_of_disjoint (h : DisjointPred Overlap P) :
     MaxNonOverlap P x ↔ x ∈ P :=
   ⟨And.left, fun hx ↦ ⟨hx, fun y hy hov ↦
@@ -97,8 +96,6 @@ the quantifier is the ordinary universal. -/
 theorem qForall_iff_of_disjoint (h : DisjointPred Overlap P) : QForall P Q ↔ ∀ x ∈ P, x ∈ Q :=
   forall_congr' fun _ ↦ imp_congr_left (maxNonOverlap_iff_of_disjoint h)
 
-/-- On a pairwise non-overlapping restrictor the quantifier is the generalized quantifier
-*every*. -/
 theorem qForall_iff_every (h : DisjointPred Overlap P) :
     QForall P Q ↔ Quantifier.GQ.every P Q :=
   qForall_iff_of_disjoint h
@@ -109,13 +106,10 @@ section SemilatticeSup
 
 variable [SemilatticeSup α] {m : α}
 
-/-- On a sum-closed restrictor a maximal element is maximal non-overlapping. -/
 theorem maxNonOverlap_of_supClosed (hP : SupClosed P) (hm : Maximal (· ∈ P) m) :
     MaxNonOverlap P m :=
   ⟨hm.1, fun _ hy _ ↦ le_sup_right.trans (hm.2 (hP hm.1 hy) le_sup_left)⟩
 
-/-- On a sum-closed restrictor without the null individual, the maximal non-overlapping element
-is the maximal element. -/
 theorem maxNonOverlap_iff_of_supClosed (h0 : ∀ x ∈ P, ¬ IsBot x) (hP : SupClosed P)
     (hm : Maximal (· ∈ P) m) : MaxNonOverlap P x ↔ x = m :=
   ⟨fun hx ↦ cum_maximal_unique hP (hx.maximal (h0 x hx.1)) hm,
@@ -143,7 +137,6 @@ def OneEmptyDom (P : Set α) : Prop := P.Nontrivial ∧ DisjointPred Overlap P
 atoms. -/
 def OneAtDom (P : Set α) : Prop := P.Nontrivial ∧ ∀ x ∈ P, Atom x
 
-/-- Distinct atoms never overlap, so the presupposition of ONE_AT entails that of ONE_∅. -/
 theorem OneAtDom.oneEmptyDom (h : OneAtDom P) : OneEmptyDom P :=
   ⟨h.1, fun ⟨x, hx, y, hy, hne, _, hz, hzx, hzy⟩ ↦
     hne (((h.2 x hx).eq hzx hz).symm.trans ((h.2 y hy).eq hzy hz))⟩
@@ -179,11 +172,9 @@ since the presupposition of *each* entails that of *every* and both leave the ba
 theorem each_le_every : each P Q ≤ every P Q :=
   fun _ ⟨h, hp⟩ ↦ ⟨(each_dom.1 h).oneEmptyDom, hp⟩
 
-/-- Under its presupposition *every* is the ordinary universal quantifier. -/
 theorem every_get_iff (h : (every P Q).Dom) : (every P Q).get h ↔ ∀ x ∈ P, x ∈ Q :=
   qForall_iff_of_disjoint h.2
 
-/-- Under its presupposition *each* is the ordinary universal quantifier. -/
 theorem each_get_iff (h : (each P Q).Dom) : (each P Q).get h ↔ ∀ x ∈ P, x ∈ Q :=
   qForall_iff_of_disjoint (each_dom.1 h).oneEmptyDom.2
 
@@ -258,22 +249,16 @@ instance : DecidablePred (· ∈ met) := fun s ↦ inferInstanceAs (Decidable (s
 under the plural restrictor and fails under the singular one. -/
 theorem dng : QForall students met ∧ ¬ QForall student met := by decide
 
-/-- In the model the plural half says that the quantifier over *students* is a claim about the
-sum of all the students. -/
 theorem qForall_students_iff (Q : Set (Finset Student)) : QForall students Q ↔ Finset.univ ∈ Q :=
   qForall_iff_of_supClosed (fun _ hs h ↦ hs.ne_empty (Finset.subset_empty.1 (h ∅)))
     (fun _ hx _ _ ↦ hx.mono Finset.subset_union_left)
     ⟨Finset.univ_nonempty, fun y _ _ ↦ Finset.subset_univ y⟩
 
-/-- In the model the singular half says that the quantifier over *student* is the ordinary
-universal. -/
 theorem qForall_student_iff (Q : Set (Finset Student)) : QForall student Q ↔ ∀ s ∈ student, s ∈ Q :=
   qForall_iff_of_disjoint (by decide)
 
-/-- Every pair of students is a maximal element of *two students*. -/
 theorem maximal_twoStudents : ∀ s ∈ twoStudents, Maximal (· ∈ twoStudents) s := by decide
 
-/-- Yet every pair overlaps another pair, so no pair is maximal non-overlapping. -/
 theorem not_maxNonOverlap_twoStudents : ∀ s, ¬ MaxNonOverlap twoStudents s := by decide
 
 /-- With three salient students the quantifier over *two students* is vacuous, so the reading
@@ -281,10 +266,8 @@ on which every pair of students satisfies the scope is unavailable. -/
 theorem qForall_twoStudents (Q : Set (Finset Student)) : QForall twoStudents Q :=
   fun s hs ↦ (not_maxNonOverlap_twoStudents s hs).elim
 
-/-- ONE_∅ rejects the plural restrictor, whose pluralities overlap. -/
 theorem not_oneEmptyDom_students : ¬ OneEmptyDom students := by decide
 
-/-- ONE_AT accepts the singular restrictor. -/
 theorem oneAtDom_student : OneAtDom student := by decide
 
 end Students
@@ -312,7 +295,6 @@ theorem tenMinutes_disjoint : DisjointPred Overlap tenMinutes := by
 theorem oneEmptyDom_tenMinutes : OneEmptyDom tenMinutes :=
   ⟨tenMinutes_nontrivial, tenMinutes_disjoint⟩
 
-/-- An interval of ten minutes is the sum of shorter intervals, so it is not an atom. -/
 theorem not_atom_tenMinutes : ∀ I ∈ tenMinutes, ¬ Atom I := by
   rintro _ ⟨k, rfl⟩ h
   obtain ⟨n, hn⟩ := Set.isAtom_iff.1 (atom_iff_isAtom.1 h)
@@ -332,7 +314,6 @@ theorem every_tenMinutes_dom (Q : Set (Set ℕ)) : (every tenMinutes Q).Dom :=
 theorem each_tenMinutes_undefined (Q : Set (Set ℕ)) : ¬ (each tenMinutes Q).Dom :=
   fun h ↦ not_oneAtDom_tenMinutes (each_dom.1 h)
 
-/-- German *jede zehn Minuten* is a presupposition failure, since *jeder* carries ONE_AT. -/
 theorem jeder_tenMinutes_undefined (Q : Set (Set ℕ)) : ¬ (jeder tenMinutes Q).Dom :=
   not_oneAtDom_tenMinutes
 
@@ -371,7 +352,6 @@ theorem one_iff_singular :
       (s ≠ .bare ↔ w.numberRestriction = some .singular) := by
   decide
 
-/-- Which structures are defined on the intervals of *ten minutes*. -/
 theorem structure_dom_tenMinutes (s : Structure) (Q : Set (Set ℕ)) :
     (over s.head tenMinutes Q).Dom ↔ s = .bare ∨ s = .nonOverlap := by
   cases s

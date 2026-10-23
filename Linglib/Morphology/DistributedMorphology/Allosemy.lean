@@ -175,7 +175,6 @@ over property-concept roots ([beavers-etal-2021]). -/
 def Verbalizer.Alloseme.ofKinds (s : Semantics.Root.Kinds) : Verbalizer.Alloseme :=
   if .result ∈ Semantics.Root.Kinds.close s then .eventive else .zero
 
-/-- v is eventive iff the root entails change. -/
 theorem Verbalizer.ofKinds_introducesEvent_iff (s : Semantics.Root.Kinds) :
     (Verbalizer.Alloseme.ofKinds s).introducesEvent = true ↔
       .result ∈ Semantics.Root.Kinds.close s := by

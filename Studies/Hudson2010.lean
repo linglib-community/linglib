@@ -117,7 +117,6 @@ theorem e2_le_bird : Bird.e2 ≤ .bird := by decide
 
 theorem sparrow_not_le_penguin : ¬ Bird.sparrow ≤ .penguin := by decide
 
-/-- A sparrow exemplar inherits the default of *bird*. -/
 theorem inherited_flight_e1 : inherited flight .e1 = {.flies} :=
   inherited_eq_singleton_of_isLeast (m := .bird) (by decide) rfl
 
@@ -126,8 +125,6 @@ theorem inherited_flight_e1 : inherited flight .e1 = {.flies} :=
 theorem inherited_flight_e2 : inherited flight .e2 = {.doesntFly} :=
   inherited_eq_singleton_of_isLeast (m := .penguin) (by decide) rfl
 
-/-- The override leaves the other defaults intact: the exceptional penguin still inherits
-what *bird* specifies about reproduction. -/
 theorem inherited_reproduction_e2 : inherited reproduction .e2 = {.laysEggs} :=
   inherited_eq_singleton_of_isLeast (m := .bird) (by decide) rfl
 
@@ -169,7 +166,6 @@ def fuel : Car → Option Fuel
   | .dieselCar => some .diesel
   | _ => none
 
-/-- The diesel car exemplar inherits the link to *diesel* before it reaches *petrol*. -/
 theorem inherited_fuel_e : inherited fuel .e = {.diesel} :=
   inherited_eq_singleton_of_isLeast (m := .dieselCar) (by decide) rfl
 
@@ -230,8 +226,6 @@ theorem not_entails_war_nixon (s : Stance) :
   rw [entails_iff_inherited_subset, inherited_war_nixon]
   cases s <;> simp
 
-/-- Climbing from Nixon through *Republican* first finds *accepts war*, and through *Quaker*
-first finds *rejects war*. Both climbs start at the bottom, so both answers are inherited. -/
 theorem search_war_nixon :
     ([Person.nixon, .republican, .quaker, .person].find? (· ∈ specifiers war .nixon)).bind war =
         some .accepts ∧
@@ -296,7 +290,6 @@ theorem pairwiseDisjoint_sex : sex.PairwiseDisjoint Set.Iic := by
   exacts [absurd rfl hne, Set.disjoint_left.2 fun x h₁ h₂ ↦ h x h₁ h₂,
     Set.disjoint_left.2 fun x h₁ h₂ ↦ h x h₂ h₁, absurd rfl hne]
 
-/-- No concept isA both *adult* and *child*. -/
 theorem pairwiseDisjoint_age : age.PairwiseDisjoint Set.Iic := by
   have h : ∀ x : Human, x ≤ .adult → x ≤ .child → False := by decide
   rintro a (rfl | rfl) b (rfl | rfl) hne
@@ -309,8 +302,6 @@ theorem subsingleton_inherited_sex {β : Type*} {att : Human → Option β}
     (h : ∀ m, (att m).isSome → m ∈ sex) (a : Human) : (inherited att a).Subsingleton :=
   subsingleton_inherited_of_pairwiseDisjoint (pairwiseDisjoint_sex.subset h)
 
-/-- A property attached only to the members of the choice set *age* is inherited at most
-once. -/
 theorem subsingleton_inherited_age {β : Type*} {att : Human → Option β}
     (h : ∀ m, (att m).isSome → m ∈ age) (a : Human) : (inherited att a).Subsingleton :=
   subsingleton_inherited_of_pairwiseDisjoint (pairwiseDisjoint_age.subset h)
@@ -359,7 +350,6 @@ theorem ancestor_iff (x a : α) :
     · exact Relation.TransGen.single h
     · exact Relation.TransGen.head hxp hpa
 
-/-- A grandparent is an ancestor. -/
 theorem ancestor_of_grandparent {x g : α} (h : grandparent mother father x g) :
     ancestor mother father x g :=
   let ⟨_, hxp, hpg⟩ := h
@@ -394,7 +384,6 @@ variable {α : Type*}
 /-- The triangle of Figure 7.6: a node's `r₁` value and `r₂` value stand in `r₃`. -/
 def Triangle (r₁ r₂ r₃ : α → α → Prop) : Prop := ∀ x y z, r₁ x y → r₂ x z → r₃ y z
 
-/-- In kinship: a person's mother is their child's grandmother. -/
 theorem triangle_grandmother (mother father : α → α → Prop) :
     Triangle (child mother father) mother (grandmother mother father) :=
   fun x _ _ hc hm ↦ ⟨x, hc, hm⟩
@@ -411,12 +400,9 @@ def raise (v s : α) : Prop := ∃ h, subj h s ∧ Relation.ReflTransGen valent 
 theorem subj_le_raise : ∀ x s, subj x s → raise valent subj x s :=
   fun x _ h ↦ ⟨x, h, Relation.ReflTransGen.refl⟩
 
-/-- The derived subjects satisfy the triangle. -/
 theorem raising_raise : Raising valent (raise valent subj) :=
   fun _ _ _ hv ⟨h, hs, hchain⟩ ↦ ⟨h, hs, hchain.tail hv⟩
 
-/-- Any subject relation containing the asserted subjects and closed under the triangle
-contains the derived subjects: `raise` is the least closure. -/
 theorem raise_le_of_raising {S : α → α → Prop} (hS : Raising valent S)
     (hsubj : ∀ x s, subj x s → S x s) : ∀ v s, raise valent subj v s → S v s := by
   rintro v s ⟨h, hs, hchain⟩
@@ -457,7 +443,6 @@ def asserted : W → W → Prop
   | .keeps, .he => True
   | _, _ => False
 
-/-- *He* is the subject of *go*, six triangles down the chain. -/
 theorem he_subject_of_go : raise valent asserted .go .he := by
   refine ⟨.keeps, trivial, ?_⟩
   exact (((((Relation.ReflTransGen.refl.tail (c := W.seeming) trivial).tail (c := W.to₁)

@@ -147,7 +147,6 @@ theorem emit_eq_write_of_found_eq_some {s : α} (h : sys.IsTarget s) (hs : sys.p
     sys.searchCopy.emit w s = sys.write v s := by
   rw [sys.searchCopy.emit_of_isTarget ⟨h, hs⟩, SearchCopy.copied, hf]; rfl
 
-/-- A segment off the tier does not undergo. -/
 theorem emit_of_not_onTier {s : α} (h : ¬ sys.pattern.OnTier s) (w : Option α) :
     sys.searchCopy.emit w s = s :=
   sys.searchCopy.emit_of_not_isTarget (fun ht ↦ h ht.2) w
@@ -181,8 +180,6 @@ private theorem isChain_toList_append_cons {R : α → α → Prop} (a? : Option
   | none => simp
   | some a => simp [List.isChain_cons_cons]
 
-/-- After the visible segment `a?`, a word whose tier continues it compatibly is left
-unchanged, provided there is no default and blockers do not undergo. -/
 private theorem runFrom_eq_self (hd : sys.default = none)
     (hb : ∀ s, sys.pattern.participation s = .opaque → ¬ sys.IsTarget s) :
     ∀ (w : List α) (a? : Option α),

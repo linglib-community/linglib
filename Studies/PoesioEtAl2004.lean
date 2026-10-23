@@ -101,9 +101,6 @@ theorem strong_iff (prev : Utterance E R) (cur : U) :
   unfold Constraint1Strong CBUniqueness EntityContinuity
   omega
 
-/-- CB uniqueness holds under any ranking that separates the realizations of the previous
-utterance, which a partial ranking such as grammatical function becomes once a disambiguating
-factor such as linear order is added. -/
 theorem cbAll_length_le_one (prev : Utterance E R) (cur : U)
     (h : ∀ r₁ ∈ prev.realizations, ∀ r₂ ∈ prev.realizations,
       r₁.role = r₂.role → r₁.entity = r₂.entity) :
@@ -135,7 +132,6 @@ the unconditional form is `CbPronominalized`. -/
 def Rule1Original (prev cur : Utterance E R) (prevCb : Option E) : Prop :=
   (∃ c, cb prev cur = some c ∧ prevCb = some c) → CbPronominalized prev cur
 
-/-- The unconditional form implies the original one, as it implies the 1995 form. -/
 theorem CbPronominalized.rule1Original {prev cur : Utterance E R} (prevCb : Option E)
     (h : CbPronominalized prev cur) : Rule1Original prev cur prevCb :=
   fun _ ↦ h
@@ -185,13 +181,10 @@ def bfp (prev cur : Utterance E R) (prevCb : Option E) : Option BFPTransition :=
     if ∀ p ∈ prevCb, p = c then if cur.cp = some c then .continue else .retain
     else if cur.cp = some c then .smoothShift else .roughShift
 
-/-- An utterance is unclassified exactly when it has no backward-looking center: the null and
-zeroing transitions of a segment. -/
 theorem bfp_eq_none_iff (prev cur : Utterance E R) (prevCb : Option E) :
     bfp prev cur prevCb = none ↔ cb prev cur = none := by
   simp [bfp]
 
-/-- The four-way classification refines the three-way one. -/
 theorem bfp_toTransition {prev cur : Utterance E R} {prevCb : Option E} {t : BFPTransition}
     (h : bfp prev cur prevCb = some t) :
     t.toTransition = transition prevCb prev cur := by

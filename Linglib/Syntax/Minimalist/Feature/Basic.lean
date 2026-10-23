@@ -91,7 +91,6 @@ def all : List FeatureType :=
   [person, number, gender, case, agr .definiteness, participant, author, atomic, minimal,
    wh, tense, infl, oblique]
 
-/-- Every dimension is listed in `all`. -/
 theorem mem_all (t : FeatureType) : t ∈ all := by
   revert t; decide
 
@@ -221,7 +220,6 @@ theorem monotone_agreement : Monotone agreement := gc_ofAgreement_agreement.mono
 
 theorem monotone_ofAgreement : Monotone ofAgreement := gc_ofAgreement_agreement.monotone_l
 
-/-- Updating a checking bundle at an agreement dimension updates its agreement content there. -/
 theorem agreement_update_agr (b : FeatureBundle) (d : Agreement.Dimension)
     (s : FeatureSlot d.Value) :
     agreement (Function.update b (.agr d) s) = Function.update b.agreement d s.toFlat := by

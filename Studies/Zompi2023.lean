@@ -154,8 +154,6 @@ def rankedViols (rk : List Con) (c : ZCell) (r : Cand F) : List ℕ :=
 @[simp] theorem rankedViols_cons (C : Con) (rk : List Con) (c : ZCell) (r : Cand F) :
     rankedViols (C :: rk) c r = viol C c r :: rankedViols rk c r := rfl
 
-/-- A candidate survives one Eval cut iff it minimises that constraint over the
-field: the cut keeps exactly the constraint's arg-min. -/
 theorem mem_cut_iff {C : Con} {c : ZCell} {v : List (Cand F)} {r : Cand F} :
     r ∈ cut c v C ↔ r ∈ v ∧ ∀ s ∈ v, viol C c r ≤ viol C c s := by
   unfold cut
@@ -175,9 +173,6 @@ theorem mem_cut_iff {C : Con} {c : ZCell} {v : List (Cand F)} {r : Cand F} :
       exact ⟨hrv, le_antisymm ((hle _ hs₀v).trans_eq hs₀)
         (hmin _ (List.mem_map_of_mem hrv))⟩
 
-/-- **Eval is lexicographic minimization.** A candidate survives the whole cut
-cascade iff its ranked violation vector is lexicographically ≤ every rival's:
-the strict-domination cut sequence computes exactly the lex-min set. -/
 theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : ZCell} {r : Cand F} :
     r ∈ eval rk v c ↔ r ∈ v ∧ ∀ s ∈ v, rankedViols rk c r ≤ rankedViols rk c s := by
   induction rk generalizing v with
@@ -211,8 +206,6 @@ private theorem map_eq_ofFn_get {α β : Type*} (l : List α) (f : α → β) :
     l.map f = List.ofFn (fun i : Fin l.length ↦ f (l.get i)) := by
   apply List.ext_getElem <;> simp
 
-/-- The ranked violation vector is the fixed-length OT profile spelled out as a
-list. -/
 theorem rankedViols_eq_ofFn (rk : List Con) (c : ZCell) (r : Cand F) :
     rankedViols rk c r = List.ofFn (fun i : Fin rk.length ↦ viol (rk.get i) c r) :=
   map_eq_ofFn_get rk (fun C ↦ viol C c r)
@@ -224,9 +217,6 @@ def zTableau [DecidableEq F] (rk : List Con) (v : List (Cand F)) (c : ZCell) :
     Tableau (Cand F) rk.length :=
   ⟨v.toFinset, fun i ↦ viol (rk.get i) c⟩
 
-/-- **Eval and OT are one engine.** An Eval survivor is exactly a winner of the OT tableau
-`zTableau`: the morphological Max/Dep competition *is* a phonological OT tableau over the
-shared lexicographic order. -/
 theorem mem_eval_iff_optimal [DecidableEq F] {rk : List Con} {v : List (Cand F)}
     {c : ZCell} {r : Cand F} : r ∈ eval rk v c ↔ r ∈ (zTableau rk v c).optimal := by
   rw [mem_eval_iff, Tableau.mem_optimal_iff]
@@ -298,12 +288,6 @@ theorem malayalam_pattern :
 
 /-! ### The checkerboard exclusion -/
 
-/-- **The novel multidimensional generalization, exhaustively**: over all 24
-rankings and all two-candidate vocabularies on the paradigm's feature space, a
-candidate that uniquely wins both NOM.SG and ACC.PL also uniquely wins ACC.SG
-or NOM.PL — the non-compliant "checkerboard" is ungenerable while either
-Russian-doll ABA remains available (`eastFrisian_pattern`,
-`malayalam_pattern`). -/
 theorem checkerboard_excluded :
     ∀ rk ∈ rankings, ∀ fa ∈ featSpace.powerset, ∀ fb ∈ featSpace.powerset,
       Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.nom, .sg⟩ ⟨fa, Ex.A⟩ →
@@ -323,13 +307,6 @@ theorem unidimensional_ABA_excluded :
       ¬ Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.acc, .sg⟩ ⟨fb, Ex.B⟩ := by
   decide
 
-/-- The well-formedness entry condition is **necessary**, not merely
-convenient: admit the entailment-violating spec {κ_dat} (κ_dat without κ_dep)
-and case-column ABA becomes derivable — {κ_dat} takes NOM and DAT while
-{κ_dep, #pl} takes ACC under `Max(K) ≫ Dep(K) ≫ Max(#) ≫ Dep(#)`. The
-dissertation asserts the assumption "will play a crucial role in allowing the
-current theory to derive unidimensional *ABA"; this witness confirms the
-system cannot do without it. -/
 theorem illformed_spec_breaks_unidimensional_ABA :
     Wins [.maxD .kase, .depD .kase, .maxD .num, .depD .num]
         [(⟨{.k2}, Ex.A⟩ : Cand Ex), ⟨{.k1, .p0}, Ex.B⟩] ⟨.nom, .sg⟩

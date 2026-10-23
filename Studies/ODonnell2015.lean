@@ -140,7 +140,6 @@ theorem mem_rules {r : ContextFreeRule (Sym ι) (suffixGrammar ι).NT} :
     Finset.mem_image, Finset.mem_univ, true_and, eq_comm (b := r)]
   tauto
 
-/-- `N` is on no right-hand side of the suffix grammar. -/
 theorem nonterminal_N_not_mem_output :
     ∀ r ∈ (suffixGrammar ι).rules, Symbol.nonterminal SuffixNT.N ∉ r.output := by
   intro r hr
@@ -170,7 +169,6 @@ theorem Suffix.licensed_word (s : Suffix) (i : ι) :
   cases s <;> simp [Suffix.word, RoseTree.licensed_node_iff, ContextFreeGrammar.Licenses, mem_rules,
     rNess, rIon, rAte, rAdj, rV, rBnd]
 
-/-- The word of `s` has the rule of `s` at its root. -/
 theorem Suffix.ruleAt?_word (s : Suffix) (i : ι) :
     RoseTree.ruleAt? (s.word i) [] = some s.rule := by
   cases s <;> rfl
@@ -196,9 +194,6 @@ abbrev Corpus : Type :=
 def dmpcfg : DirichletPCFG (suffixGrammar ι) :=
   ⟨fun _ ↦ 1, fun _ _ ↦ one_pos⟩
 
-/-- Under the DMPCFG's Pólya-urn representation, the probability that the word after a corpus with
-rule counts `x` is the word of a nominalizer is its probability under the mean PCFG of the
-posterior given `x`, since the word has at most one node of each category. -/
 theorem dmpcfg_derivProb_word (x : ContextFreeRule (Sym ι) (suffixGrammar ι).NT → ℕ) (s : Suffix)
     (i : ι) : (dmpcfg.update x).mean.derivProb (s.word i) =
       .ofReal ((dmpcfg.update x).countsProb (RoseTree.ruleCounts {s.word i})) :=
@@ -364,8 +359,6 @@ tables of the stored derivations rooted at `a`. -/
 def seating (a : G.NT) : Multiset ℕ :=
   ((subtrees D).filter (·.value = .nonterminal a)).val.map (customers D)
 
-/-- **The full-listing analysis is consistent**: a corpus of licensed derivations has as many
-tables at each nonterminal as uses of its rules there. -/
 theorem card_seating (hD : ∀ t ∈ D, t.Licensed G.Licenses) (a : G.NT) :
     Multiset.card (seating D a) = ∑ r ∈ G.rules.filter (·.input = a), counts D r := by
   rw [seating, Multiset.card_map, ← Finset.card_def,
@@ -574,9 +567,6 @@ open Morphology Morphology.Exponence MeasureTheory
 
 variable {Ctx F : Type*} [DecidableEq Ctx]
 
-/-- **The size principle as a specificity score.** Selecting the applicable rule of least domain
-size, through `Exponence.RuleSet.selectBy` on the size reversed by `OrderDual`, yields an
-Elsewhere winner. -/
 theorem selectByCard_isElsewhereWinner {v : RuleSet (DomainRule Ctx F)} {c : Ctx}
     {r : DomainRule Ctx F} (h : v.selectBy (fun s ↦ OrderDual.toDual s.dom.card) c = some r) :
     v.IsElsewhereWinner (·.dom) c r :=

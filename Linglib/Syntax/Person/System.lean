@@ -55,7 +55,6 @@ open Discourse
 /-- The tripartition person of a participant set: its person without clusivity. -/
 def tripartitionOf (s : Finset Role) : Person := (ofParticipants s).coarsen
 
-/-- The tripartition person of a union depends only on the tripartition persons of its parts. -/
 theorem tripartitionOf_union_eq_coarsen (s t : Finset Role) :
     tripartitionOf (s ∪ t) = (tripartitionOf s ⊔ tripartitionOf t).coarsen := by
   rw [tripartitionOf, ofParticipants_union, coarsen_sup]; rfl

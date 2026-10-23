@@ -126,7 +126,6 @@ private theorem domRestrict_eq_iff {i j : V → E} :
     (Z : Set V).domRestrict i = (Z : Set V).domRestrict j ↔ ∀ z ∈ Z, i z = j z :=
   Set.domRestrict_eq_domRestrict_iff
 
-/-- Assignments of the team agreeing on every variable of `Z` agree on `u`. -/
 theorem dep_iff : Dep T Z u ↔ ∀ i ∈ T, ∀ j ∈ T, (∀ z ∈ Z, i z = j z) → i u = j u := by
   simp only [Dep, mem_dep, Finset.mem_coe, domRestrict_eq_iff]
 
@@ -144,7 +143,6 @@ theorem dep_iff_exists [Nonempty E] :
     Dep T Z u ↔ ∃ h : (Z → E) → E, ∀ i ∈ T, i u = h ((Z : Set V).domRestrict i) :=
   (Function.factorsThrough_iff _).trans <| exists_congr fun _ ↦ funext_iff.trans Subtype.forall
 
-/-- Variation is the failure of dependence. -/
 @[simp] theorem not_dep : ¬ Dep T Z u ↔ Var T Z u := by
   simp only [dep_iff, Var, not_forall, exists_prop]
 
@@ -160,22 +158,17 @@ theorem dep_empty_iff : Dep T ∅ u ↔ ((· u) '' (T : Set (V → E))).Subsingl
 theorem var_empty_iff : Var T ∅ u ↔ ((· u) '' (T : Set (V → E))).Nontrivial := by
   rw [← not_dep, dep_empty_iff, Set.not_subsingleton_iff]
 
-/-- Dependence excludes variation on the same parameters. -/
 theorem Dep.not_var (h : Dep T Z u) : ¬ Var T Z u := Team.not_var.2 h
 
-/-- A parameter depends on the parameters. -/
 theorem dep_of_mem (h : u ∈ Z) : Dep T Z u := dep_iff.2 fun _ _ _ _ hZ ↦ hZ u h
 
-/-- Every dependence holds on a team of one assignment. -/
 theorem dep_singleton (i : V → E) : Dep {i} Z u := by
   rw [Dep, Finset.coe_singleton]
   exact singleton_mem_dep i
 
-/-- Dependence on fewer parameters is dependence on more. -/
 theorem Dep.mono (hZ : Z ⊆ Z') (h : Dep T Z u) : Dep T Z' u :=
   dep_iff.2 fun i hi j hj hagree ↦ dep_iff.1 h i hi j hj fun z hz ↦ hagree z (hZ hz)
 
-/-- Variation on more parameters is variation on fewer. -/
 theorem Var.anti (hZ : Z ⊆ Z') (h : Var T Z' u) : Var T Z u :=
   let ⟨i, hi, j, hj, hagree, hne⟩ := h
   ⟨i, hi, j, hj, fun z hz ↦ hagree z (hZ hz), hne⟩
@@ -186,11 +179,9 @@ theorem Dep.trans (hZ : ∀ z ∈ Z', Dep T Z z) (h : Dep T Z' u) : Dep T Z u :=
   dep_iff.2 fun i hi j hj hagree ↦
     dep_iff.1 h i hi j hj fun z hz ↦ dep_iff.1 (hZ z hz) i hi j hj hagree
 
-/-- Dependence is inherited by subteams. -/
 theorem Dep.subset (hT : T' ⊆ T) (h : Dep T Z u) : Dep T' Z u :=
   isLowerSet_dep _ _ (Finset.coe_subset.2 hT) h
 
-/-- Variation is inherited by superteams. -/
 theorem Var.superset (hT : T ⊆ T') (h : Var T Z u) : Var T' Z u :=
   let ⟨i, hi, j, hj, hagree, hne⟩ := h
   ⟨i, hT hi, j, hT hj, hagree, hne⟩

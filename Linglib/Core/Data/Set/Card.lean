@@ -21,8 +21,6 @@ namespace Set
 
 variable {α : Type*}
 
-/-- On a finite type the extension of a predicate has the cardinality of its `Finset` filter.
-[UPSTREAM] -/
 theorem ncard_setOf_eq_card_filter [Fintype α] (p : α → Prop) [DecidablePred p] :
     {x | p x}.ncard = (Finset.univ.filter p).card := by
   rw [ncard_eq_toFinset_card', toFinset_ofPred]

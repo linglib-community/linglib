@@ -113,11 +113,9 @@ theorem lt_of_lt_of_le {a b c : I} (h : ord.lt a b) (h' : ord.le b c) : ord.lt a
 
 theorem lt_irrefl (a : I) : ¬ ord.lt a a := fun h ↦ h.2 (ord.le_refl a)
 
-/-- If `a` is not strictly below `b`, then `b` is ranked no higher than `a`. -/
 theorem le_of_not_lt {a b : I} (h : ¬ ord.lt a b) : ord.le b a :=
   Classical.byContradiction fun hba ↦ h ⟨(ord.le_total a b).resolve_right hba, hba⟩
 
-/-- Every nonempty finite set of interpretations has a top-ranked member. -/
 theorem exists_le_max {S : Set I} (hS : S.Finite) (hne : S.Nonempty) :
     ∃ m ∈ S, ∀ s ∈ S, ord.le s m := by
   let : Preorder I := { le := ord.le, le_refl := ord.le_refl, le_trans := ord.le_trans }
@@ -178,8 +176,6 @@ fails. -/
 def coneDiff (le : W → W → Prop) (P Q : W → Prop) (i : W) : Set W :=
   {x | le x i ∧ P x ∧ ¬ Q x}
 
-/-- Whenever `below` is the strict form of the total `ge_w`, strict domination lifting is an ∃∀
-clause in `below`. -/
 theorem strict_lewisLift_iff_below {below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (A B : Set W) :
@@ -187,8 +183,6 @@ theorem strict_lewisLift_iff_below {below : W → W → Prop}
   rw [strict_lewisLift_iff hTotal]
   exact exists_congr fun a ↦ and_congr_right fun _ ↦ forall₂_congr fun b _ ↦ (hBelow b a).symm
 
-/-- Whenever `below` is the strict form of the total `ge_w`, the cone-localized clause is the
-strict domination lift on the cone difference sets. -/
 theorem coneStrictLift_iff_strict_lewisLift {le below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (P Q : W → Prop) (i : W) :
@@ -223,8 +217,6 @@ instance [Fintype W] [DecidableRel le] [DecidablePred P] [DecidablePred Q] :
 
 variable {le P Q i}
 
-/-- The revised comparative simplifies: its witness ranks strictly above every member making `Q`
-true or above every member making `P` false. -/
 theorem revisedComp_iff : RevisedComp le P Q i ↔ ∃ a, le a i ∧ P a ∧ ¬ Q a ∧
     ((∀ b, le b i → Q b → Strict le b a) ∨ (∀ b, le b i → ¬ P b → Strict le b a)) := by
   refine exists_congr fun a ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦
@@ -236,7 +228,6 @@ theorem revisedComp_iff : RevisedComp le P Q i ↔ ∃ a, le a i ∧ P a ∧ ¬ 
     · exact ⟨fun b hb hQ _ ↦ h b hb hQ, .inl fun b hb _ hQ ↦ h b hb hQ⟩
     · exact ⟨fun b hb _ hP ↦ h b hb hP, .inr fun b hb hP _ ↦ h b hb hP⟩
 
-/-- The basic comparative is the revised comparative of the two difference sets. -/
 theorem coneStrictLift_iff_revisedComp :
     ConeStrictLift le (Strict le) P Q i ↔
       RevisedComp le (fun a ↦ P a ∧ ¬ Q a) (fun a ↦ Q a ∧ ¬ P a) i :=
@@ -245,8 +236,6 @@ theorem coneStrictLift_iff_revisedComp :
         .inl fun _ _ h h' ↦ (h'.2 h.1).elim⟩,
       fun ⟨⟨hP, hQ⟩, _, hd, _⟩ ↦ ⟨hP, hQ, fun b hb hQ hP ↦ hd b hb ⟨hQ, hP⟩ fun h ↦ hP h.1⟩⟩
 
-/-- The revised comparative is a disjunction of two basic comparatives, with the difference set
-`P ∧ ¬Q` compared against `¬P` and against `Q`. -/
 theorem revisedComp_iff_coneStrictLift :
     RevisedComp le P Q i ↔
       ConeStrictLift le (Strict le) (fun a ↦ P a ∧ ¬ Q a) (fun a ↦ ¬ P a) i ∨
@@ -260,7 +249,6 @@ theorem revisedComp_iff_coneStrictLift :
   · exact h b hb hP fun h ↦ hP h.1
   · exact h b hb hQ fun h ↦ h.2 hQ
 
-/-- The revised clauses at `i` read their arguments only on the cone below `i`. -/
 theorem RevisedComp.congr {P' Q' : W → Prop} (hP : ∀ a, le a i → (P a ↔ P' a))
     (hQ : ∀ a, le a i → (Q a ↔ Q' a)) : RevisedComp le P Q i ↔ RevisedComp le P' Q' i :=
   exists_congr fun a ↦ and_congr_right fun ha ↦ by simp +contextual only [hP, hQ, ha]
@@ -291,7 +279,6 @@ theorem RevisedEqui.symm (h : RevisedEqui le P Q i) : RevisedEqui le Q P i := by
   obtain ⟨⟨b, hb, hPb, hQb, hab⟩, c, hc, hPc, hQc, hac⟩ := h a ha (by tauto)
   exact ⟨⟨b, hb, hQb, hPb, hab⟩, c, hc, hQc, hPc, hac⟩
 
-/-- The revised equative excludes the revised comparative. -/
 theorem RevisedEqui.not_revisedComp (h : RevisedEqui le P Q i) : ¬ RevisedComp le P Q i := by
   rintro ⟨a, ha, hPa, hQa, hd, he⟩
   rcases h with ⟨h, -⟩ | h
@@ -383,8 +370,6 @@ theorem RevisedComp.of_revisedEqui_left (h : RevisedComp ord.le P Q i)
     refine ⟨m, hm, hR, hQ, fun b hb _ hRb ↦ ?_, .inr fun b hb hRb _ ↦ ?_⟩ <;>
       exact (em (P b)).elim (hPlt b hb · hRb) (hnP b hb)
 
-/-- The case of trichotomy where a top-ranked member of the cone's symmetric difference makes `P`
-true. -/
 private theorem revisedEqui_or_revisedComp_of_max {m : W} (hm : ord.le m i) (hP : P m)
     (hQ : ¬ Q m) (hmax : ∀ a, ord.le a i → (P a ↔ ¬ Q a) → ord.le a m) :
     RevisedEqui ord.le P Q i ∨ RevisedComp ord.le P Q i := by
@@ -405,8 +390,6 @@ private theorem revisedEqui_or_revisedComp_of_max {m : W} (hm : ord.le m i) (hP 
         ord.le_trans _ _ _ (hmax a ha (iff_of_true hPa hQa)) (ord.le_of_not_lt hlt)⟩,
       fun a ha hQa hPa ↦ ⟨m, hm, hP, hQ, hmax a ha (iff_of_false hPa (not_not.2 hQa))⟩⟩)
 
-/-- Over finitely many interpretations, two predicates are revised-equal or one is revised-more
-than the other. -/
 theorem revisedEqui_or_revisedComp_or_revisedComp [Finite W] (ord : SemanticOrdering W)
     (P Q : W → Prop) (i : W) :
     RevisedEqui ord.le P Q i ∨ RevisedComp ord.le P Q i ∨ RevisedComp ord.le Q P i := by
@@ -510,8 +493,6 @@ instance instDec [Fintype I] [Fintype E] [DecidableEq E]
 variable {interp} {A B : ComparativeFormula L E} {le : I → I → Prop}
   {ord : SemanticOrdering I} {i : I} {w : W}
 
-/-- The comparative clause over a total preorder, with the domination conjunction packaged
-as `ord.lt`. -/
 theorem realize_comp_iff :
     Realize interp (.comp A B) ord.le i w ↔
     ∃ i', ord.le i' i ∧ Realize interp A ord.le i' w ∧
@@ -520,12 +501,10 @@ theorem realize_comp_iff :
         ¬ Realize interp A ord.le i'' w → ord.lt i'' i' :=
   Iff.rfl
 
-/-- Realization of a ground unary atom. -/
 @[simp] theorem realize_matom (R : L.Relations 1) (e : E) :
     Realize interp (.matom R e) le i w ↔ (interp i w).RelMap R ![e] :=
   Formula.realizeAt_rel₁ (interp i) w id R (Term.var e)
 
-/-- Comparative-free formulas are ordering-invariant. -/
 theorem ComparativeFree.realize_congr :
     ∀ {φ : ComparativeFormula L E}, φ.ComparativeFree →
       ∀ {le le' : I → I → Prop} {i : I} {w : W},
@@ -536,8 +515,6 @@ theorem ComparativeFree.realize_congr :
   | .sup _ _, h => or_congr (ComparativeFree.realize_congr h.1) (ComparativeFree.realize_congr h.2)
   | .comp _ _, h => h.elim
 
-/-- The comparative is the strict domination lift of Holliday and Icard, Lewis's lifting, applied to
-the cone at the evaluation index. -/
 theorem realize_comp_iff_strict_lewisLift :
     Realize interp (.comp A B) ord.le i w ↔
     Strict (LewisLift (flip ord.le))
@@ -545,15 +522,12 @@ theorem realize_comp_iff_strict_lewisLift :
       (coneDiff ord.le (Realize interp B ord.le · w) (Realize interp A ord.le · w) i) :=
   coneStrictLift_iff_strict_lewisLift (fun a b ↦ ord.le_total b a) (fun _ _ ↦ Iff.rfl) _ _ _
 
-/-- The comparative is irreflexive, since a witness would make `A` both true and false. -/
 theorem not_realize_comp_self : ¬ Realize interp (.comp A A) le i w :=
   fun ⟨_, _, hA, hnA, _⟩ ↦ hnA hA
 
-/-- The equative is reflexive. -/
 theorem realize_equi_self : Realize interp (A.equi A) le i w :=
   ⟨not_realize_comp_self, not_realize_comp_self⟩
 
-/-- The equative is symmetric. -/
 theorem realize_equi_comm :
     Realize interp (A.equi B) le i w ↔ Realize interp (B.equi A) le i w :=
   and_comm
@@ -588,13 +562,10 @@ section Entailment
 
 variable {ord : SemanticOrdering I} {i : I} {w : W} {A B C : ComparativeFormula L E}
 
-/-- The comparative with its right constituent entails the left, since an interpretation making `B`
-true and `A` false would have to lie strictly below one ranked no higher than itself. -/
 theorem eval_of_comp (h : Eval interp (.comp A B) ord i w) (hB : Eval interp B ord i w) :
     Eval interp A ord i w :=
   of_not_not fun hA ↦ let ⟨_, hle, _, _, hdom⟩ := h; (hdom i (ord.le_refl i) hB hA).2 hle
 
-/-- The comparative is asymmetric. -/
 theorem comp_asymm (h : Eval interp (.comp A B) ord i w) : ¬ Eval interp (.comp B A) ord i w :=
   fun ⟨j, hj, hB, hA, domB⟩ ↦
     let ⟨i', hi', hA', hB', domA⟩ := h
@@ -616,38 +587,32 @@ theorem comp_trans (h₁ : Eval interp (.comp A B) ord i w)
     · exact ord.lt_of_lt_of_le (dom₁ j hj hB hA) hle
     · exact dom₂ j hj hC hB
 
-/-- The comparative contraposes. -/
 theorem comp_not_not_iff :
     Eval interp (.comp (.not B) (.not A)) ord i w ↔ Eval interp (.comp A B) ord i w :=
   exists_congr fun _ ↦
     ⟨fun ⟨h₁, h₂, h₃, h₄⟩ ↦ ⟨h₁, not_not.1 h₃, h₂, fun j hj hB hA ↦ h₄ j hj hA (not_not.2 hB)⟩,
       fun ⟨h₁, h₂, h₃, h₄⟩ ↦ ⟨h₁, h₃, not_not.2 h₂, fun j hj hA hB ↦ h₄ j hj (not_not.1 hB) hA⟩⟩
 
-/-- The comparative distributes over a disjunction on the right. -/
 theorem comp_sup (h : Eval interp (.comp A (.sup B C)) ord i w) :
     Eval interp (.comp A B) ord i w ∧ Eval interp (.comp A C) ord i w :=
   let ⟨i', hi', hA, hBC, dom⟩ := h
   ⟨⟨i', hi', hA, fun hB ↦ hBC (Or.inl hB), fun j hj hB hA' ↦ dom j hj (Or.inl hB) hA'⟩,
     ⟨i', hi', hA, fun hC ↦ hBC (Or.inr hC), fun j hj hC hA' ↦ dom j hj (Or.inr hC) hA'⟩⟩
 
-/-- The comparative distributes over a conjunction on the left. -/
 theorem inf_comp (h : Eval interp (.comp (.inf A B) C) ord i w) :
     Eval interp (.comp A C) ord i w ∧ Eval interp (.comp B C) ord i w :=
   let ⟨i', hi', ⟨hA, hB⟩, hC, dom⟩ := h
   ⟨⟨i', hi', hA, hC, fun j hj hC' hnA ↦ dom j hj hC' fun h ↦ hnA h.1⟩,
     ⟨i', hi', hB, hC, fun j hj hC' hnB ↦ dom j hj hC' fun h ↦ hnB h.2⟩⟩
 
-/-- The equative is preserved by negating both sides. -/
 theorem equi_not_not (h : Eval interp (A.equi B) ord i w) :
     Eval interp ((ComparativeFormula.not A).equi (.not B)) ord i w :=
   ⟨fun h' ↦ h.2 ((comp_not_not_iff interp).1 h'), fun h' ↦ h.1 ((comp_not_not_iff interp).1 h')⟩
 
-/-- The weak comparative is the negation of the converse comparative. -/
 theorem eval_weak_iff : Eval interp (A.weak B) ord i w ↔ ¬ Eval interp (.comp B A) ord i w :=
   ⟨fun h ↦ h.elim (comp_asymm interp) And.right,
     fun h ↦ (em _).elim Or.inl fun h' ↦ Or.inr ⟨h', h⟩⟩
 
-/-- Any two sentences are comparable, so one is more than the other or they are equal. -/
 theorem eval_comp_or_equi :
     Eval interp (.sup (.sup (.comp A B) (.comp B A)) (A.equi B)) ord i w :=
   (em _).elim (Or.inl ∘ Or.inl) fun h₁ ↦ (em _).elim (Or.inl ∘ Or.inr) fun h₂ ↦ Or.inr ⟨h₁, h₂⟩
@@ -664,7 +629,6 @@ theorem eval_comp_not_iff :
 
 variable [Fintype I]
 
-/-- Truth preservation implies acceptance preservation. -/
 theorem accepted_mono (h : ∀ i, Eval interp A ord i w → Eval interp B ord i w)
     (hA : AssertoricContent interp A ord w) : AssertoricContent interp B ord w :=
   fun x hx ↦ h x (hA x hx)
@@ -678,7 +642,6 @@ theorem accepted_comp_of_accepted (hA : AssertoricContent interp A ord w)
   fun x hx ↦ ⟨x, ord.le_refl x, hA x hx, hB x hx, fun j hj _ hAj ↦
     ⟨hj, fun hxj ↦ hAj (hA j fun y hy ↦ hx y (ord.lt_of_le_of_lt hxj hy))⟩⟩
 
-/-- Accepting `A ≈ B` and `A` means accepting `B`. -/
 theorem accepted_of_accepted_equi (h : AssertoricContent interp (A.equi B) ord w)
     (hA : AssertoricContent interp A ord w) : AssertoricContent interp B ord w :=
   fun x hx ↦ of_not_not fun hB ↦ (h x hx).1 ⟨x, ord.le_refl x, hA x hx, hB, fun j hj _ hAj ↦
@@ -712,14 +675,11 @@ instance {I : Type*} (ord : SemanticOrdering I) (d : DistanceFunction I ord)
     DecidableRel (FarBelow ord d) := fun _ _ ↦
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The relation ≪ is asymmetric, since centeredness and noncontractivity force points related by ≤
-in both directions to be close. -/
 theorem FarBelow.asymm {I : Type*} {ord : SemanticOrdering I}
     (d : DistanceFunction I ord) {a b : I} (h : FarBelow ord d a b) :
     ¬ FarBelow ord d b a :=
   fun h' ↦ h'.2 (d.noncontractive b b a (d.centered b) h'.1 h.1)
 
-/-- The relation "not far below" is total, which lets the strict l-lifting characterize ≫. -/
 theorem not_farBelow_total {I : Type*} {ord : SemanticOrdering I}
     (d : DistanceFunction I ord) (a b : I) :
     ¬ FarBelow ord d a b ∨ ¬ FarBelow ord d b a :=
@@ -737,7 +697,6 @@ abbrev EvalCompWith : Prop :=
   ConeStrictLift ord.le below
     (fun j ↦ Eval interp φ ord j w) (fun j ↦ Eval interp ψ ord j w) i
 
-/-- ≻ is the template at <. -/
 theorem eval_comp_iff_compWith :
     Eval interp (.comp φ ψ) ord i w ↔ EvalCompWith interp φ ψ ord ord.lt i w :=
   Iff.rfl
@@ -779,9 +738,6 @@ section ModifierGroundings
 variable (φ ψ : ComparativeFormula L E) (ord : SemanticOrdering I)
   (d : DistanceFunction I ord) (i : I) (w : W)
 
-/-- ≫ is the strict l-lifting under the coarser total preorder "not far below". The axioms on the
-distance function are exactly what make that relation total, so the lift of Holliday and Icard
-applies with ≪ in the role of <. -/
 theorem evalMuchMore_iff_strict_lewisLift :
     EvalMuchMore interp φ ψ ord d i w ↔
     Strict
@@ -793,9 +749,6 @@ theorem evalMuchMore_iff_strict_lewisLift :
     (fun _ _ ↦ ⟨fun h ↦ ⟨FarBelow.asymm d h, not_not_intro h⟩,
       fun h ↦ not_not.mp h.2⟩) _ _ i
 
-/-- *mostly* is the strict l-lifting comparing levels that are uniform for `φ`, the classes of
-`ord.equiv`, mathlib's `AntisymmRel.setoid`. Some reasonably high level where `φ` holds throughout,
-strictly below the index, dominates every level below it where `φ` fails throughout. -/
 theorem evalMostly_iff_strict_lewisLift :
     EvalMostly interp φ ord d i w ↔
     Strict
@@ -827,28 +780,22 @@ theorem evalVery_iff :
     exact ⟨i, ord.le_refl i, h i (d.centered i), not_not.2 (h i (d.centered i)),
       fun b hb hφ _ ↦ ⟨hb, fun hc ↦ hφ (h b hc)⟩⟩
 
-/-- *very A* entails `A`, since every interpretation is close to itself. -/
 theorem eval_of_very (h : EvalVery interp φ ord d i w) : Eval interp φ ord i w :=
   (evalVery_iff interp d).1 h i (d.centered i)
 
-/-- *sorta A* is truth at some reasonably close interpretation. -/
 theorem evalSorta_iff :
     EvalSorta interp φ ord d i w ↔ ∃ i', d.close i i' ∧ Eval interp φ ord i' w :=
   ⟨fun h ↦ Classical.byContradiction fun h' ↦
       h ((evalVery_iff interp d).2 fun i' hi' hφ ↦ h' ⟨i', hi', hφ⟩),
     fun ⟨i', hi', hφ⟩ h ↦ (evalVery_iff interp d).1 h i' hi' hφ⟩
 
-/-- `A` entails *sorta A*. -/
 theorem sorta_of_eval (h : Eval interp φ ord i w) : EvalSorta interp φ ord d i w :=
   (evalSorta_iff interp d).2 ⟨i, d.centered i, h⟩
 
-/-- *mostly A* entails *sorta A*. -/
 theorem sorta_of_mostly (h : EvalMostly interp φ ord d i w) : EvalSorta interp φ ord d i w :=
   let ⟨i', _, hc, hφ, _⟩ := h
   (evalSorta_iff interp d).2 ⟨i', hc, hφ i' (AntisymmRel.refl _ _)⟩
 
-/-- *mostly A* and *mostly ¬A* are contradictory, since each witness level would lie strictly below
-the other. -/
 theorem not_mostly_not_of_mostly (h : EvalMostly interp φ ord d i w) :
     ¬ EvalMostly interp (.not φ) ord d i w :=
   fun ⟨i₂, lt₂, _, all₂, dom₂⟩ ↦
@@ -883,8 +830,6 @@ Klein's comparison-class parameter. -/
 def interpretationDelineation (i : I) : Degree.Delineation E :=
   ⟨fun C ↦ {x | (∃ i', ord.le i' i ∧ C = ext₁ (interp i' w) R) ∧ x ∈ C}⟩
 
-/-- The delineation comparative over the induced delineation is the existential witness clause of
-the metalinguistic comparative, under which some cone extension separates `a` from `b`. -/
 theorem delineation_comparative_iff (i : I) (a b : E) :
     (interpretationDelineation interp ord R w i).Comparative a b ↔
     ∃ i', ord.le i' i ∧ a ∈ ext₁ (interp i' w) R ∧ b ∉ ext₁ (interp i' w) R := by
@@ -895,9 +840,6 @@ theorem delineation_comparative_iff (i : I) (a b : E) :
     exact ⟨ext₁ (interp i' w) R, ⟨⟨i', h_le, rfl⟩, h_a⟩,
       fun h ↦ h_b h.2⟩
 
-/-- Under No Reversal, the metalinguistic comparative for a gradable predicate is Klein's
-delineation comparative (`Delineation.Comparative`) over the delineation that the interpretations
-induce, since No Reversal makes the domination clause of the comparative redundant. -/
 theorem eval_mc_iff_delineation_of_noReversal (i : I) (a b : E)
     (hnr : NoReversal interp ord R w b a) :
     Eval interp (.comp (.matom R a) (.matom R b)) ord i w ↔
@@ -950,15 +892,12 @@ instance EvalRevised.instDec [Fintype I] [Fintype E] [DecidableEq E]
 
 variable {A B C : ComparativeFormula L E} {ord : SemanticOrdering I} {i : I} {w : W}
 
-/-- The revised comparative is transitive. -/
 theorem evalRevised_comp_trans (h₁ : EvalRevised interp (.comp A B) ord i w)
     (h₂ : EvalRevised interp (.comp B C) ord i w) : EvalRevised interp (.comp A C) ord i w :=
   RevisedComp.trans h₁ h₂
 
 variable [Finite I]
 
-/-- The equative `¬(A ≻ B) ∧ ¬(B ≻ A)` of the revised semantics is the supplement's revised
-equative clause. -/
 theorem evalRevised_equi_iff : EvalRevised interp (A.equi B) ord i w ↔
     RevisedEqui ord.le (EvalRevised interp A ord · w) (EvalRevised interp B ord · w) i := by
   refine ⟨fun ⟨h₁, h₂⟩ ↦ ?_, fun h ↦ ⟨h.not_revisedComp, h.symm.not_revisedComp⟩⟩
@@ -1021,16 +960,10 @@ theorem evalMCond_iff_entails (hB : B.ComparativeFree) :
   · intro h x hx hAx
     exact hB.realize_congr.mpr (h ⟨hx, hAx⟩)
 
-/-- A conditional with a consequent free of the comparative conveys the weak comparative, since
-every ranked interpretation of the antecedent makes the consequent true, so none witnesses `A ≻ B`.
--/
 theorem weak_of_mcond (hB : B.ComparativeFree) (h : EvalMCond interp A B ord i w) :
     Eval interp (B.weak A) ord i w :=
   (eval_weak_iff interp).2 fun ⟨i', hi', hA, hnB, _⟩ ↦ hnB (hB.realize_congr.1 (h i' hi' hA))
 
-/-- *If A or B, then A*, but not *if A or B, then B*, conveys the strict comparative `A ≻ B` for
-constituents free of the comparative. The failure of the second conditional is a ranked witness for
-`A` and against `B`, and the first leaves it no rival. -/
 theorem comp_of_mcond_sup (hA : A.ComparativeFree) (hB : B.ComparativeFree)
     (h₁ : EvalMCond interp (.sup A B) A ord i w) (h₂ : ¬ EvalMCond interp (.sup A B) B ord i w) :
     Eval interp (.comp A B) ord i w := by
@@ -1039,9 +972,6 @@ theorem comp_of_mcond_sup (hA : A.ComparativeFree) (hB : B.ComparativeFree)
   obtain ⟨x, ⟨hx, hAB⟩, hnB⟩ := h₂
   exact ⟨x, hx, hAB.resolve_right hnB, hnB, fun j hj hB' hnA ↦ absurd (h₁ ⟨hj, Or.inr hB'⟩) hnA⟩
 
-/-- *If A, then more A than not* is valid for `A` free of the comparative, since under the
-restricted ordering every ranked interpretation makes `A` true, so the rival set of the consequent
-is empty. -/
 theorem mcond_comp_not (hA : A.ComparativeFree) : EvalMCond interp A (.comp A (.not A)) ord i w :=
   fun i' _ hA' ↦ ⟨i', ⟨ord.le_refl i', hA', hA'⟩, hA.realize_congr.1 hA',
     not_not.2 (hA.realize_congr.1 hA'),
@@ -1263,16 +1193,11 @@ instance : DecidableRel tiedOrd.le :=
 /-- *Ann is as much a linguist as not* is consistent, a borderline case, Observation 5. -/
 theorem equi_not_consistent : Eval tied (La.equi (.not La)) tiedOrd .j0 .w0 := by decide
 
-/-- Acceptance is nonclassical, since the tautology is accepted on the tied model while the
-disjunction of the two comparatives it splits into is not, as with Yalcin's informational
-entailment. -/
 theorem accepted_sup_not_accepted_comp :
     AssertoricContent tied (.sup La (.not La)) tiedOrd .w0 ∧
       ¬ AssertoricContent tied (.sup (.comp La (.not La)) (.comp (.not La) La)) tiedOrd .w0 := by
   decide
 
-/-- Modus tollens fails for acceptance, since *if A then more A than not* is valid and the negation
-of its consequent is accepted on the tied model, yet `¬A` is not. -/
 theorem modus_tollens_not_accepted :
     AssertoricContent tied (.not (.comp La (.not La))) tiedOrd .w0 ∧
       ¬ AssertoricContent tied (.not La) tiedOrd .w0 := by
@@ -1288,19 +1213,14 @@ def dist₃ : DistanceFunction I3 ord₃ where
 
 instance : DecidableRel dist₃.close := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- *sorta A* and *mostly A* are consistent with `¬A`, since at the top of the model where Ann is
-neither, a close lower level makes her a linguist. -/
 theorem sorta_mostly_consistent_with_not :
     ¬ Eval neither La ord₃ .i2 .w0 ∧ EvalSorta neither La ord₃ dist₃ .i2 .w0 ∧
       EvalMostly neither La ord₃ dist₃ .i2 .w0 := by
   decide
 
-/-- `A` does not entail *very A*, since a close interpretation may falsify it. -/
 theorem not_very_of_eval : Eval both La ord₃ .i1 .w0 ∧ ¬ EvalVery both La ord₃ dist₃ .i1 .w0 := by
   decide
 
-/-- The metalinguistic conditional is not the material conditional, since *if Ann is a linguist, she
-is a philosopher* fails at the top of the model where she is both. -/
 theorem mcond_not_material : ¬ EvalMCond both La Pa ord₃ .i2 .w0 := by decide
 
 /-! ### No Reversal -/
@@ -1326,10 +1246,8 @@ abbrev Tb : ComparativeFormula (Language.monadic Pred1) Entity2 := .matom Pred1.
     | .i1 => {.ann}
     | .i2 => {.ann, .ben}
 
-/-- No Reversal holds for the nested extensions, in the direction the bridge consumes. -/
 theorem noReversal_nested : NoReversal nested ord₃ Pred1.tall .w0 .ben .ann := by decide
 
-/-- *Ann is taller than Ben* holds from `i1` up and its converse nowhere. -/
 theorem ann_taller_nested :
     Eval nested (.comp Ta Tb) ord₃ .i1 .w0 ∧ ∀ i : I3, ¬ Eval nested (.comp Tb Ta) ord₃ i .w0 := by
   decide
@@ -1341,9 +1259,6 @@ theorem ann_taller_nested :
     | .i1 => {.ben}
     | .i2 => {.ann, .ben}
 
-/-- Without No Reversal the comparative and the delineation comparative come apart, since the
-reversing model violates it, the comparative fails at the top, and the delineation comparative holds
-there. -/
 theorem diverge_without_noReversal :
     ¬ NoReversal reversing ord₃ Pred1.tall .w0 .ben .ann ∧
     ¬ Eval reversing (.comp Ta Tb) ord₃ .i2 .w0 ∧

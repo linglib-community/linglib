@@ -85,8 +85,6 @@ the tense it combines with into a constraint on the evidential perspective (§3)
 def evidential (acquisition tense : Finset Ordering) : Constraint :=
   { eventToAcquisition := tense, acquisitionToSpeech := acquisition }
 
-/-- A tense that is the join of two tenses holds under an evidential exactly when one of
-them does. -/
 theorem holds_evidential_sup {a t t' : Finset Ordering} {f : EvidentialFrame T} :
     (evidential a (t ⊔ t')).Holds f ↔ (evidential a t).Holds f ∨ (evidential a t').Holds f :=
   Constraint.holds_eventToAcquisition_sup (c := evidential a t)
@@ -131,16 +129,12 @@ theorem te_past_derived : (te ⟦past⟧).derived = ⟦past⟧ := comp_past_past
 
 theorem te_present_derived : (te ⟦present⟧).derived = ⟦past⟧ := comp_present_left _
 
-/-- Prospective evidence acquired in the past of speech leaves the utterance perspective open, so
-the future under *-te* is compatible with a past, present or future event. -/
 theorem te_future_derived : (te ⟦future⟧).derived = ⊤ := comp_future_past
 
 theorem ney_past_derived : (ney ⟦past⟧).derived = ⟦past⟧ := comp_present_right _
 
 theorem ney_present_derived : (ney ⟦present⟧).derived = ⟦present⟧ := comp_present_right _
 
-/-- Present evidence that is prospective is for a future event, since S = A and A < T give
-S < T. -/
 theorem ney_future_derived : (ney ⟦future⟧).derived = ⟦future⟧ := comp_present_right _
 
 /-- Downstream evidence acquired by the time of speech is for a nonfuture event ((17)). -/
@@ -216,7 +210,6 @@ def Scheduled (e : Datum) : Prop := e.feature? "scheduled" = some "true"
 
 instance : DecidablePred Scheduled := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-/-- Every example names a cell and a scenario. -/
 theorem cell?_frame?_isSome : ∀ e ∈ Examples.all, (cell? e).isSome ∧ (frame? e).isSome := by
   decide
 

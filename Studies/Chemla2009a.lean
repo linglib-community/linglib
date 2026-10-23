@@ -74,9 +74,6 @@ private theorem forall_mem_of_ncard_eq_zero {W E : Type} [Finite E] {A : W → E
   by_contra hP
   exact (eq_empty_iff_forall_notMem.1 h) e ⟨he, hP⟩
 
-/-- In a model whose restrictor holds of every individual, `a` of whom satisfy the presupposition
-and `b` do not, a scope that holds of the individuals in `d` makes the sentence true iff `q` holds
-at the point it counts. -/
 private theorem model_iff {a b : ℕ} (D : Set (Unit × (Fin a ⊕ Fin b))) (d : Set (Fin a ⊕ Fin b))
     (hD : ∀ x, x ∈ D ↔ x.2 ∈ d) :
     () ∈ scopeTruth q (fun _ _ ↦ True) D ↔ q dᶜ.ncard d.ncard := by

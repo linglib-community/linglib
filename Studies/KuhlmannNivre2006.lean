@@ -79,7 +79,6 @@ def edgeDegree : ℕ :=
 
 variable {g}
 
-/-- An arc has degree zero exactly when its head dominates every position it spans. -/
 theorem edgeDegreeAt_eq_zero_iff (hT : g.IsTree) {h d : Fin n} :
     edgeDegreeAt g h d = 0 ↔ ∀ v ∈ Set.uIcc h d, Dominates g h v := by
   rw [edgeDegreeAt, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
@@ -95,8 +94,6 @@ theorem edgeDegreeAt_eq_zero_iff (hT : g.IsTree) {h d : Fin n} :
       exact (H (not_not.mp hq) fun u hu ↦ hT.leftUnique_adj hu hpq ▸ hp).trans hqv
   · exact fun H v hv _ ↦ H v hv
 
-/-- Degree zero is projectivity, for edge degree as for gap degree: a tree has edge degree zero
-exactly when it is projective. -/
 theorem edgeDegree_eq_zero_iff (hT : g.IsTree) : edgeDegree g = 0 ↔ g.IsProjective := by
   rw [Graph.isProjective_iff_isArcProjective, edgeDegree, ← Nat.bot_eq_zero,
     Finset.sup_eq_bot_iff]
@@ -144,7 +141,6 @@ def fig2b : Graph 5 :=
 theorem fig2a_isTree : fig2a.IsTree := by decide
 theorem fig2b_isTree : fig2b.IsTree := by decide
 
-/-- Planar but not projective, with the root strictly inside the gap of node 1. -/
 theorem fig2a_planar_not_projective :
     fig2a.IsPlanar ∧ ¬ fig2a.IsProjective ∧ (0 : Fin 3) < fig2a.root ∧ fig2a.root < 2 := by
   decide
@@ -173,7 +169,6 @@ def fig3c : Graph 6 :=
 
 theorem figure3_isTree : fig3a.IsTree ∧ fig3b.IsTree ∧ fig3c.IsTree := by decide
 
-/-- Node 2 has gap degree 0, 1, and 2 across the figure, and in each graph the maximum. -/
 theorem figure3_gapDegree :
     (fig3a.gapDegreeAt 1 = 0 ∧ fig3a.gapDegree = 0) ∧
       (fig3b.gapDegreeAt 1 = 1 ∧ fig3b.gapDegree = 1) ∧
@@ -255,14 +250,11 @@ def nonProjective (treebank : String) : ℕ := total treebank - count treebank .
 /-- A share in hundredths of a percent, rounded as the paper prints it. -/
 def shareBp (num den : ℕ) : ℤ := round ((num : ℚ) / den * 10000)
 
-/-- About 15% of the Danish and 23% of the Prague trees are non-projective. -/
 theorem nonProjective_share :
     shareBp (nonProjective "DDT") (total "DDT") = 1505 ∧
       shareBp (nonProjective "PDT") (total "PDT") = 2315 := by
   decide +kernel
 
-/-- Gap degree at most one covers 99.84% of DDT and 99.57% of PDT, edge degree at most one
-98.25% and 99.54%. -/
 theorem degreeLe1_coverage :
     (shareBp (atMost "DDT" .gapDegreeEq 1) (total "DDT") = 9984 ∧
       shareBp (atMost "PDT" .gapDegreeEq 1) (total "PDT") = 9957) ∧
@@ -270,8 +262,6 @@ theorem degreeLe1_coverage :
       shareBp (atMost "PDT" .edgeDegreeEq 1) (total "PDT") = 9954) := by
   decide +kernel
 
-/-- Among the non-projective trees, planarity covers 9.68% of DDT and 22.93% of PDT,
-well-nestedness 99.24% and 99.54%. -/
 theorem nonProjective_binary :
     (shareBp (count "DDT" .planar - count "DDT" .projective) (nonProjective "DDT") = 968 ∧
       shareBp (count "PDT" .planar - count "PDT" .projective) (nonProjective "PDT") = 2293) ∧

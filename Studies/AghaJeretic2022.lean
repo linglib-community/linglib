@@ -173,8 +173,6 @@ theorem exception_tolerance :
 
 /-! ### Domain restriction -/
 
-/-- If weak necessity quantifies over a proper subset of the domain of *allowed*, the negated
-modal and the existential continuation are jointly satisfiable. -/
 theorem domainRestriction_no_contradiction {D' D : Finset W} (h : D' ⊂ D) :
     ∃ q : W → Prop, (∀ w ∈ D', ¬ q w) ∧ ∃ w ∈ D, q w :=
   let ⟨w, hw, hw'⟩ := Finset.exists_of_ssubset h
@@ -192,8 +190,6 @@ open scoped Finset
 
 variable {E : Type*} [DecidableEq E] {s X : Finset E}
 
-/-- The minimal sets in the existential quantifier over `s` are the singletons of its
-elements. -/
 theorem minimal_inter_nonempty_iff :
     Minimal (fun X ↦ (s ∩ X).Nonempty) X ↔ ∃ w ∈ s, X = {w} := by
   refine ⟨fun h ↦ ?_, ?_⟩
@@ -205,14 +201,11 @@ theorem minimal_inter_nonempty_iff :
     exact minimal_iff_forall_lt.2 ⟨⟨w, Finset.mem_inter.2 ⟨hw, Finset.mem_singleton_self w⟩⟩,
       fun Y hY ↦ by simp [Finset.ssubset_singleton_iff.1 hY]⟩
 
-/-- The existential quantifier over a nonempty `s` has a minimal set. -/
 theorem exists_minimal_inter_nonempty (h : s.Nonempty) :
     ∃ X, Minimal (fun X ↦ (s ∩ X).Nonempty) X :=
   let ⟨w, hw⟩ := h
   ⟨{w}, minimal_inter_nonempty_iff.2 ⟨w, hw, rfl⟩⟩
 
-/-- The existential quantifier over an `s` with two or more elements has no unique minimal
-set. -/
 theorem not_existsUnique_minimal_inter_nonempty (h : 1 < #s) :
     ¬ ∃! X, Minimal (fun X ↦ (s ∩ X).Nonempty) X := by
   rintro ⟨X, -, huniq⟩
@@ -310,28 +303,22 @@ theorem domainRestriction_fails_exactly_gap :
       (domainRestrictionPredict d.polarity d.scenario = d.observed ↔ d.scenario ≠ .gap) := by
   decide
 
-/-- A negated weak necessity modal, however the negation is placed, rejects the existential
-continuation. -/
 theorem weak_negated_contradicts :
     ∀ e ∈ Examples.all, e.feature? "force" = some "weak" → (e.feature? "negation").isSome →
       e.feature? "remover" = none → e.feature? "continuation_felicity" = some "infelicitous" := by
   decide
 
-/-- A strong necessity modal under extra-clausal negation accepts it. -/
 theorem strong_extraclausal_compatible :
     ∀ e ∈ Examples.all, e.feature? "force" = some "strong" →
       e.feature? "negation" = some "extra-clausal" →
         e.feature? "continuation_felicity" = some "felicitous" := by
   decide
 
-/-- *Necessarily* licenses the continuation wherever it is inserted. -/
 theorem necessarily_licenses_continuation :
     ∀ e ∈ Examples.all, e.feature? "remover" = some "necessarily" →
       e.feature? "continuation_felicity" = some "felicitous" := by
   decide
 
-/-- NE on a possibility base is ungrammatical; counterfactual marking is grammatical on either
-base. -/
 theorem ne_only_necessity :
     ∀ e ∈ Examples.all,
       (e.feature? "derivation" = some "NE" → e.feature? "base" = some "possibility" →

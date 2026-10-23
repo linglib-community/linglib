@@ -71,8 +71,6 @@ worlds of the context set being closer to each other than to any world outside i
 def pragmaticConstraint (C : Set W) : Prop :=
   ∀ w (A : Set W), w ∈ C → (A ∩ C).Nonempty → s.sel w A ∈ C
 
-/-- The restriction of a selection function to a context obeys the pragmatic constraint for
-that context. -/
 theorem pragmaticConstraint_restrict (C : Set W) : pragmaticConstraint (s.restrict C) C :=
   fun w A hw hA ↦ by
     rw [s.restrict_sel_of_mem C hw hA]
@@ -92,9 +90,6 @@ theorem pragmaticConstraint_iff_restrict {s : SelectionFunction W} (hs : s.IsCSO
     rw [← h w hw A, s.restrict_sel_of_mem C hw hAC]
     exact (s.inclusion w (A ∩ C) hAC).2
 
-/-- At a context world, for an antecedent compatible with the context and a selection function
-meeting the pragmatic constraint, the selection conditional holds whenever the material
-conditional holds throughout the context. -/
 theorem mem_selectionConditional_of_forall_mem {p q : Set W} {w : W} (hw : w ∈ C)
     (hopen : (p ∩ C).Nonempty) (hC : pragmaticConstraint s C)
     (himp : ∀ w' ∈ C, w' ∈ p → w' ∈ q) : w ∈ selectionConditional s p q := by
@@ -110,29 +105,21 @@ section Context
 
 variable {W : Type*} (s : SelectionFunction W) {C p q r : Set W}
 
-/-- A proposition accepted in a context is accepted under any antecedent compatible with the
-context, once the selection function obeys the pragmatic constraint. -/
 theorem selectionConditional_of_accepted (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, w ∈ p)
     (hq : ∀ w ∈ C, w ∈ q) : ∀ w ∈ C, w ∈ selectionConditional s p q := fun _ hw ↦
   mem_selectionConditional_of_forall_mem s hw (hp.imp fun _ hv ↦ ⟨hv.2, hv.1⟩) hC
     fun w' hw' _ ↦ hq w' hw'
 
-/-- The direct argument is reasonable, since in a context accepting the disjunction where the
-negated first disjunct is open, the indicative conditional is accepted. -/
 theorem direct_argument (hC : pragmaticConstraint s C) (hopen : ∃ w ∈ C, w ∉ p)
     (hdisj : ∀ w ∈ C, w ∈ p ∨ w ∈ q) : ∀ w ∈ C, w ∈ selectionConditional s pᶜ q := fun _ hw ↦
   mem_selectionConditional_of_forall_mem s hw (hopen.imp fun _ hv ↦ ⟨hv.2, hv.1⟩) hC
     fun w' hw' hnp ↦ (hdisj w' hw').resolve_left hnp
 
-/-- In a context compatible with the antecedent, the indicative and the material conditional
-are accepted together. -/
 theorem accepted_iff_material (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, w ∈ p) :
     (∀ w ∈ C, w ∈ selectionConditional s p q) ↔ ∀ w ∈ C, w ∈ p → w ∈ q :=
   ⟨fun h w hw ↦ selectionConditional_subset_materialImp s (h w hw), fun h _ hw ↦
     mem_selectionConditional_of_forall_mem s hw (hp.imp fun _ hv ↦ ⟨hv.2, hv.1⟩) hC h⟩
 
-/-- Contraposition is reasonable for indicatives, since when the conditional is accepted and
-the negated consequent is open, the contrapositive is accepted. -/
 theorem contraposition (hC : pragmaticConstraint s C) (hq : ∃ w ∈ C, w ∉ q)
     (h : ∀ w ∈ C, w ∈ selectionConditional s p q) :
     ∀ w ∈ C, w ∈ selectionConditional s qᶜ pᶜ := by
@@ -142,8 +129,6 @@ theorem contraposition (hC : pragmaticConstraint s C) (hq : ∃ w ∈ C, w ∉ q
   have hsel : s.sel w qᶜ ∈ C := hC w _ hw (hq.imp fun _ hv ↦ ⟨hv.2, hv.1⟩)
   exact fun hp ↦ s.inclusion w qᶜ hne (selectionConditional_subset_materialImp s (h _ hsel) hp)
 
-/-- The hypothetical syllogism is reasonable for indicatives, since when both conditionals are
-accepted and the first antecedent is open, the chained conditional is accepted. -/
 theorem hypothetical_syllogism (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, w ∈ p)
     (h₁ : ∀ w ∈ C, w ∈ selectionConditional s p q) (h₂ : ∀ w ∈ C, w ∈ selectionConditional s q r) :
     ∀ w ∈ C, w ∈ selectionConditional s p r := by
@@ -203,7 +188,6 @@ def Rigid (P : L) : Prop := ∀ k k', I.prop P k = I.prop P k'
 
 theorem changeSeq_singleton (P : L) (k : K) : I.changeSeq [P] k = I.change P k := rfl
 
-/-- An entailment of a rigid conclusion is a reasonable inference. -/
 theorem Reasonable.of_entails {P Q : L} (hQ : I.Rigid Q) (h : I.Entails P Q) :
     I.Reasonable [P] Q := fun k _ ↦ by
   rw [changeSeq_singleton, I.contextSet_change, hQ (I.change P k) k]
@@ -288,16 +272,12 @@ def ReasonableInL (W : Type*) (σ : List (Sentence Atom)) (P : Sentence Atom) : 
 def EntailsInL (W : Type*) (P Q : Sentence Atom) : Prop :=
   ∀ V : Atom → Set W, (interp V).Entails P Q
 
-/-- The indicative conditional entails the material conditional in the language. -/
 theorem ifThen_entails_material (P Q : Sentence Atom) :
     EntailsInL W (.ifThen P Q) (.or (.not P) Q) := fun V k w h ↦ by
   by_cases hp : w ∈ P.prop V k
   · exact Or.inr (selectionConditional_subset_materialImp k.sel h hp)
   · exact Or.inl hp
 
-/-- The direct argument is reasonable in the language, since wherever a disjunction of atoms is
-appropriately asserted, the context comes to accept the conditional from the negated first
-disjunct to the second. -/
 theorem direct_argument_reasonable (a b : Atom) :
     ReasonableInL W [.or (.atom a) (.atom b)] (.ifThen (.not (.atom a)) (.atom b)) := by
   rintro V k ⟨⟨-, hopen⟩, -⟩
@@ -343,8 +323,6 @@ noncomputable def someoneElseFirst : SelectionFunction Suspect where
       | someoneElse => exact absurd hv hs
   centering w A hw := by simp [hw]
 
-/-- At a world where the butler did it, *the butler or the gardener did it* holds while *if the
-butler didn't, the gardener did* fails: the direct argument is no entailment. -/
 theorem not_entails_direct :
     ¬ EntailsInL Suspect (.or (.atom Culprit.butler) (.atom .gardener))
       (.ifThen (.not (.atom .butler)) (.atom .gardener)) := by
@@ -408,13 +386,6 @@ def killed : Sentence Fate := .atom .killed
 /-- *I take precautions.* -/
 def precautions : Sentence Fate := .atom .precautions
 
-/-- The fatalist argues *I will be killed or not; if I will, then even with precautions I will
-be killed; if I will not, then even without precautions I will not be; so precautions are
-ineffective or unnecessary*. In the null context the disjunction is appropriate, and each
-conditional is accepted in the context supposing its disjunct; but the disjunction of the
-conditionals is not accepted in the context of the disjunctive premiss, since at a world
-where one is killed without precautions neither conditional holds. Constructive dilemma
-fails for reasonable inference. -/
 theorem fatalism :
     (Sentence.or killed (.not killed)).Appropriate fateOf fateCtx ∧
     (fateCtx.update (killed.prop fateOf fateCtx)).set ⊆

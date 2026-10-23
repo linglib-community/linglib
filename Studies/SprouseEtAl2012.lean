@@ -91,7 +91,6 @@ theorem additive_iff_dd_eq_zero (r : Ratings α) : Additive r ↔ dd r = 0 := by
   unfold Additive lengthEffect structureEffect dd
   constructor <;> intro h <;> linarith
 
-/-- The score is positive exactly on a superadditive interaction. -/
 theorem superadditive_iff_dd_pos (r : Ratings α) : Superadditive r ↔ 0 < dd r := by
   unfold Superadditive lengthEffect structureEffect dd
   constructor <;> intro h <;> linarith
@@ -125,7 +124,6 @@ theorem structureEffect_linear (base c₁ c₂ : α) :
   simp [structureEffect, linear]
 
 omit [LinearOrder α] [IsStrictOrderedRing α] in
-/-- The simplest reductionist theory predicts additivity: no island effect. -/
 theorem dd_linear (base c₁ c₂ : α) : dd (linear base c₁ c₂) = 0 := by
   simp [dd, linear]
 
@@ -133,15 +131,11 @@ theorem additive_linear (base c₁ c₂ : α) : Additive (linear base c₁ c₂)
   (additive_iff_dd_eq_zero _).2 (dd_linear base c₁ c₂)
 
 omit [LinearOrder α] [IsStrictOrderedRing α] in
-/-- The interaction under the resource-limitation theory is the overload penalty at the
-speaker's capacity. -/
 theorem dd_resourceLimitation (base c₁ c₂ : α) (overload : α → α) (capacity : α) :
     dd (resourceLimitation base c₁ c₂ overload capacity) = overload capacity := by
   simp [dd, resourceLimitation, linear]
   ring
 
-/-- The resource-limitation theory predicts the observed superadditivity exactly where the
-penalty is positive. -/
 theorem superadditive_resourceLimitation_iff (base c₁ c₂ : α) (overload : α → α)
     (capacity : α) :
     Superadditive (resourceLimitation base c₁ c₂ overload capacity) ↔ 0 < overload capacity := by
@@ -156,7 +150,6 @@ theorem dd_resourceLimitation_antitone (base c₁ c₂ : α) {overload : α → 
   simpa only [dd_resourceLimitation] using h
 
 omit [IsStrictOrderedRing α] in
-/-- Overload: a speaker whose capacity covers both costs shows no island effect. -/
 theorem dd_resourceLimitation_eq_zero (base c₁ c₂ : α) {overload : α → α}
     (h : ∀ capacity, c₁ + c₂ ≤ capacity → overload capacity = 0) {capacity : α}
     (hc : c₁ + c₂ ≤ capacity) : dd (resourceLimitation base c₁ c₂ overload capacity) = 0 := by
@@ -171,8 +164,6 @@ theorem dd_grammatical (base c₁ c₂ penalty : α) :
   ring
 
 omit [LinearOrder α] [IsStrictOrderedRing α] in
-/-- Both theories reproduce the observed pattern: the resource-limitation theory at a capacity
-the two costs exceed matches a grammatical theory whose penalty is the overload. -/
 theorem resourceLimitation_eq_grammatical (base c₁ c₂ : α) (overload : α → α) (capacity : α) :
     resourceLimitation base c₁ c₂ overload capacity =
       grammatical base c₁ c₂ (overload capacity) :=

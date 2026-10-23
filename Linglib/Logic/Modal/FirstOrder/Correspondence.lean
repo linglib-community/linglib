@@ -81,15 +81,11 @@ def stVal (v : Var → M) (u : ℕ → W) : Var ⊕ ℕ → W ⊕ M :=
 @[simp] theorem stVal_inr (v : Var → M) (u : ℕ → W) (j : ℕ) :
     stVal v u (Sum.inr j) = Sum.inl (u j) := rfl
 
-/-- Updating an individual slot of a sorted valuation updates the
-    individual assignment. -/
 theorem stVal_update_indiv [DecidableEq Var] (v : Var → M) (u : ℕ → W) (x : Var) (d : M) :
     Function.update (stVal v u) (Sum.inl x) (Sum.inr d) =
       stVal (Function.update v x d) u := by
   simp only [stVal, Sum.update_elim_inl, Function.comp_update]
 
-/-- Updating a world slot of a sorted valuation updates the world
-    assignment. -/
 theorem stVal_update_world [DecidableEq Var] (v : Var → M) (u : ℕ → W) (j : ℕ) (w : W) :
     Function.update (stVal v u) (Sum.inr j) (Sum.inl w) =
       stVal v (Function.update u j w) := by
@@ -132,10 +128,6 @@ def stClose [DecidableEq Var] (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ 
   Formula.ex₁ (Sum.inr k)
     ((corrIndiv.formula₁ (corrWorldVar k)).not ⊓ ψ)
 
-/-- Over any correspondence structure on `W ⊕ M` whose individual-sort
-    predicate holds exactly of the second summand — as
-    `ModalStructure.correspondence`'s does definitionally — the guarded
-    witness of `stClose` is exactly a world. -/
 theorem realize_stClose [DecidableEq Var] [L.correspondence.Structure (W ⊕ M)]
     (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ)) (val : Var ⊕ ℕ → W ⊕ M)
     (hind : ∀ z : W ⊕ M,
@@ -198,8 +190,6 @@ theorem correspondence_funMap_inl (f : L.Functions n) (w : W) (z : Fin (n + 1) �
 
 /-! ### Satisfaction preservation -/
 
-/-- Translated terms realize to the individual sort: `stTerm` commutes with
-    realization at a sorted valuation. -/
 private theorem realize_stTerm {k : ℕ} {v : Var → M} {u : ℕ → W} :
     ∀ t : L.Term Var,
       (letI := K.correspondence; (stTerm k t).realize (stVal v u)) =

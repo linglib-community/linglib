@@ -61,12 +61,8 @@ def verdict : Option String → Judgment
   | some "direct_passive" | some "nani_o" => .ungrammatical
   | _ => .acceptable
 
-/-- Every example's judgment is its diagnostic's verdict, whatever the marking of the
-source. -/
 theorem judgment_eq_verdict : ∀ e ∈ Examples.all, e.judgment = verdict (diagnostic e) := by decide
 
-/-- Both markings are attested with each marking-sensitive diagnostic, the source eliding and
-scrambling and the wh-adjunct out under accusative and under ablative alike. -/
 theorem diagnostics_both_markings :
     ∀ m ∈ ["acc", "abl"],
       (∃ e ∈ Examples.all, marking e = some m ∧ diagnostic e = some "ellipsis" ∧
@@ -77,8 +73,6 @@ theorem diagnostics_both_markings :
         e.judgment = .ungrammatical := by
   decide
 
-/-- The Fragment records both verbs with non-thematic Voice, from which their unaccusativity
-is derived, and as non-passivizable. -/
 theorem alternation_verbs_unaccusative :
     ∀ v ∈ [Japanese.hanareru, Japanese.deru],
       v.voiceType = some .nonThematic ∧ v.IsUnaccusative ∧
@@ -119,15 +113,11 @@ theorem acc_variant :
       (cases accVariant).valueOf .leaver = some (.nom, .unmarked) := by
   decide
 
-/-- In the ablative variant the lexical ablative bleeds dependent accusative, and the leaver
-is unaffected. -/
 theorem abl_variant :
     (cases ablVariant).valueOf .source = some (.abl, .lexical) ∧
       (cases ablVariant).valueOf .leaver = some (.nom, .unmarked) := by
   decide
 
-/-- The accusative needs no thematic Voice, since the non-thematic head assigns no θ-role
-and the source's accusative is configurational rather than assigned by a functional head. -/
 theorem accusative_without_voice :
     ¬ anticausative.AssignsTheta ∧
       ((cases accVariant).valueOf .source).map (·.2) = some .dependent := by

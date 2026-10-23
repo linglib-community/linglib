@@ -89,7 +89,6 @@ instance : BoundedOrder Modality where
   bot := dot
   bot_le _ := Or.inl rfl
 
-/-- The unrestricted modality licenses every rule class. -/
 @[simp] theorem dot_le (m : Modality) : dot ≤ m := Or.inl rfl
 
 end Modality
@@ -254,7 +253,6 @@ def count (a : α) : Cat α → ℤ
     (x.push b).count a = x.count a - b.cat.count a := by
   obtain ⟨_ | _, _, _⟩ := b <;> rfl
 
-/-- The arguments of `xβ` count against it. -/
 theorem count_pushArgs (a : α) (x : Cat α) (β : List (Arg α)) :
     (x.pushArgs β).count a = x.count a - (β.map (·.cat.count a)).sum := by
   induction β generalizing x with

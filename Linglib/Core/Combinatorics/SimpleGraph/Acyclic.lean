@@ -21,8 +21,6 @@ namespace SimpleGraph
 
 variable {V : Type*} {G : SimpleGraph V}
 
-/-- A nonempty forest with finitely many edges has a vertex with at most one neighbour: an end
-of a longest path. -/
 theorem IsAcyclic.exists_neighborSet_subsingleton [Nonempty V] [Finite G.edgeSet]
     (hG : G.IsAcyclic) :
     ∃ v, (G.neighborSet v).Subsingleton := by

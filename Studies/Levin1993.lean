@@ -105,11 +105,6 @@ def classOf (e : Datum) : Option LevinClass :=
 def alternationOf (e : Datum) : Option DiathesisAlternation :=
   (e.feature? "alternation").bind alternationOfString
 
-/-- Every categorical row whose alternation the class's Part II page tests agrees with the
-page: the row is acceptable exactly when the alternation is in the class's profile. The
-passive, the *way* construction, directional phrases and the swarm alternation are presented
-in Part One by verb list and not tested on the class pages, so those rows fall outside the
-check. -/
 theorem participation_matches_profile :
     ∀ e ∈ Examples.all, ∀ c ∈ classOf e, ∀ a ∈ alternationOf e, e.judgment ≠ .marginal →
       c.Tests a → (c.Participates a ↔ e.judgment = .acceptable) := by
@@ -162,8 +157,6 @@ theorem not_isUpperSet_sensitivity_causativeInchoative :
 def diagnosticAlternations : List DiathesisAlternation :=
   [.causativeInchoative, .middle, .conative, .bodyPartPossessorAscension]
 
-/-- The quadruple takes pairwise distinct profiles over the diagnostic alternations, so it
-instantiates four verb classes. -/
 theorem quadruple_profiles_distinct :
     ([LevinClass.break_, .cut, .hit, .touch].map fun c ↦
       diagnosticAlternations.map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
@@ -179,14 +172,10 @@ def quadruple : List (LevinClass × Finset MeaningComponent) :=
   [(.break_, {changeOfState, causation}), (.cut, {changeOfState, causation, contact, motion}),
     (.hit, {contact, motion}), (.touch, {contact})]
 
-/-- The Introduction's conditions are necessary on the quadruple, since every alternation a class
-page of Part II attests is open to the class's meaning components. -/
 theorem quadruple_mem_sensitivity_of_participates :
     ∀ p ∈ quadruple, ∀ a : DiathesisAlternation, p.1.Participates a → p.2 ∈ sensitivity a := by
   decide +kernel
 
-/-- On the diagnostic alternations the conditions also suffice, the quadruple's meaning components
-predicting the class pages exactly. -/
 theorem quadruple_prediction_matches :
     ∀ p ∈ quadruple, ∀ a ∈ diagnosticAlternations, (p.2 ∈ sensitivity a ↔ p.1.Participates a) := by
   decide +kernel
@@ -275,7 +264,6 @@ def changeOfStateClasses : Finset LevinClass :=
   {.break_, .bend, .cooking, .otherChangeOfState, .entitySpecificChangeOfState,
     .calibratableChangeOfState}
 
-/-- The verbs of change of state are the classes Levin numbers in chapter 45. -/
 theorem mem_changeOfStateClasses_iff (c : LevinClass) :
     c ∈ changeOfStateClasses ↔ "45.".toList <+: c.numberString.toList := by
   revert c
@@ -306,9 +294,6 @@ def schematized : List DiathesisAlternation :=
 theorem isSome_schema?_iff (a : DiathesisAlternation) : (schema? a).isSome ↔ a ∈ schematized := by
   cases a <;> decide
 
-/-- Every fragment verb Levin lists has a listed class whose page it realizes, showing each
-alternation with a schema that the page attests for the whole class and none that the page stars.
--/
 theorem shows_class_alternations :
     ∀ v ∈ English.Verbs.verbs, v.levinClasses.Nonempty → ∃ c ∈ v.levinClasses,
       ∀ a ∈ schematized, ∀ p ∈ c.properties, p.heading = .alternation a.number →
@@ -317,8 +302,6 @@ theorem shows_class_alternations :
   decide +kernel
 
 open English.Verbs in
-/-- *run* shows the induced action alternation alone, with its directional phrase and its
-volitional causee, and *shatter* the causative/inchoative alternation alone. -/
 theorem run_shatter :
     (Shows run.toVerb .inducedAction ∧ ¬ Shows run.toVerb .causativeInchoative) ∧
       Shows shatter.toVerb .causativeInchoative ∧ ¬ Shows shatter.toVerb .inducedAction := by

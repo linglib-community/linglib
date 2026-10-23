@@ -159,7 +159,6 @@ def Synthetic (qp : QP) (p : Position) : Prop :=
 instance (qp : QP) (p : Position) : Decidable (Synthetic qp p) := by
   unfold Synthetic; infer_instance
 
-/-- Encliticizing protects *much*: the compound never loses its Q. -/
 theorem Synthetic.not_muchDeletes {qp : QP} {p : Position} (h : Synthetic qp p) :
     ¬ MuchDeletes qp p :=
   λ h' => Option.some_ne_none _ (h.2.1.symm.trans h'.2.1)

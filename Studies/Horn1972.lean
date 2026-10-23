@@ -83,8 +83,6 @@ theorem safer_of_le (h : IsScale P) (i : Fin (n + 1)) {j k : Fin (n + 1)} (hjk :
     assertBound P i j ⊆ assertBound P i k :=
   Set.sdiff_subset_sdiff_right (h.subset hjk)
 
-/-- (2.69ii): the negation of the strongest member follows from the negation of any member, so
-it is the inference the listener must draw. -/
 theorem compl_subset_compl_last (h : IsScale P) (j : Fin (n + 1)) :
     (P j)ᶜ ⊆ (P (Fin.last n))ᶜ :=
   Set.compl_subset_compl.mpr (h.subset (Fin.le_last j))
@@ -98,7 +96,6 @@ theorem redundant_iff_subset (p q : Set W) : Redundant p q ↔ p ⊆ q := by
 
 /-! ### Cardinal numbers (Section 1.21) -/
 
-/-- The cardinals form a scale: *at least m + 1* strictly entails *at least m*. -/
 theorem atLeast_succ_ssubset (m : ℕ) :
     Comparison.ge.interval (m + 1) ⊂ Comparison.ge.interval m :=
   Set.Ici_ssubset_Ici.2 m.lt_succ_self
@@ -108,7 +105,6 @@ theorem compl_atLeast_eq_fewerThan (m : ℕ) :
     (Comparison.ge.interval m)ᶜ = Comparison.lt.interval m :=
   Set.compl_Ici
 
-/-- The exact reading is the asserted lower bound together with the implicated upper bound. -/
 theorem bare_eq_atLeast_inter_atMost (m : ℕ) :
     Comparison.eq.interval m = Comparison.ge.interval m ∩ Comparison.le.interval m := by
   simp [Set.Ici_inter_Iic]
@@ -152,11 +148,9 @@ theorem mostQ_ssubset_someQ (hn : 2 ≤ n) : mostQ n ⊂ someQ n :=
     have := h (a := ⟨1, by omega⟩) (by simp only [someQ, Set.mem_ofPred_eq]; omega)
     simp only [mostQ, Set.mem_ofPred_eq] at this; omega⟩
 
-/-- *All* entails *some* on a nonempty domain, the subalternation of the square. -/
 theorem allQ_subset_someQ (hn : 1 ≤ n) : allQ n ⊆ someQ n := λ c hc => by
   simp only [allQ, Set.mem_ofPred_eq] at hc; simp only [someQ, Set.mem_ofPred_eq]; omega
 
-/-- *Some* does not entail *not all*: the count of everyone witnesses *some* and *all*. -/
 theorem someQ_not_subset_notAllQ (hn : 1 ≤ n) : ¬ someQ n ⊆ notAllQ n := λ h =>
   h (a := Fin.last n) (by simp [someQ]; omega) (by simp)
 
@@ -174,22 +168,18 @@ theorem someQ_inter_allQ_nonempty (hn : 1 ≤ n) : (someQ n ∩ allQ n).Nonempty
 /-- `Q` applied to the complement predicate: the count of satisfiers becomes `n - c`. -/
 def innerNeg (Q : Set (Fin (n + 1))) : Set (Fin (n + 1)) := {c | Fin.rev c ∈ Q}
 
-/-- The E corner: *none* is `~some` and `all~` alike. -/
 theorem compl_someQ : (someQ n)ᶜ = noneQ n := by
   ext c; simp [someQ, noneQ]
 
 theorem innerNeg_allQ : innerNeg (allQ n) = noneQ n := by
   ext c; simp only [innerNeg, allQ, noneQ, Set.mem_ofPred_eq, Fin.val_rev]; omega
 
-/-- The O corner: *not all* is `~all` and `some~` alike. -/
 theorem compl_allQ : (allQ n)ᶜ = notAllQ n := by
   ext c; simp [allQ, notAllQ]
 
 theorem innerNeg_someQ : innerNeg (someQ n) = notAllQ n := by
   ext c; simp only [innerNeg, someQ, notAllQ, Set.mem_ofPred_eq, Fin.val_rev]; omega
 
-/-- The contraries `A` and `E` exclude each other on a nonempty domain, and the subcontraries
-`I` and `O` exhaust it. -/
 theorem allQ_disjoint_noneQ (hn : 1 ≤ n) : Disjoint (allQ n) (noneQ n) :=
   Set.disjoint_left.mpr λ c hc hc' => by
     simp only [allQ, noneQ, Set.mem_ofPred_eq] at hc hc'; omega
@@ -202,16 +192,12 @@ theorem someQ_union_notAllQ (hn : 1 ≤ n) : someQ n ∪ notAllQ n = Set.univ :=
 complement into `Q`. -/
 def Compatible (Q : Set (Fin (n + 1))) : Prop := ∃ c, c ∈ Q ∧ Fin.rev c ∈ Q
 
-/-- *Some* lies below the midpoint: *some of the eggs broke and some didn't* is consistent. -/
 theorem someQ_compatible (hn : 2 ≤ n) : Compatible (someQ n) :=
   ⟨⟨1, by omega⟩, by simp [someQ], by simp [someQ, Fin.val_rev]; omega⟩
 
-/-- *Half* sits at the midpoint and is compatible on an even domain. -/
 theorem halfQ_compatible (k : ℕ) : Compatible (halfQ (2 * k)) :=
   ⟨⟨k, by omega⟩, by simp [halfQ], by simp [halfQ, Fin.val_rev]; omega⟩
 
-/-- *Most* lies above the midpoint: *most of the eggs broke and most didn't* is
-contradictory. -/
 theorem mostQ_not_compatible : ¬ Compatible (mostQ n) := by
   rintro ⟨c, hc, hc'⟩
   simp only [mostQ, Set.mem_ofPred_eq, Fin.val_rev] at hc hc'
@@ -225,8 +211,6 @@ theorem allQ_not_compatible (hn : 1 ≤ n) : ¬ Compatible (allQ n) := by
 /-- A quantifier that is monotone in the count. -/
 def IsUpward (Q : Set (Fin (n + 1))) : Prop := ∀ c d, c ≤ d → c ∈ Q → d ∈ Q
 
-/-- (4.58'): a monotone quantifier compatible with a lower negation has a contradictory that is
-not, so *few* and *none* sit above the midpoint of the negative scale. -/
 theorem not_compatible_compl {Q : Set (Fin (n + 1))} (hQ : IsUpward Q) (h : Compatible Q) :
     ¬ Compatible Qᶜ := by
   rintro ⟨d, hd, hd'⟩
@@ -243,13 +227,10 @@ def OuterNegationLexicalizes (Q : Set (Fin (n + 1))) : Prop := Compatible Q
 /-- (4.59iii) and (4.62i): an inner negation `Q~` lexicalizes iff `Q` is not compatible. -/
 def InnerNegationLexicalizes (Q : Set (Fin (n + 1))) : Prop := ¬ Compatible Q
 
-/-- The E corner has both routes: *none* as `~some` and as `all~`. -/
 theorem e_corner_lexicalizable (hn : 2 ≤ n) :
     OuterNegationLexicalizes (someQ n) ∧ InnerNegationLexicalizes (allQ n) :=
   ⟨someQ_compatible hn, allQ_not_compatible (by omega)⟩
 
-/-- The O corner has neither: `~all` is blocked because *all* is incompatible with a lower
-negation and `some~` because *some* is compatible, so no language lexicalizes *nall*. -/
 theorem o_corner_unlexicalizable (hn : 2 ≤ n) :
     ¬ OuterNegationLexicalizes (allQ n) ∧ ¬ InnerNegationLexicalizes (someQ n) :=
   ⟨allQ_not_compatible (by omega), not_not.mpr (someQ_compatible hn)⟩
@@ -284,11 +265,8 @@ def ConnWorld.swap : ConnWorld → ConnWorld
 /-- Compatibility with a lower negation for a connective. -/
 def CompatibleConn (C : ConnWorld → Prop) : Prop := ∃ w, C w ∧ C (ConnWorld.swap w)
 
-/-- *Or* is compatible with a lower negation, like *some*. -/
 theorem orConn_compatible : CompatibleConn orConn := ⟨.onlyA, trivial, trivial⟩
 
-/-- *And* is not, like *all*: so *nor* lexicalizes both `~or` and `and~`, and there is no
-*nand*. -/
 theorem andConn_not_compatible : ¬ CompatibleConn andConn := by
   rintro ⟨w, hw, hw'⟩; cases w <;> simp [andConn, ConnWorld.swap] at hw hw'
 

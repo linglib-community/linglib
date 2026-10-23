@@ -61,8 +61,6 @@ def leaves (t : RoseTree α) : Multiset α := t.leavesWithDepth.map Prod.fst
 
 @[simp] theorem leaves_leaf : leaves (node a []) = {a} := rfl
 
-/-- Forgetting depths collapses the shift, so the leaf labels of a node are the children's
-leaf labels. -/
 @[simp] theorem leaves_node_cons :
     leaves (node a (c :: cs)) = ((c :: cs).map leaves).sum := by
   rw [leaves, leavesWithDepth_node_cons, ← Multiset.coe_mapAddMonoidHom, map_list_sum,
@@ -97,7 +95,6 @@ theorem card_leavesWithDepth (t : RoseTree α) :
         omega
       omega
 
-/-- The number of leaf labels is the number of leaves. -/
 theorem card_leaves (t : RoseTree α) : Multiset.card t.leaves = t.numLeaves := by
   rw [leaves, Multiset.card_map, card_leavesWithDepth]
 
@@ -156,38 +153,32 @@ theorem countP_leaves_leaf (a : α) :
   rw [leaves_node_cons, ← Multiset.coe_countPAddMonoidHom, map_list_sum, List.map_map]
   rfl
 
-/-- On a non-leaf node the count is the children's total, for any root label. -/
 theorem countP_leaves_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ []) :
     (leaves (node a cs)).countP p = (cs.map fun t ↦ t.leaves.countP p).sum := by
   obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil h
   rw [countP_leaves_node_cons]
 
-/-- A root failing `p` contributes nothing, for any child list. -/
 theorem countP_leaves_node_of_not {a : α} (cs : List (RoseTree α)) (h : ¬p a) :
     (leaves (node a cs)).countP p = (cs.map fun t ↦ t.leaves.countP p).sum := by
   cases cs with
   | nil => rw [countP_leaves_leaf, ite_eq_right h]; rfl
   | cons c cs => rw [countP_leaves_node_cons]
 
-/-- The count exhausts the leaves exactly when every leaf label satisfies `p`. -/
 theorem countP_leaves_eq_numLeaves {t : RoseTree α} :
     t.leaves.countP p = t.numLeaves ↔ ∀ a ∈ t.leaves, p a := by
   rw [← card_leaves t]
   exact Multiset.countP_eq_card
 
-/-- The counted leaves are exactly the depth entries. -/
 @[simp] theorem card_filter_leavesWithDepth (t : RoseTree α) :
     Multiset.card (t.leavesWithDepth.filter fun q : α × ℕ ↦ p q.1) = t.leaves.countP p := by
   rw [leaves, Multiset.countP_map]
 
-/-- The children's counted leaves are bounded by the node's. -/
 theorem sum_map_countP_leaves_le_node (a : α) (cs : List (RoseTree α)) :
     (cs.map fun t ↦ t.leaves.countP p).sum ≤ (leaves (node a cs)).countP p := by
   rcases cs with _ | ⟨c, cs⟩
   · exact Nat.zero_le _
   · exact (countP_leaves_node_cons p a c cs).ge
 
-/-- A counted leaf is a vertex. -/
 theorem countP_leaves_le_numNodes (t : RoseTree α) : t.leaves.countP p ≤ t.numNodes :=
   (Multiset.countP_le_card _ _).trans ((card_leaves t).trans_le (numLeaves_le_numNodes t))
 

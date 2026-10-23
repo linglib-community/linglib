@@ -99,7 +99,6 @@ private theorem edge_iff (h : P.Subjoins x y Q) (a b : α) :
   exact ⟨fun ⟨m, hm⟩ ↦ hm.imp (⟨m, ·⟩) (·.2), fun h ↦ h.elim (fun ⟨m, hm⟩ ↦ ⟨m, .inl hm⟩)
     fun hab ↦ ⟨n, .inr ⟨rfl, hab⟩⟩⟩
 
-/-- Moving a part creates no new parts of anything: the mover is already inside its target. -/
 theorem descendant_iff_of_isPart (h : P.Subjoins x y Q) (hx : P.IsPart x) {u v : α} :
     Q.Descendant u v ↔ P.Descendant u v := by
   refine ⟨fun huv ↦ TransGen.closed (fun a b hab ↦ ?_) _ _ huv, (·.mono h.le)⟩
@@ -107,8 +106,6 @@ theorem descendant_iff_of_isPart (h : P.Subjoins x y Q) (hx : P.IsPart x) {u v :
   · exact .single hab
   · exact descendant_of_canSubjoin (h.canSubjoin hx)
 
-/-- External subjunction makes `x` and its parts parts of the root `y`, and nothing else
-changes. -/
 theorem descendant_iff_of_not_isPart (h : P.Subjoins x y Q) (hx : ¬ P.IsPart x) {u v : α} :
     Q.Descendant u v ↔ P.Descendant u v ∨ ((u = x ∨ P.Descendant u x) ∧ v = y) := by
   have hy : ∀ m b, ¬ P.Imm m y b := fun m b hyb ↦ h.extension hx ⟨m, b, hyb⟩
@@ -135,7 +132,6 @@ theorem descendant_iff_of_not_isPart (h : P.Subjoins x y Q) (hx : ¬ P.IsPart x)
       · exact hxy
       · exact (hux.mono h.le).trans hxy
 
-/-- A licensed subjunction creates no new parts of an object that is already a part. -/
 theorem descendant_of_isPart (h : P.Subjoins x y Q) {u v : α} (hv : P.IsPart v)
     (huv : Q.Descendant u v) : P.Descendant u v := by
   by_cases hx : P.IsPart x
@@ -167,7 +163,6 @@ theorem le (h : P.Derives Q) : P ≤ Q := by
     obtain ⟨_, _, hRQ⟩ := hRQ
     exact ih.trans hRQ.le
 
-/-- A derivation creates no new parts of an object that is already a part. -/
 theorem descendant_of_isPart (h : P.Derives Q) {u v : α} (hv : P.IsPart v)
     (huv : Q.Descendant u v) : P.Descendant u v := by
   induction h with
@@ -190,15 +185,11 @@ theorem dimensional (h : P.Derives Q) (hP : P.Dimensional) : Q.Dimensional := by
     obtain ⟨_, _, hRQ⟩ := hRQ
     exact ih.subjoin hRQ.subjoin_eq
 
-/-- Once `c` is the 2-part of `b`, a derivation brings onto the edge of `b` only `c` and the parts
-of `c`. -/
 theorem eq_or_descendant_of_nPart_two {b c γ : α} (h : P.Derives Q) (hc : P.Imm .two c b)
     (hγ : Q.NPart .two γ b) : γ = c ∨ P.Descendant γ c :=
   (hγ.eq_or_nPart_of_imm (h.le hc)).imp_right fun hγc ↦
     h.descendant_of_isPart ⟨.two, b, hc⟩ (descendant_of_nPart hγc)
 
-/-- The target must contain the mover in every derivation: an object never comes to subjoin to a
-part that does not already contain it, so lowering and sideward subjunction stay impossible. -/
 theorem not_canSubjoin_of_not_descendant {γ β : α} (h : P.Derives Q) (hβ : P.IsPart β)
     (hγβ : ¬ P.Descendant γ β) : ¬ Q.CanSubjoin γ β := fun hc ↦
   hγβ (h.descendant_of_isPart hβ (descendant_of_canSubjoin hc))
@@ -226,8 +217,6 @@ namespace IsDomain
 
 variable {S : Set α} {b c γ β : α}
 
-/-- A licensed subjunction keeps a domain a domain: a part inside it subjoins outside only from
-the edge of `b`, and then as a 2-part. -/
 theorem subjoins (hD : P.IsDomain S b) (h : P.Subjoins x y Q) : Q.IsDomain S b where
   isPart z hz := (hD.isPart z hz).mono h.le
   exit z hz n w hzw hw := by

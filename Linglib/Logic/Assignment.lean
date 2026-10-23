@@ -126,8 +126,6 @@ theorem le_iff_eqOn_domain : g ≤ h ↔ Set.EqOn g h g.domain := by
 theorem domain_mono (hgh : g ≤ h) : g.domain ⊆ h.domain :=
   fun x hx ↦ ne_bot_of_le_ne_bot hx (hgh x)
 
-/-- `h` covers `g` exactly when `h` values one variable that `g` leaves unvalued and agrees with
-`g` on all others. -/
 theorem covBy_iff : g ⋖ h ↔ ∃ x, g x = ⊥ ∧ h x ≠ ⊥ ∧ ∀ y ≠ x, g y = h y := by
   simp only [Pi.covBy_iff, Flat.covBy_iff, and_assoc]
 
@@ -146,7 +144,6 @@ def update (g : PartialAssign Var D) (x : Var) (d : D) :
     g.update x d y = g y :=
   Function.update_of_ne h ..
 
-/-- Updating `x` to the value it already has leaves `g` unchanged. -/
 theorem update_eq_self {x : Var} {a : D} (h : g x = ↑a) : g.update x a = g := by
   rw [update, ← h]; exact Function.update_eq_self x g
 
@@ -163,7 +160,6 @@ theorem update_comm (h : x ≠ y) (a b : D) (g : PartialAssign Var D) :
   ext y
   obtain rfl | hy := eq_or_ne y x <;> simp [*]
 
-/-- Valuing an unvalued variable is a covering step of the extension order. -/
 theorem covBy_update {x : Var} (hx : g x = ⊥) (d : D) : g ⋖ g.update x d :=
   covBy_iff.2 ⟨x, hx, by simp, fun _ hy ↦ (update_of_ne hy d g).symm⟩
 
@@ -244,7 +240,6 @@ def restrict (G : PluralAssign Var D) (x : Var) (a : D) : PluralAssign Var D :=
 theorem value_restrict_subset : (G.restrict x a).value x ⊆ {a} :=
   fun _ ⟨_, hg, hd⟩ ↦ Flat.coe_inj.1 (hd.symm.trans hg.2)
 
-/-- In a nonempty restriction of `G` to `x = a`, the only value of `x` is `a`. -/
 theorem value_restrict (h : (G.restrict x a).Nonempty) : (G.restrict x a).value x = {a} :=
   let ⟨g, hg⟩ := h
   (Set.Nonempty.subset_singleton_iff (s := (G.restrict x a).value x) ⟨a, g, hg, hg.2⟩).1
@@ -263,7 +258,6 @@ theorem value_eq_singleton_iff :
     rw [ha, hall a ⟨g, hg, ha⟩]
   · exact Flat.coe_inj.1 (ha.symm.trans (hall g hg (ha ▸ Flat.coe_ne_bot)))
 
-/-- Where `x` has the single value `d`, every restriction of `x` that `G` meets is to `d`. -/
 theorem eq_of_mem_restrict (h : G.value x = {d}) (hg : g ∈ G.restrict x a) : a = d :=
   h.subset ⟨g, hg.1, hg.2⟩
 

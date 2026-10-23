@@ -154,18 +154,14 @@ def czechFelicitous (ev ob : SignType) (ct : Bool) :
 
 variable (ev ob : SignType)
 
-/-- The default form is natural exactly without evidence and without a prior against
-the prejacent. -/
 theorem interPPQ_mem_iff :
     .interPPQ ∈ czechBiasProfile ev ob ↔ ev = 0 ∧ ob ≠ -1 := by
   decide +revert
 
-/-- DeclPPQ needs positive evidence and no prior for the prejacent. -/
 theorem declPPQ_mem_iff :
     .declPPQ ∈ czechBiasProfile ev ob ↔ ev = 1 ∧ ob ≠ 1 := by
   decide +revert
 
-/-- DeclNPQ needs negative evidence and no prior against the prejacent. -/
 theorem declNPQ_mem_iff :
     .declNPQ ∈ czechBiasProfile ev ob ↔ ev = -1 ∧ ob ≠ -1 := by
   decide +revert
@@ -177,13 +173,10 @@ theorem interNPQ_mem_iff :
       ob = 1 ∧ ev ≠ 1 ∨ ev = 1 ∧ ob = 0 := by
   decide +revert
 
-/-- Declarative questions are specialized for evidential bias ([gunlogson-2002]). -/
 theorem declarative_requires_evidence (f : CzechPQForm) (hf : f.verb = .nonV1)
     (h : f ∈ czechBiasProfile ev ob) : ev ≠ 0 := by
   revert hf h; decide +revert
 
-/-- Czech high negation is broader than English, being felicitous under positive evidence,
-which the evidence condition of [buring-gunlogson-2000] on outer negation excludes. -/
 theorem interNPQ_broader_than_english_outer :
     .interNPQ ∈ czechBiasProfile 1 0 ∧
       ¬ BuringGunlogson2000.Felicitous (some .positive) 1 := by
@@ -299,14 +292,11 @@ def quizRows (l : Language) : List Datum :=
 
 variable (l : Language)
 
-/-- Every language's default strategy is quiz-felicitous in its positive form. -/
 theorem default_quiz_felicitous :
     ∃ e ∈ quizRows l, strategy? e = some l.defaultStrategy ∧ polarity? e = some .positive ∧
       e.judgment = .acceptable := by
   cases l <;> decide
 
-/-- Declarative polar questions convey evidential bias and are quiz-infelicitous in every
-language. -/
 theorem declarative_quiz_infelicitous :
     ∀ e ∈ Examples.all, strategy? e = some .declarative → e.judgment = .unacceptable := by
   decide
@@ -320,7 +310,6 @@ def NegationTriggersBias : Prop :=
 instance : Decidable (NegationTriggersBias l) :=
   inferInstanceAs (Decidable (∀ e ∈ quizRows l, _))
 
-/-- Every language's quiz rows include a negated interrogative form. -/
 theorem negated_interrogative_attested :
     ∃ e ∈ quizRows l, polarity? e = some .negative ∧ strategy? e ≠ some .declarative := by
   cases l <;> decide
@@ -331,12 +320,10 @@ theorem negationTriggersBias_iff :
     NegationTriggersBias l ↔ l ≠ .polish ∧ l ≠ .macedonian := by
   cases l <;> decide
 
-/-- The particle of every quiz row is an entry of the language's fragment. -/
 theorem quiz_particles_in_fragment :
     ∀ e ∈ quizRows l, ∀ f ∈ e.feature? "particle", f ∈ l.particles.map (·.form) := by
   cases l <;> decide
 
-/-- Every fragment particle is recorded in matrix polar questions. -/
 theorem particles_licensed_polar :
     ∀ p ∈ l.particles, Clause.root .polar ∈ p.distribution.possible := by
   cases l <;> decide
@@ -376,34 +363,26 @@ def serbianBiasProfile : SignType → SignType → Finset SerbianPQForm
   | .neg, .zero => {.lnpq}
   | .neg, .neg => ∅
 
-/-- *da li* questions are limited to neutral contexts. -/
 theorem daLiPPQ_mem_iff :
     .daLiPPQ ∈ serbianBiasProfile ev ob ↔ ev = 0 ∧ ob = 0 := by
   decide +revert
 
-/-- *je li* questions have the broader distribution. -/
 theorem jeLiPPQ_of_daLiPPQ (h : .daLiPPQ ∈ serbianBiasProfile ev ob) :
     .jeLiPPQ ∈ serbianBiasProfile ev ob := by
   revert h; decide +revert
 
-/-- Positive questions are incompatible with negative biases. -/
 theorem ppq_no_negative_bias (f : SerbianPQForm) (hf : f.negation = none)
     (h : f ∈ serbianBiasProfile ev ob) : ev ≠ -1 ∧ ob ≠ -1 := by
   revert hf h; decide +revert
 
-/-- High negation resolves a conflict between a prior for the prejacent and evidence
-against it, and nothing else. -/
 theorem hnpq_mem_iff :
     .hnpq ∈ serbianBiasProfile ev ob ↔ ev = -1 ∧ ob = 1 := by
   decide +revert
 
-/-- Low negation has the broader distribution among negative questions. -/
 theorem lnpq_of_hnpq (h : .hnpq ∈ serbianBiasProfile ev ob) :
     .lnpq ∈ serbianBiasProfile ev ob := by
   revert h; decide +revert
 
-/-- Serbian high negation is narrower than English, since neutral evidence, which the evidence
-condition of [buring-gunlogson-2000] on outer negation admits, admits no Serbian HNPQ. -/
 theorem serbian_hnpq_narrower_than_english :
     BuringGunlogson2000.Felicitous (some .positive) 0 ∧ ∀ ob, .hnpq ∉ serbianBiasProfile 0 ob := by
   decide
@@ -435,7 +414,6 @@ section Wonder
 
 variable {W : Type*} (p : Set W) (w : W)
 
-/-- A polar question has exactly one true answer at each world. -/
 theorem trueAnswers_polar_existsUnique : ∃! q, q ∈ trueAnswers {p, pᶜ} w := by
   by_cases hw : w ∈ p
   · exact ⟨p, ⟨by simp, hw⟩, by rintro q ⟨rfl | rfl, hwq⟩ <;> simp_all⟩
@@ -456,8 +434,6 @@ prejacent as asked with a prior for its negation (the conflict-resolving profile
 def razveProfile (r : Option Polarity) : SignType × SignType :=
   (evidence (polarityOf r), prior (polarityOf r))
 
-/-- The profile of *razve* negative questions is the same under inner negation (VERUM)
-and outer negation (FALSUM), with negative evidence and a positive prior. -/
 theorem razveProfile_negation_invariant :
     razveProfile (some .negative) = razveProfile (some .positive) ∧
       razveProfile (some .positive) = (-1, 1) :=
@@ -474,8 +450,6 @@ def neuzeliNegations : Finset (Option Polarity) := {some .negative}
 
 theorem neuzeliNegations_ssubset : neuzeliNegations ⊂ razveNegations := by decide
 
-/-- *Razve* is a root phenomenon while *li* is obligatory in subordinated polar questions
-([korotkova-2023]), read off the fragment cells. -/
 theorem razve_root_li_embedded :
     .subordinated ∉ Russian.QuestionParticles.razve.distribution.possible.cod ∧
       Clause.embedded .polar ∈ Russian.QuestionParticles.li.distribution.possible := by
@@ -505,8 +479,6 @@ noncomputable def falsumCz : W → SignType :=
 ground. -/
 def falsumCzQuestion : Question W := polar {w | p ∉ cg w}
 
-/-- The commitment of the Czech operator is weak, since its presupposition is epistemic
-possibility, the dual of necessity, and fails only where the prejacent is necessarily false. -/
 theorem falsumCz_eq_zero_iff (w : W) :
     falsumCz epi cg p w = 0 ↔ ModalLogic.Box epi (· ∉ p) w := by
   simp [falsumCz, ModalLogic.Box, ModalLogic.Diamond]

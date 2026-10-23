@@ -118,16 +118,12 @@ theorem redundant_eq_sigmoid (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0
   field_simp
   ring
 
-/-- Beside a Boolean sufficient adjective the redundant one adds no information, and the
-probability of the redundant expression does not depend on its noise. -/
 theorem redundant_of_boolean_sufficient (hα : 0 < α) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
     (S1 α C (meaning 1 xr) .target).real {.redundant} =
       Real.sigmoid (-(α * (C .redundant - C .sufficient))) := by
   rw [redundant_eq_sigmoid hα one_pos le_rfl hr0 hr1, gain_one_left hr0.ne', Real.log_one,
     zero_sub, mul_neg]
 
-/-- Beside one sufficient adjective short of Boolean, the redundant expression is the likelier
-the less noisy the redundant adjective. -/
 theorem redundant_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < xr)
     (hr1 : xr ≤ 1) (hr0' : 0 < xr') (hr1' : xr' ≤ 1) :
     (S1 α C (meaning xs xr) .target).real {.redundant} <
@@ -137,8 +133,6 @@ theorem redundant_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 <
     Real.log_lt_log_iff (gain_pos hs0 hs1.le hr0 hr1) (gain_pos hs0 hs1.le hr0' hr1'),
     gain_lt_gain_iff two_pos hs0 hs1 hr0 hr1 hr0' hr1']
 
-/-- When two adjectives trade the sufficient and the redundant role, the redundant expression is
-the likelier on the trial whose redundant adjective is the less noisy of the two. -/
 theorem redundant_swap_lt_iff {x₁ x₂ : ℝ} (hα : 0 < α) (h₁0 : 0 < x₁) (h₁1 : x₁ ≤ 1)
     (h₂0 : 0 < x₂) (h₂1 : x₂ ≤ 1) :
     (S1 α C (meaning x₂ x₁) .target).real {.redundant} <

@@ -23,12 +23,10 @@ that is independent of which of the two instances a continuity proof was carried
 
 open OmegaCompletePartialOrder
 
-/-- On a complete lattice, the ω-supremum of a chain is its indexed supremum. -/
 theorem CompleteLattice.ωSup_eq_iSup {L : Type*} [CompleteLattice L] (c : Chain L) :
     ωSup c = ⨆ n, c n :=
   le_antisymm (ωSup_le _ _ fun n => le_iSup (fun n => c n) n) (iSup_le fun n => le_ωSup c n)
 
-/-- On a product of complete lattices, the ω-supremum of a chain is its indexed supremum. -/
 theorem Pi.ωSup_eq_iSup {ι : Type*} {L : ι → Type*} [∀ i, CompleteLattice (L i)]
     (c : Chain (∀ i, L i)) : ωSup c = ⨆ n, c n := by
   funext i
@@ -36,9 +34,6 @@ theorem Pi.ωSup_eq_iSup {ι : Type*} {L : ι → Type*} [∀ i, CompleteLattice
   rw [CompleteLattice.ωSup_eq_iSup, iSup_apply]
   rfl
 
-/-- Kleene's fixed-point theorem in supremum form: a monotone map on a complete lattice that
-commutes with suprema of monotone sequences has the supremum of its iterates as least fixed
-point. -/
 theorem OrderHom.lfp_eq_iSup_iterate {L : Type*} [CompleteLattice L] (f : L →o L)
     (hf : ∀ c : Chain L, f (⨆ n, c n) = ⨆ n, f (c n)) : f.lfp = ⨆ n, f^[n] ⊥ :=
   fixedPoints.lfp_eq_sSup_iterate f <| ωScottContinuous.of_monotone_map_ωSup

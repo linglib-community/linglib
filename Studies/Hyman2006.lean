@@ -81,7 +81,6 @@ theorem obligatory_and_culminative_iff (m : Marking Word U) :
   simp only [Obligatory, Culminative, ← Finset.card_pos, ← forall_and]
   exact forall_congr' λ w => by omega
 
-/-- The metrical grid's culminativity, exactly one peak, is the same conflation. -/
 theorem grid_isCulminative_iff (g : Prosody.Grid) :
     Prosody.Grid.IsCulminative g ↔
       1 ≤ g.countP (· == Prosody.Grid.peak g) ∧ g.countP (· == Prosody.Grid.peak g) ≤ 1 := by
@@ -126,14 +125,12 @@ open Japanese.Prosody in
 Tokyo Japanese is tonal by (3). -/
 theorem tokyo_tonal : Tonal (λ e : ProsodicEntry => e.accentMora) := ⟨ameRain, rfl⟩
 
-/-- At most one accent per word. -/
 theorem tokyo_culminative : Culminative tokyo := λ e => by
   refine (Finset.card_le_one.2 λ a ha b hb => ?_)
   simp only [tokyo, Finset.mem_filter] at ha hb
   exact Option.some.inj (ha.2.symm.trans hb.2)
 
 open Japanese.Prosody in
-/-- *ame* 'candy' is unaccented, so the accent is not obligatory. -/
 theorem tokyo_not_obligatory : ¬ Obligatory tokyo := λ h =>
   (h ameCandy).ne_empty (by decide)
 
@@ -205,10 +202,8 @@ def creek : Marking CreekWord ℕ where
   marked_subset w := by cases w <;> decide
   tbu := .syllable
 
-/-- Creek obeys OBLHEAD. -/
 theorem creek_obligatory : Obligatory creek := λ w => by cases w <;> decide
 
-/-- /náfka:kís/ carries two H tones. -/
 theorem creek_not_culminative : ¬ Culminative creek := λ h => absurd (h .nafkaakis) (by decide)
 
 /-! ### Seneca -/
@@ -264,8 +259,6 @@ theorem tableII :
   ⟨⟨kinga_obligatory, kinga_culminative⟩, ⟨creek_obligatory, creek_not_culminative⟩,
     ⟨tokyo_not_obligatory, tokyo_culminative⟩, ⟨seneca_not_obligatory, seneca_not_culminative⟩⟩
 
-/-- The most significant cut, by OBLHEAD, and the reviewer's alternative, by culminativity,
-sort Creek and Tokyo Japanese oppositely. -/
 theorem cuts_differ :
     (Obligatory creek ∧ ¬ Obligatory tokyo) ∧ (Culminative tokyo ∧ ¬ Culminative creek) :=
   ⟨⟨creek_obligatory, tokyo_not_obligatory⟩, ⟨tokyo_culminative, creek_not_culminative⟩⟩

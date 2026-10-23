@@ -60,15 +60,11 @@ def spreadPred : ModalForce → SignType
   | .weakNecessity => 1
   | .possibility => 0
 
-/-- The analyses agree on existential modals and differ on universal ones, the one place the
-data can adjudicate. -/
 theorem analyses_diverge_only_on_necessity :
     concordPred .possibility = spreadPred .possibility ∧
       concordPred .necessity ≠ spreadPred .necessity := by
   decide
 
-/-- The necessity strengthening carries the sign the spread analysis predicts and the concord
-analysis does not. -/
 theorem necessity_adjudicates (o : ShiftObservation) (hf : o.force = .necessity)
     (h : o.smMean < o.mcMean) :
     o.observedSign = spreadPred o.force ∧ o.observedSign ≠ concordPred o.force := by
@@ -77,8 +73,6 @@ theorem necessity_adjudicates (o : ShiftObservation) (hf : o.force = .necessity)
     exact sign_pos (sub_pos.mpr (by exact_mod_cast h))
   rw [hs, hf]; decide
 
-/-- The possibility weakening carries a sign neither analysis predicts, both predicting
-maintenance. -/
 theorem possibility_residual (o : ShiftObservation) (hf : o.force = .possibility)
     (h : o.mcMean < o.smMean) :
     o.observedSign ≠ spreadPred o.force ∧ o.observedSign ≠ concordPred o.force := by
@@ -94,16 +88,12 @@ and the distant context. -/
 def RegisterSensitive (close distant : ShiftObservation) : Prop :=
   close.observedSign ≠ distant.observedSign
 
-/-- A context main effect, the same additive shift on the concord and the single-modal
-cell, leaves the sign of the concord shift unchanged. -/
 theorem context_main_effect_preserves_sign (o : ShiftObservation) (c : ℕ) :
     ShiftObservation.observedSign ⟨o.force, o.mcMean + c, o.smMean + c⟩ = o.observedSign := by
   show SignType.sign (((o.mcMean + c : ℕ) : ℤ) - ((o.smMean + c : ℕ) : ℤ)) =
     SignType.sign ((o.mcMean : ℤ) - o.smMean)
   congr 1; push_cast; ring
 
-/-- Contexts that differ by a main effect alone are not register-sensitive: no
-number-by-context interaction arises. -/
 theorem not_registerSensitive_of_main_effect (o : ShiftObservation) (c : ℕ) :
     ¬ RegisterSensitive o ⟨o.force, o.mcMean + c, o.smMean + c⟩ := by
   unfold RegisterSensitive
@@ -129,24 +119,18 @@ def observedShift (measure context : String) (force : ModalForce) : Option Shift
 def observedSign (measure context : String) (force : ModalForce) : Option SignType :=
   (observedShift measure context force).map ShiftObservation.observedSign
 
-/-- The crossover of the first experiment replicates in both contexts: doubling strengthens
-commitment and confidence for necessity and weakens them for possibility. -/
 theorem crossover :
     ∀ measure ∈ ["commitment", "confidence"], ∀ context ∈ ["close", "distant"],
       observedSign measure context .necessity = some 1 ∧
         observedSign measure context .possibility = some (-1) := by
   decide +kernel
 
-/-- The force-blind penalty: concord is rated lower than the single modal on grammaticality,
-appropriateness, warmth, friendliness, and education in every cell. -/
 theorem penalty :
     ∀ measure ∈ ["grammaticality", "appropriateness", "warmth", "friendliness", "education"],
       ∀ context ∈ ["close", "distant"], ∀ force ∈ [ModalForce.necessity, .possibility],
         observedSign measure context force = some (-1) := by
   decide +kernel
 
-/-- No number-by-context interaction: on every measure with a concord effect the shift has the
-same sign for the close and the distant interlocutor. -/
 theorem context_invariant :
     ∀ measure ∈ ["commitment", "confidence", "grammaticality", "appropriateness", "warmth",
       "friendliness", "education"],
@@ -156,14 +140,10 @@ theorem context_invariant :
 
 /-! ### The first experiment -/
 
-/-- On necessity the strengthening matches the spread prediction and the sign the first
-experiment reports. -/
 theorem necessity_matches_experiment1 :
     spreadPred .necessity = LiuRotter2025.spreadEffect .necessity := by
   decide
 
-/-- On possibility the first experiment's observed weakening diverges from the spread
-analysis's prediction: the gap is the residual. -/
 theorem possibility_observed_vs_predicted :
     LiuRotter2025.spreadEffect .possibility ≠ spreadPred .possibility := by
   decide

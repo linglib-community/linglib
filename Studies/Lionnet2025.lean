@@ -107,12 +107,10 @@ def StemPattern.associate : StemPattern → List ℕ → Option RegisterTier
   | .emptyL, n :: m :: rest =>
     some (registerless [n] ++ [.downstep] :: registerless ((m - 1) :: rest))
 
-/-- Every native stem of Drubea bears one of the three patterns. -/
 theorem stems_patterned :
     ∀ s ∈ Drubea.stems, ∃ p : StemPattern, p.associate (s.shape μ) = some s.tier := by
   decide
 
-/-- So does every stem of Numèè. -/
 theorem numee_stems_patterned :
     ∀ s ∈ Numee.stems, ∃ p : StemPattern, p.associate (s.shape μ) = some s.tier := by
   decide
@@ -229,17 +227,13 @@ def drubea : Hyman2006.Marking Stem ℕ where
     exact Finset.mem_range.2 (h ▸ hi.1)
   tbu := .mora
 
-/-- The downstep is culminative: at most one per stem. -/
 theorem drubea_culminative : Hyman2006.Culminative drubea := fun ⟨a, ha⟩ =>
   (show ∀ a ∈ Drubea.stems, (RegisterTier.bearing .downstep a.tier).toFinset.card ≤ 1 by
     decide) a ha
 
-/-- It is not obligatory: /kuɽe/ 'forest' has none. -/
 theorem drubea_not_obligatory : ¬ Hyman2006.Obligatory drubea := fun h =>
   (h ⟨Drubea.kureForest, by decide⟩).ne_empty (by decide)
 
-/-- Neither of Hyman's inviolable criteria of stress accent holds: the register-bearing
-unit is the mora and the downstep is not obligatory. -/
 theorem drubea_not_stressAccent : ¬ Hyman2006.StressAccent drubea := fun h =>
   drubea_not_obligatory h.2.1
 
@@ -276,7 +270,6 @@ theorem unmark_flatMap (L : List (List (List TRN))) :
     congr 1
     simp
 
-/-- Unmarking undoes marking on an aligned word. -/
 theorem unmark_marked {r : Registered Syllable} (h : r.IsAligned μ) :
     unmark (marked r) = r.tier := by
   rw [marked, unmark_flatMap, syllableNodes, List.splitWrtComposition]
@@ -393,33 +386,25 @@ Every process but `spreading` is `Docking.ofQF`, so on words over the register a
 is computed by a one-copy relabelling transduction, the quantifier-free logical transductions
 of [chandlee-jardine-2019]. -/
 
-/-- The marked tier of every stem is over the register alphabet. -/
 theorem marked_mem_alphabet : ∀ s ∈ Drubea.stems ++ Numee.stems, ∀ a ∈ marked s, a ∈ alphabet := by
   decide
 
-/-- Raising on a stem's marked tier is the relabelling transduction's output. -/
 theorem raising_apply_relabel {s : Registered Syllable} (hs : s ∈ Drubea.stems ++ Numee.stems) :
     (Transduction.relabel raisingGuard (append .upstep) alphabet).apply (marked s) =
       raising.map (marked s) :=
   Transduction.apply_relabel (marked_mem_alphabet s hs)
 
-/-- The windows the guards read: raising one mora back and two slots forward, neutralisation
-two back, spreading three back, delinking one back and two forward, the boundary features
-two and four back. -/
 theorem guards_bounded :
     raisingGuard.Bounded 1 2 ∧ neutralizationGuard.Bounded 2 0 ∧ spreadLGuard.Bounded 3 0 ∧
       delinkLGuard.Bounded 1 2 ∧ finalRegisterless.Bounded 2 1 ∧
       finalLoweringGuard.Bounded 4 1 := by
   decide
 
-/-- Raising depends boundedly on both sides: the process is strictly local. -/
 theorem raising_boundedDependence :
     BoundedDependence raising.map .left ∧ BoundedDependence raising.map .right :=
   ⟨Docking.ofQF_boundedDependence_left guards_bounded.1 _,
     Docking.ofQF_boundedDependence_right guards_bounded.1 _⟩
 
-/-- Spreading h-epenthesis has no quantifier-free guard: whatever window a guard reads, a
-downstep just beyond it switches the raising on. -/
 theorem spreading_not_qf :
     ¬ ∃ (l r : ℕ) (φ : WindowFormula Slot), φ.Bounded l r ∧
       ∀ m i, spreading.Docks m i ↔ i < m.length ∧ φ.Realize m i := by
@@ -674,8 +659,6 @@ def derivations : List (Registered Syllable × Datum) :=
     (derive [raising] [Numee.gu2sg, Numee.capeRaise, Numee.panaaMast, Numee.koOn, Numee.nyuBoat,
       Numee.wiiDown, Numee.toThere], Examples.ex62)]
 
-/-- Every derivation rises and falls between syllables exactly where the source's levels
-do, over the tokens it levels. -/
 theorem rows_signs :
     ∀ d ∈ derivations, ∀ ls ∈ levels? d.2,
       (signs (syllableLevels d.1 (realize d.1))).take (ls.length - 1) =

@@ -60,7 +60,6 @@ theorem isContiguous_spellout {v : RuleSet (SupersetRule n F)} (hv : v.Antihomop
 
 /-! ### The plateau: terminal adjacency generates only AAA and ABB -/
 
-/-- Realization is constant above a grade bounding every threshold. -/
 theorem realize_const_of_cap {v : RuleSet (SpanRule n F)} {m g g' : Fin n}
     (hcap : ∀ it ∈ v, it.threshold ≤ m) (hg : m ≤ g) (hg' : m ≤ g') :
     realize v g = realize v g' :=
@@ -83,7 +82,6 @@ theorem realize_const_of_terminal_adjacent {v : RuleSet (SpanRule 3 F)}
 
 /-! ### Completeness: Elsewhere-generable = contiguous -/
 
-/-- A terminal rule conditioned on grade `s` has threshold `s`. -/
 theorem threshold_ofPattern {p : Paradigm n F} {s : Fin n} :
     (⟨p s, ⟨0, s.pos⟩, some s⟩ : SpanRule n F).threshold = s :=
   max_eq_right (Fin.le_def.mpr (Nat.zero_le _))

@@ -85,7 +85,6 @@ def IsLosslessFor (L : Kernel C W) : Prop :=
 
 variable {mp}
 
-/-- A deterministic encoder realizes the language model that reads the predictor through it. -/
 theorem isLosslessFor_comap {f : C → R} {hf : Measurable f}
     (h : mp.encode = Kernel.deterministic f hf) : mp.IsLosslessFor (mp.predict.comap f hf) :=
   ⟨f, hf, h, rfl⟩

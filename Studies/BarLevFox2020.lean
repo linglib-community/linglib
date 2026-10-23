@@ -122,7 +122,6 @@ theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w �
   exhIEII_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
     (h₂.imp fun _ h ↦ ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
 
-/-- The cell of simple disjunction is contradictory, so cell identification does not apply. -/
 theorem simpleDisjunction_cell (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
     cell {a ∪ b, a, b, a ∩ b} (a ∪ b) = ∅ :=
   cell_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
@@ -584,8 +583,6 @@ theorem Overlaps.of_inter_right (h : Overlaps (P ∩ Q) S) : Overlaps Q S :=
 theorem overlaps_union_iff : Overlaps (P ∪ Q) S ↔ Overlaps P S ∨ Overlaps Q S := by
   simp only [Overlaps, Finset.union_inter_distrib_right, Finset.union_nonempty]
 
-/-- *Most* is not monotone in its restrictor, but a restrictor that adds nothing to the scope
-can be dropped. -/
 theorem Most.of_union (h : Most (P ∪ Q) S) (hQ : ¬ Overlaps Q S) : Most P S := by
   have h₁ : (P ∪ Q) ∩ S = P ∩ S := by
     rw [Finset.union_inter_distrib_right, Finset.not_nonempty_iff_eq_empty.1 hQ,

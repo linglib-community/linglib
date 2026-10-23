@@ -123,13 +123,11 @@ private theorem argmin_cons_of_le {p : α × ℕ} {l : List (α × ℕ)}
   · rfl
   · simp [not_lt.mpr (h q (List.argmin_mem hl))]
 
-/-- The causer of CAUSE is the subject whatever it brings about. -/
 theorem subject_cause (x : α) (e : Sem α) : (cause (var x) e).subject = some x := by
   simp only [subject, vars, List.singleton_append, List.map_cons]
   rw [argmin_cons_of_le λ _ hq => one_le_snd_of_mem_vars_map hq]
   rfl
 
-/-- The holder of BE is the subject whatever state it is in. -/
 theorem subject_be (x : α) (s : Sem α) : (be (var x) s).subject = some x := by
   simp only [subject, vars, List.singleton_append, List.map_cons]
   rw [argmin_cons_of_le λ _ hq => one_le_snd_of_mem_vars_map hq]
@@ -147,14 +145,10 @@ def attitude : Sem Participant := be (var experiencer) (about root (var target))
 the emotional state. -/
 def episode : Sem Participant := cause (var stimulus) (be (var experiencer) root)
 
-/-- Fear-type verbs map the experiencer onto the subject. -/
 theorem attitude_subject : attitude.subject = some experiencer := subject_be _ _
 
-/-- Frighten-type verbs map the stimulus onto the subject. -/
 theorem episode_subject : episode.subject = some stimulus := subject_cause _ _
 
-/-- The episode encodes the stimulus as a cause and the attitude encodes none, the structural
-content behind the causation judgments of their Experiments 2–4. -/
 theorem episode_hasCause_attitude_not : episode.HasCause ∧ ¬ attitude.HasCause := by decide
 
 /-- The structures admit a target in the episode, still headed by the stimulus, which predicts the
@@ -172,7 +166,6 @@ def Participant.toSubjectRole : Participant → Option Pesetsky1995.SubjectRole
   | stimulus => some .stimulus
   | target => none
 
-/-- The prominence subjects are the Class I and Class II subjects. -/
 theorem agrees_with_belletti_rizzi :
     attitude.subject.bind Participant.toSubjectRole =
         Pesetsky1995.PsychVerbClass.expectedSubjectRole .classI ∧
@@ -195,7 +188,6 @@ def levinSubjectRole : LevinClass → Option ThetaRole
   | .amuse => some .stimulus
   | _ => none
 
-/-- The prominence subjects are the subjects of Levin's admire and amuse classes. -/
 theorem agrees_with_levin :
     attitude.subject.map Participant.thetaRole = levinSubjectRole .admire ∧
       episode.subject.map Participant.thetaRole = levinSubjectRole .amuse := by

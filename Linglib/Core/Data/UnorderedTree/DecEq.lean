@@ -66,8 +66,6 @@ where
       | some i => go cs (ds.eraseIdx i)
       | none => false
 
-/-- If `eqv` computes `mk`-equality on the pairs `eqv.go` compares, then `eqv.go` decides
-permutation of the `mk`-images. -/
 private theorem go_iff : ∀ {cs ds : List (RoseTree α)},
     (∀ c ∈ cs, ∀ d ∈ ds, eqv c d ↔ mk c = mk d) →
       (eqv.go cs ds ↔ (cs.map mk).Perm (ds.map mk))

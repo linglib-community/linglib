@@ -91,14 +91,10 @@ theorem isResolved_iff_exists_subset_optimalityRegion (U : W → A → ℝ) (C :
     IsResolved U C ↔ ∃ a, C ⊆ optimalityRegion U a :=
   ⟨fun ⟨a, h⟩ ↦ ⟨a, fun _ hw b ↦ h b _ hw⟩, fun ⟨a, h⟩ ↦ ⟨a, fun _ _ hw ↦ h hw _⟩⟩
 
-/-- Over finitely many actions every world has an optimal one, so the regions cover the
-worlds. -/
 theorem iUnion_optimalityRegion [Finite A] [Nonempty A] (U : W → A → ℝ) :
     ⋃ a, optimalityRegion U a = Set.univ :=
   Set.eq_univ_of_forall fun w ↦ Set.mem_iUnion.2 (Finite.exists_max (U w))
 
-/-- When every world has a strictly best action the regions are pairwise disjoint, and the
-actions induce a partition. -/
 theorem pairwise_disjoint_optimalityRegion (U : W → A → ℝ)
     (hstrict : ∀ w, ∃ a, ∀ b, b ≠ a → U w b < U w a) :
     Pairwise (Function.onFun Disjoint (optimalityRegion U)) := by
@@ -151,7 +147,6 @@ def newspaper : NewsW → Walk → ℝ
 /-- The worlds of the newspaper example are equiprobable. -/
 noncomputable abbrev newsPrior : Measure NewsW := uniformOn Set.univ
 
-/-- The actions induce overlapping propositions, not a partition. -/
 theorem newspaper_optimalityRegions :
     optimalityRegion newspaper .station = {.station, .both} ∧
       optimalityRegion newspaper .palace = {.palace, .both} := by
@@ -171,7 +166,6 @@ private theorem newspaper_value : decisionValue newspaper newsPrior = 2 / 3 := b
       norm_num
   simp only [decisionValue, h, ciSup_const]
 
-/-- Any answer that leaves the palace out resolves the problem and is worth `1 / 3`. -/
 private theorem newspaper_utilityValue {C : Set NewsW} (hC : C.Nonempty) (hs : .palace ∉ C) :
     Question.utilityValue newspaper newsPrior C = 1 / 3 := by
   obtain ⟨w₀, hw₀⟩ := hC
@@ -218,7 +212,6 @@ section Pair
 
 variable [Preorder R] {P : W → Set G} {u : W → G → R} {w : W} {x y : G}
 
-/-- Of two true values, a strictly more relevant one is the only optimal one. -/
 theorem optimalValues_eq_singleton (hP : P w = {x, y}) (h : u w x < u w y) :
     optimalValues P u w = {y} := by
   ext g
@@ -230,7 +223,6 @@ theorem optimalValues_eq_singleton (hP : P w = {x, y}) (h : u w x < u w y) :
   · rintro rfl
     exact ⟨.inr rfl, h.not_gt, lt_irrefl _⟩
 
-/-- Two true values neither of which is more relevant are both optimal. -/
 theorem optimalValues_eq_pair (hP : P w = {x, y}) (hxy : ¬ u w x < u w y)
     (hyx : ¬ u w y < u w x) : optimalValues P u w = {x, y} := by
   ext g
@@ -254,15 +246,12 @@ def questionR [Preorder R] (P : W → Set G) (u : W → G → R) : Set (Set W) :
 /-- The rule of footnote 28 puts two worlds together whenever their optimal values overlap. -/
 def overlapCells (op : W → Set G) : Set (Set W) := {p | ∃ w, p = {v | (op w ∩ op v).Nonempty}}
 
-/-- Hamblin's rule collects, for each value true somewhere, the worlds where it is true. -/
 theorem whAnswers_eq_image (P : W → Set G) :
     whAnswers P = (fun g ↦ {v | g ∈ P v}) '' ⋃ w, P w := by
   ext p
   simp only [whAnswers, Set.mem_image, Set.mem_iUnion]
   exact ⟨fun ⟨w, g, hg, hp⟩ ↦ ⟨g, ⟨w, hg⟩, hp.symm⟩, fun ⟨g, ⟨w, hg⟩, hp⟩ ↦ ⟨w, g, hg, hp.symm⟩⟩
 
-/-- When the optimal value is unique in every world the rule gives the partition by that
-value. -/
 theorem whAnswers_singleton (f : W → G) :
     whAnswers (fun w ↦ {f w}) = (Setoid.ker f).classes := by
   ext p
@@ -271,13 +260,10 @@ theorem whAnswers_singleton (f : W → G) :
   exact exists_congr fun w ↦ by
     rw [show {v | f w = f v} = {x | Setoid.ker f x w} from Set.ext fun v ↦ eq_comm]
 
-/-- When every value is equally relevant, the rule is Hamblin's. -/
 theorem questionR_const [Preorder R] (P : W → Set G) (r : R) :
     questionR P (fun _ _ ↦ r) = whAnswers P :=
   congrArg whAnswers <| funext fun w ↦ Set.ext fun g ↦ by simp [optimalValues]
 
-/-- Asking which action is optimal, the rule yields the nonempty propositions the actions
-induce. -/
 theorem questionR_actions (U : W → A → ℝ) :
     questionR (fun _ ↦ Set.univ) U = {r ∈ Set.range (optimalityRegion U) | r.Nonempty} := by
   ext p
@@ -326,7 +312,6 @@ def bestPlace : NewsW → Walk → ℝ
   | .station, .station | .palace, .palace => 2
   | .station, .palace | .palace, .station | .both, _ => 1
 
-/-- The optimal places are the best place of each world. -/
 theorem bestPlace_optimalValues :
     optimalValues (fun _ ↦ Set.univ) bestPlace .station = {.station} ∧
       optimalValues (fun _ ↦ Set.univ) bestPlace .palace = {.palace} ∧
@@ -370,23 +355,18 @@ theorem bestPlace_overlapCells :
     · exact cell .palace _ fun v ↦ by cases v <;> simp [hs, hp, hb]
     · exact cell .both _ fun v ↦ by cases v <;> simp [hs, hp, hb]
 
-/-- Hamblin's rule, which ignores which places are best, yields only the trivial answer. -/
 theorem bestPlace_hamblin : whAnswers (fun _ : NewsW ↦ (Set.univ : Set Walk)) = {Set.univ} := by
   rw [whAnswers_eq_image]
   simp
 
 /-! #### Degree questions -/
 
-/-- Ranking the numbers by size, the optimal answer to *How many meters can you jump?* is
-[rullmann-1995]'s maximum, the height you can jump (`Examples.ex_18b`). -/
 theorem optimalValues_le (jump : W → ℕ) (w : W) :
     optimalValues (fun w ↦ {n | n ≤ jump w}) (fun _ ↦ id) w = {jump w} := by
   ext n
   simp only [mem_optimalValues, Set.mem_ofPred_eq, Set.mem_singleton_iff, id]
   exact ⟨fun ⟨hn, h⟩ ↦ le_antisymm hn (h _ le_rfl), fun h ↦ ⟨h.le, fun m hm ↦ h ▸ hm⟩⟩
 
-/-- Ranking the numbers in reverse, the optimal answer to *In how many seconds can you run the
-100 meters?* is the minimum (`Examples.ex_19`). -/
 theorem optimalValues_ge (time : W → ℕ) (w : W) :
     optimalValues (fun w ↦ {n | time w ≤ n}) (fun _ ↦ OrderDual.toDual) w = {time w} := by
   ext n
@@ -394,8 +374,6 @@ theorem optimalValues_ge (time : W → ℕ) (w : W) :
     OrderDual.toDual_le_toDual]
   exact ⟨fun ⟨hn, h⟩ ↦ le_antisymm (h _ le_rfl) hn, fun h ↦ ⟨h.ge, fun m hm ↦ h ▸ hm⟩⟩
 
-/-- When jumping high is better there is no best number of meters you cannot jump, so *How many
-meters can't you jump?* is undefined (`Examples.ex_24`). -/
 theorem optimalValues_gt_eq_empty (jump : W → ℕ) (w : W) :
     optimalValues (fun w ↦ {n | jump w < n}) (fun _ ↦ id) w = ∅ :=
   Set.eq_empty_of_forall_notMem fun n ⟨hn, h⟩ ↦ h (n + 1) (by grind) (Nat.lt_succ_self n)
@@ -506,7 +484,6 @@ theorem liveIn_visit :
   ext v w
   simp [Setoid.ker_def]
 
-/-- For a letter, *Where do you live?* denotes the partition by address. -/
 theorem liveIn_letter :
     questionR livesAt (relevanceWithEffort letter livesAt) = (Setoid.ker id).classes := by
   have h (w : Address) : optimalValues livesAt (relevanceWithEffort letter livesAt) w =
@@ -520,8 +497,6 @@ theorem liveIn_letter :
   ext v w
   simp [Setoid.ker_def]
 
-/-- Without effort, for a visit both the address and the city are optimal, so *Where do you live?*
-has overlapping answers and is no partition. -/
 theorem liveIn_visit_not_pairwiseDisjoint :
     ¬ (questionR livesAt fun _ g ↦ IsResolved visit {v | g ∈ livesAt v}).PairwiseDisjoint id := by
   have hop (w : Address) :
@@ -545,8 +520,6 @@ instance : MeasurableSpace Address := ⊤
 
 instance : DiscreteMeasurableSpace Address := ⟨fun _ ↦ trivial⟩
 
-/-- For a visit, whatever the prior, asking for the city is a better question than asking for the
-address: it is worth as much, since the city settles the decision, and it asks for less. -/
 theorem liveIn_visit_better (μ : Measure Address) [IsProbabilityMeasure μ] :
     Question.Better visit μ (Finpartition.ofFun Address.city) ⊥ := by
   have hU : visit.FactorsThrough (Finpartition.ofFun Address.city).part := fun w v h ↦ by
@@ -626,7 +599,6 @@ private theorem forall_concept {p : Concept → Prop} :
     (∀ c, p c) ↔ p .john ∧ p .bill ∧ p .blue ∧ p .green :=
   ⟨fun h ↦ ⟨h _, h _, h _, h _⟩, fun ⟨h₁, h₂, h₃, h₄⟩ c ↦ by cases c <;> assumption⟩
 
-/-- A concept is optimal when its proposition resolves the problem or no true concept's does. -/
 private theorem mem_optimalValues_resolves {U : SpiderW → Concept → ℝ}
     {w : SpiderW} {c : Concept} :
     c ∈ optimalValues killer (fun _ c ↦ IsResolved U {v | c ∈ killer v}) w ↔
@@ -730,8 +702,6 @@ theorem killer_byMask :
       exacts [⟨.johnBlue, rfl⟩, ⟨.johnGreen, rfl⟩])
   all_goals cases v <;> simp [maskOf]
 
-/-- When any one concept resolves the problem every true concept is optimal, and *Who killed
-spiderman?* denotes four overlapping answers, one per concept. -/
 theorem killer_anyConcept :
     questionR killer (fun _ _ ↦ True) = {{.johnBlue, .johnGreen}, {.billBlue, .billGreen},
       {.johnBlue, .billBlue}, {.johnGreen, .billGreen}} := by
@@ -755,7 +725,6 @@ Van Rooy's wh-phrase ranges over all four concepts, which form no conceptual cov
 sense, and the decision problem selects the partitions Aloni obtains by quantifying over a cover,
 by name or by mask. -/
 
-/-- The names identify the suspects rigidly, forming the name cover `A`. -/
 theorem image_val_names : Concept.val '' {.john, .bill} = Aloni2001.names := by
   ext c
   constructor
@@ -765,7 +734,6 @@ theorem image_val_names : Concept.val '' {.john, .bill} = Aloni2001.names := by
     cases d
     exacts [⟨.john, .inl rfl, rfl⟩, ⟨.bill, .inr rfl, rfl⟩]
 
-/-- The masks form the cover `B`. -/
 theorem isCover_masks : Aloni2001.IsCover (Concept.val '' {.blue, .green}) := by
   intro w
   refine ⟨Set.mapsTo_univ _ _, ?_, fun d _ ↦ ?_⟩
@@ -781,7 +749,6 @@ theorem not_isCover_range_val : ¬ Aloni2001.IsCover (Set.range Concept.val) := 
   have e := h.eq_of_apply_eq ⟨.john, rfl⟩ ⟨.blue, rfl⟩ (w := .johnBlue) rfl
   cases congrFun e .johnGreen
 
-/-- A partition of the spiderman worlds with one cell through each of two worlds. -/
 private theorem classes_eq_pair {Q : Setoid SpiderW} {S₁ S₂ : Set SpiderW} {w₁ w₂ : SpiderW}
     (h₁ : Q.cell w₁ = S₁) (h₂ : Q.cell w₂ = S₂) (h : ∀ w, Q w w₁ ∨ Q w w₂) :
     Q.classes = {S₁, S₂} := by

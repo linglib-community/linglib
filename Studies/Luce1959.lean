@@ -305,8 +305,6 @@ def HasProductRule : Prop :=
   ∀ R S T : Finset A, R ⊆ S → S ⊆ T → cf.prob T R = cf.prob S R * cf.prob T S
 
 variable {cf} in
-/-- A ratio scale satisfies the product rule, since conditioning on `T` and then on `S ⊆ T` is
-conditioning on `S`. -/
 theorem HasRatioScale.hasProductRule (h : cf.HasRatioScale) : cf.HasProductRule := by
   obtain ⟨μ, -, hfin, hμ⟩ := h
   intro R S T hRS hST
@@ -372,7 +370,6 @@ structure HasChoiceAxiom : Prop where
 
 variable {cf}
 
-/-- A ratio scale satisfies the constant-ratio rule. -/
 theorem HasRatioScale.hasPairwiseIIA (h : cf.HasRatioScale) : cf.HasPairwiseIIA := by
   obtain ⟨μ, -, -, hμ⟩ := h
   intro T a b ha hb
@@ -382,7 +379,6 @@ theorem HasRatioScale.hasPairwiseIIA (h : cf.HasRatioScale) : cf.HasPairwiseIIA 
     measureReal_cond_singleton (by simp : b ∈ ({a, b} : Finset A))]
   ring
 
-/-- A ratio scale is a binary ratio scale on every set, with `v a = μ {a}`. -/
 theorem HasRatioScale.binaryRatioScaleOn (h : cf.HasRatioScale) :
     ∃ v : A → ℝ, ∀ S : Set A, cf.BinaryRatioScaleOn S v := by
   obtain ⟨μ, h0, hfin, hμ⟩ := h
@@ -468,8 +464,6 @@ theorem HasPairwiseIIA.hasRatioScale [Inhabited A] (hIIA : cf.HasPairwiseIIA)
     change ENNReal.ofReal (p T a) = _
     rw [hrule T a ha, ENNReal.ofReal_div_of_pos hsum, ENNReal.div_eq_inv_mul]
 
-/-- The ratio form and the constant-ratio rule are equivalent when every probability of choice
-is positive. -/
 theorem hasRatioScale_iff_hasPairwiseIIA [Inhabited A]
     (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < (cf.prob T).real {a}) :
     cf.HasRatioScale ↔ cf.HasPairwiseIIA :=
@@ -592,7 +586,6 @@ theorem jndL_iff (hx : 0 < v x) (hy : 0 < v y) (hthr : thr < 1) :
     div_lt_iff₀ (sub_pos.2 hthr)]
   constructor <;> intro h <;> linarith
 
-/-- `x I(π) y` holds exactly when neither alternative is one `π`-jnd larger than the other. -/
 theorem jndI_iff (hx : 0 < v x) (hy : 0 < v y) :
     jndI v thr x y ↔ ¬ jndL v thr x y ∧ ¬ jndL v thr y x := by
   have hc := pairwiseProb_complement hx hy
@@ -749,7 +742,6 @@ theorem pairwiseProb_powerScale (hA : 0 < A) (hx : 0 < x + C) (hy : 0 < y + C) :
   rw [pairwiseProb, powerScale, powerScale, div_rpow hy.le hx.le]
   field_simp
 
-/-- On the power scale `P(x, y) = π` exactly when `x + C = (π / (1 - π))^(1/B) (y + C)`. -/
 theorem pairwiseProb_powerScale_eq_iff (hA : 0 < A) (hB : 0 < B) (hp₀ : 0 < p) (hp₁ : p < 1)
     (hx : 0 < x + C) (hy : 0 < y + C) :
     pairwiseProb (powerScale A C B) x y = p ↔ x + C = (p / (1 - p)) ^ (1 / B) * (y + C) := by
@@ -807,8 +799,6 @@ theorem powerScale_unique {v F : ℝ → ℝ} (hv_pos : ∀ x, 0 < x + C → 0 <
   simp only [exp_zero] at this
   rw [this, powerScale, rpow_def_of_pos hx, mul_comm (log _) k, sub_eq_add_neg]
 
-/-- On the power scale `x L(π) y` holds exactly when `x + C > (π / (1 - π))^(1/B) (y + C)`, which is
-the linear generalization of Weber's law as an inequality. -/
 theorem jndL_powerScale_iff {thr : ℝ} (hA : 0 < A) (hB : 0 < B) (hthr₀ : 0 < thr)
     (hthr₁ : thr < 1) (hx : 0 < x + C) (hy : 0 < y + C) :
     jndL (powerScale A C B) thr x y ↔ (thr / (1 - thr)) ^ (1 / B) * (y + C) < x + C := by
@@ -910,8 +900,6 @@ noncomputable def ofRandomUtility (P : Measure Ω) [IsProbabilityMeasure P] (hU 
 variable {P : Measure Ω} [IsProbabilityMeasure P] (hU : Measurable U)
   (hties : ∀ j k, j ≠ k → P {ω | U ω j = U ω k} = 0)
 
-/-- The probability that `a` is judged the largest from `T` is the probability that its process
-exceeds the others of `T`. -/
 theorem ofRandomUtility_prob_singleton {T : Finset A} {a : A} (ha : a ∈ T) :
     (ofRandomUtility P hU hties).prob T {a} = P {ω | ∀ j ∈ T, j ≠ a → U ω j < U ω a} := by
   have hV : Measurable fun ω (j : T) ↦ U ω j := by fun_prop
@@ -933,9 +921,6 @@ theorem binary_ofRandomUtility {x y : A} (hxy : x ≠ y) :
   ext ω
   simp [hxy.symm]
 
-/-- For positive `x`, `y` and `z` with `P(x, y) + P(x, z) ≠ 1`, the difference between the
-probabilities that the choice axiom gives to `x` being judged the largest and the smallest is not
-`P(x, y) + P(x, z) - 1`. -/
 private theorem ratio_largest_sub_smallest_ne {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
     (hne : x / (x + y) + x / (x + z) ≠ 1) :
     x / (x + y + z) - y * z / (x * y + x * z + y * z) ≠ x / (x + y) + x / (x + z) - 1 := by
@@ -954,9 +939,6 @@ private theorem ratio_largest_sub_smallest_ne {x y z : ℝ} (hx : 0 < x) (hy : 0
     mul_left_cancel₀ hsq (by linarith)
   nlinarith [mul_pos (mul_pos hx hy) hz]
 
-/-- Positive ratio scales `p` and `q` of unit sum, with `q` giving each pair containing `x` the
-reversed odds of `p`, cannot make `p x - q x` equal to `P(x, y) + P(x, z) - 1` unless that sum is
-`1`, which is the arithmetic of Luce's proof. -/
 private theorem theorem7_arith {px py pz qx qy qz : ℝ} (hpx : 0 < px) (hpy : 0 < py)
     (hpz : 0 < pz) (hqx : 0 < qx) (hqy : 0 < qy) (hqz : 0 < qz) (hp : px + py + pz = 1)
     (hq : qx + qy + qz = 1) (hxy : qx / (qx + qy) = py / (py + px))
@@ -1098,8 +1080,6 @@ theorem forcedChoiceProb_roc (hα : 0 < α) (hv : 0 < v) :
   rw [forcedChoiceProb_eq_yesNoProb hα]
   exact yesNoProb_roc (by positivity) (by positivity)
 
-/-- The axiom-1 Yes-No observer responds as the logistic observer at sensitivity `log α` and
-criterion `log v - log α / 2`. -/
 theorem yesNoProb_eq_logistic (hα : 0 < α) (hv : 0 < v) (b : Bool) :
     yesNoProb α v b =
       (locationExperiment logisticMeasure (log α) b).real (Ioi (log v - log α / 2)) := by
@@ -1114,8 +1094,6 @@ theorem yesNoProb_eq_logistic (hα : 0 < α) (hv : 0 < v) (b : Bool) :
       sigmoid_log (div_pos hα hv), yesNoProb]
     field_simp
 
-/-- The axiom-1 forced choice responds as the logistic observer at sensitivity `2 log α` and
-criterion `log v`. -/
 theorem forcedChoiceProb_eq_logistic (hα : 0 < α) (hv : 0 < v) (b : Bool) :
     forcedChoiceProb α v b =
       (locationExperiment logisticMeasure (2 * log α) b).real (Ioi (log v)) := by
@@ -1301,7 +1279,6 @@ private theorem rankMeasure_apply_of_pos {v : A → ℝ} {T : Finset A} (hv : �
   have hrT := (mem_allRankings_iff.1 (mem_filter.1 hr).1).1
   exact (hv a (by rw [← hrT]; exact List.mem_toFinset.2 ha)).le
 
-/-- Under a positive scale the rankings of `T` form a probability distribution. -/
 theorem isProbabilityMeasure_rankMeasure {v : A → ℝ} {T : Finset A} (hv : ∀ a ∈ T, 0 < v a) :
     IsProbabilityMeasure (rankMeasure v T) :=
   ⟨by classical rw [rankMeasure_apply_of_pos hv, filter_true_of_mem fun _ _ ↦ Set.mem_univ _,
@@ -1470,7 +1447,6 @@ theorem eventPref_total (ρ σ : E) : EventPref dp ρ σ ∨ EventPref dp σ ρ 
   by_contra! h
   linarith [h.1, h.2]
 
-/-- Two events that are not equi-likely are strictly ordered. -/
 theorem gt_half_or_of_not_eventIndiff {ρ σ : E} (h : ¬EventIndiff dp ρ σ) :
     1 / 2 < dp.Q.binary ρ σ ∨ 1 / 2 < dp.Q.binary σ ρ := by
   have hc := dp.Q.binary_complement (ne_of_not_eventIndiff h)
@@ -1734,7 +1710,6 @@ private theorem no_strict_cycle (hnd : Nondegenerate dp) {ρ σ τ : E} (hρτ :
   unfold EventPref at hle
   linarith
 
-/-- Events of three distinct classes ordered `ρ ≻ σ ≻ τ` have `Q(ρ, τ) = 1`. -/
 private theorem binary_eq_one_of_lt (hnd : Nondegenerate dp) {ρ σ τ : E}
     (nρσ : ¬EventIndiff dp ρ σ) (nρτ : ¬EventIndiff dp ρ τ) (nστ : ¬EventIndiff dp σ τ)
     (h1 : 1 / 2 < dp.Q.binary ρ σ) (h2 : 1 / 2 < dp.Q.binary σ τ) : dp.Q.binary ρ τ = 1 := by
@@ -2721,8 +2696,6 @@ private theorem integrable_one_sub_sigmoid_mul {μ : Measure ℝ} {g : ℝ → �
 
 variable (m)
 
-/-- When the translates of `f` are integrable, the expectation of `f` on trial `n + 1` is the
-expectation on trial `n` of its conditional expectation. -/
 theorem integral_law_succ (μ₀ : Measure ℝ) (n : ℕ) {f : ℝ → ℝ} (hf : Measurable f)
     (hi : ∀ c, Integrable (fun u ↦ f (u + c)) (m.law μ₀ n)) :
     Integrable f (m.law μ₀ (n + 1)) ∧
@@ -2753,7 +2726,6 @@ theorem integral_law_succ (μ₀ : Measure ℝ) (n : ℕ) {f : ℝ → ℝ} (hf 
     (by rwa [← Measure.comp_eq_comp_const_apply])]
   simp [Kernel.const_apply]
 
-/-- Finite moments `E(v₀ᵗ)` of every real order persist on every trial. -/
 theorem integrable_exp_law {μ₀ : Measure ℝ} (hμ₀ : ∀ t, Integrable (fun u ↦ Real.exp (t * u)) μ₀)
     (n : ℕ) (t : ℝ) : Integrable (fun u ↦ Real.exp (t * u)) (m.law μ₀ n) := by
   induction n generalizing t with
@@ -2808,22 +2780,18 @@ def swap : BetaLearner where
   π₂_nonneg := m.π₁_nonneg
   π₂_le_one := m.π₁_le_one
 
-/-- Exchanging the alternatives turns `A(k)` into `B(−k)`. -/
 theorem swap_A (k : ℝ) : m.swap.A k = m.B (-k) := by
   simp [swap, A, B, Real.rpow_neg m.β₂₁_pos.le, Real.rpow_neg m.β₂₂_pos.le, div_eq_mul_inv]
 
-/-- Exchanging the alternatives turns `B(k)` into `A(−k)`. -/
 theorem swap_B (k : ℝ) : m.swap.B k = m.A (-k) := by
   simp [swap, A, B, Real.rpow_neg m.β₁₁_pos.le, Real.rpow_neg m.β₁₂_pos.le, div_eq_mul_inv]
 
-/-- The transition of the exchanged model is the reflection of the original one. -/
 theorem swap_kernel (u : ℝ) : m.swap.kernel u = (m.kernel (-u)).map Neg.neg := by
   simp only [kernel_apply, Measure.map_add _ _ measurable_neg,
     Measure.map_smul _ measurable_neg.aemeasurable, Measure.map_dirac' measurable_neg,
     Real.sigmoid_neg, swap, neg_add, neg_neg, sub_eq_add_neg]
   abel_nf
 
-/-- The log ratio of the exchanged model is the negated log ratio. -/
 theorem law_swap (n : ℕ) : m.swap.law (μ₀.map Neg.neg) n = (m.law μ₀ n).map Neg.neg := by
   induction n with
   | zero => rfl
@@ -2858,13 +2826,11 @@ theorem integrable_sigmoid_law [IsProbabilityMeasure μ₀] (n : ℕ) :
   (integrable_const (1 : ℝ)).mono' (by fun_prop) (.of_forall fun u ↦ by
     rw [Real.norm_eq_abs, abs_of_nonneg (Real.sigmoid_nonneg u)]; exact Real.sigmoid_le_one u)
 
-/-- Expectations under the exchanged model are expectations of the reflected function. -/
 theorem integral_law_swap (f : ℝ → ℝ) (n : ℕ) :
     ∫ x, f x ∂m.swap.law (μ₀.map Neg.neg) n = ∫ u, f (-u) ∂m.law μ₀ n := by
   rw [law_swap]
   exact integral_map_equiv (MeasurableEquiv.neg ℝ) f
 
-/-- The exchanged model chooses its first alternative with probability `1 − E(Pₙ)`. -/
 theorem integral_sigmoid_law_swap [IsProbabilityMeasure μ₀] (n : ℕ) :
     ∫ x, Real.sigmoid x ∂m.swap.law (μ₀.map Neg.neg) n = 1 - ∫ u, Real.sigmoid u ∂m.law μ₀ n := by
   rw [integral_law_swap]

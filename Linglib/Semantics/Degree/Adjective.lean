@@ -118,7 +118,6 @@ def boundedness (g : GradableAdjective) : Boundedness :=
 def standard (g : GradableAdjective) : PositiveStandard :=
   (g.gradability?.map (·.standard)).getD .contextual
 
-/-- Without a lexically fixed standard, the standard is one the scale admits. -/
 theorem admits_standard (g : GradableAdjective) (h : g.lexicalStandard = none) :
     g.boundedness.Admits g.standard := by
   cases hd : g.dimension with
@@ -202,7 +201,6 @@ def neg (p : AntonymPair) : GradableAdjective where
 
 @[simp] theorem neg_polarity (p : AntonymPair) : p.neg.polarity = .negative := rfl
 
-/-- The poles name each other as antonyms. -/
 @[simp] theorem pos_antonymForm (p : AntonymPair) : p.pos.antonymForm = some p.neg.form := rfl
 
 @[simp] theorem neg_antonymForm (p : AntonymPair) : p.neg.antonymForm = some p.pos.form := rfl

@@ -157,8 +157,6 @@ instance [IsMarkovKernel κ] : IsMarkovKernel (fillList κ) :=
     obtain ⟨c, -, rfl⟩ := List.mem_map.mp hμ
     exact isProbabilityMeasure_fill c⟩
 
-/-- A list of subtrees whose root types do not spell out the holes has mass `0`, for any family
-of laws concentrated on trees of the right type. -/
 theorem fillList_map_hole_singleton_of_ne
     (hκ : ∀ i (c : RoseTree ι), c.value ≠ i → κ i {c} = 0) :
     ∀ (js : List ι) (cs : List (RoseTree ι)), cs.map value ≠ js →
@@ -233,7 +231,6 @@ instance [IsMarkovKernel ξ] : IsMarkovKernel (generationList ξ) :=
     obtain ⟨c, -, rfl⟩ := List.mem_map.mp hμ
     exact isProbabilityMeasure_generation ξ c⟩
 
-/-- Filling a list of partial trees after one generation on each. -/
 theorem fillList_comp_generationList {κ : Kernel ι (RoseTree ι)} (ss : List (PartialTree ι)) :
     fillList κ ∘ₘ generationList ξ ss =
       Measure.listProd (ss.map fun s => fill κ ∘ₘ generation ξ s) := by
@@ -274,7 +271,6 @@ theorem expand_apply' (i : ι) (s : Set (RoseTree ι)) :
     lintegral_map (Kernel.measurable_coe _ .of_discrete) .of_discrete]
   simp_rw [fill_inr, Measure.map_apply .of_discrete .of_discrete]
 
-/-- Filling with one more generation is one generation followed by filling. -/
 theorem fill_expand_apply (s : PartialTree ι) : fill (expand ξ κ) s = fill κ ∘ₘ generation ξ s := by
   induction s using RoseTree.rec' with
   | node s cs ih =>
@@ -377,8 +373,6 @@ theorem law_singleton_of_ne {t : RoseTree ι} {i : ι} (h : t.value ≠ i) : law
     exact h rfl
   simp [this]
 
-/-- A list of family trees has probability the product of their weights below the holes it
-spells out, given the singleton law for each of them. -/
 theorem fillList_law_map_hole_singleton {cs : List (RoseTree ι)}
     (h : ∀ c ∈ cs, law ξ c.value {c} = weight ξ c) :
     fillList (law ξ) ((cs.map value).map hole) {cs} = (cs.map (weight ξ)).prod := by
@@ -389,7 +383,6 @@ theorem fillList_law_map_hole_singleton {cs : List (RoseTree ι)}
       Measure.listProd_cons_singleton_cons, fill_hole, h c (List.mem_cons_self ..), List.map_cons,
       List.prod_cons, ← fillList_apply, ih fun d hd => h d (List.mem_cons_of_mem _ hd)]
 
-/-- A family tree of an individual of type `i` has probability `weight` under the law at `i`. -/
 theorem law_singleton_value (t : RoseTree ι) : law ξ t.value {t} = weight ξ t := by
   induction t using RoseTree.rec' with
   | node i cs ih =>

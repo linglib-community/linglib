@@ -125,11 +125,9 @@ theorem definite_gen_eq_dat_iff (x : GenderNumber) :
 
 /-! ### Gender agreement -/
 
-/-- The nominative singular of the definite article keeps the three genders apart. -/
 theorem injective_definite_sg_nom : Function.Injective fun g ↦ definite (.sg g) .nom := by
   decide
 
-/-- The dative singular does not, the masculine and the neuter both being *dem*. -/
 theorem not_injective_definite_sg_dat :
     ¬ Function.Injective fun g ↦ definite (.sg g) .dat := by
   decide

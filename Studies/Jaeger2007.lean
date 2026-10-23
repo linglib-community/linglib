@@ -64,7 +64,6 @@ observation and lowering one that favours the hypothesis. -/
 def glaUpdate (r η : ℝ) (obs hyp : ℕ) : ℝ :=
   r + η * ((hyp : ℝ) - obs)
 
-/-- On binary constraints the sign is idle, and the GLA update is the plain excess. -/
 theorem glaSign_eq_glaUpdate (r η : ℝ) {obs hyp : ℕ} (ho : obs ≤ 1) (hh : hyp ≤ 1) :
     glaSign r η obs hyp = glaUpdate r η obs hyp := by
   unfold glaSign glaUpdate
@@ -177,8 +176,6 @@ def con : ConstraintSet (Syl × Syl) (Fin 5) :=
 input, under the five constraints. -/
 def syllabification : ConstraintSystem Syl Syl (Fin 5) := ⟨fun _ ↦ univ, con⟩
 
-/-- A ranking produces an input faithfully exactly when every markedness constraint the input
-violates is ranked below FAITH. -/
 theorem faithful_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
     PicksAt syllabification σ i i ↔ ∀ k, con k (i, i) = 1 → σ.Dominates 0 k := by
   revert σ i; decide +kernel
@@ -187,7 +184,6 @@ theorem faithful_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
 FAITH, namely those violating no other markedness constraint. -/
 def produced (S : Finset (Fin 5)) : Finset Syl := univ.filter fun i ↦ ∀ k, con k (i, i) = 1 → k ∈ S
 
-/-- The types a ranking produces faithfully are those of the stage it is at. -/
 theorem mem_produced_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
     i ∈ produced (univ.filter (σ.Dominates 0)) ↔ PicksAt syllabification σ i i := by
   simp [produced, faithful_iff]
@@ -199,7 +195,6 @@ theorem produced_stages :
     produced {4, 3, 2} = {cv, cvc, v, vc, cvcc, vcc} ∧ produced {4, 3, 2, 1} = univ := by
   decide
 
-/-- CV violates no markedness constraint. -/
 theorem cv_unmarked : ∀ i : Syl, ∀ k : Fin 5, k ≠ 0 → con k (i, cv) = 0 := by decide
 
 /-- A learner producing CV with certainty, the initial state with FAITH at 0 and the markedness

@@ -96,7 +96,6 @@ theorem mono (hkn : k ≤ n) (h : M ≅[L, n] N) : M ≅[L, k] N :=
 
 end ElementarilyEquivalentUpTo
 
-/-- `ElementarilyEquivalent` is `n`-equivalence at every rank. -/
 theorem elementarilyEquivalent_iff_forall_elementarilyEquivalentUpTo :
     M ≅[L] N ↔ ∀ n, M ≅[L, n] N :=
   ⟨fun h _ φ _ => h.realize_sentence φ,
@@ -174,7 +173,6 @@ theorem realize_iff : ∀ {n} {φ : L.BoundedFormula Empty n} {k} {v : Fin n →
       exact ⟨fun hv b => (h.back b).elim fun a hab => (realize_iff hab hφ).1 (hv a),
         fun hw a => (h.forth a).elim fun b hab => (realize_iff hab hφ).2 (hw b)⟩
 
-/-- On the empty tuples, the rank-`k` relation gives `k`-equivalence. -/
 theorem elementarilyEquivalentUpTo
     (h : L.DuplicatorWins k (default : Fin 0 → M) (default : Fin 0 → N)) :
     M ≅[L, k] N :=
@@ -195,8 +193,6 @@ theorem trans : ∀ {k n} {u : Fin n → M} {v : Fin n → N} {w : Fin n → P},
 
 end DuplicatorWins
 
-/-- An isomorphism is a winning strategy at every rank, answering `a` by `f a` and `b` by
-`f.symm b`. -/
 theorem Equiv.duplicatorWins (f : M ≃[L] N) :
     ∀ (k : ℕ) {n} (v : Fin n → M), L.DuplicatorWins k v (f ∘ v)
   | 0, _, v => fun φ _ => by
@@ -247,7 +243,6 @@ theorem atom_isAtomic (i : L.AtomIndex n) : (L.atom i).IsAtomic := by
   | inr p => exact .rel _ _
 
 variable {L} in
-/-- In a relational language every atomic formula on bound variables is an `atom`. -/
 theorem BoundedFormula.IsAtomic.exists_eq_atom [L.IsRelational] {φ : L.BoundedFormula Empty n}
     (hφ : φ.IsAtomic) : ∃ i, φ = L.atom i := by
   have hvar : ∀ t : L.Term (Empty ⊕ Fin n), ∃ i, t = &i := by

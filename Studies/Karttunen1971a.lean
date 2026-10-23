@@ -101,7 +101,6 @@ def english : List (Verb × ImplicationSignature) :=
     (force.toVerb, ⟨.some .positive, ⊥⟩),
     (prevent.toVerb, ⟨.some .negative, ⊥⟩)]
 
-/-- Each entry carries the signature of its schema. -/
 theorem implicative_eq : ∀ p ∈ english, p.1.implicative = p.2 := by
   decide
 

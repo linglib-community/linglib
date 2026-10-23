@@ -79,24 +79,17 @@ theorem SpelloutOrder.mono (h : ∀ p ∈ ps, p ∈ qs) (hab : SpelloutOrder ps 
     SpelloutOrder qs a b :=
   Relation.TransGen.mono (fun _ _ ⟨p, hp, hs⟩ ↦ ⟨p, h p hp, hs⟩) a b hab
 
-/-- The induced order is blind to the sequencing of Spell-outs: it reads only the set of phase
-snapshots. -/
 theorem spelloutOrder_perm (h : ps.Perm qs) : SpelloutOrder ps = SpelloutOrder qs := by
   funext a b
   exact propext ⟨.mono fun p hp ↦ h.mem_iff.mp hp, .mono fun p hp ↦ h.mem_iff.mpr hp⟩
 
-/-- Two Spell-outs ordering a pair both ways make an ordering contradiction: the derivation does
-not linearize, whatever else it contains. -/
 theorem not_consistent_of_pair (a b : α) (h₁ : Statement phases a b) (h₂ : Statement phases b a) :
     ¬ Consistent phases :=
   fun h ↦ h a (h₁.spelloutOrder.trans h₂.spelloutOrder)
 
-/-- A Spell-out with a repeated terminal orders it before itself. -/
 theorem Consistent.nodup (h : Consistent phases) (hp : p ∈ phases) : p.Nodup :=
   nodup_iff_sublist.mpr fun a hs ↦ h a (Statement.spelloutOrder ⟨p, hp, hs⟩)
 
-/-- By Order Preservation, whatever a later Spell-out places between two terminals adjacent at an
-earlier one was not spelled out with them. -/
 theorem Consistent.notMem_of_isInfix (h : Consistent phases) (hp : p ∈ phases) (hq : q ∈ phases)
     (hab : [a, b] <:+: p) (hac : [a, c] <+ q) (hcb : [c, b] <+ q) : c ∉ p := by
   intro hc
@@ -113,7 +106,6 @@ theorem Consistent.notMem_of_isInfix (h : Consistent phases) (hp : p ∈ phases)
 
 variable [DecidableEq α]
 
-/-- On a single duplicate-free snapshot, the induced order is index order. -/
 theorem spelloutOrder_singleton_idxOf (hnd : p.Nodup) (h : SpelloutOrder [p] a b) :
     p.idxOf a < p.idxOf b := by
   induction h with
@@ -126,20 +118,15 @@ theorem spelloutOrder_singleton_idxOf (hnd : p.Nodup) (h : SpelloutOrder [p] a b
     rw [mem_singleton] at hq
     exact ih.trans (hq ▸ idxOf_lt_of_pair_sublist (hq ▸ hnd) hs)
 
-/-- A single Spell-out of distinct terminals always linearizes. -/
 theorem consistent_singleton (hnd : p.Nodup) : Consistent [p] :=
   fun _ h ↦ Nat.lt_irrefl _ (spelloutOrder_singleton_idxOf hnd h)
 
-/-- A derivation every one of whose Spell-outs is a sub-order of one duplicate-free string
-linearizes. -/
 theorem consistent_of_forall_sublist {l : List α} (h : ∀ p ∈ phases, p <+ l) (hnd : l.Nodup) :
     Consistent phases := fun a hab ↦
   consistent_singleton hnd a
     (Relation.TransGen.mono (fun _ _ ⟨p, hp, hs⟩ ↦ ⟨l, mem_singleton_self l, hs.trans (h p hp)⟩)
       a a hab)
 
-/-- Two Spell-outs, the later duplicate-free and containing the earlier, cohere exactly when the
-earlier is a sub-order of the later. -/
 theorem consistent_pair_iff_sublist (hq : q.Nodup) (hpq : p ⊆ q) :
     Consistent [p, q] ↔ p <+ q := by
   refine ⟨fun h ↦ sublist_of_forall_pair_sublist (h.nodup (by simp)) hq hpq fun a b hab ↦ ?_,

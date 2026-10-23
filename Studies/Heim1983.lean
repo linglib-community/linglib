@@ -68,8 +68,6 @@ variable {W : Type*}
     by `S` is true in `w`. -/
 def TrueWrt (φ : CCP.Partial W) (c : Set W) (w : W) : Prop := ∃ h : φ.Admits c, w ∈ (φ c).get h
 
-/-- The content property is derivable from the potential. With respect to a context that is
-    true in `w` and admits it, an atomic sentence is true in `w` iff it is true there. -/
 theorem trueWrt_ofTrivalent {p : W → SignType} {c : Set W} {w : W} (hw : w ∈ c)
     (h : (ofTrivalent p).Admits c) : TrueWrt (ofTrivalent p) c w ↔ p w = 1 :=
   ⟨fun ⟨_, hm⟩ => hm.2, fun hq => ⟨h, hw, hq⟩⟩
@@ -129,7 +127,6 @@ def localNeg : CCP.Partial W := fun c => (φ (c ∩ p)).map (c \ ·)
 
 variable {φ p}
 
-/-- Both options make the update defined once the amended context admits `S`. -/
 theorem globalNeg_admits {c : Set W} (h : φ.Admits (c ∩ p)) : (globalNeg φ p).Admits c := h
 
 theorem localNeg_admits {c : Set W} (h : φ.Admits (c ∩ p)) : (localNeg φ p).Admits c := h
@@ -152,8 +149,6 @@ theorem localNeg_entails {came : W → Prop} [DecidablePred came] {c c' : Set W}
     Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff]
   tauto
 
-/-- The local option is what a continuation denying the presupposition needs, since the
-    global result cannot contain a world without the presupposition and the local one can. -/
 theorem globalNeg_disjoint {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ∩ pᶜ = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨hw, hn⟩ => hn (globalNeg_entails h hw)
 
@@ -233,8 +228,6 @@ theorem atom_admits (P : M → W → Prop) (i : ℕ) (c : File M W) : (atom P i)
 theorem atomP_admits_iff (pre P : M → W → Prop) (i : ℕ) (c : File M W) :
     (atomP pre P i).Admits c ↔ ∀ gw ∈ c, pre (gw.1 i) gw.2 := Iff.rfl
 
-/-- The heritage of *every* is that `c` admits `Every xᵢ, A, B` iff it admits `A` and `c + A`
-    admits `B`. -/
 theorem every_admits_iff (i : ℕ) (A B : CCP.Partial ((ℕ → M) × W)) (c : File M W) :
     (every i A B).Admits c ↔ ∃ h : A.Admits c, B.Admits ((A c).get h) :=
   Iff.rfl
@@ -309,7 +302,6 @@ theorem File.pointAt_eq_coe (hj : i ∈ X) :
     (File.pointAt X (g, w)).assignment i = ↑(g i) :=
   File.pointAt_assignment_eq_coe_iff.mpr ⟨hj, rfl⟩
 
-/-- Points descend as their cards and values extend. -/
 theorem File.pointAt_le_pointAt :
     File.pointAt X (g, w) ≤ File.pointAt Y (g', w') ↔ X ⊆ Y ∧ w = w' ∧ Set.EqOn g g' X := by
   constructor
@@ -373,8 +365,6 @@ theorem File.pointAt_mem_toState (hc : c.DeterminedBy X) (gw : (ℕ → M) × W)
   obtain ⟨rfl, heq'⟩ := File.pointAt_eq_pointAt.mp heq
   exact hc heq' h
 
-/-- Extension along cards is the state of the file at more cards, since the file, being
-    determined by `X`, already ranges over every value at the new cards. -/
 theorem File.toState_mul_stratum (hc : c.DeterminedBy X) :
     c.toState X * State.stratum Y = c.toState (X ∪ Y) := by
   ext r
@@ -495,8 +485,6 @@ def fatManBicycleAcc (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop) :
     CCP.Partial ((ℕ → M) × W) :=
   fun c => atomP hasBicycle pushing i {gw ∈ c | fatMan (gw.1 i) gw.2 ∧ hasBicycle (gw.1 i) gw.2}
 
-/-- The accommodated update is always defined, and its result entails that `xᵢ` was a fat
-    man, had a bicycle, and was pushing it. -/
 theorem fatManBicycleAcc_admits (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
     (c : File M W) : (fatManBicycleAcc i fatMan hasBicycle pushing).Admits c :=
   fun _ hgw => hgw.2.2
@@ -508,8 +496,6 @@ theorem fatManBicycleAcc_entails (i : ℕ) (fatMan hasBicycle pushing : M → W 
   obtain ⟨-, rfl⟩ := h
   exact fun gw hgw => ⟨hgw.1.2.1, hgw.1.2.2, hgw.2⟩
 
-/-- The accommodated result entails nothing about fat men in general. In a two-individual
-    model where only one fat man has a bicycle, the update is defined and non-empty. -/
 theorem fatManBicycleAcc_not_universal :
     ∃ (c' : File Bool Unit), c' ∈ fatManBicycleAcc 0 (fun _ _ => True) (fun a _ => a = true)
         (fun _ _ => True) Set.univ ∧ c'.TrueIn () ∧

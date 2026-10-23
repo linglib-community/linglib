@@ -112,7 +112,6 @@ theorem Derives.bigDisj_of_mem (hL : ∀ y ∈ L, y.NEFree) {x : Formula Atom} (
     · exact h.disjI (neFree_bigDisj r fun z hz ↦ hL z (by simp [hz]))
     · exact (ih (fun z hz ↦ hL z (by simp [hz])) hx).disjI (hL y (by simp)) |>.disjCom
 
-/-- A finite disjunction derives a classical one when each of its disjuncts does. -/
 theorem Derives.bigDisj_mono (hL' : ∀ y ∈ L', y.NEFree) (h : Γ ⊢ bigDisj L)
     (hsub : ∀ x ∈ L, {x} ⊢ bigDisj L') : Γ ⊢ bigDisj L' :=
   h.bigDisj_elim hsub ((Derives.single _).of_falsum (neFree_bigDisj L' hL'))
@@ -182,7 +181,6 @@ theorem poss_falsum_derives : {.poss .falsum} ⊢ (.falsum : Formula Atom) := by
     Formula.neFree_falsum (.single _) hneg
   simpa using h
 
-/-- The empty team supports every possibility. -/
 theorem Derives.poss_of_falsum (h : Γ ⊢ .falsum) : Γ ⊢ .poss φ := by
   have h₁ : Γ ⊢ .poss .falsum := h.of_falsum Formula.neFree_falsum
   have h₂ := Derives.possNeTrs (ψ := .falsum) .hole trivial h₁
@@ -191,7 +189,6 @@ theorem Derives.poss_of_falsum (h : Γ ⊢ .falsum) : Γ ⊢ .poss φ := by
     ((Derives.single _).possMon' (Derives.single _).conjE₁).trans poss_falsum_derives
   exact ((h₂.disjMonLeft hl).disjMon' hr).disj_falsum
 
-/-- The empty team supports every necessity. -/
 theorem Derives.nec_of_falsum (h : Γ ⊢ .falsum) : Γ ⊢ Formula.nec φ := by
   have h₁ : Γ ⊢ Formula.nec .falsum := h.of_falsum Formula.neFree_falsum
   have h₂ := Set.union_self Γ ▸ h₁.necPossJoin (h.poss_of_falsum (φ := φ))
@@ -208,7 +205,6 @@ theorem Derives.nec_disj_conj_ne (h : Γ ⊢ Formula.nec (.disj φ ψ)) (h' : Γ
       disj_conj_ne_derives_conj_ne.conjE₂
   exact ((Derives.single _).disj_assoc.disjMon' (Derives.single _).disjCom).disjAss.disjMonLeft hY
 
-/-- `◇Join` extends to nonempty lists. -/
 theorem Derives.poss_bigDisj (hL : L ≠ []) (h : ∀ x ∈ L, Γ ⊢ .poss x) : Γ ⊢ .poss (bigDisj L) := by
   induction L with
   | nil => exact absurd rfl hL
@@ -301,7 +297,6 @@ theorem worldType_univModel (he : Function.Injective e) :
     refine Prod.ext (funext fun i ↦ by simp [univModel_val he, world, WorldType.val]) ?_
     simp only [Function.comp_def, worldType_univModel he k, Finset.image_id']
 
-/-- The Hintikka formula of `τ` holds exactly at `τ`. -/
 theorem realize_hintikka (he : Function.Injective e) (k : ℕ) (τ τ' : WorldType n k) :
     Realize (univModel e) (hintikka e k τ) (world k τ') ↔ τ' = τ := by
   rw [realize_hintikka_iff, worldType_univModel he]
@@ -320,7 +315,6 @@ theorem support_image_iff {k : ℕ} {φ : Formula Atom} (hφ : φ.NEFree) (T : F
     support (univModel e) φ (T.image (world k)) ↔ ∀ τ ∈ T, Realize (univModel e) φ (world k τ) := by
   simp [support_iff_forall_realize hφ]
 
-/-- The strong Hintikka formula of `T` is supported exactly by the team of the types in `T`. -/
 theorem support_strongHintikka (he : Function.Injective e) {k : ℕ} (T T' : Finset (WorldType n k)) :
     support (univModel e) (strongHintikka e T) (T'.image (world k)) ↔ T' = T := by
   rw [support_strongHintikka_iff, Finset.image_image, Function.comp_def]
@@ -455,7 +449,6 @@ theorem derives_of_support (he : Function.Injective e) :
 
 /-! ### Exhaustiveness of the types -/
 
-/-- `∧` with a classical formula distributes over a finite disjunction. -/
 theorem Derives.conj_bigDisj {A : Formula Atom} (hA : A.NEFree) :
     ∀ {L : List (Formula Atom)} {Γ : Set (Formula Atom)}, Γ ⊢ .conj A (bigDisj L) →
       Γ ⊢ bigDisj (L.map (.conj A))
@@ -465,7 +458,6 @@ theorem Derives.conj_bigDisj {A : Formula Atom} (hA : A.NEFree) :
 
 theorem Derives.conj_comm (h : Γ ⊢ .conj φ ψ) : Γ ⊢ .conj ψ φ := h.conjE₂.conj h.conjE₁
 
-/-- Case analysis on the atoms in `is` covers every assignment. -/
 private theorem derives_bigDisj_literals_aux (e : Fin n → Atom) (Γ : Set (Formula Atom)) :
     ∀ is : List (Fin n), Γ ⊢ bigDisj ((Finset.univ : Finset (Fin n → Bool)).toList.map
       fun a ↦ bigConj (is.map fun j ↦ literal e j (a j)))
@@ -498,7 +490,6 @@ private theorem derives_bigDisj_literals_aux (e : Fin n → Atom) (Γ : Set (For
     · simpa [literal] using key true
     · simpa [literal] using key false
 
-/-- Every world has some atomic type. -/
 theorem derives_bigDisj_literals (e : Fin n → Atom) (Γ : Set (Formula Atom)) :
     Γ ⊢ bigDisj ((Finset.univ : Finset (Fin n → Bool)).toList.map (literals e)) :=
   derives_bigDisj_literals_aux e Γ (List.finRange n)
@@ -513,7 +504,6 @@ theorem neFree_succLit (e : Fin n → Atom) {k : ℕ} (S : Finset (WorldType n k
     (succLit e S σ).NEFree := by
   unfold succLit; split <;> exact neFree_hintikka e k σ
 
-/-- Case analysis on the types in `ss` covers every set of successor types. -/
 private theorem derives_bigDisj_succLit_aux (e : Fin n → Atom) {k : ℕ} (Γ : Set (Formula Atom)) :
     ∀ ss : List (WorldType n k),
       Γ ⊢ bigDisj ((Finset.univ : Finset (Finset (WorldType n k))).toList.map
@@ -644,8 +634,6 @@ theorem derives_bigDisj_hintikka (e : Fin n → Atom) :
 
 /-! ### Classical normal forms -/
 
-/-- A classical consequence of `φ ∧ NE` follows from `φ`, since the `⊥`-case of `⊥NETrs` is ex
-    falso. -/
 theorem Derives.of_conj_ne {β : Formula Atom} (hβ : β.NEFree) (h : {.conj φ .ne} ⊢ β) :
     {φ} ⊢ β := by
   simpa using Derives.neTrs (Δ₁ := ∅) (Δ₂ := ∅) (ψ := φ) (χ := β) .hole trivial (.single φ)
@@ -658,8 +646,6 @@ theorem strongHintikka_singleton {k : ℕ} (τ : WorldType n k) :
   simpa [strongHintikka, bigDisjNE, bigDisj] using
     (Derives.single (Formula.conj (hintikka e k τ) .ne)).disjI Formula.neFree_falsum
 
-/-- A Hintikka formula derives the classical formulas true at its type, and the negations of
-    those false there. -/
 theorem hintikka_derives (he : Function.Injective e) {β : Formula Atom} (hβ : β.NEFree) {k : ℕ}
     (hk : β.modalDepth ≤ k) (hA : β.AtomsIn (Set.range e)) (τ : WorldType n k) :
     (Realize (univModel e) β (world k τ) → {hintikka e k τ} ⊢ β) ∧
@@ -765,7 +751,6 @@ end Formula.Context
 
 open Formula.Context
 
-/-- The `⊥NE`-translation rules split a splittable context. -/
 theorem Splits.fill_split {C : Formula.Context Atom} (hC : C.Splittable) (ψ : Formula Atom) :
     Splits (C.fill ψ) {C.fill (.conj ψ .ne), C.fill (.conj ψ .falsum)} := fun χ hχ ↦ by
   have h₁ := hχ _ (Set.mem_insert _ _)
@@ -786,7 +771,6 @@ private theorem Derives.fill_strongFalsum {D : Formula.Context Atom} (hD : D.Dis
   | disjRight φ D ih => exact .strongFalsumCtr _ ((Derives.single _).disjCom.disjMonLeft (ih hD))
   | poss | nec => exact hD.elim
 
-/-- A strong contradiction in a splittable context leaves only the context's extra case. -/
 theorem Splits.fill_strongFalsum {C : Formula.Context Atom} (hC : C.Splittable) :
     Splits (C.fill .strongFalsum) C.extra := by
   have hpf : {.poss (.strongFalsum : Formula Atom)} ⊢ .falsum :=
@@ -808,8 +792,6 @@ theorem conj_ne_disj_strongHintikka_derives {k : ℕ} (τ : WorldType n k)
       or_and_right, exists_or, exists_eq_left, Function.comp]
     exact or_congr_left eq_comm
 
-/-- A disjunction of Hintikka formulas in a splittable context splits into the strong Hintikka
-    formulas of its subsets. -/
 theorem splits_bigDisj_hintikka {k : ℕ} :
     ∀ (L : List (WorldType n k)) {C : Formula.Context Atom}, C.Splittable →
       Splits (C.fill (bigDisj (L.map (hintikka e k))))

@@ -326,7 +326,6 @@ theorem licensedBy_template_iff {i : Input} {c : Candidate} :
         List.isChain_iff_getElem.mp hs.isChain k (by omega)⟩
     · exact absurd hcount (by simpa using List.nodup_iff_count_le_one.mp hs.nodup x)
 
-/-- The template licenses the templatic realization. -/
 theorem licensedBy_template_templatic (i : Input) : LicensedBy i [.template] (templatic i) :=
   licensedBy_template_iff.mpr (mem_carp_language.mpr (templatic_sortedLT i))
 
@@ -362,8 +361,6 @@ theorem outputs_isChain_ne {G : Grammar} {i : Input} {c : Candidate} (hc : c ∈
   · exact (templatic_sortedLT i).nodup.isChain
   · exact h
 
-/-- Every output is licensed by the whole ranking that selects it: a candidate no rank licenses
-is beaten by the templatic realization, licensed once the template is reached. -/
 theorem licensedBy_of_mem_optimal {i : Input} {order : List Licensor}
     (hT : .template ∈ order) {c : Candidate} (hc : c ∈ (tableau i order).optimal) :
     LicensedBy i order c := by

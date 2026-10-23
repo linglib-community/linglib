@@ -59,8 +59,6 @@ def IsConsistentSelection (F : ∀ A : Type u, Set (Set A) → Set A) : Prop :=
 
 /-! ### The cyclic cover -/
 
-/-- A preimage map sending each member of a family to a member of an injective family, along a
-bijection of indices, is a bijection between their ranges. -/
 private theorem bijOn_preimage_range {α β ι : Type*} {g : α → β} {T : ι → Set β}
     {M : ι → Set α} (σ : ι ≃ ι) (hM : Function.Injective M) (h : ∀ i, g ⁻¹' T i = M (σ i)) :
     BijOn (preimage g) (range T) (range M) := by
@@ -106,7 +104,6 @@ end Cover
 
 variable {F : ∀ A : Type u, Set (Set A) → Set A}
 
-/-- A natural consistent rule selects from a finite antichain only labels in every member. -/
 theorem IsNaturalSelection.subset_sInter (hnat : IsNaturalSelection F)
     (hcons : IsConsistentSelection F) {A : Type u} {𝓚 : Set (Set A)}
     (h𝓚 : IsAntichain (· ⊆ ·) 𝓚) (hfin : 𝓚.Finite) : F A 𝓚 ⊆ ⋂₀ 𝓚 := by
@@ -134,12 +131,10 @@ theorem IsNaturalSelection.subset_sInter (hnat : IsNaturalSelection F)
     obtain ⟨i₁, rfl⟩ := hrange ▸ hK₁
     simpa [cyclicCover] using hsub (hall (i₁ - i))
 
-/-- Selecting the intersection is natural. -/
 theorem isNaturalSelection_sInter : IsNaturalSelection fun A (𝓚 : Set (Set A)) ↦ ⋂₀ 𝓚 := by
   intro A A' f 𝓚 𝓚' _ hbij
   simp only [preimage_sInter, ← hbij.image_eq, sInter_image]
 
-/-- Selecting the intersection is consistent. -/
 theorem isConsistentSelection_sInter :
     IsConsistentSelection fun A (𝓚 : Set (Set A)) ↦ ⋂₀ 𝓚 := by
   rintro A 𝓚 - - ⟨K, hK⟩
@@ -171,9 +166,6 @@ theorem not_isNaturalSelection_choose :
   simp only [mem_insert_iff, mem_singleton_iff] at h
   rcases h with h | h <;> rw [h] at this <;> simp at this
 
-/-- When a condition holds of some subset of a finite set `s` and only of subsets of `s`, the
-elements of `s` in every maximal set meeting it are the greatest set a natural consistent rule
-selects from those maximal sets. -/
 theorem isGreatest_setOf_forall_maximal {α : Type u} {s : Set α} {P : Set α → Prop}
     (hs : s.Finite) (hP : ∀ X, P X → X ⊆ s) (hne : ∃ X, P X) :
     IsGreatest ((fun F ↦ F _ {X | Maximal P X}) ''

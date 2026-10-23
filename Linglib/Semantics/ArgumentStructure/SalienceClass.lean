@@ -85,9 +85,6 @@ theorem SalienceClass.ofKinds_close (h : Root.Kind.cause ∉ s) :
     ofKinds (Root.Kinds.close s) v = ofKinds s v := by
   revert s v; decide
 
-/-- The cause-free hypothesis of `ofKinds_close` is necessary: a lone
-    `cause` atom is outside the cut at base but patient salient after
-    closure. -/
 theorem SalienceClass.ofKinds_close_cause :
     ofKinds {.cause} ∅ = none ∧
     ofKinds (Root.Kinds.close {.cause}) ∅ = some .patient := by
@@ -104,8 +101,6 @@ def SalienceClass.stemValency : SalienceClass → Valency
   | .agentPatient => {.internal, .external}
   | .patient => {.internal}
 
-/-- Both intransitive classes surface a lone S; the agent-patient class
-    surfaces A and P (`Valency.label`'s relational relabeling). -/
 theorem SalienceClass.label_stemValency :
     ∀ c : SalienceClass,
       (stemValency c).label =

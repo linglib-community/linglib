@@ -168,13 +168,11 @@ theorem coalesce_v2 : j.coalesce j.v2 = j.elideV1 := rfl
 /-- Merger into the first vowel is elision of the second. -/
 theorem coalesce_v1 : j.coalesce j.v1 = j.elideV2 := by simp [coalesce, elideV2, stem]
 
-/-- The unrepaired concatenation is longer than the bare stem. -/
 theorem input_ne_stem : j.input ≠ j.stem := fun h ↦ by
   have := congrArg List.length h
   simp at this
   omega
 
-/-- The form with an inserted consonant is longer than the bare stem. -/
 theorem epenthesize_ne_stem (c : Segment) : j.epenthesize c ≠ j.stem := fun h ↦ by
   have := congrArg List.length h
   simp at this
@@ -185,8 +183,6 @@ suffix has one segment. -/
 @[simp] theorem elideV2_eq_stem_iff : j.elideV2 = j.stem ↔ j.suffixBody = [] := by
   simp [elideV2]
 
-/-- Elision of the first vowel merges the suffixed form with the bare suffix exactly when the
-stem has one segment. -/
 @[simp] theorem elideV1_eq_suffix_iff : j.elideV1 = j.suffix ↔ j.stemBody = [] := by
   simp [elideV1]
 

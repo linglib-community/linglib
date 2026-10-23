@@ -89,14 +89,10 @@ def centersOf : LogophoricRole → Finset Center
   | .self => {.attitudeHolder, .empathyLocus}
   | .pivot => {.empathyLocus, .deicticCenter}
 
-/-- The source and the pivot each take in a center that is not logophoric, and the self does
-not. -/
 theorem exists_mem_centersOf_not_isLogophoric_iff {r : LogophoricRole} :
     (∃ c ∈ centersOf r, ¬ c.IsLogophoric) ↔ r ≠ .self := by
   cases r <;> decide
 
-/-- Each logophoric center falls under two of the roles and each of the others under one, so
-neither logophoric center is a role of Sells. -/
 theorem isLogophoric_iff_exists_ne {c : Center} :
     c.IsLogophoric ↔ ∃ r r', r ≠ r' ∧ c ∈ centersOf r ∧ c ∈ centersOf r' := by
   cases c <;> decide
@@ -204,8 +200,6 @@ abbrev silentlyBound (t : Rep) : Set (Overt t) :=
 
 variable {b : Overt t}
 
-/-- A noun phrase is silently bound when a silent pronoun of its domain c-commands it and bears
-its index. -/
 theorem mem_silentlyBound_iff :
     b ∈ silentlyBound t ↔ ∃ x ∈ (configuration t).domain b.1, x.1.2.IsSilent ∧
       (configuration t).Binds Coindexed x b.1 := by
@@ -219,9 +213,6 @@ theorem condition_overt (hc : c.IsAnaphor) :
       (configuration t).Condition Coindexed ∅ b.1 c := by
   simpa using Configuration.condition_comap (E := ∅) Subtype.val_injective hc
 
-/-- A name meets Condition C with the silent pronouns counted exactly when it meets it among the
-pronounced noun phrases and no silent pronoun binds it, so a silent pronoun that c-commands a
-name of its index rules the representation out. -/
 theorem condition_rExpression_overt :
     ((overtConfiguration t).Condition (Coindexed on Subtype.val) ∅ b .rExpression ∧
       ¬ ∃ x : Nominal t, x.1.2.IsSilent ∧ (configuration t).Binds Coindexed x b.1) ↔
@@ -230,8 +221,6 @@ theorem condition_rExpression_overt :
   refine and_congr_right fun _ ↦ not_congr (exists_congr fun x ↦ and_congr_left fun _ ↦ ?_)
   simp
 
-/-- Were a pronoun held to Condition B in its spell-out domain, it would have to be free of the
-silent pronoun there as well as of the pronounced noun phrases. -/
 theorem condition_pronoun_overt :
     ((overtConfiguration t).Condition (Coindexed on Subtype.val) ∅ b .pronoun ∧
       b ∉ silentlyBound t) ↔ (configuration t).Condition Coindexed ∅ b.1 .pronoun :=
@@ -264,8 +253,6 @@ theorem index_eq_of_licit (ht : Licit t) {a b : Overt t}
     (fun x hx y hy hxr hyr ↦ h x hx y hy (by simpa [Overt] using hxr) (by simpa [Overt] using hyr))
     (hcov ha hna) (hcov hb hnb)
 
-/-- The spell-out domains include the clauses, so an anaphor that meets Condition A in its
-spell-out domain meets it in its minimal clause. -/
 theorem condition_clause_of_condition {b : Nominal t} (hc : c.IsAnaphor)
     (h : (configuration t).Condition Coindexed ∅ b c) :
     (t.clauseConfiguration.comap (·.1.1)).Condition Coindexed ∅ b c :=
@@ -415,7 +402,6 @@ def sentences : List (Datum × Sentence) :=
     (Examples.ex_4_27, solangeCyril), (Examples.ex_4_39a, lucieSister .anaphor .pronoun),
     (Examples.ex_4_39b, lucieSister .pronoun .anaphor), (Examples.ex_4_38, lucieBlog)]
 
-/-- Every example has a sentence. -/
 theorem map_fst_sentences : sentences.map Prod.fst = Examples.all := rfl
 
 /-- The kind of perspective center the paper's tests make the antecedent of an example. -/
@@ -438,24 +424,16 @@ theorem not_exists_forall_iff_rep :
   have h₂ := h (Examples.ex_2_8b, marieHotel) (by simp [sentences])
   exact absurd (h₁.2 (h₂.1 rfl)) (by decide)
 
-/-- Where a pronoun is coindexed with the silent pronoun of its spell-out domain, the silent
-pronoun binds it there, and the sentence is acceptable. Condition B, which bars a pronoun bound
-in its domain, therefore cannot have the domain of Condition A. -/
 theorem locallyBound_pronoun :
     (configuration ((lucieSister .pronoun .anaphor).rep 1)).LocallyBound Coindexed
       ⟨(⟨[0, 3, 1, 0]⟩, .pronoun 1), by decide⟩ := by
   decide
 
-/-- The centers entered for the sentences agree with the examples. The antecedent, which bears
-the index `1`, is a center exactly when the tests make it an attitude holder or an empathy locus,
-and it is none when it is inanimate. -/
 theorem mem_centers_iff : ∀ p ∈ sentences,
     (∀ k ∈ antecedent? p.1, (1 ∈ p.2.centers ↔ k.IsLogophoric)) ∧
       (p.1.feature? "animacy" = some "inanimate" → 1 ∉ p.2.centers) := by
   decide
 
-/-- Where the tests classify the antecedent, the representation in which the silent pronoun
-refers to it is licit, so only its being no logophoric center rules an example out. -/
 theorem licit_rep_antecedent :
     ∀ p ∈ sentences, (antecedent? p.1).isSome → Licit (p.2.rep 1) := by
   decide +kernel

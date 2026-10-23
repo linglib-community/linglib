@@ -83,15 +83,10 @@ instance : LinearOrder IndividuationType := .lift' IndividuationType.toNat (by d
 
 /-! ### The order-preservation thesis, section 3.4 -/
 
-/-- A monotone classification has order-convex fibres, so each countability class picks out a
-contiguous segment of the scale. -/
 theorem ordConnected_fiber_of_monotone {α C : Type*} [Preorder α] [PartialOrder C] {f : α → C}
     (hf : Monotone f) (c : C) : (f ⁻¹' {c}).OrdConnected :=
   Set.ordConnected_singleton.preimage_mono hf
 
-/-- A classification of a linear order onto its classes is monotone for some order on the
-classes exactly when each class is a contiguous segment, so order preservation is contiguity.
-The classes are then ordered as their members, through any choice of a member of each. -/
 theorem exists_linearOrder_monotone_iff {α C : Type*} [LinearOrder α] {f : α → C}
     (hf : Function.Surjective f) :
     (∃ _ : LinearOrder C, Monotone f) ↔ ∀ c, (f ⁻¹' {c}).OrdConnected := by
@@ -214,7 +209,6 @@ def badClassify : IndividuationType → TripartiteClass
   | .granularAggregate | .individualEntity => .singularPlural
   | .collectiveAggregate => .collectiveUnit
 
-/-- The bad system's singular/plural class is not a contiguous segment of the scale. -/
 theorem bad_fiber_not_ordConnected :
     ¬ (badClassify ⁻¹' {TripartiteClass.singularPlural}).OrdConnected := by
   intro h
@@ -288,8 +282,6 @@ def englishCoding : BinaryClass → ClassCoding
   | .nonCountable => .noContrast
   | .singularPlural => .codedPlural
 
-/-- Along the scale the zero-coded default ascends from no contrast through multiple to single
-reference. -/
 theorem welsh_default_monotone :
     Monotone fun i ↦ (welshCoding (welshClassify i)).default := by
   decide
@@ -302,8 +294,6 @@ theorem english_default_monotone :
     Monotone fun i ↦ (englishCoding (englishClassify i)).default := by
   decide
 
-/-- Dagaare's two *-ri* classes differ only in the direction of coding, the content of inverse
-number marking (section 2.4). -/
 theorem dagaare_inverse_marking :
     (dagaareCoding .pluralDefault).default = .multiple ∧
       (dagaareCoding .singularDefault).default = .single ∧
@@ -333,8 +323,6 @@ def collectiveCeiling : CollectiveLang → Corbett2000.AnimacyHierarchy
   | .welsh => .higherAnimate
   | .turkana => .human
 
-/-- The collective regions nest, Maltese within Welsh within Turkana, each the down-set of its
-ceiling. -/
 theorem collective_regions_nest :
     collectiveCeiling .maltese ≤ collectiveCeiling .welsh ∧
       collectiveCeiling .welsh ≤ collectiveCeiling .turkana := by

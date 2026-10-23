@@ -53,8 +53,6 @@ noncomputable def softmax (score : α → β → EReal) : Kernel α β :=
 instance (score : α → β → EReal) : IsFiniteKernel (softmax score) :=
   inferInstanceAs (IsFiniteKernel (ofWeights _))
 
-/-- The softmax kernel is a probability kernel whenever every row has a point of score above `⊥`
-and no score is `⊤`. -/
 theorem isMarkovKernel_softmax (h0 : ∀ w, ∃ u, score w u ≠ ⊥)
     (htop : ∀ w u, score w u ≠ ⊤) : IsMarkovKernel (softmax score) :=
   isMarkovKernel_ofWeights (fun w ↦ (h0 w).imp fun _ hu ↦ mt EReal.exp_eq_zero_iff.mp hu)
@@ -66,25 +64,20 @@ variable [MeasurableSingletonClass β]
     softmax score w {u} = EReal.exp (score w u) / ∑ u', EReal.exp (score w u') :=
   ofWeights_apply_singleton _ w u
 
-/-- A point of score `⊥` gets no mass. -/
 theorem softmax_apply_singleton_eq_zero {w : α} {u : β} (h : score w u = ⊥) :
     softmax score w {u} = 0 :=
   ofWeights_apply_singleton_eq_zero (by rw [h, EReal.exp_bot])
 
-/-- A point of score above `⊥` gets positive mass when no score is `⊤`. -/
 theorem softmax_apply_singleton_ne_zero {w : α} {u : β} (h : score w u ≠ ⊥)
     (htop : ∀ u', score w u' ≠ ⊤) : softmax score w {u} ≠ 0 :=
   ofWeights_apply_singleton_ne_zero (mt EReal.exp_eq_zero_iff.mp h)
     fun u' ↦ mt EReal.exp_eq_top_iff.mp (htop u')
 
-/-- Two rows whose scores differ by a real constant are the same. -/
 theorem softmax_apply_eq_of_add {w₁ w₂ : α} {k : ℝ} (h : ∀ u, score w₂ u = score w₁ u + k) :
     softmax score w₂ = softmax score w₁ :=
   ofWeights_apply_eq_of_mul (mt EReal.exp_eq_zero_iff.mp (EReal.coe_ne_bot k))
     (mt EReal.exp_eq_top_iff.mp (EReal.coe_ne_top k)) fun u ↦ by rw [h, EReal.exp_add]
 
-/-- Two scores differing by a real constant per row give the same kernel, since a term that does
-not depend on the point cancels in the normalization. -/
 theorem softmax_eq_of_add {score' : α → β → EReal} {k : α → ℝ}
     (h : ∀ w u, score' w u = score w u + k w) : softmax score' = softmax score :=
   ofWeights_eq_of_mul (fun w ↦ mt EReal.exp_eq_zero_iff.mp (EReal.coe_ne_bot (k w)))
@@ -181,8 +174,6 @@ theorem softmax_coe_real_singleton_lt_iff (f : α → β → ℝ) (w : α) {u u'
   have : Nonempty β := ⟨u⟩
   rw [softmax_coe_real_singleton, softmax_coe_real_singleton, Real.softmax_lt_softmax_iff]
 
-/-- A row of the softmax kernel attains the log partition function as its free energy relative to
-the uniform measure on the points of score above `⊥`. -/
 theorem freeEnergy_softmax (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w u ≠ ⊥) :
     (uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal)
         (softmax score w) =

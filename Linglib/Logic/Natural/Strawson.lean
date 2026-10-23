@@ -113,8 +113,6 @@ Strawson-entail `f q`. -/
 def IsStrawsonUE (f : α → W → SignType) : Prop :=
   ∀ ⦃p q⦄, p ≤ q → strawsonEntails (f p) (f q)
 
-/-- Von Fintel's own statement of Strawson downward entailingness asks that `f p` be true wherever
-it is defined and `f q` is true. -/
 theorem isStrawsonDE_iff :
     IsStrawsonDE f ↔ ∀ ⦃p q⦄, p ≤ q → ∀ w, f p w ≠ 0 → f q w = 1 → f p w = 1 :=
   forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ forall_congr' fun _ ↦
@@ -132,7 +130,6 @@ theorem IsStrawsonUE.of_monotone {a : α → W → Prop} (h : Monotone a)
     (hf : ∀ p w, f p w ≠ 0 → (f p w = 1 ↔ a p w)) : IsStrawsonUE f :=
   fun _ _ hpq w hp hq ↦ (hf _ w hq).2 (h hpq w ((hf _ w (by simp [hp])).1 hp))
 
-/-- Classical downward entailingness of the truth set implies the Strawson form. -/
 theorem IsStrawsonDE.of_antitone_posExt (h : Antitone fun p ↦ posExt (f p)) : IsStrawsonDE f :=
   fun _ _ hpq _ hq _ ↦ h hpq hq
 
@@ -143,18 +140,14 @@ theorem isStrawsonDE_ofProp_iff {g : α → W → Prop} :
   forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ by simp [strawsonEntails, Pi.le_def]
 
 open Classical in
-/-- Without presuppositions, Strawson upward entailingness is monotonicity. -/
 theorem isStrawsonUE_ofProp_iff {g : α → W → Prop} :
     IsStrawsonUE (fun p w ↦ SignType.ofProp (g p w)) ↔ Monotone g :=
   forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ by simp [strawsonEntails, Pi.le_def]
 
-/-- A presupposition failing at a smaller argument defeats classical downward entailingness. -/
 theorem not_antitone_posExt {p q : α} {w : W} (hpq : p ≤ q) (hq : f q w = 1) (hp : f p w = 0) :
     ¬ Antitone fun p ↦ posExt (f p) :=
   fun h ↦ by simpa [hp] using h hpq hq
 
-/-- A larger argument false at a world where a smaller one is true defeats Strawson upward
-entailingness. -/
 theorem not_isStrawsonUE {p q : α} {w : W} (hpq : p ≤ q) (hp : f p w = 1) (hq : f q w = -1) :
     ¬ IsStrawsonUE f :=
   fun h ↦ by simpa [hq] using h hpq w hp (by simp [hq])
@@ -303,19 +296,14 @@ Iatridou). -/
 noncomputable def since (p : Set T) : T → SignType :=
   {t | ago t ∈ p}.indicator fun t ↦ SignType.ofProp (Disjoint (Set.Ioc (ago t) t) p)
 
-/-- *Since* is Strawson anti-additive in its clause, as [gajewski-2011] finds von Fintel's
-Strawson downward entailing operators to be. -/
 theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
   .of_isAntiAdditive (a := fun p t ↦ Disjoint (Set.Ioc (ago t) t) p)
     (fun _ _ ↦ funext fun _ ↦ propext Set.disjoint_union_right)
     fun p t h ↦ by by_cases ht : ago t ∈ p <;> simp_all [since]
 
-/-- *Since* is Strawson downward entailing. -/
 theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
   (isStrawsonAntiAdditive_since ago).isStrawsonDE
 
-/-- *It's been five years since I saw a bird of prey* does not classically entail *it's been five
-years since I saw an eagle*, whose presupposition may fail. -/
 theorem not_antitone_posExt_since :
     ¬ Antitone fun p : Set ℤ ↦ posExt (since (· - 5) p) :=
   not_antitone_posExt (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)

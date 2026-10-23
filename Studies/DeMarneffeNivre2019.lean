@@ -71,7 +71,6 @@ theorem fig3_not_isArcProjective : ¬ fig3.IsArcProjective :=
   λ h => (by decide : ¬ Dominates fig3.toGraph 0 1)
     (h (by decide : fig3.Adj 0 3) 1 (Set.mem_uIcc.2 (Or.inl ⟨by decide, by decide⟩)))
 
-/-- Equivalently, the yield of *bigger* is *bigger than mine*, not a contiguous substring. -/
 theorem fig3_projection : fig3.projection 0 = [0, 2, 3] ∧ ¬ fig3.IsProjective :=
   ⟨by decide, fig3.isProjective_iff_isArcProjective.not.2 fig3_not_isArcProjective⟩
 
@@ -254,8 +253,6 @@ theorem fig9Enhanced_not_isTree :
       Relation.TransGen fig9Enhanced.Adj 0 0 := by
   decide
 
-/-- The enhanced graph gives *students* and *written* relations the basic tree leaves
-implicit. -/
 theorem fig9_unrepresented :
     HasUnrepresentedArg fig9.toGraph fig9Enhanced 0 ∧
       HasUnrepresentedArg fig9.toGraph fig9Enhanced 9 := by

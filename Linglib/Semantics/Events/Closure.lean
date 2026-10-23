@@ -80,12 +80,10 @@ theorem causedClosure_mono_left (h : ∀ e, s ~[cause w] e → s ~[cause' w] e) 
 theorem causedClosure.closure (h : causedClosure cause s P w) : closure P w :=
   h.imp fun _ he ↦ he.2
 
-/-- A state that causes every eventuality adds nothing to plain closure. -/
 theorem causedClosure_iff_of_forall (h : ∀ e, s ~[cause w] e) :
     causedClosure cause s P w ↔ closure P w :=
   exists_congr fun e ↦ and_iff_right (h e)
 
-/-- A state that causes nothing has an unsatisfiable prejacent. -/
 theorem not_causedClosure_of_forall_not (h : ∀ e, ¬ s ~[cause w] e) :
     ¬ causedClosure cause s P w :=
   fun ⟨e, he, _⟩ ↦ h e he

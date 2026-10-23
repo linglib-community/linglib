@@ -159,12 +159,10 @@ theorem filterMap_tailChildFilter (pairs : List (List ℕ × RoseTree α))
     · simp [ih]
     · simp [ih]
 
-/-- Grafting keeps the root value. -/
 @[simp] theorem value_multiGraft (T : RoseTree α) (pairs : List (List ℕ × RoseTree α)) :
     (multiGraft T pairs).value = T.value := by
   cases T; rfl
 
-/-- `multiGraftChildren` depends on its pair list only through the two child filters. -/
 theorem multiGraftChildren_congr {cs : List (RoseTree α)}
     {pairs₁ pairs₂ : List (List ℕ × RoseTree α)}
     (h₁ : pairs₁.filterMap headChildFilter = pairs₂.filterMap headChildFilter)
@@ -174,7 +172,6 @@ theorem multiGraftChildren_congr {cs : List (RoseTree α)}
   | nil => rfl
   | cons c cs => rw [multiGraftChildren_cons_cs, multiGraftChildren_cons_cs, h₁, h₂]
 
-/-- Root pairs never reach the children. -/
 theorem multiGraftChildren_filter_ne_nil (cs : List (RoseTree α))
     (pairs : List (List ℕ × RoseTree α)) :
     multiGraftChildren cs (pairs.filter fun p => decide (¬ p.1 = [])) =
@@ -185,7 +182,6 @@ theorem multiGraftChildren_filter_ne_nil (cs : List (RoseTree α))
     obtain ⟨q, T⟩ := p
     cases q <;> simp
 
-/-- `multiGraftChildren cs pairs` has the same length as `cs`. -/
 theorem multiGraftChildren_length :
     ∀ (cs : List (RoseTree α)) (pairs : List (List ℕ × RoseTree α)),
     (multiGraftChildren cs pairs).length = cs.length
@@ -200,7 +196,6 @@ theorem multiGraft_nil : ∀ (T : RoseTree α), multiGraft T [] = T
   | .node a cs => by
     show RoseTree.node a ([] ++ multiGraftChildren cs []) = RoseTree.node a cs
     rw [List.nil_append, multiGraftChildren_nil_pairs cs]
-/-- Grafting nothing leaves a forest unchanged. -/
 theorem multiGraftChildren_nil_pairs : ∀ (cs : List (RoseTree α)),
     multiGraftChildren cs [] = cs
   | [] => rfl

@@ -93,7 +93,6 @@ instance [DecidableLE α] : DecidablePred (· ∈ specifiers att a) :=
 instance [Fintype α] [DecidableLE α] [DecidableEq β] : DecidablePred (· ∈ inherited att a) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
 
-/-- An inherited value is the value of some node above. -/
 theorem exists_le_of_mem_inherited (h : v ∈ inherited att a) : ∃ m, a ≤ m ∧ att m = some v :=
   let ⟨m, hm, hv⟩ := h
   ⟨m, hm.prop.1, hv⟩

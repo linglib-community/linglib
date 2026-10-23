@@ -89,7 +89,6 @@ inductive Categorizer where
   | a
   deriving DecidableEq, Repr, Fintype
 
-/-- There are exactly three categorizers, unlike the infinitely many roots. -/
 theorem card_categorizer : Fintype.card Categorizer = 3 := rfl
 
 /-! ### Morphemes -/
@@ -144,7 +143,6 @@ def word (k : ℕ) : ComplexHead R H := ⟨s.root, s.heads.take k⟩
 
 theorem heads_word_isPrefix (k : ℕ) : (s.word k).heads <+: s.heads := List.take_prefix k s.heads
 
-/-- Merger skips no head, so a head in the word brings every head below it. -/
 theorem mem_word_of_le {k : ℕ} {i j : Fin s.heads.length} (hji : j ≤ i)
     (hi : (i : ℕ) < k) : (j : ℕ) < k := lt_of_le_of_lt hji hi
 

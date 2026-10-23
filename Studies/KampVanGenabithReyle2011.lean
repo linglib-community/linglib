@@ -92,10 +92,8 @@ def context : DRS dLang ℕ :=
 pronouns resolved by equations to the context's referents. -/
 def update : DRS dLang ℕ := .mk {2, 3} [.atom ⟨.love, ![3, 2]⟩, .eq 2 0, .eq 3 1]
 
-/-- The context DRS is proper. -/
 theorem context_proper : context.IsProper := by decide
 
-/-- The update DRS is not, since `x` and `y` occur free in it. -/
 theorem update_improper : ¬ update.IsProper := by decide
 
 /-- Its free referents are supplied by the context's universe, the condition under which the
@@ -103,7 +101,6 @@ context change potential of Definition 24 is defined on the context's state. -/
 theorem update_bound : update.freeVarFinset ⊆ context.referents := by
   simp [update, context]; decide
 
-/-- The update introduces no referent occurring in the context, so nothing is captured. -/
 theorem update_fresh : Disjoint update.referents (Condition.varFinsetL context.conditions) := by
   decide
 

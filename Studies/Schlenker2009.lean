@@ -173,8 +173,6 @@ theorem isLocalContext_right [Nonempty Atom] (c : Connective) (F : Formula Atom)
       (c.localContext C (F.truth I)) :=
   isLocalContext_incremental I _ C
 
-/-- The symmetric local context of any gap is the worlds of the context at which the truth value
-of the actual sentence depends on the gap. -/
 theorem isLocalContext_symmetric (K : SyntacticEnvironment Atom) (C : Set W) :
     IsLocalContext C (K.continuations I ⊤) (C ∩ {w | DependsAt (K.truth I) w}) := by
   simpa using isLocalContext_of_isTruthFunctional (C := C) fun _ hf ↦
@@ -220,8 +218,6 @@ theorem satisfaction_incremental_iff_admits (C : Set W) (F : Formula Atom) :
     Satisfaction .incremental C (Formula.occurrences I F) ↔ (F.ccp I).Admits C :=
   (satisfaction_iff_transparency I _ C F).trans (transparency_incremental_iff_admits I C F)
 
-/-- Symmetric satisfaction requires each trigger's presupposition at the worlds of the context
-at which the truth value of the sentence depends on the trigger. -/
 theorem satisfaction_symmetric_iff (C : Set W) (F : Formula Atom) :
     Satisfaction .symmetric C (Formula.occurrences I F) ↔
       ∀ o ∈ F.triggers, C ∩ {w | DependsAt (o.1.truth I) w} ⊆ I o.2.1 := by
@@ -261,7 +257,6 @@ theorem satisfaction_incremental_then_iff :
 
 /-! ### A trigger alone, and conjunction on both versions -/
 
-/-- A trigger standing alone presupposes `p` on either version. -/
 theorem satisfaction_trigger_iff (r : Version) :
     Satisfaction r C (Formula.occurrences I (.trigger p p')) ↔ C ⊆ I p := by
   cases r
@@ -309,9 +304,6 @@ theorem isLocalContext_believe :
   · rintro x hx ⟨w₀, w⟩ ⟨hw₀, hw⟩
     exact ((hx _ rfl Set.univ w₀ hw₀).2 fun _ _ ↦ trivial) w hw |>.1
 
-/-- The worlds of evaluation of the local context of the complement of *believe* are the image of
-the context under the doxastic accessibility, the worlds compatible with the agent's beliefs at some
-world of the context. -/
 theorem image_snd_localContext_believe :
     Prod.snd '' {q : W × W | q.1 ∈ C ∧ q.2 ∈ Dox q.1} = (SetRel.ofSuccessors Dox).image C := by
   ext; simp [and_comm]
@@ -338,8 +330,6 @@ theorem satisfied_believe_iff_admits {E : Type*} (Dox : E → W → Set W) (a : 
 
 variable {king son bald : W → Prop}
 
-/-- For *if the king has a son, the king's son is bald*, incremental satisfaction is admittance by
-Heim's context change potential, both holding iff the context entails a king. -/
 theorem satisfaction_incremental_king_iff_admits {k s ks b : Atom} (hk : I k = {w | king w})
     (hs : I s = {w | son w}) (hks : I ks = {w | king w ∧ son w}) (C : Set W) :
     Satisfaction .incremental C
@@ -394,7 +384,6 @@ theorem forall_mem_completions {r : Version} {F : Formula Atom} {P : Formula Ato
       ∀ o ∈ F.triggers, ∀ K', r.Finals o.1 K' → P (K'.fill (.trigger o.2.1 o.2.2)) :=
   ⟨fun h o ho K' hK ↦ h _ ⟨o, ho, K', hK, rfl⟩, fun h _ ⟨o, ho, K', hK, hX⟩ ↦ hX ▸ h o ho K' hK⟩
 
-/-- The symmetric version evaluates the sentence itself, if it holds a trigger. -/
 theorem forall_mem_completions_symmetric {F : Formula Atom} {P : Formula Atom → Prop} :
     (∀ X ∈ Version.symmetric.completions F, P X) ↔ (F.triggers ≠ [] → P F) := by
   simp only [forall_mem_completions, Version.Finals, forall_eq]
@@ -432,7 +421,6 @@ theorem resolve_congr {ρ ρ' : SyntacticEnvironment Atom → Atom → Atom → 
       ihG fun L ↦ by
       have := h (L ++ [.right c F]); rwa [List.append_assoc, List.singleton_append] at this]
 
-/-- A resolution of trigger types does not depend on the positions. -/
 theorem resolve_const (σ : Atom → Atom → Prop) (K K' : SyntacticEnvironment Atom)
     (F : Formula Atom) : resolve I w (fun _ ↦ σ) K F ↔ resolve I w (fun _ ↦ σ) K' F := by
   induction F generalizing K K' with
@@ -449,7 +437,6 @@ private theorem append_left_ne_append_right {L L' K : SyntacticEnvironment Atom}
   cases h'
 
 open Classical in
-/-- Resolutions of the two arguments of a binary connective combine into one. -/
 private theorem exists_resolve_merge (c : Connective) (F G : Formula Atom)
     (K : SyntacticEnvironment Atom) (ρ₁ ρ₂ : SyntacticEnvironment Atom → Atom → Atom → Prop) :
     ∃ ρ, (resolve I w ρ (.left c G :: K) F ↔ resolve I w ρ₁ (.left c G :: K) F) ∧
@@ -458,7 +445,6 @@ private theorem exists_resolve_merge (c : Connective) (F G : Formula Atom)
     resolve_congr I F fun L ↦ ite_eq_left ⟨L, rfl⟩,
     resolve_congr I G fun _ ↦ ite_eq_right fun ⟨_, h⟩ ↦ append_left_ne_append_right h.symm⟩
 
-/-- On its filtering presupposition, a formula takes its classical value under every resolution. -/
 theorem resolve_of_middleKleene_ne_zero {F : Formula Atom} (h : F.middleKleene I w ≠ 0)
     (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) (K : SyntacticEnvironment Atom) :
     resolve I w ρ K F ↔ w ∈ F.truth I := by
@@ -499,8 +485,6 @@ private theorem neg_ne_neg_one {a : SignType} : -a ≠ -1 ↔ a ≠ 1 := by
 private theorem neg_ne_one {a : SignType} : -a ≠ 1 ↔ a ≠ -1 := by
   cases a <;> decide
 
-/-- A formula can be true under some resolution of its tokens iff its Strong Kleene value is not
-false, and false under some resolution iff its value is not true. -/
 private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment Atom) :
     ((∃ ρ, resolve I w ρ K F) ↔ F.strongKleene I w ≠ -1) ∧
       ((∃ ρ, ¬ resolve I w ρ K F) ↔ F.strongKleene I w ≠ 1) := by
@@ -691,9 +675,6 @@ private theorem incrementally_bin {P : Formula Atom → Prop} {c : Connective} {
     rw [SyntacticEnvironment.fill_append]
     exact h K'' hK'' (SyntacticEnvironment.triggerFreeFinal_append.1 hT).1
 
-/-- A property of formulas that is decided like definedness, at triggers, under negation, and at
-each argument of a connective, holds incrementally of a formula iff the filtering presupposition
-holds. -/
 private theorem incrementally_iff_middleKleene (P : Formula Atom → Prop)
     (htrig : ∀ p p' : Atom, P (.trigger p p') ↔ w ∈ I p)
     (hnot : ∀ X : Formula Atom, P (.not X) ↔ P X)
@@ -724,8 +705,6 @@ private theorem middleKleene_ne_zero_of_triggers {F : Formula Atom} (h : F.trigg
   (Formula.middleKleene_ne_zero_iff I F w).2 fun o ho ↦ by simp [h] at ho
 
 open Classical in
-/-- On its filtering presupposition, a formula's Strong Kleene evaluation is its classical
-value. -/
 theorem strongKleene_eq_ofProp_of_middleKleene_ne_zero {F : Formula Atom}
     (h : F.middleKleene I w ≠ 0) : F.strongKleene I w = SignType.ofProp (w ∈ F.truth I) := by
   have hp : F.strongKleene I w ≠ 0 := (tokenDefined_iff I F).1 fun ρ ρ' ↦ by
@@ -738,7 +717,6 @@ private theorem strongKleene_ne_zero (c : Connective) {a b : SignType} (ha : a �
     c.table .strongKleene a b ≠ 0 := by
   revert ha hb; cases c <;> cases a <;> cases b <;> decide
 
-/-- Incremental Strong Kleene definedness is the filtering presupposition. -/
 private theorem incrementally_strongKleene_iff (w : W) (F : Formula Atom) :
     Incrementally (fun X ↦ X.strongKleene I w ≠ 0) F ↔ F.middleKleene I w ≠ 0 := by
   refine incrementally_iff_middleKleene I _ (fun _ _ ↦ by simp [Formula.strongKleene, Formula.eval])
@@ -759,7 +737,6 @@ private theorem incrementally_strongKleene_iff (w : W) (F : Formula Atom) :
     cases c <;> by_cases ht : w ∈ F.truth I <;>
       simp [Formula.strongKleene, Formula.eval, Connective.localContext, hF', ht]
 
-/-- Incremental supervaluation definedness is the filtering presupposition. -/
 private theorem incrementally_supervaluationDefined_iff (w : W) (F : Formula Atom) :
     Incrementally (SupervaluationDefined I w) F ↔ F.middleKleene I w ≠ 0 := by
   have hconst (σ : Atom → Atom → Prop) (K : SyntacticEnvironment Atom) (X : Formula Atom) :=
@@ -932,8 +909,6 @@ theorem transparent_scope_iff_universal [Finite E]
 `P`, as a function of its scope. -/
 def infinitelyMany (d : Set (Unit × ℕ)) : Set Unit := {u | {n | (u, n) ∈ d}.Infinite}
 
-/-- A presupposition that fails of finitely many individuals is transparent in the scope of
-*infinitely many*, which does not then presuppose that every individual satisfies it (C.23ii). -/
 theorem transparent_infinitelyMany_of_finite {P : Set (Unit × ℕ)}
     (hP : {n | ((), n) ∉ P}.Finite) : Transparent Set.univ {infinitelyMany} P := by
   rintro f rfl d ⟨⟩ -
@@ -1063,22 +1038,16 @@ section Trigger
 
 variable {q : NumberTree} {R : Formula Atom} {p a : Atom}
 
-/-- A formula without triggers takes its classical value under every resolution. -/
 private theorem resolve_iff_of_triggers {F : Formula Atom} (hF : F.triggers = [])
     (x : W × E) (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) :
     Schlenker2009.resolve J x ρ [] F ↔ x ∈ F.truth J :=
   resolve_of_middleKleene_ne_zero J (middleKleene_ne_zero_of_triggers J hF) ρ []
 
-/-- A resolution gives a clause whose scope is a trigger and whose restrictor holds none the
-value of the quantifier on the scope that agrees with the assertion where the presupposition holds
-and with the resolution elsewhere. -/
 private theorem resolve_trigger_iff (hR : R.triggers = []) {w : W} {ρR ρS} :
     resolve J w ρR ρS ⟨q, R, .trigger p a⟩ ↔ q.toGQ (fun e ↦ (w, e) ∈ R.truth J)
       fun e ↦ (w, e) ∈ J p ∧ (w, e) ∈ J a ∨ (w, e) ∉ J p ∧ ρS e [] p a := by
   simp only [resolve, Schlenker2009.resolve, resolve_iff_of_triggers J hR]
 
-/-- A predicate of scopes is constant over the resolutions of a trigger iff it is constant over
-the scopes that agree with the assertion where the presupposition holds. -/
 private theorem forall_resolution_iff {P A : E → Prop} (G : (E → Prop) → Prop) :
     (∀ ρ ρ' : E → Prop,
       G (fun e ↦ P e ∧ A e ∨ ¬ P e ∧ ρ e) ↔ G (fun e ↦ P e ∧ A e ∨ ¬ P e ∧ ρ' e)) ↔
@@ -1094,8 +1063,6 @@ private theorem forall_resolution_iff {P A : E → Prop} (G : (E → Prop) → P
   rw [← key hD, ← key hD']
   exact h D D'
 
-/-- A clause whose scope is a trigger and whose restrictor holds none is the one clause either
-version evaluates, since the trigger is final. -/
 theorem completions_trigger (hR : R.triggers = []) (r : Version) :
     completions r ⟨q, R, .trigger p a⟩ = {⟨q, R, .trigger p a⟩} := by
   ext X

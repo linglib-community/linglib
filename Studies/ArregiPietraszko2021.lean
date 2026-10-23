@@ -116,7 +116,6 @@ def Orphan (c : HeadChain) (x : Head) : Prop := x ∈ c.terminals ∧ x ∉ c.po
 
 instance (c : HeadChain) (x : Head) : Decidable (c.Orphan x) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- GenHM creates no orphans. -/
 theorem not_orphan_ofHeads (bottom x : Head) (above : List Head) :
     ¬ (ofHeads bottom above).Orphan x := by
   rw [Orphan, terminals_ofHeads]; exact fun h ↦ h.2 h.1
@@ -132,16 +131,12 @@ theorem mem_positions_of_pronounced {strong : Finset Head} {c : HeadChain} {x : 
   · exact (List.mem_filter.mp (List.mem_of_getLast? h)).1
   · exact List.mem_of_getLast? h
 
-/-- A chain with no strong position is pronounced in its highest, the effect of upward
-displacement. -/
 theorem pronounced_of_forall_not_mem {strong : Finset Head} {c : HeadChain}
     (h : ∀ x ∈ c.positions, x ∉ strong) : c.pronounced strong = c.positions.getLast? := by
   have : c.positions.filter (· ∈ strong) = [] :=
     List.filter_eq_nil_iff.mpr fun x hx ↦ by simpa using h x hx
   rw [pronounced, this]; rfl
 
-/-- A chain extended by a strong head is pronounced there, wherever it was pronounced before:
-downward displacement feeds upward displacement. -/
 theorem pronounced_extend_of_mem {strong : Finset Head} {x : Head} (hx : x ∈ strong)
     (c : HeadChain) : (c.extend x).pronounced strong = some x := by
   simp [pronounced, extend, List.filter_append, hx]
@@ -227,7 +222,6 @@ def vocabulary : RuleSet (VocabularyItem Feat Piece) :=
   [{.verb, .orphan} ⟷ .dummy, ⟨{(0, .verb), (1, .tense)}, .finiteStem⟩, {.verb} ⟷ .stem,
     {.T, .tense, .agr} ⟷ .finite, {.T} ⟷ .infinitival, {.neg} ⟷ .contracted]
 
-/-- The dummy verb is inserted exactly at an orphan verb, whatever stands beside it. -/
 theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (Finset Feat)} (hT : .T ∉ n.focus) :
     subsetPrinciple vocabulary n = some .dummy ↔ .verb ∈ n.focus ∧ .orphan ∈ n.focus := by
   let dummy : VocabularyItem Feat Piece := {.verb, .orphan} ⟷ .dummy
@@ -410,62 +404,44 @@ theorem doSupport_iff (h : .V ∉ cx.above) : (derive L cx verb).DoSupport ↔ S
       .V :: cx.above := HeadChain.terminals_ofHeads .V cx.above
   simp [Chains.DoSupport, derive, hs, HeadChain.Orphan, ht, h]
 
-/-- No auxiliary takes do-support. -/
 theorem not_doSupport_aux : ¬ (derive L cx .Aux).DoSupport :=
   fun h ↦ nomatch (splits_of_doSupport h).1
 
-/-- Under ellipsis and fronting a strong verb takes do-support and a weak verb is stranded. -/
 theorem doSupport_iff_strong_of_ne_inSitu (h : .V ∉ cx.above) (hne : cx.above ≠ [])
     (hvp : cx.vp ≠ .inSitu) : (derive L cx .V).DoSupport ↔ .V ∈ L.strong := by
   simp [doSupport_iff h, Splits, hne, hvp]
 
-/-- Below an intervening specifier a verb takes do-support exactly when it is strong and the
-language has Split-by-Intervention. -/
 theorem doSupport_iff_of_intervener (h : .V ∉ cx.above) (hne : cx.above ≠ [])
     (hvp : cx.vp = .inSitu) (hi : cx.intervener) :
     (derive L cx .V).DoSupport ↔ .V ∈ L.strong ∧ L.splitByIntervention := by
   simp [doSupport_iff h, Splits, hne, hvp, hi]
 
-/-- Below a weak T a verb is pronounced in V when it is strong and in T when it is weak, so the
-verbs of English and Danish are low for one reason. -/
 theorem finitePosition_declarative (hT : .T ∉ L.strong) :
     (derive L .declarative .V).finitePosition L = some (if .V ∈ L.strong then .V else .T) := by
   by_cases hV : Head.V ∈ L.strong <;>
     simp [Chains.finitePosition, derive, Splits, Context.declarative, HeadChain.pronounced,
       HeadChain.ofHeads, List.filter, hV, hT]
 
-/-- The complex head of a Danish clause is pronounced in V without C and in C with it, never in
-T: each step of GenHM is local, and the strong positions are not adjacent. -/
 theorem danish_verb_second :
     (derive danish .declarative .V).finitePosition danish = some .V ∧
       (derive danish .inversion .V).finitePosition danish = some .C := by
   decide
 
-/-- Do-support alternates with downward displacement in English and with upward displacement in
-Monnese: without an intervener the English verb is pronounced in V and the Monnese verb in T,
-and both take do-support under inversion. -/
 theorem directionality_no_correlation :
     (derive english .declarative .V).finitePosition english = some .V ∧
       (derive monnese .declarative .V).finitePosition monnese = some .T ∧
       (derive english .inversion .V).DoSupport ∧ (derive monnese .inversion .V).DoSupport := by
   decide
 
-/-- Danish has do-support under ellipsis in a verb-second clause, where its verb is otherwise
-pronounced in C, and none under inversion. -/
 theorem danish_do_support :
     (derive danish { Context.toC with vp := .elided } .V).DoSupport ∧
       ¬ (derive danish .inversion .V).DoSupport := by
   decide
 
-/-- The paper predicts of Monnese, which has no attested verb phrase ellipsis, that under
-ellipsis its verb would take do-support though it is otherwise pronounced in T. -/
 theorem monnese_ellipsis :
     (derive monnese { Context.declarative with vp := .elided } .V).DoSupport := by
   decide
 
-/-- Negation blocks the relation of the verb to C in an imperative whether that relation would
-displace the verb upward, as in Spanish, or downward, as in Vallader: the affirmative verb has C
-in its M-value and is pronounced in C in Spanish and in T in Vallader. -/
 theorem imperatives :
     (derive spanish .toC .V).finitePosition spanish = some .C ∧
       (derive vallader .toC .V).finitePosition vallader = some .T ∧
@@ -489,7 +465,6 @@ theorem HeadChain.terminals_negativeMerger {c : HeadChain} (h : .sigma ∈ c.pos
 def Chains.negativeMerger (d : Chains) : Chains :=
   { d with verb := d.verb.negativeMerger, finite := d.finite.negativeMerger }
 
-/-- Contracted negation takes do-support exactly where full negation does. -/
 theorem Chains.doSupport_negativeMerger (d : Chains) :
     d.negativeMerger.DoSupport ↔ d.DoSupport := by
   simp only [DoSupport, negativeMerger, HeadChain.negativeMerger]
@@ -500,9 +475,6 @@ theorem Chains.finitePosition_negativeMerger (L : Language) (d : Chains) :
   simp only [finitePosition, negativeMerger, HeadChain.negativeMerger]
   split <;> rfl
 
-/-- With a lexical verb the finite word is the dummy verb, its inflection, and contracted negation
-outside both, and the verb is bare. With an auxiliary the negation is outside the inflection of
-the auxiliary. In a negative question the word is pronounced in C. -/
 theorem contracted_negation :
     let negated := (derive english (.negation english) .V).negativeMerger
     let question : Context := { above := [.sigma, .T, .C], intervener := true }
@@ -513,9 +485,6 @@ theorem contracted_negation :
       (derive english question .V).negativeMerger.finitePosition english = some .C := by
   decide
 
-/-- Were contracted negation a head between T and the verb, GenHM would put its terminal inside
-the inflection, the order the paper stars. Negative Merger applies after syntax, so its terminal
-is outside every terminal of the chain, though the negation stands below T. -/
 theorem negation_outside_inflection :
     (HeadChain.ofHeads .Aux [.Neg, .T]).word english =
         some [[.stem], [.contracted], [.finite]] ∧
@@ -532,8 +501,6 @@ def verbHead : Wordlist.Verb → Head
   | .dummy => .V
   | .auxiliary => .Aux
 
-/-- The paper's *doe-s-n't* and *ha-d-n't* have their pieces in the order that Negative Merger
-derives. -/
 theorem contracted_forms :
     ∀ a ∈ Wordlist.analyses, a.form.languageId = "stan1293" →
       ∃ verb ∈ a.verb.map verbHead,
@@ -598,15 +565,10 @@ def derivation? (r : Datum) : Option (Language × Chains) := do
   let verb ← r.parse? "verbType" [("lexical", Head.V), ("auxiliary", .Aux)]
   pure (L, derive L cx verb)
 
-/-- Every verb placement, do-support, imperative, ellipsis and fronting example of the paper
-surfaces as the settings of its language derive. -/
 theorem rows_derived :
     ∀ r ∈ Examples.all, r.language ≠ "nort2795" → ∃ p ∈ derivation? r, p.2.Matches p.1 r := by
   decide +kernel
 
-/-- A split chain is pronounced as two words. Under English negation the higher is the dummy
-verb with finite inflection and the lower a bare stem, and under Monnese inversion the lower is
-an infinitive. -/
 theorem split_words :
     (derive english (.negation english) .V).finite.word english = some [[.dummy], [.finite]] ∧
       (derive english (.negation english) .V).verb.word english = some [[.stem]] ∧
@@ -620,9 +582,6 @@ def ofPollock : Pollock1989.Language → Language
   | .french => french
   | .english => english
 
-/-- In the finite clauses of French and English the finite word is pronounced in T exactly where
-Pollock's verb reaches T, and negation brings do-support exactly where his tense affix needs
-*do*: a strong verb is a verb below his opaque Agr. -/
 theorem pollock_finite (l : Pollock1989.Language) (v : Pollock1989.Verb) :
     let verb : Head := match v with | .lexical => .V | .auxiliary => .Aux
     ((derive (ofPollock l) .declarative verb).finitePosition (ofPollock l) = some .T ↔
@@ -636,8 +595,6 @@ theorem pollock_finite (l : Pollock1989.Language) (v : Pollock1989.Verb) :
 /-- The chain of an Ndebele relative clause holds T, a null C, the augment in D and the linker. -/
 def relative : HeadChain := .ofHeads .T [.C, .D, .Lnk]
 
-/-- The relative prefix is pronounced low, in the strong T below the subject, as the example
-with an overt subject shows. -/
 theorem relative_low :
     relative.pronounced ndebele.strong = some .T ∧ ∀ r ∈ Examples.all,
       Agrees r "relPrefixPosition" headLabels (relative.pronounced ndebele.strong) := by
@@ -687,8 +644,6 @@ def exponents? (a : Wordlist.Analysis) : Option (Head → Exponent) := do
   let t ← transcribe? (← a.t).toList
   pure fun | .Lnk => ⟨lnk⟩ | .D => ⟨d⟩ | .T => ⟨t⟩ | _ => ⟨[]⟩
 
-/-- Cyclic coalescence over the Mirror-obeying complex head derives the relative prefix of each
-class, free of the hiatus its exponents present. -/
 theorem relative_prefixes :
     ∀ a ∈ Wordlist.analyses, a.form.languageId = "nort2795" → ∃ e ∈ exponents? a,
       some (lift e relative.mvalue).segments = transcribe? a.form.form.toList ∧
@@ -725,9 +680,6 @@ section Amalgamation
 
 open HarizanovGribanova2019
 
-/-- Harizanov and Gribanova's amalgamation builds the complex head of GenHM when each head
-Lowers, and another bracketing of the same terminals in the same order when a head Raises into a
-head that then Lowers: it allows the Mirror Principle and does not derive it. -/
 theorem amalgamation_bracketing (x y z : Head) :
     amalgamateSpine [.single z none, .single y (some .lowering), .single x (some .lowering)] =
         some [⟨z, (HeadChain.ofHeads z [y, x]).mvalue, none⟩] ∧
@@ -735,9 +687,6 @@ theorem amalgamation_bracketing (x y z : Head) :
         some [⟨z, of z * (of y * of x), none⟩] :=
   ⟨rfl, rfl⟩
 
-/-- With C, D and the linker all Lowering, amalgamation builds the complex head of the Ndebele
-relative chain. With D Raising into the linker before the linker Lowers, it builds a complex
-head with the same terminals in the same order that spells out the class 9 prefix as *i-*. -/
 theorem amalgamation_class9 :
     amalgamateSpine [.single .T none, .single .C (some .lowering), .single .D (some .lowering),
         .single .Lnk (some .lowering)] = some [⟨.T, relative.mvalue, none⟩] ∧
@@ -747,9 +696,6 @@ theorem amalgamation_class9 :
         ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis, (lift e a.complex).segments = [Ndebele.i] :=
   ⟨rfl, _, rfl, rfl, by decide, by decide +kernel⟩
 
-/-- The two accounts meet on a single complex head. Wherever a chain is pronounced, [M] features
-that Raise the heads below that position and Lower the heads above it make amalgamation build
-the same complex head there. -/
 theorem amalgamation_at_pronounced {lo hi rest : List Head} {s b : Head}
     (h : lo ++ s :: hi = b :: rest) (hnd : (b :: rest).Nodup) :
     (HeadChain.ofHeads b rest).pronounced {s} = some s ∧
@@ -764,10 +710,6 @@ theorem amalgamation_at_pronounced {lo hi rest : List Head} {s b : Head}
     List.filter_eq_nil_iff.mpr fun a ha ↦ by simpa using fun h : a = s ↦ hs (by simp [← h, ha])
   simp [HeadChain.pronounced, HeadChain.ofHeads, ← h, List.filter_append, h₁, h₂]
 
-/-- Whatever [M] features V and T bear, amalgamation pronounces a verb in the same position with
-C above it as without, since heads added above a spine do not change where its heads are
-pronounced. The amalgamation account of Danish verb second therefore moves V in the syntax,
-across T, where the GenHM chain is pronounced in its strong C. -/
 theorem amalgamation_keeps_verb_site (m : Head → Option Direction)
     {out out' : List (Amalgam Head)} {a a' : Amalgam Head}
     (h : amalgamateSpine ([Head.V, .T].map fun x ↦ .single x (m x)) = some out)
@@ -777,10 +719,6 @@ theorem amalgamation_keeps_verb_site (m : Head → Option Direction)
   site_eq_of_append (extra := [Amalgam.single Head.C (m .C)]) h h'
     (by simp [Amalgam.members, Amalgam.single]) ha ha' hV hV'
 
-/-- Do-support turns on a specifier. A strong verb in a language with Split-by-Intervention
-takes it when the subject intervenes between C and the verb, and not when the same heads are
-related across a lower copy of the subject. A spine of heads is the same in both clauses, and
-Harizanov and Gribanova leave the union of English T with its verb to another operation. -/
 theorem doSupport_iff_intervener {L : Language} (hV : .V ∈ L.strong)
     (hs : L.splitByIntervention) :
     Context.inversion.above = Context.toC.above ∧ (derive L .inversion .V).DoSupport ∧
@@ -799,9 +737,6 @@ def clauseOf (r : Datum) : Option (Language × Context) :=
   | "dani1285", some "root" => some (danish, .toC)
   | _, _ => none
 
-/-- On the French and Danish verb-placement examples of the amalgamation study the two accounts
-agree. Each example is acceptable in exactly the order that the position of the finite word
-predicts, whether the finite verb is a lexical verb or an auxiliary. -/
 theorem amalgamation_rows :
     ∀ r ∈ HarizanovGribanova2019.Examples.all,
       r.feature? "phenomenon" = some "finiteVerbPlacement" →

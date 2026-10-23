@@ -263,7 +263,6 @@ theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) 
     · exact absurd hd (Nat.not_succ_le_zero _)
     exact (ih (Nat.le_of_succ_le_succ hd)).necImage fun _ _ h ↦ h.2
 
-/-- The support of a formula is closed under bisimulation at its modal depth. -/
 theorem bisimClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     BisimClosed M {t | support M φ t} :=
   ⟨φ.modalDepth, invariant_eval φ le_rfl⟩

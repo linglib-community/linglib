@@ -82,12 +82,8 @@ that is unfocused, in all three constructions, which is what the design holds co
 def subjectFocus : FGDConstruction → Mark
   | _ => .unfeatured
 
-/-- The extraction domain is uniform across the three constructions, so any difference between
-them is a difference in the filler. -/
 theorem subjectFocus_uniform (c c' : FGDConstruction) : subjectFocus c = subjectFocus c' := rfl
 
-/-- The filler is not: only the wh-question's is focused. This is the variable the constraint
-claims should modulate the island effect. -/
 theorem fillerFocus_varies :
     fillerFocus .whQuestion ≠ fillerFocus .relativeClause ∧
       fillerFocus .whQuestion ≠ fillerFocus .topicalization := by
@@ -116,7 +112,6 @@ def FBCPredictsIsland (c : FGDConstruction) : Prop :=
 instance : DecidablePred FBCPredictsIsland :=
   fun _ ↦ inferInstanceAs (Decidable (_ < _))
 
-/-- The categorical constraint predicts the same. -/
 theorem fbcPredictsIsland_iff (c : FGDConstruction) :
     FBCPredictsIsland c ↔ FBCViolation (fillerFocus c) (subjectFocus c) :=
   (fbcViolation_iff_lt _ _).symm

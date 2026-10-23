@@ -151,7 +151,6 @@ theorem LiftRel.equiv {r : α → α → Prop} (H : Equivalence r) : Equivalence
 theorem liftRel_singleton {a : α} {b : β} : LiftRel r {a} {b} ↔ r a b := by
   simp [LiftRel]
 
-/-- Over a singleton on the right, the lifting from a nonempty set is distribution. -/
 theorem liftRel_singleton_right (hs : s.Nonempty) {b : β} :
     LiftRel r s {b} ↔ ∀ a ∈ s, r a b := by
   simp only [LiftRel, Set.mem_singleton_iff, exists_eq_left, forall_eq]

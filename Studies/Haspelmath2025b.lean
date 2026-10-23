@@ -238,8 +238,6 @@ def o : Form := ⟨.suff "o", none⟩
 /-- The Latin forms `laud-o` 'I praise' and `laud-ab-am` 'I was praising'. -/
 def latin : Inventory Form := inventory [[laud, o], [laud, ab, am]]
 
-/-- Fn. 6: `laud-ab-` is an imperfect stem, a root with a tense suffix that combines with a
-person suffix. -/
 theorem laudab_stem :
     IsStemIn latin.forms latin [laud, ab] ∧ IsStemIn latin.forms latin [laud] := by
   decide
@@ -350,8 +348,6 @@ theorem hammer_sisters :
   ⟨hammerRoots, λ v => by cases v <;> first | exact bot_le | exact le_rfl,
     funext λ t => by rcases t with t | t <;> cases t <;> rfl⟩
 
-/-- `hammer` (noun) and `dance` (verb) instantiate the schemas but not as a pair: the
-linked shapes differ. -/
 theorem hammer_dance_not_sisters :
     ¬ nounVerb.InstantiatesAt (Sum.elim nounSub verbSub) (Sum.elim hammerNoun danceVerb) :=
   λ h => by

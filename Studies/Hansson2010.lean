@@ -115,7 +115,6 @@ def tesh : Segment := sibilant .«t̠ʃ»
 /-- The voiced postalveolar affricate /dʒ/. -/
 def dezh : Segment := sibilant .«d̠ʒ»
 
-/-- The two series differ in [anterior] alone, pair by pair. -/
 theorem eqOn_anterior_compl :
     ∀ p ∈ [(s, esh), (z, ezh), (ts, tesh), (dz, dezh)], ∀ f ≠ .anterior, p.1 f = p.2 f := by
   decide
@@ -160,7 +159,6 @@ theorem isTierStrictlyLocal : Language.IsTierStrictlyLocal 2 navajoSibilantHarmo
 theorem isBTSL : Language.IsBTSL 2 navajoSibilantHarmony.language :=
   isTierStrictlyLocal.toIsBTSL
 
-/-- A word is harmonic iff its sibilants agree in [anterior], however far apart. -/
 theorem mem_language_iff (w : List Segment) :
     w ∈ navajoSibilantHarmony.language ↔
       ∀ x ∈ sibilants w, ∀ y ∈ sibilants w, x .anterior = y .anterior := by
@@ -171,8 +169,6 @@ theorem mem_language_iff (w : List Segment) :
   exact ⟨fun h ↦ h.pairwise.forall_of_forall fun _ _ ↦ rfl,
     fun h ↦ (List.pairwise_of_forall_mem_list h).isChain⟩
 
-/-- The language is the inverse image, under the sibilant class, of agreement among the
-classes. -/
 theorem language_eq_preimage : navajoSibilantHarmony.language =
     List.map sibilantClass ⁻¹' (TierStrictlyLocalGrammar.agree (·.isSome)).language := by
   ext w
@@ -217,7 +213,6 @@ theorem sibilants_map_harmonize (t : Option Bool) (w : List Segment) :
   simp only [sibilants, List.filter_map]
   exact congrArg _ (List.filter_congr fun x _ ↦ by simp [onTier_harmonize])
 
-/-- A word has a trigger exactly when it has a sibilant. -/
 theorem trigger_eq_none_iff (w : List Segment) : trigger w = none ↔ sibilants w = [] := by
   rw [trigger]
   rcases hl : (sibilants w).getLast? with _ | x
@@ -226,7 +221,6 @@ theorem trigger_eq_none_iff (w : List Segment) : trigger w = none ↔ sibilants 
     simp only [Option.bind_some, ← List.getLast?_eq_none_iff, hl, reduceCtorEq, iff_false]
     exact Option.ne_none_iff_isSome.2 hx
 
-/-- The harmony leaves the trigger in place, so the rightmost sibilant determines the rest. -/
 theorem trigger_anticipatory (w : List Segment) : trigger (anticipatory w) = trigger w := by
   rw [anticipatory]
   rcases ht : trigger w with _ | v
@@ -238,7 +232,6 @@ theorem trigger_anticipatory (w : List Segment) : trigger (anticipatory w) = tri
       rw [trigger, sibilants_map_harmonize, List.getLast?_map, hl, Option.map_some,
         Option.bind_some, harmonize_some hx, sibilantClass_setFeature hx]
 
-/-- The harmonized word is harmonic. -/
 theorem anticipatory_mem_language (w : List Segment) :
     anticipatory w ∈ navajoSibilantHarmony.language := by
   rw [mem_language_iff, anticipatory, sibilants_map_harmonize]
@@ -249,7 +242,6 @@ theorem anticipatory_mem_language (w : List Segment) :
     rw [harmonize_some (onTier_of_mem_sibilants hx), harmonize_some (onTier_of_mem_sibilants hy)]
     simp [Segment.setFeature]
 
-/-- A harmonic word is a fixed point of the harmony. -/
 theorem anticipatory_eq_self_of_mem {w : List Segment}
     (h : w ∈ navajoSibilantHarmony.language) : anticipatory w = w := by
   rw [mem_language_iff] at h
@@ -267,8 +259,6 @@ theorem anticipatory_eq_self_of_mem {w : List Segment}
     exact Function.update_eq_self_iff.mpr hxv.symm
   · exact harmonize_of_not_onTier hon
 
-/-- The surface language is exactly the set of fixed points of anticipatory harmony, so the
-stringset the tier-based grammar recognizes and the map the harmony computes are one object. -/
 theorem mem_language_iff_anticipatory_eq (w : List Segment) :
     w ∈ navajoSibilantHarmony.language ↔ anticipatory w = w :=
   ⟨anticipatory_eq_self_of_mem, fun h ↦ h ▸ anticipatory_mem_language w⟩
@@ -319,7 +309,6 @@ theorem ur_ex6a_ii_violates : ur Examples.ex6a_ii ∉ navajoSibilantHarmony.lang
   rw [mem_language_iff_anticipatory_eq]
   decide
 
-/-- Its surface form is harmonic. -/
 theorem sr_ex6a_ii_legal : sr Examples.ex6a_ii ∈ navajoSibilantHarmony.language := by
   rw [mem_language_iff_anticipatory_eq]
   decide
@@ -337,7 +326,6 @@ theorem pattern_onTier_iff (x : Segment) : navajo.pattern.OnTier x ↔ OnTier x 
 theorem pattern_tier (w : List Segment) : navajo.pattern.tier w = sibilants w :=
   List.filter_congr fun x _ ↦ by simp [pattern_onTier_iff]
 
-/-- Every sibilant is a participating target with a value. -/
 theorem saturated : navajo.Saturated := fun x hx ↦ by
   rw [pattern_onTier_iff] at hx
   refine ⟨hx, by simp [navajo, System.mk', hx], ?_⟩
@@ -350,7 +338,6 @@ theorem preservesTier : navajo.searchCopy.PreservesTier := fun v x hx ↦ by
   exact iff_of_true (onTier_setFeature ((pattern_onTier_iff x).1 hx.2) v)
     ((pattern_onTier_iff x).1 hx.2)
 
-/-- The sibilant class is the system's tier projection. -/
 theorem pattern_project : navajo.pattern.project = sibilantClass := by
   funext x
   by_cases h : OnTier x
@@ -359,14 +346,12 @@ theorem pattern_project : navajo.pattern.project = sibilantClass := by
   · rw [Pattern.project, ite_eq_right (mt (pattern_onTier_iff x).1 h)]
     exact (Option.not_isSome_iff_eq_none.mp h).symm
 
-/-- The system's surface harmonicity is the tier-based language. -/
 theorem harmonic_iff_mem_language (w : List Segment) :
     navajo.pattern.Harmonic w ↔ w ∈ navajoSibilantHarmony.language := by
   rw [navajo.pattern.harmonic_iff_map_project_mem (fun x hx ↦ (saturated x hx).2) w,
     pattern_project, language_eq_preimage]
   rfl
 
-/-- Anticipatory harmony is the search-and-copy run of the system in its direction. -/
 theorem anticipatory_eq_apply (w : List Segment) :
     anticipatory w = navajo.searchCopy.apply w := by
   rw [navajo.apply_eq_map saturated preservesTier rfl, anticipatory]

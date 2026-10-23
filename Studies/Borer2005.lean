@@ -254,7 +254,6 @@ theorem status_truncations :
     status [.N, .n] = some .stuff ∧ status [.N, .n, .Q] = some .divided := by
   decide
 
-/-- The functional sequence places the dividing head below the quantity head. -/
 theorem fValue_Q_lt_Num : Cat.fValue .Q < Cat.fValue .Num := by decide
 
 end Borer2005

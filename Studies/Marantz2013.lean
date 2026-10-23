@@ -163,9 +163,6 @@ theorem idiom_rows :
       r.spine.IdiomLocal agentive r.trigger ∧ ¬ r.spine.RootLocal cyclic r.trigger := by
   decide
 
-/-- The two domains cross-cut: past tense is local to the root of *taught*
-but above Voice, and the v of *nationalize* is below Voice but outside the
-root's domain. -/
 theorem domains_cross_cut :
     (∃ r ∈ rows, r.spine.RootLocal cyclic r.trigger ∧ ¬ r.spine.IdiomLocal agentive r.trigger) ∧
       ∃ r ∈ rows, r.spine.IdiomLocal agentive r.trigger ∧ ¬ r.spine.RootLocal cyclic r.trigger := by

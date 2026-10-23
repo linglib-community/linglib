@@ -124,9 +124,6 @@ theorem focus_marking_not_obligatory :
     ∃ c : Config, c.WF ∧ ¬ (realize c).Nonempty :=
   ⟨⟨.object, .continuous, true⟩, ⟨fun _ ↦ rfl, Or.inr rfl⟩, Finset.not_nonempty_empty⟩
 
-/-- Tangale refutes the universalist claim that every focus receives an
-overt reflex — the Tangale side of the counterexample the Hausa
-chapter states against the Basic Focus Rule. -/
 theorem tangale_refutes_perceptibility : ¬ Perceptible realize :=
   fun h ↦ Finset.not_nonempty_empty (h ⟨.object, .continuous, true⟩)
 
@@ -168,20 +165,14 @@ def alignFocus : Constraint Prosody.Tree :=
 /-- Phrasal economy assigns one violation per φ. -/
 def starPhi : Constraint Prosody.Tree := fun t ↦ (Prosody.levelSpans .ph t).length
 
-/-- Under object focus alignment dominates economy and the separated parse wins, which derives
-the φ-edge after the verb. -/
 theorem focused_parse_separates :
     (Tableau.ofList {wrapped, separated} [alignFocus, starPhi]).optimal
       = {separated} := by decide
 
-/-- In an all-new utterance economy decides alone and the wrapped parse wins, so there is no
-boundary and the elision cascade applies. -/
 theorem neutral_parse_wraps :
     (Tableau.ofList {wrapped, separated} [starPhi]).optimal
       = {wrapped} := by decide
 
-/-- No φ spans the V–O juncture in the separated parse — elision is
-blocked there and applies in the wrapped one. -/
 theorem separated_edge_wrapped_internal :
     (0, 2) ∉ Prosody.levelSpans .ph separated ∧ (0, 2) ∈ Prosody.levelSpans .ph wrapped := by
   decide
@@ -217,8 +208,6 @@ def readBookP : Set NumWorld := {w | w.readBook}
 /-- The alternative facts, as an indexed family. -/
 def alt : Fin 3 → Set NumWorld := ![boughtBookP, boughtShirtP, readBookP]
 
-/-- The alternatives are irredundant, since each can hold while the others fail, with one world
-per free Boolean field. -/
 theorem alt_irredundant : Irredundant alt := by
   intro i
   fin_cases i
@@ -243,18 +232,12 @@ set, with 'bought the book' as prejacent. -/
 def numReading (x : Focused) : Set NumWorld :=
   excludes (alt '' ↑(extAlts x)) (alt 0)
 
-/-- One surface string has three semantically distinct readings. Over an irredundant alternative
-family *only* is injective in its resolution (`Irredundant.excludes_injOn`), and the three
-extents resolve to three different contrast sets. -/
 theorem num_readings_injOn : Set.InjOn numReading {.verb, .vp, .object} :=
   (alt_irredundant.excludes_injOn 0).comp
     (by rintro a (rfl | rfl | rfl) b (rfl | rfl | rfl) h <;>
       first | rfl | exact absurd h (by decide))
     (by rintro a (rfl | rfl | rfl) <;> decide)
 
-/-- The VP association is the strongest reading, since 'I did nothing else' entails both 'I
-bought nothing else' and 'I did nothing else to the book', by `excludes_antitone` over the
-contrast-set inclusions. -/
 theorem vp_reading_strongest :
     numReading .vp ⊆ numReading .object ∧ numReading .vp ⊆ numReading .verb :=
   ⟨excludes_antitone (Set.image_mono (Finset.coe_subset.mpr (by decide))) _,
@@ -296,8 +279,6 @@ def configRows :
    (⟨.vp, .continuous, true⟩, Examples.ex32b),
    (⟨.verb, .continuous, true⟩, Examples.ex32c)]
 
-/-- Every focus row's strategy label is read off `realize`'s reflexes, so the conditioning
-function is derived from the data, not stipulated beside it. -/
 theorem marking_matches_rows :
     ∀ p ∈ configRows,
       p.2.feature? "strategy" = some (strategyLabel p.1) ∧

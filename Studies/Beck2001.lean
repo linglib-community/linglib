@@ -72,12 +72,10 @@ variable [DecidableEq α]
 def otherOnesAmongThem (A : Finset α) (x : α) : Finset α :=
   A.erase x
 
-/-- The definite excludes the contrast argument. -/
 theorem otherOnesAmongThem_excludes (A : Finset α) (x : α) :
     x ∉ otherOnesAmongThem A x :=
   Finset.notMem_erase x A
 
-/-- The definite is a subgroup of the antecedent. -/
 theorem otherOnesAmongThem_subset (A : Finset α) (x : α) :
     otherOnesAmongThem A x ⊆ A :=
   Finset.erase_subset x A

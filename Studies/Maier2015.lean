@@ -99,14 +99,11 @@ def MentalState.flatten (K : MentalState) : DRS maierLang ℕ :=
 
 /-! ### Parasitism as accessibility -/
 
-/-- No step of the walk leaves a box whose conditions introduce no box. -/
 private theorem not_scopeStep_of_atomic {bs : List (DRS maierLang ℕ)} {D : DRS maierLang ℕ}
     {q : List (DRS maierLang ℕ) × DRS maierLang ℕ} (h : ∀ c ∈ D.conditions, MCond.IsAtomic c) :
     ¬ ScopeStep (bs, D) q := by
   rintro (⟨hc⟩ | ⟨hc⟩ | ⟨hc⟩ | ⟨hc⟩ | ⟨hc⟩) <;> exact h _ hc
 
-/-- The belief layer does not see a compartment. Where a belief referent is declared only belief
-referents are accessible, if no compartment declares it again. -/
 theorem not_accessible_of_belief (K : MentalState) (hb : ∀ c ∈ K.beliefConds, c.IsAtomic)
     (hcs : ∀ c ∈ K.compartments, ∀ cd ∈ c.conds, cd.IsAtomic) {x y : ℕ}
     (hxc : ∀ c ∈ K.compartments, x ∉ c.drefs) (hy : y ∉ K.beliefDrefs) :
@@ -196,18 +193,12 @@ def sueMerged : MentalState := sueBelief.merge sueHope
 /-- The merged description after binding the presupposed event to the believed one (60). -/
 def sueBound : MentalState := sueMerged.bind 21 20
 
-/-- Before the merge the believed event does not occur in the hope description, so the
-presupposition of *stop* has no antecedent and could only be accommodated. -/
 theorem believed_event_absent_before_merge : 20 ∉ DRS.varFinset sueHope.flatten := by
   decide
 
-/-- After the merge the believed event is accessible from the presupposed one, so binding, the
-filtering, is licensed. -/
 theorem presup_binds_after_merge : DRS.Accessible sueMerged.flatten 21 20 :=
   accessible_belief_of_compartment sueMerged (by decide) (by decide)
 
-/-- The dependence is asymmetric, since the believed event does not see the desire's referent.
--/
 theorem parasitic_asymmetry : ¬ DRS.Accessible sueMerged.flatten 20 21 :=
   not_accessible_of_belief sueMerged (by decide) (by decide) (by decide) (by decide)
 
@@ -219,9 +210,6 @@ theorem presup_resolved_after_binding :
 
 /-! ### The data -/
 
-/-- In the attitude sequences of the paper and of [karttunen-1973], the presupposition of the
-second ascription is filtered, and the discourse felicitous, exactly when the doxastic
-ascription comes first, since the parasitic attitude sees the belief and not conversely. -/
 theorem filtering_iff_doxastic_first :
     ∀ e ∈ Examples.all, e.judgment = .acceptable ↔ e.feature? "order" = some "doxasticFirst" := by
   decide

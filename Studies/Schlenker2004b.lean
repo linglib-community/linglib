@@ -117,8 +117,6 @@ def Features.ofArgs (env : ℕ → Features) (i : Term PersonFeature) (t : TimeT
     (w : Term MoodFeature) : Features :=
   ⟨i.feature Features.person env, t.feature env, w.feature Features.mood env⟩
 
-/-- An attitude verb whose arguments are the coordinates of the context variable `c_k` passes
-that variable's diacritic on unchanged. -/
 theorem Features.ofArgs_coord (env : ℕ → Features) (k : ℕ) :
     Features.ofArgs env (.coord k) (.base (.coord k)) (.coord k) = env k := rfl
 
@@ -258,8 +256,6 @@ theorem deSe_holds_iff :
       ∃ A ∈ attAt M s V i t w, ∀ c ∈ A, M.pred Pr c.agent c.time c.world := by
   simp [deSe, Formula.Holds, Term.value, TimeTerm.value, Assignment.updateCtx]
 
-/-- The embedded features of a de se report, being uninterpreted, add no presupposition: the
-report is weird only through its matrix arguments. -/
 theorem deSe_weird_iff [Preorder T] :
     (deSe V Pr i t w k).Weird M c₀ s ↔ ArgsWeird M c₀ s i t w := by
   simp [deSe, Formula.Weird, ArgsWeird, Term.Weird, TimeTerm.Weird]
@@ -326,8 +322,6 @@ theorem ulc_world_iff (e : Context W E P T → Set W) (c : Context W E P T) :
     ULC (· ≠ ·) Context.world e c ↔ c.world ∈ e c := by
   simp [ULC]
 
-/-- On a description denoting a single time the constraint is the upper limit constraint on
-reference times of `Semantics/Tense/Embedding`. -/
 theorem ulc_singleton_iff [LinearOrder T] (r : T) (c : Context W E P T) :
     ULC (· < ·) Context.time (λ _ => {r}) c ↔ compare r c.time ∈ upperLimitConstraint := by
   simp [ULC, not_lt]

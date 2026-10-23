@@ -143,7 +143,6 @@ def anaphora : List E :=
   let nonAgent := s.phrases.filter λ p => p.pronoun && decide (p.thematic ≠ .agent)
   ((if nonAgent.isEmpty then s.phrases.filter (·.pronoun) else nonAgent).map (·.entity))
 
-/-- The expected focus of a plain sentence is realized by a phrase of least thematic rank. -/
 theorem expectedFocus_le {e : E} (hs : s.form = .plain) (h : s.expectedFocus = some e) :
     ∃ p ∈ s.phrases, p.entity = e ∧ ∀ q ∈ s.phrases, p.thematic ≤ q.thematic := by
   simp only [expectedFocus, hs] at h
@@ -275,13 +274,10 @@ def cospecify (pos : Position) (ok : E → Prop) [DecidablePred ok] : Option E :
 
 variable {st} {t : ℕ} {a : List E} {cf : Focus E}
 
-/-- Retention: an anaphor co-specifying the current focus leaves the state unchanged. -/
 theorem confirm_of_mem (h : st.discourse = some cf) (ha : cf.entity ∈ a) :
     st.confirm t a = st := by
   simp [confirm, h, ha]
 
-/-- Movement: when no anaphor co-specifies the current focus and one co-specifies an alternate,
-the focus moves to an alternate and the rejected focus is stacked. -/
 theorem confirm_of_not_mem (h : st.discourse = some cf) (ha : cf.entity ∉ a)
     (halt : ∃ e ∈ st.alternates, e ∈ a) :
     ∃ e ∈ st.alternates, e ∈ a ∧ (st.confirm t a).discourse = some ⟨e, t⟩ ∧
@@ -295,13 +291,9 @@ theorem confirm_of_not_mem (h : st.discourse = some cf) (ha : cf.entity ∉ a)
 
 variable {pos : Position} {ok : E → Prop} [DecidablePred ok] {e : E}
 
-/-- A co-specification is an accepted candidate. -/
 theorem cospecify_spec (h : st.cospecify pos ok = some e) : ok e ∧ e ∈ st.candidates pos :=
   ⟨by simpa using List.find?_some h, List.mem_of_find?_eq_some h⟩
 
-/-- The animate discourse focus rule: a pronoun in agent position co-specifies a discourse focus
-that was established before the actor focus and passes the filters, the recency rule not
-applying. -/
 theorem cospecify_agent_of_precedence {d af : Focus E} (hd : st.discourse = some d)
     (haf : st.actor = some af) (hlt : d.since < af.since) (hok : ok d.entity)
     (hrec : ∀ e ∈ st.recency .agent, ¬ ok e) : st.cospecify .agent ok = some d.entity := by
@@ -361,8 +353,6 @@ namespace D2
 /-- (D2-1) Mary is giving a surprise party at Hilda's house. -/
 def a : Sentence Entity := ⟨.plain, [np mary .agent true, np party .theme, np hildasHouse .other]⟩
 
-/-- The pronoun of (D2-2), *It's at 340 Cherry St.*, in subject position, co-specifies Hilda's
-house by the recency rule, ahead of the expected focus, the party. -/
 theorem it_hildasHouse :
     (State.initial.step a).cospecify .subject (· ∈ [party, hildasHouse]) = some hildasHouse := by
   decide
@@ -379,8 +369,6 @@ def a : Sentence Entity :=
 def b : Sentence Entity :=
   ⟨.plain, [pron speaker .agent, pron necklace .theme false, np grandmother .other true]⟩
 
-/-- The pronouns of (D7-2) and (D7-3), *and it meant a lot to me*, co-specify the necklace, the
-discourse focus, which the second retains; the office is never reached. -/
 theorem it_necklace :
     (State.initial.step a).cospecify .other (· ∈ [necklace, office]) = some necklace ∧
       (State.initial.run [a, b]).cospecify .subject (· ∈ [necklace, office]) = some necklace := by
@@ -395,9 +383,6 @@ def a : Sentence Entity :=
   ⟨.plain, [np yesterday .other, np max .agent true, np bloomingdales .theme, np ned .other true,
     np winston .other true, np trip .other]⟩
 
-/-- The pronoun of (D8-2), *While he was there, he bought some sneakers for his mother*, in
-agent position co-specifies the actor focus Max: the discourse focus Bloomingdales was
-established in the same sentence and takes no precedence. -/
 theorem he_max : (State.initial.step a).cospecify .agent (· ∈ [max, ned, winston]) = some max := by
   decide
 
@@ -421,14 +406,10 @@ def afterB : State Entity := State.initial.run [a, b]
 /-- The state after (D9-3). -/
 def afterC : State Entity := afterB.step c
 
-/-- The discourse focus is Jeff throughout while the actor focus moves from the speaker to Carl
-to Oscar. -/
 theorem foci : afterB.discourse = some ⟨jeff, 1⟩ ∧ afterB.actor = some ⟨carl, 2⟩ ∧
     afterC.discourse = some ⟨jeff, 1⟩ ∧ afterC.actor = some ⟨oscar, 3⟩ := by
   decide
 
-/-- The pronouns in agent position of (D9-2) and of (D9-4), *but I think he went to the Cape with
-Linda*, co-specify Jeff: the discourse focus was established before the actor focus. -/
 theorem he_jeff :
     (State.initial.step a).cospecify .agent (· ∈ [jeff, carl, oscar]) = some jeff ∧
       afterB.cospecify .agent (· ∈ [jeff, carl, oscar]) = some jeff ∧
@@ -460,14 +441,10 @@ theorem he : afterA.cospecify .agent (· ∈ [myDog, theVet]) = some myDog ∧
     afterA.cospecify .agent (· ∈ [theVet]) = some theVet := by
   decide
 
-/-- Outside agent position the discourse focus, my dog, comes first for *him*, and the vet
-follows once dogs are found to have no hands. -/
 theorem him : afterA.cospecify .other (· ∈ [myDog, theVet]) = some myDog ∧
     afterA.cospecify .other (· ∈ [theVet]) = some theVet := by
   decide
 
-/-- After (D14-2a) both foci have moved, my dog and the speaker stacked; after (D14-2b) the
-discourse focus is retained and the actor focus is the vet. -/
 theorem foci : (afterA.step b).discourse = some ⟨theVet, 2⟩ ∧ (afterA.step b).stack = [myDog] ∧
     (afterA.step b).actor = some ⟨myDog, 2⟩ ∧ (afterA.step b).actorStack = [speaker] ∧
       (afterA.step b').discourse = some ⟨myDog, 1⟩ ∧ (afterA.step b').actor = some ⟨theVet, 2⟩ := by
@@ -485,7 +462,6 @@ def a : Sentence Entity :=
 /-- (D25-2) They came from our food co-op and were unusually fresh. -/
 def b : Sentence Entity := ⟨.plain, [pron strawberries .theme false, np foodCoop .other]⟩
 
-/-- The expected focus, the subject of the there-insertion sentence, is confirmed. -/
 theorem retained : (State.initial.run [a, b]).discourse = some ⟨strawberries, 1⟩ ∧
     (State.initial.run [a, b]).stack = [] := by
   decide
@@ -509,9 +485,6 @@ def c : Sentence Entity :=
 /-- (D35-4) They tasted really good. -/
 def d : Sentence Entity := ⟨.plain, [pron iceCreamCones .theme false]⟩
 
-/-- Baseball is confirmed by *it* in (D35-2), the pronoun in agent position not consulted,
-and retained through (D35-3); the pronoun of (D35-4) moves the focus to the ice cream cones and
-stacks baseball. -/
 theorem movement : (State.initial.run [a, b, c]).discourse = some ⟨baseball, 1⟩ ∧
     (State.initial.run [a, b, c]).alternates = [iceCreamCones] ∧
       (State.initial.run [a, b, c, d]).discourse = some ⟨iceCreamCones, 4⟩ ∧

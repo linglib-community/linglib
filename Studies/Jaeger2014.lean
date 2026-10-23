@@ -122,7 +122,6 @@ private theorem exists_weights_eq {p : M → ℝ} (h0 : ∀ x, 0 ≤ p x) (h1 : 
     rw [StdSimplex.range_toFun_comp_weights]; exact ⟨Set.mem_iInter.2 h0, h1⟩
   exact this
 
-/-- Every nonempty set of strategies is the support of some belief, the uniform one. -/
 private theorem exists_coe_support_eq {P : Set M} (hP : P.Nonempty) :
     ∃ ρ : StdSimplex ℝ M, ↑ρ.weights.support = P := by
   classical
@@ -184,7 +183,6 @@ private theorem sum_duple_mul {s t : ℝ} (hs : 0 ≤ s) (ht : 0 ≤ t) (h : s +
     ∑ x, (StdSimplex.duple a b hs ht h).weights x * X x = s * X a + t * X b := by
   simp [add_mul, Finset.sum_add_distrib, Finsupp.single_apply]
 
-/-- A belief supported on a pair weighs the two strategies. -/
 private theorem sum_mul_of_coe_support_eq_pair (hab : a ≠ b)
     (hρ : (ρ.weights.support : Set M) = {a, b}) (X : M → ℝ) :
     ∑ x, ρ.weights x * X x = ρ.weights a * X a + ρ.weights b * X b := by
@@ -214,7 +212,6 @@ private theorem frequently_mem_of_periodic (hp : 0 < p) (h : ∀ m ≥ n, u (m +
     {m : ℕ} (hm : n ≤ m) {x : α} (hx : x ∈ u m) : ∃ᶠ k in atTop, x ∈ u k :=
   frequently_atTop.2 fun N ↦ ⟨m + p * N, by nlinarith, (add_mul_of_periodic h hm N).symm ▸ hx⟩
 
-/-- Once a sequence of sets is periodic, its limit superior is the union of one period. -/
 private theorem limsup_eq_iUnion_of_periodic (hp : 0 < p) (h : ∀ m ≥ n, u (m + p) = u m) :
     limsup u atTop = ⋃ i < p, u (i + n) := by
   ext x
@@ -352,14 +349,10 @@ private theorem icrR_add_of_isPeriodicPt {n p : ℕ}
   simp only [icrR, ← iterate_add_apply] at this
   rwa [show m - n + (p + n) = m + p by omega, Nat.sub_add_cancel hm] at this
 
-/-- Once the sequence cycles, the pragmatically rationalizable receiver strategies are the union
-of the stages of one period. -/
 theorem prsR_eq_of_isPeriodicPt {n p : ℕ} (hp : 0 < p)
     (h : IsPeriodicPt g.receiverStep p (g.icrR n)) : g.prsR = ⋃ i < p, g.icrR (i + n) :=
   limsup_eq_iUnion_of_periodic hp fun _ hm ↦ g.icrR_add_of_isPeriodicPt h hm
 
-/-- Once the sequence cycles, the pragmatically rationalizable sender strategies are the union of
-the stages of one period. -/
 theorem prsS_eq_of_isPeriodicPt {n p : ℕ} (hp : 0 < p)
     (h : IsPeriodicPt g.receiverStep p (g.icrR n)) : g.prsS = ⋃ i < p, g.icrS (i + n) :=
   limsup_eq_iUnion_of_periodic hp fun _ hm ↦ by rw [icrS, g.icrR_add_of_isPeriodicPt h hm, icrS]
@@ -531,8 +524,6 @@ theorem receiverEU_lt {c : C} {f : F} {a a' : A}
   exact sum_weights_mul_lt (fun w _ ↦ hle s hs c' hc w)
     ⟨w, g.prior_support ▸ Finset.mem_univ w, by simpa [hw] using hlt⟩
 
-/-- A signal outside `T c w` that some signal weakly dominates against `R`, strictly against one
-member, is never a cautious response there. -/
 theorem senderCR_subset {R : Set (C → F → A)} {T : C → W → Set F}
     (h : ∀ c w, ∀ f' ∉ T c w, ∃ f, (∀ r ∈ R, ∀ c', g.uS c w f' (r c' f') ≤ g.uS c w f (r c' f)) ∧
       ∃ r ∈ R, ∃ c', g.uS c w f' (r c' f') < g.uS c w f (r c' f)) :
@@ -545,8 +536,6 @@ theorem senderCR_subset {R : Set (C → F → A)} {T : C → W → Set F}
   exact absurd this (not_le.2 (g.senderEU_lt (fun r hr c' _ ↦ hle r ((hρ' r).1 hr) c')
     ⟨r, (hρ' r).2 hr, c', hq ▸ Finset.mem_univ _, hlt⟩))
 
-/-- A strategy whose every choice weakly dominates against a nonempty set responds cautiously to
-it. -/
 theorem mem_senderCR [Nonempty C] {R : Set (C → F → A)} (hR : R.Nonempty) {s : C → W → F}
     (h : ∀ c w f', ∀ r ∈ R, ∀ c', g.uS c w f' (r c' f') ≤ g.uS c w (s c w) (r c' (s c w))) :
     s ∈ g.senderCR R := by
@@ -562,10 +551,6 @@ def senderPayoff (c : C) (s : C → W → F) (r : C → F → A) : ℝ :=
   ∑ w, g.prior.weights w * g.uS c w (s c w) (r c (s c w))
 
 open MeasureTheory ProbabilityTheory in
-/-- With one context, a sender strategy that no mixture of strategies weakly dominates in ex-ante
-payoff against a nonempty set of receiver strategies responds cautiously to it, the converse of
-`senderCR_subset`. Pearce's lemma for weak dominance gives a belief of full support on the set
-under which the strategy is optimal, and the objectives separate across worlds. -/
 theorem mem_senderCR_of_not_weaklyDominated [Unique C] {R : Set (C → F → A)} (hR : R.Nonempty)
     {s : C → W → F}
     (h : ∀ μ : StdSimplex ℝ (C → W → F),
@@ -640,8 +625,6 @@ theorem mem_senderCR_of_not_weaklyDominated [Unique C] {R : Set (C → F → A)}
   have := mul_pos hpos (sub_pos.2 (not_le.1 hlt))
   linarith
 
-/-- An action outside `T c f` that some action weakly dominates at the worlds where `f` is sent,
-strictly at one, is never a cautious response there. -/
 theorem receiverCR_subset {S : Set (C → W → F)} {T : C → F → Set A}
     (h : ∀ c f, ∀ a' ∉ T c f, ∃ a, (∀ s ∈ S, ∀ c' w, s c' w = f → g.uR c w a' ≤ g.uR c w a) ∧
       ∃ s ∈ S, ∃ c' w, s c' w = f ∧ g.uR c w a' < g.uR c w a) :
@@ -654,8 +637,6 @@ theorem receiverCR_subset {S : Set (C → W → F)} {T : C → F → Set A}
   exact absurd this (not_le.2 (g.receiverEU_lt (fun s hs c' _ w ↦ hle s ((hσ' s).1 hs) c' w)
     ⟨s, (hσ' s).2 hs, c', hq ▸ Finset.mem_univ _, w, hw, hlt⟩))
 
-/-- A receiver strategy whose every action weakly dominates where its signal is sent responds
-cautiously to a nonempty set of sender strategies. -/
 theorem mem_receiverCR [Nonempty C] {S : Set (C → W → F)} (hS : S.Nonempty) {r : C → F → A}
     (h : ∀ c f a', ∀ s ∈ S, ∀ c' w, s c' w = f → g.uR c w a' ≤ g.uR c w (r c f)) :
     r ∈ g.receiverCR S := by
@@ -665,8 +646,6 @@ theorem mem_receiverCR [Nonempty C] {S : Set (C → W → F)} (hS : S.Nonempty) 
     ⟨Finset.mem_univ _, fun a' _ ↦ g.receiverEU_le fun s hs c' _ w hw ↦ h c f a' s ?_ c' w hw⟩⟩
   rw [← hσ]; exact hs
 
-/-- When the signals of `T c w` weakly dominate every signal against `R` and each other signal is
-strictly beaten by one of them, the cautious responses to `R` choose from `T`. -/
 theorem senderCR_eq [Nonempty C] {R : Set (C → F → A)} (hR : R.Nonempty) {T : C → W → Set F}
     (hle : ∀ c w, ∀ f ∈ T c w, ∀ f', ∀ r ∈ R, ∀ c',
       g.uS c w f' (r c' f') ≤ g.uS c w f (r c' f))
@@ -677,8 +656,6 @@ theorem senderCR_eq [Nonempty C] {R : Set (C → F → A)} (hR : R.Nonempty) {T 
       (hlt c w f' hf').imp fun f ⟨hf, hr⟩ ↦ ⟨hle c w f hf f', hr⟩)
     fun _ hs ↦ g.mem_senderCR hR fun c w f' ↦ hle c w _ (hs c w) f'
 
-/-- When the actions of `T c f` weakly dominate every action where `f` is sent and each other
-action is strictly beaten by one of them, the cautious responses to `S` choose from `T`. -/
 theorem receiverCR_eq [Nonempty C] {S : Set (C → W → F)} (hS : S.Nonempty) {T : C → F → Set A}
     (hle : ∀ c f, ∀ a ∈ T c f, ∀ a', ∀ s ∈ S, ∀ c' w, s c' w = f → g.uR c w a' ≤ g.uR c w a)
     (hlt : ∀ c f, ∀ a' ∉ T c f, ∃ a ∈ T c f, ∃ s ∈ S, ∃ c' w, s c' w = f ∧
@@ -689,8 +666,6 @@ theorem receiverCR_eq [Nonempty C] {S : Set (C → W → F)} (hS : S.Nonempty) {
     fun _ hr ↦ g.mem_receiverCR hS fun c f a' ↦ hle c f _ (hr c f) a'
 
 omit [Fintype C] [Fintype F] [DecidableEq C] [DecidableEq W] [DecidableEq F] in
-/-- A signal true at a single world is read, under any full-support belief, as that world's best
-action. -/
 theorem optimalActions_eq_of_extension_eq_singleton {f : F} {w : W} (hf : g.extension f = {w})
     (c : C) {p : StdSimplex ℝ W} (hp : p.weights.support = Finset.univ) :
     g.optimalActions c (g.extension f) p = Finset.univ.argmax (g.uR c w) := by
@@ -806,7 +781,6 @@ private theorem icrR_zero : game.icrR 0 = Stage 0 := by
 private theorem stage_nonempty (b : Fin 2) : (Stage b).Nonempty :=
   ⟨fun _ f ↦ if f = 0 then b + 1 else b, by simp [Stage]⟩
 
-/-- Against either stage the sender sends the signal whose reading at that stage suits her. -/
 private theorem senderCR_stage (b : Fin 2) : game.senderCR (Stage b) = {liar b} := by
   rw [game.senderCR_eq (stage_nonempty b) (T := fun u w ↦ {liar b u w})]
   · ext s; simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
@@ -820,7 +794,6 @@ private theorem senderCR_stage (b : Fin 2) : game.senderCR (Stage b) = {liar b} 
       simp [Stage], (), ?_⟩
     fin_cases b <;> fin_cases w <;> fin_cases f' <;> simp_all [game, SemanticGame.uS, liar]
 
-/-- An unexpected `f₁₂` may be read either way. -/
 private theorem f₁₂_witness (a : Fin 2) : ∃ p : StdSimplex ℝ (Fin 2),
     p.weights.support = Finset.univ ∧ a ∈ game.optimalActions () (game.extension 2) p := by
   have key : ∀ x : ℝ, ∀ (h0 : 0 < x) (h1 : x < 1),
@@ -834,7 +807,6 @@ private theorem f₁₂_witness (a : Fin 2) : ∃ p : StdSimplex ℝ (Fin 2),
   · refine ⟨_, key (2/3) (by norm_num) (by norm_num), ?_⟩
     simp [SemanticGame.optimalActions, SemanticGame.extension, game, Fin.forall_fin_two]; norm_num
 
-/-- Knowing the sender lies, the receiver inverts her signals. -/
 private theorem receiverStep_stage (b : Fin 2) : game.receiverStep (Stage b) = Stage (b + 1) := by
   rw [SemanticGame.receiverStep, senderCR_stage,
     game.receiverCR_eq (Set.singleton_nonempty _)
@@ -964,8 +936,6 @@ private theorem coe_support_duple_eq_univ {x : ℝ} (h0 : 0 < x) (h1 : x < 1) :
   rw [← Finset.coe_inj, coe_support_duple (by decide) h0 (sub_pos.2 h1)]
   ext w; fin_cases w <;> simp
 
-/-- An unexpected "some" may be read any way, since some revised belief makes each action
-optimal. -/
 private theorem some_witness (a : Fin 3) : ∃ p : StdSimplex ℝ (Fin 2),
     p.weights.support = Finset.univ ∧ a ∈ game.optimalActions () (game.extension 2) p := by
   obtain ⟨x, h0, h1, hx⟩ : ∃ x : ℝ, ∃ (h0 : 0 < x) (h1 : x < 1),
@@ -983,7 +953,6 @@ private theorem some_witness (a : Fin 3) : ∃ p : StdSimplex ℝ (Fin 2),
           Fin.forall_fin_succ]; norm_num⟩
   exact ⟨_, coe_support_duple_eq_univ h0 h1, hx⟩
 
-/-- At `R₁` "all" and "some but not all" are read literally and the unused "some" any way. -/
 private theorem icrR_one : game.icrR 1 = Set.range reading := by
   rw [SemanticGame.icrR_succ, icrR_zero, SemanticGame.receiverStep, icrS_zero', range_reading]
   ext r
@@ -1009,7 +978,6 @@ private theorem icrR_one : game.icrR 1 = Set.range reading := by
       · exact (SemanticGame.unexpected_iff.1 hf _ rfl () 1 rfl).elim
       · cases c; exact some_witness _
 
-/-- A belief on the three readings of "some", with the given weights. -/
 private theorem exists_reading_belief {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
     (h : x + y + z = 1) : ∃ ρ : StdSimplex ℝ (Unit → Fin 3 → Fin 3),
       ↑ρ.weights.support = Set.range reading ∧
@@ -1023,7 +991,6 @@ private theorem exists_reading_belief {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (h
     ext a; fin_cases a <;> simp [Finsupp.mem_support_iff, hμ, hx.ne', hy.ne', hz.ne']
   · rw [sum_map_weights_mul, Fin.sum_univ_three, hμ]; rfl
 
-/-- At `S₁` the all-world still takes "all", but the other world may now try "some". -/
 private theorem icrS_one : game.icrS 1 = {s | s () 0 = 0 ∧ s () 1 ≠ 0} := by
   rw [SemanticGame.icrS, icrR_one]
   ext s
@@ -1062,7 +1029,6 @@ private theorem icrS_one : game.icrS 1 = {s | s () 0 = 0 ∧ s () 1 ≠ 0} := by
 private theorem icrS_one' : game.senderCR (Set.range reading) = {s | s () 0 = 0 ∧ s () 1 ≠ 0} :=
   icrR_one ▸ icrS_one
 
-/-- At `R₂` "some" is sent only in the not-all world, so it is read as that world. -/
 private theorem icrR_two : game.icrR 2 = {reading 1} := by
   rw [SemanticGame.icrR_succ, icrR_one, SemanticGame.receiverStep, icrS_one']
   have hsa : (fun _ w ↦ Fin.castSucc w : Unit → Fin 2 → Fin 3) ∈
@@ -1093,7 +1059,6 @@ private theorem icrR_two : game.icrR 2 = {reading 1} := by
       · exact (hf _ hsa () 1 rfl).elim
       · exact (hf _ hsb () 1 rfl).elim
 
-/-- At `S₂` the sender marks the not-all world with "some". -/
 private theorem icrS_two : game.icrS 2 = {fun _ w ↦ if w = 0 then 0 else 2} := by
   rw [SemanticGame.icrS, icrR_two]
   apply Set.Subset.antisymm
@@ -1116,7 +1081,6 @@ private theorem icrS_two' :
     game.senderCR {reading 1} = {fun _ w ↦ if w = 0 then 0 else 2} :=
   icrR_two ▸ icrS_two
 
-/-- `R₃ = R₂`, because "some but not all" is now unexpected and true only in the not-all world. -/
 private theorem icrR_three : game.icrR 3 = game.icrR 2 := by
   rw [SemanticGame.icrR_succ, icrR_two, SemanticGame.receiverStep, icrS_two']
   have hs : (fun _ w ↦ if w = 0 then 0 else 2 : Unit → Fin 2 → Fin 3) ∈
@@ -1310,8 +1274,6 @@ theorem some_implicates_not_all : game.prsS = {fun _ w ↦ if w = 0 then 0 else 
   refine ⟨(game.prsS_eq_of_isFixedPt h).trans ?_, (game.prsR_eq_of_isFixedPt h).trans h1⟩
   rw [SemanticGame.icrS, h1, icrS_one]; rfl
 
-/-- Every pragmatically rationalizable receiver reads the paper's "Some boys came in." as "not all",
-in either context. -/
 theorem some_boys_read_as_not_all :
     ∀ x ∈ annotations [("f1", 0), ("f2", 1), ("f12", 2)] [("w1", 0), ("w2", 1)],
       ∀ r ∈ game.prsR, ∀ c, r c x.1 = x.2 := by
@@ -1396,7 +1358,6 @@ private theorem icrS_zero : game.icrS 0 = {fun _ _ ↦ 0} := by
     exact ⟨.single _, .single (), coe_support_eq_singleton.2 rfl, by simp,
       fun c w ↦ by cases c; simp [e]⟩
 
-/-- Either action is optimal on a tautologous signal under a belief skewed to its world. -/
 private theorem optimalActions_witness (x : Fin 2) :
     ∃ p : StdSimplex ℝ (Fin 2), p.weights.support = Finset.univ ∧
       x ∈ game.optimalActions () Finset.univ p := by
@@ -1413,8 +1374,6 @@ private theorem optimalActions_witness (x : Fin 2) :
     rw [SemanticGame.optimalActions, argmax_fin2_one (by simp [game]; norm_num)]
     simp
 
-/-- At `R₁` the cheap form, the only one sent, is read as the frequent world; the costly form is
-unexpected, so any action survives on it and some skewed belief makes it optimal. -/
 private theorem icrR_one : game.icrR 1 = {r | r () 0 = 0} := by
   have e0 : ∀ q, Finset.univ.argmax
       (game.receiverEU (.single fun _ _ ↦ 0) q () 0) = {0} := fun q ↦
@@ -1444,9 +1403,6 @@ private theorem coe_support_mix {t : ℝ} (h0 : 0 < t) (h1 : t < 1) :
       {h : Unit → Fin 2 → Fin 2 | h () 0 = 0} :=
   (coe_support_duple zero_ne_id h0 (sub_pos.2 h1) _).trans pair_eq.symm
 
-/-- At `S₁`, against a mixture of the two receivers, the frequent world still takes the cheap form,
-while the rare world takes the costly form exactly when the literal receiver weighs at least
-`1/5`, so both signals survive there. -/
 private theorem icrS_one : game.icrS 1 = {s | s () 0 = 0} := by
   rw [SemanticGame.icrS, icrR_one]
   ext s
@@ -1480,8 +1436,6 @@ private theorem icrS_one : game.icrS 1 = {s | s () 0 = 0} := by
     fin_cases w <;> fin_cases f' <;> rcases (by omega : s () 1 = 0 ∨ s () 1 = 1) with h | h <;>
       simp_all [game] <;> nlinarith
 
-/-- At `R₂` the sender separates the worlds, so each form is read as the world it is sent in, and no
-signal is unexpected. -/
 private theorem icrR_two : game.icrR 2 = {fun _ f ↦ f} := by
   have hS : game.senderCR (game.icrR 1) = {(fun _ _ ↦ 0), (fun _ x ↦ x)} := icrS_one.trans pair_eq
   ext r
@@ -1516,7 +1470,6 @@ private theorem icrR_two : game.icrR 2 = {fun _ f ↦ f} := by
         nlinarith
     · exact absurd rfl (SemanticGame.unexpected_iff.1 hf (fun _ x ↦ x) (by simp) () f)
 
-/-- At `S₂` the sender matches signal to world. -/
 private theorem icrS_two : game.icrS 2 = {fun _ w ↦ w} := by
   rw [SemanticGame.icrS, icrR_two, game.senderCR_eq (Set.singleton_nonempty _)
     (T := fun _ w ↦ {w})]
@@ -1529,7 +1482,6 @@ private theorem icrS_two : game.icrS 2 = {fun _ w ↦ w} := by
     refine ⟨w, rfl, _, rfl, (), ?_⟩
     fin_cases w <;> fin_cases f' <;> simp_all [game]; norm_num
 
-/-- `R₃ = R₂`, the separating convention being stable. -/
 private theorem icrR_three : game.icrR 3 = game.icrR 2 := by
   have hS : game.senderCR (game.icrR 2) = {fun _ w ↦ w} := icrS_two
   have hs : (fun _ w ↦ w : Unit → Fin 2 → Fin 2) ∈ ({fun _ w ↦ w} : Set _) := rfl
@@ -1559,8 +1511,6 @@ theorem division_of_pragmatic_labor :
     rw [IsFixedPt, ← SemanticGame.icrR_succ]; exact icrR_three
   exact ⟨(game.prsS_eq_of_isFixedPt h).trans icrS_two, (game.prsR_eq_of_isFixedPt h).trans icrR_two⟩
 
-/-- Every pragmatically rationalizable receiver reads the two sentences about stopping the car as
-the paper reports, the plain one as the regular way and the periphrastic one as an abnormal way. -/
 theorem stop_sentences_read_as_reported :
     ∀ x ∈ annotations [("f", 0), ("f'", 1)] [("w1", 0), ("w2", 1)],
       ∀ r ∈ game.prsR, r () x.1 = x.2 := by
@@ -1614,7 +1564,6 @@ private theorem icrR_zero : game.icrR 0 = {r₀} := by
     Set.mem_singleton_iff, optimalActions_eq _ _ game.prior_support, Finset.mem_singleton]
   exact ⟨fun hr ↦ funext fun c ↦ funext (hr c), fun hr c f ↦ by subst hr; rfl⟩
 
-/-- At `S₀` the sender says "100 m" except when precision matters and the distance is `101 m`. -/
 private theorem icrS_zero : game.senderCR {r₀} = {s₀} := by
   rw [game.senderCR_eq (Set.singleton_nonempty _) (T := fun c w ↦ {s₀ c w})]
   · ext s; simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
@@ -1628,8 +1577,6 @@ private theorem icrS_zero : game.senderCR {r₀} = {s₀} := by
     fin_cases c <;> fin_cases w <;> fin_cases f' <;>
       simp_all [game, s₀, r₀] <;> norm_num
 
-/-- The receiver's expected utility on "100 m" against `S₀`, which sends it in `w₁` in both
-contexts but in `w₂` only when precision does not matter. -/
 private theorem receiverEU_zero (q : StdSimplex ℝ (Fin 2)) (c : Fin 2) (a : Fin 2) :
     game.receiverEU (.single s₀) q c 0 a =
       (q.weights 0 + q.weights 1) / 2 * game.uR c 0 a + q.weights 1 / 2 * game.uR c 1 a := by
@@ -1649,8 +1596,6 @@ private theorem receiverEU_two_lt {q : StdSimplex ℝ (Fin 2)} (hq0 : 0 < q.weig
   rw [SemanticGame.receiverEU_single, SemanticGame.receiverEU_single]
   fin_cases c <;> simp [game, s₀] <;> linarith
 
-/-- `R₁ = R₀`, because precision matters to the sender with positive probability, so "100 m" is
-still read as `100 m`, and the unused "exactly 100 m" is read literally. -/
 private theorem receiverStep_zero : game.receiverStep {r₀} = {r₀} := by
   rw [SemanticGame.receiverStep, icrS_zero]
   ext r
@@ -1699,8 +1644,6 @@ theorem prs_eq : game.prsS = {fun c w ↦ if c = 0 ∧ w = 1 then 2 else 0} ∧
   refine ⟨(game.prsS_eq_of_isFixedPt h).trans ?_, (game.prsR_eq_of_isFixedPt h).trans icrR_zero⟩
   rw [SemanticGame.icrS, icrR_zero, icrS_zero]; rfl
 
-/-- The round number is pragmatically ambiguous, precise when precision matters and vague when it
-does not. -/
 theorem round_number_ambiguous : ∀ s ∈ game.prsS, s 0 1 ≠ 0 ∧ s 1 1 = 0 := by
   rw [prs_eq.1]; rintro s rfl; decide
 
@@ -1736,8 +1679,6 @@ attribute [local simp] meaning uniform SemanticGame.uS
 response of [franke-2011]. -/
 def denotation (f : Fin 3) : Finset (Fin 2) := Finset.univ.filter (meaning f)
 
-/-- Under iterated best response the literal receiver is already a fixed point, in which no world
-sends "some" and "some" keeps both readings. -/
 theorem ibr_some_ambiguous :
     Function.IsFixedPt (Franke2011.receiverStep denotation ∘ Franke2011.senderStep denotation)
         denotation ∧
@@ -1800,8 +1741,6 @@ private theorem mem_pair_s {s : Unit → Fin 2 → Fin 3} :
     · left; funext u w; cases u; fin_cases w <;> simp_all [sA]
     · right; funext u w; cases u; fin_cases w <;> simp_all [sB]
 
-/-- At `S₀`, in the not-all world, "some" risks the all-reading but is cheaper, so both "some"
-and "some but not all" are cautious responses. -/
 private theorem icrS_zero (hc0 : 0 < c) (hc1 : c < 1) : (game c).senderCR {rA, rB} = {sA, sB} := by
   ext s
   rw [mem_pair_s]
@@ -1840,7 +1779,6 @@ private theorem icrS_zero (hc0 : 0 < c) (hc1 : c < 1) : (game c).senderCR {rA, r
     fin_cases w <;> fin_cases f' <;> rcases (by omega : s () 1 = 0 ∨ s () 1 = 2) with h | h <;>
       simp_all [game, rA, rB] <;> nlinarith
 
-/-- At `R₁` each message is sent in one world only, "some" in the not-all world. -/
 private theorem receiverStep_zero (hc0 : 0 < c) (hc1 : c < 1) :
     (game c).receiverStep {rA, rB} = {rB} := by
   have hsA : sA ∈ ({sA, sB} : Set _) := by simp
@@ -1867,7 +1805,6 @@ private theorem receiverStep_zero (hc0 : 0 < c) (hc1 : c < 1) :
     · exact ⟨sA, hsA, (), 0, rfl, by fin_cases a' <;> simp_all [game, rB]⟩
     · exact ⟨sB, hsB, (), 1, rfl, by fin_cases a' <;> simp_all [game, rB]⟩
 
-/-- At `S₁`, with "some" read as not-all, the cheaper form wins in the not-all world. -/
 private theorem icrS_one (hc0 : 0 < c) : (game c).senderCR {rB} = {sA} := by
   rw [(game c).senderCR_eq (Set.singleton_nonempty _) (T := fun u w ↦ {sA u w})]
   · ext s; simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
@@ -1878,7 +1815,6 @@ private theorem icrS_one (hc0 : 0 < c) : (game c).senderCR {rB} = {sA} := by
     refine ⟨sA u w, rfl, _, rfl, (), ?_⟩
     fin_cases w <;> fin_cases f' <;> simp_all [game, sA, rB]; linarith
 
-/-- `R₂ = R₁`, because "some but not all" is now unexpected and true only in the not-all world. -/
 private theorem receiverStep_one (hc0 : 0 < c) : (game c).receiverStep {rB} = {rB} := by
   have hext : (game c).extension 2 = {1} := by
     ext w; fin_cases w <;> simp [SemanticGame.extension, game]

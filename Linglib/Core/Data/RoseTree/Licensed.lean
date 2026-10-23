@@ -56,7 +56,6 @@ theorem licensed_node_iff {a : α} {cs : List (RoseTree α)} :
 @[simp] theorem licensed_leaf_iff {a : α} : (leaf a).Licensed R ↔ R a [] := by
   simp [leaf, licensed_node_iff]
 
-/-- A tree is licensed exactly when each of its local trees is. -/
 theorem licensed_iff_forall_mem_localTrees {t : RoseTree α} :
     t.Licensed R ↔ ∀ e ∈ t.localTrees, R e.1 e.2 := by
   induction t with
@@ -71,7 +70,6 @@ theorem licensed_iff_forall_mem_localTrees {t : RoseTree α} :
 instance [∀ a ks, Decidable (R a ks)] (t : RoseTree α) : Decidable (t.Licensed R) :=
   decidable_of_iff _ licensed_iff_forall_mem_localTrees.symm
 
-/-- In a licensed tree the root's local tree satisfies `R`. -/
 theorem Licensed.rel_root {a : α} {cs : List (RoseTree α)} (h : (node a cs).Licensed R) :
     R a (cs.map value) :=
   (licensed_node_iff.mp h).1

@@ -86,13 +86,10 @@ def goalsUnder (p : Probe t.val.Positions) (h : SyntacticObject)
   (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
     p.Finds {q | t.val.CCommands a q ∧ q.val ∉ cut a.val} (t.above t.branching) g).image t.termAt
 
-/-- With nothing closed, the search is unrestricted. -/
 @[simp] theorem goalsUnder_empty {h : SyntacticObject} :
     t.goalsUnder p h (fun _ ↦ ∅) = t.goals p h := by
   simp only [goalsUnder, goals, Set.mem_empty_iff_false, not_false_eq_true, and_true]
 
-/-- A goal found outside the closed positions is still found: closing part of the domain removes
-only the goals inside it, though it can expose goals they shielded. -/
 theorem mem_goalsUnder_of_finds {h : SyntacticObject}
     {cut : Core.Order.TreePath → Set Core.Order.TreePath}
     [∀ a, DecidablePred (· ∈ cut a)] {a : t.val.Positions} (ha : t.termAt a = h)

@@ -119,11 +119,9 @@ def disj (D₁ D₂ : Update S) : Condition S := D₁.dom ∪ D₂.dom
 
 @[simp] theorem mem_test : i ~[test C] j ↔ i = j ∧ j ∈ C := Iff.rfl
 
-/-- A test at the end of a sequence checks the output. -/
 theorem mem_comp_test : i ~[D ○ test C] j ↔ i ~[D] j ∧ j ∈ C :=
   ⟨fun ⟨_, h, rfl, hC⟩ ↦ ⟨h, hC⟩, fun ⟨h, hC⟩ ↦ ⟨j, h, rfl, hC⟩⟩
 
-/-- A test at the start of a sequence checks the input. -/
 theorem mem_test_comp : i ~[test C ○ D] j ↔ i ∈ C ∧ i ~[D] j :=
   ⟨fun ⟨_, ⟨rfl, hC⟩, h⟩ ↦ ⟨hC, h⟩, fun ⟨hC, h⟩ ↦ ⟨i, ⟨rfl, hC⟩, h⟩⟩
 
@@ -133,11 +131,9 @@ theorem mem_test_comp : i ~[test C ○ D] j ↔ i ∈ C ∧ i ~[D] j :=
 
 @[simp] theorem mem_disj : i ∈ disj D₁ D₂ ↔ (∃ k, i ~[D₁] k) ∨ ∃ k, i ~[D₂] k := Iff.rfl
 
-/-- A test constrains its input and output alike. -/
 theorem mem_test_iff_left : i ~[test C] j ↔ i = j ∧ i ∈ C :=
   ⟨by rintro ⟨rfl, h⟩; exact ⟨rfl, h⟩, by rintro ⟨rfl, h⟩; exact ⟨rfl, h⟩⟩
 
-/-- Negation is the core of the empty condition. -/
 theorem neg_eq_core_empty (D : Update S) : neg D = D.core ∅ := by
   ext; simp [neg]
 
@@ -161,26 +157,21 @@ theorem one_def : (1 : Update S) = .id := rfl
 /-- A test's domain is its condition. -/
 @[simp] theorem dom_test (C : Condition S) : (test C).dom = C := by ext; simp
 
-/-- A test's codomain is its condition. -/
 @[simp] theorem cod_test (C : Condition S) : (test C).cod = C := by ext; simp
 
-/-- A test is determined by its condition. -/
 theorem test_injective : Function.Injective (test : Condition S → Update S) :=
   Function.LeftInverse.injective dom_test
 
 @[simp] theorem test_inj : test C₁ = test C₂ ↔ C₁ = C₂ := test_injective.eq_iff
 
-/-- The trivial test is the identity. -/
 @[simp] theorem test_univ : test (Set.univ : Condition S) = .id := by ext ⟨i, j⟩; simp
 
 /-- Sequenced tests test the conjunction. -/
 @[simp] theorem test_comp_test (C₁ C₂ : Condition S) : test C₁ ○ test C₂ = test (C₁ ∩ C₂) := by
   ext ⟨i, j⟩; simp only [mem_comp, mem_test]; grind
 
-/-- Negating a test complements its condition. -/
 @[simp] theorem neg_test (C : Condition S) : neg (test C) = Cᶜ := by rw [neg, dom_test]
 
-/-- The strongest postcondition of a test is the filter by its condition. -/
 @[simp] theorem image_test (C σ : Set S) : (test C).image σ = σ ∩ C := by
   ext; simp only [mem_image, mem_test]; grind
 
@@ -197,10 +188,8 @@ def IsTest (D : Update S) : Prop := D ⊆ .id
 
 theorem IsTest.eq (h : IsTest D) (hij : i ~[D] j) : i = j := h hij
 
-/-- `test C` is a test. -/
 theorem isTest_test (C : Condition S) : IsTest (test C) := fun _ h ↦ h.1
 
-/-- Tests are closed under sequencing. -/
 theorem IsTest.comp (h₁ : IsTest D₁) (h₂ : IsTest D₂) : IsTest (D₁ ○ D₂) := by
   rintro ⟨_, _⟩ ⟨_, a, b⟩
   exact (h₁ a).trans (h₂ b)
@@ -217,23 +206,18 @@ theorem IsTest.eq_test_dom (h : IsTest D) : D = test D.dom := by
     obtain rfl := h.eq hk
     exact hk
 
-/-- A test's outputs are its inputs. -/
 theorem IsTest.cod_eq_dom (h : IsTest D) : D.cod = D.dom := by
   rw [h.eq_test_dom, cod_test, dom_test]
 
-/-- Negation, implication, and disjunction in terms of the domain. -/
 theorem neg_eq_compl_dom (D : Update S) : neg D = D.domᶜ := rfl
 
 theorem impl_eq_core_dom (D₁ D₂ : Update S) : impl D₁ D₂ = D₁.core D₂.dom := rfl
 
 theorem disj_eq_dom_union_dom (D₁ D₂ : Update S) : disj D₁ D₂ = D₁.dom ∪ D₂.dom := rfl
 
-/-- Implication curries, an implication from a sequence being an implication to the test of an
-implication. -/
 theorem impl_comp (D₁ D₂ D₃ : Update S) : impl (D₁ ○ D₂) D₃ = impl D₁ (test (impl D₂ D₃)) := by
   simp only [impl_eq_core_dom, dom_test, core_comp]
 
-/-- The domain of a sequence is the weakest precondition of the second domain. -/
 theorem dom_comp (D₁ D₂ : Update S) : (D₁ ○ D₂).dom = D₁.preimage D₂.dom := by
   rw [← preimage_univ_right, preimage_comp, preimage_univ_right]
 
@@ -248,7 +232,6 @@ def maxBy {α : Type*} [Preorder α] (f : S → α) (D : Update S) : Update S :=
 theorem maxBy_subset {α : Type*} [Preorder α] (f : S → α) (D : Update S) : maxBy f D ⊆ D :=
   fun _ h ↦ h.1
 
-/-- Maximizing a valuation that no output of `D` changes is vacuous. -/
 theorem maxBy_eq_self {α : Type*} [Preorder α] {f : S → α}
     (h : ∀ i j, i ~[D] j → f j = f i) : maxBy f D = D := by
   ext ⟨i, j⟩
@@ -272,8 +255,6 @@ theorem cumul_id : cumul (SetRel.id : Update S) = SetRel.id := by
   ext ⟨I, J⟩
   exact Set.liftRel_eq
 
-/-- The lift preserves sequencing, since a path through the intermediate rows gives the
-intermediate state. -/
 theorem cumul_comp (D₁ D₂ : Update S) : cumul (D₁ ○ D₂) = cumul D₁ ○ cumul D₂ := by
   ext ⟨I, J⟩
   exact Set.liftRel_comp
@@ -347,11 +328,9 @@ def neg (φ : CCP S) : CCP S := fun s ↦ s \ φ s
 /-- `guard C` passes a state through iff it satisfies `C`, else crashes to `∅`. -/
 def guard (C : Set S → Prop) : CCP S := fun s ↦ { p ∈ s | C s }
 
-/-- A guard whose condition holds passes the state through. -/
 @[simp] theorem guard_pos {C : Set S → Prop} {s} (h : C s) : guard C s = s :=
   Set.ext fun _ ↦ and_iff_left h
 
-/-- A guard whose condition fails crashes to `∅`. -/
 @[simp] theorem guard_neg {C : Set S → Prop} {s} (h : ¬C s) : guard C s = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ hp ↦ h hp.2
 
@@ -373,10 +352,8 @@ def must (φ : CCP S) : CCP S := guard (fun s ↦ φ s = s)
 /-- A transformer is *eliminative* if it never adds possibilities. -/
 def IsEliminative (u : CCP S) : Prop := u ≤ id
 
-/-- The identity is eliminative. -/
 theorem isEliminative_id : IsEliminative (id : CCP S) := le_rfl
 
-/-- Sequencing preserves eliminativity. -/
 theorem IsEliminative.seq (hu : IsEliminative u) (hv : IsEliminative v) :
     IsEliminative (u.seq v) :=
   fun s ↦ (hv (u s)).trans (hu s)
@@ -385,11 +362,9 @@ theorem IsEliminative.seq (hu : IsEliminative u) (hv : IsEliminative v) :
 `∅` — [veltman-1996]'s tests, `Update.IsTest` one carrier up. -/
 def IsTest (u : CCP S) : Prop := ∀ s, u s = s ∨ u s = ∅
 
-/-- Tests are eliminative. -/
 theorem IsTest.isEliminative (h : IsTest u) : IsEliminative u :=
   fun s p hp ↦ (h s).elim (· ▸ hp) (fun hemp ↦ (Set.notMem_empty p (hemp ▸ hp)).elim)
 
-/-- Guards are tests. -/
 theorem guard_isTest (C : Set S → Prop) : IsTest (guard C) :=
   fun s ↦ (Classical.em (C s)).elim (fun h ↦ .inl (guard_pos h)) (fun h ↦ .inr (guard_neg h))
 
@@ -401,7 +376,6 @@ theorem IsTest.eq_guard (h : IsTest u) : u = guard fun s ↦ u s = s :=
       (fun h₀ ↦ absurd (h₀ ▸ hp) (Set.notMem_empty p)),
      fun ⟨hp, hs⟩ ↦ hs.symm ▸ hp⟩
 
-/-- The tests are exactly the guards. -/
 theorem isTest_iff_exists_guard : IsTest u ↔ ∃ C, u = guard C :=
   ⟨fun h ↦ ⟨_, h.eq_guard⟩, fun ⟨C, hC⟩ ↦ hC ▸ guard_isTest C⟩
 
@@ -420,11 +394,9 @@ def up (c : Set S) : CCP S := fun s ↦ s ∩ c
 successfully. -/
 def down (u : CCP S) : Set S := {i | (u {i}).Nonempty}
 
-/-- `down` retracts `up`. -/
 @[simp] theorem down_up (c : Set S) : down (up c) = c :=
   Set.ext fun _ ↦ Set.singleton_inter_nonempty
 
-/-- On eliminative updates, content is acceptance on singletons. -/
 theorem IsEliminative.down_eq (he : IsEliminative u) : down u = {i | u {i} = {i}} :=
   Set.ext fun i ↦ show (u {i}).Nonempty ↔ u {i} = {i} from
     ⟨fun h ↦ h.subset_singleton_iff.mp (he {i}), fun h ↦ (Set.singleton_nonempty i).mono h.ge⟩
@@ -432,11 +404,9 @@ theorem IsEliminative.down_eq (he : IsEliminative u) : down u = {i | u {i} = {i}
 /-- An update is *classical* if it is eliminative and distributive. -/
 def IsClassical (u : CCP S) : Prop := IsEliminative u ∧ IsDistributive u
 
-/-- Static updates are monotone. -/
 theorem monotone_up (c : Set S) : Monotone (up c) :=
   fun _ _ h ↦ Set.inter_subset_inter_left _ h
 
-/-- Static updates are classical. -/
 theorem isClassical_up (c : Set S) : IsClassical (up c) :=
   ⟨fun _ ↦ Set.inter_subset_left,
    fun _ ↦ Set.ext fun p ↦
@@ -474,7 +444,6 @@ def CCP.lower (φ : CCP S) : Update S := {p | p.2 ∈ φ {p.1}}
 
 @[simp] theorem CCP.mem_lower {φ : CCP S} : i ~[CCP.lower φ] j ↔ j ∈ φ {i} := Iff.rfl
 
-/-- Relational images are distributive. -/
 theorem Update.image_isDistributive (R : Update S) : CCP.IsDistributive R.image :=
   fun _ ↦ by ext; simp only [mem_image, Set.mem_ofPred_eq, Set.mem_singleton_iff]; grind
 
@@ -486,7 +455,6 @@ theorem Update.lower_image (R : Update S) : CCP.lower R.image = R := by
 theorem CCP.image_lower (φ : CCP S) (hd : CCP.IsDistributive φ) : (lower φ).image = φ :=
   funext fun σ ↦ (hd σ).symm
 
-/-- The image reflects (and preserves) the order. -/
 theorem Update.image_le_image_iff : R.image ≤ R'.image ↔ R ⊆ R' :=
   ⟨fun h ⟨i, _⟩ r ↦ by
       obtain ⟨_, rfl, r'⟩ := h {i} ⟨i, rfl, r⟩
@@ -500,11 +468,9 @@ Van Benthem's additivity ([van-benthem-1986]; [rothschild-yalcin-2016];
 keeps eliminativity but its whole-state tests break distributivity; DPL's random reassignment
 does the reverse ([groenendijk-stokhof-1990], §4). -/
 
-/-- `up` of a condition is the image of its test. -/
 theorem CCP.up_eq_image_test (C : Condition S) : CCP.up C = (test C).image :=
   funext fun σ ↦ (image_test C σ).symm
 
-/-- The image of a test is eliminative. -/
 theorem Update.image_test_isEliminative (C : Condition S) :
     CCP.IsEliminative (test C).image :=
   CCP.up_eq_image_test C ▸ (CCP.isClassical_up C).1

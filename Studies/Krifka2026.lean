@@ -167,8 +167,6 @@ determiner does (40c), and leaves its restriction to `body`. -/
 def entityIntro (n : ℕ) (body : Update (HAssign World E)) : Update (HAssign World E) :=
   {(g, h) | ∃ x : E, Function.update g n (.entity x) ~[body] h}
 
-/-- A test returns its input assignment, so it preserves every referent: negation,
-implication and disjunction all re-enter the update algebra through `test`. -/
 theorem test_apply_eq {C : Condition (HAssign World E)} {g h : HAssign World E}
     (hTest : g ~[test C] h) (n : ℕ) : h n = g n :=
   congrFun hTest.1.symm n

@@ -137,8 +137,6 @@ variable (excl) in
 def UpwardExclusion : Prop :=
   ∀ ⦃q p p' : S⦄, excl q p → p ≤ p' → excl q p'
 
-/-- Under Upward Exclusion, a state conflicts with `t` exactly when some part of it excludes
-`t`. -/
 theorem UpwardExclusion.conflict_iff (hU : UpwardExclusion excl) :
     Conflict excl s t ↔ ∃ s' ≤ s, excl s' t :=
   ⟨fun ⟨a, ha, _, hb, hx⟩ ↦ ⟨a, ha, hU hx hb⟩, fun ⟨a, ha, hx⟩ ↦ ⟨a, ha, t, le_rfl, hx⟩⟩
@@ -149,11 +147,9 @@ section SemilatticeSup
 
 variable [SemilatticeSup S] {excl : S → S → Prop} {s t : S}
 
-/-- Two states one of which excludes the other have an impossible fusion. -/
 theorem sup_not_mem_possible (h : excl s t) : s ⊔ t ∉ possible excl :=
   fun hp ↦ hp ((Conflict.of_excl h).mono le_sup_left le_sup_right)
 
-/-- Two states with a possible fusion do not conflict. -/
 theorem not_conflict_of_sup_mem_possible (h : s ⊔ t ∈ possible excl) : ¬ Conflict excl s t :=
   fun hc ↦ h (hc.mono le_sup_left le_sup_right)
 
@@ -164,8 +160,6 @@ def PossibleFusion : Prop :=
   ∀ ⦃s : S⦄, s ∈ possible excl → ∀ ⦃t : S⦄, t ∈ possible excl → ¬ Conflict excl s t →
     s ⊔ t ∈ possible excl
 
-/-- Possible Fusion holds exactly when two possible states have a possible fusion just when they
-do not conflict. -/
 theorem possibleFusion_iff : PossibleFusion excl ↔
     ∀ s ∈ possible excl, ∀ t ∈ possible excl, (s ⊔ t ∈ possible excl ↔ ¬ Conflict excl s t) :=
   ⟨fun h _ hs _ ht ↦ ⟨not_conflict_of_sup_mem_possible, fun hc ↦ h hs ht hc⟩,
@@ -201,15 +195,11 @@ variable (excl) in
 def exclusionaryNeg (P : Set S) : Set S :=
   regularClosure (exclusiveNeg excl P)
 
-/-- The fusion of a choice of an excluder for each verifier of `P` verifies the exclusive negation
-of `P`. -/
 theorem sSup_image_mem_exclusiveNeg {f : S → S} (hf : ∀ p ∈ P, excl (f p) p) :
     sSup (f '' P) ∈ exclusiveNeg excl P :=
   ⟨f '' P, ⟨Set.forall_mem_image.2 fun p hp ↦ ⟨p, hp, hf p hp⟩,
     fun p hp ↦ ⟨f p, Set.mem_image_of_mem f hp, hf p hp⟩⟩, rfl⟩
 
-/-- A proposition has an exclusive negation with a verifier exactly when every verifier of it has an
-excluder. -/
 theorem exclusiveNeg_nonempty_iff :
     (exclusiveNeg excl P).Nonempty ↔ ∀ p ∈ P, ∃ r, excl r p := by
   refine ⟨fun ⟨_, Q, ⟨_, hPQ⟩, _⟩ p hp ↦ ?_, fun h ↦ ?_⟩
@@ -218,8 +208,6 @@ theorem exclusiveNeg_nonempty_iff :
   · choose! f hf using h
     exact ⟨_, sSup_image_mem_exclusiveNeg hf⟩
 
-/-- Under Null Exclusion, a proposition that the null state does not verify has an exclusive
-negation with a verifier. -/
 theorem exclusiveNeg_nonempty (hN : NullExclusion excl) (hP : ⊥ ∉ P) :
     (exclusiveNeg excl P).Nonempty :=
   exclusiveNeg_nonempty_iff.2 fun p hp ↦ (hN.2 p (ne_of_mem_of_not_mem hp hP)).2
@@ -231,8 +219,6 @@ theorem exclusiveNeg_nonempty (hN : NullExclusion excl) (hP : ⊥ ∉ P) :
   obtain rfl : Q = ∅ := Set.eq_empty_of_forall_notMem fun q hq ↦ by simpa using hQ hq
   simp
 
-/-- A state contains a verifier of the exclusive negation of `P` exactly when, for every verifier of
-`P`, it has a part that excludes it. -/
 theorem mem_upperClosure_exclusiveNeg {x : S} :
     x ∈ upperClosure (exclusiveNeg excl P) ↔ ∀ p ∈ P, ∃ r ≤ x, excl r p := by
   refine ⟨fun h p hp ↦ ?_, fun h ↦ ?_⟩
@@ -243,8 +229,6 @@ theorem mem_upperClosure_exclusiveNeg {x : S} :
     exact mem_upperClosure.2
       ⟨_, sSup_image_mem_exclusiveNeg hf, sSup_le (Set.forall_mem_image.2 hfx)⟩
 
-/-- Under Upward Exclusion, the states containing a verifier of the exclusive negation of `P` are
-those that conflict with every verifier of `P`, the polar of `P` under conflict. -/
 theorem coe_upperClosure_exclusiveNeg (hU : UpwardExclusion excl) (P : Set S) :
     (upperClosure (exclusiveNeg excl P) : Set S) = upperPolar (flip (Conflict excl)) P := by
   ext x
@@ -274,8 +258,6 @@ theorem sSup_exclusiveNeg (h : ∀ p ∈ P, ∃ r, excl r p) :
     _ ≤ sSup (Function.update f p r '' P) := le_sSup (Set.mem_image_of_mem _ hp)
     _ ≤ sSup (exclusiveNeg excl P) := le_sSup (sSup_image_mem_exclusiveNeg hg)
 
-/-- The exclusive negation of a disjunction is the conjunction of the exclusive negations of the
-disjuncts. -/
 theorem exclusiveNeg_iUnion {ι : Type*} (P : ι → Set S) :
     exclusiveNeg excl (⋃ i, P i) = Set.iSups fun i ↦ exclusiveNeg excl (P i) := by
   ext x
@@ -318,8 +300,6 @@ theorem exclusionaryNeg_singleton (p : S) :
     refine ⟨{q}, ⟨fun r hr ↦ ⟨p, rfl, Set.mem_singleton_iff.1 hr ▸ hq⟩, fun p' hp' ↦
       ⟨q, rfl, Set.mem_singleton_iff.1 hp' ▸ hq⟩⟩, sSup_singleton⟩
 
-/-- Under Upward and Downward Exclusion, the exclusionary negation of the conjunction of two single
-states is the disjunction of their exclusionary negations. -/
 theorem exclusionaryNeg_sups_singleton (hU : UpwardExclusion excl) (hD : DownwardExclusion excl)
     (p q : S) : exclusionaryNeg excl ({p} ⊻ {q}) =
       regularClosure (exclusionaryNeg excl {p} ∪ exclusionaryNeg excl {q}) := by
@@ -335,14 +315,10 @@ theorem exclusionaryNeg_sups_singleton (hU : UpwardExclusion excl) (hD : Downwar
   · exact .inl (regularClosure.le_closure _ hx)
   · exact .inr (regularClosure.le_closure _ hx)
 
-/-- Under Null Exclusion, a proposition that the null state does not verify has a negation with a
-verifier. -/
 theorem exclusionaryNeg_nonempty (hN : NullExclusion excl) (hP : ⊥ ∉ P) :
     (exclusionaryNeg excl P).Nonempty :=
   (exclusiveNeg_nonempty hN hP).mono (regularClosure.le_closure _)
 
-/-- Under Null Exclusion, the null state does not verify the negation of a proposition with a
-verifier. -/
 theorem bot_not_mem_exclusionaryNeg (hN : NullExclusion excl) (hP : P.Nonempty) :
     ⊥ ∉ exclusionaryNeg excl P := by
   rintro ⟨h₁, -⟩
@@ -352,15 +328,11 @@ theorem bot_not_mem_exclusionaryNeg (hN : NullExclusion excl) (hP : P.Nonempty) 
   obtain rfl : q = ⊥ := le_bot_iff.1 ((le_sSup hq).trans hle)
   exact (hN.1 p).1 hqp
 
-/-- Under Downward Exclusion, a state that excludes the fusion of `P` conflicts with a member of
-`P`. -/
 theorem DownwardExclusion.exists_conflict (hD : DownwardExclusion excl) {s : S}
     (hs : excl s (sSup P)) : ∃ p ∈ P, Conflict excl s p :=
   let ⟨r, ⟨p, hp, hrp⟩, hrs⟩ := mem_upperClosure.1 (hD hs).1
   ⟨p, hp, r, hrs, p, le_rfl, hrp⟩
 
-/-- Under Upward and Downward Exclusion, a state that conflicts with the fusion of `P` conflicts
-with a member of `P`. -/
 theorem exists_conflict_of_conflict_sSup (hU : UpwardExclusion excl)
     (hD : DownwardExclusion excl) {x : S} (h : Conflict excl x (sSup P)) :
     ∃ p ∈ P, Conflict excl x p :=

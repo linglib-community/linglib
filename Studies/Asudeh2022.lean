@@ -254,8 +254,6 @@ theorem Term.Linear.rename_perm {T : GlueTy α} {t : Term Γ T} (ht : t.Linear)
     σ.injective]
   exact ht.1 _ hsymm
 
-/-- Renaming the premises of a proof, with meanings that agree position by position, does not
-    change what it means. -/
 theorem Term.eval_rename (f : ℕ → ℕ) (hf : ∀ n B, Γ[n]? = some B → Γ'[f n]? = some B)
     {T : GlueTy α} (t : Term Γ T) (ρ : Env D Γ) (ρ' : Env D Γ')
     (hρ : ∀ n B (h : Γ[n]? = some B), ρ'.get (f n) (hf n B h) = ρ.get n h) :
@@ -557,8 +555,6 @@ theorem connected_iff_reachWithin (v : V) :
     have : Nonempty V := ⟨v⟩
     exact ⟨fun u w ↦ (hr u).symm.trans (hr w)⟩
 
-/-- A finite graph is a tree when everything is reachable from one vertex and it has one edge
-    fewer than vertices. -/
 theorem isTree_iff_reachWithin (v : V) :
     G.IsTree ↔ reachWithin G v (Fintype.card V) = Finset.univ ∧
       ∑ w, G.degree w + 2 = 2 * Fintype.card V := by
@@ -795,7 +791,6 @@ def Logic.linear : Logic := {.commutativity}
 /-- A resource logic admits neither weakening nor contraction. -/
 def Logic.Resource (l : Logic) : Prop := .weakening ∉ l ∧ .contraction ∉ l
 
-/-- The resource logics are the Lambek calculus and linear logic. -/
 theorem resource_iff (l : Logic) : l.Resource ↔ l = .lambek ∨ l = .linear := by
   rw [Logic.lambek, Logic.linear, ← Finset.subset_singleton_iff, Finset.subset_singleton_iff']
   constructor
@@ -805,7 +800,6 @@ theorem resource_iff (l : Logic) : l.Resource ↔ l = .lambek ∨ l = .linear :=
     exact ⟨fun hw ↦ StructuralRule.noConfusion (h _ hw),
       fun hc ↦ StructuralRule.noConfusion (h _ hc)⟩
 
-/-- Linear logic is the commutative resource logic. -/
 theorem commutative_resource_iff (l : Logic) :
     l.Resource ∧ .commutativity ∈ l ↔ l = .linear := by
   rw [resource_iff]
@@ -834,7 +828,6 @@ def recurry :
 
 theorem recurry_linear : recurry.Linear := by decide
 
-/-- The recurried proof means the same function with its arguments swapped. -/
 theorem recurry_eval {D : Label → Type} (f : D .a → D .b → D .c) :
     recurry.eval (.cons f .nil) = fun u v ↦ f v u :=
   rfl
@@ -916,8 +909,6 @@ private theorem not_correct_of_clause_from_loves :
       ((L.1.symm lovesGoal).1.1 : ℕ) = 1 → ¬ L.Correct := by
   decide +kernel
 
-/-- In a correct net the clause is the result of a quantifier, never of *loves* itself, so one of
-    the two quantifiers takes widest scope. -/
 theorem clause_from_quantifier
     {L : (Sequent.of everybodyLovesSomebody.flatten (atom Label.l)).Linking} (hL : L.Correct) :
     ((L.1.symm lovesGoal).1.1 : ℕ) ≠ 1 :=
@@ -958,8 +949,6 @@ theorem interp_qr_eq_eval :
   ⟨HeimKratzer1998.interp_computes_surface, HeimKratzer1998.interp_computes_inverse⟩
 
 open HeimKratzer1998.Toy (person sees) in
-/-- The two proofs are two readings, since in Heim and Kratzer's model the surface reading holds
-    and the inverse one fails. -/
 theorem readings_differ :
     surface.eval (scopeEnv person sees) ∧ ¬ inverse.eval (scopeEnv person sees) :=
   ⟨HeimKratzer1998.surface_scope_true, HeimKratzer1998.inverse_scope_false⟩
@@ -1042,7 +1031,6 @@ private theorem sum_count_premises (s : Spine) (j : ℕ) :
   have := le_max_right s.objects s.verbs
   split_ifs <;> omega
 
-/-- Premises with a linear proof of the clause come from a complete and coherent spine. -/
 theorem complete_coherent_of_derivable {s : Spine} (hv : 1 ≤ s.verbs)
     (h : Derivable (premises s) (atom (.clause 0))) : s.Complete ∧ s.Coherent := by
   rw [Spine.complete_and_coherent_iff s hv]
@@ -1126,7 +1114,6 @@ theorem build_linear (n : ℕ) : ∀ d i (h : i + d = n), (build n d i h).Linear
     simp only [List.count_append, hmap, List.count_cons, List.count_nil, beq_iff_eq]
     split_ifs <;> omega
 
-/-- A complete and coherent spine instantiates premises with a linear proof of its clause. -/
 theorem derivable_of_complete_coherent {s : Spine} (hv : 1 ≤ s.verbs)
     (h : s.Complete ∧ s.Coherent) : Derivable (premises s) (atom (.clause 0)) := by
   obtain ⟨n, m⟩ := s
@@ -1142,13 +1129,10 @@ theorem derivable_iff_complete_coherent (s : Spine) (hv : 1 ≤ s.verbs) :
 
 open BresnanEtAl1982 (dutch tree)
 
-/-- Every clause with its objects matching its non-final verbs composes. -/
 theorem derivable_dutch (n : ℕ) :
     Derivable (premises (Spine.ofTree (dutch n))) (atom (.clause 0)) :=
   derivable_of_complete_coherent (by simp [dutch]) (BresnanEtAl1982.dutch_wellFormed n)
 
-/-- *dat Jan Piet Marie zag helpen laten zwemmen*, with a verb too many, and *dat Jan Piet
-    Marie Hans zag helpen zwemmen*, with a noun phrase too many, do not compose. -/
 theorem not_derivable_extra_verb_or_np :
     ¬ Derivable (premises (Spine.ofTree (tree 1 3))) (atom (.clause 0)) ∧
       ¬ Derivable (premises (Spine.ofTree (tree 2 2))) (atom (.clause 0)) :=
@@ -1169,7 +1153,6 @@ def lexicon? (r : Datum) : Option (List (List (GlueTy Label))) :=
 /-- The number of words of a row's sentence, which are separated by single spaces. -/
 def wordCount (r : Datum) : ℕ := (r.primaryText.toList.filter (· = ' ')).length + 1
 
-/-- Every row has a lexicon, and each of its words contributes meaning constructors. -/
 theorem rows_lexicon : ∀ r ∈ Examples.all, ∃ lex ∈ lexicon? r, wordCount r = lex.length := by
   decide
 

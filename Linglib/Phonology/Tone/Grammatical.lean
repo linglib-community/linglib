@@ -128,13 +128,10 @@ theorem realizeLeft_singleton (n : ℕ) (t : TRN) : realizeLeft n [t] = List.rep
   | zero => rfl
   | succ n ih => simp [realizeLeft, ih, List.replicate_succ]
 
-/-- A one-tone tune spreads its tone over every unit, whichever edge it anchors at. -/
 @[simp] theorem realize_singleton (t : TRN) (e : Edge) (n : ℕ) :
     realize ⟨[t], e⟩ n = List.replicate n t := by
   cases e <;> simp [realize, realizeLeft_singleton]
 
-/-- A two-tone tune anchored right puts its second tone on the final unit and its first on
-the rest. -/
 theorem realize_pair_right (t₁ t₂ : TRN) (n : ℕ) :
     realize ⟨[t₁, t₂], .right⟩ (n + 1) = List.replicate n t₁ ++ [t₂] := by
   simp [realize, realizeLeft, realizeLeft_singleton]
@@ -190,7 +187,6 @@ def unvalue (host : List (TBU S)) : List (TBU S) :=
     (overwrite host u).map TBU.seg = host.map TBU.seg :=
   map_seg_withTier _ _ (Tune.length_realize _ _)
 
-/-- The tonal tier of an overwritten host is the tune realised over it. -/
 @[simp] theorem map_tone_overwrite (host : List (TBU S)) (u : Tune) :
     (overwrite host u).map TBU.tone = u.realize host.length :=
   map_tone_withTier _ _ (Tune.length_realize _ _)
@@ -200,7 +196,6 @@ def unvalue (host : List (TBU S)) : List (TBU S) :=
   have := congrArg List.length (map_seg_overwrite host u)
   simpa only [List.length_map] using this
 
-/-- A one-tone tune makes every unit's tone that tone. -/
 theorem map_tone_overwrite_singleton (host : List (TBU S)) (t : TRN) (e : Edge) :
     (overwrite host ⟨[t], e⟩).map TBU.tone = host.map fun _ ↦ t := by
   rw [map_tone_overwrite, Tune.realize_singleton, List.map_const']
@@ -285,12 +280,10 @@ def apply (d : Dominance) (u : Tune) (host : List (TBU S)) : List (TBU S) :=
 @[simp] theorem apply_neutral (u : Tune) (host : List (TBU S)) : neutral.apply u host = host :=
   rfl
 
-/-- A recessive tune does not apply to a valued target. -/
 theorem apply_recessive_of_valued (u : Tune) {host : List (TBU S)}
     (h : ∃ τ ∈ host, τ.IsValued) : recessive.apply u host = host := by
   simp [apply, h]
 
-/-- A recessive tune docks to an unvalued target. -/
 theorem apply_recessive_of_unvalued (u : Tune) {host : List (TBU S)}
     (h : ∀ τ ∈ host, ¬ τ.IsValued) : recessive.apply u host = overwrite host u := by
   simp only [apply]

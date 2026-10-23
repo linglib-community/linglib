@@ -107,8 +107,6 @@ def syntacticCon (L : Language α) : Con (FreeMonoid α) where
 theorem syntacticCon_iff {u v : FreeMonoid α} :
     L.syntacticCon u v ↔ L.SyntacticEquiv u.toList v.toList := Iff.rfl
 
-/-- Two words are syntactically congruent exactly when their left quotients agree in every left
-context. -/
 theorem syntacticCon_iff_leftQuotient {u v : FreeMonoid α} :
     L.syntacticCon u v ↔
       ∀ x, L.leftQuotient (x ++ u.toList) = L.leftQuotient (x ++ v.toList) :=
@@ -186,14 +184,11 @@ theorem recognizes_iff_ker_le :
     Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
   ⟨ker_le_syntacticCon_of_recognizes, recognizes_of_ker_le⟩
 
-/-- If `φ` recognizes `L`, then `φ.comp ψ` recognizes the inverse image of `L` under `ψ`. -/
 theorem Recognizes.comap {β : Type*} (hrec : Recognizes φ L) (ψ : FreeMonoid β →* FreeMonoid α) :
     Recognizes (φ.comp ψ) {w : List β | ψ (FreeMonoid.ofList w) ∈ L} := by
   obtain ⟨S, rfl⟩ := hrec
   exact ⟨S, rfl⟩
 
-/-- The syntactic monoid divides every monoid recognizing `L`, since the image of `φ` surjects
-onto the syntactic quotient through the first isomorphism theorem. -/
 theorem Recognizes.syntacticMonoid_isSubquotient (hrec : Recognizes φ L) :
     Monoid.IsSubquotient L.SyntacticMonoid M :=
   ((Monoid.IsSubquotient.of_surjective _ <| Con.lift_surjective_of_surjective
@@ -208,7 +203,6 @@ theorem recognizes_toSyntacticMonoid (L : Language α) : Recognizes L.toSyntacti
 
 /-! ### Connection to the minimal DFA -/
 
-/-- A DFA's transition action recognizes the language it accepts. -/
 theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
     Recognizes M.transitionHom M.accepts :=
   ⟨{t | t.unop M.start ∈ M.accept}, rfl⟩
@@ -217,14 +211,11 @@ theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
     (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by
   induction w using List.reverseRecOn <;> simp_all [leftQuotient_append]
 
-/-- The kernel of the minimal DFA's transition action has the same left-quotient
-characterization as the syntactic congruence. -/
 theorem ker_transitionHom_toDFA_iff {u v : FreeMonoid α} :
     Con.ker L.toDFA.transitionHom u v ↔
       ∀ x, L.leftQuotient (x ++ u.toList) = L.leftQuotient (x ++ v.toList) := by
   simp [DFA.transitionHom_eq_iff, Subtype.ext_iff, ← leftQuotient_append]
 
-/-- The intrinsic syntactic congruence is the kernel of the minimal DFA's transition action. -/
 theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom :=
   Con.ext fun _ _ ↦ syntacticCon_iff_leftQuotient.trans ker_transitionHom_toDFA_iff.symm
 

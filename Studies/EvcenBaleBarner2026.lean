@@ -191,26 +191,17 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 /-- The conditions of Experiments 1 and 3. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Each condition's modal response is the one the alternatives predict, perfection under the
-antecedent-focused question from a speaker who tested every button, and nothing otherwise. -/
 theorem rows_response : ∀ r ∈ rows, response (alternatives r.qud r.tested) = r.response := by
   decide +kernel
 
-/-- Under the neutral question, excluding every alternative leaves no button any sound, against
-the context, so strengthening is blocked. -/
 theorem neutral_blocked : Blocked (alternatives .neutral Finset.univ) answer := by decide +kernel
 
-/-- Under the consequent-focused question the alternatives are the other sounds of the blue
-button,
-which the answer already excludes, so the orange button is left open. -/
 theorem consequent_open :
     ¬ Blocked (alternatives .consequentFocused Finset.univ) answer ∧
       ¬ exh (Function.uncurry cond '' alternatives .consequentFocused Finset.univ) answer ⊆
         (cond .orange .dog)ᶜ := by
   decide +kernel
 
-/-- In Experiment 3, with the orange button untested its conditional is no alternative, and the
-answer is not perfected about it. -/
 theorem partial_knowledge_open :
     ¬ exh (Function.uncurry cond '' alternatives .antecedentFocused {.red, .blue}) answer ⊆
       (cond .orange .dog)ᶜ := by
@@ -218,9 +209,6 @@ theorem partial_knowledge_open :
 
 /-! ### Von Fintel's exhaustive answer -/
 
-/-- On the licensed case, the antecedent-focused question and a fully knowledgeable speaker,
-the paper's operator is [von-fintel-2001]'s exhaustive answer with the other buttons'
-conditionals innocently excluded. -/
 theorem exh_eq_exhaustifiedAnswer :
     exh (Function.uncurry cond '' alternatives .antecedentFocused Finset.univ) answer =
       VonFintel2001.exhaustifiedAnswer causesDog Set.univ .blue := by
@@ -260,8 +248,6 @@ theorem exh_eq_exhaustifiedAnswer :
 /-- [horn-2000]'s alternative says the sound plays whichever button is pressed. -/
 def unconditional : Set World := {w | ∀ b, w b = .dog}
 
-/-- Negating the unconditional says only that some other button fails; it does not exclude the
-orange button, which participants excluded. -/
 theorem unconditional_too_weak :
     ¬ answer ∩ unconditionalᶜ ⊆ (cond .orange .dog)ᶜ := by
   intro h
@@ -349,8 +335,6 @@ def Row2.ofDatum (ex : Datum) : Option Row2 := do
 /-- The conditions of Experiment 2. -/
 def rows2 : List Row2 := Examples.all.filterMap Row2.ofDatum
 
-/-- Against every button's answer, both answer forms exclude the queried buttons, the modal
-response in both conditions. -/
 theorem rows2_response :
     ∀ r ∈ rows2,
       (if exh (Set.range plays) r.answerType.form ⊆ r.answerType.queryᶜ then Response.no
@@ -358,9 +342,6 @@ theorem rows2_response :
         r.response := by
   decide +kernel
 
-/-- Against the cell-level answers alone, the overly informative answer leaves the red square
-open, so the observed perfection needs the finer alternatives, whether as relevant overly
-informative answers or through an accommodated question. -/
 theorem cell_level_leaves_red_open :
     ¬ exh (Set.range shapePlays) AnswerType.overlyInformative.form ⊆
       AnswerType.overlyInformative.queryᶜ := by

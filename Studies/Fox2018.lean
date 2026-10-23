@@ -83,7 +83,6 @@ variable {Exh H A}
 theorem mem_contextualPartition {C : Set W} :
     C ∈ contextualPartition H A ↔ ∃ w ∈ A, C = strongAnswer H w ∩ A := Iff.rfl
 
-/-- For a cell-identifying exhaustifier, matching is partitioning. -/
 theorem qpm_iff_partitionsBy (h : IsCellValued Exh H) : QPM Exh H A ↔ PartitionsBy Exh H A := by
   constructor
   · rintro ⟨hCI, hNV⟩
@@ -118,8 +117,6 @@ variable {H : Set (Set W)} {A : Set W}
 theorem isCellValued_exhCell : IsCellValued (exhCell H) H :=
   fun _ _ w hw ↦ exhCell_eq_strongAnswer H w hw
 
-/-- With exhaustification as the strongest true member, Cell Identification is Dayal's
-presupposition on the context set. -/
 theorem cellIdentification_exhCell_iff :
     CellIdentification (exhCell H) H A ↔ ∀ w ∈ A, IsExhaustivelyResolvable H w := by
   constructor
@@ -131,8 +128,6 @@ theorem cellIdentification_exhCell_iff :
     obtain ⟨p, hp⟩ := h w hw
     exact ⟨p, hp.1.1, by rw [exhCell_eq_strongAnswer H w hp]⟩
 
-/-- Non-Vacuity holds for `exhCell` iff every member is the strongest true member at some
-context world. -/
 theorem nonVacuity_exhCell_iff :
     NonVacuity (exhCell H) H A ↔ ∀ p ∈ H, ∃ w ∈ A, IsStrongestTrueAnswer H w p := by
   constructor
@@ -144,8 +139,6 @@ theorem nonVacuity_exhCell_iff :
     obtain ⟨w, hw, hwp⟩ := h p hp
     exact ⟨_, ⟨w, hw, rfl⟩, by rw [exhCell_eq_strongAnswer H w hwp]⟩
 
-/-- For a singular which-question over pairwise incomparable atoms, Dayal's presupposition is
-that exactly one atom is true. -/
 theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι → Set W}
     (ha : ∀ i j, a i ⊆ a j → i = j) (w : W) :
     IsExhaustivelyResolvable (range a) w ↔ ∃! i, w ∈ a i := by
@@ -153,8 +146,6 @@ theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι →
   exact exists_congr fun i ↦ and_congr_right fun _ ↦
     ⟨fun h j hj ↦ (ha _ _ (h j hj)).symm, fun h j hj ↦ by rw [h j hj]⟩
 
-/-- A plural which-question, closed under conjunction, is resolvable wherever some member is
-true. -/
 theorem isExhaustivelyResolvable_infClosure_range {ι : Type*} [Fintype ι] {a : ι → Set W} {w : W}
     (hw : ∃ i, w ∈ a i) : IsExhaustivelyResolvable (infClosure (range a)) w := by
   classical
@@ -169,7 +160,6 @@ theorem isExhaustivelyResolvable_infClosure_range {ι : Type*} [Fintype ι] {a :
 
 /-! ### Negative islands -/
 
-/-- The disjunction of two incomparable members is never the strongest true member. -/
 theorem not_isStrongestTrueAnswer_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) (h₂ : q₂ ∈ H)
     (h₁₂ : ¬ q₁ ⊆ q₂) (h₂₁ : ¬ q₂ ⊆ q₁) (w : W) : ¬ IsStrongestTrueAnswer H w (q₁ ∪ q₂) := by
   rintro ⟨⟨-, hw⟩, hmin⟩
@@ -177,8 +167,6 @@ theorem not_isStrongestTrueAnswer_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) 
   · exact h₂₁ (subset_union_right.trans (hmin ⟨h₁, hw⟩))
   · exact h₁₂ (subset_union_left.trans (hmin ⟨h₂, hw⟩))
 
-/-- A higher-order question under negation contains the negated conjunction of two readings
-together with each negated reading, so Non-Vacuity fails, which is the negative island. -/
 theorem not_nonVacuity_exhCell_of_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) (h₂ : q₂ ∈ H)
     (hu : q₁ ∪ q₂ ∈ H) (h₁₂ : ¬ q₁ ⊆ q₂) (h₂₁ : ¬ q₂ ⊆ q₁) : ¬ NonVacuity (exhCell H) H A := by
   rw [nonVacuity_exhCell_iff]
@@ -186,16 +174,12 @@ theorem not_nonVacuity_exhCell_of_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) 
   obtain ⟨w, -, hw⟩ := h _ hu
   exact not_isStrongestTrueAnswer_union h₁ h₂ h₁₂ h₂₁ w hw
 
-/-- Under a necessity modal, a member that is exactly the modal base of a context world is the
-strongest true member there, so the island is obviated. -/
 theorem isStrongestTrueAnswer_box {W' : Type*} {R : SetRel W' W} {p : Set W} (hp : p ∈ H)
     {x : W'} (hx : ∀ v, x ~[R] v ↔ v ∈ p) : IsStrongestTrueAnswer (box H R) x (R.core p) := by
   refine ⟨⟨⟨p, hp, rfl⟩, fun v hv ↦ (hx v).1 hv⟩, ?_⟩
   rintro _ ⟨⟨q, -, rfl⟩, hxq⟩ y hy v hyv
   exact hxq ((hx v).2 (hy hyv))
 
-/-- Non-Vacuity holds for the necessitated question whenever every member is exactly the modal
-base of some context world. -/
 theorem nonVacuity_box {W' : Type*} {R : SetRel W' W} {A : Set W'}
     (h : ∀ p ∈ H, ∃ x ∈ A, ∀ v, x ~[R] v ↔ v ∈ p) :
     NonVacuity (exhCell (box H R)) (box H R) A := by
@@ -212,8 +196,6 @@ section Cell
 
 variable {H : Set (Set W)}
 
-/-- Each non-empty value of the cell operator is a strong answer, so the operator identifies
-cells. -/
 theorem cell_eq_strongAnswer {p : Set W} (hp : p ∈ H) {w : W} (hw : w ∈ cell H p) :
     cell H p = strongAnswer H w := by
   ext v
@@ -229,12 +211,9 @@ theorem cell_eq_strongAnswer {p : Set W} (hp : p ∈ H) {w : W} (hw : w ∈ cell
 
 theorem isCellValued_cell : IsCellValued (cell H) H := fun _ hp _ hw ↦ cell_eq_strongAnswer hp hw
 
-/-- With the cell operator, matching is partitioning. -/
 theorem qpm_cell_iff_partitionsBy {A : Set W} : QPM (cell H) H A ↔ PartitionsBy (cell H) H A :=
   qpm_iff_partitionsBy isCellValued_cell
 
-/-- On [fox-2007]'s diamond the cell operator asserts both independent alternatives and denies
-the strongest, deriving free choice in one step. -/
 theorem cell_diamond {w s n e : Set W} (h : Fox2007.IsDiamond w s n e) :
     cell {w, s, n, e} w = (s ∩ n) \ e := by
   rw [cell_eq_of_iff _ _ fun q hq ↦ h.isInnocentlyExcludable_iff hq]
@@ -258,8 +237,6 @@ theorem cell_diamond {w s n e : Set W} (h : Fox2007.IsDiamond w s n e) :
     · exact iff_of_true hxn (hne _ (by simp))
     · exact iff_of_false hxe fun h' ↦ h' rfl
 
-/-- The cell operator agrees with [fox-2007]'s recursive exhaustification wherever free choice
-is consistent. -/
 theorem cell_eq_exhIter_two {w s n e : Set W} (h : Fox2007.IsDiamond w s n e)
     (hne : ((s ∩ n) \ e).Nonempty) : cell {w, s, n, e} w = Fox2007.exhIter {w, s, n, e} 2 w := by
   rw [cell_diamond h, h.exhIter_two_eq hne]
@@ -287,7 +264,6 @@ def atomCell (a : ι → Set W) (T : Finset ι) : Set W :=
 
 theorem mem_atomCell {T : Finset ι} {v : W} : v ∈ atomCell a T ↔ atoms v = ↑T := Iff.rfl
 
-/-- Both closures induce the atom cells. -/
 theorem strongAnswer_infClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
     strongAnswer (infClosure (range a)) w = atomCell a T := by
   ext v
@@ -300,7 +276,6 @@ theorem strongAnswer_supClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w =
   rw [strongAnswer_eq_cell, partition_supClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
     mem_atomCell]
 
-/-- Under either closure, a world lies below another iff its true atoms are among the other's. -/
 theorem leALT_infClosure_range_iff {u v : W} :
     (u ≤[infClosure (range a)] v) ↔ atoms u ⊆ atoms v := by
   constructor
@@ -350,8 +325,6 @@ theorem biUnion_subset_biUnion_iff {S T : Finset ι} : (⋃ i ∈ S, a i) ⊆ (�
     obtain ⟨i, hi, hvi⟩ := mem_iUnion₂.1 hv
     exact mem_biUnion (h hi) hvi
 
-/-- Given the conjunction over a group, a member is innocently excludable iff its group is not
-included, as the paper computes for the low-type question. -/
 theorem isInnocentlyExcludable_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.Nonempty) :
     IsInnocentlyExcludable (infClosure (range a)) (⋂ i ∈ T, a i) (⋂ i ∈ S, a i) ↔ ¬ S ⊆ T := by
   obtain ⟨w₀, hw₀⟩ := hrich T
@@ -372,8 +345,6 @@ theorem isInnocentlyExcludable_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.N
         rw [mem_biInter_iff_subset, hw₀]
         exact fun h ↦ hUT (Finset.coe_subset.1 h)
 
-/-- The minimal worlds given the disjunction over a group are the sole witnesses of its
-members. -/
 theorem mem_exhMW_supClosure_range_iff {T : Finset ι} {u : W} :
     u ∈ exhMW (supClosure (range a)) (⋃ i ∈ T, a i) ↔ ∃ i ∈ T, atoms u = ↑({i} : Finset ι) := by
   have hsing : ∀ {i : ι} {v : W}, atoms v = ↑({i} : Finset ι) → v ∈ a i := fun {i v} hv ↦ by
@@ -406,8 +377,6 @@ theorem mem_exhMW_supClosure_range_iff {T : Finset ι} {u : W} :
     rw [hu, Finset.coe_singleton]
     exact singleton_subset_iff.2 hj
 
-/-- Given the disjunction over a group, a member is innocently excludable iff its group is
-disjoint from it, as the paper computes for the high-type question. -/
 theorem isInnocentlyExcludable_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
     IsInnocentlyExcludable (supClosure (range a)) (⋃ i ∈ T, a i) (⋃ i ∈ S, a i) ↔ Disjoint S T := by
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (mem_supClosure_range.2 ⟨_, hS, rfl⟩),
@@ -426,7 +395,6 @@ theorem isInnocentlyExcludable_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
     rw [hui, Finset.coe_singleton, mem_singleton_iff] at this
     exact h hjS (this ▸ hiT)
 
-/-- For the conjunctive question, the member for a group identifies the cell of those atoms. -/
 theorem cell_biInter [Fintype ι] (T : Finset ι) :
     cell (infClosure (range a)) (⋂ i ∈ T, a i) = atomCell a T := by
   rw [infClosure_range_eq_image, cell_image_eq (P := fun S ↦ ¬ S ⊆ T) _ fun S hS ↦ by
@@ -442,7 +410,6 @@ theorem cell_biInter [Fintype ι] (T : Finset ι) :
   · intro hx
     exact ⟨by rw [hx], fun S _ ↦ by rw [hx, Finset.coe_subset]⟩
 
-/-- For the disjunctive question, the member for a group identifies the same cell. -/
 theorem cell_biUnion {T : Finset ι} (hT : T.Nonempty) :
     cell (supClosure (range a)) (⋃ i ∈ T, a i) = atomCell a T := by
   rw [supClosure_range_eq_image, cell_image_eq (P := fun S ↦ Disjoint S T) _ fun S hS ↦ by
@@ -466,8 +433,6 @@ theorem cell_biUnion {T : Finset ι} (hT : T.Nonempty) :
 def ans (Exh : Set W → Set W) (H : Set (Set W)) (w : W) : Set (Set W) :=
   {q ∈ H | w ∈ q ∧ ∀ p ∈ H, w ∈ Exh p → q ⊆ p}
 
-/-- The conjunctive question's answer set is the conjunction over the true atoms, the mention-all
-reading. -/
 theorem ans_infClosure_range [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W}
     (hw : atoms w = ↑T) :
     ans (cell (infClosure (range a))) (infClosure (range a)) w = {(⋂ i ∈ T, a i)} := by
@@ -493,8 +458,6 @@ theorem ans_infClosure_range [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w :
     subst hwU'
     exact subset_rfl
 
-/-- The disjunctive question's answer set consists of the disjunctions over the non-empty
-sub-groups of the true atoms, the mention-some reading. -/
 theorem ans_supClosure_range {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : atoms w = ↑T) :
     ans (cell (supClosure (range a))) (supClosure (range a)) w =
       (fun S ↦ ⋃ i ∈ S, a i) '' {S | S.Nonempty ∧ S ⊆ T} := by
@@ -517,8 +480,6 @@ theorem ans_supClosure_range {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : ato
       subst hwU'
       exact (biUnion_subset_biUnion_iff hrich).2 hST
 
-/-- With two or more true atoms, the disjunctive question's answer set has more than one
-member, which is the mention-some reading. -/
 theorem not_subsingleton_ans_supClosure_range {T : Finset ι} (hT : 1 < T.card) {w : W}
     (hw : atoms w = ↑T) :
     ¬ (ans (cell (supClosure (range a))) (supClosure (range a)) w).Subsingleton := by
@@ -555,8 +516,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The theory predicts the islands of the data, where a reading is blocked under negation
-without an intervening modal, or for a singular wh-phrase. -/
 theorem rows_predicted :
     ∀ r ∈ rows, (r.blocked = true ↔ (r.negation = true ∧ r.modal = false) ∨ r.singular = true) := by
   decide

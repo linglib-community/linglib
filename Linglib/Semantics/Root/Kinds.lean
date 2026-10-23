@@ -108,7 +108,6 @@ def close : ClosureOperator Kinds := .ofPred (fun s ↦ univ.filter (∃ j ∈ s
 @[simp] theorem mem_close : k ∈ close s ↔ ∃ j ∈ s, k ≤ j := by
   rw [show close s = univ.filter (∃ j ∈ s, · ≤ j) from rfl]; simp
 
-/-- The closure adds no maximal kind, such as a manner or a cause. -/
 theorem mem_close_iff_of_isMax (hk : IsMax k) : k ∈ close s ↔ k ∈ s :=
   ⟨fun h ↦ let ⟨_, hj, hkj⟩ := mem_close.1 h; le_antisymm (hk hkj) hkj ▸ hj,
     fun h ↦ mem_close.2 ⟨k, h, le_rfl⟩⟩

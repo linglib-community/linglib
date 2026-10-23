@@ -29,7 +29,6 @@ namespace Labov2012
 /-- Styles are ordered by formality, `casual < careful < formal`. -/
 instance : LinearOrder Style := LinearOrder.lift' Style.ctorIdx (by decide)
 
-/-- The President's rate of *-in'* falls strictly with the formality of the style. -/
 theorem ingByStyle_strictAnti : StrictAnti fun s ↦ (ingByStyle s).percent := by decide
 
 end Labov2012

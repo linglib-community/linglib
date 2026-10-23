@@ -105,7 +105,6 @@ theorem scan_cons_of_discharge_eq_none (h : discharge i env ms = none) :
     scan (i :: rest) env ms = scan rest env ms := by
   simp [scan, h]
 
-/-- Discharge subtracts the item's features from the node, the sum of its matrices. -/
 theorem val_add_discharge : ∀ {ms ms' : List (Finset F)}, discharge i env ms = some ms' →
     i.features.val + (ms'.map Finset.val).sum = (ms.map Finset.val).sum
   | [], _, h => by simp at h
@@ -154,7 +153,6 @@ theorem pairwise_disjoint_insertions (h : (ms.map Finset.val).sum.Nodup) :
   rw [Multiset.nodup_bind, Multiset.pairwise_coe_iff_pairwise] at this
   exact this.2.imp (Finset.disjoint_val.mp ·)
 
-/-- A node with no matrix receives nothing. -/
 @[simp] theorem insertions_nil_right :
     ∀ items : RuleSet (VocabularyItem F E), insertions items env [] = []
   | [] => rfl
@@ -162,7 +160,6 @@ theorem pairwise_disjoint_insertions (h : (ms.map Finset.val).sum.Nodup) :
 
 @[simp] theorem scansion_nil : scansion items env [] = [] := by simp [scansion]
 
-/-- Each item is inserted at most once, in Vocabulary order. -/
 theorem insertions_sublist : ∀ (items : RuleSet (VocabularyItem F E)) (ms : List (Finset F)),
     (insertions items env ms).Sublist items
   | [], _ => .slnil
@@ -183,7 +180,6 @@ theorem length_scansion_le (ms : List (Finset F)) :
     (scansion items env ms).length ≤ items.length := by
   simpa using (scansion_sublist (items := items) (env := env) ms).length_le
 
-/-- At a single matrix, an item discharges iff it applies there. -/
 theorem discharge_singleton (i : VocabularyItem F E) (m : Finset F) :
     discharge i env [m] =
       if Applies i ({ env with focus := m } : Neighborhood (Finset F))

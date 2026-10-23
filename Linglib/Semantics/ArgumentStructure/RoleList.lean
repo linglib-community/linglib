@@ -178,36 +178,26 @@ def disappearance : RoleList where
 
 /-! ### Manner roots lack result entailments -/
 
-/-- The object of the hit class does not change state, the generalization of
-[beavers-koontz-garboden-2020] that manner roots lack result entailments. -/
 theorem mannerContact_object_no_cos : ∀ o ∈ mannerContact.objectProfile, .changeOfState ∉ o := by
   simp [mannerContact, contactObject]
 
 /-! ### Derived role labels -/
 
-/-- The subject of the hit class is an agent. -/
 theorem hit_subject_role :
     mannerContact.subjectProfile.toRole = some .agent := by decide
 
-/-- The object of the hit class, causally affected and stationary, is a patient. -/
 theorem hit_object_role :
     contactObject.toRole = some .patient := by decide
 
-/-- The subject of self-motion is an agent. -/
 theorem selfMotion_subject_role :
     selfMotion.subjectProfile.toRole = some .agent := by decide
 
-/-- The subject of perception is an experiencer. -/
 theorem perception_subject_role :
     perception.subjectProfile.toRole = some .experiencer := by decide
 
-/-- The subject of a stimulus-experiencer psych verb is a stimulus. -/
 theorem psychCausal_subject_role :
     psychCausal.subjectProfile.toRole = some .stimulus := by decide
 
-/-- The directed-motion subject is a theme, since the unaccusative subject of *arrive* moves and
-changes location but is not causally affected, which is what distinguishes a patient from the
-broader theme in [dowty-1991]. -/
 theorem directedMotion_subject_role :
     directedMotion.subjectProfile.toRole = some .theme := by decide
 
@@ -218,8 +208,6 @@ theorem psychState_mirrors_psychCausal :
     psychState.objectProfile = some psychCausal.subjectProfile ∧
     psychCausal.objectProfile = some psychState.subjectProfile := by decide
 
-/-- The sole argument of the disappearance class, as of *die*, is a patient, a pure
-proto-patient. -/
 theorem disappearance_subject_role :
     disappearance.subjectProfile.toRole = some .patient := by decide
 

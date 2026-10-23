@@ -78,8 +78,6 @@ def setBExponent : ExponentTable :=
    (.personNumber .third .singular, []), (.personNumber .first .plural, [.pref "oj"]),
    (.personNumber .second .plural, [.pref "ix"]), (.personNumber .third .plural, [.pref "e"])]
 
-/-- The perfective is ergatively aligned: A apart, S with P; the family-level statement is
-`CoonMateoPedroPreminger2014.isErgativePerfective_iff`. -/
 theorem isErgative_perfective : Alignment.IsErgative (assignCase .Perf) :=
   Alignment.isErgative_ergative
 

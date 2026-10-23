@@ -107,8 +107,6 @@ where
     let rest := go r.satisfier ts r.state
     (r.satisfier :: rest.1, rest.2)
 
-/-- The domain of a probe nested under the goal `β` is the suffix of the c-command order from `β`.
--/
 theorem nestedDomain {pre post : List H} {β : H} (hβ : β ∉ pre) :
     (pre ++ β :: post).dropWhile (fun x ↦ decide (x ≠ β)) = β :: post := by
   induction pre with

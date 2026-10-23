@@ -157,7 +157,6 @@ theorem evenEnrich_eq_or_eq_empty (C : Set (Set W)) (p : Set W) :
   · exact .inl (Set.ext fun w ↦ ⟨fun hw ↦ hw.1, fun hw ↦ ⟨hw, h⟩⟩)
   · exact .inr (Set.eq_empty_of_forall_notMem fun _ hw ↦ h hw.2)
 
-/-- An alternative the prejacent does not entail makes even-like enrichment a contradiction. -/
 theorem evenEnrich_eq_empty_of_not_subset {C : Set (Set W)} {p q : Set W} (hq : q ∈ C)
     (h : ¬ p ⊆ q) : evenEnrich C p = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ hw ↦ h (hw.2 q hq)
@@ -616,8 +615,6 @@ theorem Profile.compl_core_statement {R : SetRel W W} (S : Finset E) :
   p.statement_antitone (C := fun q ↦ (R.core q)ᶜ)
     (fun _ _ h ↦ Set.compl_subset_compl.2 (SetRel.core_subset_core h)) S
 
-/-- A logical form `freeze outer inner` is felicitous for any freezer once σ's output properly
-strengthens its input at one world and the sentence holds at another. -/
 theorem Profile.felicitous_freeze {D : Finset E} {outer inner : Set W → Set W} {v w : W}
     (hmin : p.alternatives = .min)
     (hv : v ∈ inner (p.statement inner P D))
@@ -630,7 +627,6 @@ theorem Profile.felicitous_freeze {D : Finset E} {outer inner : Set W → Set W}
   · exact ⟨fun _ h ↦ h.1, fun h ↦ hv' (h hv)⟩
   · exact hw
 
-/-- A logical form `scopedOut C` is felicitous for any freezer under the same two conditions. -/
 theorem Profile.felicitous_scopedOut {D : Finset E} {C : Set W → Set W} {v w : W}
     (hmin : p.alternatives = .min)
     (hv : v ∈ p.statement id (fun a ↦ C (P a)) D)
@@ -643,7 +639,6 @@ theorem Profile.felicitous_scopedOut {D : Finset E} {C : Set W → Set W} {v w :
   · exact ⟨fun _ h ↦ h.1, fun h ↦ hv' (h hv)⟩
   · exact hw
 
-/-- A property holds of every subdomain of a two-member domain when it holds of the four. -/
 private theorem forall_mem_powerset_univ {q : Finset (Fin 2) → Prop} :
     (∀ S ∈ (Finset.univ : Finset (Fin 2)).powerset, q S) ↔ q ∅ ∧ q {0} ∧ q {1} ∧ q .univ := by
   rw [show (Finset.univ : Finset (Fin 2)).powerset = {∅, {0}, {1}, .univ} by decide]
@@ -919,16 +914,11 @@ theorem covertModal_available : ∀ e ∈ Examples.all, e.feature? "device" = so
 
 /-! ### Double duty on the implicational map -/
 
-/-- Roughly half of the languages in [haspelmath-1997]'s survey use one series for negative
-polarity and free choice, English among them: the *any*-series covers direct negation and free
-choice. -/
 theorem any_double_duty :
     ∃ e ∈ Haspelmath1997.english,
       .directNeg ∈ e.functions ∧ .freeChoice ∈ e.functions := by
   decide
 
-/-- The other half separate the two, as Romance does: no Italian series covering direct
-negation covers free choice, and the free-choice series *-unque* covers no negation function. -/
 theorem italian_separates_uses :
     ∀ e ∈ Haspelmath1997.italian,
       (.directNeg ∈ e.functions → .freeChoice ∉ e.functions) ∧

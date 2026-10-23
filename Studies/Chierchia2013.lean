@@ -62,7 +62,6 @@ def DisjunctionReading.key : DisjunctionReading → String
   | .inclusive => "inclusive"
   | .exclusive => "exclusive"
 
-/-- The not-both implicature strengthens the disjunction. -/
 theorem exclusive_subset_inclusive :
     DisjunctionReading.exclusive.denotation p q ⊆ DisjunctionReading.inclusive.denotation p q :=
   Set.sdiff_subset
@@ -92,8 +91,6 @@ def maximizeStrength : SignType → Option DisjunctionReading
   | .neg => some .inclusive
   | .zero => none
 
-/-- Under an embedding with a signature of the position's polarity, the reading Maximize Strength
-selects is the strongest. -/
 theorem isStrongest_maximizeStrength {φ : Signature} {C : Set W → Set W} (hφ : φ.SoundFor C) :
     ∀ r ∈ maximizeStrength φ.sign, IsStrongest p q C r := by
   intro r hr
@@ -110,8 +107,6 @@ section Exhaustification
 
 variable {W E : Type*} (D : Finset E) (P : E → Set W)
 
-/-- Under an antitone context the existential entails each of its subdomain alternatives, so
-*any* in a downward-entailing position is exhaustified vacuously, leaving a plain existential. -/
 theorem exh_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
     exh (C '' supClosure (P '' D)) (C (⋃ a ∈ D, P a)) = C (⋃ a ∈ D, P a) :=
   exh_eq_self <| by
@@ -119,9 +114,6 @@ theorem exh_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
     obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
     exact hC (Set.biUnion_subset_biUnion_left hS)
 
-/-- At the existential itself, where no witness is entailed, exhaustifying the obligatory
-alternatives negates every singleton alternative and is a contradiction, which is the source of the
-deviance of *any* in a positive episodic sentence. -/
 theorem exh_supClosure_eq_empty (h : ∀ a ∈ D, ¬ (⋃ b ∈ D, P b) ⊆ P a) :
     exh (supClosure (P '' D)) (⋃ a ∈ D, P a) = ∅ := by
   refine Set.eq_empty_of_forall_notMem fun w ⟨hw, hall⟩ ↦ ?_
@@ -166,8 +158,6 @@ def Position.context : Position → Option LicensingContext
   | .imperative => some .imperative
   | .matrix | .conditionalConsequent | .everyScope | .positiveQuantifierScope => none
 
-/-- The licensers of the downward-entailing positions carry weak strength, those of the modal
-positions do not. -/
 theorem carries_weak_conditionalAntecedent :
     LicensingContext.conditionalAntecedent.licenser.Carries .weak :=
   ⟨LicensingContext.isStrawsonDE_conditionalAntecedent,
@@ -229,8 +219,6 @@ instance : ∀ p : Position, DecidablePred p.Licenses
   | .matrix | .conditionalConsequent | .everyScope | .positiveQuantifierScope =>
     fun _ ↦ isFalse fun ⟨_, h, _⟩ ↦ nomatch h
 
-/-- Every downward-entailing position licenses *ever*, so the hard column of the readings of *or*
-is the column where the pure negative-polarity item is grammatical. -/
 theorem licenses_ever_of_downward (pos : Position) (h : pos.polarity = -1) :
     pos.Licenses English.PolarityItems.ever := by
   by_cases hd : pos.Downward
@@ -238,8 +226,6 @@ theorem licenses_ever_of_downward (pos : Position) (h : pos.polarity = -1) :
     exact ⟨c, hc, .inl ⟨.weak, rfl, hw⟩⟩
   · simp [Position.polarity, hd] at h
 
-/-- *Any* parts ways with *ever* exactly where the context licenses free choice, as a possibility
-modal, an imperative or a generic does. -/
 theorem licenses_any_not_ever_iff (c : LicensingContext) :
     c.licenser.Licenses English.PolarityItems.any ∧
         ¬ c.licenser.Licenses English.PolarityItems.ever ↔
@@ -287,22 +273,17 @@ noncomputable def item : String → Option PolarityItem
   | "qualsiasi" => some Italian.PolarityItems.qualsiasi
   | _ => none
 
-/-- Every unforced row on *or* names a position, and its reading is the one Maximize Strength
-selects from the polarity of that position. -/
 theorem or_rows :
     ∀ e ∈ Examples.all, e.feature? "item" = some "or" → e.feature? "forced" = none →
       ∃ pos ∈ (e.feature? "position").bind Position.ofKey,
         e.feature? "reading" = (maximizeStrength pos.polarity).map DisjunctionReading.key := by
   decide +kernel
 
-/-- The exclusive reading is available under *nobody*, but only forced by the context. -/
 theorem exclusive_under_nobody_forced :
     ∃ e ∈ Examples.all, e.feature? "forced" = some "true" ∧
       e.feature? "position" = some "nobody" ∧ e.feature? "reading" = some "exclusive" := by
   decide
 
-/-- Every row on another item names a Fragment entry and a position, and is judged acceptable
-exactly when the position licenses the entry. -/
 theorem polarity_rows :
     ∀ e ∈ Examples.all, e.feature? "item" ≠ some "or" →
       ∃ i ∈ (e.feature? "item").bind item, ∃ pos ∈ (e.feature? "position").bind Position.ofKey,

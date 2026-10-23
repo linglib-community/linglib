@@ -212,11 +212,9 @@ def Fits (i : Idiom) (d : Domain) : Prop :=
 instance (i : Idiom) (d : Domain) : Decidable (Fits i d) :=
   inferInstanceAs (Decidable (∀ r ∈ idiomData, _))
 
-/-- *iemand de bons geven*, which neither passivizes nor nominalizes, is an idiom of VoiceP. -/
 theorem fits_bons_iff (d : Domain) : Fits .bons d ↔ d = .voice := by
   cases d <;> decide +kernel
 
-/-- *iemand de das omdoen*, which passivizes and does not nominalize, is an idiom of vP. -/
 theorem fits_das_iff (d : Domain) : Fits .das d ↔ d = .v := by
   cases d <;> decide +kernel
 

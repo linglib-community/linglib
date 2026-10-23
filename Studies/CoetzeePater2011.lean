@@ -86,7 +86,6 @@ theorem observedRate_le_preC (d : Dialect) (ctx : Context) :
     observedRate d ctx ≤ observedRate d .preC := by
   cases d <;> cases ctx <;> decide
 
-/-- Chicano and Philadelphia English delete more before a vowel than before a pause. -/
 theorem observedRate_pause_lt_preV_iff (d : Dialect) :
     observedRate d .pause < observedRate d .preV ↔ d = .chicano ∨ d = .philadelphia := by
   cases d <;> decide
@@ -153,14 +152,11 @@ def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := PicksAt tdDeletio
 instance (σ : Ranking (Fin 4) 4) (ctx : Context) : Decidable (Deletes σ ctx) :=
   inferInstanceAs (Decidable (PicksAt tdDeletion σ ctx .delete))
 
-/-- Pre-consonantal deletion needs only \*CT ≫ MAX. -/
 theorem deletes_preC_iff : ∀ σ : Ranking (Fin 4) 4, Deletes σ .preC ↔ σ.Dominates 0 1 := by decide
 
-/-- Pre-vocalic deletion needs \*CT above both MAX and MAX-PRE-V. -/
 theorem deletes_preV_iff :
     ∀ σ : Ranking (Fin 4) 4, Deletes σ .preV ↔ σ.Dominates 0 1 ∧ σ.Dominates 0 2 := by decide
 
-/-- Phrase-final deletion needs \*CT above both MAX and MAX-FINAL. -/
 theorem deletes_pause_iff :
     ∀ σ : Ranking (Fin 4) 4, Deletes σ .pause ↔ σ.Dominates 0 1 ∧ σ.Dominates 0 3 := by decide
 
@@ -172,7 +168,6 @@ contexts. -/
 theorem image_system :
     univ.image system = {∅, {.pause, .preC}, {.preV, .preC}, {.preC}, univ} := by decide
 
-/-- Twelve rankings, those with MAX ≫ \*CT, delete nowhere. -/
 theorem card_system_empty : (univ.filter (system · = ∅)).card = 12 := by decide
 
 theorem card_system_pause_preC : (univ.filter (system · = {.pause, .preC})).card = 2 := by
@@ -183,22 +178,17 @@ theorem card_system_preV_preC : (univ.filter (system · = {.preV, .preC})).card 
 
 theorem card_system_preC : (univ.filter (system · = {.preC})).card = 2 := by decide
 
-/-- Six rankings, those with \*CT on top, delete everywhere. -/
 theorem card_system_univ : (univ.filter (system · = univ)).card = 6 := by decide
 
 /-! ### Deletion probabilities ((9), (13)) -/
 
-/-- Only \*CT favors deletion, in every context. -/
 theorem favoring_eq (ctx : Context) : favoring con ctx .delete .retain = {0} := by
   cases ctx <;> decide
 
-/-- MAX alone protects t/d pre-consonantally. -/
 theorem active_preC : active con .preC .delete .retain = {0, 1} := by decide
 
-/-- MAX-PRE-V joins MAX pre-vocalically. -/
 theorem active_preV : active con .preV .delete .retain = {0, 1, 2} := by decide
 
-/-- MAX-FINAL joins MAX phrase-finally. -/
 theorem active_pause : active con .pause .delete .retain = {0, 1, 3} := by decide
 
 /-- The grammar of row (a) of (13) has every ranking as a linear extension, and the grammars of
@@ -223,9 +213,6 @@ private theorem deletionProb_eq_div {g : ImposedRanking} {ctx : Context} {q : �
     deletionProb g ctx = q := by
   rw [deletionProb, uniformOn_finset_real_setOf, hk, hm, hq]
 
-/-- With no ranking imposed (row (a)), deletion needs \*CT above every constraint active in the
-context, so its probability is one over their number: 12, 8 and 8 of the 24 rankings delete
-before a consonant, a vowel and a pause. -/
 theorem deletionProb_none (ctx : Context) :
     deletionProb .none ctx = ((active con ctx .delete .retain).card : ℝ)⁻¹ := by
   rw [deletionProb, extensions, coe_univ,
@@ -245,26 +232,21 @@ theorem card_extensions (g : ImposedRanking) (ctx : Context) :
     (extensions g).card = (pocRates g ctx).total := by
   cases g <;> cases ctx <;> decide
 
-/-- Under MAX-PRE-V ≫ \*CT (row (b)), 0, 2 and 4 of the 12 linear extensions delete before a
-vowel, a pause and a consonant. -/
 theorem deletionProb_maxPreVOverStarCT :
     deletionProb .maxPreVOverStarCT .preV = 0 ∧ deletionProb .maxPreVOverStarCT .pause = 1/6 ∧
       deletionProb .maxPreVOverStarCT .preC = 1/3 :=
   ⟨deletionProb_eq_div 0 12, deletionProb_eq_div 2 12, deletionProb_eq_div 4 12⟩
 
-/-- Under \*CT ≫ MAX-PRE-V (row (c)), 8, 6 and 8 of 12 delete. -/
 theorem deletionProb_starCTOverMaxPreV :
     deletionProb .starCTOverMaxPreV .preV = 2/3 ∧ deletionProb .starCTOverMaxPreV .pause = 1/2 ∧
       deletionProb .starCTOverMaxPreV .preC = 2/3 :=
   ⟨deletionProb_eq_div 8 12, deletionProb_eq_div 6 12, deletionProb_eq_div 8 12⟩
 
-/-- Under MAX-FINAL ≫ \*CT (row (d)), 2, 0 and 4 of 12 delete. -/
 theorem deletionProb_maxFinalOverStarCT :
     deletionProb .maxFinalOverStarCT .preV = 1/6 ∧ deletionProb .maxFinalOverStarCT .pause = 0 ∧
       deletionProb .maxFinalOverStarCT .preC = 1/3 :=
   ⟨deletionProb_eq_div 2 12, deletionProb_eq_div 0 12, deletionProb_eq_div 4 12⟩
 
-/-- Under \*CT ≫ MAX-FINAL (row (e)), 6, 8 and 8 of 12 delete. -/
 theorem deletionProb_starCTOverMaxFinal :
     deletionProb .starCTOverMaxFinal .preV = 1/2 ∧ deletionProb .starCTOverMaxFinal .pause = 2/3 ∧
       deletionProb .starCTOverMaxFinal .preC = 2/3 :=
@@ -312,8 +294,6 @@ theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq
   simp only [Nat.factorial, Nat.succ_eq_add_one] at this
   omega
 
-/-- Five freely ranked constraints do not suffice for a probability of .01 either, since 1/100
-is not a multiple of 1/120. -/
 theorem uniformOn_univ_real_picksAt_ne {Input Output : Type*} [DecidableEq Output]
     (S : ConstraintSystem Input Output (Fin 5)) (i : Input) (o : Output) :
     (uniformOn (Set.univ : Set (Ranking (Fin 5) 5))).real {σ | PicksAt S σ i o} ≠
@@ -343,7 +323,6 @@ theorem measure_deletes_le_preC (μ : Measure (Ranking (Fin 4) 4)) (ctx : Contex
     μ {σ | Deletes σ ctx} ≤ μ {σ | Deletes σ .preC} :=
   measure_mono fun _ ↦ deletes_preC_of_deletes
 
-/-- No distribution over rankings produces Tejano′, whose pre-consonantal rate is its lowest. -/
 theorem not_forall_real_deletes_eq_tejanoPrime (μ : Measure (Ranking (Fin 4) 4))
     [IsFiniteMeasure μ] : ¬ ∀ ctx, μ.real {σ | Deletes σ ctx} = tejanoPrime ctx / 100 := by
   intro h
@@ -356,23 +335,19 @@ theorem not_forall_real_deletes_eq_tejanoPrime (μ : Measure (Ranking (Fin 4) 4)
 
 variable {w : Fin 4 → ℝ}
 
-/-- Retention violates only \*CT. -/
 @[simp] theorem harmonyScore_retain (ctx : Context) :
     harmonyScore con w (ctx, .retain) = -w 0 := by
   cases ctx <;> simp [harmonyScore_eq_neg_sum, Fin.sum_univ_four, con, starCT, maxC, maxPreV,
     maxFinal]
 
-/-- Pre-vocalic deletion violates MAX and MAX-PRE-V. -/
 @[simp] theorem harmonyScore_delete_preV :
     harmonyScore con w (.preV, .delete) = -(w 1 + w 2) := by
   simp [harmonyScore_eq_neg_sum, Fin.sum_univ_four, con, starCT, maxC, maxPreV, maxFinal]
 
-/-- Phrase-final deletion violates MAX and MAX-FINAL. -/
 @[simp] theorem harmonyScore_delete_pause :
     harmonyScore con w (.pause, .delete) = -(w 1 + w 3) := by
   simp [harmonyScore_eq_neg_sum, Fin.sum_univ_four, con, starCT, maxC, maxPreV, maxFinal]
 
-/-- Pre-consonantal deletion violates MAX alone. -/
 @[simp] theorem harmonyScore_delete_preC :
     harmonyScore con w (.preC, .delete) = -w 1 := by
   simp [harmonyScore_eq_neg_sum, Fin.sum_univ_four, con, starCT, maxC, maxPreV, maxFinal]
@@ -393,7 +368,6 @@ def HGDeletes (w : Fin 4 → ℝ) (ctx : Context) : Prop :=
 /-- Tableau (17) weights \*CT 2 over MAX 1, and deletion wins pre-consonantally. -/
 example : HGDeletes ![2, 1, 0, 0] .preC := by simp
 
-/-- With non-negative weights, HG shares the implication of the rankings. -/
 theorem hgDeletes_preC_of_hgDeletes (hw : 0 ≤ w) {ctx : Context} (h : HGDeletes w ctx) :
     HGDeletes w .preC := by
   rw [hgDeletes_preC_iff]
@@ -456,7 +430,6 @@ MaxEnt distribution of the context's two outputs. -/
 noncomputable def maxEntProb (w : Fin 4 → ℝ) (ctx : Context) : ℝ :=
   (maxEnt (con.comap (ctx, ·)).violations w).real {.delete}
 
-/-- With two candidates, the deletion probability is the logistic of the harmony difference. -/
 theorem maxEntProb_eq_sigmoid (w : Fin 4 → ℝ) (ctx : Context) :
     maxEntProb w ctx =
       sigmoid (harmonyScore con w (ctx, .delete) - harmonyScore con w (ctx, .retain)) :=
@@ -468,8 +441,6 @@ theorem maxEntProb_le_preC (hw : 0 ≤ w) (ctx : Context) :
   rw [maxEntProb_eq_sigmoid, maxEntProb_eq_sigmoid, sigmoid_le_iff]
   cases ctx <;> simp <;> linarith [show 0 ≤ w 2 from hw 2, show 0 ≤ w 3 from hw 3]
 
-/-- MaxEnt deletes less before a vowel than before a pause exactly when MAX-PRE-V outweighs
-MAX-FINAL. -/
 theorem maxEntProb_preV_lt_pause_iff (w : Fin 4 → ℝ) :
     maxEntProb w .preV < maxEntProb w .pause ↔ w 3 < w 2 := by
   rw [maxEntProb_eq_sigmoid, maxEntProb_eq_sigmoid, sigmoid_lt_iff]
@@ -559,7 +530,6 @@ theorem loanwordDevoicing_realizedByWeighting :
     simp [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three, identVoice, ocpVoice,
       voicedGeminate] at hne ⊢ <;> norm_num
 
-/-- No ranking realizes the pattern, the instance behind `hg_strictly_contains_ot`. -/
 theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizable := by decide
 
 /-- Ranking `σ` devoices loanword `l`. -/
@@ -717,7 +687,6 @@ def indexedTableau (l : Lexeme) (ctx : Context) : ConstraintSet Output (Option (
 def exchange : Option (Lexeme × Fin 3) ≃ Option (Lexeme × Fin 3) :=
   Equiv.optionCongr ((Equiv.swap Lexeme.feast .most).prodCongr (Equiv.refl _))
 
-/-- The tableau of *most* is that of *feast* with the two words exchanged. -/
 theorem indexedTableau_most (ctx : Context) :
     indexedTableau .most ctx = fun k ↦ indexedTableau .feast ctx (exchange k) := by
   funext k o

@@ -142,7 +142,6 @@ def acceptance : Adjective → Bool → HeartState → ℕ
 /-- The soft literal meaning `𝓛(s)` of an utterance is its acceptance proportion at the state. -/
 def meaning (u : Utterance) (s : HeartState) : ℚ := acceptance u.1 u.2 s / 49
 
-/-- The lexicon is soft, with values in `[0, 1]`. -/
 theorem meaning_bounded (u : Utterance) (s : HeartState) : 0 ≤ meaning u s ∧ meaning u s ≤ 1 := by
   obtain ⟨a, b⟩ := u
   cases a <;> cases b <;> cases s <;> constructor <;> norm_num [meaning, acceptance]
@@ -216,7 +215,6 @@ theorem util_ne_top (α c : ℝ) (p : HeartState × Phi) (u : Utterance) : util 
   · exact bot_ne_top
   · exact EReal.coe_ne_top _
 
-/-- Every situation has an applicable utterance, the adjective accepted at its state. -/
 theorem util_exists_ne_bot (α c : ℝ) (p : HeartState × Phi) : ∃ u, util α c p u ≠ ⊥ := by
   obtain ⟨s, φ⟩ := p
   cases s
@@ -245,15 +243,12 @@ theorem speaker_real_singleton_lt_iff (α c : ℝ) (p : HeartState × Phi) (u u'
     (speaker α c p).real {u} < (speaker α c p).real {u'} ↔ util α c p u < util α c p u' :=
   Kernel.softmax_real_singleton_lt_iff (util_ne_top α c p) (util_exists_ne_bot α c p)
 
-/-- An utterance of literal probability zero at the true state is never produced by a speaker
-with some weight on informativity. -/
 theorem speaker_apply_eq_zero_of_meaning_eq_zero (α c : ℝ) {s : HeartState} {φ : Phi}
     {u : Utterance} (h0 : meaning u s = 0) (hφ : φ ≠ .p0) : speaker α c (s, φ) {u} = 0 :=
   Kernel.softmax_apply_singleton_eq_zero (util_gated h0 hφ)
 
 /-! ### First-order predictions (Figure 2, top right) -/
 
-/-- The pure-social speaker compares social utility net of cost, at every state. -/
 theorem social_lt_iff {α : ℝ} (hα : 0 < α) (c : ℝ) (s : HeartState) (u u' : Utterance) :
     (speaker α c (s, .p0)).real {u} < (speaker α c (s, .p0)).real {u'} ↔
       (ev u : ℝ) - cost c u < (ev u' : ℝ) - cost c u' := by
@@ -318,8 +313,6 @@ instance : IsProbabilityMeasure prior := inferInstanceAs (IsProbabilityMeasure (
 theorem prior_ne_zero (p : HeartState × Phi) : prior {p} ≠ 0 :=
   uniformOn_univ_singleton_ne_zero p
 
-/-- Every utterance is accepted by someone at zero hearts, so every utterance is heard with
-positive probability. -/
 theorem comp_speaker_ne_zero (α c : ℝ) (u : Utterance) : (speaker α c ∘ₘ prior) {u} ≠ 0 := by
   have key : ∀ s : HeartState, meaning u s ≠ 0 → (speaker α c ∘ₘ prior) {u} ≠ 0 := fun s hs =>
     Measure.comp_apply_singleton_ne_zero _ _ (prior_ne_zero (s, .p100))

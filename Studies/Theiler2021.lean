@@ -78,7 +78,6 @@ abbrev Property (D W : Type*) (n : ℕ) := (Fin n → D) → Set W
 /-- The instantiations of a property: the propositions it yields for tuples of individuals. -/
 def instantiations (f : Property D W n) : Set (Set W) := Set.range f
 
-/-- A proposition, a 0-place property, has exactly one instantiation, itself. -/
 theorem instantiations_zero (f : Property D W 0) : instantiations f = {f default} :=
   Set.range_unique
 
@@ -107,13 +106,9 @@ def Denn (Proceed : Set W → Prop) (H : Set (Set W)) : Prop :=
 
 variable {Proceed : Set W → Prop} {p q : Set W} {H : Set (Set W)}
 
-/-- A polar question (section 4.1): the highlighted proposition itself must be necessary. -/
 theorem denn_singleton : Denn Proceed {p} ↔ Necessary Proceed (· ⊆ p) := by
   simp [Denn, Necessary]
 
-/-- A wh-question is licensed as soon as proceeding requires learning some instantiation;
-the polar question highlighting one instantiation is not, when another instantiation would
-serve. -/
 theorem denn_pair_not_denn_singleton (h : ∀ s, Proceed s ↔ s ⊆ p ∨ s ⊆ q) (hq : ¬ q ⊆ p) :
     Denn Proceed {p, q} ∧ ¬ Denn Proceed {p} := by
   refine ⟨λ s hs => ?_, λ hd => hq (denn_singleton.1 hd q ((h q).2 (Or.inr subset_rfl)))⟩
@@ -131,8 +126,6 @@ theorem twoAnnas (hp : p ≠ Set.univ) :
   denn_pair_not_denn_singleton (λ _ => mem_polar)
     λ h => hp (by simpa using Set.compl_subset_iff_union.1 h)
 
-/-- A sufficient precondition that does not entail a proposition shows the proposition is not
-necessary. -/
 theorem not_necessary_of_sufficient (h : Sufficient Proceed (· ⊆ p)) (hpq : ¬ p ⊆ q) :
     ¬ Necessary Proceed (· ⊆ q) :=
   λ hn => hpq (hn p (h p subset_rfl))
@@ -164,12 +157,9 @@ theorem denn_pair_imp_denn_union (h : Denn Proceed {p, q}) : Denn Proceed {p ∪
 
 /-! ### Conditional antecedents (section 4.5) -/
 
-/-- Proceeding from the assertion of the consequent is accepting it; a proposition is
-necessary for that exactly when the consequent entails it. -/
 theorem necessary_subset_iff : Necessary (· ⊆ q) (· ⊆ p) ↔ q ⊆ p :=
   ⟨λ h => h q subset_rfl, λ h _ hs => hs.trans h⟩
 
-/-- The at-issue conditional makes the antecedent sufficient for the consequent. -/
 theorem sufficient_subset_iff : Sufficient (· ⊆ q) (· ⊆ p) ↔ p ⊆ q :=
   ⟨λ h => h p subset_rfl, λ h _ hs => hs.trans h⟩
 

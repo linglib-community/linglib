@@ -50,7 +50,6 @@ theorem variance_bernoulliMeasure {f : X → ℝ} (hf : AEMeasurable f Ber(x, y,
   simp only [integral_bernoulliMeasure, smul_eq_mul]
   ring
 
-/-- A Bernoulli measure is carried by its two points. -/
 theorem eq_or_eq_of_bernoulliMeasure_singleton_ne_zero {z : X} (hz : Ber(x, y, p) {z} ≠ 0) :
     z = x ∨ z = y := by
   contrapose! hz

@@ -93,7 +93,6 @@ private theorem fValue_le_getLastD {l : List Cat} (hp : l.Pairwise Cat.ExtendsTo
     exact (hp.2.2 c hc _ (List.mem_singleton_self _)).2
   · exact le_rfl
 
-/-- No head of an extended projection is higher than its highest head. -/
 theorem IsExtendedProjection.fValue_le_fLevel (hs : s.IsExtendedProjection) (hc : c ∈ s) :
     c.fValue ≤ s.size.fLevel :=
   fValue_le_getLastD hs.pairwise hc

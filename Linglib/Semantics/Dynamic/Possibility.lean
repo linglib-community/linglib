@@ -74,17 +74,13 @@ def domain (p : Possibility W V (Flat M)) : Set V :=
 
 @[simp] theorem mem_domain {v : V} : v ∈ p.domain ↔ p.assignment v ≠ ⊥ := Iff.rfl
 
-/-- Descent grows the domain. -/
 theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v =>
   (ne_bot_of_le_ne_bot · (h.2 v))
 
-/-- On a shared domain, descent is equality — there is no room to grow. -/
 theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q :=
   Possibility.ext h.1 <| funext fun v =>
     Flat.eq_of_le (h.2 v) fun hd => hdom.superset hd
 
-/-- A point defines no referent exactly when its assignment is nowhere
-defined. -/
 theorem domain_eq_empty_iff : p.domain = ∅ ↔ ∀ v, p.assignment v = ⊥ := by
   simp [Set.eq_empty_iff_forall_notMem]
 
@@ -92,19 +88,16 @@ section Update
 
 variable [DecidableEq V] {x : V} {m : M}
 
-/-- Defining a referent adds it to the domain. -/
 theorem domain_update_coe : (p.update x ↑m).domain = insert x p.domain := by
   ext v
   by_cases hv : v = x <;> simp [hv, Function.update_of_ne]
 
-/-- A point undefined at `x` descends into each of its updates at `x`. -/
 theorem le_update_of_eq_bot (h : p.assignment x = ⊥) (e : Flat M) : p ≤ p.update x e :=
   ⟨rfl, fun v ↦ by
     by_cases hv : v = x
     · subst hv; simp [h]
     · simp [Function.update_of_ne hv]⟩
 
-/-- A point above `p` whose domain adds exactly `x` is an update of `p` at `x`. -/
 theorem eq_update_of_le (hpr : p ≤ r) (hdom : r.domain = insert x p.domain)
     (hm : r.assignment x = ↑m) : r = p.update x ↑m :=
   Possibility.ext hpr.1.symm <| funext fun v ↦ by
@@ -135,7 +128,6 @@ theorem le_union_left : p ≤ p.union q :=
 theorem union_le (hp : p ≤ u) (hq : q ≤ u) : p.union q ≤ u :=
   ⟨hp.1, fun v => Flat.or_le (hp.2 v) (hq.2 v)⟩
 
-/-- Compatibility of partial points is worldwise and pointwise. -/
 theorem compat_iff_forall : Compat p q ↔
     p.world = q.world ∧ ∀ v, Compat (p.assignment v) (q.assignment v) :=
   ⟨fun ⟨_, hu⟩ =>
@@ -159,15 +151,12 @@ theorem le_union_right (h : Compat p q) : q ≤ p.union q :=
   have h' := compat_iff_forall.mp h
   ⟨h'.1.symm, fun v => Flat.le_or_right (h'.2 v)⟩
 
-/-- The union of compatible points is their least upper bound. -/
 theorem isLUB_union (h : Compat p q) : IsLUB {p, q} (p.union q) :=
   ⟨mem_upperBounds_pair.mpr ⟨le_union_left, le_union_right h⟩,
     fun _ hu =>
       have h := mem_upperBounds_pair.mp hu
       union_le h.1 h.2⟩
 
-/-- The joins of pairs of points: `u` bounds `{p, q}` least exactly when
-the pair is compatible and `u` is its union. -/
 theorem isLUB_pair_iff : IsLUB {p, q} u ↔ Compat p q ∧ u = p.union q :=
   ⟨fun h =>
     have hc : Compat p q := ⟨u, h.1⟩
@@ -187,17 +176,13 @@ noncomputable instance : PartialUnify (Possibility W V (Flat M)) where
     rw [ite_eq_left h]
     exact WithTop.coe_ne_top
 
-/-- `u` is the unification of `p` and `q` exactly when they are compatible and `u` is their
-union. -/
 theorem unify_eq_coe_iff : PartialUnify.unify p q = ↑u ↔ Compat p q ∧ u = p.union q :=
   PartialUnify.unify_eq_coe_iff_isLUB.trans isLUB_pair_iff
 
-/-- The union of two points defines the union of their domains. -/
 theorem domain_union : (p.union q).domain = p.domain ∪ q.domain := by
   ext v
   cases h : p.assignment v <;> simp [h]
 
-/-- On a shared domain, compatibility is equality. -/
 theorem eq_of_compat_of_domain_eq (h : Compat p q) (hdom : p.domain = q.domain) :
     p = q :=
   have hu : (p.union q).domain = p.domain := by rw [domain_union, ← hdom, Set.union_self]
@@ -210,7 +195,6 @@ theorem union_assoc : (p.union q).union r = p.union (q.union r) :=
 @[simp] theorem union_self : p.union p = p :=
   Possibility.ext rfl <| funext fun _ => Flat.or_self _
 
-/-- On compatible points the left precedence of `union` is immaterial. -/
 theorem union_comm (h : Compat p q) : p.union q = q.union p :=
   (isLUB_union h).unique (Set.pair_comm p q ▸ isLUB_union h.symm)
 
@@ -223,8 +207,6 @@ def bot (w : W) : Possibility W V (Flat M) :=
 theorem bot_le : bot p.world ≤ p :=
   ⟨rfl, fun _ => _root_.bot_le⟩
 
-/-- An empty point compatible with `p` shares its world, hence sits
-below it. -/
 theorem bot_le_of_compat {w : W} (h : Compat p (bot w)) : bot w ≤ p := by
   obtain ⟨u, hu⟩ := h
   obtain ⟨hpu, hbu⟩ := mem_upperBounds_pair.mp hu
@@ -255,26 +237,21 @@ open Classical in
 theorem restrict_assignment (v : V) :
     (p.restrict X).assignment v = if v ∈ X then p.assignment v else ⊥ := rfl
 
-/-- Restriction descends. -/
 theorem restrict_le : p.restrict X ≤ p :=
   ⟨rfl, fun v => by
     rw [restrict_assignment]
     split_ifs
     exacts [le_rfl, _root_.bot_le]⟩
 
-/-- Restriction intersects the domain. -/
 theorem domain_restrict : (p.restrict X).domain = X ∩ p.domain := by
   ext v
   by_cases hv : v ∈ X <;> simp [restrict_assignment, hv]
 
-/-- Restriction is the identity on the referents kept. -/
 theorem restrict_assignment_of_mem {v : V} (hv : v ∈ X) :
     (p.restrict X).assignment v = p.assignment v := by
   classical
   rw [restrict_assignment, ite_eq_left hv]
 
-/-- A point with domain `X` descends into `q` exactly when it is `q`
-restricted to `X`. -/
 theorem le_iff_eq_restrict (hp : p.domain = X) :
     p ≤ q ↔ p = q.restrict X := by
   refine ⟨fun h => Possibility.ext h.1 (funext fun v => ?_), fun h => h ▸ restrict_le⟩
@@ -284,18 +261,14 @@ theorem le_iff_eq_restrict (hp : p.domain = X) :
   · by_contra hne
     exact hv (hp.subset hne)
 
-/-- A point at its own domain is fixed by restriction. -/
 theorem restrict_eq_self (hp : p.domain = X) : p.restrict X = p :=
   ((le_iff_eq_restrict hp).mp le_rfl).symm
 
-/-- A point above `p` whose domain adds exactly `X` is `p` joined with its own
-restriction to `X`. -/
 theorem eq_union_restrict (hpr : p ≤ r)
     (hdom : r.domain = p.domain ∪ X) : r = p.union (r.restrict X) :=
   (eq_of_le_of_domain_eq (union_le hpr restrict_le) <| by
     rw [domain_union, domain_restrict, hdom, Set.inter_eq_left.mpr Set.subset_union_right]).symm
 
-/-- Consecutive restrictions restrict to the intersection. -/
 theorem restrict_restrict : (p.restrict Y).restrict X = p.restrict (X ∩ Y) :=
   Possibility.ext rfl <| funext fun v => by
     simp only [restrict_assignment, Set.mem_inter_iff]
@@ -318,7 +291,6 @@ noncomputable def domainEquiv (X : Set V) :
       exact h (p.2.subset (Ne.symm hne))
   right_inv _ := by ext <;> simp
 
-/-- Restricting a classified point restricts its chart. -/
 theorem restrict_domainEquiv_symm (h : Y ⊆ X) (e : W × (X → M)) :
     ((domainEquiv X).symm e).1.restrict Y =
       ((domainEquiv Y).symm (e.1, fun v => e.2 ⟨v.1, h v.2⟩)).1 :=

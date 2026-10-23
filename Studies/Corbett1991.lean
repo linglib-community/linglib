@@ -200,7 +200,6 @@ def system : Gender.AssignmentSystem (Bool × Option Gender) Unit Value where
 
 theorem isStrictSemantic_system : system.IsStrictSemantic := fun _ ↦ rfl
 
-/-- The rules assign every noun of the fragment its gender. -/
 theorem assign_eq_gender : ∀ n ∈ allNouns, system.assign sem (fun _ ↦ ()) n = n.gender := by
   decide
 
@@ -248,14 +247,10 @@ def system : Gender.AssignmentSystem (Option Gender) (Option Declension) Value w
     | _ => none
   residue := .neut
 
-/-- The rules assign every noun of the fragment its gender, *put'* excepted, which the book
-leaves as an isolated exception with an irregular lexical marker. -/
 theorem assign_eq_gender :
     ∀ n ∈ allNouns, n ≠ put' → system.assign sem declension n = n.gender := by
   decide
 
-/-- The morphological rule would make *djadja* 'uncle' feminine and the semantic rule makes it
-masculine; the semantic rule takes precedence. -/
 theorem djadja_precedence :
     system.formal (declension djadja) = some .fem ∧
       system.assign sem declension djadja = .masc := by
@@ -289,12 +284,9 @@ def system : Gender.AssignmentSystem (Option Evaluative × Animacy) _root_.Swahi
   formal := some
   residue := .genderE
 
-/-- The rules assign every noun of the fragment its gender. -/
 theorem assign_eq_gender : ∀ n ∈ allNouns, system.assign sem Noun.morphClass n = n.gender := by
   decide
 
-/-- Gender 1/2 is purely semantic, every noun assigned to it being assigned by a semantic
-rule. -/
 theorem genderA_semantic :
     ∀ n ∈ allNouns, system.assign sem Noun.morphClass n = .genderA →
       (system.semantic (sem n)).isSome := by
@@ -321,14 +313,10 @@ def system : Gender.AssignmentSystem (Option Gender) Bool Value where
   formal acc := if acc then some .fem else none
   residue := .masc
 
-/-- The rules assign every noun of the fragment its gender, the isolated exception *doònik*
-'sail-boat' apart. -/
 theorem assign_eq_gender :
     ∀ n ∈ allNouns, n ≠ doonik → system.assign sem Noun.finalAccentedVowel n = n.gender := by
   decide
 
-/-- *abbà* 'father' ends in an accented vowel yet is masculine, the semantic rule taking
-precedence over the phonological one. -/
 theorem abba_precedence :
     system.formal abba.finalAccentedVowel = some .fem ∧
       system.assign sem Noun.finalAccentedVowel abba = .masc := by
@@ -349,9 +337,6 @@ def system : Gender.AssignmentSystem (Option Gender) Bool Gender where
   formal aa := if aa then some .feminine else none
   residue := .masculine
 
-/-- The rules assign every noun of the fragment its gender apart from *gidā* 'house' and
-*kadā̀* 'crocodile', two of the *-ā* masculines of [newman-2000] that the fragment carries;
-the book says only that the phonological rule has exceptions. -/
 theorem assign_eq_gender :
     ∀ n ∈ allNouns, n ∉ [gida, kada] →
       system.assign sem (fun n ↦ decide n.EndsInAa) n = n.gender := by
@@ -371,7 +356,6 @@ theorem crossed :
       (Value.adjForm · (numberSystem.value .plural)) := by
   decide
 
-/-- Three controller genders over two target genders in each number. -/
 theorem card_range_adjForm :
     Fintype.card (Set.range Value.adjForm) = 3 ∧
       Fintype.card (Gender.targetGenders Value.adjForm (numberSystem.value .singular)) = 2 ∧
@@ -445,7 +429,6 @@ def Value.plMarker : Value → Marker
 plural. -/
 theorem crossed : Gender.Crossed Value.sgMarker Value.plMarker := by decide
 
-/-- Universal 37 holds though neither number determines the other. -/
 theorem card_plMarker_le :
     Fintype.card (Set.range Value.plMarker) ≤ Fintype.card (Set.range Value.sgMarker) := by
   decide
@@ -504,9 +487,6 @@ open _root_.Tamil.Gender
 /-- In Figure 6.8 three singular target genders converge on two in the plural. -/
 theorem convergent : Gender.Convergent Value.sgConcord Value.plConcord := by decide
 
-/-- Greenberg's Universal 37 holds in Tamil as a corollary of convergence, a number whose
-target genders are determined by another's distinguishing no more of them. The book states the
-universal over target genders because it holds of crossed systems too, Lak above. -/
 theorem card_plConcord_le :
     Nat.card (Set.range Value.plConcord) ≤ Nat.card (Set.range Value.sgConcord) :=
   convergent.1.card_range_le
@@ -588,7 +568,6 @@ def vracFeminine : Position → Option ℚ
   | .predicate => some (517 / 1000)
   | _ => none
 
-/-- The proportion of semantic agreement rises along the hierarchy. -/
 theorem vracFeminine_respectsHierarchy : RespectsHierarchy vracFeminine := by decide +kernel
 
 /-- By the stacked-target constraint of §8.1.2, when stacked or parallel targets of one
@@ -635,7 +614,6 @@ def toPosition : FinePosition → Position
   | .relativePronoun => .relativePronoun
   | .personalPronoun => .personalPronoun
 
-/-- The finer division refines the hierarchy. -/
 theorem toPosition_monotone : Monotone toPosition := by decide
 
 end FinePosition
@@ -663,7 +641,6 @@ def fineHybridNames : List (String × Hybrid FinePosition) :=
     ("ng'ombe", ngombe),
     ("mbudzi", ngombe)]
 
-/-- The Bantu hybrids respect the finer hierarchy. -/
 theorem fineHybrids_respectHierarchy : ∀ h ∈ fineHybridNames, RespectsHierarchy h.2 := by
   decide
 
@@ -716,8 +693,6 @@ person if a conjunct is first person, else the second if one is second, else the
 def personRules : List (ResolutionRule Person Person) :=
   [.any (· = .first) .first, .any (· = .second) .second, otherwise .third]
 
-/-- On the three persons the rules are the substrate's resolution coarsened to the three
-persons, the union of the conjuncts' participant sets without clusivity. -/
 theorem resolve_personRules_pair :
     ∀ a ∈ [Person.first, .second, .third], ∀ b ∈ [Person.first, .second, .third],
       resolve personRules [a, b] = some (a ⊔ b).coarsen := by
@@ -750,8 +725,6 @@ theorem resolve_masc_fem : resolve rules [.masc, .fem] = some .rational := by de
 /-- A rational and a non-rational cannot be resolved, (18). -/
 theorem resolve_masc_neut : resolve rules [.masc, .neut] = none := by decide
 
-/-- Under a strict semantic assignment with a semantic resolution, the resolved form is a
-function of the conjuncts' rationality. -/
 theorem resolve_factorsThrough :
     Function.FactorsThrough (resolve rules) (List.map (decide <| Rational ·)) :=
   ResolutionRule.resolve_factorsThrough fun r hr a b h ↦ by
@@ -814,7 +787,6 @@ namespace Slovene
 /-- The numbers of Slovene. -/
 def numbers : Number.System := { values := {.singular, .dual, .plural} }
 
-/-- Two Slovene numbers resolve to the dual if both are singular and to the plural otherwise. -/
 theorem resolve_numbers :
     ∀ a b, numbers.resolve a b = if a = .singular ∧ b = .singular then .dual else .plural := by
   decide
@@ -839,8 +811,6 @@ theorem numberResolve_eq_resolve (c d : Number) (cs : List Number)
     · simp_all
     · split_ifs <;> simp [resolve_numbers, hpl]
 
-/-- The number rules count the conjuncts, so no resolution rules state them: two singulars take
-the dual and three the plural, though the same value occurs in both. -/
 theorem numberResolve_ne_resolve (rs : List (ResolutionRule Number Number)) :
     numberResolve numbers ≠ resolve rs := fun h ↦ by
   have := congrFun h [.singular, .singular]
@@ -858,7 +828,6 @@ theorem resolve_neuters :
       numberResolve numbers [.singular, .singular, .singular] = some .plural := by
   decide
 
-/-- The neuter is excluded as a resolved form. -/
 theorem resolve_ne_neut (cs : List Value) : resolve rules cs ≠ some .neut := fun h ↦ by
   simpa [rules] using mem_map_out_of_resolve_eq_some h
 
@@ -941,7 +910,6 @@ theorem feminine_inanimates_masc :
     ∃ g ∈ stage2, resolve g [(.fem, false), (.fem, false)] = some .masc := by
   decide
 
-/-- Feminine nouns denoting females keep the feminine in both grammars. -/
 theorem females_fem : ∀ g ∈ stage2, resolve g [(.fem, true), (.fem, true)] = some .fem := by
   decide
 

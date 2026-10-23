@@ -94,7 +94,6 @@ def pastPerfProg (V : W → E → Prop) (tc : T) (w : W) : Prop :=
 
 /-! ### Unfolding -/
 
-/-- The simple present unfolds to `∃e, [tc, tc] ⊂ τ(e) ∧ V(w)(e)`. -/
 theorem simplePresent_unfold (V : W → E → Prop) (tc : T) (w : W) :
     simplePresent V tc w ↔
     ∃ e : E, NonemptyInterval.pure tc < τ e ∧ V w e := by

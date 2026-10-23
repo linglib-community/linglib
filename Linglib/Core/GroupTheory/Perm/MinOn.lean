@@ -37,18 +37,14 @@ namespace Equiv.Perm
 
 variable {α : Type*} [LinearOrder α] {D : Finset α}
 
-/-- A permutation places at most one element of `D` first. -/
 theorem eq_of_isMinOn_symm {σ : Perm α} {x y : α} (hx : x ∈ D) (hy : y ∈ D)
     (hxm : IsMinOn σ.symm D x) (hym : IsMinOn σ.symm D y) : x = y :=
   σ.symm.injective ((isMinOn_iff.1 hxm y hy).antisymm (isMinOn_iff.1 hym x hx))
 
-/-- Every permutation places some element of a nonempty `D` first. -/
 theorem exists_isMinOn_symm (hD : D.Nonempty) (σ : Perm α) : ∃ x ∈ D, IsMinOn σ.symm D x := by
   obtain ⟨x, hx, h⟩ := D.exists_min_image σ.symm hD
   exact ⟨x, hx, isMinOn_iff.2 h⟩
 
-/-- Composing with the swap of two elements `y` and `y'` of `D` exchanges them as the first
-element of `D`. -/
 theorem isMinOn_symm_swap_mul_iff {σ : Perm α} {y y' x : α} (hy : y ∈ D) (hy' : y' ∈ D) :
     IsMinOn (swap y y' * σ).symm D (swap y y' x) ↔ IsMinOn σ.symm D x := by
   have hD (z : α) : swap y y' z ∈ D ↔ z ∈ D := by
@@ -64,8 +60,6 @@ theorem isMinOn_symm_swap_mul_iff {σ : Perm α} {y y' x : α} (hy : y ∈ D) (h
     fun h z hz ↦ h _ ((hD z).2 hz)⟩
 
 open scoped Classical in
-/-- A family closed under the swap of two elements `y` and `y'` of `D` places `y` first as often
-as `y'`. -/
 private theorem card_filter_isMinOn_symm_eq {S : Finset (Perm α)} {y y' : α} (hy : y ∈ D)
     (hy' : y' ∈ D) (hS : ∀ σ ∈ S, swap y y' * σ ∈ S) :
     #{σ ∈ S | IsMinOn σ.symm D y} = #{σ ∈ S | IsMinOn σ.symm D y'} := by

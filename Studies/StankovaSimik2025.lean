@@ -68,8 +68,6 @@ def _root_.Simik2024.VerbPosition.availableReadings : VerbPosition → List Pola
   | .v1 => [.positive]
   | .nonV1 => [.negative, .positive]
 
-/-- A reading is available exactly when its operator c-commands the negated verb, which FALSUM
-always does and the canonical operator does only over the verb in situ. -/
 theorem mem_availableReadings_iff (wp : VerbPosition) (n : Polarity) :
     n ∈ wp.availableReadings ↔ n = .positive ∨ wp = .nonV1 := by
   cases wp <;> cases n <;> decide
@@ -117,8 +115,6 @@ def LicensedAt (e : PolarityItem) (n : Polarity) : Prop :=
 instance (e : PolarityItem) (n : Polarity) : Decidable (LicensedAt e n) := by
   unfold LicensedAt; infer_instance
 
-/-- The two indefinites split the readings, the polarity item being licensed exactly where the
-concord item is not. -/
 theorem licensedAt_ppi_iff_not_nci (n : Polarity) :
     LicensedAt Indefinite.ppi.entry n ↔ ¬ LicensedAt Indefinite.nci.entry n := by
   cases n <;> decide
@@ -156,34 +152,24 @@ instance (wp : VerbPosition) (ind : Indefinite) (ctx : SignType) :
     Decidable (Felicitous wp ind ctx) := by
   unfold Felicitous; infer_instance
 
-/-- In interrogative questions the positive polarity item is felicitous in every context,
-since FALSUM licenses it and is indifferent to evidence. -/
 theorem v1_ppi_any_context (ctx : SignType) : Felicitous .v1 .ppi ctx := by
   decide +revert
 
-/-- In interrogative questions the negative concord item is never felicitous, since the
-clause-initial verb is out of reach of the canonical operator. -/
 theorem v1_nci_never (ctx : SignType) : ¬ Felicitous .v1 .nci ctx := by
   decide +revert
 
-/-- Interrogative questions are indifferent to the context. -/
 theorem v1_context_invariant (ind : Indefinite) (ctx ctx' : SignType) :
     Felicitous .v1 ind ctx ↔ Felicitous .v1 ind ctx' := by
   decide +revert
 
-/-- A declarative question with the concord item is felicitous exactly under negative
-evidence, which inner negation requires. -/
 theorem nonV1_nci_iff (ctx : SignType) :
     Felicitous .nonV1 .nci ctx ↔ ctx = -1 := by
   decide +revert
 
-/-- A declarative question with the polarity item is felicitous exactly under some evidence,
-since FALSUM licenses the verb in situ and the word order needs evidence. -/
 theorem nonV1_ppi_iff (ctx : SignType) :
     Felicitous .nonV1 .ppi ctx ↔ ctx ≠ 0 := by
   decide +revert
 
-/-- Declarative questions are infelicitous without contextual evidence. -/
 theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind 0 := by
   cases ind <;> decide
 
@@ -204,8 +190,6 @@ theorem nahodou_excludes_nci (wp : VerbPosition) :
       LicensedAt Indefinite.nci.entry n ∧ NahodouLicensed .negative n := by
   cases wp <;> decide
 
-/-- *Náhodou* is felicitous with the polarity item at either verb position, the verb in situ
-being licensed by FALSUM under a contrastive topic. -/
 theorem nahodou_ppi (wp : VerbPosition) :
     ∃ n ∈ wp.availableReadings,
       LicensedAt Indefinite.ppi.entry n ∧ NahodouLicensed .negative n := by
@@ -218,18 +202,14 @@ def CopakLicensed (pol : Polarity) (ctx : SignType) : Prop := ctx = evidence pol
 instance (pol : Polarity) (ctx : SignType) : Decidable (CopakLicensed pol ctx) := by
   unfold CopakLicensed; infer_instance
 
-/-- *Copak* is infelicitous without contextual evidence. -/
 theorem copak_requires_bias (pol : Polarity) : ¬ CopakLicensed pol 0 := by
   cases pol <;> decide
 
-/-- *Copak* marks a conflict, the prior belief it conveys opposing the evidence it requires. -/
 theorem copak_prior_ne_evidence (pol : Polarity) :
     (prior pol = 1 ↔ evidence pol = -1) ∧
       (prior pol = -1 ↔ evidence pol = 1) := by
   cases pol <;> decide
 
-/-- The two particles part on context, *náhodou* being licensed by FALSUM whatever the
-evidence and *copak* only under evidence. -/
 theorem nahodou_copak_opposite (ctx : SignType) :
     NahodouLicensed .negative .positive ∧ (CopakLicensed .negative ctx → ctx ≠ 0) := by
   decide +revert

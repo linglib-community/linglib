@@ -37,7 +37,6 @@ open Phonology Czech.Phonology Short1993.Wordlist
 
 /-! ### Phonemes -/
 
-/-- The vowels are the five. -/
 theorem vowels_eq : vowels = {a, e, i, o, u} := by decide +kernel
 
 /-- "There are twenty-five consonantal phonemes" (p. 457). -/

@@ -103,8 +103,6 @@ instance [DecidableEq S] [DecidableEq T] [DecidableEq M] : DecidableEq (Form S T
       else isFalse fun he ↦ h' (congrArg lower he)
     else isFalse fun he ↦ h (congrArg upper he)
 
-/-- Two forms are equal when their tiers agree and their lines correspond across the
-resulting identification of positions. -/
 theorem ext {f g : Form S T M} (hu : f.upper = g.upper) (hl : f.lower = g.lower)
     (h : ∀ p, p ∈ f.links ↔
       (finCongr (congrArg List.length hu) p.1, finCongr (congrArg List.length hl) p.2)
@@ -181,8 +179,6 @@ def empty : Form S T M := ⟨[], [], ∅⟩
 @[simp] theorem empty_links : (empty : Form S T M).links = ∅ := rfl
 
 variable {f g} in
-/-- A line of a concatenation is a line of the left factor, or a line of the right factor
-shifted past the left factor's tiers. -/
 theorem mem_links_concat {p : Fin (f.concat g).upper.length × Fin (f.concat g).lower.length} :
     p ∈ (f.concat g).links ↔
       (∃ q ∈ f.links, q.1.val = p.1.val ∧ q.2.val = p.2.val) ∨
@@ -306,7 +302,6 @@ theorem noCrossing_toAR_iff :
   simp only [Set.mem_ofPred_eq, Finset.mem_coe]
   exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨(f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, h⟩⟩
 
-/-- Presenting a concatenation gives the concatenation of the presentations. -/
 theorem toAR_concat : (f.concat g).toAR = f.toAR * g.toAR :=
   AR.ext_of_true_false rfl rfl fun p q ↦ by
     rw [AR.link_mul]
@@ -321,7 +316,6 @@ theorem toAR_concat : (f.concat g).toAR = f.toAR * g.toAR :=
       · exact ⟨(natAddAppend _ _ s.1, natAddAppend _ _ s.2), .inr ⟨s, hs, rfl, rfl⟩,
           by simp; omega, by simp; omega⟩
 
-/-- The empty form presents the empty representation. -/
 theorem toAR_empty : (empty : Form S T M).toAR = 1 :=
   AR.ext_of_true_false rfl rfl fun p q ↦ by simp [lines, empty]
 
@@ -405,11 +399,9 @@ theorem isLinkedLower_iff : c.IsLinkedLower i ↔ ∃ k, (k, i) ∈ c.links :=
 @[simp] theorem mem_deletedLinks : l ∈ c.deletedLinks ↔ l ∈ u.links ∧ l ∉ c.links :=
   Finset.mem_sdiff
 
-/-- The faithful candidate has no inserted line. -/
 @[simp] theorem insertedLinks_input : (input u).insertedLinks = ∅ := by
   simp [insertedLinks]
 
-/-- The faithful candidate has no deleted line. -/
 @[simp] theorem deletedLinks_input : (input u).deletedLinks = ∅ := by
   simp [deletedLinks]
 
@@ -531,7 +523,6 @@ theorem insertLink_mem_gen (hk : c.IsFloating k)
     c.insertLink k i ∈ c.gen :=
   mem_gen.2 (.inr (.inr ⟨k, i, hk, hx, rfl⟩))
 
-/-- GEN never resurrects a deleted autosegment. -/
 theorem deleted_subset_of_mem_gen (hc : c' ∈ c.gen) : c.deleted ⊆ c'.deleted := by
   rcases mem_gen.1 hc with rfl | ⟨_, -, rfl⟩ | ⟨_, _, -, -, rfl⟩
   exacts [subset_rfl, Finset.subset_insert _ _, subset_rfl]

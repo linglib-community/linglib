@@ -170,12 +170,10 @@ variable (M : KripkeModel W Atom) (φ ψ χ : Formula Atom) (t : Finset W)
 theorem support_empt_iff_gdisj_bot : support M (.empt φ) t ↔ support M (.gdisj φ .bot) t :=
   Iff.rfl
 
-/-- `φ ∧ (ψ ⨼ χ) ≡ (φ ∧ ψ) ⨼ (φ ∧ χ)`. -/
 theorem support_conj_gdisj :
     support M (.conj φ (.gdisj ψ χ)) t ↔ support M (.gdisj (.conj φ ψ) (.conj φ χ)) t :=
   and_or_left
 
-/-- `φ ∨ (ψ ⨼ χ) ≡ (φ ∨ ψ) ⨼ (φ ∨ χ)`. -/
 theorem support_disj_gdisj :
     support M (.disj φ (.gdisj ψ χ)) t ↔ support M (.gdisj (.disj φ ψ) (.disj φ χ)) t := by
   constructor
@@ -221,7 +219,6 @@ private theorem eval_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ ∧ an
   | empt ψ ih => exact ⟨Or.inr rfl, (ih hNE).2⟩
   | poss ψ _ => exact ⟨fun w hw ↦ absurd hw (by simp), fun w hw ↦ absurd hw (by simp)⟩
 
-/-- NE-free formulas have the empty-state property. -/
 theorem support_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ :=
   (eval_empty_of_neFree M φ hNE).1
 
@@ -381,8 +378,6 @@ theorem gdFree_ofBSML (φ : BSML.Formula Atom) : (ofBSML φ).GDFree := by
 theorem emptFree_ofBSML (φ : BSML.Formula Atom) : (ofBSML φ).EmptFree := by
   induction φ <;> simp_all [ofBSML, Formula.EmptFree]
 
-/-- The embedding preserves bilateral evaluation, so the joint language is a conservative
-    extension of BSML. -/
 theorem eval_ofBSML (b : Bool) (φ : BSML.Formula Atom) :
     eval M b (ofBSML φ) t ↔ BSML.eval M b φ t := by
   induction φ generalizing b t with

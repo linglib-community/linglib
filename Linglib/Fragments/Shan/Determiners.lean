@@ -29,7 +29,6 @@ def nan : DemonstrativeDeterminer := { form := "nân", deixis := Person.first.pa
 /-- The Shan determiners are the optional demonstratives *nâj/nân*. -/
 def inventory : Determiner.Inventory := [.demonstrative naj, .demonstrative nan]
 
-/-- No strength is marked. -/
 theorem strengths_inventory : inventory.strengths = ∅ := by decide
 
 end Shan.Determiners

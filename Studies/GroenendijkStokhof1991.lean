@@ -105,7 +105,6 @@ def SEquiv : Prop := φ.dom = ψ.dom
 def PEquiv : Prop := φ.cod = ψ.cod
 
 variable {φ ψ} in
-/-- Equivalent formulas are s-equivalent and p-equivalent (Facts 1 and 2). -/
 theorem SEquiv.of_eq (h : φ = ψ) : SEquiv φ ψ := h ▸ rfl
 
 variable {φ ψ} in
@@ -141,8 +140,6 @@ variable (φ ψ)
 
 /-! ### Some logical facts, section 3.4 -/
 
-/-- Implication and disjunction are definable from negation and conjunction in the usual
-way. -/
 theorem impl_eq_neg_comp_neg : (φ ⇒ ψ) = ∼(φ ○ ∼ψ) := by
   simp only [neg_eq_compl_dom, dom_comp, dom_test, ← core_compl, compl_compl, impl_eq_core_dom]
 
@@ -150,39 +147,31 @@ theorem disj_eq_neg_comp_neg_neg : (φ ⋎ ψ) = ∼(∼φ ○ ∼ψ) := by
   rw [test_comp_test, neg_test, neg_eq_compl_dom, neg_eq_compl_dom, Set.compl_inter,
     compl_compl, compl_compl, disj_eq_dom_union_dom]
 
-/-- Disjunction is definable from implication, `φ ∨ ψ ≃ ¬φ → ψ`; the converse fails below. -/
 theorem disj_eq_neg_impl : (φ ⋎ ψ) = (∼φ ⇒ ψ) := by
   simp only [impl_eq_core_dom, core_test, neg_eq_compl_dom, compl_compl, disj_eq_dom_union_dom]
 
-/-- A negated conjunction is an implication to the negated conjunct. -/
 theorem neg_comp : ∼(φ ○ ψ) = (φ ⇒ ∼ψ) := by
   simp only [impl_eq_core_dom, dom_test, neg_eq_compl_dom, core_compl, dom_comp]
 
 /-! #### Closure and double negation, Definition 17 -/
 
-/-- The closure operator is double negation. -/
 theorem close_eq_neg_neg : ◇φ = ∼∼φ := by
   rw [neg_test, neg_eq_compl_dom, compl_compl]
 
-/-- Closure fixes exactly the tests. -/
 theorem close_eq_self_iff_isTest : ◇φ = φ ↔ IsTest φ :=
   ⟨fun h ↦ h ▸ isTest_test _, fun h ↦ h.eq_test_dom.symm⟩
 
-/-- The restricted law of double negation says that `¬¬φ ≃ φ` exactly when `φ` is a test. -/
 theorem neg_neg_eq_self_iff_isTest : ∼∼φ = φ ↔ IsTest φ :=
   close_eq_neg_neg φ ▸ close_eq_self_iff_isTest φ
 
-/-- Closure retains exactly the truth conditions, `◇φ ≃ ◇ψ` iff `φ ≃ₛ ψ`. -/
 theorem close_eq_close_iff_sEquiv : ◇φ = ◇ψ ↔ SEquiv φ ψ := test_inj
 
 theorem neg_close : ∼◇φ = ∼φ := by
   rw [neg_test, neg_eq_compl_dom]
 
-/-- Double negation keeps the truth conditions, `φ ≃ₛ ¬¬φ`. -/
 theorem sEquiv_neg_neg : SEquiv φ ∼∼φ := by
   rw [SEquiv, ← close_eq_neg_neg, dom_test]
 
-/-- The restricted interdefinability of the constants, stated through closure. -/
 theorem close_comp : ◇(φ ○ ψ) = ∼(φ ⇒ ∼ψ) := by
   rw [← neg_comp, ← close_eq_neg_neg]
 
@@ -196,8 +185,6 @@ theorem close_impl : (◇φ ⇒ ψ) = (∼φ ⋎ ψ) := by
 /-! #### Conjunction and disjunction -/
 
 variable {φ ψ} in
-/-- Tests commute, and a test is idempotent, under conjunction; conjunction is associative
-outright, as `SetRel.comp_assoc`. -/
 theorem comp_comm_of_isTest (hφ : IsTest φ) (hψ : IsTest ψ) : φ ○ ψ = ψ ○ φ := by
   rw [hφ.eq_test_dom, hψ.eq_test_dom, test_comp_test, test_comp_test, Set.inter_comm]
 
@@ -205,8 +192,6 @@ variable {φ} in
 theorem comp_self_of_isTest (hφ : IsTest φ) : φ ○ φ = φ := by
   rw [hφ.eq_test_dom, test_comp_test, Set.inter_self]
 
-/-- Disjunction, static in both directions, is commutative and associative; its
-self-disjunction is the closure of the disjunct. -/
 theorem disj_self : (φ ⋎ φ) = ◇φ := by
   rw [disj_eq_dom_union_dom, Set.union_self]
 
@@ -216,8 +201,6 @@ theorem disj_comm : (φ ⋎ ψ) = (ψ ⋎ φ) := by
 theorem disj_assoc : ((φ ⋎ ψ) ⋎ χ) = (φ ⋎ (ψ ⋎ χ)) := by
   simp only [disj_eq_dom_union_dom, dom_test, Set.union_assoc]
 
-/-- The de Morgan laws DPL validates, the second an instance of distribution when the
-disjunct binds nothing in the conjunction. -/
 theorem close_comp_disj : ◇(φ ○ (ψ ⋎ χ)) = ((φ ○ ψ) ⋎ (φ ○ χ)) := by
   simp only [dom_comp, dom_test, disj_eq_dom_union_dom, preimage_union]
 
@@ -227,16 +210,12 @@ theorem disj_close_comp : (φ ⋎ (◇ψ ○ χ)) = ((φ ⋎ ψ) ○ (φ ⋎ χ)
 
 /-! #### Implication -/
 
-/-- Contraposition holds outright for a negated antecedent, and for a closed one against a
-negated consequent; the general law needs a binding condition. -/
 theorem neg_impl_comm : (∼φ ⇒ ψ) = (∼ψ ⇒ φ) := by
   rw [← disj_eq_neg_impl, ← disj_eq_neg_impl, disj_comm]
 
 theorem close_impl_eq_neg_impl_neg : (◇φ ⇒ ψ) = (∼ψ ⇒ ∼φ) := by
   rw [close_impl, disj_comm, disj_eq_neg_impl]
 
-/-- An implication is a test and turns its consequent into one, and it curries, by the
-substrate's `impl_comp`. -/
 theorem impl_close_right : (φ ⇒ ◇ψ) = (φ ⇒ ψ) := by
   rw [impl_eq_neg_comp_neg, neg_close, ← impl_eq_neg_comp_neg]
 
@@ -253,8 +232,6 @@ section Quantifiers
 
 variable {R S E : Type*} [RegisterStructure R S E] (x : R) (φ ψ : Update S)
 
-/-- The universal is definable from negation and the existential, and `¬∃xφ ≃ ∀x¬φ` holds
-unconditionally, negation turning anything into a test. -/
 theorem forall_eq_neg_exists_neg : test (dforall x φ) = ∼(dexists x ∼φ) :=
   impl_eq_neg_comp_neg _ _
 
@@ -264,14 +241,9 @@ theorem neg_exists_eq_forall_neg : ∼(dexists x φ) = test (dforall x ∼φ) :=
 theorem close_exists : ◇(dexists x φ) = ∼(test (dforall x ∼φ)) := by
   rw [close_eq_neg_neg, neg_exists_eq_forall_neg]
 
-/-- Scope extension, `∃xφ ∧ ψ ≃ ∃x[φ ∧ ψ]`, says that the binding power of the existential
-extends without limit to the right, which is what represents anaphora across sentences. It is
-the associativity of composition. -/
 theorem scope_extension : dexists x φ ○ ψ = dexists x (φ ○ ψ) :=
   comp_assoc ..
 
-/-- The donkey equivalence, `∃xφ → ψ ≃ ∀x[φ → ψ]`, says that an existential in an antecedent
-binds into the consequent with universal force. It is the currying of implication. -/
 theorem donkey_equivalence : (dexists x φ ⇒ ψ) = test (dforall x (φ ⇒ ψ)) :=
   (impl_impl _ _ _).symm
 
@@ -283,17 +255,12 @@ section Assignments
 
 variable {E : Type*} (x : ℕ) (φ ψ : Update (Assignment E))
 
-/-- An existential is a test only over a contradictory scope, given two individuals to reset
-between. This is why the externally dynamic constants are not definable from the universal and
-a static connective. -/
 theorem isTest_dexists_iff [Nontrivial E] : IsTest (dexists x φ) ↔ Contradiction φ := by
   refine ⟨fun h g ⟨k, hφ⟩ ↦ ?_, fun hc ⟨_, _⟩ ⟨_, _, hφ⟩ ↦ (hc _ ⟨_, hφ⟩).elim⟩
   obtain ⟨e, he⟩ := exists_ne (g x)
   have hg (e' : E) : Function.update g x e' = k := h.eq ⟨g, ⟨g x, by simp⟩, hφ⟩
   exact he (by simpa using congr_fun ((hg e).trans (hg (g x)).symm) x)
 
-/-- `∃xφ ≃ ¬∀x¬φ` exactly when `∃xφ` is a test, so only over a contradictory scope; the two
-are always s-equivalent. -/
 theorem exists_eq_neg_forall_neg_iff [Nontrivial E] :
     dexists x φ = ∼(test (dforall x ∼φ)) ↔ Contradiction φ := by
   rw [← isTest_dexists_iff, ← close_exists, eq_comm, close_eq_self_iff_isTest]
@@ -301,7 +268,6 @@ theorem exists_eq_neg_forall_neg_iff [Nontrivial E] :
 theorem sEquiv_exists_neg_forall_neg : SEquiv (dexists x φ) ∼(test (dforall x ∼φ)) := by
   rw [SEquiv, ← close_exists, dom_test]
 
-/-- `φ ∧ ψ ≃ ¬[φ → ¬ψ]` exactly when `φ ∧ ψ` is a test; the two are always s-equivalent. -/
 theorem comp_eq_neg_impl_neg_iff {S : Type*} (φ ψ : Update S) :
     φ ○ ψ = ∼(φ ⇒ ∼ψ) ↔ IsTest (φ ○ ψ) := by
   rw [← close_comp, eq_comm, close_eq_self_iff_isTest]
@@ -310,8 +276,6 @@ theorem sEquiv_comp_neg_impl_neg {S : Type*} (φ ψ : Update S) :
     SEquiv (φ ○ ψ) ∼(φ ⇒ ∼ψ) := by
   rw [SEquiv, ← close_comp, dom_test]
 
-/-- The restricted law of double negation fails for the existential unless its scope is
-contradictory; so a doubly negated indefinite licenses no anaphora. -/
 theorem neg_neg_exists_eq_iff [Nontrivial E] :
     ∼∼(dexists x φ) = dexists x φ ↔ Contradiction φ :=
   (neg_neg_eq_self_iff_isTest _).trans (isTest_dexists_iff x φ)
@@ -321,9 +285,6 @@ theorem dne_fails_anaphora [Nontrivial E] :
   ⟨0, test Set.univ, fun h ↦
     (neg_neg_exists_eq_iff 0 _).mp h (fun _ ↦ Classical.arbitrary E) ⟨_, rfl, trivial⟩⟩
 
-/-- Disjunction, being internally static, does not define conjunction or implication even up
-to truth conditions. Both `φ ∧ ψ ≄ₛ ¬[¬φ ∨ ¬ψ]` and `φ → ψ ≄ₛ ¬φ ∨ ψ` hold with `P` and `Q` true
-of one individual and `φ` the existential `∃xPx`. -/
 theorem not_sEquiv_comp_neg_disj_neg [Nontrivial E] :
     ∃ φ ψ : Update (Assignment E), ¬ SEquiv (φ ○ ψ) ∼(∼φ ⋎ ∼ψ) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
@@ -346,8 +307,6 @@ theorem not_sEquiv_impl_neg_disj [Nontrivial E] :
   · exact hn ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   · exact hab (by simpa using hb.symm)
 
-/-- Conjunction is neither commutative nor idempotent in general. Since binding goes left to
-right, `∃xPx ∧ Qx` differs from `Qx ∧ ∃xPx`, and the latter from its self-conjunction. -/
 theorem comp_not_comm [Nontrivial E] : ∃ φ ψ : Update (Assignment E), φ ○ ψ ≠ ψ ○ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨dexists 0 (test Set.univ), test {g | g 0 = a}, fun h ↦ ?_⟩
@@ -395,7 +354,6 @@ theorem entails_iff_valid_impl : Entails φ ψ ↔ Valid (φ ⇒ ψ) := by
 theorem sEntails_iff_entails_close : SEntails φ ψ ↔ Entails ◇φ ψ := by
   rw [Entails, cod_test, SEntails]
 
-/-- A closed or doubly negated formula entails the formula. -/
 theorem entails_close_self : Entails ◇φ φ :=
   (sEntails_iff_entails_close φ φ).mp subset_rfl
 
@@ -406,8 +364,6 @@ section Assignments
 
 variable {E : Type*} (x : ℕ)
 
-/-- The entailment `∃xPx ⊨ Px`, the paper's *A man came in wearing a hat. So, he wore a hat*,
-holds because the premiss's output binds the free variable of the conclusion. -/
 theorem entails_exists_atom (p : E → Prop) :
     Entails (dexists x (test {g : Assignment E | p (g x)})) (test {g | p (g x)}) := by
   rintro _ ⟨_, _, -, rfl, hp⟩
@@ -420,7 +376,6 @@ theorem entails_atom_exists (p : E → Prop) :
   rintro _ ⟨h, rfl, hp⟩
   exact ⟨h, h, ⟨h x, (Function.update_eq_self x h).symm⟩, rfl, hp⟩
 
-/-- s-entailment sees no binding from premiss to conclusion, so `∃xPx ⊭ₛ Px`. -/
 theorem not_sEntails_exists_atom [Nontrivial E] :
     ∃ p : E → Prop, ¬ SEntails (dexists 0 (test {g : Assignment E | p (g 0)}))
       (test {g | p (g 0)}) := by
@@ -453,8 +408,6 @@ theorem not_entails_trans [Nontrivial E] :
   obtain ⟨_, rfl, hb⟩ := h (a := fun _ ↦ b) ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   exact hab (by simpa using hb.symm)
 
-/-- Nor is it monotone in its premisses. Although `∃xPx ⊨ Px`, a further premiss `∃xQx` resets
-the binding, so `∃xPx, ∃xQx ⊭ Px`, a sequence of premisses being their conjunction. -/
 theorem not_entails_comp_exists [Nontrivial E] :
     ∃ p : E → Prop, ¬ Entails (dexists 0 (test {g : Assignment E | p (g 0)}) ○
       dexists 0 (test Set.univ)) (test {g | p (g 0)}) := by
@@ -571,8 +524,6 @@ universe u v w x
 variable {L : Language.{u, v}} {V : Type w} [DecidableEq V] (M : Type x) [L.Structure M]
   (φ ψ χ : Formula L V) (x y : V)
 
-/-- Implication, disjunction, and the universal are definable from negation, conjunction, and
-the existential. -/
 theorem eval_imp_eq : (φ ⟿ ψ).eval M = (¬ᵈ(φ ⋏ ¬ᵈψ)).eval M :=
   impl_eq_neg_comp_neg _ _
 
@@ -582,11 +533,9 @@ theorem eval_disj_eq : (φ ⋎ ψ).eval M = (¬ᵈ(¬ᵈφ ⋏ ¬ᵈψ)).eval M 
 theorem eval_all_eq : (∀[x] φ).eval M = (¬ᵈ∃[x] ¬ᵈφ).eval M :=
   forall_eq_neg_exists_neg x _
 
-/-- The restricted law of double negation on formulas. -/
 theorem eval_neg_neg_eq_iff : (¬ᵈ¬ᵈφ).eval M = φ.eval M ↔ IsTest (φ.eval M) :=
   neg_neg_eq_self_iff_isTest _
 
-/-- Scope extension and the donkey equivalence on formulas. -/
 theorem eval_ex_conj : ((∃[x] φ) ⋏ ψ).eval M = (∃[x] (φ ⋏ ψ)).eval M :=
   scope_extension x _ _
 
@@ -612,8 +561,6 @@ theorem eqOn_of_eval (hgh : g ~[φ.eval M] h) : Set.EqOn g h (↑φ.aqv : Set V)
   rw [← context_B]
   exact (φ.hasContext_eval M).blocks hgh
 
-/-- A formula none of whose active quantifier variables is free in another preserves the truth
-of the other from its inputs to its outputs. -/
 theorem mem_dom_eval_iff (hd : Disjoint φ.aqv ψ.fv) (hgh : g ~[φ.eval M] h) :
     g ∈ (ψ.eval M).dom ↔ h ∈ (ψ.eval M).dom :=
   (φ.hasContext_eval M).mem_dom_iff (ψ.hasContext_eval M) (by rwa [context_B, context_I]) hgh
@@ -635,7 +582,6 @@ theorem entails_of_subset (hd : Disjoint φ.aqv ψ.fv) (hsub : φ.eval M ⊆ ψ.
 theorem entails_self (hd : Disjoint φ.aqv φ.fv) : Entails (φ.eval M) (φ.eval M) :=
   entails_of_subset hd subset_rfl
 
-/-- A conjunction entails a second conjunct that binds none of its own free variables. -/
 theorem entails_conj_right (hd : Disjoint ψ.aqv ψ.fv) :
     Entails ((φ ⋏ ψ).eval M) (ψ.eval M) := by
   rintro _ ⟨_, _, _, hkh⟩
@@ -687,8 +633,6 @@ theorem isScopeBound_nbf : (nbf φ).IsScopeBound := by
   | imp φ ψ ihφ ihψ => exact isScopeBound_impNbf _ _ ihφ ihψ
   | _ => simp_all [nbf, IsScopeBound]
 
-/-- The dynamic truth conditions of a formula are the first-order ones of its normal binding
-form (Facts 20 and 21). -/
 theorem mem_dom_eval_iff_realize_nbf {g : V → M} :
     g ∈ (φ.eval M).dom ↔ (nbf φ).toFormula.Realize g := by
   rw [← eval_nbf]
@@ -726,7 +670,6 @@ variable {M} (P Q : L.Relations 1) (g : V → M)
 /-- The atomic formula `Px`. -/
 abbrev atom (P : L.Relations 1) (x : V) : Formula L V := rel P fun _ ↦ .var x
 
-/-- `∃x Px ∧ Qx` is true iff some individual is both `P` and `Q`. -/
 theorem mem_dom_eval_ex_conj_atom :
     g ∈ (((∃[x] (atom P x)) ⋏ atom Q x).eval M).dom ↔
       ∃ d : M, Language.Structure.RelMap P (fun _ ↦ d) ∧ Language.Structure.RelMap Q fun _ ↦ d := by
@@ -738,8 +681,6 @@ theorem mem_dom_eval_ex_conj_atom :
   · rintro ⟨d, hP, hQ⟩
     exact ⟨_, by simpa using hQ, d, rfl, by simpa using hP⟩
 
-/-- `¬¬∃x Px ∧ Qx` is true iff something is `P` and the input value of `x` is `Q`, the doubly
-negated existential binding nothing. -/
 theorem mem_dom_eval_neg_neg_ex_conj_atom :
     g ∈ (((¬ᵈ¬ᵈ∃[x] (atom P x)) ⋏ atom Q x).eval M).dom ↔
       (∃ d : M, Language.Structure.RelMap P fun _ ↦ d) ∧
@@ -762,8 +703,6 @@ theorem mem_dom_eval_ex_conj_atom_of_ne (hxy : x ≠ y) :
   · rintro ⟨⟨d, hP⟩, hQ⟩
     exact ⟨_, by simpa [Function.update_of_ne hxy] using hQ, d, rfl, by simpa using hP⟩
 
-/-- The binding theory sees the difference, the first formula not being scope-bound and the
-variant being so. -/
 theorem not_isScopeBound_ex_conj_atom : ¬ ((∃[x] (atom P x)) ⋏ atom Q x).IsScopeBound := by
   simp [IsScopeBound, aqv, fv]
 
@@ -771,9 +710,6 @@ theorem isScopeBound_ex_conj_atom_of_ne (hxy : x ≠ y) :
     ((∃[y] (atom P y)) ⋏ atom Q x).IsScopeBound := by
   simp [IsScopeBound, aqv, fv, hxy.symm]
 
-/-- A test need not be a condition syntactically. `x = y ∧ ∃x[x = y]` resets `x` to the value it
-had, so it is a test in every structure, while having an active quantifier and being no
-contradiction; it is equivalent to the condition `x = y`. -/
 theorem isTest_eval_equal_conj_ex_equal (hxy : x ≠ y) :
     IsTest (((.var x ≐ .var y) ⋏ ∃[x] (.var x ≐ .var y) : Formula L V).eval M) := by
   rintro ⟨g, h⟩ ⟨_, ⟨rfl, hg⟩, hex⟩
@@ -846,8 +782,6 @@ theorem _root_.DRT.Condition.toDPL_dis (l r : DRS L V) :
 
 variable [DecidableEq V] (M : Type x) [L.Structure M]
 
-/-- A box whose conditions translate to the tests of their verification denotes its box
-relation. -/
 private theorem eval_toDPL_of_conditions (K : DRS L V)
     (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | VerifiesCondition f c}) :
     K.toDPL.eval M = K.toRel := by

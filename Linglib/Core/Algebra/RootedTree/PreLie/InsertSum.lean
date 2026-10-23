@@ -130,8 +130,6 @@ private theorem insertion_node_pair (a : α) (cs : List (RoseTree α)) (S₁ S�
 
 open UnorderedTree in
 mutual
-/-- Grafting `S₁` into `T` and then `S₂` into the result is grafting `S₁ ◁ S₂` into `T`, plus
-grafting `S₁` and `S₂` into `T` at once, once children are unordered. -/
 theorem map_mk_bind_insertSum : ∀ (T S₁ S₂ : RoseTree α),
     ((T ◁ S₁).bind (· ◁ S₂)).map mk =
       ((S₁ ◁ S₂).bind (T ◁ ·)).map mk + (insertion T [S₁, S₂]).map mk
@@ -149,8 +147,6 @@ theorem map_mk_bind_insertSum : ∀ (T S₁ S₂ : RoseTree α),
     rw [e5, e1]
     simp only [← Multiset.singleton_add]
     abel
-/-- The forest case of `map_mk_bind_insertSum`. The trees of each forest keep their order, since
-only the children inside them are reordered. -/
 theorem map_mk_bind_insertionForest : ∀ (F : List (RoseTree α)) (S₁ S₂ : RoseTree α),
     ((insertionForest F [S₁]).bind (insertionForest · [S₂])).map (List.map mk) =
       ((S₁ ◁ S₂).bind (insertionForest F [·])).map (List.map mk) +
@@ -212,12 +208,10 @@ theorem insertSum_assoc_symm (T S₁ S₂ : UnorderedTree α) :
   rw [insertSum_bind_insertSum, insertSum_bind_insertSum T S₂ S₁, Multiset.pair_comm]
   abel
 
-/-- One host and one guest give the grafting product, each output a one-tree forest. -/
 theorem insertionMultiset_singleton_singleton (T S : UnorderedTree α) :
     insertionMultiset {T} {S} = (T ◁ S).map ({·}) :=
   insertionMultiset_singleton T {S}
 
-/-- Two one-tree forests multiply to their disjoint union and their graftings. -/
 theorem productMultiset_singleton_singleton (T S : UnorderedTree α) :
     productMultiset {T} {S} = {T, S} ::ₘ (T ◁ S).map ({·}) := by
   rw [productMultiset, ← Multiset.cons_zero, Multiset.antidiagonal_cons, Multiset.antidiagonal_zero]

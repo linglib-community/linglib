@@ -65,16 +65,13 @@ theorem monovaryOn_image (k : ι' → ι) (u : Set ι') :
 
 /-! ### Antivary -/
 
-/-- Any two functions antivary on a singleton. -/
 @[simp] theorem antivaryOn_singleton (a : ι) : AntivaryOn f g {a} := by
   simp [AntivaryOn]
 
-/-- The `Antivary` analogue of `Set.pairwise_union`. -/
 theorem antivaryOn_union : AntivaryOn f g (s ∪ t) ↔ AntivaryOn f g s ∧ AntivaryOn f g t ∧
     ∀ a ∈ s, ∀ b ∈ t, (g a < g b → f b ≤ f a) ∧ (g b < g a → f a ≤ f b) := by
   grind [AntivaryOn]
 
-/-- The `Antivary` analogue of `Set.pairwise_insert`. -/
 theorem antivaryOn_insert {a : ι} :
     AntivaryOn f g (insert a s) ↔
       AntivaryOn f g s ∧ ∀ b ∈ s, (g a < g b → f b ≤ f a) ∧ (g b < g a → f a ≤ f b) := by

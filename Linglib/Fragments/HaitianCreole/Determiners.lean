@@ -28,7 +28,6 @@ def inventory : Determiner.Inventory :=
   [ .article { form := "la", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := {.immediateSituation, .largerSituation, .anaphoric} } ]
 
-/-- A single article marks both strengths. -/
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end HaitianCreole.Determiners

@@ -22,8 +22,6 @@ variable {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G]
 
 namespace AddSubgroup
 
-/-- A subgroup is order-connected when it contains every element between zero and one of its
-elements. -/
 theorem ordConnected_of_Icc_zero_subset {H : AddSubgroup G} (h : ∀ b ∈ H, Set.Icc 0 b ⊆ H) :
     (H : Set G).OrdConnected := by
   refine Set.ordConnected_of_uIcc_subset_left (x := 0) fun y hy z hz ↦ ?_
@@ -32,7 +30,6 @@ theorem ordConnected_of_Icc_zero_subset {H : AddSubgroup G} (h : ∀ b ∈ H, Se
   · rw [Set.uIcc_of_ge hy₀] at hz
     simpa using H.neg_mem (h (-y) (H.neg_mem hy) ⟨neg_nonneg.2 hz.2, neg_le_neg hz.1⟩)
 
-/-- A nontrivial subgroup has a positive element. -/
 theorem exists_pos_mem_of_ne_bot {H : AddSubgroup G} (h : H ≠ ⊥) : ∃ a ∈ H, 0 < a := by
   obtain ⟨⟨a, ha⟩, hne⟩ := ne_bot_iff_exists_ne_zero.1 h
   rcases lt_or_gt_of_ne (show a ≠ 0 from fun e ↦ hne (Subtype.ext e)) with h | h
@@ -43,7 +40,6 @@ end AddSubgroup
 
 namespace ArchimedeanClass
 
-/-- The subgroup an upper set of archimedean classes cuts out is order-connected. -/
 theorem ordConnected_addSubgroup (s : UpperSet (ArchimedeanClass G)) :
     (addSubgroup s : Set G).OrdConnected := by
   rcases eq_or_ne s ⊤ with rfl | hs

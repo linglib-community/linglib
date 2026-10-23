@@ -105,8 +105,6 @@ def outcomes (m : _root_.Modifier (Set ℕ)) (N p q : ℕ) : Frame → Set ℕ
   | .positive => {k | k ≤ N ∧ k ∈ m {p}}
   | .negative => {k | k ≤ N ∧ N - k ∈ m {q}}
 
-/-- A comparison of the rest is the dual comparison of the goal-consistent count: *at least 400
-will die* leaves open what *at most 200 will be saved* does. -/
 theorem outcomes_negative (c : Comparison) (h : p + q = N) :
     outcomes c.modifier N p q .negative = outcomes c.dual.modifier N p q .positive := by
   ext k
@@ -271,8 +269,6 @@ theorem salience_raised (hn : 0 < n) :
     rcases hw with rfl | rfl | rfl <;>
       simp [salience, raised, moreThan, atLeast, exactly, fewerThan, atMost] <;> omega
 
-/-- The Fragment's reading of *bis zu* carries the upper bound Blok takes to be implicated, and
-would make the complement set salient, against the paper's list and `salience_bisZu`. -/
 theorem salience_raised_bisZu : salience (raised bisZu n) = -1 := by
   simp [salience, raised, German.NumeralModifiers.bisZu]
 

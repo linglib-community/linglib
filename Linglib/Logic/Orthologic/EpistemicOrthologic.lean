@@ -73,7 +73,6 @@ theorem boxHom_mk (φ : F) :
 theorem boxHom_le (a : LindenbaumTarski F) : boxHom box a ≤ a :=
   Quotient.inductionOn a fun φ ↦ mk_le_mk.mpr (IsEpistemicOrthologic.box_le φ)
 
-/-- The Lindenbaum–Tarski algebra of an epistemic orthologic is an epistemic ortholattice. -/
 theorem wittgensteinLaw_boxHom : WittgensteinLaw (boxHom box) := fun a ↦
   disjoint_iff_inf_le.mpr <| Quotient.inductionOn a fun φ ↦
     mk_le_mk.mpr (IsEpistemicOrthologic.wittgenstein (box := box) φ)
@@ -249,7 +248,6 @@ open LindenbaumTarski
 def canonicalVal : Var → LindenbaumTarski (ModalFormula Var) :=
   fun p ↦ toAntisymmetrization (· ≤ ·) (var p)
 
-/-- Under the canonical valuation every formula evaluates to its own class. -/
 theorem eval_canonicalVal (φ : ModalFormula Var) :
     eval (boxHom box) canonicalVal φ = toAntisymmetrization (· ≤ ·) φ := by
   induction φ with

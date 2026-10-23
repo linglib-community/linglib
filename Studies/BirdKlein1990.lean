@@ -84,7 +84,6 @@ structure IsEventStructure (prec ov : E → E → Prop) : Prop where
 
 variable {prec ov : E → E → Prop}
 
-/-- Precedence is transitive, overlap being reflexive. -/
 theorem IsEventStructure.prec_trans (h : IsEventStructure prec ov) {x y z : E}
     (hxy : prec x y) (hyz : prec y z) : prec x z :=
   h.prec_of_prec_of_ov hxy (h.ov_refl y) hyz
@@ -173,8 +172,6 @@ theorem IsEventStructureOf.noCrossing (h : IsEventStructureOf X prec ov) : X.NoC
       (h.prec_of_lt j (show (⟨q', hq'⟩ : Fin _) < ⟨q, hq⟩ from hgt)) (h.ov_of_adj h₁)
       (h.ov_of_adj h₂)
 
-/-- A representation with an interval order has an event structure: its interval order, with
-overlap the incomparability. -/
 theorem exists_isEventStructureOf_of_hasIntervalOrder (h : X.HasIntervalOrder) :
     ∃ prec ov, IsEventStructureOf X prec ov := by
   obtain ⟨r, hr, htier, hadj⟩ := h
@@ -210,7 +207,6 @@ of tiers. -/
 abbrev cycle : AR fun _ : Fin 3 ↦ Unit :=
   AR.fromRel (fun _ ↦ [(), ()]) fun i j p q ↦ p = 0 ∧ q = 1 ∧ j = i + 1
 
-/-- No two lines of the cycle cross. -/
 theorem cycle_noCrossing : cycle.NoCrossing := by decide
 
 /-- Yet the cycle has no event structure: the precedences chain through the overlaps from the

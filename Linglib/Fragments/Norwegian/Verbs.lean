@@ -133,11 +133,9 @@ def transitive (s : Stem) : Verb :=
 def withParticle (v : Verb) (p : String) : Verb :=
   { v with morphs := v.morphs ++ [.free p], formation := .particle p }
 
-/-- The compound participle puts the particle before the participle of the simplex verb. -/
 theorem compoundParticiple_withParticle (v : Verb) (p : String) :
     (v.withParticle p).compoundParticiple = p ++ v.stem.participle := rfl
 
-/-- The participle of a verb phrase is that of the simplex verb followed by the particle. -/
 theorem phraseParticiple_withParticle (v : Verb) (p : String) :
     (v.withParticle p).phraseParticiple = v.stem.participle ++ " " ++ p := rfl
 

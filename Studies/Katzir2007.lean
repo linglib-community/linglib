@@ -91,7 +91,6 @@ theorem all_mem_alternatives : allSentence ∈ structuralAlternatives lexicon so
   leafSubst_some_all ▸ horn_alternatives_are_structural lexicon someSentence .some_ .all_ .Det
     (by simp [lexicon]) (by decide)
 
-/-- The two are of equal complexity, each one substitution from the other. -/
 theorem some_all_equalComplexity :
     equalComplexity (substitutionSource lexicon someSentence) someSentence allSentence := by
   refine ⟨?_, ?_⟩ <;>
@@ -107,8 +106,6 @@ theorem source_lacks_conjP : ∀ t ∈ substitutionSource lexicon someSentence,
     ∀ s ∈ t.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = Cat.Conj) :=
   forall_mem_substitutionSource.2 ⟨by decide, by decide⟩
 
-/-- The symmetric alternative is no structural alternative, since the operations never
-introduce the conjunction phrase it needs, so the symmetry problem does not arise. -/
 theorem someButNotAll_not_mem_alternatives :
     someButNotAllSentence ∉ structuralAlternatives lexicon someSentence := fun h ↦
   (by decide : ¬ ∀ s ∈ someButNotAllSentence.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = Cat.Conj))
@@ -129,7 +126,6 @@ def cakeMeaning (t : Tree Cat Word) : Set Cake :=
 def assertableAlts (wa : Tree Cat Word → Prop) (t : Tree Cat Word) : Set (Tree Cat Word) :=
   {t' ∈ structuralAlternatives lexicon t | wa t'}
 
-/-- If *all* is weakly assertable, asserting *some* violates the conversational principle. -/
 theorem blocked_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa allSentence) :
     Blocked (assertableAlts wa) cakeMeaning someSentence :=
   ⟨allSentence, ⟨all_mem_alternatives, h⟩, LE.le.ssubset_of_not_superset
@@ -169,20 +165,16 @@ def rightDisjunct : Tree Cat Word :=
 
 theorem leafSubst_or_and : orSentence.leafSubst .or_ .and_ .Conj = andSentence := rfl
 
-/-- The conjunction is an alternative of the disjunction by substitution. -/
 theorem and_mem_alternatives : andSentence ∈ structuralAlternatives lexicon orSentence :=
   leafSubst_or_and ▸ horn_alternatives_are_structural lexicon orSentence .or_ .and_ .Conj
     (by simp [lexicon]) (by decide)
 
-/-- The left disjunct is an alternative of the disjunction, by deleting the right disjunct and
-the connective and then contracting, the effect of the L connective of [sauerland-2004]. -/
 theorem leftDisjunct_mem_alternatives :
     leftDisjunct ∈ structuralAlternatives lexicon orSentence := by
   refine Relation.ReflTransGen.head (StructuralOp.delete ⟨2, by simp⟩) ?_
   refine Relation.ReflTransGen.head (StructuralOp.delete ⟨1, by simp [List.eraseIdx]⟩) ?_
   exact Relation.ReflTransGen.single (StructuralOp.contract (List.Mem.head _) rfl)
 
-/-- The right disjunct likewise, the effect of R. -/
 theorem rightDisjunct_mem_alternatives :
     rightDisjunct ∈ structuralAlternatives lexicon orSentence := by
   refine Relation.ReflTransGen.head (StructuralOp.delete ⟨0, by simp⟩) ?_

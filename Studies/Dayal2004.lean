@@ -207,7 +207,6 @@ instance : Decidable (l.DefiniteKind num) := by unfold DefiniteKind; infer_insta
 
 instance : Decidable (l.BareKind num) := by unfold BareKind; infer_instance
 
-/-- Every kind term has a form, since a shift the Blocking Principle bars is lexicalized. -/
 theorem bareKind_or_definiteKind : l.BareKind num ∨ l.DefiniteKind num :=
   (em _).imp_right fun h ↦ l.blocked_subset (not_not.1 h)
 
@@ -251,7 +250,6 @@ def lexicalizationOf : Glottocode → Option Lexicalization
   | _ => none
 
 open Lexicalization in
-/-- ι is lexicalized exactly in the sampled languages whose fragment has a definite article. -/
 theorem iota_mem_lexicalized_iff :
     (.iota ∈ english.lexicalized ↔ English.Determiners.inventory.Blocks .iota) ∧
       (.iota ∈ romance.lexicalized ↔ Italian.Determiners.inventory.Blocks .iota) ∧

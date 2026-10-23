@@ -89,7 +89,6 @@ noncomputable def insertion :
     insertion (of' F) (of' G) = ((insertionMultiset F G).map (of' (R := R))).sum := by
   simp [insertion]
 
-/-- Inserting no trees leaves the host unchanged. -/
 @[simp] theorem insertion_one_right (x : ConnesKreimer R (UnorderedTree α)) :
     insertion x 1 = x := by
   refine LinearMap.congr_fun (lhom_ext' (f := insertion.flip 1) (g := .id) fun F ↦ ?_) x
@@ -104,7 +103,6 @@ theorem insertion_one_left (x : ConnesKreimer R (UnorderedTree α)) :
   · simp [← of'_zero, insertionMultiset_zero_right]
   · simp [← of'_zero, insertionMultiset_zero_left_of_ne_zero G hG, counit_of', hG]
 
-/-- On two trees the insertion is the grafting product. -/
 @[simp] theorem insertion_ofTree_ofTree (T S : UnorderedTree α) :
     insertion (ofTree (R := R) T) (ofTree S) = ((T ◁ S).map ofTree).sum := by
   rw [← of'_singleton, ← of'_singleton, insertion_of'_of', insertionMultiset_singleton_singleton,
@@ -195,7 +193,6 @@ theorem counit_product (x y : ConnesKreimer R (UnorderedTree α)) :
     lhom_ext' fun F ↦ lhom_ext' fun G ↦ counit_product_of'_of' F G
   exact LinearMap.congr_fun₂ h x y
 
-/-- Two trees multiply to their disjoint union plus their graftings, `T ⋆ S = T S + T ∘ S`. -/
 theorem product_ofTree_ofTree (T S : UnorderedTree α) :
     product (ofTree (R := R) T) (ofTree S) =
       ofTree T * ofTree S + insertion (ofTree T) (ofTree S) := by
@@ -313,7 +310,6 @@ theorem of_mul_of (F G : Forest (UnorderedTree α)) :
     (of F : GrossmanLarson R α) * of G = ((productMultiset F G).map of).sum := by
   ext; simp [Multiset.map_map]
 
-/-- Linear maps off `GrossmanLarson R α` agree if they agree on the basis. -/
 theorem lhom_ext {M : Type*} [AddCommMonoid M] [Module R M] {f g : GrossmanLarson R α →ₗ[R] M}
     (h : ∀ F, f (of F) = g (of F)) : f = g :=
   LinearMap.ext fun x ↦ LinearMap.congr_fun (lhom_ext' (f := f ∘ₗ linearEquiv.symm.toLinearMap)

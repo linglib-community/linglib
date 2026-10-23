@@ -72,7 +72,6 @@ alternatives to the target. -/
 noncomputable def informationValue (L : Kernel C A) (d : A → W → C → ℝ) (c : C) (w : W) : ℝ :=
   ∫ a, d a w c ∂(L c)
 
-/-- The generalized surprisal with the identity warping is the expected score. -/
 theorem genSurprisal_id (L : Kernel C A) (g : A → W → C → ℝ) (c : C) (w : W) :
     genSurprisal L id g c w = informationValue L g c w := rfl
 
@@ -120,7 +119,6 @@ end indicatorScore
 
 /-! ### Entropy -/
 
-/-- Scoring each alternative by its own surprisal is anticipatory. -/
 theorem isAnticipatory_surprisal (L : Kernel C A) :
     IsAnticipatory (fun a (_ : W) c ↦ surprisal (L c) a) := fun _ _ _ _ ↦ rfl
 

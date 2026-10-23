@@ -43,7 +43,6 @@ variable [DecidableEq γ] {M R : UnorderedTree γ}
 
 mutual
 
-/-- Substituting for a subtree that does not occur changes nothing. -/
 theorem unorderedReplace_of_count_eq_zero :
     ∀ (t : RoseTree γ), (unorderedSubtrees t).count M = 0 →
       unorderedReplace M R t = UnorderedTree.mk t
@@ -52,7 +51,6 @@ theorem unorderedReplace_of_count_eq_zero :
     rw [unorderedReplace, ite_eq_right (by rintro rfl; simp at h),
       unorderedReplaceList_of_count_eq_zero cs h.1, node_mk_tree_list]
 
-/-- Substituting for a subtree that occurs in no tree of a list changes none of them. -/
 theorem unorderedReplaceList_of_count_eq_zero :
     ∀ (cs : List (RoseTree γ)), (unorderedSubtreesList cs).count M = 0 →
       unorderedReplaceList M R cs = (cs.map UnorderedTree.mk : Multiset (UnorderedTree γ))
@@ -87,21 +85,18 @@ private theorem add_eq_singleton_iff {δ : Type*} {s t : Multiset δ} {a : δ} :
       exact .inl ⟨by simpa using h, rfl⟩
   · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> simp
 
-/-- No crown of a cut of a list of trees is `{M}` when `M` occurs in none of them. -/
 theorem crown_ne_of_mem_cutListSummandsG {cs : List (RoseTree γ)}
     (h : (unorderedSubtreesList cs).count M = 0) {q : Multiset (RoseTree γ) × List (RoseTree γ)}
     (hq : q ∈ cutListSummandsG E cs) : q.1.map UnorderedTree.mk ≠ {M} := fun hc ↦ by
   obtain ⟨x, hx, hxM⟩ := Multiset.mem_map.mp (hc ▸ Multiset.mem_singleton_self M)
   exact Multiset.count_eq_zero.mp h (hxM ▸ mk_mem_of_mem_crown_cutListSummandsG E cs q hq x hx)
 
-/-- No crown of a per-child action on `t` is `{M}` when `M` is not a subtree of `t`. -/
 theorem crown_ne_of_mem_augActionG {t : RoseTree γ} (h : (unorderedSubtrees t).count M = 0)
     {a : Multiset (RoseTree γ) × List (RoseTree γ)} (ha : a ∈ augActionG E t) :
     a.1.map UnorderedTree.mk ≠ {M} := fun hc ↦ by
   obtain ⟨x, hx, hxM⟩ := Multiset.mem_map.mp (hc ▸ Multiset.mem_singleton_self M)
   exact Multiset.count_eq_zero.mp h (hxM ▸ mk_mem_of_mem_crown_augActionG E t a ha x hx)
 
-/-- No crown of a cut of `t` is `{M}` when `M` does not occur below the root. -/
 theorem crown_ne_of_mem_cutSummandsG {t : RoseTree γ}
     (h : (unorderedSubtreesList t.children).count M = 0)
     {p : Multiset (RoseTree γ) × RoseTree γ} (hp : p ∈ cutSummandsG E t) :
@@ -126,8 +121,6 @@ theorem map_trunk_filter_cutSummandsG
     exact Multiset.map_congr (Multiset.filter_congr fun _ _ ↦ Iff.rfl)
       fun q _ ↦ (node_mk_tree_list a q.2).symm
 
-/-- When `M` occurs exactly once in a list of trees, one cut of the list has crown `{M}`, and its
-    remainder is the list with `M` replaced by `R`. -/
 theorem map_trunk_filter_cutListSummandsG
     (hE : ∀ s, UnorderedTree.mk s = M → ∃ ρ, E s = some [ρ] ∧ UnorderedTree.mk ρ = R) :
     ∀ (cs : List (RoseTree γ)), (unorderedSubtreesList cs).count M = 1 →
@@ -174,8 +167,6 @@ theorem map_trunk_filter_cutListSummandsG
         simp only [add_eq_singleton_iff, Multiset.map_eq_zero, Multiset.card_eq_zero]
         exact ⟨fun h ↦ h.resolve_right fun h' ↦ hx h'.2, .inl⟩
 
-/-- When `M` occurs exactly once in `t`, the per-child actions on `t` with crown `{M}` leave `t`
-    with `M` replaced by `R`. -/
 theorem map_trunk_filter_augActionG
     (hE : ∀ s, UnorderedTree.mk s = M → ∃ ρ, E s = some [ρ] ∧ UnorderedTree.mk ρ = R) :
     ∀ (t : RoseTree γ), (unorderedSubtrees t).count M = 1 →

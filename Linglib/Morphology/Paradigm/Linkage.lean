@@ -148,20 +148,16 @@ def IsUnfaithful (ι : S → M) : Prop := ∃ l σ, ℓ.pm l σ ≠ ι σ
 /-- A form cell is virtual ([stump-2012-mmm8]) when no content cell corresponds to it. -/
 def IsVirtual (zτ : Z × M) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
 
-/-- Defectiveness is exactly the failure of totality. -/
 @[simp, push] theorem not_isTotal_iff : ¬ ℓ.IsTotal ↔ ℓ.IsDefective := by
   simp [IsDefective, Realization.IsTotal, Finset.not_nonempty_iff_eq_empty]
 
-/-- Syncretism is exactly the failure of injectivity. -/
 @[simp, push] theorem not_isInjective_iff : ¬ ℓ.IsInjective ↔ ℓ.IsSyncretic := by
   simp [IsSyncretic, IsInjective]
 
-/-- Unfaithfulness is exactly the failure of property preservation. -/
 @[simp, push] theorem not_isPropertyPreserving_iff (ι : S → M) :
     ¬ ℓ.IsPropertyPreserving ι ↔ ℓ.IsUnfaithful ι := by
   simp [IsUnfaithful, IsPropertyPreserving]
 
-/-- A property mapping injective at each lexeme makes the linkage injective. -/
 theorem isInjective_of_injective_pm {ℓ : Linkage L Z S M}
     (h : ∀ l, Function.Injective (ℓ.pm l)) : ℓ.IsInjective :=
   fun l _ _ hne ↦ Finset.disjoint_left.mpr fun _ h₁ h₂ ↦
@@ -181,23 +177,18 @@ def IsHeteroclite (cls : Z → K) (l : L) : Prop :=
 
 variable {ℓ} {p : Z → X} {cls : Z → K} {l : L}
 
-/-- Invariance along `id` is invariance. -/
 theorem isInvariantAlong_id_iff : ℓ.IsInvariantAlong id l ↔ ℓ.IsInvariant l := Iff.rfl
 
-/-- Heteroclisis along `id` is suppletion. -/
 theorem isHeteroclite_id_iff : ℓ.IsHeteroclite id l ↔ ℓ.IsSuppletive l := Iff.rfl
 
-/-- A lexeme fails to be invariant along `p` exactly when it is heteroclite along `p`. -/
 @[simp, push] theorem not_isInvariantAlong_iff :
     ¬ ℓ.IsInvariantAlong p l ↔ ℓ.IsHeteroclite p l := by
   simp [IsInvariantAlong, IsHeteroclite]
 
-/-- Invariance along `p` transfers to invariance along any coarsening `q ∘ p`. -/
 theorem IsInvariantAlong.comp (h : ℓ.IsInvariantAlong p l) (q : X → Y) :
     ℓ.IsInvariantAlong (q ∘ p) l :=
   fun _ _ z hz z' hz' ↦ congrArg q (h z hz z' hz')
 
-/-- An invariant lexeme is invariant along every projection. -/
 theorem _root_.Morphology.Realization.IsInvariant.isInvariantAlong (h : ℓ.IsInvariant l)
     (p : Z → X) : ℓ.IsInvariantAlong p l :=
   fun _ _ z hz z' hz' ↦ congrArg p (h z hz z' hz')
@@ -257,7 +248,6 @@ section Realized
 
 variable (ℓ) [DecidableEq W] (rf : Z → M → W)
 
-/-- A content cell realizes as the image of its form correspondents under `rf`. -/
 theorem realized_eq_image_corr [DecidableEq M] (l : L) (σ : S) :
     ℓ.realized rf l σ = (ℓ.corr l σ).image fun zτ ↦ (rf zτ.1 zτ.2, zτ.2) := by
   ext; simp
@@ -321,7 +311,6 @@ paradigm linkage (5) of [stump-2006] with no language-specific rules (`ofRules_n
 being the root of `l`. -/
 abbrev canonical (ι : S → M) (st : L → Z) : Linkage L Z S M := ofFun ι fun l _ ↦ st l
 
-/-- Under an injective identification, the canonical linkage is canonical. -/
 theorem canonical_isCanonical {ι : S → M} (hι : Function.Injective ι) (st : L → Z) :
     (canonical ι st).IsCanonical ι :=
   (ofFun_isCanonical_iff hι).mpr fun _ _ _ ↦ rfl

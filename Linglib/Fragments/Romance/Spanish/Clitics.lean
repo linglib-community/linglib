@@ -202,7 +202,6 @@ theorem paradigm_dative_eq_paradigm_reflexive_iff (c : Person.Category) :
       c.person ≠ .third := by
   cases c <;> decide +kernel
 
-/-- Every category has a reflexive form. -/
 theorem paradigm_reflexive_nonempty (c : Person.Category) :
     (ReflexivePronoun.paradigm reflexive c).Nonempty := by
   cases c <;> decide +kernel

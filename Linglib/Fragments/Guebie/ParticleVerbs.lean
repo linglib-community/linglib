@@ -48,7 +48,6 @@ def Morpheme.ATRUniform (m : Morpheme) : Prop :=
 instance (m : Morpheme) : Decidable m.ATRUniform := by
   unfold Morpheme.ATRUniform; infer_instance
 
-/-- Giving an ATR-uniform morpheme's vowels its own value changes nothing. -/
 theorem Morpheme.ATRUniform.map_withATR {m : Morpheme} (h : m.ATRUniform) :
     m.vowels.map (withATR · m.atr) = m.vowels :=
   (List.map_congr_left (g := id) fun v hv ↦ by rw [← h v hv, withATR_atr, id]).trans
@@ -99,7 +98,6 @@ def particleVerbs : List ParticleVerb :=
    ⟨dakO, ggO, "move"⟩, ⟨dakO, wa, "hide"⟩,
    ⟨jOkU, ni, "see"⟩, ⟨jOkU, ngwOsa, "scrape"⟩]
 
-/-- Every morpheme in the lexicon is ATR-uniform. -/
 theorem particleVerbs_ATRUniform :
     ∀ pv ∈ particleVerbs, pv.particle.ATRUniform ∧ pv.verb.ATRUniform := by decide
 

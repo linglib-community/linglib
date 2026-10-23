@@ -68,8 +68,6 @@ universe u
 
 variable {α β : Type u}
 
-/-- A domain containing the trivial proposition makes *only* unsatisfiable for any other
-prejacent. -/
 theorem atMost_eq_empty_of_univ_mem {W : Type*} {C : Set (Set W)} {p : Set W}
     (hC : Set.univ ∈ C) (hp : p ≠ Set.univ) : atMost (· = ·) C p = ∅ :=
   Set.eq_empty_iff_forall_notMem.2 fun w hw ↦ hp (hw _ hC (Set.mem_univ w))
@@ -225,7 +223,6 @@ theorem ace_ssubset_pass : ace m ⊂ pass {m} := by
   · have := h (show (fun _ ↦ (1 : Fin 3)) ∈ pass {m} by simp [pass])
     exact absurd this (by simp [ace])
 
-/-- A group passed iff its parts did. -/
 theorem pass_union [DecidableEq E] (g g' : Finset E) : pass (g ∪ g') = pass g ∩ pass g' := by
   ext w; simp [pass, or_imp, forall_and]
 
@@ -279,8 +276,6 @@ def cut (x y : E) : Set (Set (E × E)) := atom (x, y)
 /-- The question *Who cut Bill down to size?* (25a) over the persons `P`. -/
 def whoCut (b : E) : Set (Set (Set (E × E))) := (fun x ↦ cut x b) '' P
 
-/-- The focus semantic value of *[Mary]F cut Bill down to size* is the set of propositions of the
-form 'x cut Bill down to size', over every individual. -/
 theorem subjectFocus_value :
     ((fun x ↦ cut x b) <$> focused m).alternatives = Set.range fun x ↦ cut x b :=
   alternatives_map_focused _ _

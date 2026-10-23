@@ -138,7 +138,6 @@ private theorem uniformOn_eq_zero_iff' (F : Finset α) :
 
 /-! ### The absolute reading and the majority quantifier -/
 
-/-- The absolute reading in division-free form, false on an empty reference class. -/
 theorem gen_iff_card :
     gen domain ψ alt φ ↔
       #(domain.filter fun x ↦ ψ x ∧ alt x) < 2 * #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) :=
@@ -146,7 +145,6 @@ theorem gen_iff_card :
 
 instance : Decidable (gen domain ψ alt φ) := decidable_of_iff _ gen_iff_card.symm
 
-/-- The relative reading in division-free, kernel-decidable form. -/
 theorem genRelative_iff_card (hA : (domain.filter alt).Nonempty)
     (hR : (domain.filter fun x ↦ ψ x ∧ alt x).Nonempty) :
     genRelative domain ψ alt φ ↔
@@ -154,7 +152,6 @@ theorem genRelative_iff_card (hA : (domain.filter alt).Nonempty)
         #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) * #(domain.filter alt) :=
   uniformOn_lt_iff hA hR
 
-/-- The absolute reading is the majority quantifier on the restricted domain. -/
 theorem gen_iff_most : gen domain ψ alt φ ↔ most (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ := by
   have h₁ : {x | (x ∈ domain ∧ ψ x ∧ alt x) ∧ φ x}.ncard =
       #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) := by
@@ -195,16 +192,12 @@ Over the whole carrier with trivial alternatives the absolute reading is the maj
 generalized quantifier, hence proportional: its truth depends only on the two cell counts.
 The relativized readings are exactly what departs from this. -/
 
-/-- With trivial alternatives over the whole carrier, gen is `most`. -/
 theorem gen_univ_iff_most {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β]
     (R S : β → Prop) [DecidablePred R] [DecidablePred S] :
     gen Finset.univ R (fun _ ↦ True) S ↔ most R S := by
   simp only [gen_iff_most, Finset.mem_univ, true_and, and_true]
 
 open Classical in
-/-- With trivial alternatives over the whole carrier, gen is proportional
-([peters-westerstahl-2006]), a property of this operator that the genericity literature's
-counterexamples to majority accounts target. -/
 theorem gen_proportional {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β] :
     Proportional (fun R S : β → Prop ↦ gen Finset.univ R (fun _ ↦ True) S) := fun R₁ S₁ R₂ S₂ ↦ by
   simpa only [gen_univ_iff_most] using proportional_most R₁ S₁ R₂ S₂
@@ -244,21 +237,18 @@ At the extreme thresholds the restricted classical quantifiers reappear; sometim
 existential, so a generic over an empty reference class entails nothing (§5.6). -/
 
 omit [DecidablePred φ] in
-/-- *Always*, probability 1, is the restricted universal. -/
 theorem freq_eq_one_iff (hR : (domain.filter fun x ↦ ψ x ∧ alt x).Nonempty) :
     freq domain ψ alt φ (· = 1) ↔ every (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ :=
   (uniformOn_eq_one_iff' hR).trans
     ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h x hx ↦ h x (Finset.mem_filter.1 hx)⟩
 
 omit [DecidablePred φ] in
-/-- *Never*, probability 0, is the restricted `no`. -/
 theorem freq_eq_zero_iff :
     freq domain ψ alt φ (· = 0) ↔ no (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ :=
   (uniformOn_eq_zero_iff' _).trans
     ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h x hx ↦ h x (Finset.mem_filter.1 hx)⟩
 
 omit [DecidablePred φ] in
-/-- *Sometimes*, positive probability, is the restricted existential. -/
 theorem freq_pos_iff :
     freq domain ψ alt φ (0 < ·) ↔ GQ.some (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ := by
   have h := freq_eq_zero_iff (domain := domain) (ψ := ψ) (alt := alt) (φ := φ)

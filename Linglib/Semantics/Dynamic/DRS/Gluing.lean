@@ -140,8 +140,6 @@ variable [∀ n, DecidableEq (L.Relations n)]
 
 variable {x : FamilyOfElements (presheaf L V) R}
 
-/-- In a compatible family, a literal is held wherever its renaming is the renaming of a held
-literal: the two are compared on a context of fresh referents. -/
 theorem mem_of_compatible (hx : x.Compatible) {Y₁ Y₂ : Context L V} {f₁ : Y₁ ⟶ c}
     {f₂ : Y₂ ⟶ c} (h₁ : R f₁) (h₂ : R f₂) {l : Literal Y₁} {m : Literal Y₂}
     (hlm : l.map f₁ = m.map f₂) (hm : m ∈ Theory.lits (x f₂ h₂)) (e : Fin l.rel.1.1 ↪ V) :
@@ -301,7 +299,6 @@ theorem exists_isGluing_iff : (∃ s, C.IsGluing (presheaf L V) x s) ↔
   rw [← hs i]
   exact Theory.mem_restrict.2 (hs.pushforward_subset hl)
 
-/-- Gluings are unique along covers jointly surjective on literals. -/
 theorem IsGluing.unique (hC : C.presieve ∈ literalPrecoverage L V c)
     (hs : C.IsGluing (presheaf L V) x s) (hs' : C.IsGluing (presheaf L V) x s') : s = s' := by
   have (t : Theory c) (ht : C.IsGluing (presheaf L V) x t) : t.lits = C.pushforward x :=
@@ -328,13 +325,11 @@ def glue (C : Cover c ι) (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab
 variable (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
   (hinj : ∀ i, Function.Injective (C.map i).map) (x)
 
-/-- Under disjoint vocabularies and injective cover maps the renamed local literals glue. -/
 theorem isGluing_glue : C.IsGluing (presheaf L V) x (C.glue hdisj hinj x) := fun i =>
   Theory.ext (Finset.ext fun l => by
     simp only [presheaf_map, Quiver.Hom.unop_op, Theory.mem_restrict, glue, mem_pushforward]
     grind [eq_of_map_eq, Literal.map_injective])
 
-/-- The referents of the glued DRS are those of the renamed local DRSs. -/
 theorem referents_toDRS_glue : (C.glue hdisj hinj x).toDRS.referents =
     Finset.univ.biUnion fun i => ((x i).toDRS.map (C.map i).extend).referents := by
   ext t

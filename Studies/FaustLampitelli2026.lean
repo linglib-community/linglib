@@ -574,7 +574,6 @@ def segment : Lang → String → Phonology.Segment
   | .tigre, "k" => Tigre.Phonology.k
   | _, _ => ⊥
 
-/-- The paper's roots, read as segments, are the fragments' roots. -/
 theorem fragment_roots :
     tigrinyaRoots.map (·.2.map (segment .tigrinya)) =
       [Tigrinya.Phonology.whip, Tigrinya.Phonology.hear, Tigrinya.Phonology.arrest,

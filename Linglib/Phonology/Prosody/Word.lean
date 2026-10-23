@@ -159,8 +159,6 @@ can be certified `IsWord` by `decide`. -/
     here. -/
 abbrev IsWord : Tree → Prop := IsConstituent .om
 
-/-- A non-recursive word is an ω over well-formed feet and stray σ-leaves, the structural content
-    of `IsWord ∧ noRec = 0`, used to read the grid off a word. -/
 theorem isWord_children {a : Constituent} {cs : List Tree}
     (hw : IsWord (.node a cs)) (hr : noRec (.node a cs) = 0) :
     a.level = .om ∧ ∀ c ∈ cs, IsFoot c ∨ (c.value.level = .syl ∧ c.children = []) := by
@@ -213,7 +211,6 @@ def PerfectWord (measure : List Syllable.Weight → ℕ) (t : Tree) : Prop :=
   (feet t).length = 1 ∧ (∀ f ∈ feet t, measure f = 2) ∧ unfootedCount t = 0
 instance : Decidable (PerfectWord measure t) := by unfold PerfectWord; infer_instance
 
-/-- A perfect word is minimal. -/
 theorem PerfectWord.minimal (h : PerfectWord measure t) : MinimalWord measure t := by
   obtain ⟨hlen, hwf, _⟩ := h
   rcases hfeet : feet t with _ | ⟨f, fs⟩
@@ -225,7 +222,6 @@ theorem PerfectWord.maximal (h : PerfectWord measure t) : MaximalWord measure t 
   obtain ⟨hlen, hwf, hu⟩ := h
   exact ⟨hlen.le, hu, hwf⟩
 
-/-- The perfect word is exactly minimal-and-maximal. -/
 theorem perfectWord_iff_minimal_and_maximal :
     PerfectWord measure t ↔ MinimalWord measure t ∧ MaximalWord measure t := by
   refine ⟨fun h => ⟨h.minimal, h.maximal⟩, ?_⟩
@@ -233,7 +229,6 @@ theorem perfectWord_iff_minimal_and_maximal :
   have h1 : 0 < (feet t).length := List.length_pos_of_mem hf
   exact ⟨le_antisymm hle (by omega), hwf, hu⟩
 
-/-- Maximality entails minimality for a footed word ([uchihara-mendozaruiz-2021]). -/
 theorem MaximalWord.minimal (hne : feet t ≠ []) (h : MaximalWord measure t) :
     MinimalWord measure t := by
   obtain ⟨_, _, hwf⟩ := h

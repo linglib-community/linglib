@@ -145,13 +145,11 @@ theorem neg_homogeneous_eq_one_iff {n : ℕ} : -homogeneous n = 1 ↔ n = 0 := b
 
 /-! ### Predictions (section 1.3) -/
 
-/-- All three approaches derive the multiplicity inference of a positive plural sentence. -/
 theorem readings_positive :
     exhIE {weak, singular} weak = strong ∧ IsLeast {weak, strong} strong ∧
       {n | homogeneous n = 1} = strong :=
   ⟨exhIE_weak, isLeast_strong, Set.ext fun _ ↦ homogeneous_eq_one_iff⟩
 
-/-- All three approaches make a negated plural sentence convey that none was fed. -/
 theorem readings_negative :
     exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsLeast {weakᶜ, strongᶜ} weakᶜ ∧
       {n | -homogeneous n = 1} = weakᶜ := by

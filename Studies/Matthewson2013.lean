@@ -86,8 +86,6 @@ theorem forces_usable : ∀ m ∈ modals, ∀ g, g.classical ∈ m.classical.for
     Deal2011.Usable .positive (lexicalForce m) (Deal2011.HasScalemate lexicalForce modals m) g := by
   decide
 
-/-- The epistemic clitics are modals without scales, and the circumstantial modals all belong
-to one. -/
 theorem hasScalemate_iff : ∀ m ∈ modals,
     Deal2011.HasScalemate lexicalForce modals m ↔ m.Circumstantial := by
   decide
@@ -108,7 +106,6 @@ def flavorTable : List (String × ModalFlavor) :=
     ("circumstantial", .circumstantial), ("pure circumstantial", .circumstantial),
     ("teleological", .circumstantial)]
 
-/-- Every row naming a modal other than the plain future names one of the fragment's. -/
 theorem rows_resolve :
     ∀ e ∈ Examples.all, ∀ s ∈ e.feature? "modal", s ≠ "dim" →
       (e.parse? "modal" modalTable).isSome := by
@@ -222,7 +219,6 @@ theorem circumstantial_future :
       ∀ o ∈ (e.feature? "orientation").bind orientationOf, o = .future := by
   decide
 
-/-- *dim* is obligatory with the circumstantial modals, as their future orientation needs it. -/
 theorem dim_circumstantial :
     ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable, m.Circumstantial →
       ∀ o ∈ (e.feature? "orientation").bind orientationOf,

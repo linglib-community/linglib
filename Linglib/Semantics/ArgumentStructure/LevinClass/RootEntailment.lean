@@ -184,7 +184,6 @@ def LevinClass.RootEntails (c : LevinClass) (k : Root.Kind) : Prop :=
 instance (c : LevinClass) (k : Root.Kind) : Decidable (c.RootEntails k) := by
   unfold LevinClass.RootEntails; split <;> infer_instance
 
-/-- Every recorded signature is well-formed. -/
 theorem LevinClass.rootEntailments_wellFormed (c : LevinClass) (s : Root.Kinds)
     (h : c.rootEntailments = some s) : s.WellFormed := by
   cases c <;> cases h <;> decide

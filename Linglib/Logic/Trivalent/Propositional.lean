@@ -169,12 +169,10 @@ theorem isDual :
     IsDual Formula.neg (fun M : Model Atom ↦ Realize C M d.dual) (Realize C · d) := fun _ _ ↦ by
   simp
 
-/-- On a Boolean model every standard is classical truth, under the strong Kleene connectives. -/
 theorem realize_ofBool (v : Atom → Bool) (φ : Formula Atom) :
     (Model.ofBool v ⊨[.strongKleene, d] φ) ↔ evalBool v φ = Bool.true := by
   rw [Realize, eval_ofBool, Trivalent.Designation.threshold_le_ofProp_iff]
 
-/-- Strong Kleene realization distributes over conjunction at either standard. -/
 @[simp] theorem realize_conj (φ ψ : Formula Atom) :
     (M ⊨[.strongKleene, d] Formula.conj φ ψ) ↔
       (M ⊨[.strongKleene, d] φ) ∧ (M ⊨[.strongKleene, d] ψ) :=
@@ -184,8 +182,6 @@ theorem realize_ofBool (v : Atom → Bool) (φ : Formula Atom) :
     (M ⊨[.strongKleene, d] φ.disj ψ) ↔ (M ⊨[.strongKleene, d] φ) ∨ (M ⊨[.strongKleene, d] ψ) :=
   le_sup_iff
 
-/-- A strong Kleene conditional is realized at `d` iff its consequent is whenever its antecedent is
-realized at the dual standard. -/
 @[simp] theorem realize_cond (φ ψ : Formula Atom) :
     (M ⊨[.strongKleene, d] φ.cond ψ) ↔
       ((M ⊨[.strongKleene, d.dual] φ) → (M ⊨[.strongKleene, d] ψ)) := by
@@ -214,7 +210,6 @@ theorem consequence_iff_dual {C : Connectives} {m n : Trivalent.Designation}
     Consequence C m n Γ Δ ↔ Consequence C n.dual m.dual (Δ.map .neg) (Γ.map .neg) :=
   mixedConsequence_iff_dual (Formula.isDual C m) (Formula.isDual C n)
 
-/-- In the strong Kleene model sending every atom to `0` every formula evaluates to `0`. -/
 theorem eval_const_zero (φ : Formula Atom) :
     Formula.eval .strongKleene (fun _ : Atom ↦ 0) φ = 0 := by
   induction φ with

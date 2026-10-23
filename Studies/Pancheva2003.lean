@@ -88,8 +88,6 @@ before `j`, the two overlap, and `j` ends strictly after `i`. -/
 def OverlapsInto (i j : NonemptyInterval T) : Prop :=
   i.fst < j.fst ∧ j.fst ≤ i.snd ∧ i.snd < j.snd
 
-/-- The neutral relation is the paper's, the intervals overlapping and `i` having a point before
-every point of `j`. -/
 theorem overlapsFromBefore_iff (i j : NonemptyInterval T) :
     OverlapsFromBefore i j ↔ i.Overlaps j ∧ ∃ t ∈ i, t ∉ j ∧ ∀ t' ∈ j, t < t' := by
   refine and_congr_right fun _ ↦ ⟨fun h ↦ ⟨i.fst, ?_, ?_, fun t' ht' ↦ ?_⟩, ?_⟩
@@ -100,8 +98,6 @@ theorem overlapsFromBefore_iff (i j : NonemptyInterval T) :
     exact (NonemptyInterval.mem_def.1 ht).1.trans_lt
       (hlt j.fst (NonemptyInterval.mem_def.2 ⟨le_rfl, j.fst_le_snd⟩))
 
-/-- The resultative relation is the paper's, the intervals overlapping, `i` having a point outside
-`j`, and `j` having a later point outside `i`. -/
 theorem overlapsInto_iff (i j : NonemptyInterval T) :
     OverlapsInto i j ↔
       i.Overlaps j ∧ ∃ t t', t ∈ i ∧ t ∉ j ∧ t' ∈ j ∧ t' ∉ i ∧ t < t' := by
@@ -142,8 +138,6 @@ variable {P : W → E → Prop} {Q : W → S → E → Prop} {w : W} {i : Nonemp
 theorem bounded_subset_prfv (P : W → E → Prop) (w : W) : BOUNDED P w ⊆ PRFV P w :=
   ofRel_mono (fun _ _ ↦ le_of_lt) P w
 
-/-- The paper's neutral entails Smith's neutral viewpoint, but not conversely, since the latter
-admits a reference interval that starts with the event. -/
 theorem neutral_subset_smith_neutral (P : W → E → Prop) (w : W) :
     NEUTRAL P w ⊆ ViewpointType.neutral.denote P w :=
   ofRel_mono (fun _ _ h ↦ NonemptyInterval.mem_def.2 ⟨h.2.le, h.1.2⟩) P w
@@ -196,7 +190,6 @@ section NoMin
 
 variable [NoMinOrder T]
 
-/-- Some span ending with the reference interval starts before any given time. -/
 private theorem exists_span (i : NonemptyInterval T) (a : T) :
     ∃ pts : NonemptyInterval T, i.FinalSubinterval pts ∧ pts.fst < a := by
   obtain ⟨b, hb⟩ := exists_lt (min i.fst a)
@@ -283,8 +276,6 @@ theorem bounded_experiential_of_ends_at_rb {e₀ : E} (h : (τ e₀).snd = t) :
 /-! #### Consistency with Iatridou, Anagnostopoulou and Izvorski -/
 
 omit [NoMinOrder T] in
-/-- The inclusive unbounded perfect of the older account holds exactly when an eventuality has
-begun by the time of tense. -/
 theorem perf_inclusive_unbounded_iff :
     ⟨w, t⟩ ∈ PERF (inclusive (UNBOUNDED P)) ↔ ∃ e, P w e ∧ (τ e).fst ≤ t := by
   constructor
@@ -333,9 +324,6 @@ theorem bounded_span_not_covered (h : i ∈ perfect (BOUNDED P) w) :
   let ⟨pts, ⟨e, hlt, hP⟩, hf⟩ := h
   ⟨pts, hf, e, hP, hlt.not_ge⟩
 
-/-- A perfect over the unbounded aspect, the only one the Portuguese perfect embeds, never places
-the eventuality wholly before the right boundary of the reference interval, so it has no
-experiential reading. -/
 theorem universal_not_ended_before_rb (h : i ∈ perfect (UNBOUNDED P) w) :
     ∃ e, P w e ∧ ¬ (τ e).snd < i.snd :=
   let ⟨e, hP, hm⟩ := universal_at_rb h

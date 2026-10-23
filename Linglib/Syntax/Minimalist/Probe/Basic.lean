@@ -114,52 +114,40 @@ def goal (p : Probe α) (goals : List α) : Option α :=
 
 variable {p : Probe α} {goals : List α}
 
-/-- A probe finds nothing iff no goal satisfies it. -/
 @[simp]
 theorem search_eq_none_iff : p.search goals = none ↔ ∀ a ∈ goals, ¬ p.sat a := by
   simp [search, List.find?_eq_none]
 
-/-- The found goal is a member of the sequence. -/
 theorem mem_of_search_eq_some {a : α} (h : p.search goals = some a) : a ∈ goals :=
   List.mem_of_find?_eq_some h
 
-/-- The found goal satisfies the probe. -/
 theorem sat_of_search_eq_some {a : α} (h : p.search goals = some a) : p.sat a := by
   simpa using List.find?_some h
 
-/-- Over a two-goal sequence whose lower goal's satisfaction entails the higher's, the search
-lands on the higher goal if anywhere, the kernel of gluttony only in inverse configurations
-([coon-keine-2021]) and of highest-only licensing ([halpert-2012]). -/
 theorem search_pair_of_imp {a b : α} (h : p.sat b → p.sat a) :
     p.search [a, b] = if p.sat a then some a else none := by
   by_cases ha : p.sat a <;> by_cases hb : p.sat b <;> simp_all [search]
 
-/-- The probe Agrees with `a` iff the search finds `a` and `a` interacts. -/
 theorem goal_eq_some_iff {a : α} :
     p.goal goals = some a ↔ p.search goals = some a ∧ p.int a := by
   simp [goal, Option.filter_eq_some_iff]
 
-/-- A probe satisfied by every goal finds the closest one. -/
 @[simp] theorem ofInt_search : (ofInt f).search goals = goals.head? := by
   cases goals <;> rfl
 
-/-- A probe satisfied by every goal Agrees with the closest one iff it interacts. -/
 theorem ofInt_goal_eq_some_iff {a : α} :
     (ofInt f).goal goals = some a ↔ goals.head? = some a ∧ f a := by
   rw [goal_eq_some_iff, ofInt_search]; rfl
 
-/-- A satisfying goal that does not interact absorbs the probe. -/
 theorem goal_eq_none_of_not_int {a : α} (h : p.search goals = some a) (ha : ¬ p.int a) :
     p.goal goals = none := by
   simp [goal, h, ha]
 
 @[simp] theorem search_nil : p.search [] = none := rfl
 
-/-- What the probe Agrees with, it found. -/
 theorem goal_le_search {a : α} (h : p.goal goals = some a) : p.search goals = some a :=
   (goal_eq_some_iff.mp h).1
 
-/-- When every satisfying goal interacts, Agree coincides with search. -/
 theorem goal_eq_search_of_int (h : ∀ a, p.sat a → p.int a) :
     p.goal goals = p.search goals := by
   rw [goal]
@@ -167,7 +155,6 @@ theorem goal_eq_search_of_int (h : ∀ a, p.sat a → p.int a) :
   | none => rfl
   | some a => simp [h a (sat_of_search_eq_some hs)]
 
-/-- A relativized probe Agrees with the goal it finds. -/
 theorem relativized_goal :
     (relativized f).goal goals = (relativized f).search goals :=
   goal_eq_search_of_int fun _ h ↦ h
@@ -202,8 +189,6 @@ theorem not_rel_of_search_eq_some {r : α → α → Prop} {a : α}
 theorem search_isSome : (p.search goals).isSome ↔ ∃ a ∈ goals, p.sat a := by
   simp [search, List.find?_isSome]
 
-/-- Widening satisfaction can only keep a search successful. If `p` finds a goal and `q` is
-satisfied by everything that satisfies `p` among `goals`, `q` finds one. -/
 theorem search_isSome_mono {q : Probe α} (h : ∀ a ∈ goals, p.sat a → q.sat a)
     (hp : (p.search goals).isSome) : (q.search goals).isSome := by
   obtain ⟨a, ha, hva⟩ := search_isSome.1 hp
@@ -220,25 +205,19 @@ instance [DecidableEq α] (p : Probe α) (goals : List α) (a : α) :
     Decidable (p.Licensed goals a) :=
   inferInstanceAs (Decidable (p.search goals = some a))
 
-/-- One search licenses at most one goal. -/
 theorem Licensed.unique {a b : α} (ha : p.Licensed goals a) (hb : p.Licensed goals b) : a = b :=
   Option.some.inj (ha.symm.trans hb)
 
-/-- Licensing is being the closest satisfying goal, with no satisfying goal intervening. -/
 theorem licensed_iff_closest {a : α} :
     p.Licensed goals a ↔ p.sat a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, ¬ p.sat b :=
   search_eq_some_iff_closest
 
-/-- A licensed goal is a member of the sequence. -/
 theorem Licensed.mem {a : α} (h : p.Licensed goals a) : a ∈ goals :=
   mem_of_search_eq_some h
 
-/-- A licensed goal satisfies the probe. -/
 theorem Licensed.sat {a : α} (h : p.Licensed goals a) : p.sat a :=
   sat_of_search_eq_some h
 
-/-- Licensing by the indiscriminate probe is being the structurally closest goal, bare
-minimality ([halpert-2012]'s L⁰). -/
 theorem indiscriminate_licensed_iff {a : α} :
     (indiscriminate : Probe α).Licensed goals a ↔ goals.head? = some a := by
   cases goals <;> exact Iff.rfl
@@ -265,14 +244,12 @@ theorem allLicensed_cons {a : α} :
   simp only [AllLicensed, List.mem_cons, forall_eq_or_imp, List.pairwise_cons]
   tauto
 
-/-- When all needy goals are licensed, the search reaches each of them. -/
 theorem AllLicensed.licensed (h : p.AllLicensed needs goals) {a : α} (ha : a ∈ goals)
     (hn : needs a) : p.Licensed goals a := by
   obtain ⟨l₁, l₂, rfl⟩ := List.append_of_mem ha
   exact search_eq_some_iff_closest.2 ⟨h.1 a ha hn, l₁, l₂, rfl,
     fun b hb ↦ (List.pairwise_append.1 h.2).2.2 b hb a List.mem_cons_self hn⟩
 
-/-- Goals none of which needs licensing are all licensed. -/
 theorem allLicensed_of_forall_not (h : ∀ a ∈ goals, ¬ needs a) :
     p.AllLicensed needs goals :=
   ⟨fun a ha hn ↦ absurd hn (h a ha),
@@ -291,8 +268,6 @@ theorem AllLicensed.countP_le_one [DecidablePred needs] (h : p.AllLicensed needs
       simp [hn]
     · simpa [hn] using ih h
 
-/-- Over goals without repetitions, all needy goals are licensed iff each is reached by the
-search. -/
 theorem allLicensed_iff_forall_licensed (hnd : goals.Nodup) :
     p.AllLicensed needs goals ↔ ∀ a ∈ goals, needs a → p.Licensed goals a := by
   refine ⟨fun h a ha hn ↦ h.licensed ha hn, fun h ↦ ?_⟩
@@ -346,12 +321,10 @@ def cascade (ps : List (Probe α)) (goals : List α) : Option α :=
 
 variable {ps : List (Probe α)}
 
-/-- A cascade delivers nothing iff no goal satisfies any probe. -/
 @[simp]
 theorem cascade_eq_none_iff : cascade ps goals = none ↔ ∀ q ∈ ps, ∀ a ∈ goals, ¬ q.sat a := by
   simp [cascade, List.findSome?_eq_none_iff]
 
-/-- Unfold one probe of the cascade. -/
 theorem cascade_cons {q : Probe α} :
     cascade (q :: ps) goals = (q.search goals <|> cascade ps goals) := by
   rw [cascade, List.findSome?_cons]
@@ -363,20 +336,16 @@ theorem cascade_cons {q : Probe α} :
   rw [cascade_cons, cascade_nil]
   cases q.search goals <;> rfl
 
-/-- `cascade` is a monoid map `(List (Probe α), ++) → (Option α, <|>)`, the single-slot
-competition running the left probes and then the right. -/
 theorem cascade_append {qs : List (Probe α)} :
     cascade (ps ++ qs) goals = (cascade ps goals <|> cascade qs goals) := by
   unfold cascade
   rw [List.findSome?_append]
   cases ps.findSome? (·.search goals) <;> rfl
 
-/-- The cascade's goal is licensed by one of its probes. -/
 theorem exists_licensed_of_cascade_eq_some {a : α} (h : cascade ps goals = some a) :
     ∃ q ∈ ps, q.Licensed goals a :=
   List.exists_of_findSome?_eq_some h
 
-/-- The cascade's goal is a member of the sequence. -/
 theorem mem_of_cascade_eq_some {a : α} (h : cascade ps goals = some a) : a ∈ goals :=
   let ⟨_, _, hq⟩ := exists_licensed_of_cascade_eq_some h
   mem_of_search_eq_some hq

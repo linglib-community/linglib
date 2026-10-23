@@ -99,14 +99,12 @@ section Closure
 variable [Preorder V] {believe : V → Prop} {HOLDER : V → Option E} {CONT : V → Option (Set W)}
   {M : E} {p p' : Set W}
 
-/-- Belief is closed under informational weakening. -/
 theorem believes_of_ssubset (hMSI : MSI CONT) (hDIV : BelievingDIV believe HOLDER) (hlt : p ⊂ p')
     (h : Believes believe HOLDER CONT M p) : Believes believe HOLDER CONT M p' :=
   let ⟨_, hbel, hhol, hcont⟩ := h
   let ⟨e', hlt', hcont'⟩ := hMSI hcont hlt
   ⟨e', hDIV.div hlt'.le hbel, hDIV.holder hhol hlt'.le, hcont'⟩
 
-/-- Negated belief is downward-entailing in its content. -/
 theorem not_believes_of_ssubset (hMSI : MSI CONT) (hDIV : BelievingDIV believe HOLDER)
     (hlt : p ⊂ p') (h : ¬ Believes believe HOLDER CONT M p') :
     ¬ Believes believe HOLDER CONT M p :=
@@ -148,8 +146,6 @@ theorem believesTheRumorThat_of_ssubset (hMSI : MSI CONT_v) (hMSO : MSO THEME)
   exact ⟨e', r', hLoc hlt'.le hloc, hbel', hDIV.holder hhol hlt'.le, hthm', hRumor hr'.le hrum,
     (hTECM hbel' hthm').symm.trans hcont'⟩
 
-/-- The negated sentence is Strawson downward-entailing in the rumor's content — the
-direction that licenses *Katya doesn't believe the rumor that Anton has ever snowboarded*. -/
 theorem not_believesTheRumorThat_of_ssubset (hMSI : MSI CONT_v) (hMSO : MSO THEME)
     (hTECM : TECM believe CONT_v CONT_e THEME) (hDIV : BelievingDIV believe HOLDER)
     (hRumor : DIV rumor) (hLoc : LocatedDIV located) (hlt : p ⊂ p')
@@ -222,7 +218,6 @@ def SumClosed (believe : V → Prop) (HOLDER : V → Option E) : Prop :=
   ∀ ⦃e e' M⦄, believe e → believe e' → HOLDER e = some M → HOLDER e' = some M →
     believe (e ⊔ e') ∧ HOLDER (e ⊔ e') = some M
 
-/-- Belief is closed under conjunction given `CONTSum` and `SumClosed`. -/
 theorem believes_inter (hCONT : CONTSum CONT) (hSum : SumClosed believe HOLDER) {M : E}
     {p q : Set W} (hp : Believes believe HOLDER CONT M p) (hq : Believes believe HOLDER CONT M q) :
     Believes believe HOLDER CONT M (p ∩ q) :=
@@ -233,8 +228,6 @@ theorem believes_inter (hCONT : CONTSum CONT) (hSum : SumClosed believe HOLDER) 
 
 end Conjunction
 
-/-- Without those principles belief need not close under conjunction, as an agent may have
-believings of content `{true}` and `{false}` and none of content `∅`. -/
 theorem not_believes_inter :
     ∃ (V E W : Type) (_ : Preorder V) (believe : V → Prop) (HOLDER : V → Option E)
       (CONT : V → Option (Set W)) (M : E) (p q : Set W),
@@ -255,15 +248,10 @@ Alternatives are ordered informationally, so `toDual p ≤ toDual p'` in `(Set W
 
 open Truthmaker OrderDual
 
-/-- Between single alternatives conjunctive parthood is entailment. *It's raining* is a
-conjunctive part of *it's raining heavily*, since raining heavily entails raining. -/
 theorem isConjunctivePart_singleton_iff_subset (p q : Set W) :
     IsConjunctivePart ({toDual q} : Set (Set W)ᵒᵈ) {toDual p} ↔ p ⊆ q :=
   isConjunctivePart_singleton_singleton
 
-/-- Disjunction introduction fails for conjunctive parthood. With `p₃` *Jessica married an
-American linguist*, `p₁` *a linguist* and `p₂` *a philosopher*, the alternative set `{p₁, p₂}` is
-not a conjunctive part of `{p₃}`, since `p₃` does not entail `p₂`. -/
 theorem not_isConjunctivePart_disjunction (p₁ p₂ p₃ : Set W) (h : ¬ p₃ ⊆ p₂) :
     ¬ IsConjunctivePart ({toDual p₁, toDual p₂} : Set (Set W)ᵒᵈ) {toDual p₃} := fun hc ↦
   h ((isConjunctivePart_singleton_right_iff (Set.insert_nonempty _ _)).1 hc _

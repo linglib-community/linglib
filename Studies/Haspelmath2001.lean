@@ -265,17 +265,12 @@ theorem majorityOfCore_iff :
       f ≠ .negativeIndefinitesWithoutVerbalNegation ∧ f ≠ .strictAgreement := by
   revert f; decide
 
-/-- Criterion (ii) holds of every feature. -/
 theorem adjacentLack : AdjacentLack f := by revert f; decide
 
-/-- Criterion (iii) holds of every feature except the relative-pronoun strategy, which Map
-107.2 extends to Armenian. -/
 theorem easternIELack_iff : EasternIELack f ↔ f ≠ .relativePronouns := by revert f; decide
 
-/-- Every survey the chapter cites puts the feature in a minority of the world's languages. -/
 theorem worldMinority : WorldMinority f := by revert f; decide
 
-/-- The 'have'-perfect meets all four criteria on the chapter's data. -/
 theorem havePerfect_isEuropeanism : IsEuropeanism .havePerfect :=
   ⟨by decide, adjacentLack _, by decide, worldMinority _⟩
 
@@ -290,22 +285,16 @@ def clusterFeatures : Finset Feature :=
 /-- The number of the nine features a language has: the isopleth of Map 107.13. -/
 def clusterScore (l : Language) : ℕ := (clusterFeatures.filter (l ∈ isogloss ·)).card
 
-/-- The nucleus, French and German, shows the SAE value in all nine features: the Charlemagne
-Sprachbund. -/
 theorem nucleus_eq : baseMap.filter (clusterScore · = 9) = {french, german} := by decide
 
-/-- The next layer, Dutch, the other Romance languages and Albanian, shows eight. -/
 theorem eight_eq :
     baseMap.filter (clusterScore · = 8) =
       {dutch, spanish, portuguese, sardinian, italian, albanian} := by
   decide
 
-/-- The next layer, English, Greek and Romanian, shows seven. -/
 theorem seven_eq : baseMap.filter (clusterScore · = 7) = {english, greek, romanian} := by
   decide
 
-/-- The area with at least five features: the nucleus, the two layers, and the Scandinavian,
-Slavic, Baltic and Hungarian languages inside the outer isopleth. -/
 theorem area_eq :
     baseMap.filter (5 ≤ clusterScore ·) =
       {french, german, dutch, spanish, portuguese, sardinian, italian, albanian, english,
@@ -313,7 +302,6 @@ theorem area_eq :
        lithuanian, ukrainian, serboCroatian, slovene, hungarian, bulgarian} := by
   decide
 
-/-- The remaining languages of the base map have at most four of the nine features. -/
 theorem outside_le_four : ∀ l ∈ baseMap, clusterScore l < 5 → clusterScore l ≤ 4 := by
   decide
 

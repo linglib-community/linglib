@@ -68,7 +68,6 @@ theorem disj_must_iff (p q : Set W) (s : Set W) (w : W) :
       w ∈ p ∨ ∀ w' ∈ s, w' ∉ p → w' ∈ q := by
   simp [disj, Sentence.must, Sentence.ofProp, update]
 
-/-- Disjunctive syllogism holds for factual disjuncts. -/
 theorem disjunctive_syllogism (p q : Set W) :
     StandardConsequence [disj (Sentence.ofProp p) (Sentence.ofProp q), (Sentence.ofProp q)ᶜ]
       (Sentence.ofProp p) := by
@@ -129,10 +128,8 @@ def Use.interpret : Use → Connective → Sentence W → Sentence W → Sentenc
   | .doubleEntailment, c, a, b => fun s w ↦ a s w ∧ b (c.shift a s) w
   | .shift, c, a, b => fun s w ↦ b (c.shift a s) w
 
-/-- Double entailment of *and* reproduces the normal conjunction. -/
 theorem doubleEntailment_and : Use.doubleEntailment.interpret .and a b = conj a b := rfl
 
-/-- The parameter-shifting *or* is the conditional on the negation of its first disjunct. -/
 theorem shift_disj : Use.shift.interpret .or a b = ifThen aᶜ b := rfl
 
 /-- The non-truth-tabular *and*, (1): the first conjunct only shifts the parameter, which is

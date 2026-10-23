@@ -159,13 +159,10 @@ theorem sufficientive_iff : sufficientive μ a b ↔ μ b ≤ μ a := Set.Iic_su
 theorem demonstrative_iff : demonstrative μ a b ↔ μ b ≤ μ a :=
   ⟨fun ⟨_, hd, h⟩ ↦ (hd.unique isGreatest_Iic) ▸ h, fun h ↦ ⟨μ b, isGreatest_Iic, h⟩⟩
 
-/-- Under a monotone factor, the modified sufficientive relates the scaled standard to the
-target: *twice as tall* is having twice the standard's degree. -/
 theorem sufficientiveFactor_iff {f : D → D} (hf : Monotone f) :
     sufficientiveFactor μ a b f ↔ f (μ b) ≤ μ a :=
   ⟨fun h ↦ h ⟨μ b, le_rfl, rfl⟩, fun h _ ⟨_, hd, hdf⟩ ↦ hdf ▸ (hf hd).trans h⟩
 
-/-- A sufficientive equative has the weak reading: it holds when the target exceeds the standard. -/
 theorem sufficientive_of_lt (h : μ b < μ a) : sufficientive μ a b :=
   (sufficientive_iff μ a b).mpr h.le
 
@@ -174,16 +171,10 @@ theorem demonstrative_of_lt (h : μ b < μ a) : demonstrative μ a b :=
 
 theorem implicit_of_lt (hb : s < μ b) (h : μ b < μ a) : implicit μ s a b := ⟨hb.trans h, hb⟩
 
-/-- A predicative equative has no weak reading: it fails when the target exceeds the standard. -/
 theorem not_predicative_of_lt (h : μ b < μ a) : ¬ predicative μ a b := h.ne'
 
-/-- The implicit equative is evaluative: it entails that the target exceeds the standard of
-comparison. -/
 theorem implicit_evaluative (h : implicit μ s a b) : s < μ a := h.1
 
-/-- The other equatives are not evaluative: with the target and the standard alike and no taller
-than the standard of comparison, the predicative, sufficientive and demonstrative equatives hold
-while the implicit one fails. -/
 theorem nonevaluative (hab : μ a = μ b) (hs : μ a ≤ s) :
     predicative μ a b ∧ sufficientive μ a b ∧ demonstrative μ a b ∧ ¬ implicit μ s a b :=
   ⟨hab, (sufficientive_iff μ a b).mpr hab.ge, (demonstrative_iff μ a b).mpr hab.ge,
@@ -215,7 +206,6 @@ def Row.ofDatum (e : Datum) : Option Row := do
     | some v => (Diagnostic.labels.lookup v).map some
   pure ⟨s, d, e.judgment⟩
 
-/-- Every example is read. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The chapter's examples. -/

@@ -150,8 +150,6 @@ def typology : Language → QSlot → Option Slot
   | .icelandic, .which => some ⟨"hvaða", 1, [⟨"hvor", true, 1⟩]⟩
   | _, _ => none
 
-/-- In the headline contrast, English *all* and French *tous* are anti-dual by different routes,
-a lexical dual and an indirect alternative. -/
 theorem universal_competitors :
     (typology .english .universal).map Slot.competitor = some .lexicalDual ∧
       (typology .french .universal).map Slot.competitor = some .indirect := by
@@ -172,14 +170,10 @@ def cellRow (r : Datum) : Option (Language × QSlot × Bool) := do
 /-- The paper's judgments on plain quantifiers in a domain of two. -/
 def cells : List (Language × QSlot × Bool) := Examples.all.filterMap cellRow
 
-/-- On every reported cell a plain quantifier is anti-dual exactly when its slot provides a
-competitor. -/
 theorem theory_matches_data :
     ∀ c ∈ cells, ∀ s ∈ typology c.1 c.2.1, (s.competitor ≠ .none ↔ c.2.2 = true) := by
   decide +kernel
 
-/-- An account with direct alternatives only predicts anti-duality from lexical duals alone,
-so it misses the cells whose competitor is indirect, where the paper finds anti-duality. -/
 theorem direct_account_misses_indirect :
     ∀ c ∈ cells, ∀ s ∈ typology c.1 c.2.1, s.competitor = .indirect → c.2.2 = true := by
   decide +kernel
@@ -213,8 +207,6 @@ def BarredByAmbiguity (parses : S → List P) (meaning : P → M) (size : S → 
 variable {parses : S → List P} {meaning : P → M} {size : S → Nat}
   {s : S} {p₁ : P}
 
-/-- Only ambiguous strings block, so unambiguous synonyms never compete under Avoid
-Ambiguity. -/
 theorem BarredByAmbiguity.isAmbiguous (h : BarredByAmbiguity parses meaning size s p₁) :
     IsAmbiguous parses meaning s :=
   let ⟨h₁, p₂, h₂, hne, _⟩ := h
@@ -244,7 +236,6 @@ def indirectFrom (base : S → Set S) (pron : S → Prop) (meaning : S → M) (s
       pron s' ∧ size s' ≤ size s ∧ ∃ sₓ ∈ base s, ¬ pron sₓ ∧ meaning s' = meaning sₓ :=
   Iff.rfl
 
-/-- An expression all of whose alternatives are pronounceable has no indirect alternative. -/
 theorem indirectFrom_eq_empty_of_forall_pron (h : ∀ x ∈ base s, pron x) :
     indirectFrom base pron meaning size s = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨_, _, sₓ, hsₓ, hn, _⟩ ↦ hn (h sₓ hsₓ)
@@ -338,8 +329,6 @@ def strSize (s : Str) : Nat := ((strParses s).map RoseTree.numNodes).foldr max 0
 theorem tousDual_barred : BarredByAmbiguity strParses meaning strSize .tousV tousDualVerres := by
   decide
 
-/-- The plural parse survives, since *les deux verres* does not realize the plural meaning and
-no other string is simple enough. -/
 theorem tousPl_not_barred : ¬ BarredByAmbiguity strParses meaning strSize .tousV tousVerres := by
   decide
 
@@ -362,7 +351,6 @@ meaning-equivalence to a silent witness, with complexity measured by `RoseTree.n
 def frenchIndirectSrc : Tree Cat String → Set (Tree Cat String) :=
   indirectFrom (structuralAlternatives frenchLex) frenchPron meaning RoseTree.numNodes
 
-/-- *tous_DUAL V* is a Katzir alternative of *tous V*, by substituting the dual determiner. -/
 theorem tousDual_katzir_alt : tousDualVerres ∈ structuralAlternatives frenchLex tousVerres := by
   apply Relation.ReflTransGen.single
   refine StructuralOp.inChild (cs := [tousLex, verresLex]) ⟨0, by decide⟩
@@ -375,7 +363,6 @@ theorem lesDeux_indirectAlt_tous : lesDeuxVerres ∈ frenchIndirectSrc tousVerre
   refine ⟨by decide, by decide, tousDualVerres, tousDual_katzir_alt, by decide, ?_⟩
   funext w; cases w <;> rfl
 
-/-- *les deux V* competes with *tous V* as an indirect alternative with the same assertion. -/
 theorem lesDeux_mem_sameAssertion :
     lesDeuxVerres ∈ sameAssertion frenchIndirectSrc assertionFn tousVerres :=
   ⟨lesDeux_indirectAlt_tous, rfl⟩
@@ -386,13 +373,10 @@ theorem presupFn_lesDeux_ssubset_tous : presupFn lesDeuxVerres ⊂ presupFn tous
   LE.le.ssubset_of_not_superset (fun w _ ↦ by cases w <;> rfl)
     (Set.not_subset.2 ⟨.w3, rfl, (by decide : ¬ meaning lesDeuxVerres .w3 = true)⟩)
 
-/-- *tous V* violates Maximize Presupposition through the indirect alternative *les deux V*,
-licensed by the silent witness. -/
 theorem tous_blocked_via_indirect :
     Blocked (sameAssertion frenchIndirectSrc assertionFn) presupFn tousVerres :=
   ⟨lesDeuxVerres, lesDeux_mem_sameAssertion, presupFn_lesDeux_ssubset_tous⟩
 
-/-- A sentence defined in the domain of three cups presupposes nothing. -/
 private theorem presupFn_eq_univ_of_w3 {t : Tree Cat String} (h : WorldEx.w3 ∈ presupFn t) :
     presupFn t = Set.univ :=
   Set.eq_univ_of_forall fun w ↦ by
@@ -400,9 +384,6 @@ private theorem presupFn_eq_univ_of_w3 {t : Tree Cat String} (h : WorldEx.w3 ∈
     split_ifs at h ⊢
     simp_all
 
-/-- *tous V* is used exactly in the domain of three cups, the paper's derivation of its
-anti-duality: in the domain of two the dual presupposition of *les deux V* holds and blocks it,
-and every competitor defined in the domain of three presupposes nothing. -/
 theorem unblocked_tous :
     unblocked (sameAssertion frenchIndirectSrc assertionFn) presupFn tousVerres = {.w3} := by
   ext w

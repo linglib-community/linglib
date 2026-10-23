@@ -87,7 +87,6 @@ noncomputable def comulForestN :
       comulForestN (R := R) F * comulForestN (R := R) G :=
   comulForestNG_add _ F G
 
-/-- `comulForestN` is multiplicative, `comulForestN (T ::ₘ F) = comulTreeN T * comulForestN F`. -/
 @[simp] theorem comulForestN_cons (T : UnorderedTree α) (F : Forest (UnorderedTree α)) :
     comulForestN (R := R) (T ::ₘ F) =
       comulTreeN (R := R) T * comulForestN (R := R) F :=
@@ -149,8 +148,6 @@ noncomputable def bPlusLin (a : α) :
 
 /-! ### `comulForestN` as a sum over forest cuts -/
 
-/-- The forest coproduct is the sum of `of' cf ⊗ of' rem` over the cuts `(cf, rem)` of the
-    forest. -/
 theorem comulForestN_eq_sum (F : Forest (UnorderedTree α)) :
     comulForestN (R := R) F = ((forestCutsG cutSummandsN F).map
       (fun pf => of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)).sum :=
@@ -158,7 +155,6 @@ theorem comulForestN_eq_sum (F : Forest (UnorderedTree α)) :
 
 /-! ### The cocycle theorem (basis-level) -/
 
-/-- A leaf is primitive for the pruning coproduct. -/
 theorem comulTreeN_leaf (a : α) :
     comulTreeN (R := R) (UnorderedTree.leaf a) =
       ofTree (UnorderedTree.leaf a) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
@@ -166,9 +162,6 @@ theorem comulTreeN_leaf (a : α) :
   unfold comulTreeN comulTreeNG
   rw [cutSummandsN_leaf, Multiset.map_singleton, Multiset.sum_singleton, of'_zero]
 
-/-- The Hochschild 1-cocycle property of `B+_a` on basis elements. The coproduct of the grafted
-tree `UnorderedTree.node a F` is the primitive term plus `B+_a` applied on the right channel of
-`comulForestN F`. -/
 theorem comulTreeN_node_cocycle (a : α) (F : Forest (UnorderedTree α)) :
     comulTreeN (R := R) (UnorderedTree.node a F) =
       ofTree (UnorderedTree.node a F) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
@@ -198,7 +191,6 @@ theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (UnorderedTree α)) :
 `(ε ⊗ id) ∘ Δ^ρ = lid⁻¹` and `(id ⊗ ε) ∘ Δ^ρ = rid⁻¹`, checked on trees through the cocycle
 `comulTreeN_node_cocycle`. The left law needs induction on the tree. -/
 
-/-- The counit kills the image of `B+_a`, which is spanned by single trees. -/
 private theorem counit_bPlusLin (a : α) (y : ConnesKreimer R (UnorderedTree α)) :
     counit (R := R) (bPlusLin (R := R) a y) = 0 := by
   have h : (counit (R := R)).toLinearMap ∘ₗ bPlusLin (R := R) a = 0 :=
@@ -274,7 +266,6 @@ theorem mem_coassocSubalg (x : ConnesKreimer R (UnorderedTree α)) :
 Both sides of `comulAlgHomN_bPlusLin_cocycle` are linear, so it extends from forests to all of
 `H` by `ConnesKreimer.lhom_ext'`. -/
 
-/-- The cocycle law holds for arbitrary `x : H`, by linearity. -/
 theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
     (x : ConnesKreimer R (UnorderedTree α)) :
     comulAlgHomN (bPlusLin (R := R) a x) =
@@ -445,9 +436,6 @@ theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (UnorderedTree α)
 
 /-! ### Tree induction: every `ofTree T` is in `coassocSubalg` -/
 
-/-- `of' F` is in `coassocSubalg` whenever every `ofTree T` for `T ∈ F` is.
-    By Multiset.induction on F using `of'_singleton`, `of'_zero`, `of'_add`, plus
-    subalgebra closure under * and 1. -/
 private theorem of'_mem_coassocSubalg_of_trees (F : Forest (UnorderedTree α))
     (h : ∀ T ∈ F, ofTree T ∈ coassocSubalg (R := R) (α := α)) :
     of' (R := R) F ∈ coassocSubalg (R := R) (α := α) := by
@@ -465,8 +453,6 @@ private theorem of'_mem_coassocSubalg_of_trees (F : Forest (UnorderedTree α))
     rw [of'_cons]
     exact mul_mem hT ih'
 
-/-- Every tree generator lies in `coassocSubalg`, by strong induction on height. A leaf is
-`B+_a 1`, and a node is `B+_a (of' F)` with `of' F` a product of generators of smaller height. -/
 theorem ofTree_mem_coassocSubalg (T : UnorderedTree α) :
     ofTree T ∈ coassocSubalg (R := R) (α := α) := by
   -- Strong induction on T.height.
@@ -550,11 +536,9 @@ noncomputable instance instBialgebraRho :
     counit_rTensor_comulAlgHomN
     counit_lTensor_comulAlgHomN
 
-/-- The coproduct of `instBialgebraRho` is `comulAlgHomN`. -/
 theorem coalgebra_comul_apply (x : ConnesKreimer R (UnorderedTree α)) :
     Coalgebra.comul (R := R) x = comulAlgHomN x := rfl
 
-/-- The counit of `instBialgebraRho` is `ConnesKreimer.counit`. -/
 theorem coalgebra_counit_apply (x : ConnesKreimer R (UnorderedTree α)) :
     CoalgebraStruct.counit (R := R) x = counit x := rfl
 

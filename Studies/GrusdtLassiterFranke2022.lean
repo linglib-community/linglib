@@ -103,7 +103,6 @@ def Assertable (θ : ℝ) : Utt → Measure (Bool × Bool) → Prop
   | .conditional, μ => θ ≤ (μ[|A]).real C
   | .likelyC, μ => 1 / 2 < μ.real C
 
-/-- A conditional probability as a ratio of real masses. -/
 theorem real_cond (μ : Measure (Bool × Bool)) (S T : Set (Bool × Bool)) :
     (μ[|S]).real T = μ.real (S ∩ T) / μ.real S := by
   rw [measureReal_def, cond_apply .of_discrete, ENNReal.toReal_mul, ENNReal.toReal_inv,
@@ -254,7 +253,6 @@ noncomputable def L0 : Kernel Utt State := listener prior (truthful ext)
 
 instance : IsFiniteKernel L0 := inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
 
-/-- The literal listener is uniform on the extension. -/
 theorem L0_apply (u : Utt) : L0 u = uniformOn (ext u) := by
   rw [L0, listener_truthful_apply, prior, uniformOn,
     cond_cond_eq_cond_inter MeasurableSet.univ .of_discrete, Set.univ_inter]

@@ -144,8 +144,6 @@ end Revised
 
 /-! ### §1.5 The m-lifting under Kratzer's *must* -/
 
-/-- A proposition holding at fewer worlds than its complement cannot be probable under the
-m-lifting, since no injection matches its complement into it. -/
 theorem best_not_probably_of_ncard_lt [Finite W] (r : W → W → Prop) {A : Set W}
     (h : A.ncard < Aᶜ.ncard) : ¬Probably (MatchingLift r) A :=
   fun hp ↦ absurd hp.1.ncard_le (not_le.2 h)
@@ -156,7 +154,6 @@ def bestFirst : Set (Fin 3 → Prop) := {(· = 0)}
 theorem bestFirst_le (v u : Fin 3) : (v ≤[bestFirst] u) ↔ (u = 0 → v = 0) := by
   simp [bestFirst, Preorder.ofCriteria_le_iff]
 
-/-- Kratzer's *must* of the sole best world holds. -/
 theorem must_best : Yalcin2010.must bestFirst {0} 0 :=
   (Yalcin2010.must_iff _ _ _).2 fun _ ↦ ⟨0, (bestFirst_le _ _).2 fun _ ↦ rfl,
     fun _ hz ↦ (bestFirst_le _ _).1 hz rfl⟩
@@ -400,11 +397,9 @@ largest possible margin over its negation, as (56) requires. -/
 theorem quantMust_prob {A : Set W} (h : quantMust A) : P A = 1 ∧ P Aᶜ = 0 := by
   subst h; simp
 
-/-- The strong probabilistic *must* agrees with the quantificational one on the mass. -/
 theorem probMust_one_iff (A : Set W) : probMust P 1 A ↔ P.real A = 1 :=
   ⟨fun h ↦ le_antisymm measureReal_le_one h, fun h ↦ h.ge⟩
 
-/-- *Might* is the dual of *must*, since `A` might hold iff its complement is not a must. -/
 theorem probMight_iff_not_probMust_compl [DiscreteMeasurableSpace W] (θ : ℝ) (A : Set W) :
     probMight P θ A ↔ ¬ probMust P θ Aᶜ := by
   change 1 - θ < P.real A ↔ ¬ θ ≤ P.real Aᶜ

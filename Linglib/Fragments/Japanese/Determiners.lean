@@ -95,11 +95,9 @@ def inventory : Determiner.Inventory :=
   indefinites.map (.quantifier ·.toQuantifier) ++
     QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
-/-- *Dare-ka* reads as `Quantifier.GQ.some`. -/
 theorem denote_dare_ka : ⟦dare_ka⟧ = ({GQ.Family.some} : Set GQ.Family.{u}) := by
   rw [← IndeterminateQuantifier.reading_of_disjunctive (q := dare_ka) rfl]; rfl
 
-/-- *Dare-mo* reads as `every`. -/
 theorem denote_dare_mo : ⟦dare_mo⟧ = ({GQ.Family.every} : Set GQ.Family.{u}) := by
   rw [← IndeterminateQuantifier.reading_of_conjunctive (q := dare_mo) rfl]; rfl
 

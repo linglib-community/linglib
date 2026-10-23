@@ -195,8 +195,6 @@ def kikongo : List (Constraint (Correspondence BinaryRole Seg)) :=
 
 /-! ### Faithfulness and correspondence -/
 
-/-- The IDENT constraints are faithfulness constraints, which the fully faithful candidate
-satisfies: its output has no correspondence among its consonants. -/
 theorem isFaithfulness_identCLCR : Correspondence.IsFaithfulness identCLCR := fun s ↦ by
   simp [identCLCR, Correspondence.maxViolFeature, Correspondence.identity]
 
@@ -330,8 +328,6 @@ def ngbakaData : List (List Seg × Judgment) :=
   (Examples.all.filter (·.language = "ngba1284")).map fun r ↦
     (parse r.primaryText.toList, r.judgment)
 
-/-- Ngbaka's tableaux: a homorganic nasal and prenasal stop agree, the prenasal nasalized, while
-a heterorganic pair surfaces faithfully. -/
 theorem ngbaka_tableaux :
     (tableau ngbaka (parse "naⁿdɛ".toList)).optimal = {⟨parse "nanɛ".toList, [(0, 2)]⟩} ∧
       (tableau ngbaka (parse "maᵑga".toList)).optimal = {⟨parse "maᵑga".toList, []⟩} := by

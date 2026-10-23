@@ -173,7 +173,6 @@ def toGraph : Graph ((i : ι) × τ i) where
 theorem toGraph_arcs_adj {v w : X.Pos} : X.toGraph.arcs.Adj v w ↔ v.1 = w.1 ∧ (v.2 : ℕ) < w.2 :=
   Iff.rfl
 
-/-- The graph of a representation satisfies Axioms 1–2. -/
 theorem isTierOrdered_toGraph : IsTierOrdered X.toGraph.arcs (X.toGraph.tier Sigma.fst) where
   irrefl _ h := lt_irrefl _ h.2
   trans _ _ _ h₁ h₂ := ⟨h₁.1.trans h₂.1, h₁.2.trans h₂.2⟩
@@ -202,8 +201,6 @@ theorem noCrossing_toGraph_iff :
     exact (isNonCrossing_lines_iff.1 (h _ _) (link_iff_adj (v := ⟨_, p⟩) (w := ⟨_, q⟩) |>.2 hvv')
       (link_iff_adj (v := ⟨_, p'⟩) (w := ⟨_, q'⟩) |>.2 hww') hpp').not_gt hqq'
 
-/-- On the graph of a representation, one position covers another in the arc order iff it is its
-successor. -/
 theorem toGraph_covBy_iff {i : ι} {p q : Fin (X.word i).length} :
     (X.toGraph.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ∧
         ∀ u, ¬ (X.toGraph.arcs.Adj ⟨i, p⟩ u ∧ X.toGraph.arcs.Adj u ⟨i, q⟩)) ↔
@@ -251,8 +248,6 @@ section Injective
 
 variable {X Y : AR τ}
 
-/-- The arc-predecessors of a position are the earlier positions of its tier, as many as its
-index. -/
 private theorem natCard_arcs_pred (v : X.Pos) :
     Nat.card {u : X.Pos // X.toGraph.arcs.Adj u v} = v.2 := by
   obtain ⟨i, p⟩ := v
@@ -267,7 +262,6 @@ private theorem natCard_arcs_pred (v : X.Pos) :
       rfl
     right_inv := fun _ ↦ rfl }
 
-/-- An isomorphism of graphs of representations keeps every position in place. -/
 private theorem _root_.Autosegmental.Graph.Iso.fst_snd_toGraph
     (e : Graph.Iso X.toGraph Y.toGraph) (v : X.Pos) :
     (e.toEquiv v).1 = v.1 ∧ ((e.toEquiv v).2 : ℕ) = v.2 := by

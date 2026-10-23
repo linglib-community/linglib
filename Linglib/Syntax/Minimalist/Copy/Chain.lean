@@ -172,7 +172,6 @@ def chainTop : List TreePath :=
 theorem not_isLink_self (p : TreePath) : ¬ IsLink hd t tok p p :=
   fun h ↦ h.1.2.1 (projectionAt_le hd t p)
 
-/-- A token with at most one copy has no link. -/
 theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links hd t tok = [] := by
   simp only [links, List.flatMap_eq_nil_iff, List.map_eq_nil_iff, List.filter_eq_nil_iff,
     decide_eq_true_eq]

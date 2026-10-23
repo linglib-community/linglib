@@ -327,7 +327,6 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     have h : s ∈ nec M.access {t | support M (C.fill ψ) t} := ih s hΓ
     rwa [Formula.Context.setOf_support_fill M ψ hC, nec_union] at h
 
-/-- A derivation from one premise is a consequence in the sense of `Consequence`. -/
 theorem consequence_of_derives (h : {φ} ⊢ ψ) : Consequence (W := W) φ ψ :=
   fun M t ht ↦ soundness h M t fun _ hγ ↦ hγ ▸ ht
 
@@ -336,11 +335,9 @@ theorem consequence_of_derives (h : {φ} ⊢ ψ) : Consequence (W := W) φ ψ :=
 /-- A formula derives itself. -/
 theorem Derives.single (φ : Formula Atom) : {φ} ⊢ φ := .hyp rfl
 
-/-- A derivation from `Γ` is a derivation from any larger set. -/
 theorem Derives.mono (hΓΔ : Γ ⊆ Δ) (h : Γ ⊢ φ) : Δ ⊢ φ :=
   Set.union_eq_self_of_subset_left hΓΔ ▸ h.cut (.hyp (Set.mem_insert φ Δ))
 
-/-- `cut` applies within one set of premises. -/
 theorem Derives.cut' (h₁ : Γ ⊢ φ) (h₂ : insert φ Γ ⊢ ψ) : Γ ⊢ ψ :=
   Set.union_self Γ ▸ h₁.cut h₂
 
@@ -352,10 +349,8 @@ theorem Derives.trans (h₁ : Γ ⊢ φ) (h₂ : {φ} ⊢ ψ) : Γ ⊢ ψ :=
 theorem Derives.conj (h₁ : Γ ⊢ φ) (h₂ : Γ ⊢ ψ) : Γ ⊢ .conj φ ψ :=
   Set.union_self Γ ▸ h₁.conjI h₂
 
-/-- `◇Mon` applies with the premise first. -/
 theorem Derives.possMon' (h₁ : Γ ⊢ .poss φ) (h₂ : {φ} ⊢ ψ) : Γ ⊢ .poss ψ := .possMon h₂ h₁
 
-/-- `∨Mon` applies with a side derivation from the replaced disjunct alone. -/
 theorem Derives.disjMon' (h₁ : Γ ⊢ .disj φ ψ) (h₂ : {ψ} ⊢ χ) : Γ ⊢ .disj φ χ := by
   simpa using h₁.disjMon (Δ := ∅) (by simp) (by simpa using h₂)
 
@@ -380,7 +375,6 @@ theorem Derives.fill (h : {φ} ⊢ ψ) : ∀ C : Formula.Context Atom, {C.fill �
 theorem strongFalsum_derives (φ : Formula Atom) : {.strongFalsum} ⊢ φ :=
   .strongFalsumCtr φ (.disjI Formula.neFree_falsum (.single _))
 
-/-- The strong tautology `¬⊥` is derivable from no premises. -/
 theorem derives_neg_falsum : (∅ : Set (Formula Atom)) ⊢ .neg .falsum :=
   .negI Formula.neFree_falsum (by simp) (.hyp (Set.mem_insert _ _))
 

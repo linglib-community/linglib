@@ -226,7 +226,6 @@ theorem kind_lt_kind_iff : s.kind < t.kind ↔ s < t := by
   have key : ∀ s t : Scenario Bool, s.kind < t.kind ↔ s < t := by decide
   rw [← kind_map he s, ← kind_map he t, key, map_lt_map_iff he]
 
-/-- On a two-element scale the downstream scenario is `⊤ = ⟨⊤, ⊥⟩` alone. -/
 theorem kind_eq_downstream_iff_eq_top : s.kind = .downstream ↔ s = ⊤ := by
   rw [kind_eq_downstream_iff, IsSimpleOrder.lt_iff_eq_bot_and_eq_top, Scenario.ext_iff, top_high,
     top_low, and_comm]

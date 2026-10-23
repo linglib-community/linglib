@@ -99,8 +99,6 @@ theorem Listener.L0_eq_listener_truthful (L : Listener P M)
   rw [truthful_apply_singleton]
   rcases h p m with h | h <;> simp [h]
 
-/-- A message that every persona sends with likelihood zero leaves the literal listener in the
-absurd state, the zero measure. -/
 theorem Listener.L0_eq_zero (L : Listener P M) {m : M} (h : ∀ p, L.likelihood p {m} = 0) :
     L.L0 m = 0 := by
   simp [Listener.L0, listener_apply, h, ProbabilityTheory.cond]
@@ -130,7 +128,6 @@ rationality `α`. -/
 noncomputable def S1 (α : ℝ) (νS : P → ℝ) (G : Multiset (Listener P M)) : Kernel P M :=
   Kernel.softmax fun _ m ↦ ((α * groupUtility νS G m : ℝ) : EReal)
 
-/-- The speaker favours the message of higher utility toward the group. -/
 theorem S1_real_singleton_lt_iff (hα : 0 < α) :
     (S1 α νS G p).real {m} < (S1 α νS G p).real {m'} ↔
       groupUtility νS G m < groupUtility νS G m' := by
@@ -143,7 +140,6 @@ theorem S1_real_singleton_lt_of_forall (hα : 0 < α) (hG : G ≠ 0)
     (S1 α νS G p).real {m} < (S1 α νS G p).real {m'} :=
   (S1_real_singleton_lt_iff hα).2 (Multiset.sum_lt_sum_of_nonempty hG h)
 
-/-- Only the proportions of a group matter to the speaker. -/
 theorem S1_nsmul_real_singleton_lt_iff (hα : 0 < α) {n : ℕ} (hn : n ≠ 0) :
     (S1 α νS (n • G) p).real {m} < (S1 α νS (n • G) p).real {m'} ↔
       (S1 α νS G p).real {m} < (S1 α νS G p).real {m'} := by
@@ -207,12 +203,10 @@ def field : GroundedField Message (dimensionalIncompatibility Trait.issue) where
     | .corporateScientists => {.proVax, .antiCorporate}
   isIndepSet m := by cases m <;> decide
 
-/-- The personae consistent with *big pharma* are those it meets, the book's table. -/
 theorem field_personae_bigPharma :
     field.personae .bigPharma = {proVaxAntiCorp, antiVaxProCorp, antiVaxAntiCorp} := by
   decide +kernel
 
-/-- The personae consistent with *corporate scientists* are those it meets, the book's table. -/
 theorem field_personae_corporateScientists :
     field.personae .corporateScientists = {proVaxProCorp, proVaxAntiCorp, antiVaxAntiCorp} := by
   decide +kernel
@@ -318,7 +312,6 @@ private theorem advantage_unsavvyProVaxxer :
   rw [log_unsavvy]
   ring
 
-/-- The savvy ratio is `2 ^ 4` times `1 + 0.062882`, whose log the series bounds. -/
 private theorem log_savvy_bounds :
     2.833572 < Real.log (531441 / 31250) ∧ Real.log (531441 / 31250) < 2.833574 := by
   have h := Real.abs_log_sub_add_sum_range_le (x := -31441 / 500000) (by norm_num [abs_div]) 5
@@ -327,7 +320,6 @@ private theorem log_savvy_bounds :
   norm_num [Finset.sum_range_succ, abs_le] at h ⊢
   constructor <;> linarith [Real.log_two_gt_d9, Real.log_two_lt_d9]
 
-/-- The unsavvy ratio is `3 ^ 3` times `1 - 292891 / 11453152`, whose log the series bounds. -/
 private theorem log_unsavvy_bounds :
     3.269930 < Real.log (301327047 / 11453152) ∧ Real.log (301327047 / 11453152) < 3.269932 := by
   have h := Real.abs_log_sub_add_sum_range_le (x := 292891 / 11453152) (by norm_num [abs_div]) 5

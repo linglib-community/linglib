@@ -78,8 +78,6 @@ structure IsMLModel {β : Type*} (R M L : β → β → Prop) : Prop where
   decomposition : ∀ ⦃x y⦄, L x y → (∃ z, M x z ∧ L z y) ∧ ∃ w, M w y ∧ L x w
   m_bounded : ∀ ⦃x y z⦄, M x z → R x y → R y z → M x y ∧ M y z
 
-/-- Along a linear order, largely smaller than is smaller than but not marginally smaller
-than. -/
 theorem IsMLModel.l_iff {M L : α → α → Prop} (h : IsMLModel (· < ·) M L) :
     L x y ↔ x < y ∧ ¬ M x y := by
   grind [h.r_of_l, h.not_l_of_m, h.m_or_l_of_r]
@@ -176,8 +174,6 @@ theorem MarginalSucc.Icc_subset (h : MarginalSucc ml x y) : Set.Icc x y ⊆ {x, 
     rcases hzy.eq_or_lt with rfl | hzy; · exact .inr rfl
     exact absurd (h.1.bounded hxz hzy).2 (h.2 z (h.1.bounded hxz hzy).1)
 
-/-- In a finitely marginal ML scale, the closed interval between at most marginally different
-degrees is finite. -/
 theorem FinitelyMarginal.finite_Icc (hf : FinitelyMarginal ml) (h : ml.AtMostMarginal x y) :
     (Set.Icc x y).Finite := by
   rcases h with _ | h | h
@@ -190,13 +186,10 @@ theorem FinitelyMarginal.finite_Icc (hf : FinitelyMarginal ml) (h : ml.AtMostMar
       exact (ih.union ((Set.toFinite _).subset hs.Icc_subset)).subset Set.Icc_subset_Icc_union_Icc
   · simp [h.lt]
 
-/-- In a finitely marginal ML scale, every block is locally finite. -/
 theorem FinitelyMarginal.finite_Icc_block (hf : FinitelyMarginal ml)
     (q : Quotient ml.atMostMarginalSetoid) (a b : {y // ⟦y⟧ = q}) : (Set.Icc a b).Finite :=
   (hf.finite_Icc (Quotient.exact (a.2.trans b.2.symm))).preimage Subtype.val_injective.injOn
 
-/-- When every block embeds in `γ`, the degrees can be given locations in `γ` that grow along
-marginal steps. -/
 theorem exists_lt_of_marginallyLT {γ : Type*} [Preorder γ]
     (h : ∀ q : Quotient ml.atMostMarginalSetoid, ∃ g : {y // ⟦y⟧ = q} → γ, StrictMono g) :
     ∃ G : α → γ, ∀ ⦃x y⦄, ml.MarginallyLT x y → G x < G y := by
@@ -295,11 +288,8 @@ def Bald (e x : α) : Prop := ¬ ml.LargelyLT x e
 
 variable {e : α}
 
-/-- Whatever is balder than the last member is bald. -/
 theorem bald_of_le (h : e ≤ x) : Bald ml e x := fun hl ↦ (hl.lt.trans_le h).false
 
-/-- Baldness is tolerant. What is marginally balder than someone not bald is not bald, and what
-is marginally less bald than someone bald is bald. -/
 theorem Bald.tolerance :
     (¬ Bald ml e x → ml.MarginallyLT x y → ¬ Bald ml e y) ∧
       (Bald ml e x → ml.MarginallyLT y x → Bald ml e y) := by
@@ -322,8 +312,6 @@ end Sorites
 
 /-! ### Itzhaki's nonstandard heuristics -/
 
-/-- Itzhaki's indistinguishability is at most marginal difference on the infinitesimal
-scale. -/
 theorem infinitesimal_atMostMarginal_iff {x y : ℝ*} :
     infinitesimal.AtMostMarginal x y ↔ Itzhaki2021.InfinitesimallyClose x y := by
   rw [infinitesimal, ofAddSubgroup_atMostMarginal_iff, Itzhaki2021.InfinitesimallyClose,

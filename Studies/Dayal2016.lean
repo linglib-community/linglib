@@ -117,7 +117,6 @@ theorem trueAnswers_whereMary : trueAnswers whereMary w₀ = {isAt .paris} := by
     obtain rfl := mem_singleton_iff.1 hp
     exact ⟨⟨.paris, rfl⟩, rfl⟩
 
-/-- The true members of the scope-marked question at `w₀`: John's thought about London. -/
 theorem trueAnswers_scopeMarked : trueAnswers scopeMarked w₀ = {think (isAt .london)} := by
   ext p
   constructor
@@ -168,7 +167,6 @@ theorem domain_of_ne_singular {n : Number} (h : n ≠ .singular) :
 plurality John likes, so the member for `x` is `Ici x`. -/
 def hamblin (n : Number) : Set (Set E) := Ici '' domain n
 
-/-- The true members: the domain elements John likes, those below the situation. -/
 theorem trueAnswers_image_Ici (D : Set E) (w : E) :
     trueAnswers (Ici '' D) w = Ici '' {x ∈ D | x ≤ w} := by
   ext p
@@ -178,7 +176,6 @@ theorem trueAnswers_image_Ici (D : Set E) (w : E) :
   · rintro ⟨x, ⟨hx, hw⟩, rfl⟩
     exact ⟨⟨x, hx, rfl⟩, hw⟩
 
-/-- The weak answer over a distributive nucleus names the sum of the true witnesses. -/
 theorem weakAnswer_image_Ici (D : Set E) (w : E) :
     weakAnswer (Ici '' D) w = Ici (sSup {x ∈ D | x ≤ w}) := by
   rw [weakAnswer, trueAnswers_image_Ici, sInter_image, Ici_sSup]
@@ -206,7 +203,6 @@ private theorem not_compl_Ici_subset {a c : E} (ha : a ≠ ⊥) (hc : c ≠ ⊥)
     ¬ (Ici c)ᶜ ⊆ Ici a :=
   fun h => ha (le_bot_iff.1 (h fun hc' => hc (le_bot_iff.1 hc')))
 
-/-- Among the members for atoms, entailment holds only within one atom's pair. -/
 private theorem atom_of_subset {a c : E} (ha : IsAtom a) (hc : IsAtom c) {p q : Set E}
     (hp : Ici a = p ∨ (Ici a)ᶜ = p) (hq : Ici c = q ∨ (Ici c)ᶜ = q) (h : q ⊆ p) :
     c = a := by
@@ -296,7 +292,6 @@ theorem dayalAns_hamblin {n : Number} {w : E} (h : w ∈ domain n) :
   (dayalAns_eq_some_iff _ _).2 <|
     (isStrongestTrueAnswer_iff _ _).2 ⟨⟨w, h, rfl⟩, (weakAnswer_hamblin n w).symm⟩
 
-/-- The strongly exhaustive answer is the situation itself: *Bill saw only w*. -/
 theorem strongAnswer_hamblin (n : Number) (w : E) : strongAnswer (hamblin n) w = {w} := by
   ext v
   simp only [mem_strongAnswer, hamblin, forall_mem_image, mem_Ici, mem_singleton_iff]

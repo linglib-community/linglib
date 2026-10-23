@@ -82,7 +82,6 @@ section Region
 
 variable {α : Type*}
 
-/-- On the strata `ℕ` the atom is `1`. -/
 theorem atom_iff_eq_one {k : ℕ} : Atom k ↔ k = 1 := by
   refine ⟨fun h ↦ ?_, ?_⟩
   · have h0 : k ≠ 0 := fun h0 ↦ h.1 (h0 ▸ isBot_bot)
@@ -98,8 +97,6 @@ def region (B : Finset α) (S : ℕ → Prop) (s : Finset α) : Prop := B ⊆ s 
 
 variable {B : Finset α} {S : ℕ → Prop}
 
-/-- `card` carries the minimal elements of a region to its least strata, since between `B` and a
-sum lies a sum of every intermediate size. -/
 theorem atomize_region (hS : ∀ k, S k → B.card ≤ k) :
     atomize (region B S) = region B (atomize S) := by
   ext s
@@ -108,7 +105,6 @@ theorem atomize_region (hS : ∀ k, S k → B.card ≤ k) :
     exact Finset.card_le_card (h.2 ⟨hBt, hj⟩ hts)
   · exact (Finset.eq_of_subset_of_card_le hts (h.2.2 ht.2 (Finset.card_le_card hts))).ge
 
-/-- The atoms of the powerset lattice are the sets of one atom. -/
 theorem atom_iff_card {s : Finset α} : Atom s ↔ Atom s.card := by
   have h : (fun t : Finset α ↦ ¬ IsBot t) = region ∅ (fun k ↦ ¬ IsBot k) := by
     ext t; simp [region, isBot_iff_eq_bot]
@@ -227,7 +223,6 @@ theorem additiveIn_le_card {c : ℕ} {s : Finset α} (hs : c ≤ s.card) :
     additiveIn (c ≤ ·.card) s :=
   ⟨hs, fun _ _ ↦ hs.trans (Finset.card_le_card Finset.subset_union_left)⟩
 
-/-- Likewise an element above a cut that contains a given atom is additive among such elements. -/
 theorem additiveIn_le_card' {i : α} {c : ℕ} {s : Finset α} (hi : i ∈ s) (hs : c ≤ s.card) :
     additiveIn (fun t ↦ i ∈ t ∧ c ≤ t.card) s :=
   ⟨⟨hi, hs⟩, fun _ _ ↦ ⟨Finset.mem_union_left _ hi,
@@ -268,8 +263,6 @@ region below the cut or in the unbounded region above it. -/
 def PlusAdditive (c : ℕ) (P : Finset α → Prop) (s : Finset α) : Prop :=
   additiveIn (fun t ↦ P t ∧ t.card < c) s ∨ additiveIn (fun t ↦ P t ∧ c ≤ t.card) s
 
-/-- On the third-person lattice, with infinitely many atoms, the `[+additive]` elements are those
-above the cut. -/
 theorem plusAdditive_nonempty_iff [Infinite α] {c : ℕ} (hc : 1 ≤ c) (s : Finset α) :
     PlusAdditive c Finset.Nonempty s ↔ c ≤ s.card := by
   have hb : (fun t : Finset α ↦ t.Nonempty ∧ t.card < c) = Band 1 c := by
@@ -549,8 +542,6 @@ theorem Bundle.exact_le {D : Type*} [SemilatticeSup D] (b : Bundle) (P : D → P
   exact step_le _ _ (fun _ _ h ↦ h.1) _ _ <| step_le _ _ (fun _ _ h ↦ h.1) _ _ <|
     step_le _ _ (fun _ _ h ↦ h.1) _ _ <| step_le _ _ (fun _ _ h ↦ h.1) _ _ h
 
-/-- The exact strata of every bundle on a person lattice over a base of at most two atoms change
-membership by the stratum four. -/
 theorem bound_strata_le : ∀ b : Bundle, ∀ p ≤ 2, (b.strata (.ray p)).bound ≤ 4 := by decide
 
 /-- The axiom of extension caps the exact numbers at the trial and the unit augmented, three
@@ -578,7 +569,6 @@ private theorem step_mem (b : Bundle) (v : Feature × Bool) {g : Strata → Stra
     (h : (b.step v g s).Mem k) : s.Mem k := by
   unfold Bundle.step at h; split_ifs at h; exacts [hg h, h]
 
-/-- `card` carries a bundle's region on the person lattice over `B` to its strata. -/
 theorem Bundle.exact_region (b : Bundle) {s : Strata} (hs : ∀ k, s.Mem k → B.card ≤ k) :
     b.exact (region B s.Mem) = region B (b.strata s).Mem := by
   have h₁ : ∀ {k}, (b.step (.atomic, false) Strata.nonAtomic s).Mem k → s.Mem k :=
@@ -651,7 +641,6 @@ theorem mem_strata_collapse {lo hi p : ℕ} (hp : p ≤ 2) (b : Bundle) (k : ℕ
   · rw [h4 k (by omega), h4 5 (by omega)]
   · rw [h4 k (by omega), h4 6 (by omega)]
 
-/-- The cells for the cuts at `lo` and `hi` are those for the cuts at five and six, collapsed. -/
 theorem cell_collapse {lo hi p : ℕ} (h : 4 < lo) (hp : p ≤ 2) (σ : Setting) (b : Bundle)
     (k : ℕ) :
     σ.cell id lo hi (Strata.ray p).Mem b k ↔
@@ -734,7 +723,6 @@ end Lattice
 By `filter_cell_eq_system`, the following hold of every person lattice and every placement of
 the cuts above four atoms. -/
 
-/-- The cells of a setting cover the strata of its lattice. -/
 theorem exists_mem_cell {lo hi p : ℕ} (h : 4 < lo) (hp : p ≤ 2) (σ : Setting) {k : ℕ}
     (hk : max p 1 ≤ k) : ∃ b ∈ σ.bundles, σ.cell id lo hi (Strata.ray p).Mem b k := by
   have ref : ∀ σ : Setting, ∀ p ≤ 2, ∀ j ≤ 6, max p 1 ≤ j →
@@ -744,7 +732,6 @@ theorem exists_mem_cell {lo hi p : ℕ} (h : 4 < lo) (hp : p ≤ 2) (σ : Settin
     (by unfold collapse; split_ifs <;> omega)
   exact ⟨b, hb, (cell_collapse h hp σ b k).mpr hc⟩
 
-/-- Distinct bundles of a setting have disjoint cells, so the system partitions the lattice. -/
 theorem disjoint_cell {lo hi p : ℕ} (h : 4 < lo) (hp : p ≤ 2) (σ : Setting) {b b' : Bundle}
     (hb : b ∈ σ.bundles) (hb' : b' ∈ σ.bundles) (hne : b ≠ b') :
     Disjoint (σ.cell id lo hi (Strata.ray p).Mem b) (σ.cell id lo hi (Strata.ray p).Mem b') := by
@@ -761,7 +748,6 @@ theorem disjoint_cell {lo hi p : ℕ} (h : 4 < lo) (hp : p ≤ 2) (σ : Setting)
     (Setting.mem_system.mpr ⟨hb, _, hj, h₁⟩) b' (Setting.mem_system.mpr ⟨hb', _, hj, h₂⟩) hne _
     hj h₁ h₂
 
-/-- Distinct numbers of a system have distinct labels. -/
 theorem nodup_values : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
     (σ.values c 0).Nodup := by
   decide +kernel
@@ -794,7 +780,6 @@ theorem length_approximative_le_two : ∀ σ : Setting, ∀ c : Convention, c.Fi
     ((σ.values c 0).filter (· ∈ [.paucal, .greaterPaucal, .greaterPlural])).length ≤ 2 := by
   decide +kernel
 
-/-- No system has more than six numbers. -/
 theorem length_values_le_six : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
     (σ.values c 0).length ≤ 6 := by
   decide +kernel
@@ -900,8 +885,6 @@ schema (34). -/
 abbrev Requires (b a : Number) : Prop :=
   Concept.ofAttribute Generates b ≤ Concept.ofAttribute Generates a
 
-/-- A number requires another when every system a legitimate setting generates with the first
-has the second. -/
 theorem requires_iff {b a : Number} : Requires b a ↔ ∀ σ : Setting, ∀ c : Convention,
     c.Fits σ.additive → σ.Legitimate → b ∈ (σ.toSystem c).values → a ∈ (σ.toSystem c).values := by
   rw [Requires, Concept.ofAttribute_le_ofAttribute_iff]
@@ -944,8 +927,6 @@ theorem mem_of_requires_corbett (c : Corbett2000.Choices) {b a : Number} (h : Re
   simp only [Corbett2000.Choices.toSystem, List.mem_toFinset] at hb ⊢
   exact key b a (fun _ hr ↦ mem_table3_of_requires h hr) c.toShape hb
 
-/-- So are the systems of [corbett-2000] without singular and plural, Pirahã's, Rembarrnga's and
-Ilocano's. -/
 theorem mem_of_requires_minimalAugmented {b a : Number} (h : Requires b a) :
     ∀ ns ∈ [Corbett2000.piraha, Corbett2000.rembarrnga, Corbett2000.ilocano],
       b ∈ ns.values → a ∈ ns.values := by

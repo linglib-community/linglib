@@ -115,7 +115,6 @@ def ProjectionMode.Admits : ProjectionMode → Background W → Prop
 /-- A modal base allows *must p, but not p* when at some world `p` is necessary and false. -/
 def Deniable (f : Background W) : Prop := ∃ p w, simpleNecessity f p w ∧ ¬ p w
 
-/-- A base allows the denial of a necessity claim exactly when it is not realistic. -/
 theorem deniable_iff_not_isRealistic : Deniable f ↔ ¬ f.IsRealistic := by
   simp [Deniable, isRealistic_iff_simpleNecessity_le_id, Pi.le_def]
 
@@ -124,8 +123,6 @@ of a necessity claim. -/
 def ProjectionMode.Veridical (μ : ProjectionMode) (W : Type*) : Prop :=
   ∀ f : Background W, μ.Admits f → ¬ Deniable f
 
-/-- Deniability diagnoses the content mode: over any worlds, a mode is veridical exactly when it
-is factual, a content base being free to hold what holds nowhere. -/
 theorem ProjectionMode.veridical_iff [Nonempty W] : μ.Veridical W ↔ μ = .factual := by
   cases μ
   · exact iff_of_true (fun _ hf h ↦ deniable_iff_not_isRealistic.1 h hf) rfl
@@ -176,7 +173,6 @@ theorem table18_2 :
       ∀ μ, ∃ c : BackgroundClass, c.traditionalFlavor = .epistemic ∧ c.projectionMode = μ := by
   decide
 
-/-- The factual–content and circumstantial–evidential divisions determine the class. -/
 theorem projectionMode_traditionalFlavor_injective :
     Function.Injective fun c : BackgroundClass ↦ (c.projectionMode, c.traditionalFlavor) := by
   decide
@@ -188,12 +184,10 @@ def BackgroundClass.ofMode (μ : ProjectionMode) : Option EvidenceType → Backg
 
 variable {s : Option EvidenceType}
 
-/-- The circumstantial–evidential division is whether an information source is encoded. -/
 theorem BackgroundClass.traditionalFlavor_ofMode :
     (ofMode μ s).traditionalFlavor = .circumstantial ↔ s = none := by
   cases s <;> cases μ <;> simp [ofMode, traditionalFlavor]
 
-/-- The factual–content division is the mode, a background without a source being factual. -/
 theorem BackgroundClass.projectionMode_ofMode (h : s = none → μ = .factual) :
     (ofMode μ s).projectionMode = μ := by
   cases s <;> cases μ <;> simp_all [ofMode, projectionMode]
@@ -205,7 +199,6 @@ def modalTable : List (String × ModalItem) :=
   [Statimcets.kaInfer, Statimcets.lakw7a, Gitksan.imaa, NezPerce.oqa, Nsyilxcen.mat,
     Nsyilxcen.cmay, Niuean.liga, Niuean.maeke, Niuean.lata].map fun m ↦ (m.form, m)
 
-/-- Every row naming a modal names one of the fragments'. -/
 theorem rows_resolve :
     ∀ e ∈ Examples.all, (e.feature? "modal").isSome → (e.parse? "modal" modalTable).isSome := by
   decide
@@ -228,7 +221,6 @@ theorem table18_3 :
       statimcetsClass lakw7a = .contentEvidential := by
   decide
 
-/-- St'át'imcets encodes the full three-way split. -/
 theorem statimcets_full_split : ∀ c : BackgroundClass, ∃ m ∈ modals, statimcetsClass m = c := by
   decide
 
@@ -245,8 +237,6 @@ end Statimcets
 
 /-! ### Gitksan: epistemic and circumstantial apart (Table 18.1) -/
 
-/-- The split between epistemic and circumstantial readings is absolute in Gitksan: each modal
-selects one type, [matthewson-2013]'s type selectivity. -/
 theorem gitksan_absolute_split : Matthewson2013.TypeSelective Gitksan.modals :=
   Matthewson2013.gitksan_mixed.1
 
@@ -266,13 +256,10 @@ def HasDualIn (L : List ModalItem) (m : ModalItem) : Prop :=
 instance (L : List ModalItem) (m : ModalItem) : Decidable (HasDualIn L m) :=
   inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _ = _ ∧ ∃ _ ∈ _, _))
 
-/-- A modal varying in force has no dual. -/
 theorem not_hasDualIn_of_variesForce {L : List ModalItem} {m : ModalItem}
     (h : m.classical.VariesForce) : ¬ HasDualIn L m :=
   fun h' ↦ Nat.not_succ_le_self 1 (h.trans_eq h'.1)
 
-/-- Gitksan *ima('a)* and *g̱at* vary in force, and Nez Perce *o'qa* has no necessity
-counterpart, so none has a dual in its inventory. -/
 theorem no_duals :
     ¬ HasDualIn Gitksan.modals Gitksan.imaa ∧ ¬ HasDualIn Gitksan.modals Gitksan.gat ∧
       ¬ HasDualIn NezPerce.modals NezPerce.oqa :=
@@ -367,8 +354,6 @@ instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
     Decidable (DistinguishesForce L D) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _ ∧ _ ∧ _ ≠ _))
 
-/-- The flavour–force correlation: Gitksan and Niuean distinguish force among their
-circumstantial modals and not among their epistemic ones. -/
 theorem force_only_circumstantial :
     (¬ DistinguishesForce Gitksan.modals ModalItem.Epistemic ∧
         DistinguishesForce Gitksan.modals ModalItem.Circumstantial) ∧
@@ -376,14 +361,11 @@ theorem force_only_circumstantial :
         DistinguishesForce Niuean.modals ModalItem.Circumstantial := by
   decide
 
-/-- Gitksan's circumstantial *da'aḵhlxw* and *sgi* are duals; its epistemic *ima('a)* and
-*g̱at* have none. -/
 theorem gitksan_duals :
     HasDualIn Gitksan.modals Gitksan.daakhlxw ∧ HasDualIn Gitksan.modals Gitksan.sgi ∧
       ¬ HasDualIn Gitksan.modals Gitksan.imaa ∧ ¬ HasDualIn Gitksan.modals Gitksan.gat :=
   ⟨by decide, by decide, no_duals.1, no_duals.2.1⟩
 
-/-- Niuean's circumstantial *maeke* and *lata* are duals; its epistemic *liga* has none. -/
 theorem niuean_duals :
     HasDualIn Niuean.modals Niuean.maeke ∧
       HasDualIn Niuean.modals Niuean.lata ∧
@@ -417,7 +399,6 @@ instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
     Decidable (OneAxisWithin L D) :=
   inferInstanceAs (Decidable (¬ (_ ∧ _)))
 
-/-- A modal of a one-axis domain varies on one axis. -/
 theorem OneAxisWithin.singleAxis {L : List ModalItem} {D : ModalItem → Prop}
     (h : OneAxisWithin L D) {m : ModalItem} (hm : m ∈ L) (hD : D m) :
     SingleAxis m.classical.meaning :=
@@ -432,18 +413,13 @@ def VanderKlok (L : List ModalItem) : Prop :=
 instance (L : List ModalItem) : Decidable (VanderKlok L) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The refinement entails the universal, each modal lying in one of the two domains. -/
 theorem VanderKlok.singleAxis {L : List ModalItem} (h : VanderKlok L) {m : ModalItem}
     (hm : m ∈ L) : SingleAxis m.classical.meaning := by
   by_cases he : m.Epistemic
   exacts [h.1.singleAxis hm he, h.2.singleAxis hm he]
 
-/-- Gitksan satisfies the refinement, its epistemic modals varying in force and its
-circumstantial modals in flavour. -/
 theorem gitksan_vanderKlok : VanderKlok Gitksan.modals := by decide
 
-/-- [nauze-2008]'s universal holds of Gitksan: every modal varies on one axis, between necessity
-and possibility or among flavours. -/
 theorem gitksan_nauze : ∀ m ∈ Gitksan.modals, SingleAxis m.classical.meaning :=
   fun _ hm ↦ gitksan_vanderKlok.singleAxis hm
 

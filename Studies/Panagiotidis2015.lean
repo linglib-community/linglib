@@ -78,29 +78,19 @@ instance : DecidablePred IsCategorizer := fun c ↦ by
 theorem isCategorizer_iff (c : Cat) : IsCategorizer c ↔ c = .v ∨ c = .n ∨ c = .a := by
   cases c <;> simp [IsCategorizer]
 
-/-- The lexical categorizers bear the substantive features, *n* [N], *v* [V], *a* both, and the
-adposition, the default categorizer, neither. -/
 theorem categorizer_features :
     categorialFeatures .n = ⟨true, false⟩ ∧ categorialFeatures .v = ⟨false, true⟩ ∧
       categorialFeatures .a = ⟨true, true⟩ ∧ categorialFeatures .P = ⟨false, false⟩ := by
   decide
 
-/-- Features are fixed by the extended-projection family: every head of a projection carries
-its categorizer's [N] and [V] specification. -/
 theorem categorialFeatures_eq_iff (c₁ c₂ : Cat) :
     categorialFeatures c₁ = categorialFeatures c₂ ↔ c₁.family = c₂.family :=
   CategorialFeatures.ofFamily_injective.eq_iff
 
-/-- Chomsky's diacritic features and Panagiotidis's substantive ones cut the categories into the
-same four classes, both being injective images of the family; the conceptual difference, P as
-`[−V, −N]` against P as the default categorizer, is invisible to the partition. -/
 theorem chomsky_panagiotidis_agree (c₁ c₂ : Cat) :
     categorialFeatures c₁ = categorialFeatures c₂ ↔ c₁.features = c₂.features := by
   rw [categorialFeatures_eq_iff, Cat.features_eq_iff]
 
-/-- The categorizers sit at the first functional level of Grimshaw's sequence, above the lexical
-heads, which records Grimshaw's architecture rather than the book's claim that categorizers are
-the only lexical heads. -/
 theorem fValue_of_isCategorizer {c : Cat} (h : IsCategorizer c) : c.fValue = 1 := by
   cases c <;> first | rfl | exact h.elim
 
@@ -145,7 +135,6 @@ def act : RootFamily := ⟨"ACT", [.mk' "act" .VERB, .mk' "action" .NOUN, .mk' "
 /-- The sample root families. -/
 def allFamilies : List RootFamily := [destroy, beauty, clear, produce, create, act]
 
-/-- Every root in the sample surfaces under each of the three categorizers. -/
 theorem all_families_tricategorial :
     ∀ rf ∈ allFamilies, rf.HasCategory .VERB ∧ rf.HasCategory .NOUN ∧ rf.HasCategory .ADJ := by
   decide

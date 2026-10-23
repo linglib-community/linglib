@@ -45,45 +45,35 @@ open Discourse
 
 /-! ### Form-function criteria (§1.1) -/
 
-/-- By informativity, a modifier lowers the accessibility a form codes. -/
 theorem informativity_modifier :
     ∀ a b : AccessibilityLevel, a.head = b.head → a.deixis = b.deixis →
       a.modified → ¬ b.modified → a < b := by
   decide
 
-/-- By informativity, a demonstrative with a noun codes lower accessibility than a bare one. -/
 theorem informativity_lexical :
     ∀ a b : AccessibilityLevel, a.head = b.head → a.deixis = b.deixis →
       ¬ a.modified → ¬ b.modified → a.lexical → ¬ b.lexical → a < b := by
   decide
 
-/-- By informativity, a full name codes lower accessibility than a partial one. -/
 theorem informativity_partial_name :
     ∀ a b : AccessibilityLevel, a.head = .name → b.head = .name →
       ¬ a.modified → ¬ b.modified → a.full → ¬ b.full → a < b := by
   decide
 
-/-- By rigidity, a full name codes lower accessibility than the description of the same
-length. -/
 theorem rigidity_full_name :
     ∀ a b : AccessibilityLevel, a.head = .name → a.full → b.head = .description →
       a.modified = b.modified → a < b := by
   decide
 
-/-- The criteria overlap only partially: a partial name is rigid, yet codes higher
-accessibility than a short description. -/
 theorem rigidity_not_sufficient :
     AccessibilityLevel.shortDefDescription < AccessibilityLevel.lastName := by
   decide
 
-/-- By attenuation, a stressed pronoun codes lower accessibility than an unstressed one. -/
 theorem attenuation_stress :
     ∀ a b : AccessibilityLevel, a.head = .pronoun → b.head = .pronoun →
       a.stressed → ¬ b.stressed → a < b := by
   decide
 
-/-- By attenuation, a free pronoun codes lower accessibility than a cliticized one, a pronoun
-than verbal agreement, and agreement than zero. -/
 theorem attenuation_reduction :
     ∀ a b : AccessibilityLevel,
       (a.head = .pronoun ∧ b.head = .pronoun ∧ ¬ a.stressed ∧ ¬ a.bound ∧ b.bound) ∨
@@ -138,7 +128,6 @@ def maya : Factors := ⟨2, 1, .localTopic, false⟩
 /-- Rachel's factors in the same example. -/
 def rachel : Factors := ⟨1, 1, .nonTopic, false⟩
 
-/-- Neither antecedent dominates the other: the factors pull apart. -/
 theorem maya_rachel_incomparable : ¬ maya.Dominates rachel ∧ ¬ rachel.Dominates maya := by
   decide
 
@@ -172,7 +161,6 @@ def marker (r : Datum) (key : String) : Option AccessibilityLevel :=
 def markers (r : Datum) : List AccessibilityLevel :=
   (r.features "marker").filterMap ofLabel
 
-/-- Topicality outranks distance: the topical, more distant Maya takes the higher marker. -/
 theorem rows_topicality_over_distance :
     ∀ r ∈ Examples.all, ∀ m ∈ (marker r "maya").toList, ∀ c ∈ (marker r "rachel").toList,
       c < m := by
@@ -211,7 +199,6 @@ def givenness : AccessibilityLevel → Finset GivennessStatus
   | .fullNameMod | .fullName => {.uniquelyIdentifiable, .familiar}
   | .lastName | .firstName => {.familiar, .activated}
 
-/-- Many forms, one status: four forms of distinct accessibility are all *activated*. -/
 theorem activated_many_forms :
     (∀ l ∈ [AccessibilityLevel.distalDem, .proxDem, .stressedPron, .proxDemNP],
       givenness l = {.activated}) ∧
@@ -219,14 +206,11 @@ theorem activated_many_forms :
         AccessibilityLevel.rank).Nodup := by
   decide
 
-/-- One form, many statuses: a full name is *uniquely identifiable* or *familiar*. -/
 theorem full_name_two_statuses :
     GivennessStatus.uniquelyIdentifiable ∈ givenness .fullName ∧
       GivennessStatus.familiar ∈ givenness .fullName := by
   decide
 
-/-- Zeroes, agreement, cliticized and full pronouns are all *in focus*, though each codes a
-different degree of accessibility and has its own distribution. -/
 theorem in_focus_collapse :
     (∀ l ∈ [AccessibilityLevel.zero, .verbalAgreement, .cliticizedPron, .unstressedPron],
       givenness l = {.inFocus}) ∧
@@ -235,8 +219,6 @@ theorem in_focus_collapse :
   decide
 
 open Discourse.Centering in
-/-- Centering's pronoun rule says nothing when no pronoun is used, so an entity coded by a
-repeated name violates nothing: the repeated-name penalty is not its prediction. -/
 theorem pronominalization_vacuous {E R : Type*} [DecidableEq E] [LinearOrder R]
     (prev cur : Utterance E R) (h : ∀ e, ¬ cur.Pronominalizes e) :
     PronominalizationConstraint prev cur :=

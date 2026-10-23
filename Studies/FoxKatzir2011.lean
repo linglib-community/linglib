@@ -71,17 +71,13 @@ the contextual substitution source. -/
 def formalAlternatives : Set (Tree C V) :=
   {ψ | atMostAsComplex (contextualSource lex φ salient) ψ φ}
 
-/-- Without salient constituents the alternatives are [katzir-2007]'s. -/
 theorem formalAlternatives_empty : formalAlternatives lex φ ∅ = structuralAlternatives lex φ := by
   simp [formalAlternatives, structuralAlternatives, contextualSource, substitutionSource]
 
-/-- A salient constituent of the sentence's category is a formal alternative. -/
 theorem mem_formalAlternatives_of_salient {ψ : Tree C V} (hψ : ψ ∈ salient)
     (hcat : ψ.cat = φ.cat) : ψ ∈ formalAlternatives lex φ salient :=
   Relation.ReflTransGen.single (StructuralOp.subst hcat (by simp [contextualSource, hψ]))
 
-/-- The symmetric *some but not all* is not a structural alternative of *some*, but it becomes a
-formal alternative once it is salient. -/
 theorem someButNotAll_mem_formalAlternatives :
     Katzir2007.someButNotAllSentence ∈ formalAlternatives Katzir2007.lexicon
       Katzir2007.someSentence {Katzir2007.someButNotAllSentence} :=
@@ -112,8 +108,6 @@ theorem mem_SM {w : W} : w ∈ SM A S ↔ w ∈ S ∧ ∀ p ∈ A, p ⊂ S → w
   exact and_congr_right fun _ ↦
     ⟨fun h p hp hps ↦ h p ⟨hp, hps⟩, fun h p ⟨hp, hps⟩ ↦ h p hp hps⟩
 
-/-- *Only*, the prejacent with the alternatives it does not entail denied
-(`Exhaustification.exh`), is at least as strong as the strengthened meaning. -/
 theorem exh_subset_SM : exh A S ⊆ SM A S := fun _ hw ↦
   mem_SM.2 ⟨hw.1, fun p hp hps hwp ↦ (ssubset_def ▸ hps).2 (hw.2 p hp hwp)⟩
 
@@ -125,8 +119,6 @@ section Symmetry
 
 variable {A : Set (Set W)} {S S₁ S₂ : Set W}
 
-/-- With both symmetric alternatives in the set, the strengthened meaning is contradictory, since
-negating either asserts the other. This is the symmetry problem. -/
 theorem SM_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ A)
     (hne₁ : S₁.Nonempty) (hne₂ : S₂.Nonempty) : SM A S = ∅ := by
   ext w
@@ -137,18 +129,15 @@ theorem SM_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ �
   · exact hall S₁ h₁ (h.ssubset_left hne₂) hw₁
   · exact hall S₂ h₂ (h.symm.ssubset_left hne₁) hw₂
 
-/-- *Only* on symmetric alternatives is contradictory as well. -/
 theorem exh_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ A)
     (hne₁ : S₁.Nonempty) (hne₂ : S₂.Nonempty) : exh A S = ∅ :=
   subset_empty_iff.1 ((SM_eq_empty_of_isSymmetric h h₁ h₂ hne₁ hne₂) ▸ exh_subset_SM)
 
-/-- Neither symmetric alternative is innocently excludable given the assertion. -/
 theorem not_isInnocentlyExcludable_of_isSymmetric (h : IsSymmetric S S₁ S₂)
     (hne₁ : S₁.Nonempty) : ¬ IsInnocentlyExcludable {S, S₁, S₂} S S₁ :=
   not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) (by simp) (by simp)
     h.union.symm.subset (h.symm.sdiff_eq.symm ▸ hne₁)
 
-/-- Innocent exclusion negates neither symmetric alternative, so exhaustification is vacuous. -/
 theorem exhIE_eq_self_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S₁.Nonempty)
     (hne₂ : S₂.Nonempty) : exhIE {S, S₁, S₂} S = S := by
   ext w
@@ -163,8 +152,6 @@ theorem exhIE_eq_self_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S�
     rw [pair_comm S₂ S₁] at this
     exact (this hq).elim
 
-/-- With the symmetric alternative absent, as under Horn scales, the other is innocently
-excludable and the implicature arises. -/
 theorem exhIE_pair_eq_sdiff (h : IsSymmetric S S₁ S₂) (hne₂ : S₂.Nonempty) :
     exhIE {S, S₁} S = S₂ := by
   obtain ⟨b, hb⟩ := hne₂
@@ -193,15 +180,11 @@ section Universal
 
 variable {R : SetRel W W} {S S₁ S₂ : Set W}
 
-/-- Under a universal operator the alternatives are no longer symmetric whenever some world's
-accessible worlds fall on both sides. -/
 theorem not_isSymmetric_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁)
     (hx₂ : x ∉ R.core S₂) : ¬ IsSymmetric (R.core S) (R.core S₁) (R.core S₂) := fun h ↦ by
   have : x ∈ R.core S₁ ∪ R.core S₂ := h.union ▸ hx
   exact this.elim hx₁ hx₂
 
-/-- Both implicatures arise under the universal operator, since such a world lies in the
-strengthened meaning. -/
 theorem mem_SM_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx₂ : x ∉ R.core S₂) :
     x ∈ SM {R.core S, R.core S₁, R.core S₂} (R.core S) := by
   refine mem_SM.2 ⟨hx, fun p hp hps ↦ ?_⟩
@@ -211,7 +194,6 @@ theorem mem_SM_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx
   · exact hx₁
   · exact hx₂
 
-/-- Both exclusions of *only* arise under the universal operator. -/
 theorem mem_exh_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx₂ : x ∉ R.core S₂) :
     x ∈ exh {R.core S, R.core S₁, R.core S₂} (R.core S) := by
   refine ⟨hx, fun p hp hxp ↦ ?_⟩
@@ -229,9 +211,6 @@ section Restriction
 
 variable {S S₁ S₂ : Set W} {F : Set (Set W)}
 
-/-- Context cannot break symmetry. With the context set the relevant propositions, closed under
-negation and conjunction, the actual alternatives keep both symmetric alternatives or
-neither. -/
 theorem mem_inter_of_isSymmetric (h : IsSymmetric S S₁ S₂) (R : BooleanSubalgebra (Set W))
     (hS : S ∈ R) (hF : S₂ ∈ F) (h₁ : S₁ ∈ (R : Set (Set W)) ∩ F) :
     S₂ ∈ (R : Set (Set W)) ∩ F :=
@@ -247,8 +226,6 @@ nothing exhaustively relevant. -/
 def IsAllowableRestriction (F A : Set (Set W)) (S : Set W) : Prop :=
   S ∈ A ∧ ∀ p ∈ F \ A, ¬ ExhaustivelyRelevant A p
 
-/-- Neither disjunct of a disjunction can be pruned in favour of the other, symmetric or not,
-since its *only*-meaning is the assertion without the kept disjunct. -/
 theorem not_isAllowableRestriction_pair (hS : S = S₁ ∪ S₂) (h₂₁ : ¬ S₂ ⊆ S₁) (hF : S₂ ∈ F)
     (h₂ : S₂ ∉ ({S, S₁} : Set (Set W))) : ¬ IsAllowableRestriction F {S, S₁} S := by
   rintro ⟨-, hall⟩
@@ -289,8 +266,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The inference arises exactly when a universal operator removes the symmetry, or when the
-formal alternatives contain neither a symmetric pair nor compatible disjuncts. -/
 theorem rows_predicted : ∀ r ∈ rows,
     (r.inference = true ↔ r.universal = true ∨ (r.symmetric = false ∧ r.compatible = false)) := by
   decide

@@ -218,8 +218,6 @@ def matchTheory : ConstraintSystem Input Candidate Con where
     | .word => (Constraint.align Eq).comap fun xc ↦ (xc.2.spans xc.1 .om, xc.1.lex.map (·.1))
     | i => correspondence.con i
 
-/-- MAX-XP asks no more than MATCH-PHRASE of any candidate, `Prosody.deficiency_corresponds_le` on
-terminal spans. -/
 theorem phrase_le (x : Input) (c : Candidate) :
     correspondence.con .phrase (x, c) ≤ matchTheory.con .phrase (x, c) := by
   have hx : (x.phrases.map (·.1)).Nodup ∧ ∀ a ∈ x.phrases, a.2 ∈ Set.Ico a.1.1 a.1.2 := by

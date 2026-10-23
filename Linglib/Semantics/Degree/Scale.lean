@@ -117,7 +117,6 @@ abbrev ScalarDimension.Scale (d : ScalarDimension) : Type := d.boundedness.Degre
 instance instLinearOrderScale (d : ScalarDimension) : LinearOrder d.Scale :=
   inferInstance
 
-/-- The degrees of a dimension have a greatest element exactly when its scale has a maximum. -/
 theorem ScalarDimension.hasGreatest_scale_iff (d : ScalarDimension) :
     (∃ m : d.Scale, IsTop m) ↔ d.boundedness.HasMax :=
   Boundedness.exists_isTop_degreeShape d.boundedness
@@ -134,7 +133,6 @@ theorem Boundedness.defaultVendlerClass_eq_accomplishment_iff {b : Boundedness} 
     b.defaultVendlerClass = .accomplishment ↔ b.HasMax := by
   cases b <;> decide
 
-/-- A degree achievement on a scale is telic by default exactly when the scale has a maximum. -/
 theorem Boundedness.telicity_defaultVendlerClass_eq_telic_iff {b : Boundedness} :
     b.defaultVendlerClass.telicity = .telic ↔ b.HasMax := by
   cases b <;> decide
@@ -156,16 +154,13 @@ theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimensi
   Boundedness.telicity_defaultVendlerClass_eq_telic_iff.trans
     (ScalarDimension.hasGreatest_scale_iff d).symm
 
-/-- The default Vendler class has the default telicity. -/
 @[simp] theorem ScalarDimension.telicity_defaultVendlerClass (d : ScalarDimension) :
     d.defaultVendlerClass.telicity = d.defaultTelicity := rfl
 
-/-- A degree achievement is durative. -/
 @[simp] theorem ScalarDimension.duration_defaultVendlerClass (d : ScalarDimension) :
     d.defaultVendlerClass.duration = .durative := by
   unfold defaultVendlerClass Boundedness.defaultVendlerClass; cases d.boundedness <;> rfl
 
-/-- A degree achievement is dynamic. -/
 @[simp] theorem ScalarDimension.dynamicity_defaultVendlerClass (d : ScalarDimension) :
     d.defaultVendlerClass.dynamicity = .dynamic := by
   unfold defaultVendlerClass Boundedness.defaultVendlerClass; cases d.boundedness <;> rfl

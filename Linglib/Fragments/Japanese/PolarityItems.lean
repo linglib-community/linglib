@@ -57,19 +57,14 @@ def dareDemo : PolarityItem :=
 
 /-! ### Licensing -/
 
-/-- *Dare-mo* needs clausemate negation, so it is licensed exactly by the contexts carrying
-anti-morphic strength, which among the named contexts is clausal negation alone. -/
 theorem dareMo_licensing_characterized (c : LicensingContext) :
     c.licenser.Licenses dareMo ↔ c.licenser.Carries .antiMorphic :=
   Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
-/-- Every attested *dare-demo* context admits it: all four are generic contexts. -/
 theorem dareDemo_licensing_sound :
     ∀ c ∈ dareDemo.licensingContexts, c.licenser.Admits dareDemo := by
   decide
 
-/-- The n-word and the free choice item are attested in disjoint contexts, clausemate negation
-against the modal, imperative and generic ones. -/
 theorem dareMo_dareDemo_licensing_disjoint :
     ∀ c ∈ dareMo.licensingContexts, c ∉ dareDemo.licensingContexts := by
   decide

@@ -74,8 +74,6 @@ def brendan : Word :=
   ⟨"Brendan", .PROPN,
     Features.of (person := some .third) (number := some .singular) (gender := some .masculine)⟩
 
-/-- The running example is a different-gender item: *she* has Lisa as its only candidate
-antecedent. -/
 theorem lisa_brendan :
     Gender.ofPair lisa brendan = .different ∧
       English.Pronouns.she.toPronoun.CandidateAntecedent lisa ∧
@@ -100,8 +98,6 @@ def Model.logit (M : Model) (c : Cell) : ℚ :=
 /-- The topicality account: production is insensitive to thematic role. -/
 def Model.Topical (M : Model) : Prop := M.goal = 0
 
-/-- The topicality account is the claim that goals and sources are pronominalized alike at
-every grammatical role and gender. -/
 theorem topical_iff (M : Model) :
     M.Topical ↔ ∀ g d, M.logit ⟨.goal, g, d⟩ = M.logit ⟨.source, g, d⟩ := by
   unfold Model.Topical
@@ -109,9 +105,6 @@ theorem topical_iff (M : Model) :
   · intro h g d; simp [Model.logit, h]
   · intro h; simpa [Model.logit] using h .nonsubject .same
 
-/-- A subject source pronominalized above a nonsubject goal, the earlier finding read as
-evidence that production ignores predictability, holds exactly when the subject effect exceeds
-the goal effect, so it leaves a positive goal effect untested. -/
 theorem source_subject_gt_goal_iff (M : Model) (d : Gender) :
     M.logit ⟨.goal, .nonsubject, d⟩ < M.logit ⟨.source, .subject, d⟩ ↔ M.goal < M.subject := by
   simp [Model.logit]
@@ -125,13 +118,9 @@ def Model.Fits (M : Model) (r : Cell → ℕ) : Prop :=
 /-- The rate of pronoun production in a cell of an experiment (Tables 1, 4, 7), in percent. -/
 def rate (x : Experiment) (c : Cell) : ℕ := (rates x c.gender c.gram c.role).pronouns
 
-/-- Goals are expected as the next mention above sources, and above subjects. -/
 theorem goal_expected : 50 < goalNextMention ∧ subjectNextMention < goalNextMention := by
   decide
 
-/-- Experiment 1 at fixed grammatical role refutes the topicality account: goals in subject
-position are pronominalized above sources in subject position, which no model without a
-thematic effect fits. -/
 theorem topical_not_fits (M : Model) (hM : M.Topical) : ¬ M.Fits (rate .retelling) := by
   intro hf
   have h := (topical_iff M).1 hM .subject .different

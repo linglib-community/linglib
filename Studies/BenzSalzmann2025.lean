@@ -66,8 +66,6 @@ theorem n_stranding_is_xStranding :
     ¬ nominalSpine.Deletes .n (.head .n) ∧ nominalSpine.Deletes .n (.head .N) :=
   ⟨nominalSpine.not_deletes_head_self _, by decide⟩
 
-/-- The clausal and nominal patterns are the same theorem at the categorizer of each extended
-projection: V is to v as N is to n. -/
 theorem clausal_nominal_parallel :
     clausalSpine.Deletes .v (.head .V) ∧ nominalSpine.Deletes .n (.head .N) := by decide
 
@@ -121,8 +119,6 @@ theorem contrast_governs_recovery (b : Bool) :
 
 /-! ### Ellipsis height and mismatches -/
 
-/-- German N-stranding deletes strictly less than the Spanish configuration: the categorizer and
-the prenominal modifiers survive the one and not the other. -/
 theorem german_smaller_domain_than_spanish :
     nStrandingNPE.Spares (.adjunct .N) ∧ nPEllipsis.Deletes (.adjunct .N) ∧
       nStrandingNPE.Spares (.head .n) ∧ nPEllipsis.Deletes (.head .n) := by decide

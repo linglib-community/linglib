@@ -253,7 +253,6 @@ theorem Comparison.dual_involutive : Function.Involutive Comparison.dual := fun 
 @[simp] theorem Comparison.dual_dual (c : Comparison) : c.dual.dual = c :=
   Comparison.dual_involutive c
 
-/-- Antonymy preserves strictness, so *fewer than* is Class A as *more than* is. -/
 @[simp] theorem Comparison.isStrict_dual (c : Comparison) : c.dual.IsStrict ↔ c.IsStrict := by
   cases c <;> exact Iff.rfl
 
@@ -266,7 +265,6 @@ taller than a*. -/
 theorem Comparison.rel_dual (a b : α) : c.dual.Rel a b ↔ c.Rel b a := by
   cases c <;> simp only [Comparison.dual, Comparison.Rel, eq_comm]
 
-/-- The dual comparison on a scale is the comparison on the dual scale. -/
 theorem Comparison.rel_dual_toDual (a b : α) :
     c.dual.Rel a b ↔ c.Rel (OrderDual.toDual a) (OrderDual.toDual b) := by
   cases c <;> exact Iff.rfl
@@ -276,8 +274,6 @@ theorem Comparison.interval_dual (n : α) :
     c.dual.interval n = OrderDual.toDual ⁻¹' c.interval (OrderDual.toDual n) := by
   cases c <;> rfl
 
-/-- The bounds of a standard set for the dual comparison are the bounds of the dual set for the
-comparison on the dual scale. -/
 theorem Comparison.bounds_dual (Δ : Set α) :
     c.dual.bounds Δ = OrderDual.toDual ⁻¹' c.bounds (OrderDual.toDual '' Δ) := by
   cases c <;> ext x <;>
@@ -291,7 +287,6 @@ section Comp
 
 variable {α β : Type*} [Preorder α] [Preorder β]
 
-/-- An order embedding of the scale preserves and reflects every comparison. -/
 theorem Comparison.rel_map_iff (f : α ↪o β) (c : Comparison) {a n : α} :
     c.Rel (f a) (f n) ↔ c.Rel a n := by
   cases c <;> simp [Comparison.Rel, f.lt_iff_lt, f.le_iff_le, f.injective.eq_iff]
@@ -303,7 +298,6 @@ theorem Comparison.preimage_interval (f : α ↪o β) (c : Comparison) (n : α) 
   ext a
   simp only [Set.mem_preimage, Comparison.mem_interval, Comparison.rel_map_iff]
 
-/-- An automorphism of the scale that fixes the threshold fixes the interval. -/
 theorem Comparison.preimage_interval_of_isFixedPt (g : α ≃o α) (c : Comparison) {n : α}
     (hn : Function.IsFixedPt g n) : g ⁻¹' c.interval n = c.interval n := by
   conv_lhs => rw [← hn.eq]
@@ -321,9 +315,6 @@ theorem Comparison.interval_injective (c : Comparison) :
   exacts [Set.singleton_injective, Set.Ici_injective, Set.Ioi_injective, Set.Iic_injective,
     Set.Iio_injective]
 
-/-- An automorphism of the scale fixes the interval at `n` exactly when it fixes `n`, so a
-comparison with a fixed threshold, the positive form, is invariant under a rescaling only when the
-rescaling fixes the threshold. -/
 theorem Comparison.preimage_interval_eq_iff (g : α ≃o α) (c : Comparison) (n : α) :
     g ⁻¹' c.interval n = c.interval n ↔ Function.IsFixedPt g n := by
   have h : g ⁻¹' c.interval n = c.interval (g.symm n) := by
@@ -331,9 +322,6 @@ theorem Comparison.preimage_interval_eq_iff (g : α ≃o α) (c : Comparison) (n
   rw [h, c.interval_injective.eq_iff, g.symm_apply_eq, eq_comm]
   rfl
 
-/-- A comparison against every threshold is invariant under an automorphism of the scale only when
-the automorphism is the identity, so comparing measures on two scales does not survive rescaling
-one of them. -/
 theorem Comparison.forall_preimage_interval_eq_iff (g : α ≃o α) (c : Comparison) :
     (∀ n, g ⁻¹' c.interval n = c.interval n) ↔ g = OrderIso.refl α := by
   simp only [Comparison.preimage_interval_eq_iff, Function.IsFixedPt]
@@ -356,7 +344,6 @@ other element under the comparison `c`. -/
 def maxOnScale {α : Type*} [Preorder α] (c : Comparison) (X : Set α) : Set α :=
   { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → c.Rel x x' }
 
-/-- Maximality on a singleton returns the singleton, for any comparison. -/
 theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α) :
     maxOnScale c {x} = {x} := by
   ext y
@@ -366,7 +353,6 @@ theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α
   · rintro rfl
     exact ⟨rfl, fun x' hx' hne => absurd hx' hne⟩
 
-/-- Maximality under `≥` picks the greatest element. -/
 theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
     maxOnScale .ge X = {x | IsGreatest X x} := by
   ext x
@@ -378,8 +364,6 @@ theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
   · exact le_refl _
   · exact hdom y hy hne
 
-/-- Maximality under `<` picks the least element, since on a partial order strictly dominating
-the other elements of `X` on the `<` scale is being the least. -/
 theorem maxOnScale_lt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     maxOnScale .lt X = {x | IsLeast X x} := by
   ext x
@@ -390,7 +374,6 @@ theorem maxOnScale_lt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     · exact (hdom y hy hne).le
   · exact lt_of_le_of_ne (hlb hy) (Ne.symm hne)
 
-/-- Maximality under `>` picks the greatest element. -/
 theorem maxOnScale_gt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     maxOnScale .gt X = {x | IsGreatest X x} := by
   ext x
@@ -402,7 +385,6 @@ theorem maxOnScale_gt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     · exact (hdom y hy hne).le
   · exact lt_of_le_of_ne (hub hy) hne
 
-/-- Maximality under `<` on a closed interval is its left endpoint. -/
 theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
     maxOnScale .lt { x : α | s ≤ x ∧ x ≤ f } = {s} := by
@@ -410,7 +392,6 @@ theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
   exact Set.eq_singleton_iff_unique_mem.mpr
     ⟨isLeast_Icc hsf, fun _ h => h.unique (isLeast_Icc hsf)⟩
 
-/-- Maximality under `>` on a closed interval is its right endpoint. -/
 theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
     maxOnScale .gt { x : α | s ≤ x ∧ x ≤ f } = {f} := by

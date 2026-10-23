@@ -207,7 +207,6 @@ theorem symmGen_le_of_common (h₁ : LeftAlignedOn m X Z) (h₂ : LeftAlignedOn 
 
 end LeftAlignedOn
 
-/-- A constituent is left-aligned with itself as soon as it contains a prominent phrase. -/
 theorem leftAlignedOn_self : LeftAlignedOn m X X ↔ (leftmost m X).isSome :=
   ⟨fun ⟨a, ha, _⟩ ↦ Option.isSome_iff_exists.2 ⟨a, ha⟩,
     fun h ↦ let ⟨a, ha⟩ := Option.isSome_iff_exists.1 h; ⟨a, ha, a, ha, .refl a⟩⟩
@@ -266,9 +265,6 @@ theorem allows_comm : r.Allows m host focus ↔ r.Allows m focus host := by
 theorem favors_comm : r.Favors m host focus ↔ r.Favors m focus host := by
   cases r <;> grind [Favors, LeftAlignedOn.symm, Relation.SymmGen]
 
-/-- Every overt reflex of a focus sits on the phrase hosting its particle, where the particle is
-pronounced and from where the phrase moves. The reflexes of an allowed placement therefore
-target the focus exactly, pied-pipe or anti-pied-pipe, and none is hosted outside the focus. -/
 theorem Allows.exactlyTargets_or_piedPipes_or_antiPiedPipes (h : r.Allows m host focus)
     {s : Finset (Reflex TreePathᵒᵈ)} (hs : s.Nonempty) (hhost : ExactlyTargets s (toDual host)) :
     ExactlyTargets s (toDual focus) ∨ PiedPipes s (toDual focus) ∨
@@ -546,7 +542,6 @@ def Row.ofDatum (d : Datum) : Option Row := do
 /-- The examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every example has its row. -/
 theorem data_length : data.length = Examples.all.length := by decide +kernel
 
 /-- An example is unmarked on a reading exactly when the variant of the rule that the paper
@@ -562,13 +557,11 @@ theorem allows_of_marginal :
       rd.2 = .marginal → r.Allows d.prominent d.host rd.1 := by
   decide +kernel
 
-/-- A starred reading marks its focus at a phrase the variant does not allow. -/
 theorem not_allows_of_ungrammatical :
     ∀ d ∈ data, ∀ r ∈ d.requirement, ∀ rd ∈ d.readings,
       rd.2 = .ungrammatical → ¬ r.Allows d.prominent d.host rd.1 := by
   decide +kernel
 
-/-- The mismatch the paper labels an example with is the relation of its host to its focus. -/
 theorem mismatch_holds :
     ∀ d ∈ data, ∀ k ∈ d.mismatch, ∀ rd ∈ d.readings, k.Holds d.host rd.1 := by
   decide +kernel

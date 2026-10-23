@@ -144,7 +144,6 @@ theorem restrictCommitment_eq_self : c.restrictCommitment a b π = c ↔ ∀ w, 
     refine Frame.ext rfl (funext fun a' => funext fun b' => Set.ext fun ⟨w, v⟩ => ?_)
     exact ⟨And.left, fun hc => ⟨hc, fun ⟨ha, hb⟩ => by subst ha hb; exact h w _ hc⟩⟩
 
-/-- Two successive restrictions are idle iff each is. -/
 theorem restrictCommitment_restrictCommitment_eq_self_iff (a' b' : A) :
     (c.restrictCommitment a b π).restrictCommitment a' b' τ = c ↔
       c.restrictCommitment a b π = c ∧ c.restrictCommitment a' b' τ = c := by

@@ -61,18 +61,13 @@ abbrev too : Set World := q ⊓ p
 /-- *Either* asserts the disjunctive counterpart, `q ⊔ p`. -/
 abbrev either : Set World := q ⊔ p
 
-/-- Negation above *too* denies the conjunction. -/
 theorem too_compl : (too q p)ᶜ = qᶜ ⊔ pᶜ := compl_inf
 
-/-- With the antecedent settled true, negated *too* denies the host. -/
 theorem not_too_of_antecedent {w : World} (hq : w ∈ q) : w ∈ (too q p)ᶜ ↔ w ∉ p := by
   simp [hq]
 
-/-- Negation above *either* denies both the host and the antecedent. -/
 theorem either_compl : (either q p)ᶜ = qᶜ ⊓ pᶜ := compl_sup
 
-/-- Denying an existential the host entails is contradictory, denying the anaphoric conjunction
-is not: it denies the antecedent. -/
 theorem abrusan_contrast {e : Set World} (he : p ≤ e) :
     p ⊓ eᶜ = ⊥ ∧ p ⊓ (too q p)ᶜ = p ⊓ qᶜ := by
   refine ⟨?_, ?_⟩
@@ -84,15 +79,12 @@ theorem abrusan_contrast {e : Set World} (he : p ≤ e) :
 /-- The alternatives of a disjunction are the disjuncts and their conjunction. -/
 def disjAlts : Set (Set World) := {q ⊔ p, q, p, q ⊓ p}
 
-/-- *Too* entails every alternative of the conjunction, so exhaustification is vacuous. -/
 theorem too_entails_alts : exh {q ⊓ p, q, p, q ⊔ p} (too q p) = too q p :=
   exh_eq_self fun a ha => by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
     rcases ha with rfl | rfl | rfl | rfl
     exacts [le_rfl, inf_le_left, inf_le_right, inf_le_left.trans le_sup_left]
 
-/-- In a positive context *either* is exhaustified to a contradiction, provided neither disjunct
-is entailed by the disjunction. -/
 theorem either_positive_contradiction (hq : ¬ either q p ≤ q) (hp : ¬ either q p ≤ p) :
     exh (disjAlts q p) (either q p) = ⊥ := by
   refine le_bot_iff.1 ?_
@@ -101,8 +93,6 @@ theorem either_positive_contradiction (hq : ¬ either q p ≤ q) (hp : ¬ either
           (exh_subset_compl (by simp [disjAlts]) hp)
     _ = ⊥ := by rw [inf_assoc, ← compl_sup, inf_compl_eq_bot]
 
-/-- Under negation the negated disjunction entails every negated alternative, so
-exhaustification is vacuous. -/
 theorem either_negative_vacuous :
     exh ((disjAlts q p).image compl) (either q p)ᶜ = (either q p)ᶜ :=
   exh_eq_self fun a ⟨b, hb, hba⟩ => by
@@ -112,22 +102,18 @@ theorem either_negative_vacuous :
     exacts [le_rfl, compl_le_compl le_sup_left, compl_le_compl le_sup_right,
       compl_le_compl (inf_le_left.trans le_sup_left)]
 
-/-- In any downward-entailing context the scalar alternative of the disjunction is entailed, so
-exhaustification is vacuous there too: the account licenses *either* beyond negation. -/
 theorem either_vacuous_in_de (C : Set World → Set World) (hDE : Antitone C) :
     C (either q p) ⊆ C (q ⊓ p) :=
   hDE (inf_le_left.trans le_sup_left)
 
 /-! ### The data -/
 
-/-- *Either* is acceptable exactly in a negative host whose antecedent is not positive. -/
 theorem either_iff_negative :
     ∀ e ∈ Examples.all, e.feature? "particle" = some "either" →
       (e.judgment = .acceptable ↔
         e.feature? "polarity" = some "negative" ∧ e.feature? "antecedent" ≠ some "positive") := by
   decide
 
-/-- *Too* occurs in both polarities; its infelicity needs a missing antecedent. -/
 theorem too_any_polarity :
     ∀ e ∈ Examples.all, e.feature? "particle" = some "too" → ¬ e.JudgedFelicitous →
       e.feature? "polarity" = some "positive" ∧ (e.context ≠ "") := by

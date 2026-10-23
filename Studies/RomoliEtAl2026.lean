@@ -167,8 +167,6 @@ theorem pointwise_notAll_ne_zero_iff :
   rw [h, KrizChemla2015.pointwise_compl, show ∀ v : SignType, -v ≠ 0 ↔ v ≠ 0 by decide,
     pointwise_all_ne_zero_iff, or_comm]
 
-/-- Under *exactly two* the sentence is true where two boys opened all of their presents and none
-of the others opened only some. -/
 theorem pointwise_exactlyTwo_eq_one_iff :
     pointwise (NumberTree.cardinal {2}) d = 1 ↔ d.count 1 = 2 ∧ d.count 0 = 0 := by
   rw [KrizChemla2015.pointwise_cardinal_eq_one_iff]
@@ -176,8 +174,6 @@ theorem pointwise_exactlyTwo_eq_one_iff :
   exact ⟨fun h ↦ by have := h _ le_rfl (by omega); have := h _ (by omega) le_rfl; omega,
     fun h k h₁ h₂ ↦ by omega⟩
 
-/-- Under *exactly two* the sentence is false where more than two boys opened all of their
-presents or fewer than two opened any. -/
 theorem pointwise_exactlyTwo_eq_neg_one_iff :
     pointwise (NumberTree.cardinal {2}) d = -1 ↔ 2 < d.count 1 ∨ d.count 1 + d.count 0 < 2 := by
   rw [KrizChemla2015.pointwise_cardinal_eq_neg_one_iff]
@@ -207,7 +203,6 @@ the question the context raises. -/
 def symmetric (ctx : AugurzkyEtAl2023.Context) (d : Display) : Prop :=
   Homogeneity.usable ctx.issue (pointwise q) d
 
-/-- The symmetric verdict is truth at the resolution the context makes. -/
 theorem symmetric_iff (ctx : AugurzkyEtAl2023.Context) (d : Display) :
     symmetric q ctx d ↔ reading q d ctx.designation := by
   refine AugurzkyEtAl2023.usable_iff_reading_of q (fun d h ↦ ?_) (fun d h ↦ ?_) (fun c h ↦ ?_)
@@ -242,8 +237,6 @@ private theorem threshold_nine (ctx : AugurzkyEtAl2023.Context) :
     0 < ctx.threshold nine ∧ ctx.threshold nine ≤ nine.card := by
   cases ctx <;> simp [AugurzkyEtAl2023.Context.threshold, nine]
 
-/-- Exhaustifying a boy's definite over the alternatives the context leaves yields the reading
-its question selects by Bar-Lev's pruning. -/
 theorem isReading_alternatives (ctx : AugurzkyEtAl2023.Context) :
     BarLev2021.IsReading nine nine BarLev2021.holds (ctx.question nine)
       (Exhaustification.exhIEII (alternatives ctx) (⋃ b ∈ nine, atom BarLev2021.holds b)) := by
@@ -298,8 +291,6 @@ theorem pexPlural_alternatives (ctx : AugurzkyEtAl2023.Context) (w : Finset ℕ)
     · exact absurd (h2.1 h) h0
     · exact absurd (h1.1 h) hn
 
-/-- With no alternative pruned, as the universal question leaves them, `pex` gives a boy's
-definite its trivalent cell. -/
 theorem pexCell_universal (n : ℕ) : pexCell .universal n = cell n := by
   have h1 := KrizChemla2015.designated_k3_cell n
   have h0 := KrizChemla2015.designated_lp_cell n
@@ -347,8 +338,6 @@ private theorem resolve_k3_pexCell :
   refine List.map_congr_left fun n _ ↦ ?_
   simp [SignType.one_le_iff, pexCell_eq_one_iff, AugurzkyEtAl2023.designated_cell]
 
-/-- In a scope-monotone environment the asymmetric verdict is truth at the context's resolution
-of the boys' cells. -/
 theorem asymmetric_iff_of_scopeMonotone (hq : q.ScopeMonotone) :
     asymmetric q ctx opened ↔ reading q (opened.map cell) ctx.designation := by
   rw [asymmetric, KrizChemla2015.pointwise_eq_supervaluation_of_scopeMonotone hq,
@@ -442,8 +431,6 @@ theorem targets_unanalysed : ∀ p ∈ pictures, p.experiment = .one → p.pictu
     pointwise (sentences p.experiment pol).quantifier.tree p.display = -1 := by
   decide
 
-/-- The control pictures are bivalent for every sentence, Experiment 3's true one true and its
-false one false. -/
 theorem controls_bivalent : ∀ p ∈ pictures, p.picture ≠ .target → ∀ pol,
     pointwise (sentences p.experiment pol).quantifier.tree p.display ≠ 0 ∧
       (p.picture = .trueControl →
@@ -452,9 +439,6 @@ theorem controls_bivalent : ∀ p ∈ pictures, p.picture ≠ .target → ∀ po
         pointwise (sentences p.experiment pol).quantifier.tree p.display = -1) := by
   decide
 
-/-- Experiment 3 is the test [augurzky-etal-2023] proposed for *exactly two*. Its positive target
-has two gappy cells and no true one, and its negative target two true cells and a gappy one, as
-`AugurzkyEtAl2023.exactlyTwo_positive` and `AugurzkyEtAl2023.exactlyTwo_negative` require. -/
 theorem targets_exactlyTwo : ∀ p ∈ pictures, p.experiment = .three →
     (.positive ∈ p.targetFor → p.display.count 0 = 2 ∧ 1 ∉ p.display) ∧
       (.negative ∈ p.targetFor → p.display.count 1 = 2 ∧ 0 ∈ p.display) := by

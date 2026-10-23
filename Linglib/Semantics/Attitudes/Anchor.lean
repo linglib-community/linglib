@@ -117,7 +117,6 @@ variable {W : Type*}
 instance : Anchor (ContentIndividual W) W :=
   ⟨cont⟩
 
-/-- Every proposition is the content of some individual, so the projection is surjective. -/
 theorem cont_surjective : Function.Surjective (cont : ContentIndividual W → W → Prop) :=
   fun p ↦ ⟨⟨p⟩, rfl⟩
 
@@ -155,7 +154,6 @@ structure SituationIndividual (S : Type*) where
 instance {S : Type*} : Anchor (SituationIndividual S) S :=
   ⟨SituationIndividual.sit⟩
 
-/-- Every situation predicate is that of some individual, so the projection is surjective. -/
 theorem SituationIndividual.sit_surjective {S : Type*} :
     Function.Surjective (SituationIndividual.sit : SituationIndividual S → S → Prop) :=
   fun p ↦ ⟨⟨p⟩, rfl⟩

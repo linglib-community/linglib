@@ -69,15 +69,12 @@ noncomputable def entropyRate (X : ℕ → Ω → S) (μ : Measure Ω) : ℝ :=
 variable (hX : ∀ t, Measurable (X t))
 include hX
 
-/-- With no past, the conditional entropy is the entropy of the first value. -/
 theorem pastCondEntropy_zero : pastCondEntropy X μ 0 = H[X 0 ; μ] := by
   rw [pastCondEntropy, condEntropy_eq_sum _ (measurable_block hX 0 0), Fintype.sum_unique,
     show block X 0 0 ⁻¹' {default} = Set.univ from
       Set.eq_univ_of_forall fun _ ↦ Subsingleton.elim _ _]
   simp
 
-/-- Conditioning on a further value of the past never adds entropy, so `distanceInfo X μ (t + 1)`
-is nonnegative. -/
 theorem distanceInfo_succ_nonneg (t : ℕ) : 0 ≤ distanceInfo X μ (t + 1) :=
   sub_nonneg.mpr <| condEntropy_le_condEntropy_comp μ (hX _) (measurable_block hX 0 _) Fin.tail
 
@@ -107,7 +104,6 @@ theorem pastCondEntropy_antitone : Antitone (pastCondEntropy X μ) :=
   antitone_nat_of_succ_le fun t ↦ by
     linarith [distanceInfo_succ hX hs t, distanceInfo_succ_nonneg (μ := μ) hX t]
 
-/-- The weighted sum of the information at distances up to `T`, by summation by parts. -/
 theorem sum_Icc_mul_distanceInfo (T : ℕ) :
     ∑ t ∈ Icc 1 T, t * distanceInfo X μ t
       = ∑ t ∈ range T, pastCondEntropy X μ t - T * pastCondEntropy X μ T := by

@@ -117,7 +117,6 @@ theorem forall_of_cumulativeBelowGen [R.IsRefl] (h : cumulativeBelowGen R k S lo
     (Finset.singleton_nonempty a)).2 l hl
   rwa [Finset.mem_singleton.1 hb] at hab
 
-/-- The strong reading entails Cumulative Kind Predication, the salient weak one. -/
 theorem cumulativeKindPred_of_cumulativeBelowGen [R.IsRefl] (hne : (k w).Nonempty)
     (h : cumulativeBelowGen R k S locs w) : cumulativeKindPred k S locs w :=
   h w (R.refl w) (k w) subset_rfl hne

@@ -106,8 +106,6 @@ theorem grammar_real_singleton (hpos : ∀ v, 0 < H v) (con : ConstraintSet (X �
     (grammar H con x).real {y} = H (con · (x, y)) / ∑ z, H (con · (x, z)) := by
   simp [grammar, tilted_real_singleton, exp_log (hpos _)]
 
-/-- The log-odds of two candidates are the log of the ratio of their probabilities, the
-normalizing constant cancelling. -/
 theorem log_grammar_div (hpos : ∀ v, 0 < H v) (con : ConstraintSet (X × Y) (Fin n)) (x : X)
     (a b : Y) :
     log ((grammar H con x).real {a} / (grammar H con x).real {b}) = logOdds H con a b x := by
@@ -155,9 +153,6 @@ theorem Separable.pos (hH : Separable H) (v : Fin n → ℕ) : 0 < H v := by
 
 /-! ### Separable harmonies predict the generalization (§5.4) -/
 
-/-- Under a separable harmony the log-odds of any two candidates have zero interaction on every
-independent square, whatever the candidates, since the log-odds is a sum of per-constraint
-terms. -/
 theorem Separable.interaction_logOdds_eq_zero (hH : Separable H) {X Y : Type*} {sq : Square X}
     {con : ConstraintSet (X × Y) (Fin n)} (hind : sq.Independent con) (a b : Y) :
     sq.interaction (logOdds H con a b) = 0 := by
@@ -196,7 +191,6 @@ private theorem witnessSquare_independent (u : Fin n → ℕ) (k : Fin n) (c : �
   · exact .inl ⟨funext fun y ↦ by simp [witness, witnessSquare, hj],
       funext fun y ↦ by simp [witness, witnessSquare, hj]⟩
 
-/-- A harmony predicting HZ's generalization splits off the violations of any one constraint. -/
 theorem PredictsHZ.mul_update (hH : PredictsHZ H) (hpos : ∀ v, 0 < H v) (h0 : H 0 = 1)
     (u : Fin n → ℕ) (k : Fin n) (c : ℕ) :
     H (update u k c) = H (Pi.single k c) * H (update u k 0) := by
@@ -364,8 +358,6 @@ theorem inverseHarmony_hz_tagalog_iff {w : Fin 6 → ℝ} (hw : ∀ k, 0 ≤ w k
     · exact .inr h.symm
     · exact .inl (by rw [h2, h3]; ring)
 
-/-- The inverse harmony is not separable once the prefix constraints differ in weight and a
-stem-nasal constraint is active. -/
 theorem not_separable_inverseHarmony {w : Fin 6 → ℝ} (hw : ∀ k, 0 ≤ w k) (h45 : w 4 ≠ w 5)
     (h2 : w 2 ≠ 0) : ¬ Separable (inverseHarmony w) := fun hH ↦ by
   have := (inverseHarmony_hz_tagalog_iff hw).1 <|

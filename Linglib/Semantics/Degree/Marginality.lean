@@ -131,7 +131,6 @@ theorem MarginallyLT.trans (hxy : ml.MarginallyLT x y) (hyz : ml.MarginallyLT y 
     ml.MarginallyLT x z := by
   grind [ml.irrelevance, MarginallyLT.lt]
 
-/-- What lies between marginally different degrees is marginally different from each. -/
 theorem MarginallyLT.bounded (hxz : ml.MarginallyLT x z) (hxy : x < y) (hyz : y < z) :
     ml.MarginallyLT x y ∧ ml.MarginallyLT y z := by
   grind [ml.extends_lt]
@@ -188,12 +187,10 @@ theorem AtMostMarginal.largelyLT_congr_right (h : ml.AtMostMarginal y z) :
   ⟨fun h' ↦ (IsOrderConnected.conn _ _ _ h').resolve_right h.2,
     fun h' ↦ (IsOrderConnected.conn _ _ _ h').resolve_right h.1⟩
 
-/-- Marginally smaller than is smaller than within a block. -/
 theorem marginallyLT_iff_lt_and_atMostMarginal :
     ml.MarginallyLT x y ↔ x < y ∧ ml.AtMostMarginal x y := by
   grind [atMostMarginal_iff_incompRel, IncompRel, LargelyLT]
 
-/-- A block of at most marginally different degrees is order-connected. -/
 theorem ordConnected_setOf_atMostMarginal (x : α) :
     {y | ml.AtMostMarginal x y}.OrdConnected :=
   ⟨fun y hy z hz w ⟨hyw, hwz⟩ ↦ by
@@ -202,8 +199,6 @@ theorem ordConnected_setOf_atMostMarginal (x : α) :
     have hyz := marginallyLT_iff_lt_and_atMostMarginal.2 ⟨hyw.trans hwz, hy.symm.trans hz⟩
     exact hy.trans (.single (.inl (hyz.bounded hyw hwz).1))⟩
 
-/-- When `x` is largely smaller than `y`, infinitely many degrees lie marginally above `x` and
-largely below `y`, since Decomposition gives each such degree a marginally greater one. -/
 theorem LargelyLT.infinite_setOf (h : ml.LargelyLT x y) :
     {z | ml.MarginallyLT x z ∧ ml.LargelyLT z y}.Infinite := fun hfin ↦ by
   obtain ⟨z₀, hz₀⟩ := (ml.decomposition h).1
@@ -211,11 +206,9 @@ theorem LargelyLT.infinite_setOf (h : ml.LargelyLT x y) :
   obtain ⟨w, hzw, hwy⟩ := (ml.decomposition hzy).1
   exact (hmax ⟨hxz.trans hzw, hwy⟩ hzw.lt.le).not_gt hzw.lt
 
-/-- Largely different degrees are infinitely far apart. -/
 theorem LargelyLT.infinite_Ioo (h : ml.LargelyLT x y) : (Set.Ioo x y).Infinite :=
   h.infinite_setOf.mono fun _ hz ↦ ⟨hz.1.lt, hz.2.lt⟩
 
-/-- The degrees largely greater than a given one form an upper set. -/
 theorem isUpperSet_setOf_largelyLT (x : α) : IsUpperSet {y | ml.LargelyLT x y} :=
   fun _ _ hle h ↦ hle.eq_or_lt.elim (· ▸ h) h.trans_lt
 
@@ -274,7 +267,6 @@ theorem ofSetoid_atMostMarginalSetoid :
         (.inl hm))⟩).2; ⟨w, hw.lt, .single (.inl hw)⟩) = ml :=
   ext fun _ _ ↦ marginallyLT_iff_lt_and_atMostMarginal.symm
 
-/-- The blocks of the scale built from a partition are the cells of the partition. -/
 theorem atMostMarginalSetoid_ofSetoid {s : Setoid α} {hconv hne hgt hlt} :
     (ofSetoid s hconv hne hgt hlt).atMostMarginalSetoid = s := by
   refine Setoid.ext fun x y ↦ ⟨fun h ↦ ?_, fun h ↦ atMostMarginal_iff.2 ?_⟩
@@ -345,7 +337,6 @@ theorem ofAddSubgroup_marginallyLT_iff {H : AddSubgroup G} {hconv hbot htop} {x 
     (ofAddSubgroup H hconv hbot htop).MarginallyLT x y ↔ x < y ∧ y - x ∈ H := by
   simp [ofAddSubgroup, ofSetoid, QuotientAddGroup.leftRel_apply, neg_add_eq_sub]
 
-/-- The blocks of the scale built from a subgroup are its cosets. -/
 theorem atMostMarginalSetoid_ofAddSubgroup {H : AddSubgroup G} {hconv hbot htop} :
     (ofAddSubgroup H hconv hbot htop).atMostMarginalSetoid = QuotientAddGroup.leftRel H :=
   atMostMarginalSetoid_ofSetoid

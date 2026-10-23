@@ -104,7 +104,6 @@ example : negationStrength .mono = ⊥ := rfl
 theorem negationStrength_ne_bot_iff (σ : Signature) : σ.negationStrength ≠ ⊥ ↔ σ.sign = -1 := by
   cases σ <;> decide
 
-/-- A strength is the one its signature realizes. -/
 theorem negationStrength_toSignature (s : Negation.Strength) :
     s.toSignature.negationStrength = s := by
   cases s <;> rfl

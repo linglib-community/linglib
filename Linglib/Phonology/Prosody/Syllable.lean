@@ -96,7 +96,6 @@ def moraCount (σ : Syllable) : Nat := σ.morae.length
 /-- The syllable's weight (= its mora count). -/
 abbrev weight (σ : Syllable) : Weight := σ.moraCount
 
-/-- A syllable has at least its nucleus mora. -/
 theorem moraCount_pos (σ : Syllable) : 0 < σ.moraCount := Nat.succ_pos _
 
 /-- The mora count as a positive natural is the weight a `Tone.Registered` word reads. -/

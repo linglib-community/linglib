@@ -68,8 +68,6 @@ def scopeTruth (q : NumberTree) (A : W → E → Prop) (d : Set (W × E)) : Set 
 def restrictorTruth (q : NumberTree) (B : W → E → Prop) (d : Set (W × E)) : Set W :=
   {w | q.toGQ (fun e ↦ (w, e) ∈ d) (B w)}
 
-/-- A truth value at `w` that is a function of the individuals at `w` depends on the pair
-`(v, e)` iff `v` is `w` and the function depends on `e`. -/
 theorem dependsOn_slice_iff {w v : W} {e : E} {g : (E → Prop) → Prop} :
     DependsOn (fun d : Set (W × E) ↦ g fun x ↦ (w, x) ∈ d) {(v, e)}ᶜ ↔
       (v = w → DependsOn g {e}ᶜ) := by
@@ -86,8 +84,6 @@ theorem dependsOn_slice_iff {w v : W} {e : E} {g : (E → Prop) → Prop} :
       exact h rfl fun x hx ↦ hd (v, x) fun h' ↦ hx (Prod.ext_iff.1 h').2
     · exact congrArg g (funext fun x ↦ hd (w, x) fun h' ↦ hv (Prod.ext_iff.1 h').1.symm)
 
-/-- A truth value at `w` that is a function of the individuals at `w` depends on finitely many
-pairs. -/
 theorem dependsOn_slice [Finite E] (w : W) (g : (E → Prop) → Prop) :
     ∃ s : Set (W × E), s.Finite ∧ DependsOn (fun d : Set (W × E) ↦ g fun x ↦ (w, x) ∈ d) s :=
   ⟨{w} ×ˢ Set.univ, (Set.finite_singleton w).prod Set.finite_univ,

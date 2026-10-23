@@ -298,7 +298,6 @@ def construals (ex : Datum) : List (Finset Component) :=
   | some c, none => components c
   | none, _ => []
 
-/-- Every row has a construal, so no row drops out of `diagnostics_agree`. -/
 theorem construals_ne_nil : ∀ ex ∈ Examples.all, construals ex ≠ [] := by decide
 
 /-- Every diagnostic row is acceptable exactly when the linking puts the verb's argument in the
@@ -322,8 +321,6 @@ theorem locativeInversion_not_diagnostic :
 def entryOf (ex : Datum) : Option Verb :=
   (ex.feature? "verb").bind (Verb.find? (English.Verbs.verbs.map (·.toVerb)))
 
-/-- The rows on *break*, *burn*, *freeze*, *arrive*, *run*, *swim* and *appear* have entries, so
-`isUnaccusative_agrees` is not vacuous. -/
 theorem entryOf_isSome :
     ∀ ex ∈ [Examples.ex4_25a, Examples.ex4_25b, Examples.ex4_25c, Examples.ex4_31a,
       Examples.ex4_50a, Examples.ex4_50b, Examples.ex6_1],

@@ -90,7 +90,6 @@ variable {op a b}
 
 @[simp] theorem excluded_strong (e : Edge) : excluded op a b e .strong = (narrow op a b e)ᶜ := rfl
 
-/-- Narrow focus on a daughter excludes the literal meaning of the node. -/
 theorem notMem_narrow (hop : Injective2 op) (e : Edge) : op a b ∉ narrow op a b e := by
   cases e <;> rintro ⟨x, hx, y, hy, h⟩ <;> obtain ⟨rfl, rfl⟩ := hop h
   exacts [hx rfl, hy rfl]
@@ -101,15 +100,12 @@ theorem disjoint_narrow_left_right (hop : Injective2 op) :
   rintro _ ⟨x, hx, _, rfl, rfl⟩ ⟨_, rfl, y, hy, h⟩
   exact hx (hop h).1.symm
 
-/-- A strong restriction on a daughter excludes narrow focus on her sister. -/
 theorem narrow_swap_subset_excluded_strong (hop : Injective2 op) (e : Edge) :
     narrow op a b e.swap ⊆ excluded op a b e .strong := by
   cases e
   exacts [(disjoint_narrow_left_right hop).subset_compl_left,
     (disjoint_narrow_left_right hop).subset_compl_right]
 
-/-- Under a bijective composition, the targets Propagation leaves are composed from targets of
-both daughters. -/
 theorem compl_propagated (hop : Bijective (uncurry op)) (u : Set α) (v : Set β) :
     (propagated op u v)ᶜ = image2 op uᶜ vᶜ := by
   have : univ ×ˢ v ∪ u ×ˢ univ = (uᶜ ×ˢ vᶜ)ᶜ := by
@@ -136,7 +132,6 @@ def node (op : α → β → γ) (e : Edge) (r : Restriction) (d₁ : WithAltern
 
 @[simp] theorem ordinary_node : (node op e r d₁ d₂).ordinary = op d₁.ordinary d₂.ordinary := rfl
 
-/-- The unalternatives of a node are those Propagation and its restriction exclude. -/
 theorem compl_alternatives_node :
     (node op e r d₁ d₂).alternativesᶜ = propagated op d₁.alternativesᶜ d₂.alternativesᶜ ∪
       excluded op d₁.ordinary d₂.ordinary e r :=
@@ -150,8 +145,6 @@ theorem alternatives_node (hop : Bijective (uncurry op)) :
   rw [alternatives_map₂, node, compl_union, compl_propagated hop, compl_compl, compl_compl,
     sdiff_eq]
 
-/-- The weak and the strong restriction on a daughter divide between them the targets that
-Propagation leaves. -/
 theorem alternatives_node_weak_union_strong :
     (node op e .weak d₁ d₂).alternatives ∪ (node op e .strong d₁ d₂).alternatives =
       (propagated op d₁.alternativesᶜ d₂.alternativesᶜ)ᶜ := by
@@ -163,7 +156,6 @@ theorem disjoint_alternatives_node_weak_strong :
   simp only [node, excluded_weak, excluded_strong, compl_union, compl_compl]
   exact disjoint_compl_left.mono inter_subset_right inter_subset_right
 
-/-- A weak restriction keeps the literal meaning of a node whose daughters keep theirs. -/
 theorem WellFormed.node_weak (hop : Injective2 op) (h₁ : d₁.WellFormed) (h₂ : d₂.WellFormed) :
     (node op e .weak d₁ d₂).WellFormed := by
   simp only [WellFormed, node, propagated, excluded_weak, mem_compl_iff, mem_union, not_or]
@@ -187,8 +179,6 @@ theorem alternatives_node_left_strong_eq_empty (h : ¬ d₂.WellFormed) :
   obtain ⟨hp, x, -, y, rfl, rfl⟩ := ht
   exact hp (.inl (mem_image2_of_mem (mem_univ x) h))
 
-/-- A strong restriction on the right daughter leaves no target when her sister excludes her own
-literal meaning. -/
 theorem alternatives_node_right_strong_eq_empty (h : ¬ d₁.WellFormed) :
     (node op .right .strong d₁ d₂).alternatives = ∅ := by
   refine eq_empty_of_forall_notMem fun t ht ↦ ?_

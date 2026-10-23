@@ -120,8 +120,6 @@ def View.LicensesResultative (v : View) (c : RootClass) : Prop := v.attach c = s
 instance (v : View) (c : RootClass) : Decidable (v.LicensesResultative c) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- In Embick's analysis of v[FIENT] an aP complement has an interpretation exactly when a Root is
-directly merged with v[FIENT]. -/
 theorem interpretable_aP_iff (x : Embick2004.DP) (m : Option Embick2004.Root)
     (a : Embick2004.Root) (μ : Embick2004.MeansRule) :
     (⟨some x, m, .aP a, some μ⟩ : Embick2004.FientP).Interpretable ↔ m.isSome := by

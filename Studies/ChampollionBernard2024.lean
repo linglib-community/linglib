@@ -99,8 +99,6 @@ sending each verifier of `φ` to an event that excludes some part of it (defs. 2
 def neg (φ : Set E) : Set E :=
   {e | ∃ h : E → E, (∀ f ∈ φ, ∃ g ≤ f, excl (h f) g) ∧ sSup (h '' φ) = e}
 
-/-- The negation of a proposition with a single verifier `f` is verified by the events that
-exclude a part of `f`. -/
 theorem neg_singleton (f : E) : neg excl {f} = {e | ∃ g ≤ f, excl e g} := by
   ext e
   constructor
@@ -143,20 +141,15 @@ theorem mem_upperClosure_neg_iff (hH : Harmony excl) (hR : PossibleFusion excl) 
   ⟨fun hn hφ ↦ not_mem_upperClosure_neg hw.prop hφ hn,
     (mem_upperClosure_or_neg hH hR hw φ).resolve_left⟩
 
-/-- A proposition paired with its negation is exclusive over the possible events. -/
 theorem exclusive_mk_neg (φ : Set E) : (BilProp.mk φ (neg excl φ)).Exclusive (possible excl) :=
   BilProp.exclusive_iff.2 fun _ hs hφ ↦ not_mem_upperClosure_neg hs hφ
 
-/-- A proposition paired with its negation is exhaustive over the possible events. -/
 theorem exhaustive_mk_neg (hC : Cosmopolitan excl) (hH : Harmony excl) (hR : PossibleFusion excl)
     (φ : Set E) : (BilProp.mk φ (neg excl φ)).Exhaustive (possible excl) :=
   (BilProp.exhaustive_iff hC).2 fun _ hw ↦ mem_upperClosure_or_neg hH hR hw φ
 
 /-! ### Emergent exclusion and de Morgan's law -/
 
-/-- An event that coheres with every member of `P` is not an individual excluder of `P`, one in the
-regular closure of the excluders of its members, so if it excludes the fusion of `P` it is an
-emergent excluder (defs. 11–13). -/
 theorem not_mem_regularClosure_excluders {P : Set E} {s : E}
     (hc : ∀ p ∈ P, ¬ Conflict excl s p) : s ∉ regularClosure {r | ∃ p ∈ P, excl r p} :=
   fun ⟨hs, _⟩ ↦
@@ -192,8 +185,6 @@ theorem neg_sups_neg_subset
 
 /-! ### Comparison with Fine's unilateral semantics -/
 
-/-- Under Upward Exclusion, every verifier of the paper's negation of `φ` verifies Fine's exclusive
-negation of `φ`. -/
 theorem neg_subset_exclusiveNeg (hU : UpwardExclusion excl) (φ : Set E) :
     neg excl φ ⊆ exclusiveNeg excl φ := by
   rintro _ ⟨h, hh, rfl⟩
@@ -234,8 +225,6 @@ theorem possibleFusion_iff_exists_le_excl (hU : UpwardExclusion excl) :
     obtain ⟨s', hs', hx⟩ := h hs ht hst
     exact hc ⟨s', hs', t, le_rfl, hx⟩
 
-/-- Under Upward Exclusion, the paper's axioms make exclusion classical in Fine's sense over the
-derived possibility. -/
 theorem classicalExclusion_possible (hU : UpwardExclusion excl) (hC : Cosmopolitan excl)
     (hH : Harmony excl) (hR : PossibleFusion excl) : ClassicalExclusion excl (possible excl) where
   sup_not_mem _ _ := sup_not_mem_possible
@@ -258,7 +247,6 @@ private theorem compl_singleton_not_subset_singleton (i j : Fin 3) :
   revert i j
   decide
 
-/-- No egg's being in the basket conflicts with another's. -/
 theorem not_conflict_eggsExcl (i j : Fin 3) : ¬ Conflict eggsExcl {i} {j} := by
   rintro ⟨_, h₁, _, h₂, k, ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩⟩
   · exact compl_singleton_not_subset_singleton k j h₂
@@ -280,8 +268,6 @@ open Truthmaker.Canonical
 
 variable {α : Type*}
 
-/-- In the canonical frame the negation of an atom is verified by its denial alone, the
-atom's falsifier in Fine's bilateral semantics. -/
 theorem neg_ver_atom (a : α) : neg Canonical.excl (atom a).ver = (atom a).fal := by
   rw [ver_atom, fal_atom, neg_singleton]
   ext e
@@ -327,7 +313,6 @@ theorem cosmopolitan_canonicalExcl : Cosmopolitan (Canonical.excl (α := α)) :=
   rw [possible_excl]
   exact fun _ ↦ exists_le_maximal_possible
 
-/-- Fine's bilateral atom is the unilateral atom paired with its negation. -/
 theorem mk_neg_ver_atom (a : α) :
     BilProp.mk (atom a).ver (neg Canonical.excl (atom a).ver) = atom a := by
   rw [neg_ver_atom]

@@ -102,21 +102,16 @@ def OverDescribes (D : Display) (t r : Fin 5) (d : Description) : Prop :=
 instance (D : Display) (t r : Fin 5) (d : Description) : Decidable (OverDescribes D t r d) := by
   unfold OverDescribes; infer_instance
 
-/-- With one apple, *the apple* identifies it and *the apple on the towel* over-describes it. -/
 theorem oneReferent_target :
     Identifies oneReferent 0 0 (.bare .apple) ∧
       OverDescribes oneReferent 0 0 (.on .apple .towel) := by
   decide
 
-/-- With two apples, *the apple* under-describes and the modifier is required. -/
 theorem twoReferent_target :
     ¬ Identifies twoReferent 0 0 (.bare .apple) ∧ Identifies twoReferent 0 0 (.on .apple .towel) ∧
       ¬ OverDescribes twoReferent 0 0 (.on .apple .towel) := by
   decide
 
-/-- In either display *the towel* under-describes the empty towel, as the apple already rests on
-a towel, *the other towel* identifies it without over-describing, and *the box* is identified
-bare. -/
 theorem destinations :
     ∀ D ∈ [oneReferent, twoReferent],
       ¬ Identifies D 0 3 (.bare .towel) ∧ Identifies D 0 3 (.other .towel) ∧
@@ -157,24 +152,18 @@ def Instruction.Matching (ins : Instruction) : Prop := ins.destination.kind = .t
 /-- The intended destination in either display: the empty towel or the box. -/
 def Instruction.goal (ins : Instruction) : Fin 5 := if ins.destination.kind = .towel then 3 else 4
 
-/-- Over either display, the destination of an instruction is identified exactly when it is not
-the bare *towel*, and is never over-described. -/
 theorem instructions_destination :
     ∀ D ∈ [oneReferent, twoReferent], ∀ ins ∈ instructions,
       (Identifies D 0 ins.goal ins.destination ↔ ins.destination ≠ .bare .towel) ∧
         ¬ OverDescribes D 0 ins.goal ins.destination := by
   decide
 
-/-- Over the one-referent display every target is identified and the modified target is an
-over-description. -/
 theorem instructions_oneReferent :
     ∀ ins ∈ instructions,
       Identifies oneReferent 0 0 ins.target ∧
         (OverDescribes oneReferent 0 0 ins.target ↔ ins.target ≠ .bare .apple) := by
   decide
 
-/-- Over the two-referent display the bare target is an under-description and the modifier is
-required. -/
 theorem instructions_twoReferent :
     ∀ ins ∈ instructions,
       (Identifies twoReferent 0 0 ins.target ↔ ins.target ≠ .bare .apple) ∧

@@ -38,17 +38,12 @@ worlds. -/
 def weakNecessity (f g g' : Background W) (p : W → Prop) (w : W) : Prop :=
   ∀ w' ∈ (premisePreorder (g' w)).minimals (bestWorlds f g w), p w'
 
-/-- Strong necessity entails weak necessity: the `g'`-best of the `g`-best worlds are
-`g`-best. -/
 theorem strong_entails_weak (f g g' : Background W) (p : W → Prop) (w : W)
     (h : strongNecessity f g p w) : weakNecessity f g g' p w := by
   rw [strongNecessity, necessity_iff] at h
   intro w' hw'
   exact h w' (Preorder.minimals_subset _ _ hw')
 
-/-- Weak necessity does not entail strong necessity: with two tied accessible worlds and a
-secondary ordering source singling out the one where `p` holds, *ought p* is true and *must p*
-false. -/
 theorem weak_not_entails_strong :
     ¬ ∀ (W : Type) (f g g' : Background W) (p : W → Prop) (w : W),
         weakNecessity f g g' p w → strongNecessity f g p w := by
@@ -76,7 +71,6 @@ theorem weak_not_entails_strong :
     Bool.false_ne_true (hStrong false (hBestAll false))
   exact hNot (h Bool f g g' p true hWeak)
 
-/-- With an empty secondary ordering source, weak necessity is strong necessity. -/
 theorem weak_eq_strong_no_secondary (f g : Background W) (p : W → Prop)
     (w : W) : weakNecessity f g (⊥ : Background W) p w ↔ strongNecessity f g p w := by
   unfold weakNecessity strongNecessity

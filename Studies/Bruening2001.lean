@@ -81,12 +81,8 @@ def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
 -- The first object asymmetrically c-commands the second ([barss-lasnik-1986]).
 example : AsymmCCommands doc aGirl (everyTelescope : SyntacticObject) := by decide
 
-/-- Only the first object may be attracted first, since it asymmetrically c-commands the second,
-so the derivation fixes the base order and the second object cannot come to scope over the first:
-*I gave a (#different) child each doll*. -/
 theorem doc_frozen : firsts doc v docQuantifiers = {↑aGirl} := by decide +kernel
 
-/-- No two candidates may be attracted first, so the double object construction is unambiguous. -/
 theorem doc_not_ambiguous : ¬ Ambiguous doc v docQuantifiers := by decide +kernel
 
 /-! ### The locative variant -/
@@ -107,30 +103,21 @@ example :
       CCommands locative toAGirl (everyTelescope : SyntacticObject) := by
   constructor <;> decide
 
-/-- Either candidate may be attracted first, since mutually c-commanding candidates are
-equidistant. -/
 theorem locative_firsts :
     firsts locative v locativeQuantifiers = {↑everyTelescope, ↑toAGirl} := by decide +kernel
 
-/-- So the locative is ambiguous: *I gave a doll to each child* has both readings. -/
 theorem locative_ambiguous : Ambiguous locative v locativeQuantifiers := by
   rw [Ambiguous, locative_firsts]
   decide
 
 /-! ### The freezing is relativized -/
 
-/-- The subject is merged in the attractor's specifier, outside its c-command domain, so it never
-competes with the objects for attraction, and either object can take scope over it even where the
-two objects' relative scope is frozen. -/
 theorem subject_not_attractable : firsts doc v [ozzy] = ∅ := by decide +kernel
 
 /-- The passive of a double object construction. With no external argument, the goal raises to the
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
 def passive : LinearizedSyntacticObject := {aGirl, {v, {gave, {appl, everyTelescope}}}}
 
-/-- In the passive the derived subject is no longer attractable while the theme is, so Shortest
-imposes no order between them and the ambiguity returns: *a (different) girl was given every
-telescope*. -/
 theorem passive_ambiguous : firsts passive v docQuantifiers = {↑everyTelescope} := by
   decide +kernel
 

@@ -357,7 +357,6 @@ theorem derivation_30 :
       (inflP .plain ⟨bare .prox, bare .part⟩).moved = none := by
   decide +kernel
 
-/-- Plain Voice moves the patient iff it is a local person, the relativized EPP. -/
 theorem voiceP_moved_iff :
     ∀ (e f : PhiFeature) (δ : Bool), e ≠ .anim →
       ((voiceP .plain ⟨bare e, ⟨f, δ⟩⟩).moved = some patient ↔ .part ≤ f) := by
@@ -483,7 +482,6 @@ theorem not_fitsRows_phiEpp : ¬ FitsRows phiEpp := by decide +kernel
 patient that (10) excludes. -/
 theorem not_fitsRows_deltaEpp : ¬ FitsRows deltaEpp := by decide +kernel
 
-/-- With δ on the obviative patient, a δ-probe on C moves it past the proximate agent. -/
 theorem canTarget_deltaEpp_obviative : CanTarget deltaEpp .prox .anim .ia := by decide +kernel
 
 /-- The category and role of a row's LDA target. -/
@@ -501,8 +499,6 @@ theorem target_eq_ex_11a_ex_16b :
       Examples.ex_11a.judgment ≠ Examples.ex_16b.judgment := by
   decide +kernel
 
-/-- The model derives the asymmetry: LDA with an argument is not a function of its category and
-role. -/
 theorem not_factorsThrough_category_role :
     ¬ Function.FactorsThrough
       (fun q : PhiFeature × PhiFeature × Role ↦ CanTarget cEpp q.1 q.2.1 q.2.2)

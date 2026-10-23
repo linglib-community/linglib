@@ -211,7 +211,6 @@ def Marks (p : DefiniteDescription.Strength) : Prop := ∃ e ∈ ds, e.Marks p
 instance (p : DefiniteDescription.Strength) : Decidable (ds.Marks p) := by
   unfold Marks; infer_instance
 
-/-- A one-entry inventory marks a strength iff the entry marks it. -/
 theorem marks_singleton (e : Entry) (p : DefiniteDescription.Strength) : Marks [e] p ↔ e.Marks p :=
   ⟨fun ⟨_, he, h⟩ ↦ List.mem_singleton.mp he ▸ h, fun h ↦ ⟨e, List.mem_singleton_self e, h⟩⟩
 
@@ -221,7 +220,6 @@ private theorem mem_foldr_union {l : List Entry} {p : DefiniteDescription.Streng
   | nil => simp
   | cons e es ih => simp [ih]
 
-/-- An inventory marks a strength iff the strength is among those it marks. -/
 theorem marks_iff_mem_strengths (p : DefiniteDescription.Strength) :
     ds.Marks p ↔ p ∈ ds.strengths :=
   (mem_foldr_union (l := ds)).symm
@@ -246,7 +244,6 @@ def Realizes : NominalKind → Prop
 
 instance : DecidablePred ds.Realizes := fun k ↦ by cases k <;> unfold Realizes <;> infer_instance
 
-/-- An inventory realizes the kind of an article strength iff it marks that strength. -/
 theorem realizes_toKind (p : DefiniteDescription.Strength) : ds.Realizes p.toKind ↔ ds.Marks p := by
   cases p <;> exact Iff.rfl
 
@@ -261,7 +258,6 @@ English *the* admits both, and a weak or strong article admits one. -/
 def Article.strengths (a : Article) : Finset DefiniteDescription.Strength :=
   a.uses.image DefiniteDescription.Use.strength
 
-/-- An article admits a strength iff, as an entry, it marks that strength. -/
 theorem Article.mem_strengths_iff_marks (a : Article) (p : DefiniteDescription.Strength) :
     p ∈ a.strengths ↔ (Determiner.Entry.article a).Marks p :=
   Iff.rfl

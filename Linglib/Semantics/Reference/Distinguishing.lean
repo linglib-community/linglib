@@ -57,7 +57,6 @@ instance [DecidableLT α] : Decidable (Distinguishes compat C r d) := by
 
 variable {compat C r d}
 
-/-- A distinguishing description distinguishes against any smaller contrast set. -/
 theorem Distinguishes.anti (h : Distinguishes compat C r d) {C' : Finset E} (hC : C' ⊆ C) :
     Distinguishes compat C' r d :=
   fun c hc ↦ h c (hC hc)

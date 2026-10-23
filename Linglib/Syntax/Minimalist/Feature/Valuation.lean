@@ -38,7 +38,6 @@ def valueAt (b : FeatureBundle) (t : FeatureType) (v : t.ValueOf) : WithTop Feat
 
 variable {t} {b b' : FeatureBundle} {v : t.ValueOf}
 
-/-- Valuation only adds information. -/
 theorem le_of_valueAt_eq_coe (h : b.valueAt t v = ↑b') : b ≤ b' := by
   obtain ⟨s, hs, rfl⟩ := WithTop.map_eq_some_iff.1 h
   exact le_update_self_iff.2 (FeatureSlot.le_of_valueWith_eq_coe hs)
@@ -98,7 +97,6 @@ theorem applyAgree_of_not_hasValuedFeature (h : ¬ goal.hasValuedFeature t) :
   cases hg : goal t <;> simp_all [applyAgree, getValuedFeature, hasValuedFeature,
     FeatureSlot.value?, FeatureSlot.isValued]
 
-/-- A probe valued by Agree only gains information. -/
 theorem le_of_applyAgree_eq_coe {probe' : FeatureBundle}
     (h : probe.applyAgree goal t = ↑probe') : probe ≤ probe' := by
   cases hg : goal.getValuedFeature t with

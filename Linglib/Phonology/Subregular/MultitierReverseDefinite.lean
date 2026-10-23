@@ -86,9 +86,6 @@ theorem prod (hM : IsMultitierReverseDefinite M) (hN : IsMultitierReverseDefinit
 theorem of_subsingleton [Subsingleton M] : IsMultitierReverseDefinite M :=
   ⟨.of_subsingleton, fun _ _ _ ↦ Subsingleton.elim _ _⟩
 
-/-- An idempotent `e` absorbs every `x` from which it can be recovered, `e * x * z = e`, since in
-the local monoid at `e` the element `e * x` has the right inverse `e * z` and aperiodicity makes it
-the identity `e`. -/
 theorem mul_eq_of_mul_mul_eq (h : IsMultitierReverseDefinite M) {e x z : M}
     (he : IsIdempotentElem e) (hz : e * x * z = e) : e * x = e := by
   obtain ⟨n, hn⟩ := h.1
@@ -182,8 +179,6 @@ variable {α : Type*} {L : Language α} {k : ℕ}
 
 /-! ### Multitier reverse definite languages satisfy the equation -/
 
-/-- Over a finite alphabet, the syntactic monoid of a reverse definite language is multitier
-reverse definite. -/
 theorem IsReverseDefinite.isMultitierReverseDefinite_syntacticMonoid [Finite α]
     (h : L.IsReverseDefinite k) : Monoid.IsMultitierReverseDefinite L.SyntacticMonoid := by
   refine ⟨h.toIsGeneralizedDefinite.isStarFree.isAperiodic, fun e he x ↦ ?_⟩
@@ -193,8 +188,6 @@ theorem IsReverseDefinite.isMultitierReverseDefinite_syntacticMonoid [Finite α]
   have hz := h.isLeftZero_syntacticClass_of_isIdempotentElem hu he
   rw [mul_assoc, hz, hz]
 
-/-- Over a finite alphabet, a multitier reverse definite language lies in the variety of the
-multitier reverse definite monoids. -/
 theorem IsBTK.mem_multitierReverseDefiniteVariety [Finite α] (h : IsBTK k L) :
     Monoid.multitierReverseDefiniteVariety.langs L :=
   h.mem_languageVariety (𝒱 := Monoid.multitierReverseDefiniteVariety.toLanguageVariety)
@@ -230,8 +223,6 @@ section Converse
 
 variable [DecidableEq α] [Finite L.SyntacticMonoid]
 
-/-- Once a letter has occurred `|M|` times, a further occurrence leaves the syntactic class
-unchanged, by the equation `x y₁ x y₂ ⋯ x yₙ x = x y₁ x y₂ ⋯ x yₙ`. -/
 private theorem syntacticClass_append_singleton_eq
     (h : Monoid.IsMultitierReverseDefinite L.SyntacticMonoid) {u : List α} {c : α}
     (hc : Nat.card L.SyntacticMonoid ≤ u.count c) :
@@ -260,7 +251,6 @@ where
           (n := n + 1) (by simpa [List.count_cons, hb] using h)
         exact ⟨b :: t, ys, hl, rfl⟩
 
-/-- Letters whose budget is spent can be deleted, once the prefix holds `|M|` of each of them. -/
 private theorem syntacticClass_append_filter
     (h : Monoid.IsMultitierReverseDefinite L.SyntacticMonoid) (β : α → ℕ) :
     ∀ (u w : List α), (∀ c, β c = 0 → Nat.card L.SyntacticMonoid ≤ u.count c) →
@@ -277,9 +267,6 @@ private theorem syntacticClass_append_filter
     · rw [List.filter_cons_of_pos (by simpa using hc), show u ++ c :: w.filter (β · ≠ 0) =
         u ++ [c] ++ w.filter (β · ≠ 0) by simp, syntacticClass_append_filter h β (u ++ [c]) w hu']
 
-/-- Two words agreeing on the length-`k` prefixes of their projections to the tiers of letters
-with budget left have the same syntactic class after equivalent prefixes, provided the budgets
-total at most `k` and each prefix holds `|M|` occurrences of a letter less its budget. -/
 private theorem syntacticClass_append_eq_of_take_filter_eq [Fintype α]
     (h : Monoid.IsMultitierReverseDefinite L.SyntacticMonoid) :
     ∀ (k : ℕ) (β : α → ℕ) (u u' w w' : List α), ∑ a, β a ≤ k →
@@ -350,9 +337,6 @@ private theorem syntacticClass_append_eq_of_take_filter_eq [Fintype α]
 
 end Converse
 
-/-- Over a finite alphabet, a language whose syntactic monoid is multitier reverse definite is
-multitier reverse definite, with window the size of the alphabet times that of the monoid. This is
-the converse of `IsBTK.mem_multitierReverseDefiniteVariety`. -/
 theorem isBTK_of_mem_multitierReverseDefiniteVariety [Fintype α]
     (h : Monoid.multitierReverseDefiniteVariety.langs L) :
     IsBTK (Fintype.card α * Nat.card L.SyntacticMonoid) L := by

@@ -71,9 +71,6 @@ def StemC.segment : StemC → Phonology.Segment
   | .p => Tagalog.p | .t => Tagalog.t | .k => Tagalog.k
   | .b => Tagalog.b | .d => Tagalog.d | .g => Tagalog.g
 
-/-- The stem classes that the constraints below list are natural classes, since the stems of *NC
-are the voiceless ones, those of *[ŋ the dorsal ones, and those of *[n the ones that are not
-labial. -/
 theorem mem_iff_segment (c : StemC) :
     (c ∈ [StemC.p, .t, .k] ↔ Phonology.Segment.ofSpecs [(.voice, false)] ≤ c.segment) ∧
       (c ∈ [StemC.k, .g] ↔ Phonology.Segment.ofSpecs [(.dorsal, true)] ≤ c.segment) ∧
@@ -86,7 +83,6 @@ def StemC.nasal : StemC → Phonology.Segment
   | .t | .d => Tagalog.n
   | .k | .g => Tagalog.ŋ
 
-/-- Coalescence gives the nasal of the stop's place, by the fragment's substitution. -/
 theorem substitute_segment (c : StemC) : Tagalog.substitute c.segment = [c.nasal] := by
   cases c <;> decide
 
@@ -131,15 +127,12 @@ def con : ConstraintSet NSCand (Fin 6)
   | 4 => starInitCorVel
   | 5 => starInitAll
 
-/-- The stringent hierarchy assigns one, two and three violations to coalesced labial, coronal
-and velar stems. -/
 theorem stringency_violations :
     starInitAll (.p, .yes) + starInitCorVel (.p, .yes) + starInitVelar (.p, .yes) = 1 ∧
     starInitAll (.t, .yes) + starInitCorVel (.t, .yes) + starInitVelar (.t, .yes) = 2 ∧
     starInitAll (.k, .yes) + starInitCorVel (.k, .yes) + starInitVelar (.k, .yes) = 3 := by
   decide
 
-/-- *ASSOCIATE and *[m have the same violation profile on this candidate space. -/
 theorem assoc_eq_initAll (c : StemC) (s : SubSt) : starAssoc (c, s) = starInitAll (c, s) := by
   cases c <;> cases s <;> rfl
 
@@ -159,7 +152,6 @@ private theorem nasalSubstitution_gen (c : StemC) :
 noncomputable def subProb (c : StemC) : ℝ :=
   (uniformOn (Set.univ : Set (Ranking (Fin 6) 6))).real {σ | PicksAt nasalSubstitution σ c .yes}
 
-/-- The share is the fraction of distinguishing constraints that favour substitution. -/
 private theorem subProb_eq_rate (c : StemC) :
     subProb c = ((favoring con c .yes .no).card : ℝ) / (active con c .yes .no).card :=
   uniformOn_real_picksAt_discrete_binary (nasalSubstitution_gen c) fun heq ↦ SubSt.noConfusion heq
@@ -201,14 +193,12 @@ theorem factorial_rates :
     subProb .b = 1/3 ∧ subProb .d = 1/4 ∧ subProb .g = 1/5 :=
   ⟨subProb_p, subProb_t, subProb_k, subProb_b, subProb_d, subProb_g⟩
 
-/-- Within each voicing class the share falls from labial to coronal to velar. -/
 theorem place_monotonicity :
     subProb .p > subProb .t ∧ subProb .t > subProb .k ∧
     subProb .b > subProb .d ∧ subProb .d > subProb .g := by
   rw [subProb_p, subProb_t, subProb_k, subProb_b, subProb_d, subProb_g]
   refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num
 
-/-- At each place the voiceless share is at least the voiced one. -/
 theorem voicing_monotonicity :
     subProb .p ≥ subProb .b ∧ subProb .t ≥ subProb .d ∧ subProb .k ≥ subProb .g := by
   rw [subProb_p, subProb_t, subProb_k, subProb_b, subProb_d, subProb_g]
@@ -216,8 +206,6 @@ theorem voicing_monotonicity :
 
 /-! ### The implicational universals, ranking by ranking -/
 
-/-- If `c'` has a smaller distinguishing set than `c` and every extra constraint of `c` favours
-substitution, then substitution on `c'` entails substitution on `c`. -/
 theorem picksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_D : active con c' .yes .no ⊆ active con c .yes .no)
     (h_Y : favoring con c' .yes .no ⊆ favoring con c .yes .no)
@@ -236,9 +224,6 @@ theorem picksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     exact h_Y (mem_inter.1 hx).1
   · exact h_extra z hz hz'
 
-/-- If `c'` has a larger distinguishing set than `c` and its substitution-favouring constraints
-all distinguish the candidates for `c`, then substitution on `c'` entails substitution on
-`c`. -/
 theorem picksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_D : active con c .yes .no ⊆ active con c' .yes .no)
     (h_Y : favoring con c' .yes .no ⊆ favoring con c .yes .no)
@@ -251,37 +236,30 @@ theorem picksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
   exact ⟨x, mem_inter.2 ⟨h_Y (mem_inter.1 hx).1, h_subset (mem_inter.1 hx).1⟩,
     hmin.of_subset (coe_subset.2 h_D)⟩
 
-/-- Substitution on voiced *b* entails substitution on voiceless *p*. -/
 theorem voicing_b_implies_p (σ : Equiv.Perm (Fin 6)) :
     PicksAt nasalSubstitution σ .b .yes → PicksAt nasalSubstitution σ .p .yes :=
   picksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
-/-- Substitution on voiced *d* entails substitution on voiceless *t*. -/
 theorem voicing_d_implies_t (σ : Equiv.Perm (Fin 6)) :
     PicksAt nasalSubstitution σ .d .yes → PicksAt nasalSubstitution σ .t .yes :=
   picksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
-/-- Substitution on voiced *g* entails substitution on voiceless *k*. -/
 theorem voicing_g_implies_k (σ : Equiv.Perm (Fin 6)) :
     PicksAt nasalSubstitution σ .g .yes → PicksAt nasalSubstitution σ .k .yes :=
   picksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
-/-- Substitution on velar *k* entails substitution on coronal *t*. -/
 theorem place_k_implies_t (σ : Equiv.Perm (Fin 6)) :
     PicksAt nasalSubstitution σ .k .yes → PicksAt nasalSubstitution σ .t .yes :=
   picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
-/-- Substitution on coronal *t* entails substitution on labial *p*. -/
 theorem place_t_implies_p (σ : Equiv.Perm (Fin 6)) :
     PicksAt nasalSubstitution σ .t .yes → PicksAt nasalSubstitution σ .p .yes :=
   picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
-/-- Substitution on velar *g* entails substitution on coronal *d*. -/
 theorem place_g_implies_d (σ : Equiv.Perm (Fin 6)) :
     PicksAt nasalSubstitution σ .g .yes → PicksAt nasalSubstitution σ .d .yes :=
   picksAt_extends_larger_D (by decide) (by decide) (by decide)
 
-/-- Substitution on coronal *d* entails substitution on labial *b*. -/
 theorem place_d_implies_b (σ : Equiv.Perm (Fin 6)) :
     PicksAt nasalSubstitution σ .d .yes → PicksAt nasalSubstitution σ .b .yes :=
   picksAt_extends_larger_D (by decide) (by decide) (by decide)

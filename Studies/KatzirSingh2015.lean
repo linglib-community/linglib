@@ -259,8 +259,6 @@ abbrev sun : Scenario Sky Article Bool where
   context := {w | w ≠ .many}
   question b := {w | decide (w = .oneShining) = b}
 
-/-- Maximize Presupposition is an instance of the answer condition, the definite being the
-better answer and the indefinite needlessly weak. -/
 theorem the_felicitous_a_odd :
     sun.Felicitous .the .oneShining ∧ ¬ sun.Felicitous .a .oneShining := by
   decide
@@ -292,10 +290,8 @@ abbrev hurford : Scenario Trip Visit Trip where
   context := Set.univ
   question a := {a}
 
-/-- *France or Paris* is a needlessly complex answer wherever *France* is true. -/
 theorem hurford_odd : ∀ w, ¬ hurford.Felicitous .franceOrParis w := by decide
 
-/-- *France* is a good answer where true. -/
 theorem france_felicitous : hurford.Felicitous .france .paris := by decide
 
 end KatzirSingh2015

@@ -92,7 +92,6 @@ inner variables are truth functions of their parents. -/
 class ContextAtRoots : Prop where
   eqn_eq_of_adj {v w : V} : M.graph.Adj w v → ∀ u u' y, M.eqn v u y = M.eqn v u' y
 
-/-- A model is acyclic when every edge climbs in depth. -/
 theorem IsAcyclic.of_depth (depth : V → ℕ) (h : ∀ {w v}, M.graph.Adj w v → depth w < depth v) :
     M.IsAcyclic :=
   RelHomClass.wellFounded (⟨depth, h⟩ : M.graph.Adj →r (· < ·)) wellFounded_lt
@@ -117,13 +116,10 @@ variable {M}
 theorem step_apply (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) (v : V) :
     M.step I u x v = (I v).unbotD (M.eqn v u x) := rfl
 
-/-- Each round computes a variable from its parents. -/
 theorem dependsOn_step (I : ∀ v, Flat (α v)) (u : U) (v : V) :
     DependsOn (M.step I u · v) {w | M.graph.Adj w v} :=
   fun _ _ h ↦ congrArg (Flat.unbotD · (I v)) (M.dependsOn_eqn v u h)
 
-/-- After `k` rounds of the equations, a variable of rank below `k` no longer depends on the
-assignment the rounds started from. -/
 theorem iterate_step_apply_eq (r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop))
     (I : ∀ v, Flat (α v)) (u : U) {k : ℕ} {v : V} (hv : r v < k) (x y : ∀ v, α v) :
     (M.step I u)^[k] x v = (M.step I u)^[k] y v :=
@@ -158,12 +154,10 @@ theorem solve_apply (I : ∀ v, Flat (α v)) (u : U) (v : V) :
     M.solve I u v = (I v).unbotD (M.eqn v u (M.solve I u)) :=
   WellFounded.fixedPoint_apply (dependsOn_step I u) v
 
-/-- An intervened variable takes its intervened value. -/
 theorem solve_of_eq_coe {I : ∀ v, Flat (α v)} {v : V} {x : α v} (h : I v = ↑x) (u : U) :
     M.solve I u v = x := by
   rw [solve_apply, h, Flat.unbotD_coe]
 
-/-- A variable the intervention leaves alone obeys its equation. -/
 theorem solve_of_eq_bot {I : ∀ v, Flat (α v)} {v : V} (h : I v = ⊥) (u : U) :
     M.solve I u v = M.eqn v u (M.solve I u) := by
   rw [solve_apply, h, Flat.unbotD_bot]

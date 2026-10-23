@@ -289,7 +289,6 @@ def structureOf (inSitu : WhPhrase → Bool → LinearizedSyntacticObject) (e : 
 def modifierOf (e : Datum) : Option LexicalItem.Token :=
   e.parse? "modifier" [("theHell", theHell), ("daodi", daodi)]
 
-/-- Every row with a modifier has a structure, so the statements below range over all of them. -/
 theorem structureOf_isSome :
     ∀ e ∈ Examples.all, (modifierOf e).isSome → (structureOf bound e).isSome := by
   decide

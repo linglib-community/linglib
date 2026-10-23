@@ -76,8 +76,6 @@ def IsTierBased (𝒞 : Language α → Prop) (L : Language α) : Prop :=
 
 namespace IsTierBased
 
-/-- Every `𝒞`-language is tier-based for `𝒞` via the universal tier, which erases no
-symbol. -/
 theorem of_class (h : 𝒞 L) : IsTierBased 𝒞 L := by
   refine ⟨fun _ ↦ true, L, ?_, h⟩
   ext w
@@ -98,23 +96,18 @@ the tier-projected family `IsTierBased 𝒞`. -/
 def IsBTC (𝒞 : Language α → Prop) (L : Language α) : Prop :=
   L ∈ BooleanSubalgebra.closure {L' | IsTierBased 𝒞 L'}
 
-/-- A tier-based language lies in the closure. -/
 theorem IsBTC.base (h : IsTierBased 𝒞 L) : IsBTC 𝒞 L :=
   BooleanSubalgebra.subset_closure h
 
-/-- Closure under intersection. -/
 theorem IsBTC.inter (h₁ : IsBTC 𝒞 L₁) (h₂ : IsBTC 𝒞 L₂) : IsBTC 𝒞 (L₁ ⊓ L₂) :=
   BooleanSubalgebra.inf_mem h₁ h₂
 
-/-- Closure under union. -/
 theorem IsBTC.union (h₁ : IsBTC 𝒞 L₁) (h₂ : IsBTC 𝒞 L₂) : IsBTC 𝒞 (L₁ ⊔ L₂) :=
   BooleanSubalgebra.sup_mem h₁ h₂
 
-/-- Closure under complement. -/
 theorem IsBTC.compl (h : IsBTC 𝒞 L) : IsBTC 𝒞 Lᶜ :=
   BooleanSubalgebra.compl_mem h
 
-/-- Every `𝒞`-language is in `IsBTC 𝒞`, via the universal tier. -/
 theorem IsBTC.of_class (h : 𝒞 L) : IsBTC 𝒞 L :=
   .base (IsTierBased.of_class h)
 
@@ -156,11 +149,9 @@ def IsBTN : Language α → Prop := IsBTC Language.IsFiniteOrCofinite
 
 An inclusion of base classes lifts to their multitier closures by `IsBTC.mono`. -/
 
-/-- The inclusion `D_k ⊆ ℒℐ_k` lifts to `BTD_k ⊆ BTLI_k`. -/
 theorem IsBTD.toIsBTLI (h : IsBTD k L) : IsBTLI k L :=
   IsBTC.mono (fun _ ↦ Language.IsDefinite.toIsGeneralizedDefinite) h
 
-/-- The inclusion `RD_k ⊆ ℒℐ_k` lifts to `BTK_k ⊆ BTLI_k`. -/
 theorem IsBTK.toIsBTLI (h : IsBTK k L) : IsBTLI k L :=
   IsBTC.mono (fun _ ↦ Language.IsReverseDefinite.toIsGeneralizedDefinite) h
 
@@ -227,8 +218,6 @@ theorem isTierStrictlyLocal_iff_isTierBased :
   · rintro ⟨T, _, rfl, G, rfl⟩
     exact ⟨⟨(T · = true), G⟩, by simp [TierStrictlyLocalGrammar.language]⟩
 
-/-- Every tier-based strictly local language lies in the multitier closure of strictly local
-languages. -/
 theorem IsTierStrictlyLocal.toIsBTSL (h : IsTierStrictlyLocal k L) : IsBTSL k L :=
   .base (isTierStrictlyLocal_iff_isTierBased.mp h)
 
@@ -277,8 +266,6 @@ theorem not_isBTC_of_indist (h_indist : IsBTC.Indist 𝒞 w₁ w₂)
     ¬ IsBTC 𝒞 L :=
   fun hL ↦ h_w₂ ((IsBTC.mem_iff_of_indist hL h_indist).mp h_w₁)
 
-/-- Two words sharing their length-`k` prefix and suffix on every Bool tier are
-indistinguishable by the tier-projected generalized `k`-definite languages. -/
 theorem IsBTC.indist_isGeneralizedDefinite_of_tierAffixes
     (h : ∀ T : α → Bool,
       Edge.left.takeAt k (w₁.filter T) = Edge.left.takeAt k (w₂.filter T) ∧

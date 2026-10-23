@@ -48,7 +48,6 @@ def subseqSet (k : ℕ) (w : List α) : Set (List α) :=
     s ∈ subseqSet k w ↔ s <+ w ∧ s.length ≤ k :=
   Iff.rfl
 
-/-- Words with the same `subseqSet k` have the same subsequences of length at most `k`. -/
 lemma subseqSet_eq_iff {k : ℕ} {w₁ w₂ : List α}
     (heq : subseqSet k w₁ = subseqSet k w₂) {s : List α} (hlen : s.length ≤ k) :
     s <+ w₁ ↔ s <+ w₂ := by
@@ -69,8 +68,6 @@ theorem subseqSet_append_congr {k : ℕ} {u₁ u₂ v₁ v₂ : List α}
       ((subseqSet_eq_iff hv (by omega)).mp h₂), by simp [length_append]; omega⟩
   exact Set.Subset.antisymm (aux hu hv) (aux hu.symm hv.symm)
 
-/-- A subsequence of `m + 1` copies of `w` that is no longer than `m` misses one of the copies, so
-it is a subsequence of `m` copies. -/
 theorem List.sublist_flatten_replicate_of_length_le {w : List α} :
     ∀ {m : ℕ} {s : List α}, s.length ≤ m → s <+ (replicate (m + 1) w).flatten →
       s <+ (replicate m w).flatten
@@ -89,7 +86,6 @@ theorem subseqSet_flatten_replicate_succ (k : ℕ) (w : List α) :
   Set.ext fun _ ↦ ⟨fun h ↦ ⟨sublist_flatten_replicate_of_length_le h.2 h.1, h.2⟩,
     fun h ↦ ⟨h.1.trans (by simp [replicate_succ]), h.2⟩⟩
 
-/-- Over a finite alphabet `subseqSet k` takes finitely many values. -/
 theorem finite_range_subseqSet [Finite α] (k : ℕ) :
     (Set.range (subseqSet (α := α) k)).Finite :=
   ((List.finite_length_le α k).finite_subsets).subset

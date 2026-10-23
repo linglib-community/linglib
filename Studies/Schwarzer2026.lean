@@ -138,7 +138,6 @@ theorem exp1_rows : ∀ e ∈ Examples.all, ∃ v ∈ (e.feature? "verb").bind e
         e.judgment = .acceptable) := by
   decide
 
-/-- Each row's selection value is that of its predicate's entry. -/
 theorem rows_selectsCP :
     ∀ e ∈ Examples.all, ∀ v ∈ (e.feature? "verb").bind entryOf,
       (e.feature? "selectsCP" = some "yes" ↔ v.toVerb.TakesClausal) := by

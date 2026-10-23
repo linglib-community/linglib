@@ -101,8 +101,6 @@ class Context.Nondegenerate (ctx : Context W) : Prop where
 instance (ctx : Context W) [h : ctx.Nondegenerate] : (swapIssue ctx).Nondegenerate :=
   ⟨h.compl_ne_zero, by simpa [swapIssue, compl_compl] using h.topic_ne_zero⟩
 
-/-- Each side's conditional is a genuine probability measure over a live
-issue. -/
 theorem Context.isProbabilityMeasure_conditional (ctx : Context W)
     [IsFiniteMeasure ctx.prior] [ctx.Nondegenerate] (θ : Bool) :
     IsProbabilityMeasure (ctx.conditional θ) := by
@@ -146,7 +144,6 @@ theorem bayesFactor_ne_top {ctx : Context W} {e : Set W} (h : ctx.prior[|ctx.top
   rw [bayesFactor_def]
   exact (ENNReal.div_lt_top (measure_ne_top _ _) h).ne
 
-/-- Relevance is strictly monotone in the Bayes factor away from the boundary cases. -/
 theorem relevance_lt_relevance {ctx : Context W} {e₁ e₂ : Set W} (h₁ : bayesFactor ctx e₁ ≠ 0)
     (h₂ : bayesFactor ctx e₂ ≠ ⊤) (h : bayesFactor ctx e₁ < bayesFactor ctx e₂) :
     relevance ctx e₁ < relevance ctx e₂ :=
@@ -178,8 +175,6 @@ the other ¬H. -/
 def hContrary (ctx : Context W) (a b : Set W) : Prop :=
   (posRelevant ctx a ∧ negRelevant ctx b) ∨ (negRelevant ctx a ∧ posRelevant ctx b)
 
-/-- `bayesFactor` under the swapped issue, with the double complement
-reduced. -/
 theorem bayesFactor_swapIssue (ctx : Context W) (e : Set W) :
     bayesFactor (swapIssue ctx) e =
       ctx.prior[|ctx.topicᶜ] e / ctx.prior[|ctx.topic] e := by
@@ -195,8 +190,6 @@ theorem posRelevant_iff_cond_lt {ctx : Context W} {e : Set W} :
     · simp [h, h', ENNReal.div_zero h', pos_iff_ne_zero]
   · rw [ENNReal.lt_div_iff_mul_lt (.inl h) (.inl (measure_ne_top _ _)), one_mul]
 
-/-- E disconfirms H exactly when ¬H makes E more probable than H does, once E is possible
-given ¬H. -/
 theorem negRelevant_iff_cond_lt {ctx : Context W} {e : Set W}
     (h : ctx.prior[|ctx.topicᶜ] e ≠ 0) :
     negRelevant ctx e ↔ ctx.prior[|ctx.topic] e < ctx.prior[|ctx.topicᶜ] e := by
@@ -209,8 +202,6 @@ Shedding ¬H-worlds from an utterance can only strengthen it as an argument for
 H: the H-side conditional is unchanged and the ¬H-side conditional can only
 fall. -/
 
-/-- If `u₂ ⊆ u₁` and every H-world of `u₁` lies in `u₂`, then `u₂` is at least
-as relevant to H as `u₁`. -/
 theorem bayesFactor_le_of_subset (ctx : Context W) {u₁ u₂ : Set W}
     (hsub : u₂ ⊆ u₁) (hent : ctx.topic ∩ u₁ ⊆ u₂) :
     bayesFactor ctx u₁ ≤ bayesFactor ctx u₂ := by
@@ -219,7 +210,6 @@ theorem bayesFactor_le_of_subset (ctx : Context W) {u₁ u₂ : Set W}
     cond_apply ctx.topicMeasurable, h]
   exact ENNReal.div_le_div_left (measure_mono hsub) _
 
-/-- Strictly so once the shed worlds carry mass and `u₂` is possible under H. -/
 theorem bayesFactor_lt_of_subset (ctx : Context W) [IsFiniteMeasure ctx.prior]
     {u₁ u₂ : Set W} (hu₂ : MeasurableSet u₂) (hsub : u₂ ⊆ u₁) (hent : ctx.topic ∩ u₁ ⊆ u₂)
     (hpos : ctx.prior (ctx.topic ∩ u₂) ≠ 0) (hgap : ctx.prior (u₁ \ u₂) ≠ 0) :
@@ -287,9 +277,6 @@ private theorem measureReal_topic_pos : 0 < ctx.prior.real ctx.topic :=
 private theorem measureReal_compl_pos : 0 < ctx.prior.real ctx.topicᶜ :=
   ENNReal.toReal_pos Context.Nondegenerate.compl_ne_zero (measure_ne_top _ _)
 
-/-- Positive relevance is a comparison of cross-products of real masses: E confirms H iff
-the H-side mass of E outweighs its ¬H-side mass after weighting each by the
-opposite cell of the issue. -/
 theorem posRelevant_iff_real_cross :
     posRelevant ctx e ↔
       ctx.prior.real (ctx.topicᶜ ∩ e) * ctx.prior.real ctx.topic <
@@ -299,9 +286,6 @@ theorem posRelevant_iff_real_cross :
     cond_real_apply _ ctx.topicMeasurable.compl, cond_real_apply _ ctx.topicMeasurable,
     div_lt_div_iff₀ (measureReal_compl_pos ctx) (measureReal_topic_pos ctx)]
 
-/-- Negative relevance as a cross-product of real masses, for a live
-proposition E (one of nonzero mass; a null E is vacuously negatively
-relevant but has a degenerate cross-product). -/
 theorem negRelevant_iff_real_cross (he : ctx.prior e ≠ 0) :
     negRelevant ctx e ↔
       ctx.prior.real (ctx.topic ∩ e) * ctx.prior.real ctx.topicᶜ <
@@ -333,8 +317,6 @@ interpretation assumes this of coordinated sisters unless something suggests oth
 def CondIndepIssue (ctx : Context W) (a b : Set W) : Prop :=
   ∀ θ, IndepSet a b (ctx.conditional θ)
 
-/-- Issue-conditional independence is the product equation P(A∧B∣H) = P(A∣H)·P(B∣H)
-together with its analogue given ¬H. -/
 theorem condIndepIssue_iff (ctx : Context W) {a b : Set W}
     (ham : MeasurableSet a) (hbm : MeasurableSet b) :
     CondIndepIssue ctx a b ↔
@@ -369,8 +351,6 @@ private theorem indepSet_uniformOn_iff (s : Set W) :
     rw [← mul_assoc]
     exact ⟨fun h ↦ Nat.eq_of_mul_eq_mul_right h0 h, fun h ↦ by rw [h]⟩
 
-/-- Over a counting prior, issue-conditional independence is the product equation of
-cardinalities on each side of the issue. -/
 theorem condIndepIssue_count_iff :
     CondIndepIssue ⟨topic, .of_discrete, .count⟩ a b ↔
       (topic ∩ (a ∩ b)).ncard * topic.ncard = (topic ∩ a).ncard * (topic ∩ b).ncard ∧
@@ -443,8 +423,6 @@ theorem CondIndepIssue.max_bayesFactor_lt_inter {ctx : Context W} {a b : Set W}
   · simpa using ENNReal.mul_lt_mul_left (zero_lt_one.trans hPosB).ne' (bayesFactor_ne_top hNb)
       hPosA
 
-/-- With the four masses in position, the inclusion-exclusion ratio sits strictly between one
-and the larger single-event ratio, the arithmetic core of the union bounds. -/
 private lemma max_div_gt_or_div (pAH pBH pAnH pBnH : ℝ)
     (h1 : 0 < pAnH) (h2 : 0 < pBnH)
     (h3 : pAnH < pAH) (h4 : pBnH < pBH)
@@ -525,8 +503,6 @@ theorem CondIndepIssue.one_lt_bayesFactor_union {ctx : Context W}
 
 /-! ### The Bayesian bridge -/
 
-/-- Over a live issue, E confirms H iff H makes E more probable than it is a priori, so Bayes'
-theorem links P(E∣H) > P(E) with BF_H(E) > 1. -/
 theorem posRelevant_iff_lt_cond (ctx : Context W) [IsProbabilityMeasure ctx.prior]
     [ctx.Nondegenerate] (e : Set W) :
     posRelevant ctx e ↔ ctx.prior e < ctx.prior[|ctx.topic] e := by

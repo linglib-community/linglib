@@ -67,12 +67,6 @@ section Method
 variable {ι I O : Type*} [Fintype ι] [DecidableEq ι] [Fintype O] [MeasurableSpace O]
   [MeasurableSingletonClass O] [Nonempty O] {m k : ℕ}
 
-/-- The joint MaxEnt grammar — systemic constraints `scon` beside the jointly
-evaluated classical constraints `con` — marginalized at input `i`
-([storme-2026]'s marginalization equation). With the systemic weights at
-zero it returns the classical MaxEnt probability of each mapping: joint
-evaluation plus marginalization conservatively extends the classical
-pipeline. -/
 theorem marginal_eq_classical_of_systemic_zero (inputs : ι → I)
     (scon : ConstraintSet (ι → O) (Fin k))
     (con : ConstraintSet (I × O) (Fin m)) (w : Fin m → ℝ) (i : ι) :
@@ -139,7 +133,6 @@ def corr : Resolution → Hiatus.Juncture → Correspondence BinaryRole Segment
     Correspondence.insertIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input.trans (by omega)⟩ glottalStop
   | .deletion, j => Correspondence.eraseIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input⟩
 
-/-- The output of each correspondence is the surface form of its candidate. -/
 theorem corr_form_rhs (o : Resolution) (j : Hiatus.Juncture) :
     (corr o j).form .rhs = resolve o j := by
   cases o
@@ -155,7 +148,6 @@ def depConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
 def maxConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
   (corr c.2 c.1).maxViol .lhs .rhs
 
-/-- DEP is violated once by epenthesis and by no other candidate, for any juncture. -/
 theorem depConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     depConstraint (j, o) = if o = .epenthesis then 1 else 0 := by
   cases o
@@ -163,7 +155,6 @@ theorem depConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
   · exact Correspondence.depViol_insertIdx
   · exact Correspondence.depViol_eraseIdx
 
-/-- MAX is violated once by deletion and by no other candidate, for any juncture. -/
 theorem maxConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     maxConstraint (j, o) = if o = .deletion then 1 else 0 := by
   cases o
@@ -171,9 +162,6 @@ theorem maxConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
   · exact Correspondence.maxViol_insertIdx
   · exact Correspondence.maxViol_eraseIdx
 
-/-- \*HIATUS's string count is its binary tableau column on the paradigm's
-junctures — unlike DEP and MAX this depends on their segmental content, since
-hiatus must survive nowhere but at the juncture itself. -/
 theorem starHiatus_eq (k : Fin 2) (o : Resolution) :
     starHiatus (inputs k, o) = if o = .hiatus then 1 else 0 := by
   revert k o; decide
@@ -227,14 +215,10 @@ surfacing as its bare stem. -/
 def realizeMorpheme : Constraint (Hiatus.Juncture × Resolution) :=
   Constraint.binary fun c ↦ resolve c.2 c.1 = c.1.stem
 
-/-- Only deletion at a monosegmental juncture leaves the suffix unrealized —
-for any juncture, by the string algebra of `Hiatus.Juncture`. -/
 theorem realizeMorpheme_eq (j : Hiatus.Juncture) (o : Resolution) :
     realizeMorpheme (j, o) = if o = .deletion ∧ j.suffixBody = [] then 1 else 0 := by
   cases o <;> simp [realizeMorpheme, resolve, j.input_ne_stem, j.epenthesize_ne_stem]
 
-/-- On this paradigm \*HOMOPHONY is the jointly evaluated REALIZEMORPHEME, since the suffixed
-forms never collide with each other, only with the base. -/
 theorem starHomophony_eq_joint_realizeMorpheme :
     starHomophony = realizeMorpheme.joint inputs := by
   funext f; revert f; decide
@@ -247,18 +231,12 @@ def ajCon : ConstraintSet (Hiatus.Juncture × Resolution) (Fin 4) :=
 /-- The weights of `ajCon`, REALIZEMORPHEME at the \*HOMOPHONY weight. -/
 def ajW (wh : ℝ) (w : Fin 3 → ℝ) : Fin 4 → ℝ := Matrix.vecCons wh w
 
-/-- The joint harmony separates over the two inputs, each scored by
-[ariyaee-jurgec-2021]'s grammar: the coupling \*HOMOPHONY introduces folds
-into the per-mapping scores. -/
 theorem harmonyScore_jointCon (wh : ℝ) (w : Fin 3 → ℝ) (f : Fin 2 → Resolution) :
     harmonyScore jointCon (jointW wh w) f = ∑ k, harmonyScore ajCon (ajW wh w) (inputs k, f k) := by
   rw [jointCon, jointW, harmonyScore_append]
   simp [ajCon, ajW, harmonyScore_joint, starHomophony_eq_joint_realizeMorpheme, Fin.sum_univ_two]
   ring
 
-/-- The marginalized model is [ariyaee-jurgec-2021]'s classical one, since the joint
-distribution is the product of the inputs' MaxEnt distributions under their per-mapping
-scores. -/
 theorem predicted_eq_maxEnt (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) :
     predicted wh w k = maxEnt (ajCon.comap (inputs k, ·)).violations (ajW wh w) := by
   rw [predicted, maxEnt_congr
@@ -267,9 +245,6 @@ theorem predicted_eq_maxEnt (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) :
       rw [harmony_sum (fun k ↦ (ajCon.comap (inputs k, ·)).violations)]
       simp [harmonyScore_jointCon]), map_eval_maxEnt_sum]
 
-/-- The per-mapping scores: each candidate costs its constraint's weight, with the
-\*HOMOPHONY weight landing on top of MAX exactly for deletion at the monosegmental
-juncture. -/
 theorem ajScore_eq (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) (o : Resolution) :
     harmonyScore ajCon (ajW wh w) (inputs k, o) = -(match o with
       | .hiatus => w 1
@@ -305,8 +280,6 @@ theorem poly_order :
     harmonyScore_comap]
   exact ⟨by norm_num [ajScore_eq, homophonyWeight], by norm_num [ajScore_eq, homophonyWeight]⟩
 
-/-- The suffix-length effect of [ariyaee-jurgec-2021]: with a positive \*HOMOPHONY weight,
-deletion is less likely for the monosegmental suffix than for the polysegmental one. -/
 theorem deletion_lt_deletion {wh : ℝ} (hwh : 0 < wh) (w : Fin 3 → ℝ) :
     (predicted wh w 0).real {.deletion} < (predicted wh w 1).real {.deletion} := by
   simp only [predicted_eq_maxEnt, maxEnt_real_singleton, harmony_violations]
@@ -314,9 +287,6 @@ theorem deletion_lt_deletion {wh : ℝ} (hwh : 0 < wh) (w : Fin 3 → ℝ) :
   · simp only [harmonyScore_comap, ajScore_eq]; simp; linarith
   · cases o <;> simp_all [ajScore_eq]
 
-/-- In log-odds against faithful hiatus, deletion is exactly the \*HOMOPHONY weight less
-likely under the monosegmental suffix than under the polysegmental one, whatever the
-weights: the whole suffix-length effect is the systemic penalty. -/
 theorem log_odds_deletion_sub (wh : ℝ) (w : Fin 3 → ℝ) :
     log ((predicted wh w 1).real {.deletion} / (predicted wh w 1).real {.hiatus}) -
       log ((predicted wh w 0).real {.deletion} / (predicted wh w 0).real {.hiatus}) = wh := by
@@ -324,17 +294,11 @@ theorem log_odds_deletion_sub (wh : ℝ) (w : Fin 3 → ℝ) :
     harmonyScore_comap, ajScore_eq]
   simp
 
-/-- DEP, \*HIATUS and MAX give the two junctures identical violation
-profiles. -/
 theorem harmonyScore_classicalCon_inputs (w : Fin 3 → ℝ) (k k' : Fin 2) (o : Resolution) :
     harmonyScore classicalCon w (inputs k, o) = harmonyScore classicalCon w (inputs k', o) :=
   harmonyScore_congr fun j ↦ by
     fin_cases j <;> simp [classicalCon, depConstraint_eq, starHiatus_eq, maxConstraint_eq]
 
-/-- Without \*HOMOPHONY there is no suffix-length effect to fit: the classical
-grammar assigns the two suffixes the same distribution under every weighting.
-The paper reports the correspondingly worse fit of the model without
-\*HOMOPHONY. -/
 theorem classical_no_length_effect (w : Fin 3 → ℝ) :
     maxEnt (classicalCon.comap (inputs 0, ·)).violations w =
       maxEnt (classicalCon.comap (inputs 1, ·)).violations w :=

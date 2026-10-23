@@ -113,7 +113,6 @@ theorem Consistent.realistic (hC : P.Consistent B) : P.Realistic B := by
     (by rw [Set.sInter_singleton, Set.inter_comm]; exact hpB)
   exact irrefl_of P.prec _ hqr
 
-/-- A consistent structure has a nonempty information state, as the empty subfamily shows. -/
 theorem Consistent.nonempty (hC : P.Consistent B) : B.Nonempty :=
   Set.nonempty_iff_ne_empty.2 fun h ↦
     let ⟨_, hp, _⟩ := hC ∅ (Set.empty_subset _) (by rw [Set.sInter_empty, Set.inter_univ]; exact h)

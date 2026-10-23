@@ -66,7 +66,6 @@ instance (p : Probe.Profile) (t : LinearizedSyntacticObject) (probe target : Syn
     Decidable (Invisible p t probe target) := by
   unfold Invisible; infer_instance
 
-/-- A probe without horizon sees everything in its domain. -/
 theorem not_invisible_of_horizon_none (t : LinearizedSyntacticObject)
     (probe target : SyntacticObject) {p : Probe.Profile} (hp : p.horizon = none) :
     ¬ Invisible p t probe target := by
@@ -137,18 +136,14 @@ def cp (tp : LinearizedSyntacticObject) : LinearizedSyntacticObject := {C₀, tp
 
 /-! ### Nominal opacity -/
 
-/-- The possessor of a specific S_O is invisible to C⁰'s wh-probe. -/
 theorem psr_invisible_dp : Invisible nominalOpacity (cp unaccDP) C₀ Psr := by decide +kernel
 
-/-- So is the possessor of a non-specific S_O: opacity does not depend on size. -/
 theorem psr_invisible_possP : Invisible nominalOpacity (cp unaccPossP) C₀ Psr := by
   decide +kernel
 
-/-- And the possessor inside a locative PP: PP islands follow from nominal opacity. -/
 theorem psr_invisible_pp : Invisible nominalOpacity (cp (themeLoc ThemeN)) C₀ Psr := by
   decide +kernel
 
-/-- The D head of a specific possessive is visible, so the whole DP can be pied-piped. -/
 theorem dHead_visible : ¬ Invisible nominalOpacity (cp unaccDP) C₀ D₀ := by decide +kernel
 
 /-- C⁰'s wh-probe, satisfied by the wh-possessor. -/
@@ -162,8 +157,6 @@ def whGoals (t : LinearizedSyntacticObject) : Finset SyntacticObject :=
 /-- The possessor raised to Spec,TP out of a non-specific S_O. -/
 def psrRaised : LinearizedSyntacticObject := {Psr, unaccPossP}
 
-/-- The wh-probe would find the possessor in situ but for its horizon; raised to Spec,TP, the
-possessor is found: Ā-extraction of a possessor goes through A-movement. -/
 theorem wh_needs_raising : (cp unaccPossP).goals (whProbe _) C₀ = {↑Psr} ∧
     whGoals (cp unaccPossP) = ∅ ∧ whGoals (cp psrRaised) = {↑Psr} := by
   decide +kernel
@@ -175,36 +168,24 @@ theorem wh_needs_raising : (cp unaccPossP).goals (whProbe _) C₀ = {↑Psr} ∧
 def dGoals (t : LinearizedSyntacticObject) (h : SyntacticObject) : Finset SyntacticObject :=
   t.goals (t.leafProbe .D) h
 
-/-- The possessor of a non-specific S_O is T⁰'s closest D-goal: it raises to Spec,TP and can
-strand the possessum. -/
 theorem unacc_possP_psr_closest : dGoals unaccPossP T₀ = {↑Psr} := by decide +kernel
 
-/-- In a specific S_O the D layer is the closer goal: the whole DP raises and the possessor is
-shielded. -/
 theorem unacc_dp_dHead_closest : dGoals unaccDP T₀ = {↑D₀} := by decide +kernel
 
-/-- The agent of a transitive is the closer goal, so the possessor of O cannot reach Spec,TP. -/
 theorem trans_agt_closest : dGoals transPossP T₀ = {↑Agt} := by decide +kernel
 
-/-- In the raising applicative the possessor of O is Appl⁰'s closest D-goal: it externalizes to
-Spec,ApplP. -/
 theorem appl_psr_closest : dGoals raisingAppl Appl₀ = {↑Psr} := by decide +kernel
 
-/-- A specific unergative subject stops T⁰ before the possessor inside the locative PP. -/
 theorem unerg_specific_blocks : dGoals (unerg SubjD) T₀ = {↑SubjD} := by decide +kernel
 
-/-- A non-specific unergative subject is no DP, so the possessor is the closest goal. -/
 theorem unerg_nonspecific_psr_closest : dGoals (unerg SubjN) T₀ = {↑Psr} := by decide +kernel
 
 /-- A specific theme c-commanding the locative PP raises instead of the possessor. -/
 theorem theme_specific_blocks : dGoals (themeLoc ThemeD) T₀ = {↑ThemeD} := by decide +kernel
 
-/-- A non-specific theme lets T⁰ reach the possessor inside the PP. -/
 theorem theme_nonspecific_psr_closest : dGoals (themeLoc ThemeN) T₀ = {↑Psr} := by
   decide +kernel
 
-/-- With the experiencer PP merged above the theme, neither c-commands the other and both are
-closest goals; the experiential reading requires the experiencer to raise. -/
 theorem experiencer_both_closest : dGoals experiencer T₀ = {↑Psr, ↑ThemeD} := by decide +kernel
 
 /-! ### Judgment type -/
@@ -220,10 +201,8 @@ inductive JudgmentType
 def judgment (t : LinearizedSyntacticObject) (h : SyntacticObject) : JudgmentType :=
   if (dGoals t h).Nonempty then .categorical else .thetic
 
-/-- An existential with a bare pivot contains no DP: the clause is thetic. -/
 theorem existential_thetic : judgment existential T₀ = .thetic := by decide +kernel
 
-/-- Predicative possession is categorical, with the possessor as ψ-subject. -/
 theorem possession_categorical : judgment unaccPossP T₀ = .categorical := by decide +kernel
 
 /-! ### The paper's examples -/
@@ -235,12 +214,9 @@ theorem stranding_iff : ∀ row ∈ Examples.all, row.feature? "strategy" = some
         row.feature? "possessum" = some "nonSpecific" ∧
           row.feature? "intervener" = some "none") := by decide
 
-/-- Pied-piping succeeds only with a specific possessum, since only a DP can be wh-moved. -/
 theorem piedPiping_specific : ∀ row ∈ Examples.all, row.feature? "strategy" = some "piedPiping" →
       row.judgment = .acceptable → row.feature? "possessum" = some "specific" := by decide
 
-/-- In predicative possession and experiential collocations possessor and possessum form no
-constituent, so pied-piping is out. -/
 theorem psi_no_piedPiping : ∀ row ∈ Examples.all, row.feature? "strategy" = some "piedPiping" →
       (row.feature? "construction" = some "predicativePossession" ∨
         row.feature? "construction" = some "experientialCollocation") →

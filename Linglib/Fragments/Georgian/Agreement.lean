@@ -176,8 +176,6 @@ theorem subject_case_ne_iff (v : VerbClass) :
       v = .transitive ∨ v = .medial := by
   cases v <;> decide
 
-/-- In every class and series the nominative argument is the one that agrees by Set A, unless
-the subject is ergative. -/
 theorem affixes_eq_A_iff (v : VerbClass) (s : Series) :
     ((pattern v s).subject.affixes = some .A ↔ (pattern v s).subject.case ≠ .dat) ∧
     ((pattern v s).directObject.affixes = some .A ↔ (pattern v s).subject.case = .dat) := by

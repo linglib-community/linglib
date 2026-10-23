@@ -200,7 +200,6 @@ theorem indefinite_fixes (φ : PVar) {v : IVar} {P P' : SemE W E} {φ' : PVar}
 theorem pronoun_fixes (φ : PVar) {v : IVar} {P : SemE W E} {φ' : PVar} (h : Fixes φ (P v φ')) :
     Fixes φ (pronoun v P φ') := h
 
-/-- Negation fixes every dref other than the one it introduces that its prejacent fixes. -/
 theorem semNOT_fixes (φ : PVar) {φ' : PVar} {Sc : SemW W E} {φ₀ : PVar} (h : φ' ≠ φ)
     (hSc : Fixes φ (Sc φ')) : Fixes φ (semNOT φ' Sc φ₀) :=
   (fixes_box (by simpa using h.symm) _).comp hSc.maxBy
@@ -287,8 +286,6 @@ theorem thereIsABathroom_fixes (φ φ' : PVar) : Fixes φ (thereIsABathroom φ')
 theorem itIsUpstairs_fixes (φ φ' : PVar) : Fixes φ (itIsUpstairs φ') :=
   pronoun_fixes φ (commonNoun_fixes φ _ _ _)
 
-/-- In the output of an assertion with `thereIsABathroom` as its clause, the dref is defined in
-the bathroom worlds of the context, and the context is in the bathroom worlds. -/
 theorem thereIsABathroom_output {φ : PVar} {k j : State World Ent}
     (h : k ~[thereIsABathroom φ] j) :
     (∀ w, w ∈ j.prop φ ↔ j.indiv υ w ≠ none) ∧ j.prop φ ⊆ {w_bu, w_b} := by
@@ -300,8 +297,6 @@ theorem thereIsABathroom_output {φ : PVar} {k j : State World Ent}
   | none => exact False.elim
   | some e => cases e; cases w <;> simp [bathroom]
 
-/-- In the output of an assertion with `itIsUpstairs` as its clause, the dref is defined and
-upstairs throughout the context. -/
 theorem itIsUpstairs_output {φ : PVar} {k j : State World Ent} (h : k ~[itIsUpstairs φ] j) :
     k = j ∧ ∀ w ∈ j.prop φ, j.indiv υ w ≠ none ∧ w ∈ ({w_bu, w_u} : Set World) := by
   obtain ⟨rfl, hpred⟩ := h
@@ -347,7 +342,6 @@ theorem veridical_run : init {w_bu} ~[veridical] j₆ := by
       simp only [j₆, State.updateProp_prop_self] at hw
       cases w <;> simp_all [j₆, bathroomRef, upstairs]
 
-/-- The dref is veridical, entailed in the speaker's commitment set. -/
 theorem veridical_veridicalIndiv : VeridicalIndiv φDC υ j₆ := by
   intro w hw
   simp only [j₆, init, State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₃),
@@ -428,7 +422,6 @@ theorem negated_run : init {w_u, w_0} ~[negated] j₇ := by
       · simp only [State.updateIndiv_prop, State.updateProp_prop_self] at hw
         cases w <;> simp_all [bathroomRef, bathroom]
 
-/-- The dref is counterfactual, undefined throughout the speaker's commitment set. -/
 theorem negated_counterfactualIndiv : CounterfactualIndiv φDC υ j₇ := by
   intro w hw
   simp only [j₇, init, State.updateIndiv_prop,
@@ -437,7 +430,6 @@ theorem negated_counterfactualIndiv : CounterfactualIndiv φDC υ j₇ := by
     State.updateProp_prop_self] at hw
   cases w <;> simp_all [j₇, bathroomRef]
 
-/-- The assertion's context is the complement of the prejacent's. -/
 theorem negated_isComplement : j₇ ∈ eqCompl φ₁ φ₂ := by
   show _ = _ᶜ
   ext w
@@ -542,13 +534,11 @@ theorem doubleNeg_run : init {w_bu, w_b} ~[doubleNeg] j₈ := by
         · simp only [State.updateIndiv_prop, State.updateProp_prop_self] at hw
           cases w <;> simp_all [bathroomRef, bathroom]
 
-/-- Double complementation returns the assertion's context to the innermost one. -/
 theorem doubleNeg_prop_eq : j₈.prop φ₁ = j₈.prop φ₃ := by
   simp [j₈, State.updateIndiv_prop, State.updateProp_prop_self,
     State.updateProp_prop_of_ne _ (by decide : φ₁ ≠ φ₃),
     State.updateProp_prop_of_ne _ (by decide : φ₁ ≠ φ₂)]
 
-/-- The doubly negated dref is veridical. -/
 theorem doubleNeg_veridicalIndiv : VeridicalIndiv φDC υ j₈ := by
   intro w hw
   simp only [j₈, init, State.updateIndiv_prop,
@@ -617,7 +607,6 @@ theorem bathDisj_run : init {w_bu, w_u, w_0} ~[bathDisj] j₉ := by
         State.updateProp_prop_of_ne _ (by decide : φ₃ ≠ φ₄)] at hw
       cases w <;> simp_all [j₉, bathroomRef, upstairs]
 
-/-- The disjunction's context is the union of the disjuncts' contexts. -/
 theorem bathDisj_union : j₉.prop φ₁ = j₉.prop φ₂ ∪ j₉.prop φ₃ := by
   ext w
   cases w <;> simp [j₉, State.updateIndiv_prop, State.updateProp_prop_self,
@@ -686,7 +675,6 @@ theorem disagree_run : init₂ {w_u, w_0} {w_bu} ~[disagree] j₁₀ := by
       simp only [j₁₀, State.updateProp_prop_self] at hw
       cases w <;> simp_all [j₁₀, bathroomRef, upstairs]
 
-/-- The dref is counterfactual for `A`. -/
 theorem disagree_counterfactual_A : CounterfactualIndiv φDCA υ j₁₀ := by
   intro w hw
   simp only [j₁₀, init₂, State.updateIndiv_prop,
@@ -697,7 +685,6 @@ theorem disagree_counterfactual_A : CounterfactualIndiv φDCA υ j₁₀ := by
     State.updateProp_prop_self] at hw
   cases w <;> simp_all [j₁₀, bathroomRef]
 
-/-- The same dref is veridical for `B`. -/
 theorem disagree_veridical_B : VeridicalIndiv φDCB υ j₁₀ := by
   intro w hw
   simp only [j₁₀, init₂, State.updateIndiv_prop,

@@ -70,8 +70,6 @@ def tnsAgrFusion : FusionRule Feature where
 /-- The fused node of a finite form. -/
 def tnsAgr (v : Verb) (past sg3 : Bool) : Finset Feature := tns v past false ∪ agr sg3
 
-/-- Agr is added only to `[−participle]` nodes: Fusion rejects a participial
-Tns. -/
 theorem agr_only_on_finite (v : Verb) (past sg3 : Bool) :
     tnsAgrFusion.apply (tns v past true) (agr sg3) = none := by
   simp [FusionRule.apply, tnsAgrFusion, tns]
@@ -101,8 +99,6 @@ def vocabulary : List (VocabularyItem Feature String) :=
     forStems {.past true} "∅" strongPast ++ forStems {.past true} "-t" tPast ++
     [{.past true} ⟷ "-d", {.sg3} ⟷ "-z", {.participle true} ⟷ "-ing", ∅ ⟷ "∅"]
 
-/-- The `∅` and `-t` pasts "are not ordered by complexity" and need no
-ordering: their stem lists are disjoint. -/
 theorem strongPast_disjoint_tPast : List.Disjoint strongPast tPast :=
   List.disjoint_left.mpr (by decide)
 
@@ -144,7 +140,6 @@ def Cell.ofDatum (ex : Datum) : Option Cell := do
   let suffix ← ex.paperFeatures.lookup "suffix"
   pure ⟨verb, part, suffix⟩
 
-/-- Every row of the data pool is a well-formed cell. -/
 theorem cell_ofDatum_isSome : ∀ ex ∈ Examples.all, (Cell.ofDatum ex).isSome := by decide
 
 /-- The cells of (7). -/
@@ -158,30 +153,20 @@ theorem principal_parts :
 
 /-! ### What the competition explains -/
 
-/-- **Syncretism by underspecification**: outside the `-n` list, the past
-participle and the finite past receive the same suffix, because every past
-item but `-n` carries only `[+past]`. -/
 theorem participle_eq_past_of_not_strong (v : Verb) (hv : v ∉ strongParticiple) :
     subsetPrinciple vocabulary (Part.pastParticiple.node v) =
       subsetPrinciple vocabulary (Part.pastFinite.node v) := by
   revert hv; cases v <;> decide
 
-/-- The stem-conditioned past `∅` (*put*) blocks the default `-d`: the
-winner is the stem-listed item. -/
 theorem zero_past_blocks_default :
     winner? vocabulary (Part.pastFinite.node .put) = some ({.past true, .stem .put} ⟷ "∅") := by
   decide
 
-/-- The paper's two zero morphemes are different items: the stem-conditioned
-past `∅` and the Elsewhere `∅` of the nonpast finite node. -/
 theorem zero_morphemes_distinct :
     winner? vocabulary (Part.pastFinite.node .put) ≠
       winner? vocabulary (Part.nonpastFinite.node .put) := by
   decide
 
-/-- The stipulated block order: at a `[+past]` node that is also `[3sg]`,
-`-d` and `-z` tie on specificity and the past block's precedence in
-`vocabulary` decides — *play-ed*, not *play-s*. -/
 theorem past_precedes_agreement :
     subsetPrinciple vocabulary (tnsAgr .play true true) = some "-d" := by
   decide
@@ -193,13 +178,9 @@ def tnsAgrSpellout : Spellout (Finset Feature) String where
   modules := [tnsAgrFusion.applyFirstAdjacent]
   insert n := (subsetPrinciple vocabulary n).toList
 
-/-- *play-s*: the domain `[Tns, Agr]` spells out as the single exponent
-`-z`. -/
 theorem plays_pf : tnsAgrSpellout.pf [tns .play false false, agr true] = [["-z"]] := by
   decide
 
-/-- Two terminals enter, one exponent slot leaves: the misalignment is
-carried by the fusion module. -/
 theorem plays_misalignment :
     [tns .play false false, agr true].length = 2 ∧
       (tnsAgrSpellout.pf [tns .play false false, agr true]).length = 1 := by

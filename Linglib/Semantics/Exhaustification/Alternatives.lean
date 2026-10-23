@@ -36,8 +36,6 @@ def leALT (u v : World) : Prop := ∀ a ∈ ALT, a u → a v
 /-- `u <[ALT] v` holds when `u` verifies strictly fewer alternatives than `v`. -/
 def ltALT (u v : World) : Prop := leALT ALT u v ∧ ¬ leALT ALT v u
 
-/-- The order on worlds is the dual of the criteria-derived preorder with the alternatives as
-criteria, the order a Kratzer ordering source induces. -/
 theorem leALT_eq_ofCriteria : leALT ALT = fun u v ↦ (Preorder.ofCriteria (· ∈ ·) ALT).le v u :=
   rfl
 
@@ -51,7 +49,6 @@ theorem leALT_iff {u v : World} : (u ≤[ALT] v) ↔ ∀ a ∈ ALT, u ∈ a → 
 
 theorem ltALT_iff {u v : World} : (u <[ALT] v) ↔ (u ≤[ALT] v) ∧ ¬ (v ≤[ALT] u) := Iff.rfl
 
-/-- One world lies below another when it verifies fewer of the alternatives. -/
 theorem leALT_iff_satisfied_subset {u v : World} :
     (u ≤[ALT] v) ↔ Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT v :=
   (Preorder.satisfied_subset_iff (· ∈ ·) ALT u v).symm
@@ -69,15 +66,12 @@ def exhMW : Set World := fun u ↦ φ u ∧ ¬ ∃ v, φ v ∧ (v <[ALT] u)
 
 theorem mem_exhMW {u : World} : u ∈ exhMW ALT φ ↔ u ∈ φ ∧ ¬∃ v ∈ φ, v <[ALT] u := Iff.rfl
 
-/-- A minimal world verifies a minimal set of alternatives among the prejacent worlds. -/
 theorem mem_exhMW_iff_minimalFor {u : World} :
     u ∈ exhMW ALT φ ↔ MinimalFor (· ∈ φ) (Preorder.satisfied (· ∈ ·) ALT) u := by
   simp only [mem_exhMW, MinimalFor, ← leALT_iff_satisfied_subset]
   exact and_congr_right fun _ ↦ ⟨fun h v hv hvu ↦ not_not.1 fun hn ↦ h ⟨v, hv, hvu, hn⟩,
     fun h ⟨v, hv, hvu, hn⟩ ↦ hn (h hv hvu)⟩
 
-/-- A minimal world is a prejacent world whose set of verified alternatives is minimal among those
-of the prejacent worlds. -/
 theorem mem_exhMW_iff_minimal {u : World} :
     u ∈ exhMW ALT φ ↔ u ∈ φ ∧
       Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) (Preorder.satisfied (· ∈ ·) ALT u) := by
@@ -91,8 +85,6 @@ def IsMinimal (u : World) : Prop := u ∈ exhMW ALT φ
 
 theorem exhMW_subset : exhMW ALT φ ⊆ φ := fun _ ⟨h, _⟩ ↦ h
 
-/-- For finite `ALT` the strict order is well-founded, being the pullback of strict inclusion
-along the finite set of alternatives a world verifies. -/
 theorem ltALT_wf_of_finite (hfin : ALT.Finite) : WellFounded (ltALT ALT) := by
   classical
   have hfin' : ∀ w, {a ∈ ALT | a w}.Finite := fun w ↦ hfin.subset fun _ h ↦ h.1
@@ -110,21 +102,17 @@ theorem ltALT_wf_of_finite (hfin : ALT.Finite) : WellFounded (ltALT ALT) := by
   rw [this]
   exact InvImage.wf f Finset.isWellFounded_ssubset
 
-/-- A satisfiable prejacent has a minimal world when `ALT` is finite. -/
 theorem exists_minimal_of_finite (hfin : ALT.Finite) (hsat : ∃ w, φ w) :
     ∃ u, IsMinimal ALT φ u :=
   let ⟨u, hu, hmin⟩ := (ltALT_wf_of_finite ALT hfin).has_min {w | φ w} hsat
   ⟨u, hu, fun ⟨v, hv, hlt⟩ ↦ hmin v hv hlt⟩
 
-/-- Every prejacent world lies above a minimal one when `ALT` is finite. -/
 theorem exists_isMinimal_le (hfin : ALT.Finite) {w : World} (hw : φ w) :
     ∃ u, IsMinimal ALT φ u ∧ u ≤[ALT] w :=
   let ⟨u, ⟨hu, huw⟩, hmin⟩ :=
     (ltALT_wf_of_finite ALT hfin).has_min {v | φ v ∧ v ≤[ALT] w} ⟨w, hw, leALT_refl ALT w⟩
   ⟨u, ⟨hu, fun ⟨v, hv, hlt⟩ ↦ hmin v ⟨hv, leALT_trans ALT v u w hlt.1 huw⟩ hlt⟩, huw⟩
 
-/-- Against all propositions every prejacent world is minimal, since a world verifying every
-proposition true at another is that world, whose singleton is a proposition. -/
 theorem exhMW_univ : exhMW Set.univ φ = φ := by
   refine Set.Subset.antisymm (exhMW_subset _ _) fun u hu ↦ ⟨hu, ?_⟩
   rintro ⟨v, -, hle, hnle⟩
@@ -142,7 +130,6 @@ structure IsMinimalCover (M : Set World) : Prop where
 
 variable {ALT φ} {M : Set World}
 
-/-- The minimal worlds are the prejacent worlds equivalent to a representative. -/
 theorem IsMinimalCover.exhMW_eq (hM : IsMinimalCover ALT φ M) :
     exhMW ALT φ = {u | φ u ∧ ∃ v ∈ M, (v ≤[ALT] u) ∧ (u ≤[ALT] v)} := by
   ext u

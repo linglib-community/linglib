@@ -118,7 +118,6 @@ instance [Fintype ι] [DecidableLE ι] [DecidableLE α] (f : ι → Option α) :
     Decidable (RespectsHierarchy f) := by
   unfold RespectsHierarchy; infer_instance
 
-/-- A map recorded at every position respects the hierarchy exactly when it is antitone. -/
 theorem respectsHierarchy_some_comp_iff_antitone {g : ι → α} :
     RespectsHierarchy (some ∘ g) ↔ Antitone g := by
   simp [RespectsHierarchy, Antitone]

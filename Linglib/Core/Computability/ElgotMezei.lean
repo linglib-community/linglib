@@ -88,8 +88,6 @@ def rightComp : Bimachine (Bool × σ₁) (Bool × (σ₁ → σ₂)) α γ wher
       = T₂.eval (T₁.runFrom s suf).reverse := by
   induction suf generalizing s <;> simp [Mealy.eval, Mealy.evalFrom_append, *]
 
-/-- Each cell emits the reverse of what `T₂` produces over the reversed image of the
-input, its whole run at the left end and its emission alone, without the flush, elsewhere. -/
 theorem rightComp_runFrom (b : Bool) (s : σ₁) (a : α) (xs : List α) :
     (T₂.rightComp T₁).runFrom (b, s) (a :: xs)
       = (if b then T₂.runFrom T₂.start (T₁.runFrom s (a :: xs)).reverse
@@ -97,15 +95,11 @@ theorem rightComp_runFrom (b : Bool) (s : σ₁) (a : α) (xs : List α) :
   induction xs generalizing b s a <;>
     cases b <;> simp [runFrom, emitted_append, Mealy.eval, Mealy.evalFrom_append, *]
 
-/-- The bimachine computes the composite on every nonempty input — the empty word is the
-only obstruction. -/
 theorem rightComp_run_cons (a : α) (xs : List α) :
     (T₂.rightComp T₁).run (a :: xs) = T₂.runRight (T₁.run (a :: xs)) := by
   rw [Bimachine.run, rightComp_lInit, rightComp_runFrom]
   simp [runRight, run]
 
-/-- The bimachine computes `T₂.runRight ∘ T₁.run`, given that the composite preserves the
-empty word. -/
 theorem rightComp_run (h : T₂.runRight (T₁.run []) = []) :
     (T₂.rightComp T₁).run = T₂.runRight ∘ T₁.run := by
   funext xs
@@ -126,8 +120,6 @@ theorem IsRightSubsequential.isBimachineComputable_comp {f : List α → List β
   obtain ⟨σ₁, _, T₁, rfl⟩ := hf
   exact ⟨_, inferInstance, _, inferInstance, T₂.rightComp T₁, T₂.rightComp_run T₁ hnil⟩
 
-/-- In the synchronous case a `Mealy` machine run right to left over the output of another
-is a bimachine, with no side condition since both passes preserve the empty word. -/
 theorem Mealy.isBimachineComputable_runRight_comp [Fintype σ₁] [Fintype σ₂]
     (T₂ : Mealy σ₂ β γ) (T₁ : Mealy σ₁ α β) :
     IsBimachineComputable (T₂.runRight ∘ T₁.run) :=
@@ -142,8 +134,6 @@ theorem IsLeftSubsequential.isBimachineComputable_comp {f : List α → List β}
   have h := hg.revConj.isBimachineComputable_comp hf.revConj (by simp [List.revConj, hnil])
   rwa [← List.revConj_comp, isBimachineComputable_revConj_iff] at h
 
-/-- In the synchronous mirror case a `Mealy` machine run left to right over the right-to-left
-pass of another is a bimachine. -/
 theorem Mealy.isBimachineComputable_run_comp_runRight [Fintype σ₁] [Fintype σ₂]
     (T₂ : Mealy σ₂ β γ) (T₁ : Mealy σ₁ α β) :
     IsBimachineComputable (T₂.run ∘ T₁.runRight) :=

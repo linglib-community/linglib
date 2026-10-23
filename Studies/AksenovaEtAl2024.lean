@@ -81,7 +81,6 @@ symbols. -/
 abbrev tierGrammar (R : V → V → Prop) : TierStrictlyLocalGrammar 2 (Option V) :=
   TierStrictlyLocalGrammar.ofForbiddenPairs (TierRel R) (·.isSome)
 
-/-- Transparent material between two tier symbols leaves them adjacent on the tier. -/
 private theorem mem_tierGrammar_window (R : V → V → Prop) (a b : V) (n : ℕ) :
     [some a] ++ List.replicate n none ++ [some b] ∈ (tierGrammar R).language ↔ ¬ R a b := by
   rw [mem_ofForbiddenPairs_language_iff]
@@ -91,8 +90,6 @@ end Tier
 
 /-! ### Two harmonies on one tier -/
 
-/-- On a two-symbol word a pattern is harmonic unless both symbols are on its tier and form an
-illicit bigram. -/
 private theorem harmonic_pair {α W : Type*} (p : Pattern α W) (x y : α) :
     p.Harmonic [x, y] ↔ (p.OnTier x → p.OnTier y → p.Licit x y) := by
   by_cases hx : p.OnTier x <;> by_cases hy : p.OnTier y <;>
@@ -213,14 +210,12 @@ def kirghizFront : Pattern (Option TurkicV) Bool :=
 def kirghizRound : Pattern (Option TurkicV) Bool :=
   { value := Option.map TurkicV.round, participation := allParticipate }
 
-/-- The printed grammar is fronting harmony and rounding harmony on one tier. -/
 theorem kirghiz_language :
     kirghiz.language = {w | kirghizFront.Harmonic w ∧ kirghizRound.Harmonic w} := by
   ext w
   exact (Set.ext_iff.1 (ofForbiddenPairs_language_congr (by decide) (by decide)) w).trans
     (harmonic_and_iff_mem_tsl kirghizFront kirghizRound (fun _ ↦ Iff.rfl) w).symm
 
-/-- Without blocking, Kirghiz harmony is strictly 2-piecewise as well. -/
 theorem kirghiz_isStrictlyPiecewise : kirghiz.language.IsStrictlyPiecewise 2 :=
   TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise (by decide)
 
@@ -413,7 +408,6 @@ theorem kikongo_rows :
         KikongoSeg.parse f.form.toList ∉ kikongo := by
   decide
 
-/-- Kikongo with a stretch of vowels between two consonants of the nasal tier. -/
 private theorem mem_kikongo_window (x y : KikongoSeg) (hx : x.isVowel = false)
     (hy : y.isVowel = false) (n : ℕ) :
     [x] ++ List.replicate n KikongoSeg.e ++ [y] ∈ kikongo ↔ ¬ (x.isNasal ∧ ¬ y.isNasal) := by

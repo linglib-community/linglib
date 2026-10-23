@@ -130,8 +130,6 @@ variable {S E : Type*}
 from situations to the unique satisfier of the property in the situation. -/
 noncomputable def the (f : E → S → Prop) (s : S) : Option E := iota (f · s)
 
-/-- The domain condition of the article is that exactly one thing has the property in the
-situation. -/
 theorem the_isSome_iff (f : E → S → Prop) (s : S) : (the f s).isSome ↔ ∃! x, f x s :=
   iota_isSome_iff _
 
@@ -211,7 +209,6 @@ theorem deRe_ne_zero_iff (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) 
   (box_ne_zero_iff R _ s).trans <| forall₂_congr fun w _ ↦
     sentence_ne_zero_iff (fun _ ↦ w₀) f vp w
 
-/-- Attributive de re presupposes exactly one satisfier in the topic situation. -/
 theorem attributiveDeRe_ne_zero_iff (R : S → Set S) (f vp : E → S → Prop) (s : S) :
     attributiveDeRe R f vp s ≠ 0 ↔ ∃! x, f x s :=
   sentence_ne_zero_iff id f _ s
@@ -303,7 +300,6 @@ section Village
 
 variable {E : Type*}
 
-/-- The minimal situations containing a fact within two bounds are the singleton. -/
 theorem exists_minimal_singleton_iff {t u : Village E} (φ : Fact E) (g : Village E → Prop) :
     (∃ s, Minimal (fun s ↦ s ≤ t ∧ s ≤ u ∧ φ ∈ s) s ∧ g s) ↔ φ ∈ t ∧ φ ∈ u ∧ g {φ} := by
   have hmin (ht : φ ∈ t) (hu : φ ∈ u) (s : Village E) :
@@ -320,8 +316,6 @@ theorem exists_minimal_singleton_iff {t u : Village E} (φ : Fact E) (g : Villag
 
 variable [DecidableEq E]
 
-/-- An extended situation for a set of facts exists exactly when `s'` is part of `s` and the
-facts hold in `s`. -/
 theorem Q_subset_iff (Φ : E → Village E) (x : E) (s s' : Village E) :
     Q (fun x s'' ↦ Φ x ⊆ s'') x s s' ↔ s' ≤ s ∧ Φ x ⊆ s := by
   constructor
@@ -331,8 +325,6 @@ theorem Q_subset_iff (Φ : E → Village E) (x : E) (s s' : Village E) :
     exact ⟨s' ∪ Φ x, (minimal_iff_eq ⟨Finset.subset_union_left, Finset.union_subset hle hsub,
       Finset.subset_union_right⟩ fun _ h ↦ Finset.union_subset h.1 h.2.2).mpr rfl⟩
 
-/-- An extended situation for a single fact exists exactly when `s'` is part of `s` and the fact
-holds in `s`. -/
 theorem Q_mem_iff (φ : E → Fact E) (x : E) (s s' : Village E) :
     Q (fun x s'' ↦ φ x ∈ s'') x s s' ↔ s' ≤ s ∧ φ x ∈ s := by
   simpa only [Finset.singleton_subset_iff] using Q_subset_iff (fun x ↦ {φ x}) x s s'
@@ -344,7 +336,6 @@ def ownsADonkey (s₀ : Village E) (x : E) (s' : Village E) : Prop :=
     a s₀ (fun y (s : Village E) ↦ Fact.donkey y ∈ s)
       (fun y ↦ Q (fun y (s : Village E) ↦ Fact.owns x y ∈ s) y) s'
 
-/-- The relative clause unfolds to facts in the situation. -/
 theorem ownsADonkey_iff (s₀ : Village E) (x : E) {s' : Village E} (h : s' ≤ s₀) :
     ownsADonkey s₀ x s' ↔ Fact.farmer x ∈ s' ∧ ∃ y, Fact.donkey y ∈ s' ∧ Fact.owns x y ∈ s' := by
   simp only [ownsADonkey, a, exists_minimal_singleton_iff, Q_mem_iff, Finset.singleton_subset_iff]
@@ -354,8 +345,6 @@ theorem ownsADonkey_iff (s₀ : Village E) (x : E) {s' : Village E} (h : s' ≤ 
   · rintro ⟨hf, y, hd, ho⟩
     exact ⟨hf, y, h hd, hd, hd, ho⟩
 
-/-- Within the world there is one minimal situation of a farmer owning a donkey per owned
-donkey, consisting of the farmer, the donkey and the owning. -/
 theorem minimal_ownsADonkey_iff (w : Village E) (x : E) (s' : Village E) :
     Minimal (fun s' ↦ s' ≤ w ∧ s' ≤ w ∧ ownsADonkey w x s') s' ↔
       ∃ y, Fact.farmer x ∈ w ∧ Fact.donkey y ∈ w ∧ Fact.owns x y ∈ w ∧
@@ -389,8 +378,6 @@ theorem minimal_ownsADonkey_iff (w : Village E) (x : E) (s' : Village E) :
       simp only [Finset.insert_subset_iff, Finset.singleton_subset_iff]
       exact ⟨hf', hd', ho'⟩
 
-/-- In the minimal situation of a farmer owning a donkey, *the donkey* denotes that donkey, unique
-by minimality. -/
 theorem the_donkey_minimal (x y : E) :
     the (fun z (s : Village E) ↦ Fact.donkey z ∈ s) {Fact.farmer x, Fact.donkey y, Fact.owns x y} =
       some y := by
@@ -449,7 +436,6 @@ theorem everyOwnerBeatsTheDonkey_iff (w : Village E) :
     obtain ⟨y, hf, hd, ho, rfl⟩ := (minimal_ownsADonkey_iff w x s').mp hs
     exact (beatsTheDonkey_iff w x y).mpr ⟨hs.prop.1, h x y hf hd ho⟩
 
-/-- The pronoun sentence has the same meaning, being the same LF up to the null noun phrase. -/
 theorem everyOwnerBeatsIt_iff (w : Village E) :
     everyOwnerBeatsIt w w ↔
       ∀ x y, Fact.farmer x ∈ w → Fact.donkey y ∈ w → Fact.owns x y ∈ w → Fact.beats x y ∈ w :=

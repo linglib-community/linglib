@@ -154,7 +154,6 @@ noncomputable def votingBases (w : Weights) (it : Item) : Measure Velar :=
 noncomputable def pNasal (w : Weights) (it : Item) : ℝ :=
   (votingBases w it).real {.nasal}
 
-/-- The harmony of a realisation weighs each faithfulness violation by its base's activation. -/
 theorem harmony_apply (w : Weights) (it : Item) (v : Velar) :
     harmony (violations it) w.vec v =
       -(w.markedness * (Constraint.binary (· = Velar.oral) v : ℝ) +
@@ -192,12 +191,10 @@ theorem pNasal_eq_sigmoid (w : Weights) (it : Item) :
 
 /-! ### The frequency effects -/
 
-/-- An existing compound with a free N2 nasalises with probability `σ(w_M − w_N2·a + w_C·b)`. -/
 theorem pNasal_existing (w : Weights) (a b : ℝ) :
     pNasal w (existing a b) = sigmoid (w.markedness - w.n2 * a + w.compound * b) := by
   simp [pNasal_eq_sigmoid, existing, sub_eq_add_neg]
 
-/-- A novel compound has no whole-compound base. -/
 theorem pNasal_novel (w : Weights) (a : ℝ) :
     pNasal w (novel a) = sigmoid (w.markedness - w.n2 * a) := by
   simp [pNasal_eq_sigmoid, novel, sub_eq_add_neg]
@@ -232,7 +229,6 @@ theorem logit_pNasal_existing (w : Weights) (a b : ℝ) :
     logit (pNasal w (existing a b)) = logit (pNasal w (novel a)) + w.compound * b := by
   rw [pNasal_existing, pNasal_novel, logit_sigmoid, logit_sigmoid]
 
-/-- A stored compound's pull adds nasalisation at any N2 activation. -/
 theorem novel_lt_existing (w : Weights) (hw : 0 < w.compound) (a : ℝ) {b : ℝ} (hb : 0 < b) :
     pNasal w (novel a) < pNasal w (existing a b) := by
   rw [pNasal_novel, pNasal_existing]
@@ -245,8 +241,6 @@ theorem existing_lt_bound (w : Weights) (hw : 0 < w.n2) {a : ℝ} (ha : 0 < a) (
   rw [pNasal_existing, pNasal_bound]
   exact sigmoid_lt (by nlinarith)
 
-/-- A bound-N2 compound nasalises at least half the time under nonnegative weights, whatever its
-frequency. -/
 theorem bound_half_le (w : Weights) (hM : 0 ≤ w.markedness) (hC : 0 ≤ w.compound) {b : ℝ}
     (hb : 0 ≤ b) : 2⁻¹ ≤ pNasal w (bound b) := by
   rw [pNasal_bound, ← sigmoid_zero]

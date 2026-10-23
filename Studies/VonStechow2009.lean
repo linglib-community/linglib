@@ -184,8 +184,6 @@ theorem reference_time_reading_not_event_time_reading :
           (fun t ↦ ◇[toSetRel ⟦past⟧] (fun t' ↦ t' = six ∧ leave t') t) s :=
   ⟨10, 6, (· = 5), by simp, by simp⟩
 
-/-- With the leaving at six, the second reading of *Mary had left at six* holds and the first
-fails. -/
 theorem event_time_reading_not_reference_time_reading :
     ∃ (s six : ℤ) (leave : ℤ → Prop),
       ◇[toSetRel ⟦past⟧]
@@ -320,7 +318,6 @@ theorem forall_past_of_past_forall
     ∀ x, boot x → ◇[toSetRel ⟦past⟧] (polish x) s :=
   fun x hx ↦ let ⟨t, hts, h⟩ := h; ⟨t, hts, h x hx⟩
 
-/-- The converse fails when the boots are polished at different past times. -/
 theorem exists_forall_past_not_past_forall :
     ∃ (s : ℤ) (boot : Bool → Prop) (polish : Bool → ℤ → Prop),
       (∀ x, boot x → ◇[toSetRel ⟦past⟧] (polish x) s) ∧
@@ -330,8 +327,6 @@ theorem exists_forall_past_not_past_forall :
     fun ⟨t, _, h⟩ ↦ by have := h true trivial; have := h false trivial; simp_all⟩
 
 omit [LinearOrder T] in
-/-- Without the Perfective, a referential Past predicates the polishing of every boot of the one
-reference time, which boots polished one at a time exclude. -/
 theorem not_forall_referential {t₅ : T} {x y : X} (hx : boot x) (hy : boot y)
     (hsep : ∀ t, polish x t → ¬ polish y t) : ¬ ∀ z, boot z → polish z t₅ :=
   fun h ↦ hsep t₅ (h x hx) (h y hy)
@@ -354,14 +349,12 @@ now. -/
 def Deictic (s : T) : Prop :=
   ◇[toSetRel ⟦future⟧] (fun t ↦ ∃ x, fish x ∧ alive x s ∧ buy x t) s
 
-/-- The simultaneous reading does not entail the deictic one. -/
 theorem exists_simultaneous_not_deictic :
     ∃ (s : ℤ) (fish : Unit → Prop) (alive buy : Unit → ℤ → Prop),
       Simultaneous fish alive buy s ∧ ¬ Deictic fish alive buy s :=
   ⟨0, fun _ ↦ True, fun _ t ↦ t = 1, fun _ t ↦ t = 1, ⟨1, by decide, (), trivial, rfl, rfl⟩,
     fun ⟨_, _, _, _, h, _⟩ ↦ by simp at h⟩
 
-/-- The deictic reading does not entail the simultaneous one. -/
 theorem exists_deictic_not_simultaneous :
     ∃ (s : ℤ) (fish : Unit → Prop) (alive buy : Unit → ℤ → Prop),
       Deictic fish alive buy s ∧ ¬ Simultaneous fish alive buy s :=

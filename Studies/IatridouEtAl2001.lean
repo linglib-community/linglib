@@ -130,20 +130,15 @@ theorem durative_prfv_of_eq (hP : HasSubintervalProperty P) {e : E} (he : P w e)
 
 /-! ### Point 1: the universal perfect at both boundaries -/
 
-/-- A durative perfect asserts the predicate at the right boundary, the time tense supplies, and
-so does one restricted by any adverbial. -/
 theorem durative_at_rb (h : ⟨w, t⟩ ∈ PERF (durative p)) : .pure t ∈ p w :=
   let ⟨pts, hd, hrb⟩ := mem_perf.1 h
   hd (Set.mem_Iic.2 (NonemptyInterval.le_def.2 ⟨hrb ▸ pts.fst_le_snd, hrb.ge⟩))
 
-/-- With *since t₀* a durative perfect asserts the predicate at the left boundary. -/
 theorem durative_at_lb (h : ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative p ·)) :
     .pure t₀ ∈ p w :=
   let ⟨pts, ⟨hlb, hd⟩, _⟩ := h
   hd (Set.mem_Iic.2 (NonemptyInterval.le_def.2 ⟨hlb.le, hlb ▸ pts.fst_le_snd⟩))
 
-/-- The non-strict imperfective holds at a moment when the moment lies in the run time of an
-event. -/
 theorem unbounded_pure_iff : .pure t ∈ UNBOUNDED P w ↔ ∃ e, P w e ∧ t ∈ τ e :=
   ⟨fun ⟨e, hle, hP⟩ ↦ ⟨e, hP, NonemptyInterval.mem_def.2 (NonemptyInterval.le_def.1 hle)⟩,
     fun ⟨e, hP, ht⟩ ↦ ⟨e, NonemptyInterval.le_def.2 (NonemptyInterval.mem_def.1 ht), hP⟩⟩
@@ -206,7 +201,6 @@ theorem no_universal_of_prfv (h : ∀ e, P w e → (τ e).fst < (τ e).snd) :
     ⟨w, t⟩ ∉ PERF (durative (PRFV P)) :=
   fun ⟨_, hd, _⟩ ↦ not_durative_prfv h hd
 
-/-- The perfective holds at a moment when an event's run time is that moment. -/
 theorem prfv_pure_iff : .pure t ∈ PRFV P w ↔ ∃ e, P w e ∧ τ e = .pure t :=
   ⟨fun ⟨e, hle, hP⟩ ↦ ⟨e, hP, le_antisymm hle
       (NonemptyInterval.le_def.2 ⟨(NonemptyInterval.le_def.1 hle).2.trans' (τ e).fst_le_snd,

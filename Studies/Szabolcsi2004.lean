@@ -28,8 +28,6 @@ open PolarityItem English.PolarityItems
 /-- The operators of the paradigm, clausemate negation, *no one*, *without* and *at most five*. -/
 def paradigm : List LicensingContext := [.negation, .nobody, .withoutClause, .atMost]
 
-/-- *Someone* is blocked immediately below an operator of the paradigm exactly when the operator
-is anti-additive. -/
 theorem antiLicenses_someone_iff :
     ∀ c ∈ paradigm, c.licenser.AntiLicenses someone ↔ c.licenser.Holds .antiAdd := by
   simp only [paradigm, List.mem_cons, List.not_mem_nil, or_false]
@@ -50,8 +48,6 @@ def operatorOf : String → Option LicensingContext
   | "at most five" => some .atMost
   | _ => none
 
-/-- Every row is on *someone*, names its operator, and its reading with *someone* in the
-operator's immediate scope is acceptable exactly when the operator does not block *someone*. -/
 theorem readings_predicted :
     ∀ d ∈ Examples.all, d.feature? "item" = some "someone" ∧
       ∃ c ∈ (d.feature? "operator").bind operatorOf, ∃ r ∈ d.readings.head?,

@@ -187,8 +187,6 @@ theorem sincere_bara_iff :
   · exact hp hf
   · exact hK c hc hf hpol
 
-/-- When the speaker's information has the addressee a source for `p`, the uptake of `p` is
-unrealizable: a source is no dependent. -/
 theorem inter_uptake_eq_empty (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
     B ∩ uptake K p f = ∅ :=
   Set.eq_empty_of_forall_notMem λ v hv => hv.2.2 (h v hv.1)

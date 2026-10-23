@@ -76,8 +76,6 @@ def mqAtIssue (s : Speaker) : Expr → W → Prop := fun q ↦ M.quot q wc s
 /-- ⦇∗⦈∗: `M.diag s q w` is the extension at `w` of `q` as uttered by `s` at `w`. -/
 def diag (s : Speaker) : Expr → W → Prop := fun q w ↦ M.quot q w s w
 
-/-- At the world of the context diagonalization is invisible, so (Conventional Wisdom) holds
-for unembedded material. -/
 theorem mqAtIssue_wc (s : Speaker) (q : Expr) : M.mqAtIssue wc s q wc = M.diag s q wc := rfl
 
 /-- † ⇝ `λf | ∃s. f = λq.⦇q⦈(w_c)(s). f∗`: ⦇∗⦈∗ extended along 𝔐's at-issue meaning. The
@@ -92,8 +90,6 @@ theorem dagger_mqAtIssue (h : FactorsThrough M.diag (M.mqAtIssue wc)) (s : Speak
     M.dagger wc (M.mqAtIssue wc s) = M.diag s :=
   h.extend_apply _ s
 
-/-- The assumption is also necessary: some function sends each `λq.⦇q⦈(w_c)(s)` to ⦇∗⦈∗(s)
-iff ⦇∗⦈∗ factors through 𝔐's at-issue meaning. -/
 theorem exists_dagger_iff :
     (∃ d : (Expr → W → Prop) → Expr → W → Prop, ∀ s, d (M.mqAtIssue wc s) = M.diag s) ↔
       FactorsThrough M.diag (M.mqAtIssue wc) := by
@@ -252,8 +248,6 @@ theorem inTheSenseThat_iff (q : Expr) (μ : W → Prop) (w : W) :
     inTheSenseThat M wc q μ w ↔ μ w ∧ ∃ s, M.quot q wc s = μ :=
   ⟨fun ⟨s, hs, hμ⟩ ↦ ⟨hμ ▸ hs, s, hμ⟩, fun ⟨hμ, s, hs⟩ ↦ ⟨s, hs ▸ hμ, hs⟩⟩
 
-/-- (7′) is true iff some speaker's use of the sentence at `w_c` expresses a truth at `w`; the
-paper restricts the speakers quantified over to not-too-outlandish ones. -/
 theorem inASense_iff (q : Expr) (w : W) : inASense M wc q w ↔ ∃ s, M.quot q wc s w :=
   ⟨fun ⟨_, s, hs, _⟩ ↦ ⟨s, hs⟩, fun ⟨s, hs⟩ ↦ ⟨_, s, hs, rfl⟩⟩
 

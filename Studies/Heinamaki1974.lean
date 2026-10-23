@@ -71,14 +71,11 @@ theorem since_veridical_complement : since A B → ∃ t, t ∈ timeTrace B :=
 
 theorem by_veridical_main : by_ A B → ∃ t, t ∈ timeTrace A := fun ⟨t, ht, _⟩ ↦ ⟨t, ht⟩
 
-/-- *Before ever* is strict *by*. -/
 theorem before_by : Tense.beforeEver A B → by_ A B :=
   fun ⟨t, ht, h⟩ ↦ ⟨t, ht, fun t' ht' ↦ (h t' ht').le⟩
 
 /-! ### Before and by as negations of when and after -/
 
-/-- *Before* is *not yet*. `A` is before ever `B` exactly when at some time of `A` it is neither
-*when* `B` nor *after* `B`. -/
 theorem beforeEver_iff_exists_not_when_not_after :
     Tense.beforeEver A B ↔ ∃ t ∈ timeTrace A, ¬ when_ {pure t} B ∧ ¬ Anscombe.after {pure t} B := by
   rw [beforeEver_iff_not_subset_upperClosure, Set.not_subset]
@@ -88,7 +85,6 @@ theorem beforeEver_iff_exists_not_when_not_after :
   exact ⟨fun h ↦ ⟨fun ht ↦ lt_irrefl t (h t ht), fun x hx ↦ (h x hx).le⟩,
     fun ⟨h₁, h₂⟩ x hx ↦ (h₂ x hx).lt_of_ne fun e ↦ h₁ (e ▸ hx)⟩
 
-/-- *By* is *not after*. `A` is by `B` exactly when at some time of `A` it is not *after* `B`. -/
 theorem by_iff_exists_not_after : by_ A B ↔ ∃ t ∈ timeTrace A, ¬ Anscombe.after {pure t} B := by
   simp only [by_, Anscombe.after, timeTrace_singleton, SetLike.mem_coe, mem_pure, exists_eq_left,
     not_exists, not_and, not_lt]
@@ -100,16 +96,12 @@ def before (A : Set (NonemptyInterval T)) (lb : T) : Prop := ∃ t ∈ timeTrace
 /-- *A after B* by the reference point holds when some time of `A` follows `B`'s first time `lb`. -/
 def after (A : Set (NonemptyInterval T)) (lb : T) : Prop := ∃ t ∈ timeTrace A, lb < t
 
-/-- When `B` has a first time, the reference-point *before* is [anscombe-1964]'s
-quantificational one. -/
 theorem before_iff_anscombe {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     before A lb ↔ Tense.beforeEver A B := (beforeEver_iff_lt_least hlb).symm
 
-/-- When `B` has a first time, the reference-point *after* is [anscombe-1964]'s. -/
 theorem after_iff_anscombe {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     after A lb ↔ Anscombe.after A B := (after_iff_least_lt hlb).symm
 
-/-- *While* is not symmetric, as a moment inside a stretch shows. -/
 theorem while_not_symm :
     ¬∀ A B : Set (NonemptyInterval ℤ), while_ A B → while_ B A := by
   intro h
@@ -127,7 +119,6 @@ theorem while_not_symm :
   rw [Set.mem_singleton_iff] at hi; subst hi
   omega
 
-/-- *By* allows coincidence where *before* does not, as an arrival exactly at the deadline shows. -/
 theorem by_not_before :
     ¬∀ A B : Set (NonemptyInterval ℤ), by_ A B → Tense.beforeEver A B := by
   intro h

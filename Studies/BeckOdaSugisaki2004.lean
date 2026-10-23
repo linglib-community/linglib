@@ -72,8 +72,6 @@ variable {Entity D : Type*} [LinearOrder D]
 def er (D₁ D₂ : Set D) : Prop :=
   ∃ m₁ m₂, IsGreatest D₁ m₁ ∧ IsGreatest D₂ m₂ ∧ m₁ < m₂
 
-/-- With unique witnesses `er` compares the two maxima directly, the comparative and the
-subcomparative of (7′), (9′) and (10′). -/
 theorem er_Iic_Iic (d₁ d₂ : D) : er (Set.Iic d₁) (Set.Iic d₂) ↔ d₁ < d₂ := by
   refine ⟨fun ⟨_, _, h₁, h₂, h⟩ => ?_,
     fun h => ⟨_, _, isGreatest_Iic, isGreatest_Iic, h⟩⟩
@@ -89,7 +87,6 @@ def pos (μ : Entity → D) (c : D) (x : Entity) : Prop :=
 theorem pos_iff_lt (μ : Entity → D) (c : D) (x : Entity) : pos μ c x ↔ c < μ x :=
   ⟨fun ⟨_, hd, hc⟩ => hc.trans_le hd, fun h => ⟨_, le_rfl, h⟩⟩
 
-/-- The positive form is the preimage of the open ray above the standard. -/
 theorem pos_iff_mem_over (μ : Entity → D) (c : D) (x : Entity) :
     pos μ c x ↔ x ∈ μ ⁻¹' Set.Ioi c := by
   simp only [pos_iff_lt, Set.mem_preimage, Set.mem_Ioi]

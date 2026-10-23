@@ -115,7 +115,6 @@ def selCombine : SelectionState → SelectionState → Option (Bool × LexicalIt
     right. -/
 def selSide (x y : SelectionState) : Option Bool := (selCombine x y).map (·.1)
 
-/-- Swapping the sisters flips the side and keeps the head and residual. -/
 theorem selCombine_comm : selCombine x y = (selCombine y x).map fun p => (!p.1, p.2) := by
   rcases x with ⟨_ | ⟨hx, _ | ⟨cx, sx⟩⟩⟩ <;> rcases y with ⟨_ | ⟨hy, _ | ⟨cy, sy⟩⟩⟩ <;>
     first
@@ -135,7 +134,6 @@ instance : MulZeroClass SelectionState where
   zero_mul _ := rfl
   mul_zero x := by rcases x with ⟨_ | ⟨h, _ | ⟨c, s⟩⟩⟩ <;> rfl
 
-/-- `*` unfolds to the canonical accessor for the selection product. -/
 theorem SelectionState.mul_def : x * y = ⟨(selCombine x y).map (·.2)⟩ := rfl
 
 instance : CommMagma SelectionState where
@@ -146,13 +144,11 @@ instance : CommMagma SelectionState where
 example : ∃ x y : SelectionState, x ≠ 0 ∧ y ≠ 0 ∧ x * y = 0 :=
   ⟨.of .bareTrace [], .of .bareTrace [], by decide⟩
 
-/-- A state never combines with itself, since of two equal sisters neither selects the other. -/
 @[simp] theorem SelectionState.mul_self (x : SelectionState) : x * x = 0 := by
   rcases x with ⟨_ | ⟨h, _ | ⟨c, s⟩⟩⟩ <;> rfl
 
 variable {x y}
 
-/-- The projected head is the head of the sister on the reported side. -/
 theorem selCombine_eq_some {b : Bool} {hd : LexicalItem.Token} {res : List Cat}
     (h : selCombine x y = some (b, hd, res)) :
     (bif b then x else y).head = some hd := by
@@ -175,7 +171,6 @@ instance : Head SelectionState where
     cases b
     exacts [Or.inr (selCombine_eq_some hproj), Or.inl (selCombine_eq_some hproj)]
 
-/-- A saturated state never projects, so the head of its product is the other factor's head. -/
 theorem SelectionState.head_of_mul_of {a r : LexicalItem.Token} {y : SelectionState}
     (h : (SelectionState.of a [] * y).head = some r) : y.head = some r := by
   rcases y with ⟨_ | ⟨hb, _ | ⟨c, rest⟩⟩⟩
@@ -225,7 +220,6 @@ def traceState : Option LexicalItem.Token → SelectionState
 def selNode : Vertex → List SelectionState → SelectionState :=
   mergeAlgebra (fun tok => .of tok tok.item.sel) traceState
 
-/-- `selNode` is invariant under permutation of the daughter states. -/
 theorem selNode_perm (a : Vertex) {l₁ l₂ : List SelectionState} (h : l₁.Perm l₂) :
     selNode a l₁ = selNode a l₂ :=
   mergeAlgebra_perm _ _ a h
@@ -234,12 +228,10 @@ theorem selNode_perm (a : Vertex) {l₁ l₂ : List SelectionState} (h : l₁.Pe
 def selCheckPlanar : RoseTree Vertex → SelectionState :=
   RoseTree.fold selNode
 
-/-- At a node, `selCheckPlanar` folds the algebra over the daughters. -/
 theorem selCheckPlanar_node (a : Vertex) (cs : List (RoseTree Vertex)) :
     selCheckPlanar (RoseTree.node a cs) = selNode a (cs.map selCheckPlanar) :=
   RoseTree.fold_node ..
 
-/-- `selCheckPlanar` is `Perm`-invariant, so it descends to the quotient. -/
 theorem selCheckPlanar_perm {t s : RoseTree Vertex} (h : RoseTree.Perm t s) :
     selCheckPlanar t = selCheckPlanar s :=
   RoseTree.fold_perm (fun a _ _ h' => selNode_perm a h') h
@@ -293,7 +285,6 @@ noncomputable def selCheckHom : SyntacticObject →ₙ* SelectionState :=
 
 @[simp] theorem selHead_leaf : (SyntacticObject.leaf tok).selHead = some tok := rfl
 
-/-- An object merged with itself has no head. -/
 @[simp] theorem selHead_merge_self (x : SyntacticObject) : (merge x x).selHead = none := by
   simp [selHead]
 

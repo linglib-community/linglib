@@ -288,7 +288,6 @@ theorem not_miDefined_of_disjoint (h : ∀ q, Highlighted c q → q ∉ ALT) :
 
 /-! ### Commitments -/
 
-/-- A speaker committed to a proposition and to its negation is inconsistent. -/
 theorem contextSetOf_eq_empty {s : A} {m m' : Move A W} (hm : m ∈ c.moves) (hm' : m' ∈ c.moves)
     (hs : m.speaker = s) (hs' : m'.speaker = s) (hp : p ∈ m.commitments)
     (hp' : pᶜ ∈ m'.commitments) : c.contextSetOf s = ∅ :=
@@ -567,7 +566,6 @@ theorem forall_mem_alternatives {k : Site} {P : Set (Set Event) → Prop} :
 
 theorem singleton_mem_happened (e : Event) : {e} ∈ happened e := Set.mem_singleton e
 
-/-- Exhaustifying the variant at `k` relative to the alternatives at `k` denies the scope. -/
 theorem exhIE_variant_subset (k : Site) :
     exhIE (alternatives (some k)) (Answer.variant k).prop ⊆ Answer.scope.propᶜ :=
   IsInnocentlyExcludable.exhIE_subset_compl
@@ -611,8 +609,6 @@ namespace MiExample
 
 variable (r : MiExample)
 
-/-- An answer fits the *=mi* sentence exactly when it is an alternative whose exhaustification
-entails the negated scope. -/
 theorem fits_iff (a : Answer) :
     (a.prop ∈ alternatives r.focus ∧ exhIE (alternatives r.focus) a.prop ⊆ r.scope.propᶜ) ↔
       r.Fits a := by
@@ -673,8 +669,6 @@ theorem highlighted_context_iff (q : Set (Set Event)) :
       rintro k rfl
       exact h hadd
 
-/-- In each example's context, the presupposition of *=mi* holds exactly when the analysis
-licenses it. -/
 theorem miDefined_iff :
     MiDefined r.context (alternatives r.focus) r.scope.prop ↔ r.Licensed := by
   simp only [MiDefined, highlighted_context_iff, Licensed]
@@ -763,8 +757,6 @@ def context : Context Role (Set Event) :=
   | .confirmsThenDeniesScope => (c.update (.assert .speaker (pure Answer.scope.prop))).update
       (.assert .speaker (pure Answer.negation.prop))
 
-/-- The speaker of a declarative with a direct or reportative evidential stays consistent exactly
-when the evidential is reportative and she denies only the scope. -/
 theorem nonempty_contextSetOf_iff (he : r.evidential.IsDirect ∨ r.evidential.IsReportative) :
     (r.context.contextSetOf .speaker).Nonempty ↔
       r.evidential.IsReportative ∧ r.continuation = .deniesScope := by

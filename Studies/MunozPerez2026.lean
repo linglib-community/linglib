@@ -110,14 +110,10 @@ def marked (a : Option Category) : Clause := ⟨Minimalist.Voice.anticausative, 
 def unmarked (a : Option Category) : Clause :=
   ⟨Minimalist.Voice.middle, [.vGO], a⟩
 
-/-- The applicative of a marked anticausative is affected, between the change and the state; that
-of an unmarked one is low, the rule's context failing. -/
 theorem site_marked_unmarked (a : Option Category) :
     (marked a).site.Affected ∧ (unmarked a).site.Low := by
   simp [marked, unmarked, Clause.site, ApplSite.Affected, ApplSite.Low]
 
-/-- The Voice head of an anticausative has no meaning, marked or not, so the clitics that spell
-a clause out cannot change what it means. -/
 theorem not_hasSemantics (a : Option Category) :
     ¬ (marked a).voice.IsThematic ∧ ¬ (unmarked a).voice.IsThematic := by
   simp only [marked, unmarked]; decide
@@ -205,11 +201,9 @@ theorem clusters_unmarked (c : Category) :
     clusters (unmarked (some c)) = (datives c).image ([·]) := by
   cases c <;> decide +kernel
 
-/-- Without a dative, a marked anticausative has the marker and an unmarked one has nothing. -/
 theorem clusters_none : clusters (marked none) = {["se"]} ∧ clusters (unmarked none) = {[]} := by
   decide +kernel
 
-/-- The three clusters of a first person singular dative. -/
 theorem clusters_marked_speaker :
     clusters (marked (some .speaker)) = {["se", "me"], ["se", "me", "le"], ["me", "le"]} := by
   decide +kernel
@@ -221,8 +215,6 @@ theorem marker_optional_iff (c : Category) :
 
 /-! ### Why fission rescues the clause -/
 
-/-- Outside the third person every dative clitic is a reflexive form, by the syncretism of the
-two series. -/
 theorem isReflexiveForm_of_mem_datives {c : Category} (hc : c.person ≠ .third) {f : String}
     (hf : f ∈ datives c) : IsReflexiveForm f := by
   have hf' := PersonalPronoun.paradigm_mono (Finset.erase_subset _ _) c hf
@@ -243,12 +235,9 @@ marker of Voice it leaves the applicative head unpronounced. -/
 theorem not_converges_singleton (f : String) : ¬ Converges none [f] := by
   simp [Converges]
 
-/-- The second exponent *le* is not a reflexive form, so the marking comes from the first. -/
 theorem not_isReflexiveForm_le : ¬ IsReflexiveForm Spanish.Clitics.le.form := by
   decide +kernel
 
-/-- Syncretism with the reflexive does not suffice for a stylistic clitic. The first person
-plural *nos* is syncretic, and fission still skips it for want of [+SING]. -/
 theorem syncretic_not_isFissionApplicable :
     (∀ f ∈ datives .speakerOthers, IsReflexiveForm f) ∧
       ¬ IsFissionApplicable .speakerOthers :=
@@ -320,14 +309,11 @@ theorem isLicit_me_iff_nos (g : PCC.Grammar) :
         PCC.IsLicit g ⟨io, do_⟩ :=
   Iff.rfl
 
-/-- The weak constraint bans a third-person dative over a first-person accusative, as in the
-ditransitive examples, so it would ban stylistic *me le* as well. -/
 theorem weak_pcc_bans :
     ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person,
       ¬ PCC.IsLicit PCC.weakGrammar ⟨io, do_⟩ := by
   decide
 
-/-- The fission rule does separate the two. -/
 theorem fission_separates :
     IsFissionApplicable .speaker ∧ ¬ IsFissionApplicable .speakerOthers := by
   decide
@@ -343,7 +329,6 @@ the clitic. -/
 def seMarkedIfAlternating (v : SpanishVerbEntry) : Prop :=
   v.Alternates → v.anticausativeMarking ≠ some .unmarked
 
-/-- *mejorar* alternates and rejects the clitic, against the prediction. -/
 theorem not_seMarkedIfAlternating_mejorar : ¬ seMarkedIfAlternating mejorar := by
   unfold seMarkedIfAlternating; decide
 

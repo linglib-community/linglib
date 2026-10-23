@@ -74,8 +74,6 @@ section Composition
 
 variable {W E : Type*}
 
-/-- A singleton set of functions applies pointwise as an image, as when the verb of *dare
-nemutta* introduces one alternative and the indeterminate a set of individuals. -/
 theorem seq_singleton (f : E → W → Prop) (A : Set E) : Set.seq {f} A = f '' A := by
   ext p; simp [Set.mem_seq_iff]
 
@@ -91,7 +89,6 @@ def opNeg (A : Set (W → Prop)) : Set (W → Prop) := {fun w ↦ ∀ p ∈ A, �
 /-- The question operator returns the alternatives themselves. -/
 def opQ (A : Set (W → Prop)) : Set (W → Prop) := A
 
-/-- Negative closure is the negation of existential closure. -/
 theorem opNeg_eq (A : Set (W → Prop)) : opNeg A = {fun w ↦ ¬ ∃ p ∈ A, p w} := by
   simp [opNeg, not_exists]
 
@@ -118,17 +115,14 @@ theorem opForall_image (P : E → W → Prop) (A : Set E) :
     opForall (P '' A) = {fun w ↦ ∀ x ∈ A, P x w} := by
   simp [opForall]
 
-/-- Existential closure is what the disjunctive *ka* denotes on the alternatives. -/
 theorem opExists_eq_denote_ka (A : Set (W → Prop)) :
     opExists A = {Japanese.Coordination.ka.denote A} := by
   rw [opExists, Coordinator.denote_of_disjunctive rfl]; congr 1; ext w; simp [sSup_apply]
 
-/-- Universal closure is what the conjunctive *mo* denotes on the alternatives. -/
 theorem opForall_eq_denote_mo (A : Set (W → Prop)) :
     opForall A = {Japanese.Coordination.mo.denote A} := by
   rw [opForall, Coordinator.denote_of_conjunctive rfl]; congr 1; ext w; simp [sInf_apply]
 
-/-- Negative closure is what a negative coordinator denotes on the alternatives. -/
 theorem opNeg_eq_denote {c : Coordinator} (hc : c.role = .negative) (A : Set (W → Prop)) :
     opNeg A = {c.denote A} := by
   rw [opNeg, Coordinator.denote_of_negative hc]; congr 1; ext w; simp [sSup_apply]
@@ -158,18 +152,15 @@ def dare (w : W) : Set E := {x | human x w}
 /-- `nemutta slept` is *nemutta* 'slept', a single alternative. -/
 def nemutta : Set (E → W → Prop) := {slept}
 
-/-- *Dare nemutta* denotes a proposition for each human. -/
 theorem dare_nemutta (w : W) :
     Set.seq (nemutta slept) (dare human w) = {p | ∃ x, human x w ∧ p = slept x} := by
   rw [nemutta, seq_singleton]
   ext p; simp [dare, eq_comm]
 
-/-- *Dare-ka nemutta* says that someone slept. -/
 theorem dare_ka (w : W) :
     opExists (Set.seq (nemutta slept) (dare human w)) = {fun w' ↦ ∃ x, human x w ∧ slept x w'} := by
   rw [nemutta, seq_singleton, opExists_image]; rfl
 
-/-- *Dare-mo nemutta* says that everyone slept. -/
 theorem dare_mo (w : W) :
     opForall (Set.seq (nemutta slept) (dare human w)) = {fun w' ↦ ∀ x, human x w → slept x w'} := by
   rw [nemutta, seq_singleton, opForall_image]; rfl
@@ -188,13 +179,11 @@ def ein (man : E → Prop) (D : Set E) : Set E := {x | man x ∧ x ∈ D}
 /-- *irgend-* widens over every value of the domain variable. -/
 def irgend (den : Set E → Set E) : Set E := ⋃ D, den D
 
-/-- *irgendein Mann* denotes all the men. -/
 theorem irgend_ein (man : E → Prop) : irgend (ein man) = {x | man x} := by
   ext x
   simp only [irgend, ein, Set.mem_iUnion, Set.mem_ofPred_eq]
   exact ⟨fun ⟨_, h, _⟩ ↦ h, fun h ↦ ⟨Set.univ, h, Set.mem_univ x⟩⟩
 
-/-- The restricted indefinite is included in its widening. -/
 theorem subset_irgend (den : Set E → Set E) (D : Set E) : den D ⊆ irgend den :=
   Set.subset_iUnion den D
 
@@ -212,7 +201,6 @@ def muss (R : SetRel W W) (A : Set (W → Prop)) : Set (W → Prop) :=
 def distribution (R : SetRel W W) (A : Set (W → Prop)) (w : W) : Prop :=
   ∀ p ∈ A, ◇[R] p w
 
-/-- On a single alternative the modals are the Kripke modals. -/
 theorem kann_singleton (R : SetRel W W) (p : W → Prop) : kann R {p} = {◇[R] p} := by
   simp [kann]
 
@@ -250,11 +238,9 @@ section FreeChoice
 
 variable {W : Type*} (R : SetRel W W) (A B : W → Prop) (w : W)
 
-/-- *Kann* over the two alternatives is the possibility of their disjunction. -/
 theorem kann_pair : (∀ q ∈ kann R {A, B}, q w) ↔ ◇[R] (fun w ↦ A w ∨ B w) w := by
   simp [kann, Diamond, exists_or, and_or_left]
 
-/-- *Muss* over the two alternatives is the necessity of their disjunction. -/
 theorem muss_pair : (∀ q ∈ muss R {A, B}, q w) ↔ □[R] (fun w ↦ A w ∨ B w) w := by
   simp [muss, Box]
 
@@ -306,10 +292,6 @@ theorem latvian_selective :
     Haspelmath1997.latvian.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
 
-/-- The Japanese series of [haspelmath-1997] are as disjoint as the Latvian ones, so the contrast
-the paper draws between the two systems is one of shape and not of distribution, the Latvian
-marker sitting on the pronoun, while the Japanese indeterminate keeps its shape under each particle
-(`japanese_same_base`). -/
 theorem japanese_series_disjoint :
     Haspelmath1997.japanese.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
@@ -357,9 +339,6 @@ theorem negation_licenses_irgendein :
       Examples.ex21.judgment = .ungrammatical :=
   ⟨by simp [German.PolarityItems.irgendein, PolarityItem.IsNPI], rfl⟩
 
-/-- Haspelmath's map agrees with the paper. Every environment the entry lists realizes a function
-of the *irgend-* series, and inflectional negation realizes direct negation, which the series
-lacks. -/
 theorem irgendein_haspelmath :
     ∀ s ∈ Haspelmath1997.german, s.toSeries = German.Indefinites.irgendSeries →
       (∀ c ∈ German.PolarityItems.irgendein.licensingContexts, ∀ f ∈ c.haspelmath,

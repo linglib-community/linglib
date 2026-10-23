@@ -93,7 +93,6 @@ time. -/
 def aspP (P : W → E → Prop) : Complement W E T :=
   fun w t e ↦ (τ e) ≤ t ∧ P w e
 
-/-- Closing AspP gives the perfective. -/
 theorem closure_aspP (P : W → E → Prop) : (aspP P).closure = Aspect.PRFV P := rfl
 
 /-- Under the past tense of the gerund, (30a), and the perfect, (30b), the complement holds at a
@@ -122,7 +121,6 @@ def NeedsMod (C : Complement W E T) : Prop :=
 variable {P : W → E → Prop} {C : Complement W E T}
   {plan : E → NonemptyInterval T → W → Set W} {w : W} {t : NonemptyInterval T} {e : E}
 
-/-- Pre-existence gives factivity, the complement holding at the forgetting. -/
 theorem PreEx.closure (h : PreEx C e w) : C.closure w (τ e) :=
   Event.PreExists.exists h
 

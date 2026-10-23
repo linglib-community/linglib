@@ -182,20 +182,16 @@ theorem cliticS_is_clitic : cliticS.classify = .simpleClitic := by decide
 
 theorem affixEd_is_affix : affixEd.classify = .inflAffix := by decide
 
-/-- *-n't* is an inflectional affix, not a clitic. -/
 theorem nt_is_affix : negNt.classify = .inflAffix := by decide
 
-/-- *-n't* is affix-like on all six criteria. -/
 theorem nt_affixScore : negNt.affixScore = 6 := by decide
 
 /-! ### Criteria B and C on the fragment -/
 
 open English.Auxiliaries
 
-/-- *mayn't* is a paradigm gap. -/
 theorem may_gap : negative may = none := by decide
 
-/-- *amn't* is a paradigm gap. -/
 theorem am_gap : negative am = none := by decide
 
 /-- The contracted negatives whose form is not the auxiliary with *-n't* suffixed: *won't*,
@@ -229,8 +225,6 @@ def cantScope : ContractedNegScope := ⟨.possibility, .negOverModal⟩
 /-- *mustn't* requires the negation. -/
 def mustntScope : ContractedNegScope := ⟨.necessity, .modalOverNeg⟩
 
-/-- The two contracted forms select opposite scopes, the irregularity in the connection between
-the contracted and the uncontracted form. -/
 theorem scope_idiosyncrasy : cantScope.scope ≠ mustntScope.scope := by decide
 
 /-- A four-world frame on which the actual world sees two worlds and every other world only
@@ -254,8 +248,6 @@ private instance : DecidablePred witnessP := fun w ↦ by
   match w with
   | 0 | 1 | 2 | 3 => infer_instance
 
-/-- `NOT(CAN(P))` and `CAN(NOT(P))` come apart: on the frame, both `P` and `¬P` are possible at
-the actual world. -/
 theorem neg_over_poss_ne_poss_over_neg :
     ∃ R : SetRel (Fin 4) (Fin 4),
       ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ Diamond R p w ↔ Diamond R (fun w' ↦ ¬ p w') w := by
@@ -263,8 +255,6 @@ theorem neg_over_poss_ne_poss_over_neg :
   have := h witnessP 0
   simp [Diamond, kripkeR, witnessP] at this
 
-/-- `NOT(MUST(P))` and `MUST(NOT(P))` come apart: on the frame, `P` is not necessary at the
-actual world, yet not necessarily false either. -/
 theorem neg_over_nec_ne_nec_over_neg :
     ∃ R : SetRel (Fin 4) (Fin 4),
       ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ Box R p w ↔ Box R (fun w' ↦ ¬ p w') w := by

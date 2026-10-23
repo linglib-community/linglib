@@ -178,20 +178,16 @@ noncomputable def maxentValue (k : ℕ) : ℝ := exp (-(k : ℝ) / 100)
 
 theorem maxentValue_pos (k : ℕ) : 0 < maxentValue k := exp_pos _
 
-/-- Forms with more violations get lower values. -/
 theorem maxentValue_lt_iff {k₁ k₂ : ℕ} :
     maxentValue k₁ < maxentValue k₂ ↔ k₂ < k₁ := by
   rw [maxentValue, maxentValue, exp_lt_exp, div_lt_div_iff_of_pos_right (by norm_num),
     neg_lt_neg_iff, Nat.cast_lt]
 
-/-- A violation-free form has the highest possible maxent value, 1. -/
 theorem maxentValue_zero : maxentValue 0 = 1 := by simp [maxentValue]
 
 /-- The predicted rating (12) is the maxent value raised to `1 / T` for a temperature `T`. -/
 noncomputable def rating (T : ℝ) (k : ℕ) : ℝ := maxentValue k ^ (1 / T)
 
-/-- The rating orders forms exactly as the score does, so a correlation with the ratings is a
-    claim about the score. -/
 theorem rating_lt_iff {T : ℝ} (hT : 0 < T) {k₁ k₂ : ℕ} :
     rating T k₁ < rating T k₂ ↔ k₂ < k₁ := by
   rw [rating, rating, rpow_lt_rpow_iff (maxentValue_pos _).le (maxentValue_pos _).le
@@ -273,8 +269,6 @@ theorem empirical_real_singleton (x : Ω) :
   rw [Finset.sum_eq_single x (fun y _ hy ↦ by simp [hy]) (by simp)]
   simp [ENNReal.toReal_div, ENNReal.toReal_sum fun _ _ ↦ ENNReal.natCast_ne_top _]
 
-/-- The log probability of the data is its size times the log-likelihood of its empirical
-    distribution. -/
 theorem logLik_eq (hD : ∑ x, D x ≠ 0) :
     logLik viol w D = (∑ x, D x : ℕ) * logLikelihood viol.violations (empirical D) w := by
   have := isProbabilityMeasure_empirical D hD
@@ -283,8 +277,6 @@ theorem logLik_eq (hD : ∑ x, D x ≠ 0) :
     smul_eq_mul, Finset.mul_sum, Nat.cast_sum]
   exact Finset.sum_congr rfl fun x _ ↦ by field_simp
 
-/-- The empirical distribution's expected violations are the observed counts over the size of
-    the data. -/
 theorem integral_violations_empirical (hD : ∑ x, D x ≠ 0) (i : Fin n) :
     (∫ x, viol.violations x ∂empirical D) i = observed viol D i / ∑ x, (D x : ℝ) := by
   have := isProbabilityMeasure_empirical D hD
@@ -400,7 +392,6 @@ def twelve : List (List Seg) :=
 theorem twelve_scores :
     twelve.map h = [376, 440, 482, 482, 484, 484, 484, 484, 490, 496, 496, 496] := by decide
 
-/-- Most unattested onsets score far worse, as [rt] scores 21.81 from #3, #6, #7, and #10. -/
 theorem h_rt : h [r, t] = 2181 ∧ viol 2 [r, t] = 1 ∧ viol 5 [r, t] = 1 ∧ viol 6 [r, t] = 1 ∧
     viol 9 [r, t] = 1 := by decide
 
@@ -410,10 +401,8 @@ theorem stch_gang :
     h [s, ch] = 621 ∧ viol 7 [s, ch] = 1 ∧ viol 13 [s, ch] = 1 ∧ viol 21 [s, ch] = 1 ∧
       table4W 7 < 400 ∧ table4W 13 < 400 ∧ table4W 21 < 400 := by decide
 
-/-- #2 ganging with #16 rules out *[ʒ]. -/
 theorem zh_gang : h [zh] = 597 ∧ viol 1 [zh] = 1 ∧ viol 15 [zh] = 1 := by decide
 
-/-- #18 and #21 gang to penalize the especially rare attested onset [θw]. -/
 theorem thw_gang : h [th, w] = 390 ∧ viol 17 [th, w] = 1 ∧ viol 20 [th, w] = 1 := by decide
 
 /-- `digits cs` reads a decimal numeral. -/
@@ -475,7 +464,6 @@ theorem onsetProb_lt_iff {o₁ o₂ : candidates} : onsetProb o₁ < onsetProb o
   rw [onsetProb_eq_softmax, softmax_lt_softmax_iff, div_lt_div_iff_of_pos_right (by norm_num),
     neg_lt_neg_iff, Nat.cast_lt]
 
-/-- The accidental gap [stw] is more probable than [rt]. -/
 theorem onsetProb_rt_lt_stw :
     onsetProb ⟨[r, t], by decide +kernel⟩ < onsetProb ⟨[s, t, w], by decide +kernel⟩ :=
   onsetProb_lt_iff.2 (by decide +kernel)

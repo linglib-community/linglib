@@ -61,8 +61,6 @@ variable {box : InfTopHom L L}
 
 @[simp] theorem diamondHom_apply (a : L) : diamondHom box a = (box aᶜ)ᶜ := rfl
 
-/-- Iterated possibility of a complement is the complement of iterated necessity,
-`◇ⁿ¬a = ¬□ⁿa`. -/
 theorem diamondHom_iterate_compl (n : ℕ) (a : L) : (diamondHom box)^[n] aᶜ = (box^[n] a)ᶜ := by
   induction n generalizing a with
   | zero => rfl

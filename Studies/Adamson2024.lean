@@ -123,7 +123,6 @@ def PossessionType.possessorPosition : PossessionType → Position
   | .inalienable => .specN
   | .alienable => .specPoss
 
-/-- An inalienable possessor can bear on gender, an alienable one cannot. -/
 theorem possession_asymmetry :
     GenderLocal PossessionType.inalienable.possessorPosition ∧
       ¬ GenderLocal PossessionType.alienable.possessorPosition := by
@@ -164,20 +163,14 @@ last cycle, which is the o-class (gender II) by default. Every categorizer is a 
 def classOf (r : Root) (hs : List Head) : NounClass :=
   agreeingGender headClass .o ((⟨r, hs⟩ : ComplexHead Root Head).lastCycle fun _ ↦ True)
 
-/-- *a bina-naa* 'my spleen' is a-class and *o bina* 'the spleen' is o-class, the o-class being
-gender II, the default. -/
 theorem switch (r : Root) : classOf r ipossessed = .a ∧ classOf r free = .o := by
   simp only [classOf, ComplexHead.lastCycle]
   decide
 
-/-- The plain alienator over the gender I nominalizer gives *o bina* the default o-class, as the
-Highest Gender Hypothesis predicts; a probe searching every n would find the lower one and give
-the a-class. -/
 theorem free_cyclic (r : Root) :
     classOf r free = .o ∧ agreeingGender headClass .o free.reverse = .a :=
   agreeingGender_lastCycle_plain (hs := []) trivial (by decide) (by decide)
 
-/-- Every body-part term of the fragment has the class of the unpossessed noun. -/
 theorem bodyPartTerms_free (r : Root) : ∀ n ∈ bodyPartTerms, n.gender = classOf r free := by
   simp only [classOf, ComplexHead.lastCycle]
   decide
@@ -217,11 +210,8 @@ def article (c : NounClass) (n : numberSystem.values) : Option Article :=
   subsetPrinciple articles
     (classFeatures c ∪ numberSystem.elim ∅ {.pl} (n := n) : Finset ArticleFeature)
 
-/-- The vocabulary derives the basic article of every class and number. -/
 theorem article_eq_headArticle : ∀ c pl, article c pl = some (headArticle c pl) := by decide
 
-/-- The agreement classes of adjectives and numerals are the fibres of [animate], so gender I-E
-is not a gender. -/
 theorem agreementClasses_targetArticle :
     Gender.agreementClasses targetArticle =
       Setoid.ker fun c ↦ decide (ArticleFeature.animate ∈ classFeatures c) := by
@@ -251,8 +241,6 @@ def ipossessedDenot : E → E → S → Prop := π isSpleen bodyPartOf
 /-- The unpossessed body-part noun, whose possessor slot the alienator closes. -/
 def freeDenot : E → S → Prop := ⨆ x, ipossessedDenot isSpleen bodyPartOf x
 
-/-- The possessor slot is open under the {D} nominalizer and existentially closed under the
-alienator. -/
 theorem freeDenot_iff (y : E) (s : S) :
     freeDenot isSpleen bodyPartOf y s ↔ isSpleen y s ∧ ∃ x, bodyPartOf x y s := by
   rw [freeDenot, ipossessedDenot, iSup_π]; simp
@@ -295,8 +283,6 @@ def declarative : List (VocabularyItem Phi String) := [{.masc} ⟷ "ka", ∅ ⟷
 /-- The declarative marker agreeing with a nominal of features `φ`. -/
 def decl (φ : Finset Phi) : Option String := subsetPrinciple declarative (impoverish φ)
 
-/-- Masculine singular takes *ka* and everything else *ke*, so impoverishment bleeds the specific
-exponent. -/
 theorem decl_masc_only :
     decl {.masc} = some "ka" ∧ decl ∅ = some "ke" ∧ decl {.participant} = some "ke" ∧
       decl {.masc, .pl} = some "ke" := by
@@ -311,8 +297,6 @@ def possessedItems (marked unmarked : String) : List (VocabularyItem Phi String)
 def agreeingForm (n : PossessedNoun) (φ : Finset Phi) : Option String :=
   subsetPrinciple (possessedItems n.mForm n.fForm) (impoverish φ)
 
-/-- Impoverishment then insertion derives the form of every possessed noun with every possessor;
-the third person masculine nonsingular, *mee mani*, is where impoverishment does the work. -/
 theorem agreeingForm_eq_form :
     ∀ n ∈ possessedNouns, ∀ p, agreeingForm n (possessorPhi p) = some (n.form p) := by
   decide
@@ -325,11 +309,9 @@ def visibleOutside (p : Possessor) : Finset Phi := if p.IsPrefix then ∅ else p
 percolate and with the feminine possessed noun otherwise. -/
 def inside (p : Possessor) : Option String := agreeingForm bako (visibleOutside p)
 
-/-- A possessor that is a separate word percolates, so the inner and outer nouns match. -/
 theorem complex_match : ∀ p, ¬ p.IsPrefix → inside p = some (bako.form p) := by
   decide
 
-/-- The prefixes *o-* and *ti-* do not, as in *o-mano baki* and *ti-mano baki*. -/
 theorem complex_mismatch :
     ∀ p, p.IsPrefix →
       agreeingForm mano (possessorPhi p) = some "mano" ∧ inside p = some "baki" := by
@@ -343,22 +325,16 @@ namespace Yanyuwa
 
 open _root_.Yanyuwa
 
-/-- Quantifiers and demonstratives agreeing with *wini* 'name' take the prefix of an
-inalienable possessor's class. -/
 theorem name_agreement (s : Speaker) (g : _root_.Yanyuwa.Gender) :
     (inheritedGender PossessionType.inalienable.possessorPosition g).map (agreementPrefix s) =
       some (agreementPrefix s g) :=
   rfl
 
-/-- A prefix alone does not tell female from feminine, nor, in men's speech, male from
-masculine; with number, which only the female and male classes distinguish, every class is told
-apart. -/
 theorem classes_separated (s : Speaker) :
     ¬ Function.Injective (agreementPrefix s) ∧
       Function.Injective fun g ↦ (agreementPrefix s g, decide g.HasNumber) := by
   cases s <;> decide
 
-/-- An alienable possessor is out of the probe's reach. -/
 theorem name_alienable (g : _root_.Yanyuwa.Gender) :
     inheritedGender PossessionType.alienable.possessorPosition g = none :=
   rfl
@@ -369,15 +345,12 @@ namespace CoastalMarind
 
 open _root_.CoastalMarind
 
-/-- The demonstrative agreeing with *igih* 'name' takes the possessor's gender. -/
 theorem name_demonstrative (g : _root_.CoastalMarind.Gender) :
     (inheritedGender PossessionType.inalienable.possessorPosition g).map
         (demonstrative · (numberSystem.value .singular)) =
       some (demonstrative g (numberSystem.value .singular)) :=
   rfl
 
-/-- *nanVh* 'face' is *nanih* with a gender I possessor and *nanuh* with a gender II one, the
-similative agreeing alongside. -/
 theorem face_inherits :
     (inheritedGender PossessionType.inalienable.possessorPosition .gI).map
         (face · (numberSystem.value .singular)) =
@@ -403,8 +376,6 @@ def numberPosition : PluralClass → Position
   | .aPlural => .nHead
   | .regular => .num
 
-/-- Gender changes between singular and plural exactly when number sits within the hypothesis's
-reach. -/
 theorem gender_change_iff_local :
     ∀ n ∈ aPlurals ++ regulars,
       n.gender ≠ n.plGender ↔

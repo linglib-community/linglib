@@ -70,7 +70,6 @@ def lattice : Sublattice ParticipantType where
 
 @[simp] theorem mem_lattice {n : ParticipantType} : n ∈ lattice ↔ n.Valid := Iff.rfl
 
-/-- Of the eighty nodes of the product, thirty-eight are valid. -/
 theorem card_valid : (Finset.univ.filter Valid).card = 38 := by decide
 
 end ParticipantType

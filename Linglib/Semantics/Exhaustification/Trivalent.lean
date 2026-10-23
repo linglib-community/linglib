@@ -76,11 +76,9 @@ def exh2 (alts : List (W → SignType)) (p : W → SignType) :
 
 variable (alts : List (W → SignType)) (p : W → SignType) (w : W)
 
-/-- `exh1` presupposes exactly what its prejacent presupposes. -/
 theorem exh1_eq_zero_iff : exh1 alts p w = 0 ↔ p w = 0 := by
   unfold exh1; split <;> (try split) <;> simp_all
 
-/-- `exh2` presupposes what its prejacent and its excludable alternatives presuppose. -/
 theorem exh2_eq_zero_iff :
     exh2 alts p w = 0 ↔
       p w = 0 ∨

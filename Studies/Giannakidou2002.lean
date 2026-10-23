@@ -77,7 +77,6 @@ the until time, at every one of its subintervals. -/
 def durativeUntil (p : W → Set (NonemptyInterval T)) (w : W) (t' : T) : Prop :=
   ∃ i ∈ durative p w, i.fst < i.snd ∧ i.snd = t'
 
-/-- A homogeneous description need only hold at the until interval itself. -/
 theorem durativeUntil_iff_of_isLowerSet {p : W → Set (NonemptyInterval T)} {w : W}
     (hp : IsLowerSet (p w)) (t' : T) :
     durativeUntil p w t' ↔ ∃ i ∈ p w, i.fst < i.snd ∧ i.snd = t' := by
@@ -151,13 +150,11 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
     rw [NonemptyInterval.mem_pure] at ht'
     exact ht' ▸ hle
 
-/-- Eventive UNTIL entails *not before*, one direction of Karttunen's equivalence. -/
 theorem eventiveUntil_not_before {P : W → E → Prop} {w : W} {t : T}
     (h : eventiveUntil P w t) : ¬ before (τ '' {e | P w e}) t :=
   fun ⟨_, ⟨_, ⟨e, he, rfl⟩, hs⟩, hlt⟩ ↦
     absurd ((h.2 e he).trans (NonemptyInterval.mem_def.mp hs).1) (not_le.mpr hlt)
 
-/-- *Not before* carries no actualization, since it holds when nothing P-like ever happens. -/
 theorem not_before_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
     ¬ before (τ '' {e | P w e}) t :=
   fun ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ ↦ hP e he

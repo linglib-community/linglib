@@ -133,7 +133,6 @@ def IsOptimal : Prop :=
 
 variable {c q}
 
-/-- The widest construal is unique, since any two construals are comparable. -/
 theorem IsWidest.unique {q' : Question W} (h : c.IsWidest q) (h' : c.IsWidest q') : q = q' :=
   by_contra fun hne ↦ (c.comparable q h.1 q' h'.1 hne).elim (h'.2 q h.1) (h.2 q' h'.1)
 
@@ -147,7 +146,6 @@ theorem IsOptimal.unique {q' : Question W} (h : c.IsOptimal q) (h' : c.IsOptimal
 theorem IsWidest.isOptimal (h : c.IsWidest q) (ha : c.Answerable q) : c.IsOptimal q :=
   ⟨h.1, ha, fun q' hq' _ ↦ h.2 q' hq'⟩
 
-/-- No construal wider than the optimal one is answerable. -/
 theorem IsOptimal.not_answerable {q' : Question W} (h : c.IsOptimal q) (hq' : q' ∈ c.uq)
     (hw : WiderThan q' q) : ¬ c.Answerable q' :=
   fun ha ↦ h.2.2 q' hq' ha hw
@@ -196,8 +194,6 @@ variable {c : Context W} {cq cq' : Question W} {p p' : Set W} {w w' : W}
 
 @[simp] theorem just_eq_one_iff : just c cq p w = 1 ↔ c.IsOptimal cq ∧ w ∈ p := by simp [just]
 
-/-- Two defined uses of *just* in one context address the same current question, since the
-presupposition fixes the construal. -/
 theorem eq_of_just_ne_zero (h : just c cq p w ≠ 0) (h' : just c cq' p' w' ≠ 0) : cq = cq' := by
   simp only [ne_eq, just_eq_zero_iff, not_not] at h h'
   exact h.unique h'

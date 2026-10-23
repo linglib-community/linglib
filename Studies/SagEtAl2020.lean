@@ -46,9 +46,6 @@ def auxInitialPrinciple : Constraint sig :=
 /-- The filler-gap grammar extended with the aux-initial construction. -/
 def saiGrammar : Grammar sig := (constraints ++ [auxInitialPrinciple]).map Constraint.toDesc
 
-/-- The aux-initial construction is a headed construction beside the filler-head construction,
-and the polar interrogative and aux-initial exclamative clauses cross-classify it with the
-interrogative and exclamative clausal types. -/
 theorem sai_cross_classify :
     (Srt.auxInitialCxt ≤ .headedCxt ∧ Srt.fillerHeadCxt ≤ .headedCxt) ∧
       (Srt.polarIntCl ≤ .auxInitialCxt ∧ Srt.polarIntCl ≤ .interrogativeCl) ∧
@@ -90,24 +87,17 @@ inductive SAIEnt where
     | _, _ => none
   R := noRel
 
-/-- The worked constructs are well-typed whenever the inversion value and the semantic type
-have sorts of the right kind. -/
 theorem saiConstruct_isWellTyped :
     ∀ i ∈ [Srt.plus, .minus], ∀ σ ∈ [Srt.question, .fact, .austinean],
       ∀ c ∈ [Srt.polarIntCl, .auxInitialExclCl], (saiConstruct c i σ).IsWellTyped := by
   decide +kernel
 
-/-- A polar interrogative satisfies the grammar exactly when its head is inverted and its
-mother is a question: the inversion comes from the aux-initial construction and the semantics
-from the interrogative clausal type, neither stated on the polar interrogative itself. -/
 theorem polarInterrogative_models :
     (saiConstruct .polarIntCl .plus .question).Models saiGrammar ∧
       ¬ (saiConstruct .polarIntCl .minus .question).Models saiGrammar ∧
       ¬ (saiConstruct .polarIntCl .plus .austinean).Models saiGrammar := by
   decide
 
-/-- An aux-initial exclamative satisfies the grammar exactly when its head is inverted and its
-mother is a fact: the same inverted head with the exclamative type's semantics. -/
 theorem auxInitialExclamative_models :
     (saiConstruct .auxInitialExclCl .plus .fact).Models saiGrammar ∧
       ¬ (saiConstruct .auxInitialExclCl .minus .fact).Models saiGrammar ∧

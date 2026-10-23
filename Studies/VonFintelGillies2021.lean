@@ -50,13 +50,9 @@ variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 theorem cant_might_exclusion (hCant : kernelCant k φ w = 1) : kernelMight k φ w = -1 := by
   rw [kernelMight_eq_neg_kernelCant, Pi.neg_apply, hCant]
 
-/-- When `B_K` is realistic and can't `φ` is true, `¬φ` holds (S2). -/
 theorem cant_entails_negation (hReal : w ∈ k.base) (hTrue : kernelCant k φ w = 1) : ¬ φ w :=
   must_entails_prejacent k _ w hReal (kernelMust_eq_one_iff.1 hTrue).2
 
-/-- Over `mastermindK` a single kernel exhibits evidentiality, strength, and might-exclusion at
-once, since can't *notBlue* is defined and true and might *notBlue* is false — the joint profile
-the Mantra cannot assign. -/
 theorem cant_dilemma_resolved :
     .w1 ∈ mastermindK.base ∧ kernelCant mastermindK notBlue .w1 = 1 ∧
       kernelMight mastermindK notBlue .w1 = -1 ∧ ¬ notBlue .w1 := by
@@ -78,8 +74,6 @@ theorem cant_dilemma_resolved :
       decide
   exact ⟨by rw [mastermind_base]; rfl, hCant, cant_might_exclusion _ _ _ hCant, by decide⟩
 
-/-- Direct evidence blocks can't, paralleling must, since when `K` settles `¬φ` can't `φ` has
-presupposition failure. -/
 theorem cant_direct_evidence_infelicity : kernelCant mastermindK red .w0 = 0 :=
   kernelMust_eq_zero_iff.2 ⟨notRed, by simp [mastermindK], Or.inl fun _ hw ↦ hw⟩
 

@@ -158,9 +158,6 @@ may fail. Mathlib's `Set.OrdConnected` is exactly this predicate
 `IsConvex`, mirroring the `IsFlat ↔ Order.IsIdeal` reuse above. The forward
 bridge `IsLowerSet.ordConnected` is already in mathlib. -/
 
-/-- A convex team property with the empty-team property is downward-closed — the
-    reverse of mathlib's `IsLowerSet.ordConnected`. Together they give
-    `isLowerSet_iff_ordConnected_of_empty`. -/
 theorem isLowerSet_of_ordConnected_empty {T : TeamProperty α}
     (hConv : T.OrdConnected) (hEmpty : ∅ ∈ T) : IsLowerSet T := by
   intro a b hab hb
@@ -177,7 +174,6 @@ theorem isLowerSet_iff_ordConnected_of_empty {T : TeamProperty α}
     (hEmpty : ∅ ∈ T) : IsLowerSet T ↔ T.OrdConnected :=
   ⟨IsLowerSet.ordConnected, fun h => isLowerSet_of_ordConnected_empty h hEmpty⟩
 
-/-- Flat team properties are convex (`IsFlat → IsLowerSet → OrdConnected`). -/
 theorem IsFlat.ordConnected [DecidableEq α] {T : TeamProperty α} (h : IsFlat T) :
     T.OrdConnected :=
   h.isLowerSet.ordConnected

@@ -69,20 +69,16 @@ def resultStative (P : Entity → State → Prop) (x : Entity) : State → Prop 
 def DeniesChange (P : Entity → State → Prop) (x : Entity) : State → Prop :=
   P x ⊓ (◇[M.become] ⊤)ᶜ
 
-/-- A deverbal stative never survives the denial of change, whatever its root. -/
 theorem not_deniesChange_resultStative : ¬ DeniesChange M (resultStative M P) x s :=
   fun h ↦ h.2 h.1.2
 
-/-- A state predicate entails change iff it never survives the denial of change. -/
 theorem entailsChange_iff_forall_not_deniesChange :
     M.EntailsChange P ↔ ∀ x s, ¬ DeniesChange M P x s :=
   forall₂_congr fun _ _ ↦ not_and_not_right.symm
 
-/-- For a state predicate that entails change the basic and the deverbal stative coincide. -/
 theorem resultStative_iff (h : M.EntailsChange P) : resultStative M P x s ↔ P x s :=
   and_iff_left_of_imp (h x s)
 
-/-- *Again* attached to `vbecome` presupposes an earlier change with every root. -/
 theorem diamond_become_of_againAt_achievement_ne_zero {e : Event}
     (hp : againAt M .achievement R P y x e ≠ 0) : ◇[R] (◇[M.become.inv] ⊤) e :=
   ModalLogic.diamond_mono R (fun w ↦ ModalLogic.diamond_mono _ le_top w) e
@@ -102,16 +98,12 @@ def forged : ArgumentStructure.EventStructure.Interpretation Unit Bool Unit wher
 /-- The knife is sharp in both of its states. -/
 def sharp (_ : Unit) (_ : Bool) : Prop := True
 
-/-- The forged state of the knife survives the denial of change. -/
 theorem forged_deniesChange : DeniesChange forged sharp () false :=
   ⟨trivial, fun ⟨_, h, _⟩ ↦ Bool.false_ne_true h⟩
 
-/-- Being sharp does not entail change. -/
 theorem not_entailsChange_sharp : ¬ forged.EntailsChange sharp :=
   fun h ↦ (entailsChange_iff_forall_not_deniesChange forged).1 h () false forged_deniesChange
 
-/-- The restitutive presupposition holds at the later state of the knife although no change gave
-rise to an earlier one. -/
 theorem forged_restitutive :
     BeaversKoontzGarboden2020.againAt forged .state {p | p.2 < p.1} sharp () () true ≠ 0 ∧
       ¬ ◇[{p | p.2 < p.1}] (◇[forged.become] ⊤) true :=
@@ -147,19 +139,14 @@ def stativeRealization (r : Root) : AdjectivalStructure → Markedness
 
 variable {r p : Root}
 
-/-- The verb and the simple stative of a root are realized as mirror images. -/
 theorem verbRealization_ne_stativeRealization_basic :
     verbRealization r ≠ stativeRealization r .basic := by
   unfold verbRealization stativeRealization; split_ifs <;> decide
 
-/-- An unmarked stative is the simple stative of a root that does not entail change, so result
-roots lack one. -/
 theorem stativeRealization_eq_unmarked_iff {a : AdjectivalStructure} :
     stativeRealization r a = .unmarked ↔ a = .basic ∧ Root.Kind.result ∉ r.closedKinds := by
   cases a <;> simp [stativeRealization]
 
-/-- The realization rule and the semantics agree. In a model that respects the signature of a
-root for its state predicate, a root whose verb is realized unmarked entails change. -/
 theorem entailsChange_of_verbRealization_eq_unmarked {Entity State Event : Type*}
     {M : ArgumentStructure.EventStructure.Interpretation Entity State Event}
     {P : Entity → State → Prop} {Q : Event → Prop} (h : M.Respects P Q r.kinds)
@@ -175,15 +162,11 @@ structure Exponence where
   /-- The unmarked realization is overt only if the marked one is. -/
   overt_marked : Overt .unmarked → Overt .marked
 
-/-- A language is asymmetric, with only the marked realization overt, equipollent, with both
-overt, or labile, with neither. -/
 theorem Exponence.trichotomy (L : Exponence) :
     (¬ L.Overt .unmarked ∧ L.Overt .marked) ∨ (L.Overt .unmarked ∧ L.Overt .marked) ∨
       (¬ L.Overt .unmarked ∧ ¬ L.Overt .marked) := by
   have := L.overt_marked; tauto
 
-/-- No language is the reverse of English, with overt verbs for the roots that entail change and
-bare verbs for those that do not. -/
 theorem Exponence.not_reverse_asymmetric (L : Exponence)
     (hr : Root.Kind.result ∈ r.closedKinds) (hp : Root.Kind.result ∉ p.closedKinds) :
     ¬ (L.Overt (verbRealization r) ∧ ¬ L.Overt (verbRealization p)) := by
@@ -245,8 +228,6 @@ def VerbalParadigmMarked (inchoative causative : Code) : Prop :=
 instance (i c : Code) : Decidable (VerbalParadigmMarked i c) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- In the Tzeltal paradigm of 'small' the simple stative *tut* is unmarked, and the verbs
-*tut-ub* and *tut-ub-tes* and the deverbal stative *tut-ub-en* are marked. -/
 theorem tzeltal_small :
     ¬ (Code.of .unattested .same .input .transitive .transitive).IsMarked ∧
       VerbalParadigmMarked (.of .unattested .derived .same .input .input)
@@ -254,8 +235,6 @@ theorem tzeltal_small :
       (Code.of .unattested .transitive .derived .equipollent .same).IsMarked := by
   decide
 
-/-- In the Oromo paradigm of 'long' every form is built on the underlying root *dheer-*, so the
-simple stative *dheer-aa* is marked along with the verbs. -/
 theorem oromo_long :
     (Code.of .derived .same .equipollent .equipollent .unattested).IsMarked ∧
       VerbalParadigmMarked (.of .derived .equipollent .same .equipollent .unattested)
@@ -297,7 +276,6 @@ def Passes (ks : Root.Kinds) (g : Diagnostic) : Prop :=
     (P : Unit → State → Prop) (Q : Event → Prop) (R : SetRel State State),
     M.Respects P Q ks ∧ g.Passes M R P ()
 
-/-- A root passes either diagnostic exactly when it does not entail change. -/
 theorem passes_iff {ks : Root.Kinds} (g : Diagnostic) :
     Passes ks g ↔ Root.Kind.result ∉ Root.Kinds.close ks := by
   refine ⟨fun ⟨_, _, M, P, Q, R, hR, hg⟩ hr ↦ ?_, fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥,

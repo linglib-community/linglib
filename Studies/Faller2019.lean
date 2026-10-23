@@ -178,8 +178,6 @@ theorem reportative_discourseCommitments_principal :
 
 theorem reportative_evid : φ ∈ (K.reportative φ a p).evid .reportative a := by simp [reportative]
 
-/-- Absence of Commitment: with a distinct principal the animator's truth commitments are
-untouched. -/
 theorem reportative_discourseCommitments_animator (h : a ≠ p) :
     (K.reportative φ a p).discourseCommitments a = K.discourseCommitments a :=
   Table.discourseCommitments_commit_of_ne h
@@ -208,7 +206,6 @@ theorem denial_discourseCommitments (h : a ≠ p) :
     exact reportative_discourseCommitments_principal K φ a p,
    Table.mem_discourseCommitments_assert _ _ _⟩
 
-/-- `φ` stays out of the animator's truth commitments; only `φᶜ` enters. -/
 theorem denial_discourseCommitments_animator (h : a ≠ p) :
     (K.denial φ a p).discourseCommitments a = insert φᶜ (K.discourseCommitments a) := by
   rw [show (K.denial φ a p).discourseCommitments a =
@@ -239,7 +236,6 @@ theorem figure6_discourseCommitments (h : a ≠ p) :
       Table.discourseCommitments_commit_of_ne h.symm]
     exact reportative_discourseCommitments_principal K φ a p⟩
 
-/-- The animator's truth commitments are those of an assertion of `φ`. -/
 theorem figure6_discourseCommitments_eq_assert (h : a ≠ p) :
     ((K.reportative φ a p).accept φ a).discourseCommitments a =
       (K.assert φ a).discourseCommitments a := by
@@ -262,8 +258,6 @@ theorem figure6_not_isSource (h1 : φ ∉ K.evid .adequate a) (h2 : φ ∉ K.evi
 theorem assert_isSource : (K.assert φ a).IsSource φ a :=
   ⟨assert_discourseCommitments K φ a, Or.inl (assert_evid K φ a)⟩
 
-/-- The English *Juan has a tractor, I hear*: an animator who is her own principal but
-specifies reportative evidence commits dependently. -/
 theorem present_reportative_dependent : (K.present φ a a .reportative).Dependent φ a :=
   ⟨Table.mem_discourseCommitments_assert _ _ _, by simp [present]⟩
 

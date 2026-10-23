@@ -91,9 +91,6 @@ targets the proposition and not the evidence, as in (15) and (16). -/
 theorem support_neg_ev : Function.support (-Ev f g p) = Function.support (Ev f g p) := by
   ext w; simp
 
-/-- The force of the evidential is set by the beliefs about the evidence. When some accessible world
-verifies every belief and all such worlds verify `p`, the assertion holds. A reliable report or a
-sound inference makes the reading close to universal, and an unreliable source leaves it weak. -/
 theorem necessity_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g w, q u)
     (h : ∀ u ∈ f.accessibleWorlds w, (∀ q ∈ g w, q u) → p u) : necessity f g p w := by
   rw [necessity_iff]

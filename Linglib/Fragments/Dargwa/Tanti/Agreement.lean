@@ -168,7 +168,6 @@ theorem PersonSet.realize_eq_nil_iff :
 /-- The past tense clitic bears no person. -/
 def pastClitic : Morph := .encl "de"
 
-/-- The second person singular clitic is the past tense clitic. -/
 theorem clitic_second_singular :
     PersonSet.clitic.paradigm.realize (.personNumber .second .singular) = some [pastClitic] := rfl
 
@@ -219,9 +218,6 @@ def transitiveClitic (a p : Person × Number) : Option (List Morph) :=
   let c := if personController ⟨a.1, p.1⟩ = .A then a else p
   PersonSet.clitic.paradigm.realize (.personNumber c.1 c.2)
 
-/-- 'I caught you' takes *=de*, 'you caught me' *=da*, 'I caught him' *=da*, 'you caught him'
-*=de* and 'Rasul caught you' *=de*, since the verb agrees with the absolutive when both
-arguments are speech-act participants and with the participant when one is. -/
 theorem transitiveClitic_caught :
     transitiveClitic (.first, .singular) (.second, .singular) = some [.encl "de"] ∧
     transitiveClitic (.second, .singular) (.first, .singular) = some [.encl "da"] ∧

@@ -101,7 +101,6 @@ theorem triviality_tests :
 def forceTable : List (String × ModalForce) :=
   [("strong", .necessity), ("weak", .weakNecessity)]
 
-/-- Every row of a test names the forces of its conjuncts, or the force of its modal. -/
 theorem tests_covered :
     ∀ e ∈ Examples.all, (e.feature? "test").isSome →
       ((e.feature? "first").isSome ∧ (e.feature? "second").isSome) ∨

@@ -160,7 +160,6 @@ def sup? [DecidableEq B] : Ty B → Ty B → Option (Ty B)
   | .base b => by simp [sup?]
   | .arr σ m τ => by simp [sup?, sup?_self τ]
 
-/-- Both compatible types lie below their join. -/
 theorem le_of_mem_sup?_left [DecidableEq B] :
     ∀ {σ τ μ : Ty B}, sup? σ τ = some μ → σ ≤ μ
   | .base b, .base b', _, h => by
@@ -181,7 +180,6 @@ def unmark : Ty B → Ty B
   | .base b => .base b
   | .arr σ _ τ => .arr σ 0 (unmark τ)
 
-/-- Every type embeds into its marking erasure. -/
 theorem le_unmark : ∀ σ : Ty B, σ ≤ unmark σ
   | .base b => .base b
   | .arr σ m τ => .arr (Ty.LE.refl σ) (le_unmark τ) (markingLE_zero m)

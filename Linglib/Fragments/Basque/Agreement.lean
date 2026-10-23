@@ -122,7 +122,6 @@ theorem hasPersonPrefix_iff_isSAP :
     ∀ c ∈ Bundle.personNumberCells, HasPersonPrefix c ↔ c.IsSAP := by
   decide
 
-/-- Every personal pronoun but the third person ones has an absolutive prefix. -/
 theorem hasPersonPrefix_phi_iff : ∀ p ∈ Pronouns.pronouns,
     HasPersonPrefix (HasPhi.phi p) ↔ p.person ≠ some .third := by
   decide

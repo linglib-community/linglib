@@ -273,8 +273,6 @@ theorem not_licenses_low_of_biEventive {i : Inventory} {p : Predicate} {d : Dati
     (hc : LittleV.BiEventive p.heads) (hl : d.site.Low) : ¬ i.Licenses p d :=
   fun h ↦ (h.2.1 hl).1.2.1 hc
 
-/-- With a complex structure a dative is affected or high, so a language without the affected
-applicative has only high datives there. -/
 theorem licenses_of_biEventive {i : Inventory} {p : Predicate} {d : Dative}
     (hc : LittleV.BiEventive p.heads) (h : i.Licenses p d) : d.site.Affected ∨ d.site.High := by
   have hne : d.site.heads ≠ [] := by

@@ -145,7 +145,6 @@ def collapse : AR τ :=
 
 variable {X m}
 
-/-- The lines of a collapse are the lines repointed through the run index. -/
 theorem link_collapse {i j : ι} {r s : ℕ} :
     (X.collapse m).Link i j r s ↔
       ∃ p q, X.Link i j p q ∧ repointIdx m (runIdx (X.word m)) i p = r ∧
@@ -195,7 +194,6 @@ instance (melody : List α) (Lk : ℕ → ℕ → Prop) [DecidableRel Lk] :
     DecidableRel (MergedLinks melody Lk) :=
   fun _ _ ↦ inferInstanceAs (Decidable (∃ _ < _, _))
 
-/-- Melody-to-timing lines of a two-tier collapse at the melody tier. -/
 theorem link_collapse_true_false {X : AR (TwoTier α β)} [DecidableEq β] {r s : ℕ} :
     (X.collapse true).Link true false r s ↔
       ∃ p < (X.word true).length, X.Link true false p s ∧ runIdx (X.word true) p = r := by

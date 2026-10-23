@@ -90,8 +90,6 @@ section Supervaluation
 variable [∀ C (x : E), Decidable (x ∈ d C)] {a b : E} (S : Finset (Set E))
 
 variable {d} in
-/-- Under a delineation monotone on the admissible classes, if some admissible class ranks `a`
-above `b` and `b` is in the extension of every admissible class, then so is `a`. -/
 theorem IsMonotoneOn.supervaluation_eq_true_of_comparative (hmono : d.IsMonotoneOn ↑S)
     (hdisc : ∃ C ∈ S, a ∈ d C ∧ b ∉ d C)
     (hb : SignType.supervaluation S (b ∈ d ·) = 1) :
@@ -100,7 +98,6 @@ theorem IsMonotoneOn.supervaluation_eq_true_of_comparative (hmono : d.IsMonotone
   obtain ⟨C₀, hC₀, haC₀, hnotbC₀⟩ := hdisc
   exact fun C hC ↦ hmono C₀ hC₀ C hC a b haC₀ hnotbC₀ (hb C hC)
 
-/-- A discriminating class in the space falsifies `b`'s super-truth. -/
 theorem supervaluation_ne_true_of_comparative (hdisc : ∃ C ∈ S, a ∈ d C ∧ b ∉ d C) :
     SignType.supervaluation S (b ∈ d ·) ≠ 1 := fun h ↦
   let ⟨C₀, hC₀, _, hnotb⟩ := hdisc
@@ -115,7 +112,6 @@ extension and leaves `v` out. -/
 def Outranks (C : Set E) (u v : E) : Prop :=
   ∃ X ⊆ C, u ∈ d X ∧ v ∉ d X
 
-/-- Klein's comparative is the ordering within the universal class. -/
 theorem comparative_iff_outranks_univ {a b : E} : d.Comparative a b ↔ d.Outranks Set.univ a b :=
   ⟨fun ⟨C, h1, h2⟩ ↦ ⟨C, Set.subset_univ C, h1, h2⟩, fun ⟨C, _, h1, h2⟩ ↦ ⟨C, h1, h2⟩⟩
 
@@ -126,7 +122,6 @@ theorem IsMonotone.outranks_asymm (hmono : d.IsMonotone) :
     d.Outranks C u v → ¬ d.Outranks C v u := fun ⟨X₁, _, hu₁, hnv₁⟩ ⟨X₂, _, hv₂, hnu₂⟩ ↦
   hnu₂ (hmono X₁ (Set.mem_univ _) X₂ (Set.mem_univ _) u v hu₁ hnv₁ hv₂)
 
-/-- Under monotonicity the ordering is transitive. -/
 theorem IsMonotone.outranks_trans (hmono : d.IsMonotone) :
     d.Outranks C u v → d.Outranks C v w → d.Outranks C u w :=
   fun ⟨X₁, _, hu₁, hnv₁⟩ ⟨X₂, hX₂, hv₂, hnw₂⟩ ↦
@@ -154,8 +149,6 @@ theorem Nondistinct.refl (C : Set E) (u : E) : d.Nondistinct C u u :=
 theorem Nondistinct.symm (h : d.Nondistinct C u v) : d.Nondistinct C v u :=
   fun X hX hv hu ↦ (h X hX hu hv).symm
 
-/-- Incomparable entities are nondistinct. The converse holds under Klein's domain restriction,
-that witness classes contain both entities. -/
 theorem nondistinct_of_not_outranks (h₁ : ¬ d.Outranks C u v) (h₂ : ¬ d.Outranks C v u) :
     d.Nondistinct C u v := fun X hX _ _ ↦
   ⟨fun hu ↦ by_contra fun hv ↦ h₁ ⟨X, hX, hu, hv⟩,
@@ -195,14 +188,11 @@ def ofMeasure : Delineation E := ⟨fun C ↦ {x | ∃ y ∈ C, μ y < μ x}⟩
 @[simp] theorem mem_ofMeasure {C : Set E} {x : E} : x ∈ ofMeasure μ C ↔ ∃ y ∈ C, μ y < μ x :=
   Iff.rfl
 
-/-- Measure-induced delineations are monotone. -/
 theorem isMonotone_ofMeasure : (ofMeasure μ).IsMonotone := by
   rintro C₁ - C₂ - a b ⟨y₁, hy₁, hlt_a⟩ hnotb ⟨y₂, hy₂, hlt_b⟩
   have hle : μ b ≤ μ y₁ := not_lt.mp fun h ↦ hnotb ⟨y₁, hy₁, h⟩
   exact ⟨y₂, hy₂, hlt_b.trans (hle.trans_lt hlt_a)⟩
 
-/-- The extension of a measure-induced delineation is monotone in the comparison class, since a
-larger class only adds witnesses. -/
 theorem monotone_ofMeasure : Monotone (ofMeasure μ) :=
   fun _ _ hle _ ⟨y, hy, hlt⟩ ↦ ⟨y, hle hy, hlt⟩
 
@@ -218,7 +208,6 @@ theorem outranks_ofMeasure_iff {C : Set E} {a b : E} (ha : a ∈ C) (hb : b ∈ 
     · exact hlt.not_gt hlt_y
     · exact lt_irrefl _ hlt_y
 
-/-- Measure-induced delineations are linear. -/
 theorem isLinear_ofMeasure : (ofMeasure μ).IsLinear := by
   intro C u hu v hv _
   rcases lt_trichotomy (μ u) (μ v) with hlt | heq | hgt
@@ -240,11 +229,9 @@ variable (d) in
 `C` that *very A* does not hold of. -/
 def fairly : Delineation E := ⟨fun C ↦ d (C \ d.very C)⟩
 
-/-- *very A* entails *A* when the delineation classifies only members of the comparison class. -/
 theorem very_subset (hcc : ∀ C, d C ⊆ C) (C : Set E) : d.very C ⊆ d C :=
   hcc _
 
-/-- *fairly A* excludes *very A*. -/
 theorem fairly_disjoint_very (hcc : ∀ C, d C ⊆ C) (C : Set E) : Disjoint (d.fairly C) (d.very C) :=
   Set.disjoint_left.2 fun _ hf ↦ (hcc _ hf).2
 
@@ -279,8 +266,6 @@ separated by some comparison class. -/
 def IsCompleteFor (R : E → E → Prop) : Prop :=
   ∀ x y, R x y → d.Comparative x y
 
-/-- Klein's comparative coincides with any scalar relation the delineation is sound and complete
-for. -/
 theorem comparative_iff_of_isSoundFor_of_isCompleteFor {R : E → E → Prop} (hs : d.IsSoundFor R)
     (hc : d.IsCompleteFor R) {x y : E} : d.Comparative x y ↔ R x y :=
   ⟨fun ⟨C, hpos, hneg⟩ ↦ hs C x y hpos hneg, hc x y⟩
@@ -295,7 +280,6 @@ theorem isCompleteFor_ofMeasure : (ofMeasure μ).IsCompleteFor fun a b ↦ μ b 
   fun x y hR ↦ (comparative_iff_outranks_univ _).2
     ((outranks_ofMeasure_iff μ (Set.mem_univ x) (Set.mem_univ y)).2 hR)
 
-/-- Klein's comparative under a measure-induced delineation is comparison of measures. -/
 theorem comparative_ofMeasure_iff {x y : E} : (ofMeasure μ).Comparative x y ↔ μ y < μ x :=
   comparative_iff_of_isSoundFor_of_isCompleteFor (isSoundFor_ofMeasure μ)
     (isCompleteFor_ofMeasure μ)

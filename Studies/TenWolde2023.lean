@@ -81,7 +81,6 @@ instance : BoundedOrder Stage where
 def Stage.path : List Stage :=
   [nPP, headClassifier, evaluative, evaluativeModifier, binominalIntensifier]
 
-/-- Each stage of the path is the immediate successor of the one before it. -/
 theorem Stage.path_isChain : Stage.path.IsChain (· ⋖ ·) := by decide
 
 /-! ### Diagnostics -/
@@ -142,9 +141,6 @@ def Diagnostic.span : Diagnostic → Set Stage
 instance (d : Diagnostic) : DecidablePred (· ∈ d.span) := fun _ ↦ by
   cases d <;> unfold Diagnostic.span <;> infer_instance
 
-/-- Every diagnostic but those of the second determiner holds over a contiguous span of the path.
-The head-classifier has no second determiner, while the N+PP before it and the evaluative
-binominal after it do. -/
 theorem ordConnected_span_iff (d : Diagnostic) :
     d.span.OrdConnected ↔ d ≠ .det₂ ∧ d ≠ .det₂Number := by
   have gap {s : Set Stage} (h₁ : Stage.nPP ∈ s) (h₂ : Stage.evaluative ∈ s)
@@ -155,43 +151,32 @@ theorem ordConnected_span_iff (d : Diagnostic) :
   case det₂Number => exact iff_of_false (gap (by decide) (by decide) (by decide)) (by decide)
   all_goals exact iff_of_true (by unfold Diagnostic.span; infer_instance) (by decide)
 
-/-- A feature of the most grammaticalized stage that holds over a contiguous span is never lost
-once gained. -/
 theorem isUpperSet_span_of_top_mem {d : Diagnostic} (hd : d.span.OrdConnected)
     (h : ⊤ ∈ d.span) : IsUpperSet d.span :=
   fun _ _ hab ha ↦ hd.out ha h ⟨hab, le_top⟩
 
-/-- A feature of the most lexical stage that holds over a contiguous span is never regained once
-lost. -/
 theorem isLowerSet_span_of_bot_mem {d : Diagnostic} (hd : d.span.OrdConnected)
     (h : ⊥ ∈ d.span) : IsLowerSet d.span :=
   fun _ _ hba ha ↦ hd.out h ha ⟨bot_le, hba⟩
 
-/-- Number agreement between the nouns is transient, arising with the evaluative binominal and
-already weakened at the next stage. -/
 theorem strictAgreement_span : Diagnostic.strictAgreement.span = {.evaluative} :=
   Set.Icc_self _
 
-/-- The restriction of the second noun to count nouns is transient, arising with the evaluative
-binominal and lifted again at the intensifier. -/
 theorem n₂CountOnly_not_upper_not_lower :
     ¬ IsUpperSet Diagnostic.n₂CountOnly.span ∧ ¬ IsLowerSet Diagnostic.n₂CountOnly.span :=
   ⟨fun h ↦ absurd (h (b := .binominalIntensifier) (by decide)
       (show Stage.evaluativeModifier ∈ _ by decide)) (by decide),
     fun h ↦ absurd (h (b := .nPP) (by decide) (show Stage.evaluative ∈ _ by decide)) (by decide)⟩
 
-/-- The head switches to the second noun exactly where the first noun becomes evaluative. -/
 theorem n₁Head_span_compl : Diagnostic.n₁Head.spanᶜ = Diagnostic.n₁Evaluative.span := by
   ext s; cases s <;> decide
 
-/-- The chunk [N₁ *of a*] forms exactly where the first noun stops inflecting. -/
 theorem n₁Plural_span_compl : Diagnostic.n₁Plural.spanᶜ = Diagnostic.chunk.span := by
   ext s; cases s <;> decide
 
 /-- The diagnostics that hold at a stage. -/
 def Stage.profile (s : Stage) : Finset Diagnostic := {d | s ∈ d.span}
 
-/-- The diagnostics tell every two stages apart. -/
 theorem profile_injective : Function.Injective Stage.profile := by decide
 
 /-! ### First nouns -/
@@ -255,20 +240,16 @@ def all : List Noun := caseStudies ++ [whale, bitch, nub, breeze, husk, snake]
 
 end Noun
 
-/-- A first noun attested at a stage is attested at every earlier stage. -/
 theorem isLowerSet_stages : ∀ n ∈ Noun.all, IsLowerSet (n.stages : Set Stage) := by
   simp only [IsLowerSet, Finset.mem_coe]; decide
 
-/-- Every inanimate first noun develops pseudo-partitive uses. -/
 theorem pseudoPartitive_of_inanimate :
     ∀ n ∈ Noun.all, n.semanticClass = .inanimate → n.pseudoPartitive := by decide
 
-/-- The animate and abstract nouns with pseudo-partitive uses are *snake* and *hell*. -/
 theorem pseudoPartitive_iff :
     ∀ n ∈ Noun.all, n.pseudoPartitive ↔
       n.semanticClass = .inanimate ∨ n = .snake ∨ n = .hell := by decide
 
-/-- A first noun has a reduced form only if it reaches a stage at which [N₁ *of a*] is a unit. -/
 theorem exists_mem_chunk_of_fused :
     ∀ n ∈ Noun.all, n.fused.isSome → ∃ s ∈ n.stages, s ∈ Diagnostic.chunk.span := by decide
 
@@ -350,8 +331,6 @@ instance : PartialOrder Node := network.partialOrder Node.rank (by decide)
 
 instance : DecidableLE Node := network.decidableLE [.stage .nPP] (by decide)
 
-/-- The metaphorical links are the covering relation of the path, so each stage is a metaphorical
-extension of the one before it and of no other. -/
 theorem metaphorical_iff_covBy (s t : Stage) :
     (.stage t, some .metaphorical) ∈ network.related (.stage s) ↔ s ⋖ t := by
   revert s t; decide
@@ -382,14 +361,10 @@ theorem inherited_secondDeterminer (s : Stage) :
   revert s; decide
 
 open DefaultInheritance in
-/-- The evaluative binominal inherits a number-marking second determiner from the N+PP, the other
-exception to contiguity in the tables (`ordConnected_span_iff`). -/
 theorem inherited_secondDeterminerNumber (s : Stage) :
     true ∈ inherited secondDeterminerNumber (.stage s) ↔ s ∈ Diagnostic.det₂Number.span := by
   revert s; decide
 
-/-- The head of the form precedes *of* exactly at the stages where the first noun is the semantic
-head. -/
 theorem head_before_of_iff (s : Stage) :
     ((s.construction.form.takeWhile (·.filler ≠ .fixed "of")).any (·.isHead)) ↔
       s ∈ Diagnostic.n₁Head.span := by
@@ -402,8 +377,6 @@ ascribes an objective property and subjective once it expresses the speaker's ev
 def Stage.level (s : Stage) : Traugott2010.SubjectivityLevel :=
   if s ∈ Diagnostic.n₁Evaluative.span then .subjective else .nonSubjective
 
-/-- The path follows [traugott-2010]'s cline, with one subjectification at the evaluative
-binominal and bleaching within the subjective level after it. -/
 theorem path_unidirectional :
     Traugott2010.Unidirectional (Stage.path.map Stage.level) := by
   decide

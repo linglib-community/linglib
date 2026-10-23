@@ -148,13 +148,10 @@ def thirdP : Finset (Finset Ω) := quadCell false false
 the case a membership decomposition collapses. -/
 theorem exclusive_excludes_addressee : ∀ s ∈ exclusive, (1 : Ω) ∉ s := by decide
 
-/-- The exclusive always contains the speaker `i`. -/
 theorem exclusive_includes_speaker : ∀ s ∈ exclusive, (0 : Ω) ∈ s := by decide
 
-/-- The inclusive always contains both the speaker and the addressee. -/
 theorem inclusive_has_both : ∀ s ∈ inclusive, (0 : Ω) ∈ s ∧ (1 : Ω) ∈ s := by decide
 
-/-- The inclusive and the exclusive are distinct cells. -/
 theorem inclusive_ne_exclusive : inclusive ≠ exclusive := by decide
 
 /-- The four quadripartition cells cover the π-lattice. -/
@@ -166,7 +163,6 @@ theorem quad_disjoint :
     Disjoint inclusive thirdP ∧ Disjoint exclusive secondP ∧
     Disjoint exclusive thirdP ∧ Disjoint secondP thirdP := by decide
 
-/-- The quadripartition has four cells. -/
 theorem quad_card : (cellsOf quadRaws).card = 4 := by decide
 
 /-- The participants of a referent are the speaker if it contains `0` and the addressee if it
@@ -227,7 +223,6 @@ def singletons : Finset (Finset Ω) := {{0}, {1}, {2}}
 contains no singleton referent, so the singular realizes only three persons. -/
 theorem inclusive_has_no_singleton : inclusive ∩ singletons = ∅ := by decide
 
-/-- Every inclusive referent has at least two members, the speaker and the addressee. -/
 theorem inclusive_card_ge_two : ∀ s ∈ inclusive, 2 ≤ s.card := by decide
 
 end Examples
@@ -286,8 +281,6 @@ theorem generated_r_iff {F : Finset ThreeFeature} {s t : Finset Role} :
     · simp only [hf, true_and, h f hf]
     · simp [hf]
 
-/-- The participant sets lacking a feature are those below a single participant set, and every
-down-set of participant sets other than the whole space is of this form. -/
 private theorem subset_iff_or_exists (a : Finset Role) :
     a = univ ∨ ∃ f : ThreeFeature, ∀ s, s ⊆ a ↔ ¬ f.Holds s := by
   revert a; decide
@@ -308,7 +301,6 @@ theorem exists_generated (c : SupCon (Finset Role)) :
   · simp only [hf, not_iff_not] at ha ⊢
     exact h f (Finset.mem_filter.mpr ⟨mem_univ f, ha⟩)
 
-/-- [±participant] and [±author] generate the tripartition. -/
 theorem generated_participant_author :
     (generated {.participant, .author}).toSetoid = Person.tripartition.toSetoid := by
   refine Setoid.ext fun s t ↦ ?_
@@ -316,14 +308,10 @@ theorem generated_participant_author :
   rw [generated_r_iff, Person.tripartition_r_iff]
   revert s t; decide
 
-/-- [±hearer] alone generates the hearer bipartition, inclusive and second person against
-exclusive and third. -/
 theorem generated_hearer {s t : Finset Role} :
     (generated {.hearer}).r s t ↔ (.addressee ∈ s ↔ .addressee ∈ t) := by
   rw [generated_r_iff]; revert s t; decide
 
-/-- [±hearer] and [±participant] generate Zwicky's tripartition, inclusive grouped with second
-person. -/
 theorem generated_hearer_participant {s t : Finset Role} :
     (generated {.hearer, .participant}).r s t ↔
       (s.Nonempty ↔ t.Nonempty) ∧ (.addressee ∈ s ↔ .addressee ∈ t) := by
@@ -488,8 +476,6 @@ def signOf : Category → Person.Feature → Bool
   | .addressee, f | .addresseeOthers, f => f == .participant       -- −author +participant
   | .other, _ | .others, _ => false                                -- −author −participant
 
-/-- Harbour's signs distinguish exclusive from inclusive, where the neutral membership
-decomposition (`Category.toFeatures`) collapses them (cf. `Examples.inclusive_ne_exclusive`). -/
 theorem signOf_speakerOthers_ne_speakerAddressee :
     signOf .speakerOthers ≠ signOf .speakerAddressee := by decide
 
@@ -506,18 +492,14 @@ open Tamil.Pronouns (naam naanŋgæ)
 underdetermine the category. -/
 def harbourSign (p : Pronoun) : Finset (Person.Feature → Bool) := p.categories.image signOf
 
-/-- *naam* (1pl inclusive) realizes the inclusive sign `+author +participant`. -/
 theorem naam_sign : harbourSign naam.toPronoun = {fun _ ↦ true} := by decide
 
-/-- *naan-ŋgæ* (1pl exclusive) realizes the exclusive sign `+author −participant`. -/
 theorem naanŋgæ_sign : harbourSign naanŋgæ.toPronoun = {(· == .author)} := by decide
 
 /-- Harbour's signs distinguish *naam* from *naan-ŋgæ* through the Pronoun API. -/
 theorem tamil_clusivity_distinguished :
     harbourSign naam.toPronoun ≠ harbourSign naanŋgæ.toPronoun := by decide
 
-/-- The membership decomposition collapses *naam* and *naan-ŋgæ*, mapping both first person
-plural categories to the same `Category.toFeatures`. -/
 theorem tamil_clusivity_collapsed_by_toFeatures :
     naam.toPronoun.categories.image Category.toFeatures
       = naanŋgæ.toPronoun.categories.image Category.toFeatures := by decide

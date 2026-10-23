@@ -50,7 +50,6 @@ theorem mk_mem_of_mem_crown_cutSummandsG :
     obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
     exact mk_mem_of_mem_crown_cutListSummandsG cs q hq x hx
 
-/-- Every crown component of a cut of a list of children is a subtree of one of them. -/
 theorem mk_mem_of_mem_crown_cutListSummandsG :
     ∀ (cs : List (RoseTree α)), ∀ q ∈ cutListSummandsG extract cs, ∀ x ∈ q.1,
       UnorderedTree.mk x ∈ unorderedSubtreesList cs
@@ -69,7 +68,6 @@ theorem mk_mem_of_mem_crown_cutListSummandsG :
     · exact .inl (mk_mem_of_mem_crown_augActionG t pr.1 ha x h)
     · exact .inr (mk_mem_of_mem_crown_cutListSummandsG ts pr.2 hq' x h)
 
-/-- Every crown component of a choice at the child `t` is a subtree of `t`. -/
 theorem mk_mem_of_mem_crown_augActionG :
     ∀ (t : RoseTree α), ∀ a ∈ augActionG extract t, ∀ x ∈ a.1,
       UnorderedTree.mk x ∈ unorderedSubtrees t
@@ -93,19 +91,16 @@ end
 
 This needs a policy that allows a cut at every subtree. -/
 
-/-- The empty cut is a cut. -/
 theorem zero_mem_cutSummandsG (t : RoseTree α) :
     ((0 : Multiset (RoseTree α)), t) ∈ cutSummandsG extract t :=
   Multiset.mem_of_mem_filter (p := fun p ↦ p.1.card = 0)
     ((cutSummandsG_filter_empty extract t).symm ▸ Multiset.mem_singleton_self _)
 
-/-- The empty cut is a cut of a list of children. -/
 theorem zero_mem_cutListSummandsG (cs : List (RoseTree α)) :
     ((0 : Multiset (RoseTree α)), cs) ∈ cutListSummandsG extract cs :=
   Multiset.mem_of_mem_filter (p := fun p ↦ p.1.card = 0)
     ((cutListSummandsG_filter_empty extract cs).symm ▸ Multiset.mem_singleton_self _)
 
-/-- Keeping the child whole is one of the choices at a child. -/
 theorem zero_mem_augActionG (t : RoseTree α) :
     ((0 : Multiset (RoseTree α)), [t]) ∈ augActionG extract t :=
   Multiset.mem_of_mem_filter (p := fun p ↦ p.1.card = 0)
@@ -115,7 +110,6 @@ variable {extract}
 
 mutual
 
-/-- Every subtree of a child of `t` is a crown component of some cut of `t`. -/
 theorem exists_mem_crown_cutSummandsG (hex : ∀ t, (extract t).isSome) :
     ∀ (t : RoseTree α) (s : UnorderedTree α), s ∈ unorderedSubtreesList t.children →
       ∃ p ∈ cutSummandsG extract t, ∃ x ∈ p.1, UnorderedTree.mk x = s
@@ -124,7 +118,6 @@ theorem exists_mem_crown_cutSummandsG (hex : ∀ t, (extract t).isSome) :
     exact ⟨(q.1, .node a q.2), by rw [cutSummandsG_node]; exact Multiset.mem_map_of_mem _ hq,
       x, hx, rfl⟩
 
-/-- Every subtree of a child in the list is a crown component of some cut of the list. -/
 theorem exists_mem_crown_cutListSummandsG (hex : ∀ t, (extract t).isSome) :
     ∀ (cs : List (RoseTree α)) (s : UnorderedTree α), s ∈ unorderedSubtreesList cs →
       ∃ q ∈ cutListSummandsG extract cs, ∃ x ∈ q.1, UnorderedTree.mk x = s
@@ -142,7 +135,6 @@ theorem exists_mem_crown_cutListSummandsG (hex : ∀ t, (extract t).isSome) :
         (Multiset.mem_product.mpr ⟨zero_mem_augActionG extract t, hq⟩),
         x, Multiset.mem_add.mpr (.inr hx), rfl⟩
 
-/-- Every subtree of `t` is a crown component of some choice at the child `t`. -/
 theorem exists_mem_crown_augActionG (hex : ∀ t, (extract t).isSome) :
     ∀ (t : RoseTree α) (s : UnorderedTree α), s ∈ unorderedSubtrees t →
       ∃ a ∈ augActionG extract t, ∃ x ∈ a.1, UnorderedTree.mk x = s

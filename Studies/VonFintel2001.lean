@@ -112,9 +112,6 @@ theorem implicature_not_noMatterWhat (hlt : noMatterWhat acc q ⊂ strictImp acc
     Implicature rel (strictImp acc p q) (fun bel ↦ ¬ bel (noMatterWhat acc q)) :=
   implicature_not_bel hlt hrel
 
-/-- Against [horn-2000], the negation of *q no matter what* is not perfection. With a relevant
-`q`-situation outside `p` and a relevant situation outside `q`, *if p, q* holds, *q no matter
-what* fails, and perfection fails. -/
 theorem exists_not_noMatterWhat_not_perfection :
     ∃ (acc : Fin 3 → Set (Fin 3)) (p q : Set (Fin 3)) (s : Fin 3),
       s ∈ strictImp acc p q ∧ s ∉ noMatterWhat acc q ∧ s ∉ perfection acc p q :=
@@ -129,8 +126,6 @@ theorem exists_not_noMatterWhat_not_perfection :
 theorem strictImp_union_subset : strictImp acc (p ∪ r) q ⊆ strictImp acc p q :=
   strictImp_anti_left Set.subset_union_left
 
-/-- The implicature for one alternative antecedent says that some relevant `r`-situation is not
-a `q`-situation. -/
 theorem exists_of_not_mem_strictImp_union (h : s ∈ strictImp acc p q)
     (h' : s ∉ strictImp acc (p ∪ r) q) : ∃ s' ∈ acc s, s' ∈ r ∧ s' ∉ q := by
   by_contra hne
@@ -176,7 +171,6 @@ variable {causes : ι → Set W} {triggers : Set ι} {t t' : ι}
     q ∈ answerAlternatives causes triggers t ↔ ∃ t' ∈ triggers, t' ≠ t ∧ causes t' = q := by
   simp [answerAlternatives, and_assoc]
 
-/-- The exhaustified answer excludes each innocently excludable alternative. -/
 theorem exhaustifiedAnswer_excludes (h_exh : s ∈ exhaustifiedAnswer causes triggers t)
     (h_ie : IsInnocentlyExcludable (answerAlternatives causes triggers t) (causes t)
       (causes t')) : s ∉ causes t' :=
@@ -187,9 +181,6 @@ over the antecedents `R`. -/
 def conditionalAnswer (acc : W → Set W) (R : Set (Set W)) (p q : Set W) : Set W :=
   exhaustifiedAnswer (fun r ↦ strictImp acc r q) R p
 
-/-- Over all antecedents the exhaustified conditional answer is perfection, since, every
-alternative being innocently excludable, the singleton antecedents of the relevant situations
-suffice. -/
 theorem perfection_of_conditionalAnswer {R : Set (Set W)} (h : s ∈ conditionalAnswer acc R p q)
     (hie : ∀ r ∈ R, r ≠ p → IsInnocentlyExcludable
       (answerAlternatives (fun r ↦ strictImp acc r q) R p) (strictImp acc p q) (strictImp acc r q))
@@ -199,8 +190,6 @@ theorem perfection_of_conditionalAnswer {R : Set (Set W)} (h : s ∈ conditional
   exact exhaustifiedAnswer_excludes h (hie _ (hR s' hs') fun e ↦ hp (e ▸ rfl))
     fun _ ⟨_, hx⟩ ↦ Set.mem_singleton_iff.1 hx ▸ hq
 
-/-- A yes/no conditional question offers no alternative antecedent, so the answer is the plain
-conditional and exhaustivity applies vacuously. -/
 theorem conditionalAnswer_singleton : conditionalAnswer acc {p} p q = strictImp acc p q := by
   simp only [conditionalAnswer, exhaustifiedAnswer, answerAlternatives, Set.sdiff_self,
     Set.image_empty, exhIE_empty]

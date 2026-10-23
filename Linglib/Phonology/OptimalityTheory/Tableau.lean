@@ -113,7 +113,6 @@ theorem optimal_subset : t.optimal ⊆ t.candidates :=
 theorem optimal_nonempty (h : t.candidates.Nonempty) : t.optimal.Nonempty :=
   Finset.argmin_nonempty h
 
-/-- A winner's profile bounds every candidate's. -/
 theorem le_of_mem_optimal (hc : c ∈ t.optimal) (hd : d ∈ t.candidates) :
     t.profile c ≤ t.profile d :=
   (mem_optimal_iff.1 hc).2 d hd
@@ -124,7 +123,6 @@ theorem optimal_eq_singleton_iff :
     t.optimal = {m} ↔ m ∈ t.candidates ∧ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c :=
   Finset.argmin_eq_singleton_iff
 
-/-- A tableau with a single candidate has it as sole winner. -/
 @[simp] theorem optimal_singleton (hc : t.candidates = {c}) : t.optimal = {c} :=
   optimal_eq_singleton_iff.2 ⟨by simp [hc], fun _ hd hdc ↦ absurd (by simpa [hc] using hd) hdc⟩
 
@@ -133,12 +131,10 @@ theorem notMem_optimal_of_lt (hc : c ∈ t.candidates) (h : t.profile c < t.prof
     d ∉ t.optimal :=
   fun hd ↦ (le_of_mem_optimal hd hc).not_gt h
 
-/-- A candidate with no violations wins, since `0` is the least profile. -/
 theorem mem_optimal_of_profile_eq_zero (hc : c ∈ t.candidates) (h0 : t.profile c = 0) :
     c ∈ t.optimal :=
   mem_optimal_iff.2 ⟨hc, fun _ _ ↦ h0 ▸ bot_le⟩
 
-/-- If some candidate has no violations, neither has any winner. -/
 theorem profile_eq_zero_of_mem_optimal (hc : c ∈ t.optimal) (hd : d ∈ t.candidates)
     (h0 : t.profile d = 0) : t.profile c = 0 :=
   le_antisymm (h0 ▸ le_of_mem_optimal hc hd) bot_le
@@ -154,12 +150,10 @@ section Pair
 
 variable [DecidableEq C]
 
-/-- A two-candidate tableau has sole winner `c` iff `c` strictly lex-dominates `d`. -/
 theorem optimal_eq_singleton_iff_pair (hcand : t.candidates = {c, d}) (hne : c ≠ d) :
     t.optimal = {c} ↔ t.profile c < t.profile d := by
   simp [optimal_eq_singleton_iff, hcand, hne.symm]
 
-/-- In a two-candidate tableau, `c` wins iff `d` does not strictly lex-dominate it. -/
 theorem mem_optimal_iff_pair (hcand : t.candidates = {c, d}) :
     c ∈ t.optimal ↔ ¬ t.profile d < t.profile c := by
   simp [mem_optimal_iff, hcand]
@@ -215,8 +209,6 @@ theorem ofRanking_notMem_optimal_of_lt (hc : c ∈ candidates) (hlt : (con · c)
     d ∉ (ofRanking con r candidates).optimal :=
   notMem_optimal_of_lt hc (Pi.toLex_comp_strictMono r hlt)
 
-/-- A candidate that harmonically bounds every competitor is the sole winner under every
-ranking of the constraint set. -/
 theorem ofRanking_optimal_eq_singleton_of_forall_lt (hc : c ∈ candidates)
     (hlt : ∀ d ∈ candidates, d ≠ c → (con · c) < (con · d)) :
     (ofRanking con r candidates).optimal = {c} :=
@@ -341,12 +333,10 @@ candidates doing best on its top constraint. -/
 theorem optimal_ofList_cons : (ofList s (F :: Fs)).optimal = (ofList (s.argmin F) Fs).optimal := by
   rw [← ofList_cons_tail, optimal_tail]
 
-/-- With no constraints every candidate wins. -/
 @[simp] theorem optimal_ofList_nil : (ofList s []).optimal = s :=
   Finset.argmin_eq_self_of_forall_le fun _ _ _ _ ↦
     le_of_eq <| funext fun i ↦ absurd i.2 (Nat.not_lt_zero _)
 
-/-- A constraint that rates every candidate alike is inert. -/
 theorem optimal_ofList_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
     (ofList s (F :: Fs)).optimal = (ofList s Fs).optimal := by
   rw [optimal_ofList_cons, Finset.argmin_eq_self_of_forall_le fun c hc d hd ↦ (h c hc d hd).le]
@@ -363,8 +353,6 @@ theorem optimal_ofList_append_of_forall_eq (h : ∀ F ∈ Fs, ∀ c ∈ s, ∀ d
 
 /-! ### Anti-faithfulness -/
 
-/-- When some candidate violates `F`, the candidates doing best on the anti-faithfulness
-constraint `¬F` are those violating `F`. -/
 theorem _root_.OptimalityTheory.Constraint.argmin_antifaithful (h : ∃ c ∈ s, 0 < F c) :
     s.argmin F.antifaithful = s.filter (0 < F ·) := by
   obtain ⟨d, hd, hFd⟩ := h
@@ -377,8 +365,6 @@ theorem _root_.OptimalityTheory.Constraint.argmin_antifaithful (h : ∃ c ∈ s,
   · rw [(Constraint.antifaithful_eq_zero_iff F c).2 hFc]
     exact Nat.zero_le _
 
-/-- An anti-faithfulness constraint on top filters the candidates down to those violating its
-faithfulness constraint, whenever one does. -/
 theorem optimal_ofList_antifaithful_cons (h : ∃ c ∈ s, 0 < F c) :
     (ofList s (F.antifaithful :: Fs)).optimal = (ofList (s.filter (0 < F ·)) Fs).optimal := by
   rw [optimal_ofList_cons, Constraint.argmin_antifaithful h]

@@ -56,15 +56,10 @@ presupposes nothing beyond the iota's definedness. -/
 noncomputable def attributiveNominal (φ : E → W → Prop) : Nominal Unit W E :=
   .ofReferent (attributive φ)
 
-/-- Where the description picks out `e`, the attributive use of *the φ is ψ* is true iff
-`ψ e`. -/
 theorem attributiveNominal_resolve_eq_one_iff (ψ : E → W → Prop) (h : attributive φ w = some e) :
     (attributiveNominal φ).resolve ψ () w = 1 ↔ ψ e w := by
   simp [attributiveNominal, Nominal.ofReferent_resolve, Presupposition.presupOfReferent_of_some h]
 
-/-- In Donnellan's scene the description uniquely fits `e` at `w` while the speaker intends
-someone else, so the attributive use denotes `e` and the referential use, the constant
-character at the intended referent, does not. -/
 theorem attributive_ne_const_of_misfit (h : attributive φ w = some e) (hne : e ≠ intended) :
     attributive φ w ≠ some (Character.const intended () w) := by
   simpa [h] using hne

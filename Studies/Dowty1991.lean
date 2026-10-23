@@ -70,12 +70,10 @@ def entailed (e : Datum) : EntailmentProfile :=
 def denied (e : Datum) : EntailmentProfile :=
   ((e.features "denies").filterMap (List.lookup · featureLabels)).toFinset
 
-/-- Every attribution names one of the ten entailments. -/
 theorem lookup_isSome : ∀ e ∈ Examples.all, ∀ s ∈ e.features "entails" ++ e.features "denies",
     (List.lookup s featureLabels).isSome := by
   decide
 
-/-- No row both attributes and denies an entailment. -/
 theorem disjoint_entailed_denied : ∀ e ∈ Examples.all, Disjoint (entailed e) (denied e) := by
   decide
 
@@ -87,7 +85,6 @@ def Matches (e : Datum) (p : EntailmentProfile) : Prop := p ∈ Set.Icc (entaile
 instance (e : Datum) (p : EntailmentProfile) : Decidable (Matches e p) :=
   inferInstanceAs (Decidable (_ ≤ _ ∧ _ ≤ _))
 
-/-- A row's attributions agree with it, its denials being disjoint from them. -/
 theorem matches_entailed {e : Datum} (h : Disjoint (entailed e) (denied e)) :
     Matches e (entailed e) :=
   ⟨le_rfl, h.le_compl_right⟩
@@ -228,8 +225,6 @@ theorem directObjectOver_of_changeOfState (hp : .changeOfState ∈ p) (hq : .cha
   rw [← Finset.card_erase_add_one hp', h, Finset.erase_eq_of_notMem hq']
   omega
 
-/-- Nonsubject arguments alike in the change-of-state entailment and the rest may either
-be direct object. -/
 theorem eitherObject_of_cosSymmetric (h : CosSymmetric p q)
     (h' : p.protoPatient.erase .changeOfState = q.protoPatient.erase .changeOfState) :
     EitherObject p q := by
@@ -313,8 +308,6 @@ theorem intransClass_unaccusative (h : ¬ Agentive p) (h' : Telic p) :
     intransClass p = .unaccusative := by
   simp only [intransClass, decide_eq_false h, decide_eq_true h', table1]
 
-/-- *run* is unergative and *die* and *arrive* unaccusative, from the substrate's class
-profiles. -/
 theorem intransClass_examples :
     intransClass selfMotion.subjectProfile = .unergative ∧
       intransClass disappearance.subjectProfile = .unaccusative ∧
@@ -337,7 +330,6 @@ theorem primary_transitives_match_templates :
       Matches Examples.eatObject consumptionObject := by
   decide
 
-/-- The hit class attributions, (64 III), hold of the contacted object template. -/
 theorem hit_class_matches_contact_object : Matches Examples.hitObject contactObject := by decide
 
 /-- The single-entailment exemplars of (29) and (30) land in the perception and desire
@@ -364,8 +356,6 @@ theorem build_object_stationary_divergence :
       Matches Examples.buildObject (insert .stationary creationObject) := by
   decide
 
-/-- The accomplishment object template carries no incremental themehood, which (64 II)
-attributes to the object of *break*; the template adds it per verb. -/
 theorem break_object_it_divergence :
     ¬ Matches Examples.breakObject accomplishmentObjectProfile ∧
       Matches Examples.breakObject (insert .incrementalTheme accomplishmentObjectProfile) := by

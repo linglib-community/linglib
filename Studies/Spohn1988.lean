@@ -180,7 +180,6 @@ theorem condition_rank (l : RankingFunction (Quotient 𝔅)) (w : W) :
     condition κ 𝔅 l w = l (Quotient.mk 𝔅 w) + aPart κ (𝔅.cell w) w :=
   rfl
 
-/-- Within an atom, the conditionalized ranking starts at the atom's rank under `l`. -/
 theorem rank_condition_cell (l : RankingFunction (Quotient 𝔅)) (w : W) :
     rank (condition κ 𝔅 l) (𝔅.cell w) = l (Quotient.mk 𝔅 w) := by
   obtain ⟨v, hv, h0⟩ := exists_aPart_eq_zero κ (𝔅.cell_nonempty w)
@@ -273,15 +272,12 @@ theorem Independent.rank_inter (h : Independent κ 𝔅 ℭ) {B C : Set W} (hB :
 
 variable (κ)
 
-/-- On a satisfiable intersection, the conditional rank is a difference of natural numbers. -/
 theorem condRank_eq {A B : Set W} (h : (A ∩ B).Nonempty) :
     κ[B | A] = ((rank κ (A ∩ B)).toNat - (rank κ A).toNat : ℕ) := by
   have hA := rank_ne_top κ (h.mono Set.inter_subset_left)
   rw [condRank_of_ne_top _ hA, ENat.natCast_sub, ENat.natCast_toNat (rank_ne_top κ h),
     ENat.natCast_toNat hA]
 
-/-- On satisfiable intersections, `κ(X | A) = κ(Y | A) + κ(Z | A)` says that
-`κ(A ∩ X) + κ(A) = κ(A ∩ Y) + κ(A ∩ Z)`. -/
 theorem condRank_add_iff {A X Y Z : Set W} (hX : (A ∩ X).Nonempty) (hY : (A ∩ Y).Nonempty)
     (hZ : (A ∩ Z).Nonempty) :
     κ[X | A] = κ[Y | A] + κ[Z | A] ↔

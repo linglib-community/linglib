@@ -41,7 +41,6 @@ namespace Tuple
 
 variable {n : ℕ} {α : Type*} [LinearOrder α] {f : Fin n → α}
 
-/-- Sorting a reordering of an injective tuple undoes the reordering. -/
 theorem sort_comp_perm_of_injective (hf : Function.Injective f) (σ : Equiv.Perm (Fin n)) :
     sort (f ∘ σ) = σ⁻¹ * sort f := by
   refine Equiv.ext fun i ↦ ?_

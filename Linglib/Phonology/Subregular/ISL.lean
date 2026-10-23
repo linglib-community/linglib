@@ -98,7 +98,6 @@ private lemma windowRun_input (n : ℕ) (w u : List α) :
   | nil => rfl
   | cons y ys ih => simp [windowRun, ih]
 
-/-- The window before each symbol is the last `k - 1` symbols of the input read so far. -/
 theorem apply_append_singleton (u : List α) (x : α) :
     r.apply (u ++ [x]) = r.apply u ++ r.windowOutput (u.rtake (k - 1)) x := by
   have h := windowRun_append_singleton (out := r.windowOutput) (upd := fun _ x ↦ [x])
@@ -132,8 +131,6 @@ theorem IsLeftInputStrictlyLocal.isPrefix (hf : IsLeftInputStrictlyLocal k f) (u
   exact isPrefix_append_of_append_singleton (fun u x ↦ ⟨_, (r.apply_append_singleton u x).symm⟩)
     u v
 
-/-- The residuals of a `k`-ISL function factor through the last `k - 1` input symbols, so inputs
-ending alike have the same continuations. -/
 theorem IsLeftInputStrictlyLocal.factorsThrough_residual (hf : IsLeftInputStrictlyLocal k f) :
     f.residual.FactorsThrough fun u ↦ u.rtake (k - 1) := by
   obtain ⟨r, rfl⟩ := hf
@@ -197,13 +194,10 @@ theorem IsLeftInputStrictlyLocal.isLeftSubsequential [Fintype α]
   obtain ⟨r, rfl⟩ := hf
   exact isLeftSubsequential_windowRun _ _ _
 
-/-- A rule emitting one symbol per input symbol is Mealy-computable, the bounded input window
-being the state. -/
 theorem ISLRule.isMealyComputable_apply [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
   isMealyComputable_windowRun _ _ _ hs
 
-/-- Over a finite input alphabet, right-ISL functions are right-subsequential. -/
 theorem IsRightInputStrictlyLocal.isRightSubsequential [Fintype α]
     (hf : IsRightInputStrictlyLocal k f) : IsRightSubsequential f :=
   IsLeftInputStrictlyLocal.isLeftSubsequential hf
@@ -228,7 +222,6 @@ private lemma windowRun_filter (n : ℕ) (w u : List α) :
 
 @[simp] lemma applyOnTier_nil : r.applyOnTier p [] = [] := rfl
 
-/-- The window before each symbol is the last `k - 1` on-tier symbols of the input read so far. -/
 theorem applyOnTier_append_singleton (u : List α) (x : α) :
     r.applyOnTier p (u ++ [x]) =
       r.applyOnTier p u ++ r.windowOutput ((u.filter (p ·)).rtake (k - 1)) x := by
@@ -236,13 +229,10 @@ theorem applyOnTier_append_singleton (u : List α) (x : α) :
     (upd := fun _ x ↦ [x].filter (p ·)) (w := []) (Nat.zero_le (k - 1)) u x
   rwa [windowRun_filter, List.nil_append] at h
 
-/-- Over the total tier, `applyOnTier` is `apply`. -/
 theorem applyOnTier_true : r.applyOnTier (fun _ ↦ True) = r.apply := by
   simp [applyOnTier]
   rfl
 
-/-- Over a finite input alphabet the rule run over a tier is left-subsequential, the bounded
-tier window being the state. -/
 theorem isLeftSubsequential_applyOnTier [Fintype α] :
     IsLeftSubsequential (r.applyOnTier p) :=
   isLeftSubsequential_windowRun _ _ _

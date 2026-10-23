@@ -76,15 +76,12 @@ def Cause (k : V → Flat Bool) (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
 
 variable {M} {C E : V} {c e : Bool} {k : V → Flat Bool}
 
-/-- Necessity is the mirror image of sufficiency: the absence of a necessary cause suffices for
-the absence of the effect. -/
 theorem globallyNecessary_iff :
     GloballyNecessary M C c E e ↔ GloballySufficient M C (!c) E (!e) := Iff.rfl
 
 theorem locallyNecessary_iff :
     LocallyNecessary M C c E e ↔ LocallySufficient M C (!c) E (!e) := Iff.rfl
 
-/-- A globally sufficient cause licenses *cause* whatever else is known or unknown. -/
 theorem Cause.of_globallySufficient (h : GloballySufficient M C c E e) (hk : k C = ↑c) :
     Cause M k C c E e :=
   ⟨hk, fun u I hkI hE ↦ h u I hE (Flat.coe_le_iff.1 (hk ▸ hkI C))⟩
@@ -148,21 +145,16 @@ instance : DecidableRel light.graph.Adj := fun w v ↦
 
 instance : light.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
-/-- The light's equation, under a background that leaves it open. -/
 theorem solve_L {I : V → Flat Bool} (h : I .L = ⊥) (u : Context) :
     light.solve I u .L = (light.solve I u .S1 && light.solve I u .S2) :=
   solve_of_eq_bot h u
 
-/-- Switch 1 being off is globally sufficient for the light to be off. -/
 theorem s1_off_globallySufficient : GloballySufficient light .S1 false .L false :=
   fun u _ hL hS1 ↦ by rw [solve_L hL, solve_of_eq_coe hS1, Bool.false_and]
 
-/-- Switch 1 being on is globally necessary for the light to be on. -/
 theorem s1_on_globallyNecessary : GloballyNecessary light .S1 true .L true :=
   s1_off_globallySufficient
 
-/-- Switch 1 being on is not globally sufficient for the light to be on, since with switch 2 off
-the light stays off. -/
 theorem s1_on_not_globallySufficient : ¬ GloballySufficient light .S1 true .L true :=
   fun h ↦ absurd (h ⟨true, false⟩ [.S1 ← true] (by decide) (by decide))
     (by decide)
@@ -197,11 +189,6 @@ namespace Bus
 
 open NadathurLauer2020.Bus
 
-/-- In the bus scenario, with Ava's visit and the rain forecast known, Ava's training is a
-sufficient cause of Lia's taking the bus in every settlement of the rest, rain alone sufficing,
-so Glass's *cause* accepts "Ava's training caused Lia to take the bus", which
-[nadathur-lauer-2020]'s necessity-based *cause* rejects: the same verb, the same scenario,
-opposite verdicts. -/
 theorem glass_nl_diverge_on_bus :
     Cause busModel (Function.update s_b .Tr ↑true) .Tr true .Bs true ∧
       ¬ NadathurLauer2020.Cause busModel s_b actual .Tr true .Bs true := by

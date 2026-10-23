@@ -80,7 +80,6 @@ def ofDependsOn (positions : Finset Position) (form : (Π d, V d) → F) (s : Fi
 
 variable (t : Target V F)
 
-/-- The inflection is the set of dimensions the form does not ignore. -/
 theorem coe_inflection : (t.inflection : Set Dimension) = {d | ¬ DependsOn t.form {d}ᶜ} :=
   Set.ext t.mem_inflection
 
@@ -88,11 +87,9 @@ theorem coe_inflection : (t.inflection : Set Dimension) = {d | ¬ DependsOn t.fo
 theorem isLeast_inflection : IsLeast {s | DependsOn t.form s} t.inflection :=
   t.coe_inflection ▸ isLeast_dependsOn_of_finite t.form
 
-/-- The form depends on the dimensions the target inflects for. -/
 theorem dependsOn_inflection : DependsOn t.form t.inflection :=
   t.isLeast_inflection.1
 
-/-- The form depends on a set of dimensions exactly when it contains the inflection. -/
 theorem dependsOn_form_iff {s : Set Dimension} : DependsOn t.form s ↔ ↑t.inflection ⊆ s :=
   ⟨fun h ↦ t.isLeast_inflection.2 h, t.dependsOn_inflection.mono⟩
 

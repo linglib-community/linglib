@@ -130,8 +130,6 @@ theorem gridColumns_Padwiyatuhu : Tree.columns (parse Padwiyatuhu) = [2, 2, 1, 3
 theorem gridColumns_sajaratuhuma :
     Tree.columns (parse sajaratuhuma) = [2, 1, 2, 1, 3, 1] := by decide
 
-/-- The head terminal of *kátaba* is the head syllable of its head foot, read off the grid's
-spine as an element rather than a height. -/
 theorem headTerminals_kataba : Tree.headTerminals (parse kataba) = [.σ 1 true] := by decide
 
 /-! ### The Continuous Column Constraint blocks final promotion
@@ -142,15 +140,11 @@ foot layer empty beneath, the gapped column of (17) that the Continuous Column C
 of Section 3.4.2 rules out, so the mark falls on the rightmost foot head and the peak lands
 inward. -/
 
-/-- The attested grid of *kátaba* is a continuous staircase, with the primary column of three on
-the antepenult, the foot layer supporting it, and the stray final light flat. -/
 theorem toGrid_kataba :
     Grid.ofTree (parse kataba) =
       [[true, true, true], [true, false, false], [true, false, false]] := by
   decide
 
-/-- The grid of *kátaba* satisfies the Continuous Column Constraint, as every grid read off a
-tree does (`Prosody.Grid.ofTree_isContinuous`). -/
 theorem cairene_grid_continuous : Marks.IsContinuous (Grid.ofTree (parse kataba)) :=
   Grid.ofTree_isContinuous _
 
@@ -158,8 +152,6 @@ theorem cairene_grid_continuous : Marks.IsContinuous (Grid.ofTree (parse kataba)
 a word-layer mark on the final column and no foot-layer mark beneath. -/
 def promotedKataba : Marks := [[true, true, true], [true, false, false], [false, false, true]]
 
-/-- Promoting the final light violates the Continuous Column Constraint, since the final column
-of `promotedKataba` is marked on layer 2 with nothing on layer 1. -/
 theorem promotedKataba_not_continuous : ¬ Marks.IsContinuous promotedKataba := by decide
 
 /-- The peak retracts off the right edge. The final stray light of *kátaba* is strictly weaker

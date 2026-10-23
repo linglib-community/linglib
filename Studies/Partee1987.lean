@@ -60,25 +60,20 @@ noncomputable def lower (Q : NP E) : Option E := iota fun j ↦ Q = individual j
 
 /-! ### Figure 1: three inverse pairs -/
 
-/-- `lower` inverts the total injection `lift`, `lower(lift(j)) = j`. -/
 theorem lower_lift : lower (individual j) = some j :=
   (iota_eq_some_iff _).2 ⟨rfl, fun _ h ↦ (individual_injective h).symm⟩
 
-/-- Lowering a lifted entity through `BE` and `iota` returns it. -/
 theorem iota_BE_lift : iota (BE (individual j)) = some j := by
   rw [BE_individual]; exact iota_ident j
 
 /-! ### Figure 2: *the king* in three types (§3.2) -/
 
-/-- Whenever `iota` is defined, `THE(king') = lift(iota(king'))`. -/
 theorem the_eq_individual (h : iota P = some j) : the P = individual j :=
   funext fun S ↦ propext <| (the_sem_iff_iota P S).trans <| by simp [h, individual]
 
-/-- Whenever `iota` is undefined, `THE(king')` is the empty set of properties. -/
 theorem the_eq_bot (h : iota P = none) : the P = ⊥ :=
   funext fun S ↦ propext <| (the_sem_iff_iota P S).trans <| by simp [h]
 
-/-- `lower(THE(king')) = iota(king')`, whether or not `iota(king')` is defined. -/
 theorem lower_the : lower (the P) = iota P := by
   cases h : iota P with
   | some j => rw [the_eq_individual j P h, lower_lift]
@@ -86,11 +81,9 @@ theorem lower_the : lower (the P) = iota P := by
     rw [the_eq_bot P h, lower, iota_eq_none_iff]
     exact fun ⟨j, hj, _⟩ ↦ (congrFun hj ⊤).mpr trivial
 
-/-- `BE(THE(king'))` holds of `x` when `x` is the only king. -/
 theorem BE_the_apply (x : E) : BE (the P) x ↔ ∀ y, P y ↔ y = x :=
   ⟨fun ⟨_, hz, hzx⟩ ↦ hzx ▸ hz, fun h ↦ ⟨x, h, rfl⟩⟩
 
-/-- When `iota(king')` is defined, `BE(THE(king')) = ident(iota(king'))`: the diagram commutes. -/
 theorem BE_the_eq_ident (h : iota P = some j) : BE (the P) = ident j := by
   rw [the_eq_individual j P h, BE_individual]
 
@@ -107,7 +100,6 @@ theorem BE_natural (f : CompleteLatticeHom (NP E) (E → Prop))
     (hcomm : ∀ j : E, f (individual j) = ident j) : f = BE :=
   completeLatticeHom_ext fun j ↦ (hcomm j).trans (BE_individual j).symm
 
-/-- *Every man* contains a singleton only if there is just one man. -/
 theorem BE_every_apply (x : E) : BE (every P) x ↔ ∀ y, P y → y = x :=
   .rfl
 

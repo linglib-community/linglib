@@ -102,7 +102,6 @@ instance {T : Type*} [LinearOrder T] (v : Aspect.ViewpointType) (f : Reichenbach
     Decidable (frame v f) := by
   cases v <;> dsimp only [frame] <;> infer_instance
 
-/-- Every annotated sentence with an auxiliary satisfies the frame relation of its viewpoint. -/
 theorem rows_annotations :
     ∀ r ∈ Examples.all, ∀ m ∈ (r.feature? "aux" >>= auxiliary?).toList,
       ∀ ann ∈ (r.feature? "frame" >>= Annotation.parse?).toList, frame m.viewpoint ann.frame := by
@@ -115,8 +114,6 @@ def sudahAnnotations : List Annotation :=
     guard (m.viewpoint = .perfect)
     r.feature? "frame" >>= Annotation.parse?
 
-/-- R is free under *sudah*, at speech time in one annotation and before it in another, with the
-event before R in both. -/
 theorem sudah_reference_free :
     (∃ a ∈ sudahAnnotations, a.r = a.s) ∧ (∃ a ∈ sudahAnnotations, a.r < a.s) ∧
       ∀ a ∈ sudahAnnotations, a.e < a.r := by
@@ -139,7 +136,6 @@ theorem klein_puzzle_dissolved :
       ∃ f : ReichenbachFrame ℤ, frame sudah.viewpoint f ∧ f.referencePosition = .lt :=
   ⟨fun _ h ↦ h.2 ▸ by decide, ⟨.root 2 1 0, by decide⟩⟩
 
-/-- The English present perfect strictly strengthens *sudah*. -/
 theorem english_pp_strictly_stronger {T : Type*} [LinearOrder T] :
     (∀ f : ReichenbachFrame T, englishPresentPerfect f → frame sudah.viewpoint f) ∧
       ∃ f : ReichenbachFrame ℤ, frame sudah.viewpoint f ∧ ¬ englishPresentPerfect f :=
@@ -172,8 +168,6 @@ instance : DecidablePred ProjectsI := fun c ↦ inferInstanceAs (Decidable c.IsF
 def complementCoding (v : Verb) : Option Clause.ComplementType :=
   v.valency.frames.head?.bind fun fr => fr.codings.head?
 
-/-- A TAM auxiliary is acceptable in a dependent clause exactly when the clause its selector
-takes projects I; root clauses do, and a nominal predicate projects no verbal structure. -/
 theorem rows_finiteness :
     ∀ r ∈ Examples.all,
       (∀ v ∈ (r.feature? "matrix" >>= matrixVerb).toList, ∀ c ∈ (complementCoding v).toList,

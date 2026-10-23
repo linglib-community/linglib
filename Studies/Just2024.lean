@@ -76,10 +76,6 @@ def Deviates (r : ρ) (p : Prominence) : Prop := Indexed θ p ↔ ¬ Indexed θ 
 instance (r : ρ) (p : Prominence) : Decidable (Deviates θ dflt r p) :=
   inferInstanceAs (Decidable (_ ↔ _))
 
-/-- The mirror image yields the coding asymmetry, a deviating referent being coded longer than
-its role's default exactly when the default is unindexed. Differential P indexing, with a
-default below the threshold, codes the deviation by adding an index; differential A
-indexing, with a default above it, codes the deviation by dropping one. -/
 theorem deviation_coding {r : ρ} {p : Prominence} (h : Deviates θ dflt r p) :
     atLeast θ (dflt r) < atLeast θ p ↔ ¬ Indexed θ (dflt r) := by
   by_cases hd : θ ≤ dflt r
@@ -90,7 +86,6 @@ theorem deviation_coding {r : ρ} {p : Prominence} (h : Deviates θ dflt r p) :
     simp only [atLeast, ite_eq_right hd, ite_eq_left hp]
     exact ⟨fun _ ↦ hd, fun _ ↦ Nat.zero_lt_one⟩
 
-/-- The deviating referent of a role indexed by default is coded shorter. -/
 theorem deviation_shorter {r : ρ} {p : Prominence} (h : Deviates θ dflt r p)
     (hr : Indexed θ (dflt r)) : atLeast θ p < atLeast θ (dflt r) := by
   have hp : ¬ θ ≤ p := fun hp ↦ h.1 hp hr
@@ -104,8 +99,6 @@ end Principle
 and not for the lower-ranked P, the role-reference associations of [haspelmath-2021]. -/
 def transitiveDefault (r : ArgumentRole) : Bool := decide r.IsHigherRanked
 
-/-- A non-prominent A and a prominent P both deviate from their defaults; the A is coded
-shorter than a default A and the P longer than a default P. -/
 theorem transitive_mirror :
     atLeast true false < atLeast true (transitiveDefault .A) ∧
       atLeast true (transitiveDefault .P) < atLeast true true :=
@@ -157,13 +150,9 @@ def datum (r : Datum) : Option (ArgumentRole × Bool × Condition) := do
 /-- The examples of the survey for which the paper names the conditioning factor. -/
 def data : List (ArgumentRole × Bool × Condition) := Examples.all.filterMap datum
 
-/-- Across the survey the index is present exactly where the referent is prominent under the
-named condition, for A and for P. -/
 theorem indexed_iff_prominent : ∀ d ∈ data, d.2.1 = true ↔ d.2.2.Prominent := by
   decide +kernel
 
-/-- Both roles are attested in both directions, with an indexed and an unindexed A and an
-indexed and an unindexed P. -/
 theorem both_roles_both_ways :
     ∀ role ∈ [ArgumentRole.A, .P], ∀ b ∈ [true, false],
       ∃ d ∈ data, d.1 = role ∧ d.2.1 = b := by
@@ -197,14 +186,10 @@ def byRanking (rank : Person → Fin 3) (s : Scenario Person) : IndexedArgs :=
   | .upstream => .p
   | .balanced => .both
 
-/-- Whether an A of a given person is indexed depends on the person of its co-argument. -/
 theorem coargument_sensitive :
     ∃ s ∈ reyesano, ∃ s' ∈ reyesano, s.1.high = s'.1.high ∧ s.2 ≠ s'.2 := by
   decide +kernel
 
-/-- No ranking of the tripartition predicts the table by indexing the higher-ranked
-argument, since a first-person A outranks a third-person P but a third-person A ties with a
-first-person P. -/
 theorem no_ranking_fits :
     ¬ ∃ rank : Person → Fin 3, ∀ s ∈ reyesano, s.2 = byRanking rank s.1 := by
   decide +kernel

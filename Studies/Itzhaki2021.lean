@@ -158,13 +158,10 @@ structure Sorites {α : Type*} (P : α → Prop) (R : α → α → Prop) (a b :
 
 variable {α : Type*} {P : α → Prop} {R : α → α → Prop} {a b : α}
 
-/-- No chain of steps leads from `a` to `b`, since it would cross from `P` out of `P` in a single
-step. -/
 theorem Sorites.not_reflTransGen (h : Sorites P R a b) : ¬ ReflTransGen R a b := fun hab ↦
   let ⟨_, _, hcd, hc, hd, _⟩ := hab.exists_boundary (S := {x | P x}) h.base h.counter
   hd (h.tolerance hc hcd)
 
-/-- Whatever a chain of steps leads to from `a` has `P`. -/
 theorem Sorites.of_reflTransGen (h : Sorites P R a b) {y : α} (hy : ReflTransGen R a y) : P y :=
   by_contra fun hn ↦ (Sorites.mk h.base h.tolerance hn).not_reflTransGen hy
 
@@ -237,7 +234,6 @@ theorem natCast_lt_qualSize (hH : mk H < 0) (hpos : 0 < H) (hx : heap x) (n : �
   · exact hn.trans_le (le_add_of_nonneg_right (Nat.cast_nonneg _))
   · exact hn
 
-/-- The qualitative sizes of two heaps are finitely close. -/
 theorem finitelyClose_qualSize (hx : heap x) (hy : heap y) :
     FinitelyClose (qualSize heap known size H x) (qualSize heap known size H y) := by
   have hn (n : ℕ) : (n : ℝ*) ∈ finites := mem_finites.2 (mk_natCast_nonneg n)
@@ -419,7 +415,6 @@ instance instIsTransInfinitelyLess : IsTrans ℝ* InfinitelyLess where
       ⟨sub_nonneg.2 hab.1.le, sub_le_sub_right hbc.1.le a⟩
     exact FinitelyClose.symm hba
 
-/-- What is finitely close to something infinitely less than `c` is infinitely less than `c`. -/
 theorem InfinitelyLess.of_finitelyClose {a b c : ℝ*} (hab : FinitelyClose a b)
     (hbc : InfinitelyLess b c) : InfinitelyLess a c := by
   refine ⟨lt_of_not_ge fun hca ↦ hbc.2 ?_, fun hac ↦ hbc.2 (hab.symm.trans hac)⟩
@@ -432,8 +427,6 @@ theorem leUpToFinite_iff_not_infinitelyLess {a b : ℝ*} :
   unfold LeUpToFinite InfinitelyLess
   grind [FinitelyClose.refl]
 
-/-- One grain is negligible for a standard of size (80.II). What is at most the standard up to a
-finite difference stays so after adding a grain. -/
 theorem LeUpToFinite.add_one {a S : ℝ*} (h : LeUpToFinite a S) : LeUpToFinite (a + 1) S := by
   have h1 : (1 : ℝ*) ∈ finites := mem_finites.2 (by simp)
   rcases h with h | ⟨hlt, hn⟩

@@ -97,7 +97,6 @@ def origin : Dimension → Origin
 /-- Covariance is agreement when it is asymmetric, the value originating on the controller. -/
 abbrev IsAgreementFeature (d : Dimension) : Prop := origin d = .controller
 
-/-- The three indisputable agreement features, read off the classification. -/
 theorem isAgreementFeature_iff (d : Dimension) :
     IsAgreementFeature d ↔ d = .gender ∨ d = .number ∨ d = .person := by
   cases d <;> decide
@@ -112,7 +111,6 @@ open _root_.Russian.Agreement
 /-- The attributive adjective is inflected for case, (5). -/
 theorem case_mem_inflection_longAdjective : .case ∈ longAdjective.inflection := by decide
 
-/-- Case is imposed by government, covariance without asymmetry. -/
 theorem not_isAgreementFeature_case : ¬ IsAgreementFeature .case := by decide
 
 /-- The attributive adjective agrees in number and gender, (1)–(5). -/
@@ -130,7 +128,6 @@ open _root_.CoastalMarind
 /-- The infixed vowel of *ak-k* 'light' distinguishes all four genders, (6)–(9). -/
 theorem faithful_light : Function.Injective (light · (numberSystem.value .singular)) := by decide
 
-/-- The demonstrative does not, since genders I and III share *e-pe*. -/
 theorem not_faithful_demonstrative :
     ¬ Function.Injective (demonstrative · (numberSystem.value .singular)) := by
   decide
@@ -150,14 +147,11 @@ theorem convergent :
       (longEnding · .inanimate (numberSystem.value .plural) .nom) := by
   decide
 
-/-- Greenberg's Universal 37 as its corollary. -/
 theorem card_longEnding_pl_le :
     Nat.card (Set.range (longEnding · .inanimate (numberSystem.value .plural) .nom)) ≤
       Nat.card (Set.range (longEnding · .inanimate (numberSystem.value .singular) .nom)) :=
   convergent.1.card_range_le
 
-/-- Gender agreement on the verb is confined to the past tense, which is inflected for gender
-where the nonpast of either conjugation is not. -/
 theorem gender_mem_inflection_pastVerb :
     .gender ∈ pastVerb.inflection ∧ ∀ k, .gender ∉ (nonpastVerb k).inflection := by decide
 
@@ -171,24 +165,19 @@ open _root_.Somali.Gender
 masculine singular's. -/
 theorem not_polar_verbPrefix : ¬ Gender.Polar Value.verbPrefix := by decide
 
-/-- The plural prefix of either gender is the masculine singular's. -/
 theorem verbPrefix_plural (g : Value) :
     g.verbPrefix (numberSystem.value .plural) =
       Value.masc.verbPrefix (numberSystem.value .singular) := by
   cases g <;> rfl
 
-/-- Not every noun is in the polarity system, since *nin* 'man' keeps *-kii* in the plural. -/
 theorem article_nin :
     nin.article (numberSystem.value .plural) = nin.article (numberSystem.value .singular) := rfl
 
-/-- In the typology of gender the article is a parallel system and the verb a convergent
-one. -/
 theorem parallel_article :
     Gender.Parallel (Value.article · (numberSystem.value .singular))
       (Value.article · (numberSystem.value .plural)) :=
   polar_article.parallel (numberSystem.value .singular) (numberSystem.value .plural)
 
-/-- The verbal prefix converges on one plural form. -/
 theorem convergent_verbPrefix :
     Gender.Convergent (Value.verbPrefix · (numberSystem.value .singular))
       (Value.verbPrefix · (numberSystem.value .plural)) := by
@@ -216,7 +205,6 @@ def features : Target → Finset Dimension
   | .finiteVerb => {.number, .person}
   | .participle => {.number, .gender}
 
-/-- Agreement features cannot be stated at the level of the language. -/
 theorem not_uniform : ¬ ∃ D, ∀ t, features t = D :=
   fun ⟨_, h⟩ ↦ absurd ((h .finiteVerb).trans (h .participle).symm) (by decide)
 
@@ -226,8 +214,6 @@ namespace Russian
 
 open _root_.Russian.Agreement
 
-/-- Agreement varies within a word class too. Russian verbs agree in person and number, except in
-the past tense, which agrees in gender and number. -/
 theorem inflection_nonpastVerb_ne_pastVerb (k : Conjugation) :
     (nonpastVerb k).inflection ≠ pastVerb.inflection := by
   cases k <;> decide
@@ -244,7 +230,6 @@ theorem facilis_factorsThrough_acer :
     Function.FactorsThrough facilis.nomSg acer.nomSg ∧
       ¬ Function.FactorsThrough acer.nomSg facilis.nomSg := by decide
 
-/-- And *felix* distinguishes nothing of what *facilis* does. -/
 theorem felix_factorsThrough_facilis :
     Function.FactorsThrough felix.nomSg facilis.nomSg ∧
       ¬ Function.FactorsThrough facilis.nomSg felix.nomSg := by decide
@@ -280,7 +265,6 @@ theorem resolve_of_shared {cs : List Chichewa.Gender.Noun} (hne : cs ≠ []) {f 
   · rw [resolve_cons_of_not_applies fun h' ↦ absurd ((h' c hc).symm.trans (h c hc)) (by decide)]
     exact resolve_cons_of_applies h
 
-/-- Were the forms not syncretic, the regular rule would apply. -/
 theorem resolve_of_ne {cs : List Chichewa.Gender.Noun} (ha : ∃ c ∈ cs, c.gender.plSubjPrefix ≠ .a)
     (hz : ∃ c ∈ cs, c.gender.plSubjPrefix ≠ .zi) : resolve rules cs = resolve semanticRules cs := by
   obtain ⟨a, ha, ha'⟩ := ha
@@ -289,7 +273,6 @@ theorem resolve_of_ne {cs : List Chichewa.Gender.Noun} (ha : ∃ c ∈ cs, c.gen
   have h₂ : ¬ ∀ c ∈ cs, c.gender.plSubjPrefix = .zi := fun h ↦ hz' (h z hz)
   simp [rules, sharedFormRules, h₁, h₂]
 
-/-- The regular rule on its own, gender 1/2 for humans and 7/8 for the rest. -/
 theorem resolve_semanticRules (cs : List Chichewa.Gender.Noun) :
     resolve semanticRules cs = some (if ∀ c ∈ cs, c.animacy = .human then .a else .zi) := by
   unfold semanticRules
@@ -297,8 +280,6 @@ theorem resolve_semanticRules (cs : List Chichewa.Gender.Noun) :
   · exact resolve_cons_of_applies hh
   · simp [hh]
 
-/-- Corbett's *Gender* adds the cats and dogs, and the children and oranges, humans and not,
-both by the shared form. -/
 theorem resolve_mphaka_galu_ana_lalanje :
     resolve rules [mphaka, galu] = some .a ∧ resolve rules [ana, lalanje] = some .a := by decide
 

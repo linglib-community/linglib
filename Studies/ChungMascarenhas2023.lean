@@ -89,7 +89,6 @@ noncomputable def countTrue (R : ι → Set W) : W → ℝ≥0∞ :=
   ∑ i, (R i).indicator 1
 
 omit [MeasurableSpace W] [DiscreteMeasurableSpace W] in
-/-- `μ_EVAL` at a world is the cardinality of the set of relevant propositions true there. -/
 @[simp] theorem countTrue_apply (R : ι → Set W) (a : W) [∀ i, Decidable (a ∈ R i)] :
     countTrue R a = (Finset.univ.filter (a ∈ R ·)).card := by
   simp [countTrue, Set.indicator_apply, Finset.sum_boole]
@@ -107,7 +106,6 @@ theorem expectedValue_eq_sum_cond (p : Measure W) (R : ι → Set W) (φ : Set W
   rw [lintegral_finsetSum _ fun i _ ↦ Measurable.of_discrete]
   exact Finset.sum_congr rfl fun i _ ↦ lintegral_indicator_one MeasurableSet.of_discrete
 
-/-- Expected value never exceeds the number of relevant propositions. -/
 theorem expectedValue_le_card (p : Measure W) (R : ι → Set W) (φ : Set W) :
     expectedValue p R φ ≤ Fintype.card ι := by
   rw [expectedValue_eq_sum_cond]
@@ -144,7 +142,6 @@ theorem toReal_expectedValue (p : Measure W) (R : ι → Set W) (φ : Set W) :
       (((R i).indicator_apply_le' (fun _ ↦ le_rfl) fun _ ↦ zero_le_one).trans_lt
         ENNReal.one_lt_top)
 
-/-- A conditional probability of the uniform prior is a counting ratio. -/
 theorem uniformOn_univ_cond_apply [Fintype W] (s t : Set W) [DecidablePred (· ∈ t)]
     [DecidablePred (· ∈ (t ∩ s))] :
     (uniformOn (Set.univ : Set W))[s | t]
@@ -155,7 +152,6 @@ theorem uniformOn_univ_cond_apply [Fintype W] (s t : Set W) [DecidablePred (· �
   rw [MeasureTheory.uniformOn_cond Set.finite_univ MeasurableSet.of_discrete, Set.univ_inter,
     uniformOn, cond_apply MeasurableSet.of_discrete, div_eq_mul_inv, mul_comm, hc, hc]
 
-/-- Under a uniform prior, expected value is a sum of counting ratios. -/
 theorem expectedValue_uniformOn_univ [Fintype W] (R : ι → Set W) (φ : Set W)
     [DecidablePred (· ∈ φ)] [∀ i, DecidablePred (· ∈ (φ ∩ R i))] :
     expectedValue (uniformOn (Set.univ : Set W)) R φ
@@ -164,7 +160,6 @@ theorem expectedValue_uniformOn_univ [Fintype W] (R : ι → Set W) (φ : Set W)
   simp only [expectedValue_eq_sum_cond, uniformOn_univ_cond_apply, div_eq_mul_inv,
     Finset.sum_mul, Nat.cast_sum]
 
-/-- A conditional probability of the uniform prior equals a printed decimal, by counting. -/
 theorem uniformOn_univ_cond_eq_ofReal [Fintype W] {s t : Set W} [DecidablePred (· ∈ t)]
     [DecidablePred (· ∈ (t ∩ s))] {m n : ℕ} {q : ℝ}
     (hs : (Finset.univ.filter (· ∈ t ∩ s)).card = m) (ht : (Finset.univ.filter (· ∈ t)).card = n)
@@ -284,13 +279,10 @@ instance : Inhabited World := ⟨(.blockNeither, .A)⟩
 instance : IsProbabilityMeasure prior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn Set.univ))
 
-/-- Any proposition exemplified at some world has positive uniform prior. -/
 theorem prior_ne_zero {A : Set World} (h : A.Nonempty) : prior A ≠ 0 := by
   rw [prior, Ne, uniformOn_eq_zero_iff Set.finite_univ, Set.univ_inter]
   exact h.ne_empty
 
-/-- `μ_{R_D}` counts miners saved, since each world abides by exactly `saved w` of the ten
-ideals. -/
 theorem countTrue_idealsRD (w : World) : countTrue idealsRD w = saved w := by
   rw [countTrue_apply, Nat.cast_inj]
   revert w; decide
@@ -339,7 +331,6 @@ theorem expectedValue_blockNeither_of_ne (p : Measure World) [IsFiniteMeasure p]
   rw [cond_apply MeasurableSet.of_discrete, hlast]
   simp [h1]
 
-/-- Conditionalized on the miners being in A, blocking neither still has expected utility 9. -/
 theorem expectedValue_inA_blockNeither_of_ne (p : Measure World) [IsFiniteMeasure p]
     (h : p (inShaft .A ∩ act .blockNeither) ≠ 0) :
     expectedValue p idealsRD (inShaft .A ∩ act .blockNeither) = 9 := by
@@ -362,7 +353,6 @@ theorem expectedValue_inA_blockA_of_ne (p : Measure World) [IsFiniteMeasure p]
   (expectedValue_eq_card_of_subset p idealsRD _ h fun k w hw ↦ by revert w k; decide).trans
     (by simp)
 
-/-- Conditionalized on the miners being in A, blocking B has expected utility 0. -/
 theorem expectedValue_inA_blockB (p : Measure World) [IsFiniteMeasure p] :
     expectedValue p idealsRD (inShaft .A ∩ act .blockB) = 0 := by
   rw [expectedValue_eq_sum_cond]
@@ -432,7 +422,6 @@ theorem must_thresholds_incompatible (hbn : p (act .blockNeither) ≠ 0)
 /-! Under the uniform prior the paper's assumptions hold, and footnote 17's indifference
 calculation goes through. -/
 
-/-- The uniform prior makes the locations equiprobable given any action. -/
 theorem prior_cond_inShaft (s : Shaft) (a : Action) :
     prior[inShaft s | act a] = 1 / 2 := by
   rw [prior, uniformOn_univ_cond_apply]

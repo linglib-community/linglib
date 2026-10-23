@@ -70,13 +70,10 @@ theorem maxViolAt_deletion (P : ℕ → Prop) [DecidablePred P] :
   rw [deletion_isSymmetric.maxViolAt_eq .rhs .lhs, depViolAt_of_graph fun _ _ ↦ mem_deletion_edge]
   rfl
 
-/-- A deletion does not violate DEP. -/
 theorem depViol_deletion : (deletion s t f).depViol .lhs .rhs = 0 := by
   rw [← deletion_isSymmetric.maxViol_eq]
   exact maxViol_eq_zero_of_graph fun _ _ ↦ mem_deletion_edge
 
-/-- A deletion does not violate IDENT exactly when each segment of `t` is the segment of `s` it
-comes from. -/
 theorem identViol_deletion_eq_zero_iff [DecidableEq α] :
     (deletion s t f).identViol .lhs .rhs = 0 ↔ ∀ j, t[j] = s[f j] := by
   rw [← deletion_isSymmetric.identViol_eq,
@@ -156,11 +153,9 @@ theorem depViolAt_insertIdx (P : ℕ → Prop) [DecidablePred P] :
   rw [insertIdx, depViolAt_swap, BinaryRole.swap_lhs, BinaryRole.swap_rhs,
     ← deletion_isSymmetric.maxViolAt_eq, maxViolAt_deletion_succAbove]
 
-/-- An insertion violates DEP once. -/
 theorem depViol_insertIdx : (insertIdx s i a).depViol .lhs .rhs = 1 := by
   rw [← depViolAt_true, depViolAt_insertIdx, ite_eq_left trivial]
 
-/-- An insertion does not violate MAX. -/
 theorem maxViol_insertIdx : (insertIdx s i a).maxViol .lhs .rhs = 0 := by
   rw [insertIdx, maxViol_swap, BinaryRole.swap_lhs, BinaryRole.swap_rhs,
     deletion_isSymmetric.maxViol_eq, depViol_deletion]

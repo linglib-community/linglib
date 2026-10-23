@@ -88,8 +88,6 @@ def tamEntries : List TAMEntry :=
   [perfectiveSg, perfectivePl, perfectiveDistal, imperative,
    future, continuous, habitual, subjunctive]
 
-/-- The four imperfective non-imperatives share the *-é* suffix and
-are distinguished by marker alone. -/
 theorem imperfectives_share_suffix :
     ∀ e ∈ tamEntries,
       (e.tam = .future ∨ e.tam = .continuous ∨ e.tam = .habitual ∨

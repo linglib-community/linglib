@@ -23,7 +23,6 @@ countable linear order, which embeds in `ℚ` by Cantor's theorem
 
 namespace Order
 
-/-- A countable strict weak order is the pullback of `<` on `ℚ` along some map. -/
 theorem exists_rat_rel_iff_lt {β : Type*} [Countable β] (r : β → β → Prop)
     [IsStrictWeakOrder β r] : ∃ f : β → ℚ, ∀ x y, r x y ↔ f x < f y := by
   classical

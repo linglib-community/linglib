@@ -115,18 +115,15 @@ def ex11a : VoiceMismatchDatum :=
     antecedentVoice := agentive, targetVoice := passive
     ellipsisType := stripping, grammatical := false }
 
-/-- The VP-ellipsis rows are as `Ellipsis.Tolerates` predicts. -/
 theorem vpe_voice_predicted :
     (ex1a.grammatical = true ↔ vpEllipsis.Tolerates .voice) ∧
     (ex2a.grammatical = true ↔ vpEllipsis.Tolerates .voice) := by decide
 
-/-- The sluicing rows in three languages are as `Ellipsis.Tolerates` predicts. -/
 theorem sluicing_voice_predicted :
     (ex5.grammatical = true ↔ sluicing.Tolerates .voice) ∧
     (ex6a.grammatical = true ↔ sluicing.Tolerates .voice) ∧
     (ex25a.grammatical = true ↔ sluicing.Tolerates .voice) := by decide
 
-/-- All high ellipsis types block voice mismatches. -/
 theorem high_ellipsis_voice_predicted :
     (ex9a.grammatical = true ↔ fragmentAnswers.Tolerates .voice) ∧
     (ex10a.grammatical = true ↔ gapping.Tolerates .voice) ∧
@@ -192,8 +189,6 @@ def ex44 : ArgStructureDatum :=
     alternationType := .prepositional
     ellipsisType := pseudogapping, grammatical := false }
 
-/-- Each row's grammaticality is as `Ellipsis.Tolerates` predicts for its alternation and
-    ellipsis. -/
 theorem argStructure_data_predicted :
     (ex30a.grammatical = true ↔ ex30a.ellipsisType.Tolerates ex30a.alternationType) ∧
     (ex31a.grammatical = true ↔ ex31a.ellipsisType.Tolerates ex31a.alternationType) ∧
@@ -204,11 +199,6 @@ theorem argStructure_data_predicted :
     (ex44.grammatical = true ↔ ex44.ellipsisType.Tolerates ex44.alternationType) := by
   decide
 
-/-- All v-level alternations are blocked under high-[E] ellipsis types
-    (sluicing, VPE, fragment answers, gapping, pseudogapping) — because
-    v is inside the deletion domain when [E] is at Voice or above.
-    Under vVPE ([E] on v), these alternations ARE tolerated
-    ([kalyakin-2026]). -/
 theorem v_alternations_blocked_high_ellipsis :
     ¬ sluicing.Tolerates .dative ∧
     ¬ sluicing.Tolerates .prepositional ∧
@@ -221,8 +211,6 @@ theorem v_alternations_blocked_high_ellipsis :
     ¬ pseudogapping.Tolerates .prepositional := by
   decide
 
-/-- The uneven distribution is that voice mismatches are tolerated in VP-ellipsis, with [E] low,
-    but blocked in all clausal ellipses, with [E] high. -/
 theorem uneven_distribution :
     vpEllipsis.Tolerates .voice ∧
     ¬ sluicing.Tolerates .voice ∧
@@ -232,8 +220,6 @@ theorem uneven_distribution :
     ¬ pseudogapping.Tolerates .voice := by
   decide
 
-/-- Voice is the discriminating dimension, the only mismatch that distinguishes VP-ellipsis from
-    sluicing; all v-level and V-level dimensions are blocked under both. -/
 theorem voice_uniquely_discriminates :
     -- voice DISCRIMINATES: VPE tolerates it, sluicing does not
     (vpEllipsis.Tolerates .voice ∧ ¬ sluicing.Tolerates .voice) ∧
@@ -246,15 +232,9 @@ theorem voice_uniquely_discriminates :
       sluicing.Tolerates .lexical) := by
   decide
 
-/-- Merchant's negative prediction. If voice mismatches were tolerated in sluicing, with [E]
-high, Sailor's generalization would force them to be tolerated in VP-ellipsis, with [E] low, so
-no language has the reverse of the attested pattern. -/
 theorem no_inverse_language : sluicing.Tolerates .voice → vpEllipsis.Tolerates .voice :=
   fun h ↦ h.of_mem_below (by decide)
 
-/-- Voice's discriminating power follows from its spine position: it sits between the VP-ellipsis
-boundary, Voice, and the sluicing boundary, C, while every other mismatch dimension sits at v or
-below. -/
 theorem voice_between_boundaries :
     Mismatch.voice.head = .Voice ∧
       ∀ m : Mismatch, m ≠ .voice → m.head ∈ clausalSpine.below .Voice :=

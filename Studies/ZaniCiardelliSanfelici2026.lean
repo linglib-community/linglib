@@ -76,7 +76,6 @@ def MoreRealistic : Prop :=
 
 variable {ord A B w} [Finite W]
 
-/-- On finitely many worlds every world of a set is at least as far as some closest world. -/
 private theorem exists_mem_minimals_le {S : Set W} {x : W} (hx : x ∈ S) :
     ∃ b ∈ (ord w).minimals S, (ord w).le b x :=
   Preorder.exists_le_mem_minimals (let := ord w; wellFounded_lt) hx
@@ -140,15 +139,12 @@ section Finite
 
 variable [Fintype W]
 
-/-- When neither disjunct is more realistic, Lewis's DAC is equivalent to SDA. -/
 theorem would_iff_distributive_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
     (hAB : ¬ MoreRealistic ord ↑A ↑B w) (hBA : ¬ MoreRealistic ord ↑B ↑A w) :
     w ∈ disjunctiveImp ord {A, B} C ↔ w ∈ distributiveImp ord {A, B} C := by
   rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_equallyRealistic htot hAB hBA,
     Set.union_subset_iff, mem_distributiveImp_pair, mem_closestImp, mem_closestImp]
 
-/-- When `A` is more realistic than `B`, Lewis's DAC is equivalent to the simplification with
-the more realistic disjunct, which is the asymmetric reading. -/
 theorem would_iff_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
     (h : MoreRealistic ord ↑A ↑B w) :
     w ∈ disjunctiveImp ord {A, B} C ↔ w ∈ closestImp ord ↑A C := by
@@ -156,12 +152,10 @@ theorem would_iff_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
 
 end Finite
 
-/-- SDA entails Lewis's DAC, and so the asymmetric reading. -/
 theorem would_of_distributive (h : w ∈ distributiveImp ord {A, B} C) :
     w ∈ disjunctiveImp ord {A, B} C :=
   mem_disjunctiveImp_pair_of_mem_distributiveImp h
 
-/-- Lewis's DAC, and so the asymmetric reading, entails DCR under a total ordering. -/
 theorem dcr_of_would (htot : ∀ w, Std.Total (ord w).le) (h : w ∈ disjunctiveImp ord {A, B} C) :
     DCR ord A B C w := by
   rw [disjunctiveImp_pair] at h
@@ -169,9 +163,6 @@ theorem dcr_of_would (htot : ∀ w, Std.Total (ord w).le) (h : w ∈ disjunctive
 
 /-! ### Homogeneity and exhaustification (§2, §3) -/
 
-/-- On the homogeneity accounts, DCR is the existential resolution of the homogeneous
-quantification over the disjuncts, on which the DAC is not false. SDA is its universal
-resolution, `homogeneousImp_eq_one_iff`. -/
 theorem dcr_iff_homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le]
     [DecidablePred (· ∈ C)] :
     DCR ord A B C w ↔ homogeneousImp ord {A, B} C w ≠ -1 := by
@@ -179,13 +170,10 @@ theorem dcr_iff_homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le
     Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, not_and_or, not_not]
 
 open BarLevFox2020 in
-/-- The literal meaning of the DAC on the exhaustification account is Lewis's. -/
 theorem literal_eq_would : closestImp ord (↑A ∪ ↑B) C = disjunctiveImp ord {A, B} C :=
   (disjunctiveImp_pair A B).symm
 
 open BarLevFox2020 in
-/-- Exhaustification with innocent inclusion strengthens the literal DAC to SDA, under the
-model conditions of [bar-lev-fox-2020]'s derivation. -/
 theorem distributive_of_exh
     (htot : ∀ w, Std.Total (ord w).le)
     (h₁ : ∃ v ∈ closestImp ord (↑A ∪ ↑B) C,
@@ -204,9 +192,6 @@ end Pair
 
 variable [Fintype W]
 
-/-- Accepting *if not H, S* reveals that `S` is more realistic than any `T` disjoint from `S`
-within the `H`-free worlds, since every closest `H`-free world is an `S`-world, and a closest
-`T`-world as close as a closest `S`-world would be one of them. -/
 theorem moreRealistic_of_closeness (htot : ∀ w, Std.Total (ord w).le) {H S T : Finset W}
     (hclose : w ∈ closestImp ord (↑H)ᶜ ↑S) (hS : S.Nonempty)
     (hT : ∀ t ∈ T, t ∉ H) (hST : ∀ t ∈ T, t ∉ S) : MoreRealistic ord ↑S ↑T w := by
@@ -295,14 +280,11 @@ theorem table3_dcr : items.map (fun it ↦ decide it.dcr) = [true, true, true, t
 theorem table3_ar : items.map (fun it ↦ decide it.ar) = [true, true, false, false] := by
   decide
 
-/-- In the equally realistic condition, Lewis's verdicts coincide with SDA on every item. -/
 theorem table3_equal :
     items.map (fun it ↦ decide (.hare ∈ disjunctiveImp equal {{it.first}, {it.second}}
       {v | v.prize = it.prize})) = [false, false, false, false] := by
   decide
 
-/-- The closeness evaluation item *if the hare doesn't win, the squirrel will win* holds in
-the non-equally realistic condition and fails in the equally realistic one. -/
 theorem closeness_item :
     .hare ∈ closestImp nonEqual {.hare}ᶜ {.squirrel} ∧
       .hare ∉ closestImp equal {.hare}ᶜ {.squirrel} := by

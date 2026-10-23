@@ -82,8 +82,6 @@ def setBExponent : ExponentTable :=
    (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "o'on"]),
    (.personNumber .second .plural, [.suff "e'ex"]), (.personNumber .third .plural, [.suff "o'ob'"])]
 
-/-- The third person singular absolutive is null, as across the Mayan branches Kaufman and
-Norman compare. -/
 theorem p3sg_abs_null : setBExponent.realize (.personNumber .third .singular) = some [] := rfl
 
 end Yukatek

@@ -52,7 +52,6 @@ def support : Finset α := P.parts.toFinset.biUnion id
 
 @[simp] theorem mem_support : x ∈ P.support ↔ ∃ A ∈ P.parts, x ∈ A := by simp [support]
 
-/-- Of two distinct parts, one lies below the other. -/
 theorem lt_or_gt_of_ne (hA : A ∈ P.parts) (hB : B ∈ P.parts) (hAB : A ≠ B) :
     (∀ a ∈ A, ∀ b ∈ B, a < b) ∨ ∀ a ∈ A, ∀ b ∈ B, b < a := by
   obtain ⟨i, hi, rfl⟩ := List.getElem_of_mem hA

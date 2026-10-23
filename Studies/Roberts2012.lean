@@ -88,7 +88,6 @@ abbrev World := Finset (Person × Food)
 world. -/
 abbrev ate (u : Person) (f : Food) : Set World := Set.Ici {(u, f)}
 
-/-- Distinct eating events are incomparable. -/
 theorem ate_subset_ate_iff {u u' : Person} {f f' : Food} :
     ate u f ⊆ ate u' f' ↔ u = u' ∧ f = f' := by
   simp [ate, Prod.ext_iff, eq_comm]
@@ -167,15 +166,12 @@ theorem alt_polar_subset_q1 (u : Person) (f : Food) :
 
 /-! ### The complete-answer partition (4) -/
 
-/-- Deciding two propositions is lying in one of the four Boolean corners. -/
 theorem subset_corners_iff {σ A B : Set World} :
     (σ ⊆ A ∨ σ ⊆ Aᶜ) ∧ (σ ⊆ B ∨ σ ⊆ Bᶜ) ↔
       σ ⊆ A ∩ B ∨ σ ⊆ A ∩ Bᶜ ∨ σ ⊆ Aᶜ ∩ B ∨ σ ⊆ Aᶜ ∩ Bᶜ := by
   simp only [Set.subset_inter_iff]
   tauto
 
-/-- A state completely answers "What did `u` eat?" iff it lies within one cell of the
-partition the alternatives induce. -/
 theorem completelyAnsweredBy_wh_iff {σ : Set World} {u : Person} :
     CompletelyAnsweredBy (wh u) σ ↔
       σ ⊆ ate u .bagels ∩ ate u .tofu ∨
@@ -201,30 +197,23 @@ A question entails another when answering it yields a complete answer to the oth
 inclusion of complete-answer sets, which the paper tabulates for the seven questions. The
 lattice order of the substrate reverses it (`wh_le_q1`, `not_q1_le_wh`). -/
 
-/-- "Who ate what?" entails "What did `u` eat?". -/
 theorem q1_entails_wh (u : Person) :
     completeAnswers q_1 ⊆ completeAnswers (wh u) :=
   completeAnswers_anti (alt_wh_subset_q1 u)
 
-/-- "What did `u` eat?" entails "Did `u` eat `f`?". -/
 theorem wh_entails_polar (u : Person) (f : Food) :
     completeAnswers (wh u) ⊆ completeAnswers (polar u f) :=
   completeAnswers_anti (alt_polar_subset_wh u f)
 
-/-- "Who ate what?" entails every polar subquestion. -/
 theorem q1_entails_polar (u : Person) (f : Food) :
     completeAnswers q_1 ⊆ completeAnswers (polar u f) :=
   completeAnswers_anti (alt_polar_subset_q1 u f)
 
-/-- Subquestions do not entail their superquestions: "Hilary ate both" completely answers
-"What did Hilary eat?" but decides nothing about Robin. -/
 theorem wh_not_entails_q1 :
     ¬ completeAnswers (wh .hilary) ⊆ completeAnswers q_1 := λ h => by
   have := h (completelyAnsweredBy_wh_iff.mpr (Or.inl subset_rfl)) _ (mem_alt_q1 .robin .bagels)
   rcases this with h' | h' <;> exact absurd h' (by decide)
 
-/-- "Did Hilary eat the bagels?" does not entail "What did Hilary eat?": the positive answer
-leaves the tofu alternative open. -/
 theorem polar_not_entails_wh :
     ¬ completeAnswers (polar .hilary .bagels) ⊆ completeAnswers (wh .hilary) := λ h => by
   have hma : CompletelyAnsweredBy (polar .hilary .bagels) (hilaryBagels : Set World) := λ p hp => by
@@ -234,14 +223,9 @@ theorem polar_not_entails_wh :
   have := h hma _ (mem_alt_wh .hilary .tofu)
   rcases this with h' | h' <;> exact absurd h' (by decide)
 
-/-- Read as the lattice order, entailment runs the other way, as the paper warns it would
-without complete answers: every state establishing something `u` ate establishes something
-someone ate. -/
 theorem wh_le_q1 (u : Person) : wh u ≤ q_1 :=
   (isNormal_of_finite (Set.toFinite _)).le_of_alt_subset (alt_wh_subset_q1 u)
 
-/-- The converse fails: that Robin ate the bagels settles "Who ate what?" but nothing Hilary
-ate. -/
 theorem not_q1_le_wh : ¬ q_1 ≤ wh .hilary := fun h ↦ by
   obtain ⟨_, ⟨f, rfl⟩, hf⟩ : ∃ a ∈ Set.range (ate .hilary), robinBagels ⊆ a := by
     rw [← alt_wh, ← mem_iff_exists_alt_subset (isNormal_of_finite (Set.toFinite _))]
@@ -254,20 +238,15 @@ The complete answers to a join are the meet of the complete answers,
 `completeAnswers_iSup_ofSet`, so jointly answering the polar subquestions is answering the
 wh-question and jointly answering the two wh-questions is answering the big question. -/
 
-/-- The complete answers to "What did `u` eat?" are the joint complete answers to its
-polar subquestions. -/
 theorem completeAnswers_wh (u : Person) :
     completeAnswers (wh u) = ⋂ f, completeAnswers (polar u f) :=
   completeAnswers_iSup_ofSet (λ f f' h => ate_antichain (u, f) (u, f') h)
 
-/-- Jointly answering the polar subquestions is exactly answering "What did `u` eat?". -/
 theorem completeAnswers_polar_inter (u : Person) :
     completeAnswers (polar u .bagels) ∩ completeAnswers (polar u .tofu)
       = completeAnswers (wh u) := by
   rw [completeAnswers_wh, iInter_food_eq]
 
-/-- Jointly answering "What did Hilary eat?" and "What did Robin eat?" is exactly answering
-"Who ate what?". -/
 theorem completeAnswers_wh_inter :
     completeAnswers (wh .hilary) ∩ completeAnswers (wh .robin) = completeAnswers q_1 := by
   rw [completeAnswers_iSup_ofSet ate_antichain]
@@ -322,9 +301,6 @@ def table : ℕ → List Qn
   | 10 => [.bii, .b, .one]
   | _ => []
 
-/-- The stacks computed from the moves are the paper's: a question is retired exactly when
-the answers so far entail its complete answer, so "What did Hilary eat?" leaves the stack
-once both its polar subquestions are answered. -/
 theorem qud_D₀ : ∀ k < 12, qud (D₀.take k) = table k := by decide
 
 theorem wellFormed_wh (C : Set World) (u : Person) :
@@ -342,8 +318,6 @@ theorem wellFormed_polar (C : Set World) (u : Person) (f : Food) :
             (isSubquestionOf_of_alt_subset C (alt_polar_subset_q1 u f))⟩,
       wellFormed_wh C u⟩
 
-/-- Every stack of the discourse is well formed in its context set (10g.iii): each question
-is a contextual subquestion of every question below it. -/
 theorem qud_wellFormed (k : ℕ) (hk : k < 12) :
     ((qud (D₀.take k)).map Qn.den).Pairwise
       (IsSubquestionOf (contextSet (D₀.take k) : Set World)) := by
@@ -364,8 +338,6 @@ def subquestions (ms : List Move) (q : Qn) : List Qn :=
     | some (Move.ask q') => if (qud (ms.take k)).head? = some q then some q' else none
     | _ => none
 
-/-- The discourse answers the big question by answering the two wh-questions and each of
-those by answering its two polar subquestions. -/
 theorem subquestions_D₀ :
     subquestions D₀ .one = [.a, .b] ∧ subquestions D₀ .a = [.ai, .aii] ∧
       subquestions D₀ .b = [.bi, .bii] ∧
@@ -383,15 +355,10 @@ theorem strat_eq :
         .node (wh .robin) [.leaf (polar .robin .bagels), .leaf (polar .robin .tofu)]] := by
   simp [strat, subquestions_D₀.1, subquestions_D₀.2.1, subquestions_D₀.2.2.1, Qn.den]
 
-/-- A wh-question's substrategy is complete: jointly resolving its polar subquestions
-resolves it, as already resolving one does, since it is one of the wh-question's
-disjuncts. -/
 theorem wh_complete (u : Person) :
     Strategy.IsComplete (.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)]) :=
   .node_pair (inf_le_left.trans (le_iSup (polar u) .bagels)) (.leaf _) (.leaf _)
 
-/-- The strategy is complete: joint resolutions of the wh-questions resolve the big
-question, whose disjuncts include those of each. -/
 theorem strat_complete : strat.IsComplete := by
   rw [strat_eq]
   exact .node_pair
@@ -404,8 +371,6 @@ theorem values_whTree (u : Person) :
       = [wh u, polar u .bagels, polar u .tofu] := by
   simp [RoseTree.leaf]
 
-/-- A wh-question's substrategy is well formed in every context: each polar question is a
-subquestion of the wh-question by alternative inclusion. -/
 theorem wh_wellFormed (C : Set World) (u : Person) :
     Strategy.WellFormed C (.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)]) := by
   refine .node (λ c hc r hr => ?_) (λ c hc => ?_)
@@ -417,8 +382,6 @@ theorem wh_wellFormed (C : Set World) (u : Person) :
   · simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     rcases hc with rfl | rfl <;> exact .leaf _ _
 
-/-- The strategy is well formed in every context: every question below the big question is
-its subquestion by alternative inclusion, and each wh-substrategy is well formed. -/
 theorem strat_wellFormed (C : Set World) : strat.WellFormed C := by
   rw [strat_eq]
   refine .node (λ c hc r hr => ?_) (λ c hc => ?_)
@@ -436,25 +399,18 @@ theorem strat_wellFormed (C : Set World) : strat.WellFormed C := by
 A partial answer evaluates at least one alternative, positively or negatively; the negative
 direction, ruling an alternative out, is the paper's point against confirm-only answerhood. -/
 
-/-- "Hilary didn't eat bagels" negatively answers "Did Hilary eat the bagels?": it falsifies
-its sole alternative. -/
 theorem neg_hilaryBagels_partiallyAnsweredBy_polar :
     PartiallyAnsweredBy (polar .hilary .bagels) (hilaryBagelsᶜ : Set World) :=
   partiallyAnsweredBy_compl_of_mem_alt (self_mem_alt_ofSet (ate .hilary .bagels))
 
-/-- "Hilary didn't eat bagels" partially answers "What did Hilary eat?": it rules out the
-bagels alternative. -/
 theorem neg_hilaryBagels_partiallyAnsweredBy_wh :
     PartiallyAnsweredBy (wh .hilary) (hilaryBagelsᶜ : Set World) :=
   partiallyAnsweredBy_compl_of_mem_alt (mem_alt_wh .hilary .bagels)
 
-/-- "Hilary ate bagels" positively answers "Did Hilary eat the bagels?". -/
 theorem hilaryBagels_partiallyAnsweredBy_polar :
     PartiallyAnsweredBy (polar .hilary .bagels) (hilaryBagels : Set World) :=
   partiallyAnsweredBy_of_mem_alt (self_mem_alt_ofSet (ate .hilary .bagels))
 
-/-- "Hilary ate bagels" partially answers "Who ate what?": it confirms one of its four
-alternatives. -/
 theorem hilaryBagels_partiallyAnsweredBy_q1 :
     PartiallyAnsweredBy q_1 (hilaryBagels : Set World) :=
   partiallyAnsweredBy_of_mem_alt (mem_alt_q1 .hilary .bagels)
@@ -468,16 +424,12 @@ strategy membership, which `wh_relevant_to_q1` proxies by partial answerhood. -/
 its content. -/
 def hilaryBagels_assertion : Question World := Question.ofSet hilaryBagels
 
-/-- "Hilary ate bagels" is relevant to move 1, "Who ate what?". -/
 theorem hilaryBagels_relevant_to_q1 : hilaryBagels_assertion.IsRelevantTo {q_1} :=
   ⟨hilaryBagels, self_mem_alt_ofSet _, q_1, rfl, hilaryBagels_partiallyAnsweredBy_q1⟩
 
-/-- "What did Hilary eat?" is relevant to "Who ate what?" under the assertion-clause proxy:
-its bagels alternative confirms an alternative of the big question. -/
 theorem wh_relevant_to_q1 : (wh .hilary).IsRelevantTo {q_1} :=
   ⟨hilaryBagels, mem_alt_wh .hilary .bagels, q_1, rfl, hilaryBagels_partiallyAnsweredBy_q1⟩
 
-/-- "Hilary ate bagels" is relevant to the whole strategy: it partially answers its root. -/
 theorem hilaryBagels_relevant_to_strat :
     hilaryBagels_assertion.IsRelevantTo {q | q ∈ strat.values} :=
   ⟨hilaryBagels, self_mem_alt_ofSet _, q_1, by simp [strat_eq],

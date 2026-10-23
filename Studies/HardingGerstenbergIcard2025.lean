@@ -104,8 +104,6 @@ theorem speaker_real_lt_iff :
     (fun _ ↦ EReal.coe_ne_top _) ⟨m, EReal.coe_ne_bot _⟩, speakerScore, speakerScore,
     EReal.coe_lt_coe_iff]
 
-/-- With two messages, the speaker's share of one is the logistic function of the scaled
-difference in utility less the difference in cost. -/
 theorem speaker_real_of_pair (hmm' : m ≠ m') (hall : ∀ c, c = m ∨ c = m') :
     (speaker β cost π R w).real {m} =
       Real.sigmoid (β * (actionUtility π R m w - actionUtility π R m' w) - (cost m - cost m')) := by
@@ -240,8 +238,6 @@ theorem expectedReward_prior (m : Msg) (a : Act) : expectedReward prior reward m
 
 variable {βL βS : ℝ}
 
-/-- After "because B" the listener apologizes for both with a share above one half, and after
-"because T" with exactly one half. -/
 theorem policy_L0_both :
     (policy βL L0 reward 1).real {1} = Real.sigmoid (2 * βL) ∧
       (policy βL L0 reward 0).real {1} = 1 / 2 := by
@@ -279,7 +275,6 @@ theorem half_lt_sigmoid (hβ : 0 < βL) : 1 / 2 < Real.sigmoid (2 * βL) := by
   have := Real.sigmoid_lt (show (0 : ℝ) < 2 * βL by linarith)
   rwa [Real.sigmoid_zero, inv_eq_one_div] at this
 
-/-- The speaker cites the birthday exactly in the conjunctive world (equal costs). -/
 theorem speaker_cites_B_iff (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
     (speaker βS (fun _ ↦ c) (policy βL L0 reward) reward 0).real {1} <
         (speaker βS (fun _ ↦ c) (policy βL L0 reward) reward 0).real {0} ∧
@@ -319,7 +314,6 @@ theorem comp_S_ne_zero (βL βS c : ℝ) : (S βL βS c ∘ₘ μ) {0} ≠ 0 := 
   exact mul_ne_zero (μ_singleton 0).1 (S_apply_ne_zero βL βS c 0 0)
     (Finset.sum_eq_zero_iff.mp h 0 (Finset.mem_univ _))
 
-/-- "Because T" is likelier from the tardiness-only world than from the conjunctive one. -/
 theorem S_real_lt (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
     (S βL βS c 1).real {0} < (S βL βS c 0).real {0} := by
   obtain ⟨h00, h01, h10, h11⟩ := utility_L0 (βL := βL)
@@ -337,8 +331,6 @@ instance (βL βS c : ℝ) : IsMarkovKernel (PL βL βS c) :=
   ⟨fun m ↦ RSA.isProbabilityMeasure_listener_of_ne_zero _ _ (μ_singleton 0).1
     (S_apply_ne_zero βL βS c 0 m)⟩
 
-/-- The pragmatic listener hearing "because T" raises the tardiness-only world above its prior,
-since the speaker would have cited the birthday in the conjunctive world. -/
 theorem pragmatic_T (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
     μ.real {0} < (PL βL βS c 0).real {0} := by
   rw [PL, RSA.listener_apply_eq_posterior _ _ (comp_S_ne_zero βL βS c),
@@ -402,8 +394,6 @@ def reward : Act → World → ℝ := fun a w => if a = 0 then 0 else if w = 1 t
 noncomputable abbrev L0 : Kernel Msg World :=
   RSA.listener (uniformOn Set.univ) (truthful fun m ↦ (sem m : Set World))
 
-/-- The two messages are equally informative, in that the conjunctive world is as likely after
-either. -/
 theorem L0_conj_eq : (L0 0).real {2} = (L0 1).real {2} := by
   simp [listener_uniformOn_truthful_apply_singleton, measureReal_def, sem]
 

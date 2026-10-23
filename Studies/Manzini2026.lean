@@ -76,7 +76,6 @@ theorem structural_iff (P : SyntacticObject → Prop)
     (hP : ∀ a b, StructurallyIdentical a b → (P a ↔ P b)) : P rootParse ↔ P epistemicParse :=
   hP _ _ dovere_transfer.1
 
-/-- Distinct tokens of the epistemic parse inscribe distinct items. -/
 theorem hasDistinctItems_epistemicParse : epistemicParse.HasDistinctItems := by
   intro a b ha hb hab
   simp only [epistemicParse, gianni, berlo, terms_merge, terms_leaf, Multiset.mem_cons,
@@ -85,10 +84,6 @@ theorem hasDistinctItems_epistemicParse : epistemicParse.HasDistinctItems := by
   rcases ha with rfl | rfl | rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl | rfl | rfl <;>
     first | rfl | simp [LexicalItem.of] at hab
 
-/-- What separates the parses is the derivation. The root parse relates a repetition, two
-inscriptions of *Gianni*, so a valuation can read its embedded subject as a group containing
-Gianni; the epistemic parse relates one object at two positions, and a partial reading needs a
-repetition (`Landau2024b.exists_isRepetition_of_isPartial`), so it admits none. -/
 theorem isPartial_rootParse_not_epistemicParse :
     (∃ val : SyntacticObject → Set ℕ, IsPartial val rootParse.copyRel) ∧
       ∀ val : SyntacticObject → Set ℕ, ¬ IsPartial val epistemicParse.copyRel := by

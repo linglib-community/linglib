@@ -100,14 +100,10 @@ def presupposition : Degree.EvaluativeValence →
   | .positive => fun μ θ x Q w ↦ Degree.ThresholdSignificant (μ x w) θ Q
   | .negative | .neutral => fun _ _ _ Q _ ↦ Q.Nonempty
 
-/-- A distributive positive predicate composed with a question is trivial, as Uegaki and Sudo
-show. -/
 theorem trivial_positive :
     Trivial (W := W) (E := E) degreeComparison (presupposition .positive) :=
   fun μ θ x _ w h ↦ (UegakiSudo2019.hope_question_iff_significance μ θ subset_rfl x w).2 h
 
-/-- Without threshold significance, *x fears Q* says only that some answer is feared, which a
-model falsifies. -/
 theorem not_trivial_negative [Inhabited E] [Inhabited W] {v : Degree.EvaluativeValence}
     (hv : v ≠ .positive) : ¬ Trivial (W := W) (E := E) degreeComparison (presupposition v) :=
   fun h ↦ by
@@ -115,8 +111,6 @@ theorem not_trivial_negative [Inhabited E] [Inhabited W] {v : Degree.EvaluativeV
       cases v <;> simp_all [presupposition]
     simp at hp
 
-/-- A relational predicate is not trivial even under threshold significance, since some agent
-does not stand in the relation to a question an answer of which clears the threshold. -/
 theorem not_trivial_relational (v : Degree.EvaluativeValence) (R : E → Set (Set W) → W → Prop)
     (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
     ¬ Trivial (fun _ _ _ ↦ R) (presupposition v) := fun h ↦ by
@@ -273,9 +267,6 @@ def turkishInflections : List (List (Σ σ, Turkish.Verb.Exponent σ)) :=
     [⟨_, .iyor⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.personNumber .first .singular)⟩],
     [⟨_, .di⟩, ⟨_, .person .one (.personNumber .first .singular)⟩]]
 
-/-- The finite verb of every Turkish row is its predicate's Fragment entry under one of the
-paper's inflections. The finite-verb template licenses the suffix string, and the Fragment's
-phonology derives its surface form, *korkmuyor* and *umuyordum* among them. -/
 theorem turkish_forms :
     ∀ r ∈ Examples.all, r.language = "nucl1301" →
       ∃ v ∈ (r.feature? "predicate").bind turkishVerb?, ∃ sfx ∈ turkishInflections,

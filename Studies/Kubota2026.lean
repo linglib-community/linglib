@@ -115,8 +115,6 @@ at every outlook and which presupposes nothing. -/
 def ofTwoDim (t : TwoDim W (W → Prop)) : Outlook W O :=
   ⟨t.atIssue, fun _ ↦ True, fun _ ↦ t.notAtIssue⟩
 
-/-- Pure expressives are rigid, so they do not shift under embedding ([potts-2007b]'s
-nondisplaceability). -/
 theorem ofTwoDim_isRigid (t : TwoDim W (W → Prop)) : (ofTwoDim (O := O) t).IsRigid :=
   isRigid_const t.notAtIssue
 
@@ -149,7 +147,6 @@ instance (row : Datum) : Decidable (PredictsFelicitous row) := by
   unfold PredictsFelicitous
   split <;> infer_instance
 
-/-- An outlook-marked utterance is felicitous iff the prior move raises a counterstance. -/
 theorem counterstance_requirement :
     ∀ row ∈ Examples.all, row.feature? "phenomenon" = some "counterstance" →
       (row.judgment = .acceptable ↔ PredictsFelicitous row) := by
@@ -157,9 +154,6 @@ theorem counterstance_requirement :
 
 /-! ### Non-cancelability ((10)–(12)) -/
 
-/-- Under a context marked as unexpected the contrary marker *mushiro* is licensed and the
-confirmatory *yahari* is not, and conversely under a context marked as expected, so the stance is
-conventional and cannot be cancelled. -/
 theorem mushiro_yahari_expectation :
     ∀ row ∈ Examples.all, row.feature? "phenomenon" = some "noncancelability" →
       row.feature? "contextExpectation" ≠ none →

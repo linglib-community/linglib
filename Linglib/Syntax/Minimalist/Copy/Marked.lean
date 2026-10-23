@@ -165,7 +165,6 @@ theorem markTree_node (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark ×
       else .node v (cs.map (markTree m l)) :=
   modifyIf_node _ _ v cs
 
-/-- Marking changes no vertex of the copy object. -/
 theorem map_snd_markTree (s : RoseTree (CopyMark × Vertex)) :
     (markTree m l s).map Prod.snd = s.map Prod.snd := by
   induction s with
@@ -176,7 +175,6 @@ theorem map_snd_markTree (s : RoseTree (CopyMark × Vertex)) :
     · rw [map_node, map_node, List.map_map]
       exact congrArg _ (List.map_congr_left ih)
 
-/-- Marking the copies of `m` contracts to replacing `m` in the contraction. -/
 theorem contractTree_markTree (s : RoseTree (CopyMark × Vertex)) :
     contractTree (markTree m l s) =
       replaceIf (UnorderedTree.mk · = m.val) (.node (.inr l) []) (contractTree s) := by
@@ -201,7 +199,6 @@ end Mark
 def mark (t : Marked) (m : SyntacticObject) (l : Option LexicalItem.Token) : Marked :=
   ⟨markTree m l t.val, by rw [map_snd_markTree]; exact t.2⟩
 
-/-- Marking a lower copy leaves the copy object as it was. -/
 @[simp] theorem unmark_mark (m : SyntacticObject) (l : Option LexicalItem.Token) :
     (t.mark m l).unmark = t.unmark :=
   Subtype.ext (map_snd_markTree m l t.val)
@@ -241,14 +238,12 @@ def find? (t : Marked) (target : SyntacticObject) : Option Marked :=
       (((isSyntacticObject_mk _).1 t.2).of_isSubtree ((isSubtree_of_mem_subtreesUntil hs).map _))⟩)
     fun _ h ↦ List.mem_of_find?_eq_some h
 
-/-- The occurrence found is a term of the copy object. -/
 theorem mem_terms_of_find? {target : SyntacticObject} {s : Marked} (h : t.find? target = some s) :
     s.unmark.toSyntacticObject ∈ t.unmark.toSyntacticObject.terms := by
   obtain ⟨r, hr, -, rfl⟩ := Option.pmap_eq_some_iff.1 h
   exact LinearizedSyntacticObject.mem_terms_toSyntacticObject.2
     ⟨_, mem_subtrees.2 ((isSubtree_of_mem_subtreesUntil hr).map _), rfl⟩
 
-/-- The occurrence found contracts to the target. -/
 theorem mk_contractTree_of_find? {target : SyntacticObject} {s : Marked}
     (h : t.find? target = some s) : UnorderedTree.mk (contractTree s.val) = target.val := by
   obtain ⟨r, -, hr, rfl⟩ := Option.pmap_eq_some_iff.1 h
@@ -265,7 +260,6 @@ theorem map_contract_find? (target : SyntacticObject) :
 
 /-! ### Leaves -/
 
-/-- A marked object whose copy object is a lexical leaf is that leaf, perhaps marked. -/
 theorem exists_val_eq_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
     (h : t.unmark.toSyntacticObject = SyntacticObject.leaf x) :
     ∃ k, t.val = .node (k, .inl (some x)) [] := by
@@ -278,7 +272,6 @@ theorem exists_val_eq_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
   subst hc
   exact ⟨k, rfl⟩
 
-/-- A copy object that is a lexical leaf contracts to that leaf when the leaf is pronounced. -/
 theorem contract_eq_leaf_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
     (h : t.unmark.toSyntacticObject = SyntacticObject.leaf x)
     (hx : x ∈ t.contract.toSyntacticObject.yield) :
@@ -288,7 +281,6 @@ theorem contract_eq_leaf_of_unmark_eq_leaf {t : Marked} {x : LexicalItem.Token}
   · exact Subtype.ext (by simp [contract, hk, SyntacticObject.leaf_val])
   · simp [LinearizedSyntacticObject.yield_toSyntacticObject, contract, hk] at hx
 
-/-- An occurrence found whose copy is a lexical leaf is that leaf, when the target is no trace. -/
 theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalItem.Token}
     (h : t.find? target = some s) (ht : target.val.value.isLeft)
     (hs : s.unmark.toSyntacticObject = SyntacticObject.leaf x) :
@@ -303,7 +295,6 @@ theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalI
 
 /-! ### C-command in the contraction and in the copy object -/
 
-/-- A subtree contracting to a lexical leaf is that leaf, unmarked. -/
 theorem eq_of_mk_contractTree_eq_leaf {r : RoseTree (CopyMark × Vertex)} {x : LexicalItem.Token}
     (h : UnorderedTree.mk (contractTree r) = (SyntacticObject.leaf x).val) :
     r = .node (none, .inl (some x)) [] := by

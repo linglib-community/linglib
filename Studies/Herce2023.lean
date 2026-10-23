@@ -122,24 +122,18 @@ theorem nacer_formCells : formCells nacer .naθk = Lset := by decide
 
 theorem caber_formCells : formCells caber .kep = Lset := by decide
 
-/-- The L-morphome is a value conjunction of no features: it crosses the moods without
-exhausting either. -/
 theorem Lset_not_natural : ¬ IsValueConjunction spFeatures ↑Lset := by
   rw [isValueConjunction_coe_iff]
   decide
 
-/-- The L-morphome under the velar /g/ stem of *venir*. -/
 theorem venir_morphome : IsMorphome venir (IsValueConjunction spFeatures) ↑Lset :=
   isMorphome_of_formCells venir (.ind, .first, .sg) _ venir_formCells (by decide)
     Lset_not_natural
 
-/-- The L-morphome under the velar /k/ stem of *nacer*: the same cells under a distinct
-exponent. -/
 theorem nacer_morphome : IsMorphome nacer (IsValueConjunction spFeatures) ↑Lset :=
   isMorphome_of_formCells nacer (.ind, .first, .sg) _ nacer_formCells (by decide)
     Lset_not_natural
 
-/-- The L-morphome under the suppletive stem of *caber*. -/
 theorem caber_morphome : IsMorphome caber (IsValueConjunction spFeatures) ↑Lset :=
   isMorphome_of_formCells caber (.ind, .first, .sg) _ caber_formCells (by decide)
     Lset_not_natural
@@ -195,19 +189,14 @@ theorem nonpast_formCells : formCells nonpast .hen = Dset := by decide
 
 theorem past_formCells : formCells past .nsu = Dset := by decide
 
-/-- The syncretic cells are a value conjunction of no features: they cross the persons and
-fix no number. -/
 theorem Dset_not_natural : ¬ IsValueConjunction dFeatures ↑Dset := by
   rw [isValueConjunction_coe_iff]
   decide
 
-/-- The syncretism under the non-past suffix *-he-n*. -/
 theorem nonpast_morphome : IsMorphome nonpast (IsValueConjunction dFeatures) ↑Dset :=
   isMorphome_of_formCells nonpast (.second, .sg) _ nonpast_formCells (by decide)
     Dset_not_natural
 
-/-- The syncretism under the past suffix *-n-su*: the same cells under a distinct exponent,
-across tenses. -/
 theorem past_morphome : IsMorphome past (IsValueConjunction dFeatures) ↑Dset :=
   isMorphome_of_formCells past (.second, .sg) _ past_formCells (by decide) Dset_not_natural
 

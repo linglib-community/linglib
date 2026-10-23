@@ -119,8 +119,6 @@ theorem le_or_disjoint_of_mem_minterms {ψ a : α} (hψ : ψ ∈ closure (Set.ra
   obtain ⟨-, σ, rfl⟩ := Finpartition.mem_minterms_parts.1 ha
   exact (minterm_le_or_le_compl hψ σ).imp_right le_compl_iff_disjoint_right.1
 
-/-- An element of the closure lies below `ψ₂` iff every nonzero minterm below it does, since it is
-the join of those minterms. -/
 theorem le_iff_forall_mem_minterms {ψ₁ ψ₂ : α} (h₁ : ψ₁ ∈ closure (Set.range φ)) :
     ψ₁ ≤ ψ₂ ↔ ∀ a ∈ (Finpartition.minterms φ).parts, a ≤ ψ₁ → a ≤ ψ₂ := by
   refine ⟨fun h a _ ha ↦ ha.trans h, fun h ↦ ?_⟩
@@ -194,7 +192,6 @@ noncomputable def closureOrderIsoOfMintermEqBot : closure (Set.range φ) ≃o cl
     (Equiv.subtypeEquivRight fun σ ↦ (h σ).not).trans
       (Finpartition.equivPartsMinterms ψ)).toOrderIsoSet).trans (toSetOfMinterms ψ).symm
 
-/-- The isomorphism carries each `φ i` to `ψ i`. -/
 theorem closureOrderIsoOfMintermEqBot_apply (i : ι) :
     closureOrderIsoOfMintermEqBot h ⟨φ i, subset_closure ⟨i, rfl⟩⟩ =
       ⟨ψ i, subset_closure ⟨i, rfl⟩⟩ := by

@@ -154,8 +154,6 @@ def numeral (n : ℤ) (m : ℚ) : Construal ℚ := ⟨fun d ↦ d = n, fun d ↦
 /-- *More than n* is read with deviation at most `m`, (69b) and (70b). -/
 def moreThan (n : ℤ) (m : ℚ) : Construal ℚ := ⟨fun d ↦ n < d, fun d ↦ (n : ℚ) - m < d⟩
 
-/-- Two distinct bare numerals whose halos meet violate Inference Preservation, being incompatible
-precisely and compatible imprecisely. -/
 theorem numeral_violates_of_le {n n' : ℤ} (h : n ≠ n') {m : ℚ}
     (hd : |(n : ℚ) - n'| ≤ 2 * m) : Violates (numeral n m) (numeral n' m) := by
   refine ⟨false, fun d hd' hn' ↦ ?_, fun hall ↦ ?_, fun hall ↦ ?_⟩
@@ -171,7 +169,6 @@ theorem numeral_violates_of_le {n n' : ℤ} (h : n ≠ n') {m : ℚ}
         abs_of_pos (by norm_num : (0 : ℚ) < 2)]
       linarith
 
-/-- Distinct bare numerals whose halos are apart preserve every inference. -/
 theorem not_numeral_violates_of_lt {n n' : ℤ} (h : n ≠ n') {m : ℚ}
     (hd : 2 * m < |(n : ℚ) - n'|) : ¬ Violates (numeral n m) (numeral n' m) := by
   rintro ⟨p, ha, -, hc⟩
@@ -220,7 +217,6 @@ theorem roundness_depends_on_scales :
       AtLeastAsRound (OnScale decimal) 180 200 ∧ ¬ AtLeastAsRound (OnScale decimal) 200 180 := by
   decide
 
-/-- Roundness is not total, as *25* and *10* lie on different cardinal scales. -/
 theorem twentyFive_ten_incomparable :
     ¬ AtLeastAsRound (OnScale decimal) 25 10 ∧ ¬ AtLeastAsRound (OnScale decimal) 10 25 := by
   decide

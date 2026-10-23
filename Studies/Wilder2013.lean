@@ -138,15 +138,12 @@ theorem doSupport_negative_iff_positive (c : Clause) (f f' : Mark) :
 theorem not_doSupport_of_aux {c : Clause} (h : c.aux) : ¬DoSupport c :=
   fun hd ↦ hd.1 h
 
-/-- A clause with Affix Hopping has no Σ and so no polarity focus. -/
 theorem not_polarityFocus_of_affixHopping {c : Clause} (h : AffixHopping c) :
     ¬PolarityFocus c := by
   rintro ⟨s, hs⟩
   rw [h.1] at hs
   cases hs
 
-/-- Emphatic *do* is the sole auxiliary whose presence signals Σ, since an emphatic *do* clause has
-Σ, though its F-mark is syntactically optional. -/
 theorem emphaticDo_sigma {c : Clause} (h : EmphaticDo c) : ∃ f, c.sigma = some (.positive, f) :=
   ((emphaticDo_iff c).1 h).2.2.2
 
@@ -162,18 +159,14 @@ def polarityFocus (p : Set W) : WithAlternatives (Set W) :=
 
 @[simp] theorem polarityFocus_ordinary (p : Set W) : (polarityFocus p).ordinary = p := rfl
 
-/-- The alternatives of polarity focus are the orbit of the proposition under the polarity
-group, its polarity alternatives. -/
 theorem polarityFocus_alternatives_eq_orbit (p : Set W) :
     (polarityFocus p).alternatives = MulAction.orbit Polarity p := by
   simp [polarityFocus, Set.image2_singleton_right, MulAction.orbit]
 
-/-- The alternatives of polarity focus are the proposition and its negation. -/
 theorem polarityFocus_alternatives (p : Set W) :
     (polarityFocus p).alternatives = {p, pᶜ} :=
   (polarityFocus_alternatives_eq_orbit p).trans (Polarity.orbit_eq_pair_compl p)
 
-/-- Polarity focus is well formed, since the proposition is among its alternatives. -/
 theorem polarityFocus_wellFormed (p : Set W) : (polarityFocus p).WellFormed :=
   ((WithAlternatives.WellFormed.unfeatured _).mark _).map₂
     (WithAlternatives.WellFormed.unfeatured _)
@@ -250,7 +243,6 @@ def doctorStrategy (good patients diagnose polite : Set W) : Discourse.Strategy 
     [.leaf (Question.polar patients), .leaf (Question.polar diagnose),
       .leaf (Question.polar polite)]
 
-/-- *He DOES have a lot of patients* directly answers a polar subquestion of the strategy. -/
 theorem directlyAnswersPolar_doctorStrategy (good patients diagnose polite : Set W) :
     DirectlyAnswersPolar (doctorStrategy good patients diagnose polite) patients := by
   simp [DirectlyAnswersPolar, doctorStrategy, RoseTree.leaf]
@@ -362,7 +354,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every example row parses. -/
 theorem rows_length : rows.length = Examples.all.length := by decide
 
 /-- The embedding environments of section 3.5, where the paper compares the two patterns. -/

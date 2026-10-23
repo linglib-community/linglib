@@ -119,8 +119,6 @@ def JoinsOccur : Prop := ∀ e e' w, occurs e w → occurs e' w → occurs (e �
 
 variable {occurs} {mem : E → W → Set W} {best : W → Set W} {vp : E → W → Prop}
 
-/-- The positive implicative entailment as an actuality entailment: the VP-event is part of an
-actual compound event, so it is actual, and it is a VP-event there. -/
 theorem actuality (hpart : PartsOccur occurs) (hped : EventDescriptionPreserved occurs vp)
     (hmem : Persists occurs (λ w => ⋃ e, mem e w)) (hbest : Persists occurs best)
     (hne : ∀ e w, ∃ w' ∈ mem e w, (best w').Nonempty) {w : W}

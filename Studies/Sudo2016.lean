@@ -92,17 +92,14 @@ noncomputable def Sortal.apply (c : Sortal W E) (n : W → ℕ) (w : W) : E → 
 many atomic parts. -/
 def up (atomic : Sortal W E) (n : W → ℕ) : W → E → Prop := fun w x ↦ atomCount atomic w x = n w
 
-/-- A sortal classifier is undefined of what is not a plurality of its sortal. -/
 @[simp] theorem Sortal.apply_eq_zero_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
     c.apply n w x = 0 ↔ ¬ AlgClosure (c w) x := by
   simp [Sortal.apply]
 
-/-- The classifier's assertion is the ∪-correlate of the numeral counted over the sortal. -/
 @[simp] theorem Sortal.apply_eq_one_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
     c.apply n w x = 1 ↔ AlgClosure (c w) x ∧ up c n w x := by
   simp [Sortal.apply, up]
 
-/-- A sortal classifier is false of a plurality of its sortal with another number of atoms. -/
 @[simp] theorem Sortal.apply_eq_neg_one_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
     c.apply n w x = -1 ↔ AlgClosure (c w) x ∧ ¬ up c n w x := by
   simp [Sortal.apply, up]
@@ -130,8 +127,6 @@ def IsDown (atomic : Sortal W E) (P : W → E → Prop) (n : W → ℕ) : Prop :
 theorem isDown_up (atomic : Sortal W E) (n : W → ℕ) : IsDown atomic (up atomic n) n :=
   fun _ _ ↦ Iff.rfl
 
-/-- ∩ is a partial inverse, since a property with a type-`n` correlate has only one, provided
-every count is instantiated. -/
 theorem IsDown.unique {atomic : Sortal W E} {P : W → E → Prop} {n m : W → ℕ}
     (hn : IsDown atomic P n) (hm : IsDown atomic P m)
     (hsurj : ∀ w, ∃ x, atomCount atomic w x = n w) : n = m := by
@@ -179,14 +174,9 @@ theorem predicateOf_up (atomic : Sortal W E) (n : W → ℕ) :
 
 end General
 
-/-- The Japanese lexicon has classifiers, as the fragment records. -/
 theorem japanese_has_classifiers : Japanese.Classifiers.classifiers.Nonempty :=
   ⟨Japanese.Classifiers.tsu, by simp [Japanese.Classifiers.classifiers]⟩
 
-/-- With the classifiers [chierchia-1998]'s typology records for Japanese in the lexicon, every
-predicate use of a Japanese numeral goes through a classifier. The two accounts share the
-premise and part over what the classifier serves, the kind-denoting noun there and the
-type-`n` numeral here. -/
 theorem predicateOf_iff_japanese {W E : Type*} [SemilatticeSup E] (atomic : Sortal W E)
     (n : W → ℕ) (P : W → E → Prop) :
     PredicateOf (Chierchia1998.Language.HasClassifiers .japanese) atomic n P ↔
@@ -203,7 +193,6 @@ variable {α : Type*} [DecidableEq α]
 def singletonSortal (P : α → Prop) : Sortal Unit (Finset α) :=
   fun _ y ↦ ∃ a, y = {a} ∧ P a
 
-/-- The atom count of a plurality is the number of its members satisfying the sortal. -/
 theorem atomCount_finset (P : α → Prop) [DecidablePred P] (x : Finset α) :
     atomCount (singletonSortal P) () x = (x.filter P).card := by
   have : {y : Finset α | y ≤ x ∧ singletonSortal P () y} =
@@ -219,8 +208,6 @@ theorem atomCount_finset (P : α → Prop) [DecidablePred P] (x : Finset α) :
   rw [atomCount, this, Set.ncard_coe_finset,
     Finset.card_image_of_injective _ Finset.singleton_injective]
 
-/-- On the set-based ontology a sortal classifier is defined exactly of a nonempty plurality of
-sortal individuals. -/
 theorem singletonSortal_apply_ne_zero_iff (P : α → Prop) (n : Unit → ℕ) (x : Finset α) :
     (singletonSortal P).apply n () x ≠ 0 ↔ x.Nonempty ∧ ∀ a ∈ x, P a := by
   rw [Ne, Sortal.apply_eq_zero_iff, not_not,
@@ -234,7 +221,6 @@ def groupApply (k n : ℕ) (x : Finset α) : Prop :=
   ∃ s : Finset (Finset α), s.card = n ∧ s.biUnion id = x ∧ (∀ y ∈ s, y.card = k) ∧
     ∀ y ∈ s, ∀ z ∈ s, y ≠ z → Disjoint y z
 
-/-- Non-overlap makes the count exact, so `n` groups of `k` have `n * k` atoms. -/
 theorem groupApply_card {k n : ℕ} {x : Finset α} (h : groupApply k n x) : x.card = n * k := by
   obtain ⟨s, hs, rfl, hk, hd⟩ := h
   rw [Finset.card_biUnion (t := id) hd]
@@ -256,7 +242,6 @@ instance : DecidablePred Ind.flower := fun a ↦ by cases a <;> unfold Ind.flowe
 /-- *-rin* counts flowers. -/
 def rin : Sortal Unit (Finset Ind) := singletonSortal Ind.flower
 
-/-- *san-rin* holds of three flowers, its presupposition met, and fails of two of them. -/
 theorem rin_three :
     rin.apply (numeral 3) () {.f1, .f2, .f3} = 1 ∧ rin.apply (numeral 3) () {.f1, .f2} = -1 := by
   have h x := singletonSortal_apply_ne_zero_iff Ind.flower (numeral 3) x
@@ -265,7 +250,6 @@ theorem rin_three :
     Sortal.apply_eq_neg_one_iff.2 ⟨(h _).2 (by decide), ?_⟩⟩ <;>
     simp only [up, rin, atomCount_finset, numeral] <;> decide
 
-/-- *-rin* does not count people, so its sortal presupposition fails of a human. -/
 theorem rin_not_human : rin.apply (numeral 1) () {.h1} = 0 := by
   rw [← not_ne_iff, rin, singletonSortal_apply_ne_zero_iff]; decide
 
@@ -273,7 +257,6 @@ theorem rin_not_human : rin.apply (numeral 1) () {.h1} = 0 := by
 theorem four_books_two_pairs : groupApply 2 2 ({.b1, .b2, .b3, .b4} : Finset Ind) :=
   ⟨{{.b1, .b2}, {.b3, .b4}}, by decide, by decide, by decide, by decide⟩
 
-/-- Four books never form six pairs, since overlapping pairs are not counted. -/
 theorem four_books_not_six_pairs (x : Finset Ind) (hx : x.card = 4) : ¬ groupApply 2 6 x :=
   fun h ↦ by have := groupApply_card h; omega
 

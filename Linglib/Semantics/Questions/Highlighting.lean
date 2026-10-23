@@ -54,17 +54,14 @@ positively, the union of what the formula highlights. -/
 noncomputable def project (H : Set (Polarity × Set W)) : Set (Polarity × Set W) :=
   if ∃ α, H = {(.negative, α)} then H else {(.positive, ⋃₀ (Prod.snd '' H))}
 
-/-- The negation of a formula highlighting a single possibility highlights its complement. -/
 @[simp] theorem neg_singleton (s : Polarity) (α : Set W) :
     neg {(s, α)} = {(.negative, αᶜ)} := by
   simp [neg]
 
-/-- Projection keeps a single negative possibility. -/
 @[simp] theorem project_singleton_negative (α : Set W) :
     project {(.negative, α)} = {(.negative, α)} :=
   ite_eq_left ⟨α, rfl⟩
 
-/-- Projection keeps a single positive possibility. -/
 @[simp] theorem project_singleton_positive (α : Set W) :
     project {(.positive, α)} = {(.positive, α)} := by
   have h : ¬ ∃ β, ({(.positive, α)} : Set (Polarity × Set W)) = {(.negative, β)} := by
@@ -73,7 +70,6 @@ noncomputable def project (H : Set (Polarity × Set W)) : Set (Polarity × Set W
   rw [project, ite_eq_right h]
   simp
 
-/-- Projection keeps a single possibility, whatever its polarity. -/
 @[simp] theorem project_singleton (x : Polarity × Set W) : project {x} = {x} := by
   obtain ⟨_ | _, α⟩ := x
   · exact project_singleton_positive α
@@ -116,26 +112,20 @@ def ofPolarity : Polarity → A → Formula A
   | .positive, a => atom a
   | .negative, a => neg (atom a)
 
-/-- A basic formula of polarity `s` on `a` expresses the proposition `s • v a`. -/
 @[simp] theorem proposition_ofPolarity (s : Polarity) (a : A) :
     (ofPolarity s a).proposition v = Question.ofSet (s • v a) := by
   cases s
   · rfl
   · simp [ofPolarity, Question.compl_eq, Question.info_ofSet]
 
-/-- A basic formula of polarity `s` on `a` highlights the image of `(positive, v a)` under `s`,
-the negative polarity complementing the possibility and reversing its polarity. -/
 @[simp] theorem highlights_ofPolarity (s : Polarity) (a : A) :
     (ofPolarity s a).highlights v = {s • (.positive, v a)} := by
   cases s <;> simp [ofPolarity, Prod.smul_mk]
 
-/-- The polar interrogatives on `a` and on `¬a` express the same issue. -/
 theorem proposition_query_ofPolarity (s : Polarity) (a : A) :
     (query (ofPolarity s a)).proposition v = Question.polar (v a) := by
   rw [proposition, proposition_ofPolarity, Question.query_ofSet, Question.polar_smul]
 
-/-- The highlights of a formula are not a function of its proposition, since `?a` and `?¬a`
-express the same issue but highlight different possibilities. -/
 theorem not_exists_highlights_eq_comp_proposition [Nonempty A] :
     ¬ ∃ f : Question W → Set (Polarity × Set W),
       ∀ φ : Formula A, φ.highlights v = f (φ.proposition v) := by
@@ -162,8 +152,6 @@ theorem isModalFree_toInquisitive : ∀ φ : Formula A, φ.toInquisitive.IsModal
   | bang φ => ⟨⟨isModalFree_toInquisitive φ, trivial⟩, trivial⟩
   | query φ => ⟨isModalFree_toInquisitive φ, isModalFree_toInquisitive φ, trivial⟩
 
-/-- A formula expresses the proposition of the InqB formula it abbreviates, under the valuation
-of the atoms by their truth sets in `M`. -/
 theorem proposition_toInquisitive [Fintype W] [DecidableEq W] (M : Inquisitive.Model W A)
     (φ : Formula A) :
     Inquisitive.proposition M φ.toInquisitive = φ.proposition fun a ↦ {w | M.val a w} := by
@@ -184,8 +172,6 @@ theorem proposition_toInquisitive [Fintype W] [DecidableEq W] (M : Inquisitive.M
       Inquisitive.proposition_inqDisj, Inquisitive.proposition_impl, Inquisitive.proposition_bot,
       himp_bot, proposition, ih, Question.query, Question.compl_eq]
 
-/-- The highlights of a formula are not a function of the InqB formula it abbreviates, since `!a`
-and `¬¬a` abbreviate the same formula but highlight `a` with opposite polarities. -/
 theorem not_exists_highlights_eq_comp_toInquisitive [Nonempty A] :
     ¬ ∃ f : Inquisitive.Formula A → Set (Polarity × Set W),
       ∀ φ : Formula A, φ.highlights v = f φ.toInquisitive := by

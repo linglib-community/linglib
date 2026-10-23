@@ -153,7 +153,6 @@ theorem second_reset_vacuous {β : Type*} [LinearOrder β] (ε : β) :
       ({ε} : Finset β).max' (Finset.singleton_nonempty ε) = ε :=
   ⟨Finset.min'_singleton ε, Finset.max'_singleton ε⟩
 
-/-- A multiple of the width is the centre of its cell. -/
 private theorem cell_of_mul {ε d₀ : ℝ} (k : ℤ) (hk : (k : ℝ) * ε = d₀) (hε : 0 < ε) :
     (grain ε).cell d₀ = Set.Ico (d₀ - ε / 2) (d₀ + ε / 2) := by
   rw [cell_grain hε, representative_eq_self_of_mem_zmultiples hε.ne'

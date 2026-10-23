@@ -95,8 +95,6 @@ noncomputable def corpusProb (D : Multiset (RoseTree (Symbol T G.NT))) : ℝ≥0
 theorem corpusProb_zero : W.corpusProb 0 = 1 := by
   simp [corpusProb]
 
-/-- Corpus probability is multiplicative over disjoint corpora, since derivation trees are
-independent under a PCFG, in contrast to `DirichletPCFG.corpusProb`. -/
 theorem corpusProb_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) :
     W.corpusProb (D₁ + D₂) = W.corpusProb D₁ * W.corpusProb D₂ := by
   simp [corpusProb]
@@ -141,7 +139,6 @@ theorem normalize_weight {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules) :
     (normalize w h0 htop).weight r = w r / ∑ r' ∈ G.rules.filter (·.input = r.input), w r' :=
   ite_eq_left hr
 
-/-- At a nonterminal, normalizing keeps the order of the weights. -/
 theorem normalize_weight_lt_normalize_weight_iff {a : G.NT} {r r' : G.RulesWithLHS a} :
     (normalize w h0 htop).weight r < (normalize w h0 htop).weight r' ↔ w r < w r' := by
   obtain ⟨r, hr⟩ := r
@@ -185,7 +182,6 @@ theorem ofCounts_weight {x : ContextFreeRule T G.NT → ℕ} {r : ContextFreeRul
   · simp [h]
   · exact Finset.sum_congr rfl fun r' hr' ↦ by simp [(Finset.mem_filter.mp hr').2, h]
 
-/-- At a nonterminal, the relative frequencies of counts order rules by count. -/
 theorem ofCounts_weight_lt_ofCounts_weight_iff {x : ContextFreeRule T G.NT → ℕ} {a : G.NT}
     {r r' : G.RulesWithLHS a} : (ofCounts x).weight r < (ofCounts x).weight r' ↔ x r < x r' := by
   rw [ofCounts, normalize_weight_lt_normalize_weight_iff, Nat.cast_lt]
@@ -219,8 +215,6 @@ theorem prod_pow_le_prod_ofCounts_pow (x : ContextFreeRule T G.NT → ℕ) :
 
 /-! ### Corpora -/
 
-/-- The probability of a licensed derivation tree is the product over the grammar's rules of the
-rule weight raised to the number of applications of that rule in the tree. -/
 theorem derivProb_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)}
     (ht : t.Licensed G.Licenses) :
     W.derivProb t = ∏ r ∈ G.rules, W.weight r ^ RoseTree.ruleCount r t := by

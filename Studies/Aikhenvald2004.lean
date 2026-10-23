@@ -130,37 +130,28 @@ def rows : Kind → List (List (Term × Finset Parameter))
     [[(.visual, {visual}), (.nonVisual, {sensory}), (.inferred, {inference}),
       (.assumed, {assumption}), (.reported, {hearsay, quotative})]]
 
-/-- Every term covers an interval of the parameters, so that in Aikhenvald's order no term skips
-one. -/
 theorem ordConnected_cells (k : Kind) :
     ∀ r ∈ k.rows, ∀ c ∈ r, (c.2 : Set Parameter).OrdConnected := by
   revert k; decide +kernel
 
-/-- Every term covers some parameter. -/
 theorem nonempty_cells (k : Kind) : ∀ r ∈ k.rows, ∀ c ∈ r, c.2.Nonempty := by
   revert k; decide +kernel
 
-/-- The terms of a system cover disjoint parameters. -/
 theorem pairwise_disjoint_cells (k : Kind) :
     ∀ r ∈ k.rows, r.Pairwise fun c d ↦ Disjoint c.2 d.2 := by
   revert k; decide +kernel
 
-/-- The letter of a kind counts the terms of each of its systems, plus one for an everything-else
-term. -/
 theorem length_rows (k : Kind) :
     ∀ r ∈ k.rows, r.length + (if k.HasDefault then 1 else 0) = k.choices := by
   revert k; decide +kernel
 
-/-- No system gives each of the six parameters a term of its own. -/
 theorem length_rows_lt (k : Kind) : ∀ r ∈ k.rows, r.length < Fintype.card Parameter := by
   revert k; decide +kernel
 
-/-- Distinct kinds have no system in common, even up to the order of the terms. -/
 theorem eq_of_perm (k k' : Kind) :
     ∀ r ∈ k.rows, ∀ r' ∈ k'.rows, (r.map Prod.snd).Perm (r'.map Prod.snd) → k = k' := by
   revert k k'; decide +kernel
 
-/-- B1 groups the parameters into Willett's three types of evidence. -/
 theorem B1_willett :
     B1.rows.map (·.map Prod.snd) =
       [[EvidenceType.attested.block, EvidenceType.inferring.block,
@@ -170,8 +161,6 @@ theorem B1_willett :
 /-- The names of the terms of a kind's systems. -/
 def terms (k : Kind) : Finset Term := (k.rows.flatMap (·.map Prod.fst)).toFinset
 
-/-- The non-firsthand term of an A2 system is that of an A1 system, the neutral term replacing
-the firsthand one. -/
 theorem A2_rows_subset : A2.rows ⊆ A1.rows.map (·.filter (·.1 ≠ .firsthand)) := by decide
 
 end Kind
@@ -196,19 +185,16 @@ theorem eq (h : Realizes es k) (h' : Realizes es k') : k = k' := by
   obtain ⟨r', hr', hp'⟩ := h'
   exact Kind.eq_of_perm k k' r hr r' hr' (hp.symm.trans hp')
 
-/-- The evidentials of an inventory realizing a kind each cover some parameter. -/
 theorem nonempty (h : Realizes es k) {e : Evidential} (he : e ∈ es) : e.covers.Nonempty := by
   obtain ⟨r, hr, hp⟩ := h
   obtain ⟨c, hc, hce⟩ := List.mem_map.1 (hp.subset (List.mem_map_of_mem he))
   exact hce ▸ Kind.nonempty_cells k r hr c hc
 
-/-- An inventory realizing a kind is well formed. -/
 theorem wellFormed (h : Realizes es k) : WellFormed es := by
   obtain ⟨r, hr, hp⟩ := h
   exact List.pairwise_map.1 <|
     (List.pairwise_map.2 (Kind.pairwise_disjoint_cells k r hr)).perm hp.symm (·.symm)
 
-/-- An inventory realizing a kind has one evidential for each of its marked terms. -/
 theorem length_add (h : Realizes es k) :
     es.length + (if k.HasDefault then 1 else 0) = k.choices := by
   obtain ⟨r, hr, hp⟩ := h
@@ -217,7 +203,6 @@ theorem length_add (h : Realizes es k) :
 
 end Realizes
 
-/-- An empty inventory, an evidentiality strategy or none at all, realizes no kind. -/
 theorem not_realizes_nil (k : Kind) : ¬ Realizes [] k := by
   revert k; decide +kernel
 
@@ -238,23 +223,18 @@ theorem tuyuca : Realizes Tuyuca.Evidentiality.evidentials .D1 := by decide
 theorem tariana : Realizes Tariana.Evidentiality.evidentials .D1 := by decide
 
 open Kashaya.Evidentiality in
-/-- The Kashaya performative covers none of the six parameters, so in either aspect the
-paradigm of a spontaneous remark realizes no kind. -/
 theorem kashaya_spontaneous (a : Aspect.Perfectivity) (k : Kind) :
     ¬ Realizes (paradigm .spontaneous a) k := fun h ↦ by
   have := h.nonempty (e := performative a) List.mem_cons_self
   cases a <;> simp [performative] at this
 
-/-- West Greenlandic's reported evidentials are synonymous, so they form no paradigm. -/
 theorem westGreenlandic_not_wellFormed :
     ¬ WellFormed WestGreenlandic.Evidentiality.evidentials := by
   decide
 
-/-- West Greenlandic's reported evidentials together realize no kind. -/
 theorem westGreenlandic (k : Kind) : ¬ Realizes WestGreenlandic.Evidentiality.evidentials k :=
   fun h ↦ westGreenlandic_not_wellFormed h.wellFormed
 
-/-- Each West Greenlandic reported evidential, read as a system on its own, is A3. -/
 theorem westGreenlandic_A3 :
     ∀ e ∈ WestGreenlandic.Evidentiality.evidentials, Realizes [e] .A3 := by
   decide
@@ -265,8 +245,6 @@ theorem westGreenlandic_A3 :
 locative only. -/
 def eucheeKe : Evidential := { morphs := [.suff "ke"], covers := {.sensory} }
 
-/-- Euchee, the one language found with an A5 system, opposes its auditory evidential to an
-unmarked term. -/
 theorem euchee : Realizes [eucheeKe] .A5 := by decide
 
 /-! ### The book's examples -/
@@ -288,8 +266,6 @@ def sourceNames : List (String × Parameter) :=
   [("visual", .visual), ("nonvisual", .sensory), ("inference", .inference),
     ("assumption", .assumption), ("report", .hearsay)]
 
-/-- In every example the term used covers the source at hand, which lies in the cell of that
-term in a system of the example's kind. -/
 theorem examples_source_mem_cell :
     ∀ x ∈ Examples.all, ∀ k ∈ x.parse? "system" kindNames, ∀ t ∈ x.parse? "term" termNames,
       ∀ p ∈ x.parse? "source" sourceNames, ∃ r ∈ k.rows, ∃ c ∈ r, c.1 = t ∧ p ∈ c.2 := by
@@ -299,16 +275,12 @@ theorem examples_source_mem_cell :
 def illustrated (lang : String) : Finset Term :=
   ((Examples.all.filter (·.language = lang)).filterMap (·.parse? "term" termNames)).toFinset
 
-/-- The Tariana illustration runs through every term of a D1 system. -/
 theorem tariana_illustration : illustrated "tari1256" = Kind.D1.terms := by
   decide
 
-/-- The Wanka Quechua examples run through every term of a B1 system. -/
 theorem wanka_illustration : illustrated "jauj1238" = Kind.B1.terms := by
   decide
 
-/-- The Turkish examples, of report, inference and non-visual perception, all use the
-non-firsthand term of an A2 system. -/
 theorem turkish_illustration : illustrated "nucl1301" = Kind.A2.terms := by
   decide
 

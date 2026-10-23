@@ -74,11 +74,9 @@ def ViolatesBifurcation (s : Root.Kinds) : Prop := ¬ s ≤ ontological
 
 instance : DecidablePred ViolatesBifurcation := fun _ ↦ inferInstanceAs (Decidable (¬ _ ≤ _))
 
-/-- Violation is carrying a `result` or `cause` kind. -/
 theorem violatesBifurcation_iff :
     ∀ s, ViolatesBifurcation s ↔ .result ∈ s ∨ .cause ∈ s := by decide
 
-/-- Adding entailments cannot repair a violation. -/
 theorem violatesBifurcation_monotone : Monotone ViolatesBifurcation :=
   fun _ _ hst hs ht ↦ hs (hst.trans ht)
 
@@ -91,8 +89,6 @@ instance : DecidablePred HasMannerAndResult := fun _ ↦ inferInstanceAs (Decida
 theorem hasMannerAndResult_monotone : Monotone HasMannerAndResult :=
   fun _ _ hst h ↦ h.trans hst
 
-/-- Bifurcation is invariant under collocational closure, since `close` only adds the `state`
-and `result` kinds forced by `cause`, never `manner`. -/
 theorem violatesBifurcation_close_iff :
     ∀ s, ViolatesBifurcation (close s) ↔ ViolatesBifurcation s := by decide
 
@@ -164,22 +160,15 @@ noncomputable def againAt (t : Template σ)
 
 variable {M}
 
-/-- *Again* attached at a template presupposes an earlier eventuality of the template, and so the
-realization of each of its subterms, with the same undergoer, which is the hierarchy of the
-readings. -/
 theorem exists_denote_of_againAt_ne_zero {t : Template σ} {u : Template τ} (hu : u.IsSubterm t)
     {R : SetRel (σ.Carrier State Event) (σ.Carrier State Event)} {w : σ.Carrier State Event}
     (h : againAt M t R P y x w ≠ 0) : ∃ w', w ~[R] w' ∧ ∃ y' v, u.denote M P ⊤ y' x v :=
   diamond_mono R (fun _ ↦ exists_denote_of_isSubterm hu) w (again_ne_zero_iff.1 h)
 
-/-- End to end, the repetitive reading over the causation presupposes an earlier eventuality
-that caused a change to the root's state. -/
 theorem diamond_vCause_of_againAt_causative_ne_zero {R : SetRel Event Event} {w : Event}
     (h : againAt M causative R P y x w ≠ 0) : ◇[R] (M.vCause (M.vBecome P x)) w :=
   diamond_mono R (fun _ h ↦ h.2) w (again_ne_zero_iff.1 h)
 
-/-- For a state predicate that entails change, even the restitutive attachment of *again*
-presupposes a change, so result roots never admit a truly restitutive reading. -/
 theorem diamond_become_of_againAt_state_ne_zero {R : SetRel State State} {s : State}
     (hres : M.EntailsChange P) (h : againAt M .state R P y x s ≠ 0) :
     ◇[R] (◇[M.become] ⊤) s :=
@@ -204,7 +193,6 @@ theorem attestedRows_eq_kinds_templates :
       {state.kinds, act.kinds, achievement.kinds, causative.kinds, accomplishment.kinds} := by
   decide
 
-/-- A signature with a manner and a state but no cause is the signature of no template. -/
 theorem kinds_ne_of_cause_not_mem {t : Template σ} {s : Root.Kinds} (hm : .manner ∈ s)
     (hs : .state ∈ s) (hc : .cause ∉ s) : t.kinds ≠ s := by
   rintro rfl; exact hc (hasCause_of_mem_kinds hm hs)
@@ -269,43 +257,32 @@ theorem drown_closedKinds : drown.closedKinds = fullSpec := by decide
 theorem attestedCells_eq_sample :
     attestedCells = (sample.map fun c ↦ (c.1.closedKinds, c.2)).toFinset := by decide
 
-/-- √hand and √drown share a signature and differ in position. -/
 theorem hand_drown_differ_in_position :
     hand.closedKinds = drown.closedKinds ∧ (hand, .adjoined) ∈ sample ∧
       (drown, .complement) ∈ sample := by decide
 
 /-! ### Falsifying the Bifurcation Thesis -/
 
-/-- √blossom entails a change of state, the templatic content of `v_become`, in the root, and so
-falsifies Bifurcation without any manner or cause entailment. -/
 theorem blossom_violatesBifurcation : ViolatesBifurcation blossom.kinds := by decide
 
 theorem crack_violatesBifurcation : ViolatesBifurcation crack.kinds := by decide
 
 theorem hand_violatesBifurcation : ViolatesBifurcation hand.kinds := by decide
 
-/-- √flat and √jog respect Bifurcation, their signatures being bounded by the ontological
-kinds. -/
 theorem flat_jog_le_ontological : flat.kinds ≤ ontological ∧ jog.kinds ≤ ontological := by
   decide
 
-/-- The Bifurcation Thesis, that every root carries only ontological kinds, is false. -/
 theorem bifurcation_thesis_false : ¬ ∀ r : Root, r.kinds ≤ ontological :=
   fun h ↦ blossom_violatesBifurcation (h blossom)
 
 /-! ### Falsifying Manner/Result Complementarity -/
 
-/-- √hand entails both a manner (by-hand transfer) and a result (recipient possession). -/
 theorem hand_hasMannerAndResult : HasMannerAndResult hand.kinds := by decide
 
-/-- √drown entails both a manner (submersion) and a result (death). -/
 theorem drown_hasMannerAndResult : HasMannerAndResult drown.kinds := by decide
 
-/-- √crack, a caused result without a manner, respects Manner/Result Complementarity. -/
 theorem crack_not_hasMannerAndResult : ¬ HasMannerAndResult crack.kinds := by decide
 
-/-- Manner/Result Complementarity, that no root entails both a manner and a result, is
-false. -/
 theorem manner_result_complementarity_false : ¬ ∀ r : Root, ¬ HasMannerAndResult r.kinds :=
   fun h ↦ h hand hand_hasMannerAndResult
 
@@ -323,14 +300,10 @@ open ArgumentStructure
 variable {Entity State Event : Type*} {M : EventStructure.Interpretation Entity State Event}
   {P : Entity → State → Prop} {Q : Event → Prop} {x : Entity} {s : State}
 
-/-- In a model that respects the signature of √crack, a cracked state arises from a change
-that some event causes. -/
 theorem crack_entails_cause (h : M.Respects P Q crack.kinds) (hs : P x s) :
     ◇[M.become] (◇[M.cause.inv] ⊤) s :=
   h .cause (by decide) x s hs
 
-/-- In a model that respects the signature of √drown, a drowned state arises from a change
-whose every cause is an event of the root's manner. -/
 theorem drown_entails_manner (h : M.Respects P Q drown.kinds) (hs : P x s) :
     ◇[M.become] (□[M.cause.inv] Q) s :=
   h .mannerOfCause (by decide) x s hs
@@ -349,15 +322,11 @@ def changing : ArgumentStructure.EventStructure.Interpretation Unit Unit Unit wh
   cause := ⊤
   effector := ⊤
 
-/-- The signature of √flat does not entail change, since the model without changes respects it
-for a state predicate that holds. -/
 theorem flat_not_entailsChange :
     unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) flat.kinds ∧
       ¬ unchanging.EntailsChange (fun _ _ ↦ True) :=
   ⟨fun p hp ↦ absurd hp (by cases p <;> decide), fun h ↦ let ⟨_, he, _⟩ := h () () trivial; he⟩
 
-/-- The signature of √crack is respected for a state predicate that holds, in the model where
-every state arises from a caused change, and is not respected in the model without changes. -/
 theorem crack_respects :
     changing.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds ∧
       ¬ unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds :=
@@ -387,13 +356,11 @@ result of the grow verbs, and the pure-manner roots of the coil and roll verbs. 
 def rootHypothesisResidue : Finset LevinClass :=
   {LevinClass.build, .create, .engender, .amuse, .split, .knead, .cooking, .grow, .coil, .roll}
 
-/-- Outside the residue, the root hypothesis agrees with every tested class page. -/
 theorem rootHypothesis_matches_profile :
     ∀ c : LevinClass, TestedForCausative c → c ∉ rootHypothesisResidue →
       (c.RootPredictsCausative ↔ c.Participates .causativeInchoative) := by
   decide +kernel
 
-/-- The residue is exactly the tested classes on which they disagree. -/
 theorem rootHypothesisResidue_disagrees :
     ∀ c ∈ rootHypothesisResidue, TestedForCausative c ∧
       ¬ (c.RootPredictsCausative ↔ c.Participates .causativeInchoative) := by

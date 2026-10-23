@@ -105,8 +105,6 @@ def verified (b : Backgrounds W) (w u : W) : Set (W → Prop) :=
 
 variable {b : Backgrounds W} {p : W → Prop} {w : W}
 
-/-- A world is at least as good as another under the promoted priorities when it verifies every
-priority the other verifies. -/
 theorem atLeastAsGoodAs_iff_verified_subset {u v : W} :
     (v ≤[b.nonNegotiable w] u) ↔ verified b w u ⊆ verified b w v :=
   (Preorder.satisfied_subset_iff _ _ u v).symm
@@ -161,19 +159,16 @@ theorem weakNecessity_iff :
       Modality.Directive.weakNecessity b.circumstances b.nonNegotiable b.negotiable p w := by
   rw [weakNecessity, favoredWorlds_eq_bestWorlds]; rfl
 
-/-- Strong necessity entails weak necessity. -/
 theorem strong_entails_weak (h : strongNecessity b p w) : weakNecessity b p w :=
   weakNecessity_iff.2
     (Modality.Directive.strong_entails_weak _ _ _ _ _ (strongNecessity_iff.1 h))
 
-/-- Weak necessity does not entail strong necessity. -/
 theorem weak_not_entails_strong :
     ¬ ∀ (W : Type) (b : Backgrounds W) (p : W → Prop) (w : W),
         weakNecessity b p w → strongNecessity b p w :=
   fun h ↦ Modality.Directive.weak_not_entails_strong fun W f g g' p w hw ↦
     strongNecessity_iff.1 (h W ⟨f, g, g'⟩ p w (weakNecessity_iff.2 hw))
 
-/-- Without negotiable priorities the two necessities coincide. -/
 theorem weakNecessity_iff_strongNecessity (hg : b.negotiable w = ∅) :
     weakNecessity b p w ↔ strongNecessity b p w := by
   simp [weakNecessity, strongNecessity, hg]

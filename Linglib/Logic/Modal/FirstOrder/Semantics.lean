@@ -80,13 +80,10 @@ def constInterp (c : L.Constants) (w : W) : M :=
 
 variable {α : Type*} (w : W) (v : α → M)
 
-/-- A constant term's value at a world is its `constInterp` denotation. -/
 theorem realizeAt_constants (c : L.Constants) :
     c.term.realizeAt K.interp w v = K.constInterp c w :=
   Term.realizeAt_constants ..
 
-/-- A unary atom of a plain formula holds at a world when the symbol's denotation there holds
-of the term's value. -/
 theorem realizeAt_rel₁ (R : L.Relations 1) (t : L.Term α) :
     (R.formula₁ t).RealizeAt K.interp w v ↔ K.relInterp₁ R w (t.realizeAt K.interp w v) := by
   rw [Formula.realizeAt_rel₁, Matrix.cons_fin_one]
@@ -161,8 +158,6 @@ variable (K : ModalStructure L W M) (w : W) (v : α → M)
     (diamond φ).Realize K w v ↔ ∃ w' ∈ K.access w, φ.Realize K w' v := by
   simp [diamond, not_forall]
 
-/-- A unary atom holds at a world when the symbol's denotation there holds of the term's
-    value. -/
 @[simp] theorem realize_rel₁ (R : L.Relations 1) (t : L.Term α) :
     ((R.modalFormula₁ t).Realize K w v) ↔
       K.relInterp₁ R w (t.realizeAt K.interp w v) := by
@@ -175,12 +170,10 @@ variable (K : ModalStructure L W M) (w : W) (v : α → M)
 Constant domains validate the Barcan formula and its converse: `□` and `∀`
 are both world-independent universal quantifiers, so they commute. -/
 
-/-- The Barcan formula `∀x □φ → □ ∀x φ`. -/
 theorem realize_barcan (x : α) (φ : ModalFormula L α) :
     (all x (box φ)).Realize K w v → (box (all x φ)).Realize K w v :=
   fun h w' hw' d ↦ h d w' hw'
 
-/-- The converse Barcan formula `□ ∀x φ → ∀x □φ`. -/
 theorem realize_converseBarcan (x : α) (φ : ModalFormula L α) :
     (box (all x φ)).Realize K w v → (all x (box φ)).Realize K w v :=
   fun h d w' hw' ↦ h w' hw' d

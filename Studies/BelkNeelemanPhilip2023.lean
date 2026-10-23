@@ -209,8 +209,6 @@ def twoPivotsMD : Derivation :=
   ⟨flatteredDisparaged john excessively john excessively,
     [(⟨[0, 1, 1]⟩, ⟨[1, 1, 1]⟩), (⟨[0, 1, 0, 1]⟩, ⟨[1, 1, 0, 1]⟩)], []⟩
 
-/-- Both derive *Mary flattered, and Bill disparaged, John excessively*; pruning the object first
-is not licensed, since the adverb would still follow it in the first conjunct. -/
 theorem licensed_twoPivots :
     twoPivotsE.phon = ["Mary", "flattered", "Bill", "disparaged", "John", "excessively"] ∧
       twoPivotsMD.phon = twoPivotsE.phon ∧ twoPivotsE.Licensed ∧ twoPivotsMD.Licensed ∧

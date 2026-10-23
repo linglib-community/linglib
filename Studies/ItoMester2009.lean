@@ -91,19 +91,16 @@ theorem one_violation_each :
 
 /-! ### The factorial typology and the ranking for English and German -/
 
-/-- Demoting FtBin makes the function word its own prosodic word. -/
 theorem fullOmega_optimum :
     (Tableau.ofList candidates [lexToOmega, parseInto .om, noRec, subminimalOmega]).optimal
       = {fullOmega} := by
   decide
 
-/-- Demoting Lex-to-ω fuses the function word into the host. -/
 theorem amalgamated_optimum :
     (Tableau.ofList candidates [subminimalOmega, parseInto .om, noRec, lexToOmega]).optimal
       = {amalgamated} := by
   decide
 
-/-- Demoting Parse-into-ω attaches the function word to the phrase, [selkirk-1996]'s site. -/
 theorem phiAttached_optimum :
     (Tableau.ofList candidates [subminimalOmega, lexToOmega, noRec, parseInto .om]).optimal
       = {phiAttached} := by
@@ -116,16 +113,11 @@ theorem adjoined_attached_tie :
       = {omegaAdjoined, phiAttached} := by
   decide
 
-/-- The function-word complex of English and German is prosodified by ω-adjunction, since under
-FtBin, Lex-to-ω ≫ Parse-into-ω ≫ No-Recursion the recursive `[ω fnc [ω lex]]` is the unique
-optimum. -/
 theorem omegaAdjunction_optimum :
     (Tableau.ofList candidates [subminimalOmega, lexToOmega, parseInto .om, noRec]).optimal
       = {omegaAdjoined} := by
   decide
 
-/-- The winning structure is recursive, ω dominating ω, and a legal prosodic word of the
-substrate, so No-Recursion is violable, not part of well-formedness. -/
 theorem winner_recursive_isWord : noRec omegaAdjoined = 1 ∧ IsWord omegaAdjoined := by decide
 
 end ItoMester2009

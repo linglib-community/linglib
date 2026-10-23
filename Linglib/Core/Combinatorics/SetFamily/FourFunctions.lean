@@ -26,8 +26,6 @@ open Finset
 variable {α β : Type*} [DistribLattice α] [Fintype α] [DecidableEq α] [CommSemiring β]
   [LinearOrder β] [IsStrictOrderedRing β] [ExistsAddOfLE β] {f g : α → β} {s : Finset α}
 
-/-- **Holley's inequality** for an upper set. If `g` dominates `f` across meets and joins, then
-the share of the weight on an upper set is at least as large under `g` as under `f`. -/
 theorem holley_isUpperSet (hf : 0 ≤ f) (hg : 0 ≤ g) (hs : IsUpperSet (s : Set α))
     (h : ∀ a b, f a * g b ≤ f (a ⊓ b) * g (a ⊔ b)) :
     (∑ a ∈ s, f a) * ∑ a, g a ≤ (∑ a, f a) * ∑ a ∈ s, g a := by

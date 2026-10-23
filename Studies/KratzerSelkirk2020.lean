@@ -90,9 +90,6 @@ theorem not_given_mark_focused {α : Type*} [Nontrivial α] (d : WithAlternative
     ¬ (d.mark .focused).Given a :=
   not_given_of_nontrivial (d.nontrivial_alternatives_mark_focused) a
 
-/-- The Givenness requirement is use-conditional and must be met by the utterance context
-however deeply [G] is embedded. As the not-at-issue content of a two-dimensional meaning, it
-survives every at-issue operator `F`. -/
 theorem useConditional_projects {W : Type*} (F : (W → Prop) → W → Prop)
     (atIssue requirement : W → Prop) :
     (F <$> (⟨atIssue, requirement⟩ : TwoDim W (W → Prop))).notAtIssue = requirement :=
@@ -183,7 +180,6 @@ theorem meaning_eq_mark (t : LF α) : t.meaning = t.raw.mark t.label.mark := by
   | squiggle ℭ t l ih => simp only [meaning, ord, WithAlternatives.ordinary_mark,
       WithAlternatives.unfeatured_ordinary]
 
-/-- Every logical form has its ordinary value among its alternatives. -/
 theorem wellFormed_meaning (t : LF α) : t.meaning.WellFormed := by
   induction t with
   | lex x l => exact (WithAlternatives.WellFormed.unfeatured x).mark _
@@ -198,7 +194,6 @@ theorem wellFormed_raw (t : LF α) : t.raw.WellFormed := by
     exact f.wellFormed_meaning.seq x.wellFormed_meaning
   | squiggle ℭ t l => exact WithAlternatives.WellFormed.unfeatured _
 
-/-- A node's own mark is a continuation of the meaning of its root. -/
 theorem meaning_eq_bind (t : LF α) :
     t.meaning = t.raw >>= fun c ↦ (pure c : WithAlternatives α).mark t.label.mark := by
   rw [meaning_eq_mark, WithAlternatives.mark_eq_bind t.wellFormed_raw]
@@ -220,7 +215,6 @@ theorem IsVariant.refl (t : LF α) : IsVariant t t := by
   | app f x l ihf ihx => exact .app l l ihf ihx
   | squiggle ℭ t l ih => exact .squiggle ℭ l l ih
 
-/-- Variants share their ordinary value, which overlooks labels. -/
 theorem IsVariant.ord_eq {s t : LF α} (h : IsVariant s t) : s.ord = t.ord := by
   induction h with
   | lex => rfl
@@ -379,7 +373,6 @@ theorem eq_pred₁_of_isVariant {g : σ → τ} {z : σ} {l₁ : Label (σ → �
     | lex _ l₁' _ => cases hz with
       | lex _ l₂' _ => exact ⟨l₁', l₂', l₃', rfl⟩
 
-/-- A [FoC]-marked function or root makes the application evoke every value. -/
 theorem alternatives_pred₁_eq_univ {g : σ → τ} {z : σ} {l₁ : Label (σ → τ)} {l₂ : Label σ}
     {l₃ : Label τ} (h : l₁.mark = .focused ∨ l₃.mark = .focused) :
     (pred₁ g z l₁ l₂ l₃).meaning.alternatives = Set.univ := by
@@ -390,7 +383,6 @@ theorem alternatives_pred₁_eq_univ {g : σ → τ} {z : σ} {l₁ : Label (σ 
     · exact absurd h nofun
   · rfl
 
-/-- Otherwise the application evokes `g` at the alternatives of its argument. -/
 theorem alternatives_pred₁ {g : σ → τ} {z : σ} {l₁ : Label (σ → τ)} (l₂ : Label σ)
     {l₃ : Label τ} (h₁ : l₁.mark = .unfeatured) (h₃ : l₃.mark = .unfeatured) :
     (pred₁ g z l₁ l₂ l₃).meaning.alternatives = g '' (lex z l₂).meaning.alternatives := by
@@ -398,8 +390,6 @@ theorem alternatives_pred₁ {g : σ → τ} {z : σ} {l₁ : Label (σ → τ)}
   ext c
   simp [WithAlternatives.mem_alternatives_seq]
 
-/-- A narrow FoCus on the argument of an injective function represents a contrast, among all the
-variants of the application, with the function at another argument. -/
 theorem representsContrast_pred₁ {g : σ → τ} (hg : Function.Injective g) (z : σ) {z' : σ}
     (hz : z' ≠ z) : (pred₁ g z .bare .foc .bare).RepresentsContrast (g z') := by
   have ht : (pred₁ g z .bare .foc .bare).meaning.alternatives = Set.range g := by
@@ -573,13 +563,10 @@ referent is among the alternatives. -/
 def isAGiven {α : Type*} (m : WithAlternatives α) (referent : α) : Prop :=
   referent ∈ m.alternatives
 
-/-- Givenness is a special case of A-Givenness. -/
 theorem isAGiven_of_given {α : Type*} {m : WithAlternatives α} {referent : α}
     (h : m.Given referent) : isAGiven m referent := by
   rw [isAGiven, h]; rfl
 
-/-- The converse fails: a two-membered alternatives value is A-Given with respect to either
-member but Given with respect to neither. -/
 theorem not_given_of_isAGiven :
     ∃ (m : WithAlternatives ℕ) (referent : ℕ), isAGiven m referent ∧ ¬ m.Given referent :=
   ⟨⟨1, {1, 2}⟩, 1, by simp [isAGiven], not_given_of_nontrivial (Set.nontrivial_pair (by decide)) 1⟩
@@ -618,9 +605,6 @@ def KSHausaReading (u : HartmannZimmermann2007.FocusUtterance) : Prop :=
 instance (u : HartmannZimmermann2007.FocusUtterance) : Decidable (KSHausaReading u) :=
   inferInstanceAs (Decidable (_ ↔ _))
 
-/-- The two accounts part on the cells the accommodation caveat targets: the ex situ
-new-information answer and the in situ corrective answer of the Hausa study both violate
-the rereading. -/
 theorem hz_cells_violate_reading :
     ¬ KSHausaReading HartmannZimmermann2007.exSitu_newInfo ∧
       ¬ KSHausaReading HartmannZimmermann2007.inSitu_corrective := by

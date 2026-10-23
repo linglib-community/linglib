@@ -147,9 +147,6 @@ theorem Dominates.card_filter_le (h : t.Dominates s) (k : ℕ) :
   obtain ⟨t', ht', hrel⟩ := h
   exact (card_filter_le_card_filter_of_rel hrel k).trans (card_le_card (filter_le_filter _ ht'))
 
-/-- The counting condition gives dominance. Greedy matching pairs the least entry of `s` with an
-entry of `t` below it, which the condition supplies and which leaves the condition intact for
-what remains. -/
 theorem dominates_of_forall_mem
     (h : ∀ k ∈ s, card (s.filter (· ≤ k)) ≤ card (t.filter (· ≤ k))) : t.Dominates s := by
   induction s using Multiset.strongInductionOn generalizing t with
@@ -318,7 +315,6 @@ theorem invPowSum_replicate (α : ℝ) (m n : ℕ) :
     (Multiset.replicate m n).invPowSum α = m * (n : ℝ≥0∞)⁻¹ ^ α := by
   rw [invPowSum, map_replicate, sum_replicate, nsmul_eq_mul]
 
-/-- On reals `invPowSum` is the sum of the real inverse powers. -/
 theorem invPowSum_toReal (hα : 0 ≤ α) (hm : 0 ∉ m) :
     (m.invPowSum α).toReal = (m.map fun n : ℕ ↦ ((n : ℝ))⁻¹ ^ α).sum := by
   induction m using Multiset.induction with
@@ -336,7 +332,6 @@ theorem invPowSum_toReal (hα : 0 ≤ α) (hm : 0 ∉ m) :
     congr 1
     rw [← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
 
-/-- On reals, at a natural exponent, `invPowSum` is `divPowSum` over `Dᵏ`. -/
 theorem invPowSum_toReal_eq {D : ℕ} (hD : D ≠ 0) (k : ℕ) {m : Multiset ℕ}
     (h : ∀ n ∈ m, n ∣ D) :
     (m.invPowSum k).toReal = (m.divPowSum D k : ℝ) / (D : ℝ) ^ k := by

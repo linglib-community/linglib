@@ -86,7 +86,6 @@ classically. -/
 def Illusory (sel : Set W → Prop) (q : Set W) : Prop :=
   (∃ p ∈ P.alts, sel p ∧ (P.selected p).Nonempty ∧ P.selected p ⊆ q) ∧ ¬ P.Entails q
 
-/-- Weakening the selection rule preserves illusions. -/
 theorem Illusory.mono {sel sel' : Set W → Prop} (h : ∀ p, sel p → sel' p) {q : Set W}
     (hq : P.Illusory sel q) : P.Illusory sel' q :=
   ⟨hq.1.imp fun p ⟨hp, hs, hne, hsub⟩ ↦ ⟨hp, h p hs, hne, hsub⟩, hq.2⟩
@@ -111,7 +110,6 @@ def indefinite {E : Type*} (P : E → Set W) (D : Set E) (hint : Set W) : Proble
 
 variable {a b c d : Set W}
 
-/-- The classical schema is the indirect schema whose hint is the first conjunct itself. -/
 theorem disjunction_eq_indirect : disjunction a b c = indirect a b c a := rfl
 
 @[simp] theorem premises_indirect : (indirect a b c d).premises = ((a ∩ b) ∪ c) ∩ d := by
@@ -120,18 +118,14 @@ theorem disjunction_eq_indirect : disjunction a b c = indirect a b c a := rfl
 @[simp] theorem premises_disjunction : (disjunction a b c).premises = ((a ∩ b) ∪ c) ∩ a :=
   premises_indirect
 
-/-- The schema is classically invalid: a world verifying the second disjunct and the hint but
-not the conclusion. -/
 theorem indirect_invalid (h : ((c ∩ d) \ b).Nonempty) : ¬ (indirect a b c d).Entails b := by
   obtain ⟨w, ⟨hwc, hwd⟩, hwb⟩ := h
   exact fun hent ↦ hwb (hent (by simpa using ⟨Or.inr hwc, hwd⟩))
 
-/-- Whatever rule selects the first disjunct yields the illusion. -/
 theorem indirect_illusory {sel : Set W → Prop} (hsel : sel (a ∩ b)) (hab : (a ∩ b ∩ d).Nonempty)
     (h : ((c ∩ d) \ b).Nonempty) : (indirect a b c d).Illusory sel b :=
   ⟨⟨a ∩ b, by simp [indirect], hsel, hab, fun _ hw ↦ hw.1.2⟩, indirect_invalid h⟩
 
-/-- In the classical schema, matching selects exactly the first disjunct. -/
 theorem matches_disjunction_iff (hc : (c \ a).Nonempty) {p : Set W}
     (hp : p ∈ ({a ∩ b, c} : Set (Set W))) : (disjunction a b c).Matches p ↔ p = a ∩ b := by
   obtain ⟨w, hwc, hwa⟩ := hc
@@ -139,13 +133,10 @@ theorem matches_disjunction_iff (hc : (c \ a).Nonempty) {p : Set W}
   · simp [Problem.Matches, disjunction]
   · exact ⟨fun h ↦ (hwa (h hwc)).elim, fun h ↦ (hwa (h ▸ hwc).1).elim⟩
 
-/-- The classical illusory inference from disjunction, under exact matching. -/
 theorem disjunction_illusory_matches (hab : (a ∩ b).Nonempty) (h : ((c ∩ a) \ b).Nonempty) :
     (disjunction a b c).Illusory (disjunction a b c).Matches b :=
   indirect_illusory (fun _ hw ↦ hw.1) (hab.elim fun w ⟨hwa, hwb⟩ ↦ ⟨w, ⟨hwa, hwb⟩, hwa⟩) h
 
-/-- Under bare overlap the symmetric, unattractive conclusion is certified too: `Overlaps`
-records attention, not the selection asymmetry. -/
 theorem disjunction_illusory_overlaps_right (hca : (c ∩ a).Nonempty)
     (h : ((a ∩ b) \ c).Nonempty) :
     (disjunction a b c).Illusory (disjunction a b c).Overlaps c := by
@@ -153,12 +144,9 @@ theorem disjunction_illusory_overlaps_right (hca : (c ∩ a).Nonempty)
   obtain ⟨w, ⟨hwa, hwb⟩, hwc⟩ := h
   exact fun hent ↦ hwc (hent (by simpa using ⟨Or.inl ⟨hwa, hwb⟩, hwa⟩))
 
-/-- Matching never selects the second disjunct of the classical schema. -/
 theorem not_matches_right (hc : (c \ a).Nonempty) : ¬ (disjunction a b c).Matches c :=
   fun h ↦ hc.elim fun _ hw ↦ hw.2 (h hw.1)
 
-/-- Exact matching undergenerates the indirect schema: when neither alternative carries the
-hint, no conclusion at all is illusory under matching. -/
 theorem indirect_not_illusory_matches (h₁ : ((a ∩ b) \ d).Nonempty) (h₂ : (c \ d).Nonempty)
     (q : Set W) : ¬ (indirect a b c d).Illusory (indirect a b c d).Matches q := by
   rintro ⟨⟨p, hp, hm, -, -⟩, -⟩
@@ -167,24 +155,17 @@ theorem indirect_not_illusory_matches (h₁ : ((a ∩ b) \ d).Nonempty) (h₂ : 
   · exact h₁.elim fun _ hw ↦ hw.2 (hm hw.1)
   · exact h₂.elim fun _ hw ↦ hw.2 (hm hw.1)
 
-/-- The *might* schema is the classical schema with the tautologous second disjunct. -/
 theorem mightProblem_eq_disjunction : mightProblem a b = disjunction a b univ := rfl
 
-/-- The *might* premise is informationally idle. -/
 @[simp] theorem sUnion_might (p : Set W) : ⋃₀ might p = univ := by simp [might]
 
-/-- It is nevertheless not the alternative set of the tautology. -/
 theorem might_ne_of_ne_univ {p : Set W} (hp : p ≠ univ) : might p ≠ might univ := by
   simp [might, hp]
 
-/-- The *might* conclusion is illusory under matching. -/
 theorem might_illusory (hab : (a ∩ b).Nonempty) (h : (a \ b).Nonempty) :
     (mightProblem a b).Illusory (mightProblem a b).Matches b :=
   disjunction_illusory_matches hab (by simpa using h)
 
-/-- The indefinite conclusion about a witness is illusory under overlap whenever another
-witness could verify the indefinite: its match is on the individual, which bare propositions
-cannot see. -/
 theorem indefinite_illusory {E : Type*} {P : E → Set W} {D : Set E} {hint : Set W} {john : E}
     (hj : john ∈ D) (hw : (P john ∩ hint).Nonempty)
     (hcm : ∃ x ∈ D, ((P x ∩ hint) \ P john).Nonempty) :
@@ -205,7 +186,6 @@ open MeasureTheory ProbabilityTheory
 
 variable {A B C : Set W}
 
-/-- The premises `((a ∧ b) ∨ c) ∧ a` are classically `(a ∧ b) ∨ (a ∧ c)`. -/
 theorem premises_eq_distrib (A B C : Set W) : ((A ∩ B) ∪ C) ∩ A = (A ∩ B) ∪ (A ∩ C) := by
   ext; simp; tauto
 
@@ -215,9 +195,6 @@ theorem premises_inter_left (A B C : Set W) : ((A ∩ B) ∪ C) ∩ A ∩ B = A 
 theorem premises_inter_right (A B C : Set W) : ((A ∩ B) ∪ C) ∩ A ∩ C = A ∩ C := by
   ext; simp; tauto
 
-/-- Conditioning any finite measure on the premises, the posteriors of `b` and of `c` agree iff
-the priors of `a ∧ b` and `a ∧ c` do: a posterior-based account distinguishes the conclusions
-only through the priors. -/
 theorem posterior_eq_iff [MeasurableSpace W] (μ : Measure W) [IsFiniteMeasure μ]
     (hE : MeasurableSet (((A ∩ B) ∪ C) ∩ A)) (h0 : μ (((A ∩ B) ∪ C) ∩ A) ≠ 0) :
     μ[B | ((A ∩ B) ∪ C) ∩ A] = μ[C | ((A ∩ B) ∪ C) ∩ A] ↔ μ (A ∩ B) = μ (A ∩ C) := by

@@ -104,17 +104,14 @@ def mannerQUD : Setoid (CommEvent Manner Content) := Setoid.ker CommEvent.manner
 /-- The content question, *what did John say?*: events in one cell share a content. -/
 def contentQUD : Setoid (CommEvent Manner Content) := Setoid.ker CommEvent.content
 
-/-- The manner question foregrounds the manner. -/
 theorem foregrounded_manner_mannerQUD :
     Foregrounded (mannerQUD (Manner := Manner) (Content := Content)) CommEvent.manner :=
   le_rfl
 
-/-- The content question foregrounds the content. -/
 theorem foregrounded_content_contentQUD :
     Foregrounded (contentQUD (Manner := Manner) (Content := Content)) CommEvent.content :=
   le_rfl
 
-/-- The manner question backgrounds the content, given two contents to choose from. -/
 theorem not_foregrounded_content_mannerQUD [Nonempty Manner] [Nontrivial Content] :
     ¬ Foregrounded (mannerQUD (Manner := Manner) (Content := Content)) CommEvent.content := by
   obtain ⟨m⟩ := ‹Nonempty Manner›
@@ -141,12 +138,10 @@ def HasManner (p : MatrixPredicate) : Prop :=
 
 instance : DecidablePred HasManner := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- A verb of the manner-of-speaking class carries manner however it is modified. -/
 theorem hasManner_of_mannerOfSpeaking {v : English.Verbs.Verb}
     (h : .mannerOfSpeaking ∈ v.levinClasses) (b : Bool) : HasManner ⟨v, b⟩ :=
   .inl h
 
-/-- A verb of the *say* class carries manner only by an adverb. -/
 theorem hasManner_say_iff {v : English.Verbs.Verb} (h : v.levinClasses = {.say}) (b : Bool) :
     HasManner ⟨v, b⟩ ↔ b = true := by
   simp [HasManner, h]
@@ -182,14 +177,11 @@ def Island (p : MatrixPredicate) (f : FocusCondition) : Prop :=
 
 variable {Manner Content}
 
-/-- Focus on the embedded object foregrounds the complement whatever the predicate. -/
 theorem not_island_embedded (p : MatrixPredicate) : ¬ Island Manner Content p .embedded :=
   fun h ↦ h le_rfl
 
 variable [Nonempty Manner] [Nontrivial Content]
 
-/-- The complement is an island exactly when the predicate is focused, or nothing is and the
-predicate carries manner. -/
 theorem island_iff (p : MatrixPredicate) (f : FocusCondition) :
     Island Manner Content p f ↔ f = .predicate ∨ f = .unmarked ∧ p.HasManner := by
   cases f
@@ -199,22 +191,16 @@ theorem island_iff (p : MatrixPredicate) (f : FocusCondition) :
       simp [Island, activeQUD, h, not_foregrounded_content_mannerQUD,
         foregrounded_content_contentQUD]
 
-/-- *Who did John whisper that Mary met with?* is degraded unless the embedded object is focused,
-Experiment 1. -/
 theorem island_whisper_iff (f : FocusCondition) :
     Island Manner Content ⟨whisper, false⟩ f ↔ f ≠ .embedded := by
   have := MatrixPredicate.hasManner_of_mannerOfSpeaking (v := whisper) (by decide) false
   cases f <;> simp [island_iff, this]
 
-/-- *Who did John say that Mary met with?* is degraded exactly when *say* is focused,
-Experiment 2a. -/
 theorem island_say_iff (f : FocusCondition) :
     Island Manner Content ⟨say, false⟩ f ↔ f = .predicate := by
   have := MatrixPredicate.hasManner_say_iff (v := say) (by decide) false
   cases f <;> simp [island_iff, this]
 
-/-- A manner adverb makes *say* behave as a manner-of-speaking verb under every focus condition,
-Experiments 3a and 3b. -/
 theorem island_sayAdverb_iff_island_whisper (f : FocusCondition) :
     Island Manner Content ⟨say, true⟩ f ↔ Island Manner Content ⟨whisper, false⟩ f := by
   have := (MatrixPredicate.hasManner_say_iff (v := say) (by decide) true).2 rfl
@@ -240,7 +226,6 @@ def rowFocus (e : Datum) : Option FocusCondition :=
   | some "none" => some .unmarked
   | _ => none
 
-/-- Every row has a predicate and a focus condition. -/
 theorem rows_parse : ∀ e ∈ Examples.all, (rowPredicate e).isSome ∧ (rowFocus e).isSome := by
   decide
 

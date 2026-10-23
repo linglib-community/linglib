@@ -101,19 +101,15 @@ theorem WellFormed.mark (hd : d.WellFormed) (m : Mark) : (d.mark m).WellFormed :
   cases m
   exacts [hd, WellFormed.focused _]
 
-/-- An F-marked constituent of a type with two values evokes two alternatives. -/
 theorem nontrivial_alternatives_mark_focused [Nontrivial α] (d : WithAlternatives α) :
     (d.mark .focused).alternatives.Nontrivial :=
   Set.nontrivial_univ
 
-/-- Narrow focus on the first argument of a predication `f x y` evokes `f x' y` for every `x'`. -/
 @[simp] theorem alternatives_map₂_focused_unfeatured (f : α → β → γ) (x : α) (y : β) :
     (map₂ f ((unfeatured x).mark .focused) ((unfeatured y).mark .unfeatured)).alternatives =
       Set.range (f · y) := by
   simp [Set.image2_singleton_right]
 
-/-- Narrow focus on the second argument of a predication `f x y` evokes `f x y'` for every
-`y'`. -/
 @[simp] theorem alternatives_map₂_unfeatured_focused (f : α → β → γ) (x : α) (y : β) :
     (map₂ f ((unfeatured x).mark .unfeatured) ((unfeatured y).mark .focused)).alternatives =
       Set.range (f x) := by

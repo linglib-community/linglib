@@ -207,7 +207,6 @@ def labels : Clusivity → Category → ℕ
 /-- The type's pattern, its column of letters as a setoid on the four cells. -/
 abbrev toPattern (t : Clusivity) : Pattern := Setoid.ker (t.labels ∘ Subtype.val)
 
-/-- The five patterns are distinct. -/
 theorem toPattern_injective : Function.Injective toPattern := by
   show ∀ s t : Clusivity, _ → _; decide +kernel
 
@@ -223,9 +222,6 @@ theorem ofAttribute_profile_le_iff {q q' : Question} :
   revert q q'
   decide +kernel
 
-/-- Every common type fits the hierarchy, since a specialized exclusive requires a specialized
-inclusive and a split inclusive a specialized exclusive, the two addressee inclusion
-implications. -/
 theorem profile_isLowerSet (t : Clusivity) : IsLowerSet (↑t.profile : Set Question) :=
   Concept.antitone_ofAttribute_iff.1 (fun _ _ h ↦ ofAttribute_profile_le_iff.2 h) t
 
@@ -248,7 +244,6 @@ theorem le_iff_profile_subset {s t : Clusivity} : s ≤ t ↔ s.profile ⊆ t.pr
 
 theorem profile_monotone : Monotone profile := fun _ _ ↦ le_iff_profile_subset.1
 
-/-- The converse of the first addressee inclusion implication fails at only-inclusive. -/
 theorem onlyInclusive_profile :
     onlyInclusive.profile = {.specializedWe, .specializedInclusive} := by decide +kernel
 
@@ -333,7 +328,6 @@ def VerticalHomophony : Prop :=
     ¬ (a.IsFirstPersonComplex ∧ b.IsFirstPersonComplex) ∧ s a b
 
 variable {s} in
-/-- Diagonal homophony is horizontal. -/
 theorem DiagonalHomophony.horizontalHomophony (h : s.DiagonalHomophony) :
     s.HorizontalHomophony :=
   let ⟨a, b, hb, _, hab⟩ := h; ⟨a, b, hb, hab⟩
@@ -384,7 +378,6 @@ instance : Decidable s.RespectsHorizontalHierarchy := by
   unfold RespectsHorizontalHierarchy; infer_instance
 
 variable {s} in
-/-- A structure respecting the hierarchy shows horizontal homophony exactly up to its rung. -/
 theorem mem_horizontalSingulars_iff (h : s.RespectsHorizontalHierarchy) {a : Singular} :
     a ∈ s.horizontalSingulars ↔ ↑a ≤ s.horizontalSingulars.max :=
   h.2.mem_iff_le_max
@@ -433,7 +426,6 @@ one). -/
 def explicitness : WithBot Opposition := s.givenUp.max
 
 variable {s} in
-/-- A structure respecting the hierarchy has given up exactly the oppositions up to its rung. -/
 theorem mem_givenUp_iff (h : s.RespectsExplicitnessHierarchy) {o : Opposition} :
     o ∈ s.givenUp ↔ ↑o ≤ s.explicitness :=
   h.mem_iff_le_max
@@ -471,12 +463,9 @@ def labels : RarePattern → Category → ℕ
 /-- The rare pattern as a setoid on the four cells. -/
 abbrev pattern (q : RarePattern) : Clusivity.Pattern := Setoid.ker (q.labels ∘ Subtype.val)
 
-/-- The rare patterns are distinct from each other. -/
 theorem pattern_injective : Function.Injective pattern := by
   show ∀ q q' : RarePattern, _ → _; decide +kernel
 
-/-- The rare patterns are distinct from the common types, so ten of the fifteen patterns are
-attested. -/
 theorem pattern_ne (q : RarePattern) (t : Clusivity) : q.pattern ≠ t.toPattern := by
   revert q t; decide +kernel
 
@@ -557,42 +546,32 @@ def clusivity : Kind → Clusivity
   | .mandara | .tupiGuarani | .kwakiutl => .inclusiveExclusive
   | .latin | .sinhalese | .berik | .slave | .nezPerce | .kombai | .omie => .unifiedWe
 
-/-- The named structures are distinct. -/
 theorem pattern_injective : Function.Injective pattern := by
   show ∀ k l : Kind, _ → _; decide +kernel
 
-/-- Each named structure has the first person complex the book files it under. -/
 theorem hasClusivity_pattern (k : Kind) : k.pattern.HasClusivity k.clusivity := by
   revert k; decide +kernel
 
-/-- Every named structure respects the horizontal hierarchy. -/
 theorem respectsHorizontalHierarchy_pattern (k : Kind) :
     k.pattern.RespectsHorizontalHierarchy := by
   revert k; decide +kernel
 
-/-- Hierarchy I, with an inclusive/exclusive opposition, runs Mandara < Tupí-Guaraní <
-Kwakiutl < Sierra Popoluca, the last rung the exclusive marked like the speaker. -/
 theorem horizontalSingulars_inclusiveExclusive :
     mandara.pattern.horizontalSingulars ⊂ tupiGuarani.pattern.horizontalSingulars ∧
     tupiGuarani.pattern.horizontalSingulars ⊂ kwakiutl.pattern.horizontalSingulars ∧
     kwakiutl.pattern.horizontalSingulars ⊂ sierraPopoluca.pattern.horizontalSingulars := by
   decide +kernel
 
-/-- Hierarchy II, without one, runs Latin < Sinhalese < Berik < Maricopa. -/
 theorem horizontalSingulars_unified :
     latin.pattern.horizontalSingulars ⊂ sinhalese.pattern.horizontalSingulars ∧
     sinhalese.pattern.horizontalSingulars ⊂ berik.pattern.horizontalSingulars ∧
     berik.pattern.horizontalSingulars ⊂ maricopa.pattern.horizontalSingulars := by
   decide +kernel
 
-/-- Every named structure respects the explicitness hierarchy. -/
 theorem respectsExplicitnessHierarchy_pattern (k : Kind) :
     k.pattern.RespectsExplicitnessHierarchy := by
   revert k; decide +kernel
 
-/-- The columns of the book's cognitive map put vertical homophony (the Slave type) at P1,
-unified-we and no-we at P2, inclusive/exclusive and only-inclusive at P3, and
-minimal/augmented at P4. -/
 theorem explicitness_pattern :
     slave.pattern.explicitness = ↑Opposition.group ∧
     latin.pattern.explicitness = ↑Opposition.inclusiveExclusive ∧
@@ -602,8 +581,6 @@ theorem explicitness_pattern :
     maranao.pattern.explicitness = ⊥ := by
   decide +kernel
 
-/-- The rows of the cognitive map put no-we and only-inclusive at N1, the Slave, Latin, Mandara
-and Maranao types at N2, and the Sinhalese type between the two. -/
 theorem numberStage_pattern :
     maricopa.pattern.numberStage = some .N1 ∧ sierraPopoluca.pattern.numberStage = some .N1 ∧
     (∀ k ∈ [slave, latin, mandara, maranao], k.pattern.numberStage = some .N2) ∧
@@ -686,22 +663,16 @@ end Row
 /-- The printed paradigms. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum?
 
-/-- Every paradigm the book files under a named type has that type's structure. -/
 theorem rows_kind : ∀ r ∈ rows, ∀ k, r.kind = some k → r.syncretism = k.pattern := by
   decide +kernel
 
-/-- Every paradigm illustrating a rare pattern has it. -/
 theorem rows_rare : ∀ r ∈ rows, ∀ q, r.rare = some q → r.wePattern = q.pattern := by
   decide +kernel
 
-/-- Every chapter-4 paradigm has one of the five common types, chapter 4 having set the rare
-patterns aside. -/
 theorem rows_hasClusivity :
     ∀ r ∈ rows, r.chapter = 4 → ∃ t, r.syncretism.HasClusivity t := by
   decide +kernel
 
-/-- Addressee inclusion implication I over the printed paradigms, Binandere the one
-exception. -/
 theorem rows_specializedInclusive_of_specializedExclusive :
     ∀ r ∈ rows, r.rare ≠ some .pj →
       r.wePattern.SpecializedExclusive → r.wePattern.SpecializedInclusive := by
@@ -712,9 +683,6 @@ theorem binandere :
       ¬ r.wePattern.SpecializedInclusive := by
   decide +kernel
 
-/-- Addressee inclusion implication II over the printed paradigms. Its exceptions are the
-rare patterns that mark the two inclusives apart, (Pf) and (Pg), which the book names, and
-(Ph), whose paradigm the book's list overlooks. -/
 theorem rows_specializedExclusive_of_splitInclusive :
     ∀ r ∈ rows, (r.rare = none ∨ r.rare = some .pi ∨ r.rare = some .pj) →
       r.wePattern.SplitInclusive → r.wePattern.SpecializedExclusive := by
@@ -725,20 +693,14 @@ theorem rows_splitInclusive_not_specializedExclusive :
       r.wePattern.SplitInclusive ∧ ¬ r.wePattern.SpecializedExclusive := by
   decide +kernel
 
-/-- The strong universal 'we' fails, since the English inflection has no 'we'. -/
 theorem english_inflection_noWe :
     ∃ r ∈ rows, r.id = "cysouw2003_4_68" ∧ r.syncretism.HasClusivity .noWe := by
   decide +kernel
 
-/-- Over the printed paradigms, the Homophony Implication holds, singular homophony occurring
-only in inflectional paradigms. The two independent-pronoun exceptions the book reports,
-Qawesqar and Winnebago, are described in chapter 2 without a printed paradigm. -/
 theorem rows_inflectional_of_singularHomophony :
     ∀ r ∈ rows, r.syncretism.SingularHomophony → r.marking = some .inflectional := by
   decide +kernel
 
-/-- The Horizontal Homophony Hierarchy holds of every common and semi-common paradigm; its
-exceptions, the diagonal cases among them, are rare. -/
 theorem rows_rare_of_not_respectsHorizontalHierarchy :
     ∀ r ∈ rows, ¬ r.syncretism.RespectsHorizontalHierarchy → r.ubiquity = .rare := by
   decide +kernel
@@ -757,7 +719,6 @@ theorem rows_unified_of_singularHomophony :
       r.syncretism.weMarking = .unified := by
   decide +kernel
 
-/-- The Explicitness Hierarchy holds of every common and semi-common paradigm. -/
 theorem rows_rare_of_not_respectsExplicitnessHierarchy :
     ∀ r ∈ rows, ¬ r.syncretism.RespectsExplicitnessHierarchy → r.ubiquity = .rare := by
   decide +kernel
@@ -778,21 +739,16 @@ theorem ofAttribute_givenUp_le_iff {o o' : Opposition} :
   rw [Concept.ofAttribute_le_ofAttribute_iff, ← h o o']
   exact ⟨fun H r hr ↦ H (x := ⟨r, hr⟩), fun H ⦃x⦄ ↦ H x.1 x.2⟩
 
-/-- Singular homophony without vertical homophony is rare, the European paradigms. -/
 theorem rows_rare_of_singularHomophony_without_vertical :
     ∀ r ∈ rows, r.syncretism.SingularHomophony → ¬ r.syncretism.VerticalHomophony →
       r.ubiquity = .rare := by
   decide +kernel
 
-/-- Vertical homophony under an inclusive/exclusive opposition is rare. -/
 theorem rows_rare_of_verticalHomophony_inclusiveExclusive :
     ∀ r ∈ rows, r.syncretism.VerticalHomophony → r.syncretism.weMarking ≠ .unified →
       r.ubiquity = .rare := by
   decide +kernel
 
-/-- Among the book's exemplars of the five rungs, the Waskia present and the Una undergoer
-suffixes have given up a singular and a group opposition, then come the Latin, Mandara and
-Maranao types. -/
 theorem explicitness_rungs :
     ∃ waskia ∈ rows, ∃ una ∈ rows,
       waskia.id = "cysouw2003_4_66" ∧ una.id = "cysouw2003_4_64" ∧
@@ -810,20 +766,15 @@ nominative pronouns. -/
 def englishSubject : Category → Finset String :=
   PersonalPronoun.paradigm (English.Pronouns.pronouns.filter (.nom ∈ ·.cases))
 
-/-- The English pronouns have the structure of the paradigm the book prints for them. -/
 theorem english_pronouns :
     ∃ r ∈ rows, r.id = "cysouw2003_4_19" ∧ Setoid.ker englishSubject = r.syncretism := by
   decide +kernel
 
-/-- With horizontal homophony in the second person only, the English pronouns break the
-horizontal hierarchy. -/
 theorem english_not_respectsHorizontalHierarchy :
     ¬ Structure.RespectsHorizontalHierarchy (Setoid.ker englishSubject) := by decide +kernel
 
-/-- The Tagalog *ang* series is a Maranao-type paradigm. -/
 theorem tagalog_maranao : Setoid.ker Tagalog.ang = Kind.maranao.pattern := by decide +kernel
 
-/-- The Tagalog *ang* series is of the minimal-augmented type. -/
 theorem tagalog_minimalAugmented :
     Structure.HasClusivity (Setoid.ker Tagalog.ang) .minimalAugmented := by
   decide +kernel

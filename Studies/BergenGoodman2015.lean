@@ -123,7 +123,6 @@ theorem noisyMeaning_apply (N : Kernel I U) (ρ : Measure I) (m : I → W → �
 
 variable [Fintype U] [MeasurableSingletonClass U]
 
-/-- Without noise the perceived utterance is the intended one, weighted by its prior. -/
 theorem noisyMeaning_id (ρ : Measure U) (m : U → W → ℝ≥0∞) (u : U) (w : W) :
     noisyMeaning Kernel.id ρ m u w = ρ {u} * m u w := by
   rw [noisyMeaning_apply, sum_eq_single u]
@@ -145,7 +144,6 @@ informativity. -/
 noncomputable def channelMix (N : Kernel I U) (L : Kernel U W) (u_i : I) (w : W) : ℝ≥0∞ :=
   ∏ u_p, L u_p {w} ^ (N u_i {u_p}).toReal
 
-/-- The mix over the perceptions the channel can produce. -/
 theorem channelMix_eq_prod (N : Kernel I U) (L : Kernel U W) {u_i : I} {s : Finset U}
     (hs : ∀ u_p ∉ s, N u_i {u_p} = 0) (w : W) :
     channelMix N L u_i w = ∏ u_p ∈ s, L u_p {w} ^ (N u_i {u_p}).toReal :=
@@ -195,8 +193,6 @@ end
 
 variable [MeasurableSingletonClass U]
 
-/-- Without noise the literal listener is the noiseless one at every utterance of positive
-finite prior mass. -/
 theorem ofDensity_noisyMeaning_id (μ : Measure W) (ρ : Measure U) (m : U → W → ℝ≥0∞)
     {u : U} (h0 : ρ {u} ≠ 0) (htop : ρ {u} ≠ ∞) :
     Kernel.ofDensity μ (noisyMeaning Kernel.id ρ m) u = Kernel.ofDensity μ m u :=
@@ -211,7 +207,6 @@ theorem channelMix_id (L : Kernel U W) (u : U) (w : W) : channelMix Kernel.id L 
 
 variable [Fintype W] [MeasurableSingletonClass W]
 
-/-- Without noise the speaker is the noiseless one. -/
 theorem noisySpeaker_id (α : ℝ) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] :
     noisySpeaker Kernel.id α C L = speaker α C L Measure.dirac := by
   rw [speaker_dirac_eq_ofWeights]
@@ -226,7 +221,6 @@ section Listener
 
 variable [MeasurableSingletonClass U] [Fintype W] [MeasurableSingletonClass W]
 
-/-- Without noise the pragmatic listener over the channel is the noiseless one. -/
 theorem listener_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
     [IsFiniteKernel L] (μ : Measure W) :
     listener μ (Kernel.id ∘ₖ noisySpeaker Kernel.id α C L) =
@@ -305,7 +299,6 @@ noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning :=
 
 variable {δ : ℝ} (m : Meaning)
 
-/-- Only the full sentence for `m` deletes to its subject fragment. -/
 theorem noisyMeaning_subject (w : Meaning) :
     noisyMeaning (N δ) uttPrior lit' (.subject m) w =
       ENNReal.ofReal δ * ({m} : Set Meaning).indicator 1 w := by
@@ -315,7 +308,6 @@ theorem noisyMeaning_subject (w : Meaning) :
     simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, lit', lit, h]
   · exact fun h => absurd (mem_univ _) h
 
-/-- Only the full sentence for `m` survives as itself. -/
 theorem noisyMeaning_full (w : Meaning) :
     noisyMeaning (N δ) uttPrior lit' (.full m) w =
       ENNReal.ofReal (1 - δ) * ({m} : Set Meaning).indicator 1 w := by
@@ -347,15 +339,12 @@ every positive deletion rate. -/
 theorem L0_subject (hδ : 0 < δ) : L0 δ (.subject m) = Measure.dirac m :=
   L0_of_noisyMeaning m hδ (noisyMeaning_subject m)
 
-/-- A full sentence is interpreted literally, at every deletion rate below `1`. -/
 theorem L0_full (hδ : δ < 1) : L0 δ (.full m) = Measure.dirac m :=
   L0_of_noisyMeaning m (by linarith) (noisyMeaning_full m)
 
 variable (hδ₀ : 0 < δ) (hδ₁ : δ < 1)
 include hδ₀ hδ₁
 
-/-- The full sentence for `m'` is heard as itself or as its subject, so its channel-mixed
-listener at `m` is `1` when `m' = m` and `0` otherwise. -/
 theorem channelMix_full (m' : Meaning) :
     channelMix (N δ) (L0 δ) m' m = if m' = m then 1 else 0 := by
   rw [channelMix_eq_prod _ _ (s := {.full m', .subject m'}) fun u hu => by
@@ -378,8 +367,6 @@ theorem S1_apply : S1 δ m = Measure.dirac m := by
   rw [channelMix_full m hδ₀ hδ₁, ENNReal.rpow_one]
   simp [eq_comm]
 
-/-- The channelled speaker reaches the subject fragment for `m` only from `m`, with the deletion
-rate. -/
 theorem comp_apply_subject (w : Meaning) :
     (N δ ∘ₖ S1 δ) w {.subject m} = if w = m then ENNReal.ofReal δ else 0 := by
   rw [Kernel.comp_apply_singleton, sum_eq_single w]
@@ -492,8 +479,6 @@ private theorem sum_univ_mean {β : Type*} [AddCommMonoid β] (f : Meaning → �
     sum_insert (by decide), sum_insert (by decide), sum_singleton]
   simp only [add_assoc]
 
-/-- The literal posterior of `onlyBob` is one minus the rate under the intact subject sentence
-and the rate under the confused one, each over the two meanings a subject sentence is true of. -/
 private theorem L0_onlyBob (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1) :
     L0 ε .bobWent {.onlyBob} = ENNReal.ofReal ((1 - ε) / 2) ∧
     L0 ε .aliceWent {.onlyBob} = ENNReal.ofReal (ε / 2) ∧

@@ -55,12 +55,10 @@ def breadthFirst (q : TreePath) : ℕ ×ₗ List ℕ := toLex (q.toList.length, 
 /-- Breadth-first search with unordered sisters: by depth alone. -/
 def depth (q : TreePath) : ℕ := q.toList.length
 
-/-- Breadth-first search refines its unordered version. -/
 theorem breadthFirst_lt_of_depth_lt {a b : TreePath} (h : depth a < depth b) :
     breadthFirst a < breadthFirst b :=
   Prod.Lex.toLex_lt_toLex.2 (.inl h)
 
-/-- A node is as deep as its sister. -/
 theorem depth_complement {b : TreePath} (hb : b ≠ ⊥) : depth (complement b) = depth b := by
   have : b.toList ≠ [] := fun h ↦ hb (TreePath.ext h)
   simp only [depth, complement, List.length_append, List.length_dropLast, List.length_singleton]
@@ -85,8 +83,6 @@ theorem eq_complement_of_finds_depth (ha : p.Finds s (depth ·.val) a) (hb : b �
   rw [← depth_complement hb0]
   exact TreePath.length_strictMono hlt
 
-/-- Breadth-first search left to right refines its unordered version, so it too matches only goals
-that no potential goal but a sister c-commands. -/
 theorem eq_complement_of_finds_breadthFirst (ha : p.Finds s (breadthFirst ·.val) a) (hb : b ∈ s)
     (hsb : p.sat b) (hba : t.val.CCommands b.val a.val) : a.val = complement b.val :=
   eq_complement_of_finds_depth (ha.of_refines fun _ _ ↦ breadthFirst_lt_of_depth_lt) hb hsb hba
@@ -127,7 +123,6 @@ def RightBranching : List ℕ → Prop
   | 1 :: l => RightBranching l
   | _ => False
 
-/-- On right-branching paths the depth-first order is the breadth-first order. -/
 theorem lt_iff_toLex_lt {l m : List ℕ} (hl : RightBranching l) (hm : RightBranching m) :
     l < m ↔ toLex (l.length, l) < toLex (m.length, m) := by
   induction l generalizing m with

@@ -78,14 +78,12 @@ theorem isAutosegmentalStrictlyLocal_bannedSubgraph :
 @[simp] theorem bannedSubgraph_nil : bannedSubgraph r [] = Set.univ :=
   Set.eq_univ_of_forall fun _ ↦ AR.free_nil
 
-/-- A grammar's language is the intersection of its factors' avoidance languages. -/
 theorem bannedSubgraph_cons (F : AR τ) :
     bannedSubgraph r (F :: B) = {w | F.FactorEmbeds (r w)}ᶜ ⊓ bannedSubgraph r B :=
   Set.ext fun _ ↦ AR.free_cons
 
 /-! ### Downward closure -/
 
-/-- A banned-subgraph language is downward closed under containment of realizations. -/
 theorem mem_bannedSubgraph_of_factorEmbeds (h : (r u).FactorEmbeds (r v))
     (hv : v ∈ bannedSubgraph r B) : u ∈ bannedSubgraph r B :=
   fun F hF hFu ↦ hv F hF (hFu.trans h)
@@ -96,8 +94,6 @@ theorem IsAutosegmentalStrictlyLocal.mem_of_factorEmbeds
   obtain ⟨B, rfl⟩ := hL
   exact mem_bannedSubgraph_of_factorEmbeds h hv
 
-/-- A language that separates two strings whose realizations are contained one in the other
-is not autosegmental strictly local. -/
 theorem not_isAutosegmentalStrictlyLocal_of_factorEmbeds (h : (r u).FactorEmbeds (r v))
     (hu : u ∉ L) (hv : v ∈ L) : ¬ IsAutosegmentalStrictlyLocal r L :=
   fun hL ↦ hu (hL.mem_of_factorEmbeds h hv)
@@ -124,8 +120,6 @@ theorem bannedSubgraph_ofList_boundary {Fs : List (Augmented α)} {k : ℕ}
       List.mem_kFactors]
     grind
 
-/-- At the boundary-padded string realization, every finite forbidden-factor `SL_k` language is
-autosegmental strictly local. -/
 theorem isAutosegmentalStrictlyLocal_ofForbidden {Fs : List (Augmented α)} {k : ℕ}
     (hk : ∀ f ∈ Fs, f.length = k) :
     IsAutosegmentalStrictlyLocal (fun w ↦ AR.ofList (boundary k w))
@@ -142,8 +136,6 @@ open Autosegmental
 
 variable {S ι : Type*} {τ : ι → Type*} (g : S → AR τ)
 
-/-- The strings whose realization contains a link-free factor are those whose tier projections
-contain its words. -/
 theorem setOf_factorEmbeds_prod_map_eq_of_link_free (F : AR τ) (hF : ∀ i j p q, ¬ F.Link i j p q) :
     {w : List S | F.FactorEmbeds (w.map g).prod} =
       ⋂ i, {w : List S | F.word i <:+: (AR.wordHom i).comp (FreeMonoid.lift g) (.ofList w)} := by

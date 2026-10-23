@@ -82,7 +82,6 @@ instance [DecidableEq V] : Decidable (Wrong kb r D) := by
 
 variable {kb r C D}
 
-/-- On a set of pairs the notion is Dale and Reiter's. -/
 theorem distinguishing_val_iff (hC : C.Nonempty) {L : DaleReiter1995.Description A V} :
     Distinguishing kb r C L.val ↔ DaleReiter1995.Distinguishing kb r C L := by
   rw [Distinguishing, distinguishes_prop_iff hC, DaleReiter1995.distinguishing_iff]
@@ -100,14 +99,12 @@ theorem Distinguishing.not_extension (hC : C.Nonempty) (h : Distinguishing kb r 
     (hc : c ∈ C) : ¬ extension kb D c :=
   ((distinguishes_prop_iff hC).1 h).2 c hc
 
-/-- A distinguishing description with one occurrence is minimal. -/
 theorem isMinimal_of_card_eq_one (hC : C.Nonempty) (h : Distinguishing kb r C D)
     (h1 : card D = 1) : IsMinimal kb r C D :=
   minimalFor_iff_forall_lt.2 ⟨h, fun D' hlt ↦ by
     obtain rfl := card_eq_zero.1 (Nat.lt_one_iff.1 (h1 ▸ hlt))
     exact not_distinguishing_zero hC⟩
 
-/-- A knowledge base assigns one value per attribute. -/
 theorem Applies.snd_eq {x : E} {p q : A × V} (hp : Applies kb x p) (hq : Applies kb x q)
     (h : p.1 = q.1) : p.2 = q.2 := by
   unfold Applies at hp hq
@@ -175,7 +172,6 @@ theorem Superfluous.not_isMinimal {p : A × V} (h : Superfluous kb r C D p) :
     ¬ IsMinimal kb r C D :=
   fun hm ↦ hm.not_prop_of_lt (card_erase_lt_of_mem h.2.1) h.2.2
 
-/-- Every kind of over-specification is distinguishing. -/
 theorem theorem1 :
     (IsMinimal kb r C D → Distinguishing kb r C D) ∧
       (RealOverSpecified kb t r C D → Distinguishing kb r C D) ∧
@@ -185,14 +181,12 @@ theorem theorem1 :
   ⟨MinimalFor.prop, fun ⟨_, _, _, h⟩ ↦ h.1, And.left, fun ⟨_, _, _, h, _⟩ ↦ h.1,
     fun ⟨_, _, _, h⟩ ↦ h.1⟩
 
-/-- A distinguishing description is neither mixed, purely under-specified nor wrong. -/
 theorem theorem2 (hC : C.Nonempty) (h : Distinguishing kb r C D) :
     ¬ Mixed kb r C D ∧ ¬ PurelyUnderSpecified kb r C D ∧ ¬ Wrong kb r D :=
   ⟨fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.not_extension hC hc hce,
     fun ⟨⟨_, _, hc, hce⟩, _⟩ ↦ h.not_extension hC hc hce,
     fun ⟨p, hp, hpr⟩ ↦ hpr (h.extension_referent hC p hp)⟩
 
-/-- The seven kinds of description exclude one another. -/
 theorem theorem3 (hC : C.Nonempty) :
     List.Pairwise (fun P Q : Description A V → Prop ↦ ∀ D, ¬ (P D ∧ Q D))
       [IsMinimal kb r C, RealOverSpecified kb t r C, NumericallyOverSpecified kb r C,
@@ -225,8 +219,6 @@ theorem theorem3 (hC : C.Nonempty) :
   · exact ⟨fun D ⟨hm, _, hp⟩ ↦ hp hm, fun D ⟨hm, hw⟩ ↦ hm.1.not_wrong hw⟩
   · exact fun D ⟨hp, hw⟩ ↦ hp.1.not_wrong hw
 
-/-- A duplicate-attribute over-specification is real or nominal, since the type occurrences of a
-distinguishing description are one pair. -/
 theorem theorem4 (hC : C.Nonempty) (h : DuplicateOverSpecified kb r C D) :
     RealOverSpecified kb t r C D ∨ NominallyOverSpecified kb t r C D := by
   obtain ⟨p, hp, -, hs⟩ := h
@@ -291,9 +283,6 @@ def scene₁ : KB Obj Attr Value
 def distractors₁ : Finset Obj :=
   {.greyDesk, .redSofa, .greenSofa, .blueChair, .greenFan, .greenDesk}
 
-/-- *The large one* is minimal, *the large green one* a real over-specification, *the green chair*
-a numerical one, *the large chair* a nominal one, and *the green chair that has the same colour
-as the fan*, which expresses the colour twice, a duplicate-attribute and real one. -/
 theorem scene₁_over :
     IsMinimal scene₁ .greenChair distractors₁ {(.size, .large)} ∧
       RealOverSpecified scene₁ .type .greenChair distractors₁
@@ -310,8 +299,6 @@ theorem scene₁_over :
     ⟨by decide, by decide, fun h ↦ h.not_prop_of_lt (j := {(.size, .large)}) (by decide)
       (by decide)⟩, by decide, by decide, by decide⟩
 
-/-- *The chair* is purely under-specified, and a description calling the green chair blue, as
-the paper's *the large blue chair in the middle* does, is wrong. -/
 theorem scene₁_under :
     PurelyUnderSpecified scene₁ .greenChair distractors₁ {(.type, .chair)} ∧
       Wrong scene₁ .greenChair {(.size, .large), (.colour, .blue), (.type, .chair)} := by
@@ -354,8 +341,6 @@ def scene₂ : KB Obj Attr Value
 def distractors₂ : Finset Obj :=
   {.greyChair, .largeGreenChair, .smallGreenChair, .largeGreenDesk, .smallGreenDesk, .greyDesk'}
 
-/-- *The green small desk* is mixed, since every small object is green, and *the front-facing
-desk* is purely under-specified. -/
 theorem scene₂_under :
     Mixed scene₂ .targetDesk distractors₂ {(.colour, .green), (.size, .small), (.type, .desk)} ∧
       PurelyUnderSpecified scene₂ .targetDesk distractors₂

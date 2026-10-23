@@ -283,7 +283,6 @@ def modifierList? (e : Datum) : Option (List Modifier) :=
 def host? (e : Datum) : Option Site :=
   e.parse? "host" [("N", nounSite), ("CMPR", .degree .cmpr), ("equative", .degree .eq)]
 
-/-- Every row is one of the five constructions below. -/
 theorem construction_rows : ∀ e ∈ Examples.all, e.feature? "construction" ∈
     [some "argument", some "semantic", some "selection", some "modifiers", some "stacked"] := by
   decide

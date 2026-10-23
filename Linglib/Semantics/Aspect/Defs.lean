@@ -96,7 +96,6 @@ namespace VendlerClass
 
 variable {c d : VendlerClass}
 
-/-- A situation type is determined by its three features. -/
 theorem eq_of_features (ht : c.telicity = d.telicity) (hd : c.duration = d.duration)
     (hy : c.dynamicity = d.dynamicity) : c = d := by
   revert ht hd hy

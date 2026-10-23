@@ -141,19 +141,15 @@ section Derivation
 
 variable {l : Licenser} {ds : List Cat} {ls ls' : List Licenser} {nps : List LicensedNP}
 
-/-- A licenser values the highest nominal of its domain if that nominal's Case is unvalued. -/
 theorem agree_cons_none {np : PhasedNP} (hnp : np.visible l.domain)
     (s : Valuation PhasedNP CaseValue) :
     l.agree ((np, none) :: s) = (np, some (.licenser l)) :: s := by
   simp [Licenser.agree, hnp]
 
-/-- A licenser passes over a nominal whose Case is already valued. -/
 theorem agree_cons_some (np : PhasedNP) (v : CaseValue) (s : Valuation PhasedNP CaseValue) :
     l.agree ((np, some v) :: s) = (np, some v) :: l.agree s := by
   simp [Licenser.agree]
 
-/-- The derivation extends the lexical valuation, each value it adds naming a licenser of the
-clause. -/
 theorem extends_license (ds : List Cat) (ls : List Licenser) (nps : List PhasedNP) :
     (initial nps).Extends (fun v ↦ ∀ l, v = .licenser l → l ∈ ls) (license ds ls nps) :=
   Valuation.Extends.foldl _ (fun c _ st ↦ Valuation.Extends.foldl _
@@ -164,7 +160,6 @@ theorem length_license (ds : List Cat) (ls : List Licenser) (nps : List PhasedNP
     (license ds ls nps).length = nps.length := by
   simp [← (extends_license ds ls nps).length_eq, initial]
 
-/-- Every licenser that values a nominal's Case is a licenser of the clause. -/
 theorem mem_of_mem_license {nps : List PhasedNP} {np : PhasedNP}
     (h : (np, some (.licenser l)) ∈ license ds ls nps) : l ∈ ls := by
   rcases (extends_license ds ls nps).of_mem h with h | h
@@ -188,7 +183,6 @@ private theorem valuedLE_foldl_agree :
     valuedLE_foldl_agree hL (h.trans (valuedLE_agreeValue _))
   | _, _, .cons_cons l hL, _, _, h => valuedLE_foldl_agree hL h.agreeValue
 
-/-- Adding licensers to a clause never leaves a nominal unvalued. -/
 theorem license_mono (h : ls <+ ls') (ds : List Cat) (nps : List PhasedNP) :
     (license ds ls nps).ValuedLE (license ds ls' nps) := by
   suffices ∀ {s t : Valuation PhasedNP CaseValue}, s.ValuedLE t →
@@ -201,7 +195,6 @@ theorem license_mono (h : ls <+ ls') (ds : List Cat) (nps : List PhasedNP) :
 theorem Converges.mono (hc : Converges ds ls nps) (h : ls <+ ls') : Converges ds ls' nps :=
   forall₂_trans (fun _ _ _ h₁ h₂ hn ↦ h₂.2 (h₁ hn)) hc (license_mono h ds _)
 
-/-- A clause with no nominal that needs licensing converges. -/
 theorem converges_of_forall_needsLicensing_eq_false
     (h : ∀ np ∈ nps, np.needsLicensing = false) : Converges ds ls nps :=
   forall₂_iff_zip.2 ⟨by simp, fun hx hn ↦ by simp [h _ (of_mem_zip hx).1] at hn⟩
@@ -241,7 +234,6 @@ theorem economical_iff : Economical ds ls nps S ↔
 
 instance : Decidable (Economical ds ls nps S) := decidable_of_iff' _ economical_iff
 
-/-- Every activated licenser is a secondary licenser of the clause. -/
 theorem Economical.mem (h : Economical ds ls nps S) {l : Licenser} (hl : l ∈ S) :
     l ∈ ls ∧ l.kind = .secondary := by
   rw [economical_iff] at h
@@ -256,18 +248,15 @@ theorem Economical.mem (h : Economical ds ls nps S) {l : Licenser} (hl : l ∈ S
 theorem Economical.subset_toFinset (h : Economical ds ls nps S) : S ⊆ ls.toFinset :=
   fun _ hl ↦ mem_toFinset.2 (h.mem hl).1
 
-/-- An economical activation exists iff the clause converges with all its licensers. -/
 theorem exists_economical_iff : (∃ S, Economical ds ls nps S) ↔ Converges ds ls nps := by
   refine ⟨fun ⟨S, h⟩ ↦ (Minimal.prop h).mono (activate_sublist _ _), fun h ↦ ?_⟩
   refine exists_minimal_of_wellFoundedLT _ ⟨ls.toFinset, ?_⟩
   rwa [activate, filter_eq_self.2 fun l hl ↦ by simp [mem_toFinset.2 hl]]
 
-/-- If the obligatory licensers suffice, no secondary licenser is activated. -/
 theorem Economical.eq_empty (h : Economical ds ls nps S)
     (h₀ : Converges ds (activate ls ∅) nps) : S = ∅ :=
   (Minimal.eq_of_le h h₀ (Finset.empty_subset S)).symm
 
-/-- If the obligatory licensers suffice, the economical derivation marks no nominal. -/
 theorem Economical.not_isDOMMarked (h : Economical ds ls nps S)
     (h₀ : Converges ds (activate ls ∅) nps) :
     ∀ p ∈ license ds (activate ls S) (nps.map (·.toPhasedNP)), ¬ IsDOMMarked p.2 := by
@@ -293,9 +282,6 @@ private theorem rules_eq_of (g : CaseAssigners) (hg : ∀ d ∈ g.domains, d.2 =
   · rw [hf]; rfl
   · rw [hf]; exact hg d (mem_of_find?_eq_some hf)
 
-/-- Licensing is the Agree modality of case assignment: case assigners with no dependent or
-elsewhere case in any domain, under which each licenser's head values the case `κ` gives it,
-assign what the licensing derivation does, each licenser read as that case. -/
 theorem assign_eq_map_license (g : CaseAssigners)
     (hg : ∀ d ∈ g.domains, d.2 = {}) (κ : Cat → _root_.Case) {ls : List Licenser}
     (hκ : ∀ l ∈ ls, g.agreeCase l.head = some (κ l.head)) (nps : List PhasedNP) :
@@ -441,11 +427,6 @@ private theorem rows_agree_aux : ∀ r ∈ rows, ∀ subject : Bool,
         ((r.nominals subject).map (·.toPhasedNP))) = r.suffixes := by
   decide
 
-/-- Licensing reproduces the data whatever the specificity of the subject: a sentence is
-grammatical exactly when some activation of the licensers is economical, so that a specific
-object in the perfective crashes, and under every economical activation the subject carries the
-suffix of the obligatory licenser and the object the L-suffix exactly when it is specific, the
-secondary T having been activated for it. -/
 theorem rows_agree : ∀ r ∈ rows, ∀ subject : Bool,
     (r.grammatical = true ↔ ∃ S, Economical domains r.clause (r.nominals subject) S) ∧
     ∀ S, Economical domains r.clause (r.nominals subject) S →

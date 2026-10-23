@@ -24,8 +24,6 @@ finitely many principal filters, and Higman's lemma: over a finite alphabet the 
 
 variable {α : Type*}
 
-/-- The finite-basis property: in a well-quasi-ordered partial order, every upward-closed set is
-the union of the principal filters of its finitely many minimal elements. -/
 theorem WellQuasiOrdered.exists_finset_eq_biUnion {r : α → α → Prop} [IsPartialOrder α r]
     (hr : WellQuasiOrdered r) {s : Set α} (hs : ∀ ⦃a b⦄, r a b → a ∈ s → b ∈ s) :
     ∃ F : Finset α, s = ⋃ a ∈ F, {b | r a b} := by
@@ -38,7 +36,6 @@ theorem WellQuasiOrdered.exists_finset_eq_biUnion {r : α → α → Prop} [IsPa
   exact ⟨m, ⟨hm, fun b hb hbm ↦
     antisymm hbm (not_not.mp fun h ↦ hmin b ⟨hb, trans_of r hbm hmx⟩ ⟨hbm, h⟩)⟩, hmx⟩
 
-/-- Higman's lemma [higman-1952]: over a finite type the sublist order is a well-quasi-order. -/
 theorem List.wellQuasiOrdered_sublist [Finite α] :
     WellQuasiOrdered (List.Sublist : List α → List α → Prop) := fun f ↦ by
   obtain ⟨m, n, hmn, h⟩ := Set.PartiallyWellOrderedOn.exists_lt

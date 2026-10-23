@@ -157,14 +157,11 @@ noncomputable def deAgentive (init : Entity → E → Prop) (High : Entity → E
 
 variable (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity)
 
-/-- The two prepositions share their at-issue content, each being the initiator relation
-wherever it is defined. -/
 theorem agentive_eq_one_iff_of_ne_zero (e : E) :
     (parAgentive init High x e ≠ 0 → (parAgentive init High x e = 1 ↔ init x e)) ∧
       (deAgentive init High x e ≠ 0 → (deAgentive init High x e = 1 ↔ init x e)) := by
   simp_all [parAgentive, deAgentive]
 
-/-- Their presuppositions are complementary. -/
 theorem parAgentive_ne_zero_iff (e : E) :
     parAgentive init High x e ≠ 0 ↔ deAgentive init High x e = 0 := by
   simp [parAgentive, deAgentive]

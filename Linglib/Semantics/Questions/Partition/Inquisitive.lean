@@ -52,7 +52,6 @@ def fromSetoid (r : Setoid W) : Question W :=
     · exact Or.inl (Set.subset_empty_iff.mp hba)
     · exact Or.inr ⟨c, hc, hba.trans hac⟩
 
-/-- A state resolves a partition issue exactly when all its worlds are related. -/
 theorem mem_fromSetoid {r : Setoid W} {q : Set W} :
     q ∈ fromSetoid r ↔ ∀ x ∈ q, ∀ y ∈ q, r x y := by
   constructor
@@ -79,7 +78,6 @@ theorem fromSetoid_inf (r₁ r₂ : Setoid W) :
     fromSetoid (r₁ ⊓ r₂) = fromSetoid r₁ ⊓ fromSetoid r₂ := by
   rw [← sInf_pair, fromSetoid_sInf, iInf_insert, iInf_singleton]
 
-/-- The trivial partition raises no issue. -/
 @[simp] theorem fromSetoid_top : fromSetoid (⊤ : Setoid W) = ⊤ := by
   rw [← sInf_empty, fromSetoid_sInf]
   simp
@@ -100,7 +98,6 @@ theorem info_fromSetoid (r : Setoid W) : (fromSetoid r).info = Set.univ :=
 
 /-! ### Alternatives of `fromSetoid` -/
 
-/-- Each cell of `r` is an alternative of `fromSetoid r`. -/
 theorem mem_alt_fromSetoid_of_mem_classes (r : Setoid W) {c : Set W}
     (hc : c ∈ r.classes) : c ∈ alt (fromSetoid r) := by
   obtain ⟨v, rfl⟩ := hc
@@ -110,8 +107,6 @@ theorem mem_alt_fromSetoid_of_mem_classes (r : Setoid W) {c : Set W}
   · exact hcq.antisymm fun x hx =>
       r.trans' (hqc' hx) (r.symm' (hqc' (hcq (r.refl' v))))
 
-/-- Every alternative of `fromSetoid r` is the empty state or a cell of
-`r` (the empty case only when `W` is empty). -/
 theorem eq_empty_or_mem_classes_of_mem_alt_fromSetoid (r : Setoid W)
     {p : Set W} (hp : p ∈ alt (fromSetoid r)) : p = ∅ ∨ p ∈ r.classes := by
   obtain ⟨rfl | ⟨c, hc, hpc⟩, hmax⟩ := hp
@@ -131,9 +126,6 @@ when `W` is empty. -/
     exact ((Set.notMem_empty w) (heq ▸ r.refl' w)).elim
   · exact hclass
 
-/-- A partition issue is normal: a resolving state lies in a cell, and
-the empty state lies in any cell, or is the only state when `W` is
-empty. -/
 theorem isNormal_fromSetoid (r : Setoid W) : (fromSetoid r).IsNormal := by
   rintro s (rfl | ⟨c, hc, hsc⟩)
   · rcases isEmpty_or_nonempty W with _ | ⟨⟨w⟩⟩
@@ -141,7 +133,6 @@ theorem isNormal_fromSetoid (r : Setoid W) : (fromSetoid r).IsNormal := by
     · exact ⟨_, mem_alt_fromSetoid_of_mem_classes r (r.mem_classes w), Set.empty_subset _⟩
   · exact ⟨c, mem_alt_fromSetoid_of_mem_classes r hc, hsc⟩
 
-/-- A setoid with two distinct cells yields an inquisitive content. -/
 theorem isInquisitive_fromSetoid_of_two_classes
     (r : Setoid W) (w₁ w₂ : W) (hne : ¬ r w₁ w₂) :
     (fromSetoid r).IsInquisitive :=
@@ -176,7 +167,6 @@ theorem fromSetoid_le_iff (r₁ r₂ : Setoid W) :
 def fromSetoidEmbedding : Setoid W ↪o Question W :=
   OrderEmbedding.ofMapLEIff fromSetoid fromSetoid_le_iff
 
-/-- Monotonicity of the embedding. -/
 theorem fromSetoid_mono {r₁ r₂ : Setoid W} (h : r₁ ≤ r₂) :
     fromSetoid r₁ ≤ fromSetoid r₂ :=
   (fromSetoid_le_iff r₁ r₂).mpr h
@@ -202,7 +192,6 @@ theorem fromSetoid_polar (p : Set W) : fromSetoid (Setoid.polar p) = polar p := 
       · exact Or.inl rfl
       · exact Or.inr ⟨_, ⟨y, rfl⟩, λ x hx => Setoid.polar_iff.2 (iff_of_false (h hx) (h hy))⟩
 
-/-- A partition decides `p` iff its issue entails the polar question whether `p`. -/
 theorem decides_iff_fromSetoid_le (r : Setoid W) (p : Set W) :
     r.Decides p ↔ fromSetoid r ≤ polar p := by
   rw [← fromSetoid_polar, fromSetoid_le_iff]; rfl
@@ -216,23 +205,18 @@ def IsPartition (P : Question W) : Prop :=
 
 namespace IsPartition
 
-/-- Alternatives of a partition issue are pairwise disjoint. -/
 theorem pairwiseDisjoint {P : Question W} (h : P.IsPartition) :
     (alt P).PairwiseDisjoint id :=
   Setoid.IsPartition.pairwiseDisjoint h
 
-/-- Alternatives of a partition issue are nonempty. -/
 theorem nonempty_of_mem_alt {P : Question W} (h : P.IsPartition)
     {p : Set W} (hp : p ∈ alt P) : p.Nonempty :=
   Setoid.nonempty_of_mem_partition h hp
 
-/-- The union of a partition issue's alternatives is the whole universe. -/
 theorem sUnion_alt_eq_univ {P : Question W} (h : P.IsPartition) :
     ⋃₀ alt P = Set.univ :=
   Setoid.IsPartition.sUnion_eq_univ h
 
-/-- Partition issues are non-informative: every world lies in some
-alternative, hence in some resolving proposition. -/
 theorem info_eq_univ {P : Question W} (h : P.IsPartition) :
     info P = Set.univ :=
   Set.eq_univ_of_univ_subset (h.sUnion_alt_eq_univ ▸ sUnion_alt_subset_info P)
@@ -246,15 +230,10 @@ alternative. -/
 def toSetoid {P : Question W} (h : P.IsPartition) : Setoid W :=
   Setoid.mkClasses (alt P) h.2
 
-/-- The equivalence classes of `toSetoid h` are exactly the
-alternatives of `P` — the defining round-trip property of
-`Setoid.mkClasses`. -/
 @[simp] theorem classes_toSetoid {P : Question W} (h : P.IsPartition) :
     (toSetoid h).classes = alt P :=
   Setoid.classes_mkClasses (alt P) h
 
-/-- Two worlds are related under `toSetoid h` iff they share an
-alternative cell. -/
 theorem toSetoid_rel_iff {P : Question W} (h : P.IsPartition) (w v : W) :
     (toSetoid h) w v ↔ ∃ p ∈ alt P, w ∈ p ∧ v ∈ p := by
   rw [Setoid.rel_iff_exists_classes, classes_toSetoid h]
@@ -267,7 +246,6 @@ issues whenever every resolving state extends to an alternative. The
 latter hypothesis is essential: over infinite `W` a partition issue
 may contain resolving states that extend to no alternative. -/
 
-/-- Under `Nonempty W`, `fromSetoid r` is a partition issue. -/
 theorem isPartition_fromSetoid [Nonempty W] (r : Setoid W) :
     (fromSetoid r).IsPartition := by
   rw [IsPartition, alt_fromSetoid]; exact r.isPartition_classes
@@ -287,8 +265,6 @@ theorem fromSetoid_toSetoid {P : Question W} (h : P.IsPartition) (hN : P.IsNorma
 
 /-! ### `IsPartition` for the basic Hamblin constructions -/
 
-/-- `polar p` is a partition issue when `p` is non-trivial: the two
-alternatives `p` and `pᶜ` partition `W` by excluded middle. -/
 theorem isPartition_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     (polar p).IsPartition := by
   rw [IsPartition, alt_polar_of_nontrivial hne hnu]

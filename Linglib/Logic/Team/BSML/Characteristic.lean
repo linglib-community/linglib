@@ -313,8 +313,6 @@ theorem support_bigConj_iff (M : KripkeModel W Atom) (l : List (Formula Atom)) (
   | cons φ rest ih =>
     simp only [bigConj, support_conj, ih, List.forall_mem_cons]
 
-/-- A team supports a disjunction of Hintikka formulas iff each of its worlds has one of their
-    types. -/
 theorem support_bigDisj_hintikka_iff (M : KripkeModel W Atom) {k : ℕ} (L : List (WorldType n k))
     (t : Finset W) :
     support M (bigDisj (L.map (hintikka e k))) t ↔ ∀ w ∈ t, worldType e M k w ∈ L := by

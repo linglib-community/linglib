@@ -112,7 +112,6 @@ def IsComplexRole (p : EntailmentProfile) : Prop := p.protoAgent.Nonempty ∧ p.
 instance : DecidablePred IsComplexRole := fun p ↦
   inferInstanceAs (Decidable (p.protoAgent.Nonempty ∧ p.protoPatient.Nonempty))
 
-/-- Bundling an agentive profile with an affected one yields a complex role. -/
 theorem isComplexRole_union (ha : p.protoAgent.Nonempty) (hp : q.protoPatient.Nonempty) :
     IsComplexRole (p ∪ q) :=
   ⟨ha.mono (protoAgent_mono Finset.subset_union_left),

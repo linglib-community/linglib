@@ -77,7 +77,6 @@ theorem card_mem_profile {u : U} (hu : u ∈ A) (h : w ∈ sem u) : (sem u).card
   Multiset.mem_map_of_mem _ (Finset.mem_filter.2 ⟨hu, h⟩)
 
 variable (sem A w) in
-/-- The utterances true at a state split into those in `A` and the others. -/
 theorem profile_add_profile_compl [Fintype U] [DecidableEq U] :
     profile sem A w + profile sem Aᶜ w = profile sem Finset.univ w := by
   have h₁ : A.filter (w ∈ sem ·) = (Finset.univ.filter (w ∈ sem ·)).filter (· ∈ A) := by
@@ -186,8 +185,6 @@ section Speaker
 
 variable {α : ℝ}
 
-/-- At a uniform prior a speaker with any cost produces an utterance at a state exactly when it
-is true there. -/
 theorem speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (hα : 0 < α) (C : U → ℝ) (w : W)
     (u : U) : speaker α C L₀ Measure.dirac w {u} ≠ 0 ↔ w ∈ sem u := by
   rw [speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα]
@@ -202,8 +199,6 @@ private theorem sum_rpow_listener (hα : 0 < α) (A : Finset U) (w : W) :
   rw [profile, Multiset.invPowSum, Multiset.map_map]
   rfl
 
-/-- The speaker's mass on a set of utterances is the share of its profile in the profile of all
-utterances. -/
 theorem speaker_uniformOn_dirac_apply_finset (hα : 0 < α) (w : W) (A : Finset U) :
     S₁[α] w ↑A = (profile sem A w).invPowSum α / (profile sem Finset.univ w).invPowSum α := by
   rw [← sum_measure_singleton]
@@ -239,7 +234,6 @@ theorem speaker_uniformOn_dirac_real_singleton_lt_of_card_lt (hα : 0 < α) {w :
         profile_eq_zero_iff.1 h0 u (Finset.mem_univ u) h).ne'
       (Multiset.invPowSum_ne_top hα.le zero_notMem_profile))
 
-/-- A true utterance is produced alike at two states with the same profile. -/
 theorem speaker_uniformOn_dirac_apply_singleton_of_profile_eq (hα : 0 < α) {w w' : W}
     (hprof : profile sem Finset.univ w = profile sem Finset.univ w') {u : U} (h : w ∈ sem u)
     (h' : w' ∈ sem u) : S₁[α] w {u} = S₁[α] w' {u} := by
@@ -248,8 +242,6 @@ theorem speaker_uniformOn_dirac_apply_singleton_of_profile_eq (hα : 0 < α) {w 
     listener_uniformOn_truthful_apply_singleton, listener_uniformOn_truthful_apply_singleton,
     ite_eq_left h, ite_eq_left h']
 
-/-- Of two states an utterance is true at, the speaker uses it more at the state whose true
-utterances are jointly less informative. -/
 theorem speaker_uniformOn_dirac_real_singleton_lt_iff_invPowSum (hα : 0 < α) {w w' : W} {u : U}
     (h : w ∈ sem u) (h' : w' ∈ sem u) :
     (S₁[α] w').real {u} < (S₁[α] w).real {u} ↔
@@ -264,8 +256,6 @@ theorem speaker_uniformOn_dirac_real_singleton_lt_iff_invPowSum (hα : 0 < α) {
     ite_eq_left h', ← ENNReal.toReal_lt_toReal (htop w) (htop w')]
   exact div_lt_div_iff_of_pos_left (inv_card_rpow_pos sem h α) (hpos w' h') (hpos w h)
 
-/-- A state at which more utterances are true gives each of them a strictly smaller share, so the
-utterances left unsaid count against it. -/
 theorem speaker_uniformOn_dirac_real_singleton_lt_of_ssubset (hα : 0 < α) {w w' : W} {u : U}
     (h : w ∈ sem u) (hsub : Finset.univ.filter (w ∈ sem ·) ⊂ Finset.univ.filter (w' ∈ sem ·)) :
     (S₁[α] w').real {u} < (S₁[α] w).real {u} := by
@@ -288,8 +278,6 @@ theorem speaker_uniformOn_dirac_real_singleton_lt_of_ssubset (hα : 0 < α) {w w
   · rw [ite_eq_right hv₀, ite_eq_left hv₀']
     exact inv_card_rpow_pos sem hv₀' α
 
-/-- When every utterance true at a state has the same extension size, the speaker is uniform on
-them at every rationality. -/
 theorem speaker_uniformOn_dirac_real_singleton_of_profile_replicate (hα : 0 < α) {w : W} {u : U}
     {m n : ℕ} (hprof : profile sem Finset.univ w = Multiset.replicate m n) (h : w ∈ sem u) :
     (S₁[α] w).real {u} = (m : ℝ)⁻¹ := by
@@ -300,8 +288,6 @@ theorem speaker_uniformOn_dirac_real_singleton_of_profile_replicate (hα : 0 < �
     ENNReal.toReal_natCast, ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast,
     div_mul_eq_div_div_swap, div_self (hn ▸ inv_card_rpow_pos sem h α).ne', one_div]
 
-/-- As the rationality goes to zero the speaker chooses uniformly among the utterances true at the
-state. -/
 theorem tendsto_speaker_uniformOn_dirac_real_singleton_nhdsGT_zero (w : W) (u : U) :
     Filter.Tendsto (fun α : ℝ ↦ (S₁[α] w).real {u}) (nhdsWithin 0 (Set.Ioi 0))
       (nhds ((if w ∈ sem u then 1 else 0) / ((Finset.univ.filter (w ∈ sem ·)).card : ℝ))) := by
@@ -329,8 +315,6 @@ theorem tendsto_speaker_uniformOn_dirac_real_singleton_nhdsGT_zero (w : W) (u : 
     rw [speaker_uniformOn_dirac_real_singleton sem hα]
     rfl
 
-/-- At a natural rationality the speaker's mass is a ratio of naturals over a common
-denominator `D` of the extension sizes. -/
 theorem speaker_uniformOn_dirac_real_singleton_divPowSum {k D : ℕ} [NeZero k] [NeZero D] {w : W}
     (hdvd : ∀ n ∈ profile sem Finset.univ w, n ∣ D) (u : U) :
     (S₁[(k : ℝ)] w).real {u} = ((if w ∈ sem u then (D / (sem u).card) ^ k else 0 : ℕ) : ℝ) /
@@ -377,8 +361,6 @@ theorem speaker_uniformOn_apply_singleton (hα : 0 < α) (hS : ∀ w, b x {w} �
       ∑ u', if S ⊆ sem u' then ((sem u').card : ℝ≥0∞)⁻¹ ^ α else 0 := by
   simp only [speaker_apply_singleton, weight_eq sem hα hS]
 
-/-- She says only the utterances true at every state she entertains, and weighs each by the
-inverse size of its extension to the power `α`. -/
 theorem speaker_uniformOn_real_singleton (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
     (speaker α 0 L₀ b x).real {u} = (if S ⊆ sem u then ((sem u).card : ℝ)⁻¹ ^ α else 0) /
       ∑ u', if S ⊆ sem u' then ((sem u').card : ℝ)⁻¹ ^ α else 0 := by
@@ -391,8 +373,6 @@ theorem speaker_uniformOn_real_singleton (hα : 0 < α) (hS : ∀ w, b x {w} ≠
   simp only [apply_ite ENNReal.toReal, ENNReal.toReal_zero, ← ENNReal.toReal_rpow,
     ENNReal.toReal_inv, ENNReal.toReal_natCast]
 
-/-- When the utterances true at every state she entertains are those true at one state, she
-speaks as the speaker who knows that state. -/
 theorem speaker_uniformOn_apply_eq_dirac (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) {w : W}
     (h : ∀ u, S ⊆ sem u ↔ w ∈ sem u) : speaker α 0 L₀ b x = S₁[α] w :=
   Measure.ext_of_singleton fun u ↦ by
@@ -413,8 +393,6 @@ section Compare
 
 variable [DecidableEq W] [DecidableEq U] {α : ℝ} {A : Finset U} {w₁ w₂ : W}
 
-/-- The speaker is likelier to choose within `A` at `w₂` than at `w₁` exactly when the profile
-sums cross-multiply so. -/
 theorem speaker_uniformOn_dirac_real_finset_lt_iff (hα : 0 < α) (A : Finset U) (w₂ : W)
     (h₁ : profile sem Finset.univ w₁ ≠ 0) :
     (S₁[α] w₁).real ↑A < (S₁[α] w₂).real ↑A ↔
@@ -451,8 +429,6 @@ theorem speaker_uniformOn_dirac_real_finset_lt_of_strictDominates (hα : 0 < α)
     mul_comm ((profile sem A w₂).invPowSum α)]
   exact ENNReal.add_lt_add_left (ENNReal.mul_ne_top (htop _ _) (htop _ _)) hodds
 
-/-- At a natural rationality the comparison is an inequality of naturals over a common
-denominator `D` of the extension sizes. -/
 theorem speaker_uniformOn_dirac_real_finset_lt_of_divPowSum {k D : ℕ} [NeZero k] [NeZero D]
     (hdvd₁ : ∀ n ∈ profile sem Finset.univ w₁, n ∣ D)
     (hdvd₂ : ∀ n ∈ profile sem Finset.univ w₂, n ∣ D)

@@ -76,7 +76,6 @@ theorem disjoint_posSupport_negSupport (v : W → SignType) :
   Set.disjoint_left.mpr fun i h₁ h₂ ↦
     absurd ((mem_posSupport.mp h₁).symm.trans (mem_negSupport.mp h₂)) (by decide)
 
-/-- The integer value of a sign is the difference of its membership indicators. -/
 private theorem signCast_eq_ite (s : SignType) :
     (s : ℤ) = (if s = 1 then 1 else 0) - (if s = -1 then 1 else 0) := by
   cases s <;> rfl
@@ -122,8 +121,6 @@ section Bridge
 
 open scoped Classical
 
-/-- The integer sum of a list of sign vectors is the difference of the
-    membership counts of its two supports. -/
 private theorem comparisonSum_eq_seqCount (L : List (W → SignType)) (i : W) :
     comparisonSum (L : Multiset (W → SignType)) i =
       seqCount i (L.map posSupport) - seqCount i (L.map negSupport) := by
@@ -153,8 +150,6 @@ theorem FiniteCancellation.cancellation {ge : Set W → Set W → Prop}
   · obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hp
     exact hge w (Multiset.mem_of_mem_erase (Multiset.mem_toList.1 hw))
 
-/-- Membership counts on the two sides of a list of set pairs differ by the
-    sum of the indicator differences. -/
 private theorem seqCount_sub_seqCount (P : List (Set W × Set W)) (i : W) :
     (seqCount i (P.map Prod.fst) : ℤ) - seqCount i (P.map Prod.snd) =
       (P.map fun p ↦ ((if i ∈ p.1 then 1 else 0) - (if i ∈ p.2 then 1 else 0) : ℤ)).sum := by
@@ -227,8 +222,6 @@ section Weighted
 
 variable {n : ℕ}
 
-/-- Nonnegative rationals over a finite index have a common positive
-    denominator `D`, with `D • w` natural-valued. -/
 private theorem exists_nat_mul {ι : Type*} [Fintype ι] (w : ι → ℚ) (hw : ∀ i, 0 ≤ w i) :
     ∃ (D : ℕ) (m : ι → ℕ), 0 < D ∧ ∀ i, (m i : ℚ) = D * w i := by
   obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors ℤ) Finset.univ w
@@ -239,8 +232,6 @@ private theorem exists_nat_mul {ι : Type*} [Fintype ι] (w : ι → ℚ) (hw : 
   rw [Nat.cast_natAbs, Nat.cast_natAbs, Int.cast_abs, Int.cast_abs, this, abs_mul,
     abs_of_nonneg (hw i)]
 
-/-- Cancellation extends to rational weightings, so a nonnegative weighting of valid
-    comparisons that sums to zero reverses every comparison it weights. -/
 private theorem Cancellation.weighted {ge : Set (Fin n) → Set (Fin n) → Prop}
     (h : Cancellation ge) (w : (Fin n → SignType) → ℚ) (hw : ∀ v, 0 ≤ w v)
     (hvalid : ∀ v, 0 < w v → ge (posSupport v) (negSupport v))
@@ -319,7 +310,6 @@ private theorem sum_ofSets_mul {A B : Set (Fin n)} (h : Disjoint A B) (x : Fin n
   · exact absurd hB (Set.disjoint_left.mp h hA)
   all_goals simp [ofSets, hA, hB]
 
-/-- A solution of the system, normalized, is a representing measure. -/
 private theorem representable_of_feasible [IsQualitativeProbability r] {x : Fin n → ℚ}
     (hx : coeffs r *ᵥ x ≤ bound r) : Representable r := by
   have hsets : ∀ A B : Set (Fin n), Disjoint A B → r A B →
@@ -365,8 +355,6 @@ private theorem representable_of_feasible [IsQualitativeProbability r] {x : Fin 
     rw [ite_eq_right hCD'] at this
     linarith
 
-/-- A Farkas certificate for the system is a nonnegative neutral weighting with positive weight
-    on a strict comparison. -/
 private theorem not_cancellation_of_certificate {y : (Fin n → SignType) → ℚ} (hy : 0 ≤ y)
     (hyA : y ᵥ* coeffs r = 0) (hyb : y ⬝ᵥ bound r < 0) : ¬Cancellation r := by
   intro hcancel

@@ -227,8 +227,6 @@ theorem lexical_forces_gender {g : Gender} (h : s.genderContrastivity = .contras
     (hl : a.lexical = some (.gender g)) : s.genders a = [some g] := by
   simp [Stage.genders, Antecedent.Inanimate, Antecedent.lexicalGender, h, hl]
 
-/-- *They* is available whenever the pronoun may omit the gender feature and the antecedent is
-not inanimate. -/
 theorem they_mem_forms (h : none ∈ s.genders a ∨ a.det = .quantifier) (hi : ¬ a.Inanimate) :
     "they" ∈ forms s a := by
   refine List.mem_filterMap.2 ⟨a.numFeatures, List.mem_map.2 ⟨none, ?_, by simp⟩, ?_⟩
@@ -272,7 +270,6 @@ theorem none_mem_genders_two_iff (hi : ¬ a.Inanimate) :
     simp_all [Stage.genders, Antecedent.Inanimate, Antecedent.lexicalGender,
       Stage.genderContrastivity]
 
-/-- At Stage 3, n of an animate antecedent may always lack a gender. -/
 theorem none_mem_genders_three (hi : ¬ a.Inanimate) : none ∈ Stage.three.genders a := by
   simp [Stage.genders, Stage.genderContrastivity, hi]
 
@@ -343,8 +340,6 @@ def Antecedent.ofRow (g : Gender) (e : Datum) : Option Antecedent := do
 def Stage.ofRow? (key : String) (e : Datum) : Option Stage :=
   e.parse? key [("1", .one), ("2", .two), ("3", .three)]
 
-/-- Every row describes an antecedent and a pronoun, and records the stage whose speakers judge it
-or, where speakers differ, the stage from which it is grammatical. -/
 theorem rows_described :
     ∀ e ∈ Examples.all, ∀ g, (Antecedent.ofRow g e).isSome ∧ (e.feature? "pronoun").isSome ∧
       ((Stage.ofRow? "stage" e).isSome ∨ (Stage.ofRow? "firstStage" e).isSome) := by

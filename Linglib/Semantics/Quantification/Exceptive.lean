@@ -101,8 +101,6 @@ theorem eq_bot_of_restrictorMonotone (hQ : RestrictorMonotone Q) (h : IsExceptio
     C = ⊥ :=
   le_bot_iff.1 (h.2 (show Q (A \ ⊥) B by rw [sdiff_bot]; exact hQ B sdiff_le h.1))
 
-/-- A nonempty exception set is restrictive, so the uniqueness condition subsumes
-restrictiveness. -/
 theorem restrictive (h : IsExceptionSet Q A C B) (hC : C ≠ ⊥) : Restrictive Q A C B :=
   ⟨h.1, fun hQA ↦ hC (le_bot_iff.1 (h.2 (show Q (A \ ⊥) B by rwa [sdiff_bot])))⟩
 
@@ -135,12 +133,9 @@ theorem isExceptionSet_iff_sInf_eq :
 
 /-! ### The universal determiners -/
 
-/-- With *every* the exception set is the restrictor minus the scope, since subtracting `S`
-rescues *every* exactly when `S` covers the restrictor elements outside the scope. -/
 theorem isExceptionSet_every (A B : α → Prop) : IsExceptionSet every A (A \ B) B :=
   .of_iff_le fun _ ↦ every_iff_le.trans sdiff_le_comm
 
-/-- With *no* the exception set is the intersection of restrictor and scope. -/
 theorem isExceptionSet_no (A B : α → Prop) : IsExceptionSet no A (A ⊓ B) B :=
   .of_iff_le fun S ↦ by rw [no_iff_le_compl, sdiff_le_comm, sdiff_compl]
 
@@ -152,12 +147,10 @@ theorem isExceptionSet_every_iff : IsExceptionSet every A C B ↔ A \ B = C :=
 theorem isExceptionSet_no_iff : IsExceptionSet no A C B ↔ A ⊓ B = C :=
   IsLeast.isLeast_iff_eq (isExceptionSet_no A B)
 
-/-- A restrictive exceptive with *every* covers the exceptions, of which there are some. -/
 theorem restrictive_every_iff : Restrictive every A C B ↔ A \ B ≤ C ∧ ¬ A ≤ B := by
   unfold Restrictive
   rw [every_iff_le, sdiff_le_comm, every_iff_le]
 
-/-- A restrictive exceptive with *no* covers the overlap, which is nonempty. -/
 theorem restrictive_no_iff : Restrictive no A C B ↔ A ⊓ B ≤ C ∧ ¬ Disjoint A B := by
   unfold Restrictive
   rw [no_iff_le_compl, sdiff_le_comm, sdiff_compl, no_iff_disjoint]

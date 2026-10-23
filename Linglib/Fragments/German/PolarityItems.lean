@@ -77,7 +77,6 @@ def erst : PolarityItem :=
 
 /-! ### Licensing -/
 
-/-- Every environment in which an entry is attested admits it. -/
 theorem german_licensing_sound :
     ∀ e ∈ [irgendein, brauchen], ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
   decide

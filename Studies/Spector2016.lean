@@ -54,8 +54,6 @@ variable {World : Type*}
 
 /-! ### The elementary case -/
 
-/-- With one alternative some prejacent world falsifies, the minimal worlds are the
-prejacent worlds falsifying it. -/
 theorem exhMW_pair {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) : exhMW {φ, ψ} φ = φ \ ψ := by
   obtain ⟨w, hwφ, hwψ⟩ := hne
   ext u
@@ -75,7 +73,6 @@ theorem exhMW_pair {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) : exhMW {φ, �
     · exact hv
     · exact absurd hau hψu
 
-/-- In the elementary case both operators deny the single alternative. -/
 theorem elementary {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) :
     exhMW {φ, ψ} φ = φ \ ψ ∧ exhIE {φ, ψ} φ = φ \ ψ :=
   ⟨exhMW_pair hne, exhIE_pair_sdiff φ hne⟩
@@ -84,8 +81,6 @@ theorem elementary {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) :
 
 variable {A B : Set World}
 
-/-- Against the disjuncts alone, the minimal worlds of a disjunction are those verifying
-exactly one disjunct, the exclusive reading. -/
 theorem exhMW_or (hA : (A \ B).Nonempty) : exhMW {A, B} (A ∪ B) = (A \ B) ∪ (B \ A) := by
   obtain ⟨w, hwA, hwB⟩ := hA
   ext u
@@ -125,8 +120,6 @@ theorem exhMW_or (hA : (A \ B).Nonempty) : exhMW {A, B} (A ∪ B) = (A \ B) ∪ 
       · exact absurd hau hAu
       · exact hBv
 
-/-- Against the disjuncts alone, innocent exclusion is vacuous, since each disjunct is verified
-by some minimal world, so neither is innocently excludable. -/
 theorem exhIE_or (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
     exhIE {A, B} (A ∪ B) = A ∪ B := by
   rw [exhIE_eq_setOf_exhMW_subset_compl {A, B} (A ∪ B), exhMW_or hA]
@@ -139,15 +132,12 @@ theorem exhIE_or (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
   · exact absurd hwA (hsub (Or.inl ⟨hwA, hwB⟩))
   · exact absurd hw'B (hsub (Or.inr ⟨hw'B, hw'A⟩))
 
-/-- Minimal worlds depend only on the preorder the alternatives induce. -/
 theorem exhMW_congr {ALT ALT' : Set (Set World)} (φ : Set World)
     (h : ∀ u v, (u ≤[ALT] v) ↔ (u ≤[ALT'] v)) : exhMW ALT φ = exhMW ALT' φ := by
   ext u
   show (φ u ∧ ¬ ∃ v, φ v ∧ v <[ALT] u) ↔ (φ u ∧ ¬ ∃ v, φ v ∧ v <[ALT'] u)
   simp only [ltALT, h]
 
-/-- Adding the conjunction as an alternative leaves the order on worlds unchanged, since it holds
-exactly where both disjuncts do. -/
 theorem leALT_or_and_iff (u v : World) : (u ≤[{A, B, A ∩ B}] v) ↔ (u ≤[{A, B}] v) := by
   constructor
   · intro h a ha
@@ -162,13 +152,10 @@ theorem leALT_or_and_iff (u v : World) : (u ≤[{A, B, A ∩ B}] v) ↔ (u ≤[{
     · exact h _ (Or.inr rfl)
     · exact fun ⟨hAu, hBu⟩ ↦ ⟨h _ (Or.inl rfl) hAu, h _ (Or.inr rfl) hBu⟩
 
-/-- With the conjunction among the alternatives the minimal worlds are as before. -/
 theorem exhMW_or_and (hA : (A \ B).Nonempty) :
     exhMW {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) :=
   (exhMW_congr (A ∪ B) (leALT_or_and_iff (A := A) (B := B))).trans (exhMW_or hA)
 
-/-- With the conjunction among the alternatives innocent exclusion denies it, and the two
-operators agree on the exclusive reading. -/
 theorem exhIE_or_and (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
     exhIE {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) := by
   rw [exhIE_eq_setOf_exhMW_subset_compl {A, B, A ∩ B} (A ∪ B), exhMW_or_and hA]
@@ -202,10 +189,6 @@ theorem exhIE_or_and (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
 
 variable {m p s : Set World}
 
-/-- For *Either Mary came, or both Peter and Sue did*, over the elementary alternatives the
-minimal worlds are those where only Mary came and those where Peter and Sue came without
-Mary, which by the paper's results is what innocent exclusion returns over the full
-alternative set. -/
 theorem exhMW_or_and_three (hm : ∃ w, w ∈ m ∧ w ∉ p ∧ w ∉ s) :
     exhMW {m, p, s} (m ∪ (p ∩ s)) = (m \ (p ∪ s)) ∪ ((p ∩ s) \ m) := by
   obtain ⟨w, hwm, hwp, hws⟩ := hm
@@ -253,7 +236,6 @@ theorem exhMW_or_and_three (hm : ∃ w, w ∈ m ∧ w ∉ p ∧ w ∉ s) :
 
 /-! ### Infinitely many alternatives -/
 
-/-- A vacuous minimal-world operator makes innocent exclusion vacuous. -/
 theorem exhIE_eq_of_exhMW_eq {ALT : Set (Set World)} {φ : Set World}
     (h : exhMW ALT φ = φ) : exhIE ALT φ = φ :=
   Set.Subset.antisymm (exhIE_subset ALT φ)
@@ -271,9 +253,6 @@ def atLeast (n : ℕ) : Set Stars := {w | (n : Stars) ≤ w}
 /-- The alternatives of *at least n* are every *exactly m* and every *at least m*. -/
 def starsALT : Set (Set Stars) := range exactly ∪ range atLeast
 
-/-- No world verifies strictly fewer of these alternatives than another, since *exactly n*
-holds only at the `n`-star world, and every *at least m* holds only at the world with infinitely
-many stars. -/
 theorem eq_of_leALT_stars {u v : Stars} (h : u ≤[starsALT] v) : u = v := by
   induction u using WithTop.recTopCoe with
   | top =>
@@ -284,7 +263,6 @@ theorem eq_of_leALT_stars {u v : Stars} (h : u ≤[starsALT] v) : u = v := by
       exact absurd (WithTop.coe_le_coe.1 this) (by omega)
   | coe n => exact (h (exactly n) (Or.inl ⟨n, rfl⟩) rfl).symm
 
-/-- Every world verifying *at least n* is minimal, so the operator is vacuous. -/
 theorem exhMW_stars (n : ℕ) : exhMW starsALT (atLeast n) = atLeast n := by
   refine Set.Subset.antisymm (exhMW_subset _ _) fun u hu ↦ ⟨hu, ?_⟩
   rintro ⟨v, -, hle, hnle⟩
@@ -292,7 +270,6 @@ theorem exhMW_stars (n : ℕ) : exhMW starsALT (atLeast n) = atLeast n := by
   subst this
   exact hnle (leALT_refl _ _)
 
-/-- And so is innocent exclusion, without computing a maximal compatible set. -/
 theorem exhIE_stars (n : ℕ) : exhIE starsALT (atLeast n) = atLeast n :=
   exhIE_eq_of_exhMW_eq (exhMW_stars n)
 

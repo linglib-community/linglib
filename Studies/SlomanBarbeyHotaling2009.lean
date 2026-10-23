@@ -98,13 +98,11 @@ def EqPrevents (s : V → Flat Bool) (a c : V) : Prop :=
 variable {M}
 
 omit [DecidableEq V] in
-/-- Experiment 4: with A alone the source of B, the relation is not an enabling one. -/
 theorem not_enables_of_forall_adj {a b : V} (h : ∀ x, M.graph.Adj x b → x = a) :
     ¬ Enables M a b := by
   rintro ⟨-, ⟨x, hx, hxb⟩, -⟩
   exact hx (h x hxb)
 
-/-- The equations `c := a` and `c := ¬a` exclude each other on an observation. -/
 theorem EqCauses.not_eqPrevents [Fintype U] [Inhabited U] [Fintype V]
     [DecidableRel M.graph.Adj] {s : V → Flat Bool} {a c : V} (h : EqCauses M s a c) :
     ¬ EqPrevents M s a c :=
@@ -176,11 +174,9 @@ def accessory : V → Flat Bool := [.X ← true]
 theorem causes_Causes : Causes causes .A .B ∧ EqCauses causes ⊥ .A .B :=
   ⟨by decide, fun v ↦ by cases v <;> decide⟩
 
-/-- Experiments 2 and 3: from *A causes B* and A, B follows with no accessory settled. -/
 theorem causes_entails : causes.CausallyEntails [.A ← true] .B true :=
   causes_Causes.2 true
 
-/-- Experiment 4: the one-link model is not an enabling relation. -/
 theorem causes_not_Enables : ¬ Enables causes .A .B :=
   not_enables_of_forall_adj (by decide)
 
@@ -192,13 +188,10 @@ theorem enables_Enables : Enables enables .A .B := by
   show (enables.solve I u .A && enables.solve I u .X) = false
   rw [solve_of_eq_coe ha, Bool.false_and]
 
-/-- Experiments 1 and 3: from *A enables B* and A alone, B does not follow, the accessory being
-unknown. -/
 theorem enables_not_entails :
     ¬ enables.CausallyEntails [.A ← true] .B true := by
   decide
 
-/-- With the accessory present, B follows from A. -/
 theorem enables_entails_of_accessory :
     enables.CausallyEntails (Function.update accessory .A ↑true) .B true := by
   decide
@@ -278,7 +271,6 @@ accessory form (4c) of *prevents*: with the accessory present, A prevents C. -/
 theorem allowsPrevents_prevents : EqPrevents (composeTwo (· && ·) (!·)) chainAccessory .A .C :=
   fun v ↦ by cases v <;> decide
 
-/-- *A prevents B*, *B prevents C* compose to `C := A`, the conclusion *A causes C*. -/
 theorem preventsPrevents_causes : EqCauses (composeOne (!·) (!·)) ⊥ .A .C :=
   fun v ↦ by cases v <;> decide
 
@@ -312,7 +304,6 @@ instance : DecidableRel threePremise.graph.Adj := fun w v ↦
 
 instance : threePremise.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
-/-- The three premises compose to `D := A`, the conclusion *A causes D*. -/
 theorem threePremise_causes : EqCauses threePremise ⊥ .A .D :=
   fun v ↦ by cases v <;> decide
 

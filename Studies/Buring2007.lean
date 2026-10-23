@@ -172,7 +172,6 @@ def nomaly : Comparative := ⟨⟨.length, .negative⟩, ⟨.height, .positive�
 the than-clause. -/
 def inverseNomaly : Comparative := ⟨⟨.height, .positive⟩, ⟨.length, .negative⟩⟩
 
-/-- All four configurations are cross-polar, so the acceptability condition applies to each. -/
 theorem configurations_crossPolar :
     anomaly.CrossPolar ∧ reverseAnomaly.CrossPolar ∧ nomaly.CrossPolar ∧
       inverseNomaly.CrossPolar := by decide
@@ -180,7 +179,6 @@ theorem configurations_crossPolar :
 /-- The nomaly is reinterpretable and has no deletion competitor. -/
 theorem nomaly_acceptable : nomaly.Acceptable := by decide
 
-/-- The anomaly, its reverse and the inverse nomaly are all blocked. -/
 theorem others_unacceptable :
     ¬ anomaly.Acceptable ∧ ¬ reverseAnomaly.Acceptable ∧ ¬ inverseNomaly.Acceptable := by decide
 
@@ -201,8 +199,6 @@ theorem reading_of_deletion {Entity D : Type*} [LinearOrder D] (m : Dimension �
   have h' : c.matrix.dimension = c.thanClause.dimension := h
   simp only [Comparative.reading, ← h']
 
-/-- With two dimensions the deletion form is not a paraphrase, so it does not compete: a 12-foot
-ladder is shorter than a 15-foot-high house without being shorter than the house is long. -/
 theorem reading_not_synonymous :
     ∃ (m : Dimension → Bool → ℕ) (subject standard : Bool),
       nomaly.reading m subject standard ∧
@@ -230,14 +226,10 @@ the subject. -/
 def negationInside (Q : (W → Prop) → Prop) (μ : W → D) (c : D) : Prop :=
   {d | Q fun v => μ v < d} ⊆ Set.Ioi c
 
-/-- The outside reading holds exactly when the modal claims the standard reaches the subject's
-degree. -/
 theorem negationOutside_iff (hQ : Monotone Q) :
     negationOutside Q μ c ↔ Q fun v => c ≤ μ v := by
   refine ⟨fun h => h le_rfl, fun h d hd => hQ (fun v hv => hd.trans hv) h⟩
 
-/-- The inside reading holds exactly when the modal fails to claim the standard falls below the
-subject's degree. -/
 theorem negationInside_iff (hQ : Monotone Q) :
     negationInside Q μ c ↔ ¬ Q fun v => μ v < c := by
   refine ⟨fun h hc => absurd (h hc) (lt_irrefl c), fun h d hd => ?_⟩
@@ -283,7 +275,6 @@ theorem outside_entails_inside_box [IsSerial R] :
   rw [negationOutside_box, negationInside_box]
   exact box_D
 
-/-- Under an existential modal the entailment runs the other way. -/
 theorem inside_entails_outside_diamond [IsSerial R] :
     negationInside (fun p => ◇[R] p w) μ c → negationOutside (fun p => ◇[R] p w) μ c := by
   rw [negationOutside_diamond, negationInside_diamond]

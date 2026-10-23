@@ -52,8 +52,6 @@ instance {W : Type*} (M : SetRel W W) [M.IsRefl] (e : FamilyVariant) : (e.rel M)
   case epistemicModal => exact ‹M.IsRefl›
   all_goals exact SetRel.isRefl_id
 
-/-- Where the modal's accessibility is the identity, every member evaluates its sentence at its own
-world. -/
 @[simp] theorem rel_id {W : Type*} (e : FamilyVariant) : e.rel (SetRel.id : SetRel W W) = .id := by
   cases e <;> rfl
 

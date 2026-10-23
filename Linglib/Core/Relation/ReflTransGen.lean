@@ -301,7 +301,6 @@ section PartialFun
 
 variable {α : Type u} {f : α → Option α} {a b : α}
 
-/-- Reachability along a partial function is reachability by its iterates on `Option α`. -/
 theorem transGen_iff_exists_iterate :
     TransGen (fun a b ↦ b ∈ f a) a b ↔ ∃ n, (·.bind f)^[n] (f a) = some b := by
   constructor
@@ -363,14 +362,12 @@ section Covers
 
 variable {α β : Type*} [Preorder β] {covers : α → α → Prop} {rank : α → β}
 
-/-- A path along edges that decrease a rank does not increase it. -/
 theorem Relation.ReflTransGen.rank_le (hrank : ∀ a b, covers a b → rank b < rank a) {a b : α}
     (hab : Relation.ReflTransGen covers a b) : rank b ≤ rank a := by
   induction hab with
   | refl => exact le_rfl
   | tail _ hr ih => exact (hrank _ _ hr).le.trans ih
 
-/-- A path along edges that decrease a rank, ending no lower than it starts, is trivial. -/
 theorem Relation.ReflTransGen.eq_of_rank_le (hrank : ∀ a b, covers a b → rank b < rank a)
     {a b : α} (hab : Relation.ReflTransGen covers a b) (h : rank a ≤ rank b) : a = b := by
   cases hab with

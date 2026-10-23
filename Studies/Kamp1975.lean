@@ -120,8 +120,6 @@ reads *at least as A as*. Kamp credits (12) to [lewis-1970], who attributes it t
   le_refl _ := fun _ _ h ↦ h
   le_trans _ _ _ hab hbc := fun c hc h ↦ hab c hc (hbc c hc h)
 
-/-- The completion comparative is antitone in the set of completions, since more completions
-make `≤` harder to satisfy. -/
 theorem kampPreorder_antitone {E C : Type*} (ext : C → E → Prop) (u₁ u₂ : E) :
     Antitone (fun S ↦ (kampPreorder ext S).le u₁ u₂) :=
   fun _ _ hle hall c hc ↦ hall c (hle hc)
@@ -151,7 +149,6 @@ theorem kampMeasureLe_total (u₁ u₂ : E) :
     kampMeasureLe ext S p u₁ u₂ ∨ kampMeasureLe ext S p u₂ u₁ :=
   le_total _ _
 
-/-- For nonnegative weights the completion comparative implies the measured one. -/
 theorem kampMeasureLe_of_kampPreorder_le (hp : ∀ c ∈ S, 0 ≤ p c) {u₁ u₂ : E}
     (h : (kampPreorder ext (S : Set C)).le u₁ u₂) :
     kampMeasureLe ext S p u₁ u₂ := by
@@ -297,8 +294,6 @@ alleged thief is a thief* is no logical truth. -/
 def allegedAdj : Modifier (Property W2 E3) := fun _N _ x ↦
   match x with | .a => True | _ => False
 
-/-- *alleged* ignores the noun, so it is extensional; with `skillful_not_extensional` this
-shows that extensionality is independent of subsectivity. -/
 theorem alleged_extensional : ModalLogic.IsExtensional allegedAdj :=
   fun _ _ _ _ ↦ rfl
 
@@ -307,7 +302,6 @@ theorem alleged_not_subsective : ¬ IsSubsective allegedAdj := by
   intro h
   exact h (fun _ _ ↦ False) .w₁ .a trivial
 
-/-- *alleged N* does not entail *not N*. -/
 theorem alleged_not_privative : ¬ IsPrivative allegedAdj := by
   intro h
   exact isPrivative_iff.mp h (fun _ _ ↦ True) .w₁ .a trivial trivial

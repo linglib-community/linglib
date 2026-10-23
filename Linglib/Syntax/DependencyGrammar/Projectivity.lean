@@ -81,7 +81,6 @@ roots always dominating the other ([kuhlmann-nivre-2006], Definition 8). -/
 def Graph.IsWellNested : Prop :=
   ∀ v w : Fin n, g.Interleave v w → Dominates g v w ∨ Dominates g w v
 
-/-- Projectivity, unfolded: nothing between two dominated positions escapes. -/
 theorem Graph.isProjective_iff :
     g.IsProjective ↔ ∀ v x, Dominates g v x → ∀ y, Dominates g v y →
       ∀ z, x ≤ z → z ≤ y → Dominates g v z := by
@@ -95,8 +94,6 @@ its head. -/
 def Graph.IsArcProjective : Prop :=
   ∀ ⦃h d⦄, g.Adj h d → ∀ w ∈ Set.uIcc h d, Dominates g h w
 
-/-- Under the arc form, everything between a position and one it dominates is dominated
-by it. -/
 theorem Graph.IsArcProjective.dominates_of_mem_uIcc {g : Graph n} (hA : g.IsArcProjective)
     {v x : Fin n} (hx : Dominates g v x) {w : Fin n} (hw : w ∈ Set.uIcc v x) :
     Dominates g v w := by
@@ -107,8 +104,6 @@ theorem Graph.IsArcProjective.dominates_of_mem_uIcc {g : Graph n} (hA : g.IsArcP
     · exact ih h₁
     · exact hvc.trans (hA hcx w h₂)
 
-/-- The two formulations of projectivity agree: every yield is an interval iff every arc
-spans only positions dominated by its head. -/
 theorem Graph.isProjective_iff_isArcProjective : g.IsProjective ↔ g.IsArcProjective := by
   constructor
   · intro hP h d hd w hw
@@ -127,7 +122,6 @@ instance : Decidable g.IsWellNested := inferInstanceAs (Decidable (∀ _, _))
 
 /-! ### Gap degree -/
 
-/-- The projection is strictly increasing. -/
 theorem Graph.projection_pairwise_lt (v : Fin n) :
     (g.projection v).Pairwise (· < ·) := (List.pairwise_lt_finRange n).filter _
 
@@ -164,8 +158,6 @@ theorem Graph.isPlanar_iff_crossings_eq_zero : g.IsPlanar ↔ g.crossings = 0 :=
   · exact fun h a b c d h1 h2 h3 ↦ h (Finset.mem_univ (a, b, c, d)) ⟨h1, h2, h3⟩
 
 
-/-- A strictly increasing list of naturals has no gaps exactly when its
-members form an order-convex set. -/
 private theorem gapfree_iff_ordConnected {l : List ℕ} (h : l.IsChain (· < ·)) :
     (∀ q ∈ l.zip l.tail, q.2 - q.1 ≤ 1) ↔ Set.OrdConnected {x | x ∈ l} := by
   rw [Set.ordConnected_iff]
@@ -211,8 +203,6 @@ private theorem mem_projection_map {v : Fin n} {k : ℕ} :
     k ∈ (g.projection v).map (·.val) ↔ ∃ x : Fin n, Dominates g v x ∧ x.val = k := by
   simp [List.mem_map]
 
-/-- A position has gap degree zero exactly when what it dominates is
-order-convex. -/
 theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
     g.gapDegreeAt v = 0 ↔ (g.yield v).OrdConnected := by
   have hmap : g.gapDegreeAt v =
@@ -244,8 +234,6 @@ theorem Graph.isProjective_iff_gapDegree_eq_zero :
 
 /-! ### The hierarchy on forests -/
 
-/-- In a projective graph the head of an arc dominates every position the arc
-spans, since the head dominates both endpoints and is order-convex. -/
 theorem Graph.IsProjective.dominates_of_mem_uIcc (hP : g.IsProjective)
     {p t x : Fin n} (h : g.Adj p t) (hx : x ∈ Set.uIcc p t) : Dominates g p x :=
   (hP p).uIcc_subset .refl (.single h) hx
@@ -274,8 +262,6 @@ theorem Graph.IsProjective.isPlanar (hF : g.IsForest) (hP : g.IsProjective) :
   · exact hbd.ne (hF.dominates_antisymm
       (step h1 h2 hba (.inr rfl) hcb.ne') (step h2 h1 hdc (.inl rfl) hbd.ne'))
 
-/-- In a planar graph, a link with one endpoint strictly inside the span of
-another link has its other endpoint inside that span too. -/
 theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
     (hL : g.Linked lo hi) (hL' : g.Linked p q)
     (hlp : lo < p) (hph : p < hi) : q ∈ Set.uIcc lo hi := by
@@ -286,8 +272,6 @@ theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
   · exact hPl hL'.symm hL ⟨h, hlp, hph⟩
   · exact hPl hL hL' ⟨hlp, hph, h⟩
 
-/-- Planarity forbids a link with one endpoint strictly inside another link's
-span and the other endpoint outside it. -/
 theorem Graph.IsPlanar.no_strict_straddle (hPl : g.IsPlanar) {p q p' q' : Fin n}
     (hL : g.Linked p q) (hL' : g.Linked p' q') (hin : p' ∈ Set.uIcc p q)
     (hne1 : p' ≠ p) (hne2 : p' ≠ q) (hout : q' ∉ Set.uIcc p q) : False := by

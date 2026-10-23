@@ -127,10 +127,8 @@ def Contains (s : ComplementSize) (f : AspProjection) : Prop := f.level ≤ s.fL
 instance (s : ComplementSize) (f : AspProjection) : Decidable (Contains s f) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- Every complement from vP up contains inner aspect. -/
 theorem contains_inner {s : ComplementSize} (h : ComplementSize.vP ≤ s) : Contains s .inner := h
 
-/-- A complement contains outer aspect exactly when it is at least a TP. -/
 theorem contains_outer_iff (s : ComplementSize) : Contains s .outer ↔ ComplementSize.tP ≤ s :=
   Iff.rfl
 
@@ -172,15 +170,12 @@ a TP (Type II) or a vP (Type III) for a nonfinite one. -/
 def sizes (fr : ArgumentFrame) : Finset ComplementSize :=
   if fr.HasFinite then {typeI} else if fr.HasClausal then {typeIII, typeII} else ∅
 
-/-- Every size a complement can have is at least a vP. -/
 theorem vP_le_of_mem_sizes {fr : ArgumentFrame} {s : ComplementSize} (h : s ∈ sizes fr) :
     ComplementSize.vP ≤ s := by
   unfold sizes at h
   split_ifs at h <;> simp only [Finset.mem_singleton, Finset.mem_insert,
     Finset.notMem_empty] at h <;> rcases h with rfl | rfl <;> decide
 
-/-- An outer-associated element can take exceptional scope across a complement of the frame
-exactly when the complement is a nonfinite clause, which can be a vP. -/
 theorem exists_mem_sizes_exceptionalScope_outer_iff (fr : ArgumentFrame) :
     (∃ s ∈ sizes fr, ExceptionalScope .outer s) ↔ fr.HasClausal ∧ ¬ fr.HasFinite := by
   unfold sizes
@@ -208,7 +203,6 @@ def Again.item : Again → Presupposition.TriggerItem
   | .faan => Cantonese.Particles.faan
   | .gwo => Cantonese.Particles.gwo
 
-/-- Every *again*-element is an iterative trigger in its fragment. -/
 theorem Again.item_triggerClass (a : Again) : a.item.triggerClass = .iterative := by cases a <;> rfl
 
 /-- The projection each element associates with. *You* associates by movement and *-faan* by
@@ -231,8 +225,6 @@ def Again.Skips (a : Again) : Prop :=
 
 instance : DecidablePred Again.Skips := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- An element takes exceptional scope somewhere exactly when it associates with the outer
-projection. -/
 theorem skips_iff (a : Again) : a.Skips ↔ a.projection = some .outer := by cases a <;> decide
 
 /-- Generalization I says that exceptional scope is found with *you* but not with *zai*. -/
@@ -347,13 +339,10 @@ theorem embedsYou :
       (Pred.xiangxin.EmbedsYou ∧ ¬ Pred.xiangxin.SkipsYou) := by
   decide
 
-/-- The selectional table refines the sizes of the fragment's frames, in that every complement
-a predicate selects has a size its frame allows. -/
 theorem Pred.size_mem_sizes (p : Pred) :
     ∀ c ∈ p.selects, ∃ fr ∈ p.entry.valency.frames, c.size ∈ sizes fr := by
   cases p <;> decide
 
-/-- Among the Mandarin predicates *xiangxin* alone selects a CP. -/
 theorem Pred.selects_cP_iff (p : Pred) :
     Complement.cP ∈ p.selects ↔ ∃ fr ∈ p.entry.valency.frames.head?, fr.HasFinite := by
   cases p <;> decide
@@ -409,10 +398,8 @@ def minimalSize : Clause.Size → ComplementSize
   | .situation => .tP
   | .proposition => .cP
 
-/-- A larger class needs a larger complement. -/
 theorem monotone_minimalSize : Monotone minimalSize := by decide
 
-/-- A dependency transparent for a class is transparent for every more integrated class. -/
 theorem exceptionalScope_of_le {f : AspProjection} {c c' : Clause.Size} (h : c ≤ c')
     (hs : ExceptionalScope f (minimalSize c')) : ExceptionalScope f (minimalSize c) :=
   antitone_exceptionalScope f (monotone_minimalSize h) hs

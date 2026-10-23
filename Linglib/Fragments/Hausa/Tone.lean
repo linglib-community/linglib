@@ -125,7 +125,6 @@ def polarOf : TRN → TRN
   | .H => .L
   | _ => .H
 
-/-- Polarity is an involution on high and low. -/
 theorem polarOf_polarOf : ∀ t ∈ [TRN.H, TRN.L], polarOf (polarOf t) = t := by decide
 
 /-- The polar tone after a syllable, opposite to its last tone. -/

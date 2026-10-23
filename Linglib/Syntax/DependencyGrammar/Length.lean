@@ -68,7 +68,6 @@ section Monovary
 
 variable {a : Arrangement α n} (ℓ : α → ℕ)
 
-/-- Mirroring an arrangement swaps monovariation and antivariation of a weight with rank. -/
 theorem monovaryOn_mirror_iff {s : Set α} : MonovaryOn ℓ a.mirror s ↔ AntivaryOn ℓ a s := by
   simp only [MonovaryOn, AntivaryOn, mirror, Equiv.trans_apply, Fin.revPerm_apply, Fin.rev_lt_rev]
   exact ⟨fun h i hi j hj hij ↦ h hj hi hij, fun h i hi j hj hij ↦ h hj hi hij⟩
@@ -91,7 +90,6 @@ section after
 
 variable {a : Arrangement α n} {x : α}
 
-/-- The number of elements after `d` is its rank from the end. -/
 theorem card_after (d : α) : #(a.after d) = n - 1 - a d := by
   rw [← Fin.card_Ioi, ← card_map a.toEmbedding]
   congr 1; ext j
@@ -110,7 +108,6 @@ theorem mem_after_apply_of_mem {c : α} (hc : c ∈ a.after x) : σ c ∈ a.afte
   · rwa [h]
   · exact hσ fun h' ↦ h (σ.injective h')
 
-/-- Rearranging the elements after `x` keeps precedence relative to anything not after `x`. -/
 theorem precedes_trans_iff_of_notMem_after {c d : α} (hc : c ∉ a.after x) :
     (Precedes (σ.trans a) c d ↔ a.Precedes c d) ∧ (Precedes (σ.trans a) d c ↔ a.Precedes d c) := by
   simp only [Precedes, Equiv.trans_apply, apply_eq_self_of_notMem_after hσ hc]
@@ -122,7 +119,6 @@ theorem precedes_trans_iff_of_notMem_after {c d : α} (hc : c ∉ a.after x) :
     constructor <;> constructor <;> intro <;> omega
   · rw [apply_eq_self_of_notMem_after hσ hd]; exact ⟨Iff.rfl, Iff.rfl⟩
 
-/-- Rearranging the elements after `x` leaves the set of them unchanged. -/
 theorem after_trans : after (σ.trans a) x = a.after x := by
   ext c
   simp only [mem_after]
@@ -144,7 +140,6 @@ def boundaryDist : ℕ :=
 theorem boundaryDist_comm : a.boundaryDist ℓ x y = a.boundaryDist ℓ y x := by
   simp only [boundaryDist, eq_comm (a := x), or_comm]
 
-/-- Mirroring preserves every distance. -/
 @[simp] theorem boundaryDist_mirror : a.mirror.boundaryDist ℓ x y = a.boundaryDist ℓ x y := by
   simp only [boundaryDist, precedes_mirror, and_comm, or_comm]
 
@@ -152,8 +147,6 @@ section Behaghel
 
 variable {a x}
 
-/-- Summed over the elements after `x`, the distances from `x` weigh each element's length by the
-number of elements farther out, which cross its words. -/
 theorem sum_boundaryDist_after :
     ∑ c ∈ a.after x, a.boundaryDist ℓ x c =
       #(a.after x) + ∑ d ∈ a.after x, ℓ d * (n - 1 - a d) := by
@@ -194,7 +187,6 @@ section perm
 variable {σ : Equiv.Perm α} (hσ : {c | σ c ≠ c} ⊆ ↑(a.after x))
 include hσ
 
-/-- Rearranging the elements after `x` leaves the distance from `x` to anything not after it. -/
 theorem boundaryDist_trans_of_notMem_after {c : α} (hc : c ∉ a.after x) :
     boundaryDist (σ.trans a) ℓ x c = a.boundaryDist ℓ x c := by
   have hx := notMem_after_self (a := a) (x := x)
@@ -213,7 +205,6 @@ theorem sum_boundaryDist_after_le (h : MonovaryOn ℓ a (a.after x)) :
   simpa [Equiv.trans_apply] using
     ((antivaryOn_rank_iff_monovaryOn ℓ).2 h).sum_mul_le_sum_mul_comp_perm hσ
 
-/-- The rearrangement is strictly longer exactly when it is not itself short before long. -/
 theorem sum_boundaryDist_after_lt_iff (h : MonovaryOn ℓ a (a.after x)) :
     ∑ c ∈ a.after x, a.boundaryDist ℓ x c <
       ∑ c ∈ after (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c ↔
@@ -223,8 +214,6 @@ theorem sum_boundaryDist_after_lt_iff (h : MonovaryOn ℓ a (a.after x)) :
   simpa [Equiv.trans_apply, Function.comp_def] using
     ((antivaryOn_rank_iff_monovaryOn ℓ).2 h).sum_mul_lt_sum_mul_comp_perm_iff hσ
 
-/-- Over the whole head, rearranging the elements after `x` cannot shorten the head's measure
-when their lengths grow outward. -/
 theorem sum_boundaryDist_le (h : MonovaryOn ℓ a (a.after x)) :
     ∑ c, a.boundaryDist ℓ x c ≤ ∑ c, boundaryDist (σ.trans a) ℓ x c := by
   rw [← sum_filter_add_sum_filter_not univ (a.Precedes x ·),
@@ -235,8 +224,6 @@ theorem sum_boundaryDist_le (h : MonovaryOn ℓ a (a.after x)) :
   · refine sum_congr rfl fun c hc ↦ (boundaryDist_trans_of_notMem_after ℓ hσ ?_).symm
     simpa using (mem_filter.1 hc).2
 
-/-- Over the whole head, the rearrangement is strictly longer exactly when it is not itself short
-before long. -/
 theorem sum_boundaryDist_lt_iff (h : MonovaryOn ℓ a (a.after x)) :
     ∑ c, a.boundaryDist ℓ x c < ∑ c, boundaryDist (σ.trans a) ℓ x c ↔
       ¬ MonovaryOn ℓ (σ.trans a) (after (σ.trans a) x) := by
@@ -256,8 +243,6 @@ section before
 variable {σ : Equiv.Perm α} (hσ : {c | σ c ≠ c} ⊆ ↑(a.before x))
 include hσ
 
-/-- In the mirror image, when the lengths of the elements before `x` grow outward (long before
-short), no rearrangement of them shortens the distance from `x` to them. -/
 theorem sum_boundaryDist_before_le (h : AntivaryOn ℓ a (a.before x)) :
     ∑ c ∈ a.before x, a.boundaryDist ℓ x c ≤
       ∑ c ∈ before (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c := by
@@ -289,8 +274,6 @@ minimisation is about. -/
 def Graph.totalLength (g : Graph n) : Nat :=
   ∑ v : Fin n, ∑ w ∈ g.children v, Nat.dist v w
 
-/-- Total dependency length reads only the arc structure, never the
-tokens. -/
 theorem Graph.totalLength_words (g : Graph n) (words' : Fin n → Morphology.Word) :
     Graph.totalLength { g with words := words' } = g.totalLength := rfl
 
@@ -322,7 +305,6 @@ theorem Graph.totalLength_map (g : Graph n) (σ : Equiv.Perm (Fin n))
   by_cases h : g.Adj (σ.symm v) (σ.symm w) <;>
     simp [h, ← hσ (σ.symm v) (σ.symm w)]
 
-/-- Position reversal preserves `Nat.dist`. -/
 theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
     Nat.dist v.rev w.rev = Nat.dist v w := by
   have hv := v.isLt
@@ -353,10 +335,6 @@ theorem Graph.linearize_words (g : Graph n) (order : List (Fin n))
 
 /-! ### Arc length and the dependent's phrase -/
 
-/-- An arc to the far end of the dependent's own phrase is at least as long as the phrase:
-when every position the dependent dominates lies between the head and the dependent, the
-arc's length bounds their number. Direction is free for a one-word phrase and costly for a
-long one. -/
 theorem Graph.ncard_yield_le_dist (g : Graph n) {v w : Fin n} (hv : v ∉ g.yield w)
     (h : ∀ x ∈ g.yield w, x ∈ Set.uIcc v w) : (g.yield w).ncard ≤ Nat.dist v w := by
   have hsub : g.yield w ⊆ Set.uIcc v w \ {v} := Set.subset_sdiff_singleton h hv
@@ -376,7 +354,6 @@ the closest boundary of the dependent's phrase. -/
 def Graph.yieldDist (g : Graph n) (v w : Fin n) : ℕ :=
   (g.yield w).toFinset.inf' (g.toFinset_yield_nonempty w) fun x ↦ Nat.dist v x
 
-/-- The distance to a phrase is at most the distance to its head. -/
 theorem Graph.yieldDist_le_dist (g : Graph n) (v w : Fin n) : g.yieldDist v w ≤ Nat.dist v w :=
   Finset.inf'_le _ (by simp [ReflTransGen.refl])
 
@@ -548,8 +525,6 @@ theorem Graph.mem_siblings_of_adj {w : Fin n} (h : g.Adj v w) : w ∈ g.siblings
     (g.siblingArrangement v).Precedes c d ↔ (c : Fin n) < d :=
   (g.siblingRank_strictMono v).lt_iff_lt.trans Subtype.coe_lt_coe.symm
 
-/-- On a projective tree the yield distance from a head to a dependent is the boundary distance
-of the sibling arrangement with phrase lengths. -/
 theorem Graph.yieldDist_eq_boundaryDist (hT : g.IsTree) (hP : g.IsProjective) {w : Fin n}
     (h : g.Adj v w) :
     g.yieldDist v w = (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)

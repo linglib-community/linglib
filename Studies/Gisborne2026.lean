@@ -178,8 +178,6 @@ variable {A}
 theorem subordinateParent_le_parent : (Concept.subordinateParent : Concept A) ≤ .parent :=
   ReflTransGen.single (by simp [conceptParents])
 
-/-- A pair of a word and a position lies below *subordinate parent* when the position is a
-subordinate parent of the word, and below *parent* when it is a parent. -/
 theorem pair_le_iff {c : Concept A} : Concept.pair w p ≤ c ↔
     c = .pair w p ∨ c = .subordinateParent ∧ A.SubordinateParent w p ∨
       c = .parent ∧ A.Parent p w := by
@@ -311,17 +309,13 @@ variable {A L root}
   simp only [Graph.Adj, graphOf]
   split_ifs <;> simp [*]
 
-/-- Two words cannot each be the other's landmark, since by transitivity each would be its own. -/
 theorem not_isTree_graphOf (h₁ : L w p) (h₂ : L p w) : ¬ (A.graphOf L root).IsTree := fun hT ↦
   hT.not_dominates_of_adj (graphOf_adj.2 h₁) (.single (graphOf_adj.2 h₂))
 
-/-- Two words that depend on each other cannot each be the other's landmark. -/
 theorem not_isTree_parentGraph (h₁ : A.Parent p w) (h₂ : A.Parent w p) :
     ¬ A.parentGraph.IsTree :=
   not_isTree_graphOf h₁ h₂
 
-/-- A word extracted from a head that is a subordinate parent of it is not positioned by a
-landmark, since the Subordinate Head Rule denies the head the landmark. -/
 theorem not_extractionBy_isLandmark (hex : A.Dep h w .extractee)
     (hs : A.SubordinateParent w h) : ¬ A.ExtractionBy A.IsLandmark := fun hE ↦
   (isLandmark_iff.1 (hE h w hex)).2 hs
@@ -362,7 +356,6 @@ theorem not_isTree_parentGraph_theySeemedToDance :
     ¬ theySeemedToDance.parentGraph.IsTree ∧ ¬ theySeemedToDance.parentGraph.IsProjective := by
   decide
 
-/-- The subject's landmark is *seemed*, its one parent that is not subordinate to another. -/
 theorem isLandmark_theySeemedToDance :
     theySeemedToDance.IsLandmark 0 1 ∧ ¬ theySeemedToDance.IsLandmark 0 2 ∧
       ¬ theySeemedToDance.IsLandmark 0 3 := by
@@ -386,7 +379,6 @@ def verbHeaded : Analysis 4 where
   arcs := [(0, 3, .comp), (3, 1, .extractee), (3, 1, .obj), (3, 2, .subj)]
   root := 0
 
-/-- The verb-headed analysis has no mutual dependency and satisfies the 2007 theory. -/
 theorem orderedByLandmarks_verbHeaded : verbHeaded.OrderedByLandmarks := by decide
 
 /-- In (52), the traditional analysis with the wh word as head, *what* is the complement of *know*
@@ -396,9 +388,6 @@ def whHeaded : Analysis 4 where
   arcs := [(0, 1, .comp), (1, 3, .comp), (3, 1, .extractee), (3, 1, .obj), (3, 2, .subj)]
   root := 0
 
-/-- The wh-headed analysis fails the 2007 theory whichever way it goes. Were every parent a
-landmark, *what* and *said* would be each other's, and by the Subordinate Head Rule *said* is not
-the landmark of the word extracted from it. -/
 theorem not_orderedByLandmarks_whHeaded :
     ¬ whHeaded.parentGraph.IsTree ∧ ¬ whHeaded.OrderedByLandmarks :=
   ⟨Analysis.not_isTree_parentGraph (p := 1) (w := 3) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
@@ -509,7 +498,6 @@ def whatHappenedThen : Analysis 3 where
   arcs := [(1, 0, .subj), (0, 1, .comp), (1, 2, .postAdjunct)]
   root := 1
 
-/-- Either word of the mutual dependency may be the landmark of the other. -/
 theorem landmarks_whatHappenedThen :
     (∃ root, ∃ c : whatHappenedThen.Choice,
       whatHappenedThen.Orders c.Landmark root ∧ c.Landmark 0 1) ∧
@@ -523,8 +511,6 @@ def thenWhatHappened : Analysis 3 where
   arcs := [(2, 0, .preAdjunct), (2, 1, .subj), (1, 2, .comp)]
   root := 2
 
-/-- The fronted *then* depends only on *happened*, and *happened* must be the landmark of
-*what*. -/
 theorem landmarks_thenWhatHappened : thenWhatHappened.OrderedByChosenLandmarks ∧
     ∀ root (c : thenWhatHappened.Choice),
       thenWhatHappened.Orders c.Landmark root → c.Landmark 1 2 := by
@@ -536,7 +522,6 @@ def iWonderWhatHappenedThen : Analysis 5 where
   arcs := [(1, 0, .subj), (1, 2, .comp), (2, 3, .comp), (3, 2, .subj), (3, 4, .postAdjunct)]
   root := 1
 
-/-- *What* has its landmark *wonder*, so it must be the landmark of *happened*. -/
 theorem landmarks_iWonderWhatHappenedThen : iWonderWhatHappenedThen.OrderedByChosenLandmarks ∧
     ∀ root (c : iWonderWhatHappenedThen.Choice),
       iWonderWhatHappenedThen.Orders c.Landmark root → c.Landmark 3 2 := by

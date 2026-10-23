@@ -56,17 +56,14 @@ def autCard : UnorderedTree α → ℕ :=
 def forestAutCard (F : Multiset (UnorderedTree α)) : ℕ :=
   F.toFinset.prod fun t => (F.count t).factorial * autCard t ^ F.count t
 
-/-- The empty forest has trivial aut group. -/
 @[simp] theorem forestAutCard_zero :
     forestAutCard (0 : Multiset (UnorderedTree α)) = 1 := by
   simp [forestAutCard]
 
-/-- A singleton forest has the aut group of its tree. -/
 @[simp] theorem forestAutCard_singleton (T : UnorderedTree α) :
     forestAutCard ({T} : Multiset (UnorderedTree α)) = autCard T := by
   simp [forestAutCard]
 
-/-- `forestAutCard` as the `autCard`-product over all members times the symmetry factor. -/
 theorem forestAutCard_eq_prod_mul_multinomialFactor (F : Multiset (UnorderedTree α)) :
     forestAutCard F = (F.map autCard).prod * multinomialFactor F := by
   unfold forestAutCard multinomialFactor
@@ -78,11 +75,9 @@ theorem forestAutCard_eq_prod_mul_multinomialFactor (F : Multiset (UnorderedTree
     autCard (UnorderedTree.node a F) = forestAutCard F := by
   simp [autCard, forestAutCard_eq_prod_mul_multinomialFactor]
 
-/-- A leaf has trivial aut group. -/
 @[simp] theorem autCard_leaf (a : α) : autCard (UnorderedTree.leaf a : UnorderedTree α) = 1 := by
   rw [← node_zero, autCard_node, forestAutCard_zero]
 
-/-- `autCard` is positive: the automorphism group contains the identity. -/
 theorem autCard_pos (t : UnorderedTree α) : 0 < autCard t := by
   induction t with
   | node a F ih =>
@@ -90,7 +85,6 @@ theorem autCard_pos (t : UnorderedTree α) : 0 < autCard t := by
     exact Finset.prod_pos fun t ht ↦
       Nat.mul_pos (Nat.factorial_pos _) (pow_pos (ih t (Multiset.mem_toFinset.1 ht)) _)
 
-/-- `forestAutCard` is positive. -/
 theorem forestAutCard_pos (F : Multiset (UnorderedTree α)) : 0 < forestAutCard F :=
   Finset.prod_pos fun t _ ↦ Nat.mul_pos (Nat.factorial_pos _) (pow_pos (autCard_pos t) _)
 

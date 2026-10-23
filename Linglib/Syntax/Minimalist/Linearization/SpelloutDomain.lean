@@ -135,7 +135,6 @@ theorem spellout_append_of_le (hmn : m ≤ n) (h : n ≤ d.length) :
     (d.append steps).spellout m n = d.spellout m n := by
   rw [spellout, spellout, spelloutDomain_append_of_le hmn h]
 
-/-- A linearizing derivation spells no domain out with a repeated token. -/
 theorem Linearizes.nodup {sched : List (ℕ × ℕ)} (h : d.Linearizes sched) {p : ℕ × ℕ}
     (hp : p ∈ sched) : (d.spellout p.1 p.2).Nodup :=
   Linearization.Consistent.nodup h (List.mem_map_of_mem hp)

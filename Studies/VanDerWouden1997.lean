@@ -50,8 +50,6 @@ def Context.Admits : Context → PolarityItem → Prop
 instance (c : Context) : DecidablePred c.Admits := by
   intro e; cases c <;> dsimp only [Context.Admits] <;> infer_instance
 
-/-- *Weinig* is monotone decreasing and not anti-additive, *geen van* anti-additive and not
-antimorphic, and *niet* antimorphic. -/
 theorem context_strengths :
     LicensingContext.few.licenser.Holds .anti ∧ ¬ LicensingContext.few.licenser.Holds .antiAdd ∧
       LicensingContext.nobody.licenser.Holds .antiAdd ∧
@@ -63,10 +61,6 @@ theorem context_strengths :
     fun h ↦ absurd (LicensingContext.holds_nobody_iff (s := .antiMorphic) |>.1 h) (by decide),
     LicensingContext.holds_negation .antiMorphic⟩
 
-/-- Van der Wouden holds that a verb with negative properties is anti-additive, no verb being only
-monotone decreasing. *Deny* bears this out, being anti-additive and not antimorphic. *Doubt*, on
-his sketch of it as not believing that the complement is true, which is the library's model of it,
-is monotone decreasing and not anti-additive. -/
 theorem verb_strengths :
     LicensingContext.denyVerb.licenser.Holds .antiAdd ∧
       ¬ LicensingContext.denyVerb.licenser.Holds .antiAddMult ∧
@@ -93,8 +87,6 @@ theorem judgments_predicted :
         (d.judgment = .acceptable ↔ c.Admits ooit) := by
   decide +kernel
 
-/-- A negative polarity item that is not also a positive one, as on the analysis with two items
-*ooit*, is admitted under *niet*. -/
 theorem negativeOnly_admits_niet : Context.niet.Admits { ooit with antiLicensor := none } := by
   decide
 

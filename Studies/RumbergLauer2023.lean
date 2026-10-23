@@ -105,8 +105,6 @@ instance {φ : Set M} [DecidablePred (· ∈ φ)] [DecidablePred (· ∈ Peircea
     (m : M) : Decidable (m ∈ peirceanPresent φ) :=
   inferInstanceAs (Decidable (m ∈ φ ∨ m ∈ Peircean.future φ))
 
-/-- A settled present-tensed atom is the Peircean present read off the moment, since
-settledness commutes with the history-independent disjunct. -/
 theorem settled_ockhamistPresent_atom (φ : Set M) :
     Ockhamist.settled (ockhamistPresent (Ockhamist.atom φ)) =
       Ockhamist.atom (peirceanPresent φ) := by
@@ -169,7 +167,6 @@ omit [PartialOrder M] in
 
 @[simp] theorem mem_present : (m, n) ∈ present φ ↔ (m, n) ∈ φ ∨ (m, n) ∈ future φ := Iff.rfl
 
-/-- The transition past of an atom is the Peircean past, ignoring the course. -/
 theorem past_atom (φ : Set M) : past (atom φ) = atom (Peircean.past φ) := rfl
 
 /-- At the actual past the future operator is settledness, since the course admits every
@@ -193,7 +190,6 @@ section LeftLinear
 
 variable [IsLeftLinear M]
 
-/-- Stability entails truth at any course compatible with the moment. -/
 theorem mem_of_mem_stable (hmn : m ≤ n ∨ n ≤ m) (h : (m, n) ∈ stable φ) : (m, n) ∈ φ :=
   h n le_rfl (histories_inter_nonempty_iff.2 hmn)
 
@@ -203,8 +199,6 @@ theorem future_atom_subset_stable (φ : Set M) :
     future (atom φ) ⊆ stable (future (atom φ)) :=
   fun _ H _n hn _ h ⟨hm, hh⟩ ↦ H h ⟨hm, Flag.Iic_subset hh hn⟩
 
-/-- Relative to the course of a maximal moment the transition future is the Ockhamist
-future on the history below it, since a complete course leaves one possible future. -/
 theorem future_atom_ofIsMax {x : M} (hx : IsMax x) (hmx : m ≤ x) (φ : Set M) :
     (m, x) ∈ future (atom φ) ↔
       (m, Flag.ofIsMax hx) ∈ Ockhamist.future (Ockhamist.atom φ) := by
@@ -226,12 +220,10 @@ def cond (A C : Set (M × M)) : Set M :=
 @[simp] theorem mem_cond {A C : Set (M × M)} {m : M} :
     m ∈ cond A C ↔ ∀ n, Minimal (fun n ↦ m ≤ n ∧ (m, n) ∈ A) n → (n, n) ∈ C := Iff.rfl
 
-/-- An antecedent already true at the actual past has it as its only minimal course. -/
 theorem minimal_eq_of_mem {A : Set (M × M)} (hA : (m, m) ∈ A)
     (h : Minimal (fun n ↦ m ≤ n ∧ (m, n) ∈ A) n) : n = m :=
   (h.2 ⟨le_rfl, hA⟩ h.1.1).antisymm h.1.1
 
-/-- A past antecedent's only minimal course is the actual past. -/
 theorem minimal_past_atom_iff {φ : Set M} :
     Minimal (fun n ↦ m ≤ n ∧ (m, n) ∈ past (atom φ)) n ↔ n = m ∧ m ∈ Peircean.past φ :=
   ⟨fun h ↦ ⟨minimal_eq_of_mem h.1.2 h, h.1.2⟩, by
@@ -264,8 +256,6 @@ theorem cond_eq_orderingImp (A C : Set (M × M)) :
 
 /-! ### Decidability on finite frames -/
 
-/-- The transition future of an atom on a finite frame is a search over the maximal
-moments. -/
 theorem mem_future_atom_iff [IsLeftLinear M] [Finite M] {φ : Set M} :
     (m, n) ∈ future (atom φ) ↔
       ∀ x, IsMax x → m ≤ x → n ≤ x → ∃ m', m < m' ∧ m' ≤ x ∧ m' ∈ φ := by
@@ -331,16 +321,12 @@ theorem mem_kaufmannCond {e : Set M} {A C : Set (M × Flag M)} {m : M} :
       (m', h) ∈ Ockhamist.settled A → (m', h) ∈ C := by
   simp only [kaufmannCond, mem_strictImp_forall, Prod.forall, mem_forwardBase, and_imp]
 
-/-- Kaufmann's conditional with a past antecedent quantifies over the later admitted moments
-at which the antecedent has come true. -/
 theorem mem_kaufmannCond_past_atom {e : Set M} {φ : Set M} {C : Set (M × Flag M)} {m : M} :
     m ∈ kaufmannCond e (Ockhamist.past (Ockhamist.atom φ)) C ↔
       ∀ (m' : M) (h : Flag M), m ≤ m' → m' ∈ h → m' ∈ e → m' ∈ Peircean.past φ →
         (m', h) ∈ C := by
   simp only [mem_kaufmannCond, Ockhamist.settled_past_atom, Ockhamist.mem_atom]
 
-/-- Kaufmann's conditional between present-tensed atoms on a finite frame, with the histories
-reduced to the maximal moments. -/
 theorem mem_kaufmannCond_present_iff [IsLeftLinear M] [Finite M] {e : Set M} {φ ψ : Set M}
     {m : M} :
     m ∈ kaufmannCond e (ockhamistPresent (Ockhamist.atom φ))
@@ -382,8 +368,6 @@ instance {T : Type*} [LinearOrder T] (time : M → T) (A C : Set M) [Fintype M] 
   decidable_of_iff _ mem_schulzCond_iff.symm
 
 omit [PartialOrder M] in
-/-- The relevant antecedent possibilities of Schulz's conditional are co-temporal, since
-minimality in the time ordering forces a shared time. -/
 theorem time_eq_of_mem_minimals {T : Type*} [LinearOrder T] {time : M → T} {s : Set M}
     {a b : M} (ha : a ∈ (Preorder.lift time).minimals s)
     (hb : b ∈ (Preorder.lift time).minimals s) : time a = time b :=
@@ -437,8 +421,6 @@ theorem antecedent_true_without_settledness :
     (now, win) ∈ Transition.present (Transition.atom beat) ∧ now ∉ peirceanPresent beat := by
   decide
 
-/-- Ockhamist future truth and Peircean settledness come apart. The win is future-true on
-the winning history yet not settled. -/
 theorem future_truth_without_settledness :
     (now, Flag.ofIsMax (x := win) (by decide)) ∈ Ockhamist.future (Ockhamist.atom beat) ∧
       now ∉ Peircean.future beat :=
@@ -499,8 +481,6 @@ instance : DecidablePred (· ∈ atTwo) := fun m ↦ inferInstanceAs (Decidable 
 instance : DecidablePred (· ∈ atThree) :=
   fun m ↦ inferInstanceAs (Decidable (m = arriveThree))
 
-/-- Schulz's minimality keeps only the early decision among the antecedent moments. The
-late decision makes the antecedent settled but is ignored. -/
 theorem schulz_ignores_the_late_decision :
     early ∈ (Preorder.lift time).minimals {m' | now ≤ m' ∧ m' ∈ peirceanPresent come} ∧
       late ∉ (Preorder.lift time).minimals {m' | now ≤ m' ∧ m' ∈ peirceanPresent come} ∧
@@ -531,8 +511,6 @@ theorem transition_rejects_both_arrivals :
         (Transition.present (Transition.atom atThree)) := by
   decide
 
-/-- The transition account's moments of decidedness for *John comes today* are the two
-decisions, which lie at different times. -/
 theorem decidedness_at_different_times :
     Minimal (fun n ↦ now ≤ n ∧ (now, n) ∈ Transition.present (Transition.atom come)) early ∧
       Minimal (fun n ↦ now ≤ n ∧ (now, n) ∈ Transition.present (Transition.atom come)) late ∧

@@ -65,7 +65,6 @@ def toAgentivity (p : EntailmentProfile) : Agentivity := Finset.univ.filter (·.
     f ∈ p.toAgentivity ↔ f.toProtoRole ∈ p := by
   simp [toAgentivity]
 
-/-- The agentivity of a profile is its preimage under the embedding. -/
 theorem toAgentivity_eq_preimage (p : EntailmentProfile) :
     p.toAgentivity = p.preimage toProtoRole toProtoRole.injective.injOn := by
   ext; simp

@@ -51,7 +51,6 @@ theorem IsLowerSet.mem_iff_le_max (h : IsLowerSet (↑s : Set α)) : a ∈ s ↔
 
 variable {t : Finset α}
 
-/-- Lower finsets of a linear order are nested. [UPSTREAM] -/
 theorem IsLowerSet.subset_or_subset (hs : IsLowerSet (↑s : Set α))
     (ht : IsLowerSet (↑t : Set α)) : s ⊆ t ∨ t ⊆ s := by
   simpa using hs.total ht
@@ -89,7 +88,6 @@ theorem isLowerSet_coe_Iic (a : α) : IsLowerSet (↑(Iic a) : Set α) := by
   le_antisymm (Finset.max_le fun _ hb ↦ WithBot.coe_le_coe.2 (mem_Iic.1 hb))
     (le_max (mem_Iic.2 le_rfl))
 
-/-- A lower finset of a linear order is the initial segment of its maximum. -/
 theorem IsLowerSet.eq_Iic_of_max_eq (h : IsLowerSet (↑s : Set α)) (ha : s.max = a) :
     s = Iic a := by
   ext x; rw [h.mem_iff_le_max, ha, mem_Iic, WithBot.coe_le_coe]

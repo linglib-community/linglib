@@ -77,8 +77,6 @@ def numUnary : RoseTree α → ℕ :=
 
 /-! ### Vertex-count conservation -/
 
-/-- The unary tick exactly compensates the root count: at a unary node the root is
-    contracted away and the tick is `1`; otherwise the root survives and the tick is `0`. -/
 theorem numNodes_contractUnary_node :
     (contractUnary (node a cs)).numNodes + (if cs.length = 1 then 1 else 0)
       = 1 + (cs.map fun c => (contractUnary c).numNodes).sum := by
@@ -95,8 +93,6 @@ theorem numNodes_contractUnary_add_numUnary (t : RoseTree α) :
 
 /-! ### `contractUnary` normalizes: no unary vertices remain -/
 
-/-- Contraction never creates a unary root: a unary root collapses away, and any other
-    root keeps its arity, so the unary count at a node is the children's total. -/
 theorem numUnary_contractUnary_node :
     (contractUnary (node a cs)).numUnary = (cs.map fun c => (contractUnary c).numUnary).sum := by
   rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩ <;> simp [Function.comp_def]
@@ -135,7 +131,6 @@ theorem contractUnary_eq_self_iff {t : RoseTree α} :
 
 /-! ### `Perm` invariance -/
 
-/-- `numUnary` is a `Perm`-invariant. -/
 theorem numUnary_perm {t s : RoseTree α} (h : Perm t s) : t.numUnary = s.numUnary :=
   fold_perm (fun _ _ _ h' => by rw [h'.length_eq, h'.sum_eq]) h
 

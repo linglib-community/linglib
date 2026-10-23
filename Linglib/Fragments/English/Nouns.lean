@@ -66,7 +66,6 @@ def Noun.realize (n : Noun) : Number → Option String
   | .plural => n.plural
   | _ => none
 
-/-- A noun has no form at a number outside the system. -/
 theorem Noun.realize_eq_none (n : Noun) {m : Number} (hm : m ∉ numberSystem.values) :
     n.realize m = none := by
   cases m <;> simp_all [numberSystem, Noun.realize]

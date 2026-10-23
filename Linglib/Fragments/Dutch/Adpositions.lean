@@ -359,12 +359,10 @@ theorem pre_of_post :
     ∀ a ∈ inventory, a.IsPostposition → a.IsPreposition ∨ a.toAdposition = af.toAdposition := by
   decide
 
-/-- An entry takes the circumpositional position exactly when it is complex. -/
 theorem circum_iff_isComplex :
     ∀ a ∈ inventory, a.IsCircumposition ↔ a.IsComplex := by
   decide
 
-/-- A circumposition takes a noun phrase only. -/
 theorem complements_of_circum :
     ∀ a ∈ inventory, a.IsCircumposition → a.complements = {some .np} := by
   decide

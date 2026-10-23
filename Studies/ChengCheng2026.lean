@@ -76,7 +76,6 @@ follow [sybesma-2021]. -/
 def vocabulary : RuleSet (VocabularyItem Feature Exponent) :=
   [{.v} ⟷ .da, {.caus₁} ⟷ .gei, {.voice} ⟷ .ba]
 
-/-- A head bearing only v is realized as *dǎ* in every context. -/
 theorem subsetPrinciple_v (l r : List (Finset Feature)) :
     subsetPrinciple vocabulary ⟨{.v}, l, r⟩ = some .da := by
   rw [subsetPrinciple_eq_head?_applicable (by decide)]
@@ -165,7 +164,6 @@ def test? (d : Datum) : Option (Combination × Bool) := do
   let s ← d.parse? "separated" [("yes", true), ("no", false)]
   pure (c, s)
 
-/-- Twelve data are tests, so `diagnostics_iff` is not vacuous. -/
 theorem length_filterMap_test? : (Examples.all.filterMap test?).length = 12 := by decide +kernel
 
 /-- A test form is acceptable iff it keeps *dǎ* with what follows it or the two lie in different

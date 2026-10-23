@@ -87,8 +87,6 @@ def assignDep (c : Case) (goals : Valuation α (Case × Mechanism)) :
 /-- The cases a list of valued NPs carries. -/
 def surface (out : Valuation α (Case × Mechanism)) : List (Option Case) := out.map (·.2.map (·.1))
 
-/-- With fewer than two caseless DPs among its goals the stack assigns nothing: the first probe
-is never valued, or the second finds no DP. -/
 theorem stack_eq_none_of_subsingleton {goals : Valuation α (Case × Mechanism)}
     (h : ∀ i j, ∀ g ∈ goals.zipIdx, ∀ g' ∈ goals.zipIdx, g.2 = i → g'.2 = j →
       g.1.2 = none → g'.1.2 = none → i = j) :
@@ -104,7 +102,6 @@ theorem stack_eq_none_of_subsingleton {goals : Valuation α (Case × Mechanism)}
     simp only [unmarkedProbe, Probe.relativized, Option.isNone_iff_eq_none] at hv hvis
     exact hne (h g'.2 g.2 g' hg' g hg rfl rfl hvis hv)
 
-/-- Minimal compliance: the DP that unlocks the stack is not the one it marks. -/
 theorem stack_ne_unlocker {goals : Valuation α (Case × Mechanism)} {g : Goal α} {j : ℕ}
     (hs : unmarkedProbe.search goals.zipIdx = some g) (hj : stack goals = some j) : j ≠ g.2 := by
   unfold stack at hj
@@ -134,8 +131,6 @@ theorem high_eq_dependentPass (c : Case) (lex : α → Option Case) (spec comp :
   simp only [lexicalValuation, Valuation.initial, List.map_cons, List.map_nil]
   cases lex spec <;> cases lex comp <;> rfl
 
-/-- One stack, one dependent case: on three caseless DPs the stack marks only the second,
-whereas the low dependent rule marks every DP c-commanded by a caseless one. -/
 theorem stack_marks_once (c : Case) (lex : α → Option Case) (a b d : α) (ha : lex a = none)
     (hb : lex b = none) (hd : lex d = none) :
     surface (assignDep c (lexicalValuation lex [a, b, d])) = [none, some c, none] ∧

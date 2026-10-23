@@ -138,7 +138,6 @@ theorem mean_weight {a : G.NT} (r : G.RulesWithLHS a) :
   exact (sum_coe_sort (G.rules.filter (·.input = r.input))
     fun r' ↦ ENNReal.ofReal (M.pseudo r')).symm
 
-/-- At a nonterminal, the mean PCFG orders rules by pseudo-count. -/
 theorem mean_weight_lt_mean_weight_iff {a : G.NT} {r r' : G.RulesWithLHS a} :
     M.mean.weight r < M.mean.weight r' ↔ M.pseudo r < M.pseudo r' := by
   rw [mean, PCFG.normalize_weight_lt_normalize_weight_iff,

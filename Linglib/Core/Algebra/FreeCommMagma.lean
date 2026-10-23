@@ -55,11 +55,9 @@ private theorem eq_of_iff_of_commCon {x y : FreeMagma α} (h : commCon α x y) (
   | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
   | mul _ _ _ _ => exact iff_of_false (nomatch ·) (nomatch ·)
 
-/-- The commutativity congruence relates a generator only to itself. -/
 @[simp] theorem commCon_of_iff {a : α} {y : FreeMagma α} : commCon α (.of a) y ↔ y = .of a :=
   ⟨fun h ↦ (eq_of_iff_of_commCon h a).1 rfl, fun h ↦ h ▸ (commCon α).refl _⟩
 
-/-- Lifting into a commutative magma respects the commutativity congruence. -/
 theorem lift_congr {M : Type v} [CommMagma M] (f : α → M) {x y : FreeMagma α}
     (h : commCon α x y) : lift f x = lift f y := by
   induction h with
@@ -101,7 +99,6 @@ instance [Inhabited α] : Inhabited (FreeCommMagma α) := ⟨of default⟩
 theorem ofMagma_surjective : Function.Surjective (ofMagma : FreeMagma α → FreeCommMagma α) :=
   fun x ↦ by rcases x with ⟨a⟩; exact ⟨a, rfl⟩
 
-/-- Every element is built from generators by multiplication. -/
 @[elab_as_elim, induction_eliminator]
 theorem inductionOn {motive : FreeCommMagma α → Prop} (x : FreeCommMagma α)
     (of : ∀ a, motive (of a)) (mul : ∀ x y, motive x → motive y → motive (x * y)) : motive x := by

@@ -90,7 +90,6 @@ def sollte : ModalAuxiliary where
 /-- The modal verbs. -/
 def allModals : List ModalAuxiliary := [duerfen, koennen, moegen, muessen, sollen, wollen, sollte]
 
-/-- *sollte* has the flavors of *sollen* and the epistemic one besides. -/
 theorem sollen_flavors_ssubset_sollte :
     sollen.flavors ⊂ sollte.flavors := by
   decide

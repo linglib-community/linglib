@@ -258,7 +258,6 @@ def Row.ofDatum (e : Datum) : Option Row := do
   let p ← e.parse? "pronouns" [("none", []), ("np1", [a]), ("np2", [b]), ("both", [a, b])]
   pure ⟨t, a, b, p, (e.readings.lookup "coreference").getD e.judgment⟩
 
-/-- Every example is read. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The dissertation's examples. -/
@@ -270,15 +269,11 @@ theorem permits_rows :
     ∀ d ∈ data, (d.judgment = .acceptable ↔ Permits (CCommands d.tree) d.pron d.np₁ d.np₂) := by
   decide
 
-/-- Read with precede-and-command, the restriction fails on *Near him, Dan saw a snake* and the
-Malagasy pair among others. -/
 theorem exists_not_permits_precedesAndCommands :
     ∃ d ∈ data,
       ¬ (d.judgment = .acceptable ↔ Permits (PrecedesAndCommands d.tree) d.pron d.np₁ d.np₂) := by
   decide
 
-/-- Precede-and-command fails only where the two domains come apart, on a pair of type I or
-type III in one order or the other. -/
 theorem typeI_or_typeIII_of_not_permits_precedesAndCommands :
     ∀ d ∈ data,
       ¬ (d.judgment = .acceptable ↔ Permits (PrecedesAndCommands d.tree) d.pron d.np₁ d.np₂) →

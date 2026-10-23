@@ -350,7 +350,6 @@ def positionPredicted (row : Datum) : Option Bool := do
     row.feature? "decision" == some "all" then {0, 1} else {0}
   return (binders site none).any fun e ↦ e.flavor == fl && decide (Claim s e w)
 
-/-- Every Chuj position row carries the predicted judgment. -/
 theorem position_rows :
     ∀ row ∈ Examples.all, ∀ b ∈ positionPredicted row,
       (row.judgment == .acceptable) = b := by decide +kernel

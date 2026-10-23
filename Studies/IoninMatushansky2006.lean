@@ -59,7 +59,6 @@ cardinality `k`. -/
 def Equicardinal (P : Finset α → Prop) (k : ℕ) : Prop :=
   ∀ s, P s → #s = k
 
-/-- The singletons of a set of individuals have one member each. -/
 theorem equicardinal_image_singleton (S : Set α) :
     Equicardinal (· ∈ ({·} : α → Finset α) '' S) 1 := by
   rintro _ ⟨a, -, rfl⟩
@@ -79,14 +78,11 @@ each satisfying the complement `P`. -/
 def cardMod (n : ℕ) (P : Finset α → Prop) (x : Finset α) : Prop :=
   ∃ Q : Finpartition x, #Q.parts = n ∧ ∀ s ∈ Q.parts, P s
 
-/-- A plurality partitioned into `n` cells of `k` members each has `n * k` members. -/
 theorem card_of_cardMod {P : Finset α → Prop} {k n : ℕ} {x : Finset α} (hP : Equicardinal P k)
     (h : cardMod n P x) : #x = n * k := by
   obtain ⟨Q, rfl, hQ⟩ := h
   rw [← Q.sum_card_parts, sum_const_nat fun s hs ↦ hP s (hQ s hs)]
 
-/-- A plurality of `n * k` members whose `k`-membered parts satisfy `P` has an equitable partition
-into `n` cells satisfying `P`. -/
 theorem cardMod_of_card {P : Finset α → Prop} {k : ℕ} (hk : k ≠ 0) (n : ℕ) {x : Finset α}
     (hP : ∀ y ⊆ x, #y = k → P y) (hx : #x = n * k) : cardMod n P x := by
   have h : n * k + 0 * (k + 1) = #x := by rw [hx, zero_mul, add_zero]

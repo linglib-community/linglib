@@ -89,7 +89,6 @@ grammatical. -/
 def harmonyScore [Ring R] (con : ConstraintSet C ι) (w : ι → R) (c : C) : R :=
   -(w ⬝ᵥ fun j ↦ (con j c : R))
 
-/-- `harmonyScore` is a negated `Finset.sum`. -/
 theorem harmonyScore_eq_neg_sum [Ring R] (con : ConstraintSet C ι) (w : ι → R) (c : C) :
     harmonyScore con w c = -∑ j, w j * (con j c : R) := rfl
 
@@ -101,7 +100,6 @@ def harmony [Ring R] (T : C → ι → R) (w : ι → R) (c : C) : R :=
 @[simp] theorem harmony_violations [Ring R] (con : ConstraintSet C ι) (w : ι → R) :
     harmony con.violations w = harmonyScore con w := rfl
 
-/-- Harmony is linear in the weights. -/
 theorem harmony_add [Ring R] (T : C → ι → R) (w w' : ι → R) :
     harmony T (w + w') = harmony T w + harmony T w' := by
   funext c
@@ -112,7 +110,6 @@ theorem harmony_smul [CommRing R] (T : C → ι → R) (r : R) (w : ι → R) :
   funext c
   simp [harmony, smul_dotProduct]
 
-/-- The harmony of a sum of violation vectors is the sum of their harmonies. -/
 theorem harmony_sum [Ring R] {κ D : Type*} [Fintype κ] (T : κ → D → ι → R) (w : ι → R)
     (f : κ → D) : harmony (fun f ↦ ∑ k, T k (f k)) w f = ∑ k, harmony (T k) w (f k) := by
   simp [harmony, dotProduct_sum]

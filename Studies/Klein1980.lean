@@ -57,8 +57,6 @@ absent from the comparison class, Mona when Jude is, and neither when both are p
 def cleverDel : Delineation Clever2 :=
   ⟨fun C ↦ {x | match x with | .j => Clever2.m ∉ C | .m => Clever2.j ∉ C}⟩
 
-/-- The clever delineation is nonlinear, since in the class of both each is ordered above the
-other. -/
 theorem clever_nonlinear : cleverDel.IsNonlinear :=
   ⟨{Clever2.j, Clever2.m}, Clever2.j, Clever2.m,
     ⟨{Clever2.j}, by simp, by simp [cleverDel], by simp [cleverDel]⟩,
@@ -77,13 +75,10 @@ transitivity of the measure order, while being tall does not make one very tall.
 
 variable {E D : Type*} [LinearOrder D]
 
-/-- Under a measure-induced delineation *very A* entails *A*. -/
 theorem very_ofMeasure_subset (μ : E → D) (C : Set E) :
     (Delineation.ofMeasure μ).very C ⊆ Delineation.ofMeasure μ C :=
   fun _ ⟨_, ⟨z, hz, hlt'⟩, hlt⟩ ↦ ⟨z, hz, hlt'.trans hlt⟩
 
-/-- An entity tall relative to everyone need not be tall relative to the tall; such an entity is
-*fairly tall*. -/
 theorem exists_mem_not_mem_very :
     ∃ x : Fin 3, x ∈ Delineation.ofMeasure id Set.univ ∧
       x ∉ (Delineation.ofMeasure id).very Set.univ := by
@@ -136,7 +131,6 @@ theorem isStrictWeakOrder_outranks {d : Delineation E} (hmono : d.IsMonotone) (C
   incomp_trans _ b _ := fun ⟨hab, hba⟩ ⟨hbc, hcb⟩ ↦
     ⟨fun hac ↦ (hac.cotrans b).elim hab hbc, fun hca ↦ (hca.cotrans b).elim hcb hba⟩
 
-/-- Any two entities are ordered one way or the other or are nondistinct. -/
 theorem outranks_or_outranks_or_nondistinct (d : Delineation E) (C : Set E) (u v : E) :
     d.Outranks C u v ∨ d.Outranks C v u ∨ d.Nondistinct C u v := by
   by_cases h1 : d.Outranks C u v

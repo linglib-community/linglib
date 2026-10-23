@@ -57,7 +57,6 @@ open scoped ENNReal
 
 namespace ENNReal
 
-/-- A supremum over a monotone sequence commutes with a countable sum. -/
 theorem iSup_tsum_of_monotone {ι : Type*} {g : ℕ → ι → ℝ≥0∞} (hg : Monotone g) :
     ⨆ n, ∑' i, g n i = ∑' i, ⨆ n, g n i := by
   simp_rw [ENNReal.tsum_eq_iSup_sum]

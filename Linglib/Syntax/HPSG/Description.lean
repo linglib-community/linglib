@@ -175,7 +175,6 @@ variable {I} {g g' : ℕ → U} {u : U} {d e : Desc Sig}
 @[simp] theorem satisfies_all {x : ℕ} : I.Satisfies g u (.all x d) ↔
     ∀ w, I.IsComponentOf u w → I.Satisfies (Function.update g x w) u d := Iff.rfl
 
-/-- A sort assignment is monotone in the sort. -/
 theorem Satisfies.sortAssign_mono {t : Term Sig} {σ τ : Srt} (hστ : σ ≤ τ)
     (h : I.Satisfies g u (.sortAssign t σ)) : I.Satisfies g u (.sortAssign t τ) :=
   let ⟨v, hv, hσ⟩ := h; ⟨v, hv, hσ.trans hστ⟩
@@ -218,7 +217,6 @@ theorem satisfies_congr : ∀ {g g' : ℕ → U},
   | all x d ih =>
     exact fun h ↦ forall_congr' fun w ↦ imp_congr_right fun _ ↦ ih (update_congr h w)
 
-/-- The satisfaction of a closed formula does not depend on the assignment. -/
 theorem satisfies_iff_of_freeVars_eq_empty (hd : d.freeVars = ∅) (g g' : ℕ → U) :
     I.Satisfies g u d ↔ I.Satisfies g' u d :=
   satisfies_congr fun x hx ↦ by simp [hd] at hx
@@ -256,7 +254,6 @@ theorem models_iff_forall_assignment (hG : ∀ d ∈ G, d.freeVars = ∅) :
 @[simp] theorem models_append : I.Models (G ++ H) ↔ I.Models G ∧ I.Models H := by
   simp only [Models, List.mem_append, or_imp, forall_and]
 
-/-- A model of a grammar is a model of any part of it. -/
 theorem Models.mono (hI : I.Models H) (hGH : G ⊆ H) : I.Models G :=
   fun u d hd ↦ hI u d (hGH hd)
 
@@ -304,14 +301,10 @@ theorem forall_satisfies_map_toDesc_iff [DecidableLE Srt] :
       ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies g u c.body := by
   simp [Constraint.inherited]
 
-/-- An interpretation is a model of a list of constraints exactly when every entity satisfies
-the constraints that its sort inherits. -/
 theorem models_map_toDesc_iff [DecidableLE Srt] : I.Models (C.map Constraint.toDesc) ↔
     ∀ u, ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies (fun _ ↦ u) u c.body :=
   forall_congr' fun _ ↦ forall_satisfies_map_toDesc_iff
 
-/-- In a model, a constraint among the principles holds of every entity whose sort is at least
-as specific as the constrained sort. -/
 theorem Models.satisfies_body {G : Grammar Sig} (hI : I.Models G) {c : Constraint Sig}
     (hc : c.toDesc ∈ G) (hu : I.S u ≤ c.sort) : I.Satisfies (fun _ ↦ u) u c.body :=
   satisfies_toDesc.1 (hI u _ hc) hu

@@ -114,7 +114,6 @@ theorem impenetrable (o : Definiteness) :
 Spec,DP. -/
 def vpEdge : LinearizedSyntacticObject := verb * (wh * (that * (book * (about * .traceOf wh))))
 
-/-- At the edge of the phase, the wh-phrase is in the phase but outside the reach of the PIC. -/
 theorem edge_not_impenetrable :
     (wh : SyntacticObject) ∈ (vpEdge : SyntacticObject).phaseEdge that := by
   decide
@@ -175,17 +174,12 @@ def Constraint.Violated : Constraint → Config → Prop
 instance (k : Constraint) : DecidablePred k.Violated := fun _ ↦ by
   cases k <;> unfold Constraint.Violated <;> infer_instance
 
-/-- The PIC on the links of the chain agrees with the PIC on terms: a link leaves the phase from
-its interior exactly when the deleted copy, within the complement of the cell's phase head, is
-inaccessible to the pronounced one under [chomsky-2000]'s condition. -/
 theorem violatesPIC_iff_not_accessible (c : Config) :
     c.ViolatesPIC c.tree ↔
       ¬ (c.tree : SyntacticObject).Accessible c.phaseHead.toList .phase wh (.traceOf wh) := by
   obtain ⟨f, o, v⟩ := c
   cases f <;> cases o <;> cases v <;> decide
 
-/-- Fronting out of a definite object under a verb that is not a verb of creation, and nothing
-else, violates the PIC. -/
 theorem pic_violated_iff (c : Config) :
     Constraint.Violated .pic c ↔
       c.fronted = true ∧ c.object = .definite ∧ c.creation = false := by
@@ -201,7 +195,6 @@ theorem violatesPIC_covertTree_iff (c : Config) :
   obtain ⟨f, o, v⟩ := c
   cases f <;> cases o <;> cases v <;> decide
 
-/-- A definite object, and nothing else, violates the Specificity Condition. -/
 theorem specificity_violated_iff (c : Config) :
     Constraint.Violated .specificity c ↔ c.object = .definite := by
   obtain ⟨f, o, v⟩ := c
@@ -223,8 +216,6 @@ def specificity : Finset Constraint := {.specificity}
 /-- The paper's proposal combines both constraints. -/
 def combined : Finset Constraint := {.pic, .specificity}
 
-/-- An indefinite object violates nothing under any account: it is neither a phase nor
-specific. -/
 theorem violations_indefinite (account : Finset Constraint) (fronted v : Bool) :
     violations account ⟨fronted, .indefinite, v⟩ = 0 :=
   Finset.card_eq_zero.mpr (Finset.filter_eq_empty_iff.mpr fun k _ ↦ by
@@ -296,8 +287,6 @@ theorem stacking_daviesDubinsky :
           ex₂.judgment ≤ ex₁.judgment := by
   decide
 
-/-- Constraints stack on the paper's cited judgments, since within a language an example violating
-strictly more constraints of the combined account is judged no better. -/
 theorem stacking : ∀ ex₁ ∈ Examples.all, ∀ ex₂ ∈ Examples.all, ex₁.language = ex₂.language →
     ∀ c₁ ∈ Config.ofDatum ex₁, ∀ c₂ ∈ Config.ofDatum ex₂,
       violations combined c₁ < violations combined c₂ →
@@ -377,9 +366,6 @@ cyclic-linearization content of the PIC on movement. -/
 theorem phase_skip_not_linearizes : ¬ (derivation false true).Linearizes (schedule false true) := by
   decide
 
-/-- Binding leaves the word order alone: with *what* in situ at both Spell-outs no ordering
-statement is added and the derivation linearizes, so a dependency established by binding never
-meets the contradiction that enforces the PIC on movement. -/
 theorem binding_linearizes : (derivation false false).Linearizes (schedule false false) := by
   decide
 

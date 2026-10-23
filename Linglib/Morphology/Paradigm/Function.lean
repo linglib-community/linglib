@@ -219,7 +219,6 @@ def expoFragment (b : Block L Z P) : Block L Z P :=
   b.filter (fun r => r.payload matches .expo _)
 
 omit [PartialOrder P] [DecidableEq L] [DecidableLE P] [DecidableLT P] in
-/-- Every member of a block's exponence fragment carries an exponence payload. -/
 theorem mem_expoFragment_expo {b : Block L Z P} {r : Rule L P (Action Z P)}
     (h : r ∈ expoFragment b) : ∃ f, r.payload = Action.expo f := by
   simp only [expoFragment, List.mem_filter] at h
@@ -247,9 +246,6 @@ def evalBlockForm (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z :=
       | none => wσ.1
   | none => wσ.1
 
-/-- A referred cell realizes as its referent's exponence-only evaluation. When the narrowest
-rule at `(w, σ)` is a referral to `retarget`, evaluating the block equals evaluating its
-exponence fragment at the retargeted cell. -/
 theorem evalBlockForm_referral {Lindex : Z → L} {b : Block L Z P} {w : Z} {σ : P}
     {r : Rule L P (Action Z P)} {retarget : P → P}
     (hr : b.selectMinimal Rule.narrowness (Lindex w, σ) = some r)
@@ -367,9 +363,6 @@ theorem functionCompositionDefault_applies (Lindex : Z → L) (bm bn : Block L Z
       (functionCompositionDefault Lindex bm bn) c :=
   ⟨Finset.mem_univ _, bot_le⟩
 
-/-- The FCD is `≤`-maximal, since every rule is at least as narrow, so an
-explicit portmanteau rule always preempts it ([spencer-2013]). The statement has
-the shape of `le_identityDefault`. -/
 theorem le_functionCompositionDefault (Lindex : Z → L) (bm bn : Block L Z P)
     (r : Rule L P (Action Z P)) :
     r.narrowness ≤ (functionCompositionDefault Lindex bm bn).narrowness := by
@@ -493,8 +486,6 @@ def Rule.mapPayload (g : F → F') (r : Rule L P F) : Rule L P F' where
 section
 variable [PartialOrder P] [DecidableEq L] [DecidableLE P] [DecidableLT P]
 
-/-- Applicability and narrowness read only class and props, so narrowest-rule
-selection is blind to a payload relabelling. -/
 theorem selectMinimal_map_payload (g : F → F') (v : RuleSet (Rule L P F)) (c : L × P) :
     RuleSet.selectMinimal (v.map (Rule.mapPayload g)) Rule.narrowness c
       = (v.selectMinimal Rule.narrowness c).map (Rule.mapPayload g) := by

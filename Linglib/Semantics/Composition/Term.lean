@@ -145,7 +145,6 @@ def evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
   | lam n b ih => simp [evalM, ih, eval]
   | comp m l r ihl ihr => simp only [evalM, ihl, ihr, Option.bind_some, Option.map_some]; rfl
 
-/-- The denotation of a renamed term interprets the renamed constants. -/
 theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty S) (f : ∀ {ty : Ty}, K ty → K' ty)
     (g : Assignment E) {ty : Ty} (t : Term K ty) :
     (t.map f).eval I g = t.eval (fun c ↦ I (f c)) g := by
@@ -155,7 +154,6 @@ theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty S) (f : ∀ {ty 
   | lam n b ih => funext x; exact ih _
   | comp m l r ihl ihr => simp only [map, eval, ihl, ihr]
 
-/-- Evaluating a renamed term interprets the renamed constants. -/
 theorem evalM_map {M : Type → Type} [Applicative M] [PredAbs M E W S]
     (I : ∀ {ty : Ty}, K' ty → M (Ty.Domain E W ty S)) (f : ∀ {ty : Ty}, K ty → K' ty)
     (g : Assignment E) {ty : Ty} (t : Term K ty) :
@@ -166,8 +164,6 @@ theorem evalM_map {M : Type → Type} [Applicative M] [PredAbs M E W S]
   | lam n b ih => simp only [map, evalM, ih]
   | comp m l r ihl ihr => simp only [map, evalM, ihl, ihr]
 
-/-- Whether a term has a denotation under an effect, and at which type, does not depend on the
-assignment. -/
 theorem isSome_evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
     (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) (g g' : Assignment E) {ty : Ty}
     (t : Term K ty) : (t.evalM I g).isSome = (t.evalM I g').isSome := by

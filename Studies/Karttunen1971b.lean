@@ -54,7 +54,6 @@ open Presupposition ModalLogic
 variable {W : Type*} {R : SetRel W W} {A : W → SignType} {s : W → Prop}
   {c : Factivity} {e : FamilyVariant}
 
-/-- A sentence or its negation is true exactly where the sentence has a truth value. -/
 private theorem eq_one_sup_neg_eq_one (A : W → SignType) :
     ((A · = 1) ⊔ (-A · = 1) : W → Prop) = (A · ≠ 0) :=
   funext fun w ↦ propext <| by simp only [Pi.sup_apply, sup_Prop_eq]; cases A w <;> simp
@@ -70,16 +69,12 @@ def Postulates (c : Factivity) (R : SetRel W W) (A : W → SignType) (s : W → 
   | .semi => (A · = 1) ≤ s ∧ (-A · = 1) ≤ s
   | .full => ◇[R] (A · = 1) ≤ s ∧ ◇[R] (-A · = 1) ≤ s
 
-/-- A semi-factive sentence has a truth value only where its complement is true. -/
 theorem postulates_semi_iff : Postulates .semi R A s ↔ (A · ≠ 0) ≤ s := by
   rw [← eq_one_sup_neg_eq_one, sup_le_iff]; rfl
 
-/-- The complement of a true factive is true wherever its sentence may have a truth value. -/
 theorem postulates_full_iff : Postulates .full R A s ↔ ◇[R] (A · ≠ 0) ≤ s := by
   rw [← eq_one_sup_neg_eq_one, diamond_sup, sup_le_iff]; rfl
 
-/-- A true factive sentence has a truth value only where its complement is necessary, along the
-converse of the accessibility relation. -/
 theorem postulates_full_iff_le_box : Postulates .full R A s ↔ (A · ≠ 0) ≤ □[R.inv] s :=
   postulates_full_iff.trans (diamond_box_gc R _ _)
 
@@ -137,7 +132,6 @@ theorem projects_iff : Projects c e ↔ c = .full ∨ e = .unembedded ∨ e = .n
 instance (c : Factivity) (e : FamilyVariant) : Decidable (Projects c e) :=
   decidable_of_iff' _ projects_iff
 
-/-- In a model of any universe, the complement is true wherever the commitment is. -/
 theorem Projects.commitment_le [R.IsRefl] (hp : Projects c e) (h : Postulates c R A s) :
     commitment R A e ≤ s :=
   h.commitment_le (projects_iff.1 hp)

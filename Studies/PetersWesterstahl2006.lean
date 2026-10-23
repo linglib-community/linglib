@@ -102,12 +102,10 @@ theorem duplicatorWinsBijective_oneCycle_twoCycles (r : ℕ) :
     (fun _ _ hd ↦ eq_zero_of_addRight_one_zpow (hd.trans hlt))
     (fun _ _ hd ↦ eq_zero_of_addRight_zero_one_zpow (by exact_mod_cast hd))
 
-/-- On one cycle every element reaches every other, so `LIN` holds. -/
 theorem oneCycle_mem_lin (r : ℕ) : oneCycle r ∈ Reciprocal.lin.holds :=
   ⟨ZMod.nontrivial_iff.2 (by have := Nat.one_lt_two_pow_iff.2 r.succ_ne_zero; omega),
     fun _ _ hxy ↦ transGen_add_one hxy⟩
 
-/-- On two cycles no element reaches the other cycle, so `LIN` fails. -/
 theorem twoCycles_not_mem_lin (r : ℕ) : twoCycles r ∉ Reciprocal.lin.holds := by
   rintro ⟨-, h⟩
   have hfst {a b : ZMod 2 × ZMod (2 ^ r)}

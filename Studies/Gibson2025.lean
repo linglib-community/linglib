@@ -118,8 +118,6 @@ def svo121 : Graph 8 :=
 and mirrors the rest. -/
 def sov121 : Graph 8 := svo121.linearize [0, 3, 7, 6, 5, 4, 2, 1] (by decide)
 
-/-- The English orders are head-first and their verb-final counterparts head-final in every
-head-argument rule. -/
 theorem sov_harmonic :
     Harmonic svo119 .headInitial ∧ Harmonic sov119 .headFinal ∧
       Harmonic svo120 .headInitial ∧ Harmonic sov120 .headFinal ∧
@@ -150,7 +148,6 @@ def voCompV122 : Graph 7 := hi122.linearize [0, 2, 3, 4, 5, 6, 1] (by decide)
 bananas from Hawaii eat*. -/
 def ovVComp122 : Graph 7 := hi122.linearize [0, 1, 2, 4, 5, 6, 3] (by decide)
 
-/-- The harmonic orders cost six and seven, the mismatches fifteen and eleven. -/
 theorem totalLength_122 :
     hi122.totalLength = 6 ∧ hf122.totalLength = 7 ∧
       voCompV122.totalLength = 15 ∧ ovVComp122.totalLength = 11 := by
@@ -207,8 +204,6 @@ def voRelN123 : Graph 11 :=
 def ovNRel123 : Graph 11 :=
   en123.linearize [7, 8, 10, 9, 6, 5, 3, 4, 2, 0, 1] (by decide)
 
-/-- The English order costs thirteen and the head-final orders twenty-seven and fifteen; each
-mismatch costs more than its harmonic baseline. -/
 theorem totalLength_123 :
     en123.totalLength = 13 ∧ hfSubjFirst123.totalLength = 27 ∧ hf123.totalLength = 15 ∧
       voSubFinal123.totalLength = 26 ∧ ovSubInitial123.totalLength = 30 ∧
@@ -223,13 +218,9 @@ theorem harmonic_123 :
         Disharmonic ovPre123 ∧ Disharmonic voRelN123 ∧ Disharmonic ovNRel123 := by
   decide
 
-/-- Reversing every arc, subjects included, costs nothing, so the book's head-final orders are
-dearer than English only because their subjects stay before their verbs. -/
 theorem totalLength_mirror_123 : en123.mirror.totalLength = 13 :=
   en123.totalLength_mirror.trans totalLength_123.1
 
-/-- A subordinator at the far end of its clause, where the arc from *said* to *that* is at least as
-long as the nine-word clause *that* heads. -/
 theorem subordinator_final_stretches :
     (voSubFinal123.yield 10).ncard ≤ Nat.dist (1 : Fin 11) 10 :=
   voSubFinal123.ncard_yield_le_dist (by decide)

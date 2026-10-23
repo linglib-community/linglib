@@ -88,7 +88,6 @@ theorem frontier_antitone {a b : CostPair} {β₁ β₂ : ℝ} (hβ₁ : 0 ≤ �
     nlinarith [mul_pos (sub_pos.2 hβ) (sub_pos.2 (not_le.mp hc))]
   exact ⟨hb, by nlinarith [mul_nonneg hβ₁ (sub_nonneg.2 hb)]⟩
 
-/-- The deviation from an encoding optimal at `β` is nonnegative. -/
 theorem efficiencyLossAt_nonneg {attested optimal : CostPair} {β : ℝ}
     (h : weightedCost optimal β ≤ weightedCost attested β) :
     0 ≤ efficiencyLossAt attested optimal β :=

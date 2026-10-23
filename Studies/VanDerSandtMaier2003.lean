@@ -111,8 +111,6 @@ theorem content_append (ϕ ψ : LDRS W) (L : Finset Label) :
   exact ⟨λ h => ⟨λ c hc => h c (Or.inl hc), λ c hc => h c (Or.inr hc)⟩,
     λ h c hc => hc.elim (h.1 c) (h.2 c)⟩
 
-/-- Assertion is monotonic: merging a representation into the record only strengthens the
-record's content. -/
 theorem content_append_subset (ϕ ψ : LDRS W) (L : Finset Label) :
     content (ϕ ++ ψ) L ⊆ content ϕ L := by
   rw [content_append]
@@ -136,8 +134,6 @@ label move under a negation in the denial's Frege layer, the others stay. -/
 def directedRA (ϕ : LDRS W) (off : Finset Label) (i : ℕ) : LDRS W :=
   surviving ϕ off ++ [⟨{fr i}, (content ϕ off)ᶜ⟩]
 
-/-- The record after directed reverse anaphora, read at layers including the denial's Frege
-layer: the surviving conditions together with the negation of the offensive content. -/
 theorem content_directedRA (ϕ : LDRS W) (off : Finset Label) {i : ℕ} {L : Finset Label}
     (hi : fr i ∈ L) :
     content (directedRA ϕ off i) L = content (surviving ϕ off) L ∩ (content ϕ off)ᶜ := by
@@ -147,13 +143,11 @@ theorem content_directedRA (ϕ : LDRS W) (off : Finset Label) {i : ℕ} {L : Fin
   simp only [mem_content_iff, List.mem_singleton, forall_eq, Set.mem_compl_iff]
   exact ⟨λ h => h ⟨fr i, Finset.mem_inter.2 ⟨Finset.mem_singleton_self _, hi⟩⟩, λ h _ => h⟩
 
-/-- Denial is non-monotonic: the offensive content is retracted from the record. -/
 theorem disjoint_content_directedRA (ϕ : LDRS W) (off : Finset Label) {i : ℕ} {L : Finset Label}
     (hi : fr i ∈ L) : Disjoint (content (directedRA ϕ off i) L) (content ϕ off) := by
   rw [content_directedRA ϕ off hi]
   exact Set.disjoint_left.2 λ w hw => hw.2
 
-/-- A condition bearing no offensive label survives directed reverse anaphora. -/
 theorem content_directedRA_subset {ϕ : LDRS W} {off : Finset Label} {i : ℕ} {L : Finset Label}
     (hi : fr i ∈ L) {c : Condition W} (hc : c ∈ ϕ) (hoff : c.labels ∩ off = ∅)
     (hL : (c.labels ∩ L).Nonempty) : content (directedRA ϕ off i) L ⊆ c.content := by
@@ -185,7 +179,6 @@ private theorem content_popeRecord_fr3 : content popeRecord {fr 3} = {.nec} := b
   ext w
   simp [mem_content_iff, popeRecord]
 
-/-- Off(ψ, fr₃) = {imp₁} — the correction clashes with the implicature layer alone. -/
 theorem popeOff : IsOff popeRecord {fr 3} {imp 1} := by
   refine ⟨?_, λ L' hL' => ?_⟩
   · rw [content_popeRecord_imp, content_popeRecord_fr3]
@@ -198,8 +191,6 @@ theorem popeOff : IsOff popeRecord {fr 3} {imp 1} := by
     rw [this] at h
     exact Set.singleton_ne_empty _ (Set.univ_disjoint.1 h)
 
-/-- After directed reverse anaphora the record says the Pope is necessarily right, keeping
-σ₁'s Frege content and negating its implicature. -/
 theorem pope_content_directedRA :
     content (directedRA popeRecord {imp 1} 2) {.background, fr 1, fr 2, fr 3} = {.nec} := by
   ext w
@@ -234,7 +225,6 @@ private theorem content_ladyRecord_fr4 : content ladyRecord {fr 4} = {.niceWife,
   ext w
   simp [mem_content_iff, ladyRecord]
 
-/-- Off(ψ, fr₄) = {imp₁} — being my wife clashes with the stranger implicature alone. -/
 theorem ladyOff : IsOff ladyRecord {fr 4} {imp 1} := by
   refine ⟨?_, λ L' hL' => ?_⟩
   · rw [content_ladyRecord_imp, content_ladyRecord_fr4]
@@ -247,7 +237,6 @@ theorem ladyOff : IsOff ladyRecord {fr 4} {imp 1} := by
     rw [this] at h
     exact (Set.insert_nonempty _ _).ne_empty (Set.univ_disjoint.1 h)
 
-/-- The acknowledged content that she is nice survives the denial of the implicature. -/
 theorem lady_nice_survives :
     content (directedRA ladyRecord {imp 1} 3) {.background, fr 1, fr 2, fr 3, fr 4} ⊆
       {.niceStranger, .niceWife} := by

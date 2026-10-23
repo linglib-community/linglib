@@ -101,12 +101,9 @@ theorem whichDeRe_iff {G P : E → Set W} {w v u : W} :
   simp only [Setoid.ker_def, Set.ext_iff, Set.mem_inter_iff, mem_extension,
     and_congr_right_iff]
 
-/-- *Who P?* is the partition of the propositions that each individual has `P`. -/
 theorem who_eq_partition (P : E → Set W) : who P = partition (Set.range P) :=
   Setoid.ext fun _ _ ↦ by rw [who_iff, partition_iff, Set.forall_mem_range]
 
-/-- *Which G P?* read de re at `w` is the partition of Karttunen's denotation of the question for
-the individuals that are `G` at `w`. -/
 theorem whichDeRe_eq_partition (G P : E → Set W) (w : W) :
     whichDeRe G P w = partition (P '' extension G w) := by
   ext v u
@@ -129,7 +126,6 @@ knowing the answer to the other (chapter II, (X)). -/
 theorem who_compl (P : E → Set W) : who (fun x ↦ (P x)ᶜ) = who P :=
   Setoid.ker_comp_of_injective (extension P) compl_injective
 
-/-- Reindexing the individuals by a surjection leaves the question unchanged. -/
 theorem who_comp_of_surjective {E' : Type*} {f : E' → E} (hf : Function.Surjective f)
     (P : E → Set W) : who (P ∘ f) = who P :=
   Setoid.ker_comp_of_injective (extension P) (Set.preimage_injective.2 hf)
@@ -168,7 +164,6 @@ def Knows (R : SetRel W W) (Q : Setoid W) (w : W) : Prop := w ∈ R.core (Q.cell
 
 variable {R : SetRel W W} {Q Q' : Setoid W} {w : W} {p q : Set W}
 
-/-- Knowing the answer to a question is knowing the answer to every question it entails. -/
 theorem Knows.mono (hQ : Q ≤ Q') (h : Knows R Q w) : Knows R Q' w :=
   fun _ hv ↦ hQ (h hv)
 
@@ -203,7 +198,6 @@ theorem knows_who_iff {P : E → Set W} :
   simp only [Knows, SetRel.mem_core, Setoid.mem_cell, who_iff, Set.mem_compl_iff]
   grind
 
-/-- Knowing who walks, when nobody walks, is knowing that nobody walks (chapter II, (XIII)). -/
 theorem knows_nobody {P : E → Set W} (h : Knows R (who P) w) (hw : ∀ x, w ∉ P x) :
     w ∈ R.core {v | ∀ x, v ∉ P x} :=
   fun _ hv x ↦ (knows_who_iff.1 h).2 x (hw x) hv
@@ -266,7 +260,6 @@ theorem karttunen_knows :
   · have := h (show true ~[john] false from trivial) (walk .suzy)ᶜ ⟨⟨.suzy, rfl⟩, by simp [walk]⟩
     simp [walk] at this
 
-/-- John does not know who walks. -/
 theorem not_knows : ¬ Knows john (who walk) true :=
   not_knows_who_of_believes (D := johnBelieves) (x := .suzy) (Set.subset_univ _) ⟨false, rfl⟩
     (fun _ h ↦ h) (by simp [walk])
@@ -299,8 +292,6 @@ def notManWalks : SetRel (Bool × Bool) (Bool × Bool) :=
 def notManButWalks : SetRel (Bool × Bool) (Bool × Bool) :=
   {p | p.2 = (true, true) ∨ p.2 = (false, true)}
 
-/-- *Who walks* does not entail *which man walks* read de dicto, since John knows the answer to
-the first but not to the second (chapter II, (XI)). -/
 theorem who_not_whichDeDicto :
     Knows notManButWalks (who walk) (true, true) ∧
       ¬ Knows notManButWalks (whichDeDicto man walk) (true, true) ∧
@@ -312,8 +303,6 @@ theorem who_not_whichDeDicto :
     simp [man, walk] at this
   exact ⟨hw, hn, fun h ↦ hn (hw.mono h)⟩
 
-/-- *Which man walks* does not entail *which man doesn't walk* with the conclusion read de dicto,
-whatever the reading of the premiss (chapter II, (XII)). -/
 theorem whichDeDicto_compl_invalid :
     Knows notMan (whichDeDicto man walk) (true, false) ∧
       Knows notMan (whichDeRe man walk (true, false)) (true, false) ∧
@@ -324,8 +313,6 @@ theorem whichDeDicto_compl_invalid :
   · have := who_iff.1 (h (show (true, false) ~[notMan] (false, false) from Or.inr rfl)) ()
     simp [man, walk] at this
 
-/-- *Which man walks* read de dicto does not entail *which man doesn't walk* read de re (chapter
-II, (XII)). -/
 theorem whichDeDicto_whichDeRe_compl_invalid :
     Knows notManWalks (whichDeDicto man walk) (true, false) ∧
       ¬ Knows notManWalks (whichDeRe man (fun x ↦ (walk x)ᶜ) (true, false)) (true, false) := by
@@ -382,7 +369,6 @@ def OffersAnswer (Q : Setoid W) (J : Set W) : Prop := restrict Q J = {J}
 theorem cell_inter_mem_restrict (hw : w ∈ J) : Q.cell w ∩ J ∈ restrict Q J :=
   ⟨Q.cell w, ⟨Q.mem_classes w, w, Q.refl' w, hw⟩, rfl⟩
 
-/-- An information set offers an answer exactly when it is nonempty and lies inside one cell. -/
 theorem offersAnswer_iff : OffersAnswer Q J ↔ J.Nonempty ∧ ∃ w, J ⊆ Q.cell w := by
   refine ⟨fun h ↦ ?_, fun ⟨⟨w, hw⟩, u, hu⟩ ↦ ?_⟩
   · obtain ⟨X, ⟨⟨u, rfl⟩, w, -, hwJ⟩, hXJ⟩ : J ∈ restrict Q J := h ▸ Set.mem_singleton J
@@ -400,8 +386,6 @@ theorem offersAnswer_iff_of_mem (hi : i ∈ J) : OffersAnswer Q J ↔ J ⊆ Q.ce
   refine ⟨fun ⟨_, v, hJ⟩ ↦ ?_, fun h ↦ ⟨⟨i, hi⟩, i, h⟩⟩
   rwa [cell_eq_of_rel (hJ hi)]
 
-/-- Information offers an answer exactly when it is nonempty and resolves the question as an
-inquisitive question. -/
 theorem offersAnswer_iff_mem_fromSetoid : OffersAnswer Q J ↔ J.Nonempty ∧ J ∈ fromSetoid Q := by
   rw [offersAnswer_iff, mem_fromSetoid]
   exact and_congr_right fun ⟨w, hw⟩ ↦ ⟨fun ⟨u, hu⟩ a ha b hb ↦ Q.trans' (hu ha) (Q.symm' (hu hb)),
@@ -422,7 +406,6 @@ theorem offersTrueAnswer_iff : OffersTrueAnswer Q J i ↔ J ⊆ Q.cell i := by
   rw [OffersTrueAnswer, offersAnswer_iff_of_mem (Set.mem_insert i J), Set.insert_subset_iff]
   exact and_iff_right (mem_cell_self i)
 
-/-- Information containing the index offers a true answer when it offers an answer. -/
 theorem offersTrueAnswer_iff_of_mem (hi : i ∈ J) : OffersTrueAnswer Q J i ↔ OffersAnswer Q J := by
   rw [OffersTrueAnswer, Set.insert_eq_of_mem hi]
 
@@ -503,7 +486,6 @@ variable {S Q}
 theorem knowsAnswer_iff : S.KnowsAnswer Q ↔ S.epistemic ⊆ Q.cell i :=
   offersAnswer_iff_of_mem S.mem_epistemic
 
-/-- The individual's knowledge offers a true answer exactly when it offers an answer. -/
 theorem offersTrueAnswer_epistemic_iff : OffersTrueAnswer Q S.epistemic i ↔ S.KnowsAnswer Q :=
   offersTrueAnswer_iff_of_mem S.mem_epistemic
 
@@ -515,8 +497,6 @@ theorem KnowsAnswer.hasTrueAnswer (h : S.KnowsAnswer Q) : S.HasTrueAnswer Q :=
 theorem HasTrueAnswer.hasAnswer (h : S.HasTrueAnswer Q) : S.HasAnswer Q :=
   OffersAnswer.anti h (Set.subset_insert i S.doxastic) S.doxastic_nonempty
 
-/-- Knowing the answer at `i` along a relation whose alternatives at `i` are the individual's
-knowledge is knowing an answer. -/
 theorem knows_iff_knowsAnswer (hR : R.image {i} = S.epistemic) :
     Knows R Q i ↔ S.KnowsAnswer Q := by
   rw [knowsAnswer_iff, ← hR, SetRel.image_subset_iff, Knows, Set.singleton_subset_iff]
@@ -657,7 +637,6 @@ def nobody : Set Index := {w | w.2 = ∅}
 /-- That everybody G's. -/
 def everybody : Set Index := {w | w.2 = Finset.univ}
 
-/-- The question who G's is open on the individual's beliefs and on their knowledge. -/
 theorem not_offersAnswer :
     ¬ OffersAnswer whoGs info.doxastic ∧ ¬ OffersAnswer whoGs info.epistemic := by
   have hD : ¬ OffersAnswer whoGs info.doxastic := fun h ↦ by
@@ -669,7 +648,6 @@ theorem not_offersAnswer :
     exact absurd (h₀.trans h₁.symm) (by decide)
   exact ⟨hD, fun h ↦ hD (h.anti info.doxastic_subset info.doxastic_nonempty)⟩
 
-/-- The individual has an answer to who is the F, but not a true one. -/
 theorem hasAnswer_whoIsTheF : info.HasAnswer whoIsTheF ∧ ¬ info.HasTrueAnswer whoIsTheF := by
   refine ⟨offersAnswer_iff.2 ⟨info.doxastic_nonempty, (0, {0}), ?_⟩, fun h ↦ ?_⟩
   · rintro w (rfl | rfl) <;> exact whoIsTheF_iff.2 rfl
@@ -684,8 +662,6 @@ theorem independent :
   ⟨⟨(0, {0}), rfl, rfl⟩, ⟨(1, {0}), rfl, by simp [byDescription]⟩,
     ⟨(1, {1}), rfl, by simp [byName]⟩, ⟨(0, ∅), by simp [byName], by simp [byDescription]⟩⟩
 
-/-- An answer true at `(0, {0})` and false at `(0, {1})` leaves the individual's beliefs only
-`(0, {0})`. -/
 theorem doxastic_inter_eq {P : Set Index} (h₀ : ((0 : Fin 2), ({0} : Finset (Fin 2))) ∈ P)
     (h₁ : ((0 : Fin 2), ({1} : Finset (Fin 2))) ∉ P) : info.doxastic ∩ P = {(0, {0})} := by
   ext w
@@ -698,7 +674,6 @@ theorem doxastic_inter_byName : info.doxastic ∩ byName = {(0, {0})} :=
 theorem doxastic_inter_byDescription : info.doxastic ∩ byDescription = {(0, {0})} :=
   doxastic_inter_eq rfl (by simp [byDescription])
 
-/-- The two answers are equivalent on the individual's beliefs. -/
 theorem pragmatically_equivalent : info.doxastic ∩ byName = info.doxastic ∩ byDescription := by
   rw [doxastic_inter_byName, doxastic_inter_byDescription]
 
@@ -737,8 +712,6 @@ theorem givesTrueAnswer_ifAnyoneThenTheF : info.GivesTrueAnswer ifAnyoneThenTheF
     Set.singleton_subset_iff]
   exact whoGs_iff.2 rfl
 
-/-- That nobody G's and that everybody G's are incompatible with the individual's beliefs, so
-neither gives an answer. -/
 theorem not_givesAnswer_nobody_everybody :
     ¬ info.GivesAnswer nobody whoGs ∧ ¬ info.GivesAnswer everybody whoGs := by
   refine ⟨fun h ↦ not_offersAnswer.1 ?_, fun h ↦ not_offersAnswer.1 ?_⟩ <;>
@@ -797,14 +770,12 @@ theorem update_doxastic {P : Set Index} (h : (someNotAll ∩ P).Nonempty) :
     (info.update P).doxastic = someNotAll ∩ P :=
   info.update_doxastic_of_nonempty h
 
-/-- That if `0` G's then `1` does gives a true partial answer. -/
 theorem conditional_true_partial :
     info.GivesTruePartialAnswer {w | 0 ∈ w → 1 ∈ w} (who G) := by
   rw [InformationSets.GivesTruePartialAnswer, InformationSets.GivesPartialAnswer,
     update_doxastic ⟨actual, by decide, by decide⟩, info_doxastic]
   decide
 
-/-- That the one who G's is an M gives a partial answer that is not true. -/
 theorem exhaustive_indefinite_partial_false :
     info.GivesPartialAnswer {w | ∃ x, x ≠ 2 ∧ w = {x}} (who G) ∧
       ¬ GivesAccess (who G) (info.update {w | ∃ x, x ≠ 2 ∧ w = {x}}).doxastic actual := by
@@ -822,7 +793,6 @@ theorem indefinite_partial_false :
     info_doxastic]
   decide
 
-/-- That the one who G's is an F gives a complete true answer. -/
 theorem exhaustive_indefinite_complete_true :
     info.GivesTrueAnswer {w | w = {2}} (who G) := by
   rw [InformationSets.GivesTrueAnswer, InformationSets.HasTrueAnswer,
@@ -907,9 +877,6 @@ namespace TwoCells
 /-- The question whose cells are `{0, 1}` and `{2, 3}`. -/
 abbrev cells : Setoid (Fin 4) := Setoid.ker fun i ↦ decide (i.val < 2)
 
-/-- Each of `{0, 2}` and `{1, 2}` is compatible with both cells but their conjunction only with
-`{2, 3}`, so the answers compatible with a conjunction need not be those compatible with both
-conjuncts. -/
 theorem determined_inter_ne :
     determined cells ({0, 2} ∩ {1, 2}) ≠ determined cells {0, 2} ∩ determined cells {1, 2} :=
   fun h ↦ by

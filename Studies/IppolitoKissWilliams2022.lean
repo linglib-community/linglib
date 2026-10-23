@@ -107,7 +107,6 @@ theorem Disagree.symm (h : c.Disagree s t) : c.Disagree t s :=
 /-- Disagreement is the stronger relation. -/
 theorem Disagree.not_agree (h : c.Disagree s t) : ¬ c.Agree s t := h.2.2
 
-/-- *but* is licensed only where *ma* is. -/
 theorem Ma.of_but (h : c.But S) : c.Ma S :=
   let ⟨hS, p, hp, hr, hd⟩ := h
   ⟨hS, p, hp, hr, hd.not_agree⟩
@@ -118,8 +117,6 @@ evidence for the answer (Section 3.2.3). -/
     c.QSupports (ofSet q) r ↔ c.dox ⊆ q ∧ c.Evidence q r := by
   simp [QSupports]
 
-/-- A question none of whose answers the speaker believes supports nothing: the ignorance
-reading and the negative bias alike. -/
 theorem not_qSupports_of_no_belief (h : ∀ q ∈ alt S, ¬ c.dox ⊆ q) (r : Set W) :
     ¬ c.QSupports S r :=
   λ ⟨q, hq, hd, _⟩ => h q hq hd
@@ -128,7 +125,6 @@ theorem not_qSupports_of_no_belief (h : ∀ q ∈ alt S, ¬ c.dox ⊆ q) (r : Se
 theorem not_ma_of_salient_empty (h : c.salient = ∅) : ¬ c.Ma S :=
   λ ⟨_, p, hp, _⟩ => by simp [h] at hp
 
-/-- Nor is *but*. -/
 theorem not_but_of_salient_empty (h : c.salient = ∅) : ¬ c.But S :=
   λ hb => not_ma_of_salient_empty h (Ma.of_but hb)
 
@@ -225,8 +221,6 @@ private theorem steak_ne_veg : steak ≠ veg := λ h =>
 private theorem meat_ne_compl : meat ≠ meatᶜ := λ h =>
   by simpa [meat] using Set.ext_iff.1 h ⟨false, false, true⟩
 
-/-- Carla's negative polar question *weren't you vegetarian?* disagrees with the salient steak
-order, so *but* is licensed. -/
 theorem but : ctx.But (polar veg) := by
   refine Context.but_of_polar rfl meat_ne_empty meat_ne_univ ?_ rfl ?_ (Or.inl ⟨rfl, rfl⟩) ?_ ?_ ?_
   · exact ⟨veg, mem_alt_polar_of_nontrivial veg_ne_empty veg_ne_univ veg |>.2 (Or.inl rfl),
@@ -251,7 +245,6 @@ theorem but : ctx.But (polar veg) := by
       · exact meat_ne_compl h
     · exact absurd (hd (show (⟨true, false, false⟩ : World) ∈ veg by simp [veg])) (by simp [veg])
 
-/-- And so is *ma*. -/
 theorem ma : ctx.Ma (polar veg) := Context.Ma.of_but but
 
 end Vegetarian

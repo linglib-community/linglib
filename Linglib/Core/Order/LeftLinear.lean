@@ -59,7 +59,6 @@ instance (priority := 100) {M : Type*} [PartialOrder M] [PredOrder M] [IsPredArc
     IsLeftLinear M :=
   ⟨fun _ _ _ ha hb ↦ (le_total_of_directed ha hb).symm⟩
 
-/-- Left-linearity pulls back along an order embedding. -/
 theorem OrderEmbedding.isLeftLinear {M N : Type*} [PartialOrder M] [PartialOrder N]
     [IsLeftLinear N] (f : M ↪o N) : IsLeftLinear M :=
   ⟨fun _ _ _ ha hb ↦ (IsLeftLinear.comparable_of_le_common (f.monotone ha)
@@ -74,14 +73,10 @@ theorem isChain_Iic (m : M) : IsChain (· ≤ ·) (Set.Iic m) := by
   intro a ha b hb _
   exact comparable_of_le_common (Set.mem_Iic.mp ha) (Set.mem_Iic.mp hb)
 
-/-- In a left-linear order everything strictly below an element is below the element it covers,
-its mother in a tree. -/
 theorem le_of_lt_of_covBy {a b m : M} (hm : m ⋖ a) (hb : b < a) : b ≤ m :=
   (comparable_of_le_common hb.le hm.le).elim id fun h ↦
     h.eq_or_lt.elim Eq.ge fun hlt ↦ (hm.2 hlt hb).elim
 
-/-- In a left-linear order two covers of an element below a common element are equal: the
-daughters of a node dominate disjoint subtrees. -/
 theorem eq_of_covBy_of_le {m c d x : M} (hc : m ⋖ c) (hd : m ⋖ d) (hcx : c ≤ x) (hdx : d ≤ x) :
     c = d :=
   (comparable_of_le_common hcx hdx).elim (fun h ↦ (hd.eq_or_eq hc.le h).resolve_left hc.ne')
@@ -139,7 +134,6 @@ theorem exists_mem_gt_of_lt (hm : m ∈ h) (hx : m < x) : ∃ y ∈ h, m < y := 
 
 variable [IsLeftLinear M]
 
-/-- In a left-linear order a flag contains the entire past of each of its elements. -/
 theorem Iic_subset (hm : m ∈ h) : Set.Iic m ⊆ (h : Set M) := fun _ hx ↦
   mem_iff_forall_le_or_ge.2 fun _ hb ↦ (h.le_or_le hb hm).elim
     (fun hbm ↦ IsLeftLinear.comparable_of_le_common hx hbm) fun hmb ↦ .inl (hx.trans hmb)
@@ -153,7 +147,6 @@ def ofIsMax (hx : IsMax x) : Flag M where
 
 @[simp] theorem mem_ofIsMax {hx : IsMax x} : y ∈ ofIsMax hx ↔ y ≤ x := Iff.rfl
 
-/-- A flag through a maximal element is its down-set. -/
 theorem eq_ofIsMax_of_mem (hx : IsMax x) (hxh : x ∈ h) : h = ofIsMax hx :=
   Flag.ext (Set.ext fun _ ↦ ⟨fun hy ↦ (h.le_or_le hy hxh).elim id fun hxy ↦ hx hxy,
     fun hy ↦ Iic_subset hxh hy⟩)

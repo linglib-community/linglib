@@ -59,20 +59,15 @@ noncomputable def update : Matrix ι κ ℝ :=
 theorem update_apply (i : ι) (j : κ) :
     update α β x y W i j = W i j + α i * x i * ((y j - (x ᵥ* W) j) * β j) := rfl
 
-/-- With one rate `η` for every cue and outcome the update is the Widrow–Hoff rule. -/
 theorem update_smul_one (η : ℝ) :
     update (η • 1) 1 x y W = W + η • vecMulVec x (y - x ᵥ* W) := by
   rw [update, smul_mul_assoc, one_mul, mul_one, smul_vecMulVec]
 
-/-- A uniform cue rate `a` and a uniform outcome rate `b` act as the single rate `a * b`. -/
 theorem update_smul_one_smul_one (a b : ℝ) :
     update (a • 1) (b • 1) x y W = update ((a * b) • 1) 1 x y W := by
   rw [update_smul_one, update, smul_mul_assoc, one_mul, mul_smul_comm, mul_one, smul_vecMulVec,
     vecMulVec_smul, smul_smul]
 
-/-- On a set `s` of present cues and a set `t` of present outcomes with maximal activations `lam`
-the update is the Rescorla–Wagner rule. A present cue gains `α i * β j` times the error of
-outcome `j` against the summed weights of the present cues, and an absent cue gains nothing. -/
 theorem update_indicator_apply (s : Finset ι) (t : Set κ) (lam : κ → ℝ) (i : ι) (j : κ) :
     update α β ((s : Set ι).indicator 1) (t.indicator lam) W i j =
       W i j + (s : Set ι).indicator α i * β j * (t.indicator lam j - ∑ i' ∈ s, W i' j) := by
@@ -87,7 +82,6 @@ theorem vecMul_update (x' : ι → ℝ) :
     x' ᵥ* update α β x y W = x' ᵥ* W + (x' ⬝ᵥ (α * x)) • ((y - x ᵥ* W) * β) := by
   rw [update, vecMul_add, vecMul_vecMulVec]
 
-/-- An event scales its own prediction error for outcome `j` by `1 - x ⬝ᵥ (α * x) * β j`. -/
 theorem sub_vecMul_update :
     y - x ᵥ* update α β x y W = (y - x ᵥ* W) * (1 - (x ⬝ᵥ (α * x)) • β) := by
   rw [vecMul_update, mul_sub, mul_one, mul_smul_comm, sub_add_eq_sub_sub]
@@ -98,7 +92,6 @@ theorem update_eq_self_iff :
     update α β x y W = W ↔ α * x = 0 ∨ (y - x ᵥ* W) * β = 0 := by
   simp [update, ← Matrix.ext_iff, vecMulVec_apply, funext_iff, forall_or_left, forall_or_right]
 
-/-- An event whose outcome the weights already predict teaches nothing. -/
 theorem update_eq_self_of_vecMul_eq {x y W} (h : x ᵥ* W = y) : update α β x y W = W :=
   (update_eq_self_iff ..).2 <| .inr <| by rw [h, sub_self, zero_mul]
 
@@ -130,8 +123,6 @@ theorem iterate_update_apply (n : ℕ) (i : ι) (j : κ) :
 
 variable {α β x}
 
-/-- Under repetition the prediction converges to the outcome, provided each outcome's error
-factor is less than one in absolute value. -/
 theorem tendsto_vecMul_iterate_update (h : ∀ j, |1 - x ⬝ᵥ (α * x) * β j| < 1) :
     Tendsto (fun n ↦ x ᵥ* (update α β x y)^[n] W) atTop (𝓝 y) := by
   refine tendsto_pi_nhds.2 fun j ↦ ?_

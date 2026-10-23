@@ -93,20 +93,13 @@ theorem exists_internal_eq_iff {s : Finset LogophoricRole} :
       (∃ e : Environment, e.internal = s) ↔ ∀ a ∈ s, ∀ b ≤ a, b ∈ s := by decide
   exact (h s).trans ⟨fun h _ _ hba ha ↦ h _ ha _ hba, fun h _ ha _ hba ↦ h hba ha⟩
 
-/-- A form oriented to the pivot goes with the protagonist wherever there is one. -/
 theorem Environment.pivot_mem_internal_iff : .pivot ∈ e.internal ↔ e ≠ .directSpeech := by
   cases e <;> decide
 
-/-- A form oriented to the self goes with the protagonist under a psychological verb or a verb of
-saying. It does not under third-person point of view, the one environment an adverbial clause
-offers, which is why *sig* is not bound into an adverbial clause where *zibun* is. -/
 theorem Environment.self_mem_internal_iff :
     .self ∈ e.internal ↔ e = .psychVerb ∨ e = .logophoricVerb := by
   cases e <;> decide
 
-/-- A form oriented to the source goes with the protagonist under a verb of saying alone. The
-paper suggests this orientation for the logophoric pronouns of Ewe and Tuburi, whose
-complementizer derives from 'say'. -/
 theorem Environment.source_mem_internal_iff : .source ∈ e.internal ↔ e = .logophoricVerb := by
   cases e <;> decide
 
@@ -167,11 +160,6 @@ theorem fits_beloved_iff :
     Fits OfProtagonist (examplesOf "diagnostic" "beloved") r ↔ r = .pivot := by
   cases r <;> decide
 
-/-- The self fits the binding of Icelandic *sig*, which is bound from the complement of a verb of
-saying, also across an adverbial clause inside it, and not from an adverbial clause of the matrix.
-These examples do not tell the self from the other roles. The paper chooses it because *sig* is
-never bound into an adverbial clause, where at most the pivot is internal
-(`Environment.self_mem_internal_iff`). -/
 theorem fits_sig : Fits Bound (examplesOf "pronoun" Icelandic.Reciprocals.sig.form) .self := by
   decide
 

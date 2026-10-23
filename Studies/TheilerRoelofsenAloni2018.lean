@@ -114,12 +114,9 @@ theorem mem_Ecmp : p ∈ Ecmp P w ↔ IsCompleteTruthful P w p := Iff.rfl
 
 theorem Ecmp_subset_E : Ecmp P w ⊆ E P w := fun _ h ↦ h.toIsTruthful
 
-/-- A truthful resolution is truthful at every world it contains, since there it entails
-nothing false. -/
 theorem IsTruthful.of_mem (h : IsTruthful P w p) (hv : v ∈ p) : IsTruthful P v p :=
   ⟨h.mem, h.nonempty, fun ⟨_, _, hvq, hpq⟩ ↦ hvq (hpq hv)⟩
 
-/-- An alternative entailed by a truthful resolution is true. -/
 theorem IsTruthful.mem_of_subset (h : IsTruthful P w p) (hq : q ∈ alt P) (hpq : p ⊆ q) :
     w ∈ q :=
   by_contra fun hw ↦ h.nfa ⟨q, mem_altUnion_of_mem_alt hq, hw, hpq⟩
@@ -129,8 +126,6 @@ theorem IsTruthful.mem_of_subset (h : IsTruthful P w p) (hq : q ∈ alt P) (hpq 
 theorem altUnion_ofSet (q : Set W) : altUnion (ofSet q) = {∅, q} := by
   simp [altUnion, alt_ofSet, Set.powerset_singleton, Set.image_insert_eq, Set.image_singleton]
 
-/-- At a world where a declarative nucleus is true its truthful resolutions are the nonempty
-propositions entailing it; where it is false there are none. -/
 theorem isTruthful_ofSet_iff : IsTruthful (ofSet q) w p ↔ w ∈ q ∧ p ⊆ q ∧ p.Nonempty := by
   refine ⟨fun h ↦ ⟨h.mem_of_subset (by simp [alt_ofSet]) h.mem, h.mem, h.nonempty⟩, ?_⟩
   rintro ⟨hw, hpq, hne⟩
@@ -141,15 +136,12 @@ theorem isTruthful_ofSet_iff : IsTruthful (ofSet q) w p ↔ w ∈ q ∧ p ⊆ q 
   · exact hne.ne_empty (Set.subset_empty_iff.1 hpr)
   · exact hwr hw
 
-/-- Every truthful resolution of a declarative complement is complete. -/
 theorem isCompleteTruthful_ofSet_iff :
     IsCompleteTruthful (ofSet q) w p ↔ IsTruthful (ofSet q) w p :=
   ⟨fun h ↦ h.toIsTruthful, fun h ↦ ⟨h, fun r hr _ ↦ by
     rw [alt_ofSet, Set.mem_singleton_iff] at hr
     exact hr ▸ h.mem⟩⟩
 
-/-- The truthful resolutions of a declarative complement are downward closed among nonempty
-propositions. -/
 theorem isTruthful_ofSet_of_subset (h : IsTruthful (ofSet q) w p) {r : Set W} (hr : r ⊆ p)
     (hne : r.Nonempty) : IsTruthful (ofSet q) w r :=
   isTruthful_ofSet_iff.2 ⟨(isTruthful_ofSet_iff.1 h).1, hr.trans h.mem, hne⟩
@@ -158,12 +150,10 @@ theorem isTruthful_ofSet_of_subset (h : IsTruthful (ofSet q) w p) {r : Set W} (h
 
 variable [Finite W]
 
-/-- Over finitely many worlds a truthful resolution entails a true alternative. -/
 theorem IsTruthful.exists_alt (h : IsTruthful P w p) : ∃ c ∈ alt P, w ∈ c ∧ p ⊆ c :=
   let ⟨c, hc, hpc⟩ := exists_alt_above P (Set.toFinite _) h.mem
   ⟨c, hc, h.mem_of_subset hc hpc, hpc⟩
 
-/-- A nucleus has a truthful resolution at a world exactly when it is true there. -/
 theorem E_nonempty_iff : (E P w).Nonempty ↔ w ∈ info P := by
   constructor
   · rintro ⟨p, hp⟩
@@ -175,8 +165,6 @@ theorem E_nonempty_iff : (E P w).Nonempty ↔ w ∈ info P := by
     rintro ⟨_, _, hwq, hq⟩
     exact hwq (hq rfl)
 
-/-- On a partition nucleus, whose alternatives are the cells of the strongly exhaustive
-reading, every truthful resolution is complete. -/
 theorem Ecmp_eq_E_of_isPartition (h : P.IsPartition) : Ecmp P = E P := by
   funext w
   refine Set.Subset.antisymm Ecmp_subset_E fun p hp ↦ ⟨hp, fun c hc hwc ↦ ?_⟩
@@ -236,8 +224,6 @@ noncomputable def care (bou : X → W → Set W) : W → SignType :=
 
 variable {dox f x} {P : Question W} {q : Set W} {w : W}
 
-/-- The internal *know* is *be certain* together with the assertion of *be right*
-(section 5.3). -/
 theorem knowInt_iff : knowInt dox f x w ↔ certain dox f x w ∧ know dox f x w := and_comm
 
 /-- *know* of a declarative holds when the nucleus is true and the subject believes it, so
@@ -280,8 +266,6 @@ theorem knowFactive_ofSet_ne_zero_iff [Finite W] :
     knowFactive dox (E (ofSet q)) x w ≠ 0 ↔ w ∈ q := by
   simp [knowFactive, E_nonempty_iff, info_ofSet]
 
-/-- With an interrogative complement, a partition nucleus, the presupposition of *know* is
-trivial. -/
 theorem knowFactive_ne_zero_of_isPartition [Finite W] (h : P.IsPartition) :
     knowFactive dox (E P) x w ≠ 0 := by
   simp [knowFactive, E_nonempty_iff, h.info_eq_univ]
@@ -343,8 +327,6 @@ theorem mem_nonExh : D ∈ nonExh a ↔ D = ∅ ∨ D ⊆ nobody a ∨ ∃ d, D 
   rw [nonExh, mem_which]
   simp [Option.exists]
 
-/-- Under independence the alternatives of the non-exhaustive reading are the answers and
-the answer that none holds. -/
 theorem alt_nonExh (hne : ∀ d, (a d).Nonempty) (hN : (nobody a).Nonempty)
     (hind : ∀ d d', a d ⊆ a d' → d = d') :
     alt (nonExh a) = Set.range (Option.elim · (nobody a) a) := by
@@ -500,8 +482,6 @@ theorem declVeridical_know : DeclVeridical (know dox) :=
 
 variable [Finite W]
 
-/-- *know* is c-distributive, since on a partition nucleus a state is a truthful resolution
-exactly when it is a truthful resolution of the true cell. -/
 theorem cDistributive_know : CDistributive (know dox) := by
   intro Q hQ x w
   constructor

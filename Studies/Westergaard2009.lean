@@ -203,7 +203,6 @@ theorem table_3_2 :
       ∃ c ∈ tableCues, ¬ (Expresses g c ↔ Expresses g' c) := by
   simp [tableGrammars, tableCues, Expresses, cueIntV2, cueDeclV2, cueExclV2, cueWhV2]
 
-/-- The Norwegian children hear the cues for non-V2 in exclamatives and embedded questions. -/
 theorem norwegian_nonV2_cues :
     Expresses stdNorwegian cueExclNonV2 ∧ Expresses stdNorwegian cueWhNonV2 := by
   simp [Expresses, cueExclNonV2, cueWhNonV2]
@@ -298,8 +297,6 @@ def TromsøWh.syllables : TromsøWh → ℕ
 /-- The status of each *wh*-word, by its syllable count. -/
 def TromsøWh.status (w : TromsøWh) : WhStatus := .ofSyllables w.syllables
 
-/-- *ka*, *kem* and *kor* are heads and block verb movement to Int⁰; the others are phrases
-and block nothing. -/
 theorem tromsøWh_blocking :
     ∀ w : TromsøWh, w.status.Blocks (root .constituent) ↔ w.syllables = 1 := by
   decide

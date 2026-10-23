@@ -107,7 +107,6 @@ instance [DecidableLE α] : Decidable (i₁.During i₂) :=
 
 theorem during_irrefl (i : NonemptyInterval α) : ¬ i.During i := fun h ↦ lt_irrefl _ h.1
 
-/-- An interval during another neither precedes nor follows it. -/
 theorem not_precedes_of_during (h : i₁.During i₂) : ¬ i₁.Precedes i₂ ∧ ¬ i₂.Precedes i₁ :=
   ⟨fun h' ↦ lt_irrefl _ ((h.1.trans_le i₁.fst_le_snd).trans h'),
    fun h' ↦ lt_irrefl _ ((i₁.fst_le_snd.trans_lt h.2).trans h')⟩
@@ -115,7 +114,6 @@ theorem not_precedes_of_during (h : i₁.During i₂) : ¬ i₁.Precedes i₂ �
 @[simp] theorem finalSubinterval_refl (i : NonemptyInterval α) : i.FinalSubinterval i :=
   ⟨le_refl i, rfl⟩
 
-/-- Subintervals overlap their containing intervals. -/
 theorem overlaps_of_le (h : i₁ ≤ i₂) : i₁.Overlaps i₂ :=
   ⟨i₁.fst_le_snd.trans (le_def.1 h).2, (le_def.1 h).1.trans i₁.fst_le_snd⟩
 
@@ -129,12 +127,10 @@ theorem precedes_trans {i₃ : NonemptyInterval α} (h₁₂ : i₁.Precedes i�
     i₁.Precedes i₃ :=
   (h₁₂.trans_le i₂.fst_le_snd).trans h₂₃
 
-/-- A subinterval of an interval preceding `i₃` precedes `i₃`. -/
 theorem precedes_of_le_of_precedes {i₃ : NonemptyInterval α} (h₁ : i₁ ≤ i₂)
     (h₂ : i₂.Precedes i₃) : i₁.Precedes i₃ :=
   (le_def.1 h₁).2.trans_lt h₂
 
-/-- Precedence and overlap are mutually exclusive. -/
 theorem precedes_not_overlaps (h : i₁.Precedes i₂) : ¬ i₁.Overlaps i₂ :=
   fun ⟨_, h₂⟩ ↦ lt_irrefl _ (h.trans_le h₂)
 
@@ -144,26 +140,21 @@ section LinearOrder
 
 variable {α : Type*} [LinearOrder α] {i₁ i₂ : NonemptyInterval α}
 
-/-- Strict containment unfolded to endpoints, `i₁ ≤ i₂` with a strictly interior endpoint. -/
 theorem lt_def : i₁ < i₂ ↔ i₁ ≤ i₂ ∧ (i₂.fst < i₁.fst ∨ i₁.snd < i₂.snd) := by
   rw [lt_iff_le_not_ge]
   exact and_congr_right' (by rw [le_def, not_and_or, not_le, not_le])
 
-/-- An interval containing an overlapping interval overlaps. -/
 theorem Overlaps.mono_left {i₁' : NonemptyInterval α} (h : i₁.Overlaps i₂) (hle : i₁ ≤ i₁') :
     i₁'.Overlaps i₂ :=
   ⟨(le_def.1 hle).1.trans h.1, h.2.trans (le_def.1 hle).2⟩
 
-/-- In a linear order two intervals overlap exactly when neither precedes the other. -/
 theorem overlaps_iff_not_precedes : i₁.Overlaps i₂ ↔ ¬ i₁.Precedes i₂ ∧ ¬ i₂.Precedes i₁ := by
   simp only [Overlaps, Precedes, not_lt, and_comm]
 
-/-- An interval precedes another iff each of its points precedes each point of the other. -/
 theorem precedes_iff_forall_mem : i₁.Precedes i₂ ↔ ∀ a ∈ i₁, ∀ b ∈ i₂, a < b :=
   ⟨fun h _ ha _ hb ↦ ((mem_def.1 ha).2.trans_lt h).trans_le (mem_def.1 hb).1,
     fun h ↦ h _ (mem_def.2 ⟨i₁.fst_le_snd, le_rfl⟩) _ (mem_def.2 ⟨le_rfl, i₂.fst_le_snd⟩)⟩
 
-/-- Two intervals overlap iff they share a point. -/
 theorem overlaps_iff_exists_mem : i₁.Overlaps i₂ ↔ ∃ a, a ∈ i₁ ∧ a ∈ i₂ :=
   ⟨fun h ↦ ⟨max i₁.fst i₂.fst, mem_def.2 ⟨le_max_left .., max_le i₁.fst_le_snd h.2⟩,
       mem_def.2 ⟨le_max_right .., max_le h.1 i₂.fst_le_snd⟩⟩,
@@ -212,7 +203,6 @@ def Precedes (s t : Interval α) : Prop := ∀ ⦃x⦄, x ∈ s → ∀ ⦃y⦄,
 @[simp] theorem notMem_bot : x ∉ (⊥ : Interval α) := by
   simp [← SetLike.mem_coe]
 
-/-- A nonempty interval lies within `s` exactly when its endpoints do. -/
 theorem coe_le_iff : (↑i : Interval α) ≤ s ↔ i.fst ∈ s ∧ i.snd ∈ s := by
   induction s using recBotCoe with
   | bot =>
@@ -227,13 +217,10 @@ theorem coe_le_iff : (↑i : Interval α) ≤ s ↔ i.fst ∈ s ∧ i.snd ∈ s 
 @[simp] theorem pure_le_iff : pure a ≤ s ↔ a ∈ s := by
   simp [← coe_subset_coe]
 
-/-- The left endpoint is the least element. -/
 theorem isLeast_coe_fst : IsLeast (↑(↑i : Interval α) : Set α) i.fst :=
   ⟨NonemptyInterval.mem_def.2 ⟨le_rfl, i.fst_le_snd⟩,
     fun _ hx ↦ (NonemptyInterval.mem_def.1 hx).1⟩
 
-/-- Nonempty intervals precede exactly when the one ends before the other starts, the
-endpoint form of the relation. -/
 theorem precedes_coe_coe : (↑i : Interval α).Precedes ↑j ↔ i.Precedes j :=
   ⟨fun h ↦ h (NonemptyInterval.mem_def.2 ⟨i.fst_le_snd, le_rfl⟩)
       (NonemptyInterval.mem_def.2 ⟨le_rfl, j.fst_le_snd⟩),
@@ -249,7 +236,6 @@ variable {α : Type*} [Lattice α] {s t : Interval α} {x : α}
 theorem not_disjoint_iff : ¬ Disjoint s t ↔ ∃ x, x ∈ s ∧ x ∈ t := by
   simp only [← disjoint_coe, Set.not_disjoint_iff, SetLike.mem_coe]
 
-/-- Nonempty intervals meet exactly when they overlap, the endpoint form of the relation. -/
 theorem not_disjoint_coe_coe {i j : NonemptyInterval α} :
     ¬ Disjoint (↑i : Interval α) ↑j ↔ i.Overlaps j := by
   rw [not_disjoint_iff]
@@ -288,7 +274,6 @@ theorem antitone_Ici : Antitone (Ici : α → Interval α) := fun _ _ h ↦ Ici_
 @[simp] theorem pure_le_Ici : pure b ≤ Ici a ↔ a ≤ b := by
   simp
 
-/-- An interval lies within the ray from `a` exactly when all its elements are at or above `a`. -/
 theorem le_Ici_iff {s : Interval α} : s ≤ Ici a ↔ ∀ x ∈ s, a ≤ x := by
   simp [← coe_subset_coe, Set.subset_def]
 
@@ -298,18 +283,15 @@ section WithTop
 
 variable {α : Type*} [PartialOrder α] {i : NonemptyInterval α} {a : α}
 
-/-- A bounded interval lies within the ray from `a` exactly when it starts at or above `a`. -/
 theorem withTop_le_Ici : (↑i.withTop : Interval (WithTop α)) ≤ Ici ↑a ↔ a ≤ i.fst := by
   simp only [coe_le_iff, NonemptyInterval.fst_withTop, NonemptyInterval.snd_withTop, mem_Ici,
     WithTop.coe_le_coe]
   exact ⟨And.left, fun h ↦ ⟨h, h.trans i.fst_le_snd⟩⟩
 
-/-- A bounded interval precedes the ray from `a` exactly when it ends below `a`. -/
 theorem precedes_withTop_Ici :
     (↑i.withTop : Interval (WithTop α)).Precedes (Ici ↑a) ↔ i.snd < a := by
   rw [Ici, precedes_coe_coe]; simp [NonemptyInterval.Precedes]
 
-/-- A bounded interval precedes the point `a` exactly when it ends below `a`. -/
 theorem precedes_withTop_pure :
     (↑i.withTop : Interval (WithTop α)).Precedes (pure ↑a) ↔ i.snd < a := by
   rw [pure, precedes_coe_coe]; simp [NonemptyInterval.Precedes]
@@ -320,7 +302,6 @@ section WithTopLattice
 
 variable {α : Type*} [Lattice α] {i : NonemptyInterval α} {a : α}
 
-/-- A bounded interval meets the ray from `a` exactly when it ends at or above `a`. -/
 theorem not_disjoint_withTop_Ici :
     ¬ Disjoint (↑i.withTop : Interval (WithTop α)) (Ici ↑a) ↔ a ≤ i.snd := by
   rw [Ici, not_disjoint_coe_coe]; simp [NonemptyInterval.Overlaps]

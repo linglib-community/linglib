@@ -95,13 +95,9 @@ non-atomic plural meeting the height presupposition, and is otherwise undefined.
 noncomputable def ixArc {ι : Type*} (g : ι → E) (C : Set E) (h : Height) (i : ι) : Option E :=
   if Arc (g i) ∧ h.presup C (g i) then some (g i) else none
 
-/-- A referent within the context does not properly extend it, so the two heights exclude each
-other. -/
 theorem not_domain_of_neutral {C : Set E} {x : E} (h : Neutral C x) : ¬ Domain C x :=
   fun h' ↦ h'.2 h
 
-/-- When the context is the parts of its sum `c`, the neutral presupposition is parthood of
-`c` and the marked one is proper extension of `c`. -/
 theorem neutral_iff {c x : E} : Neutral (Set.Iic c) x ↔ x ≤ c := Set.Iic_subset_Iic
 
 theorem domain_iff {c x : E} : Domain (Set.Iic c) x ↔ c < x := Set.Iic_ssubset_Iic
@@ -129,8 +125,6 @@ defined where the pronoun is and asserts that every part of its referent satisfi
 noncomputable def fsAllOf {W : Type*} (pron : W → Option E) (Q : E → W → Prop) : W → SignType :=
   presupOfReferent pron fun x w ↦ every (partitive x) (Q · w)
 
-/-- The quantifier presupposes what its pronoun presupposes, so `FS(ALL)-of-[ixᵢ-arc-h]` is
-undefined iff `g i` is not a non-atomic plural meeting the height presupposition. -/
 theorem fsAllOf_ixArc_eq_zero_iff {W ι : Type*} {g : ι → E} {C : Set E} {h : Height} {i : ι}
     {Q : E → W → Prop} {w : W} :
     fsAllOf (fun _ ↦ ixArc g C h i) Q w = 0 ↔ ¬ (Arc (g i) ∧ h.presup C (g i)) := by
@@ -144,9 +138,6 @@ theorem fsAllOf_eq_one_iff {W : Type*} {pron : W → Option E} {Q : E → W → 
   simp only [fsAllOf, presupOfReferent_of_some h, SignType.ofProp_eq_one_iff]
   rfl
 
-/-- With the marked pronoun denoting a plural containing the neutral one, `FS(ALL)` and `NONE`
-at the higher locus entail their neutral forms, while `SOMEONE` at the neutral locus entails
-its high form, as in section 4. -/
 theorem all_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
     every (partitive x') Q → every (partitive x) Q :=
   restrictorAntitone_every Q fun _ hy => le_trans hy h
@@ -177,7 +168,6 @@ def incorporating : List Sign := [.fsAll, .noneSym, .someone, .something, .one, 
 `IX-arc` follows them ((37), (39)). -/
 def sequential : List Sign := [.few, .each, .most, .allB, .many]
 
-/-- Each quantifier row realises height as its sign's class predicts. -/
 theorem realization_rows :
     ∀ e ∈ Examples.all, ∀ q ∈ Sign.toList, e.feature? "quantifier" = some q.form →
       (e.feature? "realization" = some "simultaneous" → q ∈ incorporating) ∧

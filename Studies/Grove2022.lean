@@ -167,8 +167,6 @@ theorem globalReading_isSome_iff (i : I) :
     (globalReading bro wetsuit bring i).isSome ↔ (wetsuit i).isSome := by
   simp only [Option.isSome_iff_ne_none, ne_eq, globalReading_eq_none_iff]
 
-/-- The two readings differ only in their presuppositions, since wherever the global reading is
-defined, so is the local one, with the same value. -/
 theorem globalReading_eq_localReading_of_isSome (i : I) (h : (wetsuit i).isSome) :
     globalReading bro wetsuit bring i = localReading bro wetsuit bring i := by
   simp only [globalReading, localReading, consequent, materialCond_decide]
@@ -227,8 +225,6 @@ theorem believeLocal_eq_some_true_iff (i : I) :
   refine forall_congr' fun j ↦ ?_
   cases wetsuit j <;> split_ifs <;> simp_all
 
-/-- Scoped above the verb, the presupposition is that Theo has a wetsuit at the evaluation
-index, so it projects past *believe* and *his wetsuit* is read de re. -/
 theorem believeGlobal_isSome_iff (i : I) :
     (believeGlobal dox wetsuit lose theo i).isSome ↔ (wetsuit i).isSome := by
   show (lostClause wetsuit lose i >>= fun φ ↦ believe dox (fun j ↦ pure (φ j)) theo i).isSome ↔ _
@@ -240,8 +236,6 @@ theorem believeGlobal_isSome_iff (i : I) :
     intro j
     split_ifs <;> rfl
 
-/-- The at-issue content reconstructs, so the global reading is true exactly when Theo has a
-wetsuit that he lost at all his doxastic alternatives. -/
 theorem believeGlobal_eq_some_true_iff (i : I) :
     believeGlobal dox wetsuit lose theo i = some true ↔
       ∃ x, wetsuit i = some x ∧ ∀ j, dox theo i j → lose x j := by

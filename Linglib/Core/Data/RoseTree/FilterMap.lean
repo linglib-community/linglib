@@ -58,7 +58,6 @@ theorem filterMap_some (g : α → β) (t : RoseTree α) :
     rw [filterMap_node, map_node, Option.map_some, List.filterMap_congr ih,
       List.filterMap_eq_map']
 
-/-- Injecting on the left and then keeping the left labels is the identity. -/
 @[simp] theorem filterMap_getLeft?_map_inl (t : RoseTree α) :
     filterMap Sum.getLeft? (map (Sum.inl : α → α ⊕ β) t) = some t := by
   rw [filterMap_map,

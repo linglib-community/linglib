@@ -89,7 +89,6 @@ theorem IsLeastSquares.iff_map_eq (hx : IsLeastSquares A b x) :
     IsLeastSquares A b x' ↔ A x' = A x :=
   ⟨fun hx' => hx'.map_eq hx, fun h => isMinOn_univ_iff.mpr fun y => h ▸ isMinOn_univ_iff.mp hx y⟩
 
-/-- Under an injective design map the least-squares solution is unique. -/
 theorem IsLeastSquares.eq_of_injective (hA : Function.Injective A) (hx : IsLeastSquares A b x)
     (hx' : IsLeastSquares A b x') : x = x' :=
   hA (hx.map_eq hx')

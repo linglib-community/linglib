@@ -302,8 +302,6 @@ theorem relCond_ofDep (h : u ≠ v) (hD : D ⊆ {p | P p.1 p.2}) (hne : D.Nonemp
     rintro _ ⟨⟨a, b⟩, hab, rfl⟩
     exact ⟨a, b, row_pair_left u v a b, row_pair_right h a b, hD hab⟩⟩
 
-/-- Under `P(u, v)` the dependency between `u` and `v` lies in `P`, with the values of `u` as
-its domain and the values of `v` as its codomain. -/
 theorem dep_of_relCond {Δ : Set ℕ} (hS : relCond P u v S Δ) :
     dep u v S ⊆ {p | P p.1 p.2} ∧ (dep u v S).dom = value u S ∧ (dep u v S).cod = value v S := by
   obtain ⟨-, hP⟩ := hS
@@ -362,9 +360,6 @@ is reciprocal to `u'` ((42)). -/
 def ReciprocalDRS (P : E → E → Prop) (X : Set E) (u u' : ℕ) (S : PluralAssign ℕ E) : Prop :=
   value u' S = X ∧ relCond P u' u S ∅ ∧ reciprocityCond u u' S ∅
 
-/-- The reciprocal DRS is the pointwise condition of `P` with non-identity conjoined, with `X`
-in both argument positions. Group identity puts `X` in the second, and the distinctness
-presupposition contributes the non-identity. -/
 theorem reciprocalDRS_iff {X : Set E} {u' : ℕ} :
     ReciprocalDRS P X u u' S ↔
       value u' S = X ∧ value u S = X ∧ relCond (fun a b ↦ P a b ∧ a ≠ b) u' u S ∅ := by
@@ -737,7 +732,6 @@ def reading (Q : Finset D → Finset D → Prop) (R : D → D → Prop) [Decidab
 
 variable (Q : Finset D → Finset D → Prop) (R : D → D → Prop) [DecidableRel R] (A : Finset D)
 
-/-- Each member of a reference set participates. -/
 theorem refSet_subset_participants {Y : Finset D} (h : IsRefSet R A Y) :
     Y ⊆ participants R A := by
   obtain ⟨hY, hR⟩ := strongReciprocity_iff.1 h.2.1
@@ -827,7 +821,6 @@ section Maximize
 
 variable {E : Type*} {P : E → E → Prop} {u u' : ℕ} {S : PluralAssign ℕ E}
 
-/-- A reciprocal DRS realizes only pairs of distinct members of `X` that `P` relates. -/
 theorem dep_subset_of_reciprocalDRS {X : Set E} (hS : ReciprocalDRS P X u u' S) :
     dep u' u S ⊆ {p | p.1 ∈ X ∧ p.2 ∈ X ∧ P p.1 p.2 ∧ p.1 ≠ p.2} := by
   obtain ⟨hX, hX', hrel⟩ := reciprocalDRS_iff.1 hS

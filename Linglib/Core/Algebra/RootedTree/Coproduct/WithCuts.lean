@@ -112,7 +112,6 @@ noncomputable def cutTensor (p : Forest (UnorderedTree α) × Forest (UnorderedT
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   of' (R := R) p.1 ⊗ₜ[R] of' p.2
 
-/-- `cutTensor` is multiplicative over the cut convolution `combinerProjG`. -/
 theorem cutTensor_combinerProjG (p q : Forest (UnorderedTree α) × Forest (UnorderedTree α)) :
     cutTensor (R := R) (combinerProjG (p, q)) = cutTensor p * cutTensor q := by
   obtain ⟨F1, m1⟩ := p

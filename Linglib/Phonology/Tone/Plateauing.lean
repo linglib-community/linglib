@@ -120,22 +120,18 @@ def toAR (a : TBU) : AR (TwoTier TRN Unit) := AR.primitive (melody a) ()
     (toAR a).Link true false p q ↔ p < (melody a).length ∧ q = 0 := by
   simp [toAR]
 
-/-- The melody of a realized string has one `H` node per H-toned TBU. -/
 @[simp] theorem word_prod_map_toAR_true (w : List TBU) :
     (w.map toAR).prod.word true = List.replicate (w.count .H) TRN.H := by
   induction w with
   | nil => rfl
   | cons a w ih => cases a <;> simp [ih, List.replicate_succ]
 
-/-- The timing tier of a realized string has one slot per TBU. -/
 @[simp] theorem word_prod_map_toAR_false (w : List TBU) :
     (w.map toAR).prod.word false = List.replicate w.length () := by
   induction w with
   | nil => rfl
   | cons a w ih => simp [ih, List.replicate_succ]
 
-/-- In a realized string, slot `j` links to melody node `p` exactly when TBU `j` is
-H-toned and `p` is its accumulated melody position. -/
 theorem link_prod_map_toAR (w : List TBU) (p j : ℕ) :
     (w.map toAR).prod.Link true false p j ↔
       p = (w.take j).count .H ∧ w[j]? = some .H := by
@@ -151,8 +147,6 @@ theorem link_prod_map_toAR (w : List TBU) (p j : ℕ) :
   · rintro ⟨rfl, hj, h⟩
     exact ⟨hj, le_rfl, by simp [h]⟩
 
-/-- In the OCP-merged realization the single fused `H` node (index `0`) links exactly to
-the H-toned slots. -/
 theorem link_collapse_prod_map_toAR (w : List TBU) (k j : ℕ) :
     ((w.map toAR).prod.collapse true).Link true false k j ↔ k = 0 ∧ w[j]? = some .H := by
   rw [AR.link_collapse]
@@ -171,8 +165,6 @@ melody tier. -/
 def plateauAR (w : List TBU) : AR (TwoTier TRN Unit) :=
   ((w.map TBU.toAR).prod.collapse true).hull true
 
-/-- In the output representation the fused `H` links to slot `j` iff some H-toned TBU lies at
-or before `j` and some at or after it, fusion then spreading read back as the string window. -/
 theorem link_plateauAR (w : List TBU) (k j : ℕ) :
     (plateauAR w).Link true false k j ↔ k = 0 ∧ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
   by_cases hj : j < w.length
@@ -189,7 +181,6 @@ theorem link_plateauAR (w : List TBU) (k j : ℕ) :
   · refine iff_of_false (fun h => hj ?_) fun ⟨_, _, h⟩ => hj (List.lt_length_of_mem_drop h)
     simpa [plateauAR] using h.lt_right
 
-/-- Slot `j` surfaces with H in the output representation iff the string window holds. -/
 theorem surfacesWith_plateauAR (w : List TBU) (j : ℕ) :
     (plateauAR w).SurfacesWith TRN.H j ↔ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
   simp only [AR.SurfacesWith, link_plateauAR, and_assoc, exists_eq_left]
@@ -216,7 +207,6 @@ def utp : Surfacing TBU where
 
 variable {w : List TBU} {i j k : ℕ}
 
-/-- Surfacing is, by definition, the two-sided window on the string. -/
 theorem utp.surfaces_def : utp.Surfaces w i ↔ .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i :=
   Iff.rfl
 
@@ -226,13 +216,11 @@ theorem utp.surfaces_iff_surfacesWith_plateauAR :
     utp.Surfaces w i ↔ (plateauAR w).SurfacesWith TRN.H i :=
   (surfacesWith_plateauAR w i).symm
 
-/-- Position `i` surfaces iff there is an H at some `j ≤ i` and an H at some `j ≥ i`. -/
 theorem utp.surfaces_iff :
     utp.Surfaces w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j ≥ i, w[j]? = some .H := by
   rw [utp.surfaces_def, List.mem_take_iff_getElem?, List.mem_drop_iff_getElem?]
   simp
 
-/-- The surfacing set is convex, since the windows only widen. -/
 theorem utp.surfaces_of_le_of_le (hi : utp.Surfaces w i) (hk : utp.Surfaces w k)
     (hij : i ≤ j) (hjk : j ≤ k) : utp.Surfaces w j :=
   utp.surfaces_def.mpr
@@ -242,7 +230,6 @@ theorem utp.surfaces_of_le_of_le (hi : utp.Surfaces w i) (hk : utp.Surfaces w k)
 theorem utp.H_mem_of_surfaces (h : utp.Surfaces w i) : .H ∈ w :=
   List.take_subset _ _ (utp.surfaces_def.mp h).1
 
-/-- Reversal swaps the two windows. -/
 theorem utp.surfaces_reverse (hi : i < w.length) :
     utp.Surfaces w.reverse i ↔ utp.Surfaces w (w.length - 1 - i) := by
   rw [utp.surfaces_def, utp.surfaces_def, List.take_reverse, List.drop_reverse,
@@ -250,7 +237,6 @@ theorem utp.surfaces_reverse (hi : i < w.length) :
     show w.length - (i + 1) = w.length - 1 - i from by omega,
     show w.length - i = (w.length - 1 - i) + 1 from by omega, and_comm]
 
-/-- TBU `i` surfaces iff it is itself a H or is strictly flanked. -/
 theorem utp.surfaces_split {a : TBU} (h : w[i]? = some a) :
     utp.Surfaces w i ↔ a = .H ∨ (.H ∈ w.take i ∧ .H ∈ w.drop (i + 1)) := by
   rcases eq_or_ne a .H with rfl | ha
@@ -270,7 +256,6 @@ theorem utp.map_getElem?_O_iff :
     (utp.map w)[j]? = some .O ↔ j < w.length ∧ ¬ utp.Surfaces w j :=
   utp.map_getElem?_lo_iff
 
-/-- Plateauing is symmetric under string reversal. -/
 theorem utp.map_reverse : utp.map w.reverse = (utp.map w).reverse := by
   refine List.ext_getElem? fun i => ?_
   by_cases hi : i < w.length
@@ -297,8 +282,6 @@ theorem utp.map_eq_plateau_indicator :
       = (List.range w.length).map fun i => if i ∈ plateau w then TBU.H else TBU.O :=
   utp.map_eq_indicator
 
-/-- A word with Hs at `lo` and `hi` and none outside
-`[lo, hi]` has plateau exactly `Finset.Icc lo hi`. -/
 theorem plateau_eq_Icc_of {lo hi : ℕ} (hlo : w[lo]? = some .H) (hhi : w[hi]? = some .H)
     (hb : ∀ j, w[j]? = some .H → lo ≤ j ∧ j ≤ hi) : plateau w = Finset.Icc lo hi := by
   ext j
@@ -329,7 +312,6 @@ theorem utp.map_getElem?_H_of_getElem?_H (h : w[i]? = some .H) :
     (utp.map w)[i]? = some .H :=
   utp.map_getElem?_hi_of_getElem?_hi h
 
-/-- Surfacing is monotone in the word's H-set. -/
 theorem utp.surfaces_mono {w' : List TBU}
     (hw : ∀ j : ℕ, w[j]? = some TBU.H → w'[j]? = some TBU.H) (h : utp.Surfaces w i) :
     utp.Surfaces w' i := by
@@ -342,15 +324,12 @@ theorem utp.map_mono {w' : List TBU}
     (h : (utp.map w)[j]? = some TBU.H) : (utp.map w')[j]? = some TBU.H :=
   utp.map_getElem?_H_iff.mpr (utp.surfaces_mono hw (utp.map_getElem?_H_iff.mp h))
 
-/-- Plateauing preserves the presence of a trigger in both directions. -/
 theorem utp.H_mem_map : .H ∈ utp.map w ↔ .H ∈ w :=
   ⟨fun h => have ⟨_, hi⟩ := List.mem_iff_getElem?.mp h
     utp.H_mem_of_surfaces (utp.map_getElem?_H_iff.mp hi),
    fun h => have ⟨i, hi⟩ := List.mem_iff_getElem?.mp h
     List.mem_iff_getElem?.mpr ⟨i, utp.map_getElem?_H_of_getElem?_H hi⟩⟩
 
-/-- Surfacing is invariant under plateauing, since the output's Hs are the plateau, whose
-convexity flanks no new positions. -/
 theorem utp.surfaces_map : utp.Surfaces (utp.map w) i ↔ utp.Surfaces w i := by
   constructor
   · intro h
@@ -376,7 +355,6 @@ theorem utp.surfaces_map : utp.Surfaces (utp.map w) i ↔ utp.Surfaces w i := by
 A word is an output of plateauing exactly when plateauing fixes it, and it is fixed exactly
 when no `O` lies between two `H`s: the outputs are the words without an `H O H` subsequence. -/
 
-/-- Plateauing fixes a word iff every surfacing position already carries `H`. -/
 theorem utp.map_eq_self_iff : utp.map w = w ↔ ∀ i, utp.Surfaces w i → w[i]? = some .H := by
   refine ⟨fun h i hi => h ▸ utp.map_getElem?_H_iff.mpr hi, fun h => List.ext_getElem? fun i => ?_⟩
   by_cases hi : i < w.length
@@ -389,11 +367,9 @@ theorem utp.map_eq_self_iff : utp.map w = w ↔ ∀ i, utp.Surfaces w i → w[i]
       | O => exact ha.symm
   · rw [List.getElem?_eq_none (by simpa using hi), List.getElem?_eq_none (by omega)]
 
-/-- Plateauing is idempotent, so its outputs are its fixed points. -/
 theorem utp.range_map : Set.range utp.map = Function.fixedPoints utp.map :=
   Set.ext fun w => ⟨fun ⟨_, hv⟩ => hv ▸ utp.map_map, fun h => ⟨w, h⟩⟩
 
-/-- An `H O H` subsequence is an `O` at a surfacing position. -/
 theorem HOH_sublist_iff : [TBU.H, .O, .H].Sublist w ↔ ∃ i, utp.Surfaces w i ∧ w[i]? = some .O := by
   simp only [List.cons_sublist_iff, List.nil_sublist, and_true, utp.surfaces_iff]
   constructor
@@ -500,8 +476,6 @@ flanking H reverts the plateau target. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map :=
   utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_def
 
-/-- UTP has two-sided unbounded dependence, a corollary of its circumambience, so whether a
-position changes depends on unboundedly distant material on both sides. -/
 theorem utp.twoSidedUnboundedDependence : TwoSidedUnboundedDependence utp.map :=
   utp.requiresBothSides.twoSidedUnboundedDependence
 

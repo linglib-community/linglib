@@ -482,8 +482,6 @@ def Force.ofString? : String → Option Force
   | "necessity" => some .necessity
   | _ => none
 
-/-- Every epistemic anchored to its embedding attitude is judged acceptable exactly when
-`Licensed` holds for the attitude's kind and the modal's force. -/
 theorem rows_track_licensing [Nontrivial W] :
     ∀ r ∈ Examples.all, r.feature? "anchor" = some "attitude" →
       r.feature? "modal_flavor" = some "epistemic" →

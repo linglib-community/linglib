@@ -48,8 +48,6 @@ theorem support_singleton_iff_st (M : Model W Domain Const Pred)
        (τ.st k).Realize (stVal v u)) :=
   (support_singleton_iff_realize M hτ hv).trans (hu ▸ realize_st M)
 
-/-- Support at a singleton state forces the closed standard translation,
-    as a sentence of `M.correspondence`. -/
 theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
@@ -70,8 +68,6 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     Function.update_eq_self _ _]
   exact h1
 
-/-- Conversely, the closed standard translation as a sentence of
-    `M.correspondence` yields support at some singleton state. -/
 theorem exists_support_of_models_toSentence
     (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}

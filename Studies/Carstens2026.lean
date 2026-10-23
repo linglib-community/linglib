@@ -84,9 +84,6 @@ def visible : G := n.outer.getD n.core
 def genders : List G := n.core :: n.outer.toList
 
 open DistributedMorphology in
-/-- The visible gender is the agreeing gender of the Highest Gender Hypothesis, the gender a probe
-finds in the last cycle of the nominal; since every n bears a gender, a probe searching every n
-finds it too. -/
 theorem visible_eq_agreeingGender (r : Root) (d : G) :
     n.visible =
         agreeingGender some d ((⟨r, n.genders⟩ : ComplexHead Root G).lastCycle fun _ ↦ True) ∧
@@ -174,8 +171,6 @@ theorem two_grammars {g : G} (ho : a.outer = some g)
       bestSemanticMatch pluralClass a a = some (pluralClass a.core) := by
   grind [highestWins_eq, bestSemanticMatch_eq, Nominal.visible]
 
-/-- Single-layer conjuncts of an interpretable gender give the two grammars nothing to
-disagree about. -/
 theorem highestWins_eq_bestSemanticMatch (ha : a.outer = none) (hb : b.outer = none)
     (hi : interpretability (status a.core) = .interpretable) :
     highestWins status pluralClass a b = bestSemanticMatch pluralClass a b := by
@@ -215,7 +210,6 @@ def shonaFlavor : Animacy → SemanticCore
   | .human => .human
   | _ => .nonhuman
 
-/-- Each flavor is borne by exactly one gender, A [human] and D [non-human]. -/
 theorem shonaFlavor_existsUnique (a : Animacy) :
     ∃! g : Shona.Gender, g.status = .interpretable (shonaFlavor a) := by
   revert a; unfold ExistsUnique; decide
@@ -296,9 +290,6 @@ theorem table13 :
 
 /-! ### Taraldsen et al.'s reading (§3.2.3) -/
 
-/-- The same failures read structurally by [taraldsen-et-al-2018]. The genders whose singular
-and plural prefixes share one classifier N are exactly the interpretable genders, the paper's
-diagnostic and their partition of the Xhosa data coinciding. -/
 theorem taraldsen_split (g : Xhosa.Gender) :
     interpretability g.status = .interpretable ↔
       TaraldsenEtAl2018.SharesClassifierN (TaraldsenEtAl2018.xhosaSg g)

@@ -103,12 +103,10 @@ instance : DecidablePred HasMax
   | .open_ | .lowerClosed => isFalse id
   | .upperClosed | .closed => isTrue trivial
 
-/-- A boundedness is determined by which endpoints it has. -/
 @[ext] theorem ext {b c : Boundedness} (hmin : b.HasMin ↔ c.HasMin) (hmax : b.HasMax ↔ c.HasMax) :
     b = c := by
   revert hmin hmax; cases b <;> cases c <;> decide
 
-/-- A scale is upper closed exactly when it has a maximum and no minimum. -/
 theorem eq_upperClosed_iff {b : Boundedness} : b = .upperClosed ↔ b.HasMax ∧ ¬ b.HasMin := by
   cases b <;> decide
 
@@ -210,7 +208,6 @@ def withMax : Boundedness → Boundedness
 section Ray
 variable {D : Type*} [Preorder D] {a : D}
 
-/-- The ray from `a` up has a least degree, `a`, and a greatest one exactly when `D` has. -/
 theorem ofOrder_Ici [IsDirectedOrder D] : ofOrder (Set.Ici a) = (ofOrder D).withMin := by
   refine ext (iff_of_true (hasMin_ofOrder.2 ⟨⟨a, le_rfl⟩, fun x ↦ x.2⟩) (hasMin_withMin _)) ?_
   rw [hasMax_ofOrder, hasMax_withMin, hasMax_ofOrder]
@@ -218,7 +215,6 @@ theorem ofOrder_Ici [IsDirectedOrder D] : ofOrder (Set.Ici a) = (ofOrder D).with
   obtain ⟨c, hxc, hac⟩ := exists_ge_ge x a
   exact le_trans hxc (hm ⟨c, hac⟩)
 
-/-- The ray from `a` down has a greatest degree, `a`, and a least one exactly when `D` has. -/
 theorem ofOrder_Iic [IsCodirectedOrder D] : ofOrder (Set.Iic a) = (ofOrder D).withMax := by
   refine ext ?_ (iff_of_true (hasMax_ofOrder.2 ⟨⟨a, le_rfl⟩, fun x ↦ x.2⟩) (hasMax_withMax _))
   rw [hasMin_ofOrder, hasMin_withMax, hasMin_ofOrder]
@@ -231,16 +227,13 @@ end Ray
 section Interval
 variable {D : Type*} [Preorder D] {a b : D}
 
-/-- A closed interval is a totally closed scale, as the probability scale `[0, 1]` is. -/
 theorem ofOrder_Icc (h : a ≤ b) : ofOrder (Set.Icc a b) = closed :=
   ext (iff_of_true (hasMin_ofOrder.2 ⟨⟨a, le_rfl, h⟩, fun x ↦ x.2.1⟩) trivial)
     (iff_of_true (hasMax_ofOrder.2 ⟨⟨b, h, le_rfl⟩, fun x ↦ x.2.2⟩) trivial)
 
-/-- An open interval of a dense order is a totally open scale. -/
 theorem ofOrder_Ioo [DenselyOrdered D] : ofOrder (Set.Ioo a b) = open_ :=
   ext (iff_of_false not_hasMin_ofOrder id) (iff_of_false not_hasMax_ofOrder id)
 
-/-- A half-open interval `(a, b]` of a dense order is an upper closed scale. -/
 theorem ofOrder_Ioc [DenselyOrdered D] (h : a < b) : ofOrder (Set.Ioc a b) = upperClosed :=
   ext (iff_of_false not_hasMin_ofOrder id)
     (iff_of_true (hasMax_ofOrder.2 ⟨⟨b, h, le_rfl⟩, fun x ↦ x.2.2⟩) trivial)
@@ -406,7 +399,6 @@ def defaultStandard : Boundedness → PositiveStandard
   | .upperClosed => .maxEndpoint
   | .closed       => .maxEndpoint
 
-/-- The default standard is always admitted. -/
 theorem admits_defaultStandard (b : Boundedness) : b.Admits b.defaultStandard := by
   cases b <;> decide
 
@@ -436,7 +428,6 @@ theorem complementary_defaultStandard_dual_iff {b : Boundedness} :
 
 @[simp] theorem not_admits_extreme (b : Boundedness) : ¬ b.Admits .extreme := id
 
-/-- Interpretive Economy rules out the contextual standard whenever the scale has an endpoint. -/
 theorem not_admits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :
     ¬ b.Admits .contextual := h
 
@@ -454,8 +445,6 @@ theorem admits_withMin_iff {b : Boundedness} {s : PositiveStandard} :
     b.withMin.Admits s ↔ s = .minEndpoint ∨ s = .maxEndpoint ∧ b.HasMax := by
   cases b <;> cases s <;> simp [Admits, withMin, HasMin, HasMax]
 
-/-- The default standard of a scale with a least degree adjoined is the maximum when the original
-scale has one, and the minimum otherwise. -/
 theorem defaultStandard_withMin (b : Boundedness) :
     b.withMin.defaultStandard = if b.HasMax then .maxEndpoint else .minEndpoint := by
   cases b <;> rfl

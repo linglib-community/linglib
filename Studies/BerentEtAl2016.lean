@@ -136,14 +136,11 @@ def dep (base : Option (List α)) : Constraint (Parse α) := fun p ↦
 
 @[simp] theorem dep_none (p : Parse α) : dep none p = 0 := rfl
 
-/-- A simplex name adds to the base whatever it has beyond the base's length. -/
 @[simp] theorem dep_some_simplex (b form : List α) :
     dep (some b) (.simplex form) = form.length - b.length :=
   Correspondence.depViol_of_diagonal (.reduplication b form []) .input .base
     (Correspondence.reduplication_edge _ _ _ (by decide))
 
-/-- A reduplicated name adds to the taught base whatever its own base has beyond it, and
-its copy adds nothing. -/
 @[simp] theorem dep_some_reduplicated (b base : List α) :
     dep (some b) (.reduplicated base) = base.length - b.length :=
   Correspondence.depViol_of_diagonal (.reduplication b base base) .input .base
@@ -160,7 +157,6 @@ def ocp : Constraint (Parse α) := fun p ↦ (p.morphemes.map Constraint.ocp).su
 @[simp] theorem ocp_simplex_pair (h : x ≠ y) : ocp (.simplex [x, y]) = 0 := by
   simp [ocp, Parse.morphemes, h]
 
-/-- The OCP is inapplicable to a base and its copy, which are separate morphemes. -/
 @[simp] theorem ocp_reduplicated_singleton (x : α) : ocp (.reduplicated [x]) = 0 := by
   simp [ocp, Parse.morphemes]
 
@@ -228,15 +224,11 @@ theorem licenses_iff :
   · rintro (h | ⟨h, hm⟩)
     exacts [⟨l.reduplicated_subset h, fun _ ↦ h⟩, ⟨hm, fun hne ↦ absurd h hne⟩]
 
-/-- Reduplication for a meaning licenses it, which is positive transfer. -/
 theorem licenses_of_mem (h : f ∈ l.reduplicated) : l.Licenses f := licenses_iff.2 (.inl h)
 
-/-- Reduplication for another meaning only withdraws the licence, which is negative
-transfer. -/
 theorem not_licenses_of_mem_of_notMem (hg : g ∈ l.reduplicated) (hf : f ∉ l.reduplicated) :
     ¬ l.Licenses f := fun h ↦ hf (h.2 ⟨g, hg⟩)
 
-/-- A language without reduplication licenses exactly the meanings it marks. -/
 theorem licenses_iff_of_eq_empty (h : l.reduplicated = ∅) : l.Licenses f ↔ f ∈ l.marked := by
   simp [licenses_iff, h]
 

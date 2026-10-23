@@ -106,7 +106,6 @@ theorem fill_getElem?_of_none {f : ℕ → α → Option β} {s : Valuation α �
     (h : s[i]? = some (x, none)) : (fill f s)[i]? = some (x, f i x) := by
   simp [fill_getElem?, h]
 
-/-- Filling with no proposals changes nothing. -/
 @[simp] theorem fill_none (s : Valuation α β) : fill (fun _ _ ↦ none) s = s := by
   refine ext_getElem? fun i ↦ ?_
   rw [fill_getElem?]
@@ -222,7 +221,6 @@ theorem ValuedLE.trans : ValuedLE s t → ValuedLE t u → ValuedLE s u := by
     cases h₂ with
     | cons h' h₂ => exact .cons ⟨h.1.trans h'.1, h'.2 ∘ h.2⟩ (ih h₂)
 
-/-- A valuation values every nominal the valuation it extends values. -/
 theorem Extends.valuedLE (h : Extends p s t) : ValuedLE s t :=
   h.imp fun a b ⟨h₁, h₂⟩ ↦ ⟨h₁, fun ha ↦ by
     rcases h₂ with e | ⟨hn, -⟩

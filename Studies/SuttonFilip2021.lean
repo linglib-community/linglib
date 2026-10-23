@@ -126,7 +126,6 @@ theorem isCount_of_perspective {D : Set α} (h : E.perspective = some D) : E.IsC
   rw [IsCount, cbase, h, Option.getD_some]
   exact (E.perspective_max D h).2.1
 
-/-- Under the null schema the counting base is the predicate the schema applies to. -/
 theorem cbase_of_null (h : E.perspective = none) : E.cbase = E.base := by
   rw [cbase, h, Option.getD_none, nullSchema_eq]
 
@@ -192,8 +191,6 @@ theorem not_cum_extn_of_singular {E : Entry α} (hs : E.sumClosed = false) (hc :
 
 /-! ### Granular frames -/
 
-/-- A frame of units and their sums overlaps as soon as it has two distinct non-null units:
-a unit and its sum with another share the unit. -/
 theorem overlapPred_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ units)
     (hne : u ≠ v) (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) :
     OverlapPred Overlap (Frame.ofUnits units).extn := by
@@ -273,7 +270,6 @@ instance : DecidablePred (· ∈ vanityPerspective) := fun s ↦ decidable_of_if
 def furniture : Entry Part :=
   ⟨Frame.ofUnits furnitureUnits, true, true, none, fun _ h ↦ by simp at h⟩
 
-/-- The functional units overlap, so *furniture* is mass although its units are identified. -/
 theorem furniture_mass : ¬ furniture.IsCount := by
   rw [Entry.isCount_iff_of_null rfl]
   show ¬ DisjointPred Overlap furnitureUnits

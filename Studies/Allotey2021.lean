@@ -80,8 +80,6 @@ theorem exists_syncretic_form_iff (r : Row) :
     (∃ f ∈ table (r, .subjective), ∀ k, f ∈ table (r, k)) ↔ r ≠ .sg2 ∧ r ≠ .sg3 ∧ r ≠ .imp := by
   cases r <;> decide
 
-/-- Only the second and third person singular have a form of the objective alone, *bo* and
-*lɛ*. -/
 theorem objective_form_iff (r : Row) :
     (∃ f ∈ table (r, .objective), formCellsOf table f = {(r, .objective)}) ↔
       r = .sg2 ∨ r = .sg3 := by
@@ -93,19 +91,14 @@ theorem possessive_subset_subjective (r : Row) :
     table (r, .possessive) ⊆ table (r, .subjective) := by
   cases r <;> decide
 
-/-- Every referential category has a form: the one form of first person
-    plural *wɔ* covers clusivity and the number of others alike. -/
 theorem paradigm_nonempty (c : Person.Category) : (paradigm c).Nonempty := by
   cases c <;> decide +kernel
 
-/-- Every row has a subjective form, the form a controlled subject takes. -/
 theorem subjective_nonempty (r : Row) : (table (r, .subjective)).Nonempty := by
   cases r <;> decide
 
 /-! ### Subject pronouns are not agreement (§4.4, §6.1) -/
 
-/-- The verb of exx 79–81 is the one form *tee* 'went' whatever the person of
-    its subject: Gã marks no subject agreement on the verb. -/
 theorem no_agreement_rows :
     (∀ row ∈ Examples.all, row.feature? "diagnostic" = some "agreement" →
       (row.feature? "person").isSome → ("tee", "went") ∈ row.glossedTokens) ∧
@@ -136,20 +129,14 @@ example : Data.WALS.F101A.sources.lookup "ga" = some ["Ablorh-Odjidja-1968[passi
 
 /-! ### Complementizer selection (§5.5.1) -/
 
-/-- The three-way clause typology is the selection relation: each clause type's
-    frame takes exactly its own complementizer. -/
 theorem frame_takes_iff (c d : EmbeddedClauseType) :
     c.frame.Takes d.complementizer ↔ c = d := by
   cases c <;> cases d <;> decide
 
-/-- A verb takes `ni` exactly when some frame of it is controlled. -/
 theorem takes_ni_iff_control :
     ∀ v ∈ verbs, v.Takes ni ↔ v.HasController := by
   decide
 
-/-- At Gã's granularity, [wurmbrand-lohninger-2023]'s hierarchy makes a proposition complement
-    exactly one whose frame takes a finite complementizer, situations and events sharing the
-    infinitival `ni`-frame. -/
 theorem proposition_iff_finite :
     ∀ v ∈ verbs, ∀ r ∈ v.readings, ∀ s ∈ r.size,
       (s = .proposition ↔ ∃ z ∈ complementizers, r.frame.Takes z ∧ z.IsFinite) := by
@@ -197,37 +184,27 @@ def formOf (row : Datum) : Option Form :=
   | some "null" => some .null
   | _ => none
 
-/-- In the rows whose only point is the shape of the controlled subject, the control frame is
-    grammatical exactly with the inventory's control form (exx 2–3, 34–44, 54–59 vs 40–41). -/
 theorem controlled_subject_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" ∈ [none, some "nullSubject"] →
       ∀ f ∈ formOf row, (row.judgment = .acceptable ↔ f = gaInventory.controlForm) := by
   decide +kernel
 
-/-- A lexical subject in the control frame is out (exx 42b–c, 64) — the copy the
-    Movement Theory of Control ([hornstein-1999]) would pronounce. -/
 theorem lexical_subject_rows :
     ∀ row ∈ Examples.all, row.feature? "embeddedSubject" = some "lexical" →
       row.feature? "clauseContext" = none → row.judgment = .ungrammatical := by
   decide +kernel
 
-/-- A complementizer is grammatical exactly when the verb takes it (exx 104–106). -/
 theorem c_selection_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "cSelection" →
       ∀ v ∈ verbOf row, ∀ c ∈ clauseTypeOf row,
         (row.judgment = .acceptable ↔ v.Takes c.complementizer) := by
   decide +kernel
 
-/-- Overt tense or aspect in the complement is grammatical exactly in the finite
-    clause types (exx 101, 111). -/
 theorem tam_rows :
     ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ t ∈ row.feature? "embeddedTAM",
       t ≠ "none" → (row.judgment = .acceptable ↔ c.complementizer.IsFinite) := by
   decide +kernel
 
-/-- Focus fronting, [rizzi-1997]'s strong-CP diagnostic, is available exactly in
-    the finite clauses (exx 107–108); matrix negation licenses an embedded NPI
-    exactly across the non-finite one (exx 116–117). -/
 theorem focus_npi_rows :
     ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row,
       (row.feature? "diagnostic" = some "focus" →
@@ -236,15 +213,11 @@ theorem focus_npi_rows :
         (row.judgment = .acceptable ↔ ¬ c.complementizer.IsFinite)) := by
   decide +kernel
 
-/-- Negation precedes the verb exactly in the non-finite clause (exx 121–122,
-    124). -/
 theorem negation_rows :
     ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ p ∈ row.feature? "negationPosition",
       (p = "preverbal" ↔ ¬ c.complementizer.IsFinite) := by
   decide +kernel
 
-/-- The embedded subject bears the irrealis high tone exactly in the `ni`-clause
-    (exx 110–112, 118). -/
 theorem subject_tone_rows :
     ∀ row ∈ Examples.all, row.judgment = .acceptable → ∀ c ∈ clauseTypeOf row,
       ∀ t ∈ row.feature? "subjectTone", (t = "high") = (c = .ni) := by
@@ -273,15 +246,11 @@ theorem implicative_rows :
 
 /-! ### The OC signature (Table 2) -/
 
-/-- The antecedent must c-command the controlled pronoun (exx 45–46):
-    grammatical exactly under the paper's c-commanding coindexation. -/
 theorem cCommand_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "cCommand" →
       (row.judgment = .acceptable ↔ row.feature? "antecedent" = some "cCommanding") := by
   decide +kernel
 
-/-- There is no long-distance antecedent (exx 47–49), the sentences being grammatical exactly
-    under the local coindexation. -/
 theorem longDistance_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "longDistance" →
       (row.judgment = .acceptable ↔ row.feature? "antecedent" = some "local") := by
@@ -293,8 +262,6 @@ theorem sloppy_only :
       ("sloppy", .acceptable) ∈ row.readings ∧ ("strict", .unacceptable) ∈ row.readings := by
   decide +kernel
 
-/-- A free reading of the embedded subject is available exactly in the finite
-    complement (exx 110–111 vs 92, 112). -/
 theorem free_reading_rows :
     ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ j, ("free", j) ∈ row.readings →
       (j = .acceptable ↔ c.complementizer.IsFinite) := by
@@ -306,8 +273,6 @@ theorem deSe_witness :
       row.judgment = .unacceptable ∧ row.context ≠ "" := by
   decide +kernel
 
-/-- The controlled form φ-covaries with its controller (exx 37–39), unlike
-    [satik-2019]'s form-invariant Ewe *yè*. -/
 theorem controlled_form_covaries : table (.sg2, .subjective) ≠ table (.pl2, .subjective) := by
   decide
 
@@ -323,23 +288,17 @@ instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d �
 def gaProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
   ofAttested (attested c)
 
-/-- No row attests a criterial configuration of the `ni`-clause. -/
 theorem attested_ni : attested .ni = ∅ := by
   rw [Set.eq_empty_iff_forall_notMem]; decide +kernel
 
-/-- The `ni`-clause is obligatory control: every clause of the signature holds,
-    so it admits no criterial configuration. [szabolcsi-2009]'s long-distance
-    Agree reaches the embedded subject across this weak CP. -/
 theorem ni_obligatory : gaProfile .ni = Set.univ :=
   ofAttested_eq_univ_iff.2 attested_ni
 
 theorem admits_ni : admits (gaProfile .ni) = ∅ := admits_eq_empty_iff.2 ni_obligatory
 
-/-- The finite `akɛ`-clause attests a free reading (exx 110–111). -/
 theorem arbitrary_mem_attested_ake : .arbitraryControl ∈ attested .ake := by
   decide +kernel
 
-/-- So it is not obligatory control. -/
 theorem ake_not_obligatory : gaProfile .ake ≠ Set.univ := fun h ↦
   Set.notMem_empty _ (ofAttested_eq_univ_iff.1 h ▸ arbitrary_mem_attested_ake)
 
@@ -351,13 +310,9 @@ theorem ake_not_obligatory : gaProfile .ake ≠ Set.univ := fun h ↦
 def gaToLandau (c : EmbeddedClauseType) : ClauseClass :=
   .ofFiniteness (decide c.complementizer.IsFinite) (decide c.complementizer.IsFinite)
 
-/-- No Gã clause type is a tensed-but-controlled F-subjunctive. -/
 theorem ga_no_fSubjunctive (c : EmbeddedClauseType) : gaToLandau c ≠ .fSubjunctive := by
   cases c <;> decide
 
-/-- The scale agrees with the rows where the paper tests reference: OC exactly on
-    the C-subjunctive, at any Agr value — Gã has no φ-agreement (exx 79–81,
-    123). -/
 theorem landau_predicts_control (c : EmbeddedClauseType) (hc : c ≠ .keji) (agr : Bool) :
     gaProfile c = Set.univ ↔ (gaToLandau c).HasOC agr := by
   cases c with
@@ -365,8 +320,6 @@ theorem landau_predicts_control (c : EmbeddedClauseType) (hc : c ≠ .keji) (agr
   | ni => exact iff_of_true ni_obligatory (by cases agr <;> decide)
   | ake => exact iff_of_false ake_not_obligatory (by cases agr <;> decide)
 
-/-- The clause a non-finite complementizer types has a non-finite [noonan-2007] coding:
-`.infinitive`, the paper's own term for the bare-root `ni`-complement. -/
 theorem not_isFinite_codings_iff (c : EmbeddedClauseType) :
     (∀ cd ∈ c.frame.codings, ¬ cd.IsFinite) ↔ ¬ c.complementizer.IsFinite := by
   cases c <;> decide
@@ -418,7 +371,6 @@ def rowsIn (ctx : IrrealisContext) (j : Judgment) : List Datum :=
 def realization (ctx : IrrealisContext) : Finset Exponent :=
   Finset.univ.filter fun e ↦ ∃ row ∈ rowsIn ctx .acceptable, shows row e
 
-/-- Embedded control realizes the marker as the subject's high tone alone. -/
 theorem realization_control : realization .embeddedControl = {.subjectTone} := by
   decide +kernel
 
@@ -447,16 +399,12 @@ def HostsTone (f : Form) : Prop := f ≠ .null
 def HostsControlTone (inv : Vocabulary Form) : Prop :=
   .subjectTone ∈ realization .embeddedControl → HostsTone inv.controlForm
 
-/-- Null PRO is impossible in Gã: a null controlled-subject form cannot host
-    the irrealis tone. -/
 theorem null_pro_impossible (inv : Vocabulary Form) (h : inv.controlForm = .null) :
     ¬ HostsControlTone inv := fun hc ↦
   hc (realization_control ▸ Finset.mem_singleton_self _) h
 
-/-- The Gã inventory meets the tone-hosting requirement. -/
 theorem ga_hostsControlTone : HostsControlTone gaInventory := fun _ h ↦ nomatch h
 
-/-- Controlled subjects surface as overt pronouns. -/
 theorem ga_overt_pro : gaInventory.controlForm = .pronoun := rfl
 
 end Allotey2021

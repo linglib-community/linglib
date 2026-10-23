@@ -77,7 +77,6 @@ theorem IsNecessity.mono (h : IsNecessity p s t) (htt' : t ⊆ t') : IsNecessity
 theorem isNecessity_univ (p : Preorder W) (s : Set W) : IsNecessity p s .univ :=
   fun u hu ↦ ⟨u, hu, p.le_refl u, fun _ _ _ ↦ trivial⟩
 
-/-- The necessities over a domain are closed under intersection. -/
 theorem IsNecessity.inter (h : IsNecessity p s t) (h' : IsNecessity p s t') :
     IsNecessity p s (t ∩ t') := fun u hu ↦
   let ⟨v, hv, hvu, hvt⟩ := h u hu
@@ -103,12 +102,10 @@ theorem exists_not_isGoodPossibility_inter :
 
 /-! ### Necessity and the minimal worlds -/
 
-/-- A necessity holds at every minimal world. -/
 theorem IsNecessity.minimals_subset (h : IsNecessity p s t) : p.minimals s ⊆ t := fun m hm ↦
   let ⟨_, hv, hvm, hvt⟩ := h m hm.1
   hvt m hm.1 (hm.2 hv hvm)
 
-/-- Under the Limit Assumption, what holds at every minimal world is a necessity. -/
 theorem isNecessity_of_minimals_subset (hlim : ∀ u ∈ s, ∃ v ∈ p.minimals s, p.le v u)
     (h : p.minimals s ⊆ t) : IsNecessity p s t := fun u hu ↦
   let ⟨v, hv, hvu⟩ := hlim u hu
@@ -121,14 +118,12 @@ theorem isNecessity_iff_minimals_subset (hlim : ∀ u ∈ s, ∃ v ∈ p.minimal
 
 /-! ### Necessity and good possibility -/
 
-/-- Over a nonempty domain a necessity is a good possibility. -/
 theorem IsNecessity.isGoodPossibility (h : IsNecessity p s t) (hs : s.Nonempty) :
     IsGoodPossibility p s t :=
   let ⟨_, hu⟩ := hs
   let ⟨v, hv, _, hvt⟩ := h _ hu
   ⟨v, hv, hvt⟩
 
-/-- On a total preorder a good possibility is a necessity. -/
 theorem IsGoodPossibility.isNecessity_of_total (htot : Std.Total p.le)
     (h : IsGoodPossibility p s t) : IsNecessity p s t := by
   obtain ⟨v, hv, hvt⟩ := h

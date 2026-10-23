@@ -321,7 +321,6 @@ private theorem W_eq : W = (71 : ℝ)⁻¹ • intW.map (Int.castRingHom ℝ) :=
 theorem U_mul_W : U * W = U := by
   rw [W_eq_conjTranspose]; exact mul_conjTranspose_mul_inv_mul isUnit_det_gramU
 
-/-- `W` is symmetric and idempotent, the orthogonal projection onto the row space of `U`. -/
 theorem isStarProjection_W : IsStarProjection W := by
   rw [W_eq_conjTranspose]; exact isStarProjection_conjTranspose_mul_inv_mul isUnit_det_gramU
 

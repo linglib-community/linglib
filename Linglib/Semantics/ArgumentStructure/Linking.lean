@@ -167,8 +167,6 @@ theorem mem_contributed_iff {t : Slot} :
     t ∈ contributed V C σ ↔ t ∈ C.frame.slots ∧ ∀ s ∈ V.frame.slots, σ s ≠ some t := by
   simp [contributed]
 
-/-- `IsFusionOn` is `IsFusion` for a correspondence that sends no slot outside the verb's frame
-anywhere. -/
 theorem isFusionOn_iff_isFusion (hσ : ∀ s, s ∉ V.frame.slots → σ s = none) :
     IsFusionOn V C σ ↔ IsFusion V C σ := by
   constructor

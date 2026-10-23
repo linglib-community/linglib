@@ -46,12 +46,10 @@ namespace Order
 
 variable {S : Type*} (r : S → S → Prop)
 
-/-- For a symmetric relation the upper and lower polars coincide. -/
 theorem upperPolar_eq_lowerPolar [Std.Symm r] (s : Set S) :
     upperPolar r s = lowerPolar r s := by
   rw [← upperPolar_swap, Std.Symm.swap_eq]
 
-/-- For a symmetric relation the upper polar of any set is an extent. -/
 theorem isExtent_upperPolar [Std.Symm r] (s : Set S) : IsExtent r (upperPolar r s) := by
   rw [upperPolar_eq_lowerPolar r]; exact isExtent_lowerPolar
 
@@ -78,8 +76,6 @@ instance instSetLike {r : S → S → Prop} : SetLike (Concept S S r) S where
   coe c := c.extent
   coe_injective _ _ h := extent_injective h
 
-/-- For an irreflexive relation the bottom concept has empty extent (no point is
-orthogonal to everything, including itself). -/
 theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ := by
   rw [Concept.extent_bot]
   ext x

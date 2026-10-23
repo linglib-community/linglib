@@ -100,11 +100,9 @@ def rootComplement (r : Root) : Tree Cat Word :=
 def directMerge (r : Root) : Tree Cat Word :=
   .adjoin .v [.terminal .root (.root r), .terminal .v .fient]
 
-/-- The Root and v[FIENT] are sisters in both structures. -/
 theorem children_perm (r : Root) : (rootComplement r).children.Perm (directMerge r).children :=
   List.Perm.swap _ _ []
 
-/-- v[FIENT] heads both structures, as the daughter of their category. -/
 theorem headIndex?_rootComplement (r : Root) : (rootComplement r).headIndex? = some 0 := rfl
 
 theorem headIndex?_directMerge (r : Root) : (directMerge r).headIndex? = some 1 := rfl
@@ -237,7 +235,6 @@ theorem isSome_interp_iff (p : FientP) : (p.interp M).isSome ↔ p.Interpretable
   rcases p with ⟨_ | x, _ | m, _ | _ | _, _ | _ | _⟩ <;>
     simp only [interp, Interpretable] <;> (try split_ifs) <;> simp_all
 
-/-- An interpretable structure satisfies the condition on v[FIENT]. -/
 theorem Interpretable.satisfiesFient {p : FientP} (h : p.Interpretable) : p.SatisfiesFient := by
   rcases p with ⟨_ | x, _ | m, _ | _ | _, _ | _ | _⟩ <;> simp_all [Interpretable, SatisfiesFient]
 
@@ -303,7 +300,6 @@ def FientP.ofDatum (d : Datum) : Option FientP := do
 def data : List (FientP × Judgment) :=
   Examples.all.filterMap fun d ↦ (FientP.ofDatum d).map (·, d.judgment)
 
-/-- Every example has its analysis. -/
 theorem data_length : data.length = Examples.all.length := by decide +kernel
 
 /-- An example is acceptable exactly when its analysis is interpretable: *The metal is hammered*

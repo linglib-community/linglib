@@ -87,7 +87,6 @@ def general (B : Finset α) : Finset (Finset α) := Finset.Ioc ∅ B
 theorem mem_general {B x : Finset α} : x ∈ general B ↔ x ⊆ B ∧ x.Nonempty := by
   simp [general, and_comm]
 
-/-- The plural denotation is included in the singular's, so the singular has general number. -/
 theorem strictPlural_subset_general (B : Finset α) : strictPlural B ⊆ general B := fun x hx ↦ by
   rw [mem_strictPlural] at hx
   exact mem_general.2 ⟨hx.1, Finset.card_pos.1 (by omega)⟩
@@ -111,7 +110,6 @@ theorem sup_general (B : Finset α) : (general B).sup id = B := by
   · simp
   · exact Finset.le_sup (f := id) (mem_general.2 ⟨subset_rfl, hB⟩)
 
-/-- The singular definite denotes the group of all the boys, if any. -/
 theorem sup?_general (B : Finset α) : sup? (general B) = if B.Nonempty then some B else none := by
   rw [sup?, sup_general]
   by_cases hB : B.Nonempty
@@ -128,7 +126,6 @@ theorem sup_strictPlural (B : Finset α) :
     rw [mem_strictPlural] at hx
     exact absurd (le_trans hx.2 (Finset.card_le_card hx.1)) h
 
-/-- The plural definite denotes the group of all the boys, presupposing that there are two. -/
 theorem sup?_strictPlural (B : Finset α) :
     sup? (strictPlural B) = if 2 ≤ B.card then some B else none := by
   rw [sup?, sup_strictPlural]
@@ -157,8 +154,6 @@ theorem strict_singular_iff (B : Finset α) (hB : B.Nonempty) :
   · intro h; simp only [Option.map_some, Option.some.injEq] at h; rw [ite_eq_right (by omega)]
   · intro h; split_ifs at h with h₂; simp; omega
 
-/-- Under a numeral the definite singular and plural carry the same presupposition at the
-    determiner: the difference is local to the number phrase. -/
 theorem sup?_two_eq (B : Finset α) : sup? (two (general B)) = sup? (two (strictPlural B)) := by
   rw [two_general_eq_two_strictPlural]
 
@@ -169,8 +164,6 @@ inductive Boy
   | john | brad | c
   deriving DecidableEq, Fintype, Repr
 
-/-- Over three boys the singular denotes every nonempty group and the plural the groups of two or
-more. -/
 theorem denotations :
     general (Finset.univ : Finset Boy) =
       {{.john}, {.brad}, {.c}, {.john, .brad}, {.john, .c}, {.brad, .c}, {.john, .brad, .c}} ∧

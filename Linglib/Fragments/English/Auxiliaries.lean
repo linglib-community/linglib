@@ -154,7 +154,6 @@ private theorem factorsThrough_ofForm {f g : {p : Person // ¬ p.MarksClusivity}
 theorem factorsThrough_havePresent_bePresent : FactorsThrough havePresent.form bePresent.form :=
   factorsThrough_ofForm (f := bePresentForm) (g := presentForm "has" "have") (by decide)
 
-/-- The present of *do* tells apart only cells that the present of *be* tells apart. -/
 theorem factorsThrough_doPresent_bePresent : FactorsThrough doPresent.form bePresent.form :=
   factorsThrough_ofForm (f := bePresentForm) (g := presentForm "does" "do") (by decide)
 
@@ -164,8 +163,6 @@ theorem not_factorsThrough_bePresent_havePresent :
     ¬ FactorsThrough bePresent.form havePresent.form :=
   fun h ↦ absurd (h (a := cell .first .singular) (b := cell .second .singular) rfl) (by decide)
 
-/-- The preterite of *be* tells apart only cells that its present tells apart, merging the
-first and the third person singular. -/
 theorem factorsThrough_bePreterite_bePresent : FactorsThrough bePreterite.form bePresent.form :=
   factorsThrough_ofForm (f := bePresentForm) (g := bePreteriteForm) (by decide)
 

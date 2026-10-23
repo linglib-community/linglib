@@ -64,8 +64,6 @@ instance [DecidableEq T] [DecidableEq L] (loc : E → L) (e₁ e₂ : E) :
     Decidable (spatiotemporallyDistant loc e₁ e₂) :=
   inferInstanceAs (Decidable (temporallyDisjoint e₁ e₂ ∨ loc e₁ ≠ loc e₂))
 
-/-- An event that precedes another is temporally disjoint from it, as in standard indirect
-evidence, where the described event is over before the learning event begins. -/
 theorem temporallyDisjoint_of_precedes {e₁ e₂ : E} (h : (τ e₁).Precedes (τ e₂)) :
     temporallyDisjoint e₁ e₂ :=
   NonemptyInterval.precedes_not_overlaps h
@@ -139,8 +137,6 @@ def loc : Ev → Place
   | .learnSmoke => .there
   | _ => .here
 
-/-- The evidential is felicitous with indirect evidence, by temporal disjointness, and with
-smoke from the chimney, by spatial distance alone, and infelicitous under direct witness. -/
 theorem felicity :
     spatiotemporallyDistant loc indirect.described indirect.learning ∧
       spatiotemporallyDistant loc smoke.described smoke.learning ∧

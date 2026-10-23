@@ -154,8 +154,6 @@ theorem resolve_empty : resolve c ∅ = c.input := by simp [resolve, Juncture.in
 private theorem v1Idx_ne_v2Idx : c.v1Idx ≠ c.v2Idx := by
   simp [Juncture.v1Idx, Juncture.v2Idx]
 
-/-- Under the regular hierarchy one candidate beats another when it ties with it on the `k`
-most dominant constraints and does better on the next. -/
 private theorem regular_lt {D D' : Finset ElidedVowel} (k : ℕ)
     (hk : k < Wordlist.Hierarchy.regular.order.length)
     (h : ∀ j (hj : j < k), marks c long D (Wordlist.Hierarchy.regular.order.get ⟨j, by omega⟩) =

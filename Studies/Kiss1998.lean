@@ -63,8 +63,6 @@ variable {ι : Type*} {A : Set ι} {a b : ι}
 saying that the predicate phrase holds of it. -/
 def alternatives (A : Set ι) : Set (Set (Set ι)) := (fun i ↦ Ici {i}) '' A
 
-/-- Hamblin composition of the predicate phrase with a focused argument ranging over the
-given set evokes exactly these alternatives. -/
 theorem alternatives_eq (A : Set ι) (a : ι) :
     alternatives A = ((fun i ↦ Ici {i}) <$> (⟨a, A⟩ : WithAlternatives ι)).alternatives := by
   ext q
@@ -82,8 +80,6 @@ theorem exh_Ici (A s : Set ι) : exh (alternatives A) (Ici s) = Icc s (s ∪ A�
   · exact (mem_union _ _ _).2 ((em (i ∈ A)).imp_left (h · hiw))
   · exact ((mem_union _ _ _).1 (h hiw)).resolve_right (not_not.2 hiA)
 
-/-- Over the whole domain, exhaustively identifying `s` asserts that the predicate holds of
-`s` and of nothing else. -/
 theorem exh_Ici_univ (s : Set ι) : exh (alternatives univ) (Ici s) = {s} := by
   rw [exh_Ici, compl_univ, union_empty, Icc_self]
 
@@ -112,8 +108,6 @@ theorem farkas_test (hb : b ∈ A) (hab : a ≠ b) :
   · exact hab (mem_singleton_iff.1 hba).symm
   · exact hbA hb
 
-/-- Exhaustive identification is not monotone in the prejacent, which is what the coordination
-test detects. -/
 theorem not_monotone_exh (hb : b ∈ A) (hab : a ≠ b) : ¬ Monotone (exh (alternatives A)) :=
   fun h ↦ (farkas_test hb hab).1 <|
     h (Ici_subset_Ici.2 (singleton_subset_iff.2 (mem_insert a _))) <| by

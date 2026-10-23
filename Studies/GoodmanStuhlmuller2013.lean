@@ -81,8 +81,6 @@ def compatible (n : ℕ) (k : Fin (N + 1)) : Finset (Fin (N + 1)) :=
     s ∈ compatible n k ↔ hypergeometricCount N s n k ≠ 0 := by
   simp [compatible]
 
-/-- After a possible observation the posterior under the uniform prior charges exactly the states
-compatible with it. -/
 theorem posterior_ne_zero_iff_mem_compatible (hk : (compatible n k).Nonempty)
     (s : Fin (N + 1)) :
     ((hypergeometric N n)†(uniformOn Set.univ)) k {s} ≠ 0 ↔ s ∈ compatible n k := by
@@ -152,15 +150,11 @@ theorem speaker_real_singleton_le_one (s : Fin (N + 1)) (u : U) :
   rw [measureReal_def, ← ENNReal.toReal_one]
   exact ENNReal.toReal_mono ENNReal.one_ne_top h
 
-/-- With complete access the speaker knows the state. -/
 theorem speaker_full : speaker sem α N = informed sem α := by
   rw [speaker, show ⇑((hypergeometric N N)†(uniformOn Set.univ)) = Measure.dirac from
     funext fun k ↦ posterior_hypergeometric_self k _ (uniformOn_univ_singleton_ne_zero k),
     hypergeometric_self, Kernel.comp_id]
 
-/-- When every object has the property the speaker sees it of each object she looks at. If the
-utterances true at every state this leaves possible are those true at `s`, she speaks as one who
-knows the state is `s`. -/
 theorem speaker_last (hα : 0 < α) (hn : n ≤ N) {s : Fin (N + 1)}
     (h : ∀ u, compatible n (⟨n, Nat.lt_succ_of_le hn⟩ : Fin (N + 1)) ⊆ sem u ↔ s ∈ sem u) :
     speaker sem α n (Fin.last N) = informed sem α s := by
@@ -249,7 +243,6 @@ section Findings
 
 variable {α : ℝ}
 
-/-- The fully informed speaker at two objects says *one* or *two*. -/
 private theorem informed_two_add_le :
     (informed NumUtt.extension α 2).real {.one} +
       (informed NumUtt.extension α 2).real {.two} ≤ 1 := by
@@ -299,19 +292,15 @@ theorem one_full {s : Fin 4} (hs : 1 < s) :
       (listener NumUtt.extension α 3 .one).real {1} :=
   listener_full_lt hα (by decide) (by revert s; decide)
 
-/-- With partial access the numeral speaker draws her observation and speaks as one who knows
-it to be the state. -/
 private theorem numeral_speaker_real {n : ℕ} (hn : n ≤ 3) (s : Fin 4) (u : NumUtt) :
     (speaker NumUtt.extension α n s).real {u} = ∑ k, (hypergeometric 3 n s).real {k} *
       (informed NumUtt.extension α k).real {u} := by
   rw [speaker_of_isUpperSet hα NumUtt.isUpperSet_extension hn, Kernel.comp_real_singleton]
 
-/-- The fully informed speaker at no objects has no numeral to use. -/
 private theorem informed_zero (u : NumUtt) :
     (informed NumUtt.extension α 0).real {u} = 0 :=
   RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ (by cases u <;> decide)
 
-/-- The fully informed speaker at one object says *one*. -/
 private theorem informed_one_one : (informed NumUtt.extension α 1).real {.one} = 1 := by
   rw [measureReal_def, RSA.speaker_listener_truthful_dirac_eq_one hα _ _ _
     (uniformOn_univ_singleton_ne_zero _) (by decide) (by decide), ENNReal.toReal_one]

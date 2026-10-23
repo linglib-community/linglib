@@ -131,16 +131,11 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-! ### Predictions -/
 
-/-- Root-determined allomorphy is attested exactly where the target sees the root: in the first
-cycle, across pruned heads only. The gerund's n and the indirect causative's Voice are outside
-the root's domain, and *-ess* blocks the theme's view of the root. -/
 theorem root_rows :
     ∀ r ∈ rows, r.conditioner = none →
       (r.spine.SeesRoot cyclic phonNull r.target ↔ r.claim = .attested) := by
   decide
 
-/-- Head-determined allomorphy is attested exactly where the target sees the conditioning head:
-present at its insertion and concatenated with it. -/
 theorem head_rows :
     ∀ r ∈ rows, ∀ j, r.conditioner = some j →
       (r.spine.Sees cyclic phonNull r.target j ↔ r.claim = .attested) := by

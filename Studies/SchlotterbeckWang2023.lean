@@ -192,7 +192,6 @@ theorem seqWeight_pair_lt_iff_of_l0_eq [DecidableEq U] [IsProbabilityMeasure μ]
     simp only [utility, ← hl, List.length_cons, List.length_nil]]
   exact mul_lt_mul_right_iff hne (utility_ne_top hβ hcost _)
 
-/-- At a positive rationality the first-word utility comparison is the listener comparison. -/
 theorem utility_single_lt_iff (hβ : 0 < β) (h0 : cost 1 ≠ 0) (htop : cost 1 ≠ ∞) :
     utility μ sem β cost [a] r < utility μ sem β cost [b] r ↔
       l0 μ sem [a] {r} < l0 μ sem [b] {r} := by
@@ -210,8 +209,6 @@ variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] [Fintype R]
 
 /-! ### Order-blind listeners -/
 
-/-- At a context-independent semantics the incremental listener is the one-shot literal
-listener at the product meaning, since Bayesian updates compose. -/
 theorem l0_contextFree [IsProbabilityMeasure μ] (m : U → R → ℝ≥0∞) (hm : ∀ u r, m u r ≤ 1)
     (us : List U) :
     l0 μ (fun u _ => m u) us = (μ.withDensity (prodMeaning m us))[|Set.univ] := by
@@ -231,8 +228,6 @@ theorem l0_contextFree [IsProbabilityMeasure μ] (m : U → R → ℝ≥0∞) (h
       hfin, show prodMeaning m us * m u = prodMeaning m (u :: us) from
         funext fun r => by simp [prodMeaning_cons, mul_comm]]
 
-/-- A context-independent semantics cannot distinguish word orders, the paper's sanity
-check. -/
 theorem l0_perm [IsProbabilityMeasure μ] (m : U → R → ℝ≥0∞) (hm : ∀ u r, m u r ≤ 1)
     {us us' : List U} (h : us.Perm us') :
     l0 μ (fun u _ => m u) us = l0 μ (fun u _ => m u) us' := by
@@ -243,8 +238,6 @@ theorem supp_uniformOn (S : Finset R) :
   ext r
   simp [mem_supp, uniformOn_eq_zero_iff S.finite_toSet, Set.inter_singleton_eq_empty]
 
-/-- At a uniform prior and a Boolean semantics the incremental listener is uniform on the
-sequentially intersected extension. -/
 theorem l0_indicator [DecidableEq R] (ext : U → Finset R → Finset R) (us : List U) :
     l0 (uniformOn Set.univ) (sharp ext) us = uniformOn (extSeq ext us : Set R) := by
   induction us with
@@ -258,8 +251,6 @@ theorem l0_indicator [DecidableEq R] (ext : U → Finset R → Finset R) (us : L
         (by rw [Measure.count_apply_finite _ (Finset.finite_toSet _)]
             exact ENNReal.natCast_ne_top _)]
 
-/-- At a uniform prior and Boolean meanings, of two words true of the referent the one true of
-fewer referents is the more informative first word. -/
 theorem l0_single_lt_iff [DecidableEq R] (ext : U → Finset R → Finset R)
     (ha : r ∈ ext a Finset.univ)
     (hb : r ∈ ext b Finset.univ) :
@@ -402,8 +393,6 @@ def Adj.ext : Adj → Finset Sticker → Finset Sticker
   | .big, C => kPercent 50 Sticker.size C
   | .blue, _ => {.blue6, .blue5, .blue1}
 
-/-- *Big blue* and *blue big* resolve differently, since *big* interpreted against the blue
-stickers admits the second-largest one, which it excludes against the whole display. -/
 theorem l0_big_blue_ne :
     l0 (uniformOn Set.univ) (sharp Adj.ext) [.big, .blue] ≠
       l0 (uniformOn Set.univ) (sharp Adj.ext) [.blue, .big] := by

@@ -75,8 +75,6 @@ the belief. -/
 noncomputable def expectedReward (L : Kernel U W) (R : A → W → ℝ) (u : U) (a : A) : ℝ :=
   ∑ w, (L u).real {w} * R a w
 
-/-- In a signaling game an action is a guess of the state, rewarded when right, so the expected
-reward of a guess is the belief's mass on it. -/
 theorem expectedReward_single [DecidableEq W] (L : Kernel U W) (u : U) (w : W) :
     expectedReward L (fun a ↦ Pi.single a 1) u w = (L u).real {w} := by
   simp [expectedReward, Pi.single_apply]
@@ -133,8 +131,6 @@ theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     policyScore, policyScore, EReal.toReal_coe, EReal.toReal_coe]
   ring_nf
 
-/-- Two utterances after which the listener's expected rewards agree up to a constant shift
-leave the policy, and so the utility at every state, the same; the listeners may differ. -/
 theorem actionUtility_policy_eq_of_expectedReward_eq_add {L' : Kernel U W} {u' : U} {c : ℝ}
     (h : ∀ a, expectedReward L R u a = expectedReward L' R u' a + c) :
     actionUtility (policy β L R) R u w = actionUtility (policy β L' R) R u' w := by

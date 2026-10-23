@@ -185,7 +185,6 @@ theorem optimal_eq (r : Ranking (Fin 3) 3) : (tableau r).optimal = {violator (r 
   rw [Equiv.symm_apply_apply]
   omega
 
-/-- A constraint that two others dominate is ranked last. -/
 private theorem apply_two_eq {r : Ranking (Fin 3) 3} {i j k : Fin 3} (hij : i ≠ j)
     (hi : r.Dominates i k) (hj : r.Dominates j k) : r 2 = k := by
   have hne : r.symm i ≠ r.symm j := fun h ↦ hij (r.symm.injective h)

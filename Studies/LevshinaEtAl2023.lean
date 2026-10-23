@@ -59,8 +59,6 @@ noncomputable def proportion : ℝ := r.subjectFirst / (r.subjectFirst + r.objec
 theorem proportion_mem : proportion r ∈ I :=
   ⟨by unfold proportion; positivity, div_le_one_of_le₀ (by simp) (by positivity)⟩
 
-/-- The subject is first in more than half the clauses exactly when it is first in more clauses
-than the object. -/
 theorem one_half_lt_proportion_iff : 1 / 2 < proportion r ↔ r.objectFirst < r.subjectFirst := by
   unfold proportion
   obtain h | h := eq_or_ne (r.subjectFirst + r.objectFirst) 0
@@ -77,11 +75,9 @@ noncomputable def orderLaw : Measure SubjectObject :=
 /-- The paper's word-order entropy, the Shannon entropy of the order in bits. -/
 noncomputable def orderEntropy : ℝ := Hm[orderLaw r] / log 2
 
-/-- Word-order entropy is the binary entropy of the proportion, in bits. -/
 theorem orderEntropy_eq_binEntropy : orderEntropy r = binEntropy (proportion r) / log 2 := by
   rw [orderEntropy, orderLaw, measureEntropy_bernoulliMeasure (by decide)]
 
-/-- A fixed order has entropy `0`. -/
 theorem orderEntropy_of_fixed (h : r.subjectFirst = 0 ∨ r.objectFirst = 0) :
     orderEntropy r = 0 := by
   rw [orderEntropy_eq_binEntropy, binEntropy_eq_zero.2, zero_div]
@@ -89,7 +85,6 @@ theorem orderEntropy_of_fixed (h : r.subjectFirst = 0 ∨ r.objectFirst = 0) :
   · simp [proportion, h]
   · by_cases h0 : r.subjectFirst = 0 <;> simp [proportion, h, h0]
 
-/-- An even split of the two orders has entropy `1`. -/
 theorem orderEntropy_of_even (h : r.subjectFirst = r.objectFirst) (h0 : r.subjectFirst ≠ 0) :
     orderEntropy r = 1 := by
   have : proportion r = 2⁻¹ := by
@@ -98,8 +93,6 @@ theorem orderEntropy_of_even (h : r.subjectFirst = r.objectFirst) (h0 : r.subjec
     ring
   rw [orderEntropy_eq_binEntropy, this, binEntropy_two_inv, div_self (log_pos one_lt_two).ne']
 
-/-- Among languages that put the subject first at least half the time, entropy ranks them in
-reverse of the proportion: the closer to an even split, the more variable the order. -/
 theorem orderEntropy_lt_iff (hr : 1 / 2 ≤ proportion r) (hs : 1 / 2 ≤ proportion s) :
     orderEntropy r < orderEntropy s ↔ proportion s < proportion r := by
   rw [orderEntropy_eq_binEntropy, orderEntropy_eq_binEntropy,
@@ -111,7 +104,6 @@ end Entropy
 
 /-! ### The subject–object proportions of Figure 1 -/
 
-/-- In every one of the 31 corpora the subject precedes the object in most clauses. -/
 theorem subject_usually_first : ∀ r ∈ subjectObjectCounts, r.objectFirst < r.subjectFirst := by
   decide
 
@@ -139,8 +131,6 @@ noncomputable def entropy (i : Corpus) : ℝ := (statistics i).entropy1000 / 100
 noncomputable def caseInformation (i : Corpus) : ℝ :=
   (statistics i).caseMutualInformation1000 / 1000
 
-/-- Over the 30 corpora, order entropy and case information covary positively, so freer order
-goes with more informative case marking. -/
 theorem covariance_entropy_caseInformation_pos :
     0 < cov[entropy, caseInformation; uniformOn Set.univ] := by
   rw [covariance_uniformOn_univ_pos_iff]
@@ -154,8 +144,6 @@ theorem covariance_entropy_caseInformation_pos :
   rw [mul_div_assoc']
   exact div_lt_div_of_pos_right h' (by norm_num)
 
-/-- The corpus with the most variable subject–object order, Lithuanian, has the most
-informative case marking. -/
 theorem freest_most_case_informative :
     ∃ i, (statistics i).language = "Lithuanian" ∧ (∀ j, entropy j ≤ entropy i)
       ∧ ∀ j, caseInformation j ≤ caseInformation i := by
@@ -168,8 +156,6 @@ theorem freest_most_case_informative :
   exact ⟨i, hi, fun j ↦ by unfold entropy; gcongr; exact he j,
     fun j ↦ by unfold caseInformation; gcongr; exact hm j⟩
 
-/-- The corpus with the most rigid subject–object order has case marking carrying no
-information about syntactic role. -/
 theorem most_rigid_least_case_informative :
     ∃ i, (∀ j, entropy i ≤ entropy j) ∧ caseInformation i = 0 := by
   have : ∃ i, (∀ j, (statistics i).entropy1000 ≤ (statistics j).entropy1000)
@@ -210,8 +196,6 @@ private theorem ncard_setOf (p : ClauseIndex → Prop) [DecidablePred p] :
   ext
   simp
 
-/-- The probability of verb–object order in a text type is the share of its clauses in that
-order. -/
 theorem verbObjectProbability_eq (t : TextType) :
     verbObjectProbability t
       = (Finset.univ.filter fun i ↦ textType i = t ∧ order i = .verbFirst).card
@@ -222,7 +206,6 @@ theorem verbObjectProbability_eq (t : TextType) :
   rw [verbObjectProbability, uniformOn_univ_cond, uniformOn_real_apply, e₁, e₂, ncard_setOf,
     ncard_setOf]
 
-/-- Each text type contributes one hundred clauses. -/
 theorem card_textType (t : TextType) : (Finset.univ.filter fun i ↦ textType i = t).card = 100 := by
   revert t
   decide +kernel
@@ -233,28 +216,23 @@ private theorem card_verbFirst :
       ∧ (Finset.univ.filter fun i ↦ textType i = .news ∧ order i = .verbFirst).card = 83 := by
   decide +kernel
 
-/-- Verb–object order in 39 of the 100 conversational clauses. -/
 theorem verbObjectProbability_conversation : verbObjectProbability .conversation = 39 / 100 := by
   rw [verbObjectProbability_eq, card_textType, card_verbFirst.1]
   norm_num
 
-/-- Verb–object order in 83 of the 100 fiction clauses. -/
 theorem verbObjectProbability_fiction : verbObjectProbability .fiction = 83 / 100 := by
   rw [verbObjectProbability_eq, card_textType, card_verbFirst.2.1]
   norm_num
 
-/-- Verb–object order in 83 of the 100 news clauses. -/
 theorem verbObjectProbability_news : verbObjectProbability .news = 83 / 100 := by
   rw [verbObjectProbability_eq, card_textType, card_verbFirst.2.2]
   norm_num
 
-/-- Verb–object order is less probable in conversation than in fiction. -/
 theorem conversation_lt_fiction :
     verbObjectProbability .conversation < verbObjectProbability .fiction := by
   rw [verbObjectProbability_conversation, verbObjectProbability_fiction]
   norm_num
 
-/-- Verb–object order is equally probable in fiction and in news. -/
 theorem fiction_eq_news : verbObjectProbability .fiction = verbObjectProbability .news := by
   rw [verbObjectProbability_fiction, verbObjectProbability_news]
 

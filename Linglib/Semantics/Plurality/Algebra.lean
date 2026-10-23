@@ -111,7 +111,6 @@ def mPart (h : Materialization E M) (x y : E) : Prop :=
 def mEquiv (h : Materialization E M) (x y : E) : Prop :=
   h x = h y
 
-/-- An individual part is a material part (T.2). -/
 theorem mPart_of_le (h : Materialization E M) (hxy : x ≤ y) : mPart h x y :=
   OrderHomClass.mono h hxy
 
@@ -133,7 +132,6 @@ end Constitution
 theorem algClosure_iff_of_atom (hx : Atom x) : AlgClosure P x ↔ P x :=
   ⟨(of_algClosure_of_atom · hx), .base⟩
 
-/-- No element of a distributive predicate is a proper plural (T.6). -/
 theorem IsDistr.not_properPlural (hP : IsDistr P) (hx : P x) : ¬ properPlural P x :=
   fun h ↦ h.2 (hP x hx)
 
@@ -191,8 +189,6 @@ theorem algClosure_image_singleton (S : Set α) (x : Finset α) :
     rw [← key]
     exact algClosure_finsetSup' hx fun a ha ↦ .base ⟨a, hS ha, rfl⟩
 
-/-- `*` of a predicate true of individuals only holds of the nonempty pluralities all of
-whose members satisfy it. -/
 theorem algClosure_iff_of_subset_range_singleton {P : Finset α → Prop}
     (hP : {x | P x} ⊆ Set.range ({·} : α → Finset α)) (x : Finset α) :
     AlgClosure P x ↔ x.Nonempty ∧ ∀ a ∈ x, P {a} := by

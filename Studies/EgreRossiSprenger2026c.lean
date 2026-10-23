@@ -132,14 +132,12 @@ theorem update_subset (s : Set W) (φ : Sentence W) : update s φ ⊆ s :=
 @[simp] theorem update_empty (φ : Sentence W) : update ∅ φ = ∅ :=
   Set.subset_eq_empty (update_subset ∅ φ) rfl
 
-/-- An update survives exactly when the sentence is true somewhere in the context. -/
 theorem update_nonempty_iff : (update s φ).Nonempty ↔ ∃ w ∈ s, φ s w = 1 := by
   refine ⟨fun ⟨w, hw⟩ ↦ (mem_update.1 hw).2, fun ⟨w, hw, h⟩ ↦
     ⟨w, mem_update.2 ⟨⟨hw, ?_⟩, w, hw, h⟩⟩⟩
   rw [h]
   decide
 
-/-- The update reads the sentence only at the context itself. -/
 theorem update_congr (h : φ s = ψ s) : update s φ = update s ψ := by
   ext w
   simp only [mem_update, h]
@@ -147,7 +145,6 @@ theorem update_congr (h : φ s = ψ s) : update s φ = update s ψ := by
 theorem update_zero (s : Set W) : update s 0 = ∅ :=
   update_of_not_exists fun ⟨_, _, h⟩ ↦ by simp at h
 
-/-- On a classical sentence the update is intersection, collapsed or not. -/
 @[simp] theorem update_ofSet (s p : Set W) : update s (ofSet p) = s ∩ p := by
   unfold update
   split_ifs with h
@@ -161,7 +158,6 @@ theorem cond_apply_of_mem (h : w ∈ update s φ) : cond φ ψ s w = ψ (update 
 
 theorem cond_apply_of_notMem (h : w ∉ update s φ) : cond φ ψ s w = 0 := ite_eq_right h
 
-/-- A conditional whose antecedent is nowhere true in the context is void throughout it. -/
 theorem cond_apply_of_not_exists (h : ¬ ∃ w ∈ s, φ s w = 1) (w : W) : cond φ ψ s w = 0 :=
   cond_apply_of_notMem (by rw [update_of_not_exists h]; exact Set.notMem_empty w)
 
@@ -181,10 +177,6 @@ theorem cond_ofSet_apply {p : Set W} (hψ : ContextFree ψ) (hw : w ∈ s) :
   · rw [cond_apply_of_notMem (by rw [update_ofSet]; exact fun h ↦ hp h.2)]
     simp [hp]
 
-/-- Where `p` is false throughout the context, `(p → q) → r` is void throughout it, while
-[cooper-1968]'s table and `(p ⊃ q) → r` both give it the value of `r`, so the conditional is not
-Cooper's on the conditional language, and Left-Nesting, valid for Cooper valuations
-([egre-rossi-sprenger-2026a]), fails. -/
 theorem cond_cond_of_inter_eq_empty {p q : Set W} (h : s ∩ p = ∅) (hw : w ∈ s) :
     cond (cond (ofSet p) (ofSet q)) χ s w = 0 ∧
       condAssert .lp (cond (ofSet p) (ofSet q) s w) (χ s w) = χ s w ∧
@@ -225,7 +217,6 @@ theorem accepts_iff : Accepts s φ ↔ (∀ w ∈ s, 0 ≤ φ s w) ∧ ∃ w ∈
   · rw [h1]
     decide
 
-/-- The empty context accepts nothing. -/
 theorem not_accepts_empty (φ : Sentence W) : ¬ Accepts ∅ φ := fun ⟨_, _, h, _⟩ ↦ h
 
 theorem accepts_ofSet_iff' {p : Set W} : Accepts s (ofSet p) ↔ s.Nonempty ∧ s ⊆ p := by
@@ -246,7 +237,6 @@ theorem avoidsVoid_box_iff : AvoidsVoid s (box φ) ↔ AvoidsVoid s φ := by
 theorem accepts_box_iff : Accepts s (box φ) ↔ Accepts s φ :=
   and_congr Sentence.accepts_box_iff avoidsVoid_box_iff
 
-/-- A context accepts `◇A` exactly when `A` is true somewhere in it. -/
 theorem accepts_dia_iff : Accepts s (dia φ) ↔ ∃ w ∈ s, φ s w = 1 := by
   rw [accepts_iff]
   constructor
@@ -300,8 +290,6 @@ theorem neg_carrier (ψ χ : Sentence W) : -carrier ψ χ = carrier ψ (-χ) := 
   simp only [Pi.neg_apply, carrier]
   split_ifs <;> simp
 
-/-- Updating with a carrier is updating with its content in a context that accepts its
-presupposition, and collapses in any other. -/
 theorem update_carrier (s : Set W) (ψ χ : Sentence W) :
     update s (carrier ψ χ) = if Accepts s ψ then update s χ else ∅ := by
   split_ifs with h
@@ -377,9 +365,6 @@ theorem not_presupposes_cond_neg (hψ : ContextFree ψ) {w₁ : W} (h₁ : φ {w
     rw [hval] at this
     exact absurd this (by decide)
 
-/-- With a classical antecedent and consequent, a conditional avoids void exactly when its
-antecedent is compatible with the context, [stalnaker-1975]'s condition on asserting an
-indicative. -/
 theorem avoidsVoid_cond_ofSet_iff {p q : Set W} :
     AvoidsVoid s (cond (ofSet p) (ofSet q)) ↔ (s ∩ p).Nonempty := by
   constructor
@@ -482,7 +467,6 @@ section ComplexUpdates
 
 variable {s : Set W} {φ ψ : Sentence W}
 
-/-- An update on `A → B` survives exactly when the update on `A` and then on `B` does. -/
 theorem update_cond_nonempty_iff :
     (update s (cond φ ψ)).Nonempty ↔ (update (update s φ) ψ).Nonempty := by
   rw [update_nonempty_iff, update_nonempty_iff (s := update s φ)]
@@ -577,8 +561,6 @@ variable {Atom : Type*} (I : Atom → Set W)
 asserting `I p'`. -/
 noncomputable def ofTrigger (p p' : Atom) : Sentence W := carrier (ofSet (I p)) (ofSet (I p'))
 
-/-- At a single world the carrier is the trigger's local value, defined where the presupposition
-holds, so the global and the local treatments of presupposition part only in larger contexts. -/
 theorem ofTrigger_singleton (p p' : Atom) (w : W) :
     ofTrigger I p p' {w} w = (Formula.trigger p p').middleKleene I w := by
   show _ = (I p).indicator (fun w ↦ ofProp (w ∈ I p')) w
@@ -754,8 +736,6 @@ Fact 4.3 rests on the collapse of Definition 3.2 at a sentence that is nowhere t
 [egre-rossi-sprenger-2026b] keeps the non-false worlds unless the update is self-defeating, and on
 it a conditional whose antecedent is void throughout the context takes its consequent's value. -/
 
-/-- Under the update of [egre-rossi-sprenger-2026b], `A → B` does not presuppose `◇A`, since with
-`A` void everywhere no context accepts `◇A`, yet `A → ⊤` is true. -/
 theorem not_presupposes_cond_dia_of_restrict :
     ¬ Presupposes (Sentence.cond (0 : Sentence Unit) (ofSet .univ)) (dia 0) := by
   intro h
@@ -813,7 +793,6 @@ theorem entailsSharp_iff_of_contextFree (hΓ : ∀ φ ∈ Γ, ContextFree φ) (h
   revert hψw h0
   cases v <;> decide
 
-/-- A conditional with a false consequent is never true. -/
 private theorem cond_ofSet_empty_ne_one (φ : Sentence W) (s : Set W) (w : W) :
     cond φ (ofSet ∅) s w ≠ 1 := by
   by_cases hu : w ∈ update s φ
@@ -822,8 +801,6 @@ private theorem cond_ofSet_empty_ne_one (φ : Sentence W) (s : Set W) (w : W) :
   · rw [cond_apply_of_notMem hu]
     decide
 
-/-- The gloss fails beyond context-free sentences, since `p` C#-entails `◇¬p → ⊥`, which is true at
-no context–world pair. -/
 theorem entailsSharp_never_true :
     EntailsSharp {ofSet {true}} (cond (dia (-ofSet {true})) (ofSet ∅)) ∧
       ∀ s, ∀ w ∈ s, cond (dia (-ofSet ({true} : Set Bool))) (ofSet ∅) s w ≠ 1 := by
@@ -873,14 +850,11 @@ theorem not_entailsSharp_neg_cond (p : Set W) (ψ : Sentence W) :
     exact absurd this (by decide)
   exact cond_apply_of_notMem fun hu ↦ hwp (by rw [update_ofSet] at hu; exact hu.2)
 
-/-- Negation Commutation stays C♭-valid. -/
 theorem entailsFlat_neg_cond (φ ψ : Sentence W) :
     EntailsFlat {-cond φ ψ} (cond φ (-ψ)) ∧ EntailsFlat {cond φ (-ψ)} (-cond φ ψ) := by
   rw [neg_cond]
   exact ⟨fun _ h ↦ h _ (Set.mem_singleton _), fun _ h ↦ h _ (Set.mem_singleton _)⟩
 
-/-- Or-to-If is not C♭-valid, since a context can accept `p ∨ q` by making `p` true and `q` false
-throughout, which voids `¬p → q`. -/
 theorem not_entailsFlat_or_to_if {p q : Set W} {w : W} (hp : w ∈ p) :
     ¬ EntailsFlat {disj (ofSet p) (ofSet q)} (cond (-ofSet p) (ofSet q)) := fun h ↦ by
   have := accepts_cond_iff.1 (h {w} fun φ hφ ↦ by

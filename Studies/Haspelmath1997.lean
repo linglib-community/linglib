@@ -117,8 +117,6 @@ open Indefinite
 
 variable {s : Finset HaspelmathFunction} {f g : HaspelmathFunction}
 
-/-- A connected region with a second function contains the only neighbour of each leaf of the
-map it contains. -/
 theorem mem_of_adjacent_eq_singleton (h : (implicationalMap.induce ↑s).Connected)
     (hs : s.Nontrivial) (hf : f ∈ s) (hfg : f.adjacent = [g]) : g ∈ s := by
   have := hs.coe_sort
@@ -126,30 +124,24 @@ theorem mem_of_adjacent_eq_singleton (h : (implicationalMap.induce ↑s).Connect
   rw [SimpleGraph.induce_adj, implicationalMap_adj, hfg, List.mem_singleton] at hadj
   exact hadj ▸ hg'
 
-/-- Specific known's only neighbour is specific unknown. -/
 theorem specificUnknown_mem_of_specificKnown_mem (h : (implicationalMap.induce ↑s).Connected)
     (hs : s.Nontrivial) (hf : .specificKnown ∈ s) : .specificUnknown ∈ s :=
   mem_of_adjacent_eq_singleton h hs hf rfl
 
-/-- A series covering specific known and irrealis non-specific covers specific unknown, so the
-ABA syncretism of the three specific functions is not a connected region. -/
 theorem specificUnknown_mem_of_irrealis_mem (h : (implicationalMap.induce ↑s).Connected)
     (hk : .specificKnown ∈ s) (hi : .irrealis ∈ s) : .specificUnknown ∈ s :=
   specificUnknown_mem_of_specificKnown_mem h ⟨_, hk, _, hi, by decide⟩ hk
 
-/-- A connected region covers an interval of the specificity functions. -/
 theorem ordConnected_specificityFunctions (h : (implicationalMap.induce ↑s).Connected) :
     (specificityFunctions s : Set SpecificityFunction).OrdConnected :=
   SpecificityFunction.ordConnected_iff.2 fun hk hn ↦ mem_specificityFunctions.2 <|
     specificUnknown_mem_of_irrealis_mem h (mem_specificityFunctions.1 hk)
       (mem_specificityFunctions.1 hn)
 
-/-- Direct negation's only neighbour is indirect negation. -/
 theorem indirectNeg_mem_of_directNeg_mem (h : (implicationalMap.induce ↑s).Connected)
     (hs : s.Nontrivial) (hf : .directNeg ∈ s) : .indirectNeg ∈ s :=
   mem_of_adjacent_eq_singleton h hs hf rfl
 
-/-- Free choice's only neighbour is the comparative. -/
 theorem comparative_mem_of_freeChoice_mem (h : (implicationalMap.induce ↑s).Connected)
     (hs : s.Nontrivial) (hf : .freeChoice ∈ s) : .comparative ∈ s :=
   mem_of_adjacent_eq_singleton h hs hf rfl
@@ -229,7 +221,6 @@ theorem contiguous (φ : Feature) :
   simp only [SimpleGraph.connected_iff_exists_forall_reachable]
   cases φ <;> decide +kernel
 
-/-- Adjacent functions differ in at most one feature that classifies both. -/
 theorem card_distinguishes_le_one :
     ∀ f g, implicationalMap.Adj f g →
       (Finset.univ.filter fun φ : Feature ↦ φ.Distinguishes f g).card ≤ 1 := by
@@ -238,14 +229,10 @@ theorem card_distinguishes_le_one :
 /-- Question, conditional and comparative, which the features do not tell apart. -/
 def undistinguished : Finset HaspelmathFunction := {.question, .conditional, .comparative}
 
-/-- The features tell every function apart but question, conditional and comparative, so that
-only their relative position on the map remains to be explained. -/
 theorem features_eq_iff :
     ∀ f g, features f = features g ↔ f = g ∨ f ∈ undistinguished ∧ g ∈ undistinguished := by
   decide
 
-/-- An original free-choice indefinite extended toward the specific end loses one feature at each
-step: scalarity, non-specificity and unknownness. -/
 theorem substance_chain :
     features .specificKnown ⋖ features .specificUnknown ∧
       features .specificUnknown ⋖ features .irrealis ∧
@@ -253,7 +240,6 @@ theorem substance_chain :
   simp only [Finset.covBy_iff_exists_insert]
   decide +kernel
 
-/-- The specificity functions are ordered by the features they have. -/
 theorem strictMono_features_toFunction :
     StrictMono fun u : SpecificityFunction ↦ features u.toFunction := by
   decide
@@ -270,8 +256,6 @@ section Licensing
 
 open PolarityItem LicensingContext
 
-/-- A licensing context realizing a negation function is anti-morphic exactly when it realizes
-direct negation. -/
 theorem carries_antiMorphic_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
     c.licenser.Carries .antiMorphic ↔ c.haspelmath = some .directNeg := by
@@ -283,7 +267,6 @@ theorem carries_antiMorphic_iff {c : LicensingContext}
   · exact fun h ↦ absurd (holds_doubtVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
   · exact fun h ↦ absurd (holds_denyVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
 
-/-- A licensing context realizing a negation function is anti-additive unless it is *doubt*. -/
 theorem carries_antiAdditive_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
     c.licenser.Carries .antiAdditive ↔ c ≠ .doubtVerb := by
@@ -352,29 +335,24 @@ def excludedByPrinciple2 : List (Finset HaspelmathFunction) :=
   [region [1, 2, 3, 4, 5, 6, 8], region [1, 2, 3, 4, 6, 7, 8], region [1, 2, 3, 4, 6, 8, 9],
     region [1, 2, 3, 4, 6, 7, 8, 9], region [1, 2, 3, 5, 8], region [1, 2, 3, 4, 5, 8, 9]]
 
-/-- Every attested combination is a connected region of the map, as adjacency requires. -/
 theorem attested_connected :
     ∀ c ∈ attestedCombinations, (implicationalMap.induce ↑c.2).Connected := by
   -- Reachability from one function of a region is much cheaper to decide than between all pairs.
   simp only [SimpleGraph.connected_iff_exists_forall_reachable]
   decide +kernel
 
-/-- Every attested combination satisfies both principles. -/
 theorem attested_principles :
     ∀ c ∈ attestedCombinations, Principle1 c.2 ∧ Principle2 c.2 := by
   decide
 
 -- Decide the quantifier by walking the list, not by enumerating every region of the map.
 attribute [local instance high] List.decidableBAll in
-/-- The principles restrict beyond adjacency, since every combination they exclude is a
-connected region. -/
 theorem excluded_connected :
     ∀ s ∈ excludedByPrinciple1 ++ excludedByPrinciple2, (implicationalMap.induce ↑s).Connected := by
   simp only [SimpleGraph.connected_iff_exists_forall_reachable]
   decide +kernel
 
 attribute [local instance high] List.decidableBAll in
-/-- Each combination a principle excludes violates it. -/
 theorem excluded_violate :
     (∀ s ∈ excludedByPrinciple1, ¬ Principle1 s) ∧
       ∀ s ∈ excludedByPrinciple2, ¬ Principle2 s := by
@@ -538,41 +516,30 @@ def sample : List (List Series) :=
   [ english, russian, german, latin, yakut, kannada, latvian, japanese, mandarin, turkish, hindi,
     italian, finnish, korean, hungarian, georgian, quechua, swahili ]
 
-/-- Every series of the sample covers a connected region, as adjacency requires. -/
 theorem sample_connected :
     ∀ p ∈ sample, ∀ e ∈ p, (implicationalMap.induce ↑e.functions).Connected := by
   simp only [SimpleGraph.connected_iff_exists_forall_reachable]
   decide +kernel
 
-/-- Both principles hold of every series in the sample. -/
 theorem sample_principles :
     ∀ p ∈ sample, ∀ e ∈ p, Principle1 e.functions ∧ Principle2 e.functions := by
   decide
 
-/-- In most languages several series overlap in distribution, which the book holds against
-accounts of grammatical meaning that rely on contrast, since thirteen of the eighteen
-paradigms have a function expressed by more than one series. -/
 theorem sample_overlap :
     ∀ p ∈ [english, russian, german, latin, yakut, mandarin, turkish, hindi, italian, finnish,
       korean, hungarian, swahili], ¬ p.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
 
-/-- The distinction between human and non-human referents is made practically everywhere, so
-every series of the sample has distinct forms for a person and a thing, but for the Latvian
-*kaut*-series, whose *kaut kas* stands for both, Latvian *kas* asking about both. -/
 theorem disjoint_forms_person_thing :
     ∀ p ∈ sample, ∀ s ∈ p, s.toSeries ≠ Latvian.Indefinites.kautSeries →
       Disjoint (s.forms .person) (s.forms .thing) := by
   decide +kernel
 
-/-- The Latvian *kaut*-series has a form for a person that is also its form for a thing. -/
 theorem not_disjoint_kaut_forms_person_thing :
     ¬ Disjoint (Latvian.Indefinites.kautSeries.forms .person)
       (Latvian.Indefinites.kautSeries.forms .thing) := by
   decide
 
-/-- The comparative's other neighbour is indirect negation, and a series may cover it with the
-negation functions and without free choice, as Japanese *-mo* does. -/
 theorem mo_comparative_with_negation :
     ∃ e ∈ japanese, .comparative ∈ e.functions ∧ .directNeg ∈ e.functions ∧
       .freeChoice ∉ e.functions := by
@@ -625,16 +592,10 @@ instance (e : Datum) (label : String) : Decidable (Covers e label) :=
 instance (e : Datum) (label : String) : Decidable (Excludes e label) :=
   inferInstanceAs (Decidable (∃ f ∈ _, ∃ r ∈ _, _))
 
-/-- Every acceptable example of the book lies in the region its figure draws for each of its
-series; a sentence with two indefinites has two series, and an indefinite outside the series of
-its language has none. -/
 theorem acceptable_covers :
     ∀ e ∈ Examples.all, e.judgment = .acceptable → ∀ l ∈ e.features "series", Covers e l := by
   decide +kernel
 
-/-- Every example the book stars out of context lies outside the region its figure draws for
-each of its series. The two starred English conditionals are starred for
-the speaker's expectation, which their context records, and not for the function. -/
 theorem ungrammatical_excludes :
     ∀ e ∈ Examples.all, e.judgment = .ungrammatical → e.context = "" →
       ∀ l ∈ e.features "series", Excludes e l := by

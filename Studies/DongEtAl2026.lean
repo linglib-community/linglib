@@ -76,30 +76,24 @@ theorem not_clarifies_iff (c : ℝ) (questions : Finset Q) :
     ¬ Clarifies U b P c questions ↔ ∀ q ∈ questions, netVoi U b P c q ≤ 0 := by
   simp only [Clarifies, not_exists, not_and, not_lt]
 
-/-- By the paper's commit rule, the agent commits exactly when the best net value is at most `0`. -/
 theorem not_clarifies_iff_sup'_le (c : ℝ) {questions : Finset Q} (h : questions.Nonempty) :
     ¬ Clarifies U b P c questions ↔ questions.sup' h (netVoi U b P c) ≤ 0 := by
   rw [not_clarifies_iff, sup'_le_iff]
 
-/-- Clarifying with a question of positive net value raises the expected utility net of its
-cost above the value of committing now. -/
 theorem value_add_lt_postValue {c : ℝ} {q : Q} (h : 0 < netVoi U b P c q) :
     decisionValue U b + c < postValue U b P q := by
   rw [netVoi, voi_eq] at h
   linarith
 
-/-- A costlier question is asked less: the clarifying region shrinks as the cost rises. -/
 theorem clarifies_of_le {c c' : ℝ} (hcc' : c ≤ c') {questions : Finset Q}
     (h : Clarifies U b P c' questions) : Clarifies U b P c questions := by
   obtain ⟨q, hq, hpos⟩ := h
   exact ⟨q, hq, by unfold netVoi at hpos ⊢; linarith⟩
 
-/-- Scaling the stakes scales the value of information. -/
 theorem voi_smul {s : ℝ} (hs : 0 ≤ s) (q : Q) : voi (s • U) b P q = s * voi U b P q := by
   rw [voi, voi, ← valueOfInformation_smul, show decisionValue (s • U) = s • decisionValue U from
     funext (decisionValue_smul hs)]
 
-/-- Uninformative questions are never asked, at any nonnegative cost. -/
 theorem not_clarifies_of_const {c : ℝ} (hc : 0 ≤ c) {questions : Finset Q}
     (hP : ∀ q ∈ questions, ∃ ν, P q = Kernel.const Θ ν) : ¬ Clarifies U b P c questions := by
   rw [not_clarifies_iff]
@@ -114,12 +108,9 @@ theorem not_clarifies_of_const {c : ℝ} (hc : 0 ≤ c) {questions : Finset Q}
 
 variable [Finite Θ] [MeasurableSingletonClass Y] [Finite Y] [Finite A]
 
-/-- Information cannot have negative value. -/
 theorem voi_nonneg (q : Q) : 0 ≤ voi U b P q :=
   valueOfInformation_decisionValue_nonneg U (P q) b
 
-/-- A question worth asking at stakes `s` is worth asking at any higher stakes `s'`: the
-commit-without-asking region shrinks as the stakes rise. -/
 theorem clarifies_smul {s s' : ℝ} (hs : 0 ≤ s) (hss' : s ≤ s') {c : ℝ} {questions : Finset Q}
     (h : Clarifies (s • U) b P c questions) : Clarifies (s' • U) b P c questions := by
   obtain ⟨q, hq, hpos⟩ := h
@@ -169,7 +160,6 @@ theorem isMarkovKernel_question : IsMarkovKernel (question r) :=
   ⟨fun θ ↦ Measure.isProbabilityMeasure_sum_ofReal_smul_dirac (answer_nonneg h₀ h₁ θ)
     (by cases θ <;> simp [answer])⟩
 
-/-- Each answer has marginal probability `1/2` under the uniform belief. -/
 theorem comp_question_real (y : Bool) :
     (question r ∘ₘ uniformOn Set.univ).real {y} = 1 / 2 := by
   have := isMarkovKernel_question h₀ h₁
@@ -177,7 +167,6 @@ theorem comp_question_real (y : Bool) :
   simp only [uniformOn_univ_real_singleton, question_real_singleton h₀ h₁]
   cases y <;> simp [answer] <;> ring
 
-/-- After answer `y`, the posterior puts the reliability `r` on the answered candidate. -/
 theorem posterior_question_real (y θ : Bool) :
     haveI := isMarkovKernel_question h₀ h₁
     (((question r)†(uniformOn Set.univ)) y).real {θ} = answer r θ y := by
@@ -189,8 +178,6 @@ theorem posterior_question_real (y θ : Bool) :
     question_real_singleton h₀ h₁, comp_question_real h₀ h₁, Fintype.card_bool]
   ring
 
-/-- The value of information of a yes/no question of reliability `r ≥ 1/2` on a two-candidate
-task is `r − 1/2`. -/
 theorem voi_reliability (hr : 1 / 2 ≤ r) :
     haveI := isMarkovKernel_question h₀ h₁
     valueOfInformation (decisionValue correct) (question r) (uniformOn Set.univ) = r - 1 / 2 := by

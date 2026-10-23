@@ -286,7 +286,6 @@ def predicted (row : Datum) : Option Bool :=
   | some s, some i, some m => scenario s >>= fun A => verdict A i m
   | _, _, _ => none
 
-/-- Every scenario row carries the predicted verdict. -/
 theorem rows_agree :
     ∀ row ∈ Examples.all, ∀ b, predicted row = some b →
       row.feature? "verdict" = some (if b then "true" else "false") := by decide +kernel

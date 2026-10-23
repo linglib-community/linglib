@@ -126,8 +126,6 @@ theorem controller_quirky (c : Case) (t : CaseCategory) (ht : t ≠ .lexical) :
       [ArgumentRole.A, .P]) = some 1 := by
   cases t <;> first | exact absurd rfl ht | rfl
 
-/-- In the Hindi perfective the verb agrees with the unmarked object past the ergative subject,
-and in the imperfective with the subject. -/
 theorem hindi_controller :
     controller .unmarked (assignCases (HindiUrdu.alignment .perfective) (fun _ ↦ none)
       [ArgumentRole.A, .P]) = some 1 ∧

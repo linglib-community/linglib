@@ -88,14 +88,11 @@ irregularity holds out a lexeme. -/
 noncomputable def fusion (J : Set K) (ℓ : Lex) (σ : ∀ k, V k) : ℝ :=
   surprisal (learner {w | w.2.1 ∉ J.pi (fun k ↦ {σ k}) ∧ w.2.2 = L w.1 w.2.1} ℓ σ) (L ℓ σ)
 
-/-- Over all categories, fusion is the paper's informational fusion, which holds out the words of
-the cell `σ` itself. -/
 theorem fusion_univ (ℓ : Lex) (σ : ∀ k, V k) :
     fusion learner L .univ ℓ σ
       = surprisal (learner {w | w.2.1 ≠ σ ∧ w.2.2 = L w.1 w.2.1} ℓ σ) (L ℓ σ) := by
   simp [fusion, Set.univ_pi_singleton]
 
-/-- In a language with two categories, pairwise fusion is informational fusion. -/
 theorem fusion_pair_eq_fusion_univ {k₁ k₂ : K} (h : ∀ k, k = k₁ ∨ k = k₂) :
     fusion learner L {k₁, k₂} = fusion learner L .univ := by
   rw [show ({k₁, k₂} : Set K) = .univ from Set.eq_univ_of_forall h]
@@ -113,8 +110,6 @@ variable {Ω S₁ S₂ S₃ F : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [I
   [MeasurableSpace F] [MeasurableSingletonClass F] [Fintype F]
   {X₁ : Ω → S₁} {X₂ : Ω → S₂} {X₃ : Ω → S₃}
 
-/-- A part fusing two features that still identifies the second once the first is known has the
-entropy of the second feature given the first, plus what it keeps of the first. -/
 theorem entropy_fused_eq (hX₁ : Measurable X₁) (hX₂ : Measurable X₂) {g : S₁ → S₂ → F}
     (hg : ∀ a, (g a).Injective) :
     H[fun ω ↦ g (X₁ ω) (X₂ ω) ; μ] = H[X₂ | X₁ ; μ] + I[fun ω ↦ g (X₁ ω) (X₂ ω) : X₁ ; μ] := by
@@ -123,8 +118,6 @@ theorem entropy_fused_eq (hX₁ : Measurable X₁) (hX₂ : Measurable X₂) {g 
   rw [mutualInfo_eq_entropy_sub_condEntropy μ hY hX₁, condEntropy_of_injective μ hX₂ hX₁ g hg]
   ring
 
-/-- Such a part has at least the entropy of the second feature given the first, the bound of
-the appendix's first argument. An agglutinative part has the entropy of the second feature. -/
 theorem condEntropy_le_entropy_fused (hX₁ : Measurable X₁) (hX₂ : Measurable X₂)
     {g : S₁ → S₂ → F} (hg : ∀ a, (g a).Injective) :
     H[X₂ | X₁ ; μ] ≤ H[fun ω ↦ g (X₁ ω) (X₂ ω) ; μ] :=
@@ -140,14 +133,12 @@ theorem condEntropy_le_condEntropy_fused (hX₁ : Measurable X₁) (hX₂ : Meas
     (hind.comp measurable_id measurable_swap).symm]
   exact condEntropy_le_condEntropy_comp μ hX₃ (hX₂.prodMk hX₁) fun p ↦ g p.2 p.1
 
-/-- XOR with a bit independent of `D` keeps that bit's entropy given `D`. -/
 theorem condEntropy_xor_eq_entropy {V D : Ω → Bool} (hV : Measurable V) (hD : Measurable D)
     (hind : V ⟂ᵢ[μ] D) : H[fun ω ↦ xor (V ω) (D ω) | D ; μ] = H[V ; μ] := by
   rw [show (fun ω ↦ xor (V ω) (D ω)) = fun ω ↦ (fun b v ↦ xor v b) (D ω) (V ω) from rfl,
     condEntropy_of_injective μ hV hD (fun b v ↦ xor v b) fun _ _ _ ↦ Bool.xor_left_inj.mp,
     hind.condEntropy_eq_entropy hV hD]
 
-/-- XOR with a fair bit independent of `D` is a fair bit. -/
 theorem entropy_xor_eq_log_two {V D : Ω → Bool} (hV : Measurable V) (hD : Measurable D)
     (hind : V ⟂ᵢ[μ] D) (hfair : H[V ; μ] = log 2) :
     H[fun ω ↦ xor (V ω) (D ω) ; μ] = log 2 := by
@@ -344,7 +335,6 @@ theorem measurePreserving_advance :
       · exact Measure.map_infinitePi_infinitePi_of_inj (P := fun _ ↦ P) Nat.succ_injective
       · exact Measure.map_id)
 
-/-- Given where the stream starts, its words are independent with law `P`. -/
 theorem cond_fst (j : Fin k) :
     (stream k P)[|Prod.fst ⁻¹' {j}] = (Measure.dirac j).prod (Measure.infinitePi fun _ ↦ P) := by
   have hk : (k : ℝ≥0∞) ≠ 0 := by exact_mod_cast NeZero.ne k
@@ -366,8 +356,6 @@ include hX
 
 variable [MeasurableSingletonClass S] [Fintype S]
 
-/-- The entropy of the start together with a variable that depends on it averages over the
-starts. -/
 theorem entropy_fst_prod :
     H[fun ω ↦ (ω.1, X ω.1 ω.2) ; stream k P]
       = log k + (k : ℝ)⁻¹ * ∑ j, H[X j ; Measure.infinitePi fun _ ↦ P] := by
@@ -381,7 +369,6 @@ theorem entropy_fst_prod :
 
 variable [MeasurableSpace T] [MeasurableSingletonClass T] [Fintype T]
 
-/-- Given the start as well, conditional entropy averages over the starts. -/
 theorem condEntropy_fst_prod {Y : Fin k → (ℕ → M) → T} (hY : ∀ j, Measurable (Y j)) :
     H[fun ω ↦ X ω.1 ω.2 | fun ω ↦ (ω.1, Y ω.1 ω.2) ; stream k P]
       = (k : ℝ)⁻¹ * ∑ j, H[X j | Y j ; Measure.infinitePi fun _ ↦ P] := by
@@ -409,7 +396,6 @@ theorem measurable_char (t : ℕ) : Measurable (char L t) :=
     (measurable_of_finite fun m : M ↦ L m (Fin.ofNat k (t + φ))).comp
       (measurable_pi_apply ((t + φ) / k))
 
-/-- The character stream is stationary. -/
 theorem isStationary_char : IsStationary (char L) (stream k P) :=
   .of_measurePreserving (measurePreserving_advance P) (measurable_char L) (char_succ L)
 
@@ -443,8 +429,6 @@ private theorem condEntropy_cur_pre (t : ℕ) (j : Fin k) :
   simp only [word, fin_ofNat_mod] at this
   exact this
 
-/-- The characters before the current one in its word, and the earlier words, which are
-independent of it, determine the past. -/
 private theorem condEntropy_cur_pre_le (t : ℕ) (j : Fin k) :
     H[cur L t j | pre L t j ; Measure.infinitePi fun _ ↦ P]
       ≤ H[cur L t j | past L t j ; Measure.infinitePi fun _ ↦ P] := by
@@ -475,8 +459,6 @@ private theorem condEntropy_cur_pre_le (t : ℕ) (j : Fin k) :
   exact condEntropy_le_condEntropy_comp _ (measurable_cur L t j)
     ((measurable_pre L t j).prodMk hearly) G
 
-/-- Once the context reaches back a whole word, the past determines the characters before the
-current one in its word. -/
 private theorem condEntropy_cur_past_le {t : ℕ} (hkt : k ≤ t + 1) (j : Fin k) :
     H[cur L t j | past L t j ; Measure.infinitePi fun _ ↦ P]
       ≤ H[cur L t j | pre L t j ; Measure.infinitePi fun _ ↦ P] := by
@@ -508,8 +490,6 @@ private theorem sum_pastCondEntropy_word (t : ℕ) :
   exact Fintype.sum_equiv (Equiv.addLeft (Fin.ofNat k t)) _ _ fun j ↦ by
     simp [Fin.val_add, Nat.add_mod]
 
-/-- With any context, a character of the stream has at least the entropy of a word per
-character. -/
 theorem le_pastCondEntropy_char (t : ℕ) :
     (k : ℝ)⁻¹ * H[fun m ↦ L m ; P] ≤ pastCondEntropy (char L) (stream k P) t :=
   calc (k : ℝ)⁻¹ * H[fun m ↦ L m ; P]
@@ -525,8 +505,6 @@ theorem le_pastCondEntropy_char (t : ℕ) :
         condEntropy_le_condEntropy_comp _ (measurable_char L t)
           (measurable_fst.prodMk (measurable_block (measurable_char L) 0 t)) Prod.snd
 
-/-- Given the start, one character of context leaves the next the entropy of its position given
-the previous one, or at the start of a word its entropy. -/
 theorem condEntropy_char_one :
     H[char L 1 | fun ω ↦ (ω.1, char L 0 ω) ; stream k P]
       = (k : ℝ)⁻¹ * ∑ j : Fin k, if (j : ℕ) + 1 < k
@@ -584,14 +562,12 @@ theorem pastCondEntropy_char_of_le {t : ℕ} (ht : 0 < t) (hkt : k ≤ t + 1) :
         exact condEntropy_cur_past_le P L hkt j
     _ = (k : ℝ)⁻¹ * H[fun m ↦ L m ; P] := by rw [sum_pastCondEntropy_word]
 
-/-- Its entropy rate is the entropy of a word per character. -/
 theorem entropyRate_char :
     entropyRate (char L) (stream k P) = (k : ℝ)⁻¹ * H[fun m ↦ L m ; P] := by
   refine le_antisymm ?_ (le_ciInf fun t ↦ le_pastCondEntropy_char P L t)
   rw [← pastCondEntropy_char_of_le P hpos (NeZero.pos k) (Nat.le_succ k)]
   exact ciInf_le ⟨0, Set.forall_mem_range.mpr fun _ ↦ condEntropy_nonneg _ _ _⟩ k
 
-/-- With no context, it has `log k` plus the average entropy of a position. -/
 theorem pastCondEntropy_char_zero :
     pastCondEntropy (char L) (stream k P) 0 = log k + (k : ℝ)⁻¹ * ∑ p, H[fun m ↦ L m p ; P] := by
   have hX : ∀ j : Fin k, Measurable fun w : ℕ → M ↦ L (w 0) j :=
@@ -605,8 +581,6 @@ theorem pastCondEntropy_char_zero :
   congr 2
   exact Finset.sum_congr rfl fun j _ ↦ entropy_eval P (fun m ↦ L m j) 0
 
-/-- With one character of context, knowing the start adds nothing, since the character reveals
-it. -/
 theorem pastCondEntropy_char_one :
     pastCondEntropy (char L) (stream k P) 1
       = H[char L 1 | fun ω ↦ (ω.1, char L 0 ω) ; stream k P] := by
@@ -632,7 +606,6 @@ variable {M B : Type*} [MeasurableSpace M] [MeasurableSingletonClass M] [Fintype
   [MeasurableSpace B] [MeasurableSingletonClass B] [Fintype B] {k : ℕ} [NeZero k]
   (P : Measure M) [IsProbabilityMeasure P] (L : M → Fin k → B)
 
-/-- With no context, a language tagged by slot has `log k` plus the average entropy of a slot. -/
 theorem pastCondEntropy_tagged_zero :
     pastCondEntropy (char (tagged L)) (stream k P) 0
       = log k + (k : ℝ)⁻¹ * ∑ p, H[fun m ↦ L m p ; P] := by
@@ -641,8 +614,6 @@ theorem pastCondEntropy_tagged_zero :
   exact Finset.sum_congr rfl fun p _ ↦ entropy_comp_of_injective P (measurable_of_finite _)
     (f := Prod.mk p) (measurable_of_finite _) (Prod.mk_right_injective p)
 
-/-- With one character of context, it has the entropy of a slot given the one before it,
-averaged with the entropy of the first slot. -/
 theorem pastCondEntropy_tagged_one :
     pastCondEntropy (char (tagged L)) (stream k P) 1
       = (k : ℝ)⁻¹ * ∑ j : Fin k, if (j : ℕ) + 1 < k
@@ -656,7 +627,6 @@ theorem pastCondEntropy_tagged_one :
   · exact entropy_comp_of_injective P (measurable_of_finite _) (f := Prod.mk 0)
       (measurable_of_finite _) (Prod.mk_right_injective 0)
 
-/-- Once the context spans a word, it has the entropy of a word per character. -/
 theorem pastCondEntropy_tagged_of_le {t : ℕ} (ht : 0 < t) (hkt : k ≤ t + 1) :
     pastCondEntropy (char (tagged L)) (stream k P) t = (k : ℝ)⁻¹ * H[fun m ↦ L m ; P] := by
   rw [pastCondEntropy_char_of_le P (L := tagged L) (pos := Prod.fst) (fun _ _ ↦ rfl) ht hkt]
@@ -692,7 +662,6 @@ theorem entropy_bit (i : Fin n) :
   rw [bits, (measurePreserving_eval _ i).map_eq,
     measureEntropy_bernoulliMeasure (by decide : true ≠ false)]
 
-/-- A sequence of bits has the product of their probabilities. -/
 theorem bits_real_singleton (x : Fin n → Bool) :
     (bits p).real {x} = ∏ i, if x i then (p i : ℝ) else 1 - p i := by
   rw [← Set.univ_pi_singleton, measureReal_def, bits, Measure.pi_pi, ENNReal.toReal_prod]
@@ -777,7 +746,6 @@ private theorem entropy_meaning :
     show (fun ω : Fin 2 → Bool ↦ ω 0) = voice from rfl, entropy_voice, meanings, entropy_bit]
   rfl
 
-/-- An unambiguous language has the entropy of the meanings. -/
 private theorem entropy_injective {B : Type*} [MeasurableSpace B] [MeasurableSingletonClass B]
     {f : (Fin 2 → Bool) → B} (hf : f.Injective) : H[f ; meanings d] = log 2 + binEntropy d := by
   rw [← entropy_meaning d]
@@ -795,8 +763,6 @@ theorem pastCondEntropy_fus_lt_agg_zero_iff :
     entropy_voice, entropy_tense]
   constructor <;> intro h <;> linarith
 
-/-- With any context, the two languages are equally surprising: fusion helps only without
-context. -/
 theorem pastCondEntropy_fus_eq_agg {t : ℕ} (ht : 0 < t) :
     pastCondEntropy (char (tagged fus)) (stream 2 (meanings d)) t
       = pastCondEntropy (char (tagged agg)) (stream 2 (meanings d)) t := by
@@ -804,7 +770,6 @@ theorem pastCondEntropy_fus_eq_agg {t : ℕ} (ht : 0 < t) :
     pastCondEntropy_tagged_of_le _ _ ht (by omega),
     entropy_injective d (f := fus) (by decide), entropy_injective d (f := agg) (by decide)]
 
-/-- Voice, a fair coin, masks the disagreement bit, so tense carries no information about it. -/
 theorem mutualInfo_disagree_tense : I[fun ω ↦ ω 1 : tense ; meanings d] = 0 := by
   rw [mutualInfo_comm _ (measurable_pi_apply 1) (measurable_of_finite tense),
     mutualInfo_eq_entropy_sub_condEntropy _ (measurable_of_finite tense) (measurable_pi_apply 1),
@@ -836,22 +801,16 @@ with voice. A morpheme is its category, `0` for voice and `1` for tense, and its
 def nonclustered (ω : Fin 2 → Bool) : Fin 2 → Fin 2 × Bool :=
   if ω 1 then ![(1, tense ω), (0, voice ω)] else ![(0, voice ω), (1, tense ω)]
 
-/-- Without category clustering the first slot identifies the meaning, so its entropy exceeds the
-clustered language's by `binEntropy d`. -/
 theorem entropy_nonclustered_fst :
     H[fun ω ↦ nonclustered ω 0 ; meanings d] = log 2 + binEntropy d :=
   entropy_injective d (by decide)
 
-/-- At the paper's uniform weights, dropping category clustering doubles the entropy of the
-first slot, as the appendix says. -/
 theorem entropy_nonclustered_fst_half :
     H[fun ω ↦ nonclustered ω 0 ; meanings half] = 2 * H[voice ; meanings half] := by
   rw [entropy_nonclustered_fst, entropy_voice]
   simp [half]
   ring
 
-/-- The second slot of `Lnonclustered` identifies the meaning as well, against the appendix's
-statement that its surprisal is unchanged. -/
 theorem entropy_nonclustered_snd :
     H[fun ω ↦ nonclustered ω 1 ; meanings d] = log 2 + binEntropy d :=
   entropy_injective d (by decide)
@@ -891,7 +850,6 @@ theorem pastCondEntropy_nonclustered_zero :
     char_nonclustered_zero]
   exact ((measurePreserving_flip d).identDistrib_comp (measurable_char _ 0)).entropy_eq
 
-/-- With one character of context, the clustered language is no more surprising. -/
 theorem pastCondEntropy_tagged_agg_one_le :
     pastCondEntropy (char (tagged agg)) (stream 2 (meanings d)) 1
       ≤ pastCondEntropy (char nonclustered) (stream 2 (meanings d)) 1 := by
@@ -1059,8 +1017,6 @@ theorem entropy_tense : H[tense ; meanings d] = log 2 :=
   entropy_xor_eq_log_two (measurable_pi_apply 1) (measurable_pi_apply 2) (indep d (by decide))
     (entropy_fair d (by decide))
 
-/-- Fusing the dependent aspect and tense costs nothing, since the third slot given the second
-keeps the entropy of tense given aspect. -/
 theorem condEntropy_fuseHigh :
     H[fun ω ↦ fuseHigh ω 2 | fun ω ↦ fuseHigh ω 1 ; meanings d] = binEntropy d := by
   rw [show (fun ω ↦ fuseHigh ω 2) = fun ω : Fin 3 → Bool ↦ ω 2 by
@@ -1070,8 +1026,6 @@ theorem condEntropy_fuseHigh :
     meanings, entropy_bit]
   rfl
 
-/-- Fusing voice with aspect leaves the third slot at least the entropy of tense given aspect, as
-the appendix's second argument says, since voice is independent of aspect and tense together. -/
 theorem condEntropy_agg_le_fuseLow :
     H[fun ω ↦ agg ω 2 | fun ω ↦ agg ω 1 ; meanings d]
       ≤ H[fun ω ↦ fuseLow ω 2 | fun ω ↦ fuseLow ω 1 ; meanings d] := by
@@ -1082,8 +1036,6 @@ theorem condEntropy_agg_le_fuseLow :
   exact condEntropy_le_condEntropy_fused (measurable_pi_apply 0) (measurable_pi_apply 1)
     (measurable_of_finite tense) hind xor
 
-/-- Fusing the independent voice and aspect hides aspect from the second slot, so the third slot
-given the second keeps the whole entropy of tense. -/
 theorem condEntropy_fuseLow :
     H[fun ω ↦ fuseLow ω 2 | fun ω ↦ fuseLow ω 1 ; meanings d] = log 2 := by
   show H[tense | fun ω : Fin 3 → Bool ↦ xor (ω 0) (ω 1) ; meanings d] = _
@@ -1142,15 +1094,12 @@ private theorem condEntropy_aspect_voice :
   ((indep d (i := 1) (j := 0) (by decide)).condEntropy_eq_entropy (measurable_pi_apply 1)
     (measurable_pi_apply 0)).trans (entropy_fair d (by decide))
 
-/-- With no context, fusing the independent voice and aspect leaves the surprisal unchanged. -/
 theorem pastCondEntropy_fuseLow_zero :
     pastCondEntropy (char (tagged fuseLow)) (stream 3 (meanings d)) 0
       = pastCondEntropy (char (tagged agg)) (stream 3 (meanings d)) 0 := by
   rw [pastCondEntropy_zero_three, pastCondEntropy_zero_three, entropy_fuseLow_one, entropy_aspect]
   rfl
 
-/-- With no context, fusing the dependent aspect and tense lowers the surprisal exactly when they
-are dependent. -/
 theorem pastCondEntropy_fuseHigh_lt_agg_zero_iff :
     pastCondEntropy (char (tagged fuseHigh)) (stream 3 (meanings d)) 0
       < pastCondEntropy (char (tagged agg)) (stream 3 (meanings d)) 0 ↔ (d : ℝ) ≠ 2⁻¹ := by
@@ -1160,7 +1109,6 @@ theorem pastCondEntropy_fuseHigh_lt_agg_zero_iff :
     show (fun ω ↦ fuseHigh ω 1) = fun ω ↦ agg ω 1 from rfl]
   constructor <;> intro h <;> linarith
 
-/-- With one character of context, fusing the dependent aspect and tense costs nothing. -/
 theorem pastCondEntropy_fuseHigh_one :
     pastCondEntropy (char (tagged fuseHigh)) (stream 3 (meanings d)) 1
       = pastCondEntropy (char (tagged agg)) (stream 3 (meanings d)) 1 := by
@@ -1186,7 +1134,6 @@ theorem pastCondEntropy_agg_lt_fuseLow_one_iff :
       (indep d (by decide)), entropy_fair d (i := 1) (by decide), ← binEntropy_lt_log_two]
   constructor <;> intro h <;> linarith
 
-/-- Once the context spans a word, the three languages are equally surprising. -/
 theorem pastCondEntropy_eq_agg {t : ℕ} (ht : 2 ≤ t) :
     pastCondEntropy (char (tagged fuseLow)) (stream 3 (meanings d)) t
         = pastCondEntropy (char (tagged agg)) (stream 3 (meanings d)) t ∧

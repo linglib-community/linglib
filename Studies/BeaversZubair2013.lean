@@ -177,7 +177,6 @@ theorem causative_entails_existential {E : Type} {s : CauserSort}
     (hxy : vp x y) : Reading.existential.resolve h vp y :=
   ⟨x, hxy⟩
 
-/-- The reflexive resolution entails the existential one, with the patient itself as witness. -/
 theorem reflexive_entails_existential {E : Type} {s : CauserSort}
     (h : CauserSort.individual ≤ s) (vp : E → E → Prop) (y : E)
     (hy : Reading.reflexive.resolve h vp y) : Reading.existential.resolve h vp y :=

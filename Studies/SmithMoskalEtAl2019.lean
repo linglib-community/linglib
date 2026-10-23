@@ -123,25 +123,18 @@ def dehu3m : Paradigm 3 ℕ :=
 
 /-! ### Containment excludes ABA, sections 3.3 and 4.2 -/
 
-/-- Over a three-grade containment hierarchy a pattern is generable by Elsewhere insertion
-exactly when it is contiguous, for case and for number alike. -/
 theorem generable_iff_contiguous (p : Paradigm 3 ℕ) : ElsewhereGenerable p ↔ IsContiguous p :=
   (isContiguous_iff_generable p).symm
 
-/-- No ABA pattern is generable. This is the reading that excludes the apparent Archi second
-plural for case and the doubtful Yagua third person for number. -/
 theorem aba_not_generable : ¬ ElsewhereGenerable ![0, 1, 0] :=
   mt (generable_iff_contiguous _).mp (by decide)
 
-/-- Of the attested patterns of the case hierarchy, Lezgian's is AAA and Icelandic's and
-Russian's are ABB. -/
 theorem lezgian_aaa : Setoid.ker lezgian1sg = Setoid.ker Paradigm.aaa := by decide
 
 theorem icelandic_abb : Setoid.ker icelandic1sg = Setoid.ker Paradigm.abb := by decide
 
 theorem russian_abb : Setoid.ker russian1sg = Setoid.ker Paradigm.abb := by decide
 
-/-- Awtuw's plural and dual share a base, the attested ABB of the number hierarchy. -/
 theorem awtuw_abb : Setoid.ker awtuw1 = Setoid.ker Paradigm.abb := by decide
 
 /-- The rules (15) for the Icelandic first singular are an accusative-conditioned *m-* and an
@@ -153,13 +146,10 @@ theorem icelandic_abb_generated :
 
 /-! ### Structural adjacency and the absence of AAB for degree, section 2 -/
 
-/-- Under [bobaljik-2012]'s structural adjacency, terminal rules with adjacent contexts cannot
-distinguish the second grade from the third. -/
 theorem realize_one_eq_two_of_terminal_adjacent {v : RuleSet (SpanRule 3 ℕ)} (hT : Terminal v)
     (hA : Adjacent v) : realize v 1 = realize v 2 :=
   realize_const_of_terminal_adjacent hT hA
 
-/-- So no AAB pattern is generable under structural adjacency. -/
 theorem aab_not_generable_of_terminal_adjacent {v : RuleSet (SpanRule 3 ℕ)} (hT : Terminal v)
     (hA : Adjacent v) {a b : ℕ} (hab : a ≠ b) : realize v ≠ ![some a, some a, some b] := by
   intro h
@@ -169,7 +159,6 @@ theorem aab_not_generable_of_terminal_adjacent {v : RuleSet (SpanRule 3 ℕ)} (h
 
 /-! ### AAB attested for case, section 3.6, and for number, section 4.2 -/
 
-/-- Wardaman and Khinalugh are AAB, contiguous with the third cell alone suppletive. -/
 theorem wardaman_aab : Setoid.ker wardaman3sg = Setoid.ker Paradigm.aab := by decide
 
 theorem khinalugh_aab : Setoid.ker khinalugh2sg = Setoid.ker Paradigm.aab := by decide
@@ -191,9 +180,6 @@ theorem wambaya_aab : Setoid.ker wambaya1incl = Setoid.ker Paradigm.aab := by de
 
 theorem dehu_aab : Setoid.ker dehu3m = Setoid.ker Paradigm.aab := by decide
 
-/-- The attested AAB patterns are contiguous, so containment admits them, yet no terminal
-vocabulary under structural adjacency generates them, so the pronominal data refute the
-adjacency condition. -/
 theorem aab_contiguous_not_adjacent_generable :
     IsContiguous wardaman3sg ∧ IsContiguous yagua2 ∧
       ∀ v : RuleSet (SpanRule 3 ℕ), Terminal v → Adjacent v →
@@ -218,7 +204,6 @@ instance {n : ℕ} {F : Type*} (d : Fin n) (v : RuleSet (SpanRule n F)) :
     Decidable (DomainLocal d v) := by
   unfold DomainLocal; infer_instance
 
-/-- Terminal rules local to a domain have thresholds inside it. -/
 theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
     {v : RuleSet (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {it : SpanRule n F}
     (hit : it ∈ v) : it.threshold ≤ d := by
@@ -232,15 +217,11 @@ theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
     simp only [Option.getD_some]
     exact max_le (by rw [Fin.le_def]; omega) (hD it hit c hc)
 
-/-- With terminal rules whose contexts lie in a domain, realization is constant above the
-domain. At the comparative this is the no-AAB plateau of degree
-without an adjacency condition. -/
 theorem realize_const_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
     {v : RuleSet (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {g g' : Fin n}
     (hg : d ≤ g) (hg' : d ≤ g') : realize v g = realize v g' :=
   realize_const_of_cap (λ _ hit => threshold_le_of_terminal_domainLocal hT hD hit) hg hg'
 
-/-- Terminal adjacency is locality at any domain containing the first head. -/
 theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*} {d : Fin n} (hd : 1 ≤ (d : ℕ))
     {v : RuleSet (SpanRule n F)} (hT : Terminal v) (hA : Adjacent v) : DomainLocal d v := by
   intro it hit c hc
@@ -252,8 +233,6 @@ theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*} {d : Fin n} (hd :
 an elsewhere *narnaj*. -/
 def wardamanVocab : RuleSet (SpanRule 3 String) := [⟨"narnaj", 0, none⟩, ⟨"gunga", 0, some 2⟩]
 
-/-- The Wardaman vocabulary is antihomophonous and local at the trivial domain of a pronoun,
-and generates the attested AAB. -/
 theorem wardaman_aab_generated :
     wardamanVocab.Antihomophonous ∧ DomainLocal 2 wardamanVocab ∧
       Setoid.ker (realize wardamanVocab) = Setoid.ker Paradigm.aab := by
@@ -266,8 +245,6 @@ theorem wardaman_not_adjacent_not_grounded :
     ¬ Adjacent wardamanVocab ∧ ¬ Grounded wardamanVocab := by
   refine ⟨?_, ?_⟩ <;> decide
 
-/-- ABA stays excluded at the trivial domain, where containment with the Elsewhere condition
-suffices. -/
 theorem wardaman_realize_contiguous : IsContiguous (realize wardamanVocab) :=
   isContiguous_realize (by decide)
 

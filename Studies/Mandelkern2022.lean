@@ -171,7 +171,6 @@ def Order.junct {A W : Type*} (o : Order) (sp sq : Set (A × W) → A → W → 
   | .symmetric =>
     sp {i ∈ c | kq i.1 i.2 ∧ sq c i.1 i.2} g w ∧ sq {i ∈ c | kp i.1 i.2 ∧ sp c i.1 i.2} g w
 
-/-- In either order the right junct's local context is the left junct's update. -/
 theorem Order.junct_right {A W : Type*} {o : Order} {sp sq : Set (A × W) → A → W → Prop}
     {kp kq : A → W → Prop} {c : Set (A × W)} {g : A} {w : W} (h : o.junct sp sq kp kq c g w) :
     sq {i ∈ c | kp i.1 i.2 ∧ sp c i.1 i.2} g w := by
@@ -338,7 +337,6 @@ theorem update_subset : update I o c p ⊆ c := Set.sep_subset _ _
     p.toTrivalent I o c i = 1 ↔ p.Satt I o c i.1 i.2 ∧ p.Realize I i.1 i.2 := by
   simp [toTrivalent]
 
-/-- Updating keeps the points of the context at which the meaning there is true. -/
 theorem update_eq_inter_posExt : update I o c p = c ∩ posExt (p.toTrivalent I o c) :=
   Set.ext fun _ ↦ and_congr_right' (toTrivalent_eq_one_iff.trans and_comm).symm
 
@@ -353,7 +351,6 @@ theorem satt_conj :
       p.Satt I .asymmetric c g w ∧ q.Satt I .asymmetric (update I .asymmetric c p) g w :=
   Iff.rfl
 
-/-- The right disjunct is satt at the local context `c¬ᵖ`. -/
 theorem satt_disj :
     (disj p q).Satt I .asymmetric c g w ↔
       p.Satt I .asymmetric c g w ∧ q.Satt I .asymmetric (update I .asymmetric c (neg p)) g w :=
@@ -380,7 +377,6 @@ theorem realize_indef_of_ne_bot (hx : g x ≠ ⊥) (hp : p.Realize I g w) (hq : 
   obtain ⟨a, ha⟩ := Flat.ne_bot_iff_exists.1 hx
   exact ⟨a, by rwa [Assign.update_eq_self ha], by rwa [Assign.update_eq_self ha]⟩
 
-/-- A true indefinite whose bounds hold has a true body. -/
 theorem realize_conj_of_satt_indef (hs : (indef x p q).Satt I o c g w)
     (hr : (indef x p q).Realize I g w) : p.Realize I g w ∧ q.Realize I g w :=
   (hs.2 hr).1
@@ -391,8 +387,6 @@ The points at which a formula is true and satt at a context, the positive extens
 `posExt (p.toTrivalent I o c)`, decompose along the connectives; updating a context intersects
 it with this set (`update_eq_inter_posExt`). -/
 
-/-- A conjunction is true and satt where its left conjunct is, at the context, and its right
-conjunct is, at the left conjunct's local context. -/
 theorem posExt_conj : posExt ((conj p q).toTrivalent I .asymmetric c) =
     posExt (p.toTrivalent I .asymmetric c) ∩
       posExt (q.toTrivalent I .asymmetric (update I .asymmetric c p)) := by
@@ -401,7 +395,6 @@ theorem posExt_conj : posExt ((conj p q).toTrivalent I .asymmetric c) =
     Set.mem_inter_iff]
   tauto
 
-/-- An indefinite is true and satt where its body is and the indefinite is true. -/
 theorem posExt_indef : posExt ((indef x p q).toTrivalent I o c) =
     {i ∈ posExt ((conj p q).toTrivalent I o c) | (indef x p q).Realize I i.1 i.2} := by
   ext ⟨g, w⟩
@@ -409,7 +402,6 @@ theorem posExt_indef : posExt ((indef x p q).toTrivalent I o c) =
   exact ⟨fun ⟨hs, hr⟩ ↦ ⟨⟨(hs.2 hr).2, (hs.2 hr).1⟩, hr⟩,
     fun ⟨⟨hs, hr⟩, hi⟩ ↦ ⟨⟨⟨g, hs⟩, fun _ ↦ ⟨hr, hs⟩⟩, hi⟩⟩
 
-/-- An indefinite whose restrictor values its variable is true and satt where its body is. -/
 theorem posExt_indef_of_ne_bot (hp : ∀ g w, p.Realize I g w → g x ≠ ⊥) :
     posExt ((indef x p q).toTrivalent I o c) = posExt ((conj p q).toTrivalent I o c) := by
   rw [posExt_indef]
@@ -417,8 +409,6 @@ theorem posExt_indef_of_ne_bot (hp : ∀ g w, p.Realize I g w → g x ≠ ⊥) :
   obtain ⟨-, hr⟩ := toTrivalent_eq_one_iff.1 hi
   exact realize_indef_of_ne_bot (hp _ _ hr.1) hr.1 hr.2
 
-/-- A definite whose restrictor is idle on the context is true and satt where its restrictor is
-true and its scope true and satt. -/
 theorem posExt_iota_of_update_eq (h : update I o c p = c) :
     posExt ((iota x p q).toTrivalent I o c) =
       {i | p.Realize I i.1 i.2} ∩ posExt (q.toTrivalent I o c) := by
@@ -448,20 +438,16 @@ theorem update_conj : update I .asymmetric c (conj p q) =
   rw [update_eq_inter_posExt, posExt_conj, ← Set.inter_assoc, ← update_eq_inter_posExt,
     ← update_eq_inter_posExt]
 
-/-- An indefinite updates as its body does, at the points where it is true. -/
 theorem update_indef :
     update I o c (indef x p q) =
       {i ∈ update I o c (conj p q) | (indef x p q).Realize I i.1 i.2} := by
   rw [update_eq_inter_posExt, posExt_indef, update_eq_inter_posExt]
   exact Set.ext fun _ ↦ and_assoc.symm
 
-/-- An indefinite whose restrictor values its variable updates as its body. -/
 theorem update_indef_of_ne_bot (hp : ∀ g w, p.Realize I g w → g x ≠ ⊥) :
     update I o c (indef x p q) = update I o c (conj p q) := by
   rw [update_eq_inter_posExt, posExt_indef_of_ne_bot hp, ← update_eq_inter_posExt]
 
-/-- A definite whose restrictor is idle on the context updates as the conjunction of its
-restrictor and scope. -/
 theorem update_iota_of_update_eq (h : update I .asymmetric c p = c) :
     update I .asymmetric c (iota x p q) = update I .asymmetric c (conj p q) := by
   have hp : c ⊆ {i | p.Realize I i.1 i.2} := fun i hi ↦ (h.ge hi).2.1
@@ -472,7 +458,6 @@ theorem update_iota_of_update_eq (h : update I .asymmetric c p = c) :
 theorem update_iota_eq_empty (h : update I o c p ≠ c) : update I o c (iota x p q) = ∅ := by
   rw [update_eq_inter_posExt, posExt_iota_eq_empty h, Set.inter_empty]
 
-/-- A pronoun whose variable is unvalued at some point of the context empties it. -/
 theorem update_iota_top_eq_empty (h : ∃ i ∈ c, i.1 x = ⊥) :
     update I o c (iota x (top x) q) = ∅ := by
   obtain ⟨i, hi, hx⟩ := h
@@ -534,12 +519,10 @@ theorem posExt_top : posExt ((top x : Formula L V Δ).toTrivalent I o c) = {i | 
 theorem update_atom₁ : update I o c (atom₁ R x) = c ∩ valuedIn x (extension I R) := by
   rw [update_eq_inter_posExt, posExt_atom₁]
 
-/-- An atom true throughout a context is idle on it. -/
 theorem update_atom₁_of_subset (h : c ⊆ valuedIn x (extension I R)) :
     update I o c (atom₁ R x) = c := by
   rw [update_atom₁, Set.inter_eq_left.2 h]
 
-/-- A pronoun restrictor is idle on a context that values its variable throughout. -/
 theorem update_top_of_subset (h : c ⊆ valuedIn x S) : update I o c (top x) = c := by
   have hx : c ⊆ {i | i.1 x ≠ ⊥} := fun i hi ↦ ne_bot_of_mem_valuedIn (h hi)
   rw [update_eq_inter_posExt, posExt_top, Set.inter_eq_left.2 hx]
@@ -561,7 +544,6 @@ theorem realize_indef_atom₁ : (indef x (atom₁ F x) (atom₁ G x)).Realize I 
     (extension I F w ∩ extension I G w).Nonempty := by
   simp [Set.Nonempty]
 
-/-- The witness bound of `ɜx(Fx, Gx)` requires that, when some `F` is a `G`, `x` be one. -/
 theorem satt_indef_atom₁ [Nonempty E] : (indef x (atom₁ F x) (atom₁ G x)).Satt I .asymmetric c g w ↔
     ((extension I F w ∩ extension I G w).Nonempty →
       (g, w) ∈ valuedIn x (extension I F ⊓ extension I G)) := by
@@ -572,7 +554,6 @@ theorem satt_indef_atom₁ [Nonempty E] : (indef x (atom₁ F x) (atom₁ G x)).
     mem_valuedIn]
   grind [Flat.coe_ne_bot]
 
-/-- At every world some assignment satisfies the witness bound of `ɜx(Fx, Gx)`. -/
 theorem exists_satt_indef_atom₁ [Nonempty E] (c : Set (Assign V Δ E × W)) (w : W) :
     ∃ g, (indef x (atom₁ F x) (atom₁ G x)).Satt I .asymmetric c g w := by
   obtain h | ⟨a, ha⟩ := (extension I F w ∩ extension I G w).eq_empty_or_nonempty
@@ -633,8 +614,6 @@ theorem posExt_iota_top_after_indef_atom₁ :
   rw [posExt_iota_of_update_eq (update_top_of_subset hc), posExt_atom₁]
   exact Set.inter_eq_right.2 fun _ hi ↦ ne_bot_of_mem_valuedIn hi
 
-/-- After `ɜx(Fx, Gx)`, the bounds of the pronoun `ιx(⊤x, Hx)` hold at every point, its local
-context valuing `x` throughout. -/
 theorem satt_iota_top_after_indef_atom₁ : (iota x (top x) (atom₁ H x)).Satt I .asymmetric
     (update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x))) g w := by
   rw [satt_iota, update_top_of_subset (S := extension I F) fun i hi ↦ by

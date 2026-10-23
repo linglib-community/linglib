@@ -83,8 +83,6 @@ variable {α : Type*}
 private abbrev sandwich (kL : ℕ) (aL : α) (mid : List α) (kR : ℕ) (aR : α) : List α :=
   replicate kL aL ++ mid ++ replicate kR aR
 
-/-- A pattern that can borrow neither bookend's symbol for its head or its last element is a
-sublist of the bookended word exactly when it is a sublist of the middle. -/
 private lemma sublist_sandwich_iff {pat mid : List α} {aL aR : α}
     (h_first : pat.head? ≠ some aL) (h_last : pat.getLast? ≠ some aR) {kL kR : ℕ} :
     pat <+ sandwich kL aL mid kR aR ↔ pat <+ mid := by
@@ -92,7 +90,6 @@ private lemma sublist_sandwich_iff {pat mid : List α} {aL aR : α}
   rw [append_assoc, sublist_replicate_append_iff_of_head?_ne h_first,
     sublist_append_replicate_iff_of_getLast?_ne h_last]
 
-/-- Two members of a list occur in one order or the other as a subsequence, unless equal. -/
 private lemma sublist_pair_of_mem {l : List α} {x y : α} (hx : x ∈ l) (hy : y ∈ l) :
     x = y ∨ [x, y] <+ l ∨ [y, x] <+ l := by
   induction l with
@@ -150,13 +147,9 @@ theorem finnish_isReverseDefinite : finnish.IsReverseDefinite 1 := isReverseDefi
 def culminativity : Language Syl :=
   {w | w.filter Syl.isStressed = [] ∨ w.filter Syl.isStressed = [.stressed]}
 
-/-- Culminativity is tier-based co/finite, since on the stress tier the word is empty or a single
-stressed syllable. -/
 theorem culminativity_isTierBased : IsTierBased IsFiniteOrCofinite culminativity :=
   ⟨_, _, rfl, Or.inl ((Set.finite_singleton _).insert _)⟩
 
-/-- Culminativity is not generalized definite, since `σᵏσ́σᵏ` is in and `σᵏσ́σ́σᵏ` is out with
-the same prefix and suffix of length `k`. -/
 theorem culminativity_not_isGeneralizedDefinite (k : ℕ) :
     ¬ culminativity.IsGeneralizedDefinite k := by
   intro h
@@ -306,8 +299,6 @@ def navajo : Language (Option Bool) :=
 
 theorem navajo_isBTN : IsBTN navajo := IsBTC.union (isBTN_tierWord _ _) (isBTN_tierWord _ _)
 
-/-- The tier formula for Navajo describes the agreement grammar on the sibilant tier, which is
-tier-based strictly local and strictly piecewise. -/
 theorem navajo_eq_agree :
     navajo = (TierStrictlyLocalGrammar.agree (·.isSome)).language := by
   ext w
@@ -334,8 +325,6 @@ theorem navajo_eq_agree :
     · exact absurd (h _ _ h' rfl rfl) (by decide)
     · exact absurd (h _ _ h' rfl rfl) (by decide)
 
-/-- The sibilant classes are the classes of Hansson's segments, and Hansson's language is the
-inverse image of Navajo's tier formula under the class map. -/
 theorem preimage_sibilantClass_navajo :
     List.map Hansson2010.sibilantClass ⁻¹' navajo =
       Hansson2010.navajoSibilantHarmony.language := by
@@ -365,7 +354,6 @@ private abbrev tsuutinaIn (k : ℕ) : List (Option Bool) :=
 private abbrev tsuutinaOut (k : ℕ) : List (Option Bool) :=
   sandwich k (some false) [some true, some false] k (some true)
 
-/-- The two witnesses share their affixes of length `k` on every tier. -/
 private lemma tsuutina_tierAffixes (k : ℕ) (T : Option Bool → Bool) :
     Edge.left.takeAt k ((tsuutinaIn k).filter T) = Edge.left.takeAt k ((tsuutinaOut k).filter T) ∧
     Edge.right.takeAt k ((tsuutinaIn k).filter T) =
@@ -509,8 +497,6 @@ def Tone.toTBU : Tone → _root_.Tone.TBU
   | .high => .H
   | .low => .O
 
-/-- The plateauing conjunct `¬h..ℓ..h` holds of exactly the outputs of Hyman and Katamba's
-plateauing map. -/
 theorem plateauing_iff_mem_range_utp (w : List Tone) :
     w ∉ shuffleIdeal [.high, .low, .high] ↔
       w.map Tone.toTBU ∈ Set.range _root_.Tone.utp.map := by
@@ -528,14 +514,12 @@ private abbrev toneIn (k : ℕ) : List Tone := sandwich k .low [.low, .high, .hi
 private abbrev toneOut (k : ℕ) : List Tone :=
   sandwich k .low [.low, .high, .low, .high, .low] k .low
 
-/-- The two witnesses share their affixes of length `k` on every tier. -/
 private lemma tone_tierAffixes (k : ℕ) (T : Tone → Bool) :
     Edge.left.takeAt k ((toneIn k).filter T) = Edge.left.takeAt k ((toneOut k).filter T) ∧
     Edge.right.takeAt k ((toneIn k).filter T) = Edge.right.takeAt k ((toneOut k).filter T) := by
   cases h_low : T .low <;> cases h_high : T .high <;>
     simp [rtake_eq_reverse_take_reverse, h_low, h_high]
 
-/-- The tone witnesses are not separated by any multitier generalized definite language. -/
 private lemma tone_indist (k : ℕ) :
     IsBTC.Indist (IsGeneralizedDefinite · k) (toneIn k) (toneOut k) :=
   IsBTC.indist_isGeneralizedDefinite_of_tierAffixes (tone_tierAffixes k)
@@ -572,7 +556,6 @@ def arigibi : Language Tone := (shuffleIdeal [.high, .high])ᶜ
 theorem arigibi_isPiecewiseTestable : arigibi.IsPiecewiseTestable 2 :=
   isPiecewiseTestable_compl_shuffleIdeal (by decide)
 
-/-- The high tier of a tone string is a run of highs. -/
 private lemma filter_isHigh_eq_replicate (w : List Tone) :
     w.filter Tone.isHigh = replicate (w.filter Tone.isHigh).length .high :=
   eq_replicate_iff.mpr ⟨rfl, fun x hx ↦ by
@@ -580,7 +563,6 @@ private lemma filter_isHigh_eq_replicate (w : List Tone) :
     · exact absurd (mem_filter.mp hx).2 (by decide)
     · rfl⟩
 
-/-- Two highs occur in a tone string iff they occur on its high tier. -/
 private lemma high_high_sublist_iff (w : List Tone) :
     [Tone.high, .high] <+ w ↔ [Tone.high, .high] <+ w.filter Tone.isHigh :=
   ⟨fun h ↦ by simpa only [filter_cons_of_pos (by decide : Tone.isHigh .high = true), filter_nil]
@@ -633,7 +615,6 @@ theorem chuave_isLocallyTestable : chuave.IsLocallyTestable 1 := by
   exact singleton_sublist.trans
     ⟨fun h ↦ let ⟨s, t, e⟩ := append_of_mem h; ⟨s, t, by simp [e]⟩, fun ⟨_, _, e⟩ ↦ e ▸ by simp⟩
 
-/-- Chuave is the complement of an empty high tier, `¬[⋊⋉]_{h}`. -/
 theorem chuave_eq_compl_tierWord : chuave = (tierWord Tone.isHigh [])ᶜ := by
   ext w
   show [Tone.high] <+ w ↔ ¬ w.filter Tone.isHigh = []

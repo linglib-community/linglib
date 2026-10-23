@@ -84,37 +84,30 @@ def stanceGender (a b : R) : AssociationField Stance GenderPole R := .of λ
 /-- The indirect index of gender by a particle composes the two maps through the stances. -/
 def composed (a b : R) : AssociationField SFP GenderPole R := formStance * stanceGender a b
 
-/-- *ze* inherits the gender associations of coarse intensity. -/
 theorem composed_ze (a b : R) (g : GenderPole) :
     composed a b .ze g = stanceGender a b .coarse g := by
   simp [composed, Matrix.mul_apply, Finset.univ, Fintype.elems, Finset.sum_insert, formStance]
 
-/-- *wa* inherits the gender associations of delicate intensity. -/
 theorem composed_wa (a b : R) (g : GenderPole) :
     composed a b .wa g = stanceGender a b .delicate g := by
   simp [composed, Matrix.mul_apply, Finset.univ, Fintype.elems, Finset.sum_insert, formStance]
 
 variable [Preorder R] {a b : R}
 
-/-- *ze* indexes masculinity more than femininity, mediated by coarse intensity. -/
 theorem ze_indexes_masculine (h : b < a) :
     composed a b .ze .feminine < composed a b .ze .masculine := by
   simpa [composed_ze, stanceGender] using h
 
-/-- *wa* indexes femininity more than masculinity, mediated by delicate intensity. -/
 theorem wa_indexes_feminine (h : b < a) :
     composed a b .wa .masculine < composed a b .wa .feminine := by
   simpa [composed_wa, stanceGender] using h
 
-/-- Every particle indexes both poles, since every stance does and every particle indexes a
-stance, the non-exclusivity of the relation. -/
 theorem indexes_all (hb : 0 < b) (h : b < a) (sfp : SFP) (g : GenderPole) :
     (composed a b).Indexes sfp g := by
   cases sfp <;> cases g <;>
     simp [AssociationField.Indexes, composed_ze, composed_wa, stanceGender] <;>
     first | exact hb | exact hb.trans h
 
-/-- The two particles contrast on each pole. -/
 theorem composed_ze_ne_wa (h : b < a) (g : GenderPole) :
     composed a b .ze g ≠ composed a b .wa g := by
   cases g <;> simp [composed_ze, composed_wa, stanceGender] <;> first | exact h.ne' | exact h.ne

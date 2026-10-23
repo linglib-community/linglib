@@ -131,7 +131,6 @@ def Lang.rows (l : Lang) : List Row := HarleyRitter2002.rows.filter (·.lang = l
 /-- The geometry of a row's cell in its language. -/
 def Row.cell (r : Row) : Option (Finset Node) := Phi.Geometry.cell r.lang.active r.person r.number
 
-/-- Every attested cell is licensed by its language's inventory. -/
 theorem licenses_rows : ∀ r ∈ rows, Licenses r.lang.active r.person r.number := by decide
 
 /-- The inventory is read off the paradigm (§2.4, §3): Addressee is active iff
@@ -147,7 +146,6 @@ theorem active_of_rows (l : Lang) :
         ∃ r ∈ l.rows, ∃ s ∈ l.rows, r.person = s.person ∧ r.number ≠ s.number) := by
   cases l <;> decide
 
-/-- Within a language, distinct cells receive distinct geometries. -/
 theorem cell_nodup (l : Lang) : (l.rows.map Row.cell).Nodup := by
   cases l <;> decide
 
@@ -183,7 +181,6 @@ theorem cell_singular_eq (h : Node.minimal ∈ A) (p : Person) :
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, h, ↓reduceIte] <;> decide
 
-/-- Dual is paucal with Augmented pruned. -/
 theorem cell_dual_eq (A : Finset Node) (p : Person) :
     cell A p .dual = (cell A p .paucal).map (·.filter λ b => ¬ Node.augmented ≤ b) := by
   cases p <;> by_cases hi : Node.individuation ∈ A <;>
@@ -222,13 +219,10 @@ theorem inclusive_needs_second (h : Licenses A .firstInclusive n) :
 
 /-! ### Gender (§6.3) -/
 
-/-- **Universal 36**: gender implies number — Class depends on Individuation. -/
 theorem gender_needs_number (hA : IsLowerSet (↑A : Set Node)) (h : Node.nounClass ∈ A) :
     Node.individuation ∈ A :=
   hA (by decide) h
 
-/-- **Universals 37 and 45**: a gendered geometry with Group prunes to a
-gendered one without, so gender in the plural implies gender in the singular. -/
 theorem gendered_plural_needs_gendered_singular {g : Finset Node} (hg : g ∈ A.lowerSubsets)
     (hc : Node.nounClass ∈ g) :
     (g.filter λ b => ¬ Node.group ≤ b) ∈ A.lowerSubsets ∧
@@ -246,8 +240,6 @@ theorem no_gender_only_in_plural
 
 /-! ### Markedness (§1.3, §2.3) -/
 
-/-- Third person is the least marked: its geometry lies within every other
-person's in the same number. -/
 theorem third_least_marked {g g' : Finset Node} (h : cell A .third n = some g)
     (h' : cell A p n = some g') : g ⊆ g' := by
   cases p <;> cases n <;> by_cases hi : Node.individuation ∈ A <;>
@@ -272,8 +264,6 @@ theorem fijian_inclusive_paucal :
 
 /-! ### Acquisition (§3) -/
 
-/-- First person is acquired before second: its geometry is a proper part
-((20a-ii)). -/
 theorem first_before_second :
     ∀ g ∈ cell A .first n, ∀ g' ∈ cell A .second n, g ⊂ g' := by
   cases n <;> by_cases hi : Node.individuation ∈ A <;> by_cases hm : Node.minimal ∈ A <;>
@@ -281,7 +271,6 @@ theorem first_before_second :
       hi, hm, ↓reduceIte, Option.mem_def,
       Option.some.injEq, forall_eq', reduceCtorEq, false_implies, implies_true] <;> decide
 
-/-- Singular is acquired before plural where Minimal is a default ((20a-iii)). -/
 theorem singular_before_plural (hm : Node.minimal ∉ A) (hi : Node.individuation ∈ A) :
     ∀ g ∈ cell A p .singular, ∀ g' ∈ cell A p .plural, g ⊂ g' := by
   cases p <;> simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def,

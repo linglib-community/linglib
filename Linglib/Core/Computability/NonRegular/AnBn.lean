@@ -103,7 +103,6 @@ theorem derives_anbn (n : ℕ) : (anbn a b).Derives [nonterminal ()]
     rw [replicate_succ', replicate_succ]
     simp
 
-/-- The sentential forms of `anbn` are `aⁿ S bⁿ` and `aⁿbⁿ`. -/
 theorem derives_anbn_iff {v : List (Symbol α (anbn a b).NT)} :
     (anbn a b).Derives [nonterminal ()] v ↔ ∃ n,
       v = (replicate n a).map terminal ++ [nonterminal ()] ++ (replicate n b).map terminal ∨

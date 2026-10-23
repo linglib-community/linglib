@@ -113,7 +113,6 @@ theorem prob_eq_div (h : μ (support p) ≠ 0) :
     cond_apply_of_subset .of_discrete (posExt_subset_support p), ← posExt_union_negExt,
     measure_union (disjoint_posExt_negExt p) .of_discrete]
 
-/-- The weight of truth and falsity together is the weight of the defined region. -/
 theorem prob_eq_div_measure_support (h : μ (support p) ≠ 0) :
     prob μ p = μ (posExt p) / μ (support p) := by
   rw [prob_of_measure_support_ne_zero h,
@@ -160,7 +159,6 @@ theorem prob_eq_one_iff [IsFiniteMeasure μ] : prob μ p = 1 ↔ μ (negExt p) =
       cond_apply .of_discrete, support_inter_compl_posExt, mul_eq_zero,
       or_iff_right (ENNReal.inv_ne_zero.2 (measure_ne_top _ _))]
 
-/-- Against a point mass, a proposition has probability `1` exactly where it is not false. -/
 @[simp] theorem prob_dirac_eq_one_iff {w : W} : prob (Measure.dirac w) p = 1 ↔ 0 ≤ p w := by
   rw [prob_eq_one_iff, Measure.dirac_apply' _ .of_discrete, Set.indicator_apply_eq_zero]
   cases h : p w <;> simp [h]

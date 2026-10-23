@@ -560,8 +560,6 @@ def segment : Lang → String → Phonology.Segment
   | .amharic, "i" => Amharic.Phonology.i
   | _, _ => ⊥
 
-/-- The squib's roots, read as segments, are the fragments' roots, the Hebrew alternating stops
-of √kl and √skt realized as the stops the squib writes. -/
 theorem fragment_roots :
     [Hebrew.klt, Hebrew.kl, Hebrew.klj, Hebrew.dmj, Hebrew.glj, Hebrew.rmj, Hebrew.skt].map
         (·.map (Arad2005.fillContinuant false)) =

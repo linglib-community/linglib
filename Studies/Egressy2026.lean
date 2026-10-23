@@ -96,7 +96,6 @@ instance (x y : Cat) : Decidable (WilliamsCycle x y) := inferInstanceAs (Decidab
 /-- A projection of the dependency's own category is crossed. -/
 theorem WilliamsCycle.refl (x : Cat) : WilliamsCycle x x := le_rfl
 
-/-- Upward entailment says that whatever a projection blocks, every higher projection blocks. -/
 theorem WilliamsCycle.of_le {x y y' : Cat} (h : y'.fValue ≤ y.fValue) (hxy : WilliamsCycle x y) :
     WilliamsCycle x y' :=
   h.trans hxy
@@ -117,7 +116,6 @@ theorem raising_blocked_by_CP : ¬ WilliamsCycle .T .C := by decide
 def crossed? (e : Datum) : Option ComplementSize :=
   e.parse? "crossed" [("tP", .tP), ("cP", .cP)]
 
-/-- The raising rows are judged exactly as the Williams Cycle predicts. -/
 theorem raising_rows : ∀ e ∈ [ex_27, ex_28], ∀ cs ∈ crossed? e,
     e.judgment = .acceptable ↔ WilliamsCycle .T cs.highestHead := by
   decide
@@ -177,12 +175,10 @@ simultaneous reading arises only through the rule. -/
 def readings (a : Attachment) (cs : ComplementSize) : Finset Ordering :=
   pastUnderPast (SOTRule.Applicable a cs)
 
-/-- The rule reaches a non-speech-reporting clause, as it reaches an English complement. -/
 theorem applicable_nonSpeech :
     SOTRule.Applicable .sizeDependent ClauseType.nonSpeechReporting.size := by
   decide
 
-/-- The rule does not reach a speech-reporting clause, as it reaches no Japanese complement. -/
 theorem not_applicable_speech :
     ¬ SOTRule.Applicable .sizeDependent ClauseType.speechReporting.size := by
   decide
@@ -194,7 +190,6 @@ theorem simultaneous_iff (ct : ClauseType) :
       ct = .nonSpeechReporting := by
   cases ct <;> decide
 
-/-- The grammar always leaves the backshifted reading; only pragmatics removes it. -/
 theorem shifted_mem (a : Attachment) (cs : ComplementSize) :
     .lt ∈ readings a cs :=
   lt_mem_pastUnderPast
@@ -211,7 +206,6 @@ grammatical ones, narrowed to the simultaneous reading under direct perception. 
 def observed (direct : Prop) [Decidable direct] (rs : Finset Ordering) : Finset Ordering :=
   if direct then rs ⊓ ⟦present⟧ else rs
 
-/-- Pragmatics only removes readings. -/
 theorem observed_le (direct : Prop) [Decidable direct] (rs : Finset Ordering) :
     observed direct rs ≤ rs := by
   unfold observed
@@ -256,8 +250,6 @@ def predicted (e : Datum) (ct : ClauseType) : Finset Ordering :=
 def singleRows : List Datum :=
   [ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_11a, ex_11b, ex_11c, ex_12, ex_13, ex_14]
 
-/-- Every single-embedding row is predicted: the simultaneous reading exactly in
-non-speech-reporting clauses, and backshift wherever direct perception does not exclude it. -/
 theorem singleRows_predicted :
     ∀ e ∈ singleRows, ∀ ct : ClauseType, clauseType? e = some ct →
       Agrees e "" (predicted e ct) := by
@@ -343,17 +335,11 @@ theorem ex18_predicted : Agrees ex_18 "deepest " ⟦past⟧ := by decide
 
 /-! ### Rival mechanisms (§3.3, §4) -/
 
-/-- De re res-movement of the embedded PAST ([abusch-1988], [heim-1994-comments]) targets an
-A-position inside the matrix VP. A res-movement obeying the Williams Cycle could not leave even
-a TP, since T is above V, so it could not derive the simultaneous reading of non-speech-reporting
-clauses; deriving them requires a movement free of the locality every other Hungarian
-dependency obeys, whereas Agree from T (`raising_crosses_TP`) derives them within it. -/
 theorem resMovement_blocked_by_TP : ¬ WilliamsCycle .V .T := by decide
 
 /-- Sequence of Tense as a probe of [keine-2020]: a probe on T whose horizon is Say. -/
 def sotProbe : Probe.Profile := ⟨.T, some .Say⟩
 
-/-- The horizon account agrees with the Williams Cycle on the two Hungarian clause types. -/
 theorem sotProbe_clauseTypes :
     sotProbe.TransparentTo ClauseSpine.tP.label ∧
       ¬ sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc, .Say]).label := by

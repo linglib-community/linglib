@@ -277,7 +277,6 @@ theorem mem_evidence_utter {f : Form} {I : CredenceLevel × CredenceLevel}
     (α, Set.Icc I.1 I.2) ∈ (K.utter x f α).evidence x := by
   simp [utter, h, special]
 
-/-- An unmarked form registers no evidence. -/
 theorem evidence_utter_of_not_isMarked {f : Form} (h : ¬ f.IsMarked) (α : Set W) :
     (K.utter x f α).evidence = K.evidence := by
   rw [utter_eq_basic_of_not_isMarked K x h]

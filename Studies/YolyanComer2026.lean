@@ -166,8 +166,6 @@ instance Formula.instDecidableRealize [DecidableEq α] (w : List α)
           @decidable_of_iff _ _ (by simp [Formula.realize_bdia, h])
             (instDecidableRealize w U j φ)
 
-/-- Satisfaction is monotone in the valuation, since recursion variables occur only
-positively. -/
 theorem Formula.Realize.mono {w : List α} {U V : Fin n → Set ℕ} (hUV : U ≤ V) :
     ∀ {φ : Formula α n} {i : ℕ}, φ.Realize w U i → φ.Realize w V i
   | .tru, _, h => h
@@ -205,10 +203,8 @@ def op : (Fin n → Set ℕ) →o (Fin n → Set ℕ) where
 /-- The least-fixed-point valuation. -/
 noncomputable def sem : Fin n → Set ℕ := OrderHom.lfp (χ.op w)
 
-/-- `sem` is a fixed point of the system operator. -/
 theorem op_sem : χ.op w (χ.sem w) = χ.sem w := (χ.op w).map_lfp
 
-/-- `sem` is below every prefixed point. -/
 theorem sem_le {U : Fin n → Set ℕ} (hU : χ.op w U ≤ U) : χ.sem w ≤ U :=
   (χ.op w).lfp_le hU
 
@@ -274,8 +270,6 @@ def nasalizationGuarded : Program Seg NasHead
   | .V' => .label vow x
   | .N' => .ite (.label vow x) (.ite (.final x) (.label nas x) (.label nas x.succ)) (.label nas x)
 
-/-- The edge-guarded program is total on every word, testing `max` before reading the
-successor. -/
 theorem nasalizationGuarded_totalOn (w : List Seg) : nasalizationGuarded.TotalOn w := by
   intro f i hi
   have hx : x.eval w i = some i := Walk.eval_var hi
@@ -348,7 +342,6 @@ def waraoChi : System Seg 1 where
 /-- The least fixed point on /naote/, where nasality holds exactly at positions 0, 1, 2. -/
 abbrev waraoU : Fin 1 → Set ℕ := fun _ ↦ {i | i < 3}
 
-/-- `waraoU` is a prefixed point of the system operator. -/
 theorem warao_op_le : waraoChi.op naote waraoU ≤ waraoU := by
   intro X i hi
   obtain rfl : X = 0 := Subsingleton.elim X 0
@@ -370,8 +363,6 @@ theorem warao_op_le : waraoChi.op naote waraoU ≤ waraoU := by
     · obtain rfl : j = 2 := by omega
       exact absurd rfl (hT .t (by decide) : naote[3]? ≠ some Seg.t)
 
-/-- The three nasal positions are in the least fixed point (unfolding `op_sem` once per
-step of the spread). -/
 theorem warao_le_sem : waraoU ≤ waraoChi.sem naote := by
   have hmem : ∀ i, waraoChi.sem naote 0 i =
       (waraoChi.eqs 0).Realize naote (waraoChi.sem naote) i := fun i ↦
@@ -394,7 +385,6 @@ theorem warao_le_sem : waraoU ≤ waraoChi.sem naote := by
   interval_cases i
   exacts [h0, h1, h2]
 
-/-- The modal semantics on /naote/, exactly. -/
 theorem warao_sem : waraoChi.sem naote = waraoU :=
   le_antisymm (waraoChi.sem_le naote warao_op_le) warao_le_sem
 
@@ -489,9 +479,6 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
       exact .ite_false (.initial_false (Walk.eval_var hi) (by omega))
         (Eval.subst (by rw [Walk.eval_pred_var hi]; simp [pred?, hj]) (ih hj))
 
-/-- On Warao the translated program agrees with the modal semantics on /naote/
-(`waraoU` is `waraoChi.sem naote` by `warao_sem`), the rule-head hypothesis discharged by
-computation. -/
 theorem warao_tr_agreement (i : ℕ) (hi : i < 5) :
     Eval waraoChi.trProgram naote i (tr (waraoChi.eqs 0))
       (decide ((waraoChi.eqs 0).Realize naote waraoU i)) := by

@@ -205,7 +205,6 @@ def strengthenedDenotation [Preorder D] (tp : ThresholdPair D) : AntonymForm →
 
 variable [LinearOrder D] (θ : D) (tp : ThresholdPair D)
 
-/-- Under the contradictory denotation *unhappy* is *not happy* and *not unhappy* is *happy*. -/
 theorem contradictoryDenotation_synonymy :
     contradictoryDenotation θ .negative = contradictoryDenotation θ .notPositive ∧
       contradictoryDenotation θ .notNegative = contradictoryDenotation θ .positive :=

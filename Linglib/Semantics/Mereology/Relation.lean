@@ -77,7 +77,6 @@ def SUM (θ : α → β → Prop) : Prop := ∀ ⦃x e⦄, θ x e → ∀ ⦃y e
 
 variable {θ : α → β → Prop}
 
-/-- Summativity is cumulativity of the graph of `θ` in the product order. -/
 theorem sum_iff_cum_uncurry : SUM θ ↔ CUM (Function.uncurry θ) :=
   ⟨fun h _ hp _ hq ↦ h hp hq, fun h _ _ hx _ _ hy ↦ h (a := (_, _)) (b := (_, _)) hx hy⟩
 
@@ -126,7 +125,6 @@ theorem UP.uo_of_mo (hU : UP θ) (hm : MO θ) : UO θ := fun _ _ hxe _ hle ↦
   let ⟨y, hy, hθ⟩ := hm hxe hle
   ⟨y, ⟨hy, hθ⟩, fun _ hz ↦ hU hz.2 hθ⟩
 
-/-- With mapping to events, general uniqueness of events gives uniqueness of events. -/
 theorem GUE.ue_of_me (hG : GUE θ) (hm : ME θ) : UE θ := UP.uo_of_mo hG.flip hm
 
 end Preorder
@@ -149,7 +147,6 @@ theorem UE.mse_of_uo (hE : UE θ) (hO : UO θ) : MSE θ := fun _ _ hxe _ hyx ↦
   ⟨e', lt_of_le_of_ne he' fun h ↦ hyx.ne ((hO hxe le_rfl).unique ⟨hyx.le, h ▸ hθ⟩ ⟨le_rfl, hxe⟩),
     hθ⟩
 
-/-- Uniqueness of objects and of events give mapping to subobjects. -/
 theorem UO.mso_of_ue (hO : UO θ) (hE : UE θ) : MSO θ := UE.mse_of_uo hO hE
 
 /-- With unique objects and mapping to subobjects, the events of a fixed object form a quantized
@@ -169,8 +166,6 @@ section OrderIso
 
 variable [Preorder α] [Preorder β] {θ : α → β → Prop} {x : α} {e : β}
 
-/-- The choice of related part is monotone, so the part of the event related to a smaller part
-of the object lies below the part related to a larger one. -/
 private theorem monotone_of_ue (hE : UE θ) {f : Set.Iic x → β}
     (hf : ∀ y, (f y ≤ e ∧ θ y (f y)) ∧ ∀ e', e' ≤ e ∧ θ y e' → e' = f y) : Monotone f :=
   fun y₁ y₂ hle ↦
@@ -204,7 +199,6 @@ section Graph
 
 variable (f : β → α)
 
-/-- The graph of a function has unique participants. -/
 theorem up_graph : UP (· = f ·) := fun _ _ _ hx hy ↦ hx.trans hy.symm
 
 /-- The graph of a function has general uniqueness of events iff the function is injective, the
@@ -214,12 +208,10 @@ theorem gue_graph_iff : GUE (· = f ·) ↔ Function.Injective f :=
 
 variable [Preorder α] [Preorder β]
 
-/-- The graph of a function maps to objects iff the function is monotone. -/
 theorem mo_graph_iff : MO (· = f ·) ↔ Monotone f :=
   ⟨fun h _ _ hle ↦ let ⟨_, hy, hy'⟩ := h rfl hle; hy' ▸ hy,
     fun h _ _ hxe _ hle ↦ ⟨_, hxe ▸ h hle, rfl⟩⟩
 
-/-- The graph of a function has unique objects iff the function is monotone. -/
 theorem uo_graph_iff : UO (· = f ·) ↔ Monotone f :=
   ⟨fun h _ _ hle ↦ let ⟨_, ⟨hy, hy'⟩, _⟩ := h rfl hle; hy' ▸ hy,
     fun h _ _ hxe _ hle ↦ ⟨_, ⟨hxe ▸ h hle, rfl⟩, fun _ hz ↦ hz.2⟩⟩
@@ -241,7 +233,6 @@ theorem sum_graph_iff (f : β → α) : SUM (· = f ·) ↔ ∀ e e', f (e ⊔ e
   ⟨fun h e e' ↦ (h (x := f e) rfl (y := f e') rfl).symm,
     fun h _ _ hx _ _ hy ↦ (congr_arg₂ (· ⊔ ·) hx hy).trans (h _ _).symm⟩
 
-/-- The graph of a sum homomorphism is summative. -/
 theorem sum_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F) : SUM (· = f ·) :=
   (sum_graph_iff f).2 (map_sup f)
 

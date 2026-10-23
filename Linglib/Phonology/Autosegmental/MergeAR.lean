@@ -273,7 +273,6 @@ private theorem repointIdx_runIdx_append_right {i : ι} {p : ℕ} (hp : p < (Y.w
   · simp [offset, hi]
 
 variable (X Y) in
-/-- The collapse of a bridging concatenation is the merging concatenation of the collapses. -/
 theorem collapse_mul :
     ofAR ((X * Y).collapse m) = (ofAR (X.collapse m) * ofAR (Y.collapse m) : MergeAR m τ) := by
   refine toAR.injective <| AR.ext (funext fun i ↦ ?_) fun i j r s ↦ ?_

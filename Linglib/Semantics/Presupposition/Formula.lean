@@ -137,7 +137,6 @@ def accommodate : Formula Atom → Formula Atom
   | not F => not (accommodate F)
   | bin c F G => bin c (accommodate F) (accommodate G)
 
-/-- Local accommodation keeps the classical meaning. -/
 @[simp] theorem truth_accommodate (F : Formula Atom) : F.accommodate.truth I = F.truth I := by
   induction F with
   | atom => rfl
@@ -147,9 +146,6 @@ def accommodate : Formula Atom → Formula Atom
 
 variable {w : W}
 
-/-- The filtering evaluation of a binary formula is defined where the first argument's is, and
-the second's wherever the world is in the second argument's local context
-([karttunen-1974-presupposition]). -/
 theorem middleKleene_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
     (hF : F.middleKleene I w ≠ 0 → F.middleKleene I w = SignType.ofProp (w ∈ F.truth I)) :
     (bin c F G).middleKleene I w ≠ 0 ↔
@@ -164,7 +160,6 @@ theorem middleKleene_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
     cases c <;> by_cases ht : w ∈ F.truth I <;>
       simp_all [Connective.localContext]
 
-/-- Where the filtering evaluation is defined, it is the classical meaning. -/
 theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ 0) :
     F.middleKleene I w = SignType.ofProp (w ∈ F.truth I) := by
   induction F with
@@ -180,22 +175,17 @@ theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ 0)
     cases c <;> by_cases ht : w ∈ F.truth I <;>
       simp_all [Connective.localContext, truth, Connective.eval]
 
-/-- The filtering evaluation of a binary formula is defined where the first argument's is, and
-the second's wherever the world is in the second argument's local context. -/
 theorem middleKleene_bin_ne_zero {c : Connective} {F G : Formula Atom} :
     (bin c F G).middleKleene I w ≠ 0 ↔
       F.middleKleene I w ≠ 0 ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ 0) :=
   middleKleene_bin_ne_zero_iff I (middleKleene_eq_ofProp I)
 
-/-- Every formula contains an atom or a trigger. -/
 theorem nonempty_atom : Formula Atom → Nonempty Atom
   | atom p => ⟨p⟩
   | trigger p _ => ⟨p⟩
   | not F => nonempty_atom F
   | bin _ F _ => nonempty_atom F
 
-/-- A context admits a binary formula when it admits the first argument and the second argument's
-local context admits the second. -/
 theorem subset_support_middleKleene_bin_iff {c : Connective} {F G : Formula Atom} {C : Set W} :
     C ⊆ Function.support ((bin c F G).middleKleene I) ↔
       C ⊆ Function.support (F.middleKleene I) ∧
@@ -266,8 +256,6 @@ theorem admits_ccp_iff {F : Formula Atom} {C : Set W} :
     (F.ccp I).Admits C ↔ C ⊆ Function.support (F.middleKleene I) :=
   ⟨(ccp_spec I F C).1, fun h ↦ Part.dom_iff_mem.2 ⟨_, (ccp_spec I F C).2 h⟩⟩
 
-/-- The context change potential updates a context to its worlds at which the formula is
-classically true. -/
 theorem ccp_get {F : Formula Atom} {C : Set W} (h : (F.ccp I).Admits C) :
     (F.ccp I C).get h = C ∩ F.truth I :=
   Part.get_eq_of_mem ((ccp_spec I F C).2 ((admits_ccp_iff I).1 h)) h

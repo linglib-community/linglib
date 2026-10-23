@@ -122,11 +122,9 @@ def Structure.path : Structure → Role → TreePath
   | _, .second => ⟨[1, 0, 1, 0, 0]⟩
   | _, .reciprocal => ⟨[1, 0, 1, 1, 0]⟩
 
-/-- Every noun phrase of a stimulus sits at a noun phrase of its tree. -/
 theorem path_mem_labeled : ∀ s r, Structure.path s r ∈ labeled (Structure.tree s) {.N} := by
   decide
 
-/-- Distinct noun phrases of a stimulus sit at distinct positions. -/
 theorem path_injective (s : Structure) : Function.Injective s.path := by
   revert s; decide
 
@@ -144,9 +142,6 @@ instance (s : Structure) (r : Role) : Decidable (r.Available s) :=
   inferInstanceAs
     (Decidable (s.configuration.Condition (pair r .reciprocal) ∅ .reciprocal .reciprocal))
 
-/-- The embedded subject is available in every structure, and the second noun phrase exactly
-when it is an indirect object. The matrix subject lies outside the reciprocal's clause, and a
-distractor does not c-command the reciprocal. -/
 theorem available_iff (s : Structure) (r : Role) :
     r.Available s ↔ r = .embeddedSubject ∨ s = .indirectObject ∧ r = .second := by
   revert s r; decide
@@ -162,8 +157,6 @@ def Local (t : Tree Cat Unit) (p q : TreePath) : Prop :=
 instance (t : Tree Cat Unit) (p q : TreePath) : Decidable (Local t p q) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- On every stimulus Kush's feature at the reciprocal holds of exactly the available
-antecedents. -/
 theorem local_iff_available (s : Structure) (r : Role) (hr : r ≠ .reciprocal) :
     Local s.tree (s.path r) (s.path .reciprocal) ↔ r.Available s := by
   revert s r; decide
@@ -195,8 +188,6 @@ def matchCount (feats : List F) (cues : List (Cue F)) (s : CueSource) : ℕ :=
 def weightedActivation (w : CueSource → ℕ) (feats : List F) (cues : List (Cue F)) : ℕ :=
   ∑ s, w s * matchCount feats cues s
 
-/-- A candidate that matches whatever cue another matches matches at least as many cues at
-every source. -/
 theorem matchCount_le {a b : List F} {cues : List (Cue F)}
     (h : ∀ c ∈ cues, c.feature ∈ b → c.feature ∈ a) (s : CueSource) :
     matchCount b cues s ≤ matchCount a cues s :=
@@ -204,8 +195,6 @@ theorem matchCount_le {a b : List F} {cues : List (Cue F)}
     simp only [decide_eq_true_eq] at hb ⊢
     exact ⟨hb.1, h c hc hb.2⟩
 
-/-- A candidate whose matches dominate another's at every source, strictly at a source with
-positive weight, out-activates it. -/
 theorem weightedActivation_lt {w : CueSource → ℕ} {a b : List F} {cues : List (Cue F)}
     (hle : ∀ s, matchCount b cues s ≤ matchCount a cues s)
     (hlt : ∃ s, 0 < w s ∧ matchCount b cues s < matchCount a cues s) :
@@ -250,9 +239,6 @@ theorem features_second {s : Structure} (hs : s ≠ .indirectObject) (n : Number
     Role.features s .second n c = [.clauseMate, .number n, .marking c] := by
   cases s <;> first | exact absurd rfl hs | rfl
 
-/-- The plural embedded subject out-activates a distractor of any number and case under any
-weighting that gives the hierarchical cue weight. The subject matches every cue, and the
-distractor lacks the `local` feature. -/
 theorem target_retrieved {s : Structure} (hs : s ≠ .indirectObject) {w : CueSource → ℕ}
     (hw : 0 < w .hierarchical) (n : Number) (cT cD : Case) :
     weightedActivation w (Role.features s .second n cD) birbirleriCues <
@@ -263,8 +249,6 @@ theorem target_retrieved {s : Structure} (hs : s ≠ .indirectObject) {w : CueSo
     rcases hc with rfl | rfl | rfl <;> simp
   · simp [matchCount, birbirleriCues_eq]
 
-/-- A distractor that matches the reciprocal in number out-activates one that does not, under
-any weighting that gives item-level cues weight. -/
 theorem distractor_interference {s : Structure} (hs : s ≠ .indirectObject) {w : CueSource → ℕ}
     (hw : 0 < w .itemLevel) (c : Case) :
     weightedActivation w (Role.features s .second .singular c) birbirleriCues <
@@ -282,14 +266,12 @@ from within the reciprocal's clause. -/
 def Privileged (s : Structure) (r : Role) : Prop :=
   r ∈ s.configuration.domain .reciprocal ∧ s.configuration.commands r .reciprocal
 
-/-- The privileged store holds exactly Principle A's available antecedents. -/
 theorem privileged_iff_available {s : Structure} {r : Role} (hr : r ≠ .reciprocal) :
     Privileged s r ↔ r.Available s := by
   rw [Role.Available, Configuration.condition_anaphor (.inr rfl), Set.mem_empty_iff_false,
     false_or, Configuration.locallyBound_pair_iff hr]
   rfl
 
-/-- No distractor enters the privileged store. -/
 theorem not_privileged_second {s : Structure} (hs : s ≠ .indirectObject) :
     ¬ Privileged s .second := by
   rw [privileged_iff_available (by decide), available_iff]
@@ -309,12 +291,10 @@ def roles : List (String × Role) :=
   [("matrix subject", .matrixSubject), ("embedded subject", .embeddedSubject),
     ("distractor", .second), ("indirect object", .second)]
 
-/-- Every row records its structure, and every reading names a noun phrase. -/
 theorem rows_parse :
     ∀ x ∈ Examples.all, (structure? x).isSome ∧ ∀ y ∈ x.readings, (roles.lookup y.1).isSome := by
   decide
 
-/-- Each row's coindexations are Principle A on its structure. -/
 theorem rows_available : ∀ x ∈ Examples.all, ∀ s ∈ structure? x, ∀ y ∈ x.readings,
     ∀ r ∈ roles.lookup y.1, (y.2 = .acceptable ↔ r.Available s) := by
   decide

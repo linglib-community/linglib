@@ -133,7 +133,6 @@ instance : DecidablePred IsFirstPersonComplex := fun _ ↦ by
   unfold IsFirstPersonComplex; infer_instance
 instance : DecidablePred IsInclusive := fun _ ↦ by unfold IsInclusive; infer_instance
 
-/-- A category is a group iff it is not singular. -/
 theorem isGroup_iff_not_isSingular : c.IsGroup ↔ ¬ c.IsSingular := by
   revert c; decide +kernel
 
@@ -154,17 +153,14 @@ def person (c : Category) : Person :=
   if c.IsGroup then Person.ofParticipants c.participants
   else (Person.ofParticipants c.participants).coarsen
 
-/-- The person projection tracks speaker inclusion. -/
 theorem person_includesSpeaker_iff (c : Category) :
     c.person.IncludesSpeaker ↔ c.IncludesSpeaker := by
   cases c <;> decide +kernel
 
-/-- The person of a category covers the category's participants. -/
 theorem participants_mem_participantSets_person (c : Category) :
     c.participants ∈ c.person.participantSets := by
   cases c <;> decide
 
-/-- Unlike UD realization, the person projection separates inclusive from exclusive. -/
 theorem person_separates_clusivity :
     Category.speakerAddresseeOthers.person ≠ Category.speakerOthers.person := by decide +kernel
 
@@ -236,17 +232,13 @@ def sharedNumber (s : Finset Category) : Option Number :=
   else if ∀ c ∈ s, c.IsGroup then some .plural
   else some .general
 
-/-- A single category shares its own person. -/
 theorem sharedPerson_singleton (c : Category) : sharedPerson {c} = some c.person := by
   cases c <;> decide
 
-/-- The categories a coordinate pair realizes share that person, wherever there are any. -/
 theorem sharedPerson_ofPersonNumber (p : Person) (n : Number)
     (h : (ofPersonNumber p n).Nonempty) : sharedPerson (ofPersonNumber p n) = some p := by
   revert h; revert p n; decide
 
-/-- The categories a coordinate pair realizes share the general number only at general
-number. -/
 theorem sharedNumber_ofPersonNumber_eq_general (p : Person) (n : Number)
     (h : sharedNumber (ofPersonNumber p n) = some .general) : n = .general := by
   revert h; revert p n; decide

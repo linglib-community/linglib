@@ -136,9 +136,6 @@ instance [Nonempty α] : IsCancelSMul Polarity (Set α) :=
     · rfl
     · exact absurd h compl_ne_self
 
-/-- The polarity alternatives of a proposition, its orbit under the polarity group, are the
-proposition and its negation, the focus value of a focused polarity ([wilder-2013],
-[gutzmann-2012]) and the answers of the polar question. -/
 theorem orbit_eq_pair_compl (p : Set α) : MulAction.orbit Polarity p = {p, pᶜ} := by
   ext q
   simp only [MulAction.mem_orbit_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -177,7 +174,6 @@ def StrictMonoBy : Polarity → (α → β) → Prop
   | positive, f => StrictMono f
   | negative, f => StrictAnti f
 
-/-- Directions compose as polarities multiply. -/
 theorem StrictMonoBy.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg : s.StrictMonoBy g)
     (hf : t.StrictMonoBy f) : (s * t).StrictMonoBy (g ∘ f) := by
   cases s <;> cases t

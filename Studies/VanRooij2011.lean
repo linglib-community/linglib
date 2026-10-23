@@ -163,7 +163,6 @@ section Universal
 noncomputable def universal (v : Profile Ad X ℝ) (C : Finset X) : Profile Ad X ℚ :=
   fun x P ↦ universalDegree (v · P) C x
 
-/-- Universal degrees forget any strictly increasing map applied to an adjective's measure. -/
 theorem universal_transform {f : Ad → ℝ → ℝ} (hf : f ∈ (ordinal : Set (Ad → ℝ → ℝ)))
     (v : Profile Ad X ℝ) (C : Finset X) : universal (v.transform f) C = universal v C :=
   funext₂ fun x P ↦ congrFun (universalDegree_comp (OrderEmbedding.ofStrictMono (f P) (hf P))
@@ -178,8 +177,6 @@ theorem factor_universal_ordinal (C : Finset X) (x y : X) (P Q : Ad) (n : ℚ) :
   intro f hf v
   simp only [universal_transform hf]
 
-/-- Universal degrees are not in general an affine function of a measure on a ratio scale, since
-heights of one, two and four give universal degrees of one third, two thirds and one. -/
 theorem universal_not_affine :
     ¬ ∃ a b : ℚ, ∀ i, universalDegree ![(1 : ℕ), 2, 4] univ i = a * ![(1 : ℚ), 2, 4] i + b := by
   rintro ⟨a, b, h⟩
@@ -196,23 +193,16 @@ end Universal
 
 /-! ### Negative adjectives and multidimensional adjectives -/
 
-/-- Measuring shortness as a fixed number minus height, after Sassoon, *y is d shorter than x*
-holds exactly when *x is d taller than y*, whatever the number. -/
 theorem shorter_iff_taller {E : Type*} (height : E → ℝ) (m : ℝ) (x y : E) (d : ℝ) :
     DifferentialComparative (fun z ↦ m - height z) y x d ↔
       DifferentialComparative height x y d := by
   simp only [DifferentialComparative]
   constructor <;> intro h <;> linarith
 
-/-- Ratios of shortness are not meaningful, since shortnesses of six and two make one three times
-as short, and moving the origin by one makes the ratio five. -/
 theorem three_times_as_short_not_meaningful :
     FactorEquative ![(-6 : ℝ), -2] 0 1 3 ∧ ¬ FactorEquative (fun i ↦ ![(-6 : ℝ), -2] i + 1) 0 1 3 :=
   ⟨by norm_num [FactorEquative], by norm_num [FactorEquative]⟩
 
-/-- Aggregating the dimensions of a multidimensional adjective by a weighted sum is not
-meaningful on a co-ordinal scale, unlike aggregating by the minimum
-(`SocialChoice.maximin_ordinalLevelInvariant`). -/
 theorem not_utilitarian_ordinalLevel :
     ¬ Invariant ordinalLevel (utilitarian ![(1 : ℚ), 1] : Rule (Fin 2) (Fin 2) ℚ) := by
   intro h

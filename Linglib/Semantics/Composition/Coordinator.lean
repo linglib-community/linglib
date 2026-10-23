@@ -61,7 +61,6 @@ theorem denote_of_disjunctive (h : c.role = .disjunctive) (s : Set α) : c.denot
 theorem denote_of_negative (h : c.role = .negative) (s : Set α) : c.denote s = (sSup s)ᶜ := by
   simp [denote, h]
 
-/-- An adversative coordinator has the truth conditions of conjunction. -/
 theorem denote_of_adversative (h : c.role = .adversative) (s : Set α) : c.denote s = sInf s := by
   simp [denote, h]
 

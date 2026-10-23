@@ -69,16 +69,12 @@ variable {t t' : MeasureTerm} {k : ℝ}
 
 @[simp] theorem quantity_snd (t : MeasureTerm) : t.quantity.2 = t.dimension := rfl
 
-/-- A unit has positive size. -/
 theorem cast_magnitude_pos (t : MeasureTerm) : (0 : ℝ) < t.magnitude :=
   Rat.cast_pos.mpr t.magnitude_pos
 
-/-- A unit quantity is invertible. -/
 theorem isUnit_quantity (t : MeasureTerm) : IsUnit t.quantity :=
   Quantity.isUnit_iff.2 t.cast_magnitude_pos.ne'
 
-/-- One unit is `k` of another when its size is `k` times the other's in their common
-dimension. -/
 theorem quantity_eq_pure_mul_iff :
     t'.quantity = .pure k * t.quantity ↔
       (t'.magnitude : ℝ) = k * t.magnitude ∧ t'.dimension = t.dimension := by
@@ -138,25 +134,20 @@ def psi : MeasureTerm :=
 pound weighs a pound-force. -/
 def standardGravity : Quantity ℝ := ((980665 / 1000 : ℚ), .of .length / .of .time ^ 2)
 
-/-- A kilogram is a thousand grams. -/
 theorem kilogram_quantity : kilogram.quantity = .pure 1000 * gram.quantity := by
   simp [MeasureTerm.quantity_eq_pure_mul_iff, kilogram, gram]
 
-/-- A liter is a thousand milliliters. -/
 theorem liter_quantity : liter.quantity = .pure 1000 * milliliter.quantity := by
   simp [MeasureTerm.quantity_eq_pure_mul_iff, liter, milliliter]
 
-/-- A cubic meter is a thousand liters. -/
 theorem meter_quantity_pow_three : meter.quantity ^ 3 = .pure 1000 * liter.quantity := by
   ext
   · norm_num [MeasureTerm.quantity, meter, liter]
   · simp [MeasureTerm.quantity, meter, liter, QuantityDimension.volume]
 
-/-- A mile is 63360 inches. -/
 theorem mile_quantity : mile.quantity = .pure 63360 * inch.quantity := by
   norm_num [MeasureTerm.quantity_eq_pure_mul_iff, mile, inch]
 
-/-- A psi is the weight of a pound under standard gravity spread over a square inch. -/
 theorem psi_quantity :
     psi.quantity = pound.quantity * standardGravity / inch.quantity ^ 2 := by
   refine Prod.ext ?_ ?_

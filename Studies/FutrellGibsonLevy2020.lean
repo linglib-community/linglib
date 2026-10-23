@@ -85,8 +85,6 @@ theorem memJoint_real_singleton (w : W) (r : R) :
 theorem measureMutualInfo_memJoint_le [Fintype R] : Im[memJoint L π mem] ≤ Im[joint L π] :=
   measureMutualInfo_parallelComp_id_comp_le _ mem
 
-/-- The average difficulty of surprisal theory, a lossless comprehender who sees the context, is
-the conditional entropy of the next word given the context. -/
 theorem averageDifficulty_of_lossless {mp : MemoryProcess C R W} (h : mp.IsLosslessFor L) :
     mp.averageDifficulty L π = H[Prod.fst | Prod.snd ; joint L π] := by
   have hsnd (c : C) : (joint L π) (Prod.snd ⁻¹' {c}) = π {c} := by
@@ -115,8 +113,6 @@ noncomputable def bayes : MemoryProcess C R W where
   encode := mem
   predict := Kernel.ofFunOfCountable fun r ↦ ((memJoint L π mem)[|Prod.snd ⁻¹' {r}]).map Prod.fst
 
-/-- The average difficulty of the Bayes-optimal comprehender is the conditional entropy of the
-next word given the memory representation. -/
 theorem averageDifficulty_bayes :
     (bayes L π mem).averageDifficulty L π = H[Prod.fst | Prod.snd ; memJoint L π mem] := by
   rw [condEntropy_eq_sum_negLog _ measurable_fst measurable_snd, MemoryProcess.averageDifficulty]
@@ -131,8 +127,6 @@ theorem averageDifficulty_bayes :
     Kernel.coe_mk, map_measureReal_apply measurable_fst (.singleton _)]
   ring
 
-/-- In the average form of information locality, the Bayes-optimal comprehender's average
-difficulty exceeds surprisal theory's by exactly the predictive information memory loses. -/
 theorem averageDifficulty_bayes_sub_lossless {mp : MemoryProcess C R W}
     (h : mp.IsLosslessFor L) : (bayes L π mem).averageDifficulty L π - mp.averageDifficulty L π
       = Im[joint L π] - Im[memJoint L π mem] := by
@@ -141,7 +135,6 @@ theorem averageDifficulty_bayes_sub_lossless {mp : MemoryProcess C R W}
     condEntropy_fst_snd, memJoint, Measure.fst_parallelComp_id_comp]
   ring
 
-/-- Lossy memory cannot make comprehension easier on average. -/
 theorem averageDifficulty_lossless_le_bayes {mp : MemoryProcess C R W} (h : mp.IsLosslessFor L) :
     mp.averageDifficulty L π ≤ (bayes L π mem).averageDifficulty L π := by
   have := averageDifficulty_bayes_sub_lossless L π mem h
@@ -160,7 +153,6 @@ variable (L : Kernel W W) (π : Measure W)
 the unigram distribution of the next word. -/
 noncomputable def pmi (y w : W) : ℝ := Real.log ((L y).real {w} / (L ∘ₘ π).real {w})
 
-/-- Conditional surprisal is unigram surprisal less pointwise mutual information. -/
 theorem surprisal_eq_sub_pmi {y w : W} (h0 : (L ∘ₘ π).real {w} ≠ 0) (hy : (L y).real {w} ≠ 0) :
     surprisal (L y) w = surprisal (L ∘ₘ π) w - pmi L π y w := by
   unfold surprisal pmi
@@ -178,8 +170,6 @@ noncomputable def erasure (e : I) : MemoryProcess W (W ⊕ Unit) W where
 
 variable {e e' : I} {y w : W}
 
-/-- Under erasure noise, difficulty is the unigram surprisal less the surviving fraction of the
-pointwise mutual information, the exact single-dependency form of information locality. -/
 theorem expectedSurprisal_erasure (h0 : (L ∘ₘ π).real {w} ≠ 0) (hy : (L y).real {w} ≠ 0) :
     (erasure L π e).expectedSurprisal y w
       = surprisal (L ∘ₘ π) w - (1 - (e : ℝ)) * pmi L π y w := by
@@ -188,8 +178,6 @@ theorem expectedSurprisal_erasure (h0 : (L ∘ₘ π).real {w} ≠ 0) (hy : (L y
   rw [surprisal_eq_sub_pmi L π h0 hy]
   ring
 
-/-- The excess difficulty of erasure-noise processing over plain surprisal is the erased
-fraction of the pointwise mutual information. -/
 theorem expectedSurprisal_erasure_sub_surprisal (h0 : (L ∘ₘ π).real {w} ≠ 0)
     (hy : (L y).real {w} ≠ 0) :
     (erasure L π e).expectedSurprisal y w - surprisal (L y) w = (e : ℝ) * pmi L π y w := by
@@ -205,8 +193,6 @@ theorem locality (h : e ≤ e') (hpmi : 0 ≤ pmi L π y w) (h0 : (L ∘ₘ π).
   have : (e : ℝ) ≤ e' := h
   nlinarith
 
-/-- When the words are negatively associated, losing the context word lowers difficulty, so
-difficulty decreases with distance. -/
 theorem antilocality (h : e ≤ e') (hpmi : pmi L π y w ≤ 0) (h0 : (L ∘ₘ π).real {w} ≠ 0)
     (hy : (L y).real {w} ≠ 0) :
     (erasure L π e').expectedSurprisal y w ≤ (erasure L π e).expectedSurprisal y w := by
@@ -214,17 +200,14 @@ theorem antilocality (h : e ≤ e') (hpmi : pmi L π y w ≤ 0) (h0 : (L ∘ₘ 
   have : (e : ℝ) ≤ e' := h
   nlinarith
 
-/-- No erasure is the lossless comprehender who sees the context word. -/
 theorem erasure_zero_isLosslessFor : (erasure L π 0).IsLosslessFor L :=
   ⟨Sum.inl, measurable_inl,
     Kernel.ext fun _ ↦ (bernoulliMeasure_zero _ _).trans (Kernel.deterministic_apply _ _).symm,
     Kernel.ext fun _ ↦ rfl⟩
 
-/-- No erasure recovers surprisal. -/
 theorem erasure_zero : (erasure L π 0).expectedSurprisal y w = surprisal (L y) w :=
   MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless (erasure_zero_isLosslessFor L π) y w
 
-/-- Certain erasure recovers the unigram prior, a regression to prior expectations. -/
 theorem erasure_one : (erasure L π 1).expectedSurprisal y w = surprisal (L ∘ₘ π) w :=
   MemoryProcess.expectedSurprisal_of_dirac (mp := erasure L π 1) (c := y)
     (bernoulliMeasure_one _ _) w

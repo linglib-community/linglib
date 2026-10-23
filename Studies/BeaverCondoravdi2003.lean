@@ -383,8 +383,6 @@ def frame : Temporal.TWFrame World ℕ :=
 theorem respectsHistory_finishes : RespectsHistory frame finishes :=
   fun _ _ _ t' ht h ↦ by simpa [finishes] using h (t', false) ht
 
-/-- No fact is dated at time `0`, so up to time `1` every world is a historical alternative to
-every other. -/
 theorem mem_alternatives_of_le_one {t : ℕ} (ht : t ≤ 1) (w v : World) :
     v ∈ frame.alternatives (w, t) := by
   have hd (u : World) : u.death ≠ 0 := by cases u <;> decide
@@ -441,7 +439,6 @@ theorem mozart_update : context ∩ {w | before dies finishes alt w} = {.early} 
     simp only [alt, le_refl, ite_true, Set.mem_insert_iff, Set.mem_singleton_iff] at hv
     rcases hv with rfl | rfl <;> simp_all [finishes, World.completion]
 
-/-- The updated context is counterfactual, Mozart finishing the Requiem in none of its worlds. -/
 theorem counterfactual_mozart :
     Counterfactual finishes (context ∩ {w | before dies finishes alt w}) := by
   rw [mozart_update]
@@ -459,8 +456,6 @@ def readingOf : String → Option BeforeReading
   | "non-committal" => some .nonCommittal
   | _ => none
 
-/-- Every row reporting a non-veridical reading is a *before* sentence, as the veridicality of
-*after*, `veridical_inter_after`, predicts. -/
 theorem rows_nonVeridical_before :
     ∀ e ∈ Examples.all, ∀ r ∈ (e.feature? "reading" >>= readingOf).toList, r ≠ .veridical →
       e.feature? "connective" = some "before" := by

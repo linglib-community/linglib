@@ -43,8 +43,6 @@ namespace RSA
 variable {W U O : Type*} [MeasurableSpace W] [Fintype W] {α : ℝ} {C : U → ℝ}
   {L : U → Measure W} {b : O → Measure W} {o : O} {u u' : U}
 
-/-- Under domination the geometric mean of the listener's masses over the belief is the
-exponential of the expected log-probability. -/
 private theorem geomMean_eq_ofReal_exp {β ν : Measure W} [IsFiniteMeasure ν] (h : β ≪ ν) :
     β.geomMean (fun w ↦ ν {w}) =
       ENNReal.ofReal (Real.exp (∑ w, β.real {w} * Real.log (ν.real {w}))) :=
@@ -74,8 +72,6 @@ theorem speaker_apply_singleton_eq_zero_iff_not_ac [IsFiniteMeasure (b o)]
 
 variable [MeasurableSingletonClass W]
 
-/-- The geometric mean of the listener's masses over the belief, to the power `α`, is the
-exponential of the negative divergence, up to a factor fixed by the entropy of the belief. -/
 private theorem geomMean_rpow_eq_exp_klDiv {β ν : Measure W} [IsProbabilityMeasure β]
     [IsZeroOrProbabilityMeasure ν] (hα : 0 < α) :
     β.geomMean (fun w ↦ ν {w}) ^ α =
@@ -134,7 +130,6 @@ section Cond
 
 variable {μ : Measure W} [IsFiniteMeasure μ] {A : O → Set W} {sem : U → Set W}
 
-/-- The speaker produces exactly the utterances her knowledge entails. -/
 theorem speaker_cond_listener_truthful_apply_singleton_eq_zero_iff (hα : 0 < α) :
     speaker α C (listener μ (truthful sem)) (fun o ↦ μ[|A o]) o {u} = 0 ↔ ¬ A o ≤ᵐ[μ] sem u := by
   rw [speaker_apply_singleton_eq_zero_iff_not_ac hα, listener_truthful_apply,

@@ -41,8 +41,6 @@ open Degree AlexandropoulouGotzner2024a
 
 variable {D : Type*} [LinearOrder D] (tp : ThresholdPair D)
 
-/-- The two residues are the same region, the gap, so the distinctions are symmetric across
-polarity. -/
 theorem residues_symmetric :
     AntonymForm.strengthenedDenotation tp .notNegative \
         AntonymForm.strengthenedDenotation tp .positive =
@@ -51,8 +49,6 @@ theorem residues_symmetric :
   (AntonymForm.strengthenedDenotation_notNegative_diff_positive tp).trans
     (AntonymForm.strengthenedDenotation_notPositive_diff_negative tp).symm
 
-/-- Under a precision-opened gap, *not dirty* is not *clean* and *not clean* is not *dirty*,
-the relative-like distinctions of the single-statement data. -/
 theorem relative_like (h : tp.neg ≤ tp.pos) :
     (AntonymForm.strengthenedDenotation tp .notNegative \
         AntonymForm.strengthenedDenotation tp .positive).Nonempty ∧
@@ -63,8 +59,6 @@ theorem relative_like (h : tp.neg ≤ tp.pos) :
 
 /-! ### Rows -/
 
-/-- An unmodified negated adjective entails its antonym exactly when the Fragment's pair takes
-    complementary standards. -/
 theorem entails_iff_complementaryStandards :
     ∀ row ∈ Examples.all, row.feature? "modifier" = none →
       row.feature? "negation" = some "negated" →
@@ -72,8 +66,6 @@ theorem entails_iff_complementaryStandards :
         (row.feature? "relation" = some "entails" ↔ p.ComplementaryStandards) := by
   decide
 
-/-- The paper's two pragmatic readings are Horn's ranges, negative strengthening landing
-    *not large* on the antonym and the middling reading landing *not small* on the gap. -/
 theorem readings_are_horn_ranges :
     ∀ row ∈ Examples.all, ∀ f ∈ formOf row, ∀ i ∈ row.feature? "inference",
       (i = "negative_strengthening" ↔ hornRanges f = {.negative}) ∧

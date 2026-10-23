@@ -71,11 +71,8 @@ theorem exist_mono : Monotone (exist · φ) := fun _ _ h _ ⟨x, hx, hφ⟩ ↦ 
 
 theorem restrict_anti : Antitone (restrict · φ) := fun _ _ h _ hr x hx ↦ hr x (h x hx)
 
-/-- The weakest predicate is true of everything, so every alternative entails the existential
-assertion. -/
 theorem exist_subset_exist_top (P : Ent → Prop) : exist P φ ⊆ exist ⊤ φ := exist_mono le_top
 
-/-- The universal assertion on the weakest predicate entails every alternative. -/
 theorem restrict_top_subset (P : Ent → Prop) : restrict ⊤ φ ⊆ restrict P φ :=
   restrict_anti le_top
 
@@ -85,17 +82,11 @@ def alternatives (Ps : Set (Ent → Prop)) (φ : World → Ent → Prop) : Set (
 
 variable {Ps : Set (Ent → Prop)}
 
-/-- In an upward-entailing context the presupposition of *bhii* is contradictory as soon as
-there is an alternative, cardinality or contextual property, since each entails the assertion
-and so is at least as likely. -/
 theorem ue_clash (hμ : Monotone μ) (hPs : Ps.Nonempty) :
     ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) :=
   let ⟨P, hP⟩ := hPs
   not_evenPresup_of_subset hμ ⟨P, hP, rfl⟩ (exist_subset_exist_top P)
 
-/-- A downward-entailing operator reverses the entailments, so under it the presupposition
-asks only that no alternative be exactly as likely; negation, the complement of a prohibition
-verb, and the permission an imperative grants are such operators. -/
 theorem de_presup (hμ : Monotone μ) {Q : Set World → Set World} (hQ : Antitone Q) :
     evenPresup μ (Q (exist ⊤ φ)) (Q '' alternatives Ps φ) ↔
       ∀ P ∈ Ps, μ (Q (exist ⊤ φ)) ≠ μ (Q (exist P φ)) := by
@@ -104,10 +95,6 @@ theorem de_presup (hμ : Monotone μ) {Q : Set World → Set World} (hQ : Antito
   · simp only [alternatives, Set.image_image, Set.forall_mem_image]
     exact fun P _ ↦ hQ (exist_subset_exist_top P)
 
-/-- Of *koii bhii aayaa* and *koii bhii nahiiN aayaa*, and of the two implicature sets of a
-yes-no question, the positive reading clashes and the negative one is satisfiable. Negation
-inside the existential, the only scope English gives a subject indefinite, is again a positive
-context, which is why English lacks the subject NPIs that Hindi licenses. -/
 theorem clausemate_negation (hμ : Monotone μ) (hPs : Ps.Nonempty) :
     ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) ∧
       (evenPresup μ (exist ⊤ φ)ᶜ (compl '' alternatives Ps φ) ↔
@@ -115,8 +102,6 @@ theorem clausemate_negation (hμ : Monotone μ) (hPs : Ps.Nonempty) :
       ¬ evenPresup μ (exist ⊤ fun w x ↦ ¬ φ w x) (alternatives Ps fun w x ↦ ¬ φ w x) :=
   ⟨ue_clash hμ hPs, de_presup hμ compl_anti, ue_clash hμ hPs⟩
 
-/-- In the restriction of a generic the assertion entails every alternative, so the
-presupposition is satisfiable and the free-choice reading licensed. -/
 theorem generic_presup (hμ : Monotone μ) :
     evenPresup μ (restrict ⊤ φ) ((restrict · φ) '' Ps) ↔
       ∀ P ∈ Ps, μ (restrict ⊤ φ) ≠ μ (restrict P φ) := by
@@ -219,8 +204,6 @@ noncomputable def Row.ofDatum (r : Datum) : Option Row :=
 /-- The survey. -/
 noncomputable def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Setting aside the cardinality items in imperatives and with numerals, an indefinite plus
-*bhii* in the survey is acceptable exactly in the environments the analysis licenses. -/
 theorem analysis_matches_judgments :
     ∀ d ∈ data,
       d.alternatives = .property ∨
@@ -228,9 +211,6 @@ theorem analysis_matches_judgments :
       (d.judgment = .acceptable ↔ d.env.Licensed) := by
   decide +kernel
 
-/-- The numeral and measure items, whose alternatives are cardinalities, are out with a
-numeral and odd in imperatives, where the analysis predicts them licensed; the paper leaves
-the imperative case open. -/
 theorem cardinality_exceptions :
     ∀ d ∈ data, d.alternatives = .cardinality →
       d.env = .imperative ∨ d.env = .numeralGeneric → d.judgment ≠ .acceptable := by

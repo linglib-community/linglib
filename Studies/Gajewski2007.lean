@@ -308,7 +308,6 @@ abbrev belJohn : SetRel (Fin 5) (Fin 5) := {p | p.1 = 0 ∧ p.2 = 1}
 abbrev belFred : SetRel (Fin 5) (Fin 5) :=
   {p | (p.1 = 0 ∧ (p.2 = 2 ∨ p.2 = 3)) ∨ (p.1 = 1 ∧ p.2 = 4)}
 
-/-- Fred is settled at John's belief world about any proposition. -/
 private theorem belFred_settled (s : Set (Fin 5)) :
     ∀ u, 0 ~[belJohn] u → □[belFred] (· ∈ s) u ∨ □[belFred] (· ∉ s) u := by
   rintro u ⟨-, rfl⟩
@@ -320,7 +319,6 @@ private theorem belFred_settled (s : Set (Fin 5)) :
     rcases hv with ⟨h', -⟩ | ⟨-, rfl⟩
     exacts [by simp at h', h]
 
-/-- At John's desire world Fred believes no proposition excluding `2` or `3`. -/
 private theorem belFred_not_box {s : Set (Fin 5)} {x : Fin 5} (hx : x = 2 ∨ x = 3) (hxs : x ∉ s) :
     □[desJohn] (fun u ↦ ¬ □[belFred] (· ∈ s) u) 0 := by
   rintro u ⟨-, rfl⟩ hall
@@ -414,8 +412,6 @@ private theorem not_isAntiAdditive_id : ¬ IsAntiAdditive (id : Set Bool → Set
   intro h
   exact absurd ((h {true} {false} true).1 (.inl rfl)).2 (by simp)
 
-/-- Of the paper's environments, sentential negation, the negated existentials, the negated
-neg-raising predicates, *no one thinks* and *not think want* are anti-additive. -/
 theorem Env.antiAdditive_iff (e : Env) :
     e.AntiAdditive ↔ e ∈ [.negation, .notSome, .notThink, .noOneThinks, .notThinkWant] := by
   cases e with
@@ -484,7 +480,6 @@ structure Row where
 def Row.ofDatum (ex : Datum) : Option Row := do
   pure ⟨← ex.parse? "environment" envTable, ex.judgment⟩
 
-/-- Every example of the paper parses to a row. -/
 theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The paper's sentences with strict NPIs. -/

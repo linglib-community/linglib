@@ -149,8 +149,6 @@ theorem Independent.interaction_sum_eq_zero {con : ConstraintSet (X × Y) (Fin n
   exact Finset.sum_eq_zero fun k _ ↦ (h k).elim (·.comp _ |>.interaction_eq_zero)
     (·.comp _ |>.interaction_eq_zero)
 
-/-- Under independence, the harmony difference between two candidates has zero interaction, for
-every weighting. -/
 theorem Independent.interaction_harmonyScore_sub {con : ConstraintSet (X × Y) (Fin n)}
     (h : sq.Independent con) (w : Fin n → R) (a b : Y) :
     sq.interaction (fun x ↦ harmonyScore con w (x, a) - harmonyScore con w (x, b)) = 0 := by

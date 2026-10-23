@@ -96,7 +96,6 @@ lemma window_eq_window_iff {k : ℕ} {w y : List α} {i q : ℤ} :
 
 variable {k : ℕ} {w y l : List α}
 
-/-- The augmented string's entries split by region into left pad, letters, and right pad. -/
 lemma getElem?_boundary (j : ℕ) :
     (boundary k w)[j]? =
       if j < k - 1 then some none
@@ -118,7 +117,6 @@ lemma getElem?_boundary (j : ℕ) :
   · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
       List.getElem?_eq_none (by simp; omega)]
 
-/-- A letter entry sits in the letter region. -/
 lemma of_getElem?_boundary_eq_some {j : ℕ} {a : α}
     (h : (boundary k w)[j]? = some (some a)) :
     k - 1 ≤ j ∧ w[j - (k - 1)]? = some a := by
@@ -128,7 +126,6 @@ lemma of_getElem?_boundary_eq_some {j : ℕ} {a : α}
   · exact ⟨by omega, by simpa using h⟩
   · exact absurd h (by simp)
 
-/-- A marker entry sits in one of the pads. -/
 lemma of_getElem?_boundary_eq_none {j : ℕ}
     (h : (boundary k w)[j]? = some (none : Option α)) :
     j < k - 1 ∨ k - 1 + w.length ≤ j := by
@@ -138,7 +135,6 @@ lemma of_getElem?_boundary_eq_none {j : ℕ}
   · exact absurd h (by simp)
   · exact .inr (by omega)
 
-/-- Boundary entries are configuration values, shifted by the pad width. -/
 lemma getElem?_boundary_eq_getElem?_int {q : ℕ} (h : q < w.length + 2 * (k - 1)) :
     (boundary k w)[q]? = some (w[(q : ℤ) - (k - 1 : ℕ)]?) := by
   rw [getElem?_boundary]

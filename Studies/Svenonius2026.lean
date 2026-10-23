@@ -138,8 +138,6 @@ subject suffix is still bare, so by `ComplexHead.visible_of_exp_none` no `vInit`
 the elsewhere -ay wins. -/
 theorem exponents_insideOut13b : insideOut13b.exponents = [.ndur, .ay, .on, .«ɗi»] := by decide
 
-/-- The word inside-out insertion builds is not a joint spell-out: once -on is realized its vowel
-is visible, and the prevocalic item beats the elsewhere -ay it chose. -/
 theorem not_joint_insideOut13b :
     ¬ IsJointSpellout vocabulary Exp.phon (insideOut13b.root :: insideOut13b.heads) := by decide
 
@@ -209,14 +207,11 @@ theorem joint_return :
     IsJointSpellout vocabulary Exp.phon returnDual ∧
       IsJointSpellout vocabulary Exp.phon returnPlural := by decide
 
-/-- The elsewhere root before the vowel-initial -i is not a joint spell-out: the prevocalic item
-applies in the realized word and beats it. -/
 theorem not_joint_return_elsewhere :
     ¬ IsJointSpellout vocabulary Exp.phon
       [⟨{.ret}, some .nung, .after⟩, ⟨{.nsg}, some .i, .after⟩, ⟨{.exc}, some .ge, .after⟩] := by
   decide
 
-/-- The control: both forms of 'live' are joint spell-outs with the same root. -/
 theorem joint_live :
     IsJointSpellout vocabulary Exp.phon liveDual ∧
       IsJointSpellout vocabulary Exp.phon livePlural := by decide

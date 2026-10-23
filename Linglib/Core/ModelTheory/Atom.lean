@@ -115,7 +115,6 @@ theorem mem_realizers_image_map {f : α → β} {v : β → M} :
 theorem mem_realizers_smul {σ : Equiv.Perm α} : v ∈ realizers M (σ • T) ↔ v ∘ σ ∈ realizers M T :=
   mem_realizers_image_map
 
-/-- A homomorphism carries an assignment realizing a set of atoms to one realizing it. -/
 theorem comp_mem_realizers {N : Type*} [L.Structure N] (φ : M →[L] N) (hv : v ∈ realizers M T) :
     φ ∘ v ∈ realizers N T :=
   mem_realizers.2 fun a ha ↦ φ.map_rel a.rel _ (mem_realizers.1 hv a ha)
@@ -134,8 +133,6 @@ instance (T : Set (L.Atom α)) : L.Structure (Canonical T) where
   funMap f := isEmptyElim f
   RelMap R xs := ⟨R, xs⟩ ∈ T
 
-/-- A map of variables realizes a set of atoms in the canonical structure of another exactly when
-it carries the first into the second. -/
 theorem of_comp_mem_realizers_iff {B : Set (L.Atom β)} {f : α → β} :
     of B ∘ f ∈ realizers (Canonical B) T ↔ map f '' T ⊆ B := by
   simp only [mem_realizers, Set.image_subset_iff]

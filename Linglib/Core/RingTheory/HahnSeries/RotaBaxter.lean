@@ -83,7 +83,6 @@ section Ring
 
 variable [AddCommMonoid Γ] [LinearOrder Γ] [IsOrderedCancelAddMonoid Γ] [Ring R]
 
-/-- A product of polar parts is polar. -/
 private theorem truncLT_truncLT_mul_truncLT (x y : R⟦Γ⟧) :
     truncLT 0 (truncLT 0 x * truncLT 0 y) = truncLT (0 : Γ) x * truncLT 0 y := by
   ext i
@@ -93,7 +92,6 @@ private theorem truncLT_truncLT_mul_truncLT (x y : R⟦Γ⟧) :
   rw [support_truncLT] at hj hl
   exact (add_neg hj.2 hl.2).not_ge hi
 
-/-- A product of nonpolar parts is nonpolar. -/
 private theorem truncLT_sub_truncLT_mul (x y : R⟦Γ⟧) :
     truncLT (0 : Γ) ((x - truncLT 0 x) * (y - truncLT 0 y)) = 0 := by
   have hnonneg (z : R⟦Γ⟧) {j : Γ} (hj : j ∈ (z - truncLT 0 z).support) : 0 ≤ j := by

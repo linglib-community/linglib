@@ -159,22 +159,15 @@ def ditransitive : List DitransitiveArg := [.subject, .directObject, .indirectOb
 def ditransitiveCases : Case.Valuation DitransitiveArg (Case × Case.Mechanism) :=
   grammar.assign DitransitiveArg.position [(.T, .C)] ditransitive
 
-/-- The direct object is valued accusative by the dependent rule, the subject being the
-    caseless NP above it. -/
 theorem do_gets_dependent_acc :
     ditransitiveCases.valueOf .directObject = some (.acc, .dependent) := by decide
 
-/-- The subject is valued nominative by T, not by a dependent rule. -/
 theorem subject_gets_nom_by_agree :
     ditransitiveCases.valueOf .subject = some (.nom, .agree) := by decide
 
-/-- The indirect object keeps its lexical dative and neither competes for dependent case nor
-    creates a case position. -/
 theorem io_has_lexical_case :
     ditransitiveCases.valueOf .indirectObject = some (.dat, .lexical) := by decide
 
-/-- The VP edge is a dependent-case position, as the grammar values the shifted direct object of
-a ditransitive, and the presubject position is none. -/
 theorem vpEdge_dependentAcc :
     vpEdge.DependentAcc ∧ ¬ presubject.HasCase ∧
       (ditransitiveCases.valueOf .directObject).map (·.2) = some .dependent := by
@@ -320,16 +313,12 @@ def accRows : List AccRow := Examples.all.filterMap AccRow.ofDatum
 
 example : accRows.length = 5 := by decide
 
-/-- Accusative on the embedded subject is licensed exactly when an unmarked matrix argument
-c-commands it: a nominative subject competes, a dative or impersonal predicate's argument does
-not. -/
 theorem acc_subjects :
     ∀ r ∈ accRows, r.judgment = .acceptable ↔ r.competitor.site.DependentAcc := by
   decide
 
 /-! ### Section 5.3: dative is not a dependent case -/
 
-/-- Mongolian differs from Sakha in the verb phrase's high case alone: no dependent dative. -/
 theorem mongolian_differs_from_sakha_in_dat_only :
     grammar.rules .v = { BakerVinokurova2010.grammar.rules .v with high := none } ∧
     grammar.rules .C = BakerVinokurova2010.grammar.rules .C ∧
@@ -351,8 +340,6 @@ def SakhaArg.position : SakhaArg → Minimalist.PhasedNP
 /-- The Sakha ditransitive, highest first. -/
 def sakhaDitransitive : List SakhaArg := [.subject, .goal, .theme]
 
-/-- The Mongolian grammar values no NP of the Sakha ditransitive dative, so the goal Sakha
-values dative comes out otherwise: the dative of a Mongolian goal is nonstructural. -/
 theorem mongolian_derives_no_dative :
     (∀ s ∈ grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive,
       s.2.map (·.1) ≠ some .dat) ∧

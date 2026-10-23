@@ -86,8 +86,6 @@ theorem absolutePresup_and_relativePresup_iff {r s : Polarity} {q : Question W}
     refine ⟨⟨_, hq, hH⟩, (r * s, α), hant, ?_⟩
     rw [hH, Prod.smul_mk, smul_eq_mul, ← mul_assoc, Polarity.mul_self, Polarity.positive_mul]
 
-/-- When a response and its antecedent highlight the images of one possibility `β` under their
-polarities, the relative feature of the response is its relative polarity. -/
 theorem relativePresup_smul_iff {r : Polarity} (x : Response) (β : Polarity × Set W) :
     RelativePresup r {x.polarity • β} {x.antecedent • β} ↔ r = x.relative := by
   simp only [RelativePresup, Set.singleton_eq_singleton_iff, exists_eq_left']
@@ -101,7 +99,6 @@ open Highlighting Highlighting.Formula
 
 variable {A : Type*} (v : A → Set W) {e o : A}
 
-/-- *Is the number of planets even?* and *Is it odd?* express the same issue. -/
 theorem proposition_query_even_eq_odd (hodd : v o = (v e)ᶜ) :
     (query (atom e)).proposition v = (query (atom o)).proposition v := by
   simp only [proposition, Question.query_ofSet, hodd, Question.polar_compl]
@@ -221,14 +218,11 @@ theorem combination_notMem_english (p : English.PolarityParticle) (r s : Polarit
     Target.combination r s ∉ english p := by
   simp [english]
 
-/-- The English particles are usable in exactly the responses Farkas and Bruce say they mark,
-*yes* [same] or [+] and *no* [reverse] or [−]. -/
 theorem usable_english_iff_mem (p : English.PolarityParticle) (x : Response) :
     Usable english p x.relative x.polarity ↔ x ∈ FarkasBruce2010.english p := by
   simp [Usable, Realizes, mem_english_iff, combination_notMem_english, Response.Feature.value,
     FarkasBruce2010.mem_english_iff]
 
-/-- French *si* is usable in exactly the [reverse, +] responses of Farkas and Bruce. -/
 theorem usable_si_iff_mem_reversePositive (x : Response) :
     Usable french .si x.relative x.polarity ↔ x ∈ FarkasBruce2010.reversePositive := by
   obtain ⟨m, a, s⟩ := x
@@ -282,12 +276,9 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The relative feature of every response, its relative polarity (`relativePresup_smul_iff`),
-is the one the paper assigns it. -/
 theorem relative_eq : ∀ r ∈ rows, r.response.relative = r.relative := by
   decide
 
-/-- Every example is judged acceptable exactly when its particle is usable in its response. -/
 theorem judgment_iff_usable :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔
       r.particle.Usable r.response.relative r.response.polarity) := by

@@ -93,7 +93,6 @@ instance : ∀ (a : Vertex L) (ks : Multiset (Vertex L)), Decidable (Vertex.Lice
   | .inl none, ks => inferInstanceAs (Decidable (Multiset.card ks = 2))
   | .inr _, _ => decidable_of_iff _ Multiset.card_eq_zero
 
-/-- The licensing of a vertex depends only on how many children it has. -/
 theorem Vertex.licenses_iff_of_card_eq {a : Vertex L} {ks ls : Multiset (Vertex L)}
     (h : Multiset.card ks = Multiset.card ls) : a.Licenses ks ↔ a.Licenses ls := by
   rcases a with (_ | _) | _ <;>
@@ -118,7 +117,6 @@ namespace SyntacticObject
 
 variable {L : Type}
 
-/-- A leaf carrying a lexical leaf or a trace is a syntactic object. -/
 theorem isSyntacticObject_mk_leaf {a : Vertex L} (ha : a ≠ Vertex.bare) :
     IsSyntacticObject (UnorderedTree.mk (.node a [])) := by
   refine (isSyntacticObject_mk _).mpr (licensed_node_iff.mpr ⟨?_, by simp⟩)
@@ -126,13 +124,11 @@ theorem isSyntacticObject_mk_leaf {a : Vertex L} (ha : a ≠ Vertex.bare) :
   | .inl (some _), _ | .inr _, _ => rfl
   | .inl none, h => exact absurd rfl h
 
-/-- A bare binary node is a syntactic object exactly when both daughters are. -/
 @[simp] theorem isSyntacticObject_mk_merge (l r : RoseTree (Vertex L)) :
     IsSyntacticObject (UnorderedTree.mk (.node Vertex.bare [l, r])) ↔
       IsSyntacticObject (UnorderedTree.mk l) ∧ IsSyntacticObject (UnorderedTree.mk r) := by
   simp [licensed_node_iff, Vertex.Licenses]
 
-/-- A node of a syntactic object has either no children or exactly two. -/
 theorem length_eq_zero_or_two {a : Vertex L} {cs : List (RoseTree (Vertex L))}
     (h : IsSyntacticObject (UnorderedTree.mk (.node a cs))) : cs.length = 0 ∨ cs.length = 2 := by
   have h := (licensed_node_iff.mp ((isSyntacticObject_mk _).mp h)).1
@@ -140,7 +136,6 @@ theorem length_eq_zero_or_two {a : Vertex L} {cs : List (RoseTree (Vertex L))}
   | .inl (some _) | .inr _ => exact .inl (by simpa [Vertex.Licenses] using congrArg Multiset.card h)
   | .inl none => exact .inr (by simpa [Vertex.Licenses] using h)
 
-/-- A node of a syntactic object with children is bare. -/
 theorem eq_bare_of_ne_nil {a : Vertex L} {cs : List (RoseTree (Vertex L))}
     (h : IsSyntacticObject (UnorderedTree.mk (.node a cs))) (hcs : cs ≠ []) : a = Vertex.bare := by
   have h := (licensed_node_iff.mp ((isSyntacticObject_mk _).mp h)).1
@@ -150,7 +145,6 @@ theorem eq_bare_of_ne_nil {a : Vertex L} {cs : List (RoseTree (Vertex L))}
 
 end SyntacticObject
 
-/-- The vertices of a syntactic object have zero or two children. -/
 theorem IsSyntacticObject.isFullBinary {L : Type} {t : UnorderedTree (SyntacticObject.Vertex L)}
     (h : IsSyntacticObject t) : t.IsFullBinary :=
   UnorderedTree.Licensed.mono (R := SyntacticObject.Vertex.Licenses) (fun
@@ -204,7 +198,6 @@ def traceOf (a : L) : SyntacticObject L :=
 @[simp] theorem traceOf_val (a : L) :
     (traceOf a).val = UnorderedTree.leaf (Vertex.traceOf a) := rfl
 
-/-- A bare binary node is a syntactic object exactly when both daughters are. -/
 theorem isSyntacticObject_merge_iff (a b : UnorderedTree (Vertex L)) :
     IsSyntacticObject (UnorderedTree.node Vertex.bare {a, b}) ↔
       IsSyntacticObject a ∧ IsSyntacticObject b := by
@@ -228,7 +221,6 @@ noncomputable def merge (l r : SyntacticObject L) : SyntacticObject L :=
 theorem merge_comm (l r : SyntacticObject L) : merge l r = merge r l :=
   Subtype.ext (by rw [merge_val, merge_val, Multiset.pair_comm])
 
-/-- Merge is injective up to the order of its daughters. -/
 theorem merge_eq_merge_iff {l r l' r' : SyntacticObject L} :
     merge l r = merge l' r' ↔ l = l' ∧ r = r' ∨ l = r' ∧ r = l' := by
   refine ⟨fun h ↦ ?_, ?_⟩
@@ -260,7 +252,6 @@ theorem traceOf_ne_merge (a : L) (l r : SyntacticObject L) :
 theorem traceOf_ne_leaf (a b : L) : traceOf a ≠ leaf b :=
   fun h ↦ by simpa using congrArg (fun s : SyntacticObject L ↦ s.val.value) h
 
-/-- Merge of two ordered-built objects is the ordered binary node, so concrete results reduce. -/
 theorem merge_mk (pl pr : RoseTree (Vertex L))
     (hl : IsSyntacticObject (UnorderedTree.mk pl)) (hr : IsSyntacticObject (UnorderedTree.mk pr)) :
     (merge ⟨UnorderedTree.mk pl, hl⟩ ⟨UnorderedTree.mk pr, hr⟩).val

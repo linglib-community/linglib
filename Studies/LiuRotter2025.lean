@@ -63,17 +63,13 @@ def vacuityEffect : ModalForce → SignType := λ _ => 0
 @[simp] theorem spreadEffect_possibility : spreadEffect .possibility = -1 := rfl
 @[simp] theorem vacuityEffect_apply (f : ModalForce) : vacuityEffect f = 0 := rfl
 
-/-- The force × number interaction: the concord effect reverses sign with force. -/
 theorem spread_crossover : spreadEffect .necessity ≠ spreadEffect .possibility := by decide
 
-/-- Concord is non-vacuous: it shifts commitment under both forces. -/
 theorem spread_nonvacuous :
     spreadEffect .necessity ≠ 0 ∧ spreadEffect .possibility ≠ 0 := by decide
 
-/-- Vacuity predicts no interaction: the null effect is the same for every force. -/
 theorem vacuity_no_interaction (f g : ModalForce) : vacuityEffect f = vacuityEffect g := rfl
 
-/-- The crossover refutes vacuity, already at necessity. -/
 theorem spread_refutes_vacuity : spreadEffect ≠ vacuityEffect :=
   λ h => absurd (congrFun h .necessity) (by decide)
 
@@ -92,8 +88,6 @@ theorem warmth_no_interaction (f g : ModalForce) : warmthEffect f = warmthEffect
 theorem warmth_real_cost (f : ModalForce) : warmthEffect f ≠ 0 := by
   show (-1 : SignType) ≠ 0; decide
 
-/-- The warmth penalty is not the commitment crossover: it is constant where spread
-reverses. -/
 theorem warmth_ne_spread : warmthEffect ≠ spreadEffect :=
   λ h => absurd (congrFun h .necessity) (by decide)
 
@@ -107,11 +101,9 @@ def SharesConcordForce (a b : ModalItem) : Prop :=
 instance : DecidableRel SharesConcordForce :=
   λ _ _ => inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, (_ ↔ _)))
 
-/-- *must* and *certainly*, the necessity stimulus, share necessity-type force. -/
 theorem must_certainly_share :
     SharesConcordForce must.toModalItem certainly := by decide
 
-/-- *may* and *possibly*, the possibility stimulus, share possibility force. -/
 theorem may_possibly_share :
     SharesConcordForce may.toModalItem possibly := by decide
 
@@ -138,14 +130,11 @@ one. -/
 def accountErrs (acc : ModalForce → SignType) (o : ShiftObservation) : Prop :=
   acc o.force ≠ o.observedSign
 
-/-- Predicting a null effect, the vacuity account errs on every cell with a real shift. -/
 theorem vacuity_errs_on_shift (o : ShiftObservation) (h : o.mcMean ≠ o.smMean) :
     accountErrs vacuityEffect o := by
   show (0 : SignType) ≠ SignType.sign ((o.mcMean : ℤ) - o.smMean)
   exact (sign_ne_zero.mpr (sub_ne_zero.mpr (by exact_mod_cast h))).symm
 
-/-- When the observed shift carries the sign the spread account predicts, the account does
-not err. -/
 theorem spread_correct_of_match (o : ShiftObservation)
     (h : o.observedSign = spreadEffect o.force) : ¬ accountErrs spreadEffect o := by
   simp only [accountErrs, not_not]; exact h.symm
@@ -168,8 +157,6 @@ def observedShift (measure : String) (force : ModalForce) : Option ShiftObservat
   let sm ← findCell (forceKey force) "SM"
   pure { force := force, mcMean := ← mc.nat? measure, smMean := ← sm.nat? measure }
 
-/-- Commitment shifts carry the spread sign: concord strengthens necessity and weakens
-possibility. -/
 theorem commitment_matches_spread :
     (observedShift "commitment" .necessity).map (·.observedSign) =
         some (spreadEffect .necessity) ∧
@@ -177,7 +164,6 @@ theorem commitment_matches_spread :
         some (spreadEffect .possibility) := by
   decide
 
-/-- Confidence tracks commitment: the match of linguistic and social meaning. -/
 theorem confidence_matches_spread :
     (observedShift "confidence" .necessity).map (·.observedSign) =
         some (spreadEffect .necessity) ∧
@@ -185,7 +171,6 @@ theorem confidence_matches_spread :
         some (spreadEffect .possibility) := by
   decide
 
-/-- Warmth shifts carry the penalty sign under both forces. -/
 theorem warmth_matches_penalty :
     (observedShift "warmth" .necessity).map (·.observedSign) =
         some (warmthEffect .necessity) ∧

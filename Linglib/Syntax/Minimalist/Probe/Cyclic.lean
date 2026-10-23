@@ -71,7 +71,6 @@ def PersonGeometry.nodes : PersonGeometry → List PersonSegment
 def personSpec (geom : PersonGeometry) (p : Person) : List PersonSegment :=
   geom.nodes.filter (· ∈ PersonSegment.spec p)
 
-/-- Every person bears `π` under every geometry. -/
 theorem pi_mem_personSpec (geom : PersonGeometry) (p : Person) :
     PersonSegment.pi ∈ personSpec geom p := by
   cases geom <;> simp [personSpec, PersonGeometry.nodes]
@@ -181,7 +180,6 @@ theorem eaLicensed_iff_isDirect : sys.EALicensed s ↔ sys.IsDirect s := by
   simp only [EALicensed, IsDirect, segProbe, Probe.ofInt_goal_eq_some_iff, List.head?_cons,
     true_and, decide_eq_true_eq]
 
-/-- Arguments of the same person make an inverse context. -/
 theorem isInverse_self (p : Person) : sys.IsInverse ⟨p, p⟩ := fun h ↦
   let ⟨_, _, hn, hm⟩ := (sys.isDirect_iff ⟨p, p⟩).1 h
   hn hm
@@ -206,8 +204,6 @@ theorem spec_subset_or_subset {geom : PersonGeometry} (h : geom.IsChain) (p q : 
   · exact Or.inl (hpq ▸ List.Subset.refl _)
   · exact h (Set.mem_range_self p) (Set.mem_range_self q) hpq
 
-/-- Under a chain geometry a context is direct iff the external argument bears more of the
-probe than the internal one does. -/
 theorem isDirect_iff_rank_lt (h : sys.geometry.IsChain) :
     sys.IsDirect s ↔ sys.rank s.low < sys.rank s.high := by
   rcases spec_subset_or_subset h s.low s.high with hsub | hsub

@@ -103,7 +103,6 @@ def g (s : Sym) : AR (TwoTier TRN TBUKind) := AR.ofWords s.melody [μ] (s.lines)
 primitives (Definition 5). -/
 def realize (w : List Sym) : MergeAR true (TwoTier TRN TBUKind) := (w.map fun s ↦ ofAR (g s)).prod
 
-/-- `g(γ₂)` violates the OCP. -/
 theorem not_isCleanAt_g_γ₂ : ¬ (g .γ₂).IsCleanAt true := by
   simp [AR.IsCleanAt, g, Sym.melody]
 

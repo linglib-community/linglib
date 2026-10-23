@@ -72,7 +72,6 @@ variable {W : Type*}
 identity. -/
 def KyaDefined (Q : Question W) : Prop := ∃ p, alt Q = {p}
 
-/-- Two distinct alternatives break the presupposition. -/
 theorem not_kyaDefined_of_mem_alt {Q : Question W} {p₁ p₂ : Set W} (h₁ : p₁ ∈ alt Q)
     (h₂ : p₂ ∈ alt Q) (hne : p₁ ≠ p₂) : ¬KyaDefined Q := fun ⟨_, hp⟩ ↦
   (Set.nontrivial_of_mem_mem_ne h₁ h₂ hne).ne_singleton hp
@@ -90,8 +89,6 @@ theorem kya_not_wh {E : Type*} {D : Set E} {P : E → Set W}
   refine not_kyaDefined_of_mem_alt ?_ ?_ hPne <;> rw [alt_which_of_antichain hD hA]
   exacts [⟨e₁, h₁, rfl⟩, ⟨e₂, h₂, rfl⟩]
 
-/-- The two-cell Hamblin polar question fails the presupposition as well; the paper's polar
-question is the one-cell `ofSet p`. -/
 theorem kya_not_two_cell {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     ¬KyaDefined (polar (W := W) p) := by
   have halt := alt_polar_of_nontrivial hne hnu

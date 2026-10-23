@@ -39,14 +39,10 @@ def IsHeimKennedy (C : Set (Node × Node)) (q δ t : Node) : Prop := (q, t) ∈ 
 instance [Decidable ((q, t) ∈ C)] [Decidable ((q, δ) ∈ C)] : Decidable (IsHeimKennedy C q δ t) :=
   inferInstanceAs (Decidable (_ → _))
 
-/-- A quantifier whose scope excludes the trace is unconstrained. -/
 theorem isHeimKennedy_of_not_mem (h : (q, t) ∉ C) : IsHeimKennedy C q δ t := fun h' ↦ absurd h' h
 
-/-- A quantifier whose scope contains the DegP is unconstrained. -/
 theorem isHeimKennedy_of_mem (h : (q, δ) ∈ C) : IsHeimKennedy C q δ t := fun _ ↦ h
 
-/-- The excluded configuration `*λd … QP … d`: the quantifier's scope contains the trace but not
-the DegP. -/
 theorem not_isHeimKennedy_iff : ¬ IsHeimKennedy C q δ t ↔ (q, t) ∈ C ∧ (q, δ) ∉ C :=
   Classical.not_imp
 

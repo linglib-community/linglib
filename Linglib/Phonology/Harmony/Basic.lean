@@ -201,7 +201,6 @@ theorem Pattern.licit_eq_flip_compatible {p : Pattern α V} (h : p.direction.sca
     p.Licit = flip p.Compatible := by
   funext a b; simp [Pattern.Licit, h, flip]
 
-/-- Two participating segments form a licit bigram when they agree in value. -/
 theorem Pattern.licit_iff_of_participating (p : Pattern α V) {a b : α}
     (ha : p.participation a = .participating) (hb : p.participation b = .participating) :
     p.Licit a b ↔ p.value a = p.value b := by
@@ -216,8 +215,6 @@ instance [DecidableEq V] (p : Pattern α V) (w : List α) :
     Decidable (p.Harmonic w) := by
   unfold Pattern.Harmonic; infer_instance
 
-/-- A word is harmonic when its tier, read in the direction of spreading, is a chain of
-compatible segments. -/
 theorem Pattern.harmonic_iff_isChain_orient (p : Pattern α V) (w : List α) :
     p.Harmonic w ↔ (p.tier (p.direction.scanEdge.orient w)).IsChain p.Compatible := by
   rcases h : p.direction.scanEdge with _ | _

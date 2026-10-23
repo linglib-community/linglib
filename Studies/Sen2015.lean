@@ -141,9 +141,6 @@ theorem spec_ternary :
   intro p
   cases p <;> decide
 
-/-- The specified variants are the extremes of the scale. A context at least as dark as the coda
-is the coda, and one at least as clear as the geminate is the geminate or onset /l/ before /i/,
-its equal in darkness. -/
 theorem extremes_specified (c : Context) :
     (Context.coda ≤ c → c = .coda) ∧
       (c ≤ .geminate → c = .geminate ∨ c = .preI) := by

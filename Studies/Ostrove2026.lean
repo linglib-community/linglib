@@ -78,8 +78,6 @@ def EmbeddedClauseType.ofDiathesis {n : ℕ} (d : Diathesis n) : EmbeddedClauseT
   else if d.controller.isSome then .untensedSubjunctive
   else .tensedSubjunctive
 
-/-- The fragment's controlled complements are exactly its untensed subjunctives: no finite
-complement is controlled, not even that of *kònì* 'know', which also takes an untensed one. -/
 theorem control_iff_untensed : ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses,
     d.controller.isSome ↔ EmbeddedClauseType.ofDiathesis d = .untensedSubjunctive := by
   decide
@@ -138,7 +136,6 @@ instance (c : EmbeddedClauseType) : Decidable (Restructures c) := by
 theorem unrestrictedTAM_iff (c : EmbeddedClauseType) : UnrestrictedTAM c ↔ c = .finite := by
   cases c <;> decide +kernel
 
-/-- By the tense column, only untensed subjunctives lack a tense of their own. -/
 theorem independentTense_iff (c : EmbeddedClauseType) :
     IndependentTense c ↔ c ≠ .untensedSubjunctive := by
   cases c <;> decide +kernel
@@ -179,7 +176,6 @@ diagnostic refutes. -/
 def smpmProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
   ofAttested (attested c)
 
-/-- Only untensed subjunctives are obligatory-control clauses. -/
 theorem isObligatory_iff (c : EmbeddedClauseType) :
     smpmProfile c = Set.univ ↔ c = .untensedSubjunctive := by
   rw [smpmProfile, ofAttested_eq_univ_iff, attested_eq_empty_iff]
@@ -203,7 +199,6 @@ def landauToSMPM : ClauseClass → EmbeddedClauseType
 def smpmToLandau (c : EmbeddedClauseType) : ClauseClass :=
   .ofFiniteness (decide (UnrestrictedTAM c)) (decide (IndependentTense c))
 
-/-- SMPM realizes every position of the scale, unlike Gã (`Allotey2021.ga_no_fSubjunctive`). -/
 theorem smpmToLandau_landauToSMPM (c : ClauseClass) : smpmToLandau (landauToSMPM c) = c := by
   cases c <;> decide +kernel
 
@@ -274,8 +269,6 @@ theorem smpm_overt_pro :
     smpmInventory.controlForm = smpmInventory.elsewhere ∧ englishInventory.controlForm = .null :=
   ⟨Vocabulary.realize_eq_elsewhere (by decide), rfl⟩
 
-/-- In general form, with the pronoun as its elsewhere form a language has silent PRO only
-through a null item for controlled subjects, which SMPM lacks. -/
 theorem smpm_no_null_item : ∀ i ∈ smpmInventory.items, i.exponent ≠ .null := by decide
 
 /-- In the syncretism table (92), each row derived from its inventory, a cell is a context in
@@ -341,28 +334,20 @@ def Universal54 (inv : Vocabulary Form)
     (s : Data.WALS.F101A.ExpressionOfPronominalSubjects) : Prop :=
   inv.controlForm ≠ .null → s = .obligatoryPronounsInSubjectPosition
 
-/-- SMPM instantiates the universal: overt PRO and no pro-drop. -/
 theorem smpm_universal54 : Universal54 smpmInventory pronominalSubjects := fun _ ↦ rfl
 
-/-- English satisfies it vacuously, whatever its 101A cell, since its PRO is null. -/
 theorem english_universal54 (s : Data.WALS.F101A.ExpressionOfPronominalSubjects) :
     Universal54 englishInventory s :=
   fun h ↦ absurd rfl h
 
-/-- Gã sits in SMPM's cell: the same controlled-subject realization, derived from the Gã
-inventory of [allotey-2021], and the same 101A cell. -/
 theorem ga_patterns_with_smpm :
     Allotey2021.gaInventory.controlForm = smpmInventory.controlForm ∧
       Allotey2021.pronominalSubjects = pronominalSubjects :=
   ⟨rfl, rfl⟩
 
-/-- Gã instantiates the universal ([allotey-2021]). -/
 theorem ga_universal54 : Universal54 Allotey2021.gaInventory Allotey2021.pronominalSubjects :=
   fun _ ↦ rfl
 
-/-- The universal has bite for Gã: under [wals-2013]'s coding of its subject markers as affixes
-(`Allotey2021.wals_codes_affixes`) Gã violates it, so its instance rests on [allotey-2021]'s
-analysis of the markers as pronouns. -/
 theorem ga_violates_universal54_of_wals :
     ∀ s ∈ Data.WALS.F101A.allData.lookup "ga",
       ¬ Universal54 Allotey2021.gaInventory s := by

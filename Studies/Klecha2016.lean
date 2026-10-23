@@ -63,8 +63,6 @@ def base [LT T] (m : Background) (history : HistoricalAlternatives W T) (s : Ind
     Set (Index W T) :=
   orientedBase history s m.orientations
 
-/-- The doxastic base is the substrate's actual-history base and the circumstantial base its
-future-history base. -/
 theorem base_dox_cir [LT T] (history : HistoricalAlternatives W T) (s : Index W T) :
     dox.base history s = actualHistoryBase history s ∧
       cir.base history s = futureHistoryBase history s :=
@@ -82,8 +80,6 @@ theorem compare_mem_orientations [LinearOrder T] (m : Background)
 tense (§4.2). -/
 theorem orientations_dox : dox.orientations = upperLimitConstraint := by decide
 
-/-- The time of a doxastically accessible situation obeys the Upper Limit Constraint at the
-evaluation time. -/
 theorem upperLimitConstraint_of_mem_dox [LinearOrder T] (history : HistoricalAlternatives W T)
     {s s' : Index W T} (h : s' ∈ dox.base history s) :
     compare s'.time s.time ∈ upperLimitConstraint :=

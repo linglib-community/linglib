@@ -90,11 +90,9 @@ def IsWellFormed (l : List LittleV) : Prop := l ≠ [] ∧ l.IsChain Embeds
 
 instance : DecidablePred IsWellFormed := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Nothing is embedded under `vBE`. -/
 theorem IsWellFormed.not_infix_vBE (hw : IsWellFormed l) (w : LittleV) : ¬ [.vBE, w] <:+: l :=
   fun h => not_vBE_embeds w (List.isChain_pair.1 (hw.2.infix h))
 
-/-- `vGO` embeds only a state. -/
 theorem IsWellFormed.eq_vBE_of_infix_vGO (hw : IsWellFormed l) (h : [.vGO, w] <:+: l) :
     w = .vBE :=
   vGO_embeds_iff.1 (List.isChain_pair.1 (hw.2.infix h))

@@ -181,7 +181,6 @@ private theorem exists_mem_of_forall₂ {R : α → β → Prop} :
     · obtain ⟨a, ha, hR⟩ := exists_mem_of_forall₂ h b hb
       exact ⟨a, List.mem_cons_of_mem _ ha, hR⟩
 
-/-- An admitted coordination has conjuncts satisfying `L` among which each phrase is one. -/
 theorem Admits.exists_mem {L : List Conjunct → Prop} (h : Admits L ps) :
     ∃ cs, L cs ∧ ∀ p ∈ ps, ∃ x ∈ cs, x ∈ ofCat p :=
   let ⟨cs, hcs, hL⟩ := h; ⟨cs, hL, exists_mem_of_forall₂ (mem_sections_map_ofCat.1 hcs)⟩
@@ -313,7 +312,6 @@ def modifiers? (e : Datum) : Option (List (Option AdvHead)) :=
   (e.features "modifier").mapM
     ([("AP", none), ("non-ly AdvP", some .silent), ("-ly AdvP", some .ly)].lookup ·)
 
-/-- Every row is one of the five constructions below. -/
 theorem construction_rows : ∀ e ∈ Examples.all, e.feature? "construction" ∈ [some "predicate",
     some "argument", some "ellipsis", some "prenominal", some "displacement"] := by
   decide

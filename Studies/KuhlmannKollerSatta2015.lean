@@ -89,7 +89,6 @@ def clusterCat : Nat → Cat Atom
   | 0 => Scat
   | n + 1 => (clusterCat n) / Ccat
 
-/-- The cluster category always has target `S`. -/
 @[simp] theorem target_clusterCat (n : Nat) : (clusterCat n).target = Atom.S := by
   induction n with
   | zero => rfl
@@ -97,8 +96,6 @@ def clusterCat : Nat → Cat Atom
 
 /-! ### The construction, as `Derives` inductions -/
 
-/-- Composing `b₁ = S/C/B` with `j` copies of `B/C/B` at degree 2 derives `bʲ⁺¹` at
-`S/Cʲ⁺¹/B`. -/
 theorem fc2Chain_derives (j : Nat) :
     exampleGrammar.Derives ((clusterCat (j + 1)).rslash .dot Bcat)
       (List.replicate (j + 1) .b) := by
@@ -111,7 +108,6 @@ theorem fc2Chain_derives (j : Nat) :
           ⟨by decide, by simp⟩
       simpa [List.replicate_succ'] using h
 
-/-- `G₁` derives the `b`-cluster `bⁿ` at category `clusterCat n`, for `n ≥ 1`. -/
 theorem cluster_derives : ∀ {n : Nat}, 1 ≤ n →
     exampleGrammar.Derives (clusterCat n) (List.replicate n .b)
   | 1, _ => .lex (by decide)
@@ -128,8 +124,6 @@ private theorem replicate_cons_comm {α : Type*} (k : Nat) (a : α) (X : List α
   | zero => rfl
   | succ k ih => simp [List.replicate_succ, List.cons_append, ih]
 
-/-- From a derivation of `w` at `clusterCat k`, crossed-composing a `c` and backward-applying
-an `a` `k` times derives `aᵏ w cᵏ` at `S`. -/
 theorem peel_derives : ∀ (k : Nat) {w : List Letter},
     exampleGrammar.Derives (clusterCat k) w →
     exampleGrammar.Derives Scat
@@ -164,10 +158,6 @@ def Reachable : Cat Atom → List Letter → Prop := fun c w ↦
     w = List.replicate i .a ++ List.replicate (k + 1 + i) .b ++
       List.replicate (i + 1) .c)
 
-/-- Every pair `G₁` derives is `Reachable`, by rule induction. The target gate admits only
-primaries with target `S`, and a secondary `Yβ` over an atom `Y` has `Y` as its target and `β` as
-its arguments, so each rule step is one of the four instances of the completeness
-construction. -/
 theorem reachable_of_derives {c : Cat Atom} {w : List Letter}
     (h : exampleGrammar.Derives c w) : Reachable c w := by
   induction h with
@@ -240,8 +230,6 @@ def PrefixClosed {α : Type*} (R : RuleSystem α) : Prop :=
 def WithoutTargetRestrictions {α : Type*} (R : RuleSystem α) : Prop :=
   ∀ x x' a (β : List (Cat.Arg α)), R x a β → R x' a β
 
-/-- A target-restricted rule system is prefix-closed: it looks only at the degree and the
-primary input's target. -/
 theorem targetRestricted_prefixClosed {α : Type*} (s : α) (d : ℕ) :
     PrefixClosed (RuleSystem.targetRestricted s d) :=
   fun _ _ _ _ hβ h ↦ ⟨hβ.length_le.trans h.1, h.2⟩
@@ -267,7 +255,6 @@ theorem anbncn_sub_one_subset_language :
   rintro rfl
   exact hn rfl
 
-/-- `G₁` derives nothing beyond `aⁿbⁿcⁿ`. -/
 theorem language_subset_anbncn : exampleGrammar.language ≤ Language.anbncn .a .b .c := by
   rintro w hw
   rcases reachable_of_derives hw with ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ |

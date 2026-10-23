@@ -107,21 +107,16 @@ noncomputable instance : Denotes DemonstrativeDeterminer
       Nominal (Assignment E) W E) :=
   ⟨fun dem _ _ _ _ _ ↦ dem.denote⟩
 
-/-- A demonstrative determiner presupposes that its referent lies in the vicinity of a referent
-whose participants form one of its participant sets. -/
 @[simp] theorem _root_.DemonstrativeDeterminer.denote_presup (dem : DemonstrativeDeterminer)
     (g : Assignment E) (s : W) :
     (dem.denote R d c χ).presup g s ↔ ∃ x, c.participants x ∈ dem.deixis ∧ x ~[χ] g d := by
   simp [DemonstrativeDeterminer.denote, SetRel.image]
 
-/-- A demonstrative with fewer participant sets presupposes more. -/
 theorem _root_.DemonstrativeDeterminer.denote_presup_mono {dem₁ dem₂ : DemonstrativeDeterminer}
     (h : dem₁.deixis ⊆ dem₂.deixis) {g : Assignment E} {s : W}
     (hp : (dem₁.denote R d c χ).presup g s) : (dem₂.denote R d c χ).presup g s :=
   SetRel.image_mono (Set.preimage_mono (Finset.coe_subset.2 h)) hp
 
-/-- Two demonstratives with complementary participant sets together cover the vicinity of every
-referent. -/
 theorem _root_.DemonstrativeDeterminer.denote_presup_or_iff_of_compl
     {dem₁ dem₂ : DemonstrativeDeterminer} (h : dem₂.deixis = dem₁.deixisᶜ) (g : Assignment E)
     (s : W) :
@@ -134,17 +129,10 @@ theorem _root_.DemonstrativeDeterminer.denote_presup_or_iff_of_compl
     · exact .inl ⟨x, hm, hx⟩
     · exact .inr ⟨x, hm, hx⟩
 
-/-- Deixis filters and does not select, so a demonstrative determiner's selector is exactly the
-strong article's selector, the API-level form of
-`DefiniteDescription.denote_demonstrative_eq_anaphoric`; the deictic content lives entirely in the
-`presup` component. -/
 theorem _root_.DemonstrativeDeterminer.denote_selector_eq_anaphoric
     (dem : DemonstrativeDeterminer) :
     (dem.denote R d c χ).selector = (DefiniteDescription.anaphoric R d).toNominal.selector := rfl
 
-/-- Two demonstrative determiners differing only in deictic content share a
-selector — *this* and *that* pick the same referent and differ only in what
-they presuppose about it. -/
 theorem _root_.DemonstrativeDeterminer.denote_selector_congr
     (dem₁ dem₂ : DemonstrativeDeterminer) :
     (dem₁.denote R d c χ).selector = (dem₂.denote R d c χ).selector := rfl
@@ -160,9 +148,6 @@ def _root_.Article.toDescriptions (a : Article) (R : Restrictor E W)
     (idx : ℕ) : Set (DefiniteDescription E W) :=
   (DefiniteDescription.ofStrength · R idx) '' a.strengths
 
-/-- An article realizes the kind of each of its own descriptions, so the denotation pipeline
-through `DefiniteDescription.ofStrength` and the inventory pipeline through
-`Determiner.Inventory.Realizes` coincide. -/
 theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article) (idx : ℕ)
     (k : DefiniteDescription E W) (hk : k ∈ a.toDescriptions R idx) :
     Determiner.Inventory.Realizes [.article a] k.kind := by
@@ -182,7 +167,6 @@ noncomputable instance : Denotes Article
     (∀ (E W : Type), Restrictor E W → ℕ → Set (Nominal (Assignment E) W E)) :=
   ⟨fun a _ _ ↦ a.denotations⟩
 
-/-- Every denotation of an article arises from a description whose kind the article realizes. -/
 theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
     (nd : Nominal (Assignment E) W E) (h : nd ∈ a.denotations R idx) :
     ∃ k : DefiniteDescription E W,
@@ -207,16 +191,10 @@ noncomputable instance : Denotes PossessiveDeterminer
       (Assignment E → W → E → E → Prop) → Nominal (Assignment E) W E) :=
   ⟨fun p _ _ ↦ p.denote⟩
 
-/-- A possessive determiner's selector is the possessive description's
-selector — the determiner picks the unique possessee related to the
-possessor by construction. -/
 @[simp]
 theorem _root_.PossessiveDeterminer.denote_selector (p : PossessiveDeterminer) :
     (p.denote R possessor rel).selector = ⟦DefiniteDescription.possessive R possessor rel⟧ := rfl
 
-/-- A possessive determiner realizes the kind of its own denotation — the
-denotational pipeline and the inventory pipeline agree, parallel to
-`Article.denotations_realized`. -/
 theorem _root_.PossessiveDeterminer.denote_realized (p : PossessiveDeterminer) :
     Determiner.Inventory.Realizes [.possessive p]
       (DefiniteDescription.possessive R possessor rel).kind :=

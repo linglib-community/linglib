@@ -66,7 +66,6 @@ lemma continuous_gumbelPDFReal (μ : ℝ) (β : ℝ≥0) : Continuous (gumbelPDF
 lemma measurable_gumbelPDFReal (μ : ℝ) (β : ℝ≥0) : Measurable (gumbelPDFReal μ β) :=
   (continuous_gumbelPDFReal μ β).measurable
 
-/-- The Gumbel cdf `exp (-exp (-((x - μ) / β)))` is an antiderivative of the pdf. -/
 private lemma hasDerivAt_gumbelCDF (μ : ℝ) (β : ℝ≥0) (x : ℝ) :
     HasDerivAt (fun y ↦ exp (-exp (-((y - μ) / β)))) (gumbelPDFReal μ β x) x :=
   (((hasDerivAt_id x).sub_const μ).div_const (β : ℝ)).neg.exp.neg.exp.congr_deriv <| by
@@ -103,7 +102,6 @@ lemma integrable_gumbelPDFReal (μ : ℝ) (β : ℝ≥0) : Integrable (gumbelPDF
   simpa using (tendsto_gumbelCDF_atTop μ hβ).sub
     ((tendsto_gumbelCDF_atBot μ hβ).comp tendsto_neg_atTop_atBot)
 
-/-- The pdf of the Gumbel distribution integrates to `1`. -/
 lemma integral_gumbelPDFReal_eq_one (μ : ℝ) (hβ : β ≠ 0) : ∫ x, gumbelPDFReal μ β x = 1 := by
   simpa using integral_of_hasDerivAt_of_tendsto (hasDerivAt_gumbelCDF μ β)
     (integrable_gumbelPDFReal μ β) (tendsto_gumbelCDF_atBot μ hβ) (tendsto_gumbelCDF_atTop μ hβ)
@@ -116,7 +114,6 @@ noncomputable def gumbelPDF (μ : ℝ) (β : ℝ≥0) (x : ℝ) : ℝ≥0∞ :=
 lemma measurable_gumbelPDF (μ : ℝ) (β : ℝ≥0) : Measurable (gumbelPDF μ β) :=
   (measurable_gumbelPDFReal μ β).ennreal_ofReal
 
-/-- The pdf of the Gumbel distribution integrates to `1`. -/
 @[simp]
 lemma lintegral_gumbelPDF_eq_one (μ : ℝ) (hβ : β ≠ 0) : ∫⁻ x, gumbelPDF μ β x = 1 := by
   unfold gumbelPDF

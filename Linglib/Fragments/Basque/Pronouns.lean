@@ -66,10 +66,8 @@ def addressee : Grade → PersonalPronoun
 /-- The pronoun inventory. -/
 def pronouns : Finset PersonalPronoun := {ni, gu, hi, zu, zuek, hura, haiek}
 
-/-- *Zu* bears the agreement features of the plural *zuek*. -/
 theorem phi_zu : HasPhi.phi zu = HasPhi.phi zuek := by decide
 
-/-- *Zu* denotes a single addressee, as the familiar *hi* does. -/
 theorem referential_zu : zu.referential = hi.referential := by decide
 
 /-- The Souletin allocutive suffix for an addressee of each grade and gender. A familiar man takes
@@ -80,7 +78,6 @@ def allocutive : Grade → Gender → Option Morphology.Morph
   | .polite, .masculine | .polite, .feminine => some (.suff "zü")
   | _, _ => none
 
-/-- The polite suffix does not mark the addressee's sex. -/
 theorem allocutive_polite : allocutive .polite .masculine = allocutive .polite .feminine := rfl
 
 end Pronouns

@@ -79,15 +79,12 @@ theorem language_eq_singleton_iff : S.language r i = {o} ↔ o ∈ S.gen i ∧ �
     toLex (fun k ↦ S.con (r k) (i, o)) < toLex (fun k ↦ S.con (r k) (i, o')) :=
   Tableau.optimal_eq_singleton_iff
 
-/-- A ranking selects a winner at every input that has a candidate. -/
 theorem language_nonempty (h : (S.gen i).Nonempty) : (S.language r i).Nonempty :=
   Tableau.optimal_nonempty h
 
 theorem language_nonempty_iff : (S.language r i).Nonempty ↔ (S.gen i).Nonempty :=
   ⟨fun ⟨o, ho⟩ ↦ ⟨o, Tableau.optimal_subset ho⟩, language_nonempty⟩
 
-/-- Tied winners have the same violations on every constraint, since the ranking reads distinct
-violation vectors as distinct profiles. -/
 theorem con_eq_of_mem_language {o' : O} (ho : o ∈ S.language r i) (ho' : o' ∈ S.language r i)
     (C : ι) : S.con C (i, o) = S.con C (i, o') := by
   have h := le_antisymm (Tableau.le_of_mem_optimal ho (Tableau.optimal_subset ho'))

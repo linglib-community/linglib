@@ -130,14 +130,11 @@ theorem subset_Pos (P : Proposition Atom) : P ⊆ Pos P := fun V hV ↦ ⟨V, hV
 theorem Pos_mono {P P' : Proposition Atom} (h : P ⊆ P') : Pos P ⊆ Pos P' :=
   fun _ ⟨V', hV', hle⟩ ↦ ⟨V', h hV', hle⟩
 
-/-- Keeping only the minimal valuations does not change the positive extension, the paper's
-second fact. -/
 theorem Pos_setOf_minimal (P : Proposition Atom) : Pos {V | Minimal (· ∈ P) V} = Pos P := by
   refine Set.Subset.antisymm (Pos_mono fun _ h ↦ h.prop) fun V ⟨V', hV', hle⟩ ↦ ?_
   obtain ⟨t, hts, ht⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ P) V' hV'
   exact ⟨t, ht, hts.trans hle⟩
 
-/-- The minimal valuations entail every state in which the answer is optimal. -/
 theorem setOf_minimal_subset_of_Pos_eq {P i : Proposition Atom} (h : Pos i = P) :
     {V | Minimal (· ∈ P) V} ⊆ i := by
   intro V hV
@@ -163,15 +160,12 @@ def IsPositive (P : Proposition Atom) : Prop :=
 /-- The positive propositions, the alternative set of a positive answer. -/
 def positives : Set (Proposition Atom) := {P | IsPositive P}
 
-/-- A positive proposition contains the valuations extending its valuations by one atom,
-since otherwise it would favor the negation of that atom. -/
 theorem IsPositive.cons_mem {P : Proposition Atom} (hP : IsPositive P) {V : Valuation Atom}
     (hV : V ∈ P) {a : Atom} (ha : a ∉ V) : V.cons a ha ∈ P := by
   by_contra h
   refine hP.2 a ⟨V, hV, ha, ?_⟩
   simpa [flip, Literal.atom, ha] using h
 
-/-- A positive proposition is closed upward. -/
 theorem IsPositive.mem_of_subset {P : Proposition Atom} (hP : IsPositive P)
     {V' V : Valuation Atom} (hV' : V' ∈ P) (hle : V' ⊆ V) : V ∈ P := by
   generalize hn : V.card - V'.card = n
@@ -194,8 +188,6 @@ theorem IsPositive.ne_univ {P : Proposition Atom} (hP : IsPositive P) : P ≠ Se
   obtain ⟨_, _, -, -, h⟩ := hP.1
   exact h (Set.mem_univ _)
 
-/-- A nonempty, non-universal, upward-closed proposition is positive: it favors the atoms of
-its minimal valuations and no negative literal. -/
 theorem isPositive_of_upward {P : Proposition Atom} (hne : P.Nonempty) (hnu : P ≠ Set.univ)
     (hup : ∀ V ∈ P, ∀ V', V ⊆ V' → V' ∈ P) : IsPositive P := by
   refine ⟨?_, fun a ⟨V, hV, haV, hflip⟩ ↦ ?_⟩
@@ -214,12 +206,9 @@ theorem isPositive_of_upward {P : Proposition Atom} (hne : P.Nonempty) (hnu : P 
     simpa [flip, Literal.atom, haV'] using
       hup V hV (V.cons a haV') fun x hx ↦ Finset.mem_cons.2 (Or.inr hx)
 
-/-- A positive proposition is its own positive extension, the paper's first fact. -/
 theorem Pos_of_isPositive {P : Proposition Atom} (hP : IsPositive P) : Pos P = P :=
   Set.Subset.antisymm (fun _ ⟨_, hV', hle⟩ ↦ hP.mem_of_subset hV' hle) (subset_Pos P)
 
-/-- The positive extension of a consistent state that does not exclude nothing is positive:
-the strongest positive proposition the state entails. -/
 theorem Pos_isPositive {i : Proposition Atom} (hi : i.Nonempty) (hnu : Pos i ≠ Set.univ) :
     IsPositive (Pos i) :=
   isPositive_of_upward (hi.mono (subset_Pos i)) hnu
@@ -227,8 +216,6 @@ theorem Pos_isPositive {i : Proposition Atom} (hi : i.Nonempty) (hnu : Pos i ≠
 
 /-! ### The reduction and the theorem -/
 
-/-- A positive answer is optimal in a consistent state exactly when it is the strongest positive
-proposition the state entails, the paper's reduction. -/
 theorem isOptimal_iff {P i : Proposition Atom} (hP : IsPositive P) (hi : i.Nonempty) :
     IsOptimal ⊥ positives P i ↔ Pos i = P := by
   simp only [IsOptimal, relativize_bot, positives, Set.mem_ofPred_eq]
@@ -247,8 +234,6 @@ theorem optimalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
     optimalStates ⊥ positives P = {i | i.Nonempty ∧ Pos i = P} :=
   Set.ext fun _ ↦ and_congr_right (isOptimal_iff hP)
 
-/-- For a positive answer the unique maximally informed optimal state is its exhaustification,
-the paper's theorem. -/
 theorem maximalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
     maximalStates ⊥ positives P = {{V | Minimal (· ∈ P) V}} := by
   have hI := optimalStates_eq hP
@@ -268,7 +253,6 @@ theorem maximalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
   · rintro rfl
     exact ⟨hExh, fun i' hi' hss ↦ hss.2 (hent i' hi')⟩
 
-/-- A positive answer implicates its exhaustification, its minimal valuations. -/
 theorem implicates_setOf_minimal {P : Proposition Atom} (hP : IsPositive P) :
     Implicates ⊥ positives P {V | Minimal (· ∈ P) V} := by
   intro i hi
@@ -295,7 +279,6 @@ theorem orProp_isPositive (a b : Atom) : IsPositive (orProp a b) := by
     rcases hV with h | h
     exacts [Or.inl (hle h), Or.inr (hle h)]
 
-/-- The exhaustification of *A or B* is exclusive, only *A* or only *B*. -/
 theorem setOf_minimal_orProp (a b : Atom) : {V | Minimal (· ∈ orProp a b) V} = exclOr a b := by
   ext V
   simp only [orProp, exclOr, Set.mem_ofPred_eq, minimal_iff_forall_lt]
@@ -318,13 +301,10 @@ theorem setOf_minimal_orProp (a b : Atom) : {V | Minimal (· ∈ orProp a b) V} 
       rw [Finset.eq_empty_of_ssubset_singleton hss] at hV'
       exact hV'.elim (Finset.notMem_empty a) (Finset.notMem_empty b)
 
-/-- *A or B* implicates *only A or only B*. -/
 theorem orProp_implicates_exclOr (a b : Atom) :
     Implicates ⊥ positives (orProp a b) (exclOr a b) :=
   setOf_minimal_orProp a b ▸ implicates_setOf_minimal (orProp_isPositive a b)
 
-/-- No state in which *A or B* is optimal decides *A*, so there is no unwanted negation: a state
-entailing *A* would have *A* as a better answer and one entailing *not A* would have *B*. -/
 theorem no_unwanted_negation {a b : Atom} (hab : a ≠ b) {i : Proposition Atom}
     (hi : i ∈ optimalStates ⊥ positives (orProp a b)) :
     ¬ i ⊆ atomProp a ∧ ¬ i ⊆ (atomProp a)ᶜ := by

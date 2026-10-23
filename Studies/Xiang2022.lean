@@ -67,8 +67,6 @@ def trueShort (P : α → Set W) (w : W) : Set α := {a | w ∈ P a}
 strongest true member. -/
 def DEP (P : α → Set W) (w : W) : Prop := IsExhaustivelyResolvable (range P) w
 
-/-- The presupposition over short answers: a true short answer whose proposition entails
-every true one. -/
 theorem dep_iff (P : α → Set W) (w : W) :
     DEP P w ↔ ∃ a, w ∈ P a ∧ ∀ b, w ∈ P b → P a ⊆ P b :=
   isExhaustivelyResolvable_range_iff P w
@@ -77,7 +75,6 @@ theorem dep_iff (P : α → Set W) (w : W) :
 short answers. -/
 abbrev MaxI (P : α → Set W) (w : W) (a : α) : Prop := MinimalFor (· ∈ trueShort P w) P a
 
-/-- The paper's form: true, and not asymmetrically entailed by another true answer. -/
 theorem maxI_iff {P : α → Set W} {w : W} {a : α} :
     MaxI P w a ↔ w ∈ P a ∧ ∀ b, w ∈ P b → ¬ P b ⊂ P a := by
   simp only [MaxI, MinimalFor, mem_trueShort, not_lt_iff_le_imp_ge]
@@ -88,7 +85,6 @@ def ansS (P : α → Set W) (w : W) : Set α := {a | MaxI P w a}
 /-- The propositional operator: the image of the short-answer operator. -/
 def ansP (P : α → Set W) (w : W) : Set (Set W) := P '' ansS P w
 
-/-- The propositional operator returns the minimal true members of the answer space. -/
 theorem mem_ansP_iff {P : α → Set W} {w : W} {p : Set W} :
     p ∈ ansP P w ↔ Minimal (· ∈ trueAnswers (range P) w) p := by
   constructor
@@ -99,7 +95,6 @@ theorem mem_ansP_iff {P : α → Set W} {w : W} {p : Set W} :
   · rintro ⟨⟨⟨a, rfl⟩, ha⟩, hmin⟩
     exact ⟨a, ⟨ha, fun b hb hle ↦ hmin (y := P b) ⟨⟨b, rfl⟩, hb⟩ hle⟩, rfl⟩
 
-/-- Under Dayal's presupposition the operator returns the strongest true answer alone. -/
 theorem ansP_eq_singleton {P : α → Set W} {w : W} {p : Set W}
     (h : IsStrongestTrueAnswer (range P) w p) : ansP P w = {p} := by
   ext q
@@ -113,17 +108,11 @@ modalized question's true short answers, `P` satisfies Dayal's presupposition. -
 def RelExh (O : Set W → Set W) (R : SetRel W W) (P : α → Set W) (w : W) : Prop :=
   ∀ v, w ~[R] v → (∃ a, w ∈ O (P a) ∧ v ∈ P a) → DEP P v
 
-/-- The generalization for existential modals: the mention-some readings satisfy Relativized
-Exhaustivity exactly when the non-modalized question satisfies Dayal's presupposition at every
-accessible world where some short answer is true. -/
 theorem relExh_poss_iff (R : SetRel W W) (P : α → Set W) (w : W) :
     RelExh R.preimage R P w ↔ ∀ v, w ~[R] v → (trueShort P v).Nonempty → DEP P v :=
   forall₂_congr fun v hv ↦ imp_congr_left
     ⟨fun ⟨a, _, ha⟩ ↦ ⟨a, ha⟩, fun ⟨a, ha⟩ ↦ ⟨a, ⟨v, ha, hv⟩, ha⟩⟩
 
-/-- For a non-modalized question, over the identity relation on which both modals are the
-identity, Relativized Exhaustivity is Dayal's presupposition wherever the question has a true
-answer. -/
 theorem relExh_id_iff (P : α → Set W) (w : W) :
     RelExh id .id P w ↔ ((trueShort P w).Nonempty → DEP P w) := by
   simp [RelExh, Set.Nonempty]
@@ -134,20 +123,16 @@ theorem relExh_id_iff (P : α → Set W) (w : W) :
 no other. -/
 def localExh (P : α → Set W) : α → Set W := exh (range P) ∘ P
 
-/-- Two true exhaustified short answers have the same proposition. -/
 theorem eq_of_mem_localExh {P : α → Set W} {w : W} {a b : α} (ha : w ∈ localExh P a)
     (hb : w ∈ localExh P b) : P a = P b :=
   (ha.2 _ ⟨b, rfl⟩ hb.1).antisymm (hb.2 _ ⟨a, rfl⟩ ha.1)
 
-/-- The exhaustified question satisfies Dayal's presupposition wherever it has a true answer. -/
 theorem dep_localExh {P : α → Set W} {w : W} (h : (trueShort (localExh P) w).Nonempty) :
     DEP (localExh P) w :=
   let ⟨a, ha⟩ := h
   (dep_iff _ _).2 ⟨a, ha, fun b hb ↦ by
     simp only [localExh, Function.comp_apply, eq_of_mem_localExh ha hb, subset_rfl]⟩
 
-/-- The exhaustified mention-some reading of a *can*-question satisfies Relativized
-Exhaustivity over any accessibility relation: the uniqueness it presupposes is existential. -/
 theorem relExh_poss_localExh (R : SetRel W W) (P : α → Set W) (w : W) :
     RelExh R.preimage R (localExh P) w :=
   (relExh_poss_iff R _ w).2 fun _ _ h ↦ dep_localExh h
@@ -167,13 +152,9 @@ def chair : Fin 2 → Set CW
 only itself. -/
 def chairR : SetRel CW CW := {p | if p.1 = 0 then p.2 ≠ 0 else p.1 = p.2}
 
-/-- Under the base, *x can chair* holds at the evaluation world and at `x`'s own world. -/
 theorem poss_localExh_chair (a : Fin 2) : chairR.preimage (localExh chair a) = {0, a.succ} := by
   ext w; fin_cases a <;> fin_cases w <;> simp [localExh, exh, chair, chairR]
 
-/-- The exhaustified mention-some reading of *Who can chair the committee?* has both short
-answers max-informative, satisfies Relativized Exhaustivity, and violates Dayal's
-presupposition. -/
 theorem chair_scenario :
     ansS (chairR.preimage ∘ localExh chair) 0 = univ ∧
       RelExh chairR.preimage chairR (localExh chair) 0 ∧
@@ -205,7 +186,6 @@ def assign : Fin 3 → Set AW
   | 1 => assigned 1
   | 2 => assigned 0 ∪ assigned 1
 
-/-- The higher-order answer space is the disjunctive closure of the first-order one. -/
 theorem range_assign : range assign = supClosure (range assigned) := by
   rw [Set.supClosure_range_eq_image]
   ext q
@@ -229,20 +209,13 @@ def assignR : SetRel AW AW :=
   {p | if p.1 = 0 then p.2 ∈ ({1, 2, 3} : Set AW)
     else if p.1 = 4 then p.2 ∈ ({1, 2} : Set AW) else p.1 = p.2}
 
-/-- The first-order question satisfies Dayal's presupposition exactly at the worlds assigning
-one chapter. -/
 theorem dep_assigned_iff (v : AW) : DEP assigned v ↔ v = 1 ∨ v = 2 := by
   fin_cases v <;> simp [dep_iff, assigned, Fin.exists_fin_two, Fin.forall_fin_two, subset_def]
 
-/-- So does the higher-order question: at world 3 the disjunction is entailed by both
-disjuncts, so no true answer is strongest. -/
 theorem dep_assign_iff (v : AW) : DEP assign v ↔ v = 1 ∨ v = 2 := by
   fin_cases v <;> simp [dep_iff, assign, assigned, Fin.exists_fin_succ, Fin.forall_fin_succ,
     subset_def]
 
-/-- Dayal's presupposition holds of the modalized question at world 0, where the disjunction
-is its only true answer, while Relativized Exhaustivity fails there and holds at world 4:
-the local-uniqueness inference of *Which chapter do we have to assign?*. -/
 theorem assign_scenario :
     DEP (assignR.core ∘ assign) 0 ∧ ¬ RelExh assignR.core assignR assign 0 ∧
       RelExh assignR.core assignR assign 4 := by
@@ -258,9 +231,6 @@ theorem assign_scenario :
       h 3 (by simp [assignR]) ⟨2, by simp [h2], by simp [assign, assigned]⟩
   · exact (dep_assign_iff v).2 (by simpa [assignR] using hv)
 
-/-- The first-order mention-some reading of *Which chapter can we assign?* over the same base:
-Relativized Exhaustivity fails at world 0, whose accessible world 3 assigns both chapters,
-and holds at world 4, the universal local-uniqueness inference. -/
 theorem assign_can_scenario :
     ¬ RelExh assignR.preimage assignR assigned 0 ∧ RelExh assignR.preimage assignR assigned 4 := by
   simp only [relExh_poss_iff, dep_assigned_iff]
