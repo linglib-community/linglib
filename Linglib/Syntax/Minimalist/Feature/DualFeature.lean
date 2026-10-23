@@ -80,6 +80,22 @@ def toPF [DecidableEq F] (b : Bundle F) : Finset F :=
 @[simp] theorem toPF_ofInterp [DecidableEq F] (s : Finset F) : (ofInterp s).toPF = s := by
   simp [toPF]
 
+/-- A dual-feature bundle is a family of privative feature sets indexed by the interface each set
+is sent to. -/
+def equivPi : Bundle F ≃ (Interpretability → Finset F) where
+  toFun b := fun i ↦ match i with
+    | .interpretable => b.interp
+    | .uninterpretable => b.uninterp
+  invFun f := ⟨f .interpretable, f .uninterpretable⟩
+  left_inv _ := rfl
+  right_inv f := funext fun i ↦ by cases i <;> rfl
+
+@[simp] theorem equivPi_apply_interpretable (b : Bundle F) :
+    equivPi b .interpretable = b.interp := rfl
+
+@[simp] theorem equivPi_apply_uninterpretable (b : Bundle F) :
+    equivPi b .uninterpretable = b.uninterp := rfl
+
 end Bundle
 
 /-- Resolution of two conjuncts, the interpretable features that percolate from both, converted

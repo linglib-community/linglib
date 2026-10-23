@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Flat
+public import Mathlib.Order.GaloisConnection.Defs
 public import Mathlib.Order.WithBot
 
 /-!
@@ -24,6 +25,10 @@ general here, polymorphic in the value type, and decoupled from the `SyntacticOb
   `valued` and the eliminator `FeatureSlot.rec'`
 * `Minimalist.FeatureSlot.valueWith` — valuation, unification of a present slot with a value,
   `⊤` on a clash
+* `Minimalist.FeatureSlot.ofFlat`, `Minimalist.FeatureSlot.toFlat`,
+  `Minimalist.FeatureSlot.gciOfFlat` — the checking slot over the flat slot, a Galois
+  coinsertion; on a borne slot valuation restricts to flat unification
+  (`FeatureSlot.map_toFlat_valueWith`)
 
 ## References
 
@@ -92,6 +97,56 @@ def isValued : FeatureSlot α → Bool
 def value? : FeatureSlot α → Option α
   | valued v => some v
   | _ => none
+
+/-! ### The flat slot underneath -/
+
+/-- A flat slot as a checking slot, borne exactly when specified: `⊥` becomes `absent` and a
+value is `valued`. -/
+def ofFlat : Flat α → FeatureSlot α := Flat.recBotCoe absent valued
+
+/-- The value content of a checking slot: `absent` and `unvalued` alike are unspecified. -/
+def toFlat : FeatureSlot α → Flat α := WithBot.recBotCoe ⊥ id
+
+@[simp] theorem ofFlat_bot : ofFlat (⊥ : Flat α) = absent := rfl
+
+@[simp] theorem ofFlat_coe (v : α) : ofFlat (v : Flat α) = valued v := rfl
+
+@[simp] theorem toFlat_absent : toFlat (absent : FeatureSlot α) = ⊥ := rfl
+
+@[simp] theorem toFlat_unvalued : toFlat (unvalued : FeatureSlot α) = ⊥ := rfl
+
+@[simp] theorem toFlat_valued (v : α) : toFlat (valued v) = ↑v := rfl
+
+@[simp] theorem toFlat_ofFlat (x : Flat α) : toFlat (ofFlat x) = x := by
+  induction x using Flat.recBotCoe <;> rfl
+
+/-- The checking slot refines the flat slot: `ofFlat` embeds, `toFlat` retracts, and the two
+unspecified states sit below every specified one. -/
+theorem gc_ofFlat_toFlat : GaloisConnection (ofFlat : Flat α → FeatureSlot α) toFlat := by
+  intro x s
+  cases s with
+  | absent =>
+    induction x using Flat.recBotCoe with
+    | bot => simp
+    | coe v =>
+      exact iff_of_false (fun h ↦ valued_ne_absent v (le_bot_iff.1 h)) (by simp [le_bot_iff])
+  | unvalued =>
+    induction x using Flat.recBotCoe with
+    | bot => exact iff_of_true bot_le bot_le
+    | coe v =>
+      refine iff_of_false (fun h ↦ ?_) (by simp [le_bot_iff])
+      have := WithBot.coe_le_coe.1 h
+      simp [le_bot_iff] at this
+  | valued w =>
+    induction x using Flat.recBotCoe with
+    | bot => exact iff_of_true bot_le bot_le
+    | coe v =>
+      simp only [ofFlat_coe, toFlat_valued]
+      exact WithBot.coe_le_coe
+
+/-- The checking layer sits over the flat layer by a Galois coinsertion. -/
+def gciOfFlat : GaloisCoinsertion (ofFlat : Flat α → FeatureSlot α) toFlat :=
+  gc_ofFlat_toFlat.toGaloisCoinsertion fun x ↦ (toFlat_ofFlat x).le
 
 /-- Valuing a slot with `v` unifies it with `valued v` when the item bears the dimension: an
 unvalued slot takes `v`, a slot valued `v` stays, and a slot valued otherwise clashes, `⊤`. An absent
@@ -180,6 +235,21 @@ theorem valueWith_mono (v : α) :
     | valued w =>
       obtain rfl : u = w := Flat.coe_le_coe.1 (WithBot.coe_le_coe.1 h)
       exact le_rfl
+
+/-- On a borne slot, valuation restricts to flat unification: the `WithBot` refinement adds
+exactly the absence guard. -/
+theorem map_toFlat_valueWith (hs : s ≠ absent) :
+    (valueWith v s).map toFlat = PartialUnify.unify s.toFlat (v : Flat α) := by
+  cases s with
+  | absent => exact absurd rfl hs
+  | unvalued =>
+    rw [valueWith_unvalued, WithTop.map_coe, toFlat_valued, toFlat_unvalued, eq_comm]
+    exact PartialUnify.unify_eq_right.2 bot_le
+  | valued w =>
+    rcases eq_or_ne w v with rfl | hwv
+    · simp
+    · rw [valueWith_eq_top_iff.2 ⟨w, hwv, rfl⟩, WithTop.map_top, toFlat_valued]
+      exact (Flat.unify_eq_top_of_ne hwv).symm
 
 end Valuation
 

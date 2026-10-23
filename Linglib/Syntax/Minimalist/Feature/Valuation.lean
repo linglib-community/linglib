@@ -17,6 +17,8 @@ delivers the goal is `Minimalist.LinearizedSyntacticObject.goals`.
 ## Main results
 
 * `Minimalist.FeatureBundle.valueAt_eq_unify`: valuation is unification with the value.
+* `Minimalist.FeatureBundle.map_agreement_valueAt`: on a borne agreement dimension, valuation
+  restricts to flat unification of the bundle's agreement content with the value.
 
 ## References
 
@@ -64,6 +66,20 @@ theorem valueAt_eq_unify (hb : b t ≠ .absent) :
       rcases eq_or_ne u t with rfl | hu
       · simpa using hl.2 (mem_upperBounds_pair.2 ⟨hbw u, by simpa using hsw u⟩)
       · simpa [hu] using hbw u
+
+/-- On a borne agreement dimension, valuation restricts to flat unification of the bundle's
+agreement content with the value: the checking layer adds exactly the absence guard. -/
+theorem map_agreement_valueAt {d : Agreement.Dimension} {v : d.Value} {b : FeatureBundle}
+    (hb : b (.agr d) ≠ .absent) :
+    (b.valueAt (.agr d) v).map agreement = PartialUnify.unify b.agreement (.set d v ⊥) := by
+  rw [show (Agreement.Bundle.set d v ⊥) = Function.update (⊥ : Agreement.Bundle) d ↑v from rfl,
+    PartialUnify.unify_update_bot, agreement_apply,
+    ← FeatureSlot.map_toFlat_valueWith (v := v) hb, valueAt]
+  induction (b (.agr d)).valueWith v using WithTop.recTopCoe with
+  | top => rfl
+  | coe s' =>
+    simp only [WithTop.map_coe]
+    exact congrArg _ (agreement_update_agr b d s')
 
 variable (t)
 
