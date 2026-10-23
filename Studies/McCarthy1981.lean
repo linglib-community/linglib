@@ -232,8 +232,7 @@ def placeAffixes (sp : Spec α) (r : ConsonantalRoot α) : TemplateMatch α :=
 /-- Erasure (24), generalized (p. 393), removes the root line on the C-slot of the final
 CVC. -/
 def erasure (m : TemplateMatch α) : TemplateMatch α :=
-  { m with associations := m.associations.filter fun a ↦
-      !(a.source == .root && a.slotIndex == m.template.length - 3) }
+  m.delink .root (m.template.length - 3)
 
 /-- The consonantism of a binyan, with the affixes placed, the root associated by the
 conventions, and, where Erasure applies, the conventions again with the binyan's respreading
@@ -245,10 +244,6 @@ def consonantism (ax : Affixes α) (plusSeg : Slot) (b : Binyan) (r : Consonanta
   if sp.erasure then
     (((erasure m).associateOneToOne .root).associateRemaining .root).spread sp.respread
   else m
-
-/-- The number of lines from an element of a tier. -/
-def linkCount (m : TemplateMatch α) (s : AssocSource) (k : ℕ) : ℕ :=
-  m.associations.countP fun a ↦ a.source == s && a.melodyIndex == k
 
 /-! ### The vocalism -/
 
@@ -428,15 +423,15 @@ private theorem spellout_eq {p : Slot} {b : Binyan} {xs : List α} {r : Consonan
 
 private theorem linkCount_eq {p : Slot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
     (hr : r.map (label ax xs) = ⟨xs⟩) (s : AssocSource) (k : ℕ) :
-    linkCount (consonantism ax p b ⟨xs⟩) s k =
-      linkCount (consonantism numeralAffixes p b r) s k := by
+    (consonantism ax p b ⟨xs⟩).linkCount s k =
+      (consonantism numeralAffixes p b r).linkCount s k := by
   rw [consonantism_eq_map ax hr]
   rfl
 
 /-- The second binyan geminates its medial radical by Erasure and respreading (17), (25). -/
 theorem consonantism_II :
     (consonantism ax .V .II ⟨[x, y, z]⟩).spellout = [x, y, y, z] ∧
-      linkCount (consonantism ax .V .II ⟨[x, y, z]⟩) .root 1 = 2 :=
+      (consonantism ax .V .II ⟨[x, y, z]⟩).linkCount .root 1 = 2 :=
   ⟨spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 1, 2]) (by decide),
     (linkCount_eq ax (r := ⟨[0, 1, 2]⟩) rfl _ _).trans (by decide)⟩
 
@@ -451,7 +446,7 @@ theorem consonantism_XII_XIII :
 binyanim undo Erasure (34). -/
 theorem consonantism_biliteral :
     (consonantism ax .V .I ⟨[x, y]⟩).spellout = [x, y, y] ∧
-      linkCount (consonantism ax .V .I ⟨[x, y]⟩) .root 0 = 1 ∧
+      (consonantism ax .V .I ⟨[x, y]⟩).linkCount .root 0 = 1 ∧
       (consonantism ax .V .II ⟨[x, y]⟩).spellout = [x, y, y, y] ∧
       (consonantism ax .V .V ⟨[x, y]⟩).spellout = [ax.t, x, y, y, y] :=
   ⟨spellout_eq ax (r := ⟨[0, 1]⟩) rfl (out := [0, 1, 1]) (by decide),

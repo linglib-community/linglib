@@ -3,11 +3,12 @@ module
 public import Linglib.Fragments.Tarifit.ConsonantalRoots
 public import Linglib.Morphology.Morphotactics.Association
 public import Linglib.Data.Examples.AfkirZellou2025
+public import Linglib.Data.Wordlist.AfkirZellou2025
 import Mathlib.Data.Fin.VecNotation
 import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!
-# Schwa variation in Tarifit CCəC words
+# Schwa variation and the intensive imperative in Tarifit
 
 Tarifit triconsonantal verbs in the simple imperative carry a template schwa between the second
 and third radicals, and Afkir and Zellou find two further variants: a short intrusive schwa in
@@ -25,9 +26,16 @@ profiles (`countP_rising_plateau_falling`) needs /ʕ/ above the tap, so /ʕrəm/
 Table 9 files it under rising sonority. Vowellessness tracks voiceless second and third radicals
 (`voiceless_of_often_vowelless`, `voiced_of_never_vowelless`).
 
+The intensive imperative geminates the medial radical in the template CəCCəC, and a geminate
+bilabial or dental fricative is a stop (p. 9): /ʒβð/ has [ʒβəð] and [ʒəb:əð]. One fragment root
+derives both imperatives of each verb of §2 (`imperatives_derived`), except that Table 1 prints
+the intensive of /χns/ without the schwa after the geminate (`bend_down_imp_intens`).
+
 ## Main definitions
 
 * `AfkirZellou2025.imperative`: a root's simple imperative, by the association conventions.
+* `AfkirZellou2025.intensive`: a root's intensive imperative, by the conventions, Erasure and
+  fortition.
 * `AfkirZellou2025.sonority`: the sonority of a phone on the scale of Figure 9.
 * `AfkirZellou2025.Rising`, `Plateau`, `Falling`: the sonority profile of the initial cluster.
 * `AfkirZellou2025.targets`: the thirty-eight CCəC target words, by root.
@@ -36,7 +44,9 @@ Table 9 files it under rising sonority. Vowellessness tracks voiceless second an
 
 Figure 9 ranks voiced stops below voiceless fricatives, against the default of [parker-2002]
 that it cites (`Sonority.Class.parkerRank`). No target cluster pairs the two classes, so the
-profiles are the same on either scale. The regression estimates, the acoustic measurements and
+profiles are the same on either scale. The book gives the intensive forms, not their derivation:
+the derivation here is McCarthy's for the Arabic second binyan, whose template CVCCVC the
+intensive shares (`intensiveStem_eq`). The regression estimates, the acoustic measurements and
 the perception study have no formal counterpart here.
 
 ## References
@@ -53,26 +63,80 @@ namespace AfkirZellou2025
 
 open Tarifit Morphology Phonology
 
-/-! ### The simple imperative -/
+/-! ### Stems -/
+
+section Stem
+
+variable {α β : Type*}
 
 /-- The prosodic template CCəC of the simple imperative. -/
 def imperativeTemplate : Autosegmental.Skeleton := [.C, .C, .V, .C]
 
-/-- The simple imperative of a root: the root and the schwa associated with the template CCəC by
-the universal association conventions. -/
-def imperative (r : ConsonantalRoot Segment) : TemplateMatch Segment :=
-  ((({ root := r, vocalism := [«ə»], template := imperativeTemplate, associations := [] } :
-    TemplateMatch Segment).associate .root).associate .vocalism)
+/-- The prosodic template CəCCəC of the intensive imperative. -/
+def intensiveTemplate : Autosegmental.Skeleton := [.C, .V, .C, .C, .V, .C]
+
+/-- A root and the vowel `v` on a template, with no association lines yet. -/
+def unassociated (t : Autosegmental.Skeleton) (v : α) (r : ConsonantalRoot α) : TemplateMatch α :=
+  { root := r, vocalism := [v], template := t, associations := [] }
+
+/-- The simple stem: the root and the vowel associated with CCəC by the universal conventions. -/
+def simpleStem (v : α) (r : ConsonantalRoot α) : TemplateMatch α :=
+  ((unassociated imperativeTemplate v r).associate .root).associate .vocalism
+
+/-- The intensive stem: the root associated with CəCCəC by the conventions, the root line on the
+C-slot of the final CVC erased, and the conventions again, which respread the medial radical to
+it, as McCarthy's Erasure does in the Arabic second binyan; then the vowel. -/
+def intensiveStem (v : α) (r : ConsonantalRoot α) : TemplateMatch α :=
+  let m := (unassociated intensiveTemplate v r).associate .root
+  ((m.delink .root 3).associate .root).associate .vocalism
+
+theorem simpleStem_map (f : α → β) (v : α) (r : ConsonantalRoot α) :
+    simpleStem (f v) (r.map f) = (simpleStem v r).map f := by
+  simp only [simpleStem, ← TemplateMatch.associate_map]; rfl
+
+theorem intensiveStem_map (f : α → β) (v : α) (r : ConsonantalRoot α) :
+    intensiveStem (f v) (r.map f) = (intensiveStem v r).map f := by
+  simp only [intensiveStem, ← TemplateMatch.associate_map, ← TemplateMatch.delink_map]; rfl
+
+theorem simpleStem_eq (a b c v : α) :
+    simpleStem v ⟨[a, b, c]⟩ =
+      { root := ⟨[a, b, c]⟩, vocalism := [v], template := imperativeTemplate,
+        associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 1⟩, ⟨.root, 2, 3⟩, ⟨.vocalism, 0, 2⟩] } :=
+  (simpleStem_map ![a, b, c, v] 3 ⟨[0, 1, 2]⟩).trans <| congrArg (·.map ![a, b, c, v])
+    (show simpleStem (3 : Fin 4) ⟨[0, 1, 2]⟩ =
+        { root := ⟨[0, 1, 2]⟩, vocalism := [3], template := imperativeTemplate,
+          associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 1⟩, ⟨.root, 2, 3⟩, ⟨.vocalism, 0, 2⟩] } by
+      decide +kernel)
+
+/-- The intensive stem links the medial radical to two slots. -/
+theorem intensiveStem_eq (a b c v : α) :
+    intensiveStem v ⟨[a, b, c]⟩ =
+      { root := ⟨[a, b, c]⟩, vocalism := [v], template := intensiveTemplate,
+        associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 2⟩, ⟨.root, 2, 5⟩, ⟨.root, 1, 3⟩,
+          ⟨.vocalism, 0, 1⟩, ⟨.vocalism, 0, 4⟩] } :=
+  (intensiveStem_map ![a, b, c, v] 3 ⟨[0, 1, 2]⟩).trans <| congrArg (·.map ![a, b, c, v])
+    (show intensiveStem (3 : Fin 4) ⟨[0, 1, 2]⟩ =
+        { root := ⟨[0, 1, 2]⟩, vocalism := [3], template := intensiveTemplate,
+          associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 2⟩, ⟨.root, 2, 5⟩, ⟨.root, 1, 3⟩,
+            ⟨.vocalism, 0, 1⟩, ⟨.vocalism, 0, 4⟩] } by
+      decide +kernel)
+
+theorem spellout_simpleStem (a b c v : α) :
+    (simpleStem v ⟨[a, b, c]⟩).spellout = [a, b, v, c] := by
+  rw [simpleStem_eq]; rfl
+
+theorem spellout_intensiveStem (a b c v : α) :
+    (intensiveStem v ⟨[a, b, c]⟩).spellout = [a, v, b, b, v, c] := by
+  rw [intensiveStem_eq]; rfl
+
+end Stem
+
+/-- The simple imperative of a root. -/
+def imperative (r : ConsonantalRoot Segment) : TemplateMatch Segment := simpleStem «ə» r
 
 theorem spellout_imperative (a b c : Segment) :
-    (imperative ⟨[a, b, c]⟩).spellout = [a, b, «ə», c] := by
-  have h : ((({ root := ⟨[0, 1, 2]⟩, vocalism := [3], template := imperativeTemplate,
-                 associations := [] } : TemplateMatch (Fin 4)).associate .root).associate
-      .vocalism).spellout = [0, 1, 3, 2] := by
-    decide +kernel
-  have := congrArg (List.map ![a, b, c, «ə»]) h
-  rwa [← TemplateMatch.spellout_map, ← TemplateMatch.associate_map,
-    ← TemplateMatch.associate_map] at this
+    (imperative ⟨[a, b, c]⟩).spellout = [a, b, «ə», c] :=
+  spellout_simpleStem a b c «ə»
 
 /-- The transcription of a root's imperative. -/
 def surface (r : ConsonantalRoot Segment) : String :=
@@ -204,6 +268,71 @@ theorem voiceless_of_often_vowelless :
 
 theorem voiced_of_never_vowelless :
     ∀ x ∈ rows, vowelless? x.1 = some .never → ¬ VoicelessAt x.2 1 ∨ ¬ VoicelessAt x.2 2 := by
+  decide +kernel
+
+/-! ### The intensive imperative -/
+
+/-- The bilabial and dental fricatives, which continue the historical stops at their places. -/
+def spirants : Finset Segment := ⟨↑[β, θ, ð, «ðˤ»], by decide +kernel⟩
+
+/-- The stop at a fricative's place: [−continuant], without delayed release. -/
+def harden (x : Segment) : Segment :=
+  (x.setFeature .continuant false).setFeature .delayedRelease false
+
+/-- The labial and dental stops surface as fricatives except when geminated (p. 9): Figure 6
+lists the stops of the spirants geminated, and no spirant geminated. -/
+theorem spirantization : ∀ x ∈ spirants, harden x ∈ geminates ∧ x ∉ geminates := by
+  decide +kernel
+
+example : [β, θ, ð, «ðˤ»].map harden = [b, t, d, «dˤ»] := by decide +kernel
+
+/-- The fortis counterpart of a phoneme: the stop of a spirant, any other phoneme itself. -/
+def fortis (x : Segment) : Segment := if x ∈ spirants then harden x else x
+
+/-- Fortition: a root element linked to two slots is fortis. -/
+def fortition (m : TemplateMatch Segment) : TemplateMatch Segment :=
+  { m with root := ⟨m.root.segments.mapIdx fun k x ↦
+      if 2 ≤ m.linkCount .root k then fortis x else x⟩ }
+
+/-- The intensive imperative of a root: the intensive stem with schwa, after fortition. -/
+def intensive (r : ConsonantalRoot Segment) : TemplateMatch Segment :=
+  fortition (intensiveStem «ə» r)
+
+/-- The medial radical of an intensive imperative is a fortis geminate. -/
+theorem spellout_intensive (a b c : Segment) :
+    (intensive ⟨[a, b, c]⟩).spellout = [a, «ə», fortis b, fortis b, «ə», c] := by
+  rw [intensive, intensiveStem_eq]; rfl
+
+/-- The written segments of a phoneme string, with a geminate, two adjacent identical phonemes,
+written once with a length mark. -/
+def written : List Segment → Option (List String)
+  | [] => some []
+  | x :: xs => do
+    let s ← ipa? x
+    match xs.head?, ← written xs with
+    | some y, w :: ws => pure (if x = y ∧ w = s then (s ++ ":") :: ws else s :: w :: ws)
+    | _, ws => pure (s :: ws)
+
+/-- The stem of a cell of the data. -/
+def stem (c : Wordlist.Cell) (r : ConsonantalRoot Segment) : TemplateMatch Segment :=
+  if c.stem = ↑Wordlist.Stem.intensive then intensive r else imperative r
+
+/-- The roots of the imperatives of §2. -/
+def sketchRoots : List (ConsonantalRoot Segment) := [«ʒβð», χðm, skf, nqβ, fhm, rħm, χns]
+
+/-- One root of the fragment derives each verb's simple and intensive imperatives, except the
+intensive imperative of Table 1. -/
+theorem imperatives_derived :
+    ∀ ℓ ∈ Wordlist.lexemes, ∃ r ∈ sketchRoots, ∀ f ∈ Wordlist.all, f.lexeme = ℓ →
+      f ≠ Wordlist.bend_down_imp_intens → written (stem f.cell r).spellout = some f.segments := by
+  decide +kernel
+
+/-- Table 1 writes the intensive imperative of χns without the schwa that follows the geminate in
+the derived form, as in the intensive imperatives of p. 9. -/
+theorem bend_down_imp_intens :
+    written (intensive χns).spellout ≠ some Wordlist.bend_down_imp_intens.segments ∧
+      written ((intensive χns).spellout.eraseIdx 4) =
+        some Wordlist.bend_down_imp_intens.segments := by
   decide +kernel
 
 end AfkirZellou2025

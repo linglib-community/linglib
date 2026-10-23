@@ -1,0 +1,201 @@
+{
+  "description": "Simple and intensive imperatives of triconsonantal verbs in Afkir and Zellou's phonological sketch: the examples of p. 9, the intensive imperatives of the consonant examples (1), and the imperatives of Table 1. Checked against the page images.",
+  "Types": {
+    "Stem": [
+      {"Value": "simple", "Lean": "simple", "Description": "the simple stem"},
+      {"Value": "intensive", "Lean": "intensive", "Description": "the intensive stem"}
+    ]
+  },
+  "CellTable": [
+    {
+      "ID": "imp",
+      "Name": "simple imperative",
+      "Features": "Mood=Imp|Stem=simple"
+    },
+    {
+      "ID": "imp_intens",
+      "Name": "intensive imperative",
+      "Features": "Mood=Imp|Stem=intensive"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "pull_out",
+      "Name": "pull out",
+      "Description": "the root ʒbð"
+    },
+    {
+      "ID": "work",
+      "Name": "work",
+      "Description": "the root χðm"
+    },
+    {
+      "ID": "suck_up",
+      "Name": "suck up",
+      "Description": "the root skf"
+    },
+    {
+      "ID": "pick",
+      "Name": "pick",
+      "Description": "the root nqβ"
+    },
+    {
+      "ID": "understand",
+      "Name": "understand",
+      "Description": ""
+    },
+    {
+      "ID": "move_back",
+      "Name": "move back",
+      "Description": ""
+    },
+    {
+      "ID": "bend_down",
+      "Name": "bend down",
+      "Description": "the root χns"
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "pull_out",
+      "Language_ID": "tari1263",
+      "Parameter_ID": "pull_out",
+      "POS": "VERB"
+    },
+    {
+      "ID": "work",
+      "Language_ID": "tari1263",
+      "Parameter_ID": "work",
+      "POS": "VERB"
+    },
+    {
+      "ID": "suck_up",
+      "Language_ID": "tari1263",
+      "Parameter_ID": "suck_up",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pick",
+      "Language_ID": "tari1263",
+      "Parameter_ID": "pick",
+      "POS": "VERB"
+    },
+    {
+      "ID": "understand",
+      "Language_ID": "tari1263",
+      "Parameter_ID": "understand",
+      "POS": "VERB"
+    },
+    {
+      "ID": "move_back",
+      "Language_ID": "tari1263",
+      "Parameter_ID": "move_back",
+      "POS": "VERB"
+    },
+    {
+      "ID": "bend_down",
+      "Language_ID": "tari1263",
+      "Parameter_ID": "bend_down",
+      "POS": "VERB"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "afkirzellou2025_pull_out_imp",
+      "Lexeme_ID": "pull_out",
+      "Cell": "imp",
+      "Form": "ʒβəð",
+      "Segments": ["ʒ", "β", "ə", "ð"],
+      "Source": ["afkir-zellou-2025[p. 9]"]
+    },
+    {
+      "ID": "afkirzellou2025_pull_out_imp_intens",
+      "Lexeme_ID": "pull_out",
+      "Cell": "imp_intens",
+      "Form": "ʒəb:əð",
+      "Segments": ["ʒ", "ə", "b:", "ə", "ð"],
+      "Source": ["afkir-zellou-2025[p. 9]"]
+    },
+    {
+      "ID": "afkirzellou2025_work_imp",
+      "Lexeme_ID": "work",
+      "Cell": "imp",
+      "Form": "χðəm",
+      "Segments": ["χ", "ð", "ə", "m"],
+      "Source": ["afkir-zellou-2025[p. 9]"]
+    },
+    {
+      "ID": "afkirzellou2025_work_imp_intens",
+      "Lexeme_ID": "work",
+      "Cell": "imp_intens",
+      "Form": "χəd:əm",
+      "Segments": ["χ", "ə", "d:", "ə", "m"],
+      "Source": ["afkir-zellou-2025[p. 9]"]
+    },
+    {
+      "ID": "afkirzellou2025_suck_up_imp",
+      "Lexeme_ID": "suck_up",
+      "Cell": "imp",
+      "Form": "skəf",
+      "Segments": ["s", "k", "ə", "f"],
+      "Source": ["afkir-zellou-2025[p. 9]"]
+    },
+    {
+      "ID": "afkirzellou2025_suck_up_imp_intens",
+      "Lexeme_ID": "suck_up",
+      "Cell": "imp_intens",
+      "Form": "sək:əf",
+      "Segments": ["s", "ə", "k:", "ə", "f"],
+      "Source": ["afkir-zellou-2025[p. 9]"]
+    },
+    {
+      "ID": "afkirzellou2025_pick_imp",
+      "Lexeme_ID": "pick",
+      "Cell": "imp",
+      "Form": "nqəβ",
+      "Segments": ["n", "q", "ə", "β"],
+      "Source": ["afkir-zellou-2025[p. 9]"]
+    },
+    {
+      "ID": "afkirzellou2025_pick_imp_intens",
+      "Lexeme_ID": "pick",
+      "Cell": "imp_intens",
+      "Form": "nəq:əβ",
+      "Segments": ["n", "ə", "q:", "ə", "β"],
+      "Source": ["afkir-zellou-2025[p. 9]"]
+    },
+    {
+      "ID": "afkirzellou2025_understand_imp_intens",
+      "Lexeme_ID": "understand",
+      "Cell": "imp_intens",
+      "Form": "fəh:əm",
+      "Segments": ["f", "ə", "h:", "ə", "m"],
+      "Source": ["afkir-zellou-2025[(1)]"]
+    },
+    {
+      "ID": "afkirzellou2025_move_back_imp_intens",
+      "Lexeme_ID": "move_back",
+      "Cell": "imp_intens",
+      "Form": "rəħ:əm",
+      "Segments": ["r", "ə", "ħ:", "ə", "m"],
+      "Source": ["afkir-zellou-2025[(1)]"]
+    },
+    {
+      "ID": "afkirzellou2025_bend_down_imp",
+      "Lexeme_ID": "bend_down",
+      "Cell": "imp",
+      "Form": "χnəs",
+      "Segments": ["χ", "n", "ə", "s"],
+      "Source": ["afkir-zellou-2025[Table 1]"]
+    },
+    {
+      "ID": "afkirzellou2025_bend_down_imp_intens",
+      "Lexeme_ID": "bend_down",
+      "Cell": "imp_intens",
+      "Form": "ˈχən:s",
+      "Segments": ["χ", "ə", "n:", "s"],
+      "Comment": "Stress-marked; no schwa between the geminate and the final consonant.",
+      "Source": ["afkir-zellou-2025[Table 1]"]
+    }
+  ]
+}

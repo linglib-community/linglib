@@ -8,8 +8,9 @@ public import Linglib.Phonology.Segmental.PHOIBLE
 This file defines the phonemes of Tarifit (Nador variety) as Afkir and Zellou chart them: the
 consonants of their Figure 6, the four vowels /a i u ə/, and the marginal /l/ and /p/ of recent
 loans. A phoneme is named by its IPA symbol, with feature values from the PHOIBLE chart, which has
-no Tarifit inventory. Length is not a feature here: a geminate is a consonant on two timing slots,
-and `geminates` collects the consonants that the chart lists geminated.
+no Tarifit inventory. The coronal stops are dental, as the text calls them. Length is not a
+feature here: a geminate is a consonant on two timing slots, and `geminates` collects the
+consonants that the chart lists geminated.
 
 The chart has no entry for the pharyngealized and labialized consonants, whose tongue-root and
 labial values PHOIBLE gives as contours, so each is the plain consonant with [+RTR] or with
@@ -22,10 +23,6 @@ onsets holds only with /ʕ/ above the tap, so /ʕ/ is the chart's segment as an 
 * `Tarifit.consonants`, `Tarifit.geminates`: the consonants of Figure 6, singly and geminated.
 * `Tarifit.vowels`, `Tarifit.marginal`: the vowels, and the consonants of recent loans.
 * `Tarifit.ipa?`: the IPA transcription of a phoneme.
-
-## Main results
-
-* `Tarifit.spirantization`: the labial and dental stops geminate and their fricatives do not.
 
 ## References
 
@@ -50,17 +47,17 @@ def labialization : Segment := .ofSpecs [(.round, true), (.labiodental, false)]
 /-- The voiced bilabial stop /b/. -/
 def b : Segment := .ofChart .«b»
 
-/-- The voiceless alveolar stop /t/. -/
-def t : Segment := .ofChart .«t»
+/-- The voiceless dental stop /t/. -/
+def t : Segment := .ofChart .«t̪»
 
-/-- The voiced alveolar stop /d/. -/
-def d : Segment := .ofChart .«d»
+/-- The voiced dental stop /d/. -/
+def d : Segment := .ofChart .«d̪»
 
-/-- The pharyngealized voiceless stop /tˤ/. -/
-def «tˤ» : Segment := .ofChart .«t» pharyngealization
+/-- The pharyngealized voiceless dental stop /tˤ/. -/
+def «tˤ» : Segment := .ofChart .«t̪» pharyngealization
 
-/-- The pharyngealized voiced stop /dˤ/. -/
-def «dˤ» : Segment := .ofChart .«d» pharyngealization
+/-- The pharyngealized voiced dental stop /dˤ/. -/
+def «dˤ» : Segment := .ofChart .«d̪» pharyngealization
 
 /-- The voiceless velar stop /k/. -/
 def k : Segment := .ofChart .«k»
@@ -220,12 +217,6 @@ def vowels : Finset Segment := ⟨↑[a, i, u, «ə»], by decide +kernel⟩
 
 /-- The consonants of recent loans outside Figure 6. -/
 def marginal : Finset Segment := ⟨↑[l, p], by decide +kernel⟩
-
-/-- The labial and dental stops surface as fricatives except when geminated (p. 9), so Figure 6
-lists each of /b t d dˤ/ geminated and none of /β θ ð ðˤ/. -/
-theorem spirantization :
-    ∀ x ∈ [(b, β), (t, θ), (d, ð), («dˤ», «ðˤ»)], x.1 ∈ geminates ∧ x.2 ∉ geminates := by
-  decide +kernel
 
 /-- The phonemes, each with its IPA transcription. -/
 def transcriptions : List (Segment × String) :=

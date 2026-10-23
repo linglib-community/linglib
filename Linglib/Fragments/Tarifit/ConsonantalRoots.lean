@@ -8,8 +8,8 @@ public import Linglib.Morphology.Root.Consonantal
 
 This file defines triconsonantal verb roots of Tarifit as melodies over the consonants of
 `Fragments/Tarifit/Phonology.lean`, each named by its radicals and given with its simple
-imperative, the CCəC form with a schwa between the second and third radicals. A gloss is given
-where Afkir and Zellou give one.
+imperative, the CCəC form with a schwa between the second and third radicals, or with its
+intensive imperative where only that is given. A gloss is given where Afkir and Zellou give one.
 
 ## References
 
@@ -135,5 +135,15 @@ def skf : ConsonantalRoot Segment := ⟨[s, k, f]⟩
 
 /-- The root rsq, whose simple imperative is /rsəq/. -/
 def rsq : ConsonantalRoot Segment := ⟨[r, s, q]⟩
+
+
+/-- The root χðm 'work', whose simple imperative is /χðəm/. -/
+def χðm : ConsonantalRoot Segment := ⟨[χ, ð, m]⟩
+
+/-- The root fhm, whose intensive imperative /fəh:əm/ is 'understand!'. -/
+def fhm : ConsonantalRoot Segment := ⟨[f, h, m]⟩
+
+/-- The root rħm, whose intensive imperative /rəħ:əm/ is 'move back!'. -/
+def rħm : ConsonantalRoot Segment := ⟨[r, ħ, m]⟩
 
 end Tarifit

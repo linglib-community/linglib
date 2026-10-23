@@ -28,7 +28,8 @@ line receives no phonetic realization. The association conventions that draw the
 * `TemplateMatch.spellout`, `TemplateMatch.map`: the surface segments of a match, and the
   relabelling of its melodies.
 * `TemplateMatch.OrderedOn`: the association lines of a tier do not cross.
-* `TemplateMatch.links`: the lines of a tier as pairs of positions.
+* `TemplateMatch.links`, `TemplateMatch.linkCount`: the lines of a tier as pairs of positions,
+  and the number of lines from one of its elements.
 
 ## Main results
 
@@ -170,6 +171,13 @@ end map
 /-- The lines of tier `s` as `(melodyIndex, slotIndex)` pairs. -/
 def links (s : AssocSource) : Finset (ℕ × ℕ) :=
   ((m.associations.filter (·.source = s)).map fun a ↦ (a.melodyIndex, a.slotIndex)).toFinset
+
+/-- The number of lines from element `k` of tier `s`; a geminate is an element with two. -/
+def linkCount (s : AssocSource) (k : ℕ) : ℕ :=
+  m.associations.countP fun a ↦ a.source == s && a.melodyIndex == k
+
+@[simp] theorem linkCount_map {β : Type*} (f : α → β) (s : AssocSource) (k : ℕ) :
+    (m.map f).linkCount s k = m.linkCount s k := rfl
 
 @[simp] theorem mem_links {s : AssocSource} {p : ℕ × ℕ} :
     p ∈ m.links s ↔ ∃ a ∈ m.associations, a.source = s ∧ (a.melodyIndex, a.slotIndex) = p := by

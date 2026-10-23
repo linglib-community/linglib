@@ -682,7 +682,7 @@ theorem verbSpine_rootLocal : ∀ base : Option Head, (∀ c ∈ base, c = .n �
 /-- A binyan geminates when a triliteral root's middle radical is one element on two of its slots.
 -/
 def Binyan.Geminated (b : Binyan) : Prop :=
-  2 ≤ McCarthy1981.linkCount (consonantism numeralPx b ⟨[0, 1, 2]⟩) .root 1
+  2 ≤ (consonantism numeralPx b ⟨[0, 1, 2]⟩).linkCount .root 1
 
 instance : DecidablePred Binyan.Geminated := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
 
