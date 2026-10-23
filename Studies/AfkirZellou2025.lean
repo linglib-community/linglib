@@ -148,10 +148,6 @@ inductive Vowelless
   | often
   deriving DecidableEq, Repr
 
-/-- The root a row reports, by the transcription of its imperative. -/
-def root? (e : Datum) : Option (ConsonantalRoot Segment) :=
-  targets.find? (surface · == e.primaryText)
-
 /-- The row's intrusion category. -/
 def intrusion? (e : Datum) : Option Intrusion :=
   match e.feature? "intrusion" with
@@ -169,43 +165,45 @@ def vowelless? (e : Datum) : Option Vowelless :=
   | some "often" => some .often
   | _ => none
 
+/-- The rows of Tables 7 and 9, each with its root, both in the order of Table 7. -/
+def rows : List (Datum × ConsonantalRoot Segment) := Examples.all.zip targets
+
 theorem rows_complete :
-    ∀ e ∈ Examples.all, (root? e).isSome ∧ (intrusion? e).isSome ∧ (vowelless? e).isSome := by
+    Examples.all.length = targets.length ∧ ∀ x ∈ rows,
+      surface x.2 = x.1.primaryText ∧ (intrusion? x.1).isSome ∧ (vowelless? x.1).isSome := by
   decide +kernel
 
 /-! ### The intrusive schwa -/
 
 theorem almostExclusively_iff_c2_r :
-    ∀ e ∈ Examples.all, ∀ r ∈ root? e,
-      intrusion? e = some .almostExclusively ↔ r.segments[1]? = some Tarifit.r := by
+    ∀ x ∈ rows, intrusion? x.1 = some .almostExclusively ↔ x.2.segments[1]? = some Tarifit.r := by
   decide +kernel
 
 theorem intrusion_of_rising :
-    ∀ e ∈ Examples.all, ∀ r ∈ root? e, Rising r →
-      intrusion? e = some .variably ∨ intrusion? e = some .almostExclusively ∨
-        VoicelessAt r 1 := by
+    ∀ x ∈ rows, Rising x.2 →
+      intrusion? x.1 = some .variably ∨ intrusion? x.1 = some .almostExclusively ∨
+        VoicelessAt x.2 1 := by
   decide +kernel
 
 theorem nonRising_or_voiceless_of_never_rarely :
-    ∀ e ∈ Examples.all, (intrusion? e = some .never ∨ intrusion? e = some .rarely) →
-      ∀ r ∈ root? e, ¬ Rising r ∨ VoicelessAt r 1 := by
+    ∀ x ∈ rows, intrusion? x.1 = some .never ∨ intrusion? x.1 = some .rarely →
+      ¬ Rising x.2 ∨ VoicelessAt x.2 1 := by
   decide +kernel
 
 theorem variably_exceptions :
-    ∀ e ∈ Examples.all, intrusion? e = some .variably →
-      ∀ r ∈ root? e, Rising r ∨ ¬ VoicelessAt r 1 ∨ r ∈ [nqβ, nqr, «qtˤʕ»] := by
+    ∀ x ∈ rows, intrusion? x.1 = some .variably →
+      Rising x.2 ∨ ¬ VoicelessAt x.2 1 ∨ x.2 ∈ [nqβ, nqr, «qtˤʕ»] := by
   decide +kernel
 
 /-! ### Vowelless production -/
 
 theorem voiceless_of_often_vowelless :
-    ∀ e ∈ Examples.all, vowelless? e = some .often →
-      ∀ r ∈ root? e, (VoicelessAt r 1 ∧ VoicelessAt r 2) ∨ r = ħkm := by
+    ∀ x ∈ rows, vowelless? x.1 = some .often →
+      (VoicelessAt x.2 1 ∧ VoicelessAt x.2 2) ∨ x.2 = ħkm := by
   decide +kernel
 
 theorem voiced_of_never_vowelless :
-    ∀ e ∈ Examples.all, vowelless? e = some .never →
-      ∀ r ∈ root? e, ¬ VoicelessAt r 1 ∨ ¬ VoicelessAt r 2 := by
+    ∀ x ∈ rows, vowelless? x.1 = some .never → ¬ VoicelessAt x.2 1 ∨ ¬ VoicelessAt x.2 2 := by
   decide +kernel
 
 end AfkirZellou2025
