@@ -464,14 +464,14 @@
     "translation": "Roya found out what Forood must buy.",
     "context": "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SBI"],
       ["ro", "no"],
       ["modal", "must"],
-      ["scenario", "freeChoice59"],
-      ["verdict", "true"]
+      ["scenario", "freeChoice59"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -489,14 +489,14 @@
     "translation": "Roya found out what book Forood must buy.",
     "context": "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SCI"],
       ["ro", "no"],
       ["modal", "must"],
-      ["scenario", "freeChoice59"],
-      ["verdict", "true"]
+      ["scenario", "freeChoice59"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -514,14 +514,14 @@
     "translation": "Roya found out what Forood must buy.",
     "context": "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SBI"],
       ["ro", "yes"],
       ["modal", "must"],
-      ["scenario", "freeChoice59"],
-      ["verdict", "false"]
+      ["scenario", "freeChoice59"]
     ],
     "comment": "Printed unmarked; the prose says it is not a felicitous description of the scenario (59) (verdict false): -ro neutralizes the disjunctions, so no free choice interpretation.",
     "verified": "page-image"
@@ -539,14 +539,14 @@
     "translation": "Roya found out what book Forood must buy.",
     "context": "Forood must buy one of two things / books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "SCI"],
       ["ro", "yes"],
       ["modal", "must"],
-      ["scenario", "freeChoice59"],
-      ["verdict", "false"]
+      ["scenario", "freeChoice59"]
     ],
     "comment": "Printed unmarked; the prose says it is not a felicitous description of the scenario (59) (verdict false).",
     "verified": "page-image"
@@ -664,13 +664,13 @@
     "translation": "Forood has forgotten which book he has bought.",
     "context": "Forood looks confused. Ava sees him and asks Roya what is going on. Roya replies:",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"],
       ["ro", "yes"],
-      ["property", "D-linked"],
-      ["verdict", "false"]
+      ["property", "D-linked"]
     ],
     "comment": "Printed unmarked; the prose calls it deviant in the scenario (68), where the set of books is neither salient nor discourse-given (verdict false).",
     "verified": "page-image"
@@ -735,14 +735,14 @@
     "translation": "Roya found out which book Forood must buy.",
     "context": "Forood must buy one of two books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"],
       ["ro", "yes"],
       ["modal", "must"],
-      ["inference", "free choice"],
-      ["verdict", "true"]
+      ["inference", "free choice"]
     ],
     "comment": "Unlike (74) in English and unlike -ro marked what CIs, allows the free choice interpretation.",
     "verified": "page-image"
@@ -757,13 +757,13 @@
     "translation": "",
     "context": "Forood must buy one of two books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"],
       ["language", "English"],
-      ["modal", "must"],
-      ["verdict", "false"]
+      ["modal", "must"]
     ],
     "comment": "Printed unmarked; the prose says that, unlike (73), it cannot felicitously describe the scenario (72) (verdict false).",
     "verified": "page-image"
@@ -781,13 +781,13 @@
     "translation": "Roya found out which book Forood must buy.",
     "context": "Forood must buy one of two books. He is not required to buy either but permitted to do so. Roya found out that this is the case.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"],
       ["ro", "yes"],
-      ["modal", "must"],
-      ["verdict", "false"]
+      ["modal", "must"]
     ],
     "comment": "Printed unmarked; the prose says it cannot felicitously describe the scenario (72): with -æ the free choice interpretation is blocked (verdict false).",
     "verified": "page-image"

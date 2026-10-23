@@ -33,6 +33,7 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
     "translation": "...",
     "context": "",
     "judgment": "acceptable",                // one of the 6 cases
+    "verdict": true,                         // optional: a truth-value judgment in the context
     "alternatives": [{"form": "...", "judgment": "unacceptable"}],
     "readings":     [{"name": "strong", "judgment": "acceptable"},
                      {"name": "weak",   "judgment": "acceptable"}],
@@ -248,6 +249,9 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     glossed     = emit_glossed_tokens(ex.get("glossedTokens", []), where)
     context     = ex.get("context") or ""
     judgment    = parse_judgment(ex.get("judgment", ""), where + ".judgment")
+    verdict     = ex.get("verdict")
+    if verdict is not None and not isinstance(verdict, bool):
+        raise ValueError(f"{where}.verdict: expected a JSON boolean")
     alternatives = emit_form_judgment_list(ex.get("alternatives", []), where + ".alternatives", "form")
     readings    = emit_form_judgment_list(ex.get("readings", []), where + ".readings", "name")
     features    = emit_string_pair_list(ex.get("paperFeatures", []), where + ".paperFeatures")
@@ -258,6 +262,9 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
         if k == "alsoJudged":
             parse_judgment(v, where + ".paperFeatures.alsoJudged")
 
+    verdict_line = ""
+    if verdict is not None:
+        verdict_line = f"\n    verdict := some {'true' if verdict else 'false'}"
     return f"""def {local} : Datum :=
   {{ id := {lean_string(ex_id)}
     source := {src}
@@ -266,7 +273,7 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     primaryText := {lean_string(primary)}
     glossedTokens := {glossed}
     context := {lean_string(context)}
-    judgment := {judgment}
+    judgment := {judgment}{verdict_line}
     alternatives := {alternatives}
     readings := {readings}
     paperFeatures := {features} }}"""
@@ -374,7 +381,7 @@ def process(author_year: str, check: bool) -> bool:
 KEY_ORDER = [
     "id", "source", "reportedIn", "language", "primaryText",
     "discourseSegments", "glossedTokens", "translation", "context",
-    "judgment", "alternatives", "readings", "paperFeatures", "comment",
+    "judgment", "verdict", "alternatives", "readings", "paperFeatures", "comment",
     "verified",
 ]
 

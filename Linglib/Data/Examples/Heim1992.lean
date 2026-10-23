@@ -141,9 +141,10 @@ def s32a : Datum :=
     glossedTokens := []
     context := "Nicholas is not willing to pay the $3,000 that he believes it would cost him if he flew to Paris on the Concorde, but he would love to fly on the Concorde if he could get the trip for free."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.1"), ("truth", "true"), ("source", "Asher 1987")] }
+    paperFeatures := [("section", "4.1"), ("source", "Asher 1987")] }
 
 def s32b : Datum :=
   { id := "heim1992_s32b"
@@ -154,9 +155,10 @@ def s32b : Datum :=
     glossedTokens := []
     context := "Nicholas is not willing to pay the $3,000 that he believes it would cost him if he flew to Paris on the Concorde, but he would love to fly on the Concorde if he could get the trip for free."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.1"), ("truth", "false"), ("source", "Asher 1987")] }
+    paperFeatures := [("section", "4.1"), ("source", "Asher 1987")] }
 
 def s33 : Datum :=
   { id := "heim1992_s33"

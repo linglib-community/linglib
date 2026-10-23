@@ -1,10 +1,7 @@
 [
   {
     "id": "iz2021_s10a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(10a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(10a)"},
     "language": "stan1293",
     "primaryText": "The patient hasn't had a seizure in (the last) 5 years.",
     "discourseSegments": [],
@@ -15,28 +12,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "adverbial",
-        "in the last 5 years, LB adverbial"
-      ],
-      [
-        "ai",
-        "cancelable"
-      ]
+      ["section", "1"],
+      ["adverbial", "in the last 5 years, LB adverbial"],
+      ["ai", "cancelable"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s10b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(10b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(10b)"},
     "language": "stan1293",
     "primaryText": "The patient hasn't had a seizure since 2015.",
     "discourseSegments": [],
@@ -47,28 +32,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "adverbial",
-        "since 2015, LB adverbial"
-      ],
-      [
-        "ai",
-        "cancelable"
-      ]
+      ["section", "1"],
+      ["adverbial", "since 2015, LB adverbial"],
+      ["ai", "cancelable"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s11b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(11B)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(11B)"},
     "language": "stan1293",
     "primaryText": "She hasn't had one in the 5 years that I have been here. I don't know about earlier.",
     "discourseSegments": [],
@@ -79,32 +52,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "adverbial",
-        "in the 5 years that I have been here, LB adverbial"
-      ],
-      [
-        "continuation",
-        "ignorance"
-      ],
-      [
-        "section",
-        "1"
-      ],
-      [
-        "ai",
-        "canceled"
-      ]
+      ["adverbial", "in the 5 years that I have been here, LB adverbial"],
+      ["continuation", "ignorance"],
+      ["section", "1"],
+      ["ai", "canceled"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s12",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(12)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(12)"},
     "language": "stan1293",
     "primaryText": "She hasn't had a seizure in the last 5 years / since 2015. In fact, she has never had one.",
     "discourseSegments": [],
@@ -115,32 +73,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "adverbial",
-        "in the last 5 years, LB adverbial"
-      ],
-      [
-        "continuation",
-        "denial"
-      ],
-      [
-        "section",
-        "1"
-      ],
-      [
-        "ai",
-        "canceled"
-      ]
+      ["adverbial", "in the last 5 years, LB adverbial"],
+      ["continuation", "denial"],
+      ["section", "1"],
+      ["ai", "canceled"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s22a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(22a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(22a)"},
     "language": "stan1293",
     "primaryText": "He hasn't had a seizure in years. ... I don't know about earlier.",
     "discourseSegments": [],
@@ -151,32 +94,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "continuation",
-        "ignorance"
-      ],
-      [
-        "section",
-        "1"
-      ],
-      [
-        "adverbial",
-        "in years"
-      ],
-      [
-        "ai",
-        "not cancelable"
-      ]
+      ["continuation", "ignorance"],
+      ["section", "1"],
+      ["adverbial", "in years"],
+      ["ai", "not cancelable"]
     ],
     "comment": "Constant's observation.",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s22b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(22b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(22b)"},
     "language": "stan1293",
     "primaryText": "He hasn't had a seizure in years. ... In fact, he has never had one.",
     "discourseSegments": [],
@@ -187,32 +115,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "continuation",
-        "denial"
-      ],
-      [
-        "section",
-        "1"
-      ],
-      [
-        "adverbial",
-        "in years"
-      ],
-      [
-        "ai",
-        "not cancelable"
-      ]
+      ["continuation", "denial"],
+      ["section", "1"],
+      ["adverbial", "in years"],
+      ["ai", "not cancelable"]
     ],
     "comment": "Constant's observation.",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s23",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(23)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(23)"},
     "language": "stan1293",
     "primaryText": "Sue has not had a seizure in (the last) 5 years, so she is eligible to apply.",
     "discourseSegments": [],
@@ -223,24 +136,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "ai",
-        "the last seizure need not be at the LB"
-      ]
+      ["section", "1"],
+      ["ai", "the last seizure need not be at the LB"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s24a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(24a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(24a)"},
     "language": "stan1293",
     "primaryText": "Fred has not driven for/in 15 years because of the ladder accident.",
     "discourseSegments": [],
@@ -248,27 +152,18 @@
     "translation": "",
     "context": "Fred's licence was suspended for 10 years after a car accident 25 years ago; 15 years ago a ladder accident paralysed him.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "truth",
-        "true"
-      ]
+      ["section", "1"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s24c",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(24c)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(24c)"},
     "language": "stan1293",
     "primaryText": "Fred has not driven in years because of the ladder accident.",
     "discourseSegments": [],
@@ -276,31 +171,19 @@
     "translation": "",
     "context": "Fred's licence was suspended for 10 years after a car accident 25 years ago; 15 years ago a ladder accident paralysed him.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "truth",
-        "false"
-      ],
-      [
-        "ai",
-        "at the LB: conveys that Fred drove around the ladder accident"
-      ]
+      ["section", "1"],
+      ["ai", "at the LB: conveys that Fred drove around the ladder accident"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s25",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(25)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(25)"},
     "language": "stan1293",
     "primaryText": "Fred has not driven a car in the last 40 years (so he is also entitled to a reward).",
     "discourseSegments": [],
@@ -311,24 +194,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "pts",
-        "exceeds the subject's lifetime"
-      ]
+      ["section", "1"],
+      ["pts", "exceeds the subject's lifetime"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s26",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(26)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(26)"},
     "language": "stan1293",
     "primaryText": "Fred has not driven a car in years (so he is also entitled to a reward).",
     "discourseSegments": [],
@@ -336,31 +210,19 @@
     "translation": "",
     "context": "Fred is 40 and has never driven.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "truth",
-        "false"
-      ],
-      [
-        "ai",
-        "not cancelable"
-      ]
+      ["section", "1"],
+      ["ai", "not cancelable"]
     ],
     "comment": "Printed unmarked: grammatical, but not truthfully utterable of someone who never drove.",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s27a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(27a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(27a)"},
     "language": "stan1293",
     "primaryText": "I think he's never read a book. He definitely hasn't read one in years.",
     "discourseSegments": [],
@@ -371,24 +233,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "reading",
-        "modal subordination, (29a)"
-      ]
+      ["section", "1"],
+      ["reading", "modal subordination, (29a)"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s31a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(31a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(31a)"},
     "language": "stan1293",
     "primaryText": "... worse than I thought. She had not been there in months.",
     "discourseSegments": [],
@@ -399,24 +252,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "2"
-      ],
-      [
-        "bei",
-        "PTS longer than expected"
-      ]
+      ["section", "2"],
+      ["bei", "PTS longer than expected"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s31b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(31b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(31b)"},
     "language": "stan1293",
     "primaryText": "... better than I thought. She had not been there in days.",
     "discourseSegments": [],
@@ -427,24 +271,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "2"
-      ],
-      [
-        "bei",
-        "PTS shorter than expected"
-      ]
+      ["section", "2"],
+      ["bei", "PTS shorter than expected"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s32b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(32b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(32b)"},
     "language": "stan1293",
     "primaryText": "He hasn't drunk anything in minutes.",
     "discourseSegments": [],
@@ -455,24 +290,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "2"
-      ],
-      [
-        "bei",
-        "violated"
-      ]
+      ["section", "2"],
+      ["bei", "violated"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s32c",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(32c)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(32c)"},
     "language": "stan1293",
     "primaryText": "He hasn't drunk anything in days.",
     "discourseSegments": [],
@@ -483,24 +309,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "2"
-      ],
-      [
-        "bei",
-        "satisfied"
-      ]
+      ["section", "2"],
+      ["bei", "satisfied"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s33b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(33b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(33b)"},
     "language": "stan1293",
     "primaryText": "He hasn't taken a breath in seconds.",
     "discourseSegments": [],
@@ -511,24 +328,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "2"
-      ],
-      [
-        "bei",
-        "violated"
-      ]
+      ["section", "2"],
+      ["bei", "violated"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s36b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(36b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(36b)"},
     "language": "stan1293",
     "primaryText": "I saw him last week. He had not shaved in days.",
     "discourseSegments": [],
@@ -539,24 +347,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "3.1"
-      ],
-      [
-        "rb",
-        "before the utterance time, past perfect"
-      ]
+      ["section", "3.1"],
+      ["rb", "before the utterance time, past perfect"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s37",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(37)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(37)"},
     "language": "stan1293",
     "primaryText": "He didn't go to the movies in years.",
     "discourseSegments": [],
@@ -567,24 +366,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "3.1"
-      ],
-      [
-        "adverbial",
-        "in years is only a PTS adverbial"
-      ]
+      ["section", "3.1"],
+      ["adverbial", "in years is only a PTS adverbial"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s40b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(40b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(40b)"},
     "language": "stan1293",
     "primaryText": "He has had a seizure in years.",
     "discourseSegments": [],
@@ -595,24 +385,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "npi",
-        "unlicensed"
-      ]
+      ["section", "3.2"],
+      ["npi", "unlicensed"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s40c",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(40c)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(40c)"},
     "language": "stan1293",
     "primaryText": "Nobody has had a seizure in years.",
     "discourseSegments": [],
@@ -623,24 +404,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "npi",
-        "antiadditive licensor"
-      ]
+      ["section", "3.2"],
+      ["npi", "antiadditive licensor"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s41a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(41a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(41a)"},
     "language": "stan1293",
     "primaryText": "Few patients have had a seizure in years.",
     "discourseSegments": [],
@@ -651,24 +423,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "npi",
-        "strong: not licensed by few"
-      ]
+      ["section", "3.2"],
+      ["npi", "strong: not licensed by few"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s42",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(42)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(42)"},
     "language": "stan1293",
     "primaryText": "He has had two seizures in (the last) 5 years / since 1990.",
     "discourseSegments": [],
@@ -679,24 +442,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "npi",
-        "not an NPI"
-      ]
+      ["section", "3.2"],
+      ["npi", "not an NPI"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s52",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(52)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(52)"},
     "language": "stan1293",
     "primaryText": "He was asleep / composing a sonnet until 5 p.m. / my departure.",
     "discourseSegments": [],
@@ -707,24 +461,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.1"
-      ],
-      [
-        "until",
-        "imperfective predicate, throughout the UTS"
-      ]
+      ["section", "5.1"],
+      ["until", "imperfective predicate, throughout the UTS"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s54",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(54)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(54)"},
     "language": "stan1293",
     "primaryText": "He was asleep / composing a sonnet until 5 p.m. and possibly well beyond that. I'm not sure.",
     "discourseSegments": [],
@@ -735,24 +480,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.1"
-      ],
-      [
-        "inference",
-        "cancelable"
-      ]
+      ["section", "5.1"],
+      ["inference", "cancelable"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s56",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(56)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(56)"},
     "language": "stan1293",
     "primaryText": "He was not asleep / composing a sonnet until 5 p.m. / until I left.",
     "discourseSegments": [],
@@ -763,24 +499,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.1"
-      ],
-      [
-        "readings",
-        "throughout-not; not-throughout"
-      ]
+      ["section", "5.1"],
+      ["readings", "throughout-not; not-throughout"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s58",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(58)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(58)"},
     "language": "stan1293",
     "primaryText": "She left / reached the summit until 5 p.m. / I left.",
     "discourseSegments": [],
@@ -791,24 +518,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.1"
-      ],
-      [
-        "until",
-        "perfective predicate without negation"
-      ]
+      ["section", "5.1"],
+      ["until", "perfective predicate without negation"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s59",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(59)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(59)"},
     "language": "stan1293",
     "primaryText": "She didn't leave / reach the summit until 5 p.m. / I left.",
     "discourseSegments": [],
@@ -819,24 +537,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.1"
-      ],
-      [
-        "ai",
-        "not cancelable"
-      ]
+      ["section", "5.1"],
+      ["ai", "not cancelable"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s60b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(60b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(60b)"},
     "language": "stan1293",
     "primaryText": "She didn't leave until 5 p.m. / I left. ... in fact, she didn't leave at all.",
     "discourseSegments": [],
@@ -847,24 +556,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.1"
-      ],
-      [
-        "ai",
-        "not cancelable"
-      ]
+      ["section", "5.1"],
+      ["ai", "not cancelable"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s61b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(61b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(61b)"},
     "language": "stan1293",
     "primaryText": "She didn't leave when I left. ... in fact, she didn't leave at all.",
     "discourseSegments": [],
@@ -875,60 +575,21 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.1"
-      ],
-      [
-        "ai",
-        "none"
-      ]
+      ["section", "5.1"],
+      ["ai", "none"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s62",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(62)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(62)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen kimithike para monon ta mesanixta.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "I",
-        "the"
-      ],
-      [
-        "prigipisa",
-        "princess"
-      ],
-      [
-        "dhen",
-        "not"
-      ],
-      [
-        "kimithike",
-        "slept.PRF.3S"
-      ],
-      [
-        "para",
-        "but"
-      ],
-      [
-        "monon",
-        "only"
-      ],
-      [
-        "ta",
-        "the"
-      ],
-      [
-        "mesanixta",
-        "midnight"
-      ]
+      ["I", "the"], ["prigipisa", "princess"], ["dhen", "not"], ["kimithike", "slept.PRF.3S"],
+      ["para", "but"], ["monon", "only"], ["ta", "the"], ["mesanixta", "midnight"]
     ],
     "translation": "The princess didn't sleep until midnight.",
     "context": "",
@@ -936,56 +597,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.1"
-      ],
-      [
-        "source",
-        "Giannakidou 2002:92"
-      ],
-      [
-        "analysis",
-        "exceptive para mono, not until-p"
-      ]
+      ["section", "5.2.1.1"],
+      ["source", "Giannakidou 2002:92"],
+      ["analysis", "exceptive para mono, not until-p"]
     ],
     "comment": "Giannakidou's glosses and translation, as the paper reproduces them; the paper adds '= It was only at midnight that the princess fell asleep.' The paper reanalyzes the sentence as the exceptive (68).",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s64",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(64)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(64)"},
     "language": "mode1248",
     "primaryText": "Dhen vlepo para mono tin Miranda.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Dhen",
-        "NEG"
-      ],
-      [
-        "vlepo",
-        "see.1SG"
-      ],
-      [
-        "para",
-        "PARA"
-      ],
-      [
-        "mono",
-        "MONO"
-      ],
-      [
-        "tin",
-        "the"
-      ],
-      [
-        "Miranda",
-        "Miranda"
-      ]
+      ["Dhen", "NEG"], ["vlepo", "see.1SG"], ["para", "PARA"], ["mono", "MONO"], ["tin", "the"],
+      ["Miranda", "Miranda"]
     ],
     "translation": "I see no one except Miranda.",
     "context": "",
@@ -993,56 +620,21 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.1"
-      ],
-      [
-        "analysis",
-        "exceptive on an argument"
-      ]
+      ["section", "5.2.1.1"],
+      ["analysis", "exceptive on an argument"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s70",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(70)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(70)"},
     "language": "mode1248",
     "primaryText": "Dhen kimate para mono otan kani krio.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Dhen",
-        "NEG"
-      ],
-      [
-        "kimate",
-        "sleeps"
-      ],
-      [
-        "para",
-        "PARA"
-      ],
-      [
-        "mono",
-        "MONO"
-      ],
-      [
-        "otan",
-        "when"
-      ],
-      [
-        "kani",
-        "makes"
-      ],
-      [
-        "krio",
-        "cold"
-      ]
+      ["Dhen", "NEG"], ["kimate", "sleeps"], ["para", "PARA"], ["mono", "MONO"], ["otan", "when"],
+      ["kani", "makes"], ["krio", "cold"]
     ],
     "translation": "He doesn't sleep except when it is cold.",
     "context": "",
@@ -1050,76 +642,23 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.1"
-      ],
-      [
-        "analysis",
-        "exceptive with an imperfective predicate"
-      ]
+      ["section", "5.2.1.1"],
+      ["analysis", "exceptive with an imperfective predicate"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s74",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(74)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(74)"},
     "language": "mode1248",
     "primaryText": "Dhen thimose para mono proxthes, htes to vradhi ke simera to proi.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Dhen",
-        "NEG"
-      ],
-      [
-        "thimose",
-        "got.angry"
-      ],
-      [
-        "para",
-        "PARA"
-      ],
-      [
-        "mono",
-        "MONO"
-      ],
-      [
-        "proxthes",
-        "day.before.yesterday"
-      ],
-      [
-        "htes",
-        "yesterday"
-      ],
-      [
-        "to",
-        "the"
-      ],
-      [
-        "vradhi",
-        "evening"
-      ],
-      [
-        "ke",
-        "and"
-      ],
-      [
-        "simera",
-        "today"
-      ],
-      [
-        "to",
-        "the"
-      ],
-      [
-        "proi",
-        "morning"
-      ]
+      ["Dhen", "NEG"], ["thimose", "got.angry"], ["para", "PARA"], ["mono", "MONO"],
+      ["proxthes", "day.before.yesterday"], ["htes", "yesterday"], ["to", "the"],
+      ["vradhi", "evening"], ["ke", "and"], ["simera", "today"], ["to", "the"],
+      ["proi", "morning"]
     ],
     "translation": "She did not get angry except the day before yesterday, yesterday evening, and this morning.",
     "context": "",
@@ -1127,76 +666,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.1"
-      ],
-      [
-        "analysis",
-        "exceptive with three temporal arguments; no English counterpart with until"
-      ]
+      ["section", "5.2.1.1"],
+      ["analysis", "exceptive with three temporal arguments; no English counterpart with until"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s75a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(75a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(75a)"},
     "language": "mode1248",
     "primaryText": "Mexri tis 5 to apojevma, o Yanis iche idhi pchi 3 bires.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Mexri",
-        "MEXRI"
-      ],
-      [
-        "tis",
-        "the"
-      ],
-      [
-        "5",
-        "5"
-      ],
-      [
-        "to",
-        "the"
-      ],
-      [
-        "apojevma",
-        "afternoon"
-      ],
-      [
-        "o",
-        "the"
-      ],
-      [
-        "Yanis",
-        "John"
-      ],
-      [
-        "iche",
-        "had"
-      ],
-      [
-        "idhi",
-        "already"
-      ],
-      [
-        "pchi",
-        "drunk"
-      ],
-      [
-        "3",
-        "3"
-      ],
-      [
-        "bires",
-        "beers"
-      ]
+      ["Mexri", "MEXRI"], ["tis", "the"], ["5", "5"], ["to", "the"], ["apojevma", "afternoon"],
+      ["o", "the"], ["Yanis", "John"], ["iche", "had"], ["idhi", "already"], ["pchi", "drunk"],
+      ["3", "3"], ["bires", "beers"]
     ],
     "translation": "By 5 p.m., John had already drunk 3 beers.",
     "context": "",
@@ -1204,138 +689,68 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.1"
-      ],
-      [
-        "analysis",
-        "mexri with a perfective predicate, unlike until-d"
-      ]
+      ["section", "5.2.1.1"],
+      ["analysis", "mexri with a perfective predicate, unlike until-d"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s77",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(77)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(77)"},
     "language": "czec1258",
     "primaryText": "Spal dokud jsem neodešla.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Spal",
-        "slept.IMP.3.M.SG"
-      ],
-      [
-        "dokud",
-        "until"
-      ],
-      [
-        "jsem",
-        "AUX.PAST.1SG"
-      ],
-      [
-        "neodešla",
-        "NEG.left.PFV.3.F.SG"
-      ]
+      ["Spal", "slept.IMP.3.M.SG"], ["dokud", "until"], ["jsem", "AUX.PAST.1SG"],
+      ["neodešla", "NEG.left.PFV.3.F.SG"]
     ],
     "translation": "He was asleep until I left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [{"form": "Spal až do jsem neodešla.", "judgment": "ungrammatical"}],
+    "alternatives": [
+      {"form": "Spal až do jsem neodešla.", "judgment": "ungrammatical"}
+    ],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.2"
-      ],
-      [
-        "item",
-        "dokud, clausal complement, affirmative imperfective"
-      ]
+      ["section", "5.2.1.2"],
+      ["item", "dokud, clausal complement, affirmative imperfective"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s78",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(78)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(78)"},
     "language": "czec1258",
     "primaryText": "Spal až do pěti.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Spal",
-        "slept.IMP.3.M.SG"
-      ],
-      [
-        "až do",
-        "until"
-      ],
-      [
-        "pěti",
-        "5"
-      ]
+      ["Spal", "slept.IMP.3.M.SG"], ["až do", "until"], ["pěti", "5"]
     ],
     "translation": "He was asleep until 5.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [{"form": "Spal dokud pěti.", "judgment": "ungrammatical"}],
+    "alternatives": [
+      {"form": "Spal dokud pěti.", "judgment": "ungrammatical"}
+    ],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.2"
-      ],
-      [
-        "item",
-        "až do, NP complement, affirmative imperfective"
-      ]
+      ["section", "5.2.1.2"],
+      ["item", "až do, NP complement, affirmative imperfective"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s79",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(79)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(79)"},
     "language": "czec1258",
     "primaryText": "Napsal dvě básně, dokud jsem neodešla.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Napsal",
-        "wrote.PFV.3.M.SG"
-      ],
-      [
-        "dvě",
-        "2"
-      ],
-      [
-        "básně",
-        "poems"
-      ],
-      [
-        "dokud",
-        "until"
-      ],
-      [
-        "jsem",
-        "AUX.PAST.1SG"
-      ],
-      [
-        "neodešla",
-        "NEG.left.PFV.3.F.SG"
-      ]
+      ["Napsal", "wrote.PFV.3.M.SG"], ["dvě", "2"], ["básně", "poems"], ["dokud", "until"],
+      ["jsem", "AUX.PAST.1SG"], ["neodešla", "NEG.left.PFV.3.F.SG"]
     ],
     "translation": "He wrote 2 poems until I left.",
     "context": "",
@@ -1343,44 +758,21 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.2"
-      ],
-      [
-        "item",
-        "dokud with an affirmative perfective"
-      ]
+      ["section", "5.2.1.2"],
+      ["item", "dokud with an affirmative perfective"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s81",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(81)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(81)"},
     "language": "czec1258",
     "primaryText": "Neodešel, dokud neodešla Marie.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Neodešel",
-        "NEG.left.PFV.3.M.SG"
-      ],
-      [
-        "dokud",
-        "until"
-      ],
-      [
-        "neodešla",
-        "NEG.left.PFV.3.F.SG"
-      ],
-      [
-        "Marie",
-        "Marie"
-      ]
+      ["Neodešel", "NEG.left.PFV.3.M.SG"], ["dokud", "until"], ["neodešla", "NEG.left.PFV.3.F.SG"],
+      ["Marie", "Marie"]
     ],
     "translation": "He didn't leave until Marie left. (#In fact, he may not have left at all.)",
     "context": "",
@@ -1388,44 +780,21 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.2"
-      ],
-      [
-        "item",
-        "dokud with a negated perfective"
-      ],
-      [
-        "ai",
-        "not cancelable"
-      ]
+      ["section", "5.2.1.2"],
+      ["item", "dokud with a negated perfective"],
+      ["ai", "not cancelable"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s82",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(82)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(82)"},
     "language": "czec1258",
     "primaryText": "Neodešel až do pěti.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Neodešel",
-        "NEG.left.PFV.3.M.SG"
-      ],
-      [
-        "až do",
-        "until"
-      ],
-      [
-        "pěti",
-        "5"
-      ]
+      ["Neodešel", "NEG.left.PFV.3.M.SG"], ["až do", "until"], ["pěti", "5"]
     ],
     "translation": "He didn't leave until 5. (In fact, he may not have left at all.)",
     "context": "",
@@ -1433,28 +802,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.1.2"
-      ],
-      [
-        "item",
-        "až do with a negated perfective"
-      ],
-      [
-        "ai",
-        "cancelable"
-      ]
+      ["section", "5.2.1.2"],
+      ["item", "až do with a negated perfective"],
+      ["ai", "cancelable"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s83",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(83)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(83)"},
     "language": "stan1293",
     "primaryText": "She did not leave until 5 p.m. and maybe she didn't leave at all.",
     "discourseSegments": [],
@@ -1465,24 +822,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.2"
-      ],
-      [
-        "ai",
-        "not cancelable"
-      ]
+      ["section", "5.2.2"],
+      ["ai", "not cancelable"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s85",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(85)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(85)"},
     "language": "stan1293",
     "primaryText": "She was asleep until 5 p.m. and maybe she was asleep afterwards.",
     "discourseSegments": [],
@@ -1493,24 +841,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.2"
-      ],
-      [
-        "inference",
-        "cancelable"
-      ]
+      ["section", "5.2.2"],
+      ["inference", "cancelable"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s89",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(89)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(89)"},
     "language": "stan1293",
     "primaryText": "For 5 weeks, the plant didn't die. Finally, it succumbed to the extreme drought.",
     "discourseSegments": [],
@@ -1521,24 +860,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.2"
-      ],
-      [
-        "subinterval",
-        "negation yields the subinterval property"
-      ]
+      ["section", "5.2.2"],
+      ["subinterval", "negation yields the subinterval property"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s91",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(91)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(91)"},
     "language": "stan1293",
     "primaryText": "Nancy didn't get married until she died.",
     "discourseSegments": [],
@@ -1549,24 +879,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.2"
-      ],
-      [
-        "ai",
-        "not cancelable, a real-world impossibility"
-      ]
+      ["section", "5.2.2"],
+      ["ai", "not cancelable, a real-world impossibility"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s92",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(92)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(92)"},
     "language": "stan1293",
     "primaryText": "Nancy remained a spinster until she died.",
     "discourseSegments": [],
@@ -1577,24 +898,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.2"
-      ],
-      [
-        "ai",
-        "none"
-      ]
+      ["section", "5.2.2"],
+      ["ai", "none"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s98b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(98b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(98b)"},
     "language": "stan1293",
     "primaryText": "How long did the princess not wake up?",
     "discourseSegments": [],
@@ -1605,28 +917,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.2"
-      ],
-      [
-        "source",
-        "Karttunen 1974:287"
-      ],
-      [
-        "test",
-        "how long"
-      ]
+      ["section", "5.2.2"],
+      ["source", "Karttunen 1974:287"],
+      ["test", "how long"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s102",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(102)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(102)"},
     "language": "stan1293",
     "primaryText": "How long wasn't she asleep?",
     "discourseSegments": [],
@@ -1637,24 +937,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.2"
-      ],
-      [
-        "test",
-        "how long fails with negated statives too"
-      ]
+      ["section", "5.2.2"],
+      ["test", "how long fails with negated statives too"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s110",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(110)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(110)"},
     "language": "stan1293",
     "primaryText": "For how long did the princess not wake up?",
     "discourseSegments": [],
@@ -1665,24 +956,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "5.2.2"
-      ],
-      [
-        "test",
-        "for how long, above negation"
-      ]
+      ["section", "5.2.2"],
+      ["test", "for how long, above negation"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s114a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(114a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(114a)"},
     "language": "stan1293",
     "primaryText": "Few people left until 5 p.m.",
     "discourseSegments": [],
@@ -1693,24 +975,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "6"
-      ],
-      [
-        "npi",
-        "strong: not licensed by few"
-      ]
+      ["section", "6"],
+      ["npi", "strong: not licensed by few"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s119a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(119a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(119a)"},
     "language": "stan1293",
     "primaryText": "I expected her to arrive before 5 p.m. but/and she didn't arrive until 7 p.m.",
     "discourseSegments": [],
@@ -1721,24 +994,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "6"
-      ],
-      [
-        "bei",
-        "later than expected"
-      ]
+      ["section", "6"],
+      ["bei", "later than expected"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s119b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(119b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(119b)"},
     "language": "stan1293",
     "primaryText": "I expected her to arrive before 5 p.m. but/and she didn't arrive until 3 p.m.",
     "discourseSegments": [],
@@ -1749,24 +1013,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "6"
-      ],
-      [
-        "bei",
-        "earlier than expected"
-      ]
+      ["section", "6"],
+      ["bei", "earlier than expected"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s121b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(121b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(121b)"},
     "language": "stan1293",
     "primaryText": "The paper was due at 5 p.m., but she didn't submit it until 4 p.m.",
     "discourseSegments": [],
@@ -1777,24 +1032,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "6"
-      ],
-      [
-        "bei",
-        "the RB must be later than the contextual alternative"
-      ]
+      ["section", "6"],
+      ["bei", "the RB must be later than the contextual alternative"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s123",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(123)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(123)"},
     "language": "stan1293",
     "primaryText": "She didn't leave until 6 p.m. In fact, she left at 7 p.m.",
     "discourseSegments": [],
@@ -1805,24 +1051,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "6"
-      ],
-      [
-        "ai",
-        "at the RB"
-      ]
+      ["section", "6"],
+      ["ai", "at the RB"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s124",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(124)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(124)"},
     "language": "stan1293",
     "primaryText": "She was asleep until 6 p.m. In fact, she was asleep until 7 p.m.",
     "discourseSegments": [],
@@ -1833,24 +1070,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "6"
-      ],
-      [
-        "inference",
-        "the inferred event need not set the RB"
-      ]
+      ["section", "6"],
+      ["inference", "the inferred event need not set the RB"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s128",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(128)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(128)"},
     "language": "stan1293",
     "primaryText": "Sue arrived until 7 p.m.",
     "discourseSegments": [],
@@ -1861,24 +1089,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "7.1"
-      ],
-      [
-        "exh",
-        "contradiction, (129)–(132)"
-      ]
+      ["section", "7.1"],
+      ["exh", "contradiction, (129)–(132)"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s133a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(133a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(133a)"},
     "language": "stan1293",
     "primaryText": "Miranda was reading Anna Karenina until yesterday.",
     "discourseSegments": [],
@@ -1889,24 +1108,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "7.2"
-      ],
-      [
-        "construal",
-        "(148a) EXH > UNTIL, vacuous"
-      ]
+      ["section", "7.2"],
+      ["construal", "(148a) EXH > UNTIL, vacuous"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s133b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(133b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(133b)"},
     "language": "stan1293",
     "primaryText": "Miranda wasn't reading Anna Karenina until yesterday.",
     "discourseSegments": [],
@@ -1917,24 +1127,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "7.2"
-      ],
-      [
-        "construal",
-        "(148c1) throughout-not; (148c2) not-throughout"
-      ]
+      ["section", "7.2"],
+      ["construal", "(148c1) throughout-not; (148c2) not-throughout"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s134",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(134)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(134)"},
     "language": "stan1293",
     "primaryText": "She broke a glass until 7 p.m.",
     "discourseSegments": [],
@@ -1945,24 +1146,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "7.2"
-      ],
-      [
-        "exh",
-        "contradiction with a perfective predicate"
-      ]
+      ["section", "7.2"],
+      ["exh", "contradiction with a perfective predicate"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s147b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(147b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(147b)"},
     "language": "stan1293",
     "primaryText": "Sue didn't arrive until 7.",
     "discourseSegments": [],
@@ -1973,24 +1165,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "7.3"
-      ],
-      [
-        "construal",
-        "(148b) EXH > NEG > UNTIL, until-p, domain widener"
-      ]
+      ["section", "7.3"],
+      ["construal", "(148b) EXH > NEG > UNTIL, until-p, domain widener"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s149",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(149)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(149)"},
     "language": "stan1293",
     "primaryText": "Nancy didn't get married until she died.",
     "discourseSegments": [],
@@ -2001,24 +1184,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "7.3"
-      ],
-      [
-        "construal",
-        "(148b), noncancelable AI"
-      ]
+      ["section", "7.3"],
+      ["construal", "(148b), noncancelable AI"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s152b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(152b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(152b)"},
     "language": "stan1293",
     "primaryText": "He has been asleep in years.",
     "discourseSegments": [],
@@ -2029,24 +1203,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "8"
-      ],
-      [
-        "perfect",
-        "E-perfect contradictory under exhaustification; U-perfect unavailable, (153)"
-      ]
+      ["section", "8"],
+      ["perfect", "E-perfect contradictory under exhaustification; U-perfect unavailable, (153)"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s153",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(153)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(153)"},
     "language": "stan1293",
     "primaryText": "He has been sick in the last 5 years.",
     "discourseSegments": [],
@@ -2057,24 +1222,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "8"
-      ],
-      [
-        "perfect",
-        "E-perfect only"
-      ]
+      ["section", "8"],
+      ["perfect", "E-perfect only"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s156",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(156)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(156)"},
     "language": "stan1293",
     "primaryText": "I won't leave until Friday, if at all.",
     "discourseSegments": [],
@@ -2085,24 +1241,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "9"
-      ],
-      [
-        "ai",
-        "cancelable: conditional, or future branch"
-      ]
+      ["section", "9"],
+      ["ai", "cancelable: conditional, or future branch"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s160",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(160)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(160)"},
     "language": "stan1293",
     "primaryText": "She will not get married until she meets a man who speaks 23 languages, so I guess she may never get married.",
     "discourseSegments": [],
@@ -2113,84 +1260,23 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "9"
-      ],
-      [
-        "ai",
-        "satisfied on a future branch"
-      ]
+      ["section", "9"],
+      ["ai", "satisfied on a future branch"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s161",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(161)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(161)"},
     "language": "czec1258",
     "primaryText": "Nevdá se, dokud nepotká muže, který mluví 23 jazyky. ... takže se asi nevdá nikdy.",
     "discourseSegments": [],
     "glossedTokens": [
-      [
-        "Nevdá",
-        "NEG.get.married.PFV.3SG"
-      ],
-      [
-        "se",
-        "REFL"
-      ],
-      [
-        "dokud",
-        "DOKUD"
-      ],
-      [
-        "nepotká",
-        "NEG.meet.PFV.3SG"
-      ],
-      [
-        "muže",
-        "man"
-      ],
-      [
-        "který",
-        "which"
-      ],
-      [
-        "mluví",
-        "speaks"
-      ],
-      [
-        "23",
-        "23"
-      ],
-      [
-        "jazyky",
-        "languages"
-      ],
-      [
-        "takže",
-        "so"
-      ],
-      [
-        "se",
-        "REFL"
-      ],
-      [
-        "asi",
-        "probably"
-      ],
-      [
-        "nevdá",
-        "NEG.get.married.PFV.3SG"
-      ],
-      [
-        "nikdy",
-        "never"
-      ]
+      ["Nevdá", "NEG.get.married.PFV.3SG"], ["se", "REFL"], ["dokud", "DOKUD"],
+      ["nepotká", "NEG.meet.PFV.3SG"], ["muže", "man"], ["který", "which"], ["mluví", "speaks"],
+      ["23", "23"], ["jazyky", "languages"], ["takže", "so"], ["se", "REFL"], ["asi", "probably"],
+      ["nevdá", "NEG.get.married.PFV.3SG"], ["nikdy", "never"]
     ],
     "translation": "She will not get married until she meets a man who speaks 23 languages. ... so she'll probably never get married.",
     "context": "",
@@ -2198,24 +1284,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "9"
-      ],
-      [
-        "ai",
-        "satisfied on a future branch"
-      ]
+      ["section", "9"],
+      ["ai", "satisfied on a future branch"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s162",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(162)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(162)"},
     "language": "stan1293",
     "primaryText": "He is a confirmed bachelor. He will not get married until he dies.",
     "discourseSegments": [],
@@ -2226,24 +1303,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "9"
-      ],
-      [
-        "ai",
-        "no future branch satisfies it"
-      ]
+      ["section", "9"],
+      ["ai", "no future branch satisfies it"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s165",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(165)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(165)"},
     "language": "stan1293",
     "primaryText": "She didn't leave until I am sick.",
     "discourseSegments": [],
@@ -2254,24 +1322,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "9"
-      ],
-      [
-        "tense",
-        "the argument of until shifts with the matrix"
-      ]
+      ["section", "9"],
+      ["tense", "the argument of until shifts with the matrix"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s170",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(170)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(170)"},
     "language": "stan1293",
     "primaryText": "She was unhappy until she read Anna Karenina.",
     "discourseSegments": [],
@@ -2282,24 +1341,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "10"
-      ],
-      [
-        "rb",
-        "the completion of the reading, the maximally informative interval"
-      ]
+      ["section", "10"],
+      ["rb", "the completion of the reading, the maximally informative interval"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s172",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(172)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(172)"},
     "language": "stan1293",
     "primaryText": "She was happy until she was working at the grocery store.",
     "discourseSegments": [],
@@ -2310,24 +1360,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "10"
-      ],
-      [
-        "rb",
-        "the beginning of the working"
-      ]
+      ["section", "10"],
+      ["rb", "the beginning of the working"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s176",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(176)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(176)"},
     "language": "stan1293",
     "primaryText": "She didn't read War and Peace until she read Anna Karenina.",
     "discourseSegments": [],
@@ -2338,24 +1379,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "10"
-      ],
-      [
-        "rb",
-        "the completion of Anna Karenina; War and Peace read upon it"
-      ]
+      ["section", "10"],
+      ["rb", "the completion of Anna Karenina; War and Peace read upon it"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s178b",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(178b)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(178b)"},
     "language": "stan1293",
     "primaryText": "This year, no students passed the state exam, so the department will face budget cuts.",
     "discourseSegments": [],
@@ -2366,24 +1398,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "11"
-      ],
-      [
-        "few",
-        "not many, without an existential inference"
-      ]
+      ["section", "11"],
+      ["few", "not many, without an existential inference"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s180",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(180)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(180)"},
     "language": "stan1293",
     "primaryText": "Only John has said something in weeks.",
     "discourseSegments": [],
@@ -2394,28 +1417,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "11"
-      ],
-      [
-        "source",
-        "Chierchia 2013:219–220"
-      ],
-      [
-        "npi",
-        "strong: the presupposition is exhaustified"
-      ]
+      ["section", "11"],
+      ["source", "Chierchia 2013:219–220"],
+      ["npi", "strong: the presupposition is exhaustified"]
     ],
     "comment": "Printed unmarked; the text calls it odd, after Chierchia, since its presupposition exhaustified is contradictory.",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s182a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(182a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(182a)"},
     "language": "stan1293",
     "primaryText": "I haven't been there in the last 5 years.",
     "discourseSegments": [],
@@ -2426,24 +1437,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "11"
-      ],
-      [
-        "presupposition",
-        "there is a PTS [t, UT]"
-      ]
+      ["section", "11"],
+      ["presupposition", "there is a PTS [t, UT]"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "iz2021_s186a",
-    "source": {
-      "bibkey": "iatridou-zeijlstra-2021",
-      "paperLabel": "(186a)"
-    },
+    "source": {"bibkey": "iatridou-zeijlstra-2021", "paperLabel": "(186a)"},
     "language": "stan1293",
     "primaryText": "I didn't leave until 2010.",
     "discourseSegments": [],
@@ -2454,14 +1456,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "11"
-      ],
-      [
-        "presupposition",
-        "there is a UTS [t, 2010]"
-      ]
+      ["section", "11"],
+      ["presupposition", "there is a UTS [t, 2010]"]
     ],
     "comment": "",
     "verified": "page-image"

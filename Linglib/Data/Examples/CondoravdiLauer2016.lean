@@ -89,9 +89,10 @@ def cl2016_ex14 : Datum :=
     glossedTokens := []
     context := "On a subway platform the speaker notices a stranger who appears lost and might be on his way to Harlem; as it happens the stranger wants to go to Hoboken, accessible only by the PATH train."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "hoboken"), ("truth", "false")] }
+    paperFeatures := [("construction", "hoboken")] }
 
 def cl2016_ex15 : Datum :=
   { id := "cl2016_ex15"
@@ -258,9 +259,10 @@ def cl2016_ex37 : Datum :=
     glossedTokens := []
     context := "You can only take three days off work, and this is mutually known."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "counterfactual"), ("truth", "false")] }
+    paperFeatures := [("construction", "counterfactual")] }
 
 def cl2016_ex38 : Datum :=
   { id := "cl2016_ex38"
@@ -765,9 +767,10 @@ def cl2016_ex96 : Datum :=
     glossedTokens := []
     context := "Two trains go to Harlem, and Ruud van Nistelrooij is on one of them; the addressee wants to meet him."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "strength"), ("modal", "strong"), ("truth", "false")] }
+    paperFeatures := [("construction", "strength"), ("modal", "strong")] }
 
 def cl2016_ex97 : Datum :=
   { id := "cl2016_ex97"
@@ -999,9 +1002,10 @@ def cl2016_ex112a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
+    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
 def cl2016_ex112b : Datum :=
   { id := "cl2016_ex112b"
@@ -1012,9 +1016,10 @@ def cl2016_ex112b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
+    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
 def cl2016_ex112c : Datum :=
   { id := "cl2016_ex112c"
@@ -1025,9 +1030,10 @@ def cl2016_ex112c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
+    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
 def cl2016_ex112d : Datum :=
   { id := "cl2016_ex112d"
@@ -1038,9 +1044,10 @@ def cl2016_ex112d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
+    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
 def cl2016_ex112e : Datum :=
   { id := "cl2016_ex112e"
@@ -1051,9 +1058,10 @@ def cl2016_ex112e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
+    paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
 def all : List Datum := [cl2016_ex1, cl2016_ex2, cl2016_ex3, cl2016_ex4, cl2016_ex5, cl2016_ex14, cl2016_ex15, cl2016_ex19a, cl2016_ex19b, cl2016_ex20a, cl2016_ex20b, cl2016_ex21, cl2016_ex28, cl2016_ex29a, cl2016_ex29b, cl2016_ex30, cl2016_ex31, cl2016_ex35a, cl2016_ex37, cl2016_ex38, cl2016_ex39a, cl2016_ex39b, cl2016_ex40a, cl2016_ex40b, cl2016_ex42, cl2016_ex43, cl2016_ex44, cl2016_ex46, cl2016_ex47, cl2016_ex48, cl2016_ex49a, cl2016_ex49b, cl2016_ex52, cl2016_ex53, cl2016_ex54, cl2016_ex55, cl2016_ex56a, cl2016_ex56b, cl2016_ex58, cl2016_ex61, cl2016_ex62a, cl2016_ex62b, cl2016_ex63, cl2016_ex64, cl2016_ex74, cl2016_ex81a, cl2016_ex81b, cl2016_ex82a, cl2016_ex82b, cl2016_ex83a, cl2016_ex83b, cl2016_ex84, cl2016_ex85, cl2016_ex86, cl2016_ex91a, cl2016_ex91b, cl2016_ex92, cl2016_ex96, cl2016_ex97, cl2016_ex98a, cl2016_ex98b, cl2016_ex99, cl2016_ex100a, cl2016_ex100b, cl2016_ex101, cl2016_ex103, cl2016_ex106a, cl2016_ex106b, cl2016_ex106c, cl2016_ex107, cl2016_ex108, cl2016_ex109, cl2016_ex110a, cl2016_ex110b, cl2016_ex111, cl2016_ex112a, cl2016_ex112b, cl2016_ex112c, cl2016_ex112d, cl2016_ex112e]
 

@@ -32,6 +32,8 @@ sentence-level counterpart of `Data/Wordlist/`.
   the prose give it.
 * `Datum.Fits`, `Datum.ReadCount`: a prediction's fit with the judgment band of what a reader
   reads off a row, and the count of rows a reader reads, the coverage witness beside a fit.
+* `Datum.FitsVerdict`: a prediction's fit with the truth-value judgment of a row whose task is
+  truth in the context.
 
 ## Main statements
 
@@ -72,7 +74,9 @@ sentence-level counterpart of `Data/Wordlist/`.
   a judgment from the paper's claim about that judgment checks nothing. A claim column is read as
   a target, checking that the formal account derives what the paper asserts, or stands as
   documentation; prose commentary belongs in `comment`. A stimulus value is a key into a finite
-  taxonomy, so a `parse?` table can read it.
+  taxonomy, so a `parse?` table can read it. A truth-value judgment in a context is the `verdict`
+  field, never a feature: the response of a truth task is a field of the datum, like the mark of
+  an acceptability task, which on such a row records only well-formedness.
 * Studies decide propositions over rows, so every lookup reduces in the kernel. `digits?` reads a
   numeral by a fold over its characters because `String.toNat?` is well-founded recursive and
   does not.
@@ -128,6 +132,9 @@ structure Datum where
   context : String
   /-- The judgment the source reports for the expression in the context. -/
   judgment : Judgment
+  /-- The truth-value judgment the source reports, where the task is truth in the context rather
+  than the acceptability that `judgment` records; `none` where the source reports none. -/
+  verdict : Option Bool := none
   /-- The other forms the source judges in the same frame, each a whole sentence, with their
   judgments. -/
   alternatives : List (String × Judgment) := []
@@ -204,6 +211,17 @@ def Fits {α : Type*} (f : Datum → Option α) (P : α → Judgment.Band) : Pro
 instance {α : Type*} (f : Datum → Option α) (P : α → Judgment.Band) :
     Decidable (e.Fits f P) :=
   inferInstanceAs (Decidable (∀ a ∈ f e, _ = _))
+
+/-- The prediction `P` over what the reader `f` reads off `e` fits the row's truth-value
+judgment: where the source reports a verdict, it is the predicted one. The `judgment` of such a
+row records only that the expression is well formed, so a truth-value row is read by
+`FitsVerdict`, not `Fits`. -/
+def FitsVerdict {α : Type*} (f : Datum → Option α) (P : α → Bool) : Prop :=
+  ∀ a ∈ f e, ∀ b ∈ e.verdict, b = P a
+
+instance {α : Type*} (f : Datum → Option α) (P : α → Bool) :
+    Decidable (e.FitsVerdict f P) :=
+  inferInstanceAs (Decidable (∀ a ∈ f e, ∀ b ∈ e.verdict, _ = _))
 
 /-- The reader `f` reads exactly `n` of `rows`: the coverage witness beside a `Fits` or other
 row-quantified theorem, without which the theorem goes silently vacuous when a feature key or a

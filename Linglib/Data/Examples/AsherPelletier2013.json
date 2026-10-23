@@ -620,11 +620,11 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "characterizing"],
-      ["verdict", "false"]
+      ["type", "characterizing"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -833,11 +833,11 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "characterizing"],
-      ["verdict", "false"],
       ["relativeAccount", "true"]
     ],
     "comment": "",
@@ -854,11 +854,11 @@
     "translation": "",
     "context": "There are only 50 governors and Schwarzenegger is a body builder; this is a much larger percentage of bodybuilders than the percentage of bodybuilders planet-wide.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "characterizing"],
-      ["verdict", "false"],
       ["relativeAccount", "true"]
     ],
     "comment": "",
@@ -875,11 +875,11 @@
     "translation": "",
     "context": "Supposing that there are 1000 philosophers and 1 or 2 manage to leave their armchairs to go do sport, whereas the vast majority of the 6 billion inhabitants of the planet are just couch potatoes or too poor to be able to afford to do sports.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["type", "characterizing"],
-      ["verdict", "false"],
       ["relativeAccount", "true"]
     ],
     "comment": "",
@@ -977,11 +977,11 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "focus-sensitive adverb"],
-      ["verdict", "false"]
+      ["type", "focus-sensitive adverb"]
     ],
     "comment": "From Sterken 2009; false unless discourse restricts the alternatives.",
     "verified": "page-image"

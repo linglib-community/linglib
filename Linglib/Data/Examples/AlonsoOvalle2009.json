@@ -9,13 +9,13 @@
     "translation": "",
     "context": "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "bumperCrop"],
       ["antecedent", "good weather or sun cold"],
-      ["modal", "would"],
-      ["verdict", "false"]
+      ["modal", "would"]
     ],
     "comment": "A variation on an example in Nute 1975; repeated as (4), (11), (20), (48), and (78a). Judged false: if the sun had grown cold the pumpkins would have been ruined.",
     "verified": "page-image"
@@ -96,14 +96,14 @@
     "translation": "",
     "context": "Kratzer, p.c., a variation on an example in Nute 1980.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "hitler"],
       ["antecedent", "joined Germany or the U.S."],
       ["modal", "would"],
-      ["polarity", "negated"],
-      ["verdict", "true"]
+      ["polarity", "negated"]
     ],
     "comment": "Under the universal quantifier over propositions, true iff not both (30a) and (30b) are true; the continuation (31) shows one of them can be.",
     "verified": "page-image"
@@ -118,13 +118,13 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "hitler"],
       ["antecedent", "joined Germany"],
-      ["modal", "would"],
-      ["verdict", "true"]
+      ["modal", "would"]
     ],
     "comment": "True per the continuation (31).",
     "verified": "page-image"
@@ -139,13 +139,13 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "hitler"],
       ["antecedent", "joined the U.S."],
-      ["modal", "would"],
-      ["verdict", "false"]
+      ["modal", "would"]
     ],
     "comment": "Not true per the continuation (31): he might have objected to Spain joining the U.S.",
     "verified": "page-image"
@@ -389,13 +389,13 @@
     "translation": "",
     "context": "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "bumperCrop"],
       ["antecedent", "good weather"],
-      ["modal", "would"],
-      ["verdict", "true"]
+      ["modal", "would"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -410,13 +410,13 @@
     "translation": "",
     "context": "The summer is over; visiting a farm, the owner complains about the weather and points to a bunch of immature pumpkins and ruined pumpkin plants.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "bumperCrop"],
       ["antecedent", "sun cold"],
-      ["modal", "would"],
-      ["verdict", "false"]
+      ["modal", "would"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -431,13 +431,13 @@
     "translation": "",
     "context": "After a magic show in which the magician bent a fork with the power of his mind.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "fork"],
       ["antecedent", "magic book or newborn baby"],
-      ["modal", "might"],
-      ["verdict", "false"]
+      ["modal", "might"]
     ],
     "comment": "The hearer disagrees: a newborn baby would not have bent the fork. Repeated as (56), (59), (69), and, with 'newborn child' and without 'too', (73).",
     "verified": "page-image"
@@ -452,13 +452,13 @@
     "translation": "",
     "context": "After a magic show in which the magician bent a fork with the power of his mind.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "fork"],
       ["antecedent", "magic book"],
-      ["modal", "might"],
-      ["verdict", "true"]
+      ["modal", "might"]
     ],
     "comment": "Repeated as (74a); (61a) has 'a good book on magic'.",
     "verified": "page-image"
@@ -473,13 +473,13 @@
     "translation": "",
     "context": "After a magic show in which the magician bent a fork with the power of his mind.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "fork"],
       ["antecedent", "newborn baby"],
-      ["modal", "might"],
-      ["verdict", "false"]
+      ["modal", "might"]
     ],
     "comment": "Repeated as (61b); (74b) has 'newborn child'.",
     "verified": "page-image"
@@ -643,14 +643,14 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["scenario", "budget"],
       ["antecedent", "defense or education"],
       ["modal", "would"],
-      ["closure", "existential"],
-      ["verdict", "true"]
+      ["closure", "existential"]
     ],
     "comment": "Nute 1984. Intuitively true; the consequent is one of the disjuncts.",
     "verified": "page-image"

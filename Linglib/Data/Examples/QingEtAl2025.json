@@ -181,13 +181,13 @@
     "translation": "",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -203,13 +203,13 @@
     "translation": "",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
       ["clause", "declarative"],
-      ["embedding", "argument"],
-      ["truth", "false"]
+      ["embedding", "argument"]
     ],
     "comment": "false for every choice of Y",
     "verified": "page-image"
@@ -309,13 +309,13 @@
     "translation": "",
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -331,13 +331,13 @@
     "translation": "",
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
       ["clause", "declarative"],
-      ["embedding", "argument"],
-      ["truth", "false"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -501,14 +501,14 @@
     "translation": "",
     "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "marginal",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "hope"],
       ["clause", "polar"],
       ["embedding", "argument"],
-      ["target", "radical"],
-      ["truth", "true"]
+      ["target", "radical"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -524,14 +524,14 @@
     "translation": "",
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "marginal",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "hope"],
       ["clause", "polar"],
       ["embedding", "argument"],
-      ["target", "negation"],
-      ["truth", "false"]
+      ["target", "negation"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -591,6 +591,7 @@
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "unacceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -599,8 +600,7 @@
       ["valence", "positive"],
       ["clause", "polar"],
       ["embedding", "quotation"],
-      ["target", "negation"],
-      ["truth", "false"]
+      ["target", "negation"]
     ],
     "comment": "implies that Des hopes that John is alive",
     "verified": "page-image"
@@ -616,6 +616,7 @@
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -624,8 +625,7 @@
       ["valence", "positive"],
       ["clause", "polar"],
       ["embedding", "quotation"],
-      ["target", "radical"],
-      ["truth", "true"]
+      ["target", "radical"]
     ],
     "comment": "implies that Des hopes that John is dead",
     "verified": "page-image"
@@ -641,6 +641,7 @@
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -649,8 +650,7 @@
       ["valence", "positive"],
       ["clause", "polar"],
       ["embedding", "quotation"],
-      ["target", "radical"],
-      ["truth", "true"]
+      ["target", "radical"]
     ],
     "comment": "implies that Ali hopes that John is alive",
     "verified": "page-image"
@@ -666,6 +666,7 @@
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "unacceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -674,8 +675,7 @@
       ["valence", "positive"],
       ["clause", "polar"],
       ["embedding", "quotation"],
-      ["target", "negation"],
-      ["truth", "false"]
+      ["target", "negation"]
     ],
     "comment": "implies that Ali hopes that John is dead",
     "verified": "page-image"
@@ -691,6 +691,7 @@
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -699,8 +700,7 @@
       ["valence", "negative"],
       ["clause", "polar"],
       ["embedding", "quotation"],
-      ["target", "radical"],
-      ["truth", "true"]
+      ["target", "radical"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -716,6 +716,7 @@
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "marginal",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -724,8 +725,7 @@
       ["valence", "negative"],
       ["clause", "polar"],
       ["embedding", "quotation"],
-      ["target", "negation"],
-      ["truth", "true"]
+      ["target", "negation"]
     ],
     "comment": "(?) for some consultants, ultimately judged true and felicitous",
     "verified": "page-image"
@@ -741,6 +741,7 @@
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "marginal",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -749,8 +750,7 @@
       ["valence", "negative"],
       ["clause", "polar"],
       ["embedding", "quotation"],
-      ["target", "negation"],
-      ["truth", "true"]
+      ["target", "negation"]
     ],
     "comment": "(?) for some consultants, ultimately judged true and felicitous",
     "verified": "page-image"
@@ -766,6 +766,7 @@
     "translation": "",
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -774,8 +775,7 @@
       ["valence", "negative"],
       ["clause", "polar"],
       ["embedding", "quotation"],
-      ["target", "radical"],
-      ["truth", "true"]
+      ["target", "radical"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -844,13 +844,13 @@
     "translation": "My father worries (very much) about where he can dock his boat.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "danxin"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -870,13 +870,13 @@
     "translation": "My father worries (very much) that he can dock his boat at Y.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "danxin"],
       ["clause", "declarative"],
-      ["embedding", "argument"],
-      ["truth", "false"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -895,13 +895,13 @@
     "translation": "John worries (very much) what he should wear.",
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "danxin"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1094,13 +1094,13 @@
     "translation": "He worries where he can dock his boat.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "sinpai"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1119,13 +1119,13 @@
     "translation": "He worries that he can dock his boat at Y.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "sinpai"],
       ["clause", "declarative"],
-      ["embedding", "argument"],
-      ["truth", "false"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1144,13 +1144,13 @@
     "translation": "John worries what he should wear.",
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "sinpai"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1169,14 +1169,14 @@
     "translation": "John fears whether his neighbor will be home.",
     "context": "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "osore"],
       ["clause", "polar"],
       ["embedding", "argument"],
-      ["target", "negation"],
-      ["truth", "true"]
+      ["target", "negation"]
     ],
     "comment": "The paper's gloss prints neightbor-NOM.",
     "verified": "page-image"
@@ -1195,14 +1195,14 @@
     "translation": "John fears whether his neighbor will be home.",
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "osore"],
       ["clause", "polar"],
       ["embedding", "argument"],
-      ["target", "radical"],
-      ["truth", "true"]
+      ["target", "radical"]
     ],
     "comment": "The paper's gloss prints neightbor-NOM.",
     "verified": "page-image"
@@ -1319,13 +1319,13 @@
     "translation": "My father worries about where Antonio can dock his boat.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "preocupar"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1345,13 +1345,13 @@
     "translation": "My father worries that Antonio can dock the boat at Y.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "preocupar"],
       ["clause", "declarative"],
-      ["embedding", "argument"],
-      ["truth", "false"]
+      ["embedding", "argument"]
     ],
     "comment": "the subjunctive clause allows a non-veridical interpretation, fn. 6",
     "verified": "page-image"
@@ -1370,13 +1370,13 @@
     "translation": "It worries John what he should wear.",
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "preocupar"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1492,13 +1492,13 @@
     "translation": "My dad is worried where he'll park his boat.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "endiselen"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "future in place of the possibility modal, fn. 7",
     "verified": "page-image"
@@ -1517,13 +1517,13 @@
     "translation": "My dad is worried that he'll park his boat in Y.",
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "endiselen"],
       ["clause", "declarative"],
-      ["embedding", "argument"],
-      ["truth", "false"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1542,13 +1542,13 @@
     "translation": "John is worried what he should wear.",
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "endiselen"],
       ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["truth", "true"]
+      ["embedding", "argument"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1568,14 +1568,14 @@
     "translation": "John fears whether his neighbor will be home over the weekend.",
     "context": "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],
       ["clause", "polar"],
       ["embedding", "argument"],
-      ["target", "negation"],
-      ["truth", "true"]
+      ["target", "negation"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1595,14 +1595,14 @@
     "translation": "John fears whether his neighbor will be home over the weekend.",
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],
       ["clause", "polar"],
       ["embedding", "argument"],
-      ["target", "radical"],
-      ["truth", "true"]
+      ["target", "radical"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1893,14 +1893,14 @@
     "translation": "John hopes whether his neighbor will be home.",
     "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
       ["clause", "polar"],
       ["embedding", "diye"],
-      ["target", "radical"],
-      ["truth", "true"]
+      ["target", "radical"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1919,14 +1919,14 @@
     "translation": "John hopes whether his neighbor will be home.",
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
       ["clause", "polar"],
       ["embedding", "diye"],
-      ["target", "negation"],
-      ["truth", "false"]
+      ["target", "negation"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1945,14 +1945,14 @@
     "translation": "John fears whether his neighbor will be home.",
     "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],
       ["clause", "polar"],
       ["embedding", "diye"],
-      ["target", "negation"],
-      ["truth", "true"]
+      ["target", "negation"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1971,14 +1971,14 @@
     "translation": "John fears whether his neighbor will be home.",
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],
       ["clause", "polar"],
       ["embedding", "diye"],
-      ["target", "radical"],
-      ["truth", "true"]
+      ["target", "radical"]
     ],
     "comment": "",
     "verified": "page-image"

@@ -289,18 +289,11 @@ def degree? (r : Datum) (who scale : String) : Option ℚ := do
   | some "men", some "width" => (Man.parse? n).map (universalDegree widthClass univ)
   | _, _ => none
 
-/-- The truth value a row reports. -/
-def truth? (r : Datum) : Option Bool :=
-  match r.feature? "truth" with
-  | some "true" => some true
-  | some "false" => some false
-  | _ => none
-
 /-- Every sentence the paper evaluates in one of its situations has the truth value it reports,
 since the subject's universal degree exceeds the standard's exactly when the paper says the sentence
 is true. -/
 theorem rows_truth : ∀ r ∈ Examples.all, (r.feature? "model").isSome →
-    ∃ t ∈ truth? r, ∃ d₁ ∈ degree? r "subject" "subjectScale",
+    ∃ t ∈ r.verdict, ∃ d₁ ∈ degree? r "subject" "subjectScale",
       ∃ d₂ ∈ degree? r "standard" "standardScale", (d₂ < d₁ ↔ t = true) := by
   decide +kernel
 

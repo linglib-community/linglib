@@ -83,6 +83,9 @@ MARK = {
 
 CUSTOM_COLUMNS = [
     {"name": "Context", "dc:description": "The scenario the paper gives for the judgment."},
+    {"name": "Verdict", "datatype": "boolean",
+     "dc:description": "The truth-value judgment the source reports for the expression in the "
+                       "context, where the task is truth rather than acceptability."},
     {"name": "Discourse_Segments", "datatype": "json",
      "dc:description": "The utterances of a discourse example, in order."},
     {"name": "Alternatives", "datatype": "json",
@@ -153,6 +156,7 @@ def example_row(paper, row):
         "Grammaticality_Judgement": MARK[row["judgment"]] or None,
         "Contribution_ID": paper,
         "Context": row.get("context") or None,
+        "Verdict": row.get("verdict"),
         "Discourse_Segments": row.get("discourseSegments") or None,
         "Alternatives": [{"form": a["form"], "mark": MARK[a["judgment"]]}
                          for a in row.get("alternatives", [])] or None,

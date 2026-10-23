@@ -267,18 +267,9 @@
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [
-      {
-        "form": "many of my friends but Chris",
-        "judgment": "ungrammatical"
-      },
-      {
-        "form": "three of my friends but Chris",
-        "judgment": "ungrammatical"
-      },
-      {
-        "form": "some of my friends but Chris",
-        "judgment": "ungrammatical"
-      }
+      {"form": "many of my friends but Chris", "judgment": "ungrammatical"},
+      {"form": "three of my friends but Chris", "judgment": "ungrammatical"},
+      {"form": "some of my friends but Chris", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -454,11 +445,11 @@
     "translation": "",
     "context": "Tom, John and Harry did not attend; Bill and Mary did.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["determiner", "most"],
-      ["truth", "false"]
+      ["determiner", "most"]
     ],
     "comment": "",
     "verified": "page-image"

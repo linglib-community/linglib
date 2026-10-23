@@ -245,8 +245,13 @@ over disjunctions (`isExhaustivelyResolvable_box_iff` relates this to the questi
 *must*). -/
 theorem scenario_rows :
     ∀ row ∈ Examples.all, row.feature? "scenario" = some "freeChoice59" →
-      (hamblinOf row).map
+      ∀ b ∈ row.verdict, (hamblinOf row).map
           (fun H => decide (IsExhaustivelyResolvableOn (ofFinset H) ↑freeChoice.1)) =
-        some (row.feature? "verdict" == some "true") := by decide +kernel
+        some b := by decide +kernel
+
+theorem scenario_read :
+    (Examples.all.filter fun row =>
+      row.feature? "scenario" = some "freeChoice59" ∧ row.verdict.isSome).length = 4 := by
+  decide +kernel
 
 end AlonsoOvalleMoghiseh2025b

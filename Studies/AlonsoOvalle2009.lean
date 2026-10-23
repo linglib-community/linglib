@@ -325,14 +325,12 @@ def predicted (row : Datum) : Option Bool :=
     some (decide (.actual ∈ disjunctiveImp budgetSim {defense, education} ↑defense))
   | _, _, _ => none
 
-theorem rows_agree :
-    ∀ row ∈ Examples.all, ∀ v, row.feature? "verdict" = some v →
-      ∀ b, predicted row = some b → v = if b then "true" else "false" := by
+theorem rows_agree : ∀ row ∈ Examples.all, row.FitsVerdict predicted id := by
   decide +kernel
 
-example :
+theorem rows_read :
     (Examples.all.filter fun row =>
-      (row.feature? "verdict").isSome ∧ (predicted row).isSome).length = 10 := by
+      row.verdict.isSome ∧ (predicted row).isSome).length = 10 := by
   decide +kernel
 
 end

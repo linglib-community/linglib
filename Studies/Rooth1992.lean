@@ -387,7 +387,7 @@ def OnlyFocus.domain (f : OnlyFocus) : Set (Set (Set (Person × Person × Person
 /-- The focus position and the truth value an *only* row reports. -/
 def onlyRow (r : Datum) : Option (OnlyFocus × Bool) := do
   let f ← r.parse? "focus" [("Bill", OnlyFocus.bill), ("Sue", .sue)]
-  let v ← r.parse? "truth" [("true", true), ("false", false)]
+  let v ← r.verdict
   pure (f, v)
 
 /-- The *only* rows have (3a) false and (3b) true. -/

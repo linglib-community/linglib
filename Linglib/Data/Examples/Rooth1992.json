@@ -1,10 +1,7 @@
 [
   {
     "id": "rooth1992_3a",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(3a)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(3a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary only introduced [Bill]F to Sue.",
@@ -13,31 +10,19 @@
     "translation": "",
     "context": "Mary introduced Bill and Tom to Sue, and there were no other introductions.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "only"
-      ],
-      [
-        "focus",
-        "Bill"
-      ],
-      [
-        "truth",
-        "false"
-      ]
+      ["construction", "only"],
+      ["focus", "Bill"]
     ],
     "comment": "False in the introduction scenario: the domain of only is constrained to properties of the form 'introducing y to Sue', and Mary also introduced Tom to Sue.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_3b",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(3b)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(3b)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary only introduced Bill to [Sue]F.",
@@ -46,31 +31,19 @@
     "translation": "",
     "context": "Mary introduced Bill and Tom to Sue, and there were no other introductions.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "only"
-      ],
-      [
-        "focus",
-        "Sue"
-      ],
-      [
-        "truth",
-        "true"
-      ]
+      ["construction", "only"],
+      ["focus", "Sue"]
     ],
     "comment": "True in the introduction scenario: among properties of the form 'introducing Bill to z', Mary has only 'introducing Bill to Sue'.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_7",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(7)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(7)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary only [read]F The Recognitions.",
@@ -82,24 +55,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "only"
-      ],
-      [
-        "focus",
-        "read"
-      ]
+      ["construction", "only"],
+      ["focus", "read"]
     ],
     "comment": "With a focused transitive verb the focus semantic value of the VP contains every property of the form 'R-ing The Recognitions', trivial relations included; fixing the domain of only to it gives unsatisfiable truth conditions, though the sentence can be true.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_11",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(11)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(11)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "An [American]F farmer was talking to a [Canadian]F farmer ...",
@@ -111,20 +75,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "contrast"
-      ]
+      ["construction", "contrast"]
     ],
     "comment": "Symmetric contrast: each N' is construed as contrasting with the other, the ordinary value of each being a member of the focus semantic value of the other.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_16",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(16)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(16)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Well, I [passed]F.",
@@ -135,30 +93,18 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "the speaker did not ace the quiz",
-        "judgment": "acceptable"
-      }
+      {"name": "the speaker did not ace the quiz", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      [
-        "construction",
-        "scale"
-      ],
-      [
-        "focus",
-        "passed"
-      ]
+      ["construction", "scale"],
+      ["focus", "passed"]
     ],
     "comment": "Suggests that the speaker did no better than passing, and nothing about whether the roommates passed.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_17",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(17)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(17)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Well, [I]F passed.",
@@ -169,30 +115,18 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "the roommates did not pass",
-        "judgment": "acceptable"
-      }
+      {"name": "the roommates did not pass", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      [
-        "construction",
-        "scale"
-      ],
-      [
-        "focus",
-        "I"
-      ]
+      ["construction", "scale"],
+      ["focus", "I"]
     ],
     "comment": "Suggests that the roommates did not pass, via a scale of group propositions of the form 'x passed'.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_23Aa_Qa",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(23Aa) answering (23Qa)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(23Aa) answering (23Qa)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "[Mary]F cut Bill down to size.",
@@ -204,28 +138,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "qa"
-      ],
-      [
-        "question",
-        "whoCutBill"
-      ],
-      [
-        "focus",
-        "Mary"
-      ]
+      ["construction", "qa"],
+      ["question", "whoCutBill"],
+      ["focus", "Mary"]
     ],
     "comment": "An appropriate answer: the question denotation is a subset of the answer's focus semantic value.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_23Ab_Qa",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(23Ab) answering (23Qa)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(23Ab) answering (23Qa)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary cut [Bill]F down to size.",
@@ -237,28 +159,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "qa"
-      ],
-      [
-        "question",
-        "whoCutBill"
-      ],
-      [
-        "focus",
-        "Bill"
-      ]
+      ["construction", "qa"],
+      ["question", "whoCutBill"],
+      ["focus", "Bill"]
     ],
     "comment": "Inappropriate: the propositions of the form 'x cut Bill down to size' are not all of the form 'Mary cut y down to size'.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_23Ab_Qb",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(23Ab) answering (23Qb)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(23Ab) answering (23Qb)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary cut [Bill]F down to size.",
@@ -270,28 +180,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "qa"
-      ],
-      [
-        "question",
-        "whoDidMaryCut"
-      ],
-      [
-        "focus",
-        "Bill"
-      ]
+      ["construction", "qa"],
+      ["question", "whoDidMaryCut"],
+      ["focus", "Bill"]
     ],
     "comment": "An appropriate answer to the object question.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_23Aa_Qb",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(23Aa) answering (23Qb)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(23Aa) answering (23Qb)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "[Mary]F cut Bill down to size.",
@@ -303,28 +201,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "qa"
-      ],
-      [
-        "question",
-        "whoDidMaryCut"
-      ],
-      [
-        "focus",
-        "Mary"
-      ]
+      ["construction", "qa"],
+      ["question", "whoDidMaryCut"],
+      ["focus", "Mary"]
     ],
     "comment": "Inappropriate as an answer to the object question.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_59a",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(59a)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(59a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "she beats [me]F more often than Sue",
@@ -335,34 +221,19 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "than she beats Sue",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "than Sue beats me",
-        "judgment": "unacceptable"
-      }
+      {"name": "than she beats Sue", "judgment": "acceptable"},
+      {"name": "than Sue beats me", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      [
-        "construction",
-        "ellipsis"
-      ],
-      [
-        "focus",
-        "me"
-      ]
+      ["construction", "ellipsis"],
+      ["focus", "me"]
     ],
     "comment": "Bare remnant ellipsis: focus on the object correlate selects the reading in which the remnant corresponds to the object.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_59b",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(59b)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(59b)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "[she]F beats me more often than Sue",
@@ -373,34 +244,19 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "than she beats Sue",
-        "judgment": "unacceptable"
-      },
-      {
-        "name": "than Sue beats me",
-        "judgment": "acceptable"
-      }
+      {"name": "than she beats Sue", "judgment": "unacceptable"},
+      {"name": "than Sue beats me", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      [
-        "construction",
-        "ellipsis"
-      ],
-      [
-        "focus",
-        "she"
-      ]
+      ["construction", "ellipsis"],
+      ["focus", "she"]
     ],
     "comment": "Focus on the subject correlate selects the reading in which the remnant corresponds to the subject.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_70",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(70)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(70)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "People who [grow]F rice generally only [eat]F rice.",
@@ -412,24 +268,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "only"
-      ],
-      [
-        "focus",
-        "eat"
-      ]
+      ["construction", "only"],
+      ["focus", "eat"]
     ],
     "comment": "The focus on the verb is anaphoric to the other verb phrase rather than associated with only, whose domain is then fixed pragmatically: what is excluded is eating staples other than rice.",
     "verified": "page-image"
   },
   {
     "id": "rooth1992_72a",
-    "source": {
-      "bibkey": "rooth-1992",
-      "paperLabel": "(72a)"
-    },
+    "source": {"bibkey": "rooth-1992", "paperLabel": "(72a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "An American farmer was talking to a [Canadian]F farmer ...",
@@ -441,10 +288,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "construction",
-        "contrast"
-      ]
+      ["construction", "contrast"]
     ],
     "comment": "The anticipatory first focus of (11) is optional: no focus interpretation operator at the level of the first N'.",
     "verified": "page-image"

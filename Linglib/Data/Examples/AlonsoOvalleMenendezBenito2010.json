@@ -364,13 +364,13 @@
     "translation": "Juan may be anywhere in the house.",
     "context": "Hide-and-seek; Juan is hiding. Pedro is convinced that Juan is not in the bathroom or in the kitchen, but for all Pedro knows Juan could be in any of the other rooms of the house, or even outside (say, in the barn).",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "cualquiera"],
       ["modal", "may"],
-      ["scenario", "barn27"],
-      ["verdict", "false"]
+      ["scenario", "barn27"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -388,13 +388,13 @@
     "translation": "Juan may be in a part of the house.",
     "context": "Hide-and-seek; Juan is hiding. Pedro is convinced that Juan is not in the bathroom or in the kitchen, but for all Pedro knows Juan could be in any of the other rooms of the house, or even outside (say, in the barn).",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
       ["modal", "may"],
-      ["scenario", "barn27"],
-      ["verdict", "true"]
+      ["scenario", "barn27"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -409,13 +409,13 @@
     "translation": "The department can hire any of the candidates that have applied to the position.",
     "context": "The department of linguistics is hiring a new professor. Several candidates have applied, but some of them don't have a Ph.D. According to University policies, only candidates with a Ph.D. can be hired.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "cualquiera"],
       ["modal", "may"],
-      ["scenario", "hiring29"],
-      ["verdict", "false"]
+      ["scenario", "hiring29"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -430,13 +430,13 @@
     "translation": "The department can hire one of the candidates that have applied to the position.",
     "context": "The department of linguistics is hiring a new professor. Several candidates have applied, but some of them don't have a Ph.D. According to University policies, only candidates with a Ph.D. can be hired.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "algún"],
       ["modal", "may"],
-      ["scenario", "hiring29"],
-      ["verdict", "true"]
+      ["scenario", "hiring29"]
     ],
     "comment": "",
     "verified": "page-image"

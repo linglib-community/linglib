@@ -540,6 +540,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -548,8 +549,7 @@
       ["subject", "b"],
       ["subjectScale", "beauty"],
       ["standard", "h"],
-      ["standardScale", "intelligence"],
-      ["truth", "true"]
+      ["standardScale", "intelligence"]
     ],
     "comment": "Betty is the second most beautiful of ten, Heather the fifth most intelligent.",
     "verified": "page-image"
@@ -565,6 +565,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -573,8 +574,7 @@
       ["subject", "b"],
       ["subjectScale", "intelligence"],
       ["standard", "e"],
-      ["standardScale", "beauty"],
-      ["truth", "false"]
+      ["standardScale", "beauty"]
     ],
     "comment": "Betty is the third least intelligent of ten, Evelin the fifth most beautiful.",
     "verified": "page-image"
@@ -721,6 +721,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -729,8 +730,7 @@
       ["subject", "s"],
       ["subjectScale", "height"],
       ["standard", "s"],
-      ["standardScale", "width"],
-      ["truth", "true"]
+      ["standardScale", "width"]
     ],
     "comment": "Seymour is five feet two inches tall and three feet wide, measurements to eighty inches.",
     "verified": "page-image"
@@ -746,6 +746,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -754,8 +755,7 @@
       ["subject", "s"],
       ["subjectScale", "width"],
       ["standard", "s"],
-      ["standardScale", "height"],
-      ["truth", "false"]
+      ["standardScale", "height"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -790,6 +790,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -798,8 +799,7 @@
       ["subject", "s"],
       ["subjectScale", "height"],
       ["standard", "s"],
-      ["standardScale", "width"],
-      ["truth", "false"]
+      ["standardScale", "width"]
     ],
     "comment": "Seymour, five feet tall and three feet wide, is the shortest of the men and as wide as the widest.",
     "verified": "page-image"
@@ -815,6 +815,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -823,8 +824,7 @@
       ["subject", "s"],
       ["subjectScale", "height"],
       ["standard", "s"],
-      ["standardScale", "width"],
-      ["truth", "false"]
+      ["standardScale", "width"]
     ],
     "comment": "The modified nominal restricts both comparison classes to men.",
     "verified": "page-image"

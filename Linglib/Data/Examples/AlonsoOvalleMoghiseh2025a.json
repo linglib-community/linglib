@@ -556,13 +556,13 @@
     "translation": "Forood can buy a book.",
     "context": "There are only five books (b1–b5). Forood is allowed to buy b1, b2, and b3, but not b4 or b5.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek"],
       ["modal", "deontic possibility"],
-      ["scenario", "permitted24"],
-      ["verdict", "true"]
+      ["scenario", "permitted24"]
     ],
     "comment": "Alonso-Ovalle & Moghiseh 2019: 6. Felicitous in (24); consistent with the continuation (27).",
     "verified": "page-image"
@@ -580,13 +580,13 @@
     "translation": "Forood can buy a book — any book.",
     "context": "There are only five books (b1–b5). Forood is allowed to buy b1, b2, and b3, but not b4 or b5.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
       ["modal", "deontic possibility"],
-      ["scenario", "permitted24"],
-      ["verdict", "false"]
+      ["scenario", "permitted24"]
     ],
     "comment": "Cannot describe (24): conveys that Forood may buy any of the five books; inconsistent with (27).",
     "verified": "page-image"
@@ -625,13 +625,13 @@
     "translation": "Forood must buy a book.",
     "context": "There are only five books (b1–b5). Forood is required to buy a book and is allowed to buy b1, b2, and b3, but not b4 or b5.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek"],
       ["modal", "deontic necessity"],
-      ["scenario", "required28"],
-      ["verdict", "true"]
+      ["scenario", "required28"]
     ],
     "comment": "Alonso-Ovalle & Moghiseh 2019: 7.",
     "verified": "page-image"
@@ -649,13 +649,13 @@
     "translation": "Forood must buy a book — any book.",
     "context": "There are only five books (b1–b5). Forood is required to buy a book and is allowed to buy b1, b2, and b3, but not b4 or b5.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
       ["modal", "deontic necessity"],
-      ["scenario", "required28"],
-      ["verdict", "false"]
+      ["scenario", "required28"]
     ],
     "comment": "Not true in (28): conveys that Forood can buy any book.",
     "verified": "page-image"
@@ -673,13 +673,13 @@
     "translation": "Forood might have bought a book.",
     "context": "There are only five books (b1–b5). The speaker is convinced that Forood hasn't bought b4 or b5, but for all he knows Forood could have bought any of the other books, or even none.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
       ["modal", "epistemic possibility"],
-      ["scenario", "known31"],
-      ["verdict", "true"]
+      ["scenario", "known31"]
     ],
     "comment": "Felicitous in (31) although not all books are epistemic possibilities; can be followed by (33). The paper prints mitune-e.",
     "verified": "page-image"
@@ -718,13 +718,13 @@
     "translation": "Forood must have bought a book.",
     "context": "There are only five books (b1–b5). The speaker is convinced that Forood has bought a book, but knows that he hasn't bought b4 or b5.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
       ["modal", "epistemic necessity"],
-      ["scenario", "known34"],
-      ["verdict", "true"]
+      ["scenario", "known34"]
     ],
     "comment": "Alonso-Ovalle & Moghiseh 2019: 6.",
     "verified": "page-image"
@@ -1061,13 +1061,13 @@
     "translation": "Forood has to buy some book / some books.",
     "context": "There are only five books (b1–b5). Forood is required to buy a book, and any book is a permissible option. He is allowed to buy one or more than one book.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "algún"],
       ["modal", "deontic necessity"],
-      ["scenario", "anyNumber104"],
-      ["verdict", "true"]
+      ["scenario", "anyNumber104"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1085,13 +1085,13 @@
     "translation": "Forood must buy a book — any book.",
     "context": "There are only five books (b1–b5). Forood is required to buy a book, and any book is a permissible option. He is allowed to buy one or more than one book.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "irgendein"],
       ["modal", "deontic necessity"],
-      ["scenario", "anyNumber104"],
-      ["verdict", "true"]
+      ["scenario", "anyNumber104"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1109,13 +1109,13 @@
     "translation": "Forood must buy one book — any book.",
     "context": "There are only five books (b1–b5). Forood is required to buy a book, and any book is a permissible option. He is allowed to buy one or more than one book.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
       ["modal", "deontic necessity"],
-      ["scenario", "anyNumber104"],
-      ["verdict", "false"]
+      ["scenario", "anyNumber104"]
     ],
     "comment": "False in (104): conveys that in all permitted worlds Forood buys exactly one book. Incompatible with (107).",
     "verified": "page-image"
@@ -1133,13 +1133,13 @@
     "translation": "Forood can buy one book — any book.",
     "context": "There are only five books (b1–b5). Forood is required to buy two books, and any book is a permissible option.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "yek-i"],
       ["modal", "deontic possibility"],
-      ["scenario", "twoBooks108"],
-      ["verdict", "false"]
+      ["scenario", "twoBooks108"]
     ],
     "comment": "Infelicitous in (108): no permitted world has exactly one book bought. Compatible with (107) and with (110).",
     "verified": "page-image"
