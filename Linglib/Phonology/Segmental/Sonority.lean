@@ -9,6 +9,7 @@ public import Linglib.Phonology.Segmental.Basic
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Mathlib.Order.UpperLower.Basic
 import Mathlib.Data.Fintype.Lattice
+import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Phonology.Segmental.PHOIBLE
 
@@ -187,6 +188,133 @@ def ofSegment (s : Segment) : Sonority :=
   else if s.HasValue .syllabic true then .vowel
   else .glide
 
+theorem rank_strictMono : StrictMono rank := fun _ _ h ↦ h
+
+/-- [sonorant], [approximant], [consonantal] and [syllabic] cut the hierarchy (Table 4.1). -/
+theorem isCut_features :
+    IsCut id {c : Sonority | c.toSegment.HasValue .sonorant true} ∧
+      IsCut id {c : Sonority | c.toSegment.HasValue .approximant true} ∧
+      IsCut id {c : Sonority | c.toSegment.HasValue .consonantal false} ∧
+      IsCut id {c : Sonority | c.toSegment.HasValue .syllabic true} := by
+  refine ⟨⟨Set.Ici nasal, isUpperSet_Ici _, ?_⟩, ⟨Set.Ici liquid, isUpperSet_Ici _, ?_⟩,
+    ⟨Set.Ici glide, isUpperSet_Ici _, ?_⟩, ⟨Set.Ici vowel, isUpperSet_Ici _, ?_⟩⟩ <;>
+  · ext c
+    simp only [Set.mem_preimage, id, Set.mem_Ici]
+    cases c <;> decide
+
+/-- The features `ofSegment` reads, the four of Table 4.1. -/
+def features : Finset Feature := {.sonorant, .approximant, .consonantal, .syllabic}
+
+theorem ofSegment_congr {s s' : Segment} (h : ∀ f ∈ features, s f = s' f) :
+    ofSegment s = ofSegment s' := by
+  simp only [ofSegment, Segment.HasValue, h _ (by decide : Feature.sonorant ∈ features),
+    h _ (by decide : Feature.approximant ∈ features),
+    h _ (by decide : Feature.consonantal ∈ features),
+    h _ (by decide : Feature.syllabic ∈ features)]
+
+theorem ofSegment_setFeature {f : Feature} (hf : f ∉ features) (s : Segment) (v : Bool) :
+    ofSegment (s.setFeature f v) = ofSegment s :=
+  ofSegment_congr fun g hg ↦ Segment.setFeature_apply_of_ne (s := s) (by rintro rfl; exact hf hg) v
+
+@[simp] theorem ofSegment_toSegment (c : Sonority) : ofSegment c.toSegment = c := by
+  cases c <;> decide
+
+theorem apply_eq_toSegment_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) {f : Feature}
+    (hf : f ∈ features) : s f = c.toSegment f := by
+  have key : ∀ c : Sonority, ∀ f ∈ features, ∃ v, c.toSegment f = some v := by decide
+  obtain ⟨v, hv⟩ := key c f hf
+  rw [hv]
+  exact (Segment.le_iff_forall_hasValue s).1 h f v hv
+
+/-- A segment with the values of a column of Table 4.1 has that column's sonority. -/
+theorem ofSegment_eq_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
+    ofSegment s = c :=
+  (ofSegment_congr fun _ hf ↦ apply_eq_toSegment_of_le h hf).trans (ofSegment_toSegment c)
+
+/-- On a segment with the values of a column of Table 4.1, exactly that column's description
+holds. -/
+theorem description_le_iff {c c' : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
+    c'.description ≤ s ↔ c' = c := by
+  have hsupp : ∀ c' : Sonority, ∀ f ∉ features, c'.description f = ⊥ := by decide
+  have key : ∀ c c' : Sonority, c'.description ≤ c.toSegment ↔ c' = c := by decide
+  rw [← key c c']
+  refine forall_congr' fun f ↦ ?_
+  by_cases hf : f ∈ features
+  · rw [apply_eq_toSegment_of_le h hf]
+  · simp [hsupp c' f hf]
+
+theorem description_le_iff_ofSegment_eq {c c' : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
+    c'.description ≤ s ↔ ofSegment s = c' := by
+  rw [description_le_iff h, ofSegment_eq_of_le h, eq_comm]
+
+/-- The sonority rise from `a` to `b` is positive when sonority rises, zero on a plateau,
+and negative when it falls. -/
+def rise (a b : Sonority) : ℤ := b.rank - a.rank
+
+@[simp] theorem rise_self (a : Sonority) : rise a a = 0 := by simp only [rise]; omega
+
+theorem neg_rise (a b : Sonority) : -rise a b = rise b a := by simp only [rise]; omega
+
+theorem rise_add_rise (a b c : Sonority) : rise a b + rise b c = rise a c := by
+  simp only [rise]; omega
+
+@[simp] theorem rise_pos {a b : Sonority} : 0 < rise a b ↔ a < b := by
+  change 0 < (b.rank : ℤ) - a.rank ↔ a.rank < b.rank; omega
+
+@[simp] theorem rise_neg {a b : Sonority} : rise a b < 0 ↔ b < a := by
+  change (b.rank : ℤ) - a.rank < 0 ↔ b.rank < a.rank; omega
+
+@[simp] theorem rise_eq_zero {a b : Sonority} : rise a b = 0 ↔ a = b :=
+  ⟨fun h ↦ rank_strictMono.injective (by simp only [rise] at h; omega),
+    by rintro rfl; exact rise_self _⟩
+
+/-- [continuant] is not a sonority feature: its positive class is not contiguous on the hierarchy
+(p. 78). -/
+theorem not_contiguous_continuant :
+    ¬ Contiguous ofSegment {s : Segment | s.HasValue .continuant true} := by
+  intro h
+  exact absurd (contiguous_iff.1 h (.ofSpecs [(.sonorant, false), (.continuant, true)]) (by decide)
+    (.ofSpecs [(.syllabic, true), (.sonorant, true), (.approximant, true), (.continuant, true)])
+    (by decide) (.ofSpecs [(.sonorant, true), (.approximant, false), (.continuant, false)])
+    (by decide) (by decide)) (by decide)
+
+theorem naturalClass_description (c : Sonority) :
+    c.description.naturalClass (Finset.univ.image Sonority.toSegment) = {c.toSegment} := by
+  revert c
+  decide +kernel
+
+/-- Among the columns of Table 4.1, the natural classes are the contiguous sets (p. 76). -/
+theorem isNaturalClass_image_iff {S : Finset Sonority} (hS : S.Nonempty) :
+    IsNaturalClass (Finset.univ.image Sonority.toSegment) (S.image Sonority.toSegment) ↔
+      (S : Set Sonority).OrdConnected := by
+  simp only [Set.ordConnected_iff, Finset.mem_coe, Set.subset_def, Set.mem_Icc]
+  have key : ∀ S : Finset Sonority, S.Nonempty →
+      (IsNaturalClass (Finset.univ.image toSegment) (S.image toSegment) ↔
+        ∀ a ∈ S, ∀ b ∈ S, a ≤ b → ∀ c, a ≤ c ∧ c ≤ b → c ∈ S) := by
+    decide +kernel
+  exact key S hS
+
+open Data.PHOIBLE.FeatureMatrix in
+/-- Chart segments fall into the sonority classes of their glyphs, the nasal by its
+[−approximant]. -/
+example : [«p», «s», «n», «l», «j», «a»].map (ofSegment ∘ Data.PHOIBLE.FeatureMatrix.toSegment) =
+    [.obstruent, .obstruent, .nasal, .liquid, .glide, .vowel] := by decide
+
 end Sonority
+
+namespace Segment
+
+variable (s : Segment)
+
+theorem isVowel_iff_le : s.IsVowel ↔ Sonority.vowel.description ≤ s := by
+  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsVowel]
+
+theorem isObstruent_iff_le : s.IsObstruent ↔ Sonority.obstruent.description ≤ s := by
+  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsObstruent]
+
+theorem isNasal_iff_le : s.IsNasal ↔ Sonority.nasal.description ≤ s := by
+  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsNasal]
+
+end Segment
 
 end Phonology

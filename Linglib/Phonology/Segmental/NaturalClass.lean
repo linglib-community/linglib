@@ -1,9 +1,7 @@
 module
 
 public import Mathlib.Data.Finset.Lattice.Fold
-public import Mathlib.Order.Interval.Set.OrdConnected
 public import Linglib.Phonology.Segmental.Defs
-import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Natural classes
@@ -39,8 +37,6 @@ classes form Broe's lattice of representations.
 * `Phonology.isNaturalClass_iff`: a set is a natural class exactly when it is the natural class
   of what its members share.
 * `Phonology.IsNaturalClass.inter`: two overlapping natural classes meet in a natural class.
-* `Phonology.Sonority.isNaturalClass_image_iff`: among the columns of Hayes's Table 4.1, the
-  natural classes are the sets of sonority classes that are contiguous on the hierarchy.
 
 ## Implementation notes
 
@@ -150,21 +146,5 @@ theorem IsNaturalClass.inter (hS : IsNaturalClass I S) (hT : IsNaturalClass I T)
   exact Finset.subset_inter
     ((naturalClass_inf'_subset_iff hI hST).2 Finset.inter_subset_left)
     ((naturalClass_inf'_subset_iff hI hST).2 Finset.inter_subset_right)
-
-theorem Sonority.naturalClass_description (c : Sonority) :
-    c.description.naturalClass (Finset.univ.image Sonority.toSegment) = {c.toSegment} := by
-  revert c
-  decide +kernel
-
-/-- Among the columns of Table 4.1, the natural classes are the contiguous sets (p. 76). -/
-theorem Sonority.isNaturalClass_image_iff {S : Finset Sonority} (hS : S.Nonempty) :
-    IsNaturalClass (Finset.univ.image Sonority.toSegment) (S.image Sonority.toSegment) ↔
-      (S : Set Sonority).OrdConnected := by
-  simp only [Set.ordConnected_iff, Finset.mem_coe, Set.subset_def, Set.mem_Icc]
-  have key : ∀ S : Finset Sonority, S.Nonempty →
-      (IsNaturalClass (Finset.univ.image toSegment) (S.image toSegment) ↔
-        ∀ a ∈ S, ∀ b ∈ S, a ≤ b → ∀ c, a ≤ c ∧ c ≤ b → c ∈ S) := by
-    decide +kernel
-  exact key S hS
 
 end Phonology
