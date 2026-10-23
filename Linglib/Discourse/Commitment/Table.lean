@@ -2,7 +2,7 @@ module
 
 public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Discourse.QUD.Issue
-public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Resolution
 
 /-!
 # The Table
@@ -25,13 +25,11 @@ the common ground alone and moves only the projected set.
 
 ## Main definitions
 
-* `Question.DecidedBy P f`: the common ground `f` entails a complete answer of the issue `P`.
 * `Commitment.Table A W`: the context structure, with `Table.discourseCommitments a` the
   propositions `a` has publicly committed to and `Table.projectedSet` the projected set, the
   fold of the paper's `ps ∪ P` over the stack.
 * `Table.IsStable`: the Table is empty.
 * `Table.InCrisis`: the common ground is inconsistent or no projected common ground is.
-* `Table.Shared`: every participant is committed to the proposition.
 * `Table.assert`, `Table.polarQuestion`, `Table.settle`, `Table.agreeToDisagree`: the
   default assertion (9), which commits its author as in [gunlogson-2001], the default polar
   question (12), the common-ground increasing operation M' (17), and agreeing to disagree (23).
@@ -63,11 +61,11 @@ the common ground alone and moves only the projected set.
   `Question.decidedBy_top` records that the trivial issue is always decided.
 * M' (17) applies in the paper only once the proposition is on every commitment list;
   `Table.settle` is the operation itself, and the trigger is a hypothesis on the caller,
-  `Table.Shared`. Its popping clause is read as "pop from the top while decided", which
-  follows the stack wording of (17) and agrees with the paper's examples; the gloss after
-  (17) can also be read as removing every decided item from anywhere in the stack, and the
-  clause pops on an entailed complete answer where the gloss says a decided one, which differ
-  for a declarative whose negation the new common ground entails. Whether a common ground
+  `p ∈ jointContents K.commitments`. Its popping clause is read as "pop from the top while
+  decided", which follows the stack wording of (17) and agrees with the paper's examples; the
+  gloss after (17) can also be read as removing every decided item from anywhere in the stack,
+  and the clause pops on an entailed complete answer where the gloss says a decided one, which
+  differ for a declarative whose negation the new common ground entails. Whether a common ground
   entails a complete answer is not decidable, so `Table.settle` is classical and
   noncomputable.
 * Agreeing to disagree requires a denial on top of the assertion it denies, which is where
@@ -86,31 +84,6 @@ the common ground alone and moves only the projected set.
 @[expose] public section
 
 open Filter
-
-namespace Question
-
-variable {W : Type*} {P : Question W} {f g : Filter W} {p : Set W}
-
-/-- The common ground `f` decides the issue `P` when it entails one of its complete answers. -/
-def DecidedBy (P : Question W) (f : Filter W) : Prop := ∃ q ∈ alt P, q ∈ f
-
-theorem DecidedBy.mono (h : f ≤ g) : P.DecidedBy g → P.DecidedBy f :=
-  Exists.imp fun _ ⟨hq, hg⟩ ↦ ⟨hq, h hg⟩
-
-theorem DecidedBy.ker_mem (h : P.DecidedBy f) : f.ker ∈ P :=
-  let ⟨q, hq, hf⟩ := h
-  P.downward_closed q (mem_of_mem_alt hq) _ (Set.sInter_subset_of_mem hf)
-
-@[simp] theorem decidedBy_top : (⊤ : Question W).DecidedBy f := ⟨_, by simp, univ_mem⟩
-
-@[simp] theorem decidedBy_ofSet : (ofSet p).DecidedBy f ↔ p ∈ f := by simp [DecidedBy]
-
-@[simp] theorem decidedBy_polar : (polar p).DecidedBy f ↔ p ∈ f ∨ pᶜ ∈ f := by
-  by_cases h : p = ∅ ∨ p = Set.univ
-  · rcases h with rfl | rfl <;> simp [polar_empty, polar_univ]
-  · simp [DecidedBy, mem_alt_polar_of_nontrivial (not_or.1 h).1 (not_or.1 h).2]
-
-end Question
 
 namespace Commitment
 
@@ -183,9 +156,6 @@ def IsStable : Prop := K.stack = []
 
 /-- `DC_a`: the propositions `a` has publicly committed to. -/
 def discourseCommitments : Set (Set W) := contents (ofCommitter K.commitments a)
-
-/-- Every participant is committed to `p`. -/
-def Shared : Prop := ∀ a : A, p ∈ K.discourseCommitments a
 
 /-! ### The projected set -/
 

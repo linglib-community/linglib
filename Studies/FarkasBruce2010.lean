@@ -23,7 +23,7 @@ whether the author is committed and in whether the projected set is inquisitive
 (`projectedSet_assert`, `projectedSet_polarQuestion`), and agree in deciding the sentence radical in
 every projected common ground (`Table.mem_of_mem_projectedSet_assert`,
 `Table.mem_or_compl_mem_of_mem_projectedSet_polarQuestion`). Confirmation (16) followed by the
-common-ground increase `M'` (17) settles an assertion (`shared_assert_confirm`,
+common-ground increase `M'` (17) settles an assertion (`mem_jointContents_assert_confirm`,
 `isStable_settle_assert`, `mem_commonGround_settle`); a total denial (22) leaves nothing consistent
 projected and the conversation in crisis (21, `Table.inCrisis_assert_assert_compl`), from which
 agreeing to disagree (23) recovers with the commitments intact (`not_inCrisis_agreeToDisagree`,
@@ -118,8 +118,9 @@ theorem projectedSet_polarQuestion (hK : K.IsStable) (hp : K.commonGround ⊓ �
 
 /-- After the addressee confirms (16), the asserted proposition is on every commitment
 list. -/
-theorem shared_assert_confirm : ((K.assert .speaker p).commit .addressee p).Shared p := by
-  intro a
+theorem mem_jointContents_assert_confirm :
+    p ∈ jointContents ((K.assert .speaker p).commit .addressee p).commitments := by
+  refine mem_jointContents.2 fun a ↦ show p ∈ Table.discourseCommitments _ a from ?_
   cases a
   · rw [Table.discourseCommitments_commit_of_ne (by decide)]
     exact Table.mem_discourseCommitments_assert _ _ _

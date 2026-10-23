@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Discourse.Commitment.Basic
+public import Linglib.Discourse.Commitment.Sincerity
 
 /-!
 # Belief–commitment frames
@@ -32,6 +32,8 @@ committed to towards `b` at a world is a commitment state of `Commitment.Basic`.
 * `Frame.competent_iff`: Competence holds iff all agents share one belief relation.
 * `Frame.slate_toState_restrictCommitment`: on commitment states the update is the insertion of
   `commit a π`.
+* `Frame.sincere_iff_forall_sincere_toState`: Sincerity of a frame is `Commitment.Sincere` of
+  every projected commitment state, relative to belief.
 
 ## Implementation notes
 
@@ -219,6 +221,14 @@ theorem slate_toState_restrictCommitment :
   congr 1
   ext
   simp
+
+variable {c}
+
+theorem sincere_iff_forall_sincere_toState :
+    c.Sincere ↔
+      ∀ x y w, Commitment.Sincere (fun _ a v ↦ {π | c.Believes a π v}) (c.toState x y w) w :=
+  ⟨fun hs _ _ _ _ ⟨_, hπ, e⟩ _ ↦ e ▸ hs.believes_of_committed hπ,
+    fun h x y p hp ↦ h x y p.1 _ ⟨{v | p.1 ~[c.commitment x y] v}, fun _ ↦ id, rfl⟩ rfl p.2 hp⟩
 
 end Frame
 

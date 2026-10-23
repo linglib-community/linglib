@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Attitudes.Preference.Structure
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Discourse.Commitment.Preferential
+public import Linglib.Discourse.Commitment.Sincerity
 public import Linglib.Data.Examples.CondoravdiLauer2012
 
 /-!
@@ -115,7 +115,7 @@ theorem imp_self_verifying {K : W → State A W} (hK : DoxasticReduction K)
 
 /-- In a directive context, a sincere preferential commitment to `p` under (34) is an effective
 preference satisfied only if the addressee effectively prefers `p` (§3.4; cf. (32)). -/
-theorem directive_want_addressee {K : State A W} {ad : A} (hs : Sincere P K w)
+theorem directive_want_addressee {K : State A W} {ad : A} (hs : Sincere (effectivePreference P) K w)
     (hp : commit a p .preferential ∈ K) (hii : p ⊆ {v | Want P ad p v}) :
     WantNecessary P a {v | Want P ad p v} w :=
   (hs.want hp).wantNecessary.mono hii
@@ -125,18 +125,20 @@ theorem directive_want_addressee {K : State A W} {ad : A} (hs : Sincere P K w)
 /-- The preferential commitments of a sincere speaker with consistent effective preferences are
 jointly realizable in the information state: successive imperatives are consistent, §2.1. -/
 theorem imperatives_consistent {K : State A W} {B : Set W} (hC : (P a w).Consistent B)
-    (hs : Sincere P K w) :
+    (hs : Sincere (effectivePreference P) K w) :
     (B ∩ contextSet (ofForce (ofCommitter K a) .preferential)).Nonempty := by
   refine hC.inter_sInter_maxElts_nonempty.mono
     (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter ?_))
   rintro _ ⟨c, ⟨⟨⟨hc, rfl⟩, hf⟩, hp⟩, rfl⟩
-  exact hs c hc hf hp
+  have h := hs c hc hp
+  rw [hf] at h
+  exact h
 
 /-- Two imperatives with incompatible contents are not both sincere at one time, (11) and (15):
 the second revises the speaker's effective preferences, (12) to (14). -/
 theorem imperatives_revise {K : State A W} {B : Set W} (hC : (P a w).Consistent B)
     (hp : commit a p .preferential ∈ K) (hq : commit a q .preferential ∈ K)
-    (h : B ∩ (p ∩ q) = ∅) : ¬ Sincere P K w :=
+    (h : B ∩ (p ∩ q) = ∅) : ¬ Sincere (effectivePreference P) K w :=
   fun hs ↦ (hC.inter_inter_nonempty_of_mem_maxElts (hs.want hp) (hs.want hq)).ne_empty h
 
 /-! ### Endorsement: advice, permission, concession -/
