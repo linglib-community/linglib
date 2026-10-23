@@ -18,13 +18,15 @@ phrase, and proves its conservativity and scope monotonicity.
 
 ## Main statements
 
-* `Quantifier.GQ.Conservative.poss`: `Poss Q₁ C Q₂ R` is conservative if `Q₂` is.
+* `Quantifier.GQ.Conservative.poss`: `Poss Q₁ C Q₂ R` is conservative if `Q₂` is (7.29).
 * `Quantifier.GQ.ScopeMonotone.poss` and its variants: `Poss` is scope monotone in the product of
   the directions of `Q₁` and `Q₂`.
-* `Possession.poss_eq_possNP_restrict`: for symmetric `Q₁`, `Poss Q₁ C = PossNP (Q₁ C)`.
+* `Possession.poss_eq_possNP_restrict`: for symmetric `Q₁`, `Poss Q₁ C = PossNP (Q₁ C)`
+  (Fact 1).
 * `Possession.possNP_individual_the`: `PossNP` at an individual with the definite as `Q₂` is the
   definite over the relationalized noun.
-* `Possession.poss_not_quantityInvariant`: `Poss` is not invariant under permutations.
+* `Possession.poss_not_quantityInvariant`: `Poss` is not invariant under permutations
+  (p. 256).
 
 ## Implementation notes
 
@@ -63,13 +65,11 @@ def PossNP (Q : NP α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
 
 /-! ### Conservativity -/
 
-/-- `Poss Q₁ C Q₂ R` is conservative whenever `Q₂` is ((7.29)). -/
 theorem _root_.Quantifier.GQ.Conservative.poss {Q₂ : GQ α} (h₂ : Conservative Q₂) (Q₁ : GQ α)
     (C : α → Prop) (R : α → α → Prop) : Conservative (Poss Q₁ C Q₂ R) := fun _ _ ↦
   iff_of_eq (congrArg (Q₁ _) (funext fun _ ↦ propext
     (Conservative.congr_scope h₂ fun _ hy ↦ (and_iff_right hy.1).symm)))
 
-/-- `PossNP Q Q₂ R` is conservative whenever `Q₂` is. -/
 theorem _root_.Quantifier.GQ.Conservative.possNP {Q₂ : GQ α} (h₂ : Conservative Q₂) (Q : NP α)
     (R : α → α → Prop) : Conservative (PossNP Q Q₂ R) := fun _ _ ↦
   iff_of_eq (congrArg Q (funext fun _ ↦ propext (and_congr_right fun _ ↦
@@ -104,8 +104,6 @@ end Monotone
 
 /-! ### Narrowing -/
 
-/-- For a symmetric conservative `Q₁`, restricting the possessors to `dom A R` has no effect
-(Fact 1, §7.8.1). -/
 theorem poss_eq_possNP_restrict {Q₁ : GQ α} (hSym : Std.Symm Q₁) (hCons : Conservative Q₁)
     (C : α → Prop) (Q₂ : GQ α) (R : α → α → Prop) :
     Poss Q₁ C Q₂ R = PossNP (Q₁ C) Q₂ R :=
@@ -118,21 +116,16 @@ theorem possNP_individual_iff {Q₂ : GQ α} {R : α → α → Prop} {a : α} {
     PossNP (individual a) Q₂ R A B ↔ dom A R a ∧ Q₂ (π A R a) B :=
   Iff.rfl
 
-/-- A possessive with an individual possessor entails that the possessor possesses some `A`. -/
 theorem possNP_individual_existential_import {Q₂ : GQ α} {R : α → α → Prop}
     {a : α} {A B : α → Prop} (h : PossNP (individual a) Q₂ R A B) : dom A R a :=
   h.1
 
-/-- With an individual possessor and the definite as `Q₂`, `PossNP` is the definite over the
-relationalized noun. -/
 theorem possNP_individual_the {R : α → α → Prop} {a : α} {A B : α → Prop} :
     PossNP (individual a) the R A B ↔ the (π A R a) B :=
   ⟨And.right, fun h ↦ ⟨h.elim fun x hx ↦ ⟨x, (hx.1 x).2 rfl⟩, h⟩⟩
 
 /-! ### Quantity invariance -/
 
-/-- `Poss` is not invariant under permutations of the domain, since `C` and `R` stay fixed
-(p. 256). -/
 theorem poss_not_quantityInvariant :
     ¬ QuantityInvariant
         (Poss (GQ.some (α := Bool)) (fun _ ↦ True) GQ.some
