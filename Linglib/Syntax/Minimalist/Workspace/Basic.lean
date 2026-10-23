@@ -19,8 +19,9 @@ with one of its terms, and Parallel, Sideward, Late and Countercyclic Merge are 
 the two may come from. Whatever MERGE does, the terms of the workspace stay terms of it
 (`Workspace.terms_subset_terms_merge`). The forest product is disjoint union, so a workspace is
 what `of'` lifts into the Hopf algebra `ConnesKreimer ℤ (UnorderedTree Vertex)`, where the Merge
-operator of `Workspace/Algebra/` computes MERGE (`SyntacticObject.mergeOpC_of'_merge`,
-`SyntacticObject.mergeOpC_im_of'_merge`).
+operator of `Workspace/Algebra/` computes MERGE on External Merge, and on Internal and Sideward
+Merge computes it with the extracted terms contracted to traces
+(`SyntacticObject.mergeOpC_of'_merge`, `SyntacticObject.mergeOpC_sideward2b_of'_merge`).
 
 ## Main definitions
 

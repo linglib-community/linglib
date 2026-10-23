@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Data.RoseTree.Replace
 public import Linglib.Core.Data.UnorderedTree.DecEq
 public import Linglib.Core.Data.UnorderedTree.Basic
+public import Linglib.Core.Data.UnorderedTree.Subtree
 
 /-!
 # Substitution of subtrees
@@ -101,6 +102,17 @@ theorem replace_node_pair (target replacement : UnorderedTree α) (a : α) (l r 
 
 theorem replace_self (t r : UnorderedTree α) : replace t r t = r := by
   simpa [node_eta] using replace_node t r t.value t.children
+
+/-- Replacing a target that is no subtree leaves the tree unchanged. -/
+theorem replace_of_notMem_subtrees {target r t : UnorderedTree α} (h : target ∉ t.subtrees) :
+    replace target r t = t := by
+  induction t with
+  | node a F ih =>
+    rw [subtrees_node, Multiset.mem_cons, not_or] at h
+    rw [replace_node, ite_eq_right (Ne.symm h.1)]
+    conv_rhs => rw [← Multiset.map_id F]
+    exact congrArg (node a) (Multiset.map_congr rfl fun c hc ↦ ih c hc fun hm ↦
+      h.2 (Multiset.mem_join.2 ⟨_, Multiset.mem_map_of_mem _ hc, hm⟩))
 
 /-- Replacing the planar subtrees in the class `target` is replacing `target` in the class. -/
 theorem mk_replaceIf (target : UnorderedTree α) (r t : RoseTree α) :
