@@ -78,7 +78,7 @@ their strong reading and a repeated description no sloppy reading.
 * [donnellan-1966]
 * [kripke-1977]
 * [karttunen-1974-presupposition]
-* [stanley-szab-2000]
+* [stanley-szabo-2000]
 * [geach-1962]
 -/
 

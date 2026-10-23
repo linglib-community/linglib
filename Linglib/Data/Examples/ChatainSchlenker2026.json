@@ -1,0 +1,186 @@
+[
+  {
+    "id": "chatainschlenker2026_26",
+    "source": {"bibkey": "chatain-schlenker-2026", "paperLabel": "(26)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Last Monday, Bill did not take the lab rat out of its cage. On Wednesday as well, but that’s just because I took it home on Tuesday and forgot to bring it back, so it wasn’t in the cage at all that day.",
+    "discourseSegments": [
+      "Last Monday, Bill did not take the lab rat out of its cage.",
+      "On Wednesday as well, but that’s just because I took it home on Tuesday and forgot to bring it back, so it wasn’t in the cage at all that day."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We’re supposed to take the lab rat out of its cage once a day. Otherwise, it feels stressed. Bill has been unreliable in performing this task.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Ann's sentence licenses the inference that last Monday the rat was initially in its cage; Sue's stripped clause is read without that presupposition for Wednesday.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chatainschlenker2026_34a",
+    "source": {"bibkey": "chatain-schlenker-2026", "paperLabel": "(34a)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Aucune de ces dix personnalités ne s’aperçoit qu’elle est impopulaire, car elles sont toutes mortes!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aucune", "none"], ["de", "of"], ["ces", "these"], ["dix", "ten"],
+      ["personnalités", "public.figures"], ["ne", "NE"], ["s’aperçoit", "SE-notices"],
+      ["qu’elle", "that-she"], ["est", "is"], ["impopulaire", "unpopular"], ["car", "because"],
+      ["elles", "they"], ["sont", "are"], ["toutes", "all"], ["mortes", "dead"]
+    ],
+    "translation": "None of these ten public figures realize that they are unpopular, because they are all dead.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["accommodated", "alive"],
+      ["projected", "unpopular"]
+    ],
+    "comment": "The source glosses elles sont as the single word they-are. It prints that the sentence does not imply that each of the ten public figures is alive and implies that each is unpopular.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chatainschlenker2026_34b",
+    "source": {"bibkey": "chatain-schlenker-2026", "paperLabel": "(34b)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Aucune de ces dix personnalités ne s’aperçoit qu’elle est impopulaire, car aucune ne l’est!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aucune", "none"], ["de", "of"], ["ces", "these"], ["dix", "ten"],
+      ["personnalités", "public.figures"], ["ne", "NE"], ["s’aperçoit", "SE-notices"],
+      ["qu’elle", "that-she"], ["est", "is"], ["impopulaire", "unpopular"], ["car", "because"],
+      ["aucune", "none"], ["ne", "NE"], ["l’est", "it-is"]
+    ],
+    "translation": "None of these ten public figures realize that they are unpopular, because none of them is!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["accommodated", "unpopular"],
+      ["projected", "alive"]
+    ],
+    "comment": "The source aligns qu’elle est with the glosses that and she-is. It prints that the sentence implies that each of the ten public figures is alive and does not imply that each is unpopular.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chatainschlenker2026_38a",
+    "source": {"bibkey": "chatain-schlenker-2026", "paperLabel": "(38a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Josh won’t return the book to the library.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The source prints that the sentence implies that the book is with Josh and that the book belongs to the library.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chatainschlenker2026_38b",
+    "source": {"bibkey": "chatain-schlenker-2026", "paperLabel": "(38b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Josh won’t return the book to the library, because he never had the book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["accommodated", "possession"],
+      ["projected", "ownership"]
+    ],
+    "comment": "The source prints that the sentence does not imply that the book is with Josh and implies that the book belongs to the library.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chatainschlenker2026_38c",
+    "source": {"bibkey": "chatain-schlenker-2026", "paperLabel": "(38c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Josh won’t return the book to the library, because it’s not a book from the library.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["accommodated", "ownership"],
+      ["projected", "possession"]
+    ],
+    "comment": "The source prints that the sentence implies that the book is with Josh and does not imply that the book belongs to the library.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chatainschlenker2026_39a",
+    "source": {"bibkey": "chatain-schlenker-2026", "paperLabel": "(39a)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Dans mon pays, le roi ne s’aperçoit pas qu’il est impopulaire. Dans le mien aussi: il est mort.",
+    "discourseSegments": [
+      "Dans mon pays, le roi ne s’aperçoit pas qu’il est impopulaire.",
+      "Dans le mien aussi: il est mort."
+    ],
+    "glossedTokens": [
+      ["Dans", "in"], ["mon", "my"], ["pays", "country"], ["le", "the"], ["roi", "king"],
+      ["ne", "NE"], ["s’aperçoit", "himself-notices"], ["pas", "not"], ["qu’il", "that-he"],
+      ["est", "is"], ["impopulaire", "unpopular"], ["Dans", "in"], ["le", "the"], ["mien", "mine"],
+      ["aussi", "too"], ["il", "he"], ["est", "is"], ["mort", "dead"]
+    ],
+    "translation": "In my country, the king does not notice that he is unpopular. In mine too: he is dead.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["accommodated", "alive"],
+      ["projected", "unpopular"]
+    ],
+    "comment": "The source prints that the discourse implies that the king in A's country is alive and unpopular, does not imply that the king in B's country is alive, and implies that he is or was unpopular.",
+    "verified": "page-image"
+  },
+  {
+    "id": "chatainschlenker2026_39b",
+    "source": {"bibkey": "chatain-schlenker-2026", "paperLabel": "(39b)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Dans mon pays, le roi ne s’aperçoit pas qu’il est impopulaire. Dans le mien aussi: notre roi est très populaire.",
+    "discourseSegments": [
+      "Dans mon pays, le roi ne s’aperçoit pas qu’il est impopulaire.",
+      "Dans le mien aussi: notre roi est très populaire."
+    ],
+    "glossedTokens": [
+      ["Dans", "in"], ["mon", "my"], ["pays", "country"], ["le", "the"], ["roi", "king"],
+      ["ne", "NE"], ["s’aperçoit", "himself-notices"], ["pas", "not"], ["qu’il", "that-he"],
+      ["est", "is"], ["impopulaire", "unpopular"], ["Dans", "in"], ["le", "the"], ["mien", "mine"],
+      ["aussi", "too"], ["notre", "our"], ["roi", "king"], ["est", "is"], ["très", "very"],
+      ["populaire", "popular"]
+    ],
+    "translation": "In my country, the king does not notice that he is unpopular. In mine too: our king is very popular.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["accommodated", "unpopular"],
+      ["projected", "alive"]
+    ],
+    "comment": "The source prints that the discourse implies that the king in A's country is alive and unpopular, implies that the king in B's country is alive, and does not imply that he is or was unpopular.",
+    "verified": "page-image"
+  }
+]

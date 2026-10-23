@@ -51,7 +51,7 @@ realise the pronoun, and check the paper's examples.
 * [P. Schlenker, J. Lamberton and M. Santoro, *Iconic variables*
   (2013)][schlenker-lamberton-santoro-2013]
 * [J. Stanley and Z. Gendler Szabó, *On quantifier domain restriction*
-  (2000)][stanley-szab-2000]
+  (2000)][stanley-szabo-2000]
 -/
 
 @[expose] public section

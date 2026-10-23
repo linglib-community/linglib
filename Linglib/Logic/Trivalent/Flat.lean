@@ -28,6 +28,7 @@ of Belnap's four values, of which they are the consistent part.
 * `SignType.truthOrder_ne_knowledgeOrder`: the two orders differ.
 * `SignType.toFlat_neg_mono`, `SignType.toFlat_inf_mono_left`, `SignType.toFlat_sup_mono_left`:
   the Strong Kleene connectives are knowledge-monotone.
+* `SignType.toFlat_le_toFlat_ofProp_eq_one`: Bochvar's assertion operator only adds information.
 * `SignType.meetWeak_not_truthMono`, `SignType.joinWeak_not_truthMono`: the Weak Kleene ones are
   not truth-monotone.
 * `SignType.toFlat_supervaluation`: over a nonempty family, the supervaluation is the knowledge
@@ -84,6 +85,13 @@ theorem toFlat_inf_mono_left {a a' : SignType} (b : SignType)
 theorem toFlat_sup_mono_left {a a' : SignType} (b : SignType)
     (h : toFlat a ≤ toFlat a') : toFlat (a ⊔ b) ≤ toFlat (a' ⊔ b) := by
   cases a <;> cases a' <;> cases b <;> revert h <;> decide
+
+/-- Bochvar's assertion operator only adds information. -/
+theorem toFlat_le_toFlat_ofProp_eq_one (a : SignType) : toFlat a ≤ toFlat (ofProp (a = 1)) := by
+  cases a <;> decide
+
+theorem eq_of_toFlat_le {a b : SignType} (h : toFlat a ≤ toFlat b) (ha : a ≠ 0) : a = b := by
+  cases a <;> cases b <;> revert h ha <;> decide
 
 /-- Weak Kleene conjunction is not truth-monotone, since `0 ≤ 1` but `meetWeak 0 (-1) = 0` is not
 below `meetWeak 1 (-1) = -1`; unlike `⊓` it is no bilattice operation. -/

@@ -214,7 +214,8 @@ end ConditionalEvent
 /-! ### Extensions under assertion
 
 Asserting a proposition pointwise, `fun w ↦ ofProp (p w = 1)`, keeps its positive extension and
-moves its gap into the negative extension. -/
+moves its gap into the negative extension. Conjoining it with a two-valued `R` keeps its gap only
+where `R` holds. -/
 
 @[simp] theorem posExt_ofProp_eq_one (p : W → SignType) :
     posExt (fun w ↦ ofProp (p w = 1)) = posExt p := by
@@ -227,6 +228,10 @@ moves its gap into the negative extension. -/
 @[simp] theorem gapExt_ofProp_eq_one (p : W → SignType) :
     gapExt (fun w ↦ ofProp (p w = 1)) = ∅ := by
   ext w; simp
+
+@[simp] theorem gapExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
+    gapExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ gapExt p := by
+  ext w; simp [and_comm]
 
 theorem isBivalent_ofProp_eq_one (p : W → SignType) : IsBivalent fun w ↦ ofProp (p w = 1) :=
   fun w ↦ by by_cases h : p w = 1 <;> simp [h]
