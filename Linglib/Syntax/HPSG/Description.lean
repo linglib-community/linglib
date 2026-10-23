@@ -7,53 +7,35 @@ public import Mathlib.Logic.Function.Basic
 /-!
 # RSRL descriptions
 
-This file defines the description language of RSRL and its satisfaction relation. A formula
-assigns a sort to a term, equates two terms, applies a relation symbol to variables, or combines
-formulae with the classical connectives and with quantifiers. Satisfaction is defined relative to
-a domain of quantification, and in RSRL the quantifiers range over the components of the
-described entity rather than over the whole universe. A grammar is a list of formulae, its
-principles, and an interpretation is a model of a grammar when every principle holds of every
-entity.
-
-Richter reserves the word description for a formula without free variables, and observes that
-the denotation of a description does not depend on the variable assignment. The file proves
-that observation. It also proves that a sort assignment is monotone in the sort, which is what
-makes a constraint on a sort hold of the entities of every subsort.
+This file defines the description language of RSRL and its satisfaction relation, with the
+quantifiers ranging over a given set. In RSRL they range over the components of the described
+entity. A grammar is a list of principles, and an interpretation is a model of a grammar when
+every principle holds of every entity.
 
 ## Main definitions
 
 * `HPSG.RSRL.Desc`: a formula of the description language.
-* `HPSG.RSRL.Desc.freeVars`: the variables that occur free in a formula.
 * `HPSG.RSRL.Desc.IsColonFree`: no term of the formula starts at the described entity.
-* `HPSG.RSRL.Desc.conj`, `HPSG.RSRL.Desc.disj`: the conjunction and the disjunction of a list of
-  formulae.
-* `HPSG.RSRL.Interpretation.SatisfiesOn`: an entity satisfies a formula under a variable
-  assignment, with quantifiers over a given set.
-* `HPSG.RSRL.Interpretation.Satisfies`: the same, with quantifiers over the components of the
-  entity.
-* `HPSG.RSRL.Grammar`: a list of principles.
+* `HPSG.RSRL.Interpretation.SatisfiesOn`: satisfaction with quantifiers over a given set.
+* `HPSG.RSRL.Interpretation.Satisfies`: satisfaction with quantifiers over the components.
 * `HPSG.RSRL.Interpretation.Models`: every entity satisfies every principle of the grammar.
 * `HPSG.RSRL.Constraint`: a principle that requires the entities of one sort to satisfy a formula.
-* `HPSG.RSRL.Constraint.inherited`: the constraints of a list that a sort inherits.
 
 ## Main results
 
-* `HPSG.RSRL.Interpretation.satisfies_congr`: satisfaction depends only on the values that the
-  assignment gives to the free variables.
+* `HPSG.RSRL.Interpretation.satisfiesOn_congr`: satisfaction depends only on the free variables.
 * `HPSG.RSRL.Interpretation.satisfiesOn_iff_of_isColonFree`: a colon-free formula does not depend
   on the described entity.
 * `HPSG.RSRL.Interpretation.models_iff_forall_assignment`: a model of a grammar of closed
   formulae satisfies them under every assignment.
 * `HPSG.RSRL.Interpretation.forall_satisfies_map_toDesc_iff`: an entity satisfies a list of
-  constraints exactly when it satisfies the constraints that its sort inherits.
+  constraints exactly when it satisfies those that its sort inherits.
 
 ## Implementation notes
 
-A relational formula applies a relation symbol to exactly as many variables as its arity, as in
-Richter's syntax. A term is passed to a relation by binding it to a quantified variable first.
-`Models` evaluates each principle at the entity `u` under the constant assignment `fun _ ↦ u`, so
-that it is decidable on a finite universe. For closed principles the choice of assignment is
-immaterial by `models_iff_forall_assignment`.
+As in Richter's syntax, a relation symbol applies to variables only. `Models` evaluates each
+principle at `u` under the constant assignment `fun _ ↦ u`, which makes it decidable on a finite
+universe and is immaterial for closed principles.
 
 ## References
 
@@ -101,8 +83,8 @@ namespace Desc
 /-- The biconditional of two formulae. -/
 protected def iff (d e : Desc Sig) : Desc Sig := (d.imp e).and (e.imp d)
 
-/-- The formula `∀ x₀ (x₀ ≈ x₀)`, which every entity satisfies. The description language has no
-constant for truth. -/
+/-- The formula `∀ x₀ (x₀ ≈ x₀)`, which every entity satisfies, in place of a constant for
+truth. -/
 def top : Desc Sig := .all 0 (.pathEq (.var 0) (.var 0))
 
 /-- The negation of `top`, which no entity satisfies. -/
@@ -155,8 +137,8 @@ variable (I : Interpretation Sig U)
 
 /-! ### Satisfaction -/
 
-/-- The entity `u` satisfies a formula under the assignment `g` when the quantifiers range over
-the set `D`. An atomic formula with an undefined term is false. -/
+/-- The entity `u` satisfies a formula under the assignment `g` with the quantifiers ranging over
+`D`, an atomic formula with an undefined term being false. -/
 def SatisfiesOn (D : Set U) (g : ℕ → U) (u : U) : Desc Sig → Prop
   | .sortAssign t σ => ∃ v ∈ I.termDenot g t u, I.S v ≤ σ
   | .pathEq t₁ t₂ => ∃ v ∈ I.termDenot g t₁ u, v ∈ I.termDenot g t₂ u
@@ -413,8 +395,7 @@ variable {I : Interpretation Sig U} {C : List (Constraint Sig)} {g : ℕ → U} 
   simp [Constraint.toDesc]
 
 /-- An entity satisfies the formulae that state a list of constraints exactly when it satisfies
-the bodies of the constraints that its sort inherits. An entity below several constrained sorts
-therefore satisfies the constraints on all of them. -/
+the bodies of the constraints that its sort inherits. -/
 theorem forall_satisfies_map_toDesc_iff [DecidableLE Srt] :
     (∀ d ∈ C.map Constraint.toDesc, I.Satisfies g u d) ↔
       ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies g u c.body := by
