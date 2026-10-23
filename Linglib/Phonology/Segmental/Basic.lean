@@ -23,14 +23,15 @@ the sonority hierarchy, whose four features each cut it at one point, as in Haye
   of its values.
 * `Segment.ofSpecs_le_iff`: a specification list lies below a segment iff the segment has every
   listed value.
-* `Segment.isVowel_iff_le`: the vowels are the segments above [+syllabic], and likewise for the
-  consonants, obstruents, nasals and sibilants.
+* `Segment.isVowel_iff_le`, `Segment.isObstruent_iff_le`, `Segment.isNasal_iff_le`: the vowels,
+  obstruents and nasals are the segments above the descriptions of their sonority classes.
 * `IsDistinctive`: a feature set on which no two segments of an inventory agree, with
   `Segment.restrict_eq_restrict_iff` relating restriction to agreement on the set.
 * `Sonority.nasal_le_iff`, `Sonority.liquid_le_iff`, `Sonority.glide_le_iff`,
   `Sonority.vowel_le_iff`: each feature of Table 4.1 cuts the hierarchy at one point.
 * `Sonority.ofSegment_eq_of_le`: a segment with the values of a column of Table 4.1 has that
   column's sonority.
+* `Sonority.description_le_iff`: on such a segment exactly that column's description holds.
 * `Sonority.ofSegment_congr`: sonority depends on a segment only through the four features,
   and not on [continuant].
 * `Sonority.rise_pos`, `Sonority.rise_eq_zero`, `Sonority.rise_neg`: the sign of the sonority
@@ -95,22 +96,19 @@ theorem hasValue_iff_ofSpecs_le (f : Feature) (v : Bool) :
   rw [ofSpecs_le_iff_forall_mem s (by simp)]
   simp
 
-/-- The vowels are the segments above [+syllabic]. -/
-theorem isVowel_iff_le : s.IsVowel ↔ ofSpecs [(.syllabic, true)] ≤ s := by
-  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsVowel]
+/-- The vowels are the segments above the description of their class. -/
+theorem isVowel_iff_le : s.IsVowel ↔ Sonority.vowel.description ≤ s := by
+  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsVowel]
 
 /-- The consonants are the segments above [+consonantal]. -/
 theorem isConsonant_iff_le : s.IsConsonant ↔ ofSpecs [(.consonantal, true)] ≤ s := by
   rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsConsonant]
 
-/-- The obstruents are the segments above [+consonantal, −sonorant]. -/
-theorem isObstruent_iff_le :
-    s.IsObstruent ↔ ofSpecs [(.consonantal, true), (.sonorant, false)] ≤ s := by
-  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsObstruent]
+theorem isObstruent_iff_le : s.IsObstruent ↔ Sonority.obstruent.description ≤ s := by
+  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsObstruent]
 
-/-- The nasals are the segments above [+nasal]. -/
-theorem isNasal_iff_le : s.IsNasal ↔ ofSpecs [(.nasal, true)] ≤ s := by
-  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsNasal]
+theorem isNasal_iff_le : s.IsNasal ↔ Sonority.nasal.description ≤ s := by
+  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsNasal]
 
 /-- The sibilants are the segments above [+strident]. -/
 theorem isSibilant_iff_le : s.IsSibilant ↔ ofSpecs [(.strident, true)] ≤ s :=
@@ -217,14 +215,34 @@ theorem ofSegment_setFeature {f : Feature} (hf : f ∉ features) (s : Segment) (
 @[simp] theorem ofSegment_toSegment (c : Sonority) : ofSegment c.toSegment = c := by
   cases c <;> decide
 
-/-- A segment with the values of a column of Table 4.1 has that column's sonority. -/
-theorem ofSegment_eq_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
-    ofSegment s = c := by
-  refine (ofSegment_congr fun f hf ↦ ?_).trans (ofSegment_toSegment c)
+/-- A segment above a column of Table 4.1 agrees with it on the four features. -/
+theorem apply_eq_toSegment_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) {f : Feature}
+    (hf : f ∈ features) : s f = c.toSegment f := by
   have key : ∀ c : Sonority, ∀ f ∈ features, ∃ v, c.toSegment f = some v := by decide
   obtain ⟨v, hv⟩ := key c f hf
   rw [hv]
   exact (Segment.le_iff_forall_hasValue s).1 h f v hv
+
+/-- A segment with the values of a column of Table 4.1 has that column's sonority. -/
+theorem ofSegment_eq_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
+    ofSegment s = c :=
+  (ofSegment_congr fun _ hf ↦ apply_eq_toSegment_of_le h hf).trans (ofSegment_toSegment c)
+
+/-- On a segment with the values of a column of Table 4.1, exactly that column's description
+holds. -/
+theorem description_le_iff {c c' : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
+    c'.description ≤ s ↔ c' = c := by
+  have hsupp : ∀ c' : Sonority, ∀ f ∉ features, c'.description f = ⊥ := by decide
+  have key : ∀ c c' : Sonority, c'.description ≤ c.toSegment ↔ c' = c := by decide
+  rw [← key c c']
+  refine forall_congr' fun f ↦ ?_
+  by_cases hf : f ∈ features
+  · rw [apply_eq_toSegment_of_le h hf]
+  · simp [hsupp c' f hf]
+
+theorem description_le_iff_ofSegment_eq {c c' : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
+    c'.description ≤ s ↔ ofSegment s = c' := by
+  rw [description_le_iff h, ofSegment_eq_of_le h, eq_comm]
 
 /-- [continuant] is not a sonority feature: nasals are [−continuant] and fricatives
 [+continuant]. -/

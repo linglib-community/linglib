@@ -70,10 +70,11 @@ theorem juncture_of_obstruent :
     ∀ x ∈ consonants, x.IsObstruent → x ∉ substituting → juncture x = assimilate [ng, x] := by
   decide +kernel
 
-/-- Before every obstruent but `s`, the juncture nasal agrees with the obstruent in every place
-feature but [strident] (pp. 9–10). -/
+/-- Before every consonantal obstruent but `s`, the juncture nasal agrees with the obstruent in
+every place feature but [strident] (pp. 9–10). The [−consonantal] obstruent *h* takes *ng*, as a
+vowel does (`juncture_of_vowel_or_h`). -/
 theorem juncture_head_agrees :
-    ∀ x ∈ consonants, x.IsObstruent → x ≠ s →
+    ∀ x ∈ consonants, x.IsConsonant → x.IsObstruent → x ≠ s →
       ∀ N ∈ (juncture x).head?, N.IsNasal ∧
         ∀ ft ∈ FeatureClass.place.erase .strident, N ft = x ft := by
   decide +kernel

@@ -21,9 +21,10 @@ features here: length is a segment on two timing slots, and stress belongs to sy
 segment gives each feature the value `+`, `−` or none, and segments are ordered by specificity,
 with the unspecified segment least and the meet of two segments the description they share.
 
-The file also names some natural classes by their features and defines the sonority hierarchy
-of Hayes's Table 4.1, whose five classes are cut by four features, together with Parker's
-refinement of it into eight classes. The theorems are in `Phonology/Segmental/Basic.lean`.
+The file also defines the sonority hierarchy of Hayes's Table 4.1, whose five classes are cut by
+four features and defined by the descriptions of p. 77, together with Parker's refinement of it
+into eight classes, and names the vowels, obstruents and nasals by those descriptions. The
+theorems are in `Phonology/Segmental/Basic.lean`.
 
 ## References
 
@@ -154,13 +155,13 @@ instance : Decidable s.IsVowel := inferInstanceAs (Decidable (s.HasValue _ _))
 def IsConsonant : Prop := s.HasValue .consonantal true
 instance : Decidable s.IsConsonant := inferInstanceAs (Decidable (s.HasValue _ _))
 
-/-- An obstruent is a [+consonantal, −sonorant] segment. -/
-def IsObstruent : Prop := s.HasValue .consonantal true ∧ s.HasValue .sonorant false
-instance : Decidable s.IsObstruent := inferInstanceAs (Decidable (_ ∧ _))
+/-- An obstruent is a [−sonorant] segment. -/
+def IsObstruent : Prop := s.HasValue .sonorant false
+instance : Decidable s.IsObstruent := inferInstanceAs (Decidable (s.HasValue _ _))
 
-/-- A nasal is a [+nasal] segment, consonant or vowel. -/
-def IsNasal : Prop := s.HasValue .nasal true
-instance : Decidable s.IsNasal := inferInstanceAs (Decidable (s.HasValue _ _))
+/-- A nasal is a [−approximant, +sonorant] segment. -/
+def IsNasal : Prop := s.HasValue .approximant false ∧ s.HasValue .sonorant true
+instance : Decidable s.IsNasal := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A sibilant is a [+strident] segment. -/
 def IsSibilant : Prop := s.HasValue .strident true
@@ -226,6 +227,16 @@ def toSegment : Sonority → Segment
     .ofSpecs [(.syllabic, false), (.consonantal, false), (.approximant, true), (.sonorant, true)]
   | .vowel =>
     .ofSpecs [(.syllabic, true), (.consonantal, false), (.approximant, true), (.sonorant, true)]
+
+/-- The features that define a class (Hayes p. 77): [−sonorant] for an obstruent, [−approximant,
++sonorant] for a nasal, [+consonantal, +approximant] for a liquid, [−syllabic, −consonantal] for a
+glide and [+syllabic] for a vowel. -/
+def description : Sonority → Segment
+  | .obstruent => .ofSpecs [(.sonorant, false)]
+  | .nasal => .ofSpecs [(.approximant, false), (.sonorant, true)]
+  | .liquid => .ofSpecs [(.consonantal, true), (.approximant, true)]
+  | .glide => .ofSpecs [(.syllabic, false), (.consonantal, false)]
+  | .vowel => .ofSpecs [(.syllabic, true)]
 
 /-- The sonority of a segment: an obstruent if [−sonorant], else a nasal if [−approximant], else
 a liquid if [+consonantal], else a vowel if [+syllabic], and otherwise a glide. A syllabic liquid

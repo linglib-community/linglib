@@ -39,6 +39,8 @@ classes form Broe's lattice of representations.
 * `Phonology.isNaturalClass_iff`: a set is a natural class exactly when it is the natural class
   of what its members share.
 * `Phonology.IsNaturalClass.inter`: two overlapping natural classes meet in a natural class.
+* `Phonology.Sonority.naturalClass_description`: among the columns of Hayes's Table 4.1, each
+  class's description picks out its own column.
 * `Phonology.Sonority.isNaturalClass_image_iff`: among the columns of Hayes's Table 4.1, the
   natural classes are the sets of sonority classes that are contiguous on the hierarchy.
 
@@ -150,6 +152,12 @@ theorem IsNaturalClass.inter (hS : IsNaturalClass I S) (hT : IsNaturalClass I T)
   exact Finset.subset_inter
     ((naturalClass_inf'_subset_iff hI hST).2 Finset.inter_subset_left)
     ((naturalClass_inf'_subset_iff hI hST).2 Finset.inter_subset_right)
+
+/-- Among the columns of Table 4.1, the description of a class picks out its own column. -/
+theorem Sonority.naturalClass_description (c : Sonority) :
+    c.description.naturalClass (Finset.univ.image Sonority.toSegment) = {c.toSegment} := by
+  revert c
+  decide +kernel
 
 /-- Among the columns of Table 4.1, a set of sonority classes is a natural class exactly when it
 is contiguous on the hierarchy, as Hayes argues for cutting the hierarchy with four features
