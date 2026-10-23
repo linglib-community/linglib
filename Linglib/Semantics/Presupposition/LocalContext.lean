@@ -61,7 +61,7 @@ world of `C`. -/
 def Transparent (C : Set W) (env : Set (α → Set W)) (x : α) : Prop :=
   ∀ f ∈ env, ∀ d : α, ∀ w ∈ C, w ∈ f (x ⊓ d) ↔ w ∈ f d
 
-/-- The local context of the gap in `C`: its least transparent restriction. -/
+/-- The local context of the gap in `C` is its least transparent restriction. -/
 def IsLocalContext (C : Set W) (env : Set (α → Set W)) (x : α) : Prop :=
   IsLeast {x | Transparent C env x} x
 
@@ -124,8 +124,9 @@ end Lattice
 
 /-- A restriction `x` is transparent in `C` at the assertion `a` if it is transparent for the
 denotations of the gap that agree with `a` on `x`. These are the resolutions of a trigger that
-presupposes `x` and asserts `a`, so transparency at `a` is definedness by supervaluation: every
-resolution gives the sentence the same truth value at each world of `C` (`transparentAt_iff`). -/
+presupposes `x` and asserts `a`, so transparency at `a` is definedness by supervaluation, that is,
+every resolution gives the sentence the same truth value at each world of `C` (`transparentAt_iff`).
+-/
 def TransparentAt (C : Set W) (env : Set (α → Set W)) (x a : α) : Prop :=
   ∀ f ∈ env, ∀ d, x ⊓ d = x ⊓ a → ∀ w ∈ C, w ∈ f (x ⊓ d) ↔ w ∈ f d
 
@@ -275,7 +276,7 @@ theorem transparent_iff_subset (henv : ∀ f ∈ env, IsTruthFunctional f) :
       · rw [(henv f hf).mem_iff_of_mem hd, hind]
       · rw [(henv f hf).mem_iff_of_notMem hd]
 
-/-- The local context of truth-functional continuations exists: it is the set of worlds of the
+/-- The local context of truth-functional continuations exists and is the set of worlds of the
 context at which the truth value depends on the gap for some continuation. -/
 theorem isLocalContext_of_isTruthFunctional (henv : ∀ f ∈ env, IsTruthFunctional f) :
     IsLocalContext C env (C ∩ {w | ∃ f ∈ env, DependsAt f w}) :=

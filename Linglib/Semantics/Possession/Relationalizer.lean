@@ -45,8 +45,8 @@ variable {ι κ α : Type*}
 
 /-! ### The relationalizer -/
 
-/-- The relationalizer: `π P R x` holds of the `P`s to which `x` stands in `R`, as *cloud* in
-*John's cloud*. -/
+/-- The relationalizer `π P R x` holds of the `P`s to which `x` stands in `R`, as *cloud* in *John's
+cloud*. -/
 def π [Min α] (P : α) (R : ι → α) : ι → α := fun x ↦ P ⊓ R x
 
 theorem π_apply [Min α] (P : α) (R : ι → α) (x : ι) : π P R x = P ⊓ R x := rfl
@@ -66,7 +66,7 @@ instance {P : κ → Prop} {R : ι → κ → Prop} [DecidablePred P] [∀ x, De
 
 /-! ### Possessors -/
 
-/-- The possessors of `P` under `R`: the `x` that stand in `R` to some `P`. -/
+/-- The possessors of `P` under `R` are the `x` that stand in `R` to some `P`. -/
 def dom (P : κ → Prop) (R : ι → κ → Prop) (x : ι) : Prop := ∃ y, P y ∧ R x y
 
 instance [Fintype κ] {P : κ → Prop} {R : ι → κ → Prop} [DecidablePred P]

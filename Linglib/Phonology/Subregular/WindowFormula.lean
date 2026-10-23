@@ -294,9 +294,9 @@ theorem eval_le_add_sdepth : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v
     have := eval_le_add_sdepth hu
     simp only [sdepth]; omega
 
-/-- Let `n` and `n'` be in-range positions whose windows `l` back and `r` forward have the same
-edges: each offset is in range at one iff it is at the other. A walk reaching at most `l` back and
-`r` forward moves the same displacement from both, or falls off at both. -/
+/-- If the windows `l` back and `r` forward of in-range positions `n` and `n'` have the same edges,
+so that each offset is in range at one iff it is at the other, then a walk reaching at most `l` back
+and `r` forward moves the same displacement from both or falls off at both. -/
 theorem eval_bounded {l r n' : ℕ} (hn : n < w.length) (hn' : n' < w'.length)
     (hleft : ∀ j ≤ l, (j ≤ n ↔ j ≤ n'))
     (hright : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length)) :
@@ -361,8 +361,8 @@ end Walk
 
 /-! ### Quantifier-free formulas -/
 
-/-- A quantifier-free formula: a boolean combination of label and definedness tests on walks
-from a single position. -/
+/-- A quantifier-free formula is a boolean combination of label and definedness tests on walks from
+a single position. -/
 inductive WindowFormula (α : Type*) where
   | label : α → Walk → WindowFormula α
   | defined : Walk → WindowFormula α
@@ -441,8 +441,8 @@ own, bounded by `r` back and nothing forward. -/
 abbrev BackBounded (r : ℕ) (φ : WindowFormula α) : Prop := φ.Bounded r 0
 
 /-- A formula bounded by `l` and `r` has the same truth value at `(w, n)` and `(w', n')` whenever
-the windows `l` back and `r` forward agree: the same offsets are in range and carry the same
-labels. -/
+the windows `l` back and `r` forward agree, that is, the same offsets are in range and carry the
+same labels. -/
 theorem Bounded.realize_congr {l r : ℕ} {w w' : List α} {n n' : ℕ}
     (hn : n < w.length) (hn' : n' < w'.length)
     (hleft : ∀ j ≤ l, (j ≤ n ↔ j ≤ n') ∧ (j ≤ n → w[n - j]? = w'[n' - j]?))
@@ -557,7 +557,7 @@ section Example
 
 private inductive Sym | a | b deriving DecidableEq
 
-/-- The position is flanked by `a`s: a bounded two-sided context stated by walks, with no
+/-- The position is flanked by `a`s. This bounded two-sided context is stated by walks, with no
 quantifier. -/
 private def flankedByA : WindowFormula Sym :=
   .conj (.label .a (.pred .var)) (.label .a (.succ .var))

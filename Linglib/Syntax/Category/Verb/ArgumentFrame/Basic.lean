@@ -69,10 +69,10 @@ inductive ImplicitInterp where
 
 namespace ArgumentFrame
 
-/-- An argument position of a frame: nominal; adpositional, with the type of case marked and
-    the adposition selected; clausal, with the coding, the sentence types and the subject
-    requirement selected; implicit, an unexpressed argument with its interpretation; or
-    expletive. Every axis is optional, and `none` or `⊥` selects nothing. -/
+/-- An argument position of a frame is nominal; adpositional, with the type of case marked and the
+adposition selected; clausal, with the coding, the sentence types and the subject requirement
+selected; implicit, an unexpressed argument with its interpretation; or expletive. Every axis is
+optional, and `none` or `⊥` selects nothing. -/
 inductive Position where
   | nominal
   | adpositional (relation : Option Case.Kind := none)
@@ -169,8 +169,8 @@ inductive Axis where
   | interp
   deriving DecidableEq, Fintype, Repr
 
-/-- The values an axis takes: an optional value in the flat order for an enumerated axis, and a
-    selection of sentence types for the `types` axis. -/
+/-- An enumerated axis takes an optional value in the flat order, and the `types` axis takes a
+selection of sentence types. -/
 def Axis.Carrier : Axis → Type
   | coding => Flat Clause.ComplementType
   | types => Clause.Selection
@@ -334,8 +334,8 @@ def argumentRole : Slot → Option ArgumentRole
     | 2, some 1 => some .T
     | _, _ => none
 
-/-- The slot that carries object entailments: the last core object, which is the sole object of
-    a monotransitive frame and the second object of a double-object frame. -/
+/-- The slot that carries object entailments is the last core object, which is the sole object of a
+monotransitive frame and the second object of a double-object frame. -/
 def objectSlot? : Option Slot := fr.coreObjects.getLast?
 
 /-! ### Shape predicates -/
@@ -374,9 +374,8 @@ instance : Decidable fr.HasImplicit := inferInstanceAs (Decidable (∃ p ∈ _, 
 def leaveImplicit (i : ℕ) (a : Option ImplicitInterp := none) : ArgumentFrame :=
   { fr with complements := fr.complements.set i (.implicit a) }
 
-/-- The frame with a nominal object added before its complements, as for an object-control or
-causative verb before its infinitive or small clause: *persuade him to leave*, *make him
-leave*. -/
+/-- Add a nominal object before the complements of a frame, as for an object-control or causative
+verb before its infinitive or small clause in *persuade him to leave* or *make him leave*. -/
 def withObject : ArgumentFrame := { fr with complements := .nominal :: fr.complements }
 
 /-- The [noonan-2007] codings recorded across the frame's complements. -/

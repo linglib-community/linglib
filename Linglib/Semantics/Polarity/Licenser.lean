@@ -121,8 +121,8 @@ structure ScalarFamily extends OperatorFamily where
   /-- The operator exhaustified against its stronger scale-mates, at each parameter. -/
   exhaustified : ∀ p, Dom p → Cod p
 
-/-- The operator a construction places over the position of a polarity item: classical, scalar
-(with its enrichment), into trivalent propositions, modal, or a question. -/
+/-- The operator that a construction places over the position of a polarity item is classical,
+scalar (with its enrichment), into trivalent propositions, modal, or a question. -/
 inductive Licenser : Type 2 where
   | classical (F : OperatorFamily)
   | scalar (F : ScalarFamily)
@@ -141,8 +141,8 @@ inductive LicensingMechanism where
 
 namespace Licenser
 
-/-- The meaning of a licenser above the exhaustivity operator: the enriched operators of a scalar
-licenser, and any other licenser itself. -/
+/-- Above the exhaustivity operator, a scalar licenser has the meaning of its enriched operators,
+and any other licenser keeps its own meaning. -/
 def exhaustified : Licenser → Licenser
   | .scalar F => .classical { F.toOperatorFamily with op := F.exhaustified }
   | L => L

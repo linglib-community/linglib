@@ -114,10 +114,10 @@ section Translate
 
 variable {C : Type} {K : Ty → Type*} {L : Type*}
 
-/-- The term the tree `t` translates to by the composition principles of [heim-kratzer-1998]:
-a terminal goes to its word's constant, a non-branching node to its daughter's term, a binary
-node to its daughters' terms composed by the mode their types select, a trace to the variable of
-its index, and a binder to the abstraction over that variable. -/
+/-- Translate the tree `t` into a term by the composition principles of [heim-kratzer-1998]. A
+terminal goes to its word's constant, a non-branching node to its daughter's term, a binary node to
+its daughters' terms composed by the mode their types select, a trace to the variable of its index,
+and a binder to the abstraction over that variable. -/
 def translate (lex : L → Option (Σ ty, K ty)) : Tree C L → Option (Σ ty, Term K ty)
   | .terminal _ w => (lex w).map fun c ↦ ⟨c.1, .const c.2⟩
   | .node _ (t :: []) => translate lex t
@@ -651,7 +651,7 @@ theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M S)) (f : 
 
 variable (lex : L → Set (Denotation E W M S)) (g : Assignment E)
 
-/-- The readings of a tree when each word has a set of readings: the denotations of the trees
+/-- The readings of a tree when each word has a set of readings are the denotations of the trees
 obtained by resolving each occurrence of a word to one of its readings. -/
 def readings (t : Tree C L) : Set (Denotation E W M S) :=
   {d | ∃ r : Tree C {p : L × Denotation E W M S // p.2 ∈ lex p.1},

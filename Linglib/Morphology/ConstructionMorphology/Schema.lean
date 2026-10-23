@@ -72,8 +72,8 @@ namespace Schema
 section PartialOrder
 variable [PartialOrder α] {s t : Schema V α} {w w₁ w₂ : V → α}
 
-/-- An item `w` instantiates the schema `s` if `w` lies above the description of `s` at every
-slot: it matches each constant and fills each variable. -/
+/-- An item `w` instantiates the schema `s` if `w` lies above the description of `s` at every slot,
+so that it matches each constant and fills each variable. -/
 def Instantiates (s : Schema V α) (w : V → α) : Prop := s.body ≤ w
 
 instance decidablePredInstantiates [DecidableLE (V → α)] (s : Schema V α) :
@@ -111,7 +111,7 @@ end PartialOrder
 
 /-! ### The generality order of a family -/
 
-/-- The generality order of a family of schemas with distinct descriptions: `i ≤ j` when the
+/-- In the generality order of a family of schemas with distinct descriptions, `i ≤ j` when the
 description of `j` lies below that of `i`, so that `j` is at least as general. The schemas of a
 hierarchical lexicon inherit defeasible properties by default inheritance along this order. -/
 abbrev generalityOrder {ι : Type*} [PartialOrder α] (family : ι → Schema V α)
@@ -126,8 +126,8 @@ from positions to variables; positions with the same subscript are *coindexed* a
 alike. Two items form a *paired instantiation* when their sum instantiates the schema through the
 sum of their subscriptings; the relation is symmetric. -/
 
-/-- The schema `s` read at positions through the subscripting `pos`: the description and the open
-variables pulled back along `pos`, forgetting which positions are coindexed. -/
+/-- Pull the schema `s` back along the subscripting `pos`, reading its description and open
+variables at positions and forgetting which positions are coindexed. -/
 def comap (s : Schema V α) (pos : P → V) : Schema P α :=
   ⟨s.body ∘ pos, pos ⁻¹' s.opens⟩
 
@@ -226,7 +226,7 @@ end Positions
 section PartialOrder
 variable [PartialOrder α] {s : Schema V α} {w : V → α} {Λ Λ' : Set (V → α)} {v : V}
 
-/-- The relational role of a schema: `s` relates `w` over the lexicon `Λ` if `w` is stored in `Λ`
+/-- In its relational role, a schema `s` relates `w` over the lexicon `Λ` if `w` is stored in `Λ`
 and instantiates `s`. -/
 def Relates (s : Schema V α) (Λ : Set (V → α)) (w : V → α) : Prop :=
   w ∈ Λ ∧ s.Instantiates w
@@ -238,8 +238,8 @@ theorem Relates.mono (h : Λ ⊆ Λ') (hw : s.Relates Λ w) : s.Relates Λ' w :=
 theorem Instantiates.relates_insert (h : s.Instantiates w) : s.Relates (insert w Λ) w :=
   ⟨Set.mem_insert _ _, h⟩
 
-/-- The fillers attested at slot `v`: the values the stored instances of `s` take at `v`. A closed
-variable admits only these. -/
+/-- The fillers attested at slot `v` are the values the stored instances of `s` take at `v`. A
+closed variable admits only these. -/
 def attested (s : Schema V α) (Λ : Set (V → α)) (v : V) : Set α :=
   {a | ∃ w, s.Relates Λ w ∧ w v = a}
 
@@ -256,7 +256,7 @@ theorem attested_mono (h : Λ ⊆ Λ') (v : V) : s.attested Λ v ⊆ s.attested 
 
 end PartialOrder
 
-/-- A schema is instantiated by the meet of two items exactly when it is instantiated by both:
+/-- A schema is instantiated by the meet of two items exactly when it is instantiated by both, so
 the meet is their least general generalization, the Structural Intersection of Relational
 Morphology. -/
 theorem instantiates_inf_iff [SemilatticeInf α] {s : Schema V α} {w₁ w₂ : V → α} :
@@ -277,15 +277,15 @@ def productive (body : V → α) : Schema V α := ⟨body, {v | body v = ⊥}⟩
     (productive body).opens = {v | body v = ⊥} :=
   rfl
 
-/-- The generative role of a schema: `s` generates `w` over the lexicon `Λ` if `w` instantiates
-`s` and fills each closed variable of `s` (a slot at `⊥` not marked open) with a filler attested
-in `Λ`. The item `w` need not be stored. -/
+/-- In its generative role, a schema `s` generates `w` over the lexicon `Λ` if `w` instantiates `s`
+and fills each closed variable of `s` (a slot at `⊥` not marked open) with a filler attested in `Λ`.
+The item `w` need not be stored. -/
 def Generates (s : Schema V α) (Λ : Set (V → α)) (w : V → α) : Prop :=
   s.Instantiates w ∧ ∀ v, s.body v = ⊥ → v ∉ s.opens → w v ∈ s.attested Λ v
 
 theorem Generates.instantiates (h : s.Generates Λ w) : s.Instantiates w := h.1
 
-/-- The values a schema admits at slot `v` over the lexicon `Λ`: any value at an open variable,
+/-- The values a schema admits at slot `v` over the lexicon `Λ` are any value at an open variable,
 an attested filler at a closed one, and any value above a constant. -/
 def fillers (s : Schema V α) (Λ : Set (V → α)) (v : V) : Set α :=
   {a | s.body v ≤ a ∧ (s.body v = ⊥ → v ∉ s.opens → a ∈ s.attested Λ v)}
@@ -355,13 +355,13 @@ variable {f g : P → α} {S : Set P}
 section PartialOrder
 variable [PartialOrder α]
 
-/-- `Instantiation f g S`: `g` agrees with `f` outside `S` and is strictly above `f` at every
-position of `S`. This is the link from a schema's description to its instances. -/
+/-- `Instantiation f g S` holds when `g` agrees with `f` outside `S` and is strictly above `f` at
+every position of `S`. This is the link from a schema's description to its instances. -/
 def Instantiation (f g : P → α) (S : Set P) : Prop :=
   Set.EqOn f g Sᶜ ∧ StrongLT (S.domRestrict f) (S.domRestrict g)
 
-/-- `Contrast f g S`: `f` and `g` agree outside `S` and are incompatible at every position of
-`S`. This is the link between sister words. -/
+/-- `Contrast f g S` holds when `f` and `g` agree outside `S` and are incompatible at every position
+of `S`. This is the link between sister words. -/
 def Contrast (f g : P → α) (S : Set P) : Prop :=
   Set.EqOn f g Sᶜ ∧ ∀ p ∈ S, ¬ Compat (f p) (g p)
 

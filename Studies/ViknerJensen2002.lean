@@ -48,7 +48,7 @@ variable {E S : Type*}
 
 /-! ### The genitive clitic -/
 
-/-- The genitive `'s` (16): the possessive quantifier of `Q` over the relational noun `R`, with
+/-- The genitive `'s` (16) is the possessive quantifier of `Q` over the relational noun `R`, with
 the definite as possessee quantifier. -/
 def clitic (Q : NP E) (R : E → E → S → Prop) (s : S) : NP E :=
   PossNP Q the (fun u x ↦ R u x s) (fun _ ↦ True)
@@ -117,13 +117,13 @@ inductive RelationType where
   | control
   deriving DecidableEq, Repr
 
-/-- The argument structure of a sense (9): a property, or a relation with the possessor first,
-`sister' y x` reading *x is a sister of y*. -/
+/-- The argument structure of a sense (9) is a property, or a relation with the possessor first, so
+that `sister' y x` reads *x is a sister of y*. -/
 inductive ArgStructure (E S : Type*)
   | sortal (W : E → S → Prop)
   | relational (R : E → E → S → Prop)
 
-/-- A word sense (9): an argument structure and its qualia, each a relation whose first argument
+/-- A word sense (9) is an argument structure with its qualia, each a relation whose first argument
 is the related entity, that is the whole (22), the maker or the user. -/
 structure Sense (E S : Type*) where
   arg : ArgStructure E S
@@ -145,11 +145,11 @@ def inherent : Option (E → E → S → Prop) :=
   | .sortal _ => none
   | .relational R => some R
 
-/-- The shift of a sortal sense by one of its qualia: Co (23), Ag (30) and Te (47). -/
+/-- Shift a sortal sense by one of its qualia, giving Co (23), Ag (30) and Te (47). -/
 def shift (r : Pustejovsky1995.QualeRole) : Option (E → E → S → Prop) :=
   σ.sortal.bind fun W ↦ (σ.quale r).map (π W)
 
-/-- The shift of a sortal sense by a given relation: Ctr (33) for control, Prag (36) for a
+/-- Shift a sortal sense by a given relation, giving Ctr (33) for control and Prag (36) for a
 contextual relation. -/
 def shiftWith (R : E → E → S → Prop) : Option (E → E → S → Prop) :=
   σ.sortal.map (π · R)
@@ -176,8 +176,9 @@ theorem not_clitic_control {ctrl : E → E → S → Prop} {animate : E → S �
 
 /-! ### *Favourite* (§4) -/
 
-/-- *Favourite* (43): `x` is `y`'s favourite `R` iff `x` is an `R` of `y`'s and `y` prefers it to
-its other `R`s, where `prefer T T' y s` means that `y` prefers `T'` to `T`. -/
+/-- The meaning of *favourite* (43), under which `x` is `y`'s favourite `R` iff `x` is an `R` of
+`y`'s and `y` prefers it to its other `R`s, where `prefer T T' y s` means that `y` prefers `T'` to
+`T`. -/
 def favourite (prefer : (S → Prop) → (S → Prop) → E → S → Prop) (R : E → E → S → Prop) :
     E → E → S → Prop :=
   fun y x s ↦ R y x s ∧ ∀ z, R y z s ∧ z ≠ x → prefer (R y z) (R y x) y s
@@ -195,8 +196,8 @@ theorem favourite_subsingleton {R : E → E → S → Prop} {y : E} {s : S}
     {x | favourite prefer R y x s}.Subsingleton :=
   fun x hx x' hx' ↦ by_contra fun hne ↦ h _ _ (hx.2 x' ⟨hx'.1, Ne.symm hne⟩) (hx'.2 x ⟨hx.1, hne⟩)
 
-/-- *Favourite N* (55d–f): *favourite* over the relation of a relational sense, or over the
-telic shift of a sortal one. -/
+/-- *Favourite N* (55d–f) applies *favourite* to the relation of a relational sense or to the telic
+shift of a sortal one. -/
 def Sense.favourite (σ : Sense E S) (prefer : (S → Prop) → (S → Prop) → E → S → Prop) :
     Option (E → E → S → Prop) :=
   (σ.inherent <|> σ.shift .telic).map (ViknerJensen2002.favourite prefer)

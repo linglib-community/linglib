@@ -69,11 +69,11 @@ section Experiment
 
 variable (P : Kernel Bool ℝ) (k : ℝ)
 
-/-- The hit rate of the criterion `k`: the probability that the observation on a signal trial
+/-- The hit rate of the criterion `k` is the probability that the observation on a signal trial
 exceeds `k`, so that the observer responds "yes". -/
 noncomputable def hitRate : ℝ := (P true).real (Ioi k)
 
-/-- The false-alarm rate of the criterion `k`: the probability that the observation on a noise
+/-- The false-alarm rate of the criterion `k` is the probability that the observation on a noise
 trial exceeds `k`. -/
 noncomputable def falseAlarmRate : ℝ := (P false).real (Ioi k)
 
@@ -103,7 +103,7 @@ section Location
 
 variable (ν : Measure ℝ) (δ : ℝ)
 
-/-- The location experiment of a noise law `ν` at sensitivity `δ`: the observation is `ν` shifted
+/-- In the location experiment of a noise law `ν` at sensitivity `δ`, the observation is `ν` shifted
 by `δ / 2` on signal trials and by `-(δ / 2)` on noise trials. -/
 noncomputable def locationExperiment : Kernel Bool ℝ :=
   Kernel.ofFunOfCountable fun b ↦ ν.map (· + if b then δ / 2 else -(δ / 2))
@@ -191,9 +191,9 @@ theorem falseAlarmRate_gaussianReal :
     falseAlarmRate (locationExperiment (gaussianReal 0 1) δ) k = normalCDF (-(δ / 2) - k) :=
   falseAlarmRate_locationExperiment_eq_cdf k
 
-/-- In the normal model the sensitivity is the difference of the z-scores of the rates, whatever
-the criterion: the receiver operating characteristic on z-score axes is the line
-`z(H) = z(F) + d'` of unit slope ([macmillan-creelman-2005], eq. (1.8)). -/
+/-- In the normal model the sensitivity is the difference of the z-scores of the rates, whatever the
+criterion, so the receiver operating characteristic on z-score axes is the line `z(H) = z(F) + d'`
+of unit slope ([macmillan-creelman-2005], eq. (1.8)). -/
 theorem probit_hitRate_sub_probit_falseAlarmRate :
     probit (hitRate (locationExperiment (gaussianReal 0 1) δ) k) -
       probit (falseAlarmRate (locationExperiment (gaussianReal 0 1) δ) k) = δ := by
@@ -217,8 +217,8 @@ theorem likelihoodRatio_gaussianReal (x : ℝ) :
   push_cast
   ring
 
-/-- In the normal model the two-alternative forced choice is the binary probit rule: the
-difference of the two observations is `N(δ, 2)`, so the proportion correct is `Φ (δ / √2)`
+/-- In the normal model the two-alternative forced choice is the binary probit rule. The difference
+of the two observations is `N(δ, 2)`, so the proportion correct is `Φ (δ / √2)`
 ([macmillan-creelman-2005], eq. (7.6)). -/
 theorem forcedChoice_one_gaussianReal :
     forcedChoice (locationExperiment (gaussianReal 0 1) δ) 1 =
@@ -247,9 +247,9 @@ theorem falseAlarmRate_logisticMeasure :
     falseAlarmRate (locationExperiment logisticMeasure δ) k = Real.sigmoid (-(δ / 2) - k) := by
   rw [falseAlarmRate_locationExperiment_eq_cdf, cdf_logisticMeasure]
 
-/-- In the logistic model the sensitivity is the difference of the log-odds of the rates, for
-every criterion: on log-odds axes the receiver operating characteristic is a line of unit slope,
-`δ` above the chance line ([macmillan-creelman-2005], eq. (4.10), with `δ = 2 ln α`). -/
+/-- In the logistic model the sensitivity is the difference of the log-odds of the rates for every
+criterion, so on log-odds axes the receiver operating characteristic is a line of unit slope, `δ`
+above the chance line ([macmillan-creelman-2005], eq. (4.10), with `δ = 2 ln α`). -/
 theorem logit_hitRate_sub_logit_falseAlarmRate :
     Real.logit (hitRate (locationExperiment logisticMeasure δ) k) -
       Real.logit (falseAlarmRate (locationExperiment logisticMeasure δ) k) = δ := by

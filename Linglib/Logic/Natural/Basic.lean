@@ -88,8 +88,8 @@ inductive Atom where
   | codisjoint
   deriving DecidableEq, Fintype, Repr
 
-/-- The atomic constraints a relation asserts: `≡` is `{le, ge}`, `^` is `{disjoint, codisjoint}`
-and `#` is `∅`. A relation holds iff all its constraints do (`Relation.holds_iff` in
+/-- The atomic constraints a relation asserts, `{le, ge}` for `≡`, `{disjoint, codisjoint}` for `^`
+and `∅` for `#`. A relation holds iff all its constraints do (`Relation.holds_iff` in
 `Logic/Natural/Soundness.lean`), and of the sixteen constraint sets exactly these seven are
 nondegenerately realizable (`Relation.mem_range_constraints_iff` in
 `Logic/Natural/Completeness.lean`). -/
@@ -104,7 +104,7 @@ def constraints : Relation → Finset Atom
 
 theorem constraints_injective : Function.Injective constraints := by decide
 
-/-- The implication order ([icard-2012]'s ≪): `R ≤ R'` iff `xRy` entails `xR'y`, i.e. iff the
+/-- In the implication order ([icard-2012]'s ≪), `R ≤ R'` iff `xRy` entails `xR'y`, i.e. iff the
 constraints of `R'` are among those of `R` (`Relation.Holds.of_le`). It consists of two diamonds
 sharing only the top `#`, one with `≡` below `⊑` and `⊒`, the other with `^` below `|` and `⌣`;
 there is no bottom, since `x = y` makes `x` and `y` neither disjoint nor exhaustive. -/
@@ -122,14 +122,12 @@ instance : OrderTop Relation where
   top := .independent
   le_top _ := le_iff.mpr (Finset.empty_subset _)
 
-/--
-The join `R ⋈ R'` ([icard-2012], Lemma 1.5): given `xRy` and `yR'z`, the strongest relation
-guaranteed between `x` and `z`. This is relation-algebra join, not lattice join. Each cell is sound
+/-- The join `R ⋈ R'` ([icard-2012], Lemma 1.5) is the strongest relation guaranteed between `x` and
+`z` given `xRy` and `yR'z`. This is relation-algebra join, not lattice join. Each cell is sound
 (`Relation.Holds.join` in `Logic/Natural/Soundness.lean`) and is the least sound relation
-(`Relation.isLeast_join` in `Logic/Natural/Completeness.lean`), as in [icard-2012]'s
-Definition 1.4. [maccartney-manning-2009]'s §3 join is exact relation composition, which on 17 of
-the 49 cells is a union of the seven relations; this table gives the best single relation there.
--/
+(`Relation.isLeast_join` in `Logic/Natural/Completeness.lean`), as in [icard-2012]'s Definition 1.4.
+[maccartney-manning-2009]'s §3 join is exact relation composition, which on 17 of the 49 cells is a
+union of the seven relations; this table gives the best single relation there. -/
 def join : Relation → Relation → Relation
   -- ≡ is the identity
   | .equiv, r => r
@@ -177,8 +175,8 @@ instance : One Relation := ⟨.equiv⟩
 
 /-- The relations form a monoid under ⋈ with identity `≡`. The identity and absorption laws are
 printed in [icard-2012] (p. 710); associativity appears in neither [icard-2012] nor
-[maccartney-manning-2009] and is checked by `decide`. The monoid is not commutative:
-`^ ⋈ ⌣ = ⊑` but `⌣ ⋈ ^ = ⊒`. -/
+[maccartney-manning-2009] and is checked by `decide`. The monoid is not commutative, since `^ ⋈ ⌣ =
+⊑` but `⌣ ⋈ ^ = ⊒`. -/
 instance : Monoid Relation where
   mul_assoc := by decide
   one_mul r := by cases r <;> rfl
@@ -252,7 +250,7 @@ def properties : Signature → Finset Property
 
 theorem properties_injective : Function.Injective properties := by decide
 
-/-- The refinement order ([icard-2012]'s ≼, §2.2): `σ ≤ τ` iff every σ-function is a τ-function,
+/-- In the refinement order ([icard-2012]'s ≼, §2.2), `σ ≤ τ` iff every σ-function is a τ-function,
 i.e. iff the properties of `τ` are among those of `σ` (`Signature.SoundFor.of_le` in
 `Logic/Natural/Soundness.lean`). -/
 instance : PartialOrder Signature :=
@@ -269,13 +267,12 @@ instance : OrderTop Signature where
   top := .all
   le_top _ := le_iff.mpr (Finset.empty_subset _)
 
-/-- The projection of a relation through a function of the given signature: the strongest
-relation guaranteed between `f x` and `f y` when `x R y` and `f` has signature `σ` ([icard-2012]
-Definition 2.3, computed by his Lemma 2.4). Each row is sound (`soundFor_*` in
-`Logic/Natural/Soundness.lean`) and least (`Signature.isLeast_project` in
-`Logic/Natural/Completeness.lean`). One cell departs from the printed table: [icard-2012] prints
-`[R]^• = #` for all `R` (p. 715), but every function preserves equality, so his Definition 2.3
-forces `[≡]^• = ≡`. -/
+/-- The projection of a relation through a function of the given signature is the strongest relation
+guaranteed between `f x` and `f y` when `x R y` and `f` has signature `σ` ([icard-2012] Definition
+2.3, computed by his Lemma 2.4). Each row is sound (`soundFor_*` in `Logic/Natural/Soundness.lean`)
+and least (`Signature.isLeast_project` in `Logic/Natural/Completeness.lean`). One cell departs from
+the printed table. [icard-2012] prints `[R]^• = #` for all `R` (p. 715), but every function
+preserves equality, so his Definition 2.3 forces `[≡]^• = ≡`. -/
 def project : Relation → Signature → Relation
   | .equiv, .all => .equiv
   | _, .all => .independent
@@ -352,12 +349,10 @@ def fromProjectionPair : Relation → Relation → Signature
   | .reverse, .negation    => .antiAddMult
   | _, _ => .mono  -- unreachable for valid projection pairs
 
-/--
-Composition of entailment signatures ([icard-2012], Lemma 2.7): `compose ψ φ` is the unique
-signature whose projection table is that of projecting through `φ` and then `ψ`. It is computed
-from the projections of `forward` and `negation`, which distinguish all 9 signatures; for `•` both
-are `#`, which makes it absorbing ([icard-2012] p. 716).
--/
+/-- The composition `compose ψ φ` of entailment signatures ([icard-2012], Lemma 2.7) is the unique
+signature whose projection table is that of projecting through `φ` and then `ψ`. It is computed from
+the projections of `forward` and `negation`, which distinguish all 9 signatures; for `•` both are
+`#`, which makes it absorbing ([icard-2012] p. 716). -/
 def compose (ψ φ : Signature) : Signature :=
   fromProjectionPair
     (project (project .forward φ) ψ)
@@ -371,7 +366,7 @@ theorem compose_identity_left (s : Signature) : compose .addMult s = s := by
 theorem compose_identity_right (s : Signature) : compose s .addMult = s := by
   cases s <;> rfl
 
-/-- `•` is absorbing: `φ ∘ • = • = • ∘ φ` ([icard-2012] p. 716). -/
+/-- The signature `•` is absorbing, that is, `φ ∘ • = • = • ∘ φ` ([icard-2012] p. 716). -/
 theorem compose_all_left (s : Signature) : compose .all s = .all := by
   cases s <;> rfl
 
@@ -396,9 +391,9 @@ end Signature
 
 namespace Signature
 
-/-- The sign of a signature ([icard-2012]'s coarse upward/downward distinction): `1` if it
-preserves forward entailment (`[⊑]^φ = ⊑`), `-1` if it reverses it (`[⊑]^φ = ⊒`), and `0`
-otherwise, as for a non-monotone context such as *exactly n* or an arbitrary one. -/
+/-- The sign of a signature ([icard-2012]'s coarse upward/downward distinction) is `1` if it
+preserves forward entailment (`[⊑]^φ = ⊑`), `-1` if it reverses it (`[⊑]^φ = ⊒`), and `0` otherwise,
+as for a non-monotone context such as *exactly n* or an arbitrary one. -/
 def sign (φ : Signature) : SignType :=
   if project .forward φ == .forward then 1
   else if project .forward φ == .reverse then -1
@@ -415,11 +410,11 @@ def signHom : Signature →* SignType where
 
 theorem sign_antiAddMult : antiAddMult.sign = (Polarity.negative : SignType) := rfl
 
-/-- The projectivity signature of a position: the product of the signatures along its path,
-outermost first ([icard-2012]'s `pro(s(u)) = top(s) ∘ pro(u)`, Definition 2.9). Under the
-projection action the innermost (last) signature applies first. For example,
-`contextProjectivity [.antiAdd, .addMult] = .antiAdd`: an intersective modifier inside the
-restrictor of *no* leaves the position anti-additive. -/
+/-- The projectivity signature of a position is the product of the signatures along its path,
+outermost first ([icard-2012]'s `pro(s(u)) = top(s) ∘ pro(u)`, Definition 2.9). Under the projection
+action the innermost (last) signature applies first. For example, `contextProjectivity [.antiAdd,
+.addMult] = .antiAdd` says that an intersective modifier inside the restrictor of *no* leaves the
+position anti-additive. -/
 def contextProjectivity (path : List Signature) : Signature :=
   path.prod
 
@@ -440,8 +435,8 @@ instance : SMul Signature Relation := ⟨λ σ R => Signature.project R σ⟩
 @[simp] theorem Signature.smul_def (σ : Signature) (R : Relation) :
     σ • R = Signature.project R σ := rfl
 
-/-- Projection is an action of the signature monoid on the relations:
-`projection_composition` is the `mul_smul` law. -/
+/-- Projection is an action of the signature monoid on the relations, with `projection_composition`
+as its `mul_smul` law. -/
 instance : MulAction Signature Relation where
   one_smul := by decide
   mul_smul ψ φ R := (projection_composition R φ ψ).symm

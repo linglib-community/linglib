@@ -59,8 +59,8 @@ caller's obligation. Ginzburg's KoS orders the QUD partially, with its own updat
 
 namespace Discourse
 
-/-- A strategy of inquiry: a rose tree of questions whose children are the subquestions pursued
-to answer their parent ([roberts-2012] definition (12); [buring-2003]'s d-trees). -/
+/-- A strategy of inquiry is a rose tree of questions whose children are the subquestions pursued to
+answer their parent ([roberts-2012] definition (12); [buring-2003]'s d-trees). -/
 abbrev Strategy (W : Type*) := RoseTree (Question W)
 
 namespace Strategy

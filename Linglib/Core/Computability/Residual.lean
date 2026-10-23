@@ -73,7 +73,7 @@ namespace Function
 
 /-! ### The prefix function and residuals -/
 
-/-- The prefix function of `f` at `u`: the longest common prefix of the outputs of `f` on the
+/-- The prefix function of `f` at `u` is the longest common prefix of the outputs of `f` on the
 extensions of `u`, that is, the output already determined after reading `u`. -/
 noncomputable def prefixFunction (u : List α) : List β :=
   (f u).take (sSup {n | n ≤ (f u).length ∧ ∀ w, (f u).take n <+: f (u ++ w)})
@@ -150,8 +150,8 @@ theorem residual_eq_of_forall {P : List β} (h : ∀ w, f (u ++ w) = P ++ g (v +
     List.drop_append]
   simp
 
-/-- Residuals compose as a right action of words: the residual by `u ++ v` is the residual by `v`
-of the residual by `u`. -/
+/-- The residual by `u ++ v` is the residual by `v` of the residual by `u`, so residuals compose as
+a right action of words. -/
 theorem residual_append (u v : List α) : f.residual (u ++ v) = (f.residual u).residual v :=
   residual_eq_of_forall fun w ↦ by
     rw [List.append_assoc]
@@ -253,8 +253,8 @@ theorem IsLeftSubsequential.of_finite_range_residual (hf : (Set.range f.residual
   have hT : T.run = f := funext fun v ↦ hrun none v
   exact hT ▸ T.isLeftSubsequential
 
-/-- Myhill–Nerode for subsequential transducers: a function is left-subsequential iff it has
-finitely many residuals ([chandlee-eyraud-heinz-2015], after Oncina and García). -/
+/-- A function is left-subsequential iff it has finitely many residuals, which is the Myhill–Nerode
+theorem for subsequential transducers ([chandlee-eyraud-heinz-2015], after Oncina and García). -/
 theorem isLeftSubsequential_iff_finite_range_residual :
     IsLeftSubsequential f ↔ (Set.range f.residual).Finite :=
   ⟨IsLeftSubsequential.finite_range_residual, IsLeftSubsequential.of_finite_range_residual⟩
@@ -339,8 +339,8 @@ theorem isMealyComputable_of_residual {f : List α → List β}
     show (f (u ++ [x])).drop (f u).length = f.residual u [x] by rw [residual_eq_drop (hpre u)],
     List.head?_eq_some_head]
 
-/-- Myhill–Nerode for Mealy machines: a function is Mealy-computable iff it is length-preserving,
-prefix-preserving, and has finitely many residuals. -/
+/-- A function is Mealy-computable iff it is length-preserving, prefix-preserving, and has finitely
+many residuals, which is the Myhill–Nerode theorem for Mealy machines. -/
 theorem isMealyComputable_iff_residual {f : List α → List β} :
     IsMealyComputable f
       ↔ (∀ xs, (f xs).length = xs.length) ∧ (∀ u v, f u <+: f (u ++ v))
@@ -352,13 +352,13 @@ theorem isMealyComputable_iff_residual {f : List α → List β} :
 
 namespace Function
 
-/-- The synchronous residual of `f` by `u` sends `v` to the output of `f` on `u ++ v` past its
-first `u.length` symbols: for a length-preserving `f`, the output after `u`. -/
+/-- The synchronous residual of `f` by `u` sends `v` to the output of `f` on `u ++ v` past its first
+`u.length` symbols, which for a length-preserving `f` is the output after `u`. -/
 def syncResidual (u : List α) : List α → List β :=
   fun v ↦ (f (u ++ v)).drop u.length
 
-/-- The synchronous coresidual of `f` by `y` sends `u` to the first `u.length` symbols of the
-output of `f` on `u ++ y`: for a length-preserving `f`, the output before `y`. -/
+/-- The synchronous coresidual of `f` by `y` sends `u` to the first `u.length` symbols of the output
+of `f` on `u ++ y`, which for a length-preserving `f` is the output before `y`. -/
 def syncCoresidual (y : List α) : List α → List β :=
   fun u ↦ (f (u ++ y)).take u.length
 
@@ -504,8 +504,9 @@ theorem isLengthPreservingBimachineComputable_of_syncResidual {f : List α → L
 
 end Bimachine
 
-/-- Myhill–Nerode for bimachines: a function is length-preserving bimachine-computable iff it is
-length-preserving with finitely many synchronous residuals and finitely many coresiduals. -/
+/-- A function is length-preserving bimachine-computable iff it is length-preserving with finitely
+many synchronous residuals and finitely many coresiduals, which is the Myhill–Nerode theorem for
+bimachines. -/
 theorem isLengthPreservingBimachineComputable_iff_syncResidual {f : List α → List β} :
     IsLengthPreservingBimachineComputable f
       ↔ (∀ xs, (f xs).length = xs.length) ∧ (Set.range (syncResidual f)).Finite

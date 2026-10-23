@@ -159,7 +159,7 @@ weak article over the restrictor narrowed to the antecedent. -/
 theorem denote_unique_restrictor (k : DefiniteDescription E W) : ⟦unique k.restrictor⟧ = ⟦k⟧ := rfl
 
 /-- The strong article is the possessive whose possessor is the antecedent and whose relation is
-identity: anaphora is relational anaphora to the referent itself. -/
+identity, so anaphora is relational anaphora to the referent itself. -/
 theorem denote_anaphoric_eq_possessive :
     ⟦anaphoric R d⟧ = ⟦possessive R (fun g _ ↦ g d) fun _ _ y x ↦ x = y⟧ := rfl
 

@@ -65,8 +65,8 @@ inductive Schema where
   | equation
   deriving DecidableEq, Repr, Fintype
 
-/-- The predicate nucleus of a schema's formula: the lexical verb *take*, the locative copula
-*be at*, the existential *exist*, or the equative copula *be*. -/
+/-- The predicate nucleus of a schema's formula is the lexical verb *take*, the locative copula *be
+at*, the existential *exist*, or the equative copula *be*. -/
 inductive Nucleus where
   | take
   | beAt
@@ -74,8 +74,8 @@ inductive Nucleus where
   | be
   deriving DecidableEq, Repr
 
-/-- Whether a nucleus retains lexical content: *take* does, the schematic predicates of
-location, existence, and equation do not. -/
+/-- A nucleus is lexical if it retains lexical content, as *take* does and the schematic predicates
+of location, existence, and equation do not. -/
 def Nucleus.IsLexical : Nucleus → Prop
   | .take => True
   | .beAt | .exist | .be => False
@@ -90,9 +90,9 @@ inductive Participant where
   | possessee
   deriving DecidableEq, Repr
 
-/-- How the participant that is not the subject enters the formula: as the object or the
-locative argument of the nucleus, or grafted on as a comitative, dative, or ablative adjunct,
-a genitival modifier, or a topic. -/
+/-- The participant that is not the subject enters the formula as the object or the locative
+argument of the nucleus, or grafted on as a comitative, dative, or ablative adjunct, a genitival
+modifier, or a topic. -/
 inductive Entry where
   | object
   | locative
@@ -122,7 +122,7 @@ def Entry.case : Entry → Option Case
   | .ablative => some .abl
   | .object | .topic => none
 
-/-- A formulaic description of a schema: its nucleus, the participant it encodes as the
+/-- A formulaic description of a schema gives its nucleus, the participant it encodes as the
 subject, and how the other participant enters. -/
 structure Formula where
   nucleus : Nucleus
@@ -179,8 +179,8 @@ A construction grammaticalizing from a source schema to a possessive target carr
 meaning alone at Stage I, both meanings at Stage II, where it is ambiguous, and the target
 meaning alone at Stage III. -/
 
-/-- The meanings a construction can carry: that of its source schema and the possessive
-target. -/
+/-- The meanings a construction can carry are that of its source schema and the possessive target.
+-/
 inductive Meaning where
   | source
   | target
@@ -267,9 +267,9 @@ def teluguData : List (Schema × Notion) :=
   (Examples.all.filter fun r ↦ r.language = "telu1262").filterMap fun r ↦ do
     pure (← schema r, ← notion r)
 
-/-- Telugu divides the notions between two schemas as the chapter's generalizations expect:
-the Location Schema expresses physical possession and the Goal Schema, an Existence schema,
-the permanent and inalienable notions, never the physical one. -/
+/-- Telugu divides the notions between two schemas as the chapter's generalizations expect. The
+Location Schema expresses physical possession, and the Goal Schema, an Existence schema, expresses
+the permanent and inalienable notions but never the physical one. -/
 theorem telugu_notions : ∀ d ∈ teluguData, d.1 = .location ↔ d.2 = .physical := by
   decide +kernel
 

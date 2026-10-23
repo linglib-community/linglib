@@ -48,7 +48,7 @@ for the same reason.
 
 @[expose] public section
 
-/-- The order of a head and one of its dependents: head-initial if the head precedes, as a verb
+/-- The order of a head and one of its dependents is head-initial if the head precedes, as a verb
 precedes its object in VO order and a preposition its noun phrase, and head-final otherwise. -/
 inductive HeadDirection where
   | headInitial
@@ -145,8 +145,8 @@ section nearest
 
 variable {α β : Type*}
 
-/-- The dependent next to the head, given the dependents `l` on one side of it in linear order:
-the first if the head precedes them, the last if it follows them. -/
+/-- Of the dependents `l` on one side of the head, in linear order, the one next to the head is the
+first if the head precedes them and the last if it follows them. -/
 def nearest : HeadDirection → List α → Option α
   | headInitial, l => l.head?
   | headFinal, l => l.getLast?
@@ -213,8 +213,8 @@ def headDirection : HeadDirection := .ofLT (a x) (a y)
 /-- The mirror image, every rank reversed. -/
 def mirror : Arrangement α n := a.trans Fin.revPerm
 
-/-- `a.IsEnd x d` holds when `x` is a head in direction `d` of every other element: `x` stands
-first when `d` is head-initial and last when it is head-final. -/
+/-- `a.IsEnd x d` holds when `x` is a head in direction `d` of every other element, that is, when
+`x` stands first if `d` is head-initial and last if it is head-final. -/
 def IsEnd : HeadDirection → Prop
   | .headInitial => (a x : ℕ) = 0
   | .headFinal => (a x : ℕ) + 1 = n

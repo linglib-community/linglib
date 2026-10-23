@@ -104,9 +104,9 @@ instance : IsStrictTotalOrder ι r.Dominates := InvImage.isStrictTotalOrder r.sy
 @[simp] theorem one_dominates_iff {i j : Fin n} : (1 : Ranking (Fin n) n).Dominates i j ↔ i < j :=
   Iff.rfl
 
-/-- A ranking acts on a lex-ordered vector by reordering it by rank: coordinate `p` of `r • v` is
-the value of `v` at the constraint ranked `p`-th. With this convention the action of `Sₙ` is a right
-action, `(r * s) • v = s • r • v`. -/
+/-- A ranking acts on a lex-ordered vector by reordering it by rank, so that coordinate `p` of `r •
+v` is the value of `v` at the constraint ranked `p`-th. With this convention the action of `Sₙ` is a
+right action, `(r * s) • v = s • r • v`. -/
 instance {α : Type*} : SMul (Ranking (Fin n) n) (Lex (Fin n → α)) :=
   ⟨fun r v => toLex fun p => ofLex v (r p)⟩
 

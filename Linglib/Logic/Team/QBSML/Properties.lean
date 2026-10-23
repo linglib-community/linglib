@@ -77,8 +77,8 @@ theorem support_empty_of_neFree {φ : Formula Var Const Pred}
 
 /-! ### Downward and union closure for NE-free formulas -/
 
-/-- Downward and union closure of support and anti-support, proved together: the quantifier
-    cases are [aloni-vanormondt-2023] Fact 2, the others [anttila-2021] Proposition 2.2.8. -/
+/-- Support and anti-support of an NE-free formula are downward and union closed. The quantifier
+cases are [aloni-vanormondt-2023] Fact 2 and the others are [anttila-2021] Proposition 2.2.8. -/
 private theorem support_and_antiSupport_dc_uc_of_neFree
     {φ : Formula Var Const Pred} (hNE : φ.NEFree)
     (M : Model W Domain Const Pred) :
@@ -663,8 +663,8 @@ theorem antiSupport_singleton_iff_realizeAt (M : Model W Domain Const Pred)
   (support_and_antiSupport_singleton_realizeAt M hψ hv).2
 
 /-- A state supports a translatable modal-free formula iff the translation is satisfied at every
-    index: `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s` ([aloni-vanormondt-2023]
-    Proposition 4.1, modal-free case). -/
+index, that is, `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s` ([aloni-vanormondt-2023]
+Proposition 4.1, modal-free case). -/
 theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var}
     (hψ : φ.toFormula? = some ψ) (s : Finset (Index W Var Domain))
@@ -684,9 +684,8 @@ formula, modal or not, into a `ModalFormula` over the monadic signature
 (`Logic/Modal/FirstOrder/Semantics.lean`), and support is Kripke satisfaction at every index. The
 translation is defined exactly on the NE-free formulas. -/
 
-/-- The translation of QBSML into first-order modal formulas over the monadic signature: `◇`
-    becomes `ModalFormula.diamond` and quantifiers become named binders. Only `NE` has no
-    translation. -/
+/-- The translation of QBSML into first-order modal formulas over the monadic signature, which sends
+`◇` to `ModalFormula.diamond` and quantifiers to named binders. Only `NE` has no translation. -/
 def Formula.toModal? [DecidableEq Var] :
     Formula Var Const Pred →
       Option (ModalFormula ((Language.monadic Pred)[[Const]]) Var)
@@ -1071,9 +1070,9 @@ theorem antiSupport_singleton_iff_realize (M : Model W Domain Const Pred)
     antiSupport M φ {i} ↔ ¬ τ.Realize M i.world v :=
   (support_and_antiSupport_singleton_realize M hτ hv).2
 
-/-- A state supports an NE-free formula iff its modal translation is satisfied at every index:
-    `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s` ([aloni-vanormondt-2023]
-    Proposition 4.1). -/
+/-- A state supports an NE-free formula iff its modal translation is satisfied at every index, that
+is, `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s` ([aloni-vanormondt-2023] Proposition
+4.1). -/
 theorem support_iff_forall_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
