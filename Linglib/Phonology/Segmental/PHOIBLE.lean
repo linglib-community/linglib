@@ -160,7 +160,7 @@ theorem toSegment_tenseAsATR_of_ne (m : FeatureMatrix) {f : Phonology.Feature} (
 /-- Chart segments fall into the sonority classes of their glyphs, the nasal by its
 [−approximant]. -/
 example : [«p», «s», «n», «l», «j», «a»].map (Sonority.ofSegment ∘ toSegment) =
-    [.stop, .fricative, .nasal, .liquid, .glide, .vowel] := by decide
+    [.obstruent, .obstruent, .nasal, .liquid, .glide, .vowel] := by decide
 
 /-- An unrounded vowel is [−round] and a rounded one keeps its [+round]. -/
 example : «i».toSegment.HasValue .round false ∧ «u».toSegment.HasValue .round true := by decide

@@ -11,36 +11,31 @@ public import Linglib.Core.Data.Fintype.Sets
 /-!
 # Basic theory of segments
 
-This file develops the theory of the segments defined in
-`Phonology/Segmental/Defs.lean`. Natural-class membership is the bundle order: a
-specification matches a segment exactly when it lies below it in the subsumption order
-of Shieber and Carpenter, so having a value is lying above the bundle specifying that
-value alone, matching a specification list is having each listed value, and each
-conjunctive natural class is the segments above its specification. The remaining
-results concern the feature-change operations, the features on which sonority depends, the
-sonority rise between two classes, and the Parker sonority ranking.
+This file develops the theory of the segments defined in `Phonology/Segmental/Defs.lean`.
+Natural-class membership is the bundle order of Shieber and Carpenter: having a value is lying
+above the segment that has that value alone, and each named natural class is the segments above
+its features. The other results concern the change of a feature, distinctive feature sets, and
+the sonority hierarchy, whose four features each cut it at one point, as in Hayes's Table 4.1.
 
 ## Main results
 
 * `Segment.le_iff_forall_hasValue`: a description lies below a segment iff the segment has each
   of its values.
-* `Segment.hasValue_iff_ofSpecs_le`: having a value is lying above the single-feature
-  bundle.
-* `Segment.ofSpecs_le_iff`: a specification list lies below a segment iff the segment has
-  every listed value.
-* `Segment.isVowel_iff_le`: a natural class is the segments above its specification, and
-  likewise for consonants, stops, fricatives, nasals, sibilants and glides.
-* `Segment.setFeature_hasValue`: the feature-change operations act as specified.
+* `Segment.ofSpecs_le_iff`: a specification list lies below a segment iff the segment has every
+  listed value.
+* `Segment.isVowel_iff_le`: the vowels are the segments above [+syllabic], and likewise for the
+  consonants, obstruents, nasals and sibilants.
 * `IsDistinctive`: a feature set on which no two segments of an inventory agree, with
-  `Segment.restrict_eq_restrict_iff` relating restriction to agreement on the set, which is
-  decidable.
-* `Sonority.ofSegment_congr`: sonority depends on a segment only through the major-class
-  features and continuancy, so it is blind to place and laryngeal features.
-* `Sonority.rise_pos`, `Sonority.rise_eq_zero`, `Sonority.rise_neg`: the sign of the
-  sonority rise separates rises, plateaus and falls.
-* `Sonority.Class.parkerRank_injective`: the Parker scale ranks classes distinctly.
-* `Sonority.Class.toSonority_ofSegment`: the Parker classification coarsens to the
-  six-level one.
+  `Segment.restrict_eq_restrict_iff` relating restriction to agreement on the set.
+* `Sonority.nasal_le_iff`, `Sonority.liquid_le_iff`, `Sonority.glide_le_iff`,
+  `Sonority.vowel_le_iff`: each feature of Table 4.1 cuts the hierarchy at one point.
+* `Sonority.ofSegment_eq_of_le`: a segment with the values of a column of Table 4.1 has that
+  column's sonority.
+* `Sonority.ofSegment_congr`: sonority depends on a segment only through the four features,
+  and not on [continuant].
+* `Sonority.rise_pos`, `Sonority.rise_eq_zero`, `Sonority.rise_neg`: the sign of the sonority
+  rise separates rises, plateaus and falls.
+* `Sonority.Class.toSonority_ofSegment`: Parker's classes refine the hierarchy.
 
 ## References
 
@@ -100,74 +95,35 @@ theorem hasValue_iff_ofSpecs_le (f : Feature) (v : Bool) :
   rw [ofSpecs_le_iff_forall_mem s (by simp)]
   simp
 
-/-- The vowels are the segments above `[+syllabic]`. -/
+/-- The vowels are the segments above [+syllabic]. -/
 theorem isVowel_iff_le : s.IsVowel ↔ ofSpecs [(.syllabic, true)] ≤ s := by
   rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsVowel]
 
-/-- The consonants are the segments above `[+consonantal]`. -/
+/-- The consonants are the segments above [+consonantal]. -/
 theorem isConsonant_iff_le : s.IsConsonant ↔ ofSpecs [(.consonantal, true)] ≤ s := by
   rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsConsonant]
 
-/-- The obstruents are the segments above `[+cons, −son]`. -/
+/-- The obstruents are the segments above [+consonantal, −sonorant]. -/
 theorem isObstruent_iff_le :
     s.IsObstruent ↔ ofSpecs [(.consonantal, true), (.sonorant, false)] ≤ s := by
   rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsObstruent]
 
-/-- The stops are the segments above `[+cons, −son, −cont]`. -/
-theorem isStop_iff_le :
-    s.IsStop ↔
-      ofSpecs [(.consonantal, true), (.sonorant, false), (.continuant, false)] ≤ s := by
-  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsStop]
-
-/-- The fricatives are the segments above `[+cons, −son, +cont]`. -/
-theorem isFricative_iff_le :
-    s.IsFricative ↔
-      ofSpecs [(.consonantal, true), (.sonorant, false), (.continuant, true)] ≤ s := by
-  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsFricative]
-
-/-- The nasals are the segments above `[+nasal]`. -/
+/-- The nasals are the segments above [+nasal]. -/
 theorem isNasal_iff_le : s.IsNasal ↔ ofSpecs [(.nasal, true)] ≤ s := by
   rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsNasal]
 
-/-- The sibilants are the segments above `[+strident]`. -/
+/-- The sibilants are the segments above [+strident]. -/
 theorem isSibilant_iff_le : s.IsSibilant ↔ ofSpecs [(.strident, true)] ≤ s :=
   hasValue_iff_ofSpecs_le s _ _
 
-/-- The glides are the segments above `[−cons, −syll, +approx]`. -/
-theorem isGlide_iff_le :
-    s.IsGlide ↔
-      ofSpecs [(.consonantal, false), (.syllabic, false), (.approximant, true)] ≤ s := by
-  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsGlide]
-
-/-! ### Effect on the modified feature -/
+/-! ### Changes -/
 
 @[simp] theorem setFeature_hasValue (f : Feature) (v : Bool) : (s.setFeature f v).HasValue f v :=
   Function.update_self _ _ _
 
-theorem fillFromContext_apply_self_of_unspecified {f : Feature} (h : s.Unspecified f)
-    (ctx : Segment) :
-    (s.fillFromContext f ctx) f = ctx f := by
-  show (s f).or (Function.update (⊥ : Segment) f (ctx f) f) = ctx f
-  rw [show s f = none from h, Function.update_self]
-  rfl
-
-theorem fillFromContext_apply_self_of_specified {f : Feature} {w : Bool} (h : s.HasValue f w)
-    (ctx : Segment) : (s.fillFromContext f ctx) f = some w := by
-  show (s f).or _ = some w
-  rw [show s f = some w from h]
-  rfl
-
-/-! ### Value preserved on other features -/
-
 @[simp] theorem setFeature_apply_of_ne {f g : Feature} (h : f ≠ g) (v : Bool) :
     (s.setFeature f v) g = s g :=
   Function.update_of_ne (Ne.symm h) _ _
-
-@[simp] theorem fillFromContext_apply_of_ne {f g : Feature} (h : f ≠ g) (ctx : Segment) :
-    (s.fillFromContext f ctx) g = s g := by
-  show (s g).or (Function.update (⊥ : Segment) f (ctx f) g) = s g
-  rw [Function.update_of_ne (Ne.symm h)]
-  exact Flat.or_bot _
 
 end Segment
 
@@ -226,15 +182,29 @@ namespace Sonority
 
 theorem rank_strictMono : StrictMono rank := fun _ _ h ↦ h
 
-/-- The features `ofSegment` reads are the major-class features and continuancy. Place and
-laryngeal features are absent. -/
-def features : Finset Feature := {.sonorant, .continuant, .approximant, .consonantal, .syllabic}
+/-- [+sonorant] cuts the hierarchy below the nasals. -/
+theorem nasal_le_iff {c : Sonority} : nasal ≤ c ↔ c.toSegment.HasValue .sonorant true := by
+  cases c <;> decide
+
+/-- [+approximant] cuts the hierarchy below the liquids. -/
+theorem liquid_le_iff {c : Sonority} : liquid ≤ c ↔ c.toSegment.HasValue .approximant true := by
+  cases c <;> decide
+
+/-- [−consonantal] cuts the hierarchy below the glides. -/
+theorem glide_le_iff {c : Sonority} : glide ≤ c ↔ c.toSegment.HasValue .consonantal false := by
+  cases c <;> decide
+
+/-- [+syllabic] cuts the hierarchy below the vowels. -/
+theorem vowel_le_iff {c : Sonority} : vowel ≤ c ↔ c.toSegment.HasValue .syllabic true := by
+  cases c <;> decide
+
+/-- The features `ofSegment` reads, the four of Table 4.1. -/
+def features : Finset Feature := {.sonorant, .approximant, .consonantal, .syllabic}
 
 /-- Sonority depends on a segment only through `Sonority.features`. -/
 theorem ofSegment_congr {s s' : Segment} (h : ∀ f ∈ features, s f = s' f) :
     ofSegment s = ofSegment s' := by
   simp only [ofSegment, Segment.HasValue, h _ (by decide : Feature.sonorant ∈ features),
-    h _ (by decide : Feature.continuant ∈ features),
     h _ (by decide : Feature.approximant ∈ features),
     h _ (by decide : Feature.consonantal ∈ features),
     h _ (by decide : Feature.syllabic ∈ features)]
@@ -243,6 +213,24 @@ theorem ofSegment_congr {s s' : Segment} (h : ∀ f ∈ features, s f = s' f) :
 theorem ofSegment_setFeature {f : Feature} (hf : f ∉ features) (s : Segment) (v : Bool) :
     ofSegment (s.setFeature f v) = ofSegment s :=
   ofSegment_congr fun g hg ↦ Segment.setFeature_apply_of_ne (s := s) (by rintro rfl; exact hf hg) v
+
+@[simp] theorem ofSegment_toSegment (c : Sonority) : ofSegment c.toSegment = c := by
+  cases c <;> decide
+
+/-- A segment with the values of a column of Table 4.1 has that column's sonority. -/
+theorem ofSegment_eq_of_le {c : Sonority} {s : Segment} (h : c.toSegment ≤ s) :
+    ofSegment s = c := by
+  refine (ofSegment_congr fun f hf ↦ ?_).trans (ofSegment_toSegment c)
+  have key : ∀ c : Sonority, ∀ f ∈ features, ∃ v, c.toSegment f = some v := by decide
+  obtain ⟨v, hv⟩ := key c f hf
+  rw [hv]
+  exact (Segment.le_iff_forall_hasValue s).1 h f v hv
+
+/-- [continuant] is not a sonority feature: nasals are [−continuant] and fricatives
+[+continuant]. -/
+theorem ofSegment_setFeature_continuant (s : Segment) (v : Bool) :
+    ofSegment (s.setFeature .continuant v) = ofSegment s :=
+  ofSegment_setFeature (by decide) s v
 
 /-- The sonority rise from `a` to `b` is positive when sonority rises, zero on a plateau,
 and negative when it falls. -/
@@ -269,18 +257,15 @@ end Sonority
 
 namespace Sonority.Class
 
-/-- The eight Parker classes receive distinct ranks ([parker-2002]). The ranking is Parker's
-    reversible default, so injectivity is the faithful invariant, and no fixed order on
-    `Sonority.Class` is implied. -/
 theorem parkerRank_injective : Function.Injective parkerRank := by
   intro a b h
   cases a <;> cases b <;> simp_all [parkerRank]
 
-/-- Classifying on the Parker scale and collapsing the voicing split is the six-level
-    classification. -/
-theorem toSonority_ofSegment (s : Segment) : (ofSegment s).toSonority = Sonority.ofSegment s := by
-  unfold ofSegment Sonority.ofSegment
-  split_ifs <;> rfl
+/-- Parker's classes refine the hierarchy. -/
+@[simp] theorem toSonority_ofSegment (s : Segment) :
+    (ofSegment s).toSonority = Sonority.ofSegment s := by
+  unfold ofSegment
+  split <;> (try split_ifs) <;> simp_all [toSonority]
 
 end Sonority.Class
 
